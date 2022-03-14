@@ -62,10 +62,10 @@ const SolarUpdraftTowerChimneyRadiusInput = ({
         for (const e of elements) {
           if (e.type === ObjectType.Foundation && !e.locked) {
             const f = e as FoundationModel;
-            if (f.solarStructure === SolarStructure.UpdraftTower) {
+            if (f.solarStructure === SolarStructure.UpdraftTower && f.solarUpdraftTower) {
               if (
-                f.solarUpdraftTower?.chimneyRadius === undefined ||
-                Math.abs(f.solarUpdraftTower?.chimneyRadius - chimneyRadius) > ZERO_TOLERANCE
+                f.solarUpdraftTower.chimneyRadius === undefined ||
+                Math.abs(f.solarUpdraftTower.chimneyRadius - chimneyRadius) > ZERO_TOLERANCE
               ) {
                 return true;
               }
@@ -74,11 +74,13 @@ const SolarUpdraftTowerChimneyRadiusInput = ({
         }
         break;
       default:
-        if (
-          foundation?.solarUpdraftTower?.chimneyRadius === undefined ||
-          Math.abs(foundation?.solarUpdraftTower?.chimneyRadius - chimneyRadius) > ZERO_TOLERANCE
-        ) {
-          return true;
+        if (foundation && foundation.solarStructure === SolarStructure.UpdraftTower && foundation.solarUpdraftTower) {
+          if (
+            foundation.solarUpdraftTower.chimneyRadius === undefined ||
+            Math.abs(foundation.solarUpdraftTower.chimneyRadius - chimneyRadius) > ZERO_TOLERANCE
+          ) {
+            return true;
+          }
         }
     }
     return false;
@@ -93,7 +95,12 @@ const SolarUpdraftTowerChimneyRadiusInput = ({
         for (const elem of elements) {
           if (elem.type === ObjectType.Foundation) {
             const f = elem as FoundationModel;
-            oldValuesAll.set(elem.id, f.solarUpdraftTower?.chimneyRadius ?? Math.max(1, 0.025 * Math.min(f.lx, f.ly)));
+            if (f.solarStructure === SolarStructure.UpdraftTower && f.solarUpdraftTower) {
+              oldValuesAll.set(
+                elem.id,
+                f.solarUpdraftTower?.chimneyRadius ?? Math.max(1, 0.025 * Math.min(f.lx, f.ly)),
+              );
+            }
           }
         }
         const undoableChangeAll = {
@@ -115,9 +122,9 @@ const SolarUpdraftTowerChimneyRadiusInput = ({
         setApplyCount(applyCount + 1);
         break;
       default:
-        if (foundation) {
+        if (foundation && foundation.solarStructure === SolarStructure.UpdraftTower && foundation.solarUpdraftTower) {
           const oldValue =
-            foundation.solarUpdraftTower?.chimneyHeight ?? Math.max(1, 0.025 * Math.min(foundation.lx, foundation.ly));
+            foundation.solarUpdraftTower.chimneyHeight ?? Math.max(1, 0.025 * Math.min(foundation.lx, foundation.ly));
           updateChimneyRadiusById(foundation.id, value);
           const undoableChange = {
             name: 'Set Solar Chimney Radius on Foundation',

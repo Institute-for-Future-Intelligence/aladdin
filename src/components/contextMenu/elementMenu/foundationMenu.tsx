@@ -38,6 +38,9 @@ import SolarPowerTowerHeightInput from './solarPowerTowerHeightInput';
 import SolarPowerTowerReceiverAbsorptanceInput from './solarPowerTowerReceiverAbsorptanceInput';
 import SolarPowerTowerReceiverOpticalEfficiencyInput from './solarPowerTowerReceiverOpticalEfficiencyInput';
 import SolarPowerTowerReceiverThermalEfficiencyInput from './solarPowerTowerReceiverThermalEfficiencyInput';
+import SolarUpdraftTowerCollectorTransmittanceInput from './solarUpdraftTowerCollectorTransmittanceInput';
+import SolarUpdraftTowerDischargeCoefficientInput from './solarUpdraftTowerDischargeCoefficientInput';
+import SolarUpdraftTowerTurbineEfficiencyInput from './solarUpdraftTowerTurbineEfficiencyInput';
 
 export const FoundationMenu = () => {
   const setCommonStore = useStore(Selector.set);
@@ -89,6 +92,9 @@ export const FoundationMenu = () => {
   const [chimneyRadiusDialogVisible, setChimneyRadiusDialogVisible] = useState(false);
   const [collectorHeightDialogVisible, setCollectorHeightDialogVisible] = useState(false);
   const [collectorRadiusDialogVisible, setCollectorRadiusDialogVisible] = useState(false);
+  const [collectorTransmittanceDialogVisible, setCollectorTransmittanceDialogVisible] = useState(false);
+  const [dischargeCoefficientDialogVisible, setDischargeCoefficientDialogVisible] = useState(false);
+  const [turbineEfficiencyDialogVisible, setTurbineEfficiencyDialogVisible] = useState(false);
 
   const counter = foundation ? countAllOffspringsByType(foundation.id) : new ElementCounter();
   const lang = { lng: language };
@@ -1002,6 +1008,51 @@ export const FoundationMenu = () => {
               }}
             >
               {i18n.t('solarUpdraftTowerMenu.SolarUpdraftTowerCollectorRadius', lang)} ...
+            </Menu.Item>
+
+            <SolarUpdraftTowerCollectorTransmittanceInput
+              dialogVisible={collectorTransmittanceDialogVisible}
+              setDialogVisible={setCollectorTransmittanceDialogVisible}
+            />
+            <Menu.Item
+              key={'solar-updraft-tower-collector-transmittance'}
+              style={{ paddingLeft: '36px' }}
+              onClick={() => {
+                setApplyCount(0);
+                setCollectorTransmittanceDialogVisible(true);
+              }}
+            >
+              {i18n.t('solarUpdraftTowerMenu.SolarUpdraftTowerCollectorTransmittance', lang)} ...
+            </Menu.Item>
+
+            <SolarUpdraftTowerDischargeCoefficientInput
+              dialogVisible={dischargeCoefficientDialogVisible}
+              setDialogVisible={setDischargeCoefficientDialogVisible}
+            />
+            <Menu.Item
+              key={'solar-updraft-tower-discharge-coefficient'}
+              style={{ paddingLeft: '36px' }}
+              onClick={() => {
+                setApplyCount(0);
+                setDischargeCoefficientDialogVisible(true);
+              }}
+            >
+              {i18n.t('solarUpdraftTowerMenu.SolarUpdraftTowerDischargeCoefficient', lang)} ...
+            </Menu.Item>
+
+            <SolarUpdraftTowerTurbineEfficiencyInput
+              dialogVisible={turbineEfficiencyDialogVisible}
+              setDialogVisible={setTurbineEfficiencyDialogVisible}
+            />
+            <Menu.Item
+              key={'solar-updraft-tower-turbine-efficiency'}
+              style={{ paddingLeft: '36px' }}
+              onClick={() => {
+                setApplyCount(0);
+                setTurbineEfficiencyDialogVisible(true);
+              }}
+            >
+              {i18n.t('solarUpdraftTowerMenu.SolarUpdraftTowerTurbineEfficiency', lang)} ...
             </Menu.Item>
           </SubMenu>
         )}

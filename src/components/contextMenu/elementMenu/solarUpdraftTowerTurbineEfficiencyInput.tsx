@@ -14,7 +14,7 @@ import { UndoableChangeGroup } from 'src/undo/UndoableChangeGroup';
 import { FoundationModel } from 'src/models/FoundationModel';
 import { ZERO_TOLERANCE } from 'src/constants';
 
-const SolarUpdraftTowerCollectorHeightInput = ({
+const SolarUpdraftTowerTurbineEfficiencyInput = ({
   dialogVisible,
   setDialogVisible,
 }: {
@@ -23,8 +23,8 @@ const SolarUpdraftTowerCollectorHeightInput = ({
 }) => {
   const language = useStore(Selector.language);
   const elements = useStore(Selector.elements);
-  const updateCollectorHeightById = useStore(Selector.updateSolarUpdraftTowerCollectorHeightById);
-  const updateCollectorHeightForAll = useStore(Selector.updateSolarUpdraftTowerCollectorHeightForAll);
+  const updateById = useStore(Selector.updateSolarUpdraftTowerTurbineEfficiencyById);
+  const updateForAll = useStore(Selector.updateSolarUpdraftTowerTurbineEfficiencyForAll);
   const foundation = useStore(Selector.selectedElement) as FoundationModel;
   const addUndoable = useStore(Selector.addUndoable);
   const foundationActionScope = useStore(Selector.foundationActionScope);
@@ -33,8 +33,8 @@ const SolarUpdraftTowerCollectorHeightInput = ({
   const setApplyCount = useStore(Selector.setApplyCount);
   const revertApply = useStore(Selector.revertApply);
 
-  const [inputCollectorHeight, setInputCollectorHeight] = useState<number>(
-    foundation?.solarUpdraftTower?.collectorHeight ?? Math.max(3, 10 * foundation?.lz),
+  const [inputTurbineEfficiency, setInputTurbineEfficiency] = useState<number>(
+    foundation?.solarUpdraftTower?.turbineEfficiency ?? 0.9,
   );
   const [updateFlag, setUpdateFlag] = useState<boolean>(false);
   const [dragEnabled, setDragEnabled] = useState<boolean>(false);
@@ -45,7 +45,7 @@ const SolarUpdraftTowerCollectorHeightInput = ({
 
   useEffect(() => {
     if (foundation) {
-      setInputCollectorHeight(foundation.solarUpdraftTower?.collectorHeight ?? Math.max(3, 10 * foundation.lz));
+      setInputTurbineEfficiency(foundation.solarUpdraftTower?.turbineEfficiency ?? 0.9);
     }
   }, [foundation]);
 
@@ -54,7 +54,7 @@ const SolarUpdraftTowerCollectorHeightInput = ({
     setUpdateFlag(!updateFlag);
   };
 
-  const needChange = (collectorHeight: number) => {
+  const needChange = (efficiency: number) => {
     switch (foundationActionScope) {
       case Scope.AllObjectsOfThisType:
         for (const e of elements) {
@@ -62,8 +62,8 @@ const SolarUpdraftTowerCollectorHeightInput = ({
             const f = e as FoundationModel;
             if (f.solarStructure === SolarStructure.UpdraftTower && f.solarUpdraftTower) {
               if (
-                f.solarUpdraftTower.collectorHeight === undefined ||
-                Math.abs(f.solarUpdraftTower.collectorHeight - collectorHeight) > ZERO_TOLERANCE
+                f.solarUpdraftTower.turbineEfficiency === undefined ||
+                Math.abs(f.solarUpdraftTower.turbineEfficiency - efficiency) > ZERO_TOLERANCE
               ) {
                 return true;
               }
@@ -74,8 +74,8 @@ const SolarUpdraftTowerCollectorHeightInput = ({
       default:
         if (foundation && foundation.solarStructure === SolarStructure.UpdraftTower && foundation.solarUpdraftTower) {
           if (
-            foundation.solarUpdraftTower.collectorHeight === undefined ||
-            Math.abs(foundation.solarUpdraftTower.collectorHeight - collectorHeight) > ZERO_TOLERANCE
+            foundation.solarUpdraftTower.turbineEfficiency === undefined ||
+            Math.abs(foundation.solarUpdraftTower.turbineEfficiency - efficiency) > ZERO_TOLERANCE
           ) {
             return true;
           }
@@ -84,7 +84,7 @@ const SolarUpdraftTowerCollectorHeightInput = ({
     return false;
   };
 
-  const setCollectorHeight = (value: number) => {
+  const setEfficiency = (value: number) => {
     if (!foundation) return;
     if (!needChange(value)) return;
     switch (foundationActionScope) {
@@ -94,43 +94,43 @@ const SolarUpdraftTowerCollectorHeightInput = ({
           if (elem.type === ObjectType.Foundation) {
             const f = elem as FoundationModel;
             if (f.solarStructure === SolarStructure.UpdraftTower && f.solarUpdraftTower) {
-              oldValuesAll.set(elem.id, f.solarUpdraftTower.collectorHeight ?? Math.max(3, 10 * f.lz));
+              oldValuesAll.set(elem.id, f.solarUpdraftTower.turbineEfficiency ?? 0.9);
             }
           }
         }
         const undoableChangeAll = {
-          name: 'Set Solar Collector Height for All Foundations',
+          name: 'Set Solar Updraft Tower Turbine Efficiency for All Foundations',
           timestamp: Date.now(),
           oldValues: oldValuesAll,
           newValue: value,
           undo: () => {
-            for (const [id, ch] of undoableChangeAll.oldValues.entries()) {
-              updateCollectorHeightById(id, ch as number);
+            for (const [id, dc] of undoableChangeAll.oldValues.entries()) {
+              updateById(id, dc as number);
             }
           },
           redo: () => {
-            updateCollectorHeightForAll(undoableChangeAll.newValue as number);
+            updateForAll(undoableChangeAll.newValue as number);
           },
         } as UndoableChangeGroup;
         addUndoable(undoableChangeAll);
-        updateCollectorHeightForAll(value);
+        updateForAll(value);
         setApplyCount(applyCount + 1);
         break;
       default:
         if (foundation && foundation.solarStructure === SolarStructure.UpdraftTower && foundation.solarUpdraftTower) {
-          const oldValue = foundation.solarUpdraftTower.collectorHeight ?? Math.max(3, 10 * foundation.lz);
-          updateCollectorHeightById(foundation.id, value);
+          const oldValue = foundation.solarUpdraftTower.turbineEfficiency ?? 0.9;
+          updateById(foundation.id, value);
           const undoableChange = {
-            name: 'Set Solar Collector Height on Foundation',
+            name: 'Set Solar Updraft Tower Turbine Efficiency on Foundation',
             timestamp: Date.now(),
             oldValue: oldValue,
             newValue: value,
             changedElementId: foundation.id,
             undo: () => {
-              updateCollectorHeightById(undoableChange.changedElementId, undoableChange.oldValue as number);
+              updateById(undoableChange.changedElementId, undoableChange.oldValue as number);
             },
             redo: () => {
-              updateCollectorHeightById(undoableChange.changedElementId, undoableChange.newValue as number);
+              updateById(undoableChange.changedElementId, undoableChange.newValue as number);
             },
           } as UndoableChange;
           addUndoable(undoableChange);
@@ -154,7 +154,7 @@ const SolarUpdraftTowerCollectorHeightInput = ({
   };
 
   const close = () => {
-    setInputCollectorHeight(foundation?.solarUpdraftTower?.collectorHeight ?? Math.max(3, 10 * foundation.lz));
+    setInputTurbineEfficiency(foundation?.solarUpdraftTower?.turbineEfficiency ?? 0.9);
     setDialogVisible(false);
   };
 
@@ -164,7 +164,7 @@ const SolarUpdraftTowerCollectorHeightInput = ({
   };
 
   const ok = () => {
-    setCollectorHeight(inputCollectorHeight);
+    setEfficiency(inputTurbineEfficiency);
     setDialogVisible(false);
     setApplyCount(0);
   };
@@ -172,7 +172,7 @@ const SolarUpdraftTowerCollectorHeightInput = ({
   return (
     <>
       <Modal
-        width={550}
+        width={540}
         visible={dialogVisible}
         title={
           <div
@@ -180,14 +180,14 @@ const SolarUpdraftTowerCollectorHeightInput = ({
             onMouseOver={() => setDragEnabled(true)}
             onMouseOut={() => setDragEnabled(false)}
           >
-            {i18n.t('solarUpdraftTowerMenu.SolarUpdraftTowerCollectorHeight', lang)}
+            {i18n.t('solarUpdraftTowerMenu.SolarUpdraftTowerTurbineEfficiency', lang)}
           </div>
         }
         footer={[
           <Button
             key="Apply"
             onClick={() => {
-              setCollectorHeight(inputCollectorHeight);
+              setEfficiency(inputTurbineEfficiency);
             }}
           >
             {i18n.t('word.Apply', lang)}
@@ -212,27 +212,30 @@ const SolarUpdraftTowerCollectorHeightInput = ({
         <Row gutter={6}>
           <Col className="gutter-row" span={6}>
             <InputNumber
-              min={2}
-              max={20}
+              min={0.2}
+              max={1.0}
               style={{ width: 120 }}
-              step={1}
-              precision={1}
-              value={inputCollectorHeight}
-              formatter={(a) => Number(a).toFixed(1)}
-              onChange={(value) => setInputCollectorHeight(value)}
+              step={0.01}
+              precision={2}
+              value={inputTurbineEfficiency}
+              formatter={(a) => Number(a).toFixed(2)}
+              onChange={(value) => setInputTurbineEfficiency(value)}
               onPressEnter={ok}
             />
             <div style={{ paddingTop: '20px', textAlign: 'left', fontSize: '11px' }}>
-              {i18n.t('word.Range', lang)}: [2, 20] {i18n.t('word.MeterAbbreviation', lang)}
+              {i18n.t('word.Range', lang)}: [0.2, 1.0]
             </div>
-          </Col>
-          <Col className="gutter-row" span={1} style={{ verticalAlign: 'middle', paddingTop: '6px' }}>
-            {i18n.t('word.MeterAbbreviation', lang)}
           </Col>
           <Col
             className="gutter-row"
-            style={{ border: '2px dashed #ccc', paddingTop: '8px', paddingLeft: '12px', paddingBottom: '8px' }}
-            span={16}
+            style={{
+              border: '2px dashed #ccc',
+              marginLeft: '16px',
+              paddingTop: '8px',
+              paddingLeft: '12px',
+              paddingBottom: '8px',
+            }}
+            span={17}
           >
             <Radio.Group onChange={onScopeChange} value={foundationActionScope}>
               <Space direction="vertical">
@@ -247,4 +250,4 @@ const SolarUpdraftTowerCollectorHeightInput = ({
   );
 };
 
-export default SolarUpdraftTowerCollectorHeightInput;
+export default SolarUpdraftTowerTurbineEfficiencyInput;

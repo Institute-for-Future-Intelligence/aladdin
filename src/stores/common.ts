@@ -315,6 +315,12 @@ export interface CommonStoreState {
   updateSolarUpdraftTowerCollectorHeightForAll: (height: number) => void;
   updateSolarUpdraftTowerCollectorRadiusById: (id: string, radius: number) => void;
   updateSolarUpdraftTowerCollectorRadiusForAll: (radius: number) => void;
+  updateSolarUpdraftTowerCollectorTransmittanceById: (id: string, transmittance: number) => void;
+  updateSolarUpdraftTowerCollectorTransmittanceForAll: (transmittance: number) => void;
+  updateSolarUpdraftTowerDischargeCoefficientById: (id: string, coefficient: number) => void;
+  updateSolarUpdraftTowerDischargeCoefficientForAll: (coefficient: number) => void;
+  updateSolarUpdraftTowerTurbineEfficiencyById: (id: string, efficiency: number) => void;
+  updateSolarUpdraftTowerTurbineEfficiencyForAll: (efficiency: number) => void;
 
   // for cuboids
   cuboidActionScope: Scope;
@@ -2295,6 +2301,87 @@ export const useStore = create<CommonStoreState>(
                   if (f.solarStructure === SolarStructure.UpdraftTower) {
                     if (!f.solarUpdraftTower) f.solarUpdraftTower = {} as SolarUpdraftTowerModel;
                     f.solarUpdraftTower.collectorRadius = radius;
+                  }
+                }
+              }
+            });
+          },
+          updateSolarUpdraftTowerCollectorTransmittanceById(id, transmittance) {
+            immerSet((state: CommonStoreState) => {
+              for (const e of state.elements) {
+                if (e.type === ObjectType.Foundation && e.id === id && !e.locked) {
+                  const f = e as FoundationModel;
+                  if (f.solarStructure === SolarStructure.UpdraftTower) {
+                    if (!f.solarUpdraftTower) f.solarUpdraftTower = {} as SolarUpdraftTowerModel;
+                    f.solarUpdraftTower.collectorTransmittance = transmittance;
+                  }
+                  break;
+                }
+              }
+            });
+          },
+          updateSolarUpdraftTowerCollectorTransmittanceForAll(transmittance) {
+            immerSet((state: CommonStoreState) => {
+              for (const e of state.elements) {
+                if (e.type === ObjectType.Foundation && !e.locked) {
+                  const f = e as FoundationModel;
+                  if (f.solarStructure === SolarStructure.UpdraftTower) {
+                    if (!f.solarUpdraftTower) f.solarUpdraftTower = {} as SolarUpdraftTowerModel;
+                    f.solarUpdraftTower.collectorTransmittance = transmittance;
+                  }
+                }
+              }
+            });
+          },
+          updateSolarUpdraftTowerDischargeCoefficientById(id, coefficient) {
+            immerSet((state: CommonStoreState) => {
+              for (const e of state.elements) {
+                if (e.type === ObjectType.Foundation && e.id === id && !e.locked) {
+                  const f = e as FoundationModel;
+                  if (f.solarStructure === SolarStructure.UpdraftTower) {
+                    if (!f.solarUpdraftTower) f.solarUpdraftTower = {} as SolarUpdraftTowerModel;
+                    f.solarUpdraftTower.dischargeCoefficient = coefficient;
+                  }
+                  break;
+                }
+              }
+            });
+          },
+          updateSolarUpdraftTowerDischargeCoefficientForAll(coefficient) {
+            immerSet((state: CommonStoreState) => {
+              for (const e of state.elements) {
+                if (e.type === ObjectType.Foundation && !e.locked) {
+                  const f = e as FoundationModel;
+                  if (f.solarStructure === SolarStructure.UpdraftTower) {
+                    if (!f.solarUpdraftTower) f.solarUpdraftTower = {} as SolarUpdraftTowerModel;
+                    f.solarUpdraftTower.dischargeCoefficient = coefficient;
+                  }
+                }
+              }
+            });
+          },
+          updateSolarUpdraftTowerTurbineEfficiencyById(id, efficiency) {
+            immerSet((state: CommonStoreState) => {
+              for (const e of state.elements) {
+                if (e.type === ObjectType.Foundation && e.id === id && !e.locked) {
+                  const f = e as FoundationModel;
+                  if (f.solarStructure === SolarStructure.UpdraftTower) {
+                    if (!f.solarUpdraftTower) f.solarUpdraftTower = {} as SolarUpdraftTowerModel;
+                    f.solarUpdraftTower.turbineEfficiency = efficiency;
+                  }
+                  break;
+                }
+              }
+            });
+          },
+          updateSolarUpdraftTowerTurbineEfficiencyForAll(efficiency) {
+            immerSet((state: CommonStoreState) => {
+              for (const e of state.elements) {
+                if (e.type === ObjectType.Foundation && !e.locked) {
+                  const f = e as FoundationModel;
+                  if (f.solarStructure === SolarStructure.UpdraftTower) {
+                    if (!f.solarUpdraftTower) f.solarUpdraftTower = {} as SolarUpdraftTowerModel;
+                    f.solarUpdraftTower.turbineEfficiency = efficiency;
                   }
                 }
               }

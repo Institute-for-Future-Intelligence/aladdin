@@ -444,6 +444,9 @@ export const i18n_tr = {
       SolarUpdraftTowerChimneyRadius: 'Solar Updraft Tower Chimney Radius',
       SolarUpdraftTowerCollectorHeight: 'Solar Updraft Tower Collector Height',
       SolarUpdraftTowerCollectorRadius: 'Solar Updraft Tower Collector Radius',
+      SolarUpdraftTowerCollectorTransmittance: 'Solar Updraft Tower Collector Transmittance',
+      SolarUpdraftTowerDischargeCoefficient: 'Solar Updraft Tower Discharge Coefficient',
+      SolarUpdraftTowerTurbineEfficiency: 'Solar Updraft Tower Turbine Efficiency',
     },
 
     cuboidMenu: {

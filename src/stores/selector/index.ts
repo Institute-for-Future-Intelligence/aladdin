@@ -283,6 +283,24 @@ export const updateSolarUpdraftTowerCollectorRadiusById = (state: CommonStoreSta
 export const updateSolarUpdraftTowerCollectorRadiusForAll = (state: CommonStoreState) =>
   state.updateSolarUpdraftTowerCollectorRadiusForAll;
 
+export const updateSolarUpdraftTowerCollectorTransmittanceById = (state: CommonStoreState) =>
+  state.updateSolarUpdraftTowerCollectorTransmittanceById;
+
+export const updateSolarUpdraftTowerCollectorTransmittanceForAll = (state: CommonStoreState) =>
+  state.updateSolarUpdraftTowerCollectorTransmittanceForAll;
+
+export const updateSolarUpdraftTowerDischargeCoefficientById = (state: CommonStoreState) =>
+  state.updateSolarUpdraftTowerDischargeCoefficientById;
+
+export const updateSolarUpdraftTowerDischargeCoefficientForAll = (state: CommonStoreState) =>
+  state.updateSolarUpdraftTowerDischargeCoefficientForAll;
+
+export const updateSolarUpdraftTowerTurbineEfficiencyById = (state: CommonStoreState) =>
+  state.updateSolarUpdraftTowerTurbineEfficiencyById;
+
+export const updateSolarUpdraftTowerTurbineEfficiencyForAll = (state: CommonStoreState) =>
+  state.updateSolarUpdraftTowerTurbineEfficiencyForAll;
+
 export const updateFoundationTextureById = (state: CommonStoreState) => state.updateFoundationTextureById;
 
 export const updateFoundationTextureForAll = (state: CommonStoreState) => state.updateFoundationTextureForAll;
