@@ -483,6 +483,7 @@ export interface CommonStoreState {
   pasteElementsToPoint: () => ElementModel[];
   pasteElementsByKey: () => ElementModel[];
   countElementsByType: (type: ObjectType, excludeLocked?: boolean) => number;
+  countSolarStructuresByType: (type: SolarStructure, excludeLocked?: boolean) => number;
   countObservers: () => number;
   removeElementsByType: (type: ObjectType) => void;
   countElementsByReferenceId: (id: string) => number;
@@ -3868,6 +3869,29 @@ export const useStore = create<CommonStoreState>(
                 for (const e of state.elements) {
                   if (e.type === type) {
                     count++;
+                  }
+                }
+              }
+            });
+            return count;
+          },
+          countSolarStructuresByType(type, excludeLocked) {
+            let count = 0;
+            immerSet((state: CommonStoreState) => {
+              if (excludeLocked) {
+                for (const e of state.elements) {
+                  if (e.type === ObjectType.Foundation && !e.locked) {
+                    if ((e as FoundationModel).solarStructure === type) {
+                      count++;
+                    }
+                  }
+                }
+              } else {
+                for (const e of state.elements) {
+                  if (e.type === ObjectType.Foundation) {
+                    if ((e as FoundationModel).solarStructure === type) {
+                      count++;
+                    }
                   }
                 }
               }

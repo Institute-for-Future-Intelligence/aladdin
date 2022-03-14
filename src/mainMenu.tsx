@@ -52,7 +52,7 @@ import logo from './assets/magic-lamp.png';
 import 'antd/dist/antd.css';
 import About from './about';
 import { saveImage, showInfo } from './helpers';
-import { Language, ObjectType } from './types';
+import { Language, ObjectType, SolarStructure } from './types';
 import * as Selector from './stores/selector';
 import i18n from './i18n/i18n';
 import { Util } from './Util';
@@ -141,6 +141,7 @@ const MainMenu = ({ viewOnly, set2DView, resetView, zoomView, canvas }: MainMenu
   const axes = useStore(Selector.viewState.axes);
   const countObservers = useStore(Selector.countObservers);
   const countElementsByType = useStore(Selector.countElementsByType);
+  const countSolarStructuresByType = useStore(Selector.countSolarStructuresByType);
   const selectedElement = useStore(Selector.selectedElement);
   const elementsToPaste = useStore(Selector.elementsToPaste);
   const pasteElements = useStore(Selector.pasteElementsByKey);
@@ -1405,7 +1406,7 @@ const MainMenu = ({ viewOnly, set2DView, resetView, zoomView, canvas }: MainMenu
           <Menu.Item
             key={'solar-updraft-tower-daily-yield'}
             onClick={() => {
-              const towerCount = countElementsByType(ObjectType.Foundation);
+              const towerCount = countSolarStructuresByType(SolarStructure.UpdraftTower);
               if (towerCount === 0) {
                 showInfo(i18n.t('analysisManager.NoSolarUpdraftTowerForAnalysis', lang));
                 return;
@@ -1426,7 +1427,7 @@ const MainMenu = ({ viewOnly, set2DView, resetView, zoomView, canvas }: MainMenu
           <Menu.Item
             key={'solar-updraft-tower-yearly-yield'}
             onClick={() => {
-              const towerCount = countElementsByType(ObjectType.Foundation);
+              const towerCount = countSolarStructuresByType(SolarStructure.UpdraftTower);
               if (towerCount === 0) {
                 showInfo(i18n.t('analysisManager.NoSolarUpdraftTowerForAnalysis', lang));
                 return;

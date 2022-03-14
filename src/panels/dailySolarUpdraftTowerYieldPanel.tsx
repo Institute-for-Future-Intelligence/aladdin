@@ -7,7 +7,7 @@ import LineGraph from '../components/lineGraph';
 import styled from 'styled-components';
 import { useStore } from '../stores/common';
 import * as Selector from '../stores/selector';
-import { GraphDataType, ObjectType } from '../types';
+import { GraphDataType, SolarStructure } from '../types';
 import moment from 'moment';
 import ReactDraggable, { DraggableEventHandler } from 'react-draggable';
 import { Button, Space, Switch } from 'antd';
@@ -69,7 +69,7 @@ const DailySolarUpdraftTowerYieldPanel = ({ city }: DailySolarUpdraftTowerYieldP
   const language = useStore(Selector.language);
   const setCommonStore = useStore(Selector.set);
   const now = new Date(useStore(Selector.world.date));
-  const countElementsByType = useStore(Selector.countElementsByType);
+  const countSolarStructuresByType = useStore(Selector.countSolarStructuresByType);
   const dailyYield = useStore(Selector.dailyUpdraftTowerYield);
   const individualOutputs = useStore(Selector.dailyUpdraftTowerIndividualOutputs);
   const panelX = useStore(Selector.viewState.dailyUpdraftTowerYieldPanelX);
@@ -145,7 +145,7 @@ const DailySolarUpdraftTowerYieldPanel = ({ city }: DailySolarUpdraftTowerYieldP
     });
   };
 
-  const towerCount = countElementsByType(ObjectType.Foundation);
+  const towerCount = countSolarStructuresByType(SolarStructure.UpdraftTower);
   useEffect(() => {
     if (towerCount < 2 && individualOutputs) {
       setCommonStore((state) => {
