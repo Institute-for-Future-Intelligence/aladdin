@@ -32,7 +32,12 @@ export interface WorldModel {
   cspDaysPerYear: number;
   cspGridCellSize: number;
 
+  sutTimesPerHour: number;
+  sutDaysPerYear: number;
+  sutGridCellSize: number;
+
   noAnimationForHeatmapSimulation: boolean;
   noAnimationForSensorDataCollection: boolean;
   noAnimationForSolarPanelSimulation: boolean;
+  noAnimationForSolarUpdraftTowerSimulation: boolean;
 }

@@ -36,6 +36,12 @@ export const cspDaysPerYear = (state: CommonStoreState) => state.world.cspDaysPe
 
 export const cspGridCellSize = (state: CommonStoreState) => state.world.cspGridCellSize;
 
+export const sutTimesPerHour = (state: CommonStoreState) => state.world.sutTimesPerHour;
+
+export const sutDaysPerYear = (state: CommonStoreState) => state.world.sutDaysPerYear;
+
+export const sutGridCellSize = (state: CommonStoreState) => state.world.sutGridCellSize;
+
 export const noAnimationForHeatmapSimulation = (state: CommonStoreState) => state.world.noAnimationForHeatmapSimulation;
 
 export const noAnimationForSensorDataCollection = (state: CommonStoreState) =>
@@ -43,3 +49,6 @@ export const noAnimationForSensorDataCollection = (state: CommonStoreState) =>
 
 export const noAnimationForSolarPanelSimulation = (state: CommonStoreState) =>
   state.world.noAnimationForSolarPanelSimulation;
+
+export const noAnimationForSolarUpdraftTowerSimulation = (state: CommonStoreState) =>
+  state.world.noAnimationForSolarUpdraftTowerSimulation;

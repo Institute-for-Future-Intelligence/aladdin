@@ -66,6 +66,7 @@ import { UndoableDelete } from './undo/UndoableDelete';
 import { UndoablePaste } from './undo/UndoablePaste';
 import CspSimulationSettings from './components/contextMenu/elementMenu/cspSimulationSettings';
 import PvSimulationSettings from './components/contextMenu/elementMenu/pvSimulationSettings';
+import SutSimulationSettings from './components/contextMenu/elementMenu/sutSimulationSettings';
 
 const { SubMenu } = Menu;
 
@@ -1445,6 +1446,7 @@ const MainMenu = ({ viewOnly, set2DView, resetView, zoomView, canvas }: MainMenu
           >
             {i18n.t('menu.solarUpdraftTower.AnalyzeYearlyYield', lang)}
           </Menu.Item>
+          <SutSimulationSettings />
         </SubMenu>
       </SubMenu>
 

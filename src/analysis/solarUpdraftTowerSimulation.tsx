@@ -47,15 +47,17 @@ const SolarUpdraftTowerSimulation = ({ city }: SolarUpdraftTowerSimulationProps)
   const runYearlySimulation = useStore(Selector.runYearlySimulationForUpdraftTower);
   const pauseYearlySimulation = useStore(Selector.pauseYearlySimulationForUpdraftTower);
   const showDailyUpdraftTowerPanel = useStore(Selector.viewState.showDailyUpdraftTowerYieldPanel);
-  const noAnimation = useStore(Selector.world.noAnimationForSensorDataCollection); // TODO
-  const cellSize = world.solarRadiationHeatmapGridCellSize ?? 0.5; // TODO
+  const noAnimation = useStore(Selector.world.noAnimationForSolarUpdraftTowerSimulation);
+  const cellSize = world.sutGridCellSize ?? 1;
 
   const { scene } = useThree();
   const lang = { lng: language };
   const weather = getWeather(city ?? 'Boston MA, USA');
   const elevation = city ? getWeather(city).elevation : 0;
-  const timesPerHour = world.timesPerHour ?? 4;
+  const timesPerHour = world.sutTimesPerHour ?? 4;
   const minuteInterval = 60 / timesPerHour;
+  const daysPerYear = world.sutDaysPerYear ?? 6;
+  const monthInterval = 12 / daysPerYear;
   const ray = useMemo(() => new Raycaster(), []);
   const now = new Date(world.date);
   const objectsRef = useRef<Object3D[]>([]);
@@ -64,7 +66,7 @@ const SolarUpdraftTowerSimulation = ({ city }: SolarUpdraftTowerSimulationProps)
   const simulationCompletedRef = useRef<boolean>(false);
   const originalDateRef = useRef<Date>(new Date(world.date));
   const dailyDataMapRef = useRef<Map<string, number[]>>(new Map<string, number[]>());
-  const yearlyDataMapRef = useRef<Map<string, number[]>>(new Map<string, number[]>());
+  const yearlyOutputsMapRef = useRef<Map<string, number[]>>(new Map<string, number[]>());
   const sampledDayRef = useRef<number>(0);
   const pauseRef = useRef<boolean>(false);
   const pausedDateRef = useRef<Date>(new Date(world.date));
@@ -343,7 +345,7 @@ const SolarUpdraftTowerSimulation = ({ city }: SolarUpdraftTowerSimulationProps)
     resetYearlyDataMap();
     originalDateRef.current = new Date(world.date);
     sampledDayRef.current = 0;
-    for (let month = 0; month < 12; month++) {
+    for (let month = 0; month < 12; month += monthInterval) {
       now.setMonth(month, 22);
       sunMinutesRef.current = computeSunriseAndSunsetInMinutes(now, world.latitude);
       resetDailyDataMap();
@@ -392,7 +394,7 @@ const SolarUpdraftTowerSimulation = ({ city }: SolarUpdraftTowerSimulationProps)
       } else {
         finishMonthly();
         sampledDayRef.current++;
-        if (sampledDayRef.current === 12) {
+        if (sampledDayRef.current === daysPerYear) {
           cancelAnimationFrame(requestRef.current);
           setCommonStore((state) => {
             state.runYearlySimulationForUpdraftTower = false;
@@ -407,7 +409,7 @@ const SolarUpdraftTowerSimulation = ({ city }: SolarUpdraftTowerSimulationProps)
           return;
         }
         // go to the next month
-        now.setMonth(sampledDayRef.current, 22);
+        now.setMonth(sampledDayRef.current * monthInterval, 22);
         dayRef.current = now.getDay();
         sunMinutesRef.current = computeSunriseAndSunsetInMinutes(now, world.latitude);
         now.setHours(Math.floor(sunMinutesRef.current.sunrise / 60), -minuteInterval / 2);
@@ -426,7 +428,7 @@ const SolarUpdraftTowerSimulation = ({ city }: SolarUpdraftTowerSimulationProps)
         if (f.solarStructure === SolarStructure.UpdraftTower && f.solarUpdraftTower) {
           const result = dailyDataMapRef.current.get(e.id + '-sut');
           if (result) {
-            const total = yearlyDataMapRef.current.get(e.id + '-sut');
+            const total = yearlyOutputsMapRef.current.get(e.id + '-sut');
             if (total) {
               const sumDaily = result.reduce((a, b) => a + b, 0);
               total[sampledDayRef.current] += sumDaily * timeFactor;
@@ -446,7 +448,7 @@ const SolarUpdraftTowerSimulation = ({ city }: SolarUpdraftTowerSimulationProps)
       if (e.type === ObjectType.Foundation) {
         const f = e as FoundationModel;
         if (f.solarStructure === SolarStructure.UpdraftTower && f.solarUpdraftTower) {
-          const result = yearlyDataMapRef.current.get(e.id + '-sut');
+          const result = yearlyOutputsMapRef.current.get(e.id + '-sut');
           if (result) {
             resultArr.push(result);
             labels.push(e.label ? e.label : 'Tower' + ++index);
@@ -455,11 +457,11 @@ const SolarUpdraftTowerSimulation = ({ city }: SolarUpdraftTowerSimulationProps)
       }
     }
     const results = [];
-    for (let month = 0; month < 12; month++) {
+    for (let month = 0; month < 12; month += monthInterval) {
       const r: DatumEntry = {};
       r['Month'] = MONTHS[month];
       for (const [i, a] of resultArr.entries()) {
-        r[labels[i]] = a[month];
+        r[labels[i]] = a[month / monthInterval] * 30;
       }
       results.push(r);
     }
@@ -490,11 +492,11 @@ const SolarUpdraftTowerSimulation = ({ city }: SolarUpdraftTowerSimulationProps)
       if (e.type === ObjectType.Foundation) {
         const f = e as FoundationModel;
         if (f.solarStructure === SolarStructure.UpdraftTower && f.solarUpdraftTower) {
-          const yearlyResult = yearlyDataMapRef.current.get(e.id + '-sut');
-          if (yearlyResult) {
-            yearlyResult.fill(0);
+          const yearlyOutput = yearlyOutputsMapRef.current.get(e.id + '-sut');
+          if (yearlyOutput && yearlyOutput.length === daysPerYear) {
+            yearlyOutput.fill(0);
           } else {
-            yearlyDataMapRef.current.set(e.id + '-sut', new Array(12).fill(0));
+            yearlyOutputsMapRef.current.set(e.id, new Array(daysPerYear).fill(0));
           }
         }
       }

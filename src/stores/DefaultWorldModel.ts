@@ -35,9 +35,14 @@ export class DefaultWorldModel implements WorldModel {
   cspDaysPerYear: number;
   cspGridCellSize: number;
 
+  sutTimesPerHour: number;
+  sutDaysPerYear: number;
+  sutGridCellSize: number;
+
   noAnimationForHeatmapSimulation: boolean;
   noAnimationForSensorDataCollection: boolean;
   noAnimationForSolarPanelSimulation: boolean;
+  noAnimationForSolarUpdraftTowerSimulation: boolean;
 
   constructor() {
     this.latitude = 42.2844063;
@@ -66,9 +71,14 @@ export class DefaultWorldModel implements WorldModel {
     this.cspDaysPerYear = 4;
     this.cspGridCellSize = 0.5;
 
+    this.sutTimesPerHour = 4;
+    this.sutDaysPerYear = 4;
+    this.sutGridCellSize = 1;
+
     this.noAnimationForHeatmapSimulation = false;
     this.noAnimationForSensorDataCollection = false;
     this.noAnimationForSolarPanelSimulation = false;
+    this.noAnimationForSolarUpdraftTowerSimulation = false;
   }
 
   static resetWorldModel(worldModel: WorldModel) {
@@ -96,9 +106,14 @@ export class DefaultWorldModel implements WorldModel {
     worldModel.cspDaysPerYear = 4;
     worldModel.cspGridCellSize = 0.5;
 
+    worldModel.sutTimesPerHour = 4;
+    worldModel.sutDaysPerYear = 4;
+    worldModel.sutGridCellSize = 1;
+
     worldModel.noAnimationForHeatmapSimulation = false;
     worldModel.noAnimationForSensorDataCollection = false;
     worldModel.noAnimationForSolarPanelSimulation = false;
+    worldModel.noAnimationForSolarUpdraftTowerSimulation = false;
   }
 
   getElements() {
