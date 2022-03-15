@@ -205,7 +205,7 @@ const SolarUpdraftTowerSimulation = ({ city }: SolarUpdraftTowerSimulationProps)
       if (e.type === ObjectType.Foundation) {
         const f = e as FoundationModel;
         if (f.solarStructure === SolarStructure.UpdraftTower && f.solarUpdraftTower) {
-          const transmittance = f.solarUpdraftTower.collectorTransmittance ?? 0.9;
+          const transmissivity = f.solarUpdraftTower.collectorTransmissivity ?? 0.9;
           const turbineEfficiency = f.solarUpdraftTower.turbineEfficiency ?? 0.9;
           const dischargeCoefficient = f.solarUpdraftTower.dischargeCoefficient ?? 0.65;
           const chimneyArea = Math.PI * f.solarUpdraftTower.chimneyRadius * f.solarUpdraftTower.chimneyRadius;
@@ -226,7 +226,7 @@ const SolarUpdraftTowerSimulation = ({ city }: SolarUpdraftTowerSimulationProps)
                     currentTemperature = getOutsideTemperatureAtMinute(t.high, t.low, Util.minutesIntoDay(date));
                   }
                 }
-                result[i] *= timeFactor * transmittance;
+                result[i] *= timeFactor * transmissivity;
                 const airTemperature = currentTemperature * (1 + Math.cbrt((result[i] * result[i]) / (a * a * c)));
                 const airSpeed = Math.sqrt(c * (airTemperature / currentTemperature - 1));
                 result[i] = b * airSpeed * airSpeed * airSpeed;

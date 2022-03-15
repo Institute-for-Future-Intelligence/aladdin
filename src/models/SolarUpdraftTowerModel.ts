@@ -10,7 +10,7 @@ export interface SolarUpdraftTowerModel {
   collectorRadius: number;
 
   // default to 0.9
-  collectorTransmittance?: number;
+  collectorTransmissivity?: number;
 
   // usually taken to be from 0.65 to 0.70: https://en.wikipedia.org/wiki/Stack_effect
   dischargeCoefficient?: number;

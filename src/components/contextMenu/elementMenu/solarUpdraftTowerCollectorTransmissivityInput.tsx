@@ -14,7 +14,7 @@ import { UndoableChangeGroup } from 'src/undo/UndoableChangeGroup';
 import { FoundationModel } from 'src/models/FoundationModel';
 import { ZERO_TOLERANCE } from 'src/constants';
 
-const SolarUpdraftTowerCollectorTransmittanceInput = ({
+const SolarUpdraftTowerCollectorTransmissivityInput = ({
   dialogVisible,
   setDialogVisible,
 }: {
@@ -23,8 +23,8 @@ const SolarUpdraftTowerCollectorTransmittanceInput = ({
 }) => {
   const language = useStore(Selector.language);
   const elements = useStore(Selector.elements);
-  const updateById = useStore(Selector.updateSolarUpdraftTowerCollectorTransmittanceById);
-  const updateForAll = useStore(Selector.updateSolarUpdraftTowerCollectorTransmittanceForAll);
+  const updateById = useStore(Selector.updateSolarUpdraftTowerCollectorTransmissivityById);
+  const updateForAll = useStore(Selector.updateSolarUpdraftTowerCollectorTransmissivityForAll);
   const foundation = useStore(Selector.selectedElement) as FoundationModel;
   const addUndoable = useStore(Selector.addUndoable);
   const foundationActionScope = useStore(Selector.foundationActionScope);
@@ -33,8 +33,8 @@ const SolarUpdraftTowerCollectorTransmittanceInput = ({
   const setApplyCount = useStore(Selector.setApplyCount);
   const revertApply = useStore(Selector.revertApply);
 
-  const [inputTransmittance, setInputTransmittance] = useState<number>(
-    foundation?.solarUpdraftTower?.collectorTransmittance ?? 0.9,
+  const [inputTransmissivity, setInputTransmissivity] = useState<number>(
+    foundation?.solarUpdraftTower?.collectorTransmissivity ?? 0.9,
   );
   const [updateFlag, setUpdateFlag] = useState<boolean>(false);
   const [dragEnabled, setDragEnabled] = useState<boolean>(false);
@@ -45,7 +45,7 @@ const SolarUpdraftTowerCollectorTransmittanceInput = ({
 
   useEffect(() => {
     if (foundation) {
-      setInputTransmittance(foundation.solarUpdraftTower?.collectorTransmittance ?? 0.9);
+      setInputTransmissivity(foundation.solarUpdraftTower?.collectorTransmissivity ?? 0.9);
     }
   }, [foundation]);
 
@@ -54,7 +54,7 @@ const SolarUpdraftTowerCollectorTransmittanceInput = ({
     setUpdateFlag(!updateFlag);
   };
 
-  const needChange = (transmittance: number) => {
+  const needChange = (transmissivity: number) => {
     switch (foundationActionScope) {
       case Scope.AllObjectsOfThisType:
         for (const e of elements) {
@@ -62,8 +62,8 @@ const SolarUpdraftTowerCollectorTransmittanceInput = ({
             const f = e as FoundationModel;
             if (f.solarStructure === SolarStructure.UpdraftTower && f.solarUpdraftTower) {
               if (
-                f.solarUpdraftTower.collectorTransmittance === undefined ||
-                Math.abs(f.solarUpdraftTower.collectorTransmittance - transmittance) > ZERO_TOLERANCE
+                f.solarUpdraftTower.collectorTransmissivity === undefined ||
+                Math.abs(f.solarUpdraftTower.collectorTransmissivity - transmissivity) > ZERO_TOLERANCE
               ) {
                 return true;
               }
@@ -74,8 +74,8 @@ const SolarUpdraftTowerCollectorTransmittanceInput = ({
       default:
         if (foundation && foundation.solarStructure === SolarStructure.UpdraftTower && foundation.solarUpdraftTower) {
           if (
-            foundation.solarUpdraftTower.collectorTransmittance === undefined ||
-            Math.abs(foundation.solarUpdraftTower.collectorTransmittance - transmittance) > ZERO_TOLERANCE
+            foundation.solarUpdraftTower.collectorTransmissivity === undefined ||
+            Math.abs(foundation.solarUpdraftTower.collectorTransmissivity - transmissivity) > ZERO_TOLERANCE
           ) {
             return true;
           }
@@ -84,7 +84,7 @@ const SolarUpdraftTowerCollectorTransmittanceInput = ({
     return false;
   };
 
-  const setTransmittance = (value: number) => {
+  const setTransmissivity = (value: number) => {
     if (!foundation) return;
     if (!needChange(value)) return;
     switch (foundationActionScope) {
@@ -94,12 +94,12 @@ const SolarUpdraftTowerCollectorTransmittanceInput = ({
           if (elem.type === ObjectType.Foundation) {
             const f = elem as FoundationModel;
             if (f.solarStructure === SolarStructure.UpdraftTower && f.solarUpdraftTower) {
-              oldValuesAll.set(elem.id, f.solarUpdraftTower.collectorTransmittance ?? 0.9);
+              oldValuesAll.set(elem.id, f.solarUpdraftTower.collectorTransmissivity ?? 0.9);
             }
           }
         }
         const undoableChangeAll = {
-          name: 'Set Solar Collector Transmittance for All Foundations',
+          name: 'Set Solar Collector Transmissivity for All Foundations',
           timestamp: Date.now(),
           oldValues: oldValuesAll,
           newValue: value,
@@ -118,10 +118,10 @@ const SolarUpdraftTowerCollectorTransmittanceInput = ({
         break;
       default:
         if (foundation && foundation.solarStructure === SolarStructure.UpdraftTower && foundation.solarUpdraftTower) {
-          const oldValue = foundation.solarUpdraftTower.collectorTransmittance ?? 0.9;
+          const oldValue = foundation.solarUpdraftTower.collectorTransmissivity ?? 0.9;
           updateById(foundation.id, value);
           const undoableChange = {
-            name: 'Set Solar Collector Transmittance on Foundation',
+            name: 'Set Solar Collector Transmissivity on Foundation',
             timestamp: Date.now(),
             oldValue: oldValue,
             newValue: value,
@@ -154,7 +154,7 @@ const SolarUpdraftTowerCollectorTransmittanceInput = ({
   };
 
   const close = () => {
-    setInputTransmittance(foundation?.solarUpdraftTower?.collectorTransmittance ?? 0.9);
+    setInputTransmissivity(foundation?.solarUpdraftTower?.collectorTransmissivity ?? 0.9);
     setDialogVisible(false);
   };
 
@@ -164,7 +164,7 @@ const SolarUpdraftTowerCollectorTransmittanceInput = ({
   };
 
   const ok = () => {
-    setTransmittance(inputTransmittance);
+    setTransmissivity(inputTransmissivity);
     setDialogVisible(false);
     setApplyCount(0);
   };
@@ -180,14 +180,14 @@ const SolarUpdraftTowerCollectorTransmittanceInput = ({
             onMouseOver={() => setDragEnabled(true)}
             onMouseOut={() => setDragEnabled(false)}
           >
-            {i18n.t('solarUpdraftTowerMenu.SolarUpdraftTowerCollectorTransmittance', lang)}
+            {i18n.t('solarUpdraftTowerMenu.SolarUpdraftTowerCollectorTransmissivity', lang)}
           </div>
         }
         footer={[
           <Button
             key="Apply"
             onClick={() => {
-              setTransmittance(inputTransmittance);
+              setTransmissivity(inputTransmissivity);
             }}
           >
             {i18n.t('word.Apply', lang)}
@@ -217,9 +217,9 @@ const SolarUpdraftTowerCollectorTransmittanceInput = ({
               style={{ width: 120 }}
               step={0.01}
               precision={2}
-              value={inputTransmittance}
+              value={inputTransmissivity}
               formatter={(a) => Number(a).toFixed(2)}
-              onChange={(value) => setInputTransmittance(value)}
+              onChange={(value) => setInputTransmissivity(value)}
               onPressEnter={ok}
             />
             <div style={{ paddingTop: '20px', textAlign: 'left', fontSize: '11px' }}>
@@ -250,4 +250,4 @@ const SolarUpdraftTowerCollectorTransmittanceInput = ({
   );
 };
 
-export default SolarUpdraftTowerCollectorTransmittanceInput;
+export default SolarUpdraftTowerCollectorTransmissivityInput;

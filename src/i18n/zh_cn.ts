@@ -431,7 +431,7 @@ export const i18n_zh_cn = {
       SolarUpdraftTowerChimneyRadius: '太阳能上升气流塔烟囱的半径',
       SolarUpdraftTowerCollectorHeight: '太阳能上升气流塔集热棚的高度',
       SolarUpdraftTowerCollectorRadius: '太阳能上升气流塔集热棚的半径',
-      SolarUpdraftTowerCollectorTransmittance: '太阳能上升气流塔集热棚的透射率',
+      SolarUpdraftTowerCollectorTransmissivity: '太阳能上升气流塔集热棚的透射率',
       SolarUpdraftTowerDischargeCoefficient: '太阳能上升气流塔的流量系数',
       SolarUpdraftTowerTurbineEfficiency: '太阳能上升气流塔的涡轮机效率',
     },

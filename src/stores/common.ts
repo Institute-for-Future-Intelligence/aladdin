@@ -315,8 +315,8 @@ export interface CommonStoreState {
   updateSolarUpdraftTowerCollectorHeightForAll: (height: number) => void;
   updateSolarUpdraftTowerCollectorRadiusById: (id: string, radius: number) => void;
   updateSolarUpdraftTowerCollectorRadiusForAll: (radius: number) => void;
-  updateSolarUpdraftTowerCollectorTransmittanceById: (id: string, transmittance: number) => void;
-  updateSolarUpdraftTowerCollectorTransmittanceForAll: (transmittance: number) => void;
+  updateSolarUpdraftTowerCollectorTransmissivityById: (id: string, transmissivity: number) => void;
+  updateSolarUpdraftTowerCollectorTransmissivityForAll: (transmissivity: number) => void;
   updateSolarUpdraftTowerDischargeCoefficientById: (id: string, coefficient: number) => void;
   updateSolarUpdraftTowerDischargeCoefficientForAll: (coefficient: number) => void;
   updateSolarUpdraftTowerTurbineEfficiencyById: (id: string, efficiency: number) => void;
@@ -2307,28 +2307,28 @@ export const useStore = create<CommonStoreState>(
               }
             });
           },
-          updateSolarUpdraftTowerCollectorTransmittanceById(id, transmittance) {
+          updateSolarUpdraftTowerCollectorTransmissivityById(id, transmissivity) {
             immerSet((state: CommonStoreState) => {
               for (const e of state.elements) {
                 if (e.type === ObjectType.Foundation && e.id === id && !e.locked) {
                   const f = e as FoundationModel;
                   if (f.solarStructure === SolarStructure.UpdraftTower) {
                     if (!f.solarUpdraftTower) f.solarUpdraftTower = {} as SolarUpdraftTowerModel;
-                    f.solarUpdraftTower.collectorTransmittance = transmittance;
+                    f.solarUpdraftTower.collectorTransmissivity = transmissivity;
                   }
                   break;
                 }
               }
             });
           },
-          updateSolarUpdraftTowerCollectorTransmittanceForAll(transmittance) {
+          updateSolarUpdraftTowerCollectorTransmissivityForAll(transmissivity) {
             immerSet((state: CommonStoreState) => {
               for (const e of state.elements) {
                 if (e.type === ObjectType.Foundation && !e.locked) {
                   const f = e as FoundationModel;
                   if (f.solarStructure === SolarStructure.UpdraftTower) {
                     if (!f.solarUpdraftTower) f.solarUpdraftTower = {} as SolarUpdraftTowerModel;
-                    f.solarUpdraftTower.collectorTransmittance = transmittance;
+                    f.solarUpdraftTower.collectorTransmissivity = transmissivity;
                   }
                 }
               }

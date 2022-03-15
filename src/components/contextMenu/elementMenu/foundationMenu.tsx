@@ -38,7 +38,7 @@ import SolarPowerTowerHeightInput from './solarPowerTowerHeightInput';
 import SolarPowerTowerReceiverAbsorptanceInput from './solarPowerTowerReceiverAbsorptanceInput';
 import SolarPowerTowerReceiverOpticalEfficiencyInput from './solarPowerTowerReceiverOpticalEfficiencyInput';
 import SolarPowerTowerReceiverThermalEfficiencyInput from './solarPowerTowerReceiverThermalEfficiencyInput';
-import SolarUpdraftTowerCollectorTransmittanceInput from './solarUpdraftTowerCollectorTransmittanceInput';
+import SolarUpdraftTowerCollectorTransmissivityInput from './solarUpdraftTowerCollectorTransmissivityInput';
 import SolarUpdraftTowerDischargeCoefficientInput from './solarUpdraftTowerDischargeCoefficientInput';
 import SolarUpdraftTowerTurbineEfficiencyInput from './solarUpdraftTowerTurbineEfficiencyInput';
 
@@ -92,7 +92,7 @@ export const FoundationMenu = () => {
   const [chimneyRadiusDialogVisible, setChimneyRadiusDialogVisible] = useState(false);
   const [collectorHeightDialogVisible, setCollectorHeightDialogVisible] = useState(false);
   const [collectorRadiusDialogVisible, setCollectorRadiusDialogVisible] = useState(false);
-  const [collectorTransmittanceDialogVisible, setCollectorTransmittanceDialogVisible] = useState(false);
+  const [collectorTransmissivityDialogVisible, setCollectorTransmissivityDialogVisible] = useState(false);
   const [dischargeCoefficientDialogVisible, setDischargeCoefficientDialogVisible] = useState(false);
   const [turbineEfficiencyDialogVisible, setTurbineEfficiencyDialogVisible] = useState(false);
 
@@ -1010,19 +1010,19 @@ export const FoundationMenu = () => {
               {i18n.t('solarUpdraftTowerMenu.SolarUpdraftTowerCollectorRadius', lang)} ...
             </Menu.Item>
 
-            <SolarUpdraftTowerCollectorTransmittanceInput
-              dialogVisible={collectorTransmittanceDialogVisible}
-              setDialogVisible={setCollectorTransmittanceDialogVisible}
+            <SolarUpdraftTowerCollectorTransmissivityInput
+              dialogVisible={collectorTransmissivityDialogVisible}
+              setDialogVisible={setCollectorTransmissivityDialogVisible}
             />
             <Menu.Item
-              key={'solar-updraft-tower-collector-transmittance'}
+              key={'solar-updraft-tower-collector-transmissivity'}
               style={{ paddingLeft: '36px' }}
               onClick={() => {
                 setApplyCount(0);
-                setCollectorTransmittanceDialogVisible(true);
+                setCollectorTransmissivityDialogVisible(true);
               }}
             >
-              {i18n.t('solarUpdraftTowerMenu.SolarUpdraftTowerCollectorTransmittance', lang)} ...
+              {i18n.t('solarUpdraftTowerMenu.SolarUpdraftTowerCollectorTransmissivity', lang)} ...
             </Menu.Item>
 
             <SolarUpdraftTowerDischargeCoefficientInput
