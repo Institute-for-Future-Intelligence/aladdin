@@ -4,6 +4,8 @@
 
 import React, { useEffect, useMemo, useState } from 'react';
 import {
+  Area,
+  AreaChart,
   CartesianGrid,
   Label,
   Legend,
@@ -17,12 +19,13 @@ import {
 } from 'recharts';
 import { createSymbol, SYMBOLS } from './symbols';
 import { PRESET_COLORS } from '../constants';
-import { GraphDataType, DatumEntry } from '../types';
+import { ChartType, DatumEntry, GraphDataType } from '../types';
 import { CurveType } from 'recharts/types/shape/Curve';
 import LineGraphMenu from './lineGraphMenu';
 
 export interface LineGraphProps {
   type: GraphDataType;
+  chartType: ChartType;
   dataSource: DatumEntry[];
   labels?: string[];
   height: number;
@@ -40,6 +43,7 @@ export interface LineGraphProps {
 
 const LineGraph = ({
   type,
+  chartType = ChartType.Line,
   dataSource,
   labels,
   height,
@@ -70,10 +74,10 @@ const LineGraph = ({
     if (lineCount !== len) {
       setLineCount(len);
     }
-  }, [dataSource]);
+  }, [lineCount, dataSource]);
 
-  const getLines = useMemo(() => {
-    const lines = [];
+  const getRepresentation = useMemo(() => {
+    const representations = [];
     let defaultSymbol;
     for (let i = 0; i < lineCount; i++) {
       let name = '';
@@ -146,23 +150,37 @@ const LineGraph = ({
       const symbol = createSymbol(SYMBOLS[i], symbolSize, symbolCount, opacity);
       if (i === 0) defaultSymbol = symbol;
       const isMeasured = name.startsWith('Measured');
-      lines.push(
-        <Line
-          key={i}
-          type={curveType}
-          name={name}
-          dataKey={name}
-          stroke={PRESET_COLORS[i]}
-          strokeDasharray={isMeasured ? '5 5' : ''}
-          opacity={isMeasured ? opacity / 2 : opacity}
-          strokeWidth={lineWidth}
-          dot={!isMeasured && symbolCount > 0 ? (symbol ? symbol : defaultSymbol) : false}
-          isAnimationActive={false}
-        />,
+      representations.push(
+        chartType === ChartType.Area ? (
+          <Area
+            key={i}
+            type={curveType}
+            name={name}
+            dataKey={name}
+            stroke={PRESET_COLORS[i]}
+            opacity={opacity}
+            strokeWidth={lineWidth}
+            dot={false}
+            isAnimationActive={false}
+          />
+        ) : (
+          <Line
+            key={i}
+            type={curveType}
+            name={name}
+            dataKey={name}
+            stroke={PRESET_COLORS[i]}
+            strokeDasharray={isMeasured ? '5 5' : ''}
+            opacity={isMeasured ? opacity / 2 : opacity}
+            strokeWidth={lineWidth}
+            dot={!isMeasured && symbolCount > 0 ? (symbol ? symbol : defaultSymbol) : false}
+            isAnimationActive={false}
+          />
+        ),
       );
     }
-    return lines;
-  }, [labels, lineCount, lineWidth, symbolCount, symbolSize, legendDataKey]);
+    return representations;
+  }, [type, chartType, curveType, labels, lineCount, lineWidth, symbolCount, symbolSize, legendDataKey]);
 
   // @ts-ignore
   const onMouseDown = (e) => {};
@@ -196,46 +214,89 @@ const LineGraph = ({
             }}
           >
             <ResponsiveContainer width="100%" height={`100%`}>
-              <LineChart
-                data={dataSource}
-                onMouseDown={onMouseDown}
-                margin={{
-                  top: 5,
-                  right: 30,
-                  left: 20,
-                  bottom: 30,
-                }}
-              >
-                <Tooltip formatter={(value: number) => value.toFixed(fractionDigits) + ' ' + unitY} />
-                <CartesianGrid
-                  vertical={verticalGridLines}
-                  horizontal={horizontalGridLines}
-                  stroke={'rgba(128, 128, 128, 0.3)'}
-                />
-                <ReferenceLine x={referenceX} stroke="orange" strokeWidth={2} />
-                <XAxis dataKey={labelX}>
-                  <Label value={labelX + (unitX ? ' (' + unitX + ')' : '')} offset={0} position="bottom" />
-                </XAxis>
-                <YAxis domain={[yMin, yMax]}>
-                  <Label
-                    dx={-15}
-                    value={labelY + (unitY ? ' (' + unitY + ')' : '')}
-                    offset={0}
-                    angle={-90}
-                    position="center"
+              {chartType === ChartType.Area ? (
+                <AreaChart
+                  data={dataSource}
+                  onMouseDown={onMouseDown}
+                  margin={{
+                    top: 5,
+                    right: 30,
+                    left: 20,
+                    bottom: 30,
+                  }}
+                >
+                  <Tooltip formatter={(value: number) => value.toFixed(fractionDigits) + ' ' + unitY} />
+                  <CartesianGrid
+                    vertical={verticalGridLines}
+                    horizontal={horizontalGridLines}
+                    stroke={'rgba(128, 128, 128, 0.3)'}
                   />
-                </YAxis>
-                {getLines}
-                {lineCount > 1 && (
-                  <Legend
-                    iconType="plainline"
-                    verticalAlign="top"
-                    height={36}
-                    onMouseLeave={onMouseLeaveLegend}
-                    onMouseEnter={onMouseEnterLegend}
+                  <ReferenceLine x={referenceX} stroke="orange" strokeWidth={2} />
+                  <XAxis dataKey={labelX}>
+                    <Label value={labelX + (unitX ? ' (' + unitX + ')' : '')} offset={0} position="bottom" />
+                  </XAxis>
+                  <YAxis domain={[yMin, yMax]}>
+                    <Label
+                      dx={-15}
+                      value={labelY + (unitY ? ' (' + unitY + ')' : '')}
+                      offset={0}
+                      angle={-90}
+                      position="center"
+                    />
+                  </YAxis>
+                  {getRepresentation}
+                  {lineCount > 1 && (
+                    <Legend
+                      iconType="plainline"
+                      verticalAlign="top"
+                      height={36}
+                      onMouseLeave={onMouseLeaveLegend}
+                      onMouseEnter={onMouseEnterLegend}
+                    />
+                  )}
+                </AreaChart>
+              ) : (
+                <LineChart
+                  data={dataSource}
+                  onMouseDown={onMouseDown}
+                  margin={{
+                    top: 5,
+                    right: 30,
+                    left: 20,
+                    bottom: 30,
+                  }}
+                >
+                  <Tooltip formatter={(value: number) => value.toFixed(fractionDigits) + ' ' + unitY} />
+                  <CartesianGrid
+                    vertical={verticalGridLines}
+                    horizontal={horizontalGridLines}
+                    stroke={'rgba(128, 128, 128, 0.3)'}
                   />
-                )}
-              </LineChart>
+                  <ReferenceLine x={referenceX} stroke="orange" strokeWidth={2} />
+                  <XAxis dataKey={labelX}>
+                    <Label value={labelX + (unitX ? ' (' + unitX + ')' : '')} offset={0} position="bottom" />
+                  </XAxis>
+                  <YAxis domain={[yMin, yMax]}>
+                    <Label
+                      dx={-15}
+                      value={labelY + (unitY ? ' (' + unitY + ')' : '')}
+                      offset={0}
+                      angle={-90}
+                      position="center"
+                    />
+                  </YAxis>
+                  {getRepresentation}
+                  {lineCount > 1 && (
+                    <Legend
+                      iconType="plainline"
+                      verticalAlign="top"
+                      height={36}
+                      onMouseLeave={onMouseLeaveLegend}
+                      onMouseEnter={onMouseEnterLegend}
+                    />
+                  )}
+                </LineChart>
+              )}
             </ResponsiveContainer>
             <LineGraphMenu
               lineCount={lineCount}

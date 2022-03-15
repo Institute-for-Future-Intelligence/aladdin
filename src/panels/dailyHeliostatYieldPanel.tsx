@@ -7,7 +7,7 @@ import LineGraph from '../components/lineGraph';
 import styled from 'styled-components';
 import { useStore } from '../stores/common';
 import * as Selector from '../stores/selector';
-import { GraphDataType, ObjectType } from '../types';
+import { ChartType, GraphDataType, ObjectType } from '../types';
 import moment from 'moment';
 import ReactDraggable, { DraggableEventHandler } from 'react-draggable';
 import { Button, Space, Switch } from 'antd';
@@ -195,6 +195,7 @@ const DailyHeliostatYieldPanel = ({ city }: DailyHeliostatYieldPanelProps) => {
           </Header>
           <LineGraph
             type={GraphDataType.DailyHeliostatYield}
+            chartType={individualOutputs ? ChartType.Line : ChartType.Area}
             dataSource={dailyYield}
             labels={heliostatLabels}
             height={responsiveHeight}

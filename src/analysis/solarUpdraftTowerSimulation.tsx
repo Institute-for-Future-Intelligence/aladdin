@@ -2,7 +2,7 @@
  * @Copyright 2022. Institute for Future Intelligence, Inc.
  */
 
-import React, { useEffect, useMemo, useRef, useState } from 'react';
+import React, { useEffect, useMemo, useRef } from 'react';
 import {
   calculateDiffuseAndReflectedRadiation,
   calculatePeakRadiation,
@@ -342,8 +342,8 @@ const SolarUpdraftTowerSimulation = ({ city }: SolarUpdraftTowerSimulationProps)
     resetDailyDataMap();
     resetYearlyDataMap();
     originalDateRef.current = new Date(world.date);
+    sampledDayRef.current = 0;
     for (let month = 0; month < 12; month++) {
-      sampledDayRef.current = month;
       now.setMonth(month, 22);
       sunMinutesRef.current = computeSunriseAndSunsetInMinutes(now, world.latitude);
       resetDailyDataMap();
@@ -356,6 +356,7 @@ const SolarUpdraftTowerSimulation = ({ city }: SolarUpdraftTowerSimulationProps)
         }
       }
       finishMonthly();
+      sampledDayRef.current++;
     }
     setCommonStore((state) => {
       state.runYearlySimulationForUpdraftTower = false;

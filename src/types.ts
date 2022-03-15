@@ -60,6 +60,11 @@ export interface DatumEntry {
   [key: string]: number | undefined | string;
 }
 
+export enum ChartType {
+  Line = 1,
+  Area = 2,
+}
+
 export enum GraphDataType {
   HourlyTemperatures = 1,
   MonthlyTemperatures = 2,

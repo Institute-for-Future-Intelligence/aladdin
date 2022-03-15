@@ -7,7 +7,7 @@ import LineGraph from '../components/lineGraph';
 import styled from 'styled-components';
 import { useStore } from '../stores/common';
 import * as Selector from '../stores/selector';
-import { GraphDataType, ObjectType } from '../types';
+import { ChartType, GraphDataType, ObjectType } from '../types';
 import moment from 'moment';
 import ReactDraggable, { DraggableEventHandler } from 'react-draggable';
 import { Button, Space } from 'antd';
@@ -159,6 +159,7 @@ const DailyLightSensorPanel = ({ city }: DailyLightSensorPanelProps) => {
           </Header>
           <LineGraph
             type={GraphDataType.DailyRadiationSensorData}
+            chartType={ChartType.Line}
             dataSource={sensorData}
             labels={sensorLabels}
             height={responsiveHeight}

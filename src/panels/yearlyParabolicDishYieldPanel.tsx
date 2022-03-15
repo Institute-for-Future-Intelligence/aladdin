@@ -7,7 +7,7 @@ import LineGraph from '../components/lineGraph';
 import styled from 'styled-components';
 import { useStore } from '../stores/common';
 import * as Selector from '../stores/selector';
-import { GraphDataType, ObjectType } from '../types';
+import { ChartType, GraphDataType, ObjectType } from '../types';
 import { MONTHS } from '../constants';
 import { Util } from '../Util';
 import ReactDraggable, { DraggableEventHandler } from 'react-draggable';
@@ -199,6 +199,7 @@ const YearlyParabolicDishYieldPanel = ({ city }: YearlyParabolicDishYieldPanelPr
           </Header>
           <LineGraph
             type={GraphDataType.YearlyParabolicDishYield}
+            chartType={individualOutputs ? ChartType.Line : ChartType.Area}
             dataSource={yearlyYield.map(({ Daylight, Clearness, ...item }) => item)}
             labels={parabolicDishLabels}
             height={responsiveHeight}

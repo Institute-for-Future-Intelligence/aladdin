@@ -5,7 +5,7 @@
 import React, { useEffect, useMemo, useRef, useState } from 'react';
 import BarGraph from '../components/barGraph';
 import LineGraph from '../components/lineGraph';
-import { GraphDataType } from '../types';
+import { ChartType, GraphDataType } from '../types';
 import styled from 'styled-components';
 import { useStore } from '../stores/common';
 import * as Selector from '../stores/selector';
@@ -217,6 +217,7 @@ const WeatherPanel = ({ city, graphs }: WeatherPanelProps) => {
               }
               return (
                 <LineGraph
+                  chartType={ChartType.Line}
                   key={g}
                   type={g}
                   dataSource={getData[g]}

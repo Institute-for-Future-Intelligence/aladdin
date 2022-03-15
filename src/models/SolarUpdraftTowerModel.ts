@@ -9,7 +9,8 @@ export interface SolarUpdraftTowerModel {
   collectorHeight: number;
   collectorRadius: number;
 
-  // default to 0.9
+  // transmissivity is the ratio of the total light that passes through the glass, default to 0.9
+  // (don't use transmittance, which is the measured ratio of light at normal incidence)
   collectorTransmissivity?: number;
 
   // usually taken to be from 0.65 to 0.70: https://en.wikipedia.org/wiki/Stack_effect

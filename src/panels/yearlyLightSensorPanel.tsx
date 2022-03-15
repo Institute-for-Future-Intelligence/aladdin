@@ -7,7 +7,7 @@ import LineGraph from '../components/lineGraph';
 import styled from 'styled-components';
 import { useStore } from '../stores/common';
 import * as Selector from '../stores/selector';
-import { GraphDataType, ObjectType } from '../types';
+import { ChartType, GraphDataType, ObjectType } from '../types';
 import { MONTHS } from '../constants';
 import { Util } from '../Util';
 import BarGraph from '../components/barGraph';
@@ -165,6 +165,7 @@ const YearlyLightSensorPanel = ({ city }: YearlyLightSensorPanelProps) => {
           {daylightGraph && (
             <LineGraph
               type={GraphDataType.DaylightData}
+              chartType={ChartType.Area}
               dataSource={sensorData.map((e) => ({ Month: e.Month, Daylight: e.Daylight }))}
               height={responsiveHeight}
               labelX={labelX}
@@ -194,6 +195,7 @@ const YearlyLightSensorPanel = ({ city }: YearlyLightSensorPanelProps) => {
           {radiationGraph && (
             <LineGraph
               type={GraphDataType.YearlyRadiationSensorData}
+              chartType={ChartType.Line}
               dataSource={sensorData.map(({ Daylight, Clearness, ...item }) => item)}
               labels={sensorLabels}
               height={responsiveHeight}

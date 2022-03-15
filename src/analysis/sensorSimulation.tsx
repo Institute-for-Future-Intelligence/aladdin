@@ -313,8 +313,8 @@ const SensorSimulation = ({ city }: SensorSimulationProps) => {
     resetDailyDataMap();
     resetYearlyDataMap();
     originalDateRef.current = new Date(world.date);
+    sampledDayRef.current = 0;
     for (let month = 0; month < 12; month++) {
-      sampledDayRef.current = month;
       now.setMonth(month, 22);
       sunMinutesRef.current = computeSunriseAndSunsetInMinutes(now, world.latitude);
       resetDailyDataMap();
@@ -324,6 +324,7 @@ const SensorSimulation = ({ city }: SensorSimulationProps) => {
         }
       }
       finishMonthly();
+      sampledDayRef.current++;
     }
     setCommonStore((state) => {
       state.runYearlyLightSensor = false;
