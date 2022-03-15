@@ -100,6 +100,7 @@ export const i18n_zh_tw = {
       Radiation: '輻射',
       Temperature: '温度',
       kWh: '千瓦時',
+      MeterPerSecond: '米/秒',
       NorthInitial: '北',
       SouthInitial: '南',
       EastInitial: '東',
@@ -752,6 +753,8 @@ export const i18n_zh_tw = {
     updraftTowerYieldPanel: {
       UpdraftTowerDailyYield: '太陽能上升氣流塔日發電量',
       UpdraftTowerYearlyYield: '太陽能上升氣流塔年發電量',
+      ChimneyAirTemperature: '煙囪空氣溫度',
+      ChimneyWindSpeed: '煙囪風速',
       Yield: '發電量',
       YieldPerHour: '每小時發電量',
       DailyTotal: '日發電總量',

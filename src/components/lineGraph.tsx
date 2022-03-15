@@ -76,7 +76,7 @@ const LineGraph = ({
     }
   }, [lineCount, dataSource]);
 
-  const getRepresentation = useMemo(() => {
+  const getRepresentations = useMemo(() => {
     const representations = [];
     let defaultSymbol;
     for (let i = 0; i < lineCount; i++) {
@@ -244,7 +244,7 @@ const LineGraph = ({
                       position="center"
                     />
                   </YAxis>
-                  {getRepresentation}
+                  {getRepresentations}
                   {lineCount > 1 && (
                     <Legend
                       iconType="plainline"
@@ -285,7 +285,7 @@ const LineGraph = ({
                       position="center"
                     />
                   </YAxis>
-                  {getRepresentation}
+                  {getRepresentations}
                   {lineCount > 1 && (
                     <Legend
                       iconType="plainline"

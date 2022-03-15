@@ -40,6 +40,7 @@ const SolarUpdraftTowerSimulation = ({ city }: SolarUpdraftTowerSimulationProps)
   const elements = useStore.getState().elements;
   const getWeather = useStore(Selector.getWeather);
   const setLabels = useStore(Selector.setUpdraftTowerLabels);
+  const setDailyResults = useStore(Selector.setDailyUpdraftTowerResults);
   const setDailyYield = useStore(Selector.setDailyUpdraftTowerYield);
   const setYearlyYield = useStore(Selector.setYearlyUpdraftTowerYield);
   const runDailySimulation = useStore(Selector.runDailySimulationForUpdraftTower);
@@ -65,7 +66,9 @@ const SolarUpdraftTowerSimulation = ({ city }: SolarUpdraftTowerSimulationProps)
   const requestRef = useRef<number>(0);
   const simulationCompletedRef = useRef<boolean>(false);
   const originalDateRef = useRef<Date>(new Date(world.date));
-  const dailyDataMapRef = useRef<Map<string, number[]>>(new Map<string, number[]>());
+  const dailyAirTemperaturesMapRef = useRef<Map<string, number[]>>(new Map<string, number[]>());
+  const dailyWindSpeedsMapRef = useRef<Map<string, number[]>>(new Map<string, number[]>());
+  const dailyOutputsMapRef = useRef<Map<string, number[]>>(new Map<string, number[]>());
   const yearlyOutputsMapRef = useRef<Map<string, number[]>>(new Map<string, number[]>());
   const sampledDayRef = useRef<number>(0);
   const pauseRef = useRef<boolean>(false);
@@ -127,7 +130,7 @@ const SolarUpdraftTowerSimulation = ({ city }: SolarUpdraftTowerSimulationProps)
 
   const staticSimulateDaily = () => {
     fetchObjects();
-    resetDailyDataMap();
+    resetDailyMaps();
     for (const e of elements) {
       if (e.type === ObjectType.Foundation) {
         const f = e as FoundationModel;
@@ -160,7 +163,7 @@ const SolarUpdraftTowerSimulation = ({ city }: SolarUpdraftTowerSimulationProps)
     }
     simulationCompletedRef.current = false;
     fetchObjects();
-    resetDailyDataMap();
+    resetDailyMaps();
   };
 
   const simulateDaily = () => {
@@ -214,25 +217,27 @@ const SolarUpdraftTowerSimulation = ({ city }: SolarUpdraftTowerSimulationProps)
           const a = AIR_DENSITY * AIR_ISOBARIC_SPECIFIC_HEAT * chimneyArea;
           const b = (0.5 * dischargeCoefficient * turbineEfficiency * AIR_DENSITY * chimneyArea) / 1000; // convert to kWh
           const c = 2 * GRAVITATIONAL_ACCELERATION * f.solarUpdraftTower.chimneyHeight;
-          const result = dailyDataMapRef.current.get(e.id + '-sut');
-          if (result) {
+          const airTemperatures = dailyAirTemperaturesMapRef.current.get(e.id + '-sut');
+          const windSpeeds = dailyWindSpeedsMapRef.current.get(e.id + '-sut');
+          const outputs = dailyOutputsMapRef.current.get(e.id + '-sut');
+          if (outputs && airTemperatures && windSpeeds) {
             const date = new Date(world.date);
-            for (let i = 0; i < result.length; i++) {
-              if (result[i] !== 0) {
-                let currentTemperature = 20;
-                if (city) {
-                  const weather = getWeather(city);
-                  if (weather) {
-                    date.setHours(i);
-                    const t = computeOutsideTemperature(date, weather.lowestTemperatures, weather.highestTemperatures);
-                    currentTemperature = getOutsideTemperatureAtMinute(t.high, t.low, Util.minutesIntoDay(date));
-                  }
+            for (let i = 0; i < outputs.length; i++) {
+              let currentTemperature = 20;
+              if (city) {
+                const weather = getWeather(city);
+                if (weather) {
+                  date.setHours(i);
+                  const t = computeOutsideTemperature(date, weather.lowestTemperatures, weather.highestTemperatures);
+                  currentTemperature = getOutsideTemperatureAtMinute(t.high, t.low, Util.minutesIntoDay(date));
                 }
-                result[i] *= timeFactor * transmissivity;
-                const airTemperature = currentTemperature * (1 + Math.cbrt((result[i] * result[i]) / (a * a * c)));
-                const airSpeed = Math.sqrt(c * (airTemperature / currentTemperature - 1));
-                result[i] = b * airSpeed * airSpeed * airSpeed;
               }
+              outputs[i] *= timeFactor * transmissivity;
+              const temperature = currentTemperature * (1 + Math.cbrt((outputs[i] * outputs[i]) / (a * a * c)));
+              const speed = Math.sqrt(c * (temperature / currentTemperature - 1));
+              outputs[i] = b * speed * speed * speed;
+              airTemperatures[i] = temperature;
+              windSpeeds[i] = speed;
             }
           }
         }
@@ -249,15 +254,24 @@ const SolarUpdraftTowerSimulation = ({ city }: SolarUpdraftTowerSimulationProps)
       if (e.type === ObjectType.Foundation) {
         const f = e as FoundationModel;
         if (f.solarStructure === SolarStructure.UpdraftTower && f.solarUpdraftTower) {
-          const result = dailyDataMapRef.current.get(e.id + '-sut');
-          if (result) {
-            map.set('Tower' + ++index, result);
+          index++;
+          const temperature = dailyAirTemperaturesMapRef.current.get(e.id + '-sut');
+          if (temperature) {
+            map.set('Temperature Tower' + index, temperature);
+          }
+          const speed = dailyWindSpeedsMapRef.current.get(e.id + '-sut');
+          if (speed) {
+            map.set('Wind Speed Tower' + index, speed);
+          }
+          const output = dailyOutputsMapRef.current.get(e.id + '-sut');
+          if (output) {
+            map.set('Tower' + index, output);
             labels.push(e.label ? e.label : 'Tower' + index);
           }
         }
       }
     }
-    const data = [];
+    const outputs = [];
     for (let i = 0; i < 24; i++) {
       const datum: DatumEntry = {};
       datum['Hour'] = i;
@@ -265,9 +279,22 @@ const SolarUpdraftTowerSimulation = ({ city }: SolarUpdraftTowerSimulationProps)
         const key = 'Tower' + k;
         datum[labels[k - 1]] = map.get(key)?.[i];
       }
-      data.push(datum);
+      outputs.push(datum);
     }
-    setDailyYield(data);
+    setDailyYield(outputs);
+    const results = [];
+    for (let i = 0; i < 24; i++) {
+      const datum: DatumEntry = {};
+      datum['Hour'] = i;
+      for (let k = 1; k <= index; k++) {
+        let key = 'Temperature Tower' + k;
+        datum['Temperature ' + labels[k - 1]] = map.get(key)?.[i];
+        key = 'Wind Speed Tower' + k;
+        datum['Wind Speed ' + labels[k - 1]] = map.get(key)?.[i];
+      }
+      results.push(datum);
+    }
+    setDailyResults(results);
     setLabels(labels);
   };
 
@@ -335,20 +362,20 @@ const SolarUpdraftTowerSimulation = ({ city }: SolarUpdraftTowerSimulationProps)
     }
     simulationCompletedRef.current = false;
     fetchObjects();
-    resetDailyDataMap();
-    resetYearlyDataMap();
+    resetDailyMaps();
+    resetYearlyMap();
   };
 
   const staticSimulateYearly = () => {
     fetchObjects();
-    resetDailyDataMap();
-    resetYearlyDataMap();
+    resetDailyMaps();
+    resetYearlyMap();
     originalDateRef.current = new Date(world.date);
     sampledDayRef.current = 0;
     for (let month = 0; month < 12; month += monthInterval) {
       now.setMonth(month, 22);
       sunMinutesRef.current = computeSunriseAndSunsetInMinutes(now, world.latitude);
-      resetDailyDataMap();
+      resetDailyMaps();
       for (const e of elements) {
         if (e.type === ObjectType.Foundation) {
           const f = e as FoundationModel;
@@ -413,7 +440,7 @@ const SolarUpdraftTowerSimulation = ({ city }: SolarUpdraftTowerSimulationProps)
         dayRef.current = now.getDay();
         sunMinutesRef.current = computeSunriseAndSunsetInMinutes(now, world.latitude);
         now.setHours(Math.floor(sunMinutesRef.current.sunrise / 60), -minuteInterval / 2);
-        resetDailyDataMap();
+        resetDailyMaps();
         // recursive call to the next step of the simulation
         requestRef.current = requestAnimationFrame(simulateYearly);
       }
@@ -426,7 +453,7 @@ const SolarUpdraftTowerSimulation = ({ city }: SolarUpdraftTowerSimulationProps)
       if (e.type === ObjectType.Foundation) {
         const f = e as FoundationModel;
         if (f.solarStructure === SolarStructure.UpdraftTower && f.solarUpdraftTower) {
-          const result = dailyDataMapRef.current.get(e.id + '-sut');
+          const result = dailyOutputsMapRef.current.get(e.id + '-sut');
           if (result) {
             const total = yearlyOutputsMapRef.current.get(e.id + '-sut');
             if (total) {
@@ -471,23 +498,35 @@ const SolarUpdraftTowerSimulation = ({ city }: SolarUpdraftTowerSimulationProps)
 
   /* shared functions between daily and yearly simulation */
 
-  const resetDailyDataMap = () => {
+  const resetDailyMaps = () => {
     for (const e of elements) {
       if (e.type === ObjectType.Foundation) {
         const f = e as FoundationModel;
         if (f.solarStructure === SolarStructure.UpdraftTower && f.solarUpdraftTower) {
-          const result = dailyDataMapRef.current.get(e.id + '-sut');
-          if (result) {
-            result.fill(0);
+          const airTemperatures = dailyAirTemperaturesMapRef.current.get(e.id + '-sut');
+          if (airTemperatures) {
+            airTemperatures.fill(0);
           } else {
-            dailyDataMapRef.current.set(e.id + '-sut', new Array(24).fill(0));
+            dailyAirTemperaturesMapRef.current.set(e.id + '-sut', new Array(24).fill(0));
+          }
+          const windSpeeds = dailyWindSpeedsMapRef.current.get(e.id + '-sut');
+          if (windSpeeds) {
+            windSpeeds.fill(0);
+          } else {
+            dailyWindSpeedsMapRef.current.set(e.id + '-sut', new Array(24).fill(0));
+          }
+          const yields = dailyOutputsMapRef.current.get(e.id + '-sut');
+          if (yields) {
+            yields.fill(0);
+          } else {
+            dailyOutputsMapRef.current.set(e.id + '-sut', new Array(24).fill(0));
           }
         }
       }
     }
   };
 
-  const resetYearlyDataMap = () => {
+  const resetYearlyMap = () => {
     for (const e of elements) {
       if (e.type === ObjectType.Foundation) {
         const f = e as FoundationModel;
@@ -508,7 +547,7 @@ const SolarUpdraftTowerSimulation = ({ city }: SolarUpdraftTowerSimulationProps)
     if (!solarUpdraftTower) return;
     const sunDirection = getSunDirection(now, world.latitude);
     if (sunDirection.z < ZERO_TOLERANCE) return; // when the sun is not out
-    const output = dailyDataMapRef.current.get(foundation.id + '-sut');
+    const output = dailyOutputsMapRef.current.get(foundation.id + '-sut');
     if (output) {
       const dayOfYear = Util.dayOfYear(now);
       const normal = new Vector3().fromArray(foundation.normal);
@@ -553,7 +592,7 @@ const SolarUpdraftTowerSimulation = ({ city }: SolarUpdraftTowerSimulationProps)
   const calculateYieldWithoutAnimation = (foundation: FoundationModel) => {
     const solarUpdraftTower = foundation.solarUpdraftTower;
     if (!solarUpdraftTower) return;
-    const result = dailyDataMapRef.current.get(foundation.id + '-sut');
+    const result = dailyOutputsMapRef.current.get(foundation.id + '-sut');
     if (!result) return;
     const normal = new Vector3().fromArray(foundation.normal);
     const year = now.getFullYear();

@@ -14,6 +14,7 @@ import { Button, Space, Switch } from 'antd';
 import { screenshot, showInfo } from '../helpers';
 import { ReloadOutlined, SaveOutlined, UnorderedListOutlined } from '@ant-design/icons';
 import i18n from '../i18n/i18n';
+import BiaxialLineGraph from '../components/biaxialLineGraph';
 
 const Container = styled.div`
   position: fixed;
@@ -31,8 +32,8 @@ const ColumnWrapper = styled.div`
   position: absolute;
   right: 0;
   top: 0;
-  width: 600px;
-  height: 400px;
+  width: 640px;
+  height: 500px;
   padding-bottom: 10px;
   border: 2px solid gainsboro;
   border-radius: 10px 10px 10px 10px;
@@ -71,6 +72,7 @@ const DailySolarUpdraftTowerYieldPanel = ({ city }: DailySolarUpdraftTowerYieldP
   const now = new Date(useStore(Selector.world.date));
   const countSolarStructuresByType = useStore(Selector.countSolarStructuresByType);
   const dailyYield = useStore(Selector.dailyUpdraftTowerYield);
+  const dailyResults = useStore(Selector.dailyUpdraftTowerResults);
   const individualOutputs = useStore(Selector.dailyUpdraftTowerIndividualOutputs);
   const panelX = useStore(Selector.viewState.dailyUpdraftTowerYieldPanelX);
   const panelY = useStore(Selector.viewState.dailyUpdraftTowerYieldPanelY);
@@ -155,8 +157,10 @@ const DailySolarUpdraftTowerYieldPanel = ({ city }: DailySolarUpdraftTowerYieldP
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [towerCount]);
 
-  const labelX = 'Hour';
-  const labelY = i18n.t('updraftTowerYieldPanel.YieldPerHour', lang);
+  const labelHour = 'Hour';
+  const labelYield = i18n.t('updraftTowerYieldPanel.YieldPerHour', lang);
+  const labelTemperature = i18n.t('updraftTowerYieldPanel.ChimneyAirTemperature', lang);
+  const labelSpeed = i18n.t('updraftTowerYieldPanel.ChimneyWindSpeed', lang);
   let totalTooltip = '';
   if (individualOutputs) {
     updraftTowerSumRef.current.forEach((value, key) => (totalTooltip += key + ': ' + value.toFixed(2) + '\n'));
@@ -200,10 +204,27 @@ const DailySolarUpdraftTowerYieldPanel = ({ city }: DailySolarUpdraftTowerYieldP
             dataSource={dailyYield}
             labels={updraftTowerLabels}
             height={responsiveHeight}
-            labelX={labelX}
-            labelY={labelY}
+            labelX={labelHour}
+            labelY={labelYield}
             unitY={i18n.t('word.kWh', lang)}
             yMin={0}
+            curveType={'linear'}
+            fractionDigits={2}
+            symbolCount={24}
+            referenceX={now.getHours()}
+          />
+          <BiaxialLineGraph
+            type1={GraphDataType.DailyUpdraftTowerAirTemperature}
+            type2={GraphDataType.DailyUpdraftTowerWindSpeed}
+            dataSource={dailyResults}
+            height={responsiveHeight}
+            labelX={labelHour}
+            labelY1={labelTemperature}
+            labelY2={labelSpeed}
+            unitY1={'°C'}
+            unitY2={i18n.t('word.MeterPerSecond', lang)}
+            yMin1={0}
+            yMin2={0}
             curveType={'linear'}
             fractionDigits={2}
             symbolCount={24}
@@ -268,7 +289,7 @@ const DailySolarUpdraftTowerYieldPanel = ({ city }: DailySolarUpdraftTowerYieldP
               icon={<SaveOutlined />}
               title={i18n.t('word.SaveAsImage', lang)}
               onClick={() => {
-                screenshot('line-graph-' + labelX + '-' + labelY, 'daily-Updraft-tower-yield', {}).then(() => {
+                screenshot('line-graph-' + labelHour + '-' + labelYield, 'daily-Updraft-tower-yield', {}).then(() => {
                   showInfo(i18n.t('message.ScreenshotSaved', lang));
                 });
               }}

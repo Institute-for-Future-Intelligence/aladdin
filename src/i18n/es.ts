@@ -100,6 +100,7 @@ export const i18n_es = {
       Radiation: 'Radiación',
       Temperature: 'Temperatura',
       kWh: 'kWh',
+      MeterPerSecond: 'm/s',
       NorthInitial: 'N',
       SouthInitial: 'S',
       EastInitial: 'E',
@@ -769,6 +770,8 @@ export const i18n_es = {
     updraftTowerYieldPanel: {
       UpdraftTowerDailyYield: 'Solar Updraft Tower Daily Yield',
       UpdraftTowerYearlyYield: 'Solar Updraft Tower Yearly Yield',
+      ChimneyAirTemperature: 'Chimney Air Temperature',
+      ChimneyWindSpeed: 'Chimney Wind Speed',
       Yield: 'Yield',
       YieldPerHour: 'Yield per Hour',
       DailyTotal: 'Daily Total',

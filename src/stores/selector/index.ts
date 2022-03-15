@@ -784,9 +784,13 @@ export const pauseDailySimulationForUpdraftTower = (state: CommonStoreState) =>
 export const pauseYearlySimulationForUpdraftTower = (state: CommonStoreState) =>
   state.pauseYearlySimulationForUpdraftTower;
 
+export const dailyUpdraftTowerResults = (state: CommonStoreState) => state.dailyUpdraftTowerResults;
+
 export const dailyUpdraftTowerYield = (state: CommonStoreState) => state.dailyUpdraftTowerYield;
 
 export const dailyUpdraftTowerIndividualOutputs = (state: CommonStoreState) => state.dailyUpdraftTowerIndividualOutputs;
+
+export const setDailyUpdraftTowerResults = (state: CommonStoreState) => state.setDailyUpdraftTowerResults;
 
 export const setDailyUpdraftTowerYield = (state: CommonStoreState) => state.setDailyUpdraftTowerYield;
 

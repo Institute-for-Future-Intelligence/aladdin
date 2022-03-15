@@ -582,8 +582,10 @@ export interface CommonStoreState {
   runYearlySimulationForUpdraftTower: boolean;
   pauseDailySimulationForUpdraftTower: boolean;
   pauseYearlySimulationForUpdraftTower: boolean;
-  dailyUpdraftTowerYield: DatumEntry[];
   dailyUpdraftTowerIndividualOutputs: boolean;
+  dailyUpdraftTowerResults: DatumEntry[];
+  dailyUpdraftTowerYield: DatumEntry[];
+  setDailyUpdraftTowerResults: (data: DatumEntry[]) => void;
   setDailyUpdraftTowerYield: (data: DatumEntry[]) => void;
   yearlyUpdraftTowerYield: DatumEntry[];
   yearlyUpdraftTowerIndividualOutputs: boolean;
@@ -940,8 +942,14 @@ export const useStore = create<CommonStoreState>(
           runYearlySimulationForUpdraftTower: false,
           pauseDailySimulationForUpdraftTower: false,
           pauseYearlySimulationForUpdraftTower: false,
-          dailyUpdraftTowerYield: [],
           dailyUpdraftTowerIndividualOutputs: false,
+          dailyUpdraftTowerResults: [],
+          dailyUpdraftTowerYield: [],
+          setDailyUpdraftTowerResults(data) {
+            immerSet((state: CommonStoreState) => {
+              state.dailyUpdraftTowerResults = [...data];
+            });
+          },
           setDailyUpdraftTowerYield(data) {
             immerSet((state: CommonStoreState) => {
               state.dailyUpdraftTowerYield = [...data];
