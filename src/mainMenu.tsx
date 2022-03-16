@@ -130,6 +130,7 @@ const MainMenu = ({ viewOnly, set2DView, resetView, zoomView, canvas }: MainMenu
   const showInstructionPanel = useStore(Selector.viewState.showInstructionPanel);
   const showMapPanel = useStore(Selector.viewState.showMapPanel);
   const showWeatherPanel = useStore(Selector.viewState.showWeatherPanel);
+  const showDiurnalTemperaturePanel = useStore(Selector.viewState.showDiurnalTemperaturePanel);
   const showStickyNotePanel = useStore(Selector.viewState.showStickyNotePanel);
   const showHeliodonPanel = useStore(Selector.viewState.showHeliodonPanel);
   const shadowEnabled = useStore(Selector.viewState.shadowEnabled);
@@ -499,6 +500,27 @@ const MainMenu = ({ viewOnly, set2DView, resetView, zoomView, canvas }: MainMenu
     addUndoable(undoable);
     setCommonStore((state) => {
       state.viewState.showWeatherPanel = true;
+    });
+  };
+
+  const openDiurnalTemperaturePanel = () => {
+    const undoable = {
+      name: 'Open Diurnal Temperature Panel',
+      timestamp: Date.now(),
+      undo: () => {
+        setCommonStore((state) => {
+          state.viewState.showDiurnalTemperaturePanel = false;
+        });
+      },
+      redo: () => {
+        setCommonStore((state) => {
+          state.viewState.showDiurnalTemperaturePanel = true;
+        });
+      },
+    } as Undoable;
+    addUndoable(undoable);
+    setCommonStore((state) => {
+      state.viewState.showDiurnalTemperaturePanel = true;
     });
   };
 
@@ -940,6 +962,11 @@ const MainMenu = ({ viewOnly, set2DView, resetView, zoomView, canvas }: MainMenu
         {!showWeatherPanel && (
           <Menu.Item key={'weather-panel-check-box'} onClick={openWeatherPanel}>
             {i18n.t('menu.tool.WeatherData', lang)}
+          </Menu.Item>
+        )}
+        {!showDiurnalTemperaturePanel && (
+          <Menu.Item key={'diurnal-temperature-panel-check-box'} onClick={openDiurnalTemperaturePanel}>
+            {i18n.t('menu.tool.DiurnalTemperature', lang)}
           </Menu.Item>
         )}
         <SubMenu key={'benchmarks'} title={i18n.t('menu.benchmarksSubMenu', lang)}>

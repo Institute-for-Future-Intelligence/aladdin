@@ -3,6 +3,7 @@
  */
 
 import { CommonStoreState } from '../common';
+import { DiurnalTemperaturePanelProps } from '../../panels/diurnalTemperaturePanel';
 
 export const shadowEnabled = (state: CommonStoreState) => state.viewState.shadowEnabled;
 
@@ -72,6 +73,12 @@ export const showWeatherPanel = (state: CommonStoreState) => state.viewState.sho
 export const weatherPanelX = (state: CommonStoreState) => state.viewState.weatherPanelX;
 
 export const weatherPanelY = (state: CommonStoreState) => state.viewState.weatherPanelY;
+
+export const showDiurnalTemperaturePanel = (state: CommonStoreState) => state.viewState.showDiurnalTemperaturePanel;
+
+export const diurnalTemperaturePanelX = (state: CommonStoreState) => state.viewState.diurnalTemperaturePanelX;
+
+export const diurnalTemperaturePanelY = (state: CommonStoreState) => state.viewState.diurnalTemperaturePanelY;
 
 export const showStickyNotePanel = (state: CommonStoreState) => state.viewState.showStickyNotePanel;
 

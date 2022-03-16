@@ -26,6 +26,7 @@ export interface ViewState {
   showMapPanel: boolean;
   showHeliodonPanel: boolean;
   showWeatherPanel: boolean;
+  showDiurnalTemperaturePanel: boolean;
   showStickyNotePanel: boolean;
   showSiteInfoPanel: boolean;
   showDesignInfoPanel: boolean;
@@ -52,6 +53,8 @@ export interface ViewState {
   mapPanelY: number;
   weatherPanelX: number;
   weatherPanelY: number;
+  diurnalTemperaturePanelX: number;
+  diurnalTemperaturePanelY: number;
   stickyNotePanelX: number;
   stickyNotePanelY: number;
   dailyLightSensorPanelX: number;

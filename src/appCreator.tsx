@@ -70,6 +70,8 @@ import YearlyHeliostatYieldPanel from './panels/yearlyHeliostatYieldPanel';
 import HeliostatSimulation from './analysis/heliostatSimulation';
 import SolarUpdraftTowerSimulation from './analysis/solarUpdraftTowerSimulation';
 import DailySolarUpdraftTowerYieldPanel from './panels/dailySolarUpdraftTowerYieldPanel';
+import { showDiurnalTemperaturePanel } from './stores/selector/viewState';
+import DiurnalTemperaturePanel from './panels/diurnalTemperaturePanel';
 
 export interface AppCreatorProps {
   viewOnly: boolean;
@@ -101,6 +103,7 @@ const AppCreator = ({ viewOnly = false }: AppCreatorProps) => {
   const showHeliodonPanel = useStore(Selector.viewState.showHeliodonPanel);
   const showStickyNotePanel = useStore(Selector.viewState.showStickyNotePanel);
   const showWeatherPanel = useStore(Selector.viewState.showWeatherPanel);
+  const showDiurnalTemperaturePanel = useStore(Selector.viewState.showDiurnalTemperaturePanel);
   const showSolarRadiationHeatmap = useStore(Selector.showSolarRadiationHeatmap);
   const noAnimationForHeatmapSimulation = useStore(Selector.world.noAnimationForHeatmapSimulation);
   const showDailyLightSensorPanel = useStore(Selector.viewState.showDailyLightSensorPanel);
@@ -354,6 +357,7 @@ const AppCreator = ({ viewOnly = false }: AppCreatorProps) => {
       {showWeatherPanel && (
         <WeatherPanel city={city} graphs={[GraphDataType.MonthlyTemperatures, GraphDataType.SunshineHours]} />
       )}
+      {showDiurnalTemperaturePanel && <DiurnalTemperaturePanel city={city} />}
       {showYearlyLightSensorPanel && <YearlyLightSensorPanel city={city} />}
       {showDailyLightSensorPanel && <DailyLightSensorPanel city={city} />}
       {showYearlyPvYieldPanel && <YearlyPvYieldPanel city={city} />}

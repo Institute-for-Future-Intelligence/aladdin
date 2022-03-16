@@ -211,6 +211,7 @@ export const i18n_tr = {
       tool: {
         Map: 'Harita',
         WeatherData: 'Hava Durumu Verisi',
+        DiurnalTemperature: 'Diurnal Temperature',
         Heliodon: 'Heliodon',
         SunAndTime: 'Sun & Time',
       },

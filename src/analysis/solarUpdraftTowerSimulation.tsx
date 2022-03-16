@@ -234,7 +234,8 @@ const SolarUpdraftTowerSimulation = ({ city }: SolarUpdraftTowerSimulationProps)
               }
               outputs[i] *= timeFactor * transmissivity;
               const temperature = currentTemperature * (1 + Math.cbrt((outputs[i] * outputs[i]) / (a * a * c)));
-              const speed = Math.sqrt(c * (temperature / currentTemperature - 1));
+              const speed =
+                temperature > currentTemperature ? Math.sqrt(c * (temperature / currentTemperature - 1)) : 0;
               outputs[i] = b * speed * speed * speed;
               airTemperatures[i] = temperature;
               windSpeeds[i] = speed;

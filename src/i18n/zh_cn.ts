@@ -209,6 +209,7 @@ export const i18n_zh_cn = {
       tool: {
         Map: '地图',
         WeatherData: '气象数据',
+        DiurnalTemperature: '昼夜温度',
         Heliodon: '日影仪',
         SunAndTime: '太阳和时间',
       },

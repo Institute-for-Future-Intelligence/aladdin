@@ -3,6 +3,7 @@
  */
 
 import { ViewState } from './ViewState';
+import { showDiurnalTemperaturePanel } from './selector/viewState';
 
 export class DefaultViewState implements ViewState {
   orthographic: boolean;
@@ -27,6 +28,7 @@ export class DefaultViewState implements ViewState {
   showMapPanel: boolean;
   showHeliodonPanel: boolean;
   showWeatherPanel: boolean;
+  showDiurnalTemperaturePanel: boolean;
   showStickyNotePanel: boolean;
   showSiteInfoPanel: boolean;
   showDesignInfoPanel: boolean;
@@ -54,6 +56,8 @@ export class DefaultViewState implements ViewState {
   mapPanelY: number;
   weatherPanelX: number;
   weatherPanelY: number;
+  diurnalTemperaturePanelX: number;
+  diurnalTemperaturePanelY: number;
   stickyNotePanelX: number;
   stickyNotePanelY: number;
   dailyLightSensorPanelX: number;
@@ -117,6 +121,7 @@ export class DefaultViewState implements ViewState {
     this.showMapPanel = false;
     this.showHeliodonPanel = false;
     this.showWeatherPanel = false;
+    this.showDiurnalTemperaturePanel = false;
     this.showStickyNotePanel = false;
     this.showSiteInfoPanel = true;
     this.showDesignInfoPanel = false;
@@ -144,6 +149,8 @@ export class DefaultViewState implements ViewState {
     this.mapPanelY = 0;
     this.weatherPanelX = 0;
     this.weatherPanelY = 0;
+    this.diurnalTemperaturePanelX = 0;
+    this.diurnalTemperaturePanelY = 0;
     this.stickyNotePanelX = 0;
     this.stickyNotePanelY = 0;
     this.dailyLightSensorPanelX = 0;
@@ -207,6 +214,7 @@ export class DefaultViewState implements ViewState {
     viewState.showMapPanel = false;
     viewState.showHeliodonPanel = false;
     viewState.showWeatherPanel = false;
+    viewState.showDiurnalTemperaturePanel = false;
     viewState.showStickyNotePanel = false;
     viewState.showSiteInfoPanel = true;
     viewState.showDesignInfoPanel = true;
@@ -234,6 +242,8 @@ export class DefaultViewState implements ViewState {
     viewState.mapPanelY = 0;
     viewState.weatherPanelX = 0;
     viewState.weatherPanelY = 0;
+    viewState.diurnalTemperaturePanelX = 0;
+    viewState.diurnalTemperaturePanelY = 0;
     viewState.stickyNotePanelX = 0;
     viewState.stickyNotePanelY = 0;
     viewState.dailyLightSensorPanelX = 0;
