@@ -18,6 +18,7 @@ import {
   ActionType,
   CuboidTexture,
   DatumEntry,
+  DiurnalTemperatureModel,
   FoundationTexture,
   HumanName,
   LineStyle,
@@ -4742,6 +4743,8 @@ export const useStore = create<CommonStoreState>(
                       lowestTemperatures: lows,
                       highestTemperatures: highs,
                       sunshineHours: sun,
+                      highestTemperatureTimeInMinutes: 900, // assume it is 3pm (at 15*60 minutes)
+                      diurnalTemperatureModel: DiurnalTemperatureModel.Sinusoidal,
                     } as WeatherModel;
                     data.push(wm);
                   }

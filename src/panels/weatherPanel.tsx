@@ -206,7 +206,8 @@ const WeatherPanel = ({ city, graphs }: WeatherPanelProps) => {
                     type={g}
                     dataSource={getData[g]}
                     height={responsiveHeight}
-                    labelX={'Month'}
+                    dataKeyAxisX={'Month'}
+                    labelX={i18n.t('word.Month', lang)}
                     labelY={yNames[g]}
                     unitY={yUnits[g]}
                     yMin={0}
@@ -223,7 +224,8 @@ const WeatherPanel = ({ city, graphs }: WeatherPanelProps) => {
                   type={g}
                   dataSource={getData[g]}
                   height={responsiveHeight}
-                  labelX={'Month'}
+                  dataKeyAxisX={'Month'}
+                  labelX={i18n.t('word.Month', lang)}
                   labelY={yNames[g]}
                   unitY={yUnits[g]}
                   fractionDigits={0}

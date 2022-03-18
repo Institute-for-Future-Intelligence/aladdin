@@ -4,7 +4,7 @@
 
 import React, { useEffect, useMemo, useRef, useState } from 'react';
 import LineGraph from '../components/lineGraph';
-import { ChartType, GraphDataType } from '../types';
+import { ChartType, DiurnalTemperatureModel, GraphDataType } from '../types';
 import styled from 'styled-components';
 import { useStore } from '../stores/common';
 import * as Selector from '../stores/selector';
@@ -12,6 +12,9 @@ import { Util } from '../Util';
 import ReactDraggable, { DraggableEventHandler } from 'react-draggable';
 import i18n from '../i18n/i18n';
 import { computeOutsideTemperature, getOutsideTemperatureAtMinute } from '../analysis/heatTools';
+import { computeSunriseAndSunsetInMinutes } from '../analysis/sunTools';
+import dayjs from 'dayjs';
+import { Radio, Space } from 'antd';
 
 const Container = styled.div`
   position: fixed;
@@ -65,7 +68,10 @@ export interface DiurnalTemperaturePanelProps {
 const DiurnalTemperaturePanel = ({ city }: DiurnalTemperaturePanelProps) => {
   const language = useStore(Selector.language);
   const setCommonStore = useStore(Selector.set);
-  const now = useStore(Selector.world.date);
+  const now = new Date(useStore(Selector.world.date));
+  const latitude = useStore(Selector.world.latitude);
+  const diurnalTemperatureModel =
+    useStore(Selector.world.diurnalTemperatureModel) ?? DiurnalTemperatureModel.Sinusoidal;
   const getWeather = useStore(Selector.getWeather);
   const diurnalTemperaturePanelX = useStore(Selector.viewState.diurnalTemperaturePanelX);
   const diurnalTemperaturePanelY = useStore(Selector.viewState.diurnalTemperaturePanelY);
@@ -81,6 +87,7 @@ const DiurnalTemperaturePanel = ({ city }: DiurnalTemperaturePanelProps) => {
     x: isNaN(diurnalTemperaturePanelX) ? 0 : Math.min(diurnalTemperaturePanelX, window.innerWidth - wOffset),
     y: isNaN(diurnalTemperaturePanelY) ? 0 : Math.min(diurnalTemperaturePanelY, window.innerHeight - hOffset),
   });
+  const [selectedModel, setSelectedModel] = useState<DiurnalTemperatureModel>(diurnalTemperatureModel);
   const lang = { lng: language };
 
   // when the window is resized (the code depends on where the panel is originally anchored in the CSS)
@@ -103,20 +110,36 @@ const DiurnalTemperaturePanel = ({ city }: DiurnalTemperaturePanelProps) => {
     if (city) {
       const weather = getWeather(city);
       if (weather) {
-        const date = new Date(now);
+        const sunMinutes = computeSunriseAndSunsetInMinutes(now, latitude);
         for (let i = 0; i < 24; i++) {
-          date.setHours(i);
-          const t = computeOutsideTemperature(date, weather.lowestTemperatures, weather.highestTemperatures);
+          now.setHours(i);
+          const t = computeOutsideTemperature(now, weather.lowestTemperatures, weather.highestTemperatures);
+          const m = Util.minutesIntoDay(now);
           result.push({
             Hour: i,
-            Temperature: getOutsideTemperatureAtMinute(t.high, t.low, Util.minutesIntoDay(date)),
+            Sinusoidal: getOutsideTemperatureAtMinute(
+              t.high,
+              t.low,
+              DiurnalTemperatureModel.Sinusoidal,
+              weather.highestTemperatureTimeInMinutes,
+              sunMinutes,
+              m,
+            ),
+            PartonLogan: getOutsideTemperatureAtMinute(
+              t.high,
+              t.low,
+              DiurnalTemperatureModel.PartonLogan,
+              weather.highestTemperatureTimeInMinutes,
+              sunMinutes,
+              m,
+            ),
           });
         }
       }
     }
     return result;
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [city]);
+  }, [city, diurnalTemperatureModel, now.getMonth(), now.getDate()]);
 
   const onDrag: DraggableEventHandler = (e, ui) => {
     setCurPosition({
@@ -127,14 +150,21 @@ const DiurnalTemperaturePanel = ({ city }: DiurnalTemperaturePanelProps) => {
 
   const onDragEnd: DraggableEventHandler = (e, ui) => {
     setCommonStore((state) => {
-      state.viewState.weatherPanelX = Math.min(ui.x, window.innerWidth - wOffset);
-      state.viewState.weatherPanelY = Math.min(ui.y, window.innerHeight - hOffset);
+      state.viewState.diurnalTemperaturePanelX = Math.min(ui.x, window.innerWidth - wOffset);
+      state.viewState.diurnalTemperaturePanelY = Math.min(ui.y, window.innerHeight - hOffset);
     });
   };
 
   const closePanel = () => {
     setCommonStore((state) => {
       state.viewState.showDiurnalTemperaturePanel = false;
+    });
+  };
+
+  const onChangeModel = (e: any) => {
+    setSelectedModel(e.target.value);
+    setCommonStore((state) => {
+      state.world.diurnalTemperatureModel = e.target.value;
     });
   };
 
@@ -152,7 +182,7 @@ const DiurnalTemperaturePanel = ({ city }: DiurnalTemperaturePanelProps) => {
         <ColumnWrapper ref={wrapperRef}>
           <Header className="handle">
             <span>
-              {i18n.t('menu.tool.DiurnalTemperature', lang) + ':'} {city}
+              {i18n.t('menu.tool.DiurnalTemperature', lang) + ':'} {city} | {dayjs(now).format('MM/DD')}
             </span>
             <span
               style={{ cursor: 'pointer' }}
@@ -169,14 +199,25 @@ const DiurnalTemperaturePanel = ({ city }: DiurnalTemperaturePanelProps) => {
           <LineGraph
             chartType={ChartType.Line}
             type={GraphDataType.HourlyTemperatures}
+            selectedIndex={selectedModel - DiurnalTemperatureModel.Sinusoidal}
             dataSource={getData}
             height={100}
-            labelX={'Hour'}
+            dataKeyAxisX={'Hour'}
+            labelX={i18n.t('word.Hour', lang)}
             labelY={i18n.t('word.Temperature', lang)}
             unitY={'°C'}
-            fractionDigits={0}
-            referenceX={new Date(now).getHours()}
+            fractionDigits={1}
+            referenceX={now.getHours()}
           />
+          <Space style={{ alignSelf: 'center' }}>
+            <Space>{i18n.t('diurnalTemperaturePanel.SelectModel', lang)}</Space>
+            <Radio.Group onChange={onChangeModel} value={selectedModel}>
+              <Radio value={DiurnalTemperatureModel.Sinusoidal}>
+                {i18n.t('diurnalTemperaturePanel.Sinusoidal', lang)}
+              </Radio>
+              <Radio value={DiurnalTemperatureModel.PartonLogan}>Parton-Logan</Radio>
+            </Radio.Group>
+          </Space>
         </ColumnWrapper>
       </Container>
     </ReactDraggable>

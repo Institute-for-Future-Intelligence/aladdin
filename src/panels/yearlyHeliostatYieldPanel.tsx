@@ -157,7 +157,7 @@ const YearlyHeliostatYieldPanel = ({ city }: YearlyHeliostatYieldPanelProps) => 
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [heliostatCount]);
 
-  const labelX = 'Month';
+  const labelX = i18n.t('word.Month', lang);
   const labelY = i18n.t('heliostatYieldPanel.Yield', lang);
   let totalTooltip = '';
   if (individualOutputs) {
@@ -202,6 +202,7 @@ const YearlyHeliostatYieldPanel = ({ city }: YearlyHeliostatYieldPanelProps) => 
             dataSource={yearlyYield.map(({ Daylight, Clearness, ...item }) => item)}
             labels={heliostatLabels}
             height={responsiveHeight}
+            dataKeyAxisX={'Month'}
             labelX={labelX}
             labelY={labelY}
             unitY={i18n.t('word.kWh', lang)}

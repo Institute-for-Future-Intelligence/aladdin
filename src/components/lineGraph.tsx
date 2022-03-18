@@ -26,9 +26,11 @@ import LineGraphMenu from './lineGraphMenu';
 export interface LineGraphProps {
   type: GraphDataType;
   chartType: ChartType;
+  selectedIndex?: number;
   dataSource: DatumEntry[];
   labels?: string[];
   height: number;
+  dataKeyAxisX?: string;
   labelX?: string;
   labelY?: string;
   unitX?: string;
@@ -44,9 +46,11 @@ export interface LineGraphProps {
 const LineGraph = ({
   type,
   chartType = ChartType.Line,
+  selectedIndex,
   dataSource,
   labels,
   height,
+  dataKeyAxisX,
   labelX,
   labelY,
   unitX,
@@ -89,7 +93,15 @@ const LineGraph = ({
           name = 'Sunshine';
           break;
         case GraphDataType.HourlyTemperatures:
-          name = 'Temperature';
+          if (lineCount === 1) {
+            name = 'Temperature';
+          } else {
+            if (i === 1) {
+              name = 'PartonLogan';
+            } else {
+              name = 'Sinusoidal';
+            }
+          }
           break;
         case GraphDataType.DaylightData:
           name = 'Daylight';
@@ -171,7 +183,9 @@ const LineGraph = ({
             dataKey={name}
             stroke={PRESET_COLORS[i]}
             strokeDasharray={isMeasured ? '5 5' : ''}
-            opacity={isMeasured ? opacity / 2 : opacity}
+            opacity={
+              isMeasured ? opacity / 2 : selectedIndex !== undefined && selectedIndex !== i ? opacity / 4 : opacity
+            }
             strokeWidth={lineWidth}
             dot={!isMeasured && symbolCount > 0 ? (symbol ? symbol : defaultSymbol) : false}
             isAnimationActive={false}
@@ -180,7 +194,7 @@ const LineGraph = ({
       );
     }
     return representations;
-  }, [type, chartType, curveType, labels, lineCount, lineWidth, symbolCount, symbolSize, legendDataKey]);
+  }, [type, chartType, selectedIndex, curveType, labels, lineCount, lineWidth, symbolCount, symbolSize, legendDataKey]);
 
   // @ts-ignore
   const onMouseDown = (e) => {};
@@ -232,7 +246,7 @@ const LineGraph = ({
                     stroke={'rgba(128, 128, 128, 0.3)'}
                   />
                   <ReferenceLine x={referenceX} stroke="orange" strokeWidth={2} />
-                  <XAxis dataKey={labelX}>
+                  <XAxis dataKey={dataKeyAxisX ?? labelX}>
                     <Label value={labelX + (unitX ? ' (' + unitX + ')' : '')} offset={0} position="bottom" />
                   </XAxis>
                   <YAxis domain={[yMin, yMax]}>
@@ -273,7 +287,7 @@ const LineGraph = ({
                     stroke={'rgba(128, 128, 128, 0.3)'}
                   />
                   <ReferenceLine x={referenceX} stroke="orange" strokeWidth={2} />
-                  <XAxis dataKey={labelX}>
+                  <XAxis dataKey={dataKeyAxisX ?? labelX}>
                     <Label value={labelX + (unitX ? ' (' + unitX + ')' : '')} offset={0} position="bottom" />
                   </XAxis>
                   <YAxis domain={[yMin, yMax]}>

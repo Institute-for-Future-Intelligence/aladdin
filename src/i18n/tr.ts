@@ -805,6 +805,11 @@ export const i18n_tr = {
       SunshineHours: 'Guneþ Iþýðý',
     },
 
+    diurnalTemperaturePanel: {
+      SelectModel: 'Select Model',
+      Sinusoidal: 'Sinusoidal',
+    },
+
     yearlyLightSensorPanel: {
       SkyClearness: 'Netlik',
       ShowDaylightResults: 'Gün ýþýðý sonuçlarýný göster',

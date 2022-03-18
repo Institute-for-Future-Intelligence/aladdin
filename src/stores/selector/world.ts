@@ -22,6 +22,8 @@ export const dustLoss = (state: CommonStoreState) => state.world.dustLoss;
 
 export const discretization = (state: CommonStoreState) => state.world.discretization;
 
+export const diurnalTemperatureModel = (state: CommonStoreState) => state.world.diurnalTemperatureModel;
+
 export const solarRadiationHeatmapGridCellSize = (state: CommonStoreState) =>
   state.world.solarRadiationHeatmapGridCellSize;
 

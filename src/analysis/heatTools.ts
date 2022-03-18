@@ -2,13 +2,43 @@
  * @Copyright 2021-2022. Institute for Future Intelligence, Inc.
  */
 
-import { OMEGA_DAY } from './analysisConstants';
+import { MINUTES_OF_DAY, OMEGA_DAY } from './analysisConstants';
 import { Util } from '../Util';
+import { SunMinutes } from './SunMinutes';
+import { DiurnalTemperatureModel } from '../types';
 
 // interpolate between the lowest and highest temperatures of the day
 // to get the temperature of a given minute in the day
-export const getOutsideTemperatureAtMinute = (hi: number, lo: number, minute: number) => {
-  return 0.5 * (hi + lo) - 0.5 * (hi - lo) * Math.cos(OMEGA_DAY * minute);
+export const getOutsideTemperatureAtMinute = (
+  hi: number,
+  lo: number,
+  model: DiurnalTemperatureModel,
+  highestTemperatureTimeInMinutes: number,
+  sunMinutes: SunMinutes,
+  minute: number,
+) => {
+  if (model === DiurnalTemperatureModel.Sinusoidal) {
+    return 0.5 * (hi + lo) - 0.5 * (hi - lo) * Math.cos(OMEGA_DAY * (minute - (highestTemperatureTimeInMinutes - 720)));
+  }
+  const mean = 0.5 * (hi + lo);
+  const ampl = 0.5 * (hi - lo);
+  const day = sunMinutes.daylight();
+  // day time
+  if (minute > sunMinutes.sunrise && minute < sunMinutes.sunset) {
+    return mean + ampl * Math.cos((Math.PI / day) * (minute - highestTemperatureTimeInMinutes));
+  }
+  const night = MINUTES_OF_DAY - day;
+  const temperatureAtSunset =
+    mean + ampl * Math.cos((Math.PI / day) * (sunMinutes.sunset - highestTemperatureTimeInMinutes));
+  const b = 6;
+  // after sunset
+  if (minute > sunMinutes.sunset) {
+    const minutesAfterSunset = minute - sunMinutes.sunset;
+    return lo + (temperatureAtSunset - lo) * Math.exp((-b * minutesAfterSunset) / night);
+  }
+  // before sunrise
+  const minutesAfterSunset = minute + 23 * 60 - sunMinutes.sunset;
+  return lo + (temperatureAtSunset - lo) * Math.exp((-b * minutesAfterSunset) / night);
 };
 
 // we only know the average lowest and highest temperatures of the months. So we have to interpolate between these monthly data to get the daily data.

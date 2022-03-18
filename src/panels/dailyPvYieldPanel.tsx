@@ -155,7 +155,7 @@ const DailyPvYieldPanel = ({ city }: DailyPvYieldPanelProps) => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [solarPanelCount]);
 
-  const labelX = 'Hour';
+  const labelX = i18n.t('word.Hour', lang);
   const labelY = i18n.t('solarPanelYieldPanel.YieldPerHour', lang);
   let totalTooltip = '';
   if (individualOutputs) {
@@ -199,6 +199,7 @@ const DailyPvYieldPanel = ({ city }: DailyPvYieldPanelProps) => {
             dataSource={dailyYield}
             labels={solarPanelLabels}
             height={responsiveHeight}
+            dataKeyAxisX={'Hour'}
             labelX={labelX}
             labelY={labelY}
             unitY={i18n.t('word.kWh', lang)}

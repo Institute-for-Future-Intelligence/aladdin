@@ -157,7 +157,7 @@ const YearlyFresnelReflectorYieldPanel = ({ city }: YearlyFresnelReflectorYieldP
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [fresnelReflectorCount]);
 
-  const labelX = 'Month';
+  const labelX = i18n.t('word.Month', lang);
   const labelY = i18n.t('fresnelReflectorYieldPanel.Yield', lang);
   let totalTooltip = '';
   if (individualOutputs) {
@@ -203,6 +203,7 @@ const YearlyFresnelReflectorYieldPanel = ({ city }: YearlyFresnelReflectorYieldP
             dataSource={yearlyYield.map(({ Daylight, Clearness, ...item }) => item)}
             labels={fresnelReflectorLabels}
             height={responsiveHeight}
+            dataKeyAxisX={'Month'}
             labelX={labelX}
             labelY={labelY}
             unitY={i18n.t('word.kWh', lang)}

@@ -93,7 +93,7 @@ export const i18n_zh_cn = {
       Rename: '改名',
       Location: '位置',
       Latitude: '纬度',
-      Month: '月',
+      Month: '月份',
       Day: '天',
       Hour: '小时',
       Daylight: '白天长度',
@@ -785,6 +785,11 @@ export const i18n_zh_cn = {
 
     weatherPanel: {
       SunshineHours: '日照时间',
+    },
+
+    diurnalTemperaturePanel: {
+      SelectModel: '选择模型',
+      Sinusoidal: '正弦函数',
     },
 
     yearlyLightSensorPanel: {

@@ -155,7 +155,7 @@ const DailyParabolicDishYieldPanel = ({ city }: DailyParabolicDishYieldPanelProp
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [parabolicDishCount]);
 
-  const labelX = 'Hour';
+  const labelX = i18n.t('word.Hour', lang);
   const labelY = i18n.t('parabolicDishYieldPanel.YieldPerHour', lang);
   let totalTooltip = '';
   if (individualOutputs) {
@@ -200,6 +200,7 @@ const DailyParabolicDishYieldPanel = ({ city }: DailyParabolicDishYieldPanelProp
             dataSource={dailyYield}
             labels={parabolicDishLabels}
             height={responsiveHeight}
+            dataKeyAxisX={'Hour'}
             labelX={labelX}
             labelY={labelY}
             unitY={i18n.t('word.kWh', lang)}

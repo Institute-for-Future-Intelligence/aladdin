@@ -804,6 +804,11 @@ export const i18n_en = {
       SunshineHours: 'Sunshine',
     },
 
+    diurnalTemperaturePanel: {
+      SelectModel: 'Select Model',
+      Sinusoidal: 'Sinusoidal',
+    },
+
     yearlyLightSensorPanel: {
       SkyClearness: 'Clearness',
       ShowDaylightResults: 'Show daylight results',

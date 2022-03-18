@@ -8,6 +8,7 @@ export interface WeatherModel {
   latitude: number;
   longitude: number;
   elevation: number;
+  highestTemperatureTimeInMinutes: number;
   lowestTemperatures: number[];
   highestTemperatures: number[];
   sunshineHours: number[];

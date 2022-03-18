@@ -3,7 +3,7 @@
  */
 
 import { ElementModel } from '../models/ElementModel';
-import { Discretization, FoundationTexture, HumanName, ObjectType } from '../types';
+import { Discretization, DiurnalTemperatureModel, FoundationTexture, HumanName, ObjectType } from '../types';
 import { FoundationModel } from '../models/FoundationModel';
 import { SensorModel } from '../models/SensorModel';
 import { WorldModel } from '../models/WorldModel';
@@ -28,6 +28,7 @@ export class DefaultWorldModel implements WorldModel {
   dustLoss: number;
   pvGridCellSize: number;
   discretization: Discretization;
+  diurnalTemperatureModel: DiurnalTemperatureModel;
   solarPanelVisibilityGridCellSize: number;
   solarRadiationHeatmapGridCellSize: number;
 
@@ -64,6 +65,7 @@ export class DefaultWorldModel implements WorldModel {
     this.dustLoss = 0.05;
     this.pvGridCellSize = 0.5;
     this.discretization = Discretization.APPROXIMATE;
+    this.diurnalTemperatureModel = DiurnalTemperatureModel.Sinusoidal;
     this.solarPanelVisibilityGridCellSize = 0.2;
     this.solarRadiationHeatmapGridCellSize = 0.5;
 
@@ -99,6 +101,7 @@ export class DefaultWorldModel implements WorldModel {
     worldModel.dustLoss = 0.05;
     worldModel.pvGridCellSize = 0.5;
     worldModel.discretization = Discretization.APPROXIMATE;
+    worldModel.diurnalTemperatureModel = DiurnalTemperatureModel.Sinusoidal;
     worldModel.solarPanelVisibilityGridCellSize = 0.2;
     worldModel.solarRadiationHeatmapGridCellSize = 0.5;
 

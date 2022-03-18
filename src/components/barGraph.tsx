@@ -17,11 +17,13 @@ import {
 } from 'recharts';
 import { PRESET_COLORS } from '../constants';
 import { GraphDataType, DatumEntry } from '../types';
+import BarGraphMenu from './barGraphMenu';
 
 export interface BarGraphProps {
   type: GraphDataType;
   dataSource: DatumEntry[];
   height: number;
+  dataKeyAxisX?: string;
   labelX?: string;
   labelY?: string;
   unitX?: string;
@@ -37,6 +39,7 @@ const BarGraph = ({
   type,
   dataSource,
   height,
+  dataKeyAxisX,
   labelX,
   labelY,
   unitX,
@@ -152,7 +155,7 @@ const BarGraph = ({
                   stroke={'rgba(128, 128, 128, 0.3)'}
                 />
                 <ReferenceLine x={referenceX} stroke="orange" strokeWidth={2} />
-                <XAxis dataKey={labelX}>
+                <XAxis dataKey={dataKeyAxisX ?? labelX}>
                   <Label value={labelX + (unitX ? ' (' + unitX + ')' : '')} offset={0} position="bottom" />
                 </XAxis>
                 <YAxis domain={[yMin, yMax]}>
@@ -176,6 +179,16 @@ const BarGraph = ({
                 )}
               </BarChart>
             </ResponsiveContainer>
+            <BarGraphMenu
+              horizontalGrid={horizontalGridLines}
+              verticalGrid={verticalGridLines}
+              changeHorizontalGrid={(checked) => {
+                setHorizontalGridLines(checked);
+              }}
+              changeVerticalGrid={(checked) => {
+                setVerticalGridLines(checked);
+              }}
+            />
           </div>
         </div>
       )}

@@ -155,7 +155,7 @@ const DailyHeliostatYieldPanel = ({ city }: DailyHeliostatYieldPanelProps) => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [heliostatCount]);
 
-  const labelX = 'Hour';
+  const labelX = i18n.t('word.Hour', lang);
   const labelY = i18n.t('heliostatYieldPanel.YieldPerHour', lang);
   let totalTooltip = '';
   if (individualOutputs) {
@@ -199,6 +199,7 @@ const DailyHeliostatYieldPanel = ({ city }: DailyHeliostatYieldPanelProps) => {
             dataSource={dailyYield}
             labels={heliostatLabels}
             height={responsiveHeight}
+            dataKeyAxisX={'Hour'}
             labelX={labelX}
             labelY={labelY}
             unitY={i18n.t('word.kWh', lang)}

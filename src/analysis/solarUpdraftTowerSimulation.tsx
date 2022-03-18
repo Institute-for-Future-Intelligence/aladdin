@@ -229,13 +229,24 @@ const SolarUpdraftTowerSimulation = ({ city }: SolarUpdraftTowerSimulationProps)
                 if (weather) {
                   date.setHours(i);
                   const t = computeOutsideTemperature(date, weather.lowestTemperatures, weather.highestTemperatures);
-                  currentTemperature = getOutsideTemperatureAtMinute(t.high, t.low, Util.minutesIntoDay(date));
+                  currentTemperature = getOutsideTemperatureAtMinute(
+                    t.high,
+                    t.low,
+                    world.diurnalTemperatureModel,
+                    weather.highestTemperatureTimeInMinutes,
+                    sunMinutes,
+                    Util.minutesIntoDay(date),
+                  );
                 }
               }
               outputs[i] *= timeFactor * transmissivity;
-              const temperature = currentTemperature * (1 + Math.cbrt((outputs[i] * outputs[i]) / (a * a * c)));
+              const temperature =
+                (currentTemperature + 273) * (1 + Math.cbrt((outputs[i] * outputs[i]) / (a * a * c))) - 273;
+              console.log(i, temperature, currentTemperature);
               const speed =
-                temperature > currentTemperature ? Math.sqrt(c * (temperature / currentTemperature - 1)) : 0;
+                temperature > currentTemperature
+                  ? Math.sqrt(c * ((temperature + 273) / (currentTemperature + 273) - 1))
+                  : 0;
               outputs[i] = b * speed * speed * speed;
               airTemperatures[i] = temperature;
               windSpeeds[i] = speed;

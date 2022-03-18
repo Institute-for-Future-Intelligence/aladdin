@@ -157,7 +157,7 @@ const YearlyParabolicDishYieldPanel = ({ city }: YearlyParabolicDishYieldPanelPr
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [parabolicDishCount]);
 
-  const labelX = 'Month';
+  const labelX = i18n.t('word.Month', lang);
   const labelY = i18n.t('parabolicDishYieldPanel.Yield', lang);
   let totalTooltip = '';
   if (individualOutputs) {
@@ -203,6 +203,7 @@ const YearlyParabolicDishYieldPanel = ({ city }: YearlyParabolicDishYieldPanelPr
             dataSource={yearlyYield.map(({ Daylight, Clearness, ...item }) => item)}
             labels={parabolicDishLabels}
             height={responsiveHeight}
+            dataKeyAxisX={'Month'}
             labelX={labelX}
             labelY={labelY}
             unitY={i18n.t('word.kWh', lang)}

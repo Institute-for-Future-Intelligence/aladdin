@@ -131,7 +131,7 @@ const YearlyLightSensorPanel = ({ city }: YearlyLightSensorPanelProps) => {
     });
   };
 
-  const labelX = 'Month';
+  const labelX = i18n.t('word.Month', lang);
   const labelY = i18n.t('word.Radiation', lang);
 
   return (
@@ -168,6 +168,7 @@ const YearlyLightSensorPanel = ({ city }: YearlyLightSensorPanelProps) => {
               chartType={ChartType.Area}
               dataSource={sensorData.map((e) => ({ Month: e.Month, Daylight: e.Daylight }))}
               height={responsiveHeight}
+              dataKeyAxisX={'Month'}
               labelX={labelX}
               labelY={i18n.t('word.Daylight', lang)}
               unitY={i18n.t('word.Hour', lang)}
@@ -182,6 +183,7 @@ const YearlyLightSensorPanel = ({ city }: YearlyLightSensorPanelProps) => {
               type={GraphDataType.ClearnessData}
               dataSource={sensorData.map((e) => ({ Month: e.Month, Clearness: e.Clearness }))}
               height={responsiveHeight}
+              dataKeyAxisX={'Month'}
               labelX={labelX}
               labelY={i18n.t('yearlyLightSensorPanel.SkyClearness', lang)}
               unitY={'%'}
@@ -199,6 +201,7 @@ const YearlyLightSensorPanel = ({ city }: YearlyLightSensorPanelProps) => {
               dataSource={sensorData.map(({ Daylight, Clearness, ...item }) => item)}
               labels={sensorLabels}
               height={responsiveHeight}
+              dataKeyAxisX={'Month'}
               labelX={labelX}
               labelY={labelY}
               unitY={'kWh/m²/' + i18n.t('word.Day', lang)}

@@ -2,7 +2,7 @@
  * @Copyright 2021-2022. Institute for Future Intelligence, Inc.
  */
 
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 import { useStore } from '../stores/common';
 import * as Selector from '../stores/selector';
 import styled from 'styled-components';
@@ -13,6 +13,7 @@ import { computeOutsideTemperature, getOutsideTemperatureAtMinute } from '../ana
 import dayjs from 'dayjs';
 import { Util } from '../Util';
 import i18n from '../i18n/i18n';
+import { computeSunriseAndSunsetInMinutes } from '../analysis/sunTools';
 
 const Container = styled.div`
   position: absolute;
@@ -57,6 +58,7 @@ const SiteInfoPanel = ({ city }: SiteInfoPanelProps) => {
   const address = useStore(Selector.world.address);
   const latitude = useStore(Selector.world.latitude);
   const longitude = useStore(Selector.world.longitude);
+  const diurnalTemperatureModel = useStore(Selector.world.diurnalTemperatureModel);
   const weatherData = useStore(Selector.weatherData);
   const sunlightDirection = useStore(Selector.sunlightDirection);
 
@@ -72,12 +74,23 @@ const SiteInfoPanel = ({ city }: SiteInfoPanelProps) => {
       if (weather) {
         const t = computeOutsideTemperature(now, weather.lowestTemperatures, weather.highestTemperatures);
         setDailyTemperatures(t);
-        const c = getOutsideTemperatureAtMinute(t.high, t.low, Util.minutesIntoDay(now));
+        const c = getOutsideTemperatureAtMinute(
+          t.high,
+          t.low,
+          diurnalTemperatureModel,
+          weather.highestTemperatureTimeInMinutes,
+          sunMinutes,
+          Util.minutesIntoDay(now),
+        );
         setCurrentTemperature(c);
       }
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [city, dateString]);
+
+  const sunMinutes = useMemo(() => {
+    return computeSunriseAndSunsetInMinutes(now, latitude);
+  }, [dateString, latitude]);
 
   const color = daytime ? 'navajowhite' : 'antiquewhite';
 

@@ -98,7 +98,14 @@ const SolarPanelSimulation = ({ city }: SolarPanelSimulationProps) => {
       if (weather) {
         const n = new Date(world.date);
         const t = computeOutsideTemperature(n, weather.lowestTemperatures, weather.highestTemperatures);
-        const c = getOutsideTemperatureAtMinute(t.high, t.low, Util.minutesIntoDay(n));
+        const c = getOutsideTemperatureAtMinute(
+          t.high,
+          t.low,
+          world.diurnalTemperatureModel,
+          weather.highestTemperatureTimeInMinutes,
+          sunMinutes,
+          Util.minutesIntoDay(n),
+        );
         setCurrentTemperature(c);
       }
     }

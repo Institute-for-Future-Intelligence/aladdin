@@ -3,7 +3,7 @@
  */
 
 import { GroundModel } from './GroundModel';
-import { Discretization } from '../types';
+import { Discretization, DiurnalTemperatureModel } from '../types';
 
 export interface WorldModel {
   name: string;
@@ -12,6 +12,7 @@ export interface WorldModel {
   longitude: number;
   address: string;
   ground: GroundModel;
+  diurnalTemperatureModel: DiurnalTemperatureModel;
 
   // Linear attenuation coefficient (µ) is a constant that describes the fraction of attenuated
   // incident photons in a light beam per unit thickness of a material. It includes all possible

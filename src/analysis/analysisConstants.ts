@@ -8,8 +8,8 @@ export const SOLAR_CONSTANT = 1.361;
 // in m/s^2
 export const GRAVITATIONAL_ACCELERATION = 9.8067;
 
-// in kJ/(kg*K) (room temperature)
-export const AIR_ISOBARIC_SPECIFIC_HEAT = 1.012;
+// in kWh/(kg*K) (room temperature)
+export const AIR_ISOBARIC_SPECIFIC_HEAT = 1.012 / 3600;
 
 // in kg/m^3 (at 101.325 kPa and 15 °C)
 export const AIR_DENSITY = 1.225;

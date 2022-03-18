@@ -155,7 +155,7 @@ const DailyFresnelReflectorYieldPanel = ({ city }: DailyFresnelReflectorYieldPan
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [fresnelReflectorCount]);
 
-  const labelX = 'Hour';
+  const labelX = i18n.t('word.Hour', lang);
   const labelY = i18n.t('fresnelReflectorYieldPanel.YieldPerHour', lang);
   let totalTooltip = '';
   if (individualOutputs) {
@@ -200,6 +200,7 @@ const DailyFresnelReflectorYieldPanel = ({ city }: DailyFresnelReflectorYieldPan
             dataSource={dailyYield}
             labels={fresnelReflectorLabels}
             height={responsiveHeight}
+            dataKeyAxisX={'Hour'}
             labelX={labelX}
             labelY={labelY}
             unitY={i18n.t('word.kWh', lang)}

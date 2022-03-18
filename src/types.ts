@@ -96,6 +96,11 @@ export enum Theme {
   Grassland = 'Grassland',
 }
 
+export enum DiurnalTemperatureModel {
+  Sinusoidal = 1,
+  PartonLogan = 2, // https://www.sciencedirect.com/science/article/abs/pii/0002157181901059
+}
+
 export enum Language {
   English = 'English',
   ChineseSimplified = '简体中文',

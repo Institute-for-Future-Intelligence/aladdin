@@ -70,7 +70,6 @@ import YearlyHeliostatYieldPanel from './panels/yearlyHeliostatYieldPanel';
 import HeliostatSimulation from './analysis/heliostatSimulation';
 import SolarUpdraftTowerSimulation from './analysis/solarUpdraftTowerSimulation';
 import DailySolarUpdraftTowerYieldPanel from './panels/dailySolarUpdraftTowerYieldPanel';
-import { showDiurnalTemperaturePanel } from './stores/selector/viewState';
 import DiurnalTemperaturePanel from './panels/diurnalTemperaturePanel';
 
 export interface AppCreatorProps {

@@ -125,7 +125,7 @@ const DailyLightSensorPanel = ({ city }: DailyLightSensorPanelProps) => {
     });
   };
 
-  const labelX = 'Hour';
+  const labelX = i18n.t('word.Hour', lang);
   const labelY = i18n.t('word.Radiation', lang);
 
   return (
@@ -163,6 +163,7 @@ const DailyLightSensorPanel = ({ city }: DailyLightSensorPanelProps) => {
             dataSource={sensorData}
             labels={sensorLabels}
             height={responsiveHeight}
+            dataKeyAxisX={'Hour'}
             labelX={labelX}
             labelY={labelY}
             unitY={'kWh/m²/' + i18n.t('word.Day', lang)}
