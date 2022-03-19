@@ -19,6 +19,7 @@ import {
   AIR_ISOBARIC_SPECIFIC_HEAT,
   AirMass,
   GRAVITATIONAL_ACCELERATION,
+  KELVIN_AT_ZERO_CELSIUS,
   MINUTES_OF_DAY,
 } from './analysisConstants';
 import { MONTHS, UNIT_VECTOR_POS_Z, ZERO_TOLERANCE } from '../constants';
@@ -214,40 +215,41 @@ const SolarUpdraftTowerSimulation = ({ city }: SolarUpdraftTowerSimulationProps)
           const turbineEfficiency = f.solarUpdraftTower.turbineEfficiency ?? 0.9;
           const dischargeCoefficient = f.solarUpdraftTower.dischargeCoefficient ?? 0.65;
           const chimneyArea = Math.PI * f.solarUpdraftTower.chimneyRadius * f.solarUpdraftTower.chimneyRadius;
-          const a = AIR_DENSITY * AIR_ISOBARIC_SPECIFIC_HEAT * chimneyArea;
-          const b = (0.5 * dischargeCoefficient * turbineEfficiency * AIR_DENSITY * chimneyArea) / 1000; // convert to kWh
-          const c = 2 * GRAVITATIONAL_ACCELERATION * f.solarUpdraftTower.chimneyHeight;
+          const dca = AIR_DENSITY * AIR_ISOBARIC_SPECIFIC_HEAT * chimneyArea;
+          const speedFactor = 2 * GRAVITATIONAL_ACCELERATION * f.solarUpdraftTower.chimneyHeight;
           const airTemperatures = dailyAirTemperaturesMapRef.current.get(e.id + '-sut');
           const windSpeeds = dailyWindSpeedsMapRef.current.get(e.id + '-sut');
           const outputs = dailyOutputsMapRef.current.get(e.id + '-sut');
           if (outputs && airTemperatures && windSpeeds) {
+            const powerFactor = 0.5 * dischargeCoefficient * turbineEfficiency * AIR_DENSITY * chimneyArea;
             const date = new Date(world.date);
+            let weather, temp;
+            if (city) {
+              weather = getWeather(city);
+              temp = computeOutsideTemperature(date, weather.lowestTemperatures, weather.highestTemperatures);
+            }
             for (let i = 0; i < outputs.length; i++) {
-              let currentTemperature = 20;
-              if (city) {
-                const weather = getWeather(city);
-                if (weather) {
-                  date.setHours(i);
-                  const t = computeOutsideTemperature(date, weather.lowestTemperatures, weather.highestTemperatures);
-                  currentTemperature = getOutsideTemperatureAtMinute(
-                    t.high,
-                    t.low,
-                    world.diurnalTemperatureModel,
-                    weather.highestTemperatureTimeInMinutes,
-                    sunMinutes,
-                    Util.minutesIntoDay(date),
-                  );
-                }
+              let ambientTemperature = 20;
+              if (weather && temp) {
+                date.setHours(i);
+                ambientTemperature = getOutsideTemperatureAtMinute(
+                  temp.high,
+                  temp.low,
+                  world.diurnalTemperatureModel,
+                  weather.highestTemperatureTimeInMinutes,
+                  sunMinutes,
+                  Util.minutesIntoDay(date),
+                );
               }
-              outputs[i] *= timeFactor * transmissivity;
-              const temperature =
-                (currentTemperature + 273) * (1 + Math.cbrt((outputs[i] * outputs[i]) / (a * a * c))) - 273;
-              console.log(i, temperature, currentTemperature);
+              outputs[i] *= timeFactor * transmissivity * 1000; // from kW to W
+              const k0 = ambientTemperature + KELVIN_AT_ZERO_CELSIUS;
+              const a = outputs[i] / (dca * k0);
+              const temperature = k0 * (1 + Math.cbrt((a * a) / speedFactor)) - KELVIN_AT_ZERO_CELSIUS;
               const speed =
-                temperature > currentTemperature
-                  ? Math.sqrt(c * ((temperature + 273) / (currentTemperature + 273) - 1))
+                temperature > ambientTemperature
+                  ? Math.sqrt(speedFactor * ((temperature + KELVIN_AT_ZERO_CELSIUS) / k0 - 1))
                   : 0;
-              outputs[i] = b * speed * speed * speed;
+              outputs[i] = powerFactor * speed * speed * speed * 0.001; // from W to kW
               airTemperatures[i] = temperature;
               windSpeeds[i] = speed;
             }
@@ -619,6 +621,8 @@ const SolarUpdraftTowerSimulation = ({ city }: SolarUpdraftTowerSimulationProps)
     const z0 = foundation.lz + solarUpdraftTower.collectorHeight;
     const v = new Vector3(0, 0, z0);
     const rsq = radius * radius;
+    let countPoints = 0;
+    const area = Math.PI * solarUpdraftTower.collectorRadius * solarUpdraftTower.collectorRadius;
     for (let i = 0; i < 24; i++) {
       for (let j = 0; j < world.timesPerHour; j++) {
         // a shift of 30 minutes minute half of the interval ensures the symmetry of the result around noon
@@ -634,11 +638,13 @@ const SolarUpdraftTowerSimulation = ({ city }: SolarUpdraftTowerSimulationProps)
             peakRadiation,
           );
           const dot = normal.dot(sunDirection);
+          countPoints = 0;
           for (let kx = 0; kx < max; kx++) {
             v.x = x0 + kx * cellSize;
             for (let ky = 0; ky < max; ky++) {
               v.y = y0 + ky * cellSize;
               if (v.x * v.x + v.y * v.y > rsq) continue;
+              countPoints++;
               result[i] += indirectRadiation;
               if (dot > 0) {
                 if (!inShadow(foundation.id, v, sunDirection)) {
@@ -649,13 +655,15 @@ const SolarUpdraftTowerSimulation = ({ city }: SolarUpdraftTowerSimulationProps)
           }
         }
       }
+      if (countPoints) result[i] /= countPoints;
+      result[i] *= area;
     }
   };
 
   // apply clearness and convert the unit of time step from minute to hour so that we get kWh
   // (divided by times per hour as the radiation is added up that many times in an hour)
   const getTimeFactor = () => {
-    const daylight = sunMinutes.daylight() / 60;
+    const daylight = sunMinutes.daylight() / 60; // in hours
     return daylight > ZERO_TOLERANCE ? weather.sunshineHours[now.getMonth()] / (30 * daylight * timesPerHour) : 0;
   };
 

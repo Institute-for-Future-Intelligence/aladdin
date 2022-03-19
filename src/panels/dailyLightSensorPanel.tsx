@@ -166,7 +166,7 @@ const DailyLightSensorPanel = ({ city }: DailyLightSensorPanelProps) => {
             dataKeyAxisX={'Hour'}
             labelX={labelX}
             labelY={labelY}
-            unitY={'kWh/m²/' + i18n.t('word.Day', lang)}
+            unitY={'kWh/m²'}
             yMin={0}
             curveType={'linear'}
             fractionDigits={2}

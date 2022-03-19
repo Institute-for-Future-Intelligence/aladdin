@@ -277,6 +277,7 @@ export const i18n_zh_cn = {
       solarUpdraftTower: {
         AnalyzeDailyYield: '分析当天产出',
         AnalyzeYearlyYield: '分析全年产出',
+        SolarUpdraftTowerSimulationNoAnimation: '若无移动部件则省略动画',
       },
       tutorialsSubMenu: '教程',
       solarEnergyScienceSubMenu: '太阳能科学',

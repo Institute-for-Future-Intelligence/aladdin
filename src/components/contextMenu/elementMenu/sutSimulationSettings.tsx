@@ -3,17 +3,20 @@
  */
 
 import React from 'react';
-import { InputNumber, Menu, Select, Space } from 'antd';
+import { InputNumber, Menu, Select, Space, Switch } from 'antd';
 import { useStore } from '../../../stores/common';
 import * as Selector from '../../../stores/selector';
 import i18n from '../../../i18n/i18n';
+import { Util } from '../../../Util';
 
 const SutSimulationSettings = () => {
   const setCommonStore = useStore(Selector.set);
+  const elements = useStore.getState().elements;
   const language = useStore(Selector.language);
   const sutTimesPerHour = useStore(Selector.world.sutTimesPerHour);
   const sutDaysPerYear = useStore(Selector.world.sutDaysPerYear);
   const sutGridCellSize = useStore(Selector.world.sutGridCellSize);
+  const noAnimation = useStore(Selector.world.noAnimationForSolarUpdraftTowerSimulation);
 
   const lang = { lng: language };
   const { SubMenu } = Menu;
@@ -80,6 +83,21 @@ const SutSimulationSettings = () => {
           />
           <Space style={{ paddingLeft: '10px' }}>{i18n.t('word.MeterAbbreviation', lang)}</Space>
         </Menu.Item>
+        {!Util.hasMovingParts(elements) && (
+          <Menu.Item key={'solar-updraft-tower-simulation-no-animation'}>
+            <Space style={{ width: '280px' }}>
+              {i18n.t('menu.solarUpdraftTower.SolarUpdraftTowerSimulationNoAnimation', lang) + ':'}
+            </Space>
+            <Switch
+              checked={noAnimation}
+              onChange={(checked) => {
+                setCommonStore((state) => {
+                  state.world.noAnimationForSolarUpdraftTowerSimulation = checked;
+                });
+              }}
+            />
+          </Menu.Item>
+        )}
       </Menu>
     </SubMenu>
   );

@@ -278,6 +278,7 @@ export const i18n_en = {
       solarUpdraftTower: {
         AnalyzeDailyYield: 'Analyze Daily Yield',
         AnalyzeYearlyYield: 'Analyze Yearly Yield',
+        SolarUpdraftTowerSimulationNoAnimation: 'No Animation for Solar Updraft Tower Simulation',
       },
       tutorialsSubMenu: 'Tutorials',
       solarEnergyScienceSubMenu: 'Solar Science',
