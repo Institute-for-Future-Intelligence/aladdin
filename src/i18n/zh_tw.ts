@@ -283,6 +283,7 @@ export const i18n_zh_tw = {
       solarEnergyScienceSubMenu: '太陽能科學',
       photovoltaicSolarPowerSubMenu: '光伏發電',
       concentratedSolarPowerSubMenu: '光熱發電',
+      otherTypesOfSolarPowerSubMenu: '其它類型的太陽能發電',
       tutorials: {
         SunAngles: '太陽相對於地面觀察者的角度',
         InsolationAndClimate: '太陽輻射和氣候的關係',

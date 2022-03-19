@@ -67,6 +67,7 @@ const SolarUpdraftTowerSimulation = ({ city }: SolarUpdraftTowerSimulationProps)
   const requestRef = useRef<number>(0);
   const simulationCompletedRef = useRef<boolean>(false);
   const originalDateRef = useRef<Date>(new Date(world.date));
+  const dailyAmbientTemperaturesRef = useRef<number[]>(new Array(24).fill(0));
   const dailyAirTemperaturesMapRef = useRef<Map<string, number[]>>(new Map<string, number[]>());
   const dailyWindSpeedsMapRef = useRef<Map<string, number[]>>(new Map<string, number[]>());
   const dailyOutputsMapRef = useRef<Map<string, number[]>>(new Map<string, number[]>());
@@ -240,6 +241,7 @@ const SolarUpdraftTowerSimulation = ({ city }: SolarUpdraftTowerSimulationProps)
                   sunMinutes,
                   Util.minutesIntoDay(date),
                 );
+                dailyAmbientTemperaturesRef.current[i] = ambientTemperature;
               }
               outputs[i] *= timeFactor * transmissivity * 1000; // from kW to W
               const k0 = ambientTemperature + KELVIN_AT_ZERO_CELSIUS;
@@ -300,6 +302,7 @@ const SolarUpdraftTowerSimulation = ({ city }: SolarUpdraftTowerSimulationProps)
     for (let i = 0; i < 24; i++) {
       const datum: DatumEntry = {};
       datum['Hour'] = i;
+      datum['Ambient Temperature'] = dailyAmbientTemperaturesRef.current[i];
       for (let k = 1; k <= index; k++) {
         let key = 'Temperature Tower' + k;
         datum['Temperature ' + labels[k - 1]] = map.get(key)?.[i];

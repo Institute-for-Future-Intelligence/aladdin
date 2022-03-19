@@ -25,6 +25,7 @@ export interface BiaxialLineGraphProps {
   type2: GraphDataType;
   dataSource: DatumEntry[];
   height: number;
+  dataKeyAxisX?: string;
   labelX?: string;
   labelY1?: string;
   labelY2?: string;
@@ -46,6 +47,7 @@ const BiaxialLineGraph = ({
   type2,
   dataSource,
   height,
+  dataKeyAxisX,
   labelX,
   labelY1,
   labelY2,
@@ -73,7 +75,8 @@ const BiaxialLineGraph = ({
     if (!dataSource || dataSource.length === 0) {
       return;
     }
-    const len = Array.isArray(dataSource) ? Object.keys(dataSource[0]).length - 1 : Object.keys(dataSource).length - 1;
+    let len = Array.isArray(dataSource) ? Object.keys(dataSource[0]).length - 1 : Object.keys(dataSource).length - 1;
+    len--; // subtract one because the first one is the ambient temperature, which is shared among SUTs
     if (lineCount !== len / 2) {
       setLineCount(len / 2);
     }
@@ -82,6 +85,21 @@ const BiaxialLineGraph = ({
   const getLines = useMemo(() => {
     const lines = [];
     let defaultSymbol;
+    lines.push(
+      <Line
+        yAxisId="left"
+        key={'ambient-temperature'}
+        type={curveType}
+        name={'Ambient Temperature'}
+        dataKey={'Ambient Temperature'}
+        stroke={PRESET_COLORS[0]}
+        strokeDasharray={'5 5'}
+        opacity={0.5}
+        strokeWidth={lineWidth}
+        dot={false}
+        isAnimationActive={false}
+      />,
+    );
     for (let i = 0; i < lineCount; i++) {
       let name = '';
       switch (type1) {
@@ -186,7 +204,7 @@ const BiaxialLineGraph = ({
                   stroke={'rgba(128, 128, 128, 0.3)'}
                 />
                 <ReferenceLine yAxisId="left" x={referenceX} stroke="orange" strokeWidth={2} />
-                <XAxis dataKey={labelX}>
+                <XAxis dataKey={dataKeyAxisX ?? labelX}>
                   <Label value={labelX + (unitX ? ' (' + unitX + ')' : '')} offset={0} position="bottom" />
                 </XAxis>
                 <YAxis domain={[yMin1, yMax1]} yAxisId="left">

@@ -33,7 +33,7 @@ const ColumnWrapper = styled.div`
   right: 0;
   top: 0;
   width: 640px;
-  height: 500px;
+  height: 550px;
   padding-bottom: 10px;
   border: 2px solid gainsboro;
   border-radius: 10px 10px 10px 10px;
@@ -157,7 +157,7 @@ const DailySolarUpdraftTowerYieldPanel = ({ city }: DailySolarUpdraftTowerYieldP
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [towerCount]);
 
-  const labelHour = 'Hour';
+  const labelHour = i18n.t('word.Hour', lang);
   const labelYield = i18n.t('updraftTowerYieldPanel.YieldPerHour', lang);
   const labelTemperature = i18n.t('updraftTowerYieldPanel.ChimneyAirTemperature', lang);
   const labelSpeed = i18n.t('updraftTowerYieldPanel.ChimneyWindSpeed', lang);
@@ -204,6 +204,7 @@ const DailySolarUpdraftTowerYieldPanel = ({ city }: DailySolarUpdraftTowerYieldP
             dataSource={dailyYield}
             labels={updraftTowerLabels}
             height={responsiveHeight}
+            dataKeyAxisX={'Hour'}
             labelX={labelHour}
             labelY={labelYield}
             unitY={i18n.t('word.kWh', lang)}
@@ -218,6 +219,7 @@ const DailySolarUpdraftTowerYieldPanel = ({ city }: DailySolarUpdraftTowerYieldP
             type2={GraphDataType.DailyUpdraftTowerWindSpeed}
             dataSource={dailyResults}
             height={responsiveHeight}
+            dataKeyAxisX={'Hour'}
             labelX={labelHour}
             labelY1={labelTemperature}
             labelY2={labelSpeed}

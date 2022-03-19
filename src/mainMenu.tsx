@@ -1544,6 +1544,9 @@ const MainMenu = ({ viewOnly, set2DView, resetView, zoomView, canvas }: MainMenu
           <Menu.Item key="effect_solar_power_tower_height" onClick={loadFile}>
             {i18n.t('menu.tutorials.EffectSolarPowerTowerHeight', lang)}
           </Menu.Item>
+        </SubMenu>
+        {/* other types of solar power */}
+        <SubMenu key={'other-types-of-solar-power'} title={i18n.t('menu.otherTypesOfSolarPowerSubMenu', lang)}>
           <Menu.Item key="solar_updraft_tower" onClick={loadFile}>
             {i18n.t('menu.tutorials.SolarUpdraftTower', lang)}
           </Menu.Item>

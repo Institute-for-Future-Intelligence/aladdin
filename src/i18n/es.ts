@@ -284,6 +284,7 @@ export const i18n_es = {
       solarEnergyScienceSubMenu: 'Solar Science',
       photovoltaicSolarPowerSubMenu: 'Photovoltaic Solar Power',
       concentratedSolarPowerSubMenu: 'Concentrated Solar Power',
+      otherTypesOfSolarPowerSubMenu: 'Other Types of Solar Power',
       tutorials: {
         SunAngles: 'Ángulos solares relativos a un observador en el suelo',
         InsolationAndClimate: 'Insolation and Climate',
