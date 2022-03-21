@@ -14,6 +14,8 @@ export const address = (state: CommonStoreState) => state.world.address;
 
 export const airAttenuationCoefficient = (state: CommonStoreState) => state.world.airAttenuationCoefficient;
 
+export const airConvectiveCoefficient = (state: CommonStoreState) => state.world.airConvectiveCoefficient;
+
 export const timesPerHour = (state: CommonStoreState) => state.world.timesPerHour;
 
 export const daysPerYear = (state: CommonStoreState) => state.world.daysPerYear;

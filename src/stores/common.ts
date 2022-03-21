@@ -318,6 +318,8 @@ export interface CommonStoreState {
   updateSolarUpdraftTowerCollectorRadiusForAll: (radius: number) => void;
   updateSolarUpdraftTowerCollectorTransmissivityById: (id: string, transmissivity: number) => void;
   updateSolarUpdraftTowerCollectorTransmissivityForAll: (transmissivity: number) => void;
+  updateSolarUpdraftTowerCollectorEmissivityById: (id: string, emissivity: number) => void;
+  updateSolarUpdraftTowerCollectorEmissivityForAll: (emissivity: number) => void;
   updateSolarUpdraftTowerDischargeCoefficientById: (id: string, coefficient: number) => void;
   updateSolarUpdraftTowerDischargeCoefficientForAll: (coefficient: number) => void;
   updateSolarUpdraftTowerTurbineEfficiencyById: (id: string, efficiency: number) => void;
@@ -2338,6 +2340,33 @@ export const useStore = create<CommonStoreState>(
                   if (f.solarStructure === SolarStructure.UpdraftTower) {
                     if (!f.solarUpdraftTower) f.solarUpdraftTower = {} as SolarUpdraftTowerModel;
                     f.solarUpdraftTower.collectorTransmissivity = transmissivity;
+                  }
+                }
+              }
+            });
+          },
+          updateSolarUpdraftTowerCollectorEmissivityById(id, emissivity) {
+            immerSet((state: CommonStoreState) => {
+              for (const e of state.elements) {
+                if (e.type === ObjectType.Foundation && e.id === id && !e.locked) {
+                  const f = e as FoundationModel;
+                  if (f.solarStructure === SolarStructure.UpdraftTower) {
+                    if (!f.solarUpdraftTower) f.solarUpdraftTower = {} as SolarUpdraftTowerModel;
+                    f.solarUpdraftTower.collectorEmissivity = emissivity;
+                  }
+                  break;
+                }
+              }
+            });
+          },
+          updateSolarUpdraftTowerCollectorEmissivityForAll(emissivity) {
+            immerSet((state: CommonStoreState) => {
+              for (const e of state.elements) {
+                if (e.type === ObjectType.Foundation && !e.locked) {
+                  const f = e as FoundationModel;
+                  if (f.solarStructure === SolarStructure.UpdraftTower) {
+                    if (!f.solarUpdraftTower) f.solarUpdraftTower = {} as SolarUpdraftTowerModel;
+                    f.solarUpdraftTower.collectorEmissivity = emissivity;
                   }
                 }
               }

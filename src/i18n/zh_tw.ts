@@ -344,6 +344,7 @@ export const i18n_zh_tw = {
       ThemeForest: '森林',
       ThemeGrassland: '草原',
       SunlightAttenuationCoefficientInAir: '陽光在空氣中傳播的衰減係數',
+      ConvectiveCoefficientOfAir: '空氣對流傳熱係數',
     },
 
     groundMenu: {
@@ -436,6 +437,7 @@ export const i18n_zh_tw = {
       SolarUpdraftTowerCollectorHeight: '太陽能上升氣流塔集熱棚的高度',
       SolarUpdraftTowerCollectorRadius: '太陽能上升氣流塔集熱棚的半徑',
       SolarUpdraftTowerCollectorTransmissivity: '太陽能上升氣流塔集熱棚的透射率',
+      SolarUpdraftTowerCollectorEmissivity: '太陽能上升氣流塔集熱棚的發射率',
       SolarUpdraftTowerDischargeCoefficient: '太陽能上升氣流塔的流量係數',
       SolarUpdraftTowerTurbineEfficiency: '太陽能上升氣流塔的渦輪機效率',
     },

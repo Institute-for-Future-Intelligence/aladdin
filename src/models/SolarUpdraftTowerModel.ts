@@ -13,6 +13,10 @@ export interface SolarUpdraftTowerModel {
   // (don't use transmittance, which is the measured ratio of light at normal incidence)
   collectorTransmissivity?: number;
 
+  // the emissivity of the surface of a material is its effectiveness in emitting energy as thermal radiation.
+  // the default value is 0.95
+  collectorEmissivity?: number;
+
   // usually taken to be from 0.65 to 0.70: https://en.wikipedia.org/wiki/Stack_effect
   dischargeCoefficient?: number;
 

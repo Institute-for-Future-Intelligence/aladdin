@@ -346,6 +346,7 @@ export const i18n_es = {
       ThemeForest: 'Bosque',
       ThemeGrassland: 'Campo',
       SunlightAttenuationCoefficientInAir: 'Sunlight Attenuation Coefficient in Air',
+      ConvectiveCoefficientOfAir: 'Convective Coefficient of Air',
     },
 
     groundMenu: {
@@ -448,6 +449,7 @@ export const i18n_es = {
       SolarUpdraftTowerCollectorHeight: 'Solar Updraft Tower Collector Height',
       SolarUpdraftTowerCollectorRadius: 'Solar Updraft Tower Collector Radius',
       SolarUpdraftTowerCollectorTransmissivity: 'Solar Updraft Tower Collector Transmissivity',
+      SolarUpdraftTowerCollectorEmissivity: 'Solar Updraft Tower Collector Emissivity',
       SolarUpdraftTowerDischargeCoefficient: 'Solar Updraft Tower Discharge Coefficient',
       SolarUpdraftTowerTurbineEfficiency: 'Solar Updraft Tower Turbine Efficiency',
     },

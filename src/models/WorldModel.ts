@@ -21,6 +21,11 @@ export interface WorldModel {
   // simulations to account for the loss in reflecting sunlight to a receiver.
   airAttenuationCoefficient: number;
 
+  // 2.5-20 W/(m^2*K) of air: https://en.wikipedia.org/wiki/Heat_transfer_coefficient
+  // The heat transfer coefficient in thermodynamics is the proportionality constant between the heat flux and the
+  // thermodynamic driving force for the flow of heat (i.e., the temperature difference, ΔT).
+  airConvectiveCoefficient: number;
+
   timesPerHour: number;
   daysPerYear: number;
   dustLoss: number;

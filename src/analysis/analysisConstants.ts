@@ -17,6 +17,9 @@ export const AIR_DENSITY = 1.225;
 // 0 °C in K
 export const KELVIN_AT_ZERO_CELSIUS = 273.15;
 
+// in W/(m^2*K^4) Stefan–Boltzmann constant
+export const STEFAN_BOLTZMANN_CONSTANT = 5.67e-8;
+
 // original ASHRAE_C = [0.058, 0.060, 0.071, 0.097, 0.121, 0.134, 0.136, 0.122, 0.092, 0.073, 0.063, 0.057];
 // http://www.physics.arizona.edu/~cronin/Solar/References/Irradiance%20Models%20and%20Data/WOC01.pdf
 // revised C coefficients found from Iqbal's book

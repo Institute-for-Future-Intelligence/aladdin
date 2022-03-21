@@ -19,6 +19,7 @@ export const SkyMenu = () => {
   const theme = useStore(Selector.viewState.theme);
   const language = useStore(Selector.language);
   const airAttenuationCoefficient = useStore(Selector.world.airAttenuationCoefficient) ?? 0.01;
+  const airConvectiveCoefficient = useStore(Selector.world.airConvectiveCoefficient) ?? 5;
 
   const lang = { lng: language };
 
@@ -44,6 +45,12 @@ export const SkyMenu = () => {
   const setAirAttenuationCoefficient = (value: number) => {
     setCommonStore((state) => {
       state.world.airAttenuationCoefficient = value;
+    });
+  };
+
+  const setAirConvectiveCoefficient = (value: number) => {
+    setCommonStore((state) => {
+      state.world.airConvectiveCoefficient = value;
     });
   };
 
@@ -112,7 +119,7 @@ export const SkyMenu = () => {
 
       <Menu>
         <Menu.Item style={{ paddingLeft: '36px' }} key={'air-attenuation-coefficient'}>
-          <Space style={{ width: '250px' }}>{i18n.t('skyMenu.SunlightAttenuationCoefficientInAir', lang) + ':'}</Space>
+          <Space style={{ width: '260px' }}>{i18n.t('skyMenu.SunlightAttenuationCoefficientInAir', lang) + ':'}</Space>
           <InputNumber
             min={0}
             max={0.1}
@@ -137,6 +144,39 @@ export const SkyMenu = () => {
                 } as UndoableChange;
                 addUndoable(undoableChange);
                 setAirAttenuationCoefficient(newAttenuationCoefficient);
+              }
+            }}
+          />
+        </Menu.Item>
+
+        <Menu.Item style={{ paddingLeft: '36px' }} key={'air-convective-coefficient'}>
+          <Space style={{ width: '260px' }}>
+            {i18n.t('skyMenu.ConvectiveCoefficientOfAir', lang) + ' [W/(m²×K)]:'}
+          </Space>
+          <InputNumber
+            min={2.5}
+            max={20}
+            step={0.1}
+            precision={2}
+            value={airConvectiveCoefficient}
+            onChange={(value) => {
+              if (value) {
+                const oldConvectiveCoefficient = airConvectiveCoefficient;
+                const newConvectiveCoefficient = value;
+                const undoableChange = {
+                  name: 'Set Convective Coefficient of Air',
+                  timestamp: Date.now(),
+                  oldValue: oldConvectiveCoefficient,
+                  newValue: newConvectiveCoefficient,
+                  undo: () => {
+                    setAirConvectiveCoefficient(undoableChange.oldValue as number);
+                  },
+                  redo: () => {
+                    setAirConvectiveCoefficient(undoableChange.newValue as number);
+                  },
+                } as UndoableChange;
+                addUndoable(undoableChange);
+                setAirConvectiveCoefficient(newConvectiveCoefficient);
               }
             }}
           />

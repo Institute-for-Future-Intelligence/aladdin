@@ -36,7 +36,8 @@
     "sutGridCellSize": 5,
     "diurnalTemperatureModel": 2,
     "noAnimationForSolarUpdraftTowerSimulation": true,
-    "noAnimationForSensorDataCollection": true
+    "noAnimationForSensorDataCollection": true,
+    "noAnimationForHeatmapSimulation": true
   },
   "elements": [
     {

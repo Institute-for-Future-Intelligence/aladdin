@@ -41,6 +41,7 @@ import SolarPowerTowerReceiverThermalEfficiencyInput from './solarPowerTowerRece
 import SolarUpdraftTowerCollectorTransmissivityInput from './solarUpdraftTowerCollectorTransmissivityInput';
 import SolarUpdraftTowerDischargeCoefficientInput from './solarUpdraftTowerDischargeCoefficientInput';
 import SolarUpdraftTowerTurbineEfficiencyInput from './solarUpdraftTowerTurbineEfficiencyInput';
+import SolarUpdraftTowerCollectorEmissivityInput from './solarUpdraftTowerCollectorEmissivityInput';
 
 export const FoundationMenu = () => {
   const setCommonStore = useStore(Selector.set);
@@ -93,6 +94,7 @@ export const FoundationMenu = () => {
   const [collectorHeightDialogVisible, setCollectorHeightDialogVisible] = useState(false);
   const [collectorRadiusDialogVisible, setCollectorRadiusDialogVisible] = useState(false);
   const [collectorTransmissivityDialogVisible, setCollectorTransmissivityDialogVisible] = useState(false);
+  const [collectorEmissivityDialogVisible, setCollectorEmissivityDialogVisible] = useState(false);
   const [dischargeCoefficientDialogVisible, setDischargeCoefficientDialogVisible] = useState(false);
   const [turbineEfficiencyDialogVisible, setTurbineEfficiencyDialogVisible] = useState(false);
 
@@ -1023,6 +1025,21 @@ export const FoundationMenu = () => {
               }}
             >
               {i18n.t('solarUpdraftTowerMenu.SolarUpdraftTowerCollectorTransmissivity', lang)} ...
+            </Menu.Item>
+
+            <SolarUpdraftTowerCollectorEmissivityInput
+              dialogVisible={collectorEmissivityDialogVisible}
+              setDialogVisible={setCollectorEmissivityDialogVisible}
+            />
+            <Menu.Item
+              key={'solar-updraft-tower-collector-emissivity'}
+              style={{ paddingLeft: '36px' }}
+              onClick={() => {
+                setApplyCount(0);
+                setCollectorEmissivityDialogVisible(true);
+              }}
+            >
+              {i18n.t('solarUpdraftTowerMenu.SolarUpdraftTowerCollectorEmissivity', lang)} ...
             </Menu.Item>
 
             <SolarUpdraftTowerDischargeCoefficientInput

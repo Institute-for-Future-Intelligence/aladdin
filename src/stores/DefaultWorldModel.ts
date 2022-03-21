@@ -23,6 +23,7 @@ export class DefaultWorldModel implements WorldModel {
   longitude: number;
   address: string;
   airAttenuationCoefficient: number;
+  airConvectiveCoefficient: number;
   timesPerHour: number;
   daysPerYear: number;
   dustLoss: number;
@@ -59,6 +60,7 @@ export class DefaultWorldModel implements WorldModel {
     } as GroundModel;
 
     this.airAttenuationCoefficient = 0.01;
+    this.airConvectiveCoefficient = 5;
 
     this.timesPerHour = 4; // how many times per hour to collect data
     this.daysPerYear = 12; // how many days per year for sampling
@@ -95,6 +97,7 @@ export class DefaultWorldModel implements WorldModel {
     worldModel.ground.snowReflectionFactors.fill(0);
 
     worldModel.airAttenuationCoefficient = 0.01;
+    worldModel.airConvectiveCoefficient = 5;
 
     worldModel.timesPerHour = 4; // how many times per hour to collect data
     worldModel.daysPerYear = 12; // how many days per year for sampling

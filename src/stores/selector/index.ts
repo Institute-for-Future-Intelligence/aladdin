@@ -289,6 +289,12 @@ export const updateSolarUpdraftTowerCollectorTransmissivityById = (state: Common
 export const updateSolarUpdraftTowerCollectorTransmissivityForAll = (state: CommonStoreState) =>
   state.updateSolarUpdraftTowerCollectorTransmissivityForAll;
 
+export const updateSolarUpdraftTowerCollectorEmissivityById = (state: CommonStoreState) =>
+  state.updateSolarUpdraftTowerCollectorEmissivityById;
+
+export const updateSolarUpdraftTowerCollectorEmissivityForAll = (state: CommonStoreState) =>
+  state.updateSolarUpdraftTowerCollectorEmissivityForAll;
+
 export const updateSolarUpdraftTowerDischargeCoefficientById = (state: CommonStoreState) =>
   state.updateSolarUpdraftTowerDischargeCoefficientById;
 

@@ -21,6 +21,7 @@ import {
   GRAVITATIONAL_ACCELERATION,
   KELVIN_AT_ZERO_CELSIUS,
   MINUTES_OF_DAY,
+  STEFAN_BOLTZMANN_CONSTANT,
 } from './analysisConstants';
 import { MONTHS, UNIT_VECTOR_POS_Z, ZERO_TOLERANCE } from '../constants';
 import * as Selector from '../stores/selector';
@@ -68,7 +69,7 @@ const SolarUpdraftTowerSimulation = ({ city }: SolarUpdraftTowerSimulationProps)
   const simulationCompletedRef = useRef<boolean>(false);
   const originalDateRef = useRef<Date>(new Date(world.date));
   const dailyAmbientTemperaturesRef = useRef<number[]>(new Array(24).fill(0));
-  const dailyAirTemperaturesMapRef = useRef<Map<string, number[]>>(new Map<string, number[]>());
+  const dailyChimneyInletAirTemperaturesMapRef = useRef<Map<string, number[]>>(new Map<string, number[]>());
   const dailyWindSpeedsMapRef = useRef<Map<string, number[]>>(new Map<string, number[]>());
   const dailyOutputsMapRef = useRef<Map<string, number[]>>(new Map<string, number[]>());
   const yearlyOutputsMapRef = useRef<Map<string, number[]>>(new Map<string, number[]>());
@@ -216,12 +217,13 @@ const SolarUpdraftTowerSimulation = ({ city }: SolarUpdraftTowerSimulationProps)
           const turbineEfficiency = f.solarUpdraftTower.turbineEfficiency ?? 0.9;
           const dischargeCoefficient = f.solarUpdraftTower.dischargeCoefficient ?? 0.65;
           const chimneyArea = Math.PI * f.solarUpdraftTower.chimneyRadius * f.solarUpdraftTower.chimneyRadius;
+          const collectorArea = Math.PI * f.solarUpdraftTower.collectorRadius * f.solarUpdraftTower.collectorRadius;
           const dca = AIR_DENSITY * AIR_ISOBARIC_SPECIFIC_HEAT * chimneyArea;
           const speedFactor = 2 * GRAVITATIONAL_ACCELERATION * f.solarUpdraftTower.chimneyHeight;
-          const airTemperatures = dailyAirTemperaturesMapRef.current.get(e.id + '-sut');
+          const chimneyInletTemperatures = dailyChimneyInletAirTemperaturesMapRef.current.get(e.id + '-sut');
           const windSpeeds = dailyWindSpeedsMapRef.current.get(e.id + '-sut');
           const outputs = dailyOutputsMapRef.current.get(e.id + '-sut');
-          if (outputs && airTemperatures && windSpeeds) {
+          if (outputs && chimneyInletTemperatures && windSpeeds) {
             const powerFactor = 0.5 * dischargeCoefficient * turbineEfficiency * AIR_DENSITY * chimneyArea;
             const date = new Date(world.date);
             let weather, temp;
@@ -244,15 +246,31 @@ const SolarUpdraftTowerSimulation = ({ city }: SolarUpdraftTowerSimulationProps)
                 dailyAmbientTemperaturesRef.current[i] = ambientTemperature;
               }
               outputs[i] *= timeFactor * transmissivity * 1000; // from kW to W
-              const k0 = ambientTemperature + KELVIN_AT_ZERO_CELSIUS;
-              const a = outputs[i] / (dca * k0);
-              const temperature = k0 * (1 + Math.cbrt((a * a) / speedFactor)) - KELVIN_AT_ZERO_CELSIUS;
+              const tAmbientK = ambientTemperature + KELVIN_AT_ZERO_CELSIUS;
+              if (outputs[i] > 0 && i > 0 && chimneyInletTemperatures[i - 1] > ambientTemperature) {
+                // assume that the average temperature of the collector is the mean between ambient and inlet
+                const tCollector = (chimneyInletTemperatures[i - 1] + ambientTemperature) / 2;
+                const convectiveLoss =
+                  world.airConvectiveCoefficient * collectorArea * (tCollector - ambientTemperature);
+                const tCollectorK = tCollector + KELVIN_AT_ZERO_CELSIUS;
+                const tCollector4 = tCollectorK * tCollectorK * tCollectorK * tCollectorK;
+                const tAmbient4 = tAmbientK * tAmbientK * tAmbientK * tAmbientK;
+                const radiationLoss =
+                  (f.solarUpdraftTower.collectorEmissivity ?? 0.95) *
+                  STEFAN_BOLTZMANN_CONSTANT *
+                  collectorArea *
+                  (tCollector4 - tAmbient4);
+                outputs[i] -= convectiveLoss + radiationLoss;
+                if (outputs[i] < 0) outputs[i] = 0;
+              }
+              const a = outputs[i] / (dca * tAmbientK);
+              const temperature = tAmbientK * (1 + Math.cbrt((a * a) / speedFactor)) - KELVIN_AT_ZERO_CELSIUS;
               const speed =
                 temperature > ambientTemperature
-                  ? Math.sqrt(speedFactor * ((temperature + KELVIN_AT_ZERO_CELSIUS) / k0 - 1))
+                  ? Math.sqrt(speedFactor * ((temperature + KELVIN_AT_ZERO_CELSIUS) / tAmbientK - 1))
                   : 0;
               outputs[i] = powerFactor * speed * speed * speed * 0.001; // from W to kW
-              airTemperatures[i] = temperature;
+              chimneyInletTemperatures[i] = temperature;
               windSpeeds[i] = speed;
             }
           }
@@ -271,7 +289,7 @@ const SolarUpdraftTowerSimulation = ({ city }: SolarUpdraftTowerSimulationProps)
         const f = e as FoundationModel;
         if (f.solarStructure === SolarStructure.UpdraftTower && f.solarUpdraftTower) {
           index++;
-          const temperature = dailyAirTemperaturesMapRef.current.get(e.id + '-sut');
+          const temperature = dailyChimneyInletAirTemperaturesMapRef.current.get(e.id + '-sut');
           if (temperature) {
             map.set('Temperature Tower' + index, temperature);
           }
@@ -471,13 +489,14 @@ const SolarUpdraftTowerSimulation = ({ city }: SolarUpdraftTowerSimulationProps)
         const f = e as FoundationModel;
         if (f.solarStructure === SolarStructure.UpdraftTower && f.solarUpdraftTower) {
           const outputs = dailyOutputsMapRef.current.get(f.id + '-sut');
-          const airTemperatures = dailyAirTemperaturesMapRef.current.get(e.id + '-sut');
+          const chimneyInletTemperatures = dailyChimneyInletAirTemperaturesMapRef.current.get(e.id + '-sut');
           const windSpeeds = dailyWindSpeedsMapRef.current.get(e.id + '-sut');
-          if (outputs && airTemperatures && windSpeeds) {
+          if (outputs && chimneyInletTemperatures && windSpeeds) {
             const transmissivity = f.solarUpdraftTower.collectorTransmissivity ?? 0.9;
             const turbineEfficiency = f.solarUpdraftTower.turbineEfficiency ?? 0.9;
             const dischargeCoefficient = f.solarUpdraftTower.dischargeCoefficient ?? 0.65;
             const chimneyArea = Math.PI * f.solarUpdraftTower.chimneyRadius * f.solarUpdraftTower.chimneyRadius;
+            const collectorArea = Math.PI * f.solarUpdraftTower.collectorRadius * f.solarUpdraftTower.collectorRadius;
             const dca = AIR_DENSITY * AIR_ISOBARIC_SPECIFIC_HEAT * chimneyArea;
             const speedFactor = 2 * GRAVITATIONAL_ACCELERATION * f.solarUpdraftTower.chimneyHeight;
             const powerFactor = 0.5 * dischargeCoefficient * turbineEfficiency * AIR_DENSITY * chimneyArea;
@@ -501,15 +520,31 @@ const SolarUpdraftTowerSimulation = ({ city }: SolarUpdraftTowerSimulationProps)
                 dailyAmbientTemperaturesRef.current[i] = ambientTemperature;
               }
               outputs[i] *= timeFactor * transmissivity * 1000; // from kW to W
-              const k0 = ambientTemperature + KELVIN_AT_ZERO_CELSIUS;
-              const a = outputs[i] / (dca * k0);
-              const temperature = k0 * (1 + Math.cbrt((a * a) / speedFactor)) - KELVIN_AT_ZERO_CELSIUS;
+              const tAmbientK = ambientTemperature + KELVIN_AT_ZERO_CELSIUS;
+              if (outputs[i] > 0 && i > 0 && chimneyInletTemperatures[i - 1] > ambientTemperature) {
+                // assume that the average temperature of the collector is the mean between ambient and inlet
+                const tCollector = (chimneyInletTemperatures[i - 1] + ambientTemperature) / 2;
+                const convectiveLoss =
+                  world.airConvectiveCoefficient * collectorArea * (tCollector - ambientTemperature);
+                const tCollectorK = tCollector + KELVIN_AT_ZERO_CELSIUS;
+                const tCollector4 = tCollectorK * tCollectorK * tCollectorK * tCollectorK;
+                const tAmbient4 = tAmbientK * tAmbientK * tAmbientK * tAmbientK;
+                const radiationLoss =
+                  (f.solarUpdraftTower.collectorEmissivity ?? 0.95) *
+                  STEFAN_BOLTZMANN_CONSTANT *
+                  collectorArea *
+                  (tCollector4 - tAmbient4);
+                outputs[i] -= convectiveLoss + radiationLoss;
+                if (outputs[i] < 0) outputs[i] = 0;
+              }
+              const a = outputs[i] / (dca * tAmbientK);
+              const temperature = tAmbientK * (1 + Math.cbrt((a * a) / speedFactor)) - KELVIN_AT_ZERO_CELSIUS;
               const speed =
                 temperature > ambientTemperature
-                  ? Math.sqrt(speedFactor * ((temperature + KELVIN_AT_ZERO_CELSIUS) / k0 - 1))
+                  ? Math.sqrt(speedFactor * ((temperature + KELVIN_AT_ZERO_CELSIUS) / tAmbientK - 1))
                   : 0;
               outputs[i] = powerFactor * speed * speed * speed * 0.001; // from W to kW
-              airTemperatures[i] = temperature;
+              chimneyInletTemperatures[i] = temperature;
               windSpeeds[i] = speed;
             }
             const total = yearlyOutputsMapRef.current.get(f.id + '-sut');
@@ -562,11 +597,11 @@ const SolarUpdraftTowerSimulation = ({ city }: SolarUpdraftTowerSimulationProps)
       if (e.type === ObjectType.Foundation) {
         const f = e as FoundationModel;
         if (f.solarStructure === SolarStructure.UpdraftTower && f.solarUpdraftTower) {
-          const airTemperatures = dailyAirTemperaturesMapRef.current.get(e.id + '-sut');
+          const airTemperatures = dailyChimneyInletAirTemperaturesMapRef.current.get(e.id + '-sut');
           if (airTemperatures) {
             airTemperatures.fill(0);
           } else {
-            dailyAirTemperaturesMapRef.current.set(e.id + '-sut', new Array(24).fill(0));
+            dailyChimneyInletAirTemperaturesMapRef.current.set(e.id + '-sut', new Array(24).fill(0));
           }
           const windSpeeds = dailyWindSpeedsMapRef.current.get(e.id + '-sut');
           if (windSpeeds) {
