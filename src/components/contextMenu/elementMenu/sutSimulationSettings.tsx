@@ -85,7 +85,7 @@ const SutSimulationSettings = () => {
         </Menu.Item>
         {!Util.hasMovingParts(elements) && (
           <Menu.Item key={'solar-updraft-tower-simulation-no-animation'}>
-            <Space style={{ width: '280px' }}>
+            <Space style={{ width: '320px' }}>
               {i18n.t('menu.solarUpdraftTower.SolarUpdraftTowerSimulationNoAnimation', lang) + ':'}
             </Space>
             <Switch

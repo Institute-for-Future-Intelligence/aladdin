@@ -211,7 +211,7 @@ const WeatherPanel = ({ city, graphs }: WeatherPanelProps) => {
                     labelY={yNames[g]}
                     unitY={yUnits[g]}
                     yMin={0}
-                    fractionDigits={0}
+                    fractionDigits={1}
                     referenceX={referenceX}
                     color={'#FFD700'}
                   />
@@ -228,7 +228,7 @@ const WeatherPanel = ({ city, graphs }: WeatherPanelProps) => {
                   labelX={i18n.t('word.Month', lang)}
                   labelY={yNames[g]}
                   unitY={yUnits[g]}
-                  fractionDigits={0}
+                  fractionDigits={1}
                   referenceX={referenceX}
                 />
               );

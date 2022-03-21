@@ -7,19 +7,20 @@ import LineGraph from '../components/lineGraph';
 import styled from 'styled-components';
 import { useStore } from '../stores/common';
 import * as Selector from '../stores/selector';
-import { ChartType, GraphDataType, SolarStructure } from '../types';
-import moment from 'moment';
+import { ChartType, GraphDataType, ObjectType, SolarStructure } from '../types';
+import { MONTHS } from '../constants';
+import { Util } from '../Util';
 import ReactDraggable, { DraggableEventHandler } from 'react-draggable';
 import { Button, Space, Switch } from 'antd';
 import { screenshot, showInfo } from '../helpers';
 import { ReloadOutlined, SaveOutlined, UnorderedListOutlined } from '@ant-design/icons';
 import i18n from '../i18n/i18n';
-import BiaxialLineGraph from '../components/biaxialLineGraph';
+import { DailySolarUpdraftTowerYieldPanelProps } from './dailySolarUpdraftTowerYieldPanel';
 
 const Container = styled.div`
   position: fixed;
-  top: 80px;
-  right: 24px;
+  top: 85px;
+  right: 36px;
   display: flex;
   justify-content: center;
   align-items: center;
@@ -32,8 +33,8 @@ const ColumnWrapper = styled.div`
   position: absolute;
   right: 0;
   top: 0;
-  width: 640px;
-  height: 550px;
+  width: 600px;
+  height: 400px;
   padding-bottom: 10px;
   border: 2px solid gainsboro;
   border-radius: 10px 10px 10px 10px;
@@ -62,21 +63,21 @@ const Header = styled.div`
   }
 `;
 
-export interface DailySolarUpdraftTowerYieldPanelProps {
+export interface YearlySolarUpdraftTowerYieldPanelProps {
   city: string | null;
 }
 
-const DailySolarUpdraftTowerYieldPanel = ({ city }: DailySolarUpdraftTowerYieldPanelProps) => {
+const YearlySolarUpdraftTowerYieldPanel = ({ city }: YearlySolarUpdraftTowerYieldPanelProps) => {
   const language = useStore(Selector.language);
   const setCommonStore = useStore(Selector.set);
-  const now = new Date(useStore(Selector.world.date));
+  const daysPerYear = useStore(Selector.world.sutDaysPerYear) ?? 6;
+  const now = useStore(Selector.world.date);
+  const yearlyYield = useStore(Selector.yearlyUpdraftTowerYield);
+  const individualOutputs = useStore(Selector.yearlyUpdraftTowerIndividualOutputs);
+  const labels = useStore(Selector.updraftTowerLabels);
   const countSolarStructuresByType = useStore(Selector.countSolarStructuresByType);
-  const dailyYield = useStore(Selector.dailyUpdraftTowerYield);
-  const dailyResults = useStore(Selector.dailyUpdraftTowerResults);
-  const individualOutputs = useStore(Selector.dailyUpdraftTowerIndividualOutputs);
-  const panelX = useStore(Selector.viewState.dailyUpdraftTowerYieldPanelX);
-  const panelY = useStore(Selector.viewState.dailyUpdraftTowerYieldPanelY);
-  const updraftTowerLabels = useStore(Selector.updraftTowerLabels);
+  const panelX = useStore(Selector.viewState.yearlyUpdraftTowerYieldPanelX);
+  const panelY = useStore(Selector.viewState.yearlyUpdraftTowerYieldPanelY);
 
   // nodeRef is to suppress ReactDOM.findDOMNode() deprecation warning. See:
   // https://github.com/react-grid-layout/react-draggable/blob/v4.4.2/lib/DraggableCore.js#L159-L171
@@ -92,16 +93,17 @@ const DailySolarUpdraftTowerYieldPanel = ({ city }: DailySolarUpdraftTowerYieldP
   const [sum, setSum] = useState(0);
   const towerSumRef = useRef(new Map<string, number>());
 
-  const lang = { lng: language };
   const responsiveHeight = 100;
+  const referenceX = MONTHS[Math.floor((Util.daysIntoYear(now) / 365) * 12)];
+  const lang = { lng: language };
 
   useEffect(() => {
     let s = 0;
     towerSumRef.current.clear();
-    for (const datum of dailyYield) {
+    for (const datum of yearlyYield) {
       for (const prop in datum) {
         if (datum.hasOwnProperty(prop)) {
-          if (prop !== 'Hour') {
+          if (prop !== 'Month') {
             s += datum[prop] as number;
             towerSumRef.current.set(prop, (towerSumRef.current.get(prop) ?? 0) + (datum[prop] as number));
           }
@@ -109,8 +111,7 @@ const DailySolarUpdraftTowerYieldPanel = ({ city }: DailySolarUpdraftTowerYieldP
       }
     }
     setSum(s);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [dailyYield]);
+  }, [yearlyYield]);
 
   // when the window is resized (the code depends on where the panel is originally anchored in the CSS)
   useEffect(() => {
@@ -136,14 +137,14 @@ const DailySolarUpdraftTowerYieldPanel = ({ city }: DailySolarUpdraftTowerYieldP
 
   const onDragEnd: DraggableEventHandler = (e, ui) => {
     setCommonStore((state) => {
-      state.viewState.dailyUpdraftTowerYieldPanelX = Math.max(ui.x, wOffset - window.innerWidth);
-      state.viewState.dailyUpdraftTowerYieldPanelY = Math.min(ui.y, window.innerHeight - hOffset);
+      state.viewState.yearlyUpdraftTowerYieldPanelX = Math.max(ui.x, wOffset - window.innerWidth);
+      state.viewState.yearlyUpdraftTowerYieldPanelY = Math.min(ui.y, window.innerHeight - hOffset);
     });
   };
 
   const closePanel = () => {
     setCommonStore((state) => {
-      state.viewState.showDailyUpdraftTowerYieldPanel = false;
+      state.viewState.showYearlyUpdraftTowerYieldPanel = false;
     });
   };
 
@@ -151,21 +152,20 @@ const DailySolarUpdraftTowerYieldPanel = ({ city }: DailySolarUpdraftTowerYieldP
   useEffect(() => {
     if (towerCount < 2 && individualOutputs) {
       setCommonStore((state) => {
-        state.dailyUpdraftTowerIndividualOutputs = false;
+        state.yearlyUpdraftTowerIndividualOutputs = false;
       });
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [towerCount]);
 
-  const labelHour = i18n.t('word.Hour', lang);
-  const labelYield = i18n.t('updraftTowerYieldPanel.YieldPerHour', lang);
-  const labelTemperature = i18n.t('updraftTowerYieldPanel.ChimneyAirTemperature', lang);
-  const labelSpeed = i18n.t('updraftTowerYieldPanel.ChimneyWindSpeed', lang);
+  const labelX = i18n.t('word.Month', lang);
+  const labelY = i18n.t('updraftTowerYieldPanel.Yield', lang);
   let totalTooltip = '';
   if (individualOutputs) {
     towerSumRef.current.forEach((value, key) => (totalTooltip += key + ': ' + value.toFixed(2) + '\n'));
     totalTooltip += '——————————\n';
-    totalTooltip += i18n.t('word.Total', lang) + ': ' + sum.toFixed(2) + ' ' + i18n.t('word.kWh', lang);
+    totalTooltip +=
+      i18n.t('word.Total', lang) + ': ' + ((sum * 12) / daysPerYear).toFixed(2) + ' ' + i18n.t('word.kWh', lang);
   }
 
   return (
@@ -182,9 +182,9 @@ const DailySolarUpdraftTowerYieldPanel = ({ city }: DailySolarUpdraftTowerYieldP
         <ColumnWrapper ref={wrapperRef}>
           <Header className="handle">
             <span>
-              {i18n.t('updraftTowerYieldPanel.UpdraftTowerDailyYield', lang)}:{' '}
+              {i18n.t('updraftTowerYieldPanel.UpdraftTowerYearlyYield', lang)}:{' '}
               {i18n.t('sensorPanel.WeatherDataFrom', lang)}
-              {' ' + city} | {moment(now).format('MM/DD')}
+              {' ' + city}
             </span>
             <span
               style={{ cursor: 'pointer' }}
@@ -199,38 +199,19 @@ const DailySolarUpdraftTowerYieldPanel = ({ city }: DailySolarUpdraftTowerYieldP
             </span>
           </Header>
           <LineGraph
-            type={GraphDataType.DailyUpdraftTowerYield}
+            type={GraphDataType.YearlyUpdraftTowerYield}
             chartType={individualOutputs ? ChartType.Line : ChartType.Area}
-            dataSource={dailyYield}
-            labels={updraftTowerLabels}
+            dataSource={yearlyYield.map(({ Daylight, Clearness, ...item }) => item)}
+            labels={labels}
             height={responsiveHeight}
-            dataKeyAxisX={'Hour'}
-            labelX={labelHour}
-            labelY={labelYield}
+            dataKeyAxisX={'Month'}
+            labelX={labelX}
+            labelY={labelY}
             unitY={i18n.t('word.kWh', lang)}
             yMin={0}
             curveType={'linear'}
             fractionDigits={2}
-            symbolCount={24}
-            referenceX={now.getHours()}
-          />
-          <BiaxialLineGraph
-            type1={GraphDataType.DailyUpdraftTowerAirTemperature}
-            type2={GraphDataType.DailyUpdraftTowerWindSpeed}
-            dataSource={dailyResults}
-            height={responsiveHeight}
-            dataKeyAxisX={'Hour'}
-            labelX={labelHour}
-            labelY1={labelTemperature}
-            labelY2={labelSpeed}
-            unitY1={'°C'}
-            unitY2={i18n.t('word.MeterPerSecond', lang)}
-            yMin1={0}
-            yMin2={0}
-            curveType={'linear'}
-            fractionDigits={2}
-            symbolCount={24}
-            referenceX={now.getHours()}
+            referenceX={referenceX}
           />
           <Space style={{ alignSelf: 'center' }}>
             {individualOutputs && towerCount > 1 ? (
@@ -238,8 +219,9 @@ const DailySolarUpdraftTowerYieldPanel = ({ city }: DailySolarUpdraftTowerYieldP
                 {i18n.t('updraftTowerYieldPanel.HoverForBreakdown', lang)}
               </Space>
             ) : (
-              <Space style={{ cursor: 'default' }}>
-                {i18n.t('updraftTowerYieldPanel.DailyTotal', lang)}:{sum.toFixed(2)} {i18n.t('word.kWh', lang)}
+              <Space>
+                {i18n.t('updraftTowerYieldPanel.YearlyTotal', lang)}:{((sum * 12) / daysPerYear).toFixed(2)}{' '}
+                {i18n.t('word.kWh', lang)}
               </Space>
             )}
             {towerCount > 1 && (
@@ -257,10 +239,10 @@ const DailySolarUpdraftTowerYieldPanel = ({ city }: DailySolarUpdraftTowerYieldP
                   // give it 0.1 second for the info to show up
                   setTimeout(() => {
                     setCommonStore((state) => {
-                      state.runDailySimulationForUpdraftTower = true;
-                      state.pauseDailySimulationForUpdraftTower = false;
                       state.simulationInProgress = true;
-                      state.dailyUpdraftTowerIndividualOutputs = checked;
+                      state.yearlyUpdraftTowerIndividualOutputs = checked;
+                      state.runYearlySimulationForUpdraftTower = true;
+                      state.pauseYearlySimulationForUpdraftTower = false;
                     });
                   }, 100);
                 }}
@@ -279,9 +261,9 @@ const DailySolarUpdraftTowerYieldPanel = ({ city }: DailySolarUpdraftTowerYieldP
                 // give it 0.1 second for the info to show up
                 setTimeout(() => {
                   setCommonStore((state) => {
-                    state.runDailySimulationForUpdraftTower = true;
-                    state.pauseDailySimulationForUpdraftTower = false;
                     state.simulationInProgress = true;
+                    state.runYearlySimulationForUpdraftTower = true;
+                    state.pauseYearlySimulationForUpdraftTower = false;
                   });
                 }, 100);
               }}
@@ -291,7 +273,7 @@ const DailySolarUpdraftTowerYieldPanel = ({ city }: DailySolarUpdraftTowerYieldP
               icon={<SaveOutlined />}
               title={i18n.t('word.SaveAsImage', lang)}
               onClick={() => {
-                screenshot('line-graph-' + labelHour + '-' + labelYield, 'daily-Updraft-tower-yield', {}).then(() => {
+                screenshot('line-graph-' + labelX + '-' + labelY, 'yearly-updraft-tower-yield', {}).then(() => {
                   showInfo(i18n.t('message.ScreenshotSaved', lang));
                 });
               }}
@@ -303,4 +285,4 @@ const DailySolarUpdraftTowerYieldPanel = ({ city }: DailySolarUpdraftTowerYieldP
   );
 };
 
-export default React.memo(DailySolarUpdraftTowerYieldPanel);
+export default React.memo(YearlySolarUpdraftTowerYieldPanel);

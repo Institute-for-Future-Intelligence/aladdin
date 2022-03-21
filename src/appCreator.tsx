@@ -71,6 +71,7 @@ import HeliostatSimulation from './analysis/heliostatSimulation';
 import SolarUpdraftTowerSimulation from './analysis/solarUpdraftTowerSimulation';
 import DailySolarUpdraftTowerYieldPanel from './panels/dailySolarUpdraftTowerYieldPanel';
 import DiurnalTemperaturePanel from './panels/diurnalTemperaturePanel';
+import YearlySolarUpdraftTowerYieldPanel from './panels/yearlySolarUpdraftTowerYieldPanel';
 
 export interface AppCreatorProps {
   viewOnly: boolean;
@@ -371,7 +372,7 @@ const AppCreator = ({ viewOnly = false }: AppCreatorProps) => {
       {showDailyHeliostatYieldPanel && <DailyHeliostatYieldPanel city={city} />}
       {showYearlyHeliostatYieldPanel && <YearlyHeliostatYieldPanel city={city} />}
       {showDailyUpdraftTowerYieldPanel && <DailySolarUpdraftTowerYieldPanel city={city} />}
-      {/*{showYearlyUpdraftTowerYieldPanel && <YearlyUpdraftTowerYieldPane city={city} />}*/}
+      {showYearlyUpdraftTowerYieldPanel && <YearlySolarUpdraftTowerYieldPanel city={city} />}
       {showSolarRadiationHeatmap && <HeatmapControlPanel />}
       <DropdownContextMenu>
         <div>

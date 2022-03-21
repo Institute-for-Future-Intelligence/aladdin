@@ -470,12 +470,47 @@ const SolarUpdraftTowerSimulation = ({ city }: SolarUpdraftTowerSimulationProps)
       if (e.type === ObjectType.Foundation) {
         const f = e as FoundationModel;
         if (f.solarStructure === SolarStructure.UpdraftTower && f.solarUpdraftTower) {
-          const result = dailyOutputsMapRef.current.get(e.id + '-sut');
+          const result = dailyOutputsMapRef.current.get(f.id + '-sut');
           if (result) {
-            const total = yearlyOutputsMapRef.current.get(e.id + '-sut');
+            const transmissivity = f.solarUpdraftTower.collectorTransmissivity ?? 0.9;
+            const turbineEfficiency = f.solarUpdraftTower.turbineEfficiency ?? 0.9;
+            const dischargeCoefficient = f.solarUpdraftTower.dischargeCoefficient ?? 0.65;
+            const chimneyArea = Math.PI * f.solarUpdraftTower.chimneyRadius * f.solarUpdraftTower.chimneyRadius;
+            const dca = AIR_DENSITY * AIR_ISOBARIC_SPECIFIC_HEAT * chimneyArea;
+            const speedFactor = 2 * GRAVITATIONAL_ACCELERATION * f.solarUpdraftTower.chimneyHeight;
+            const powerFactor = 0.5 * dischargeCoefficient * turbineEfficiency * AIR_DENSITY * chimneyArea;
+            let weather, temp;
+            if (city) {
+              weather = getWeather(city);
+              temp = computeOutsideTemperature(now, weather.lowestTemperatures, weather.highestTemperatures);
+            }
+            for (let i = 0; i < result.length; i++) {
+              let ambientTemperature = 20;
+              if (weather && temp) {
+                now.setHours(i);
+                ambientTemperature = getOutsideTemperatureAtMinute(
+                  temp.high,
+                  temp.low,
+                  world.diurnalTemperatureModel,
+                  weather.highestTemperatureTimeInMinutes,
+                  sunMinutes,
+                  Util.minutesIntoDay(now),
+                );
+              }
+              result[i] *= timeFactor * transmissivity * 1000; // from kW to W
+              const k0 = ambientTemperature + KELVIN_AT_ZERO_CELSIUS;
+              const a = result[i] / (dca * k0);
+              const temperature = k0 * (1 + Math.cbrt((a * a) / speedFactor)) - KELVIN_AT_ZERO_CELSIUS;
+              const speed =
+                temperature > ambientTemperature
+                  ? Math.sqrt(speedFactor * ((temperature + KELVIN_AT_ZERO_CELSIUS) / k0 - 1))
+                  : 0;
+              result[i] = powerFactor * speed * speed * speed * 0.001; // from W to kW
+            }
+            const total = yearlyOutputsMapRef.current.get(f.id + '-sut');
             if (total) {
               const sumDaily = result.reduce((a, b) => a + b, 0);
-              total[sampledDayRef.current] += sumDaily * timeFactor;
+              total[sampledDayRef.current] += sumDaily;
             }
           }
         }
@@ -552,7 +587,7 @@ const SolarUpdraftTowerSimulation = ({ city }: SolarUpdraftTowerSimulationProps)
           if (yearlyOutput && yearlyOutput.length === daysPerYear) {
             yearlyOutput.fill(0);
           } else {
-            yearlyOutputsMapRef.current.set(e.id, new Array(daysPerYear).fill(0));
+            yearlyOutputsMapRef.current.set(e.id + '-sut', new Array(daysPerYear).fill(0));
           }
         }
       }
@@ -585,11 +620,13 @@ const SolarUpdraftTowerSimulation = ({ city }: SolarUpdraftTowerSimulationProps)
       const dot = normal.dot(sunDirection);
       const rsq = radius * radius;
       let result = 0;
+      let countPoints = 0;
       for (let u = 0; u < max; u++) {
         vec.x = x0 + u * cellSize;
         for (let v = 0; v < max; v++) {
           vec.y = y0 + v * cellSize;
           if (vec.x * vec.x + vec.y * vec.y > rsq) continue;
+          countPoints++;
           result += indirectRadiation;
           if (dot > 0) {
             if (!inShadow(foundation.id, vec, sunDirection)) {
@@ -598,10 +635,12 @@ const SolarUpdraftTowerSimulation = ({ city }: SolarUpdraftTowerSimulationProps)
           }
         }
       }
+      if (countPoints) result /= countPoints;
       // the output is the average radiation intensity. if the minutes are greater than 30 or 30, it is counted
       // as the measurement of the next hour to maintain the symmetry around noon
       const index = now.getMinutes() >= 30 ? (now.getHours() + 1 === 24 ? 0 : now.getHours() + 1) : now.getHours();
-      output[index] += result;
+      const area = Math.PI * solarUpdraftTower.collectorRadius * solarUpdraftTower.collectorRadius;
+      output[index] += result * area;
     }
   };
 
