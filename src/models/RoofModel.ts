@@ -20,6 +20,15 @@ export interface HipRoofModel extends RoofModel {
   leftRidgeLength: number;
 }
 
+export interface GambrelRoofModel extends RoofModel {
+  topRidgeLeftPoint: number[];
+  topRidgeRightPoint: number[];
+  frontRidgeLeftPoint: number[];
+  frontRidgeRightPoint: number[];
+  backRidgeLeftPoint: number[];
+  backRidgeRightPoint: number[];
+}
+
 export interface Point3 {
   x: number;
   y: number;
@@ -30,6 +39,7 @@ export enum RoofType {
   Pyramid = 'Pyramid',
   Gable = 'Gable',
   Hip = 'Hip',
+  Gambrel = 'Gambrel',
 }
 
 export enum RoofTexture {

@@ -23,7 +23,16 @@ import { FoundationModel } from './FoundationModel';
 import { SolarPanelModel } from './SolarPanelModel';
 import { PvModel } from './PvModel';
 import { WallModel } from './WallModel';
-import { HipRoofModel, Point3, RoofModel, RoofTexture, RoofType } from './RoofModel';
+import {
+  GableRoofModel,
+  GambrelRoofModel,
+  HipRoofModel,
+  Point3,
+  PyramidRoofModel,
+  RoofModel,
+  RoofTexture,
+  RoofType,
+} from './RoofModel';
 import { GROUND_ID } from '../constants';
 import { WindowModel } from './WindowModel';
 import { Point2 } from './Point2';
@@ -473,7 +482,7 @@ export class ElementModelFactory {
     } as WindowModel;
   }
 
-  static makeRoof(lz: number, parent: ElementModel, wallsId: string[], ridgeLength?: number) {
+  static makePyramidRoof(wallsId: string[], parent: ElementModel, lz: number) {
     return {
       type: ObjectType.Roof,
       cx: 0,
@@ -492,8 +501,81 @@ export class ElementModelFactory {
       parentId: parent.id,
       foundationId: parent.id,
       id: short.generate() as string,
+    } as PyramidRoofModel;
+  }
+
+  static makeGableRoof(wallsId: string[], parent: ElementModel, lz: number) {
+    return {
+      type: ObjectType.Roof,
+      cx: 0,
+      cy: 0,
+      cz: 0,
+      lx: 0,
+      ly: 0,
+      lz: lz * 1.5,
+      roofType: RoofType.Gable,
+      wallsId: [...wallsId],
+      texture: RoofTexture.Default,
+      selected: false,
+      showLabel: false,
+      normal: [0, 0, 1],
+      rotation: [0, 0, 0],
+      parentId: parent.id,
+      foundationId: parent.id,
+      id: short.generate() as string,
+    } as GableRoofModel;
+  }
+
+  static makeHipRoof(wallsId: string[], parent: ElementModel, lz: number, ridgeLength: number) {
+    return {
+      type: ObjectType.Roof,
+      cx: 0,
+      cy: 0,
+      cz: 0,
+      lx: 0,
+      ly: 0,
+      lz: lz * 1.5,
+      roofType: RoofType.Hip,
+      wallsId: [...wallsId],
+      texture: RoofTexture.Default,
+      selected: false,
+      showLabel: false,
+      normal: [0, 0, 1],
+      rotation: [0, 0, 0],
+      parentId: parent.id,
+      foundationId: parent.id,
+      id: short.generate() as string,
       leftRidgeLength: (ridgeLength ?? 2) / 2,
       rightRidgeLength: (ridgeLength ?? 2) / 2,
-    } as HipRoofModel; // todo
+    } as HipRoofModel;
+  }
+
+  static makeGambrelRoof(wallsId: string[], parent: ElementModel, lz: number) {
+    const xpercent = 0.35;
+    return {
+      type: ObjectType.Roof,
+      cx: 0,
+      cy: 0,
+      cz: 0,
+      lx: 0,
+      ly: 0,
+      lz: lz * 2,
+      roofType: RoofType.Gambrel,
+      wallsId: [...wallsId],
+      topRidgeLeftPoint: [0, 1],
+      topRidgeRightPoint: [0, 1],
+      frontRidgeLeftPoint: [xpercent, 0.5],
+      frontRidgeRightPoint: [-xpercent, 0.5],
+      backRidgeLeftPoint: [xpercent, 0.5],
+      backRidgeRightPoint: [-xpercent, 0.5],
+      texture: RoofTexture.Default,
+      selected: false,
+      showLabel: false,
+      normal: [0, 0, 1],
+      rotation: [0, 0, 0],
+      parentId: parent.id,
+      foundationId: parent.id,
+      id: short.generate() as string,
+    } as GambrelRoofModel;
   }
 }

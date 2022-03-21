@@ -69,6 +69,8 @@ const Wall = ({
   leftRoofHeight,
   rightRoofHeight,
   centerRoofHeight,
+  centerLeftRoofHeight,
+  centerRightRoofHeight,
 }: WallModel) => {
   const textureLoader = useMemo(() => {
     let textureImg;
@@ -228,42 +230,55 @@ const Wall = ({
     shape.lineTo(-x, -y);
   };
 
-  const drawRectangle = (
-    shape: Shape,
-    lx: number,
-    ly: number,
-    cx = 0,
-    cy = 0,
-    leftOffset = 0,
-    rightOffset = 0,
-    leftRoofHeight?: number,
-    rightRoofHeight?: number,
-    centerRoofHeight?: number[],
-  ) => {
+  const drawRectangle = (shape: Shape, lx: number, ly: number, cx = 0, cy = 0, leftOffset = 0, rightOffset = 0) => {
     const x = lx / 2;
     const y = ly / 2;
     shape.moveTo(cx - x + leftOffset, cy - y); // lower left
     shape.lineTo(cx + x - rightOffset, cy - y); // lower right
-    if (roofId && (leftRoofHeight || rightRoofHeight || centerRoofHeight)) {
-      shape.lineTo(cx + x - rightOffset, rightRoofHeight ? rightRoofHeight - y : cy + 2 * y - y);
+
+    if (roofId) {
+      rightRoofHeight && shape.lineTo(cx + x - rightOffset, rightRoofHeight - y);
+      centerRightRoofHeight && shape.lineTo(centerRightRoofHeight[0] * lx, centerRightRoofHeight[1] - y);
       centerRoofHeight && shape.lineTo(centerRoofHeight[0] * lx, centerRoofHeight[1] - y);
-      shape.lineTo(cx - x + leftOffset, leftRoofHeight ? leftRoofHeight - y : cy + 2 * y - y);
+      centerLeftRoofHeight && shape.lineTo(centerLeftRoofHeight[0] * lx, centerLeftRoofHeight[1] - y);
+      leftRoofHeight && shape.lineTo(cx - x + leftOffset, leftRoofHeight - y);
     } else {
       shape.lineTo(cx + x - rightOffset, cy + y); // upper right
       shape.lineTo(cx - x + leftOffset, cy + y); // upper left
     }
+
+    // reseved for pyramidRoof
+    // if (roofId && (leftRoofHeight || rightRoofHeight || centerRoofHeight)) {
+    //   shape.lineTo(cx + x - rightOffset, rightRoofHeight ? rightRoofHeight - y : cy + 2 * y - y);
+    //   centerRoofHeight && shape.lineTo(centerRoofHeight[0] * lx, centerRoofHeight[1] - y);
+    //   shape.lineTo(cx - x + leftOffset, leftRoofHeight ? leftRoofHeight - y : cy + 2 * y - y);
+    // } else {
+    //   shape.lineTo(cx + x - rightOffset, cy + y); // upper right
+    //   shape.lineTo(cx - x + leftOffset, cy + y); // upper left
+    // }
+
     shape.lineTo(cx - x + leftOffset, cy - y); // lower left
+  };
+
+  const drawWindow = (shape: Shape, lx: number, ly: number, cx = 0, cy = 0) => {
+    const x = lx / 2;
+    const y = ly / 2;
+    shape.moveTo(cx - x, cy - y);
+    shape.lineTo(cx + x, cy - y);
+    shape.lineTo(cx + x, cy + y);
+    shape.lineTo(cx - x, cy + y);
+    shape.lineTo(cx - x, cy - y);
   };
 
   // outside wall
   if (outSideWallRef.current) {
     const wallShape = new Shape();
-    drawRectangle(wallShape, lx, lz, 0, 0, 0, 0, leftRoofHeight, rightRoofHeight, centerRoofHeight);
+    drawRectangle(wallShape, lx, lz, 0, 0, 0, 0);
 
     windows.forEach((w) => {
       if (w.id !== invalidWindowIdRef.current) {
         const window = new Shape();
-        drawRectangle(window, w.lx * lx, w.lz * lz, w.cx * lx, w.cz * lz);
+        drawWindow(window, w.lx * lx, w.lz * lz, w.cx * lx, w.cz * lz);
         wallShape.holes.push(window);
       }
     });
@@ -273,12 +288,12 @@ const Wall = ({
   // inside wall
   if (insideWallRef.current) {
     const wallShape = new Shape();
-    drawRectangle(wallShape, lx, lz, 0, 0, leftOffset, rightOffset, leftRoofHeight, rightRoofHeight, centerRoofHeight);
+    drawRectangle(wallShape, lx, lz, 0, 0, leftOffset, rightOffset);
 
     windows.forEach((w) => {
       if (w.id !== invalidWindowIdRef.current) {
         const window = new Shape();
-        drawRectangle(window, w.lx * lx, w.lz * lz, w.cx * lx, w.cz * lz);
+        drawWindow(window, w.lx * lx, w.lz * lz, w.cx * lx, w.cz * lz);
         wallShape.holes.push(window);
       }
     });
@@ -290,7 +305,7 @@ const Wall = ({
   // intersection plane
   if (intersectionPlaneRef.current) {
     const wallShape = new Shape();
-    drawRectangle(wallShape, lx, lz, 0, 0, 0, 0, leftRoofHeight, rightRoofHeight);
+    drawRectangle(wallShape, lx, lz, 0, 0, 0, 0);
     intersectionPlaneRef.current.geometry = new ShapeBufferGeometry(wallShape);
   }
 
@@ -342,6 +357,8 @@ const Wall = ({
             (e as WallModel).leftRoofHeight = undefined;
             (e as WallModel).rightRoofHeight = undefined;
             (e as WallModel).centerRoofHeight = undefined;
+            (e as WallModel).centerLeftRoofHeight = undefined;
+            (e as WallModel).centerRightRoofHeight = undefined;
             break;
           }
         }
@@ -593,9 +610,45 @@ const Wall = ({
 
         // add new elements
         switch (objectTypeToAddRef.current) {
-          case ObjectType.Roof: {
+          case ObjectType.PyramidRoof: {
             if (parent && !roofId) {
-              const roof = ElementModelFactory.makeRoof(lz, parent, [wallModel.id], lx / 2);
+              const roof = ElementModelFactory.makePyramidRoof([wallModel.id], parent, lz);
+              setCommonStore((state) => {
+                state.elements.push(roof);
+              });
+            }
+            setCommonStore((state) => {
+              state.objectTypeToAdd = ObjectType.None;
+            });
+            return;
+          }
+          case ObjectType.GableRoof: {
+            if (parent && !roofId) {
+              const roof = ElementModelFactory.makeGableRoof([wallModel.id], parent, lz);
+              setCommonStore((state) => {
+                state.elements.push(roof);
+              });
+            }
+            setCommonStore((state) => {
+              state.objectTypeToAdd = ObjectType.None;
+            });
+            return;
+          }
+          case ObjectType.HipRoof: {
+            if (parent && !roofId) {
+              const roof = ElementModelFactory.makeHipRoof([wallModel.id], parent, lz, lx / 2);
+              setCommonStore((state) => {
+                state.elements.push(roof);
+              });
+            }
+            setCommonStore((state) => {
+              state.objectTypeToAdd = ObjectType.None;
+            });
+            return;
+          }
+          case ObjectType.GambrelRoof: {
+            if (parent && !roofId) {
+              const roof = ElementModelFactory.makeGambrelRoof([wallModel.id], parent, lz);
               setCommonStore((state) => {
                 state.elements.push(roof);
               });

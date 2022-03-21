@@ -109,7 +109,7 @@ const HipRoof = ({
 
   const centroid2D = useMemo(() => {
     if (currentWallArray.length !== 4) {
-      return new Vector3();
+      return new Vector2();
     }
     const points = getWallPoint(currentWallArray);
     const p = Util.calculatePolygonCentroid(points);
@@ -323,7 +323,7 @@ const HipRoof = ({
           name={'Roof Intersection Plane'}
           ref={intersectionPlaneRef}
           args={[1000, 100]}
-          // visible={false}
+          visible={false}
           position={intersectionPlanePosition}
           rotation={intersectionPlaneRotation}
           onPointerMove={(e) => {

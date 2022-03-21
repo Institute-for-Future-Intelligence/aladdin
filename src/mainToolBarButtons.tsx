@@ -261,6 +261,91 @@ const MainToolBarButtons = () => {
         />
         {i18n.t('toolbar.SwitchToAddingRoof', lang)}
       </Menu.Item>
+
+      <Menu.Item
+        style={{ userSelect: 'none' }}
+        key="add-pyramidRoof-menu-item"
+        onClick={() => {
+          setCategory2Flag(ObjectType.Roof);
+          setMode(ObjectType.PyramidRoof);
+        }}
+      >
+        <img
+          alt={'Roof'}
+          src={RoofImage}
+          height={36}
+          width={36}
+          style={{
+            filter: defaultFilter,
+            verticalAlign: 'middle',
+            marginRight: '10px',
+          }}
+        />
+        PyramidRoof
+      </Menu.Item>
+      <Menu.Item
+        style={{ userSelect: 'none' }}
+        key="add-GableRoof-menu-item"
+        onClick={() => {
+          setCategory2Flag(ObjectType.Roof);
+          setMode(ObjectType.GableRoof);
+        }}
+      >
+        <img
+          alt={'Roof'}
+          src={RoofImage}
+          height={36}
+          width={36}
+          style={{
+            filter: defaultFilter,
+            verticalAlign: 'middle',
+            marginRight: '10px',
+          }}
+        />
+        GableRoof
+      </Menu.Item>
+      <Menu.Item
+        style={{ userSelect: 'none' }}
+        key="add-HipRoof-menu-item"
+        onClick={() => {
+          setCategory2Flag(ObjectType.Roof);
+          setMode(ObjectType.HipRoof);
+        }}
+      >
+        <img
+          alt={'Roof'}
+          src={RoofImage}
+          height={36}
+          width={36}
+          style={{
+            filter: defaultFilter,
+            verticalAlign: 'middle',
+            marginRight: '10px',
+          }}
+        />
+        HipRoof
+      </Menu.Item>
+      <Menu.Item
+        style={{ userSelect: 'none' }}
+        key="add-GambrelRoof-menu-item"
+        onClick={() => {
+          setCategory2Flag(ObjectType.Roof);
+          setMode(ObjectType.GambrelRoof);
+        }}
+      >
+        <img
+          alt={'Roof'}
+          src={RoofImage}
+          height={36}
+          width={36}
+          style={{
+            filter: defaultFilter,
+            verticalAlign: 'middle',
+            marginRight: '10px',
+          }}
+        />
+        GambrelRoof
+      </Menu.Item>
     </Menu>
   );
 
