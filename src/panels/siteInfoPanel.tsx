@@ -61,6 +61,7 @@ const SiteInfoPanel = ({ city }: SiteInfoPanelProps) => {
   const diurnalTemperatureModel = useStore(Selector.world.diurnalTemperatureModel);
   const weatherData = useStore(Selector.weatherData);
   const sunlightDirection = useStore(Selector.sunlightDirection);
+  const highestTemperatureTimeInMinutes = useStore(Selector.world.highestTemperatureTimeInMinutes) ?? 900;
 
   const [dailyTemperatures, setDailyTemperatures] = useState({ low: 0, high: 20 });
   const [currentTemperature, setCurrentTemperature] = useState<number>(10);
@@ -78,7 +79,7 @@ const SiteInfoPanel = ({ city }: SiteInfoPanelProps) => {
           t.high,
           t.low,
           diurnalTemperatureModel,
-          weather.highestTemperatureTimeInMinutes,
+          highestTemperatureTimeInMinutes,
           sunMinutes,
           Util.minutesIntoDay(now),
         );

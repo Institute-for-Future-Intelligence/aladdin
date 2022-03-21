@@ -345,6 +345,7 @@ export const i18n_zh_tw = {
       ThemeGrassland: '草原',
       SunlightAttenuationCoefficientInAir: '陽光在空氣中傳播的衰減係數',
       ConvectiveCoefficientOfAir: '空氣對流傳熱係數',
+      HighestTemperatureTimeInMinutes: '最高氣溫時間(分鐘)',
     },
 
     groundMenu: {

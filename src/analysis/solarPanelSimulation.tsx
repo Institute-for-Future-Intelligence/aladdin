@@ -57,6 +57,7 @@ const SolarPanelSimulation = ({ city }: SolarPanelSimulationProps) => {
   const pauseYearlySimulation = useStore(Selector.pauseYearlySimulationForSolarPanels);
   const showDailyPvYieldPanel = useStore(Selector.viewState.showDailyPvYieldPanel);
   const noAnimation = useStore(Selector.world.noAnimationForSolarPanelSimulation);
+  const highestTemperatureTimeInMinutes = useStore(Selector.world.highestTemperatureTimeInMinutes) ?? 900;
 
   const [currentTemperature, setCurrentTemperature] = useState<number>(20);
   const { scene } = useThree();
@@ -102,7 +103,7 @@ const SolarPanelSimulation = ({ city }: SolarPanelSimulationProps) => {
           t.high,
           t.low,
           world.diurnalTemperatureModel,
-          weather.highestTemperatureTimeInMinutes,
+          highestTemperatureTimeInMinutes,
           sunMinutes,
           Util.minutesIntoDay(n),
         );

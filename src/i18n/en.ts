@@ -347,6 +347,7 @@ export const i18n_en = {
       ThemeGrassland: 'Grassland',
       SunlightAttenuationCoefficientInAir: 'Sunlight Attenuation Coefficient in Air',
       ConvectiveCoefficientOfAir: 'Convective Coefficient of Air',
+      HighestTemperatureTimeInMinutes: 'Highest Temperature Time (Minutes)',
     },
 
     groundMenu: {

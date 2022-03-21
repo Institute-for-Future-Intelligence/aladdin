@@ -72,6 +72,7 @@ const DiurnalTemperaturePanel = ({ city }: DiurnalTemperaturePanelProps) => {
   const latitude = useStore(Selector.world.latitude);
   const diurnalTemperatureModel =
     useStore(Selector.world.diurnalTemperatureModel) ?? DiurnalTemperatureModel.Sinusoidal;
+  const highestTemperatureTimeInMinutes = useStore(Selector.world.highestTemperatureTimeInMinutes) ?? 900;
   const getWeather = useStore(Selector.getWeather);
   const diurnalTemperaturePanelX = useStore(Selector.viewState.diurnalTemperaturePanelX);
   const diurnalTemperaturePanelY = useStore(Selector.viewState.diurnalTemperaturePanelY);
@@ -121,7 +122,7 @@ const DiurnalTemperaturePanel = ({ city }: DiurnalTemperaturePanelProps) => {
               t.high,
               t.low,
               DiurnalTemperatureModel.Sinusoidal,
-              weather.highestTemperatureTimeInMinutes,
+              highestTemperatureTimeInMinutes,
               sunMinutes,
               m,
             ),
@@ -129,7 +130,7 @@ const DiurnalTemperaturePanel = ({ city }: DiurnalTemperaturePanelProps) => {
               t.high,
               t.low,
               DiurnalTemperatureModel.PartonLogan,
-              weather.highestTemperatureTimeInMinutes,
+              highestTemperatureTimeInMinutes,
               sunMinutes,
               m,
             ),
@@ -139,7 +140,7 @@ const DiurnalTemperaturePanel = ({ city }: DiurnalTemperaturePanelProps) => {
     }
     return result;
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [city, diurnalTemperatureModel, now.getMonth(), now.getDate()]);
+  }, [city, highestTemperatureTimeInMinutes, diurnalTemperatureModel, now.getMonth(), now.getDate()]);
 
   const onDrag: DraggableEventHandler = (e, ui) => {
     setCurPosition({

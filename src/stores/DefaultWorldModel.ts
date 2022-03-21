@@ -30,6 +30,8 @@ export class DefaultWorldModel implements WorldModel {
   pvGridCellSize: number;
   discretization: Discretization;
   diurnalTemperatureModel: DiurnalTemperatureModel;
+  highestTemperatureTimeInMinutes: number;
+
   solarPanelVisibilityGridCellSize: number;
   solarRadiationHeatmapGridCellSize: number;
 
@@ -68,6 +70,8 @@ export class DefaultWorldModel implements WorldModel {
     this.pvGridCellSize = 0.5;
     this.discretization = Discretization.APPROXIMATE;
     this.diurnalTemperatureModel = DiurnalTemperatureModel.Sinusoidal;
+    this.highestTemperatureTimeInMinutes = 900;
+
     this.solarPanelVisibilityGridCellSize = 0.2;
     this.solarRadiationHeatmapGridCellSize = 0.5;
 
@@ -105,6 +109,8 @@ export class DefaultWorldModel implements WorldModel {
     worldModel.pvGridCellSize = 0.5;
     worldModel.discretization = Discretization.APPROXIMATE;
     worldModel.diurnalTemperatureModel = DiurnalTemperatureModel.Sinusoidal;
+    worldModel.highestTemperatureTimeInMinutes = 900;
+
     worldModel.solarPanelVisibilityGridCellSize = 0.2;
     worldModel.solarRadiationHeatmapGridCellSize = 0.5;
 

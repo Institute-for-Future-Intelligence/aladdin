@@ -26,6 +26,8 @@ export const discretization = (state: CommonStoreState) => state.world.discretiz
 
 export const diurnalTemperatureModel = (state: CommonStoreState) => state.world.diurnalTemperatureModel;
 
+export const highestTemperatureTimeInMinutes = (state: CommonStoreState) => state.world.highestTemperatureTimeInMinutes;
+
 export const solarRadiationHeatmapGridCellSize = (state: CommonStoreState) =>
   state.world.solarRadiationHeatmapGridCellSize;
 

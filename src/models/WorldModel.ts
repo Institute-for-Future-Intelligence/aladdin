@@ -14,6 +14,9 @@ export interface WorldModel {
   ground: GroundModel;
   diurnalTemperatureModel: DiurnalTemperatureModel;
 
+  // the minutes of the day when the air temperature reaches the highest
+  highestTemperatureTimeInMinutes: number;
+
   // Linear attenuation coefficient (µ) is a constant that describes the fraction of attenuated
   // incident photons in a light beam per unit thickness of a material. It includes all possible
   // interactions including coherent scatter, Compton scatter, and photoelectric effect for the
@@ -24,6 +27,7 @@ export interface WorldModel {
   // 2.5-20 W/(m^2*K) of air: https://en.wikipedia.org/wiki/Heat_transfer_coefficient
   // The heat transfer coefficient in thermodynamics is the proportionality constant between the heat flux and the
   // thermodynamic driving force for the flow of heat (i.e., the temperature difference, ΔT).
+  // The default value is 5 W/(m^2*K).
   airConvectiveCoefficient: number;
 
   timesPerHour: number;

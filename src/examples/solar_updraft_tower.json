@@ -35,6 +35,7 @@
     "solarRadiationHeatmapGridCellSize": 2,
     "sutGridCellSize": 5,
     "diurnalTemperatureModel": 2,
+    "highestTemperatureTimeInMinutes": 930,
     "noAnimationForSolarUpdraftTowerSimulation": true,
     "noAnimationForSensorDataCollection": true,
     "noAnimationForHeatmapSimulation": true

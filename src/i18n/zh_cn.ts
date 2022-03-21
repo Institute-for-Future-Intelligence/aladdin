@@ -345,6 +345,7 @@ export const i18n_zh_cn = {
       ThemeGrassland: '草原',
       SunlightAttenuationCoefficientInAir: '阳光在空气中传播的衰减系数',
       ConvectiveCoefficientOfAir: '空气对流传热系数',
+      HighestTemperatureTimeInMinutes: '最高气温时间(分钟)',
     },
 
     groundMenu: {

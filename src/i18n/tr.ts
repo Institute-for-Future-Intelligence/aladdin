@@ -348,6 +348,7 @@ export const i18n_tr = {
       ThemeGrassland: 'Savana',
       SunlightAttenuationCoefficientInAir: 'Sunlight Attenuation Coefficient in Air',
       ConvectiveCoefficientOfAir: 'Convective Coefficient of Air',
+      HighestTemperatureTimeInMinutes: 'Highest Temperature Time (Minutes)',
     },
 
     groundMenu: {

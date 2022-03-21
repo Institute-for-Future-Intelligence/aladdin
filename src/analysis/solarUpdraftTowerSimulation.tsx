@@ -51,6 +51,7 @@ const SolarUpdraftTowerSimulation = ({ city }: SolarUpdraftTowerSimulationProps)
   const pauseYearlySimulation = useStore(Selector.pauseYearlySimulationForUpdraftTower);
   const showDailyUpdraftTowerPanel = useStore(Selector.viewState.showDailyUpdraftTowerYieldPanel);
   const noAnimation = useStore(Selector.world.noAnimationForSolarUpdraftTowerSimulation);
+  const highestTemperatureTimeInMinutes = useStore(Selector.world.highestTemperatureTimeInMinutes) ?? 900;
   const cellSize = world.sutGridCellSize ?? 1;
 
   const { scene } = useThree();
@@ -239,7 +240,7 @@ const SolarUpdraftTowerSimulation = ({ city }: SolarUpdraftTowerSimulationProps)
                   temp.high,
                   temp.low,
                   world.diurnalTemperatureModel,
-                  weather.highestTemperatureTimeInMinutes,
+                  highestTemperatureTimeInMinutes,
                   sunMinutes,
                   Util.minutesIntoDay(date),
                 );
@@ -251,7 +252,7 @@ const SolarUpdraftTowerSimulation = ({ city }: SolarUpdraftTowerSimulationProps)
                 // assume that the average temperature of the collector is the mean between ambient and inlet
                 const tCollector = (chimneyInletTemperatures[i - 1] + ambientTemperature) / 2;
                 const convectiveLoss =
-                  world.airConvectiveCoefficient * collectorArea * (tCollector - ambientTemperature);
+                  (world.airConvectiveCoefficient ?? 5) * collectorArea * (tCollector - ambientTemperature);
                 const tCollectorK = tCollector + KELVIN_AT_ZERO_CELSIUS;
                 const tCollector4 = tCollectorK * tCollectorK * tCollectorK * tCollectorK;
                 const tAmbient4 = tAmbientK * tAmbientK * tAmbientK * tAmbientK;
@@ -513,7 +514,7 @@ const SolarUpdraftTowerSimulation = ({ city }: SolarUpdraftTowerSimulationProps)
                   temp.high,
                   temp.low,
                   world.diurnalTemperatureModel,
-                  weather.highestTemperatureTimeInMinutes,
+                  highestTemperatureTimeInMinutes,
                   sunMinutes,
                   Util.minutesIntoDay(now),
                 );
@@ -525,7 +526,7 @@ const SolarUpdraftTowerSimulation = ({ city }: SolarUpdraftTowerSimulationProps)
                 // assume that the average temperature of the collector is the mean between ambient and inlet
                 const tCollector = (chimneyInletTemperatures[i - 1] + ambientTemperature) / 2;
                 const convectiveLoss =
-                  world.airConvectiveCoefficient * collectorArea * (tCollector - ambientTemperature);
+                  (world.airConvectiveCoefficient ?? 5) * collectorArea * (tCollector - ambientTemperature);
                 const tCollectorK = tCollector + KELVIN_AT_ZERO_CELSIUS;
                 const tCollector4 = tCollectorK * tCollectorK * tCollectorK * tCollectorK;
                 const tAmbient4 = tAmbientK * tAmbientK * tAmbientK * tAmbientK;

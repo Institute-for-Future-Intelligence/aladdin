@@ -2,7 +2,7 @@
  * @Copyright 2021-2022. Institute for Future Intelligence, Inc.
  */
 
-import React from 'react';
+import React, { useMemo } from 'react';
 import { Checkbox, InputNumber, Menu, Radio, Space } from 'antd';
 import SubMenu from 'antd/lib/menu/SubMenu';
 import { useStore } from '../../../stores/common';
@@ -11,17 +11,23 @@ import { Theme } from '../../../types';
 import i18n from '../../../i18n/i18n';
 import { UndoableCheck } from '../../../undo/UndoableCheck';
 import { UndoableChange } from '../../../undo/UndoableChange';
+import { computeSunriseAndSunsetInMinutes } from '../../../analysis/sunTools';
 
 export const SkyMenu = () => {
   const setCommonStore = useStore(Selector.set);
   const addUndoable = useStore(Selector.addUndoable);
+  const world = useStore.getState().world;
   const axes = useStore(Selector.viewState.axes);
   const theme = useStore(Selector.viewState.theme);
   const language = useStore(Selector.language);
   const airAttenuationCoefficient = useStore(Selector.world.airAttenuationCoefficient) ?? 0.01;
   const airConvectiveCoefficient = useStore(Selector.world.airConvectiveCoefficient) ?? 5;
+  const highestTemperatureTimeInMinutes = useStore(Selector.world.highestTemperatureTimeInMinutes) ?? 900;
 
   const lang = { lng: language };
+  const sunMinutes = useMemo(() => {
+    return computeSunriseAndSunsetInMinutes(new Date(world.date), world.latitude);
+  }, [world.date, world.latitude]);
 
   const radioStyle = {
     display: 'block',
@@ -51,6 +57,12 @@ export const SkyMenu = () => {
   const setAirConvectiveCoefficient = (value: number) => {
     setCommonStore((state) => {
       state.world.airConvectiveCoefficient = value;
+    });
+  };
+
+  const setHighestTemperatureTimeInMinutes = (value: number) => {
+    setCommonStore((state) => {
+      state.world.highestTemperatureTimeInMinutes = value;
     });
   };
 
@@ -177,6 +189,37 @@ export const SkyMenu = () => {
                 } as UndoableChange;
                 addUndoable(undoableChange);
                 setAirConvectiveCoefficient(newConvectiveCoefficient);
+              }
+            }}
+          />
+        </Menu.Item>
+
+        <Menu.Item style={{ paddingLeft: '36px' }} key={'highest-temperature-time-in-minutes'}>
+          <Space style={{ width: '260px' }}>{i18n.t('skyMenu.HighestTemperatureTimeInMinutes', lang) + ':'}</Space>
+          <InputNumber
+            min={720}
+            max={sunMinutes.sunset}
+            step={5}
+            precision={0}
+            value={highestTemperatureTimeInMinutes}
+            onChange={(value) => {
+              if (value) {
+                const oldMinutes = highestTemperatureTimeInMinutes;
+                const newMinutes = value;
+                const undoableChange = {
+                  name: 'Set Time of Highest Temperature in Minutes',
+                  timestamp: Date.now(),
+                  oldValue: oldMinutes,
+                  newValue: newMinutes,
+                  undo: () => {
+                    setHighestTemperatureTimeInMinutes(undoableChange.oldValue as number);
+                  },
+                  redo: () => {
+                    setHighestTemperatureTimeInMinutes(undoableChange.newValue as number);
+                  },
+                } as UndoableChange;
+                addUndoable(undoableChange);
+                setHighestTemperatureTimeInMinutes(newMinutes);
               }
             }}
           />
