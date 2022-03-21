@@ -1,6 +1,6 @@
 {
-  "docid": "8wk2TaQLPwN296FGEnC7uW",
-  "timestamp": 1647732496501,
+  "docid": "qSBUrd39qhi91VZZdRsKxz",
+  "timestamp": 1647901371503,
   "userid": "QWecNcxhyvP6j6sBN11hBsfZDau1",
   "owner": null,
   "email": null,
@@ -28,7 +28,7 @@
       ]
     },
     "address": "13200 Manzanares, Ciudad Real, Spain",
-    "date": "Thu Sep 02 2021 14:00:00 GMT-0400 (Eastern Daylight Time)",
+    "date": "Tue Jun 08 2021 14:00:00 GMT-0400 (Eastern Daylight Time)",
     "name": "default",
     "orthographic": false,
     "cameraZoom": 35.16173831821251,
@@ -38,7 +38,8 @@
     "highestTemperatureTimeInMinutes": 930,
     "noAnimationForSolarUpdraftTowerSimulation": true,
     "noAnimationForSensorDataCollection": true,
-    "noAnimationForHeatmapSimulation": true
+    "noAnimationForHeatmapSimulation": true,
+    "airConvectiveCoefficient": 10
   },
   "elements": [
     {
@@ -70,7 +71,10 @@
         "collectorHeight": 2,
         "collectorRadius": 122,
         "chimneyHeight": 195,
-        "chimneyRadius": 5
+        "chimneyRadius": 5,
+        "collectorEmissivity": 0.9,
+        "collectorTransmissivity": 0.8,
+        "turbineEfficiency": 0.3
       }
     },
     {
@@ -117,7 +121,8 @@
       ],
       "parentId": "of4fAMi2p9MKmo6JDUYnfX",
       "id": "nRWqXrYCJwuMMKPznon3yj",
-      "selected": false
+      "selected": false,
+      "ly": 0.6
     }
   ],
   "view": {
@@ -157,9 +162,9 @@
     "showYearlyLightSensorPanel": false,
     "mapType": "roadmap",
     "cameraPosition": [
-      -360.982952842044,
-      -281.16618886391336,
-      137.40220528313012
+      -286.2671151424885,
+      -379.63764367710047,
+      88.70698003902255
     ],
     "panCenter": [
       31.318634005291777,

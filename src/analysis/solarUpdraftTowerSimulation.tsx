@@ -215,7 +215,7 @@ const SolarUpdraftTowerSimulation = ({ city }: SolarUpdraftTowerSimulationProps)
         const f = e as FoundationModel;
         if (f.solarStructure === SolarStructure.UpdraftTower && f.solarUpdraftTower) {
           const transmissivity = f.solarUpdraftTower.collectorTransmissivity ?? 0.9;
-          const turbineEfficiency = f.solarUpdraftTower.turbineEfficiency ?? 0.9;
+          const turbineEfficiency = f.solarUpdraftTower.turbineEfficiency ?? 0.3;
           const dischargeCoefficient = f.solarUpdraftTower.dischargeCoefficient ?? 0.65;
           const chimneyArea = Math.PI * f.solarUpdraftTower.chimneyRadius * f.solarUpdraftTower.chimneyRadius;
           const collectorArea = Math.PI * f.solarUpdraftTower.collectorRadius * f.solarUpdraftTower.collectorRadius;
@@ -494,7 +494,7 @@ const SolarUpdraftTowerSimulation = ({ city }: SolarUpdraftTowerSimulationProps)
           const windSpeeds = dailyWindSpeedsMapRef.current.get(e.id + '-sut');
           if (outputs && chimneyInletTemperatures && windSpeeds) {
             const transmissivity = f.solarUpdraftTower.collectorTransmissivity ?? 0.9;
-            const turbineEfficiency = f.solarUpdraftTower.turbineEfficiency ?? 0.9;
+            const turbineEfficiency = f.solarUpdraftTower.turbineEfficiency ?? 0.3;
             const dischargeCoefficient = f.solarUpdraftTower.dischargeCoefficient ?? 0.65;
             const chimneyArea = Math.PI * f.solarUpdraftTower.chimneyRadius * f.solarUpdraftTower.chimneyRadius;
             const collectorArea = Math.PI * f.solarUpdraftTower.collectorRadius * f.solarUpdraftTower.collectorRadius;

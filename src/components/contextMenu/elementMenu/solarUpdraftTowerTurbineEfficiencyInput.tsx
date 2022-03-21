@@ -34,7 +34,7 @@ const SolarUpdraftTowerTurbineEfficiencyInput = ({
   const revertApply = useStore(Selector.revertApply);
 
   const [inputTurbineEfficiency, setInputTurbineEfficiency] = useState<number>(
-    foundation?.solarUpdraftTower?.turbineEfficiency ?? 0.9,
+    foundation?.solarUpdraftTower?.turbineEfficiency ?? 0.3,
   );
   const [updateFlag, setUpdateFlag] = useState<boolean>(false);
   const [dragEnabled, setDragEnabled] = useState<boolean>(false);
@@ -45,7 +45,7 @@ const SolarUpdraftTowerTurbineEfficiencyInput = ({
 
   useEffect(() => {
     if (foundation) {
-      setInputTurbineEfficiency(foundation.solarUpdraftTower?.turbineEfficiency ?? 0.9);
+      setInputTurbineEfficiency(foundation.solarUpdraftTower?.turbineEfficiency ?? 0.3);
     }
   }, [foundation]);
 
@@ -94,7 +94,7 @@ const SolarUpdraftTowerTurbineEfficiencyInput = ({
           if (elem.type === ObjectType.Foundation) {
             const f = elem as FoundationModel;
             if (f.solarStructure === SolarStructure.UpdraftTower && f.solarUpdraftTower) {
-              oldValuesAll.set(elem.id, f.solarUpdraftTower.turbineEfficiency ?? 0.9);
+              oldValuesAll.set(elem.id, f.solarUpdraftTower.turbineEfficiency ?? 0.3);
             }
           }
         }
@@ -118,7 +118,7 @@ const SolarUpdraftTowerTurbineEfficiencyInput = ({
         break;
       default:
         if (foundation && foundation.solarStructure === SolarStructure.UpdraftTower && foundation.solarUpdraftTower) {
-          const oldValue = foundation.solarUpdraftTower.turbineEfficiency ?? 0.9;
+          const oldValue = foundation.solarUpdraftTower.turbineEfficiency ?? 0.3;
           updateById(foundation.id, value);
           const undoableChange = {
             name: 'Set Solar Updraft Tower Turbine Efficiency on Foundation',
@@ -154,7 +154,7 @@ const SolarUpdraftTowerTurbineEfficiencyInput = ({
   };
 
   const close = () => {
-    setInputTurbineEfficiency(foundation?.solarUpdraftTower?.turbineEfficiency ?? 0.9);
+    setInputTurbineEfficiency(foundation?.solarUpdraftTower?.turbineEfficiency ?? 0.3);
     setDialogVisible(false);
   };
 
