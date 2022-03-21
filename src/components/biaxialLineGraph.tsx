@@ -90,8 +90,8 @@ const BiaxialLineGraph = ({
         yAxisId="left"
         key={'ambient-temperature'}
         type={curveType}
-        name={'Ambient Temperature'}
-        dataKey={'Ambient Temperature'}
+        name={'T_Ambient'}
+        dataKey={'T_Ambient'}
         stroke={PRESET_COLORS[0]}
         strokeDasharray={'5 5'}
         opacity={0.5}
@@ -104,7 +104,7 @@ const BiaxialLineGraph = ({
       let name = '';
       switch (type1) {
         case GraphDataType.DailyUpdraftTowerAirTemperature:
-          name = 'Temperature Tower' + (i + 1);
+          name = 'T_Tower' + (i + 1);
           break;
       }
       const opacity = legendDataKey === null ? 1 : legendDataKey === name ? 1 : 0.25;
@@ -131,7 +131,7 @@ const BiaxialLineGraph = ({
       name = '';
       switch (type2) {
         case GraphDataType.DailyUpdraftTowerWindSpeed:
-          name = 'Wind Speed Tower' + (i + 1);
+          name = 'V_Tower' + (i + 1);
           break;
       }
       if (name !== '') {

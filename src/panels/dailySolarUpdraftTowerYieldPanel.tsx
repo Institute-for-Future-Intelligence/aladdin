@@ -10,9 +10,9 @@ import * as Selector from '../stores/selector';
 import { ChartType, GraphDataType, SolarStructure } from '../types';
 import moment from 'moment';
 import ReactDraggable, { DraggableEventHandler } from 'react-draggable';
-import { Button, Space, Switch } from 'antd';
+import { Button, Space } from 'antd';
 import { screenshot, showInfo } from '../helpers';
-import { ReloadOutlined, SaveOutlined, UnorderedListOutlined } from '@ant-design/icons';
+import { ReloadOutlined, SaveOutlined } from '@ant-design/icons';
 import i18n from '../i18n/i18n';
 import BiaxialLineGraph from '../components/biaxialLineGraph';
 
@@ -162,7 +162,7 @@ const DailySolarUpdraftTowerYieldPanel = ({ city }: DailySolarUpdraftTowerYieldP
   const labelTemperature = i18n.t('updraftTowerYieldPanel.ChimneyAirTemperature', lang);
   const labelSpeed = i18n.t('updraftTowerYieldPanel.ChimneyWindSpeed', lang);
   let totalTooltip = '';
-  if (individualOutputs) {
+  if (towerCount > 1) {
     towerSumRef.current.forEach((value, key) => (totalTooltip += key + ': ' + value.toFixed(2) + '\n'));
     totalTooltip += '——————————\n';
     totalTooltip += i18n.t('word.Total', lang) + ': ' + sum.toFixed(2) + ' ' + i18n.t('word.kWh', lang);
@@ -233,7 +233,7 @@ const DailySolarUpdraftTowerYieldPanel = ({ city }: DailySolarUpdraftTowerYieldP
             referenceX={now.getHours()}
           />
           <Space style={{ alignSelf: 'center' }}>
-            {individualOutputs && towerCount > 1 ? (
+            {towerCount > 1 ? (
               <Space title={totalTooltip} style={{ cursor: 'pointer', border: '2px solid #ccc', padding: '4px' }}>
                 {i18n.t('updraftTowerYieldPanel.HoverForBreakdown', lang)}
               </Space>
@@ -241,30 +241,6 @@ const DailySolarUpdraftTowerYieldPanel = ({ city }: DailySolarUpdraftTowerYieldP
               <Space style={{ cursor: 'default' }}>
                 {i18n.t('updraftTowerYieldPanel.DailyTotal', lang)}:{sum.toFixed(2)} {i18n.t('word.kWh', lang)}
               </Space>
-            )}
-            {towerCount > 1 && (
-              <Switch
-                title={i18n.t('updraftTowerYieldPanel.ShowOutputsOfIndividualUpdraftTowers', lang)}
-                checkedChildren={<UnorderedListOutlined />}
-                unCheckedChildren={<UnorderedListOutlined />}
-                checked={individualOutputs}
-                onChange={(checked) => {
-                  if (towerCount === 0) {
-                    showInfo(i18n.t('analysisManager.NoSolarUpdraftTowerForAnalysis', lang));
-                    return;
-                  }
-                  showInfo(i18n.t('message.SimulationStarted', lang));
-                  // give it 0.1 second for the info to show up
-                  setTimeout(() => {
-                    setCommonStore((state) => {
-                      state.runDailySimulationForUpdraftTower = true;
-                      state.pauseDailySimulationForUpdraftTower = false;
-                      state.simulationInProgress = true;
-                      state.dailyUpdraftTowerIndividualOutputs = checked;
-                    });
-                  }, 100);
-                }}
-              />
             )}
             <Button
               type="default"

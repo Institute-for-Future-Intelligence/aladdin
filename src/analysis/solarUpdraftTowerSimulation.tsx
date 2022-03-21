@@ -302,12 +302,12 @@ const SolarUpdraftTowerSimulation = ({ city }: SolarUpdraftTowerSimulationProps)
     for (let i = 0; i < 24; i++) {
       const datum: DatumEntry = {};
       datum['Hour'] = i;
-      datum['Ambient Temperature'] = dailyAmbientTemperaturesRef.current[i];
+      datum['T_Ambient'] = dailyAmbientTemperaturesRef.current[i];
       for (let k = 1; k <= index; k++) {
         let key = 'Temperature Tower' + k;
-        datum['Temperature ' + labels[k - 1]] = map.get(key)?.[i];
+        datum['T_' + labels[k - 1]] = map.get(key)?.[i];
         key = 'Wind Speed Tower' + k;
-        datum['Wind Speed ' + labels[k - 1]] = map.get(key)?.[i];
+        datum['V_' + labels[k - 1]] = map.get(key)?.[i];
       }
       results.push(datum);
     }
@@ -470,8 +470,10 @@ const SolarUpdraftTowerSimulation = ({ city }: SolarUpdraftTowerSimulationProps)
       if (e.type === ObjectType.Foundation) {
         const f = e as FoundationModel;
         if (f.solarStructure === SolarStructure.UpdraftTower && f.solarUpdraftTower) {
-          const result = dailyOutputsMapRef.current.get(f.id + '-sut');
-          if (result) {
+          const outputs = dailyOutputsMapRef.current.get(f.id + '-sut');
+          const airTemperatures = dailyAirTemperaturesMapRef.current.get(e.id + '-sut');
+          const windSpeeds = dailyWindSpeedsMapRef.current.get(e.id + '-sut');
+          if (outputs && airTemperatures && windSpeeds) {
             const transmissivity = f.solarUpdraftTower.collectorTransmissivity ?? 0.9;
             const turbineEfficiency = f.solarUpdraftTower.turbineEfficiency ?? 0.9;
             const dischargeCoefficient = f.solarUpdraftTower.dischargeCoefficient ?? 0.65;
@@ -484,7 +486,7 @@ const SolarUpdraftTowerSimulation = ({ city }: SolarUpdraftTowerSimulationProps)
               weather = getWeather(city);
               temp = computeOutsideTemperature(now, weather.lowestTemperatures, weather.highestTemperatures);
             }
-            for (let i = 0; i < result.length; i++) {
+            for (let i = 0; i < outputs.length; i++) {
               let ambientTemperature = 20;
               if (weather && temp) {
                 now.setHours(i);
@@ -496,27 +498,32 @@ const SolarUpdraftTowerSimulation = ({ city }: SolarUpdraftTowerSimulationProps)
                   sunMinutes,
                   Util.minutesIntoDay(now),
                 );
+                dailyAmbientTemperaturesRef.current[i] = ambientTemperature;
               }
-              result[i] *= timeFactor * transmissivity * 1000; // from kW to W
+              outputs[i] *= timeFactor * transmissivity * 1000; // from kW to W
               const k0 = ambientTemperature + KELVIN_AT_ZERO_CELSIUS;
-              const a = result[i] / (dca * k0);
+              const a = outputs[i] / (dca * k0);
               const temperature = k0 * (1 + Math.cbrt((a * a) / speedFactor)) - KELVIN_AT_ZERO_CELSIUS;
               const speed =
                 temperature > ambientTemperature
                   ? Math.sqrt(speedFactor * ((temperature + KELVIN_AT_ZERO_CELSIUS) / k0 - 1))
                   : 0;
-              result[i] = powerFactor * speed * speed * speed * 0.001; // from W to kW
+              outputs[i] = powerFactor * speed * speed * speed * 0.001; // from W to kW
+              airTemperatures[i] = temperature;
+              windSpeeds[i] = speed;
             }
             const total = yearlyOutputsMapRef.current.get(f.id + '-sut');
             if (total) {
-              const sumDaily = result.reduce((a, b) => a + b, 0);
+              const sumDaily = outputs.reduce((a, b) => a + b, 0);
               total[sampledDayRef.current] += sumDaily;
             }
           }
         }
       }
     }
-    if (showDailyUpdraftTowerPanel) finishDaily();
+    if (showDailyUpdraftTowerPanel) {
+      generateDailyData();
+    }
   };
 
   const generateYearlyData = () => {

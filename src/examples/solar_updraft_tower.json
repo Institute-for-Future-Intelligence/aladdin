@@ -32,8 +32,8 @@
     "name": "default",
     "orthographic": false,
     "cameraZoom": 35.16173831821251,
-    "solarRadiationHeatmapGridCellSize": 1,
-    "sutGridCellSize": 2,
+    "solarRadiationHeatmapGridCellSize": 2,
+    "sutGridCellSize": 5,
     "diurnalTemperatureModel": 2,
     "noAnimationForSolarUpdraftTowerSimulation": true,
     "noAnimationForSensorDataCollection": true
@@ -179,7 +179,7 @@
       12.466888399142201,
       0.000012467288726847116
     ],
-    "solarRadiationHeatMapMaxValue": 4,
+    "solarRadiationHeatMapMaxValue": 5,
     "showDailyHeliostatYieldPanel": false,
     "dailyHeliostatYieldPanelX": null,
     "dailyHeliostatYieldPanelY": null,

@@ -7,15 +7,14 @@ import LineGraph from '../components/lineGraph';
 import styled from 'styled-components';
 import { useStore } from '../stores/common';
 import * as Selector from '../stores/selector';
-import { ChartType, GraphDataType, ObjectType, SolarStructure } from '../types';
+import { ChartType, GraphDataType, SolarStructure } from '../types';
 import { MONTHS } from '../constants';
 import { Util } from '../Util';
 import ReactDraggable, { DraggableEventHandler } from 'react-draggable';
-import { Button, Space, Switch } from 'antd';
+import { Button, Space } from 'antd';
 import { screenshot, showInfo } from '../helpers';
-import { ReloadOutlined, SaveOutlined, UnorderedListOutlined } from '@ant-design/icons';
+import { ReloadOutlined, SaveOutlined } from '@ant-design/icons';
 import i18n from '../i18n/i18n';
-import { DailySolarUpdraftTowerYieldPanelProps } from './dailySolarUpdraftTowerYieldPanel';
 
 const Container = styled.div`
   position: fixed;
@@ -161,12 +160,10 @@ const YearlySolarUpdraftTowerYieldPanel = ({ city }: YearlySolarUpdraftTowerYiel
   const labelX = i18n.t('word.Month', lang);
   const labelY = i18n.t('updraftTowerYieldPanel.Yield', lang);
   let totalTooltip = '';
-  if (individualOutputs) {
-    towerSumRef.current.forEach((value, key) => (totalTooltip += key + ': ' + value.toFixed(2) + '\n'));
-    totalTooltip += '——————————\n';
-    totalTooltip +=
-      i18n.t('word.Total', lang) + ': ' + ((sum * 12) / daysPerYear).toFixed(2) + ' ' + i18n.t('word.kWh', lang);
-  }
+  towerSumRef.current.forEach((value, key) => (totalTooltip += key + ': ' + value.toFixed(2) + '\n'));
+  totalTooltip += '——————————\n';
+  totalTooltip +=
+    i18n.t('word.Total', lang) + ': ' + ((sum * 12) / daysPerYear).toFixed(2) + ' ' + i18n.t('word.kWh', lang);
 
   return (
     <ReactDraggable
@@ -214,7 +211,7 @@ const YearlySolarUpdraftTowerYieldPanel = ({ city }: YearlySolarUpdraftTowerYiel
             referenceX={referenceX}
           />
           <Space style={{ alignSelf: 'center' }}>
-            {individualOutputs && towerCount > 1 ? (
+            {towerCount > 1 ? (
               <Space title={totalTooltip} style={{ cursor: 'pointer', border: '2px solid #ccc', padding: '4px' }}>
                 {i18n.t('updraftTowerYieldPanel.HoverForBreakdown', lang)}
               </Space>
@@ -223,30 +220,6 @@ const YearlySolarUpdraftTowerYieldPanel = ({ city }: YearlySolarUpdraftTowerYiel
                 {i18n.t('updraftTowerYieldPanel.YearlyTotal', lang)}:{((sum * 12) / daysPerYear).toFixed(2)}{' '}
                 {i18n.t('word.kWh', lang)}
               </Space>
-            )}
-            {towerCount > 1 && (
-              <Switch
-                title={i18n.t('updraftTowerYieldPanel.ShowOutputsOfIndividualUpdraftTowers', lang)}
-                checkedChildren={<UnorderedListOutlined />}
-                unCheckedChildren={<UnorderedListOutlined />}
-                checked={individualOutputs}
-                onChange={(checked) => {
-                  if (towerCount === 0) {
-                    showInfo(i18n.t('analysisManager.NoSolarUpdraftTowerForAnalysis', lang));
-                    return;
-                  }
-                  showInfo(i18n.t('message.SimulationStarted', lang));
-                  // give it 0.1 second for the info to show up
-                  setTimeout(() => {
-                    setCommonStore((state) => {
-                      state.simulationInProgress = true;
-                      state.yearlyUpdraftTowerIndividualOutputs = checked;
-                      state.runYearlySimulationForUpdraftTower = true;
-                      state.pauseYearlySimulationForUpdraftTower = false;
-                    });
-                  }, 100);
-                }}
-              />
             )}
             <Button
               type="default"
