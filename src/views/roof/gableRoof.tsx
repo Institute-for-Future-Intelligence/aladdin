@@ -26,35 +26,44 @@ enum RoofHandleType {
   Null = 'Null',
 }
 
-const GableRoof = ({ id, parentId, cx, cy, cz, wallsId, selected }: GableRoofModel) => {
+const GableRoof = ({
+  id,
+  parentId,
+  cx,
+  cy,
+  cz,
+  lz,
+  wallsId,
+  selected,
+  ridgeLeftPoint,
+  ridgeRightPoint,
+}: GableRoofModel) => {
   const setCommonStore = useStore(Selector.set);
   const getElementById = useStore(Selector.getElementById);
+  const removeElementById = useStore(Selector.removeElementById);
   const elements = useStore(Selector.elements);
   const { gl, camera } = useThree();
   const ray = useMemo(() => new Raycaster(), []);
   const mouse = useMemo(() => new Vector2(), []);
 
-  const [h, setH] = useState(8);
+  const [h, setH] = useState(lz);
+  const [minHeight, setMinHeight] = useState(lz / 2);
   const [showIntersectionPlane, setShowIntersectionPlane] = useState(false);
   const [roofHandleType, setRoofHandleType] = useState<RoofHandleType>(RoofHandleType.Null);
+  const [isShed, setIsShed] = useState(false); // todo: need change, wall height
 
-  const shedWallIndex = useRef(-1);
   const intersectionPlaneRef = useRef<Mesh>(null);
+
+  useEffect(() => {
+    if (h < minHeight) {
+      setH(minHeight);
+    }
+  }, [minHeight]);
 
   const setRayCast = (e: PointerEvent) => {
     mouse.x = (e.offsetX / gl.domElement.clientWidth) * 2 - 1;
     mouse.y = -(e.offsetY / gl.domElement.clientHeight) * 2 + 1;
     ray.setFromCamera(mouse, camera);
-  };
-
-  const getWallCenterPoint = (wall: WallModel) => {
-    if (wall.centerRoofHeight) {
-      const v = new Vector3(wall.centerRoofHeight[0] * wall.lx, 0, 0);
-      const e = new Euler(0, 0, wall.relativeAngle);
-      return new Vector3(wall.cx, wall.cy, h).add(v.applyEuler(e));
-    } else {
-      return new Vector3(wall.cx, wall.cy, h);
-    }
   };
 
   const getRelPos = (foundation: ElementModel, wall: WallModel, point: Vector3) => {
@@ -68,6 +77,50 @@ const GableRoof = ({ id, parentId, cx, cy, cz, wallsId, selected }: GableRoofMod
     return Math.min(Math.abs(x), 0.5) * (x >= 0 ? 1 : -1);
   };
 
+  const getRidgePoint = (wall: WallModel, px: number, ph: number) => {
+    if (!wall) {
+      return new Vector3();
+    }
+    const e = new Euler(0, 0, wall.relativeAngle);
+    const v = new Vector3(px * wall.lx, 0, 0);
+    const height = ph * (h - minHeight) + minHeight;
+    return new Vector3(wall.cx, wall.cy, height).add(v.applyEuler(e));
+  };
+
+  const getWallHeight = (arr: WallModel[], i: number) => {
+    const w = arr[i];
+    let lh = 0;
+    let rh = 0;
+    if (i === 0) {
+      lh = Math.max(w.lz, arr[arr.length - 1].lz);
+      rh = Math.max(w.lz, arr[i + 1].lz);
+    } else if (i === arr.length - 1) {
+      lh = Math.max(w.lz, arr[i - 1].lz);
+      rh = Math.max(w.lz, arr[0].lz);
+    } else {
+      lh = Math.max(w.lz, arr[i - 1].lz);
+      rh = Math.max(w.lz, arr[i + 1].lz);
+    }
+    return { lh, rh };
+  };
+
+  const getWallHeightShed = (arr: WallModel[], i: number) => {
+    const w = arr[i];
+    let lh = 0;
+    let rh = 0;
+    if (i === 0) {
+      lh = Math.min(w.lz, arr[arr.length - 1].lz);
+      rh = Math.min(w.lz, arr[i + 1].lz);
+    } else if (i === arr.length - 1) {
+      lh = Math.min(w.lz, arr[i - 1].lz);
+      rh = Math.min(w.lz, arr[0].lz);
+    } else {
+      lh = Math.min(w.lz, arr[i - 1].lz);
+      rh = Math.min(w.lz, arr[i + 1].lz);
+    }
+    return { lh, rh };
+  };
+
   const currentWallArray = useMemo(() => {
     const array: WallModel[] = [];
     if (wallsId.length > 0) {
@@ -77,10 +130,10 @@ const GableRoof = ({ id, parentId, cx, cy, cz, wallsId, selected }: GableRoofMod
         const leftWall = getElementById(wall.leftJoints[0]) as WallModel;
         const rightWall = getElementById(wall.rightJoints[0]) as WallModel;
         if (leftWall && rightWall) {
-          array.push(leftWall, rightWall);
           const midWall = getElementById(leftWall.leftJoints[0]) as WallModel;
-          if (midWall) {
-            array.push(midWall);
+          const checkWall = getElementById(rightWall.rightJoints[0]) as WallModel;
+          if (midWall && checkWall && midWall.id === checkWall.id) {
+            array.push(rightWall, midWall, leftWall);
           }
         }
       }
@@ -88,60 +141,69 @@ const GableRoof = ({ id, parentId, cx, cy, cz, wallsId, selected }: GableRoofMod
     return array;
   }, [elements]);
 
-  const ridgeLeftPoint = useMemo(() => {
-    const wall = currentWallArray[1];
-    return getWallCenterPoint(wall);
-  }, [currentWallArray, h]);
+  const ridgeLeftPointV3 = useMemo(() => {
+    const wall = currentWallArray[3];
+    const [x, h] = ridgeLeftPoint; // percent
+    return getRidgePoint(wall, x, h);
+  }, [currentWallArray, h, ridgeLeftPoint]);
 
-  const ridgeRightPoint = useMemo(() => {
-    const wall = currentWallArray[2];
-    return getWallCenterPoint(wall);
-  }, [currentWallArray, h]);
+  const ridgeRightPointV3 = useMemo(() => {
+    const wall = currentWallArray[1];
+    const [x, h] = ridgeRightPoint; // percent
+    return getRidgePoint(wall, x, h);
+  }, [currentWallArray, h, ridgeRightPoint]);
 
   const ridgeMidPoint = useMemo(() => {
-    return new Vector3((ridgeLeftPoint.x + ridgeRightPoint.x) / 2, (ridgeLeftPoint.y + ridgeRightPoint.y) / 2, h);
-  }, [ridgeLeftPoint, ridgeRightPoint]);
+    return new Vector3(
+      (ridgeLeftPointV3.x + ridgeRightPointV3.x) / 2,
+      (ridgeLeftPointV3.y + ridgeRightPointV3.y) / 2,
+      h,
+    );
+  }, [ridgeLeftPointV3, ridgeRightPointV3]);
 
   const roofSegments = useMemo(() => {
     const segments: Vector3[][] = [];
 
+    if (currentWallArray.length !== 4) {
+      return segments;
+    }
+
     // shed roof
-    if (currentWallArray[1].centerRoofHeight && Math.abs(currentWallArray[1].centerRoofHeight[0]) === 0.5) {
+    if (currentWallArray[3].centerRoofHeight && Math.abs(currentWallArray[3].centerRoofHeight[0]) === 0.5) {
       const vector = [];
-      const currWall = currentWallArray[currentWallArray[1].centerRoofHeight[0] < 0 ? 0 : 3];
-      const currLeftPoint = new Vector3();
-      const currRightPoint = new Vector3();
-      currLeftPoint.set(currWall.leftPoint[0], currWall.leftPoint[1], currWall.lz).sub(ridgeMidPoint);
-      currRightPoint.set(currWall.rightPoint[0], currWall.rightPoint[1], currWall.lz).sub(ridgeMidPoint);
+      const idx = currentWallArray[3].centerRoofHeight[0] < 0 ? 0 : 2;
+      const currWall = currentWallArray[idx];
+      const { lh, rh } = getWallHeightShed(currentWallArray, idx);
+      const currLeftPoint = new Vector3(currWall.leftPoint[0], currWall.leftPoint[1], lh).sub(ridgeMidPoint);
+      const currRightPoint = new Vector3(currWall.rightPoint[0], currWall.rightPoint[1], rh).sub(ridgeMidPoint);
       vector.push(
         currLeftPoint,
         currRightPoint,
-        ridgeLeftPoint.clone().sub(ridgeMidPoint),
-        ridgeRightPoint.clone().sub(ridgeMidPoint),
+        ridgeLeftPointV3.clone().sub(ridgeMidPoint),
+        ridgeRightPointV3.clone().sub(ridgeMidPoint),
       );
       segments.push(vector);
     }
     // gable roof
     else {
-      for (let i = 0; i < 4; i += 3) {
+      for (let i = 0; i < 4; i += 2) {
         const vector = [];
         const currWall = currentWallArray[i];
-        const currLeftPoint = new Vector3();
-        const currRightPoint = new Vector3();
-        currLeftPoint.set(currWall.leftPoint[0], currWall.leftPoint[1], currWall.lz).sub(ridgeMidPoint);
-        currRightPoint.set(currWall.rightPoint[0], currWall.rightPoint[1], currWall.lz).sub(ridgeMidPoint);
+        const { lh, rh } = getWallHeight(currentWallArray, i);
+        const currLeftPoint = new Vector3(currWall.leftPoint[0], currWall.leftPoint[1], lh).sub(ridgeMidPoint);
+        const currRightPoint = new Vector3(currWall.rightPoint[0], currWall.rightPoint[1], rh).sub(ridgeMidPoint);
         vector.push(
           currLeftPoint,
           currRightPoint,
-          ridgeLeftPoint.clone().sub(ridgeMidPoint),
-          ridgeRightPoint.clone().sub(ridgeMidPoint),
+          ridgeLeftPointV3.clone().sub(ridgeMidPoint),
+          ridgeRightPointV3.clone().sub(ridgeMidPoint),
         );
         segments.push(vector);
       }
     }
 
     return segments;
-  }, [currentWallArray, ridgeLeftPoint, ridgeRightPoint, h]);
+  }, [currentWallArray, ridgeLeftPointV3, ridgeRightPointV3, h]);
 
   // set position and rotation
   const parent = getElementById(parentId);
@@ -154,28 +216,75 @@ const GableRoof = ({ id, parentId, cx, cy, cz, wallsId, selected }: GableRoofMod
   }
 
   useEffect(() => {
-    setCommonStore((state) => {
-      for (const e of state.elements) {
-        if (e.id === currentWallArray[1].id) {
+    if (currentWallArray.length === 4) {
+      let minHeight = 0;
+      setCommonStore((state) => {
+        for (const e of state.elements) {
           const w = e as WallModel;
-          w.roofId = id;
-          if (w.centerRoofHeight) {
-            w.centerRoofHeight[1] = h;
-          } else {
-            w.centerRoofHeight = [0, h];
+          switch (e.id) {
+            case currentWallArray[0].id: {
+              const { lh, rh } = isShed ? getWallHeightShed(currentWallArray, 0) : getWallHeight(currentWallArray, 0);
+              minHeight = Math.max(minHeight, Math.max(lh, rh));
+              w.roofId = id;
+              if (ridgeLeftPoint[0] === 0.5) {
+                w.leftRoofHeight = h;
+                w.rightRoofHeight = h;
+                w.centerRoofHeight = undefined;
+              } else {
+                w.leftRoofHeight = lh;
+                w.rightRoofHeight = rh;
+              }
+              break;
+            }
+            case currentWallArray[1].id: {
+              const { lh, rh } = isShed ? getWallHeightShed(currentWallArray, 1) : getWallHeight(currentWallArray, 1);
+              minHeight = Math.max(minHeight, Math.max(lh, rh));
+              w.roofId = id;
+              w.leftRoofHeight = lh;
+              w.rightRoofHeight = rh;
+              if (w.centerRoofHeight) {
+                w.centerRoofHeight[0] = ridgeRightPoint[0];
+              } else {
+                w.centerRoofHeight = [...ridgeRightPoint];
+              }
+              w.centerRoofHeight[1] = h;
+              break;
+            }
+            case currentWallArray[2].id: {
+              const { lh, rh } = isShed ? getWallHeightShed(currentWallArray, 2) : getWallHeight(currentWallArray, 2);
+              minHeight = Math.max(minHeight, Math.max(lh, rh));
+              w.roofId = id;
+              if (ridgeLeftPoint[0] === -0.5) {
+                w.leftRoofHeight = h;
+                w.rightRoofHeight = h;
+                w.centerRoofHeight = undefined;
+              } else {
+                w.leftRoofHeight = lh;
+                w.rightRoofHeight = rh;
+              }
+              break;
+            }
+            case currentWallArray[3].id: {
+              const { lh, rh } = isShed ? getWallHeightShed(currentWallArray, 3) : getWallHeight(currentWallArray, 3);
+              minHeight = Math.max(minHeight, Math.max(lh, rh));
+              w.roofId = id;
+              w.leftRoofHeight = lh;
+              w.rightRoofHeight = rh;
+              if (w.centerRoofHeight) {
+                w.centerRoofHeight[0] = ridgeLeftPoint[0];
+              } else {
+                w.centerRoofHeight = [...ridgeLeftPoint];
+              }
+              w.centerRoofHeight[1] = h;
+              break;
+            }
           }
         }
-        if (e.id === currentWallArray[2].id) {
-          const w = e as WallModel;
-          w.roofId = id;
-          if (w.centerRoofHeight) {
-            w.centerRoofHeight[1] = h;
-          } else {
-            w.centerRoofHeight = [0, h];
-          }
-        }
-      }
-    });
+      });
+      setMinHeight(minHeight);
+    } else {
+      removeElementById(id, false);
+    }
   }, [currentWallArray, h]);
 
   return (
@@ -229,13 +338,13 @@ const GableRoof = ({ id, parentId, cx, cy, cz, wallsId, selected }: GableRoofMod
           />
           {/* side handles */}
           <Sphere
-            position={[ridgeLeftPoint.x, ridgeLeftPoint.y, ridgeLeftPoint.z + 0.15]}
+            position={[ridgeLeftPointV3.x, ridgeLeftPointV3.y, ridgeLeftPointV3.z + 0.15]}
             args={[0.3]}
             onPointerDown={() => {
               setShowIntersectionPlane(true);
-              intersectionPlanePosition.set(ridgeLeftPoint.x, ridgeLeftPoint.y, h);
-              if (parent && currentWallArray[1]) {
-                const r = currentWallArray[1].relativeAngle;
+              intersectionPlanePosition.set(ridgeLeftPointV3.x, ridgeLeftPointV3.y, h);
+              if (parent && currentWallArray[3]) {
+                const r = currentWallArray[3].relativeAngle;
                 intersectionPlaneRotation.set(-HALF_PI, 0, r, 'ZXY');
               }
               setRoofHandleType(RoofHandleType.Left);
@@ -243,13 +352,13 @@ const GableRoof = ({ id, parentId, cx, cy, cz, wallsId, selected }: GableRoofMod
             }}
           />
           <Sphere
-            position={[ridgeRightPoint.x, ridgeRightPoint.y, ridgeRightPoint.z + 0.15]}
+            position={[ridgeRightPointV3.x, ridgeRightPointV3.y, ridgeRightPointV3.z + 0.15]}
             args={[0.3]}
             onPointerDown={() => {
               setShowIntersectionPlane(true);
-              intersectionPlanePosition.set(ridgeRightPoint.x, ridgeRightPoint.y, h);
-              if (parent && currentWallArray[2]) {
-                const r = currentWallArray[2].relativeAngle;
+              intersectionPlanePosition.set(ridgeRightPointV3.x, ridgeRightPointV3.y, h);
+              if (parent && currentWallArray[1]) {
+                const r = currentWallArray[1].relativeAngle;
                 intersectionPlaneRotation.set(-HALF_PI, 0, r, 'ZXY');
               }
               setRoofHandleType(RoofHandleType.Right);
@@ -276,110 +385,48 @@ const GableRoof = ({ id, parentId, cx, cy, cz, wallsId, selected }: GableRoofMod
                 const point = intersects[0].point;
                 switch (roofHandleType) {
                   case RoofHandleType.Left: {
-                    const wall = currentWallArray[1];
+                    const wall = currentWallArray[3];
                     if (wall) {
                       const foundation = getElementById(wall.parentId);
                       if (foundation) {
                         const x = getRelPos(foundation, wall, point);
                         setCommonStore((state) => {
                           for (const e of state.elements) {
-                            if (e.id === wall.id) {
-                              const w = e as WallModel;
-                              if (w.centerRoofHeight) {
-                                w.centerRoofHeight[0] = x;
-                              } else {
-                                w.centerRoofHeight = [x, h];
-                              }
-                            }
-                            if (e.id === currentWallArray[2].id) {
-                              const w = e as WallModel;
-                              if (w.centerRoofHeight) {
-                                w.centerRoofHeight[0] = -x;
-                              } else {
-                                w.centerRoofHeight = [-x, h];
-                              }
-                            }
-                            if (e.id === currentWallArray[3].id) {
-                              if (x === -0.5) {
-                                const w = e as WallModel;
-                                w.roofId = id;
-                                w.leftRoofHeight = h - w.lz / 2;
-                                w.rightRoofHeight = h - w.lz / 2;
-                                w.centerRoofHeight = undefined;
-                              } else {
-                                const w = e as WallModel;
-                                w.leftRoofHeight = undefined;
-                                w.rightRoofHeight = undefined;
-                              }
-                            }
-                            if (e.id === currentWallArray[0].id) {
-                              if (x === 0.5) {
-                                const w = e as WallModel;
-                                w.roofId = id;
-                                w.leftRoofHeight = h - w.lz / 2;
-                                w.rightRoofHeight = h - w.lz / 2;
-                                w.centerRoofHeight = undefined;
-                              } else {
-                                const w = e as WallModel;
-                                w.leftRoofHeight = undefined;
-                                w.rightRoofHeight = undefined;
-                              }
+                            if (e.id === id) {
+                              const r = e as GableRoofModel;
+                              r.ridgeLeftPoint[0] = x;
+                              r.ridgeRightPoint[0] = -x;
+                              break;
                             }
                           }
                         });
+                        if (Math.abs(x) === 0.5 && !isShed) {
+                          setIsShed(true);
+                        } else if (Math.abs(x) !== 0.5 && isShed) {
+                          setIsShed(false);
+                        }
                       }
                     }
                     break;
                   }
                   case RoofHandleType.Right: {
-                    const wall = currentWallArray[2];
+                    const wall = currentWallArray[1];
                     if (wall) {
                       const foundation = getElementById(wall.parentId);
                       if (foundation) {
                         const x = getRelPos(foundation, wall, point);
+                        if (Math.abs(x) === 0.5 && !isShed) {
+                          setIsShed(true);
+                        } else if (Math.abs(x) !== 0.5 && isShed) {
+                          setIsShed(false);
+                        }
                         setCommonStore((state) => {
                           for (const e of state.elements) {
-                            if (e.id === wall.id) {
-                              const w = e as WallModel;
-                              if (w.centerRoofHeight) {
-                                w.centerRoofHeight[0] = x;
-                              } else {
-                                w.centerRoofHeight = [x, h];
-                              }
-                            }
-                            if (e.id === currentWallArray[1].id) {
-                              const w = e as WallModel;
-                              if (w.centerRoofHeight) {
-                                w.centerRoofHeight[0] = -x;
-                              } else {
-                                w.centerRoofHeight = [-x, h];
-                              }
-                            }
-                            if (e.id === currentWallArray[3].id) {
-                              if (x === 0.5) {
-                                const w = e as WallModel;
-                                w.roofId = id;
-                                w.leftRoofHeight = h - w.lz / 2;
-                                w.rightRoofHeight = h - w.lz / 2;
-                                w.centerRoofHeight = undefined;
-                              } else {
-                                const w = e as WallModel;
-                                w.leftRoofHeight = undefined;
-                                w.rightRoofHeight = undefined;
-                              }
-                            }
-                            if (e.id === currentWallArray[0].id) {
-                              if (x === -0.5) {
-                                const w = e as WallModel;
-                                w.roofId = id;
-                                w.leftRoofHeight = h - w.lz / 2;
-                                w.rightRoofHeight = h - w.lz / 2;
-                                w.centerRoofHeight = undefined;
-                              } else {
-                                const w = e as WallModel;
-                                w.leftRoofHeight = undefined;
-                                w.rightRoofHeight = undefined;
-                              }
+                            if (e.id === id) {
+                              const r = e as GableRoofModel;
+                              r.ridgeLeftPoint[0] = -x;
+                              r.ridgeRightPoint[0] = x;
+                              break;
                             }
                           }
                         });
@@ -388,9 +435,7 @@ const GableRoof = ({ id, parentId, cx, cy, cz, wallsId, selected }: GableRoofMod
                     break;
                   }
                   case RoofHandleType.Mid: {
-                    if (parent) {
-                      setH(point.z - parent.lz - 0.3); // todo
-                    }
+                    setH(Math.max(minHeight, point.z - (parent?.lz ?? 0) - 0.3));
                     break;
                   }
                 }
@@ -401,6 +446,14 @@ const GableRoof = ({ id, parentId, cx, cy, cz, wallsId, selected }: GableRoofMod
             setShowIntersectionPlane(false);
             setRoofHandleType(RoofHandleType.Null);
             useStoreRef.getState().setEnableOrbitController(true);
+            setCommonStore((state) => {
+              for (const e of state.elements) {
+                if (e.id === id) {
+                  (e as GableRoofModel).lz = h;
+                  break;
+                }
+              }
+            });
           }}
         >
           <meshBasicMaterial side={DoubleSide} transparent={true} opacity={0.5} />

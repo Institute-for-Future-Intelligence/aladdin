@@ -237,11 +237,19 @@ const Wall = ({
     shape.lineTo(cx + x - rightOffset, cy - y); // lower right
 
     if (roofId) {
-      rightRoofHeight && shape.lineTo(cx + x - rightOffset, rightRoofHeight - y);
+      if (rightRoofHeight) {
+        shape.lineTo(cx + x - rightOffset, rightRoofHeight - y);
+      } else {
+        shape.lineTo(cx + x - rightOffset, cy + y); // upper right
+      }
       centerRightRoofHeight && shape.lineTo(centerRightRoofHeight[0] * lx, centerRightRoofHeight[1] - y);
       centerRoofHeight && shape.lineTo(centerRoofHeight[0] * lx, centerRoofHeight[1] - y);
       centerLeftRoofHeight && shape.lineTo(centerLeftRoofHeight[0] * lx, centerLeftRoofHeight[1] - y);
-      leftRoofHeight && shape.lineTo(cx - x + leftOffset, leftRoofHeight - y);
+      if (leftRoofHeight) {
+        shape.lineTo(cx - x + leftOffset, leftRoofHeight - y);
+      } else {
+        shape.lineTo(cx - x + leftOffset, cy + y); // upper left
+      }
     } else {
       shape.lineTo(cx + x - rightOffset, cy + y); // upper right
       shape.lineTo(cx - x + leftOffset, cy + y); // upper left
@@ -890,15 +898,17 @@ const Wall = ({
           </mesh>
 
           {/* inside wall */}
-          <mesh
-            name={'Inside Wall'}
-            ref={insideWallRef}
-            position={[0, ly, 0]}
-            rotation={[HALF_PI, 0, 0]}
-            castShadow={shadowEnabled}
-            receiveShadow={shadowEnabled}
-            onPointerDown={handleWallBodyPointerDown}
-          />
+          {!roofId && (
+            <mesh
+              name={'Inside Wall'}
+              ref={insideWallRef}
+              position={[0, ly, 0]}
+              rotation={[HALF_PI, 0, 0]}
+              castShadow={shadowEnabled}
+              receiveShadow={shadowEnabled}
+              onPointerDown={handleWallBodyPointerDown}
+            />
+          )}
 
           {/* top surface */}
           {!roofId && (
@@ -913,7 +923,7 @@ const Wall = ({
           )}
 
           {/* side surfaces */}
-          {leftOffset === 0 && (
+          {leftOffset === 0 && !roofId && (
             <Plane
               args={[leftRoofHeight ?? lz, ly]}
               position={[-hx + 0.01, hy, -(lz - (leftRoofHeight ?? lz)) / 2]}
@@ -925,7 +935,7 @@ const Wall = ({
               <meshStandardMaterial color={'white'} side={DoubleSide} />
             </Plane>
           )}
-          {rightOffset === 0 && (
+          {rightOffset === 0 && !roofId && (
             <Plane
               args={[rightRoofHeight ?? lz, ly]}
               position={[hx - 0.01, hy, -(lz - (rightRoofHeight ?? lz)) / 2]}

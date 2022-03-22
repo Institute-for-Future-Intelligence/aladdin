@@ -3843,6 +3843,9 @@ export const useStore = create<CommonStoreState>(
                           (e as WallModel).leftJoints = [];
                         } else if (e.id === currentWall.roofId) {
                           (e as RoofModel).wallsId = (e as RoofModel).wallsId.filter((v) => v !== currentWall.id);
+                          if ((e as RoofModel).wallsId.length === 0) {
+                            state.deletedRoofId = e.id;
+                          }
                         }
                       }
                       for (const e of state.elements) {

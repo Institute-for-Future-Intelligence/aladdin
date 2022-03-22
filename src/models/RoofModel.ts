@@ -6,15 +6,16 @@ import { ElementModel } from './ElementModel';
 import { Point2 } from './Point2';
 
 export interface RoofModel extends ElementModel {
-  // points: Point2[];
-  centerPoint: Point2;
   wallsId: string[];
   roofType: RoofType;
   texture: RoofTexture;
 }
 
 export interface PyramidRoofModel extends RoofModel {}
-export interface GableRoofModel extends RoofModel {}
+export interface GableRoofModel extends RoofModel {
+  ridgeLeftPoint: number[];
+  ridgeRightPoint: number[];
+}
 export interface HipRoofModel extends RoofModel {
   rightRidgeLength: number;
   leftRidgeLength: number;

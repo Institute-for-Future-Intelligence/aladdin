@@ -523,6 +523,8 @@ export class ElementModelFactory {
       parentId: parent.id,
       foundationId: parent.id,
       id: short.generate() as string,
+      ridgeLeftPoint: [0, 1],
+      ridgeRightPoint: [0, 1],
     } as GableRoofModel;
   }
 
