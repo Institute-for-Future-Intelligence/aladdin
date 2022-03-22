@@ -240,38 +240,17 @@ const MainToolBarButtons = () => {
         />
         {i18n.t('toolbar.SwitchToAddingWindow', lang)}
       </Menu.Item>
-      <Menu.Item
-        style={{ userSelect: 'none' }}
-        key="add-roof-menu-item"
-        onClick={() => {
-          setCategory2Flag(ObjectType.Roof);
-          setMode(ObjectType.Roof);
-        }}
-      >
-        <img
-          alt={'Roof'}
-          src={RoofImage}
-          height={36}
-          width={36}
-          style={{
-            filter: defaultFilter,
-            verticalAlign: 'middle',
-            marginRight: '10px',
-          }}
-        />
-        {i18n.t('toolbar.SwitchToAddingRoof', lang)}
-      </Menu.Item>
 
       <Menu.Item
         style={{ userSelect: 'none' }}
         key="add-pyramidRoof-menu-item"
         onClick={() => {
-          setCategory2Flag(ObjectType.Roof);
+          setCategory2Flag(ObjectType.PyramidRoof);
           setMode(ObjectType.PyramidRoof);
         }}
       >
         <img
-          alt={'Roof'}
+          alt={'PyramidRoof'}
           src={RoofImage}
           height={36}
           width={36}
@@ -281,18 +260,18 @@ const MainToolBarButtons = () => {
             marginRight: '10px',
           }}
         />
-        PyramidRoof
+        {i18n.t('toolbar.SwitchToAddingPyramidRoof', lang)}
       </Menu.Item>
       <Menu.Item
         style={{ userSelect: 'none' }}
         key="add-GableRoof-menu-item"
         onClick={() => {
-          setCategory2Flag(ObjectType.Roof);
+          setCategory2Flag(ObjectType.GableRoof);
           setMode(ObjectType.GableRoof);
         }}
       >
         <img
-          alt={'Roof'}
+          alt={'GableRoof'}
           src={RoofImage}
           height={36}
           width={36}
@@ -302,18 +281,18 @@ const MainToolBarButtons = () => {
             marginRight: '10px',
           }}
         />
-        GableRoof
+        {i18n.t('toolbar.SwitchToAddingGableRoof', lang)}
       </Menu.Item>
       <Menu.Item
         style={{ userSelect: 'none' }}
         key="add-HipRoof-menu-item"
         onClick={() => {
-          setCategory2Flag(ObjectType.Roof);
+          setCategory2Flag(ObjectType.HipRoof);
           setMode(ObjectType.HipRoof);
         }}
       >
         <img
-          alt={'Roof'}
+          alt={'HipRoof'}
           src={RoofImage}
           height={36}
           width={36}
@@ -323,18 +302,18 @@ const MainToolBarButtons = () => {
             marginRight: '10px',
           }}
         />
-        HipRoof
+        {i18n.t('toolbar.SwitchToAddingHipRoof', lang)}
       </Menu.Item>
       <Menu.Item
         style={{ userSelect: 'none' }}
         key="add-GambrelRoof-menu-item"
         onClick={() => {
-          setCategory2Flag(ObjectType.Roof);
+          setCategory2Flag(ObjectType.GambrelRoof);
           setMode(ObjectType.GambrelRoof);
         }}
       >
         <img
-          alt={'Roof'}
+          alt={'GambrelRoof'}
           src={RoofImage}
           height={36}
           width={36}
@@ -344,7 +323,7 @@ const MainToolBarButtons = () => {
             marginRight: '10px',
           }}
         />
-        GambrelRoof
+        {i18n.t('toolbar.SwitchToAddingGambrelRoof', lang)}
       </Menu.Item>
     </Menu>
   );
@@ -664,20 +643,71 @@ const MainToolBarButtons = () => {
             }}
           />
         )}
-        {category2Flag === ObjectType.Roof && (
+        {category2Flag === ObjectType.PyramidRoof && (
           <img
-            title={i18n.t('toolbar.AddRoof', lang)}
-            alt={'Roof'}
+            title={i18n.t('toolbar.AddPyramidRoof', lang)}
+            alt={'PyramidRoof'}
             src={RoofImage}
             height={36}
             width={36}
             style={{
-              filter: objectTypeToAdd === ObjectType.Roof ? selectFilter : defaultFilter,
+              filter: objectTypeToAdd === ObjectType.PyramidRoof ? selectFilter : defaultFilter,
               cursor: 'pointer',
               verticalAlign: 'middle',
             }}
             onClick={() => {
-              setMode(ObjectType.Roof);
+              setMode(ObjectType.PyramidRoof);
+            }}
+          />
+        )}
+        {category2Flag === ObjectType.GableRoof && (
+          <img
+            title={i18n.t('toolbar.AddGableRoof', lang)}
+            alt={'GableRoof'}
+            src={RoofImage}
+            height={36}
+            width={36}
+            style={{
+              filter: objectTypeToAdd === ObjectType.GableRoof ? selectFilter : defaultFilter,
+              cursor: 'pointer',
+              verticalAlign: 'middle',
+            }}
+            onClick={() => {
+              setMode(ObjectType.GableRoof);
+            }}
+          />
+        )}
+        {category2Flag === ObjectType.HipRoof && (
+          <img
+            title={i18n.t('toolbar.AddHipRoof', lang)}
+            alt={'HipRoof'}
+            src={RoofImage}
+            height={36}
+            width={36}
+            style={{
+              filter: objectTypeToAdd === ObjectType.HipRoof ? selectFilter : defaultFilter,
+              cursor: 'pointer',
+              verticalAlign: 'middle',
+            }}
+            onClick={() => {
+              setMode(ObjectType.HipRoof);
+            }}
+          />
+        )}
+        {category2Flag === ObjectType.GambrelRoof && (
+          <img
+            title={i18n.t('toolbar.AddGambrelRoof', lang)}
+            alt={'GambrelRoof'}
+            src={RoofImage}
+            height={36}
+            width={36}
+            style={{
+              filter: objectTypeToAdd === ObjectType.GambrelRoof ? selectFilter : defaultFilter,
+              cursor: 'pointer',
+              verticalAlign: 'middle',
+            }}
+            onClick={() => {
+              setMode(ObjectType.GambrelRoof);
             }}
           />
         )}
