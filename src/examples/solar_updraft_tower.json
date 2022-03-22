@@ -1,6 +1,6 @@
 {
-  "docid": "qSBUrd39qhi91VZZdRsKxz",
-  "timestamp": 1647901371503,
+  "docid": "1mt3H85vSeLycnvzEbiGLF",
+  "timestamp": 1647905546466,
   "userid": "QWecNcxhyvP6j6sBN11hBsfZDau1",
   "owner": null,
   "email": null,
@@ -38,7 +38,7 @@
     "highestTemperatureTimeInMinutes": 930,
     "noAnimationForSolarUpdraftTowerSimulation": true,
     "noAnimationForSensorDataCollection": true,
-    "noAnimationForHeatmapSimulation": true,
+    "noAnimationForHeatmapSimulation": false,
     "airConvectiveCoefficient": 10
   },
   "elements": [
@@ -49,7 +49,7 @@
         0,
         1
       ],
-      "lz": 0.1,
+      "lz": 0.5,
       "ly": 250,
       "id": "of4fAMi2p9MKmo6JDUYnfX",
       "type": "Foundation",
@@ -162,9 +162,9 @@
     "showYearlyLightSensorPanel": false,
     "mapType": "roadmap",
     "cameraPosition": [
-      -286.2671151424885,
-      -379.63764367710047,
-      88.70698003902255
+      -286.26711514248836,
+      -379.63764367710024,
+      88.70698003902253
     ],
     "panCenter": [
       31.318634005291777,
@@ -186,7 +186,7 @@
       12.466888399142201,
       0.000012467288726847116
     ],
-    "solarRadiationHeatMapMaxValue": 5,
+    "solarRadiationHeatMapMaxValue": 7,
     "showDailyHeliostatYieldPanel": false,
     "dailyHeliostatYieldPanelX": null,
     "dailyHeliostatYieldPanelY": null,

@@ -649,8 +649,8 @@ const SolarUpdraftTowerSimulation = ({ city }: SolarUpdraftTowerSimulationProps)
       const radius = solarUpdraftTower.collectorRadius;
       const max = Math.max(2, Math.round((radius * 2) / cellSize));
       // shift half cell size to the center of each grid cell
-      const x0 = -radius + cellSize / 2;
-      const y0 = -radius + cellSize / 2;
+      const x0 = foundation.cx - radius + cellSize / 2;
+      const y0 = foundation.cy - radius + cellSize / 2;
       const z0 = foundation.lz + solarUpdraftTower.collectorHeight;
       const peakRadiation = calculatePeakRadiation(sunDirection, dayOfYear, elevation, AirMass.SPHERE_MODEL);
       const indirectRadiation = calculateDiffuseAndReflectedRadiation(
@@ -664,15 +664,18 @@ const SolarUpdraftTowerSimulation = ({ city }: SolarUpdraftTowerSimulationProps)
       const rsq = radius * radius;
       let result = 0;
       let countPoints = 0;
+      let dx, dy;
       for (let u = 0; u < max; u++) {
         vec.x = x0 + u * cellSize;
+        dx = vec.x - foundation.cx;
         for (let v = 0; v < max; v++) {
           vec.y = y0 + v * cellSize;
-          if (vec.x * vec.x + vec.y * vec.y > rsq) continue;
+          dy = vec.y - foundation.cy;
+          if (dx * dx + dy * dy > rsq) continue;
           countPoints++;
           result += indirectRadiation;
           if (dot > 0) {
-            if (!inShadow(foundation.id, vec, sunDirection)) {
+            if (!inShadow(foundation.id + '-sut', vec, sunDirection)) {
               result += dot * peakRadiation;
             }
           }
@@ -701,12 +704,13 @@ const SolarUpdraftTowerSimulation = ({ city }: SolarUpdraftTowerSimulationProps)
     const radius = solarUpdraftTower.collectorRadius;
     const max = Math.max(2, Math.round((radius * 2) / cellSize));
     // shift half cell size to the center of each grid cell
-    const x0 = -radius + cellSize / 2;
-    const y0 = -radius + cellSize / 2;
+    const x0 = foundation.cx - radius + cellSize / 2;
+    const y0 = foundation.cy - radius + cellSize / 2;
     const z0 = foundation.lz + solarUpdraftTower.collectorHeight;
     const v = new Vector3(0, 0, z0);
     const rsq = radius * radius;
     let countPoints = 0;
+    let dx, dy;
     const area = Math.PI * solarUpdraftTower.collectorRadius * solarUpdraftTower.collectorRadius;
     for (let i = 0; i < 24; i++) {
       for (let j = 0; j < world.timesPerHour; j++) {
@@ -726,13 +730,15 @@ const SolarUpdraftTowerSimulation = ({ city }: SolarUpdraftTowerSimulationProps)
           countPoints = 0;
           for (let kx = 0; kx < max; kx++) {
             v.x = x0 + kx * cellSize;
+            dx = v.x - foundation.cx;
             for (let ky = 0; ky < max; ky++) {
               v.y = y0 + ky * cellSize;
-              if (v.x * v.x + v.y * v.y > rsq) continue;
+              dy = v.y - foundation.cy;
+              if (dx * dx + dy * dy > rsq) continue;
               countPoints++;
               result[i] += indirectRadiation;
               if (dot > 0) {
-                if (!inShadow(foundation.id, v, sunDirection)) {
+                if (!inShadow(foundation.id + '-sut', v, sunDirection)) {
                   result[i] += dot * peakRadiation;
                 }
               }

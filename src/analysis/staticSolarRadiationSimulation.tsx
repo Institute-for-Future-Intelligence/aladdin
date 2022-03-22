@@ -357,8 +357,8 @@ const StaticSolarRadiationSimulation = ({ city }: StaticSolarRadiationSimulation
     const radius = solarUpdraftTower.collectorRadius;
     const max = Math.max(2, Math.round((radius * 2) / cellSize));
     // shift half cell size to the center of each grid cell
-    const x0 = -radius + cellSize / 2;
-    const y0 = -radius + cellSize / 2;
+    const x0 = foundation.cx - radius + cellSize / 2;
+    const y0 = foundation.cy - radius + cellSize / 2;
     const z0 = foundation.lz + solarUpdraftTower.collectorHeight;
     const cellOutputTotals = Array(max)
       .fill(0)
@@ -366,6 +366,7 @@ const StaticSolarRadiationSimulation = ({ city }: StaticSolarRadiationSimulation
     const v = new Vector3(0, 0, z0);
     const rsq = radius * radius;
     let count = 0;
+    let dx, dy;
     for (let i = 0; i < 24; i++) {
       for (let j = 0; j < world.timesPerHour; j++) {
         const currentTime = new Date(year, month, date, i, j * interval);
@@ -383,12 +384,14 @@ const StaticSolarRadiationSimulation = ({ city }: StaticSolarRadiationSimulation
           const dot = UNIT_VECTOR_POS_Z.dot(sunDirection);
           for (let kx = 0; kx < max; kx++) {
             v.x = x0 + kx * cellSize;
+            dx = v.x - foundation.cx;
             for (let ky = 0; ky < max; ky++) {
               v.y = y0 + ky * cellSize;
-              if (v.x * v.x + v.y * v.y > rsq) continue;
+              dy = v.y - foundation.cy;
+              if (dx * dx + dy * dy > rsq) continue;
               cellOutputTotals[kx][ky] += indirectRadiation;
               if (dot > 0) {
-                if (!inShadow(foundation.id, v, sunDirection)) {
+                if (!inShadow(foundation.id + '-sut', v, sunDirection)) {
                   cellOutputTotals[kx][ky] += dot * peakRadiation;
                 }
               }

@@ -175,6 +175,7 @@ const SolarUpdraftTower = ({ foundation }: { foundation: FoundationModel }) => {
         <meshStandardMaterial attach="material" color={'white'} side={DoubleSide} />
       </Cylinder>
       <Circle
+        uuid={foundation.id + '-sut'}
         userData={{ unintersectable: true, simulation: true }}
         name={'Greenhouse Ceiling'}
         castShadow={false}
