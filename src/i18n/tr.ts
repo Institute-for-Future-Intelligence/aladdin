@@ -323,6 +323,7 @@ export const i18n_tr = {
         VegetativeBuffer: 'Vegetative Buffer',
         SolarFarmInRealWorld: 'Gerçek Dünyada Güneþ Tarlasý',
         SolarTrackersInRealWorld: 'Gerçek Dünyada Güneþ Takpçileri',
+        SolarUpdraftTowerInCity: 'Solar Updraft Tower in City',
         SimpleHouse: 'Basit Ev',
         OfficeBuilding: 'Ofis Binasý',
         Hotel: 'Hotel',

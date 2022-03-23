@@ -1,0 +1,476 @@
+{
+  "docid": "snT8RSM4bna2exT4SbrKpx",
+  "timestamp": 1647994374708,
+  "userid": "QWecNcxhyvP6j6sBN11hBsfZDau1",
+  "owner": null,
+  "email": null,
+  "world": {
+    "latitude": 25.206789542006906,
+    "solarPanelGridCellSize": 0.5,
+    "timesPerHour": 4,
+    "longitude": 55.273800285141746,
+    "ground": {
+      "albedo": 0.32,
+      "thermalDiffusivity": 0.05,
+      "snowReflectionFactors": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ]
+    },
+    "address": "Dubai - United Arab Emirates",
+    "date": "Mon Mar 22 2021 14:00:00 GMT-0400 (Eastern Daylight Time)",
+    "name": "default",
+    "orthographic": false,
+    "cameraZoom": 35.16173831821251,
+    "solarRadiationHeatmapGridCellSize": 2,
+    "sutGridCellSize": 5,
+    "diurnalTemperatureModel": 2,
+    "highestTemperatureTimeInMinutes": 930,
+    "noAnimationForSolarUpdraftTowerSimulation": true,
+    "noAnimationForSensorDataCollection": true,
+    "noAnimationForHeatmapSimulation": false,
+    "airConvectiveCoefficient": 10
+  },
+  "elements": [
+    {
+      "cy": -14.779474133308753,
+      "normal": [
+        0,
+        0,
+        1
+      ],
+      "lz": 0.5,
+      "ly": 264.0330484296776,
+      "id": "of4fAMi2p9MKmo6JDUYnfX",
+      "type": "Foundation",
+      "cx": -13.154176421163392,
+      "cz": 0.05,
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "lx": 454.50633176715684,
+      "selected": false,
+      "parentId": "Ground",
+      "solarReceiverHeight": 20,
+      "locked": false,
+      "solarStructure": 3,
+      "color": "#16a5a5",
+      "solarUpdraftTower": {
+        "collectorHeight": 2,
+        "collectorRadius": 122,
+        "chimneyHeight": 195,
+        "chimneyRadius": 5,
+        "collectorEmissivity": 0.9,
+        "collectorTransmissivity": 0.8,
+        "turbineEfficiency": 0.3
+      },
+      "textureType": "No Foundation Texture"
+    },
+    {
+      "type": "Sensor",
+      "cx": -0.11120328110703694,
+      "cy": 0.21015039060624294,
+      "cz": 0.5000000074505806,
+      "lx": 0.1,
+      "ly": 0.1,
+      "lz": 0.01,
+      "showLabel": false,
+      "normal": [
+        0,
+        0,
+        1
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "parentId": "of4fAMi2p9MKmo6JDUYnfX",
+      "foundationId": "of4fAMi2p9MKmo6JDUYnfX",
+      "id": "o2v8sLskiRxHNQMJYgmnf4",
+      "selected": false
+    },
+    {
+      "type": "Human",
+      "name": "Jack",
+      "cx": -101.47750420174262,
+      "cy": 106.72814742414681,
+      "cz": 0.05000000074505806,
+      "lx": 0.6,
+      "lz": 1.8,
+      "normal": [
+        0,
+        1,
+        0
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "parentId": "of4fAMi2p9MKmo6JDUYnfX",
+      "id": "nRWqXrYCJwuMMKPznon3yj",
+      "selected": false,
+      "ly": 0.6
+    },
+    {
+      "type": "Cuboid",
+      "cx": 2.1177379727110406,
+      "cy": 160.51534566937434,
+      "cz": 74.09390657882601,
+      "lx": 78.30098332647403,
+      "ly": 55.99394288505539,
+      "lz": 148.18781315765202,
+      "color": "#ffffff",
+      "faceColors": [
+        "#ffffff",
+        "#ffffff",
+        "#ffffff",
+        "#ffffff",
+        "gray",
+        "gray"
+      ],
+      "textureTypes": [
+        "No Facade Texture",
+        "No Facade Texture",
+        "No Facade Texture",
+        "No Facade Texture",
+        "No Facade Texture",
+        "No Facade Texture"
+      ],
+      "normal": [
+        0,
+        0,
+        1
+      ],
+      "rotation": [
+        0,
+        0,
+        -0.025752033646721628
+      ],
+      "parentId": "Ground",
+      "selected": false,
+      "id": "2EhrboeXntUZKiBN3HjSix"
+    },
+    {
+      "type": "Cuboid",
+      "cx": 50.66161337498563,
+      "cy": 207.36077727687461,
+      "cz": 32.43138091159533,
+      "lx": 145.9842111895511,
+      "ly": 125.02724353031309,
+      "lz": 64.86276182319067,
+      "color": "#ffffff",
+      "faceColors": [
+        "#ffffff",
+        "#ffffff",
+        "#ffffff",
+        "#ffffff",
+        "gray",
+        "gray"
+      ],
+      "textureTypes": [
+        "No Facade Texture",
+        "No Facade Texture",
+        "No Facade Texture",
+        "No Facade Texture",
+        "No Facade Texture",
+        "No Facade Texture"
+      ],
+      "normal": [
+        0,
+        0,
+        1
+      ],
+      "rotation": [
+        0,
+        0,
+        -0.13048951214355942
+      ],
+      "parentId": "Ground",
+      "id": "6Xn8R7eKSnxRxHnYpiNTaj",
+      "selected": false
+    },
+    {
+      "type": "Cuboid",
+      "cx": -72.11151802635683,
+      "cy": 193.1105351858589,
+      "cz": 37.54389418882869,
+      "lx": 180.92996331753585,
+      "ly": 104.88750828847839,
+      "lz": 75.08778837765738,
+      "color": "#ffffff",
+      "faceColors": [
+        "#ffffff",
+        "#ffffff",
+        "#ffffff",
+        "#ffffff",
+        "gray",
+        "gray"
+      ],
+      "textureTypes": [
+        "No Facade Texture",
+        "No Facade Texture",
+        "No Facade Texture",
+        "No Facade Texture",
+        "No Facade Texture",
+        "No Facade Texture"
+      ],
+      "normal": [
+        0,
+        0,
+        1
+      ],
+      "rotation": [
+        0,
+        0,
+        0.4372817352121965
+      ],
+      "parentId": "Ground",
+      "id": "qmmFDRVBHd8n28gezjkd3v",
+      "selected": false
+    },
+    {
+      "type": "Cuboid",
+      "cx": 153.53794529088543,
+      "cy": 135.2714939761318,
+      "cz": 28.458907280218547,
+      "lx": 236.41206811774626,
+      "ly": 73.3973881158558,
+      "lz": 56.917814560437094,
+      "color": "#ffffff",
+      "faceColors": [
+        "#ffffff",
+        "#ffffff",
+        "#ffffff",
+        "#ffffff",
+        "gray",
+        "gray"
+      ],
+      "textureTypes": [
+        "No Facade Texture",
+        "No Facade Texture",
+        "No Facade Texture",
+        "No Facade Texture",
+        "No Facade Texture",
+        "No Facade Texture"
+      ],
+      "normal": [
+        0,
+        0,
+        1
+      ],
+      "rotation": [
+        0,
+        0,
+        -1.0889289069735497
+      ],
+      "parentId": "Ground",
+      "id": "6WFEHvBHfcw1hyoqbdVq2Q",
+      "selected": false
+    },
+    {
+      "type": "Cuboid",
+      "cx": 197.28140665982946,
+      "cy": -49.22558984875294,
+      "cz": 23.43801759070747,
+      "lx": 72.3188854798575,
+      "ly": 208.05225786437427,
+      "lz": 46.87603518141494,
+      "color": "#ffffff",
+      "faceColors": [
+        "#ffffff",
+        "#ffffff",
+        "#ffffff",
+        "#ffffff",
+        "gray",
+        "gray"
+      ],
+      "textureTypes": [
+        "No Facade Texture",
+        "No Facade Texture",
+        "No Facade Texture",
+        "No Facade Texture",
+        "No Facade Texture",
+        "No Facade Texture"
+      ],
+      "normal": [
+        0,
+        0,
+        1
+      ],
+      "rotation": [
+        0,
+        0,
+        -0.13048951214355942
+      ],
+      "parentId": "Ground",
+      "id": "wVZSZy2dQew3t36trixDr8",
+      "selected": false
+    },
+    {
+      "type": "Cuboid",
+      "cx": -201.1839566931086,
+      "cy": 103.76736037364329,
+      "cz": 23.43801759070747,
+      "lx": 180.92996331753585,
+      "ly": 104.88750828847839,
+      "lz": 46.87603518141494,
+      "color": "#ffffff",
+      "faceColors": [
+        "#ffffff",
+        "#ffffff",
+        "#ffffff",
+        "#ffffff",
+        "gray",
+        "gray"
+      ],
+      "textureTypes": [
+        "No Facade Texture",
+        "No Facade Texture",
+        "No Facade Texture",
+        "No Facade Texture",
+        "No Facade Texture",
+        "No Facade Texture"
+      ],
+      "normal": [
+        0,
+        0,
+        1
+      ],
+      "rotation": [
+        0,
+        0,
+        0.7727363696866378
+      ],
+      "parentId": "Ground",
+      "id": "1QdVXZ9PmC9w7nnsHyZH8T",
+      "selected": false
+    },
+    {
+      "type": "Cuboid",
+      "cx": -255.36665065884822,
+      "cy": -36.73723769206747,
+      "cz": 18.59922423283554,
+      "lx": 225.13779640089743,
+      "ly": 104.62558934593119,
+      "lz": 37.19844846567108,
+      "color": "#ffffff",
+      "faceColors": [
+        "#ffffff",
+        "#ffffff",
+        "#ffffff",
+        "#ffffff",
+        "gray",
+        "gray"
+      ],
+      "textureTypes": [
+        "No Facade Texture",
+        "No Facade Texture",
+        "No Facade Texture",
+        "No Facade Texture",
+        "No Facade Texture",
+        "No Facade Texture"
+      ],
+      "normal": [
+        0,
+        0,
+        1
+      ],
+      "rotation": [
+        0,
+        0,
+        1.5327638573782314
+      ],
+      "parentId": "Ground",
+      "id": "raZT6wgNraS3Vp9bqR82TD",
+      "selected": false
+    }
+  ],
+  "view": {
+    "yearlyPvYieldPanelX": -25,
+    "autoRotate": false,
+    "mapZoom": 18,
+    "axes": false,
+    "theme": "Default",
+    "showSiteInfoPanel": true,
+    "showDesignInfoPanel": false,
+    "showWeatherPanel": false,
+    "groundPanelX": 0,
+    "dailyPvYieldPanelX": -4,
+    "dailyLightSensorPanelY": 50,
+    "showDailyLightSensorPanel": false,
+    "mapTilt": 0,
+    "yearlyPvYieldPanelY": 16,
+    "yearlyLightSensorPanelX": -605,
+    "showGroundPanel": false,
+    "showHeliodonPanel": false,
+    "heliodon": false,
+    "weatherPanelY": 53,
+    "heliodonPanelX": -1226,
+    "dailyPvYieldPanelY": 3,
+    "mapWeatherStations": false,
+    "yearlyLightSensorPanelY": 60,
+    "showPvDailyYieldPanel": true,
+    "showYearlyPvYieldPanel": false,
+    "dailyLightSensorPanelX": -1231,
+    "weatherPanelX": 606,
+    "heliodonPanelY": 482,
+    "groundColor": "#68ccca",
+    "groundPanelY": 0,
+    "groundImage": false,
+    "showDailyPvYieldPanel": false,
+    "shadowEnabled": true,
+    "showYearlyLightSensorPanel": false,
+    "mapType": "hybrid",
+    "cameraPosition": [
+      -90.01171835895659,
+      -555.4483085712341,
+      96.07353497556753
+    ],
+    "panCenter": [
+      -9.153086630446868,
+      47.334689777283224,
+      96.07353497556753
+    ],
+    "orthographic": false,
+    "enableRotate": true,
+    "cameraZoom": 1.8893648827547527,
+    "showInstructionPanel": true,
+    "showMapPanel": false,
+    "cameraPosition2D": [
+      8.410285062152344,
+      12.466838396919735,
+      50.00001246725617
+    ],
+    "panCenter2D": [
+      8.410285062152344,
+      12.466888399142201,
+      0.000012467288726847116
+    ],
+    "solarRadiationHeatMapMaxValue": 5,
+    "showDailyHeliostatYieldPanel": false,
+    "dailyHeliostatYieldPanelX": null,
+    "dailyHeliostatYieldPanelY": null,
+    "showYearlyHeliostatYieldPanel": false,
+    "showDailyUpdraftTowerYieldPanel": false,
+    "showDiurnalTemperaturePanel": false,
+    "diurnalTemperaturePanelX": 1237,
+    "diurnalTemperaturePanelY": 239,
+    "dailyUpdraftTowerYieldPanelX": -3,
+    "dailyUpdraftTowerYieldPanelY": 18
+  },
+  "notes": []
+}

@@ -320,6 +320,7 @@ export const i18n_zh_cn = {
         VegetativeBuffer: '太阳能农场绿化带',
         SolarFarmInRealWorld: '模拟一个真实世界里的太阳能农场',
         SolarTrackersInRealWorld: '模拟一个真实世界里的追日光伏板阵列',
+        SolarUpdraftTowerInCity: '太阳能上升气流塔在城市中的应用',
         SimpleHouse: '一栋简单的房屋',
         OfficeBuilding: '一栋简单的办公楼',
         Hotel: '一个旅馆场景',

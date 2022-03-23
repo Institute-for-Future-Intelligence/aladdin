@@ -322,6 +322,7 @@ export const i18n_en = {
         VegetativeBuffer: 'Vegetative Buffer',
         SolarFarmInRealWorld: 'Solar Farm in the Real World',
         SolarTrackersInRealWorld: 'Solar Trackers in the Real World',
+        SolarUpdraftTowerInCity: 'Solar Updraft Tower in City',
         SimpleHouse: 'Simple House',
         OfficeBuilding: 'Office Building',
         Hotel: 'Hotel',

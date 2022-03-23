@@ -320,6 +320,7 @@ export const i18n_zh_tw = {
         VegetativeBuffer: '太陽能農場绿化带',
         SolarFarmInRealWorld: '模擬一個真實世界裡的太陽能農場',
         SolarTrackersInRealWorld: '模擬一個真實世界裡的追日光伏板陣列',
+        SolarUpdraftTowerInCity: '太陽能上升氣流塔在城市中的應用',
         SimpleHouse: '一棟簡單的房屋',
         OfficeBuilding: '一棟簡單的寫字樓',
         Hotel: '一個旅館場景',
