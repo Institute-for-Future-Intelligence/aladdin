@@ -34,7 +34,8 @@ const FoundationAzimuthInput = ({
   const setApplyCount = useStore(Selector.setApplyCount);
   const revertApply = useStore(Selector.revertApply);
 
-  const [inputAzimuth, setInputAzimuth] = useState<number>(foundation?.rotation[2] ?? 0);
+  // reverse the sign because rotation angle is positive counterclockwise whereas azimuth is positive clockwise
+  const [inputAzimuth, setInputAzimuth] = useState<number>(-foundation?.rotation[2] ?? 0);
   const [updateFlag, setUpdateFlag] = useState<boolean>(false);
   const [dragEnabled, setDragEnabled] = useState<boolean>(false);
   const [bounds, setBounds] = useState<DraggableBounds>({ left: 0, top: 0, bottom: 0, right: 0 } as DraggableBounds);
@@ -44,7 +45,7 @@ const FoundationAzimuthInput = ({
 
   useEffect(() => {
     if (foundation) {
-      setInputAzimuth(foundation.rotation[2]);
+      setInputAzimuth(-foundation.rotation[2]);
     }
   }, [foundation]);
 
@@ -59,14 +60,14 @@ const FoundationAzimuthInput = ({
         for (const e of elements) {
           if (e.type === ObjectType.Foundation && !e.locked) {
             const f = e as FoundationModel;
-            if (Math.abs(f.rotation[2] - azimuth) > ZERO_TOLERANCE) {
+            if (Math.abs(-f.rotation[2] - azimuth) > ZERO_TOLERANCE) {
               return true;
             }
           }
         }
         break;
       default:
-        if (Math.abs(foundation?.rotation[2] - azimuth) > ZERO_TOLERANCE) {
+        if (Math.abs(-foundation?.rotation[2] - azimuth) > ZERO_TOLERANCE) {
           return true;
         }
     }
@@ -81,7 +82,7 @@ const FoundationAzimuthInput = ({
         const oldAzimuthsAll = new Map<string, number>();
         for (const elem of elements) {
           if (elem.type === ObjectType.Foundation) {
-            oldAzimuthsAll.set(elem.id, elem.rotation[2]);
+            oldAzimuthsAll.set(elem.id, -elem.rotation[2]);
           }
         }
         const undoableChangeAll = {
@@ -91,20 +92,20 @@ const FoundationAzimuthInput = ({
           newValue: value,
           undo: () => {
             for (const [id, az] of undoableChangeAll.oldValues.entries()) {
-              updateElementRotationById(id, 0, 0, az as number);
+              updateElementRotationById(id, 0, 0, -(az as number));
             }
           },
           redo: () => {
-            updateElementRotationForAll(ObjectType.Foundation, 0, 0, undoableChangeAll.newValue as number);
+            updateElementRotationForAll(ObjectType.Foundation, 0, 0, -(undoableChangeAll.newValue as number));
           },
         } as UndoableChangeGroup;
         addUndoable(undoableChangeAll);
-        updateElementRotationForAll(ObjectType.Foundation, 0, 0, value);
+        updateElementRotationForAll(ObjectType.Foundation, 0, 0, -value);
         setApplyCount(applyCount + 1);
         break;
       default:
         if (foundation) {
-          const oldAzimuth = foundation.rotation[2];
+          const oldAzimuth = -foundation.rotation[2];
           const undoableChange = {
             name: 'Set Foundation Azimuth',
             timestamp: Date.now(),
@@ -112,14 +113,14 @@ const FoundationAzimuthInput = ({
             newValue: value,
             changedElementId: foundation.id,
             undo: () => {
-              updateElementRotationById(undoableChange.changedElementId, 0, 0, undoableChange.oldValue as number);
+              updateElementRotationById(undoableChange.changedElementId, 0, 0, -(undoableChange.oldValue as number));
             },
             redo: () => {
-              updateElementRotationById(undoableChange.changedElementId, 0, 0, undoableChange.newValue as number);
+              updateElementRotationById(undoableChange.changedElementId, 0, 0, -(undoableChange.newValue as number));
             },
           } as UndoableChange;
           addUndoable(undoableChange);
-          updateElementRotationById(foundation.id, 0, 0, value);
+          updateElementRotationById(foundation.id, 0, 0, -value);
           setApplyCount(applyCount + 1);
         }
     }
@@ -140,7 +141,7 @@ const FoundationAzimuthInput = ({
   };
 
   const close = () => {
-    setInputAzimuth(foundation?.rotation[2]);
+    setInputAzimuth(-foundation?.rotation[2]);
     setDialogVisible(false);
   };
 

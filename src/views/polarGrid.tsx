@@ -81,7 +81,7 @@ export const PolarGrid = ({ element, height }: { element: ElementModel; height?:
           {/* shown angle */}
           <group rotation={[0, angle, 0]}>
             <mesh position={[-0.5, 0, -radius * 0.9]} rotation={[-HALF_PI, 0, 0]} userData={{ unintersectable: true }}>
-              <textGeometry args={[`${Math.floor(Util.toDegrees(angle))}°`, textGeometryParams]} />
+              <textGeometry args={[`${-Util.toDegrees(angle).toFixed(1)}°`, textGeometryParams]} />
             </mesh>
           </group>
 
@@ -97,7 +97,7 @@ export const PolarGrid = ({ element, height }: { element: ElementModel; height?:
                   rotation={[-HALF_PI, 0, 0]}
                   userData={{ unintersectable: true }}
                 >
-                  <textGeometry args={[`${15 * times}°`, textGeometryParams]} />
+                  <textGeometry args={[`${-15 * times}°`, textGeometryParams]} />
                   <meshStandardMaterial attach="material" color={'lightGray'} />
                 </mesh>
               </group>

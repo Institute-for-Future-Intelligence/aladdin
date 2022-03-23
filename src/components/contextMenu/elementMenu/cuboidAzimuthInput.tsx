@@ -34,7 +34,8 @@ const CuboidAzimuthInput = ({
   const setApplyCount = useStore(Selector.setApplyCount);
   const revertApply = useStore(Selector.revertApply);
 
-  const [inputAzimuth, setInputAzimuth] = useState<number>(cuboid?.rotation[2] ?? 0);
+  // reverse the sign because rotation angle is positive counterclockwise whereas azimuth is positive clockwise
+  const [inputAzimuth, setInputAzimuth] = useState<number>(-cuboid?.rotation[2] ?? 0);
   const [updateFlag, setUpdateFlag] = useState<boolean>(false);
   const [dragEnabled, setDragEnabled] = useState<boolean>(false);
   const [bounds, setBounds] = useState<DraggableBounds>({ left: 0, top: 0, bottom: 0, right: 0 } as DraggableBounds);
@@ -44,7 +45,7 @@ const CuboidAzimuthInput = ({
 
   useEffect(() => {
     if (cuboid) {
-      setInputAzimuth(cuboid.rotation[2]);
+      setInputAzimuth(-cuboid.rotation[2]);
     }
   }, [cuboid]);
 
@@ -59,14 +60,14 @@ const CuboidAzimuthInput = ({
         for (const e of elements) {
           if (e.type === ObjectType.Cuboid && !e.locked) {
             const c = e as CuboidModel;
-            if (Math.abs(c.rotation[2] - azimuth) > ZERO_TOLERANCE) {
+            if (Math.abs(-c.rotation[2] - azimuth) > ZERO_TOLERANCE) {
               return true;
             }
           }
         }
         break;
       default:
-        if (Math.abs(cuboid?.rotation[2] - azimuth) > ZERO_TOLERANCE) {
+        if (Math.abs(-cuboid?.rotation[2] - azimuth) > ZERO_TOLERANCE) {
           return true;
         }
     }
@@ -81,7 +82,7 @@ const CuboidAzimuthInput = ({
         const oldAzimuthsAll = new Map<string, number>();
         for (const elem of elements) {
           if (elem.type === ObjectType.Cuboid) {
-            oldAzimuthsAll.set(elem.id, elem.rotation[2]);
+            oldAzimuthsAll.set(elem.id, -elem.rotation[2]);
           }
         }
         const undoableChangeAll = {
@@ -91,20 +92,20 @@ const CuboidAzimuthInput = ({
           newValue: value,
           undo: () => {
             for (const [id, az] of undoableChangeAll.oldValues.entries()) {
-              updateElementRotationById(id, 0, 0, az as number);
+              updateElementRotationById(id, 0, 0, -(az as number));
             }
           },
           redo: () => {
-            updateElementRotationForAll(ObjectType.Cuboid, 0, 0, undoableChangeAll.newValue as number);
+            updateElementRotationForAll(ObjectType.Cuboid, 0, 0, -(undoableChangeAll.newValue as number));
           },
         } as UndoableChangeGroup;
         addUndoable(undoableChangeAll);
-        updateElementRotationForAll(ObjectType.Cuboid, 0, 0, value);
+        updateElementRotationForAll(ObjectType.Cuboid, 0, 0, -value);
         setApplyCount(applyCount + 1);
         break;
       default:
         if (cuboid) {
-          const oldAzimuth = cuboid.rotation[2];
+          const oldAzimuth = -cuboid.rotation[2];
           const undoableChange = {
             name: 'Set Cuboid Azimuth',
             timestamp: Date.now(),
@@ -112,14 +113,14 @@ const CuboidAzimuthInput = ({
             newValue: value,
             changedElementId: cuboid.id,
             undo: () => {
-              updateElementRotationById(undoableChange.changedElementId, 0, 0, undoableChange.oldValue as number);
+              updateElementRotationById(undoableChange.changedElementId, 0, 0, -(undoableChange.oldValue as number));
             },
             redo: () => {
-              updateElementRotationById(undoableChange.changedElementId, 0, 0, undoableChange.newValue as number);
+              updateElementRotationById(undoableChange.changedElementId, 0, 0, -(undoableChange.newValue as number));
             },
           } as UndoableChange;
           addUndoable(undoableChange);
-          updateElementRotationById(cuboid.id, 0, 0, value);
+          updateElementRotationById(cuboid.id, 0, 0, -value);
           setApplyCount(applyCount + 1);
         }
     }
@@ -140,7 +141,7 @@ const CuboidAzimuthInput = ({
   };
 
   const close = () => {
-    setInputAzimuth(cuboid?.rotation[2]);
+    setInputAzimuth(-cuboid?.rotation[2]);
     setDialogVisible(false);
   };
 
