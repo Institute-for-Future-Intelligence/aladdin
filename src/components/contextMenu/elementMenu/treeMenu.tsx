@@ -22,7 +22,8 @@ export const TreeMenu = () => {
   const tree = useStore(Selector.selectedElement) as TreeModel;
   const addUndoable = useStore(Selector.addUndoable);
 
-  const [updateFlag, setUpdateFlag] = useState<boolean>(false);
+  const [inputSpread, setInputSpread] = useState<number>(tree?.lx ?? 1);
+  const [inputHeight, setInputHeight] = useState<number>(tree?.lz ?? 1);
 
   const lang = { lng: language };
 
@@ -45,12 +46,11 @@ export const TreeMenu = () => {
 
   const setSpread = (value: number) => {
     if (!tree) return;
-    if (!value || value === tree.lx) return;
-    const oldSpread = tree.lx;
+    if (!value || value === inputSpread) return;
     const undoableChange = {
       name: 'Set Tree Spread',
       timestamp: Date.now(),
-      oldValue: oldSpread,
+      oldValue: inputSpread,
       newValue: value,
       changedElementId: tree.id,
       undo: () => {
@@ -62,17 +62,16 @@ export const TreeMenu = () => {
     } as UndoableChange;
     addUndoable(undoableChange);
     updateElementLxById(tree.id, value);
-    setUpdateFlag(!updateFlag);
+    setInputSpread(value);
   };
 
   const setHeight = (value: number) => {
     if (!tree) return;
-    if (!value || value === tree.lz) return;
-    const oldHeight = tree.lz;
+    if (!value || value === inputHeight) return;
     const undoableChange = {
       name: 'Set Tree Height',
       timestamp: Date.now(),
-      oldValue: oldHeight,
+      oldValue: inputHeight,
       newValue: value,
       changedElementId: tree.id,
       undo: () => {
@@ -84,7 +83,7 @@ export const TreeMenu = () => {
     } as UndoableChange;
     addUndoable(undoableChange);
     updateElementLzById(tree.id, value);
-    setUpdateFlag(!updateFlag);
+    setInputHeight(value);
   };
 
   const editable = !tree?.locked;
@@ -122,7 +121,7 @@ export const TreeMenu = () => {
                 max={50}
                 step={1}
                 precision={1}
-                value={tree?.lx ?? 1}
+                value={inputSpread}
                 formatter={(x) => Number(x).toFixed(1)}
                 onChange={(value) => setSpread(value)}
               />
@@ -138,7 +137,7 @@ export const TreeMenu = () => {
                 max={30}
                 step={1}
                 precision={1}
-                value={tree?.lz ?? 1}
+                value={inputHeight}
                 formatter={(x) => Number(x).toFixed(1)}
                 onChange={(value) => setHeight(value)}
               />
