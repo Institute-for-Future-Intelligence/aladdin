@@ -20,6 +20,9 @@ export interface ViewState {
   theme: string;
   heliodon: boolean;
   showSunAngles: boolean;
+  showAzimuthAngle: boolean;
+  showElevationAngle: boolean;
+  showZenithAngle: boolean;
   groundImage: boolean;
   groundColor: string;
 

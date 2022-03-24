@@ -349,6 +349,10 @@ export const i18n_en = {
       SunlightAttenuationCoefficientInAir: 'Sunlight Attenuation Coefficient in Air',
       ConvectiveCoefficientOfAir: 'Convective Coefficient of Air',
       HighestTemperatureTimeInMinutes: 'Highest Temperature Time (Minutes)',
+      SelectSunAnglesToShow: 'Select Sun Angles to Show',
+      ShowAzimuthAngle: 'Show Azimuth Angle',
+      ShowElevationAngle: 'Show Elevation Angle',
+      ShowZenithAngle: 'Show Zenith Angle',
     },
 
     groundMenu: {

@@ -19,6 +19,9 @@ export const SkyMenu = () => {
   const world = useStore.getState().world;
   const axes = useStore(Selector.viewState.axes);
   const theme = useStore(Selector.viewState.theme);
+  const showAzimuthAngle = useStore(Selector.viewState.showAzimuthAngle) ?? true;
+  const showElevationAngle = useStore(Selector.viewState.showElevationAngle) ?? true;
+  const showZenithAngle = useStore(Selector.viewState.showZenithAngle) ?? true;
   const language = useStore(Selector.language);
   const airAttenuationCoefficient = useStore(Selector.world.airAttenuationCoefficient) ?? 0.01;
   const airConvectiveCoefficient = useStore(Selector.world.airConvectiveCoefficient) ?? 5;
@@ -48,6 +51,24 @@ export const SkyMenu = () => {
     });
   };
 
+  const setShowAzimuthAngle = (value: boolean) => {
+    setCommonStore((state) => {
+      state.viewState.showAzimuthAngle = value;
+    });
+  };
+
+  const setShowElevationAngle = (value: boolean) => {
+    setCommonStore((state) => {
+      state.viewState.showElevationAngle = value;
+    });
+  };
+
+  const setShowZenithAngle = (value: boolean) => {
+    setCommonStore((state) => {
+      state.viewState.showZenithAngle = value;
+    });
+  };
+
   const setAirAttenuationCoefficient = (value: number) => {
     setCommonStore((state) => {
       state.world.airAttenuationCoefficient = value;
@@ -67,7 +88,7 @@ export const SkyMenu = () => {
   };
 
   return (
-    <>
+    <Menu.ItemGroup>
       <Menu.Item key={'axes'}>
         <Checkbox
           checked={axes}
@@ -91,6 +112,7 @@ export const SkyMenu = () => {
           {i18n.t('skyMenu.Axes', lang)}
         </Checkbox>
       </Menu.Item>
+
       <SubMenu key={'theme'} title={i18n.t('skyMenu.Theme', lang)} style={{ paddingLeft: '24px' }}>
         <Radio.Group
           value={theme}
@@ -127,6 +149,86 @@ export const SkyMenu = () => {
             {i18n.t('skyMenu.ThemeGrassland', lang)}
           </Radio>
         </Radio.Group>
+      </SubMenu>
+
+      <SubMenu key={'sun-angles'} title={i18n.t('skyMenu.SelectSunAnglesToShow', lang)} style={{ paddingLeft: '24px' }}>
+        <Menu.ItemGroup>
+          <Menu.Item>
+            <Checkbox
+              checked={showAzimuthAngle}
+              onChange={(e) => {
+                const oldValue = showAzimuthAngle;
+                const newValue = e.target.checked;
+                const undoableChange = {
+                  name: 'Show Azimuth Angle ' + newValue,
+                  timestamp: Date.now(),
+                  oldValue: oldValue,
+                  newValue: newValue,
+                  undo: () => {
+                    setShowAzimuthAngle(undoableChange.oldValue as boolean);
+                  },
+                  redo: () => {
+                    setShowAzimuthAngle(undoableChange.newValue as boolean);
+                  },
+                } as UndoableChange;
+                addUndoable(undoableChange);
+                setShowAzimuthAngle(newValue);
+              }}
+            >
+              {i18n.t('skyMenu.ShowAzimuthAngle', lang)}
+            </Checkbox>
+          </Menu.Item>
+          <Menu.Item>
+            <Checkbox
+              checked={showElevationAngle}
+              onChange={(e) => {
+                const oldValue = showElevationAngle;
+                const newValue = e.target.checked;
+                const undoableChange = {
+                  name: 'Show Elevation Angle ' + newValue,
+                  timestamp: Date.now(),
+                  oldValue: oldValue,
+                  newValue: newValue,
+                  undo: () => {
+                    setShowElevationAngle(undoableChange.oldValue as boolean);
+                  },
+                  redo: () => {
+                    setShowElevationAngle(undoableChange.newValue as boolean);
+                  },
+                } as UndoableChange;
+                addUndoable(undoableChange);
+                setShowElevationAngle(newValue);
+              }}
+            >
+              {i18n.t('skyMenu.ShowElevationAngle', lang)}
+            </Checkbox>
+          </Menu.Item>
+          <Menu.Item>
+            <Checkbox
+              checked={showZenithAngle}
+              onChange={(e) => {
+                const oldValue = showZenithAngle;
+                const newValue = e.target.checked;
+                const undoableChange = {
+                  name: 'Show Zenith Angle ' + newValue,
+                  timestamp: Date.now(),
+                  oldValue: oldValue,
+                  newValue: newValue,
+                  undo: () => {
+                    setShowZenithAngle(undoableChange.oldValue as boolean);
+                  },
+                  redo: () => {
+                    setShowZenithAngle(undoableChange.newValue as boolean);
+                  },
+                } as UndoableChange;
+                addUndoable(undoableChange);
+                setShowZenithAngle(newValue);
+              }}
+            >
+              {i18n.t('skyMenu.ShowZenithAngle', lang)}
+            </Checkbox>
+          </Menu.Item>
+        </Menu.ItemGroup>
       </SubMenu>
 
       <Menu>
@@ -225,6 +327,6 @@ export const SkyMenu = () => {
           />
         </Menu.Item>
       </Menu>
-    </>
+    </Menu.ItemGroup>
   );
 };

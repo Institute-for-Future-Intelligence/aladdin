@@ -18,6 +18,12 @@ export const ambientLightIntensity = (state: CommonStoreState) => state.viewStat
 
 export const theme = (state: CommonStoreState) => state.viewState.theme;
 
+export const showAzimuthAngle = (state: CommonStoreState) => state.viewState.showAzimuthAngle;
+
+export const showElevationAngle = (state: CommonStoreState) => state.viewState.showElevationAngle;
+
+export const showZenithAngle = (state: CommonStoreState) => state.viewState.showZenithAngle;
+
 export const autoRotate = (state: CommonStoreState) => state.viewState.autoRotate;
 
 export const groundImage = (state: CommonStoreState) => state.viewState.groundImage;

@@ -22,6 +22,9 @@ export class DefaultViewState implements ViewState {
   theme: string;
   heliodon: boolean;
   showSunAngles: boolean;
+  showAzimuthAngle: boolean;
+  showElevationAngle: boolean;
+  showZenithAngle: boolean;
   groundImage: boolean;
   groundColor: string;
 
@@ -115,6 +118,9 @@ export class DefaultViewState implements ViewState {
     this.theme = 'Default';
     this.heliodon = false;
     this.showSunAngles = false;
+    this.showAzimuthAngle = true;
+    this.showElevationAngle = true;
+    this.showZenithAngle = true;
     this.groundImage = false;
     this.groundColor = 'forestgreen';
 
@@ -208,6 +214,9 @@ export class DefaultViewState implements ViewState {
     viewState.theme = 'Default';
     viewState.heliodon = false;
     viewState.showSunAngles = false;
+    viewState.showAzimuthAngle = true;
+    viewState.showElevationAngle = true;
+    viewState.showZenithAngle = true;
     viewState.groundImage = false;
     viewState.groundColor = 'forestgreen';
 

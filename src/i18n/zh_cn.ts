@@ -347,6 +347,10 @@ export const i18n_zh_cn = {
       SunlightAttenuationCoefficientInAir: '阳光在空气中传播的衰减系数',
       ConvectiveCoefficientOfAir: '空气对流传热系数',
       HighestTemperatureTimeInMinutes: '最高气温时间(分钟)',
+      SelectSunAnglesToShow: '选择太阳角度显示',
+      ShowAzimuthAngle: '显示方位角',
+      ShowElevationAngle: '显示高度角',
+      ShowZenithAngle: '显示天顶角',
     },
 
     groundMenu: {

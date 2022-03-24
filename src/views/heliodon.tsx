@@ -46,6 +46,9 @@ interface HeliodonProps {
 const Heliodon = ({ date, hourAngle, declinationAngle, worldLatitude }: HeliodonProps) => {
   const radius = useStore(Selector.sceneRadius);
   const showSunAngles = useStore(Selector.viewState.showSunAngles);
+  const showAzimuthAngle = useStore(Selector.viewState.showAzimuthAngle) ?? true;
+  const showElevationAngle = useStore(Selector.viewState.showElevationAngle) ?? true;
+  const showZenithAngle = useStore(Selector.viewState.showZenithAngle) ?? true;
 
   const [latitude, setLatitude] = useState<number>(Util.toRadians(42));
   const glowTexture = useTexture(GlowImage);
@@ -394,75 +397,87 @@ const Heliodon = ({ date, hourAngle, declinationAngle, worldLatitude }: Heliodon
             lineWidth={0.5}
             color={'white'}
           />
-          <Line
-            userData={{ unintersectable: true }}
-            linewidth={0.5}
-            points={elevationAngleArcPoints}
-            position={[0, 0, 0]}
-            rotation={new Euler(HALF_PI, 0, HALF_PI + azimuthAngle, 'ZXY')}
-            color={'white'}
-            name={'Elevation Angle Arc'}
-          />
-          <textSprite
-            userData={{ unintersectable: true }}
-            name={'Elevation Angle'}
-            backgroundColor={'indigo'}
-            text={Util.toDegrees(elevationAngle).toFixed(0) + '°'}
-            fontSize={80}
-            fontFace={'Times Roman'}
-            textHeight={angleLabelHeight}
-            position={sunDirection
-              .clone()
-              .multiplyScalar(angleArcRadius)
-              .add(sunDirectionOnGround.clone().multiplyScalar(angleArcRadius))
-              .multiplyScalar(0.65)}
-          />
-          <Line
-            userData={{ unintersectable: true }}
-            linewidth={0.5}
-            points={zenithAngleArcPoints}
-            position={[0, 0, 0]}
-            rotation={new Euler(HALF_PI, 0, HALF_PI + azimuthAngle, 'ZXY')}
-            color={'white'}
-            name={'Zenith Angle Arc'}
-          />
-          <textSprite
-            userData={{ unintersectable: true }}
-            name={'Zenith Angle'}
-            backgroundColor={'navy'}
-            text={Util.toDegrees(zenithAngle).toFixed(0) + '°'}
-            fontSize={80}
-            fontFace={'Times Roman'}
-            textHeight={angleLabelHeight}
-            position={sunDirection
-              .clone()
-              .multiplyScalar(angleArcRadius)
-              .add(UNIT_VECTOR_POS_Z.clone().multiplyScalar(angleArcRadius))
-              .multiplyScalar(0.57)}
-          />
-          <Line
-            userData={{ unintersectable: true }}
-            linewidth={0.5}
-            points={azimuthAngleArcPoints}
-            position={[0, 0, 0]}
-            color={'white'}
-            name={'Azimuth Angle Arc'}
-          />
-          <textSprite
-            userData={{ unintersectable: true }}
-            name={'Azimuth Angle'}
-            backgroundColor={'firebrick'}
-            text={Util.toDegrees(azimuthAngle).toFixed(0) + '°'}
-            fontSize={80}
-            fontFace={'Times Roman'}
-            textHeight={angleLabelHeight}
-            position={sunDirectionOnGround
-              .clone()
-              .multiplyScalar(angleArcRadius)
-              .add(UNIT_VECTOR_POS_Y.clone().multiplyScalar(angleArcRadius))
-              .multiplyScalar(1.1)
-              .add(new Vector3(0, 0, angleLabelHeight / 2))}
-          />
+          {showElevationAngle && (
+            <>
+              <Line
+                userData={{ unintersectable: true }}
+                linewidth={0.5}
+                points={elevationAngleArcPoints}
+                position={[0, 0, 0]}
+                rotation={new Euler(HALF_PI, 0, HALF_PI + azimuthAngle, 'ZXY')}
+                color={'white'}
+                name={'Elevation Angle Arc'}
+              />
+              <textSprite
+                userData={{ unintersectable: true }}
+                name={'Elevation Angle'}
+                backgroundColor={'indigo'}
+                text={Util.toDegrees(elevationAngle).toFixed(0) + '°'}
+                fontSize={80}
+                fontFace={'Times Roman'}
+                textHeight={angleLabelHeight}
+                position={sunDirection
+                  .clone()
+                  .multiplyScalar(angleArcRadius)
+                  .add(sunDirectionOnGround.clone().multiplyScalar(angleArcRadius))
+                  .multiplyScalar(0.65)}
+              />
+            </>
+          )}
+          {showZenithAngle && (
+            <>
+              <Line
+                userData={{ unintersectable: true }}
+                linewidth={0.5}
+                points={zenithAngleArcPoints}
+                position={[0, 0, 0]}
+                rotation={new Euler(HALF_PI, 0, HALF_PI + azimuthAngle, 'ZXY')}
+                color={'white'}
+                name={'Zenith Angle Arc'}
+              />
+              <textSprite
+                userData={{ unintersectable: true }}
+                name={'Zenith Angle'}
+                backgroundColor={'navy'}
+                text={Util.toDegrees(zenithAngle).toFixed(0) + '°'}
+                fontSize={80}
+                fontFace={'Times Roman'}
+                textHeight={angleLabelHeight}
+                position={sunDirection
+                  .clone()
+                  .multiplyScalar(angleArcRadius)
+                  .add(UNIT_VECTOR_POS_Z.clone().multiplyScalar(angleArcRadius))
+                  .multiplyScalar(0.57)}
+              />
+            </>
+          )}
+          {showAzimuthAngle && (
+            <>
+              <Line
+                userData={{ unintersectable: true }}
+                linewidth={0.5}
+                points={azimuthAngleArcPoints}
+                position={[0, 0, 0]}
+                color={'white'}
+                name={'Azimuth Angle Arc'}
+              />
+              <textSprite
+                userData={{ unintersectable: true }}
+                name={'Azimuth Angle'}
+                backgroundColor={'firebrick'}
+                text={Util.toDegrees(-azimuthAngle).toFixed(0) + '°'}
+                fontSize={80}
+                fontFace={'Times Roman'}
+                textHeight={angleLabelHeight}
+                position={sunDirectionOnGround
+                  .clone()
+                  .multiplyScalar(angleArcRadius)
+                  .add(UNIT_VECTOR_POS_Y.clone().multiplyScalar(angleArcRadius))
+                  .multiplyScalar(1.1)
+                  .add(new Vector3(0, 0, angleLabelHeight / 2))}
+              />
+            </>
+          )}
         </>
       )}
     </group>
