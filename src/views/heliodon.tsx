@@ -295,7 +295,7 @@ const Heliodon = ({ date, hourAngle, declinationAngle, worldLatitude }: Heliodon
         return (
           <group key={i} rotation={[HALF_PI, (times * Math.PI) / nLabels, 0]}>
             <mesh position={[offset, 0, -radius * 1.1]} rotation={[-HALF_PI, 0, 0]}>
-              <textGeometry args={[`${(180 / nLabels) * times}°`, textGeometryParams]} />
+              <textGeometry args={[`${-(180 / nLabels) * times}°`, textGeometryParams]} />
               <meshStandardMaterial attach="material" color={'lightGray'} />
             </mesh>
           </group>

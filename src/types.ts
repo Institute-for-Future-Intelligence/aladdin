@@ -42,6 +42,11 @@ export interface CloudFileInfo {
   readonly userid: string;
 }
 
+export enum GeneticSelectionMethod {
+  ROULETTE_WHEEL = 1,
+  TOURNAMENT = 2,
+}
+
 export enum LineStyle {
   Solid = 1,
   Dashed = 2,
