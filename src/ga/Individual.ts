@@ -41,6 +41,12 @@ export class Individual {
     return this.chromosome[i];
   }
 
+  copyGenes(original: Individual) {
+    const n = Math.min(this.chromosome.length, original.chromosome.length);
+    for (let i = 0; i < n; i++) {
+      this.chromosome[i] = original.chromosome[i];
+    }
+  }
   /*
    * return the Euclidean distance between the chromosomes
    * phenotypic only as we don't use genotypic (bit) coding
