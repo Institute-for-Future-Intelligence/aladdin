@@ -107,6 +107,8 @@ export const getParent = (state: CommonStoreState) => state.getParent;
 
 export const getChildren = (state: CommonStoreState) => state.getChildren;
 
+export const getChildrenOfType = (state: CommonStoreState) => state.getChildrenOfType;
+
 export const selectedElement = (state: CommonStoreState) => state.selectedElement;
 
 export const getSelectedElement = (state: CommonStoreState) => state.getSelectedElement;

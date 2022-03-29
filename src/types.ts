@@ -42,9 +42,20 @@ export interface CloudFileInfo {
   readonly userid: string;
 }
 
+export enum ObjectiveFunctionType {
+  DAILY = 1,
+  YEARLY = 2,
+}
+
 export enum GeneticSelectionMethod {
   ROULETTE_WHEEL = 1,
   TOURNAMENT = 2,
+}
+
+export enum GeneticAlgorithmMethod {
+  GLOBAL_SEARCH_UNIFORM_SELECTION = 1,
+  LOCAL_SEARCH_RANDOM_OPTIMIZATION = 2, // https://en.wikipedia.org/wiki/Random_optimization
+  GLOBAL_SEARCH_FITNESS_SHARING = 3, // https://stackoverflow.com/questions/13775810/what-is-niching-scheme
 }
 
 export enum LineStyle {

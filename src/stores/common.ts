@@ -492,6 +492,7 @@ export interface CommonStoreState {
   countElementsByReferenceId: (id: string) => number;
   removeElementsByReferenceId: (id: string, cache: boolean) => void;
   getChildren: (id: string) => ElementModel[];
+  getChildrenOfType: (type: ObjectType, id: string) => ElementModel[];
   // the following goes faster than counting individual types of children through multiple loops
   countAllOffspringsByTypeAtOnce: (ancestorId: string) => ElementCounter;
   countAllChildElementsByType: (parentId: string, type: ObjectType, excludeLocked?: boolean) => number;
@@ -3979,6 +3980,15 @@ export const useStore = create<CommonStoreState>(
             const children: ElementModel[] = [];
             for (const e of get().elements) {
               if (e.parentId === id) {
+                children.push(e);
+              }
+            }
+            return children;
+          },
+          getChildrenOfType(type: ObjectType, id) {
+            const children: ElementModel[] = [];
+            for (const e of get().elements) {
+              if (e.type === type && e.parentId === id) {
                 children.push(e);
               }
             }
