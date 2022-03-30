@@ -5,11 +5,11 @@
 import { ObjectiveFunctionType } from '../types';
 
 export abstract class ObjectiveFunction {
-  abstract compute(): number;
-
   type: ObjectiveFunctionType = ObjectiveFunctionType.DAILY;
 
   cancelled: boolean = false;
+
+  abstract compute(): number;
 
   cancel(): void {
     this.cancelled = true;

@@ -6,7 +6,8 @@ import { ObjectiveFunctionType } from '../types';
 import { ObjectiveFunction } from './ObjectiveFunction';
 
 export class SolarOutputObjectiveFunction extends ObjectiveFunction {
-  SolarOutputObjectiveFunction(type: ObjectiveFunctionType) {
+  constructor(type: ObjectiveFunctionType) {
+    super();
     this.type = type;
   }
 

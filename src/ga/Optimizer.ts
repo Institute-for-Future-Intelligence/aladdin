@@ -6,19 +6,20 @@ import { GeneticAlgorithmMethod } from '../types';
 import { FoundationModel } from '../models/FoundationModel';
 import { Population } from './Population';
 import { Individual } from './Individual';
+import { ObjectiveFunction } from './ObjectiveFunction';
 
 export abstract class Optimizer {
+  objectiveFunction: ObjectiveFunction | null = null;
   population: Population;
   minima: number[];
   maxima: number[];
   foundation: FoundationModel;
-  // objectiveFunction;
   fitnessSharingRadius: number = 0.1;
   searchMethod: GeneticAlgorithmMethod = GeneticAlgorithmMethod.GLOBAL_SEARCH_UNIFORM_SELECTION;
   localSearchRadius: number = 0.1;
 
   //constraints;
-  stop: boolean = true;
+  stopped: boolean = true;
   mutationRate: number = 0.1;
   crossoverRate: number = 0.5;
   selectionRate: number = 0.5;
@@ -68,5 +69,17 @@ export abstract class Optimizer {
   setMinMax(i: number, min: number, max: number): void {
     this.minima[i] = min;
     this.maxima[i] = max;
+  }
+
+  abstract computeIndividualFitness(individual: Individual): void;
+
+  abstract applyFittest(): void;
+
+  stop(): void {
+    this.stopped = true;
+  }
+
+  shouldTerminate(): boolean {
+    return this.outsideGenerationCounter >= this.maximumGenerations;
   }
 }

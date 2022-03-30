@@ -24,6 +24,15 @@ export class Individual {
     }
   }
 
+  copy(original: Individual): Individual {
+    const c = new Individual(original.chromosome.length, false, 0);
+    for (let i = 0; i < c.chromosome.length; i++) {
+      c.chromosome[i] = original.chromosome[i];
+    }
+    this.fitness = original.fitness;
+    return c;
+  }
+
   compare(i: Individual): number {
     if (isNaN(this.fitness) || isNaN(i.fitness)) throw new Error('Fitness cannot be NaN');
     if (this.fitness > i.fitness) return 1;
