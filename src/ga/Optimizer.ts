@@ -7,6 +7,7 @@ import { FoundationModel } from '../models/FoundationModel';
 import { Population } from './Population';
 import { Individual } from './Individual';
 import { ObjectiveFunction } from './ObjectiveFunction';
+import { Constraint } from './Constraint';
 
 export abstract class Optimizer {
   objectiveFunction: ObjectiveFunction | null = null;
@@ -18,7 +19,7 @@ export abstract class Optimizer {
   searchMethod: GeneticAlgorithmMethod = GeneticAlgorithmMethod.GLOBAL_SEARCH_UNIFORM_SELECTION;
   localSearchRadius: number = 0.1;
 
-  //constraints;
+  constraints: Constraint[] = [];
   stopped: boolean = true;
   mutationRate: number = 0.1;
   crossoverRate: number = 0.5;

@@ -13,6 +13,7 @@ import { Individual } from './Individual';
 import { SolarPanelModel } from '../models/SolarPanelModel';
 import { GeneticAlgorithmMethod, ObjectiveFunctionType } from '../types';
 import { SolarOutputObjectiveFunction } from './SolarOutputObjectiveFunction';
+import { RectangularBound } from './RectangularBound';
 
 export class SolarPanelTiltAngleOptimizer extends Optimizer {
   solarPanels: SolarPanelModel[];
@@ -159,17 +160,17 @@ export class SolarPanelTiltAngleOptimizer extends Optimizer {
             y[j2] = this.minima[j] + gene * (this.maxima[j] - this.minima[j]);
           }
         }
-        // for (let j2 = 0; j2 < x.length; j2++) {
-        //   for (final Constraint c : constraints) {
-        //     if (c instanceof RectangularBound) {
-        //       final RectangularBound rb = (RectangularBound) c;
-        //       if (rb.contains(x[j2], y[j2])) {
-        //         this.population.setViolation(i, true);
-        //         detected = true;
-        //       }
-        //     }
-        //   }
-        // }
+        for (let j2 = 0; j2 < x.length; j2++) {
+          for (const c of this.constraints) {
+            if (c instanceof RectangularBound) {
+              const rb = c as RectangularBound;
+              if (rb.contains(x[j2], y[j2])) {
+                this.population.violations[i] = true;
+                detected = true;
+              }
+            }
+          }
+        }
       }
     }
     return detected;
