@@ -70,6 +70,7 @@ export const i18n_zh_tw = {
       Apply: '應用',
       Close: '關閉',
       ApplyTo: '適用於',
+      Run: '運行',
       Pause: '暫停',
       Resume: '繼續',
       Clear: '清空',
@@ -524,6 +525,24 @@ export const i18n_zh_tw = {
       SolarPanelArrayPoleHeight: '支架高度',
       SolarPanelArrayPoleSpacing: '支柱間隔',
       LayoutNotAcceptedCheckYourParameters: '恕不能採用此佈局。請檢查您的參數設置。',
+    },
+
+    gaMenu: {
+      SolarPanelTiltAngleOptimization: '光伏板傾斜角度優化',
+      Objective: '目標函數',
+      ObjectiveFunctionDailyOutput: '當日產出',
+      ObjectiveFunctionYearlyOutput: '全年產出',
+      GeneticAlgorithmSelectionMethod: '基因算法選擇方法',
+      RouletteWheel: '輪盤',
+      Tournament: '淘汰制',
+      GeneticAlgorithmSearchMethod: '基因算法搜索方法',
+      GlobalSearchUniformSelection: '全局搜索均勻取樣',
+      LocalSearchRandomOptimization: '局部搜索隨機優化',
+      PopulationSize: '種群數目',
+      MaximumGenerations: '最大世代數目',
+      MutationRate: '突變率',
+      ConvergenceThreshold: '收斂閾值',
+      LocalSearchRadius: '局部搜索的半徑',
     },
 
     treeMenu: {

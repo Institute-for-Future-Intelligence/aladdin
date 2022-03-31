@@ -14,7 +14,7 @@ export class SolarOutputObjectiveFunction extends ObjectiveFunction {
   compute(): number {
     let result = 0;
     switch (this.type) {
-      case ObjectiveFunctionType.YEARLY:
+      case ObjectiveFunctionType.YEARLY_OUTPUT:
         break;
       default:
         break;

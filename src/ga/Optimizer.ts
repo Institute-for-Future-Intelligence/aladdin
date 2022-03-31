@@ -2,7 +2,7 @@
  * @Copyright 2022. Institute for Future Intelligence, Inc.
  */
 
-import { GeneticAlgorithmMethod } from '../types';
+import { GeneticAlgorithmSearchMethod } from '../types';
 import { FoundationModel } from '../models/FoundationModel';
 import { Population } from './Population';
 import { Individual } from './Individual';
@@ -16,7 +16,7 @@ export abstract class Optimizer {
   maxima: number[];
   foundation: FoundationModel;
   fitnessSharingRadius: number = 0.1;
-  searchMethod: GeneticAlgorithmMethod = GeneticAlgorithmMethod.GLOBAL_SEARCH_UNIFORM_SELECTION;
+  searchMethod: GeneticAlgorithmSearchMethod = GeneticAlgorithmSearchMethod.GLOBAL_SEARCH_UNIFORM_SELECTION;
   localSearchRadius: number = 0.1;
 
   constraints: Constraint[] = [];

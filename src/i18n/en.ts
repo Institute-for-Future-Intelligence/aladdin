@@ -70,6 +70,7 @@ export const i18n_en = {
       Apply: 'Apply',
       Close: 'Close',
       ApplyTo: 'Apply to',
+      Run: 'Run',
       Pause: 'Pause',
       Resume: 'Resume',
       Clear: 'Clear',
@@ -541,6 +542,24 @@ export const i18n_en = {
       SolarPanelArrayPoleHeight: 'Pole Height',
       SolarPanelArrayPoleSpacing: 'Pole Spacing',
       LayoutNotAcceptedCheckYourParameters: 'This layout is not accepted. Please check your parameters.',
+    },
+
+    gaMenu: {
+      SolarPanelTiltAngleOptimization: 'Solar Panel Tilt Angle Optimization',
+      Objective: 'Objective',
+      ObjectiveFunctionDailyOutput: 'Daily Output',
+      ObjectiveFunctionYearlyOutput: 'Yearly Output',
+      GeneticAlgorithmSelectionMethod: 'Genetic Algorithm Selection Method',
+      RouletteWheel: 'Roulette Wheel',
+      Tournament: 'Tournament',
+      GeneticAlgorithmSearchMethod: 'Genetic Algorithm Search Method',
+      GlobalSearchUniformSelection: 'Global Search Uniform Selection',
+      LocalSearchRandomOptimization: 'Local Search Random Optimization',
+      PopulationSize: 'Population Size',
+      MaximumGenerations: 'Maximum Generations',
+      MutationRate: 'Mutation Rate',
+      ConvergenceThreshold: 'Convergence Threshold',
+      LocalSearchRadius: 'Local Search Radius',
     },
 
     treeMenu: {

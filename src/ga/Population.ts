@@ -4,7 +4,7 @@
  */
 
 import { Individual } from './Individual';
-import { GeneticSelectionMethod } from '../types';
+import { GeneticAlgorithmSelectionMethod } from '../types';
 import { Parents } from './Parents';
 import { Util } from '../Util';
 
@@ -15,7 +15,7 @@ export class Population {
   beta: number;
   survivors: Individual[];
   mutants: Individual[];
-  selectionMethod: GeneticSelectionMethod = GeneticSelectionMethod.ROULETTE_WHEEL;
+  selectionMethod: GeneticAlgorithmSelectionMethod = GeneticAlgorithmSelectionMethod.ROULETTE_WHEEL;
   convergenceThreshold: number;
   discretizationSteps: number;
 
@@ -119,7 +119,7 @@ export class Population {
       // multiplying 2 because each couple produces two children as shown in the mating algorithm below
       let p: Parents | null = null;
       switch (this.selectionMethod) {
-        case GeneticSelectionMethod.TOURNAMENT:
+        case GeneticAlgorithmSelectionMethod.TOURNAMENT:
           p = this.selectParentsByTournament();
           break;
         default:

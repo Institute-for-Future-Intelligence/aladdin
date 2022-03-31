@@ -19,6 +19,7 @@ import PolygonTextureSelection from './polygonTextureSelection';
 import SolarPanelLayoutWizard from './solarPanelLayoutWizard';
 import PolygonLineStyleSelection from './polygonLineStyleSelection';
 import PolygonLineWidthSelection from './polygonLineWidthSelection';
+import SolarPanelTiltAngleOptimizerWizard from './solarPanelTiltAngleOptimizerWizard';
 
 export const PolygonMenu = () => {
   const language = useStore(Selector.language);
@@ -34,6 +35,7 @@ export const PolygonMenu = () => {
   const [fillColorDialogVisible, setFillColorDialogVisible] = useState(false);
   const [textureDialogVisible, setTextureDialogVisible] = useState(false);
   const [solarPanelLayoutWizardVisible, setSolarPanelLayoutWizardVisible] = useState(false);
+  const [solarPanelTiltAngleOptimizerWizardVisible, setSolarPanelTiltAngleOptimizerWizardVisible] = useState(false);
   const lang = { lng: language };
 
   const togglePolygonFilled = (e: CheckboxChangeEvent) => {
@@ -92,6 +94,20 @@ export const PolygonMenu = () => {
             style={{ paddingLeft: '36px' }}
           >
             {i18n.t('polygonMenu.SolarPanelArrayLayout', lang)} ...
+          </Menu.Item>
+
+          <SolarPanelTiltAngleOptimizerWizard
+            dialogVisible={solarPanelTiltAngleOptimizerWizardVisible}
+            setDialogVisible={setSolarPanelTiltAngleOptimizerWizardVisible}
+          />
+          <Menu.Item
+            key={'solar-panel-tilt-angle-optimizer'}
+            onClick={() => {
+              setSolarPanelTiltAngleOptimizerWizardVisible(true);
+            }}
+            style={{ paddingLeft: '36px' }}
+          >
+            {i18n.t('gaMenu.SolarPanelTiltAngleOptimization', lang)} ...
           </Menu.Item>
         </SubMenu>
         <Lock keyName={'polygon-lock'} />

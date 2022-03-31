@@ -11,7 +11,7 @@ import { Optimizer } from './Optimizer';
 import { FoundationModel } from '../models/FoundationModel';
 import { Individual } from './Individual';
 import { SolarPanelModel } from '../models/SolarPanelModel';
-import { GeneticAlgorithmMethod, ObjectiveFunctionType } from '../types';
+import { GeneticAlgorithmSearchMethod, ObjectiveFunctionType } from '../types';
 import { SolarOutputObjectiveFunction } from './SolarOutputObjectiveFunction';
 import { RectangularBound } from './RectangularBound';
 
@@ -27,13 +27,13 @@ export class SolarPanelTiltAngleOptimizer extends Optimizer {
   ) {
     super(foundation, populationSize, chromosomeLength, discretizationSteps);
     this.solarPanels = solarPanels;
-    this.objectiveFunction = new SolarOutputObjectiveFunction(ObjectiveFunctionType.DAILY);
+    this.objectiveFunction = new SolarOutputObjectiveFunction(ObjectiveFunctionType.DAILY_OUTPUT);
     // initialize the population with the first-born being the current design
     const firstBorn: Individual = this.population.individuals[0];
     for (const [i, panel] of solarPanels.entries()) {
       const normalizedValue = 0.5 * (1.0 + panel.tiltAngle / 90.0);
       firstBorn.setGene(i, normalizedValue);
-      if (this.searchMethod === GeneticAlgorithmMethod.LOCAL_SEARCH_RANDOM_OPTIMIZATION) {
+      if (this.searchMethod === GeneticAlgorithmSearchMethod.LOCAL_SEARCH_RANDOM_OPTIMIZATION) {
         for (let k = 1; k < this.population.individuals.length; k++) {
           const individual: Individual = this.population.individuals[k];
           let v = Math.random() * this.localSearchRadius + normalizedValue;
@@ -130,7 +130,7 @@ export class SolarPanelTiltAngleOptimizer extends Optimizer {
           this.population.restoreGenes();
         } else {
           this.converged = this.population.isSgaConverged();
-          if (!this.converged && this.searchMethod === GeneticAlgorithmMethod.GLOBAL_SEARCH_UNIFORM_SELECTION) {
+          if (!this.converged && this.searchMethod === GeneticAlgorithmSearchMethod.GLOBAL_SEARCH_UNIFORM_SELECTION) {
             this.population.mutate(this.mutationRate);
           }
         }

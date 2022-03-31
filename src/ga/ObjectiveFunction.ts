@@ -5,7 +5,7 @@
 import { ObjectiveFunctionType } from '../types';
 
 export abstract class ObjectiveFunction {
-  type: ObjectiveFunctionType = ObjectiveFunctionType.DAILY;
+  type: ObjectiveFunctionType = ObjectiveFunctionType.DAILY_OUTPUT;
 
   cancelled: boolean = false;
 
