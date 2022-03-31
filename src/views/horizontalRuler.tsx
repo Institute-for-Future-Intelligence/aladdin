@@ -29,6 +29,7 @@ export const HorizontalRuler = ({ element, verticalLift }: HorizontalRulerProps)
   const color = element.lineColor ?? 'white';
   const lang = { lng: language };
   const labelBackgroundColor = 'darkorchid';
+  const ratio = Math.max(1, (hx + hy) / 32);
 
   const rulerOffset = useMemo(() => {
     switch (element.type) {
@@ -57,7 +58,7 @@ export const HorizontalRuler = ({ element, verticalLift }: HorizontalRulerProps)
           text={element.ly.toFixed(1) + i18n.t('word.MeterAbbreviation', lang)}
           fontSize={80}
           fontFace={'Times Roman'}
-          textHeight={1}
+          textHeight={ratio}
           position={[-hx - rulerOffset, 0, hz + verticalLift]}
         />
         <Line
@@ -120,7 +121,7 @@ export const HorizontalRuler = ({ element, verticalLift }: HorizontalRulerProps)
           text={element.ly.toFixed(1) + i18n.t('word.MeterAbbreviation', lang)}
           fontSize={80}
           fontFace={'Times Roman'}
-          textHeight={1}
+          textHeight={ratio}
           position={[hx + rulerOffset, 0, hz + verticalLift]}
         />
         <Line
@@ -183,7 +184,7 @@ export const HorizontalRuler = ({ element, verticalLift }: HorizontalRulerProps)
           text={element.lx.toFixed(1) + i18n.t('word.MeterAbbreviation', lang)}
           fontSize={80}
           fontFace={'Times Roman'}
-          textHeight={1}
+          textHeight={ratio}
           position={[0, -hy - rulerOffset, hz + verticalLift]}
         />
         <Line
@@ -246,7 +247,7 @@ export const HorizontalRuler = ({ element, verticalLift }: HorizontalRulerProps)
           text={element.lx.toFixed(1) + i18n.t('word.MeterAbbreviation', lang)}
           fontSize={80}
           fontFace={'Times Roman'}
-          textHeight={1}
+          textHeight={ratio}
           position={[0, hy + rulerOffset, hz + verticalLift]}
         />
         <Line

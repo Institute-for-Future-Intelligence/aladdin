@@ -19,6 +19,7 @@ export const PolarGrid = ({ element, height }: { element: ElementModel; height?:
   const hoveredHandle = useStore(Selector.hoveredHandle);
   const angle = useStore(Selector.selectedElementAngle);
   const getParent = useStore(Selector.getParent);
+  const groundImage = useStore(Selector.viewState.groundImage);
 
   const [position, setPosition] = useState<Vector3>();
   const [radius, setRadius] = useState<number>(10);
@@ -36,10 +37,10 @@ export const PolarGrid = ({ element, height }: { element: ElementModel; height?:
           }
           break;
         case ObjectType.Foundation:
-          setPosition(new Vector3(cx, cy, 0));
+          setPosition(new Vector3(cx, cy, groundImage ? 0.1 : 0));
           break;
         default:
-          setPosition(new Vector3(cx, cy, 0.2));
+          setPosition(new Vector3(cx, cy, groundImage ? 0.2 : 0));
       }
       setRadius(Math.max(5, Math.hypot(lx, ly) * 0.75));
     }
