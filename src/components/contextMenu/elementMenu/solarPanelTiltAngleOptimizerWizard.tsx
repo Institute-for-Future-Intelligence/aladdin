@@ -2,7 +2,7 @@
  * @Copyright 2022. Institute for Future Intelligence, Inc.
  */
 
-import React, { useRef, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { Button, Col, InputNumber, Modal, Row, Select } from 'antd';
 import Draggable, { DraggableBounds, DraggableData, DraggableEvent } from 'react-draggable';
 import { useStore } from '../../../stores/common';

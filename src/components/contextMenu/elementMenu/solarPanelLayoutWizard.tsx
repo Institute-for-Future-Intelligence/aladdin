@@ -2,7 +2,7 @@
  * @Copyright 2021-2022. Institute for Future Intelligence, Inc.
  */
 
-import React, { useRef, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { Button, Col, InputNumber, Modal, Row, Select } from 'antd';
 import Draggable, { DraggableBounds, DraggableData, DraggableEvent } from 'react-draggable';
 import { useStore } from '../../../stores/common';
@@ -60,12 +60,15 @@ const SolarPanelLayoutWizard = ({
   const dragRef = useRef<HTMLDivElement | null>(null);
   const changedRef = useRef(true);
   const okButtonRef = useRef<HTMLElement | null>(null);
-  okButtonRef.current?.focus();
 
   const lang = { lng: language };
   const pvModel = getPvModule(pvModelName);
   const reference = getSelectedElement();
   const relativeMargin = 0.01;
+
+  useEffect(() => {
+    okButtonRef.current?.focus();
+  }, []);
 
   const onStart = (event: DraggableEvent, uiData: DraggableData) => {
     if (dragRef.current) {

@@ -43,8 +43,6 @@ const ParabolicTroughRelativeAzimuthInput = ({
   const dragRef = useRef<HTMLDivElement | null>(null);
   const rejectRef = useRef<boolean>(false);
   const rejectedValue = useRef<number | undefined>();
-  const okButtonRef = useRef<HTMLElement | null>(null);
-  okButtonRef.current?.focus();
 
   const lang = { lng: language };
 
@@ -297,7 +295,7 @@ const ParabolicTroughRelativeAzimuthInput = ({
           <Button key="Cancel" onClick={cancel}>
             {i18n.t('word.Cancel', lang)}
           </Button>,
-          <Button key="OK" type="primary" onClick={ok} ref={okButtonRef}>
+          <Button key="OK" type="primary" onClick={ok}>
             {i18n.t('word.OK', lang)}
           </Button>,
         ]}
