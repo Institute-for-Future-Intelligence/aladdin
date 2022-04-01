@@ -35,6 +35,8 @@ const SolarPanelTiltAngleOptimizerWizard = ({
   const mutationRateRef = useRef<number>(0.1);
   const convergenceThresholdRef = useRef<number>(0.01);
   const localSearchRadiusRef = useRef<number>(0.1);
+  const okButtonRef = useRef<HTMLElement | null>(null);
+  okButtonRef.current?.focus();
 
   const lang = { lng: language };
 
@@ -66,7 +68,7 @@ const SolarPanelTiltAngleOptimizerWizard = ({
             onMouseOver={() => setDragEnabled(true)}
             onMouseOut={() => setDragEnabled(false)}
           >
-            {i18n.t('gaMenu.SolarPanelTiltAngleOptimization', lang)}
+            {i18n.t('optimizationMenu.SolarPanelTiltAngleOptimization', lang)}
           </div>
         }
         footer={[
@@ -82,6 +84,7 @@ const SolarPanelTiltAngleOptimizerWizard = ({
           <Button
             key="Run"
             type="primary"
+            ref={okButtonRef}
             onClick={() => {
               run();
               setDialogVisible(false);
@@ -105,7 +108,7 @@ const SolarPanelTiltAngleOptimizerWizard = ({
       >
         <Row gutter={6} style={{ paddingBottom: '4px' }}>
           <Col className="gutter-row" span={12}>
-            {i18n.t('gaMenu.Objective', lang) + ':'}
+            {i18n.t('optimizationMenu.Objective', lang) + ':'}
           </Col>
           <Col className="gutter-row" span={12}>
             <Select
@@ -118,10 +121,10 @@ const SolarPanelTiltAngleOptimizerWizard = ({
               }}
             >
               <Option key={ObjectiveFunctionType.DAILY_OUTPUT} value={ObjectiveFunctionType.DAILY_OUTPUT}>
-                {i18n.t('gaMenu.ObjectiveFunctionDailyOutput', lang)}
+                {i18n.t('optimizationMenu.ObjectiveFunctionDailyOutput', lang)}
               </Option>
               <Option key={ObjectiveFunctionType.YEARLY_OUTPUT} value={ObjectiveFunctionType.YEARLY_OUTPUT}>
-                {i18n.t('gaMenu.ObjectiveFunctionYearlyOutput', lang)}
+                {i18n.t('optimizationMenu.ObjectiveFunctionYearlyOutput', lang)}
               </Option>
             </Select>
           </Col>
@@ -129,7 +132,7 @@ const SolarPanelTiltAngleOptimizerWizard = ({
 
         <Row gutter={6} style={{ paddingBottom: '4px' }}>
           <Col className="gutter-row" span={12}>
-            {i18n.t('gaMenu.GeneticAlgorithmSelectionMethod', lang) + ':'}
+            {i18n.t('optimizationMenu.GeneticAlgorithmSelectionMethod', lang) + ':'}
           </Col>
           <Col className="gutter-row" span={12}>
             <Select
@@ -145,13 +148,13 @@ const SolarPanelTiltAngleOptimizerWizard = ({
                 key={GeneticAlgorithmSelectionMethod.ROULETTE_WHEEL}
                 value={GeneticAlgorithmSelectionMethod.ROULETTE_WHEEL}
               >
-                {i18n.t('gaMenu.RouletteWheel', lang)}
+                {i18n.t('optimizationMenu.RouletteWheel', lang)}
               </Option>
               <Option
                 key={GeneticAlgorithmSelectionMethod.TOURNAMENT}
                 value={GeneticAlgorithmSelectionMethod.TOURNAMENT}
               >
-                {i18n.t('gaMenu.Tournament', lang)}
+                {i18n.t('optimizationMenu.Tournament', lang)}
               </Option>
             </Select>
           </Col>
@@ -159,7 +162,7 @@ const SolarPanelTiltAngleOptimizerWizard = ({
 
         <Row gutter={6} style={{ paddingBottom: '4px' }}>
           <Col className="gutter-row" span={12}>
-            {i18n.t('gaMenu.PopulationSize', lang) + ':'}
+            {i18n.t('optimizationMenu.PopulationSize', lang) + ':'}
           </Col>
           <Col className="gutter-row" span={12}>
             <InputNumber
@@ -180,7 +183,7 @@ const SolarPanelTiltAngleOptimizerWizard = ({
 
         <Row gutter={6} style={{ paddingBottom: '4px' }}>
           <Col className="gutter-row" span={12}>
-            {i18n.t('gaMenu.MaximumGenerations', lang) + ':'}
+            {i18n.t('optimizationMenu.MaximumGenerations', lang) + ':'}
           </Col>
           <Col className="gutter-row" span={12}>
             <InputNumber
@@ -201,7 +204,7 @@ const SolarPanelTiltAngleOptimizerWizard = ({
 
         <Row gutter={6} style={{ paddingBottom: '4px' }}>
           <Col className="gutter-row" span={12}>
-            {i18n.t('gaMenu.MutationRate', lang) + ' [0, 1]: '}
+            {i18n.t('optimizationMenu.MutationRate', lang) + ' [0, 1]: '}
           </Col>
           <Col className="gutter-row" span={12}>
             <InputNumber
@@ -222,7 +225,7 @@ const SolarPanelTiltAngleOptimizerWizard = ({
 
         <Row gutter={6} style={{ paddingBottom: '4px' }}>
           <Col className="gutter-row" span={12}>
-            {i18n.t('gaMenu.ConvergenceThreshold', lang) + ' [0, 0.1]: '}
+            {i18n.t('optimizationMenu.ConvergenceThreshold', lang) + ' [0, 0.1]: '}
           </Col>
           <Col className="gutter-row" span={12}>
             <InputNumber
@@ -243,7 +246,7 @@ const SolarPanelTiltAngleOptimizerWizard = ({
 
         <Row gutter={6} style={{ paddingBottom: '4px' }}>
           <Col className="gutter-row" span={12}>
-            {i18n.t('gaMenu.GeneticAlgorithmSearchMethod', lang) + ':'}
+            {i18n.t('optimizationMenu.GeneticAlgorithmSearchMethod', lang) + ':'}
           </Col>
           <Col className="gutter-row" span={12}>
             <Select
@@ -259,13 +262,13 @@ const SolarPanelTiltAngleOptimizerWizard = ({
                 key={GeneticAlgorithmSearchMethod.GLOBAL_SEARCH_UNIFORM_SELECTION}
                 value={GeneticAlgorithmSearchMethod.GLOBAL_SEARCH_UNIFORM_SELECTION}
               >
-                {i18n.t('gaMenu.GlobalSearchUniformSelection', lang)}
+                {i18n.t('optimizationMenu.GlobalSearchUniformSelection', lang)}
               </Option>
               <Option
                 key={GeneticAlgorithmSearchMethod.LOCAL_SEARCH_RANDOM_OPTIMIZATION}
                 value={GeneticAlgorithmSearchMethod.LOCAL_SEARCH_RANDOM_OPTIMIZATION}
               >
-                {i18n.t('gaMenu.LocalSearchRandomOptimization', lang)}
+                {i18n.t('optimizationMenu.LocalSearchRandomOptimization', lang)}
               </Option>
             </Select>
           </Col>
@@ -274,7 +277,7 @@ const SolarPanelTiltAngleOptimizerWizard = ({
         {searchMethodRef.current === GeneticAlgorithmSearchMethod.LOCAL_SEARCH_RANDOM_OPTIMIZATION && (
           <Row gutter={6} style={{ paddingBottom: '4px' }}>
             <Col className="gutter-row" span={12}>
-              {i18n.t('gaMenu.LocalSearchRadius', lang) + ' ([0, 1]: '}
+              {i18n.t('optimizationMenu.LocalSearchRadius', lang) + ' ([0, 1]: '}
             </Col>
             <Col className="gutter-row" span={12}>
               <InputNumber

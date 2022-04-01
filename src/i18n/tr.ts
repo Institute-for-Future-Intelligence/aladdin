@@ -545,7 +545,8 @@ export const i18n_tr = {
       LayoutNotAcceptedCheckYourParameters: 'This layout is not accepted. Please check your parameters.',
     },
 
-    gaMenu: {
+    optimizationMenu: {
+      Optimization: 'Optimization',
       SolarPanelTiltAngleOptimization: 'Solar Panel Tilt Angle Optimization',
       Objective: 'Objective',
       ObjectiveFunctionDailyOutput: 'Daily Output',

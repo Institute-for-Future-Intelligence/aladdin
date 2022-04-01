@@ -47,6 +47,8 @@ const FoundationHeightInput = ({
   const [dragEnabled, setDragEnabled] = useState<boolean>(false);
   const [bounds, setBounds] = useState<DraggableBounds>({ left: 0, top: 0, bottom: 0, right: 0 } as DraggableBounds);
   const dragRef = useRef<HTMLDivElement | null>(null);
+  const okButtonRef = useRef<HTMLElement | null>(null);
+  okButtonRef.current?.focus();
 
   const oldChildrenParentIdMapRef = useRef<Map<string, string>>(new Map<string, string>());
   const newChildrenParentIdMapRef = useRef<Map<string, string>>(new Map<string, string>());
@@ -353,7 +355,7 @@ const FoundationHeightInput = ({
           <Button key="Cancel" onClick={cancel}>
             {i18n.t('word.Cancel', lang)}
           </Button>,
-          <Button key="OK" type="primary" onClick={ok}>
+          <Button key="OK" type="primary" onClick={ok} ref={okButtonRef}>
             {i18n.t('word.OK', lang)}
           </Button>,
         ]}

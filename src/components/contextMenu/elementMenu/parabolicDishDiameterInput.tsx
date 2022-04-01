@@ -46,6 +46,8 @@ const ParabolicDishDiameterInput = ({
   const dragRef = useRef<HTMLDivElement | null>(null);
   const rejectRef = useRef<boolean>(false);
   const rejectedValue = useRef<number | undefined>();
+  const okButtonRef = useRef<HTMLElement | null>(null);
+  okButtonRef.current?.focus();
 
   const lang = { lng: language };
 
@@ -311,7 +313,7 @@ const ParabolicDishDiameterInput = ({
           <Button key="Cancel" onClick={cancel}>
             {i18n.t('word.Cancel', lang)}
           </Button>,
-          <Button key="OK" type="primary" onClick={ok}>
+          <Button key="OK" type="primary" onClick={ok} ref={okButtonRef}>
             {i18n.t('word.OK', lang)}
           </Button>,
         ]}

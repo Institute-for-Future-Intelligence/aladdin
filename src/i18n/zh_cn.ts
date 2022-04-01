@@ -527,7 +527,8 @@ export const i18n_zh_cn = {
       LayoutNotAcceptedCheckYourParameters: '恕不能采用此布局。请检查您的参数设置。',
     },
 
-    gaMenu: {
+    optimizationMenu: {
+      Optimization: '优化',
       SolarPanelTiltAngleOptimization: '光伏板倾斜角度优化',
       Objective: '目标函数',
       ObjectiveFunctionDailyOutput: '当日产出',

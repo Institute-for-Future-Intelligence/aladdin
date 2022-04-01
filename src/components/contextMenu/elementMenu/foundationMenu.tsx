@@ -42,6 +42,7 @@ import SolarUpdraftTowerCollectorTransmissivityInput from './solarUpdraftTowerCo
 import SolarUpdraftTowerDischargeCoefficientInput from './solarUpdraftTowerDischargeCoefficientInput';
 import SolarUpdraftTowerTurbineEfficiencyInput from './solarUpdraftTowerTurbineEfficiencyInput';
 import SolarUpdraftTowerCollectorEmissivityInput from './solarUpdraftTowerCollectorEmissivityInput';
+import SolarPanelTiltAngleOptimizerWizard from './solarPanelTiltAngleOptimizerWizard';
 
 export const FoundationMenu = () => {
   const setCommonStore = useStore(Selector.set);
@@ -97,6 +98,7 @@ export const FoundationMenu = () => {
   const [collectorEmissivityDialogVisible, setCollectorEmissivityDialogVisible] = useState(false);
   const [dischargeCoefficientDialogVisible, setDischargeCoefficientDialogVisible] = useState(false);
   const [turbineEfficiencyDialogVisible, setTurbineEfficiencyDialogVisible] = useState(false);
+  const [solarPanelTiltAngleOptimizerWizardVisible, setSolarPanelTiltAngleOptimizerWizardVisible] = useState(false);
 
   const counter = foundation ? countAllOffspringsByType(foundation.id) : new ElementCounter();
   const lang = { lng: language };
@@ -1073,6 +1075,25 @@ export const FoundationMenu = () => {
             </Menu.Item>
           </SubMenu>
         )}
+        <SubMenu
+          key={'optimization'}
+          title={i18n.t('optimizationMenu.Optimization', lang)}
+          style={{ paddingLeft: '24px' }}
+        >
+          <SolarPanelTiltAngleOptimizerWizard
+            dialogVisible={solarPanelTiltAngleOptimizerWizardVisible}
+            setDialogVisible={setSolarPanelTiltAngleOptimizerWizardVisible}
+          />
+          <Menu.Item
+            key={'solar-panel-tilt-angle-optimizer'}
+            onClick={() => {
+              setSolarPanelTiltAngleOptimizerWizardVisible(true);
+            }}
+            style={{ paddingLeft: '12px' }}
+          >
+            {i18n.t('optimizationMenu.SolarPanelTiltAngleOptimization', lang)} ...
+          </Menu.Item>
+        </SubMenu>
       </Menu.ItemGroup>
     )
   );

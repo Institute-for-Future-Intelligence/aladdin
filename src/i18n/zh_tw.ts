@@ -527,7 +527,8 @@ export const i18n_zh_tw = {
       LayoutNotAcceptedCheckYourParameters: '恕不能採用此佈局。請檢查您的參數設置。',
     },
 
-    gaMenu: {
+    optimizationMenu: {
+      Optimization: '優化',
       SolarPanelTiltAngleOptimization: '光伏板傾斜角度優化',
       Objective: '目標函數',
       ObjectiveFunctionDailyOutput: '當日產出',
