@@ -15,13 +15,7 @@ import { FoundationModel } from '../../../models/FoundationModel';
 import { Util } from '../../../Util';
 import { ZERO_TOLERANCE } from '../../../constants';
 
-const FoundationAzimuthInput = ({
-  dialogVisible,
-  setDialogVisible,
-}: {
-  dialogVisible: boolean;
-  setDialogVisible: (b: boolean) => void;
-}) => {
+const FoundationAzimuthInput = ({ setDialogVisible }: { setDialogVisible: (b: boolean) => void }) => {
   const language = useStore(Selector.language);
   const elements = useStore(Selector.elements);
   const updateElementRotationById = useStore(Selector.updateElementRotationById);
@@ -160,7 +154,7 @@ const FoundationAzimuthInput = ({
     <>
       <Modal
         width={550}
-        visible={dialogVisible}
+        visible={true}
         title={
           <div
             style={{ width: '100%', cursor: 'move' }}

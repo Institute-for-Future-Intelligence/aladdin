@@ -21,13 +21,7 @@ import { ElementModel } from 'src/models/ElementModel';
 import { useStoreRef } from 'src/stores/commonRef';
 import { invalidate } from '@react-three/fiber';
 
-const FoundationLengthInput = ({
-  dialogVisible,
-  setDialogVisible,
-}: {
-  dialogVisible: boolean;
-  setDialogVisible: (b: boolean) => void;
-}) => {
+const FoundationLengthInput = ({ setDialogVisible }: { setDialogVisible: (b: boolean) => void }) => {
   const language = useStore(Selector.language);
   const elements = useStore(Selector.elements);
   const updateElementCxById = useStore(Selector.updateElementCxById);
@@ -484,7 +478,7 @@ const FoundationLengthInput = ({
     <>
       <Modal
         width={550}
-        visible={dialogVisible}
+        visible={true}
         title={
           <div
             style={{ width: '100%', cursor: 'move' }}

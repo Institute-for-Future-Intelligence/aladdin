@@ -47,7 +47,7 @@ export const WallMenu = () => {
         {/* <Cut keyName={'wall-cut'} /> */}
         <Lock keyName={'wall-lock'} />
 
-        <WallTextureSelection dialogVisible={textureDialogVisible} setDialogVisible={setTextureDialogVisible} />
+        {textureDialogVisible && <WallTextureSelection setDialogVisible={setTextureDialogVisible} />}
         <Menu.Item
           key={'wall-texture'}
           style={{ paddingLeft: paddingLeft }}
@@ -59,7 +59,7 @@ export const WallMenu = () => {
           {i18n.t('word.Texture', lang)} ...
         </Menu.Item>
 
-        <WallColorSelection dialogVisible={colorDialogVisible} setDialogVisible={setColorDialogVisible} />
+        {colorDialogVisible && <WallColorSelection setDialogVisible={setColorDialogVisible} />}
         {(wall.textureType === WallTexture.NoTexture || wall.textureType === WallTexture.Default) && (
           <Menu.Item
             key={'wall-color'}
@@ -73,7 +73,7 @@ export const WallMenu = () => {
           </Menu.Item>
         )}
 
-        <WallHeightInput dialogVisible={heightDialogVisible} setDialogVisible={setHeightDialogVisible} />
+        {heightDialogVisible && <WallHeightInput setDialogVisible={setHeightDialogVisible} />}
         <Menu.Item
           key={'wall-height'}
           style={{ paddingLeft: paddingLeft }}
@@ -85,7 +85,7 @@ export const WallMenu = () => {
           {i18n.t('word.Height', lang)} ...
         </Menu.Item>
 
-        <WallThicknessInput dialogVisible={thicknessDialogVisible} setDialogVisible={setThicknessDialogVisible} />
+        {thicknessDialogVisible && <WallThicknessInput setDialogVisible={setThicknessDialogVisible} />}
         <Menu.Item
           key={'wall-thickness'}
           style={{ paddingLeft: paddingLeft }}

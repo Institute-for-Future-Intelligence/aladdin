@@ -17,13 +17,7 @@ import { UNIT_VECTOR_POS_Z_ARRAY } from '../../../constants';
 
 const { Option } = Select;
 
-const SolarPanelOrientationSelection = ({
-  dialogVisible,
-  setDialogVisible,
-}: {
-  dialogVisible: boolean;
-  setDialogVisible: (b: boolean) => void;
-}) => {
+const SolarPanelOrientationSelection = ({ setDialogVisible }: { setDialogVisible: (b: boolean) => void }) => {
   const language = useStore(Selector.language);
   const elements = useStore(Selector.elements);
   const getPvModule = useStore(Selector.getPvModule);
@@ -423,7 +417,7 @@ const SolarPanelOrientationSelection = ({
     <>
       <Modal
         width={550}
-        visible={dialogVisible}
+        visible={true}
         title={
           <div
             style={{ width: '100%', cursor: 'move' }}

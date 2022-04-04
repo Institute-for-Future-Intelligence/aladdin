@@ -610,7 +610,7 @@ export const FoundationMenu = () => {
 
         {editable && (!foundation.textureType || foundation.textureType === FoundationTexture.NoTexture) && (
           <>
-            <FoundationColorSelection dialogVisible={colorDialogVisible} setDialogVisible={setColorDialogVisible} />
+            {colorDialogVisible && <FoundationColorSelection setDialogVisible={setColorDialogVisible} />}
             <Menu.Item
               key={'foundation-color'}
               style={{ paddingLeft: '36px' }}
@@ -626,10 +626,7 @@ export const FoundationMenu = () => {
 
         {editable && (
           <>
-            <FoundationTextureSelection
-              dialogVisible={textureDialogVisible}
-              setDialogVisible={setTextureDialogVisible}
-            />
+            {textureDialogVisible && <FoundationTextureSelection setDialogVisible={setTextureDialogVisible} />}
             <Menu.Item
               key={'foundation-texture'}
               style={{ paddingLeft: '36px' }}
@@ -641,7 +638,7 @@ export const FoundationMenu = () => {
               {i18n.t('word.Texture', lang)} ...
             </Menu.Item>
 
-            <FoundationLengthInput dialogVisible={lengthDialogVisible} setDialogVisible={setLengthDialogVisible} />
+            {lengthDialogVisible && <FoundationLengthInput setDialogVisible={setLengthDialogVisible} />}
             <Menu.Item
               key={'foundation-length'}
               style={{ paddingLeft: '36px' }}
@@ -653,7 +650,7 @@ export const FoundationMenu = () => {
               {i18n.t('word.Length', lang)} ...
             </Menu.Item>
 
-            <FoundationWidthInput dialogVisible={widthDialogVisible} setDialogVisible={setWidthDialogVisible} />
+            {widthDialogVisible && <FoundationWidthInput setDialogVisible={setWidthDialogVisible} />}
             <Menu.Item
               key={'foundation-width'}
               style={{ paddingLeft: '36px' }}
@@ -665,7 +662,7 @@ export const FoundationMenu = () => {
               {i18n.t('word.Width', lang)} ...
             </Menu.Item>
 
-            <FoundationHeightInput dialogVisible={heightDialogVisible} setDialogVisible={setHeightDialogVisible} />
+            {heightDialogVisible && <FoundationHeightInput setDialogVisible={setHeightDialogVisible} />}
             <Menu.Item
               key={'foundation-height'}
               style={{ paddingLeft: '36px' }}
@@ -677,7 +674,7 @@ export const FoundationMenu = () => {
               {i18n.t('word.Height', lang)} ...
             </Menu.Item>
 
-            <FoundationAzimuthInput dialogVisible={azimuthDialogVisible} setDialogVisible={setAzimuthDialogVisible} />
+            {azimuthDialogVisible && <FoundationAzimuthInput setDialogVisible={setAzimuthDialogVisible} />}
             <Menu.Item
               key={'foundation-azimuth'}
               style={{ paddingLeft: '36px' }}
@@ -788,10 +785,9 @@ export const FoundationMenu = () => {
             title={i18n.t('solarAbsorberPipeMenu.AbsorberPipePhysicalProperties', lang)}
             style={{ paddingLeft: '24px' }}
           >
-            <SolarAbsorberPipeHeightInput
-              dialogVisible={solarAbsorberPipeHeightDialogVisible}
-              setDialogVisible={setSolarAbsorberPipeHeightDialogVisible}
-            />
+            {solarAbsorberPipeHeightDialogVisible && (
+              <SolarAbsorberPipeHeightInput setDialogVisible={setSolarAbsorberPipeHeightDialogVisible} />
+            )}
             <Menu.Item
               key={'solar-absorber-pipe-height'}
               style={{ paddingLeft: '36px' }}
@@ -803,10 +799,9 @@ export const FoundationMenu = () => {
               {i18n.t('solarAbsorberPipeMenu.AbsorberHeight', lang)} ...
             </Menu.Item>
 
-            <SolarAbsorberPipeApertureWidthInput
-              dialogVisible={solarAbsorberPipeApertureWidthDialogVisible}
-              setDialogVisible={setSolarAbsorberPipeApertureWidthDialogVisible}
-            />
+            {solarAbsorberPipeApertureWidthDialogVisible && (
+              <SolarAbsorberPipeApertureWidthInput setDialogVisible={setSolarAbsorberPipeApertureWidthDialogVisible} />
+            )}
             <Menu.Item
               key={'solar-absorber-pipe-aperture-width'}
               style={{ paddingLeft: '36px' }}
@@ -817,10 +812,9 @@ export const FoundationMenu = () => {
             >
               {i18n.t('solarAbsorberPipeMenu.AbsorberApertureWidth', lang)} ...
             </Menu.Item>
-            <SolarAbsorberPipePoleNumberInput
-              dialogVisible={solarAbsorberPipePoleNumberDialogVisible}
-              setDialogVisible={setSolarAbsorberPipePoleNumberDialogVisible}
-            />
+            {solarAbsorberPipePoleNumberDialogVisible && (
+              <SolarAbsorberPipePoleNumberInput setDialogVisible={setSolarAbsorberPipePoleNumberDialogVisible} />
+            )}
 
             <Menu.Item
               key={'foundation-solar-receiver-pipe-pole-number'}
@@ -833,10 +827,9 @@ export const FoundationMenu = () => {
               {i18n.t('solarAbsorberPipeMenu.AbsorberPipePoleNumber', lang)} ...
             </Menu.Item>
 
-            <SolarAbsorberPipeAbsorptanceInput
-              dialogVisible={solarAbsorberPipeAbsorptanceDialogVisible}
-              setDialogVisible={setSolarAbsorberPipeAbsorptanceDialogVisible}
-            />
+            {solarAbsorberPipeAbsorptanceDialogVisible && (
+              <SolarAbsorberPipeAbsorptanceInput setDialogVisible={setSolarAbsorberPipeAbsorptanceDialogVisible} />
+            )}
             <Menu.Item
               key={'solar-absorber-pipe-absorptance'}
               style={{ paddingLeft: '36px' }}
@@ -848,10 +841,11 @@ export const FoundationMenu = () => {
               {i18n.t('solarAbsorberPipeMenu.AbsorberAbsorptance', lang)} ...
             </Menu.Item>
 
-            <SolarAbsorberPipeOpticalEfficiencyInput
-              dialogVisible={solarAbsorberPipeOpticalEfficiencyDialogVisible}
-              setDialogVisible={setSolarAbsorberPipeOpticalEfficiencyDialogVisible}
-            />
+            {solarAbsorberPipeOpticalEfficiencyDialogVisible && (
+              <SolarAbsorberPipeOpticalEfficiencyInput
+                setDialogVisible={setSolarAbsorberPipeOpticalEfficiencyDialogVisible}
+              />
+            )}
             <Menu.Item
               key={'solar-absorber-optical-efficiency'}
               style={{ paddingLeft: '36px' }}
@@ -863,10 +857,11 @@ export const FoundationMenu = () => {
               {i18n.t('solarAbsorberPipeMenu.AbsorberOpticalEfficiency', lang)} ...
             </Menu.Item>
 
-            <SolarAbsorberPipeThermalEfficiencyInput
-              dialogVisible={solarAbsorberPipeThermalEfficiencyDialogVisible}
-              setDialogVisible={setSolarAbsorberPipeThermalEfficiencyDialogVisible}
-            />
+            {solarAbsorberPipeThermalEfficiencyDialogVisible && (
+              <SolarAbsorberPipeThermalEfficiencyInput
+                setDialogVisible={setSolarAbsorberPipeThermalEfficiencyDialogVisible}
+              />
+            )}
             <Menu.Item
               key={'solar-absorber-thermal-efficiency'}
               style={{ paddingLeft: '36px' }}
@@ -886,10 +881,9 @@ export const FoundationMenu = () => {
             title={i18n.t('solarPowerTowerMenu.ReceiverTowerPhysicalProperties', lang)}
             style={{ paddingLeft: '24px' }}
           >
-            <SolarPowerTowerHeightInput
-              dialogVisible={solarPowerTowerHeightDialogVisible}
-              setDialogVisible={setSolarPowerTowerHeightDialogVisible}
-            />
+            {solarPowerTowerHeightDialogVisible && (
+              <SolarPowerTowerHeightInput setDialogVisible={setSolarPowerTowerHeightDialogVisible} />
+            )}
             <Menu.Item
               key={'solar-power-tower-height'}
               style={{ paddingLeft: '36px' }}
@@ -901,10 +895,11 @@ export const FoundationMenu = () => {
               {i18n.t('solarPowerTowerMenu.ReceiverTowerHeight', lang)} ...
             </Menu.Item>
 
-            <SolarPowerTowerReceiverAbsorptanceInput
-              dialogVisible={solarPowerTowerReceiverAbsorptanceDialogVisible}
-              setDialogVisible={setSolarPowerTowerReceiverAbsorptanceDialogVisible}
-            />
+            {solarPowerTowerReceiverAbsorptanceDialogVisible && (
+              <SolarPowerTowerReceiverAbsorptanceInput
+                setDialogVisible={setSolarPowerTowerReceiverAbsorptanceDialogVisible}
+              />
+            )}
             <Menu.Item
               key={'solar-power-tower-receiver-absorptance'}
               style={{ paddingLeft: '36px' }}
@@ -916,10 +911,11 @@ export const FoundationMenu = () => {
               {i18n.t('solarPowerTowerMenu.ReceiverAbsorptance', lang)} ...
             </Menu.Item>
 
-            <SolarPowerTowerReceiverOpticalEfficiencyInput
-              dialogVisible={solarPowerTowerReceiverOpticalEfficiencyDialogVisible}
-              setDialogVisible={setSolarPowerTowerReceiverOpticalEfficiencyDialogVisible}
-            />
+            {solarPowerTowerReceiverOpticalEfficiencyDialogVisible && (
+              <SolarPowerTowerReceiverOpticalEfficiencyInput
+                setDialogVisible={setSolarPowerTowerReceiverOpticalEfficiencyDialogVisible}
+              />
+            )}
             <Menu.Item
               key={'solar-power-tower-receiver-optical-efficiency'}
               style={{ paddingLeft: '36px' }}
@@ -931,10 +927,11 @@ export const FoundationMenu = () => {
               {i18n.t('solarPowerTowerMenu.ReceiverOpticalEfficiency', lang)} ...
             </Menu.Item>
 
-            <SolarPowerTowerReceiverThermalEfficiencyInput
-              dialogVisible={solarPowerTowerReceiverThermalEfficiencyDialogVisible}
-              setDialogVisible={setSolarPowerTowerReceiverThermalEfficiencyDialogVisible}
-            />
+            {solarPowerTowerReceiverThermalEfficiencyDialogVisible && (
+              <SolarPowerTowerReceiverThermalEfficiencyInput
+                setDialogVisible={setSolarPowerTowerReceiverThermalEfficiencyDialogVisible}
+              />
+            )}
             <Menu.Item
               key={'solar-power-tower-receiver-thermal-efficiency'}
               style={{ paddingLeft: '36px' }}
@@ -954,10 +951,9 @@ export const FoundationMenu = () => {
             title={i18n.t('solarUpdraftTowerMenu.SolarUpdraftTowerPhysicalProperties', lang)}
             style={{ paddingLeft: '24px' }}
           >
-            <SolarUpdraftTowerChimneyHeightInput
-              dialogVisible={chimneyHeightDialogVisible}
-              setDialogVisible={setChimneyHeightDialogVisible}
-            />
+            {chimneyHeightDialogVisible && (
+              <SolarUpdraftTowerChimneyHeightInput setDialogVisible={setChimneyHeightDialogVisible} />
+            )}
             <Menu.Item
               key={'solar-updraft-tower-chimney-height'}
               style={{ paddingLeft: '36px' }}
@@ -969,10 +965,9 @@ export const FoundationMenu = () => {
               {i18n.t('solarUpdraftTowerMenu.SolarUpdraftTowerChimneyHeight', lang)} ...
             </Menu.Item>
 
-            <SolarUpdraftTowerChimneyRadiusInput
-              dialogVisible={chimneyRadiusDialogVisible}
-              setDialogVisible={setChimneyRadiusDialogVisible}
-            />
+            {chimneyRadiusDialogVisible && (
+              <SolarUpdraftTowerChimneyRadiusInput setDialogVisible={setChimneyRadiusDialogVisible} />
+            )}
             <Menu.Item
               key={'solar-updraft-tower-chimney-radius'}
               style={{ paddingLeft: '36px' }}
@@ -984,10 +979,9 @@ export const FoundationMenu = () => {
               {i18n.t('solarUpdraftTowerMenu.SolarUpdraftTowerChimneyRadius', lang)} ...
             </Menu.Item>
 
-            <SolarUpdraftTowerCollectorHeightInput
-              dialogVisible={collectorHeightDialogVisible}
-              setDialogVisible={setCollectorHeightDialogVisible}
-            />
+            {collectorHeightDialogVisible && (
+              <SolarUpdraftTowerCollectorHeightInput setDialogVisible={setCollectorHeightDialogVisible} />
+            )}
             <Menu.Item
               key={'solar-updraft-tower-collector-height'}
               style={{ paddingLeft: '36px' }}
@@ -999,10 +993,9 @@ export const FoundationMenu = () => {
               {i18n.t('solarUpdraftTowerMenu.SolarUpdraftTowerCollectorHeight', lang)} ...
             </Menu.Item>
 
-            <SolarUpdraftTowerCollectorRadiusInput
-              dialogVisible={collectorRadiusDialogVisible}
-              setDialogVisible={setCollectorRadiusDialogVisible}
-            />
+            {collectorRadiusDialogVisible && (
+              <SolarUpdraftTowerCollectorRadiusInput setDialogVisible={setCollectorRadiusDialogVisible} />
+            )}
             <Menu.Item
               key={'solar-updraft-tower-collector-radius'}
               style={{ paddingLeft: '36px' }}
@@ -1014,10 +1007,11 @@ export const FoundationMenu = () => {
               {i18n.t('solarUpdraftTowerMenu.SolarUpdraftTowerCollectorRadius', lang)} ...
             </Menu.Item>
 
-            <SolarUpdraftTowerCollectorTransmissivityInput
-              dialogVisible={collectorTransmissivityDialogVisible}
-              setDialogVisible={setCollectorTransmissivityDialogVisible}
-            />
+            {collectorTransmissivityDialogVisible && (
+              <SolarUpdraftTowerCollectorTransmissivityInput
+                setDialogVisible={setCollectorTransmissivityDialogVisible}
+              />
+            )}
             <Menu.Item
               key={'solar-updraft-tower-collector-transmissivity'}
               style={{ paddingLeft: '36px' }}
@@ -1029,10 +1023,9 @@ export const FoundationMenu = () => {
               {i18n.t('solarUpdraftTowerMenu.SolarUpdraftTowerCollectorTransmissivity', lang)} ...
             </Menu.Item>
 
-            <SolarUpdraftTowerCollectorEmissivityInput
-              dialogVisible={collectorEmissivityDialogVisible}
-              setDialogVisible={setCollectorEmissivityDialogVisible}
-            />
+            {collectorEmissivityDialogVisible && (
+              <SolarUpdraftTowerCollectorEmissivityInput setDialogVisible={setCollectorEmissivityDialogVisible} />
+            )}
             <Menu.Item
               key={'solar-updraft-tower-collector-emissivity'}
               style={{ paddingLeft: '36px' }}
@@ -1044,10 +1037,9 @@ export const FoundationMenu = () => {
               {i18n.t('solarUpdraftTowerMenu.SolarUpdraftTowerCollectorEmissivity', lang)} ...
             </Menu.Item>
 
-            <SolarUpdraftTowerDischargeCoefficientInput
-              dialogVisible={dischargeCoefficientDialogVisible}
-              setDialogVisible={setDischargeCoefficientDialogVisible}
-            />
+            {dischargeCoefficientDialogVisible && (
+              <SolarUpdraftTowerDischargeCoefficientInput setDialogVisible={setDischargeCoefficientDialogVisible} />
+            )}
             <Menu.Item
               key={'solar-updraft-tower-discharge-coefficient'}
               style={{ paddingLeft: '36px' }}
@@ -1059,10 +1051,9 @@ export const FoundationMenu = () => {
               {i18n.t('solarUpdraftTowerMenu.SolarUpdraftTowerDischargeCoefficient', lang)} ...
             </Menu.Item>
 
-            <SolarUpdraftTowerTurbineEfficiencyInput
-              dialogVisible={turbineEfficiencyDialogVisible}
-              setDialogVisible={setTurbineEfficiencyDialogVisible}
-            />
+            {turbineEfficiencyDialogVisible && (
+              <SolarUpdraftTowerTurbineEfficiencyInput setDialogVisible={setTurbineEfficiencyDialogVisible} />
+            )}
             <Menu.Item
               key={'solar-updraft-tower-turbine-efficiency'}
               style={{ paddingLeft: '36px' }}
@@ -1080,10 +1071,9 @@ export const FoundationMenu = () => {
           title={i18n.t('optimizationMenu.Optimization', lang)}
           style={{ paddingLeft: '24px' }}
         >
-          <SolarPanelTiltAngleOptimizerWizard
-            dialogVisible={solarPanelTiltAngleOptimizerWizardVisible}
-            setDialogVisible={setSolarPanelTiltAngleOptimizerWizardVisible}
-          />
+          {solarPanelTiltAngleOptimizerWizardVisible && (
+            <SolarPanelTiltAngleOptimizerWizard setDialogVisible={setSolarPanelTiltAngleOptimizerWizardVisible} />
+          )}
           <Menu.Item
             key={'solar-panel-tilt-angle-optimizer'}
             onClick={() => {

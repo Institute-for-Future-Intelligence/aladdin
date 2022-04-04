@@ -118,10 +118,7 @@ export const ParabolicDishMenu = () => {
       {parabolicDish && editable && (
         <>
           {/* dish rim diameter */}
-          <ParabolicDishDiameterInput
-            dialogVisible={diameterDialogVisible}
-            setDialogVisible={setDiameterDialogVisible}
-          />
+          {diameterDialogVisible && <ParabolicDishDiameterInput setDialogVisible={setDiameterDialogVisible} />}
           <Menu.Item
             key={'parabolic-dish-radius'}
             style={{ paddingLeft: '36px' }}
@@ -134,10 +131,7 @@ export const ParabolicDishMenu = () => {
           </Menu.Item>
 
           {/* latus rectum */}
-          <ParabolicDishLatusRectumInput
-            dialogVisible={latusRectumDialogVisible}
-            setDialogVisible={setLatusRectumDialogVisible}
-          />
+          {latusRectumDialogVisible && <ParabolicDishLatusRectumInput setDialogVisible={setLatusRectumDialogVisible} />}
           <Menu.Item
             key={'parabolic-dish-latus-rectum'}
             style={{ paddingLeft: '36px' }}
@@ -150,10 +144,9 @@ export const ParabolicDishMenu = () => {
           </Menu.Item>
 
           {/* structure type */}
-          <ParabolicDishStructureTypeInput
-            dialogVisible={structureTypeDialogVisible}
-            setDialogVisible={setStructureTypeDialogVisible}
-          />
+          {structureTypeDialogVisible && (
+            <ParabolicDishStructureTypeInput setDialogVisible={setStructureTypeDialogVisible} />
+          )}
           <Menu.Item
             key={'parabolic-dish-structure-type'}
             style={{ paddingLeft: '36px' }}
@@ -166,10 +159,7 @@ export const ParabolicDishMenu = () => {
           </Menu.Item>
 
           {/* extra pole height in addition to the aperture radius */}
-          <ParabolicDishPoleHeightInput
-            dialogVisible={poleHeightDialogVisible}
-            setDialogVisible={setPoleHeightDialogVisible}
-          />
+          {poleHeightDialogVisible && <ParabolicDishPoleHeightInput setDialogVisible={setPoleHeightDialogVisible} />}
           <Menu.Item
             key={'parabolic-dish-pole-height'}
             style={{ paddingLeft: '36px' }}
@@ -182,10 +172,7 @@ export const ParabolicDishMenu = () => {
           </Menu.Item>
 
           {/* reflectance */}
-          <ParabolicDishReflectanceInput
-            dialogVisible={reflectanceDialogVisible}
-            setDialogVisible={setReflectanceDialogVisible}
-          />
+          {reflectanceDialogVisible && <ParabolicDishReflectanceInput setDialogVisible={setReflectanceDialogVisible} />}
           <Menu.Item
             key={'parabolic-dish-reflectance'}
             style={{ paddingLeft: '36px' }}
@@ -198,10 +185,7 @@ export const ParabolicDishMenu = () => {
           </Menu.Item>
 
           {/* absorptance */}
-          <ParabolicDishAbsorptanceInput
-            dialogVisible={absorptanceDialogVisible}
-            setDialogVisible={setAbsorptanceDialogVisible}
-          />
+          {absorptanceDialogVisible && <ParabolicDishAbsorptanceInput setDialogVisible={setAbsorptanceDialogVisible} />}
           <Menu.Item
             key={'parabolic-dish-absorptance'}
             style={{ paddingLeft: '36px' }}
@@ -214,10 +198,9 @@ export const ParabolicDishMenu = () => {
           </Menu.Item>
 
           {/* optical efficiency */}
-          <ParabolicDishOpticalEfficiencyInput
-            dialogVisible={opticalEfficiencyDialogVisible}
-            setDialogVisible={setOpticalEfficiencyDialogVisible}
-          />
+          {opticalEfficiencyDialogVisible && (
+            <ParabolicDishOpticalEfficiencyInput setDialogVisible={setOpticalEfficiencyDialogVisible} />
+          )}
           <Menu.Item
             key={'parabolic-dish-optical-efficiency'}
             style={{ paddingLeft: '36px' }}
@@ -230,10 +213,9 @@ export const ParabolicDishMenu = () => {
           </Menu.Item>
 
           {/* thermal efficiency */}
-          <ParabolicDishThermalEfficiencyInput
-            dialogVisible={thermalEfficiencyDialogVisible}
-            setDialogVisible={setThermalEfficiencyDialogVisible}
-          />
+          {thermalEfficiencyDialogVisible && (
+            <ParabolicDishThermalEfficiencyInput setDialogVisible={setThermalEfficiencyDialogVisible} />
+          )}
           <Menu.Item
             key={'parabolic-dish-thermal-efficiency'}
             style={{ paddingLeft: '36px' }}

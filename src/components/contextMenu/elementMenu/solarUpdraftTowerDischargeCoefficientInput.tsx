@@ -15,10 +15,8 @@ import { FoundationModel } from 'src/models/FoundationModel';
 import { ZERO_TOLERANCE } from 'src/constants';
 
 const SolarUpdraftTowerDischargeCoefficientInput = ({
-  dialogVisible,
   setDialogVisible,
 }: {
-  dialogVisible: boolean;
   setDialogVisible: (b: boolean) => void;
 }) => {
   const language = useStore(Selector.language);
@@ -173,7 +171,7 @@ const SolarUpdraftTowerDischargeCoefficientInput = ({
     <>
       <Modal
         width={540}
-        visible={dialogVisible}
+        visible={true}
         title={
           <div
             style={{ width: '100%', cursor: 'move' }}

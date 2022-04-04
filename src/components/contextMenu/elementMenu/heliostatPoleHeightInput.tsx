@@ -14,13 +14,7 @@ import { UndoableChangeGroup } from '../../../undo/UndoableChangeGroup';
 import { ZERO_TOLERANCE } from '../../../constants';
 import { HeliostatModel } from '../../../models/HeliostatModel';
 
-const HeliostatPoleHeightInput = ({
-  dialogVisible,
-  setDialogVisible,
-}: {
-  dialogVisible: boolean;
-  setDialogVisible: (b: boolean) => void;
-}) => {
+const HeliostatPoleHeightInput = ({ setDialogVisible }: { setDialogVisible: (b: boolean) => void }) => {
   const language = useStore(Selector.language);
   const elements = useStore(Selector.elements);
   const updatePoleHeightById = useStore(Selector.updateSolarCollectorPoleHeightById);
@@ -258,7 +252,7 @@ const HeliostatPoleHeightInput = ({
     <>
       <Modal
         width={600}
-        visible={dialogVisible}
+        visible={true}
         title={
           <div
             style={{ width: '100%', cursor: 'move' }}

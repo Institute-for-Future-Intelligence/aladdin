@@ -94,7 +94,7 @@ export const HeliostatMenu = () => {
       {heliostat && editable && (
         <>
           {/* select tower */}
-          <HeliostatTowerSelection dialogVisible={towerDialogVisible} setDialogVisible={setTowerDialogVisible} />
+          {towerDialogVisible && <HeliostatTowerSelection setDialogVisible={setTowerDialogVisible} />}
           <Menu.Item
             key={'heliostat-tower'}
             style={{ paddingLeft: '36px' }}
@@ -107,7 +107,7 @@ export const HeliostatMenu = () => {
           </Menu.Item>
 
           {/* heliostat length */}
-          <HeliostatLengthInput dialogVisible={lengthDialogVisible} setDialogVisible={setLengthDialogVisible} />
+          {lengthDialogVisible && <HeliostatLengthInput setDialogVisible={setLengthDialogVisible} />}
           <Menu.Item
             key={'heliostat-length'}
             style={{ paddingLeft: '36px' }}
@@ -120,7 +120,7 @@ export const HeliostatMenu = () => {
           </Menu.Item>
 
           {/* heliostat width */}
-          <HeliostatWidthInput dialogVisible={widthDialogVisible} setDialogVisible={setWidthDialogVisible} />
+          {widthDialogVisible && <HeliostatWidthInput setDialogVisible={setWidthDialogVisible} />}
           <Menu.Item
             key={'heliostat-width'}
             style={{ paddingLeft: '36px' }}
@@ -133,10 +133,7 @@ export const HeliostatMenu = () => {
           </Menu.Item>
 
           {/* extra pole height in addition to the half of the aperture size */}
-          <HeliostatPoleHeightInput
-            dialogVisible={poleHeightDialogVisible}
-            setDialogVisible={setPoleHeightDialogVisible}
-          />
+          {poleHeightDialogVisible && <HeliostatPoleHeightInput setDialogVisible={setPoleHeightDialogVisible} />}
           <Menu.Item
             key={'heliostat-pole-height'}
             style={{ paddingLeft: '36px' }}
@@ -149,10 +146,7 @@ export const HeliostatMenu = () => {
           </Menu.Item>
 
           {/* reflectance */}
-          <HeliostatReflectanceInput
-            dialogVisible={reflectanceDialogVisible}
-            setDialogVisible={setReflectanceDialogVisible}
-          />
+          {reflectanceDialogVisible && <HeliostatReflectanceInput setDialogVisible={setReflectanceDialogVisible} />}
           <Menu.Item
             key={'heliostat-reflectance'}
             style={{ paddingLeft: '36px' }}
@@ -165,10 +159,7 @@ export const HeliostatMenu = () => {
           </Menu.Item>
 
           {/* draw sun beam or not */}
-          <HeliostatDrawSunBeamSelection
-            dialogVisible={sunBeamDialogVisible}
-            setDialogVisible={setSunBeamDialogVisible}
-          />
+          {sunBeamDialogVisible && <HeliostatDrawSunBeamSelection setDialogVisible={setSunBeamDialogVisible} />}
           <Menu.Item
             key={'heliostat-draw-sun-beam'}
             style={{ paddingLeft: '36px' }}

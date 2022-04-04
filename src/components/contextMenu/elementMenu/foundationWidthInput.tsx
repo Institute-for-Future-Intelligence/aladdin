@@ -21,13 +21,7 @@ import { ElementModel } from 'src/models/ElementModel';
 import { useStoreRef } from 'src/stores/commonRef';
 import { invalidate } from '@react-three/fiber';
 
-const FoundationWidthInput = ({
-  dialogVisible,
-  setDialogVisible,
-}: {
-  dialogVisible: boolean;
-  setDialogVisible: (b: boolean) => void;
-}) => {
+const FoundationWidthInput = ({ setDialogVisible }: { setDialogVisible: (b: boolean) => void }) => {
   const language = useStore(Selector.language);
   const elements = useStore(Selector.elements);
   const setElementPosition = useStore(Selector.setElementPosition);
@@ -485,7 +479,7 @@ const FoundationWidthInput = ({
     <>
       <Modal
         width={550}
-        visible={dialogVisible}
+        visible={true}
         title={
           <div
             style={{ width: '100%', cursor: 'move' }}

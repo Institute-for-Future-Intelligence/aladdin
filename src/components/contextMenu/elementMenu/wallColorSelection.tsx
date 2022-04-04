@@ -14,13 +14,7 @@ import { UndoableChangeGroup } from '../../../undo/UndoableChangeGroup';
 import { WallModel } from '../../../models/WallModel';
 import { CompactPicker } from 'react-color';
 
-const WallColorSelection = ({
-  dialogVisible,
-  setDialogVisible,
-}: {
-  dialogVisible: boolean;
-  setDialogVisible: (b: boolean) => void;
-}) => {
+const WallColorSelection = ({ setDialogVisible }: { setDialogVisible: (b: boolean) => void }) => {
   const language = useStore(Selector.language);
   const elements = useStore(Selector.elements);
   const updateWallColorById = useStore(Selector.updateWallColorById);
@@ -177,7 +171,7 @@ const WallColorSelection = ({
     <>
       <Modal
         width={640}
-        visible={dialogVisible}
+        visible={true}
         title={
           <div
             style={{ width: '100%', cursor: 'move' }}

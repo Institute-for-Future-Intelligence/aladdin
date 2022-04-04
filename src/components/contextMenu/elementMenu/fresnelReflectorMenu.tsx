@@ -96,10 +96,7 @@ export const FresnelReflectorMenu = () => {
       {fresnelReflector && editable && (
         <>
           {/* receiver */}
-          <FresnelReflectorAbsorberSelection
-            dialogVisible={receiverDialogVisible}
-            setDialogVisible={setReceiverDialogVisible}
-          />
+          {receiverDialogVisible && <FresnelReflectorAbsorberSelection setDialogVisible={setReceiverDialogVisible} />}
           <Menu.Item
             key={'fresnel-reflector-receiver'}
             style={{ paddingLeft: '36px' }}
@@ -112,7 +109,7 @@ export const FresnelReflectorMenu = () => {
           </Menu.Item>
 
           {/* reflector length */}
-          <FresnelReflectorLengthInput dialogVisible={lengthDialogVisible} setDialogVisible={setLengthDialogVisible} />
+          {lengthDialogVisible && <FresnelReflectorLengthInput setDialogVisible={setLengthDialogVisible} />}
           <Menu.Item
             key={'fresnel-reflector-length'}
             style={{ paddingLeft: '36px' }}
@@ -125,7 +122,7 @@ export const FresnelReflectorMenu = () => {
           </Menu.Item>
 
           {/* reflector width */}
-          <FresnelReflectorWidthInput dialogVisible={widthDialogVisible} setDialogVisible={setWidthDialogVisible} />
+          {widthDialogVisible && <FresnelReflectorWidthInput setDialogVisible={setWidthDialogVisible} />}
           <Menu.Item
             key={'fresnel-reflector-width'}
             style={{ paddingLeft: '36px' }}
@@ -138,10 +135,9 @@ export const FresnelReflectorMenu = () => {
           </Menu.Item>
 
           {/* module length */}
-          <FresnelReflectorModuleLengthInput
-            dialogVisible={moduleLengthDialogVisible}
-            setDialogVisible={setModuleLengthDialogVisible}
-          />
+          {moduleLengthDialogVisible && (
+            <FresnelReflectorModuleLengthInput setDialogVisible={setModuleLengthDialogVisible} />
+          )}
           <Menu.Item
             key={'fresnel-reflector-module-length'}
             style={{ paddingLeft: '36px' }}
@@ -154,10 +150,7 @@ export const FresnelReflectorMenu = () => {
           </Menu.Item>
 
           {/* extra pole height in addition to the half of the aperture width */}
-          <FresnelReflectorPoleHeightInput
-            dialogVisible={poleHeightDialogVisible}
-            setDialogVisible={setPoleHeightDialogVisible}
-          />
+          {poleHeightDialogVisible && <FresnelReflectorPoleHeightInput setDialogVisible={setPoleHeightDialogVisible} />}
           <Menu.Item
             key={'fresnel-reflector-pole-height'}
             style={{ paddingLeft: '36px' }}
@@ -170,10 +163,9 @@ export const FresnelReflectorMenu = () => {
           </Menu.Item>
 
           {/* reflectance */}
-          <FresnelReflectorReflectanceInput
-            dialogVisible={reflectanceDialogVisible}
-            setDialogVisible={setReflectanceDialogVisible}
-          />
+          {reflectanceDialogVisible && (
+            <FresnelReflectorReflectanceInput setDialogVisible={setReflectanceDialogVisible} />
+          )}
           <Menu.Item
             key={'fresnel-reflector-reflectance'}
             style={{ paddingLeft: '36px' }}
@@ -186,10 +178,7 @@ export const FresnelReflectorMenu = () => {
           </Menu.Item>
 
           {/* draw sun beam or not */}
-          <FresnelReflectorDrawSunBeamSelection
-            dialogVisible={sunBeamDialogVisible}
-            setDialogVisible={setSunBeamDialogVisible}
-          />
+          {sunBeamDialogVisible && <FresnelReflectorDrawSunBeamSelection setDialogVisible={setSunBeamDialogVisible} />}
           <Menu.Item
             key={'fresnel-reflector-draw-sun-beam'}
             style={{ paddingLeft: '36px' }}

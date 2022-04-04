@@ -17,13 +17,7 @@ import { Util } from '../../../Util';
 
 const { Option } = Select;
 
-const SolarPanelModelSelection = ({
-  dialogVisible,
-  setDialogVisible,
-}: {
-  dialogVisible: boolean;
-  setDialogVisible: (b: boolean) => void;
-}) => {
+const SolarPanelModelSelection = ({ setDialogVisible }: { setDialogVisible: (b: boolean) => void }) => {
   const language = useStore(Selector.language);
   const elements = useStore(Selector.elements);
   const updateSolarPanelModelById = useStore(Selector.updateSolarPanelModelById);
@@ -307,7 +301,7 @@ const SolarPanelModelSelection = ({
     <>
       <Modal
         width={600}
-        visible={dialogVisible}
+        visible={true}
         title={
           <div
             style={{ width: '100%', cursor: 'move' }}

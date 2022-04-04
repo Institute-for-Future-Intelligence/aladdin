@@ -120,7 +120,7 @@ export const ParabolicTroughMenu = () => {
       {parabolicTrough && editable && (
         <>
           {/* trough length */}
-          <ParabolicTroughLengthInput dialogVisible={lengthDialogVisible} setDialogVisible={setLengthDialogVisible} />
+          {lengthDialogVisible && <ParabolicTroughLengthInput setDialogVisible={setLengthDialogVisible} />}
           <Menu.Item
             key={'parabolic-trough-length'}
             style={{ paddingLeft: '36px' }}
@@ -133,7 +133,7 @@ export const ParabolicTroughMenu = () => {
           </Menu.Item>
 
           {/* trough width */}
-          <ParabolicTroughWidthInput dialogVisible={widthDialogVisible} setDialogVisible={setWidthDialogVisible} />
+          {widthDialogVisible && <ParabolicTroughWidthInput setDialogVisible={setWidthDialogVisible} />}
           <Menu.Item
             key={'parabolic-trough-width'}
             style={{ paddingLeft: '36px' }}
@@ -146,10 +146,9 @@ export const ParabolicTroughMenu = () => {
           </Menu.Item>
 
           {/* module length */}
-          <ParabolicTroughModuleLengthInput
-            dialogVisible={moduleLengthDialogVisible}
-            setDialogVisible={setModuleLengthDialogVisible}
-          />
+          {moduleLengthDialogVisible && (
+            <ParabolicTroughModuleLengthInput setDialogVisible={setModuleLengthDialogVisible} />
+          )}
           <Menu.Item
             key={'parabolic-trough-module-length'}
             style={{ paddingLeft: '36px' }}
@@ -162,10 +161,9 @@ export const ParabolicTroughMenu = () => {
           </Menu.Item>
 
           {/* latus rectum */}
-          <ParabolicTroughLatusRectumInput
-            dialogVisible={latusRectumDialogVisible}
-            setDialogVisible={setLatusRectumDialogVisible}
-          />
+          {latusRectumDialogVisible && (
+            <ParabolicTroughLatusRectumInput setDialogVisible={setLatusRectumDialogVisible} />
+          )}
           <Menu.Item
             key={'parabolic-trough-latus-rectum'}
             style={{ paddingLeft: '36px' }}
@@ -178,10 +176,7 @@ export const ParabolicTroughMenu = () => {
           </Menu.Item>
 
           {/* extra pole height in addition to the half of the aperture width */}
-          <ParabolicTroughPoleHeightInput
-            dialogVisible={poleHeightDialogVisible}
-            setDialogVisible={setPoleHeightDialogVisible}
-          />
+          {poleHeightDialogVisible && <ParabolicTroughPoleHeightInput setDialogVisible={setPoleHeightDialogVisible} />}
           <Menu.Item
             key={'parabolic-trough-pole-height'}
             style={{ paddingLeft: '36px' }}
@@ -194,10 +189,9 @@ export const ParabolicTroughMenu = () => {
           </Menu.Item>
 
           {/* reflectance */}
-          <ParabolicTroughReflectanceInput
-            dialogVisible={reflectanceDialogVisible}
-            setDialogVisible={setReflectanceDialogVisible}
-          />
+          {reflectanceDialogVisible && (
+            <ParabolicTroughReflectanceInput setDialogVisible={setReflectanceDialogVisible} />
+          )}
           <Menu.Item
             key={'parabolic-trough-reflectance'}
             style={{ paddingLeft: '36px' }}
@@ -210,10 +204,9 @@ export const ParabolicTroughMenu = () => {
           </Menu.Item>
 
           {/* absorptance */}
-          <ParabolicTroughAbsorptanceInput
-            dialogVisible={absorptanceDialogVisible}
-            setDialogVisible={setAbsorptanceDialogVisible}
-          />
+          {absorptanceDialogVisible && (
+            <ParabolicTroughAbsorptanceInput setDialogVisible={setAbsorptanceDialogVisible} />
+          )}
           <Menu.Item
             key={'parabolic-trough-absorptance'}
             style={{ paddingLeft: '36px' }}
@@ -226,10 +219,9 @@ export const ParabolicTroughMenu = () => {
           </Menu.Item>
 
           {/* optical efficiency */}
-          <ParabolicTroughOpticalEfficiencyInput
-            dialogVisible={opticalEfficiencyDialogVisible}
-            setDialogVisible={setOpticalEfficiencyDialogVisible}
-          />
+          {opticalEfficiencyDialogVisible && (
+            <ParabolicTroughOpticalEfficiencyInput setDialogVisible={setOpticalEfficiencyDialogVisible} />
+          )}
           <Menu.Item
             key={'parabolic-trough-optical-efficiency'}
             style={{ paddingLeft: '36px' }}
@@ -242,10 +234,9 @@ export const ParabolicTroughMenu = () => {
           </Menu.Item>
 
           {/* thermal efficiency */}
-          <ParabolicTroughThermalEfficiencyInput
-            dialogVisible={thermalEfficiencyDialogVisible}
-            setDialogVisible={setThermalEfficiencyDialogVisible}
-          />
+          {thermalEfficiencyDialogVisible && (
+            <ParabolicTroughThermalEfficiencyInput setDialogVisible={setThermalEfficiencyDialogVisible} />
+          )}
           <Menu.Item
             key={'parabolic-trough-thermal-efficiency'}
             style={{ paddingLeft: '36px' }}

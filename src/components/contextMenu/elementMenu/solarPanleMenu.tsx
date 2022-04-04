@@ -125,7 +125,7 @@ export const SolarPanelMenu = () => {
       {solarPanel && editable && (
         <>
           {/* pv model */}
-          <SolarPanelModelSelection dialogVisible={pvModelDialogVisible} setDialogVisible={setPvModelDialogVisible} />
+          {pvModelDialogVisible && <SolarPanelModelSelection setDialogVisible={setPvModelDialogVisible} />}
           <Menu.Item
             key={'solar-panel-change'}
             onClick={() => {
@@ -138,10 +138,9 @@ export const SolarPanelMenu = () => {
           </Menu.Item>
 
           {/* orientation: landscape or portrait */}
-          <SolarPanelOrientationSelection
-            dialogVisible={orientationDialogVisible}
-            setDialogVisible={setOrientationDialogVisible}
-          />
+          {orientationDialogVisible && (
+            <SolarPanelOrientationSelection setDialogVisible={setOrientationDialogVisible} />
+          )}
           <Menu.Item
             key={'solar-panel-orientation'}
             style={{ paddingLeft: '36px', width: '150px' }}
@@ -154,7 +153,7 @@ export const SolarPanelMenu = () => {
           </Menu.Item>
 
           {/* array length */}
-          <SolarPanelLengthInput dialogVisible={lengthDialogVisible} setDialogVisible={setLengthDialogVisible} />
+          {lengthDialogVisible && <SolarPanelLengthInput setDialogVisible={setLengthDialogVisible} />}
           <Menu.Item
             key={'solar-panel-length'}
             style={{ paddingLeft: '36px' }}
@@ -167,7 +166,7 @@ export const SolarPanelMenu = () => {
           </Menu.Item>
 
           {/* array width */}
-          <SolarPanelWidthInput dialogVisible={widthDialogVisible} setDialogVisible={setWidthDialogVisible} />
+          {widthDialogVisible && <SolarPanelWidthInput setDialogVisible={setWidthDialogVisible} />}
           <Menu.Item
             key={'solar-panel-width'}
             style={{ paddingLeft: '36px' }}
@@ -182,7 +181,7 @@ export const SolarPanelMenu = () => {
           {panelNormal && Util.isSame(panelNormal, UNIT_VECTOR_POS_Z) && (
             <>
               {/* tilt angle */}
-              <SolarPanelTiltAngleInput dialogVisible={tiltDialogVisible} setDialogVisible={setTiltDialogVisible} />
+              {tiltDialogVisible && <SolarPanelTiltAngleInput setDialogVisible={setTiltDialogVisible} />}
               <Menu.Item
                 key={'solar-panel-tilt-angle'}
                 style={{ paddingLeft: '36px' }}
@@ -195,10 +194,7 @@ export const SolarPanelMenu = () => {
               </Menu.Item>
 
               {/* relative azimuth to the parent element */}
-              <SolarPanelRelativeAzimuthInput
-                dialogVisible={azimuthDialogVisible}
-                setDialogVisible={setAzimuthDialogVisible}
-              />
+              {azimuthDialogVisible && <SolarPanelRelativeAzimuthInput setDialogVisible={setAzimuthDialogVisible} />}
               <Menu.Item
                 key={'solar-panel-relative-azimuth'}
                 style={{ paddingLeft: '36px' }}
@@ -211,10 +207,7 @@ export const SolarPanelMenu = () => {
               </Menu.Item>
 
               {/* solar tracker type */}
-              <SolarPanelTrackerSelection
-                dialogVisible={trackerDialogVisible}
-                setDialogVisible={setTrackerDialogVisible}
-              />
+              {trackerDialogVisible && <SolarPanelTrackerSelection setDialogVisible={setTrackerDialogVisible} />}
               <Menu.Item
                 key={'solar-panel-tracker'}
                 style={{ paddingLeft: '36px' }}
@@ -227,10 +220,7 @@ export const SolarPanelMenu = () => {
               </Menu.Item>
 
               {/* pole height */}
-              <SolarPanelPoleHeightInput
-                dialogVisible={poleHeightDialogVisible}
-                setDialogVisible={setPoleHeightDialogVisible}
-              />
+              {poleHeightDialogVisible && <SolarPanelPoleHeightInput setDialogVisible={setPoleHeightDialogVisible} />}
               <Menu.Item
                 key={'solar-panel-pole-height'}
                 style={{ paddingLeft: '36px' }}
@@ -243,10 +233,9 @@ export const SolarPanelMenu = () => {
               </Menu.Item>
 
               {/* pole spacing */}
-              <SolarPanelPoleSpacingInput
-                dialogVisible={poleSpacingDialogVisible}
-                setDialogVisible={setPoleSpacingDialogVisible}
-              />
+              {poleSpacingDialogVisible && (
+                <SolarPanelPoleSpacingInput setDialogVisible={setPoleSpacingDialogVisible} />
+              )}
               <Menu.Item
                 key={'solar-panel-pole-spacing'}
                 style={{ paddingLeft: '36px' }}

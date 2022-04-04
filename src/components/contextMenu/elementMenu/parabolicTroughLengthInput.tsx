@@ -18,13 +18,7 @@ import { Util } from '../../../Util';
 // for parabolic troughs, since the default alignment is north-south, ly is always much larger than lx.
 // to agree with the convention, we call ly length and lx width, reversed from most other elements in Aladdin.
 
-const ParabolicTroughLengthInput = ({
-  dialogVisible,
-  setDialogVisible,
-}: {
-  dialogVisible: boolean;
-  setDialogVisible: (b: boolean) => void;
-}) => {
+const ParabolicTroughLengthInput = ({ setDialogVisible }: { setDialogVisible: (b: boolean) => void }) => {
   const language = useStore(Selector.language);
   const elements = useStore(Selector.elements);
   const updateLyById = useStore(Selector.updateElementLyById);
@@ -274,7 +268,7 @@ const ParabolicTroughLengthInput = ({
     <>
       <Modal
         width={600}
-        visible={dialogVisible}
+        visible={true}
         title={
           <div
             style={{ width: '100%', cursor: 'move' }}

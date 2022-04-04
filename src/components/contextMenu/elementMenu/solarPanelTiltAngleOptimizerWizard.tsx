@@ -12,13 +12,7 @@ import { GeneticAlgorithmSearchMethod, GeneticAlgorithmSelectionMethod, Objectiv
 
 const { Option } = Select;
 
-const SolarPanelTiltAngleOptimizerWizard = ({
-  dialogVisible,
-  setDialogVisible,
-}: {
-  dialogVisible: boolean;
-  setDialogVisible: (b: boolean) => void;
-}) => {
+const SolarPanelTiltAngleOptimizerWizard = ({ setDialogVisible }: { setDialogVisible: (b: boolean) => void }) => {
   const language = useStore(Selector.language);
 
   const [updateFlag, setUpdateFlag] = useState<boolean>(false);
@@ -65,7 +59,7 @@ const SolarPanelTiltAngleOptimizerWizard = ({
     <>
       <Modal
         width={600}
-        visible={dialogVisible}
+        visible={true}
         title={
           <div
             style={{ width: '100%', cursor: 'move' }}

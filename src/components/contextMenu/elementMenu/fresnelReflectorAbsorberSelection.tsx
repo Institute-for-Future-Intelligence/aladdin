@@ -16,13 +16,7 @@ import { FoundationModel } from '../../../models/FoundationModel';
 
 const { Option } = Select;
 
-const FresnelReflectorAbsorberSelection = ({
-  dialogVisible,
-  setDialogVisible,
-}: {
-  dialogVisible: boolean;
-  setDialogVisible: (b: boolean) => void;
-}) => {
+const FresnelReflectorAbsorberSelection = ({ setDialogVisible }: { setDialogVisible: (b: boolean) => void }) => {
   const language = useStore(Selector.language);
   const elements = useStore(Selector.elements);
   const getElementById = useStore(Selector.getElementById);
@@ -242,7 +236,7 @@ const FresnelReflectorAbsorberSelection = ({
     <>
       <Modal
         width={640}
-        visible={dialogVisible}
+        visible={true}
         title={
           <div
             style={{ width: '100%', cursor: 'move' }}
