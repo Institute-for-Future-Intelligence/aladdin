@@ -79,10 +79,9 @@ export const PolygonMenu = () => {
         <Copy keyName={'polygon-copy'} />
         {editable && <Cut keyName={'polygon-cut'} />}
         <SubMenu key={'layout'} title={i18n.t('polygonMenu.Layout', lang)} style={{ paddingLeft: '24px' }}>
-          <SolarPanelLayoutWizard
-            dialogVisible={solarPanelLayoutWizardVisible}
-            setDialogVisible={setSolarPanelLayoutWizardVisible}
-          />
+          {solarPanelLayoutWizardVisible && (
+            <SolarPanelLayoutWizard setDialogVisible={setSolarPanelLayoutWizardVisible} />
+          )}
           <Menu.Item
             key={'solar-panel-layout'}
             onClick={() => {
@@ -104,10 +103,7 @@ export const PolygonMenu = () => {
         )}
         {editable && (
           <>
-            <PolygonLineColorSelection
-              dialogVisible={lineColorDialogVisible}
-              setDialogVisible={setLineColorDialogVisible}
-            />
+            {lineColorDialogVisible && <PolygonLineColorSelection setDialogVisible={setLineColorDialogVisible} />}
             <Menu.Item
               key={'polygon-line-color'}
               style={{ paddingLeft: '36px' }}
@@ -118,10 +114,7 @@ export const PolygonMenu = () => {
             >
               {i18n.t('polygonMenu.LineColor', lang)} ...
             </Menu.Item>
-            <PolygonLineStyleSelection
-              dialogVisible={lineStyleDialogVisible}
-              setDialogVisible={setLineStyleDialogVisible}
-            />
+            {lineStyleDialogVisible && <PolygonLineStyleSelection setDialogVisible={setLineStyleDialogVisible} />}
             <Menu.Item
               key={'polygon-line-style'}
               style={{ paddingLeft: '36px' }}
@@ -132,10 +125,7 @@ export const PolygonMenu = () => {
             >
               {i18n.t('polygonMenu.LineStyle', lang)} ...
             </Menu.Item>
-            <PolygonLineWidthSelection
-              dialogVisible={lineWidthDialogVisible}
-              setDialogVisible={setLineWidthDialogVisible}
-            />
+            {lineWidthDialogVisible && <PolygonLineWidthSelection setDialogVisible={setLineWidthDialogVisible} />}
             <Menu.Item
               key={'polygon-line-width'}
               style={{ paddingLeft: '36px' }}
@@ -150,10 +140,7 @@ export const PolygonMenu = () => {
         )}
         {editable && (!polygon.textureType || polygon.textureType === PolygonTexture.NoTexture) && (
           <>
-            <PolygonFillColorSelection
-              dialogVisible={fillColorDialogVisible}
-              setDialogVisible={setFillColorDialogVisible}
-            />
+            {fillColorDialogVisible && <PolygonFillColorSelection setDialogVisible={setFillColorDialogVisible} />}
             <Menu.Item
               key={'polygon-fill-color'}
               style={{ paddingLeft: '36px' }}
@@ -168,7 +155,7 @@ export const PolygonMenu = () => {
         )}
         {editable && (
           <>
-            <PolygonTextureSelection dialogVisible={textureDialogVisible} setDialogVisible={setTextureDialogVisible} />
+            {textureDialogVisible && <PolygonTextureSelection setDialogVisible={setTextureDialogVisible} />}
             <Menu.Item
               key={'polygon-texture'}
               style={{ paddingLeft: '36px' }}

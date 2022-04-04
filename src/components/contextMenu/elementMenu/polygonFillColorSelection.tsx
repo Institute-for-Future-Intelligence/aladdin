@@ -15,13 +15,7 @@ import { UndoableChangeGroup } from '../../../undo/UndoableChangeGroup';
 import { PolygonModel } from '../../../models/PolygonModel';
 import { Util } from '../../../Util';
 
-const PolygonFillColorSelection = ({
-  dialogVisible,
-  setDialogVisible,
-}: {
-  dialogVisible: boolean;
-  setDialogVisible: (b: boolean) => void;
-}) => {
+const PolygonFillColorSelection = ({ setDialogVisible }: { setDialogVisible: (b: boolean) => void }) => {
   const language = useStore(Selector.language);
   const elements = useStore(Selector.elements);
   const getParent = useStore(Selector.getParent);
@@ -263,7 +257,7 @@ const PolygonFillColorSelection = ({
     <>
       <Modal
         width={600}
-        visible={dialogVisible}
+        visible={true}
         title={
           <div
             style={{ width: '100%', cursor: 'move' }}

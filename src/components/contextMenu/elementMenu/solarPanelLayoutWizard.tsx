@@ -22,13 +22,7 @@ import { showError } from '../../../helpers';
 
 const { Option } = Select;
 
-const SolarPanelLayoutWizard = ({
-  dialogVisible,
-  setDialogVisible,
-}: {
-  dialogVisible: boolean;
-  setDialogVisible: (b: boolean) => void;
-}) => {
+const SolarPanelLayoutWizard = ({ setDialogVisible }: { setDialogVisible: (b: boolean) => void }) => {
   const setCommonStore = useStore(Selector.set);
   const language = useStore(Selector.language);
   const elements = useStore(Selector.elements);
@@ -41,20 +35,25 @@ const SolarPanelLayoutWizard = ({
   const removeElementsByReferenceId = useStore(Selector.removeElementsByReferenceId);
   const clearDeletedElements = useStore(Selector.clearDeletedElements);
   const addUndoable = useStore(Selector.addUndoable);
-  const pvModelName = useStore.getState().solarPanelArrayLayoutParams.pvModelName;
-  const rowAxis = useStore.getState().solarPanelArrayLayoutParams.rowAxis;
-  const orientation = useStore.getState().solarPanelArrayLayoutParams.orientation;
-  const tiltAngle = useStore.getState().solarPanelArrayLayoutParams.tiltAngle;
-  const rowWidthInPanels = useStore.getState().solarPanelArrayLayoutParams.rowWidthInPanels;
-  const interRowSpacing = useStore.getState().solarPanelArrayLayoutParams.interRowSpacing;
-  const poleHeight = useStore.getState().solarPanelArrayLayoutParams.poleHeight;
-  const poleSpacing = useStore.getState().solarPanelArrayLayoutParams.poleSpacing;
   const applyCount = useStore(Selector.applyCount);
   const setApplyCount = useStore(Selector.setApplyCount);
   const revertApply = useStore(Selector.revertApply);
 
+  const [pvModelName, setPvModelName] = useState<string>(useStore.getState().solarPanelArrayLayoutParams.pvModelName);
+  const [rowAxis, setRowAxis] = useState<RowAxis>(useStore.getState().solarPanelArrayLayoutParams.rowAxis);
+  const [orientation, setOrientation] = useState<Orientation>(
+    useStore.getState().solarPanelArrayLayoutParams.orientation,
+  );
+  const [tiltAngle, setTiltAngle] = useState<number>(useStore.getState().solarPanelArrayLayoutParams.tiltAngle);
+  const [rowWidthInPanels, setRowWidthInPanels] = useState<number>(
+    useStore.getState().solarPanelArrayLayoutParams.rowWidthInPanels,
+  );
+  const [interRowSpacing, setInterRowSpacing] = useState<number>(
+    useStore.getState().solarPanelArrayLayoutParams.interRowSpacing,
+  );
+  const [poleHeight, setPoleHeight] = useState<number>(useStore.getState().solarPanelArrayLayoutParams.poleHeight);
+  const [poleSpacing, setPoleSpacing] = useState<number>(useStore.getState().solarPanelArrayLayoutParams.poleSpacing);
   const [warningDialogVisible, setWarningDialogVisible] = useState(false);
-  const [updateFlag, setUpdateFlag] = useState<boolean>(false);
   const [dragEnabled, setDragEnabled] = useState<boolean>(false);
   const [bounds, setBounds] = useState<DraggableBounds>({ left: 0, top: 0, bottom: 0, right: 0 } as DraggableBounds);
   const dragRef = useRef<HTMLDivElement | null>(null);
@@ -278,6 +277,15 @@ const SolarPanelLayoutWizard = ({
     changedRef.current = false;
     setCommonStore((state) => {
       state.updateDesignInfo();
+      // save the values in the common store so that they can be retrieved
+      state.solarPanelArrayLayoutParams.pvModelName = pvModelName;
+      state.solarPanelArrayLayoutParams.rowAxis = rowAxis;
+      state.solarPanelArrayLayoutParams.orientation = orientation;
+      state.solarPanelArrayLayoutParams.tiltAngle = tiltAngle;
+      state.solarPanelArrayLayoutParams.rowWidthInPanels = rowWidthInPanels;
+      state.solarPanelArrayLayoutParams.interRowSpacing = interRowSpacing;
+      state.solarPanelArrayLayoutParams.poleHeight = poleHeight;
+      state.solarPanelArrayLayoutParams.poleSpacing = poleSpacing;
     });
   };
 
@@ -330,7 +338,7 @@ const SolarPanelLayoutWizard = ({
       )}
       <Modal
         width={560}
-        visible={dialogVisible}
+        visible={true}
         title={
           <div
             style={{ width: '100%', cursor: 'move' }}
@@ -390,10 +398,7 @@ const SolarPanelLayoutWizard = ({
               style={{ width: '100%' }}
               value={pvModelName}
               onChange={(value) => {
-                setCommonStore((state) => {
-                  state.solarPanelArrayLayoutParams.pvModelName = value;
-                });
-                setUpdateFlag(!updateFlag);
+                setPvModelName(value);
                 changedRef.current = true;
               }}
             >
@@ -415,10 +420,7 @@ const SolarPanelLayoutWizard = ({
               style={{ width: '100%' }}
               value={rowAxis}
               onChange={(value) => {
-                setCommonStore((state) => {
-                  state.solarPanelArrayLayoutParams.rowAxis = value;
-                });
-                setUpdateFlag(!updateFlag);
+                setRowAxis(value);
                 changedRef.current = true;
               }}
             >
@@ -441,10 +443,7 @@ const SolarPanelLayoutWizard = ({
               style={{ width: '100%' }}
               value={orientation}
               onChange={(value) => {
-                setCommonStore((state) => {
-                  state.solarPanelArrayLayoutParams.orientation = value;
-                });
-                setUpdateFlag(!updateFlag);
+                setOrientation(value);
                 changedRef.current = true;
               }}
             >
@@ -472,10 +471,7 @@ const SolarPanelLayoutWizard = ({
               step={1}
               formatter={(a) => Number(a).toFixed(1) + '°'}
               onChange={(value) => {
-                setCommonStore((state) => {
-                  state.solarPanelArrayLayoutParams.tiltAngle = Util.toRadians(value);
-                });
-                setUpdateFlag(!updateFlag);
+                setTiltAngle(Util.toRadians(value));
                 changedRef.current = true;
               }}
             />
@@ -499,10 +495,7 @@ const SolarPanelLayoutWizard = ({
               value={rowWidthInPanels}
               formatter={(a) => Number(a).toFixed(0)}
               onChange={(value) => {
-                setCommonStore((state) => {
-                  state.solarPanelArrayLayoutParams.rowWidthInPanels = value;
-                });
-                setUpdateFlag(!updateFlag);
+                setRowWidthInPanels(value);
                 changedRef.current = true;
               }}
             />
@@ -526,10 +519,7 @@ const SolarPanelLayoutWizard = ({
               step={0.5}
               formatter={(a) => Number(a).toFixed(1)}
               onChange={(value) => {
-                setCommonStore((state) => {
-                  state.solarPanelArrayLayoutParams.interRowSpacing = value;
-                });
-                setUpdateFlag(!updateFlag);
+                setInterRowSpacing(value);
                 changedRef.current = true;
               }}
             />
@@ -553,10 +543,7 @@ const SolarPanelLayoutWizard = ({
               step={0.1}
               formatter={(a) => Number(a).toFixed(1)}
               onChange={(value) => {
-                setCommonStore((state) => {
-                  state.solarPanelArrayLayoutParams.poleHeight = value;
-                });
-                setUpdateFlag(!updateFlag);
+                setPoleHeight(value);
                 changedRef.current = true;
               }}
             />
@@ -580,10 +567,7 @@ const SolarPanelLayoutWizard = ({
               step={0.5}
               formatter={(a) => Number(a).toFixed(1)}
               onChange={(value) => {
-                setCommonStore((state) => {
-                  state.solarPanelArrayLayoutParams.poleSpacing = value;
-                });
-                setUpdateFlag(!updateFlag);
+                setPoleSpacing(value);
                 changedRef.current = true;
               }}
             />

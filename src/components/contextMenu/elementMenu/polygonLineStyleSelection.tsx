@@ -14,13 +14,7 @@ import { PolygonModel } from '../../../models/PolygonModel';
 import { Util } from '../../../Util';
 import { UndoableChangeGroup } from '../../../undo/UndoableChangeGroup';
 
-const PolygonLineStyleSelection = ({
-  dialogVisible,
-  setDialogVisible,
-}: {
-  dialogVisible: boolean;
-  setDialogVisible: (b: boolean) => void;
-}) => {
+const PolygonLineStyleSelection = ({ setDialogVisible }: { setDialogVisible: (b: boolean) => void }) => {
   const language = useStore(Selector.language);
   const elements = useStore(Selector.elements);
   const getParent = useStore(Selector.getParent);
@@ -261,7 +255,7 @@ const PolygonLineStyleSelection = ({
     <>
       <Modal
         width={500}
-        visible={dialogVisible}
+        visible={true}
         title={
           <div
             style={{ width: '100%', cursor: 'move' }}

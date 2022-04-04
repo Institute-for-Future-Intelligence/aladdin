@@ -25,13 +25,7 @@ import { UndoableChangeGroup } from '../../../undo/UndoableChangeGroup';
 import { PolygonModel } from '../../../models/PolygonModel';
 import { Util } from '../../../Util';
 
-const PolygonTextureSelection = ({
-  dialogVisible,
-  setDialogVisible,
-}: {
-  dialogVisible: boolean;
-  setDialogVisible: (b: boolean) => void;
-}) => {
+const PolygonTextureSelection = ({ setDialogVisible }: { setDialogVisible: (b: boolean) => void }) => {
   const language = useStore(Selector.language);
   const elements = useStore(Selector.elements);
   const getParent = useStore(Selector.getParent);
@@ -275,7 +269,7 @@ const PolygonTextureSelection = ({
     <>
       <Modal
         width={500}
-        visible={dialogVisible}
+        visible={true}
         title={
           <div
             style={{ width: '100%', cursor: 'move' }}

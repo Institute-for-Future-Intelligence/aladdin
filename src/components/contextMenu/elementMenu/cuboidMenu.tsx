@@ -323,7 +323,9 @@ export const CuboidMenu = () => {
           (!cuboid.textureTypes ||
             (selectedSideIndex >= 0 && cuboid.textureTypes[selectedSideIndex] === CuboidTexture.NoTexture)) && (
             <>
-              <CuboidColorSelection dialogVisible={colorDialogVisible} setDialogVisible={setColorDialogVisible} />
+              {colorDialogVisible && (
+                <CuboidColorSelection dialogVisible={true} setDialogVisible={setColorDialogVisible} />
+              )}
               <Menu.Item
                 key={'cuboid-color'}
                 style={{ paddingLeft: '36px' }}
@@ -339,7 +341,9 @@ export const CuboidMenu = () => {
 
         {editable && (
           <>
-            <CuboidTextureSelection dialogVisible={textureDialogVisible} setDialogVisible={setTextureDialogVisible} />
+            {textureDialogVisible && (
+              <CuboidTextureSelection dialogVisible={true} setDialogVisible={setTextureDialogVisible} />
+            )}
             <Menu.Item
               key={'cuboid-texture'}
               style={{ paddingLeft: '36px' }}
@@ -351,7 +355,9 @@ export const CuboidMenu = () => {
               {i18n.t('word.Texture', lang)} ...
             </Menu.Item>
 
-            <CuboidLengthInput dialogVisible={lengthDialogVisible} setDialogVisible={setLengthDialogVisible} />
+            {lengthDialogVisible && (
+              <CuboidLengthInput dialogVisible={true} setDialogVisible={setLengthDialogVisible} />
+            )}
             <Menu.Item
               key={'cuboid-length'}
               style={{ paddingLeft: '36px' }}
@@ -367,7 +373,7 @@ export const CuboidMenu = () => {
               {i18n.t('word.Length', lang)} ...
             </Menu.Item>
 
-            <CuboidWidthInput dialogVisible={widthDialogVisible} setDialogVisible={setWidthDialogVisible} />
+            {widthDialogVisible && <CuboidWidthInput dialogVisible={true} setDialogVisible={setWidthDialogVisible} />}
             <Menu.Item
               key={'cuboid-width'}
               style={{ paddingLeft: '36px' }}
@@ -383,7 +389,9 @@ export const CuboidMenu = () => {
               {i18n.t('word.Width', lang)} ...
             </Menu.Item>
 
-            <CuboidHeightInput dialogVisible={heightDialogVisible} setDialogVisible={setHeightDialogVisible} />
+            {heightDialogVisible && (
+              <CuboidHeightInput dialogVisible={true} setDialogVisible={setHeightDialogVisible} />
+            )}
             <Menu.Item
               key={'cuboid-height'}
               style={{ paddingLeft: '36px' }}
@@ -399,7 +407,9 @@ export const CuboidMenu = () => {
               {i18n.t('word.Height', lang)} ...
             </Menu.Item>
 
-            <CuboidAzimuthInput dialogVisible={azimuthDialogVisible} setDialogVisible={setAzimuthDialogVisible} />
+            {azimuthDialogVisible && (
+              <CuboidAzimuthInput dialogVisible={true} setDialogVisible={setAzimuthDialogVisible} />
+            )}
             <Menu.Item
               key={'cuboid-azimuth'}
               style={{ paddingLeft: '36px' }}

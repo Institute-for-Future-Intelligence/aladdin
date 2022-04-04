@@ -36,7 +36,11 @@ const SolarPanelTiltAngleOptimizerWizard = ({
   const convergenceThresholdRef = useRef<number>(0.01);
   const localSearchRadiusRef = useRef<number>(0.1);
   const okButtonRef = useRef<HTMLElement | null>(null);
-  okButtonRef.current?.focus();
+  //okButtonRef.current?.focus();
+
+  useEffect(() => {
+    okButtonRef.current?.focus();
+  }, []);
 
   const lang = { lng: language };
 
