@@ -13,24 +13,23 @@ import { GeneticAlgorithmSearchMethod, GeneticAlgorithmSelectionMethod, Objectiv
 const { Option } = Select;
 
 const SolarPanelTiltAngleOptimizerWizard = ({ setDialogVisible }: { setDialogVisible: (b: boolean) => void }) => {
+  const setCommonStore = useStore(Selector.set);
   const language = useStore(Selector.language);
 
   const [updateFlag, setUpdateFlag] = useState<boolean>(false);
   const [dragEnabled, setDragEnabled] = useState<boolean>(false);
   const [bounds, setBounds] = useState<DraggableBounds>({ left: 0, top: 0, bottom: 0, right: 0 } as DraggableBounds);
   const dragRef = useRef<HTMLDivElement | null>(null);
-  const objectiveTypeRef = useRef<ObjectiveFunctionType>(ObjectiveFunctionType.DAILY_OUTPUT);
-  const selectionMethodRef = useRef<GeneticAlgorithmSelectionMethod>(GeneticAlgorithmSelectionMethod.ROULETTE_WHEEL);
-  const searchMethodRef = useRef<GeneticAlgorithmSearchMethod>(
-    GeneticAlgorithmSearchMethod.GLOBAL_SEARCH_UNIFORM_SELECTION,
-  );
-  const populationSizeRef = useRef<number>(20);
-  const maximumGenerationsRef = useRef<number>(5);
-  const mutationRateRef = useRef<number>(0.1);
-  const convergenceThresholdRef = useRef<number>(0.01);
-  const localSearchRadiusRef = useRef<number>(0.1);
+  const params = useStore.getState().geneticAlgorithmState.solarPanelTiltAngleGeneticAlgorithmParams;
+  const objectiveFunctionTypeRef = useRef<ObjectiveFunctionType>(params.objectiveFunctionType);
+  const selectionMethodRef = useRef<GeneticAlgorithmSelectionMethod>(params.selectionMethod);
+  const searchMethodRef = useRef<GeneticAlgorithmSearchMethod>(params.searchMethod);
+  const populationSizeRef = useRef<number>(params.populationSize);
+  const maximumGenerationsRef = useRef<number>(params.maximumGenerations);
+  const mutationRateRef = useRef<number>(params.mutationRate);
+  const convergenceThresholdRef = useRef<number>(params.convergenceThreshold);
+  const localSearchRadiusRef = useRef<number>(params.localSearchRadius);
   const okButtonRef = useRef<HTMLElement | null>(null);
-  //okButtonRef.current?.focus();
 
   useEffect(() => {
     okButtonRef.current?.focus();
@@ -51,9 +50,30 @@ const SolarPanelTiltAngleOptimizerWizard = ({ setDialogVisible }: { setDialogVis
     }
   };
 
+  // save the values in the common store so that they can be retrieved
+  const updateStoreParams = () => {
+    setCommonStore((state) => {
+      state.geneticAlgorithmState.solarPanelTiltAngleGeneticAlgorithmParams.objectiveFunctionType =
+        objectiveFunctionTypeRef.current;
+      state.geneticAlgorithmState.solarPanelTiltAngleGeneticAlgorithmParams.selectionMethod =
+        selectionMethodRef.current;
+      state.geneticAlgorithmState.solarPanelTiltAngleGeneticAlgorithmParams.searchMethod = searchMethodRef.current;
+      state.geneticAlgorithmState.solarPanelTiltAngleGeneticAlgorithmParams.populationSize = populationSizeRef.current;
+      state.geneticAlgorithmState.solarPanelTiltAngleGeneticAlgorithmParams.maximumGenerations =
+        maximumGenerationsRef.current;
+      state.geneticAlgorithmState.solarPanelTiltAngleGeneticAlgorithmParams.mutationRate = mutationRateRef.current;
+      state.geneticAlgorithmState.solarPanelTiltAngleGeneticAlgorithmParams.convergenceThreshold =
+        convergenceThresholdRef.current;
+      state.geneticAlgorithmState.solarPanelTiltAngleGeneticAlgorithmParams.localSearchRadius =
+        localSearchRadiusRef.current;
+    });
+  };
+
   const cancel = () => {};
 
-  const run = () => {};
+  const run = () => {
+    updateStoreParams();
+  };
 
   return (
     <>
@@ -110,11 +130,11 @@ const SolarPanelTiltAngleOptimizerWizard = ({ setDialogVisible }: { setDialogVis
           </Col>
           <Col className="gutter-row" span={12}>
             <Select
-              defaultValue={objectiveTypeRef.current}
+              defaultValue={objectiveFunctionTypeRef.current}
               style={{ width: '100%' }}
-              value={objectiveTypeRef.current}
+              value={objectiveFunctionTypeRef.current}
               onChange={(value) => {
-                objectiveTypeRef.current = value;
+                objectiveFunctionTypeRef.current = value;
                 setUpdateFlag(!updateFlag);
               }}
             >

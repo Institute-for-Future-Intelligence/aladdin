@@ -3,7 +3,6 @@
  */
 
 import { ViewState } from './ViewState';
-import { showDiurnalTemperaturePanel } from './selector/viewState';
 
 export class DefaultViewState implements ViewState {
   orthographic: boolean;

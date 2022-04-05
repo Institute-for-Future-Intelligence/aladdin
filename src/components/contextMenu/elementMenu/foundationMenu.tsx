@@ -1071,18 +1071,22 @@ export const FoundationMenu = () => {
           title={i18n.t('optimizationMenu.Optimization', lang)}
           style={{ paddingLeft: '24px' }}
         >
-          {solarPanelTiltAngleOptimizerWizardVisible && (
-            <SolarPanelTiltAngleOptimizerWizard setDialogVisible={setSolarPanelTiltAngleOptimizerWizardVisible} />
+          {counter.solarPanelCount > 0 && (
+            <>
+              {solarPanelTiltAngleOptimizerWizardVisible && (
+                <SolarPanelTiltAngleOptimizerWizard setDialogVisible={setSolarPanelTiltAngleOptimizerWizardVisible} />
+              )}
+              <Menu.Item
+                key={'solar-panel-tilt-angle-optimizer'}
+                onClick={() => {
+                  setSolarPanelTiltAngleOptimizerWizardVisible(true);
+                }}
+                style={{ paddingLeft: '12px' }}
+              >
+                {i18n.t('optimizationMenu.SolarPanelTiltAngleOptimization', lang)} ...
+              </Menu.Item>
+            </>
           )}
-          <Menu.Item
-            key={'solar-panel-tilt-angle-optimizer'}
-            onClick={() => {
-              setSolarPanelTiltAngleOptimizerWizardVisible(true);
-            }}
-            style={{ paddingLeft: '12px' }}
-          >
-            {i18n.t('optimizationMenu.SolarPanelTiltAngleOptimization', lang)} ...
-          </Menu.Item>
         </SubMenu>
       </Menu.ItemGroup>
     )

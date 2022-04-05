@@ -80,6 +80,8 @@ import { SolarRadiationData } from '../models/SolarRadiationData';
 import { SolarUpdraftTowerModel } from '../models/SolarUpdraftTowerModel';
 import { SolarAbsorberPipeModel } from '../models/SolarAbsorberPipeModel';
 import { SolarPowerTowerModel } from '../models/SolarPowerTowerModel';
+import { GeneticAlgorithmState } from './GeneticAlgorithmState';
+import { DefaultGeneticAlgorithmState } from './DefaultGeneticAlgorithmState';
 
 enableMapSet();
 
@@ -647,6 +649,7 @@ export interface CommonStoreState {
   localContentToImportAfterCloudFileUpdate: any;
 
   solarPanelArrayLayoutParams: SolarPanelArrayLayoutParams;
+  geneticAlgorithmState: GeneticAlgorithmState;
 
   // the following is to fix the bug that when ctrl+o is pressed, the file dialog gets fired up multiple times
   localFileDialogRequested: boolean;
@@ -659,7 +662,6 @@ export const useStore = create<CommonStoreState>(
         const immerSet: CommonStoreState['set'] = (fn) => set(produce(fn));
         const defaultWorldModel = new DefaultWorldModel();
         const defaultElements = defaultWorldModel.getElements();
-        const defaultViewState = new DefaultViewState();
 
         return {
           set: (fn) => {
@@ -671,8 +673,9 @@ export const useStore = create<CommonStoreState>(
           },
           world: defaultWorldModel,
           elements: defaultElements,
-          viewState: defaultViewState,
+          viewState: new DefaultViewState(),
           solarPanelArrayLayoutParams: new DefaultSolarPanelArrayLayoutParams(),
+          geneticAlgorithmState: new DefaultGeneticAlgorithmState(),
           notes: [],
           user: {} as User,
           language: 'en',
@@ -4981,6 +4984,7 @@ export const useStore = create<CommonStoreState>(
           'dailyLightSensorData',
           'yearlyLightSensorData',
           'solarPanelArrayLayoutParams',
+          'geneticAlgorithmState',
         ],
       },
     ),
