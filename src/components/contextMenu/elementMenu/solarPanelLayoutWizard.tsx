@@ -19,6 +19,7 @@ import { SolarPanelModel } from '../../../models/SolarPanelModel';
 import { UndoableLayout } from '../../../undo/UndoableLayout';
 import { ElementModel } from '../../../models/ElementModel';
 import { showError } from '../../../helpers';
+import { SolarPanelArrayLayoutParams } from '../../../stores/SolarPanelArrayLayoutParams';
 
 const { Option } = Select;
 
@@ -26,6 +27,7 @@ const SolarPanelLayoutWizard = ({ setDialogVisible }: { setDialogVisible: (b: bo
   const setCommonStore = useStore(Selector.set);
   const language = useStore(Selector.language);
   const elements = useStore(Selector.elements);
+  const solarPanelArrayLayoutParams = useStore.getState().solarPanelArrayLayoutParams;
   const getSelectedElement = useStore(Selector.getSelectedElement);
   const getParent = useStore(Selector.getParent);
   const pvModules = useStore(Selector.pvModules);
@@ -39,35 +41,38 @@ const SolarPanelLayoutWizard = ({ setDialogVisible }: { setDialogVisible: (b: bo
   const setApplyCount = useStore(Selector.setApplyCount);
   const revertApply = useStore(Selector.revertApply);
 
-  const [pvModelName, setPvModelName] = useState<string>(useStore.getState().solarPanelArrayLayoutParams.pvModelName);
-  const [rowAxis, setRowAxis] = useState<RowAxis>(useStore.getState().solarPanelArrayLayoutParams.rowAxis);
-  const [orientation, setOrientation] = useState<Orientation>(
-    useStore.getState().solarPanelArrayLayoutParams.orientation,
-  );
-  const [tiltAngle, setTiltAngle] = useState<number>(useStore.getState().solarPanelArrayLayoutParams.tiltAngle);
-  const [rowWidthInPanels, setRowWidthInPanels] = useState<number>(
-    useStore.getState().solarPanelArrayLayoutParams.rowWidthInPanels,
-  );
-  const [interRowSpacing, setInterRowSpacing] = useState<number>(
-    useStore.getState().solarPanelArrayLayoutParams.interRowSpacing,
-  );
-  const [poleHeight, setPoleHeight] = useState<number>(useStore.getState().solarPanelArrayLayoutParams.poleHeight);
-  const [poleSpacing, setPoleSpacing] = useState<number>(useStore.getState().solarPanelArrayLayoutParams.poleSpacing);
+  const [updateFlag, setUpdateFlag] = useState<boolean>(false);
   const [warningDialogVisible, setWarningDialogVisible] = useState(false);
   const [dragEnabled, setDragEnabled] = useState<boolean>(false);
   const [bounds, setBounds] = useState<DraggableBounds>({ left: 0, top: 0, bottom: 0, right: 0 } as DraggableBounds);
   const dragRef = useRef<HTMLDivElement | null>(null);
-  const changedRef = useRef(true);
+  const changedRef = useRef(false);
   const okButtonRef = useRef<HTMLElement | null>(null);
+  const warningOkButtonRef = useRef<HTMLElement | null>(null);
+  const okButtonClickedRef = useRef<boolean>(false);
+  const pvModelNameRef = useRef<string>(useStore.getState().solarPanelArrayLayoutParams.pvModelName);
+  const rowAxisRef = useRef<RowAxis>(useStore.getState().solarPanelArrayLayoutParams.rowAxis);
+  const orientationRef = useRef<Orientation>(useStore.getState().solarPanelArrayLayoutParams.orientation);
+  const tiltAngleRef = useRef<number>(useStore.getState().solarPanelArrayLayoutParams.tiltAngle);
+  const rowWidthInPanelsRef = useRef<number>(useStore.getState().solarPanelArrayLayoutParams.rowWidthInPanels);
+  const interRowSpacingRef = useRef<number>(useStore.getState().solarPanelArrayLayoutParams.interRowSpacing);
+  const poleHeightRef = useRef<number>(useStore.getState().solarPanelArrayLayoutParams.poleHeight);
+  const poleSpacingRef = useRef<number>(useStore.getState().solarPanelArrayLayoutParams.poleSpacing);
 
   const lang = { lng: language };
-  const pvModel = getPvModule(pvModelName);
+  const pvModel = getPvModule(pvModelNameRef.current);
   const reference = getSelectedElement();
   const relativeMargin = 0.01;
 
   useEffect(() => {
     okButtonRef.current?.focus();
   }, []);
+
+  useEffect(() => {
+    if (warningDialogVisible) {
+      warningOkButtonRef.current?.focus();
+    }
+  }, [warningDialogVisible]);
 
   const onStart = (event: DraggableEvent, uiData: DraggableData) => {
     if (dragRef.current) {
@@ -106,15 +111,16 @@ const SolarPanelLayoutWizard = ({ setDialogVisible }: { setDialogVisible: (b: bo
   };
 
   const isLayoutOk = () => {
-    const ly = (orientation === Orientation.portrait ? pvModel.length : pvModel.width) * rowWidthInPanels;
-    const projectedWidth = ly * Math.abs(Math.sin(tiltAngle));
+    const ly =
+      (orientationRef.current === Orientation.portrait ? pvModel.length : pvModel.width) * rowWidthInPanelsRef.current;
+    const projectedWidth = ly * Math.abs(Math.sin(tiltAngleRef.current));
     // The solar panel intersects with the ground?
-    if (0.5 * projectedWidth > poleHeight) {
+    if (0.5 * projectedWidth > poleHeightRef.current) {
       showError(i18n.t('message.SolarPanelsCannotIntersectWithGround', lang));
       return false;
     }
     // The inter-row spacing is too small?
-    if (ly > interRowSpacing) {
+    if (ly > interRowSpacingRef.current) {
       showError(i18n.t('message.SolarPanelsCannotOverlapWithOneAnother', lang));
       return false;
     }
@@ -148,13 +154,15 @@ const SolarPanelLayoutWizard = ({ setDialogVisible }: { setDialogVisible: (b: bo
         let n: number;
         let start: number;
         let delta: number;
-        const ly = (orientation === Orientation.portrait ? pvModel.length : pvModel.width) * rowWidthInPanels;
-        let h = 0.5 * Math.abs(Math.sin(tiltAngle)) * ly;
-        if (rowAxis === RowAxis.meridional) {
+        const ly =
+          (orientationRef.current === Orientation.portrait ? pvModel.length : pvModel.width) *
+          rowWidthInPanelsRef.current;
+        let h = 0.5 * Math.abs(Math.sin(tiltAngleRef.current)) * ly;
+        if (rowAxisRef.current === RowAxis.meridional) {
           // north-south axis, so the array is laid in x direction
-          n = Math.floor(((bounds.maxX - bounds.minX) * foundation.lx - ly) / interRowSpacing);
+          n = Math.floor(((bounds.maxX - bounds.minX) * foundation.lx - ly) / interRowSpacingRef.current);
           start = bounds.minX + ly / (2 * foundation.lx);
-          delta = interRowSpacing / foundation.lx;
+          delta = interRowSpacingRef.current / foundation.lx;
           h /= foundation.lx;
           let a: Point2 = { x: 0, y: -0.5 } as Point2;
           let b: Point2 = { x: 0, y: 0.5 } as Point2;
@@ -183,12 +191,12 @@ const SolarPanelLayoutWizard = ({ setDialogVisible }: { setDialogVisible: (b: bo
                   lx * foundation.ly,
                   ly,
                 );
-                solarPanel.tiltAngle = tiltAngle;
+                solarPanel.tiltAngle = tiltAngleRef.current;
                 solarPanel.relativeAzimuth = HALF_PI;
-                solarPanel.poleHeight = poleHeight;
-                solarPanel.poleSpacing = poleSpacing;
+                solarPanel.poleHeight = poleHeightRef.current;
+                solarPanel.poleSpacing = poleSpacingRef.current;
                 solarPanel.referenceId = area.id;
-                changeOrientation(solarPanel, orientation);
+                changeOrientation(solarPanel, orientationRef.current);
                 newElements.push(JSON.parse(JSON.stringify(solarPanel)));
                 setCommonStore((state) => {
                   state.elements.push(solarPanel);
@@ -198,9 +206,9 @@ const SolarPanelLayoutWizard = ({ setDialogVisible }: { setDialogVisible: (b: bo
           }
         } else {
           // east-west axis, so the array is laid in y direction
-          n = Math.floor(((bounds.maxY - bounds.minY) * foundation.ly - ly) / interRowSpacing);
+          n = Math.floor(((bounds.maxY - bounds.minY) * foundation.ly - ly) / interRowSpacingRef.current);
           start = bounds.minY + ly / (2 * foundation.ly) + relativeMargin;
-          delta = interRowSpacing / foundation.ly;
+          delta = interRowSpacingRef.current / foundation.ly;
           h /= foundation.ly;
           let a: Point2 = { x: -0.5, y: 0 } as Point2;
           let b: Point2 = { x: 0.5, y: 0 } as Point2;
@@ -229,12 +237,12 @@ const SolarPanelLayoutWizard = ({ setDialogVisible }: { setDialogVisible: (b: bo
                   lx * foundation.lx,
                   ly,
                 );
-                solarPanel.tiltAngle = tiltAngle;
+                solarPanel.tiltAngle = tiltAngleRef.current;
                 solarPanel.relativeAzimuth = 0;
-                solarPanel.poleHeight = poleHeight;
-                solarPanel.poleSpacing = poleSpacing;
+                solarPanel.poleHeight = poleHeightRef.current;
+                solarPanel.poleSpacing = poleSpacingRef.current;
                 solarPanel.referenceId = area.id;
-                changeOrientation(solarPanel, orientation);
+                changeOrientation(solarPanel, orientationRef.current);
                 newElements.push(JSON.parse(JSON.stringify(solarPanel)));
                 setCommonStore((state) => {
                   state.elements.push(solarPanel);
@@ -248,6 +256,26 @@ const SolarPanelLayoutWizard = ({ setDialogVisible }: { setDialogVisible: (b: bo
           timestamp: Date.now(),
           oldElements: useStore.getState().deletedElements,
           newElements: newElements,
+          oldParams: {
+            pvModelName: solarPanelArrayLayoutParams.pvModelName,
+            rowAxis: solarPanelArrayLayoutParams.rowAxis,
+            orientation: solarPanelArrayLayoutParams.orientation,
+            tiltAngle: solarPanelArrayLayoutParams.tiltAngle,
+            rowWidthInPanels: solarPanelArrayLayoutParams.rowWidthInPanels,
+            interRowSpacing: solarPanelArrayLayoutParams.interRowSpacing,
+            poleHeight: solarPanelArrayLayoutParams.poleHeight,
+            poleSpacing: solarPanelArrayLayoutParams.poleSpacing,
+          } as SolarPanelArrayLayoutParams,
+          newParams: {
+            pvModelName: pvModelNameRef.current,
+            rowAxis: rowAxisRef.current,
+            orientation: orientationRef.current,
+            tiltAngle: tiltAngleRef.current,
+            rowWidthInPanels: rowWidthInPanelsRef.current,
+            interRowSpacing: interRowSpacingRef.current,
+            poleHeight: poleHeightRef.current,
+            poleSpacing: poleSpacingRef.current,
+          } as SolarPanelArrayLayoutParams,
           referenceId: area.id,
           undo: () => {
             removeElementsByReferenceId(undoableLayout.referenceId, false);
@@ -258,6 +286,8 @@ const SolarPanelLayoutWizard = ({ setDialogVisible }: { setDialogVisible: (b: bo
                 }
               });
             }
+            setParams(undoableLayout.oldParams);
+            updateStoreParams();
           },
           redo: () => {
             removeElementsByReferenceId(undoableLayout.referenceId, false);
@@ -268,6 +298,8 @@ const SolarPanelLayoutWizard = ({ setDialogVisible }: { setDialogVisible: (b: bo
                 }
               });
             }
+            setParams(undoableLayout.newParams);
+            updateStoreParams();
           },
         } as UndoableLayout;
         addUndoable(undoableLayout);
@@ -277,15 +309,32 @@ const SolarPanelLayoutWizard = ({ setDialogVisible }: { setDialogVisible: (b: bo
     changedRef.current = false;
     setCommonStore((state) => {
       state.updateDesignInfo();
-      // save the values in the common store so that they can be retrieved
-      state.solarPanelArrayLayoutParams.pvModelName = pvModelName;
-      state.solarPanelArrayLayoutParams.rowAxis = rowAxis;
-      state.solarPanelArrayLayoutParams.orientation = orientation;
-      state.solarPanelArrayLayoutParams.tiltAngle = tiltAngle;
-      state.solarPanelArrayLayoutParams.rowWidthInPanels = rowWidthInPanels;
-      state.solarPanelArrayLayoutParams.interRowSpacing = interRowSpacing;
-      state.solarPanelArrayLayoutParams.poleHeight = poleHeight;
-      state.solarPanelArrayLayoutParams.poleSpacing = poleSpacing;
+    });
+    updateStoreParams();
+  };
+
+  const setParams = (params: SolarPanelArrayLayoutParams) => {
+    pvModelNameRef.current = params.pvModelName;
+    rowAxisRef.current = params.rowAxis;
+    orientationRef.current = params.orientation;
+    tiltAngleRef.current = params.tiltAngle;
+    rowWidthInPanelsRef.current = params.rowWidthInPanels;
+    interRowSpacingRef.current = params.interRowSpacing;
+    poleHeightRef.current = params.poleHeight;
+    poleSpacingRef.current = params.poleSpacing;
+  };
+
+  // save the values in the common store so that they can be retrieved
+  const updateStoreParams = () => {
+    setCommonStore((state) => {
+      state.solarPanelArrayLayoutParams.pvModelName = pvModelNameRef.current;
+      state.solarPanelArrayLayoutParams.rowAxis = rowAxisRef.current;
+      state.solarPanelArrayLayoutParams.orientation = orientationRef.current;
+      state.solarPanelArrayLayoutParams.tiltAngle = tiltAngleRef.current;
+      state.solarPanelArrayLayoutParams.rowWidthInPanels = rowWidthInPanelsRef.current;
+      state.solarPanelArrayLayoutParams.interRowSpacing = interRowSpacingRef.current;
+      state.solarPanelArrayLayoutParams.poleHeight = poleHeightRef.current;
+      state.solarPanelArrayLayoutParams.poleSpacing = poleSpacingRef.current;
     });
   };
 
@@ -306,6 +355,43 @@ const SolarPanelLayoutWizard = ({ setDialogVisible }: { setDialogVisible: (b: bo
     }
   };
 
+  const onApplyClick = () => {
+    apply();
+    okButtonClickedRef.current = false;
+  };
+
+  const onCancelClick = () => {
+    setDialogVisible(false);
+    revertApply();
+    changedRef.current = true;
+    okButtonClickedRef.current = false;
+  };
+
+  const onOkClick = () => {
+    if (changedRef.current) {
+      apply();
+      okButtonClickedRef.current = true;
+    } else {
+      setDialogVisible(false);
+    }
+  };
+
+  const onWarningCancelClick = () => {
+    setWarningDialogVisible(false);
+  };
+
+  const onWarningOkClick = () => {
+    if (reference) {
+      removeElementsByReferenceId(reference.id, true);
+      layout();
+      if (okButtonClickedRef.current) {
+        setDialogVisible(false);
+        setApplyCount(0);
+      }
+    }
+    setWarningDialogVisible(false);
+  };
+
   return (
     <>
       {warningDialogVisible && (
@@ -321,19 +407,18 @@ const SolarPanelLayoutWizard = ({ setDialogVisible }: { setDialogVisible: (b: bo
               {i18n.t('word.Reminder', lang)}
             </div>
           }
-          onOk={() => {
-            if (reference) {
-              removeElementsByReferenceId(reference.id, true);
-              layout();
-            }
-            setWarningDialogVisible(false);
-          }}
-          onCancel={() => {
-            setWarningDialogVisible(false);
-          }}
+          footer={[
+            <Button key="Cancel" onClick={onWarningCancelClick}>
+              {i18n.t('word.Cancel', lang)}
+            </Button>,
+            <Button key="OK" type="primary" ref={warningOkButtonRef} onClick={onWarningOkClick}>
+              {i18n.t('word.OK', lang)}
+            </Button>,
+          ]}
         >
-          {i18n.t('message.ExistingSolarPanelsWillBeRemovedBeforeApplyingNewLayout', lang)}
-          {i18n.t('message.DoYouWantToContinue', lang)}
+          {i18n.t('message.ExistingSolarPanelsWillBeRemovedBeforeApplyingNewLayout', lang) +
+            ' ' +
+            i18n.t('message.DoYouWantToContinue', lang)}
         </Modal>
       )}
       <Modal
@@ -349,29 +434,13 @@ const SolarPanelLayoutWizard = ({ setDialogVisible }: { setDialogVisible: (b: bo
           </div>
         }
         footer={[
-          <Button key="Apply" onClick={apply}>
+          <Button key="Apply" disabled={!changedRef.current} onClick={onApplyClick}>
             {i18n.t('word.Apply', lang)}
           </Button>,
-          <Button
-            key="Cancel"
-            onClick={() => {
-              setDialogVisible(false);
-              revertApply();
-              changedRef.current = true;
-            }}
-          >
+          <Button key="Cancel" onClick={onCancelClick}>
             {i18n.t('word.Cancel', lang)}
           </Button>,
-          <Button
-            key="OK"
-            type="primary"
-            ref={okButtonRef}
-            onClick={() => {
-              apply();
-              setDialogVisible(false);
-              setApplyCount(0);
-            }}
-          >
+          <Button key="OK" type="primary" ref={okButtonRef} onClick={onOkClick}>
             {i18n.t('word.OK', lang)}
           </Button>,
         ]}
@@ -396,10 +465,11 @@ const SolarPanelLayoutWizard = ({ setDialogVisible }: { setDialogVisible: (b: bo
             <Select
               defaultValue="Custom"
               style={{ width: '100%' }}
-              value={pvModelName}
+              value={pvModelNameRef.current}
               onChange={(value) => {
-                setPvModelName(value);
+                pvModelNameRef.current = value;
                 changedRef.current = true;
+                setUpdateFlag(!updateFlag);
               }}
             >
               {Object.keys(pvModules).map((key) => (
@@ -418,10 +488,11 @@ const SolarPanelLayoutWizard = ({ setDialogVisible }: { setDialogVisible: (b: bo
           <Col className="gutter-row" span={10}>
             <Select
               style={{ width: '100%' }}
-              value={rowAxis}
+              value={rowAxisRef.current}
               onChange={(value) => {
-                setRowAxis(value);
+                rowAxisRef.current = value;
                 changedRef.current = true;
+                setUpdateFlag(!updateFlag);
               }}
             >
               <Option key={RowAxis.zonal} value={RowAxis.zonal}>
@@ -441,10 +512,11 @@ const SolarPanelLayoutWizard = ({ setDialogVisible }: { setDialogVisible: (b: bo
           <Col className="gutter-row" span={10}>
             <Select
               style={{ width: '100%' }}
-              value={orientation}
+              value={orientationRef.current}
               onChange={(value) => {
-                setOrientation(value);
+                orientationRef.current = value;
                 changedRef.current = true;
+                setUpdateFlag(!updateFlag);
               }}
             >
               <Option key={Orientation.portrait} value={Orientation.portrait}>
@@ -467,12 +539,13 @@ const SolarPanelLayoutWizard = ({ setDialogVisible }: { setDialogVisible: (b: bo
               max={90}
               style={{ width: '100%' }}
               precision={1}
-              value={Util.toDegrees(tiltAngle)}
+              value={Util.toDegrees(tiltAngleRef.current)}
               step={1}
               formatter={(a) => Number(a).toFixed(1) + '°'}
               onChange={(value) => {
-                setTiltAngle(Util.toRadians(value));
+                tiltAngleRef.current = Util.toRadians(value);
                 changedRef.current = true;
+                setUpdateFlag(!updateFlag);
               }}
             />
           </Col>
@@ -492,11 +565,12 @@ const SolarPanelLayoutWizard = ({ setDialogVisible }: { setDialogVisible: (b: bo
               step={1}
               style={{ width: '100%' }}
               precision={3}
-              value={rowWidthInPanels}
+              value={rowWidthInPanelsRef.current}
               formatter={(a) => Number(a).toFixed(0)}
               onChange={(value) => {
-                setRowWidthInPanels(value);
+                rowWidthInPanelsRef.current = value;
                 changedRef.current = true;
+                setUpdateFlag(!updateFlag);
               }}
             />
           </Col>
@@ -515,12 +589,13 @@ const SolarPanelLayoutWizard = ({ setDialogVisible }: { setDialogVisible: (b: bo
               max={20}
               style={{ width: '100%' }}
               precision={1}
-              value={interRowSpacing}
+              value={interRowSpacingRef.current}
               step={0.5}
               formatter={(a) => Number(a).toFixed(1)}
               onChange={(value) => {
-                setInterRowSpacing(value);
+                interRowSpacingRef.current = value;
                 changedRef.current = true;
+                setUpdateFlag(!updateFlag);
               }}
             />
           </Col>
@@ -539,12 +614,13 @@ const SolarPanelLayoutWizard = ({ setDialogVisible }: { setDialogVisible: (b: bo
               max={10}
               style={{ width: '100%' }}
               precision={1}
-              value={poleHeight}
+              value={poleHeightRef.current}
               step={0.1}
               formatter={(a) => Number(a).toFixed(1)}
               onChange={(value) => {
-                setPoleHeight(value);
+                poleHeightRef.current = value;
                 changedRef.current = true;
+                setUpdateFlag(!updateFlag);
               }}
             />
           </Col>
@@ -563,12 +639,13 @@ const SolarPanelLayoutWizard = ({ setDialogVisible }: { setDialogVisible: (b: bo
               max={10}
               style={{ width: '100%' }}
               precision={1}
-              value={poleSpacing}
+              value={poleSpacingRef.current}
               step={0.5}
               formatter={(a) => Number(a).toFixed(1)}
               onChange={(value) => {
-                setPoleSpacing(value);
+                poleSpacingRef.current = value;
                 changedRef.current = true;
+                setUpdateFlag(!updateFlag);
               }}
             />
           </Col>
