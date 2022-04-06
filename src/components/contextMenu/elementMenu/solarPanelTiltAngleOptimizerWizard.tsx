@@ -8,13 +8,23 @@ import Draggable, { DraggableBounds, DraggableData, DraggableEvent } from 'react
 import { useStore } from '../../../stores/common';
 import * as Selector from '../../../stores/selector';
 import i18n from '../../../i18n/i18n';
-import { GeneticAlgorithmSearchMethod, GeneticAlgorithmSelectionMethod, ObjectiveFunctionType } from '../../../types';
+import {
+  GeneticAlgorithmSearchMethod,
+  GeneticAlgorithmSelectionMethod,
+  ObjectiveFunctionType,
+  ObjectType,
+} from '../../../types';
+import { FoundationModel } from '../../../models/FoundationModel';
+import { SolarPanelTiltAngleOptimizer } from '../../../ga/SolarPanelTiltAngleOptimizer';
+import { SolarPanelModel } from '../../../models/SolarPanelModel';
 
 const { Option } = Select;
 
 const SolarPanelTiltAngleOptimizerWizard = ({ setDialogVisible }: { setDialogVisible: (b: boolean) => void }) => {
   const setCommonStore = useStore(Selector.set);
   const language = useStore(Selector.language);
+  const foundation = useStore(Selector.selectedElement) as FoundationModel;
+  const getChildrenOfType = useStore(Selector.getChildrenOfType);
 
   const [updateFlag, setUpdateFlag] = useState<boolean>(false);
   const [dragEnabled, setDragEnabled] = useState<boolean>(false);
@@ -50,7 +60,7 @@ const SolarPanelTiltAngleOptimizerWizard = ({ setDialogVisible }: { setDialogVis
     }
   };
 
-  // save the values in the common store so that they can be retrieved
+  // save the values in the common store to persist the user's last settings
   const updateStoreParams = () => {
     setCommonStore((state) => {
       state.geneticAlgorithmState.solarPanelTiltAngleGeneticAlgorithmParams.objectiveFunctionType =
@@ -72,6 +82,20 @@ const SolarPanelTiltAngleOptimizerWizard = ({ setDialogVisible }: { setDialogVis
   const cancel = () => {};
 
   const run = () => {
+    const solarPanels = getChildrenOfType(ObjectType.SolarPanel, foundation.id) as SolarPanelModel[];
+    const optimizer = new SolarPanelTiltAngleOptimizer(
+      solarPanels,
+      foundation,
+      populationSizeRef.current,
+      solarPanels.length,
+      0,
+    );
+    optimizer.evolve(
+      searchMethodRef.current === GeneticAlgorithmSearchMethod.LOCAL_SEARCH_RANDOM_OPTIMIZATION,
+      objectiveFunctionTypeRef.current === ObjectiveFunctionType.DAILY_OUTPUT,
+      false,
+      localSearchRadiusRef.current,
+    );
     updateStoreParams();
   };
 

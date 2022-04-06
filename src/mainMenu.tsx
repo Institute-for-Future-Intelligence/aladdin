@@ -11,7 +11,8 @@ import solar_farm_01 from './examples/solar_farm_01.json';
 import solar_farm_02 from './examples/solar_farm_02.json';
 import solar_farm_03 from './examples/solar_farm_03.json';
 import solar_trackers from './examples/solar_trackers.json';
-import simple_house_01 from './examples/simple_house_01.json';
+import cape_cod_with_shed_dormer from './examples/cape_cod_with_shed_dormer.json';
+import barn_house from './examples/barn_house.json';
 import hotel_01 from './examples/hotel_01.json';
 import heatmap_01 from './examples/heatmap_01.json';
 import vegetative_buffer_01 from './examples/vegetative_buffer_01.json';
@@ -279,8 +280,11 @@ const MainMenu = ({ viewOnly, set2DView, resetView, zoomView, canvas }: MainMenu
       case 'solar_updraft_tower_city':
         input = solar_updraft_tower_city;
         break;
-      case 'simple_house_01':
-        input = simple_house_01;
+      case 'cape_cod_with_shed_dormer':
+        input = cape_cod_with_shed_dormer;
+        break;
+      case 'barn_house':
+        input = barn_house;
         break;
       case 'solar_radiation_predicted_vs_measured':
         input = solar_radiation_predicted_vs_measured;
@@ -1597,19 +1601,28 @@ const MainMenu = ({ viewOnly, set2DView, resetView, zoomView, canvas }: MainMenu
         </SubMenu>
 
         {/* buildings */}
-        <SubMenu key={'buildings'} title={i18n.t('menu.buildingsSubMenu', lang)}>
-          <Menu.Item key="simple_house_01" onClick={loadFile}>
-            {i18n.t('menu.examples.SimpleHouse', lang)}
-          </Menu.Item>
-          <Menu.Item key="office_building_01" onClick={loadFile}>
-            {i18n.t('menu.examples.OfficeBuilding', lang)}
-          </Menu.Item>
-          <Menu.Item key="hotel_01" onClick={loadFile}>
-            {i18n.t('menu.examples.Hotel', lang)}
-          </Menu.Item>
-          <Menu.Item key="heatmap_01" onClick={loadFile}>
-            {i18n.t('menu.examples.Heatmap1', lang)}
-          </Menu.Item>
+        <SubMenu key={'built-environment'} title={i18n.t('menu.builtEnvironmentSubMenu', lang)}>
+          <SubMenu key={'residential_buildings'} title={i18n.t('menu.residentialBuildingsSubMenu', lang)}>
+            <Menu.Item key="cape_cod_with_shed_dormer" onClick={loadFile}>
+              {i18n.t('menu.examples.CapeCodStyleHouseWithShedDormer', lang)}
+            </Menu.Item>
+            <Menu.Item key="barn_house" onClick={loadFile}>
+              {i18n.t('menu.examples.BarnStyleHouse', lang)}
+            </Menu.Item>
+          </SubMenu>
+          <SubMenu key={'commercial_buildings'} title={i18n.t('menu.commercialBuildingsSubMenu', lang)}>
+            <Menu.Item key="office_building_01" onClick={loadFile}>
+              {i18n.t('menu.examples.OfficeBuilding', lang)}
+            </Menu.Item>
+            <Menu.Item key="hotel_01" onClick={loadFile}>
+              {i18n.t('menu.examples.Hotel', lang)}
+            </Menu.Item>
+          </SubMenu>
+          <SubMenu key={'urban_planning'} title={i18n.t('menu.urbanPlanningSubMenu', lang)}>
+            <Menu.Item key="heatmap_01" onClick={loadFile}>
+              {i18n.t('menu.examples.Heatmap1', lang)}
+            </Menu.Item>
+          </SubMenu>
         </SubMenu>
       </SubMenu>
 
