@@ -18,7 +18,7 @@ import GableRoof from './gableRoof';
 import HipRoof from './hipRoof';
 import GambrelRoof from './GambrelRoof';
 
-const Roof = ({ ...props }: RoofModel) => {
+const Roof = (props: RoofModel) => {
   const { id, wallsId, roofType } = props;
 
   const removeElementById = useStore(Selector.removeElementById);
@@ -39,15 +39,12 @@ const Roof = ({ ...props }: RoofModel) => {
         return <HipRoof {...(props as HipRoofModel)} />;
       case RoofType.Gambrel:
         return <GambrelRoof {...(props as GambrelRoofModel)} />;
+      default:
+        return null;
     }
-    return null;
   };
 
   return renderRoof();
-  // return <PyramidRoof {...(props as PyramidRoofModel)} />;
-  // return <GableRoof {...(props as GableRoofModel)} />;
-  // return <HipRoof {...(props as HipRoofModel)} />;
-  // return <GambrelRoof {...(props as GambrelRoofModel)} />
 };
 
 export default Roof;

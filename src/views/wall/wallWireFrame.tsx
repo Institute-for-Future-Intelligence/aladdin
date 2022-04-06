@@ -7,13 +7,14 @@ import { Line } from '@react-three/drei';
 import { HALF_PI } from '../../constants';
 
 interface WallWireFrameProps {
+  selected: boolean;
   x: number;
   z: number;
   leftHeight?: number;
   rightHeight?: number;
 }
 
-const WallWireFrame = React.memo(({ x, z, leftHeight = 2 * z, rightHeight = 2 * z }: WallWireFrameProps) => {
+const WallWireFrame = React.memo(({ selected, x, z, leftHeight = 2 * z, rightHeight = 2 * z }: WallWireFrameProps) => {
   const lineWidth = 0.2;
 
   const lowerLeft: [number, number, number] = [-x, -z, 0];
@@ -27,7 +28,7 @@ const WallWireFrame = React.memo(({ x, z, leftHeight = 2 * z, rightHeight = 2 * 
         <Line points={[lowerLeft, lowerRight]} lineWidth={lineWidth} />
         <Line points={[lowerLeft, upperLeft]} lineWidth={lineWidth} />
         <Line points={[lowerRight, upperRight]} lineWidth={lineWidth} />
-        <Line points={[upperLeft, upperRight]} lineWidth={lineWidth} />
+        {selected && <Line points={[upperLeft, upperRight]} lineWidth={lineWidth} />}
       </group>
     </React.Fragment>
   );

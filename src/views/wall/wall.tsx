@@ -969,9 +969,15 @@ const Wall = ({
 
           {/* wireFrame */}
           {selected ? (
-            <WallWireFrame x={hx} z={hz} />
+            <WallWireFrame selected={selected} x={hx} z={hz} />
           ) : (
-            <WallWireFrame x={hx} z={hz} leftHeight={leftRoofHeight} rightHeight={rightRoofHeight} />
+            <WallWireFrame
+              selected={selected}
+              x={hx}
+              z={hz}
+              leftHeight={leftRoofHeight}
+              rightHeight={rightRoofHeight}
+            />
           )}
 
           {/* handles */}
