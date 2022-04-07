@@ -164,6 +164,13 @@ export const i18n_es = {
       CancelSimulation: 'Cancel simulation',
       PauseSimulation: 'Pause simulation',
       ResumeSimulation: 'Resume simulation',
+      EvolutionStarted: 'Evolution started.',
+      EvolutionCompleted: 'Evolution completed.',
+      EvolutionAborted: 'Evolution aborted.',
+      EvolutionPaused: 'Evolution paused.',
+      CancelEvolution: 'Cancel evolution',
+      PauseEvolution: 'Pause evolution',
+      ResumeEvolution: 'Resume evolution',
     },
 
     menu: {
@@ -340,7 +347,7 @@ export const i18n_es = {
     avatarMenu: {
       AccountSettings: 'Configuraciones de la cuenta',
       PrivacyInfo:
-        'When you sign in, your Google ID is used to create and access your Aladdin account. Only a seemingly random alphanumeric string is stored in our database as a reference. No personally identifiable data such as your name or email is ever gathered. For more information, see our Privacy Policy: https://intofuture.org/aladdin-privacy.html',
+        'When you sign in, your Google ID is used to create and access your Aladdin account. Only a random alphanumeric string is stored in our database as a reference. No personally identifiable data such as your name or email is ever gathered. For more information, see our Privacy Policy: https://intofuture.org/aladdin-privacy.html',
       SignIn: 'Iniciar sesión',
       SignOut: 'Desconectar',
       IfYouAreAStudent: 'Si eres un estudiante',

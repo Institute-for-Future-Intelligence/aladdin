@@ -138,6 +138,8 @@ export interface CommonStoreState {
   runDynamicSimulation: boolean;
   runStaticSimulation: boolean;
   pauseSimulation: boolean;
+  runEvolution: boolean;
+  pauseEvolution: boolean;
   clickObjectType: ObjectType | null;
   contextMenuObjectType: ObjectType | null;
   duringCameraInteraction: boolean;
@@ -632,6 +634,8 @@ export interface CommonStoreState {
 
   simulationInProgress: boolean;
   simulationPaused: boolean;
+  evolutionInProgress: boolean;
+  evolutionPaused: boolean;
   showSolarRadiationHeatmap: boolean;
   updateDesignInfo: () => void;
   updateDesignInfoFlag: boolean;
@@ -986,6 +990,8 @@ export const useStore = create<CommonStoreState>(
           runDynamicSimulation: false,
           runStaticSimulation: false,
           pauseSimulation: false,
+          runEvolution: false,
+          pauseEvolution: false,
           clickObjectType: null,
           contextMenuObjectType: null,
           duringCameraInteraction: false,
@@ -4955,6 +4961,8 @@ export const useStore = create<CommonStoreState>(
 
           simulationInProgress: false,
           simulationPaused: false,
+          evolutionInProgress: false,
+          evolutionPaused: false,
           showSolarRadiationHeatmap: false,
           locale: enUS,
           localFileName: 'aladdin.ala',

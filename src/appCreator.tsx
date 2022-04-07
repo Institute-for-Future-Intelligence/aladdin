@@ -72,6 +72,8 @@ import SolarUpdraftTowerSimulation from './analysis/solarUpdraftTowerSimulation'
 import DailySolarUpdraftTowerYieldPanel from './panels/dailySolarUpdraftTowerYieldPanel';
 import DiurnalTemperaturePanel from './panels/diurnalTemperaturePanel';
 import YearlySolarUpdraftTowerYieldPanel from './panels/yearlySolarUpdraftTowerYieldPanel';
+import EvolutionControlPanel from './panels/evolutionControlPanel';
+import SolarPanelTiltAngleEvolution from './ga/solarPanelTiltAngleEvolution';
 
 export interface AppCreatorProps {
   viewOnly: boolean;
@@ -89,6 +91,8 @@ const AppCreator = ({ viewOnly = false }: AppCreatorProps) => {
   const orthographic = useStore(Selector.viewState.orthographic) ?? false;
   const simulationInProgress = useStore(Selector.simulationInProgress);
   const simulationPaused = useStore(Selector.simulationPaused);
+  const evolutionInProgress = useStore(Selector.evolutionInProgress);
+  const evolutionPaused = useStore(Selector.evolutionPaused);
   const objectTypeToAdd = useStore(Selector.objectTypeToAdd);
   const sceneRadius = useStore(Selector.sceneRadius);
   const cameraZoom = useStore(Selector.viewState.cameraZoom) ?? 20;
@@ -241,9 +245,12 @@ const AppCreator = ({ viewOnly = false }: AppCreatorProps) => {
 
   return (
     <div className="App">
-      {(loading || simulationInProgress) && (
+      {(loading || simulationInProgress || evolutionInProgress) && (
         <>
-          {(!noAnimationForHeatmapSimulation || Util.hasMovingParts(elements)) && <SimulationControlPanel />}
+          {simulationInProgress && (!noAnimationForHeatmapSimulation || Util.hasMovingParts(elements)) && (
+            <SimulationControlPanel />
+          )}
+          {evolutionInProgress && <EvolutionControlPanel />}
           <Spinner spinning={!simulationPaused} />
         </>
       )}
@@ -409,6 +416,7 @@ const AppCreator = ({ viewOnly = false }: AppCreatorProps) => {
             <FresnelReflectorSimulation city={city} />
             <HeliostatSimulation city={city} />
             <SolarUpdraftTowerSimulation city={city} />
+            <SolarPanelTiltAngleEvolution />
           </Canvas>
           <KeyboardListener
             canvas={canvasRef.current}

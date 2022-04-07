@@ -2,7 +2,7 @@
  * @Copyright 2022. Institute for Future Intelligence, Inc.
  */
 
-import { Rectangle } from '../models/Rectangle';
+import { Rectangle } from '../../models/Rectangle';
 import { Constraint } from './Constraint';
 
 export class RectangularBound implements Constraint {

@@ -8,13 +8,13 @@
  */
 
 import { Optimizer } from './Optimizer';
-import { FoundationModel } from '../models/FoundationModel';
+import { FoundationModel } from '../../models/FoundationModel';
 import { Individual } from './Individual';
-import { SolarPanelModel } from '../models/SolarPanelModel';
-import { GeneticAlgorithmSearchMethod, ObjectiveFunctionType } from '../types';
+import { SolarPanelModel } from '../../models/SolarPanelModel';
+import { GeneticAlgorithmSearchMethod, ObjectiveFunctionType } from '../../types';
 import { SolarOutputObjectiveFunction } from './SolarOutputObjectiveFunction';
-import { HALF_PI } from '../constants';
-import { Util } from '../Util';
+import { HALF_PI } from '../../constants';
+import { Util } from '../../Util';
 
 export class SolarPanelTiltAngleOptimizer extends Optimizer {
   solarPanels: SolarPanelModel[];
@@ -85,12 +85,13 @@ export class SolarPanelTiltAngleOptimizer extends Optimizer {
     return s.substring(0, s.length - 2) + ') = ' + individual.fitness;
   }
 
-  evolve(local: boolean, daily: boolean, profit: boolean, searchRadius: number): void {
-    //onStart();
+  startEvolving(): void {
     this.outsideGenerationCounter = 0;
     this.computeCounter = 0;
     this.fittestOfGenerations.fill(null);
+  }
 
+  evolve(local: boolean, daily: boolean, profit: boolean, searchRadius: number): void {
     // the number of individuals to evaluate is maximumGeneration * population.size(), subject to the convergence criterion
     if (this.maximumGenerations > 1) {
       while (!this.shouldTerminate()) {

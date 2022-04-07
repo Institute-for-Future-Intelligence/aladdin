@@ -2,8 +2,8 @@
  * @Copyright 2022. Institute for Future Intelligence, Inc.
  */
 
-import { GeneticAlgorithmSearchMethod } from '../types';
-import { FoundationModel } from '../models/FoundationModel';
+import { GeneticAlgorithmSearchMethod } from '../../types';
+import { FoundationModel } from '../../models/FoundationModel';
 import { Population } from './Population';
 import { Individual } from './Individual';
 import { ObjectiveFunction } from './ObjectiveFunction';

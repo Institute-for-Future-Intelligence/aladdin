@@ -163,6 +163,13 @@ export const i18n_zh_tw = {
       CancelSimulation: '取消模擬',
       PauseSimulation: '暫停模擬',
       ResumeSimulation: '繼續模擬',
+      EvolutionStarted: '演化開始。',
+      EvolutionCompleted: '演化結束。',
+      EvolutionAborted: '演化取消。',
+      EvolutionPaused: '演化暫停。',
+      CancelEvolution: '取消演化',
+      PauseEvolution: '暫停演化',
+      ResumeEvolution: '繼續演化',
     },
 
     menu: {

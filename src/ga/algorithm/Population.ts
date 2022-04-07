@@ -4,9 +4,9 @@
  */
 
 import { Individual } from './Individual';
-import { GeneticAlgorithmSelectionMethod } from '../types';
+import { GeneticAlgorithmSelectionMethod } from '../../types';
 import { Parents } from './Parents';
-import { Util } from '../Util';
+import { Util } from '../../Util';
 
 export class Population {
   individuals: Individual[];

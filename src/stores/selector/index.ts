@@ -89,6 +89,10 @@ export const runStaticSimulation = (state: CommonStoreState) => state.runStaticS
 
 export const pauseSimulation = (state: CommonStoreState) => state.pauseSimulation;
 
+export const runEvolution = (state: CommonStoreState) => state.runEvolution;
+
+export const pauseEvolution = (state: CommonStoreState) => state.pauseEvolution;
+
 export const updateSceneRadiusFlag = (state: CommonStoreState) => state.updateSceneRadiusFlag;
 
 export const updateSceneRadius = (state: CommonStoreState) => state.updateSceneRadius;
@@ -615,6 +619,10 @@ export const selectedElementHeight = (state: CommonStoreState) => state.selected
 export const simulationInProgress = (state: CommonStoreState) => state.simulationInProgress;
 
 export const simulationPaused = (state: CommonStoreState) => state.simulationPaused;
+
+export const evolutionInProgress = (state: CommonStoreState) => state.evolutionInProgress;
+
+export const evolutionPaused = (state: CommonStoreState) => state.evolutionPaused;
 
 export const updateDesignInfo = (state: CommonStoreState) => state.updateDesignInfo;
 
