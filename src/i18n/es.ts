@@ -311,7 +311,10 @@ export const i18n_es = {
       },
       examplesSubMenu: 'Ejemplos',
       solarEnergySubMenu: 'Energía Solar',
-      buildingsSubMenu: 'Edificios',
+      builtEnvironmentSubMenu: 'Built Environment',
+      residentialBuildingsSubMenu: 'Residential Buildings',
+      commercialBuildingsSubMenu: 'Commercial Buildings',
+      urbanPlanningSubMenu: 'Urban Planning',
       examples: {
         SunBeamAndHeliodon: 'Rayo de sol y heliodon',
         SolarFarm: 'Granja solar',
@@ -324,7 +327,8 @@ export const i18n_es = {
         SolarFarmInRealWorld: 'Granja solar en el mundo real',
         SolarTrackersInRealWorld: 'Seguidores solares en el mundo real',
         SolarUpdraftTowerInCity: 'Solar Updraft Tower in City',
-        SimpleHouse: 'Casa sencilla',
+        CapeCodStyleHouseWithShedDormer: 'Cape Cod Style House with Shed Dormer',
+        BarnStyleHouse: 'Barn Style House',
         OfficeBuilding: 'Edificio de oficinas',
         Hotel: 'Hotel',
         Heatmap1: 'Heatmap',
@@ -335,6 +339,8 @@ export const i18n_es = {
 
     avatarMenu: {
       AccountSettings: 'Configuraciones de la cuenta',
+      PrivacyInfo:
+        'When you sign in, your Google ID is used to create and access your Aladdin account. Only a seemingly random alphanumeric string is stored in our database as a reference. No personally identifiable data such as your name or email is ever gathered. For more information, see our Privacy Policy: https://intofuture.org/aladdin-privacy.html',
       SignIn: 'Iniciar sesión',
       SignOut: 'Desconectar',
       IfYouAreAStudent: 'Si eres un estudiante',

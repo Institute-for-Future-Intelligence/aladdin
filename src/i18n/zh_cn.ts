@@ -309,7 +309,10 @@ export const i18n_zh_cn = {
       },
       examplesSubMenu: '例子',
       solarEnergySubMenu: '太阳能',
-      buildingsSubMenu: '建筑物',
+      builtEnvironmentSubMenu: '建造环境',
+      residentialBuildingsSubMenu: '住宅建筑',
+      commercialBuildingsSubMenu: '商用建筑',
+      urbanPlanningSubMenu: '城市规划',
       examples: {
         SunBeamAndHeliodon: '太阳光束和日影仪',
         SolarFarm: '太阳能农场',
@@ -322,7 +325,8 @@ export const i18n_zh_cn = {
         SolarFarmInRealWorld: '模拟一个真实世界里的太阳能农场',
         SolarTrackersInRealWorld: '模拟一个真实世界里的追日光伏板阵列',
         SolarUpdraftTowerInCity: '太阳能上升气流塔在城市中的应用',
-        SimpleHouse: '一栋简单的房屋',
+        CapeCodStyleHouseWithShedDormer: '有棚顶窗的科德角风格的住宅',
+        BarnStyleHouse: '谷仓式风格的住宅',
         OfficeBuilding: '一栋简单的办公楼',
         Hotel: '一个旅馆场景',
         Heatmap1: '热图例一',
@@ -333,6 +337,8 @@ export const i18n_zh_cn = {
 
     avatarMenu: {
       AccountSettings: '账号设定',
+      PrivacyInfo:
+        '登录需要采用您的谷歌ID建立或进入您的阿拉丁账户。我们只储存一个随机的字符串作为您的ID。任何关于您的可辨识的个人信息都没有被收集。详情请参考我们的隐私声明：https://intofuture.org/aladdin-privacy.html',
       SignIn: '登录',
       SignOut: '退出账号',
       IfYouAreAStudent: '如果您是一个学生',

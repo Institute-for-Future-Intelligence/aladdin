@@ -587,7 +587,7 @@ const MainToolBar = ({ viewOnly = false }: MainToolBarProps) => {
                 </a>
               </Dropdown>
             ) : (
-              <Button type="primary" title={i18n.t('avatarMenu.SignIn', lang)} onClick={signIn}>
+              <Button type="primary" title={i18n.t('avatarMenu.PrivacyInfo', lang)} onClick={signIn}>
                 {i18n.t('avatarMenu.SignIn', lang)}
               </Button>
             )}
