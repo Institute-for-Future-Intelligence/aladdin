@@ -25,6 +25,7 @@ const SolarPanelTiltAngleOptimizerWizard = ({ setDialogVisible }: { setDialogVis
   const language = useStore(Selector.language);
   const foundation = useStore(Selector.selectedElement) as FoundationModel;
   const getChildrenOfType = useStore(Selector.getChildrenOfType);
+  const updateSolarPanelTiltAngleById = useStore(Selector.updateSolarPanelTiltAngleById);
 
   const [updateFlag, setUpdateFlag] = useState<boolean>(false);
   const [dragEnabled, setDragEnabled] = useState<boolean>(false);
@@ -82,7 +83,11 @@ const SolarPanelTiltAngleOptimizerWizard = ({ setDialogVisible }: { setDialogVis
   const cancel = () => {};
 
   const run = () => {
-    const solarPanels = getChildrenOfType(ObjectType.SolarPanel, foundation.id) as SolarPanelModel[];
+    const originalSolarPanels = getChildrenOfType(ObjectType.SolarPanel, foundation.id) as SolarPanelModel[];
+    const solarPanels = new Array<SolarPanelModel>();
+    for (const osp of originalSolarPanels) {
+      solarPanels.push(JSON.parse(JSON.stringify(osp)) as SolarPanelModel);
+    }
     const optimizer = new SolarPanelTiltAngleOptimizer(
       solarPanels,
       foundation,
@@ -97,6 +102,9 @@ const SolarPanelTiltAngleOptimizerWizard = ({ setDialogVisible }: { setDialogVis
       localSearchRadiusRef.current,
     );
     updateStoreParams();
+    for (const sp of solarPanels) {
+      updateSolarPanelTiltAngleById(sp.id, sp.tiltAngle);
+    }
   };
 
   return (

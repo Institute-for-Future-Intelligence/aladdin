@@ -309,7 +309,7 @@ export const i18n_zh_tw = {
       },
       examplesSubMenu: '例子',
       solarEnergySubMenu: '太陽能',
-      builtEnvironmentSubMenu: '建築環境',
+      builtEnvironmentSubMenu: '建造環境',
       residentialBuildingsSubMenu: '住宅建築',
       commercialBuildingsSubMenu: '商用建築',
       urbanPlanningSubMenu: '城市規劃',
@@ -338,6 +338,8 @@ export const i18n_zh_tw = {
 
     avatarMenu: {
       AccountSettings: '賬號設定',
+      PrivacyInfo:
+        '登錄需要採用您的谷歌ID建立或進入您的阿拉丁賬戶。我們只儲存一個隨機的字符串作為您的ID。任何關於您的可辨識的個人信息都沒有被收集。詳情請參考我們的隱私聲明：https://intofuture.org/aladdin-privacy.html',
       SignIn: '登錄',
       SignOut: '退出賬號',
       IfYouAreAStudent: '如果您是一個學生',
