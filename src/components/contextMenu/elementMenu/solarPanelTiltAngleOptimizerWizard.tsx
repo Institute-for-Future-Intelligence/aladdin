@@ -92,6 +92,7 @@ const SolarPanelTiltAngleOptimizerWizard = ({ setDialogVisible }: { setDialogVis
       solarPanels,
       foundation,
       populationSizeRef.current,
+      maximumGenerationsRef.current,
       solarPanels.length,
       0,
     );

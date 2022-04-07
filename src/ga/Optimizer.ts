@@ -26,7 +26,7 @@ export abstract class Optimizer {
   selectionRate: number = 0.5;
   maximumGenerations: number = 5;
 
-  fittestOfGenerations: Individual[] = [];
+  fittestOfGenerations: (Individual | null)[] = [];
   outsideGenerationCounter: number = 0;
   computeCounter: number = 0;
   converged: boolean = false;
@@ -42,11 +42,12 @@ export abstract class Optimizer {
   constructor(
     foundation: FoundationModel,
     populationSize: number,
+    maximumGenerations: number,
     chromosomeLength: number,
     discretizationSteps: number,
   ) {
     this.population = new Population(populationSize, chromosomeLength, discretizationSteps);
-    //constraints;
+    this.maximumGenerations = maximumGenerations;
     this.geneNames = new Array<string>(chromosomeLength);
     this.geneMinima = new Array<number>(chromosomeLength);
     this.geneMaxima = new Array<number>(chromosomeLength);
@@ -65,6 +66,8 @@ export abstract class Optimizer {
       this.setMinMax(i, cx - lx * 0.5, cx + lx * 0.5);
       this.setMinMax(i + 1, cy - ly * 0.5, cy + ly * 0.5);
     }
+    this.fittestOfGenerations = new Array<Individual | null>(this.maximumGenerations + 1);
+    this.fittestOfGenerations.fill(null);
   }
 
   setMinMax(i: number, min: number, max: number): void {

@@ -15,8 +15,10 @@ export class SolarOutputObjectiveFunction extends ObjectiveFunction {
     let result = 0;
     switch (this.type) {
       case ObjectiveFunctionType.YEARLY_OUTPUT:
+        result = Math.random(); // TODO: dummy function for testing
         break;
       default:
+        result = Math.random(); // TODO: dummy function for testing
         break;
     }
     return result;

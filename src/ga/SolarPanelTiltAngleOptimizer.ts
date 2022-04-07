@@ -13,7 +13,8 @@ import { Individual } from './Individual';
 import { SolarPanelModel } from '../models/SolarPanelModel';
 import { GeneticAlgorithmSearchMethod, ObjectiveFunctionType } from '../types';
 import { SolarOutputObjectiveFunction } from './SolarOutputObjectiveFunction';
-import { RectangularBound } from './RectangularBound';
+import { HALF_PI } from '../constants';
+import { Util } from '../Util';
 
 export class SolarPanelTiltAngleOptimizer extends Optimizer {
   solarPanels: SolarPanelModel[];
@@ -22,16 +23,17 @@ export class SolarPanelTiltAngleOptimizer extends Optimizer {
     solarPanels: SolarPanelModel[],
     foundation: FoundationModel,
     populationSize: number,
+    maximumGenerations: number,
     chromosomeLength: number,
     discretizationSteps: number,
   ) {
-    super(foundation, populationSize, chromosomeLength, discretizationSteps);
+    super(foundation, populationSize, maximumGenerations, chromosomeLength, discretizationSteps);
     this.solarPanels = solarPanels;
     this.objectiveFunction = new SolarOutputObjectiveFunction(ObjectiveFunctionType.DAILY_OUTPUT);
     // initialize the population with the first-born being the current design
     const firstBorn: Individual = this.population.individuals[0];
     for (const [i, panel] of solarPanels.entries()) {
-      const normalizedValue = 0.5 * (1.0 + panel.tiltAngle / 90.0);
+      const normalizedValue = 0.5 * (1.0 + panel.tiltAngle / HALF_PI);
       firstBorn.setGene(i, normalizedValue);
       if (this.searchMethod === GeneticAlgorithmSearchMethod.LOCAL_SEARCH_RANDOM_OPTIMIZATION) {
         for (let k = 1; k < this.population.individuals.length; k++) {
@@ -44,8 +46,8 @@ export class SolarPanelTiltAngleOptimizer extends Optimizer {
         }
       }
       this.geneNames[i] = 'Tilt Angle (' + panel.id + ')';
-      this.geneMinima[i] = -90;
-      this.geneMaxima[i] = 90;
+      this.geneMinima[i] = -HALF_PI;
+      this.geneMaxima[i] = HALF_PI;
       this.initialGene[i] = panel.tiltAngle;
     }
   }
@@ -53,7 +55,7 @@ export class SolarPanelTiltAngleOptimizer extends Optimizer {
   computeIndividualFitness(individual: Individual): void {
     for (let i = 0; i < individual.chromosome.length; i++) {
       const gene = individual.getGene(i);
-      this.solarPanels[i].tiltAngle = (2 * gene - 1) * 90;
+      this.solarPanels[i].tiltAngle = (2 * gene - 1) * HALF_PI;
     }
     if (this.objectiveFunction) {
       individual.fitness = this.objectiveFunction.compute();
@@ -65,7 +67,7 @@ export class SolarPanelTiltAngleOptimizer extends Optimizer {
     if (best) {
       for (let i = 0; i < best.chromosome.length; i++) {
         const gene = best.getGene(i);
-        this.solarPanels[i].tiltAngle = (2 * gene - 1) * 90;
+        this.solarPanels[i].tiltAngle = (2 * gene - 1) * HALF_PI;
         this.finalGene[i] = this.solarPanels[i].tiltAngle;
       }
       this.finalFitness = best.fitness;
@@ -78,7 +80,7 @@ export class SolarPanelTiltAngleOptimizer extends Optimizer {
     let s = '(';
     for (let i = 0; i < individual.chromosome.length; i++) {
       const gene = individual.getGene(i);
-      s += (2 * gene - 1) * 90 + ', ';
+      s += Util.toDegrees((2 * gene - 1) * HALF_PI).toFixed(2) + ', ';
     }
     return s.substring(0, s.length - 2) + ') = ' + individual.fitness;
   }
@@ -87,7 +89,7 @@ export class SolarPanelTiltAngleOptimizer extends Optimizer {
     //onStart();
     this.outsideGenerationCounter = 0;
     this.computeCounter = 0;
-    //this.fittestOfGenerations.fill(null);
+    this.fittestOfGenerations.fill(null);
 
     // the number of individuals to evaluate is maximumGeneration * population.size(), subject to the convergence criterion
     if (this.maximumGenerations > 1) {
@@ -109,7 +111,7 @@ export class SolarPanelTiltAngleOptimizer extends Optimizer {
     if (!this.converged) {
       const individual: Individual = this.population.individuals[indexOfIndividual];
       this.computeIndividualFitness(individual);
-      const generation = this.computeCounter / populationSize;
+      const generation = Math.floor(this.computeCounter / populationSize);
       console.log(
         'Generation ' +
           generation +
@@ -135,12 +137,13 @@ export class SolarPanelTiltAngleOptimizer extends Optimizer {
           }
         }
       }
+      this.computeCounter++;
     } else {
       this.applyFittest();
     }
   }
 
-  // if anyone in the current population doesn't meed the constraints, the entire population dies
+  // if anyone in the current population doesn't meet the constraints, the entire population dies
   // and the algorithm reverts to the previous generation -- not efficient
   detectViolations(): boolean {
     let detected = false;
@@ -149,25 +152,14 @@ export class SolarPanelTiltAngleOptimizer extends Optimizer {
       const populationSize = this.population.individuals.length;
       for (let i = 0; i < populationSize; i++) {
         const individual = this.population.individuals[i];
-        const x: number[] = new Array<number>(chromosomeLength / 2);
-        const y: number[] = new Array<number>(chromosomeLength / 2);
+        const angle: number[] = new Array<number>(chromosomeLength);
         for (let j = 0; j < chromosomeLength; j++) {
           const gene = individual.getGene(j);
-          const j2 = j / 2;
-          if (j % 2 === 0) {
-            x[j2] = this.minima[j] + gene * (this.maxima[j] - this.minima[j]);
-          } else {
-            y[j2] = this.minima[j] + gene * (this.maxima[j] - this.minima[j]);
-          }
+          angle[j] = this.minima[j] + gene * (this.maxima[j] - this.minima[j]);
         }
-        for (let j2 = 0; j2 < x.length; j2++) {
-          for (const c of this.constraints) {
-            if (c instanceof RectangularBound) {
-              const rb = c as RectangularBound;
-              if (rb.contains(x[j2], y[j2])) {
-                this.population.violations[i] = true;
-                detected = true;
-              }
+        if (this.constraints.length > 0) {
+          for (let j = 0; j < angle.length; j++) {
+            for (const c of this.constraints) {
             }
           }
         }

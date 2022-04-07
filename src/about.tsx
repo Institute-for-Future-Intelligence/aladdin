@@ -36,7 +36,7 @@ const About = ({ openAboutUs }: AboutProps) => {
       <div
         style={{
           position: 'absolute',
-          fontSize: 'medium',
+          fontSize: 'small',
           color: 'antiquewhite',
           cursor: 'pointer',
           bottom: '10px',

@@ -35,8 +35,9 @@ export class Population {
     }
   }
 
+  // sort the fitness in the descending order (sort b before a if b's fitness is higher than a's)
   sort(): void {
-    this.individuals.sort((a, b) => a.compare(b));
+    this.individuals.sort((a, b) => b.compare(a));
   }
 
   getNicheCount(selected: Individual, sigma: number): number {
@@ -114,7 +115,7 @@ export class Population {
     }
 
     const newBorn = this.individuals.length - numberOfSurvivers;
-    const oldFolks = new Array<Parents>(newBorn);
+    const oldFolks = new Array<Parents>();
     while (oldFolks.length * 2 < newBorn) {
       // multiplying 2 because each couple produces two children as shown in the mating algorithm below
       let p: Parents | null = null;

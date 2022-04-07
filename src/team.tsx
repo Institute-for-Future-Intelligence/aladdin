@@ -19,7 +19,7 @@ const Team = ({ top, height, color }: TeamProps) => {
   const lang = { lng: language };
   const linePos = top + 56 + 'px';
   const top100 = top + 100 + 'px';
-  const top200 = top + 190 + 'px';
+  const top200 = top + 205 + 'px';
 
   return (
     <div>
@@ -98,17 +98,19 @@ const Team = ({ top, height, color }: TeamProps) => {
                 <br />
               </td>
               <td>
-                <h3 style={{ color: color }}>{i18n.t('aboutUs.Research', lang)}</h3>
-                Shannon Sung
-                <br />
-                Charles Xie
-                <br />
-              </td>
-              <td>
                 <h3 style={{ color: color }}>{i18n.t('aboutUs.Support', lang)}</h3>
                 Rundong Jiang
                 <br />
                 Joy Massicotte
+                <br />
+              </td>
+              <td>
+                <h3 style={{ color: color }}>{i18n.t('aboutUs.Research', lang)}</h3>
+                Alex Barco
+                <br />
+                Shannon Sung
+                <br />
+                Charles Xie
                 <br />
               </td>
             </tr>
@@ -126,7 +128,7 @@ const Team = ({ top, height, color }: TeamProps) => {
           color: color,
         }}
       >
-        {i18n.t('aboutUs.Translators', lang)}: {Language.Spanish} (Alex Barco), {Language.Turkish} (Hasan Bircan)
+        {i18n.t('aboutUs.Translators', lang)}: {Language.Turkish} (Hasan Bircan)
         <br />
         <br />
         {i18n.t('aboutUs.Acknowledgment', lang)}: {i18n.t('aboutUs.FundingInformation', lang)}{' '}
