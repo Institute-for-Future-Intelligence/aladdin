@@ -9,7 +9,10 @@ import SensorImage from './assets/sensor.png';
 import SolarPanelImage from './assets/solar-panel.png';
 import WallImage from './assets/wall.png';
 import WindowImage from './assets/window.png';
-import RoofImage from './assets/roof.png';
+import PyramidRoofImage from './assets/pyramid_roof.png';
+import HipRoofImage from './assets/hip_roof.png';
+import GamblerRoofImage from './assets/gambler_roof.png';
+import GableRoofImage from './assets/gable_roof.png';
 import TreeImage from './assets/tree.png';
 import HumanImage from './assets/human.png';
 import ParabolicTroughImage from './assets/parabolic_trough.png';
@@ -251,7 +254,7 @@ const MainToolBarButtons = () => {
       >
         <img
           alt={'PyramidRoof'}
-          src={RoofImage}
+          src={PyramidRoofImage}
           height={36}
           width={36}
           style={{
@@ -272,7 +275,7 @@ const MainToolBarButtons = () => {
       >
         <img
           alt={'GableRoof'}
-          src={RoofImage}
+          src={GableRoofImage}
           height={36}
           width={36}
           style={{
@@ -293,7 +296,7 @@ const MainToolBarButtons = () => {
       >
         <img
           alt={'HipRoof'}
-          src={RoofImage}
+          src={HipRoofImage}
           height={36}
           width={36}
           style={{
@@ -314,7 +317,7 @@ const MainToolBarButtons = () => {
       >
         <img
           alt={'GambrelRoof'}
-          src={RoofImage}
+          src={GamblerRoofImage}
           height={36}
           width={36}
           style={{
@@ -647,7 +650,7 @@ const MainToolBarButtons = () => {
           <img
             title={i18n.t('toolbar.AddPyramidRoof', lang)}
             alt={'PyramidRoof'}
-            src={RoofImage}
+            src={PyramidRoofImage}
             height={36}
             width={36}
             style={{
@@ -664,7 +667,7 @@ const MainToolBarButtons = () => {
           <img
             title={i18n.t('toolbar.AddGableRoof', lang)}
             alt={'GableRoof'}
-            src={RoofImage}
+            src={GableRoofImage}
             height={36}
             width={36}
             style={{
@@ -681,7 +684,7 @@ const MainToolBarButtons = () => {
           <img
             title={i18n.t('toolbar.AddHipRoof', lang)}
             alt={'HipRoof'}
-            src={RoofImage}
+            src={HipRoofImage}
             height={36}
             width={36}
             style={{
@@ -698,7 +701,7 @@ const MainToolBarButtons = () => {
           <img
             title={i18n.t('toolbar.AddGambrelRoof', lang)}
             alt={'GambrelRoof'}
-            src={RoofImage}
+            src={GamblerRoofImage}
             height={36}
             width={36}
             style={{
