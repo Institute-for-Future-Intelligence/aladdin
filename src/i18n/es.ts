@@ -347,7 +347,7 @@ export const i18n_es = {
     avatarMenu: {
       AccountSettings: 'Configuraciones de la cuenta',
       PrivacyInfo:
-        'When you sign in, your Google ID is used to create and access your Aladdin account. Only a random alphanumeric string is stored in our database as a reference. No personally identifiable data such as your name or email is ever gathered. For more information, see our Privacy Policy: https://intofuture.org/aladdin-privacy.html',
+        'When you sign in, your Google ID is used to create and access your Aladdin account.\nOnly a random alphanumeric string is stored in our database as a reference.\nNo personally identifiable data such as your name or email is ever gathered.\nFor more information, see our Privacy Policy:\nhttps://intofuture.org/aladdin-privacy.html',
       SignIn: 'Iniciar sesión',
       SignOut: 'Desconectar',
       IfYouAreAStudent: 'Si eres un estudiante',

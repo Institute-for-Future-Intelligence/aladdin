@@ -345,7 +345,7 @@ export const i18n_zh_cn = {
     avatarMenu: {
       AccountSettings: '账号设定',
       PrivacyInfo:
-        '登录需要采用您的谷歌ID建立或进入您的阿拉丁账户。我们只储存一个随机的字符串作为您的ID。任何关于您的可辨识的个人信息都没有被收集。详情请参考我们的隐私声明：https://intofuture.org/aladdin-privacy.html',
+        '登录需要采用您的谷歌ID建立或进入您的阿拉丁账户。\n我们只储存一个随机的字符串作为您的ID。\n任何关于您的可辨识的个人信息都没有被收集。\n详情请参考我们的隐私声明：\nhttps://intofuture.org/aladdin-privacy.html',
       SignIn: '登录',
       SignOut: '退出账号',
       IfYouAreAStudent: '如果您是一个学生',
