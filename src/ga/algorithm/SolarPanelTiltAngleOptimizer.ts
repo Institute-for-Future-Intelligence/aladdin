@@ -24,10 +24,9 @@ export class SolarPanelTiltAngleOptimizer extends Optimizer {
     foundation: FoundationModel,
     populationSize: number,
     maximumGenerations: number,
-    chromosomeLength: number,
     discretizationSteps: number,
   ) {
-    super(foundation, populationSize, maximumGenerations, chromosomeLength, discretizationSteps);
+    super(foundation, populationSize, maximumGenerations, solarPanels.length, discretizationSteps);
     this.solarPanels = solarPanels;
     this.objectiveFunction = new SolarOutputObjectiveFunction(ObjectiveFunctionType.DAILY_OUTPUT);
     // initialize the population with the first-born being the current design

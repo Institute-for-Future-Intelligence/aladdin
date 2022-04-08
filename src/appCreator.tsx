@@ -251,7 +251,7 @@ const AppCreator = ({ viewOnly = false }: AppCreatorProps) => {
             <SimulationControlPanel />
           )}
           {evolutionInProgress && <EvolutionControlPanel />}
-          <Spinner spinning={!simulationPaused} />
+          <Spinner spinning={!simulationPaused || !evolutionPaused} />
         </>
       )}
       <div

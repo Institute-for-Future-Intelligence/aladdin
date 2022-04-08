@@ -20,11 +20,7 @@ const SolarPanelTiltAngleEvolution = () => {
   const foundation = useStore(Selector.selectedElement) as FoundationModel;
   const getChildrenOfType = useStore(Selector.getChildrenOfType);
   const updateSolarPanelTiltAngleById = useStore(Selector.updateSolarPanelTiltAngleById);
-
   const params = useStore.getState().geneticAlgorithmState.solarPanelTiltAngleGeneticAlgorithmParams;
-  const populationSizeRef = useRef<number>(params.populationSize);
-  const maximumGenerationsRef = useRef<number>(params.maximumGenerations);
-  const mutationRateRef = useRef<number>(params.mutationRate);
 
   const lang = { lng: language };
   const requestRef = useRef<number>(0);
@@ -32,6 +28,7 @@ const SolarPanelTiltAngleEvolution = () => {
   const pauseRef = useRef<boolean>(false);
   const solarPanelsRef = useRef<SolarPanelModel[]>();
   const optimizerRef = useRef<SolarPanelTiltAngleOptimizer>();
+  const individualIndexRef = useRef<number>(0);
 
   useEffect(() => {
     if (runEvolution) {
@@ -83,12 +80,12 @@ const SolarPanelTiltAngleEvolution = () => {
     optimizerRef.current = new SolarPanelTiltAngleOptimizer(
       solarPanelsRef.current,
       foundation,
-      populationSizeRef.current,
-      maximumGenerationsRef.current,
-      solarPanelsRef.current.length,
+      params.populationSize,
+      params.maximumGenerations,
       0,
     );
-    optimizerRef.current.mutationRate = mutationRateRef.current;
+    optimizerRef.current.mutationRate = params.mutationRate;
+    individualIndexRef.current = 0;
   };
 
   const updateSolarPanels = () => {
@@ -102,15 +99,13 @@ const SolarPanelTiltAngleEvolution = () => {
   const evolve = () => {
     if (!optimizerRef.current) return;
     if (runEvolution && !pauseRef.current) {
-      if (optimizerRef.current.outsideGenerationCounter >= maximumGenerationsRef.current) {
+      if (optimizerRef.current.outsideGenerationCounter >= params.maximumGenerations) {
         cancelAnimationFrame(requestRef.current);
         setCommonStore((state) => {
           state.runEvolution = false;
         });
         evolutionCompletedRef.current = true;
-        if (optimizerRef.current.maximumGenerations > 1) {
-          optimizerRef.current.applyFittest(); // show the fittest
-        }
+        optimizerRef.current.applyFittest(); // show the fittest
         setCommonStore((state) => {
           state.evolutionInProgress = false;
         });
@@ -118,20 +113,15 @@ const SolarPanelTiltAngleEvolution = () => {
         return;
       }
       // the number of individuals to evaluate is maximumGeneration * population.size(), subject to the convergence criterion
-      if (optimizerRef.current.maximumGenerations > 1) {
-        while (!optimizerRef.current.shouldTerminate()) {
-          for (let i = 0; i < optimizerRef.current.population.individuals.length; i++) {
-            optimizerRef.current.computeIndividual(i);
-            updateSolarPanels();
-          }
-          optimizerRef.current.outsideGenerationCounter++;
-        }
-      }
-
+      optimizerRef.current.computeIndividual(individualIndexRef.current % params.populationSize);
+      updateSolarPanels();
+      individualIndexRef.current++;
+      optimizerRef.current.outsideGenerationCounter = Math.floor(individualIndexRef.current / params.populationSize);
       // recursive call to the next step of the evolution, which is to evaluate the next individual
       requestRef.current = requestAnimationFrame(evolve);
     }
   };
+
   return <></>;
 };
 
