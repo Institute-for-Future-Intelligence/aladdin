@@ -140,7 +140,7 @@ export interface CommonStoreState {
   pauseSimulation: boolean;
   runEvolution: boolean;
   pauseEvolution: boolean;
-  objectiveEvaluationIndex: number;
+  objectiveEvaluationIndex: number; // index for evaluating objective function in genetic algorithms
   clickObjectType: ObjectType | null;
   contextMenuObjectType: ObjectType | null;
   duringCameraInteraction: boolean;

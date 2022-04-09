@@ -7,7 +7,7 @@ import { useStore } from '../stores/common';
 import * as Selector from 'src/stores/selector';
 import { showInfo } from '../helpers';
 import i18n from '../i18n/i18n';
-import { ObjectType } from '../types';
+import { ObjectiveFunctionType, ObjectType } from '../types';
 import { SolarPanelModel } from '../models/SolarPanelModel';
 import { SolarPanelTiltAngleOptimizer } from './algorithm/SolarPanelTiltAngleOptimizer';
 import { FoundationModel } from '../models/FoundationModel';
@@ -100,27 +100,49 @@ const SolarPanelTiltAngleEvolution = () => {
     }
   };
 
-  useEffect(() => {
-    if (!optimizerRef.current || !objectiveEvaluationIndex) return;
+  const getTotal = (): number => {
     let total = 0;
-    for (const datum of useStore.getState().dailyPvYield) {
-      for (const prop in datum) {
-        if (datum.hasOwnProperty(prop)) {
-          if (prop !== 'Hour') {
-            total += datum[prop] as number;
+    switch (params.objectiveFunctionType) {
+      case ObjectiveFunctionType.DAILY_OUTPUT:
+        for (const datum of useStore.getState().dailyPvYield) {
+          for (const prop in datum) {
+            if (datum.hasOwnProperty(prop)) {
+              if (prop !== 'Hour') {
+                total += datum[prop] as number;
+              }
+            }
           }
         }
-      }
+        break;
+      case ObjectiveFunctionType.YEARLY_OUTPUT:
+        for (const datum of useStore.getState().yearlyPvYield) {
+          for (const prop in datum) {
+            if (datum.hasOwnProperty(prop)) {
+              if (prop !== 'Month') {
+                total += datum[prop] as number;
+              }
+            }
+          }
+        }
+        break;
     }
-    // the number of individuals to evaluate is maximumGenerations * populationSize, subject to the convergence criterion
+    return total;
+  };
+
+  // the increment of objectiveEvaluationIndex is used as a trigger to request the next animation frame
+  useEffect(() => {
+    if (!optimizerRef.current || !objectiveEvaluationIndex) return;
+    // the number of individuals to evaluate is less than or equal to maximumGenerations * populationSize,
+    // subject to the convergence criterion
     convergedRef.current = optimizerRef.current.evolveIndividual(
       individualIndexRef.current % params.populationSize,
-      total,
+      getTotal(),
     );
     individualIndexRef.current++;
     optimizerRef.current.outsideGenerationCounter = Math.floor(individualIndexRef.current / params.populationSize);
     // recursive call to the next step of the evolution, which is to evaluate the next individual
     requestRef.current = requestAnimationFrame(evolve);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [objectiveEvaluationIndex]);
 
   const evolve = () => {
@@ -131,6 +153,7 @@ const SolarPanelTiltAngleEvolution = () => {
         setCommonStore((state) => {
           state.runEvolution = false;
           state.evolutionInProgress = false;
+          state.objectiveEvaluationIndex = 0;
         });
         evolutionCompletedRef.current = true;
         optimizerRef.current.applyFittest();
@@ -141,8 +164,16 @@ const SolarPanelTiltAngleEvolution = () => {
       optimizerRef.current.translateIndividual(individualIndexRef.current % params.populationSize);
       updateSolarPanels();
       setCommonStore((state) => {
-        state.dailyPvIndividualOutputs = false;
-        state.runDailySimulationForSolarPanels = true;
+        switch (params.objectiveFunctionType) {
+          case ObjectiveFunctionType.DAILY_OUTPUT:
+            state.dailyPvIndividualOutputs = false;
+            state.runDailySimulationForSolarPanels = true;
+            break;
+          case ObjectiveFunctionType.YEARLY_OUTPUT:
+            state.yearlyPvIndividualOutputs = false;
+            state.runYearlySimulationForSolarPanels = true;
+            break;
+        }
       });
     }
   };
