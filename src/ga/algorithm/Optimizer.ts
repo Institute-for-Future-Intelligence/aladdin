@@ -6,11 +6,9 @@ import { GeneticAlgorithmSearchMethod } from '../../types';
 import { FoundationModel } from '../../models/FoundationModel';
 import { Population } from './Population';
 import { Individual } from './Individual';
-import { ObjectiveFunction } from './ObjectiveFunction';
 import { Constraint } from './Constraint';
 
 export abstract class Optimizer {
-  objectiveFunction: ObjectiveFunction | null = null;
   population: Population;
   minima: number[];
   maxima: number[];

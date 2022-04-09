@@ -11,8 +11,7 @@ import { Optimizer } from './Optimizer';
 import { FoundationModel } from '../../models/FoundationModel';
 import { Individual } from './Individual';
 import { SolarPanelModel } from '../../models/SolarPanelModel';
-import { GeneticAlgorithmSearchMethod, ObjectiveFunctionType } from '../../types';
-import { SolarOutputObjectiveFunction } from './SolarOutputObjectiveFunction';
+import { GeneticAlgorithmSearchMethod } from '../../types';
 import { HALF_PI } from '../../constants';
 import { Util } from '../../Util';
 
@@ -28,8 +27,7 @@ export class SolarPanelTiltAngleOptimizer extends Optimizer {
   ) {
     super(foundation, populationSize, maximumGenerations, solarPanels.length, discretizationSteps);
     this.solarPanels = solarPanels;
-    this.objectiveFunction = new SolarOutputObjectiveFunction(ObjectiveFunctionType.DAILY_OUTPUT);
-    // initialize the population with the first-born being the current design
+    // initialize the population with the firstborn being the current design
     const firstBorn: Individual = this.population.individuals[0];
     for (const [i, panel] of solarPanels.entries()) {
       const normalizedValue = 0.5 * (1.0 + panel.tiltAngle / HALF_PI);
