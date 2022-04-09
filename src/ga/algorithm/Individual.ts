@@ -7,11 +7,13 @@ export class Individual {
 
   // store the fitness value evaluated by the objective function (NaN means not evaluated yet)
   fitness: number = Number.NaN;
+  discretizationSteps: number | undefined;
 
-  constructor(length: number, randomize: boolean, discretizationSteps: number) {
+  constructor(length: number, randomize: boolean, discretizationSteps?: number) {
     this.chromosome = new Array(length);
+    this.discretizationSteps = discretizationSteps;
     if (randomize) {
-      if (discretizationSteps > 0) {
+      if (discretizationSteps) {
         for (let i = 0; i < length; i++) {
           const n = Math.floor(Math.random() * discretizationSteps);
           this.chromosome[i] = n / discretizationSteps;
@@ -25,7 +27,7 @@ export class Individual {
   }
 
   copy(original: Individual): Individual {
-    const c = new Individual(original.chromosome.length, false, 0);
+    const c = new Individual(original.chromosome.length, false, original.discretizationSteps);
     for (let i = 0; i < c.chromosome.length; i++) {
       c.chromosome[i] = original.chromosome[i];
     }

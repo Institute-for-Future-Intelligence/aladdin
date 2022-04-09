@@ -17,11 +17,18 @@ export class Population {
   mutants: Individual[];
   selectionMethod: GeneticAlgorithmSelectionMethod = GeneticAlgorithmSelectionMethod.ROULETTE_WHEEL;
   convergenceThreshold: number;
-  discretizationSteps: number;
+  discretizationSteps: number | undefined;
 
-  constructor(populationSize: number, chromosomeLength: number, discretizationSteps: number) {
+  constructor(
+    populationSize: number,
+    chromosomeLength: number,
+    selectionMethod: GeneticAlgorithmSelectionMethod,
+    convergenceThreshold: number,
+    discretizationSteps?: number,
+  ) {
     this.beta = 0.5;
-    this.convergenceThreshold = 0.01;
+    this.selectionMethod = selectionMethod;
+    this.convergenceThreshold = convergenceThreshold;
     this.individuals = new Array(populationSize);
     this.savedGeneration = new Array(populationSize);
     this.violations = new Array(populationSize);
@@ -86,7 +93,7 @@ export class Population {
 
   /* Implement simple genetic algorithm (SGA) */
 
-  runSga(selectionRate: number, crossoverRate: number): void {
+  evolve(selectionRate: number, crossoverRate: number): void {
     this.selectSurvivors(selectionRate);
     this.crossover(crossoverRate);
   }
@@ -117,7 +124,7 @@ export class Population {
     const newBorn = this.individuals.length - numberOfSurvivers;
     const oldFolks = new Array<Parents>();
     while (oldFolks.length * 2 < newBorn) {
-      // multiplying 2 because each couple produces two children as shown in the mating algorithm below
+      // multiplying 2 above because each couple produces two children as shown in the mating algorithm below
       let p: Parents | null = null;
       switch (this.selectionMethod) {
         case GeneticAlgorithmSelectionMethod.TOURNAMENT:
@@ -131,6 +138,7 @@ export class Population {
       }
     }
 
+    // mating of dad and mom produces two children
     let childIndex = numberOfSurvivers;
     for (const p of oldFolks) {
       const n = p.dad.chromosome.length;
@@ -185,7 +193,7 @@ export class Population {
           break;
         }
       }
-    } while (mom == null);
+    } while (mom === null);
     if (dad && mom) return new Parents(dad, mom);
     return null;
   }
@@ -250,7 +258,7 @@ export class Population {
     }
   }
 
-  // check convergence bitwisely (so-called nominal convergence)
+  // check convergence bitwise (the so-called nominal convergence)
   isNominallyConverged(): boolean {
     if (this.survivors.length < 2) {
       return true;

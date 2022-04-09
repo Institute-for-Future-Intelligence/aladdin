@@ -85,7 +85,8 @@ const SolarPanelTiltAngleEvolution = () => {
       foundation,
       params.populationSize,
       params.maximumGenerations,
-      0,
+      params.selectionMethod,
+      params.convergenceThreshold,
     );
     optimizerRef.current.mutationRate = params.mutationRate;
     individualIndexRef.current = 0;
@@ -158,7 +159,13 @@ const SolarPanelTiltAngleEvolution = () => {
         evolutionCompletedRef.current = true;
         optimizerRef.current.applyFittest();
         updateSolarPanels();
-        showInfo(i18n.t('message.EvolutionCompleted', lang));
+        showInfo(
+          i18n.t('message.EvolutionCompleted', lang) +
+            '\n' +
+            (convergedRef.current
+              ? i18n.t('message.ConvergenceThresholdHasBeenReached', lang)
+              : i18n.t('message.MaximumNumberOfGenerationsHasBeenReached', lang)),
+        );
         return;
       }
       optimizerRef.current.translateIndividual(individualIndexRef.current % params.populationSize);

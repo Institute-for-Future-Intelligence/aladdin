@@ -11,7 +11,7 @@ import { Optimizer } from './Optimizer';
 import { FoundationModel } from '../../models/FoundationModel';
 import { Individual } from './Individual';
 import { SolarPanelModel } from '../../models/SolarPanelModel';
-import { GeneticAlgorithmSearchMethod } from '../../types';
+import { GeneticAlgorithmSearchMethod, GeneticAlgorithmSelectionMethod } from '../../types';
 import { HALF_PI } from '../../constants';
 import { Util } from '../../Util';
 
@@ -23,11 +23,12 @@ export class SolarPanelTiltAngleOptimizer extends Optimizer {
     foundation: FoundationModel,
     populationSize: number,
     maximumGenerations: number,
-    discretizationSteps: number,
+    selectionMethod: GeneticAlgorithmSelectionMethod,
+    convergenceThreshold: number,
   ) {
-    super(foundation, populationSize, maximumGenerations, solarPanels.length, discretizationSteps);
+    super(foundation, populationSize, maximumGenerations, solarPanels.length, selectionMethod, convergenceThreshold);
     this.solarPanels = solarPanels;
-    // initialize the population with the firstborn being the current design
+    // set the firstborn to be the current design
     const firstBorn: Individual = this.population.individuals[0];
     for (const [i, panel] of solarPanels.entries()) {
       const normalizedValue = 0.5 * (1.0 + panel.tiltAngle / HALF_PI);
@@ -91,6 +92,12 @@ export class SolarPanelTiltAngleOptimizer extends Optimizer {
     if (!this.converged) {
       const individual: Individual = this.population.individuals[indexOfIndividual];
       individual.fitness = fitness;
+      // the first individual of the first generation is used as a baseline
+      // (imagine it as the fittest of the zeroth generation)
+      if (this.computeCounter === 0 && indexOfIndividual === 0) {
+        this.fittestOfGenerations[0] = individual;
+        this.initialFitness = fitness;
+      }
       const generation = Math.floor(this.computeCounter / populationSize);
       console.log(
         'Generation ' +
@@ -103,7 +110,7 @@ export class SolarPanelTiltAngleOptimizer extends Optimizer {
       const isAtTheEndOfGeneration = this.computeCounter % populationSize === populationSize - 1;
       if (isAtTheEndOfGeneration) {
         this.population.saveGenes();
-        this.population.runSga(this.selectionRate, this.crossoverRate);
+        this.population.evolve(this.selectionRate, this.crossoverRate);
         const best = this.population.getFittest();
         if (best) {
           this.fittestOfGenerations[generation + 1] = best;
@@ -125,25 +132,6 @@ export class SolarPanelTiltAngleOptimizer extends Optimizer {
   // if anyone in the current population doesn't meet the constraints, the entire population dies
   // and the algorithm reverts to the previous generation -- not efficient
   detectViolations(): boolean {
-    let detected = false;
-    if (this.minima && this.maxima) {
-      const chromosomeLength = this.population.individuals[0].chromosome.length;
-      const populationSize = this.population.individuals.length;
-      for (let i = 0; i < populationSize; i++) {
-        const individual = this.population.individuals[i];
-        const angle: number[] = new Array<number>(chromosomeLength);
-        for (let j = 0; j < chromosomeLength; j++) {
-          const gene = individual.getGene(j);
-          angle[j] = this.minima[j] + gene * (this.maxima[j] - this.minima[j]);
-        }
-        if (this.constraints.length > 0) {
-          for (let j = 0; j < angle.length; j++) {
-            for (const c of this.constraints) {
-            }
-          }
-        }
-      }
-    }
-    return detected;
+    return false; // TODO
   }
 }

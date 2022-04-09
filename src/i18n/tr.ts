@@ -172,6 +172,8 @@ export const i18n_tr = {
       CancelEvolution: 'Cancel evolution',
       PauseEvolution: 'Pause evolution',
       ResumeEvolution: 'Resume evolution',
+      ConvergenceThresholdHasBeenReached: 'The convergence threshold has been reached.',
+      MaximumNumberOfGenerationsHasBeenReached: 'The maximum number of generations has been reached.',
     },
 
     menu: {

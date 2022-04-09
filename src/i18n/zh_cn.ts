@@ -170,6 +170,8 @@ export const i18n_zh_cn = {
       CancelEvolution: '取消演化',
       PauseEvolution: '暂停演化',
       ResumeEvolution: '继续演化',
+      ConvergenceThresholdHasBeenReached: '收敛阈值已达到。',
+      MaximumNumberOfGenerationsHasBeenReached: '最大世代数已达到。',
     },
 
     menu: {
