@@ -37,6 +37,8 @@ const EvolutionControlPanel = () => {
 
   const cancel = () => {
     setCommonStore((state) => {
+      state.runStaticSimulation = false;
+      state.pauseSimulation = false;
       state.runEvolution = false;
       state.pauseEvolution = false;
     });
@@ -44,6 +46,7 @@ const EvolutionControlPanel = () => {
 
   const pause = () => {
     setCommonStore((state) => {
+      state.pauseSimulation = true;
       if (state.runEvolution) {
         state.pauseEvolution = true;
       }
@@ -52,6 +55,7 @@ const EvolutionControlPanel = () => {
 
   const resume = () => {
     setCommonStore((state) => {
+      state.pauseSimulation = false;
       if (state.runEvolution) {
         state.pauseEvolution = false;
       }

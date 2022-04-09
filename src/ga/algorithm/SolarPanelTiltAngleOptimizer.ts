@@ -51,16 +51,6 @@ export class SolarPanelTiltAngleOptimizer extends Optimizer {
     }
   }
 
-  computeIndividualFitness(individual: Individual): void {
-    for (let i = 0; i < individual.chromosome.length; i++) {
-      const gene = individual.getGene(i);
-      this.solarPanels[i].tiltAngle = (2 * gene - 1) * HALF_PI;
-    }
-    if (this.objectiveFunction) {
-      individual.fitness = this.objectiveFunction.compute();
-    }
-  }
-
   applyFittest(): void {
     const best: Individual | undefined = this.population.getFittest();
     if (best) {
@@ -90,27 +80,20 @@ export class SolarPanelTiltAngleOptimizer extends Optimizer {
     this.fittestOfGenerations.fill(null);
   }
 
-  evolve(local: boolean, daily: boolean, profit: boolean, searchRadius: number): void {
-    // the number of individuals to evaluate is maximumGeneration * population.size(), subject to the convergence criterion
-    if (this.maximumGenerations > 1) {
-      while (!this.shouldTerminate()) {
-        for (let i = 0; i < this.population.individuals.length; i++) {
-          this.computeIndividual(i);
-        }
-        this.outsideGenerationCounter++;
-      }
-    }
-
-    if (this.maximumGenerations > 1) {
-      this.applyFittest(); // show the fittest
+  // translate gene to structure for the specified individual
+  translateIndividual(indexOfIndividual: number): void {
+    const individual: Individual = this.population.individuals[indexOfIndividual];
+    for (let i = 0; i < individual.chromosome.length; i++) {
+      const gene = individual.getGene(i);
+      this.solarPanels[i].tiltAngle = (2 * gene - 1) * HALF_PI;
     }
   }
 
-  computeIndividual(indexOfIndividual: number): void {
+  evolveIndividual(indexOfIndividual: number, fitness: number): void {
     const populationSize = this.population.individuals.length;
     if (!this.converged) {
       const individual: Individual = this.population.individuals[indexOfIndividual];
-      this.computeIndividualFitness(individual);
+      individual.fitness = fitness;
       const generation = Math.floor(this.computeCounter / populationSize);
       console.log(
         'Generation ' +

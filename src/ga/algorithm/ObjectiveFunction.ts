@@ -7,11 +7,5 @@ import { ObjectiveFunctionType } from '../../types';
 export abstract class ObjectiveFunction {
   type: ObjectiveFunctionType = ObjectiveFunctionType.DAILY_OUTPUT;
 
-  cancelled: boolean = false;
-
   abstract compute(): number;
-
-  cancel(): void {
-    this.cancelled = true;
-  }
 }

@@ -20,6 +20,7 @@ const SolarPanelTiltAngleEvolution = () => {
   const foundation = useStore(Selector.selectedElement) as FoundationModel;
   const getChildrenOfType = useStore(Selector.getChildrenOfType);
   const updateSolarPanelTiltAngleById = useStore(Selector.updateSolarPanelTiltAngleById);
+  const objectiveEvaluationIndex = useStore(Selector.objectiveEvaluationIndex);
   const params = useStore.getState().geneticAlgorithmState.solarPanelTiltAngleGeneticAlgorithmParams;
 
   const lang = { lng: language };
@@ -70,6 +71,7 @@ const SolarPanelTiltAngleEvolution = () => {
   const init = () => {
     setCommonStore((state) => {
       state.evolutionInProgress = true;
+      state.objectiveEvaluationIndex = 0;
     });
     evolutionCompletedRef.current = false;
     const originalSolarPanels = getChildrenOfType(ObjectType.SolarPanel, foundation.id) as SolarPanelModel[];
@@ -96,6 +98,26 @@ const SolarPanelTiltAngleEvolution = () => {
     }
   };
 
+  useEffect(() => {
+    if (!optimizerRef.current || !objectiveEvaluationIndex) return;
+    let total = 0;
+    for (const datum of useStore.getState().dailyPvYield) {
+      for (const prop in datum) {
+        if (datum.hasOwnProperty(prop)) {
+          if (prop !== 'Hour') {
+            total += datum[prop] as number;
+          }
+        }
+      }
+    }
+    // the number of individuals to evaluate is maximumGenerations * populationSize, subject to the convergence criterion
+    optimizerRef.current.evolveIndividual(individualIndexRef.current % params.populationSize, total);
+    individualIndexRef.current++;
+    optimizerRef.current.outsideGenerationCounter = Math.floor(individualIndexRef.current / params.populationSize);
+    // recursive call to the next step of the evolution, which is to evaluate the next individual
+    requestRef.current = requestAnimationFrame(evolve);
+  }, [objectiveEvaluationIndex]);
+
   const evolve = () => {
     if (!optimizerRef.current) return;
     if (runEvolution && !pauseRef.current) {
@@ -112,13 +134,12 @@ const SolarPanelTiltAngleEvolution = () => {
         showInfo(i18n.t('message.EvolutionCompleted', lang));
         return;
       }
-      // the number of individuals to evaluate is maximumGeneration * population.size(), subject to the convergence criterion
-      optimizerRef.current.computeIndividual(individualIndexRef.current % params.populationSize);
+      optimizerRef.current.translateIndividual(individualIndexRef.current % params.populationSize);
       updateSolarPanels();
-      individualIndexRef.current++;
-      optimizerRef.current.outsideGenerationCounter = Math.floor(individualIndexRef.current / params.populationSize);
-      // recursive call to the next step of the evolution, which is to evaluate the next individual
-      requestRef.current = requestAnimationFrame(evolve);
+      setCommonStore((state) => {
+        state.dailyPvIndividualOutputs = false;
+        state.runDailySimulationForSolarPanels = true;
+      });
     }
   };
 

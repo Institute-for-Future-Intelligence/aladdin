@@ -140,6 +140,7 @@ export interface CommonStoreState {
   pauseSimulation: boolean;
   runEvolution: boolean;
   pauseEvolution: boolean;
+  objectiveEvaluationIndex: number;
   clickObjectType: ObjectType | null;
   contextMenuObjectType: ObjectType | null;
   duringCameraInteraction: boolean;
@@ -992,6 +993,7 @@ export const useStore = create<CommonStoreState>(
           pauseSimulation: false,
           runEvolution: false,
           pauseEvolution: false,
+          objectiveEvaluationIndex: 0,
           clickObjectType: null,
           contextMenuObjectType: null,
           duringCameraInteraction: false,

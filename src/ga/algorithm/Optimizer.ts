@@ -75,8 +75,6 @@ export abstract class Optimizer {
     this.maxima[i] = max;
   }
 
-  abstract computeIndividualFitness(individual: Individual): void;
-
   abstract applyFittest(): void;
 
   stop(): void {
