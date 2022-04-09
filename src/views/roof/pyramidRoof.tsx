@@ -41,6 +41,7 @@ const PyramidRoof = ({ cx, cy, cz, lz, id, parentId, wallsId, selected }: Pyrami
   const setCommonStore = useStore(Selector.set);
   const getElementById = useStore(Selector.getElementById);
   const removeElementById = useStore(Selector.removeElementById);
+  const addUndoable = useStore(Selector.addUndoable);
   const elements = useStore(Selector.elements);
   const { camera, gl } = useThree();
   const ray = useMemo(() => new Raycaster(), []);

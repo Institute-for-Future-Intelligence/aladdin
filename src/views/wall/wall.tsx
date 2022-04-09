@@ -511,7 +511,7 @@ const Wall = ({
     invalidWindowIdRef.current = null;
   };
 
-  const addUndoableAdd = (elem: ElementModel) => {
+  const handleUndoableAdd = (elem: ElementModel) => {
     const undoableAdd = {
       name: 'Add',
       timestamp: Date.now(),
@@ -529,7 +529,7 @@ const Wall = ({
     addUndoable(undoableAdd);
   };
 
-  const addUndoableMove = (elem: ElementModel) => {
+  const handleUndoableMove = (elem: ElementModel) => {
     const undoableMove = {
       name: 'Move',
       timestamp: Date.now(),
@@ -550,7 +550,7 @@ const Wall = ({
     addUndoable(undoableMove);
   };
 
-  const addUndoableResize = (elem: ElementModel) => {
+  const handleUndoableResize = (elem: ElementModel) => {
     switch (elem.type) {
       case ObjectType.Window:
         const undoableResize = {
@@ -621,6 +621,7 @@ const Wall = ({
           case ObjectType.PyramidRoof: {
             if (parent && !roofId) {
               const roof = ElementModelFactory.makePyramidRoof([wallModel.id], parent, lz);
+              handleUndoableAdd(roof);
               setCommonStore((state) => {
                 state.elements.push(roof);
               });
@@ -633,6 +634,7 @@ const Wall = ({
           case ObjectType.GableRoof: {
             if (parent && !roofId) {
               const roof = ElementModelFactory.makeGableRoof([wallModel.id], parent, lz);
+              handleUndoableAdd(roof);
               setCommonStore((state) => {
                 state.elements.push(roof);
               });
@@ -645,6 +647,7 @@ const Wall = ({
           case ObjectType.HipRoof: {
             if (parent && !roofId) {
               const roof = ElementModelFactory.makeHipRoof([wallModel.id], parent, lz, lx / 2);
+              handleUndoableAdd(roof);
               setCommonStore((state) => {
                 state.elements.push(roof);
               });
@@ -657,6 +660,7 @@ const Wall = ({
           case ObjectType.GambrelRoof: {
             if (parent && !roofId) {
               const roof = ElementModelFactory.makeGambrelRoof([wallModel.id], parent, lz);
+              handleUndoableAdd(roof);
               setCommonStore((state) => {
                 state.elements.push(roof);
               });
@@ -708,12 +712,12 @@ const Wall = ({
       const elem = getElementById(grabRef.current.id);
       if (elem) {
         if (moveHandleTypeRef.current) {
-          addUndoableMove(elem);
+          handleUndoableMove(elem);
         } else if (resizeHandleTypeRef.current) {
           if (isSettingWindowEndPointRef.current) {
-            addUndoableAdd(elem);
+            handleUndoableAdd(elem);
           } else {
-            addUndoableResize(elem);
+            handleUndoableResize(elem);
           }
         }
       }
