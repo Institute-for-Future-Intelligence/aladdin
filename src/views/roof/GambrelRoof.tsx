@@ -15,6 +15,7 @@ import { useStoreRef } from 'src/stores/commonRef';
 import * as Selector from 'src/stores/selector';
 import { Util } from 'src/Util';
 import { DoubleSide, Euler, Mesh, Raycaster, Vector2, Vector3 } from 'three';
+import { handleUndoableResizeRoofHeight } from './roof';
 
 enum RoofHandleType {
   TopMid = 'TopMid',
@@ -60,6 +61,7 @@ const GambrelRoof = ({
   const { gl, camera } = useThree();
   const ray = useMemo(() => new Raycaster(), []);
   const mouse = useMemo(() => new Vector2(), []);
+  const oldHeight = useRef<number>(h);
 
   // set position and rotation
   const parent = getElementById(parentId);
@@ -76,6 +78,10 @@ const GambrelRoof = ({
       setH(minHeight);
     }
   }, [minHeight]);
+
+  useEffect(() => {
+    setH(lz);
+  }, [lz]);
 
   const currentWallArray = useMemo(() => {
     const array: WallModel[] = [];
@@ -369,6 +375,7 @@ const GambrelRoof = ({
               }
               setRoofHandleType(RoofHandleType.TopMid);
               useStoreRef.getState().setEnableOrbitController(false);
+              oldHeight.current = h;
             }}
           />
 
@@ -553,6 +560,12 @@ const GambrelRoof = ({
             }
           }}
           onPointerUp={() => {
+            switch (roofHandleType) {
+              case RoofHandleType.TopMid: {
+                handleUndoableResizeRoofHeight(id, oldHeight.current, h);
+                break;
+              }
+            }
             setEnableIntersectionPlane(false);
             setRoofHandleType(RoofHandleType.Null);
             useStoreRef.getState().setEnableOrbitController(true);

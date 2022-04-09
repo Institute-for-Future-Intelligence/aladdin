@@ -14,6 +14,7 @@ import { useStoreRef } from 'src/stores/commonRef';
 import { useThree } from '@react-three/fiber';
 import { HALF_PI } from 'src/constants';
 import { ElementModel } from 'src/models/ElementModel';
+import { handleUndoableResizeRoofHeight } from './roof';
 
 const intersectionPlanePosition = new Vector3();
 const intersectionPlaneRotation = new Euler();
@@ -53,12 +54,17 @@ const GableRoof = ({
   const [isShed, setIsShed] = useState(false); // todo: need change, wall height
 
   const intersectionPlaneRef = useRef<Mesh>(null);
+  const oldHeight = useRef<number>(h);
 
   useEffect(() => {
     if (h < minHeight) {
       setH(minHeight);
     }
   }, [minHeight]);
+
+  useEffect(() => {
+    setH(lz);
+  }, [lz]);
 
   const setRayCast = (e: PointerEvent) => {
     mouse.x = (e.offsetX / gl.domElement.clientWidth) * 2 - 1;
@@ -334,6 +340,7 @@ const GableRoof = ({
               }
               setRoofHandleType(RoofHandleType.Mid);
               useStoreRef.getState().setEnableOrbitController(false);
+              oldHeight.current = h;
             }}
           />
           {/* side handles */}
@@ -443,6 +450,15 @@ const GableRoof = ({
             }
           }}
           onPointerUp={() => {
+            switch (roofHandleType) {
+              case RoofHandleType.Mid: {
+                handleUndoableResizeRoofHeight(id, oldHeight.current, h);
+                break;
+              }
+              case RoofHandleType.Left:
+              case RoofHandleType.Right: {
+              }
+            }
             setShowIntersectionPlane(false);
             setRoofHandleType(RoofHandleType.Null);
             useStoreRef.getState().setEnableOrbitController(true);

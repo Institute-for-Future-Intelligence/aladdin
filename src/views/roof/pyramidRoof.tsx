@@ -31,7 +31,7 @@ import { Util } from 'src/Util';
 import wall from '../wall/wall';
 import { ObjectType } from 'src/types';
 import { CSG } from 'three-csg-ts';
-import { UndoableResizeRoofHeight } from 'src/undo/UndoableResize';
+import { handleUndoableResizeRoofHeight } from './roof';
 
 const centerPointPosition = new Vector3();
 const intersectionPlanePosition = new Vector3();
@@ -121,23 +121,6 @@ const PyramidRoof = ({ cx, cy, cz, lz, id, parentId, wallsId, selected }: Pyrami
       }
     }
     return false;
-  };
-
-  const handleUndoableResizeRoofHeight = (elemId: string, oldHeight: number, newHeight: number) => {
-    const undoableResizeRoofHeight = {
-      name: 'ResizeRoofHeight',
-      timestamp: Date.now(),
-      resizedElementId: elemId,
-      oldHeight: oldHeight,
-      newHeight: newHeight,
-      undo: () => {
-        updateRoofHeight(undoableResizeRoofHeight.resizedElementId, undoableResizeRoofHeight.oldHeight);
-      },
-      redo: () => {
-        updateRoofHeight(undoableResizeRoofHeight.resizedElementId, undoableResizeRoofHeight.newHeight);
-      },
-    } as UndoableResizeRoofHeight;
-    addUndoable(undoableResizeRoofHeight);
   };
 
   // get Walls array from left to right

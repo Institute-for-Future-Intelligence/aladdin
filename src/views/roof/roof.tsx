@@ -17,6 +17,28 @@ import PyramidRoof from './pyramidRoof';
 import GableRoof from './gableRoof';
 import HipRoof from './hipRoof';
 import GambrelRoof from './GambrelRoof';
+import { UndoableResizeRoofHeight } from 'src/undo/UndoableResize';
+
+export const handleUndoableResizeRoofHeight = (elemId: string, oldHeight: number, newHeight: number) => {
+  const undoableResizeRoofHeight = {
+    name: 'ResizeRoofHeight',
+    timestamp: Date.now(),
+    resizedElementId: elemId,
+    oldHeight: oldHeight,
+    newHeight: newHeight,
+    undo: () => {
+      useStore
+        .getState()
+        .updateRoofHeight(undoableResizeRoofHeight.resizedElementId, undoableResizeRoofHeight.oldHeight);
+    },
+    redo: () => {
+      useStore
+        .getState()
+        .updateRoofHeight(undoableResizeRoofHeight.resizedElementId, undoableResizeRoofHeight.newHeight);
+    },
+  } as UndoableResizeRoofHeight;
+  useStore.getState().addUndoable(undoableResizeRoofHeight);
+};
 
 const Roof = (props: RoofModel) => {
   const { id, wallsId, roofType } = props;

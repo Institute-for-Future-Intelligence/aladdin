@@ -14,6 +14,7 @@ import { useStoreRef } from 'src/stores/commonRef';
 import * as Selector from 'src/stores/selector';
 import { Util } from 'src/Util';
 import { DoubleSide, Euler, Mesh, Raycaster, Vector2, Vector3 } from 'three';
+import { handleUndoableResizeRoofHeight } from './roof';
 
 interface RoofSegmentWireframeProps {
   leftRoof: Vector3;
@@ -70,12 +71,17 @@ const HipRoof = ({
   const { gl, camera } = useThree();
   const ray = useMemo(() => new Raycaster(), []);
   const mouse = useMemo(() => new Vector2(), []);
+  const oldHeight = useRef<number>(h);
 
   useEffect(() => {
     if (h < minHeight) {
       setH(minHeight * 1.5);
     }
   }, [minHeight]);
+
+  useEffect(() => {
+    setH(lz);
+  }, [lz]);
 
   const currentWallArray = useMemo(() => {
     const array: WallModel[] = [];
@@ -297,6 +303,7 @@ const HipRoof = ({
               }
               setRoofHandleType(RoofHandleType.Mid);
               useStoreRef.getState().setEnableOrbitController(false);
+              oldHeight.current = h;
             }}
           />
           {/* right handle */}
@@ -384,6 +391,15 @@ const HipRoof = ({
             }
           }}
           onPointerUp={() => {
+            switch (roofHandleType) {
+              case RoofHandleType.Mid: {
+                handleUndoableResizeRoofHeight(id, oldHeight.current, h);
+                break;
+              }
+              case RoofHandleType.Left:
+              case RoofHandleType.Right: {
+              }
+            }
             setEnableIntersectionPlane(false);
             setRoofHandleType(RoofHandleType.Null);
             useStoreRef.getState().setEnableOrbitController(true);
