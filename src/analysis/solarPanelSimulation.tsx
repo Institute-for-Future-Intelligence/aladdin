@@ -171,7 +171,7 @@ const SolarPanelSimulation = ({ city }: SolarPanelSimulationProps) => {
       state.runDailySimulationForSolarPanels = false;
       state.simulationInProgress = false;
       state.simulationPaused = false;
-      state.viewState.showDailyPvYieldPanel = true;
+      if (!runEvolution) state.viewState.showDailyPvYieldPanel = true;
     });
     if (!runEvolution) {
       // don't show info when this simulation is called by an evolution
@@ -207,7 +207,7 @@ const SolarPanelSimulation = ({ city }: SolarPanelSimulationProps) => {
           state.simulationInProgress = false;
           state.simulationPaused = false;
           state.world.date = originalDateRef.current.toString();
-          state.viewState.showDailyPvYieldPanel = true;
+          if (!runEvolution) state.viewState.showDailyPvYieldPanel = true;
         });
         if (!runEvolution) {
           // don't show info when this simulation is called by an evolution
@@ -482,7 +482,7 @@ const SolarPanelSimulation = ({ city }: SolarPanelSimulationProps) => {
         }
       }
     }
-    if (showDailyPvYieldPanel) finishDaily();
+    if (!runEvolution && showDailyPvYieldPanel) finishDaily();
   };
 
   // TODO:

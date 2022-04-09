@@ -75,6 +75,7 @@ const DailyPvYieldPanel = ({ city }: DailyPvYieldPanelProps) => {
   const panelX = useStore(Selector.viewState.dailyPvYieldPanelX);
   const panelY = useStore(Selector.viewState.dailyPvYieldPanelY);
   const solarPanelLabels = useStore(Selector.solarPanelLabels);
+  const runEvolution = useStore(Selector.runEvolution);
 
   // nodeRef is to suppress ReactDOM.findDOMNode() deprecation warning. See:
   // https://github.com/react-grid-layout/react-draggable/blob/v4.4.2/lib/DraggableCore.js#L159-L171
@@ -219,60 +220,64 @@ const DailyPvYieldPanel = ({ city }: DailyPvYieldPanelProps) => {
                 {i18n.t('solarPanelYieldPanel.DailyTotal', lang)}:{sum.toFixed(3)} {i18n.t('word.kWh', lang)}
               </Space>
             )}
-            {solarPanelCount > 1 && (
-              <Switch
-                title={i18n.t('solarPanelYieldPanel.ShowOutputsOfIndividualSolarPanels', lang)}
-                checkedChildren={<UnorderedListOutlined />}
-                unCheckedChildren={<UnorderedListOutlined />}
-                checked={individualOutputs}
-                onChange={(checked) => {
-                  if (solarPanelCount === 0) {
-                    showInfo(i18n.t('analysisManager.NoSolarPanelForAnalysis', lang));
-                    return;
-                  }
-                  showInfo(i18n.t('message.SimulationStarted', lang));
-                  // give it 0.1 second for the info to show up
-                  setTimeout(() => {
-                    setCommonStore((state) => {
-                      state.simulationInProgress = true;
-                      state.dailyPvIndividualOutputs = checked;
-                      state.runDailySimulationForSolarPanels = true;
-                      state.pauseDailySimulationForSolarPanels = false;
+            {!runEvolution && (
+              <>
+                {solarPanelCount > 1 && (
+                  <Switch
+                    title={i18n.t('solarPanelYieldPanel.ShowOutputsOfIndividualSolarPanels', lang)}
+                    checkedChildren={<UnorderedListOutlined />}
+                    unCheckedChildren={<UnorderedListOutlined />}
+                    checked={individualOutputs}
+                    onChange={(checked) => {
+                      if (solarPanelCount === 0) {
+                        showInfo(i18n.t('analysisManager.NoSolarPanelForAnalysis', lang));
+                        return;
+                      }
+                      showInfo(i18n.t('message.SimulationStarted', lang));
+                      // give it 0.1 second for the info to show up
+                      setTimeout(() => {
+                        setCommonStore((state) => {
+                          state.simulationInProgress = true;
+                          state.dailyPvIndividualOutputs = checked;
+                          state.runDailySimulationForSolarPanels = true;
+                          state.pauseDailySimulationForSolarPanels = false;
+                        });
+                      }, 100);
+                    }}
+                  />
+                )}
+                <Button
+                  type="default"
+                  icon={<ReloadOutlined />}
+                  title={i18n.t('word.Update', lang)}
+                  onClick={() => {
+                    if (solarPanelCount === 0) {
+                      showInfo(i18n.t('analysisManager.NoSolarPanelForAnalysis', lang));
+                      return;
+                    }
+                    showInfo(i18n.t('message.SimulationStarted', lang));
+                    // give it 0.1 second for the info to show up
+                    setTimeout(() => {
+                      setCommonStore((state) => {
+                        state.simulationInProgress = true;
+                        state.runDailySimulationForSolarPanels = true;
+                        state.pauseDailySimulationForSolarPanels = false;
+                      });
+                    }, 100);
+                  }}
+                />
+                <Button
+                  type="default"
+                  icon={<SaveOutlined />}
+                  title={i18n.t('word.SaveAsImage', lang)}
+                  onClick={() => {
+                    screenshot('line-graph-' + labelX + '-' + labelY, 'daily-pv-yield', {}).then(() => {
+                      showInfo(i18n.t('message.ScreenshotSaved', lang));
                     });
-                  }, 100);
-                }}
-              />
+                  }}
+                />
+              </>
             )}
-            <Button
-              type="default"
-              icon={<ReloadOutlined />}
-              title={i18n.t('word.Update', lang)}
-              onClick={() => {
-                if (solarPanelCount === 0) {
-                  showInfo(i18n.t('analysisManager.NoSolarPanelForAnalysis', lang));
-                  return;
-                }
-                showInfo(i18n.t('message.SimulationStarted', lang));
-                // give it 0.1 second for the info to show up
-                setTimeout(() => {
-                  setCommonStore((state) => {
-                    state.simulationInProgress = true;
-                    state.runDailySimulationForSolarPanels = true;
-                    state.pauseDailySimulationForSolarPanels = false;
-                  });
-                }, 100);
-              }}
-            />
-            <Button
-              type="default"
-              icon={<SaveOutlined />}
-              title={i18n.t('word.SaveAsImage', lang)}
-              onClick={() => {
-                screenshot('line-graph-' + labelX + '-' + labelY, 'daily-pv-yield', {}).then(() => {
-                  showInfo(i18n.t('message.ScreenshotSaved', lang));
-                });
-              }}
-            />
           </Space>
         </ColumnWrapper>
       </Container>

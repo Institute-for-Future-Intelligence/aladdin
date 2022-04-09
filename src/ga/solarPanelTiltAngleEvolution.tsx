@@ -30,6 +30,7 @@ const SolarPanelTiltAngleEvolution = () => {
   const solarPanelsRef = useRef<SolarPanelModel[]>();
   const optimizerRef = useRef<SolarPanelTiltAngleOptimizer>();
   const individualIndexRef = useRef<number>(0);
+  const convergedRef = useRef<boolean>(false);
 
   useEffect(() => {
     if (runEvolution) {
@@ -88,6 +89,7 @@ const SolarPanelTiltAngleEvolution = () => {
     );
     optimizerRef.current.mutationRate = params.mutationRate;
     individualIndexRef.current = 0;
+    convergedRef.current = false;
   };
 
   const updateSolarPanels = () => {
@@ -111,7 +113,10 @@ const SolarPanelTiltAngleEvolution = () => {
       }
     }
     // the number of individuals to evaluate is maximumGenerations * populationSize, subject to the convergence criterion
-    optimizerRef.current.evolveIndividual(individualIndexRef.current % params.populationSize, total);
+    convergedRef.current = optimizerRef.current.evolveIndividual(
+      individualIndexRef.current % params.populationSize,
+      total,
+    );
     individualIndexRef.current++;
     optimizerRef.current.outsideGenerationCounter = Math.floor(individualIndexRef.current / params.populationSize);
     // recursive call to the next step of the evolution, which is to evaluate the next individual
@@ -121,16 +126,15 @@ const SolarPanelTiltAngleEvolution = () => {
   const evolve = () => {
     if (!optimizerRef.current) return;
     if (runEvolution && !pauseRef.current) {
-      if (optimizerRef.current.outsideGenerationCounter >= params.maximumGenerations) {
+      if (convergedRef.current || optimizerRef.current.outsideGenerationCounter >= params.maximumGenerations) {
         cancelAnimationFrame(requestRef.current);
         setCommonStore((state) => {
           state.runEvolution = false;
-        });
-        evolutionCompletedRef.current = true;
-        optimizerRef.current.applyFittest(); // show the fittest
-        setCommonStore((state) => {
           state.evolutionInProgress = false;
         });
+        evolutionCompletedRef.current = true;
+        optimizerRef.current.applyFittest();
+        updateSolarPanels();
         showInfo(i18n.t('message.EvolutionCompleted', lang));
         return;
       }

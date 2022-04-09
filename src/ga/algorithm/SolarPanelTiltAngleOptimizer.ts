@@ -59,7 +59,6 @@ export class SolarPanelTiltAngleOptimizer extends Optimizer {
       }
       this.finalFitness = best.fitness;
       console.log('Fittest: ' + SolarPanelTiltAngleOptimizer.individualToString(best));
-      // displayFittest();
     }
   }
 
@@ -87,7 +86,7 @@ export class SolarPanelTiltAngleOptimizer extends Optimizer {
     }
   }
 
-  evolveIndividual(indexOfIndividual: number, fitness: number): void {
+  evolveIndividual(indexOfIndividual: number, fitness: number): boolean {
     const populationSize = this.population.individuals.length;
     if (!this.converged) {
       const individual: Individual = this.population.individuals[indexOfIndividual];
@@ -112,16 +111,15 @@ export class SolarPanelTiltAngleOptimizer extends Optimizer {
         if (this.detectViolations()) {
           this.population.restoreGenes();
         } else {
-          this.converged = this.population.isSgaConverged();
+          this.converged = this.population.isNominallyConverged();
           if (!this.converged && this.searchMethod === GeneticAlgorithmSearchMethod.GLOBAL_SEARCH_UNIFORM_SELECTION) {
             this.population.mutate(this.mutationRate);
           }
         }
       }
       this.computeCounter++;
-    } else {
-      this.applyFittest();
     }
+    return this.converged;
   }
 
   // if anyone in the current population doesn't meet the constraints, the entire population dies

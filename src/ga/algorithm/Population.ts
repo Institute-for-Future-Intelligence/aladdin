@@ -251,12 +251,12 @@ export class Population {
   }
 
   // check convergence bitwisely (so-called nominal convergence)
-  isSgaConverged(): boolean {
+  isNominallyConverged(): boolean {
     if (this.survivors.length < 2) {
       return true;
     }
     const n = this.individuals[0].chromosome.length;
-    const m = Math.max(2, this.survivors.length / 2);
+    const m = Math.max(2, Math.floor(this.survivors.length / 2));
     for (let i = 0; i < n; i++) {
       let average = 0;
       for (let j = 0; j < m; j++) {
