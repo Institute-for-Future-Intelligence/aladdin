@@ -953,6 +953,8 @@ export const updateWallThicknessAboveFoundation = (state: CommonStoreState) => s
 
 export const updateWallThicknessForAll = (state: CommonStoreState) => state.updateWallThicknessForAll;
 
+export const updateRoofHeight = (state: CommonStoreState) => state.updateRoofHeight;
+
 export * as solarPanelArrayLayoutParams from './solarPanelArrayLayoutParams';
 
 // genetic algorithms

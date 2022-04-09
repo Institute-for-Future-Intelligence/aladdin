@@ -523,6 +523,7 @@ const Wall = ({
         setCommonStore((state) => {
           state.elements.push(undoableAdd.addedElement);
           state.selectedElement = undoableAdd.addedElement;
+          state.deletedRoofId = null;
         });
       },
     } as UndoableAdd;

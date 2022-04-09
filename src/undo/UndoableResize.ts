@@ -57,3 +57,9 @@ export interface UndoableResizeWall extends Undoable {
   newPoint: number[][];
   flippedWallSide: FlippedWallSide;
 }
+
+export interface UndoableResizeRoofHeight extends Undoable {
+  resizedElementId: string;
+  oldHeight: number;
+  newHeight: number;
+}

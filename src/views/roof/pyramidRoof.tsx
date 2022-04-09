@@ -31,6 +31,7 @@ import { Util } from 'src/Util';
 import wall from '../wall/wall';
 import { ObjectType } from 'src/types';
 import { CSG } from 'three-csg-ts';
+import { UndoableResizeRoofHeight } from 'src/undo/UndoableResize';
 
 const centerPointPosition = new Vector3();
 const intersectionPlanePosition = new Vector3();
@@ -42,18 +43,19 @@ const PyramidRoof = ({ cx, cy, cz, lz, id, parentId, wallsId, selected }: Pyrami
   const getElementById = useStore(Selector.getElementById);
   const removeElementById = useStore(Selector.removeElementById);
   const addUndoable = useStore(Selector.addUndoable);
+  const updateRoofHeight = useStore(Selector.updateRoofHeight);
   const elements = useStore(Selector.elements);
   const { camera, gl } = useThree();
   const ray = useMemo(() => new Raycaster(), []);
   const mouse = useMemo(() => new Vector2(), []);
 
-  const intersectionPlaneRef = useRef<Mesh>(null);
-  const isWallLoopRef = useRef(false);
-
   const [h, setH] = useState(lz);
   const [minHeight, setMinHeight] = useState(lz);
-
   const [showIntersectionPlane, setShowIntersectionPlane] = useState(false);
+
+  const intersectionPlaneRef = useRef<Mesh>(null);
+  const isWallLoopRef = useRef(false);
+  const oldHeight = useRef<number>(h);
 
   const prevWallsIdSet = new Set<string>(wallsId);
 
@@ -62,6 +64,10 @@ const PyramidRoof = ({ cx, cy, cz, lz, id, parentId, wallsId, selected }: Pyrami
       setH(minHeight);
     }
   }, [minHeight]);
+
+  useEffect(() => {
+    setH(lz);
+  }, [lz]);
 
   const setRayCast = (e: PointerEvent) => {
     mouse.x = (e.offsetX / gl.domElement.clientWidth) * 2 - 1;
@@ -115,6 +121,23 @@ const PyramidRoof = ({ cx, cy, cz, lz, id, parentId, wallsId, selected }: Pyrami
       }
     }
     return false;
+  };
+
+  const handleUndoableResizeRoofHeight = (elemId: string, oldHeight: number, newHeight: number) => {
+    const undoableResizeRoofHeight = {
+      name: 'ResizeRoofHeight',
+      timestamp: Date.now(),
+      resizedElementId: elemId,
+      oldHeight: oldHeight,
+      newHeight: newHeight,
+      undo: () => {
+        updateRoofHeight(undoableResizeRoofHeight.resizedElementId, undoableResizeRoofHeight.oldHeight);
+      },
+      redo: () => {
+        updateRoofHeight(undoableResizeRoofHeight.resizedElementId, undoableResizeRoofHeight.newHeight);
+      },
+    } as UndoableResizeRoofHeight;
+    addUndoable(undoableResizeRoofHeight);
   };
 
   // get Walls array from left to right
@@ -324,6 +347,7 @@ const PyramidRoof = ({ cx, cy, cz, lz, id, parentId, wallsId, selected }: Pyrami
           args={[0.3]}
           position={[centerPoint.x, centerPoint.y, h + 0.3]}
           onPointerDown={() => {
+            oldHeight.current = h;
             setShowIntersectionPlane(true);
             useStoreRef.getState().setEnableOrbitController(false);
           }}
@@ -354,14 +378,8 @@ const PyramidRoof = ({ cx, cy, cz, lz, id, parentId, wallsId, selected }: Pyrami
             }
           }}
           onPointerUp={(e) => {
-            setCommonStore((state) => {
-              for (const e of state.elements) {
-                if (e.id === id) {
-                  e.lz = h;
-                  break;
-                }
-              }
-            });
+            updateRoofHeight(id, h);
+            handleUndoableResizeRoofHeight(id, oldHeight.current, h);
             setShowIntersectionPlane(false);
             useStoreRef.getState().setEnableOrbitController(true);
           }}

@@ -470,6 +470,9 @@ export interface CommonStoreState {
   updateWallThicknessAboveFoundation: (foundationId: string, thickness: number) => void;
   updateWallThicknessForAll: (thickness: number) => void;
 
+  // for roofs
+  updateRoofHeight: (id: string, height: number) => void;
+
   // for trees
   updateTreeTypeById: (id: string, type: TreeType) => void;
   updateTreeShowModelById: (id: string, showModel: boolean) => void;
@@ -3545,6 +3548,17 @@ export const useStore = create<CommonStoreState>(
               for (const e of state.elements) {
                 if (e.type === ObjectType.Wall && !e.locked) {
                   (e as WallModel).ly = thickness;
+                }
+              }
+            });
+          },
+
+          updateRoofHeight(id, height) {
+            immerSet((state: CommonStoreState) => {
+              for (const e of state.elements) {
+                if (e.id === id) {
+                  e.lz = height;
+                  break;
                 }
               }
             });
