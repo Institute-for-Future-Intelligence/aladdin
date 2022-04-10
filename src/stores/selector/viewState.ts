@@ -206,3 +206,9 @@ export const showYearlyUpdraftTowerYieldPanel = (state: CommonStoreState) =>
 export const yearlyUpdraftTowerYieldPanelX = (state: CommonStoreState) => state.viewState.yearlyUpdraftTowerYieldPanelX;
 
 export const yearlyUpdraftTowerYieldPanelY = (state: CommonStoreState) => state.viewState.yearlyUpdraftTowerYieldPanelY;
+
+export const showEvolutionPanel = (state: CommonStoreState) => state.viewState.showEvolutionPanel;
+
+export const evolutionPanelX = (state: CommonStoreState) => state.viewState.evolutionPanelX;
+
+export const evolutionPanelY = (state: CommonStoreState) => state.viewState.evolutionPanelY;

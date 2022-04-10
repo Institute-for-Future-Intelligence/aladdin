@@ -104,8 +104,6 @@ export enum GraphDataType {
   DailyHeliostatYield = 17,
   YearlyUpdraftTowerYield = 18,
   DailyUpdraftTowerYield = 19,
-  DailyUpdraftTowerAirTemperature = 20,
-  DailyUpdraftTowerWindSpeed = 21,
 }
 
 export enum Theme {

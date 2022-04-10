@@ -2,7 +2,7 @@
  * @Copyright 2022. Institute for Future Intelligence, Inc.
  */
 
-import React, { useEffect, useMemo, useState } from 'react';
+import React, { useMemo, useState } from 'react';
 import {
   CartesianGrid,
   Label,
@@ -17,12 +17,10 @@ import {
 } from 'recharts';
 import { createSymbol, SYMBOLS } from './symbols';
 import { PRESET_COLORS } from '../constants';
-import { DatumEntry, GraphDataType } from '../types';
+import { DatumEntry } from '../types';
 import { CurveType } from 'recharts/types/shape/Curve';
 
-export interface BiaxialLineGraphProps {
-  type1: GraphDataType;
-  type2: GraphDataType;
+export interface GaBiaxialLineGraphProps {
   dataSource: DatumEntry[];
   height: number;
   dataKeyAxisX?: string;
@@ -39,12 +37,9 @@ export interface BiaxialLineGraphProps {
   curveType?: CurveType;
   referenceX?: number | string;
   fractionDigits?: number;
-  symbolCount?: number;
 }
 
-const BiaxialLineGraph = ({
-  type1,
-  type2,
+const GaBiaxialLineGraph = ({
   dataSource,
   height,
   dataKeyAxisX,
@@ -61,102 +56,63 @@ const BiaxialLineGraph = ({
   curveType = 'linear',
   referenceX,
   fractionDigits = 2,
-  symbolCount = 12,
-}: BiaxialLineGraphProps) => {
-  const [lineCount, setLineCount] = useState<number>(0);
-  const [horizontalGridLines, setHorizontalGridLines] = useState<boolean>(true);
-  const [verticalGridLines, setVerticalGridLines] = useState<boolean>(true);
+}: GaBiaxialLineGraphProps) => {
   const [legendDataKey, setLegendDataKey] = useState<string | null>(null);
-  const [lineWidth, setLineWidth] = useState<number>(2);
-  const [symbolSize, setSymbolSize] = useState<number>(1);
-
-  //init
-  useEffect(() => {
-    if (!dataSource || dataSource.length === 0) {
-      return;
-    }
-    let len = Array.isArray(dataSource) ? Object.keys(dataSource[0]).length - 1 : Object.keys(dataSource).length - 1;
-    len--; // subtract one because the first one is the ambient temperature, which is shared among SUTs
-    if (lineCount !== len / 2) {
-      setLineCount(len / 2);
-    }
-  }, [lineCount, dataSource]);
+  const horizontalGridLines = true;
+  const verticalGridLines = true;
+  const lineWidth = 2;
+  const symbolSize = 1;
 
   const getLines = useMemo(() => {
+    if (!dataSource || dataSource.length === 0) return [];
+    // the first column is for the x-axis, the last is for the objective
+    const lineCount = Object.keys(dataSource[0]).length - 1;
+    const symbolCount = dataSource.length;
     const lines = [];
     let defaultSymbol;
+    for (let i = 0; i < lineCount - 1; i++) {
+      let name = 'Gene' + (i + 1);
+      const opacity = legendDataKey === null ? 1 : legendDataKey === name ? 1 : 0.25;
+      const symbol = createSymbol(SYMBOLS[2 * i], symbolSize, symbolCount, opacity);
+      if (i === 0) defaultSymbol = symbol;
+      lines.push(
+        <Line
+          yAxisId="left"
+          key={'left-' + i}
+          type={curveType}
+          name={name}
+          dataKey={name}
+          stroke={PRESET_COLORS[i]}
+          strokeDasharray={'5 3'}
+          opacity={opacity}
+          strokeWidth={lineWidth / 2}
+          dot={symbolCount > 0 ? (symbol ? symbol : defaultSymbol) : false}
+          isAnimationActive={false}
+        />,
+      );
+    }
+    const name = 'Objective';
+    const opacity = legendDataKey === null ? 1 : legendDataKey === name ? 1 : 0.25;
+    const symbol = createSymbol(SYMBOLS[lineCount], symbolSize, symbolCount, opacity);
     lines.push(
       <Line
-        yAxisId="left"
-        key={'ambient-temperature'}
+        yAxisId="right"
+        key={'right'}
         type={curveType}
-        name={'T_Ambient'}
-        dataKey={'T_Ambient'}
-        stroke={PRESET_COLORS[0]}
-        strokeDasharray={'5 5'}
-        opacity={0.5}
+        name={name}
+        dataKey={name}
+        stroke={PRESET_COLORS[lineCount]}
+        opacity={opacity}
         strokeWidth={lineWidth}
-        dot={false}
+        dot={symbolCount > 0 ? (symbol ? symbol : defaultSymbol) : false}
         isAnimationActive={false}
       />,
     );
-    for (let i = 0; i < lineCount; i++) {
-      let name = '';
-      switch (type1) {
-        case GraphDataType.DailyUpdraftTowerAirTemperature:
-          name = 'T_Tower' + (i + 1);
-          break;
-      }
-      const opacity = legendDataKey === null ? 1 : legendDataKey === name ? 1 : 0.25;
-      if (name !== '') {
-        const symbol = createSymbol(SYMBOLS[2 * i], symbolSize, symbolCount, opacity);
-        if (i === 0) defaultSymbol = symbol;
-        const isMeasured = name.startsWith('Measured');
-        lines.push(
-          <Line
-            yAxisId="left"
-            key={'left-' + i}
-            type={curveType}
-            name={name}
-            dataKey={name}
-            stroke={PRESET_COLORS[2 * i]}
-            strokeDasharray={isMeasured ? '5 5' : ''}
-            opacity={isMeasured ? opacity / 2 : opacity}
-            strokeWidth={lineWidth}
-            dot={!isMeasured && symbolCount > 0 ? (symbol ? symbol : defaultSymbol) : false}
-            isAnimationActive={false}
-          />,
-        );
-      }
-      name = '';
-      switch (type2) {
-        case GraphDataType.DailyUpdraftTowerWindSpeed:
-          name = 'V_Tower' + (i + 1);
-          break;
-      }
-      if (name !== '') {
-        const symbol = createSymbol(SYMBOLS[2 * i + 1], symbolSize, symbolCount, opacity);
-        lines.push(
-          <Line
-            yAxisId="right"
-            key={'right-' + i}
-            type={curveType}
-            name={name}
-            dataKey={name}
-            stroke={PRESET_COLORS[2 * i + 1]}
-            opacity={opacity}
-            strokeWidth={lineWidth}
-            dot={symbolCount > 0 ? (symbol ? symbol : defaultSymbol) : false}
-            isAnimationActive={false}
-          />,
-        );
-      }
-    }
     return lines;
-  }, [type1, curveType, lineCount, lineWidth, symbolCount, symbolSize, legendDataKey]);
+  }, [dataSource, curveType, lineWidth, symbolSize, legendDataKey]);
 
   // @ts-ignore
-  const onMouseDown = (e) => {};
+  const onMouseDown = () => {};
 
   // @ts-ignore
   const onMouseEnterLegend = (o) => {
@@ -164,7 +120,7 @@ const BiaxialLineGraph = ({
   };
 
   // @ts-ignore
-  const onMouseLeaveLegend = (o) => {
+  const onMouseLeaveLegend = () => {
     setLegendDataKey(null);
   };
 
@@ -226,15 +182,13 @@ const BiaxialLineGraph = ({
                   />
                 </YAxis>
                 {getLines}
-                {lineCount > 1 && (
-                  <Legend
-                    iconType="plainline"
-                    verticalAlign="top"
-                    height={36}
-                    onMouseLeave={onMouseLeaveLegend}
-                    onMouseEnter={onMouseEnterLegend}
-                  />
-                )}
+                <Legend
+                  iconType="plainline"
+                  verticalAlign="top"
+                  height={36}
+                  onMouseLeave={onMouseLeaveLegend}
+                  onMouseEnter={onMouseEnterLegend}
+                />
               </LineChart>
             </ResponsiveContainer>
           </div>
@@ -244,4 +198,4 @@ const BiaxialLineGraph = ({
   );
 };
 
-export default BiaxialLineGraph;
+export default GaBiaxialLineGraph;

@@ -955,6 +955,12 @@ export const updateWallThicknessForAll = (state: CommonStoreState) => state.upda
 
 export * as solarPanelArrayLayoutParams from './solarPanelArrayLayoutParams';
 
+// genetic algorithms
+
+export const fittestIndividualResults = (state: CommonStoreState) => state.fittestIndividualResults;
+
+export const setFittestIndividualResults = (state: CommonStoreState) => state.setFittestIndividualResults;
+
 export * as viewState from './viewState';
 
 export * as world from './world';

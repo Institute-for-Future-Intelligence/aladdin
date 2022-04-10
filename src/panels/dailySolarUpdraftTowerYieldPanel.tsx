@@ -14,7 +14,7 @@ import { Button, Space } from 'antd';
 import { screenshot, showInfo } from '../helpers';
 import { ReloadOutlined, SaveOutlined } from '@ant-design/icons';
 import i18n from '../i18n/i18n';
-import BiaxialLineGraph from '../components/biaxialLineGraph';
+import SutBiaxialLineGraph from '../components/sutBiaxialLineGraph';
 
 const Container = styled.div`
   position: fixed;
@@ -214,9 +214,7 @@ const DailySolarUpdraftTowerYieldPanel = ({ city }: DailySolarUpdraftTowerYieldP
             symbolCount={24}
             referenceX={now.getHours()}
           />
-          <BiaxialLineGraph
-            type1={GraphDataType.DailyUpdraftTowerAirTemperature}
-            type2={GraphDataType.DailyUpdraftTowerWindSpeed}
+          <SutBiaxialLineGraph
             dataSource={dailyResults}
             height={responsiveHeight}
             dataKeyAxisX={'Hour'}
@@ -267,7 +265,7 @@ const DailySolarUpdraftTowerYieldPanel = ({ city }: DailySolarUpdraftTowerYieldP
               icon={<SaveOutlined />}
               title={i18n.t('word.SaveAsImage', lang)}
               onClick={() => {
-                screenshot('line-graph-' + labelHour + '-' + labelYield, 'daily-Updraft-tower-yield', {}).then(() => {
+                screenshot('line-graph-' + labelHour + '-' + labelYield, 'daily-updraft-tower-yield', {}).then(() => {
                   showInfo(i18n.t('message.ScreenshotSaved', lang));
                 });
               }}

@@ -603,6 +603,10 @@ export interface CommonStoreState {
   updraftTowerLabels: string[];
   setUpdraftTowerLabels: (labels: string[]) => void;
 
+  // genetic algorithms
+  fittestIndividualResults: DatumEntry[];
+  setFittestIndividualResults: (data: DatumEntry[]) => void;
+
   sunlightDirection: Vector3;
   setSunlightDirection: (vector: Vector3) => void;
 
@@ -984,6 +988,13 @@ export const useStore = create<CommonStoreState>(
             });
           },
 
+          // genetic algorithms
+          fittestIndividualResults: [],
+          setFittestIndividualResults(data) {
+            immerSet((state: CommonStoreState) => {
+              state.fittestIndividualResults = [...data];
+            });
+          },
           // aabb must be initialized with defined vectors or it may cause problems as it may be used to
           // determine the scopes of the axes.
           aabb: new Box3(new Vector3(-10, -10, -10), new Vector3(10, 10, 10)),

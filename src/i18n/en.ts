@@ -562,6 +562,8 @@ export const i18n_en = {
     optimizationMenu: {
       Optimization: 'Optimization',
       SolarPanelTiltAngleOptimization: 'Solar Panel Tilt Angle Optimization',
+      Generation: 'Generation',
+      Gene: 'Gene',
       Objective: 'Objective',
       ObjectiveFunctionDailyOutput: 'Daily Output',
       ObjectiveFunctionYearlyOutput: 'Yearly Output',

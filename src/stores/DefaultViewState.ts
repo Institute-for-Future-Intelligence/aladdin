@@ -50,6 +50,7 @@ export class DefaultViewState implements ViewState {
   showYearlyHeliostatYieldPanel: boolean;
   showDailyUpdraftTowerYieldPanel: boolean;
   showYearlyUpdraftTowerYieldPanel: boolean;
+  showEvolutionPanel: boolean;
   autoRotate: boolean;
 
   heliodonPanelX: number;
@@ -94,6 +95,8 @@ export class DefaultViewState implements ViewState {
   dailyUpdraftTowerYieldPanelY: number;
   yearlyUpdraftTowerYieldPanelX: number;
   yearlyUpdraftTowerYieldPanelY: number;
+  evolutionPanelX: number;
+  evolutionPanelY: number;
 
   mapZoom: number;
   mapType: string;
@@ -146,6 +149,7 @@ export class DefaultViewState implements ViewState {
     this.showYearlyHeliostatYieldPanel = false;
     this.showDailyUpdraftTowerYieldPanel = false;
     this.showYearlyUpdraftTowerYieldPanel = false;
+    this.showEvolutionPanel = false;
     this.autoRotate = false;
 
     this.heliodonPanelX = 0;
@@ -190,6 +194,8 @@ export class DefaultViewState implements ViewState {
     this.dailyUpdraftTowerYieldPanelY = 0;
     this.yearlyUpdraftTowerYieldPanelX = 0;
     this.yearlyUpdraftTowerYieldPanelY = 0;
+    this.evolutionPanelX = 0;
+    this.evolutionPanelY = 0;
 
     this.mapZoom = 18;
     this.mapType = 'roadmap';
@@ -242,6 +248,7 @@ export class DefaultViewState implements ViewState {
     viewState.showYearlyHeliostatYieldPanel = false;
     viewState.showDailyUpdraftTowerYieldPanel = false;
     viewState.showYearlyUpdraftTowerYieldPanel = false;
+    viewState.showEvolutionPanel = false;
     viewState.autoRotate = false;
 
     viewState.heliodonPanelX = 0;
@@ -286,6 +293,8 @@ export class DefaultViewState implements ViewState {
     viewState.dailyUpdraftTowerYieldPanelY = 0;
     viewState.yearlyUpdraftTowerYieldPanelX = 0;
     viewState.yearlyUpdraftTowerYieldPanelY = 0;
+    viewState.evolutionPanelX = 0;
+    viewState.evolutionPanelY = 0;
 
     viewState.mapZoom = 18;
     viewState.mapType = 'roadmap';

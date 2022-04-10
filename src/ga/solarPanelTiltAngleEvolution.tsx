@@ -7,10 +7,12 @@ import { useStore } from '../stores/common';
 import * as Selector from 'src/stores/selector';
 import { showInfo } from '../helpers';
 import i18n from '../i18n/i18n';
-import { ObjectiveFunctionType, ObjectType } from '../types';
+import { DatumEntry, ObjectiveFunctionType, ObjectType } from '../types';
 import { SolarPanelModel } from '../models/SolarPanelModel';
 import { SolarPanelTiltAngleOptimizer } from './algorithm/SolarPanelTiltAngleOptimizer';
 import { FoundationModel } from '../models/FoundationModel';
+import { HALF_PI } from '../constants';
+import { Util } from '../Util';
 
 const SolarPanelTiltAngleEvolution = () => {
   const setCommonStore = useStore(Selector.set);
@@ -20,6 +22,7 @@ const SolarPanelTiltAngleEvolution = () => {
   const foundation = useStore(Selector.selectedElement) as FoundationModel;
   const getChildrenOfType = useStore(Selector.getChildrenOfType);
   const updateSolarPanelTiltAngleById = useStore(Selector.updateSolarPanelTiltAngleById);
+  const setFittestIndividualResults = useStore(Selector.setFittestIndividualResults);
   const objectiveEvaluationIndex = useStore(Selector.objectiveEvaluationIndex);
   const params = useStore.getState().geneticAlgorithmState.solarPanelTiltAngleGeneticAlgorithmParams;
 
@@ -70,6 +73,7 @@ const SolarPanelTiltAngleEvolution = () => {
 
   // getting ready for the evolution
   const init = () => {
+    if (!foundation) return;
     setCommonStore((state) => {
       state.evolutionInProgress = true;
       state.objectiveEvaluationIndex = 0;
@@ -159,6 +163,7 @@ const SolarPanelTiltAngleEvolution = () => {
         evolutionCompletedRef.current = true;
         optimizerRef.current.applyFittest();
         updateSolarPanels();
+        updateResults();
         showInfo(
           i18n.t('message.EvolutionCompleted', lang) +
             '\n' +
@@ -166,6 +171,9 @@ const SolarPanelTiltAngleEvolution = () => {
               ? i18n.t('message.ConvergenceThresholdHasBeenReached', lang)
               : i18n.t('message.MaximumNumberOfGenerationsHasBeenReached', lang)),
         );
+        setCommonStore((state) => {
+          state.viewState.showEvolutionPanel = true;
+        });
         return;
       }
       optimizerRef.current.translateIndividual(individualIndexRef.current % params.populationSize);
@@ -183,6 +191,24 @@ const SolarPanelTiltAngleEvolution = () => {
         }
       });
     }
+  };
+
+  const updateResults = () => {
+    if (!optimizerRef.current) return;
+    const results: DatumEntry[] = [];
+    for (const [index, fg] of optimizerRef.current.fittestOfGenerations.entries()) {
+      if (fg) {
+        const n = fg.chromosome.length;
+        const datum: DatumEntry = {};
+        datum['Generation'] = index;
+        for (let k = 0; k < n; k++) {
+          datum['Gene' + (k + 1)] = Util.toDegrees((2 * fg.chromosome[k] - 1) * HALF_PI);
+        }
+        datum['Objective'] = fg.fitness;
+        results.push(datum);
+      }
+    }
+    setFittestIndividualResults(results);
   };
 
   return <></>;

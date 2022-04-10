@@ -74,6 +74,7 @@ import DiurnalTemperaturePanel from './panels/diurnalTemperaturePanel';
 import YearlySolarUpdraftTowerYieldPanel from './panels/yearlySolarUpdraftTowerYieldPanel';
 import EvolutionControlPanel from './panels/evolutionControlPanel';
 import SolarPanelTiltAngleEvolution from './ga/solarPanelTiltAngleEvolution';
+import SolarPanelTiltAngleOptimizationResult from './panels/solarPanelTiltAngleOptimizationResult';
 
 export interface AppCreatorProps {
   viewOnly: boolean;
@@ -125,6 +126,7 @@ const AppCreator = ({ viewOnly = false }: AppCreatorProps) => {
   const showYearlyHeliostatYieldPanel = useStore(Selector.viewState.showYearlyHeliostatYieldPanel);
   const showDailyUpdraftTowerYieldPanel = useStore(Selector.viewState.showDailyUpdraftTowerYieldPanel);
   const showYearlyUpdraftTowerYieldPanel = useStore(Selector.viewState.showYearlyUpdraftTowerYieldPanel);
+  const showEvolutionPanel = useStore(Selector.viewState.showEvolutionPanel);
   const addedFoundationId = useStore(Selector.addedFoundationId);
   const addedCuboidId = useStore(Selector.addedCuboidId);
 
@@ -381,6 +383,7 @@ const AppCreator = ({ viewOnly = false }: AppCreatorProps) => {
       {showDailyUpdraftTowerYieldPanel && <DailySolarUpdraftTowerYieldPanel city={city} />}
       {showYearlyUpdraftTowerYieldPanel && <YearlySolarUpdraftTowerYieldPanel city={city} />}
       {showSolarRadiationHeatmap && <HeatmapControlPanel />}
+      {showEvolutionPanel && <SolarPanelTiltAngleOptimizationResult />}
       <DropdownContextMenu>
         <div>
           <Canvas

@@ -546,6 +546,8 @@ export const i18n_zh_tw = {
     optimizationMenu: {
       Optimization: '優化',
       SolarPanelTiltAngleOptimization: '光伏板傾斜角度優化',
+      Generation: '世代',
+      Gene: '基因',
       Objective: '目標函數',
       ObjectiveFunctionDailyOutput: '當日產出',
       ObjectiveFunctionYearlyOutput: '全年產出',

@@ -49,6 +49,7 @@ export interface ViewState {
   showYearlyHeliostatYieldPanel: boolean;
   showDailyUpdraftTowerYieldPanel: boolean;
   showYearlyUpdraftTowerYieldPanel: boolean;
+  showEvolutionPanel: boolean;
 
   heliodonPanelX: number;
   heliodonPanelY: number;
@@ -92,6 +93,8 @@ export interface ViewState {
   dailyUpdraftTowerYieldPanelY: number;
   yearlyUpdraftTowerYieldPanelX: number;
   yearlyUpdraftTowerYieldPanelY: number;
+  evolutionPanelX: number;
+  evolutionPanelY: number;
 
   mapZoom: number;
   mapType: string;
