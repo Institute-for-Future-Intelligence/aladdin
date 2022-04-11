@@ -11,8 +11,8 @@ import { Button, Space } from 'antd';
 import { screenshot, showInfo } from '../helpers';
 import { RightCircleOutlined, SaveOutlined } from '@ant-design/icons';
 import i18n from '../i18n/i18n';
-import { FoundationModel } from '../models/FoundationModel';
 import GaBiaxialLineGraph from '../components/gaBiaxialLineGraph';
+import { ObjectType } from '../types';
 
 const Container = styled.div`
   position: fixed;
@@ -66,7 +66,7 @@ const SolarPanelTiltAngleOptimizationResult = () => {
   const fittestIndividualResults = useStore(Selector.fittestIndividualResults);
   const panelX = useStore(Selector.viewState.evolutionPanelX);
   const panelY = useStore(Selector.viewState.evolutionPanelY);
-  const foundation = useStore(Selector.selectedElement) as FoundationModel;
+  const selectedElement = useStore(Selector.selectedElement);
 
   // nodeRef is to suppress ReactDOM.findDOMNode() deprecation warning. See:
   // https://github.com/react-grid-layout/react-draggable/blob/v4.4.2/lib/DraggableCore.js#L159-L171
@@ -167,7 +167,7 @@ const SolarPanelTiltAngleOptimizationResult = () => {
             fractionDigits={2}
           />
           <Space style={{ alignSelf: 'center' }}>
-            {foundation && (
+            {selectedElement && selectedElement.type === ObjectType.Foundation && (
               <Button
                 type="default"
                 icon={<RightCircleOutlined />}

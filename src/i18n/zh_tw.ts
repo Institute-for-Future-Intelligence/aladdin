@@ -167,6 +167,7 @@ export const i18n_zh_tw = {
       EvolutionCompleted: '演化結束。',
       EvolutionAborted: '演化取消。',
       EvolutionPaused: '演化暫停。',
+      EncounterEvolutionError: '演化出錯。',
       CancelEvolution: '取消演化',
       PauseEvolution: '暫停演化',
       ResumeEvolution: '繼續演化',

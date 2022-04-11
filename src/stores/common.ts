@@ -841,6 +841,11 @@ export const useStore = create<CommonStoreState>(
           setDailyPvYield(data) {
             immerSet((state: CommonStoreState) => {
               state.dailyPvYield = [...data];
+              // increment the index of objective evaluation to notify the genetic algorithm that
+              // this simulation has completed and the result has been reported to the common store
+              if (state.runEvolution) {
+                state.objectiveEvaluationIndex++;
+              }
             });
           },
           yearlyPvYield: [],
@@ -848,6 +853,11 @@ export const useStore = create<CommonStoreState>(
           setYearlyPvYield(data) {
             immerSet((state: CommonStoreState) => {
               state.yearlyPvYield = [...data];
+              // increment the index of objective evaluation to notify the genetic algorithm that
+              // this simulation has completed and the result has been reported to the common store
+              if (state.runEvolution) {
+                state.objectiveEvaluationIndex++;
+              }
             });
           },
           solarPanelLabels: [],

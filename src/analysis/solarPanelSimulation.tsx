@@ -308,13 +308,6 @@ const SolarPanelSimulation = ({ city }: SolarPanelSimulationProps) => {
         data.push({ Hour: i, Total: total[i] } as DatumEntry);
       }
       setDailyYield(data);
-      if (runEvolution) {
-        // increment the index of objective evaluation to notify the genetic algorithm that
-        // this simulation has completed and the result has been reported to the common store
-        setCommonStore((state) => {
-          state.objectiveEvaluationIndex++;
-        });
-      }
     }
   };
 
@@ -535,13 +528,6 @@ const SolarPanelSimulation = ({ city }: SolarPanelSimulationProps) => {
         results.push({ Month: MONTHS[month], Total: total * 30 } as DatumEntry);
       }
       setYearlyYield(results);
-      if (runEvolution) {
-        // increment the index of objective evaluation to notify the genetic algorithm that
-        // this simulation has completed and the result has been reported to the common store
-        setCommonStore((state) => {
-          state.objectiveEvaluationIndex++;
-        });
-      }
     }
   };
 

@@ -101,7 +101,7 @@ export class SolarPanelTiltAngleOptimizer extends Optimizer {
       const generation = Math.floor(this.computeCounter / populationSize);
       console.log(
         'Generation ' +
-          generation +
+          (generation + 1) +
           ', individual ' +
           indexOfIndividual +
           ' : ' +
@@ -113,7 +113,7 @@ export class SolarPanelTiltAngleOptimizer extends Optimizer {
         this.population.evolve(this.selectionRate, this.crossoverRate);
         const best = this.population.getFittest();
         if (best) {
-          this.fittestOfGenerations[generation + 1] = best;
+          this.fittestOfGenerations[generation + 1] = best.getCopy();
         }
         if (this.detectViolations()) {
           this.population.restoreGenes();

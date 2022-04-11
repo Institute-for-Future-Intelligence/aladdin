@@ -168,6 +168,7 @@ export const i18n_es = {
       EvolutionCompleted: 'Evolution completed.',
       EvolutionAborted: 'Evolution aborted.',
       EvolutionPaused: 'Evolution paused.',
+      EncounterEvolutionError: 'Encountered an evolution error.',
       CancelEvolution: 'Cancel evolution',
       PauseEvolution: 'Pause evolution',
       ResumeEvolution: 'Resume evolution',

@@ -26,12 +26,12 @@ export class Individual {
     }
   }
 
-  copy(original: Individual): Individual {
-    const c = new Individual(original.chromosome.length, false, original.discretizationSteps);
+  getCopy(): Individual {
+    const c = new Individual(this.chromosome.length, false, this.discretizationSteps);
     for (let i = 0; i < c.chromosome.length; i++) {
-      c.chromosome[i] = original.chromosome[i];
+      c.chromosome[i] = this.chromosome[i];
     }
-    this.fitness = original.fitness;
+    c.fitness = this.fitness;
     return c;
   }
 

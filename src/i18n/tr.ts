@@ -169,6 +169,7 @@ export const i18n_tr = {
       EvolutionCompleted: 'Evolution completed.',
       EvolutionAborted: 'Evolution aborted.',
       EvolutionPaused: 'Evolution paused.',
+      EncounterEvolutionError: 'Encountered an evolution error.',
       CancelEvolution: 'Cancel evolution',
       PauseEvolution: 'Pause evolution',
       ResumeEvolution: 'Resume evolution',

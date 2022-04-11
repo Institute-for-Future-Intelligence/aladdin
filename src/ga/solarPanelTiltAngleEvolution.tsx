@@ -5,7 +5,7 @@
 import React, { useEffect, useRef } from 'react';
 import { useStore } from '../stores/common';
 import * as Selector from 'src/stores/selector';
-import { showInfo } from '../helpers';
+import { showError, showInfo } from '../helpers';
 import i18n from '../i18n/i18n';
 import { DatumEntry, ObjectiveFunctionType, ObjectType } from '../types';
 import { SolarPanelModel } from '../models/SolarPanelModel';
@@ -84,17 +84,21 @@ const SolarPanelTiltAngleEvolution = () => {
     for (const osp of originalSolarPanels) {
       solarPanelsRef.current.push(JSON.parse(JSON.stringify(osp)) as SolarPanelModel);
     }
-    optimizerRef.current = new SolarPanelTiltAngleOptimizer(
-      solarPanelsRef.current,
-      foundation,
-      params.populationSize,
-      params.maximumGenerations,
-      params.selectionMethod,
-      params.convergenceThreshold,
-    );
-    optimizerRef.current.mutationRate = params.mutationRate;
-    individualIndexRef.current = 0;
-    convergedRef.current = false;
+    if (solarPanelsRef.current.length > 0) {
+      optimizerRef.current = new SolarPanelTiltAngleOptimizer(
+        solarPanelsRef.current,
+        foundation,
+        params.populationSize,
+        params.maximumGenerations,
+        params.selectionMethod,
+        params.convergenceThreshold,
+      );
+      optimizerRef.current.mutationRate = params.mutationRate;
+      individualIndexRef.current = 0;
+      convergedRef.current = false;
+    } else {
+      showError(i18n.t('message.EncounterEvolutionError', lang));
+    }
   };
 
   const updateSolarPanels = () => {
