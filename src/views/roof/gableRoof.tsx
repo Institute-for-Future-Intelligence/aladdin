@@ -15,6 +15,7 @@ import { useThree } from '@react-three/fiber';
 import { HALF_PI } from 'src/constants';
 import { ElementModel } from 'src/models/ElementModel';
 import { handleUndoableResizeRoofHeight } from './roof';
+import { UnoableResizeGableRoofRidge } from 'src/undo/UndoableResize';
 
 const intersectionPlanePosition = new Vector3();
 const intersectionPlaneRotation = new Euler();
@@ -55,6 +56,8 @@ const GableRoof = ({
 
   const intersectionPlaneRef = useRef<Mesh>(null);
   const oldHeight = useRef<number>(h);
+  const oldRidgeLeft = useRef<number>(ridgeLeftPoint[0]);
+  const oldRidgeRight = useRef<number>(ridgeRightPoint[0]);
 
   useEffect(() => {
     if (h < minHeight) {
@@ -65,6 +68,43 @@ const GableRoof = ({
   useEffect(() => {
     setH(lz);
   }, [lz]);
+
+  const updateRoofTopRidge = (elemId: string, left: number, right: number) => {
+    setCommonStore((state) => {
+      for (const e of state.elements) {
+        if (e.id === elemId) {
+          (e as GableRoofModel).ridgeLeftPoint[0] = left;
+          (e as GableRoofModel).ridgeRightPoint[0] = right;
+          break;
+        }
+      }
+    });
+  };
+
+  const handleUndoableResizeTopRidge = (
+    elemId: string,
+    oldLeft: number,
+    oldRight: number,
+    newLeft: number,
+    newRight: number,
+  ) => {
+    const undoable = {
+      name: 'ResizeGableRoofRidge',
+      timestamp: Date.now(),
+      resizedElementId: elemId,
+      oldLeft: oldLeft,
+      oldRight: oldRight,
+      newLeft: newLeft,
+      newRight: newRight,
+      undo: () => {
+        updateRoofTopRidge(undoable.resizedElementId, oldLeft, oldRight);
+      },
+      redo: () => {
+        updateRoofTopRidge(undoable.resizedElementId, newLeft, newRight);
+      },
+    } as UnoableResizeGableRoofRidge;
+    useStore.getState().addUndoable(undoable);
+  };
 
   const setRayCast = (e: PointerEvent) => {
     mouse.x = (e.offsetX / gl.domElement.clientWidth) * 2 - 1;
@@ -348,6 +388,8 @@ const GableRoof = ({
             position={[ridgeLeftPointV3.x, ridgeLeftPointV3.y, ridgeLeftPointV3.z + 0.15]}
             args={[0.3]}
             onPointerDown={() => {
+              oldRidgeLeft.current = ridgeLeftPoint[0];
+              oldRidgeRight.current = ridgeRightPoint[0];
               setShowIntersectionPlane(true);
               intersectionPlanePosition.set(ridgeLeftPointV3.x, ridgeLeftPointV3.y, h);
               if (parent && currentWallArray[3]) {
@@ -362,6 +404,8 @@ const GableRoof = ({
             position={[ridgeRightPointV3.x, ridgeRightPointV3.y, ridgeRightPointV3.z + 0.15]}
             args={[0.3]}
             onPointerDown={() => {
+              oldRidgeLeft.current = ridgeLeftPoint[0];
+              oldRidgeRight.current = ridgeRightPoint[0];
               setShowIntersectionPlane(true);
               intersectionPlanePosition.set(ridgeRightPointV3.x, ridgeRightPointV3.y, h);
               if (parent && currentWallArray[1]) {
@@ -397,16 +441,7 @@ const GableRoof = ({
                       const foundation = getElementById(wall.parentId);
                       if (foundation) {
                         const x = getRelPos(foundation, wall, point);
-                        setCommonStore((state) => {
-                          for (const e of state.elements) {
-                            if (e.id === id) {
-                              const r = e as GableRoofModel;
-                              r.ridgeLeftPoint[0] = x;
-                              r.ridgeRightPoint[0] = -x;
-                              break;
-                            }
-                          }
-                        });
+                        updateRoofTopRidge(id, x, -x);
                         if (Math.abs(x) === 0.5 && !isShed) {
                           setIsShed(true);
                         } else if (Math.abs(x) !== 0.5 && isShed) {
@@ -422,21 +457,12 @@ const GableRoof = ({
                       const foundation = getElementById(wall.parentId);
                       if (foundation) {
                         const x = getRelPos(foundation, wall, point);
+                        updateRoofTopRidge(id, -x, x);
                         if (Math.abs(x) === 0.5 && !isShed) {
                           setIsShed(true);
                         } else if (Math.abs(x) !== 0.5 && isShed) {
                           setIsShed(false);
                         }
-                        setCommonStore((state) => {
-                          for (const e of state.elements) {
-                            if (e.id === id) {
-                              const r = e as GableRoofModel;
-                              r.ridgeLeftPoint[0] = -x;
-                              r.ridgeRightPoint[0] = x;
-                              break;
-                            }
-                          }
-                        });
                       }
                     }
                     break;
@@ -457,6 +483,13 @@ const GableRoof = ({
               }
               case RoofHandleType.Left:
               case RoofHandleType.Right: {
+                handleUndoableResizeTopRidge(
+                  id,
+                  oldRidgeLeft.current,
+                  oldRidgeRight.current,
+                  ridgeLeftPoint[0],
+                  ridgeRightPoint[0],
+                );
               }
             }
             setShowIntersectionPlane(false);
