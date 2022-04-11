@@ -12,6 +12,7 @@ import { WallModel } from 'src/models/WallModel';
 import { useStore } from 'src/stores/common';
 import { useStoreRef } from 'src/stores/commonRef';
 import * as Selector from 'src/stores/selector';
+import { UndoableResizeHipRoofRidge } from 'src/undo/UndoableResize';
 import { Util } from 'src/Util';
 import { DoubleSide, Euler, Mesh, Raycaster, Vector2, Vector3 } from 'three';
 import { handleUndoableResizeRoofHeight } from './roof';
@@ -82,6 +83,51 @@ const HipRoof = ({
   useEffect(() => {
     setH(lz);
   }, [lz]);
+
+  useEffect(() => {
+    setLeftRidgeLengthCurr(leftRidgeLength);
+  }, [leftRidgeLength]);
+
+  useEffect(() => {
+    setRightRidgeLengthCurr(rightRidgeLength);
+  }, [rightRidgeLength]);
+
+  const setHipRoofRidgeLength = (elemId: string, leftRidge: number, rightRidge: number) => {
+    setCommonStore((state) => {
+      for (const e of state.elements) {
+        if (e.id === elemId) {
+          (e as HipRoofModel).leftRidgeLength = leftRidge;
+          (e as HipRoofModel).rightRidgeLength = rightRidge;
+          break;
+        }
+      }
+    });
+  };
+
+  const handleUndoableResizeRidgeLength = (
+    elemId: string,
+    oldLeft: number,
+    oldRight: number,
+    newLeft: number,
+    newRight: number,
+  ) => {
+    const undoable = {
+      name: 'ResizeHipRoofRidge',
+      timestamp: Date.now(),
+      resizedElementId: elemId,
+      oldLeftRidgeLength: oldLeft,
+      oldRightRidgeLength: oldRight,
+      newLeftRidgeLength: newLeft,
+      newRightRidgeLength: newRight,
+      undo: () => {
+        setHipRoofRidgeLength(undoable.resizedElementId, undoable.oldLeftRidgeLength, undoable.oldRightRidgeLength);
+      },
+      redo: () => {
+        setHipRoofRidgeLength(undoable.resizedElementId, undoable.newLeftRidgeLength, undoable.newRightRidgeLength);
+      },
+    } as UndoableResizeHipRoofRidge;
+    useStore.getState().addUndoable(undoable);
+  };
 
   const currentWallArray = useMemo(() => {
     const array: WallModel[] = [];
@@ -398,6 +444,13 @@ const HipRoof = ({
               }
               case RoofHandleType.Left:
               case RoofHandleType.Right: {
+                handleUndoableResizeRidgeLength(
+                  id,
+                  leftRidgeLength,
+                  rightRidgeLength,
+                  leftRidgeLengthCurr,
+                  rightRidgeLengthCurr,
+                );
               }
             }
             setEnableIntersectionPlane(false);
