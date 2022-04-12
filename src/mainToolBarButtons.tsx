@@ -9,6 +9,7 @@ import SensorImage from './assets/sensor.png';
 import SolarPanelImage from './assets/solar-panel.png';
 import WallImage from './assets/wall.png';
 import WindowImage from './assets/window.png';
+import DoorImage from './assets/door.png';
 import PyramidRoofImage from './assets/pyramid_roof.png';
 import HipRoofImage from './assets/hip_roof.png';
 import GamblerRoofImage from './assets/gambler_roof.png';
@@ -35,6 +36,21 @@ import { UndoableCheck } from './undo/UndoableCheck';
 import { useStoreRef } from './stores/commonRef';
 import { showInfo } from './helpers';
 import { Util } from './Util';
+
+const ToolBarButton = ({ ...props }) => {
+  return (
+    <div
+      style={{
+        verticalAlign: 'top',
+        display: 'inline-block',
+        marginTop: '4px',
+        marginRight: '8px',
+      }}
+    >
+      {props.children}
+    </div>
+  );
+};
 
 const MainToolBarButtons = () => {
   const setCommonStore = useStore(Selector.set);
@@ -152,362 +168,169 @@ const MainToolBarButtons = () => {
     selectNone();
   };
 
+  const menuItem = (
+    objectType: ObjectType,
+    srcImg: string,
+    setFlag: (val: React.SetStateAction<ObjectType>) => void,
+    text?: string,
+  ) => {
+    const key = objectType.charAt(0).toLowerCase() + objectType.slice(1).replace(/\s+/g, '');
+    return (
+      <Menu.Item
+        style={{ userSelect: 'none' }}
+        key={`add-${key}-menu-item`}
+        onClick={() => {
+          setFlag(objectType);
+          setMode(objectType);
+        }}
+      >
+        <img
+          alt={objectType}
+          src={srcImg}
+          height={36}
+          width={36}
+          style={{
+            filter: defaultFilter,
+            verticalAlign: 'middle',
+            marginRight: '10px',
+          }}
+        />
+        {i18n.t(`toolbar.SwitchToAdding${text ?? objectType.replaceAll(' ', '')}`, lang)}
+      </Menu.Item>
+    );
+  };
+
+  const buttonImg = (objectType: ObjectType, srcImg: string, addedElemId?: string | null, text?: string) => {
+    return (
+      <img
+        title={i18n.t(`toolbar.Add${text ?? objectType.replaceAll(' ', '')}`, lang)}
+        alt={objectType}
+        src={srcImg}
+        height={36}
+        width={36}
+        style={{
+          filter: objectTypeToAdd === objectType || addedElemId ? selectFilter : defaultFilter,
+          cursor: 'pointer',
+          verticalAlign: 'middle',
+        }}
+        onClick={() => {
+          setMode(objectType);
+        }}
+      />
+    );
+  };
+
+  const dropdownButton = (overlay: JSX.Element) => {
+    return (
+      <Dropdown overlay={overlay} trigger={['click']}>
+        <label
+          title={i18n.t('toolbar.ClickForMoreButtons', lang)}
+          style={{
+            cursor: 'pointer',
+            verticalAlign: 'middle',
+            fontSize: '10px',
+            marginLeft: '4px',
+            width: '10px',
+            height: '36px',
+            color: '#666666',
+            fontWeight: 'bold',
+          }}
+        >
+          ▼
+        </label>
+      </Dropdown>
+    );
+  };
+
   const category1Menu = (
     <Menu>
-      <Menu.Item
-        style={{ userSelect: 'none' }}
-        key="add-foundation-menu-item"
-        onClick={() => {
-          setCategory1Flag(ObjectType.Foundation);
-          setMode(ObjectType.Foundation);
-        }}
-      >
-        <img
-          alt={'Foundation'}
-          src={FoundationImage}
-          height={36}
-          width={36}
-          style={{
-            filter: defaultFilter,
-            verticalAlign: 'middle',
-            marginRight: '10px',
-          }}
-        />
-        {i18n.t('toolbar.SwitchToAddingFoundation', lang)}
-      </Menu.Item>
-      <Menu.Item
-        style={{ userSelect: 'none' }}
-        key="add-cuboid-menu-item"
-        onClick={() => {
-          setCategory1Flag(ObjectType.Cuboid);
-          setMode(ObjectType.Cuboid);
-        }}
-      >
-        <img
-          alt={'Cuboid'}
-          src={CuboidImage}
-          height={36}
-          width={36}
-          style={{
-            filter: defaultFilter,
-            verticalAlign: 'middle',
-            marginRight: '10px',
-          }}
-        />
-        {i18n.t('toolbar.SwitchToAddingCuboid', lang)}
-      </Menu.Item>
+      {menuItem(ObjectType.Foundation, FoundationImage, setCategory1Flag)}
+      {menuItem(ObjectType.Cuboid, CuboidImage, setCategory1Flag)}
     </Menu>
   );
 
   const category2Menu = (
     <Menu>
-      <Menu.Item
-        style={{ userSelect: 'none' }}
-        key="add-wall-menu-item"
-        onClick={() => {
-          setCategory2Flag(ObjectType.Wall);
-          setMode(ObjectType.Wall);
-        }}
-      >
-        <img
-          alt={'Wall'}
-          src={WallImage}
-          height={36}
-          width={36}
-          style={{
-            filter: defaultFilter,
-            verticalAlign: 'middle',
-            marginRight: '10px',
-          }}
-        />
-        {i18n.t('toolbar.SwitchToAddingWall', lang)}
-      </Menu.Item>
-      <Menu.Item
-        style={{ userSelect: 'none' }}
-        key="add-window-menu-item"
-        onClick={() => {
-          setCategory2Flag(ObjectType.Window);
-          setMode(ObjectType.Window);
-        }}
-      >
-        <img
-          alt={'Window'}
-          src={WindowImage}
-          height={36}
-          width={36}
-          style={{
-            filter: defaultFilter,
-            verticalAlign: 'middle',
-            marginRight: '10px',
-          }}
-        />
-        {i18n.t('toolbar.SwitchToAddingWindow', lang)}
-      </Menu.Item>
-
-      <Menu.Item
-        style={{ userSelect: 'none' }}
-        key="add-pyramidRoof-menu-item"
-        onClick={() => {
-          setCategory2Flag(ObjectType.PyramidRoof);
-          setMode(ObjectType.PyramidRoof);
-        }}
-      >
-        <img
-          alt={'PyramidRoof'}
-          src={PyramidRoofImage}
-          height={36}
-          width={36}
-          style={{
-            filter: defaultFilter,
-            verticalAlign: 'middle',
-            marginRight: '10px',
-          }}
-        />
-        {i18n.t('toolbar.SwitchToAddingPyramidRoof', lang)}
-      </Menu.Item>
-      <Menu.Item
-        style={{ userSelect: 'none' }}
-        key="add-GableRoof-menu-item"
-        onClick={() => {
-          setCategory2Flag(ObjectType.GableRoof);
-          setMode(ObjectType.GableRoof);
-        }}
-      >
-        <img
-          alt={'GableRoof'}
-          src={GableRoofImage}
-          height={36}
-          width={36}
-          style={{
-            filter: defaultFilter,
-            verticalAlign: 'middle',
-            marginRight: '10px',
-          }}
-        />
-        {i18n.t('toolbar.SwitchToAddingGableRoof', lang)}
-      </Menu.Item>
-      <Menu.Item
-        style={{ userSelect: 'none' }}
-        key="add-HipRoof-menu-item"
-        onClick={() => {
-          setCategory2Flag(ObjectType.HipRoof);
-          setMode(ObjectType.HipRoof);
-        }}
-      >
-        <img
-          alt={'HipRoof'}
-          src={HipRoofImage}
-          height={36}
-          width={36}
-          style={{
-            filter: defaultFilter,
-            verticalAlign: 'middle',
-            marginRight: '10px',
-          }}
-        />
-        {i18n.t('toolbar.SwitchToAddingHipRoof', lang)}
-      </Menu.Item>
-      <Menu.Item
-        style={{ userSelect: 'none' }}
-        key="add-GambrelRoof-menu-item"
-        onClick={() => {
-          setCategory2Flag(ObjectType.GambrelRoof);
-          setMode(ObjectType.GambrelRoof);
-        }}
-      >
-        <img
-          alt={'GambrelRoof'}
-          src={GamblerRoofImage}
-          height={36}
-          width={36}
-          style={{
-            filter: defaultFilter,
-            verticalAlign: 'middle',
-            marginRight: '10px',
-          }}
-        />
-        {i18n.t('toolbar.SwitchToAddingGambrelRoof', lang)}
-      </Menu.Item>
+      {menuItem(ObjectType.Wall, WallImage, setCategory2Flag)}
+      {menuItem(ObjectType.Window, WindowImage, setCategory2Flag)}
+      {menuItem(ObjectType.Door, DoorImage, setCategory2Flag)}
+      {menuItem(ObjectType.PyramidRoof, PyramidRoofImage, setCategory2Flag)}
+      {menuItem(ObjectType.HipRoof, HipRoofImage, setCategory2Flag)}
+      {menuItem(ObjectType.GableRoof, GableRoofImage, setCategory2Flag)}
+      {menuItem(ObjectType.GambrelRoof, GamblerRoofImage, setCategory2Flag)}
     </Menu>
   );
 
   const category3Menu = (
     <Menu>
-      <Menu.Item
-        style={{ userSelect: 'none' }}
-        key="add-solar-panel-menu-item"
-        onClick={() => {
-          setCategory3Flag(ObjectType.SolarPanel);
-          setMode(ObjectType.SolarPanel);
-        }}
-      >
-        <img
-          alt={'Solar Panel'}
-          src={SolarPanelImage}
-          height={36}
-          width={36}
-          style={{
-            filter: defaultFilter,
-            verticalAlign: 'middle',
-            marginRight: '10px',
-          }}
-        />
-        {i18n.t('toolbar.SwitchToAddingSolarPanel', lang)}
-      </Menu.Item>
-      <Menu.Item
-        style={{ userSelect: 'none' }}
-        key="add-sensor-menu-item"
-        onClick={() => {
-          setCategory3Flag(ObjectType.Sensor);
-          setMode(ObjectType.Sensor);
-        }}
-      >
-        <img
-          alt={'Sensor'}
-          src={SensorImage}
-          height={36}
-          width={36}
-          style={{
-            filter: defaultFilter,
-            verticalAlign: 'middle',
-            marginRight: '10px',
-          }}
-        />
-        {i18n.t('toolbar.SwitchToAddingSensor', lang)}
-      </Menu.Item>
-      <Menu.Item
-        style={{ userSelect: 'none' }}
-        key="add-parabolic-trough-menu-item"
-        onClick={() => {
-          setCategory3Flag(ObjectType.ParabolicTrough);
-          setMode(ObjectType.ParabolicTrough);
-        }}
-      >
-        <img
-          alt={'Parabolic Trough'}
-          src={ParabolicTroughImage}
-          height={36}
-          width={36}
-          style={{
-            filter: defaultFilter,
-            verticalAlign: 'middle',
-            marginRight: '10px',
-          }}
-        />
-        {i18n.t('toolbar.SwitchToAddingParabolicTrough', lang)}
-      </Menu.Item>
-      <Menu.Item
-        style={{ userSelect: 'none' }}
-        key="add-parabolic-dish-menu-item"
-        onClick={() => {
-          setCategory3Flag(ObjectType.ParabolicDish);
-          setMode(ObjectType.ParabolicDish);
-        }}
-      >
-        <img
-          alt={'Parabolic Dish'}
-          src={ParabolicDishImage}
-          height={36}
-          width={36}
-          style={{
-            filter: defaultFilter,
-            verticalAlign: 'middle',
-            marginRight: '10px',
-          }}
-        />
-        {i18n.t('toolbar.SwitchToAddingParabolicDish', lang)}
-      </Menu.Item>
-      <Menu.Item
-        style={{ userSelect: 'none' }}
-        key="add-fresnel-reflector-menu-item"
-        onClick={() => {
-          setCategory3Flag(ObjectType.FresnelReflector);
-          setMode(ObjectType.FresnelReflector);
-        }}
-      >
-        <img
-          alt={'Fresnel Reflector'}
-          src={FresnelReflectorImage}
-          height={36}
-          width={36}
-          style={{
-            filter: defaultFilter,
-            verticalAlign: 'middle',
-            marginRight: '10px',
-          }}
-        />
-        {i18n.t('toolbar.SwitchToAddingFresnelReflector', lang)}
-      </Menu.Item>
-      <Menu.Item
-        style={{ userSelect: 'none' }}
-        key="add-heliostat-menu-item"
-        onClick={() => {
-          setCategory3Flag(ObjectType.Heliostat);
-          setMode(ObjectType.Heliostat);
-        }}
-      >
-        <img
-          alt={'Heliostat'}
-          src={HeliostatImage}
-          height={36}
-          width={36}
-          style={{
-            filter: defaultFilter,
-            verticalAlign: 'middle',
-            marginRight: '10px',
-          }}
-        />
-        {i18n.t('toolbar.SwitchToAddingHeliostat', lang)}
-      </Menu.Item>
+      {menuItem(ObjectType.SolarPanel, SolarPanelImage, setCategory3Flag)}
+      {menuItem(ObjectType.ParabolicTrough, ParabolicTroughImage, setCategory3Flag)}
+      {menuItem(ObjectType.ParabolicDish, ParabolicDishImage, setCategory3Flag)}
+      {menuItem(ObjectType.FresnelReflector, FresnelReflectorImage, setCategory3Flag)}
+      {menuItem(ObjectType.Heliostat, HeliostatImage, setCategory3Flag)}
     </Menu>
   );
 
   const category4Menu = (
     <Menu>
-      <Menu.Item
-        style={{ userSelect: 'none' }}
-        key="add-tree-menu-item"
-        onClick={() => {
-          setCategory4Flag(ObjectType.Tree);
-          setMode(ObjectType.Tree);
-        }}
-      >
-        <img
-          alt={'Tree'}
-          src={TreeImage}
-          height={36}
-          width={36}
-          style={{
-            filter: defaultFilter,
-            verticalAlign: 'middle',
-            marginRight: '10px',
-          }}
-        />
-        {i18n.t('toolbar.SwitchToAddingTree', lang)}
-      </Menu.Item>
-      <Menu.Item
-        style={{ userSelect: 'none' }}
-        key="add-human-menu-item"
-        onClick={() => {
-          setCategory4Flag(ObjectType.Human);
-          setMode(ObjectType.Human);
-        }}
-      >
-        <img
-          alt={'Human'}
-          src={HumanImage}
-          height={36}
-          width={36}
-          style={{
-            filter: defaultFilter,
-            verticalAlign: 'middle',
-            marginRight: '10px',
-          }}
-        />
-        {i18n.t('toolbar.SwitchToAddingPeople', lang)}
-      </Menu.Item>
+      {menuItem(ObjectType.Tree, TreeImage, setCategory4Flag)}
+      {menuItem(ObjectType.Human, HumanImage, setCategory4Flag, 'People')}
     </Menu>
   );
+
+  const category1Button = (objectType: ObjectType) => {
+    switch (objectType) {
+      case ObjectType.Foundation:
+        return buttonImg(objectType, FoundationImage, useStore.getState().addedFoundationId);
+      case ObjectType.Cuboid:
+        return buttonImg(objectType, CuboidImage, useStore.getState().addedCuboidId);
+    }
+  };
+
+  const category2Button = (objectType: ObjectType) => {
+    switch (objectType) {
+      case ObjectType.Wall:
+        return buttonImg(objectType, WallImage, useStore.getState().addedWallId);
+      case ObjectType.Window:
+        return buttonImg(objectType, WindowImage, useStore.getState().addedWindowId);
+      case ObjectType.Door:
+        return buttonImg(objectType, DoorImage);
+      case ObjectType.PyramidRoof:
+        return buttonImg(ObjectType.PyramidRoof, PyramidRoofImage);
+      case ObjectType.HipRoof:
+        return buttonImg(ObjectType.HipRoof, HipRoofImage);
+      case ObjectType.GableRoof:
+        return buttonImg(ObjectType.GableRoof, GableRoofImage);
+      case ObjectType.GambrelRoof:
+        return buttonImg(ObjectType.GambrelRoof, GamblerRoofImage);
+    }
+  };
+
+  const category3Button = (objectType: ObjectType) => {
+    switch (objectType) {
+      case ObjectType.SolarPanel:
+        return buttonImg(objectType, SolarPanelImage);
+      case ObjectType.ParabolicTrough:
+        return buttonImg(objectType, ParabolicTroughImage);
+      case ObjectType.ParabolicDish:
+        return buttonImg(objectType, ParabolicDishImage);
+      case ObjectType.FresnelReflector:
+        return buttonImg(objectType, FresnelReflectorImage);
+      case ObjectType.Heliostat:
+        return buttonImg(objectType, HeliostatImage);
+      case ObjectType.Sensor:
+        return buttonImg(objectType, SensorImage);
+    }
+  };
+
+  const category4Button = (objectType: ObjectType) => {
+    switch (objectType) {
+      case ObjectType.Tree:
+        return buttonImg(objectType, TreeImage);
+      case ObjectType.Human:
+        return buttonImg(objectType, HumanImage, undefined, 'People');
+    }
+  };
 
   const inSelectionMode = () => {
     return (
@@ -518,14 +341,7 @@ const MainToolBarButtons = () => {
   return (
     <div>
       {/* default to select */}
-      <div
-        style={{
-          verticalAlign: 'top',
-          display: 'inline-block',
-          marginTop: '4px',
-          marginRight: '8px',
-        }}
-      >
+      <ToolBarButton>
         <img
           title={i18n.t('toolbar.Select', lang)}
           alt={'Select'}
@@ -539,391 +355,31 @@ const MainToolBarButtons = () => {
           }}
           onClick={resetToSelectMode}
         />
-      </div>
+      </ToolBarButton>
 
       {/* add buttons in category 1 */}
-      <div
-        style={{
-          verticalAlign: 'top',
-          display: 'inline-block',
-          marginTop: '4px',
-          marginRight: '8px',
-        }}
-      >
-        {category1Flag === ObjectType.Foundation && (
-          <img
-            title={i18n.t('toolbar.AddFoundation', lang)}
-            alt={'Foundation'}
-            src={FoundationImage}
-            height={36}
-            width={36}
-            style={{
-              filter: objectTypeToAdd === ObjectType.Foundation || addedFoundationId ? selectFilter : defaultFilter,
-              cursor: 'pointer',
-              verticalAlign: 'middle',
-            }}
-            onClick={() => {
-              setMode(ObjectType.Foundation);
-            }}
-          />
-        )}
-        {category1Flag === ObjectType.Cuboid && (
-          <img
-            title={i18n.t('toolbar.AddCuboid', lang)}
-            alt={'Cuboid'}
-            src={CuboidImage}
-            height={36}
-            width={36}
-            style={{
-              filter: objectTypeToAdd === ObjectType.Cuboid || addedCuboidId ? selectFilter : defaultFilter,
-              cursor: 'pointer',
-              verticalAlign: 'middle',
-            }}
-            onClick={() => {
-              setMode(ObjectType.Cuboid);
-            }}
-          />
-        )}
-        <Dropdown overlay={category1Menu} trigger={['click']}>
-          <label
-            title={i18n.t('toolbar.ClickForMoreButtons', lang)}
-            style={{
-              cursor: 'pointer',
-              verticalAlign: 'middle',
-              fontSize: '10px',
-              marginLeft: '4px',
-              width: '10px',
-              height: '36px',
-              color: '#666666',
-              fontWeight: 'bold',
-            }}
-          >
-            ▼
-          </label>
-        </Dropdown>
-      </div>
+      <ToolBarButton>
+        {category1Button(category1Flag)}
+        {dropdownButton(category1Menu)}
+      </ToolBarButton>
 
       {/* add buttons in category 2 */}
-      <div
-        style={{
-          verticalAlign: 'top',
-          display: 'inline-block',
-          marginTop: '4px',
-          marginRight: '8px',
-        }}
-      >
-        {category2Flag === ObjectType.Wall && (
-          <img
-            title={i18n.t('toolbar.AddWall', lang)}
-            alt={'Wall'}
-            src={WallImage}
-            height={36}
-            width={36}
-            style={{
-              filter: objectTypeToAdd === ObjectType.Wall || addedWallId ? selectFilter : defaultFilter,
-              cursor: 'pointer',
-              verticalAlign: 'middle',
-            }}
-            onClick={() => {
-              setMode(ObjectType.Wall);
-            }}
-          />
-        )}
-        {category2Flag === ObjectType.Window && (
-          <img
-            title={i18n.t('toolbar.AddWindow', lang)}
-            alt={'Window'}
-            src={WindowImage}
-            height={36}
-            width={36}
-            style={{
-              filter: objectTypeToAdd === ObjectType.Window || addedWindowId ? selectFilter : defaultFilter,
-              cursor: 'pointer',
-              verticalAlign: 'middle',
-            }}
-            onClick={() => {
-              setMode(ObjectType.Window);
-            }}
-          />
-        )}
-        {category2Flag === ObjectType.PyramidRoof && (
-          <img
-            title={i18n.t('toolbar.AddPyramidRoof', lang)}
-            alt={'PyramidRoof'}
-            src={PyramidRoofImage}
-            height={36}
-            width={36}
-            style={{
-              filter: objectTypeToAdd === ObjectType.PyramidRoof ? selectFilter : defaultFilter,
-              cursor: 'pointer',
-              verticalAlign: 'middle',
-            }}
-            onClick={() => {
-              setMode(ObjectType.PyramidRoof);
-            }}
-          />
-        )}
-        {category2Flag === ObjectType.GableRoof && (
-          <img
-            title={i18n.t('toolbar.AddGableRoof', lang)}
-            alt={'GableRoof'}
-            src={GableRoofImage}
-            height={36}
-            width={36}
-            style={{
-              filter: objectTypeToAdd === ObjectType.GableRoof ? selectFilter : defaultFilter,
-              cursor: 'pointer',
-              verticalAlign: 'middle',
-            }}
-            onClick={() => {
-              setMode(ObjectType.GableRoof);
-            }}
-          />
-        )}
-        {category2Flag === ObjectType.HipRoof && (
-          <img
-            title={i18n.t('toolbar.AddHipRoof', lang)}
-            alt={'HipRoof'}
-            src={HipRoofImage}
-            height={36}
-            width={36}
-            style={{
-              filter: objectTypeToAdd === ObjectType.HipRoof ? selectFilter : defaultFilter,
-              cursor: 'pointer',
-              verticalAlign: 'middle',
-            }}
-            onClick={() => {
-              setMode(ObjectType.HipRoof);
-            }}
-          />
-        )}
-        {category2Flag === ObjectType.GambrelRoof && (
-          <img
-            title={i18n.t('toolbar.AddGambrelRoof', lang)}
-            alt={'GambrelRoof'}
-            src={GamblerRoofImage}
-            height={36}
-            width={36}
-            style={{
-              filter: objectTypeToAdd === ObjectType.GambrelRoof ? selectFilter : defaultFilter,
-              cursor: 'pointer',
-              verticalAlign: 'middle',
-            }}
-            onClick={() => {
-              setMode(ObjectType.GambrelRoof);
-            }}
-          />
-        )}
-        <Dropdown overlay={category2Menu} trigger={['click']}>
-          <label
-            title={i18n.t('toolbar.ClickForMoreButtons', lang)}
-            style={{
-              cursor: 'pointer',
-              verticalAlign: 'middle',
-              fontSize: '10px',
-              marginLeft: '4px',
-              width: '10px',
-              height: '36px',
-              color: '#666666',
-              fontWeight: 'bold',
-            }}
-          >
-            ▼
-          </label>
-        </Dropdown>
-      </div>
+      <ToolBarButton>
+        {category2Button(category2Flag)}
+        {dropdownButton(category2Menu)}
+      </ToolBarButton>
 
       {/* add buttons in category 3 */}
-      <div
-        style={{
-          verticalAlign: 'top',
-          display: 'inline-block',
-          marginTop: '4px',
-          marginRight: '8px',
-        }}
-      >
-        {category3Flag === ObjectType.SolarPanel && (
-          <img
-            title={i18n.t('toolbar.AddSolarPanel', lang)}
-            alt={'Solar panel'}
-            src={SolarPanelImage}
-            height={36}
-            width={36}
-            style={{
-              filter: objectTypeToAdd === ObjectType.SolarPanel ? selectFilter : defaultFilter,
-              cursor: 'pointer',
-              verticalAlign: 'middle',
-            }}
-            onClick={() => {
-              setMode(ObjectType.SolarPanel);
-            }}
-          />
-        )}
-        {category3Flag === ObjectType.ParabolicTrough && (
-          <img
-            title={i18n.t('toolbar.AddParabolicTrough', lang)}
-            alt={'Parabolic Trough'}
-            src={ParabolicTroughImage}
-            height={36}
-            width={36}
-            style={{
-              filter: objectTypeToAdd === ObjectType.ParabolicTrough ? selectFilter : defaultFilter,
-              cursor: 'pointer',
-              verticalAlign: 'middle',
-            }}
-            onClick={() => {
-              setMode(ObjectType.ParabolicTrough);
-            }}
-          />
-        )}
-        {category3Flag === ObjectType.ParabolicDish && (
-          <img
-            title={i18n.t('toolbar.AddParabolicDish', lang)}
-            alt={'Parabolic Dish'}
-            src={ParabolicDishImage}
-            height={36}
-            width={36}
-            style={{
-              filter: objectTypeToAdd === ObjectType.ParabolicDish ? selectFilter : defaultFilter,
-              cursor: 'pointer',
-              verticalAlign: 'middle',
-            }}
-            onClick={() => {
-              setMode(ObjectType.ParabolicDish);
-            }}
-          />
-        )}
-        {category3Flag === ObjectType.FresnelReflector && (
-          <img
-            title={i18n.t('toolbar.AddFresnelReflector', lang)}
-            alt={'Fresnel Reflector'}
-            src={FresnelReflectorImage}
-            height={36}
-            width={36}
-            style={{
-              filter: objectTypeToAdd === ObjectType.FresnelReflector ? selectFilter : defaultFilter,
-              cursor: 'pointer',
-              verticalAlign: 'middle',
-            }}
-            onClick={() => {
-              setMode(ObjectType.FresnelReflector);
-            }}
-          />
-        )}
-        {category3Flag === ObjectType.Heliostat && (
-          <img
-            title={i18n.t('toolbar.AddHeliostat', lang)}
-            alt={'Heliostat'}
-            src={HeliostatImage}
-            height={36}
-            width={36}
-            style={{
-              filter: objectTypeToAdd === ObjectType.Heliostat ? selectFilter : defaultFilter,
-              cursor: 'pointer',
-              verticalAlign: 'middle',
-            }}
-            onClick={() => {
-              setMode(ObjectType.Heliostat);
-            }}
-          />
-        )}
-        {category3Flag === ObjectType.Sensor && (
-          <img
-            title={i18n.t('toolbar.AddSensor', lang)}
-            alt={'Sensor'}
-            src={SensorImage}
-            height={36}
-            width={36}
-            style={{
-              filter: objectTypeToAdd === ObjectType.Sensor ? selectFilter : defaultFilter,
-              cursor: 'pointer',
-              verticalAlign: 'middle',
-            }}
-            onClick={() => {
-              setMode(ObjectType.Sensor);
-            }}
-          />
-        )}
-        <Dropdown overlay={category3Menu} trigger={['click']}>
-          <label
-            title={i18n.t('toolbar.ClickForMoreButtons', lang)}
-            style={{
-              cursor: 'pointer',
-              verticalAlign: 'middle',
-              fontSize: '10px',
-              marginLeft: '4px',
-              width: '10px',
-              height: '36px',
-              color: '#666666',
-              fontWeight: 'bold',
-            }}
-          >
-            ▼
-          </label>
-        </Dropdown>
-      </div>
+      <ToolBarButton>
+        {category3Button(category3Flag)}
+        {dropdownButton(category3Menu)}
+      </ToolBarButton>
 
       {/* add buttons in category 4 */}
-      <div
-        style={{
-          verticalAlign: 'top',
-          display: 'inline-block',
-          marginTop: '4px',
-          marginRight: '8px',
-        }}
-      >
-        {category4Flag === ObjectType.Tree && (
-          <img
-            title={i18n.t('toolbar.AddTree', lang)}
-            alt={'Tree'}
-            src={TreeImage}
-            height={36}
-            width={36}
-            style={{
-              filter: objectTypeToAdd === ObjectType.Tree ? selectFilter : defaultFilter,
-              cursor: 'pointer',
-              verticalAlign: 'middle',
-            }}
-            onClick={() => {
-              setMode(ObjectType.Tree);
-            }}
-          />
-        )}
-        {category4Flag === ObjectType.Human && (
-          <img
-            title={i18n.t('toolbar.AddPeople', lang)}
-            alt={'Human'}
-            src={HumanImage}
-            height={36}
-            width={36}
-            style={{
-              filter: objectTypeToAdd === ObjectType.Human ? selectFilter : defaultFilter,
-              cursor: 'pointer',
-              verticalAlign: 'middle',
-            }}
-            onClick={() => {
-              setMode(ObjectType.Human);
-            }}
-          />
-        )}
-        <Dropdown overlay={category4Menu} trigger={['click']}>
-          <label
-            title={i18n.t('toolbar.ClickForMoreButtons', lang)}
-            style={{
-              cursor: 'pointer',
-              verticalAlign: 'middle',
-              fontSize: '10px',
-              marginLeft: '4px',
-              width: '10px',
-              height: '36px',
-              color: '#666666',
-              fontWeight: 'bold',
-            }}
-          >
-            ▼
-          </label>
-        </Dropdown>
-      </div>
+      <ToolBarButton>
+        {category4Button(category4Flag)}
+        {dropdownButton(category4Menu)}
+      </ToolBarButton>
 
       <FontAwesomeIcon
         title={i18n.t('toolbar.ClearScene', lang)}
