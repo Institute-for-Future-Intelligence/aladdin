@@ -17,9 +17,11 @@ import WallTexture10 from 'src/resources/wall_10.png';
 
 import React, { useEffect, useMemo, useRef, useState } from 'react';
 import {
+  BackSide,
   DoubleSide,
   Euler,
   Mesh,
+  MeshBasicMaterial,
   MeshStandardMaterial,
   Raycaster,
   RepeatWrapping,
@@ -164,7 +166,8 @@ const Wall = ({
   const enableFineGridRef = useRef(useStore.getState().enableFineGrid);
 
   const intersectionPlaneRef = useRef<Mesh>(null);
-  const outSideWallRef = useRef<Mesh>(null);
+  const outsideWallRef = useRef<Mesh>(null);
+  const outsideWallInnerFaceRef = useRef<Mesh>(null);
   const insideWallRef = useRef<Mesh>(null);
   const topSurfaceRef = useRef<Mesh>(null);
   const grabRef = useRef<ElementModel | null>(null);
@@ -279,7 +282,7 @@ const Wall = ({
   };
 
   // outside wall
-  if (outSideWallRef.current) {
+  if (outsideWallRef.current && outsideWallInnerFaceRef.current) {
     const wallShape = new Shape();
     drawRectangle(wallShape, lx, lz, 0, 0, 0, 0);
 
@@ -290,7 +293,9 @@ const Wall = ({
         wallShape.holes.push(window);
       }
     });
-    outSideWallRef.current.geometry = new ShapeBufferGeometry(wallShape);
+    outsideWallRef.current.geometry = new ShapeBufferGeometry(wallShape);
+    outsideWallInnerFaceRef.current.geometry = new ShapeBufferGeometry(wallShape);
+    outsideWallInnerFaceRef.current.material = new MeshBasicMaterial({ color: 'white', side: BackSide });
   }
 
   // inside wall
@@ -877,7 +882,7 @@ const Wall = ({
             name={'Outside Wall'}
             uuid={id}
             userData={{ simulation: true }}
-            ref={outSideWallRef}
+            ref={outsideWallRef}
             rotation={[HALF_PI, 0, 0]}
             castShadow={shadowEnabled}
             receiveShadow={shadowEnabled}
@@ -887,7 +892,7 @@ const Wall = ({
               }
               selectMe(id, e, ActionType.Select);
               setCommonStore((state) => {
-                if (e.intersections.length > 0 && e.intersections[0].object === outSideWallRef.current) {
+                if (e.intersections.length > 0 && e.intersections[0].object === outsideWallRef.current) {
                   state.contextMenuObjectType = ObjectType.Wall;
                   state.pastePoint.copy(e.intersections[0].point);
                 }
@@ -898,9 +903,9 @@ const Wall = ({
             <meshBasicMaterial
               color={textureType === WallTexture.Default || textureType === WallTexture.NoTexture ? color : 'white'}
               map={texture}
-              side={DoubleSide}
             />
           </mesh>
+          <mesh ref={outsideWallInnerFaceRef} rotation={[HALF_PI, 0, 0]} castShadow={shadowEnabled} />
 
           {/* inside wall */}
           {!roofId && (
