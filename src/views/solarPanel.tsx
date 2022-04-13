@@ -394,8 +394,8 @@ const SolarPanel = ({
   const [showTiltAngle, setShowTiltAngle] = useState(false);
 
   return (
-    <group name={'Solar Panel Group ' + id} rotation={euler} position={[cx, cy, cz + hz]}>
-      <group rotation={relativeEuler}>
+    <group name={'Solar Panel Group Grandpa ' + id} rotation={euler} position={[cx, cy, cz + hz]}>
+      <group name={'Solar Panel Group Dad ' + id} rotation={relativeEuler}>
         {/* draw panel */}
         <Box
           receiveShadow={shadowEnabled}

@@ -67,9 +67,9 @@ export class SolarPanelTiltAngleOptimizer extends Optimizer {
     let s = '(';
     for (let i = 0; i < individual.chromosome.length; i++) {
       const gene = individual.getGene(i);
-      s += Util.toDegrees((2 * gene - 1) * HALF_PI).toFixed(2) + ', ';
+      s += Util.toDegrees((2 * gene - 1) * HALF_PI).toFixed(3) + ', ';
     }
-    return s.substring(0, s.length - 2) + ') = ' + individual.fitness;
+    return s.substring(0, s.length - 2) + ') = ' + individual.fitness.toFixed(5);
   }
 
   startEvolving(): void {

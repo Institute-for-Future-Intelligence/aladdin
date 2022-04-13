@@ -119,7 +119,11 @@ const SolarPanelSimulation = ({ city }: SolarPanelSimulationProps) => {
   useEffect(() => {
     if (runDailySimulation) {
       if (noAnimation && !Util.hasMovingParts(elements)) {
-        staticSimulateDaily();
+        // this causes the simulation code to run at the beginning of the next event cycle
+        // that hopefully has the updated scene graph
+        setTimeout(() => {
+          staticSimulateDaily();
+        }, 50);
       } else {
         initDaily();
         requestRef.current = requestAnimationFrame(simulateDaily);
@@ -316,7 +320,11 @@ const SolarPanelSimulation = ({ city }: SolarPanelSimulationProps) => {
   useEffect(() => {
     if (runYearlySimulation) {
       if (noAnimation && !Util.hasMovingParts(elements)) {
-        staticSimulateYearly();
+        // this causes the simulation code to run at the beginning of the next event cycle
+        // that hopefully has the updated scene graph
+        setTimeout(() => {
+          staticSimulateYearly();
+        }, 50);
       } else {
         initYearly();
         requestRef.current = requestAnimationFrame(simulateYearly);
@@ -680,6 +688,12 @@ const SolarPanelSimulation = ({ city }: SolarPanelSimulationProps) => {
               break;
           }
           output[i] += sum / (nx * ny);
+        } else {
+          for (let kx = 0; kx < nx; kx++) {
+            for (let ky = 0; ky < ny; ky++) {
+              cellOutputs[kx][ky] = 0;
+            }
+          }
         }
       }
     }

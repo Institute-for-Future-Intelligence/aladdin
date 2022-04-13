@@ -161,8 +161,6 @@ const SolarPanelTiltAngleOptimizationResult = () => {
             labelY2={labelObjective}
             unitY1={'°'}
             unitY2={i18n.t('word.kWh', lang)}
-            yMin1={-90}
-            yMin2={0}
             curveType={'linear'}
             fractionDigits={2}
           />

@@ -101,14 +101,6 @@ const SolarPanelTiltAngleEvolution = () => {
     }
   };
 
-  const updateSolarPanels = () => {
-    if (solarPanelsRef.current) {
-      for (const sp of solarPanelsRef.current) {
-        updateSolarPanelTiltAngleById(sp.id, sp.tiltAngle);
-      }
-    }
-  };
-
   const getTotal = (): number => {
     let total = 0;
     switch (params.objectiveFunctionType) {
@@ -116,7 +108,7 @@ const SolarPanelTiltAngleEvolution = () => {
         for (const datum of useStore.getState().dailyPvYield) {
           for (const prop in datum) {
             if (datum.hasOwnProperty(prop)) {
-              if (prop !== 'Hour') {
+              if (prop === 'Total') {
                 total += datum[prop] as number;
               }
             }
@@ -127,7 +119,7 @@ const SolarPanelTiltAngleEvolution = () => {
         for (const datum of useStore.getState().yearlyPvYield) {
           for (const prop in datum) {
             if (datum.hasOwnProperty(prop)) {
-              if (prop !== 'Month') {
+              if (prop === 'Total') {
                 total += datum[prop] as number;
               }
             }
@@ -166,7 +158,11 @@ const SolarPanelTiltAngleEvolution = () => {
         });
         evolutionCompletedRef.current = true;
         optimizerRef.current.applyFittest();
-        updateSolarPanels();
+        if (solarPanelsRef.current) {
+          for (const sp of solarPanelsRef.current) {
+            updateSolarPanelTiltAngleById(sp.id, sp.tiltAngle);
+          }
+        }
         updateResults();
         showInfo(
           i18n.t('message.EvolutionCompleted', lang) +
@@ -181,17 +177,29 @@ const SolarPanelTiltAngleEvolution = () => {
         return;
       }
       optimizerRef.current.translateIndividual(individualIndexRef.current % params.populationSize);
-      updateSolarPanels();
       setCommonStore((state) => {
-        switch (params.objectiveFunctionType) {
-          case ObjectiveFunctionType.DAILY_OUTPUT:
-            state.dailyPvIndividualOutputs = false;
-            state.runDailySimulationForSolarPanels = true;
-            break;
-          case ObjectiveFunctionType.YEARLY_OUTPUT:
-            state.yearlyPvIndividualOutputs = false;
-            state.runYearlySimulationForSolarPanels = true;
-            break;
+        if (solarPanelsRef.current) {
+          for (const e of state.elements) {
+            if (e.type === ObjectType.SolarPanel) {
+              const panel = e as SolarPanelModel;
+              for (const sp of solarPanelsRef.current) {
+                if (panel.id === sp.id) {
+                  panel.tiltAngle = sp.tiltAngle;
+                  break;
+                }
+              }
+            }
+          }
+          switch (params.objectiveFunctionType) {
+            case ObjectiveFunctionType.DAILY_OUTPUT:
+              state.dailyPvIndividualOutputs = false;
+              state.runDailySimulationForSolarPanels = true;
+              break;
+            case ObjectiveFunctionType.YEARLY_OUTPUT:
+              state.yearlyPvIndividualOutputs = false;
+              state.runYearlySimulationForSolarPanels = true;
+              break;
+          }
         }
       });
     }
