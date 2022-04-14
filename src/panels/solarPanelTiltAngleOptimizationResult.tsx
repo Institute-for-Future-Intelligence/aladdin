@@ -64,6 +64,7 @@ const SolarPanelTiltAngleOptimizationResult = () => {
   const language = useStore(Selector.language);
   const setCommonStore = useStore(Selector.set);
   const fittestIndividualResults = useStore(Selector.fittestIndividualResults);
+  const geneLabels = useStore(Selector.geneLabels);
   const panelX = useStore(Selector.viewState.evolutionPanelX);
   const panelY = useStore(Selector.viewState.evolutionPanelY);
   const selectedElement = useStore(Selector.selectedElement);
@@ -154,6 +155,7 @@ const SolarPanelTiltAngleOptimizationResult = () => {
           </Header>
           <GaBiaxialLineGraph
             dataSource={fittestIndividualResults}
+            labels={geneLabels}
             height={responsiveHeight}
             dataKeyAxisX={'Generation'}
             labelX={labelGeneration}

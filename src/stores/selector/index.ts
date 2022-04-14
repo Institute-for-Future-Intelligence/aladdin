@@ -961,6 +961,10 @@ export const fittestIndividualResults = (state: CommonStoreState) => state.fitte
 
 export const setFittestIndividualResults = (state: CommonStoreState) => state.setFittestIndividualResults;
 
+export const geneLabels = (state: CommonStoreState) => state.geneLabels;
+
+export const setGeneLabels = (state: CommonStoreState) => state.setGeneLabels;
+
 export * as viewState from './viewState';
 
 export * as world from './world';

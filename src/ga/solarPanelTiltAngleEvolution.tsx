@@ -17,6 +17,7 @@ import { Util } from '../Util';
 const SolarPanelTiltAngleEvolution = () => {
   const setCommonStore = useStore(Selector.set);
   const language = useStore(Selector.language);
+  const daysPerYear = useStore(Selector.world.daysPerYear) ?? 6;
   const runEvolution = useStore(Selector.runEvolution);
   const pauseEvolution = useStore(Selector.pauseEvolution);
   const foundation = useStore(Selector.selectedElement) as FoundationModel;
@@ -24,6 +25,8 @@ const SolarPanelTiltAngleEvolution = () => {
   const updateSolarPanelTiltAngleById = useStore(Selector.updateSolarPanelTiltAngleById);
   const setFittestIndividualResults = useStore(Selector.setFittestIndividualResults);
   const objectiveEvaluationIndex = useStore(Selector.objectiveEvaluationIndex);
+  const geneLabels = useStore(Selector.geneLabels);
+  const setGeneLabels = useStore(Selector.setGeneLabels);
   const params = useStore.getState().geneticAlgorithmState.solarPanelTiltAngleGeneticAlgorithmParams;
 
   const lang = { lng: language };
@@ -81,8 +84,10 @@ const SolarPanelTiltAngleEvolution = () => {
     evolutionCompletedRef.current = false;
     const originalSolarPanels = getChildrenOfType(ObjectType.SolarPanel, foundation.id) as SolarPanelModel[];
     solarPanelsRef.current = [];
+    const labels: (string | undefined)[] = [];
     for (const osp of originalSolarPanels) {
       solarPanelsRef.current.push(JSON.parse(JSON.stringify(osp)) as SolarPanelModel);
+      labels.push(osp.label);
     }
     if (solarPanelsRef.current.length > 0) {
       optimizerRef.current = new SolarPanelTiltAngleOptimizer(
@@ -98,6 +103,7 @@ const SolarPanelTiltAngleEvolution = () => {
       optimizerRef.current.mutationRate = params.mutationRate;
       individualIndexRef.current = 0;
       convergedRef.current = false;
+      setGeneLabels(labels);
     } else {
       showError(i18n.t('message.EncounterEvolutionError', lang));
     }
@@ -129,6 +135,7 @@ const SolarPanelTiltAngleEvolution = () => {
             }
           }
         }
+        total *= 12 / daysPerYear;
         break;
     }
     return total;
@@ -219,7 +226,7 @@ const SolarPanelTiltAngleEvolution = () => {
         const datum: DatumEntry = {};
         datum['Generation'] = index;
         for (let k = 0; k < n; k++) {
-          datum['Gene' + (k + 1)] = Util.toDegrees((2 * fg.chromosome[k] - 1) * HALF_PI);
+          datum[geneLabels[k] ?? 'Gene' + (k + 1)] = Util.toDegrees((2 * fg.chromosome[k] - 1) * HALF_PI);
         }
         datum['Objective'] = fg.fitness;
         results.push(datum);
