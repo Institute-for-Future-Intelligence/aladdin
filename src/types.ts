@@ -132,6 +132,7 @@ export enum ObjectType {
   Foundation = 'Foundation',
   Wall = 'Wall',
   Window = 'Window',
+  Door = 'Door',
   Roof = 'Roof',
   PyramidRoof = 'Pyramid Roof',
   GableRoof = 'Gable Roof',
@@ -353,6 +354,23 @@ export enum WallTexture {
   Texture09 = 'Wall Texture #9',
   Texture10 = 'Wall Texture #10',
   NoTexture = 'No Wall Texture',
+}
+
+export enum DoorTexture {
+  Default = 'Door Texture Default',
+  Texture01 = 'Door Texture #1',
+  Texture02 = 'Door Texture #2',
+  Texture03 = 'Door Texture #3',
+  Texture04 = 'Door Texture #4',
+  Texture05 = 'Door Texture #5',
+  Texture06 = 'Door Texture #6',
+  Texture07 = 'Door Texture #7',
+  Texture08 = 'Door Texture #8',
+  Texture09 = 'Door Texture #9',
+  Texture10 = 'Door Texture #10',
+  Texture11 = 'Door Texture #11',
+  Texture12 = 'Door Texture #12',
+  NoTexture = 'No Door Texture',
 }
 
 export enum WallSide {

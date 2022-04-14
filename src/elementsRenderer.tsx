@@ -79,7 +79,6 @@ const ElementsRenderer: React.FC = () => {
             return <Wall key={e.id} {...(e as WallModel)} />;
           case ObjectType.Roof:
             return <Roof key={e.id} {...(e as RoofModel)} />;
-          // return null;
           case ObjectType.Polygon:
             return <Polygon key={e.id} {...(e as PolygonModel)} />;
           default:

@@ -4,6 +4,7 @@
 
 import {
   CuboidTexture,
+  DoorTexture,
   HumanName,
   ObjectType,
   Orientation,
@@ -43,6 +44,7 @@ import { ParabolicTroughModel } from './ParabolicTroughModel';
 import { ParabolicDishModel } from './ParabolicDishModel';
 import { FresnelReflectorModel } from './FresnelReflectorModel';
 import { HeliostatModel } from './HeliostatModel';
+import { DoorModel } from './DoorModel';
 
 export class ElementModelFactory {
   static makeHuman(parentId: string, x: number, y: number, z?: number) {
@@ -480,6 +482,35 @@ export class ElementModelFactory {
       foundationId: foundationId,
       id: short.generate() as string,
     } as WindowModel;
+  }
+
+  static makeDoor(parent: ElementModel, normal?: Vector3) {
+    let foundationId;
+    switch (parent.type) {
+      case ObjectType.Cuboid:
+        foundationId = parent.id;
+        break;
+      case ObjectType.Wall:
+        foundationId = parent.parentId;
+        break;
+    }
+    return {
+      type: ObjectType.Door,
+      cx: 0,
+      cy: 0,
+      cz: 0,
+      lx: 0,
+      ly: 0,
+      lz: 0,
+      textureType: DoorTexture.Default,
+      selected: true,
+      showLabel: false,
+      normal: normal ? normal.toArray() : [0, 1, 0],
+      rotation: [0, 0, 0],
+      parentId: parent.id,
+      foundationId: foundationId,
+      id: short.generate() as string,
+    } as DoorModel;
   }
 
   static makePyramidRoof(wallsId: string[], parent: ElementModel, lz: number) {

@@ -640,6 +640,9 @@ export interface CommonStoreState {
   addedWindowId: string | null;
   deletedWindowAndParentId: string[] | null;
 
+  addedDoorId: string | null;
+  deletedDoorAndParentId: string[] | null;
+
   deletedRoofId: string | null;
 
   simulationInProgress: boolean;
@@ -4978,7 +4981,13 @@ export const useStore = create<CommonStoreState>(
           selectedElementHeight: 0,
 
           isAddingElement() {
-            if (get().addedCuboidId || get().addedFoundationId || get().addedWallId || get().addedWindowId) {
+            if (
+              get().addedCuboidId ||
+              get().addedFoundationId ||
+              get().addedWallId ||
+              get().addedWindowId ||
+              get().addedDoorId
+            ) {
               return true;
             }
             return false;
@@ -4996,6 +5005,9 @@ export const useStore = create<CommonStoreState>(
 
           addedWindowId: null,
           deletedWindowAndParentId: null,
+
+          addedDoorId: null,
+          deletedDoorAndParentId: null,
 
           updateDesignInfoFlag: false,
           updateDesignInfo() {

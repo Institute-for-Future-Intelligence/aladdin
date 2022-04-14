@@ -51,6 +51,8 @@ import { FINE_GRID_SCALE, HALF_PI, TWO_PI } from 'src/constants';
 import { UndoableMove } from 'src/undo/UndoableMove';
 import { UndoableAdd } from 'src/undo/UndoableAdd';
 import { UndoableResizeWindow } from 'src/undo/UndoableResize';
+import { DoorModel } from 'src/models/DoorModel';
+import Door from '../door';
 
 const Wall = ({
   id,
@@ -176,12 +178,15 @@ const Wall = ({
   const isSettingWindowStartPointRef = useRef(false);
   const isSettingWindowEndPointRef = useRef(false);
   const invalidWindowIdRef = useRef<string | null>(null);
+  const isSettingDoorStartPointRef = useRef(false);
+  const isSettingDoorEndPointRef = useRef(false);
   const oldPositionRef = useRef<number[]>([]);
   const oldDimensionRef = useRef<number[]>([]);
 
   const [originElements, setOriginElements] = useState<ElementModel[] | null>([]);
   const [showGrid, setShowGrid] = useState(false);
   const [windows, setWindows] = useState<WindowModel[]>([]);
+  const [doors, setDoors] = useState<DoorModel[]>([]);
 
   const { camera, gl } = useThree();
   const mouse = useMemo(() => new Vector2(), []);
@@ -358,6 +363,7 @@ const Wall = ({
   // windows
   useEffect(() => {
     setWindows(elements.filter((e) => e.type === ObjectType.Window && e.parentId === id));
+    setDoors((elements as DoorModel[]).filter((e) => e.type === ObjectType.Door && e.parentId === id));
   }, [elements]);
 
   // roof
@@ -379,7 +385,7 @@ const Wall = ({
     }
   }, [deletedRoofId]);
 
-  const getWindowRelativePos = (p: Vector3, wall: WallModel) => {
+  const getRelativePosOnWall = (p: Vector3, wall: WallModel) => {
     const { cx, cy, cz } = wall;
     const foundation = getElementById(wall.parentId);
     if (foundation && wallAbsAngle !== undefined) {
@@ -417,7 +423,7 @@ const Wall = ({
     return p;
   };
 
-  const resizingWindowInsideWall = (p: Vector3) => {
+  const resizingHandleInsideWall = (p: Vector3) => {
     const margin = 0.1;
     if (p.z > hz - margin) {
       p.setZ(hz - margin);
@@ -514,6 +520,8 @@ const Wall = ({
     isSettingWindowStartPointRef.current = false;
     isSettingWindowEndPointRef.current = false;
     invalidWindowIdRef.current = null;
+    isSettingDoorStartPointRef.current = false;
+    isSettingDoorEndPointRef.current = false;
   };
 
   const handleUndoableAdd = (elem: ElementModel) => {
@@ -619,6 +627,19 @@ const Wall = ({
           });
           isSettingWindowStartPointRef.current = false;
           isSettingWindowEndPointRef.current = true;
+          return;
+        }
+
+        // set door start point
+        if (isSettingDoorStartPointRef.current) {
+          useStoreRef.getState().setEnableOrbitController(false);
+          setCommonStore((state) => {
+            state.moveHandleType = null;
+            state.resizeHandleType = ResizeHandleType.UpperRight;
+            state.resizeAnchor.copy(pointer).setZ(-lz / 2);
+          });
+          isSettingDoorStartPointRef.current = false;
+          isSettingDoorEndPointRef.current = true;
           return;
         }
 
@@ -733,6 +754,7 @@ const Wall = ({
       state.moveHandleType = null;
       state.resizeHandleType = null;
       state.addedWindowId = null;
+      state.addedDoorId = null;
     });
     useStoreRef.getState().setEnableOrbitController(true);
     setShowGrid(false);
@@ -768,7 +790,7 @@ const Wall = ({
 
           switch (grabRef.current.type) {
             case ObjectType.Window: {
-              let p = getWindowRelativePos(pointer, wallModel);
+              let p = getRelativePosOnWall(pointer, wallModel);
               p = getPositionOnGrid(p);
 
               if (moveHandleType) {
@@ -784,8 +806,8 @@ const Wall = ({
                   }
                 });
               } else if (resizeHandleType) {
-                p = resizingWindowInsideWall(p);
-                let resizeAnchor = getWindowRelativePos(resizeAnchorRef.current, wallModel);
+                p = resizingHandleInsideWall(p);
+                let resizeAnchor = getRelativePosOnWall(resizeAnchorRef.current, wallModel);
                 if (isSettingWindowEndPointRef.current) {
                   resizeAnchor = getPositionOnGrid(resizeAnchor);
                 }
@@ -806,6 +828,38 @@ const Wall = ({
               }
               break;
             }
+            case ObjectType.Door: {
+              let p = getRelativePosOnWall(pointer, wallModel);
+              p = resizingHandleInsideWall(getPositionOnGrid(p));
+
+              // adding door
+              if (moveHandleType) {
+                setCommonStore((state) => {
+                  for (const e of state.elements) {
+                    if (e.id === grabRef.current?.id) {
+                      e.cx = p.x / lx;
+                      e.cz = (p.z - lz / 2) / 2 / lz;
+                      e.lz = (p.z + lz / 2) / lz;
+                    }
+                  }
+                });
+              } else if (resizeHandleType) {
+                let resizeAnchor = getRelativePosOnWall(resizeAnchorRef.current, wallModel);
+                const v = new Vector3().subVectors(resizeAnchor, p); // door diagonal vector
+                let relativePos = new Vector3().addVectors(resizeAnchor, p).divideScalar(2);
+                setCommonStore((state) => {
+                  for (const e of state.elements) {
+                    if (e.id === grabRef.current?.id) {
+                      e.cx = relativePos.x / lx;
+                      e.lx = Math.abs(v.x) / lx;
+                      e.cz = (p.z - lz / 2) / 2 / lz;
+                      e.lz = (p.z + lz / 2) / lz;
+                    }
+                  }
+                });
+              }
+              break;
+            }
             case ObjectType.SolarPanel: {
               break;
             }
@@ -818,7 +872,7 @@ const Wall = ({
         // add new element
         switch (objectTypeToAddRef.current) {
           case ObjectType.Window: {
-            let relativePos = getWindowRelativePos(pointer, wallModel);
+            let relativePos = getRelativePosOnWall(pointer, wallModel);
             relativePos = getPositionOnGrid(relativePos);
 
             const newWindow = ElementModelFactory.makeWindow(wallModel, relativePos.x / lx, 0, relativePos.z / lz);
@@ -836,6 +890,21 @@ const Wall = ({
             isSettingWindowStartPointRef.current = true;
             break;
           }
+          case ObjectType.Door: {
+            const newDoor = ElementModelFactory.makeDoor(wallModel); //todo
+            useStoreRef.getState().setEnableOrbitController(false);
+            setCommonStore((state) => {
+              state.objectTypeToAdd = ObjectType.None;
+              state.elements.push(newDoor);
+              state.moveHandleType = MoveHandleType.Mid;
+              state.selectedElement = newDoor;
+              state.addedDoorId = newDoor.id;
+            });
+            setShowGrid(true);
+            grabRef.current = newDoor;
+            isSettingDoorStartPointRef.current = true;
+            break;
+          }
           case ObjectType.SolarPanel: {
             break;
           }
@@ -848,12 +917,18 @@ const Wall = ({
   };
 
   const handleIntersectionPointerOut = (e: ThreeEvent<PointerEvent>) => {
-    if (isSettingWindowStartPointRef.current && grabRef.current) {
-      removeElementById(grabRef.current.id, false);
+    if (grabRef.current && (isSettingDoorStartPointRef.current || isSettingWindowStartPointRef.current)) {
       setCommonStore((state) => {
-        state.objectTypeToAdd = ObjectType.Window;
-        state.addedWindowId = null;
+        if (isSettingDoorStartPointRef.current) {
+          state.objectTypeToAdd = ObjectType.Door;
+          state.addedDoorId = null;
+        }
+        if (isSettingWindowStartPointRef.current) {
+          state.objectTypeToAdd = ObjectType.Window;
+          state.addedWindowId = null;
+        }
       });
+      removeElementById(grabRef.current!.id, false);
       setShowGrid(false);
       resetCurrentState();
     }
@@ -975,6 +1050,9 @@ const Wall = ({
 
           {windows.map((e) => {
             return <Window key={e.id} {...(e as WindowModel)} />;
+          })}
+          {doors.map((e) => {
+            return <Door key={e.id} {...(e as DoorModel)} />;
           })}
 
           {/* wireFrame */}
