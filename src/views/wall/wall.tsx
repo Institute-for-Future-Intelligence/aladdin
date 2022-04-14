@@ -50,7 +50,7 @@ import * as Selector from 'src/stores/selector';
 import { FINE_GRID_SCALE, HALF_PI, TWO_PI } from 'src/constants';
 import { UndoableMove } from 'src/undo/UndoableMove';
 import { UndoableAdd } from 'src/undo/UndoableAdd';
-import { UndoableResizeWindow } from 'src/undo/UndoableResize';
+import { UndoableResizeWindowOrDoor } from 'src/undo/UndoableResize';
 import { DoorModel } from 'src/models/DoorModel';
 import Door from '../door';
 
@@ -566,6 +566,7 @@ const Wall = ({
 
   const handleUndoableResize = (elem: ElementModel) => {
     switch (elem.type) {
+      case ObjectType.Door:
       case ObjectType.Window:
         const undoableResize = {
           name: 'Resize',
@@ -597,7 +598,7 @@ const Wall = ({
               }
             });
           },
-        } as UndoableResizeWindow;
+        } as UndoableResizeWindowOrDoor;
         addUndoable(undoableResize);
         break;
     }
@@ -734,14 +735,14 @@ const Wall = ({
       invalidWindowIdRef.current = null;
       setOriginElements(null);
     }
-    // add undo for valid window operation
+    // add undo for valid operation
     else {
       const elem = getElementById(grabRef.current.id);
       if (elem) {
         if (moveHandleTypeRef.current) {
           handleUndoableMove(elem);
         } else if (resizeHandleTypeRef.current) {
-          if (isSettingWindowEndPointRef.current) {
+          if (isSettingWindowEndPointRef.current || isSettingDoorEndPointRef.current) {
             handleUndoableAdd(elem);
           } else {
             handleUndoableResize(elem);

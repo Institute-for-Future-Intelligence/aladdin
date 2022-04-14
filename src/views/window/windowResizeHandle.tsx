@@ -36,7 +36,7 @@ const WindowResizeHandle = ({ x, z, handleType }: WindowResizeHandleProps) => {
     <Box
       ref={handleRef}
       name={handleType}
-      args={[0.1, 0.1, 0.1]}
+      args={[0.2, 0.2, 0.2]}
       position={[x, 0, z]}
       onPointerDown={(e) => {
         useStoreRef.getState().setEnableOrbitController(false);
