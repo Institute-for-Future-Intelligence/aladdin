@@ -12,6 +12,8 @@ export class DefaultGeneticAlgorithmParams implements GeneticAlgorithmParams {
   searchMethod: GeneticAlgorithmSearchMethod;
   populationSize: number;
   maximumGenerations: number;
+  selectionRate: number;
+  crossoverRate: number;
   mutationRate: number;
   convergenceThreshold: number;
   localSearchRadius: number;
@@ -23,6 +25,8 @@ export class DefaultGeneticAlgorithmParams implements GeneticAlgorithmParams {
     this.searchMethod = GeneticAlgorithmSearchMethod.GLOBAL_SEARCH_UNIFORM_SELECTION;
     this.populationSize = 20;
     this.maximumGenerations = 5;
+    this.selectionRate = 0.5;
+    this.crossoverRate = 0.5;
     this.mutationRate = 0.1;
     this.convergenceThreshold = 0.01;
     this.localSearchRadius = 0.1;

@@ -11,6 +11,8 @@ export interface GeneticAlgorithmParams {
   searchMethod: GeneticAlgorithmSearchMethod;
   populationSize: number;
   maximumGenerations: number;
+  selectionRate: number;
+  crossoverRate: number;
   mutationRate: number;
   convergenceThreshold: number;
   localSearchRadius: number;

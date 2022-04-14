@@ -123,8 +123,8 @@ const SolarPanelTiltAngleOptimizationResult = () => {
   };
 
   const labelGeneration = i18n.t('optimizationMenu.Generation', lang);
-  const labelGene = i18n.t('optimizationMenu.Gene', lang);
-  const labelObjective = i18n.t('optimizationMenu.Objective', lang);
+  const labelGene = i18n.t('solarPanelMenu.TiltAngle', lang);
+  const labelObjective = i18n.t('solarPanelYieldPanel.SolarPanelDailyYield', lang);
 
   return (
     <ReactDraggable

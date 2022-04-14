@@ -93,6 +93,8 @@ const SolarPanelTiltAngleEvolution = () => {
         params.selectionMethod,
         params.convergenceThreshold,
       );
+      optimizerRef.current.selectionRate = params.selectionRate;
+      optimizerRef.current.crossoverRate = params.crossoverRate;
       optimizerRef.current.mutationRate = params.mutationRate;
       individualIndexRef.current = 0;
       convergedRef.current = false;
@@ -141,6 +143,7 @@ const SolarPanelTiltAngleEvolution = () => {
       individualIndexRef.current % params.populationSize,
       getTotal(),
     );
+    updateResults();
     individualIndexRef.current++;
     optimizerRef.current.outsideGenerationCounter = Math.floor(individualIndexRef.current / params.populationSize);
     // recursive call to the next step of the evolution, which is to evaluate the next individual

@@ -576,8 +576,10 @@ export const i18n_es = {
       LocalSearchRandomOptimization: 'Local Search Random Optimization',
       PopulationSize: 'Population Size',
       MaximumGenerations: 'Maximum Generations',
+      SelectionRate: 'Selection Rate',
+      CrossoverRate: 'Crossover Rate',
       MutationRate: 'Mutation Rate',
-      ConvergenceThreshold: 'Convergence Threshold',
+      ConvergenceThreshold: 'Convergence Threshold for Termination',
       LocalSearchRadius: 'Local Search Radius',
     },
 

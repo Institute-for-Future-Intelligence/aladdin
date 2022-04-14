@@ -29,6 +29,8 @@ const SolarPanelTiltAngleOptimizerWizard = ({ setDialogVisible }: { setDialogVis
   const populationSizeRef = useRef<number>(params.populationSize);
   const maximumGenerationsRef = useRef<number>(params.maximumGenerations);
   const mutationRateRef = useRef<number>(params.mutationRate);
+  const selectionRateRef = useRef<number>(params.selectionRate ?? 0.5);
+  const crossoverRateRef = useRef<number>(params.crossoverRate ?? 0.5);
   const convergenceThresholdRef = useRef<number>(params.convergenceThreshold);
   const localSearchRadiusRef = useRef<number>(params.localSearchRadius);
   const okButtonRef = useRef<HTMLElement | null>(null);
@@ -63,6 +65,8 @@ const SolarPanelTiltAngleOptimizerWizard = ({ setDialogVisible }: { setDialogVis
       state.geneticAlgorithmState.solarPanelTiltAngleGeneticAlgorithmParams.populationSize = populationSizeRef.current;
       state.geneticAlgorithmState.solarPanelTiltAngleGeneticAlgorithmParams.maximumGenerations =
         maximumGenerationsRef.current;
+      state.geneticAlgorithmState.solarPanelTiltAngleGeneticAlgorithmParams.selectionRate = selectionRateRef.current;
+      state.geneticAlgorithmState.solarPanelTiltAngleGeneticAlgorithmParams.crossoverRate = crossoverRateRef.current;
       state.geneticAlgorithmState.solarPanelTiltAngleGeneticAlgorithmParams.mutationRate = mutationRateRef.current;
       state.geneticAlgorithmState.solarPanelTiltAngleGeneticAlgorithmParams.convergenceThreshold =
         convergenceThresholdRef.current;
@@ -87,7 +91,7 @@ const SolarPanelTiltAngleOptimizerWizard = ({ setDialogVisible }: { setDialogVis
   return (
     <>
       <Modal
-        width={600}
+        width={640}
         visible={true}
         title={
           <div
@@ -221,6 +225,48 @@ const SolarPanelTiltAngleOptimizerWizard = ({ setDialogVisible }: { setDialogVis
               formatter={(a) => Number(a).toFixed(0)}
               onChange={(value) => {
                 maximumGenerationsRef.current = value;
+                setUpdateFlag(!updateFlag);
+              }}
+            />
+          </Col>
+        </Row>
+
+        <Row gutter={6} style={{ paddingBottom: '4px' }}>
+          <Col className="gutter-row" span={12}>
+            {i18n.t('optimizationMenu.SelectionRate', lang) + ' [0, 1]: '}
+          </Col>
+          <Col className="gutter-row" span={12}>
+            <InputNumber
+              min={0}
+              max={1}
+              style={{ width: '100%' }}
+              precision={2}
+              value={selectionRateRef.current}
+              step={0.01}
+              formatter={(a) => Number(a).toFixed(2)}
+              onChange={(value) => {
+                selectionRateRef.current = value;
+                setUpdateFlag(!updateFlag);
+              }}
+            />
+          </Col>
+        </Row>
+
+        <Row gutter={6} style={{ paddingBottom: '4px' }}>
+          <Col className="gutter-row" span={12}>
+            {i18n.t('optimizationMenu.CrossoverRate', lang) + ' [0, 1]: '}
+          </Col>
+          <Col className="gutter-row" span={12}>
+            <InputNumber
+              min={0}
+              max={1}
+              style={{ width: '100%' }}
+              precision={2}
+              value={crossoverRateRef.current}
+              step={0.01}
+              formatter={(a) => Number(a).toFixed(2)}
+              onChange={(value) => {
+                crossoverRateRef.current = value;
                 setUpdateFlag(!updateFlag);
               }}
             />

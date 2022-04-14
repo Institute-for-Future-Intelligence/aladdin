@@ -12,7 +12,7 @@ export class Population {
   individuals: Individual[];
   savedGeneration: Individual[];
   violations: boolean[];
-  beta: number;
+  beta: number; // blending parameter for genetic mixing
   survivors: Individual[];
   mutants: Individual[];
   selectionMethod: GeneticAlgorithmSelectionMethod = GeneticAlgorithmSelectionMethod.ROULETTE_WHEEL;
@@ -148,6 +148,10 @@ export class Population {
       for (let i = 0; i < n; i++) {
         const di = p.dad.getGene(i);
         const mi = p.mom.getGene(i);
+        // if the crossover rate equals to 1, then it is uniform crossover when beta is 0 or 1,
+        // which means the children take a gene from either parent completely randomly
+        // if the crossover rate equals to 0, then it is reduced to only blending,
+        // which may work as well (but crossover can increase higher genetic diversity)
         if (Math.random() < crossoverRate) {
           child1.setGene(i, this.beta * di + (1 - this.beta) * mi);
           child2.setGene(i, this.beta * mi + (1 - this.beta) * di);
