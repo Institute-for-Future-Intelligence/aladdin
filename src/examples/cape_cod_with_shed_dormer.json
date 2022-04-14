@@ -1,6 +1,6 @@
 {
-  "docid": "1C2zT177W5mpyPEjQZvAGc",
-  "timestamp": 1649256439935,
+  "docid": "hTYyNKk3VBmKphBq2PLKSz",
+  "timestamp": 1649977079831,
   "userid": "QWecNcxhyvP6j6sBN11hBsfZDau1",
   "owner": null,
   "email": null,
@@ -1110,6 +1110,31 @@
       "parentId": "2u4Fe7xnA6kkXXVGrQ4eyJ",
       "foundationId": "m7AH7DcnoGzAq9kryBy4RS",
       "selected": false
+    },
+    {
+      "type": "Door",
+      "cx": -0.007175044455080826,
+      "cy": 0,
+      "cz": -0.10574881686604092,
+      "lx": 0.24768342224349496,
+      "ly": 0,
+      "lz": 0.7885023662679181,
+      "textureType": "Door Texture Default",
+      "selected": false,
+      "showLabel": false,
+      "normal": [
+        0,
+        1,
+        0
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "parentId": "cV8MyCuhWAsvEyyFuVqVqg",
+      "foundationId": "m7AH7DcnoGzAq9kryBy4RS",
+      "id": "j9wJCoWK33fz7y9VeMvYET"
     }
   ],
   "view": {
@@ -1141,8 +1166,8 @@
     "dailyHeliostatYieldPanelX": 0,
     "showDailyParabolicDishYieldPanel": false,
     "cameraPosition": [
-      -12.16139903850927,
-      -16.266914847024438,
+      -9.381048149358904,
+      -18.607476375064877,
       4.074781230070627
     ],
     "showYearlyHeliostatYieldPanel": false,

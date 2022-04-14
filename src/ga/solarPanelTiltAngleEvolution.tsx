@@ -226,7 +226,12 @@ const SolarPanelTiltAngleEvolution = () => {
         const datum: DatumEntry = {};
         datum['Generation'] = index;
         for (let k = 0; k < n; k++) {
-          datum[geneLabels[k] ?? 'Gene' + (k + 1)] = Util.toDegrees((2 * fg.chromosome[k] - 1) * HALF_PI);
+          let key = 'Gene' + (k + 1);
+          if (geneLabels[k]) {
+            const trimmed = geneLabels[k]?.trim();
+            if (trimmed && trimmed !== '') key = trimmed;
+          }
+          datum[key] = Util.toDegrees((2 * fg.chromosome[k] - 1) * HALF_PI);
         }
         datum['Objective'] = fg.fitness;
         results.push(datum);

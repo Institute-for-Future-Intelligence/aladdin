@@ -337,6 +337,7 @@ export const i18n_zh_cn = {
         SolarUpdraftTowerInCity: '太阳能上升气流塔在城市中的应用',
         CapeCodStyleHouseWithShedDormer: '有棚顶窗的科德角风格的住宅',
         BarnStyleHouse: '谷仓式风格的住宅',
+        GambrelRoof: '复斜屋顶的住宅',
         OfficeBuilding: '一栋简单的办公楼',
         Hotel: '一个旅馆场景',
         Heatmap1: '热图例一',

@@ -73,7 +73,7 @@ const GaBiaxialLineGraph = ({
     const lines = [];
     let defaultSymbol;
     for (let i = 0; i < lineCount - 1; i++) {
-      let name = labels && labels[i] ? labels[i] : 'Gene' + (i + 1);
+      let name = labels && labels[i] && labels[i] !== '' ? labels[i] : 'Gene' + (i + 1);
       const opacity = legendDataKey === null ? 1 : legendDataKey === name ? 1 : 0.25;
       const symbol = createSymbol(SYMBOLS[2 * i], symbolSize, symbolCount, opacity);
       if (i === 0) defaultSymbol = symbol;

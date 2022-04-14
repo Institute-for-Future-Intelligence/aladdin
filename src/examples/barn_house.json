@@ -1,6 +1,6 @@
 {
-  "docid": "6VsX7dpkJBKsrfDfQRnNNa",
-  "timestamp": 1649258423192,
+  "docid": "r5zfZaWfGPGh6tB5HE7C4a",
+  "timestamp": 1649977197738,
   "userid": "QWecNcxhyvP6j6sBN11hBsfZDau1",
   "owner": null,
   "email": null,
@@ -1281,7 +1281,8 @@
       ],
       "parentId": "46TKaVq8pvU97fq25w6FtQ",
       "id": "fEgQo63aax49KtqEdPTNhE",
-      "selected": false
+      "selected": false,
+      "ly": 0.6
     },
     {
       "type": "Human",
@@ -1303,7 +1304,8 @@
       ],
       "parentId": "Ground",
       "id": "4BmWg5mgbRSqHZB7i69JCr",
-      "selected": false
+      "selected": false,
+      "ly": 0.4
     },
     {
       "type": "Human",
@@ -1325,7 +1327,8 @@
       ],
       "parentId": "Ground",
       "id": "xix4idJ2qyP21RHv281pxk",
-      "selected": false
+      "selected": false,
+      "ly": 0.6
     },
     {
       "type": "Human",
@@ -1347,7 +1350,8 @@
       ],
       "parentId": "Ground",
       "id": "pnZ17fTrUAQjd7ZGBi4LZw",
-      "selected": false
+      "selected": false,
+      "ly": 0.6
     },
     {
       "type": "Human",
@@ -1369,7 +1373,8 @@
       ],
       "parentId": "Ground",
       "id": "swuHMR6JuNqcRU1q2CGzEB",
-      "selected": false
+      "selected": false,
+      "ly": 2
     },
     {
       "type": "Human",
@@ -1391,7 +1396,33 @@
       ],
       "parentId": "Ground",
       "id": "neJBajzFYG5HwTAskcMmid",
-      "selected": false
+      "selected": false,
+      "ly": 0.4
+    },
+    {
+      "type": "Door",
+      "cx": 0.0142857142857143,
+      "cy": 0,
+      "cz": -0.29,
+      "lx": 0.2761904761904762,
+      "ly": 0,
+      "lz": 0.42000000000000004,
+      "textureType": "Door Texture Default",
+      "selected": false,
+      "showLabel": false,
+      "normal": [
+        0,
+        1,
+        0
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "parentId": "iF8yBnVR7zKfNKiVQ7M1op",
+      "foundationId": "x9h6vgTSQ3QLh48G3oYMPN",
+      "id": "1cqNEbnbmdgjFsj2KffdDW"
     }
   ],
   "view": {
@@ -1403,8 +1434,8 @@
     "enableRotate": true,
     "weatherPanelY": 0,
     "cameraPosition": [
-      34.29790593081313,
-      -35.09303934629889,
+      32.503689798569035,
+      -26.261918917991277,
       7.827458424625398
     ],
     "showYearlyUpdraftTowerYieldPanel": false,

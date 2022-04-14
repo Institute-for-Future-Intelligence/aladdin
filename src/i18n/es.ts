@@ -339,6 +339,7 @@ export const i18n_es = {
         SolarUpdraftTowerInCity: 'Solar Updraft Tower in City',
         CapeCodStyleHouseWithShedDormer: 'Cape Cod Style House with Shed Dormer',
         BarnStyleHouse: 'Barn Style House',
+        GambrelRoof: 'Gambrel Roof',
         OfficeBuilding: 'Edificio de oficinas',
         Hotel: 'Hotel',
         Heatmap1: 'Heatmap',

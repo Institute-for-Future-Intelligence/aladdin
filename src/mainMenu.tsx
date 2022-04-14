@@ -13,6 +13,7 @@ import solar_farm_03 from './examples/solar_farm_03.json';
 import solar_trackers from './examples/solar_trackers.json';
 import cape_cod_with_shed_dormer from './examples/cape_cod_with_shed_dormer.json';
 import barn_house from './examples/barn_house.json';
+import gambrel_roof from './examples/gambrel_roof.json';
 import hotel_01 from './examples/hotel_01.json';
 import heatmap_01 from './examples/heatmap_01.json';
 import vegetative_buffer_01 from './examples/vegetative_buffer_01.json';
@@ -282,6 +283,9 @@ const MainMenu = ({ viewOnly, set2DView, resetView, zoomView, canvas }: MainMenu
         break;
       case 'cape_cod_with_shed_dormer':
         input = cape_cod_with_shed_dormer;
+        break;
+      case 'gambrel_roof':
+        input = gambrel_roof;
         break;
       case 'barn_house':
         input = barn_house;
@@ -1605,6 +1609,9 @@ const MainMenu = ({ viewOnly, set2DView, resetView, zoomView, canvas }: MainMenu
           <SubMenu key={'residential_buildings'} title={i18n.t('menu.residentialBuildingsSubMenu', lang)}>
             <Menu.Item key="cape_cod_with_shed_dormer" onClick={loadFile}>
               {i18n.t('menu.examples.CapeCodStyleHouseWithShedDormer', lang)}
+            </Menu.Item>
+            <Menu.Item key="gambrel_roof" onClick={loadFile}>
+              {i18n.t('menu.examples.GambrelRoof', lang)}
             </Menu.Item>
             <Menu.Item key="barn_house" onClick={loadFile}>
               {i18n.t('menu.examples.BarnStyleHouse', lang)}
