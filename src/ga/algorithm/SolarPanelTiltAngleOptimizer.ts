@@ -95,7 +95,7 @@ export class SolarPanelTiltAngleOptimizer extends Optimizer {
       // the first individual of the first generation is used as a baseline
       // (imagine it as the fittest of the zeroth generation)
       if (this.computeCounter === 0 && indexOfIndividual === 0) {
-        this.fittestOfGenerations[0] = individual;
+        this.fittestOfGenerations[0] = individual.getCopy();
         this.initialFitness = fitness;
       }
       const generation = Math.floor(this.computeCounter / populationSize);
