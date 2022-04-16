@@ -562,6 +562,7 @@ const SolarPanelSimulation = ({ city }: SolarPanelSimulationProps) => {
     const date = now.getDate();
     const dayOfYear = Util.dayOfYear(now);
     let lx: number, ly: number, nx: number, ny: number;
+    let dCell: number;
     if (world.discretization === Discretization.EXACT) {
       lx = panel.lx;
       ly = panel.ly;
@@ -576,6 +577,7 @@ const SolarPanelSimulation = ({ city }: SolarPanelSimulationProps) => {
         nx *= pvModel.m;
         ny *= pvModel.n;
       }
+      dCell = panel.lx / nx;
     } else {
       lx = panel.lx;
       ly = panel.ly;
@@ -584,12 +586,13 @@ const SolarPanelSimulation = ({ city }: SolarPanelSimulationProps) => {
       // nx and ny must be even (for circuit simulation)
       if (nx % 2 !== 0) nx += 1;
       if (ny % 2 !== 0) ny += 1;
+      dCell = cellSize;
     }
     const dx = lx / nx;
     const dy = ly / ny;
     // shift half cell size to the center of each grid cell
-    const x0 = center.x - (lx - cellSize) / 2;
-    const y0 = center.y - (ly - cellSize) / 2;
+    const x0 = center.x - (lx - dCell) / 2;
+    const y0 = center.y - (ly - dCell) / 2;
     const z0 = parent.lz + panel.poleHeight + panel.lz;
     const center2d = new Vector2(center.x, center.y);
     const v = new Vector3();
@@ -713,6 +716,7 @@ const SolarPanelSimulation = ({ city }: SolarPanelSimulationProps) => {
     const month = now.getMonth();
     const dayOfYear = Util.dayOfYear(now);
     let lx: number, ly: number, nx: number, ny: number;
+    let dCell: number;
     if (world.discretization === Discretization.EXACT) {
       lx = panel.lx;
       ly = panel.ly;
@@ -727,6 +731,7 @@ const SolarPanelSimulation = ({ city }: SolarPanelSimulationProps) => {
         nx *= pvModel.m;
         ny *= pvModel.n;
       }
+      dCell = panel.lx / nx;
     } else {
       lx = panel.lx;
       ly = panel.ly;
@@ -735,12 +740,13 @@ const SolarPanelSimulation = ({ city }: SolarPanelSimulationProps) => {
       // nx and ny must be even (for circuit simulation)
       if (nx % 2 !== 0) nx += 1;
       if (ny % 2 !== 0) ny += 1;
+      dCell = cellSize;
     }
     const dx = lx / nx;
     const dy = ly / ny;
     // shift half cell size to the center of each grid cell
-    const x0 = center.x - (lx - cellSize) / 2;
-    const y0 = center.y - (ly - cellSize) / 2;
+    const x0 = center.x - (lx - dCell) / 2;
+    const y0 = center.y - (ly - dCell) / 2;
     const z0 = parent.lz + panel.poleHeight + panel.lz;
     const center2d = new Vector2(center.x, center.y);
     const v = new Vector3();
