@@ -12,7 +12,7 @@ import { screenshot, showInfo } from '../helpers';
 import { RightCircleOutlined, SaveOutlined } from '@ant-design/icons';
 import i18n from '../i18n/i18n';
 import GaBiaxialLineGraph from '../components/gaBiaxialLineGraph';
-import { ObjectType } from '../types';
+import { ObjectiveFunctionType, ObjectType } from '../types';
 
 const Container = styled.div`
   position: fixed;
@@ -68,6 +68,7 @@ const SolarPanelTiltAngleOptimizationResult = () => {
   const panelX = useStore(Selector.viewState.evolutionPanelX);
   const panelY = useStore(Selector.viewState.evolutionPanelY);
   const selectedElement = useStore(Selector.selectedElement);
+  const params = useStore.getState().geneticAlgorithmState.solarPanelTiltAngleGeneticAlgorithmParams;
 
   // nodeRef is to suppress ReactDOM.findDOMNode() deprecation warning. See:
   // https://github.com/react-grid-layout/react-draggable/blob/v4.4.2/lib/DraggableCore.js#L159-L171
@@ -125,7 +126,10 @@ const SolarPanelTiltAngleOptimizationResult = () => {
 
   const labelGeneration = i18n.t('optimizationMenu.Generation', lang);
   const labelGene = i18n.t('solarPanelMenu.TiltAngle', lang);
-  const labelObjective = i18n.t('solarPanelYieldPanel.SolarPanelDailyYield', lang);
+  const labelObjective =
+    params.objectiveFunctionType === ObjectiveFunctionType.DAILY_OUTPUT
+      ? i18n.t('solarPanelYieldPanel.SolarPanelDailyYield', lang)
+      : i18n.t('solarPanelYieldPanel.SolarPanelYearlyYield', lang);
 
   return (
     <ReactDraggable

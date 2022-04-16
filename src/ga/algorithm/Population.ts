@@ -246,6 +246,10 @@ export class Population {
     if (m === 0) {
       // ensure at least one mutant?
       m = 1;
+    } else if (m === this.individuals.length - 1) {
+      // we will have a deadlock in the while loop below if we don't do this
+      // because the length of mutants will always be less than the full individual length in elitism
+      m = this.individuals.length - 2;
     }
     this.mutants = [];
     while (this.mutants.length < m) {
