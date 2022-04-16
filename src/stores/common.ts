@@ -759,6 +759,7 @@ export const useStore = create<CommonStoreState>(
               state.localContentToImportAfterCloudFileUpdate = undefined;
               state.fileChanged = !state.fileChanged;
               state.showSolarRadiationHeatmap = false;
+              state.geneticAlgorithmState = content.geneticAlgorithmState ?? new DefaultGeneticAlgorithmState();
             });
             // 1/6/2022: Humans previously did not have dimension data (which probably was a mistake).
             // We do this for backward compatibility. Otherwise, humans cannot be moved in old files.
@@ -784,6 +785,7 @@ export const useStore = create<CommonStoreState>(
               world: JSON.parse(JSON.stringify(state.world)),
               elements: JSON.parse(JSON.stringify(state.elements)),
               view: JSON.parse(JSON.stringify(state.viewState)),
+              geneticAlgorithmState: JSON.parse(JSON.stringify(state.geneticAlgorithmState)),
               notes: state.notes,
             };
           },

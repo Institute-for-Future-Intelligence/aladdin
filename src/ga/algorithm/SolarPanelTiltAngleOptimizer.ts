@@ -107,6 +107,13 @@ export class SolarPanelTiltAngleOptimizer extends Optimizer {
           ' : ' +
           SolarPanelTiltAngleOptimizer.individualToString(individual),
       );
+      const savedIndividual = this.populationOfGenerations[generation]?.individuals[indexOfIndividual];
+      if (savedIndividual) {
+        for (let k = 0; k < individual.chromosome.length; k++) {
+          savedIndividual.chromosome[k] = individual.chromosome[k];
+        }
+        savedIndividual.fitness = individual.fitness;
+      }
       const isAtTheEndOfGeneration = this.computeCounter % populationSize === populationSize - 1;
       if (isAtTheEndOfGeneration) {
         this.population.saveGenes();

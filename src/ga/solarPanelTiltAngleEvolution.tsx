@@ -220,10 +220,12 @@ const SolarPanelTiltAngleEvolution = () => {
   const updateResults = () => {
     if (!optimizerRef.current) return;
     const results: DatumEntry[] = [];
-    for (const [index, fg] of optimizerRef.current.fittestOfGenerations.entries()) {
+    for (let index = 0; index < optimizerRef.current.fittestOfGenerations.length; index++) {
+      const datum: DatumEntry = {};
+      // the first fittest starts from index 1 because index 0 is used for the initial state
+      const fg = optimizerRef.current.fittestOfGenerations[index];
       if (fg) {
         const n = fg.chromosome.length;
-        const datum: DatumEntry = {};
         datum['Generation'] = index;
         for (let k = 0; k < n; k++) {
           let key = 'Gene' + (k + 1);
@@ -234,6 +236,22 @@ const SolarPanelTiltAngleEvolution = () => {
           datum[key] = Util.toDegrees((2 * fg.chromosome[k] - 1) * HALF_PI);
         }
         datum['Objective'] = fg.fitness;
+        // the first generation of population starts from index 0
+        if (index > 0) {
+          const pg = optimizerRef.current.populationOfGenerations[index - 1];
+          if (pg) {
+            let counter = 0;
+            for (let i = 0; i < pg.individuals.length; i++) {
+              const n = pg.individuals[i].chromosome.length;
+              for (let k = 0; k < n; k++) {
+                const key = 'I' + ++counter;
+                datum[key] = Util.toDegrees((2 * pg.individuals[i].chromosome[k] - 1) * HALF_PI);
+              }
+            }
+          }
+        }
+      }
+      if (Object.keys(datum).length > 0) {
         results.push(datum);
       }
     }

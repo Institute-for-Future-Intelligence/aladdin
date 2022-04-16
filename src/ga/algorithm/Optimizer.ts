@@ -25,6 +25,7 @@ export abstract class Optimizer {
   maximumGenerations: number = 5;
 
   fittestOfGenerations: (Individual | null)[] = [];
+  populationOfGenerations: (Population | null)[] = [];
   outsideGenerationCounter: number = 0;
   computeCounter: number = 0;
   converged: boolean = false;
@@ -74,6 +75,15 @@ export abstract class Optimizer {
     }
     this.fittestOfGenerations = new Array<Individual | null>(this.maximumGenerations + 1);
     this.fittestOfGenerations.fill(null);
+    this.populationOfGenerations = new Array<Population | null>(this.maximumGenerations);
+    for (let i = 0; i < this.maximumGenerations; i++) {
+      this.populationOfGenerations[i] = new Population(
+        populationSize,
+        chromosomeLength,
+        selectionMethod,
+        convergenceThreshold,
+      );
+    }
   }
 
   setMinMax(i: number, min: number, max: number): void {

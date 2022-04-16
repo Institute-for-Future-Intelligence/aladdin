@@ -2,7 +2,7 @@
  * @Copyright 2022. Institute for Future Intelligence, Inc.
  */
 
-import React, { useMemo, useState } from 'react';
+import React, { useMemo, useRef, useState } from 'react';
 import {
   CartesianGrid,
   Label,
@@ -64,52 +64,90 @@ const GaBiaxialLineGraph = ({
   const verticalGridLines = true;
   const lineWidth = 2;
   const symbolSize = 1;
+  const payloadRef = useRef<any[]>([]);
 
+  // data source format starts from the genes of the fittest of each generation, followed by the best objective
+  // and then the genes of all the individuals from each generation:
+  // Generation, Gene1, Gene2, ..., Objective, I1, I2, I3, ...
   const getLines = useMemo(() => {
     if (!dataSource || dataSource.length === 0) return [];
     // the first column is for the x-axis, the last is for the objective
-    const lineCount = Object.keys(dataSource[0]).length - 1;
+    const fittestLineCount = Object.keys(dataSource[0]).length - 1;
+    const totalLineCount = dataSource[1] ? Object.keys(dataSource[1]).length - 1 : fittestLineCount;
     const symbolCount = dataSource.length;
     const lines = [];
+    const lastFittestLineIndex = fittestLineCount - 1;
+    const individualCount = (totalLineCount - fittestLineCount) / lastFittestLineIndex;
     let defaultSymbol;
-    for (let i = 0; i < lineCount - 1; i++) {
-      let name = labels && labels[i] && labels[i] !== '' ? labels[i] : 'Gene' + (i + 1);
-      const opacity = legendDataKey === null ? 1 : legendDataKey === name ? 1 : 0.25;
-      const symbol = createSymbol(SYMBOLS[2 * i], symbolSize, symbolCount, opacity);
-      if (i === 0) defaultSymbol = symbol;
-      lines.push(
-        <Line
-          yAxisId="left"
-          key={'left-' + i}
-          type={curveType}
-          name={name}
-          dataKey={name}
-          stroke={PRESET_COLORS[i]}
-          strokeDasharray={'5 3'}
-          opacity={opacity}
-          strokeWidth={lineWidth / 2}
-          dot={symbolCount > 0 ? (symbol ? symbol : defaultSymbol) : false}
-          isAnimationActive={false}
-        />,
-      );
+    payloadRef.current.length = 0;
+    for (let i = 0; i < totalLineCount; i++) {
+      if (i < lastFittestLineIndex) {
+        const name = labels && labels[i] && labels[i] !== '' ? labels[i] : 'Gene' + (i + 1);
+        const opacity = legendDataKey === null ? 1 : legendDataKey === name ? 1 : 0.25;
+        const symbol = createSymbol(SYMBOLS[i], symbolSize, symbolCount, opacity);
+        if (i === 0) defaultSymbol = symbol;
+        lines.push(
+          <Line
+            yAxisId="left"
+            key={'left-' + i}
+            type={curveType}
+            name={name}
+            dataKey={name}
+            stroke={PRESET_COLORS[i]}
+            strokeDasharray={'5 3'}
+            opacity={opacity}
+            strokeWidth={lineWidth / 2}
+            dot={symbolCount > 0 ? (symbol ? symbol : defaultSymbol) : false}
+            isAnimationActive={false}
+          />,
+        );
+        payloadRef.current.push({ id: name, type: 'line', value: name, color: PRESET_COLORS[i] });
+      } else if (i === lastFittestLineIndex) {
+        const name = 'Objective';
+        const opacity = legendDataKey === null ? 1 : legendDataKey === name ? 1 : 0.25;
+        const symbol = createSymbol(SYMBOLS[i], symbolSize, symbolCount, opacity);
+        lines.push(
+          <Line
+            yAxisId="right"
+            key={'right'}
+            type={curveType}
+            name={name}
+            dataKey={name}
+            stroke={PRESET_COLORS[i]}
+            opacity={opacity}
+            strokeWidth={lineWidth}
+            dot={symbolCount > 0 ? (symbol ? symbol : defaultSymbol) : false}
+            isAnimationActive={false}
+          />,
+        );
+        payloadRef.current.push({ id: name, type: 'line', value: name, color: PRESET_COLORS[lastFittestLineIndex] });
+      } else {
+        const geneIndex = Math.floor((i - fittestLineCount) / individualCount);
+        const name = 'I' + (i + 1);
+        const opacity = 0.5;
+        const symbol = createSymbol(
+          SYMBOLS[geneIndex],
+          (symbolSize * 2) / 3,
+          symbolCount,
+          opacity,
+          PRESET_COLORS[geneIndex],
+        );
+        lines.push(
+          <Line
+            yAxisId="left"
+            key={'left-' + i}
+            type={curveType}
+            name={name}
+            dataKey={name}
+            opacity={opacity}
+            stroke={PRESET_COLORS[geneIndex]}
+            strokeWidth={0}
+            dot={symbol ? symbol : defaultSymbol}
+            isAnimationActive={false}
+          />,
+        );
+      }
     }
-    const name = 'Objective';
-    const opacity = legendDataKey === null ? 1 : legendDataKey === name ? 1 : 0.25;
-    const symbol = createSymbol(SYMBOLS[lineCount], symbolSize, symbolCount, opacity);
-    lines.push(
-      <Line
-        yAxisId="right"
-        key={'right'}
-        type={curveType}
-        name={name}
-        dataKey={name}
-        stroke={PRESET_COLORS[lineCount]}
-        opacity={opacity}
-        strokeWidth={lineWidth}
-        dot={symbolCount > 0 ? (symbol ? symbol : defaultSymbol) : false}
-        isAnimationActive={false}
-      />,
-    );
     return lines;
   }, [dataSource, curveType, lineWidth, symbolSize, legendDataKey]);
 
@@ -185,6 +223,7 @@ const GaBiaxialLineGraph = ({
                 </YAxis>
                 {getLines}
                 <Legend
+                  payload={payloadRef.current}
                   iconType="plainline"
                   verticalAlign="top"
                   height={36}
