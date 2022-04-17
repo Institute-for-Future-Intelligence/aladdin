@@ -323,6 +323,7 @@ export const i18n_zh_tw = {
       residentialBuildingsSubMenu: '住宅建築',
       commercialBuildingsSubMenu: '商用建築',
       urbanPlanningSubMenu: '城市規劃',
+      artificialIntelligenceSubMenu: '人工智慧',
       examples: {
         SunBeamAndHeliodon: '太陽光束和日影儀',
         SolarFarm: '太陽能農場',
@@ -341,6 +342,8 @@ export const i18n_zh_tw = {
         OfficeBuilding: '一棟簡單的寫字樓',
         Hotel: '一個旅館場景',
         Heatmap1: '熱圖例一',
+        OptimizingTiltAngleOfOneSolarPanelRow: '優化單排光伏板的傾斜角',
+        OptimizingTiltAnglesOfMultipleSolarPanelRows: '優化多排光伏板的傾斜角',
       },
       languageSubMenu: '語言',
       AboutUs: '關於我們',

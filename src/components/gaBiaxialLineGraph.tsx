@@ -123,7 +123,7 @@ const GaBiaxialLineGraph = ({
         payloadRef.current.push({ id: name, type: 'line', value: name, color: PRESET_COLORS[lastFittestLineIndex] });
       } else {
         const geneIndex = Math.floor((i - fittestLineCount) / individualCount);
-        const name = 'I' + (i + 1);
+        const name = 'Individual' + (i + 1);
         const opacity = 0.5;
         const symbol = createSymbol(
           SYMBOLS[geneIndex],
@@ -193,7 +193,22 @@ const GaBiaxialLineGraph = ({
                   bottom: 30,
                 }}
               >
-                <Tooltip formatter={(value: number) => value.toFixed(fractionDigits)} />
+                <Tooltip
+                  formatter={(value: number) => value.toFixed(fractionDigits)}
+                  content={({ active, payload }) => {
+                    if (!active || !payload) return null;
+                    return payload.map((p) => {
+                      if (!p.name?.toString().startsWith('Individual')) {
+                        return (
+                          <div key={p.name}>
+                            {p.name}: {(p.value as number).toFixed(fractionDigits)}
+                          </div>
+                        );
+                      }
+                      return null;
+                    });
+                  }}
+                />
                 <CartesianGrid
                   vertical={verticalGridLines}
                   horizontal={horizontalGridLines}

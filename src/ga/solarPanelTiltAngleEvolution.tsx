@@ -244,7 +244,7 @@ const SolarPanelTiltAngleEvolution = () => {
             for (let i = 0; i < pg.individuals.length; i++) {
               const n = pg.individuals[i].chromosome.length;
               for (let k = 0; k < n; k++) {
-                const key = 'I' + ++counter;
+                const key = 'Individual' + ++counter;
                 datum[key] = Util.toDegrees((2 * pg.individuals[i].chromosome[k] - 1) * HALF_PI);
               }
             }

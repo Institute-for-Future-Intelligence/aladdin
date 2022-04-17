@@ -325,6 +325,7 @@ export const i18n_es = {
       residentialBuildingsSubMenu: 'Residential Buildings',
       commercialBuildingsSubMenu: 'Commercial Buildings',
       urbanPlanningSubMenu: 'Urban Planning',
+      artificialIntelligenceSubMenu: 'Artificial Intelligence',
       examples: {
         SunBeamAndHeliodon: 'Rayo de sol y heliodon',
         SolarFarm: 'Granja solar',
@@ -343,6 +344,8 @@ export const i18n_es = {
         OfficeBuilding: 'Edificio de oficinas',
         Hotel: 'Hotel',
         Heatmap1: 'Heatmap',
+        OptimizingTiltAngleOfOneSolarPanelRow: 'Optimizing the Tilt Angle of a Solar Panel Row',
+        OptimizingTiltAnglesOfMultipleSolarPanelRows: 'Optimizing the Tilt Angles of Multiple Solar Panel Rows',
       },
       languageSubMenu: 'Idioma',
       AboutUs: 'Sobre nosotros',
