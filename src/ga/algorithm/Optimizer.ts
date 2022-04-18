@@ -45,6 +45,8 @@ export abstract class Optimizer {
     chromosomeLength: number,
     selectionMethod: GeneticAlgorithmSelectionMethod,
     convergenceThreshold: number,
+    searchMethod: GeneticAlgorithmSearchMethod,
+    localSearchRadius: number,
     discretizationSteps?: number,
   ) {
     this.population = new Population(
@@ -55,6 +57,8 @@ export abstract class Optimizer {
       discretizationSteps,
     );
     this.maximumGenerations = maximumGenerations;
+    this.searchMethod = searchMethod;
+    this.localSearchRadius = localSearchRadius;
     this.geneNames = new Array<string>(chromosomeLength);
     this.geneMinima = new Array<number>(chromosomeLength);
     this.geneMaxima = new Array<number>(chromosomeLength);

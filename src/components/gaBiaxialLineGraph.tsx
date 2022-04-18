@@ -127,7 +127,7 @@ const GaBiaxialLineGraph = ({
         const opacity = 0.5;
         const symbol = createSymbol(
           SYMBOLS[geneIndex],
-          (symbolSize * 2) / 3,
+          symbolSize * 0.5,
           symbolCount,
           opacity,
           PRESET_COLORS[geneIndex],
@@ -156,7 +156,7 @@ const GaBiaxialLineGraph = ({
 
   // @ts-ignore
   const onMouseEnterLegend = (o) => {
-    setLegendDataKey(o.dataKey);
+    setLegendDataKey(o.id);
   };
 
   // @ts-ignore
@@ -215,21 +215,21 @@ const GaBiaxialLineGraph = ({
                   stroke={'rgba(128, 128, 128, 0.3)'}
                 />
                 <ReferenceLine yAxisId="left" x={referenceX} stroke="orange" strokeWidth={2} />
-                <XAxis dataKey={dataKeyAxisX ?? labelX}>
+                <XAxis dataKey={dataKeyAxisX ?? labelX} style={{ fontSize: '10px' }}>
                   <Label value={labelX + (unitX ? ' (' + unitX + ')' : '')} offset={0} position="bottom" />
                 </XAxis>
-                <YAxis domain={[yMin1, yMax1]} yAxisId="left">
+                <YAxis domain={[yMin1, yMax1]} yAxisId="left" style={{ fontSize: '10px' }}>
                   <Label
-                    dx={-15}
+                    dx={-20}
                     value={labelY1 + (unitY1 ? ' (' + unitY1 + ')' : '')}
                     offset={0}
                     angle={-90}
                     position="center"
                   />
                 </YAxis>
-                <YAxis domain={[yMin2, yMax2]} yAxisId="right" orientation={'right'}>
+                <YAxis domain={[yMin2, yMax2]} yAxisId="right" orientation={'right'} style={{ fontSize: '10px' }}>
                   <Label
-                    dx={15}
+                    dx={30}
                     value={labelY2 + (unitY2 ? ' (' + unitY2 + ')' : '')}
                     offset={0}
                     angle={-90}

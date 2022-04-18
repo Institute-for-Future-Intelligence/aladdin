@@ -14,6 +14,7 @@ import { SolarPanelModel } from '../../models/SolarPanelModel';
 import { GeneticAlgorithmSearchMethod, GeneticAlgorithmSelectionMethod } from '../../types';
 import { HALF_PI } from '../../constants';
 import { Util } from '../../Util';
+import { Random } from '../../Random';
 
 export class SolarPanelTiltAngleOptimizer extends Optimizer {
   solarPanels: SolarPanelModel[];
@@ -25,8 +26,19 @@ export class SolarPanelTiltAngleOptimizer extends Optimizer {
     maximumGenerations: number,
     selectionMethod: GeneticAlgorithmSelectionMethod,
     convergenceThreshold: number,
+    searchMethod: GeneticAlgorithmSearchMethod,
+    localSearchRadius: number,
   ) {
-    super(foundation, populationSize, maximumGenerations, solarPanels.length, selectionMethod, convergenceThreshold);
+    super(
+      foundation,
+      populationSize,
+      maximumGenerations,
+      solarPanels.length,
+      selectionMethod,
+      convergenceThreshold,
+      searchMethod,
+      localSearchRadius,
+    );
     this.solarPanels = solarPanels;
     // set the firstborn to be the current design
     const firstBorn: Individual = this.population.individuals[0];
@@ -36,9 +48,9 @@ export class SolarPanelTiltAngleOptimizer extends Optimizer {
       if (this.searchMethod === GeneticAlgorithmSearchMethod.LOCAL_SEARCH_RANDOM_OPTIMIZATION) {
         for (let k = 1; k < this.population.individuals.length; k++) {
           const individual: Individual = this.population.individuals[k];
-          let v = Math.random() * this.localSearchRadius + normalizedValue;
+          let v = Random.gaussian() * this.localSearchRadius + normalizedValue;
           while (v < 0 || v > 1) {
-            v = Math.random() * this.localSearchRadius + normalizedValue;
+            v = Random.gaussian() * this.localSearchRadius + normalizedValue;
           }
           individual.setGene(i, v);
         }

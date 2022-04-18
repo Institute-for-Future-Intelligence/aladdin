@@ -97,6 +97,8 @@ const SolarPanelTiltAngleEvolution = () => {
         params.maximumGenerations,
         params.selectionMethod,
         params.convergenceThreshold,
+        params.searchMethod,
+        params.localSearchRadius,
       );
       optimizerRef.current.selectionRate = params.selectionRate;
       optimizerRef.current.crossoverRate = params.crossoverRate;
