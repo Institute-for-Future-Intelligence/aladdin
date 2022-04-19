@@ -70,7 +70,7 @@
       "showLabel": true,
       "label": "Row1",
       "tiltAngle": 0,
-      "poleSpacing": 3,
+      "poleSpacing": 2,
       "rotation": [
         0,
         0,
@@ -111,7 +111,7 @@
       "orientation": "Portrait",
       "poleRadius": 0.05,
       "poleHeight": 1.2,
-      "poleSpacing": 3,
+      "poleSpacing": 2,
       "showLabel": true,
       "normal": [
         0,
@@ -146,7 +146,7 @@
       "orientation": "Portrait",
       "poleRadius": 0.05,
       "poleHeight": 1.2,
-      "poleSpacing": 3,
+      "poleSpacing": 2,
       "showLabel": true,
       "normal": [
         0,
@@ -181,7 +181,7 @@
       "orientation": "Portrait",
       "poleRadius": 0.05,
       "poleHeight": 1.2,
-      "poleSpacing": 3,
+      "poleSpacing": 2,
       "showLabel": true,
       "normal": [
         0,

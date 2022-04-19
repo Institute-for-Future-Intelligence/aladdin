@@ -8,13 +8,13 @@
  */
 
 import { Optimizer } from './Optimizer';
-import { FoundationModel } from '../../models/FoundationModel';
+import { FoundationModel } from '../../../models/FoundationModel';
 import { Individual } from './Individual';
-import { SolarPanelModel } from '../../models/SolarPanelModel';
-import { GeneticAlgorithmSearchMethod, GeneticAlgorithmSelectionMethod } from '../../types';
-import { HALF_PI } from '../../constants';
-import { Util } from '../../Util';
-import { Random } from '../../Random';
+import { SolarPanelModel } from '../../../models/SolarPanelModel';
+import { GeneticAlgorithmSearchMethod, GeneticAlgorithmSelectionMethod } from '../../../types';
+import { HALF_PI } from '../../../constants';
+import { Util } from '../../../Util';
+import { Random } from '../../../Random';
 
 export class SolarPanelTiltAngleOptimizer extends Optimizer {
   solarPanels: SolarPanelModel[];

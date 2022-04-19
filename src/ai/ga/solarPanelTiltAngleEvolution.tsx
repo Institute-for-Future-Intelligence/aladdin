@@ -3,16 +3,16 @@
  */
 
 import React, { useEffect, useRef } from 'react';
-import { useStore } from '../stores/common';
+import { useStore } from '../../stores/common';
 import * as Selector from 'src/stores/selector';
-import { showError, showInfo } from '../helpers';
-import i18n from '../i18n/i18n';
-import { DatumEntry, ObjectiveFunctionType, ObjectType } from '../types';
-import { SolarPanelModel } from '../models/SolarPanelModel';
+import { showError, showInfo } from '../../helpers';
+import i18n from '../../i18n/i18n';
+import { DatumEntry, ObjectiveFunctionType, ObjectType } from '../../types';
+import { SolarPanelModel } from '../../models/SolarPanelModel';
 import { SolarPanelTiltAngleOptimizer } from './algorithm/SolarPanelTiltAngleOptimizer';
-import { FoundationModel } from '../models/FoundationModel';
-import { HALF_PI } from '../constants';
-import { Util } from '../Util';
+import { FoundationModel } from '../../models/FoundationModel';
+import { HALF_PI } from '../../constants';
+import { Util } from '../../Util';
 
 const SolarPanelTiltAngleEvolution = () => {
   const setCommonStore = useStore(Selector.set);

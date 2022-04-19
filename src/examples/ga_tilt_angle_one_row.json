@@ -76,7 +76,7 @@
       "poleRadius": 0.05,
       "poleHeight": 1.2,
       "poleSpacing": 3,
-      "showLabel": true,
+      "showLabel": false,
       "normal": [
         0,
         0,
