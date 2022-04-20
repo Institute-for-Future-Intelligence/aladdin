@@ -7,16 +7,16 @@
  *
  */
 
-import { Optimizer } from './Optimizer';
+import { OptimizerGA } from './OptimizerGA';
 import { FoundationModel } from '../../../models/FoundationModel';
 import { Individual } from './Individual';
 import { SolarPanelModel } from '../../../models/SolarPanelModel';
-import { GeneticAlgorithmSearchMethod, GeneticAlgorithmSelectionMethod } from '../../../types';
+import { SearchMethod, GeneticAlgorithmSelectionMethod } from '../../../types';
 import { HALF_PI } from '../../../constants';
 import { Util } from '../../../Util';
 import { Random } from '../../../Random';
 
-export class SolarPanelTiltAngleOptimizer extends Optimizer {
+export class SolarPanelTiltAngleOptimizerGA extends OptimizerGA {
   solarPanels: SolarPanelModel[];
 
   constructor(
@@ -26,7 +26,7 @@ export class SolarPanelTiltAngleOptimizer extends Optimizer {
     maximumGenerations: number,
     selectionMethod: GeneticAlgorithmSelectionMethod,
     convergenceThreshold: number,
-    searchMethod: GeneticAlgorithmSearchMethod,
+    searchMethod: SearchMethod,
     localSearchRadius: number,
   ) {
     super(
@@ -45,7 +45,7 @@ export class SolarPanelTiltAngleOptimizer extends Optimizer {
     for (const [i, panel] of solarPanels.entries()) {
       const normalizedValue = 0.5 * (1.0 + panel.tiltAngle / HALF_PI);
       firstBorn.setGene(i, normalizedValue);
-      if (this.searchMethod === GeneticAlgorithmSearchMethod.LOCAL_SEARCH_RANDOM_OPTIMIZATION) {
+      if (this.searchMethod === SearchMethod.LOCAL_SEARCH_RANDOM_OPTIMIZATION) {
         for (let k = 1; k < this.population.individuals.length; k++) {
           const individual: Individual = this.population.individuals[k];
           let v = Random.gaussian() * this.localSearchRadius + normalizedValue;
@@ -71,7 +71,7 @@ export class SolarPanelTiltAngleOptimizer extends Optimizer {
         this.finalGene[i] = this.solarPanels[i].tiltAngle;
       }
       this.finalFitness = best.fitness;
-      console.log('Fittest: ' + SolarPanelTiltAngleOptimizer.individualToString(best));
+      console.log('Fittest: ' + SolarPanelTiltAngleOptimizerGA.individualToString(best));
     }
   }
 
@@ -117,7 +117,7 @@ export class SolarPanelTiltAngleOptimizer extends Optimizer {
           ', individual ' +
           indexOfIndividual +
           ' : ' +
-          SolarPanelTiltAngleOptimizer.individualToString(individual),
+          SolarPanelTiltAngleOptimizerGA.individualToString(individual),
       );
       const savedIndividual = this.populationOfGenerations[generation]?.individuals[indexOfIndividual];
       if (savedIndividual) {
@@ -137,8 +137,8 @@ export class SolarPanelTiltAngleOptimizer extends Optimizer {
         if (this.detectViolations()) {
           this.population.restoreGenes();
         } else {
-          this.converged = this.population.isNominallyConverged();
-          if (!this.converged && this.searchMethod === GeneticAlgorithmSearchMethod.GLOBAL_SEARCH_UNIFORM_SELECTION) {
+          this.converged = this.population.isNominallyConverged(this.convergenceThreshold);
+          if (!this.converged && this.searchMethod === SearchMethod.GLOBAL_SEARCH_UNIFORM_SELECTION) {
             this.population.mutate(this.mutationRate);
           }
         }

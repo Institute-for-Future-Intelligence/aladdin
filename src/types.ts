@@ -55,7 +55,7 @@ export enum GeneticAlgorithmSelectionMethod {
   TOURNAMENT = 2,
 }
 
-export enum GeneticAlgorithmSearchMethod {
+export enum SearchMethod {
   GLOBAL_SEARCH_UNIFORM_SELECTION = 1,
   LOCAL_SEARCH_RANDOM_OPTIMIZATION = 2, // https://en.wikipedia.org/wiki/Random_optimization
   GLOBAL_SEARCH_FITNESS_SHARING = 3, // https://stackoverflow.com/questions/13775810/what-is-niching-scheme

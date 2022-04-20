@@ -2,13 +2,13 @@
  * @Copyright 2022. Institute for Future Intelligence, Inc.
  */
 
-import { GeneticAlgorithmSearchMethod, GeneticAlgorithmSelectionMethod, ObjectiveFunctionType } from '../types';
+import { SearchMethod, GeneticAlgorithmSelectionMethod, ObjectiveFunctionType } from '../types';
 
 export interface GeneticAlgorithmParams {
   solution: string;
   objectiveFunctionType: ObjectiveFunctionType;
   selectionMethod: GeneticAlgorithmSelectionMethod;
-  searchMethod: GeneticAlgorithmSearchMethod;
+  searchMethod: SearchMethod;
   populationSize: number;
   maximumGenerations: number;
   selectionRate: number;

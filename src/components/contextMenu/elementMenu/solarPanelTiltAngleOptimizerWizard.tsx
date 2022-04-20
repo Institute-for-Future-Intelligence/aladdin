@@ -8,7 +8,7 @@ import Draggable, { DraggableBounds, DraggableData, DraggableEvent } from 'react
 import { useStore } from '../../../stores/common';
 import * as Selector from '../../../stores/selector';
 import i18n from '../../../i18n/i18n';
-import { GeneticAlgorithmSearchMethod, GeneticAlgorithmSelectionMethod, ObjectiveFunctionType } from '../../../types';
+import { SearchMethod, GeneticAlgorithmSelectionMethod, ObjectiveFunctionType } from '../../../types';
 import { showInfo } from '../../../helpers';
 
 const { Option } = Select;
@@ -25,7 +25,7 @@ const SolarPanelTiltAngleOptimizerWizard = ({ setDialogVisible }: { setDialogVis
   const params = useStore.getState().geneticAlgorithmState.solarPanelTiltAngleGeneticAlgorithmParams;
   const objectiveFunctionTypeRef = useRef<ObjectiveFunctionType>(params.objectiveFunctionType);
   const selectionMethodRef = useRef<GeneticAlgorithmSelectionMethod>(params.selectionMethod);
-  const searchMethodRef = useRef<GeneticAlgorithmSearchMethod>(params.searchMethod);
+  const searchMethodRef = useRef<SearchMethod>(params.searchMethod);
   const populationSizeRef = useRef<number>(params.populationSize);
   const maximumGenerationsRef = useRef<number>(params.maximumGenerations);
   const mutationRateRef = useRef<number>(params.mutationRate);
@@ -330,14 +330,14 @@ const SolarPanelTiltAngleOptimizerWizard = ({ setDialogVisible }: { setDialogVis
               }}
             >
               <Option
-                key={GeneticAlgorithmSearchMethod.GLOBAL_SEARCH_UNIFORM_SELECTION}
-                value={GeneticAlgorithmSearchMethod.GLOBAL_SEARCH_UNIFORM_SELECTION}
+                key={SearchMethod.GLOBAL_SEARCH_UNIFORM_SELECTION}
+                value={SearchMethod.GLOBAL_SEARCH_UNIFORM_SELECTION}
               >
                 {i18n.t('optimizationMenu.GlobalSearchUniformSelection', lang)}
               </Option>
               <Option
-                key={GeneticAlgorithmSearchMethod.LOCAL_SEARCH_RANDOM_OPTIMIZATION}
-                value={GeneticAlgorithmSearchMethod.LOCAL_SEARCH_RANDOM_OPTIMIZATION}
+                key={SearchMethod.LOCAL_SEARCH_RANDOM_OPTIMIZATION}
+                value={SearchMethod.LOCAL_SEARCH_RANDOM_OPTIMIZATION}
               >
                 {i18n.t('optimizationMenu.LocalSearchRandomOptimization', lang)}
               </Option>
@@ -345,7 +345,7 @@ const SolarPanelTiltAngleOptimizerWizard = ({ setDialogVisible }: { setDialogVis
           </Col>
         </Row>
 
-        {searchMethodRef.current === GeneticAlgorithmSearchMethod.LOCAL_SEARCH_RANDOM_OPTIMIZATION && (
+        {searchMethodRef.current === SearchMethod.LOCAL_SEARCH_RANDOM_OPTIMIZATION && (
           <Row gutter={6} style={{ paddingBottom: '4px' }}>
             <Col className="gutter-row" span={12}>
               {i18n.t('optimizationMenu.LocalSearchRadius', lang) + ' ([0, 1]: '}

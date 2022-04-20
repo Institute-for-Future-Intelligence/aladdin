@@ -9,12 +9,12 @@ import { showError, showInfo } from '../../helpers';
 import i18n from '../../i18n/i18n';
 import { DatumEntry, ObjectiveFunctionType, ObjectType } from '../../types';
 import { SolarPanelModel } from '../../models/SolarPanelModel';
-import { SolarPanelTiltAngleOptimizer } from './algorithm/SolarPanelTiltAngleOptimizer';
+import { SolarPanelTiltAngleOptimizerGA } from './algorithm/SolarPanelTiltAngleOptimizerGA';
 import { FoundationModel } from '../../models/FoundationModel';
 import { HALF_PI } from '../../constants';
 import { Util } from '../../Util';
 
-const SolarPanelTiltAngleEvolution = () => {
+const SolarPanelTiltAngleGA = () => {
   const setCommonStore = useStore(Selector.set);
   const language = useStore(Selector.language);
   const daysPerYear = useStore(Selector.world.daysPerYear) ?? 6;
@@ -34,7 +34,7 @@ const SolarPanelTiltAngleEvolution = () => {
   const evolutionCompletedRef = useRef<boolean>(false);
   const pauseRef = useRef<boolean>(false);
   const solarPanelsRef = useRef<SolarPanelModel[]>();
-  const optimizerRef = useRef<SolarPanelTiltAngleOptimizer>();
+  const optimizerRef = useRef<SolarPanelTiltAngleOptimizerGA>();
   const individualIndexRef = useRef<number>(0);
   const convergedRef = useRef<boolean>(false);
 
@@ -90,7 +90,7 @@ const SolarPanelTiltAngleEvolution = () => {
       labels.push(osp.label);
     }
     if (solarPanelsRef.current.length > 0) {
-      optimizerRef.current = new SolarPanelTiltAngleOptimizer(
+      optimizerRef.current = new SolarPanelTiltAngleOptimizerGA(
         solarPanelsRef.current,
         foundation,
         params.populationSize,
@@ -263,4 +263,4 @@ const SolarPanelTiltAngleEvolution = () => {
   return <></>;
 };
 
-export default React.memo(SolarPanelTiltAngleEvolution);
+export default React.memo(SolarPanelTiltAngleGA);

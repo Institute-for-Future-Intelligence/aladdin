@@ -2,19 +2,20 @@
  * @Copyright 2022. Institute for Future Intelligence, Inc.
  */
 
-import { GeneticAlgorithmSearchMethod, GeneticAlgorithmSelectionMethod } from '../../../types';
+import { SearchMethod, GeneticAlgorithmSelectionMethod } from '../../../types';
 import { FoundationModel } from '../../../models/FoundationModel';
 import { Population } from './Population';
 import { Individual } from './Individual';
 import { Constraint } from './Constraint';
 
-export abstract class Optimizer {
+export abstract class OptimizerGA {
   population: Population;
+  convergenceThreshold: number;
   minima: number[];
   maxima: number[];
   foundation: FoundationModel;
   fitnessSharingRadius: number = 0.1;
-  searchMethod: GeneticAlgorithmSearchMethod = GeneticAlgorithmSearchMethod.GLOBAL_SEARCH_UNIFORM_SELECTION;
+  searchMethod: SearchMethod = SearchMethod.GLOBAL_SEARCH_UNIFORM_SELECTION;
   localSearchRadius: number = 0.1;
 
   constraints: Constraint[] = [];
@@ -45,17 +46,12 @@ export abstract class Optimizer {
     chromosomeLength: number,
     selectionMethod: GeneticAlgorithmSelectionMethod,
     convergenceThreshold: number,
-    searchMethod: GeneticAlgorithmSearchMethod,
+    searchMethod: SearchMethod,
     localSearchRadius: number,
     discretizationSteps?: number,
   ) {
-    this.population = new Population(
-      populationSize,
-      chromosomeLength,
-      selectionMethod,
-      convergenceThreshold,
-      discretizationSteps,
-    );
+    this.population = new Population(populationSize, chromosomeLength, selectionMethod, discretizationSteps);
+    this.convergenceThreshold = convergenceThreshold;
     this.maximumGenerations = maximumGenerations;
     this.searchMethod = searchMethod;
     this.localSearchRadius = localSearchRadius;

@@ -3,13 +3,13 @@
  */
 
 import { GeneticAlgorithmParams } from './GeneticAlgorithmParams';
-import { GeneticAlgorithmSearchMethod, GeneticAlgorithmSelectionMethod, ObjectiveFunctionType } from '../types';
+import { SearchMethod, GeneticAlgorithmSelectionMethod, ObjectiveFunctionType } from '../types';
 
 export class DefaultGeneticAlgorithmParams implements GeneticAlgorithmParams {
   solution: string;
   objectiveFunctionType: ObjectiveFunctionType;
   selectionMethod: GeneticAlgorithmSelectionMethod;
-  searchMethod: GeneticAlgorithmSearchMethod;
+  searchMethod: SearchMethod;
   populationSize: number;
   maximumGenerations: number;
   selectionRate: number;
@@ -22,7 +22,7 @@ export class DefaultGeneticAlgorithmParams implements GeneticAlgorithmParams {
     this.solution = solution;
     this.objectiveFunctionType = ObjectiveFunctionType.DAILY_OUTPUT;
     this.selectionMethod = GeneticAlgorithmSelectionMethod.ROULETTE_WHEEL;
-    this.searchMethod = GeneticAlgorithmSearchMethod.GLOBAL_SEARCH_UNIFORM_SELECTION;
+    this.searchMethod = SearchMethod.GLOBAL_SEARCH_UNIFORM_SELECTION;
     this.populationSize = 20;
     this.maximumGenerations = 5;
     this.selectionRate = 0.5;

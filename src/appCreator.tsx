@@ -73,7 +73,7 @@ import DailySolarUpdraftTowerYieldPanel from './panels/dailySolarUpdraftTowerYie
 import DiurnalTemperaturePanel from './panels/diurnalTemperaturePanel';
 import YearlySolarUpdraftTowerYieldPanel from './panels/yearlySolarUpdraftTowerYieldPanel';
 import EvolutionControlPanel from './panels/evolutionControlPanel';
-import SolarPanelTiltAngleEvolution from './ai/ga/solarPanelTiltAngleEvolution';
+import SolarPanelTiltAngleEvolution from './ai/ga/solarPanelTiltAngleGA';
 import SolarPanelTiltAngleOptimizationResult from './panels/solarPanelTiltAngleOptimizationResult';
 
 export interface AppCreatorProps {

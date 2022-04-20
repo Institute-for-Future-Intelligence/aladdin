@@ -16,19 +16,16 @@ export class Population {
   survivors: Individual[];
   mutants: Individual[];
   selectionMethod: GeneticAlgorithmSelectionMethod = GeneticAlgorithmSelectionMethod.ROULETTE_WHEEL;
-  convergenceThreshold: number;
   discretizationSteps: number | undefined;
 
   constructor(
     populationSize: number,
     chromosomeLength: number,
     selectionMethod: GeneticAlgorithmSelectionMethod,
-    convergenceThreshold: number,
     discretizationSteps?: number,
   ) {
     this.beta = 0.5;
     this.selectionMethod = selectionMethod;
-    this.convergenceThreshold = convergenceThreshold;
     this.individuals = new Array(populationSize);
     this.savedGeneration = new Array(populationSize);
     this.violations = new Array(populationSize);
@@ -267,7 +264,7 @@ export class Population {
   }
 
   // check convergence bitwise (the so-called nominal convergence)
-  isNominallyConverged(): boolean {
+  isNominallyConverged(convergenceThreshold: number): boolean {
     if (this.survivors.length < 2) {
       return true;
     }
@@ -280,7 +277,7 @@ export class Population {
       }
       average /= m;
       for (let j = 0; j < m; j++) {
-        if (Math.abs(this.survivors[j].getGene(i) / average - 1.0) > this.convergenceThreshold) {
+        if (Math.abs(this.survivors[j].getGene(i) / average - 1.0) > convergenceThreshold) {
           return false;
         }
       }
