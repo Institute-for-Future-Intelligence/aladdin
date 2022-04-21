@@ -43,7 +43,6 @@ const SolarPanelTiltAnglePso = () => {
   const convergedRef = useRef<boolean>(false);
 
   useEffect(() => {
-    console.log(evolutionMethod);
     if (runEvolution && evolutionMethod === EvolutionMethod.PARTICLE_SWARM_OPTIMIZATION) {
       init();
       requestRef.current = requestAnimationFrame(evolve);

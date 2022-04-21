@@ -38,10 +38,12 @@ export class Swarm {
   // sort the fitness in the descending order (sort b before a if b's fitness is higher than a's)
   sort(): void {
     this.particles.sort((a, b) => b.compare(a));
-    for (let i = 0; i < this.bestPositionOfSwarm.length; i++) {
-      this.bestPositionOfSwarm[i] = this.particles[0].position[i];
+    if (Number.isNaN(this.bestFitness) || this.bestFitness < this.particles[0].fitness) {
+      for (let i = 0; i < this.bestPositionOfSwarm.length; i++) {
+        this.bestPositionOfSwarm[i] = this.particles[0].position[i];
+      }
+      this.bestFitness = this.particles[0].fitness;
     }
-    this.bestFitness = this.particles[0].fitness;
   }
 
   // check convergence bitwise (the so-called nominal convergence)

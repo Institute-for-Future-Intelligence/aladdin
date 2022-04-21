@@ -27,6 +27,12 @@ export class Particle {
     }
   }
 
+  updateBestPosition() {
+    for (let i = 0; i < this.bestPositionOfParticle.length; i++) {
+      this.bestPositionOfParticle[i] = this.position[i];
+    }
+  }
+
   getCopy(): Particle {
     const c = new Particle(this.position.length);
     for (let i = 0; i < c.position.length; i++) {

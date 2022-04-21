@@ -130,7 +130,7 @@ const SolarPanelTiltAngleOptimizationResult = () => {
   );
   const labelVariable = i18n.t('solarPanelMenu.TiltAngle', lang);
   const params =
-    evolutionMethod === EvolutionMethod.GENETIC_ALGORITHM
+    !evolutionMethod || evolutionMethod === EvolutionMethod.GENETIC_ALGORITHM
       ? useStore.getState().evolutionaryAlgorithmState.solarPanelTiltAngleGeneticAlgorithmParams
       : useStore.getState().evolutionaryAlgorithmState.solarPanelTiltAngleParticleSwarmOptimizationParams;
   const labelObjective =

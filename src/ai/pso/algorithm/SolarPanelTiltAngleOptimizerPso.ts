@@ -94,6 +94,9 @@ export class SolarPanelTiltAngleOptimizerPso extends OptimizerPso {
     const swarmSize = this.swarm.particles.length;
     if (!this.converged) {
       const particle: Particle = this.swarm.particles[indexOfParticle];
+      if (fitness > particle.fitness) {
+        particle.updateBestPosition();
+      }
       particle.fitness = fitness;
       // the first particle at the first step is used as a baseline
       if (this.computeCounter === 0 && indexOfParticle === 0) {
