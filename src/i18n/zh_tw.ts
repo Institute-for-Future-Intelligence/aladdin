@@ -173,6 +173,7 @@ export const i18n_zh_tw = {
       ResumeEvolution: '繼續演化',
       ConvergenceThresholdHasBeenReached: '收斂閾值已達到。',
       MaximumNumberOfGenerationsHasBeenReached: '最大世代數已達到。',
+      MaximumNumberOfStepsHasBeenReached: '最大步數已達到。',
     },
 
     menu: {

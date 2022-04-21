@@ -175,6 +175,7 @@ export const i18n_tr = {
       ResumeEvolution: 'Resume evolution',
       ConvergenceThresholdHasBeenReached: 'The convergence threshold has been reached.',
       MaximumNumberOfGenerationsHasBeenReached: 'The maximum number of generations has been reached.',
+      MaximumNumberOfStepsHasBeenReached: 'The maximum number of steps has been reached.',
     },
 
     menu: {

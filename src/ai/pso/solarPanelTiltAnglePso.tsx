@@ -185,7 +185,7 @@ const SolarPanelTiltAnglePso = () => {
             '\n' +
             (convergedRef.current
               ? i18n.t('message.ConvergenceThresholdHasBeenReached', lang)
-              : i18n.t('message.MaximumNumberOfGenerationsHasBeenReached', lang)),
+              : i18n.t('message.MaximumNumberOfStepsHasBeenReached', lang)),
         );
         setCommonStore((state) => {
           state.viewState.showEvolutionPanel = true;
@@ -227,9 +227,9 @@ const SolarPanelTiltAnglePso = () => {
     for (let index = 0; index < optimizerRef.current.bestPositionOfSteps.length; index++) {
       const datum: DatumEntry = {};
       // the first fittest starts from index 1 because index 0 is used for the initial state
-      const fg = optimizerRef.current.bestPositionOfSteps[index];
-      if (fg) {
-        const n = fg.length;
+      const ps = optimizerRef.current.bestPositionOfSteps[index];
+      if (ps) {
+        const n = ps.length;
         datum['Generation'] = index;
         for (let k = 0; k < n; k++) {
           let key = 'Gene' + (k + 1);
@@ -237,19 +237,19 @@ const SolarPanelTiltAnglePso = () => {
             const trimmed = particleLabels[k]?.trim();
             if (trimmed && trimmed !== '') key = trimmed;
           }
-          datum[key] = Util.toDegrees((2 * fg[k] - 1) * HALF_PI);
+          datum[key] = Util.toDegrees((2 * ps[k] - 1) * HALF_PI);
         }
         datum['Objective'] = optimizerRef.current.bestFitnessOfSteps[index];
         // the first generation of population starts from index 0
         if (index > 0) {
-          const pg = optimizerRef.current.swarmOfSteps[index - 1];
-          if (pg) {
+          const ss = optimizerRef.current.swarmOfSteps[index - 1];
+          if (ss) {
             let counter = 0;
-            for (let i = 0; i < pg.particles.length; i++) {
-              const n = pg.particles[i].position.length;
+            for (let i = 0; i < ss.particles.length; i++) {
+              const n = ss.particles[i].position.length;
               for (let k = 0; k < n; k++) {
-                const key = 'Particle' + ++counter;
-                datum[key] = Util.toDegrees((2 * pg.particles[i].position[k] - 1) * HALF_PI);
+                const key = 'Individual' + ++counter;
+                datum[key] = Util.toDegrees((2 * ss.particles[i].position[k] - 1) * HALF_PI);
               }
             }
           }

@@ -290,6 +290,7 @@
     "evolutionPanelX": 3,
     "evolutionPanelY": 4
   },
+  "evolutionMethod": 1,
   "evolutionaryAlgorithmState": {
     "solarPanelTiltAngleGeneticAlgorithmParams": {
       "solution": "Solar Panel Tilt Angle",
@@ -301,6 +302,18 @@
       "selectionRate": 0.5,
       "crossoverRate": 0.5,
       "mutationRate": 0.1,
+      "convergenceThreshold": 0.01,
+      "localSearchRadius": 0.1
+    },
+    "solarPanelTiltAngleParticleSwarmOptimizationParams": {
+      "solution": "Solar Panel Tilt Angle",
+      "objectiveFunctionType": 2,
+      "searchMethod": 1,
+      "swarmSize": 20,
+      "maximumSteps": 20,
+      "inertia": 0.8,
+      "cognitiveCoefficient": 0.1,
+      "socialCoefficient": 0.1,
       "convergenceThreshold": 0.01,
       "localSearchRadius": 0.1
     }

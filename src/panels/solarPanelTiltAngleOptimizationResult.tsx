@@ -13,6 +13,7 @@ import { RightCircleOutlined, SaveOutlined } from '@ant-design/icons';
 import i18n from '../i18n/i18n';
 import GaBiaxialLineGraph from '../components/gaBiaxialLineGraph';
 import { EvolutionMethod, ObjectiveFunctionType, ObjectType } from '../types';
+import { DefaultParticleSwarmOptimizationParams } from '../stores/DefaultParticleSwarmOptimizationParams';
 
 const Container = styled.div`
   position: fixed;
@@ -132,7 +133,8 @@ const SolarPanelTiltAngleOptimizationResult = () => {
   const params =
     !evolutionMethod || evolutionMethod === EvolutionMethod.GENETIC_ALGORITHM
       ? useStore.getState().evolutionaryAlgorithmState.solarPanelTiltAngleGeneticAlgorithmParams
-      : useStore.getState().evolutionaryAlgorithmState.solarPanelTiltAngleParticleSwarmOptimizationParams;
+      : useStore.getState().evolutionaryAlgorithmState.solarPanelTiltAngleParticleSwarmOptimizationParams ??
+        new DefaultParticleSwarmOptimizationParams('Solar Panel Tilt Angle');
   const labelObjective =
     params.objectiveFunctionType === ObjectiveFunctionType.DAILY_OUTPUT
       ? i18n.t('solarPanelYieldPanel.SolarPanelDailyYield', lang)

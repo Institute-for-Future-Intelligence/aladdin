@@ -1,6 +1,6 @@
 {
-  "docid": "5F9w5ihWFbMMBAVWTqZnj4",
-  "timestamp": 1650209199182,
+  "docid": "q3fdmCT3FiGvp8UP7nsfr9",
+  "timestamp": 1650575018649,
   "userid": "QWecNcxhyvP6j6sBN11hBsfZDau1",
   "owner": null,
   "email": null,
@@ -184,6 +184,7 @@
     "evolutionPanelX": -13,
     "evolutionPanelY": 8
   },
+  "evolutionMethod": 1,
   "evolutionaryAlgorithmState": {
     "solarPanelTiltAngleGeneticAlgorithmParams": {
       "solution": "Solar Panel Tilt Angle",
@@ -191,10 +192,22 @@
       "selectionMethod": 1,
       "searchMethod": 1,
       "populationSize": 30,
-      "maximumGenerations": 20,
+      "maximumGenerations": 5,
       "selectionRate": 0.5,
       "crossoverRate": 0.5,
       "mutationRate": 0.1,
+      "convergenceThreshold": 0.01,
+      "localSearchRadius": 0.1
+    },
+    "solarPanelTiltAngleParticleSwarmOptimizationParams": {
+      "solution": "Solar Panel Tilt Angle",
+      "objectiveFunctionType": 2,
+      "searchMethod": 1,
+      "swarmSize": 20,
+      "maximumSteps": 10,
+      "inertia": 0.8,
+      "cognitiveCoefficient": 0.1,
+      "socialCoefficient": 0.1,
       "convergenceThreshold": 0.01,
       "localSearchRadius": 0.1
     }

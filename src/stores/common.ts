@@ -762,6 +762,7 @@ export const useStore = create<CommonStoreState>(
               state.localContentToImportAfterCloudFileUpdate = undefined;
               state.fileChanged = !state.fileChanged;
               state.showSolarRadiationHeatmap = false;
+              state.evolutionMethod = content.evolutionMethod ?? EvolutionMethod.GENETIC_ALGORITHM;
               state.evolutionaryAlgorithmState =
                 content.evolutionaryAlgorithmState ?? new DefaultEvolutionaryAlgorithmState();
             });
@@ -789,7 +790,8 @@ export const useStore = create<CommonStoreState>(
               world: JSON.parse(JSON.stringify(state.world)),
               elements: JSON.parse(JSON.stringify(state.elements)),
               view: JSON.parse(JSON.stringify(state.viewState)),
-              geneticAlgorithmState: JSON.parse(JSON.stringify(state.evolutionaryAlgorithmState)),
+              evolutionMethod: state.evolutionMethod,
+              evolutionaryAlgorithmState: JSON.parse(JSON.stringify(state.evolutionaryAlgorithmState)),
               notes: state.notes,
             };
           },
@@ -5099,6 +5101,7 @@ export const useStore = create<CommonStoreState>(
           'dailyLightSensorData',
           'yearlyLightSensorData',
           'solarPanelArrayLayoutParams',
+          'evolutionMethod',
           'evolutionaryAlgorithmState',
         ],
       },
