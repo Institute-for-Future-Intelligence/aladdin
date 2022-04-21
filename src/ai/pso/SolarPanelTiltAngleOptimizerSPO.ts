@@ -116,12 +116,15 @@ export class SolarPanelTiltAngleOptimizerSPO extends OptimizerSPO {
       }
       const isAtTheEndOfStep = this.computeCounter % swarmSize === swarmSize - 1;
       if (isAtTheEndOfStep) {
-        this.swarm.evolve();
+        this.swarm.move();
         const best = this.swarm.bestPositionOfSwarm;
         if (best) {
           this.bestPositionOfSteps[step + 1] = [...best];
         }
-        this.converged = this.swarm.isNominallyConverged(this.convergenceThreshold);
+        this.converged = this.swarm.isNominallyConverged(
+          this.convergenceThreshold,
+          Math.max(2, this.swarm.particles.length / 4),
+        );
       }
       this.computeCounter++;
     }

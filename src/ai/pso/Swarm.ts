@@ -6,8 +6,11 @@ import { Particle } from './Particle';
 
 export class Swarm {
   particles: Particle[];
+  inertia: number = 0.8;
+  cognitiveCoefficient: number = 0.1;
+  socialCoefficient: number = 0.1;
 
-  // the position that results in the best ever fitness of this swarm
+  // the normalized position that results in the best ever fitness of this swarm
   bestPositionOfSwarm: number[];
   bestFitness: number = Number.NaN;
 
@@ -19,19 +22,36 @@ export class Swarm {
     this.bestPositionOfSwarm = new Array<number>(dimension);
   }
 
-  evolve() {}
+  move() {
+    for (const p of this.particles) {
+      const n = p.position.length;
+      for (let i = 0; i < n; i++) {
+        p.velocity[i] =
+          this.inertia * p.velocity[i] +
+          this.cognitiveCoefficient * Math.random() * (p.bestPositionOfParticle[i] - p.position[i]) +
+          this.socialCoefficient * Math.random() * (this.bestPositionOfSwarm[i] - p.position[i]);
+        p.position[i] += p.velocity[i];
+      }
+    }
+  }
+
+  // sort the fitness in the descending order (sort b before a if b's fitness is higher than a's)
+  sort(): void {
+    this.particles.sort((a, b) => b.compare(a));
+  }
 
   // check convergence bitwise (the so-called nominal convergence)
-  isNominallyConverged(convergenceThreshold: number): boolean {
+  isNominallyConverged(convergenceThreshold: number, top: number): boolean {
+    if (top <= 0) throw new Error('top must be greater than 0');
+    this.sort();
     const n = this.particles[0].position.length;
-    const m = Math.max(2, this.particles.length / 2);
     for (let i = 0; i < n; i++) {
       let average = 0;
-      for (let j = 0; j < m; j++) {
+      for (let j = 0; j < top; j++) {
         average += this.particles[j].position[i];
       }
-      average /= m;
-      for (let j = 0; j < m; j++) {
+      average /= top;
+      for (let j = 0; j < top; j++) {
         if (Math.abs(this.particles[j].position[i] / average - 1.0) > convergenceThreshold) {
           return false;
         }
