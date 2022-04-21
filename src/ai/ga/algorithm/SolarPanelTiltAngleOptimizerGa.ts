@@ -7,7 +7,7 @@
  *
  */
 
-import { OptimizerGA } from './OptimizerGA';
+import { OptimizerGa } from './OptimizerGa';
 import { FoundationModel } from '../../../models/FoundationModel';
 import { Individual } from './Individual';
 import { SolarPanelModel } from '../../../models/SolarPanelModel';
@@ -16,7 +16,7 @@ import { HALF_PI } from '../../../constants';
 import { Util } from '../../../Util';
 import { Random } from '../../../Random';
 
-export class SolarPanelTiltAngleOptimizerGA extends OptimizerGA {
+export class SolarPanelTiltAngleOptimizerGa extends OptimizerGa {
   solarPanels: SolarPanelModel[];
 
   constructor(
@@ -71,7 +71,7 @@ export class SolarPanelTiltAngleOptimizerGA extends OptimizerGA {
         this.finalGene[i] = this.solarPanels[i].tiltAngle;
       }
       this.finalFitness = best.fitness;
-      console.log('Fittest: ' + SolarPanelTiltAngleOptimizerGA.individualToString(best));
+      console.log('Fittest: ' + SolarPanelTiltAngleOptimizerGa.individualToString(best));
     }
   }
 
@@ -117,7 +117,7 @@ export class SolarPanelTiltAngleOptimizerGA extends OptimizerGA {
           ', individual ' +
           indexOfIndividual +
           ' : ' +
-          SolarPanelTiltAngleOptimizerGA.individualToString(individual),
+          SolarPanelTiltAngleOptimizerGa.individualToString(individual),
       );
       const savedIndividual = this.populationOfGenerations[generation]?.individuals[indexOfIndividual];
       if (savedIndividual) {

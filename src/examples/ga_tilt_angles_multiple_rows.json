@@ -290,7 +290,7 @@
     "evolutionPanelX": 3,
     "evolutionPanelY": 4
   },
-  "geneticAlgorithmState": {
+  "evolutionaryAlgorithmState": {
     "solarPanelTiltAngleGeneticAlgorithmParams": {
       "solution": "Solar Panel Tilt Angle",
       "objectiveFunctionType": 2,

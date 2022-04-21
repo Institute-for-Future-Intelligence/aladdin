@@ -7,16 +7,16 @@
  *
  */
 
-import { FoundationModel } from '../../models/FoundationModel';
-import { SolarPanelModel } from '../../models/SolarPanelModel';
-import { HALF_PI } from '../../constants';
-import { Util } from '../../Util';
-import { Random } from '../../Random';
-import { OptimizerSPO } from './OptimizerSPO';
+import { FoundationModel } from '../../../models/FoundationModel';
+import { SolarPanelModel } from '../../../models/SolarPanelModel';
+import { HALF_PI } from '../../../constants';
+import { Util } from '../../../Util';
+import { Random } from '../../../Random';
+import { OptimizerPso } from './OptimizerPso';
 import { Particle } from './Particle';
-import { SearchMethod } from '../../types';
+import { SearchMethod } from '../../../types';
 
-export class SolarPanelTiltAngleOptimizerSPO extends OptimizerSPO {
+export class SolarPanelTiltAngleOptimizerPso extends OptimizerPso {
   solarPanels: SolarPanelModel[];
 
   constructor(
@@ -56,13 +56,13 @@ export class SolarPanelTiltAngleOptimizerSPO extends OptimizerSPO {
     }
   }
 
-  applyBest(): void {
+  applyFittest(): void {
     const best = this.swarm.bestPositionOfSwarm;
     if (best) {
       for (let i = 0; i < best.length; i++) {
         this.solarPanels[i].tiltAngle = (2 * best[i] - 1) * HALF_PI;
       }
-      console.log('Best: ' + SolarPanelTiltAngleOptimizerSPO.individualToString(best, this.swarm.bestFitness));
+      console.log('Best: ' + SolarPanelTiltAngleOptimizerPso.individualToString(best, this.swarm.bestFitness));
     }
   }
 
@@ -78,6 +78,7 @@ export class SolarPanelTiltAngleOptimizerSPO extends OptimizerSPO {
     this.outsideStepCounter = 0;
     this.computeCounter = 0;
     this.bestPositionOfSteps.fill(null);
+    this.bestFitnessOfSteps.fill(0);
   }
 
   // translate position to structure for the specified particle
@@ -97,6 +98,7 @@ export class SolarPanelTiltAngleOptimizerSPO extends OptimizerSPO {
       // the first particle at the first step is used as a baseline
       if (this.computeCounter === 0 && indexOfParticle === 0) {
         this.bestPositionOfSteps[0] = [...particle.position];
+        this.bestFitnessOfSteps[0] = fitness;
       }
       const step = Math.floor(this.computeCounter / swarmSize);
       console.log(
@@ -105,7 +107,7 @@ export class SolarPanelTiltAngleOptimizerSPO extends OptimizerSPO {
           ', particle ' +
           indexOfParticle +
           ' : ' +
-          SolarPanelTiltAngleOptimizerSPO.individualToString(particle.position, fitness),
+          SolarPanelTiltAngleOptimizerPso.individualToString(particle.position, fitness),
       );
       const savedParticle = this.swarmOfSteps[step]?.particles[indexOfParticle];
       if (savedParticle) {
@@ -116,15 +118,17 @@ export class SolarPanelTiltAngleOptimizerSPO extends OptimizerSPO {
       }
       const isAtTheEndOfStep = this.computeCounter % swarmSize === swarmSize - 1;
       if (isAtTheEndOfStep) {
-        this.swarm.move();
+        this.swarm.sort();
         const best = this.swarm.bestPositionOfSwarm;
         if (best) {
           this.bestPositionOfSteps[step + 1] = [...best];
+          this.bestFitnessOfSteps[step + 1] = this.swarm.bestFitness;
         }
         this.converged = this.swarm.isNominallyConverged(
           this.convergenceThreshold,
           Math.max(2, this.swarm.particles.length / 4),
         );
+        this.swarm.move();
       }
       this.computeCounter++;
     }

@@ -19,6 +19,7 @@ import {
   CuboidTexture,
   DatumEntry,
   DiurnalTemperatureModel,
+  EvolutionMethod,
   FoundationTexture,
   HumanName,
   LineStyle,
@@ -80,8 +81,8 @@ import { SolarRadiationData } from '../models/SolarRadiationData';
 import { SolarUpdraftTowerModel } from '../models/SolarUpdraftTowerModel';
 import { SolarAbsorberPipeModel } from '../models/SolarAbsorberPipeModel';
 import { SolarPowerTowerModel } from '../models/SolarPowerTowerModel';
-import { GeneticAlgorithmState } from './GeneticAlgorithmState';
-import { DefaultGeneticAlgorithmState } from './DefaultGeneticAlgorithmState';
+import { EvolutionaryAlgorithmState } from './EvolutionaryAlgorithmState';
+import { DefaultEvolutionaryAlgorithmState } from './DefaultEvolutionaryAlgorithmState';
 import { RoofModel } from 'src/models/RoofModel';
 
 enableMapSet();
@@ -140,6 +141,7 @@ export interface CommonStoreState {
   pauseSimulation: boolean;
   runEvolution: boolean;
   pauseEvolution: boolean;
+  evolutionMethod: EvolutionMethod;
   objectiveEvaluationIndex: number; // index for evaluating objective function in genetic algorithms
   clickObjectType: ObjectType | null;
   contextMenuObjectType: ObjectType | null;
@@ -670,7 +672,7 @@ export interface CommonStoreState {
   localContentToImportAfterCloudFileUpdate: any;
 
   solarPanelArrayLayoutParams: SolarPanelArrayLayoutParams;
-  geneticAlgorithmState: GeneticAlgorithmState;
+  evolutionaryAlgorithmState: EvolutionaryAlgorithmState;
 
   // the following is to fix the bug that when ctrl+o is pressed, the file dialog gets fired up multiple times
   localFileDialogRequested: boolean;
@@ -696,7 +698,7 @@ export const useStore = create<CommonStoreState>(
           elements: defaultElements,
           viewState: new DefaultViewState(),
           solarPanelArrayLayoutParams: new DefaultSolarPanelArrayLayoutParams(),
-          geneticAlgorithmState: new DefaultGeneticAlgorithmState(),
+          evolutionaryAlgorithmState: new DefaultEvolutionaryAlgorithmState(),
           notes: [],
           user: {} as User,
           language: 'en',
@@ -760,7 +762,8 @@ export const useStore = create<CommonStoreState>(
               state.localContentToImportAfterCloudFileUpdate = undefined;
               state.fileChanged = !state.fileChanged;
               state.showSolarRadiationHeatmap = false;
-              state.geneticAlgorithmState = content.geneticAlgorithmState ?? new DefaultGeneticAlgorithmState();
+              state.evolutionaryAlgorithmState =
+                content.evolutionaryAlgorithmState ?? new DefaultEvolutionaryAlgorithmState();
             });
             // 1/6/2022: Humans previously did not have dimension data (which probably was a mistake).
             // We do this for backward compatibility. Otherwise, humans cannot be moved in old files.
@@ -786,7 +789,7 @@ export const useStore = create<CommonStoreState>(
               world: JSON.parse(JSON.stringify(state.world)),
               elements: JSON.parse(JSON.stringify(state.elements)),
               view: JSON.parse(JSON.stringify(state.viewState)),
-              geneticAlgorithmState: JSON.parse(JSON.stringify(state.geneticAlgorithmState)),
+              geneticAlgorithmState: JSON.parse(JSON.stringify(state.evolutionaryAlgorithmState)),
               notes: state.notes,
             };
           },
@@ -1032,6 +1035,7 @@ export const useStore = create<CommonStoreState>(
           pauseSimulation: false,
           runEvolution: false,
           pauseEvolution: false,
+          evolutionMethod: EvolutionMethod.GENETIC_ALGORITHM,
           objectiveEvaluationIndex: 0,
           clickObjectType: null,
           contextMenuObjectType: null,
@@ -5095,7 +5099,7 @@ export const useStore = create<CommonStoreState>(
           'dailyLightSensorData',
           'yearlyLightSensorData',
           'solarPanelArrayLayoutParams',
-          'geneticAlgorithmState',
+          'evolutionaryAlgorithmState',
         ],
       },
     ),

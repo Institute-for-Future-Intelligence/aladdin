@@ -8,7 +8,7 @@ import { Population } from './Population';
 import { Individual } from './Individual';
 import { Constraint } from './Constraint';
 
-export abstract class OptimizerGA {
+export abstract class OptimizerGa {
   population: Population;
   convergenceThreshold: number;
   minima: number[];

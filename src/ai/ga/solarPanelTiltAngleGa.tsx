@@ -7,17 +7,18 @@ import { useStore } from '../../stores/common';
 import * as Selector from 'src/stores/selector';
 import { showError, showInfo } from '../../helpers';
 import i18n from '../../i18n/i18n';
-import { DatumEntry, ObjectiveFunctionType, ObjectType } from '../../types';
+import { DatumEntry, EvolutionMethod, ObjectiveFunctionType, ObjectType } from '../../types';
 import { SolarPanelModel } from '../../models/SolarPanelModel';
-import { SolarPanelTiltAngleOptimizerGA } from './algorithm/SolarPanelTiltAngleOptimizerGA';
+import { SolarPanelTiltAngleOptimizerGa } from './algorithm/SolarPanelTiltAngleOptimizerGa';
 import { FoundationModel } from '../../models/FoundationModel';
 import { HALF_PI } from '../../constants';
 import { Util } from '../../Util';
 
-const SolarPanelTiltAngleGA = () => {
+const SolarPanelTiltAngleGa = () => {
   const setCommonStore = useStore(Selector.set);
   const language = useStore(Selector.language);
   const daysPerYear = useStore(Selector.world.daysPerYear) ?? 6;
+  const evolutionMethod = useStore(Selector.evolutionMethod);
   const runEvolution = useStore(Selector.runEvolution);
   const pauseEvolution = useStore(Selector.pauseEvolution);
   const foundation = useStore(Selector.selectedElement) as FoundationModel;
@@ -27,19 +28,19 @@ const SolarPanelTiltAngleGA = () => {
   const objectiveEvaluationIndex = useStore(Selector.objectiveEvaluationIndex);
   const geneLabels = useStore(Selector.geneLabels);
   const setGeneLabels = useStore(Selector.setGeneLabels);
-  const params = useStore.getState().geneticAlgorithmState.solarPanelTiltAngleGeneticAlgorithmParams;
+  const params = useStore.getState().evolutionaryAlgorithmState.solarPanelTiltAngleGeneticAlgorithmParams;
 
   const lang = { lng: language };
   const requestRef = useRef<number>(0);
   const evolutionCompletedRef = useRef<boolean>(false);
   const pauseRef = useRef<boolean>(false);
   const solarPanelsRef = useRef<SolarPanelModel[]>();
-  const optimizerRef = useRef<SolarPanelTiltAngleOptimizerGA>();
+  const optimizerRef = useRef<SolarPanelTiltAngleOptimizerGa>();
   const individualIndexRef = useRef<number>(0);
   const convergedRef = useRef<boolean>(false);
 
   useEffect(() => {
-    if (runEvolution) {
+    if (runEvolution && evolutionMethod === EvolutionMethod.GENETIC_ALGORITHM) {
       init();
       requestRef.current = requestAnimationFrame(evolve);
       return () => {
@@ -90,7 +91,7 @@ const SolarPanelTiltAngleGA = () => {
       labels.push(osp.label);
     }
     if (solarPanelsRef.current.length > 0) {
-      optimizerRef.current = new SolarPanelTiltAngleOptimizerGA(
+      optimizerRef.current = new SolarPanelTiltAngleOptimizerGa(
         solarPanelsRef.current,
         foundation,
         params.populationSize,
@@ -106,6 +107,7 @@ const SolarPanelTiltAngleGA = () => {
       individualIndexRef.current = 0;
       convergedRef.current = false;
       setGeneLabels(labels);
+      optimizerRef.current.startEvolving();
     } else {
       showError(i18n.t('message.EncounterEvolutionError', lang));
     }
@@ -162,6 +164,7 @@ const SolarPanelTiltAngleGA = () => {
 
   const evolve = () => {
     if (!optimizerRef.current) return;
+    if (evolutionMethod !== EvolutionMethod.GENETIC_ALGORITHM) return;
     if (runEvolution && !pauseRef.current) {
       if (convergedRef.current || optimizerRef.current.outsideGenerationCounter >= params.maximumGenerations) {
         cancelAnimationFrame(requestRef.current);
@@ -263,4 +266,4 @@ const SolarPanelTiltAngleGA = () => {
   return <></>;
 };
 
-export default React.memo(SolarPanelTiltAngleGA);
+export default React.memo(SolarPanelTiltAngleGa);

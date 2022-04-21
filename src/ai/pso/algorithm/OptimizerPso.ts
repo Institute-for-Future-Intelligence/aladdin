@@ -2,16 +2,20 @@
  * @Copyright 2022. Institute for Future Intelligence, Inc.
  */
 
-import { FoundationModel } from '../../models/FoundationModel';
+import { FoundationModel } from '../../../models/FoundationModel';
 import { Swarm } from './Swarm';
-import { SearchMethod } from '../../types';
+import { SearchMethod } from '../../../types';
 
-export abstract class OptimizerSPO {
+export abstract class OptimizerPso {
   swarm: Swarm;
   foundation: FoundationModel;
   stopped: boolean = true;
+  inertia: number = 0.8;
+  cognitiveCoefficient: number = 0.1;
+  socialCoefficient: number = 0.1;
   maximumSteps: number = 5;
   bestPositionOfSteps: (number[] | null)[] = [];
+  bestFitnessOfSteps: number[] = [];
   swarmOfSteps: (Swarm | null)[] = [];
   outsideStepCounter: number = 0;
   computeCounter: number = 0;
@@ -37,13 +41,15 @@ export abstract class OptimizerSPO {
     this.foundation = foundation;
     this.bestPositionOfSteps = new Array<number[] | null>(this.maximumSteps + 1);
     this.bestPositionOfSteps.fill(null);
+    this.bestFitnessOfSteps = new Array<number>(this.maximumSteps + 1);
+    this.bestFitnessOfSteps.fill(0);
     this.swarmOfSteps = new Array<Swarm | null>(this.maximumSteps);
     for (let i = 0; i < this.maximumSteps; i++) {
       this.swarmOfSteps[i] = new Swarm(swarmSize, particleDimension);
     }
   }
 
-  abstract applyBest(): void;
+  abstract applyFittest(): void;
 
   stop(): void {
     this.stopped = true;

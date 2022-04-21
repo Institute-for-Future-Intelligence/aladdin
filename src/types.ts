@@ -50,6 +50,11 @@ export enum ObjectiveFunctionType {
   YEARLY_OUTPUT = 2,
 }
 
+export enum EvolutionMethod {
+  GENETIC_ALGORITHM = 1,
+  PARTICLE_SWARM_OPTIMIZATION = 2,
+}
+
 export enum GeneticAlgorithmSelectionMethod {
   ROULETTE_WHEEL = 1,
   TOURNAMENT = 2,

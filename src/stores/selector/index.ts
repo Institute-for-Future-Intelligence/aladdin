@@ -93,6 +93,8 @@ export const runEvolution = (state: CommonStoreState) => state.runEvolution;
 
 export const pauseEvolution = (state: CommonStoreState) => state.pauseEvolution;
 
+export const evolutionMethod = (state: CommonStoreState) => state.evolutionMethod;
+
 export const objectiveEvaluationIndex = (state: CommonStoreState) => state.objectiveEvaluationIndex;
 
 export const updateSceneRadiusFlag = (state: CommonStoreState) => state.updateSceneRadiusFlag;

@@ -2,7 +2,7 @@
  * @Copyright 2022. Institute for Future Intelligence, Inc.
  */
 
-import { Random } from '../../Random';
+import { Random } from '../../../Random';
 
 export class Particle {
   position: number[]; // normalized to [0, 1)
@@ -23,7 +23,7 @@ export class Particle {
       const r = Math.random();
       this.position.push(r);
       this.bestPositionOfParticle.push(r);
-      this.velocity.push(Random.gaussian() * 0.1);
+      this.velocity.push(Random.gaussian() * 0.01);
     }
   }
 

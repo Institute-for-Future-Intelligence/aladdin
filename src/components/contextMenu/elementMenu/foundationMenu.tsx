@@ -42,7 +42,8 @@ import SolarUpdraftTowerCollectorTransmissivityInput from './solarUpdraftTowerCo
 import SolarUpdraftTowerDischargeCoefficientInput from './solarUpdraftTowerDischargeCoefficientInput';
 import SolarUpdraftTowerTurbineEfficiencyInput from './solarUpdraftTowerTurbineEfficiencyInput';
 import SolarUpdraftTowerCollectorEmissivityInput from './solarUpdraftTowerCollectorEmissivityInput';
-import SolarPanelTiltAngleOptimizerWizard from './solarPanelTiltAngleOptimizerWizard';
+import SolarPanelTiltAngleGaWizard from './solarPanelTiltAngleGaWizard';
+import SolarPanelTiltAnglePsoWizard from './solarPanelTiltAnglePsoWizard';
 
 export const FoundationMenu = () => {
   const setCommonStore = useStore(Selector.set);
@@ -98,7 +99,8 @@ export const FoundationMenu = () => {
   const [collectorEmissivityDialogVisible, setCollectorEmissivityDialogVisible] = useState(false);
   const [dischargeCoefficientDialogVisible, setDischargeCoefficientDialogVisible] = useState(false);
   const [turbineEfficiencyDialogVisible, setTurbineEfficiencyDialogVisible] = useState(false);
-  const [solarPanelTiltAngleOptimizerWizardVisible, setSolarPanelTiltAngleOptimizerWizardVisible] = useState(false);
+  const [solarPanelTiltAngleGaWizardVisible, setSolarPanelTiltAngleGaWizardVisible] = useState(false);
+  const [solarPanelTiltAnglePsoWizardVisible, setSolarPanelTiltAnglePsoWizardVisible] = useState(false);
 
   const counter = foundation ? countAllOffspringsByType(foundation.id) : new ElementCounter();
   const lang = { lng: language };
@@ -1073,17 +1075,31 @@ export const FoundationMenu = () => {
         >
           {counter.solarPanelCount > 0 && (
             <>
-              {solarPanelTiltAngleOptimizerWizardVisible && (
-                <SolarPanelTiltAngleOptimizerWizard setDialogVisible={setSolarPanelTiltAngleOptimizerWizardVisible} />
+              {solarPanelTiltAngleGaWizardVisible && (
+                <SolarPanelTiltAngleGaWizard setDialogVisible={setSolarPanelTiltAngleGaWizardVisible} />
               )}
               <Menu.Item
-                key={'solar-panel-tilt-angle-optimizer'}
+                key={'solar-panel-tilt-angle-ga-optimizer'}
                 onClick={() => {
-                  setSolarPanelTiltAngleOptimizerWizardVisible(true);
+                  setSolarPanelTiltAngleGaWizardVisible(true);
                 }}
                 style={{ paddingLeft: '12px' }}
               >
-                {i18n.t('optimizationMenu.SolarPanelTiltAngleOptimization', lang)} ...
+                {i18n.t('optimizationMenu.SolarPanelTiltAngleOptimization', lang) + ' '}(
+                {i18n.t('optimizationMenu.GeneticAlgorithm', lang)})...
+              </Menu.Item>
+              {solarPanelTiltAnglePsoWizardVisible && (
+                <SolarPanelTiltAnglePsoWizard setDialogVisible={setSolarPanelTiltAnglePsoWizardVisible} />
+              )}
+              <Menu.Item
+                key={'solar-panel-tilt-angle-pso-optimizer'}
+                onClick={() => {
+                  setSolarPanelTiltAnglePsoWizardVisible(true);
+                }}
+                style={{ paddingLeft: '12px' }}
+              >
+                {i18n.t('optimizationMenu.SolarPanelTiltAngleOptimization', lang) + ' '}(
+                {i18n.t('optimizationMenu.ParticleSwarmOptimization', lang)})...
               </Menu.Item>
             </>
           )}

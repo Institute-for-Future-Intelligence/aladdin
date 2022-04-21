@@ -12,7 +12,7 @@ import { screenshot, showInfo } from '../helpers';
 import { RightCircleOutlined, SaveOutlined } from '@ant-design/icons';
 import i18n from '../i18n/i18n';
 import GaBiaxialLineGraph from '../components/gaBiaxialLineGraph';
-import { ObjectiveFunctionType, ObjectType } from '../types';
+import { EvolutionMethod, ObjectiveFunctionType, ObjectType } from '../types';
 
 const Container = styled.div`
   position: fixed;
@@ -68,7 +68,7 @@ const SolarPanelTiltAngleOptimizationResult = () => {
   const panelX = useStore(Selector.viewState.evolutionPanelX);
   const panelY = useStore(Selector.viewState.evolutionPanelY);
   const selectedElement = useStore(Selector.selectedElement);
-  const params = useStore.getState().geneticAlgorithmState.solarPanelTiltAngleGeneticAlgorithmParams;
+  const evolutionMethod = useStore(Selector.evolutionMethod);
 
   // nodeRef is to suppress ReactDOM.findDOMNode() deprecation warning. See:
   // https://github.com/react-grid-layout/react-draggable/blob/v4.4.2/lib/DraggableCore.js#L159-L171
@@ -124,8 +124,15 @@ const SolarPanelTiltAngleOptimizationResult = () => {
     });
   };
 
-  const labelGeneration = i18n.t('optimizationMenu.Generation', lang);
-  const labelGene = i18n.t('solarPanelMenu.TiltAngle', lang);
+  const labelAxisX = i18n.t(
+    evolutionMethod === EvolutionMethod.GENETIC_ALGORITHM ? 'optimizationMenu.Generation' : 'optimizationMenu.Step',
+    lang,
+  );
+  const labelVariable = i18n.t('solarPanelMenu.TiltAngle', lang);
+  const params =
+    evolutionMethod === EvolutionMethod.GENETIC_ALGORITHM
+      ? useStore.getState().evolutionaryAlgorithmState.solarPanelTiltAngleGeneticAlgorithmParams
+      : useStore.getState().evolutionaryAlgorithmState.solarPanelTiltAngleParticleSwarmOptimizationParams;
   const labelObjective =
     params.objectiveFunctionType === ObjectiveFunctionType.DAILY_OUTPUT
       ? i18n.t('solarPanelYieldPanel.SolarPanelDailyYield', lang)
@@ -162,8 +169,8 @@ const SolarPanelTiltAngleOptimizationResult = () => {
             labels={geneLabels}
             height={responsiveHeight}
             dataKeyAxisX={'Generation'}
-            labelX={labelGeneration}
-            labelY1={labelGene}
+            labelX={labelAxisX}
+            labelY1={labelVariable}
             labelY2={labelObjective}
             unitY1={'°'}
             unitY2={i18n.t('word.kWh', lang)}
@@ -195,7 +202,7 @@ const SolarPanelTiltAngleOptimizationResult = () => {
               title={i18n.t('word.SaveAsImage', lang)}
               onClick={() => {
                 screenshot(
-                  'biaxial-line-graph-' + labelGeneration + '-' + labelGene + '-' + labelObjective,
+                  'biaxial-line-graph-' + labelAxisX + '-' + labelVariable + '-' + labelObjective,
                   'solar-panel-tilt-angle-evolution',
                   {},
                 ).then(() => {
