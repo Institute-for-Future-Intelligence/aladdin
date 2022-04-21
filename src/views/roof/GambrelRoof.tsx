@@ -488,7 +488,10 @@ const GambrelRoof = ({
                 const point = intersects[0].point;
                 switch (roofHandleType) {
                   case RoofHandleType.TopMid: {
-                    setH(Math.max(minHeight, point.z - (parent?.lz ?? 0) - 0.3));
+                    const r = topRidgeLeftPoint[1];
+                    const p = point.z - (parent?.lz ?? 0);
+                    const val = (p - minHeight) / r + minHeight;
+                    setH(Math.max(minHeight, val));
                     break;
                   }
                   case RoofHandleType.FrontLeft: {
@@ -504,6 +507,10 @@ const GambrelRoof = ({
                               px = 0.5;
                             }
                             (e as GambrelRoofModel).frontRidgeLeftPoint[0] = px;
+                            (e as GambrelRoofModel).frontRidgeLeftPoint[1] = Math.max(
+                              0,
+                              Math.min(topRidgeLeftPoint[1], (point.z - minHeight) / (h - minHeight)),
+                            );
                           }
                           break;
                         }
@@ -524,6 +531,14 @@ const GambrelRoof = ({
                               px = frontRidgeLeftPoint[0];
                             }
                             (e as GambrelRoofModel).topRidgeLeftPoint[0] = px;
+                            (e as GambrelRoofModel).topRidgeLeftPoint[1] = Math.max(
+                              Math.max(frontRidgeLeftPoint[1], backRidgeRightPoint[1]),
+                              (point.z - minHeight) / (h - minHeight),
+                            );
+                            (e as GambrelRoofModel).topRidgeRightPoint[1] = Math.max(
+                              Math.max(frontRidgeRightPoint[1], backRidgeLeftPoint[1]),
+                              (point.z - minHeight) / (h - minHeight),
+                            );
                           }
                           break;
                         }
@@ -544,6 +559,10 @@ const GambrelRoof = ({
                               px = -0.5;
                             }
                             (e as GambrelRoofModel).backRidgeRightPoint[0] = px;
+                            (e as GambrelRoofModel).backRidgeRightPoint[1] = Math.max(
+                              0,
+                              Math.min(topRidgeLeftPoint[1], (point.z - minHeight) / (h - minHeight)),
+                            );
                           }
                           break;
                         }
@@ -564,6 +583,10 @@ const GambrelRoof = ({
                               px = topRidgeRightPoint[0];
                             }
                             (e as GambrelRoofModel).frontRidgeRightPoint[0] = px;
+                            (e as GambrelRoofModel).frontRidgeRightPoint[1] = Math.max(
+                              0,
+                              Math.min(topRidgeRightPoint[1], (point.z - minHeight) / (h - minHeight)),
+                            );
                           }
                           break;
                         }
@@ -584,6 +607,14 @@ const GambrelRoof = ({
                               px = backRidgeLeftPoint[0];
                             }
                             (e as GambrelRoofModel).topRidgeRightPoint[0] = px;
+                            (e as GambrelRoofModel).topRidgeLeftPoint[1] = Math.max(
+                              Math.max(frontRidgeLeftPoint[1], backRidgeRightPoint[1]),
+                              (point.z - minHeight) / (h - minHeight),
+                            );
+                            (e as GambrelRoofModel).topRidgeRightPoint[1] = Math.max(
+                              Math.max(frontRidgeRightPoint[1], backRidgeLeftPoint[1]),
+                              (point.z - minHeight) / (h - minHeight),
+                            );
                           }
                           break;
                         }
@@ -604,6 +635,10 @@ const GambrelRoof = ({
                               px = topRidgeRightPoint[0];
                             }
                             (e as GambrelRoofModel).backRidgeLeftPoint[0] = px;
+                            (e as GambrelRoofModel).backRidgeLeftPoint[1] = Math.max(
+                              0,
+                              Math.min(topRidgeRightPoint[1], (point.z - minHeight) / (h - minHeight)),
+                            );
                           }
                           break;
                         }
