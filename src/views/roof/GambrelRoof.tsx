@@ -63,7 +63,7 @@ const GambrelRoof = ({
   const ray = useMemo(() => new Raycaster(), []);
   const mouse = useMemo(() => new Vector2(), []);
   const oldHeight = useRef<number>(h);
-  const oldRidgeVal = useRef<number>(0);
+  const oldRidgeVal = useRef<number[]>([]);
 
   // set position and rotation
   const parent = getElementById(parentId);
@@ -85,28 +85,30 @@ const GambrelRoof = ({
     setH(lz);
   }, [lz]);
 
-  const updateRidge = (elemId: string, type: string, val: number) => {
+  const updateRidge = (elemId: string, type: string, val: number[]) => {
     setCommonStore((state) => {
       for (const e of state.elements) {
         if (e.id === elemId) {
           switch (type) {
             case RoofHandleType.FrontLeft:
-              (e as GambrelRoofModel).frontRidgeLeftPoint[0] = val;
+              (e as GambrelRoofModel).frontRidgeLeftPoint = [...val];
               break;
             case RoofHandleType.FrontRight:
-              (e as GambrelRoofModel).frontRidgeRightPoint[0] = val;
+              (e as GambrelRoofModel).frontRidgeRightPoint = [...val];
               break;
             case RoofHandleType.TopLeft:
-              (e as GambrelRoofModel).topRidgeLeftPoint[0] = val;
+              (e as GambrelRoofModel).topRidgeLeftPoint = [...val];
+              (e as GambrelRoofModel).topRidgeRightPoint[1] = val[1];
               break;
             case RoofHandleType.TopRight:
-              (e as GambrelRoofModel).topRidgeRightPoint[0] = val;
+              (e as GambrelRoofModel).topRidgeRightPoint = [...val];
+              (e as GambrelRoofModel).topRidgeLeftPoint[1] = val[1];
               break;
             case RoofHandleType.BackLeft:
-              (e as GambrelRoofModel).backRidgeLeftPoint[0] = val;
+              (e as GambrelRoofModel).backRidgeLeftPoint = [...val];
               break;
             case RoofHandleType.BackRight:
-              (e as GambrelRoofModel).backRidgeRightPoint[0] = val;
+              (e as GambrelRoofModel).backRidgeRightPoint = [...val];
               break;
           }
           break;
@@ -115,13 +117,13 @@ const GambrelRoof = ({
     });
   };
 
-  const handleUnoableResizeRidge = (elemId: string, type: RoofHandleType, oldVal: number, newVal: number) => {
+  const handleUnoableResizeRidge = (elemId: string, type: RoofHandleType, oldVal: number[], newVal: number[]) => {
     const undoable = {
       name: 'ResizeGambrelRoofRidge',
       timestamp: Date.now(),
       resizedElementId: elemId,
-      oldVal: oldVal,
-      newVal: newVal,
+      oldVal: [...oldVal],
+      newVal: [...newVal],
       type: type,
       undo: () => {
         updateRidge(undoable.resizedElementId, undoable.type, undoable.oldVal);
@@ -401,7 +403,7 @@ const GambrelRoof = ({
             position={[topRidgeLeftPointV3.x, topRidgeLeftPointV3.y, topRidgeLeftPointV3.z]}
             args={[0.3]}
             onPointerDown={() => {
-              oldRidgeVal.current = topRidgeLeftPoint[0];
+              oldRidgeVal.current = [...topRidgeLeftPoint];
               setInterSectionPlane(topRidgeLeftPointV3, currentWallArray[3]);
               setRoofHandleType(RoofHandleType.TopLeft);
             }}
@@ -410,7 +412,7 @@ const GambrelRoof = ({
             position={[topRidgeRightPointV3.x, topRidgeRightPointV3.y, topRidgeRightPointV3.z]}
             args={[0.3]}
             onPointerDown={() => {
-              oldRidgeVal.current = topRidgeRightPoint[0];
+              oldRidgeVal.current = [...topRidgeRightPoint];
               setInterSectionPlane(topRidgeRightPointV3, currentWallArray[1]);
               setRoofHandleType(RoofHandleType.TopRight);
             }}
@@ -435,7 +437,7 @@ const GambrelRoof = ({
             position={[frontRidgeLeftPointV3.x, frontRidgeLeftPointV3.y, frontRidgeLeftPointV3.z]}
             args={[0.3]}
             onPointerDown={() => {
-              oldRidgeVal.current = frontRidgeLeftPoint[0];
+              oldRidgeVal.current = [...frontRidgeLeftPoint];
               setInterSectionPlane(frontRidgeLeftPointV3, currentWallArray[3]);
               setRoofHandleType(RoofHandleType.FrontLeft);
             }}
@@ -444,7 +446,7 @@ const GambrelRoof = ({
             position={[frontRidgeRightPointV3.x, frontRidgeRightPointV3.y, frontRidgeRightPointV3.z]}
             args={[0.3]}
             onPointerDown={() => {
-              oldRidgeVal.current = frontRidgeRightPoint[0];
+              oldRidgeVal.current = [...frontRidgeRightPoint];
               setInterSectionPlane(frontRidgeRightPointV3, currentWallArray[1]);
               setRoofHandleType(RoofHandleType.FrontRight);
             }}
@@ -454,7 +456,7 @@ const GambrelRoof = ({
             position={[backRidgeLeftPointV3.x, backRidgeLeftPointV3.y, backRidgeLeftPointV3.z]}
             args={[0.3]}
             onPointerDown={() => {
-              oldRidgeVal.current = backRidgeLeftPoint[0];
+              oldRidgeVal.current = [...backRidgeLeftPoint];
               setInterSectionPlane(backRidgeLeftPointV3, currentWallArray[1]);
               setRoofHandleType(RoofHandleType.BackLeft);
             }}
@@ -463,7 +465,7 @@ const GambrelRoof = ({
             position={[backRidgeRightPointV3.x, backRidgeRightPointV3.y, backRidgeRightPointV3.z]}
             args={[0.3]}
             onPointerDown={() => {
-              oldRidgeVal.current = backRidgeRightPoint[0];
+              oldRidgeVal.current = [...backRidgeRightPoint];
               setInterSectionPlane(backRidgeRightPointV3, currentWallArray[3]);
               setRoofHandleType(RoofHandleType.BackRight);
             }}
@@ -657,27 +659,27 @@ const GambrelRoof = ({
                 break;
               }
               case RoofHandleType.TopLeft: {
-                handleUnoableResizeRidge(id, roofHandleType, oldRidgeVal.current, topRidgeLeftPoint[0]);
+                handleUnoableResizeRidge(id, roofHandleType, oldRidgeVal.current, topRidgeLeftPoint);
                 break;
               }
               case RoofHandleType.TopRight: {
-                handleUnoableResizeRidge(id, roofHandleType, oldRidgeVal.current, topRidgeRightPoint[0]);
+                handleUnoableResizeRidge(id, roofHandleType, oldRidgeVal.current, topRidgeRightPoint);
                 break;
               }
               case RoofHandleType.FrontLeft: {
-                handleUnoableResizeRidge(id, roofHandleType, oldRidgeVal.current, frontRidgeLeftPoint[0]);
+                handleUnoableResizeRidge(id, roofHandleType, oldRidgeVal.current, frontRidgeLeftPoint);
                 break;
               }
               case RoofHandleType.FrontRight: {
-                handleUnoableResizeRidge(id, roofHandleType, oldRidgeVal.current, frontRidgeRightPoint[0]);
+                handleUnoableResizeRidge(id, roofHandleType, oldRidgeVal.current, frontRidgeRightPoint);
                 break;
               }
               case RoofHandleType.BackLeft: {
-                handleUnoableResizeRidge(id, roofHandleType, oldRidgeVal.current, backRidgeLeftPoint[0]);
+                handleUnoableResizeRidge(id, roofHandleType, oldRidgeVal.current, backRidgeLeftPoint);
                 break;
               }
               case RoofHandleType.BackRight: {
-                handleUnoableResizeRidge(id, roofHandleType, oldRidgeVal.current, backRidgeRightPoint[0]);
+                handleUnoableResizeRidge(id, roofHandleType, oldRidgeVal.current, backRidgeRightPoint);
                 break;
               }
             }
