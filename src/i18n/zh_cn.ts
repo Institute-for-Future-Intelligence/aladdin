@@ -574,6 +574,7 @@ export const i18n_zh_cn = {
       Step: '步数',
       SwarmSize: '粒子数目',
       MaximumSteps: '最大步数',
+      MaximumVelocity: '最大速度',
       InertiaWeight: '惯性权重',
       CognitiveCoefficient: '认知系数',
       SocialCoefficient: '社会系数',

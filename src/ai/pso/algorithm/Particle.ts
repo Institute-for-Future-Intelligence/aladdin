@@ -14,8 +14,9 @@ export class Particle {
   // the position that results in the best ever fitness of this particle
   bestPositionOfParticle: number[];
 
-  // construct a particle with a random position
-  constructor(dimension: number) {
+  // construct a particle with a random position within [0, 1) and
+  // a random velocity within vmax as the variance of the normal distribution and zero as the average
+  constructor(dimension: number, vmax?: number) {
     this.position = new Array<number>();
     this.velocity = new Array<number>();
     this.bestPositionOfParticle = new Array<number>();
@@ -23,7 +24,7 @@ export class Particle {
       const r = Math.random();
       this.position.push(r);
       this.bestPositionOfParticle.push(r);
-      this.velocity.push(Random.gaussian() * 0.01);
+      if (vmax) this.velocity.push(Random.gaussian() * vmax);
     }
   }
 
@@ -31,17 +32,6 @@ export class Particle {
     for (let i = 0; i < this.bestPositionOfParticle.length; i++) {
       this.bestPositionOfParticle[i] = this.position[i];
     }
-  }
-
-  getCopy(): Particle {
-    const c = new Particle(this.position.length);
-    for (let i = 0; i < c.position.length; i++) {
-      c.position[i] = this.position[i];
-      c.velocity[i] = this.velocity[i];
-      c.bestPositionOfParticle[i] = this.bestPositionOfParticle[i];
-    }
-    c.fitness = this.fitness;
-    return c;
   }
 
   compare(p: Particle): number {

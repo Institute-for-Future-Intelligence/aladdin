@@ -24,16 +24,17 @@ export abstract class OptimizerPso {
   searchMethod: SearchMethod = SearchMethod.GLOBAL_SEARCH_UNIFORM_SELECTION;
   localSearchRadius: number = 0.1;
 
-  constructor(
+  protected constructor(
     foundation: FoundationModel,
     swarmSize: number,
+    vmax: number,
     maximumSteps: number,
     particleDimension: number,
     convergenceThreshold: number,
     searchMethod: SearchMethod,
     localSearchRadius: number,
   ) {
-    this.swarm = new Swarm(swarmSize, particleDimension);
+    this.swarm = new Swarm(swarmSize, particleDimension, vmax);
     this.convergenceThreshold = convergenceThreshold;
     this.searchMethod = searchMethod;
     this.localSearchRadius = localSearchRadius;
@@ -46,6 +47,19 @@ export abstract class OptimizerPso {
     this.swarmOfSteps = new Array<Swarm | null>(this.maximumSteps);
     for (let i = 0; i < this.maximumSteps; i++) {
       this.swarmOfSteps[i] = new Swarm(swarmSize, particleDimension);
+    }
+  }
+
+  moveSwarm() {
+    for (const p of this.swarm.particles) {
+      const n = p.position.length;
+      for (let i = 0; i < n; i++) {
+        p.velocity[i] =
+          this.inertia * p.velocity[i] +
+          this.cognitiveCoefficient * Math.random() * (p.bestPositionOfParticle[i] - p.position[i]) +
+          this.socialCoefficient * Math.random() * (this.swarm.bestPositionOfSwarm[i] - p.position[i]);
+        p.position[i] += p.velocity[i];
+      }
     }
   }
 

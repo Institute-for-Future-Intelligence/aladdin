@@ -10,6 +10,7 @@ export interface ParticleSwarmOptimizationParams {
   searchMethod: SearchMethod;
   swarmSize: number;
   maximumSteps: number;
+  vmax: number;
   inertia: number;
   cognitiveCoefficient: number;
   socialCoefficient: number;

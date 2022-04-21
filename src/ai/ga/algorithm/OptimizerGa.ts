@@ -39,7 +39,7 @@ export abstract class OptimizerGa {
   initialFitness: number = 0;
   finalFitness: number = 0;
 
-  constructor(
+  protected constructor(
     foundation: FoundationModel,
     populationSize: number,
     maximumGenerations: number,

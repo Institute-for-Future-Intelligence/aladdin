@@ -23,6 +23,7 @@ export class SolarPanelTiltAngleOptimizerPso extends OptimizerPso {
     solarPanels: SolarPanelModel[],
     foundation: FoundationModel,
     swarmSize: number,
+    vmax: number,
     maximumSteps: number,
     convergenceThreshold: number,
     searchMethod: SearchMethod,
@@ -31,6 +32,7 @@ export class SolarPanelTiltAngleOptimizerPso extends OptimizerPso {
     super(
       foundation,
       swarmSize,
+      vmax,
       maximumSteps,
       solarPanels.length,
       convergenceThreshold,
@@ -90,7 +92,7 @@ export class SolarPanelTiltAngleOptimizerPso extends OptimizerPso {
     }
   }
 
-  moveParticle(indexOfParticle: number, fitness: number): boolean {
+  updateParticle(indexOfParticle: number, fitness: number): boolean {
     const swarmSize = this.swarm.particles.length;
     if (!this.converged) {
       const particle: Particle = this.swarm.particles[indexOfParticle];
@@ -131,7 +133,7 @@ export class SolarPanelTiltAngleOptimizerPso extends OptimizerPso {
           this.convergenceThreshold,
           Math.max(2, this.swarm.particles.length / 4),
         );
-        this.swarm.move();
+        this.moveSwarm();
       }
       this.computeCounter++;
     }

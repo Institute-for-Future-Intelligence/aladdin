@@ -30,6 +30,7 @@ const SolarPanelTiltAnglePsoWizard = ({ setDialogVisible }: { setDialogVisible: 
   const searchMethodRef = useRef<SearchMethod>(params.searchMethod);
   const swarmSizeRef = useRef<number>(params.swarmSize);
   const maximumStepsRef = useRef<number>(params.maximumSteps);
+  const vmaxRef = useRef<number>(params.vmax ?? 0.01);
   const inertiaRef = useRef<number>(params.inertia ?? 0.8);
   const cognitiveCoefficientRef = useRef<number>(params.cognitiveCoefficient ?? 0.1);
   const socialCoefficientRef = useRef<number>(params.socialCoefficient ?? 0.1);
@@ -75,6 +76,7 @@ const SolarPanelTiltAnglePsoWizard = ({ setDialogVisible }: { setDialogVisible: 
         cognitiveCoefficientRef.current;
       state.evolutionaryAlgorithmState.solarPanelTiltAngleParticleSwarmOptimizationParams.socialCoefficient =
         socialCoefficientRef.current;
+      state.evolutionaryAlgorithmState.solarPanelTiltAngleParticleSwarmOptimizationParams.vmax = vmaxRef.current;
       state.evolutionaryAlgorithmState.solarPanelTiltAngleParticleSwarmOptimizationParams.inertia = inertiaRef.current;
       state.evolutionaryAlgorithmState.solarPanelTiltAngleParticleSwarmOptimizationParams.convergenceThreshold =
         convergenceThresholdRef.current;
@@ -268,6 +270,27 @@ const SolarPanelTiltAnglePsoWizard = ({ setDialogVisible }: { setDialogVisible: 
               formatter={(a) => Number(a).toFixed(2)}
               onChange={(value) => {
                 inertiaRef.current = value;
+                setUpdateFlag(!updateFlag);
+              }}
+            />
+          </Col>
+        </Row>
+
+        <Row gutter={6} style={{ paddingBottom: '4px' }}>
+          <Col className="gutter-row" span={12}>
+            {i18n.t('optimizationMenu.MaximumVelocity', lang) + ' [0.001, 0.1]: '}
+          </Col>
+          <Col className="gutter-row" span={12}>
+            <InputNumber
+              min={0.001}
+              max={0.1}
+              style={{ width: '100%' }}
+              precision={3}
+              value={vmaxRef.current}
+              step={0.001}
+              formatter={(a) => Number(a).toFixed(3)}
+              onChange={(value) => {
+                vmaxRef.current = value;
                 setUpdateFlag(!updateFlag);
               }}
             />

@@ -592,6 +592,7 @@ export const i18n_tr = {
       Step: 'Step',
       SwarmSize: 'Swarm Size',
       MaximumSteps: 'Maximum Steps',
+      MaximumVelocity: 'Maximum Velocity',
       InertiaWeight: 'Inertia Weight',
       CognitiveCoefficient: 'Cognitive Coefficient',
       SocialCoefficient: 'Social Coefficient',

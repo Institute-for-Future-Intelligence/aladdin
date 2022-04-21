@@ -6,33 +6,17 @@ import { Particle } from './Particle';
 
 export class Swarm {
   particles: Particle[];
-  inertia: number = 0.8;
-  cognitiveCoefficient: number = 0.1;
-  socialCoefficient: number = 0.1;
 
   // the normalized position that results in the best ever fitness of this swarm
   bestPositionOfSwarm: number[];
   bestFitness: number = Number.NaN;
 
-  constructor(size: number, dimension: number) {
+  constructor(size: number, dimension: number, vmax?: number) {
     this.particles = new Array<Particle>();
     for (let i = 0; i < size; i++) {
-      this.particles.push(new Particle(dimension));
+      this.particles.push(new Particle(dimension, vmax));
     }
     this.bestPositionOfSwarm = new Array<number>(dimension);
-  }
-
-  move() {
-    for (const p of this.particles) {
-      const n = p.position.length;
-      for (let i = 0; i < n; i++) {
-        p.velocity[i] =
-          this.inertia * p.velocity[i] +
-          this.cognitiveCoefficient * Math.random() * (p.bestPositionOfParticle[i] - p.position[i]) +
-          this.socialCoefficient * Math.random() * (this.bestPositionOfSwarm[i] - p.position[i]);
-        p.position[i] += p.velocity[i];
-      }
-    }
   }
 
   // sort the fitness in the descending order (sort b before a if b's fitness is higher than a's)

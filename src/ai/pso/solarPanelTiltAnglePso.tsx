@@ -98,6 +98,7 @@ const SolarPanelTiltAnglePso = () => {
         solarPanelsRef.current,
         foundation,
         params.swarmSize,
+        params.vmax,
         params.maximumSteps,
         params.convergenceThreshold,
         params.searchMethod,
@@ -152,7 +153,7 @@ const SolarPanelTiltAnglePso = () => {
     if (!optimizerRef.current || !objectiveEvaluationIndex) return;
     // the number of individuals to evaluate is less than or equal to maximumGenerations * populationSize,
     // subject to the convergence criterion
-    convergedRef.current = optimizerRef.current.moveParticle(particleIndexRef.current % params.swarmSize, getTotal());
+    convergedRef.current = optimizerRef.current.updateParticle(particleIndexRef.current % params.swarmSize, getTotal());
     updateResults();
     particleIndexRef.current++;
     optimizerRef.current.outsideStepCounter = Math.floor(particleIndexRef.current / params.swarmSize);

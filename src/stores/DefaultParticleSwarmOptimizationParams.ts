@@ -11,6 +11,7 @@ export class DefaultParticleSwarmOptimizationParams implements ParticleSwarmOpti
   searchMethod: SearchMethod;
   swarmSize: number;
   maximumSteps: number;
+  vmax: number;
   inertia: number;
   cognitiveCoefficient: number;
   socialCoefficient: number;
@@ -23,6 +24,7 @@ export class DefaultParticleSwarmOptimizationParams implements ParticleSwarmOpti
     this.searchMethod = SearchMethod.GLOBAL_SEARCH_UNIFORM_SELECTION;
     this.swarmSize = 20;
     this.maximumSteps = 5;
+    this.vmax = 0.01;
     this.inertia = 0.8;
     this.cognitiveCoefficient = 0.1;
     this.socialCoefficient = 0.1;
