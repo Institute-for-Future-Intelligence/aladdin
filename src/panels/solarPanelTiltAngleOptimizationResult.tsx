@@ -13,7 +13,6 @@ import { RightCircleOutlined, SaveOutlined } from '@ant-design/icons';
 import i18n from '../i18n/i18n';
 import EvolutionBiaxialLineGraph from '../components/evolutionBiaxialLineGraph';
 import { EvolutionMethod, ObjectiveFunctionType, ObjectType } from '../types';
-import { DefaultParticleSwarmOptimizationParams } from '../stores/DefaultParticleSwarmOptimizationParams';
 
 const Container = styled.div`
   position: fixed;
@@ -70,6 +69,7 @@ const SolarPanelTiltAngleOptimizationResult = () => {
   const panelY = useStore(Selector.viewState.evolutionPanelY);
   const selectedElement = useStore(Selector.selectedElement);
   const evolutionMethod = useStore(Selector.evolutionMethod);
+  const evolutionaryAlgorithmState = useStore(Selector.evolutionaryAlgorithmState);
 
   // nodeRef is to suppress ReactDOM.findDOMNode() deprecation warning. See:
   // https://github.com/react-grid-layout/react-draggable/blob/v4.4.2/lib/DraggableCore.js#L159-L171
@@ -132,9 +132,8 @@ const SolarPanelTiltAngleOptimizationResult = () => {
   const labelVariable = i18n.t('solarPanelMenu.TiltAngle', lang);
   const params =
     !evolutionMethod || evolutionMethod === EvolutionMethod.GENETIC_ALGORITHM
-      ? useStore.getState().evolutionaryAlgorithmState.solarPanelTiltAngleGeneticAlgorithmParams
-      : useStore.getState().evolutionaryAlgorithmState.solarPanelTiltAngleParticleSwarmOptimizationParams ??
-        new DefaultParticleSwarmOptimizationParams('Solar Panel Tilt Angle');
+      ? evolutionaryAlgorithmState.geneticAlgorithmParams
+      : evolutionaryAlgorithmState.particleSwarmOptimizationParams;
   const labelObjective =
     params.objectiveFunctionType === ObjectiveFunctionType.DAILY_OUTPUT
       ? i18n.t('solarPanelYieldPanel.SolarPanelDailyYield', lang)

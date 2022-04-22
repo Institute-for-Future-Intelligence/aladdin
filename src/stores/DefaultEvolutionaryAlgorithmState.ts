@@ -9,13 +9,11 @@ import { ParticleSwarmOptimizationParams } from './ParticleSwarmOptimizationPara
 import { DefaultParticleSwarmOptimizationParams } from './DefaultParticleSwarmOptimizationParams';
 
 export class DefaultEvolutionaryAlgorithmState implements EvolutionaryAlgorithmState {
-  solarPanelTiltAngleGeneticAlgorithmParams: GeneticAlgorithmParams;
-  solarPanelTiltAngleParticleSwarmOptimizationParams: ParticleSwarmOptimizationParams;
+  geneticAlgorithmParams: GeneticAlgorithmParams;
+  particleSwarmOptimizationParams: ParticleSwarmOptimizationParams;
 
   constructor() {
-    this.solarPanelTiltAngleGeneticAlgorithmParams = new DefaultGeneticAlgorithmParams('Solar Panel Tilt Angle');
-    this.solarPanelTiltAngleParticleSwarmOptimizationParams = new DefaultParticleSwarmOptimizationParams(
-      'Solar Panel Tilt Angle',
-    );
+    this.geneticAlgorithmParams = new DefaultGeneticAlgorithmParams('Solar Panel Tilt Angle');
+    this.particleSwarmOptimizationParams = new DefaultParticleSwarmOptimizationParams('Solar Panel Tilt Angle');
   }
 }

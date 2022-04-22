@@ -22,7 +22,7 @@ const SolarPanelTiltAngleGaWizard = ({ setDialogVisible }: { setDialogVisible: (
   const [dragEnabled, setDragEnabled] = useState<boolean>(false);
   const [bounds, setBounds] = useState<DraggableBounds>({ left: 0, top: 0, bottom: 0, right: 0 } as DraggableBounds);
   const dragRef = useRef<HTMLDivElement | null>(null);
-  const params = useStore.getState().evolutionaryAlgorithmState.solarPanelTiltAngleGeneticAlgorithmParams;
+  const params = useStore(Selector.evolutionaryAlgorithmState).geneticAlgorithmParams;
   const objectiveFunctionTypeRef = useRef<ObjectiveFunctionType>(params.objectiveFunctionType);
   const selectionMethodRef = useRef<GeneticAlgorithmSelectionMethod>(params.selectionMethod);
   const searchMethodRef = useRef<SearchMethod>(params.searchMethod);
@@ -57,24 +57,17 @@ const SolarPanelTiltAngleGaWizard = ({ setDialogVisible }: { setDialogVisible: (
   // save the values in the common store to persist the user's last settings
   const updateStoreParams = () => {
     setCommonStore((state) => {
-      state.evolutionaryAlgorithmState.solarPanelTiltAngleGeneticAlgorithmParams.objectiveFunctionType =
-        objectiveFunctionTypeRef.current;
-      state.evolutionaryAlgorithmState.solarPanelTiltAngleGeneticAlgorithmParams.selectionMethod =
-        selectionMethodRef.current;
-      state.evolutionaryAlgorithmState.solarPanelTiltAngleGeneticAlgorithmParams.searchMethod = searchMethodRef.current;
-      state.evolutionaryAlgorithmState.solarPanelTiltAngleGeneticAlgorithmParams.populationSize =
-        populationSizeRef.current;
-      state.evolutionaryAlgorithmState.solarPanelTiltAngleGeneticAlgorithmParams.maximumGenerations =
-        maximumGenerationsRef.current;
-      state.evolutionaryAlgorithmState.solarPanelTiltAngleGeneticAlgorithmParams.selectionRate =
-        selectionRateRef.current;
-      state.evolutionaryAlgorithmState.solarPanelTiltAngleGeneticAlgorithmParams.crossoverRate =
-        crossoverRateRef.current;
-      state.evolutionaryAlgorithmState.solarPanelTiltAngleGeneticAlgorithmParams.mutationRate = mutationRateRef.current;
-      state.evolutionaryAlgorithmState.solarPanelTiltAngleGeneticAlgorithmParams.convergenceThreshold =
-        convergenceThresholdRef.current;
-      state.evolutionaryAlgorithmState.solarPanelTiltAngleGeneticAlgorithmParams.localSearchRadius =
-        localSearchRadiusRef.current;
+      state.evolutionaryAlgorithmState.geneticAlgorithmParams.solution = 'Solar Panel Tilt Angle';
+      state.evolutionaryAlgorithmState.geneticAlgorithmParams.objectiveFunctionType = objectiveFunctionTypeRef.current;
+      state.evolutionaryAlgorithmState.geneticAlgorithmParams.selectionMethod = selectionMethodRef.current;
+      state.evolutionaryAlgorithmState.geneticAlgorithmParams.searchMethod = searchMethodRef.current;
+      state.evolutionaryAlgorithmState.geneticAlgorithmParams.populationSize = populationSizeRef.current;
+      state.evolutionaryAlgorithmState.geneticAlgorithmParams.maximumGenerations = maximumGenerationsRef.current;
+      state.evolutionaryAlgorithmState.geneticAlgorithmParams.selectionRate = selectionRateRef.current;
+      state.evolutionaryAlgorithmState.geneticAlgorithmParams.crossoverRate = crossoverRateRef.current;
+      state.evolutionaryAlgorithmState.geneticAlgorithmParams.mutationRate = mutationRateRef.current;
+      state.evolutionaryAlgorithmState.geneticAlgorithmParams.convergenceThreshold = convergenceThresholdRef.current;
+      state.evolutionaryAlgorithmState.geneticAlgorithmParams.localSearchRadius = localSearchRadiusRef.current;
     });
   };
 

@@ -9,39 +9,40 @@ import { showError, showInfo } from '../../helpers';
 import i18n from '../../i18n/i18n';
 import { DatumEntry, EvolutionMethod, ObjectiveFunctionType, ObjectType } from '../../types';
 import { SolarPanelModel } from '../../models/SolarPanelModel';
+import { SolarPanelTiltAngleOptimizerGa } from './algorithm/SolarPanelTiltAngleOptimizerGa';
 import { FoundationModel } from '../../models/FoundationModel';
 import { HALF_PI } from '../../constants';
 import { Util } from '../../Util';
-import { SolarPanelTiltAngleOptimizerPso } from './algorithm/SolarPanelTiltAngleOptimizerPso';
-import { DefaultParticleSwarmOptimizationParams } from '../../stores/DefaultParticleSwarmOptimizationParams';
+import { PolygonModel } from '../../models/PolygonModel';
 
-const SolarPanelTiltAnglePso = () => {
+const SolarPanelArrayGa = () => {
   const setCommonStore = useStore(Selector.set);
   const language = useStore(Selector.language);
   const daysPerYear = useStore(Selector.world.daysPerYear) ?? 6;
   const evolutionMethod = useStore(Selector.evolutionMethod);
   const runEvolution = useStore(Selector.runEvolution);
   const pauseEvolution = useStore(Selector.pauseEvolution);
-  const foundation = useStore(Selector.selectedElement) as FoundationModel;
+  const getParent = useStore(Selector.getParent);
+  const polygon = useStore(Selector.selectedElement) as PolygonModel;
   const getChildrenOfType = useStore(Selector.getChildrenOfType);
-  const updateSolarPanelTiltAngleById = useStore(Selector.updateSolarPanelTiltAngleById);
-  const setFittestParticleResults = useStore(Selector.setFittestIndividualResults);
+  const setFittestIndividualResults = useStore(Selector.setFittestIndividualResults);
   const objectiveEvaluationIndex = useStore(Selector.objectiveEvaluationIndex);
-  const particleLabels = useStore(Selector.variableLabels);
-  const setParticleLabels = useStore(Selector.setVariableLabels);
-  const params = useStore(Selector.evolutionaryAlgorithmState).particleSwarmOptimizationParams;
+  const geneLabels = useStore(Selector.variableLabels);
+  const setGeneLabels = useStore(Selector.setVariableLabels);
+  const params = useStore(Selector.evolutionaryAlgorithmState).geneticAlgorithmParams;
 
   const lang = { lng: language };
   const requestRef = useRef<number>(0);
   const evolutionCompletedRef = useRef<boolean>(false);
   const pauseRef = useRef<boolean>(false);
   const solarPanelsRef = useRef<SolarPanelModel[]>();
-  const optimizerRef = useRef<SolarPanelTiltAngleOptimizerPso>();
-  const particleIndexRef = useRef<number>(0);
+  const optimizerRef = useRef<SolarPanelTiltAngleOptimizerGa>();
+  const individualIndexRef = useRef<number>(0);
   const convergedRef = useRef<boolean>(false);
+  const foundation = getParent(polygon) as FoundationModel;
 
   useEffect(() => {
-    if (runEvolution && evolutionMethod === EvolutionMethod.PARTICLE_SWARM_OPTIMIZATION) {
+    if (runEvolution && evolutionMethod === EvolutionMethod.GENETIC_ALGORITHM) {
       init();
       requestRef.current = requestAnimationFrame(evolve);
       return () => {
@@ -92,26 +93,23 @@ const SolarPanelTiltAnglePso = () => {
       labels.push(osp.label);
     }
     if (solarPanelsRef.current.length > 0) {
-      optimizerRef.current = new SolarPanelTiltAngleOptimizerPso(
+      optimizerRef.current = new SolarPanelTiltAngleOptimizerGa(
         solarPanelsRef.current,
         foundation,
-        params.swarmSize,
-        params.vmax,
-        params.maximumSteps,
+        params.populationSize,
+        params.maximumGenerations,
+        params.selectionMethod,
         params.convergenceThreshold,
         params.searchMethod,
         params.localSearchRadius,
       );
-      optimizerRef.current.inertia = params.inertia;
-      optimizerRef.current.cognitiveCoefficient = params.cognitiveCoefficient;
-      optimizerRef.current.socialCoefficient = params.socialCoefficient;
-      particleIndexRef.current = 0;
+      optimizerRef.current.selectionRate = params.selectionRate;
+      optimizerRef.current.crossoverRate = params.crossoverRate;
+      optimizerRef.current.mutationRate = params.mutationRate;
+      individualIndexRef.current = 0;
       convergedRef.current = false;
-      setParticleLabels(labels);
+      setGeneLabels(labels);
       optimizerRef.current.startEvolving();
-      setCommonStore((state) => {
-        state.viewState.showEvolutionPanel = true;
-      });
     } else {
       showError(i18n.t('message.EncounterEvolutionError', lang));
     }
@@ -152,22 +150,25 @@ const SolarPanelTiltAnglePso = () => {
   // the increment of objectiveEvaluationIndex is used as a trigger to request the next animation frame
   useEffect(() => {
     if (!optimizerRef.current || !objectiveEvaluationIndex) return;
-    // the number of particles to evaluate is less than or equal to maximumSteps * swarmSize,
+    // the number of individuals to evaluate is less than or equal to maximumGenerations * populationSize,
     // subject to the convergence criterion
-    convergedRef.current = optimizerRef.current.updateParticle(particleIndexRef.current % params.swarmSize, getTotal());
+    convergedRef.current = optimizerRef.current.evolveIndividual(
+      individualIndexRef.current % params.populationSize,
+      getTotal(),
+    );
     updateResults();
-    particleIndexRef.current++;
-    optimizerRef.current.outsideStepCounter = Math.floor(particleIndexRef.current / params.swarmSize);
-    // recursive call to the next step of the evolution, which is to evaluate the next particle
+    individualIndexRef.current++;
+    optimizerRef.current.outsideGenerationCounter = Math.floor(individualIndexRef.current / params.populationSize);
+    // recursive call to the next step of the evolution, which is to evaluate the next individual
     requestRef.current = requestAnimationFrame(evolve);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [objectiveEvaluationIndex]);
 
   const evolve = () => {
     if (!optimizerRef.current) return;
-    if (evolutionMethod !== EvolutionMethod.PARTICLE_SWARM_OPTIMIZATION) return;
+    if (evolutionMethod !== EvolutionMethod.GENETIC_ALGORITHM) return;
     if (runEvolution && !pauseRef.current) {
-      if (convergedRef.current || optimizerRef.current.outsideStepCounter >= params.maximumSteps) {
+      if (convergedRef.current || optimizerRef.current.outsideGenerationCounter >= params.maximumGenerations) {
         cancelAnimationFrame(requestRef.current);
         setCommonStore((state) => {
           state.runEvolution = false;
@@ -176,10 +177,7 @@ const SolarPanelTiltAnglePso = () => {
         });
         evolutionCompletedRef.current = true;
         optimizerRef.current.applyFittest();
-        if (solarPanelsRef.current) {
-          for (const sp of solarPanelsRef.current) {
-            updateSolarPanelTiltAngleById(sp.id, sp.tiltAngle);
-          }
+        if (polygon && foundation) {
         }
         updateResults();
         showInfo(
@@ -187,11 +185,14 @@ const SolarPanelTiltAnglePso = () => {
             '\n' +
             (convergedRef.current
               ? i18n.t('message.ConvergenceThresholdHasBeenReached', lang)
-              : i18n.t('message.MaximumNumberOfStepsHasBeenReached', lang)),
+              : i18n.t('message.MaximumNumberOfGenerationsHasBeenReached', lang)),
         );
+        setCommonStore((state) => {
+          state.viewState.showEvolutionPanel = true;
+        });
         return;
       }
-      optimizerRef.current.translateParticle(particleIndexRef.current % params.swarmSize);
+      optimizerRef.current.translateIndividual(individualIndexRef.current % params.populationSize);
       setCommonStore((state) => {
         if (solarPanelsRef.current) {
           for (const e of state.elements) {
@@ -223,32 +224,32 @@ const SolarPanelTiltAnglePso = () => {
   const updateResults = () => {
     if (!optimizerRef.current) return;
     const results: DatumEntry[] = [];
-    for (let index = 0; index < optimizerRef.current.bestPositionOfSteps.length; index++) {
+    for (let index = 0; index < optimizerRef.current.fittestOfGenerations.length; index++) {
       const datum: DatumEntry = {};
       // the first fittest starts from index 1 because index 0 is used for the initial state
-      const ps = optimizerRef.current.bestPositionOfSteps[index];
-      if (ps) {
-        const n = ps.length;
+      const fg = optimizerRef.current.fittestOfGenerations[index];
+      if (fg) {
+        const n = fg.chromosome.length;
         datum['Step'] = index;
         for (let k = 0; k < n; k++) {
           let key = 'Var' + (k + 1);
-          if (particleLabels[k]) {
-            const trimmed = particleLabels[k]?.trim();
+          if (geneLabels[k]) {
+            const trimmed = geneLabels[k]?.trim();
             if (trimmed && trimmed !== '') key = trimmed;
           }
-          datum[key] = Util.toDegrees((2 * ps[k] - 1) * HALF_PI);
+          datum[key] = Util.toDegrees((2 * fg.chromosome[k] - 1) * HALF_PI);
         }
-        datum['Objective'] = optimizerRef.current.bestFitnessOfSteps[index];
-        // the first step of the swarm starts from index 0
+        datum['Objective'] = fg.fitness;
+        // the first generation of population starts from index 0
         if (index > 0) {
-          const ss = optimizerRef.current.swarmOfSteps[index - 1];
-          if (ss) {
+          const pg = optimizerRef.current.populationOfGenerations[index - 1];
+          if (pg) {
             let counter = 0;
-            for (let i = 0; i < ss.particles.length; i++) {
-              const n = ss.particles[i].position.length;
+            for (let i = 0; i < pg.individuals.length; i++) {
+              const n = pg.individuals[i].chromosome.length;
               for (let k = 0; k < n; k++) {
                 const key = 'Individual' + ++counter;
-                datum[key] = Util.toDegrees((2 * ss.particles[i].position[k] - 1) * HALF_PI);
+                datum[key] = Util.toDegrees((2 * pg.individuals[i].chromosome[k] - 1) * HALF_PI);
               }
             }
           }
@@ -258,10 +259,10 @@ const SolarPanelTiltAnglePso = () => {
         results.push(datum);
       }
     }
-    setFittestParticleResults(results);
+    setFittestIndividualResults(results);
   };
 
   return <></>;
 };
 
-export default React.memo(SolarPanelTiltAnglePso);
+export default React.memo(SolarPanelArrayGa);

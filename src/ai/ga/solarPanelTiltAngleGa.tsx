@@ -28,7 +28,7 @@ const SolarPanelTiltAngleGa = () => {
   const objectiveEvaluationIndex = useStore(Selector.objectiveEvaluationIndex);
   const geneLabels = useStore(Selector.variableLabels);
   const setGeneLabels = useStore(Selector.setVariableLabels);
-  const params = useStore.getState().evolutionaryAlgorithmState.solarPanelTiltAngleGeneticAlgorithmParams;
+  const params = useStore(Selector.evolutionaryAlgorithmState).geneticAlgorithmParams;
 
   const lang = { lng: language };
   const requestRef = useRef<number>(0);
@@ -108,6 +108,9 @@ const SolarPanelTiltAngleGa = () => {
       convergedRef.current = false;
       setGeneLabels(labels);
       optimizerRef.current.startEvolving();
+      setCommonStore((state) => {
+        state.viewState.showEvolutionPanel = true;
+      });
     } else {
       showError(i18n.t('message.EncounterEvolutionError', lang));
     }
@@ -188,9 +191,6 @@ const SolarPanelTiltAngleGa = () => {
               ? i18n.t('message.ConvergenceThresholdHasBeenReached', lang)
               : i18n.t('message.MaximumNumberOfGenerationsHasBeenReached', lang)),
         );
-        setCommonStore((state) => {
-          state.viewState.showEvolutionPanel = true;
-        });
         return;
       }
       optimizerRef.current.translateIndividual(individualIndexRef.current % params.populationSize);

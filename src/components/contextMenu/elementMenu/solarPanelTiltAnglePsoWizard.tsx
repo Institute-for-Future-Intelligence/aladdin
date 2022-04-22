@@ -10,7 +10,6 @@ import * as Selector from '../../../stores/selector';
 import i18n from '../../../i18n/i18n';
 import { EvolutionMethod, ObjectiveFunctionType, SearchMethod } from '../../../types';
 import { showInfo } from '../../../helpers';
-import { DefaultParticleSwarmOptimizationParams } from '../../../stores/DefaultParticleSwarmOptimizationParams';
 
 const { Option } = Select;
 
@@ -18,14 +17,12 @@ const SolarPanelTiltAnglePsoWizard = ({ setDialogVisible }: { setDialogVisible: 
   const setCommonStore = useStore(Selector.set);
   const language = useStore(Selector.language);
   const runEvolution = useStore(Selector.runEvolution);
+  const params = useStore(Selector.evolutionaryAlgorithmState).particleSwarmOptimizationParams;
 
   const [updateFlag, setUpdateFlag] = useState<boolean>(false);
   const [dragEnabled, setDragEnabled] = useState<boolean>(false);
   const [bounds, setBounds] = useState<DraggableBounds>({ left: 0, top: 0, bottom: 0, right: 0 } as DraggableBounds);
   const dragRef = useRef<HTMLDivElement | null>(null);
-  const params =
-    useStore.getState().evolutionaryAlgorithmState.solarPanelTiltAngleParticleSwarmOptimizationParams ??
-    new DefaultParticleSwarmOptimizationParams('Solar Panel Tilt Angle');
   const objectiveFunctionTypeRef = useRef<ObjectiveFunctionType>(params.objectiveFunctionType);
   const searchMethodRef = useRef<SearchMethod>(params.searchMethod);
   const swarmSizeRef = useRef<number>(params.swarmSize);
@@ -60,28 +57,20 @@ const SolarPanelTiltAnglePsoWizard = ({ setDialogVisible }: { setDialogVisible: 
   // save the values in the common store to persist the user's last settings
   const updateStoreParams = () => {
     setCommonStore((state) => {
-      if (!state.evolutionaryAlgorithmState.solarPanelTiltAngleParticleSwarmOptimizationParams) {
-        state.evolutionaryAlgorithmState.solarPanelTiltAngleParticleSwarmOptimizationParams =
-          new DefaultParticleSwarmOptimizationParams('Solar Panel Tilt Angle');
-      }
-      state.evolutionaryAlgorithmState.solarPanelTiltAngleParticleSwarmOptimizationParams.objectiveFunctionType =
+      state.evolutionaryAlgorithmState.particleSwarmOptimizationParams.solution = 'Solar Panel Tilt Angle';
+      state.evolutionaryAlgorithmState.particleSwarmOptimizationParams.objectiveFunctionType =
         objectiveFunctionTypeRef.current;
-      state.evolutionaryAlgorithmState.solarPanelTiltAngleParticleSwarmOptimizationParams.searchMethod =
-        searchMethodRef.current;
-      state.evolutionaryAlgorithmState.solarPanelTiltAngleParticleSwarmOptimizationParams.swarmSize =
-        swarmSizeRef.current;
-      state.evolutionaryAlgorithmState.solarPanelTiltAngleParticleSwarmOptimizationParams.maximumSteps =
-        maximumStepsRef.current;
-      state.evolutionaryAlgorithmState.solarPanelTiltAngleParticleSwarmOptimizationParams.cognitiveCoefficient =
+      state.evolutionaryAlgorithmState.particleSwarmOptimizationParams.searchMethod = searchMethodRef.current;
+      state.evolutionaryAlgorithmState.particleSwarmOptimizationParams.swarmSize = swarmSizeRef.current;
+      state.evolutionaryAlgorithmState.particleSwarmOptimizationParams.maximumSteps = maximumStepsRef.current;
+      state.evolutionaryAlgorithmState.particleSwarmOptimizationParams.cognitiveCoefficient =
         cognitiveCoefficientRef.current;
-      state.evolutionaryAlgorithmState.solarPanelTiltAngleParticleSwarmOptimizationParams.socialCoefficient =
-        socialCoefficientRef.current;
-      state.evolutionaryAlgorithmState.solarPanelTiltAngleParticleSwarmOptimizationParams.vmax = vmaxRef.current;
-      state.evolutionaryAlgorithmState.solarPanelTiltAngleParticleSwarmOptimizationParams.inertia = inertiaRef.current;
-      state.evolutionaryAlgorithmState.solarPanelTiltAngleParticleSwarmOptimizationParams.convergenceThreshold =
+      state.evolutionaryAlgorithmState.particleSwarmOptimizationParams.socialCoefficient = socialCoefficientRef.current;
+      state.evolutionaryAlgorithmState.particleSwarmOptimizationParams.vmax = vmaxRef.current;
+      state.evolutionaryAlgorithmState.particleSwarmOptimizationParams.inertia = inertiaRef.current;
+      state.evolutionaryAlgorithmState.particleSwarmOptimizationParams.convergenceThreshold =
         convergenceThresholdRef.current;
-      state.evolutionaryAlgorithmState.solarPanelTiltAngleParticleSwarmOptimizationParams.localSearchRadius =
-        localSearchRadiusRef.current;
+      state.evolutionaryAlgorithmState.particleSwarmOptimizationParams.localSearchRadius = localSearchRadiusRef.current;
     });
   };
 

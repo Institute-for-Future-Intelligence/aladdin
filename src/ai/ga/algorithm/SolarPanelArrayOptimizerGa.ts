@@ -75,34 +75,34 @@ export class SolarPanelArrayOptimizerGa extends OptimizerGa {
       this.poleHeight = sp1.poleHeight;
       this.poleSpacing = sp1.poleSpacing;
 
-      this.initialGene[0] = sp1.tiltAngle;
-      const normalizedTiltAngle = 0.5 * (1.0 + this.initialGene[0] / HALF_PI);
-      firstBorn.setGene(0, normalizedTiltAngle);
+      this.initialGene[0] = 0.5 * (1.0 + sp1.tiltAngle / HALF_PI);
+      firstBorn.setGene(0, this.initialGene[0]);
 
-      this.initialGene[1] = Math.hypot(sp1.cx - sp2.cx, sp1.cy - sp2.cy);
-      let normalizedInterRowSpacing =
-        (this.initialGene[1] - this.minimumInterRowSpacing) /
+      this.initialGene[1] =
+        (Math.hypot(sp1.cx - sp2.cx, sp1.cy - sp2.cy) - this.minimumInterRowSpacing) /
         (this.maximumInterRowSpacing - this.minimumInterRowSpacing);
-      if (normalizedInterRowSpacing < 0) normalizedInterRowSpacing = 0;
-      else if (normalizedInterRowSpacing > 1) normalizedInterRowSpacing = 1;
-      firstBorn.setGene(1, normalizedInterRowSpacing);
+      if (this.initialGene[1] < 0) this.initialGene[1] = 0;
+      else if (this.initialGene[1] > 1) this.initialGene[1] = 1;
+      firstBorn.setGene(1, this.initialGene[1]);
 
-      this.initialGene[2] = Math.max(
+      const rowsPerRack = Math.max(
         1,
         Math.round(sp1.ly / (sp1.orientation === Orientation.portrait ? pvModel.length : pvModel.width)),
       );
-      let normalizedRowsPerRack =
-        (this.initialGene[2] - this.minimumRowsPerPack) / (this.maximumRowsPerRack - this.minimumRowsPerPack);
-      if (normalizedRowsPerRack < 0) normalizedRowsPerRack = 0;
-      else if (normalizedRowsPerRack > 1) normalizedRowsPerRack = 1;
-      firstBorn.setGene(2, normalizedRowsPerRack);
+      this.initialGene[2] =
+        (rowsPerRack - this.minimumRowsPerPack) / (this.maximumRowsPerRack - this.minimumRowsPerPack);
+      if (this.initialGene[2] < 0) this.initialGene[2] = 0;
+      else if (this.initialGene[2] > 1) this.initialGene[2] = 1;
+      firstBorn.setGene(2, this.initialGene[2]);
     }
   }
 
   applyFittest(): void {
     const best: Individual | undefined = this.population.getFittest();
     if (best) {
-      this.finalGene[0] = (2 * best.getGene(0) - 1) * HALF_PI;
+      this.finalGene[0] = best.getGene(0);
+      this.finalGene[1] = best.getGene(1);
+      this.finalGene[2] = best.getGene(2);
       this.finalFitness = best.fitness;
       console.log('Fittest: ' + this.individualToString(best));
     }
@@ -234,7 +234,7 @@ export class SolarPanelArrayOptimizerGa extends OptimizerGa {
     return newElements;
   }
 
-  changeOrientation(solarPanel: SolarPanelModel, value: Orientation): void {
+  private changeOrientation(solarPanel: SolarPanelModel, value: Orientation): void {
     if (solarPanel) {
       solarPanel.orientation = value;
       // add a small number because the round-off error may cause the floor to drop one

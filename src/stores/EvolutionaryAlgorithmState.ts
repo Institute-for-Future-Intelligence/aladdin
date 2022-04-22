@@ -6,6 +6,6 @@ import { GeneticAlgorithmParams } from './GeneticAlgorithmParams';
 import { ParticleSwarmOptimizationParams } from './ParticleSwarmOptimizationParams';
 
 export interface EvolutionaryAlgorithmState {
-  solarPanelTiltAngleGeneticAlgorithmParams: GeneticAlgorithmParams;
-  solarPanelTiltAngleParticleSwarmOptimizationParams: ParticleSwarmOptimizationParams;
+  geneticAlgorithmParams: GeneticAlgorithmParams;
+  particleSwarmOptimizationParams: ParticleSwarmOptimizationParams;
 }

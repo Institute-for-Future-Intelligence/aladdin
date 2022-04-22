@@ -969,6 +969,8 @@ export const variableLabels = (state: CommonStoreState) => state.variableLabels;
 
 export const setVariableLabels = (state: CommonStoreState) => state.setVariableLabels;
 
+export const evolutionaryAlgorithmState = (state: CommonStoreState) => state.evolutionaryAlgorithmState;
+
 export * as viewState from './viewState';
 
 export * as world from './world';
