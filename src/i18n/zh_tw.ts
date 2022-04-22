@@ -551,8 +551,8 @@ export const i18n_zh_tw = {
     optimizationMenu: {
       Optimization: '優化',
       GeneticAlgorithm: '遺傳算法',
-      ParticleSwarmOptimization: '粒子群優化',
       GeneticAlgorithmSettings: '遺傳算法設定',
+      ParticleSwarmOptimization: '粒子群優化',
       ParticleSwarmOptimizationSettings: '粒子群優化設定',
       SolarPanelTiltAngleOptimization: '光伏板傾斜角度優化',
       Generation: '世代',

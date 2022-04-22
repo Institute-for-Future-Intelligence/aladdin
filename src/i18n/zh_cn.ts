@@ -551,8 +551,8 @@ export const i18n_zh_cn = {
     optimizationMenu: {
       Optimization: '优化',
       GeneticAlgorithm: '遗传算法',
-      ParticleSwarmOptimization: '粒子群优化',
       GeneticAlgorithmSettings: '遗传算法设定',
+      ParticleSwarmOptimization: '粒子群优化',
       ParticleSwarmOptimizationSettings: '粒子群优化设定',
       SolarPanelTiltAngleOptimization: '光伏板倾斜角度优化',
       Generation: '世代',

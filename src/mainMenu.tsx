@@ -40,8 +40,8 @@ import solar_radiation_predicted_vs_measured from './examples/solar_radiation_pr
 import solar_updraft_tower from './examples/solar_updraft_tower.json';
 import solar_updraft_tower_city from './examples/solar_updraft_tower_city.json';
 import tucson_sundt_station from './examples/tucson_sundt_station.json';
-import ga_tilt_angle_one_row from './examples/ga_tilt_angle_one_row.json';
-import ga_tilt_angles_multiple_rows from './examples/ga_tilt_angles_multiple_rows.json';
+import ai_tilt_angle_one_row from './examples/ai_tilt_angle_one_row.json';
+import ai_tilt_angles_multiple_rows from './examples/ai_tilt_angles_multiple_rows.json';
 
 import zhCN from 'antd/lib/locale/zh_CN';
 import zhTW from 'antd/lib/locale/zh_TW';
@@ -298,11 +298,11 @@ const MainMenu = ({ viewOnly, set2DView, resetView, zoomView, canvas }: MainMenu
       case 'tucson_sundt_station':
         input = tucson_sundt_station;
         break;
-      case 'ga_tilt_angle_one_row':
-        input = ga_tilt_angle_one_row;
+      case 'ai_tilt_angle_one_row':
+        input = ai_tilt_angle_one_row;
         break;
-      case 'ga_tilt_angles_multiple_rows':
-        input = ga_tilt_angles_multiple_rows;
+      case 'ai_tilt_angles_multiple_rows':
+        input = ai_tilt_angles_multiple_rows;
         break;
     }
     if (input) {
@@ -1642,10 +1642,10 @@ const MainMenu = ({ viewOnly, set2DView, resetView, zoomView, canvas }: MainMenu
 
         {/* artificial intelligence */}
         <SubMenu key={'artificial-intelligence'} title={i18n.t('menu.artificialIntelligenceSubMenu', lang)}>
-          <Menu.Item key="ga_tilt_angle_one_row" onClick={loadFile}>
+          <Menu.Item key="ai_tilt_angle_one_row" onClick={loadFile}>
             {i18n.t('menu.examples.OptimizingTiltAngleOfOneSolarPanelRow', lang)}
           </Menu.Item>
-          <Menu.Item key="ga_tilt_angles_multiple_rows" onClick={loadFile}>
+          <Menu.Item key="ai_tilt_angles_multiple_rows" onClick={loadFile}>
             {i18n.t('menu.examples.OptimizingTiltAnglesOfMultipleSolarPanelRows', lang)}
           </Menu.Item>
         </SubMenu>

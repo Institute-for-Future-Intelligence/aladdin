@@ -568,9 +568,9 @@ export const i18n_es = {
     optimizationMenu: {
       Optimization: 'Optimization',
       GeneticAlgorithm: 'Genetic Algorithm',
-      ParticleSwarmOptimization: 'Swarm Particle Optimization',
       GeneticAlgorithmSettings: 'Genetic Algorithm Settings',
-      ParticleSwarmOptimizationSettings: 'Swarm Particle Optimization Settings',
+      ParticleSwarmOptimization: 'Particle Swarm Optimization',
+      ParticleSwarmOptimizationSettings: 'Particle Swarm Optimization Settings',
       SolarPanelTiltAngleOptimization: 'Solar Panel Tilt Angle Optimization',
       Generation: 'Generation',
       Gene: 'Gene',

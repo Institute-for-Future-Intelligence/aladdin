@@ -24,7 +24,11 @@ export class Particle {
       const r = Math.random();
       this.position.push(r);
       this.bestPositionOfParticle.push(r);
-      if (vmax) this.velocity.push(Random.gaussian() * vmax);
+      if (vmax) {
+        this.velocity.push(Random.gaussian() * vmax);
+      } else {
+        this.velocity.push(0);
+      }
     }
   }
 
