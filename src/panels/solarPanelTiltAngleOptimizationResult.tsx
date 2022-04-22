@@ -11,7 +11,7 @@ import { Button, Space } from 'antd';
 import { screenshot, showInfo } from '../helpers';
 import { RightCircleOutlined, SaveOutlined } from '@ant-design/icons';
 import i18n from '../i18n/i18n';
-import GaBiaxialLineGraph from '../components/gaBiaxialLineGraph';
+import EvolutionBiaxialLineGraph from '../components/evolutionBiaxialLineGraph';
 import { EvolutionMethod, ObjectiveFunctionType, ObjectType } from '../types';
 import { DefaultParticleSwarmOptimizationParams } from '../stores/DefaultParticleSwarmOptimizationParams';
 
@@ -65,7 +65,7 @@ const SolarPanelTiltAngleOptimizationResult = () => {
   const language = useStore(Selector.language);
   const setCommonStore = useStore(Selector.set);
   const fittestIndividualResults = useStore(Selector.fittestIndividualResults);
-  const geneLabels = useStore(Selector.geneLabels);
+  const variableLabels = useStore(Selector.variableLabels);
   const panelX = useStore(Selector.viewState.evolutionPanelX);
   const panelY = useStore(Selector.viewState.evolutionPanelY);
   const selectedElement = useStore(Selector.selectedElement);
@@ -153,7 +153,13 @@ const SolarPanelTiltAngleOptimizationResult = () => {
       <Container ref={nodeRef}>
         <ColumnWrapper ref={wrapperRef}>
           <Header className="handle">
-            <span>{i18n.t('optimizationMenu.SolarPanelTiltAngleOptimization', lang)}</span>
+            <span>
+              {i18n.t('optimizationMenu.SolarPanelTiltAngleOptimization', lang) +
+                ': ' +
+                (evolutionMethod === EvolutionMethod.GENETIC_ALGORITHM
+                  ? i18n.t('optimizationMenu.GeneticAlgorithm', lang)
+                  : i18n.t('optimizationMenu.ParticleSwarmOptimization', lang))}
+            </span>
             <span
               style={{ cursor: 'pointer' }}
               onTouchStart={() => {
@@ -166,11 +172,11 @@ const SolarPanelTiltAngleOptimizationResult = () => {
               {i18n.t('word.Close', lang)}
             </span>
           </Header>
-          <GaBiaxialLineGraph
+          <EvolutionBiaxialLineGraph
             dataSource={fittestIndividualResults}
-            labels={geneLabels}
+            labels={variableLabels}
             height={responsiveHeight}
-            dataKeyAxisX={'Generation'}
+            dataKeyAxisX={'Step'}
             labelX={labelAxisX}
             labelY1={labelVariable}
             labelY2={labelObjective}

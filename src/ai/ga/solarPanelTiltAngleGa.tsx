@@ -26,8 +26,8 @@ const SolarPanelTiltAngleGa = () => {
   const updateSolarPanelTiltAngleById = useStore(Selector.updateSolarPanelTiltAngleById);
   const setFittestIndividualResults = useStore(Selector.setFittestIndividualResults);
   const objectiveEvaluationIndex = useStore(Selector.objectiveEvaluationIndex);
-  const geneLabels = useStore(Selector.geneLabels);
-  const setGeneLabels = useStore(Selector.setGeneLabels);
+  const geneLabels = useStore(Selector.variableLabels);
+  const setGeneLabels = useStore(Selector.setVariableLabels);
   const params = useStore.getState().evolutionaryAlgorithmState.solarPanelTiltAngleGeneticAlgorithmParams;
 
   const lang = { lng: language };
@@ -231,9 +231,9 @@ const SolarPanelTiltAngleGa = () => {
       const fg = optimizerRef.current.fittestOfGenerations[index];
       if (fg) {
         const n = fg.chromosome.length;
-        datum['Generation'] = index;
+        datum['Step'] = index;
         for (let k = 0; k < n; k++) {
-          let key = 'Gene' + (k + 1);
+          let key = 'Var' + (k + 1);
           if (geneLabels[k]) {
             const trimmed = geneLabels[k]?.trim();
             if (trimmed && trimmed !== '') key = trimmed;

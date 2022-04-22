@@ -40,7 +40,7 @@ export interface GaBiaxialLineGraphProps {
   fractionDigits?: number;
 }
 
-const GaBiaxialLineGraph = ({
+const EvolutionBiaxialLineGraph = ({
   dataSource,
   labels,
   height,
@@ -66,9 +66,12 @@ const GaBiaxialLineGraph = ({
   const symbolSize = 1;
   const payloadRef = useRef<any[]>([]);
 
-  // data source format starts from the genes of the fittest of each generation, followed by the best objective
-  // and then the genes of all the individuals from each generation:
+  // data source format starts from the variables (individual genes or particle positions) of the fittest of
+  // each generation or step, followed by the best objective and then the variables of all the individuals
+  // or particles from each generation or step, such as:
   // Generation, Gene1, Gene2, ..., Objective, I1, I2, I3, ...
+  // or
+  // Step, Position1, Position2, ..., Objective, I1, I2, I3, ...
   const getLines = useMemo(() => {
     if (!dataSource || dataSource.length === 0) return [];
     // the first column is for the x-axis, the last is for the objective
@@ -82,7 +85,7 @@ const GaBiaxialLineGraph = ({
     payloadRef.current.length = 0;
     for (let i = 0; i < totalLineCount; i++) {
       if (i < lastFittestLineIndex) {
-        const name = labels && labels[i] && labels[i] !== '' ? labels[i] : 'Gene' + (i + 1);
+        const name = labels && labels[i] && labels[i] !== '' ? labels[i] : 'Var' + (i + 1);
         const opacity = legendDataKey === null ? 1 : legendDataKey === name ? 1 : 0.25;
         const symbol = createSymbol(SYMBOLS[i], symbolSize, symbolCount, opacity);
         if (i === 0) defaultSymbol = symbol;
@@ -122,16 +125,10 @@ const GaBiaxialLineGraph = ({
         );
         payloadRef.current.push({ id: name, type: 'line', value: name, color: PRESET_COLORS[lastFittestLineIndex] });
       } else {
-        const geneIndex = Math.floor((i - fittestLineCount) / individualCount);
+        const varIndex = Math.floor((i - fittestLineCount) / individualCount);
         const name = 'Individual' + (i + 1);
         const opacity = 0.5;
-        const symbol = createSymbol(
-          SYMBOLS[geneIndex],
-          symbolSize * 0.5,
-          symbolCount,
-          opacity,
-          PRESET_COLORS[geneIndex],
-        );
+        const symbol = createSymbol(SYMBOLS[varIndex], symbolSize * 0.5, symbolCount, opacity, PRESET_COLORS[varIndex]);
         lines.push(
           <Line
             yAxisId="left"
@@ -140,7 +137,7 @@ const GaBiaxialLineGraph = ({
             name={name}
             dataKey={name}
             opacity={opacity}
-            stroke={PRESET_COLORS[geneIndex]}
+            stroke={PRESET_COLORS[varIndex]}
             strokeWidth={0}
             dot={symbol ? symbol : defaultSymbol}
             isAnimationActive={false}
@@ -254,4 +251,4 @@ const GaBiaxialLineGraph = ({
   );
 };
 
-export default GaBiaxialLineGraph;
+export default EvolutionBiaxialLineGraph;

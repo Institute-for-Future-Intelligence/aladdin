@@ -609,11 +609,11 @@ export interface CommonStoreState {
   updraftTowerLabels: string[];
   setUpdraftTowerLabels: (labels: string[]) => void;
 
-  // genetic algorithms
+  // genetic algorithms and particle swarm optimization
   fittestIndividualResults: DatumEntry[];
   setFittestIndividualResults: (data: DatumEntry[]) => void;
-  geneLabels: (string | undefined)[];
-  setGeneLabels: (labels: (string | undefined)[]) => void;
+  variableLabels: (string | undefined)[];
+  setVariableLabels: (labels: (string | undefined)[]) => void;
 
   sunlightDirection: Vector3;
   setSunlightDirection: (vector: Vector3) => void;
@@ -1021,10 +1021,10 @@ export const useStore = create<CommonStoreState>(
               state.fittestIndividualResults = [...data];
             });
           },
-          geneLabels: [],
-          setGeneLabels(labels) {
+          variableLabels: [],
+          setVariableLabels(labels) {
             immerSet((state: CommonStoreState) => {
-              state.geneLabels = [...labels];
+              state.variableLabels = [...labels];
             });
           },
 

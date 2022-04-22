@@ -27,8 +27,8 @@ const SolarPanelTiltAnglePso = () => {
   const updateSolarPanelTiltAngleById = useStore(Selector.updateSolarPanelTiltAngleById);
   const setFittestParticleResults = useStore(Selector.setFittestIndividualResults);
   const objectiveEvaluationIndex = useStore(Selector.objectiveEvaluationIndex);
-  const particleLabels = useStore(Selector.geneLabels);
-  const setParticleLabels = useStore(Selector.setGeneLabels);
+  const particleLabels = useStore(Selector.variableLabels);
+  const setParticleLabels = useStore(Selector.setVariableLabels);
   const params =
     useStore.getState().evolutionaryAlgorithmState.solarPanelTiltAngleParticleSwarmOptimizationParams ??
     new DefaultParticleSwarmOptimizationParams('Solar Panel Tilt Angle');
@@ -151,13 +151,13 @@ const SolarPanelTiltAnglePso = () => {
   // the increment of objectiveEvaluationIndex is used as a trigger to request the next animation frame
   useEffect(() => {
     if (!optimizerRef.current || !objectiveEvaluationIndex) return;
-    // the number of individuals to evaluate is less than or equal to maximumGenerations * populationSize,
+    // the number of particles to evaluate is less than or equal to maximumSteps * swarmSize,
     // subject to the convergence criterion
     convergedRef.current = optimizerRef.current.updateParticle(particleIndexRef.current % params.swarmSize, getTotal());
     updateResults();
     particleIndexRef.current++;
     optimizerRef.current.outsideStepCounter = Math.floor(particleIndexRef.current / params.swarmSize);
-    // recursive call to the next step of the evolution, which is to evaluate the next individual
+    // recursive call to the next step of the evolution, which is to evaluate the next particle
     requestRef.current = requestAnimationFrame(evolve);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [objectiveEvaluationIndex]);
@@ -231,9 +231,9 @@ const SolarPanelTiltAnglePso = () => {
       const ps = optimizerRef.current.bestPositionOfSteps[index];
       if (ps) {
         const n = ps.length;
-        datum['Generation'] = index;
+        datum['Step'] = index;
         for (let k = 0; k < n; k++) {
-          let key = 'Gene' + (k + 1);
+          let key = 'Var' + (k + 1);
           if (particleLabels[k]) {
             const trimmed = particleLabels[k]?.trim();
             if (trimmed && trimmed !== '') key = trimmed;
@@ -241,7 +241,7 @@ const SolarPanelTiltAnglePso = () => {
           datum[key] = Util.toDegrees((2 * ps[k] - 1) * HALF_PI);
         }
         datum['Objective'] = optimizerRef.current.bestFitnessOfSteps[index];
-        // the first generation of population starts from index 0
+        // the first step of the swarm starts from index 0
         if (index > 0) {
           const ss = optimizerRef.current.swarmOfSteps[index - 1];
           if (ss) {

@@ -64,11 +64,11 @@ export class SolarPanelTiltAngleOptimizerPso extends OptimizerPso {
       for (let i = 0; i < best.length; i++) {
         this.solarPanels[i].tiltAngle = (2 * best[i] - 1) * HALF_PI;
       }
-      console.log('Best: ' + SolarPanelTiltAngleOptimizerPso.individualToString(best, this.swarm.bestFitness));
+      console.log('Best: ' + SolarPanelTiltAngleOptimizerPso.particleToString(best, this.swarm.bestFitness));
     }
   }
 
-  private static individualToString(position: number[], bestFitness: number): string {
+  private static particleToString(position: number[], bestFitness: number): string {
     let s = '(';
     for (let i = 0; i < position.length; i++) {
       s += Util.toDegrees((2 * position[i] - 1) * HALF_PI).toFixed(3) + ', ';
@@ -112,7 +112,7 @@ export class SolarPanelTiltAngleOptimizerPso extends OptimizerPso {
           ', particle ' +
           indexOfParticle +
           ' : ' +
-          SolarPanelTiltAngleOptimizerPso.individualToString(particle.position, fitness),
+          SolarPanelTiltAngleOptimizerPso.particleToString(particle.position, fitness),
       );
       const savedParticle = this.swarmOfSteps[step]?.particles[indexOfParticle];
       if (savedParticle) {
