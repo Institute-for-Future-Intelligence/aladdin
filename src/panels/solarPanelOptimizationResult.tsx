@@ -2,7 +2,7 @@
  * @Copyright 2022. Institute for Future Intelligence, Inc.
  */
 
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useEffect, useMemo, useRef, useState } from 'react';
 import styled from 'styled-components';
 import { useStore } from '../stores/common';
 import * as Selector from '../stores/selector';
@@ -60,7 +60,7 @@ const Header = styled.div`
   }
 `;
 
-const SolarPanelTiltAngleOptimizationResult = () => {
+const SolarPanelOptimizationResult = () => {
   const language = useStore(Selector.language);
   const setCommonStore = useStore(Selector.set);
   const fittestIndividualResults = useStore(Selector.fittestIndividualResults);
@@ -125,19 +125,39 @@ const SolarPanelTiltAngleOptimizationResult = () => {
     });
   };
 
-  const labelAxisX = i18n.t(
-    evolutionMethod === EvolutionMethod.GENETIC_ALGORITHM ? 'optimizationMenu.Generation' : 'optimizationMenu.Step',
-    lang,
-  );
-  const labelVariable = i18n.t('solarPanelMenu.TiltAngle', lang);
-  const params =
-    !evolutionMethod || evolutionMethod === EvolutionMethod.GENETIC_ALGORITHM
+  const params = useMemo(() => {
+    return !evolutionMethod || evolutionMethod === EvolutionMethod.GENETIC_ALGORITHM
       ? evolutionaryAlgorithmState.geneticAlgorithmParams
       : evolutionaryAlgorithmState.particleSwarmOptimizationParams;
-  const labelObjective =
-    params.objectiveFunctionType === ObjectiveFunctionType.DAILY_OUTPUT
+  }, [evolutionMethod]);
+
+  const labelAxisX = useMemo(() => {
+    return i18n.t(
+      evolutionMethod === EvolutionMethod.GENETIC_ALGORITHM ? 'optimizationMenu.Generation' : 'optimizationMenu.Step',
+      lang,
+    );
+  }, [evolutionMethod, lang]);
+
+  const labelVariable = useMemo(() => {
+    if (params.solution === 'Solar Panel Tilt Angle') return i18n.t('solarPanelMenu.TiltAngle', lang);
+    return i18n.t('optimizationMenu.NormalizedVariables', lang);
+  }, [params.solution, lang]);
+
+  const unitY1 = useMemo(() => {
+    if (params.solution === 'Solar Panel Tilt Angle') return '°';
+    return '';
+  }, [params.solution]);
+
+  const unitY2 = useMemo(() => {
+    if (params.solution === 'Solar Panel Array') return i18n.t('word.kWh', lang);
+    return i18n.t('word.kWh', lang);
+  }, [params.solution, lang]);
+
+  const labelObjective = useMemo(() => {
+    return params.objectiveFunctionType === ObjectiveFunctionType.DAILY_OUTPUT
       ? i18n.t('solarPanelYieldPanel.SolarPanelDailyYield', lang)
       : i18n.t('solarPanelYieldPanel.SolarPanelYearlyYield', lang);
+  }, [params.objectiveFunctionType, lang]);
 
   return (
     <ReactDraggable
@@ -179,8 +199,8 @@ const SolarPanelTiltAngleOptimizationResult = () => {
             labelX={labelAxisX}
             labelY1={labelVariable}
             labelY2={labelObjective}
-            unitY1={'°'}
-            unitY2={i18n.t('word.kWh', lang)}
+            unitY1={unitY1}
+            unitY2={unitY2}
             curveType={'linear'}
             fractionDigits={2}
           />
@@ -224,4 +244,4 @@ const SolarPanelTiltAngleOptimizationResult = () => {
   );
 };
 
-export default React.memo(SolarPanelTiltAngleOptimizationResult);
+export default React.memo(SolarPanelOptimizationResult);

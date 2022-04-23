@@ -574,6 +574,7 @@ export const i18n_es = {
       SolarPanelTiltAngleOptimization: 'Solar Panel Tilt Angle Optimization',
       Generation: 'Generation',
       Gene: 'Gene',
+      NormalizedVariables: 'Normalized Variables',
       Objective: 'Objective',
       ObjectiveFunctionDailyOutput: 'Daily Output',
       ObjectiveFunctionYearlyOutput: 'Yearly Output',
@@ -597,6 +598,7 @@ export const i18n_es = {
       SocialCoefficient: 'Social Coefficient',
       ConvergenceThreshold: 'Convergence Threshold for Termination',
       LocalSearchRadius: 'Local Search Radius',
+      SolarPanelArray: 'Solar Panel Array',
     },
 
     treeMenu: {

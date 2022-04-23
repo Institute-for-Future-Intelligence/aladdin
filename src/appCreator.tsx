@@ -75,7 +75,7 @@ import YearlySolarUpdraftTowerYieldPanel from './panels/yearlySolarUpdraftTowerY
 import EvolutionControlPanel from './panels/evolutionControlPanel';
 import SolarPanelTiltAngleGa from './ai/ga/solarPanelTiltAngleGa';
 import SolarPanelTiltAnglePso from './ai/pso/solarPanelTiltAnglePso';
-import SolarPanelTiltAngleOptimizationResult from './panels/solarPanelTiltAngleOptimizationResult';
+import SolarPanelOptimizationResult from './panels/solarPanelOptimizationResult';
 
 export interface AppCreatorProps {
   viewOnly: boolean;
@@ -385,7 +385,7 @@ const AppCreator = ({ viewOnly = false }: AppCreatorProps) => {
       {showDailyUpdraftTowerYieldPanel && <DailySolarUpdraftTowerYieldPanel city={city} />}
       {showYearlyUpdraftTowerYieldPanel && <YearlySolarUpdraftTowerYieldPanel city={city} />}
       {showSolarRadiationHeatmap && <HeatmapControlPanel />}
-      {showEvolutionPanel && <SolarPanelTiltAngleOptimizationResult />}
+      {showEvolutionPanel && <SolarPanelOptimizationResult />}
       <DropdownContextMenu>
         <div>
           <Canvas

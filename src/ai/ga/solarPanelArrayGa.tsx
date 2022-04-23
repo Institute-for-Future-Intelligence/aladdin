@@ -9,11 +9,11 @@ import { showError, showInfo } from '../../helpers';
 import i18n from '../../i18n/i18n';
 import { DatumEntry, EvolutionMethod, ObjectiveFunctionType, ObjectType } from '../../types';
 import { SolarPanelModel } from '../../models/SolarPanelModel';
-import { SolarPanelTiltAngleOptimizerGa } from './algorithm/SolarPanelTiltAngleOptimizerGa';
 import { FoundationModel } from '../../models/FoundationModel';
 import { HALF_PI } from '../../constants';
 import { Util } from '../../Util';
 import { PolygonModel } from '../../models/PolygonModel';
+import { SolarPanelArrayOptimizerGa } from './algorithm/SolarPanelArrayOptimizerGa';
 
 const SolarPanelArrayGa = () => {
   const setCommonStore = useStore(Selector.set);
@@ -29,6 +29,7 @@ const SolarPanelArrayGa = () => {
   const objectiveEvaluationIndex = useStore(Selector.objectiveEvaluationIndex);
   const geneLabels = useStore(Selector.variableLabels);
   const setGeneLabels = useStore(Selector.setVariableLabels);
+  const getPvModule = useStore(Selector.getPvModule);
   const params = useStore(Selector.evolutionaryAlgorithmState).geneticAlgorithmParams;
 
   const lang = { lng: language };
@@ -36,7 +37,7 @@ const SolarPanelArrayGa = () => {
   const evolutionCompletedRef = useRef<boolean>(false);
   const pauseRef = useRef<boolean>(false);
   const solarPanelsRef = useRef<SolarPanelModel[]>();
-  const optimizerRef = useRef<SolarPanelTiltAngleOptimizerGa>();
+  const optimizerRef = useRef<SolarPanelArrayOptimizerGa>();
   const individualIndexRef = useRef<number>(0);
   const convergedRef = useRef<boolean>(false);
   const foundation = getParent(polygon) as FoundationModel;
@@ -79,7 +80,7 @@ const SolarPanelArrayGa = () => {
 
   // getting ready for the evolution
   const init = () => {
-    if (!foundation) return;
+    if (!polygon || !foundation) return;
     setCommonStore((state) => {
       state.evolutionInProgress = true;
       state.objectiveEvaluationIndex = 0;
@@ -93,8 +94,10 @@ const SolarPanelArrayGa = () => {
       labels.push(osp.label);
     }
     if (solarPanelsRef.current.length > 0) {
-      optimizerRef.current = new SolarPanelTiltAngleOptimizerGa(
+      optimizerRef.current = new SolarPanelArrayOptimizerGa(
+        getPvModule(solarPanelsRef.current[0].pvModelName) ?? getPvModule('SPR-X21-335-BLK'),
         solarPanelsRef.current,
+        polygon,
         foundation,
         params.populationSize,
         params.maximumGenerations,

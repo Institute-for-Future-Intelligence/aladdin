@@ -557,6 +557,7 @@ export const i18n_zh_tw = {
       SolarPanelTiltAngleOptimization: '光伏板傾斜角度優化',
       Generation: '世代',
       Gene: '基因',
+      NormalizedVariables: '標準化變量',
       Objective: '目標函數',
       ObjectiveFunctionDailyOutput: '當日產出',
       ObjectiveFunctionYearlyOutput: '全年產出',
@@ -580,6 +581,7 @@ export const i18n_zh_tw = {
       SocialCoefficient: '社會係數',
       ConvergenceThreshold: '終止條件的收斂閾值',
       LocalSearchRadius: '局部搜索的半徑',
+      SolarPanelArray: '光伏板陣列',
     },
 
     treeMenu: {
