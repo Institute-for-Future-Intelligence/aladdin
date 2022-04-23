@@ -45,6 +45,11 @@ export interface CloudFileInfo {
   readonly userid: string;
 }
 
+export enum DesignProblem {
+  SOLAR_PANEL_TILT_ANGLE = 'Solar Panel Tilt Angle',
+  SOLAR_PANEL_ARRAY = 'Solar Panel Array',
+}
+
 export enum ObjectiveFunctionType {
   DAILY_OUTPUT = 1,
   YEARLY_OUTPUT = 2,

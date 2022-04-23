@@ -2,10 +2,10 @@
  * @Copyright 2022. Institute for Future Intelligence, Inc.
  */
 
-import { SearchMethod, GeneticAlgorithmSelectionMethod, ObjectiveFunctionType } from '../types';
+import { SearchMethod, GeneticAlgorithmSelectionMethod, ObjectiveFunctionType, DesignProblem } from '../types';
 
 export interface GeneticAlgorithmParams {
-  solution: string;
+  problem: DesignProblem;
   objectiveFunctionType: ObjectiveFunctionType;
   selectionMethod: GeneticAlgorithmSelectionMethod;
   searchMethod: SearchMethod;

@@ -2,11 +2,11 @@
  * @Copyright 2022. Institute for Future Intelligence, Inc.
  */
 
-import { SearchMethod, ObjectiveFunctionType } from '../types';
+import { SearchMethod, ObjectiveFunctionType, DesignProblem } from '../types';
 import { ParticleSwarmOptimizationParams } from './ParticleSwarmOptimizationParams';
 
 export class DefaultParticleSwarmOptimizationParams implements ParticleSwarmOptimizationParams {
-  solution: string;
+  problem: DesignProblem;
   objectiveFunctionType: ObjectiveFunctionType;
   searchMethod: SearchMethod;
   swarmSize: number;
@@ -18,8 +18,8 @@ export class DefaultParticleSwarmOptimizationParams implements ParticleSwarmOpti
   convergenceThreshold: number;
   localSearchRadius: number;
 
-  constructor(solution: string) {
-    this.solution = solution;
+  constructor(problem: DesignProblem) {
+    this.problem = problem;
     this.objectiveFunctionType = ObjectiveFunctionType.DAILY_OUTPUT;
     this.searchMethod = SearchMethod.GLOBAL_SEARCH_UNIFORM_SELECTION;
     this.swarmSize = 20;

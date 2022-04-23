@@ -293,7 +293,7 @@
   "evolutionMethod": 2,
   "evolutionaryAlgorithmState": {
     "geneticAlgorithmParams": {
-      "solution": "Solar Panel Tilt Angle",
+      "problem": "Solar Panel Tilt Angle",
       "objectiveFunctionType": 2,
       "selectionMethod": 1,
       "searchMethod": 1,
@@ -306,7 +306,7 @@
       "localSearchRadius": 0.1
     },
     "particleSwarmOptimizationParams": {
-      "solution": "Solar Panel Tilt Angle",
+      "problem": "Solar Panel Tilt Angle",
       "objectiveFunctionType": 2,
       "searchMethod": 1,
       "vmax": 0.01,

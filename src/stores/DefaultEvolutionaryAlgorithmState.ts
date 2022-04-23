@@ -7,13 +7,16 @@ import { GeneticAlgorithmParams } from './GeneticAlgorithmParams';
 import { DefaultGeneticAlgorithmParams } from './DefaultGeneticAlgorithmParams';
 import { ParticleSwarmOptimizationParams } from './ParticleSwarmOptimizationParams';
 import { DefaultParticleSwarmOptimizationParams } from './DefaultParticleSwarmOptimizationParams';
+import { DesignProblem } from '../types';
 
 export class DefaultEvolutionaryAlgorithmState implements EvolutionaryAlgorithmState {
   geneticAlgorithmParams: GeneticAlgorithmParams;
   particleSwarmOptimizationParams: ParticleSwarmOptimizationParams;
 
   constructor() {
-    this.geneticAlgorithmParams = new DefaultGeneticAlgorithmParams('Solar Panel Tilt Angle');
-    this.particleSwarmOptimizationParams = new DefaultParticleSwarmOptimizationParams('Solar Panel Tilt Angle');
+    this.geneticAlgorithmParams = new DefaultGeneticAlgorithmParams(DesignProblem.SOLAR_PANEL_TILT_ANGLE);
+    this.particleSwarmOptimizationParams = new DefaultParticleSwarmOptimizationParams(
+      DesignProblem.SOLAR_PANEL_TILT_ANGLE,
+    );
   }
 }

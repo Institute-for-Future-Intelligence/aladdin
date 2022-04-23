@@ -3,10 +3,10 @@
  */
 
 import { GeneticAlgorithmParams } from './GeneticAlgorithmParams';
-import { SearchMethod, GeneticAlgorithmSelectionMethod, ObjectiveFunctionType } from '../types';
+import { SearchMethod, GeneticAlgorithmSelectionMethod, ObjectiveFunctionType, DesignProblem } from '../types';
 
 export class DefaultGeneticAlgorithmParams implements GeneticAlgorithmParams {
-  solution: string;
+  problem: DesignProblem;
   objectiveFunctionType: ObjectiveFunctionType;
   selectionMethod: GeneticAlgorithmSelectionMethod;
   searchMethod: SearchMethod;
@@ -18,8 +18,8 @@ export class DefaultGeneticAlgorithmParams implements GeneticAlgorithmParams {
   convergenceThreshold: number;
   localSearchRadius: number;
 
-  constructor(solution: string) {
-    this.solution = solution;
+  constructor(problem: DesignProblem) {
+    this.problem = problem;
     this.objectiveFunctionType = ObjectiveFunctionType.DAILY_OUTPUT;
     this.selectionMethod = GeneticAlgorithmSelectionMethod.ROULETTE_WHEEL;
     this.searchMethod = SearchMethod.GLOBAL_SEARCH_UNIFORM_SELECTION;

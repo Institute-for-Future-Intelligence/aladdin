@@ -2,10 +2,10 @@
  * @Copyright 2022. Institute for Future Intelligence, Inc.
  */
 
-import { SearchMethod, ObjectiveFunctionType } from '../types';
+import { SearchMethod, ObjectiveFunctionType, DesignProblem } from '../types';
 
 export interface ParticleSwarmOptimizationParams {
-  solution: string;
+  problem: DesignProblem;
   objectiveFunctionType: ObjectiveFunctionType;
   searchMethod: SearchMethod;
   swarmSize: number;

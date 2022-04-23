@@ -8,7 +8,13 @@ import Draggable, { DraggableBounds, DraggableData, DraggableEvent } from 'react
 import { useStore } from '../../../stores/common';
 import * as Selector from '../../../stores/selector';
 import i18n from '../../../i18n/i18n';
-import { EvolutionMethod, GeneticAlgorithmSelectionMethod, ObjectiveFunctionType, SearchMethod } from '../../../types';
+import {
+  DesignProblem,
+  EvolutionMethod,
+  GeneticAlgorithmSelectionMethod,
+  ObjectiveFunctionType,
+  SearchMethod,
+} from '../../../types';
 import { showInfo } from '../../../helpers';
 
 const { Option } = Select;
@@ -57,7 +63,7 @@ const SolarPanelTiltAngleGaWizard = ({ setDialogVisible }: { setDialogVisible: (
   // save the values in the common store to persist the user's last settings
   const updateStoreParams = () => {
     setCommonStore((state) => {
-      state.evolutionaryAlgorithmState.geneticAlgorithmParams.solution = 'Solar Panel Tilt Angle';
+      state.evolutionaryAlgorithmState.geneticAlgorithmParams.problem = DesignProblem.SOLAR_PANEL_TILT_ANGLE;
       state.evolutionaryAlgorithmState.geneticAlgorithmParams.objectiveFunctionType = objectiveFunctionTypeRef.current;
       state.evolutionaryAlgorithmState.geneticAlgorithmParams.selectionMethod = selectionMethodRef.current;
       state.evolutionaryAlgorithmState.geneticAlgorithmParams.searchMethod = searchMethodRef.current;

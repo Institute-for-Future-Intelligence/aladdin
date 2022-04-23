@@ -8,7 +8,7 @@ import Draggable, { DraggableBounds, DraggableData, DraggableEvent } from 'react
 import { useStore } from '../../../stores/common';
 import * as Selector from '../../../stores/selector';
 import i18n from '../../../i18n/i18n';
-import { EvolutionMethod, ObjectiveFunctionType, SearchMethod } from '../../../types';
+import { DesignProblem, EvolutionMethod, ObjectiveFunctionType, SearchMethod } from '../../../types';
 import { showInfo } from '../../../helpers';
 
 const { Option } = Select;
@@ -57,7 +57,7 @@ const SolarPanelTiltAnglePsoWizard = ({ setDialogVisible }: { setDialogVisible: 
   // save the values in the common store to persist the user's last settings
   const updateStoreParams = () => {
     setCommonStore((state) => {
-      state.evolutionaryAlgorithmState.particleSwarmOptimizationParams.solution = 'Solar Panel Tilt Angle';
+      state.evolutionaryAlgorithmState.particleSwarmOptimizationParams.problem = DesignProblem.SOLAR_PANEL_TILT_ANGLE;
       state.evolutionaryAlgorithmState.particleSwarmOptimizationParams.objectiveFunctionType =
         objectiveFunctionTypeRef.current;
       state.evolutionaryAlgorithmState.particleSwarmOptimizationParams.searchMethod = searchMethodRef.current;

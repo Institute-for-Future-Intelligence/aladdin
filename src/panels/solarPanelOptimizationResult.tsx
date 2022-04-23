@@ -12,7 +12,7 @@ import { screenshot, showInfo } from '../helpers';
 import { RightCircleOutlined, SaveOutlined } from '@ant-design/icons';
 import i18n from '../i18n/i18n';
 import EvolutionBiaxialLineGraph from '../components/evolutionBiaxialLineGraph';
-import { EvolutionMethod, ObjectiveFunctionType, ObjectType } from '../types';
+import { DesignProblem, EvolutionMethod, ObjectiveFunctionType, ObjectType } from '../types';
 
 const Container = styled.div`
   position: fixed;
@@ -139,19 +139,19 @@ const SolarPanelOptimizationResult = () => {
   }, [evolutionMethod, lang]);
 
   const labelVariable = useMemo(() => {
-    if (params.solution === 'Solar Panel Tilt Angle') return i18n.t('solarPanelMenu.TiltAngle', lang);
+    if (params.problem === DesignProblem.SOLAR_PANEL_TILT_ANGLE) return i18n.t('solarPanelMenu.TiltAngle', lang);
     return i18n.t('optimizationMenu.NormalizedVariables', lang);
-  }, [params.solution, lang]);
+  }, [params.problem, lang]);
 
   const unitY1 = useMemo(() => {
-    if (params.solution === 'Solar Panel Tilt Angle') return '°';
+    if (params.problem === DesignProblem.SOLAR_PANEL_TILT_ANGLE) return '°';
     return '';
-  }, [params.solution]);
+  }, [params.problem]);
 
   const unitY2 = useMemo(() => {
-    if (params.solution === 'Solar Panel Array') return i18n.t('word.kWh', lang);
+    if (params.problem === DesignProblem.SOLAR_PANEL_ARRAY) return i18n.t('word.kWh', lang);
     return i18n.t('word.kWh', lang);
-  }, [params.solution, lang]);
+  }, [params.problem, lang]);
 
   const labelObjective = useMemo(() => {
     return params.objectiveFunctionType === ObjectiveFunctionType.DAILY_OUTPUT
