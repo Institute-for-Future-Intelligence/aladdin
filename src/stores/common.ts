@@ -84,6 +84,8 @@ import { SolarPowerTowerModel } from '../models/SolarPowerTowerModel';
 import { EvolutionaryAlgorithmState } from './EvolutionaryAlgorithmState';
 import { DefaultEvolutionaryAlgorithmState } from './DefaultEvolutionaryAlgorithmState';
 import { RoofModel } from 'src/models/RoofModel';
+import { SolarPanelArrayLayoutConstraints } from './SolarPanelArrayLayoutConstraints';
+import { DefaultSolarPanelArrayLayoutConstraints } from './DefaultSolarPanelArrayLayoutConstraints';
 
 enableMapSet();
 
@@ -672,6 +674,7 @@ export interface CommonStoreState {
   localContentToImportAfterCloudFileUpdate: any;
 
   solarPanelArrayLayoutParams: SolarPanelArrayLayoutParams;
+  solarPanelArrayLayoutConstraints: SolarPanelArrayLayoutConstraints;
   evolutionaryAlgorithmState: EvolutionaryAlgorithmState;
 
   // the following is to fix the bug that when ctrl+o is pressed, the file dialog gets fired up multiple times
@@ -698,6 +701,7 @@ export const useStore = create<CommonStoreState>(
           elements: defaultElements,
           viewState: new DefaultViewState(),
           solarPanelArrayLayoutParams: new DefaultSolarPanelArrayLayoutParams(),
+          solarPanelArrayLayoutConstraints: new DefaultSolarPanelArrayLayoutConstraints(),
           evolutionaryAlgorithmState: new DefaultEvolutionaryAlgorithmState(),
           notes: [],
           user: {} as User,
@@ -763,6 +767,8 @@ export const useStore = create<CommonStoreState>(
               state.fileChanged = !state.fileChanged;
               state.showSolarRadiationHeatmap = false;
               state.evolutionMethod = content.evolutionMethod ?? EvolutionMethod.GENETIC_ALGORITHM;
+              state.solarPanelArrayLayoutConstraints =
+                content.solarPanelArrayLayoutConstraints ?? new DefaultSolarPanelArrayLayoutConstraints();
               state.evolutionaryAlgorithmState =
                 content.evolutionaryAlgorithmState ?? new DefaultEvolutionaryAlgorithmState();
             });
@@ -791,6 +797,7 @@ export const useStore = create<CommonStoreState>(
               elements: JSON.parse(JSON.stringify(state.elements)),
               view: JSON.parse(JSON.stringify(state.viewState)),
               evolutionMethod: state.evolutionMethod,
+              solarPanelArrayLayoutConstraints: JSON.parse(JSON.stringify(state.solarPanelArrayLayoutConstraints)),
               evolutionaryAlgorithmState: JSON.parse(JSON.stringify(state.evolutionaryAlgorithmState)),
               notes: state.notes,
             };
@@ -5101,6 +5108,7 @@ export const useStore = create<CommonStoreState>(
           'dailyLightSensorData',
           'yearlyLightSensorData',
           'solarPanelArrayLayoutParams',
+          'solarPanelArrayLayoutConstraints',
           'evolutionMethod',
           'evolutionaryAlgorithmState',
         ],

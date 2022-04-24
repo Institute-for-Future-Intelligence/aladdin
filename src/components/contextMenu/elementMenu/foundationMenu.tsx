@@ -1073,36 +1073,45 @@ export const FoundationMenu = () => {
           title={i18n.t('optimizationMenu.Optimization', lang)}
           style={{ paddingLeft: '24px' }}
         >
-          {counter.solarPanelCount > 0 && (
-            <>
-              {solarPanelTiltAngleGaWizardVisible && (
-                <SolarPanelTiltAngleGaWizard setDialogVisible={setSolarPanelTiltAngleGaWizardVisible} />
-              )}
-              <Menu.Item
-                key={'solar-panel-tilt-angle-ga-optimizer'}
-                onClick={() => {
-                  setSolarPanelTiltAngleGaWizardVisible(true);
-                }}
-                style={{ paddingLeft: '12px' }}
-              >
-                {i18n.t('optimizationMenu.SolarPanelTiltAngleOptimization', lang) + ' '}(
-                {i18n.t('optimizationMenu.GeneticAlgorithm', lang)})...
-              </Menu.Item>
-              {solarPanelTiltAnglePsoWizardVisible && (
-                <SolarPanelTiltAnglePsoWizard setDialogVisible={setSolarPanelTiltAnglePsoWizardVisible} />
-              )}
-              <Menu.Item
-                key={'solar-panel-tilt-angle-pso-optimizer'}
-                onClick={() => {
-                  setSolarPanelTiltAnglePsoWizardVisible(true);
-                }}
-                style={{ paddingLeft: '12px' }}
-              >
-                {i18n.t('optimizationMenu.SolarPanelTiltAngleOptimization', lang) + ' '}(
-                {i18n.t('optimizationMenu.ParticleSwarmOptimization', lang)})...
-              </Menu.Item>
-            </>
-          )}
+          <SubMenu key={'genetic-algorithms'} title={i18n.t('optimizationMenu.GeneticAlgorithm', lang)}>
+            {counter.solarPanelCount > 0 && (
+              <>
+                {solarPanelTiltAngleGaWizardVisible && (
+                  <SolarPanelTiltAngleGaWizard setDialogVisible={setSolarPanelTiltAngleGaWizardVisible} />
+                )}
+                <Menu.Item
+                  key={'solar-panel-tilt-angle-ga-optimizer'}
+                  onClick={() => {
+                    setSolarPanelTiltAngleGaWizardVisible(true);
+                  }}
+                  style={{ paddingLeft: '12px' }}
+                >
+                  {i18n.t('optimizationMenu.SolarPanelTiltAngleOptimization', lang)}...
+                </Menu.Item>
+              </>
+            )}
+          </SubMenu>
+          <SubMenu
+            key={'particle-swarm-optimization'}
+            title={i18n.t('optimizationMenu.ParticleSwarmOptimization', lang)}
+          >
+            {counter.solarPanelCount > 0 && (
+              <>
+                {solarPanelTiltAnglePsoWizardVisible && (
+                  <SolarPanelTiltAnglePsoWizard setDialogVisible={setSolarPanelTiltAnglePsoWizardVisible} />
+                )}
+                <Menu.Item
+                  key={'solar-panel-tilt-angle-pso-optimizer'}
+                  onClick={() => {
+                    setSolarPanelTiltAnglePsoWizardVisible(true);
+                  }}
+                  style={{ paddingLeft: '12px' }}
+                >
+                  {i18n.t('optimizationMenu.SolarPanelTiltAngleOptimization', lang)}...
+                </Menu.Item>
+              </>
+            )}
+          </SubMenu>
         </SubMenu>
       </Menu.ItemGroup>
     )

@@ -552,6 +552,7 @@ export const i18n_en = {
       Layout: 'Layout',
       SolarPanelArrayLayout: 'Solar Panel Array Layout',
       SolarPanelArrayLayoutParametricDesign: 'Solar Panel Array Layout: Parametric Design',
+      SolarPanelArrayLayoutGenerativeDesign: 'Solar Panel Array Layout: Generative Design',
       SolarPanelArrayModel: 'Solar Panel Model',
       SolarPanelArrayOrientation: 'Orientation',
       SolarPanelArrayTiltAngle: 'Tilt Angle',
@@ -599,6 +600,7 @@ export const i18n_en = {
       ConvergenceThreshold: 'Convergence Threshold for Termination',
       LocalSearchRadius: 'Local Search Radius',
       SolarPanelArray: 'Solar Panel Array',
+      RowsPerRackRange: 'Range for Rows per Rack',
     },
 
     treeMenu: {

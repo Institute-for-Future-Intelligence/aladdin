@@ -23,7 +23,7 @@ import AcceptCookie from './acceptCookie';
 import GroundImage from './views/groundImage';
 import DropdownContextMenu from './components/contextMenu';
 import WeatherPanel from './panels/weatherPanel';
-import { EvolutionMethod, GraphDataType, ObjectType } from './types';
+import { DesignProblem, EvolutionMethod, GraphDataType, ObjectType } from './types';
 import SensorSimulation from './analysis/sensorSimulation';
 import SolarPanelSimulation from './analysis/solarPanelSimulation';
 import YearlyLightSensorPanel from './panels/yearlyLightSensorPanel';
@@ -74,6 +74,7 @@ import DiurnalTemperaturePanel from './panels/diurnalTemperaturePanel';
 import YearlySolarUpdraftTowerYieldPanel from './panels/yearlySolarUpdraftTowerYieldPanel';
 import EvolutionControlPanel from './panels/evolutionControlPanel';
 import SolarPanelTiltAngleGa from './ai/ga/solarPanelTiltAngleGa';
+import SolarPanelArrayGa from './ai/ga/solarPanelArrayGa';
 import SolarPanelTiltAnglePso from './ai/pso/solarPanelTiltAnglePso';
 import SolarPanelOptimizationResult from './panels/solarPanelOptimizationResult';
 
@@ -131,6 +132,7 @@ const AppCreator = ({ viewOnly = false }: AppCreatorProps) => {
   const addedFoundationId = useStore(Selector.addedFoundationId);
   const addedCuboidId = useStore(Selector.addedCuboidId);
   const evolutionMethod = useStore(Selector.evolutionMethod);
+  const evolutionaryAlgorithmState = useStore(Selector.evolutionaryAlgorithmState);
 
   const [loading, setLoading] = useState(true);
   const [city, setCity] = useState<string | null>('Boston MA, USA');
@@ -421,8 +423,17 @@ const AppCreator = ({ viewOnly = false }: AppCreatorProps) => {
             <FresnelReflectorSimulation city={city} />
             <HeliostatSimulation city={city} />
             <SolarUpdraftTowerSimulation city={city} />
-            {evolutionMethod === EvolutionMethod.GENETIC_ALGORITHM && <SolarPanelTiltAngleGa />}
-            {evolutionMethod === EvolutionMethod.PARTICLE_SWARM_OPTIMIZATION && <SolarPanelTiltAnglePso />}
+            {evolutionMethod === EvolutionMethod.GENETIC_ALGORITHM &&
+              evolutionaryAlgorithmState.geneticAlgorithmParams.problem === DesignProblem.SOLAR_PANEL_TILT_ANGLE && (
+                <SolarPanelTiltAngleGa />
+              )}
+            {evolutionMethod === EvolutionMethod.GENETIC_ALGORITHM &&
+              evolutionaryAlgorithmState.geneticAlgorithmParams.problem === DesignProblem.SOLAR_PANEL_ARRAY && (
+                <SolarPanelArrayGa />
+              )}
+            {evolutionMethod === EvolutionMethod.PARTICLE_SWARM_OPTIMIZATION &&
+              evolutionaryAlgorithmState.particleSwarmOptimizationParams.problem ===
+                DesignProblem.SOLAR_PANEL_TILT_ANGLE && <SolarPanelTiltAnglePso />}
           </Canvas>
           <KeyboardListener
             canvas={canvasRef.current}

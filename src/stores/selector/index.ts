@@ -971,6 +971,8 @@ export const setVariableLabels = (state: CommonStoreState) => state.setVariableL
 
 export const evolutionaryAlgorithmState = (state: CommonStoreState) => state.evolutionaryAlgorithmState;
 
+export const solarPanelArrayLayoutConstraints = (state: CommonStoreState) => state.solarPanelArrayLayoutConstraints;
+
 export * as viewState from './viewState';
 
 export * as world from './world';

@@ -19,6 +19,7 @@ import PolygonTextureSelection from './polygonTextureSelection';
 import SolarPanelLayoutWizard from './solarPanelLayoutWizard';
 import PolygonLineStyleSelection from './polygonLineStyleSelection';
 import PolygonLineWidthSelection from './polygonLineWidthSelection';
+import SolarPanelArrayGaWizard from './solarPanelArrayGaWizard';
 
 export const PolygonMenu = () => {
   const language = useStore(Selector.language);
@@ -34,6 +35,7 @@ export const PolygonMenu = () => {
   const [fillColorDialogVisible, setFillColorDialogVisible] = useState(false);
   const [textureDialogVisible, setTextureDialogVisible] = useState(false);
   const [solarPanelLayoutWizardVisible, setSolarPanelLayoutWizardVisible] = useState(false);
+  const [solarPanelLayoutGaWizardVisible, setSolarPanelLayoutGaWizardVisible] = useState(false);
   const lang = { lng: language };
 
   const togglePolygonFilled = (e: CheckboxChangeEvent) => {
@@ -90,7 +92,20 @@ export const PolygonMenu = () => {
             }}
             style={{ paddingLeft: '36px' }}
           >
-            {i18n.t('polygonMenu.SolarPanelArrayLayout', lang)} ...
+            {i18n.t('polygonMenu.SolarPanelArrayLayoutParametricDesign', lang)} ...
+          </Menu.Item>
+          {solarPanelLayoutGaWizardVisible && (
+            <SolarPanelArrayGaWizard setDialogVisible={setSolarPanelLayoutGaWizardVisible} />
+          )}
+          <Menu.Item
+            key={'solar-panel-layout-ga'}
+            onClick={() => {
+              setApplyCount(0);
+              setSolarPanelLayoutGaWizardVisible(true);
+            }}
+            style={{ paddingLeft: '36px' }}
+          >
+            {i18n.t('polygonMenu.SolarPanelArrayLayoutGenerativeDesign', lang)} ...
           </Menu.Item>
         </SubMenu>
         <Lock keyName={'polygon-lock'} />

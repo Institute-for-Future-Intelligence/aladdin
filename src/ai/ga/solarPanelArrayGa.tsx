@@ -7,7 +7,7 @@ import { useStore } from '../../stores/common';
 import * as Selector from 'src/stores/selector';
 import { showError, showInfo } from '../../helpers';
 import i18n from '../../i18n/i18n';
-import { DatumEntry, EvolutionMethod, ObjectiveFunctionType, ObjectType } from '../../types';
+import { DatumEntry, DesignProblem, EvolutionMethod, ObjectiveFunctionType, ObjectType } from '../../types';
 import { SolarPanelModel } from '../../models/SolarPanelModel';
 import { FoundationModel } from '../../models/FoundationModel';
 import { HALF_PI } from '../../constants';
@@ -31,6 +31,7 @@ const SolarPanelArrayGa = () => {
   const setGeneLabels = useStore(Selector.setVariableLabels);
   const getPvModule = useStore(Selector.getPvModule);
   const params = useStore(Selector.evolutionaryAlgorithmState).geneticAlgorithmParams;
+  const constraints = useStore(Selector.solarPanelArrayLayoutConstraints);
 
   const lang = { lng: language };
   const requestRef = useRef<number>(0);
@@ -40,10 +41,12 @@ const SolarPanelArrayGa = () => {
   const optimizerRef = useRef<SolarPanelArrayOptimizerGa>();
   const individualIndexRef = useRef<number>(0);
   const convergedRef = useRef<boolean>(false);
-  const foundation = getParent(polygon) as FoundationModel;
+  const foundation = polygon ? (getParent(polygon) as FoundationModel) : undefined;
 
   useEffect(() => {
-    if (runEvolution && evolutionMethod === EvolutionMethod.GENETIC_ALGORITHM) {
+    if (params.problem !== DesignProblem.SOLAR_PANEL_ARRAY) return;
+    if (evolutionMethod !== EvolutionMethod.GENETIC_ALGORITHM) return;
+    if (runEvolution) {
       init();
       requestRef.current = requestAnimationFrame(evolve);
       return () => {
@@ -109,6 +112,8 @@ const SolarPanelArrayGa = () => {
       optimizerRef.current.selectionRate = params.selectionRate;
       optimizerRef.current.crossoverRate = params.crossoverRate;
       optimizerRef.current.mutationRate = params.mutationRate;
+      optimizerRef.current.minimumRowsPerRack = constraints.minimumRowsPerRack;
+      optimizerRef.current.maximumRowsPerRack = constraints.maximumRowsPerRack;
       individualIndexRef.current = 0;
       convergedRef.current = false;
       setGeneLabels(labels);
@@ -195,30 +200,20 @@ const SolarPanelArrayGa = () => {
         });
         return;
       }
-      optimizerRef.current.translateIndividual(individualIndexRef.current % params.populationSize);
+      const solarPanelArray = optimizerRef.current.translateIndividual(
+        individualIndexRef.current % params.populationSize,
+      );
+      console.log(solarPanelArray.length);
       setCommonStore((state) => {
-        if (solarPanelsRef.current) {
-          for (const e of state.elements) {
-            if (e.type === ObjectType.SolarPanel) {
-              const panel = e as SolarPanelModel;
-              for (const sp of solarPanelsRef.current) {
-                if (panel.id === sp.id) {
-                  panel.tiltAngle = sp.tiltAngle;
-                  break;
-                }
-              }
-            }
-          }
-          switch (params.objectiveFunctionType) {
-            case ObjectiveFunctionType.DAILY_OUTPUT:
-              state.dailyPvIndividualOutputs = false;
-              state.runDailySimulationForSolarPanels = true;
-              break;
-            case ObjectiveFunctionType.YEARLY_OUTPUT:
-              state.yearlyPvIndividualOutputs = false;
-              state.runYearlySimulationForSolarPanels = true;
-              break;
-          }
+        switch (params.objectiveFunctionType) {
+          case ObjectiveFunctionType.DAILY_OUTPUT:
+            state.dailyPvIndividualOutputs = false;
+            state.runDailySimulationForSolarPanels = true;
+            break;
+          case ObjectiveFunctionType.YEARLY_OUTPUT:
+            state.yearlyPvIndividualOutputs = false;
+            state.runYearlySimulationForSolarPanels = true;
+            break;
         }
       });
     }

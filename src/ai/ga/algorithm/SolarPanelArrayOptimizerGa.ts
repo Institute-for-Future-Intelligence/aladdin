@@ -30,7 +30,7 @@ export class SolarPanelArrayOptimizerGa extends OptimizerGa {
   // allowable ranges for genes (tilt angle from -90° to 90°)
   minimumInterRowSpacing: number = 0.01; // relative to the dimension of the foundation
   maximumInterRowSpacing: number = 0.1;
-  minimumRowsPerPack: number = 1;
+  minimumRowsPerRack: number = 1;
   maximumRowsPerRack: number = 6;
 
   constructor(
@@ -64,7 +64,7 @@ export class SolarPanelArrayOptimizerGa extends OptimizerGa {
     this.geneMinima[1] = this.minimumInterRowSpacing;
     this.geneMaxima[1] = this.maximumInterRowSpacing;
     this.geneNames[2] = 'Rack Rows';
-    this.geneMinima[2] = this.minimumRowsPerPack;
+    this.geneMinima[2] = this.minimumRowsPerRack;
     this.geneMaxima[2] = this.maximumRowsPerRack;
     // set the firstborn to be the current design, if any
     if (initialSolarPanels && initialSolarPanels.length > 1) {
@@ -90,7 +90,7 @@ export class SolarPanelArrayOptimizerGa extends OptimizerGa {
         Math.round(sp1.ly / (sp1.orientation === Orientation.portrait ? pvModel.length : pvModel.width)),
       );
       this.initialGene[2] =
-        (rowsPerRack - this.minimumRowsPerPack) / (this.maximumRowsPerRack - this.minimumRowsPerPack);
+        (rowsPerRack - this.minimumRowsPerRack) / (this.maximumRowsPerRack - this.minimumRowsPerRack);
       if (this.initialGene[2] < 0) this.initialGene[2] = 0;
       else if (this.initialGene[2] > 1) this.initialGene[2] = 1;
       firstBorn.setGene(2, this.initialGene[2]);
@@ -115,7 +115,7 @@ export class SolarPanelArrayOptimizerGa extends OptimizerGa {
         individual.getGene(1) * (this.maximumInterRowSpacing - this.minimumInterRowSpacing) +
         this.minimumInterRowSpacing
       ).toFixed(3) + ', ';
-    s += individual.getGene(2) * (this.maximumRowsPerRack - this.minimumRowsPerPack) + this.minimumRowsPerPack + ')';
+    s += individual.getGene(2) * (this.maximumRowsPerRack - this.minimumRowsPerRack) + this.minimumRowsPerRack + ')';
     return s + ' = ' + individual.fitness.toFixed(5);
   }
 
@@ -130,9 +130,13 @@ export class SolarPanelArrayOptimizerGa extends OptimizerGa {
     const individual: Individual = this.population.individuals[indexOfIndividual];
     const tiltAngle = (2 * individual.getGene(0) - 1) * HALF_PI;
     const interRowSpacing =
-      individual.getGene(1) * (this.maximumInterRowSpacing - this.minimumInterRowSpacing) + this.minimumInterRowSpacing;
-    const rowsPerRack =
-      individual.getGene(2) * (this.maximumRowsPerRack - this.minimumRowsPerPack) + this.minimumRowsPerPack;
+      this.foundation.lx *
+      (individual.getGene(1) * (this.maximumInterRowSpacing - this.minimumInterRowSpacing) +
+        this.minimumInterRowSpacing);
+    const rowsPerRack = Math.floor(
+      individual.getGene(2) * (this.maximumRowsPerRack - this.minimumRowsPerRack) + this.minimumRowsPerRack,
+    );
+    console.log(tiltAngle, interRowSpacing, rowsPerRack);
     return this.layout(tiltAngle, interRowSpacing, rowsPerRack);
   }
 

@@ -83,6 +83,7 @@ const SolarPanelTiltAnglePsoWizard = ({ setDialogVisible }: { setDialogVisible: 
     setTimeout(() => {
       setCommonStore((state) => {
         state.evolutionMethod = EvolutionMethod.PARTICLE_SWARM_OPTIMIZATION;
+        state.evolutionaryAlgorithmState.particleSwarmOptimizationParams.problem = DesignProblem.SOLAR_PANEL_TILT_ANGLE;
         state.runEvolution = !state.runEvolution;
       });
     }, 100);

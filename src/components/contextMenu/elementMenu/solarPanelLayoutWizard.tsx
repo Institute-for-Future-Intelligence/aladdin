@@ -54,7 +54,7 @@ const SolarPanelLayoutWizard = ({ setDialogVisible }: { setDialogVisible: (b: bo
   const rowAxisRef = useRef<RowAxis>(useStore.getState().solarPanelArrayLayoutParams.rowAxis);
   const orientationRef = useRef<Orientation>(useStore.getState().solarPanelArrayLayoutParams.orientation);
   const tiltAngleRef = useRef<number>(useStore.getState().solarPanelArrayLayoutParams.tiltAngle);
-  const rowWidthInPanelsRef = useRef<number>(useStore.getState().solarPanelArrayLayoutParams.rowWidthInPanels);
+  const rowsPerRackRef = useRef<number>(useStore.getState().solarPanelArrayLayoutParams.rowsPerRack);
   const interRowSpacingRef = useRef<number>(useStore.getState().solarPanelArrayLayoutParams.interRowSpacing);
   const poleHeightRef = useRef<number>(useStore.getState().solarPanelArrayLayoutParams.poleHeight);
   const poleSpacingRef = useRef<number>(useStore.getState().solarPanelArrayLayoutParams.poleSpacing);
@@ -112,7 +112,7 @@ const SolarPanelLayoutWizard = ({ setDialogVisible }: { setDialogVisible: (b: bo
 
   const isLayoutOk = () => {
     const ly =
-      (orientationRef.current === Orientation.portrait ? pvModel.length : pvModel.width) * rowWidthInPanelsRef.current;
+      (orientationRef.current === Orientation.portrait ? pvModel.length : pvModel.width) * rowsPerRackRef.current;
     const projectedWidth = ly * Math.abs(Math.sin(tiltAngleRef.current));
     // The solar panel intersects with the ground?
     if (0.5 * projectedWidth > poleHeightRef.current) {
@@ -155,8 +155,7 @@ const SolarPanelLayoutWizard = ({ setDialogVisible }: { setDialogVisible: (b: bo
         let start: number;
         let delta: number;
         const ly =
-          (orientationRef.current === Orientation.portrait ? pvModel.length : pvModel.width) *
-          rowWidthInPanelsRef.current;
+          (orientationRef.current === Orientation.portrait ? pvModel.length : pvModel.width) * rowsPerRackRef.current;
         let h = 0.5 * Math.abs(Math.sin(tiltAngleRef.current)) * ly;
         if (rowAxisRef.current === RowAxis.meridional) {
           // north-south axis, so the array is laid in x direction
@@ -261,7 +260,7 @@ const SolarPanelLayoutWizard = ({ setDialogVisible }: { setDialogVisible: (b: bo
             rowAxis: solarPanelArrayLayoutParams.rowAxis,
             orientation: solarPanelArrayLayoutParams.orientation,
             tiltAngle: solarPanelArrayLayoutParams.tiltAngle,
-            rowWidthInPanels: solarPanelArrayLayoutParams.rowWidthInPanels,
+            rowsPerRack: solarPanelArrayLayoutParams.rowsPerRack,
             interRowSpacing: solarPanelArrayLayoutParams.interRowSpacing,
             poleHeight: solarPanelArrayLayoutParams.poleHeight,
             poleSpacing: solarPanelArrayLayoutParams.poleSpacing,
@@ -271,7 +270,7 @@ const SolarPanelLayoutWizard = ({ setDialogVisible }: { setDialogVisible: (b: bo
             rowAxis: rowAxisRef.current,
             orientation: orientationRef.current,
             tiltAngle: tiltAngleRef.current,
-            rowWidthInPanels: rowWidthInPanelsRef.current,
+            rowsPerRack: rowsPerRackRef.current,
             interRowSpacing: interRowSpacingRef.current,
             poleHeight: poleHeightRef.current,
             poleSpacing: poleSpacingRef.current,
@@ -318,7 +317,7 @@ const SolarPanelLayoutWizard = ({ setDialogVisible }: { setDialogVisible: (b: bo
     rowAxisRef.current = params.rowAxis;
     orientationRef.current = params.orientation;
     tiltAngleRef.current = params.tiltAngle;
-    rowWidthInPanelsRef.current = params.rowWidthInPanels;
+    rowsPerRackRef.current = params.rowsPerRack;
     interRowSpacingRef.current = params.interRowSpacing;
     poleHeightRef.current = params.poleHeight;
     poleSpacingRef.current = params.poleSpacing;
@@ -331,7 +330,7 @@ const SolarPanelLayoutWizard = ({ setDialogVisible }: { setDialogVisible: (b: bo
       state.solarPanelArrayLayoutParams.rowAxis = rowAxisRef.current;
       state.solarPanelArrayLayoutParams.orientation = orientationRef.current;
       state.solarPanelArrayLayoutParams.tiltAngle = tiltAngleRef.current;
-      state.solarPanelArrayLayoutParams.rowWidthInPanels = rowWidthInPanelsRef.current;
+      state.solarPanelArrayLayoutParams.rowsPerRack = rowsPerRackRef.current;
       state.solarPanelArrayLayoutParams.interRowSpacing = interRowSpacingRef.current;
       state.solarPanelArrayLayoutParams.poleHeight = poleHeightRef.current;
       state.solarPanelArrayLayoutParams.poleSpacing = poleSpacingRef.current;
@@ -565,10 +564,10 @@ const SolarPanelLayoutWizard = ({ setDialogVisible }: { setDialogVisible: (b: bo
               step={1}
               style={{ width: '100%' }}
               precision={3}
-              value={rowWidthInPanelsRef.current}
+              value={rowsPerRackRef.current}
               formatter={(a) => Number(a).toFixed(0)}
               onChange={(value) => {
-                rowWidthInPanelsRef.current = value;
+                rowsPerRackRef.current = value;
                 changedRef.current = true;
                 setUpdateFlag(!updateFlag);
               }}

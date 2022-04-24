@@ -3,7 +3,7 @@
  */
 
 import React, { useEffect, useRef, useState } from 'react';
-import { Button, Col, InputNumber, Modal, Row, Select } from 'antd';
+import { Button, Col, InputNumber, Modal, Row, Select, Slider } from 'antd';
 import Draggable, { DraggableBounds, DraggableData, DraggableEvent } from 'react-draggable';
 import { useStore } from '../../../stores/common';
 import * as Selector from '../../../stores/selector';
@@ -16,10 +16,11 @@ import {
   SearchMethod,
 } from '../../../types';
 import { showInfo } from '../../../helpers';
+import { DefaultSolarPanelArrayLayoutConstraints } from '../../../stores/DefaultSolarPanelArrayLayoutConstraints';
 
 const { Option } = Select;
 
-const SolarPanelTiltAngleGaWizard = ({ setDialogVisible }: { setDialogVisible: (b: boolean) => void }) => {
+const SolarPanelArrayGaWizard = ({ setDialogVisible }: { setDialogVisible: (b: boolean) => void }) => {
   const setCommonStore = useStore(Selector.set);
   const language = useStore(Selector.language);
   const runEvolution = useStore(Selector.runEvolution);
@@ -39,6 +40,8 @@ const SolarPanelTiltAngleGaWizard = ({ setDialogVisible }: { setDialogVisible: (
   const crossoverRateRef = useRef<number>(params.crossoverRate ?? 0.5);
   const convergenceThresholdRef = useRef<number>(params.convergenceThreshold);
   const localSearchRadiusRef = useRef<number>(params.localSearchRadius);
+  const minimumRowsPerRackRef = useRef<number>(1);
+  const maximumRowsPerRackRef = useRef<number>(6);
   const okButtonRef = useRef<HTMLElement | null>(null);
 
   useEffect(() => {
@@ -74,6 +77,10 @@ const SolarPanelTiltAngleGaWizard = ({ setDialogVisible }: { setDialogVisible: (
       state.evolutionaryAlgorithmState.geneticAlgorithmParams.mutationRate = mutationRateRef.current;
       state.evolutionaryAlgorithmState.geneticAlgorithmParams.convergenceThreshold = convergenceThresholdRef.current;
       state.evolutionaryAlgorithmState.geneticAlgorithmParams.localSearchRadius = localSearchRadiusRef.current;
+      if (!state.solarPanelArrayLayoutConstraints)
+        state.solarPanelArrayLayoutConstraints = new DefaultSolarPanelArrayLayoutConstraints();
+      state.solarPanelArrayLayoutConstraints.minimumRowsPerRack = minimumRowsPerRackRef.current;
+      state.solarPanelArrayLayoutConstraints.maximumRowsPerRack = maximumRowsPerRackRef.current;
     });
   };
 
@@ -86,7 +93,7 @@ const SolarPanelTiltAngleGaWizard = ({ setDialogVisible }: { setDialogVisible: (
     setTimeout(() => {
       setCommonStore((state) => {
         state.evolutionMethod = EvolutionMethod.GENETIC_ALGORITHM;
-        state.evolutionaryAlgorithmState.geneticAlgorithmParams.problem = DesignProblem.SOLAR_PANEL_TILT_ANGLE;
+        state.evolutionaryAlgorithmState.geneticAlgorithmParams.problem = DesignProblem.SOLAR_PANEL_ARRAY;
         state.runEvolution = !state.runEvolution;
       });
     }, 100);
@@ -103,7 +110,7 @@ const SolarPanelTiltAngleGaWizard = ({ setDialogVisible }: { setDialogVisible: (
             onMouseOver={() => setDragEnabled(true)}
             onMouseOut={() => setDragEnabled(false)}
           >
-            {i18n.t('optimizationMenu.SolarPanelTiltAngleOptimization', lang) + ': '}
+            {i18n.t('polygonMenu.SolarPanelArrayLayoutGenerativeDesign', lang) + ': '}
             {i18n.t('optimizationMenu.GeneticAlgorithmSettings', lang)}
           </div>
         }
@@ -372,10 +379,85 @@ const SolarPanelTiltAngleGaWizard = ({ setDialogVisible }: { setDialogVisible: (
             </Col>
           </Row>
         )}
+
+        <Row gutter={6} style={{ paddingBottom: '4px' }}>
+          <Col className="gutter-row" span={12}>
+            {i18n.t('optimizationMenu.RowsPerRackRange', lang) + ':'}
+          </Col>
+          <Col className="gutter-row" span={12}>
+            <Slider
+              range
+              onChange={(value) => {
+                minimumRowsPerRackRef.current = value[0];
+                maximumRowsPerRackRef.current = value[1];
+                setUpdateFlag(!updateFlag);
+              }}
+              min={1}
+              max={9}
+              defaultValue={[minimumRowsPerRackRef.current, maximumRowsPerRackRef.current]}
+              marks={{
+                1: {
+                  style: {
+                    fontSize: '10px',
+                  },
+                  label: 1,
+                },
+                2: {
+                  style: {
+                    fontSize: '10px',
+                  },
+                  label: 2,
+                },
+                3: {
+                  style: {
+                    fontSize: '10px',
+                  },
+                  label: 3,
+                },
+                4: {
+                  style: {
+                    fontSize: '10px',
+                  },
+                  label: 4,
+                },
+                5: {
+                  style: {
+                    fontSize: '10px',
+                  },
+                  label: 5,
+                },
+                6: {
+                  style: {
+                    fontSize: '10px',
+                  },
+                  label: 6,
+                },
+                7: {
+                  style: {
+                    fontSize: '10px',
+                  },
+                  label: 7,
+                },
+                8: {
+                  style: {
+                    fontSize: '10px',
+                  },
+                  label: 8,
+                },
+                9: {
+                  style: {
+                    fontSize: '10px',
+                  },
+                  label: 9,
+                },
+              }}
+            />
+          </Col>
+        </Row>
       </Modal>
     </>
   );
 };
 
 // don't wrap this with React.memo as changedRef would be saved
-export default SolarPanelTiltAngleGaWizard;
+export default SolarPanelArrayGaWizard;

@@ -535,6 +535,7 @@ export const i18n_zh_tw = {
       Layout: '佈局',
       SolarPanelArrayLayout: '光伏板陣列佈局',
       SolarPanelArrayLayoutParametricDesign: '光伏板陣列佈局參數化設計',
+      SolarPanelArrayLayoutGenerativeDesign: '光伏板陣列佈局生成式設計',
       SolarPanelArrayModel: '光伏板型號',
       SolarPanelArrayOrientation: '排列方向',
       SolarPanelArrayTiltAngle: '傾斜角度',
@@ -582,6 +583,7 @@ export const i18n_zh_tw = {
       ConvergenceThreshold: '終止條件的收斂閾值',
       LocalSearchRadius: '局部搜索的半徑',
       SolarPanelArray: '光伏板陣列',
+      RowsPerRackRange: '單個支架上的光伏板行數範圍',
     },
 
     treeMenu: {

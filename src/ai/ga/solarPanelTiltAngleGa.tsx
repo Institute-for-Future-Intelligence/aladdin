@@ -7,7 +7,7 @@ import { useStore } from '../../stores/common';
 import * as Selector from 'src/stores/selector';
 import { showError, showInfo } from '../../helpers';
 import i18n from '../../i18n/i18n';
-import { DatumEntry, EvolutionMethod, ObjectiveFunctionType, ObjectType } from '../../types';
+import { DatumEntry, DesignProblem, EvolutionMethod, ObjectiveFunctionType, ObjectType } from '../../types';
 import { SolarPanelModel } from '../../models/SolarPanelModel';
 import { SolarPanelTiltAngleOptimizerGa } from './algorithm/SolarPanelTiltAngleOptimizerGa';
 import { FoundationModel } from '../../models/FoundationModel';
@@ -40,7 +40,9 @@ const SolarPanelTiltAngleGa = () => {
   const convergedRef = useRef<boolean>(false);
 
   useEffect(() => {
-    if (runEvolution && evolutionMethod === EvolutionMethod.GENETIC_ALGORITHM) {
+    if (params.problem !== DesignProblem.SOLAR_PANEL_TILT_ANGLE) return;
+    if (evolutionMethod !== EvolutionMethod.GENETIC_ALGORITHM) return;
+    if (runEvolution) {
       init();
       requestRef.current = requestAnimationFrame(evolve);
       return () => {
