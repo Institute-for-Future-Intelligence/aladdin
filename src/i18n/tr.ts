@@ -574,6 +574,7 @@ export const i18n_tr = {
       ParticleSwarmOptimization: 'Particle Swarm Optimization',
       ParticleSwarmOptimizationSettings: 'Particle Swarm Optimization Settings',
       SolarPanelTiltAngleOptimization: 'Solar Panel Tilt Angle Optimization',
+      SolarPanelArrayLayout: 'Solar Panel Array Layout',
       Generation: 'Generation',
       Gene: 'Gene',
       NormalizedVariables: 'Normalized Variables',
@@ -600,7 +601,6 @@ export const i18n_tr = {
       SocialCoefficient: 'Social Coefficient',
       ConvergenceThreshold: 'Convergence Threshold for Termination',
       LocalSearchRadius: 'Local Search Radius',
-      SolarPanelArray: 'Solar Panel Array',
       RowsPerRackRange: 'Range for Rows per Rack',
     },
 

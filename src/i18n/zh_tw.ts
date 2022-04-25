@@ -556,6 +556,7 @@ export const i18n_zh_tw = {
       ParticleSwarmOptimization: '粒子群優化',
       ParticleSwarmOptimizationSettings: '粒子群優化設定',
       SolarPanelTiltAngleOptimization: '光伏板傾斜角度優化',
+      SolarPanelArrayLayout: '光伏板陣列佈局',
       Generation: '世代',
       Gene: '基因',
       NormalizedVariables: '標準化變量',
@@ -582,7 +583,6 @@ export const i18n_zh_tw = {
       SocialCoefficient: '社會係數',
       ConvergenceThreshold: '終止條件的收斂閾值',
       LocalSearchRadius: '局部搜索的半徑',
-      SolarPanelArray: '光伏板陣列',
       RowsPerRackRange: '單個支架上的光伏板行數範圍',
     },
 

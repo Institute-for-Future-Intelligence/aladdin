@@ -159,6 +159,26 @@ const SolarPanelOptimizationResult = () => {
       : i18n.t('solarPanelYieldPanel.SolarPanelYearlyYield', lang);
   }, [params.objectiveFunctionType, lang]);
 
+  const buttonEnabled = useMemo(() => {
+    if (!selectedElement) return false;
+    if (params.problem === DesignProblem.SOLAR_PANEL_TILT_ANGLE) return selectedElement.type === ObjectType.Foundation;
+    if (params.problem === DesignProblem.SOLAR_PANEL_ARRAY) return selectedElement.type === ObjectType.Polygon;
+    return false;
+  }, [params.problem, selectedElement]);
+
+  const title = useMemo(() => {
+    let s = '';
+    if (params.problem === DesignProblem.SOLAR_PANEL_TILT_ANGLE)
+      s += i18n.t('optimizationMenu.SolarPanelTiltAngleOptimization', lang);
+    if (params.problem === DesignProblem.SOLAR_PANEL_ARRAY) s += i18n.t('optimizationMenu.SolarPanelArrayLayout', lang);
+    s += ': ';
+    s +=
+      evolutionMethod === EvolutionMethod.GENETIC_ALGORITHM
+        ? i18n.t('optimizationMenu.GeneticAlgorithm', lang)
+        : i18n.t('optimizationMenu.ParticleSwarmOptimization', lang);
+    return s;
+  }, [params.problem, evolutionMethod]);
+
   return (
     <ReactDraggable
       nodeRef={nodeRef}
@@ -172,13 +192,7 @@ const SolarPanelOptimizationResult = () => {
       <Container ref={nodeRef}>
         <ColumnWrapper ref={wrapperRef}>
           <Header className="handle">
-            <span>
-              {i18n.t('optimizationMenu.SolarPanelTiltAngleOptimization', lang) +
-                ': ' +
-                (evolutionMethod === EvolutionMethod.GENETIC_ALGORITHM
-                  ? i18n.t('optimizationMenu.GeneticAlgorithm', lang)
-                  : i18n.t('optimizationMenu.ParticleSwarmOptimization', lang))}
-            </span>
+            <span>{title}</span>
             <span
               style={{ cursor: 'pointer' }}
               onTouchStart={() => {
@@ -205,7 +219,7 @@ const SolarPanelOptimizationResult = () => {
             fractionDigits={2}
           />
           <Space style={{ alignSelf: 'center' }}>
-            {selectedElement && selectedElement.type === ObjectType.Foundation && (
+            {buttonEnabled && (
               <Button
                 type="default"
                 icon={<RightCircleOutlined />}

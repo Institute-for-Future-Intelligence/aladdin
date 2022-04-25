@@ -111,14 +111,14 @@ const SolarPanelArrayGa = () => {
         params.convergenceThreshold,
         params.searchMethod,
         params.localSearchRadius,
+        constraints.minimumInterRowSpacing,
+        constraints.maximumInterRowSpacing,
+        constraints.minimumRowsPerRack,
+        constraints.maximumRowsPerRack,
       );
       optimizerRef.current.selectionRate = params.selectionRate;
       optimizerRef.current.crossoverRate = params.crossoverRate;
       optimizerRef.current.mutationRate = params.mutationRate;
-      optimizerRef.current.minimumInterRowSpacing = constraints.minimumInterRowSpacing ?? 5;
-      optimizerRef.current.maximumInterRowSpacing = constraints.maximumInterRowSpacing ?? 10;
-      optimizerRef.current.minimumRowsPerRack = constraints.minimumRowsPerRack;
-      optimizerRef.current.maximumRowsPerRack = constraints.maximumRowsPerRack;
       individualIndexRef.current = 0;
       convergedRef.current = false;
       setGeneLabels(labels);
@@ -189,9 +189,14 @@ const SolarPanelArrayGa = () => {
           state.objectiveEvaluationIndex = 0;
         });
         evolutionCompletedRef.current = true;
-        optimizerRef.current.applyFittest();
-        if (polygon && foundation) {
+        if (solarPanelArrayRef.current.length > 0) {
+          removeElementsByReferenceId(polygon.id, false);
         }
+        solarPanelArrayRef.current = optimizerRef.current.translateBest();
+        optimizerRef.current.applyFittest();
+        setCommonStore((state) => {
+          state.elements.push(...solarPanelArrayRef.current);
+        });
         updateResults();
         showInfo(
           i18n.t('message.EvolutionCompleted', lang) +
@@ -208,7 +213,7 @@ const SolarPanelArrayGa = () => {
       if (solarPanelArrayRef.current.length > 0) {
         removeElementsByReferenceId(polygon.id, false);
       }
-      solarPanelArrayRef.current = optimizerRef.current.translateIndividual(
+      solarPanelArrayRef.current = optimizerRef.current.translateIndividualByIndex(
         individualIndexRef.current % params.populationSize,
       );
       setCommonStore((state) => {
@@ -243,7 +248,7 @@ const SolarPanelArrayGa = () => {
             const trimmed = geneLabels[k]?.trim();
             if (trimmed && trimmed !== '') key = trimmed;
           }
-          datum[key] = Util.toDegrees((2 * fg.chromosome[k] - 1) * HALF_PI);
+          datum[key] = fg.chromosome[k];
         }
         datum['Objective'] = fg.fitness;
         // the first generation of population starts from index 0
@@ -255,7 +260,7 @@ const SolarPanelArrayGa = () => {
               const n = pg.individuals[i].chromosome.length;
               for (let k = 0; k < n; k++) {
                 const key = 'Individual' + ++counter;
-                datum[key] = Util.toDegrees((2 * pg.individuals[i].chromosome[k] - 1) * HALF_PI);
+                datum[key] = pg.individuals[i].chromosome[k];
               }
             }
           }

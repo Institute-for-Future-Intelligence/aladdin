@@ -111,7 +111,7 @@ const SolarPanelArrayGaWizard = ({ setDialogVisible }: { setDialogVisible: (b: b
             onMouseOver={() => setDragEnabled(true)}
             onMouseOut={() => setDragEnabled(false)}
           >
-            {i18n.t('polygonMenu.SolarPanelArrayLayoutGenerativeDesign', lang) + ': '}
+            {i18n.t('optimizationMenu.SolarPanelArrayLayout', lang) + ': '}
             {i18n.t('optimizationMenu.GeneticAlgorithmSettings', lang)}
           </div>
         }
