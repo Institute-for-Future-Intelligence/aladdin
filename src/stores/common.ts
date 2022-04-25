@@ -4145,15 +4145,7 @@ export const useStore = create<CommonStoreState>(
                       const sp = e as SolarPanelModel;
                       const pvModel = state.getPvModule(sp.pvModelName);
                       if (pvModel) {
-                        let nx, ny;
-                        if (sp.orientation === Orientation.portrait) {
-                          nx = Math.max(1, Math.round(sp.lx / pvModel.width));
-                          ny = Math.max(1, Math.round(sp.ly / pvModel.length));
-                        } else {
-                          nx = Math.max(1, Math.round(sp.lx / pvModel.length));
-                          ny = Math.max(1, Math.round(sp.ly / pvModel.width));
-                        }
-                        counter.solarPanelModuleCount += nx * ny;
+                        counter.solarPanelModuleCount += Util.countSolarPanelsOnRack(sp, pvModel);
                       }
                       break;
                     case ObjectType.ParabolicDish:
@@ -4202,15 +4194,7 @@ export const useStore = create<CommonStoreState>(
                     const sp = e as SolarPanelModel;
                     const pvModel = state.getPvModule(sp.pvModelName);
                     if (pvModel) {
-                      let nx, ny;
-                      if (sp.orientation === Orientation.portrait) {
-                        nx = Math.max(1, Math.round(sp.lx / pvModel.width));
-                        ny = Math.max(1, Math.round(sp.ly / pvModel.length));
-                      } else {
-                        nx = Math.max(1, Math.round(sp.lx / pvModel.length));
-                        ny = Math.max(1, Math.round(sp.ly / pvModel.width));
-                      }
-                      count += nx * ny;
+                      count += Util.countSolarPanelsOnRack(sp, pvModel);
                     }
                   }
                 }
@@ -4220,15 +4204,7 @@ export const useStore = create<CommonStoreState>(
                     const sp = e as SolarPanelModel;
                     const pvModel = state.getPvModule(sp.pvModelName);
                     if (pvModel) {
-                      let nx, ny;
-                      if (sp.orientation === Orientation.portrait) {
-                        nx = Math.max(1, Math.round(sp.lx / pvModel.width));
-                        ny = Math.max(1, Math.round(sp.ly / pvModel.length));
-                      } else {
-                        nx = Math.max(1, Math.round(sp.lx / pvModel.length));
-                        ny = Math.max(1, Math.round(sp.ly / pvModel.width));
-                      }
-                      count += nx * ny;
+                      count += Util.countSolarPanelsOnRack(sp, pvModel);
                     }
                   }
                 }
@@ -4244,15 +4220,7 @@ export const useStore = create<CommonStoreState>(
                   const sp = e as SolarPanelModel;
                   const pvModel = state.getPvModule(sp.pvModelName);
                   if (pvModel) {
-                    let nx, ny;
-                    if (sp.orientation === Orientation.portrait) {
-                      nx = Math.max(1, Math.round(sp.lx / pvModel.width));
-                      ny = Math.max(1, Math.round(sp.ly / pvModel.length));
-                    } else {
-                      nx = Math.max(1, Math.round(sp.lx / pvModel.length));
-                      ny = Math.max(1, Math.round(sp.ly / pvModel.width));
-                    }
-                    count += nx * ny;
+                    count = Util.countSolarPanelsOnRack(sp, pvModel);
                     break;
                   }
                 }
@@ -4268,15 +4236,7 @@ export const useStore = create<CommonStoreState>(
                   const sp = e as SolarPanelModel;
                   const pvModel = state.getPvModule(sp.pvModelName);
                   if (pvModel) {
-                    let nx, ny;
-                    if (sp.orientation === Orientation.portrait) {
-                      nx = Math.max(1, Math.round(sp.lx / pvModel.width));
-                      ny = Math.max(1, Math.round(sp.ly / pvModel.length));
-                    } else {
-                      nx = Math.max(1, Math.round(sp.lx / pvModel.length));
-                      ny = Math.max(1, Math.round(sp.ly / pvModel.width));
-                    }
-                    count += nx * ny;
+                    count += Util.countSolarPanelsOnRack(sp, pvModel);
                   }
                 }
               }

@@ -3,6 +3,8 @@
  */
 
 export interface SolarPanelArrayLayoutConstraints {
+  minimumInterRowSpacing: number;
+  maximumInterRowSpacing: number;
   minimumRowsPerRack: number;
   maximumRowsPerRack: number;
 }

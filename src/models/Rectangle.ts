@@ -15,6 +15,22 @@ export class Rectangle {
     this.height = height;
   }
 
+  minX(): number {
+    return this.x;
+  }
+
+  maxX(): number {
+    return this.x + this.width;
+  }
+
+  minY(): number {
+    return this.y;
+  }
+
+  maxY(): number {
+    return this.y + this.height;
+  }
+
   contains(x: number, y: number): boolean {
     return x > this.x && x < this.x + this.width && y > this.y && y < this.y + this.height;
   }

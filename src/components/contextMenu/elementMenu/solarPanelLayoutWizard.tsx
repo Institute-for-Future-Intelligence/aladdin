@@ -159,8 +159,8 @@ const SolarPanelLayoutWizard = ({ setDialogVisible }: { setDialogVisible: (b: bo
         let h = 0.5 * Math.abs(Math.sin(tiltAngleRef.current)) * ly;
         if (rowAxisRef.current === RowAxis.meridional) {
           // north-south axis, so the array is laid in x direction
-          n = Math.floor(((bounds.maxX - bounds.minX) * foundation.lx - ly) / interRowSpacingRef.current);
-          start = bounds.minX + ly / (2 * foundation.lx);
+          n = Math.floor(((bounds.maxX() - bounds.minX()) * foundation.lx - ly) / interRowSpacingRef.current);
+          start = bounds.minX() + ly / (2 * foundation.lx);
           delta = interRowSpacingRef.current / foundation.lx;
           h /= foundation.lx;
           let a: Point2 = { x: 0, y: -0.5 } as Point2;
@@ -205,8 +205,8 @@ const SolarPanelLayoutWizard = ({ setDialogVisible }: { setDialogVisible: (b: bo
           }
         } else {
           // east-west axis, so the array is laid in y direction
-          n = Math.floor(((bounds.maxY - bounds.minY) * foundation.ly - ly) / interRowSpacingRef.current);
-          start = bounds.minY + ly / (2 * foundation.ly) + relativeMargin;
+          n = Math.floor(((bounds.maxY() - bounds.minY()) * foundation.ly - ly) / interRowSpacingRef.current);
+          start = bounds.minY() + ly / (2 * foundation.ly) + relativeMargin;
           delta = interRowSpacingRef.current / foundation.ly;
           h /= foundation.ly;
           let a: Point2 = { x: -0.5, y: 0 } as Point2;

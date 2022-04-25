@@ -30,10 +30,10 @@ const SolarPanelArrayGa = () => {
   const geneLabels = useStore(Selector.variableLabels);
   const setGeneLabels = useStore(Selector.setVariableLabels);
   const getPvModule = useStore(Selector.getPvModule);
+  const removeElementsByReferenceId = useStore(Selector.removeElementsByReferenceId);
   const params = useStore(Selector.evolutionaryAlgorithmState).geneticAlgorithmParams;
   const constraints = useStore(Selector.solarPanelArrayLayoutConstraints);
 
-  const lang = { lng: language };
   const requestRef = useRef<number>(0);
   const evolutionCompletedRef = useRef<boolean>(false);
   const pauseRef = useRef<boolean>(false);
@@ -41,6 +41,9 @@ const SolarPanelArrayGa = () => {
   const optimizerRef = useRef<SolarPanelArrayOptimizerGa>();
   const individualIndexRef = useRef<number>(0);
   const convergedRef = useRef<boolean>(false);
+  const solarPanelArrayRef = useRef<SolarPanelModel[]>([]);
+
+  const lang = { lng: language };
   const foundation = polygon ? (getParent(polygon) as FoundationModel) : undefined;
 
   useEffect(() => {
@@ -112,6 +115,8 @@ const SolarPanelArrayGa = () => {
       optimizerRef.current.selectionRate = params.selectionRate;
       optimizerRef.current.crossoverRate = params.crossoverRate;
       optimizerRef.current.mutationRate = params.mutationRate;
+      optimizerRef.current.minimumInterRowSpacing = constraints.minimumInterRowSpacing ?? 5;
+      optimizerRef.current.maximumInterRowSpacing = constraints.maximumInterRowSpacing ?? 10;
       optimizerRef.current.minimumRowsPerRack = constraints.minimumRowsPerRack;
       optimizerRef.current.maximumRowsPerRack = constraints.maximumRowsPerRack;
       individualIndexRef.current = 0;
@@ -200,11 +205,14 @@ const SolarPanelArrayGa = () => {
         });
         return;
       }
-      const solarPanelArray = optimizerRef.current.translateIndividual(
+      if (solarPanelArrayRef.current.length > 0) {
+        removeElementsByReferenceId(polygon.id, false);
+      }
+      solarPanelArrayRef.current = optimizerRef.current.translateIndividual(
         individualIndexRef.current % params.populationSize,
       );
-      console.log(solarPanelArray.length);
       setCommonStore((state) => {
+        state.elements.push(...solarPanelArrayRef.current);
         switch (params.objectiveFunctionType) {
           case ObjectiveFunctionType.DAILY_OUTPUT:
             state.dailyPvIndividualOutputs = false;

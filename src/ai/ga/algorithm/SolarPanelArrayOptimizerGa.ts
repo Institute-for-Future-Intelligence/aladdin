@@ -17,6 +17,7 @@ import { SolarPanelModel } from '../../../models/SolarPanelModel';
 import { PvModel } from '../../../models/PvModel';
 import { Point2 } from '../../../models/Point2';
 import { ElementModelFactory } from '../../../models/ElementModelFactory';
+import { Rectangle } from '../../../models/Rectangle';
 
 export class SolarPanelArrayOptimizerGa extends OptimizerGa {
   polygon: PolygonModel;
@@ -26,10 +27,13 @@ export class SolarPanelArrayOptimizerGa extends OptimizerGa {
   relativeMargin: number = 0.01;
   poleHeight: number = 2;
   poleSpacing: number = 5;
+  bounds: Rectangle;
+  solarPanelCount: number = 0;
+  solarRackCount: number = 0;
 
   // allowable ranges for genes (tilt angle from -90° to 90°)
-  minimumInterRowSpacing: number = 0.01; // relative to the dimension of the foundation
-  maximumInterRowSpacing: number = 0.1;
+  minimumInterRowSpacing: number = 3; // in meters
+  maximumInterRowSpacing: number = 10; // in meters
   minimumRowsPerRack: number = 1;
   maximumRowsPerRack: number = 6;
 
@@ -79,7 +83,8 @@ export class SolarPanelArrayOptimizerGa extends OptimizerGa {
       firstBorn.setGene(0, this.initialGene[0]);
 
       this.initialGene[1] =
-        (Math.hypot(sp1.cx - sp2.cx, sp1.cy - sp2.cy) - this.minimumInterRowSpacing) /
+        (Math.hypot((sp1.cx - sp2.cx) * this.foundation.lx, (sp1.cy - sp2.cy) * this.foundation.ly) -
+          this.minimumInterRowSpacing) /
         (this.maximumInterRowSpacing - this.minimumInterRowSpacing);
       if (this.initialGene[1] < 0) this.initialGene[1] = 0;
       else if (this.initialGene[1] > 1) this.initialGene[1] = 1;
@@ -95,6 +100,19 @@ export class SolarPanelArrayOptimizerGa extends OptimizerGa {
       else if (this.initialGene[2] > 1) this.initialGene[2] = 1;
       firstBorn.setGene(2, this.initialGene[2]);
     }
+    this.bounds = Util.calculatePolygonBounds(this.polygon.vertices);
+  }
+
+  private setInterRowSpacingBounds() {
+    this.bounds = Util.calculatePolygonBounds(this.polygon.vertices);
+    if (this.rowAxis === RowAxis.meridional) {
+      // north-south axis, so the array is laid in x direction
+      this.maximumInterRowSpacing = this.bounds.width * 0.5 * this.foundation.lx;
+    } else {
+      // east-west axis, so the array is laid in y direction
+      this.maximumInterRowSpacing = this.bounds.height * 0.5 * this.foundation.ly;
+    }
+    console.log(this.minimumInterRowSpacing, this.maximumInterRowSpacing);
   }
 
   applyFittest(): void {
@@ -104,7 +122,14 @@ export class SolarPanelArrayOptimizerGa extends OptimizerGa {
       this.finalGene[1] = best.getGene(1);
       this.finalGene[2] = best.getGene(2);
       this.finalFitness = best.fitness;
-      console.log('Fittest: ' + this.individualToString(best));
+      console.log(
+        'Fittest: ' +
+          this.individualToString(best) +
+          ', rack count: ' +
+          this.solarRackCount +
+          ', panel count: ' +
+          this.solarPanelCount,
+      );
     }
   }
 
@@ -115,7 +140,10 @@ export class SolarPanelArrayOptimizerGa extends OptimizerGa {
         individual.getGene(1) * (this.maximumInterRowSpacing - this.minimumInterRowSpacing) +
         this.minimumInterRowSpacing
       ).toFixed(3) + ', ';
-    s += individual.getGene(2) * (this.maximumRowsPerRack - this.minimumRowsPerRack) + this.minimumRowsPerRack + ')';
+    s +=
+      Math.floor(
+        individual.getGene(2) * (this.maximumRowsPerRack - this.minimumRowsPerRack) + this.minimumRowsPerRack,
+      ) + ')';
     return s + ' = ' + individual.fitness.toFixed(5);
   }
 
@@ -123,6 +151,7 @@ export class SolarPanelArrayOptimizerGa extends OptimizerGa {
     this.outsideGenerationCounter = 0;
     this.computeCounter = 0;
     this.fittestOfGenerations.fill(null);
+    this.setInterRowSpacingBounds();
   }
 
   // translate gene to structure for the specified individual
@@ -130,19 +159,18 @@ export class SolarPanelArrayOptimizerGa extends OptimizerGa {
     const individual: Individual = this.population.individuals[indexOfIndividual];
     const tiltAngle = (2 * individual.getGene(0) - 1) * HALF_PI;
     const interRowSpacing =
-      this.foundation.lx *
-      (individual.getGene(1) * (this.maximumInterRowSpacing - this.minimumInterRowSpacing) +
-        this.minimumInterRowSpacing);
+      individual.getGene(1) * (this.maximumInterRowSpacing - this.minimumInterRowSpacing) + this.minimumInterRowSpacing;
     const rowsPerRack = Math.floor(
       individual.getGene(2) * (this.maximumRowsPerRack - this.minimumRowsPerRack) + this.minimumRowsPerRack,
     );
-    console.log(tiltAngle, interRowSpacing, rowsPerRack);
-    return this.layout(tiltAngle, interRowSpacing, rowsPerRack);
+    const solarPanels = this.layout(tiltAngle, interRowSpacing, rowsPerRack);
+    this.solarRackCount = solarPanels.length;
+    return solarPanels;
   }
 
   layout(tiltAngle: number, interRowSpacing: number, rowsPerRack: number): SolarPanelModel[] {
-    const bounds = Util.calculatePolygonBounds(this.polygon.vertices);
-    const newElements: SolarPanelModel[] = [];
+    const solarPanels: SolarPanelModel[] = [];
+    this.solarPanelCount = 0;
     let n: number;
     let start: number;
     let delta: number;
@@ -150,8 +178,8 @@ export class SolarPanelArrayOptimizerGa extends OptimizerGa {
     let h = 0.5 * Math.abs(Math.sin(tiltAngle)) * ly;
     if (this.rowAxis === RowAxis.meridional) {
       // north-south axis, so the array is laid in x direction
-      n = Math.floor(((bounds.maxX - bounds.minX) * this.foundation.lx - ly) / interRowSpacing);
-      start = bounds.minX + ly / (2 * this.foundation.lx);
+      n = Math.floor(((this.bounds.maxX() - this.bounds.minX()) * this.foundation.lx - ly) / interRowSpacing);
+      start = this.bounds.minX() + ly / (2 * this.foundation.lx);
       delta = interRowSpacing / this.foundation.lx;
       h /= this.foundation.lx;
       let a: Point2 = { x: 0, y: -0.5 } as Point2;
@@ -187,14 +215,15 @@ export class SolarPanelArrayOptimizerGa extends OptimizerGa {
             solarPanel.poleSpacing = this.poleSpacing;
             solarPanel.referenceId = this.polygon.id;
             this.changeOrientation(solarPanel, this.orientation);
-            newElements.push(JSON.parse(JSON.stringify(solarPanel)));
+            solarPanels.push(JSON.parse(JSON.stringify(solarPanel)));
+            this.solarPanelCount += Util.countSolarPanelsOnRack(solarPanel, this.pvModel);
           }
         }
       }
     } else {
       // east-west axis, so the array is laid in y direction
-      n = Math.floor(((bounds.maxY - bounds.minY) * this.foundation.ly - ly) / interRowSpacing);
-      start = bounds.minY + ly / (2 * this.foundation.ly) + this.relativeMargin;
+      n = Math.floor(((this.bounds.maxY() - this.bounds.minY()) * this.foundation.ly - ly) / interRowSpacing);
+      start = this.bounds.minY() + ly / (2 * this.foundation.ly) + this.relativeMargin;
       delta = interRowSpacing / this.foundation.ly;
       h /= this.foundation.ly;
       let a: Point2 = { x: -0.5, y: 0 } as Point2;
@@ -230,12 +259,13 @@ export class SolarPanelArrayOptimizerGa extends OptimizerGa {
             solarPanel.poleSpacing = this.poleSpacing;
             solarPanel.referenceId = this.polygon.id;
             this.changeOrientation(solarPanel, this.orientation);
-            newElements.push(JSON.parse(JSON.stringify(solarPanel)));
+            solarPanels.push(JSON.parse(JSON.stringify(solarPanel)));
+            this.solarPanelCount += Util.countSolarPanelsOnRack(solarPanel, this.pvModel);
           }
         }
       }
     }
-    return newElements;
+    return solarPanels;
   }
 
   private changeOrientation(solarPanel: SolarPanelModel, value: Orientation): void {
@@ -278,7 +308,11 @@ export class SolarPanelArrayOptimizerGa extends OptimizerGa {
           ', individual ' +
           indexOfIndividual +
           ' : ' +
-          this.individualToString(individual),
+          this.individualToString(individual) +
+          ', rack count: ' +
+          this.solarRackCount +
+          ', panel count: ' +
+          this.solarPanelCount,
       );
       const savedIndividual = this.populationOfGenerations[generation]?.individuals[indexOfIndividual];
       if (savedIndividual) {

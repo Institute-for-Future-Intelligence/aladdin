@@ -24,6 +24,7 @@ const SolarPanelArrayGaWizard = ({ setDialogVisible }: { setDialogVisible: (b: b
   const setCommonStore = useStore(Selector.set);
   const language = useStore(Selector.language);
   const runEvolution = useStore(Selector.runEvolution);
+  const constraints = useStore(Selector.solarPanelArrayLayoutConstraints);
 
   const [updateFlag, setUpdateFlag] = useState<boolean>(false);
   const [dragEnabled, setDragEnabled] = useState<boolean>(false);
@@ -40,8 +41,8 @@ const SolarPanelArrayGaWizard = ({ setDialogVisible }: { setDialogVisible: (b: b
   const crossoverRateRef = useRef<number>(params.crossoverRate ?? 0.5);
   const convergenceThresholdRef = useRef<number>(params.convergenceThreshold);
   const localSearchRadiusRef = useRef<number>(params.localSearchRadius);
-  const minimumRowsPerRackRef = useRef<number>(1);
-  const maximumRowsPerRackRef = useRef<number>(6);
+  const minimumRowsPerRackRef = useRef<number>(constraints.minimumRowsPerRack);
+  const maximumRowsPerRackRef = useRef<number>(constraints.maximumRowsPerRack);
   const okButtonRef = useRef<HTMLElement | null>(null);
 
   useEffect(() => {

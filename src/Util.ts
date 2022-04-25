@@ -34,6 +34,7 @@ import { PolygonModel } from './models/PolygonModel';
 import { Point2 } from './models/Point2';
 import { useStore } from './stores/common';
 import { SolarCollector } from './models/SolarCollector';
+import { Rectangle } from './models/Rectangle';
 
 export class Util {
   static fetchIntersectables(scene: Scene): Object3D[] {
@@ -153,6 +154,22 @@ export class Util {
     return new CanvasTexture(canvas);
   }
 
+  static countSolarPanelsOnRack(rack: SolarPanelModel, pvModel: PvModel): number {
+    let count = 0;
+    if (pvModel && rack) {
+      let nx, ny;
+      if (rack.orientation === Orientation.portrait) {
+        nx = Math.max(1, Math.round(rack.lx / pvModel.width));
+        ny = Math.max(1, Math.round(rack.ly / pvModel.length));
+      } else {
+        nx = Math.max(1, Math.round(rack.lx / pvModel.length));
+        ny = Math.max(1, Math.round(rack.ly / pvModel.width));
+      }
+      count += nx * ny;
+    }
+    return count;
+  }
+
   static doSolarPanelsOverlap(sp1: SolarPanelModel, sp2: SolarPanelModel, parent: ElementModel): boolean {
     if (sp1.parentId !== parent.id || sp2.parentId !== parent.id) return false;
     if (!Util.isIdentical(sp1.normal, sp2.normal)) return false;
@@ -258,7 +275,7 @@ export class Util {
     return intersections;
   }
 
-  static calculatePolygonBounds(vertices: Point2[]) {
+  static calculatePolygonBounds(vertices: Point2[]): Rectangle {
     let minX = vertices[0].x;
     let maxX = vertices[0].x;
     let minY = vertices[0].y;
@@ -271,7 +288,7 @@ export class Util {
         if (maxY < v.y) maxY = v.y;
       }
     }
-    return { minX: minX, maxX: maxX, minY: minY, maxY: maxY };
+    return new Rectangle(minX, minY, maxX - minX, maxY - minY);
   }
 
   static calculatePolygonCentroid(vertices: Point2[]): Point2 {
