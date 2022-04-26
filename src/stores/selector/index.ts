@@ -959,6 +959,8 @@ export const updateRoofHeight = (state: CommonStoreState) => state.updateRoofHei
 
 export * as solarPanelArrayLayoutParams from './solarPanelArrayLayoutParams';
 
+export const economicsParams = (state: CommonStoreState) => state.economicsParams;
+
 // genetic algorithms and particle swarm optimization
 
 export const fittestIndividualResults = (state: CommonStoreState) => state.fittestIndividualResults;

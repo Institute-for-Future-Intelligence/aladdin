@@ -86,6 +86,8 @@ import { DefaultEvolutionaryAlgorithmState } from './DefaultEvolutionaryAlgorith
 import { RoofModel } from 'src/models/RoofModel';
 import { SolarPanelArrayLayoutConstraints } from './SolarPanelArrayLayoutConstraints';
 import { DefaultSolarPanelArrayLayoutConstraints } from './DefaultSolarPanelArrayLayoutConstraints';
+import { EconomicsParams } from './EconomicsParams';
+import { DefaultEconomicsParams } from './DefaultEconomicsParams';
 
 enableMapSet();
 
@@ -676,6 +678,7 @@ export interface CommonStoreState {
   solarPanelArrayLayoutParams: SolarPanelArrayLayoutParams;
   solarPanelArrayLayoutConstraints: SolarPanelArrayLayoutConstraints;
   evolutionaryAlgorithmState: EvolutionaryAlgorithmState;
+  economicsParams: EconomicsParams;
 
   // the following is to fix the bug that when ctrl+o is pressed, the file dialog gets fired up multiple times
   localFileDialogRequested: boolean;
@@ -703,6 +706,7 @@ export const useStore = create<CommonStoreState>(
           solarPanelArrayLayoutParams: new DefaultSolarPanelArrayLayoutParams(),
           solarPanelArrayLayoutConstraints: new DefaultSolarPanelArrayLayoutConstraints(),
           evolutionaryAlgorithmState: new DefaultEvolutionaryAlgorithmState(),
+          economicsParams: new DefaultEconomicsParams(),
           notes: [],
           user: {} as User,
           language: 'en',

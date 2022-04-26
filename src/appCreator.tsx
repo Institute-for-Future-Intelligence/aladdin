@@ -77,6 +77,7 @@ import SolarPanelTiltAngleGa from './ai/ga/solarPanelTiltAngleGa';
 import SolarPanelArrayGa from './ai/ga/solarPanelArrayGa';
 import SolarPanelTiltAnglePso from './ai/pso/solarPanelTiltAnglePso';
 import SolarPanelOptimizationResult from './panels/solarPanelOptimizationResult';
+import EconomicsPanel from './panels/economicsPanel';
 
 export interface AppCreatorProps {
   viewOnly: boolean;
@@ -111,6 +112,7 @@ const AppCreator = ({ viewOnly = false }: AppCreatorProps) => {
   const showStickyNotePanel = useStore(Selector.viewState.showStickyNotePanel);
   const showWeatherPanel = useStore(Selector.viewState.showWeatherPanel);
   const showDiurnalTemperaturePanel = useStore(Selector.viewState.showDiurnalTemperaturePanel);
+  const showEconomicsPanel = useStore(Selector.viewState.showEconomicsPanel);
   const showSolarRadiationHeatmap = useStore(Selector.showSolarRadiationHeatmap);
   const noAnimationForHeatmapSimulation = useStore(Selector.world.noAnimationForHeatmapSimulation);
   const showDailyLightSensorPanel = useStore(Selector.viewState.showDailyLightSensorPanel);
@@ -371,6 +373,15 @@ const AppCreator = ({ viewOnly = false }: AppCreatorProps) => {
         <WeatherPanel city={city} graphs={[GraphDataType.MonthlyTemperatures, GraphDataType.SunshineHours]} />
       )}
       {showDiurnalTemperaturePanel && <DiurnalTemperaturePanel city={city} />}
+      {showEconomicsPanel && (
+        <EconomicsPanel
+          setDialogVisible={(visible) => {
+            setCommonStore((state) => {
+              state.viewState.showEconomicsPanel = visible;
+            });
+          }}
+        />
+      )}
       {showYearlyLightSensorPanel && <YearlyLightSensorPanel city={city} />}
       {showDailyLightSensorPanel && <DailyLightSensorPanel city={city} />}
       {showYearlyPvYieldPanel && <YearlyPvYieldPanel city={city} />}

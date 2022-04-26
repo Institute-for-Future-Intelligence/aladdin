@@ -866,6 +866,12 @@ export const i18n_zh_tw = {
       Sinusoidal: '正弦函數',
     },
 
+    economicsPanel: {
+      EconomicsParameters: '經濟學參數',
+      ElectricitySellingPrice: '銷售電價',
+      OperationalCostPerUnit: '單位運行成本',
+    },
+
     yearlyLightSensorPanel: {
       SkyClearness: '天空清晰度',
       ShowDaylightResults: '顯示日照時間結果',

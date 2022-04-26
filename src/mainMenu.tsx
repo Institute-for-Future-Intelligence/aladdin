@@ -136,6 +136,7 @@ const MainMenu = ({ viewOnly, set2DView, resetView, zoomView, canvas }: MainMenu
   const showMapPanel = useStore(Selector.viewState.showMapPanel);
   const showWeatherPanel = useStore(Selector.viewState.showWeatherPanel);
   const showDiurnalTemperaturePanel = useStore(Selector.viewState.showDiurnalTemperaturePanel);
+  const showEconomicsPanel = useStore(Selector.viewState.showEconomicsPanel);
   const showStickyNotePanel = useStore(Selector.viewState.showStickyNotePanel);
   const showHeliodonPanel = useStore(Selector.viewState.showHeliodonPanel);
   const shadowEnabled = useStore(Selector.viewState.shadowEnabled);
@@ -740,7 +741,7 @@ const MainMenu = ({ viewOnly, set2DView, resetView, zoomView, canvas }: MainMenu
           }}
         >
           {i18n.t('menu.file.OpenLocalFile', lang)}
-          <label style={{ paddingLeft: '2px', fontSize: 9 }}>({isMac ? '⌘' : 'Ctrl'}+O)</label>
+          <label style={{ paddingLeft: '2px', fontSize: 9 }}>({isMac ? '⌘' : 'Ctrl'}+O)</label>...
         </Menu.Item>
 
         <Menu.Item
@@ -752,7 +753,7 @@ const MainMenu = ({ viewOnly, set2DView, resetView, zoomView, canvas }: MainMenu
           }}
         >
           {i18n.t('menu.file.SaveAsLocalFile', lang)}
-          <label style={{ paddingLeft: '2px', fontSize: 9 }}>({isMac ? '⌘' : 'Ctrl'}+S)</label>
+          <label style={{ paddingLeft: '2px', fontSize: 9 }}>({isMac ? '⌘' : 'Ctrl'}+S)</label>...
         </Menu.Item>
 
         {user.uid && (
@@ -765,7 +766,7 @@ const MainMenu = ({ viewOnly, set2DView, resetView, zoomView, canvas }: MainMenu
             }}
           >
             {i18n.t('menu.file.OpenCloudFile', lang)}
-            <label style={{ paddingLeft: '2px', fontSize: 9 }}>({isMac ? '⌘' : 'Ctrl'}+Shift+O)</label>
+            <label style={{ paddingLeft: '2px', fontSize: 9 }}>({isMac ? '⌘' : 'Ctrl'}+Shift+O)</label>...
           </Menu.Item>
         )}
 
@@ -793,7 +794,7 @@ const MainMenu = ({ viewOnly, set2DView, resetView, zoomView, canvas }: MainMenu
               });
             }}
           >
-            {i18n.t('menu.file.SaveAsCloudFile', lang)}
+            {i18n.t('menu.file.SaveAsCloudFile', lang)}...
           </Menu.Item>
         )}
 
@@ -971,22 +972,34 @@ const MainMenu = ({ viewOnly, set2DView, resetView, zoomView, canvas }: MainMenu
       <SubMenu key={'tool'} title={i18n.t('menu.toolSubMenu', lang)}>
         {!showHeliodonPanel && (
           <Menu.Item key={'heliodon-panel-check-box'} onClick={openHeliodonPanel}>
-            {i18n.t('menu.tool.SunAndTime', lang)}
+            {i18n.t('menu.tool.SunAndTime', lang)}...
           </Menu.Item>
         )}
         {!showMapPanel && (
           <Menu.Item key={'map-panel-check-box'} onClick={openMapPanel}>
-            {i18n.t('menu.tool.Map', lang)}
+            {i18n.t('menu.tool.Map', lang)}...
           </Menu.Item>
         )}
         {!showWeatherPanel && (
           <Menu.Item key={'weather-panel-check-box'} onClick={openWeatherPanel}>
-            {i18n.t('menu.tool.WeatherData', lang)}
+            {i18n.t('menu.tool.WeatherData', lang)}...
           </Menu.Item>
         )}
         {!showDiurnalTemperaturePanel && (
           <Menu.Item key={'diurnal-temperature-panel-check-box'} onClick={openDiurnalTemperaturePanel}>
-            {i18n.t('menu.tool.DiurnalTemperature', lang)}
+            {i18n.t('menu.tool.DiurnalTemperature', lang)}...
+          </Menu.Item>
+        )}
+        {!showEconomicsPanel && (
+          <Menu.Item
+            key={'economics-panel-menu-item'}
+            onClick={() => {
+              setCommonStore((state) => {
+                state.viewState.showEconomicsPanel = true;
+              });
+            }}
+          >
+            {i18n.t('economicsPanel.EconomicsParameters', lang)}...
           </Menu.Item>
         )}
         <SubMenu key={'benchmarks'} title={i18n.t('menu.benchmarksSubMenu', lang)}>
@@ -1697,7 +1710,7 @@ const MainMenu = ({ viewOnly, set2DView, resetView, zoomView, canvas }: MainMenu
       </SubMenu>
       {/* about menu */}
       <Menu.Item key="about" onClick={gotoAboutPage}>
-        {i18n.t('menu.AboutUs', lang)}
+        {i18n.t('menu.AboutUs', lang)}...
       </Menu.Item>
     </Menu>
   );

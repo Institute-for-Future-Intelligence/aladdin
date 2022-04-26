@@ -86,6 +86,8 @@ export const diurnalTemperaturePanelX = (state: CommonStoreState) => state.viewS
 
 export const diurnalTemperaturePanelY = (state: CommonStoreState) => state.viewState.diurnalTemperaturePanelY;
 
+export const showEconomicsPanel = (state: CommonStoreState) => state.viewState.showEconomicsPanel;
+
 export const showStickyNotePanel = (state: CommonStoreState) => state.viewState.showStickyNotePanel;
 
 export const stickyNotePanelX = (state: CommonStoreState) => state.viewState.stickyNotePanelX;

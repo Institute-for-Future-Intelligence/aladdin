@@ -883,6 +883,12 @@ export const i18n_en = {
       Sinusoidal: 'Sinusoidal',
     },
 
+    economicsPanel: {
+      EconomicsParameters: 'Economics Parameters',
+      ElectricitySellingPrice: 'Electricity Selling Price',
+      OperationalCostPerUnit: 'Operational Cost per Unit',
+    },
+
     yearlyLightSensorPanel: {
       SkyClearness: 'Clearness',
       ShowDaylightResults: 'Show daylight results',

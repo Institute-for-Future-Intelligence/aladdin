@@ -31,6 +31,7 @@ export class DefaultViewState implements ViewState {
   showHeliodonPanel: boolean;
   showWeatherPanel: boolean;
   showDiurnalTemperaturePanel: boolean;
+  showEconomicsPanel: boolean;
   showStickyNotePanel: boolean;
   showSiteInfoPanel: boolean;
   showDesignInfoPanel: boolean;
@@ -130,6 +131,7 @@ export class DefaultViewState implements ViewState {
     this.showHeliodonPanel = false;
     this.showWeatherPanel = false;
     this.showDiurnalTemperaturePanel = false;
+    this.showEconomicsPanel = false;
     this.showStickyNotePanel = false;
     this.showSiteInfoPanel = true;
     this.showDesignInfoPanel = false;
@@ -229,6 +231,7 @@ export class DefaultViewState implements ViewState {
     viewState.showHeliodonPanel = false;
     viewState.showWeatherPanel = false;
     viewState.showDiurnalTemperaturePanel = false;
+    viewState.showEconomicsPanel = false;
     viewState.showStickyNotePanel = false;
     viewState.showSiteInfoPanel = true;
     viewState.showDesignInfoPanel = true;
