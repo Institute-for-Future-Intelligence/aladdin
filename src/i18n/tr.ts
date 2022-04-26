@@ -579,8 +579,10 @@ export const i18n_tr = {
       Gene: 'Gene',
       NormalizedVariables: 'Normalized Variables',
       Objective: 'Objective',
-      ObjectiveFunctionDailyOutput: 'Daily Output',
-      ObjectiveFunctionYearlyOutput: 'Yearly Output',
+      ObjectiveFunctionDailyTotalOutput: 'Daily Total Output',
+      ObjectiveFunctionYearlyTotalOutput: 'Yearly Total Output',
+      ObjectiveFunctionDailyAverageOutput: 'Daily Average Output',
+      ObjectiveFunctionYearlyAverageOutput: 'Yearly Average Output',
       GeneticAlgorithmSelectionMethod: 'Genetic Algorithm Selection Method',
       RouletteWheel: 'Roulette Wheel',
       Tournament: 'Tournament',
@@ -602,6 +604,8 @@ export const i18n_tr = {
       ConvergenceThreshold: 'Convergence Threshold for Termination',
       LocalSearchRadius: 'Local Search Radius',
       RowsPerRackRange: 'Range for Rows per Rack',
+      TiltAngleRange: 'Range for Tilt Angle',
+      InterRowSpacingRange: 'Range for Inter-Row Spacing',
     },
 
     treeMenu: {

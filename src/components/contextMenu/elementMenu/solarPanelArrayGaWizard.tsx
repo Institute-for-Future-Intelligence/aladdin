@@ -17,6 +17,8 @@ import {
 } from '../../../types';
 import { showInfo } from '../../../helpers';
 import { DefaultSolarPanelArrayLayoutConstraints } from '../../../stores/DefaultSolarPanelArrayLayoutConstraints';
+import { Util } from '../../../Util';
+import { HALF_PI } from '../../../constants';
 
 const { Option } = Select;
 
@@ -41,8 +43,12 @@ const SolarPanelArrayGaWizard = ({ setDialogVisible }: { setDialogVisible: (b: b
   const crossoverRateRef = useRef<number>(params.crossoverRate ?? 0.5);
   const convergenceThresholdRef = useRef<number>(params.convergenceThreshold);
   const localSearchRadiusRef = useRef<number>(params.localSearchRadius);
+  const minimumTiltAngleRef = useRef<number>(constraints.minimumTiltAngle ?? -HALF_PI);
+  const maximumTiltAngleRef = useRef<number>(constraints.maximumTiltAngle ?? HALF_PI);
   const minimumRowsPerRackRef = useRef<number>(constraints.minimumRowsPerRack);
   const maximumRowsPerRackRef = useRef<number>(constraints.maximumRowsPerRack);
+  const minimumInterRowSpacingRef = useRef<number>(constraints.minimumInterRowSpacing);
+  const maximumInterRowSpacingRef = useRef<number>(constraints.maximumInterRowSpacing);
   const okButtonRef = useRef<HTMLElement | null>(null);
 
   useEffect(() => {
@@ -82,6 +88,10 @@ const SolarPanelArrayGaWizard = ({ setDialogVisible }: { setDialogVisible: (b: b
         state.solarPanelArrayLayoutConstraints = new DefaultSolarPanelArrayLayoutConstraints();
       state.solarPanelArrayLayoutConstraints.minimumRowsPerRack = minimumRowsPerRackRef.current;
       state.solarPanelArrayLayoutConstraints.maximumRowsPerRack = maximumRowsPerRackRef.current;
+      state.solarPanelArrayLayoutConstraints.minimumTiltAngle = minimumTiltAngleRef.current;
+      state.solarPanelArrayLayoutConstraints.maximumTiltAngle = maximumTiltAngleRef.current;
+      state.solarPanelArrayLayoutConstraints.minimumInterRowSpacing = minimumInterRowSpacingRef.current;
+      state.solarPanelArrayLayoutConstraints.maximumInterRowSpacing = maximumInterRowSpacingRef.current;
     });
   };
 
@@ -162,11 +172,23 @@ const SolarPanelArrayGaWizard = ({ setDialogVisible }: { setDialogVisible: (b: b
                 setUpdateFlag(!updateFlag);
               }}
             >
-              <Option key={ObjectiveFunctionType.DAILY_OUTPUT} value={ObjectiveFunctionType.DAILY_OUTPUT}>
-                {i18n.t('optimizationMenu.ObjectiveFunctionDailyOutput', lang)}
+              <Option key={ObjectiveFunctionType.DAILY_TOTAL_OUTPUT} value={ObjectiveFunctionType.DAILY_TOTAL_OUTPUT}>
+                {i18n.t('optimizationMenu.ObjectiveFunctionDailyTotalOutput', lang)}
               </Option>
-              <Option key={ObjectiveFunctionType.YEARLY_OUTPUT} value={ObjectiveFunctionType.YEARLY_OUTPUT}>
-                {i18n.t('optimizationMenu.ObjectiveFunctionYearlyOutput', lang)}
+              <Option key={ObjectiveFunctionType.YEARLY_TOTAL_OUTPUT} value={ObjectiveFunctionType.YEARLY_TOTAL_OUTPUT}>
+                {i18n.t('optimizationMenu.ObjectiveFunctionYearlyTotalOutput', lang)}
+              </Option>
+              <Option
+                key={ObjectiveFunctionType.DAILY_AVERAGE_OUTPUT}
+                value={ObjectiveFunctionType.DAILY_AVERAGE_OUTPUT}
+              >
+                {i18n.t('optimizationMenu.ObjectiveFunctionDailyAverageOutput', lang)}
+              </Option>
+              <Option
+                key={ObjectiveFunctionType.YEARLY_AVERAGE_OUTPUT}
+                value={ObjectiveFunctionType.YEARLY_AVERAGE_OUTPUT}
+              >
+                {i18n.t('optimizationMenu.ObjectiveFunctionYearlyAverageOutput', lang)}
               </Option>
             </Select>
           </Col>
@@ -381,12 +403,65 @@ const SolarPanelArrayGaWizard = ({ setDialogVisible }: { setDialogVisible: (b: b
           </Row>
         )}
 
-        <Row gutter={6} style={{ paddingBottom: '4px' }}>
+        <Row gutter={6} style={{ paddingBottom: '0px' }}>
+          <Col className="gutter-row" span={12}>
+            {i18n.t('optimizationMenu.TiltAngleRange', lang) + ':'}
+          </Col>
+          <Col className="gutter-row" span={12}>
+            <Slider
+              style={{ paddingBottom: 0, paddingTop: 0, marginTop: '10px', marginBottom: '10px' }}
+              range
+              onChange={(value) => {
+                minimumTiltAngleRef.current = Util.toRadians(value[0]);
+                maximumTiltAngleRef.current = Util.toRadians(value[1]);
+                setUpdateFlag(!updateFlag);
+              }}
+              min={-90}
+              max={90}
+              defaultValue={[Util.toDegrees(minimumTiltAngleRef.current), Util.toDegrees(maximumTiltAngleRef.current)]}
+              marks={{
+                '-90': {
+                  style: {
+                    fontSize: '10px',
+                  },
+                  label: '-90°',
+                },
+                '-45': {
+                  style: {
+                    fontSize: '10px',
+                  },
+                  label: '-45°',
+                },
+                '0': {
+                  style: {
+                    fontSize: '10px',
+                  },
+                  label: '0°',
+                },
+                '45': {
+                  style: {
+                    fontSize: '10px',
+                  },
+                  label: '45°',
+                },
+                '90': {
+                  style: {
+                    fontSize: '10px',
+                  },
+                  label: '90°',
+                },
+              }}
+            />
+          </Col>
+        </Row>
+
+        <Row gutter={6} style={{ paddingBottom: '0px', paddingTop: '6px' }}>
           <Col className="gutter-row" span={12}>
             {i18n.t('optimizationMenu.RowsPerRackRange', lang) + ':'}
           </Col>
           <Col className="gutter-row" span={12}>
             <Slider
+              style={{ paddingBottom: 0, paddingTop: 0, marginTop: '10px', marginBottom: '10px' }}
               range
               onChange={(value) => {
                 minimumRowsPerRackRef.current = value[0];
@@ -450,6 +525,58 @@ const SolarPanelArrayGaWizard = ({ setDialogVisible }: { setDialogVisible: (b: b
                     fontSize: '10px',
                   },
                   label: 9,
+                },
+              }}
+            />
+          </Col>
+        </Row>
+
+        <Row gutter={6} style={{ paddingBottom: '0px', paddingTop: '6px' }}>
+          <Col className="gutter-row" span={12}>
+            {i18n.t('optimizationMenu.InterRowSpacingRange', lang) + ':'}
+          </Col>
+          <Col className="gutter-row" span={12}>
+            <Slider
+              style={{ paddingBottom: 0, paddingTop: 0, marginTop: '10px', marginBottom: '2px' }}
+              range
+              onChange={(value) => {
+                minimumInterRowSpacingRef.current = value[0];
+                maximumInterRowSpacingRef.current = value[1];
+                setUpdateFlag(!updateFlag);
+              }}
+              min={2}
+              max={10}
+              defaultValue={[minimumInterRowSpacingRef.current, maximumInterRowSpacingRef.current]}
+              marks={{
+                2: {
+                  style: {
+                    fontSize: '10px',
+                  },
+                  label: '2m',
+                },
+                4: {
+                  style: {
+                    fontSize: '10px',
+                  },
+                  label: '4m',
+                },
+                6: {
+                  style: {
+                    fontSize: '10px',
+                  },
+                  label: '6m',
+                },
+                8: {
+                  style: {
+                    fontSize: '10px',
+                  },
+                  label: '8m',
+                },
+                10: {
+                  style: {
+                    fontSize: '10px',
+                  },
+                  label: '10m',
                 },
               }}
             />

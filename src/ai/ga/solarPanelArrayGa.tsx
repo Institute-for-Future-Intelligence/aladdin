@@ -10,8 +10,6 @@ import i18n from '../../i18n/i18n';
 import { DatumEntry, DesignProblem, EvolutionMethod, ObjectiveFunctionType, ObjectType } from '../../types';
 import { SolarPanelModel } from '../../models/SolarPanelModel';
 import { FoundationModel } from '../../models/FoundationModel';
-import { HALF_PI } from '../../constants';
-import { Util } from '../../Util';
 import { PolygonModel } from '../../models/PolygonModel';
 import { SolarPanelArrayOptimizerGa } from './algorithm/SolarPanelArrayOptimizerGa';
 
@@ -94,10 +92,8 @@ const SolarPanelArrayGa = () => {
     evolutionCompletedRef.current = false;
     const originalSolarPanels = getChildrenOfType(ObjectType.SolarPanel, foundation.id) as SolarPanelModel[];
     solarPanelsRef.current = [];
-    const labels: (string | undefined)[] = [];
     for (const osp of originalSolarPanels) {
       solarPanelsRef.current.push(JSON.parse(JSON.stringify(osp)) as SolarPanelModel);
-      labels.push(osp.label);
     }
     if (solarPanelsRef.current.length > 0) {
       optimizerRef.current = new SolarPanelArrayOptimizerGa(
@@ -115,13 +111,15 @@ const SolarPanelArrayGa = () => {
         constraints.maximumInterRowSpacing,
         constraints.minimumRowsPerRack,
         constraints.maximumRowsPerRack,
+        constraints.minimumTiltAngle,
+        constraints.maximumTiltAngle,
       );
       optimizerRef.current.selectionRate = params.selectionRate;
       optimizerRef.current.crossoverRate = params.crossoverRate;
       optimizerRef.current.mutationRate = params.mutationRate;
       individualIndexRef.current = 0;
       convergedRef.current = false;
-      setGeneLabels(labels);
+      setGeneLabels([...optimizerRef.current.geneNames]);
       optimizerRef.current.startEvolving();
     } else {
       showError(i18n.t('message.EncounterEvolutionError', lang));
@@ -131,7 +129,8 @@ const SolarPanelArrayGa = () => {
   const getTotal = (): number => {
     let total = 0;
     switch (params.objectiveFunctionType) {
-      case ObjectiveFunctionType.DAILY_OUTPUT:
+      case ObjectiveFunctionType.DAILY_TOTAL_OUTPUT:
+      case ObjectiveFunctionType.DAILY_AVERAGE_OUTPUT:
         const dailyPvYield = useStore.getState().dailyPvYield;
         for (const datum of dailyPvYield) {
           for (const prop in datum) {
@@ -143,7 +142,8 @@ const SolarPanelArrayGa = () => {
           }
         }
         break;
-      case ObjectiveFunctionType.YEARLY_OUTPUT:
+      case ObjectiveFunctionType.YEARLY_TOTAL_OUTPUT:
+      case ObjectiveFunctionType.YEARLY_AVERAGE_OUTPUT:
         const yearlyPvYield = useStore.getState().yearlyPvYield;
         for (const datum of yearlyPvYield) {
           for (const prop in datum) {
@@ -155,6 +155,13 @@ const SolarPanelArrayGa = () => {
           }
         }
         total *= 12 / daysPerYear;
+        break;
+    }
+    switch (params.objectiveFunctionType) {
+      case ObjectiveFunctionType.DAILY_AVERAGE_OUTPUT:
+      case ObjectiveFunctionType.YEARLY_AVERAGE_OUTPUT:
+        const count = optimizerRef.current?.solarPanelCount;
+        total = count ? total / count : total;
         break;
     }
     return total;
@@ -219,11 +226,13 @@ const SolarPanelArrayGa = () => {
       setCommonStore((state) => {
         state.elements.push(...solarPanelArrayRef.current);
         switch (params.objectiveFunctionType) {
-          case ObjectiveFunctionType.DAILY_OUTPUT:
+          case ObjectiveFunctionType.DAILY_TOTAL_OUTPUT:
+          case ObjectiveFunctionType.DAILY_AVERAGE_OUTPUT:
             state.dailyPvIndividualOutputs = false;
             state.runDailySimulationForSolarPanels = true;
             break;
-          case ObjectiveFunctionType.YEARLY_OUTPUT:
+          case ObjectiveFunctionType.YEARLY_TOTAL_OUTPUT:
+          case ObjectiveFunctionType.YEARLY_AVERAGE_OUTPUT:
             state.yearlyPvIndividualOutputs = false;
             state.runYearlySimulationForSolarPanels = true;
             break;

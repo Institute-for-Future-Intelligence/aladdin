@@ -121,7 +121,7 @@ const SolarPanelTiltAngleGa = () => {
   const getTotal = (): number => {
     let total = 0;
     switch (params.objectiveFunctionType) {
-      case ObjectiveFunctionType.DAILY_OUTPUT:
+      case ObjectiveFunctionType.DAILY_TOTAL_OUTPUT:
         const dailyPvYield = useStore.getState().dailyPvYield;
         for (const datum of dailyPvYield) {
           for (const prop in datum) {
@@ -133,7 +133,7 @@ const SolarPanelTiltAngleGa = () => {
           }
         }
         break;
-      case ObjectiveFunctionType.YEARLY_OUTPUT:
+      case ObjectiveFunctionType.YEARLY_TOTAL_OUTPUT:
         const yearlyPvYield = useStore.getState().yearlyPvYield;
         for (const datum of yearlyPvYield) {
           for (const prop in datum) {
@@ -210,11 +210,11 @@ const SolarPanelTiltAngleGa = () => {
             }
           }
           switch (params.objectiveFunctionType) {
-            case ObjectiveFunctionType.DAILY_OUTPUT:
+            case ObjectiveFunctionType.DAILY_TOTAL_OUTPUT:
               state.dailyPvIndividualOutputs = false;
               state.runDailySimulationForSolarPanels = true;
               break;
-            case ObjectiveFunctionType.YEARLY_OUTPUT:
+            case ObjectiveFunctionType.YEARLY_TOTAL_OUTPUT:
               state.yearlyPvIndividualOutputs = false;
               state.runYearlySimulationForSolarPanels = true;
               break;

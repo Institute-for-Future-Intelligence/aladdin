@@ -83,7 +83,10 @@ const SolarPanelOptimizationResult = () => {
     y: isNaN(panelY) ? 0 : Math.min(panelY, window.innerHeight - hOffset),
   });
 
-  const lang = { lng: language };
+  const lang = useMemo(() => {
+    return { lng: language };
+  }, [language]);
+
   const responsiveHeight = 100;
 
   useEffect(() => {
@@ -154,7 +157,7 @@ const SolarPanelOptimizationResult = () => {
   }, [params.problem, lang]);
 
   const labelObjective = useMemo(() => {
-    return params.objectiveFunctionType === ObjectiveFunctionType.DAILY_OUTPUT
+    return params.objectiveFunctionType === ObjectiveFunctionType.DAILY_TOTAL_OUTPUT
       ? i18n.t('solarPanelYieldPanel.SolarPanelDailyYield', lang)
       : i18n.t('solarPanelYieldPanel.SolarPanelYearlyYield', lang);
   }, [params.objectiveFunctionType, lang]);
@@ -177,7 +180,7 @@ const SolarPanelOptimizationResult = () => {
         ? i18n.t('optimizationMenu.GeneticAlgorithm', lang)
         : i18n.t('optimizationMenu.ParticleSwarmOptimization', lang);
     return s;
-  }, [params.problem, evolutionMethod]);
+  }, [params.problem, evolutionMethod, lang]);
 
   return (
     <ReactDraggable

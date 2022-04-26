@@ -561,8 +561,10 @@ export const i18n_zh_tw = {
       Gene: '基因',
       NormalizedVariables: '標準化變量',
       Objective: '目標函數',
-      ObjectiveFunctionDailyOutput: '當日產出',
-      ObjectiveFunctionYearlyOutput: '全年產出',
+      ObjectiveFunctionDailyTotalOutput: '當日總產出',
+      ObjectiveFunctionYearlyTotalOutput: '全年總產出',
+      ObjectiveFunctionDailyAverageOutput: '當日平均產出',
+      ObjectiveFunctionYearlyAverageOutput: '全年平均產出',
       GeneticAlgorithmSelectionMethod: '遺傳算法選擇方法',
       RouletteWheel: '輪盤制',
       Tournament: '淘汰制',
@@ -583,7 +585,9 @@ export const i18n_zh_tw = {
       SocialCoefficient: '社會係數',
       ConvergenceThreshold: '終止條件的收斂閾值',
       LocalSearchRadius: '局部搜索的半徑',
-      RowsPerRackRange: '單個支架上的光伏板行數範圍',
+      RowsPerRackRange: '單個支架上光伏板行數的變化範圍',
+      TiltAngleRange: '光伏板傾斜角度的變化範圍',
+      InterRowSpacingRange: '光伏板陣列行間距的變化範圍',
     },
 
     treeMenu: {

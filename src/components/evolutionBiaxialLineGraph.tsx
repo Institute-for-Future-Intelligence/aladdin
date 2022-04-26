@@ -16,9 +16,12 @@ import {
   YAxis,
 } from 'recharts';
 import { createSymbol, SYMBOLS } from './symbols';
-import { PRESET_COLORS } from '../constants';
+import { HALF_PI, PRESET_COLORS } from '../constants';
 import { DatumEntry } from '../types';
 import { CurveType } from 'recharts/types/shape/Curve';
+import { Util } from '../Util';
+import { useStore } from '../stores/common';
+import * as Selector from '../stores/selector';
 
 export interface GaBiaxialLineGraphProps {
   dataSource: DatumEntry[];
@@ -59,6 +62,7 @@ const EvolutionBiaxialLineGraph = ({
   referenceX,
   fractionDigits = 2,
 }: GaBiaxialLineGraphProps) => {
+  const constraints = useStore(Selector.solarPanelArrayLayoutConstraints);
   const [legendDataKey, setLegendDataKey] = useState<string | null>(null);
   const horizontalGridLines = true;
   const verticalGridLines = true;
@@ -196,9 +200,34 @@ const EvolutionBiaxialLineGraph = ({
                     if (!active || !payload) return null;
                     return payload.map((p) => {
                       if (!p.name?.toString().startsWith('Individual')) {
+                        let label: string;
+                        if (p.name === 'Tilt Angle') {
+                          label =
+                            Util.toDegrees(
+                              (p.value as number) * (constraints.maximumTiltAngle - constraints.minimumTiltAngle) +
+                                constraints.minimumTiltAngle,
+                            ).toFixed(fractionDigits) + '°';
+                        } else if (p.name === 'Inter-Row Spacing') {
+                          label =
+                            (
+                              (p.value as number) *
+                                (constraints.maximumInterRowSpacing - constraints.minimumInterRowSpacing) +
+                              constraints.minimumInterRowSpacing
+                            ).toFixed(fractionDigits) + 'm';
+                        } else if (p.name === 'Rack Width') {
+                          label =
+                            Math.floor(
+                              (p.value as number) * (constraints.maximumRowsPerRack - constraints.minimumRowsPerRack) +
+                                constraints.minimumRowsPerRack,
+                            ) + ' panels';
+                        } else if (p.name === 'Objective') {
+                          label = (p.value as number).toFixed(fractionDigits) + ' kWh';
+                        } else {
+                          label = (p.value as number).toFixed(fractionDigits);
+                        }
                         return (
                           <div key={p.name}>
-                            {p.name}: {(p.value as number).toFixed(fractionDigits)}
+                            {p.name}: {label}
                           </div>
                         );
                       }

@@ -20,7 +20,7 @@ export class DefaultParticleSwarmOptimizationParams implements ParticleSwarmOpti
 
   constructor(problem: DesignProblem) {
     this.problem = problem;
-    this.objectiveFunctionType = ObjectiveFunctionType.DAILY_OUTPUT;
+    this.objectiveFunctionType = ObjectiveFunctionType.DAILY_TOTAL_OUTPUT;
     this.searchMethod = SearchMethod.GLOBAL_SEARCH_UNIFORM_SELECTION;
     this.swarmSize = 20;
     this.maximumSteps = 5;

@@ -51,8 +51,10 @@ export enum DesignProblem {
 }
 
 export enum ObjectiveFunctionType {
-  DAILY_OUTPUT = 1,
-  YEARLY_OUTPUT = 2,
+  DAILY_TOTAL_OUTPUT = 1,
+  YEARLY_TOTAL_OUTPUT = 2,
+  DAILY_AVERAGE_OUTPUT = 3,
+  YEARLY_AVERAGE_OUTPUT = 4,
 }
 
 export enum EvolutionMethod {

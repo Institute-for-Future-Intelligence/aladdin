@@ -20,7 +20,7 @@ export class DefaultGeneticAlgorithmParams implements GeneticAlgorithmParams {
 
   constructor(problem: DesignProblem) {
     this.problem = problem;
-    this.objectiveFunctionType = ObjectiveFunctionType.DAILY_OUTPUT;
+    this.objectiveFunctionType = ObjectiveFunctionType.DAILY_TOTAL_OUTPUT;
     this.selectionMethod = GeneticAlgorithmSelectionMethod.ROULETTE_WHEEL;
     this.searchMethod = SearchMethod.GLOBAL_SEARCH_UNIFORM_SELECTION;
     this.populationSize = 20;

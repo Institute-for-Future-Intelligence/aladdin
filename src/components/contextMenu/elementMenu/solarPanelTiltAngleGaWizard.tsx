@@ -154,11 +154,11 @@ const SolarPanelTiltAngleGaWizard = ({ setDialogVisible }: { setDialogVisible: (
                 setUpdateFlag(!updateFlag);
               }}
             >
-              <Option key={ObjectiveFunctionType.DAILY_OUTPUT} value={ObjectiveFunctionType.DAILY_OUTPUT}>
-                {i18n.t('optimizationMenu.ObjectiveFunctionDailyOutput', lang)}
+              <Option key={ObjectiveFunctionType.DAILY_TOTAL_OUTPUT} value={ObjectiveFunctionType.DAILY_TOTAL_OUTPUT}>
+                {i18n.t('optimizationMenu.ObjectiveFunctionDailyTotalOutput', lang)}
               </Option>
-              <Option key={ObjectiveFunctionType.YEARLY_OUTPUT} value={ObjectiveFunctionType.YEARLY_OUTPUT}>
-                {i18n.t('optimizationMenu.ObjectiveFunctionYearlyOutput', lang)}
+              <Option key={ObjectiveFunctionType.YEARLY_TOTAL_OUTPUT} value={ObjectiveFunctionType.YEARLY_TOTAL_OUTPUT}>
+                {i18n.t('optimizationMenu.ObjectiveFunctionYearlyTotalOutput', lang)}
               </Option>
             </Select>
           </Col>

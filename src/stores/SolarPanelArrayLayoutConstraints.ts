@@ -7,4 +7,6 @@ export interface SolarPanelArrayLayoutConstraints {
   maximumInterRowSpacing: number;
   minimumRowsPerRack: number;
   maximumRowsPerRack: number;
+  minimumTiltAngle: number;
+  maximumTiltAngle: number;
 }
