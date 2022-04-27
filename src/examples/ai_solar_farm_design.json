@@ -1,6 +1,6 @@
 {
-  "docid": "cSWxf7VGHX6mSnfveCDejy",
-  "timestamp": 1651080668193,
+  "docid": "mn7qvzkALUGAg4t6fwTnhs",
+  "timestamp": 1651101066453,
   "userid": "QWecNcxhyvP6j6sBN11hBsfZDau1",
   "owner": null,
   "email": null,
@@ -70,7 +70,7 @@
       "lx": 0.4,
       "ly": 0.4,
       "lz": 0.4,
-      "color": "#999999",
+      "color": "#68ccca",
       "normal": [
         0,
         0,
@@ -95,8 +95,12 @@
           "y": 0.38143928702789676
         },
         {
-          "x": -0.03703159655436363,
-          "y": 0.4507918846693325
+          "x": -0.2592211758805454,
+          "y": 0.46813003407969145
+        },
+        {
+          "x": 0.22218957932618177,
+          "y": 0.46813003407969145
         },
         {
           "x": 0.35180016726645447,
@@ -127,9 +131,9 @@
       "foundationId": "of4fAMi2p9MKmo6JDUYnfX",
       "selected": false,
       "filled": true,
-      "selectedIndex": 9,
+      "selectedIndex": 4,
       "id": "u4ViXg39ZL8tds2AfD2o6U",
-      "textureType": "Polygon Texture #7",
+      "textureType": "No Polygon Texture",
       "locked": true
     },
     {
@@ -140,13 +144,13 @@
       "lx": 5.885558899621623,
       "ly": 2.63032996641639,
       "lz": 4,
-      "color": "#ffffff",
+      "color": "#999999",
       "faceColors": [
-        "#ffffff",
-        "#ffffff",
-        "#ffffff",
-        "#ffffff",
-        "#ffffff",
+        "#999999",
+        "#999999",
+        "#999999",
+        "#999999",
+        "#999999",
         "gray"
       ],
       "textureTypes": [
@@ -192,177 +196,8 @@
       ],
       "parentId": "of4fAMi2p9MKmo6JDUYnfX",
       "id": "rrK38LJKu6CVWVjf2zV1b2",
-      "selected": false
-    },
-    {
-      "type": "Solar Panel",
-      "pvModelName": "CS6X-355P-FG",
-      "trackerType": "None",
-      "relativeAzimuth": 0,
-      "tiltAngle": 0.3490658503988659,
-      "orientation": "Landscape",
-      "drawSunBeam": false,
-      "poleHeight": 2.5,
-      "poleRadius": 0.05,
-      "poleSpacing": 5,
-      "cx": 0.07107694482825605,
-      "cy": -0.4065317014344632,
-      "cz": 0.1,
-      "lx": 11.808,
-      "ly": 2.976,
-      "lz": 0.006,
-      "showLabel": false,
-      "normal": [
-        0,
-        0,
-        1
-      ],
-      "rotation": [
-        0,
-        0,
-        0
-      ],
-      "parentId": "of4fAMi2p9MKmo6JDUYnfX",
-      "foundationId": "of4fAMi2p9MKmo6JDUYnfX",
-      "id": "a1EfALbskfw53q3gKz9YiH",
-      "referenceId": "u4ViXg39ZL8tds2AfD2o6U",
-      "selected": false
-    },
-    {
-      "type": "Solar Panel",
-      "pvModelName": "CS6X-355P-FG",
-      "trackerType": "None",
-      "relativeAzimuth": 0,
-      "tiltAngle": 0.3490658503988659,
-      "orientation": "Landscape",
-      "drawSunBeam": false,
-      "poleHeight": 2.5,
-      "poleRadius": 0.05,
-      "poleSpacing": 5,
-      "cx": -0.05867440997267792,
-      "cy": -0.2331502073308738,
-      "cz": 0.1,
-      "lx": 9.84,
-      "ly": 2.976,
-      "lz": 0.006,
-      "showLabel": false,
-      "normal": [
-        0,
-        0,
-        1
-      ],
-      "rotation": [
-        0,
-        0,
-        0
-      ],
-      "parentId": "of4fAMi2p9MKmo6JDUYnfX",
-      "foundationId": "of4fAMi2p9MKmo6JDUYnfX",
-      "id": "tKtCEAryjPDhRkoGAGtnxD",
-      "referenceId": "u4ViXg39ZL8tds2AfD2o6U",
-      "selected": false
-    },
-    {
-      "type": "Solar Panel",
-      "pvModelName": "CS6X-355P-FG",
-      "trackerType": "None",
-      "relativeAzimuth": 0,
-      "tiltAngle": 0.3490658503988659,
-      "orientation": "Landscape",
-      "drawSunBeam": false,
-      "poleHeight": 2.5,
-      "poleRadius": 0.05,
-      "poleSpacing": 5,
-      "cx": -0.019376011152486328,
-      "cy": -0.05976871322728439,
-      "cz": 0.1,
-      "lx": 17.712,
-      "ly": 2.976,
-      "lz": 0.006,
-      "showLabel": false,
-      "normal": [
-        0,
-        0,
-        1
-      ],
-      "rotation": [
-        0,
-        0,
-        0
-      ],
-      "parentId": "of4fAMi2p9MKmo6JDUYnfX",
-      "foundationId": "of4fAMi2p9MKmo6JDUYnfX",
-      "id": "uifAZhC6RnY9f1XXMj4pkJ",
-      "referenceId": "u4ViXg39ZL8tds2AfD2o6U",
-      "selected": false
-    },
-    {
-      "type": "Solar Panel",
-      "pvModelName": "CS6X-355P-FG",
-      "trackerType": "None",
-      "relativeAzimuth": 0,
-      "tiltAngle": 0.3490658503988659,
-      "orientation": "Landscape",
-      "drawSunBeam": false,
-      "poleHeight": 2.5,
-      "poleRadius": 0.05,
-      "poleSpacing": 5,
-      "cx": -0.03392607449209484,
-      "cy": 0.11361278087630505,
-      "cz": 0.1,
-      "lx": 17.712,
-      "ly": 2.976,
-      "lz": 0.006,
-      "showLabel": false,
-      "normal": [
-        0,
-        0,
-        1
-      ],
-      "rotation": [
-        0,
-        0,
-        0
-      ],
-      "parentId": "of4fAMi2p9MKmo6JDUYnfX",
-      "foundationId": "of4fAMi2p9MKmo6JDUYnfX",
-      "id": "geZvKxEXKjETdQ3d5Lgm5g",
-      "referenceId": "u4ViXg39ZL8tds2AfD2o6U",
-      "selected": false
-    },
-    {
-      "type": "Solar Panel",
-      "pvModelName": "CS6X-355P-FG",
-      "trackerType": "None",
-      "relativeAzimuth": 0,
-      "tiltAngle": 0.3490658503988659,
-      "orientation": "Landscape",
-      "drawSunBeam": false,
-      "poleHeight": 2.5,
-      "poleRadius": 0.05,
-      "poleSpacing": 5,
-      "cx": -0.04705768901131374,
-      "cy": 0.28699427497989444,
-      "cz": 0.1,
-      "lx": 19.68,
-      "ly": 2.976,
-      "lz": 0.006,
-      "showLabel": false,
-      "normal": [
-        0,
-        0,
-        1
-      ],
-      "rotation": [
-        0,
-        0,
-        0
-      ],
-      "parentId": "of4fAMi2p9MKmo6JDUYnfX",
-      "foundationId": "of4fAMi2p9MKmo6JDUYnfX",
-      "id": "pp4be9bL1iw9MFQXeHzb5s",
-      "referenceId": "u4ViXg39ZL8tds2AfD2o6U",
-      "selected": false
+      "selected": false,
+      "ly": 0.6
     }
   ],
   "view": {
@@ -402,14 +237,14 @@
     "showYearlyLightSensorPanel": false,
     "mapType": "roadmap",
     "cameraPosition": [
-      19.044060264175897,
-      -35.726179040446965,
-      19.72715458392283
+      14.238207538078159,
+      -23.111877532041458,
+      30.138555703667492
     ],
     "panCenter": [
-      18.38913954772241,
-      -2.542423010712041,
-      1.371352818471817
+      14.4714120590319,
+      -3.416758286517111,
+      0
     ],
     "orthographic": false,
     "enableRotate": true,

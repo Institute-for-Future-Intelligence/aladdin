@@ -169,13 +169,13 @@ const SolarPanelOptimizationResult = () => {
       case ObjectiveFunctionType.YEARLY_PROFIT:
         return i18n.t('optimizationMenu.ObjectiveFunctionYearlyProfit', lang);
       case ObjectiveFunctionType.DAILY_AVERAGE_OUTPUT:
-        return i18n.t('ObjectiveFunctionDailyAverageOutput', lang);
+        return i18n.t('optimizationMenu.ObjectiveFunctionDailyAverageOutput', lang);
       case ObjectiveFunctionType.YEARLY_AVERAGE_OUTPUT:
-        return i18n.t('ObjectiveFunctionYearlyAverageOutput', lang);
+        return i18n.t('optimizationMenu.ObjectiveFunctionYearlyAverageOutput', lang);
       case ObjectiveFunctionType.DAILY_TOTAL_OUTPUT:
-        return i18n.t('ObjectiveFunctionDailyTotalOutput', lang);
+        return i18n.t('optimizationMenu.ObjectiveFunctionDailyTotalOutput', lang);
     }
-    return i18n.t('ObjectiveFunctionYearlyTotalOutput', lang);
+    return i18n.t('optimizationMenu.ObjectiveFunctionYearlyTotalOutput', lang);
   }, [params.objectiveFunctionType, lang]);
 
   const buttonEnabled = useMemo(() => {
@@ -184,6 +184,12 @@ const SolarPanelOptimizationResult = () => {
     if (params.problem === DesignProblem.SOLAR_PANEL_ARRAY) return selectedElement.type === ObjectType.Polygon;
     return false;
   }, [params.problem, selectedElement]);
+
+  const hint = useMemo(() => {
+    if (params.problem === DesignProblem.SOLAR_PANEL_ARRAY)
+      return i18n.t('optimizationMenu.ClickTargetPolygonToActivate', lang);
+    return i18n.t('optimizationMenu.ClickTargetFoundationToActivate', lang);
+  }, [params.problem, lang]);
 
   const title = useMemo(() => {
     let s = '';
@@ -256,6 +262,7 @@ const SolarPanelOptimizationResult = () => {
                 }}
               />
             )}
+            {!buttonEnabled && <label>{hint}</label>}
             <Button
               type="default"
               icon={<SaveOutlined />}

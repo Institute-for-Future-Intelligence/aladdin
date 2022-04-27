@@ -221,7 +221,7 @@ const EvolutionBiaxialLineGraph = ({
                                 constraints.minimumRowsPerRack,
                             ) + ' panels';
                         } else if (p.name === 'Objective') {
-                          label = (p.value as number).toFixed(fractionDigits) + ' kWh';
+                          label = (p.value as number).toFixed(fractionDigits) + ' ' + unitY2;
                         } else {
                           label = (p.value as number).toFixed(fractionDigits);
                         }

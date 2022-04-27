@@ -96,35 +96,34 @@ const SolarPanelArrayGa = () => {
     for (const osp of originalSolarPanels) {
       solarPanelsRef.current.push(JSON.parse(JSON.stringify(osp)) as SolarPanelModel);
     }
-    if (solarPanelsRef.current.length > 0) {
-      optimizerRef.current = new SolarPanelArrayOptimizerGa(
-        getPvModule(solarPanelsRef.current[0].pvModelName) ?? getPvModule('SPR-X21-335-BLK'),
-        solarPanelsRef.current,
-        polygon,
-        foundation,
-        params.populationSize,
-        params.maximumGenerations,
-        params.selectionMethod,
-        params.convergenceThreshold,
-        params.searchMethod,
-        params.localSearchRadius,
-        constraints.minimumInterRowSpacing,
-        constraints.maximumInterRowSpacing,
-        constraints.minimumRowsPerRack,
-        constraints.maximumRowsPerRack,
-        constraints.minimumTiltAngle,
-        constraints.maximumTiltAngle,
-      );
-      optimizerRef.current.selectionRate = params.selectionRate;
-      optimizerRef.current.crossoverRate = params.crossoverRate;
-      optimizerRef.current.mutationRate = params.mutationRate;
-      individualIndexRef.current = 0;
-      convergedRef.current = false;
-      setGeneLabels([...optimizerRef.current.geneNames]);
-      optimizerRef.current.startEvolving();
-    } else {
-      showError(i18n.t('message.EncounterEvolutionError', lang));
-    }
+    optimizerRef.current = new SolarPanelArrayOptimizerGa(
+      getPvModule(solarPanelsRef.current.length > 0 ? solarPanelsRef.current[0].pvModelName : 'SPR-X21-335-BLK'),
+      solarPanelsRef.current,
+      polygon,
+      foundation,
+      params.populationSize,
+      params.maximumGenerations,
+      params.selectionMethod,
+      params.convergenceThreshold,
+      params.searchMethod,
+      params.localSearchRadius,
+      constraints.minimumInterRowSpacing,
+      constraints.maximumInterRowSpacing,
+      constraints.minimumRowsPerRack,
+      constraints.maximumRowsPerRack,
+      constraints.minimumTiltAngle,
+      constraints.maximumTiltAngle,
+    );
+    optimizerRef.current.selectionRate = params.selectionRate;
+    optimizerRef.current.crossoverRate = params.crossoverRate;
+    optimizerRef.current.mutationRate = params.mutationRate;
+    individualIndexRef.current = 0;
+    convergedRef.current = false;
+    setGeneLabels([...optimizerRef.current.geneNames]);
+    optimizerRef.current.startEvolving();
+    setCommonStore((state) => {
+      state.viewState.showEvolutionPanel = true;
+    });
   };
 
   const getTotal = (): number => {

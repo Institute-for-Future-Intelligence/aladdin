@@ -610,6 +610,8 @@ export const i18n_tr = {
       RowsPerRackRange: 'Range for Rows per Rack',
       TiltAngleRange: 'Range for Tilt Angle',
       InterRowSpacingRange: 'Range for Inter-Row Spacing',
+      ClickTargetPolygonToActivate: 'Click Target Polygon to Activate',
+      ClickTargetFoundationToActivate: 'Click Target Foundation to Activate',
     },
 
     treeMenu: {

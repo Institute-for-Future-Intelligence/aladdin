@@ -592,6 +592,8 @@ export const i18n_zh_tw = {
       RowsPerRackRange: '單個支架上光伏板行數的變化範圍',
       TiltAngleRange: '光伏板傾斜角度的變化範圍',
       InterRowSpacingRange: '光伏板陣列行間距的變化範圍',
+      ClickTargetPolygonToActivate: '點擊目標多邊形激活',
+      ClickTargetFoundationToActivate: '點擊目標地基激活',
     },
 
     treeMenu: {
