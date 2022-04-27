@@ -102,6 +102,7 @@ export const i18n_tr = {
       Radiation: 'Radyasyon',
       Temperature: 'Sýcaklýk',
       kWh: 'kWh',
+      dollar: 'dollar',
       MeterPerSecond: 'm/s',
       NorthInitial: 'N',
       SouthInitial: 'S',
@@ -799,6 +800,7 @@ export const i18n_tr = {
       YearlyTotal: 'Yýllýk Toplam',
       HoverForBreakdown: 'Analiz için fareyle üzerine gelin',
       ShowOutputsOfIndividualSolarPanels: 'Herbir güneþ panelinin verimini göster',
+      Profit: 'Profit',
     },
 
     parabolicTroughYieldPanel: {

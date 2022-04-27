@@ -69,7 +69,7 @@ const SolarPanelOptimizationResult = () => {
   const panelY = useStore(Selector.viewState.evolutionPanelY);
   const selectedElement = useStore(Selector.selectedElement);
   const evolutionMethod = useStore(Selector.evolutionMethod);
-  const evolutionaryAlgorithmState = useStore(Selector.evolutionaryAlgorithmState);
+  const evolutionaryAlgorithmState = useStore.getState().evolutionaryAlgorithmState;
 
   // nodeRef is to suppress ReactDOM.findDOMNode() deprecation warning. See:
   // https://github.com/react-grid-layout/react-draggable/blob/v4.4.2/lib/DraggableCore.js#L159-L171
@@ -152,14 +152,30 @@ const SolarPanelOptimizationResult = () => {
   }, [params.problem]);
 
   const unitY2 = useMemo(() => {
-    if (params.problem === DesignProblem.SOLAR_PANEL_ARRAY) return i18n.t('word.kWh', lang);
+    if (
+      params.problem === DesignProblem.SOLAR_PANEL_ARRAY &&
+      (params.objectiveFunctionType === ObjectiveFunctionType.DAILY_PROFIT ||
+        params.objectiveFunctionType === ObjectiveFunctionType.YEARLY_PROFIT)
+    ) {
+      return i18n.t('word.dollar', lang);
+    }
     return i18n.t('word.kWh', lang);
   }, [params.problem, lang]);
 
   const labelObjective = useMemo(() => {
-    return params.objectiveFunctionType === ObjectiveFunctionType.DAILY_TOTAL_OUTPUT
-      ? i18n.t('solarPanelYieldPanel.SolarPanelDailyYield', lang)
-      : i18n.t('solarPanelYieldPanel.SolarPanelYearlyYield', lang);
+    switch (params.objectiveFunctionType) {
+      case ObjectiveFunctionType.DAILY_PROFIT:
+        return i18n.t('optimizationMenu.ObjectiveFunctionDailyProfit', lang);
+      case ObjectiveFunctionType.YEARLY_PROFIT:
+        return i18n.t('optimizationMenu.ObjectiveFunctionYearlyProfit', lang);
+      case ObjectiveFunctionType.DAILY_AVERAGE_OUTPUT:
+        return i18n.t('ObjectiveFunctionDailyAverageOutput', lang);
+      case ObjectiveFunctionType.YEARLY_AVERAGE_OUTPUT:
+        return i18n.t('ObjectiveFunctionYearlyAverageOutput', lang);
+      case ObjectiveFunctionType.DAILY_TOTAL_OUTPUT:
+        return i18n.t('ObjectiveFunctionDailyTotalOutput', lang);
+    }
+    return i18n.t('ObjectiveFunctionYearlyTotalOutput', lang);
   }, [params.objectiveFunctionType, lang]);
 
   const buttonEnabled = useMemo(() => {

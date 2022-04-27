@@ -101,6 +101,7 @@ export const i18n_es = {
       Radiation: 'Radiación',
       Temperature: 'Temperatura',
       kWh: 'kWh',
+      dollar: 'dollar',
       MeterPerSecond: 'm/s',
       NorthInitial: 'N',
       SouthInitial: 'S',
@@ -798,6 +799,7 @@ export const i18n_es = {
       YearlyTotal: 'Total anual',
       HoverForBreakdown: 'Desplazar para ver desglose',
       ShowOutputsOfIndividualSolarPanels: 'Mostrar salidas de paneles solares individuales',
+      Profit: 'Profit',
     },
 
     parabolicTroughYieldPanel: {

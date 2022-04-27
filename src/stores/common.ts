@@ -775,6 +775,7 @@ export const useStore = create<CommonStoreState>(
                 content.solarPanelArrayLayoutConstraints ?? new DefaultSolarPanelArrayLayoutConstraints();
               state.evolutionaryAlgorithmState =
                 content.evolutionaryAlgorithmState ?? new DefaultEvolutionaryAlgorithmState();
+              state.economicsParams = content.economicsParams ?? new DefaultEconomicsParams();
             });
             // 1/6/2022: Humans previously did not have dimension data (which probably was a mistake).
             // We do this for backward compatibility. Otherwise, humans cannot be moved in old files.
@@ -803,6 +804,7 @@ export const useStore = create<CommonStoreState>(
               evolutionMethod: state.evolutionMethod,
               solarPanelArrayLayoutConstraints: JSON.parse(JSON.stringify(state.solarPanelArrayLayoutConstraints)),
               evolutionaryAlgorithmState: JSON.parse(JSON.stringify(state.evolutionaryAlgorithmState)),
+              economicsParams: JSON.parse(JSON.stringify(state.economicsParams)),
               notes: state.notes,
             };
           },
@@ -5073,6 +5075,7 @@ export const useStore = create<CommonStoreState>(
           'yearlyLightSensorData',
           'solarPanelArrayLayoutParams',
           'solarPanelArrayLayoutConstraints',
+          'economicsParams',
           'evolutionMethod',
           'evolutionaryAlgorithmState',
         ],

@@ -31,6 +31,7 @@ const SolarPanelArrayGa = () => {
   const removeElementsByReferenceId = useStore(Selector.removeElementsByReferenceId);
   const params = useStore(Selector.evolutionaryAlgorithmState).geneticAlgorithmParams;
   const constraints = useStore(Selector.solarPanelArrayLayoutConstraints);
+  const economics = useStore.getState().economicsParams;
 
   const requestRef = useRef<number>(0);
   const evolutionCompletedRef = useRef<boolean>(false);
@@ -131,6 +132,7 @@ const SolarPanelArrayGa = () => {
     switch (params.objectiveFunctionType) {
       case ObjectiveFunctionType.DAILY_TOTAL_OUTPUT:
       case ObjectiveFunctionType.DAILY_AVERAGE_OUTPUT:
+      case ObjectiveFunctionType.DAILY_PROFIT:
         const dailyPvYield = useStore.getState().dailyPvYield;
         for (const datum of dailyPvYield) {
           for (const prop in datum) {
@@ -144,6 +146,7 @@ const SolarPanelArrayGa = () => {
         break;
       case ObjectiveFunctionType.YEARLY_TOTAL_OUTPUT:
       case ObjectiveFunctionType.YEARLY_AVERAGE_OUTPUT:
+      case ObjectiveFunctionType.YEARLY_PROFIT:
         const yearlyPvYield = useStore.getState().yearlyPvYield;
         for (const datum of yearlyPvYield) {
           for (const prop in datum) {
@@ -157,11 +160,17 @@ const SolarPanelArrayGa = () => {
         total *= 12 / daysPerYear;
         break;
     }
+    const count = optimizerRef.current?.solarPanelCount;
     switch (params.objectiveFunctionType) {
       case ObjectiveFunctionType.DAILY_AVERAGE_OUTPUT:
       case ObjectiveFunctionType.YEARLY_AVERAGE_OUTPUT:
-        const count = optimizerRef.current?.solarPanelCount;
         total = count ? total / count : total;
+        break;
+      case ObjectiveFunctionType.DAILY_PROFIT:
+        total = total * economics.electricitySellingPrice - (count ?? 0) * economics.operationalCostPerUnit;
+        break;
+      case ObjectiveFunctionType.YEARLY_PROFIT:
+        total = total * economics.electricitySellingPrice - (count ?? 0) * economics.operationalCostPerUnit * 365;
         break;
     }
     return total;
@@ -228,11 +237,13 @@ const SolarPanelArrayGa = () => {
         switch (params.objectiveFunctionType) {
           case ObjectiveFunctionType.DAILY_TOTAL_OUTPUT:
           case ObjectiveFunctionType.DAILY_AVERAGE_OUTPUT:
+          case ObjectiveFunctionType.DAILY_PROFIT:
             state.dailyPvIndividualOutputs = false;
             state.runDailySimulationForSolarPanels = true;
             break;
           case ObjectiveFunctionType.YEARLY_TOTAL_OUTPUT:
           case ObjectiveFunctionType.YEARLY_AVERAGE_OUTPUT:
+          case ObjectiveFunctionType.YEARLY_PROFIT:
             state.yearlyPvIndividualOutputs = false;
             state.runYearlySimulationForSolarPanels = true;
             break;

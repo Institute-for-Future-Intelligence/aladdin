@@ -101,6 +101,7 @@ export const i18n_zh_tw = {
       Radiation: '輻射',
       Temperature: '温度',
       kWh: '千瓦時',
+      dollar: '元',
       MeterPerSecond: '米/秒',
       NorthInitial: '北',
       SouthInitial: '南',
@@ -781,6 +782,7 @@ export const i18n_zh_tw = {
       YearlyTotal: '年發電總量',
       HoverForBreakdown: '在此停留滑鼠分列發電量',
       ShowOutputsOfIndividualSolarPanels: '顯示每行光伏板單獨發電量',
+      Profit: '利潤',
     },
 
     parabolicTroughYieldPanel: {

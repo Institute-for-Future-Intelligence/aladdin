@@ -20,9 +20,7 @@ const EconomicsPanel = ({ setDialogVisible }: { setDialogVisible: (b: boolean) =
   const [dragEnabled, setDragEnabled] = useState<boolean>(false);
   const [bounds, setBounds] = useState<DraggableBounds>({ left: 0, top: 0, bottom: 0, right: 0 } as DraggableBounds);
   const dragRef = useRef<HTMLDivElement | null>(null);
-  const changedRef = useRef(true);
   const okButtonRef = useRef<HTMLElement | null>(null);
-  const okButtonClickedRef = useRef<boolean>(false);
   const electricitySellingPriceRef = useRef<number>(economicsParams.electricitySellingPrice);
   const operationalCostPerUnitRef = useRef<number>(economicsParams.operationalCostPerUnit);
 
@@ -46,7 +44,6 @@ const EconomicsPanel = ({ setDialogVisible }: { setDialogVisible: (b: boolean) =
   };
 
   const apply = () => {
-    if (!changedRef.current) return;
     const oldPrice = economicsParams.electricitySellingPrice;
     const newPrice = electricitySellingPriceRef.current;
     if (oldPrice !== newPrice) {
@@ -100,17 +97,11 @@ const EconomicsPanel = ({ setDialogVisible }: { setDialogVisible: (b: boolean) =
 
   const onCancelClick = () => {
     setDialogVisible(false);
-    changedRef.current = true;
-    okButtonClickedRef.current = false;
   };
 
   const onOkClick = () => {
-    if (changedRef.current) {
-      apply();
-      okButtonClickedRef.current = true;
-    } else {
-      setDialogVisible(false);
-    }
+    apply();
+    setDialogVisible(false);
   };
 
   return (
@@ -137,7 +128,6 @@ const EconomicsPanel = ({ setDialogVisible }: { setDialogVisible: (b: boolean) =
       // this must be specified for the x button in the upper-right corner to work
       onCancel={() => {
         setDialogVisible(false);
-        changedRef.current = true;
       }}
       maskClosable={false}
       destroyOnClose={false}
@@ -162,7 +152,6 @@ const EconomicsPanel = ({ setDialogVisible }: { setDialogVisible: (b: boolean) =
             formatter={(a) => '$' + Number(a).toFixed(2) + '/kWh'}
             onChange={(value) => {
               electricitySellingPriceRef.current = value;
-              changedRef.current = true;
               setUpdateFlag(!updateFlag);
             }}
           />
@@ -184,7 +173,6 @@ const EconomicsPanel = ({ setDialogVisible }: { setDialogVisible: (b: boolean) =
             formatter={(a) => '$' + Number(a).toFixed(2) + '/day'}
             onChange={(value) => {
               operationalCostPerUnitRef.current = value;
-              changedRef.current = true;
               setUpdateFlag(!updateFlag);
             }}
           />
@@ -194,5 +182,4 @@ const EconomicsPanel = ({ setDialogVisible }: { setDialogVisible: (b: boolean) =
   );
 };
 
-// don't wrap this with React.memo as changedRef would be saved
-export default EconomicsPanel;
+export default React.memo(EconomicsPanel);

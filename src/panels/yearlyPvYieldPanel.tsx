@@ -78,6 +78,8 @@ const YearlyPvYieldPanel = ({ city }: YearlyPvYieldPanelProps) => {
   const panelX = useStore(Selector.viewState.yearlyPvYieldPanelX);
   const panelY = useStore(Selector.viewState.yearlyPvYieldPanelY);
   const runEvolution = useStore(Selector.runEvolution);
+  const economics = useStore.getState().economicsParams;
+  const countAllSolarPanels = useStore(Selector.countAllSolarPanels);
 
   // nodeRef is to suppress ReactDOM.findDOMNode() deprecation warning. See:
   // https://github.com/react-grid-layout/react-draggable/blob/v4.4.2/lib/DraggableCore.js#L159-L171
@@ -96,6 +98,7 @@ const YearlyPvYieldPanel = ({ city }: YearlyPvYieldPanelProps) => {
   const responsiveHeight = 100;
   const referenceX = MONTHS[Math.floor((Util.daysIntoYear(now) / 365) * 12)];
   const lang = { lng: language };
+  const solarPanelCount = countElementsByType(ObjectType.SolarPanel);
 
   useEffect(() => {
     let s = 0;
@@ -148,7 +151,6 @@ const YearlyPvYieldPanel = ({ city }: YearlyPvYieldPanelProps) => {
     });
   };
 
-  const solarPanelCount = countElementsByType(ObjectType.SolarPanel);
   useEffect(() => {
     if (solarPanelCount < 2 && individualOutputs) {
       setCommonStore((state) => {
@@ -167,6 +169,11 @@ const YearlyPvYieldPanel = ({ city }: YearlyPvYieldPanelProps) => {
     totalTooltip +=
       i18n.t('word.Total', lang) + ': ' + ((sum * 12) / daysPerYear).toFixed(2) + ' ' + i18n.t('word.kWh', lang);
   }
+
+  const solarPanelNumber = countAllSolarPanels();
+  const totalYield = (sum * 12) / daysPerYear;
+  const totalProfit =
+    totalYield * economics.electricitySellingPrice - solarPanelNumber * economics.operationalCostPerUnit * 365;
 
   return (
     <ReactDraggable
@@ -219,10 +226,18 @@ const YearlyPvYieldPanel = ({ city }: YearlyPvYieldPanelProps) => {
                 {i18n.t('solarPanelYieldPanel.HoverForBreakdown', lang)}
               </Space>
             ) : (
-              <Space>
-                {i18n.t('solarPanelYieldPanel.YearlyTotal', lang)}:{((sum * 12) / daysPerYear).toFixed(2)}{' '}
-                {i18n.t('word.kWh', lang)}
-              </Space>
+              <>
+                <Space>
+                  {i18n.t('solarPanelYieldPanel.YearlyTotal', lang) +
+                    ': ' +
+                    totalYield.toFixed(2) +
+                    ' ' +
+                    i18n.t('word.kWh', lang)}
+                </Space>
+                {totalYield > 0 && (
+                  <Space>{'| ' + i18n.t('solarPanelYieldPanel.Profit', lang) + ': $' + totalProfit.toFixed(2)}</Space>
+                )}
+              </>
             )}
             {!runEvolution && (
               <>
