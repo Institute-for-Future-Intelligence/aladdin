@@ -76,6 +76,8 @@ const DailyPvYieldPanel = ({ city }: DailyPvYieldPanelProps) => {
   const panelY = useStore(Selector.viewState.dailyPvYieldPanelY);
   const solarPanelLabels = useStore(Selector.solarPanelLabels);
   const runEvolution = useStore(Selector.runEvolution);
+  const economics = useStore.getState().economicsParams;
+  const countAllSolarPanels = useStore(Selector.countAllSolarPanels);
 
   // nodeRef is to suppress ReactDOM.findDOMNode() deprecation warning. See:
   // https://github.com/react-grid-layout/react-draggable/blob/v4.4.2/lib/DraggableCore.js#L159-L171
@@ -165,6 +167,9 @@ const DailyPvYieldPanel = ({ city }: DailyPvYieldPanelProps) => {
     totalTooltip += i18n.t('word.Total', lang) + ': ' + sum.toFixed(3) + ' ' + i18n.t('word.kWh', lang);
   }
 
+  const solarPanelNumber = countAllSolarPanels();
+  const totalProfit = sum * economics.electricitySellingPrice - solarPanelNumber * economics.operationalCostPerUnit;
+
   return (
     <ReactDraggable
       nodeRef={nodeRef}
@@ -216,9 +221,18 @@ const DailyPvYieldPanel = ({ city }: DailyPvYieldPanelProps) => {
                 {i18n.t('solarPanelYieldPanel.HoverForBreakdown', lang)}
               </Space>
             ) : (
-              <Space style={{ cursor: 'default' }}>
-                {i18n.t('solarPanelYieldPanel.DailyTotal', lang)}:{sum.toFixed(3)} {i18n.t('word.kWh', lang)}
-              </Space>
+              <>
+                <Space style={{ cursor: 'default' }}>
+                  {i18n.t('solarPanelYieldPanel.DailyTotal', lang) +
+                    ': ' +
+                    sum.toFixed(3) +
+                    ' ' +
+                    i18n.t('word.kWh', lang)}
+                </Space>
+                {sum > 0 && (
+                  <Space>{'| ' + i18n.t('solarPanelYieldPanel.Profit', lang) + ': $' + totalProfit.toFixed(2)}</Space>
+                )}
+              </>
             )}
             {!runEvolution && (
               <>

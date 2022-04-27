@@ -346,6 +346,7 @@ export const i18n_zh_cn = {
         Heatmap1: '热图例一',
         OptimizingTiltAngleOfOneSolarPanelRow: '优化单排光伏板的倾斜角',
         OptimizingTiltAnglesOfMultipleSolarPanelRows: '优化多排光伏板的倾斜角',
+        SolarFarmGenerativeDesign: '生成式设计太阳能农场',
       },
       languageSubMenu: '语言',
       AboutUs: '关于我们',

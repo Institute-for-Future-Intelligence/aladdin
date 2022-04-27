@@ -132,7 +132,7 @@ const SolarPanelOptimizationResult = () => {
     return !evolutionMethod || evolutionMethod === EvolutionMethod.GENETIC_ALGORITHM
       ? evolutionaryAlgorithmState.geneticAlgorithmParams
       : evolutionaryAlgorithmState.particleSwarmOptimizationParams;
-  }, [evolutionMethod]);
+  }, [evolutionMethod, evolutionaryAlgorithmState]);
 
   const labelAxisX = useMemo(() => {
     return i18n.t(

@@ -1,0 +1,478 @@
+{
+  "docid": "cSWxf7VGHX6mSnfveCDejy",
+  "timestamp": 1651080668193,
+  "userid": "QWecNcxhyvP6j6sBN11hBsfZDau1",
+  "owner": null,
+  "email": null,
+  "world": {
+    "latitude": 42.2844063,
+    "pvGridCellSize": 0.5,
+    "timesPerHour": 4,
+    "longitude": -71.3488548,
+    "ground": {
+      "albedo": 0.3,
+      "thermalDiffusivity": 0.05,
+      "snowReflectionFactors": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ]
+    },
+    "address": "Natick, MA",
+    "date": "Mon Mar 22 2021 12:00:00 GMT-0400 (Eastern Daylight Time)",
+    "name": "default",
+    "orthographic": false,
+    "cameraZoom": 35.16173831821251,
+    "noAnimationForSolarPanelSimulation": true,
+    "noAnimationForHeatmapSimulation": true,
+    "discretization": "Approximate",
+    "daysPerYear": 4
+  },
+  "elements": [
+    {
+      "cy": -0.05939884982430854,
+      "normal": [
+        0,
+        0,
+        1
+      ],
+      "lz": 0.1,
+      "ly": 28.838141151400354,
+      "id": "of4fAMi2p9MKmo6JDUYnfX",
+      "type": "Foundation",
+      "cx": -1.7579129577303791,
+      "cz": 0.05,
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "lx": 27.003966694548705,
+      "selected": false,
+      "parentId": "Ground",
+      "textureType": "Foundation Texture #2",
+      "locked": true
+    },
+    {
+      "type": "Polygon",
+      "cx": 0,
+      "cy": 0,
+      "cz": 0,
+      "lx": 0.4,
+      "ly": 0.4,
+      "lz": 0.4,
+      "color": "#999999",
+      "normal": [
+        0,
+        0,
+        1
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "vertices": [
+        {
+          "x": -0.14812638621745453,
+          "y": -0.46813003407969145
+        },
+        {
+          "x": -0.37031596554363627,
+          "y": -0.06935259764143577
+        },
+        {
+          "x": -0.46289495692954535,
+          "y": 0.38143928702789676
+        },
+        {
+          "x": -0.03703159655436363,
+          "y": 0.4507918846693325
+        },
+        {
+          "x": 0.35180016726645447,
+          "y": 0.38143928702789676
+        },
+        {
+          "x": 0.31975653145803984,
+          "y": -0.21313783808799217
+        },
+        {
+          "x": 0.1531143469634035,
+          "y": -0.21313783808799217
+        },
+        {
+          "x": 0.14812638621745453,
+          "y": -0.3641011376175378
+        },
+        {
+          "x": 0.31476857071209086,
+          "y": -0.3641011376175378
+        },
+        {
+          "x": 0.31476857071209086,
+          "y": -0.46813003407969145
+        }
+      ],
+      "parentId": "of4fAMi2p9MKmo6JDUYnfX",
+      "foundationId": "of4fAMi2p9MKmo6JDUYnfX",
+      "selected": false,
+      "filled": true,
+      "selectedIndex": 9,
+      "id": "u4ViXg39ZL8tds2AfD2o6U",
+      "textureType": "Polygon Texture #7",
+      "locked": true
+    },
+    {
+      "type": "Cuboid",
+      "cx": 7.416523588560649,
+      "cy": -8.218199087568228,
+      "cz": 2,
+      "lx": 5.885558899621623,
+      "ly": 2.63032996641639,
+      "lz": 4,
+      "color": "#ffffff",
+      "faceColors": [
+        "#ffffff",
+        "#ffffff",
+        "#ffffff",
+        "#ffffff",
+        "#ffffff",
+        "gray"
+      ],
+      "textureTypes": [
+        "No Facade Texture",
+        "No Facade Texture",
+        "No Facade Texture",
+        "No Facade Texture",
+        "No Facade Texture",
+        "No Facade Texture"
+      ],
+      "normal": [
+        0,
+        0,
+        1
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "parentId": "Ground",
+      "selected": false,
+      "id": "iRR7r8U8TVYVH3vipQSJGM",
+      "locked": true
+    },
+    {
+      "type": "Human",
+      "name": "Jack",
+      "cx": 10.603917360410481,
+      "cy": -12.559388994116993,
+      "cz": 0.05000000074505806,
+      "lx": 0.6,
+      "lz": 1.8,
+      "normal": [
+        0,
+        1,
+        0
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "parentId": "of4fAMi2p9MKmo6JDUYnfX",
+      "id": "rrK38LJKu6CVWVjf2zV1b2",
+      "selected": false
+    },
+    {
+      "type": "Solar Panel",
+      "pvModelName": "CS6X-355P-FG",
+      "trackerType": "None",
+      "relativeAzimuth": 0,
+      "tiltAngle": 0.3490658503988659,
+      "orientation": "Landscape",
+      "drawSunBeam": false,
+      "poleHeight": 2.5,
+      "poleRadius": 0.05,
+      "poleSpacing": 5,
+      "cx": 0.07107694482825605,
+      "cy": -0.4065317014344632,
+      "cz": 0.1,
+      "lx": 11.808,
+      "ly": 2.976,
+      "lz": 0.006,
+      "showLabel": false,
+      "normal": [
+        0,
+        0,
+        1
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "parentId": "of4fAMi2p9MKmo6JDUYnfX",
+      "foundationId": "of4fAMi2p9MKmo6JDUYnfX",
+      "id": "a1EfALbskfw53q3gKz9YiH",
+      "referenceId": "u4ViXg39ZL8tds2AfD2o6U",
+      "selected": false
+    },
+    {
+      "type": "Solar Panel",
+      "pvModelName": "CS6X-355P-FG",
+      "trackerType": "None",
+      "relativeAzimuth": 0,
+      "tiltAngle": 0.3490658503988659,
+      "orientation": "Landscape",
+      "drawSunBeam": false,
+      "poleHeight": 2.5,
+      "poleRadius": 0.05,
+      "poleSpacing": 5,
+      "cx": -0.05867440997267792,
+      "cy": -0.2331502073308738,
+      "cz": 0.1,
+      "lx": 9.84,
+      "ly": 2.976,
+      "lz": 0.006,
+      "showLabel": false,
+      "normal": [
+        0,
+        0,
+        1
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "parentId": "of4fAMi2p9MKmo6JDUYnfX",
+      "foundationId": "of4fAMi2p9MKmo6JDUYnfX",
+      "id": "tKtCEAryjPDhRkoGAGtnxD",
+      "referenceId": "u4ViXg39ZL8tds2AfD2o6U",
+      "selected": false
+    },
+    {
+      "type": "Solar Panel",
+      "pvModelName": "CS6X-355P-FG",
+      "trackerType": "None",
+      "relativeAzimuth": 0,
+      "tiltAngle": 0.3490658503988659,
+      "orientation": "Landscape",
+      "drawSunBeam": false,
+      "poleHeight": 2.5,
+      "poleRadius": 0.05,
+      "poleSpacing": 5,
+      "cx": -0.019376011152486328,
+      "cy": -0.05976871322728439,
+      "cz": 0.1,
+      "lx": 17.712,
+      "ly": 2.976,
+      "lz": 0.006,
+      "showLabel": false,
+      "normal": [
+        0,
+        0,
+        1
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "parentId": "of4fAMi2p9MKmo6JDUYnfX",
+      "foundationId": "of4fAMi2p9MKmo6JDUYnfX",
+      "id": "uifAZhC6RnY9f1XXMj4pkJ",
+      "referenceId": "u4ViXg39ZL8tds2AfD2o6U",
+      "selected": false
+    },
+    {
+      "type": "Solar Panel",
+      "pvModelName": "CS6X-355P-FG",
+      "trackerType": "None",
+      "relativeAzimuth": 0,
+      "tiltAngle": 0.3490658503988659,
+      "orientation": "Landscape",
+      "drawSunBeam": false,
+      "poleHeight": 2.5,
+      "poleRadius": 0.05,
+      "poleSpacing": 5,
+      "cx": -0.03392607449209484,
+      "cy": 0.11361278087630505,
+      "cz": 0.1,
+      "lx": 17.712,
+      "ly": 2.976,
+      "lz": 0.006,
+      "showLabel": false,
+      "normal": [
+        0,
+        0,
+        1
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "parentId": "of4fAMi2p9MKmo6JDUYnfX",
+      "foundationId": "of4fAMi2p9MKmo6JDUYnfX",
+      "id": "geZvKxEXKjETdQ3d5Lgm5g",
+      "referenceId": "u4ViXg39ZL8tds2AfD2o6U",
+      "selected": false
+    },
+    {
+      "type": "Solar Panel",
+      "pvModelName": "CS6X-355P-FG",
+      "trackerType": "None",
+      "relativeAzimuth": 0,
+      "tiltAngle": 0.3490658503988659,
+      "orientation": "Landscape",
+      "drawSunBeam": false,
+      "poleHeight": 2.5,
+      "poleRadius": 0.05,
+      "poleSpacing": 5,
+      "cx": -0.04705768901131374,
+      "cy": 0.28699427497989444,
+      "cz": 0.1,
+      "lx": 19.68,
+      "ly": 2.976,
+      "lz": 0.006,
+      "showLabel": false,
+      "normal": [
+        0,
+        0,
+        1
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "parentId": "of4fAMi2p9MKmo6JDUYnfX",
+      "foundationId": "of4fAMi2p9MKmo6JDUYnfX",
+      "id": "pp4be9bL1iw9MFQXeHzb5s",
+      "referenceId": "u4ViXg39ZL8tds2AfD2o6U",
+      "selected": false
+    }
+  ],
+  "view": {
+    "yearlyPvYieldPanelX": -1278,
+    "autoRotate": false,
+    "mapZoom": 16,
+    "axes": true,
+    "theme": "Default",
+    "showSiteInfoPanel": false,
+    "showDesignInfoPanel": true,
+    "showWeatherPanel": false,
+    "groundPanelX": 0,
+    "dailyPvYieldPanelX": -1280,
+    "dailyLightSensorPanelY": 232,
+    "showDailyLightSensorPanel": false,
+    "mapTilt": 0,
+    "yearlyPvYieldPanelY": 47,
+    "yearlyLightSensorPanelX": 0,
+    "showGroundPanel": false,
+    "showHeliodonPanel": false,
+    "heliodon": false,
+    "weatherPanelY": 0,
+    "heliodonPanelX": -548,
+    "dailyPvYieldPanelY": 11,
+    "mapWeatherStations": false,
+    "yearlyLightSensorPanelY": 0,
+    "showPvDailyYieldPanel": true,
+    "showYearlyPvYieldPanel": false,
+    "dailyLightSensorPanelX": -240,
+    "weatherPanelX": 0,
+    "heliodonPanelY": -14,
+    "groundColor": "forestgreen",
+    "groundPanelY": 0,
+    "groundImage": false,
+    "showDailyPvYieldPanel": false,
+    "shadowEnabled": true,
+    "showYearlyLightSensorPanel": false,
+    "mapType": "roadmap",
+    "cameraPosition": [
+      19.044060264175897,
+      -35.726179040446965,
+      19.72715458392283
+    ],
+    "panCenter": [
+      18.38913954772241,
+      -2.542423010712041,
+      1.371352818471817
+    ],
+    "orthographic": false,
+    "enableRotate": true,
+    "cameraZoom": 12.604988194492186,
+    "showInstructionPanel": true,
+    "cameraPosition2D": [
+      2.3674379904539022,
+      -0.03943765886515896,
+      47.999999960583935
+    ],
+    "panCenter2D": [
+      2.3674379904539022,
+      -0.03938965673234099,
+      7.088571867787634e-7
+    ],
+    "showEvolutionPanel": true,
+    "solarRadiationHeatMapMaxValue": 3.5,
+    "evolutionPanelX": -3,
+    "evolutionPanelY": 5,
+    "showEconomicsPanel": false
+  },
+  "evolutionMethod": 1,
+  "solarPanelArrayLayoutConstraints": {
+    "minimumInterRowSpacing": 2,
+    "maximumInterRowSpacing": 10,
+    "minimumRowsPerRack": 1,
+    "maximumRowsPerRack": 5,
+    "minimumTiltAngle": 0,
+    "maximumTiltAngle": 1.5707963267948966
+  },
+  "evolutionaryAlgorithmState": {
+    "geneticAlgorithmParams": {
+      "solution": "Solar Panel Tilt Angle",
+      "objectiveFunctionType": 6,
+      "selectionMethod": 1,
+      "searchMethod": 1,
+      "populationSize": 10,
+      "maximumGenerations": 5,
+      "selectionRate": 0.5,
+      "crossoverRate": 0.5,
+      "mutationRate": 0.1,
+      "convergenceThreshold": 0.01,
+      "localSearchRadius": 0.1,
+      "problem": "Solar Panel Array"
+    },
+    "particleSwarmOptimizationParams": {
+      "solution": "Solar Panel Tilt Angle",
+      "objectiveFunctionType": 2,
+      "searchMethod": 1,
+      "vmax": 0.01,
+      "swarmSize": 20,
+      "maximumSteps": 10,
+      "inertia": 0.8,
+      "cognitiveCoefficient": 0.1,
+      "socialCoefficient": 0.1,
+      "convergenceThreshold": 0.01,
+      "localSearchRadius": 0.1
+    }
+  },
+  "economicsParams": {
+    "projectLifeSpan": 25,
+    "electricitySellingPrice": 0.25,
+    "operationalCostPerUnit": 0.3
+  },
+  "notes": []
+}

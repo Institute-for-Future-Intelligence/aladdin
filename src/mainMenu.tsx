@@ -42,6 +42,7 @@ import solar_updraft_tower_city from './examples/solar_updraft_tower_city.json';
 import tucson_sundt_station from './examples/tucson_sundt_station.json';
 import ai_tilt_angle_one_row from './examples/ai_tilt_angle_one_row.json';
 import ai_tilt_angles_multiple_rows from './examples/ai_tilt_angles_multiple_rows.json';
+import ai_solar_farm_design from './examples/ai_solar_farm_design.json';
 
 import zhCN from 'antd/lib/locale/zh_CN';
 import zhTW from 'antd/lib/locale/zh_TW';
@@ -304,6 +305,9 @@ const MainMenu = ({ viewOnly, set2DView, resetView, zoomView, canvas }: MainMenu
         break;
       case 'ai_tilt_angles_multiple_rows':
         input = ai_tilt_angles_multiple_rows;
+        break;
+      case 'ai_solar_farm_design':
+        input = ai_solar_farm_design;
         break;
     }
     if (input) {
@@ -1660,6 +1664,9 @@ const MainMenu = ({ viewOnly, set2DView, resetView, zoomView, canvas }: MainMenu
           </Menu.Item>
           <Menu.Item key="ai_tilt_angles_multiple_rows" onClick={loadFile}>
             {i18n.t('menu.examples.OptimizingTiltAnglesOfMultipleSolarPanelRows', lang)}
+          </Menu.Item>
+          <Menu.Item key="ai_solar_farm_design" onClick={loadFile}>
+            {i18n.t('menu.examples.SolarFarmGenerativeDesign', lang)}
           </Menu.Item>
         </SubMenu>
       </SubMenu>

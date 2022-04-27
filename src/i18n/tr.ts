@@ -349,6 +349,7 @@ export const i18n_tr = {
         Heatmap1: 'Heatmap',
         OptimizingTiltAngleOfOneSolarPanelRow: 'Optimizing the Tilt Angle of a Solar Panel Row',
         OptimizingTiltAnglesOfMultipleSolarPanelRows: 'Optimizing the Tilt Angles of Multiple Solar Panel Rows',
+        SolarFarmGenerativeDesign: 'Solar Farm Generative Design',
       },
       languageSubMenu: 'Dil',
       AboutUs: 'Hakkýmýzda',
