@@ -190,6 +190,12 @@ const SolarPanelArrayGaWizard = ({ setDialogVisible }: { setDialogVisible: (b: b
               >
                 {i18n.t('optimizationMenu.ObjectiveFunctionYearlyAverageOutput', lang)}
               </Option>
+              <Option key={ObjectiveFunctionType.DAILY_PROFIT} value={ObjectiveFunctionType.DAILY_PROFIT}>
+                {i18n.t('optimizationMenu.ObjectiveFunctionDailyProfit', lang)}
+              </Option>
+              <Option key={ObjectiveFunctionType.YEARLY_PROFIT} value={ObjectiveFunctionType.YEARLY_PROFIT}>
+                {i18n.t('optimizationMenu.ObjectiveFunctionYearlyProfit', lang)}
+              </Option>
             </Select>
           </Col>
         </Row>

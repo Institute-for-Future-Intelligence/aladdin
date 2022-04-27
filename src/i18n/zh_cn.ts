@@ -565,6 +565,8 @@ export const i18n_zh_cn = {
       ObjectiveFunctionYearlyTotalOutput: '全年总产出',
       ObjectiveFunctionDailyAverageOutput: '当日平均产出',
       ObjectiveFunctionYearlyAverageOutput: '全年平均产出',
+      ObjectiveFunctionDailyProfit: '当日利润',
+      ObjectiveFunctionYearlyProfit: '全年利润',
       GeneticAlgorithmSelectionMethod: '遗传算法选择方法',
       RouletteWheel: '轮盘制',
       Tournament: '淘汰制',

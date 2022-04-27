@@ -55,6 +55,8 @@ export enum ObjectiveFunctionType {
   YEARLY_TOTAL_OUTPUT = 2,
   DAILY_AVERAGE_OUTPUT = 3,
   YEARLY_AVERAGE_OUTPUT = 4,
+  DAILY_PROFIT = 5,
+  YEARLY_PROFIT = 6,
 }
 
 export enum EvolutionMethod {

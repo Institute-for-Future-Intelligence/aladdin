@@ -582,6 +582,8 @@ export const i18n_en = {
       ObjectiveFunctionYearlyTotalOutput: 'Yearly Total Output',
       ObjectiveFunctionDailyAverageOutput: 'Daily Average Output',
       ObjectiveFunctionYearlyAverageOutput: 'Yearly Average Output',
+      ObjectiveFunctionDailyProfit: 'Daily Profit',
+      ObjectiveFunctionYearlyProfit: 'Yearly Profit',
       GeneticAlgorithmSelectionMethod: 'Genetic Algorithm Selection Method',
       RouletteWheel: 'Roulette Wheel',
       Tournament: 'Tournament',
