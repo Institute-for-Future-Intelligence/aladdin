@@ -107,7 +107,7 @@ export class SolarPanelArrayOptimizerGa extends OptimizerGa {
           Math.round(sp1.ly / (sp1.orientation === Orientation.portrait ? pvModel.length : pvModel.width)),
         );
         let gene3 = (rowsPerRack - this.minimumRowsPerRack) / (this.maximumRowsPerRack - this.minimumRowsPerRack);
-        if (gene3) gene3 = 0;
+        if (gene3 < 0) gene3 = 0;
         else if (gene3 > 1) gene3 = 1;
         firstBorn.setGene(2, gene3);
       }

@@ -351,6 +351,7 @@ export const i18n_tr = {
         OptimizingTiltAnglesOfMultipleSolarPanelRows: 'Optimizing the Tilt Angles of Multiple Solar Panel Rows',
         SolarFarmGenerativeDesign: 'Solar Farm Generative Design',
         SolarFarmGenerativeDesignWithBlock: 'Solar Farm Generative Design in the Presence of a Block',
+        FitchburgSolarFarmGenerativeDesign: 'Fitchburg Solar Farm Generative Design',
       },
       languageSubMenu: 'Dil',
       AboutUs: 'Hakkýmýzda',

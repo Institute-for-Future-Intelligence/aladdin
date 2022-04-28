@@ -348,6 +348,7 @@ export const i18n_zh_cn = {
         OptimizingTiltAnglesOfMultipleSolarPanelRows: '优化多排光伏板的倾斜角',
         SolarFarmGenerativeDesign: '生成式设计太阳能农场',
         SolarFarmGenerativeDesignWithBlock: '生成式设计太阳能农场：周边有建筑物的情况',
+        FitchburgSolarFarmGenerativeDesign: '生成式设计太阳能农场：真实世界案例',
       },
       languageSubMenu: '语言',
       AboutUs: '关于我们',
