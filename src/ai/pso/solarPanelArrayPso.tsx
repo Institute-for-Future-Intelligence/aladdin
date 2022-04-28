@@ -23,20 +23,19 @@ const SolarPanelArrayPso = () => {
   const getParent = useStore(Selector.getParent);
   const polygon = useStore(Selector.selectedElement) as PolygonModel;
   const getChildrenOfType = useStore(Selector.getChildrenOfType);
+  const getPvModule = useStore(Selector.getPvModule);
+  const removeElementsByReferenceId = useStore(Selector.removeElementsByReferenceId);
   const setFittestParticleResults = useStore(Selector.setFittestIndividualResults);
   const objectiveEvaluationIndex = useStore(Selector.objectiveEvaluationIndex);
   const particleLabels = useStore(Selector.variableLabels);
   const setParticleLabels = useStore(Selector.setVariableLabels);
   const params = useStore(Selector.evolutionaryAlgorithmState).particleSwarmOptimizationParams;
-  const constraints = useStore(Selector.solarPanelArrayLayoutConstraints);
+  const constraints = useStore.getState().solarPanelArrayLayoutConstraints;
   const economics = useStore.getState().economicsParams;
-  const getPvModule = useStore(Selector.getPvModule);
-  const removeElementsByReferenceId = useStore(Selector.removeElementsByReferenceId);
 
   const requestRef = useRef<number>(0);
   const evolutionCompletedRef = useRef<boolean>(false);
   const pauseRef = useRef<boolean>(false);
-  const solarPanelsRef = useRef<SolarPanelModel[]>();
   const optimizerRef = useRef<SolarPanelArrayOptimizerPso>();
   const particleIndexRef = useRef<number>(0);
   const convergedRef = useRef<boolean>(false);
@@ -46,8 +45,8 @@ const SolarPanelArrayPso = () => {
   const foundation = polygon ? (getParent(polygon) as FoundationModel) : undefined;
 
   useEffect(() => {
-    if (params.problem !== DesignProblem.SOLAR_PANEL_ARRAY) return;
     if (evolutionMethod !== EvolutionMethod.PARTICLE_SWARM_OPTIMIZATION) return;
+    if (params.problem !== DesignProblem.SOLAR_PANEL_ARRAY) return;
     if (runEvolution) {
       init();
       requestRef.current = requestAnimationFrame(evolve);
@@ -85,20 +84,20 @@ const SolarPanelArrayPso = () => {
 
   // getting ready for the evolution
   const init = () => {
-    if (!foundation) return;
+    if (!polygon || !foundation) return;
     setCommonStore((state) => {
       state.evolutionInProgress = true;
       state.objectiveEvaluationIndex = 0;
     });
     evolutionCompletedRef.current = false;
     const originalSolarPanels = getChildrenOfType(ObjectType.SolarPanel, foundation.id) as SolarPanelModel[];
-    solarPanelsRef.current = [];
+    const copiedSolarPanels: SolarPanelModel[] = [];
     for (const osp of originalSolarPanels) {
-      solarPanelsRef.current.push(JSON.parse(JSON.stringify(osp)) as SolarPanelModel);
+      copiedSolarPanels.push(JSON.parse(JSON.stringify(osp)) as SolarPanelModel);
     }
     optimizerRef.current = new SolarPanelArrayOptimizerPso(
-      getPvModule(solarPanelsRef.current.length > 0 ? solarPanelsRef.current[0].pvModelName : 'CS6X-355P-FG'),
-      solarPanelsRef.current,
+      getPvModule(copiedSolarPanels.length > 0 ? copiedSolarPanels[0].pvModelName : 'CS6X-355P-FG'),
+      copiedSolarPanels,
       polygon,
       foundation,
       params.swarmSize,
@@ -163,13 +162,15 @@ const SolarPanelArrayPso = () => {
     switch (params.objectiveFunctionType) {
       case ObjectiveFunctionType.DAILY_AVERAGE_OUTPUT:
       case ObjectiveFunctionType.YEARLY_AVERAGE_OUTPUT:
-        total = count ? total / count : total;
+        if (count) total /= count;
         break;
       case ObjectiveFunctionType.DAILY_PROFIT:
-        total = total * economics.electricitySellingPrice - (count ?? 0) * economics.operationalCostPerUnit;
+        total = total * economics.electricitySellingPrice;
+        if (count) total -= count * economics.operationalCostPerUnit;
         break;
       case ObjectiveFunctionType.YEARLY_PROFIT:
-        total = total * economics.electricitySellingPrice - (count ?? 0) * economics.operationalCostPerUnit * 365;
+        total = total * economics.electricitySellingPrice;
+        if (count) total -= count * economics.operationalCostPerUnit * 365;
         break;
     }
     return total;
@@ -256,12 +257,7 @@ const SolarPanelArrayPso = () => {
         const n = ps.length;
         datum['Step'] = index;
         for (let k = 0; k < n; k++) {
-          let key = 'Var' + (k + 1);
-          if (particleLabels[k]) {
-            const trimmed = particleLabels[k]?.trim();
-            if (trimmed && trimmed !== '') key = trimmed;
-          }
-          datum[key] = ps[k];
+          datum[particleLabels[k] ?? 'Var' + (k + 1)] = ps[k];
         }
         datum['Objective'] = optimizerRef.current.bestFitnessOfSteps[index];
         // the first step of the swarm starts from index 0
@@ -272,8 +268,7 @@ const SolarPanelArrayPso = () => {
             for (let i = 0; i < ss.particles.length; i++) {
               const n = ss.particles[i].position.length;
               for (let k = 0; k < n; k++) {
-                const key = 'Individual' + ++counter;
-                datum[key] = ss.particles[i].position[k];
+                datum['Individual' + ++counter] = ss.particles[i].position[k];
               }
             }
           }

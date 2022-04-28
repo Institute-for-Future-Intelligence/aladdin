@@ -68,36 +68,38 @@ export class SolarPanelArrayOptimizerPso extends OptimizerPso {
     this.maximumTiltAngle = maximumTiltAngle;
     this.setInterRowSpacingBounds();
     // set the first particle to be the current design, if any
-    if (initialSolarPanels && initialSolarPanels.length > 1) {
-      const firstParticle: Particle = this.swarm.particles[0];
-      // calculate the particle positions of the initial solar panels
+    if (initialSolarPanels && initialSolarPanels.length > 0) {
       const sp1 = initialSolarPanels[0];
-      const sp2 = initialSolarPanels[1];
       this.poleHeight = sp1.poleHeight;
       this.poleSpacing = sp1.poleSpacing;
 
-      firstParticle.position[0] =
-        (sp1.tiltAngle - this.minimumTiltAngle) / (this.maximumTiltAngle - this.minimumTiltAngle);
+      if (initialSolarPanels.length > 1) {
+        const firstParticle: Particle = this.swarm.particles[0];
+        // calculate the particle positions of the initial solar panels
+        firstParticle.position[0] =
+          (sp1.tiltAngle - this.minimumTiltAngle) / (this.maximumTiltAngle - this.minimumTiltAngle);
 
-      const interRowSpacing =
-        this.rowAxis === RowAxis.meridional
-          ? Math.abs(sp1.cx - sp2.cx) * this.foundation.lx
-          : Math.abs(sp1.cy - sp2.cy) * this.foundation.ly;
-      let normalizedInterRowSpacing =
-        (interRowSpacing - this.minimumInterRowSpacing) / (this.maximumInterRowSpacing - this.minimumInterRowSpacing);
-      if (normalizedInterRowSpacing < 0) normalizedInterRowSpacing = 0;
-      else if (normalizedInterRowSpacing > 1) normalizedInterRowSpacing = 1;
-      firstParticle.position[1] = normalizedInterRowSpacing;
+        const sp2 = initialSolarPanels[1];
+        const interRowSpacing =
+          this.rowAxis === RowAxis.meridional
+            ? Math.abs(sp1.cx - sp2.cx) * this.foundation.lx
+            : Math.abs(sp1.cy - sp2.cy) * this.foundation.ly;
+        let normalizedInterRowSpacing =
+          (interRowSpacing - this.minimumInterRowSpacing) / (this.maximumInterRowSpacing - this.minimumInterRowSpacing);
+        if (normalizedInterRowSpacing < 0) normalizedInterRowSpacing = 0;
+        else if (normalizedInterRowSpacing > 1) normalizedInterRowSpacing = 1;
+        firstParticle.position[1] = normalizedInterRowSpacing;
 
-      const rowsPerRack = Math.max(
-        1,
-        Math.round(sp1.ly / (sp1.orientation === Orientation.portrait ? pvModel.length : pvModel.width)),
-      );
-      let normalizedRowsPerRack =
-        (rowsPerRack - this.minimumRowsPerRack) / (this.maximumRowsPerRack - this.minimumRowsPerRack);
-      if (normalizedRowsPerRack < 0) normalizedRowsPerRack = 0;
-      else if (normalizedRowsPerRack > 1) normalizedRowsPerRack = 1;
-      firstParticle.position[2] = normalizedRowsPerRack;
+        const rowsPerRack = Math.max(
+          1,
+          Math.round(sp1.ly / (sp1.orientation === Orientation.portrait ? pvModel.length : pvModel.width)),
+        );
+        let normalizedRowsPerRack =
+          (rowsPerRack - this.minimumRowsPerRack) / (this.maximumRowsPerRack - this.minimumRowsPerRack);
+        if (normalizedRowsPerRack < 0) normalizedRowsPerRack = 0;
+        else if (normalizedRowsPerRack > 1) normalizedRowsPerRack = 1;
+        firstParticle.position[2] = normalizedRowsPerRack;
+      }
     }
   }
 
@@ -106,11 +108,10 @@ export class SolarPanelArrayOptimizerPso extends OptimizerPso {
   }
 
   applyFittest(): void {
-    const best = this.swarm.bestPositionOfSwarm;
-    if (best) {
+    if (this.swarm.bestPositionOfSwarm) {
       console.log(
         'Best: ' +
-          this.particleToString(best, this.swarm.bestFitness) +
+          this.particleToString(this.swarm.bestPositionOfSwarm, this.swarm.bestFitness) +
           ', rack count: ' +
           this.solarRackCount +
           ', panel count: ' +
@@ -145,14 +146,13 @@ export class SolarPanelArrayOptimizerPso extends OptimizerPso {
   }
 
   translateBest(): SolarPanelModel[] {
-    const best: number[] | undefined = this.swarm.bestPositionOfSwarm;
-    if (best) {
-      return this.translatePosition(best);
+    if (this.swarm.bestPositionOfSwarm) {
+      return this.translatePosition(this.swarm.bestPositionOfSwarm);
     }
     return [];
   }
 
-  // translate position to structure for the specified particle
+  // translate position to structure for the specified position
   private translatePosition(position: number[]): SolarPanelModel[] {
     const tiltAngle = position[0] * (this.maximumTiltAngle - this.minimumTiltAngle) + this.minimumTiltAngle;
     const interRowSpacing =
@@ -212,7 +212,7 @@ export class SolarPanelArrayOptimizerPso extends OptimizerPso {
             solarPanel.poleHeight = this.poleHeight;
             solarPanel.poleSpacing = this.poleSpacing;
             solarPanel.referenceId = this.polygon.id;
-            this.changeOrientation(solarPanel, this.orientation);
+            Util.changeOrientation(solarPanel, this.pvModel, this.orientation);
             solarPanels.push(JSON.parse(JSON.stringify(solarPanel)));
             this.solarPanelCount += Util.countSolarPanelsOnRack(solarPanel, this.pvModel);
           }
@@ -256,7 +256,7 @@ export class SolarPanelArrayOptimizerPso extends OptimizerPso {
             solarPanel.poleHeight = this.poleHeight;
             solarPanel.poleSpacing = this.poleSpacing;
             solarPanel.referenceId = this.polygon.id;
-            this.changeOrientation(solarPanel, this.orientation);
+            Util.changeOrientation(solarPanel, this.pvModel, this.orientation);
             solarPanels.push(JSON.parse(JSON.stringify(solarPanel)));
             this.solarPanelCount += Util.countSolarPanelsOnRack(solarPanel, this.pvModel);
           }
@@ -264,28 +264,6 @@ export class SolarPanelArrayOptimizerPso extends OptimizerPso {
       }
     }
     return solarPanels;
-  }
-
-  private changeOrientation(solarPanel: SolarPanelModel, value: Orientation): void {
-    if (solarPanel) {
-      solarPanel.orientation = value;
-      // add a small number because the round-off error may cause the floor to drop one
-      solarPanel.lx += 0.00001;
-      solarPanel.ly += 0.00001;
-      if (value === Orientation.portrait) {
-        // calculate the current x-y layout
-        const nx = Math.max(1, Math.floor(solarPanel.lx / this.pvModel.width));
-        const ny = Math.max(1, Math.floor(solarPanel.ly / this.pvModel.length));
-        solarPanel.lx = nx * this.pvModel.width;
-        solarPanel.ly = ny * this.pvModel.length;
-      } else {
-        // calculate the current x-y layout
-        const nx = Math.max(1, Math.floor(solarPanel.lx / this.pvModel.length));
-        const ny = Math.max(1, Math.floor(solarPanel.ly / this.pvModel.width));
-        solarPanel.lx = nx * this.pvModel.length;
-        solarPanel.ly = ny * this.pvModel.width;
-      }
-    }
   }
 
   updateParticle(indexOfParticle: number, fitness: number): boolean {

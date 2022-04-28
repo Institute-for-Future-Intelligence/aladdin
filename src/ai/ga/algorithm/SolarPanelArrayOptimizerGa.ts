@@ -86,36 +86,38 @@ export class SolarPanelArrayOptimizerGa extends OptimizerGa {
     this.geneMinima[2] = this.minimumRowsPerRack;
     this.geneMaxima[2] = this.maximumRowsPerRack;
     // set the firstborn to be the current design, if any
-    if (initialSolarPanels && initialSolarPanels.length > 1) {
-      const firstBorn: Individual = this.population.individuals[0];
-      // calculate the genes of the initial solar panels
+    if (initialSolarPanels && initialSolarPanels.length > 0) {
       const sp1 = initialSolarPanels[0];
-      const sp2 = initialSolarPanels[1];
       this.poleHeight = sp1.poleHeight;
       this.poleSpacing = sp1.poleSpacing;
 
-      this.initialGene[0] = (sp1.tiltAngle - this.minimumTiltAngle) / (this.maximumTiltAngle - this.minimumTiltAngle);
-      firstBorn.setGene(0, this.initialGene[0]);
+      if (initialSolarPanels.length > 1) {
+        const firstBorn: Individual = this.population.individuals[0];
+        // calculate the genes of the initial solar panels
+        this.initialGene[0] = (sp1.tiltAngle - this.minimumTiltAngle) / (this.maximumTiltAngle - this.minimumTiltAngle);
+        firstBorn.setGene(0, this.initialGene[0]);
 
-      const interRowSpacing =
-        this.rowAxis === RowAxis.meridional
-          ? Math.abs(sp1.cx - sp2.cx) * this.foundation.lx
-          : Math.abs(sp1.cy - sp2.cy) * this.foundation.ly;
-      this.initialGene[1] =
-        (interRowSpacing - this.minimumInterRowSpacing) / (this.maximumInterRowSpacing - this.minimumInterRowSpacing);
-      if (this.initialGene[1] < 0) this.initialGene[1] = 0;
-      else if (this.initialGene[1] > 1) this.initialGene[1] = 1;
-      firstBorn.setGene(1, this.initialGene[1]);
+        const sp2 = initialSolarPanels[1];
+        const interRowSpacing =
+          this.rowAxis === RowAxis.meridional
+            ? Math.abs(sp1.cx - sp2.cx) * this.foundation.lx
+            : Math.abs(sp1.cy - sp2.cy) * this.foundation.ly;
+        this.initialGene[1] =
+          (interRowSpacing - this.minimumInterRowSpacing) / (this.maximumInterRowSpacing - this.minimumInterRowSpacing);
+        if (this.initialGene[1] < 0) this.initialGene[1] = 0;
+        else if (this.initialGene[1] > 1) this.initialGene[1] = 1;
+        firstBorn.setGene(1, this.initialGene[1]);
 
-      const rowsPerRack = Math.max(
-        1,
-        Math.round(sp1.ly / (sp1.orientation === Orientation.portrait ? pvModel.length : pvModel.width)),
-      );
-      this.initialGene[2] =
-        (rowsPerRack - this.minimumRowsPerRack) / (this.maximumRowsPerRack - this.minimumRowsPerRack);
-      if (this.initialGene[2] < 0) this.initialGene[2] = 0;
-      else if (this.initialGene[2] > 1) this.initialGene[2] = 1;
-      firstBorn.setGene(2, this.initialGene[2]);
+        const rowsPerRack = Math.max(
+          1,
+          Math.round(sp1.ly / (sp1.orientation === Orientation.portrait ? pvModel.length : pvModel.width)),
+        );
+        this.initialGene[2] =
+          (rowsPerRack - this.minimumRowsPerRack) / (this.maximumRowsPerRack - this.minimumRowsPerRack);
+        if (this.initialGene[2] < 0) this.initialGene[2] = 0;
+        else if (this.initialGene[2] > 1) this.initialGene[2] = 1;
+        firstBorn.setGene(2, this.initialGene[2]);
+      }
     }
   }
 
@@ -239,7 +241,7 @@ export class SolarPanelArrayOptimizerGa extends OptimizerGa {
             solarPanel.poleHeight = this.poleHeight;
             solarPanel.poleSpacing = this.poleSpacing;
             solarPanel.referenceId = this.polygon.id;
-            this.changeOrientation(solarPanel, this.orientation);
+            Util.changeOrientation(solarPanel, this.pvModel, this.orientation);
             solarPanels.push(JSON.parse(JSON.stringify(solarPanel)));
             this.solarPanelCount += Util.countSolarPanelsOnRack(solarPanel, this.pvModel);
           }
@@ -283,7 +285,7 @@ export class SolarPanelArrayOptimizerGa extends OptimizerGa {
             solarPanel.poleHeight = this.poleHeight;
             solarPanel.poleSpacing = this.poleSpacing;
             solarPanel.referenceId = this.polygon.id;
-            this.changeOrientation(solarPanel, this.orientation);
+            Util.changeOrientation(solarPanel, this.pvModel, this.orientation);
             solarPanels.push(JSON.parse(JSON.stringify(solarPanel)));
             this.solarPanelCount += Util.countSolarPanelsOnRack(solarPanel, this.pvModel);
           }
@@ -291,28 +293,6 @@ export class SolarPanelArrayOptimizerGa extends OptimizerGa {
       }
     }
     return solarPanels;
-  }
-
-  private changeOrientation(solarPanel: SolarPanelModel, value: Orientation): void {
-    if (solarPanel) {
-      solarPanel.orientation = value;
-      // add a small number because the round-off error may cause the floor to drop one
-      solarPanel.lx += 0.00001;
-      solarPanel.ly += 0.00001;
-      if (value === Orientation.portrait) {
-        // calculate the current x-y layout
-        const nx = Math.max(1, Math.floor(solarPanel.lx / this.pvModel.width));
-        const ny = Math.max(1, Math.floor(solarPanel.ly / this.pvModel.length));
-        solarPanel.lx = nx * this.pvModel.width;
-        solarPanel.ly = ny * this.pvModel.length;
-      } else {
-        // calculate the current x-y layout
-        const nx = Math.max(1, Math.floor(solarPanel.lx / this.pvModel.length));
-        const ny = Math.max(1, Math.floor(solarPanel.ly / this.pvModel.width));
-        solarPanel.lx = nx * this.pvModel.length;
-        solarPanel.ly = ny * this.pvModel.width;
-      }
-    }
   }
 
   evolveIndividual(indexOfIndividual: number, fitness: number): boolean {

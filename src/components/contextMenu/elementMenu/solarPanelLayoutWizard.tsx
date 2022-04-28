@@ -87,29 +87,6 @@ const SolarPanelLayoutWizard = ({ setDialogVisible }: { setDialogVisible: (b: bo
     }
   };
 
-  const changeOrientation = (solarPanel: SolarPanelModel, value: Orientation) => {
-    if (solarPanel) {
-      solarPanel.orientation = value;
-      const pvModel = getPvModule(solarPanel.pvModelName);
-      // add a small number because the round-off error may cause the floor to drop one
-      solarPanel.lx += 0.00001;
-      solarPanel.ly += 0.00001;
-      if (value === Orientation.portrait) {
-        // calculate the current x-y layout
-        const nx = Math.max(1, Math.floor(solarPanel.lx / pvModel.width));
-        const ny = Math.max(1, Math.floor(solarPanel.ly / pvModel.length));
-        solarPanel.lx = nx * pvModel.width;
-        solarPanel.ly = ny * pvModel.length;
-      } else {
-        // calculate the current x-y layout
-        const nx = Math.max(1, Math.floor(solarPanel.lx / pvModel.length));
-        const ny = Math.max(1, Math.floor(solarPanel.ly / pvModel.width));
-        solarPanel.lx = nx * pvModel.length;
-        solarPanel.ly = ny * pvModel.width;
-      }
-    }
-  };
-
   const isLayoutOk = () => {
     const ly =
       (orientationRef.current === Orientation.portrait ? pvModel.length : pvModel.width) * rowsPerRackRef.current;
@@ -195,7 +172,7 @@ const SolarPanelLayoutWizard = ({ setDialogVisible }: { setDialogVisible: (b: bo
                 solarPanel.poleHeight = poleHeightRef.current;
                 solarPanel.poleSpacing = poleSpacingRef.current;
                 solarPanel.referenceId = area.id;
-                changeOrientation(solarPanel, orientationRef.current);
+                Util.changeOrientation(solarPanel, pvModel, orientationRef.current);
                 newElements.push(JSON.parse(JSON.stringify(solarPanel)));
                 setCommonStore((state) => {
                   state.elements.push(solarPanel);
@@ -241,7 +218,7 @@ const SolarPanelLayoutWizard = ({ setDialogVisible }: { setDialogVisible: (b: bo
                 solarPanel.poleHeight = poleHeightRef.current;
                 solarPanel.poleSpacing = poleSpacingRef.current;
                 solarPanel.referenceId = area.id;
-                changeOrientation(solarPanel, orientationRef.current);
+                Util.changeOrientation(solarPanel, pvModel, orientationRef.current);
                 newElements.push(JSON.parse(JSON.stringify(solarPanel)));
                 setCommonStore((state) => {
                   state.elements.push(solarPanel);

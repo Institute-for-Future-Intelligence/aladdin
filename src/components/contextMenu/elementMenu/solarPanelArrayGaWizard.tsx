@@ -26,13 +26,14 @@ const SolarPanelArrayGaWizard = ({ setDialogVisible }: { setDialogVisible: (b: b
   const setCommonStore = useStore(Selector.set);
   const language = useStore(Selector.language);
   const runEvolution = useStore(Selector.runEvolution);
+  const params = useStore(Selector.evolutionaryAlgorithmState).geneticAlgorithmParams;
   const constraints = useStore(Selector.solarPanelArrayLayoutConstraints);
 
   const [updateFlag, setUpdateFlag] = useState<boolean>(false);
   const [dragEnabled, setDragEnabled] = useState<boolean>(false);
   const [bounds, setBounds] = useState<DraggableBounds>({ left: 0, top: 0, bottom: 0, right: 0 } as DraggableBounds);
+
   const dragRef = useRef<HTMLDivElement | null>(null);
-  const params = useStore(Selector.evolutionaryAlgorithmState).geneticAlgorithmParams;
   const objectiveFunctionTypeRef = useRef<ObjectiveFunctionType>(params.objectiveFunctionType);
   const selectionMethodRef = useRef<GeneticAlgorithmSelectionMethod>(params.selectionMethod);
   const searchMethodRef = useRef<SearchMethod>(params.searchMethod);
@@ -104,7 +105,6 @@ const SolarPanelArrayGaWizard = ({ setDialogVisible }: { setDialogVisible: (b: b
     setTimeout(() => {
       setCommonStore((state) => {
         state.evolutionMethod = EvolutionMethod.GENETIC_ALGORITHM;
-        state.evolutionaryAlgorithmState.geneticAlgorithmParams.problem = DesignProblem.SOLAR_PANEL_ARRAY;
         state.runEvolution = !state.runEvolution;
       });
     }, 100);
@@ -121,8 +121,9 @@ const SolarPanelArrayGaWizard = ({ setDialogVisible }: { setDialogVisible: (b: b
             onMouseOver={() => setDragEnabled(true)}
             onMouseOut={() => setDragEnabled(false)}
           >
-            {i18n.t('optimizationMenu.SolarPanelArrayLayout', lang) + ': '}
-            {i18n.t('optimizationMenu.GeneticAlgorithmSettings', lang)}
+            {i18n.t('optimizationMenu.SolarPanelArrayLayout', lang) +
+              ': ' +
+              i18n.t('optimizationMenu.GeneticAlgorithmSettings', lang)}
           </div>
         }
         footer={[
@@ -232,7 +233,7 @@ const SolarPanelArrayGaWizard = ({ setDialogVisible }: { setDialogVisible: (b: b
 
         <Row gutter={6} style={{ paddingBottom: '4px' }}>
           <Col className="gutter-row" span={12}>
-            {i18n.t('optimizationMenu.PopulationSize', lang) + ':'}
+            {i18n.t('optimizationMenu.PopulationSize', lang) + ' [10, 100]:'}
           </Col>
           <Col className="gutter-row" span={12}>
             <InputNumber
@@ -253,7 +254,7 @@ const SolarPanelArrayGaWizard = ({ setDialogVisible }: { setDialogVisible: (b: b
 
         <Row gutter={6} style={{ paddingBottom: '4px' }}>
           <Col className="gutter-row" span={12}>
-            {i18n.t('optimizationMenu.MaximumGenerations', lang) + ':'}
+            {i18n.t('optimizationMenu.MaximumGenerations', lang) + ' [5, 100]:'}
           </Col>
           <Col className="gutter-row" span={12}>
             <InputNumber
@@ -337,7 +338,7 @@ const SolarPanelArrayGaWizard = ({ setDialogVisible }: { setDialogVisible: (b: b
 
         <Row gutter={6} style={{ paddingBottom: '4px' }}>
           <Col className="gutter-row" span={12}>
-            {i18n.t('optimizationMenu.ConvergenceThreshold', lang) + ' [0, 0.1]: '}
+            {i18n.t('optimizationMenu.ConvergenceThreshold', lang) + ' (0, 0.1]: '}
           </Col>
           <Col className="gutter-row" span={12}>
             <InputNumber

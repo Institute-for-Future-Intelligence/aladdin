@@ -221,6 +221,28 @@ export class Util {
     return vertices;
   }
 
+  static changeOrientation(solarPanel: SolarPanelModel, pvModel: PvModel, value: Orientation): void {
+    if (solarPanel) {
+      solarPanel.orientation = value;
+      // add a small number because the round-off error may cause the floor to drop one
+      solarPanel.lx += 0.00001;
+      solarPanel.ly += 0.00001;
+      if (value === Orientation.portrait) {
+        // calculate the current x-y layout
+        const nx = Math.max(1, Math.floor(solarPanel.lx / pvModel.width));
+        const ny = Math.max(1, Math.floor(solarPanel.ly / pvModel.length));
+        solarPanel.lx = nx * pvModel.width;
+        solarPanel.ly = ny * pvModel.length;
+      } else {
+        // calculate the current x-y layout
+        const nx = Math.max(1, Math.floor(solarPanel.lx / pvModel.length));
+        const ny = Math.max(1, Math.floor(solarPanel.ly / pvModel.width));
+        solarPanel.lx = nx * pvModel.length;
+        solarPanel.ly = ny * pvModel.width;
+      }
+    }
+  }
+
   static panelizeLx(solarPanel: SolarPanelModel, pvModel: PvModel, value: number): number {
     const dx = solarPanel.orientation === Orientation.portrait ? pvModel.width : pvModel.length;
     let lx = value ?? 1;
