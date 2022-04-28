@@ -78,6 +78,7 @@ import SolarPanelArrayGa from './ai/ga/solarPanelArrayGa';
 import SolarPanelTiltAnglePso from './ai/pso/solarPanelTiltAnglePso';
 import SolarPanelOptimizationResult from './panels/solarPanelOptimizationResult';
 import EconomicsPanel from './panels/economicsPanel';
+import SolarPanelArrayPso from './ai/pso/solarPanelArrayPso';
 
 export interface AppCreatorProps {
   viewOnly: boolean;
@@ -445,6 +446,9 @@ const AppCreator = ({ viewOnly = false }: AppCreatorProps) => {
             {evolutionMethod === EvolutionMethod.PARTICLE_SWARM_OPTIMIZATION &&
               evolutionaryAlgorithmState.particleSwarmOptimizationParams.problem ===
                 DesignProblem.SOLAR_PANEL_TILT_ANGLE && <SolarPanelTiltAnglePso />}
+            {evolutionMethod === EvolutionMethod.PARTICLE_SWARM_OPTIMIZATION &&
+              evolutionaryAlgorithmState.particleSwarmOptimizationParams.problem ===
+                DesignProblem.SOLAR_PANEL_ARRAY && <SolarPanelArrayPso />}
           </Canvas>
           <KeyboardListener
             canvas={canvasRef.current}

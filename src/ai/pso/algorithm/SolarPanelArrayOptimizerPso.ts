@@ -288,7 +288,7 @@ export class SolarPanelArrayOptimizerPso extends OptimizerPso {
     }
   }
 
-  moveParticle(indexOfParticle: number, fitness: number): boolean {
+  updateParticle(indexOfParticle: number, fitness: number): boolean {
     const swarmSize = this.swarm.particles.length;
     if (!this.converged) {
       const particle: Particle = this.swarm.particles[indexOfParticle];
