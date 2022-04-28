@@ -22,7 +22,7 @@ import { HALF_PI } from '../../../constants';
 
 const { Option } = Select;
 
-const SolarPanelArrayGaWizard = ({ setDialogVisible }: { setDialogVisible: (b: boolean) => void }) => {
+const SolarPanelArrayPsoWizard = ({ setDialogVisible }: { setDialogVisible: (b: boolean) => void }) => {
   const setCommonStore = useStore(Selector.set);
   const language = useStore(Selector.language);
   const runEvolution = useStore(Selector.runEvolution);
@@ -32,15 +32,15 @@ const SolarPanelArrayGaWizard = ({ setDialogVisible }: { setDialogVisible: (b: b
   const [dragEnabled, setDragEnabled] = useState<boolean>(false);
   const [bounds, setBounds] = useState<DraggableBounds>({ left: 0, top: 0, bottom: 0, right: 0 } as DraggableBounds);
   const dragRef = useRef<HTMLDivElement | null>(null);
-  const params = useStore(Selector.evolutionaryAlgorithmState).geneticAlgorithmParams;
+  const params = useStore(Selector.evolutionaryAlgorithmState).particleSwarmOptimizationParams;
   const objectiveFunctionTypeRef = useRef<ObjectiveFunctionType>(params.objectiveFunctionType);
-  const selectionMethodRef = useRef<GeneticAlgorithmSelectionMethod>(params.selectionMethod);
   const searchMethodRef = useRef<SearchMethod>(params.searchMethod);
-  const populationSizeRef = useRef<number>(params.populationSize);
-  const maximumGenerationsRef = useRef<number>(params.maximumGenerations);
-  const mutationRateRef = useRef<number>(params.mutationRate);
-  const selectionRateRef = useRef<number>(params.selectionRate ?? 0.5);
-  const crossoverRateRef = useRef<number>(params.crossoverRate ?? 0.5);
+  const swarmSizeRef = useRef<number>(params.swarmSize);
+  const maximumStepsRef = useRef<number>(params.maximumSteps);
+  const vmaxRef = useRef<number>(params.vmax ?? 0.01);
+  const inertiaRef = useRef<number>(params.inertia ?? 0.8);
+  const cognitiveCoefficientRef = useRef<number>(params.cognitiveCoefficient ?? 0.1);
+  const socialCoefficientRef = useRef<number>(params.socialCoefficient ?? 0.1);
   const convergenceThresholdRef = useRef<number>(params.convergenceThreshold);
   const localSearchRadiusRef = useRef<number>(params.localSearchRadius);
   const minimumTiltAngleRef = useRef<number>(constraints.minimumTiltAngle ?? -HALF_PI);
@@ -73,17 +73,20 @@ const SolarPanelArrayGaWizard = ({ setDialogVisible }: { setDialogVisible: (b: b
   // save the values in the common store to persist the user's last settings
   const updateStoreParams = () => {
     setCommonStore((state) => {
-      state.evolutionaryAlgorithmState.geneticAlgorithmParams.problem = DesignProblem.SOLAR_PANEL_ARRAY;
-      state.evolutionaryAlgorithmState.geneticAlgorithmParams.objectiveFunctionType = objectiveFunctionTypeRef.current;
-      state.evolutionaryAlgorithmState.geneticAlgorithmParams.selectionMethod = selectionMethodRef.current;
-      state.evolutionaryAlgorithmState.geneticAlgorithmParams.searchMethod = searchMethodRef.current;
-      state.evolutionaryAlgorithmState.geneticAlgorithmParams.populationSize = populationSizeRef.current;
-      state.evolutionaryAlgorithmState.geneticAlgorithmParams.maximumGenerations = maximumGenerationsRef.current;
-      state.evolutionaryAlgorithmState.geneticAlgorithmParams.selectionRate = selectionRateRef.current;
-      state.evolutionaryAlgorithmState.geneticAlgorithmParams.crossoverRate = crossoverRateRef.current;
-      state.evolutionaryAlgorithmState.geneticAlgorithmParams.mutationRate = mutationRateRef.current;
-      state.evolutionaryAlgorithmState.geneticAlgorithmParams.convergenceThreshold = convergenceThresholdRef.current;
-      state.evolutionaryAlgorithmState.geneticAlgorithmParams.localSearchRadius = localSearchRadiusRef.current;
+      state.evolutionaryAlgorithmState.particleSwarmOptimizationParams.problem = DesignProblem.SOLAR_PANEL_ARRAY;
+      state.evolutionaryAlgorithmState.particleSwarmOptimizationParams.objectiveFunctionType =
+        objectiveFunctionTypeRef.current;
+      state.evolutionaryAlgorithmState.particleSwarmOptimizationParams.searchMethod = searchMethodRef.current;
+      state.evolutionaryAlgorithmState.particleSwarmOptimizationParams.swarmSize = swarmSizeRef.current;
+      state.evolutionaryAlgorithmState.particleSwarmOptimizationParams.maximumSteps = maximumStepsRef.current;
+      state.evolutionaryAlgorithmState.particleSwarmOptimizationParams.cognitiveCoefficient =
+        cognitiveCoefficientRef.current;
+      state.evolutionaryAlgorithmState.particleSwarmOptimizationParams.socialCoefficient = socialCoefficientRef.current;
+      state.evolutionaryAlgorithmState.particleSwarmOptimizationParams.vmax = vmaxRef.current;
+      state.evolutionaryAlgorithmState.particleSwarmOptimizationParams.inertia = inertiaRef.current;
+      state.evolutionaryAlgorithmState.particleSwarmOptimizationParams.convergenceThreshold =
+        convergenceThresholdRef.current;
+      state.evolutionaryAlgorithmState.particleSwarmOptimizationParams.localSearchRadius = localSearchRadiusRef.current;
       if (!state.solarPanelArrayLayoutConstraints)
         state.solarPanelArrayLayoutConstraints = new DefaultSolarPanelArrayLayoutConstraints();
       state.solarPanelArrayLayoutConstraints.minimumRowsPerRack = minimumRowsPerRackRef.current;
@@ -103,8 +106,8 @@ const SolarPanelArrayGaWizard = ({ setDialogVisible }: { setDialogVisible: (b: b
     // give it 0.1 second for the info to show up
     setTimeout(() => {
       setCommonStore((state) => {
-        state.evolutionMethod = EvolutionMethod.GENETIC_ALGORITHM;
-        state.evolutionaryAlgorithmState.geneticAlgorithmParams.problem = DesignProblem.SOLAR_PANEL_ARRAY;
+        state.evolutionMethod = EvolutionMethod.PARTICLE_SWARM_OPTIMIZATION;
+        state.evolutionaryAlgorithmState.particleSwarmOptimizationParams.problem = DesignProblem.SOLAR_PANEL_ARRAY;
         state.runEvolution = !state.runEvolution;
       });
     }, 100);
@@ -122,7 +125,7 @@ const SolarPanelArrayGaWizard = ({ setDialogVisible }: { setDialogVisible: (b: b
             onMouseOut={() => setDragEnabled(false)}
           >
             {i18n.t('optimizationMenu.SolarPanelArrayLayout', lang) + ': '}
-            {i18n.t('optimizationMenu.GeneticAlgorithmSettings', lang)}
+            {i18n.t('optimizationMenu.ParticleSwarmOptimizationSettings', lang)}
           </div>
         }
         footer={[
@@ -202,37 +205,7 @@ const SolarPanelArrayGaWizard = ({ setDialogVisible }: { setDialogVisible: (b: b
 
         <Row gutter={6} style={{ paddingBottom: '4px' }}>
           <Col className="gutter-row" span={12}>
-            {i18n.t('optimizationMenu.GeneticAlgorithmSelectionMethod', lang) + ':'}
-          </Col>
-          <Col className="gutter-row" span={12}>
-            <Select
-              defaultValue={selectionMethodRef.current}
-              style={{ width: '100%' }}
-              value={selectionMethodRef.current}
-              onChange={(value) => {
-                selectionMethodRef.current = value;
-                setUpdateFlag(!updateFlag);
-              }}
-            >
-              <Option
-                key={GeneticAlgorithmSelectionMethod.ROULETTE_WHEEL}
-                value={GeneticAlgorithmSelectionMethod.ROULETTE_WHEEL}
-              >
-                {i18n.t('optimizationMenu.RouletteWheel', lang)}
-              </Option>
-              <Option
-                key={GeneticAlgorithmSelectionMethod.TOURNAMENT}
-                value={GeneticAlgorithmSelectionMethod.TOURNAMENT}
-              >
-                {i18n.t('optimizationMenu.Tournament', lang)}
-              </Option>
-            </Select>
-          </Col>
-        </Row>
-
-        <Row gutter={6} style={{ paddingBottom: '4px' }}>
-          <Col className="gutter-row" span={12}>
-            {i18n.t('optimizationMenu.PopulationSize', lang) + ':'}
+            {i18n.t('optimizationMenu.SwarmSize', lang) + ':'}
           </Col>
           <Col className="gutter-row" span={12}>
             <InputNumber
@@ -240,11 +213,11 @@ const SolarPanelArrayGaWizard = ({ setDialogVisible }: { setDialogVisible: (b: b
               max={100}
               style={{ width: '100%' }}
               precision={0}
-              value={populationSizeRef.current}
+              value={swarmSizeRef.current}
               step={1}
               formatter={(a) => Number(a).toFixed(0)}
               onChange={(value) => {
-                populationSizeRef.current = value;
+                swarmSizeRef.current = value;
                 setUpdateFlag(!updateFlag);
               }}
             />
@@ -253,7 +226,7 @@ const SolarPanelArrayGaWizard = ({ setDialogVisible }: { setDialogVisible: (b: b
 
         <Row gutter={6} style={{ paddingBottom: '4px' }}>
           <Col className="gutter-row" span={12}>
-            {i18n.t('optimizationMenu.MaximumGenerations', lang) + ':'}
+            {i18n.t('optimizationMenu.MaximumSteps', lang) + ':'}
           </Col>
           <Col className="gutter-row" span={12}>
             <InputNumber
@@ -262,10 +235,10 @@ const SolarPanelArrayGaWizard = ({ setDialogVisible }: { setDialogVisible: (b: b
               step={1}
               style={{ width: '100%' }}
               precision={0}
-              value={maximumGenerationsRef.current}
+              value={maximumStepsRef.current}
               formatter={(a) => Number(a).toFixed(0)}
               onChange={(value) => {
-                maximumGenerationsRef.current = value;
+                maximumStepsRef.current = value;
                 setUpdateFlag(!updateFlag);
               }}
             />
@@ -274,7 +247,7 @@ const SolarPanelArrayGaWizard = ({ setDialogVisible }: { setDialogVisible: (b: b
 
         <Row gutter={6} style={{ paddingBottom: '4px' }}>
           <Col className="gutter-row" span={12}>
-            {i18n.t('optimizationMenu.SelectionRate', lang) + ' [0, 1]: '}
+            {i18n.t('optimizationMenu.CognitiveCoefficient', lang) + ' [0, 1]: '}
           </Col>
           <Col className="gutter-row" span={12}>
             <InputNumber
@@ -282,11 +255,11 @@ const SolarPanelArrayGaWizard = ({ setDialogVisible }: { setDialogVisible: (b: b
               max={1}
               style={{ width: '100%' }}
               precision={2}
-              value={selectionRateRef.current}
+              value={cognitiveCoefficientRef.current}
               step={0.01}
               formatter={(a) => Number(a).toFixed(2)}
               onChange={(value) => {
-                selectionRateRef.current = value;
+                cognitiveCoefficientRef.current = value;
                 setUpdateFlag(!updateFlag);
               }}
             />
@@ -295,7 +268,7 @@ const SolarPanelArrayGaWizard = ({ setDialogVisible }: { setDialogVisible: (b: b
 
         <Row gutter={6} style={{ paddingBottom: '4px' }}>
           <Col className="gutter-row" span={12}>
-            {i18n.t('optimizationMenu.CrossoverRate', lang) + ' [0, 1]: '}
+            {i18n.t('optimizationMenu.SocialCoefficient', lang) + ' [0, 1]: '}
           </Col>
           <Col className="gutter-row" span={12}>
             <InputNumber
@@ -303,11 +276,11 @@ const SolarPanelArrayGaWizard = ({ setDialogVisible }: { setDialogVisible: (b: b
               max={1}
               style={{ width: '100%' }}
               precision={2}
-              value={crossoverRateRef.current}
+              value={socialCoefficientRef.current}
               step={0.01}
               formatter={(a) => Number(a).toFixed(2)}
               onChange={(value) => {
-                crossoverRateRef.current = value;
+                socialCoefficientRef.current = value;
                 setUpdateFlag(!updateFlag);
               }}
             />
@@ -316,7 +289,7 @@ const SolarPanelArrayGaWizard = ({ setDialogVisible }: { setDialogVisible: (b: b
 
         <Row gutter={6} style={{ paddingBottom: '4px' }}>
           <Col className="gutter-row" span={12}>
-            {i18n.t('optimizationMenu.MutationRate', lang) + ' [0, 1]: '}
+            {i18n.t('optimizationMenu.InertiaWeight', lang) + ' [0, 1]: '}
           </Col>
           <Col className="gutter-row" span={12}>
             <InputNumber
@@ -324,11 +297,32 @@ const SolarPanelArrayGaWizard = ({ setDialogVisible }: { setDialogVisible: (b: b
               max={1}
               style={{ width: '100%' }}
               precision={2}
-              value={mutationRateRef.current}
+              value={inertiaRef.current}
               step={0.01}
               formatter={(a) => Number(a).toFixed(2)}
               onChange={(value) => {
-                mutationRateRef.current = value;
+                inertiaRef.current = value;
+                setUpdateFlag(!updateFlag);
+              }}
+            />
+          </Col>
+        </Row>
+
+        <Row gutter={6} style={{ paddingBottom: '4px' }}>
+          <Col className="gutter-row" span={12}>
+            {i18n.t('optimizationMenu.MaximumVelocity', lang) + ' [0.001, 0.1]: '}
+          </Col>
+          <Col className="gutter-row" span={12}>
+            <InputNumber
+              min={0.001}
+              max={0.1}
+              style={{ width: '100%' }}
+              precision={3}
+              value={vmaxRef.current}
+              step={0.001}
+              formatter={(a) => Number(a).toFixed(3)}
+              onChange={(value) => {
+                vmaxRef.current = value;
                 setUpdateFlag(!updateFlag);
               }}
             />
@@ -593,4 +587,4 @@ const SolarPanelArrayGaWizard = ({ setDialogVisible }: { setDialogVisible: (b: b
   );
 };
 
-export default React.memo(SolarPanelArrayGaWizard);
+export default React.memo(SolarPanelArrayPsoWizard);

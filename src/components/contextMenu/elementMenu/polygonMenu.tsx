@@ -20,6 +20,7 @@ import SolarPanelLayoutWizard from './solarPanelLayoutWizard';
 import PolygonLineStyleSelection from './polygonLineStyleSelection';
 import PolygonLineWidthSelection from './polygonLineWidthSelection';
 import SolarPanelArrayGaWizard from './solarPanelArrayGaWizard';
+import SolarPanelArrayPsoWizard from './solarPanelArrayPsoWizard';
 
 export const PolygonMenu = () => {
   const language = useStore(Selector.language);
@@ -36,6 +37,7 @@ export const PolygonMenu = () => {
   const [textureDialogVisible, setTextureDialogVisible] = useState(false);
   const [solarPanelLayoutWizardVisible, setSolarPanelLayoutWizardVisible] = useState(false);
   const [solarPanelLayoutGaWizardVisible, setSolarPanelLayoutGaWizardVisible] = useState(false);
+  const [solarPanelLayoutPsoWizardVisible, setSolarPanelLayoutPsoWizardVisible] = useState(false);
   const lang = { lng: language };
 
   const togglePolygonFilled = (e: CheckboxChangeEvent) => {
@@ -94,19 +96,38 @@ export const PolygonMenu = () => {
           >
             {i18n.t('polygonMenu.SolarPanelArrayLayoutParametricDesign', lang)} ...
           </Menu.Item>
-          {solarPanelLayoutGaWizardVisible && (
-            <SolarPanelArrayGaWizard setDialogVisible={setSolarPanelLayoutGaWizardVisible} />
-          )}
-          <Menu.Item
-            key={'solar-panel-layout-ga'}
-            onClick={() => {
-              setApplyCount(0);
-              setSolarPanelLayoutGaWizardVisible(true);
-            }}
-            style={{ paddingLeft: '36px' }}
+          <SubMenu
+            key={'solar-panel-layout-ai'}
+            title={i18n.t('polygonMenu.SolarPanelArrayLayoutGenerativeDesign', lang)}
+            style={{ paddingLeft: '24px' }}
           >
-            {i18n.t('polygonMenu.SolarPanelArrayLayoutGenerativeDesign', lang)} ...
-          </Menu.Item>
+            {solarPanelLayoutGaWizardVisible && (
+              <SolarPanelArrayGaWizard setDialogVisible={setSolarPanelLayoutGaWizardVisible} />
+            )}
+            <Menu.Item
+              key={'solar-panel-layout-ga'}
+              onClick={() => {
+                setApplyCount(0);
+                setSolarPanelLayoutGaWizardVisible(true);
+              }}
+              style={{ paddingLeft: '36px' }}
+            >
+              {i18n.t('optimizationMenu.GeneticAlgorithm', lang)} ...
+            </Menu.Item>
+            {solarPanelLayoutPsoWizardVisible && (
+              <SolarPanelArrayPsoWizard setDialogVisible={setSolarPanelLayoutPsoWizardVisible} />
+            )}
+            <Menu.Item
+              key={'solar-panel-layout-pso'}
+              onClick={() => {
+                setApplyCount(0);
+                setSolarPanelLayoutPsoWizardVisible(true);
+              }}
+              style={{ paddingLeft: '36px' }}
+            >
+              {i18n.t('optimizationMenu.ParticleSwarmOptimization', lang)} ...
+            </Menu.Item>
+          </SubMenu>
         </SubMenu>
         <Lock keyName={'polygon-lock'} />
         {editable && (

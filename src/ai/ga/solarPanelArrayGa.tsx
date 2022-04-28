@@ -97,7 +97,7 @@ const SolarPanelArrayGa = () => {
       solarPanelsRef.current.push(JSON.parse(JSON.stringify(osp)) as SolarPanelModel);
     }
     optimizerRef.current = new SolarPanelArrayOptimizerGa(
-      getPvModule(solarPanelsRef.current.length > 0 ? solarPanelsRef.current[0].pvModelName : 'SPR-X21-335-BLK'),
+      getPvModule(solarPanelsRef.current.length > 0 ? solarPanelsRef.current[0].pvModelName : 'CS6X-355P-FG'),
       solarPanelsRef.current,
       polygon,
       foundation,

@@ -40,7 +40,7 @@ export class SolarPanelTiltAngleOptimizerPso extends OptimizerPso {
       localSearchRadius,
     );
     this.solarPanels = solarPanels;
-    // set the firstborn to be the current design
+    // set the first particle to be the current design
     const firstParticle: Particle = this.swarm.particles[0];
     for (const [i, panel] of solarPanels.entries()) {
       const normalizedValue = 0.5 * (1.0 + panel.tiltAngle / HALF_PI);

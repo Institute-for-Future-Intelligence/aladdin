@@ -13,7 +13,6 @@ import { FoundationModel } from '../../models/FoundationModel';
 import { HALF_PI } from '../../constants';
 import { Util } from '../../Util';
 import { SolarPanelTiltAngleOptimizerPso } from './algorithm/SolarPanelTiltAngleOptimizerPso';
-import { DefaultParticleSwarmOptimizationParams } from '../../stores/DefaultParticleSwarmOptimizationParams';
 
 const SolarPanelTiltAnglePso = () => {
   const setCommonStore = useStore(Selector.set);
