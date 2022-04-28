@@ -1,6 +1,6 @@
 {
-  "docid": "fNQwoXKqyxYzBsrSTLszUX",
-  "timestamp": 1651163692243,
+  "docid": "mn7qvzkALUGAg4t6fwTnhs",
+  "timestamp": 1651101066453,
   "userid": "QWecNcxhyvP6j6sBN11hBsfZDau1",
   "owner": null,
   "email": null,
@@ -137,8 +137,48 @@
       "locked": true
     },
     {
+      "type": "Cuboid",
+      "cx": 7.416523588560649,
+      "cy": -8.218199087568228,
+      "cz": 2,
+      "lx": 5.885558899621623,
+      "ly": 2.63032996641639,
+      "lz": 4,
+      "color": "#999999",
+      "faceColors": [
+        "#999999",
+        "#999999",
+        "#999999",
+        "#999999",
+        "#999999",
+        "gray"
+      ],
+      "textureTypes": [
+        "No Facade Texture",
+        "No Facade Texture",
+        "No Facade Texture",
+        "No Facade Texture",
+        "No Facade Texture",
+        "No Facade Texture"
+      ],
+      "normal": [
+        0,
+        0,
+        1
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "parentId": "Ground",
+      "selected": false,
+      "id": "iRR7r8U8TVYVH3vipQSJGM",
+      "locked": true
+    },
+    {
       "type": "Human",
-      "name": "Jane",
+      "name": "Judd",
       "cx": 10.603917360410481,
       "cy": -12.559388994116993,
       "cz": 0.05000000074505806,
@@ -197,9 +237,9 @@
     "showYearlyLightSensorPanel": false,
     "mapType": "roadmap",
     "cameraPosition": [
-      14.448053603741622,
-      -21.172072176637204,
-      31.321445199621508
+      14.238207538078159,
+      -23.111877532041458,
+      30.138555703667492
     ],
     "panCenter": [
       14.4714120590319,
@@ -226,7 +266,7 @@
     "evolutionPanelY": 5,
     "showEconomicsPanel": false
   },
-  "evolutionMethod": 2,
+  "evolutionMethod": 1,
   "solarPanelArrayLayoutConstraints": {
     "minimumInterRowSpacing": 2,
     "maximumInterRowSpacing": 10,
@@ -261,8 +301,7 @@
       "cognitiveCoefficient": 0.1,
       "socialCoefficient": 0.1,
       "convergenceThreshold": 0.01,
-      "localSearchRadius": 0.1,
-      "problem": "Solar Panel Array"
+      "localSearchRadius": 0.1
     }
   },
   "economicsParams": {

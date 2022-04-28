@@ -56,9 +56,6 @@ export class SolarPanelTiltAngleOptimizerGa extends OptimizerGa {
         }
       }
       this.geneNames[i] = 'Tilt Angle (' + panel.id + ')';
-      this.geneMinima[i] = -HALF_PI;
-      this.geneMaxima[i] = HALF_PI;
-      this.initialGene[i] = panel.tiltAngle;
     }
   }
 
@@ -68,9 +65,7 @@ export class SolarPanelTiltAngleOptimizerGa extends OptimizerGa {
       for (let i = 0; i < best.chromosome.length; i++) {
         const gene = best.getGene(i);
         this.solarPanels[i].tiltAngle = (2 * gene - 1) * HALF_PI;
-        this.finalGene[i] = this.solarPanels[i].tiltAngle;
       }
-      this.finalFitness = best.fitness;
       console.log('Fittest: ' + SolarPanelTiltAngleOptimizerGa.individualToString(best));
     }
   }
@@ -108,7 +103,6 @@ export class SolarPanelTiltAngleOptimizerGa extends OptimizerGa {
       // (imagine it as the fittest of the zeroth generation)
       if (this.computeCounter === 0 && indexOfIndividual === 0) {
         this.fittestOfGenerations[0] = individual.getCopy();
-        this.initialFitness = fitness;
       }
       const generation = Math.floor(this.computeCounter / populationSize);
       console.log(

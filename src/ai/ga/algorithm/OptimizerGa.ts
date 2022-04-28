@@ -31,13 +31,6 @@ export abstract class OptimizerGa {
   computeCounter: number = 0;
   converged: boolean = false;
   geneNames: string[];
-  geneMinima: number[];
-  geneMaxima: number[];
-  isGeneInteger: boolean[];
-  initialGene: number[];
-  finalGene: number[];
-  initialFitness: number = 0;
-  finalFitness: number = 0;
 
   protected constructor(
     foundation: FoundationModel,
@@ -56,12 +49,6 @@ export abstract class OptimizerGa {
     this.searchMethod = searchMethod;
     this.localSearchRadius = localSearchRadius;
     this.geneNames = new Array<string>(chromosomeLength);
-    this.geneMinima = new Array<number>(chromosomeLength);
-    this.geneMaxima = new Array<number>(chromosomeLength);
-    this.isGeneInteger = new Array<boolean>(chromosomeLength);
-    this.initialGene = new Array<number>(chromosomeLength);
-    this.finalGene = new Array<number>(chromosomeLength);
-    this.isGeneInteger.fill(false);
     this.foundation = foundation;
     const cx = foundation.cx;
     const cy = foundation.cy;

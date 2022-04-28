@@ -347,6 +347,7 @@ export const i18n_zh_tw = {
         OptimizingTiltAngleOfOneSolarPanelRow: '優化單排光伏板的傾斜角',
         OptimizingTiltAnglesOfMultipleSolarPanelRows: '優化多排光伏板的傾斜角',
         SolarFarmGenerativeDesign: '生成式設計太陽能農場',
+        SolarFarmGenerativeDesignWithBlock: '生成式設計太陽能農場：周邊有建築物的情況',
       },
       languageSubMenu: '語言',
       AboutUs: '關於我們',
