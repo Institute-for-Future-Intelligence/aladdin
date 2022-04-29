@@ -89,10 +89,6 @@ const SolarPanelOptimizationResult = () => {
 
   const responsiveHeight = 100;
 
-  useEffect(() => {
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [fittestIndividualResults]);
-
   // when the window is resized (the code depends on where the panel is originally anchored in the CSS)
   useEffect(() => {
     const handleResize = () => {

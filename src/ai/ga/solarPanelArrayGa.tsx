@@ -199,21 +199,14 @@ const SolarPanelArrayGa = () => {
     if (runEvolution && !pauseRef.current) {
       if (convergedRef.current || optimizerRef.current.outsideGenerationCounter >= params.maximumGenerations) {
         cancelAnimationFrame(requestRef.current);
-        setCommonStore((state) => {
-          state.runEvolution = false;
-          state.evolutionInProgress = false;
-          state.objectiveEvaluationIndex = 0;
-        });
         evolutionCompletedRef.current = true;
         if (solarPanelArrayRef.current.length > 0) {
           removeElementsByReferenceId(polygon.id, false);
         }
         solarPanelArrayRef.current = optimizerRef.current.translateBest();
         optimizerRef.current.applyFittest();
-        setCommonStore((state) => {
-          state.elements.push(...solarPanelArrayRef.current);
-        });
         updateResults();
+        runCallback(true);
         showInfo(
           i18n.t('message.EvolutionCompleted', lang) +
             '\n' +
@@ -232,24 +225,33 @@ const SolarPanelArrayGa = () => {
       solarPanelArrayRef.current = optimizerRef.current.translateIndividualByIndex(
         individualIndexRef.current % params.populationSize,
       );
-      setCommonStore((state) => {
-        state.elements.push(...solarPanelArrayRef.current);
-        switch (params.objectiveFunctionType) {
-          case ObjectiveFunctionType.DAILY_TOTAL_OUTPUT:
-          case ObjectiveFunctionType.DAILY_AVERAGE_OUTPUT:
-          case ObjectiveFunctionType.DAILY_PROFIT:
-            state.dailyPvIndividualOutputs = false;
-            state.runDailySimulationForSolarPanels = true;
-            break;
-          case ObjectiveFunctionType.YEARLY_TOTAL_OUTPUT:
-          case ObjectiveFunctionType.YEARLY_AVERAGE_OUTPUT:
-          case ObjectiveFunctionType.YEARLY_PROFIT:
-            state.yearlyPvIndividualOutputs = false;
-            state.runYearlySimulationForSolarPanels = true;
-            break;
-        }
-      });
+      runCallback(false);
     }
+  };
+
+  const runCallback = (lastStep: boolean) => {
+    setCommonStore((state) => {
+      state.elements.push(...solarPanelArrayRef.current);
+      switch (params.objectiveFunctionType) {
+        case ObjectiveFunctionType.DAILY_TOTAL_OUTPUT:
+        case ObjectiveFunctionType.DAILY_AVERAGE_OUTPUT:
+        case ObjectiveFunctionType.DAILY_PROFIT:
+          state.dailyPvIndividualOutputs = false;
+          state.runDailySimulationForSolarPanels = true;
+          break;
+        case ObjectiveFunctionType.YEARLY_TOTAL_OUTPUT:
+        case ObjectiveFunctionType.YEARLY_AVERAGE_OUTPUT:
+        case ObjectiveFunctionType.YEARLY_PROFIT:
+          state.yearlyPvIndividualOutputs = false;
+          state.runYearlySimulationForSolarPanels = true;
+          break;
+      }
+      if (lastStep) {
+        state.runEvolution = false;
+        state.evolutionInProgress = false;
+        state.objectiveEvaluationIndex = 0;
+      }
+    });
   };
 
   const updateResults = () => {

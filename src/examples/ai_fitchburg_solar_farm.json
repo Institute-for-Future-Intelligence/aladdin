@@ -1189,7 +1189,6 @@
   },
   "evolutionaryAlgorithmState": {
     "geneticAlgorithmParams": {
-      "solution": "Solar Panel Tilt Angle",
       "objectiveFunctionType": 6,
       "selectionMethod": 1,
       "searchMethod": 1,
@@ -1203,8 +1202,7 @@
       "problem": "Solar Panel Array"
     },
     "particleSwarmOptimizationParams": {
-      "solution": "Solar Panel Tilt Angle",
-      "objectiveFunctionType": 2,
+      "objectiveFunctionType": 6,
       "searchMethod": 1,
       "vmax": 0.01,
       "swarmSize": 20,

@@ -23,7 +23,6 @@ const SolarPanelTiltAnglePso = () => {
   const pauseEvolution = useStore(Selector.pauseEvolution);
   const foundation = useStore(Selector.selectedElement) as FoundationModel;
   const getChildrenOfType = useStore(Selector.getChildrenOfType);
-  const updateSolarPanelTiltAngleById = useStore(Selector.updateSolarPanelTiltAngleById);
   const setFittestParticleResults = useStore(Selector.setFittestIndividualResults);
   const objectiveEvaluationIndex = useStore(Selector.objectiveEvaluationIndex);
   const particleLabels = useStore(Selector.variableLabels);
@@ -170,19 +169,10 @@ const SolarPanelTiltAnglePso = () => {
     if (runEvolution && !pauseRef.current) {
       if (convergedRef.current || optimizerRef.current.outsideStepCounter >= params.maximumSteps) {
         cancelAnimationFrame(requestRef.current);
-        setCommonStore((state) => {
-          state.runEvolution = false;
-          state.evolutionInProgress = false;
-          state.objectiveEvaluationIndex = 0;
-        });
         evolutionCompletedRef.current = true;
         optimizerRef.current.applyFittest();
-        if (solarPanelsRef.current) {
-          for (const sp of solarPanelsRef.current) {
-            updateSolarPanelTiltAngleById(sp.id, sp.tiltAngle);
-          }
-        }
         updateResults();
+        runCallback(true);
         showInfo(
           i18n.t('message.EvolutionCompleted', lang) +
             '\n' +
@@ -193,32 +183,41 @@ const SolarPanelTiltAnglePso = () => {
         return;
       }
       optimizerRef.current.translateParticle(particleIndexRef.current % params.swarmSize);
-      setCommonStore((state) => {
-        if (solarPanelsRef.current) {
-          for (const e of state.elements) {
-            if (e.type === ObjectType.SolarPanel) {
-              const panel = e as SolarPanelModel;
-              for (const sp of solarPanelsRef.current) {
-                if (panel.id === sp.id) {
-                  panel.tiltAngle = sp.tiltAngle;
-                  break;
-                }
+      runCallback(false);
+    }
+  };
+
+  const runCallback = (lastStep: boolean) => {
+    setCommonStore((state) => {
+      if (solarPanelsRef.current) {
+        for (const e of state.elements) {
+          if (e.type === ObjectType.SolarPanel) {
+            const panel = e as SolarPanelModel;
+            for (const sp of solarPanelsRef.current) {
+              if (panel.id === sp.id) {
+                panel.tiltAngle = sp.tiltAngle;
+                break;
               }
             }
           }
-          switch (params.objectiveFunctionType) {
-            case ObjectiveFunctionType.DAILY_TOTAL_OUTPUT:
-              state.dailyPvIndividualOutputs = false;
-              state.runDailySimulationForSolarPanels = true;
-              break;
-            case ObjectiveFunctionType.YEARLY_TOTAL_OUTPUT:
-              state.yearlyPvIndividualOutputs = false;
-              state.runYearlySimulationForSolarPanels = true;
-              break;
-          }
         }
-      });
-    }
+        switch (params.objectiveFunctionType) {
+          case ObjectiveFunctionType.DAILY_TOTAL_OUTPUT:
+            state.dailyPvIndividualOutputs = false;
+            state.runDailySimulationForSolarPanels = true;
+            break;
+          case ObjectiveFunctionType.YEARLY_TOTAL_OUTPUT:
+            state.yearlyPvIndividualOutputs = false;
+            state.runYearlySimulationForSolarPanels = true;
+            break;
+        }
+      }
+      if (lastStep) {
+        state.runEvolution = false;
+        state.evolutionInProgress = false;
+        state.objectiveEvaluationIndex = 0;
+      }
+    });
   };
 
   const updateResults = () => {
