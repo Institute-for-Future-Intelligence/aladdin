@@ -776,6 +776,22 @@ export const useStore = create<CommonStoreState>(
               state.evolutionaryAlgorithmState =
                 content.evolutionaryAlgorithmState ?? new DefaultEvolutionaryAlgorithmState();
               state.economicsParams = content.economicsParams ?? new DefaultEconomicsParams();
+              // clear existing data, if any
+              state.dailyLightSensorData.length = 0;
+              state.yearlyLightSensorData.length = 0;
+              state.dailyPvYield.length = 0;
+              state.yearlyPvYield.length = 0;
+              state.dailyParabolicDishYield.length = 0;
+              state.yearlyParabolicDishYield.length = 0;
+              state.dailyParabolicTroughYield.length = 0;
+              state.yearlyParabolicTroughYield.length = 0;
+              state.dailyFresnelReflectorYield.length = 0;
+              state.yearlyFresnelReflectorYield.length = 0;
+              state.dailyHeliostatYield.length = 0;
+              state.yearlyHeliostatYield.length = 0;
+              state.dailyUpdraftTowerYield.length = 0;
+              state.yearlyUpdraftTowerYield.length = 0;
+              state.fittestIndividualResults.length = 0;
             });
             // 1/6/2022: Humans previously did not have dimension data (which probably was a mistake).
             // We do this for backward compatibility. Otherwise, humans cannot be moved in old files.
