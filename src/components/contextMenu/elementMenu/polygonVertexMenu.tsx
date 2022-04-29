@@ -69,7 +69,7 @@ export const PolygonVertexMenu = () => {
     }
   };
 
-  return (
+  return polygon && polygon.selectedIndex >= 0 ? (
     <>
       <Menu.Item key={'polygon-vertex-insert-before-index'} onClick={insertVertexBeforeIndex}>
         {i18n.t('polygonMenu.InsertVertexBeforeIndex', lang)}
@@ -83,5 +83,7 @@ export const PolygonVertexMenu = () => {
         </Menu.Item>
       )}
     </>
+  ) : (
+    <></>
   );
 };

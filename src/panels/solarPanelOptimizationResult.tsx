@@ -160,7 +160,7 @@ const SolarPanelOptimizationResult = () => {
       return i18n.t('word.dollar', lang);
     }
     return i18n.t('word.kWh', lang);
-  }, [params.problem, lang]);
+  }, [params.problem, params.objectiveFunctionType, lang]);
 
   const labelObjective = useMemo(() => {
     switch (params.objectiveFunctionType) {
