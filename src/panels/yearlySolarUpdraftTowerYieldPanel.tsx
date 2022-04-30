@@ -159,11 +159,14 @@ const YearlySolarUpdraftTowerYieldPanel = ({ city }: YearlySolarUpdraftTowerYiel
 
   const labelX = i18n.t('word.Month', lang);
   const labelY = i18n.t('updraftTowerYieldPanel.Yield', lang);
+  const yearScaleFactor = 12 / daysPerYear;
   let totalTooltip = '';
-  towerSumRef.current.forEach((value, key) => (totalTooltip += key + ': ' + value.toFixed(2) + '\n'));
+  towerSumRef.current.forEach(
+    (value, key) => (totalTooltip += key + ': ' + (value * yearScaleFactor).toFixed(2) + '\n'),
+  );
   totalTooltip += '——————————\n';
   totalTooltip +=
-    i18n.t('word.Total', lang) + ': ' + ((sum * 12) / daysPerYear).toFixed(2) + ' ' + i18n.t('word.kWh', lang);
+    i18n.t('word.Total', lang) + ': ' + (sum * yearScaleFactor).toFixed(2) + ' ' + i18n.t('word.kWh', lang);
 
   return (
     <ReactDraggable
@@ -217,7 +220,7 @@ const YearlySolarUpdraftTowerYieldPanel = ({ city }: YearlySolarUpdraftTowerYiel
               </Space>
             ) : (
               <Space>
-                {i18n.t('updraftTowerYieldPanel.YearlyTotal', lang)}:{((sum * 12) / daysPerYear).toFixed(2)}{' '}
+                {i18n.t('updraftTowerYieldPanel.YearlyTotal', lang)}:{(sum * yearScaleFactor).toFixed(2)}{' '}
                 {i18n.t('word.kWh', lang)}
               </Space>
             )}

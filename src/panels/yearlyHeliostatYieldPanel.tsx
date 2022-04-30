@@ -159,12 +159,15 @@ const YearlyHeliostatYieldPanel = ({ city }: YearlyHeliostatYieldPanelProps) => 
 
   const labelX = i18n.t('word.Month', lang);
   const labelY = i18n.t('heliostatYieldPanel.Yield', lang);
+  const yearScaleFactor = 12 / daysPerYear;
   let totalTooltip = '';
   if (individualOutputs) {
-    heliostatSumRef.current.forEach((value, key) => (totalTooltip += key + ': ' + value.toFixed(2) + '\n'));
+    heliostatSumRef.current.forEach(
+      (value, key) => (totalTooltip += key + ': ' + (value * yearScaleFactor).toFixed(2) + '\n'),
+    );
     totalTooltip += '——————————\n';
     totalTooltip +=
-      i18n.t('word.Total', lang) + ': ' + ((sum * 12) / daysPerYear).toFixed(2) + ' ' + i18n.t('word.kWh', lang);
+      i18n.t('word.Total', lang) + ': ' + (sum * yearScaleFactor).toFixed(2) + ' ' + i18n.t('word.kWh', lang);
   }
 
   return (
@@ -207,7 +210,7 @@ const YearlyHeliostatYieldPanel = ({ city }: YearlyHeliostatYieldPanelProps) => 
             labelY={labelY}
             unitY={i18n.t('word.kWh', lang)}
             yMin={0}
-            curveType={'natural'}
+            curveType={'linear'}
             fractionDigits={2}
             referenceX={referenceX}
           />
@@ -218,7 +221,7 @@ const YearlyHeliostatYieldPanel = ({ city }: YearlyHeliostatYieldPanelProps) => 
               </Space>
             ) : (
               <Space>
-                {i18n.t('heliostatYieldPanel.YearlyTotal', lang)}:{((sum * 12) / daysPerYear).toFixed(2)}{' '}
+                {i18n.t('heliostatYieldPanel.YearlyTotal', lang)}:{(sum * yearScaleFactor).toFixed(2)}{' '}
                 {i18n.t('word.kWh', lang)}
               </Space>
             )}

@@ -162,16 +162,19 @@ const YearlyPvYieldPanel = ({ city }: YearlyPvYieldPanelProps) => {
 
   const labelX = i18n.t('word.Month', lang);
   const labelY = i18n.t('solarPanelYieldPanel.Yield', lang);
+  const yearScaleFactor = 12 / daysPerYear;
   let totalTooltip = '';
   if (individualOutputs) {
-    panelSumRef.current.forEach((value, key) => (totalTooltip += key + ': ' + value.toFixed(2) + '\n'));
+    panelSumRef.current.forEach(
+      (value, key) => (totalTooltip += key + ': ' + (value * yearScaleFactor).toFixed(2) + '\n'),
+    );
     totalTooltip += '——————————\n';
     totalTooltip +=
-      i18n.t('word.Total', lang) + ': ' + ((sum * 12) / daysPerYear).toFixed(2) + ' ' + i18n.t('word.kWh', lang);
+      i18n.t('word.Total', lang) + ': ' + (sum * yearScaleFactor).toFixed(2) + ' ' + i18n.t('word.kWh', lang);
   }
 
   const solarPanelNumber = countAllSolarPanels();
-  const totalYield = (sum * 12) / daysPerYear;
+  const totalYield = sum * yearScaleFactor;
   const totalProfit =
     totalYield * economics.electricitySellingPrice - solarPanelNumber * economics.operationalCostPerUnit * 365;
 
