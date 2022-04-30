@@ -951,7 +951,7 @@ const SolarPanelSimulation = ({ city }: SolarPanelSimulationProps) => {
           t.low,
           world.diurnalTemperatureModel,
           highestTemperatureTimeInMinutes,
-          sunMinutes,
+          computeSunriseAndSunsetInMinutes(currentTime, world.latitude),
           Util.minutesIntoDay(currentTime),
         );
       }
