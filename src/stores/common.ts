@@ -682,6 +682,9 @@ export interface CommonStoreState {
   evolutionaryAlgorithmState: EvolutionaryAlgorithmState;
   economicsParams: EconomicsParams;
 
+  geneticAlgorithmWizardSelectedTab: string;
+  particleSwarmOptimizationWizardSelectedTab: string;
+
   // the following is to fix the bug that when ctrl+o is pressed, the file dialog gets fired up multiple times
   localFileDialogRequested: boolean;
 }
@@ -709,6 +712,8 @@ export const useStore = create<CommonStoreState>(
           solarPanelArrayLayoutConstraints: new DefaultSolarPanelArrayLayoutConstraints(),
           evolutionaryAlgorithmState: new DefaultEvolutionaryAlgorithmState(),
           economicsParams: new DefaultEconomicsParams(),
+          geneticAlgorithmWizardSelectedTab: '1',
+          particleSwarmOptimizationWizardSelectedTab: '1',
           notes: [],
           user: {} as User,
           language: 'en',
@@ -5099,6 +5104,8 @@ export const useStore = create<CommonStoreState>(
           'economicsParams',
           'evolutionMethod',
           'evolutionaryAlgorithmState',
+          'geneticAlgorithmWizardSelectedTab',
+          'particleSwarmOptimizationWizardSelectedTab',
         ],
       },
     ),

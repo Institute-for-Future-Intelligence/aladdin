@@ -981,6 +981,11 @@ export const evolutionaryAlgorithmState = (state: CommonStoreState) => state.evo
 
 export const solarPanelArrayLayoutConstraints = (state: CommonStoreState) => state.solarPanelArrayLayoutConstraints;
 
+export const geneticAlgorithmWizardSelectedTab = (state: CommonStoreState) => state.geneticAlgorithmWizardSelectedTab;
+
+export const particleSwarmOptimizationWizardSelectedTab = (state: CommonStoreState) =>
+  state.particleSwarmOptimizationWizardSelectedTab;
+
 export * as viewState from './viewState';
 
 export * as world from './world';

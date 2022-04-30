@@ -573,6 +573,8 @@ export const i18n_tr = {
 
     optimizationMenu: {
       Optimization: 'Optimization',
+      Parameters: 'Parameters',
+      Variables: 'Variables',
       GeneticAlgorithm: 'Genetic Algorithm',
       GeneticAlgorithmSettings: 'Genetic Algorithm Settings',
       ParticleSwarmOptimization: 'Particle Swarm Optimization',

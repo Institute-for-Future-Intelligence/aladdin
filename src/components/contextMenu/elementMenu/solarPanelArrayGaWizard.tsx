@@ -3,7 +3,7 @@
  */
 
 import React, { useEffect, useRef, useState } from 'react';
-import { Button, Col, InputNumber, Modal, Row, Select, Slider } from 'antd';
+import { Button, Col, InputNumber, Modal, Row, Select, Slider, Tabs } from 'antd';
 import Draggable, { DraggableBounds, DraggableData, DraggableEvent } from 'react-draggable';
 import { useStore } from '../../../stores/common';
 import * as Selector from '../../../stores/selector';
@@ -21,6 +21,7 @@ import { Util } from '../../../Util';
 import { HALF_PI } from '../../../constants';
 
 const { Option } = Select;
+const { TabPane } = Tabs;
 
 const SolarPanelArrayGaWizard = ({ setDialogVisible }: { setDialogVisible: (b: boolean) => void }) => {
   const setCommonStore = useStore(Selector.set);
@@ -28,6 +29,7 @@ const SolarPanelArrayGaWizard = ({ setDialogVisible }: { setDialogVisible: (b: b
   const runEvolution = useStore(Selector.runEvolution);
   const params = useStore(Selector.evolutionaryAlgorithmState).geneticAlgorithmParams;
   const constraints = useStore(Selector.solarPanelArrayLayoutConstraints);
+  const geneticAlgorithmWizardSelectedTab = useStore(Selector.geneticAlgorithmWizardSelectedTab);
 
   const [updateFlag, setUpdateFlag] = useState<boolean>(false);
   const [dragEnabled, setDragEnabled] = useState<boolean>(false);
@@ -159,436 +161,459 @@ const SolarPanelArrayGaWizard = ({ setDialogVisible }: { setDialogVisible: (b: b
           </Draggable>
         )}
       >
-        <Row gutter={6} style={{ paddingBottom: '4px' }}>
-          <Col className="gutter-row" span={12}>
-            {i18n.t('optimizationMenu.Objective', lang) + ':'}
-          </Col>
-          <Col className="gutter-row" span={12}>
-            <Select
-              defaultValue={objectiveFunctionTypeRef.current}
-              style={{ width: '100%' }}
-              value={objectiveFunctionTypeRef.current}
-              onChange={(value) => {
-                objectiveFunctionTypeRef.current = value;
-                setUpdateFlag(!updateFlag);
-              }}
-            >
-              <Option key={ObjectiveFunctionType.DAILY_TOTAL_OUTPUT} value={ObjectiveFunctionType.DAILY_TOTAL_OUTPUT}>
-                {i18n.t('optimizationMenu.ObjectiveFunctionDailyTotalOutput', lang)}
-              </Option>
-              <Option key={ObjectiveFunctionType.YEARLY_TOTAL_OUTPUT} value={ObjectiveFunctionType.YEARLY_TOTAL_OUTPUT}>
-                {i18n.t('optimizationMenu.ObjectiveFunctionYearlyTotalOutput', lang)}
-              </Option>
-              <Option
-                key={ObjectiveFunctionType.DAILY_AVERAGE_OUTPUT}
-                value={ObjectiveFunctionType.DAILY_AVERAGE_OUTPUT}
-              >
-                {i18n.t('optimizationMenu.ObjectiveFunctionDailyAverageOutput', lang)}
-              </Option>
-              <Option
-                key={ObjectiveFunctionType.YEARLY_AVERAGE_OUTPUT}
-                value={ObjectiveFunctionType.YEARLY_AVERAGE_OUTPUT}
-              >
-                {i18n.t('optimizationMenu.ObjectiveFunctionYearlyAverageOutput', lang)}
-              </Option>
-              <Option key={ObjectiveFunctionType.DAILY_PROFIT} value={ObjectiveFunctionType.DAILY_PROFIT}>
-                {i18n.t('optimizationMenu.ObjectiveFunctionDailyProfit', lang)}
-              </Option>
-              <Option key={ObjectiveFunctionType.YEARLY_PROFIT} value={ObjectiveFunctionType.YEARLY_PROFIT}>
-                {i18n.t('optimizationMenu.ObjectiveFunctionYearlyProfit', lang)}
-              </Option>
-            </Select>
-          </Col>
-        </Row>
+        <Tabs
+          defaultActiveKey={geneticAlgorithmWizardSelectedTab}
+          type="card"
+          onChange={(key) => {
+            setCommonStore((state) => {
+              state.geneticAlgorithmWizardSelectedTab = key;
+            });
+          }}
+        >
+          <TabPane tab={i18n.t('optimizationMenu.Parameters', lang)} key="1">
+            <Row gutter={6} style={{ paddingBottom: '4px' }}>
+              <Col className="gutter-row" span={12}>
+                {i18n.t('optimizationMenu.Objective', lang) + ':'}
+              </Col>
+              <Col className="gutter-row" span={12}>
+                <Select
+                  defaultValue={objectiveFunctionTypeRef.current}
+                  style={{ width: '100%' }}
+                  value={objectiveFunctionTypeRef.current}
+                  onChange={(value) => {
+                    objectiveFunctionTypeRef.current = value;
+                    setUpdateFlag(!updateFlag);
+                  }}
+                >
+                  <Option
+                    key={ObjectiveFunctionType.DAILY_TOTAL_OUTPUT}
+                    value={ObjectiveFunctionType.DAILY_TOTAL_OUTPUT}
+                  >
+                    {i18n.t('optimizationMenu.ObjectiveFunctionDailyTotalOutput', lang)}
+                  </Option>
+                  <Option
+                    key={ObjectiveFunctionType.YEARLY_TOTAL_OUTPUT}
+                    value={ObjectiveFunctionType.YEARLY_TOTAL_OUTPUT}
+                  >
+                    {i18n.t('optimizationMenu.ObjectiveFunctionYearlyTotalOutput', lang)}
+                  </Option>
+                  <Option
+                    key={ObjectiveFunctionType.DAILY_AVERAGE_OUTPUT}
+                    value={ObjectiveFunctionType.DAILY_AVERAGE_OUTPUT}
+                  >
+                    {i18n.t('optimizationMenu.ObjectiveFunctionDailyAverageOutput', lang)}
+                  </Option>
+                  <Option
+                    key={ObjectiveFunctionType.YEARLY_AVERAGE_OUTPUT}
+                    value={ObjectiveFunctionType.YEARLY_AVERAGE_OUTPUT}
+                  >
+                    {i18n.t('optimizationMenu.ObjectiveFunctionYearlyAverageOutput', lang)}
+                  </Option>
+                  <Option key={ObjectiveFunctionType.DAILY_PROFIT} value={ObjectiveFunctionType.DAILY_PROFIT}>
+                    {i18n.t('optimizationMenu.ObjectiveFunctionDailyProfit', lang)}
+                  </Option>
+                  <Option key={ObjectiveFunctionType.YEARLY_PROFIT} value={ObjectiveFunctionType.YEARLY_PROFIT}>
+                    {i18n.t('optimizationMenu.ObjectiveFunctionYearlyProfit', lang)}
+                  </Option>
+                </Select>
+              </Col>
+            </Row>
 
-        <Row gutter={6} style={{ paddingBottom: '4px' }}>
-          <Col className="gutter-row" span={12}>
-            {i18n.t('optimizationMenu.GeneticAlgorithmSelectionMethod', lang) + ':'}
-          </Col>
-          <Col className="gutter-row" span={12}>
-            <Select
-              defaultValue={selectionMethodRef.current}
-              style={{ width: '100%' }}
-              value={selectionMethodRef.current}
-              onChange={(value) => {
-                selectionMethodRef.current = value;
-                setUpdateFlag(!updateFlag);
-              }}
-            >
-              <Option
-                key={GeneticAlgorithmSelectionMethod.ROULETTE_WHEEL}
-                value={GeneticAlgorithmSelectionMethod.ROULETTE_WHEEL}
-              >
-                {i18n.t('optimizationMenu.RouletteWheel', lang)}
-              </Option>
-              <Option
-                key={GeneticAlgorithmSelectionMethod.TOURNAMENT}
-                value={GeneticAlgorithmSelectionMethod.TOURNAMENT}
-              >
-                {i18n.t('optimizationMenu.Tournament', lang)}
-              </Option>
-            </Select>
-          </Col>
-        </Row>
+            <Row gutter={6} style={{ paddingBottom: '4px' }}>
+              <Col className="gutter-row" span={12}>
+                {i18n.t('optimizationMenu.GeneticAlgorithmSelectionMethod', lang) + ':'}
+              </Col>
+              <Col className="gutter-row" span={12}>
+                <Select
+                  defaultValue={selectionMethodRef.current}
+                  style={{ width: '100%' }}
+                  value={selectionMethodRef.current}
+                  onChange={(value) => {
+                    selectionMethodRef.current = value;
+                    setUpdateFlag(!updateFlag);
+                  }}
+                >
+                  <Option
+                    key={GeneticAlgorithmSelectionMethod.ROULETTE_WHEEL}
+                    value={GeneticAlgorithmSelectionMethod.ROULETTE_WHEEL}
+                  >
+                    {i18n.t('optimizationMenu.RouletteWheel', lang)}
+                  </Option>
+                  <Option
+                    key={GeneticAlgorithmSelectionMethod.TOURNAMENT}
+                    value={GeneticAlgorithmSelectionMethod.TOURNAMENT}
+                  >
+                    {i18n.t('optimizationMenu.Tournament', lang)}
+                  </Option>
+                </Select>
+              </Col>
+            </Row>
 
-        <Row gutter={6} style={{ paddingBottom: '4px' }}>
-          <Col className="gutter-row" span={12}>
-            {i18n.t('optimizationMenu.PopulationSize', lang) + ' [10, 100]:'}
-          </Col>
-          <Col className="gutter-row" span={12}>
-            <InputNumber
-              min={10}
-              max={100}
-              style={{ width: '100%' }}
-              precision={0}
-              value={populationSizeRef.current}
-              step={1}
-              formatter={(a) => Number(a).toFixed(0)}
-              onChange={(value) => {
-                populationSizeRef.current = value;
-                setUpdateFlag(!updateFlag);
-              }}
-            />
-          </Col>
-        </Row>
+            <Row gutter={6} style={{ paddingBottom: '4px' }}>
+              <Col className="gutter-row" span={12}>
+                {i18n.t('optimizationMenu.PopulationSize', lang) + ' [10, 100]:'}
+              </Col>
+              <Col className="gutter-row" span={12}>
+                <InputNumber
+                  min={10}
+                  max={100}
+                  style={{ width: '100%' }}
+                  precision={0}
+                  value={populationSizeRef.current}
+                  step={1}
+                  formatter={(a) => Number(a).toFixed(0)}
+                  onChange={(value) => {
+                    populationSizeRef.current = value;
+                    setUpdateFlag(!updateFlag);
+                  }}
+                />
+              </Col>
+            </Row>
 
-        <Row gutter={6} style={{ paddingBottom: '4px' }}>
-          <Col className="gutter-row" span={12}>
-            {i18n.t('optimizationMenu.MaximumGenerations', lang) + ' [5, 100]:'}
-          </Col>
-          <Col className="gutter-row" span={12}>
-            <InputNumber
-              min={5}
-              max={100}
-              step={1}
-              style={{ width: '100%' }}
-              precision={0}
-              value={maximumGenerationsRef.current}
-              formatter={(a) => Number(a).toFixed(0)}
-              onChange={(value) => {
-                maximumGenerationsRef.current = value;
-                setUpdateFlag(!updateFlag);
-              }}
-            />
-          </Col>
-        </Row>
+            <Row gutter={6} style={{ paddingBottom: '4px' }}>
+              <Col className="gutter-row" span={12}>
+                {i18n.t('optimizationMenu.MaximumGenerations', lang) + ' [5, 100]:'}
+              </Col>
+              <Col className="gutter-row" span={12}>
+                <InputNumber
+                  min={5}
+                  max={100}
+                  step={1}
+                  style={{ width: '100%' }}
+                  precision={0}
+                  value={maximumGenerationsRef.current}
+                  formatter={(a) => Number(a).toFixed(0)}
+                  onChange={(value) => {
+                    maximumGenerationsRef.current = value;
+                    setUpdateFlag(!updateFlag);
+                  }}
+                />
+              </Col>
+            </Row>
 
-        <Row gutter={6} style={{ paddingBottom: '4px' }}>
-          <Col className="gutter-row" span={12}>
-            {i18n.t('optimizationMenu.SelectionRate', lang) + ' [0, 1]: '}
-          </Col>
-          <Col className="gutter-row" span={12}>
-            <InputNumber
-              min={0}
-              max={1}
-              style={{ width: '100%' }}
-              precision={2}
-              value={selectionRateRef.current}
-              step={0.01}
-              formatter={(a) => Number(a).toFixed(2)}
-              onChange={(value) => {
-                selectionRateRef.current = value;
-                setUpdateFlag(!updateFlag);
-              }}
-            />
-          </Col>
-        </Row>
+            <Row gutter={6} style={{ paddingBottom: '4px' }}>
+              <Col className="gutter-row" span={12}>
+                {i18n.t('optimizationMenu.SelectionRate', lang) + ' [0, 1]: '}
+              </Col>
+              <Col className="gutter-row" span={12}>
+                <InputNumber
+                  min={0}
+                  max={1}
+                  style={{ width: '100%' }}
+                  precision={2}
+                  value={selectionRateRef.current}
+                  step={0.01}
+                  formatter={(a) => Number(a).toFixed(2)}
+                  onChange={(value) => {
+                    selectionRateRef.current = value;
+                    setUpdateFlag(!updateFlag);
+                  }}
+                />
+              </Col>
+            </Row>
 
-        <Row gutter={6} style={{ paddingBottom: '4px' }}>
-          <Col className="gutter-row" span={12}>
-            {i18n.t('optimizationMenu.CrossoverRate', lang) + ' [0, 1]: '}
-          </Col>
-          <Col className="gutter-row" span={12}>
-            <InputNumber
-              min={0}
-              max={1}
-              style={{ width: '100%' }}
-              precision={2}
-              value={crossoverRateRef.current}
-              step={0.01}
-              formatter={(a) => Number(a).toFixed(2)}
-              onChange={(value) => {
-                crossoverRateRef.current = value;
-                setUpdateFlag(!updateFlag);
-              }}
-            />
-          </Col>
-        </Row>
+            <Row gutter={6} style={{ paddingBottom: '4px' }}>
+              <Col className="gutter-row" span={12}>
+                {i18n.t('optimizationMenu.CrossoverRate', lang) + ' [0, 1]: '}
+              </Col>
+              <Col className="gutter-row" span={12}>
+                <InputNumber
+                  min={0}
+                  max={1}
+                  style={{ width: '100%' }}
+                  precision={2}
+                  value={crossoverRateRef.current}
+                  step={0.01}
+                  formatter={(a) => Number(a).toFixed(2)}
+                  onChange={(value) => {
+                    crossoverRateRef.current = value;
+                    setUpdateFlag(!updateFlag);
+                  }}
+                />
+              </Col>
+            </Row>
 
-        <Row gutter={6} style={{ paddingBottom: '4px' }}>
-          <Col className="gutter-row" span={12}>
-            {i18n.t('optimizationMenu.MutationRate', lang) + ' [0, 1]: '}
-          </Col>
-          <Col className="gutter-row" span={12}>
-            <InputNumber
-              min={0}
-              max={1}
-              style={{ width: '100%' }}
-              precision={2}
-              value={mutationRateRef.current}
-              step={0.01}
-              formatter={(a) => Number(a).toFixed(2)}
-              onChange={(value) => {
-                mutationRateRef.current = value;
-                setUpdateFlag(!updateFlag);
-              }}
-            />
-          </Col>
-        </Row>
+            <Row gutter={6} style={{ paddingBottom: '4px' }}>
+              <Col className="gutter-row" span={12}>
+                {i18n.t('optimizationMenu.MutationRate', lang) + ' [0, 1]: '}
+              </Col>
+              <Col className="gutter-row" span={12}>
+                <InputNumber
+                  min={0}
+                  max={1}
+                  style={{ width: '100%' }}
+                  precision={2}
+                  value={mutationRateRef.current}
+                  step={0.01}
+                  formatter={(a) => Number(a).toFixed(2)}
+                  onChange={(value) => {
+                    mutationRateRef.current = value;
+                    setUpdateFlag(!updateFlag);
+                  }}
+                />
+              </Col>
+            </Row>
 
-        <Row gutter={6} style={{ paddingBottom: '4px' }}>
-          <Col className="gutter-row" span={12}>
-            {i18n.t('optimizationMenu.ConvergenceThreshold', lang) + ' (0, 0.1]: '}
-          </Col>
-          <Col className="gutter-row" span={12}>
-            <InputNumber
-              min={0.001}
-              max={0.1}
-              style={{ width: '100%' }}
-              precision={3}
-              value={convergenceThresholdRef.current}
-              step={0.001}
-              formatter={(a) => Number(a).toFixed(3)}
-              onChange={(value) => {
-                convergenceThresholdRef.current = value;
-                setUpdateFlag(!updateFlag);
-              }}
-            />
-          </Col>
-        </Row>
+            <Row gutter={6} style={{ paddingBottom: '4px' }}>
+              <Col className="gutter-row" span={12}>
+                {i18n.t('optimizationMenu.ConvergenceThreshold', lang) + ' (0, 0.1]: '}
+              </Col>
+              <Col className="gutter-row" span={12}>
+                <InputNumber
+                  min={0.001}
+                  max={0.1}
+                  style={{ width: '100%' }}
+                  precision={3}
+                  value={convergenceThresholdRef.current}
+                  step={0.001}
+                  formatter={(a) => Number(a).toFixed(3)}
+                  onChange={(value) => {
+                    convergenceThresholdRef.current = value;
+                    setUpdateFlag(!updateFlag);
+                  }}
+                />
+              </Col>
+            </Row>
 
-        <Row gutter={6} style={{ paddingBottom: '4px' }}>
-          <Col className="gutter-row" span={12}>
-            {i18n.t('optimizationMenu.SearchMethod', lang) + ':'}
-          </Col>
-          <Col className="gutter-row" span={12}>
-            <Select
-              defaultValue={searchMethodRef.current}
-              style={{ width: '100%' }}
-              value={searchMethodRef.current}
-              onChange={(value) => {
-                searchMethodRef.current = value;
-                setUpdateFlag(!updateFlag);
-              }}
-            >
-              <Option
-                key={SearchMethod.GLOBAL_SEARCH_UNIFORM_SELECTION}
-                value={SearchMethod.GLOBAL_SEARCH_UNIFORM_SELECTION}
-              >
-                {i18n.t('optimizationMenu.GlobalSearchUniformSelection', lang)}
-              </Option>
-              <Option
-                key={SearchMethod.LOCAL_SEARCH_RANDOM_OPTIMIZATION}
-                value={SearchMethod.LOCAL_SEARCH_RANDOM_OPTIMIZATION}
-              >
-                {i18n.t('optimizationMenu.LocalSearchRandomOptimization', lang)}
-              </Option>
-            </Select>
-          </Col>
-        </Row>
+            <Row gutter={6} style={{ paddingBottom: '4px' }}>
+              <Col className="gutter-row" span={12}>
+                {i18n.t('optimizationMenu.SearchMethod', lang) + ':'}
+              </Col>
+              <Col className="gutter-row" span={12}>
+                <Select
+                  defaultValue={searchMethodRef.current}
+                  style={{ width: '100%' }}
+                  value={searchMethodRef.current}
+                  onChange={(value) => {
+                    searchMethodRef.current = value;
+                    setUpdateFlag(!updateFlag);
+                  }}
+                >
+                  <Option
+                    key={SearchMethod.GLOBAL_SEARCH_UNIFORM_SELECTION}
+                    value={SearchMethod.GLOBAL_SEARCH_UNIFORM_SELECTION}
+                  >
+                    {i18n.t('optimizationMenu.GlobalSearchUniformSelection', lang)}
+                  </Option>
+                  <Option
+                    key={SearchMethod.LOCAL_SEARCH_RANDOM_OPTIMIZATION}
+                    value={SearchMethod.LOCAL_SEARCH_RANDOM_OPTIMIZATION}
+                  >
+                    {i18n.t('optimizationMenu.LocalSearchRandomOptimization', lang)}
+                  </Option>
+                </Select>
+              </Col>
+            </Row>
 
-        {searchMethodRef.current === SearchMethod.LOCAL_SEARCH_RANDOM_OPTIMIZATION && (
-          <Row gutter={6} style={{ paddingBottom: '4px' }}>
-            <Col className="gutter-row" span={12}>
-              {i18n.t('optimizationMenu.LocalSearchRadius', lang) + ' ([0, 1]: '}
-            </Col>
-            <Col className="gutter-row" span={12}>
-              <InputNumber
-                min={0}
-                max={1}
-                style={{ width: '100%' }}
-                precision={2}
-                value={localSearchRadiusRef.current}
-                step={0.01}
-                formatter={(a) => Number(a).toFixed(2)}
-                onChange={(value) => {
-                  localSearchRadiusRef.current = value;
-                  setUpdateFlag(!updateFlag);
-                }}
-              />
-            </Col>
-          </Row>
-        )}
+            {searchMethodRef.current === SearchMethod.LOCAL_SEARCH_RANDOM_OPTIMIZATION && (
+              <Row gutter={6} style={{ paddingBottom: '4px' }}>
+                <Col className="gutter-row" span={12}>
+                  {i18n.t('optimizationMenu.LocalSearchRadius', lang) + ' ([0, 1]: '}
+                </Col>
+                <Col className="gutter-row" span={12}>
+                  <InputNumber
+                    min={0}
+                    max={1}
+                    style={{ width: '100%' }}
+                    precision={2}
+                    value={localSearchRadiusRef.current}
+                    step={0.01}
+                    formatter={(a) => Number(a).toFixed(2)}
+                    onChange={(value) => {
+                      localSearchRadiusRef.current = value;
+                      setUpdateFlag(!updateFlag);
+                    }}
+                  />
+                </Col>
+              </Row>
+            )}
+          </TabPane>
 
-        <Row gutter={6} style={{ paddingBottom: '0px' }}>
-          <Col className="gutter-row" span={12}>
-            {i18n.t('optimizationMenu.TiltAngleRange', lang) + ':'}
-          </Col>
-          <Col className="gutter-row" span={12}>
-            <Slider
-              style={{ paddingBottom: 0, paddingTop: 0, marginTop: '10px', marginBottom: '10px' }}
-              range
-              onChange={(value) => {
-                minimumTiltAngleRef.current = Util.toRadians(value[0]);
-                maximumTiltAngleRef.current = Util.toRadians(value[1]);
-                setUpdateFlag(!updateFlag);
-              }}
-              min={-90}
-              max={90}
-              defaultValue={[Util.toDegrees(minimumTiltAngleRef.current), Util.toDegrees(maximumTiltAngleRef.current)]}
-              marks={{
-                '-90': {
-                  style: {
-                    fontSize: '10px',
-                  },
-                  label: '-90°',
-                },
-                '-45': {
-                  style: {
-                    fontSize: '10px',
-                  },
-                  label: '-45°',
-                },
-                '0': {
-                  style: {
-                    fontSize: '10px',
-                  },
-                  label: '0°',
-                },
-                '45': {
-                  style: {
-                    fontSize: '10px',
-                  },
-                  label: '45°',
-                },
-                '90': {
-                  style: {
-                    fontSize: '10px',
-                  },
-                  label: '90°',
-                },
-              }}
-            />
-          </Col>
-        </Row>
+          <TabPane tab={i18n.t('optimizationMenu.Variables', lang)} key="2">
+            <Row gutter={6} style={{ paddingBottom: '0px' }}>
+              <Col className="gutter-row" span={12}>
+                {i18n.t('optimizationMenu.TiltAngleRange', lang) + ':'}
+              </Col>
+              <Col className="gutter-row" span={12}>
+                <Slider
+                  style={{ paddingBottom: 0, paddingTop: 0, marginTop: '10px', marginBottom: '10px' }}
+                  range
+                  onChange={(value) => {
+                    minimumTiltAngleRef.current = Util.toRadians(value[0]);
+                    maximumTiltAngleRef.current = Util.toRadians(value[1]);
+                    setUpdateFlag(!updateFlag);
+                  }}
+                  min={-90}
+                  max={90}
+                  defaultValue={[
+                    Util.toDegrees(minimumTiltAngleRef.current),
+                    Util.toDegrees(maximumTiltAngleRef.current),
+                  ]}
+                  marks={{
+                    '-90': {
+                      style: {
+                        fontSize: '10px',
+                      },
+                      label: '-90°',
+                    },
+                    '-45': {
+                      style: {
+                        fontSize: '10px',
+                      },
+                      label: '-45°',
+                    },
+                    '0': {
+                      style: {
+                        fontSize: '10px',
+                      },
+                      label: '0°',
+                    },
+                    '45': {
+                      style: {
+                        fontSize: '10px',
+                      },
+                      label: '45°',
+                    },
+                    '90': {
+                      style: {
+                        fontSize: '10px',
+                      },
+                      label: '90°',
+                    },
+                  }}
+                />
+              </Col>
+            </Row>
 
-        <Row gutter={6} style={{ paddingBottom: '0px', paddingTop: '6px' }}>
-          <Col className="gutter-row" span={12}>
-            {i18n.t('optimizationMenu.RowsPerRackRange', lang) + ':'}
-          </Col>
-          <Col className="gutter-row" span={12}>
-            <Slider
-              style={{ paddingBottom: 0, paddingTop: 0, marginTop: '10px', marginBottom: '10px' }}
-              range
-              onChange={(value) => {
-                minimumRowsPerRackRef.current = value[0];
-                maximumRowsPerRackRef.current = value[1];
-                setUpdateFlag(!updateFlag);
-              }}
-              min={1}
-              max={9}
-              defaultValue={[minimumRowsPerRackRef.current, maximumRowsPerRackRef.current]}
-              marks={{
-                1: {
-                  style: {
-                    fontSize: '10px',
-                  },
-                  label: 1,
-                },
-                2: {
-                  style: {
-                    fontSize: '10px',
-                  },
-                  label: 2,
-                },
-                3: {
-                  style: {
-                    fontSize: '10px',
-                  },
-                  label: 3,
-                },
-                4: {
-                  style: {
-                    fontSize: '10px',
-                  },
-                  label: 4,
-                },
-                5: {
-                  style: {
-                    fontSize: '10px',
-                  },
-                  label: 5,
-                },
-                6: {
-                  style: {
-                    fontSize: '10px',
-                  },
-                  label: 6,
-                },
-                7: {
-                  style: {
-                    fontSize: '10px',
-                  },
-                  label: 7,
-                },
-                8: {
-                  style: {
-                    fontSize: '10px',
-                  },
-                  label: 8,
-                },
-                9: {
-                  style: {
-                    fontSize: '10px',
-                  },
-                  label: 9,
-                },
-              }}
-            />
-          </Col>
-        </Row>
+            <Row gutter={6} style={{ paddingBottom: '0px', paddingTop: '6px' }}>
+              <Col className="gutter-row" span={12}>
+                {i18n.t('optimizationMenu.RowsPerRackRange', lang) + ':'}
+              </Col>
+              <Col className="gutter-row" span={12}>
+                <Slider
+                  style={{ paddingBottom: 0, paddingTop: 0, marginTop: '10px', marginBottom: '10px' }}
+                  range
+                  onChange={(value) => {
+                    minimumRowsPerRackRef.current = value[0];
+                    maximumRowsPerRackRef.current = value[1];
+                    setUpdateFlag(!updateFlag);
+                  }}
+                  min={1}
+                  max={9}
+                  defaultValue={[minimumRowsPerRackRef.current, maximumRowsPerRackRef.current]}
+                  marks={{
+                    1: {
+                      style: {
+                        fontSize: '10px',
+                      },
+                      label: 1,
+                    },
+                    2: {
+                      style: {
+                        fontSize: '10px',
+                      },
+                      label: 2,
+                    },
+                    3: {
+                      style: {
+                        fontSize: '10px',
+                      },
+                      label: 3,
+                    },
+                    4: {
+                      style: {
+                        fontSize: '10px',
+                      },
+                      label: 4,
+                    },
+                    5: {
+                      style: {
+                        fontSize: '10px',
+                      },
+                      label: 5,
+                    },
+                    6: {
+                      style: {
+                        fontSize: '10px',
+                      },
+                      label: 6,
+                    },
+                    7: {
+                      style: {
+                        fontSize: '10px',
+                      },
+                      label: 7,
+                    },
+                    8: {
+                      style: {
+                        fontSize: '10px',
+                      },
+                      label: 8,
+                    },
+                    9: {
+                      style: {
+                        fontSize: '10px',
+                      },
+                      label: 9,
+                    },
+                  }}
+                />
+              </Col>
+            </Row>
 
-        <Row gutter={6} style={{ paddingBottom: '0px', paddingTop: '6px' }}>
-          <Col className="gutter-row" span={12}>
-            {i18n.t('optimizationMenu.InterRowSpacingRange', lang) + ':'}
-          </Col>
-          <Col className="gutter-row" span={12}>
-            <Slider
-              style={{ paddingBottom: 0, paddingTop: 0, marginTop: '10px', marginBottom: '2px' }}
-              range
-              onChange={(value) => {
-                minimumInterRowSpacingRef.current = value[0];
-                maximumInterRowSpacingRef.current = value[1];
-                setUpdateFlag(!updateFlag);
-              }}
-              min={2}
-              max={10}
-              defaultValue={[minimumInterRowSpacingRef.current, maximumInterRowSpacingRef.current]}
-              marks={{
-                2: {
-                  style: {
-                    fontSize: '10px',
-                  },
-                  label: '2m',
-                },
-                4: {
-                  style: {
-                    fontSize: '10px',
-                  },
-                  label: '4m',
-                },
-                6: {
-                  style: {
-                    fontSize: '10px',
-                  },
-                  label: '6m',
-                },
-                8: {
-                  style: {
-                    fontSize: '10px',
-                  },
-                  label: '8m',
-                },
-                10: {
-                  style: {
-                    fontSize: '10px',
-                  },
-                  label: '10m',
-                },
-              }}
-            />
-          </Col>
-        </Row>
+            <Row gutter={6} style={{ paddingBottom: '0px', paddingTop: '6px' }}>
+              <Col className="gutter-row" span={12}>
+                {i18n.t('optimizationMenu.InterRowSpacingRange', lang) + ':'}
+              </Col>
+              <Col className="gutter-row" span={12}>
+                <Slider
+                  style={{ paddingBottom: 0, paddingTop: 0, marginTop: '10px', marginBottom: '2px' }}
+                  range
+                  onChange={(value) => {
+                    minimumInterRowSpacingRef.current = value[0];
+                    maximumInterRowSpacingRef.current = value[1];
+                    setUpdateFlag(!updateFlag);
+                  }}
+                  min={2}
+                  max={10}
+                  defaultValue={[minimumInterRowSpacingRef.current, maximumInterRowSpacingRef.current]}
+                  marks={{
+                    2: {
+                      style: {
+                        fontSize: '10px',
+                      },
+                      label: '2m',
+                    },
+                    4: {
+                      style: {
+                        fontSize: '10px',
+                      },
+                      label: '4m',
+                    },
+                    6: {
+                      style: {
+                        fontSize: '10px',
+                      },
+                      label: '6m',
+                    },
+                    8: {
+                      style: {
+                        fontSize: '10px',
+                      },
+                      label: '8m',
+                    },
+                    10: {
+                      style: {
+                        fontSize: '10px',
+                      },
+                      label: '10m',
+                    },
+                  }}
+                />
+              </Col>
+            </Row>
+          </TabPane>
+        </Tabs>
       </Modal>
     </>
   );

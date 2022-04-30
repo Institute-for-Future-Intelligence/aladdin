@@ -555,6 +555,8 @@ export const i18n_zh_cn = {
 
     optimizationMenu: {
       Optimization: '优化',
+      Parameters: '参数',
+      Variables: '变量',
       GeneticAlgorithm: '遗传算法',
       GeneticAlgorithmSettings: '遗传算法设定',
       ParticleSwarmOptimization: '粒子群优化',

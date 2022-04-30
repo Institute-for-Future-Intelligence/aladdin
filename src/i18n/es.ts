@@ -572,6 +572,8 @@ export const i18n_es = {
 
     optimizationMenu: {
       Optimization: 'Optimization',
+      Parameters: 'Parameters',
+      Variables: 'Variables',
       GeneticAlgorithm: 'Genetic Algorithm',
       GeneticAlgorithmSettings: 'Genetic Algorithm Settings',
       ParticleSwarmOptimization: 'Particle Swarm Optimization',
