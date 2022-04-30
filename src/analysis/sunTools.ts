@@ -16,7 +16,7 @@ const HALF_DAY_MINUTES = 720;
 
 export const computeDeclinationAngle = (date: Date) => {
   const days = Math.floor((date.getTime() - new Date(date.getFullYear(), 0, 0).getTime()) / DAY_MILLISECONDS);
-  return TILT_ANGLE * Math.sin((TWO_PI * (284 + days)) / Util.daysInYear(date));
+  return TILT_ANGLE * Math.sin((TWO_PI * (284 + days)) / 365.25);
 };
 
 // https://en.wikipedia.org/wiki/Sunrise_equation
