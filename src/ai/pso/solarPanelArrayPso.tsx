@@ -231,13 +231,21 @@ const SolarPanelArrayPso = () => {
         case ObjectiveFunctionType.DAILY_AVERAGE_OUTPUT:
         case ObjectiveFunctionType.DAILY_PROFIT:
           state.dailyPvIndividualOutputs = false;
-          state.runDailySimulationForSolarPanels = true;
+          if (lastStep) {
+            state.runDailySimulationForSolarPanelsLastStep = true;
+          } else {
+            state.runDailySimulationForSolarPanels = true;
+          }
           break;
         case ObjectiveFunctionType.YEARLY_TOTAL_OUTPUT:
         case ObjectiveFunctionType.YEARLY_AVERAGE_OUTPUT:
         case ObjectiveFunctionType.YEARLY_PROFIT:
           state.yearlyPvIndividualOutputs = false;
-          state.runYearlySimulationForSolarPanels = true;
+          if (lastStep) {
+            state.runYearlySimulationForSolarPanelsLastStep = true;
+          } else {
+            state.runYearlySimulationForSolarPanels = true;
+          }
           break;
       }
       if (lastStep) {

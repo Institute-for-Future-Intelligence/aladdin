@@ -207,11 +207,19 @@ const SolarPanelTiltAngleGa = () => {
         switch (params.objectiveFunctionType) {
           case ObjectiveFunctionType.DAILY_TOTAL_OUTPUT:
             state.dailyPvIndividualOutputs = false;
-            state.runDailySimulationForSolarPanels = true;
+            if (lastStep) {
+              state.runDailySimulationForSolarPanelsLastStep = true;
+            } else {
+              state.runDailySimulationForSolarPanels = true;
+            }
             break;
           case ObjectiveFunctionType.YEARLY_TOTAL_OUTPUT:
             state.yearlyPvIndividualOutputs = false;
-            state.runYearlySimulationForSolarPanels = true;
+            if (lastStep) {
+              state.runYearlySimulationForSolarPanelsLastStep = true;
+            } else {
+              state.runYearlySimulationForSolarPanels = true;
+            }
             break;
         }
       }

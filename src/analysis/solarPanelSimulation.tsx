@@ -52,8 +52,10 @@ const SolarPanelSimulation = ({ city }: SolarPanelSimulationProps) => {
   const yearlyIndividualOutputs = useStore(Selector.yearlyPvIndividualOutputs);
   const setSolarPanelLabels = useStore(Selector.setSolarPanelLabels);
   const runDailySimulation = useStore(Selector.runDailySimulationForSolarPanels);
+  const runDailySimulationLastStep = useStore(Selector.runDailySimulationForSolarPanelsLastStep);
   const pauseDailySimulation = useStore(Selector.pauseDailySimulationForSolarPanels);
   const runYearlySimulation = useStore(Selector.runYearlySimulationForSolarPanels);
+  const runYearlySimulationLastStep = useStore(Selector.runYearlySimulationForSolarPanelsLastStep);
   const pauseYearlySimulation = useStore(Selector.pauseYearlySimulationForSolarPanels);
   const showDailyPvYieldPanel = useStore(Selector.viewState.showDailyPvYieldPanel);
   const noAnimation = useStore(Selector.world.noAnimationForSolarPanelSimulation);
@@ -122,7 +124,7 @@ const SolarPanelSimulation = ({ city }: SolarPanelSimulationProps) => {
         // this causes the simulation code to run at the beginning of the next event cycle
         // that hopefully has the updated scene graph
         setTimeout(() => {
-          staticSimulateDaily();
+          staticSimulateDaily(false);
         }, 50);
       } else {
         initDaily();
@@ -145,6 +147,20 @@ const SolarPanelSimulation = ({ city }: SolarPanelSimulationProps) => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [runDailySimulation]);
 
+  // this is used in the last step of simulation in an evolution
+  useEffect(() => {
+    if (runDailySimulationLastStep) {
+      if (noAnimation && !Util.hasMovingParts(elements)) {
+        // this causes the simulation code to run at the beginning of the next event cycle
+        // that hopefully has the updated scene graph
+        setTimeout(() => {
+          staticSimulateDaily(true);
+        }, 50);
+      }
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [runDailySimulationLastStep]);
+
   useEffect(() => {
     pauseRef.current = pauseDailySimulation;
     if (pauseDailySimulation) {
@@ -163,7 +179,7 @@ const SolarPanelSimulation = ({ city }: SolarPanelSimulationProps) => {
     }
   }, [pauseDailySimulation]);
 
-  const staticSimulateDaily = () => {
+  const staticSimulateDaily = (lastStep: boolean) => {
     fetchObjects();
     resetDailyOutputsMap();
     for (const e of elements) {
@@ -172,12 +188,16 @@ const SolarPanelSimulation = ({ city }: SolarPanelSimulationProps) => {
       }
     }
     setCommonStore((state) => {
-      state.runDailySimulationForSolarPanels = false;
+      if (lastStep) {
+        state.runDailySimulationForSolarPanelsLastStep = false;
+      } else {
+        state.runDailySimulationForSolarPanels = false;
+      }
       state.simulationInProgress = false;
       state.simulationPaused = false;
-      if (!runEvolution) state.viewState.showDailyPvYieldPanel = true;
+      if (!runEvolution && !lastStep) state.viewState.showDailyPvYieldPanel = true;
     });
-    if (!runEvolution) {
+    if (!runEvolution && !lastStep) {
       // don't show info when this simulation is called by an evolution
       showInfo(i18n.t('message.SimulationCompleted', lang));
     }
@@ -323,7 +343,7 @@ const SolarPanelSimulation = ({ city }: SolarPanelSimulationProps) => {
         // this causes the simulation code to run at the beginning of the next event cycle
         // that hopefully has the updated scene graph
         setTimeout(() => {
-          staticSimulateYearly();
+          staticSimulateYearly(false);
         }, 50);
       } else {
         initYearly();
@@ -345,6 +365,20 @@ const SolarPanelSimulation = ({ city }: SolarPanelSimulationProps) => {
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [runYearlySimulation]);
+
+  // this is used for the last step of simulation in an evolution
+  useEffect(() => {
+    if (runYearlySimulationLastStep) {
+      if (noAnimation && !Util.hasMovingParts(elements)) {
+        // this causes the simulation code to run at the beginning of the next event cycle
+        // that hopefully has the updated scene graph
+        setTimeout(() => {
+          staticSimulateYearly(true);
+        }, 50);
+      }
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [runYearlySimulationLastStep]);
 
   useEffect(() => {
     pauseRef.current = pauseYearlySimulation;
@@ -387,7 +421,7 @@ const SolarPanelSimulation = ({ city }: SolarPanelSimulationProps) => {
     resetYearlyOutputsMap();
   };
 
-  const staticSimulateYearly = () => {
+  const staticSimulateYearly = (lastStep: boolean) => {
     fetchObjects();
     resetDailyOutputsMap();
     resetYearlyOutputsMap();
@@ -406,13 +440,17 @@ const SolarPanelSimulation = ({ city }: SolarPanelSimulationProps) => {
       sampledDayRef.current++;
     }
     setCommonStore((state) => {
-      state.runYearlySimulationForSolarPanels = false;
+      if (lastStep) {
+        state.runYearlySimulationForSolarPanelsLastStep = false;
+      } else {
+        state.runYearlySimulationForSolarPanels = false;
+      }
       state.simulationInProgress = false;
       state.simulationPaused = false;
       state.world.date = originalDateRef.current.toString();
-      if (!runEvolution) state.viewState.showYearlyPvYieldPanel = true;
+      if (!runEvolution && !lastStep) state.viewState.showYearlyPvYieldPanel = true;
     });
-    if (!runEvolution) {
+    if (!runEvolution && !lastStep) {
       // don't show info when this simulation is called by an evolution
       showInfo(i18n.t('message.SimulationCompleted', lang));
     }

@@ -679,7 +679,13 @@ export const solarPanelVisibilityResults = (state: CommonStoreState) => state.so
 
 export const runDailySimulationForSolarPanels = (state: CommonStoreState) => state.runDailySimulationForSolarPanels;
 
+export const runDailySimulationForSolarPanelsLastStep = (state: CommonStoreState) =>
+  state.runDailySimulationForSolarPanelsLastStep;
+
 export const runYearlySimulationForSolarPanels = (state: CommonStoreState) => state.runYearlySimulationForSolarPanels;
+
+export const runYearlySimulationForSolarPanelsLastStep = (state: CommonStoreState) =>
+  state.runYearlySimulationForSolarPanelsLastStep;
 
 export const pauseDailySimulationForSolarPanels = (state: CommonStoreState) => state.pauseDailySimulationForSolarPanels;
 

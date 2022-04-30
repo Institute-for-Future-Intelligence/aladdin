@@ -534,8 +534,10 @@ export interface CommonStoreState {
   runSolarPanelVisibilityAnalysis: boolean;
   solarPanelVisibilityResults: Map<Vantage, Map<string, number>>;
   runDailySimulationForSolarPanels: boolean;
+  runDailySimulationForSolarPanelsLastStep: boolean;
   pauseDailySimulationForSolarPanels: boolean;
   runYearlySimulationForSolarPanels: boolean;
+  runYearlySimulationForSolarPanelsLastStep: boolean;
   pauseYearlySimulationForSolarPanels: boolean;
   dailyPvYield: DatumEntry[];
   dailyPvIndividualOutputs: boolean;
@@ -878,8 +880,10 @@ export const useStore = create<CommonStoreState>(
           runSolarPanelVisibilityAnalysis: false,
           solarPanelVisibilityResults: new Map<Vantage, Map<string, number>>(),
           runDailySimulationForSolarPanels: false,
+          runDailySimulationForSolarPanelsLastStep: false,
           pauseDailySimulationForSolarPanels: false,
           runYearlySimulationForSolarPanels: false,
+          runYearlySimulationForSolarPanelsLastStep: false,
           pauseYearlySimulationForSolarPanels: false,
           dailyPvYield: [],
           dailyPvIndividualOutputs: false,
