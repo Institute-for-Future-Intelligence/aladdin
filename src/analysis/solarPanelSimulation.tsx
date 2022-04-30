@@ -2,7 +2,7 @@
  * @Copyright 2021-2022. Institute for Future Intelligence, Inc.
  */
 
-import React, { useEffect, useMemo, useRef, useState } from 'react';
+import React, { useEffect, useMemo, useRef } from 'react';
 import {
   calculateDiffuseAndReflectedRadiation,
   calculatePeakRadiation,
@@ -62,7 +62,6 @@ const SolarPanelSimulation = ({ city }: SolarPanelSimulationProps) => {
   const highestTemperatureTimeInMinutes = useStore(Selector.world.highestTemperatureTimeInMinutes) ?? 900;
   const runEvolution = useStore(Selector.runEvolution);
 
-  const [currentTemperature, setCurrentTemperature] = useState<number>(20);
   const { scene } = useThree();
   const lang = { lng: language };
   const weather = getWeather(city ?? 'Boston MA, USA');
@@ -87,6 +86,7 @@ const SolarPanelSimulation = ({ city }: SolarPanelSimulationProps) => {
   const pauseRef = useRef<boolean>(false);
   const pausedDateRef = useRef<Date>(new Date(world.date));
   const dayRef = useRef<number>(0);
+  const currentTemperatureRef = useRef<number>(20);
 
   // this is used in daily simulation that should respond to change of date and latitude
   const sunMinutes = useMemo(() => {
@@ -95,26 +95,6 @@ const SolarPanelSimulation = ({ city }: SolarPanelSimulationProps) => {
 
   // this is used in yearly simulation in which the date is changed programmatically based on the current latitude
   const sunMinutesRef = useRef<SunMinutes>(sunMinutes);
-
-  useEffect(() => {
-    if (city) {
-      const weather = getWeather(city);
-      if (weather) {
-        const n = new Date(world.date);
-        const t = computeOutsideTemperature(n, weather.lowestTemperatures, weather.highestTemperatures);
-        const c = getOutsideTemperatureAtMinute(
-          t.high,
-          t.low,
-          world.diurnalTemperatureModel,
-          highestTemperatureTimeInMinutes,
-          sunMinutes,
-          Util.minutesIntoDay(n),
-        );
-        setCurrentTemperature(c);
-      }
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [city, world.date]);
 
   /* do the daily simulation to generate daily PV outputs */
 
@@ -665,6 +645,8 @@ const SolarPanelSimulation = ({ city }: SolarPanelSimulationProps) => {
           // we must consider cell wiring and distributed efficiency
           // Nice demo at: https://www.youtube.com/watch?v=UNPJapaZlCU
           let sum = 0;
+          updateTemperature(currentTime);
+          const eff = getPanelEfficiency(currentTemperatureRef.current, panel, pvModel);
           switch (pvModel.shadeTolerance) {
             case ShadeTolerance.NONE:
               // all the cells are connected in a single series,
@@ -728,7 +710,7 @@ const SolarPanelSimulation = ({ city }: SolarPanelSimulationProps) => {
               }
               break;
           }
-          output[i] += sum / (nx * ny);
+          output[i] += (eff * sum) / (nx * ny);
         } else {
           for (let kx = 0; kx < nx; kx++) {
             for (let ky = 0; ky < ny; ky++) {
@@ -906,10 +888,12 @@ const SolarPanelSimulation = ({ city }: SolarPanelSimulationProps) => {
     }
     const output = dailyOutputsMapRef.current.get(panel.id);
     if (output) {
+      updateTemperature(now);
+      const eff = getPanelEfficiency(currentTemperatureRef.current, panel, pvModel);
       // the output is the average radiation intensity. if the minutes are greater than 30 or 30, it is counted
       // as the measurement of the next hour to maintain the symmetry around noon
       const index = now.getMinutes() >= 30 ? (now.getHours() + 1 === 24 ? 0 : now.getHours() + 1) : now.getHours();
-      output[index] += sum / (nx * ny);
+      output[index] += (eff * sum) / (nx * ny);
     }
   };
 
@@ -954,9 +938,24 @@ const SolarPanelSimulation = ({ city }: SolarPanelSimulationProps) => {
   const getElementFactor = (panel: SolarPanelModel) => {
     const pvModel = getPvModule(panel.pvModelName);
     if (!pvModel) throw new Error('PV model not found');
-    return (
-      panel.lx * panel.ly * getPanelEfficiency(currentTemperature, panel, pvModel) * inverterEfficiency * (1 - dustLoss)
-    );
+    return panel.lx * panel.ly * inverterEfficiency * (1 - dustLoss);
+  };
+
+  const updateTemperature = (currentTime: Date) => {
+    if (city) {
+      const weather = getWeather(city);
+      if (weather) {
+        const t = computeOutsideTemperature(currentTime, weather.lowestTemperatures, weather.highestTemperatures);
+        currentTemperatureRef.current = getOutsideTemperatureAtMinute(
+          t.high,
+          t.low,
+          world.diurnalTemperatureModel,
+          highestTemperatureTimeInMinutes,
+          sunMinutes,
+          Util.minutesIntoDay(currentTime),
+        );
+      }
+    }
   };
 
   const inShadow = (panelId: string, position: Vector3, sunDirection: Vector3) => {
