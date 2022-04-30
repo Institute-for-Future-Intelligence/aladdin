@@ -60,6 +60,7 @@ const DesignInfoPanel = ({}: DesignInfoPanelProps) => {
   const sceneRadius = useStore(Selector.sceneRadius);
   const updateDesignInfoFlag = useStore(Selector.updateDesignInfoFlag);
   const selectedElement = useStore(Selector.selectedElement);
+  const getParent = useStore(Selector.getParent);
 
   const [updateFlag, setUpdateFlag] = useState<boolean>(false);
   const [solarPanelCount, setSolarPanelCount] = useState<number>(0);
@@ -72,6 +73,12 @@ const DesignInfoPanel = ({}: DesignInfoPanelProps) => {
       if (selectedElement.type === ObjectType.SolarPanel) {
         setSolarPanelCount(countSolarPanelsOnRack(selectedElement.id));
         setSolarPanelDailyYield((selectedElement as SolarPanelModel).dailyYield ?? 0);
+      } else if (selectedElement.type === ObjectType.Polygon) {
+        const parent = getParent(selectedElement);
+        if (parent) {
+          setSolarPanelCount(countAllChildSolarPanels(parent.id));
+          setSolarPanelDailyYield(countAllChildSolarPanelDailyYields(parent.id));
+        }
       } else {
         setSolarPanelCount(countAllChildSolarPanels(selectedElement.id));
         setSolarPanelDailyYield(countAllChildSolarPanelDailyYields(selectedElement.id));

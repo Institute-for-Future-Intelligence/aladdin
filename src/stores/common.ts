@@ -792,6 +792,7 @@ export const useStore = create<CommonStoreState>(
               state.dailyHeliostatYield.length = 0;
               state.yearlyHeliostatYield.length = 0;
               state.dailyUpdraftTowerYield.length = 0;
+              state.dailyUpdraftTowerResults.length = 0;
               state.yearlyUpdraftTowerYield.length = 0;
               state.fittestIndividualResults.length = 0;
             });
