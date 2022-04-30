@@ -70,7 +70,7 @@ const YearlyHeliostatYieldPanel = ({ city }: YearlyHeliostatYieldPanelProps) => 
   const language = useStore(Selector.language);
   const setCommonStore = useStore(Selector.set);
   const daysPerYear = useStore(Selector.world.cspDaysPerYear) ?? 6;
-  const now = useStore(Selector.world.date);
+  const now = new Date(useStore(Selector.world.date));
   const yearlyYield = useStore(Selector.yearlyHeliostatYield);
   const individualOutputs = useStore(Selector.yearlyHeliostatIndividualOutputs);
   const heliostatLabels = useStore(Selector.heliostatLabels);
@@ -93,7 +93,7 @@ const YearlyHeliostatYieldPanel = ({ city }: YearlyHeliostatYieldPanelProps) => 
   const heliostatSumRef = useRef(new Map<string, number>());
 
   const responsiveHeight = 100;
-  const referenceX = MONTHS[Math.floor((Util.daysIntoYear(now) / 365) * 12)];
+  const referenceX = MONTHS[now.getMonth()];
   const lang = { lng: language };
 
   useEffect(() => {
@@ -184,7 +184,8 @@ const YearlyHeliostatYieldPanel = ({ city }: YearlyHeliostatYieldPanelProps) => 
         <ColumnWrapper ref={wrapperRef}>
           <Header className="handle">
             <span>
-              {i18n.t('heliostatYieldPanel.HeliostatYearlyYield', lang)}: {i18n.t('sensorPanel.WeatherDataFrom', lang)}
+              {i18n.t('heliostatYieldPanel.HeliostatYearlyYield', lang) + ' (' + now.getFullYear() + '): '}
+              {i18n.t('sensorPanel.WeatherDataFrom', lang)}
               {' ' + city}
             </span>
             <span

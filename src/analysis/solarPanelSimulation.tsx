@@ -96,6 +96,8 @@ const SolarPanelSimulation = ({ city }: SolarPanelSimulationProps) => {
   // this is used in yearly simulation in which the date is changed programmatically based on the current latitude
   const sunMinutesRef = useRef<SunMinutes>(sunMinutes);
 
+  const daysOfMonth = Util.daysInYear(now) / 12;
+
   /* do the daily simulation to generate daily PV outputs */
 
   useEffect(() => {
@@ -528,7 +530,7 @@ const SolarPanelSimulation = ({ city }: SolarPanelSimulationProps) => {
         const r: DatumEntry = {};
         r['Month'] = MONTHS[month];
         for (const [i, a] of resultArr.entries()) {
-          r[labels[i]] = a[month / monthInterval] * 30;
+          r[labels[i]] = a[month / monthInterval] * daysOfMonth;
         }
         results.push(r);
       }
@@ -551,7 +553,7 @@ const SolarPanelSimulation = ({ city }: SolarPanelSimulationProps) => {
         for (const result of resultArr) {
           total += result[month / monthInterval];
         }
-        results.push({ Month: MONTHS[month], Total: total * 30 } as DatumEntry);
+        results.push({ Month: MONTHS[month], Total: total * daysOfMonth } as DatumEntry);
       }
       setYearlyYield(results);
     }

@@ -781,15 +781,17 @@ export class Util {
     return date.getHours() * 60 + date.getMinutes();
   }
 
-  static daysIntoYear(date: string): number {
-    return Util.dayOfYear(new Date(date));
-  }
-
   static dayOfYear(date: Date): number {
     const start = new Date(date.getFullYear(), 0, 0);
     const diff = date.getTime() - start.getTime();
     const oneDay = 1000 * 60 * 60 * 24;
     return Math.floor(diff / oneDay);
+  }
+
+  // https://en.wikipedia.org/wiki/Leap_year
+  static daysInYear(date: Date) {
+    const year = date.getFullYear();
+    return (year % 4 === 0 && year % 100 > 0) || year % 400 === 0 ? 366 : 365;
   }
 
   static daysOfMonth(month: number, year: number): number {

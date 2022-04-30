@@ -70,7 +70,7 @@ export interface YearlyLightSensorPanelProps {
 const YearlyLightSensorPanel = ({ city }: YearlyLightSensorPanelProps) => {
   const language = useStore(Selector.language);
   const setCommonStore = useStore(Selector.set);
-  const now = useStore(Selector.world.date);
+  const now = new Date(useStore(Selector.world.date));
   const sensorData = useStore(Selector.yearlyLightSensorData);
   const sensorLabels = useStore(Selector.sensorLabels);
   const panelX = useStore(Selector.viewState.yearlyLightSensorPanelX);
@@ -94,7 +94,7 @@ const YearlyLightSensorPanel = ({ city }: YearlyLightSensorPanelProps) => {
 
   const lang = { lng: language };
   const responsiveHeight = 100;
-  const referenceX = MONTHS[Math.floor((Util.daysIntoYear(now) / 365) * 12)];
+  const referenceX = MONTHS[now.getMonth()];
 
   // when the window is resized (the code depends on where the panel is originally anchored in the CSS)
   useEffect(() => {

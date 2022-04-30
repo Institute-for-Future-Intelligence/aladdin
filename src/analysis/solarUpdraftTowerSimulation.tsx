@@ -87,6 +87,8 @@ const SolarUpdraftTowerSimulation = ({ city }: SolarUpdraftTowerSimulationProps)
   // this is used in yearly simulation in which the date is changed programmatically based on the current latitude
   const sunMinutesRef = useRef<SunMinutes>(sunMinutes);
 
+  const daysOfMonth = Util.daysInYear(now) / 12;
+
   /* do the daily simulation to generate daily yield */
 
   useEffect(() => {
@@ -583,7 +585,7 @@ const SolarUpdraftTowerSimulation = ({ city }: SolarUpdraftTowerSimulationProps)
       const r: DatumEntry = {};
       r['Month'] = MONTHS[month];
       for (const [i, a] of resultArr.entries()) {
-        r[labels[i]] = a[month / monthInterval] * 30;
+        r[labels[i]] = a[month / monthInterval] * daysOfMonth;
       }
       results.push(r);
     }

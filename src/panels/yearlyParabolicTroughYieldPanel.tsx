@@ -70,7 +70,7 @@ const YearlyParabolicTroughYieldPanel = ({ city }: YearlyParabolicTroughYieldPan
   const language = useStore(Selector.language);
   const setCommonStore = useStore(Selector.set);
   const daysPerYear = useStore(Selector.world.cspDaysPerYear) ?? 6;
-  const now = useStore(Selector.world.date);
+  const now = new Date(useStore(Selector.world.date));
   const yearlyYield = useStore(Selector.yearlyParabolicTroughYield);
   const individualOutputs = useStore(Selector.yearlyParabolicTroughIndividualOutputs);
   const parabolicTroughLabels = useStore(Selector.parabolicTroughLabels);
@@ -93,7 +93,7 @@ const YearlyParabolicTroughYieldPanel = ({ city }: YearlyParabolicTroughYieldPan
   const troughSumRef = useRef(new Map<string, number>());
 
   const responsiveHeight = 100;
-  const referenceX = MONTHS[Math.floor((Util.daysIntoYear(now) / 365) * 12)];
+  const referenceX = MONTHS[now.getMonth()];
   const lang = { lng: language };
 
   useEffect(() => {
@@ -184,7 +184,7 @@ const YearlyParabolicTroughYieldPanel = ({ city }: YearlyParabolicTroughYieldPan
         <ColumnWrapper ref={wrapperRef}>
           <Header className="handle">
             <span>
-              {i18n.t('parabolicTroughYieldPanel.ParabolicTroughYearlyYield', lang)}:{' '}
+              {i18n.t('parabolicTroughYieldPanel.ParabolicTroughYearlyYield', lang) + ' (' + now.getFullYear() + '): '}
               {i18n.t('sensorPanel.WeatherDataFrom', lang)}
               {' ' + city}
             </span>

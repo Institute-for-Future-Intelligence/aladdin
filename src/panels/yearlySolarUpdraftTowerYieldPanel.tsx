@@ -70,7 +70,7 @@ const YearlySolarUpdraftTowerYieldPanel = ({ city }: YearlySolarUpdraftTowerYiel
   const language = useStore(Selector.language);
   const setCommonStore = useStore(Selector.set);
   const daysPerYear = useStore(Selector.world.sutDaysPerYear) ?? 6;
-  const now = useStore(Selector.world.date);
+  const now = new Date(useStore(Selector.world.date));
   const yearlyYield = useStore(Selector.yearlyUpdraftTowerYield);
   const individualOutputs = useStore(Selector.yearlyUpdraftTowerIndividualOutputs);
   const labels = useStore(Selector.updraftTowerLabels);
@@ -93,7 +93,7 @@ const YearlySolarUpdraftTowerYieldPanel = ({ city }: YearlySolarUpdraftTowerYiel
   const towerSumRef = useRef(new Map<string, number>());
 
   const responsiveHeight = 100;
-  const referenceX = MONTHS[Math.floor((Util.daysIntoYear(now) / 365) * 12)];
+  const referenceX = MONTHS[now.getMonth()];
   const lang = { lng: language };
 
   useEffect(() => {
@@ -182,7 +182,7 @@ const YearlySolarUpdraftTowerYieldPanel = ({ city }: YearlySolarUpdraftTowerYiel
         <ColumnWrapper ref={wrapperRef}>
           <Header className="handle">
             <span>
-              {i18n.t('updraftTowerYieldPanel.UpdraftTowerYearlyYield', lang)}:{' '}
+              {i18n.t('updraftTowerYieldPanel.UpdraftTowerYearlyYield', lang) + ' (' + now.getFullYear() + '): '}
               {i18n.t('sensorPanel.WeatherDataFrom', lang)}
               {' ' + city}
             </span>

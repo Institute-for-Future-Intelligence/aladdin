@@ -67,7 +67,7 @@ export interface WeatherPanelProps {
 const WeatherPanel = ({ city, graphs }: WeatherPanelProps) => {
   const language = useStore(Selector.language);
   const setCommonStore = useStore(Selector.set);
-  const now = useStore(Selector.world.date);
+  const now = new Date(useStore(Selector.world.date));
   const getWeather = useStore(Selector.getWeather);
   const weatherPanelX = useStore(Selector.viewState.weatherPanelX);
   const weatherPanelY = useStore(Selector.viewState.weatherPanelY);
@@ -147,7 +147,7 @@ const WeatherPanel = ({ city, graphs }: WeatherPanelProps) => {
     i18n.t('weatherPanel.SunshineHours', lang),
   ];
   const yUnits = ['NA', '°C', '°C', i18n.t('word.Hour', lang)];
-  const referenceX = MONTHS[Math.floor((Util.daysIntoYear(now) / 365) * 12)];
+  const referenceX = MONTHS[now.getMonth()];
 
   const onDrag: DraggableEventHandler = (e, ui) => {
     setCurPosition({

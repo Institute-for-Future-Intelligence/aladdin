@@ -70,7 +70,7 @@ const YearlyPvYieldPanel = ({ city }: YearlyPvYieldPanelProps) => {
   const language = useStore(Selector.language);
   const setCommonStore = useStore(Selector.set);
   const daysPerYear = useStore(Selector.world.daysPerYear) ?? 6;
-  const now = useStore(Selector.world.date);
+  const now = new Date(useStore(Selector.world.date));
   const yearlyYield = useStore(Selector.yearlyPvYield);
   const individualOutputs = useStore(Selector.yearlyPvIndividualOutputs);
   const solarPanelLabels = useStore(Selector.solarPanelLabels);
@@ -96,7 +96,7 @@ const YearlyPvYieldPanel = ({ city }: YearlyPvYieldPanelProps) => {
   const panelSumRef = useRef(new Map<string, number>());
 
   const responsiveHeight = 100;
-  const referenceX = MONTHS[Math.floor((Util.daysIntoYear(now) / 365) * 12)];
+  const referenceX = MONTHS[now.getMonth()];
   const lang = { lng: language };
   const solarPanelCount = countElementsByType(ObjectType.SolarPanel);
 
@@ -192,9 +192,13 @@ const YearlyPvYieldPanel = ({ city }: YearlyPvYieldPanelProps) => {
         <ColumnWrapper ref={wrapperRef}>
           <Header className="handle">
             <span>
-              {i18n.t('solarPanelYieldPanel.SolarPanelYearlyYield', lang)}:{' '}
-              {i18n.t('sensorPanel.WeatherDataFrom', lang)}
-              {' ' + city}
+              {i18n.t('solarPanelYieldPanel.SolarPanelYearlyYield', lang) +
+                ' (' +
+                now.getFullYear() +
+                '): ' +
+                i18n.t('sensorPanel.WeatherDataFrom', lang) +
+                ' ' +
+                city}
             </span>
             <span
               style={{ cursor: 'pointer' }}
