@@ -24,7 +24,7 @@ const Container = styled.div`
   justify-content: center;
   align-items: center;
   padding: 16px;
-  z-index: 9;
+  z-index: 10;
 `;
 
 const ColumnWrapper = styled.div`
@@ -39,6 +39,9 @@ const ColumnWrapper = styled.div`
   border-radius: 10px 10px 10px 10px;
   display: flex;
   flex-direction: column;
+  overflow-x: auto;
+  overflow-y: auto;
+  resize: both;
 `;
 
 const Header = styled.div`

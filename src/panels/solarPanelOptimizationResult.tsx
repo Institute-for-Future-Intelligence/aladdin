@@ -22,7 +22,7 @@ const Container = styled.div`
   justify-content: center;
   align-items: center;
   padding: 16px;
-  z-index: 9;
+  z-index: 8;
 `;
 
 const ColumnWrapper = styled.div`
@@ -38,6 +38,7 @@ const ColumnWrapper = styled.div`
   display: flex;
   flex-direction: column;
   overflow-y: auto;
+  resize: vertical;
 `;
 
 const Header = styled.div`
@@ -89,17 +90,18 @@ const SolarPanelOptimizationResult = () => {
 
   const responsiveHeight = 100;
 
-  // when the window is resized (the code depends on where the panel is originally anchored in the CSS)
+  // when the browser window (not this div window) is resized
+  // (the code depends on where the panel is originally anchored in the CSS)
   useEffect(() => {
-    const handleResize = () => {
+    const handleWindowResize = () => {
       setCurPosition({
         x: Math.max(panelX, wOffset - window.innerWidth),
         y: Math.min(panelY, window.innerHeight - hOffset),
       });
     };
-    window.addEventListener('resize', handleResize);
+    window.addEventListener('resize', handleWindowResize);
     return () => {
-      window.removeEventListener('resize', handleResize);
+      window.removeEventListener('resize', handleWindowResize);
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);

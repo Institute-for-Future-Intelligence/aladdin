@@ -22,7 +22,7 @@ const Container = styled.div`
   padding: 0;
   opacity: 100%;
   user-select: none;
-  z-index: 8; // must be less than other panels
+  z-index: 7; // must be less than other panels
 `;
 
 const ColumnWrapper = styled.div`

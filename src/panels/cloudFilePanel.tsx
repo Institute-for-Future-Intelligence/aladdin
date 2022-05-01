@@ -42,6 +42,9 @@ const ColumnWrapper = styled.div`
   border-radius: 10px 10px 10px 10px;
   display: flex;
   flex-direction: column;
+  overflow-x: auto;
+  overflow-y: auto;
+  resize: vertical;
 `;
 
 const Header = styled.div`

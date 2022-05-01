@@ -9,7 +9,6 @@ import { useStore } from '../stores/common';
 import * as Selector from '../stores/selector';
 import { ChartType, GraphDataType, ObjectType } from '../types';
 import { MONTHS } from '../constants';
-import { Util } from '../Util';
 import BarGraph from '../components/barGraph';
 import ReactDraggable, { DraggableEventHandler } from 'react-draggable';
 import { Button, Space, Switch } from 'antd';
@@ -41,6 +40,7 @@ const ColumnWrapper = styled.div`
   display: flex;
   flex-direction: column;
   overflow-y: auto;
+  resize: vertical;
 `;
 
 const Header = styled.div`

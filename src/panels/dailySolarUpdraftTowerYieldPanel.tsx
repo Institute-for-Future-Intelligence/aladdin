@@ -40,6 +40,7 @@ const ColumnWrapper = styled.div`
   display: flex;
   flex-direction: column;
   overflow-y: auto;
+  resize: vertical;
 `;
 
 const Header = styled.div`

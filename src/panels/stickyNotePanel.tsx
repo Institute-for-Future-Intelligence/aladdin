@@ -18,7 +18,7 @@ const Container = styled.div`
   justify-content: center;
   align-items: center;
   padding: 16px;
-  z-index: 9;
+  z-index: 11;
 `;
 
 const ColumnWrapper = styled.div`
@@ -33,6 +33,9 @@ const ColumnWrapper = styled.div`
   border-radius: 10px 10px 10px 10px;
   display: flex;
   flex-direction: column;
+  overflow-x: auto;
+  overflow-y: auto;
+  resize: both;
 `;
 
 const Header = styled.div`
@@ -145,7 +148,7 @@ const StickyNotePanel = () => {
               </span>
             </Header>
             <TextArea
-              rows={11}
+              rows={100}
               value={text}
               onChange={(e) => {
                 setText(e.target.value);

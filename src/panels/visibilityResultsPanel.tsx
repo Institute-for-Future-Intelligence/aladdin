@@ -24,7 +24,7 @@ const Container = styled.div`
   justify-content: center;
   align-items: center;
   padding: 16px;
-  z-index: 9;
+  z-index: 8;
 `;
 
 const ColumnWrapper = styled.div`
@@ -40,6 +40,7 @@ const ColumnWrapper = styled.div`
   display: flex;
   flex-direction: column;
   overflow-y: auto;
+  resize: vertical;
 `;
 
 const Header = styled.div`
