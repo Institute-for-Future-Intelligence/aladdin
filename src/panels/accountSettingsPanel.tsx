@@ -29,6 +29,10 @@ const ColumnWrapper = styled.div`
   top: 0;
   width: 400px;
   height: 600px;
+  min-width: 400px;
+  max-width: 800px;
+  min-height: 200px;
+  max-height: 600px;
   padding-bottom: 10px;
   border: 2px solid gainsboro;
   border-radius: 10px 10px 10px 10px;
@@ -36,7 +40,7 @@ const ColumnWrapper = styled.div`
   flex-direction: column;
   overflow-x: auto;
   overflow-y: auto;
-  resize: vertical;
+  resize: both;
 `;
 
 const Header = styled.div`

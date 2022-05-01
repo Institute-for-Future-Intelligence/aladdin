@@ -36,6 +36,10 @@ const ColumnWrapper = styled.div`
   left: 0;
   top: 0;
   width: 410px;
+  min-width: 400px;
+  max-width: 800px;
+  min-height: 200px;
+  max-height: 600px;
   padding-bottom: 10px;
   border: 2px solid gainsboro;
   border-radius: 10px 10px 10px 10px;
