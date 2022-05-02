@@ -15,6 +15,7 @@ import { Button, Space, Switch } from 'antd';
 import { ReloadOutlined, SaveOutlined } from '@ant-design/icons';
 import { screenshot, showInfo } from '../helpers';
 import i18n from '../i18n/i18n';
+import { Rectangle } from '../models/Rectangle';
 
 const Container = styled.div`
   position: fixed;
@@ -32,8 +33,6 @@ const ColumnWrapper = styled.div`
   position: absolute;
   right: 0;
   top: 0;
-  width: 600px;
-  height: 500px;
   min-width: 400px;
   max-width: 800px;
   min-height: 200px;
@@ -46,6 +45,7 @@ const ColumnWrapper = styled.div`
   overflow-x: auto;
   overflow-y: auto;
   resize: both;
+  direction: rtl;
 `;
 
 const Header = styled.div`
@@ -78,19 +78,19 @@ const YearlyLightSensorPanel = ({ city }: YearlyLightSensorPanelProps) => {
   const now = new Date(useStore(Selector.world.date));
   const sensorData = useStore(Selector.yearlyLightSensorData);
   const sensorLabels = useStore(Selector.sensorLabels);
-  const panelX = useStore(Selector.viewState.yearlyLightSensorPanelX);
-  const panelY = useStore(Selector.viewState.yearlyLightSensorPanelY);
+  const panelRect = useStore(Selector.viewState.yearlyLightSensorPanelRect);
   const countElementsByType = useStore(Selector.countElementsByType);
   const daylightGraph = useStore(Selector.viewState.yearlyLightSensorPanelShowDaylight);
   const clearnessGraph = useStore(Selector.viewState.yearlyLightSensorPanelShowClearness);
 
   const [radiationGraph, setRadiationGraph] = useState(true);
   const wrapperRef = useRef<HTMLDivElement | null>(null);
-  const wOffset = wrapperRef.current ? wrapperRef.current.clientWidth + 40 : 540;
-  const hOffset = wrapperRef.current ? wrapperRef.current.clientHeight + 100 : 600;
+  const resizeObserverRef = useRef<ResizeObserver>();
+  const wOffset = wrapperRef.current ? wrapperRef.current.clientWidth + 40 : panelRect ? panelRect.width + 40 : 640;
+  const hOffset = wrapperRef.current ? wrapperRef.current.clientHeight + 100 : panelRect ? panelRect.height + 100 : 600;
   const [curPosition, setCurPosition] = useState({
-    x: isNaN(panelX) ? 0 : Math.max(panelX, wOffset - window.innerWidth),
-    y: isNaN(panelY) ? 0 : Math.min(panelY, window.innerHeight - hOffset),
+    x: panelRect ? Math.max(panelRect.x, wOffset - window.innerWidth) : 0,
+    y: panelRect ? Math.min(panelRect.y, window.innerHeight - hOffset) : 0,
   });
 
   // nodeRef is to suppress ReactDOM.findDOMNode() deprecation warning. See:
@@ -98,23 +98,46 @@ const YearlyLightSensorPanel = ({ city }: YearlyLightSensorPanelProps) => {
   const nodeRef = React.useRef(null);
 
   const lang = { lng: language };
-  const responsiveHeight = 100;
   const referenceX = MONTHS[now.getMonth()];
+
+  useEffect(() => {
+    setCurPosition({
+      x: Math.max(panelRect?.x, wOffset - window.innerWidth),
+      y: Math.min(panelRect?.y, window.innerHeight - hOffset),
+    });
+  }, [panelRect, wOffset, hOffset]);
 
   // when the window is resized (the code depends on where the panel is originally anchored in the CSS)
   useEffect(() => {
-    const handleResize = () => {
+    const handleWindowResize = () => {
       setCurPosition({
-        x: Math.max(panelX, wOffset - window.innerWidth),
-        y: Math.min(panelY, window.innerHeight - hOffset),
+        x: Math.max(panelRect?.x, wOffset - window.innerWidth),
+        y: Math.min(panelRect?.y, window.innerHeight - hOffset),
       });
     };
-    window.addEventListener('resize', handleResize);
+    window.addEventListener('resize', handleWindowResize);
+    if (wrapperRef.current) {
+      if (!resizeObserverRef.current) {
+        resizeObserverRef.current = new ResizeObserver(() => {
+          setCommonStore((state) => {
+            if (wrapperRef.current) {
+              if (!state.viewState.yearlyLightSensorPanelRect) {
+                state.viewState.yearlyLightSensorPanelRect = new Rectangle(0, 0, 600, 500);
+              }
+              state.viewState.yearlyLightSensorPanelRect.width = wrapperRef.current.offsetWidth;
+              state.viewState.yearlyLightSensorPanelRect.height = wrapperRef.current.offsetHeight;
+            }
+          });
+        });
+      }
+      resizeObserverRef.current.observe(wrapperRef.current);
+    }
     return () => {
-      window.removeEventListener('resize', handleResize);
+      window.removeEventListener('resize', handleWindowResize);
+      resizeObserverRef.current?.disconnect();
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  }, [panelRect, wOffset, hOffset]);
 
   const onDrag: DraggableEventHandler = (e, ui) => {
     setCurPosition({
@@ -125,8 +148,8 @@ const YearlyLightSensorPanel = ({ city }: YearlyLightSensorPanelProps) => {
 
   const onDragEnd: DraggableEventHandler = (e, ui) => {
     setCommonStore((state) => {
-      state.viewState.yearlyLightSensorPanelX = Math.max(ui.x, wOffset - window.innerWidth);
-      state.viewState.yearlyLightSensorPanelY = Math.min(ui.y, window.innerHeight - hOffset);
+      state.viewState.yearlyLightSensorPanelRect.x = Math.max(ui.x, wOffset - window.innerWidth);
+      state.viewState.yearlyLightSensorPanelRect.y = Math.min(ui.y, window.innerHeight - hOffset);
     });
   };
 
@@ -150,10 +173,19 @@ const YearlyLightSensorPanel = ({ city }: YearlyLightSensorPanelProps) => {
       onStop={onDragEnd}
     >
       <Container ref={nodeRef}>
-        <ColumnWrapper ref={wrapperRef}>
-          <Header className="handle">
+        <ColumnWrapper
+          ref={wrapperRef}
+          style={{
+            width: (panelRect ? panelRect.width : 600) + 'px',
+            height: (panelRect ? panelRect.height : 500) + 'px',
+          }}
+        >
+          <Header className="handle" style={{ direction: 'ltr' }}>
             <span>
-              {i18n.t('sensorPanel.LightSensor', lang)}: {i18n.t('sensorPanel.WeatherDataFrom', lang)} {city}
+              {i18n.t('sensorPanel.LightSensor', lang) + ': '}
+              <label style={{ fontSize: '10px' }}>
+                {i18n.t('sensorPanel.WeatherDataFrom', lang) + ' ' + city + ' | ' + now.getFullYear()}
+              </label>
             </span>
             <span
               style={{ cursor: 'pointer' }}
@@ -172,7 +204,7 @@ const YearlyLightSensorPanel = ({ city }: YearlyLightSensorPanelProps) => {
               type={GraphDataType.DaylightData}
               chartType={ChartType.Area}
               dataSource={sensorData.map((e) => ({ Month: e.Month, Daylight: e.Daylight }))}
-              height={responsiveHeight}
+              height={100}
               dataKeyAxisX={'Month'}
               labelX={labelX}
               labelY={i18n.t('word.Daylight', lang)}
@@ -187,7 +219,7 @@ const YearlyLightSensorPanel = ({ city }: YearlyLightSensorPanelProps) => {
             <BarGraph
               type={GraphDataType.ClearnessData}
               dataSource={sensorData.map((e) => ({ Month: e.Month, Clearness: e.Clearness }))}
-              height={responsiveHeight}
+              height={100}
               dataKeyAxisX={'Month'}
               labelX={labelX}
               labelY={i18n.t('yearlyLightSensorPanel.SkyClearness', lang)}
@@ -205,7 +237,7 @@ const YearlyLightSensorPanel = ({ city }: YearlyLightSensorPanelProps) => {
               chartType={ChartType.Line}
               dataSource={sensorData.map(({ Daylight, Clearness, ...item }) => item)}
               labels={sensorLabels}
-              height={responsiveHeight}
+              height={100}
               dataKeyAxisX={'Month'}
               labelX={labelX}
               labelY={labelY}
@@ -216,7 +248,7 @@ const YearlyLightSensorPanel = ({ city }: YearlyLightSensorPanelProps) => {
               referenceX={referenceX}
             />
           )}
-          <Space style={{ alignSelf: 'center', padding: '10px' }}>
+          <Space style={{ alignSelf: 'center', padding: '10px', direction: 'ltr' }}>
             <Space>
               <Switch
                 title={i18n.t('yearlyLightSensorPanel.ShowDaylightResults', lang)}

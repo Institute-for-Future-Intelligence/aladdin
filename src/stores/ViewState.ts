@@ -64,10 +64,8 @@ export interface ViewState {
   diurnalTemperaturePanelY: number;
   stickyNotePanelX: number;
   stickyNotePanelY: number;
-  dailyLightSensorPanelX: number;
-  dailyLightSensorPanelY: number;
-  yearlyLightSensorPanelX: number;
-  yearlyLightSensorPanelY: number;
+  dailyLightSensorPanelRect: Rectangle;
+  yearlyLightSensorPanelRect: Rectangle;
   yearlyLightSensorPanelShowDaylight: boolean;
   yearlyLightSensorPanelShowClearness: boolean;
   dailyPvYieldPanelRect: Rectangle;

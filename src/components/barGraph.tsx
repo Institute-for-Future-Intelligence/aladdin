@@ -125,7 +125,7 @@ const BarGraph = ({
         // need two div wrappers to disable the responsiveness of ResponsiveContainer
         <div
           id={'bar-graph-' + labelX + '-' + labelY}
-          style={{ width: '100%', height: `${height}%`, position: 'relative' }}
+          style={{ width: '100%', height: `${height}%`, position: 'relative', direction: 'ltr' }}
         >
           <div
             style={{

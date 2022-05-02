@@ -14,6 +14,7 @@ import { Button, Space } from 'antd';
 import { ReloadOutlined, SaveOutlined } from '@ant-design/icons';
 import { screenshot, showInfo } from '../helpers';
 import i18n from '../i18n/i18n';
+import { Rectangle } from '../models/Rectangle';
 
 const Container = styled.div`
   position: fixed;
@@ -31,8 +32,6 @@ const ColumnWrapper = styled.div`
   position: absolute;
   right: 0;
   top: 0;
-  width: 600px;
-  height: 360px;
   min-width: 400px;
   max-width: 800px;
   min-height: 200px;
@@ -45,6 +44,7 @@ const ColumnWrapper = styled.div`
   overflow-x: auto;
   overflow-y: auto;
   resize: both;
+  direction: rtl;
 `;
 
 const Header = styled.div`
@@ -77,8 +77,7 @@ const DailyLightSensorPanel = ({ city }: DailyLightSensorPanelProps) => {
   const now = new Date(useStore(Selector.world.date));
   const sensorLabels = useStore(Selector.sensorLabels);
   const sensorData = useStore(Selector.dailyLightSensorData);
-  const panelX = useStore(Selector.viewState.dailyLightSensorPanelX);
-  const panelY = useStore(Selector.viewState.dailyLightSensorPanelY);
+  const panelRect = useStore(Selector.viewState.dailyLightSensorPanelRect);
   const countElementsByType = useStore(Selector.countElementsByType);
 
   // nodeRef is to suppress ReactDOM.findDOMNode() deprecation warning. See:
@@ -86,30 +85,54 @@ const DailyLightSensorPanel = ({ city }: DailyLightSensorPanelProps) => {
   const nodeRef = React.useRef(null);
 
   const wrapperRef = useRef<HTMLDivElement | null>(null);
-  const wOffset = wrapperRef.current ? wrapperRef.current.clientWidth + 40 : 640;
-  const hOffset = wrapperRef.current ? wrapperRef.current.clientHeight + 100 : 460;
+  const resizeObserverRef = useRef<ResizeObserver>();
+  const wOffset = wrapperRef.current ? wrapperRef.current.clientWidth + 40 : panelRect ? panelRect.width + 40 : 640;
+  const hOffset = wrapperRef.current ? wrapperRef.current.clientHeight + 100 : panelRect ? panelRect.height + 100 : 460;
   const [curPosition, setCurPosition] = useState({
-    x: isNaN(panelX) ? 0 : Math.max(panelX, wOffset - window.innerWidth),
-    y: isNaN(panelY) ? 0 : Math.min(panelY, window.innerHeight - hOffset),
+    x: panelRect ? Math.max(panelRect.x, wOffset - window.innerWidth) : 0,
+    y: panelRect ? Math.min(panelRect.y, window.innerHeight - hOffset) : 0,
   });
 
   const lang = { lng: language };
-  const responsiveHeight = 100;
+
+  useEffect(() => {
+    setCurPosition({
+      x: Math.max(panelRect?.x, wOffset - window.innerWidth),
+      y: Math.min(panelRect?.y, window.innerHeight - hOffset),
+    });
+  }, [panelRect, wOffset, hOffset]);
 
   // when the window is resized (the code depends on where the panel is originally anchored in the CSS)
   useEffect(() => {
-    const handleResize = () => {
+    const handleWindowResize = () => {
       setCurPosition({
-        x: Math.max(panelX, wOffset - window.innerWidth),
-        y: Math.min(panelY, window.innerHeight - hOffset),
+        x: Math.max(panelRect?.x, wOffset - window.innerWidth),
+        y: Math.min(panelRect?.y, window.innerHeight - hOffset),
       });
     };
-    window.addEventListener('resize', handleResize);
+    window.addEventListener('resize', handleWindowResize);
+    if (wrapperRef.current) {
+      if (!resizeObserverRef.current) {
+        resizeObserverRef.current = new ResizeObserver(() => {
+          setCommonStore((state) => {
+            if (wrapperRef.current) {
+              if (!state.viewState.dailyLightSensorPanelRect) {
+                state.viewState.dailyLightSensorPanelRect = new Rectangle(0, 0, 600, 360);
+              }
+              state.viewState.dailyLightSensorPanelRect.width = wrapperRef.current.offsetWidth;
+              state.viewState.dailyLightSensorPanelRect.height = wrapperRef.current.offsetHeight;
+            }
+          });
+        });
+      }
+      resizeObserverRef.current.observe(wrapperRef.current);
+    }
     return () => {
-      window.removeEventListener('resize', handleResize);
+      window.removeEventListener('resize', handleWindowResize);
+      resizeObserverRef.current?.disconnect();
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  }, [panelRect, wOffset, hOffset]);
 
   const onDrag: DraggableEventHandler = (e, ui) => {
     setCurPosition({
@@ -120,8 +143,8 @@ const DailyLightSensorPanel = ({ city }: DailyLightSensorPanelProps) => {
 
   const onDragEnd: DraggableEventHandler = (e, ui) => {
     setCommonStore((state) => {
-      state.viewState.dailyLightSensorPanelX = Math.max(ui.x, wOffset - window.innerWidth);
-      state.viewState.dailyLightSensorPanelY = Math.min(ui.y, window.innerHeight - hOffset);
+      state.viewState.dailyLightSensorPanelRect.x = Math.max(ui.x, wOffset - window.innerWidth);
+      state.viewState.dailyLightSensorPanelRect.y = Math.min(ui.y, window.innerHeight - hOffset);
     });
   };
 
@@ -145,11 +168,19 @@ const DailyLightSensorPanel = ({ city }: DailyLightSensorPanelProps) => {
       onStop={onDragEnd}
     >
       <Container ref={nodeRef}>
-        <ColumnWrapper ref={wrapperRef}>
-          <Header className="handle">
+        <ColumnWrapper
+          ref={wrapperRef}
+          style={{
+            width: (panelRect ? panelRect.width : 600) + 'px',
+            height: (panelRect ? panelRect.height : 360) + 'px',
+          }}
+        >
+          <Header className="handle" style={{ direction: 'ltr' }}>
             <span>
-              {i18n.t('sensorPanel.LightSensor', lang)}: {i18n.t('sensorPanel.WeatherDataFrom', lang)}
-              {' ' + city} | {moment(now).format('MM/DD')}
+              {i18n.t('sensorPanel.LightSensor', lang) + ': '}
+              <label style={{ fontSize: '10px' }}>
+                {i18n.t('sensorPanel.WeatherDataFrom', lang) + ' ' + city + ' | ' + moment(now).format('MM/DD')}
+              </label>
             </span>
             <span
               style={{ cursor: 'pointer' }}
@@ -168,7 +199,7 @@ const DailyLightSensorPanel = ({ city }: DailyLightSensorPanelProps) => {
             chartType={ChartType.Line}
             dataSource={sensorData}
             labels={sensorLabels}
-            height={responsiveHeight}
+            height={100}
             dataKeyAxisX={'Hour'}
             labelX={labelX}
             labelY={labelY}
@@ -179,7 +210,7 @@ const DailyLightSensorPanel = ({ city }: DailyLightSensorPanelProps) => {
             symbolCount={24}
             referenceX={now.getHours()}
           />
-          <Space style={{ alignSelf: 'center' }}>
+          <Space style={{ alignSelf: 'center', direction: 'ltr' }}>
             <Button
               type="default"
               icon={<ReloadOutlined />}

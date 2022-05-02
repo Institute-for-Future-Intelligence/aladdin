@@ -96,15 +96,11 @@ export const stickyNotePanelY = (state: CommonStoreState) => state.viewState.sti
 
 export const showDailyLightSensorPanel = (state: CommonStoreState) => state.viewState.showDailyLightSensorPanel;
 
-export const dailyLightSensorPanelX = (state: CommonStoreState) => state.viewState.dailyLightSensorPanelX;
-
-export const dailyLightSensorPanelY = (state: CommonStoreState) => state.viewState.dailyLightSensorPanelY;
+export const dailyLightSensorPanelRect = (state: CommonStoreState) => state.viewState.dailyLightSensorPanelRect;
 
 export const showYearlyLightSensorPanel = (state: CommonStoreState) => state.viewState.showYearlyLightSensorPanel;
 
-export const yearlyLightSensorPanelX = (state: CommonStoreState) => state.viewState.yearlyLightSensorPanelX;
-
-export const yearlyLightSensorPanelY = (state: CommonStoreState) => state.viewState.yearlyLightSensorPanelY;
+export const yearlyLightSensorPanelRect = (state: CommonStoreState) => state.viewState.yearlyLightSensorPanelRect;
 
 export const yearlyLightSensorPanelShowDaylight = (state: CommonStoreState) =>
   state.viewState.yearlyLightSensorPanelShowDaylight;
