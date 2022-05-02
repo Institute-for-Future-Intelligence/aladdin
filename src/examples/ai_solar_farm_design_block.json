@@ -1,6 +1,6 @@
 {
-  "docid": "mn7qvzkALUGAg4t6fwTnhs",
-  "timestamp": 1651101066453,
+  "docid": "rYwcdiKjBWwck9G28ECztG",
+  "timestamp": 1651526000202,
   "userid": "QWecNcxhyvP6j6sBN11hBsfZDau1",
   "owner": null,
   "email": null,
@@ -183,7 +183,7 @@
       "cy": -12.559388994116993,
       "cz": 0.05000000074505806,
       "lx": 0.6,
-      "lz": 1.8,
+      "lz": 1.68,
       "normal": [
         0,
         1,
@@ -264,7 +264,13 @@
     "solarRadiationHeatMapMaxValue": 3.5,
     "evolutionPanelX": -3,
     "evolutionPanelY": 5,
-    "showEconomicsPanel": false
+    "showEconomicsPanel": false,
+    "evolutionPanelRect": {
+      "x": 0,
+      "y": 0,
+      "width": 543,
+      "height": 341
+    }
   },
   "evolutionMethod": 1,
   "solarPanelArrayLayoutConstraints": {

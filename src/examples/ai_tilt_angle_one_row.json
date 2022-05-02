@@ -1,6 +1,6 @@
 {
-  "docid": "q3fdmCT3FiGvp8UP7nsfr9",
-  "timestamp": 1650575018649,
+  "docid": "72cfE6F3GWHH3931zvTzWk",
+  "timestamp": 1651525782977,
   "userid": "QWecNcxhyvP6j6sBN11hBsfZDau1",
   "owner": null,
   "email": null,
@@ -57,7 +57,7 @@
         0
       ],
       "lx": 18.837452107330996,
-      "selected": false,
+      "selected": true,
       "parentId": "Ground"
     },
     {
@@ -156,9 +156,9 @@
     "showYearlyLightSensorPanel": false,
     "mapType": "roadmap",
     "cameraPosition": [
-      9.661900643630158,
-      -7.157141754831505,
-      3.855247908073731
+      9.66190064363015,
+      -7.157141754831499,
+      3.8552479080737285
     ],
     "panCenter": [
       0.4252296602758445,
@@ -182,9 +182,23 @@
     "showEvolutionPanel": true,
     "solarRadiationHeatMapMaxValue": 6,
     "evolutionPanelX": -13,
-    "evolutionPanelY": 8
+    "evolutionPanelY": 8,
+    "evolutionPanelRect": {
+      "x": 0,
+      "y": 0,
+      "width": 498,
+      "height": 340
+    }
   },
   "evolutionMethod": 1,
+  "solarPanelArrayLayoutConstraints": {
+    "minimumInterRowSpacing": 2,
+    "maximumInterRowSpacing": 10,
+    "minimumRowsPerRack": 1,
+    "maximumRowsPerRack": 6,
+    "minimumTiltAngle": -1.5707963267948966,
+    "maximumTiltAngle": 1.5707963267948966
+  },
   "evolutionaryAlgorithmState": {
     "geneticAlgorithmParams": {
       "problem": "Solar Panel Tilt Angle",
@@ -212,6 +226,11 @@
       "convergenceThreshold": 0.01,
       "localSearchRadius": 0.1
     }
+  },
+  "economicsParams": {
+    "projectLifeSpan": 25,
+    "electricitySellingPrice": 0.25,
+    "operationalCostPerUnit": 0.15
   },
   "notes": []
 }

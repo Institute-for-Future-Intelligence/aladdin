@@ -157,7 +157,7 @@ const SutBiaxialLineGraph = ({
         // need two div wrappers to disable the responsiveness of ResponsiveContainer
         <div
           id={'biaxial-line-graph-' + labelX + '-' + labelY1 + '-' + labelY2}
-          style={{ width: '100%', height: `${height}%`, position: 'relative' }}
+          style={{ width: '100%', height: `${height}%`, position: 'relative', direction: 'ltr' }}
         >
           <div
             style={{

@@ -14,6 +14,7 @@ import { Button, Space, Switch } from 'antd';
 import { screenshot, showInfo } from '../helpers';
 import { ReloadOutlined, SaveOutlined, UnorderedListOutlined } from '@ant-design/icons';
 import i18n from '../i18n/i18n';
+import { Rectangle } from '../models/Rectangle';
 
 const Container = styled.div`
   position: fixed;
@@ -31,8 +32,6 @@ const ColumnWrapper = styled.div`
   position: absolute;
   right: 0;
   top: 0;
-  width: 600px;
-  height: 400px;
   min-width: 400px;
   max-width: 800px;
   min-height: 200px;
@@ -45,6 +44,7 @@ const ColumnWrapper = styled.div`
   overflow-x: auto;
   overflow-y: auto;
   resize: both;
+  direction: rtl;
 `;
 
 const Header = styled.div`
@@ -78,8 +78,7 @@ const DailyHeliostatYieldPanel = ({ city }: DailyHeliostatYieldPanelProps) => {
   const countElementsByType = useStore(Selector.countElementsByType);
   const dailyYield = useStore(Selector.dailyHeliostatYield);
   const individualOutputs = useStore(Selector.dailyHeliostatIndividualOutputs);
-  const panelX = useStore(Selector.viewState.dailyHeliostatYieldPanelX);
-  const panelY = useStore(Selector.viewState.dailyHeliostatYieldPanelY);
+  const panelRect = useStore(Selector.viewState.dailyHeliostatYieldPanelRect);
   const heliostatLabels = useStore(Selector.heliostatLabels);
 
   // nodeRef is to suppress ReactDOM.findDOMNode() deprecation warning. See:
@@ -87,17 +86,17 @@ const DailyHeliostatYieldPanel = ({ city }: DailyHeliostatYieldPanelProps) => {
   const nodeRef = React.useRef(null);
 
   const wrapperRef = useRef<HTMLDivElement | null>(null);
-  const wOffset = wrapperRef.current ? wrapperRef.current.clientWidth + 40 : 640;
-  const hOffset = wrapperRef.current ? wrapperRef.current.clientHeight + 100 : 500;
+  const resizeObserverRef = useRef<ResizeObserver>();
+  const wOffset = wrapperRef.current ? wrapperRef.current.clientWidth + 40 : panelRect ? panelRect.width + 40 : 640;
+  const hOffset = wrapperRef.current ? wrapperRef.current.clientHeight + 100 : panelRect ? panelRect.height + 100 : 500;
   const [curPosition, setCurPosition] = useState({
-    x: isNaN(panelX) ? 0 : Math.max(panelX, wOffset - window.innerWidth),
-    y: isNaN(panelY) ? 0 : Math.min(panelY, window.innerHeight - hOffset),
+    x: panelRect ? Math.max(panelRect.x, wOffset - window.innerWidth) : 0,
+    y: panelRect ? Math.min(panelRect.y, window.innerHeight - hOffset) : 0,
   });
   const [sum, setSum] = useState(0);
   const heliostatSumRef = useRef(new Map<string, number>());
 
   const lang = { lng: language };
-  const responsiveHeight = 100;
 
   useEffect(() => {
     let s = 0;
@@ -116,20 +115,44 @@ const DailyHeliostatYieldPanel = ({ city }: DailyHeliostatYieldPanelProps) => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [dailyYield]);
 
+  useEffect(() => {
+    setCurPosition({
+      x: Math.max(panelRect?.x, wOffset - window.innerWidth),
+      y: Math.min(panelRect?.y, window.innerHeight - hOffset),
+    });
+  }, [panelRect, wOffset, hOffset]);
+
   // when the window is resized (the code depends on where the panel is originally anchored in the CSS)
   useEffect(() => {
-    const handleResize = () => {
+    const handleWindowResize = () => {
       setCurPosition({
-        x: Math.max(panelX, wOffset - window.innerWidth),
-        y: Math.min(panelY, window.innerHeight - hOffset),
+        x: Math.max(panelRect?.x, wOffset - window.innerWidth),
+        y: Math.min(panelRect?.y, window.innerHeight - hOffset),
       });
     };
-    window.addEventListener('resize', handleResize);
+    window.addEventListener('resize', handleWindowResize);
+    if (wrapperRef.current) {
+      if (!resizeObserverRef.current) {
+        resizeObserverRef.current = new ResizeObserver(() => {
+          setCommonStore((state) => {
+            if (wrapperRef.current) {
+              if (!state.viewState.dailyHeliostatYieldPanelRect) {
+                state.viewState.dailyHeliostatYieldPanelRect = new Rectangle(0, 0, 600, 400);
+              }
+              state.viewState.dailyHeliostatYieldPanelRect.width = wrapperRef.current.offsetWidth;
+              state.viewState.dailyHeliostatYieldPanelRect.height = wrapperRef.current.offsetHeight;
+            }
+          });
+        });
+      }
+      resizeObserverRef.current.observe(wrapperRef.current);
+    }
     return () => {
-      window.removeEventListener('resize', handleResize);
+      window.removeEventListener('resize', handleWindowResize);
+      resizeObserverRef.current?.disconnect();
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  }, [panelRect, wOffset, hOffset]);
 
   const onDrag: DraggableEventHandler = (e, ui) => {
     setCurPosition({
@@ -140,8 +163,11 @@ const DailyHeliostatYieldPanel = ({ city }: DailyHeliostatYieldPanelProps) => {
 
   const onDragEnd: DraggableEventHandler = (e, ui) => {
     setCommonStore((state) => {
-      state.viewState.dailyHeliostatYieldPanelX = Math.max(ui.x, wOffset - window.innerWidth);
-      state.viewState.dailyHeliostatYieldPanelY = Math.min(ui.y, window.innerHeight - hOffset);
+      if (!state.viewState.dailyHeliostatYieldPanelRect) {
+        state.viewState.dailyHeliostatYieldPanelRect = new Rectangle(0, 0, 600, 400);
+      }
+      state.viewState.dailyHeliostatYieldPanelRect.x = Math.max(ui.x, wOffset - window.innerWidth);
+      state.viewState.dailyHeliostatYieldPanelRect.y = Math.min(ui.y, window.innerHeight - hOffset);
     });
   };
 
@@ -159,7 +185,7 @@ const DailyHeliostatYieldPanel = ({ city }: DailyHeliostatYieldPanelProps) => {
       });
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [heliostatCount]);
+  }, [heliostatCount, individualOutputs]);
 
   const labelX = i18n.t('word.Hour', lang);
   const labelY = i18n.t('heliostatYieldPanel.YieldPerHour', lang);
@@ -181,11 +207,19 @@ const DailyHeliostatYieldPanel = ({ city }: DailyHeliostatYieldPanelProps) => {
       onStop={onDragEnd}
     >
       <Container ref={nodeRef}>
-        <ColumnWrapper ref={wrapperRef}>
-          <Header className="handle">
+        <ColumnWrapper
+          ref={wrapperRef}
+          style={{
+            width: (panelRect ? panelRect.width : 600) + 'px',
+            height: (panelRect ? panelRect.height : 400) + 'px',
+          }}
+        >
+          <Header className="handle" style={{ direction: 'ltr' }}>
             <span>
-              {i18n.t('heliostatYieldPanel.HeliostatDailyYield', lang)}: {i18n.t('sensorPanel.WeatherDataFrom', lang)}
-              {' ' + city} | {moment(now).format('MM/DD')}
+              {i18n.t('heliostatYieldPanel.HeliostatDailyYield', lang) + ': '}
+              <label style={{ fontSize: '10px' }}>
+                {i18n.t('sensorPanel.WeatherDataFrom', lang) + ' ' + city + ' | ' + moment(now).format('MM/DD')}
+              </label>
             </span>
             <span
               style={{ cursor: 'pointer' }}
@@ -204,7 +238,7 @@ const DailyHeliostatYieldPanel = ({ city }: DailyHeliostatYieldPanelProps) => {
             chartType={individualOutputs ? ChartType.Line : ChartType.Area}
             dataSource={dailyYield}
             labels={heliostatLabels}
-            height={responsiveHeight}
+            height={100}
             dataKeyAxisX={'Hour'}
             labelX={labelX}
             labelY={labelY}
@@ -215,7 +249,7 @@ const DailyHeliostatYieldPanel = ({ city }: DailyHeliostatYieldPanelProps) => {
             symbolCount={24}
             referenceX={now.getHours()}
           />
-          <Space style={{ alignSelf: 'center' }}>
+          <Space style={{ alignSelf: 'center', direction: 'ltr' }}>
             {individualOutputs && heliostatCount > 1 ? (
               <Space title={totalTooltip} style={{ cursor: 'pointer', border: '2px solid #ccc', padding: '4px' }}>
                 {i18n.t('heliostatYieldPanel.HoverForBreakdown', lang)}

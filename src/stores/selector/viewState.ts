@@ -118,83 +118,59 @@ export const visibilityResultsPanelRect = (state: CommonStoreState) => state.vie
 export const showDailyParabolicTroughYieldPanel = (state: CommonStoreState) =>
   state.viewState.showDailyParabolicTroughYieldPanel;
 
-export const dailyParabolicTroughYieldPanelX = (state: CommonStoreState) =>
-  state.viewState.dailyParabolicTroughYieldPanelX;
-
-export const dailyParabolicTroughYieldPanelY = (state: CommonStoreState) =>
-  state.viewState.dailyParabolicTroughYieldPanelY;
+export const dailyParabolicTroughYieldPanelRect = (state: CommonStoreState) =>
+  state.viewState.dailyParabolicTroughYieldPanelRect;
 
 export const showYearlyParabolicTroughYieldPanel = (state: CommonStoreState) =>
   state.viewState.showYearlyParabolicTroughYieldPanel;
 
-export const yearlyParabolicTroughYieldPanelX = (state: CommonStoreState) =>
-  state.viewState.yearlyParabolicTroughYieldPanelX;
-
-export const yearlyParabolicTroughYieldPanelY = (state: CommonStoreState) =>
-  state.viewState.yearlyParabolicTroughYieldPanelY;
+export const yearlyParabolicTroughYieldPanelRect = (state: CommonStoreState) =>
+  state.viewState.yearlyParabolicTroughYieldPanelRect;
 
 export const showDailyParabolicDishYieldPanel = (state: CommonStoreState) =>
   state.viewState.showDailyParabolicDishYieldPanel;
 
-export const dailyParabolicDishYieldPanelX = (state: CommonStoreState) => state.viewState.dailyParabolicDishYieldPanelX;
-
-export const dailyParabolicDishYieldPanelY = (state: CommonStoreState) => state.viewState.dailyParabolicDishYieldPanelY;
+export const dailyParabolicDishYieldPanelRect = (state: CommonStoreState) =>
+  state.viewState.dailyParabolicDishYieldPanelRect;
 
 export const showYearlyParabolicDishYieldPanel = (state: CommonStoreState) =>
   state.viewState.showYearlyParabolicDishYieldPanel;
 
-export const yearlyParabolicDishYieldPanelX = (state: CommonStoreState) =>
-  state.viewState.yearlyParabolicDishYieldPanelX;
-
-export const yearlyParabolicDishYieldPanelY = (state: CommonStoreState) =>
-  state.viewState.yearlyParabolicDishYieldPanelY;
+export const yearlyParabolicDishYieldPanelRect = (state: CommonStoreState) =>
+  state.viewState.yearlyParabolicDishYieldPanelRect;
 
 export const showDailyFresnelReflectorYieldPanel = (state: CommonStoreState) =>
   state.viewState.showDailyFresnelReflectorYieldPanel;
 
-export const dailyFresnelReflectorYieldPanelX = (state: CommonStoreState) =>
-  state.viewState.dailyFresnelReflectorYieldPanelX;
-
-export const dailyFresnelReflectorYieldPanelY = (state: CommonStoreState) =>
-  state.viewState.dailyFresnelReflectorYieldPanelY;
+export const dailyFresnelReflectorYieldPanelRect = (state: CommonStoreState) =>
+  state.viewState.dailyFresnelReflectorYieldPanelRect;
 
 export const showYearlyFresnelReflectorYieldPanel = (state: CommonStoreState) =>
   state.viewState.showYearlyFresnelReflectorYieldPanel;
 
-export const yearlyFresnelReflectorYieldPanelX = (state: CommonStoreState) =>
-  state.viewState.yearlyFresnelReflectorYieldPanelX;
-
-export const yearlyFresnelReflectorYieldPanelY = (state: CommonStoreState) =>
-  state.viewState.yearlyFresnelReflectorYieldPanelY;
+export const yearlyFresnelReflectorYieldPanelRect = (state: CommonStoreState) =>
+  state.viewState.yearlyFresnelReflectorYieldPanelRect;
 
 export const showDailyHeliostatYieldPanel = (state: CommonStoreState) => state.viewState.showDailyHeliostatYieldPanel;
 
-export const dailyHeliostatYieldPanelX = (state: CommonStoreState) => state.viewState.dailyHeliostatYieldPanelX;
-
-export const dailyHeliostatYieldPanelY = (state: CommonStoreState) => state.viewState.dailyHeliostatYieldPanelY;
+export const dailyHeliostatYieldPanelRect = (state: CommonStoreState) => state.viewState.dailyHeliostatYieldPanelRect;
 
 export const showYearlyHeliostatYieldPanel = (state: CommonStoreState) => state.viewState.showYearlyHeliostatYieldPanel;
 
-export const yearlyHeliostatYieldPanelX = (state: CommonStoreState) => state.viewState.yearlyHeliostatYieldPanelX;
-
-export const yearlyHeliostatYieldPanelY = (state: CommonStoreState) => state.viewState.yearlyHeliostatYieldPanelY;
+export const yearlyHeliostatYieldPanelRect = (state: CommonStoreState) => state.viewState.yearlyHeliostatYieldPanelRect;
 
 export const showDailyUpdraftTowerYieldPanel = (state: CommonStoreState) =>
   state.viewState.showDailyUpdraftTowerYieldPanel;
 
-export const dailyUpdraftTowerYieldPanelX = (state: CommonStoreState) => state.viewState.dailyUpdraftTowerYieldPanelX;
-
-export const dailyUpdraftTowerYieldPanelY = (state: CommonStoreState) => state.viewState.dailyUpdraftTowerYieldPanelY;
+export const dailyUpdraftTowerYieldPanelRect = (state: CommonStoreState) =>
+  state.viewState.dailyUpdraftTowerYieldPanelRect;
 
 export const showYearlyUpdraftTowerYieldPanel = (state: CommonStoreState) =>
   state.viewState.showYearlyUpdraftTowerYieldPanel;
 
-export const yearlyUpdraftTowerYieldPanelX = (state: CommonStoreState) => state.viewState.yearlyUpdraftTowerYieldPanelX;
-
-export const yearlyUpdraftTowerYieldPanelY = (state: CommonStoreState) => state.viewState.yearlyUpdraftTowerYieldPanelY;
+export const yearlyUpdraftTowerYieldPanelRect = (state: CommonStoreState) =>
+  state.viewState.yearlyUpdraftTowerYieldPanelRect;
 
 export const showEvolutionPanel = (state: CommonStoreState) => state.viewState.showEvolutionPanel;
 
-export const evolutionPanelX = (state: CommonStoreState) => state.viewState.evolutionPanelX;
-
-export const evolutionPanelY = (state: CommonStoreState) => state.viewState.evolutionPanelY;
+export const evolutionPanelRect = (state: CommonStoreState) => state.viewState.evolutionPanelRect;

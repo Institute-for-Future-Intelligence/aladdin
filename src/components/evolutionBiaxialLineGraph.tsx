@@ -16,7 +16,7 @@ import {
   YAxis,
 } from 'recharts';
 import { createSymbol, SYMBOLS } from './symbols';
-import { HALF_PI, PRESET_COLORS } from '../constants';
+import { PRESET_COLORS } from '../constants';
 import { DatumEntry } from '../types';
 import { CurveType } from 'recharts/types/shape/Curve';
 import { Util } from '../Util';
@@ -171,7 +171,7 @@ const EvolutionBiaxialLineGraph = ({
         // need two div wrappers to disable the responsiveness of ResponsiveContainer
         <div
           id={'biaxial-line-graph-' + labelX + '-' + labelY1 + '-' + labelY2}
-          style={{ width: '100%', height: `${height}%`, position: 'relative' }}
+          style={{ width: '100%', height: `${height}%`, position: 'relative', direction: 'ltr' }}
         >
           <div
             style={{

@@ -1,6 +1,6 @@
 {
-  "docid": "fNQwoXKqyxYzBsrSTLszUX",
-  "timestamp": 1651163692243,
+  "docid": "7YmWgF36Q3TygkDzrLQ7nK",
+  "timestamp": 1651525955392,
   "userid": "QWecNcxhyvP6j6sBN11hBsfZDau1",
   "owner": null,
   "email": null,
@@ -142,8 +142,8 @@
       "cx": 10.603917360410481,
       "cy": -12.559388994116993,
       "cz": 0.05000000074505806,
-      "lx": 0.6,
-      "lz": 1.8,
+      "lx": 0.45,
+      "lz": 1.55,
       "normal": [
         0,
         1,
@@ -157,7 +157,7 @@
       "parentId": "of4fAMi2p9MKmo6JDUYnfX",
       "id": "rrK38LJKu6CVWVjf2zV1b2",
       "selected": false,
-      "ly": 0.6
+      "ly": 0.45
     }
   ],
   "view": {
@@ -224,7 +224,13 @@
     "solarRadiationHeatMapMaxValue": 3.5,
     "evolutionPanelX": -3,
     "evolutionPanelY": 5,
-    "showEconomicsPanel": false
+    "showEconomicsPanel": false,
+    "evolutionPanelRect": {
+      "x": 0,
+      "y": 0,
+      "width": 520,
+      "height": 318
+    }
   },
   "evolutionMethod": 2,
   "solarPanelArrayLayoutConstraints": {

@@ -13,6 +13,7 @@ import { RightCircleOutlined, SaveOutlined } from '@ant-design/icons';
 import i18n from '../i18n/i18n';
 import EvolutionBiaxialLineGraph from '../components/evolutionBiaxialLineGraph';
 import { DesignProblem, EvolutionMethod, ObjectiveFunctionType, ObjectType } from '../types';
+import { Rectangle } from '../models/Rectangle';
 
 const Container = styled.div`
   position: fixed;
@@ -30,8 +31,6 @@ const ColumnWrapper = styled.div`
   position: absolute;
   right: 0;
   top: 0;
-  width: 640px;
-  height: 400px;
   min-width: 400px;
   max-width: 800px;
   min-height: 200px;
@@ -44,6 +43,7 @@ const ColumnWrapper = styled.div`
   overflow-x: auto;
   overflow-y: auto;
   resize: both;
+  direction: rtl;
 `;
 
 const Header = styled.div`
@@ -71,8 +71,7 @@ const SolarPanelOptimizationResult = () => {
   const setCommonStore = useStore(Selector.set);
   const fittestIndividualResults = useStore(Selector.fittestIndividualResults);
   const variableLabels = useStore(Selector.variableLabels);
-  const panelX = useStore(Selector.viewState.evolutionPanelX);
-  const panelY = useStore(Selector.viewState.evolutionPanelY);
+  const panelRect = useStore(Selector.viewState.evolutionPanelRect);
   const selectedElement = useStore(Selector.selectedElement);
   const evolutionMethod = useStore(Selector.evolutionMethod);
   const evolutionaryAlgorithmState = useStore.getState().evolutionaryAlgorithmState;
@@ -82,34 +81,57 @@ const SolarPanelOptimizationResult = () => {
   const nodeRef = React.useRef(null);
 
   const wrapperRef = useRef<HTMLDivElement | null>(null);
-  const wOffset = wrapperRef.current ? wrapperRef.current.clientWidth + 40 : 640;
-  const hOffset = wrapperRef.current ? wrapperRef.current.clientHeight + 100 : 500;
+  const resizeObserverRef = useRef<ResizeObserver>();
+  const wOffset = wrapperRef.current ? wrapperRef.current.clientWidth + 40 : panelRect ? panelRect.width + 40 : 680;
+  const hOffset = wrapperRef.current ? wrapperRef.current.clientHeight + 100 : panelRect ? panelRect.height + 100 : 500;
   const [curPosition, setCurPosition] = useState({
-    x: isNaN(panelX) ? 0 : Math.max(panelX, wOffset - window.innerWidth),
-    y: isNaN(panelY) ? 0 : Math.min(panelY, window.innerHeight - hOffset),
+    x: panelRect ? Math.max(panelRect.x, wOffset - window.innerWidth) : 0,
+    y: panelRect ? Math.min(panelRect.y, window.innerHeight - hOffset) : 0,
   });
 
   const lang = useMemo(() => {
     return { lng: language };
   }, [language]);
 
-  const responsiveHeight = 100;
+  useEffect(() => {
+    setCurPosition({
+      x: Math.max(panelRect?.x, wOffset - window.innerWidth),
+      y: Math.min(panelRect?.y, window.innerHeight - hOffset),
+    });
+  }, [panelRect, wOffset, hOffset]);
 
   // when the browser window (not this div window) is resized
   // (the code depends on where the panel is originally anchored in the CSS)
   useEffect(() => {
     const handleWindowResize = () => {
       setCurPosition({
-        x: Math.max(panelX, wOffset - window.innerWidth),
-        y: Math.min(panelY, window.innerHeight - hOffset),
+        x: Math.max(panelRect?.x, wOffset - window.innerWidth),
+        y: Math.min(panelRect?.y, window.innerHeight - hOffset),
       });
     };
     window.addEventListener('resize', handleWindowResize);
+    if (wrapperRef.current) {
+      if (!resizeObserverRef.current) {
+        resizeObserverRef.current = new ResizeObserver(() => {
+          setCommonStore((state) => {
+            if (wrapperRef.current) {
+              if (!state.viewState.evolutionPanelRect) {
+                state.viewState.evolutionPanelRect = new Rectangle(0, 0, 640, 400);
+              }
+              state.viewState.evolutionPanelRect.width = wrapperRef.current.offsetWidth;
+              state.viewState.evolutionPanelRect.height = wrapperRef.current.offsetHeight;
+            }
+          });
+        });
+      }
+      resizeObserverRef.current.observe(wrapperRef.current);
+    }
     return () => {
       window.removeEventListener('resize', handleWindowResize);
+      resizeObserverRef.current?.disconnect();
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  }, [panelRect, wOffset, hOffset]);
 
   const onDrag: DraggableEventHandler = (e, ui) => {
     setCurPosition({
@@ -120,8 +142,11 @@ const SolarPanelOptimizationResult = () => {
 
   const onDragEnd: DraggableEventHandler = (e, ui) => {
     setCommonStore((state) => {
-      state.viewState.evolutionPanelX = Math.max(ui.x, wOffset - window.innerWidth);
-      state.viewState.evolutionPanelY = Math.min(ui.y, window.innerHeight - hOffset);
+      if (!state.viewState.evolutionPanelRect) {
+        state.viewState.evolutionPanelRect = new Rectangle(0, 0, 640, 400);
+      }
+      state.viewState.evolutionPanelRect.x = Math.max(ui.x, wOffset - window.innerWidth);
+      state.viewState.evolutionPanelRect.y = Math.min(ui.y, window.innerHeight - hOffset);
     });
   };
 
@@ -218,8 +243,14 @@ const SolarPanelOptimizationResult = () => {
       onStop={onDragEnd}
     >
       <Container ref={nodeRef}>
-        <ColumnWrapper ref={wrapperRef}>
-          <Header className="handle">
+        <ColumnWrapper
+          ref={wrapperRef}
+          style={{
+            width: (panelRect ? panelRect.width : 640) + 'px',
+            height: (panelRect ? panelRect.height : 400) + 'px',
+          }}
+        >
+          <Header className="handle" style={{ direction: 'ltr' }}>
             <span>{title}</span>
             <span
               style={{ cursor: 'pointer' }}
@@ -236,7 +267,7 @@ const SolarPanelOptimizationResult = () => {
           <EvolutionBiaxialLineGraph
             dataSource={fittestIndividualResults}
             labels={variableLabels}
-            height={responsiveHeight}
+            height={100}
             dataKeyAxisX={'Step'}
             labelX={labelAxisX}
             labelY1={labelVariable}
@@ -246,7 +277,7 @@ const SolarPanelOptimizationResult = () => {
             curveType={'linear'}
             fractionDigits={2}
           />
-          <Space style={{ alignSelf: 'center' }}>
+          <Space style={{ alignSelf: 'center', direction: 'ltr' }}>
             {buttonEnabled && (
               <Button
                 type="default"

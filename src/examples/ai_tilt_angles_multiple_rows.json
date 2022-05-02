@@ -1,6 +1,6 @@
 {
-  "docid": "2rTCwWh4UK9XfJGh13RbjK",
-  "timestamp": 1650216346134,
+  "docid": "3i6pcNU98x7h18z9bALfDc",
+  "timestamp": 1651525865467,
   "userid": "QWecNcxhyvP6j6sBN11hBsfZDau1",
   "owner": null,
   "email": null,
@@ -288,9 +288,23 @@
     "showEvolutionPanel": true,
     "solarRadiationHeatMapMaxValue": 6,
     "evolutionPanelX": 3,
-    "evolutionPanelY": 4
+    "evolutionPanelY": 4,
+    "evolutionPanelRect": {
+      "x": 0,
+      "y": 0,
+      "width": 518,
+      "height": 335
+    }
   },
   "evolutionMethod": 2,
+  "solarPanelArrayLayoutConstraints": {
+    "minimumInterRowSpacing": 2,
+    "maximumInterRowSpacing": 10,
+    "minimumRowsPerRack": 1,
+    "maximumRowsPerRack": 6,
+    "minimumTiltAngle": -1.5707963267948966,
+    "maximumTiltAngle": 1.5707963267948966
+  },
   "evolutionaryAlgorithmState": {
     "geneticAlgorithmParams": {
       "problem": "Solar Panel Tilt Angle",
@@ -318,6 +332,11 @@
       "convergenceThreshold": 0.01,
       "localSearchRadius": 0.1
     }
+  },
+  "economicsParams": {
+    "projectLifeSpan": 25,
+    "electricitySellingPrice": 0.25,
+    "operationalCostPerUnit": 0.15
   },
   "notes": []
 }

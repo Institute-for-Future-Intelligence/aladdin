@@ -1,6 +1,6 @@
 {
-  "docid": "6iiWYQDrr9q95Wh5zAdjxV",
-  "timestamp": 1644420206104,
+  "docid": "rD5DE7MAoB3wzvfQmiZwdJ",
+  "timestamp": 1651523655357,
   "userid": "QWecNcxhyvP6j6sBN11hBsfZDau1",
   "owner": null,
   "email": null,
@@ -100,29 +100,6 @@
       "selected": false
     },
     {
-      "type": "Human",
-      "name": "Jack",
-      "cx": 2.1160523019559125,
-      "cy": -2.004760697934909,
-      "cz": 0.05000000074505806,
-      "lx": 0.6,
-      "lz": 1.8,
-      "normal": [
-        0,
-        1,
-        0
-      ],
-      "rotation": [
-        0,
-        0,
-        0
-      ],
-      "parentId": "1jWhHcaUD3hYBmq8heF7Mt",
-      "id": "5yjJpM6KSokHFbghVSmguB",
-      "selected": false,
-      "ly": 0.6
-    },
-    {
       "type": "Cuboid",
       "cx": -0.0385404512454377,
       "cy": 0.14330355436037368,
@@ -160,6 +137,28 @@
       "parentId": "Ground",
       "selected": false,
       "id": "wjK4XRngAZ84SKTN23jchz"
+    },
+    {
+      "type": "Human",
+      "name": "Judd",
+      "cx": 1.5445606997476098,
+      "cy": -3.0401084333788013,
+      "cz": 0.05000000074505806,
+      "lx": 0.6,
+      "lz": 1.68,
+      "normal": [
+        0,
+        1,
+        0
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "parentId": "1jWhHcaUD3hYBmq8heF7Mt",
+      "id": "weMPyi8cZcMft87uExNbWN",
+      "selected": false
     }
   ],
   "view": {
@@ -196,8 +195,8 @@
     "showDailyLightSensorPanel": false,
     "shadowEnabled": true,
     "cameraPosition": [
-      -2.42018328063582,
-      -15.878268188373026,
+      -2.4201832806358174,
+      -15.878268188373015,
       3.8943744657694412
     ],
     "panCenter": [
@@ -245,6 +244,48 @@
     "dailyParabolicDishYieldPanelY": 0,
     "yearlyParabolicDishYieldPanelX": 0,
     "yearlyParabolicDishYieldPanelY": 0
+  },
+  "evolutionMethod": 1,
+  "solarPanelArrayLayoutConstraints": {
+    "minimumInterRowSpacing": 2,
+    "maximumInterRowSpacing": 10,
+    "minimumRowsPerRack": 1,
+    "maximumRowsPerRack": 6,
+    "minimumTiltAngle": -1.5707963267948966,
+    "maximumTiltAngle": 1.5707963267948966
+  },
+  "evolutionaryAlgorithmState": {
+    "geneticAlgorithmParams": {
+      "problem": "Solar Panel Tilt Angle",
+      "objectiveFunctionType": 1,
+      "selectionMethod": 1,
+      "searchMethod": 1,
+      "populationSize": 20,
+      "maximumGenerations": 5,
+      "selectionRate": 0.5,
+      "crossoverRate": 0.5,
+      "mutationRate": 0.1,
+      "convergenceThreshold": 0.01,
+      "localSearchRadius": 0.1
+    },
+    "particleSwarmOptimizationParams": {
+      "problem": "Solar Panel Tilt Angle",
+      "objectiveFunctionType": 1,
+      "searchMethod": 1,
+      "swarmSize": 20,
+      "maximumSteps": 5,
+      "vmax": 0.01,
+      "inertia": 0.8,
+      "cognitiveCoefficient": 0.1,
+      "socialCoefficient": 0.1,
+      "convergenceThreshold": 0.01,
+      "localSearchRadius": 0.1
+    }
+  },
+  "economicsParams": {
+    "projectLifeSpan": 25,
+    "electricitySellingPrice": 0.25,
+    "operationalCostPerUnit": 0.15
   },
   "notes": []
 }

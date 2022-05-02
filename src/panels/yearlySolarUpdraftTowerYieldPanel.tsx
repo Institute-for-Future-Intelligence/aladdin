@@ -14,6 +14,7 @@ import { Button, Space } from 'antd';
 import { screenshot, showInfo } from '../helpers';
 import { ReloadOutlined, SaveOutlined } from '@ant-design/icons';
 import i18n from '../i18n/i18n';
+import { Rectangle } from '../models/Rectangle';
 
 const Container = styled.div`
   position: fixed;
@@ -31,8 +32,6 @@ const ColumnWrapper = styled.div`
   position: absolute;
   right: 0;
   top: 0;
-  width: 600px;
-  height: 400px;
   min-width: 400px;
   max-width: 800px;
   min-height: 200px;
@@ -45,6 +44,7 @@ const ColumnWrapper = styled.div`
   overflow-x: auto;
   overflow-y: auto;
   resize: both;
+  direction: rtl;
 `;
 
 const Header = styled.div`
@@ -80,24 +80,23 @@ const YearlySolarUpdraftTowerYieldPanel = ({ city }: YearlySolarUpdraftTowerYiel
   const individualOutputs = useStore(Selector.yearlyUpdraftTowerIndividualOutputs);
   const labels = useStore(Selector.updraftTowerLabels);
   const countSolarStructuresByType = useStore(Selector.countSolarStructuresByType);
-  const panelX = useStore(Selector.viewState.yearlyUpdraftTowerYieldPanelX);
-  const panelY = useStore(Selector.viewState.yearlyUpdraftTowerYieldPanelY);
+  const panelRect = useStore(Selector.viewState.yearlyUpdraftTowerYieldPanelRect);
 
   // nodeRef is to suppress ReactDOM.findDOMNode() deprecation warning. See:
   // https://github.com/react-grid-layout/react-draggable/blob/v4.4.2/lib/DraggableCore.js#L159-L171
   const nodeRef = React.useRef(null);
 
   const wrapperRef = useRef<HTMLDivElement | null>(null);
-  const wOffset = wrapperRef.current ? wrapperRef.current.clientWidth + 40 : 640;
-  const hOffset = wrapperRef.current ? wrapperRef.current.clientHeight + 100 : 500;
+  const resizeObserverRef = useRef<ResizeObserver>();
+  const wOffset = wrapperRef.current ? wrapperRef.current.clientWidth + 40 : panelRect ? panelRect.width + 40 : 640;
+  const hOffset = wrapperRef.current ? wrapperRef.current.clientHeight + 100 : panelRect ? panelRect.height + 100 : 500;
   const [curPosition, setCurPosition] = useState({
-    x: isNaN(panelX) ? 0 : Math.max(panelX, wOffset - window.innerWidth),
-    y: isNaN(panelY) ? 0 : Math.min(panelY, window.innerHeight - hOffset),
+    x: panelRect ? Math.max(panelRect.x, wOffset - window.innerWidth) : 0,
+    y: panelRect ? Math.min(panelRect.y, window.innerHeight - hOffset) : 0,
   });
   const [sum, setSum] = useState(0);
   const towerSumRef = useRef(new Map<string, number>());
 
-  const responsiveHeight = 100;
   const referenceX = MONTHS[now.getMonth()];
   const lang = { lng: language };
 
@@ -117,20 +116,44 @@ const YearlySolarUpdraftTowerYieldPanel = ({ city }: YearlySolarUpdraftTowerYiel
     setSum(s);
   }, [yearlyYield]);
 
+  useEffect(() => {
+    setCurPosition({
+      x: Math.max(panelRect?.x, wOffset - window.innerWidth),
+      y: Math.min(panelRect?.y, window.innerHeight - hOffset),
+    });
+  }, [panelRect, wOffset, hOffset]);
+
   // when the window is resized (the code depends on where the panel is originally anchored in the CSS)
   useEffect(() => {
-    const handleResize = () => {
+    const handleWindowResize = () => {
       setCurPosition({
-        x: Math.max(panelX, wOffset - window.innerWidth),
-        y: Math.min(panelY, window.innerHeight - hOffset),
+        x: Math.max(panelRect?.x, wOffset - window.innerWidth),
+        y: Math.min(panelRect?.y, window.innerHeight - hOffset),
       });
     };
-    window.addEventListener('resize', handleResize);
+    window.addEventListener('resize', handleWindowResize);
+    if (wrapperRef.current) {
+      if (!resizeObserverRef.current) {
+        resizeObserverRef.current = new ResizeObserver(() => {
+          setCommonStore((state) => {
+            if (wrapperRef.current) {
+              if (!state.viewState.yearlyUpdraftTowerYieldPanelRect) {
+                state.viewState.yearlyUpdraftTowerYieldPanelRect = new Rectangle(0, 0, 600, 400);
+              }
+              state.viewState.yearlyUpdraftTowerYieldPanelRect.width = wrapperRef.current.offsetWidth;
+              state.viewState.yearlyUpdraftTowerYieldPanelRect.height = wrapperRef.current.offsetHeight;
+            }
+          });
+        });
+      }
+      resizeObserverRef.current.observe(wrapperRef.current);
+    }
     return () => {
-      window.removeEventListener('resize', handleResize);
+      window.removeEventListener('resize', handleWindowResize);
+      resizeObserverRef.current?.disconnect();
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  }, [panelRect, wOffset, hOffset]);
 
   const onDrag: DraggableEventHandler = (e, ui) => {
     setCurPosition({
@@ -141,8 +164,11 @@ const YearlySolarUpdraftTowerYieldPanel = ({ city }: YearlySolarUpdraftTowerYiel
 
   const onDragEnd: DraggableEventHandler = (e, ui) => {
     setCommonStore((state) => {
-      state.viewState.yearlyUpdraftTowerYieldPanelX = Math.max(ui.x, wOffset - window.innerWidth);
-      state.viewState.yearlyUpdraftTowerYieldPanelY = Math.min(ui.y, window.innerHeight - hOffset);
+      if (!state.viewState.yearlyUpdraftTowerYieldPanelRect) {
+        state.viewState.yearlyUpdraftTowerYieldPanelRect = new Rectangle(0, 0, 600, 400);
+      }
+      state.viewState.yearlyUpdraftTowerYieldPanelRect.x = Math.max(ui.x, wOffset - window.innerWidth);
+      state.viewState.yearlyUpdraftTowerYieldPanelRect.y = Math.min(ui.y, window.innerHeight - hOffset);
     });
   };
 
@@ -160,7 +186,7 @@ const YearlySolarUpdraftTowerYieldPanel = ({ city }: YearlySolarUpdraftTowerYiel
       });
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [towerCount]);
+  }, [towerCount, individualOutputs]);
 
   const labelX = i18n.t('word.Month', lang);
   const labelY = i18n.t('updraftTowerYieldPanel.Yield', lang);
@@ -184,12 +210,19 @@ const YearlySolarUpdraftTowerYieldPanel = ({ city }: YearlySolarUpdraftTowerYiel
       onStop={onDragEnd}
     >
       <Container ref={nodeRef}>
-        <ColumnWrapper ref={wrapperRef}>
-          <Header className="handle">
+        <ColumnWrapper
+          ref={wrapperRef}
+          style={{
+            width: (panelRect ? panelRect.width : 600) + 'px',
+            height: (panelRect ? panelRect.height : 400) + 'px',
+          }}
+        >
+          <Header className="handle" style={{ direction: 'ltr' }}>
             <span>
-              {i18n.t('updraftTowerYieldPanel.UpdraftTowerYearlyYield', lang) + ' (' + now.getFullYear() + '): '}
-              {i18n.t('sensorPanel.WeatherDataFrom', lang)}
-              {' ' + city}
+              {i18n.t('updraftTowerYieldPanel.UpdraftTowerYearlyYield', lang) + ': '}
+              <label style={{ fontSize: '10px' }}>
+                {i18n.t('sensorPanel.WeatherDataFrom', lang) + ' ' + city + ' | ' + now.getFullYear()}
+              </label>
             </span>
             <span
               style={{ cursor: 'pointer' }}
@@ -208,7 +241,7 @@ const YearlySolarUpdraftTowerYieldPanel = ({ city }: YearlySolarUpdraftTowerYiel
             chartType={individualOutputs ? ChartType.Line : ChartType.Area}
             dataSource={yearlyYield.map(({ Daylight, Clearness, ...item }) => item)}
             labels={labels}
-            height={responsiveHeight}
+            height={100}
             dataKeyAxisX={'Month'}
             labelX={labelX}
             labelY={labelY}
@@ -218,7 +251,7 @@ const YearlySolarUpdraftTowerYieldPanel = ({ city }: YearlySolarUpdraftTowerYiel
             fractionDigits={2}
             referenceX={referenceX}
           />
-          <Space style={{ alignSelf: 'center' }}>
+          <Space style={{ alignSelf: 'center', direction: 'ltr' }}>
             {towerCount > 1 ? (
               <Space title={totalTooltip} style={{ cursor: 'pointer', border: '2px solid #ccc', padding: '4px' }}>
                 {i18n.t('updraftTowerYieldPanel.HoverForBreakdown', lang)}
