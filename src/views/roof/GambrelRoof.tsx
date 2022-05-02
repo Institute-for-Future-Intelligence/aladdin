@@ -13,7 +13,7 @@ import { WallModel } from 'src/models/WallModel';
 import { useStore } from 'src/stores/common';
 import { useStoreRef } from 'src/stores/commonRef';
 import * as Selector from 'src/stores/selector';
-import { UnoableResizeGambrelRoofRidge } from 'src/undo/UndoableResize';
+import { UnoableResizeGambrelAndMansardRoofRidge } from 'src/undo/UndoableResize';
 import { Util } from 'src/Util';
 import { DoubleSide, Euler, Mesh, Raycaster, Vector2, Vector3 } from 'three';
 import { handleUndoableResizeRoofHeight } from './roof';
@@ -129,7 +129,7 @@ const GambrelRoof = ({
       redo: () => {
         updateRidge(undoable.resizedElementId, undoable.type, undoable.newVal);
       },
-    } as UnoableResizeGambrelRoofRidge;
+    } as UnoableResizeGambrelAndMansardRoofRidge;
     useStore.getState().addUndoable(undoable);
   };
 

@@ -80,7 +80,7 @@ export interface UnoableResizeGableRoofRidge extends Undoable {
   newRight: number;
 }
 
-export interface UnoableResizeGambrelRoofRidge extends Undoable {
+export interface UnoableResizeGambrelAndMansardRoofRidge extends Undoable {
   resizedElementId: string;
   type: string;
   oldVal: number;

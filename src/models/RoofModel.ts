@@ -31,10 +31,8 @@ export interface GambrelRoofModel extends RoofModel {
 }
 
 export interface MansardRoofModel extends RoofModel {
-  frontRidgeLeftPoint: number[];
-  frontRidgeRightPoint: number[];
-  backRidgeLeftPoint: number[];
-  backRidgeRightPoint: number[];
+  frontRidge: number;
+  backRidge: number;
 }
 
 export interface Point3 {

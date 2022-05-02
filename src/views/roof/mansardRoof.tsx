@@ -13,8 +13,10 @@ import { WallModel } from 'src/models/WallModel';
 import { useStore } from 'src/stores/common';
 import { useStoreRef } from 'src/stores/commonRef';
 import * as Selector from 'src/stores/selector';
+import { UnoableResizeGambrelAndMansardRoofRidge } from 'src/undo/UndoableResize';
 import { Util } from 'src/Util';
 import { DoubleSide, Euler, Mesh, Vector2, Vector3 } from 'three';
+import { handleUndoableResizeRoofHeight } from './roof';
 
 const intersectionPlanePosition = new Vector3();
 const intersectionPlaneRotation = new Euler();
@@ -29,20 +31,7 @@ enum RoofHandleType {
   Null = 'Null',
 }
 
-const MansardRoof = ({
-  parentId,
-  id,
-  wallsId,
-  cx,
-  cy,
-  cz,
-  lz,
-  frontRidgeLeftPoint,
-  frontRidgeRightPoint,
-  backRidgeLeftPoint,
-  backRidgeRightPoint,
-  selected,
-}: MansardRoofModel) => {
+const MansardRoof = ({ parentId, id, wallsId, cx, cy, cz, lz, frontRidge, backRidge, selected }: MansardRoofModel) => {
   const getElementById = useStore(Selector.getElementById);
   const setCommonStore = useStore(Selector.set);
   const removeElementById = useStore(Selector.removeElementById);
@@ -54,8 +43,11 @@ const MansardRoof = ({
   const [minHeight, setMinHeight] = useState(lz / 1.5);
   const [enableIntersectionPlane, setEnableIntersectionPlane] = useState(false);
   const [roofHandleType, setRoofHandleType] = useState(RoofHandleType.Null);
+  const oldHeight = useRef<number>(h);
+  const oldRidgeVal = useRef<number>(0);
 
   const intersectionPlaneRef = useRef<Mesh>(null);
+  const isPointerMovingRef = useRef(false);
   const { gl, camera } = useThree();
 
   const parent = getElementById(parentId);
@@ -140,6 +132,44 @@ const MansardRoof = ({
     }
   };
 
+  const updateRidge = (elemId: string, type: string, val: number) => {
+    setCommonStore((state) => {
+      for (const e of state.elements) {
+        if (e.id === elemId) {
+          switch (type) {
+            case RoofHandleType.FrontLeft:
+            case RoofHandleType.FrontRight:
+              (e as MansardRoofModel).frontRidge = val;
+              break;
+            case RoofHandleType.BackLeft:
+            case RoofHandleType.BackRight:
+              (e as MansardRoofModel).backRidge = val;
+              break;
+          }
+          break;
+        }
+      }
+    });
+  };
+
+  const handleUnoableResizeRidge = (elemId: string, type: RoofHandleType, oldVal: number, newVal: number) => {
+    const undoable = {
+      name: 'ResizeMansardRoofRidge',
+      timestamp: Date.now(),
+      resizedElementId: elemId,
+      oldVal: oldVal,
+      newVal: newVal,
+      type: type,
+      undo: () => {
+        updateRidge(undoable.resizedElementId, undoable.type, undoable.oldVal);
+      },
+      redo: () => {
+        updateRidge(undoable.resizedElementId, undoable.type, undoable.newVal);
+      },
+    } as UnoableResizeGambrelAndMansardRoofRidge;
+    useStore.getState().addUndoable(undoable);
+  };
+
   const currentWallArray = useMemo(() => {
     const array: WallModel[] = [];
     if (wallsId.length > 0) {
@@ -172,28 +202,24 @@ const MansardRoof = ({
   // front ridge
   const frontRidgeLeftPointV3 = useMemo(() => {
     const wall = currentWallArray[3];
-    const [x] = frontRidgeLeftPoint;
-    return getRidgePoint(wall, x).sub(centroid);
-  }, [currentWallArray, centroid, frontRidgeLeftPoint]);
+    return getRidgePoint(wall, frontRidge).sub(centroid);
+  }, [currentWallArray, centroid, frontRidge]);
 
   const frontRidgeRightPointV3 = useMemo(() => {
     const wall = currentWallArray[1];
-    const [x] = frontRidgeRightPoint;
-    return getRidgePoint(wall, x).sub(centroid);
-  }, [currentWallArray, centroid, frontRidgeRightPoint]);
+    return getRidgePoint(wall, -frontRidge).sub(centroid);
+  }, [currentWallArray, centroid, frontRidge]);
 
   // back ridge
   const backRidgeLeftPointV3 = useMemo(() => {
     const wall = currentWallArray[1];
-    const [x] = backRidgeLeftPoint;
-    return getRidgePoint(wall, x).sub(centroid);
-  }, [currentWallArray, centroid, backRidgeLeftPoint]);
+    return getRidgePoint(wall, -backRidge).sub(centroid);
+  }, [currentWallArray, centroid, backRidge]);
 
   const backRidgeRightPointV3 = useMemo(() => {
     const wall = currentWallArray[3];
-    const [x] = backRidgeRightPoint;
-    return getRidgePoint(wall, x).sub(centroid);
-  }, [currentWallArray, centroid, backRidgeRightPoint]);
+    return getRidgePoint(wall, backRidge).sub(centroid);
+  }, [currentWallArray, centroid, backRidge]);
 
   const roofSegments = useMemo(() => {
     const segments: Vector3[][] = [];
@@ -245,24 +271,24 @@ const MansardRoof = ({
               w.rightRoofHeight = rh;
               if (i === 1) {
                 if (w.centerLeftRoofHeight && w.centerRightRoofHeight) {
-                  w.centerLeftRoofHeight[0] = frontRidgeRightPoint[0];
+                  w.centerLeftRoofHeight[0] = -frontRidge;
                   w.centerLeftRoofHeight[1] = h;
-                  w.centerRightRoofHeight[0] = backRidgeLeftPoint[0];
+                  w.centerRightRoofHeight[0] = -backRidge;
                   w.centerRightRoofHeight[1] = h;
                 } else {
-                  w.centerLeftRoofHeight = [...frontRidgeRightPoint];
-                  w.centerRightRoofHeight = [...backRidgeLeftPoint];
+                  w.centerLeftRoofHeight = [-frontRidge, h];
+                  w.centerRightRoofHeight = [-backRidge, h];
                 }
               }
               if (i === 3) {
                 if (w.centerLeftRoofHeight && w.centerRightRoofHeight) {
-                  w.centerLeftRoofHeight[0] = backRidgeRightPoint[0];
+                  w.centerLeftRoofHeight[0] = backRidge;
                   w.centerLeftRoofHeight[1] = h;
-                  w.centerRightRoofHeight[0] = frontRidgeLeftPoint[0];
+                  w.centerRightRoofHeight[0] = frontRidge;
                   w.centerRightRoofHeight[1] = h;
                 } else {
-                  w.centerLeftRoofHeight = [...backRidgeRightPoint];
-                  w.centerRightRoofHeight = [...frontRidgeLeftPoint];
+                  w.centerLeftRoofHeight = [backRidge, h];
+                  w.centerRightRoofHeight = [frontRidge, h];
                 }
               }
               break;
@@ -314,6 +340,7 @@ const MansardRoof = ({
             position={[0, 0, 0.3]}
             args={[0.3]}
             onPointerDown={() => {
+              isPointerMovingRef.current = true;
               setEnableIntersectionPlane(true);
               intersectionPlanePosition.set(centroid.x, centroid.y, h);
               if (parent) {
@@ -322,6 +349,7 @@ const MansardRoof = ({
               }
               setRoofHandleType(RoofHandleType.Top);
               useStoreRef.getState().setEnableOrbitController(false);
+              oldHeight.current = h;
             }}
           />
 
@@ -329,6 +357,8 @@ const MansardRoof = ({
             position={[frontRidgeLeftPointV3.x, frontRidgeLeftPointV3.y, frontRidgeLeftPointV3.z]}
             args={[0.3]}
             onPointerDown={() => {
+              isPointerMovingRef.current = true;
+              oldRidgeVal.current = frontRidge;
               setInterSectionPlane(frontRidgeLeftPointV3, currentWallArray[3]);
               setRoofHandleType(RoofHandleType.FrontLeft);
             }}
@@ -337,6 +367,8 @@ const MansardRoof = ({
             position={[frontRidgeRightPointV3.x, frontRidgeRightPointV3.y, frontRidgeRightPointV3.z]}
             args={[0.3]}
             onPointerDown={() => {
+              isPointerMovingRef.current = true;
+              oldRidgeVal.current = frontRidge;
               setInterSectionPlane(frontRidgeRightPointV3, currentWallArray[1]);
               setRoofHandleType(RoofHandleType.FrontRight);
             }}
@@ -346,6 +378,8 @@ const MansardRoof = ({
             position={[backRidgeLeftPointV3.x, backRidgeLeftPointV3.y, backRidgeLeftPointV3.z]}
             args={[0.3]}
             onPointerDown={() => {
+              isPointerMovingRef.current = true;
+              oldRidgeVal.current = backRidge;
               setInterSectionPlane(backRidgeLeftPointV3, currentWallArray[1]);
               setRoofHandleType(RoofHandleType.BackLeft);
             }}
@@ -354,6 +388,8 @@ const MansardRoof = ({
             position={[backRidgeRightPointV3.x, backRidgeRightPointV3.y, backRidgeRightPointV3.z]}
             args={[0.3]}
             onPointerDown={() => {
+              isPointerMovingRef.current = true;
+              oldRidgeVal.current = backRidge;
               setInterSectionPlane(backRidgeRightPointV3, currentWallArray[3]);
               setRoofHandleType(RoofHandleType.BackRight);
             }}
@@ -367,11 +403,11 @@ const MansardRoof = ({
           name={'Roof Intersection Plane'}
           ref={intersectionPlaneRef}
           args={[1000, 100]}
-          // visible={false}
+          visible={false}
           position={intersectionPlanePosition}
           rotation={intersectionPlaneRotation}
           onPointerMove={(e) => {
-            if (intersectionPlaneRef.current) {
+            if (intersectionPlaneRef.current && isPointerMovingRef.current) {
               setRayCast(e);
               const intersects = ray.intersectObjects([intersectionPlaneRef.current]);
               if (intersects[0] && parent) {
@@ -391,8 +427,7 @@ const MansardRoof = ({
                         if (e.id === id) {
                           if (parent && currentWallArray[3]) {
                             const px = Util.clamp(getRelPos(parent, currentWallArray[3], point), 0.01, 0.49);
-                            (e as MansardRoofModel).frontRidgeLeftPoint[0] = px;
-                            (e as MansardRoofModel).frontRidgeRightPoint[0] = -px;
+                            (e as MansardRoofModel).frontRidge = px;
                             break;
                           }
                         }
@@ -406,8 +441,7 @@ const MansardRoof = ({
                         if (e.id === id) {
                           if (parent && currentWallArray[1]) {
                             const px = Util.clamp(getRelPos(parent, currentWallArray[1], point), -0.49, -0.01);
-                            (e as MansardRoofModel).frontRidgeLeftPoint[0] = -px;
-                            (e as MansardRoofModel).frontRidgeRightPoint[0] = px;
+                            (e as MansardRoofModel).frontRidge = -px;
                           }
                           break;
                         }
@@ -421,8 +455,7 @@ const MansardRoof = ({
                         if (e.id === id) {
                           if (parent && currentWallArray[3]) {
                             const px = Util.clamp(getRelPos(parent, currentWallArray[3], point), -0.49, -0.01);
-                            (e as MansardRoofModel).backRidgeLeftPoint[0] = -px;
-                            (e as MansardRoofModel).backRidgeRightPoint[0] = px;
+                            (e as MansardRoofModel).backRidge = px;
                           }
                           break;
                         }
@@ -436,8 +469,7 @@ const MansardRoof = ({
                         if (e.id === id) {
                           if (parent && currentWallArray[1]) {
                             const px = Util.clamp(getRelPos(parent, currentWallArray[1], point), 0.01, 0.49);
-                            (e as MansardRoofModel).backRidgeLeftPoint[0] = px;
-                            (e as MansardRoofModel).backRidgeRightPoint[0] = -px;
+                            (e as MansardRoofModel).backRidge = -px;
                           }
                           break;
                         }
@@ -450,9 +482,26 @@ const MansardRoof = ({
             }
           }}
           onPointerUp={() => {
+            isPointerMovingRef.current = false;
             setEnableIntersectionPlane(false);
             setRoofHandleType(RoofHandleType.Null);
             useStoreRef.getState().setEnableOrbitController(true);
+            switch (roofHandleType) {
+              case RoofHandleType.Top: {
+                handleUndoableResizeRoofHeight(id, oldHeight.current, h);
+                break;
+              }
+              case RoofHandleType.FrontLeft:
+              case RoofHandleType.FrontRight: {
+                handleUnoableResizeRidge(id, roofHandleType, oldRidgeVal.current, frontRidge);
+                break;
+              }
+              case RoofHandleType.BackLeft:
+              case RoofHandleType.BackRight: {
+                handleUnoableResizeRidge(id, roofHandleType, oldRidgeVal.current, backRidge);
+                break;
+              }
+            }
             setCommonStore((state) => {
               for (const e of state.elements) {
                 if (e.id === id) {
