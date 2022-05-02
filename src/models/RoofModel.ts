@@ -30,6 +30,13 @@ export interface GambrelRoofModel extends RoofModel {
   backRidgeRightPoint: number[];
 }
 
+export interface MansardRoofModel extends RoofModel {
+  frontRidgeLeftPoint: number[];
+  frontRidgeRightPoint: number[];
+  backRidgeLeftPoint: number[];
+  backRidgeRightPoint: number[];
+}
+
 export interface Point3 {
   x: number;
   y: number;
@@ -41,6 +48,7 @@ export enum RoofType {
   Gable = 'Gable',
   Hip = 'Hip',
   Gambrel = 'Gambrel',
+  Mansard = 'Mansard',
 }
 
 export enum RoofTexture {

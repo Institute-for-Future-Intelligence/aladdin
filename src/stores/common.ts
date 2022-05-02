@@ -39,7 +39,7 @@ import {
   WindowState,
 } from '../types';
 import { DefaultWorldModel } from './DefaultWorldModel';
-import { Box3, Euler, Vector2, Vector3 } from 'three';
+import { Box3, Euler, Raycaster, Vector2, Vector3 } from 'three';
 import { ElementModelCloner } from '../models/ElementModelCloner';
 import { DefaultViewState } from './DefaultViewState';
 import { ViewState } from './ViewState';
@@ -107,6 +107,9 @@ export interface CommonStoreState {
   setHeatmap: (id: string, data: number[][]) => void;
   getHeatmap: (id: string) => number[][] | undefined;
   clearHeatmaps: () => void;
+
+  ray: Raycaster;
+  mouse: Vector2;
 
   changed: boolean;
   setChanged: (b: boolean) => void;
@@ -721,6 +724,8 @@ export const useStore = create<CommonStoreState>(
           floatingWindowOpacity: FLOATING_WINDOW_OPACITY,
           cloudFile: undefined,
           heatmaps: new Map<string, number[][]>(),
+          ray: new Raycaster(),
+          mouse: new Vector2(),
           setHeatmap(id, data) {
             immerSet((state: CommonStoreState) => {
               state.heatmaps.set(id, data);

@@ -8,6 +8,7 @@ import {
   GableRoofModel,
   GambrelRoofModel,
   HipRoofModel,
+  MansardRoofModel,
   PyramidRoofModel,
   RoofModel,
   RoofType,
@@ -16,8 +17,9 @@ import * as Selector from '../../stores/selector';
 import PyramidRoof from './pyramidRoof';
 import GableRoof from './gableRoof';
 import HipRoof from './hipRoof';
-import GambrelRoof from './GambrelRoof';
+import GambrelRoof from './gambrelRoof';
 import { UndoableResizeRoofHeight } from 'src/undo/UndoableResize';
+import MansardRoof from './mansardRoof';
 
 export const handleUndoableResizeRoofHeight = (elemId: string, oldHeight: number, newHeight: number) => {
   const undoableResizeRoofHeight = {
@@ -61,6 +63,8 @@ const Roof = (props: RoofModel) => {
         return <HipRoof {...(props as HipRoofModel)} />;
       case RoofType.Gambrel:
         return <GambrelRoof {...(props as GambrelRoofModel)} />;
+      case RoofType.Mansard:
+        return <MansardRoof {...(props as MansardRoofModel)} />;
       default:
         return null;
     }

@@ -28,6 +28,7 @@ import {
   GableRoofModel,
   GambrelRoofModel,
   HipRoofModel,
+  MansardRoofModel,
   Point3,
   PyramidRoofModel,
   RoofModel,
@@ -610,5 +611,32 @@ export class ElementModelFactory {
       foundationId: parent.id,
       id: short.generate() as string,
     } as GambrelRoofModel;
+  }
+
+  static makeMansardRoof(wallsId: string[], parent: ElementModel, lz: number) {
+    const xpercent = 0.35;
+    return {
+      type: ObjectType.Roof,
+      cx: 0,
+      cy: 0,
+      cz: 0,
+      lx: 0,
+      ly: 0,
+      lz: lz * 1.5,
+      roofType: RoofType.Mansard,
+      wallsId: [...wallsId],
+      frontRidgeLeftPoint: [xpercent, 1],
+      frontRidgeRightPoint: [-xpercent, 1],
+      backRidgeLeftPoint: [xpercent, 1],
+      backRidgeRightPoint: [-xpercent, 1],
+      texture: RoofTexture.Default,
+      selected: false,
+      showLabel: false,
+      normal: [0, 0, 1],
+      rotation: [0, 0, 0],
+      parentId: parent.id,
+      foundationId: parent.id,
+      id: short.generate() as string,
+    } as MansardRoofModel;
   }
 }

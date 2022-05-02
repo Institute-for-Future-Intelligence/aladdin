@@ -645,59 +645,53 @@ const Wall = ({
         }
 
         // add new elements
-        switch (objectTypeToAddRef.current) {
-          case ObjectType.PyramidRoof: {
-            if (parent && !roofId) {
+        if (parent && !roofId && objectTypeToAddRef.current) {
+          switch (objectTypeToAddRef.current) {
+            case ObjectType.PyramidRoof: {
               const roof = ElementModelFactory.makePyramidRoof([wallModel.id], parent, lz);
               handleUndoableAdd(roof);
               setCommonStore((state) => {
                 state.elements.push(roof);
               });
+              break;
             }
-            setCommonStore((state) => {
-              state.objectTypeToAdd = ObjectType.None;
-            });
-            return;
-          }
-          case ObjectType.GableRoof: {
-            if (parent && !roofId) {
+            case ObjectType.GableRoof: {
               const roof = ElementModelFactory.makeGableRoof([wallModel.id], parent, lz);
               handleUndoableAdd(roof);
               setCommonStore((state) => {
                 state.elements.push(roof);
               });
+              break;
             }
-            setCommonStore((state) => {
-              state.objectTypeToAdd = ObjectType.None;
-            });
-            return;
-          }
-          case ObjectType.HipRoof: {
-            if (parent && !roofId) {
+            case ObjectType.HipRoof: {
               const roof = ElementModelFactory.makeHipRoof([wallModel.id], parent, lz, lx / 2);
               handleUndoableAdd(roof);
               setCommonStore((state) => {
                 state.elements.push(roof);
               });
+              break;
             }
-            setCommonStore((state) => {
-              state.objectTypeToAdd = ObjectType.None;
-            });
-            return;
-          }
-          case ObjectType.GambrelRoof: {
-            if (parent && !roofId) {
-              const roof = ElementModelFactory.makeGambrelRoof([wallModel.id], parent, lz);
+            // case ObjectType.GambrelRoof: {
+            //   const roof = ElementModelFactory.makeGambrelRoof([wallModel.id], parent, lz);
+            //   handleUndoableAdd(roof);
+            //   setCommonStore((state) => {
+            //     state.elements.push(roof);
+            //   });
+            //   break;
+            // }
+            case ObjectType.GambrelRoof: {
+              const roof = ElementModelFactory.makeMansardRoof([wallModel.id], parent, lz);
               handleUndoableAdd(roof);
               setCommonStore((state) => {
                 state.elements.push(roof);
               });
+              break;
             }
-            setCommonStore((state) => {
-              state.objectTypeToAdd = ObjectType.None;
-            });
-            return;
           }
+          setCommonStore((state) => {
+            state.objectTypeToAdd = ObjectType.None;
+          });
+          return;
         }
 
         const selectedElement = getSelectedElement();

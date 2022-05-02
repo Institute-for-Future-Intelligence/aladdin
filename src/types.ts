@@ -152,6 +152,7 @@ export enum ObjectType {
   GableRoof = 'Gable Roof',
   HipRoof = 'Hip Roof',
   GambrelRoof = 'Gambrel Roof',
+  MansardRoof = 'Mansard Roof',
   Sensor = 'Sensor',
   SolarPanel = 'Solar Panel',
   WaterHeater = 'Water Heater',
