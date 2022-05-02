@@ -4,8 +4,10 @@
 
 import { SolarPanelArrayLayoutConstraints } from './SolarPanelArrayLayoutConstraints';
 import { HALF_PI } from '../constants';
+import { immerable } from 'immer';
 
 export class DefaultSolarPanelArrayLayoutConstraints implements SolarPanelArrayLayoutConstraints {
+  [immerable] = true;
   minimumInterRowSpacing: number;
   maximumInterRowSpacing: number;
   minimumRowsPerRack: number;

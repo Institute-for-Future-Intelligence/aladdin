@@ -3,8 +3,10 @@
  */
 
 import { ViewState } from './ViewState';
+import { immerable } from 'immer';
 
 export class DefaultViewState implements ViewState {
+  [immerable] = true;
   orthographic: boolean;
   enableRotate: boolean;
   ambientLightIntensity: number;

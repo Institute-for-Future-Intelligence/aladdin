@@ -138,7 +138,7 @@ const AppCreator = ({ viewOnly = false }: AppCreatorProps) => {
   const evolutionaryAlgorithmState = useStore(Selector.evolutionaryAlgorithmState);
 
   const [loading, setLoading] = useState(true);
-  const [city, setCity] = useState<string | null>('Boston MA, USA');
+  const [city, setCity] = useState<string>('Boston MA, USA');
 
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const lang = { lng: language };
@@ -148,7 +148,7 @@ const AppCreator = ({ viewOnly = false }: AppCreatorProps) => {
   }, []);
 
   useEffect(() => {
-    setCity(getClosestCity(worldLatitude, worldLongitude));
+    setCity(getClosestCity(worldLatitude, worldLongitude) ?? 'Boston MA, USA');
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [worldLatitude, worldLongitude]);
 

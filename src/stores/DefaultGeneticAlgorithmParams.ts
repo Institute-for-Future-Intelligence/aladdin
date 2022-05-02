@@ -4,8 +4,10 @@
 
 import { GeneticAlgorithmParams } from './GeneticAlgorithmParams';
 import { SearchMethod, GeneticAlgorithmSelectionMethod, ObjectiveFunctionType, DesignProblem } from '../types';
+import { immerable } from 'immer';
 
 export class DefaultGeneticAlgorithmParams implements GeneticAlgorithmParams {
+  [immerable] = true;
   problem: DesignProblem;
   objectiveFunctionType: ObjectiveFunctionType;
   selectionMethod: GeneticAlgorithmSelectionMethod;

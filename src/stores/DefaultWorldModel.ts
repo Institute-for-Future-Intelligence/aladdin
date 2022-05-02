@@ -12,10 +12,12 @@ import { HumanModel } from '../models/HumanModel';
 import short from 'short-uuid';
 import { GROUND_ID } from '../constants';
 import { HumanData } from '../HumanData';
+import { immerable } from 'immer';
 
 // default scene
 
 export class DefaultWorldModel implements WorldModel {
+  [immerable] = true;
   name: string;
   date: string;
   ground: GroundModel;

@@ -4,8 +4,10 @@
 
 import { SearchMethod, ObjectiveFunctionType, DesignProblem } from '../types';
 import { ParticleSwarmOptimizationParams } from './ParticleSwarmOptimizationParams';
+import { immerable } from 'immer';
 
 export class DefaultParticleSwarmOptimizationParams implements ParticleSwarmOptimizationParams {
+  [immerable] = true;
   problem: DesignProblem;
   objectiveFunctionType: ObjectiveFunctionType;
   searchMethod: SearchMethod;

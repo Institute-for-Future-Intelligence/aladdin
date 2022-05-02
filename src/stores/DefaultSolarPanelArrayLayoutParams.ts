@@ -4,8 +4,10 @@
 
 import { SolarPanelArrayLayoutParams } from './SolarPanelArrayLayoutParams';
 import { Orientation, RowAxis } from '../types';
+import { immerable } from 'immer';
 
 export class DefaultSolarPanelArrayLayoutParams implements SolarPanelArrayLayoutParams {
+  [immerable] = true;
   pvModelName: string;
   rowAxis: RowAxis;
   orientation: Orientation;

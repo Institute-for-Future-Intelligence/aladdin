@@ -3,8 +3,10 @@
  */
 
 import { EconomicsParams } from './EconomicsParams';
+import { immerable } from 'immer';
 
 export class DefaultEconomicsParams implements EconomicsParams {
+  [immerable] = true;
   projectLifeSpan: number;
   electricitySellingPrice: number;
   operationalCostPerUnit: number;
