@@ -76,15 +76,11 @@ export const mapPanelY = (state: CommonStoreState) => state.viewState.mapPanelY;
 
 export const showWeatherPanel = (state: CommonStoreState) => state.viewState.showWeatherPanel;
 
-export const weatherPanelX = (state: CommonStoreState) => state.viewState.weatherPanelX;
-
-export const weatherPanelY = (state: CommonStoreState) => state.viewState.weatherPanelY;
+export const weatherPanelRect = (state: CommonStoreState) => state.viewState.weatherPanelRect;
 
 export const showDiurnalTemperaturePanel = (state: CommonStoreState) => state.viewState.showDiurnalTemperaturePanel;
 
-export const diurnalTemperaturePanelX = (state: CommonStoreState) => state.viewState.diurnalTemperaturePanelX;
-
-export const diurnalTemperaturePanelY = (state: CommonStoreState) => state.viewState.diurnalTemperaturePanelY;
+export const diurnalTemperaturePanelRect = (state: CommonStoreState) => state.viewState.diurnalTemperaturePanelRect;
 
 export const showEconomicsPanel = (state: CommonStoreState) => state.viewState.showEconomicsPanel;
 
@@ -117,9 +113,7 @@ export const yearlyPvYieldPanelRect = (state: CommonStoreState) => state.viewSta
 export const showVisibilityResultsPanel = (state: CommonStoreState) =>
   state.viewState.showSolarPanelVisibilityResultsPanel;
 
-export const visibilityResultsPanelX = (state: CommonStoreState) => state.viewState.visibilityResultsPanelX;
-
-export const visibilityResultsPanelY = (state: CommonStoreState) => state.viewState.visibilityResultsPanelY;
+export const visibilityResultsPanelRect = (state: CommonStoreState) => state.viewState.visibilityResultsPanelRect;
 
 export const showDailyParabolicTroughYieldPanel = (state: CommonStoreState) =>
   state.viewState.showDailyParabolicTroughYieldPanel;

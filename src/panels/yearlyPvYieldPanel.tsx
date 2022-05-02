@@ -167,6 +167,9 @@ const YearlyPvYieldPanel = ({ city }: YearlyPvYieldPanelProps) => {
 
   const onDragEnd: DraggableEventHandler = (e, ui) => {
     setCommonStore((state) => {
+      if (!state.viewState.yearlyPvYieldPanelRect) {
+        state.viewState.yearlyPvYieldPanelRect = new Rectangle(0, 0, 600, 400);
+      }
       state.viewState.yearlyPvYieldPanelRect.x = Math.max(ui.x, wOffset - window.innerWidth);
       state.viewState.yearlyPvYieldPanelRect.y = Math.min(ui.y, window.innerHeight - hOffset);
     });

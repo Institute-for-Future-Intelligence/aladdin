@@ -61,10 +61,8 @@ export class DefaultViewState implements ViewState {
   heliodonPanelY: number;
   mapPanelX: number;
   mapPanelY: number;
-  weatherPanelX: number;
-  weatherPanelY: number;
-  diurnalTemperaturePanelX: number;
-  diurnalTemperaturePanelY: number;
+  weatherPanelRect: Rectangle;
+  diurnalTemperaturePanelRect: Rectangle;
   stickyNotePanelRect: Rectangle;
   dailyLightSensorPanelRect: Rectangle;
   yearlyLightSensorPanelRect: Rectangle;
@@ -72,8 +70,7 @@ export class DefaultViewState implements ViewState {
   yearlyLightSensorPanelShowClearness: boolean;
   dailyPvYieldPanelRect: Rectangle;
   yearlyPvYieldPanelRect: Rectangle;
-  visibilityResultsPanelX: number;
-  visibilityResultsPanelY: number;
+  visibilityResultsPanelRect: Rectangle;
   dailyParabolicTroughYieldPanelX: number;
   dailyParabolicTroughYieldPanelY: number;
   yearlyParabolicTroughYieldPanelX: number;
@@ -156,10 +153,8 @@ export class DefaultViewState implements ViewState {
     this.heliodonPanelY = 0;
     this.mapPanelX = 0;
     this.mapPanelY = 0;
-    this.weatherPanelX = 0;
-    this.weatherPanelY = 0;
-    this.diurnalTemperaturePanelX = 0;
-    this.diurnalTemperaturePanelY = 0;
+    this.weatherPanelRect = new Rectangle(0, 0, 500, 500);
+    this.diurnalTemperaturePanelRect = new Rectangle(0, 0, 600, 400);
     this.stickyNotePanelRect = new Rectangle(0, 0, 400, 300);
     this.dailyLightSensorPanelRect = new Rectangle(0, 0, 600, 360);
     this.yearlyLightSensorPanelRect = new Rectangle(0, 0, 600, 500);
@@ -167,8 +162,7 @@ export class DefaultViewState implements ViewState {
     this.yearlyLightSensorPanelShowClearness = false;
     this.dailyPvYieldPanelRect = new Rectangle(0, 0, 600, 400);
     this.yearlyPvYieldPanelRect = new Rectangle(0, 0, 600, 400);
-    this.visibilityResultsPanelX = 0;
-    this.visibilityResultsPanelY = 0;
+    this.visibilityResultsPanelRect = new Rectangle(0, 0, 600, 470);
     this.dailyParabolicTroughYieldPanelX = 0;
     this.dailyParabolicTroughYieldPanelY = 0;
     this.yearlyParabolicTroughYieldPanelX = 0;
@@ -251,10 +245,8 @@ export class DefaultViewState implements ViewState {
     viewState.heliodonPanelY = 0;
     viewState.mapPanelX = 0;
     viewState.mapPanelY = 0;
-    viewState.weatherPanelX = 0;
-    viewState.weatherPanelY = 0;
-    viewState.diurnalTemperaturePanelX = 0;
-    viewState.diurnalTemperaturePanelY = 0;
+    viewState.weatherPanelRect = new Rectangle(0, 0, 500, 500);
+    viewState.diurnalTemperaturePanelRect = new Rectangle(0, 0, 600, 400);
     viewState.stickyNotePanelRect = new Rectangle(0, 0, 400, 300);
     viewState.dailyLightSensorPanelRect = new Rectangle(0, 0, 600, 360);
     viewState.yearlyLightSensorPanelRect = new Rectangle(0, 0, 600, 500);
@@ -262,8 +254,7 @@ export class DefaultViewState implements ViewState {
     viewState.yearlyLightSensorPanelShowClearness = false;
     viewState.dailyPvYieldPanelRect = new Rectangle(0, 0, 600, 400);
     viewState.yearlyPvYieldPanelRect = new Rectangle(0, 0, 600, 400);
-    viewState.visibilityResultsPanelX = 0;
-    viewState.visibilityResultsPanelY = 0;
+    viewState.visibilityResultsPanelRect = new Rectangle(0, 0, 600, 470);
     viewState.dailyParabolicTroughYieldPanelX = 0;
     viewState.dailyParabolicTroughYieldPanelY = 0;
     viewState.yearlyParabolicTroughYieldPanelX = 0;

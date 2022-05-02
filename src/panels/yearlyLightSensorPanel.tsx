@@ -148,6 +148,9 @@ const YearlyLightSensorPanel = ({ city }: YearlyLightSensorPanelProps) => {
 
   const onDragEnd: DraggableEventHandler = (e, ui) => {
     setCommonStore((state) => {
+      if (!state.viewState.yearlyLightSensorPanelRect) {
+        state.viewState.yearlyLightSensorPanelRect = new Rectangle(0, 0, 600, 500);
+      }
       state.viewState.yearlyLightSensorPanelRect.x = Math.max(ui.x, wOffset - window.innerWidth);
       state.viewState.yearlyLightSensorPanelRect.y = Math.min(ui.y, window.innerHeight - hOffset);
     });

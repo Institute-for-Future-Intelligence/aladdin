@@ -143,6 +143,9 @@ const DailyLightSensorPanel = ({ city }: DailyLightSensorPanelProps) => {
 
   const onDragEnd: DraggableEventHandler = (e, ui) => {
     setCommonStore((state) => {
+      if (!state.viewState.dailyLightSensorPanelRect) {
+        state.viewState.dailyLightSensorPanelRect = new Rectangle(0, 0, 600, 360);
+      }
       state.viewState.dailyLightSensorPanelRect.x = Math.max(ui.x, wOffset - window.innerWidth);
       state.viewState.dailyLightSensorPanelRect.y = Math.min(ui.y, window.innerHeight - hOffset);
     });

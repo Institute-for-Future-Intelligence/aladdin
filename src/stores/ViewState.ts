@@ -58,10 +58,8 @@ export interface ViewState {
   heliodonPanelY: number;
   mapPanelX: number;
   mapPanelY: number;
-  weatherPanelX: number;
-  weatherPanelY: number;
-  diurnalTemperaturePanelX: number;
-  diurnalTemperaturePanelY: number;
+  weatherPanelRect: Rectangle;
+  diurnalTemperaturePanelRect: Rectangle;
   stickyNotePanelRect: Rectangle;
   dailyLightSensorPanelRect: Rectangle;
   yearlyLightSensorPanelRect: Rectangle;
@@ -69,8 +67,7 @@ export interface ViewState {
   yearlyLightSensorPanelShowClearness: boolean;
   dailyPvYieldPanelRect: Rectangle;
   yearlyPvYieldPanelRect: Rectangle;
-  visibilityResultsPanelX: number;
-  visibilityResultsPanelY: number;
+  visibilityResultsPanelRect: Rectangle;
   dailyParabolicTroughYieldPanelX: number;
   dailyParabolicTroughYieldPanelY: number;
   yearlyParabolicTroughYieldPanelX: number;

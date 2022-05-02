@@ -15,6 +15,7 @@ import { computeOutsideTemperature, getOutsideTemperatureAtMinute } from '../ana
 import { computeSunriseAndSunsetInMinutes } from '../analysis/sunTools';
 import dayjs from 'dayjs';
 import { Radio, Space } from 'antd';
+import { Rectangle } from '../models/Rectangle';
 
 const Container = styled.div`
   position: fixed;
@@ -32,10 +33,8 @@ const ColumnWrapper = styled.div`
   position: absolute;
   left: 0;
   top: 0;
-  width: 600px;
   min-width: 400px;
   max-width: 800px;
-  height: 400px;
   min-height: 200px;
   max-height: 600px;
   padding-bottom: 10px;
@@ -81,37 +80,61 @@ const DiurnalTemperaturePanel = ({ city }: DiurnalTemperaturePanelProps) => {
     useStore(Selector.world.diurnalTemperatureModel) ?? DiurnalTemperatureModel.Sinusoidal;
   const highestTemperatureTimeInMinutes = useStore(Selector.world.highestTemperatureTimeInMinutes) ?? 900;
   const getWeather = useStore(Selector.getWeather);
-  const diurnalTemperaturePanelX = useStore(Selector.viewState.diurnalTemperaturePanelX);
-  const diurnalTemperaturePanelY = useStore(Selector.viewState.diurnalTemperaturePanelY);
+  const panelRect = useStore(Selector.viewState.diurnalTemperaturePanelRect);
 
   // nodeRef is to suppress ReactDOM.findDOMNode() deprecation warning. See:
   // https://github.com/react-grid-layout/react-draggable/blob/v4.4.2/lib/DraggableCore.js#L159-L171
   const nodeRef = React.useRef(null);
 
   const wrapperRef = useRef<HTMLDivElement | null>(null);
-  const wOffset = wrapperRef.current ? wrapperRef.current.clientWidth + 40 : 540;
-  const hOffset = wrapperRef.current ? wrapperRef.current.clientHeight + 100 : 600;
+  const resizeObserverRef = useRef<ResizeObserver>();
+  const wOffset = wrapperRef.current ? wrapperRef.current.clientWidth + 40 : panelRect ? panelRect.width + 40 : 640;
+  const hOffset = wrapperRef.current ? wrapperRef.current.clientHeight + 100 : panelRect ? panelRect.height + 100 : 500;
   const [curPosition, setCurPosition] = useState({
-    x: isNaN(diurnalTemperaturePanelX) ? 0 : Math.min(diurnalTemperaturePanelX, window.innerWidth - wOffset),
-    y: isNaN(diurnalTemperaturePanelY) ? 0 : Math.min(diurnalTemperaturePanelY, window.innerHeight - hOffset),
+    x: panelRect ? Math.min(panelRect.x, window.innerWidth - wOffset) : 0,
+    y: panelRect ? Math.min(panelRect.y, window.innerHeight - hOffset) : 0,
   });
   const [selectedModel, setSelectedModel] = useState<DiurnalTemperatureModel>(diurnalTemperatureModel);
   const lang = { lng: language };
 
+  useEffect(() => {
+    setCurPosition({
+      x: Math.min(panelRect?.x, window.innerWidth - wOffset),
+      y: Math.min(panelRect?.y, window.innerHeight - hOffset),
+    });
+  }, [panelRect, wOffset, hOffset]);
+
   // when the window is resized (the code depends on where the panel is originally anchored in the CSS)
   useEffect(() => {
-    const handleResize = () => {
+    const handleWindowResize = () => {
       setCurPosition({
-        x: Math.min(diurnalTemperaturePanelX, window.innerWidth - wOffset),
-        y: Math.min(diurnalTemperaturePanelY, window.innerHeight - hOffset),
+        x: Math.min(panelRect?.x, window.innerWidth - wOffset),
+        y: Math.min(panelRect?.y, window.innerHeight - hOffset),
       });
     };
-    window.addEventListener('resize', handleResize);
+    window.addEventListener('resize', handleWindowResize);
+    if (wrapperRef.current) {
+      if (!resizeObserverRef.current) {
+        resizeObserverRef.current = new ResizeObserver(() => {
+          setCommonStore((state) => {
+            if (wrapperRef.current) {
+              if (!state.viewState.diurnalTemperaturePanelRect) {
+                state.viewState.diurnalTemperaturePanelRect = new Rectangle(0, 0, 600, 400);
+              }
+              state.viewState.diurnalTemperaturePanelRect.width = wrapperRef.current.offsetWidth;
+              state.viewState.diurnalTemperaturePanelRect.height = wrapperRef.current.offsetHeight;
+            }
+          });
+        });
+      }
+      resizeObserverRef.current.observe(wrapperRef.current);
+    }
     return () => {
-      window.removeEventListener('resize', handleResize);
+      window.removeEventListener('resize', handleWindowResize);
+      resizeObserverRef.current?.disconnect();
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  }, [panelRect, wOffset, hOffset]);
 
   const getData = useMemo(() => {
     const result = [];
@@ -158,8 +181,11 @@ const DiurnalTemperaturePanel = ({ city }: DiurnalTemperaturePanelProps) => {
 
   const onDragEnd: DraggableEventHandler = (e, ui) => {
     setCommonStore((state) => {
-      state.viewState.diurnalTemperaturePanelX = Math.min(ui.x, window.innerWidth - wOffset);
-      state.viewState.diurnalTemperaturePanelY = Math.min(ui.y, window.innerHeight - hOffset);
+      if (!state.viewState.diurnalTemperaturePanelRect) {
+        state.viewState.diurnalTemperaturePanelRect = new Rectangle(0, 0, 600, 400);
+      }
+      state.viewState.diurnalTemperaturePanelRect.x = Math.min(ui.x, window.innerWidth - wOffset);
+      state.viewState.diurnalTemperaturePanelRect.y = Math.min(ui.y, window.innerHeight - hOffset);
     });
   };
 
@@ -187,10 +213,16 @@ const DiurnalTemperaturePanel = ({ city }: DiurnalTemperaturePanelProps) => {
       onStop={onDragEnd}
     >
       <Container ref={nodeRef}>
-        <ColumnWrapper ref={wrapperRef}>
+        <ColumnWrapper
+          ref={wrapperRef}
+          style={{
+            width: (panelRect ? panelRect.width : 600) + 'px',
+            height: (panelRect ? panelRect.height : 400) + 'px',
+          }}
+        >
           <Header className="handle">
             <span>
-              {i18n.t('menu.tool.DiurnalTemperature', lang) + ':'} {city} | {dayjs(now).format('MM/DD')}
+              {i18n.t('menu.tool.DiurnalTemperature', lang) + ': ' + city + ' | ' + dayjs(now).format('MM/DD')}
             </span>
             <span
               style={{ cursor: 'pointer' }}

@@ -165,6 +165,9 @@ const DailyPvYieldPanel = ({ city }: DailyPvYieldPanelProps) => {
 
   const onDragEnd: DraggableEventHandler = (e, ui) => {
     setCommonStore((state) => {
+      if (!state.viewState.dailyPvYieldPanelRect) {
+        state.viewState.dailyPvYieldPanelRect = new Rectangle(0, 0, 600, 400);
+      }
       state.viewState.dailyPvYieldPanelRect.x = Math.max(ui.x, wOffset - window.innerWidth);
       state.viewState.dailyPvYieldPanelRect.y = Math.min(ui.y, window.innerHeight - hOffset);
     });

@@ -136,6 +136,9 @@ const StickyNotePanel = () => {
 
   const onDragEnd: DraggableEventHandler = (e, ui) => {
     setCommonStore((state) => {
+      if (!state.viewState.stickyNotePanelRect) {
+        state.viewState.stickyNotePanelRect = new Rectangle(0, 0, 400, 300);
+      }
       state.viewState.stickyNotePanelRect.x = Math.min(ui.x, window.innerWidth - wOffset);
       state.viewState.stickyNotePanelRect.y = Math.min(ui.y, window.innerHeight - hOffset);
     });

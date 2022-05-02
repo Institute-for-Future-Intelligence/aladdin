@@ -13,6 +13,7 @@ import { ReloadOutlined, SaveOutlined } from '@ant-design/icons';
 import { screenshot, showInfo } from '../helpers';
 import i18n from '../i18n/i18n';
 import { HumanData } from '../HumanData';
+import { Rectangle } from '../models/Rectangle';
 
 const { Column } = Table;
 
@@ -32,8 +33,6 @@ const ColumnWrapper = styled.div`
   position: absolute;
   right: 0;
   top: 0;
-  width: 600px;
-  height: 470px;
   min-width: 400px;
   max-width: 800px;
   min-height: 200px;
@@ -43,8 +42,10 @@ const ColumnWrapper = styled.div`
   border-radius: 10px 10px 10px 10px;
   display: flex;
   flex-direction: column;
+  overflow-x: auto;
   overflow-y: auto;
   resize: both;
+  direction: rtl;
 `;
 
 const Header = styled.div`
@@ -71,8 +72,7 @@ const VisibilityResultsPanel = () => {
   const language = useStore(Selector.language);
   const setCommonStore = useStore(Selector.set);
   const now = new Date(useStore(Selector.world.date));
-  const visibilityResultsPanelX = useStore(Selector.viewState.visibilityResultsPanelX);
-  const visibilityResultsPanelY = useStore(Selector.viewState.visibilityResultsPanelY);
+  const panelRect = useStore(Selector.viewState.visibilityResultsPanelRect);
   const solarPanelVisibilityResults = useStore(Selector.solarPanelVisibilityResults);
   const countObservers = useStore(Selector.countObservers);
 
@@ -81,27 +81,52 @@ const VisibilityResultsPanel = () => {
   const nodeRef = React.useRef(null);
 
   const wrapperRef = useRef<HTMLDivElement | null>(null);
-  const wOffset = wrapperRef.current ? wrapperRef.current.clientWidth + 40 : 640;
-  const hOffset = wrapperRef.current ? wrapperRef.current.clientHeight + 100 : 460;
+  const resizeObserverRef = useRef<ResizeObserver>();
+  const wOffset = wrapperRef.current ? wrapperRef.current.clientWidth + 40 : panelRect ? panelRect.width + 40 : 640;
+  const hOffset = wrapperRef.current ? wrapperRef.current.clientHeight + 100 : panelRect ? panelRect.height + 100 : 570;
   const [curPosition, setCurPosition] = useState({
-    x: isNaN(visibilityResultsPanelX) ? 0 : Math.max(visibilityResultsPanelX, wOffset - window.innerWidth),
-    y: isNaN(visibilityResultsPanelY) ? 0 : Math.min(visibilityResultsPanelY, window.innerHeight - hOffset),
+    x: panelRect ? Math.max(panelRect.x, wOffset - window.innerWidth) : 0,
+    y: panelRect ? Math.min(panelRect.y, window.innerHeight - hOffset) : 0,
   });
   const [resultArray, setResultArray] = useState<any[]>([]);
 
   const lang = { lng: language };
 
+  useEffect(() => {
+    setCurPosition({
+      x: Math.max(panelRect?.x, wOffset - window.innerWidth),
+      y: Math.min(panelRect?.y, window.innerHeight - hOffset),
+    });
+  }, [panelRect, wOffset, hOffset]);
+
   // when the window is resized (the code depends on where the panel is originally anchored in the CSS)
   useEffect(() => {
-    const handleResize = () => {
+    const handleWindowResize = () => {
       setCurPosition({
-        x: Math.max(visibilityResultsPanelX, wOffset - window.innerWidth),
-        y: Math.min(visibilityResultsPanelY, window.innerHeight - hOffset),
+        x: Math.max(panelRect?.x, wOffset - window.innerWidth),
+        y: Math.min(panelRect?.y, window.innerHeight - hOffset),
       });
     };
-    window.addEventListener('resize', handleResize);
+    window.addEventListener('resize', handleWindowResize);
+    if (wrapperRef.current) {
+      if (!resizeObserverRef.current) {
+        resizeObserverRef.current = new ResizeObserver(() => {
+          setCommonStore((state) => {
+            if (wrapperRef.current) {
+              if (!state.viewState.visibilityResultsPanelRect) {
+                state.viewState.visibilityResultsPanelRect = new Rectangle(0, 0, 600, 470);
+              }
+              state.viewState.visibilityResultsPanelRect.width = wrapperRef.current.offsetWidth;
+              state.viewState.visibilityResultsPanelRect.height = wrapperRef.current.offsetHeight;
+            }
+          });
+        });
+      }
+      resizeObserverRef.current.observe(wrapperRef.current);
+    }
     return () => {
-      window.removeEventListener('resize', handleResize);
+      window.removeEventListener('resize', handleWindowResize);
+      resizeObserverRef.current?.disconnect();
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
@@ -147,8 +172,11 @@ const VisibilityResultsPanel = () => {
 
   const onDragEnd: DraggableEventHandler = (e, ui) => {
     setCommonStore((state) => {
-      state.viewState.visibilityResultsPanelX = Math.max(ui.x, wOffset - window.innerWidth);
-      state.viewState.visibilityResultsPanelY = Math.min(ui.y, window.innerHeight - hOffset);
+      if (!state.viewState.visibilityResultsPanelRect) {
+        state.viewState.visibilityResultsPanelRect = new Rectangle(0, 0, 600, 470);
+      }
+      state.viewState.visibilityResultsPanelRect.x = Math.max(ui.x, wOffset - window.innerWidth);
+      state.viewState.visibilityResultsPanelRect.y = Math.min(ui.y, window.innerHeight - hOffset);
     });
   };
 
@@ -169,8 +197,14 @@ const VisibilityResultsPanel = () => {
       onStop={onDragEnd}
     >
       <Container ref={nodeRef}>
-        <ColumnWrapper ref={wrapperRef}>
-          <Header className="handle">
+        <ColumnWrapper
+          ref={wrapperRef}
+          style={{
+            width: (panelRect ? panelRect.width : 600) + 'px',
+            height: (panelRect ? panelRect.height : 470) + 'px',
+          }}
+        >
+          <Header className="handle" style={{ direction: 'ltr' }}>
             <span>
               {i18n.t('visibilityPanel.SolarPanelVisibility', lang) + ' — ' + moment(now).format('h:mm a MM/DD')}
             </span>
@@ -188,7 +222,7 @@ const VisibilityResultsPanel = () => {
           </Header>
           <Table
             id={'visibility-results-table'}
-            style={{ width: '100%' }}
+            style={{ width: '100%', direction: 'ltr' }}
             dataSource={resultArray}
             pagination={{
               defaultPageSize: 5,
@@ -206,7 +240,7 @@ const VisibilityResultsPanel = () => {
             />
           </Table>
 
-          <Space style={{ alignSelf: 'center' }}>
+          <Space style={{ alignSelf: 'center', direction: 'ltr' }}>
             <Button
               type="default"
               icon={<ReloadOutlined />}
