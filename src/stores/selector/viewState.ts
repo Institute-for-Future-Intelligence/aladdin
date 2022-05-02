@@ -90,9 +90,7 @@ export const showEconomicsPanel = (state: CommonStoreState) => state.viewState.s
 
 export const showStickyNotePanel = (state: CommonStoreState) => state.viewState.showStickyNotePanel;
 
-export const stickyNotePanelX = (state: CommonStoreState) => state.viewState.stickyNotePanelX;
-
-export const stickyNotePanelY = (state: CommonStoreState) => state.viewState.stickyNotePanelY;
+export const stickyNotePanelRect = (state: CommonStoreState) => state.viewState.stickyNotePanelRect;
 
 export const showDailyLightSensorPanel = (state: CommonStoreState) => state.viewState.showDailyLightSensorPanel;
 

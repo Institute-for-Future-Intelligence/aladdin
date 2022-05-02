@@ -7,8 +7,9 @@ import styled from 'styled-components';
 import { useStore } from '../stores/common';
 import * as Selector from '../stores/selector';
 import ReactDraggable, { DraggableEventHandler } from 'react-draggable';
-import { Button, Input, Space } from 'antd';
+import { Input } from 'antd';
 import i18n from '../i18n/i18n';
+import { Rectangle } from '../models/Rectangle';
 
 const Container = styled.div`
   position: fixed;
@@ -26,9 +27,7 @@ const ColumnWrapper = styled.div`
   position: absolute;
   left: 0;
   top: 0;
-  width: 400px;
-  height: 300px;
-  min-width: 400px;
+  min-width: 200px;
   max-width: 800px;
   min-height: 200px;
   max-height: 600px;
@@ -68,37 +67,61 @@ const StickyNotePanel = () => {
   const language = useStore(Selector.language);
   const setCommonStore = useStore(Selector.set);
   const notes = useStore(Selector.notes);
-  const stickyNotePanelX = useStore(Selector.viewState.stickyNotePanelX);
-  const stickyNotePanelY = useStore(Selector.viewState.stickyNotePanelY);
+  const panelRect = useStore(Selector.viewState.stickyNotePanelRect);
 
   // nodeRef is to suppress ReactDOM.findDOMNode() deprecation warning. See:
   // https://github.com/react-grid-layout/react-draggable/blob/v4.4.2/lib/DraggableCore.js#L159-L171
   const nodeRef = React.useRef(null);
 
   const wrapperRef = useRef<HTMLDivElement | null>(null);
-  const wOffset = wrapperRef.current ? wrapperRef.current.clientWidth + 40 : 440;
-  const hOffset = wrapperRef.current ? wrapperRef.current.clientHeight + 100 : 400;
+  const resizeObserverRef = useRef<ResizeObserver>();
+  const wOffset = wrapperRef.current ? wrapperRef.current.clientWidth + 40 : panelRect ? panelRect.width + 40 : 440;
+  const hOffset = wrapperRef.current ? wrapperRef.current.clientHeight + 100 : panelRect ? panelRect.height + 100 : 400;
   const [curPosition, setCurPosition] = useState({
-    x: isNaN(stickyNotePanelX) ? 0 : Math.min(stickyNotePanelX, window.innerWidth - wOffset),
-    y: isNaN(stickyNotePanelY) ? 0 : Math.min(stickyNotePanelY, window.innerHeight - hOffset),
+    x: panelRect ? Math.min(panelRect.x, window.innerWidth - wOffset) : 0,
+    y: panelRect ? Math.min(panelRect.y, window.innerHeight - hOffset) : 0,
   });
   const [text, setText] = useState<string>(notes.length > 0 ? notes[0] : '');
   const lang = { lng: language };
 
+  useEffect(() => {
+    setCurPosition({
+      x: Math.min(panelRect?.x, window.innerWidth - wOffset),
+      y: Math.min(panelRect?.y, window.innerHeight - hOffset),
+    });
+  }, [panelRect, wOffset, hOffset]);
+
   // when the window is resized (the code depends on where the panel is originally anchored in the CSS)
   useEffect(() => {
-    const handleResize = () => {
+    const handleWindowResize = () => {
       setCurPosition({
-        x: Math.min(stickyNotePanelX, window.innerWidth - wOffset),
-        y: Math.min(stickyNotePanelY, window.innerHeight - hOffset),
+        x: Math.min(panelRect?.x, window.innerWidth - wOffset),
+        y: Math.min(panelRect?.y, window.innerHeight - hOffset),
       });
     };
-    window.addEventListener('resize', handleResize);
+    window.addEventListener('resize', handleWindowResize);
+    if (wrapperRef.current) {
+      if (!resizeObserverRef.current) {
+        resizeObserverRef.current = new ResizeObserver(() => {
+          setCommonStore((state) => {
+            if (wrapperRef.current) {
+              if (!state.viewState.stickyNotePanelRect) {
+                state.viewState.stickyNotePanelRect = new Rectangle(0, 0, 400, 300);
+              }
+              state.viewState.stickyNotePanelRect.width = wrapperRef.current.offsetWidth;
+              state.viewState.stickyNotePanelRect.height = wrapperRef.current.offsetHeight;
+            }
+          });
+        });
+      }
+      resizeObserverRef.current.observe(wrapperRef.current);
+    }
     return () => {
-      window.removeEventListener('resize', handleResize);
+      window.removeEventListener('resize', handleWindowResize);
+      resizeObserverRef.current?.disconnect();
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  }, [panelRect, wOffset, hOffset]);
 
   useEffect(() => {
     setText(notes.length > 0 ? notes[0] : '');
@@ -113,14 +136,15 @@ const StickyNotePanel = () => {
 
   const onDragEnd: DraggableEventHandler = (e, ui) => {
     setCommonStore((state) => {
-      state.viewState.stickyNotePanelX = Math.min(ui.x, window.innerWidth - wOffset);
-      state.viewState.stickyNotePanelY = Math.min(ui.y, window.innerHeight - hOffset);
+      state.viewState.stickyNotePanelRect.x = Math.min(ui.x, window.innerWidth - wOffset);
+      state.viewState.stickyNotePanelRect.y = Math.min(ui.y, window.innerHeight - hOffset);
     });
   };
 
   const closePanel = () => {
     setCommonStore((state) => {
       state.viewState.showStickyNotePanel = false;
+      state.notes[0] = text;
     });
   };
 
@@ -136,7 +160,13 @@ const StickyNotePanel = () => {
         onStop={onDragEnd}
       >
         <Container ref={nodeRef}>
-          <ColumnWrapper ref={wrapperRef}>
+          <ColumnWrapper
+            ref={wrapperRef}
+            style={{
+              width: (panelRect ? panelRect.width : 400) + 'px',
+              height: (panelRect ? panelRect.height : 300) + 'px',
+            }}
+          >
             <Header className="handle">
               <span>{i18n.t('menu.view.StickyNote', lang)}</span>
               <span
@@ -152,6 +182,7 @@ const StickyNotePanel = () => {
               </span>
             </Header>
             <TextArea
+              style={{ resize: 'none' }}
               rows={100}
               value={text}
               onChange={(e) => {
@@ -163,18 +194,6 @@ const StickyNotePanel = () => {
                 });
               }}
             />
-            <Space style={{ alignSelf: 'center', paddingTop: '8px' }}>
-              <Button
-                type="primary"
-                onClick={() => {
-                  setCommonStore((state) => {
-                    state.notes[0] = text;
-                  });
-                }}
-              >
-                {i18n.t('word.Save', lang)}
-              </Button>
-            </Space>
           </ColumnWrapper>
         </Container>
       </ReactDraggable>

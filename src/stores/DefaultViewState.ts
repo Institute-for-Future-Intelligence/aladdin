@@ -65,8 +65,7 @@ export class DefaultViewState implements ViewState {
   weatherPanelY: number;
   diurnalTemperaturePanelX: number;
   diurnalTemperaturePanelY: number;
-  stickyNotePanelX: number;
-  stickyNotePanelY: number;
+  stickyNotePanelRect: Rectangle;
   dailyLightSensorPanelRect: Rectangle;
   yearlyLightSensorPanelRect: Rectangle;
   yearlyLightSensorPanelShowDaylight: boolean;
@@ -161,8 +160,7 @@ export class DefaultViewState implements ViewState {
     this.weatherPanelY = 0;
     this.diurnalTemperaturePanelX = 0;
     this.diurnalTemperaturePanelY = 0;
-    this.stickyNotePanelX = 0;
-    this.stickyNotePanelY = 0;
+    this.stickyNotePanelRect = new Rectangle(0, 0, 400, 300);
     this.dailyLightSensorPanelRect = new Rectangle(0, 0, 600, 360);
     this.yearlyLightSensorPanelRect = new Rectangle(0, 0, 600, 500);
     this.yearlyLightSensorPanelShowDaylight = false;
@@ -257,8 +255,7 @@ export class DefaultViewState implements ViewState {
     viewState.weatherPanelY = 0;
     viewState.diurnalTemperaturePanelX = 0;
     viewState.diurnalTemperaturePanelY = 0;
-    viewState.stickyNotePanelX = 0;
-    viewState.stickyNotePanelY = 0;
+    viewState.stickyNotePanelRect = new Rectangle(0, 0, 400, 300);
     viewState.dailyLightSensorPanelRect = new Rectangle(0, 0, 600, 360);
     viewState.yearlyLightSensorPanelRect = new Rectangle(0, 0, 600, 500);
     viewState.yearlyLightSensorPanelShowDaylight = false;
