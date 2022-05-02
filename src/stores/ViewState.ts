@@ -2,6 +2,8 @@
  * @Copyright 2021-2022. Institute for Future Intelligence, Inc.
  */
 
+import { Rectangle } from '../models/Rectangle';
+
 export interface ViewState {
   orthographic: boolean;
   enableRotate: boolean;
@@ -68,8 +70,7 @@ export interface ViewState {
   yearlyLightSensorPanelY: number;
   yearlyLightSensorPanelShowDaylight: boolean;
   yearlyLightSensorPanelShowClearness: boolean;
-  dailyPvYieldPanelX: number;
-  dailyPvYieldPanelY: number;
+  dailyPvYieldPanelRect: Rectangle;
   yearlyPvYieldPanelX: number;
   yearlyPvYieldPanelY: number;
   visibilityResultsPanelX: number;

@@ -114,9 +114,7 @@ export const yearlyLightSensorPanelShowClearness = (state: CommonStoreState) =>
 
 export const showDailyPvYieldPanel = (state: CommonStoreState) => state.viewState.showDailyPvYieldPanel;
 
-export const dailyPvYieldPanelX = (state: CommonStoreState) => state.viewState.dailyPvYieldPanelX;
-
-export const dailyPvYieldPanelY = (state: CommonStoreState) => state.viewState.dailyPvYieldPanelY;
+export const dailyPvYieldPanelRect = (state: CommonStoreState) => state.viewState.dailyPvYieldPanelRect;
 
 export const showYearlyPvYieldPanel = (state: CommonStoreState) => state.viewState.showYearlyPvYieldPanel;
 

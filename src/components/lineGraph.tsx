@@ -215,7 +215,7 @@ const LineGraph = ({
         // need two div wrappers to disable the responsiveness of ResponsiveContainer
         <div
           id={'line-graph-' + labelX + '-' + labelY}
-          style={{ width: '100%', height: `${height}%`, position: 'relative' }}
+          style={{ width: '100%', height: `${height}%`, position: 'relative', direction: 'ltr' }}
         >
           <div
             style={{

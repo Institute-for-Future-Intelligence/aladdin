@@ -4,6 +4,7 @@
 
 import { ViewState } from './ViewState';
 import { immerable } from 'immer';
+import { Rectangle } from '../models/Rectangle';
 
 export class DefaultViewState implements ViewState {
   [immerable] = true;
@@ -72,8 +73,7 @@ export class DefaultViewState implements ViewState {
   yearlyLightSensorPanelY: number;
   yearlyLightSensorPanelShowDaylight: boolean;
   yearlyLightSensorPanelShowClearness: boolean;
-  dailyPvYieldPanelX: number;
-  dailyPvYieldPanelY: number;
+  dailyPvYieldPanelRect: Rectangle;
   yearlyPvYieldPanelX: number;
   yearlyPvYieldPanelY: number;
   visibilityResultsPanelX: number;
@@ -172,8 +172,7 @@ export class DefaultViewState implements ViewState {
     this.yearlyLightSensorPanelY = 0;
     this.yearlyLightSensorPanelShowDaylight = false;
     this.yearlyLightSensorPanelShowClearness = false;
-    this.dailyPvYieldPanelX = 0;
-    this.dailyPvYieldPanelY = 0;
+    this.dailyPvYieldPanelRect = new Rectangle(0, 0, 600, 400);
     this.yearlyPvYieldPanelX = 0;
     this.yearlyPvYieldPanelY = 0;
     this.visibilityResultsPanelX = 0;
@@ -272,8 +271,7 @@ export class DefaultViewState implements ViewState {
     viewState.yearlyLightSensorPanelY = 0;
     viewState.yearlyLightSensorPanelShowDaylight = false;
     viewState.yearlyLightSensorPanelShowClearness = false;
-    viewState.dailyPvYieldPanelX = 0;
-    viewState.dailyPvYieldPanelY = 0;
+    viewState.dailyPvYieldPanelRect = new Rectangle(0, 0, 600, 400);
     viewState.yearlyPvYieldPanelX = 0;
     viewState.yearlyPvYieldPanelY = 0;
     viewState.visibilityResultsPanelX = 0;
