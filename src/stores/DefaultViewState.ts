@@ -74,8 +74,7 @@ export class DefaultViewState implements ViewState {
   yearlyLightSensorPanelShowDaylight: boolean;
   yearlyLightSensorPanelShowClearness: boolean;
   dailyPvYieldPanelRect: Rectangle;
-  yearlyPvYieldPanelX: number;
-  yearlyPvYieldPanelY: number;
+  yearlyPvYieldPanelRect: Rectangle;
   visibilityResultsPanelX: number;
   visibilityResultsPanelY: number;
   dailyParabolicTroughYieldPanelX: number;
@@ -173,8 +172,7 @@ export class DefaultViewState implements ViewState {
     this.yearlyLightSensorPanelShowDaylight = false;
     this.yearlyLightSensorPanelShowClearness = false;
     this.dailyPvYieldPanelRect = new Rectangle(0, 0, 600, 400);
-    this.yearlyPvYieldPanelX = 0;
-    this.yearlyPvYieldPanelY = 0;
+    this.yearlyPvYieldPanelRect = new Rectangle(0, 0, 600, 400);
     this.visibilityResultsPanelX = 0;
     this.visibilityResultsPanelY = 0;
     this.dailyParabolicTroughYieldPanelX = 0;
@@ -272,8 +270,7 @@ export class DefaultViewState implements ViewState {
     viewState.yearlyLightSensorPanelShowDaylight = false;
     viewState.yearlyLightSensorPanelShowClearness = false;
     viewState.dailyPvYieldPanelRect = new Rectangle(0, 0, 600, 400);
-    viewState.yearlyPvYieldPanelX = 0;
-    viewState.yearlyPvYieldPanelY = 0;
+    viewState.yearlyPvYieldPanelRect = new Rectangle(0, 0, 600, 400);
     viewState.visibilityResultsPanelX = 0;
     viewState.visibilityResultsPanelY = 0;
     viewState.dailyParabolicTroughYieldPanelX = 0;

@@ -118,9 +118,7 @@ export const dailyPvYieldPanelRect = (state: CommonStoreState) => state.viewStat
 
 export const showYearlyPvYieldPanel = (state: CommonStoreState) => state.viewState.showYearlyPvYieldPanel;
 
-export const yearlyPvYieldPanelX = (state: CommonStoreState) => state.viewState.yearlyPvYieldPanelX;
-
-export const yearlyPvYieldPanelY = (state: CommonStoreState) => state.viewState.yearlyPvYieldPanelY;
+export const yearlyPvYieldPanelRect = (state: CommonStoreState) => state.viewState.yearlyPvYieldPanelRect;
 
 export const showVisibilityResultsPanel = (state: CommonStoreState) =>
   state.viewState.showSolarPanelVisibilityResultsPanel;

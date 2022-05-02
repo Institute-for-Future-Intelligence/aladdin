@@ -217,8 +217,10 @@ const DailyPvYieldPanel = ({ city }: DailyPvYieldPanelProps) => {
         >
           <Header className="handle" style={{ direction: 'ltr' }}>
             <span>
-              {i18n.t('solarPanelYieldPanel.SolarPanelDailyYield', lang)}: {i18n.t('sensorPanel.WeatherDataFrom', lang)}
-              {' ' + city} | {moment(now).format('MM/DD')}
+              <label>{i18n.t('solarPanelYieldPanel.SolarPanelDailyYield', lang) + ': '}</label>
+              <label style={{ fontSize: '10px' }}>
+                {i18n.t('sensorPanel.WeatherDataFrom', lang) + ' ' + city} | {moment(now).format('MM/DD')}
+              </label>
             </span>
             <span
               style={{ cursor: 'pointer' }}

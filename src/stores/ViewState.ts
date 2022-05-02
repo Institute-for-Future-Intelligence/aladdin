@@ -71,8 +71,7 @@ export interface ViewState {
   yearlyLightSensorPanelShowDaylight: boolean;
   yearlyLightSensorPanelShowClearness: boolean;
   dailyPvYieldPanelRect: Rectangle;
-  yearlyPvYieldPanelX: number;
-  yearlyPvYieldPanelY: number;
+  yearlyPvYieldPanelRect: Rectangle;
   visibilityResultsPanelX: number;
   visibilityResultsPanelY: number;
   dailyParabolicTroughYieldPanelX: number;

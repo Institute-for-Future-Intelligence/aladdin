@@ -14,6 +14,7 @@ import { Button, Space, Switch } from 'antd';
 import { screenshot, showInfo } from '../helpers';
 import { ReloadOutlined, SaveOutlined, UnorderedListOutlined } from '@ant-design/icons';
 import i18n from '../i18n/i18n';
+import { Rectangle } from '../models/Rectangle';
 
 const Container = styled.div`
   position: fixed;
@@ -31,8 +32,6 @@ const ColumnWrapper = styled.div`
   position: absolute;
   right: 0;
   top: 0;
-  width: 600px;
-  height: 400px;
   min-width: 400px;
   max-width: 800px;
   min-height: 200px;
@@ -45,6 +44,7 @@ const ColumnWrapper = styled.div`
   overflow-x: auto;
   overflow-y: auto;
   resize: both;
+  direction: rtl;
 `;
 
 const Header = styled.div`
@@ -80,8 +80,7 @@ const YearlyPvYieldPanel = ({ city }: YearlyPvYieldPanelProps) => {
   const individualOutputs = useStore(Selector.yearlyPvIndividualOutputs);
   const solarPanelLabels = useStore(Selector.solarPanelLabels);
   const countElementsByType = useStore(Selector.countElementsByType);
-  const panelX = useStore(Selector.viewState.yearlyPvYieldPanelX);
-  const panelY = useStore(Selector.viewState.yearlyPvYieldPanelY);
+  const panelRect = useStore(Selector.viewState.yearlyPvYieldPanelRect);
   const runEvolution = useStore(Selector.runEvolution);
   const economics = useStore.getState().economicsParams;
   const countAllSolarPanels = useStore(Selector.countAllSolarPanels);
@@ -94,13 +93,13 @@ const YearlyPvYieldPanel = ({ city }: YearlyPvYieldPanelProps) => {
   const wOffset = wrapperRef.current ? wrapperRef.current.clientWidth + 40 : 640;
   const hOffset = wrapperRef.current ? wrapperRef.current.clientHeight + 100 : 500;
   const [curPosition, setCurPosition] = useState({
-    x: isNaN(panelX) ? 0 : Math.max(panelX, wOffset - window.innerWidth),
-    y: isNaN(panelY) ? 0 : Math.min(panelY, window.innerHeight - hOffset),
+    x: panelRect ? Math.max(panelRect.x, wOffset - window.innerWidth) : 0,
+    y: panelRect ? Math.min(panelRect.y, window.innerHeight - hOffset) : 0,
   });
   const [sum, setSum] = useState(0);
   const panelSumRef = useRef(new Map<string, number>());
+  const resizeObserverRef = useRef<ResizeObserver>();
 
-  const responsiveHeight = 100;
   const referenceX = MONTHS[now.getMonth()];
   const lang = { lng: language };
   const solarPanelCount = countElementsByType(ObjectType.SolarPanel);
@@ -121,20 +120,43 @@ const YearlyPvYieldPanel = ({ city }: YearlyPvYieldPanelProps) => {
     setSum(s);
   }, [yearlyYield]);
 
+  useEffect(() => {
+    setCurPosition({
+      x: Math.max(panelRect?.x, wOffset - window.innerWidth),
+      y: Math.min(panelRect?.y, window.innerHeight - hOffset),
+    });
+  }, [panelRect, wOffset, hOffset]);
+
   // when the window is resized (the code depends on where the panel is originally anchored in the CSS)
   useEffect(() => {
-    const handleResize = () => {
+    const handleWindowResize = () => {
       setCurPosition({
-        x: Math.max(panelX, wOffset - window.innerWidth),
-        y: Math.min(panelY, window.innerHeight - hOffset),
+        x: Math.max(panelRect?.x, wOffset - window.innerWidth),
+        y: Math.min(panelRect?.y, window.innerHeight - hOffset),
       });
     };
-    window.addEventListener('resize', handleResize);
+    window.addEventListener('resize', handleWindowResize);
+    if (wrapperRef.current) {
+      if (!resizeObserverRef.current) {
+        resizeObserverRef.current = new ResizeObserver(() => {
+          setCommonStore((state) => {
+            if (wrapperRef.current) {
+              if (!state.viewState.yearlyPvYieldPanelRect) {
+                state.viewState.yearlyPvYieldPanelRect = new Rectangle(0, 0, 600, 400);
+              }
+              state.viewState.yearlyPvYieldPanelRect.width = wrapperRef.current.offsetWidth;
+              state.viewState.yearlyPvYieldPanelRect.height = wrapperRef.current.offsetHeight;
+            }
+          });
+        });
+      }
+      resizeObserverRef.current.observe(wrapperRef.current);
+    }
     return () => {
-      window.removeEventListener('resize', handleResize);
+      window.removeEventListener('resize', handleWindowResize);
+      resizeObserverRef.current?.disconnect();
     };
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  }, [panelRect, wOffset, hOffset]);
 
   const onDrag: DraggableEventHandler = (e, ui) => {
     setCurPosition({
@@ -145,8 +167,8 @@ const YearlyPvYieldPanel = ({ city }: YearlyPvYieldPanelProps) => {
 
   const onDragEnd: DraggableEventHandler = (e, ui) => {
     setCommonStore((state) => {
-      state.viewState.yearlyPvYieldPanelX = Math.max(ui.x, wOffset - window.innerWidth);
-      state.viewState.yearlyPvYieldPanelY = Math.min(ui.y, window.innerHeight - hOffset);
+      state.viewState.yearlyPvYieldPanelRect.x = Math.max(ui.x, wOffset - window.innerWidth);
+      state.viewState.yearlyPvYieldPanelRect.y = Math.min(ui.y, window.innerHeight - hOffset);
     });
   };
 
@@ -163,7 +185,7 @@ const YearlyPvYieldPanel = ({ city }: YearlyPvYieldPanelProps) => {
       });
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [solarPanelCount]);
+  }, [solarPanelCount, individualOutputs]);
 
   const labelX = i18n.t('word.Month', lang);
   const labelY = i18n.t('solarPanelYieldPanel.Yield', lang);
@@ -194,16 +216,19 @@ const YearlyPvYieldPanel = ({ city }: YearlyPvYieldPanelProps) => {
       onStop={onDragEnd}
     >
       <Container ref={nodeRef}>
-        <ColumnWrapper ref={wrapperRef}>
-          <Header className="handle">
+        <ColumnWrapper
+          ref={wrapperRef}
+          style={{
+            width: (panelRect ? panelRect.width : 600) + 'px',
+            height: (panelRect ? panelRect.height : 400) + 'px',
+          }}
+        >
+          <Header className="handle" style={{ direction: 'ltr' }}>
             <span>
-              {i18n.t('solarPanelYieldPanel.SolarPanelYearlyYield', lang) +
-                ' (' +
-                now.getFullYear() +
-                '): ' +
-                i18n.t('sensorPanel.WeatherDataFrom', lang) +
-                ' ' +
-                city}
+              <label>{i18n.t('solarPanelYieldPanel.SolarPanelYearlyYield', lang) + ': '}</label>
+              <label style={{ fontSize: '10px' }}>
+                {i18n.t('sensorPanel.WeatherDataFrom', lang) + ' ' + city + ' | ' + now.getFullYear()}
+              </label>
             </span>
             <span
               style={{ cursor: 'pointer' }}
@@ -222,7 +247,7 @@ const YearlyPvYieldPanel = ({ city }: YearlyPvYieldPanelProps) => {
             chartType={individualOutputs ? ChartType.Line : ChartType.Area}
             dataSource={yearlyYield.map(({ Daylight, Clearness, ...item }) => item)}
             labels={solarPanelLabels}
-            height={responsiveHeight}
+            height={100}
             dataKeyAxisX={'Month'}
             labelX={labelX}
             labelY={labelY}
@@ -232,7 +257,7 @@ const YearlyPvYieldPanel = ({ city }: YearlyPvYieldPanelProps) => {
             fractionDigits={2}
             referenceX={referenceX}
           />
-          <Space style={{ alignSelf: 'center' }}>
+          <Space style={{ alignSelf: 'center', direction: 'ltr' }}>
             {individualOutputs && solarPanelCount > 1 ? (
               <Space title={totalTooltip} style={{ cursor: 'pointer', border: '2px solid #ccc', padding: '4px' }}>
                 {i18n.t('solarPanelYieldPanel.HoverForBreakdown', lang)}
