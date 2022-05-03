@@ -76,6 +76,7 @@ import CspSimulationSettings from './components/contextMenu/elementMenu/cspSimul
 import PvSimulationSettings from './components/contextMenu/elementMenu/pvSimulationSettings';
 import SutSimulationSettings from './components/contextMenu/elementMenu/sutSimulationSettings';
 import { UndoableChange } from './undo/UndoableChange';
+import { FLOATING_WINDOW_OPACITY } from './constants';
 
 const { SubMenu } = Menu;
 
@@ -358,7 +359,7 @@ const MainMenu = ({ viewOnly, set2DView, resetView, zoomView, canvas }: MainMenu
 
   const toggleTranslucency = (e: CheckboxChangeEvent) => {
     const oldOpacity = floatingWindowOpacity;
-    const newOpacity = e.target.checked ? 0.75 : 1;
+    const newOpacity = e.target.checked ? FLOATING_WINDOW_OPACITY : 1;
     const undoableChange = {
       name: 'Floating Window Opacity',
       timestamp: Date.now(),

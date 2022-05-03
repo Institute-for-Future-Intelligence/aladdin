@@ -15,6 +15,7 @@ import { screenshot, showInfo } from '../helpers';
 import { ReloadOutlined, SaveOutlined, UnorderedListOutlined } from '@ant-design/icons';
 import i18n from '../i18n/i18n';
 import { Rectangle } from '../models/Rectangle';
+import { FLOATING_WINDOW_OPACITY } from '../constants';
 
 const Container = styled.div`
   position: fixed;
@@ -73,7 +74,7 @@ export interface DailyParabolicTroughYieldPanelProps {
 
 const DailyParabolicTroughYieldPanel = ({ city }: DailyParabolicTroughYieldPanelProps) => {
   const language = useStore(Selector.language);
-  const opacity = useStore(Selector.floatingWindowOpacity) ?? 0.75;
+  const opacity = useStore(Selector.floatingWindowOpacity) ?? FLOATING_WINDOW_OPACITY;
   const setCommonStore = useStore(Selector.set);
   const now = new Date(useStore(Selector.world.date));
   const countElementsByType = useStore(Selector.countElementsByType);

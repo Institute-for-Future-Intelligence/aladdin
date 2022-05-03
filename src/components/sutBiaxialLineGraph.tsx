@@ -187,10 +187,10 @@ const SutBiaxialLineGraph = ({
                   stroke={'rgba(128, 128, 128, 0.3)'}
                 />
                 <ReferenceLine yAxisId="left" x={referenceX} stroke="orange" strokeWidth={2} />
-                <XAxis dataKey={dataKeyAxisX ?? labelX}>
+                <XAxis dataKey={dataKeyAxisX ?? labelX} fontSize={'10px'}>
                   <Label value={labelX + (unitX ? ' (' + unitX + ')' : '')} offset={0} position="bottom" />
                 </XAxis>
-                <YAxis domain={[yMin1, yMax1]} yAxisId="left">
+                <YAxis domain={[yMin1, yMax1]} yAxisId="left" fontSize={'10px'}>
                   <Label
                     dx={-15}
                     value={labelY1 + (unitY1 ? ' (' + unitY1 + ')' : '')}
@@ -199,7 +199,7 @@ const SutBiaxialLineGraph = ({
                     position="center"
                   />
                 </YAxis>
-                <YAxis domain={[yMin2, yMax2]} yAxisId="right" orientation={'right'}>
+                <YAxis domain={[yMin2, yMax2]} yAxisId="right" orientation={'right'} fontSize={'10px'}>
                   <Label
                     dx={15}
                     value={labelY2 + (unitY2 ? ' (' + unitY2 + ')' : '')}

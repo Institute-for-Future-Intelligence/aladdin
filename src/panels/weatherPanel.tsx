@@ -9,7 +9,7 @@ import { ChartType, GraphDataType } from '../types';
 import styled from 'styled-components';
 import { useStore } from '../stores/common';
 import * as Selector from '../stores/selector';
-import { MONTHS } from '../constants';
+import { FLOATING_WINDOW_OPACITY, MONTHS } from '../constants';
 import ReactDraggable, { DraggableEventHandler } from 'react-draggable';
 import i18n from '../i18n/i18n';
 import { Rectangle } from '../models/Rectangle';
@@ -71,6 +71,7 @@ export interface WeatherPanelProps {
 
 const WeatherPanel = ({ city, graphs }: WeatherPanelProps) => {
   const language = useStore(Selector.language);
+  const opacity = useStore(Selector.floatingWindowOpacity) ?? FLOATING_WINDOW_OPACITY;
   const setCommonStore = useStore(Selector.set);
   const now = new Date(useStore(Selector.world.date));
   const getWeather = useStore(Selector.getWeather);
@@ -215,6 +216,7 @@ const WeatherPanel = ({ city, graphs }: WeatherPanelProps) => {
         <ColumnWrapper
           ref={wrapperRef}
           style={{
+            opacity: opacity,
             width: (panelRect ? panelRect.width : 500) + 'px',
             height: (panelRect ? panelRect.height : 500) + 'px',
           }}

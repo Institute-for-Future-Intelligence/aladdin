@@ -8,7 +8,7 @@ import styled from 'styled-components';
 import { useStore } from '../stores/common';
 import * as Selector from '../stores/selector';
 import { ChartType, GraphDataType, ObjectType } from '../types';
-import { MONTHS } from '../constants';
+import { FLOATING_WINDOW_OPACITY, MONTHS } from '../constants';
 import ReactDraggable, { DraggableEventHandler } from 'react-draggable';
 import { Button, Space, Switch } from 'antd';
 import { screenshot, showInfo } from '../helpers';
@@ -73,7 +73,7 @@ export interface YearlyParabolicDishYieldPanelProps {
 
 const YearlyParabolicDishYieldPanel = ({ city }: YearlyParabolicDishYieldPanelProps) => {
   const language = useStore(Selector.language);
-  const opacity = useStore(Selector.floatingWindowOpacity) ?? 0.75;
+  const opacity = useStore(Selector.floatingWindowOpacity) ?? FLOATING_WINDOW_OPACITY;
   const setCommonStore = useStore(Selector.set);
   const daysPerYear = useStore(Selector.world.cspDaysPerYear) ?? 6;
   const now = new Date(useStore(Selector.world.date));

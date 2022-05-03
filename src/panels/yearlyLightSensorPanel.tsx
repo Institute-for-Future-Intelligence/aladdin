@@ -8,7 +8,7 @@ import styled from 'styled-components';
 import { useStore } from '../stores/common';
 import * as Selector from '../stores/selector';
 import { ChartType, GraphDataType, ObjectType } from '../types';
-import { MONTHS } from '../constants';
+import { FLOATING_WINDOW_OPACITY, MONTHS } from '../constants';
 import BarGraph from '../components/barGraph';
 import ReactDraggable, { DraggableEventHandler } from 'react-draggable';
 import { Button, Space, Switch } from 'antd';
@@ -74,7 +74,7 @@ export interface YearlyLightSensorPanelProps {
 
 const YearlyLightSensorPanel = ({ city }: YearlyLightSensorPanelProps) => {
   const language = useStore(Selector.language);
-  const opacity = useStore(Selector.floatingWindowOpacity) ?? 0.75;
+  const opacity = useStore(Selector.floatingWindowOpacity) ?? FLOATING_WINDOW_OPACITY;
   const setCommonStore = useStore(Selector.set);
   const now = new Date(useStore(Selector.world.date));
   const sensorData = useStore(Selector.yearlyLightSensorData);

@@ -14,6 +14,7 @@ import i18n from '../i18n/i18n';
 import EvolutionBiaxialLineGraph from '../components/evolutionBiaxialLineGraph';
 import { DesignProblem, EvolutionMethod, ObjectiveFunctionType, ObjectType } from '../types';
 import { Rectangle } from '../models/Rectangle';
+import { FLOATING_WINDOW_OPACITY } from '../constants';
 
 const Container = styled.div`
   position: fixed;
@@ -68,7 +69,7 @@ const Header = styled.div`
 
 const SolarPanelOptimizationResult = () => {
   const language = useStore(Selector.language);
-  const opacity = useStore(Selector.floatingWindowOpacity) ?? 0.75;
+  const opacity = useStore(Selector.floatingWindowOpacity) ?? FLOATING_WINDOW_OPACITY;
   const setCommonStore = useStore(Selector.set);
   const fittestIndividualResults = useStore(Selector.fittestIndividualResults);
   const variableLabels = useStore(Selector.variableLabels);

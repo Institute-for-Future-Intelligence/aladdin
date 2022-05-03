@@ -10,6 +10,7 @@ import ReactDraggable, { DraggableEventHandler } from 'react-draggable';
 import { Input } from 'antd';
 import i18n from '../i18n/i18n';
 import { Rectangle } from '../models/Rectangle';
+import { FLOATING_WINDOW_OPACITY } from '../constants';
 
 const Container = styled.div`
   position: fixed;
@@ -31,7 +32,6 @@ const ColumnWrapper = styled.div`
   max-width: 800px;
   min-height: 200px;
   max-height: 600px;
-  padding-bottom: 10px;
   border: 2px solid gainsboro;
   border-radius: 10px 10px 10px 10px;
   display: flex;
@@ -65,7 +65,7 @@ const { TextArea } = Input;
 
 const StickyNotePanel = () => {
   const language = useStore(Selector.language);
-  const opacity = useStore(Selector.floatingWindowOpacity) ?? 0.75;
+  const opacity = useStore(Selector.floatingWindowOpacity) ?? FLOATING_WINDOW_OPACITY;
   const setCommonStore = useStore(Selector.set);
   const notes = useStore(Selector.notes);
   const panelRect = useStore(Selector.viewState.stickyNotePanelRect);

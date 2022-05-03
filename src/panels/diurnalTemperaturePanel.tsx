@@ -16,6 +16,7 @@ import { computeSunriseAndSunsetInMinutes } from '../analysis/sunTools';
 import dayjs from 'dayjs';
 import { Radio, Space } from 'antd';
 import { Rectangle } from '../models/Rectangle';
+import { FLOATING_WINDOW_OPACITY } from '../constants';
 
 const Container = styled.div`
   position: fixed;
@@ -73,6 +74,7 @@ export interface DiurnalTemperaturePanelProps {
 
 const DiurnalTemperaturePanel = ({ city }: DiurnalTemperaturePanelProps) => {
   const language = useStore(Selector.language);
+  const opacity = useStore(Selector.floatingWindowOpacity) ?? FLOATING_WINDOW_OPACITY;
   const setCommonStore = useStore(Selector.set);
   const now = new Date(useStore(Selector.world.date));
   const latitude = useStore(Selector.world.latitude);
@@ -216,6 +218,7 @@ const DiurnalTemperaturePanel = ({ city }: DiurnalTemperaturePanelProps) => {
         <ColumnWrapper
           ref={wrapperRef}
           style={{
+            opacity: opacity,
             width: (panelRect ? panelRect.width : 600) + 'px',
             height: (panelRect ? panelRect.height : 400) + 'px',
           }}

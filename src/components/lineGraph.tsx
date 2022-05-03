@@ -246,10 +246,10 @@ const LineGraph = ({
                     stroke={'rgba(128, 128, 128, 0.3)'}
                   />
                   <ReferenceLine x={referenceX} stroke="orange" strokeWidth={2} />
-                  <XAxis dataKey={dataKeyAxisX ?? labelX}>
+                  <XAxis dataKey={dataKeyAxisX ?? labelX} fontSize={'10px'}>
                     <Label value={labelX + (unitX ? ' (' + unitX + ')' : '')} offset={0} position="bottom" />
                   </XAxis>
-                  <YAxis domain={[yMin, yMax]}>
+                  <YAxis domain={[yMin, yMax]} fontSize={'10px'}>
                     <Label
                       dx={-15}
                       value={labelY + (unitY ? ' (' + unitY + ')' : '')}
@@ -287,10 +287,10 @@ const LineGraph = ({
                     stroke={'rgba(128, 128, 128, 0.3)'}
                   />
                   <ReferenceLine x={referenceX} stroke="orange" strokeWidth={2} />
-                  <XAxis dataKey={dataKeyAxisX ?? labelX}>
+                  <XAxis dataKey={dataKeyAxisX ?? labelX} fontSize={'10px'}>
                     <Label value={labelX + (unitX ? ' (' + unitX + ')' : '')} offset={0} position="bottom" />
                   </XAxis>
-                  <YAxis domain={[yMin, yMax]}>
+                  <YAxis domain={[yMin, yMax]} fontSize={'10px'}>
                     <Label
                       dx={-15}
                       value={labelY + (unitY ? ' (' + unitY + ')' : '')}
@@ -302,6 +302,7 @@ const LineGraph = ({
                   {getRepresentations}
                   {lineCount > 1 && (
                     <Legend
+                      wrapperStyle={{ fontSize: '11px' }}
                       iconType="plainline"
                       verticalAlign="top"
                       height={36}

@@ -59,7 +59,7 @@ import { TreeModel } from '../models/TreeModel';
 import { HumanModel } from '../models/HumanModel';
 import { FoundationModel } from '../models/FoundationModel';
 import { CuboidModel } from '../models/CuboidModel';
-import { GROUND_ID, ORIGIN_VECTOR2, UNIT_VECTOR_POS_Z_ARRAY } from '../constants';
+import { FLOATING_WINDOW_OPACITY, GROUND_ID, ORIGIN_VECTOR2, UNIT_VECTOR_POS_Z_ARRAY } from '../constants';
 import { PolygonModel } from '../models/PolygonModel';
 import { Point2 } from '../models/Point2';
 import { useStoreRef } from './commonRef';
@@ -718,7 +718,7 @@ export const useStore = create<CommonStoreState>(
           notes: [],
           user: {} as User,
           language: 'en',
-          floatingWindowOpacity: 0.75,
+          floatingWindowOpacity: FLOATING_WINDOW_OPACITY,
           cloudFile: undefined,
           heatmaps: new Map<string, number[][]>(),
           setHeatmap(id, data) {
