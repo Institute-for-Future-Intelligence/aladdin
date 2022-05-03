@@ -7,7 +7,7 @@ import TextSprite from 'three-spritetext';
 import { MyOrbitControls } from './js/MyOrbitControls';
 import { ParabolicCylinderGeometry } from './js/ParabolicCylinderGeometry';
 import { ParaboloidGeometry } from './js/ParaboloidGeometry';
-import { ConvexGeometry } from 'three/examples/jsm/geometries/ConvexGeometry.js';
+import { ConvexGeometry } from './js/ConvexGeometry';
 
 // Extend makes these JSX elements (with the first character lower-cased)
 extend({ TextSprite });

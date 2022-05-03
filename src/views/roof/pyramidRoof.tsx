@@ -22,7 +22,7 @@ import {
 import * as Selector from 'src/stores/selector';
 import { WallModel } from 'src/models/WallModel';
 import { Box, Line, Plane, Sphere } from '@react-three/drei';
-import { ConvexGeometry } from 'three/examples/jsm/geometries/ConvexGeometry.js';
+import { ConvexGeometry } from 'src/js/ConvexGeometry.js';
 import { HALF_PI } from 'src/constants';
 import { useStoreRef } from 'src/stores/commonRef';
 import { useThree } from '@react-three/fiber';
