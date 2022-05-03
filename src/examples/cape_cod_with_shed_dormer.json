@@ -440,7 +440,7 @@
         0.022465454047944533,
         1
       ],
-      "texture": "Roof Texture Default",
+      "textureType": "Roof Texture Default",
       "showLabel": false,
       "lz": 7.873287310605744,
       "normal": [
@@ -542,7 +542,7 @@
       "lx": 0,
       "showLabel": false,
       "parentId": "8fpWrU7qVyVgipB7LtABom",
-      "texture": "Roof Texture Default",
+      "textureType": "Roof Texture Default",
       "normal": [
         0,
         0,

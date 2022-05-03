@@ -293,7 +293,7 @@
       "type": "Roof",
       "roofType": "Gable",
       "lx": 0,
-      "texture": "Roof Texture Default",
+      "textureType": "Roof Texture Default",
       "id": "kA3Mxv4Z9tXUoTK3QPMaWL",
       "rotation": [
         0,
@@ -548,7 +548,7 @@
       "cz": 0,
       "id": "6c49g876wkgGNVBvgTNf4N",
       "cx": 0,
-      "texture": "Roof Texture Default",
+      "textureType": "Roof Texture Default",
       "wallsId": [
         "6JeFi4vn6AoV5MBuK71Kj4"
       ],
@@ -885,7 +885,7 @@
         0,
         0
       ],
-      "texture": "Roof Texture Default",
+      "textureType": "Roof Texture Default",
       "type": "Roof",
       "wallsId": [
         "5spEvKcr5r35ajFtNP5ug4",

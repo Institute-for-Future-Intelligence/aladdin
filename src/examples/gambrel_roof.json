@@ -627,7 +627,7 @@
         -0.35,
         0.5
       ],
-      "texture": "Roof Texture Default",
+      "textureType": "Roof Texture Default",
       "selected": false,
       "showLabel": false,
       "normal": [
