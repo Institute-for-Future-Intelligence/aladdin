@@ -1,7 +1,6 @@
 /*
  * @Copyright 2021-2022. Institute for Future Intelligence, Inc.
  */
-
 import { Line, Plane, Sphere } from '@react-three/drei';
 import { useThree } from '@react-three/fiber';
 import React, { useEffect, useMemo, useRef, useState } from 'react';
@@ -15,7 +14,7 @@ import * as Selector from 'src/stores/selector';
 import { UndoableResizeHipRoofRidge } from 'src/undo/UndoableResize';
 import { Util } from 'src/Util';
 import { DoubleSide, Euler, Mesh, Raycaster, Vector2, Vector3 } from 'three';
-import { handleUndoableResizeRoofHeight } from './roof';
+import { handleUndoableResizeRoofHeight, useRoofTexture } from './roof';
 
 interface RoofSegmentWireframeProps {
   leftRoof: Vector3;
@@ -45,7 +44,11 @@ const HipRoof = ({
   leftRidgeLength,
   rightRidgeLength,
   selected,
+  textureType,
+  color,
 }: HipRoofModel) => {
+  const texture = useRoofTexture(textureType);
+
   const getElementById = useStore(Selector.getElementById);
   const setCommonStore = useStore(Selector.set);
   const removeElementById = useStore(Selector.removeElementById);
@@ -302,7 +305,7 @@ const HipRoof = ({
             <group key={i} name={`Roof segment ${i}`}>
               <mesh>
                 <convexGeometry args={[v]} />
-                <meshStandardMaterial side={DoubleSide} color="#2F4F4F" />
+                <meshStandardMaterial side={DoubleSide} map={texture} color={color} />
               </mesh>
               <Line points={[leftRoof, rightRoof]} lineWidth={0.2} />
               {showCenterWireFrame && (

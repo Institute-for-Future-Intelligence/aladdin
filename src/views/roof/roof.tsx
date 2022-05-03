@@ -2,7 +2,16 @@
  * @Copyright 2021-2022. Institute for Future Intelligence, Inc.
  */
 
-import React, { useEffect } from 'react';
+import RoofTextureDefault from 'src/resources/roof_edge.png';
+import RoofTexture01 from 'src/resources/roof_01.png';
+import RoofTexture02 from 'src/resources/roof_02.png';
+import RoofTexture03 from 'src/resources/roof_03.png';
+import RoofTexture04 from 'src/resources/roof_04.png';
+import RoofTexture05 from 'src/resources/roof_05.png';
+import RoofTexture06 from 'src/resources/roof_06.png';
+import RoofTexture07 from 'src/resources/roof_07.png';
+
+import React, { useEffect, useMemo, useState } from 'react';
 import { useStore } from '../../stores/common';
 import {
   GableRoofModel,
@@ -11,6 +20,7 @@ import {
   MansardRoofModel,
   PyramidRoofModel,
   RoofModel,
+  RoofTexture,
   RoofType,
 } from '../../models/RoofModel';
 import * as Selector from '../../stores/selector';
@@ -20,6 +30,7 @@ import HipRoof from './hipRoof';
 import GambrelRoof from './gambrelRoof';
 import { UndoableResizeRoofHeight } from 'src/undo/UndoableResize';
 import MansardRoof from './mansardRoof';
+import { RepeatWrapping, TextureLoader } from 'three';
 
 export const handleUndoableResizeRoofHeight = (elemId: string, oldHeight: number, newHeight: number) => {
   const undoableResizeRoofHeight = {
@@ -40,6 +51,64 @@ export const handleUndoableResizeRoofHeight = (elemId: string, oldHeight: number
     },
   } as UndoableResizeRoofHeight;
   useStore.getState().addUndoable(undoableResizeRoofHeight);
+};
+
+export const useRoofTexture = (textureType: RoofTexture) => {
+  const textureLoader = useMemo(() => {
+    let textureImg;
+    switch (textureType) {
+      case RoofTexture.Default:
+        textureImg = RoofTextureDefault;
+        break;
+      case RoofTexture.Texture01:
+        textureImg = RoofTexture01;
+        break;
+      case RoofTexture.Texture02:
+        textureImg = RoofTexture02;
+        break;
+      case RoofTexture.Texture03:
+        textureImg = RoofTexture03;
+        break;
+      case RoofTexture.Texture04:
+        textureImg = RoofTexture04;
+        break;
+      case RoofTexture.Texture05:
+        textureImg = RoofTexture05;
+        break;
+      case RoofTexture.Texture06:
+        textureImg = RoofTexture06;
+        break;
+      case RoofTexture.Texture07:
+        textureImg = RoofTexture07;
+        break;
+      default:
+        textureImg = RoofTextureDefault;
+    }
+    return new TextureLoader().load(textureImg, (texture) => {
+      texture.wrapS = texture.wrapT = RepeatWrapping;
+      texture.repeat.set(0.4, 0.4);
+      switch (textureType) {
+        case RoofTexture.Default: {
+          texture.repeat.set(3, 3);
+          break;
+        }
+        case RoofTexture.Texture03: {
+          texture.repeat.set(0.9, 0.9);
+          break;
+        }
+        case RoofTexture.Texture04:
+        case RoofTexture.Texture05:
+        case RoofTexture.Texture06: {
+          texture.repeat.set(0.75, 0.75);
+          break;
+        }
+      }
+      setTexture(texture);
+    });
+  }, [textureType]);
+
+  const [texture, setTexture] = useState(textureLoader);
+  return texture;
 };
 
 const Roof = (props: RoofModel) => {

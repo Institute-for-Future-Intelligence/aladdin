@@ -16,7 +16,7 @@ import * as Selector from 'src/stores/selector';
 import { UnoableResizeGambrelAndMansardRoofRidge } from 'src/undo/UndoableResize';
 import { Util } from 'src/Util';
 import { DoubleSide, Euler, Mesh, Vector2, Vector3 } from 'three';
-import { handleUndoableResizeRoofHeight } from './roof';
+import { handleUndoableResizeRoofHeight, useRoofTexture } from './roof';
 
 const intersectionPlanePosition = new Vector3();
 const intersectionPlaneRotation = new Euler();
@@ -31,7 +31,22 @@ enum RoofHandleType {
   Null = 'Null',
 }
 
-const MansardRoof = ({ parentId, id, wallsId, cx, cy, cz, lz, frontRidge, backRidge, selected }: MansardRoofModel) => {
+const MansardRoof = ({
+  parentId,
+  id,
+  wallsId,
+  cx,
+  cy,
+  cz,
+  lz,
+  frontRidge,
+  backRidge,
+  selected,
+  textureType,
+  color,
+}: MansardRoofModel) => {
+  const texture = useRoofTexture(textureType);
+
   const getElementById = useStore(Selector.getElementById);
   const setCommonStore = useStore(Selector.set);
   const removeElementById = useStore(Selector.removeElementById);
@@ -326,7 +341,7 @@ const MansardRoof = ({ parentId, id, wallsId, cx, cy, cz, lz, frontRidge, backRi
             <group key={i} name={`Roof segment ${i}`}>
               <mesh>
                 <convexGeometry args={[v]} />
-                <meshStandardMaterial side={DoubleSide} color="#2F4F4F" />
+                <meshStandardMaterial side={DoubleSide} color={color} map={texture} />
               </mesh>
             </group>
           );

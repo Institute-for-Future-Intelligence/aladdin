@@ -4,7 +4,6 @@
 
 import { Plane, Sphere } from '@react-three/drei';
 import React, { useEffect, useMemo, useRef, useState } from 'react';
-import { Point2 } from 'src/models/Point2';
 import { GableRoofModel } from 'src/models/RoofModel';
 import { WallModel } from 'src/models/WallModel';
 import { useStore } from 'src/stores/common';
@@ -14,7 +13,7 @@ import { useStoreRef } from 'src/stores/commonRef';
 import { useThree } from '@react-three/fiber';
 import { HALF_PI } from 'src/constants';
 import { ElementModel } from 'src/models/ElementModel';
-import { handleUndoableResizeRoofHeight } from './roof';
+import { handleUndoableResizeRoofHeight, useRoofTexture } from './roof';
 import { UnoableResizeGableRoofRidge } from 'src/undo/UndoableResize';
 
 const intersectionPlanePosition = new Vector3();
@@ -39,7 +38,11 @@ const GableRoof = ({
   selected,
   ridgeLeftPoint,
   ridgeRightPoint,
+  textureType,
+  color,
 }: GableRoofModel) => {
+  const texture = useRoofTexture(textureType);
+
   const setCommonStore = useStore(Selector.set);
   const getElementById = useStore(Selector.getElementById);
   const removeElementById = useStore(Selector.removeElementById);
@@ -358,7 +361,7 @@ const GableRoof = ({
           return (
             <mesh key={i}>
               <convexGeometry args={[v]} />
-              <meshStandardMaterial side={DoubleSide} color="#2F4F4F" />
+              <meshStandardMaterial side={DoubleSide} map={texture} color={color} />
             </mesh>
           );
         })}

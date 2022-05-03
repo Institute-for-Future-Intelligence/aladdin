@@ -15,8 +15,21 @@ import { useStoreRef } from 'src/stores/commonRef';
 import * as Selector from 'src/stores/selector';
 import { UnoableResizeGambrelAndMansardRoofRidge } from 'src/undo/UndoableResize';
 import { Util } from 'src/Util';
-import { DoubleSide, Euler, Mesh, Raycaster, Vector2, Vector3 } from 'three';
-import { handleUndoableResizeRoofHeight } from './roof';
+import {
+  BoxGeometry,
+  BufferGeometry,
+  DoubleSide,
+  Euler,
+  Float32BufferAttribute,
+  Mesh,
+  Raycaster,
+  Texture,
+  Vector2,
+  Vector3,
+} from 'three';
+import { handleUndoableResizeRoofHeight, useRoofTexture } from './roof';
+import { CSG } from 'three-csg-ts';
+import { ConvexGeometry } from 'three/examples/jsm/geometries/ConvexGeometry';
 
 enum RoofHandleType {
   TopMid = 'TopMid',
@@ -48,7 +61,11 @@ const GambrelRoof = ({
   backRidgeLeftPoint,
   backRidgeRightPoint,
   selected,
+  textureType,
+  color,
 }: GambrelRoofModel) => {
+  const texture = useRoofTexture(textureType);
+
   const getElementById = useStore(Selector.getElementById);
   const setCommonStore = useStore(Selector.set);
   const removeElementById = useStore(Selector.removeElementById);
@@ -387,7 +404,7 @@ const GambrelRoof = ({
             <group key={i} name={`Roof segment ${i}`}>
               <mesh>
                 <convexGeometry args={[v]} />
-                <meshStandardMaterial side={DoubleSide} color="#2F4F4F" />
+                <meshStandardMaterial map={texture} side={DoubleSide} color={color} />
               </mesh>
             </group>
           );
@@ -664,6 +681,72 @@ const GambrelRoof = ({
         </Plane>
       )}
     </group>
+  );
+};
+
+interface RoofSegmentProps {
+  points: Vector3[];
+  texture: Texture;
+}
+
+// window test code
+const RoofSegment = ({ texture }: { texture: Texture }) => {
+  const ref = useRef<Mesh>(null);
+  useEffect(() => {
+    if (ref.current) {
+      const a = new Vector3(0, 0, 0);
+      const b = new Vector3(10, 0, 0);
+      const c = new Vector3(10, 10, 0);
+
+      const d = new Vector3(0, 10, 5);
+      const e = new Vector3(10, 10, 0);
+      const f = new Vector3(0, 0, 0);
+
+      const points = [a, b, c, d, e, f];
+
+      const uvs = [
+        a.x / 10,
+        a.y / 10,
+        b.x / 10,
+        b.y / 10,
+        c.x / 10,
+        c.y / 10,
+        d.x / 10,
+        d.y / 10,
+        e.x / 10,
+        e.y / 10,
+        f.x / 10,
+        f.y / 10,
+      ];
+
+      const roofGeometry = new BufferGeometry();
+      roofGeometry.setFromPoints(points);
+      roofGeometry.computeVertexNormals();
+      roofGeometry.setAttribute('uv', new Float32BufferAttribute(uvs, 2));
+
+      const roofMesh = new Mesh(roofGeometry);
+
+      const h: Vector3[] = [];
+      h.push(new Vector3(4, 4, -1));
+      h.push(new Vector3(6, 4, -1));
+      h.push(new Vector3(4, 6, -1));
+      h.push(new Vector3(6, 6, -1));
+      h.push(new Vector3(4, 4, 5));
+      h.push(new Vector3(6, 4, 5));
+      h.push(new Vector3(4, 6, 5));
+      h.push(new Vector3(6, 6, 5));
+
+      const holeMesh = new Mesh(new ConvexGeometry(h));
+
+      const res = CSG.union(roofMesh, holeMesh); // ???
+      ref.current.geometry = res.geometry;
+    }
+  }, []);
+
+  return (
+    <mesh position={[0, 0, 8]} ref={ref}>
+      <meshBasicMaterial side={DoubleSide} map={texture} />
+    </mesh>
   );
 };
 

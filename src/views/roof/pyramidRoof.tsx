@@ -5,20 +5,7 @@
 import React, { useEffect, useMemo, useRef, useState } from 'react';
 import { PyramidRoofModel, RoofModel } from 'src/models/RoofModel';
 import { useStore } from 'src/stores/common';
-import {
-  BoxBufferGeometry,
-  BoxGeometry,
-  BufferGeometry,
-  DoubleSide,
-  Euler,
-  Matrix4,
-  Mesh,
-  MeshStandardMaterial,
-  Raycaster,
-  Shape,
-  Vector2,
-  Vector3,
-} from 'three';
+import { DoubleSide, Euler, Mesh, Raycaster, Texture, Vector2, Vector3 } from 'three';
 import * as Selector from 'src/stores/selector';
 import { WallModel } from 'src/models/WallModel';
 import { Box, Line, Plane, Sphere } from '@react-three/drei';
@@ -28,21 +15,21 @@ import { useStoreRef } from 'src/stores/commonRef';
 import { useThree } from '@react-three/fiber';
 import { Point2 } from 'src/models/Point2';
 import { Util } from 'src/Util';
-import wall from '../wall/wall';
 import { ObjectType } from 'src/types';
 import { CSG } from 'three-csg-ts';
-import { handleUndoableResizeRoofHeight } from './roof';
+import { handleUndoableResizeRoofHeight, useRoofTexture } from './roof';
 
 const centerPointPosition = new Vector3();
 const intersectionPlanePosition = new Vector3();
 const intersectionPlaneRotation = new Euler();
 const zeroVector = new Vector3();
 
-const PyramidRoof = ({ cx, cy, cz, lz, id, parentId, wallsId, selected }: PyramidRoofModel) => {
+const PyramidRoof = ({ cx, cy, cz, lz, id, parentId, wallsId, selected, textureType }: PyramidRoofModel) => {
+  const texture = useRoofTexture(textureType);
+
   const setCommonStore = useStore(Selector.set);
   const getElementById = useStore(Selector.getElementById);
   const removeElementById = useStore(Selector.removeElementById);
-  const addUndoable = useStore(Selector.addUndoable);
   const updateRoofHeight = useStore(Selector.updateRoofHeight);
   const elements = useStore(Selector.elements);
   const { camera, gl } = useThree();
@@ -309,7 +296,7 @@ const PyramidRoof = ({ cx, cy, cz, lz, id, parentId, wallsId, selected }: Pyrami
             if (leftPoint.distanceTo(rightPoint) > 0.1) {
               return (
                 <group name={`Roof segment ${idx}`} key={idx}>
-                  <RoofSegment v={v} />
+                  <RoofSegment v={v} texture={texture} />
                   <Line points={[leftPoint, rightPoint]} lineWidth={0.2} />
                   {showCenterWireFrame && (
                     <>
@@ -372,16 +359,18 @@ const PyramidRoof = ({ cx, cy, cz, lz, id, parentId, wallsId, selected }: Pyrami
   );
 };
 
-const RoofSegment = ({ v }: { v: Vector3[] }) => {
-  const mat = useMemo(() => {
-    return new MeshStandardMaterial();
-  }, []);
+const RoofSegment = ({ v, texture }: { v: Vector3[]; texture: Texture }) => {
+  // const mat = useMemo(() => {
+  //   const m = new MeshStandardMaterial();
+  //   m.map = texture;
+  //   return m;
+  // }, []);
   const meshRef = useRef<Mesh>(null);
 
   if (meshRef.current) {
     v.push(new Vector3(0, 0, -0.001));
 
-    const roofMesh = new Mesh(new ConvexGeometry(v), mat);
+    const geo = new ConvexGeometry(v);
 
     // todo: if has window
     if (false) {
@@ -396,13 +385,13 @@ const RoofSegment = ({ v }: { v: Vector3[] }) => {
       // const res = CSG.subtract(roofMesh, holeMesh);
       // meshRef.current.geometry = res.geometry;
     } else {
-      meshRef.current.geometry = roofMesh.geometry;
+      meshRef.current.geometry = geo;
     }
   }
 
   return (
     <mesh ref={meshRef} castShadow>
-      <meshStandardMaterial side={DoubleSide} color="#2F4F4F" />
+      <meshStandardMaterial side={DoubleSide} map={texture} />
     </mesh>
   );
 };
