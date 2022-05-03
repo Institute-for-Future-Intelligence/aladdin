@@ -38,6 +38,8 @@ export const loadPvModules = (state: CommonStoreState) => state.loadPvModules;
 
 export const getPvModule = (state: CommonStoreState) => state.getPvModule;
 
+export const floatingWindowOpacity = (state: CommonStoreState) => state.floatingWindowOpacity;
+
 export const language = (state: CommonStoreState) => state.language;
 
 export const locale = (state: CommonStoreState) => state.locale;

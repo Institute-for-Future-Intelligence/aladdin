@@ -218,6 +218,7 @@ export const i18n_es = {
         Instruction: 'Instrucción',
         StickyNote: 'Nota adhesiva',
         ShowShadow: 'Mostrar sombra',
+        TranslucentFloatingWindows: 'Translucent Floating Windows',
       },
       toolSubMenu: 'Herramienta',
       tool: {

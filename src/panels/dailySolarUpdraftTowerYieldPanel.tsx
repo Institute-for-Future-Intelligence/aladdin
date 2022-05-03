@@ -74,6 +74,7 @@ export interface DailySolarUpdraftTowerYieldPanelProps {
 
 const DailySolarUpdraftTowerYieldPanel = ({ city }: DailySolarUpdraftTowerYieldPanelProps) => {
   const language = useStore(Selector.language);
+  const opacity = useStore(Selector.floatingWindowOpacity) ?? 0.75;
   const setCommonStore = useStore(Selector.set);
   const now = new Date(useStore(Selector.world.date));
   const countSolarStructuresByType = useStore(Selector.countSolarStructuresByType);
@@ -214,6 +215,7 @@ const DailySolarUpdraftTowerYieldPanel = ({ city }: DailySolarUpdraftTowerYieldP
         <ColumnWrapper
           ref={wrapperRef}
           style={{
+            opacity: opacity,
             width: (panelRect ? panelRect.width : 640) + 'px',
             height: (panelRect ? panelRect.height : 550) + 'px',
           }}

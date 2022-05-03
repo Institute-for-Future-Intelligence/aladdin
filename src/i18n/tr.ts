@@ -219,6 +219,7 @@ export const i18n_tr = {
         Instruction: 'Yönerge',
         StickyNote: 'Yapýþkan Not',
         ShowShadow: 'Gölge Göster',
+        TranslucentFloatingWindows: 'Translucent Floating Windows',
       },
       toolSubMenu: 'Araç',
       tool: {

@@ -68,6 +68,7 @@ const Header = styled.div`
 
 const SolarPanelOptimizationResult = () => {
   const language = useStore(Selector.language);
+  const opacity = useStore(Selector.floatingWindowOpacity) ?? 0.75;
   const setCommonStore = useStore(Selector.set);
   const fittestIndividualResults = useStore(Selector.fittestIndividualResults);
   const variableLabels = useStore(Selector.variableLabels);
@@ -246,6 +247,7 @@ const SolarPanelOptimizationResult = () => {
         <ColumnWrapper
           ref={wrapperRef}
           style={{
+            opacity: opacity,
             width: (panelRect ? panelRect.width : 640) + 'px',
             height: (panelRect ? panelRect.height : 400) + 'px',
           }}

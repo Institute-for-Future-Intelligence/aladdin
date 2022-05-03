@@ -217,6 +217,7 @@ export const i18n_zh_cn = {
         Instruction: '操作说明',
         StickyNote: '便签',
         ShowShadow: '显示阴影',
+        TranslucentFloatingWindows: '透明浮动窗口',
       },
       toolSubMenu: '工具',
       tool: {

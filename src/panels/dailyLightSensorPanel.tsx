@@ -73,6 +73,7 @@ export interface DailyLightSensorPanelProps {
 
 const DailyLightSensorPanel = ({ city }: DailyLightSensorPanelProps) => {
   const language = useStore(Selector.language);
+  const opacity = useStore(Selector.floatingWindowOpacity) ?? 0.75;
   const setCommonStore = useStore(Selector.set);
   const now = new Date(useStore(Selector.world.date));
   const sensorLabels = useStore(Selector.sensorLabels);
@@ -174,6 +175,7 @@ const DailyLightSensorPanel = ({ city }: DailyLightSensorPanelProps) => {
         <ColumnWrapper
           ref={wrapperRef}
           style={{
+            opacity: opacity,
             width: (panelRect ? panelRect.width : 600) + 'px',
             height: (panelRect ? panelRect.height : 360) + 'px',
           }}

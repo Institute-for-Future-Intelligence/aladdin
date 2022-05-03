@@ -73,6 +73,7 @@ export interface YearlySolarUpdraftTowerYieldPanelProps {
 
 const YearlySolarUpdraftTowerYieldPanel = ({ city }: YearlySolarUpdraftTowerYieldPanelProps) => {
   const language = useStore(Selector.language);
+  const opacity = useStore(Selector.floatingWindowOpacity) ?? 0.75;
   const setCommonStore = useStore(Selector.set);
   const daysPerYear = useStore(Selector.world.sutDaysPerYear) ?? 6;
   const now = new Date(useStore(Selector.world.date));
@@ -213,6 +214,7 @@ const YearlySolarUpdraftTowerYieldPanel = ({ city }: YearlySolarUpdraftTowerYiel
         <ColumnWrapper
           ref={wrapperRef}
           style={{
+            opacity: opacity,
             width: (panelRect ? panelRect.width : 600) + 'px',
             height: (panelRect ? panelRect.height : 400) + 'px',
           }}

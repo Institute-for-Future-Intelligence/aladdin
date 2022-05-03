@@ -65,6 +65,7 @@ const { TextArea } = Input;
 
 const StickyNotePanel = () => {
   const language = useStore(Selector.language);
+  const opacity = useStore(Selector.floatingWindowOpacity) ?? 0.75;
   const setCommonStore = useStore(Selector.set);
   const notes = useStore(Selector.notes);
   const panelRect = useStore(Selector.viewState.stickyNotePanelRect);
@@ -166,6 +167,7 @@ const StickyNotePanel = () => {
           <ColumnWrapper
             ref={wrapperRef}
             style={{
+              opacity: opacity,
               width: (panelRect ? panelRect.width : 400) + 'px',
               height: (panelRect ? panelRect.height : 300) + 'px',
             }}

@@ -101,6 +101,7 @@ export interface CommonStoreState {
   notes: string[];
   user: User;
   language: string;
+  floatingWindowOpacity: number;
   cloudFile: string | undefined;
   heatmaps: Map<string, number[][]>;
   setHeatmap: (id: string, data: number[][]) => void;
@@ -717,6 +718,7 @@ export const useStore = create<CommonStoreState>(
           notes: [],
           user: {} as User,
           language: 'en',
+          floatingWindowOpacity: 0.75,
           cloudFile: undefined,
           heatmaps: new Map<string, number[][]>(),
           setHeatmap(id, data) {
@@ -5086,6 +5088,7 @@ export const useStore = create<CommonStoreState>(
         },
         whitelist: [
           'language',
+          'floatingWindowOpacity',
           'locale',
           'cloudFile',
           'world',

@@ -218,6 +218,7 @@ export const i18n_en = {
         Instruction: 'Instruction',
         StickyNote: 'Sticky Note',
         ShowShadow: 'Show Shadow',
+        TranslucentFloatingWindows: 'Translucent Floating Windows',
       },
       toolSubMenu: 'Tool',
       tool: {

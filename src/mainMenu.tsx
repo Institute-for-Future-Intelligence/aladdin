@@ -75,6 +75,7 @@ import { UndoablePaste } from './undo/UndoablePaste';
 import CspSimulationSettings from './components/contextMenu/elementMenu/cspSimulationSettings';
 import PvSimulationSettings from './components/contextMenu/elementMenu/pvSimulationSettings';
 import SutSimulationSettings from './components/contextMenu/elementMenu/sutSimulationSettings';
+import { UndoableChange } from './undo/UndoableChange';
 
 const { SubMenu } = Menu;
 
@@ -123,6 +124,7 @@ export interface MainMenuProps {
 const MainMenu = ({ viewOnly, set2DView, resetView, zoomView, canvas }: MainMenuProps) => {
   const setCommonStore = useStore(Selector.set);
   const language = useStore(Selector.language);
+  const floatingWindowOpacity = useStore(Selector.floatingWindowOpacity);
   const elements = useStore.getState().elements;
   const selectNone = useStore(Selector.selectNone);
   const undoManager = useStore(Selector.undoManager);
@@ -352,6 +354,31 @@ const MainMenu = ({ viewOnly, set2DView, resetView, zoomView, canvas }: MainMenu
         showInfo(i18n.t('menu.file.ToSaveYourWorkPleaseSignIn', lang));
       }
     }
+  };
+
+  const toggleTranslucency = (e: CheckboxChangeEvent) => {
+    const oldOpacity = floatingWindowOpacity;
+    const newOpacity = e.target.checked ? 0.75 : 1;
+    const undoableChange = {
+      name: 'Floating Window Opacity',
+      timestamp: Date.now(),
+      oldValue: oldOpacity,
+      newValue: newOpacity,
+      undo: () => {
+        setCommonStore((state) => {
+          state.floatingWindowOpacity = undoableChange.oldValue as number;
+        });
+      },
+      redo: () => {
+        setCommonStore((state) => {
+          state.floatingWindowOpacity = undoableChange.newValue as number;
+        });
+      },
+    } as UndoableChange;
+    addUndoable(undoableChange);
+    setCommonStore((state) => {
+      state.floatingWindowOpacity = newOpacity;
+    });
   };
 
   const toggleShadow = () => {
@@ -953,6 +980,11 @@ const MainMenu = ({ viewOnly, set2DView, resetView, zoomView, canvas }: MainMenu
             </Checkbox>
           </Menu.Item>
         )}
+        <Menu.Item key={'translucency-check-box'}>
+          <Checkbox checked={floatingWindowOpacity < 1} onChange={toggleTranslucency}>
+            {i18n.t('menu.view.TranslucentFloatingWindows', lang)}
+          </Checkbox>
+        </Menu.Item>
         <Menu.Item key={'shadow-check-box'}>
           <Checkbox checked={shadowEnabled} onChange={toggleShadow}>
             {i18n.t('menu.view.ShowShadow', lang)}

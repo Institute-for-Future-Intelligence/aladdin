@@ -73,6 +73,7 @@ export interface DailyParabolicDishYieldPanelProps {
 
 const DailyParabolicDishYieldPanel = ({ city }: DailyParabolicDishYieldPanelProps) => {
   const language = useStore(Selector.language);
+  const opacity = useStore(Selector.floatingWindowOpacity) ?? 0.75;
   const setCommonStore = useStore(Selector.set);
   const now = new Date(useStore(Selector.world.date));
   const countElementsByType = useStore(Selector.countElementsByType);
@@ -210,6 +211,7 @@ const DailyParabolicDishYieldPanel = ({ city }: DailyParabolicDishYieldPanelProp
         <ColumnWrapper
           ref={wrapperRef}
           style={{
+            opacity: opacity,
             width: (panelRect ? panelRect.width : 600) + 'px',
             height: (panelRect ? panelRect.height : 400) + 'px',
           }}

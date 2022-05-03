@@ -74,6 +74,7 @@ export interface YearlyLightSensorPanelProps {
 
 const YearlyLightSensorPanel = ({ city }: YearlyLightSensorPanelProps) => {
   const language = useStore(Selector.language);
+  const opacity = useStore(Selector.floatingWindowOpacity) ?? 0.75;
   const setCommonStore = useStore(Selector.set);
   const now = new Date(useStore(Selector.world.date));
   const sensorData = useStore(Selector.yearlyLightSensorData);
@@ -179,6 +180,7 @@ const YearlyLightSensorPanel = ({ city }: YearlyLightSensorPanelProps) => {
         <ColumnWrapper
           ref={wrapperRef}
           style={{
+            opacity: opacity,
             width: (panelRect ? panelRect.width : 600) + 'px',
             height: (panelRect ? panelRect.height : 500) + 'px',
           }}
