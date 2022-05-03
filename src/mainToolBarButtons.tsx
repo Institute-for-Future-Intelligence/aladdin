@@ -258,6 +258,7 @@ const MainToolBarButtons = () => {
       {menuItem(ObjectType.HipRoof, HipRoofImage, setCategory2Flag)}
       {menuItem(ObjectType.GableRoof, GableRoofImage, setCategory2Flag)}
       {menuItem(ObjectType.GambrelRoof, GamblerRoofImage, setCategory2Flag)}
+      {menuItem(ObjectType.MansardRoof, GamblerRoofImage, setCategory2Flag)}
     </Menu>
   );
 
@@ -304,6 +305,8 @@ const MainToolBarButtons = () => {
         return buttonImg(ObjectType.GableRoof, GableRoofImage);
       case ObjectType.GambrelRoof:
         return buttonImg(ObjectType.GambrelRoof, GamblerRoofImage);
+      case ObjectType.MansardRoof:
+        return buttonImg(ObjectType.MansardRoof, GamblerRoofImage);
     }
   };
 
