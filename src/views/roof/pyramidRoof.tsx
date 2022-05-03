@@ -10,14 +10,14 @@ import * as Selector from 'src/stores/selector';
 import { WallModel } from 'src/models/WallModel';
 import { Box, Line, Plane, Sphere } from '@react-three/drei';
 import { ConvexGeometry } from 'src/js/ConvexGeometry.js';
-import { HALF_PI } from 'src/constants';
+import { HALF_PI, TWO_PI } from 'src/constants';
 import { useStoreRef } from 'src/stores/commonRef';
 import { useThree } from '@react-three/fiber';
 import { Point2 } from 'src/models/Point2';
 import { Util } from 'src/Util';
 import { ObjectType } from 'src/types';
 import { CSG } from 'three-csg-ts';
-import { handleUndoableResizeRoofHeight, useRoofTexture } from './roof';
+import { ConvexGeoProps, handleUndoableResizeRoofHeight, useRoofTexture } from './roof';
 
 const centerPointPosition = new Vector3();
 const intersectionPlanePosition = new Vector3();
@@ -171,7 +171,7 @@ const PyramidRoof = ({ cx, cy, cz, lz, id, parentId, wallsId, selected, textureT
   }, [currentWallArray, h]);
 
   const roofSegments = useMemo(() => {
-    const segments: Vector3[][] = [];
+    const segments: ConvexGeoProps[] = [];
     if (currentWallArray.length < 2) {
       return segments;
     }
@@ -183,13 +183,15 @@ const PyramidRoof = ({ cx, cy, cz, lz, id, parentId, wallsId, selected, textureT
         w.rightPoint.length > 0 &&
         (w.leftPoint[0] !== w.rightPoint[0] || w.leftPoint[1] !== w.rightPoint[1])
       ) {
-        const vectors = [];
+        const points = [];
         const { lh, rh } = getWallHeight(currentWallArray, i);
         minHeight = Math.max(minHeight, Math.max(lh, rh));
         const leftPoint = new Vector3(w.leftPoint[0], w.leftPoint[1], lh).sub(centerPointPosition);
         const rightPoint = new Vector3(w.rightPoint[0], w.rightPoint[1], rh).sub(centerPointPosition);
-        vectors.push(leftPoint, rightPoint, zeroVector, zeroVector);
-        segments.push(vectors);
+        const direction = -w.relativeAngle;
+        const length = new Vector3(w.cx, w.cy).sub(centerPointPosition.clone().setZ(0)).length();
+        points.push(leftPoint, rightPoint, zeroVector, zeroVector);
+        segments.push({ points, direction, length });
       }
     }
     if (!isWallLoopRef.current) {
@@ -203,11 +205,15 @@ const PyramidRoof = ({ cx, cy, cz, lz, id, parentId, wallsId, selected, textureT
       const rightPoint = new Vector3(firstWall.leftPoint[0], firstWall.leftPoint[1], firstWall.lz).sub(
         centerPointPosition,
       );
-      segments[0][0].setZ(firstWall.lz - centerPointPosition.z);
-      segments[segments.length - 1][1].setZ(lastWall.lz - centerPointPosition.z);
-      const vectors = [];
-      vectors.push(leftPoint, rightPoint, zeroVector, zeroVector);
-      segments.push(vectors);
+      segments[0].points[0].setZ(firstWall.lz - centerPointPosition.z);
+      segments[segments.length - 1].points[1].setZ(lastWall.lz - centerPointPosition.z);
+      const points = [];
+      let angle = Math.atan2(rightPoint.y - leftPoint.y, rightPoint.x - leftPoint.x);
+      angle = angle >= 0 ? angle : (TWO_PI + angle) % TWO_PI;
+
+      const length = new Vector3().addVectors(leftPoint, rightPoint).setZ(0).divideScalar(2).length();
+      points.push(leftPoint, rightPoint, zeroVector, zeroVector);
+      segments.push({ points, direction: -angle, length });
     }
 
     setMinHeight(minHeight);
@@ -289,16 +295,22 @@ const PyramidRoof = ({ cx, cy, cz, lz, id, parentId, wallsId, selected, textureT
           }
         }}
       >
-        {roofSegments.map((v, idx) => {
-          if (v.length > 0) {
-            const [leftPoint, rightPoint, zeroVector] = v;
-            const showCenterWireFrame = Math.abs(leftPoint.z) > 0.1;
+        {roofSegments.map((segment, idx) => {
+          const { points, direction, length } = segment;
+          if (points.length > 0) {
+            const [leftPoint, rightPoint, zeroVector] = points;
+            const isFlat = Math.abs(leftPoint.z) < 0.01;
             if (leftPoint.distanceTo(rightPoint) > 0.1) {
               return (
                 <group name={`Roof segment ${idx}`} key={idx}>
-                  <RoofSegment v={v} texture={texture} />
+                  <RoofSegment
+                    points={points}
+                    direction={isFlat ? 0 : direction}
+                    length={isFlat ? 1 : length}
+                    texture={texture}
+                  />
                   <Line points={[leftPoint, rightPoint]} lineWidth={0.2} />
-                  {showCenterWireFrame && (
+                  {!isFlat && (
                     <>
                       <Line points={[leftPoint, zeroVector]} lineWidth={0.2} />
                       <Line points={[rightPoint, zeroVector]} lineWidth={0.2} />
@@ -359,7 +371,17 @@ const PyramidRoof = ({ cx, cy, cz, lz, id, parentId, wallsId, selected, textureT
   );
 };
 
-const RoofSegment = ({ v, texture }: { v: Vector3[]; texture: Texture }) => {
+const RoofSegment = ({
+  points,
+  direction,
+  length,
+  texture,
+}: {
+  points: Vector3[];
+  direction: number;
+  length: number;
+  texture: Texture;
+}) => {
   // const mat = useMemo(() => {
   //   const m = new MeshStandardMaterial();
   //   m.map = texture;
@@ -368,9 +390,9 @@ const RoofSegment = ({ v, texture }: { v: Vector3[]; texture: Texture }) => {
   const meshRef = useRef<Mesh>(null);
 
   if (meshRef.current) {
-    v.push(new Vector3(0, 0, -0.001));
+    points.push(new Vector3(0, 0, -0.001));
 
-    const geo = new ConvexGeometry(v);
+    const geo = new ConvexGeometry(points, direction, length);
 
     // todo: if has window
     if (false) {

@@ -7,7 +7,7 @@ import { Euler } from 'three';
 import { ConvexHull } from 'three/examples/jsm/math/ConvexHull.js';
 
 class ConvexGeometry extends THREE.BufferGeometry {
-  constructor(points, dirction = 0) {
+  constructor(points, dirction, length) {
     super();
 
     const vertices = [];
@@ -27,7 +27,11 @@ class ConvexGeometry extends THREE.BufferGeometry {
         normals.push(face.normal.x, face.normal.y, face.normal.z);
 
         const p = point.clone().applyEuler(euler);
-        uvs.push(p.x, p.y);
+
+        const l2 = Math.sqrt(length * length + p.z * p.z);
+        const y = p.y * l2 / length;
+        uvs.push(p.x, y);
+
         edge = edge.next;
       } while (edge !== face.edge);
     }

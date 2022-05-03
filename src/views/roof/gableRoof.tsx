@@ -13,7 +13,7 @@ import { useStoreRef } from 'src/stores/commonRef';
 import { useThree } from '@react-three/fiber';
 import { HALF_PI } from 'src/constants';
 import { ElementModel } from 'src/models/ElementModel';
-import { handleUndoableResizeRoofHeight, useRoofTexture } from './roof';
+import { handleUndoableResizeRoofHeight, ConvexGeoProps, useRoofTexture } from './roof';
 import { UnoableResizeGableRoofRidge } from 'src/undo/UndoableResize';
 
 const intersectionPlanePosition = new Vector3();
@@ -211,7 +211,7 @@ const GableRoof = ({
   }, [ridgeLeftPointV3, ridgeRightPointV3]);
 
   const roofSegments = useMemo(() => {
-    const segments: Vector3[][] = [];
+    const segments: ConvexGeoProps[] = [];
 
     if (currentWallArray.length !== 4) {
       return segments;
@@ -219,35 +219,39 @@ const GableRoof = ({
 
     // shed roof
     if (currentWallArray[3].centerRoofHeight && Math.abs(currentWallArray[3].centerRoofHeight[0]) === 0.5) {
-      const vector = [];
+      const points: Vector3[] = [];
       const idx = currentWallArray[3].centerRoofHeight[0] < 0 ? 0 : 2;
       const currWall = currentWallArray[idx];
+      const direction = -currWall.relativeAngle;
       const { lh, rh } = getWallHeightShed(currentWallArray, idx);
       const currLeftPoint = new Vector3(currWall.leftPoint[0], currWall.leftPoint[1], lh).sub(ridgeMidPoint);
       const currRightPoint = new Vector3(currWall.rightPoint[0], currWall.rightPoint[1], rh).sub(ridgeMidPoint);
-      vector.push(
+      const length = new Vector3(currWall.cx, currWall.cy).sub(ridgeMidPoint.clone().setZ(0)).length();
+      points.push(
         currLeftPoint,
         currRightPoint,
         ridgeLeftPointV3.clone().sub(ridgeMidPoint),
         ridgeRightPointV3.clone().sub(ridgeMidPoint),
       );
-      segments.push(vector);
+      segments.push({ points, direction, length });
     }
     // gable roof
     else {
       for (let i = 0; i < 4; i += 2) {
-        const vector = [];
+        const points: Vector3[] = [];
         const currWall = currentWallArray[i];
+        const direction = -currWall.relativeAngle;
         const { lh, rh } = getWallHeight(currentWallArray, i);
         const currLeftPoint = new Vector3(currWall.leftPoint[0], currWall.leftPoint[1], lh).sub(ridgeMidPoint);
         const currRightPoint = new Vector3(currWall.rightPoint[0], currWall.rightPoint[1], rh).sub(ridgeMidPoint);
-        vector.push(
+        const length = new Vector3(currWall.cx, currWall.cy).sub(ridgeMidPoint.clone().setZ(0)).length();
+        points.push(
           currLeftPoint,
           currRightPoint,
           ridgeLeftPointV3.clone().sub(ridgeMidPoint),
           ridgeRightPointV3.clone().sub(ridgeMidPoint),
         );
-        segments.push(vector);
+        segments.push({ points, direction, length });
       }
     }
 
@@ -357,10 +361,13 @@ const GableRoof = ({
           }
         }}
       >
-        {roofSegments.map((v, i) => {
+        {roofSegments.map((segment, i, arr) => {
+          const { points, direction, length } = segment;
+          const [leftRoof, rightRoof, rightRidge, leftRidge] = points;
+          const isFlat = Math.abs(leftRoof.z) < 0.1;
           return (
             <mesh key={i}>
-              <convexGeometry args={[v]} />
+              <convexGeometry args={[points, isFlat ? arr[0].direction : direction, isFlat ? 1 : length]} />
               <meshStandardMaterial side={DoubleSide} map={texture} color={color} />
             </mesh>
           );

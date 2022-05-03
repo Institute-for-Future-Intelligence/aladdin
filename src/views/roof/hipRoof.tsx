@@ -14,7 +14,7 @@ import * as Selector from 'src/stores/selector';
 import { UndoableResizeHipRoofRidge } from 'src/undo/UndoableResize';
 import { Util } from 'src/Util';
 import { DoubleSide, Euler, Mesh, Raycaster, Vector2, Vector3 } from 'three';
-import { handleUndoableResizeRoofHeight, useRoofTexture } from './roof';
+import { handleUndoableResizeRoofHeight, ConvexGeoProps, useRoofTexture } from './roof';
 
 interface RoofSegmentWireframeProps {
   leftRoof: Vector3;
@@ -217,35 +217,41 @@ const HipRoof = ({
   };
 
   const roofSegments = useMemo(() => {
-    const segments: Vector3[][] = [];
+    const segments: ConvexGeoProps[] = [];
     let minHeight = 0;
     if (currentWallArray.length !== 4) {
       return segments;
     }
     for (let i = 0; i < 4; i++) {
-      const vector: Vector3[] = [];
+      const points: Vector3[] = [];
       const wall = currentWallArray[i];
+      const direction = -wall.relativeAngle;
       const { lh, rh } = getWallHeight(currentWallArray, i);
       minHeight = Math.max(minHeight, Math.max(lh, rh));
       const wallLeftPoint = new Vector3(wall.leftPoint[0], wall.leftPoint[1], lh).sub(ridgeMidPoint);
       const wallRightPoint = new Vector3(wall.rightPoint[0], wall.rightPoint[1], rh).sub(ridgeMidPoint);
       const ridgeLeft = ridgeLeftPoint.clone().sub(ridgeMidPoint);
       const ridgeRight = ridgeRightPoint.clone().sub(ridgeMidPoint);
+      let length = 0;
       switch (i) {
         case 0:
-          makeSement(vector, wallLeftPoint, wallRightPoint, ridgeRight, ridgeLeft);
+          length = new Vector3(wall.cx, wall.cy).sub(ridgeMidPoint.clone().setZ(0)).length();
+          makeSement(points, wallLeftPoint, wallRightPoint, ridgeRight, ridgeLeft);
           break;
         case 1:
-          makeSement(vector, wallLeftPoint, wallRightPoint, ridgeRight, ridgeRight);
+          length = new Vector3(wall.cx, wall.cy).sub(ridgeRightPoint.clone().setZ(0)).length();
+          makeSement(points, wallLeftPoint, wallRightPoint, ridgeRight, ridgeRight);
           break;
         case 2:
-          makeSement(vector, wallLeftPoint, wallRightPoint, ridgeLeft, ridgeRight);
+          length = new Vector3(wall.cx, wall.cy).sub(ridgeMidPoint.clone().setZ(0)).length();
+          makeSement(points, wallLeftPoint, wallRightPoint, ridgeLeft, ridgeRight);
           break;
         case 3:
-          makeSement(vector, wallLeftPoint, wallRightPoint, ridgeLeft, ridgeLeft);
+          length = new Vector3(wall.cx, wall.cy).sub(ridgeLeftPoint.clone().setZ(0)).length();
+          makeSement(points, wallLeftPoint, wallRightPoint, ridgeLeft, ridgeLeft);
           break;
       }
-      segments.push(vector);
+      segments.push({ points, direction, length });
     }
     setMinHeight(minHeight);
     return segments;
@@ -298,17 +304,18 @@ const HipRoof = ({
           }
         }}
       >
-        {roofSegments.map((v, i) => {
-          const [leftRoof, rightRoof, rightRidge, leftRidge] = v;
-          const showCenterWireFrame = Math.abs(leftRoof.z) > 0.1;
+        {roofSegments.map((segment, i, arr) => {
+          const { points, direction, length } = segment;
+          const [leftRoof, rightRoof, rightRidge, leftRidge] = points;
+          const isFlat = Math.abs(leftRoof.z) < 0.1;
           return (
             <group key={i} name={`Roof segment ${i}`}>
               <mesh>
-                <convexGeometry args={[v]} />
+                <convexGeometry args={[points, isFlat ? arr[0].direction : direction, isFlat ? 1 : length]} />
                 <meshStandardMaterial side={DoubleSide} map={texture} color={color} />
               </mesh>
               <Line points={[leftRoof, rightRoof]} lineWidth={0.2} />
-              {showCenterWireFrame && (
+              {!isFlat && (
                 <RoofSegmentWireframe
                   leftRoof={leftRoof}
                   leftRidge={leftRidge}

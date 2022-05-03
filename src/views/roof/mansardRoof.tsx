@@ -16,7 +16,7 @@ import * as Selector from 'src/stores/selector';
 import { UnoableResizeGambrelAndMansardRoofRidge } from 'src/undo/UndoableResize';
 import { Util } from 'src/Util';
 import { DoubleSide, Euler, Mesh, Vector2, Vector3 } from 'three';
-import { handleUndoableResizeRoofHeight, useRoofTexture } from './roof';
+import { ConvexGeoProps as ConvexGeometryProps, handleUndoableResizeRoofHeight, useRoofTexture } from './roof';
 
 const intersectionPlanePosition = new Vector3();
 const intersectionPlaneRotation = new Euler();
@@ -237,7 +237,8 @@ const MansardRoof = ({
   }, [currentWallArray, centroid, backRidge]);
 
   const roofSegments = useMemo(() => {
-    const segments: Vector3[][] = [];
+    // const segments: Vector3[][] = [];
+    const segments: ConvexGeometryProps[] = [];
 
     if (currentWallArray.length != 4) {
       return segments;
@@ -246,27 +247,31 @@ const MansardRoof = ({
     // front
     const frontSide: Vector3[] = [];
     const frontWall = currentWallArray[0];
+    const frontDirection = -frontWall.relativeAngle;
     const { lh: frontWallLh, rh: frontWallRh } = getWallHeight(currentWallArray, 0);
     const frontWallLeftPoint = new Vector3(frontWall.leftPoint[0], frontWall.leftPoint[1], frontWallLh).sub(centroid);
     const frontWallRightPoint = new Vector3(frontWall.rightPoint[0], frontWall.rightPoint[1], frontWallRh).sub(
       centroid,
     );
+    const frontLength = new Vector3(frontWall.cx, frontWall.cy).sub(centroid.clone().setZ(0)).length();
     frontSide.push(frontWallLeftPoint, frontWallRightPoint, frontRidgeRightPointV3, frontRidgeLeftPointV3);
-    segments.push(frontSide);
+    segments.push({ points: frontSide, direction: frontDirection, length: frontLength });
 
     // top
     const top: Vector3[] = [];
     top.push(frontRidgeLeftPointV3, frontRidgeRightPointV3, backRidgeLeftPointV3, backRidgeRightPointV3);
-    segments.push(top);
+    segments.push({ points: top, direction: frontDirection, length: 1 });
 
     // back
     const backSide: Vector3[] = [];
     const backWall = currentWallArray[2];
+    const backDirection = -backWall.relativeAngle;
     const { lh: backWallLh, rh: backWallRh } = getWallHeight(currentWallArray, 2);
     const backWallLeftPoint = new Vector3(backWall.leftPoint[0], backWall.leftPoint[1], backWallLh).sub(centroid);
     const backWallRightPoint = new Vector3(backWall.rightPoint[0], backWall.rightPoint[1], backWallRh).sub(centroid);
+    const backLength = new Vector3(backWall.cx, backWall.cy).sub(centroid.clone().setZ(0)).length();
     backSide.push(backWallLeftPoint, backWallRightPoint, backRidgeRightPointV3, backRidgeLeftPointV3);
-    segments.push(backSide);
+    segments.push({ points: backSide, direction: backDirection, length: backLength });
 
     return segments;
   }, [currentWallArray, h]);
@@ -336,11 +341,14 @@ const MansardRoof = ({
           }
         }}
       >
-        {roofSegments.map((v, i) => {
+        {roofSegments.map((segment, i, arr) => {
+          const { points, direction, length } = segment;
+          const [leftRoof, rightRoof, rightRidge, leftRidge] = points;
+          const isFlat = Math.abs(leftRoof.z) < 0.1;
           return (
             <group key={i} name={`Roof segment ${i}`}>
               <mesh>
-                <convexGeometry args={[v]} />
+                <convexGeometry args={[points, isFlat ? arr[0].direction : direction, isFlat ? 1 : length]} />
                 <meshStandardMaterial side={DoubleSide} color={color} map={texture} />
               </mesh>
             </group>
