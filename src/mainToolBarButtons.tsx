@@ -12,7 +12,8 @@ import WindowImage from './assets/window.png';
 import DoorImage from './assets/door.png';
 import PyramidRoofImage from './assets/pyramid_roof.png';
 import HipRoofImage from './assets/hip_roof.png';
-import GamblerRoofImage from './assets/gambler_roof.png';
+import GambrelRoofImage from './assets/gambrel_roof.png';
+import MansardRoofImage from './assets/mansard_roof.png';
 import GableRoofImage from './assets/gable_roof.png';
 import TreeImage from './assets/tree.png';
 import HumanImage from './assets/human.png';
@@ -257,8 +258,8 @@ const MainToolBarButtons = () => {
       {menuItem(ObjectType.PyramidRoof, PyramidRoofImage, setCategory2Flag)}
       {menuItem(ObjectType.HipRoof, HipRoofImage, setCategory2Flag)}
       {menuItem(ObjectType.GableRoof, GableRoofImage, setCategory2Flag)}
-      {menuItem(ObjectType.GambrelRoof, GamblerRoofImage, setCategory2Flag)}
-      {menuItem(ObjectType.MansardRoof, GamblerRoofImage, setCategory2Flag)}
+      {menuItem(ObjectType.GambrelRoof, GambrelRoofImage, setCategory2Flag)}
+      {menuItem(ObjectType.MansardRoof, MansardRoofImage, setCategory2Flag)}
     </Menu>
   );
 
@@ -304,9 +305,9 @@ const MainToolBarButtons = () => {
       case ObjectType.GableRoof:
         return buttonImg(ObjectType.GableRoof, GableRoofImage);
       case ObjectType.GambrelRoof:
-        return buttonImg(ObjectType.GambrelRoof, GamblerRoofImage);
+        return buttonImg(ObjectType.GambrelRoof, GambrelRoofImage);
       case ObjectType.MansardRoof:
-        return buttonImg(ObjectType.MansardRoof, GamblerRoofImage);
+        return buttonImg(ObjectType.MansardRoof, MansardRoofImage);
     }
   };
 
