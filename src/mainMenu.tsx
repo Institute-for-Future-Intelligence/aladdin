@@ -753,7 +753,7 @@ const MainMenu = ({ viewOnly, set2DView, resetView, zoomView, canvas }: MainMenu
   const readyToPaste = elementsToPaste && elementsToPaste.length > 0;
 
   const menu = (
-    <Menu>
+    <Menu triggerSubMenuAction={'click'}>
       {/* file menu */}
       <SubMenu key={'file'} title={i18n.t('menu.fileSubMenu', lang)}>
         <Menu.Item

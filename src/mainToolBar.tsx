@@ -496,7 +496,7 @@ const MainToolBar = ({ viewOnly = false }: MainToolBarProps) => {
   };
 
   const avatarMenu = (
-    <Menu>
+    <Menu triggerSubMenuAction={'click'}>
       <Menu.Item key="account" onClick={gotoAccountSettings}>
         {i18n.t('avatarMenu.AccountSettings', lang)}
       </Menu.Item>

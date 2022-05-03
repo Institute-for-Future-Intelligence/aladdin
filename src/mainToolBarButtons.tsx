@@ -263,12 +263,12 @@ const MainToolBarButtons = () => {
 
   const category3Menu = (
     <Menu>
-      {menuItem(ObjectType.Sensor, SensorImage, setCategory3Flag)}
       {menuItem(ObjectType.SolarPanel, SolarPanelImage, setCategory3Flag)}
       {menuItem(ObjectType.ParabolicTrough, ParabolicTroughImage, setCategory3Flag)}
       {menuItem(ObjectType.ParabolicDish, ParabolicDishImage, setCategory3Flag)}
       {menuItem(ObjectType.FresnelReflector, FresnelReflectorImage, setCategory3Flag)}
       {menuItem(ObjectType.Heliostat, HeliostatImage, setCategory3Flag)}
+      {menuItem(ObjectType.Sensor, SensorImage, setCategory3Flag)}
     </Menu>
   );
 

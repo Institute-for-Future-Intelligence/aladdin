@@ -37,97 +37,97 @@ const DropdownContextMenu: React.FC<ContextMenuProps> = ({ children }) => {
     switch (contextMenuObjectType) {
       case ObjectType.Ground:
         return (
-          <Menu>
+          <Menu triggerSubMenuAction={'click'}>
             <GroundMenu />
           </Menu>
         );
       case ObjectType.Sky:
         return (
-          <Menu>
+          <Menu triggerSubMenuAction={'click'}>
             <SkyMenu />
           </Menu>
         );
       case ObjectType.Foundation:
         return (
-          <Menu>
+          <Menu triggerSubMenuAction={'click'}>
             <FoundationMenu />
           </Menu>
         );
       case ObjectType.Cuboid:
         return (
-          <Menu>
+          <Menu triggerSubMenuAction={'click'}>
             <CuboidMenu />
           </Menu>
         );
       case ObjectType.Polygon:
         return (
-          <Menu>
+          <Menu triggerSubMenuAction={'click'}>
             <PolygonMenu />
           </Menu>
         );
       case ObjectType.PolygonVertex:
         return (
-          <Menu>
+          <Menu triggerSubMenuAction={'click'}>
             <PolygonVertexMenu />
           </Menu>
         );
       case ObjectType.SolarPanel:
         return (
-          <Menu>
+          <Menu triggerSubMenuAction={'click'}>
             <SolarPanelMenu />
           </Menu>
         );
       case ObjectType.ParabolicTrough:
         return (
-          <Menu>
+          <Menu triggerSubMenuAction={'click'}>
             <ParabolicTroughMenu />
           </Menu>
         );
       case ObjectType.ParabolicDish:
         return (
-          <Menu>
+          <Menu triggerSubMenuAction={'click'}>
             <ParabolicDishMenu />
           </Menu>
         );
       case ObjectType.FresnelReflector:
         return (
-          <Menu>
+          <Menu triggerSubMenuAction={'click'}>
             <FresnelReflectorMenu />
           </Menu>
         );
       case ObjectType.Heliostat:
         return (
-          <Menu>
+          <Menu triggerSubMenuAction={'click'}>
             <HeliostatMenu />
           </Menu>
         );
       case ObjectType.Sensor:
         return (
-          <Menu>
+          <Menu triggerSubMenuAction={'click'}>
             <SensorMenu />
           </Menu>
         );
       case ObjectType.Human:
         return (
-          <Menu>
+          <Menu triggerSubMenuAction={'click'}>
             <HumanMenu />
           </Menu>
         );
       case ObjectType.Tree:
         return (
-          <Menu>
+          <Menu triggerSubMenuAction={'click'}>
             <TreeMenu />
           </Menu>
         );
       case ObjectType.Wall:
         return (
-          <Menu>
+          <Menu triggerSubMenuAction={'click'}>
             <WallMenu />
           </Menu>
         );
       case ObjectType.Window:
         return (
-          <Menu>
+          <Menu triggerSubMenuAction={'click'}>
             <WindowMenu />
           </Menu>
         );
