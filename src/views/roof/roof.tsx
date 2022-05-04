@@ -88,22 +88,20 @@ export const useRoofTexture = (textureType: RoofTexture) => {
     }
     return new TextureLoader().load(textureImg, (texture) => {
       texture.wrapS = texture.wrapT = RepeatWrapping;
-      texture.repeat.set(0.4, 0.4);
       switch (textureType) {
-        case RoofTexture.Default: {
-          texture.repeat.set(3, 3);
+        case RoofTexture.Texture01:
+          texture.repeat.set(0.5, 0.5);
           break;
-        }
-        case RoofTexture.Texture03: {
+        case RoofTexture.Texture03:
           texture.repeat.set(0.9, 0.9);
           break;
-        }
         case RoofTexture.Texture04:
         case RoofTexture.Texture05:
-        case RoofTexture.Texture06: {
+        case RoofTexture.Texture06:
           texture.repeat.set(0.75, 0.75);
           break;
-        }
+        default:
+          texture.repeat.set(0.5, 0.5);
       }
       setTexture(texture);
     });
