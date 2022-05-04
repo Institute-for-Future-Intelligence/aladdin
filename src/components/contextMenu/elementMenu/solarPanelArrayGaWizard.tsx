@@ -92,7 +92,7 @@ const SolarPanelArrayGaWizard = ({ setDialogVisible }: { setDialogVisible: (b: b
   const poleSpacingRef = useRef<number>(
     originalSolarPanels && originalSolarPanels.length > 0
       ? originalSolarPanels[0].poleSpacing
-      : constraints.poleSpacing ?? 5,
+      : constraints.poleSpacing ?? 3,
   );
 
   const onStart = (event: DraggableEvent, uiData: DraggableData) => {

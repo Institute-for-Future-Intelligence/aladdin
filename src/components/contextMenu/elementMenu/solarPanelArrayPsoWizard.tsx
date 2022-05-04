@@ -8,11 +8,22 @@ import Draggable, { DraggableBounds, DraggableData, DraggableEvent } from 'react
 import { useStore } from '../../../stores/common';
 import * as Selector from '../../../stores/selector';
 import i18n from '../../../i18n/i18n';
-import { DesignProblem, EvolutionMethod, ObjectiveFunctionType, SearchMethod } from '../../../types';
+import {
+  DesignProblem,
+  EvolutionMethod,
+  ObjectiveFunctionType,
+  ObjectType,
+  Orientation,
+  RowAxis,
+  SearchMethod,
+} from '../../../types';
 import { showInfo } from '../../../helpers';
 import { DefaultSolarPanelArrayLayoutConstraints } from '../../../stores/DefaultSolarPanelArrayLayoutConstraints';
 import { Util } from '../../../Util';
 import { HALF_PI } from '../../../constants';
+import { FoundationModel } from '../../../models/FoundationModel';
+import { SolarPanelModel } from '../../../models/SolarPanelModel';
+import { PolygonModel } from '../../../models/PolygonModel';
 
 const { Option } = Select;
 const { TabPane } = Tabs;
@@ -21,6 +32,10 @@ const SolarPanelArrayPsoWizard = ({ setDialogVisible }: { setDialogVisible: (b: 
   const setCommonStore = useStore(Selector.set);
   const language = useStore(Selector.language);
   const runEvolution = useStore(Selector.runEvolution);
+  const pvModules = useStore(Selector.pvModules);
+  const polygon = useStore(Selector.selectedElement) as PolygonModel;
+  const getParent = useStore(Selector.getParent);
+  const getChildrenOfType = useStore(Selector.getChildrenOfType);
   const params = useStore(Selector.evolutionaryAlgorithmState).particleSwarmOptimizationParams;
   const constraints = useStore(Selector.solarPanelArrayLayoutConstraints);
   const particleSwarmOptimizationWizardSelectedTab = useStore(Selector.particleSwarmOptimizationWizardSelectedTab);
@@ -53,6 +68,31 @@ const SolarPanelArrayPsoWizard = ({ setDialogVisible }: { setDialogVisible: (b: 
   }, []);
 
   const lang = { lng: language };
+  const rowAxisRef = useRef<RowAxis>(constraints.rowAxis ?? RowAxis.zonal);
+  const foundation = polygon ? (getParent(polygon) as FoundationModel) : undefined;
+  const originalSolarPanels = foundation
+    ? (getChildrenOfType(ObjectType.SolarPanel, foundation.id) as SolarPanelModel[])
+    : undefined;
+  const pvModelNameRef = useRef<string>(
+    originalSolarPanels && originalSolarPanels.length > 0
+      ? originalSolarPanels[0].pvModelName
+      : constraints.pvModelName ?? 'CS6X-355P-FG',
+  );
+  const orientationRef = useRef<Orientation>(
+    originalSolarPanels && originalSolarPanels.length > 0
+      ? originalSolarPanels[0].orientation
+      : constraints.orientation ?? Orientation.landscape,
+  );
+  const poleHeightRef = useRef<number>(
+    originalSolarPanels && originalSolarPanels.length > 0
+      ? originalSolarPanels[0].poleHeight
+      : constraints.poleHeight ?? 1,
+  );
+  const poleSpacingRef = useRef<number>(
+    originalSolarPanels && originalSolarPanels.length > 0
+      ? originalSolarPanels[0].poleSpacing
+      : constraints.poleSpacing ?? 3,
+  );
 
   const onStart = (event: DraggableEvent, uiData: DraggableData) => {
     if (dragRef.current) {
@@ -92,6 +132,11 @@ const SolarPanelArrayPsoWizard = ({ setDialogVisible }: { setDialogVisible: (b: 
       state.solarPanelArrayLayoutConstraints.maximumTiltAngle = maximumTiltAngleRef.current;
       state.solarPanelArrayLayoutConstraints.minimumInterRowSpacing = minimumInterRowSpacingRef.current;
       state.solarPanelArrayLayoutConstraints.maximumInterRowSpacing = maximumInterRowSpacingRef.current;
+      state.solarPanelArrayLayoutConstraints.poleHeight = poleHeightRef.current;
+      state.solarPanelArrayLayoutConstraints.poleSpacing = poleSpacingRef.current;
+      state.solarPanelArrayLayoutConstraints.pvModelName = pvModelNameRef.current;
+      state.solarPanelArrayLayoutConstraints.rowAxis = rowAxisRef.current;
+      state.solarPanelArrayLayoutConstraints.orientation = orientationRef.current;
     });
   };
 
@@ -565,6 +610,183 @@ const SolarPanelArrayPsoWizard = ({ setDialogVisible }: { setDialogVisible: (b: 
                   min={2}
                   max={10}
                   defaultValue={[minimumInterRowSpacingRef.current, maximumInterRowSpacingRef.current]}
+                  marks={{
+                    2: {
+                      style: {
+                        fontSize: '10px',
+                      },
+                      label: '2m',
+                    },
+                    4: {
+                      style: {
+                        fontSize: '10px',
+                      },
+                      label: '4m',
+                    },
+                    6: {
+                      style: {
+                        fontSize: '10px',
+                      },
+                      label: '6m',
+                    },
+                    8: {
+                      style: {
+                        fontSize: '10px',
+                      },
+                      label: '8m',
+                    },
+                    10: {
+                      style: {
+                        fontSize: '10px',
+                      },
+                      label: '10m',
+                    },
+                  }}
+                />
+              </Col>
+            </Row>
+          </TabPane>
+
+          <TabPane tab={i18n.t('optimizationMenu.Constants', lang)} key="3">
+            <Row gutter={6} style={{ paddingBottom: '6px', paddingTop: '0px' }}>
+              <Col className="gutter-row" span={12}>
+                {i18n.t('polygonMenu.SolarPanelArrayModel', lang) + ':'}
+              </Col>
+              <Col className="gutter-row" span={12}>
+                <Select
+                  defaultValue="Custom"
+                  style={{ width: '100%' }}
+                  value={pvModelNameRef.current}
+                  onChange={(value) => {
+                    pvModelNameRef.current = value;
+                    setUpdateFlag(!updateFlag);
+                  }}
+                >
+                  {Object.keys(pvModules).map((key) => (
+                    <Option key={key} value={key}>
+                      {key}
+                    </Option>
+                  ))}
+                </Select>
+              </Col>
+            </Row>
+
+            <Row gutter={6} style={{ paddingBottom: '6px', paddingTop: '8px' }}>
+              <Col className="gutter-row" span={12}>
+                {i18n.t('polygonMenu.SolarPanelArrayRowAxis', lang) + ':'}
+              </Col>
+              <Col className="gutter-row" span={12}>
+                <Select
+                  style={{ width: '100%' }}
+                  value={rowAxisRef.current}
+                  onChange={(value) => {
+                    rowAxisRef.current = value;
+                    setUpdateFlag(!updateFlag);
+                  }}
+                >
+                  <Option key={RowAxis.zonal} value={RowAxis.zonal}>
+                    {i18n.t('polygonMenu.SolarPanelArrayZonalRowAxis', lang)}
+                  </Option>
+                  <Option key={RowAxis.meridional} value={RowAxis.meridional}>
+                    {i18n.t('polygonMenu.SolarPanelArrayMeridionalRowAxis', lang)}
+                  </Option>
+                </Select>
+              </Col>
+            </Row>
+
+            <Row gutter={6} style={{ paddingBottom: '6px', paddingTop: '8px' }}>
+              <Col className="gutter-row" span={12}>
+                {i18n.t('polygonMenu.SolarPanelArrayOrientation', lang) + ':'}
+              </Col>
+              <Col className="gutter-row" span={12}>
+                <Select
+                  style={{ width: '100%' }}
+                  value={orientationRef.current}
+                  onChange={(value) => {
+                    orientationRef.current = value;
+                    setUpdateFlag(!updateFlag);
+                  }}
+                >
+                  <Option key={Orientation.portrait} value={Orientation.portrait}>
+                    {i18n.t('solarPanelMenu.Portrait', lang)}
+                  </Option>
+                  <Option key={Orientation.landscape} value={Orientation.landscape}>
+                    {i18n.t('solarPanelMenu.Landscape', lang)}
+                  </Option>
+                </Select>
+              </Col>
+            </Row>
+
+            <Row gutter={6} style={{ paddingBottom: '0px', paddingTop: '12px' }}>
+              <Col className="gutter-row" span={12}>
+                {i18n.t('solarCollectorMenu.PoleHeight', lang) + ':'}
+              </Col>
+              <Col className="gutter-row" span={12}>
+                <Slider
+                  style={{ paddingBottom: 0, paddingTop: 0, marginTop: '16px', marginBottom: '16px' }}
+                  onChange={(value) => {
+                    poleHeightRef.current = value;
+                    setUpdateFlag(!updateFlag);
+                  }}
+                  min={0}
+                  max={10}
+                  defaultValue={poleHeightRef.current}
+                  marks={{
+                    0: {
+                      style: {
+                        fontSize: '10px',
+                      },
+                      label: '0m',
+                    },
+                    2: {
+                      style: {
+                        fontSize: '10px',
+                      },
+                      label: '2m',
+                    },
+                    4: {
+                      style: {
+                        fontSize: '10px',
+                      },
+                      label: '4m',
+                    },
+                    6: {
+                      style: {
+                        fontSize: '10px',
+                      },
+                      label: '6m',
+                    },
+                    8: {
+                      style: {
+                        fontSize: '10px',
+                      },
+                      label: '8m',
+                    },
+                    10: {
+                      style: {
+                        fontSize: '10px',
+                      },
+                      label: '10m',
+                    },
+                  }}
+                />
+              </Col>
+            </Row>
+
+            <Row gutter={6} style={{ paddingBottom: '0px', paddingTop: '6px' }}>
+              <Col className="gutter-row" span={12}>
+                {i18n.t('solarPanelMenu.PoleSpacing', lang) + ':'}
+              </Col>
+              <Col className="gutter-row" span={12}>
+                <Slider
+                  style={{ paddingBottom: 0, paddingTop: 0, marginTop: '16px', marginBottom: '16px' }}
+                  onChange={(value) => {
+                    poleSpacingRef.current = value;
+                    setUpdateFlag(!updateFlag);
+                  }}
+                  min={2}
+                  max={10}
+                  defaultValue={poleSpacingRef.current}
                   marks={{
                     2: {
                       style: {

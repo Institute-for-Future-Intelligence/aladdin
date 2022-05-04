@@ -41,6 +41,10 @@ export class SolarPanelArrayOptimizerPso extends OptimizerPso {
 
   constructor(
     pvModel: PvModel,
+    rowAxis: RowAxis,
+    orientation: Orientation,
+    poleHeight: number,
+    poleSpacing: number,
     initialSolarPanels: SolarPanelModel[],
     polygon: PolygonModel,
     foundation: FoundationModel,
@@ -60,6 +64,10 @@ export class SolarPanelArrayOptimizerPso extends OptimizerPso {
     super(foundation, swarmSize, vmax, maximumSteps, 3, convergenceThreshold, searchMethod, localSearchRadius);
     this.polygon = polygon;
     this.pvModel = pvModel;
+    this.rowAxis = rowAxis;
+    this.orientation = orientation;
+    this.poleHeight = poleHeight;
+    this.poleSpacing = poleSpacing;
     this.minimumInterRowSpacing = minimumInterRowSpacing;
     this.maximumInterRowSpacing = maximumInterRowSpacing;
     this.minimumRowsPerRack = minimumRowsPerRack;
@@ -70,8 +78,6 @@ export class SolarPanelArrayOptimizerPso extends OptimizerPso {
     // set the first particle to be the current design, if any
     if (initialSolarPanels && initialSolarPanels.length > 0) {
       const sp1 = initialSolarPanels[0];
-      this.poleHeight = sp1.poleHeight;
-      this.poleSpacing = sp1.poleSpacing;
 
       if (initialSolarPanels.length > 1) {
         const firstParticle: Particle = this.swarm.particles[0];
