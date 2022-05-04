@@ -8,7 +8,7 @@ import * as Selector from './stores/selector';
 import { saveAs } from 'file-saver';
 import { showError, showInfo } from './helpers';
 import i18n from './i18n/i18n';
-import { Input, Modal } from 'antd';
+import { Button, Input, Modal } from 'antd';
 import Draggable, { DraggableBounds, DraggableData, DraggableEvent } from 'react-draggable';
 import { ExclamationCircleOutlined } from '@ant-design/icons';
 
@@ -194,7 +194,7 @@ const LocalFileManager = ({ viewOnly = false }: LocalFileManagerProps) => {
     }
   };
 
-  const performOKAction = () => {
+  const performOkAction = () => {
     setConfirmLoading(true);
     if (writeLocalFile()) {
       setCommonStore((state) => {
@@ -202,6 +202,21 @@ const LocalFileManager = ({ viewOnly = false }: LocalFileManagerProps) => {
       });
     }
     setConfirmLoading(false);
+  };
+
+  const performCancelAction = () => {
+    setCommonStore((state) => {
+      state.saveLocalFileDialogVisible = false;
+    });
+  };
+
+  const useCloudFileName = () => {
+    if (cloudFile) {
+      setCommonStore((state) => {
+        state.localFileName = cloudFile;
+        if (!state.localFileName.endsWith('.ala')) state.localFileName += '.ala';
+      });
+    }
   };
 
   return (
@@ -216,14 +231,31 @@ const LocalFileManager = ({ viewOnly = false }: LocalFileManagerProps) => {
             {i18n.t('menu.file.SaveAsLocalFile', lang)}
           </div>
         }
+        footer={
+          cloudFile
+            ? [
+                <Button key="Apply" onClick={useCloudFileName}>
+                  {i18n.t('menu.file.UseCloudFileName', lang)}
+                </Button>,
+                <Button key="Cancel" onClick={performCancelAction}>
+                  {i18n.t('word.Cancel', lang)}
+                </Button>,
+                <Button key="OK" type="primary" onClick={performOkAction}>
+                  {i18n.t('word.OK', lang)}
+                </Button>,
+              ]
+            : [
+                <Button key="Cancel" onClick={performCancelAction}>
+                  {i18n.t('word.Cancel', lang)}
+                </Button>,
+                <Button key="OK" type="primary" onClick={performOkAction}>
+                  {i18n.t('word.OK', lang)}
+                </Button>,
+              ]
+        }
         visible={saveLocalFileDialogVisible}
-        onOk={performOKAction}
         confirmLoading={confirmLoading}
-        onCancel={() => {
-          setCommonStore((state) => {
-            state.saveLocalFileDialogVisible = false;
-          });
-        }}
+        onCancel={performCancelAction}
         modalRender={(modal) => (
           <Draggable disabled={!dragEnabled} bounds={bounds} onStart={(event, uiData) => onStart(event, uiData)}>
             <div ref={dragRef}>{modal}</div>
@@ -233,7 +265,7 @@ const LocalFileManager = ({ viewOnly = false }: LocalFileManagerProps) => {
         <Input
           placeholder="File name"
           value={localFileName}
-          onPressEnter={performOKAction}
+          onPressEnter={performOkAction}
           onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
             setCommonStore((state) => {
               state.localFileName = e.target.value;

@@ -201,6 +201,7 @@ export const i18n_en = {
         SavingAbortedMustHaveValidTitle: 'Saving aborted! You must have a valid title for a cloud file',
         ToSaveYourWorkPleaseSignIn: 'To save your work, please sign in.',
         TakeScreenshot: 'Take Screenshot',
+        UseCloudFileName: 'Use Cloud File Name',
       },
       editSubMenu: 'Edit',
       edit: {

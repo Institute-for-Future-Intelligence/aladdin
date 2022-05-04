@@ -2,7 +2,6 @@
  * @Copyright 2021-2022. Institute for Future Intelligence, Inc.
  */
 
-import RoofTextureDefault from 'src/resources/roof_edge.png';
 import RoofTexture01 from 'src/resources/roof_01.png';
 import RoofTexture02 from 'src/resources/roof_02.png';
 import RoofTexture03 from 'src/resources/roof_03.png';
@@ -63,9 +62,6 @@ export const useRoofTexture = (textureType: RoofTexture) => {
   const textureLoader = useMemo(() => {
     let textureImg;
     switch (textureType) {
-      case RoofTexture.Default:
-        textureImg = RoofTextureDefault;
-        break;
       case RoofTexture.Texture01:
         textureImg = RoofTexture01;
         break;
@@ -88,7 +84,7 @@ export const useRoofTexture = (textureType: RoofTexture) => {
         textureImg = RoofTexture07;
         break;
       default:
-        textureImg = RoofTextureDefault;
+        textureImg = RoofTexture01;
     }
     return new TextureLoader().load(textureImg, (texture) => {
       texture.wrapS = texture.wrapT = RepeatWrapping;

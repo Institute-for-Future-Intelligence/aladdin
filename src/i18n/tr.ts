@@ -202,6 +202,7 @@ export const i18n_tr = {
         SavingAbortedMustHaveValidTitle: 'Kaydet iptal edildi! Bulut dosyasý için geçerli bir baþlýðýnýz olmalýdýr',
         ToSaveYourWorkPleaseSignIn: 'Çalýþmanýzý kaydetmek için lütfen oturum açýn.',
         TakeScreenshot: 'Ekran görüntüsü al',
+        UseCloudFileName: 'Use Cloud File Name',
       },
       editSubMenu: 'Düzen',
       edit: {

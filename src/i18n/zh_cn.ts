@@ -200,6 +200,7 @@ export const i18n_zh_cn = {
         SavingAbortedMustHaveValidTitle: '云端文件名无效，保存失败',
         ToSaveYourWorkPleaseSignIn: '为了保存您的云端文件，请您先登录。',
         TakeScreenshot: '截屏',
+        UseCloudFileName: '采用云端文件名',
       },
       editSubMenu: '编辑',
       edit: {

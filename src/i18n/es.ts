@@ -201,6 +201,7 @@ export const i18n_es = {
         SavingAbortedMustHaveValidTitle: '!Error guardando! Debes tener un título válido para el archivo en la nube',
         ToSaveYourWorkPleaseSignIn: 'Para guardar tu trabajo, por favor regístrese.',
         TakeScreenshot: 'Hacer captura de pantalla',
+        UseCloudFileName: 'Use Cloud File Name',
       },
       editSubMenu: 'Editar',
       edit: {

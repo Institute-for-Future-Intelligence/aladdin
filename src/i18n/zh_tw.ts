@@ -200,6 +200,7 @@ export const i18n_zh_tw = {
         SavingAbortedMustHaveValidTitle: '雲端文檔名無效，保存失敗',
         ToSaveYourWorkPleaseSignIn: '為了保存您的雲端文檔，請您先登錄。',
         TakeScreenshot: '截屏',
+        UseCloudFileName: '採用雲端文件名',
       },
       editSubMenu: '編輯',
       edit: {
