@@ -15,7 +15,6 @@ import { FoundationModel } from '../../../models/FoundationModel';
 import { ElementModelFactory } from '../../../models/ElementModelFactory';
 import { HALF_PI, UNIT_VECTOR_POS_Z } from '../../../constants';
 import { Point2 } from '../../../models/Point2';
-import { SolarPanelModel } from '../../../models/SolarPanelModel';
 import { UndoableLayout } from '../../../undo/UndoableLayout';
 import { ElementModel } from '../../../models/ElementModel';
 import { showError } from '../../../helpers';

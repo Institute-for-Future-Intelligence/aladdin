@@ -1,5 +1,5 @@
 /*
- * @Copyright 2021-2022. Institute for Future Intelligence, Inc.
+ * @Copyright 2022. Institute for Future Intelligence, Inc.
  */
 
 import { Plane, Sphere } from '@react-three/drei';
@@ -16,7 +16,6 @@ import * as Selector from 'src/stores/selector';
 import { UnoableResizeGambrelAndMansardRoofRidge } from 'src/undo/UndoableResize';
 import { Util } from 'src/Util';
 import {
-  BoxGeometry,
   BufferGeometry,
   DoubleSide,
   Euler,
