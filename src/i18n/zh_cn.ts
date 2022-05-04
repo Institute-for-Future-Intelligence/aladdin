@@ -107,6 +107,7 @@ export const i18n_zh_cn = {
       SouthInitial: '南',
       EastInitial: '东',
       WestInitial: '西',
+      Fixed: '固定',
     },
 
     shared: {
@@ -558,6 +559,7 @@ export const i18n_zh_cn = {
       Optimization: '优化',
       Parameters: '参数',
       Variables: '变量',
+      Constants: '常量',
       GeneticAlgorithm: '遗传算法',
       GeneticAlgorithmSettings: '遗传算法设定',
       ParticleSwarmOptimization: '粒子群优化',

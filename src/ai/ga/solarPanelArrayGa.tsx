@@ -7,7 +7,15 @@ import { useStore } from '../../stores/common';
 import * as Selector from 'src/stores/selector';
 import { showInfo } from '../../helpers';
 import i18n from '../../i18n/i18n';
-import { DatumEntry, DesignProblem, EvolutionMethod, ObjectiveFunctionType, ObjectType } from '../../types';
+import {
+  DatumEntry,
+  DesignProblem,
+  EvolutionMethod,
+  ObjectiveFunctionType,
+  ObjectType,
+  Orientation,
+  RowAxis,
+} from '../../types';
 import { SolarPanelModel } from '../../models/SolarPanelModel';
 import { FoundationModel } from '../../models/FoundationModel';
 import { PolygonModel } from '../../models/PolygonModel';
@@ -96,7 +104,11 @@ const SolarPanelArrayGa = () => {
       copiedSolarPanels.push(JSON.parse(JSON.stringify(osp)) as SolarPanelModel);
     }
     optimizerRef.current = new SolarPanelArrayOptimizerGa(
-      getPvModule(copiedSolarPanels.length > 0 ? copiedSolarPanels[0].pvModelName : 'CS6X-355P-FG'),
+      getPvModule(constraints.pvModelName ?? 'CS6X-355P-FG'),
+      constraints.rowAxis ?? RowAxis.zonal,
+      constraints.orientation ?? Orientation.landscape,
+      constraints.poleHeight ?? 1,
+      constraints.poleSpacing ?? 3,
       copiedSolarPanels,
       polygon,
       foundation,

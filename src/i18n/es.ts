@@ -107,6 +107,7 @@ export const i18n_es = {
       SouthInitial: 'S',
       EastInitial: 'E',
       WestInitial: 'O',
+      Fixed: 'Fixed',
     },
 
     shared: {
@@ -575,6 +576,7 @@ export const i18n_es = {
       Optimization: 'Optimization',
       Parameters: 'Parameters',
       Variables: 'Variables',
+      Constants: 'Constants',
       GeneticAlgorithm: 'Genetic Algorithm',
       GeneticAlgorithmSettings: 'Genetic Algorithm Settings',
       ParticleSwarmOptimization: 'Particle Swarm Optimization',

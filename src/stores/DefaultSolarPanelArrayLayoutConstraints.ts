@@ -5,6 +5,7 @@
 import { SolarPanelArrayLayoutConstraints } from './SolarPanelArrayLayoutConstraints';
 import { HALF_PI } from '../constants';
 import { immerable } from 'immer';
+import { Orientation, RowAxis } from '../types';
 
 export class DefaultSolarPanelArrayLayoutConstraints implements SolarPanelArrayLayoutConstraints {
   [immerable] = true;
@@ -14,6 +15,11 @@ export class DefaultSolarPanelArrayLayoutConstraints implements SolarPanelArrayL
   maximumRowsPerRack: number;
   minimumTiltAngle: number;
   maximumTiltAngle: number;
+  poleHeight: number;
+  poleSpacing: number;
+  orientation: Orientation;
+  pvModelName: string;
+  rowAxis: RowAxis;
 
   constructor() {
     this.minimumInterRowSpacing = 2;
@@ -22,5 +28,10 @@ export class DefaultSolarPanelArrayLayoutConstraints implements SolarPanelArrayL
     this.maximumRowsPerRack = 6;
     this.minimumTiltAngle = -HALF_PI;
     this.maximumTiltAngle = HALF_PI;
+    this.poleHeight = 1;
+    this.poleSpacing = 5;
+    this.orientation = Orientation.landscape;
+    this.pvModelName = 'CS6X-355P-FG';
+    this.rowAxis = RowAxis.zonal;
   }
 }

@@ -610,7 +610,7 @@ const SolarPanelLayoutWizard = ({ setDialogVisible }: { setDialogVisible: (b: bo
           </Col>
           <Col className="gutter-row" span={10}>
             <InputNumber
-              min={1}
+              min={2}
               max={10}
               style={{ width: '100%' }}
               precision={1}

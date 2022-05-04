@@ -20,7 +20,7 @@ export class DefaultSolarPanelArrayLayoutParams implements SolarPanelArrayLayout
   constructor() {
     this.pvModelName = 'SPR-X21-335-BLK';
     this.rowAxis = RowAxis.zonal;
-    this.orientation = Orientation.portrait;
+    this.orientation = Orientation.landscape;
     this.tiltAngle = 0;
     this.rowsPerRack = 1;
     this.interRowSpacing = 2;

@@ -41,6 +41,10 @@ export class SolarPanelArrayOptimizerGa extends OptimizerGa {
 
   constructor(
     pvModel: PvModel,
+    rowAxis: RowAxis,
+    orientation: Orientation,
+    poleHeight: number,
+    poleSpacing: number,
     initialSolarPanels: SolarPanelModel[],
     polygon: PolygonModel,
     foundation: FoundationModel,
@@ -69,6 +73,10 @@ export class SolarPanelArrayOptimizerGa extends OptimizerGa {
     );
     this.polygon = polygon;
     this.pvModel = pvModel;
+    this.rowAxis = rowAxis;
+    this.orientation = orientation;
+    this.poleHeight = poleHeight;
+    this.poleSpacing = poleSpacing;
     this.minimumInterRowSpacing = minimumInterRowSpacing;
     this.maximumInterRowSpacing = maximumInterRowSpacing;
     this.minimumRowsPerRack = minimumRowsPerRack;
@@ -82,8 +90,6 @@ export class SolarPanelArrayOptimizerGa extends OptimizerGa {
     // set the firstborn to be the current design, if any
     if (initialSolarPanels && initialSolarPanels.length > 0) {
       const sp1 = initialSolarPanels[0];
-      this.poleHeight = sp1.poleHeight;
-      this.poleSpacing = sp1.poleSpacing;
 
       if (initialSolarPanels.length > 1) {
         const firstBorn: Individual = this.population.individuals[0];
