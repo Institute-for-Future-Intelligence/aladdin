@@ -17,6 +17,7 @@ import { ZERO_TOLERANCE } from 'src/constants';
 const SolarPowerTowerReceiverAbsorptanceInput = ({ setDialogVisible }: { setDialogVisible: (b: boolean) => void }) => {
   const language = useStore(Selector.language);
   const elements = useStore(Selector.elements);
+  const getElementById = useStore(Selector.getElementById);
   const updateById = useStore(Selector.updateSolarPowerTowerReceiverAbsorptanceById);
   const updateForAll = useStore(Selector.updateSolarPowerTowerReceiverAbsorptanceForAll);
   const foundation = useStore(Selector.selectedElement) as FoundationModel;
@@ -109,25 +110,28 @@ const SolarPowerTowerReceiverAbsorptanceInput = ({ setDialogVisible }: { setDial
         setApplyCount(applyCount + 1);
         break;
       default:
-        if (powerTower) {
-          const oldValue = powerTower.receiverAbsorptance ?? 0.95;
-          updateById(foundation.id, value);
-          const undoableChange = {
-            name: 'Set Receiver Absorptance on Foundation',
-            timestamp: Date.now(),
-            oldValue: oldValue,
-            newValue: value,
-            changedElementId: foundation.id,
-            undo: () => {
-              updateById(undoableChange.changedElementId, undoableChange.oldValue as number);
-            },
-            redo: () => {
-              updateById(undoableChange.changedElementId, undoableChange.newValue as number);
-            },
-          } as UndoableChange;
-          addUndoable(undoableChange);
-          setApplyCount(applyCount + 1);
-        }
+        // foundation selected element may be outdated, make sure that we get the latest
+        const f = getElementById(foundation.id) as FoundationModel;
+        const oldValue =
+          f && f.solarPowerTower
+            ? f.solarPowerTower.receiverAbsorptance ?? 0.95
+            : powerTower.receiverAbsorptance ?? 0.95;
+        updateById(foundation.id, value);
+        const undoableChange = {
+          name: 'Set Receiver Absorptance on Foundation',
+          timestamp: Date.now(),
+          oldValue: oldValue,
+          newValue: value,
+          changedElementId: foundation.id,
+          undo: () => {
+            updateById(undoableChange.changedElementId, undoableChange.oldValue as number);
+          },
+          redo: () => {
+            updateById(undoableChange.changedElementId, undoableChange.newValue as number);
+          },
+        } as UndoableChange;
+        addUndoable(undoableChange);
+        setApplyCount(applyCount + 1);
     }
     setUpdateFlag(!updateFlag);
   };

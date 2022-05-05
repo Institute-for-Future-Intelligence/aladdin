@@ -17,6 +17,7 @@ import { ZERO_TOLERANCE } from 'src/constants';
 const SolarUpdraftTowerCollectorHeightInput = ({ setDialogVisible }: { setDialogVisible: (b: boolean) => void }) => {
   const language = useStore(Selector.language);
   const elements = useStore(Selector.elements);
+  const getElementById = useStore(Selector.getElementById);
   const updateCollectorHeightById = useStore(Selector.updateSolarUpdraftTowerCollectorHeightById);
   const updateCollectorHeightForAll = useStore(Selector.updateSolarUpdraftTowerCollectorHeightForAll);
   const foundation = useStore(Selector.selectedElement) as FoundationModel;
@@ -111,8 +112,13 @@ const SolarUpdraftTowerCollectorHeightInput = ({ setDialogVisible }: { setDialog
         setApplyCount(applyCount + 1);
         break;
       default:
-        if (foundation && foundation.solarStructure === SolarStructure.UpdraftTower && foundation.solarUpdraftTower) {
-          const oldValue = foundation.solarUpdraftTower.collectorHeight ?? Math.max(3, 10 * foundation.lz);
+        if (foundation.solarStructure === SolarStructure.UpdraftTower && foundation.solarUpdraftTower) {
+          // foundation selected element may be outdated, make sure that we get the latest
+          const f = getElementById(foundation.id) as FoundationModel;
+          const oldValue =
+            f && f.solarUpdraftTower
+              ? f.solarUpdraftTower.collectorHeight ?? Math.max(3, 10 * f.lz)
+              : foundation.solarUpdraftTower.collectorHeight ?? Math.max(3, 10 * foundation.lz);
           updateCollectorHeightById(foundation.id, value);
           const undoableChange = {
             name: 'Set Solar Collector Height on Foundation',

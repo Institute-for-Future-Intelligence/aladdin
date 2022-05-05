@@ -17,6 +17,7 @@ import { ZERO_TOLERANCE } from 'src/constants';
 const SolarUpdraftTowerChimneyHeightInput = ({ setDialogVisible }: { setDialogVisible: (b: boolean) => void }) => {
   const language = useStore(Selector.language);
   const elements = useStore(Selector.elements);
+  const getElementById = useStore(Selector.getElementById);
   const updateChimneyHeightById = useStore(Selector.updateSolarUpdraftTowerChimneyHeightById);
   const updateChimneyHeightForAll = useStore(Selector.updateSolarUpdraftTowerChimneyHeightForAll);
   const foundation = useStore(Selector.selectedElement) as FoundationModel;
@@ -111,8 +112,13 @@ const SolarUpdraftTowerChimneyHeightInput = ({ setDialogVisible }: { setDialogVi
         setApplyCount(applyCount + 1);
         break;
       default:
-        if (foundation && foundation.solarStructure === SolarStructure.UpdraftTower && foundation.solarUpdraftTower) {
-          const oldValue = foundation.solarUpdraftTower.chimneyHeight ?? Math.max(foundation.lx, foundation.ly);
+        if (foundation.solarStructure === SolarStructure.UpdraftTower && foundation.solarUpdraftTower) {
+          // foundation selected element may be outdated, make sure that we get the latest
+          const f = getElementById(foundation.id) as FoundationModel;
+          const oldValue =
+            f && f.solarUpdraftTower
+              ? f.solarUpdraftTower.chimneyHeight ?? Math.max(f.lx, f.ly)
+              : foundation.solarUpdraftTower.chimneyHeight ?? Math.max(foundation.lx, foundation.ly);
           updateChimneyHeightById(foundation.id, value);
           const undoableChange = {
             name: 'Set Solar Chimney Height on Foundation',

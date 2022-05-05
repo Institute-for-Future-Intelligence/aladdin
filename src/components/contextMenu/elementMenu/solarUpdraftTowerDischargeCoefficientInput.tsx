@@ -21,6 +21,7 @@ const SolarUpdraftTowerDischargeCoefficientInput = ({
 }) => {
   const language = useStore(Selector.language);
   const elements = useStore(Selector.elements);
+  const getElementById = useStore(Selector.getElementById);
   const updateById = useStore(Selector.updateSolarUpdraftTowerDischargeCoefficientById);
   const updateForAll = useStore(Selector.updateSolarUpdraftTowerDischargeCoefficientForAll);
   const foundation = useStore(Selector.selectedElement) as FoundationModel;
@@ -115,8 +116,13 @@ const SolarUpdraftTowerDischargeCoefficientInput = ({
         setApplyCount(applyCount + 1);
         break;
       default:
-        if (foundation && foundation.solarStructure === SolarStructure.UpdraftTower && foundation.solarUpdraftTower) {
-          const oldValue = foundation.solarUpdraftTower.dischargeCoefficient ?? 0.65;
+        if (foundation.solarStructure === SolarStructure.UpdraftTower && foundation.solarUpdraftTower) {
+          // foundation selected element may be outdated, make sure that we get the latest
+          const f = getElementById(foundation.id) as FoundationModel;
+          const oldValue =
+            f && f.solarUpdraftTower
+              ? f.solarUpdraftTower.dischargeCoefficient ?? 0.65
+              : foundation.solarUpdraftTower.dischargeCoefficient ?? 0.65;
           updateById(foundation.id, value);
           const undoableChange = {
             name: 'Set Solar Chimney Discharge Coefficient on Foundation',

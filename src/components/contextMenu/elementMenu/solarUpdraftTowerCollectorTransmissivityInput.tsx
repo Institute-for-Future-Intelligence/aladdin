@@ -21,6 +21,7 @@ const SolarUpdraftTowerCollectorTransmissivityInput = ({
 }) => {
   const language = useStore(Selector.language);
   const elements = useStore(Selector.elements);
+  const getElementById = useStore(Selector.getElementById);
   const updateById = useStore(Selector.updateSolarUpdraftTowerCollectorTransmissivityById);
   const updateForAll = useStore(Selector.updateSolarUpdraftTowerCollectorTransmissivityForAll);
   const foundation = useStore(Selector.selectedElement) as FoundationModel;
@@ -115,8 +116,13 @@ const SolarUpdraftTowerCollectorTransmissivityInput = ({
         setApplyCount(applyCount + 1);
         break;
       default:
-        if (foundation && foundation.solarStructure === SolarStructure.UpdraftTower && foundation.solarUpdraftTower) {
-          const oldValue = foundation.solarUpdraftTower.collectorTransmissivity ?? 0.9;
+        if (foundation.solarStructure === SolarStructure.UpdraftTower && foundation.solarUpdraftTower) {
+          // foundation selected element may be outdated, make sure that we get the latest
+          const f = getElementById(foundation.id) as FoundationModel;
+          const oldValue =
+            f && f.solarUpdraftTower
+              ? f.solarUpdraftTower.collectorTransmissivity ?? 0.9
+              : foundation.solarUpdraftTower.collectorTransmissivity ?? 0.9;
           updateById(foundation.id, value);
           const undoableChange = {
             name: 'Set Solar Collector Transmissivity on Foundation',

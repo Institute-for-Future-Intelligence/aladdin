@@ -17,6 +17,7 @@ import { ZERO_TOLERANCE } from 'src/constants';
 const SolarUpdraftTowerCollectorRadiusInput = ({ setDialogVisible }: { setDialogVisible: (b: boolean) => void }) => {
   const language = useStore(Selector.language);
   const elements = useStore(Selector.elements);
+  const getElementById = useStore(Selector.getElementById);
   const updateCollectorRadiusById = useStore(Selector.updateSolarUpdraftTowerCollectorRadiusById);
   const updateCollectorRadiusForAll = useStore(Selector.updateSolarUpdraftTowerCollectorRadiusForAll);
   const foundation = useStore(Selector.selectedElement) as FoundationModel;
@@ -116,9 +117,14 @@ const SolarUpdraftTowerCollectorRadiusInput = ({ setDialogVisible }: { setDialog
         setApplyCount(applyCount + 1);
         break;
       default:
-        if (foundation && foundation.solarStructure === SolarStructure.UpdraftTower && foundation.solarUpdraftTower) {
+        if (foundation.solarStructure === SolarStructure.UpdraftTower && foundation.solarUpdraftTower) {
+          // foundation selected element may be outdated, make sure that we get the latest
+          const f = getElementById(foundation.id) as FoundationModel;
           const oldValue =
-            foundation.solarUpdraftTower.collectorRadius ?? Math.max(10, 0.5 * Math.min(foundation.lx, foundation.ly));
+            f && f.solarUpdraftTower
+              ? f.solarUpdraftTower.collectorRadius ?? Math.max(10, 0.5 * Math.min(f.lx, f.ly))
+              : foundation.solarUpdraftTower.collectorRadius ??
+                Math.max(10, 0.5 * Math.min(foundation.lx, foundation.ly));
           updateCollectorRadiusById(foundation.id, value);
           const undoableChange = {
             name: 'Set Solar Collector Radius on Foundation',

@@ -17,6 +17,7 @@ import { ZERO_TOLERANCE } from 'src/constants';
 const SolarUpdraftTowerTurbineEfficiencyInput = ({ setDialogVisible }: { setDialogVisible: (b: boolean) => void }) => {
   const language = useStore(Selector.language);
   const elements = useStore(Selector.elements);
+  const getElementById = useStore(Selector.getElementById);
   const updateById = useStore(Selector.updateSolarUpdraftTowerTurbineEfficiencyById);
   const updateForAll = useStore(Selector.updateSolarUpdraftTowerTurbineEfficiencyForAll);
   const foundation = useStore(Selector.selectedElement) as FoundationModel;
@@ -111,8 +112,13 @@ const SolarUpdraftTowerTurbineEfficiencyInput = ({ setDialogVisible }: { setDial
         setApplyCount(applyCount + 1);
         break;
       default:
-        if (foundation && foundation.solarStructure === SolarStructure.UpdraftTower && foundation.solarUpdraftTower) {
-          const oldValue = foundation.solarUpdraftTower.turbineEfficiency ?? 0.3;
+        if (foundation.solarStructure === SolarStructure.UpdraftTower && foundation.solarUpdraftTower) {
+          // foundation selected element may be outdated, make sure that we get the latest
+          const f = getElementById(foundation.id) as FoundationModel;
+          const oldValue =
+            f && f.solarUpdraftTower
+              ? f.solarUpdraftTower.turbineEfficiency ?? 0.3
+              : foundation.solarUpdraftTower.turbineEfficiency ?? 0.3;
           updateById(foundation.id, value);
           const undoableChange = {
             name: 'Set Solar Updraft Tower Turbine Efficiency on Foundation',

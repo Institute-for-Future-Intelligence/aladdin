@@ -17,6 +17,7 @@ import { ZERO_TOLERANCE } from 'src/constants';
 const SolarUpdraftTowerChimneyRadiusInput = ({ setDialogVisible }: { setDialogVisible: (b: boolean) => void }) => {
   const language = useStore(Selector.language);
   const elements = useStore(Selector.elements);
+  const getElementById = useStore(Selector.getElementById);
   const updateChimneyRadiusById = useStore(Selector.updateSolarUpdraftTowerChimneyRadiusById);
   const updateChimneyRadiusForAll = useStore(Selector.updateSolarUpdraftTowerChimneyRadiusForAll);
   const foundation = useStore(Selector.selectedElement) as FoundationModel;
@@ -116,9 +117,14 @@ const SolarUpdraftTowerChimneyRadiusInput = ({ setDialogVisible }: { setDialogVi
         setApplyCount(applyCount + 1);
         break;
       default:
-        if (foundation && foundation.solarStructure === SolarStructure.UpdraftTower && foundation.solarUpdraftTower) {
+        if (foundation.solarStructure === SolarStructure.UpdraftTower && foundation.solarUpdraftTower) {
+          // foundation selected element may be outdated, make sure that we get the latest
+          const f = getElementById(foundation.id) as FoundationModel;
           const oldValue =
-            foundation.solarUpdraftTower.chimneyHeight ?? Math.max(1, 0.025 * Math.min(foundation.lx, foundation.ly));
+            f && f.solarUpdraftTower
+              ? f.solarUpdraftTower.chimneyRadius ?? Math.max(1, 0.025 * Math.min(f.lx, f.ly))
+              : foundation.solarUpdraftTower.chimneyRadius ??
+                Math.max(1, 0.025 * Math.min(foundation.lx, foundation.ly));
           updateChimneyRadiusById(foundation.id, value);
           const undoableChange = {
             name: 'Set Solar Chimney Radius on Foundation',
