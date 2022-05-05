@@ -18,6 +18,7 @@ import { UNIT_VECTOR_POS_Z_ARRAY, ZERO_TOLERANCE } from '../../../constants';
 const SolarPanelRelativeAzimuthInput = ({ setDialogVisible }: { setDialogVisible: (b: boolean) => void }) => {
   const language = useStore(Selector.language);
   const elements = useStore(Selector.elements);
+  const getElementById = useStore(Selector.getElementById);
   const updateRelativeAzimuthById = useStore(Selector.updateSolarCollectorRelativeAzimuthById);
   const updateRelativeAzimuthOnSurface = useStore(Selector.updateSolarCollectorRelativeAzimuthOnSurface);
   const updateRelativeAzimuthAboveFoundation = useStore(Selector.updateSolarCollectorRelativeAzimuthAboveFoundation);
@@ -318,30 +319,30 @@ const SolarPanelRelativeAzimuthInput = ({ setDialogVisible }: { setDialogVisible
         }
         break;
       default:
-        if (solarPanel) {
-          const oldRelativeAzimuth = -solarPanel.relativeAzimuth;
-          rejectRef.current = rejectChange(solarPanel, value);
-          if (rejectRef.current) {
-            rejectedValue.current = value;
-            setInputRelativeAzimuth(oldRelativeAzimuth);
-          } else {
-            const undoableChange = {
-              name: 'Set Solar Panel Array Relative Azimuth',
-              timestamp: Date.now(),
-              oldValue: oldRelativeAzimuth,
-              newValue: value,
-              changedElementId: solarPanel.id,
-              undo: () => {
-                updateRelativeAzimuthById(undoableChange.changedElementId, -(undoableChange.oldValue as number));
-              },
-              redo: () => {
-                updateRelativeAzimuthById(undoableChange.changedElementId, -(undoableChange.newValue as number));
-              },
-            } as UndoableChange;
-            addUndoable(undoableChange);
-            updateRelativeAzimuthById(solarPanel.id, -value);
-            setApplyCount(applyCount + 1);
-          }
+        // solar panel selected element may be outdated, make sure that we get the latest
+        const sp = getElementById(solarPanel.id) as SolarPanelModel;
+        const oldRelativeAzimuth = sp ? -sp.relativeAzimuth : -solarPanel.relativeAzimuth;
+        rejectRef.current = rejectChange(solarPanel, value);
+        if (rejectRef.current) {
+          rejectedValue.current = value;
+          setInputRelativeAzimuth(oldRelativeAzimuth);
+        } else {
+          const undoableChange = {
+            name: 'Set Solar Panel Array Relative Azimuth',
+            timestamp: Date.now(),
+            oldValue: oldRelativeAzimuth,
+            newValue: value,
+            changedElementId: solarPanel.id,
+            undo: () => {
+              updateRelativeAzimuthById(undoableChange.changedElementId, -(undoableChange.oldValue as number));
+            },
+            redo: () => {
+              updateRelativeAzimuthById(undoableChange.changedElementId, -(undoableChange.newValue as number));
+            },
+          } as UndoableChange;
+          addUndoable(undoableChange);
+          updateRelativeAzimuthById(solarPanel.id, -value);
+          setApplyCount(applyCount + 1);
         }
     }
     setUpdateFlag(!updateFlag);

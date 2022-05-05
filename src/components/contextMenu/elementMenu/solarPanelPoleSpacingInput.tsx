@@ -18,6 +18,7 @@ import { ZERO_TOLERANCE } from '../../../constants';
 const SolarPanelPoleSpacingInput = ({ setDialogVisible }: { setDialogVisible: (b: boolean) => void }) => {
   const language = useStore(Selector.language);
   const elements = useStore(Selector.elements);
+  const getElementById = useStore(Selector.getElementById);
   const updateSolarPanelPoleSpacingById = useStore(Selector.updateSolarPanelPoleSpacingById);
   const updateSolarPanelPoleSpacingOnSurface = useStore(Selector.updateSolarPanelPoleSpacingOnSurface);
   const updateSolarPanelPoleSpacingAboveFoundation = useStore(Selector.updateSolarPanelPoleSpacingAboveFoundation);
@@ -223,25 +224,25 @@ const SolarPanelPoleSpacingInput = ({ setDialogVisible }: { setDialogVisible: (b
         }
         break;
       default:
-        if (solarPanel) {
-          const oldPoleSpacing = solarPanel.poleSpacing;
-          const undoableChange = {
-            name: 'Set Solar Panel Array Pole Spacing',
-            timestamp: Date.now(),
-            oldValue: oldPoleSpacing,
-            newValue: value,
-            changedElementId: solarPanel.id,
-            undo: () => {
-              updateSolarPanelPoleSpacingById(undoableChange.changedElementId, undoableChange.oldValue as number);
-            },
-            redo: () => {
-              updateSolarPanelPoleSpacingById(undoableChange.changedElementId, undoableChange.newValue as number);
-            },
-          } as UndoableChange;
-          addUndoable(undoableChange);
-          updateSolarPanelPoleSpacingById(solarPanel.id, value);
-          setApplyCount(applyCount + 1);
-        }
+        // solar panel selected element may be outdated, make sure that we get the latest
+        const sp = getElementById(solarPanel.id) as SolarPanelModel;
+        const oldPoleSpacing = sp ? sp.poleSpacing : solarPanel.poleSpacing;
+        const undoableChange = {
+          name: 'Set Solar Panel Array Pole Spacing',
+          timestamp: Date.now(),
+          oldValue: oldPoleSpacing,
+          newValue: value,
+          changedElementId: solarPanel.id,
+          undo: () => {
+            updateSolarPanelPoleSpacingById(undoableChange.changedElementId, undoableChange.oldValue as number);
+          },
+          redo: () => {
+            updateSolarPanelPoleSpacingById(undoableChange.changedElementId, undoableChange.newValue as number);
+          },
+        } as UndoableChange;
+        addUndoable(undoableChange);
+        updateSolarPanelPoleSpacingById(solarPanel.id, value);
+        setApplyCount(applyCount + 1);
     }
     setUpdateFlag(!updateFlag);
   };

@@ -18,6 +18,7 @@ import { ZERO_TOLERANCE } from '../../../constants';
 const SolarPanelTiltAngleInput = ({ setDialogVisible }: { setDialogVisible: (b: boolean) => void }) => {
   const language = useStore(Selector.language);
   const elements = useStore(Selector.elements);
+  const getElementById = useStore(Selector.getElementById);
   const updateSolarPanelTiltAngleById = useStore(Selector.updateSolarPanelTiltAngleById);
   const updateSolarPanelTiltAngleOnSurface = useStore(Selector.updateSolarPanelTiltAngleOnSurface);
   const updateSolarPanelTiltAngleAboveFoundation = useStore(Selector.updateSolarPanelTiltAngleAboveFoundation);
@@ -287,30 +288,30 @@ const SolarPanelTiltAngleInput = ({ setDialogVisible }: { setDialogVisible: (b: 
         }
         break;
       default:
-        if (solarPanel) {
-          const oldTiltAngle = solarPanel.tiltAngle;
-          rejectRef.current = 0.5 * solarPanel.ly * Math.abs(Math.sin(value)) > solarPanel.poleHeight;
-          if (rejectRef.current) {
-            rejectedValue.current = value;
-            setInputTiltAngle(oldTiltAngle);
-          } else {
-            const undoableChange = {
-              name: 'Set Solar Panel Array Tilt Angle',
-              timestamp: Date.now(),
-              oldValue: oldTiltAngle,
-              newValue: value,
-              changedElementId: solarPanel.id,
-              undo: () => {
-                updateSolarPanelTiltAngleById(undoableChange.changedElementId, undoableChange.oldValue as number);
-              },
-              redo: () => {
-                updateSolarPanelTiltAngleById(undoableChange.changedElementId, undoableChange.newValue as number);
-              },
-            } as UndoableChange;
-            addUndoable(undoableChange);
-            updateSolarPanelTiltAngleById(solarPanel.id, value);
-            setApplyCount(applyCount + 1);
-          }
+        // solar panel selected element may be outdated, make sure that we get the latest
+        const sp = getElementById(solarPanel.id) as SolarPanelModel;
+        const oldTiltAngle = sp ? sp.tiltAngle : solarPanel.tiltAngle;
+        rejectRef.current = 0.5 * solarPanel.ly * Math.abs(Math.sin(value)) > solarPanel.poleHeight;
+        if (rejectRef.current) {
+          rejectedValue.current = value;
+          setInputTiltAngle(oldTiltAngle);
+        } else {
+          const undoableChange = {
+            name: 'Set Solar Panel Array Tilt Angle',
+            timestamp: Date.now(),
+            oldValue: oldTiltAngle,
+            newValue: value,
+            changedElementId: solarPanel.id,
+            undo: () => {
+              updateSolarPanelTiltAngleById(undoableChange.changedElementId, undoableChange.oldValue as number);
+            },
+            redo: () => {
+              updateSolarPanelTiltAngleById(undoableChange.changedElementId, undoableChange.newValue as number);
+            },
+          } as UndoableChange;
+          addUndoable(undoableChange);
+          updateSolarPanelTiltAngleById(solarPanel.id, value);
+          setApplyCount(applyCount + 1);
         }
     }
     setUpdateFlag(!updateFlag);

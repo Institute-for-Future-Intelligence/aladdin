@@ -22,6 +22,7 @@ import { Util } from '../../../Util';
 const CuboidHeightInput = ({ setDialogVisible }: { setDialogVisible: (b: boolean) => void }) => {
   const language = useStore(Selector.language);
   const elements = useStore(Selector.elements);
+  const getElementById = useStore(Selector.getElementById);
   const updateElementLzById = useStore(Selector.updateElementLzById);
   const updateElementCzById = useStore(Selector.updateElementCzById);
   const updateElementLzForAll = useStore(Selector.updateElementLzForAll);
@@ -242,53 +243,52 @@ const CuboidHeightInput = ({ setDialogVisible }: { setDialogVisible: (b: boolean
         setApplyCount(applyCount + 1);
         break;
       default:
-        if (cuboid) {
-          const oldLz = cuboid.lz;
-          updateCzOfChildren(cuboid, value);
-          updateLzAndCz(cuboid.id, value);
-
-          const undoableChange = {
-            name: 'Set Cuboid Width',
-            timestamp: Date.now(),
-            oldValue: oldLz,
-            newValue: value,
-            oldChildrenPositionsMap: new Map(oldChildrenPositionsMapRef.current),
-            newChildrenPositionsMap: new Map(newChildrenPositionsMapRef.current),
-            oldChildrenParentIdMap: new Map(oldChildrenParentIdMapRef.current),
-            newChildrenParentIdMap: new Map(newChildrenParentIdMapRef.current),
-            changedElementId: cuboid.id,
-            undo: () => {
-              updateLzAndCz(undoableChange.changedElementId, undoableChange.oldValue as number);
-              if (undoableChange.oldChildrenPositionsMap && undoableChange.oldChildrenPositionsMap.size > 0) {
-                for (const [id, ps] of undoableChange.oldChildrenPositionsMap.entries()) {
-                  setElementPosition(id, ps.x, ps.y, ps.z);
-                  const oldParentId = undoableChange.oldChildrenParentIdMap?.get(id);
-                  const newParentId = undoableChange.newChildrenParentIdMap?.get(id);
-                  if (oldParentId && newParentId && oldParentId !== newParentId) {
-                    attachToObjectGroup(oldParentId, newParentId, id);
-                    setParentIdById(oldParentId, id);
-                  }
+        // cuboid via selected element may be outdated, make sure that we get the latest
+        const c = getElementById(cuboid.id);
+        const oldLz = c ? c.lz : cuboid.lz;
+        updateCzOfChildren(cuboid, value);
+        updateLzAndCz(cuboid.id, value);
+        const undoableChange = {
+          name: 'Set Cuboid Width',
+          timestamp: Date.now(),
+          oldValue: oldLz,
+          newValue: value,
+          oldChildrenPositionsMap: new Map(oldChildrenPositionsMapRef.current),
+          newChildrenPositionsMap: new Map(newChildrenPositionsMapRef.current),
+          oldChildrenParentIdMap: new Map(oldChildrenParentIdMapRef.current),
+          newChildrenParentIdMap: new Map(newChildrenParentIdMapRef.current),
+          changedElementId: cuboid.id,
+          undo: () => {
+            updateLzAndCz(undoableChange.changedElementId, undoableChange.oldValue as number);
+            if (undoableChange.oldChildrenPositionsMap && undoableChange.oldChildrenPositionsMap.size > 0) {
+              for (const [id, ps] of undoableChange.oldChildrenPositionsMap.entries()) {
+                setElementPosition(id, ps.x, ps.y, ps.z);
+                const oldParentId = undoableChange.oldChildrenParentIdMap?.get(id);
+                const newParentId = undoableChange.newChildrenParentIdMap?.get(id);
+                if (oldParentId && newParentId && oldParentId !== newParentId) {
+                  attachToObjectGroup(oldParentId, newParentId, id);
+                  setParentIdById(oldParentId, id);
                 }
               }
-            },
-            redo: () => {
-              updateLzAndCz(undoableChange.changedElementId, undoableChange.newValue as number);
-              if (undoableChange.newChildrenPositionsMap && undoableChange.newChildrenPositionsMap.size > 0) {
-                for (const [id, ps] of undoableChange.newChildrenPositionsMap.entries()) {
-                  setElementPosition(id, ps.x, ps.y, ps.z);
-                  const oldParentId = undoableChange.oldChildrenParentIdMap?.get(id);
-                  const newParentId = undoableChange.newChildrenParentIdMap?.get(id);
-                  if (oldParentId && newParentId && oldParentId !== newParentId) {
-                    attachToObjectGroup(newParentId, oldParentId, id);
-                    setParentIdById(newParentId, id);
-                  }
+            }
+          },
+          redo: () => {
+            updateLzAndCz(undoableChange.changedElementId, undoableChange.newValue as number);
+            if (undoableChange.newChildrenPositionsMap && undoableChange.newChildrenPositionsMap.size > 0) {
+              for (const [id, ps] of undoableChange.newChildrenPositionsMap.entries()) {
+                setElementPosition(id, ps.x, ps.y, ps.z);
+                const oldParentId = undoableChange.oldChildrenParentIdMap?.get(id);
+                const newParentId = undoableChange.newChildrenParentIdMap?.get(id);
+                if (oldParentId && newParentId && oldParentId !== newParentId) {
+                  attachToObjectGroup(newParentId, oldParentId, id);
+                  setParentIdById(newParentId, id);
                 }
               }
-            },
-          } as UndoableChange;
-          addUndoable(undoableChange);
-          setApplyCount(applyCount + 1);
-        }
+            }
+          },
+        } as UndoableChange;
+        addUndoable(undoableChange);
+        setApplyCount(applyCount + 1);
     }
     setUpdateFlag(!updateFlag);
   };

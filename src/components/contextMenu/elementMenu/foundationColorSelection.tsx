@@ -18,6 +18,7 @@ const FoundationColorSelection = ({ setDialogVisible }: { setDialogVisible: (b: 
   const language = useStore(Selector.language);
   const elements = useStore(Selector.elements);
   const updateElementColorById = useStore(Selector.updateElementColorById);
+  const getElementById = useStore(Selector.getElementById);
   const updateElementColorForAll = useStore(Selector.updateElementColorForAll);
   const foundation = useStore(Selector.selectedElement) as FoundationModel;
   const addUndoable = useStore(Selector.addUndoable);
@@ -101,25 +102,25 @@ const FoundationColorSelection = ({ setDialogVisible }: { setDialogVisible: (b: 
         setApplyCount(applyCount + 1);
         break;
       default:
-        if (foundation) {
-          const oldColor = foundation.color;
-          const undoableChange = {
-            name: 'Set Color of Selected Foundation',
-            timestamp: Date.now(),
-            oldValue: oldColor,
-            newValue: value,
-            changedElementId: foundation.id,
-            undo: () => {
-              updateElementColorById(undoableChange.changedElementId, undoableChange.oldValue as string);
-            },
-            redo: () => {
-              updateElementColorById(undoableChange.changedElementId, undoableChange.newValue as string);
-            },
-          } as UndoableChange;
-          addUndoable(undoableChange);
-          updateElementColorById(foundation.id, value);
-          setApplyCount(applyCount + 1);
-        }
+        // foundation via selected element may be outdated, make sure that we get the latest
+        const f = getElementById(foundation.id);
+        const oldColor = f ? f.color : foundation.color;
+        const undoableChange = {
+          name: 'Set Color of Selected Foundation',
+          timestamp: Date.now(),
+          oldValue: oldColor,
+          newValue: value,
+          changedElementId: foundation.id,
+          undo: () => {
+            updateElementColorById(undoableChange.changedElementId, undoableChange.oldValue as string);
+          },
+          redo: () => {
+            updateElementColorById(undoableChange.changedElementId, undoableChange.newValue as string);
+          },
+        } as UndoableChange;
+        addUndoable(undoableChange);
+        updateElementColorById(foundation.id, value);
+        setApplyCount(applyCount + 1);
     }
     setUpdateFlag(!updateFlag);
   };

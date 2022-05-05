@@ -18,6 +18,7 @@ import { ZERO_TOLERANCE } from '../../../constants';
 const SolarPanelPoleHeightInput = ({ setDialogVisible }: { setDialogVisible: (b: boolean) => void }) => {
   const language = useStore(Selector.language);
   const elements = useStore(Selector.elements);
+  const getElementById = useStore(Selector.getElementById);
   const updatePoleHeightById = useStore(Selector.updateSolarCollectorPoleHeightById);
   const updatePoleHeightOnSurface = useStore(Selector.updateSolarCollectorPoleHeightOnSurface);
   const updatePoleHeightAboveFoundation = useStore(Selector.updateSolarCollectorPoleHeightAboveFoundation);
@@ -288,30 +289,30 @@ const SolarPanelPoleHeightInput = ({ setDialogVisible }: { setDialogVisible: (b:
         }
         break;
       default:
-        if (solarPanel) {
-          const oldPoleHeight = solarPanel.poleHeight;
-          rejectRef.current = 0.5 * solarPanel.ly * Math.abs(Math.sin(solarPanel.tiltAngle)) > value;
-          if (rejectRef.current) {
-            rejectedValue.current = value;
-            setInputPoleHeight(oldPoleHeight);
-          } else {
-            const undoableChange = {
-              name: 'Set Solar Panel Array Pole Height',
-              timestamp: Date.now(),
-              oldValue: oldPoleHeight,
-              newValue: value,
-              changedElementId: solarPanel.id,
-              undo: () => {
-                updatePoleHeightById(undoableChange.changedElementId, undoableChange.oldValue as number);
-              },
-              redo: () => {
-                updatePoleHeightById(undoableChange.changedElementId, undoableChange.newValue as number);
-              },
-            } as UndoableChange;
-            addUndoable(undoableChange);
-            updatePoleHeightById(solarPanel.id, value);
-            setApplyCount(applyCount + 1);
-          }
+        // solar panel selected element may be outdated, make sure that we get the latest
+        const sp = getElementById(solarPanel.id) as SolarPanelModel;
+        const oldPoleHeight = sp ? sp.poleHeight : solarPanel.poleHeight;
+        rejectRef.current = 0.5 * solarPanel.ly * Math.abs(Math.sin(solarPanel.tiltAngle)) > value;
+        if (rejectRef.current) {
+          rejectedValue.current = value;
+          setInputPoleHeight(oldPoleHeight);
+        } else {
+          const undoableChange = {
+            name: 'Set Solar Panel Array Pole Height',
+            timestamp: Date.now(),
+            oldValue: oldPoleHeight,
+            newValue: value,
+            changedElementId: solarPanel.id,
+            undo: () => {
+              updatePoleHeightById(undoableChange.changedElementId, undoableChange.oldValue as number);
+            },
+            redo: () => {
+              updatePoleHeightById(undoableChange.changedElementId, undoableChange.newValue as number);
+            },
+          } as UndoableChange;
+          addUndoable(undoableChange);
+          updatePoleHeightById(solarPanel.id, value);
+          setApplyCount(applyCount + 1);
         }
     }
     setUpdateFlag(!updateFlag);

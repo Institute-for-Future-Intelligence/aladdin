@@ -222,9 +222,7 @@ const WeatherPanel = ({ city, graphs }: WeatherPanelProps) => {
           }}
         >
           <Header className="handle">
-            <span>
-              {i18n.t('word.Weather', lang) + ':'} {city}
-            </span>
+            <span>{i18n.t('word.Weather', lang) + ': ' + city}</span>
             <span
               style={{ cursor: 'pointer' }}
               onTouchStart={() => {

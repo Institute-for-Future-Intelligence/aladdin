@@ -18,6 +18,7 @@ import { UNIT_VECTOR_POS_Z_ARRAY, ZERO_TOLERANCE } from '../../../constants';
 const SolarPanelLengthInput = ({ setDialogVisible }: { setDialogVisible: (b: boolean) => void }) => {
   const language = useStore(Selector.language);
   const elements = useStore(Selector.elements);
+  const getElementById = useStore(Selector.getElementById);
   const getPvModule = useStore(Selector.getPvModule);
   const updateSolarPanelLxById = useStore(Selector.updateSolarPanelLxById);
   const updateSolarPanelLxOnSurface = useStore(Selector.updateSolarPanelLxOnSurface);
@@ -314,30 +315,30 @@ const SolarPanelLengthInput = ({ setDialogVisible }: { setDialogVisible: (b: boo
         }
         break;
       default:
-        if (solarPanel) {
-          const oldLength = solarPanel.lx;
-          rejectRef.current = rejectChange(solarPanel, value);
-          if (rejectRef.current) {
-            rejectedValue.current = value;
-            setInputLength(oldLength);
-          } else {
-            const undoableChange = {
-              name: 'Set Solar Panel Array Length',
-              timestamp: Date.now(),
-              oldValue: oldLength,
-              newValue: value,
-              changedElementId: solarPanel.id,
-              undo: () => {
-                updateSolarPanelLxById(undoableChange.changedElementId, undoableChange.oldValue as number);
-              },
-              redo: () => {
-                updateSolarPanelLxById(undoableChange.changedElementId, undoableChange.newValue as number);
-              },
-            } as UndoableChange;
-            addUndoable(undoableChange);
-            updateSolarPanelLxById(solarPanel.id, value);
-            setApplyCount(applyCount + 1);
-          }
+        // solar panel selected element may be outdated, make sure that we get the latest
+        const sp = getElementById(solarPanel.id);
+        const oldLength = sp ? sp.lx : solarPanel.lx;
+        rejectRef.current = rejectChange(solarPanel, value);
+        if (rejectRef.current) {
+          rejectedValue.current = value;
+          setInputLength(oldLength);
+        } else {
+          const undoableChange = {
+            name: 'Set Solar Panel Array Length',
+            timestamp: Date.now(),
+            oldValue: oldLength,
+            newValue: value,
+            changedElementId: solarPanel.id,
+            undo: () => {
+              updateSolarPanelLxById(undoableChange.changedElementId, undoableChange.oldValue as number);
+            },
+            redo: () => {
+              updateSolarPanelLxById(undoableChange.changedElementId, undoableChange.newValue as number);
+            },
+          } as UndoableChange;
+          addUndoable(undoableChange);
+          updateSolarPanelLxById(solarPanel.id, value);
+          setApplyCount(applyCount + 1);
         }
     }
     setUpdateFlag(!updateFlag);

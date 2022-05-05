@@ -24,6 +24,7 @@ import { invalidate } from '@react-three/fiber';
 const FoundationLengthInput = ({ setDialogVisible }: { setDialogVisible: (b: boolean) => void }) => {
   const language = useStore(Selector.language);
   const elements = useStore(Selector.elements);
+  const getElementById = useStore(Selector.getElementById);
   const updateElementCxById = useStore(Selector.updateElementCxById);
   const updateElementLxById = useStore(Selector.updateElementLxById);
   const updateElementLxForAll = useStore(Selector.updateElementLxForAll);
@@ -302,7 +303,9 @@ const FoundationLengthInput = ({ setDialogVisible }: { setDialogVisible: (b: boo
   const setLx = (value: number) => {
     if (!foundation) return;
     if (!needChange(value)) return;
-    const oldLx = foundation.lx;
+    // foundation via selected element may be outdated, make sure that we get the latest
+    const f = getElementById(foundation.id);
+    const oldLx = f ? f.lx : foundation.lx;
     rejectedValue.current = undefined;
     rejectRef.current = rejectChange(value);
     if (rejectRef.current) {

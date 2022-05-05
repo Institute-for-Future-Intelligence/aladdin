@@ -20,6 +20,7 @@ const { Option } = Select;
 const SolarPanelModelSelection = ({ setDialogVisible }: { setDialogVisible: (b: boolean) => void }) => {
   const language = useStore(Selector.language);
   const elements = useStore(Selector.elements);
+  const getElementById = useStore(Selector.getElementById);
   const updateSolarPanelModelById = useStore(Selector.updateSolarPanelModelById);
   const updateSolarPanelModelOnSurface = useStore(Selector.updateSolarPanelModelOnSurface);
   const updateSolarPanelModelAboveFoundation = useStore(Selector.updateSolarPanelModelAboveFoundation);
@@ -247,7 +248,9 @@ const SolarPanelModelSelection = ({ setDialogVisible }: { setDialogVisible: (b: 
         }
         break;
       default:
-        const oldModel = solarPanel.pvModelName;
+        // solar panel selected element may be outdated, make sure that we get the latest
+        const sp = getElementById(solarPanel.id) as SolarPanelModel;
+        const oldModel = sp ? sp.pvModelName : solarPanel.pvModelName;
         const undoableChange = {
           name: 'Set Model for Selected Solar Panel',
           timestamp: Date.now(),

@@ -18,6 +18,7 @@ import { ZERO_TOLERANCE } from '../../../constants';
 const CuboidAzimuthInput = ({ setDialogVisible }: { setDialogVisible: (b: boolean) => void }) => {
   const language = useStore(Selector.language);
   const elements = useStore(Selector.elements);
+  const getElementById = useStore(Selector.getElementById);
   const updateElementRotationById = useStore(Selector.updateElementRotationById);
   const updateElementRotationForAll = useStore(Selector.updateElementRotationForAll);
   const cuboid = useStore(Selector.selectedElement) as CuboidModel;
@@ -98,25 +99,25 @@ const CuboidAzimuthInput = ({ setDialogVisible }: { setDialogVisible: (b: boolea
         setApplyCount(applyCount + 1);
         break;
       default:
-        if (cuboid) {
-          const oldAzimuth = -cuboid.rotation[2];
-          const undoableChange = {
-            name: 'Set Cuboid Azimuth',
-            timestamp: Date.now(),
-            oldValue: oldAzimuth,
-            newValue: value,
-            changedElementId: cuboid.id,
-            undo: () => {
-              updateElementRotationById(undoableChange.changedElementId, 0, 0, -(undoableChange.oldValue as number));
-            },
-            redo: () => {
-              updateElementRotationById(undoableChange.changedElementId, 0, 0, -(undoableChange.newValue as number));
-            },
-          } as UndoableChange;
-          addUndoable(undoableChange);
-          updateElementRotationById(cuboid.id, 0, 0, -value);
-          setApplyCount(applyCount + 1);
-        }
+        // cuboid via selected element may be outdated, make sure that we get the latest
+        const c = getElementById(cuboid.id);
+        const oldAzimuth = c ? -c.rotation[2] : -cuboid.rotation[2];
+        const undoableChange = {
+          name: 'Set Cuboid Azimuth',
+          timestamp: Date.now(),
+          oldValue: oldAzimuth,
+          newValue: value,
+          changedElementId: cuboid.id,
+          undo: () => {
+            updateElementRotationById(undoableChange.changedElementId, 0, 0, -(undoableChange.oldValue as number));
+          },
+          redo: () => {
+            updateElementRotationById(undoableChange.changedElementId, 0, 0, -(undoableChange.newValue as number));
+          },
+        } as UndoableChange;
+        addUndoable(undoableChange);
+        updateElementRotationById(cuboid.id, 0, 0, -value);
+        setApplyCount(applyCount + 1);
     }
     setUpdateFlag(!updateFlag);
   };

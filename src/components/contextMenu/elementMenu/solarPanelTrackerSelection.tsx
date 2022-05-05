@@ -17,6 +17,7 @@ import { Util } from '../../../Util';
 const SolarPanelTrackerSelection = ({ setDialogVisible }: { setDialogVisible: (b: boolean) => void }) => {
   const language = useStore(Selector.language);
   const elements = useStore(Selector.elements);
+  const getElementById = useStore(Selector.getElementById);
   const updateSolarPanelTrackerTypeById = useStore(Selector.updateSolarPanelTrackerTypeById);
   const updateSolarPanelTrackerTypeOnSurface = useStore(Selector.updateSolarPanelTrackerTypeOnSurface);
   const updateSolarPanelTrackerTypeAboveFoundation = useStore(Selector.updateSolarPanelTrackerTypeAboveFoundation);
@@ -229,25 +230,25 @@ const SolarPanelTrackerSelection = ({ setDialogVisible }: { setDialogVisible: (b
         }
         break;
       default:
-        if (solarPanel) {
-          const oldTrackerType = solarPanel.trackerType;
-          const undoableChange = {
-            name: 'Set Solar Panel Array Tracker Type',
-            timestamp: Date.now(),
-            oldValue: oldTrackerType,
-            newValue: value,
-            changedElementId: solarPanel.id,
-            undo: () => {
-              updateSolarPanelTrackerTypeById(undoableChange.changedElementId, undoableChange.oldValue as TrackerType);
-            },
-            redo: () => {
-              updateSolarPanelTrackerTypeById(undoableChange.changedElementId, undoableChange.newValue as TrackerType);
-            },
-          } as UndoableChange;
-          addUndoable(undoableChange);
-          updateSolarPanelTrackerTypeById(solarPanel.id, value);
-          setApplyCount(applyCount + 1);
-        }
+        // solar panel selected element may be outdated, make sure that we get the latest
+        const sp = getElementById(solarPanel.id) as SolarPanelModel;
+        const oldTrackerType = sp ? sp.trackerType : solarPanel.trackerType;
+        const undoableChange = {
+          name: 'Set Solar Panel Array Tracker Type',
+          timestamp: Date.now(),
+          oldValue: oldTrackerType,
+          newValue: value,
+          changedElementId: solarPanel.id,
+          undo: () => {
+            updateSolarPanelTrackerTypeById(undoableChange.changedElementId, undoableChange.oldValue as TrackerType);
+          },
+          redo: () => {
+            updateSolarPanelTrackerTypeById(undoableChange.changedElementId, undoableChange.newValue as TrackerType);
+          },
+        } as UndoableChange;
+        addUndoable(undoableChange);
+        updateSolarPanelTrackerTypeById(solarPanel.id, value);
+        setApplyCount(applyCount + 1);
     }
     setUpdateFlag(!updateFlag);
   };

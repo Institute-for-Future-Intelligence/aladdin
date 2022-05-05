@@ -18,6 +18,7 @@ import { ZERO_TOLERANCE } from '../../../constants';
 const FoundationAzimuthInput = ({ setDialogVisible }: { setDialogVisible: (b: boolean) => void }) => {
   const language = useStore(Selector.language);
   const elements = useStore(Selector.elements);
+  const getElementById = useStore(Selector.getElementById);
   const updateElementRotationById = useStore(Selector.updateElementRotationById);
   const updateElementRotationForAll = useStore(Selector.updateElementRotationForAll);
   const foundation = useStore(Selector.selectedElement) as FoundationModel;
@@ -98,25 +99,25 @@ const FoundationAzimuthInput = ({ setDialogVisible }: { setDialogVisible: (b: bo
         setApplyCount(applyCount + 1);
         break;
       default:
-        if (foundation) {
-          const oldAzimuth = -foundation.rotation[2];
-          const undoableChange = {
-            name: 'Set Foundation Azimuth',
-            timestamp: Date.now(),
-            oldValue: oldAzimuth,
-            newValue: value,
-            changedElementId: foundation.id,
-            undo: () => {
-              updateElementRotationById(undoableChange.changedElementId, 0, 0, -(undoableChange.oldValue as number));
-            },
-            redo: () => {
-              updateElementRotationById(undoableChange.changedElementId, 0, 0, -(undoableChange.newValue as number));
-            },
-          } as UndoableChange;
-          addUndoable(undoableChange);
-          updateElementRotationById(foundation.id, 0, 0, -value);
-          setApplyCount(applyCount + 1);
-        }
+        // foundation via selected element may be outdated, make sure that we get the latest
+        const f = getElementById(foundation.id);
+        const oldAzimuth = f ? -f.rotation[2] : -foundation.rotation[2];
+        const undoableChange = {
+          name: 'Set Foundation Azimuth',
+          timestamp: Date.now(),
+          oldValue: oldAzimuth,
+          newValue: value,
+          changedElementId: foundation.id,
+          undo: () => {
+            updateElementRotationById(undoableChange.changedElementId, 0, 0, -(undoableChange.oldValue as number));
+          },
+          redo: () => {
+            updateElementRotationById(undoableChange.changedElementId, 0, 0, -(undoableChange.newValue as number));
+          },
+        } as UndoableChange;
+        addUndoable(undoableChange);
+        updateElementRotationById(foundation.id, 0, 0, -value);
+        setApplyCount(applyCount + 1);
     }
     setUpdateFlag(!updateFlag);
   };

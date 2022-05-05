@@ -24,6 +24,7 @@ import { invalidate } from '@react-three/fiber';
 const CuboidWidthInput = ({ setDialogVisible }: { setDialogVisible: (b: boolean) => void }) => {
   const language = useStore(Selector.language);
   const elements = useStore(Selector.elements);
+  const getElementById = useStore(Selector.getElementById);
   const getChildren = useStore(Selector.getChildren);
   const setElementPosition = useStore(Selector.setElementPosition);
   const updateElementCyById = useStore(Selector.updateElementCyById);
@@ -293,7 +294,9 @@ const CuboidWidthInput = ({ setDialogVisible }: { setDialogVisible: (b: boolean)
   const setLy = (value: number) => {
     if (!cuboid) return;
     if (!needChange(value)) return;
-    const oldLy = cuboid.ly;
+    // cuboid via selected element may be outdated, make sure that we get the latest
+    const c = getElementById(cuboid.id);
+    const oldLy = c ? c.ly : cuboid.ly;
     rejectedValue.current = undefined;
     rejectRef.current = rejectChange(value);
     if (rejectRef.current) {

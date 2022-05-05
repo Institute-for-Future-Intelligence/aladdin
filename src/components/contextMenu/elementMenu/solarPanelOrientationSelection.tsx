@@ -20,6 +20,7 @@ const { Option } = Select;
 const SolarPanelOrientationSelection = ({ setDialogVisible }: { setDialogVisible: (b: boolean) => void }) => {
   const language = useStore(Selector.language);
   const elements = useStore(Selector.elements);
+  const getElementById = useStore(Selector.getElementById);
   const getPvModule = useStore(Selector.getPvModule);
   const updateSolarPanelOrientationById = useStore(Selector.updateSolarPanelOrientationById);
   const updateSolarPanelOrientationOnSurface = useStore(Selector.updateSolarPanelOrientationOnSurface);
@@ -352,30 +353,30 @@ const SolarPanelOrientationSelection = ({ setDialogVisible }: { setDialogVisible
         }
         break;
       default:
-        if (solarPanel) {
-          const oldOrientation = solarPanel.orientation;
-          rejectRef.current = rejectChange(solarPanel, value);
-          if (rejectRef.current) {
-            rejectedValue.current = value;
-            setSelectedOrientation(oldOrientation);
-          } else {
-            const undoableChange = {
-              name: 'Set Orientation of Selected Solar Panel',
-              timestamp: Date.now(),
-              oldValue: oldOrientation,
-              newValue: value,
-              changedElementId: solarPanel.id,
-              undo: () => {
-                changeOrientation(undoableChange.oldValue as Orientation);
-              },
-              redo: () => {
-                changeOrientation(undoableChange.newValue as Orientation);
-              },
-            } as UndoableChange;
-            addUndoable(undoableChange);
-            changeOrientation(value);
-            setApplyCount(applyCount + 1);
-          }
+        // solar panel selected element may be outdated, make sure that we get the latest
+        const sp = getElementById(solarPanel.id) as SolarPanelModel;
+        const oldOrientation = sp ? sp.orientation : solarPanel.orientation;
+        rejectRef.current = rejectChange(solarPanel, value);
+        if (rejectRef.current) {
+          rejectedValue.current = value;
+          setSelectedOrientation(oldOrientation);
+        } else {
+          const undoableChange = {
+            name: 'Set Orientation of Selected Solar Panel',
+            timestamp: Date.now(),
+            oldValue: oldOrientation,
+            newValue: value,
+            changedElementId: solarPanel.id,
+            undo: () => {
+              changeOrientation(undoableChange.oldValue as Orientation);
+            },
+            redo: () => {
+              changeOrientation(undoableChange.newValue as Orientation);
+            },
+          } as UndoableChange;
+          addUndoable(undoableChange);
+          changeOrientation(value);
+          setApplyCount(applyCount + 1);
         }
     }
     setUpdateFlag(!updateFlag);

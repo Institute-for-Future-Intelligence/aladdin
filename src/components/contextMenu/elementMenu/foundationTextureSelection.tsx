@@ -24,6 +24,7 @@ import { FoundationModel } from '../../../models/FoundationModel';
 const FoundationTextureSelection = ({ setDialogVisible }: { setDialogVisible: (b: boolean) => void }) => {
   const language = useStore(Selector.language);
   const elements = useStore(Selector.elements);
+  const getElementById = useStore(Selector.getElementById);
   const updateFoundationTextureById = useStore(Selector.updateFoundationTextureById);
   const updateFoundationTextureForAll = useStore(Selector.updateFoundationTextureForAll);
   const foundation = useStore(Selector.selectedElement) as FoundationModel;
@@ -110,31 +111,25 @@ const FoundationTextureSelection = ({ setDialogVisible }: { setDialogVisible: (b
         setApplyCount(applyCount + 1);
         break;
       default:
-        if (foundation) {
-          const oldTexture = foundation.textureType;
-          const undoableChange = {
-            name: 'Set Texture of Selected Foundation',
-            timestamp: Date.now(),
-            oldValue: oldTexture,
-            newValue: value,
-            changedElementId: foundation.id,
-            undo: () => {
-              updateFoundationTextureById(
-                undoableChange.changedElementId,
-                undoableChange.oldValue as FoundationTexture,
-              );
-            },
-            redo: () => {
-              updateFoundationTextureById(
-                undoableChange.changedElementId,
-                undoableChange.newValue as FoundationTexture,
-              );
-            },
-          } as UndoableChange;
-          addUndoable(undoableChange);
-          updateFoundationTextureById(foundation.id, value);
-          setApplyCount(applyCount + 1);
-        }
+        // foundation via selected element may be outdated, make sure that we get the latest
+        const f = getElementById(foundation.id);
+        const oldTexture = f ? (f as FoundationModel).textureType : foundation.textureType;
+        const undoableChange = {
+          name: 'Set Texture of Selected Foundation',
+          timestamp: Date.now(),
+          oldValue: oldTexture,
+          newValue: value,
+          changedElementId: foundation.id,
+          undo: () => {
+            updateFoundationTextureById(undoableChange.changedElementId, undoableChange.oldValue as FoundationTexture);
+          },
+          redo: () => {
+            updateFoundationTextureById(undoableChange.changedElementId, undoableChange.newValue as FoundationTexture);
+          },
+        } as UndoableChange;
+        addUndoable(undoableChange);
+        updateFoundationTextureById(foundation.id, value);
+        setApplyCount(applyCount + 1);
     }
     setUpdateFlag(!updateFlag);
   };
