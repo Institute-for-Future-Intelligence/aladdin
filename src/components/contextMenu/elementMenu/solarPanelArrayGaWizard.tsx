@@ -734,6 +734,7 @@ const SolarPanelArrayGaWizard = ({ setDialogVisible }: { setDialogVisible: (b: b
                   }}
                   min={0}
                   max={10}
+                  step={0.1}
                   defaultValue={poleHeightRef.current}
                   marks={{
                     0: {
@@ -790,6 +791,7 @@ const SolarPanelArrayGaWizard = ({ setDialogVisible }: { setDialogVisible: (b: b
                   }}
                   min={2}
                   max={10}
+                  step={0.1}
                   defaultValue={poleSpacingRef.current}
                   marks={{
                     2: {
