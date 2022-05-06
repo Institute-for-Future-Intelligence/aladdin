@@ -17,6 +17,7 @@ import { ZERO_TOLERANCE } from 'src/constants';
 const SolarAbsorberPipeThermalEfficiencyInput = ({ setDialogVisible }: { setDialogVisible: (b: boolean) => void }) => {
   const language = useStore(Selector.language);
   const elements = useStore(Selector.elements);
+  const getElementById = useStore(Selector.getElementById);
   const updateById = useStore(Selector.updateSolarAbsorberPipeThermalEfficiencyById);
   const updateForAll = useStore(Selector.updateSolarAbsorberPipeThermalEfficiencyForAll);
   const foundation = useStore(Selector.selectedElement) as FoundationModel;
@@ -111,25 +112,28 @@ const SolarAbsorberPipeThermalEfficiencyInput = ({ setDialogVisible }: { setDial
         setApplyCount(applyCount + 1);
         break;
       default:
-        if (absorberPipe) {
-          const oldValue = absorberPipe.absorberThermalEfficiency ?? 0.3;
-          updateById(foundation.id, value);
-          const undoableChange = {
-            name: 'Set Absorber Thermal Efficiency on Foundation',
-            timestamp: Date.now(),
-            oldValue: oldValue,
-            newValue: value,
-            changedElementId: foundation.id,
-            undo: () => {
-              updateById(undoableChange.changedElementId, undoableChange.oldValue as number);
-            },
-            redo: () => {
-              updateById(undoableChange.changedElementId, undoableChange.newValue as number);
-            },
-          } as UndoableChange;
-          addUndoable(undoableChange);
-          setApplyCount(applyCount + 1);
-        }
+        // foundation selected element may be outdated, make sure that we get the latest
+        const f = getElementById(foundation.id) as FoundationModel;
+        const oldValue =
+          f && f.solarAbsorberPipe
+            ? f.solarAbsorberPipe.absorberThermalEfficiency ?? 0.3
+            : absorberPipe.absorberThermalEfficiency ?? 0.3;
+        updateById(foundation.id, value);
+        const undoableChange = {
+          name: 'Set Absorber Thermal Efficiency on Foundation',
+          timestamp: Date.now(),
+          oldValue: oldValue,
+          newValue: value,
+          changedElementId: foundation.id,
+          undo: () => {
+            updateById(undoableChange.changedElementId, undoableChange.oldValue as number);
+          },
+          redo: () => {
+            updateById(undoableChange.changedElementId, undoableChange.newValue as number);
+          },
+        } as UndoableChange;
+        addUndoable(undoableChange);
+        setApplyCount(applyCount + 1);
     }
     setUpdateFlag(!updateFlag);
   };

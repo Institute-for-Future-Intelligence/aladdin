@@ -18,6 +18,7 @@ import { Util } from '../../../Util';
 const ParabolicTroughLatusRectumInput = ({ setDialogVisible }: { setDialogVisible: (b: boolean) => void }) => {
   const language = useStore(Selector.language);
   const elements = useStore(Selector.elements);
+  const getElementById = useStore(Selector.getElementById);
   const updateLatusRectumById = useStore(Selector.updateParabolaLatusRectumById);
   const updateLatusRectumAboveFoundation = useStore(Selector.updateParabolaLatusRectumAboveFoundation);
   const updateLatusRectumForAll = useStore(Selector.updateParabolaLatusRectumForAll);
@@ -193,30 +194,29 @@ const ParabolicTroughLatusRectumInput = ({ setDialogVisible }: { setDialogVisibl
         }
         break;
       default:
-        if (parabolicTrough) {
-          const oldLatusRectum = parabolicTrough.latusRectum;
-          rejectRef.current = rejectChange(parabolicTrough, value);
-          if (rejectRef.current) {
-            rejectedValue.current = value;
-            setInputLatusRectum(oldLatusRectum);
-          } else {
-            const undoableChange = {
-              name: 'Set Parabolic Trough Latus Rectum',
-              timestamp: Date.now(),
-              oldValue: oldLatusRectum,
-              newValue: value,
-              changedElementId: parabolicTrough.id,
-              undo: () => {
-                updateLatusRectumById(undoableChange.changedElementId, undoableChange.oldValue as number);
-              },
-              redo: () => {
-                updateLatusRectumById(undoableChange.changedElementId, undoableChange.newValue as number);
-              },
-            } as UndoableChange;
-            addUndoable(undoableChange);
-            updateLatusRectumById(parabolicTrough.id, value);
-            setApplyCount(applyCount + 1);
-          }
+        const p = getElementById(parabolicTrough.id) as ParabolicTroughModel;
+        const oldLatusRectum = p ? p.latusRectum : parabolicTrough.latusRectum;
+        rejectRef.current = rejectChange(parabolicTrough, value);
+        if (rejectRef.current) {
+          rejectedValue.current = value;
+          setInputLatusRectum(oldLatusRectum);
+        } else {
+          const undoableChange = {
+            name: 'Set Parabolic Trough Latus Rectum',
+            timestamp: Date.now(),
+            oldValue: oldLatusRectum,
+            newValue: value,
+            changedElementId: parabolicTrough.id,
+            undo: () => {
+              updateLatusRectumById(undoableChange.changedElementId, undoableChange.oldValue as number);
+            },
+            redo: () => {
+              updateLatusRectumById(undoableChange.changedElementId, undoableChange.newValue as number);
+            },
+          } as UndoableChange;
+          addUndoable(undoableChange);
+          updateLatusRectumById(parabolicTrough.id, value);
+          setApplyCount(applyCount + 1);
         }
     }
     setUpdateFlag(!updateFlag);

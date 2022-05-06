@@ -17,6 +17,7 @@ import { UndoableChangeGroup } from '../../../undo/UndoableChangeGroup';
 const PolygonLineWidthSelection = ({ setDialogVisible }: { setDialogVisible: (b: boolean) => void }) => {
   const language = useStore(Selector.language);
   const elements = useStore(Selector.elements);
+  const getElementById = useStore(Selector.getElementById);
   const getParent = useStore(Selector.getParent);
   const updateElementLineWidthById = useStore(Selector.updateElementLineWidthById);
   const updateElementLineWidthOnSurface = useStore(Selector.updateElementLineWidthOnSurface);
@@ -201,7 +202,8 @@ const PolygonLineWidthSelection = ({ setDialogVisible }: { setDialogVisible: (b:
         }
         break;
       default:
-        const oldWidth = polygon.lineWidth;
+        const p = getElementById(polygon.id) as PolygonModel;
+        const oldWidth = p ? p.lineWidth : polygon.lineWidth;
         const undoableChange = {
           name: 'Set Line Width of Selected Polygon',
           timestamp: Date.now(),

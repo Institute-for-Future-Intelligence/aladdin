@@ -18,6 +18,7 @@ import { Util } from '../../../Util';
 const ParabolicDishLatusRectumInput = ({ setDialogVisible }: { setDialogVisible: (b: boolean) => void }) => {
   const language = useStore(Selector.language);
   const elements = useStore(Selector.elements);
+  const getElementById = useStore(Selector.getElementById);
   const updateLatusRectumById = useStore(Selector.updateParabolaLatusRectumById);
   const updateLatusRectumAboveFoundation = useStore(Selector.updateParabolaLatusRectumAboveFoundation);
   const updateLatusRectumForAll = useStore(Selector.updateParabolaLatusRectumForAll);
@@ -193,30 +194,29 @@ const ParabolicDishLatusRectumInput = ({ setDialogVisible }: { setDialogVisible:
         }
         break;
       default:
-        if (parabolicDish) {
-          const oldLatusRectum = parabolicDish.latusRectum;
-          rejectRef.current = rejectChange(parabolicDish, value);
-          if (rejectRef.current) {
-            rejectedValue.current = value;
-            setInputLatusRectum(oldLatusRectum);
-          } else {
-            const undoableChange = {
-              name: 'Set Parabolic Dish Latus Rectum',
-              timestamp: Date.now(),
-              oldValue: oldLatusRectum,
-              newValue: value,
-              changedElementId: parabolicDish.id,
-              undo: () => {
-                updateLatusRectumById(undoableChange.changedElementId, undoableChange.oldValue as number);
-              },
-              redo: () => {
-                updateLatusRectumById(undoableChange.changedElementId, undoableChange.newValue as number);
-              },
-            } as UndoableChange;
-            addUndoable(undoableChange);
-            updateLatusRectumById(parabolicDish.id, value);
-            setApplyCount(applyCount + 1);
-          }
+        const p = getElementById(parabolicDish.id) as ParabolicDishModel;
+        const oldLatusRectum = p ? p.latusRectum : parabolicDish.latusRectum;
+        rejectRef.current = rejectChange(parabolicDish, value);
+        if (rejectRef.current) {
+          rejectedValue.current = value;
+          setInputLatusRectum(oldLatusRectum);
+        } else {
+          const undoableChange = {
+            name: 'Set Parabolic Dish Latus Rectum',
+            timestamp: Date.now(),
+            oldValue: oldLatusRectum,
+            newValue: value,
+            changedElementId: parabolicDish.id,
+            undo: () => {
+              updateLatusRectumById(undoableChange.changedElementId, undoableChange.oldValue as number);
+            },
+            redo: () => {
+              updateLatusRectumById(undoableChange.changedElementId, undoableChange.newValue as number);
+            },
+          } as UndoableChange;
+          addUndoable(undoableChange);
+          updateLatusRectumById(parabolicDish.id, value);
+          setApplyCount(applyCount + 1);
         }
     }
     setUpdateFlag(!updateFlag);

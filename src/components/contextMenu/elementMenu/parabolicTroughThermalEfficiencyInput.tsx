@@ -17,6 +17,7 @@ import { ZERO_TOLERANCE } from '../../../constants';
 const ParabolicTroughThermalEfficiencyInput = ({ setDialogVisible }: { setDialogVisible: (b: boolean) => void }) => {
   const language = useStore(Selector.language);
   const elements = useStore(Selector.elements);
+  const getElementById = useStore(Selector.getElementById);
   const updateById = useStore(Selector.updateParabolicCollectorThermalEfficiencyById);
   const updateAboveFoundation = useStore(Selector.updateParabolicCollectorThermalEfficiencyAboveFoundation);
   const updateForAll = useStore(Selector.updateParabolicCollectorThermalEfficiencyForAll);
@@ -143,25 +144,24 @@ const ParabolicTroughThermalEfficiencyInput = ({ setDialogVisible }: { setDialog
         }
         break;
       default:
-        if (parabolicTrough) {
-          const oldThermalEfficiency = parabolicTrough.thermalEfficiency;
-          const undoableChange = {
-            name: 'Set Parabolic Trough Thermal Efficiency',
-            timestamp: Date.now(),
-            oldValue: oldThermalEfficiency,
-            newValue: value,
-            changedElementId: parabolicTrough.id,
-            undo: () => {
-              updateById(undoableChange.changedElementId, undoableChange.oldValue as number);
-            },
-            redo: () => {
-              updateById(undoableChange.changedElementId, undoableChange.newValue as number);
-            },
-          } as UndoableChange;
-          addUndoable(undoableChange);
-          updateById(parabolicTrough.id, value);
-          setApplyCount(applyCount + 1);
-        }
+        const p = getElementById(parabolicTrough.id) as ParabolicTroughModel;
+        const oldThermalEfficiency = p ? p.thermalEfficiency : parabolicTrough.thermalEfficiency;
+        const undoableChange = {
+          name: 'Set Parabolic Trough Thermal Efficiency',
+          timestamp: Date.now(),
+          oldValue: oldThermalEfficiency,
+          newValue: value,
+          changedElementId: parabolicTrough.id,
+          undo: () => {
+            updateById(undoableChange.changedElementId, undoableChange.oldValue as number);
+          },
+          redo: () => {
+            updateById(undoableChange.changedElementId, undoableChange.newValue as number);
+          },
+        } as UndoableChange;
+        addUndoable(undoableChange);
+        updateById(parabolicTrough.id, value);
+        setApplyCount(applyCount + 1);
     }
     setUpdateFlag(!updateFlag);
   };

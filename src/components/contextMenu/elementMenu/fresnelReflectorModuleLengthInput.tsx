@@ -18,6 +18,7 @@ import { Util } from '../../../Util';
 const FresnelReflectorModuleLengthInput = ({ setDialogVisible }: { setDialogVisible: (b: boolean) => void }) => {
   const language = useStore(Selector.language);
   const elements = useStore(Selector.elements);
+  const getElementById = useStore(Selector.getElementById);
   const updateModuleLengthById = useStore(Selector.updateModuleLengthById);
   const updateModuleLengthAboveFoundation = useStore(Selector.updateModuleLengthAboveFoundation);
   const updateModuleLengthForAll = useStore(Selector.updateModuleLengthForAll);
@@ -197,30 +198,30 @@ const FresnelReflectorModuleLengthInput = ({ setDialogVisible }: { setDialogVisi
         }
         break;
       default:
-        if (fresnelReflector) {
-          const oldModuleLength = fresnelReflector.moduleLength;
-          rejectRef.current = rejectChange(fresnelReflector, value);
-          if (rejectRef.current) {
-            rejectedValue.current = value;
-            setInputModuleLength(oldModuleLength);
-          } else {
-            const undoableChange = {
-              name: 'Set Fresnel Reflector Module Length',
-              timestamp: Date.now(),
-              oldValue: oldModuleLength,
-              newValue: value,
-              changedElementId: fresnelReflector.id,
-              undo: () => {
-                updateModuleLengthById(undoableChange.changedElementId, undoableChange.oldValue as number);
-              },
-              redo: () => {
-                updateModuleLengthById(undoableChange.changedElementId, undoableChange.newValue as number);
-              },
-            } as UndoableChange;
-            addUndoable(undoableChange);
-            updateModuleLengthById(fresnelReflector.id, value);
-            setApplyCount(applyCount + 1);
-          }
+        // selected element may be outdated, make sure that we get the latest
+        const f = getElementById(fresnelReflector.id) as FresnelReflectorModel;
+        const oldModuleLength = f ? f.moduleLength : fresnelReflector.moduleLength;
+        rejectRef.current = rejectChange(fresnelReflector, value);
+        if (rejectRef.current) {
+          rejectedValue.current = value;
+          setInputModuleLength(oldModuleLength);
+        } else {
+          const undoableChange = {
+            name: 'Set Fresnel Reflector Module Length',
+            timestamp: Date.now(),
+            oldValue: oldModuleLength,
+            newValue: value,
+            changedElementId: fresnelReflector.id,
+            undo: () => {
+              updateModuleLengthById(undoableChange.changedElementId, undoableChange.oldValue as number);
+            },
+            redo: () => {
+              updateModuleLengthById(undoableChange.changedElementId, undoableChange.newValue as number);
+            },
+          } as UndoableChange;
+          addUndoable(undoableChange);
+          updateModuleLengthById(fresnelReflector.id, value);
+          setApplyCount(applyCount + 1);
         }
     }
     setUpdateFlag(!updateFlag);

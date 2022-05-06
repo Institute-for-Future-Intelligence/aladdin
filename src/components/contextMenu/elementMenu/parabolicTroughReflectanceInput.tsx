@@ -17,6 +17,7 @@ import { ZERO_TOLERANCE } from '../../../constants';
 const ParabolicTroughReflectanceInput = ({ setDialogVisible }: { setDialogVisible: (b: boolean) => void }) => {
   const language = useStore(Selector.language);
   const elements = useStore(Selector.elements);
+  const getElementById = useStore(Selector.getElementById);
   const updateById = useStore(Selector.updateCspReflectanceById);
   const updateAboveFoundation = useStore(Selector.updateCspReflectanceAboveFoundation);
   const updateForAll = useStore(Selector.updateCspReflectanceForAll);
@@ -141,25 +142,24 @@ const ParabolicTroughReflectanceInput = ({ setDialogVisible }: { setDialogVisibl
         }
         break;
       default:
-        if (parabolicTrough) {
-          const oldReflectance = parabolicTrough.reflectance;
-          const undoableChange = {
-            name: 'Set Parabolic Trough Reflectance',
-            timestamp: Date.now(),
-            oldValue: oldReflectance,
-            newValue: value,
-            changedElementId: parabolicTrough.id,
-            undo: () => {
-              updateById(undoableChange.changedElementId, undoableChange.oldValue as number);
-            },
-            redo: () => {
-              updateById(undoableChange.changedElementId, undoableChange.newValue as number);
-            },
-          } as UndoableChange;
-          addUndoable(undoableChange);
-          updateById(parabolicTrough.id, value);
-          setApplyCount(applyCount + 1);
-        }
+        const p = getElementById(parabolicTrough.id) as ParabolicTroughModel;
+        const oldReflectance = p ? p.reflectance : parabolicTrough.reflectance;
+        const undoableChange = {
+          name: 'Set Parabolic Trough Reflectance',
+          timestamp: Date.now(),
+          oldValue: oldReflectance,
+          newValue: value,
+          changedElementId: parabolicTrough.id,
+          undo: () => {
+            updateById(undoableChange.changedElementId, undoableChange.oldValue as number);
+          },
+          redo: () => {
+            updateById(undoableChange.changedElementId, undoableChange.newValue as number);
+          },
+        } as UndoableChange;
+        addUndoable(undoableChange);
+        updateById(parabolicTrough.id, value);
+        setApplyCount(applyCount + 1);
     }
     setUpdateFlag(!updateFlag);
   };

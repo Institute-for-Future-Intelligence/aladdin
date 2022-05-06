@@ -17,6 +17,7 @@ import { UndoableChangeGroup } from '../../../undo/UndoableChangeGroup';
 const PolygonLineStyleSelection = ({ setDialogVisible }: { setDialogVisible: (b: boolean) => void }) => {
   const language = useStore(Selector.language);
   const elements = useStore(Selector.elements);
+  const getElementById = useStore(Selector.getElementById);
   const getParent = useStore(Selector.getParent);
   const updatePolygonLineStyleById = useStore(Selector.updatePolygonLineStyleById);
   const updatePolygonLineStyleOnSurface = useStore(Selector.updatePolygonLineStyleOnSurface);
@@ -199,7 +200,8 @@ const PolygonLineStyleSelection = ({ setDialogVisible }: { setDialogVisible: (b:
         }
         break;
       default:
-        const oldStyle = polygon.lineStyle;
+        const p = getElementById(polygon.id) as PolygonModel;
+        const oldStyle = p ? p.lineStyle : polygon.lineStyle;
         const undoableChange = {
           name: 'Set Line Style of Selected Polygon',
           timestamp: Date.now(),

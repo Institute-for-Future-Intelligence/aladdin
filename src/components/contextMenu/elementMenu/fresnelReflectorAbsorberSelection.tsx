@@ -178,25 +178,25 @@ const FresnelReflectorAbsorberSelection = ({ setDialogVisible }: { setDialogVisi
         }
         break;
       default:
-        if (fresnelReflector) {
-          const oldValue = fresnelReflector.receiverId;
-          const undoableChange = {
-            name: 'Set Receiver for Fresnel Reflector',
-            timestamp: Date.now(),
-            oldValue: oldValue,
-            newValue: value,
-            changedElementId: fresnelReflector.id,
-            undo: () => {
-              updateById(undoableChange.changedElementId, undoableChange.oldValue as string);
-            },
-            redo: () => {
-              updateById(undoableChange.changedElementId, undoableChange.newValue as string);
-            },
-          } as UndoableChange;
-          addUndoable(undoableChange);
-          updateById(fresnelReflector.id, value);
-          setApplyCount(applyCount + 1);
-        }
+        // selected element may be outdated, make sure that we get the latest
+        const f = getElementById(fresnelReflector.id) as FresnelReflectorModel;
+        const oldValue = f ? f.receiverId : fresnelReflector.receiverId;
+        const undoableChange = {
+          name: 'Set Receiver for Fresnel Reflector',
+          timestamp: Date.now(),
+          oldValue: oldValue,
+          newValue: value,
+          changedElementId: fresnelReflector.id,
+          undo: () => {
+            updateById(undoableChange.changedElementId, undoableChange.oldValue as string);
+          },
+          redo: () => {
+            updateById(undoableChange.changedElementId, undoableChange.newValue as string);
+          },
+        } as UndoableChange;
+        addUndoable(undoableChange);
+        updateById(fresnelReflector.id, value);
+        setApplyCount(applyCount + 1);
     }
     setUpdateFlag(!updateFlag);
   };

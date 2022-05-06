@@ -16,6 +16,7 @@ import { FoundationModel } from 'src/models/FoundationModel';
 const SolarAbsorberPipePoleNumberInput = ({ setDialogVisible }: { setDialogVisible: (b: boolean) => void }) => {
   const language = useStore(Selector.language);
   const elements = useStore(Selector.elements);
+  const getElementById = useStore(Selector.getElementById);
   const updateById = useStore(Selector.updateSolarAbsorberPipePoleNumberById);
   const updateForAll = useStore(Selector.updateSolarAbsorberPipePoleNumberForAll);
   const foundation = useStore(Selector.selectedElement) as FoundationModel;
@@ -70,7 +71,7 @@ const SolarAbsorberPipePoleNumberInput = ({ setDialogVisible }: { setDialogVisib
   };
 
   const setPoleNumber = (value: number) => {
-    if (!foundation) return;
+    if (!foundation || !absorberPipe) return;
     if (!needChange(value)) return;
     switch (foundationActionScope) {
       case Scope.AllObjectsOfThisType:
@@ -102,25 +103,25 @@ const SolarAbsorberPipePoleNumberInput = ({ setDialogVisible }: { setDialogVisib
         setApplyCount(applyCount + 1);
         break;
       default:
-        if (absorberPipe) {
-          const oldValue = absorberPipe.poleNumber ?? 5;
-          updateById(foundation.id, value);
-          const undoableChange = {
-            name: 'Set Absorber Pipe Pole Number on Foundation',
-            timestamp: Date.now(),
-            oldValue: oldValue,
-            newValue: value,
-            changedElementId: foundation.id,
-            undo: () => {
-              updateById(undoableChange.changedElementId, undoableChange.oldValue as number);
-            },
-            redo: () => {
-              updateById(undoableChange.changedElementId, undoableChange.newValue as number);
-            },
-          } as UndoableChange;
-          addUndoable(undoableChange);
-          setApplyCount(applyCount + 1);
-        }
+        // foundation selected element may be outdated, make sure that we get the latest
+        const f = getElementById(foundation.id) as FoundationModel;
+        const oldValue = f && f.solarAbsorberPipe ? f.solarAbsorberPipe.poleNumber ?? 5 : absorberPipe.poleNumber ?? 5;
+        updateById(foundation.id, value);
+        const undoableChange = {
+          name: 'Set Absorber Pipe Pole Number on Foundation',
+          timestamp: Date.now(),
+          oldValue: oldValue,
+          newValue: value,
+          changedElementId: foundation.id,
+          undo: () => {
+            updateById(undoableChange.changedElementId, undoableChange.oldValue as number);
+          },
+          redo: () => {
+            updateById(undoableChange.changedElementId, undoableChange.newValue as number);
+          },
+        } as UndoableChange;
+        addUndoable(undoableChange);
+        setApplyCount(applyCount + 1);
     }
     setUpdateFlag(!updateFlag);
   };

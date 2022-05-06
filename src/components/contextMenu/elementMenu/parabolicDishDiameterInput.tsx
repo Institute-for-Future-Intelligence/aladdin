@@ -18,6 +18,7 @@ import { Util } from '../../../Util';
 const ParabolicDishDiameterInput = ({ setDialogVisible }: { setDialogVisible: (b: boolean) => void }) => {
   const language = useStore(Selector.language);
   const elements = useStore(Selector.elements);
+  const getElementById = useStore(Selector.getElementById);
   const updateLxById = useStore(Selector.updateElementLxById);
   const updateLyById = useStore(Selector.updateElementLyById);
   const updateLxAboveFoundation = useStore(Selector.updateElementLxAboveFoundation);
@@ -207,33 +208,32 @@ const ParabolicDishDiameterInput = ({ setDialogVisible }: { setDialogVisible: (b
         }
         break;
       default:
-        if (parabolicDish) {
-          const oldDiameter = parabolicDish.lx;
-          rejectRef.current = rejectChange(parabolicDish, value);
-          if (rejectRef.current) {
-            rejectedValue.current = value;
-            setInputDiameter(oldDiameter);
-          } else {
-            const undoableChange = {
-              name: 'Set Parabolic Dish Diameter',
-              timestamp: Date.now(),
-              oldValue: oldDiameter,
-              newValue: value,
-              changedElementId: parabolicDish.id,
-              undo: () => {
-                updateLxById(undoableChange.changedElementId, undoableChange.oldValue as number);
-                updateLyById(undoableChange.changedElementId, undoableChange.oldValue as number);
-              },
-              redo: () => {
-                updateLxById(undoableChange.changedElementId, undoableChange.newValue as number);
-                updateLyById(undoableChange.changedElementId, undoableChange.newValue as number);
-              },
-            } as UndoableChange;
-            addUndoable(undoableChange);
-            updateLxById(parabolicDish.id, value);
-            updateLyById(parabolicDish.id, value);
-            setApplyCount(applyCount + 1);
-          }
+        const p = getElementById(parabolicDish.id) as ParabolicDishModel;
+        const oldDiameter = p ? p.lx : parabolicDish.lx;
+        rejectRef.current = rejectChange(parabolicDish, value);
+        if (rejectRef.current) {
+          rejectedValue.current = value;
+          setInputDiameter(oldDiameter);
+        } else {
+          const undoableChange = {
+            name: 'Set Parabolic Dish Diameter',
+            timestamp: Date.now(),
+            oldValue: oldDiameter,
+            newValue: value,
+            changedElementId: parabolicDish.id,
+            undo: () => {
+              updateLxById(undoableChange.changedElementId, undoableChange.oldValue as number);
+              updateLyById(undoableChange.changedElementId, undoableChange.oldValue as number);
+            },
+            redo: () => {
+              updateLxById(undoableChange.changedElementId, undoableChange.newValue as number);
+              updateLyById(undoableChange.changedElementId, undoableChange.newValue as number);
+            },
+          } as UndoableChange;
+          addUndoable(undoableChange);
+          updateLxById(parabolicDish.id, value);
+          updateLyById(parabolicDish.id, value);
+          setApplyCount(applyCount + 1);
         }
     }
     setUpdateFlag(!updateFlag);

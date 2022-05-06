@@ -17,6 +17,7 @@ import { ZERO_TOLERANCE } from '../../../constants';
 const ParabolicTroughPoleHeightInput = ({ setDialogVisible }: { setDialogVisible: (b: boolean) => void }) => {
   const language = useStore(Selector.language);
   const elements = useStore(Selector.elements);
+  const getElementById = useStore(Selector.getElementById);
   const updatePoleHeightById = useStore(Selector.updateSolarCollectorPoleHeightById);
   const updatePoleHeightAboveFoundation = useStore(Selector.updateSolarCollectorPoleHeightAboveFoundation);
   const updatePoleHeightForAll = useStore(Selector.updateSolarCollectorPoleHeightForAll);
@@ -186,30 +187,29 @@ const ParabolicTroughPoleHeightInput = ({ setDialogVisible }: { setDialogVisible
         }
         break;
       default:
-        if (parabolicTrough) {
-          const oldPoleHeight = parabolicTrough.poleHeight;
-          rejectRef.current = 0.5 * parabolicTrough.lx * Math.abs(Math.sin(parabolicTrough.tiltAngle)) > value;
-          if (rejectRef.current) {
-            rejectedValue.current = value;
-            setInputPoleHeight(oldPoleHeight);
-          } else {
-            const undoableChange = {
-              name: 'Set Parabolic Trough Pole Height',
-              timestamp: Date.now(),
-              oldValue: oldPoleHeight,
-              newValue: value,
-              changedElementId: parabolicTrough.id,
-              undo: () => {
-                updatePoleHeightById(undoableChange.changedElementId, undoableChange.oldValue as number);
-              },
-              redo: () => {
-                updatePoleHeightById(undoableChange.changedElementId, undoableChange.newValue as number);
-              },
-            } as UndoableChange;
-            addUndoable(undoableChange);
-            updatePoleHeightById(parabolicTrough.id, value);
-            setApplyCount(applyCount + 1);
-          }
+        const p = getElementById(parabolicTrough.id) as ParabolicTroughModel;
+        const oldPoleHeight = p ? p.poleHeight : parabolicTrough.poleHeight;
+        rejectRef.current = 0.5 * parabolicTrough.lx * Math.abs(Math.sin(parabolicTrough.tiltAngle)) > value;
+        if (rejectRef.current) {
+          rejectedValue.current = value;
+          setInputPoleHeight(oldPoleHeight);
+        } else {
+          const undoableChange = {
+            name: 'Set Parabolic Trough Pole Height',
+            timestamp: Date.now(),
+            oldValue: oldPoleHeight,
+            newValue: value,
+            changedElementId: parabolicTrough.id,
+            undo: () => {
+              updatePoleHeightById(undoableChange.changedElementId, undoableChange.oldValue as number);
+            },
+            redo: () => {
+              updatePoleHeightById(undoableChange.changedElementId, undoableChange.newValue as number);
+            },
+          } as UndoableChange;
+          addUndoable(undoableChange);
+          updatePoleHeightById(parabolicTrough.id, value);
+          setApplyCount(applyCount + 1);
         }
     }
     setUpdateFlag(!updateFlag);

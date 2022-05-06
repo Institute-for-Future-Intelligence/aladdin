@@ -174,25 +174,25 @@ const HeliostatTowerSelection = ({ setDialogVisible }: { setDialogVisible: (b: b
         }
         break;
       default:
-        if (heliostat) {
-          const oldValue = heliostat.towerId;
-          const undoableChange = {
-            name: 'Set Tower for Heliostat',
-            timestamp: Date.now(),
-            oldValue: oldValue,
-            newValue: value,
-            changedElementId: heliostat.id,
-            undo: () => {
-              updateById(undoableChange.changedElementId, undoableChange.oldValue as string);
-            },
-            redo: () => {
-              updateById(undoableChange.changedElementId, undoableChange.newValue as string);
-            },
-          } as UndoableChange;
-          addUndoable(undoableChange);
-          updateById(heliostat.id, value);
-          setApplyCount(applyCount + 1);
-        }
+        // selected element may be outdated, make sure that we get the latest
+        const h = getElementById(heliostat.id) as HeliostatModel;
+        const oldValue = h ? h.towerId : heliostat.towerId;
+        const undoableChange = {
+          name: 'Set Tower for Heliostat',
+          timestamp: Date.now(),
+          oldValue: oldValue,
+          newValue: value,
+          changedElementId: heliostat.id,
+          undo: () => {
+            updateById(undoableChange.changedElementId, undoableChange.oldValue as string);
+          },
+          redo: () => {
+            updateById(undoableChange.changedElementId, undoableChange.newValue as string);
+          },
+        } as UndoableChange;
+        addUndoable(undoableChange);
+        updateById(heliostat.id, value);
+        setApplyCount(applyCount + 1);
     }
     setUpdateFlag(!updateFlag);
   };

@@ -18,6 +18,7 @@ import { Util } from '../../../Util';
 const ParabolicTroughModuleLengthInput = ({ setDialogVisible }: { setDialogVisible: (b: boolean) => void }) => {
   const language = useStore(Selector.language);
   const elements = useStore(Selector.elements);
+  const getElementById = useStore(Selector.getElementById);
   const updateModuleLengthById = useStore(Selector.updateModuleLengthById);
   const updateModuleLengthAboveFoundation = useStore(Selector.updateModuleLengthAboveFoundation);
   const updateModuleLengthForAll = useStore(Selector.updateModuleLengthForAll);
@@ -193,30 +194,29 @@ const ParabolicTroughModuleLengthInput = ({ setDialogVisible }: { setDialogVisib
         }
         break;
       default:
-        if (parabolicTrough) {
-          const oldModuleLength = parabolicTrough.moduleLength;
-          rejectRef.current = rejectChange(parabolicTrough, value);
-          if (rejectRef.current) {
-            rejectedValue.current = value;
-            setInputModuleLength(oldModuleLength);
-          } else {
-            const undoableChange = {
-              name: 'Set Parabolic Trough Module Length',
-              timestamp: Date.now(),
-              oldValue: oldModuleLength,
-              newValue: value,
-              changedElementId: parabolicTrough.id,
-              undo: () => {
-                updateModuleLengthById(undoableChange.changedElementId, undoableChange.oldValue as number);
-              },
-              redo: () => {
-                updateModuleLengthById(undoableChange.changedElementId, undoableChange.newValue as number);
-              },
-            } as UndoableChange;
-            addUndoable(undoableChange);
-            updateModuleLengthById(parabolicTrough.id, value);
-            setApplyCount(applyCount + 1);
-          }
+        const p = getElementById(parabolicTrough.id) as ParabolicTroughModel;
+        const oldModuleLength = p ? p.moduleLength : parabolicTrough.moduleLength;
+        rejectRef.current = rejectChange(parabolicTrough, value);
+        if (rejectRef.current) {
+          rejectedValue.current = value;
+          setInputModuleLength(oldModuleLength);
+        } else {
+          const undoableChange = {
+            name: 'Set Parabolic Trough Module Length',
+            timestamp: Date.now(),
+            oldValue: oldModuleLength,
+            newValue: value,
+            changedElementId: parabolicTrough.id,
+            undo: () => {
+              updateModuleLengthById(undoableChange.changedElementId, undoableChange.oldValue as number);
+            },
+            redo: () => {
+              updateModuleLengthById(undoableChange.changedElementId, undoableChange.newValue as number);
+            },
+          } as UndoableChange;
+          addUndoable(undoableChange);
+          updateModuleLengthById(parabolicTrough.id, value);
+          setApplyCount(applyCount + 1);
         }
     }
     setUpdateFlag(!updateFlag);

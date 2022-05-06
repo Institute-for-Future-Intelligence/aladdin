@@ -21,6 +21,7 @@ import { Util } from '../../../Util';
 const FresnelReflectorLengthInput = ({ setDialogVisible }: { setDialogVisible: (b: boolean) => void }) => {
   const language = useStore(Selector.language);
   const elements = useStore(Selector.elements);
+  const getElementById = useStore(Selector.getElementById);
   const updateLyById = useStore(Selector.updateElementLyById);
   const updateLyAboveFoundation = useStore(Selector.updateElementLyAboveFoundation);
   const updateLyForAll = useStore(Selector.updateElementLyForAll);
@@ -200,30 +201,30 @@ const FresnelReflectorLengthInput = ({ setDialogVisible }: { setDialogVisible: (
         }
         break;
       default:
-        if (fresnelReflector) {
-          const oldLength = fresnelReflector.ly;
-          rejectRef.current = rejectChange(fresnelReflector, value);
-          if (rejectRef.current) {
-            rejectedValue.current = value;
-            setInputLength(oldLength);
-          } else {
-            const undoableChange = {
-              name: 'Set Fresnel Reflector Length',
-              timestamp: Date.now(),
-              oldValue: oldLength,
-              newValue: value,
-              changedElementId: fresnelReflector.id,
-              undo: () => {
-                updateLyById(undoableChange.changedElementId, undoableChange.oldValue as number);
-              },
-              redo: () => {
-                updateLyById(undoableChange.changedElementId, undoableChange.newValue as number);
-              },
-            } as UndoableChange;
-            addUndoable(undoableChange);
-            updateLyById(fresnelReflector.id, value);
-            setApplyCount(applyCount + 1);
-          }
+        // selected element may be outdated, make sure that we get the latest
+        const f = getElementById(fresnelReflector.id) as FresnelReflectorModel;
+        const oldLength = f ? f.ly : fresnelReflector.ly;
+        rejectRef.current = rejectChange(fresnelReflector, value);
+        if (rejectRef.current) {
+          rejectedValue.current = value;
+          setInputLength(oldLength);
+        } else {
+          const undoableChange = {
+            name: 'Set Fresnel Reflector Length',
+            timestamp: Date.now(),
+            oldValue: oldLength,
+            newValue: value,
+            changedElementId: fresnelReflector.id,
+            undo: () => {
+              updateLyById(undoableChange.changedElementId, undoableChange.oldValue as number);
+            },
+            redo: () => {
+              updateLyById(undoableChange.changedElementId, undoableChange.newValue as number);
+            },
+          } as UndoableChange;
+          addUndoable(undoableChange);
+          updateLyById(fresnelReflector.id, value);
+          setApplyCount(applyCount + 1);
         }
     }
     setUpdateFlag(!updateFlag);

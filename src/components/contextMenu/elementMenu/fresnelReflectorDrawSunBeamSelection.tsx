@@ -16,6 +16,7 @@ import { UndoableChangeGroup } from '../../../undo/UndoableChangeGroup';
 const FresnelReflectorDrawSunBeamSelection = ({ setDialogVisible }: { setDialogVisible: (b: boolean) => void }) => {
   const language = useStore(Selector.language);
   const elements = useStore(Selector.elements);
+  const getElementById = useStore(Selector.getElementById);
   const updateById = useStore(Selector.updateSolarCollectorDrawSunBeamById);
   const updateAboveFoundation = useStore(Selector.updateSolarCollectorDrawSunBeamAboveFoundation);
   const updateForAll = useStore(Selector.updateSolarCollectorDrawSunBeamForAll);
@@ -148,25 +149,25 @@ const FresnelReflectorDrawSunBeamSelection = ({ setDialogVisible }: { setDialogV
         }
         break;
       default:
-        if (fresnelReflector) {
-          const oldValue = fresnelReflector.drawSunBeam;
-          const undoableChange = {
-            name: 'Draw Sun Beam for Fresnel Reflector',
-            timestamp: Date.now(),
-            oldValue: oldValue,
-            newValue: value,
-            changedElementId: fresnelReflector.id,
-            undo: () => {
-              updateById(undoableChange.changedElementId, undoableChange.oldValue as boolean);
-            },
-            redo: () => {
-              updateById(undoableChange.changedElementId, undoableChange.newValue as boolean);
-            },
-          } as UndoableChange;
-          addUndoable(undoableChange);
-          updateById(fresnelReflector.id, value);
-          setApplyCount(applyCount + 1);
-        }
+        // selected element may be outdated, make sure that we get the latest
+        const f = getElementById(fresnelReflector.id) as FresnelReflectorModel;
+        const oldValue = f ? f.drawSunBeam : fresnelReflector.drawSunBeam;
+        const undoableChange = {
+          name: 'Draw Sun Beam for Fresnel Reflector',
+          timestamp: Date.now(),
+          oldValue: oldValue,
+          newValue: value,
+          changedElementId: fresnelReflector.id,
+          undo: () => {
+            updateById(undoableChange.changedElementId, undoableChange.oldValue as boolean);
+          },
+          redo: () => {
+            updateById(undoableChange.changedElementId, undoableChange.newValue as boolean);
+          },
+        } as UndoableChange;
+        addUndoable(undoableChange);
+        updateById(fresnelReflector.id, value);
+        setApplyCount(applyCount + 1);
     }
     setUpdateFlag(!updateFlag);
   };

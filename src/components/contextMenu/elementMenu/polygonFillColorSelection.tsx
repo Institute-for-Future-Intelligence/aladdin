@@ -18,6 +18,7 @@ import { Util } from '../../../Util';
 const PolygonFillColorSelection = ({ setDialogVisible }: { setDialogVisible: (b: boolean) => void }) => {
   const language = useStore(Selector.language);
   const elements = useStore(Selector.elements);
+  const getElementById = useStore(Selector.getElementById);
   const getParent = useStore(Selector.getParent);
   const updateElementFillColorById = useStore(Selector.updateElementColorById);
   const updateElementFillColorOnSurface = useStore(Selector.updateElementColorOnSurface);
@@ -201,7 +202,8 @@ const PolygonFillColorSelection = ({ setDialogVisible }: { setDialogVisible: (b:
         }
         break;
       default:
-        const oldColor = polygon.color;
+        const p = getElementById(polygon.id) as PolygonModel;
+        const oldColor = p ? p.color : polygon.color;
         const undoableChange = {
           name: 'Set Fill Color of Selected Polygon',
           timestamp: Date.now(),

@@ -16,6 +16,7 @@ import { UndoableChangeGroup } from '../../../undo/UndoableChangeGroup';
 const ParabolicDishStructureTypeInput = ({ setDialogVisible }: { setDialogVisible: (b: boolean) => void }) => {
   const language = useStore(Selector.language);
   const elements = useStore(Selector.elements);
+  const getElementById = useStore(Selector.getElementById);
   const updateById = useStore(Selector.updateParabolicDishStructureTypeById);
   const updateAboveFoundation = useStore(Selector.updateParabolicDishStructureTypeAboveFoundation);
   const updateForAll = useStore(Selector.updateParabolicDishStructureTypeForAll);
@@ -146,25 +147,24 @@ const ParabolicDishStructureTypeInput = ({ setDialogVisible }: { setDialogVisibl
         }
         break;
       default:
-        if (parabolicDish) {
-          const oldStructureType = parabolicDish.structureType;
-          const undoableChange = {
-            name: 'Set Parabolic Dish Structure Type',
-            timestamp: Date.now(),
-            oldValue: oldStructureType,
-            newValue: type,
-            changedElementId: parabolicDish.id,
-            undo: () => {
-              updateById(undoableChange.changedElementId, undoableChange.oldValue as ParabolicDishStructureType);
-            },
-            redo: () => {
-              updateById(undoableChange.changedElementId, undoableChange.newValue as ParabolicDishStructureType);
-            },
-          } as UndoableChange;
-          addUndoable(undoableChange);
-          updateById(parabolicDish.id, type);
-          setApplyCount(applyCount + 1);
-        }
+        const p = getElementById(parabolicDish.id) as ParabolicDishModel;
+        const oldStructureType = p ? p.structureType : parabolicDish.structureType;
+        const undoableChange = {
+          name: 'Set Parabolic Dish Structure Type',
+          timestamp: Date.now(),
+          oldValue: oldStructureType,
+          newValue: type,
+          changedElementId: parabolicDish.id,
+          undo: () => {
+            updateById(undoableChange.changedElementId, undoableChange.oldValue as ParabolicDishStructureType);
+          },
+          redo: () => {
+            updateById(undoableChange.changedElementId, undoableChange.newValue as ParabolicDishStructureType);
+          },
+        } as UndoableChange;
+        addUndoable(undoableChange);
+        updateById(parabolicDish.id, type);
+        setApplyCount(applyCount + 1);
     }
     setUpdateFlag(!updateFlag);
   };

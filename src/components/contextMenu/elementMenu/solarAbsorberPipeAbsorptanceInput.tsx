@@ -17,6 +17,7 @@ import { ZERO_TOLERANCE } from 'src/constants';
 const SolarAbsorberPipeAbsorptanceInput = ({ setDialogVisible }: { setDialogVisible: (b: boolean) => void }) => {
   const language = useStore(Selector.language);
   const elements = useStore(Selector.elements);
+  const getElementById = useStore(Selector.getElementById);
   const updateById = useStore(Selector.updateSolarAbsorberPipeAbsorptanceById);
   const updateForAll = useStore(Selector.updateSolarAbsorberPipeAbsorptanceForAll);
   const foundation = useStore(Selector.selectedElement) as FoundationModel;
@@ -109,25 +110,28 @@ const SolarAbsorberPipeAbsorptanceInput = ({ setDialogVisible }: { setDialogVisi
         setApplyCount(applyCount + 1);
         break;
       default:
-        if (absorberPipe) {
-          const oldValue = absorberPipe.absorberAbsorptance ?? 0.95;
-          updateById(foundation.id, value);
-          const undoableChange = {
-            name: 'Set Absorber Pipe Absorptance on Foundation',
-            timestamp: Date.now(),
-            oldValue: oldValue,
-            newValue: value,
-            changedElementId: foundation.id,
-            undo: () => {
-              updateById(undoableChange.changedElementId, undoableChange.oldValue as number);
-            },
-            redo: () => {
-              updateById(undoableChange.changedElementId, undoableChange.newValue as number);
-            },
-          } as UndoableChange;
-          addUndoable(undoableChange);
-          setApplyCount(applyCount + 1);
-        }
+        // foundation selected element may be outdated, make sure that we get the latest
+        const f = getElementById(foundation.id) as FoundationModel;
+        const oldValue =
+          f && f.solarAbsorberPipe
+            ? f.solarAbsorberPipe.absorberAbsorptance ?? 0.95
+            : absorberPipe.absorberAbsorptance ?? 0.95;
+        updateById(foundation.id, value);
+        const undoableChange = {
+          name: 'Set Absorber Pipe Absorptance on Foundation',
+          timestamp: Date.now(),
+          oldValue: oldValue,
+          newValue: value,
+          changedElementId: foundation.id,
+          undo: () => {
+            updateById(undoableChange.changedElementId, undoableChange.oldValue as number);
+          },
+          redo: () => {
+            updateById(undoableChange.changedElementId, undoableChange.newValue as number);
+          },
+        } as UndoableChange;
+        addUndoable(undoableChange);
+        setApplyCount(applyCount + 1);
     }
     setUpdateFlag(!updateFlag);
   };

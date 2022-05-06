@@ -18,6 +18,7 @@ import { Util } from '../../../Util';
 const HeliostatWidthInput = ({ setDialogVisible }: { setDialogVisible: (b: boolean) => void }) => {
   const language = useStore(Selector.language);
   const elements = useStore(Selector.elements);
+  const getElementById = useStore(Selector.getElementById);
   const updateLyById = useStore(Selector.updateElementLyById);
   const updateLyAboveFoundation = useStore(Selector.updateElementLyAboveFoundation);
   const updateLyForAll = useStore(Selector.updateElementLyForAll);
@@ -193,30 +194,30 @@ const HeliostatWidthInput = ({ setDialogVisible }: { setDialogVisible: (b: boole
         }
         break;
       default:
-        if (heliostat) {
-          const oldValue = heliostat.ly;
-          rejectRef.current = rejectChange(heliostat, value);
-          if (rejectRef.current) {
-            rejectedValue.current = value;
-            setInputWidth(oldValue);
-          } else {
-            const undoableChange = {
-              name: 'Set Heliostat Width',
-              timestamp: Date.now(),
-              oldValue: oldValue,
-              newValue: value,
-              changedElementId: heliostat.id,
-              undo: () => {
-                updateLyById(undoableChange.changedElementId, undoableChange.oldValue as number);
-              },
-              redo: () => {
-                updateLyById(undoableChange.changedElementId, undoableChange.newValue as number);
-              },
-            } as UndoableChange;
-            addUndoable(undoableChange);
-            updateLyById(heliostat.id, value);
-            setApplyCount(applyCount + 1);
-          }
+        // selected element may be outdated, make sure that we get the latest
+        const h = getElementById(heliostat.id) as HeliostatModel;
+        const oldValue = h ? h.ly : heliostat.ly;
+        rejectRef.current = rejectChange(heliostat, value);
+        if (rejectRef.current) {
+          rejectedValue.current = value;
+          setInputWidth(oldValue);
+        } else {
+          const undoableChange = {
+            name: 'Set Heliostat Width',
+            timestamp: Date.now(),
+            oldValue: oldValue,
+            newValue: value,
+            changedElementId: heliostat.id,
+            undo: () => {
+              updateLyById(undoableChange.changedElementId, undoableChange.oldValue as number);
+            },
+            redo: () => {
+              updateLyById(undoableChange.changedElementId, undoableChange.newValue as number);
+            },
+          } as UndoableChange;
+          addUndoable(undoableChange);
+          updateLyById(heliostat.id, value);
+          setApplyCount(applyCount + 1);
         }
     }
     setUpdateFlag(!updateFlag);

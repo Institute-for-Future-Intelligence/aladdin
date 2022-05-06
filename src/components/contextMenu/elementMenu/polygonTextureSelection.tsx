@@ -28,6 +28,7 @@ import { Util } from '../../../Util';
 const PolygonTextureSelection = ({ setDialogVisible }: { setDialogVisible: (b: boolean) => void }) => {
   const language = useStore(Selector.language);
   const elements = useStore(Selector.elements);
+  const getElementById = useStore(Selector.getElementById);
   const getParent = useStore(Selector.getParent);
   const updatePolygonTextureById = useStore(Selector.updatePolygonTextureById);
   const updatePolygonTextureOnSurface = useStore(Selector.updatePolygonTextureOnSurface);
@@ -213,7 +214,8 @@ const PolygonTextureSelection = ({ setDialogVisible }: { setDialogVisible: (b: b
         }
         break;
       default:
-        const oldTexture = polygon.textureType;
+        const p = getElementById(polygon.id) as PolygonModel;
+        const oldTexture = p ? p.textureType : polygon.textureType;
         const undoableChange = {
           name: 'Set Texture of Selected Polygon',
           timestamp: Date.now(),

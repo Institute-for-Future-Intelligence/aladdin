@@ -17,6 +17,7 @@ import { ZERO_TOLERANCE } from '../../../constants';
 const ParabolicDishAbsorptanceInput = ({ setDialogVisible }: { setDialogVisible: (b: boolean) => void }) => {
   const language = useStore(Selector.language);
   const elements = useStore(Selector.elements);
+  const getElementById = useStore(Selector.getElementById);
   const updateById = useStore(Selector.updateParabolicCollectorAbsorptanceById);
   const updateAboveFoundation = useStore(Selector.updateParabolicCollectorAbsorptanceAboveFoundation);
   const updateForAll = useStore(Selector.updateParabolicCollectorAbsorptanceForAll);
@@ -141,25 +142,24 @@ const ParabolicDishAbsorptanceInput = ({ setDialogVisible }: { setDialogVisible:
         }
         break;
       default:
-        if (parabolicDish) {
-          const oldAbsorptance = parabolicDish.absorptance;
-          const undoableChange = {
-            name: 'Set Parabolic Dish Absorptance',
-            timestamp: Date.now(),
-            oldValue: oldAbsorptance,
-            newValue: value,
-            changedElementId: parabolicDish.id,
-            undo: () => {
-              updateById(undoableChange.changedElementId, undoableChange.oldValue as number);
-            },
-            redo: () => {
-              updateById(undoableChange.changedElementId, undoableChange.newValue as number);
-            },
-          } as UndoableChange;
-          addUndoable(undoableChange);
-          updateById(parabolicDish.id, value);
-          setApplyCount(applyCount + 1);
-        }
+        const p = getElementById(parabolicDish.id) as ParabolicDishModel;
+        const oldAbsorptance = p ? p.absorptance : parabolicDish.absorptance;
+        const undoableChange = {
+          name: 'Set Parabolic Dish Absorptance',
+          timestamp: Date.now(),
+          oldValue: oldAbsorptance,
+          newValue: value,
+          changedElementId: parabolicDish.id,
+          undo: () => {
+            updateById(undoableChange.changedElementId, undoableChange.oldValue as number);
+          },
+          redo: () => {
+            updateById(undoableChange.changedElementId, undoableChange.newValue as number);
+          },
+        } as UndoableChange;
+        addUndoable(undoableChange);
+        updateById(parabolicDish.id, value);
+        setApplyCount(applyCount + 1);
     }
     setUpdateFlag(!updateFlag);
   };

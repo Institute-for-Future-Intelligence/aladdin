@@ -17,6 +17,7 @@ import { ZERO_TOLERANCE } from '../../../constants';
 const HeliostatReflectanceInput = ({ setDialogVisible }: { setDialogVisible: (b: boolean) => void }) => {
   const language = useStore(Selector.language);
   const elements = useStore(Selector.elements);
+  const getElementById = useStore(Selector.getElementById);
   const updateById = useStore(Selector.updateCspReflectanceById);
   const updateAboveFoundation = useStore(Selector.updateCspReflectanceAboveFoundation);
   const updateForAll = useStore(Selector.updateCspReflectanceForAll);
@@ -141,25 +142,25 @@ const HeliostatReflectanceInput = ({ setDialogVisible }: { setDialogVisible: (b:
         }
         break;
       default:
-        if (heliostat) {
-          const oldReflectance = heliostat.reflectance;
-          const undoableChange = {
-            name: 'Set Heliostat Reflectance',
-            timestamp: Date.now(),
-            oldValue: oldReflectance,
-            newValue: value,
-            changedElementId: heliostat.id,
-            undo: () => {
-              updateById(undoableChange.changedElementId, undoableChange.oldValue as number);
-            },
-            redo: () => {
-              updateById(undoableChange.changedElementId, undoableChange.newValue as number);
-            },
-          } as UndoableChange;
-          addUndoable(undoableChange);
-          updateById(heliostat.id, value);
-          setApplyCount(applyCount + 1);
-        }
+        // selected element may be outdated, make sure that we get the latest
+        const h = getElementById(heliostat.id) as HeliostatModel;
+        const oldReflectance = h ? h.reflectance : heliostat.reflectance;
+        const undoableChange = {
+          name: 'Set Heliostat Reflectance',
+          timestamp: Date.now(),
+          oldValue: oldReflectance,
+          newValue: value,
+          changedElementId: heliostat.id,
+          undo: () => {
+            updateById(undoableChange.changedElementId, undoableChange.oldValue as number);
+          },
+          redo: () => {
+            updateById(undoableChange.changedElementId, undoableChange.newValue as number);
+          },
+        } as UndoableChange;
+        addUndoable(undoableChange);
+        updateById(heliostat.id, value);
+        setApplyCount(applyCount + 1);
     }
     setUpdateFlag(!updateFlag);
   };

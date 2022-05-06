@@ -17,6 +17,7 @@ import { ZERO_TOLERANCE } from '../../../constants';
 const FresnelReflectorReflectanceInput = ({ setDialogVisible }: { setDialogVisible: (b: boolean) => void }) => {
   const language = useStore(Selector.language);
   const elements = useStore(Selector.elements);
+  const getElementById = useStore(Selector.getElementById);
   const updateById = useStore(Selector.updateCspReflectanceById);
   const updateAboveFoundation = useStore(Selector.updateCspReflectanceAboveFoundation);
   const updateForAll = useStore(Selector.updateCspReflectanceForAll);
@@ -145,25 +146,25 @@ const FresnelReflectorReflectanceInput = ({ setDialogVisible }: { setDialogVisib
         }
         break;
       default:
-        if (fresnelReflector) {
-          const oldReflectance = fresnelReflector.reflectance;
-          const undoableChange = {
-            name: 'Set Fresnel Reflector Reflectance',
-            timestamp: Date.now(),
-            oldValue: oldReflectance,
-            newValue: value,
-            changedElementId: fresnelReflector.id,
-            undo: () => {
-              updateById(undoableChange.changedElementId, undoableChange.oldValue as number);
-            },
-            redo: () => {
-              updateById(undoableChange.changedElementId, undoableChange.newValue as number);
-            },
-          } as UndoableChange;
-          addUndoable(undoableChange);
-          updateById(fresnelReflector.id, value);
-          setApplyCount(applyCount + 1);
-        }
+        // selected element may be outdated, make sure that we get the latest
+        const f = getElementById(fresnelReflector.id) as FresnelReflectorModel;
+        const oldReflectance = f ? f.reflectance : fresnelReflector.reflectance;
+        const undoableChange = {
+          name: 'Set Fresnel Reflector Reflectance',
+          timestamp: Date.now(),
+          oldValue: oldReflectance,
+          newValue: value,
+          changedElementId: fresnelReflector.id,
+          undo: () => {
+            updateById(undoableChange.changedElementId, undoableChange.oldValue as number);
+          },
+          redo: () => {
+            updateById(undoableChange.changedElementId, undoableChange.newValue as number);
+          },
+        } as UndoableChange;
+        addUndoable(undoableChange);
+        updateById(fresnelReflector.id, value);
+        setApplyCount(applyCount + 1);
     }
     setUpdateFlag(!updateFlag);
   };

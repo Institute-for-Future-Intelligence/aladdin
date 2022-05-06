@@ -21,6 +21,7 @@ import { Util } from '../../../Util';
 const ParabolicTroughLengthInput = ({ setDialogVisible }: { setDialogVisible: (b: boolean) => void }) => {
   const language = useStore(Selector.language);
   const elements = useStore(Selector.elements);
+  const getElementById = useStore(Selector.getElementById);
   const updateLyById = useStore(Selector.updateElementLyById);
   const updateLyAboveFoundation = useStore(Selector.updateElementLyAboveFoundation);
   const updateLyForAll = useStore(Selector.updateElementLyForAll);
@@ -196,30 +197,29 @@ const ParabolicTroughLengthInput = ({ setDialogVisible }: { setDialogVisible: (b
         }
         break;
       default:
-        if (parabolicTrough) {
-          const oldLength = parabolicTrough.ly;
-          rejectRef.current = rejectChange(parabolicTrough, value);
-          if (rejectRef.current) {
-            rejectedValue.current = value;
-            setInputLength(oldLength);
-          } else {
-            const undoableChange = {
-              name: 'Set Parabolic Trough Length',
-              timestamp: Date.now(),
-              oldValue: oldLength,
-              newValue: value,
-              changedElementId: parabolicTrough.id,
-              undo: () => {
-                updateLyById(undoableChange.changedElementId, undoableChange.oldValue as number);
-              },
-              redo: () => {
-                updateLyById(undoableChange.changedElementId, undoableChange.newValue as number);
-              },
-            } as UndoableChange;
-            addUndoable(undoableChange);
-            updateLyById(parabolicTrough.id, value);
-            setApplyCount(applyCount + 1);
-          }
+        const p = getElementById(parabolicTrough.id) as ParabolicTroughModel;
+        const oldLength = p ? p.ly : parabolicTrough.ly;
+        rejectRef.current = rejectChange(parabolicTrough, value);
+        if (rejectRef.current) {
+          rejectedValue.current = value;
+          setInputLength(oldLength);
+        } else {
+          const undoableChange = {
+            name: 'Set Parabolic Trough Length',
+            timestamp: Date.now(),
+            oldValue: oldLength,
+            newValue: value,
+            changedElementId: parabolicTrough.id,
+            undo: () => {
+              updateLyById(undoableChange.changedElementId, undoableChange.oldValue as number);
+            },
+            redo: () => {
+              updateLyById(undoableChange.changedElementId, undoableChange.newValue as number);
+            },
+          } as UndoableChange;
+          addUndoable(undoableChange);
+          updateLyById(parabolicTrough.id, value);
+          setApplyCount(applyCount + 1);
         }
     }
     setUpdateFlag(!updateFlag);

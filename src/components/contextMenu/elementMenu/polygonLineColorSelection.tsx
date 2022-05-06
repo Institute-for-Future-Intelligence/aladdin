@@ -18,6 +18,7 @@ import { Util } from '../../../Util';
 const PolygonLineColorSelection = ({ setDialogVisible }: { setDialogVisible: (b: boolean) => void }) => {
   const language = useStore(Selector.language);
   const elements = useStore(Selector.elements);
+  const getElementById = useStore(Selector.getElementById);
   const getParent = useStore(Selector.getParent);
   const updateElementLineColorById = useStore(Selector.updateElementLineColorById);
   const updateElementLineColorOnSurface = useStore(Selector.updateElementLineColorOnSurface);
@@ -201,7 +202,8 @@ const PolygonLineColorSelection = ({ setDialogVisible }: { setDialogVisible: (b:
         }
         break;
       default:
-        const oldColor = polygon.lineColor;
+        const p = getElementById(polygon.id) as PolygonModel;
+        const oldColor = p ? p.lineColor : polygon.lineColor;
         const undoableChange = {
           name: 'Set Line Color of Selected Polygon',
           timestamp: Date.now(),

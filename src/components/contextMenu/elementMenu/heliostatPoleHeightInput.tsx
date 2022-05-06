@@ -17,6 +17,7 @@ import { HeliostatModel } from '../../../models/HeliostatModel';
 const HeliostatPoleHeightInput = ({ setDialogVisible }: { setDialogVisible: (b: boolean) => void }) => {
   const language = useStore(Selector.language);
   const elements = useStore(Selector.elements);
+  const getElementById = useStore(Selector.getElementById);
   const updatePoleHeightById = useStore(Selector.updateSolarCollectorPoleHeightById);
   const updatePoleHeightAboveFoundation = useStore(Selector.updateSolarCollectorPoleHeightAboveFoundation);
   const updatePoleHeightForAll = useStore(Selector.updateSolarCollectorPoleHeightForAll);
@@ -186,31 +187,31 @@ const HeliostatPoleHeightInput = ({ setDialogVisible }: { setDialogVisible: (b: 
         }
         break;
       default:
-        if (heliostat) {
-          const oldPoleHeight = heliostat.poleHeight;
-          rejectRef.current =
-            0.5 * Math.max(heliostat.lx, heliostat.ly) * Math.abs(Math.sin(heliostat.tiltAngle)) > value;
-          if (rejectRef.current) {
-            rejectedValue.current = value;
-            setInputPoleHeight(oldPoleHeight);
-          } else {
-            const undoableChange = {
-              name: 'Set Heliostat Pole Height',
-              timestamp: Date.now(),
-              oldValue: oldPoleHeight,
-              newValue: value,
-              changedElementId: heliostat.id,
-              undo: () => {
-                updatePoleHeightById(undoableChange.changedElementId, undoableChange.oldValue as number);
-              },
-              redo: () => {
-                updatePoleHeightById(undoableChange.changedElementId, undoableChange.newValue as number);
-              },
-            } as UndoableChange;
-            addUndoable(undoableChange);
-            updatePoleHeightById(heliostat.id, value);
-            setApplyCount(applyCount + 1);
-          }
+        // selected element may be outdated, make sure that we get the latest
+        const h = getElementById(heliostat.id) as HeliostatModel;
+        const oldPoleHeight = h ? h.poleHeight : heliostat.poleHeight;
+        rejectRef.current =
+          0.5 * Math.max(heliostat.lx, heliostat.ly) * Math.abs(Math.sin(heliostat.tiltAngle)) > value;
+        if (rejectRef.current) {
+          rejectedValue.current = value;
+          setInputPoleHeight(oldPoleHeight);
+        } else {
+          const undoableChange = {
+            name: 'Set Heliostat Pole Height',
+            timestamp: Date.now(),
+            oldValue: oldPoleHeight,
+            newValue: value,
+            changedElementId: heliostat.id,
+            undo: () => {
+              updatePoleHeightById(undoableChange.changedElementId, undoableChange.oldValue as number);
+            },
+            redo: () => {
+              updatePoleHeightById(undoableChange.changedElementId, undoableChange.newValue as number);
+            },
+          } as UndoableChange;
+          addUndoable(undoableChange);
+          updatePoleHeightById(heliostat.id, value);
+          setApplyCount(applyCount + 1);
         }
     }
     setUpdateFlag(!updateFlag);

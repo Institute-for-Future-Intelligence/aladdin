@@ -17,6 +17,7 @@ import { ZERO_TOLERANCE } from '../../../constants';
 const FresnelReflectorPoleHeightInput = ({ setDialogVisible }: { setDialogVisible: (b: boolean) => void }) => {
   const language = useStore(Selector.language);
   const elements = useStore(Selector.elements);
+  const getElementById = useStore(Selector.getElementById);
   const updatePoleHeightById = useStore(Selector.updateSolarCollectorPoleHeightById);
   const updatePoleHeightAboveFoundation = useStore(Selector.updateSolarCollectorPoleHeightAboveFoundation);
   const updatePoleHeightForAll = useStore(Selector.updateSolarCollectorPoleHeightForAll);
@@ -190,30 +191,30 @@ const FresnelReflectorPoleHeightInput = ({ setDialogVisible }: { setDialogVisibl
         }
         break;
       default:
-        if (fresnelReflector) {
-          const oldPoleHeight = fresnelReflector.poleHeight;
-          rejectRef.current = 0.5 * fresnelReflector.lx * Math.abs(Math.sin(fresnelReflector.tiltAngle)) > value;
-          if (rejectRef.current) {
-            rejectedValue.current = value;
-            setInputPoleHeight(oldPoleHeight);
-          } else {
-            const undoableChange = {
-              name: 'Set Fresnel Reflector Pole Height',
-              timestamp: Date.now(),
-              oldValue: oldPoleHeight,
-              newValue: value,
-              changedElementId: fresnelReflector.id,
-              undo: () => {
-                updatePoleHeightById(undoableChange.changedElementId, undoableChange.oldValue as number);
-              },
-              redo: () => {
-                updatePoleHeightById(undoableChange.changedElementId, undoableChange.newValue as number);
-              },
-            } as UndoableChange;
-            addUndoable(undoableChange);
-            updatePoleHeightById(fresnelReflector.id, value);
-            setApplyCount(applyCount + 1);
-          }
+        // selected element may be outdated, make sure that we get the latest
+        const f = getElementById(fresnelReflector.id) as FresnelReflectorModel;
+        const oldPoleHeight = f ? f.poleHeight : fresnelReflector.poleHeight;
+        rejectRef.current = 0.5 * fresnelReflector.lx * Math.abs(Math.sin(fresnelReflector.tiltAngle)) > value;
+        if (rejectRef.current) {
+          rejectedValue.current = value;
+          setInputPoleHeight(oldPoleHeight);
+        } else {
+          const undoableChange = {
+            name: 'Set Fresnel Reflector Pole Height',
+            timestamp: Date.now(),
+            oldValue: oldPoleHeight,
+            newValue: value,
+            changedElementId: fresnelReflector.id,
+            undo: () => {
+              updatePoleHeightById(undoableChange.changedElementId, undoableChange.oldValue as number);
+            },
+            redo: () => {
+              updatePoleHeightById(undoableChange.changedElementId, undoableChange.newValue as number);
+            },
+          } as UndoableChange;
+          addUndoable(undoableChange);
+          updatePoleHeightById(fresnelReflector.id, value);
+          setApplyCount(applyCount + 1);
         }
     }
     setUpdateFlag(!updateFlag);

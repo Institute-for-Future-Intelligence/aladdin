@@ -18,6 +18,7 @@ import { Util } from '../../../Util';
 const HeliostatLengthInput = ({ setDialogVisible }: { setDialogVisible: (b: boolean) => void }) => {
   const language = useStore(Selector.language);
   const elements = useStore(Selector.elements);
+  const getElementById = useStore(Selector.getElementById);
   const updateLxById = useStore(Selector.updateElementLxById);
   const updateLxAboveFoundation = useStore(Selector.updateElementLxAboveFoundation);
   const updateLxForAll = useStore(Selector.updateElementLxForAll);
@@ -193,30 +194,30 @@ const HeliostatLengthInput = ({ setDialogVisible }: { setDialogVisible: (b: bool
         }
         break;
       default:
-        if (heliostat) {
-          const oldValue = heliostat.lx;
-          rejectRef.current = rejectChange(heliostat, value);
-          if (rejectRef.current) {
-            rejectedValue.current = value;
-            setInputLength(oldValue);
-          } else {
-            const undoableChange = {
-              name: 'Set Heliostat Length',
-              timestamp: Date.now(),
-              oldValue: oldValue,
-              newValue: value,
-              changedElementId: heliostat.id,
-              undo: () => {
-                updateLxById(undoableChange.changedElementId, undoableChange.oldValue as number);
-              },
-              redo: () => {
-                updateLxById(undoableChange.changedElementId, undoableChange.newValue as number);
-              },
-            } as UndoableChange;
-            addUndoable(undoableChange);
-            updateLxById(heliostat.id, value);
-            setApplyCount(applyCount + 1);
-          }
+        // selected element may be outdated, make sure that we get the latest
+        const h = getElementById(heliostat.id) as HeliostatModel;
+        const oldValue = h ? h.lx : heliostat.lx;
+        rejectRef.current = rejectChange(heliostat, value);
+        if (rejectRef.current) {
+          rejectedValue.current = value;
+          setInputLength(oldValue);
+        } else {
+          const undoableChange = {
+            name: 'Set Heliostat Length',
+            timestamp: Date.now(),
+            oldValue: oldValue,
+            newValue: value,
+            changedElementId: heliostat.id,
+            undo: () => {
+              updateLxById(undoableChange.changedElementId, undoableChange.oldValue as number);
+            },
+            redo: () => {
+              updateLxById(undoableChange.changedElementId, undoableChange.newValue as number);
+            },
+          } as UndoableChange;
+          addUndoable(undoableChange);
+          updateLxById(heliostat.id, value);
+          setApplyCount(applyCount + 1);
         }
     }
     setUpdateFlag(!updateFlag);
