@@ -90,6 +90,7 @@ const GambrelRoof = ({
   const mouse = useMemo(() => new Vector2(), []);
   const oldHeight = useRef<number>(h);
   const oldRidgeVal = useRef<number>(0);
+  const isPointerMovingRef = useRef(false);
 
   // set position and rotation
   const parent = getElementById(parentId);
@@ -579,6 +580,7 @@ const GambrelRoof = ({
             position={[topRidgeLeftPointV3.x, topRidgeLeftPointV3.y, topRidgeLeftPointV3.z]}
             args={[0.3]}
             onPointerDown={() => {
+              isPointerMovingRef.current = true;
               oldRidgeVal.current = topRidgeLeftPoint[0];
               setInterSectionPlane(topRidgeLeftPointV3, currentWallArray[3]);
               setRoofHandleType(RoofHandleType.TopLeft);
@@ -588,6 +590,7 @@ const GambrelRoof = ({
             position={[topRidgeRightPointV3.x, topRidgeRightPointV3.y, topRidgeRightPointV3.z]}
             args={[0.3]}
             onPointerDown={() => {
+              isPointerMovingRef.current = true;
               oldRidgeVal.current = topRidgeRightPoint[0];
               setInterSectionPlane(topRidgeRightPointV3, currentWallArray[1]);
               setRoofHandleType(RoofHandleType.TopRight);
@@ -597,6 +600,7 @@ const GambrelRoof = ({
             position={[topRidgeMidPointV3.x, topRidgeMidPointV3.y, topRidgeMidPointV3.z]}
             args={[0.3]}
             onPointerDown={() => {
+              isPointerMovingRef.current = true;
               setEnableIntersectionPlane(true);
               intersectionPlanePosition.set(topRidgeMidPointV3.x, topRidgeMidPointV3.y, h).add(centroid);
               if (parent) {
@@ -613,6 +617,7 @@ const GambrelRoof = ({
             position={[frontRidgeLeftPointV3.x, frontRidgeLeftPointV3.y, frontRidgeLeftPointV3.z]}
             args={[0.3]}
             onPointerDown={() => {
+              isPointerMovingRef.current = true;
               oldRidgeVal.current = frontRidgeLeftPoint[0];
               setInterSectionPlane(frontRidgeLeftPointV3, currentWallArray[3]);
               setRoofHandleType(RoofHandleType.FrontLeft);
@@ -622,6 +627,7 @@ const GambrelRoof = ({
             position={[frontRidgeRightPointV3.x, frontRidgeRightPointV3.y, frontRidgeRightPointV3.z]}
             args={[0.3]}
             onPointerDown={() => {
+              isPointerMovingRef.current = true;
               oldRidgeVal.current = frontRidgeRightPoint[0];
               setInterSectionPlane(frontRidgeRightPointV3, currentWallArray[1]);
               setRoofHandleType(RoofHandleType.FrontRight);
@@ -632,6 +638,7 @@ const GambrelRoof = ({
             position={[backRidgeLeftPointV3.x, backRidgeLeftPointV3.y, backRidgeLeftPointV3.z]}
             args={[0.3]}
             onPointerDown={() => {
+              isPointerMovingRef.current = true;
               oldRidgeVal.current = backRidgeLeftPoint[0];
               setInterSectionPlane(backRidgeLeftPointV3, currentWallArray[1]);
               setRoofHandleType(RoofHandleType.BackLeft);
@@ -641,6 +648,7 @@ const GambrelRoof = ({
             position={[backRidgeRightPointV3.x, backRidgeRightPointV3.y, backRidgeRightPointV3.z]}
             args={[0.3]}
             onPointerDown={() => {
+              isPointerMovingRef.current = true;
               oldRidgeVal.current = backRidgeRightPoint[0];
               setInterSectionPlane(backRidgeRightPointV3, currentWallArray[3]);
               setRoofHandleType(RoofHandleType.BackRight);
@@ -659,7 +667,7 @@ const GambrelRoof = ({
           position={intersectionPlanePosition}
           rotation={intersectionPlaneRotation}
           onPointerMove={(e) => {
-            if (intersectionPlaneRef.current) {
+            if (intersectionPlaneRef.current && isPointerMovingRef.current) {
               setRayCast(e);
               const intersects = ray.intersectObjects([intersectionPlaneRef.current]);
               if (intersects[0] && parent) {
@@ -815,6 +823,7 @@ const GambrelRoof = ({
                 break;
               }
             }
+            isPointerMovingRef.current = false;
             setEnableIntersectionPlane(false);
             setRoofHandleType(RoofHandleType.Null);
             useStoreRef.getState().setEnableOrbitController(true);

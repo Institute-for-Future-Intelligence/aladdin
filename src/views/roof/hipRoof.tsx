@@ -87,6 +87,7 @@ const HipRoof = ({
   const ray = useMemo(() => new Raycaster(), []);
   const mouse = useMemo(() => new Vector2(), []);
   const oldHeight = useRef<number>(h);
+  const isPointerMovingRef = useRef(false);
 
   useEffect(() => {
     if (h < minHeight) {
@@ -411,6 +412,7 @@ const HipRoof = ({
             position={[ridgeLeftPoint.x, ridgeLeftPoint.y, ridgeLeftPoint.z]}
             args={[0.3]}
             onPointerDown={() => {
+              isPointerMovingRef.current = true;
               setEnableIntersectionPlane(true);
               intersectionPlanePosition.set(ridgeLeftPoint.x, ridgeLeftPoint.y, h);
               if (parent && currentWallArray[0]) {
@@ -426,6 +428,7 @@ const HipRoof = ({
             position={[ridgeMidPoint.x, ridgeMidPoint.y, ridgeMidPoint.z]}
             args={[0.3]}
             onPointerDown={() => {
+              isPointerMovingRef.current = true;
               setEnableIntersectionPlane(true);
               intersectionPlanePosition.set(ridgeMidPoint.x, ridgeMidPoint.y, h);
               if (parent) {
@@ -442,6 +445,7 @@ const HipRoof = ({
             position={[ridgeRightPoint.x, ridgeRightPoint.y, ridgeRightPoint.z]}
             args={[0.3]}
             onPointerDown={() => {
+              isPointerMovingRef.current = true;
               setEnableIntersectionPlane(true);
               intersectionPlanePosition.set(ridgeRightPoint.x, ridgeRightPoint.y, h);
               if (parent && currentWallArray[0]) {
@@ -465,7 +469,7 @@ const HipRoof = ({
           position={intersectionPlanePosition}
           rotation={intersectionPlaneRotation}
           onPointerMove={(e) => {
-            if (intersectionPlaneRef.current) {
+            if (intersectionPlaneRef.current && isPointerMovingRef.current) {
               setRayCast(e);
               const intersects = ray.intersectObjects([intersectionPlaneRef.current]);
               if (intersects[0] && parent) {
@@ -541,6 +545,7 @@ const HipRoof = ({
                 );
               }
             }
+            isPointerMovingRef.current = false;
             setEnableIntersectionPlane(false);
             setRoofHandleType(RoofHandleType.Null);
             useStoreRef.getState().setEnableOrbitController(true);

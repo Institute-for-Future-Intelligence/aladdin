@@ -574,7 +574,6 @@ const MansardRoof = ({
               if (intersects[0] && parent) {
                 const point = intersects[0].point;
                 if (point.z < 0.001) {
-                  // todo: don't know why it happens
                   return;
                 }
                 switch (roofHandleType) {
