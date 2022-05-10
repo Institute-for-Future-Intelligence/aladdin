@@ -12,7 +12,7 @@ const Container = styled.div`
   bottom: 0;
   right: 0;
   height: 125px;
-  width: 200px;
+  width: 150px;
   pointer-events: none;
 `;
 

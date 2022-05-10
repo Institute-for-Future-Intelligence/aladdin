@@ -150,38 +150,36 @@ const CuboidColorSelection = ({ setDialogVisible }: { setDialogVisible: (b: bool
         setApplyCount(applyCount + 1);
         break;
       case Scope.OnlyThisObject:
-        if (cuboid) {
-          let oldColors;
-          if (cuboid.faceColors) {
-            oldColors = [...cuboid.faceColors];
-          } else {
-            const c = cuboid.color ?? 'gray';
-            oldColors = [c, c, c, c, c, c];
-          }
-          const undoableChange = {
-            name: 'Set Color for All Sides of Selected Cuboid',
-            timestamp: Date.now(),
-            oldValue: oldColors,
-            newValue: value,
-            changedElementId: cuboid.id,
-            undo: () => {
-              if (undoableChange.oldValue && Array.isArray(undoableChange.oldValue)) {
-                for (let i = 0; i < undoableChange.oldValue.length; i++) {
-                  updateCuboidColorBySide(i, undoableChange.changedElementId, undoableChange.oldValue[i] as string);
-                }
-              }
-            },
-            redo: () => {
-              updateCuboidColorById(undoableChange.changedElementId, undoableChange.newValue as string);
-            },
-          } as UndoableChange;
-          addUndoable(undoableChange);
-          updateCuboidColorById(cuboid.id, value);
-          setApplyCount(applyCount + 1);
+        let oldColors;
+        if (cuboid.faceColors) {
+          oldColors = [...cuboid.faceColors];
+        } else {
+          const c = cuboid.color ?? 'gray';
+          oldColors = [c, c, c, c, c, c];
         }
+        const undoableChange = {
+          name: 'Set Color for All Sides of Selected Cuboid',
+          timestamp: Date.now(),
+          oldValue: oldColors,
+          newValue: value,
+          changedElementId: cuboid.id,
+          undo: () => {
+            if (undoableChange.oldValue && Array.isArray(undoableChange.oldValue)) {
+              for (let i = 0; i < undoableChange.oldValue.length; i++) {
+                updateCuboidColorBySide(i, undoableChange.changedElementId, undoableChange.oldValue[i] as string);
+              }
+            }
+          },
+          redo: () => {
+            updateCuboidColorById(undoableChange.changedElementId, undoableChange.newValue as string);
+          },
+        } as UndoableChange;
+        addUndoable(undoableChange);
+        updateCuboidColorById(cuboid.id, value);
+        setApplyCount(applyCount + 1);
         break;
       default:
-        if (cuboid && selectedSideIndex >= 0) {
+        if (selectedSideIndex >= 0) {
           const oldColor = cuboid.faceColors ? cuboid.faceColors[selectedSideIndex] : cuboid.color;
           const undoableChange = {
             name: 'Set Color for Selected Side of Cuboid',

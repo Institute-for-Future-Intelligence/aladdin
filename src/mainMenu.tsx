@@ -52,7 +52,7 @@ import esES from 'antd/lib/locale/es_ES';
 import trTR from 'antd/lib/locale/tr_TR';
 import enUS from 'antd/lib/locale/en_US';
 
-import React, { useState } from 'react';
+import React, { useMemo, useState } from 'react';
 import { useStore } from './stores/common';
 import styled from 'styled-components';
 import { Checkbox, Dropdown, InputNumber, Menu, Modal, Radio, Space, Switch } from 'antd';
@@ -172,7 +172,46 @@ const MainMenu = ({ viewOnly, set2DView, resetView, zoomView, canvas }: MainMenu
   const [aboutUs, setAboutUs] = useState(false);
 
   const lang = { lng: language };
-  const isMac = Util.getOS()?.startsWith('Mac');
+  const isMac = Util.isMac();
+
+  const keyF2 = useMemo(() => {
+    const os = Util.getOS();
+    if (os) {
+      if (os.includes('OS X')) {
+        return 'fn+F2';
+      }
+      if (os.includes('Chrome')) {
+        return '🔍+➔';
+      }
+    }
+    return 'F2';
+  }, []);
+
+  const keyF4 = useMemo(() => {
+    const os = Util.getOS();
+    if (os) {
+      if (os.includes('OS X')) {
+        return 'fn+F4';
+      }
+      if (os.includes('Chrome')) {
+        return '🔍+⛶';
+      }
+    }
+    return 'F4';
+  }, []);
+
+  const keyHome = useMemo(() => {
+    const os = Util.getOS();
+    if (os) {
+      if (os.includes('OS X')) {
+        return 'Ctrl+Alt+H';
+      }
+      if (os.includes('Chrome')) {
+        return 'Ctrl+Alt+H';
+      }
+    }
+    return 'Ctrl+Home';
+  }, []);
 
   const openAboutUs = (on: boolean) => {
     setAboutUs(on);
@@ -939,7 +978,7 @@ const MainMenu = ({ viewOnly, set2DView, resetView, zoomView, canvas }: MainMenu
             style={{ paddingLeft: '36px' }}
           >
             {i18n.t('menu.view.ResetView', lang)}
-            <label style={{ paddingLeft: '2px', fontSize: 9 }}>(Ctrl+Home)</label>
+            <label style={{ paddingLeft: '2px', fontSize: 9 }}>({keyHome})</label>
           </Menu.Item>
         )}
         <Menu.Item
@@ -970,14 +1009,14 @@ const MainMenu = ({ viewOnly, set2DView, resetView, zoomView, canvas }: MainMenu
         <Menu.Item key={'orthographic-check-box'}>
           <Checkbox checked={orthographic} onChange={toggle2DView}>
             {i18n.t('menu.view.TwoDimensionalView', lang)}
-            <label style={{ paddingLeft: '2px', fontSize: 9 }}>(F2)</label>
+            <label style={{ paddingLeft: '2px', fontSize: 9 }}>({keyF2})</label>
           </Checkbox>
         </Menu.Item>
         {!orthographic && (
           <Menu.Item key={'auto-rotate-check-box'}>
             <Checkbox checked={autoRotate} onChange={toggleAutoRotate}>
               {i18n.t('menu.view.AutoRotate', lang)}
-              <label style={{ paddingLeft: '2px', fontSize: 9 }}>(F4)</label>
+              <label style={{ paddingLeft: '2px', fontSize: 9 }}>({keyF4})</label>
             </Checkbox>
           </Menu.Item>
         )}

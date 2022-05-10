@@ -32,7 +32,7 @@ const Compass = () => {
   }, []);
 
   return (
-    <group ref={compassRef} name={'Compass'}>
+    <group ref={compassRef} name={'Compass'} scale={0.85}>
       <mesh position={[-0.2, 2, 0]} material={textMaterial}>
         <textGeometry args={['N', textGeometryParams]} />
       </mesh>

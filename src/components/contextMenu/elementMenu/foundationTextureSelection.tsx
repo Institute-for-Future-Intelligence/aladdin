@@ -112,8 +112,8 @@ const FoundationTextureSelection = ({ setDialogVisible }: { setDialogVisible: (b
         break;
       default:
         // foundation via selected element may be outdated, make sure that we get the latest
-        const f = getElementById(foundation.id);
-        const oldTexture = f ? (f as FoundationModel).textureType : foundation.textureType;
+        const f = getElementById(foundation.id) as FoundationModel;
+        const oldTexture = f ? f.textureType : foundation.textureType;
         const undoableChange = {
           name: 'Set Texture of Selected Foundation',
           timestamp: Date.now(),

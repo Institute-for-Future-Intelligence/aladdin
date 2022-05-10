@@ -20,7 +20,7 @@ export const Paste = ({ paddingLeft = '36px', keyName }: { paddingLeft?: string;
   const removeElementById = useStore(Selector.removeElementById);
   const addUndoable = useStore(Selector.addUndoable);
 
-  const isMac = Util.getOS()?.startsWith('Mac');
+  const isMac = Util.isMac();
 
   const paste = () => {
     if (elementsToPaste && elementsToPaste.length > 0) {
@@ -59,7 +59,7 @@ export const Copy = ({ paddingLeft = '36px', keyName }: { paddingLeft?: string; 
   const language = useStore(Selector.language);
   const copyElementById = useStore(Selector.copyElementById);
   const selectedElement = useStore(Selector.selectedElement);
-  const isMac = Util.getOS()?.startsWith('Mac');
+  const isMac = Util.isMac();
 
   const copyElement = () => {
     if (selectedElement) {
@@ -83,7 +83,7 @@ export const Cut = ({ paddingLeft = '36px', keyName }: { paddingLeft?: string; k
   const getElementById = useStore(Selector.getElementById);
   const addUndoable = useStore(Selector.addUndoable);
   const copyCutElements = useStore(Selector.copyCutElements);
-  const isMac = Util.getOS()?.startsWith('Mac');
+  const isMac = Util.isMac();
 
   const cut = () => {
     if (selectedElement) {

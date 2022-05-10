@@ -83,7 +83,7 @@ export const CuboidMenu = () => {
         {editable && <Cut keyName={'cuboid-cut'} />}
         <Lock keyName={'cuboid-lock'} />
 
-        {editable && counter.gotSome() && contextMenuObjectType && (
+        {counter.gotSome() && contextMenuObjectType && (
           <SubMenu key={'clear'} title={i18n.t('word.Clear', lang)} style={{ paddingLeft: '24px' }}>
             {counter.sensorCount > 0 && (
               <Menu.Item

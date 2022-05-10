@@ -2,11 +2,13 @@
  * @Copyright 2021-2022. Institute for Future Intelligence, Inc.
  */
 
-import React from 'react';
+import React, { useMemo } from 'react';
 import { useStore } from '../stores/common';
 import styled from 'styled-components';
 import i18n from '../i18n/i18n';
 import * as Selector from '../stores/selector';
+import { Util } from '../Util';
+import { fontSize } from 'html2canvas/dist/types/css/property-descriptors/font-size';
 
 const Container = styled.div`
   position: absolute;
@@ -49,6 +51,19 @@ const InstructionPanel = () => {
   const lang = { lng: language };
   const color = sunlightDirection.y > 0 ? 'navajowhite' : 'antiquewhite';
 
+  const keyF2 = useMemo(() => {
+    const os = Util.getOS();
+    if (os) {
+      if (os.includes('OS X')) {
+        return 'fn + F2';
+      }
+      if (os.includes('Chrome')) {
+        return '🔍 + ➔';
+      }
+    }
+    return 'F2';
+  }, []);
+
   return (
     <Container>
       <ColumnWrapper style={{ color: color, fontSize: '9px' }}>
@@ -69,7 +84,7 @@ const InstructionPanel = () => {
         {/*  </label>*/}
         {/*)}*/}
         <label>
-          <b>{i18n.t('instructionPanel.Toggle2D3D', lang)}</b>: {i18n.t('word.Press', lang)} F2
+          <b>{i18n.t('instructionPanel.Toggle2D3D', lang)}</b>: {i18n.t('word.Press', lang)} {keyF2}
         </label>
         {/*{!orthographic && (*/}
         {/*  <label>*/}

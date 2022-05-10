@@ -143,36 +143,34 @@ const CuboidTextureSelection = ({ setDialogVisible }: { setDialogVisible: (b: bo
         setApplyCount(applyCount + 1);
         break;
       case Scope.OnlyThisObject:
-        if (cuboid) {
-          const oldTextures = cuboid.textureTypes ? [...cuboid.textureTypes] : undefined;
-          const undoableChange = {
-            name: 'Set Texture for All Sides of Selected Cuboid',
-            timestamp: Date.now(),
-            oldValue: oldTextures,
-            newValue: value,
-            changedElementId: cuboid.id,
-            undo: () => {
-              if (undoableChange.oldValue && Array.isArray(undoableChange.oldValue)) {
-                for (let i = 0; i < undoableChange.oldValue.length; i++) {
-                  updateCuboidTextureBySide(
-                    i,
-                    undoableChange.changedElementId,
-                    undoableChange.oldValue[i] as CuboidTexture,
-                  );
-                }
+        const oldTextures = cuboid.textureTypes ? [...cuboid.textureTypes] : undefined;
+        const undoableChange = {
+          name: 'Set Texture for All Sides of Selected Cuboid',
+          timestamp: Date.now(),
+          oldValue: oldTextures,
+          newValue: value,
+          changedElementId: cuboid.id,
+          undo: () => {
+            if (undoableChange.oldValue && Array.isArray(undoableChange.oldValue)) {
+              for (let i = 0; i < undoableChange.oldValue.length; i++) {
+                updateCuboidTextureBySide(
+                  i,
+                  undoableChange.changedElementId,
+                  undoableChange.oldValue[i] as CuboidTexture,
+                );
               }
-            },
-            redo: () => {
-              updateCuboidTextureById(undoableChange.changedElementId, undoableChange.newValue as CuboidTexture);
-            },
-          } as UndoableChange;
-          addUndoable(undoableChange);
-          updateCuboidTextureById(cuboid.id, value);
-          setApplyCount(applyCount + 1);
-        }
+            }
+          },
+          redo: () => {
+            updateCuboidTextureById(undoableChange.changedElementId, undoableChange.newValue as CuboidTexture);
+          },
+        } as UndoableChange;
+        addUndoable(undoableChange);
+        updateCuboidTextureById(cuboid.id, value);
+        setApplyCount(applyCount + 1);
         break;
       default:
-        if (cuboid && selectedSideIndex >= 0) {
+        if (selectedSideIndex >= 0) {
           const oldTexture = cuboid.textureTypes ? cuboid.textureTypes[selectedSideIndex] : CuboidTexture.NoTexture;
           const undoableChange = {
             name: 'Set Texture for Selected Side of Cuboid',

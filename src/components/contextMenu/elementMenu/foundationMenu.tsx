@@ -143,7 +143,7 @@ export const FoundationMenu = () => {
         <Copy keyName={'foundation-copy'} />
         {editable && <Cut keyName={'foundation-cut'} />}
         <Lock keyName={'foundation-lock'} />
-        {editable && counter.gotSome() && contextMenuObjectType && (
+        {counter.gotSome() && contextMenuObjectType && (
           <SubMenu key={'clear'} title={i18n.t('word.Clear', lang)} style={{ paddingLeft: '24px' }}>
             {counter.wallCount > 0 && (
               <Menu.Item
