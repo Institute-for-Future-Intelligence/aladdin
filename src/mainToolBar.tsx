@@ -231,6 +231,7 @@ const MainToolBar = ({ viewOnly = false }: MainToolBarProps) => {
           .set({
             uid: user.uid,
             signFile: user.signFile,
+            since: dayjs(new Date()).format('MM/DD/YYYY hh:mm a'),
           })
           .then(() => {
             showInfo(i18n.t('message.YourAccountWasCreated', lang));

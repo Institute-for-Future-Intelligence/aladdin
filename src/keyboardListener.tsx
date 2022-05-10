@@ -98,7 +98,7 @@ const KeyboardListener = ({ canvas, set2DView, resetView, zoomView }: KeyboardLi
     'shift',
     'esc',
     'ctrl+home',
-    'meta+home',
+    'ctrl+alt+h',
     'ctrl+shift+o',
     'meta+shift+o',
     'ctrl+shift+s',
@@ -535,8 +535,8 @@ const KeyboardListener = ({ canvas, set2DView, resetView, zoomView }: KeyboardLi
           addUndoable(undoablePaste);
         }
         break;
+      case 'ctrl+alt+h': // for Mac and Chrome OS
       case 'ctrl+home':
-      case 'meta+home': // for Mac
         if (!orthographic) {
           // if not already reset
           if (
