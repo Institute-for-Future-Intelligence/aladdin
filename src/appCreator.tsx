@@ -29,6 +29,7 @@ import SolarPanelSimulation from './analysis/solarPanelSimulation';
 import YearlyLightSensorPanel from './panels/yearlyLightSensorPanel';
 import DailyLightSensorPanel from './panels/dailyLightSensorPanel';
 import MainToolBar from './mainToolBar';
+import ActionLogger from './actionLogger';
 import Spinner from './components/spinner';
 import StickyNotePanel from './panels/stickyNotePanel';
 import InstructionPanel from './panels/instructionPanel';
@@ -460,6 +461,7 @@ const AppCreator = ({ viewOnly = false }: AppCreatorProps) => {
       </DropdownContextMenu>
       <CompassContainer visible={!orthographic} />
       {!viewOnly && <AcceptCookie />}
+      {!viewOnly && <ActionLogger />}
     </div>
   );
 };

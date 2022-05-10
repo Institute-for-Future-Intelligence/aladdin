@@ -674,6 +674,8 @@ export interface CommonStoreState {
   enableFineGrid: boolean;
   setEnableFineGrid: (b: boolean) => void;
 
+  actionLoggerFlag: boolean;
+  currentUndoable: Undoable | undefined;
   showCloudFileTitleDialog: boolean;
   // we have to use the sure flip of an additional flag to ensure it triggers useEffect hook
   showCloudFileTitleDialogFlag: boolean;
@@ -863,6 +865,8 @@ export const useStore = create<CommonStoreState>(
           undoManager: new UndoManager(),
           addUndoable(undoable: Undoable) {
             immerSet((state: CommonStoreState) => {
+              state.actionLoggerFlag = !state.actionLoggerFlag;
+              state.currentUndoable = undoable;
               state.undoManager.add(undoable);
             });
           },
@@ -5070,6 +5074,8 @@ export const useStore = create<CommonStoreState>(
           saveLocalFileDialogVisible: false,
           localFileDialogRequested: false,
           pvModelDialogVisible: false,
+          actionLoggerFlag: false,
+          currentUndoable: undefined,
           showCloudFileTitleDialog: false,
           showCloudFileTitleDialogFlag: false,
           saveCloudFileFlag: false,

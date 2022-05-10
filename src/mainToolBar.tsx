@@ -462,25 +462,32 @@ const MainToolBar = ({ viewOnly = false }: MainToolBarProps) => {
             files
               .doc(newTitle)
               .set(data)
-              .then(() => files.doc(oldTitle).delete());
+              .then(() => {
+                files
+                  .doc(oldTitle)
+                  .delete()
+                  .then(() => {
+                    // TODO
+                  });
+                for (const f of cloudFileArray) {
+                  if (f.userid === userid && f.title === oldTitle) {
+                    f.title = newTitle;
+                    break;
+                  }
+                }
+                setCloudFileArray([...cloudFileArray]);
+                setCommonStore((state) => {
+                  if (state.cloudFile === oldTitle) {
+                    state.cloudFile = newTitle;
+                  }
+                });
+              });
           }
         }
       })
       .catch((error) => {
         showError(i18n.t('message.CannotRenameCloudFile', lang) + ': ' + error);
       });
-    for (const f of cloudFileArray) {
-      if (f.userid === userid && f.title === oldTitle) {
-        f.title = newTitle;
-        setCommonStore((state) => {
-          if (state.cloudFile === oldTitle) {
-            state.cloudFile = newTitle;
-          }
-        });
-        break;
-      }
-    }
-    setCloudFileArray([...cloudFileArray]);
   };
 
   const gotoAccountSettings = () => {

@@ -36,6 +36,11 @@ export interface User {
   signFile: boolean;
 }
 
+export enum FirebaseName {
+  FILES = 'Files',
+  LOG_DATA = 'Log Data',
+}
+
 export interface CloudFileInfo {
   readonly timestamp: number;
   readonly fileName: string;

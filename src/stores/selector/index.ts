@@ -44,6 +44,10 @@ export const language = (state: CommonStoreState) => state.language;
 
 export const locale = (state: CommonStoreState) => state.locale;
 
+export const actionLoggerFlag = (state: CommonStoreState) => state.actionLoggerFlag;
+
+export const currentUndoable = (state: CommonStoreState) => state.currentUndoable;
+
 export const showCloudFileTitleDialog = (state: CommonStoreState) => state.showCloudFileTitleDialog;
 
 export const showCloudFileTitleDialogFlag = (state: CommonStoreState) => state.showCloudFileTitleDialogFlag;
