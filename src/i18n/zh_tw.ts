@@ -868,8 +868,11 @@ export const i18n_zh_tw = {
     accountSettingsPanel: {
       MyAccountSettings: '我的賬戶設定',
       MyID: '我的ID',
+      ClickToCopyMyID: '點擊此處拷貝我的ID',
       IDInClipBoard: '您現在可以粘貼ID了。',
       StoreMyNameInMyFilesWhenSaving: '保存文檔時籤上我的大名',
+      DoYouReallyWantToShowYourNameInYourFiles: '您確定在您的文檔裡保存您的大名嗎？',
+      SignFileDisclaimer: '如果您選擇保存，您的大名可能被所有打開您的文檔的人看到。',
     },
 
     weatherPanel: {

@@ -886,8 +886,11 @@ export const i18n_tr = {
     accountSettingsPanel: {
       MyAccountSettings: 'Hesap Ayarlarým',
       MyID: 'My ID',
+      ClickToCopyMyID: 'Click to copy my ID',
       IDInClipBoard: 'Your ID was copied and is ready to paste.',
       StoreMyNameInMyFilesWhenSaving: 'Store my name in my files when saving',
+      DoYouReallyWantToShowYourNameInYourFiles: 'Do you really want to show your display name in your files?',
+      SignFileDisclaimer: 'If yes, your display name may be seen by anyone who can access your files.',
     },
 
     weatherPanel: {

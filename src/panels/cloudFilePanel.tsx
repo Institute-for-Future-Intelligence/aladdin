@@ -49,6 +49,7 @@ const ColumnWrapper = styled.div`
   overflow-x: auto;
   overflow-y: auto;
   resize: both;
+  direction: rtl;
 `;
 
 const Header = styled.div`
@@ -213,7 +214,7 @@ const CloudFilePanel = ({ cloudFileArray, openCloudFile, deleteCloudFile, rename
       >
         <Container ref={nodeRef}>
           <ColumnWrapper ref={wrapperRef}>
-            <Header className="handle">
+            <Header className="handle" style={{ direction: 'ltr' }}>
               <span>{i18n.t('cloudFilePanel.MyCloudFiles', lang)}</span>
               <span
                 style={{ cursor: 'pointer' }}
@@ -229,7 +230,7 @@ const CloudFilePanel = ({ cloudFileArray, openCloudFile, deleteCloudFile, rename
             </Header>
             <Table
               size={'small'}
-              style={{ width: '100%' }}
+              style={{ width: '100%', direction: 'ltr' }}
               dataSource={cloudFileArray}
               pagination={{
                 defaultPageSize: 5,

@@ -8,8 +8,11 @@ import { useStore } from '../stores/common';
 import * as Selector from '../stores/selector';
 import ReactDraggable, { DraggableEventHandler } from 'react-draggable';
 import i18n from '../i18n/i18n';
-import { Space, Switch } from 'antd';
+import { Modal, Space, Switch } from 'antd';
 import { copyTextToClipboard, showSuccess } from '../helpers';
+import { ExclamationCircleOutlined } from '@ant-design/icons';
+
+const { confirm } = Modal;
 
 const Container = styled.div`
   position: fixed;
@@ -28,7 +31,7 @@ const ColumnWrapper = styled.div`
   right: 0;
   top: 0;
   width: 400px;
-  height: 600px;
+  height: 300px;
   min-width: 400px;
   max-width: 800px;
   min-height: 200px;
@@ -41,6 +44,7 @@ const ColumnWrapper = styled.div`
   overflow-x: auto;
   overflow-y: auto;
   resize: both;
+  direction: rtl;
 `;
 
 const Header = styled.div`
@@ -123,7 +127,7 @@ const AccountSettingsPanel = () => {
       >
         <Container ref={nodeRef}>
           <ColumnWrapper ref={wrapperRef}>
-            <Header className="handle">
+            <Header className="handle" style={{ direction: 'ltr' }}>
               <span>{i18n.t('accountSettingsPanel.MyAccountSettings', lang)}</span>
               <span
                 style={{ cursor: 'pointer' }}
@@ -137,7 +141,7 @@ const AccountSettingsPanel = () => {
                 {i18n.t('word.Close', lang)}
               </span>
             </Header>
-            <Space style={{ paddingTop: '20px', paddingLeft: '20px' }}>
+            <Space style={{ paddingTop: '20px', paddingLeft: '20px', direction: 'ltr' }}>
               <Space
                 style={{
                   width: '50px',
@@ -154,18 +158,38 @@ const AccountSettingsPanel = () => {
                   }
                 }}
               >
-                {i18n.t('accountSettingsPanel.MyID', lang)}
+                <label title={i18n.t('accountSettingsPanel.ClickToCopyMyID', lang)}>
+                  {i18n.t('accountSettingsPanel.MyID', lang)}
+                </label>
               </Space>
               <Space style={{ paddingLeft: '6px' }}>{user.uid}</Space>
             </Space>
-            <Space style={{ paddingTop: '10px', paddingLeft: '20px' }}>
+            <Space style={{ paddingTop: '10px', paddingLeft: '20px', direction: 'ltr' }}>
               <Space style={{ width: '50px' }}>
                 <Switch
                   checked={user.signFile}
                   onChange={(checked) => {
-                    setCommonStore((state) => {
-                      state.user.signFile = checked;
-                    });
+                    if (checked) {
+                      confirm({
+                        title: i18n.t('accountSettingsPanel.DoYouReallyWantToShowYourNameInYourFiles', lang),
+                        icon: <ExclamationCircleOutlined />,
+                        content: i18n.t('accountSettingsPanel.SignFileDisclaimer', lang),
+                        onOk() {
+                          setCommonStore((state) => {
+                            state.user.signFile = true;
+                          });
+                        },
+                        onCancel() {
+                          setCommonStore((state) => {
+                            state.user.signFile = false;
+                          });
+                        },
+                      });
+                    } else {
+                      setCommonStore((state) => {
+                        state.user.signFile = false;
+                      });
+                    }
                   }}
                 />
               </Space>
