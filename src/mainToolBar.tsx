@@ -13,7 +13,7 @@ import firebase from 'firebase/app';
 import 'firebase/auth';
 import 'firebase/firestore';
 import { showError, showInfo } from './helpers';
-import { CloudFileInfo, ObjectType, User } from './types';
+import { CloudFileInfo, FirebaseName, ObjectType, User } from './types';
 import CloudFilePanel from './panels/cloudFilePanel';
 import Spinner from './components/spinner';
 import AccountSettingsPanel from './panels/accountSettingsPanel';
@@ -21,6 +21,7 @@ import i18n from './i18n/i18n';
 import MainToolBarButtons from './mainToolBarButtons';
 import Draggable, { DraggableBounds, DraggableData, DraggableEvent } from 'react-draggable';
 import { ExclamationCircleOutlined } from '@ant-design/icons';
+import { Util } from './Util';
 
 const ButtonsContainer = styled.div`
   position: absolute;
@@ -84,10 +85,14 @@ const MainToolBar = ({ viewOnly = false }: MainToolBarProps) => {
       messagingSenderId: process.env.REACT_APP_FIREBASE_MESSAGING_SENDER_ID,
       appId: process.env.REACT_APP_FIREBASE_APP_ID,
     };
-    if (!firebase.apps.length) {
+    let initialize = firebase.apps.length === 0; // no app, should initialize
+    if (firebase.apps.length === 1 && firebase.apps[0].name === FirebaseName.LOG_DATA) {
+      initialize = true; // if there is only the logger app, should initialize
+    }
+    if (initialize) {
       firebase.initializeApp(config);
     } else {
-      firebase.app(); // if already initialized, use that one
+      firebase.app(); // if already initialized, use the default one
     }
     // do not use firebase.auth().currentUser - currentUser might be null because the auth object has not finished initializing.
     // If you use an observer to keep track of the user's sign-in status, you don't need to handle this case.
@@ -192,7 +197,7 @@ const MainToolBar = ({ viewOnly = false }: MainToolBarProps) => {
             state.user.displayName = result.user.displayName;
             state.user.photoURL = result.user.photoURL;
             registerUser({ ...state.user }).then(() => {
-              // TODO
+              // ignore
             });
           }
         });
@@ -212,7 +217,7 @@ const MainToolBar = ({ viewOnly = false }: MainToolBarProps) => {
       .then((querySnapshot) => {
         for (const doc of querySnapshot.docs) {
           if (doc.id === user.uid) {
-            signFile = doc.data().signFile;
+            signFile = !!doc.data().signFile;
             return true;
           }
         }
@@ -230,8 +235,9 @@ const MainToolBar = ({ viewOnly = false }: MainToolBarProps) => {
           .doc(user.uid)
           .set({
             uid: user.uid,
-            signFile: user.signFile,
+            signFile: !!user.signFile, // don't listen to WS's suggestion to simplify it
             since: dayjs(new Date()).format('MM/DD/YYYY hh:mm a'),
+            os: Util.getOS(),
           })
           .then(() => {
             showInfo(i18n.t('message.YourAccountWasCreated', lang));

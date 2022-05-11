@@ -29,6 +29,7 @@ const Container = styled.div`
 
 const SimulationControlPanel = () => {
   const setCommonStore = useStore(Selector.set);
+  const loggable = useStore(Selector.loggable);
   const language = useStore(Selector.language);
   const simulationPaused = useStore(Selector.simulationPaused);
   const showDesignInfoPanel = useStore(Selector.viewState.showDesignInfoPanel);
@@ -70,6 +71,13 @@ const SimulationControlPanel = () => {
       state.runYearlySimulationForHeliostats = false;
       state.pauseDailySimulationForHeliostats = false;
       state.pauseYearlySimulationForHeliostats = false;
+
+      if (loggable) {
+        state.actionInfo = {
+          name: 'Cancel Simulation',
+          timestamp: new Date().getTime(),
+        };
+      }
     });
   };
 
@@ -120,6 +128,13 @@ const SimulationControlPanel = () => {
       if (state.runYearlySimulationForHeliostats) {
         state.pauseYearlySimulationForHeliostats = true;
       }
+
+      if (loggable) {
+        state.actionInfo = {
+          name: 'Pause Simulation',
+          timestamp: new Date().getTime(),
+        };
+      }
     });
   };
 
@@ -169,6 +184,13 @@ const SimulationControlPanel = () => {
       }
       if (state.runYearlySimulationForHeliostats) {
         state.pauseYearlySimulationForHeliostats = false;
+      }
+
+      if (loggable) {
+        state.actionInfo = {
+          name: 'Resume Simulation',
+          timestamp: new Date().getTime(),
+        };
       }
     });
   };

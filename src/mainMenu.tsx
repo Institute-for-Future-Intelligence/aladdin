@@ -543,7 +543,7 @@ const MainMenu = ({ viewOnly, set2DView, resetView, zoomView, canvas }: MainMenu
 
   const openHeliodonPanel = () => {
     const undoable = {
-      name: 'Open Heliodon Control Panel',
+      name: 'Open Sun and Time Settings Panel',
       timestamp: Date.now(),
       undo: () => {
         setCommonStore((state) => {
