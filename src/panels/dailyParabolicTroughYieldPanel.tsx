@@ -281,6 +281,10 @@ const DailyParabolicTroughYieldPanel = ({ city }: DailyParabolicTroughYieldPanel
                       state.pauseDailySimulationForParabolicTroughs = false;
                       state.simulationInProgress = true;
                       state.dailyParabolicTroughIndividualOutputs = checked;
+                      state.actionInfo = {
+                        name: 'Run Daily Simulation For Parabolic Troughs: ' + (checked ? 'Individual' : 'Total'),
+                        timestamp: new Date().getTime(),
+                      };
                     });
                   }, 100);
                 }}
@@ -302,6 +306,10 @@ const DailyParabolicTroughYieldPanel = ({ city }: DailyParabolicTroughYieldPanel
                     state.runDailySimulationForParabolicTroughs = true;
                     state.pauseDailySimulationForParabolicTroughs = false;
                     state.simulationInProgress = true;
+                    state.actionInfo = {
+                      name: 'Run Daily Simulation For Parabolic Troughs',
+                      timestamp: new Date().getTime(),
+                    };
                   });
                 }, 100);
               }}

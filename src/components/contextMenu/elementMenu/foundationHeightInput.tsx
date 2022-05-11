@@ -258,6 +258,7 @@ const FoundationHeightInput = ({ setDialogVisible }: { setDialogVisible: (b: boo
           oldChildrenParentIdMap: new Map(oldChildrenParentIdMapRef.current),
           newChildrenParentIdMap: new Map(newChildrenParentIdMapRef.current),
           changedElementId: foundation.id,
+          changedElementType: foundation.type,
           undo: () => {
             updateLzAndCz(undoableChange.changedElementId, undoableChange.oldValue as number);
             if (undoableChange.oldChildrenPositionsMap && undoableChange.oldChildrenPositionsMap.size > 0) {

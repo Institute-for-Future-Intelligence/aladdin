@@ -108,6 +108,7 @@ const CuboidAzimuthInput = ({ setDialogVisible }: { setDialogVisible: (b: boolea
           oldValue: oldAzimuth,
           newValue: value,
           changedElementId: cuboid.id,
+          changedElementType: cuboid.type,
           undo: () => {
             updateElementRotationById(undoableChange.changedElementId, 0, 0, -(undoableChange.oldValue as number));
           },

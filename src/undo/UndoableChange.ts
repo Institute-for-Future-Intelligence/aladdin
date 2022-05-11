@@ -3,7 +3,7 @@
  */
 
 import { Undoable } from './Undoable';
-import { CuboidTexture, LineStyle, ParabolicDishStructureType, SolarStructure } from '../types';
+import { CuboidTexture, LineStyle, ObjectType, ParabolicDishStructureType, SolarStructure } from '../types';
 import { Point2 } from '../models/Point2';
 import { Vector3 } from 'three';
 
@@ -29,6 +29,7 @@ export interface UndoableChange extends Undoable {
     | ParabolicDishStructureType
     | SolarStructure;
   changedElementId: string;
+  changedElementType?: ObjectType;
   changedSideIndex?: number;
   oldChildrenParentIdMap?: Map<string, string>;
   newChildrenParentIdMap?: Map<string, string>;

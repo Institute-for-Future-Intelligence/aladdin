@@ -116,6 +116,7 @@ const WallThicknessInput = ({ setDialogVisible }: { setDialogVisible: (b: boolea
             oldValue: oldThickness,
             newValue: value,
             changedElementId: wall.id,
+            changedElementType: wall.type,
             undo: () => {
               updateWallThicknessById(undoableChange.changedElementId, undoableChange.oldValue as number);
             },

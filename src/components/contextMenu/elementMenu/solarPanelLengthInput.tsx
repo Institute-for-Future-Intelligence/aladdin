@@ -329,6 +329,7 @@ const SolarPanelLengthInput = ({ setDialogVisible }: { setDialogVisible: (b: boo
             oldValue: oldLength,
             newValue: value,
             changedElementId: solarPanel.id,
+            changedElementType: solarPanel.type,
             undo: () => {
               updateSolarPanelLxById(undoableChange.changedElementId, undoableChange.oldValue as number);
             },

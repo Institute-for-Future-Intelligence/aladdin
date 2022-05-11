@@ -46,6 +46,8 @@ export const PolygonMenu = () => {
         name: 'Fill Polygon',
         timestamp: Date.now(),
         checked: !polygon.filled,
+        selectedElementId: polygon.id,
+        selectedElementType: ObjectType.Polygon,
         undo: () => {
           updatePolygonFilledById(polygon.id, !undoableCheck.checked);
         },

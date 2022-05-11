@@ -296,6 +296,10 @@ const DailyPvYieldPanel = ({ city }: DailyPvYieldPanelProps) => {
                           state.dailyPvIndividualOutputs = checked;
                           state.runDailySimulationForSolarPanels = true;
                           state.pauseDailySimulationForSolarPanels = false;
+                          state.actionInfo = {
+                            name: 'Run Daily Simulation For Solar Panels: ' + (checked ? 'Individual' : 'Total'),
+                            timestamp: new Date().getTime(),
+                          };
                         });
                       }, 100);
                     }}
@@ -317,6 +321,10 @@ const DailyPvYieldPanel = ({ city }: DailyPvYieldPanelProps) => {
                         state.simulationInProgress = true;
                         state.runDailySimulationForSolarPanels = true;
                         state.pauseDailySimulationForSolarPanels = false;
+                        state.actionInfo = {
+                          name: 'Run Daily Simulation For Solar Panels',
+                          timestamp: new Date().getTime(),
+                        };
                       });
                     }, 100);
                   }}

@@ -298,6 +298,10 @@ const DailySolarUpdraftTowerYieldPanel = ({ city }: DailySolarUpdraftTowerYieldP
                     state.runDailySimulationForUpdraftTower = true;
                     state.pauseDailySimulationForUpdraftTower = false;
                     state.simulationInProgress = true;
+                    state.actionInfo = {
+                      name: 'Run Daily Simulation For Solar Updraft Tower',
+                      timestamp: new Date().getTime(),
+                    };
                   });
                 }, 100);
               }}

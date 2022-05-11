@@ -210,6 +210,7 @@ const ParabolicTroughWidthInput = ({ setDialogVisible }: { setDialogVisible: (b:
             oldValue: oldWidth,
             newValue: value,
             changedElementId: parabolicTrough.id,
+            changedElementType: parabolicTrough.type,
             undo: () => {
               updateLxById(undoableChange.changedElementId, undoableChange.oldValue as number);
             },

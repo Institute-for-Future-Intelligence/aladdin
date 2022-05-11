@@ -1187,6 +1187,7 @@ const Foundation = ({
             oldValue: oldVerticesRef.current,
             newValue: newVerticesRef.current,
             changedElementId: elem.id,
+            changedElementType: elem.type,
             undo: () => {
               updatePolygonVerticesById(undoableEditPolygon.changedElementId, undoableEditPolygon.oldValue as Point2[]);
             },
@@ -1210,6 +1211,7 @@ const Foundation = ({
               name: 'Resize',
               timestamp: Date.now(),
               resizedElementId: grabRef.current.id,
+              resizedElementType: grabRef.current.type,
               oldCx: oldPositionRef.current.x,
               oldCy: oldPositionRef.current.y,
               oldCz: oldPositionRef.current.z,
@@ -1268,6 +1270,7 @@ const Foundation = ({
                   oldValue: oldAzimuthRef.current,
                   newValue: newAzimuthRef.current,
                   changedElementId: collector.id,
+                  changedElementType: collector.type,
                   undo: () => {
                     updateSolarCollectorRelativeAzimuthById(
                       undoableRotate.changedElementId,
@@ -1300,6 +1303,7 @@ const Foundation = ({
                 name: 'Move',
                 timestamp: Date.now(),
                 movedElementId: elem.id,
+                movedElementType: elem.type,
                 oldCx: oldPositionRef.current.x,
                 oldCy: oldPositionRef.current.y,
                 oldCz: oldPositionRef.current.z,

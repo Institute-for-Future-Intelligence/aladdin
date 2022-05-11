@@ -258,6 +258,7 @@ const CuboidHeightInput = ({ setDialogVisible }: { setDialogVisible: (b: boolean
           oldChildrenParentIdMap: new Map(oldChildrenParentIdMapRef.current),
           newChildrenParentIdMap: new Map(newChildrenParentIdMapRef.current),
           changedElementId: cuboid.id,
+          changedElementType: cuboid.type,
           undo: () => {
             updateLzAndCz(undoableChange.changedElementId, undoableChange.oldValue as number);
             if (undoableChange.oldChildrenPositionsMap && undoableChange.oldChildrenPositionsMap.size > 0) {

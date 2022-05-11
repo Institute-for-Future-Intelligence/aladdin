@@ -19,6 +19,7 @@ import ParabolicDishAbsorptanceInput from './parabolicDishAbsorptanceInput';
 import ParabolicDishOpticalEfficiencyInput from './parabolicDishOpticalEfficiencyInput';
 import ParabolicDishThermalEfficiencyInput from './parabolicDishThermalEfficiencyInput';
 import ParabolicDishStructureTypeInput from './parabolicDishStructureTypeInput';
+import { ObjectType } from '../../../types';
 
 export const ParabolicDishMenu = () => {
   const language = useStore(Selector.language);
@@ -54,6 +55,8 @@ export const ParabolicDishMenu = () => {
         name: 'Show Parabolic Dish Label',
         timestamp: Date.now(),
         checked: !parabolicDish.showLabel,
+        selectedElementId: parabolicDish.id,
+        selectedElementType: ObjectType.ParabolicDish,
         undo: () => {
           updateElementShowLabelById(parabolicDish.id, !undoableCheck.checked);
         },
@@ -76,6 +79,7 @@ export const ParabolicDishMenu = () => {
         oldValue: oldLabel,
         newValue: labelText,
         changedElementId: parabolicDish.id,
+        changedElementType: parabolicDish.type,
         undo: () => {
           updateElementLabelById(undoableChange.changedElementId, undoableChange.oldValue as string);
         },
@@ -95,6 +99,8 @@ export const ParabolicDishMenu = () => {
         name: 'Show Sun Beam',
         timestamp: Date.now(),
         checked: !parabolicDish.drawSunBeam,
+        selectedElementId: parabolicDish.id,
+        selectedElementType: ObjectType.ParabolicDish,
         undo: () => {
           updateSolarCollectorDrawSunBeamById(parabolicDish.id, !undoableCheck.checked);
         },

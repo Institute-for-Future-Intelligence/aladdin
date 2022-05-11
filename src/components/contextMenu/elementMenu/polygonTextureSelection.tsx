@@ -222,6 +222,7 @@ const PolygonTextureSelection = ({ setDialogVisible }: { setDialogVisible: (b: b
           oldValue: oldTexture,
           newValue: value,
           changedElementId: polygon.id,
+          changedElementType: polygon.type,
           undo: () => {
             updatePolygonTextureById(undoableChange.changedElementId, undoableChange.oldValue as PolygonTexture);
           },

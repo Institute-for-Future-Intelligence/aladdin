@@ -367,6 +367,7 @@ const SolarPanelOrientationSelection = ({ setDialogVisible }: { setDialogVisible
             oldValue: oldOrientation,
             newValue: value,
             changedElementId: solarPanel.id,
+            changedElementType: solarPanel.type,
             undo: () => {
               changeOrientation(undoableChange.oldValue as Orientation);
             },

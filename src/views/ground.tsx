@@ -298,6 +298,7 @@ const Ground = () => {
       name: 'Resize',
       timestamp: Date.now(),
       resizedElementId: grabRef.current.id,
+      resizedElementType: grabRef.current.type,
       oldCx: oldPositionRef.current.x,
       oldCy: oldPositionRef.current.y,
       oldCz: oldPositionRef.current.z,
@@ -481,6 +482,7 @@ const Ground = () => {
               name: 'Change Tree Height',
               timestamp: Date.now(),
               changedElementId: elem.id,
+              changedElementType: elem.type,
               oldValue: oldDimensionRef.current.z,
               newValue: elem.lz,
               undo: () => {
@@ -500,6 +502,7 @@ const Ground = () => {
               name: 'Change Tree Spread',
               timestamp: Date.now(),
               changedElementId: elem.id,
+              changedElementType: elem.type,
               oldValue: oldDimensionRef.current.x,
               newValue: elem.lx,
               undo: () => {
@@ -518,6 +521,7 @@ const Ground = () => {
           name: 'Change Wall Height',
           timestamp: Date.now(),
           changedElementId: elem.id,
+          changedElementType: elem.type,
           oldValue: oldDimensionRef.current.z,
           newValue: elem.lz,
           undo: () => {
@@ -753,6 +757,7 @@ const Ground = () => {
           name: 'Move',
           timestamp: Date.now(),
           movedElementId: elem.id,
+          movedElementType: elem.type,
           oldCx: oldPositionRef.current.x,
           oldCy: oldPositionRef.current.y,
           oldCz: oldPositionRef.current.z,
@@ -787,6 +792,7 @@ const Ground = () => {
         name: 'Rotate',
         timestamp: Date.now(),
         rotatedElementId: elem.id,
+        rotatedElementType: elem.type,
         oldRotation: oldRotationRef.current,
         newRotation: newRotationRef.current,
         undo: () => {

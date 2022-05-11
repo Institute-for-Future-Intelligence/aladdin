@@ -207,6 +207,7 @@ const ParabolicTroughModuleLengthInput = ({ setDialogVisible }: { setDialogVisib
             oldValue: oldModuleLength,
             newValue: value,
             changedElementId: parabolicTrough.id,
+            changedElementType: parabolicTrough.type,
             undo: () => {
               updateModuleLengthById(undoableChange.changedElementId, undoableChange.oldValue as number);
             },

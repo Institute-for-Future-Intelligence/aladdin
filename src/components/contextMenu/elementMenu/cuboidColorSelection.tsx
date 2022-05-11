@@ -163,6 +163,7 @@ const CuboidColorSelection = ({ setDialogVisible }: { setDialogVisible: (b: bool
           oldValue: oldColors,
           newValue: value,
           changedElementId: cuboid.id,
+          changedElementType: cuboid.type,
           undo: () => {
             if (undoableChange.oldValue && Array.isArray(undoableChange.oldValue)) {
               for (let i = 0; i < undoableChange.oldValue.length; i++) {
@@ -187,6 +188,7 @@ const CuboidColorSelection = ({ setDialogVisible }: { setDialogVisible: (b: bool
             oldValue: oldColor,
             newValue: value,
             changedElementId: cuboid.id,
+            changedElementType: cuboid.type,
             changedSideIndex: selectedSideIndex,
             undo: () => {
               if (undoableChange.changedSideIndex !== undefined) {

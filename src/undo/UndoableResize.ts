@@ -6,6 +6,7 @@ import { Undoable } from './Undoable';
 import { Vector2, Vector3 } from 'three';
 import { Point2 } from '../models/Point2';
 import { FlippedWallSide } from './UndoableAdd';
+import { ObjectType } from '../types';
 
 export interface UndoableResize extends Undoable {
   oldCx: number;
@@ -23,6 +24,7 @@ export interface UndoableResize extends Undoable {
   newLz: number;
 
   resizedElementId: string;
+  resizedElementType: ObjectType;
 
   oldChildrenPositionsMap: Map<string, Vector3>;
   newChildrenPositionsMap: Map<string, Vector3>;

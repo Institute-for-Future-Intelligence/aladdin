@@ -58,6 +58,7 @@ const HumanSelection = () => {
               oldValue: oldPerson,
               newValue: value,
               changedElementId: human.id,
+              changedElementType: human.type,
               undo: () => {
                 updateHumanNameById(undoableChange.changedElementId, undoableChange.oldValue as HumanName);
               },

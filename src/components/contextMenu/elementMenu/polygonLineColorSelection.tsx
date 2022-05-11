@@ -210,6 +210,7 @@ const PolygonLineColorSelection = ({ setDialogVisible }: { setDialogVisible: (b:
           oldValue: oldColor,
           newValue: value,
           changedElementId: polygon.id,
+          changedElementType: polygon.type,
           undo: () => {
             updateElementLineColorById(undoableChange.changedElementId, undoableChange.oldValue as string);
           },

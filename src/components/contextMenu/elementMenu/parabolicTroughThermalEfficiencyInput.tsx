@@ -152,6 +152,7 @@ const ParabolicTroughThermalEfficiencyInput = ({ setDialogVisible }: { setDialog
           oldValue: oldThermalEfficiency,
           newValue: value,
           changedElementId: parabolicTrough.id,
+          changedElementType: parabolicTrough.type,
           undo: () => {
             updateById(undoableChange.changedElementId, undoableChange.oldValue as number);
           },

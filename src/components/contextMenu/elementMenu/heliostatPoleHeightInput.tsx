@@ -202,6 +202,7 @@ const HeliostatPoleHeightInput = ({ setDialogVisible }: { setDialogVisible: (b: 
             oldValue: oldPoleHeight,
             newValue: value,
             changedElementId: heliostat.id,
+            changedElementType: heliostat.type,
             undo: () => {
               updatePoleHeightById(undoableChange.changedElementId, undoableChange.oldValue as number);
             },

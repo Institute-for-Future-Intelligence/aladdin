@@ -200,6 +200,7 @@ const ParabolicDishPoleHeightInput = ({ setDialogVisible }: { setDialogVisible: 
             oldValue: oldPoleHeight,
             newValue: value,
             changedElementId: parabolicDish.id,
+            changedElementType: parabolicDish.type,
             undo: () => {
               updatePoleHeightById(undoableChange.changedElementId, undoableChange.oldValue as number);
             },

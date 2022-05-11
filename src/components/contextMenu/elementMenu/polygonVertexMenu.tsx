@@ -54,6 +54,7 @@ export const PolygonVertexMenu = () => {
         name: action,
         timestamp: Date.now(),
         changedElementId: polygon.id,
+        changedElementType: polygon.type,
         oldValue: oldVertices,
         newValue: newVertices,
         undo: () => {

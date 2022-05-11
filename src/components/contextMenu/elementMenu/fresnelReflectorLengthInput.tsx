@@ -215,6 +215,7 @@ const FresnelReflectorLengthInput = ({ setDialogVisible }: { setDialogVisible: (
             oldValue: oldLength,
             newValue: value,
             changedElementId: fresnelReflector.id,
+            changedElementType: fresnelReflector.type,
             undo: () => {
               updateLyById(undoableChange.changedElementId, undoableChange.oldValue as number);
             },

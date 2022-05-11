@@ -146,6 +146,8 @@ export const Lock = ({ keyName }: { keyName: string }) => {
             name: 'Lock',
             timestamp: Date.now(),
             checked: checked,
+            selectedElementId: selectedElement?.id,
+            selectedElementType: selectedElement?.type,
             undo: () => {
               lockElement(!undoableCheck.checked);
             },

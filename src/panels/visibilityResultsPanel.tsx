@@ -257,6 +257,10 @@ const VisibilityResultsPanel = () => {
                   setCommonStore((state) => {
                     state.simulationInProgress = true;
                     state.runSolarPanelVisibilityAnalysis = true;
+                    state.actionInfo = {
+                      name: 'Run Visibility Analysis For Solar Panels',
+                      timestamp: new Date().getTime(),
+                    };
                   });
                 }, 100);
               }}

@@ -333,6 +333,7 @@ const SolarPanelWidthInput = ({ setDialogVisible }: { setDialogVisible: (b: bool
             oldValue: oldWidth,
             newValue: value,
             changedElementId: solarPanel.id,
+            changedElementType: solarPanel.type,
             undo: () => {
               updateSolarPanelLyById(undoableChange.changedElementId, undoableChange.oldValue as number);
             },

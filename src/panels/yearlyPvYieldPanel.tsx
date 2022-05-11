@@ -302,6 +302,10 @@ const YearlyPvYieldPanel = ({ city }: YearlyPvYieldPanelProps) => {
                           state.yearlyPvIndividualOutputs = checked;
                           state.runYearlySimulationForSolarPanels = true;
                           state.pauseYearlySimulationForSolarPanels = false;
+                          state.actionInfo = {
+                            name: 'Run Yearly Simulation For Solar Panels: ' + (checked ? 'Individual' : 'Total'),
+                            timestamp: new Date().getTime(),
+                          };
                         });
                       }, 100);
                     }}
@@ -323,6 +327,10 @@ const YearlyPvYieldPanel = ({ city }: YearlyPvYieldPanelProps) => {
                         state.simulationInProgress = true;
                         state.runYearlySimulationForSolarPanels = true;
                         state.pauseYearlySimulationForSolarPanels = false;
+                        state.actionInfo = {
+                          name: 'Run Yearly Simulation For Solar Panels',
+                          timestamp: new Date().getTime(),
+                        };
                       });
                     }, 100);
                   }}

@@ -108,6 +108,7 @@ const FoundationAzimuthInput = ({ setDialogVisible }: { setDialogVisible: (b: bo
           oldValue: oldAzimuth,
           newValue: value,
           changedElementId: foundation.id,
+          changedElementType: foundation.type,
           undo: () => {
             updateElementRotationById(undoableChange.changedElementId, 0, 0, -(undoableChange.oldValue as number));
           },

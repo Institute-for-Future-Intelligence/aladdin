@@ -208,6 +208,7 @@ const HeliostatLengthInput = ({ setDialogVisible }: { setDialogVisible: (b: bool
             oldValue: oldValue,
             newValue: value,
             changedElementId: heliostat.id,
+            changedElementType: heliostat.type,
             undo: () => {
               updateLxById(undoableChange.changedElementId, undoableChange.oldValue as number);
             },

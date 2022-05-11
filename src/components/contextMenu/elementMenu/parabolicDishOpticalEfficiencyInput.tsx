@@ -150,6 +150,7 @@ const ParabolicDishOpticalEfficiencyInput = ({ setDialogVisible }: { setDialogVi
           oldValue: oldOpticalEfficiency,
           newValue: value,
           changedElementId: parabolicDish.id,
+          changedElementType: parabolicDish.type,
           undo: () => {
             updateById(undoableChange.changedElementId, undoableChange.oldValue as number);
           },

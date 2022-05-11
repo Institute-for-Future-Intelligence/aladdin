@@ -208,6 +208,7 @@ const HeliostatWidthInput = ({ setDialogVisible }: { setDialogVisible: (b: boole
             oldValue: oldValue,
             newValue: value,
             changedElementId: heliostat.id,
+            changedElementType: heliostat.type,
             undo: () => {
               updateLyById(undoableChange.changedElementId, undoableChange.oldValue as number);
             },

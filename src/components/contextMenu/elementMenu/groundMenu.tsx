@@ -272,7 +272,7 @@ export const GroundMenu = () => {
                 const oldAlbedo = albedo;
                 const newAlbedo = value;
                 const undoableChange = {
-                  name: 'Set Albedo',
+                  name: 'Set Ground Albedo',
                   timestamp: Date.now(),
                   oldValue: oldAlbedo,
                   newValue: newAlbedo,

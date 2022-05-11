@@ -158,6 +158,7 @@ const FresnelReflectorDrawSunBeamSelection = ({ setDialogVisible }: { setDialogV
           oldValue: oldValue,
           newValue: value,
           changedElementId: fresnelReflector.id,
+          changedElementType: fresnelReflector.type,
           undo: () => {
             updateById(undoableChange.changedElementId, undoableChange.oldValue as boolean);
           },

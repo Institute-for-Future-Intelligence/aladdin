@@ -746,6 +746,7 @@ export const FoundationMenu = () => {
                     oldValue: oldValue,
                     newValue: newValue,
                     changedElementId: foundation.id,
+                    changedElementType: foundation.type,
                     undo: () => {
                       updateFoundationSolarStructureById(
                         undoableChange.changedElementId,

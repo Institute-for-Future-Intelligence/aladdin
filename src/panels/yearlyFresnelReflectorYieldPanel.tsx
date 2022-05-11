@@ -285,6 +285,10 @@ const YearlyFresnelReflectorYieldPanel = ({ city }: YearlyFresnelReflectorYieldP
                       state.pauseYearlySimulationForFresnelReflectors = false;
                       state.simulationInProgress = true;
                       state.yearlyFresnelReflectorIndividualOutputs = checked;
+                      state.actionInfo = {
+                        name: 'Run Yearly Simulation For Fresnel Reflectors: ' + (checked ? 'Individual' : 'Total'),
+                        timestamp: new Date().getTime(),
+                      };
                     });
                   }, 100);
                 }}
@@ -306,6 +310,10 @@ const YearlyFresnelReflectorYieldPanel = ({ city }: YearlyFresnelReflectorYieldP
                     state.runYearlySimulationForFresnelReflectors = true;
                     state.pauseYearlySimulationForFresnelReflectors = false;
                     state.simulationInProgress = true;
+                    state.actionInfo = {
+                      name: 'Run Yearly Simulation For Fresnel Reflectors',
+                      timestamp: new Date().getTime(),
+                    };
                   });
                 }, 100);
               }}

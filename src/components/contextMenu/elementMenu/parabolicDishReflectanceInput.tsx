@@ -150,6 +150,7 @@ const ParabolicDishReflectanceInput = ({ setDialogVisible }: { setDialogVisible:
           oldValue: oldReflectance,
           newValue: value,
           changedElementId: parabolicDish.id,
+          changedElementType: parabolicDish.type,
           undo: () => {
             updateById(undoableChange.changedElementId, undoableChange.oldValue as number);
           },

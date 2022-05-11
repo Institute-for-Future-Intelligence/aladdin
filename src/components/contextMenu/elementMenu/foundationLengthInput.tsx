@@ -393,6 +393,7 @@ const FoundationLengthInput = ({ setDialogVisible }: { setDialogVisible: (b: boo
             oldSize: oldLx,
             newSize: value,
             resizedElementId: foundation.id,
+            resizedElementType: foundation.type,
             oldChildrenPositionsMap: new Map(oldChildrenPositionsMapRef.current),
             newChildrenPositionsMap: new Map(newChildrenPositionsMapRef.current),
             oldChildrenVerticesMap: new Map(oldChildrenVerticesMapRef.current),

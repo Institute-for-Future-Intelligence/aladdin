@@ -183,6 +183,7 @@ const HeliostatTowerSelection = ({ setDialogVisible }: { setDialogVisible: (b: b
           oldValue: oldValue,
           newValue: value,
           changedElementId: heliostat.id,
+          changedElementType: heliostat.type,
           undo: () => {
             updateById(undoableChange.changedElementId, undoableChange.oldValue as string);
           },

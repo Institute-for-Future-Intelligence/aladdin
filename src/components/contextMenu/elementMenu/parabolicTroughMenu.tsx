@@ -20,6 +20,7 @@ import ParabolicTroughReflectanceInput from './parabolicTroughReflectanceInput';
 import ParabolicTroughAbsorptanceInput from './parabolicTroughAbsorptanceInput';
 import ParabolicTroughOpticalEfficiencyInput from './parabolicTroughOpticalEfficiencyInput';
 import ParabolicTroughThermalEfficiencyInput from './parabolicTroughThermalEfficiencyInput';
+import { ObjectType } from '../../../types';
 
 export const ParabolicTroughMenu = () => {
   const language = useStore(Selector.language);
@@ -56,6 +57,8 @@ export const ParabolicTroughMenu = () => {
         name: 'Show Parabolic Trough Label',
         timestamp: Date.now(),
         checked: !parabolicTrough.showLabel,
+        selectedElementId: parabolicTrough.id,
+        selectedElementType: ObjectType.ParabolicTrough,
         undo: () => {
           updateElementShowLabelById(parabolicTrough.id, !undoableCheck.checked);
         },
@@ -78,6 +81,7 @@ export const ParabolicTroughMenu = () => {
         oldValue: oldLabel,
         newValue: labelText,
         changedElementId: parabolicTrough.id,
+        changedElementType: parabolicTrough.type,
         undo: () => {
           updateElementLabelById(undoableChange.changedElementId, undoableChange.oldValue as string);
         },
@@ -97,6 +101,8 @@ export const ParabolicTroughMenu = () => {
         name: 'Show Sun Beam',
         timestamp: Date.now(),
         checked: !parabolicTrough.drawSunBeam,
+        selectedElementId: parabolicTrough.id,
+        selectedElementType: ObjectType.ParabolicTrough,
         undo: () => {
           updateSolarCollectorDrawSunBeamById(parabolicTrough.id, !undoableCheck.checked);
         },

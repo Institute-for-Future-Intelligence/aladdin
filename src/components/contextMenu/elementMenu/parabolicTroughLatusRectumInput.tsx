@@ -207,6 +207,7 @@ const ParabolicTroughLatusRectumInput = ({ setDialogVisible }: { setDialogVisibl
             oldValue: oldLatusRectum,
             newValue: value,
             changedElementId: parabolicTrough.id,
+            changedElementType: parabolicTrough.type,
             undo: () => {
               updateLatusRectumById(undoableChange.changedElementId, undoableChange.oldValue as number);
             },

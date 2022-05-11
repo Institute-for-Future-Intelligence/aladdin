@@ -280,6 +280,10 @@ const YearlySolarUpdraftTowerYieldPanel = ({ city }: YearlySolarUpdraftTowerYiel
                     state.simulationInProgress = true;
                     state.runYearlySimulationForUpdraftTower = true;
                     state.pauseYearlySimulationForUpdraftTower = false;
+                    state.actionInfo = {
+                      name: 'Run Yearly Simulation For Solar Updraft Tower',
+                      timestamp: new Date().getTime(),
+                    };
                   });
                 }, 100);
               }}

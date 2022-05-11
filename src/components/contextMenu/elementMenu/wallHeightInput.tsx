@@ -116,6 +116,7 @@ const WallHeightInput = ({ setDialogVisible }: { setDialogVisible: (b: boolean) 
             oldValue: oldHeight,
             newValue: value,
             changedElementId: wall.id,
+            changedElementType: wall.type,
             undo: () => {
               updateWallHeightById(undoableChange.changedElementId, undoableChange.oldValue as number);
             },

@@ -212,6 +212,7 @@ const FresnelReflectorModuleLengthInput = ({ setDialogVisible }: { setDialogVisi
             oldValue: oldModuleLength,
             newValue: value,
             changedElementId: fresnelReflector.id,
+            changedElementType: fresnelReflector.type,
             undo: () => {
               updateModuleLengthById(undoableChange.changedElementId, undoableChange.oldValue as number);
             },

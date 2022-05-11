@@ -306,6 +306,7 @@ const YearlyLightSensorPanel = ({ city }: YearlyLightSensorPanelProps) => {
                       state.runYearlyLightSensor = true;
                       state.pauseYearlyLightSensor = false;
                       state.simulationInProgress = true;
+                      state.actionInfo = { name: 'Collect Yearly Data for Sensors', timestamp: new Date().getTime() };
                     });
                   }, 100);
                 }}

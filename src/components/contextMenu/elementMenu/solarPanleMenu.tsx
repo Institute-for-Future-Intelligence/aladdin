@@ -23,6 +23,7 @@ import SolarPanelTrackerSelection from './solarPanelTrackerSelection';
 import SolarPanelPoleHeightInput from './solarPanelPoleHeightInput';
 import SolarPanelPoleSpacingInput from './solarPanelPoleSpacingInput';
 import { UNIT_VECTOR_POS_Z } from '../../../constants';
+import { ObjectType } from '../../../types';
 
 export const SolarPanelMenu = () => {
   const language = useStore(Selector.language);
@@ -61,6 +62,8 @@ export const SolarPanelMenu = () => {
         name: 'Show Solar Panel Label',
         timestamp: Date.now(),
         checked: !solarPanel.showLabel,
+        selectedElementId: solarPanel.id,
+        selectedElementType: ObjectType.SolarPanel,
         undo: () => {
           updateElementShowLabelById(solarPanel.id, !undoableCheck.checked);
         },
@@ -83,6 +86,7 @@ export const SolarPanelMenu = () => {
         oldValue: oldLabel,
         newValue: labelText,
         changedElementId: solarPanel.id,
+        changedElementType: solarPanel.type,
         undo: () => {
           updateElementLabelById(undoableChange.changedElementId, undoableChange.oldValue as string);
         },
@@ -102,6 +106,8 @@ export const SolarPanelMenu = () => {
         name: 'Show Sun Beam',
         timestamp: Date.now(),
         checked: !solarPanel.drawSunBeam,
+        selectedElementId: solarPanel.id,
+        selectedElementType: ObjectType.SolarPanel,
         undo: () => {
           updateSolarCollectorDrawSunBeamById(solarPanel.id, !undoableCheck.checked);
         },

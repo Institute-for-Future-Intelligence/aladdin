@@ -3,9 +3,11 @@
  */
 
 import { Undoable } from './Undoable';
+import { ObjectType } from '../types';
 
 export interface UndoableRotate extends Undoable {
   oldRotation: number[];
   newRotation: number[];
   rotatedElementId: string;
+  rotatedElementType: ObjectType;
 }

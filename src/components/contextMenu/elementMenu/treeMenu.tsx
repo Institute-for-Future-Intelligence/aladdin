@@ -33,6 +33,8 @@ export const TreeMenu = () => {
       name: 'Show Tree Model',
       timestamp: Date.now(),
       checked: on,
+      selectedElementId: tree.id,
+      selectedElementType: ObjectType.Tree,
       undo: () => {
         updateTreeShowModelById(tree.id, !undoableCheck.checked);
       },
@@ -53,6 +55,7 @@ export const TreeMenu = () => {
       oldValue: inputSpread,
       newValue: value,
       changedElementId: tree.id,
+      changedElementType: tree.type,
       undo: () => {
         updateElementLxById(undoableChange.changedElementId, undoableChange.oldValue as number);
       },
@@ -74,6 +77,7 @@ export const TreeMenu = () => {
       oldValue: inputHeight,
       newValue: value,
       changedElementId: tree.id,
+      changedElementType: tree.type,
       undo: () => {
         updateElementLzById(undoableChange.changedElementId, undoableChange.oldValue as number);
       },

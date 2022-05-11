@@ -205,6 +205,7 @@ const FresnelReflectorPoleHeightInput = ({ setDialogVisible }: { setDialogVisibl
             oldValue: oldPoleHeight,
             newValue: value,
             changedElementId: fresnelReflector.id,
+            changedElementType: fresnelReflector.type,
             undo: () => {
               updatePoleHeightById(undoableChange.changedElementId, undoableChange.oldValue as number);
             },

@@ -281,6 +281,10 @@ const DailyFresnelReflectorYieldPanel = ({ city }: DailyFresnelReflectorYieldPan
                       state.pauseDailySimulationForFresnelReflectors = false;
                       state.simulationInProgress = true;
                       state.dailyFresnelReflectorIndividualOutputs = checked;
+                      state.actionInfo = {
+                        name: 'Run Daily Simulation For Fresnel Reflectors: ' + (checked ? 'Individual' : 'Total'),
+                        timestamp: new Date().getTime(),
+                      };
                     });
                   }, 100);
                 }}
@@ -302,6 +306,10 @@ const DailyFresnelReflectorYieldPanel = ({ city }: DailyFresnelReflectorYieldPan
                     state.runDailySimulationForFresnelReflectors = true;
                     state.pauseDailySimulationForFresnelReflectors = false;
                     state.simulationInProgress = true;
+                    state.actionInfo = {
+                      name: 'Run Daily Simulation For Fresnel Reflectors',
+                      timestamp: new Date().getTime(),
+                    };
                   });
                 }, 100);
               }}

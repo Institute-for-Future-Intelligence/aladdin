@@ -241,6 +241,7 @@ const KeyboardListener = ({ canvas, set2DView, resetView, zoomView }: KeyboardLi
               timestamp: Date.now(),
               displacement: displacement,
               movedElementId: selectedElement.id,
+              movedElementType: selectedElement.type,
               undo: () => {
                 updateElementCxById(
                   undoableMoveLeft.movedElementId,
@@ -303,6 +304,7 @@ const KeyboardListener = ({ canvas, set2DView, resetView, zoomView }: KeyboardLi
               timestamp: Date.now(),
               displacement: displacement,
               movedElementId: selectedElement.id,
+              movedElementType: selectedElement.type,
               undo: () => {
                 updateElementCxById(
                   undoableMoveRight.movedElementId,
@@ -365,6 +367,7 @@ const KeyboardListener = ({ canvas, set2DView, resetView, zoomView }: KeyboardLi
               timestamp: Date.now(),
               displacement: displacement,
               movedElementId: selectedElement.id,
+              movedElementType: selectedElement.type,
               undo: () => {
                 updateElementCyById(undoableMoveUp.movedElementId, selectedElement.cy - undoableMoveUp.displacement);
               },
@@ -421,6 +424,7 @@ const KeyboardListener = ({ canvas, set2DView, resetView, zoomView }: KeyboardLi
               timestamp: Date.now(),
               displacement: displacement,
               movedElementId: selectedElement.id,
+              movedElementType: selectedElement.type,
               undo: () => {
                 updateElementCyById(
                   undoableMoveDown.movedElementId,

@@ -210,6 +210,7 @@ const PolygonFillColorSelection = ({ setDialogVisible }: { setDialogVisible: (b:
           oldValue: oldColor,
           newValue: value,
           changedElementId: polygon.id,
+          changedElementType: polygon.type,
           undo: () => {
             updateElementFillColorById(undoableChange.changedElementId, undoableChange.oldValue as string);
           },

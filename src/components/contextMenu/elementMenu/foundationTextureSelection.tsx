@@ -120,6 +120,7 @@ const FoundationTextureSelection = ({ setDialogVisible }: { setDialogVisible: (b
           oldValue: oldTexture,
           newValue: value,
           changedElementId: foundation.id,
+          changedElementType: foundation.type,
           undo: () => {
             updateFoundationTextureById(undoableChange.changedElementId, undoableChange.oldValue as FoundationTexture);
           },

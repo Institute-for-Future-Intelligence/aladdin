@@ -303,6 +303,7 @@ const SolarPanelPoleHeightInput = ({ setDialogVisible }: { setDialogVisible: (b:
             oldValue: oldPoleHeight,
             newValue: value,
             changedElementId: solarPanel.id,
+            changedElementType: solarPanel.type,
             undo: () => {
               updatePoleHeightById(undoableChange.changedElementId, undoableChange.oldValue as number);
             },

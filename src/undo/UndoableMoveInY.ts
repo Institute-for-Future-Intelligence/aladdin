@@ -3,8 +3,10 @@
  */
 
 import { Undoable } from './Undoable';
+import { ObjectType } from '../types';
 
 export interface UndoableMoveInY extends Undoable {
   displacement: number;
   movedElementId: string;
+  movedElementType: ObjectType;
 }

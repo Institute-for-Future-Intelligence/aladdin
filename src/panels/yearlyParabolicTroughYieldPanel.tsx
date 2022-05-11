@@ -285,6 +285,10 @@ const YearlyParabolicTroughYieldPanel = ({ city }: YearlyParabolicTroughYieldPan
                       state.pauseYearlySimulationForParabolicTroughs = false;
                       state.simulationInProgress = true;
                       state.yearlyParabolicTroughIndividualOutputs = checked;
+                      state.actionInfo = {
+                        name: 'Run Yearly Simulation For Parabolic Troughs: ' + (checked ? 'Individual' : 'Total'),
+                        timestamp: new Date().getTime(),
+                      };
                     });
                   }, 100);
                 }}
@@ -306,6 +310,10 @@ const YearlyParabolicTroughYieldPanel = ({ city }: YearlyParabolicTroughYieldPan
                     state.runYearlySimulationForParabolicTroughs = true;
                     state.pauseYearlySimulationForParabolicTroughs = false;
                     state.simulationInProgress = true;
+                    state.actionInfo = {
+                      name: 'Run Yearly Simulation For Parabolic Troughs',
+                      timestamp: new Date().getTime(),
+                    };
                   });
                 }, 100);
               }}

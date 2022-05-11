@@ -333,6 +333,7 @@ const SolarPanelRelativeAzimuthInput = ({ setDialogVisible }: { setDialogVisible
             oldValue: oldRelativeAzimuth,
             newValue: value,
             changedElementId: solarPanel.id,
+            changedElementType: solarPanel.type,
             undo: () => {
               updateRelativeAzimuthById(undoableChange.changedElementId, -(undoableChange.oldValue as number));
             },

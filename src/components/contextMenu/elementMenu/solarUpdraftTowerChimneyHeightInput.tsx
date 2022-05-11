@@ -126,6 +126,7 @@ const SolarUpdraftTowerChimneyHeightInput = ({ setDialogVisible }: { setDialogVi
             oldValue: oldValue,
             newValue: value,
             changedElementId: foundation.id,
+            changedElementType: foundation.type,
             undo: () => {
               updateChimneyHeightById(undoableChange.changedElementId, undoableChange.oldValue as number);
             },

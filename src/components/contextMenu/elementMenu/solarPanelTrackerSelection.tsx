@@ -239,6 +239,7 @@ const SolarPanelTrackerSelection = ({ setDialogVisible }: { setDialogVisible: (b
           oldValue: oldTrackerType,
           newValue: value,
           changedElementId: solarPanel.id,
+          changedElementType: solarPanel.type,
           undo: () => {
             updateSolarPanelTrackerTypeById(undoableChange.changedElementId, undoableChange.oldValue as TrackerType);
           },

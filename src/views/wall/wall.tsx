@@ -548,6 +548,7 @@ const Wall = ({
       name: 'Move',
       timestamp: Date.now(),
       movedElementId: elem.id,
+      movedElementType: elem.type,
       oldCx: oldPositionRef.current[0],
       oldCy: oldPositionRef.current[1],
       oldCz: oldPositionRef.current[2],

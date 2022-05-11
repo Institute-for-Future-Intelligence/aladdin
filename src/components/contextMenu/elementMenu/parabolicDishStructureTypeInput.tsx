@@ -155,6 +155,7 @@ const ParabolicDishStructureTypeInput = ({ setDialogVisible }: { setDialogVisibl
           oldValue: oldStructureType,
           newValue: type,
           changedElementId: parabolicDish.id,
+          changedElementType: parabolicDish.type,
           undo: () => {
             updateById(undoableChange.changedElementId, undoableChange.oldValue as ParabolicDishStructureType);
           },

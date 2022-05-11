@@ -150,6 +150,7 @@ const ParabolicDishThermalEfficiencyInput = ({ setDialogVisible }: { setDialogVi
           oldValue: oldThermalEfficiency,
           newValue: value,
           changedElementId: parabolicDish.id,
+          changedElementType: parabolicDish.type,
           undo: () => {
             updateById(undoableChange.changedElementId, undoableChange.oldValue as number);
           },

@@ -152,6 +152,7 @@ const ParabolicTroughOpticalEfficiencyInput = ({ setDialogVisible }: { setDialog
           oldValue: oldOpticalEfficiency,
           newValue: value,
           changedElementId: parabolicTrough.id,
+          changedElementType: parabolicTrough.type,
           undo: () => {
             updateById(undoableChange.changedElementId, undoableChange.oldValue as number);
           },

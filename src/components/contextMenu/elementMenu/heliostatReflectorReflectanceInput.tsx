@@ -151,6 +151,7 @@ const HeliostatReflectanceInput = ({ setDialogVisible }: { setDialogVisible: (b:
           oldValue: oldReflectance,
           newValue: value,
           changedElementId: heliostat.id,
+          changedElementType: heliostat.type,
           undo: () => {
             updateById(undoableChange.changedElementId, undoableChange.oldValue as number);
           },

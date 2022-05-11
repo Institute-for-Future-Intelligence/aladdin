@@ -150,6 +150,7 @@ const CuboidTextureSelection = ({ setDialogVisible }: { setDialogVisible: (b: bo
           oldValue: oldTextures,
           newValue: value,
           changedElementId: cuboid.id,
+          changedElementType: cuboid.type,
           undo: () => {
             if (undoableChange.oldValue && Array.isArray(undoableChange.oldValue)) {
               for (let i = 0; i < undoableChange.oldValue.length; i++) {
@@ -178,6 +179,7 @@ const CuboidTextureSelection = ({ setDialogVisible }: { setDialogVisible: (b: bo
             oldValue: oldTexture,
             newValue: value,
             changedElementId: cuboid.id,
+            changedElementType: cuboid.type,
             changedSideIndex: selectedSideIndex,
             undo: () => {
               if (undoableChange.changedSideIndex !== undefined) {

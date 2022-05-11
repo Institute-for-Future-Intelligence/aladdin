@@ -379,6 +379,7 @@ const CuboidLengthInput = ({ setDialogVisible }: { setDialogVisible: (b: boolean
             oldSize: oldLx,
             newSize: value,
             resizedElementId: cuboid.id,
+            resizedElementType: cuboid.type,
             oldChildrenPositionsMap: new Map(oldChildrenPositionsMapRef.current),
             newChildrenPositionsMap: new Map(newChildrenPositionsMapRef.current),
             oldChildrenVerticesMap: new Map(oldChildrenVerticesMapRef.current),

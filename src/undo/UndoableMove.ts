@@ -4,6 +4,7 @@
 
 import { Undoable } from './Undoable';
 import { Vector3 } from 'three';
+import { ObjectType } from '../types';
 
 export interface UndoableMove extends Undoable {
   oldCx: number;
@@ -15,6 +16,7 @@ export interface UndoableMove extends Undoable {
   oldNormal?: Vector3;
   newNormal?: Vector3;
   movedElementId: string;
+  movedElementType?: ObjectType;
   oldParentId?: string;
   newParentId?: string;
 }

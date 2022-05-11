@@ -14,6 +14,7 @@ import { UndoableCheck } from '../../../undo/UndoableCheck';
 import { useStoreRef } from '../../../stores/commonRef';
 import { Easing, Tween, update } from '@tweenjs/tween.js';
 import { Util } from '../../../Util';
+import { ObjectType } from '../../../types';
 
 export const HumanMenu = () => {
   const setCommonStore = useStore(Selector.set);
@@ -115,6 +116,8 @@ export const HumanMenu = () => {
                   name: 'Set Observer',
                   timestamp: Date.now(),
                   checked: checked,
+                  selectedElementId: human.id,
+                  selectedElementType: ObjectType.Human,
                   undo: () => {
                     updateHumanObserverById(human.id, !undoableCheck.checked);
                   },

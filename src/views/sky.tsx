@@ -537,6 +537,7 @@ const Sky = ({ theme = 'Default' }: SkyProps) => {
                   name: 'Change Cuboid Height',
                   timestamp: Date.now(),
                   changedElementId: elem.id,
+                  changedElementType: elem.type,
                   oldValue: oldHeightRef.current,
                   newValue: elem.lz,
                   oldChildrenPositionsMap: new Map(oldChildrenPositionsMapRef.current),
@@ -608,6 +609,7 @@ const Sky = ({ theme = 'Default' }: SkyProps) => {
                   name: 'Change Tree Height',
                   timestamp: Date.now(),
                   changedElementId: elem.id,
+                  changedElementType: elem.type,
                   oldValue: oldHeightRef.current,
                   newValue: elem.lz,
                   undo: () => {
@@ -627,6 +629,7 @@ const Sky = ({ theme = 'Default' }: SkyProps) => {
                   name: 'Change Tree Spread',
                   timestamp: Date.now(),
                   changedElementId: elem.id,
+                  changedElementType: elem.type,
                   oldValue: oldWidthRef.current,
                   newValue: elem.lx,
                   undo: () => {
@@ -649,6 +652,7 @@ const Sky = ({ theme = 'Default' }: SkyProps) => {
               name: 'Change Wall Height',
               timestamp: Date.now(),
               changedElementId: elem.id,
+              changedElementType: elem.type,
               oldValue: oldHeightRef.current,
               newValue: elem.lz,
               undo: () => {
@@ -746,6 +750,7 @@ const Sky = ({ theme = 'Default' }: SkyProps) => {
               name: 'Move',
               timestamp: Date.now(),
               movedElementId: elem.id,
+              movedElementType: elem.type,
               oldCx: oldPositionRef.current.x,
               oldCy: oldPositionRef.current.y,
               oldCz: oldPositionRef.current.z,

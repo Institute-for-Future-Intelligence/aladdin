@@ -161,7 +161,7 @@ const AppCreator = ({ viewOnly = false }: AppCreatorProps) => {
     }
   }, [objectTypeToAdd, addedCuboidId, addedFoundationId]);
 
-  const ifiUser = user ? user.email?.endsWith('@intofuture.org') : false;
+  const loggable = user ? !user.email?.endsWith('@intofuture.org') : false;
 
   const zoomView = (scale: number) => {
     if (orthographic) {
@@ -464,7 +464,7 @@ const AppCreator = ({ viewOnly = false }: AppCreatorProps) => {
       </DropdownContextMenu>
       <CompassContainer visible={!orthographic} />
       {!viewOnly && <AcceptCookie />}
-      {!viewOnly && !ifiUser && <ActionLogger />}
+      {!viewOnly && loggable && <ActionLogger />}
     </div>
   );
 };

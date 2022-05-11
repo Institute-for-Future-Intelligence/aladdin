@@ -281,6 +281,10 @@ const DailyHeliostatYieldPanel = ({ city }: DailyHeliostatYieldPanelProps) => {
                       state.pauseDailySimulationForHeliostats = false;
                       state.simulationInProgress = true;
                       state.dailyHeliostatIndividualOutputs = checked;
+                      state.actionInfo = {
+                        name: 'Run Daily Simulation For Heliostats: ' + (checked ? 'Individual' : 'Total'),
+                        timestamp: new Date().getTime(),
+                      };
                     });
                   }, 100);
                 }}
@@ -302,6 +306,7 @@ const DailyHeliostatYieldPanel = ({ city }: DailyHeliostatYieldPanelProps) => {
                     state.runDailySimulationForHeliostats = true;
                     state.pauseDailySimulationForHeliostats = false;
                     state.simulationInProgress = true;
+                    state.actionInfo = { name: 'Run Daily Simulation For Heliostats', timestamp: new Date().getTime() };
                   });
                 }, 100);
               }}

@@ -394,6 +394,7 @@ const FoundationWidthInput = ({ setDialogVisible }: { setDialogVisible: (b: bool
             oldSize: oldLy,
             newSize: value,
             resizedElementId: foundation.id,
+            resizedElementType: foundation.type,
             oldChildrenPositionsMap: new Map(oldChildrenPositionsMapRef.current),
             newChildrenPositionsMap: new Map(newChildrenPositionsMapRef.current),
             oldChildrenVerticesMap: new Map(oldChildrenVerticesMapRef.current),

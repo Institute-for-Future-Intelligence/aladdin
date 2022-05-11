@@ -44,6 +44,7 @@ const TreeSelection = () => {
               oldValue: oldTree,
               newValue: value,
               changedElementId: tree.id,
+              changedElementType: tree.type,
               undo: () => {
                 updateTreeTypeById(undoableChange.changedElementId, undoableChange.oldValue as TreeType);
               },

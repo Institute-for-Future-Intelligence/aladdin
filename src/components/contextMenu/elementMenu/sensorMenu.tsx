@@ -12,6 +12,7 @@ import i18n from '../../../i18n/i18n';
 import { UndoableCheck } from '../../../undo/UndoableCheck';
 import { UndoableChange } from '../../../undo/UndoableChange';
 import { SensorModel } from '../../../models/SensorModel';
+import { ObjectType } from '../../../types';
 
 export const SensorMenu = () => {
   const language = useStore(Selector.language);
@@ -38,6 +39,7 @@ export const SensorMenu = () => {
         oldValue: oldLabel,
         newValue: labelText,
         changedElementId: sensor.id,
+        changedElementType: sensor.type,
         undo: () => {
           updateElementLabelById(undoableChange.changedElementId, undoableChange.oldValue as string);
         },
@@ -56,6 +58,8 @@ export const SensorMenu = () => {
         name: 'Show Sensor Label',
         timestamp: Date.now(),
         checked: !sensor.showLabel,
+        selectedElementId: sensor.id,
+        selectedElementType: ObjectType.Sensor,
         undo: () => {
           updateElementShowLabelById(sensor.id, !undoableCheck.checked);
         },

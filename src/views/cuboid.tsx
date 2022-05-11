@@ -846,6 +846,7 @@ const Cuboid = ({
           oldValue: oldVerticesRef.current,
           newValue: newVerticesRef.current,
           changedElementId: elem.id,
+          changedElementType: elem.type,
           undo: () => {
             updatePolygonVerticesById(undoableEditPolygon.changedElementId, undoableEditPolygon.oldValue as Point2[]);
           },
@@ -871,6 +872,7 @@ const Cuboid = ({
             name: 'Resize',
             timestamp: Date.now(),
             resizedElementId: grabRef.current.id,
+            resizedElementType: grabRef.current.type,
             oldCx: oldPositionRef.current.x,
             oldCy: oldPositionRef.current.y,
             oldCz: oldPositionRef.current.z,
@@ -929,6 +931,7 @@ const Cuboid = ({
                 oldValue: oldAzimuthRef.current,
                 newValue: newAzimuthRef.current,
                 changedElementId: solarPanel.id,
+                changedElementType: solarPanel.type,
                 undo: () => {
                   updateSolarPanelRelativeAzimuthById(
                     undoableRotate.changedElementId,
@@ -964,6 +967,7 @@ const Cuboid = ({
               name: 'Move',
               timestamp: Date.now(),
               movedElementId: grabRef.current.id,
+              movedElementType: grabRef.current?.type,
               oldCx: oldPositionRef.current.x,
               oldCy: oldPositionRef.current.y,
               oldCz: oldPositionRef.current.z,

@@ -285,6 +285,10 @@ const YearlyParabolicDishYieldPanel = ({ city }: YearlyParabolicDishYieldPanelPr
                       state.pauseYearlySimulationForParabolicDishes = false;
                       state.simulationInProgress = true;
                       state.yearlyParabolicDishIndividualOutputs = checked;
+                      state.actionInfo = {
+                        name: 'Run Yearly Simulation For Parabolic Dishes: ' + (checked ? 'Individual' : 'Total'),
+                        timestamp: new Date().getTime(),
+                      };
                     });
                   }, 100);
                 }}
@@ -306,6 +310,10 @@ const YearlyParabolicDishYieldPanel = ({ city }: YearlyParabolicDishYieldPanelPr
                     state.runYearlySimulationForParabolicDishes = true;
                     state.pauseYearlySimulationForParabolicDishes = false;
                     state.simulationInProgress = true;
+                    state.actionInfo = {
+                      name: 'Run Yearly Simulation For Parabolic Dishes',
+                      timestamp: new Date().getTime(),
+                    };
                   });
                 }, 100);
               }}

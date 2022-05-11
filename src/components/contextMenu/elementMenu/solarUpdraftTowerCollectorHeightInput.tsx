@@ -126,6 +126,7 @@ const SolarUpdraftTowerCollectorHeightInput = ({ setDialogVisible }: { setDialog
             oldValue: oldValue,
             newValue: value,
             changedElementId: foundation.id,
+            changedElementType: foundation.type,
             undo: () => {
               updateCollectorHeightById(undoableChange.changedElementId, undoableChange.oldValue as number);
             },

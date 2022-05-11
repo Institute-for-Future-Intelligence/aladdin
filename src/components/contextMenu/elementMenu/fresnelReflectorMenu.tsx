@@ -18,6 +18,7 @@ import FresnelReflectorModuleLengthInput from './fresnelReflectorModuleLengthInp
 import FresnelReflectorReflectanceInput from './fresnelReflectorReflectanceInput';
 import FresnelReflectorAbsorberSelection from './fresnelReflectorAbsorberSelection';
 import FresnelReflectorDrawSunBeamSelection from './fresnelReflectorDrawSunBeamSelection';
+import { ObjectType } from '../../../types';
 
 export const FresnelReflectorMenu = () => {
   const language = useStore(Selector.language);
@@ -51,6 +52,8 @@ export const FresnelReflectorMenu = () => {
         name: 'Show Fresnel Reflector Label',
         timestamp: Date.now(),
         checked: !fresnelReflector.showLabel,
+        selectedElementId: fresnelReflector.id,
+        selectedElementType: ObjectType.FresnelReflector,
         undo: () => {
           updateElementShowLabelById(fresnelReflector.id, !undoableCheck.checked);
         },
@@ -73,6 +76,7 @@ export const FresnelReflectorMenu = () => {
         oldValue: oldLabel,
         newValue: labelText,
         changedElementId: fresnelReflector.id,
+        changedElementType: fresnelReflector.type,
         undo: () => {
           updateElementLabelById(undoableChange.changedElementId, undoableChange.oldValue as string);
         },

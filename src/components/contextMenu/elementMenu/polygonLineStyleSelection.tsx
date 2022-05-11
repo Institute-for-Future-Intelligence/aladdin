@@ -208,6 +208,7 @@ const PolygonLineStyleSelection = ({ setDialogVisible }: { setDialogVisible: (b:
           oldValue: oldStyle,
           newValue: value,
           changedElementId: polygon.id,
+          changedElementType: polygon.type,
           undo: () => {
             updatePolygonLineStyleById(undoableChange.changedElementId, undoableChange.oldValue as LineStyle);
           },

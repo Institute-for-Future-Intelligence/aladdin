@@ -726,11 +726,12 @@ const SolarPanel = ({
                 onPointerUp={(e) => {
                   if (Math.abs(newTiltAngleRef.current - oldTiltAngleRef.current) > ZERO_TOLERANCE) {
                     const undoableChange = {
-                      name: 'Set Solar Panel Array Tilt Angle',
+                      name: 'Set Solar Panel Tilt Angle',
                       timestamp: Date.now(),
                       oldValue: oldTiltAngleRef.current,
                       newValue: newTiltAngleRef.current,
                       changedElementId: id,
+                      changedElementType: ObjectType.SolarPanel,
                       undo: () => {
                         updateSolarPanelTiltAngleById(
                           undoableChange.changedElementId,

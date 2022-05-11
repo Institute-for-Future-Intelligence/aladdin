@@ -210,6 +210,7 @@ const PolygonLineWidthSelection = ({ setDialogVisible }: { setDialogVisible: (b:
           oldValue: oldWidth,
           newValue: value,
           changedElementId: polygon.id,
+          changedElementType: polygon.type,
           undo: () => {
             updateElementLineWidthById(undoableChange.changedElementId, undoableChange.oldValue as number);
           },

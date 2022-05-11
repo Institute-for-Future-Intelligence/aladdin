@@ -121,6 +121,7 @@ const WallColorSelection = ({ setDialogVisible }: { setDialogVisible: (b: boolea
             oldValue: oldColor,
             newValue: value,
             changedElementId: wall.id,
+            changedElementType: wall.type,
             undo: () => {
               updateWallColorById(undoableChange.changedElementId, undoableChange.oldValue as string);
             },

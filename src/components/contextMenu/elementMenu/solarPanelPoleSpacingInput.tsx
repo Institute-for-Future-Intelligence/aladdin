@@ -233,6 +233,7 @@ const SolarPanelPoleSpacingInput = ({ setDialogVisible }: { setDialogVisible: (b
           oldValue: oldPoleSpacing,
           newValue: value,
           changedElementId: solarPanel.id,
+          changedElementType: solarPanel.type,
           undo: () => {
             updateSolarPanelPoleSpacingById(undoableChange.changedElementId, undoableChange.oldValue as number);
           },

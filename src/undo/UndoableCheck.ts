@@ -3,7 +3,10 @@
  */
 
 import { Undoable } from './Undoable';
+import { ObjectType } from '../types';
 
 export interface UndoableCheck extends Undoable {
   checked: boolean;
+  selectedElementId?: string;
+  selectedElementType?: ObjectType;
 }

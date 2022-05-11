@@ -123,6 +123,7 @@ const SolarPowerTowerReceiverAbsorptanceInput = ({ setDialogVisible }: { setDial
           oldValue: oldValue,
           newValue: value,
           changedElementId: foundation.id,
+          changedElementType: foundation.type,
           undo: () => {
             updateById(undoableChange.changedElementId, undoableChange.oldValue as number);
           },

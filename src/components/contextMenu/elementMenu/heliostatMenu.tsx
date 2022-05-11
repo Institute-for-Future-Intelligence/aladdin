@@ -17,6 +17,7 @@ import HeliostatPoleHeightInput from './heliostatPoleHeightInput';
 import HeliostatReflectanceInput from './heliostatReflectorReflectanceInput';
 import HeliostatDrawSunBeamSelection from './heliostatDrawSunBeamSelection';
 import HeliostatTowerSelection from './heliostatTowerSelection';
+import { ObjectType } from '../../../types';
 
 export const HeliostatMenu = () => {
   const language = useStore(Selector.language);
@@ -49,6 +50,8 @@ export const HeliostatMenu = () => {
         name: 'Show Heliostat Label',
         timestamp: Date.now(),
         checked: !heliostat.showLabel,
+        selectedElementId: heliostat.id,
+        selectedElementType: ObjectType.Heliostat,
         undo: () => {
           updateElementShowLabelById(heliostat.id, !undoableCheck.checked);
         },
@@ -71,6 +74,7 @@ export const HeliostatMenu = () => {
         oldValue: oldLabel,
         newValue: labelText,
         changedElementId: heliostat.id,
+        changedElementType: heliostat.type,
         undo: () => {
           updateElementLabelById(undoableChange.changedElementId, undoableChange.oldValue as string);
         },

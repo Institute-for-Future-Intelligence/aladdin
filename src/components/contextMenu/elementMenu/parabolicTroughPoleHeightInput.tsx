@@ -200,6 +200,7 @@ const ParabolicTroughPoleHeightInput = ({ setDialogVisible }: { setDialogVisible
             oldValue: oldPoleHeight,
             newValue: value,
             changedElementId: parabolicTrough.id,
+            changedElementType: parabolicTrough.type,
             undo: () => {
               updatePoleHeightById(undoableChange.changedElementId, undoableChange.oldValue as number);
             },

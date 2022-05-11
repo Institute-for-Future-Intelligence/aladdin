@@ -111,6 +111,7 @@ const FoundationColorSelection = ({ setDialogVisible }: { setDialogVisible: (b: 
           oldValue: oldColor,
           newValue: value,
           changedElementId: foundation.id,
+          changedElementType: foundation.type,
           undo: () => {
             updateElementColorById(undoableChange.changedElementId, undoableChange.oldValue as string);
           },

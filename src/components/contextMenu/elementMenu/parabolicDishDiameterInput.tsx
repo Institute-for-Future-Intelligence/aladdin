@@ -221,6 +221,7 @@ const ParabolicDishDiameterInput = ({ setDialogVisible }: { setDialogVisible: (b
             oldValue: oldDiameter,
             newValue: value,
             changedElementId: parabolicDish.id,
+            changedElementType: parabolicDish.type,
             undo: () => {
               updateLxById(undoableChange.changedElementId, undoableChange.oldValue as number);
               updateLyById(undoableChange.changedElementId, undoableChange.oldValue as number);

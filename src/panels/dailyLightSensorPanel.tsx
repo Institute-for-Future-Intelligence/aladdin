@@ -234,6 +234,7 @@ const DailyLightSensorPanel = ({ city }: DailyLightSensorPanelProps) => {
                     state.runDailyLightSensor = true;
                     state.pauseDailyLightSensor = false;
                     state.simulationInProgress = true;
+                    state.actionInfo = { name: 'Collect Daily Data for Sensors', timestamp: new Date().getTime() };
                   });
                 }, 100);
               }}

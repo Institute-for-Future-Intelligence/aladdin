@@ -257,6 +257,7 @@ const SolarPanelModelSelection = ({ setDialogVisible }: { setDialogVisible: (b: 
           oldValue: oldModel,
           newValue: value,
           changedElementId: solarPanel.id,
+          changedElementType: solarPanel.type,
           undo: () => {
             updateSolarPanelModelById(undoableChange.changedElementId, undoableChange.oldValue as string);
           },

@@ -302,6 +302,7 @@ const SolarPanelTiltAngleInput = ({ setDialogVisible }: { setDialogVisible: (b: 
             oldValue: oldTiltAngle,
             newValue: value,
             changedElementId: solarPanel.id,
+            changedElementType: solarPanel.type,
             undo: () => {
               updateSolarPanelTiltAngleById(undoableChange.changedElementId, undoableChange.oldValue as number);
             },

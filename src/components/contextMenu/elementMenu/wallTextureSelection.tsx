@@ -133,6 +133,7 @@ const WallTextureSelection = ({ setDialogVisible }: { setDialogVisible: (b: bool
             oldValue: oldTexture,
             newValue: value,
             changedElementId: wall.id,
+            changedElementType: wall.type,
             undo: () => {
               updateWallTextureById(undoableChange.changedElementId, undoableChange.oldValue as WallTexture);
             },
