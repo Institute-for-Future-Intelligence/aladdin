@@ -11,11 +11,13 @@ import dayjs from 'dayjs';
 import { FirebaseName } from './types';
 
 const ActionLogger = () => {
-  const actionLoggerFlag = useStore(Selector.actionLoggerFlag);
+  const actionInfo = useStore(Selector.actionInfo);
   const currentUndoable = useStore(Selector.currentUndoable);
   const user = useStore(Selector.user);
+  const cloudFile = useStore(Selector.cloudFile);
 
-  const firstCall = useRef<boolean>(true);
+  const firstCallUndo = useRef<boolean>(true);
+  const firstCallAction = useRef<boolean>(true);
   const databaseRef = useRef<any>();
 
   useEffect(() => {
@@ -45,17 +47,41 @@ const ActionLogger = () => {
   }, []);
 
   useEffect(() => {
-    if (firstCall.current) {
-      firstCall.current = false;
+    if (firstCallUndo.current) {
+      firstCallUndo.current = false;
     } else {
-      const timestamp = dayjs(new Date()).format('MM-DD-YYYY hh:mm:SSS a');
       if (currentUndoable) {
+        // we cannot use hh:mm:SSS as suggested by dayjs's format documentation
+        // because SSS only takes the last three digits of the millisecond string,
+        // resulting in incorrect ordering of the log. so we use the millisecond string
+        // to ensure the order and use the formatted string to provide readability.
+        const timestamp =
+          dayjs(new Date(currentUndoable.timestamp)).format('MM-DD-YYYY hh:mm a') +
+          ' (' +
+          currentUndoable.timestamp +
+          ')';
         databaseRef.current.ref(user.uid + '/' + timestamp).set({
+          file: cloudFile ?? 'Untitled',
           action: JSON.stringify(currentUndoable),
         });
       }
     }
-  }, [actionLoggerFlag, user.uid]);
+  }, [currentUndoable, user.uid]);
+
+  useEffect(() => {
+    if (firstCallAction.current) {
+      firstCallAction.current = false;
+    } else {
+      if (actionInfo) {
+        const timestamp =
+          dayjs(new Date(actionInfo.timestamp)).format('MM-DD-YYYY hh:mm a') + ' (' + actionInfo.timestamp + ')';
+        databaseRef.current.ref(user.uid + '/' + timestamp).set({
+          file: cloudFile ?? 'Untitled',
+          action: JSON.stringify(actionInfo),
+        });
+      }
+    }
+  }, [actionInfo, user.uid]);
 
   return <></>;
 };

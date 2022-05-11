@@ -144,6 +144,7 @@ const MainToolBarButtons = () => {
       selectNone();
       setCommonStore((state) => {
         state.runStaticSimulation = !state.runStaticSimulation;
+        state.actionInfo = { name: 'Generate Daily Solar Radiation Heatmap (Static)', timestamp: new Date().getTime() };
       });
     }, 100);
   };
@@ -157,6 +158,10 @@ const MainToolBarButtons = () => {
       selectNone();
       setCommonStore((state) => {
         state.runDynamicSimulation = !state.runDynamicSimulation;
+        state.actionInfo = {
+          name: 'Generate Daily Solar Radiation Heatmap (Dynamic)',
+          timestamp: new Date().getTime(),
+        };
       });
     }, 100);
   };

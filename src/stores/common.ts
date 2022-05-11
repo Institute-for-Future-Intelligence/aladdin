@@ -15,6 +15,7 @@ import pvmodules from '../resources/pvmodules.csv';
 import Papa from 'papaparse';
 import { Util } from '../Util';
 import {
+  ActionInfo,
   ActionType,
   CuboidTexture,
   DatumEntry,
@@ -674,7 +675,7 @@ export interface CommonStoreState {
   enableFineGrid: boolean;
   setEnableFineGrid: (b: boolean) => void;
 
-  actionLoggerFlag: boolean;
+  actionInfo: ActionInfo | undefined;
   currentUndoable: Undoable | undefined;
   showCloudFileTitleDialog: boolean;
   // we have to use the sure flip of an additional flag to ensure it triggers useEffect hook
@@ -780,6 +781,8 @@ export const useStore = create<CommonStoreState>(
               state.elements = content.elements;
               state.notes = content.notes ?? [];
               state.cloudFile = title;
+              state.currentUndoable = undefined;
+              state.actionInfo = undefined;
               state.updateSceneRadiusFlag = !state.updateSceneRadiusFlag;
               state.changed = false;
               state.skipChange = true;
@@ -860,12 +863,13 @@ export const useStore = create<CommonStoreState>(
               state.notes = [];
               state.fileChanged = !state.fileChanged;
               state.showSolarRadiationHeatmap = false;
+              state.currentUndoable = undefined;
+              state.actionInfo = undefined;
             });
           },
           undoManager: new UndoManager(),
           addUndoable(undoable: Undoable) {
             immerSet((state: CommonStoreState) => {
-              state.actionLoggerFlag = !state.actionLoggerFlag;
               state.currentUndoable = undoable;
               state.undoManager.add(undoable);
             });
@@ -5074,7 +5078,7 @@ export const useStore = create<CommonStoreState>(
           saveLocalFileDialogVisible: false,
           localFileDialogRequested: false,
           pvModelDialogVisible: false,
-          actionLoggerFlag: false,
+          actionInfo: undefined,
           currentUndoable: undefined,
           showCloudFileTitleDialog: false,
           showCloudFileTitleDialogFlag: false,

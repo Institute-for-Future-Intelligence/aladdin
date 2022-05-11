@@ -86,6 +86,7 @@ export interface AppCreatorProps {
 }
 
 const AppCreator = ({ viewOnly = false }: AppCreatorProps) => {
+  const user = useStore(Selector.user);
   const setCommonStore = useStore(Selector.set);
   const elements = useStore.getState().elements;
   const language = useStore(Selector.language);
@@ -159,6 +160,8 @@ const AppCreator = ({ viewOnly = false }: AppCreatorProps) => {
         objectTypeToAdd !== ObjectType.None || addedCuboidId || addedFoundationId ? 'crosshair' : 'default';
     }
   }, [objectTypeToAdd, addedCuboidId, addedFoundationId]);
+
+  const ifiUser = user ? user.email?.endsWith('@intofuture.org') : false;
 
   const zoomView = (scale: number) => {
     if (orthographic) {
@@ -461,7 +464,7 @@ const AppCreator = ({ viewOnly = false }: AppCreatorProps) => {
       </DropdownContextMenu>
       <CompassContainer visible={!orthographic} />
       {!viewOnly && <AcceptCookie />}
-      {!viewOnly && <ActionLogger />}
+      {!viewOnly && !ifiUser && <ActionLogger />}
     </div>
   );
 };
