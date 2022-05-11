@@ -178,6 +178,8 @@ export const i18n_tr = {
       ConvergenceThresholdHasBeenReached: 'The convergence threshold has been reached.',
       MaximumNumberOfGenerationsHasBeenReached: 'The maximum number of generations has been reached.',
       MaximumNumberOfStepsHasBeenReached: 'The maximum number of steps has been reached.',
+      ObjectiveFunctionTypeError:
+        'The current objective function is not supported by this operation. Please start from the menu.',
     },
 
     menu: {

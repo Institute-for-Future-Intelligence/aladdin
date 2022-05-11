@@ -161,7 +161,7 @@ const AppCreator = ({ viewOnly = false }: AppCreatorProps) => {
     }
   }, [objectTypeToAdd, addedCuboidId, addedFoundationId]);
 
-  const loggable = user ? !user.email?.endsWith('@intofuture.org') : false;
+  const loggable = user && user.uid ? !user.email?.endsWith('@intofuture.org') : false;
 
   const zoomView = (scale: number) => {
     if (orthographic) {

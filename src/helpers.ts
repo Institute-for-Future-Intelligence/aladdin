@@ -89,9 +89,9 @@ export const showWarning = (msg: string) => {
   });
 };
 
-export const showError = (msg: string) => {
+export const showError = (msg: string, duration?: number) => {
   message.error({
-    duration: 2,
+    duration: duration ?? 2,
     content: msg,
     className: 'custom-class',
     style: {

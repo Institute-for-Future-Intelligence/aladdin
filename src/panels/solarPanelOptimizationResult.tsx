@@ -294,6 +294,23 @@ const SolarPanelOptimizationResult = () => {
                       state.runEvolution = true;
                       state.pauseEvolution = false;
                       state.evolutionInProgress = true;
+                      let representationName;
+                      if (params.problem === DesignProblem.SOLAR_PANEL_ARRAY) {
+                        if (evolutionMethod === EvolutionMethod.GENETIC_ALGORITHM) {
+                          representationName = 'Run Genetic Algorithm for Solar Panel Array Layout';
+                        } else if (evolutionMethod === EvolutionMethod.PARTICLE_SWARM_OPTIMIZATION) {
+                          representationName = 'Run Particle Swarm Optimization for Solar Panel Array Layout';
+                        }
+                      } else if (params.problem === DesignProblem.SOLAR_PANEL_TILT_ANGLE) {
+                        if (evolutionMethod === EvolutionMethod.GENETIC_ALGORITHM) {
+                          representationName = 'Run Genetic Algorithm for Solar Panel Tilt Angle';
+                        } else if (evolutionMethod === EvolutionMethod.PARTICLE_SWARM_OPTIMIZATION) {
+                          representationName = 'Run Particle Swarm Optimization for Solar Panel Tilt Angle';
+                        }
+                      }
+                      if (representationName) {
+                        state.actionInfo = { name: representationName, timestamp: new Date().getTime() };
+                      }
                     });
                   }, 100);
                 }}

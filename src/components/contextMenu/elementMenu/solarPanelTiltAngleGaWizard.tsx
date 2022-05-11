@@ -29,9 +29,11 @@ const SolarPanelTiltAngleGaWizard = ({ setDialogVisible }: { setDialogVisible: (
   const [bounds, setBounds] = useState<DraggableBounds>({ left: 0, top: 0, bottom: 0, right: 0 } as DraggableBounds);
   const dragRef = useRef<HTMLDivElement | null>(null);
   const params = useStore(Selector.evolutionaryAlgorithmState).geneticAlgorithmParams;
-  const objectiveFunctionTypeRef = useRef<ObjectiveFunctionType>(params.objectiveFunctionType);
   const selectionMethodRef = useRef<GeneticAlgorithmSelectionMethod>(params.selectionMethod);
   const searchMethodRef = useRef<SearchMethod>(params.searchMethod);
+  const objectiveFunctionTypeRef = useRef<ObjectiveFunctionType>(
+    Math.min(params.objectiveFunctionType, ObjectiveFunctionType.YEARLY_TOTAL_OUTPUT),
+  );
   const populationSizeRef = useRef<number>(params.populationSize);
   const maximumGenerationsRef = useRef<number>(params.maximumGenerations);
   const mutationRateRef = useRef<number>(params.mutationRate);
@@ -88,6 +90,10 @@ const SolarPanelTiltAngleGaWizard = ({ setDialogVisible }: { setDialogVisible: (
         state.evolutionMethod = EvolutionMethod.GENETIC_ALGORITHM;
         state.evolutionaryAlgorithmState.geneticAlgorithmParams.problem = DesignProblem.SOLAR_PANEL_TILT_ANGLE;
         state.runEvolution = !state.runEvolution;
+        state.actionInfo = {
+          name: 'Run Genetic Algorithm for Solar Panel Tilt Angle',
+          timestamp: new Date().getTime(),
+        };
       });
     }, 100);
   };

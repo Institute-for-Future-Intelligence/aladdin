@@ -23,7 +23,9 @@ const SolarPanelTiltAnglePsoWizard = ({ setDialogVisible }: { setDialogVisible: 
   const [dragEnabled, setDragEnabled] = useState<boolean>(false);
   const [bounds, setBounds] = useState<DraggableBounds>({ left: 0, top: 0, bottom: 0, right: 0 } as DraggableBounds);
   const dragRef = useRef<HTMLDivElement | null>(null);
-  const objectiveFunctionTypeRef = useRef<ObjectiveFunctionType>(params.objectiveFunctionType);
+  const objectiveFunctionTypeRef = useRef<ObjectiveFunctionType>(
+    Math.min(params.objectiveFunctionType, ObjectiveFunctionType.YEARLY_TOTAL_OUTPUT),
+  );
   const searchMethodRef = useRef<SearchMethod>(params.searchMethod);
   const swarmSizeRef = useRef<number>(params.swarmSize);
   const maximumStepsRef = useRef<number>(params.maximumSteps);
@@ -85,6 +87,10 @@ const SolarPanelTiltAnglePsoWizard = ({ setDialogVisible }: { setDialogVisible: 
         state.evolutionMethod = EvolutionMethod.PARTICLE_SWARM_OPTIMIZATION;
         state.evolutionaryAlgorithmState.particleSwarmOptimizationParams.problem = DesignProblem.SOLAR_PANEL_TILT_ANGLE;
         state.runEvolution = !state.runEvolution;
+        state.actionInfo = {
+          name: 'Run Particle Swarm Optimization for Solar Panel Tilt Angle',
+          timestamp: new Date().getTime(),
+        };
       });
     }, 100);
   };

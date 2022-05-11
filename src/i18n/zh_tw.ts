@@ -176,6 +176,7 @@ export const i18n_zh_tw = {
       ConvergenceThresholdHasBeenReached: '收斂閾值已達到。',
       MaximumNumberOfGenerationsHasBeenReached: '最大世代數已達到。',
       MaximumNumberOfStepsHasBeenReached: '最大步數已達到。',
+      ObjectiveFunctionTypeError: '此操作不支持當前的目標函數。請從菜單啟動此功能。',
     },
 
     menu: {

@@ -221,6 +221,8 @@ const SolarPanelTiltAngleGa = () => {
               state.runYearlySimulationForSolarPanels = true;
             }
             break;
+          default:
+            showError(i18n.t('message.ObjectiveFunctionTypeError', lang), 60);
         }
       }
       if (lastStep) {
