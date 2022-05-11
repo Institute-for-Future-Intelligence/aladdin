@@ -73,6 +73,7 @@ export interface YearlyFresnelReflectorYieldPanelProps {
 
 const YearlyFresnelReflectorYieldPanel = ({ city }: YearlyFresnelReflectorYieldPanelProps) => {
   const language = useStore(Selector.language);
+  const loggable = useStore(Selector.loggable);
   const opacity = useStore(Selector.floatingWindowOpacity) ?? FLOATING_WINDOW_OPACITY;
   const setCommonStore = useStore(Selector.set);
   const daysPerYear = useStore(Selector.world.cspDaysPerYear) ?? 6;
@@ -285,10 +286,12 @@ const YearlyFresnelReflectorYieldPanel = ({ city }: YearlyFresnelReflectorYieldP
                       state.pauseYearlySimulationForFresnelReflectors = false;
                       state.simulationInProgress = true;
                       state.yearlyFresnelReflectorIndividualOutputs = checked;
-                      state.actionInfo = {
-                        name: 'Run Yearly Simulation For Fresnel Reflectors: ' + (checked ? 'Individual' : 'Total'),
-                        timestamp: new Date().getTime(),
-                      };
+                      if (loggable) {
+                        state.actionInfo = {
+                          name: 'Run Yearly Simulation For Fresnel Reflectors: ' + (checked ? 'Individual' : 'Total'),
+                          timestamp: new Date().getTime(),
+                        };
+                      }
                     });
                   }, 100);
                 }}
@@ -310,10 +313,12 @@ const YearlyFresnelReflectorYieldPanel = ({ city }: YearlyFresnelReflectorYieldP
                     state.runYearlySimulationForFresnelReflectors = true;
                     state.pauseYearlySimulationForFresnelReflectors = false;
                     state.simulationInProgress = true;
-                    state.actionInfo = {
-                      name: 'Run Yearly Simulation For Fresnel Reflectors',
-                      timestamp: new Date().getTime(),
-                    };
+                    if (loggable) {
+                      state.actionInfo = {
+                        name: 'Run Yearly Simulation For Fresnel Reflectors',
+                        timestamp: new Date().getTime(),
+                      };
+                    }
                   });
                 }, 100);
               }}

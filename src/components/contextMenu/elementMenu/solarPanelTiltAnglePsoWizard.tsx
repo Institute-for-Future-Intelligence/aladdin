@@ -15,6 +15,7 @@ const { Option } = Select;
 
 const SolarPanelTiltAnglePsoWizard = ({ setDialogVisible }: { setDialogVisible: (b: boolean) => void }) => {
   const setCommonStore = useStore(Selector.set);
+  const loggable = useStore(Selector.loggable);
   const language = useStore(Selector.language);
   const runEvolution = useStore(Selector.runEvolution);
   const params = useStore(Selector.evolutionaryAlgorithmState).particleSwarmOptimizationParams;
@@ -87,10 +88,12 @@ const SolarPanelTiltAnglePsoWizard = ({ setDialogVisible }: { setDialogVisible: 
         state.evolutionMethod = EvolutionMethod.PARTICLE_SWARM_OPTIMIZATION;
         state.evolutionaryAlgorithmState.particleSwarmOptimizationParams.problem = DesignProblem.SOLAR_PANEL_TILT_ANGLE;
         state.runEvolution = !state.runEvolution;
-        state.actionInfo = {
-          name: 'Run Particle Swarm Optimization for Solar Panel Tilt Angle',
-          timestamp: new Date().getTime(),
-        };
+        if (loggable) {
+          state.actionInfo = {
+            name: 'Run Particle Swarm Optimization for Solar Panel Tilt Angle',
+            timestamp: new Date().getTime(),
+          };
+        }
       });
     }, 100);
   };

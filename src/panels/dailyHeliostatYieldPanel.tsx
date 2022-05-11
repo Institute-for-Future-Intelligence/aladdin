@@ -74,6 +74,7 @@ export interface DailyHeliostatYieldPanelProps {
 
 const DailyHeliostatYieldPanel = ({ city }: DailyHeliostatYieldPanelProps) => {
   const language = useStore(Selector.language);
+  const loggable = useStore(Selector.loggable);
   const opacity = useStore(Selector.floatingWindowOpacity) ?? FLOATING_WINDOW_OPACITY;
   const setCommonStore = useStore(Selector.set);
   const now = new Date(useStore(Selector.world.date));
@@ -281,10 +282,12 @@ const DailyHeliostatYieldPanel = ({ city }: DailyHeliostatYieldPanelProps) => {
                       state.pauseDailySimulationForHeliostats = false;
                       state.simulationInProgress = true;
                       state.dailyHeliostatIndividualOutputs = checked;
-                      state.actionInfo = {
-                        name: 'Run Daily Simulation For Heliostats: ' + (checked ? 'Individual' : 'Total'),
-                        timestamp: new Date().getTime(),
-                      };
+                      if (loggable) {
+                        state.actionInfo = {
+                          name: 'Run Daily Simulation For Heliostats: ' + (checked ? 'Individual' : 'Total'),
+                          timestamp: new Date().getTime(),
+                        };
+                      }
                     });
                   }, 100);
                 }}
@@ -306,7 +309,12 @@ const DailyHeliostatYieldPanel = ({ city }: DailyHeliostatYieldPanelProps) => {
                     state.runDailySimulationForHeliostats = true;
                     state.pauseDailySimulationForHeliostats = false;
                     state.simulationInProgress = true;
-                    state.actionInfo = { name: 'Run Daily Simulation For Heliostats', timestamp: new Date().getTime() };
+                    if (loggable) {
+                      state.actionInfo = {
+                        name: 'Run Daily Simulation For Heliostats',
+                        timestamp: new Date().getTime(),
+                      };
+                    }
                   });
                 }, 100);
               }}

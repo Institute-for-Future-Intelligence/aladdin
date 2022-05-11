@@ -74,6 +74,7 @@ export interface DailyPvYieldPanelProps {
 
 const DailyPvYieldPanel = ({ city }: DailyPvYieldPanelProps) => {
   const language = useStore(Selector.language);
+  const loggable = useStore(Selector.loggable);
   const opacity = useStore(Selector.floatingWindowOpacity) ?? FLOATING_WINDOW_OPACITY;
   const setCommonStore = useStore(Selector.set);
   const now = new Date(useStore(Selector.world.date));
@@ -296,10 +297,12 @@ const DailyPvYieldPanel = ({ city }: DailyPvYieldPanelProps) => {
                           state.dailyPvIndividualOutputs = checked;
                           state.runDailySimulationForSolarPanels = true;
                           state.pauseDailySimulationForSolarPanels = false;
-                          state.actionInfo = {
-                            name: 'Run Daily Simulation For Solar Panels: ' + (checked ? 'Individual' : 'Total'),
-                            timestamp: new Date().getTime(),
-                          };
+                          if (loggable) {
+                            state.actionInfo = {
+                              name: 'Run Daily Simulation For Solar Panels: ' + (checked ? 'Individual' : 'Total'),
+                              timestamp: new Date().getTime(),
+                            };
+                          }
                         });
                       }, 100);
                     }}
@@ -321,10 +324,12 @@ const DailyPvYieldPanel = ({ city }: DailyPvYieldPanelProps) => {
                         state.simulationInProgress = true;
                         state.runDailySimulationForSolarPanels = true;
                         state.pauseDailySimulationForSolarPanels = false;
-                        state.actionInfo = {
-                          name: 'Run Daily Simulation For Solar Panels',
-                          timestamp: new Date().getTime(),
-                        };
+                        if (loggable) {
+                          state.actionInfo = {
+                            name: 'Run Daily Simulation For Solar Panels',
+                            timestamp: new Date().getTime(),
+                          };
+                        }
                       });
                     }, 100);
                   }}

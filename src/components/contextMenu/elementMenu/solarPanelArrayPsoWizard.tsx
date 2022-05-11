@@ -30,6 +30,7 @@ const { TabPane } = Tabs;
 
 const SolarPanelArrayPsoWizard = ({ setDialogVisible }: { setDialogVisible: (b: boolean) => void }) => {
   const setCommonStore = useStore(Selector.set);
+  const loggable = useStore(Selector.loggable);
   const language = useStore(Selector.language);
   const runEvolution = useStore(Selector.runEvolution);
   const pvModules = useStore(Selector.pvModules);
@@ -150,10 +151,12 @@ const SolarPanelArrayPsoWizard = ({ setDialogVisible }: { setDialogVisible: (b: 
       setCommonStore((state) => {
         state.evolutionMethod = EvolutionMethod.PARTICLE_SWARM_OPTIMIZATION;
         state.runEvolution = !state.runEvolution;
-        state.actionInfo = {
-          name: 'Run Particle Swarm Optimization for Solar Panel Array Layout',
-          timestamp: new Date().getTime(),
-        };
+        if (loggable) {
+          state.actionInfo = {
+            name: 'Run Particle Swarm Optimization for Solar Panel Array Layout',
+            timestamp: new Date().getTime(),
+          };
+        }
       });
     }, 100);
   };

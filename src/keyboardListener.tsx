@@ -31,6 +31,7 @@ export interface KeyboardListenerProps {
 
 const KeyboardListener = ({ canvas, set2DView, resetView, zoomView }: KeyboardListenerProps) => {
   const setCommonStore = useStore(Selector.set);
+  const loggable = useStore(Selector.loggable);
   const selectNone = useStore(Selector.selectNone);
   const language = useStore(Selector.language);
   const undoManager = useStore(Selector.undoManager);
@@ -104,6 +105,7 @@ const KeyboardListener = ({ canvas, set2DView, resetView, zoomView }: KeyboardLi
     'ctrl+shift+s',
     'meta+shift+s',
     'delete',
+    'alt+backspace',
     'f2',
     'f4',
   ];
@@ -620,6 +622,7 @@ const KeyboardListener = ({ canvas, set2DView, resetView, zoomView }: KeyboardLi
           state.saveCloudFileFlag = !state.saveCloudFileFlag;
         });
         break;
+      case 'alt+backspace':
       case 'delete':
         if (selectedElement) {
           if (selectedElement.locked) {
@@ -671,12 +674,28 @@ const KeyboardListener = ({ canvas, set2DView, resetView, zoomView }: KeyboardLi
       case 'meta+z': // for Mac
         if (undoManager.hasUndo()) {
           undoManager.undo();
+          if (loggable) {
+            setCommonStore((state) => {
+              state.actionInfo = {
+                name: 'Undo',
+                timestamp: new Date().getTime(),
+              };
+            });
+          }
         }
         break;
       case 'ctrl+y':
       case 'meta+y': // for Mac
         if (undoManager.hasRedo()) {
           undoManager.redo();
+          if (loggable) {
+            setCommonStore((state) => {
+              state.actionInfo = {
+                name: 'Redo',
+                timestamp: new Date().getTime(),
+              };
+            });
+          }
         }
         break;
       case 'shift':

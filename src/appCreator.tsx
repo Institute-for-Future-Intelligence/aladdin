@@ -87,6 +87,7 @@ export interface AppCreatorProps {
 
 const AppCreator = ({ viewOnly = false }: AppCreatorProps) => {
   const user = useStore(Selector.user);
+  const loggable = useStore(Selector.loggable);
   const setCommonStore = useStore(Selector.set);
   const elements = useStore.getState().elements;
   const language = useStore(Selector.language);
@@ -161,7 +162,11 @@ const AppCreator = ({ viewOnly = false }: AppCreatorProps) => {
     }
   }, [objectTypeToAdd, addedCuboidId, addedFoundationId]);
 
-  const loggable = user && user.uid ? !user.email?.endsWith('@intofuture.org') : false;
+  useEffect(() => {
+    setCommonStore((state) => {
+      state.loggable = user && user.uid ? !user.email?.endsWith('@intofuture.org') : false;
+    });
+  }, [user]);
 
   const zoomView = (scale: number) => {
     if (orthographic) {

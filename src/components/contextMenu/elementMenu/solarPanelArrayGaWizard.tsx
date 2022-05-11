@@ -31,6 +31,7 @@ const { TabPane } = Tabs;
 
 const SolarPanelArrayGaWizard = ({ setDialogVisible }: { setDialogVisible: (b: boolean) => void }) => {
   const setCommonStore = useStore(Selector.set);
+  const loggable = useStore(Selector.loggable);
   const language = useStore(Selector.language);
   const runEvolution = useStore(Selector.runEvolution);
   const pvModules = useStore(Selector.pvModules);
@@ -148,10 +149,12 @@ const SolarPanelArrayGaWizard = ({ setDialogVisible }: { setDialogVisible: (b: b
       setCommonStore((state) => {
         state.evolutionMethod = EvolutionMethod.GENETIC_ALGORITHM;
         state.runEvolution = !state.runEvolution;
-        state.actionInfo = {
-          name: 'Run Genetic Algorithm for Solar Panel Array Layout',
-          timestamp: new Date().getTime(),
-        };
+        if (loggable) {
+          state.actionInfo = {
+            name: 'Run Genetic Algorithm for Solar Panel Array Layout',
+            timestamp: new Date().getTime(),
+          };
+        }
       });
     }, 100);
   };

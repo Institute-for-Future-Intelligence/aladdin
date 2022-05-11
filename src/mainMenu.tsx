@@ -124,6 +124,7 @@ export interface MainMenuProps {
 
 const MainMenu = ({ viewOnly, set2DView, resetView, zoomView, canvas }: MainMenuProps) => {
   const setCommonStore = useStore(Selector.set);
+  const loggable = useStore(Selector.loggable);
   const language = useStore(Selector.language);
   const floatingWindowOpacity = useStore(Selector.floatingWindowOpacity);
   const elements = useStore.getState().elements;
@@ -772,7 +773,12 @@ const MainMenu = ({ viewOnly, set2DView, resetView, zoomView, canvas }: MainMenu
       selectNone();
       setCommonStore((state) => {
         state.runStaticSimulation = !state.runStaticSimulation;
-        state.actionInfo = { name: 'Generate Daily Solar Radiation Heatmap (Static)', timestamp: new Date().getTime() };
+        if (loggable) {
+          state.actionInfo = {
+            name: 'Generate Daily Solar Radiation Heatmap (Static)',
+            timestamp: new Date().getTime(),
+          };
+        }
       });
     }, 100);
   };
@@ -786,10 +792,12 @@ const MainMenu = ({ viewOnly, set2DView, resetView, zoomView, canvas }: MainMenu
       selectNone();
       setCommonStore((state) => {
         state.runDynamicSimulation = !state.runDynamicSimulation;
-        state.actionInfo = {
-          name: 'Generate Daily Solar Radiation Heatmap (Dynamic)',
-          timestamp: new Date().getTime(),
-        };
+        if (loggable) {
+          state.actionInfo = {
+            name: 'Generate Daily Solar Radiation Heatmap (Dynamic)',
+            timestamp: new Date().getTime(),
+          };
+        }
       });
     }, 100);
   };
@@ -1204,7 +1212,9 @@ const MainMenu = ({ viewOnly, set2DView, resetView, zoomView, canvas }: MainMenu
                 setCommonStore((state) => {
                   state.simulationInProgress = true;
                   state.runDailyLightSensor = true;
-                  state.actionInfo = { name: 'Collect Daily Data for Sensors', timestamp: new Date().getTime() };
+                  if (loggable) {
+                    state.actionInfo = { name: 'Collect Daily Data for Sensors', timestamp: new Date().getTime() };
+                  }
                 });
               }, 100);
             }}
@@ -1225,7 +1235,9 @@ const MainMenu = ({ viewOnly, set2DView, resetView, zoomView, canvas }: MainMenu
                 setCommonStore((state) => {
                   state.simulationInProgress = true;
                   state.runYearlyLightSensor = true;
-                  state.actionInfo = { name: 'Collect Yearly Data for Sensors', timestamp: new Date().getTime() };
+                  if (loggable) {
+                    state.actionInfo = { name: 'Collect Yearly Data for Sensors', timestamp: new Date().getTime() };
+                  }
                 });
               }, 100);
             }}
@@ -1288,7 +1300,12 @@ const MainMenu = ({ viewOnly, set2DView, resetView, zoomView, canvas }: MainMenu
                   state.simulationInProgress = true;
                   state.dailyPvIndividualOutputs = false;
                   state.runDailySimulationForSolarPanels = true;
-                  state.actionInfo = { name: 'Run Daily Simulation For Solar Panels', timestamp: new Date().getTime() };
+                  if (loggable) {
+                    state.actionInfo = {
+                      name: 'Run Daily Simulation For Solar Panels',
+                      timestamp: new Date().getTime(),
+                    };
+                  }
                 });
               }, 100);
             }}
@@ -1310,10 +1327,12 @@ const MainMenu = ({ viewOnly, set2DView, resetView, zoomView, canvas }: MainMenu
                   state.simulationInProgress = true;
                   state.yearlyPvIndividualOutputs = false;
                   state.runYearlySimulationForSolarPanels = true;
-                  state.actionInfo = {
-                    name: 'Run Yearly Simulation For Solar Panels',
-                    timestamp: new Date().getTime(),
-                  };
+                  if (loggable) {
+                    state.actionInfo = {
+                      name: 'Run Yearly Simulation For Solar Panels',
+                      timestamp: new Date().getTime(),
+                    };
+                  }
                 });
               }, 100);
             }}
@@ -1335,10 +1354,12 @@ const MainMenu = ({ viewOnly, set2DView, resetView, zoomView, canvas }: MainMenu
                 setCommonStore((state) => {
                   state.simulationInProgress = true;
                   state.runSolarPanelVisibilityAnalysis = !state.runSolarPanelVisibilityAnalysis;
-                  state.actionInfo = {
-                    name: 'Run Visibility Analysis For Solar Panels',
-                    timestamp: new Date().getTime(),
-                  };
+                  if (loggable) {
+                    state.actionInfo = {
+                      name: 'Run Visibility Analysis For Solar Panels',
+                      timestamp: new Date().getTime(),
+                    };
+                  }
                 });
               }, 100);
             }}
@@ -1391,10 +1412,12 @@ const MainMenu = ({ viewOnly, set2DView, resetView, zoomView, canvas }: MainMenu
                   state.simulationInProgress = true;
                   state.dailyParabolicTroughIndividualOutputs = false;
                   state.runDailySimulationForParabolicTroughs = true;
-                  state.actionInfo = {
-                    name: 'Run Daily Simulation for Parabolic Troughs',
-                    timestamp: new Date().getTime(),
-                  };
+                  if (loggable) {
+                    state.actionInfo = {
+                      name: 'Run Daily Simulation for Parabolic Troughs',
+                      timestamp: new Date().getTime(),
+                    };
+                  }
                 });
               }, 100);
             }}
@@ -1416,10 +1439,12 @@ const MainMenu = ({ viewOnly, set2DView, resetView, zoomView, canvas }: MainMenu
                   state.simulationInProgress = true;
                   state.yearlyParabolicTroughIndividualOutputs = false;
                   state.runYearlySimulationForParabolicTroughs = true;
-                  state.actionInfo = {
-                    name: 'Run Yearly Simulation for Parabolic Troughs',
-                    timestamp: new Date().getTime(),
-                  };
+                  if (loggable) {
+                    state.actionInfo = {
+                      name: 'Run Yearly Simulation for Parabolic Troughs',
+                      timestamp: new Date().getTime(),
+                    };
+                  }
                 });
               }, 100);
             }}
@@ -1446,10 +1471,12 @@ const MainMenu = ({ viewOnly, set2DView, resetView, zoomView, canvas }: MainMenu
                   state.simulationInProgress = true;
                   state.dailyParabolicDishIndividualOutputs = false;
                   state.runDailySimulationForParabolicDishes = true;
-                  state.actionInfo = {
-                    name: 'Run Daily Simulation for Parabolic Dishes',
-                    timestamp: new Date().getTime(),
-                  };
+                  if (loggable) {
+                    state.actionInfo = {
+                      name: 'Run Daily Simulation for Parabolic Dishes',
+                      timestamp: new Date().getTime(),
+                    };
+                  }
                 });
               }, 100);
             }}
@@ -1471,10 +1498,12 @@ const MainMenu = ({ viewOnly, set2DView, resetView, zoomView, canvas }: MainMenu
                   state.simulationInProgress = true;
                   state.yearlyParabolicDishIndividualOutputs = false;
                   state.runYearlySimulationForParabolicDishes = true;
-                  state.actionInfo = {
-                    name: 'Run Yearly Simulation for Parabolic Dishes',
-                    timestamp: new Date().getTime(),
-                  };
+                  if (loggable) {
+                    state.actionInfo = {
+                      name: 'Run Yearly Simulation for Parabolic Dishes',
+                      timestamp: new Date().getTime(),
+                    };
+                  }
                 });
               }, 100);
             }}
@@ -1501,10 +1530,12 @@ const MainMenu = ({ viewOnly, set2DView, resetView, zoomView, canvas }: MainMenu
                   state.simulationInProgress = true;
                   state.dailyFresnelReflectorIndividualOutputs = false;
                   state.runDailySimulationForFresnelReflectors = true;
-                  state.actionInfo = {
-                    name: 'Run Daily Simulation for Fresnel Reflectors',
-                    timestamp: new Date().getTime(),
-                  };
+                  if (loggable) {
+                    state.actionInfo = {
+                      name: 'Run Daily Simulation for Fresnel Reflectors',
+                      timestamp: new Date().getTime(),
+                    };
+                  }
                 });
               }, 100);
             }}
@@ -1526,10 +1557,12 @@ const MainMenu = ({ viewOnly, set2DView, resetView, zoomView, canvas }: MainMenu
                   state.simulationInProgress = true;
                   state.yearlyFresnelReflectorIndividualOutputs = false;
                   state.runYearlySimulationForFresnelReflectors = true;
-                  state.actionInfo = {
-                    name: 'Run Yearly Simulation for Fresnel Reflectors',
-                    timestamp: new Date().getTime(),
-                  };
+                  if (loggable) {
+                    state.actionInfo = {
+                      name: 'Run Yearly Simulation for Fresnel Reflectors',
+                      timestamp: new Date().getTime(),
+                    };
+                  }
                 });
               }, 100);
             }}
@@ -1556,7 +1589,9 @@ const MainMenu = ({ viewOnly, set2DView, resetView, zoomView, canvas }: MainMenu
                   state.simulationInProgress = true;
                   state.dailyHeliostatIndividualOutputs = false;
                   state.runDailySimulationForHeliostats = true;
-                  state.actionInfo = { name: 'Run Daily Simulation for Heliostats', timestamp: new Date().getTime() };
+                  if (loggable) {
+                    state.actionInfo = { name: 'Run Daily Simulation for Heliostats', timestamp: new Date().getTime() };
+                  }
                 });
               }, 100);
             }}
@@ -1578,7 +1613,12 @@ const MainMenu = ({ viewOnly, set2DView, resetView, zoomView, canvas }: MainMenu
                   state.simulationInProgress = true;
                   state.yearlyHeliostatIndividualOutputs = false;
                   state.runYearlySimulationForHeliostats = true;
-                  state.actionInfo = { name: 'Run Yearly Simulation for Heliostats', timestamp: new Date().getTime() };
+                  if (loggable) {
+                    state.actionInfo = {
+                      name: 'Run Yearly Simulation for Heliostats',
+                      timestamp: new Date().getTime(),
+                    };
+                  }
                 });
               }, 100);
             }}
@@ -1605,10 +1645,12 @@ const MainMenu = ({ viewOnly, set2DView, resetView, zoomView, canvas }: MainMenu
                   state.simulationInProgress = true;
                   state.dailyUpdraftTowerIndividualOutputs = false;
                   state.runDailySimulationForUpdraftTower = true;
-                  state.actionInfo = {
-                    name: 'Run Daily Simulation for Solar Updraft Tower',
-                    timestamp: new Date().getTime(),
-                  };
+                  if (loggable) {
+                    state.actionInfo = {
+                      name: 'Run Daily Simulation for Solar Updraft Tower',
+                      timestamp: new Date().getTime(),
+                    };
+                  }
                 });
               }, 100);
             }}
@@ -1630,10 +1672,12 @@ const MainMenu = ({ viewOnly, set2DView, resetView, zoomView, canvas }: MainMenu
                   state.simulationInProgress = true;
                   state.yearlyUpdraftTowerIndividualOutputs = false;
                   state.runYearlySimulationForUpdraftTower = true;
-                  state.actionInfo = {
-                    name: 'Run Yearly Simulation for Solar Updraft Tower',
-                    timestamp: new Date().getTime(),
-                  };
+                  if (loggable) {
+                    state.actionInfo = {
+                      name: 'Run Yearly Simulation for Solar Updraft Tower',
+                      timestamp: new Date().getTime(),
+                    };
+                  }
                 });
               }, 100);
             }}

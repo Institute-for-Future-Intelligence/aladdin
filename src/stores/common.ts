@@ -675,6 +675,7 @@ export interface CommonStoreState {
   enableFineGrid: boolean;
   setEnableFineGrid: (b: boolean) => void;
 
+  loggable: boolean;
   actionInfo: ActionInfo | undefined;
   currentUndoable: Undoable | undefined;
   showCloudFileTitleDialog: boolean;
@@ -870,7 +871,9 @@ export const useStore = create<CommonStoreState>(
           undoManager: new UndoManager(),
           addUndoable(undoable: Undoable) {
             immerSet((state: CommonStoreState) => {
-              state.currentUndoable = undoable;
+              if (state.loggable) {
+                state.currentUndoable = undoable;
+              }
               state.undoManager.add(undoable);
             });
           },
@@ -5078,6 +5081,7 @@ export const useStore = create<CommonStoreState>(
           saveLocalFileDialogVisible: false,
           localFileDialogRequested: false,
           pvModelDialogVisible: false,
+          loggable: false,
           actionInfo: undefined,
           currentUndoable: undefined,
           showCloudFileTitleDialog: false,

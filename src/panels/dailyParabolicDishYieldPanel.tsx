@@ -74,6 +74,7 @@ export interface DailyParabolicDishYieldPanelProps {
 
 const DailyParabolicDishYieldPanel = ({ city }: DailyParabolicDishYieldPanelProps) => {
   const language = useStore(Selector.language);
+  const loggable = useStore(Selector.loggable);
   const opacity = useStore(Selector.floatingWindowOpacity) ?? FLOATING_WINDOW_OPACITY;
   const setCommonStore = useStore(Selector.set);
   const now = new Date(useStore(Selector.world.date));
@@ -281,10 +282,12 @@ const DailyParabolicDishYieldPanel = ({ city }: DailyParabolicDishYieldPanelProp
                       state.pauseDailySimulationForParabolicDishes = false;
                       state.simulationInProgress = true;
                       state.dailyParabolicDishIndividualOutputs = checked;
-                      state.actionInfo = {
-                        name: 'Run Daily Simulation For Parabolic Dishes: ' + (checked ? 'Individual' : 'Total'),
-                        timestamp: new Date().getTime(),
-                      };
+                      if (loggable) {
+                        state.actionInfo = {
+                          name: 'Run Daily Simulation For Parabolic Dishes: ' + (checked ? 'Individual' : 'Total'),
+                          timestamp: new Date().getTime(),
+                        };
+                      }
                     });
                   }, 100);
                 }}
@@ -306,10 +309,12 @@ const DailyParabolicDishYieldPanel = ({ city }: DailyParabolicDishYieldPanelProp
                     state.runDailySimulationForParabolicDishes = true;
                     state.pauseDailySimulationForParabolicDishes = false;
                     state.simulationInProgress = true;
-                    state.actionInfo = {
-                      name: 'Run Daily Simulation For Parabolic Dishes',
-                      timestamp: new Date().getTime(),
-                    };
+                    if (loggable) {
+                      state.actionInfo = {
+                        name: 'Run Daily Simulation For Parabolic Dishes',
+                        timestamp: new Date().getTime(),
+                      };
+                    }
                   });
                 }, 100);
               }}

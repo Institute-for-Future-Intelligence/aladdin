@@ -21,6 +21,7 @@ const { Option } = Select;
 
 const SolarPanelTiltAngleGaWizard = ({ setDialogVisible }: { setDialogVisible: (b: boolean) => void }) => {
   const setCommonStore = useStore(Selector.set);
+  const loggable = useStore(Selector.loggable);
   const language = useStore(Selector.language);
   const runEvolution = useStore(Selector.runEvolution);
 
@@ -90,10 +91,12 @@ const SolarPanelTiltAngleGaWizard = ({ setDialogVisible }: { setDialogVisible: (
         state.evolutionMethod = EvolutionMethod.GENETIC_ALGORITHM;
         state.evolutionaryAlgorithmState.geneticAlgorithmParams.problem = DesignProblem.SOLAR_PANEL_TILT_ANGLE;
         state.runEvolution = !state.runEvolution;
-        state.actionInfo = {
-          name: 'Run Genetic Algorithm for Solar Panel Tilt Angle',
-          timestamp: new Date().getTime(),
-        };
+        if (loggable) {
+          state.actionInfo = {
+            name: 'Run Genetic Algorithm for Solar Panel Tilt Angle',
+            timestamp: new Date().getTime(),
+          };
+        }
       });
     }, 100);
   };

@@ -73,6 +73,7 @@ export interface YearlyHeliostatYieldPanelProps {
 
 const YearlyHeliostatYieldPanel = ({ city }: YearlyHeliostatYieldPanelProps) => {
   const language = useStore(Selector.language);
+  const loggable = useStore(Selector.loggable);
   const opacity = useStore(Selector.floatingWindowOpacity) ?? FLOATING_WINDOW_OPACITY;
   const setCommonStore = useStore(Selector.set);
   const daysPerYear = useStore(Selector.world.cspDaysPerYear) ?? 6;
@@ -285,10 +286,12 @@ const YearlyHeliostatYieldPanel = ({ city }: YearlyHeliostatYieldPanelProps) => 
                       state.pauseYearlySimulationForHeliostats = false;
                       state.simulationInProgress = true;
                       state.yearlyHeliostatIndividualOutputs = checked;
-                      state.actionInfo = {
-                        name: 'Run Yearly Simulation For Heliostats: ' + (checked ? 'Individual' : 'Total'),
-                        timestamp: new Date().getTime(),
-                      };
+                      if (loggable) {
+                        state.actionInfo = {
+                          name: 'Run Yearly Simulation For Heliostats: ' + (checked ? 'Individual' : 'Total'),
+                          timestamp: new Date().getTime(),
+                        };
+                      }
                     });
                   }, 100);
                 }}
@@ -310,10 +313,12 @@ const YearlyHeliostatYieldPanel = ({ city }: YearlyHeliostatYieldPanelProps) => 
                     state.runYearlySimulationForHeliostats = true;
                     state.pauseYearlySimulationForHeliostats = false;
                     state.simulationInProgress = true;
-                    state.actionInfo = {
-                      name: 'Run Yearly Simulation For Heliostats',
-                      timestamp: new Date().getTime(),
-                    };
+                    if (loggable) {
+                      state.actionInfo = {
+                        name: 'Run Yearly Simulation For Heliostats',
+                        timestamp: new Date().getTime(),
+                      };
+                    }
                   });
                 }, 100);
               }}

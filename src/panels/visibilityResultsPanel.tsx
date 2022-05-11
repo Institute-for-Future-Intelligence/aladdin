@@ -70,6 +70,7 @@ const Header = styled.div`
 
 const VisibilityResultsPanel = () => {
   const language = useStore(Selector.language);
+  const loggable = useStore(Selector.loggable);
   const setCommonStore = useStore(Selector.set);
   const now = new Date(useStore(Selector.world.date));
   const panelRect = useStore(Selector.viewState.visibilityResultsPanelRect);
@@ -257,10 +258,12 @@ const VisibilityResultsPanel = () => {
                   setCommonStore((state) => {
                     state.simulationInProgress = true;
                     state.runSolarPanelVisibilityAnalysis = true;
-                    state.actionInfo = {
-                      name: 'Run Visibility Analysis For Solar Panels',
-                      timestamp: new Date().getTime(),
-                    };
+                    if (loggable) {
+                      state.actionInfo = {
+                        name: 'Run Visibility Analysis For Solar Panels',
+                        timestamp: new Date().getTime(),
+                      };
+                    }
                   });
                 }, 100);
               }}

@@ -74,6 +74,7 @@ export interface YearlyLightSensorPanelProps {
 
 const YearlyLightSensorPanel = ({ city }: YearlyLightSensorPanelProps) => {
   const language = useStore(Selector.language);
+  const loggable = useStore(Selector.loggable);
   const opacity = useStore(Selector.floatingWindowOpacity) ?? FLOATING_WINDOW_OPACITY;
   const setCommonStore = useStore(Selector.set);
   const now = new Date(useStore(Selector.world.date));
@@ -306,7 +307,9 @@ const YearlyLightSensorPanel = ({ city }: YearlyLightSensorPanelProps) => {
                       state.runYearlyLightSensor = true;
                       state.pauseYearlyLightSensor = false;
                       state.simulationInProgress = true;
-                      state.actionInfo = { name: 'Collect Yearly Data for Sensors', timestamp: new Date().getTime() };
+                      if (loggable) {
+                        state.actionInfo = { name: 'Collect Yearly Data for Sensors', timestamp: new Date().getTime() };
+                      }
                     });
                   }, 100);
                 }}

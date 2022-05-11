@@ -74,6 +74,7 @@ export interface DailyLightSensorPanelProps {
 
 const DailyLightSensorPanel = ({ city }: DailyLightSensorPanelProps) => {
   const language = useStore(Selector.language);
+  const loggable = useStore(Selector.loggable);
   const opacity = useStore(Selector.floatingWindowOpacity) ?? FLOATING_WINDOW_OPACITY;
   const setCommonStore = useStore(Selector.set);
   const now = new Date(useStore(Selector.world.date));
@@ -234,7 +235,9 @@ const DailyLightSensorPanel = ({ city }: DailyLightSensorPanelProps) => {
                     state.runDailyLightSensor = true;
                     state.pauseDailyLightSensor = false;
                     state.simulationInProgress = true;
-                    state.actionInfo = { name: 'Collect Daily Data for Sensors', timestamp: new Date().getTime() };
+                    if (loggable) {
+                      state.actionInfo = { name: 'Collect Daily Data for Sensors', timestamp: new Date().getTime() };
+                    }
                   });
                 }, 100);
               }}

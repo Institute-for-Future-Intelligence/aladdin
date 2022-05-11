@@ -73,6 +73,7 @@ export interface YearlyParabolicTroughYieldPanelProps {
 
 const YearlyParabolicTroughYieldPanel = ({ city }: YearlyParabolicTroughYieldPanelProps) => {
   const language = useStore(Selector.language);
+  const loggable = useStore(Selector.loggable);
   const opacity = useStore(Selector.floatingWindowOpacity) ?? FLOATING_WINDOW_OPACITY;
   const setCommonStore = useStore(Selector.set);
   const daysPerYear = useStore(Selector.world.cspDaysPerYear) ?? 6;
@@ -285,10 +286,12 @@ const YearlyParabolicTroughYieldPanel = ({ city }: YearlyParabolicTroughYieldPan
                       state.pauseYearlySimulationForParabolicTroughs = false;
                       state.simulationInProgress = true;
                       state.yearlyParabolicTroughIndividualOutputs = checked;
-                      state.actionInfo = {
-                        name: 'Run Yearly Simulation For Parabolic Troughs: ' + (checked ? 'Individual' : 'Total'),
-                        timestamp: new Date().getTime(),
-                      };
+                      if (loggable) {
+                        state.actionInfo = {
+                          name: 'Run Yearly Simulation For Parabolic Troughs: ' + (checked ? 'Individual' : 'Total'),
+                          timestamp: new Date().getTime(),
+                        };
+                      }
                     });
                   }, 100);
                 }}
@@ -310,10 +313,12 @@ const YearlyParabolicTroughYieldPanel = ({ city }: YearlyParabolicTroughYieldPan
                     state.runYearlySimulationForParabolicTroughs = true;
                     state.pauseYearlySimulationForParabolicTroughs = false;
                     state.simulationInProgress = true;
-                    state.actionInfo = {
-                      name: 'Run Yearly Simulation For Parabolic Troughs',
-                      timestamp: new Date().getTime(),
-                    };
+                    if (loggable) {
+                      state.actionInfo = {
+                        name: 'Run Yearly Simulation For Parabolic Troughs',
+                        timestamp: new Date().getTime(),
+                      };
+                    }
                   });
                 }, 100);
               }}

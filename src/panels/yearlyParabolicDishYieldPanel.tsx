@@ -73,6 +73,7 @@ export interface YearlyParabolicDishYieldPanelProps {
 
 const YearlyParabolicDishYieldPanel = ({ city }: YearlyParabolicDishYieldPanelProps) => {
   const language = useStore(Selector.language);
+  const loggable = useStore(Selector.loggable);
   const opacity = useStore(Selector.floatingWindowOpacity) ?? FLOATING_WINDOW_OPACITY;
   const setCommonStore = useStore(Selector.set);
   const daysPerYear = useStore(Selector.world.cspDaysPerYear) ?? 6;
@@ -285,10 +286,12 @@ const YearlyParabolicDishYieldPanel = ({ city }: YearlyParabolicDishYieldPanelPr
                       state.pauseYearlySimulationForParabolicDishes = false;
                       state.simulationInProgress = true;
                       state.yearlyParabolicDishIndividualOutputs = checked;
-                      state.actionInfo = {
-                        name: 'Run Yearly Simulation For Parabolic Dishes: ' + (checked ? 'Individual' : 'Total'),
-                        timestamp: new Date().getTime(),
-                      };
+                      if (loggable) {
+                        state.actionInfo = {
+                          name: 'Run Yearly Simulation For Parabolic Dishes: ' + (checked ? 'Individual' : 'Total'),
+                          timestamp: new Date().getTime(),
+                        };
+                      }
                     });
                   }, 100);
                 }}
@@ -310,10 +313,12 @@ const YearlyParabolicDishYieldPanel = ({ city }: YearlyParabolicDishYieldPanelPr
                     state.runYearlySimulationForParabolicDishes = true;
                     state.pauseYearlySimulationForParabolicDishes = false;
                     state.simulationInProgress = true;
-                    state.actionInfo = {
-                      name: 'Run Yearly Simulation For Parabolic Dishes',
-                      timestamp: new Date().getTime(),
-                    };
+                    if (loggable) {
+                      state.actionInfo = {
+                        name: 'Run Yearly Simulation For Parabolic Dishes',
+                        timestamp: new Date().getTime(),
+                      };
+                    }
                   });
                 }, 100);
               }}

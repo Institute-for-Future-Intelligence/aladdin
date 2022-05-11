@@ -73,6 +73,7 @@ export interface YearlySolarUpdraftTowerYieldPanelProps {
 
 const YearlySolarUpdraftTowerYieldPanel = ({ city }: YearlySolarUpdraftTowerYieldPanelProps) => {
   const language = useStore(Selector.language);
+  const loggable = useStore(Selector.loggable);
   const opacity = useStore(Selector.floatingWindowOpacity) ?? FLOATING_WINDOW_OPACITY;
   const setCommonStore = useStore(Selector.set);
   const daysPerYear = useStore(Selector.world.sutDaysPerYear) ?? 6;
@@ -280,10 +281,12 @@ const YearlySolarUpdraftTowerYieldPanel = ({ city }: YearlySolarUpdraftTowerYiel
                     state.simulationInProgress = true;
                     state.runYearlySimulationForUpdraftTower = true;
                     state.pauseYearlySimulationForUpdraftTower = false;
-                    state.actionInfo = {
-                      name: 'Run Yearly Simulation For Solar Updraft Tower',
-                      timestamp: new Date().getTime(),
-                    };
+                    if (loggable) {
+                      state.actionInfo = {
+                        name: 'Run Yearly Simulation For Solar Updraft Tower',
+                        timestamp: new Date().getTime(),
+                      };
+                    }
                   });
                 }, 100);
               }}

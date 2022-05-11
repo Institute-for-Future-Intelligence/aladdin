@@ -74,6 +74,7 @@ export interface DailyFresnelReflectorYieldPanelProps {
 
 const DailyFresnelReflectorYieldPanel = ({ city }: DailyFresnelReflectorYieldPanelProps) => {
   const language = useStore(Selector.language);
+  const loggable = useStore(Selector.loggable);
   const opacity = useStore(Selector.floatingWindowOpacity) ?? FLOATING_WINDOW_OPACITY;
   const setCommonStore = useStore(Selector.set);
   const now = new Date(useStore(Selector.world.date));
@@ -281,10 +282,12 @@ const DailyFresnelReflectorYieldPanel = ({ city }: DailyFresnelReflectorYieldPan
                       state.pauseDailySimulationForFresnelReflectors = false;
                       state.simulationInProgress = true;
                       state.dailyFresnelReflectorIndividualOutputs = checked;
-                      state.actionInfo = {
-                        name: 'Run Daily Simulation For Fresnel Reflectors: ' + (checked ? 'Individual' : 'Total'),
-                        timestamp: new Date().getTime(),
-                      };
+                      if (loggable) {
+                        state.actionInfo = {
+                          name: 'Run Daily Simulation For Fresnel Reflectors: ' + (checked ? 'Individual' : 'Total'),
+                          timestamp: new Date().getTime(),
+                        };
+                      }
                     });
                   }, 100);
                 }}
@@ -306,10 +309,12 @@ const DailyFresnelReflectorYieldPanel = ({ city }: DailyFresnelReflectorYieldPan
                     state.runDailySimulationForFresnelReflectors = true;
                     state.pauseDailySimulationForFresnelReflectors = false;
                     state.simulationInProgress = true;
-                    state.actionInfo = {
-                      name: 'Run Daily Simulation For Fresnel Reflectors',
-                      timestamp: new Date().getTime(),
-                    };
+                    if (loggable) {
+                      state.actionInfo = {
+                        name: 'Run Daily Simulation For Fresnel Reflectors',
+                        timestamp: new Date().getTime(),
+                      };
+                    }
                   });
                 }, 100);
               }}
