@@ -17,6 +17,7 @@ import dayjs from 'dayjs';
 import { Radio, Space } from 'antd';
 import { Rectangle } from '../models/Rectangle';
 import { FLOATING_WINDOW_OPACITY } from '../constants';
+import { UndoableChange } from '../undo/UndoableChange';
 
 const Container = styled.div`
   position: fixed;
@@ -74,6 +75,8 @@ export interface DiurnalTemperaturePanelProps {
 
 const DiurnalTemperaturePanel = ({ city }: DiurnalTemperaturePanelProps) => {
   const language = useStore(Selector.language);
+  const loggable = useStore(Selector.loggable);
+  const addUndoable = useStore(Selector.addUndoable);
   const opacity = useStore(Selector.floatingWindowOpacity) ?? FLOATING_WINDOW_OPACITY;
   const setCommonStore = useStore(Selector.set);
   const now = new Date(useStore(Selector.world.date));
@@ -194,13 +197,40 @@ const DiurnalTemperaturePanel = ({ city }: DiurnalTemperaturePanelProps) => {
   const closePanel = () => {
     setCommonStore((state) => {
       state.viewState.showDiurnalTemperaturePanel = false;
+      if (loggable) {
+        state.actionInfo = {
+          name: 'Close Diurnal Temperature Panel',
+          timestamp: new Date().getTime(),
+        };
+      }
     });
   };
 
   const onChangeModel = (e: any) => {
-    setSelectedModel(e.target.value);
+    const oldModel = selectedModel;
+    const newModel = e.target.value;
+    const undoableChange = {
+      name: 'Change Diurnal Temperature Model',
+      timestamp: Date.now(),
+      oldValue: oldModel,
+      newValue: newModel,
+      undo: () => {
+        setSelectedModel(undoableChange.oldValue as DiurnalTemperatureModel);
+        setCommonStore((state) => {
+          state.world.diurnalTemperatureModel = undoableChange.oldValue as DiurnalTemperatureModel;
+        });
+      },
+      redo: () => {
+        setSelectedModel(undoableChange.newValue as DiurnalTemperatureModel);
+        setCommonStore((state) => {
+          state.world.diurnalTemperatureModel = undoableChange.newValue as DiurnalTemperatureModel;
+        });
+      },
+    } as UndoableChange;
+    addUndoable(undoableChange);
+    setSelectedModel(newModel);
     setCommonStore((state) => {
-      state.world.diurnalTemperatureModel = e.target.value;
+      state.world.diurnalTemperatureModel = newModel;
     });
   };
 

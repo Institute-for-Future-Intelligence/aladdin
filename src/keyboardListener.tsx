@@ -3,7 +3,7 @@
  */
 
 import React, { useEffect, useState } from 'react';
-import { ObjectType } from './types';
+import { ActionInfo, ObjectType } from './types';
 import { useStore } from './stores/common';
 import * as Selector from './stores/selector';
 import { UndoableDelete } from './undo/UndoableDelete';
@@ -487,6 +487,16 @@ const KeyboardListener = ({ canvas, set2DView, resetView, zoomView }: KeyboardLi
       case 'meta+c': // for Mac
         if (selectedElement) {
           copyElementById(selectedElement.id);
+          if (loggable) {
+            setCommonStore((state) => {
+              state.actionInfo = {
+                name: 'Copy',
+                timestamp: new Date().getTime(),
+                elementId: selectedElement.id,
+                elementType: selectedElement.type,
+              } as ActionInfo;
+            });
+          }
         }
         break;
       case 'ctrl+x':
@@ -602,24 +612,48 @@ const KeyboardListener = ({ canvas, set2DView, resetView, zoomView }: KeyboardLi
       case 'meta+f': // for Mac
         setCommonStore((state) => {
           state.createNewFileFlag = !state.createNewFileFlag;
+          if (loggable) {
+            state.actionInfo = {
+              name: 'Create New File',
+              timestamp: new Date().getTime(),
+            };
+          }
         });
         break;
       case 'ctrl+s':
       case 'meta+s': // for Mac
         setCommonStore((state) => {
           state.saveLocalFileDialogVisible = true;
+          if (loggable) {
+            state.actionInfo = {
+              name: 'Save Local File',
+              timestamp: new Date().getTime(),
+            };
+          }
         });
         break;
       case 'ctrl+shift+o':
       case 'meta+shift+o': // for Mac
         setCommonStore((state) => {
           state.listCloudFilesFlag = !state.listCloudFilesFlag;
+          if (loggable) {
+            state.actionInfo = {
+              name: 'List Cloud Files',
+              timestamp: new Date().getTime(),
+            };
+          }
         });
         break;
       case 'ctrl+shift+s':
       case 'meta+shift+s': // for Mac
         setCommonStore((state) => {
           state.saveCloudFileFlag = !state.saveCloudFileFlag;
+          if (loggable) {
+            state.actionInfo = {
+              name: 'Save Cloud File',
+              timestamp: new Date().getTime(),
+            };
+          }
         });
         break;
       case 'alt+backspace':
@@ -679,7 +713,7 @@ const KeyboardListener = ({ canvas, set2DView, resetView, zoomView }: KeyboardLi
               state.actionInfo = {
                 name: 'Undo',
                 timestamp: new Date().getTime(),
-              };
+              } as ActionInfo;
             });
           }
         }
@@ -693,7 +727,7 @@ const KeyboardListener = ({ canvas, set2DView, resetView, zoomView }: KeyboardLi
               state.actionInfo = {
                 name: 'Redo',
                 timestamp: new Date().getTime(),
-              };
+              } as ActionInfo;
             });
           }
         }
@@ -735,6 +769,12 @@ const KeyboardListener = ({ canvas, set2DView, resetView, zoomView }: KeyboardLi
           setCommonStore((state) => {
             state.localFileDialogRequested = true;
             state.openLocalFileFlag = !state.openLocalFileFlag;
+            if (loggable) {
+              state.actionInfo = {
+                name: 'Open Local File',
+                timestamp: new Date().getTime(),
+              };
+            }
           });
         }
         break;

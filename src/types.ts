@@ -53,6 +53,8 @@ export interface CloudFileInfo {
 export interface ActionInfo {
   readonly timestamp: number;
   readonly name: string;
+  readonly elementId?: string;
+  readonly elementType?: ObjectType;
 }
 
 export enum DesignProblem {

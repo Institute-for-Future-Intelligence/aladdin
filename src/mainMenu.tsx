@@ -60,7 +60,7 @@ import logo from './assets/magic-lamp.png';
 import 'antd/dist/antd.css';
 import About from './about';
 import { saveImage, showInfo } from './helpers';
-import { Language, ObjectType, SolarStructure } from './types';
+import { ActionInfo, Language, ObjectType, SolarStructure } from './types';
 import * as Selector from './stores/selector';
 import i18n from './i18n/i18n';
 import { Util } from './Util';
@@ -225,6 +225,14 @@ const MainMenu = ({ viewOnly, set2DView, resetView, zoomView, canvas }: MainMenu
   const takeScreenshot = () => {
     if (canvas) {
       saveImage('screenshot.png', canvas.toDataURL('image/png'));
+      if (loggable) {
+        setCommonStore((state) => {
+          state.actionInfo = {
+            name: 'Take Screenshot',
+            timestamp: new Date().getTime(),
+          };
+        });
+      }
     }
   };
 
@@ -697,6 +705,16 @@ const MainMenu = ({ viewOnly, set2DView, resetView, zoomView, canvas }: MainMenu
   const copySelectedElement = () => {
     if (selectedElement) {
       copyElementById(selectedElement.id);
+      if (loggable) {
+        setCommonStore((state) => {
+          state.actionInfo = {
+            name: 'Copy',
+            timestamp: new Date().getTime(),
+            elementId: selectedElement.id,
+            elementType: selectedElement.type,
+          } as ActionInfo;
+        });
+      }
     }
   };
 
@@ -815,6 +833,12 @@ const MainMenu = ({ viewOnly, set2DView, resetView, zoomView, canvas }: MainMenu
             setCommonStore((state) => {
               state.createNewFileFlag = !state.createNewFileFlag;
               state.objectTypeToAdd = ObjectType.None;
+              if (loggable) {
+                state.actionInfo = {
+                  name: 'Create New File',
+                  timestamp: new Date().getTime(),
+                };
+              }
             });
           }}
         >
@@ -829,6 +853,12 @@ const MainMenu = ({ viewOnly, set2DView, resetView, zoomView, canvas }: MainMenu
             setCommonStore((state) => {
               state.openLocalFileFlag = !state.openLocalFileFlag;
               state.objectTypeToAdd = ObjectType.None;
+              if (loggable) {
+                state.actionInfo = {
+                  name: 'Open Local File',
+                  timestamp: new Date().getTime(),
+                };
+              }
             });
           }}
         >
@@ -841,6 +871,12 @@ const MainMenu = ({ viewOnly, set2DView, resetView, zoomView, canvas }: MainMenu
           onClick={() => {
             setCommonStore((state) => {
               state.saveLocalFileDialogVisible = true;
+              if (loggable) {
+                state.actionInfo = {
+                  name: 'Save as Local File',
+                  timestamp: new Date().getTime(),
+                };
+              }
             });
           }}
         >
@@ -854,6 +890,12 @@ const MainMenu = ({ viewOnly, set2DView, resetView, zoomView, canvas }: MainMenu
             onClick={() => {
               setCommonStore((state) => {
                 state.listCloudFilesFlag = !state.listCloudFilesFlag;
+                if (loggable) {
+                  state.actionInfo = {
+                    name: 'List Cloud Files',
+                    timestamp: new Date().getTime(),
+                  };
+                }
               });
             }}
           >
@@ -868,6 +910,12 @@ const MainMenu = ({ viewOnly, set2DView, resetView, zoomView, canvas }: MainMenu
             onClick={() => {
               setCommonStore((state) => {
                 state.saveCloudFileFlag = !state.saveCloudFileFlag;
+                if (loggable) {
+                  state.actionInfo = {
+                    name: 'Save Cloud File',
+                    timestamp: new Date().getTime(),
+                  };
+                }
               });
             }}
           >
@@ -883,6 +931,12 @@ const MainMenu = ({ viewOnly, set2DView, resetView, zoomView, canvas }: MainMenu
               setCommonStore((state) => {
                 state.showCloudFileTitleDialogFlag = !state.showCloudFileTitleDialogFlag;
                 state.showCloudFileTitleDialog = true;
+                if (loggable) {
+                  state.actionInfo = {
+                    name: 'Save as Cloud File',
+                    timestamp: new Date().getTime(),
+                  };
+                }
               });
             }}
           >
@@ -922,6 +976,14 @@ const MainMenu = ({ viewOnly, set2DView, resetView, zoomView, canvas }: MainMenu
               onClick={() => {
                 if (undoManager.hasUndo()) {
                   undoManager.undo();
+                  if (loggable) {
+                    setCommonStore((state) => {
+                      state.actionInfo = {
+                        name: 'Undo',
+                        timestamp: new Date().getTime(),
+                      };
+                    });
+                  }
                 }
               }}
             >
@@ -935,6 +997,14 @@ const MainMenu = ({ viewOnly, set2DView, resetView, zoomView, canvas }: MainMenu
               onClick={() => {
                 if (undoManager.hasRedo()) {
                   undoManager.redo();
+                  if (loggable) {
+                    setCommonStore((state) => {
+                      state.actionInfo = {
+                        name: 'Redo',
+                        timestamp: new Date().getTime(),
+                      };
+                    });
+                  }
                 }
               }}
             >

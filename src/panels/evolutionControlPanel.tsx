@@ -29,6 +29,7 @@ const Container = styled.div`
 
 const EvolutionControlPanel = () => {
   const setCommonStore = useStore(Selector.set);
+  const loggable = useStore(Selector.loggable);
   const language = useStore(Selector.language);
   const evolutionPaused = useStore(Selector.evolutionPaused);
   const showDesignInfoPanel = useStore(Selector.viewState.showDesignInfoPanel);
@@ -41,6 +42,12 @@ const EvolutionControlPanel = () => {
       state.pauseSimulation = false;
       state.runEvolution = false;
       state.pauseEvolution = false;
+      if (loggable) {
+        state.actionInfo = {
+          name: 'Cancel Evolution',
+          timestamp: new Date().getTime(),
+        };
+      }
     });
   };
 
@@ -50,6 +57,12 @@ const EvolutionControlPanel = () => {
       if (state.runEvolution) {
         state.pauseEvolution = true;
       }
+      if (loggable) {
+        state.actionInfo = {
+          name: 'Pause Evolution',
+          timestamp: new Date().getTime(),
+        };
+      }
     });
   };
 
@@ -58,6 +71,12 @@ const EvolutionControlPanel = () => {
       state.pauseSimulation = false;
       if (state.runEvolution) {
         state.pauseEvolution = false;
+      }
+      if (loggable) {
+        state.actionInfo = {
+          name: 'Resume Evolution',
+          timestamp: new Date().getTime(),
+        };
       }
     });
   };

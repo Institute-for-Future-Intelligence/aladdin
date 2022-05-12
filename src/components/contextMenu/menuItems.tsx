@@ -11,6 +11,7 @@ import { Util } from '../../Util';
 import { UndoableDelete } from '../../undo/UndoableDelete';
 import { UndoablePaste } from '../../undo/UndoablePaste';
 import { UndoableCheck } from '../../undo/UndoableCheck';
+import { ActionInfo } from '../../types';
 
 export const Paste = ({ paddingLeft = '36px', keyName }: { paddingLeft?: string; keyName: string }) => {
   const setCommonStore = useStore(Selector.set);
@@ -56,14 +57,26 @@ export const Paste = ({ paddingLeft = '36px', keyName }: { paddingLeft?: string;
 };
 
 export const Copy = ({ paddingLeft = '36px', keyName }: { paddingLeft?: string; keyName: string }) => {
+  const setCommonStore = useStore(Selector.set);
   const language = useStore(Selector.language);
   const copyElementById = useStore(Selector.copyElementById);
   const selectedElement = useStore(Selector.selectedElement);
+  const loggable = useStore(Selector.loggable);
   const isMac = Util.isMac();
 
   const copyElement = () => {
     if (selectedElement) {
       copyElementById(selectedElement.id);
+      if (loggable) {
+        setCommonStore((state) => {
+          state.actionInfo = {
+            name: 'Copy',
+            timestamp: new Date().getTime(),
+            elementId: selectedElement.id,
+            elementType: selectedElement.type,
+          } as ActionInfo;
+        });
+      }
     }
   };
 
