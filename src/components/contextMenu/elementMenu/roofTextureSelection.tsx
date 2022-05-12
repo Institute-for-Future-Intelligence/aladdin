@@ -10,41 +10,35 @@ import WallTexture04Icon from 'src/resources/wall_04_menu.png';
 import WallTexture05Icon from 'src/resources/wall_05_menu.png';
 import WallTexture06Icon from 'src/resources/wall_06_menu.png';
 import WallTexture07Icon from 'src/resources/wall_07_menu.png';
-import WallTexture08Icon from 'src/resources/wall_08_menu.png';
-import WallTexture09Icon from 'src/resources/wall_09_menu.png';
-import WallTexture10Icon from 'src/resources/wall_10_menu.png';
 
 import React, { useEffect, useRef, useState } from 'react';
-import { Button, Col, Modal, Radio, RadioChangeEvent, Row, Select, Space } from 'antd';
+import { Button, Col, Modal, Radio, Row, Select, Space } from 'antd';
 import Draggable, { DraggableBounds, DraggableData, DraggableEvent } from 'react-draggable';
 import { useStore } from 'src/stores/common';
 import * as Selector from 'src/stores/selector';
-import { ObjectType, Scope, WallTexture } from 'src/types';
+import { ObjectType, Scope, RoofTexture } from 'src/types';
 import i18n from 'src/i18n/i18n';
 import { UndoableChange } from 'src/undo/UndoableChange';
 import { UndoableChangeGroup } from 'src/undo/UndoableChangeGroup';
-import { WallModel } from 'src/models/WallModel';
+import { RoofModel } from 'src/models/RoofModel';
 
-const WallTextureSelection = ({ setDialogVisible }: { setDialogVisible: (b: boolean) => void }) => {
+const RoofTextureSelection = ({ setDialogVisible }: { setDialogVisible: (b: boolean) => void }) => {
   const language = useStore(Selector.language);
-  const elements = useStore(Selector.elements);
-  const updateWallTextureById = useStore(Selector.updateWallTextureById);
-  const updateWallTextureAboveFoundation = useStore(Selector.updateWallTextureAboveFoundation);
-  const updateWallTextureForAll = useStore(Selector.updateWallTextureForAll);
-  const wall = useStore(Selector.selectedElement) as WallModel;
+  const roof = useStore(Selector.selectedElement) as RoofModel;
   const addUndoable = useStore(Selector.addUndoable);
-  const wallActionScope = useStore(Selector.wallActionScope);
-  const setWallActionScope = useStore(Selector.setWallActionScope);
+  const roofActionScope = useStore(Selector.roofActionScope);
+  const setRoofActionScope = useStore(Selector.setRoofActionScope);
   const applyCount = useStore(Selector.applyCount);
   const setApplyCount = useStore(Selector.setApplyCount);
   const revertApply = useStore(Selector.revertApply);
+  const setCommonStore = useStore(Selector.set);
 
-  const [selectedTexture, setSelectedTexture] = useState<WallTexture>(wall?.textureType ?? WallTexture.Default);
-  const [updateFlag, setUpdateFlag] = useState<boolean>(false);
+  const [selectedTexture, setSelectedTexture] = useState<RoofTexture>(roof?.textureType ?? RoofTexture.Default);
   const [dragEnabled, setDragEnabled] = useState<boolean>(false);
   const [bounds, setBounds] = useState<DraggableBounds>({ left: 0, top: 0, bottom: 0, right: 0 } as DraggableBounds);
   const dragRef = useRef<HTMLDivElement | null>(null);
   const okButtonRef = useRef<HTMLElement | null>(null);
+
   useEffect(() => {
     okButtonRef.current?.focus();
   });
@@ -53,100 +47,128 @@ const WallTextureSelection = ({ setDialogVisible }: { setDialogVisible: (b: bool
   const { Option } = Select;
 
   useEffect(() => {
-    if (wall) {
-      setSelectedTexture(wall?.textureType ?? WallTexture.Default);
+    if (roof) {
+      setSelectedTexture(roof?.textureType ?? RoofTexture.Default);
     }
-  }, [wall]);
+  }, [roof]);
 
-  const onScopeChange = (e: RadioChangeEvent) => {
-    setWallActionScope(e.target.value);
-    setUpdateFlag(!updateFlag);
+  const updateTextureById = (id: string, textureType: RoofTexture) => {
+    setCommonStore((state) => {
+      for (const e of state.elements) {
+        if (e.id === id) {
+          if (!e.locked) {
+            (e as RoofModel).textureType = textureType;
+          }
+          break;
+        }
+      }
+    });
   };
 
-  const setTexture = (value: WallTexture) => {
-    if (!wall) return;
-    switch (wallActionScope) {
+  const updateTextureAboveFoundation = (groupId: string, textureType: RoofTexture) => {
+    setCommonStore((state) => {
+      for (const e of state.elements) {
+        if (e.foundationId === groupId) {
+          (e as RoofModel).textureType = textureType;
+        }
+      }
+    });
+  };
+
+  const updateTextureInMap = (map: Map<string, RoofTexture>, textureType: RoofTexture) => {
+    for (const [id, texture] of map.entries()) {
+      updateTextureById(id, textureType);
+    }
+  };
+
+  const undoTextureInMap = (map: Map<string, RoofTexture>) => {
+    for (const [id, texture] of map.entries()) {
+      updateTextureById(id, texture);
+    }
+  };
+
+  const setTexture = (value: RoofTexture) => {
+    switch (roofActionScope) {
       case Scope.AllObjectsOfThisType:
-        const oldTexturesAll = new Map<string, WallTexture>();
-        for (const elem of elements) {
-          if (elem.type === ObjectType.Wall && !elem.locked) {
-            oldTexturesAll.set(elem.id, (elem as WallModel).textureType ?? WallTexture.Default);
+        const oldTexturesAll = new Map<string, RoofTexture>();
+        for (const elem of useStore.getState().elements) {
+          if (elem.type === ObjectType.Roof && !elem.locked) {
+            oldTexturesAll.set(elem.id, (elem as RoofModel).textureType ?? RoofTexture.Default);
           }
         }
         const undoableChangeAll = {
-          name: 'Set Texture for All Walls',
+          name: 'Set Texture for All Roofs',
           timestamp: Date.now(),
           oldValues: oldTexturesAll,
           newValue: value,
           undo: () => {
-            for (const [id, texture] of undoableChangeAll.oldValues.entries()) {
-              updateWallTextureById(id, texture as WallTexture);
-            }
+            undoTextureInMap(undoableChangeAll.oldValues as Map<string, RoofTexture>);
           },
           redo: () => {
-            updateWallTextureForAll(undoableChangeAll.newValue as WallTexture);
+            updateTextureInMap(
+              undoableChangeAll.oldValues as Map<string, RoofTexture>,
+              undoableChangeAll.newValue as RoofTexture,
+            );
           },
         } as UndoableChangeGroup;
         addUndoable(undoableChangeAll);
-        updateWallTextureForAll(value);
+        updateTextureInMap(oldTexturesAll, value);
         setApplyCount(applyCount + 1);
         break;
       case Scope.AllObjectsOfThisTypeAboveFoundation:
-        if (wall.foundationId) {
-          const oldTexturesAboveFoundation = new Map<string, WallTexture>();
-          for (const elem of elements) {
-            if (elem.type === ObjectType.Wall && elem.foundationId === wall.foundationId && !elem.locked) {
-              oldTexturesAboveFoundation.set(elem.id, (elem as WallModel).textureType);
+        if (roof.foundationId) {
+          const oldTexturesAboveFoundation = new Map<string, RoofTexture>();
+          for (const elem of useStore.getState().elements) {
+            if (elem.type === ObjectType.Roof && elem.foundationId === roof.foundationId && !elem.locked) {
+              oldTexturesAboveFoundation.set(elem.id, (elem as RoofModel).textureType);
             }
           }
           const undoableChangeAboveFoundation = {
-            name: 'Set Texture for All Walls Above Foundation',
+            name: 'Set Texture for All Roofs Above Foundation',
             timestamp: Date.now(),
             oldValues: oldTexturesAboveFoundation,
             newValue: value,
-            groupId: wall.foundationId,
+            groupId: roof.foundationId,
             undo: () => {
-              for (const [id, wt] of undoableChangeAboveFoundation.oldValues.entries()) {
-                updateWallTextureById(id, wt as WallTexture);
-              }
+              undoTextureInMap(undoableChangeAboveFoundation.oldTexturesAboveFoundation as Map<string, RoofTexture>);
+              console.log('undo');
             },
             redo: () => {
               if (undoableChangeAboveFoundation.groupId) {
-                updateWallTextureAboveFoundation(
+                updateTextureAboveFoundation(
                   undoableChangeAboveFoundation.groupId,
-                  undoableChangeAboveFoundation.newValue as WallTexture,
+                  undoableChangeAboveFoundation.newValue as RoofTexture,
                 );
               }
             },
           } as UndoableChangeGroup;
           addUndoable(undoableChangeAboveFoundation);
-          updateWallTextureAboveFoundation(wall.foundationId, value);
+          updateTextureAboveFoundation(roof.foundationId, value);
           setApplyCount(applyCount + 1);
         }
         break;
       default:
-        if (wall) {
-          const oldTexture = wall.textureType;
+        if (roof) {
+          const oldTexture = roof.textureType;
           const undoableChange = {
-            name: 'Set Texture of Selected Wall',
+            name: 'Set Texture of Selected Roof',
             timestamp: Date.now(),
             oldValue: oldTexture,
             newValue: value,
-            changedElementId: wall.id,
-            changedElementType: wall.type,
+            changedElementId: roof.id,
+            changedElementType: roof.type,
             undo: () => {
-              updateWallTextureById(undoableChange.changedElementId, undoableChange.oldValue as WallTexture);
+              updateTextureById(undoableChange.changedElementId, undoableChange.oldValue as RoofTexture);
             },
             redo: () => {
-              updateWallTextureById(undoableChange.changedElementId, undoableChange.newValue as WallTexture);
+              updateTextureById(undoableChange.changedElementId, undoableChange.newValue as RoofTexture);
             },
           } as UndoableChange;
           addUndoable(undoableChange);
-          updateWallTextureById(wall.id, value);
+          updateTextureById(roof.id, value);
           setApplyCount(applyCount + 1);
         }
     }
-    setUpdateFlag(!updateFlag);
   };
 
   const onStart = (event: DraggableEvent, uiData: DraggableData) => {
@@ -163,21 +185,25 @@ const WallTextureSelection = ({ setDialogVisible }: { setDialogVisible: (b: bool
   };
 
   const close = () => {
-    if (wall?.textureType) {
-      setSelectedTexture(wall.textureType);
+    if (roof?.textureType) {
+      setSelectedTexture(roof.textureType);
     }
     setDialogVisible(false);
   };
 
-  const cancel = () => {
+  const handleCancel = () => {
     close();
     revertApply();
   };
 
-  const ok = () => {
+  const handleOk = () => {
     setTexture(selectedTexture);
     setDialogVisible(false);
     setApplyCount(0);
+  };
+
+  const handleApply = () => {
+    setTexture(selectedTexture);
   };
 
   return (
@@ -195,18 +221,13 @@ const WallTextureSelection = ({ setDialogVisible }: { setDialogVisible: (b: bool
           </div>
         }
         footer={[
-          <Button
-            key="Apply"
-            onClick={() => {
-              setTexture(selectedTexture);
-            }}
-          >
+          <Button key="Apply" onClick={handleApply}>
             {i18n.t('word.Apply', lang)}
           </Button>,
-          <Button key="Cancel" onClick={cancel}>
+          <Button key="Cancel" onClick={handleCancel}>
             {i18n.t('word.Cancel', lang)}
           </Button>,
-          <Button key="OK" type="primary" onClick={ok} ref={okButtonRef}>
+          <Button key="OK" type="primary" onClick={handleOk} ref={okButtonRef}>
             {i18n.t('word.OK', lang)}
           </Button>,
         ]}
@@ -223,7 +244,7 @@ const WallTextureSelection = ({ setDialogVisible }: { setDialogVisible: (b: bool
         <Row gutter={6}>
           <Col className="gutter-row" span={9}>
             <Select style={{ width: '150px' }} value={selectedTexture} onChange={(value) => setSelectedTexture(value)}>
-              <Option key={WallTexture.NoTexture} value={WallTexture.NoTexture}>
+              <Option key={RoofTexture.NoTexture} value={RoofTexture.NoTexture}>
                 <div
                   style={{
                     display: 'inline-block',
@@ -239,125 +260,92 @@ const WallTextureSelection = ({ setDialogVisible }: { setDialogVisible: (b: bool
                 {i18n.t('shared.NoTexture', lang)}
               </Option>
 
-              <Option key={WallTexture.Default} value={WallTexture.Default}>
+              <Option key={RoofTexture.Default} value={RoofTexture.Default}>
                 <img
-                  alt={WallTexture.Default}
+                  alt={RoofTexture.Default}
                   src={WallTextureDefaultIcon}
                   height={20}
                   width={40}
                   style={{ paddingRight: '8px' }}
                 />{' '}
-                {i18n.t('wallMenu.TextureDefault', lang)}
+                {i18n.t('roofMenu.TextureDefault', lang)}
               </Option>
 
-              <Option key={WallTexture.Texture01} value={WallTexture.Texture01}>
+              <Option key={RoofTexture.Texture01} value={RoofTexture.Texture01}>
                 <img
-                  alt={WallTexture.Texture01}
+                  alt={RoofTexture.Texture01}
                   src={WallTexture01Icon}
                   height={20}
                   width={40}
                   style={{ paddingRight: '8px' }}
                 />{' '}
-                {i18n.t('wallMenu.Texture01', lang)}
+                {i18n.t('roofMenu.Texture01', lang)}
               </Option>
 
-              <Option key={WallTexture.Texture02} value={WallTexture.Texture02}>
+              <Option key={RoofTexture.Texture02} value={RoofTexture.Texture02}>
                 <img
-                  alt={WallTexture.Texture02}
+                  alt={RoofTexture.Texture02}
                   src={WallTexture02Icon}
                   height={20}
                   width={40}
                   style={{ paddingRight: '8px' }}
                 />{' '}
-                {i18n.t('wallMenu.Texture02', lang)}
+                {i18n.t('roofMenu.Texture02', lang)}
               </Option>
 
-              <Option key={WallTexture.Texture03} value={WallTexture.Texture03}>
+              <Option key={RoofTexture.Texture03} value={RoofTexture.Texture03}>
                 <img
-                  alt={WallTexture.Texture03}
+                  alt={RoofTexture.Texture03}
                   src={WallTexture03Icon}
                   height={20}
                   width={40}
                   style={{ paddingRight: '8px' }}
                 />{' '}
-                {i18n.t('wallMenu.Texture03', lang)}
+                {i18n.t('roofMenu.Texture03', lang)}
               </Option>
 
-              <Option key={WallTexture.Texture04} value={WallTexture.Texture04}>
+              <Option key={RoofTexture.Texture04} value={RoofTexture.Texture04}>
                 <img
-                  alt={WallTexture.Texture04}
+                  alt={RoofTexture.Texture04}
                   src={WallTexture04Icon}
                   height={20}
                   width={40}
                   style={{ paddingRight: '8px' }}
                 />{' '}
-                {i18n.t('wallMenu.Texture04', lang)}
+                {i18n.t('roofMenu.Texture04', lang)}
               </Option>
 
-              <Option key={WallTexture.Texture05} value={WallTexture.Texture05}>
+              <Option key={RoofTexture.Texture05} value={RoofTexture.Texture05}>
                 <img
-                  alt={WallTexture.Texture05}
+                  alt={RoofTexture.Texture05}
                   src={WallTexture05Icon}
                   height={20}
                   width={40}
                   style={{ paddingRight: '8px' }}
                 />{' '}
-                {i18n.t('wallMenu.Texture05', lang)}
+                {i18n.t('roofMenu.Texture05', lang)}
               </Option>
 
-              <Option key={WallTexture.Texture06} value={WallTexture.Texture06}>
+              <Option key={RoofTexture.Texture06} value={RoofTexture.Texture06}>
                 <img
-                  alt={WallTexture.Texture06}
+                  alt={RoofTexture.Texture06}
                   src={WallTexture06Icon}
                   height={20}
                   width={40}
                   style={{ paddingRight: '8px' }}
                 />{' '}
-                {i18n.t('wallMenu.Texture06', lang)}
+                {i18n.t('roofMenu.Texture06', lang)}
               </Option>
 
-              <Option key={WallTexture.Texture07} value={WallTexture.Texture07}>
+              <Option key={RoofTexture.Texture07} value={RoofTexture.Texture07}>
                 <img
-                  alt={WallTexture.Texture07}
+                  alt={RoofTexture.Texture07}
                   src={WallTexture07Icon}
                   height={20}
                   width={40}
                   style={{ paddingRight: '8px' }}
                 />{' '}
-                {i18n.t('wallMenu.Texture07', lang)}
-              </Option>
-
-              <Option key={WallTexture.Texture08} value={WallTexture.Texture08}>
-                <img
-                  alt={WallTexture.Texture08}
-                  src={WallTexture08Icon}
-                  height={20}
-                  width={40}
-                  style={{ paddingRight: '8px' }}
-                />{' '}
-                {i18n.t('wallMenu.Texture08', lang)}
-              </Option>
-
-              <Option key={WallTexture.Texture09} value={WallTexture.Texture09}>
-                <img
-                  alt={WallTexture.Texture09}
-                  src={WallTexture09Icon}
-                  height={20}
-                  width={40}
-                  style={{ paddingRight: '8px' }}
-                />{' '}
-                {i18n.t('wallMenu.Texture09', lang)}
-              </Option>
-
-              <Option key={WallTexture.Texture10} value={WallTexture.Texture10}>
-                <img
-                  alt={WallTexture.Texture10}
-                  src={WallTexture10Icon}
-                  height={20}
-                  width={40}
-                  style={{ paddingRight: '8px' }}
-                />{' '}
-                {i18n.t('wallMenu.Texture10', lang)}
+                {i18n.t('roofMenu.Texture07', lang)}
               </Option>
             </Select>
           </Col>
@@ -366,13 +354,13 @@ const WallTextureSelection = ({ setDialogVisible }: { setDialogVisible: (b: bool
             style={{ border: '2px dashed #ccc', paddingTop: '8px', paddingLeft: '12px', paddingBottom: '8px' }}
             span={15}
           >
-            <Radio.Group onChange={onScopeChange} value={wallActionScope}>
+            <Radio.Group value={roofActionScope} onChange={(e) => setRoofActionScope(e.target.value)}>
               <Space direction="vertical">
-                <Radio value={Scope.OnlyThisObject}>{i18n.t('wallMenu.OnlyThisWall', lang)}</Radio>
+                <Radio value={Scope.OnlyThisObject}>{i18n.t('roofMenu.OnlyThisRoof', lang)}</Radio>
                 <Radio value={Scope.AllObjectsOfThisTypeAboveFoundation}>
-                  {i18n.t('wallMenu.AllWallsAboveFoundation', lang)}
+                  {i18n.t('roofMenu.AllRoofsAboveFoundation', lang)}
                 </Radio>
-                <Radio value={Scope.AllObjectsOfThisType}>{i18n.t('wallMenu.AllWalls', lang)}</Radio>
+                <Radio value={Scope.AllObjectsOfThisType}>{i18n.t('roofMenu.AllRoofs', lang)}</Radio>
               </Space>
             </Radio.Group>
           </Col>
@@ -382,4 +370,4 @@ const WallTextureSelection = ({ setDialogVisible }: { setDialogVisible: (b: bool
   );
 };
 
-export default WallTextureSelection;
+export default RoofTextureSelection;

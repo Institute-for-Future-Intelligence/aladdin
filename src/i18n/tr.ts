@@ -757,6 +757,20 @@ export const i18n_tr = {
       AllWalls: 'Tüm Duvarlar',
     },
 
+    roofMenu: {
+      TextureDefault: 'Varsayýlan',
+      Texture01: 'Tekstür 1',
+      Texture02: 'Tekstür 2',
+      Texture03: 'Tekstür 3',
+      Texture04: 'Tekstür 4',
+      Texture05: 'Tekstür 5',
+      Texture06: 'Tekstür 6',
+      Texture07: 'Tekstür 7',
+      OnlyThisRoof: 'Only This Wall',
+      AllRoofsAboveFoundation: 'All Walls Above the Same Foundation',
+      AllRoofs: 'All Roofs',
+    },
+
     windowMenu: {},
 
     siteInfoPanel: {

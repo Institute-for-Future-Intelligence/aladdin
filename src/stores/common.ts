@@ -472,6 +472,18 @@ export interface CommonStoreState {
   wallActionScope: Scope;
   setWallActionScope: (scope: Scope) => void;
 
+  // for roofs
+  roofActionScope: Scope;
+  setRoofActionScope: (scope: Scope) => void;
+
+  // for windows
+  windowActionScope: Scope;
+  setWindowActionScope: (scope: Scope) => void;
+
+  // for doors
+  doorActionScope: Scope;
+  setDoorActionScope: (scope: Scope) => void;
+
   updateWallRelativeAngleById: (id: string, angle: number) => void;
   updateWallLeftJointsById: (id: string, joints: string[]) => void;
   updateWallRightJointsById: (id: string, joints: string[]) => void;
@@ -3524,6 +3536,27 @@ export const useStore = create<CommonStoreState>(
           setWallActionScope(scope) {
             immerSet((state: CommonStoreState) => {
               state.wallActionScope = scope;
+            });
+          },
+          // for roofs
+          roofActionScope: Scope.OnlyThisObject,
+          setRoofActionScope(scope) {
+            immerSet((state: CommonStoreState) => {
+              state.roofActionScope = scope;
+            });
+          },
+          // for windows
+          windowActionScope: Scope.OnlyThisObject,
+          setWindowActionScope(scope) {
+            immerSet((state: CommonStoreState) => {
+              state.windowActionScope = scope;
+            });
+          },
+          // for doors
+          doorActionScope: Scope.OnlyThisObject,
+          setDoorActionScope(scope) {
+            immerSet((state: CommonStoreState) => {
+              state.doorActionScope = scope;
             });
           },
 

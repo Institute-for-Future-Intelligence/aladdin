@@ -758,6 +758,22 @@ export const i18n_en = {
 
     windowMenu: {},
 
+    roofMenu: {
+      TextureDefault: 'Default',
+      Texture01: 'Texture 1',
+      Texture02: 'Texture 2',
+      Texture03: 'Texture 3',
+      Texture04: 'Texture 4',
+      Texture05: 'Texture 5',
+      Texture06: 'Texture 6',
+      Texture07: 'Texture 7',
+      OnlyThisRoof: 'Only This Roof',
+      AllRoofsAboveFoundation: 'All Roofs Above the Same Foundation',
+      AllRoofs: 'All Roofs',
+    },
+
+    doorMenu: {},
+
     siteInfoPanel: {
       High: 'High',
       Low: 'Low',

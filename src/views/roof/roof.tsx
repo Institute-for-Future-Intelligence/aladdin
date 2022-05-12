@@ -19,7 +19,6 @@ import {
   MansardRoofModel,
   PyramidRoofModel,
   RoofModel,
-  RoofTexture,
   RoofType,
 } from '../../models/RoofModel';
 import * as Selector from '../../stores/selector';
@@ -30,7 +29,8 @@ import GambrelRoof from './gambrelRoof';
 import { UndoableResizeRoofHeight } from 'src/undo/UndoableResize';
 import MansardRoof from './mansardRoof';
 import { RepeatWrapping, TextureLoader, Vector3 } from 'three';
-import { ObjectType } from '../../types';
+import { ObjectType, RoofTexture } from 'src/types';
+import { ThreeEvent } from '@react-three/fiber';
 
 export interface ConvexGeoProps {
   points: Vector3[];
@@ -111,6 +111,22 @@ export const useRoofTexture = (textureType: RoofTexture) => {
 
   const [texture, setTexture] = useState(textureLoader);
   return texture;
+};
+
+export const handleRoofContextMenu = (e: ThreeEvent<MouseEvent>, id: string) => {
+  useStore.getState().set((state) => {
+    if (e.intersections.length > 0 && e.intersections[0].eventObject.name === e.eventObject.name) {
+      state.contextMenuObjectType = ObjectType.Roof;
+      for (const e of state.elements) {
+        if (e.id === id) {
+          e.selected = true;
+          state.selectedElement = e;
+        } else {
+          e.selected = false;
+        }
+      }
+    }
+  });
 };
 
 const Roof = (props: RoofModel) => {

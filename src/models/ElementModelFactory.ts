@@ -9,6 +9,7 @@ import {
   ObjectType,
   Orientation,
   ParabolicDishStructureType,
+  RoofTexture,
   TrackerType,
   TreeType,
   WallTexture,
@@ -32,7 +33,6 @@ import {
   Point3,
   PyramidRoofModel,
   RoofModel,
-  RoofTexture,
   RoofType,
 } from './RoofModel';
 import { GROUND_ID } from '../constants';

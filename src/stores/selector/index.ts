@@ -945,7 +945,19 @@ export const updateWallMapOnFoundation = (state: CommonStoreState) => state.upda
 
 export const wallActionScope = (state: CommonStoreState) => state.wallActionScope;
 
+export const roofActionScope = (state: CommonStoreState) => state.roofActionScope;
+
+export const windowActionScope = (state: CommonStoreState) => state.windowActionScope;
+
+export const doorActionScope = (state: CommonStoreState) => state.doorActionScope;
+
 export const setWallActionScope = (state: CommonStoreState) => state.setWallActionScope;
+
+export const setRoofActionScope = (state: CommonStoreState) => state.setRoofActionScope;
+
+export const setDoorActionScope = (state: CommonStoreState) => state.setDoorActionScope;
+
+export const setWindowActionScope = (state: CommonStoreState) => state.setWindowActionScope;
 
 export const updateWallRelativeAngleById = (state: CommonStoreState) => state.updateWallRelativeAngleById;
 

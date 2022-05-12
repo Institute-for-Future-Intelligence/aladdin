@@ -2,8 +2,8 @@
  * @Copyright 2021-2022. Institute for Future Intelligence, Inc.
  */
 
+import { RoofTexture } from 'src/types';
 import { ElementModel } from './ElementModel';
-import { Point2 } from './Point2';
 
 export interface RoofModel extends ElementModel {
   wallsId: string[];
@@ -47,16 +47,4 @@ export enum RoofType {
   Hip = 'Hip',
   Gambrel = 'Gambrel',
   Mansard = 'Mansard',
-}
-
-export enum RoofTexture {
-  Default = 'Roof Texture Default',
-  Texture01 = 'Roof Texture #1',
-  Texture02 = 'Roof Texture #2',
-  Texture03 = 'Roof Texture #3',
-  Texture04 = 'Roof Texture #4',
-  Texture05 = 'Roof Texture #5',
-  Texture06 = 'Roof Texture #6',
-  Texture07 = 'Roof Texture #7',
-  NoTexture = 'No Roof Texture',
 }

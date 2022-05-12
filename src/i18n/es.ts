@@ -756,6 +756,20 @@ export const i18n_es = {
       AllWalls: 'Todo paredes',
     },
 
+    roofMenu: {
+      TextureDefault: 'Por defecto',
+      Texture01: 'Textura 1',
+      Texture02: 'Textura 2',
+      Texture03: 'Textura 3',
+      Texture04: 'Textura 4',
+      Texture05: 'Textura 5',
+      Texture06: 'Textura 6',
+      Texture07: 'Textura 7',
+      OnlyThisRoof: 'Only This Wall',
+      AllRoofsAboveFoundation: 'All Walls Above the Same Foundation',
+      AllRoofs: 'All Roofs',
+    },
+
     windowMenu: {},
 
     siteInfoPanel: {

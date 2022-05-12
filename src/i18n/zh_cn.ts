@@ -738,6 +738,20 @@ export const i18n_zh_cn = {
       AllWalls: '所有的墙',
     },
 
+    roofMenu: {
+      TextureDefault: '默认材质',
+      Texture01: '一号材质',
+      Texture02: '二号材质',
+      Texture03: '三号材质',
+      Texture04: '四号材质',
+      Texture05: '五号材质',
+      Texture06: '六号材质',
+      Texture07: '七号材质',
+      OnlyThisRoof: '只这个房顶',
+      AllRoofsAboveFoundation: '同一地基上所有的房顶',
+      AllRoofs: '所有的房顶',
+    },
+
     windowMenu: {},
 
     siteInfoPanel: {

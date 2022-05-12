@@ -739,6 +739,20 @@ export const i18n_zh_tw = {
       AllWalls: '所有的牆',
     },
 
+    roofMenu: {
+      TextureDefault: '默認材質',
+      Texture01: '一號材質',
+      Texture02: '二號材質',
+      Texture03: '三號材質',
+      Texture04: '四號材質',
+      Texture05: '五號材質',
+      Texture06: '六號材質',
+      Texture07: '七號材質',
+      OnlyThisWall: '只這个屋顶',
+      AllRoofsAboveFoundation: '同一地基上所有的屋顶',
+      AllRoofs: '所有的屋顶',
+    },
+
     windowMenu: {},
 
     siteInfoPanel: {

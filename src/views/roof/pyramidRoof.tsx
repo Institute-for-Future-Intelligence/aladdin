@@ -15,9 +15,9 @@ import { useStoreRef } from 'src/stores/commonRef';
 import { useThree } from '@react-three/fiber';
 import { Point2 } from 'src/models/Point2';
 import { Util } from 'src/Util';
-import { ObjectType } from 'src/types';
+import { ActionType, ObjectType } from 'src/types';
 import { CSG } from 'three-csg-ts';
-import { ConvexGeoProps, handleUndoableResizeRoofHeight, useRoofTexture } from './roof';
+import { ConvexGeoProps, handleRoofContextMenu, handleUndoableResizeRoofHeight, useRoofTexture } from './roof';
 
 const centerPointPosition = new Vector3();
 const intersectionPlanePosition = new Vector3();
@@ -31,6 +31,7 @@ const PyramidRoof = ({ cx, cy, cz, lz, id, parentId, wallsId, selected, textureT
   const getElementById = useStore(Selector.getElementById);
   const removeElementById = useStore(Selector.removeElementById);
   const updateRoofHeight = useStore(Selector.updateRoofHeight);
+  const selectMe = useStore(Selector.selectMe);
   const elements = useStore(Selector.elements);
   const { camera, gl } = useThree();
   const ray = useMemo(() => new Raycaster(), []);
@@ -278,7 +279,7 @@ const PyramidRoof = ({ cx, cy, cz, lz, id, parentId, wallsId, selected, textureT
     <group position={[cx, cy, cz]} rotation={[0, 0, rotation]} name={`PyramidRoof Group ${id}`}>
       {/* roof segments group */}
       <group
-        name="Roof Segments Group"
+        name={`Roof Segments Group ${id}`}
         position={[centerPoint.x, centerPoint.y, h]}
         scale={1.1}
         onPointerDown={(e) => {
@@ -293,6 +294,9 @@ const PyramidRoof = ({ cx, cy, cz, lz, id, parentId, wallsId, selected, textureT
               }
             });
           }
+        }}
+        onContextMenu={(e) => {
+          handleRoofContextMenu(e, id);
         }}
       >
         {roofSegments.map((segment, idx) => {
