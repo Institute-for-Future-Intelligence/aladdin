@@ -11,6 +11,7 @@ import { WallModel } from 'src/models/WallModel';
 import { useStore } from 'src/stores/common';
 import { useStoreRef } from 'src/stores/commonRef';
 import * as Selector from 'src/stores/selector';
+import { RoofTexture } from 'src/types';
 import { UndoableResizeHipRoofRidge } from 'src/undo/UndoableResize';
 import { Util } from 'src/Util';
 import { DoubleSide, Euler, Mesh, Raycaster, Vector2, Vector3 } from 'three';
@@ -314,7 +315,11 @@ const HipRoof = ({
             <group key={i} name={`Roof segment ${i}`}>
               <mesh>
                 <convexGeometry args={[points, isFlat ? arr[0].direction : direction, isFlat ? 1 : length]} />
-                <meshStandardMaterial side={DoubleSide} map={texture} color={color} />
+                <meshStandardMaterial
+                  side={DoubleSide}
+                  map={texture}
+                  color={textureType === RoofTexture.Default || textureType === RoofTexture.NoTexture ? color : 'white'}
+                />
               </mesh>
               <Line points={[leftRoof, rightRoof]} lineWidth={0.2} />
               {!isFlat && (

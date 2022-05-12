@@ -32,6 +32,7 @@ const RoofTextureSelection = ({ setDialogVisible }: { setDialogVisible: (b: bool
   const setApplyCount = useStore(Selector.setApplyCount);
   const revertApply = useStore(Selector.revertApply);
   const setCommonStore = useStore(Selector.set);
+  const getElementById = useStore(Selector.getElementById);
 
   const [selectedTexture, setSelectedTexture] = useState<RoofTexture>(roof?.textureType ?? RoofTexture.Default);
   const [dragEnabled, setDragEnabled] = useState<boolean>(false);
@@ -65,18 +66,8 @@ const RoofTextureSelection = ({ setDialogVisible }: { setDialogVisible: (b: bool
     });
   };
 
-  const updateTextureAboveFoundation = (groupId: string, textureType: RoofTexture) => {
-    setCommonStore((state) => {
-      for (const e of state.elements) {
-        if (e.foundationId === groupId) {
-          (e as RoofModel).textureType = textureType;
-        }
-      }
-    });
-  };
-
   const updateTextureInMap = (map: Map<string, RoofTexture>, textureType: RoofTexture) => {
-    for (const [id, texture] of map.entries()) {
+    for (const id of map.keys()) {
       updateTextureById(id, textureType);
     }
   };
@@ -131,25 +122,25 @@ const RoofTextureSelection = ({ setDialogVisible }: { setDialogVisible: (b: bool
             groupId: roof.foundationId,
             undo: () => {
               undoTextureInMap(undoableChangeAboveFoundation.oldTexturesAboveFoundation as Map<string, RoofTexture>);
-              console.log('undo');
             },
             redo: () => {
               if (undoableChangeAboveFoundation.groupId) {
-                updateTextureAboveFoundation(
-                  undoableChangeAboveFoundation.groupId,
+                updateTextureInMap(
+                  undoableChangeAboveFoundation.oldTexturesAboveFoundation as Map<string, RoofTexture>,
                   undoableChangeAboveFoundation.newValue as RoofTexture,
                 );
               }
             },
           } as UndoableChangeGroup;
           addUndoable(undoableChangeAboveFoundation);
-          updateTextureAboveFoundation(roof.foundationId, value);
+          updateTextureInMap(oldTexturesAboveFoundation, value);
           setApplyCount(applyCount + 1);
         }
         break;
       default:
         if (roof) {
-          const oldTexture = roof.textureType;
+          const updatedRoof = getElementById(roof.id) as RoofModel;
+          const oldTexture = updatedRoof ? updatedRoof.textureType : roof.textureType;
           const undoableChange = {
             name: 'Set Texture of Selected Roof',
             timestamp: Date.now(),
@@ -197,7 +188,10 @@ const RoofTextureSelection = ({ setDialogVisible }: { setDialogVisible: (b: bool
   };
 
   const handleOk = () => {
-    setTexture(selectedTexture);
+    const updatedRoof = getElementById(roof.id) as RoofModel;
+    if (updatedRoof && updatedRoof.textureType !== selectedTexture) {
+      setTexture(selectedTexture);
+    }
     setDialogVisible(false);
     setApplyCount(0);
   };

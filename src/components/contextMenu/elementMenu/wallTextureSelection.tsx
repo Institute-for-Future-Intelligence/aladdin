@@ -38,6 +38,7 @@ const WallTextureSelection = ({ setDialogVisible }: { setDialogVisible: (b: bool
   const applyCount = useStore(Selector.applyCount);
   const setApplyCount = useStore(Selector.setApplyCount);
   const revertApply = useStore(Selector.revertApply);
+  const getElementById = useStore(Selector.getElementById);
 
   const [selectedTexture, setSelectedTexture] = useState<WallTexture>(wall?.textureType ?? WallTexture.Default);
   const [updateFlag, setUpdateFlag] = useState<boolean>(false);
@@ -126,7 +127,8 @@ const WallTextureSelection = ({ setDialogVisible }: { setDialogVisible: (b: bool
         break;
       default:
         if (wall) {
-          const oldTexture = wall.textureType;
+          const updatedWall = getElementById(wall.id) as WallModel;
+          const oldTexture = updatedWall?.textureType ?? wall.textureType;
           const undoableChange = {
             name: 'Set Texture of Selected Wall',
             timestamp: Date.now(),

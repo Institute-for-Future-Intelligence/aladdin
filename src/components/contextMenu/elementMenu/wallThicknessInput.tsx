@@ -26,6 +26,7 @@ const WallThicknessInput = ({ setDialogVisible }: { setDialogVisible: (b: boolea
   const applyCount = useStore(Selector.applyCount);
   const setApplyCount = useStore(Selector.setApplyCount);
   const revertApply = useStore(Selector.revertApply);
+  const getElementById = useStore(Selector.getElementById);
 
   const [updateFlag, setUpdateFlag] = useState<boolean>(false);
   const [dragEnabled, setDragEnabled] = useState<boolean>(false);
@@ -109,7 +110,8 @@ const WallThicknessInput = ({ setDialogVisible }: { setDialogVisible: (b: boolea
         break;
       default:
         if (wall) {
-          const oldThickness = wall.ly ?? 0.3;
+          const updatedWall = getElementById(wall.id) as WallModel;
+          const oldThickness = updatedWall.ly ?? wall.ly ?? 0.3;
           const undoableChange = {
             name: 'Set Wall Thickness',
             timestamp: Date.now(),

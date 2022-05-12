@@ -29,7 +29,7 @@ import {
 import { ConvexGeoProps, handleUndoableResizeRoofHeight, useRoofTexture } from './roof';
 import { CSG } from 'three-csg-ts';
 import { ConvexGeometry } from 'three/examples/jsm/geometries/ConvexGeometry';
-import { ObjectType } from '../../types';
+import { RoofTexture, ObjectType } from 'src/types';
 
 enum RoofHandleType {
   TopMid = 'TopMid',
@@ -413,7 +413,11 @@ const GambrelRoof = ({
             <group key={i} name={`Roof segment ${i}`}>
               <mesh>
                 <convexGeometry args={[points, isFlat ? arr[0].direction : direction, isFlat ? 1 : length]} />
-                <meshStandardMaterial map={texture} side={DoubleSide} color={color} />
+                <meshStandardMaterial
+                  map={texture}
+                  side={DoubleSide}
+                  color={textureType === RoofTexture.Default || textureType === RoofTexture.NoTexture ? color : 'white'}
+                />
               </mesh>
             </group>
           );

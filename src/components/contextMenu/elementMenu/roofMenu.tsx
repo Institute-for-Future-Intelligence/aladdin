@@ -4,18 +4,17 @@
 
 import React, { useState } from 'react';
 import { Menu } from 'antd';
-import { useStore } from '../../../stores/common';
-import * as Selector from '../../../stores/selector';
-import { Lock, Paste } from '../menuItems';
-import i18n from '../../../i18n/i18n';
-import WallColorSelection from './wallColorSelection';
-import { WallModel } from 'src/models/WallModel';
-import { ObjectType, WallTexture } from 'src/types';
+import { useStore } from 'src/stores/common';
+import * as Selector from 'src/stores/selector';
+import { Lock } from '../menuItems';
+import i18n from 'src/i18n/i18n';
+import { RoofTexture } from 'src/types';
 import RoofTextureSelection from './roofTextureSelection';
+import RoofColorSelection from './roofColorSelection';
+import { RoofModel } from 'src/models/RoofModel';
 
 export const RoofMenu = () => {
-  const roof = useStore(Selector.selectedElement) as WallModel;
-  const elementsToPaste = useStore(Selector.elementsToPaste);
+  const roof = useStore(Selector.selectedElement) as RoofModel;
   const language = useStore(Selector.language);
   const setApplyCount = useStore(Selector.setApplyCount);
 
@@ -42,8 +41,8 @@ export const RoofMenu = () => {
           {i18n.t('word.Texture', lang)} ...
         </Menu.Item>
 
-        {colorDialogVisible && <WallColorSelection setDialogVisible={setColorDialogVisible} />}
-        {(roof.textureType === WallTexture.NoTexture || roof.textureType === WallTexture.Default) && (
+        {colorDialogVisible && <RoofColorSelection setDialogVisible={setColorDialogVisible} />}
+        {(roof.textureType === RoofTexture.NoTexture || roof.textureType === RoofTexture.Default) && (
           <Menu.Item
             key={'roof-color'}
             style={{ paddingLeft: paddingLeft }}

@@ -15,7 +15,7 @@ import { HALF_PI } from 'src/constants';
 import { ElementModel } from 'src/models/ElementModel';
 import { ConvexGeoProps, handleUndoableResizeRoofHeight, useRoofTexture } from './roof';
 import { UnoableResizeGableRoofRidge } from 'src/undo/UndoableResize';
-import { ObjectType } from '../../types';
+import { RoofTexture, ObjectType } from 'src/types';
 
 const intersectionPlanePosition = new Vector3();
 const intersectionPlaneRotation = new Euler();
@@ -370,7 +370,11 @@ const GableRoof = ({
           return (
             <mesh key={i}>
               <convexGeometry args={[points, isFlat ? arr[0].direction : direction, isFlat ? 1 : length]} />
-              <meshStandardMaterial side={DoubleSide} map={texture} color={color} />
+              <meshStandardMaterial
+                side={DoubleSide}
+                map={texture}
+                color={textureType === RoofTexture.Default || textureType === RoofTexture.NoTexture ? color : 'white'}
+              />
             </mesh>
           );
         })}

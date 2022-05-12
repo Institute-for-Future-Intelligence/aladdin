@@ -15,7 +15,7 @@ import { useStoreRef } from 'src/stores/commonRef';
 import { useThree } from '@react-three/fiber';
 import { Point2 } from 'src/models/Point2';
 import { Util } from 'src/Util';
-import { ActionType, ObjectType } from 'src/types';
+import { ObjectType, RoofTexture } from 'src/types';
 import { CSG } from 'three-csg-ts';
 import { ConvexGeoProps, handleRoofContextMenu, handleUndoableResizeRoofHeight, useRoofTexture } from './roof';
 
@@ -24,14 +24,11 @@ const intersectionPlanePosition = new Vector3();
 const intersectionPlaneRotation = new Euler();
 const zeroVector = new Vector3();
 
-const PyramidRoof = ({ cx, cy, cz, lz, id, parentId, wallsId, selected, textureType }: PyramidRoofModel) => {
-  const texture = useRoofTexture(textureType);
-
+const PyramidRoof = ({ cx, cy, cz, lz, id, parentId, wallsId, selected, textureType, color }: PyramidRoofModel) => {
   const setCommonStore = useStore(Selector.set);
   const getElementById = useStore(Selector.getElementById);
   const removeElementById = useStore(Selector.removeElementById);
   const updateRoofHeight = useStore(Selector.updateRoofHeight);
-  const selectMe = useStore(Selector.selectMe);
   const elements = useStore(Selector.elements);
   const { camera, gl } = useThree();
   const ray = useMemo(() => new Raycaster(), []);
@@ -311,7 +308,8 @@ const PyramidRoof = ({ cx, cy, cz, lz, id, parentId, wallsId, selected, textureT
                     points={points}
                     direction={isFlat ? 0 : direction}
                     length={isFlat ? 1 : length}
-                    texture={texture}
+                    textureType={textureType}
+                    color={color ?? 'white'}
                   />
                   <Line points={[leftPoint, rightPoint]} lineWidth={0.2} />
                   {!isFlat && (
@@ -379,12 +377,14 @@ const RoofSegment = ({
   points,
   direction,
   length,
-  texture,
+  textureType,
+  color,
 }: {
   points: Vector3[];
   direction: number;
   length: number;
-  texture: Texture;
+  textureType: RoofTexture;
+  color: string;
 }) => {
   // const mat = useMemo(() => {
   //   const m = new MeshStandardMaterial();
@@ -392,6 +392,7 @@ const RoofSegment = ({
   //   return m;
   // }, []);
   const meshRef = useRef<Mesh>(null);
+  const texture = useRoofTexture(textureType);
 
   if (meshRef.current) {
     points.push(new Vector3(0, 0, -0.001));
@@ -417,7 +418,11 @@ const RoofSegment = ({
 
   return (
     <mesh ref={meshRef} castShadow>
-      <meshStandardMaterial side={DoubleSide} map={texture} />
+      <meshStandardMaterial
+        side={DoubleSide}
+        map={texture}
+        color={textureType === RoofTexture.Default || textureType === RoofTexture.NoTexture ? color : 'white'}
+      />
     </mesh>
   );
 };
