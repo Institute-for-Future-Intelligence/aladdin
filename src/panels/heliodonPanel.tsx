@@ -15,6 +15,7 @@ import { UndoableCheck } from '../undo/UndoableCheck';
 import { UndoableChange } from '../undo/UndoableChange';
 import { UndoableChangeLocation } from '../undo/UndoableChangeLocation';
 import { computeSunriseAndSunsetInMinutes } from '../analysis/sunTools';
+import { throttle } from 'lodash';
 
 const Container = styled.div`
   position: absolute;
@@ -207,6 +208,39 @@ const HeliodonPanel = () => {
     });
   };
 
+  // throttled functions must be wrapped in useRef so that they don't get created every time
+  const onLatitudeChangeRef = useRef(
+    throttle((value: number) => {
+      const undoableChangeLocation = {
+        name: 'Set Latitude',
+        timestamp: Date.now(),
+        oldLatitude: latitude,
+        newLatitude: value,
+        oldAddress: address,
+        newAddress: '',
+        undo: () => {
+          setCommonStore((state) => {
+            state.world.latitude = undoableChangeLocation.oldLatitude;
+            state.world.address = undoableChangeLocation.oldAddress;
+          });
+          setUpdateFlag(!updateFlag);
+        },
+        redo: () => {
+          setCommonStore((state) => {
+            state.world.latitude = undoableChangeLocation.newLatitude;
+            state.world.address = undoableChangeLocation.newAddress;
+          });
+          setUpdateFlag(!updateFlag);
+        },
+      } as UndoableChangeLocation;
+      addUndoable(undoableChangeLocation);
+      setCommonStore((state) => {
+        state.world.latitude = value;
+        state.world.address = '';
+      });
+    }, 500),
+  );
+
   return (
     <ReactDraggable
       nodeRef={nodeRef}
@@ -391,35 +425,7 @@ const HeliodonPanel = () => {
                   max={90}
                   value={latitude}
                   tooltipVisible={false}
-                  onChange={(value: number) => {
-                    const undoableChangeLocation = {
-                      name: 'Set Latitude',
-                      timestamp: Date.now(),
-                      oldLatitude: latitude,
-                      newLatitude: value,
-                      oldAddress: address,
-                      newAddress: '',
-                      undo: () => {
-                        setCommonStore((state) => {
-                          state.world.latitude = undoableChangeLocation.oldLatitude;
-                          state.world.address = undoableChangeLocation.oldAddress;
-                        });
-                        setUpdateFlag(!updateFlag);
-                      },
-                      redo: () => {
-                        setCommonStore((state) => {
-                          state.world.latitude = undoableChangeLocation.newLatitude;
-                          state.world.address = undoableChangeLocation.newAddress;
-                        });
-                        setUpdateFlag(!updateFlag);
-                      },
-                    } as UndoableChangeLocation;
-                    addUndoable(undoableChangeLocation);
-                    setCommonStore((state) => {
-                      state.world.latitude = value;
-                      state.world.address = '';
-                    });
-                  }}
+                  onChange={onLatitudeChangeRef.current}
                 />
               </div>
             )}
