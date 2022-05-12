@@ -56,9 +56,9 @@ const ActionLogger = () => {
         // resulting in incorrect ordering of the log. so we use the millisecond string
         // to ensure the order and use the formatted string to provide readability.
         const timestamp =
-          dayjs(new Date(currentUndoable.timestamp)).format('MM-DD-YYYY hh:mm a') +
-          ' (' +
           currentUndoable.timestamp +
+          ' (' +
+          dayjs(new Date(currentUndoable.timestamp)).format('MM-DD-YYYY hh:mm a') +
           ')';
         databaseRef.current.ref(user.uid + '/' + timestamp).set({
           file: cloudFile ?? 'Untitled',
@@ -74,7 +74,7 @@ const ActionLogger = () => {
     } else {
       if (actionInfo) {
         const timestamp =
-          dayjs(new Date(actionInfo.timestamp)).format('MM-DD-YYYY hh:mm a') + ' (' + actionInfo.timestamp + ')';
+          actionInfo.timestamp + ' (' + dayjs(new Date(actionInfo.timestamp)).format('MM-DD-YYYY hh:mm a') + ')';
         databaseRef.current.ref(user.uid + '/' + timestamp).set({
           file: cloudFile ?? 'Untitled',
           action: JSON.stringify(actionInfo),
