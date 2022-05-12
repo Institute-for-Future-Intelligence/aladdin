@@ -3,7 +3,6 @@
  */
 
 import React, { ErrorInfo } from 'react';
-import { Util } from './Util';
 
 class ErrorPage extends React.Component<{}, { hasError: boolean }> {
   constructor(props: any) {
@@ -26,30 +25,9 @@ class ErrorPage extends React.Component<{}, { hasError: boolean }> {
     window.location.reload();
   }
 
-  isWebGLEnabled() {
-    return Util.detectWebGLContext();
-  }
-
   render() {
-    if (this.isWebGLEnabled()) {
-      if (this.state.hasError) {
-        // You can render any custom fallback UI
-        return (
-          <div
-            style={{
-              marginTop: 10,
-              marginLeft: 20,
-            }}
-          >
-            <h1>Error</h1>
-            <p>Something went wrong. Please click the following button to clear the cache and reload the page.</p>
-            <p>
-              <button onClick={this.clearCacheAndReload}>Refresh</button>
-            </p>
-          </div>
-        );
-      }
-    } else {
+    if (this.state.hasError) {
+      // You can render any custom fallback UI
       return (
         <div
           style={{
@@ -58,7 +36,10 @@ class ErrorPage extends React.Component<{}, { hasError: boolean }> {
           }}
         >
           <h1>Error</h1>
-          <p>WebGL must be enabled to run Aladdin.</p>
+          <p>Something went wrong. Please click the following button to clear the cache and reload the page.</p>
+          <p>
+            <button onClick={this.clearCacheAndReload}>Refresh</button>
+          </p>
         </div>
       );
     }
