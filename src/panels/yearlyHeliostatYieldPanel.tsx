@@ -177,6 +177,12 @@ const YearlyHeliostatYieldPanel = ({ city }: YearlyHeliostatYieldPanelProps) => 
   const closePanel = () => {
     setCommonStore((state) => {
       state.viewState.showYearlyHeliostatYieldPanel = false;
+      if (loggable) {
+        state.actionInfo = {
+          name: 'Close Heliostat Yearly Yield Graph',
+          timestamp: new Date().getTime(),
+        };
+      }
     });
   };
 

@@ -72,6 +72,7 @@ const Header = styled.div`
 
 const MapPanel = () => {
   const language = useStore(Selector.language);
+  const loggable = useStore(Selector.loggable);
   const setCommonStore = useStore(Selector.set);
   const addUndoable = useStore(Selector.addUndoable);
   const address = useStore(Selector.world.address);
@@ -181,6 +182,12 @@ const MapPanel = () => {
   const closePanel = () => {
     setCommonStore((state) => {
       state.viewState.showMapPanel = false;
+      if (loggable) {
+        state.actionInfo = {
+          name: 'Close Map Window',
+          timestamp: new Date().getTime(),
+        };
+      }
     });
   };
 

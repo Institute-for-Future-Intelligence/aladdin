@@ -161,6 +161,12 @@ const YearlyLightSensorPanel = ({ city }: YearlyLightSensorPanelProps) => {
   const closePanel = () => {
     setCommonStore((state) => {
       state.viewState.showYearlyLightSensorPanel = false;
+      if (loggable) {
+        state.actionInfo = {
+          name: 'Close Yearly Light Sensor Graph',
+          timestamp: new Date().getTime(),
+        };
+      }
     });
   };
 
@@ -321,6 +327,14 @@ const YearlyLightSensorPanel = ({ city }: YearlyLightSensorPanelProps) => {
                 onClick={() => {
                   screenshot('line-graph-' + labelX + '-' + labelY, 'yearly-light-sensor', {}).then(() => {
                     showInfo(i18n.t('message.ScreenshotSaved', lang));
+                    if (loggable) {
+                      setCommonStore((state) => {
+                        state.actionInfo = {
+                          name: 'Take Screenshot of Yearly Light Sensor Graph',
+                          timestamp: new Date().getTime(),
+                        };
+                      });
+                    }
                   });
                 }}
               />

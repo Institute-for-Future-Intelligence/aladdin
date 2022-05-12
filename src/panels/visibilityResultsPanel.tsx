@@ -184,6 +184,12 @@ const VisibilityResultsPanel = () => {
   const closePanel = () => {
     setCommonStore((state) => {
       state.viewState.showSolarPanelVisibilityResultsPanel = false;
+      if (loggable) {
+        state.actionInfo = {
+          name: 'Close Visibility Results Panel',
+          timestamp: new Date().getTime(),
+        };
+      }
     });
   };
 

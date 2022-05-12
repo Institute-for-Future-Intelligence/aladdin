@@ -177,6 +177,12 @@ const DailyParabolicDishYieldPanel = ({ city }: DailyParabolicDishYieldPanelProp
   const closePanel = () => {
     setCommonStore((state) => {
       state.viewState.showDailyParabolicDishYieldPanel = false;
+      if (loggable) {
+        state.actionInfo = {
+          name: 'Close Parabolic Dish Daily Yield Graph',
+          timestamp: new Date().getTime(),
+        };
+      }
     });
   };
 

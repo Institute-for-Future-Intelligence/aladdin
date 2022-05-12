@@ -89,6 +89,7 @@ import { SolarPanelArrayLayoutConstraints } from './SolarPanelArrayLayoutConstra
 import { DefaultSolarPanelArrayLayoutConstraints } from './DefaultSolarPanelArrayLayoutConstraints';
 import { EconomicsParams } from './EconomicsParams';
 import { DefaultEconomicsParams } from './DefaultEconomicsParams';
+import dayjs from 'dayjs';
 
 enableMapSet();
 
@@ -829,9 +830,11 @@ export const useStore = create<CommonStoreState>(
           },
           exportContent() {
             const state = get();
+            const date = new Date();
             return {
               docid: short.generate(),
-              timestamp: new Date().getTime(),
+              time: dayjs(date).format('MM/DD/YYYY hh:mm a'),
+              timestamp: date.getTime(),
               userid: state.user.uid,
               owner: state.user.signFile ? state.user.displayName : null,
               email: state.user.signFile ? state.user.email : null,

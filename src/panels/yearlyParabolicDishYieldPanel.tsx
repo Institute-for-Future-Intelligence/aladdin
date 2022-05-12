@@ -177,6 +177,12 @@ const YearlyParabolicDishYieldPanel = ({ city }: YearlyParabolicDishYieldPanelPr
   const closePanel = () => {
     setCommonStore((state) => {
       state.viewState.showYearlyParabolicDishYieldPanel = false;
+      if (loggable) {
+        state.actionInfo = {
+          name: 'Close Parabolic Dish Yearly Yield Graph',
+          timestamp: new Date().getTime(),
+        };
+      }
     });
   };
 

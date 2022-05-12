@@ -177,6 +177,12 @@ const YearlyFresnelReflectorYieldPanel = ({ city }: YearlyFresnelReflectorYieldP
   const closePanel = () => {
     setCommonStore((state) => {
       state.viewState.showYearlyFresnelReflectorYieldPanel = false;
+      if (loggable) {
+        state.actionInfo = {
+          name: 'Close Fresnel Reflector Yearly Yield Graph',
+          timestamp: new Date().getTime(),
+        };
+      }
     });
   };
 

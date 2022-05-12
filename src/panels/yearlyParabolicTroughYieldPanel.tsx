@@ -177,6 +177,12 @@ const YearlyParabolicTroughYieldPanel = ({ city }: YearlyParabolicTroughYieldPan
   const closePanel = () => {
     setCommonStore((state) => {
       state.viewState.showYearlyParabolicTroughYieldPanel = false;
+      if (loggable) {
+        state.actionInfo = {
+          name: 'Close Parabolic Trough Yearly Yield Graph',
+          timestamp: new Date().getTime(),
+        };
+      }
     });
   };
 

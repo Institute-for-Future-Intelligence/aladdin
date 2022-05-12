@@ -179,6 +179,12 @@ const DailyPvYieldPanel = ({ city }: DailyPvYieldPanelProps) => {
   const closePanel = () => {
     setCommonStore((state) => {
       state.viewState.showDailyPvYieldPanel = false;
+      if (loggable) {
+        state.actionInfo = {
+          name: 'Close Solar Panel Daily Yield Graph',
+          timestamp: new Date().getTime(),
+        };
+      }
     });
   };
 
@@ -341,6 +347,14 @@ const DailyPvYieldPanel = ({ city }: DailyPvYieldPanelProps) => {
                   onClick={() => {
                     screenshot('line-graph-' + labelX + '-' + labelY, 'daily-pv-yield', {}).then(() => {
                       showInfo(i18n.t('message.ScreenshotSaved', lang));
+                      if (loggable) {
+                        setCommonStore((state) => {
+                          state.actionInfo = {
+                            name: 'Take Screenshot of Solar Panel Daily Yield Graph',
+                            timestamp: new Date().getTime(),
+                          };
+                        });
+                      }
                     });
                   }}
                 />

@@ -177,6 +177,12 @@ const YearlySolarUpdraftTowerYieldPanel = ({ city }: YearlySolarUpdraftTowerYiel
   const closePanel = () => {
     setCommonStore((state) => {
       state.viewState.showYearlyUpdraftTowerYieldPanel = false;
+      if (loggable) {
+        state.actionInfo = {
+          name: 'Close Solar Updraft Tower Yearly Yield Graph',
+          timestamp: new Date().getTime(),
+        };
+      }
     });
   };
 

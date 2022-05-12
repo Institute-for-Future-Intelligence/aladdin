@@ -177,6 +177,12 @@ const DailyHeliostatYieldPanel = ({ city }: DailyHeliostatYieldPanelProps) => {
   const closePanel = () => {
     setCommonStore((state) => {
       state.viewState.showDailyHeliostatYieldPanel = false;
+      if (loggable) {
+        state.actionInfo = {
+          name: 'Close Heliostat Daily Yield Graph',
+          timestamp: new Date().getTime(),
+        };
+      }
     });
   };
 

@@ -71,6 +71,7 @@ export interface WeatherPanelProps {
 
 const WeatherPanel = ({ city, graphs }: WeatherPanelProps) => {
   const language = useStore(Selector.language);
+  const loggable = useStore(Selector.loggable);
   const opacity = useStore(Selector.floatingWindowOpacity) ?? FLOATING_WINDOW_OPACITY;
   const setCommonStore = useStore(Selector.set);
   const now = new Date(useStore(Selector.world.date));
@@ -199,6 +200,12 @@ const WeatherPanel = ({ city, graphs }: WeatherPanelProps) => {
   const closePanel = () => {
     setCommonStore((state) => {
       state.viewState.showWeatherPanel = false;
+      if (loggable) {
+        state.actionInfo = {
+          name: 'Close Weather Graph',
+          timestamp: new Date().getTime(),
+        };
+      }
     });
   };
 

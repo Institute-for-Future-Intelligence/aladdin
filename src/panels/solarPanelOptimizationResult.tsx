@@ -156,6 +156,12 @@ const SolarPanelOptimizationResult = () => {
   const closePanel = () => {
     setCommonStore((state) => {
       state.viewState.showEvolutionPanel = false;
+      if (loggable) {
+        state.actionInfo = {
+          name: 'Close Solar Panel Optimization Graph',
+          timestamp: new Date().getTime(),
+        };
+      }
     });
   };
 

@@ -180,6 +180,12 @@ const YearlyPvYieldPanel = ({ city }: YearlyPvYieldPanelProps) => {
   const closePanel = () => {
     setCommonStore((state) => {
       state.viewState.showYearlyPvYieldPanel = false;
+      if (loggable) {
+        state.actionInfo = {
+          name: 'Close Solar Panel Yearly Yield Graph',
+          timestamp: new Date().getTime(),
+        };
+      }
     });
   };
 
@@ -347,6 +353,14 @@ const YearlyPvYieldPanel = ({ city }: YearlyPvYieldPanelProps) => {
                   onClick={() => {
                     screenshot('line-graph-' + labelX + '-' + labelY, 'yearly-pv-yield', {}).then(() => {
                       showInfo(i18n.t('message.ScreenshotSaved', lang));
+                      if (loggable) {
+                        setCommonStore((state) => {
+                          state.actionInfo = {
+                            name: 'Take Screenshot of Solar Panel Yearly Yield Graph',
+                            timestamp: new Date().getTime(),
+                          };
+                        });
+                      }
                     });
                   }}
                 />

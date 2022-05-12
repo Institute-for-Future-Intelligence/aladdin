@@ -177,6 +177,12 @@ const DailyParabolicTroughYieldPanel = ({ city }: DailyParabolicTroughYieldPanel
   const closePanel = () => {
     setCommonStore((state) => {
       state.viewState.showDailyParabolicTroughYieldPanel = false;
+      if (loggable) {
+        state.actionInfo = {
+          name: 'Close Parabolic Trough Daily Yield Graph',
+          timestamp: new Date().getTime(),
+        };
+      }
     });
   };
 

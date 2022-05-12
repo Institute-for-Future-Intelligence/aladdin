@@ -157,6 +157,12 @@ const DailyLightSensorPanel = ({ city }: DailyLightSensorPanelProps) => {
   const closePanel = () => {
     setCommonStore((state) => {
       state.viewState.showDailyLightSensorPanel = false;
+      if (loggable) {
+        state.actionInfo = {
+          name: 'Close Daily Light Sensor Graph',
+          timestamp: new Date().getTime(),
+        };
+      }
     });
   };
 
@@ -249,6 +255,14 @@ const DailyLightSensorPanel = ({ city }: DailyLightSensorPanelProps) => {
               onClick={() => {
                 screenshot('line-graph-' + labelX + '-' + labelY, 'daily-light-sensor', {}).then(() => {
                   showInfo(i18n.t('message.ScreenshotSaved', lang));
+                  if (loggable) {
+                    setCommonStore((state) => {
+                      state.actionInfo = {
+                        name: 'Take Screenshot of Daily Light Sensor Graph',
+                        timestamp: new Date().getTime(),
+                      };
+                    });
+                  }
                 });
               }}
             />

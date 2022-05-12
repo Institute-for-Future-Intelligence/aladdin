@@ -177,6 +177,12 @@ const DailyFresnelReflectorYieldPanel = ({ city }: DailyFresnelReflectorYieldPan
   const closePanel = () => {
     setCommonStore((state) => {
       state.viewState.showDailyFresnelReflectorYieldPanel = false;
+      if (loggable) {
+        state.actionInfo = {
+          name: 'Close Fresnel Reflector Daily Yield Graph',
+          timestamp: new Date().getTime(),
+        };
+      }
     });
   };
 
