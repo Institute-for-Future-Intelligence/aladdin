@@ -34,6 +34,7 @@ export const i18n_zh_cn = {
       AllRightsReserved: '版权所有',
       MeterAbbreviation: '米',
       Version: '版本',
+      VersionInitial: '版本',
       Options: '选项',
       Maximum: '最大',
       Minimum: '最小',

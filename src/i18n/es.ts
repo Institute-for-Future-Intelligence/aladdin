@@ -34,6 +34,7 @@ export const i18n_es = {
       AllRightsReserved: 'Todos los derechos reservados',
       MeterAbbreviation: 'm',
       Version: 'Versión',
+      VersionInitial: 'V',
       Options: 'Opciones',
       Maximum: 'Maximum',
       Minimum: 'Minimum',

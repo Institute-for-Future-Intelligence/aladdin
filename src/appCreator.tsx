@@ -319,8 +319,8 @@ const AppCreator = ({ viewOnly = false }: AppCreatorProps) => {
         <div
           style={{
             position: 'absolute',
-            bottom: '10px',
-            left: '10px',
+            bottom: '6px',
+            left: '6px',
             zIndex: 999,
             fontSize: '8px',
             userSelect: 'none',
@@ -338,29 +338,38 @@ const AppCreator = ({ viewOnly = false }: AppCreatorProps) => {
           {' V ' + VERSION}
         </div>
       ) : (
-        <div
-          style={{
-            position: 'absolute',
-            bottom: '10px',
-            left: '10px',
-            zIndex: 999,
-            fontSize: '12px',
-            userSelect: 'none',
-            color: 'antiquewhite',
-          }}
-        >
+        <>
           <img
             alt="IFI Logo"
             src={ifiLogo}
             height="40px"
-            style={{ verticalAlign: 'bottom', cursor: 'pointer' }}
+            style={{
+              position: 'absolute',
+              cursor: 'pointer',
+              bottom: '6px',
+              left: '6px',
+              zIndex: 999,
+              userSelect: 'none',
+            }}
             title={i18n.t('tooltip.gotoIFI', lang)}
             onClick={visitIFI}
           />
-          &nbsp;&nbsp; &copy;{new Date().getFullYear()} {i18n.t('name.IFI', lang)}
-          &nbsp;
-          {i18n.t('word.Version', lang) + ' ' + VERSION + '. ' + i18n.t('word.AllRightsReserved', lang) + '. '}
-        </div>
+          <div
+            style={{
+              position: 'absolute',
+              bottom: '4px',
+              left: '44px',
+              zIndex: 999,
+              fontSize: '10px',
+              userSelect: 'none',
+              color: 'antiquewhite',
+            }}
+          >
+            &nbsp;&nbsp; &copy;{new Date().getFullYear()} {i18n.t('name.IFI', lang)}
+            &nbsp;
+            {i18n.t('word.VersionInitial', lang) + VERSION + '. ' + i18n.t('word.AllRightsReserved', lang) + '. '}
+          </div>
+        </>
       )}
       {!viewOnly && (
         <ShareLink size={16} round={true} margin={'2px'} style={{ position: 'absolute', right: '0', top: '80px' }} />

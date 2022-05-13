@@ -35,6 +35,7 @@ export const i18n_tr = {
       AllRightsReserved: 'Tüm Haklarý Saklýdýr',
       MeterAbbreviation: 'm',
       Version: 'Sürüm',
+      VersionInitial: 'S',
       Options: 'Seçenekler',
       Maximum: 'Maximum',
       Minimum: 'Minimum',
