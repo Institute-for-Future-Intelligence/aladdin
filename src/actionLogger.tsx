@@ -19,6 +19,7 @@ const ActionLogger = () => {
   const firstCallUndo = useRef<boolean>(true);
   const firstCallAction = useRef<boolean>(true);
   const databaseRef = useRef<any>();
+  const group = 'all'; // TODO: This has to be set by the user
 
   useEffect(() => {
     const config = {
@@ -26,7 +27,7 @@ const ActionLogger = () => {
       authDomain: process.env.REACT_APP_FIREBASE_AUTH_DOMAIN,
       projectId: process.env.REACT_APP_FIREBASE_PROJECT_ID,
       storageBucket: process.env.REACT_APP_FIREBASE_STORAGE_BUCKET,
-      databaseURL: process.env.REACT_APP_FIREBASE_REAL_TIME_DATABASE_URL,
+      databaseURL: process.env.REACT_APP_FIREBASE_LOGGER_DATABASE_URL,
       messagingSenderId: process.env.REACT_APP_FIREBASE_MESSAGING_SENDER_ID,
       appId: process.env.REACT_APP_FIREBASE_APP_ID,
     };
@@ -60,7 +61,7 @@ const ActionLogger = () => {
           ' (' +
           dayjs(new Date(currentUndoable.timestamp)).format('MM-DD-YYYY hh:mm a') +
           ')';
-        databaseRef.current.ref(user.uid + '/' + timestamp).set({
+        databaseRef.current.ref(group + '/' + user.uid + '/' + timestamp).set({
           file: cloudFile ?? 'Untitled',
           action: JSON.stringify(currentUndoable),
         });
@@ -75,7 +76,7 @@ const ActionLogger = () => {
       if (actionInfo) {
         const timestamp =
           actionInfo.timestamp + ' (' + dayjs(new Date(actionInfo.timestamp)).format('MM-DD-YYYY hh:mm a') + ')';
-        databaseRef.current.ref(user.uid + '/' + timestamp).set({
+        databaseRef.current.ref(group + '/' + user.uid + '/' + timestamp).set({
           file: cloudFile ?? 'Untitled',
           action: JSON.stringify(actionInfo),
         });
