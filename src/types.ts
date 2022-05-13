@@ -34,6 +34,7 @@ export interface User {
   photoURL: string | null;
   uid: string | null;
   signFile: boolean;
+  noLogging: boolean;
 }
 
 export enum FirebaseName {

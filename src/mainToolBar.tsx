@@ -211,13 +211,16 @@ const MainToolBar = ({ viewOnly = false }: MainToolBarProps) => {
   const registerUser = async (user: User): Promise<any> => {
     const firestore = firebase.firestore();
     let signFile = false;
+    let noLogging = false;
     const found = await firestore
       .collection('users')
       .get()
       .then((querySnapshot) => {
         for (const doc of querySnapshot.docs) {
           if (doc.id === user.uid) {
-            signFile = !!doc.data().signFile;
+            const docData = doc.data();
+            signFile = !!docData.signFile;
+            noLogging = !!docData.noLogging;
             return true;
           }
         }
@@ -226,8 +229,10 @@ const MainToolBar = ({ viewOnly = false }: MainToolBarProps) => {
     if (found) {
       setCommonStore((state) => {
         state.user.signFile = signFile;
+        state.user.noLogging = noLogging;
       });
       user.signFile = signFile;
+      user.noLogging = noLogging;
     } else {
       if (user.uid) {
         firestore
@@ -236,6 +241,7 @@ const MainToolBar = ({ viewOnly = false }: MainToolBarProps) => {
           .set({
             uid: user.uid,
             signFile: !!user.signFile, // don't listen to WS's suggestion to simplify it
+            noLogging: !!user.noLogging,
             since: dayjs(new Date()).format('MM/DD/YYYY hh:mm a'),
             os: Util.getOS(),
           })

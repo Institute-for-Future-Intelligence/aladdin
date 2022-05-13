@@ -165,6 +165,9 @@ const AppCreator = ({ viewOnly = false }: AppCreatorProps) => {
   useEffect(() => {
     setCommonStore((state) => {
       state.loggable = user && user.uid ? !user.email?.endsWith('@intofuture.org') : false;
+      if (user && user.noLogging) {
+        state.loggable = false;
+      }
     });
   }, [user]);
 

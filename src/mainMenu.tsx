@@ -382,6 +382,14 @@ const MainMenu = ({ viewOnly, set2DView, resetView, zoomView, canvas }: MainMenu
       } else {
         importContent(input);
       }
+      setCommonStore((state) => {
+        if (loggable) {
+          state.actionInfo = {
+            name: 'Open Example: ' + e.key,
+            timestamp: new Date().getTime(),
+          };
+        }
+      });
     }
   };
 
@@ -1163,6 +1171,12 @@ const MainMenu = ({ viewOnly, set2DView, resetView, zoomView, canvas }: MainMenu
             onClick={() => {
               setCommonStore((state) => {
                 state.viewState.showEconomicsPanel = true;
+                if (loggable) {
+                  state.actionInfo = {
+                    name: 'Open Economics Panel',
+                    timestamp: new Date().getTime(),
+                  };
+                }
               });
             }}
           >
