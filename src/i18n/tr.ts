@@ -788,6 +788,7 @@ export const i18n_tr = {
       OnlyThisRoof: 'Only This Wall',
       AllRoofsAboveFoundation: 'All Walls Above the Same Foundation',
       AllRoofs: 'All Roofs',
+      OverhangLength: 'Overhang Length',
     },
 
     windowMenu: {},

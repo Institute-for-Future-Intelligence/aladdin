@@ -751,6 +751,7 @@ export const i18n_zh_tw = {
       OnlyThisWall: '只這个屋顶',
       AllRoofsAboveFoundation: '同一地基上所有的屋顶',
       AllRoofs: '所有的屋顶',
+      OverhangLength: '屋簷長度',
     },
 
     doorMenu: {

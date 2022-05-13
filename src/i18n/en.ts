@@ -770,6 +770,7 @@ export const i18n_en = {
       OnlyThisRoof: 'Only This Roof',
       AllRoofsAboveFoundation: 'All Roofs Above the Same Foundation',
       AllRoofs: 'All Roofs',
+      OverhangLength: 'Overhang Length',
     },
 
     doorMenu: {

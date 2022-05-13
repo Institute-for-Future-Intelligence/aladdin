@@ -12,12 +12,14 @@ import { RoofTexture } from 'src/types';
 import RoofTextureSelection from './roofTextureSelection';
 import RoofColorSelection from './roofColorSelection';
 import { RoofModel } from 'src/models/RoofModel';
+import RoofOverhangInput from './roofOverhangInput';
 
 export const RoofMenu = () => {
   const roof = useStore(Selector.selectedElement) as RoofModel;
   const language = useStore(Selector.language);
   const setApplyCount = useStore(Selector.setApplyCount);
 
+  const [overhangDialogVisible, setOverhangDialogVisible] = useState(false);
   const [textureDialogVisible, setTextureDialogVisible] = useState(false);
   const [colorDialogVisible, setColorDialogVisible] = useState(false);
 
@@ -28,6 +30,18 @@ export const RoofMenu = () => {
     roof && (
       <>
         <Lock keyName={'roof-lock'} />
+
+        {overhangDialogVisible && <RoofOverhangInput setDialogVisible={setOverhangDialogVisible} />}
+        <Menu.Item
+          key={'roof-overhang'}
+          style={{ paddingLeft: paddingLeft }}
+          onClick={() => {
+            setApplyCount(0);
+            setOverhangDialogVisible(true);
+          }}
+        >
+          {i18n.t('roofMenu.OverhangLength', lang)} ...
+        </Menu.Item>
 
         {textureDialogVisible && <RoofTextureSelection setDialogVisible={setTextureDialogVisible} />}
         <Menu.Item
