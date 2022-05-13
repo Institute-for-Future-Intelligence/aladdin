@@ -26,7 +26,7 @@ import {
   Vector2,
   Vector3,
 } from 'three';
-import { ConvexGeoProps, handleUndoableResizeRoofHeight, useRoofTexture } from './roof';
+import { ConvexGeoProps, handleRoofContextMenu, handleUndoableResizeRoofHeight, useRoofTexture } from './roof';
 import { CSG } from 'three-csg-ts';
 import { ConvexGeometry } from 'three/examples/jsm/geometries/ConvexGeometry';
 import { RoofTexture, ObjectType } from 'src/types';
@@ -403,6 +403,9 @@ const GambrelRoof = ({
               }
             });
           }
+        }}
+        onContextMenu={(e) => {
+          handleRoofContextMenu(e, id);
         }}
       >
         {roofSegments.map((segment, i, arr) => {

@@ -15,8 +15,8 @@ import { RoofTexture } from 'src/types';
 import { UndoableResizeHipRoofRidge } from 'src/undo/UndoableResize';
 import { Util } from 'src/Util';
 import { DoubleSide, Euler, Mesh, Raycaster, Vector2, Vector3 } from 'three';
-import { ConvexGeoProps, handleUndoableResizeRoofHeight, useRoofTexture } from './roof';
 import { ObjectType } from '../../types';
+import { handleUndoableResizeRoofHeight, ConvexGeoProps, useRoofTexture, handleRoofContextMenu } from './roof';
 
 interface RoofSegmentWireframeProps {
   leftRoof: Vector3;
@@ -305,6 +305,9 @@ const HipRoof = ({
               }
             });
           }
+        }}
+        onContextMenu={(e) => {
+          handleRoofContextMenu(e, id);
         }}
       >
         {roofSegments.map((segment, i, arr) => {

@@ -17,8 +17,13 @@ import { RoofTexture } from 'src/types';
 import { UnoableResizeGambrelAndMansardRoofRidge } from 'src/undo/UndoableResize';
 import { Util } from 'src/Util';
 import { DoubleSide, Euler, Mesh, Vector2, Vector3 } from 'three';
-import { ConvexGeoProps as ConvexGeometryProps, handleUndoableResizeRoofHeight, useRoofTexture } from './roof';
 import { ObjectType } from '../../types';
+import {
+  ConvexGeoProps as ConvexGeometryProps,
+  handleRoofContextMenu,
+  handleUndoableResizeRoofHeight,
+  useRoofTexture,
+} from './roof';
 
 const intersectionPlanePosition = new Vector3();
 const intersectionPlaneRotation = new Euler();
@@ -342,6 +347,9 @@ const MansardRoof = ({
               }
             });
           }
+        }}
+        onContextMenu={(e) => {
+          handleRoofContextMenu(e, id);
         }}
       >
         {roofSegments.map((segment, i, arr) => {

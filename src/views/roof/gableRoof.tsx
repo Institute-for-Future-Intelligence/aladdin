@@ -13,7 +13,7 @@ import { useStoreRef } from 'src/stores/commonRef';
 import { useThree } from '@react-three/fiber';
 import { HALF_PI } from 'src/constants';
 import { ElementModel } from 'src/models/ElementModel';
-import { ConvexGeoProps, handleUndoableResizeRoofHeight, useRoofTexture } from './roof';
+import { handleUndoableResizeRoofHeight, ConvexGeoProps, useRoofTexture, handleRoofContextMenu } from './roof';
 import { UnoableResizeGableRoofRidge } from 'src/undo/UndoableResize';
 import { RoofTexture, ObjectType } from 'src/types';
 
@@ -361,6 +361,9 @@ const GableRoof = ({
               }
             });
           }
+        }}
+        onContextMenu={(e) => {
+          handleRoofContextMenu(e, id);
         }}
       >
         {roofSegments.map((segment, i, arr) => {
