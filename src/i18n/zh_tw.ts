@@ -875,6 +875,7 @@ export const i18n_zh_tw = {
       StoreMyNameInMyFilesWhenSaving: '保存文檔時籤上我的大名',
       DoYouReallyWantToShowYourNameInYourFiles: '您確定在您的文檔裡保存您的大名嗎？',
       SignFileDisclaimer: '如果您選擇保存，您的大名可能被所有打開您的文檔的人看到。',
+      UserCount: '用戶總數',
     },
 
     weatherPanel: {

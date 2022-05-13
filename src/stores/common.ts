@@ -102,6 +102,7 @@ export interface CommonStoreState {
   viewState: ViewState;
   notes: string[];
   user: User;
+  userCount: number;
   language: string;
   floatingWindowOpacity: number;
   cloudFile: string | undefined;
@@ -725,6 +726,7 @@ export const useStore = create<CommonStoreState>(
           particleSwarmOptimizationWizardSelectedTab: '1',
           notes: [],
           user: {} as User,
+          userCount: 0,
           language: 'en',
           floatingWindowOpacity: FLOATING_WINDOW_OPACITY,
           cloudFile: undefined,

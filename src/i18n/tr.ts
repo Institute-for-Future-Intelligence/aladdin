@@ -894,6 +894,7 @@ export const i18n_tr = {
       StoreMyNameInMyFilesWhenSaving: 'Store my name in my files when saving',
       DoYouReallyWantToShowYourNameInYourFiles: 'Do you really want to show your display name in your files?',
       SignFileDisclaimer: 'If yes, your display name may be seen by anyone who can access your files.',
+      UserCount: 'User Count',
     },
 
     weatherPanel: {

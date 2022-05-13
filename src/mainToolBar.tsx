@@ -203,7 +203,9 @@ const MainToolBar = ({ viewOnly = false }: MainToolBarProps) => {
         });
       })
       .catch((error) => {
-        showError(i18n.t('message.CannotSignIn', lang) + ': ' + error);
+        if (error.code !== 'auth/popup-closed-by-user') {
+          showError(i18n.t('message.CannotSignIn', lang) + ': ' + error);
+        }
       });
     resetToSelectMode();
   };
@@ -212,10 +214,12 @@ const MainToolBar = ({ viewOnly = false }: MainToolBarProps) => {
     const firestore = firebase.firestore();
     let signFile = false;
     let noLogging = false;
+    let userCount = 0;
     const found = await firestore
       .collection('users')
       .get()
       .then((querySnapshot) => {
+        userCount = querySnapshot.size;
         for (const doc of querySnapshot.docs) {
           if (doc.id === user.uid) {
             const docData = doc.data();
@@ -230,6 +234,7 @@ const MainToolBar = ({ viewOnly = false }: MainToolBarProps) => {
       setCommonStore((state) => {
         state.user.signFile = signFile;
         state.user.noLogging = noLogging;
+        state.userCount = userCount;
       });
       user.signFile = signFile;
       user.noLogging = noLogging;

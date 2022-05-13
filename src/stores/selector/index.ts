@@ -8,6 +8,8 @@ export const set = (state: CommonStoreState) => state.set;
 
 export const user = (state: CommonStoreState) => state.user;
 
+export const userCount = (state: CommonStoreState) => state.userCount;
+
 export const getHeatmap = (state: CommonStoreState) => state.getHeatmap;
 
 export const setHeatmap = (state: CommonStoreState) => state.setHeatmap;

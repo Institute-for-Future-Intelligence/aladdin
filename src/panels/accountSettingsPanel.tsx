@@ -71,6 +71,7 @@ const AccountSettingsPanel = () => {
   const setCommonStore = useStore(Selector.set);
   const language = useStore(Selector.language);
   const user = useStore(Selector.user);
+  const userCount = useStore(Selector.userCount);
 
   // nodeRef is to suppress ReactDOM.findDOMNode() deprecation warning. See:
   // https://github.com/react-grid-layout/react-draggable/blob/v4.4.2/lib/DraggableCore.js#L159-L171
@@ -113,6 +114,8 @@ const AccountSettingsPanel = () => {
       state.showAccountSettingsPanel = false;
     });
   };
+
+  const superuser = user && user.email && user.email.endsWith('intofuture.org');
 
   return (
     <>
@@ -197,6 +200,12 @@ const AccountSettingsPanel = () => {
                 {i18n.t('accountSettingsPanel.StoreMyNameInMyFilesWhenSaving', lang)}
               </Space>
             </Space>
+            {superuser && (
+              <Space style={{ paddingTop: '20px', paddingLeft: '20px', direction: 'ltr' }}>
+                <label>{i18n.t('accountSettingsPanel.UserCount', lang)}</label>
+                <Space style={{ paddingLeft: '6px' }}>{userCount}</Space>
+              </Space>
+            )}
           </ColumnWrapper>
         </Container>
       </ReactDraggable>
