@@ -45,6 +45,7 @@ enum RoofHandleType {
 const intersectionPlanePosition = new Vector3();
 const intersectionPlaneRotation = new Euler();
 const zeroVector2 = new Vector2();
+const euler = new Euler(0, 0, HALF_PI);
 
 const GambrelRoof = ({
   id,
@@ -63,6 +64,7 @@ const GambrelRoof = ({
   selected,
   textureType,
   color,
+  overhang,
 }: GambrelRoofModel) => {
   const texture = useRoofTexture(textureType);
 
@@ -81,6 +83,8 @@ const GambrelRoof = ({
   const mouse = useMemo(() => new Vector2(), []);
   const oldHeight = useRef<number>(h);
   const oldRidgeVal = useRef<number>(0);
+
+  overhang = overhang ?? 0.4;
 
   // set position and rotation
   const parent = getElementById(parentId);
@@ -151,25 +155,32 @@ const GambrelRoof = ({
     useStore.getState().addUndoable(undoable);
   };
 
-  const currentWallArray = useMemo(() => {
-    const array: WallModel[] = [];
-    if (wallsId.length > 0) {
-      const wall = getElementById(wallsId[0]) as WallModel;
-      array.push(wall);
-      if (wall) {
-        const leftWall = getElementById(wall.leftJoints[0]) as WallModel;
-        const rightWall = getElementById(wall.rightJoints[0]) as WallModel;
-        if (leftWall && rightWall) {
-          const midWall = getElementById(leftWall.leftJoints[0]) as WallModel;
-          const checkWall = getElementById(rightWall.rightJoints[0]) as WallModel;
-          if (midWall && checkWall && midWall.id === checkWall.id) {
-            array.push(rightWall, midWall, leftWall);
-          }
-        }
-      }
+  const setRayCast = (e: PointerEvent) => {
+    mouse.x = (e.offsetX / gl.domElement.clientWidth) * 2 - 1;
+    mouse.y = -(e.offsetY / gl.domElement.clientHeight) * 2 + 1;
+    ray.setFromCamera(mouse, camera);
+  };
+
+  const setInterSectionPlane = (handlePointV3: Vector3, wall: WallModel) => {
+    setEnableIntersectionPlane(true);
+    useStoreRef.getState().setEnableOrbitController(false);
+    intersectionPlanePosition.set(handlePointV3.x, handlePointV3.y, h).add(centroid);
+    if (parent && wall) {
+      const r = wall.relativeAngle;
+      intersectionPlaneRotation.set(-HALF_PI, 0, r, 'ZXY');
     }
-    return array;
-  }, [elements]);
+  };
+
+  const getRelPos = (foundation: ElementModel, wall: WallModel, point: Vector3) => {
+    const foundationCenter = new Vector2(foundation.cx, foundation.cy);
+    const wallAbsCenter = new Vector2(wall.cx, wall.cy)
+      .rotateAround(zeroVector2, foundation.rotation[2])
+      .add(foundationCenter);
+    const wallAbsAngle = foundation.rotation[2] + wall.relativeAngle;
+    const p = new Vector2(point.x, point.y).sub(wallAbsCenter).rotateAround(zeroVector2, -wallAbsAngle);
+    const x = p.x / wall.lx;
+    return Math.min(Math.abs(x), 0.5) * (x >= 0 ? 1 : -1);
+  };
 
   const getRidgePoint = (wall: WallModel, px: number, ph: number) => {
     if (!wall) {
@@ -190,6 +201,74 @@ const GambrelRoof = ({
     }
     return arr;
   };
+
+  // todo: should determained by wall 0 and 2;
+  const getWallHeight = (arr: WallModel[], i: number) => {
+    const w = arr[i];
+    let lh = 0;
+    let rh = 0;
+    if (i === 0) {
+      lh = Math.max(w.lz, arr[arr.length - 1].lz);
+      rh = Math.max(w.lz, arr[i + 1].lz);
+    } else if (i === arr.length - 1) {
+      lh = Math.max(w.lz, arr[i - 1].lz);
+      rh = Math.max(w.lz, arr[0].lz);
+    } else {
+      lh = Math.max(w.lz, arr[i - 1].lz);
+      rh = Math.max(w.lz, arr[i + 1].lz);
+    }
+    return { lh, rh };
+  };
+
+  const getNormal = (wall: WallModel) => {
+    return new Vector3()
+      .subVectors(
+        new Vector3(wall.leftPoint[0], wall.leftPoint[1]),
+        new Vector3(wall.rightPoint[0], wall.rightPoint[1]),
+      )
+      .applyEuler(euler)
+      .normalize();
+  };
+
+  const getIntersectionPoint = (v1: Vector3, v2: Vector3, v3: Vector3, v4: Vector3) => {
+    const x = [v1.x, v2.x, v3.x, v4.x];
+    const y = [v1.y, v2.y, v3.y, v4.y];
+    const x0 =
+      ((x[2] - x[3]) * (x[1] * y[0] - x[0] * y[1]) - (x[0] - x[1]) * (x[3] * y[2] - x[2] * y[3])) /
+      ((x[2] - x[3]) * (y[0] - y[1]) - (x[0] - x[1]) * (y[2] - y[3]));
+    const y0 =
+      ((y[2] - y[3]) * (y[1] * x[0] - y[0] * x[1]) - (y[0] - y[1]) * (y[3] * x[2] - y[2] * x[3])) /
+      ((y[2] - y[3]) * (x[0] - x[1]) - (y[0] - y[1]) * (x[2] - x[3]));
+    return new Vector3(x0, y0);
+  };
+
+  // distance from point p3 to line formed by p1 and p2
+  const getDistance = (p1: Vector3, p2: Vector3, p3: Vector3) => {
+    const A = p2.y - p1.y;
+    const B = p1.x - p2.x;
+    const C = p2.x * p1.y - p1.x * p2.y;
+    return Math.abs((A * p3.x + B * p3.y + C) / Math.sqrt(A * A + B * B));
+  };
+
+  const currentWallArray = useMemo(() => {
+    const array: WallModel[] = [];
+    if (wallsId.length > 0) {
+      const wall = getElementById(wallsId[0]) as WallModel;
+      array.push(wall);
+      if (wall) {
+        const leftWall = getElementById(wall.leftJoints[0]) as WallModel;
+        const rightWall = getElementById(wall.rightJoints[0]) as WallModel;
+        if (leftWall && rightWall) {
+          const midWall = getElementById(leftWall.leftJoints[0]) as WallModel;
+          const checkWall = getElementById(rightWall.rightJoints[0]) as WallModel;
+          if (midWall && checkWall && midWall.id === checkWall.id) {
+            array.push(rightWall, midWall, leftWall);
+          }
+        }
+      }
+    }
+    return array;
+  }, [elements]);
 
   const centroid = useMemo(() => {
     if (currentWallArray.length !== 4) {
@@ -243,95 +322,187 @@ const GambrelRoof = ({
     return getRidgePoint(wall, x, h).sub(centroid);
   }, [currentWallArray, centroid, backRidgeRightPoint]);
 
-  // todo: should determained by wall 0 and 2;
-  const getWallHeight = (arr: WallModel[], i: number) => {
-    const w = arr[i];
-    let lh = 0;
-    let rh = 0;
-    if (i === 0) {
-      lh = Math.max(w.lz, arr[arr.length - 1].lz);
-      rh = Math.max(w.lz, arr[i + 1].lz);
-    } else if (i === arr.length - 1) {
-      lh = Math.max(w.lz, arr[i - 1].lz);
-      rh = Math.max(w.lz, arr[0].lz);
-    } else {
-      lh = Math.max(w.lz, arr[i - 1].lz);
-      rh = Math.max(w.lz, arr[i + 1].lz);
-    }
-    return { lh, rh };
-  };
+  const overhangs = useMemo(() => {
+    return currentWallArray.map((wall) => getNormal(wall).multiplyScalar(overhang));
+  }, [currentWallArray, overhang]);
 
   const roofSegments = useMemo(() => {
-    // const segments: Vector3[][] = [];
     const segments: ConvexGeoProps[] = [];
 
     if (currentWallArray.length != 4) {
       return segments;
     }
 
+    const [frontWall, rightWall, backWall, leftWall] = currentWallArray;
+    const [frontOverhang, rightOverhang, backOverhang, leftOverhang] = overhangs;
+
+    const wallPoint0 = new Vector3(frontWall.leftPoint[0], frontWall.leftPoint[1]);
+    const wallPoint1 = new Vector3(frontWall.rightPoint[0], frontWall.rightPoint[1]);
+    const wallPoint2 = new Vector3(backWall.leftPoint[0], backWall.leftPoint[1]);
+    const wallPoint3 = new Vector3(backWall.rightPoint[0], backWall.rightPoint[1]);
+
+    const frontWallLeftPointAfterOffset = wallPoint0.clone().add(frontOverhang);
+    const frontWallRightPointAfterOffset = wallPoint1.clone().add(frontOverhang);
+    const leftWallLeftPointAfterOffset = wallPoint3.clone().add(leftOverhang);
+    const leftWallRightPointAfterOffset = wallPoint0.clone().add(leftOverhang);
+    const rightWallLeftPointAfterOffset = wallPoint1.clone().add(rightOverhang);
+    const rightWallRightPointAfterOffset = wallPoint2.clone().add(rightOverhang);
+    const backWallLeftPointAfterOffset = wallPoint2.clone().add(backOverhang);
+    const backWallRightPointAfterOffset = wallPoint3.clone().add(backOverhang);
+
     // front side
-    const frontSide: Vector3[] = [];
-    const frontWall = currentWallArray[0];
-    const frontDirection = -frontWall.relativeAngle;
+    const frontSidePoints: Vector3[] = [];
     const { lh: frontWallLh, rh: frontWallRh } = getWallHeight(currentWallArray, 0);
-    const frontWallLeftPoint = new Vector3(frontWall.leftPoint[0], frontWall.leftPoint[1], frontWallLh).sub(centroid);
-    const frontWallRightPoint = new Vector3(frontWall.rightPoint[0], frontWall.rightPoint[1], frontWallRh).sub(
-      centroid,
+
+    const d0 = getDistance(wallPoint0, wallPoint1, frontRidgeLeftPointV3.clone().add(centroid));
+    const overhangHeight0 = Math.min(
+      (overhang / d0) * (frontRidgeLeftPointV3.clone().add(centroid).z - frontWallRh),
+      frontWallLh,
     );
+
+    const d1 = getDistance(wallPoint0, wallPoint1, frontRidgeRightPointV3.clone().add(centroid));
+    const overhangHeight1 = Math.min(
+      (overhang / d1) * (frontRidgeRightPointV3.clone().add(centroid).z - frontWallRh),
+      frontWallRh,
+    );
+
+    const frontWallLeftPointAfterOverhang = getIntersectionPoint(
+      frontWallLeftPointAfterOffset,
+      frontWallRightPointAfterOffset,
+      leftWallLeftPointAfterOffset,
+      leftWallRightPointAfterOffset,
+    )
+      .setZ(frontWallLh - overhangHeight0)
+      .sub(centroid);
+
+    const frontWallRightPointAfterOverhang = getIntersectionPoint(
+      frontWallLeftPointAfterOffset,
+      frontWallRightPointAfterOffset,
+      rightWallLeftPointAfterOffset,
+      rightWallRightPointAfterOffset,
+    )
+      .setZ(frontWallRh - overhangHeight1)
+      .sub(centroid);
+
+    const frontRidgeLeftPointAfterOverhang = getIntersectionPoint(
+      frontRidgeLeftPointV3,
+      frontRidgeRightPointV3,
+      leftWallLeftPointAfterOffset.clone().sub(centroid),
+      leftWallRightPointAfterOffset.clone().sub(centroid),
+    ).setZ(frontRidgeRightPointV3.z);
+
+    const frontRidgeRightPointAfterOverhang = getIntersectionPoint(
+      frontRidgeRightPointV3,
+      frontRidgeLeftPointV3,
+      rightWallLeftPointAfterOffset.clone().sub(centroid),
+      rightWallRightPointAfterOffset.clone().sub(centroid),
+    ).setZ(frontRidgeRightPointV3.z);
+
+    frontSidePoints.push(
+      frontWallLeftPointAfterOverhang,
+      frontWallRightPointAfterOverhang,
+      frontRidgeRightPointAfterOverhang,
+      frontRidgeLeftPointAfterOverhang,
+    );
+
+    const frontDirection = -frontWall.relativeAngle;
     const frontSideLenght = new Vector3(frontWall.cx, frontWall.cy).sub(topRidgeMidPointV3.setZ(0)).length();
-    frontSide.push(frontWallLeftPoint, frontWallRightPoint, frontRidgeRightPointV3, frontRidgeLeftPointV3);
-    segments.push({ points: frontSide, direction: frontDirection, length: frontSideLenght });
+    segments.push({ points: frontSidePoints, direction: frontDirection, length: frontSideLenght });
 
     // front top
-    const frontTop: Vector3[] = [];
-    frontTop.push(frontRidgeLeftPointV3, frontRidgeRightPointV3, topRidgeRightPointV3, topRidgeLeftPointV3);
-    segments.push({ points: frontTop, direction: frontDirection, length: frontSideLenght });
+    const frontTopPoints: Vector3[] = [];
+    const topRidgeLeftPointAfterOverhang = getIntersectionPoint(
+      topRidgeLeftPointV3,
+      topRidgeRightPointV3,
+      leftWallLeftPointAfterOffset.clone().sub(centroid),
+      leftWallRightPointAfterOffset.clone().sub(centroid),
+    ).setZ(topRidgeLeftPointV3.z);
+
+    const topRidgeRightPointAfterOverhang = getIntersectionPoint(
+      topRidgeLeftPointV3,
+      topRidgeRightPointV3,
+      rightWallLeftPointAfterOffset.clone().sub(centroid),
+      rightWallRightPointAfterOffset.clone().sub(centroid),
+    ).setZ(topRidgeRightPointV3.z);
+
+    frontTopPoints.push(
+      frontRidgeLeftPointAfterOverhang,
+      frontRidgeRightPointAfterOverhang,
+      topRidgeRightPointAfterOverhang,
+      topRidgeLeftPointAfterOverhang,
+    );
+    segments.push({ points: frontTopPoints, direction: frontDirection, length: frontSideLenght });
 
     // back side
-    const backSide: Vector3[] = [];
-    const backWall = currentWallArray[2];
+    const backSidePoints: Vector3[] = [];
     const backDirection = -backWall.relativeAngle;
     const { lh: backWallLh, rh: backWallRh } = getWallHeight(currentWallArray, 2);
-    const backWallLeftPoint = new Vector3(backWall.leftPoint[0], backWall.leftPoint[1], backWallLh).sub(centroid);
-    const backWallRightPoint = new Vector3(backWall.rightPoint[0], backWall.rightPoint[1], backWallRh).sub(centroid);
+
+    const d2 = getDistance(wallPoint2, wallPoint3, backRidgeLeftPointV3.clone().add(centroid));
+    const overhangHeight2 = Math.min(
+      (overhang / d2) * (backRidgeLeftPointV3.clone().add(centroid).z - backWallRh),
+      backWallLh,
+    );
+
+    const d3 = getDistance(wallPoint2, wallPoint3, backRidgeRightPointV3.clone().add(centroid));
+    const overhangHeight3 = Math.min(
+      (overhang / d3) * (backRidgeRightPointV3.clone().add(centroid).z - backWallRh),
+      backWallRh,
+    );
+
+    const backWallLeftPointAfterOverhang = getIntersectionPoint(
+      backWallLeftPointAfterOffset,
+      backWallRightPointAfterOffset,
+      rightWallLeftPointAfterOffset,
+      rightWallRightPointAfterOffset,
+    )
+      .setZ(backWallLh - overhangHeight2)
+      .sub(centroid);
+
+    const backWallRightPointAfterOverhang = getIntersectionPoint(
+      backWallLeftPointAfterOffset,
+      backWallRightPointAfterOffset,
+      leftWallLeftPointAfterOffset,
+      leftWallRightPointAfterOffset,
+    )
+      .setZ(backWallRh - overhangHeight3)
+      .sub(centroid);
+
+    const backRidgeLeftPointAfterOverhang = getIntersectionPoint(
+      backRidgeLeftPointV3,
+      backRidgeRightPointV3,
+      rightWallLeftPointAfterOffset.clone().sub(centroid),
+      rightWallRightPointAfterOffset.clone().sub(centroid),
+    ).setZ(backRidgeRightPointV3.z);
+
+    const backRidgeRightPointAfterOverhang = getIntersectionPoint(
+      backRidgeRightPointV3,
+      backRidgeLeftPointV3,
+      leftWallLeftPointAfterOffset.clone().sub(centroid),
+      leftWallRightPointAfterOffset.clone().sub(centroid),
+    ).setZ(backRidgeRightPointV3.z);
+
     const backSideLenght = new Vector3(backWall.cx, backWall.cy).sub(topRidgeMidPointV3.setZ(0)).length();
-    backSide.push(backWallLeftPoint, backWallRightPoint, backRidgeRightPointV3, backRidgeLeftPointV3);
-    segments.push({ points: backSide, direction: backDirection, length: backSideLenght });
+    backSidePoints.push(
+      backWallLeftPointAfterOverhang,
+      backWallRightPointAfterOverhang,
+      backRidgeRightPointAfterOverhang,
+      backRidgeLeftPointAfterOverhang,
+    );
+    segments.push({ points: backSidePoints, direction: backDirection, length: backSideLenght });
 
     // back top
-    const backTop: Vector3[] = [];
-    backTop.push(topRidgeLeftPointV3, topRidgeRightPointV3, backRidgeLeftPointV3, backRidgeRightPointV3);
-    segments.push({ points: backTop, direction: backDirection, length: backSideLenght });
+    const backTopPoints: Vector3[] = [];
+    backTopPoints.push(
+      topRidgeLeftPointAfterOverhang,
+      topRidgeRightPointAfterOverhang,
+      backRidgeLeftPointAfterOverhang,
+      backRidgeRightPointAfterOverhang,
+    );
+    segments.push({ points: backTopPoints, direction: backDirection, length: backSideLenght });
 
     return segments;
   }, [currentWallArray, h]);
-
-  const setRayCast = (e: PointerEvent) => {
-    mouse.x = (e.offsetX / gl.domElement.clientWidth) * 2 - 1;
-    mouse.y = -(e.offsetY / gl.domElement.clientHeight) * 2 + 1;
-    ray.setFromCamera(mouse, camera);
-  };
-
-  const setInterSectionPlane = (handlePointV3: Vector3, wall: WallModel) => {
-    setEnableIntersectionPlane(true);
-    useStoreRef.getState().setEnableOrbitController(false);
-    intersectionPlanePosition.set(handlePointV3.x, handlePointV3.y, h).add(centroid);
-    if (parent && wall) {
-      const r = wall.relativeAngle;
-      intersectionPlaneRotation.set(-HALF_PI, 0, r, 'ZXY');
-    }
-  };
-
-  const getRelPos = (foundation: ElementModel, wall: WallModel, point: Vector3) => {
-    const foundationCenter = new Vector2(foundation.cx, foundation.cy);
-    const wallAbsCenter = new Vector2(wall.cx, wall.cy)
-      .rotateAround(zeroVector2, foundation.rotation[2])
-      .add(foundationCenter);
-    const wallAbsAngle = foundation.rotation[2] + wall.relativeAngle;
-    const p = new Vector2(point.x, point.y).sub(wallAbsCenter).rotateAround(zeroVector2, -wallAbsAngle);
-    const x = p.x / wall.lx;
-    return Math.min(Math.abs(x), 0.5) * (x >= 0 ? 1 : -1);
-  };
 
   useEffect(() => {
     if (currentWallArray.length === 4) {
@@ -390,7 +561,6 @@ const GambrelRoof = ({
       {/* roof segments */}
       <group
         position={[centroid.x, centroid.y, centroid.z]}
-        scale={new Vector3(1.1, 1, 1)}
         onPointerDown={(e) => {
           if (e.intersections[0].eventObject.name === e.eventObject.name) {
             setCommonStore((state) => {

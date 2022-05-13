@@ -9,6 +9,7 @@ export interface RoofModel extends ElementModel {
   wallsId: string[];
   roofType: RoofType;
   textureType: RoofTexture;
+  overhang: number;
 }
 
 export interface PyramidRoofModel extends RoofModel {}
