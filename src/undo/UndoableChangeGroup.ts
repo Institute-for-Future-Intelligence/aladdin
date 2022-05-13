@@ -3,13 +3,15 @@
  */
 
 import { Undoable } from './Undoable';
-import { CuboidTexture, RoofTexture, WallTexture } from '../types';
+import { CuboidTexture, DoorTexture, RoofTexture, WallTexture } from '../types';
 import { Vector3 } from 'three';
 
 export interface UndoableChangeGroup extends Undoable {
-  oldTexturesAboveFoundation: Map<string, RoofTexture>;
   // old values might be different, so we store their IDs and values in a map
-  oldValues: Map<string, boolean | string | number | string[] | CuboidTexture[] | WallTexture | RoofTexture>;
+  oldValues: Map<
+    string,
+    boolean | string | number | string[] | CuboidTexture[] | WallTexture | RoofTexture | DoorTexture
+  >;
   // but there is only one new value, so no need to use a map.
   newValue: boolean | string | number | string[] | CuboidTexture[] | WallTexture | RoofTexture;
   groupId: string;

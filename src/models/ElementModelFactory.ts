@@ -504,6 +504,7 @@ export class ElementModelFactory {
       ly: 0,
       lz: 0,
       textureType: DoorTexture.Default,
+      color: 'white',
       selected: true,
       showLabel: false,
       normal: normal ? normal.toArray() : [0, 1, 0],

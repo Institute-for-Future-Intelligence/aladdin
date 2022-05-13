@@ -752,6 +752,25 @@ export const i18n_zh_cn = {
       AllRoofs: '所有的房顶',
     },
 
+    doorMenu: {
+      TextureDefault: '默认材质',
+      Texture01: '一号材质',
+      Texture02: '二号材质',
+      Texture03: '三号材质',
+      Texture04: '四号材质',
+      Texture05: '五号材质',
+      Texture06: '六号材质',
+      Texture07: '七号材质',
+      Texture08: '八号材质',
+      Texture09: '九号材质',
+      Texture10: '十号材质',
+      Texture11: '十一号材质',
+      Texture12: '十二号材质',
+      OnlyThisDoor: '只这个门',
+      AllDoorsAboveFoundation: '同一地基上所有的门',
+      AllDoors: '所有的门',
+    },
+
     windowMenu: {},
 
     siteInfoPanel: {

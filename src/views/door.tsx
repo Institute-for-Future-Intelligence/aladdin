@@ -45,7 +45,7 @@ const DoorHandleWapper = ({ lx, lz }: DoorHandleWapperProps) => {
   );
 };
 
-const Door = ({ id, parentId, cx, cz, lx, lz, selected, locked, textureType }: DoorModel) => {
+const Door = ({ id, parentId, cx, cz, lx, lz, selected, locked, textureType, color }: DoorModel) => {
   const textureLoader = useMemo(() => {
     let textureImg;
     switch (textureType) {
@@ -165,7 +165,11 @@ const Door = ({ id, parentId, cx, cz, lx, lz, selected, locked, textureType }: D
           }
         }}
       >
-        <meshBasicMaterial map={texture} side={DoubleSide} />
+        <meshBasicMaterial
+          map={texture}
+          side={DoubleSide}
+          color={textureType === DoorTexture.Default || textureType === DoorTexture.NoTexture ? color : 'white'}
+        />
       </Plane>
       {selected && !locked && <DoorHandleWapper lx={wlx} lz={wlz} />}
     </group>

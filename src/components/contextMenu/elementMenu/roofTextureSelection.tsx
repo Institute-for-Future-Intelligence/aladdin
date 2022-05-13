@@ -2,14 +2,14 @@
  * @Copyright 2021-2022. Institute for Future Intelligence, Inc.
  */
 
-import WallTextureDefaultIcon from 'src/resources/wall_edge.png';
-import WallTexture01Icon from 'src/resources/wall_01_menu.png';
-import WallTexture02Icon from 'src/resources/wall_02_menu.png';
-import WallTexture03Icon from 'src/resources/wall_03_menu.png';
-import WallTexture04Icon from 'src/resources/wall_04_menu.png';
-import WallTexture05Icon from 'src/resources/wall_05_menu.png';
-import WallTexture06Icon from 'src/resources/wall_06_menu.png';
-import WallTexture07Icon from 'src/resources/wall_07_menu.png';
+import RoofTextureDefaultIcon from 'src/resources/roof_edge_menu.png';
+import RoofTexture01Icon from 'src/resources/roof_01_menu.png';
+import RoofTexture02Icon from 'src/resources/roof_02_menu.png';
+import RoofTexture03Icon from 'src/resources/roof_03_menu.png';
+import RoofTexture04Icon from 'src/resources/roof_04_menu.png';
+import RoofTexture05Icon from 'src/resources/roof_05_menu.png';
+import RoofTexture06Icon from 'src/resources/roof_06_menu.png';
+import RoofTexture07Icon from 'src/resources/roof_07_menu.png';
 
 import React, { useEffect, useRef, useState } from 'react';
 import { Button, Col, Modal, Radio, Row, Select, Space } from 'antd';
@@ -121,12 +121,12 @@ const RoofTextureSelection = ({ setDialogVisible }: { setDialogVisible: (b: bool
             newValue: value,
             groupId: roof.foundationId,
             undo: () => {
-              undoTextureInMap(undoableChangeAboveFoundation.oldTexturesAboveFoundation as Map<string, RoofTexture>);
+              undoTextureInMap(undoableChangeAboveFoundation.oldValues as Map<string, RoofTexture>);
             },
             redo: () => {
               if (undoableChangeAboveFoundation.groupId) {
                 updateTextureInMap(
-                  undoableChangeAboveFoundation.oldTexturesAboveFoundation as Map<string, RoofTexture>,
+                  undoableChangeAboveFoundation.oldValues as Map<string, RoofTexture>,
                   undoableChangeAboveFoundation.newValue as RoofTexture,
                 );
               }
@@ -257,7 +257,7 @@ const RoofTextureSelection = ({ setDialogVisible }: { setDialogVisible: (b: bool
               <Option key={RoofTexture.Default} value={RoofTexture.Default}>
                 <img
                   alt={RoofTexture.Default}
-                  src={WallTextureDefaultIcon}
+                  src={RoofTextureDefaultIcon}
                   height={20}
                   width={40}
                   style={{ paddingRight: '8px' }}
@@ -268,7 +268,7 @@ const RoofTextureSelection = ({ setDialogVisible }: { setDialogVisible: (b: bool
               <Option key={RoofTexture.Texture01} value={RoofTexture.Texture01}>
                 <img
                   alt={RoofTexture.Texture01}
-                  src={WallTexture01Icon}
+                  src={RoofTexture01Icon}
                   height={20}
                   width={40}
                   style={{ paddingRight: '8px' }}
@@ -279,7 +279,7 @@ const RoofTextureSelection = ({ setDialogVisible }: { setDialogVisible: (b: bool
               <Option key={RoofTexture.Texture02} value={RoofTexture.Texture02}>
                 <img
                   alt={RoofTexture.Texture02}
-                  src={WallTexture02Icon}
+                  src={RoofTexture02Icon}
                   height={20}
                   width={40}
                   style={{ paddingRight: '8px' }}
@@ -290,7 +290,7 @@ const RoofTextureSelection = ({ setDialogVisible }: { setDialogVisible: (b: bool
               <Option key={RoofTexture.Texture03} value={RoofTexture.Texture03}>
                 <img
                   alt={RoofTexture.Texture03}
-                  src={WallTexture03Icon}
+                  src={RoofTexture03Icon}
                   height={20}
                   width={40}
                   style={{ paddingRight: '8px' }}
@@ -301,7 +301,7 @@ const RoofTextureSelection = ({ setDialogVisible }: { setDialogVisible: (b: bool
               <Option key={RoofTexture.Texture04} value={RoofTexture.Texture04}>
                 <img
                   alt={RoofTexture.Texture04}
-                  src={WallTexture04Icon}
+                  src={RoofTexture04Icon}
                   height={20}
                   width={40}
                   style={{ paddingRight: '8px' }}
@@ -312,7 +312,7 @@ const RoofTextureSelection = ({ setDialogVisible }: { setDialogVisible: (b: bool
               <Option key={RoofTexture.Texture05} value={RoofTexture.Texture05}>
                 <img
                   alt={RoofTexture.Texture05}
-                  src={WallTexture05Icon}
+                  src={RoofTexture05Icon}
                   height={20}
                   width={40}
                   style={{ paddingRight: '8px' }}
@@ -323,7 +323,7 @@ const RoofTextureSelection = ({ setDialogVisible }: { setDialogVisible: (b: bool
               <Option key={RoofTexture.Texture06} value={RoofTexture.Texture06}>
                 <img
                   alt={RoofTexture.Texture06}
-                  src={WallTexture06Icon}
+                  src={RoofTexture06Icon}
                   height={20}
                   width={40}
                   style={{ paddingRight: '8px' }}
@@ -334,7 +334,7 @@ const RoofTextureSelection = ({ setDialogVisible }: { setDialogVisible: (b: bool
               <Option key={RoofTexture.Texture07} value={RoofTexture.Texture07}>
                 <img
                   alt={RoofTexture.Texture07}
-                  src={WallTexture07Icon}
+                  src={RoofTexture07Icon}
                   height={20}
                   width={40}
                   style={{ paddingRight: '8px' }}

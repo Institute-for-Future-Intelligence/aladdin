@@ -753,6 +753,25 @@ export const i18n_zh_tw = {
       AllRoofs: '所有的屋顶',
     },
 
+    doorMenu: {
+      TextureDefault: '默認材質',
+      Texture01: '一號材質',
+      Texture02: '二號材質',
+      Texture03: '三號材質',
+      Texture04: '四號材質',
+      Texture05: '五號材質',
+      Texture06: '六號材質',
+      Texture07: '七號材質',
+      Texture08: '八號材質',
+      Texture09: '九號材質',
+      Texture10: '十號材質',
+      Texture11: '十一號材質',
+      Texture12: '十二號材質',
+      OnlyThisDoor: '只這个門',
+      AllDoorsAboveFoundation: '同一地基上所有的門',
+      AllDoors: '所有的門',
+    },
+
     windowMenu: {},
 
     siteInfoPanel: {
