@@ -7,6 +7,8 @@ import { GoogleMap, Marker } from '@react-google-maps/api';
 import { useStore } from '../stores/common';
 import * as Selector from '../stores/selector';
 import { UndoableChange } from '../undo/UndoableChange';
+import { UndoableChangeLocation } from '../undo/UndoableChangeLocation';
+import { throttle } from 'lodash';
 
 const containerStyle = {
   border: '1px solid',
@@ -54,79 +56,99 @@ const Maps = () => {
     }
   };
 
-  const onBoundsChanged = () => {
-    if (map) {
-      bounds.current = map.getBounds();
-      if (mapWeatherStations) {
-        loadCities();
+  const onBoundsChanged = throttle(
+    () => {
+      if (map) {
+        const oldPos = bounds.current?.getCenter();
+        bounds.current = map.getBounds();
+        const newPos = bounds.current?.getCenter();
+        let same = true;
+        if (oldPos && newPos) {
+          if (oldPos.lat() !== newPos.lat() || oldPos.lng() !== newPos.lng()) {
+            same = false;
+          }
+        }
+        if (!same) {
+          if (mapWeatherStations) {
+            loadCities();
+          }
+        }
       }
-    }
-  };
+    },
+    1000,
+    { leading: false, trailing: true },
+  );
 
-  const onCenterChanged = () => {
-    if (map) {
-      const center = map.getCenter();
-      const lat = center.lat();
-      const lng = center.lng();
-      if (lat !== latitude || lng !== longitude) {
-        // We do not want to make this undoable as it will result in
-        // too many undoable events as the user drags the map
-        // const undoableChangeLocation = {
-        //   name: 'Set Location',
-        //   timestamp: Date.now(),
-        //   oldLatitude: latitude,
-        //   newLatitude: lat,
-        //   oldLongitude: longitude,
-        //   newLongitude: lng,
-        //   undo: () => {
-        //     setCommonStore((state) => {
-        //       state.world.latitude = undoableChangeLocation.oldLatitude;
-        //       state.world.longitude = undoableChangeLocation.oldLongitude;
-        //     });
-        //   },
-        //   redo: () => {
-        //     setCommonStore((state) => {
-        //       state.world.latitude = undoableChangeLocation.newLatitude;
-        //       state.world.longitude = undoableChangeLocation.newLongitude;
-        //     });
-        //   },
-        // } as UndoableChangeLocation;
-        // addUndoable(undoableChangeLocation);
-        setCommonStore((state) => {
-          state.world.latitude = lat;
-          state.world.longitude = lng;
-        });
+  const onCenterChanged = throttle(
+    () => {
+      if (map) {
+        const center = map.getCenter();
+        const lat = center.lat();
+        const lng = center.lng();
+        if (lat !== latitude || lng !== longitude) {
+          const undoableChangeLocation = {
+            name: 'Set Location',
+            timestamp: Date.now(),
+            oldLatitude: latitude,
+            newLatitude: lat,
+            oldLongitude: longitude,
+            newLongitude: lng,
+            undo: () => {
+              setCommonStore((state) => {
+                state.world.latitude = undoableChangeLocation.oldLatitude;
+                state.world.longitude = undoableChangeLocation.oldLongitude;
+              });
+            },
+            redo: () => {
+              setCommonStore((state) => {
+                state.world.latitude = undoableChangeLocation.newLatitude;
+                state.world.longitude = undoableChangeLocation.newLongitude;
+              });
+            },
+          } as UndoableChangeLocation;
+          addUndoable(undoableChangeLocation);
+          setCommonStore((state) => {
+            state.world.latitude = lat;
+            state.world.longitude = lng;
+          });
+        }
       }
-    }
-  };
+    },
+    1000,
+    { leading: false, trailing: true },
+  );
 
-  const onZoomChanged = () => {
-    if (map) {
-      const z = map.getZoom();
-      if (z !== mapZoom) {
-        const undoableChange = {
-          name: 'Zoom Map',
-          timestamp: Date.now(),
-          oldValue: mapZoom,
-          newValue: z,
-          undo: () => {
-            setCommonStore((state) => {
-              state.viewState.mapZoom = undoableChange.oldValue as number;
-            });
-          },
-          redo: () => {
-            setCommonStore((state) => {
-              state.viewState.mapZoom = undoableChange.newValue as number;
-            });
-          },
-        } as UndoableChange;
-        addUndoable(undoableChange);
-        setCommonStore((state) => {
-          state.viewState.mapZoom = z;
-        });
+  const onZoomChanged = throttle(
+    () => {
+      if (map) {
+        const z = map.getZoom();
+        if (z !== mapZoom) {
+          const undoableChange = {
+            name: 'Zoom Map',
+            timestamp: Date.now(),
+            oldValue: mapZoom,
+            newValue: z,
+            undo: () => {
+              setCommonStore((state) => {
+                state.viewState.mapZoom = undoableChange.oldValue as number;
+              });
+            },
+            redo: () => {
+              setCommonStore((state) => {
+                state.viewState.mapZoom = undoableChange.newValue as number;
+              });
+            },
+          } as UndoableChange;
+          addUndoable(undoableChange);
+          setCommonStore((state) => {
+            state.viewState.mapZoom = z;
+          });
+        }
       }
-    }
-  };
+    },
+    1000,
+    { leading: false, trailing: true },
+  );
 
   const onTiltChanged = () => {
     if (map) {

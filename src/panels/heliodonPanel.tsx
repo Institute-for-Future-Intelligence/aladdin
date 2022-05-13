@@ -210,35 +210,39 @@ const HeliodonPanel = () => {
 
   // throttled functions must be wrapped in useRef so that they don't get created every time
   const onLatitudeChangeRef = useRef(
-    throttle((value: number) => {
-      const undoableChangeLocation = {
-        name: 'Set Latitude',
-        timestamp: Date.now(),
-        oldLatitude: latitude,
-        newLatitude: value,
-        oldAddress: address,
-        newAddress: '',
-        undo: () => {
-          setCommonStore((state) => {
-            state.world.latitude = undoableChangeLocation.oldLatitude;
-            state.world.address = undoableChangeLocation.oldAddress;
-          });
-          setUpdateFlag(!updateFlag);
-        },
-        redo: () => {
-          setCommonStore((state) => {
-            state.world.latitude = undoableChangeLocation.newLatitude;
-            state.world.address = undoableChangeLocation.newAddress;
-          });
-          setUpdateFlag(!updateFlag);
-        },
-      } as UndoableChangeLocation;
-      addUndoable(undoableChangeLocation);
-      setCommonStore((state) => {
-        state.world.latitude = value;
-        state.world.address = '';
-      });
-    }, 500),
+    throttle(
+      (value: number) => {
+        const undoableChangeLocation = {
+          name: 'Set Latitude',
+          timestamp: Date.now(),
+          oldLatitude: latitude,
+          newLatitude: value,
+          oldAddress: address,
+          newAddress: '',
+          undo: () => {
+            setCommonStore((state) => {
+              state.world.latitude = undoableChangeLocation.oldLatitude;
+              state.world.address = undoableChangeLocation.oldAddress;
+            });
+            setUpdateFlag(!updateFlag);
+          },
+          redo: () => {
+            setCommonStore((state) => {
+              state.world.latitude = undoableChangeLocation.newLatitude;
+              state.world.address = undoableChangeLocation.newAddress;
+            });
+            setUpdateFlag(!updateFlag);
+          },
+        } as UndoableChangeLocation;
+        addUndoable(undoableChangeLocation);
+        setCommonStore((state) => {
+          state.world.latitude = value;
+          state.world.address = '';
+        });
+      },
+      500,
+      { leading: false, trailing: true },
+    ),
   );
 
   return (
