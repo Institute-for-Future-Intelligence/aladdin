@@ -869,7 +869,7 @@ export const i18n_zh_cn = {
 
     accountSettingsPanel: {
       MyAccountSettings: '我的账户设定',
-      MyID: '我的ID',
+      MyID: '我的🆔',
       ClickToCopyMyID: '点击此处拷贝我的ID',
       IDInClipBoard: '您现在可以粘贴ID了。',
       StoreMyNameInMyFilesWhenSaving: '保存文件时签上我的大名',

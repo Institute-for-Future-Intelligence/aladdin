@@ -32,19 +32,19 @@ const SolarPanelTiltAngleInput = ({ setDialogVisible }: { setDialogVisible: (b: 
   const setApplyCount = useStore(Selector.setApplyCount);
   const revertApply = useStore(Selector.revertApply);
 
-  const [inputTiltAngle, setInputTiltAngle] = useState<number>(solarPanel?.tiltAngle ?? 0);
   const [updateFlag, setUpdateFlag] = useState<boolean>(false);
   const [dragEnabled, setDragEnabled] = useState<boolean>(false);
   const [bounds, setBounds] = useState<DraggableBounds>({ left: 0, top: 0, bottom: 0, right: 0 } as DraggableBounds);
   const dragRef = useRef<HTMLDivElement | null>(null);
   const rejectRef = useRef<boolean>(false);
   const rejectedValue = useRef<number | undefined>();
+  const inputTiltAngleRef = useRef<number>(solarPanel?.tiltAngle ?? 0);
 
   const lang = { lng: language };
 
   useEffect(() => {
     if (solarPanel) {
-      setInputTiltAngle(solarPanel.tiltAngle);
+      inputTiltAngleRef.current = solarPanel.tiltAngle;
     }
   }, [solarPanel]);
 
@@ -132,7 +132,7 @@ const SolarPanelTiltAngleInput = ({ setDialogVisible }: { setDialogVisible: (b: 
         }
         if (rejectRef.current) {
           rejectedValue.current = value;
-          setInputTiltAngle(solarPanel.tiltAngle);
+          inputTiltAngleRef.current = solarPanel.tiltAngle;
         } else {
           const oldTiltAnglesAll = new Map<string, number>();
           for (const elem of elements) {
@@ -172,7 +172,7 @@ const SolarPanelTiltAngleInput = ({ setDialogVisible }: { setDialogVisible: (b: 
           }
           if (rejectRef.current) {
             rejectedValue.current = value;
-            setInputTiltAngle(solarPanel.tiltAngle);
+            inputTiltAngleRef.current = solarPanel.tiltAngle;
           } else {
             const oldTiltAnglesAboveFoundation = new Map<string, number>();
             for (const elem of elements) {
@@ -238,7 +238,7 @@ const SolarPanelTiltAngleInput = ({ setDialogVisible }: { setDialogVisible: (b: 
           }
           if (rejectRef.current) {
             rejectedValue.current = value;
-            setInputTiltAngle(solarPanel.tiltAngle);
+            inputTiltAngleRef.current = solarPanel.tiltAngle;
           } else {
             const oldTiltAnglesOnSurface = new Map<string, number>();
             if (isParentCuboid) {
@@ -294,7 +294,7 @@ const SolarPanelTiltAngleInput = ({ setDialogVisible }: { setDialogVisible: (b: 
         rejectRef.current = 0.5 * solarPanel.ly * Math.abs(Math.sin(value)) > solarPanel.poleHeight;
         if (rejectRef.current) {
           rejectedValue.current = value;
-          setInputTiltAngle(oldTiltAngle);
+          inputTiltAngleRef.current = oldTiltAngle;
         } else {
           const undoableChange = {
             name: 'Set Solar Panel Array Tilt Angle',
@@ -332,7 +332,7 @@ const SolarPanelTiltAngleInput = ({ setDialogVisible }: { setDialogVisible: (b: 
   };
 
   const close = () => {
-    setInputTiltAngle(solarPanel.tiltAngle);
+    inputTiltAngleRef.current = solarPanel.tiltAngle;
     rejectRef.current = false;
     setDialogVisible(false);
   };
@@ -343,7 +343,7 @@ const SolarPanelTiltAngleInput = ({ setDialogVisible }: { setDialogVisible: (b: 
   };
 
   const ok = () => {
-    setTiltAngle(inputTiltAngle);
+    setTiltAngle(inputTiltAngleRef.current);
     if (!rejectRef.current) {
       setDialogVisible(false);
       setApplyCount(0);
@@ -377,7 +377,7 @@ const SolarPanelTiltAngleInput = ({ setDialogVisible }: { setDialogVisible: (b: 
           <Button
             key="Apply"
             onClick={() => {
-              setTiltAngle(inputTiltAngle);
+              setTiltAngle(inputTiltAngleRef.current);
             }}
           >
             {i18n.t('word.Apply', lang)}
@@ -406,10 +406,14 @@ const SolarPanelTiltAngleInput = ({ setDialogVisible }: { setDialogVisible: (b: 
               max={90}
               style={{ width: 120 }}
               precision={1}
-              value={Util.toDegrees(inputTiltAngle)}
+              // make sure that we round up the number as toDegrees may cause things like .999999999
+              value={parseFloat(Util.toDegrees(inputTiltAngleRef.current).toFixed(2))}
               step={1}
-              formatter={(a) => Number(a).toFixed(1) + '°'}
-              onChange={(value) => setInputTiltAngle(Util.toRadians(value))}
+              formatter={(value) => `${value}°`}
+              onChange={(value) => {
+                inputTiltAngleRef.current = Util.toRadians(value);
+                setUpdateFlag(!updateFlag);
+              }}
               onPressEnter={ok}
             />
             <div style={{ paddingTop: '20px', textAlign: 'left', fontSize: '11px' }}>
@@ -421,7 +425,7 @@ const SolarPanelTiltAngleInput = ({ setDialogVisible }: { setDialogVisible: (b: 
           <Col
             className="gutter-row"
             style={{ border: '2px dashed #ccc', paddingTop: '8px', paddingLeft: '12px', paddingBottom: '8px' }}
-            span={16}
+            span={18}
           >
             <Radio.Group onChange={onScopeChange} value={solarPanelActionScope}>
               <Space direction="vertical">

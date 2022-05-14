@@ -887,7 +887,7 @@ export const i18n_en = {
 
     accountSettingsPanel: {
       MyAccountSettings: 'My Account Settings',
-      MyID: 'My ID',
+      MyID: 'My 🆔',
       ClickToCopyMyID: 'Click to copy my ID',
       IDInClipBoard: 'Your ID was copied and is ready to paste.',
       StoreMyNameInMyFilesWhenSaving: 'Store my name in my files when saving',

@@ -34,15 +34,15 @@ const SolarPanelLengthInput = ({ setDialogVisible }: { setDialogVisible: (b: boo
   const revertApply = useStore(Selector.revertApply);
 
   const [dx, setDx] = useState<number>(0);
-  const [inputLength, setInputLength] = useState<number>(
-    solarPanel?.orientation === Orientation.portrait ? solarPanel?.lx ?? 1 : solarPanel?.ly ?? 2,
-  );
   const [updateFlag, setUpdateFlag] = useState<boolean>(false);
   const [dragEnabled, setDragEnabled] = useState<boolean>(false);
   const [bounds, setBounds] = useState<DraggableBounds>({ left: 0, top: 0, bottom: 0, right: 0 } as DraggableBounds);
   const dragRef = useRef<HTMLDivElement | null>(null);
   const rejectRef = useRef<boolean>(false);
   const rejectedValue = useRef<number | undefined>();
+  const inputLengthRef = useRef<number>(
+    solarPanel?.orientation === Orientation.portrait ? solarPanel?.lx ?? 1 : solarPanel?.ly ?? 2,
+  );
 
   const lang = { lng: language };
 
@@ -50,7 +50,7 @@ const SolarPanelLengthInput = ({ setDialogVisible }: { setDialogVisible: (b: boo
     if (solarPanel) {
       const pvModel = getPvModule(solarPanel.pvModelName) ?? getPvModule('SPR-X21-335-BLK');
       setDx(solarPanel.orientation === Orientation.portrait ? pvModel.width : pvModel.length);
-      setInputLength(solarPanel.lx);
+      inputLengthRef.current = solarPanel.lx;
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [solarPanel]);
@@ -160,7 +160,7 @@ const SolarPanelLengthInput = ({ setDialogVisible }: { setDialogVisible: (b: boo
         }
         if (rejectRef.current) {
           rejectedValue.current = value;
-          setInputLength(solarPanel.lx);
+          inputLengthRef.current = solarPanel.lx;
         } else {
           const oldLengthsAll = new Map<string, number>();
           for (const elem of elements) {
@@ -200,7 +200,7 @@ const SolarPanelLengthInput = ({ setDialogVisible }: { setDialogVisible: (b: boo
           }
           if (rejectRef.current) {
             rejectedValue.current = value;
-            setInputLength(solarPanel.lx);
+            inputLengthRef.current = solarPanel.lx;
           } else {
             const oldLengthsAboveFoundation = new Map<string, number>();
             for (const elem of elements) {
@@ -264,7 +264,7 @@ const SolarPanelLengthInput = ({ setDialogVisible }: { setDialogVisible: (b: boo
           }
           if (rejectRef.current) {
             rejectedValue.current = value;
-            setInputLength(solarPanel.lx);
+            inputLengthRef.current = solarPanel.lx;
           } else {
             const oldLengthsOnSurface = new Map<string, number>();
             const isParentCuboid = parent.type === ObjectType.Cuboid;
@@ -321,7 +321,7 @@ const SolarPanelLengthInput = ({ setDialogVisible }: { setDialogVisible: (b: boo
         rejectRef.current = rejectChange(solarPanel, value);
         if (rejectRef.current) {
           rejectedValue.current = value;
-          setInputLength(oldLength);
+          inputLengthRef.current = oldLength;
         } else {
           const undoableChange = {
             name: 'Set Solar Panel Array Length',
@@ -366,7 +366,7 @@ const SolarPanelLengthInput = ({ setDialogVisible }: { setDialogVisible: (b: boo
   };
 
   const close = () => {
-    setInputLength(solarPanel.lx);
+    inputLengthRef.current = solarPanel.lx;
     rejectRef.current = false;
     setDialogVisible(false);
   };
@@ -377,7 +377,7 @@ const SolarPanelLengthInput = ({ setDialogVisible }: { setDialogVisible: (b: boo
   };
 
   const ok = () => {
-    setLength(inputLength);
+    setLength(inputLengthRef.current);
     if (!rejectRef.current) {
       setDialogVisible(false);
       setApplyCount(0);
@@ -409,7 +409,7 @@ const SolarPanelLengthInput = ({ setDialogVisible }: { setDialogVisible: (b: boo
           <Button
             key="Apply"
             onClick={() => {
-              setLength(inputLength);
+              setLength(inputLengthRef.current);
             }}
           >
             {i18n.t('word.Apply', lang)}
@@ -439,24 +439,24 @@ const SolarPanelLengthInput = ({ setDialogVisible }: { setDialogVisible: (b: boo
               step={dx}
               style={{ width: 120 }}
               precision={2}
-              value={inputLength}
-              formatter={(a) => Number(a).toFixed(2)}
-              onChange={(value) => setInputLength(panelize(value))}
+              value={inputLengthRef.current}
+              formatter={(value) => `${value} ` + i18n.t('word.MeterAbbreviation', lang)}
+              onChange={(value) => {
+                inputLengthRef.current = panelize(value);
+                setUpdateFlag(!updateFlag);
+              }}
               onPressEnter={ok}
             />
             <div style={{ paddingTop: '20px', textAlign: 'left', fontSize: '11px' }}>
-              {Math.round(inputLength / dx) + ' ' + i18n.t('solarPanelMenu.PanelsWide', lang)}
+              {Math.round(inputLengthRef.current / dx) + ' ' + i18n.t('solarPanelMenu.PanelsWide', lang)}
               <br />
               {i18n.t('word.MaximumNumber', lang)}: 100 {i18n.t('solarPanelMenu.Panels', lang)}
             </div>
           </Col>
-          <Col className="gutter-row" span={1} style={{ verticalAlign: 'middle', paddingTop: '6px' }}>
-            {i18n.t('word.MeterAbbreviation', lang)}
-          </Col>
           <Col
             className="gutter-row"
             style={{ border: '2px dashed #ccc', paddingTop: '8px', paddingLeft: '12px', paddingBottom: '8px' }}
-            span={16}
+            span={18}
           >
             <Radio.Group onChange={onScopeChange} value={solarPanelActionScope}>
               <Space direction="vertical">

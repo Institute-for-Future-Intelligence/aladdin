@@ -32,22 +32,22 @@ const SolarPanelRelativeAzimuthInput = ({ setDialogVisible }: { setDialogVisible
   const setApplyCount = useStore(Selector.setApplyCount);
   const revertApply = useStore(Selector.revertApply);
 
-  // reverse the sign because rotation angle is positive counterclockwise whereas azimuth is positive clockwise
-  // unfortunately, the variable should not be named as relativeAzimuth. Instead, it should have been named as
-  // relativeRotationAngle. Keep this in mind that relativeAzimuth is NOT really azimuth.
-  const [inputRelativeAzimuth, setInputRelativeAzimuth] = useState<number>(-solarPanel?.relativeAzimuth ?? 0);
   const [updateFlag, setUpdateFlag] = useState<boolean>(false);
   const [dragEnabled, setDragEnabled] = useState<boolean>(false);
   const [bounds, setBounds] = useState<DraggableBounds>({ left: 0, top: 0, bottom: 0, right: 0 } as DraggableBounds);
   const dragRef = useRef<HTMLDivElement | null>(null);
   const rejectRef = useRef<boolean>(false);
   const rejectedValue = useRef<number | undefined>();
+  // reverse the sign because rotation angle is positive counterclockwise whereas azimuth is positive clockwise
+  // unfortunately, the variable should not be named as relativeAzimuth. Instead, it should have been named as
+  // relativeRotationAngle. Keep this in mind that relativeAzimuth is NOT really azimuth.
+  const inputRelativeAzimuthRef = useRef<number>(-solarPanel?.relativeAzimuth ?? 0);
 
   const lang = { lng: language };
 
   useEffect(() => {
     if (solarPanel) {
-      setInputRelativeAzimuth(-solarPanel.relativeAzimuth);
+      inputRelativeAzimuthRef.current = -solarPanel.relativeAzimuth;
     }
   }, [solarPanel]);
 
@@ -160,7 +160,7 @@ const SolarPanelRelativeAzimuthInput = ({ setDialogVisible }: { setDialogVisible
         }
         if (rejectRef.current) {
           rejectedValue.current = value;
-          setInputRelativeAzimuth(-solarPanel.relativeAzimuth);
+          inputRelativeAzimuthRef.current = -solarPanel.relativeAzimuth;
         } else {
           const oldRelativeAzimuthsAll = new Map<string, number>();
           for (const elem of elements) {
@@ -200,7 +200,7 @@ const SolarPanelRelativeAzimuthInput = ({ setDialogVisible }: { setDialogVisible
           }
           if (rejectRef.current) {
             rejectedValue.current = value;
-            setInputRelativeAzimuth(-solarPanel.relativeAzimuth);
+            inputRelativeAzimuthRef.current = -solarPanel.relativeAzimuth;
           } else {
             const oldRelativeAzimuthsAboveFoundation = new Map<string, number>();
             for (const elem of elements) {
@@ -266,7 +266,7 @@ const SolarPanelRelativeAzimuthInput = ({ setDialogVisible }: { setDialogVisible
             }
             if (rejectRef.current) {
               rejectedValue.current = value;
-              setInputRelativeAzimuth(-solarPanel.relativeAzimuth);
+              inputRelativeAzimuthRef.current = -solarPanel.relativeAzimuth;
             } else {
               const oldRelativeAzimuthsOnSurface = new Map<string, number>();
               const isParentCuboid = parent.type === ObjectType.Cuboid;
@@ -325,7 +325,7 @@ const SolarPanelRelativeAzimuthInput = ({ setDialogVisible }: { setDialogVisible
         rejectRef.current = rejectChange(solarPanel, value);
         if (rejectRef.current) {
           rejectedValue.current = value;
-          setInputRelativeAzimuth(oldRelativeAzimuth);
+          inputRelativeAzimuthRef.current = oldRelativeAzimuth;
         } else {
           const undoableChange = {
             name: 'Set Solar Panel Array Relative Azimuth',
@@ -363,7 +363,7 @@ const SolarPanelRelativeAzimuthInput = ({ setDialogVisible }: { setDialogVisible
   };
 
   const close = () => {
-    setInputRelativeAzimuth(-solarPanel.relativeAzimuth);
+    inputRelativeAzimuthRef.current = -solarPanel.relativeAzimuth;
     rejectRef.current = false;
     setDialogVisible(false);
   };
@@ -374,7 +374,7 @@ const SolarPanelRelativeAzimuthInput = ({ setDialogVisible }: { setDialogVisible
   };
 
   const ok = () => {
-    setRelativeAzimuth(inputRelativeAzimuth);
+    setRelativeAzimuth(inputRelativeAzimuthRef.current);
     if (!rejectRef.current) {
       setDialogVisible(false);
       setApplyCount(0);
@@ -408,7 +408,7 @@ const SolarPanelRelativeAzimuthInput = ({ setDialogVisible }: { setDialogVisible
           <Button
             key="Apply"
             onClick={() => {
-              setRelativeAzimuth(inputRelativeAzimuth);
+              setRelativeAzimuth(inputRelativeAzimuthRef.current);
             }}
           >
             {i18n.t('word.Apply', lang)}
@@ -437,10 +437,14 @@ const SolarPanelRelativeAzimuthInput = ({ setDialogVisible }: { setDialogVisible
               max={180}
               style={{ width: 120 }}
               precision={1}
-              value={Util.toDegrees(inputRelativeAzimuth)}
+              // make sure that we round up the number as toDegrees may cause things like .999999999
+              value={parseFloat(Util.toDegrees(inputRelativeAzimuthRef.current).toFixed(2))}
               step={1}
-              formatter={(a) => Number(a).toFixed(1) + '°'}
-              onChange={(value) => setInputRelativeAzimuth(Util.toRadians(value))}
+              formatter={(value) => `${value}°`}
+              onChange={(value) => {
+                inputRelativeAzimuthRef.current = Util.toRadians(value);
+                setUpdateFlag(!updateFlag);
+              }}
               onPressEnter={ok}
             />
             <div style={{ paddingTop: '20px', textAlign: 'left', fontSize: '11px' }}>
@@ -454,7 +458,7 @@ const SolarPanelRelativeAzimuthInput = ({ setDialogVisible }: { setDialogVisible
           <Col
             className="gutter-row"
             style={{ border: '2px dashed #ccc', paddingTop: '8px', paddingLeft: '12px', paddingBottom: '8px' }}
-            span={16}
+            span={18}
           >
             <Radio.Group onChange={onScopeChange} value={solarPanelActionScope}>
               <Space direction="vertical">

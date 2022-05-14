@@ -203,7 +203,7 @@ const MainToolBar = ({ viewOnly = false }: MainToolBarProps) => {
         });
       })
       .catch((error) => {
-        if (error.code !== 'auth/popup-closed-by-user') {
+        if (error.code !== 'auth/popup-closed-by-user' && error.code !== 'auth/cancelled-popup-request') {
           showError(i18n.t('message.CannotSignIn', lang) + ': ' + error);
         }
       });
