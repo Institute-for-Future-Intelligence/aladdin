@@ -8,7 +8,7 @@ import * as Selector from './stores/selector';
 import firebase from 'firebase/app';
 import 'firebase/database';
 import dayjs from 'dayjs';
-import { FirebaseName, SchoolID } from './types';
+import { ClassID, FirebaseName, SchoolID } from './types';
 
 const ActionLogger = () => {
   const actionInfo = useStore(Selector.actionInfo);
@@ -19,7 +19,8 @@ const ActionLogger = () => {
   const firstCallUndo = useRef<boolean>(true);
   const firstCallAction = useRef<boolean>(true);
   const databaseRef = useRef<any>();
-  const group = user.schoolID ?? SchoolID.UNSET;
+  const schoolID = user.schoolID ?? SchoolID.UNKNOWN;
+  const classID = user.classID ?? ClassID.UNKNOWN;
 
   useEffect(() => {
     const config = {
@@ -61,7 +62,7 @@ const ActionLogger = () => {
           ' (' +
           dayjs(new Date(currentUndoable.timestamp)).format('MM-DD-YYYY hh:mm a') +
           ')';
-        databaseRef.current.ref(group + '/' + user.uid + '/' + timestamp).set({
+        databaseRef.current.ref(schoolID + '/' + classID + '/' + user.uid + '/' + timestamp).set({
           file: cloudFile ?? 'Untitled',
           action: JSON.stringify(currentUndoable),
         });
@@ -76,7 +77,7 @@ const ActionLogger = () => {
       if (actionInfo) {
         const timestamp =
           actionInfo.timestamp + ' (' + dayjs(new Date(actionInfo.timestamp)).format('MM-DD-YYYY hh:mm a') + ')';
-        databaseRef.current.ref(group + '/' + user.uid + '/' + timestamp).set({
+        databaseRef.current.ref(schoolID + '/' + classID + '/' + user.uid + '/' + timestamp).set({
           file: cloudFile ?? 'Untitled',
           action: JSON.stringify(actionInfo),
         });

@@ -8,10 +8,11 @@ import { useStore } from '../stores/common';
 import * as Selector from '../stores/selector';
 import ReactDraggable, { DraggableEventHandler } from 'react-draggable';
 import i18n from '../i18n/i18n';
-import { Modal, Select, Space, Switch } from 'antd';
+import { Button, Col, Modal, Row, Select, Space, Switch } from 'antd';
 import { copyTextToClipboard, showSuccess } from '../helpers';
 import { ExclamationCircleOutlined } from '@ant-design/icons';
 import { SchoolID } from '../types';
+import { ClassID } from '../types';
 
 const { confirm } = Modal;
 const { Option } = Select;
@@ -32,7 +33,7 @@ const ColumnWrapper = styled.div`
   position: absolute;
   right: 0;
   top: 0;
-  width: 400px;
+  width: 450px;
   height: 300px;
   min-width: 400px;
   max-width: 800px;
@@ -43,7 +44,8 @@ const ColumnWrapper = styled.div`
   border-radius: 10px 10px 10px 10px;
   display: flex;
   flex-direction: column;
-  overflow-x: auto;
+  text-align: left;
+  overflow-x: hidden;
   overflow-y: auto;
   resize: both;
   direction: rtl;
@@ -80,7 +82,8 @@ const AccountSettingsPanel = () => {
   const nodeRef = React.useRef(null);
 
   const wrapperRef = useRef<HTMLDivElement | null>(null);
-  const schoolIdRef = useRef<SchoolID>(user.schoolID ?? SchoolID.UNSET);
+  const schoolIdRef = useRef<SchoolID>(user.schoolID ?? SchoolID.UNKNOWN);
+  const classIdRef = useRef<ClassID>(user.classID ?? ClassID.UNKNOWN);
   const wOffset = wrapperRef.current ? wrapperRef.current.clientWidth + 40 : 640;
   const hOffset = wrapperRef.current ? wrapperRef.current.clientHeight + 100 : 600;
   const [curPosition, setCurPosition] = useState({ x: 0, y: 0 });
@@ -147,16 +150,11 @@ const AccountSettingsPanel = () => {
                 {i18n.t('word.Close', lang)}
               </span>
             </Header>
-            <Space style={{ paddingTop: '20px', paddingLeft: '20px', direction: 'ltr' }}>
-              <Space
-                style={{
-                  width: '50px',
-                  cursor: 'copy',
-                  background: 'antiquewhite',
-                  justifyContent: 'center',
-                  border: 'black solid 1px',
-                  borderRadius: '8px',
-                }}
+
+            <Row gutter={20} style={{ paddingTop: '20px', paddingLeft: '20px', direction: 'ltr' }}>
+              <Col
+                className="gutter-row"
+                span={6}
                 onClick={() => {
                   if (user.uid) {
                     copyTextToClipboard(user.uid);
@@ -164,14 +162,20 @@ const AccountSettingsPanel = () => {
                   }
                 }}
               >
-                <label title={i18n.t('accountSettingsPanel.ClickToCopyMyID', lang)}>
+                <Button
+                  title={i18n.t('accountSettingsPanel.ClickToCopyMyID', lang)}
+                  style={{ cursor: 'copy', borderRadius: '8px' }}
+                >
                   {i18n.t('accountSettingsPanel.MyID', lang)}
-                </label>
-              </Space>
-              <Space style={{ paddingLeft: '6px' }}>{user.uid}</Space>
-            </Space>
-            <Space style={{ paddingTop: '10px', paddingLeft: '20px', direction: 'ltr' }}>
-              <Space style={{ width: '50px' }}>
+                </Button>
+              </Col>
+              <Col className="gutter-row" span={18}>
+                {user.uid}
+              </Col>
+            </Row>
+
+            <Row gutter={20} style={{ paddingTop: '20px', paddingLeft: '20px', direction: 'ltr' }}>
+              <Col className="gutter-row" span={6}>
                 <Switch
                   checked={user.signFile}
                   onChange={(checked) => {
@@ -198,48 +202,95 @@ const AccountSettingsPanel = () => {
                     }
                   }}
                 />
-              </Space>
-              <Space style={{ paddingLeft: '6px' }}>
+              </Col>
+              <Col className="gutter-row" span={18}>
                 {i18n.t('accountSettingsPanel.StoreMyNameInMyFilesWhenSaving', lang)}
-              </Space>
-            </Space>
-            <Space style={{ paddingTop: '20px', paddingLeft: '20px', direction: 'ltr' }}>
-              <label>{i18n.t('accountSettingsPanel.SchoolID', lang)}</label>
-              <Select
-                style={{ width: '200px' }}
-                value={schoolIdRef.current}
-                onChange={(value) => {
-                  schoolIdRef.current = value;
-                  setCommonStore((state) => {
-                    state.user.schoolID = value;
-                  });
-                }}
-              >
-                <Option key={SchoolID.UNSET} value={SchoolID.UNSET}>
-                  {SchoolID.UNSET}
-                </Option>
-                <Option key={SchoolID.SCHOOL1} value={SchoolID.SCHOOL1}>
-                  {SchoolID.SCHOOL1}
-                </Option>
-                <Option key={SchoolID.SCHOOL2} value={SchoolID.SCHOOL2}>
-                  {SchoolID.SCHOOL2}
-                </Option>
-                <Option key={SchoolID.SCHOOL3} value={SchoolID.SCHOOL3}>
-                  {SchoolID.SCHOOL3}
-                </Option>
-                <Option key={SchoolID.SCHOOL4} value={SchoolID.SCHOOL4}>
-                  {SchoolID.SCHOOL4}
-                </Option>
-                <Option key={SchoolID.SCHOOL5} value={SchoolID.SCHOOL5}>
-                  {SchoolID.SCHOOL5}
-                </Option>
-              </Select>
-            </Space>
+              </Col>
+            </Row>
+
+            <Row gutter={20} style={{ paddingTop: '20px', paddingLeft: '20px', direction: 'ltr' }}>
+              <Col className="gutter-row" span={6}>
+                {i18n.t('accountSettingsPanel.SchoolID', lang)}
+              </Col>
+              <Col className="gutter-row" span={18}>
+                <Select
+                  style={{ width: '90%' }}
+                  value={schoolIdRef.current}
+                  onChange={(value) => {
+                    schoolIdRef.current = value;
+                    setCommonStore((state) => {
+                      state.user.schoolID = value;
+                    });
+                  }}
+                >
+                  <Option key={SchoolID.UNKNOWN} value={SchoolID.UNKNOWN}>
+                    {SchoolID.UNKNOWN}
+                  </Option>
+                  <Option key={SchoolID.SCHOOL1} value={SchoolID.SCHOOL1}>
+                    {SchoolID.SCHOOL1}
+                  </Option>
+                  <Option key={SchoolID.SCHOOL2} value={SchoolID.SCHOOL2}>
+                    {SchoolID.SCHOOL2}
+                  </Option>
+                  <Option key={SchoolID.SCHOOL3} value={SchoolID.SCHOOL3}>
+                    {SchoolID.SCHOOL3}
+                  </Option>
+                  <Option key={SchoolID.SCHOOL4} value={SchoolID.SCHOOL4}>
+                    {SchoolID.SCHOOL4}
+                  </Option>
+                  <Option key={SchoolID.SCHOOL5} value={SchoolID.SCHOOL5}>
+                    {SchoolID.SCHOOL5}
+                  </Option>
+                </Select>
+              </Col>
+            </Row>
+
+            <Row gutter={20} style={{ paddingTop: '20px', paddingLeft: '20px', direction: 'ltr' }}>
+              <Col className="gutter-row" span={6}>
+                {i18n.t('accountSettingsPanel.ClassID', lang)}
+              </Col>
+              <Col className="gutter-row" span={18}>
+                <Select
+                  style={{ width: '90%' }}
+                  value={classIdRef.current}
+                  onChange={(value) => {
+                    classIdRef.current = value;
+                    setCommonStore((state) => {
+                      state.user.classID = value;
+                    });
+                  }}
+                >
+                  <Option key={ClassID.UNKNOWN} value={ClassID.UNKNOWN}>
+                    {ClassID.UNKNOWN}
+                  </Option>
+                  <Option key={ClassID.CLASS1} value={ClassID.CLASS1}>
+                    {ClassID.CLASS1}
+                  </Option>
+                  <Option key={ClassID.CLASS2} value={ClassID.CLASS2}>
+                    {ClassID.CLASS2}
+                  </Option>
+                  <Option key={ClassID.CLASS3} value={ClassID.CLASS3}>
+                    {ClassID.CLASS3}
+                  </Option>
+                  <Option key={ClassID.CLASS4} value={ClassID.CLASS4}>
+                    {ClassID.CLASS4}
+                  </Option>
+                  <Option key={ClassID.CLASS5} value={ClassID.CLASS5}>
+                    {ClassID.CLASS5}
+                  </Option>
+                </Select>
+              </Col>
+            </Row>
+
             {superuser && (
-              <Space style={{ paddingTop: '20px', paddingLeft: '20px', direction: 'ltr' }}>
-                <label>{i18n.t('accountSettingsPanel.UserCount', lang)}</label>
-                <Space style={{ paddingLeft: '6px' }}>{userCount}</Space>
-              </Space>
+              <Row gutter={6} style={{ paddingTop: '20px', paddingLeft: '20px', direction: 'ltr' }}>
+                <Col className="gutter-row" span={6}>
+                  {i18n.t('accountSettingsPanel.UserCount', lang)}
+                </Col>
+                <Col className="gutter-row" span={18}>
+                  {userCount}
+                </Col>
+              </Row>
             )}
           </ColumnWrapper>
         </Container>

@@ -895,6 +895,7 @@ export const i18n_en = {
       SignFileDisclaimer: 'If yes, your display name may be seen by anyone who can access your files.',
       UserCount: 'User Count',
       SchoolID: 'School ID',
+      ClassID: 'Class ID',
     },
 
     weatherPanel: {

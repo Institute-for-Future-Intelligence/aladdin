@@ -36,6 +36,7 @@ export interface User {
   signFile: boolean;
   noLogging: boolean;
   schoolID: SchoolID;
+  classID: ClassID;
 }
 
 export enum FirebaseName {
@@ -44,12 +45,21 @@ export enum FirebaseName {
 }
 
 export enum SchoolID {
-  UNSET = 'UNSET',
+  UNKNOWN = 'UNKNOWN SCHOOL',
   SCHOOL1 = 'SCHOOL 1',
   SCHOOL2 = 'SCHOOL 2',
   SCHOOL3 = 'SCHOOL 3',
   SCHOOL4 = 'SCHOOL 4',
   SCHOOL5 = 'SCHOOL 5',
+}
+
+export enum ClassID {
+  UNKNOWN = 'UNKNOWN CLASS',
+  CLASS1 = 'CLASS 1',
+  CLASS2 = 'CLASS 2',
+  CLASS3 = 'CLASS 3',
+  CLASS4 = 'CLASS 4',
+  CLASS5 = 'CLASS 5',
 }
 
 export interface CloudFileInfo {
