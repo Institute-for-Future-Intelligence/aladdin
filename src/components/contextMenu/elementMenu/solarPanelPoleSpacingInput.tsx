@@ -32,17 +32,17 @@ const SolarPanelPoleSpacingInput = ({ setDialogVisible }: { setDialogVisible: (b
   const setApplyCount = useStore(Selector.setApplyCount);
   const revertApply = useStore(Selector.revertApply);
 
-  const [inputPoleSpacing, setInputPoleSpacing] = useState<number>(solarPanel?.poleSpacing ?? 0);
   const [updateFlag, setUpdateFlag] = useState<boolean>(false);
   const [dragEnabled, setDragEnabled] = useState<boolean>(false);
   const [bounds, setBounds] = useState<DraggableBounds>({ left: 0, top: 0, bottom: 0, right: 0 } as DraggableBounds);
   const dragRef = useRef<HTMLDivElement | null>(null);
+  const inputPoleSpacingRef = useRef<number>(solarPanel?.poleSpacing ?? 0);
 
   const lang = { lng: language };
 
   useEffect(() => {
     if (solarPanel) {
-      setInputPoleSpacing(solarPanel.poleSpacing);
+      inputPoleSpacingRef.current = solarPanel.poleSpacing;
     }
   }, [solarPanel]);
 
@@ -262,7 +262,7 @@ const SolarPanelPoleSpacingInput = ({ setDialogVisible }: { setDialogVisible: (b
   };
 
   const close = () => {
-    setInputPoleSpacing(solarPanel.poleSpacing);
+    inputPoleSpacingRef.current = solarPanel.poleSpacing;
     setDialogVisible(false);
   };
 
@@ -272,7 +272,7 @@ const SolarPanelPoleSpacingInput = ({ setDialogVisible }: { setDialogVisible: (b
   };
 
   const ok = () => {
-    setPoleSpacing(inputPoleSpacing);
+    setPoleSpacing(inputPoleSpacingRef.current);
     setDialogVisible(false);
     setApplyCount(0);
   };
@@ -295,7 +295,7 @@ const SolarPanelPoleSpacingInput = ({ setDialogVisible }: { setDialogVisible: (b
           <Button
             key="Apply"
             onClick={() => {
-              setPoleSpacing(inputPoleSpacing);
+              setPoleSpacing(inputPoleSpacingRef.current);
             }}
           >
             {i18n.t('word.Apply', lang)}
@@ -325,9 +325,11 @@ const SolarPanelPoleSpacingInput = ({ setDialogVisible }: { setDialogVisible: (b
               step={1}
               style={{ width: 120 }}
               precision={2}
-              value={inputPoleSpacing}
-              formatter={(a) => Number(a).toFixed(2)}
-              onChange={(value) => setInputPoleSpacing(value)}
+              value={inputPoleSpacingRef.current}
+              onChange={(value) => {
+                inputPoleSpacingRef.current = value;
+                setUpdateFlag(!updateFlag);
+              }}
               onPressEnter={ok}
             />
             <div style={{ paddingTop: '20px', textAlign: 'left', fontSize: '11px' }}>

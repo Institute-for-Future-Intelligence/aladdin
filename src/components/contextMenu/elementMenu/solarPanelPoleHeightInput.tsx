@@ -32,19 +32,19 @@ const SolarPanelPoleHeightInput = ({ setDialogVisible }: { setDialogVisible: (b:
   const setApplyCount = useStore(Selector.setApplyCount);
   const revertApply = useStore(Selector.revertApply);
 
-  const [inputPoleHeight, setInputPoleHeight] = useState<number>(solarPanel?.poleHeight ?? 0);
   const [updateFlag, setUpdateFlag] = useState<boolean>(false);
   const [dragEnabled, setDragEnabled] = useState<boolean>(false);
   const [bounds, setBounds] = useState<DraggableBounds>({ left: 0, top: 0, bottom: 0, right: 0 } as DraggableBounds);
   const dragRef = useRef<HTMLDivElement | null>(null);
   const rejectRef = useRef<boolean>(false);
   const rejectedValue = useRef<number | undefined>();
+  const inputPoleHeightRef = useRef<number>(solarPanel?.poleHeight ?? 0);
 
   const lang = { lng: language };
 
   useEffect(() => {
     if (solarPanel) {
-      setInputPoleHeight(solarPanel.poleHeight);
+      inputPoleHeightRef.current = solarPanel.poleHeight;
     }
   }, [solarPanel]);
 
@@ -130,7 +130,7 @@ const SolarPanelPoleHeightInput = ({ setDialogVisible }: { setDialogVisible: (b:
         }
         if (rejectRef.current) {
           rejectedValue.current = value;
-          setInputPoleHeight(solarPanel.poleHeight);
+          inputPoleHeightRef.current = solarPanel.poleHeight;
         } else {
           const oldPoleHeightsAll = new Map<string, number>();
           for (const elem of elements) {
@@ -170,7 +170,7 @@ const SolarPanelPoleHeightInput = ({ setDialogVisible }: { setDialogVisible: (b:
           }
           if (rejectRef.current) {
             rejectedValue.current = value;
-            setInputPoleHeight(solarPanel.poleHeight);
+            inputPoleHeightRef.current = solarPanel.poleHeight;
           } else {
             const oldPoleHeightsAboveFoundation = new Map<string, number>();
             for (const elem of elements) {
@@ -237,7 +237,7 @@ const SolarPanelPoleHeightInput = ({ setDialogVisible }: { setDialogVisible: (b:
           }
           if (rejectRef.current) {
             rejectedValue.current = value;
-            setInputPoleHeight(solarPanel.poleHeight);
+            inputPoleHeightRef.current = solarPanel.poleHeight;
           } else {
             const oldPoleHeightsOnSurface = new Map<string, number>();
             const isParentCuboid = parent.type === ObjectType.Cuboid;
@@ -295,7 +295,7 @@ const SolarPanelPoleHeightInput = ({ setDialogVisible }: { setDialogVisible: (b:
         rejectRef.current = 0.5 * solarPanel.ly * Math.abs(Math.sin(solarPanel.tiltAngle)) > value;
         if (rejectRef.current) {
           rejectedValue.current = value;
-          setInputPoleHeight(oldPoleHeight);
+          inputPoleHeightRef.current = oldPoleHeight;
         } else {
           const undoableChange = {
             name: 'Set Solar Panel Array Pole Height',
@@ -333,7 +333,7 @@ const SolarPanelPoleHeightInput = ({ setDialogVisible }: { setDialogVisible: (b:
   };
 
   const close = () => {
-    setInputPoleHeight(solarPanel.poleHeight);
+    inputPoleHeightRef.current = solarPanel.poleHeight;
     rejectRef.current = false;
     setDialogVisible(false);
   };
@@ -344,7 +344,7 @@ const SolarPanelPoleHeightInput = ({ setDialogVisible }: { setDialogVisible: (b:
   };
 
   const ok = () => {
-    setPoleHeight(inputPoleHeight);
+    setPoleHeight(inputPoleHeightRef.current);
     if (!rejectRef.current) {
       setDialogVisible(false);
       setApplyCount(0);
@@ -376,7 +376,7 @@ const SolarPanelPoleHeightInput = ({ setDialogVisible }: { setDialogVisible: (b:
           <Button
             key="Apply"
             onClick={() => {
-              setPoleHeight(inputPoleHeight);
+              setPoleHeight(inputPoleHeightRef.current);
             }}
           >
             {i18n.t('word.Apply', lang)}
@@ -406,14 +406,15 @@ const SolarPanelPoleHeightInput = ({ setDialogVisible }: { setDialogVisible: (b:
               style={{ width: 120 }}
               step={0.1}
               precision={2}
-              value={inputPoleHeight}
-              formatter={(a) => Number(a).toFixed(2)}
-              onChange={(value) => setInputPoleHeight(value)}
+              value={inputPoleHeightRef.current}
+              // formatter={(value) => `${value} ` + i18n.t('word.MeterAbbreviation', lang)}
+              // parser={value => Number(value?.replace(i18n.t('word.MeterAbbreviation', lang), ''))}
+              onChange={(value) => {
+                inputPoleHeightRef.current = value;
+                setUpdateFlag(!updateFlag);
+              }}
               onPressEnter={ok}
             />
-            <div style={{ paddingTop: '20px', textAlign: 'left', fontSize: '11px' }}>
-              {i18n.t('word.Range', lang)}: [0, 5] {i18n.t('word.MeterAbbreviation', lang)}
-            </div>
           </Col>
           <Col className="gutter-row" span={1} style={{ verticalAlign: 'middle', paddingTop: '6px' }}>
             {i18n.t('word.MeterAbbreviation', lang)}
@@ -421,7 +422,7 @@ const SolarPanelPoleHeightInput = ({ setDialogVisible }: { setDialogVisible: (b:
           <Col
             className="gutter-row"
             style={{ border: '2px dashed #ccc', paddingTop: '8px', paddingLeft: '12px', paddingBottom: '8px' }}
-            span={16}
+            span={17}
           >
             <Radio.Group onChange={onScopeChange} value={actionScope}>
               <Space direction="vertical">

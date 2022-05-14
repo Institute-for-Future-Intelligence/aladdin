@@ -440,7 +440,6 @@ const SolarPanelLengthInput = ({ setDialogVisible }: { setDialogVisible: (b: boo
               style={{ width: 120 }}
               precision={2}
               value={inputLengthRef.current}
-              formatter={(value) => `${value} ` + i18n.t('word.MeterAbbreviation', lang)}
               onChange={(value) => {
                 inputLengthRef.current = panelize(value);
                 setUpdateFlag(!updateFlag);
@@ -453,10 +452,13 @@ const SolarPanelLengthInput = ({ setDialogVisible }: { setDialogVisible: (b: boo
               {i18n.t('word.MaximumNumber', lang)}: 100 {i18n.t('solarPanelMenu.Panels', lang)}
             </div>
           </Col>
+          <Col className="gutter-row" span={1} style={{ verticalAlign: 'middle', paddingTop: '6px' }}>
+            {i18n.t('word.MeterAbbreviation', lang)}
+          </Col>
           <Col
             className="gutter-row"
             style={{ border: '2px dashed #ccc', paddingTop: '8px', paddingLeft: '12px', paddingBottom: '8px' }}
-            span={18}
+            span={17}
           >
             <Radio.Group onChange={onScopeChange} value={solarPanelActionScope}>
               <Space direction="vertical">

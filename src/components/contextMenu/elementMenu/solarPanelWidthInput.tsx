@@ -34,15 +34,15 @@ const SolarPanelWidthInput = ({ setDialogVisible }: { setDialogVisible: (b: bool
   const revertApply = useStore(Selector.revertApply);
 
   const [dy, setDy] = useState<number>(0);
-  const [inputWidth, setInputWidth] = useState<number>(
-    solarPanel?.orientation === Orientation.portrait ? solarPanel?.ly ?? 2 : solarPanel?.lx ?? 1,
-  );
   const [updateFlag, setUpdateFlag] = useState<boolean>(false);
   const [dragEnabled, setDragEnabled] = useState<boolean>(false);
   const [bounds, setBounds] = useState<DraggableBounds>({ left: 0, top: 0, bottom: 0, right: 0 } as DraggableBounds);
   const dragRef = useRef<HTMLDivElement | null>(null);
   const rejectRef = useRef<boolean>(false);
   const rejectedValue = useRef<number | undefined>();
+  const inputWidthRef = useRef<number>(
+    solarPanel?.orientation === Orientation.portrait ? solarPanel?.ly ?? 2 : solarPanel?.lx ?? 1,
+  );
 
   const lang = { lng: language };
 
@@ -50,7 +50,7 @@ const SolarPanelWidthInput = ({ setDialogVisible }: { setDialogVisible: (b: bool
     if (solarPanel) {
       const pvModel = getPvModule(solarPanel.pvModelName) ?? getPvModule('SPR-X21-335-BLK');
       setDy(solarPanel.orientation === Orientation.portrait ? pvModel.length : pvModel.width);
-      setInputWidth(solarPanel.ly);
+      inputWidthRef.current = solarPanel.ly;
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [solarPanel]);
@@ -164,7 +164,7 @@ const SolarPanelWidthInput = ({ setDialogVisible }: { setDialogVisible: (b: bool
         }
         if (rejectRef.current) {
           rejectedValue.current = value;
-          setInputWidth(solarPanel.ly);
+          inputWidthRef.current = solarPanel.ly;
         } else {
           const oldWidthsAll = new Map<string, number>();
           for (const elem of elements) {
@@ -204,7 +204,7 @@ const SolarPanelWidthInput = ({ setDialogVisible }: { setDialogVisible: (b: bool
           }
           if (rejectRef.current) {
             rejectedValue.current = value;
-            setInputWidth(solarPanel.ly);
+            inputWidthRef.current = solarPanel.ly;
           } else {
             const oldWidthsAboveFoundation = new Map<string, number>();
             for (const elem of elements) {
@@ -268,7 +268,7 @@ const SolarPanelWidthInput = ({ setDialogVisible }: { setDialogVisible: (b: bool
           }
           if (rejectRef.current) {
             rejectedValue.current = value;
-            setInputWidth(solarPanel.ly);
+            inputWidthRef.current = solarPanel.ly;
           } else {
             const oldWidthsOnSurface = new Map<string, number>();
             const isParentCuboid = parent.type === ObjectType.Cuboid;
@@ -325,7 +325,7 @@ const SolarPanelWidthInput = ({ setDialogVisible }: { setDialogVisible: (b: bool
         rejectRef.current = rejectChange(solarPanel, value);
         if (rejectRef.current) {
           rejectedValue.current = value;
-          setInputWidth(oldWidth);
+          inputWidthRef.current = oldWidth;
         } else {
           const undoableChange = {
             name: 'Set Solar Panel Array Width',
@@ -363,7 +363,7 @@ const SolarPanelWidthInput = ({ setDialogVisible }: { setDialogVisible: (b: bool
   };
 
   const close = () => {
-    setInputWidth(solarPanel.ly);
+    inputWidthRef.current = solarPanel.ly;
     rejectRef.current = false;
     setDialogVisible(false);
   };
@@ -374,7 +374,7 @@ const SolarPanelWidthInput = ({ setDialogVisible }: { setDialogVisible: (b: bool
   };
 
   const ok = () => {
-    setWidth(inputWidth);
+    setWidth(inputWidthRef.current);
     if (!rejectRef.current) {
       setDialogVisible(false);
       setApplyCount(0);
@@ -413,7 +413,7 @@ const SolarPanelWidthInput = ({ setDialogVisible }: { setDialogVisible: (b: bool
           <Button
             key="Apply"
             onClick={() => {
-              setWidth(inputWidth);
+              setWidth(inputWidthRef.current);
             }}
           >
             {i18n.t('word.Apply', lang)}
@@ -443,13 +443,15 @@ const SolarPanelWidthInput = ({ setDialogVisible }: { setDialogVisible: (b: bool
               step={dy}
               style={{ width: 120 }}
               precision={2}
-              value={inputWidth}
-              formatter={(a) => Number(a).toFixed(2)}
-              onChange={(value) => setInputWidth(panelize(value))}
+              value={inputWidthRef.current}
+              onChange={(value) => {
+                inputWidthRef.current = panelize(value);
+                setUpdateFlag(!updateFlag);
+              }}
               onPressEnter={ok}
             />
             <div style={{ paddingTop: '20px', textAlign: 'left', fontSize: '11px' }}>
-              {Math.round(inputWidth / dy) + ' ' + i18n.t('solarPanelMenu.PanelsLong', lang)}
+              {Math.round(inputWidthRef.current / dy) + ' ' + i18n.t('solarPanelMenu.PanelsLong', lang)}
               <br />
               {i18n.t('word.MaximumNumber', lang)}: 100 {i18n.t('solarPanelMenu.Panels', lang)}
             </div>
