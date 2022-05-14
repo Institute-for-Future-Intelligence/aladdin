@@ -13,7 +13,7 @@ import firebase from 'firebase/app';
 import 'firebase/auth';
 import 'firebase/firestore';
 import { showError, showInfo } from './helpers';
-import { CloudFileInfo, FirebaseName, ObjectType, User } from './types';
+import { CloudFileInfo, FirebaseName, ObjectType, SchoolID, User } from './types';
 import CloudFilePanel from './panels/cloudFilePanel';
 import Spinner from './components/spinner';
 import AccountSettingsPanel from './panels/accountSettingsPanel';
@@ -168,7 +168,7 @@ const MainToolBar = ({ viewOnly = false }: MainToolBarProps) => {
       saveAccountSettings(user);
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [user.signFile]);
+  }, [user.signFile, user.schoolID]);
 
   const init = () => {
     const userid = params.get('userid');
@@ -215,6 +215,7 @@ const MainToolBar = ({ viewOnly = false }: MainToolBarProps) => {
     let signFile = false;
     let noLogging = false;
     let userCount = 0;
+    let schoolID = SchoolID.UNSET;
     const found = await firestore
       .collection('users')
       .get()
@@ -225,6 +226,7 @@ const MainToolBar = ({ viewOnly = false }: MainToolBarProps) => {
             const docData = doc.data();
             signFile = !!docData.signFile;
             noLogging = !!docData.noLogging;
+            schoolID = docData.schoolID ? (docData.schoolID as SchoolID) : SchoolID.UNSET;
             return true;
           }
         }
@@ -234,10 +236,12 @@ const MainToolBar = ({ viewOnly = false }: MainToolBarProps) => {
       setCommonStore((state) => {
         state.user.signFile = signFile;
         state.user.noLogging = noLogging;
+        state.user.schoolID = schoolID;
         state.userCount = userCount;
       });
       user.signFile = signFile;
       user.noLogging = noLogging;
+      user.schoolID = schoolID;
     } else {
       if (user.uid) {
         firestore
@@ -247,6 +251,7 @@ const MainToolBar = ({ viewOnly = false }: MainToolBarProps) => {
             uid: user.uid,
             signFile: !!user.signFile, // don't listen to WS's suggestion to simplify it
             noLogging: !!user.noLogging,
+            schoolID: user.schoolID ?? SchoolID.UNSET,
             since: dayjs(new Date()).format('MM/DD/YYYY hh:mm a'),
             os: Util.getOS(),
           })
@@ -289,6 +294,7 @@ const MainToolBar = ({ viewOnly = false }: MainToolBarProps) => {
         .doc(user.uid)
         .update({
           signFile: !!user.signFile,
+          schoolID: user.schoolID ?? SchoolID.UNSET,
         })
         .then(() => {
           showInfo(i18n.t('message.YourAccountSettingsWereSaved', lang));

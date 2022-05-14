@@ -404,15 +404,12 @@ const SolarPanelModelSelection = ({ setDialogVisible }: { setDialogVisible: (b: 
               <Option key={'Monocrystalline'} value={'Monocrystalline'}>
                 {i18n.t('pvModelPanel.Monocrystalline', lang)}
               </Option>
-              )
               <Option key={'Polycrystalline'} value={'Polycrystalline'}>
                 {i18n.t('pvModelPanel.Polycrystalline', lang)}
               </Option>
-              )
               <Option key={'Thin Film'} value={'Thin Film'}>
                 {i18n.t('pvModelPanel.ThinFilm', lang)}
               </Option>
-              )
             </Select>
           </Col>
         </Row>
@@ -434,11 +431,9 @@ const SolarPanelModelSelection = ({ setDialogVisible }: { setDialogVisible: (b: 
               <Option key={'Black'} value={'Black'}>
                 {i18n.t('pvModelPanel.Black', lang)}
               </Option>
-              )
               <Option key={'Blue'} value={'Blue'}>
                 {i18n.t('pvModelPanel.Blue', lang)}
               </Option>
-              )
             </Select>
           </Col>
         </Row>
@@ -511,15 +506,12 @@ const SolarPanelModelSelection = ({ setDialogVisible }: { setDialogVisible: (b: 
               <Option key={ShadeTolerance.HIGH} value={ShadeTolerance.HIGH}>
                 {i18n.t('word.High', lang)}
               </Option>
-              )
               <Option key={ShadeTolerance.NONE} value={ShadeTolerance.NONE}>
                 {i18n.t('word.None', lang)}
               </Option>
-              )
               <Option key={ShadeTolerance.PARTIAL} value={ShadeTolerance.PARTIAL}>
                 {i18n.t('word.Partial', lang)}
               </Option>
-              )
             </Select>
           </Col>
         </Row>

@@ -895,6 +895,7 @@ export const i18n_tr = {
       DoYouReallyWantToShowYourNameInYourFiles: 'Do you really want to show your display name in your files?',
       SignFileDisclaimer: 'If yes, your display name may be seen by anyone who can access your files.',
       UserCount: 'User Count',
+      SchoolID: 'School ID',
     },
 
     weatherPanel: {

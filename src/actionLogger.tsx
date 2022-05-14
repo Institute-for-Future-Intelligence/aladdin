@@ -8,7 +8,7 @@ import * as Selector from './stores/selector';
 import firebase from 'firebase/app';
 import 'firebase/database';
 import dayjs from 'dayjs';
-import { FirebaseName } from './types';
+import { FirebaseName, SchoolID } from './types';
 
 const ActionLogger = () => {
   const actionInfo = useStore(Selector.actionInfo);
@@ -19,7 +19,7 @@ const ActionLogger = () => {
   const firstCallUndo = useRef<boolean>(true);
   const firstCallAction = useRef<boolean>(true);
   const databaseRef = useRef<any>();
-  const group = 'all'; // TODO: This has to be set by the user
+  const group = user.schoolID ?? SchoolID.UNSET;
 
   useEffect(() => {
     const config = {

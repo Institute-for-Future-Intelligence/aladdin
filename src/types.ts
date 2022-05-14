@@ -35,11 +35,21 @@ export interface User {
   uid: string | null;
   signFile: boolean;
   noLogging: boolean;
+  schoolID: SchoolID;
 }
 
 export enum FirebaseName {
   FILES = 'Files',
   LOG_DATA = 'Log Data',
+}
+
+export enum SchoolID {
+  UNSET = 'UNSET',
+  SCHOOL1 = 'SCHOOL 1',
+  SCHOOL2 = 'SCHOOL 2',
+  SCHOOL3 = 'SCHOOL 3',
+  SCHOOL4 = 'SCHOOL 4',
+  SCHOOL5 = 'SCHOOL 5',
 }
 
 export interface CloudFileInfo {

@@ -8,11 +8,13 @@ import { useStore } from '../stores/common';
 import * as Selector from '../stores/selector';
 import ReactDraggable, { DraggableEventHandler } from 'react-draggable';
 import i18n from '../i18n/i18n';
-import { Modal, Space, Switch } from 'antd';
+import { Modal, Select, Space, Switch } from 'antd';
 import { copyTextToClipboard, showSuccess } from '../helpers';
 import { ExclamationCircleOutlined } from '@ant-design/icons';
+import { SchoolID } from '../types';
 
 const { confirm } = Modal;
+const { Option } = Select;
 
 const Container = styled.div`
   position: fixed;
@@ -78,6 +80,7 @@ const AccountSettingsPanel = () => {
   const nodeRef = React.useRef(null);
 
   const wrapperRef = useRef<HTMLDivElement | null>(null);
+  const schoolIdRef = useRef<SchoolID>(user.schoolID ?? SchoolID.UNSET);
   const wOffset = wrapperRef.current ? wrapperRef.current.clientWidth + 40 : 640;
   const hOffset = wrapperRef.current ? wrapperRef.current.clientHeight + 100 : 600;
   const [curPosition, setCurPosition] = useState({ x: 0, y: 0 });
@@ -199,6 +202,38 @@ const AccountSettingsPanel = () => {
               <Space style={{ paddingLeft: '6px' }}>
                 {i18n.t('accountSettingsPanel.StoreMyNameInMyFilesWhenSaving', lang)}
               </Space>
+            </Space>
+            <Space style={{ paddingTop: '20px', paddingLeft: '20px', direction: 'ltr' }}>
+              <label>{i18n.t('accountSettingsPanel.SchoolID', lang)}</label>
+              <Select
+                style={{ width: '200px' }}
+                value={schoolIdRef.current}
+                onChange={(value) => {
+                  schoolIdRef.current = value;
+                  setCommonStore((state) => {
+                    state.user.schoolID = value;
+                  });
+                }}
+              >
+                <Option key={SchoolID.UNSET} value={SchoolID.UNSET}>
+                  {SchoolID.UNSET}
+                </Option>
+                <Option key={SchoolID.SCHOOL1} value={SchoolID.SCHOOL1}>
+                  {SchoolID.SCHOOL1}
+                </Option>
+                <Option key={SchoolID.SCHOOL2} value={SchoolID.SCHOOL2}>
+                  {SchoolID.SCHOOL2}
+                </Option>
+                <Option key={SchoolID.SCHOOL3} value={SchoolID.SCHOOL3}>
+                  {SchoolID.SCHOOL3}
+                </Option>
+                <Option key={SchoolID.SCHOOL4} value={SchoolID.SCHOOL4}>
+                  {SchoolID.SCHOOL4}
+                </Option>
+                <Option key={SchoolID.SCHOOL5} value={SchoolID.SCHOOL5}>
+                  {SchoolID.SCHOOL5}
+                </Option>
+              </Select>
             </Space>
             {superuser && (
               <Space style={{ paddingTop: '20px', paddingLeft: '20px', direction: 'ltr' }}>

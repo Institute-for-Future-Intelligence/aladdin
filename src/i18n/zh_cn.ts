@@ -876,6 +876,7 @@ export const i18n_zh_cn = {
       DoYouReallyWantToShowYourNameInYourFiles: '您确定在您的文件里保存您的大名吗？',
       SignFileDisclaimer: '如果您选择保存，您的大名可能被所有打开您的文件的人看到。',
       UserCount: '用户总数',
+      SchoolID: '学校ID',
     },
 
     weatherPanel: {
