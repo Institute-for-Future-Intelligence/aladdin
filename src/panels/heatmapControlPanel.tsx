@@ -63,7 +63,6 @@ const HeatmapControlPanel = () => {
             style={{ width: 72 }}
             precision={1}
             value={solarRadiationHeatmapMaxValue ?? 5}
-            formatter={(a) => Number(a).toFixed(1)}
             onChange={(value) => {
               setCommonStore((state) => {
                 state.viewState.solarRadiationHeatMapMaxValue = value;

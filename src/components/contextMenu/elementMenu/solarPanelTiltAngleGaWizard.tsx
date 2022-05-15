@@ -213,9 +213,9 @@ const SolarPanelTiltAngleGaWizard = ({ setDialogVisible }: { setDialogVisible: (
               max={100}
               style={{ width: '100%' }}
               precision={0}
+              formatter={(a) => Number(a).toFixed(0)}
               value={populationSizeRef.current}
               step={1}
-              formatter={(a) => Number(a).toFixed(0)}
               onChange={(value) => {
                 populationSizeRef.current = value;
                 setUpdateFlag(!updateFlag);
@@ -235,8 +235,8 @@ const SolarPanelTiltAngleGaWizard = ({ setDialogVisible }: { setDialogVisible: (
               step={1}
               style={{ width: '100%' }}
               precision={0}
-              value={maximumGenerationsRef.current}
               formatter={(a) => Number(a).toFixed(0)}
+              value={maximumGenerationsRef.current}
               onChange={(value) => {
                 maximumGenerationsRef.current = value;
                 setUpdateFlag(!updateFlag);
@@ -257,7 +257,6 @@ const SolarPanelTiltAngleGaWizard = ({ setDialogVisible }: { setDialogVisible: (
               precision={2}
               value={selectionRateRef.current}
               step={0.01}
-              formatter={(a) => Number(a).toFixed(2)}
               onChange={(value) => {
                 selectionRateRef.current = value;
                 setUpdateFlag(!updateFlag);
@@ -278,7 +277,6 @@ const SolarPanelTiltAngleGaWizard = ({ setDialogVisible }: { setDialogVisible: (
               precision={2}
               value={crossoverRateRef.current}
               step={0.01}
-              formatter={(a) => Number(a).toFixed(2)}
               onChange={(value) => {
                 crossoverRateRef.current = value;
                 setUpdateFlag(!updateFlag);
@@ -299,7 +297,6 @@ const SolarPanelTiltAngleGaWizard = ({ setDialogVisible }: { setDialogVisible: (
               precision={2}
               value={mutationRateRef.current}
               step={0.01}
-              formatter={(a) => Number(a).toFixed(2)}
               onChange={(value) => {
                 mutationRateRef.current = value;
                 setUpdateFlag(!updateFlag);
@@ -320,7 +317,6 @@ const SolarPanelTiltAngleGaWizard = ({ setDialogVisible }: { setDialogVisible: (
               precision={3}
               value={convergenceThresholdRef.current}
               step={0.001}
-              formatter={(a) => Number(a).toFixed(3)}
               onChange={(value) => {
                 convergenceThresholdRef.current = value;
                 setUpdateFlag(!updateFlag);
@@ -372,7 +368,6 @@ const SolarPanelTiltAngleGaWizard = ({ setDialogVisible }: { setDialogVisible: (
                 precision={2}
                 value={localSearchRadiusRef.current}
                 step={0.01}
-                formatter={(a) => Number(a).toFixed(2)}
                 onChange={(value) => {
                   localSearchRadiusRef.current = value;
                   setUpdateFlag(!updateFlag);

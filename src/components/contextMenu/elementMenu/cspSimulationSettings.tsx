@@ -71,7 +71,6 @@ const CspSimulationSettings = ({ name }: { name: string }) => {
             style={{ width: 72 }}
             precision={2}
             value={cspGridCellSize ?? 0.5}
-            formatter={(a) => Number(a).toFixed(2)}
             onChange={(value) => {
               setCommonStore((state) => {
                 state.world.cspGridCellSize = value;

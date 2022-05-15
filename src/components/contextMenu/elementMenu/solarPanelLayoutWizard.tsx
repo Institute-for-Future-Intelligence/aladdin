@@ -514,9 +514,10 @@ const SolarPanelLayoutWizard = ({ setDialogVisible }: { setDialogVisible: (b: bo
               max={90}
               style={{ width: '100%' }}
               precision={1}
-              value={Util.toDegrees(tiltAngleRef.current)}
+              // make sure that we round up the number as toDegrees may cause things like .999999999
+              value={parseFloat(Util.toDegrees(tiltAngleRef.current).toFixed(2))}
               step={1}
-              formatter={(a) => Number(a).toFixed(1) + '°'}
+              formatter={(value) => `${value}°`}
               onChange={(value) => {
                 tiltAngleRef.current = Util.toRadians(value);
                 changedRef.current = true;
@@ -539,9 +540,9 @@ const SolarPanelLayoutWizard = ({ setDialogVisible }: { setDialogVisible: (b: bo
               max={100}
               step={1}
               style={{ width: '100%' }}
-              precision={3}
-              value={rowsPerRackRef.current}
+              precision={0}
               formatter={(a) => Number(a).toFixed(0)}
+              value={rowsPerRackRef.current}
               onChange={(value) => {
                 rowsPerRackRef.current = value;
                 changedRef.current = true;
@@ -566,7 +567,6 @@ const SolarPanelLayoutWizard = ({ setDialogVisible }: { setDialogVisible: (b: bo
               precision={1}
               value={interRowSpacingRef.current}
               step={0.5}
-              formatter={(a) => Number(a).toFixed(1)}
               onChange={(value) => {
                 interRowSpacingRef.current = value;
                 changedRef.current = true;
@@ -591,7 +591,6 @@ const SolarPanelLayoutWizard = ({ setDialogVisible }: { setDialogVisible: (b: bo
               precision={1}
               value={poleHeightRef.current}
               step={0.1}
-              formatter={(a) => Number(a).toFixed(1)}
               onChange={(value) => {
                 poleHeightRef.current = value;
                 changedRef.current = true;
@@ -616,7 +615,6 @@ const SolarPanelLayoutWizard = ({ setDialogVisible }: { setDialogVisible: (b: bo
               precision={1}
               value={poleSpacingRef.current}
               step={0.5}
-              formatter={(a) => Number(a).toFixed(1)}
               onChange={(value) => {
                 poleSpacingRef.current = value;
                 changedRef.current = true;

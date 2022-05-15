@@ -149,7 +149,7 @@ const EconomicsPanel = ({ setDialogVisible }: { setDialogVisible: (b: boolean) =
             precision={2}
             value={electricitySellingPriceRef.current}
             step={0.01}
-            formatter={(a) => '$' + Number(a).toFixed(2) + '/kWh'}
+            formatter={(value) => `\$${value}/kWh`}
             onChange={(value) => {
               electricitySellingPriceRef.current = value;
               setUpdateFlag(!updateFlag);
@@ -170,7 +170,7 @@ const EconomicsPanel = ({ setDialogVisible }: { setDialogVisible: (b: boolean) =
             precision={2}
             value={operationalCostPerUnitRef.current}
             step={0.01}
-            formatter={(a) => '$' + Number(a).toFixed(2) + '/day'}
+            formatter={(value) => `\$${value}/day`}
             onChange={(value) => {
               operationalCostPerUnitRef.current = value;
               setUpdateFlag(!updateFlag);

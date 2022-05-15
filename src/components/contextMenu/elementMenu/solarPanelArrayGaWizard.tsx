@@ -350,7 +350,6 @@ const SolarPanelArrayGaWizard = ({ setDialogVisible }: { setDialogVisible: (b: b
                   precision={2}
                   value={selectionRateRef.current}
                   step={0.01}
-                  formatter={(a) => Number(a).toFixed(2)}
                   onChange={(value) => {
                     selectionRateRef.current = value;
                     setUpdateFlag(!updateFlag);
@@ -371,7 +370,6 @@ const SolarPanelArrayGaWizard = ({ setDialogVisible }: { setDialogVisible: (b: b
                   precision={2}
                   value={crossoverRateRef.current}
                   step={0.01}
-                  formatter={(a) => Number(a).toFixed(2)}
                   onChange={(value) => {
                     crossoverRateRef.current = value;
                     setUpdateFlag(!updateFlag);
@@ -392,7 +390,6 @@ const SolarPanelArrayGaWizard = ({ setDialogVisible }: { setDialogVisible: (b: b
                   precision={2}
                   value={mutationRateRef.current}
                   step={0.01}
-                  formatter={(a) => Number(a).toFixed(2)}
                   onChange={(value) => {
                     mutationRateRef.current = value;
                     setUpdateFlag(!updateFlag);
@@ -413,7 +410,6 @@ const SolarPanelArrayGaWizard = ({ setDialogVisible }: { setDialogVisible: (b: b
                   precision={3}
                   value={convergenceThresholdRef.current}
                   step={0.001}
-                  formatter={(a) => Number(a).toFixed(3)}
                   onChange={(value) => {
                     convergenceThresholdRef.current = value;
                     setUpdateFlag(!updateFlag);
@@ -465,7 +461,6 @@ const SolarPanelArrayGaWizard = ({ setDialogVisible }: { setDialogVisible: (b: b
                     precision={2}
                     value={localSearchRadiusRef.current}
                     step={0.01}
-                    formatter={(a) => Number(a).toFixed(2)}
                     onChange={(value) => {
                       localSearchRadiusRef.current = value;
                       setUpdateFlag(!updateFlag);

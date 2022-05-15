@@ -224,7 +224,6 @@ const SolarPanelTiltAnglePsoWizard = ({ setDialogVisible }: { setDialogVisible: 
               precision={2}
               value={cognitiveCoefficientRef.current}
               step={0.01}
-              formatter={(a) => Number(a).toFixed(2)}
               onChange={(value) => {
                 cognitiveCoefficientRef.current = value;
                 setUpdateFlag(!updateFlag);
@@ -245,7 +244,6 @@ const SolarPanelTiltAnglePsoWizard = ({ setDialogVisible }: { setDialogVisible: 
               precision={2}
               value={socialCoefficientRef.current}
               step={0.01}
-              formatter={(a) => Number(a).toFixed(2)}
               onChange={(value) => {
                 socialCoefficientRef.current = value;
                 setUpdateFlag(!updateFlag);
@@ -266,7 +264,6 @@ const SolarPanelTiltAnglePsoWizard = ({ setDialogVisible }: { setDialogVisible: 
               precision={2}
               value={inertiaRef.current}
               step={0.01}
-              formatter={(a) => Number(a).toFixed(2)}
               onChange={(value) => {
                 inertiaRef.current = value;
                 setUpdateFlag(!updateFlag);
@@ -287,7 +284,6 @@ const SolarPanelTiltAnglePsoWizard = ({ setDialogVisible }: { setDialogVisible: 
               precision={3}
               value={vmaxRef.current}
               step={0.001}
-              formatter={(a) => Number(a).toFixed(3)}
               onChange={(value) => {
                 vmaxRef.current = value;
                 setUpdateFlag(!updateFlag);
@@ -308,7 +304,6 @@ const SolarPanelTiltAnglePsoWizard = ({ setDialogVisible }: { setDialogVisible: 
               precision={3}
               value={convergenceThresholdRef.current}
               step={0.001}
-              formatter={(a) => Number(a).toFixed(3)}
               onChange={(value) => {
                 convergenceThresholdRef.current = value;
                 setUpdateFlag(!updateFlag);
@@ -360,7 +355,6 @@ const SolarPanelTiltAnglePsoWizard = ({ setDialogVisible }: { setDialogVisible: 
                 precision={2}
                 value={localSearchRadiusRef.current}
                 step={0.01}
-                formatter={(a) => Number(a).toFixed(2)}
                 onChange={(value) => {
                   localSearchRadiusRef.current = value;
                   setUpdateFlag(!updateFlag);

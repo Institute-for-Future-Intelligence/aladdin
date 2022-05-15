@@ -126,7 +126,6 @@ export const TreeMenu = () => {
                 step={1}
                 precision={1}
                 value={inputSpread}
-                formatter={(x) => Number(x).toFixed(1)}
                 onChange={(value) => setSpread(value)}
               />
             </Menu.Item>

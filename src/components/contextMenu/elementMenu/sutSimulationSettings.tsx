@@ -74,7 +74,6 @@ const SutSimulationSettings = () => {
             style={{ width: 72 }}
             precision={1}
             value={sutGridCellSize ?? 1}
-            formatter={(a) => Number(a).toFixed(1)}
             onChange={(value) => {
               setCommonStore((state) => {
                 state.world.sutGridCellSize = value;

@@ -1220,7 +1220,6 @@ const MainMenu = ({ viewOnly, set2DView, resetView, zoomView, canvas }: MainMenu
                   style={{ width: 60 }}
                   precision={1}
                   value={solarRadiationHeatmapGridCellSize ?? 0.5}
-                  formatter={(a) => Number(a).toFixed(1)}
                   onChange={(value) => {
                     setCommonStore((state) => {
                       state.world.solarRadiationHeatmapGridCellSize = value;
@@ -1240,7 +1239,6 @@ const MainMenu = ({ viewOnly, set2DView, resetView, zoomView, canvas }: MainMenu
                   style={{ width: 60 }}
                   precision={1}
                   value={solarRadiationHeatmapMaxValue ?? 5}
-                  formatter={(a) => Number(a).toFixed(1)}
                   onChange={(value) => {
                     setCommonStore((state) => {
                       state.viewState.solarRadiationHeatMapMaxValue = value;
@@ -1466,7 +1464,6 @@ const MainMenu = ({ viewOnly, set2DView, resetView, zoomView, canvas }: MainMenu
                   style={{ width: 60 }}
                   precision={1}
                   value={solarPanelVisibilityGridCellSize ?? 0.2}
-                  formatter={(a) => Number(a).toFixed(1)}
                   onChange={(value) => {
                     setCommonStore((state) => {
                       state.world.solarPanelVisibilityGridCellSize = value;

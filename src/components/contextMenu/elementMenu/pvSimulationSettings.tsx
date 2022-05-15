@@ -96,7 +96,6 @@ const PvSimulationSettings = () => {
               style={{ width: 72 }}
               precision={2}
               value={gridCellSize ?? 0.5}
-              formatter={(a) => Number(a).toFixed(2)}
               onChange={(value) => {
                 setCommonStore((state) => {
                   state.world.pvGridCellSize = value;
