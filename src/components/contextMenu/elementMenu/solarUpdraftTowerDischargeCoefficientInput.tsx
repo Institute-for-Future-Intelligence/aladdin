@@ -32,19 +32,17 @@ const SolarUpdraftTowerDischargeCoefficientInput = ({
   const setApplyCount = useStore(Selector.setApplyCount);
   const revertApply = useStore(Selector.revertApply);
 
-  const [inputCoefficient, setInputCoefficient] = useState<number>(
-    foundation?.solarUpdraftTower?.dischargeCoefficient ?? 0.65,
-  );
   const [updateFlag, setUpdateFlag] = useState<boolean>(false);
   const [dragEnabled, setDragEnabled] = useState<boolean>(false);
   const [bounds, setBounds] = useState<DraggableBounds>({ left: 0, top: 0, bottom: 0, right: 0 } as DraggableBounds);
   const dragRef = useRef<HTMLDivElement | null>(null);
+  const inputCoefficientRef = useRef<number>(foundation?.solarUpdraftTower?.dischargeCoefficient ?? 0.65);
 
   const lang = { lng: language };
 
   useEffect(() => {
     if (foundation) {
-      setInputCoefficient(foundation.solarUpdraftTower?.dischargeCoefficient ?? 0.65);
+      inputCoefficientRef.current = foundation.solarUpdraftTower?.dischargeCoefficient ?? 0.65;
     }
   }, [foundation]);
 
@@ -159,7 +157,7 @@ const SolarUpdraftTowerDischargeCoefficientInput = ({
   };
 
   const close = () => {
-    setInputCoefficient(foundation?.solarUpdraftTower?.dischargeCoefficient ?? 0.65);
+    inputCoefficientRef.current = foundation?.solarUpdraftTower?.dischargeCoefficient ?? 0.65;
     setDialogVisible(false);
   };
 
@@ -169,7 +167,7 @@ const SolarUpdraftTowerDischargeCoefficientInput = ({
   };
 
   const ok = () => {
-    setCoefficient(inputCoefficient);
+    setCoefficient(inputCoefficientRef.current);
     setDialogVisible(false);
     setApplyCount(0);
   };
@@ -192,7 +190,7 @@ const SolarUpdraftTowerDischargeCoefficientInput = ({
           <Button
             key="Apply"
             onClick={() => {
-              setCoefficient(inputCoefficient);
+              setCoefficient(inputCoefficientRef.current);
             }}
           >
             {i18n.t('word.Apply', lang)}
@@ -222,9 +220,11 @@ const SolarUpdraftTowerDischargeCoefficientInput = ({
               style={{ width: 120 }}
               step={0.01}
               precision={2}
-              value={inputCoefficient}
-              formatter={(a) => Number(a).toFixed(2)}
-              onChange={(value) => setInputCoefficient(value)}
+              value={inputCoefficientRef.current}
+              onChange={(value) => {
+                inputCoefficientRef.current = value;
+                setUpdateFlag(!updateFlag);
+              }}
               onPressEnter={ok}
             />
             <div style={{ paddingTop: '20px', textAlign: 'left', fontSize: '11px' }}>

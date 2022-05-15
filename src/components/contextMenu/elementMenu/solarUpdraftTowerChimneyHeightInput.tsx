@@ -28,19 +28,20 @@ const SolarUpdraftTowerChimneyHeightInput = ({ setDialogVisible }: { setDialogVi
   const setApplyCount = useStore(Selector.setApplyCount);
   const revertApply = useStore(Selector.revertApply);
 
-  const [inputChimneyHeight, setInputChimneyHeight] = useState<number>(
-    foundation?.solarUpdraftTower?.chimneyHeight ?? Math.max(foundation?.lx, foundation?.ly),
-  );
   const [updateFlag, setUpdateFlag] = useState<boolean>(false);
   const [dragEnabled, setDragEnabled] = useState<boolean>(false);
   const [bounds, setBounds] = useState<DraggableBounds>({ left: 0, top: 0, bottom: 0, right: 0 } as DraggableBounds);
   const dragRef = useRef<HTMLDivElement | null>(null);
+  const inputChimneyHeightRef = useRef<number>(
+    foundation?.solarUpdraftTower?.chimneyHeight ?? Math.max(foundation?.lx, foundation?.ly),
+  );
 
   const lang = { lng: language };
 
   useEffect(() => {
     if (foundation) {
-      setInputChimneyHeight(foundation.solarUpdraftTower?.chimneyHeight ?? Math.max(foundation.lx, foundation.ly));
+      inputChimneyHeightRef.current =
+        foundation.solarUpdraftTower?.chimneyHeight ?? Math.max(foundation.lx, foundation.ly);
     }
   }, [foundation]);
 
@@ -155,7 +156,8 @@ const SolarUpdraftTowerChimneyHeightInput = ({ setDialogVisible }: { setDialogVi
   };
 
   const close = () => {
-    setInputChimneyHeight(foundation?.solarUpdraftTower?.chimneyHeight ?? Math.max(foundation.lx, foundation.ly));
+    inputChimneyHeightRef.current =
+      foundation?.solarUpdraftTower?.chimneyHeight ?? Math.max(foundation.lx, foundation.ly);
     setDialogVisible(false);
   };
 
@@ -165,7 +167,7 @@ const SolarUpdraftTowerChimneyHeightInput = ({ setDialogVisible }: { setDialogVi
   };
 
   const ok = () => {
-    setChimneyHeight(inputChimneyHeight);
+    setChimneyHeight(inputChimneyHeightRef.current);
     setDialogVisible(false);
     setApplyCount(0);
   };
@@ -188,7 +190,7 @@ const SolarUpdraftTowerChimneyHeightInput = ({ setDialogVisible }: { setDialogVi
           <Button
             key="Apply"
             onClick={() => {
-              setChimneyHeight(inputChimneyHeight);
+              setChimneyHeight(inputChimneyHeightRef.current);
             }}
           >
             {i18n.t('word.Apply', lang)}
@@ -217,10 +219,12 @@ const SolarUpdraftTowerChimneyHeightInput = ({ setDialogVisible }: { setDialogVi
               max={1000}
               style={{ width: 120 }}
               step={10}
-              precision={1}
-              value={inputChimneyHeight}
-              formatter={(a) => Number(a).toFixed(1)}
-              onChange={(value) => setInputChimneyHeight(value)}
+              precision={2}
+              value={inputChimneyHeightRef.current}
+              onChange={(value) => {
+                inputChimneyHeightRef.current = value;
+                setUpdateFlag(!updateFlag);
+              }}
               onPressEnter={ok}
             />
             <div style={{ paddingTop: '20px', textAlign: 'left', fontSize: '11px' }}>

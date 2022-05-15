@@ -30,17 +30,17 @@ const SolarPowerTowerHeightInput = ({ setDialogVisible }: { setDialogVisible: (b
 
   const powerTower = foundation?.solarPowerTower;
 
-  const [inputTowerHeight, setInputTowerHeight] = useState<number>(powerTower?.towerHeight ?? 20);
   const [updateFlag, setUpdateFlag] = useState<boolean>(false);
   const [dragEnabled, setDragEnabled] = useState<boolean>(false);
   const [bounds, setBounds] = useState<DraggableBounds>({ left: 0, top: 0, bottom: 0, right: 0 } as DraggableBounds);
   const dragRef = useRef<HTMLDivElement | null>(null);
+  const inputTowerHeightRef = useRef<number>(powerTower?.towerHeight ?? 20);
 
   const lang = { lng: language };
 
   useEffect(() => {
     if (powerTower) {
-      setInputTowerHeight(powerTower.towerHeight ?? 20);
+      inputTowerHeightRef.current = powerTower.towerHeight ?? 20;
     }
   }, [foundation]);
 
@@ -145,7 +145,7 @@ const SolarPowerTowerHeightInput = ({ setDialogVisible }: { setDialogVisible: (b
   };
 
   const close = () => {
-    setInputTowerHeight(powerTower?.towerHeight ?? 20);
+    inputTowerHeightRef.current = powerTower?.towerHeight ?? 20;
     setDialogVisible(false);
   };
 
@@ -155,7 +155,7 @@ const SolarPowerTowerHeightInput = ({ setDialogVisible }: { setDialogVisible: (b
   };
 
   const ok = () => {
-    setTowerHeight(inputTowerHeight);
+    setTowerHeight(inputTowerHeightRef.current);
     setDialogVisible(false);
     setApplyCount(0);
   };
@@ -178,7 +178,7 @@ const SolarPowerTowerHeightInput = ({ setDialogVisible }: { setDialogVisible: (b
           <Button
             key="Apply"
             onClick={() => {
-              setTowerHeight(inputTowerHeight);
+              setTowerHeight(inputTowerHeightRef.current);
             }}
           >
             {i18n.t('word.Apply', lang)}
@@ -208,9 +208,11 @@ const SolarPowerTowerHeightInput = ({ setDialogVisible }: { setDialogVisible: (b
               style={{ width: 120 }}
               step={1}
               precision={1}
-              value={inputTowerHeight}
-              formatter={(a) => Number(a).toFixed(1)}
-              onChange={(value) => setInputTowerHeight(value)}
+              value={inputTowerHeightRef.current}
+              onChange={(value) => {
+                inputTowerHeightRef.current = value;
+                setUpdateFlag(!updateFlag);
+              }}
               onPressEnter={ok}
             />
             <div style={{ paddingTop: '20px', textAlign: 'left', fontSize: '11px' }}>

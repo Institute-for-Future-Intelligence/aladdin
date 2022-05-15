@@ -405,7 +405,7 @@ const SolarPanelTiltAngleInput = ({ setDialogVisible }: { setDialogVisible: (b: 
               min={-90}
               max={90}
               style={{ width: 120 }}
-              precision={1}
+              precision={2}
               // make sure that we round up the number as toDegrees may cause things like .999999999
               value={parseFloat(Util.toDegrees(inputTiltAngleRef.current).toFixed(2))}
               step={1}

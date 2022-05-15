@@ -32,19 +32,17 @@ const SolarUpdraftTowerCollectorTransmissivityInput = ({
   const setApplyCount = useStore(Selector.setApplyCount);
   const revertApply = useStore(Selector.revertApply);
 
-  const [inputTransmissivity, setInputTransmissivity] = useState<number>(
-    foundation?.solarUpdraftTower?.collectorTransmissivity ?? 0.9,
-  );
   const [updateFlag, setUpdateFlag] = useState<boolean>(false);
   const [dragEnabled, setDragEnabled] = useState<boolean>(false);
   const [bounds, setBounds] = useState<DraggableBounds>({ left: 0, top: 0, bottom: 0, right: 0 } as DraggableBounds);
   const dragRef = useRef<HTMLDivElement | null>(null);
+  const inputTransmissivityRef = useRef<number>(foundation?.solarUpdraftTower?.collectorTransmissivity ?? 0.9);
 
   const lang = { lng: language };
 
   useEffect(() => {
     if (foundation) {
-      setInputTransmissivity(foundation.solarUpdraftTower?.collectorTransmissivity ?? 0.9);
+      inputTransmissivityRef.current = foundation.solarUpdraftTower?.collectorTransmissivity ?? 0.9;
     }
   }, [foundation]);
 
@@ -159,7 +157,7 @@ const SolarUpdraftTowerCollectorTransmissivityInput = ({
   };
 
   const close = () => {
-    setInputTransmissivity(foundation?.solarUpdraftTower?.collectorTransmissivity ?? 0.9);
+    inputTransmissivityRef.current = foundation?.solarUpdraftTower?.collectorTransmissivity ?? 0.9;
     setDialogVisible(false);
   };
 
@@ -169,7 +167,7 @@ const SolarUpdraftTowerCollectorTransmissivityInput = ({
   };
 
   const ok = () => {
-    setTransmissivity(inputTransmissivity);
+    setTransmissivity(inputTransmissivityRef.current);
     setDialogVisible(false);
     setApplyCount(0);
   };
@@ -192,7 +190,7 @@ const SolarUpdraftTowerCollectorTransmissivityInput = ({
           <Button
             key="Apply"
             onClick={() => {
-              setTransmissivity(inputTransmissivity);
+              setTransmissivity(inputTransmissivityRef.current);
             }}
           >
             {i18n.t('word.Apply', lang)}
@@ -222,9 +220,11 @@ const SolarUpdraftTowerCollectorTransmissivityInput = ({
               style={{ width: 120 }}
               step={0.01}
               precision={2}
-              value={inputTransmissivity}
-              formatter={(a) => Number(a).toFixed(2)}
-              onChange={(value) => setInputTransmissivity(value)}
+              value={inputTransmissivityRef.current}
+              onChange={(value) => {
+                inputTransmissivityRef.current = value;
+                setUpdateFlag(!updateFlag);
+              }}
               onPressEnter={ok}
             />
             <div style={{ paddingTop: '20px', textAlign: 'left', fontSize: '11px' }}>

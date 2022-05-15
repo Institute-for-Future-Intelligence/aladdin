@@ -29,17 +29,17 @@ const SolarAbsorberPipePoleNumberInput = ({ setDialogVisible }: { setDialogVisib
 
   const absorberPipe = foundation?.solarAbsorberPipe;
 
-  const [inputPoleNumber, setInputPoleNumber] = useState<number>(absorberPipe?.poleNumber ?? 5);
   const [updateFlag, setUpdateFlag] = useState<boolean>(false);
   const [dragEnabled, setDragEnabled] = useState<boolean>(false);
   const [bounds, setBounds] = useState<DraggableBounds>({ left: 0, top: 0, bottom: 0, right: 0 } as DraggableBounds);
   const dragRef = useRef<HTMLDivElement | null>(null);
+  const inputPoleNumberRef = useRef<number>(absorberPipe?.poleNumber ?? 5);
 
   const lang = { lng: language };
 
   useEffect(() => {
     if (absorberPipe) {
-      setInputPoleNumber(absorberPipe.poleNumber ?? 5);
+      inputPoleNumberRef.current = absorberPipe.poleNumber ?? 5;
     }
   }, [foundation]);
 
@@ -141,7 +141,7 @@ const SolarAbsorberPipePoleNumberInput = ({ setDialogVisible }: { setDialogVisib
   };
 
   const close = () => {
-    setInputPoleNumber(absorberPipe?.poleNumber ?? 5);
+    inputPoleNumberRef.current = absorberPipe?.poleNumber ?? 5;
     setDialogVisible(false);
   };
 
@@ -151,7 +151,7 @@ const SolarAbsorberPipePoleNumberInput = ({ setDialogVisible }: { setDialogVisib
   };
 
   const ok = () => {
-    setPoleNumber(inputPoleNumber);
+    setPoleNumber(inputPoleNumberRef.current);
     setDialogVisible(false);
     setApplyCount(0);
   };
@@ -174,7 +174,7 @@ const SolarAbsorberPipePoleNumberInput = ({ setDialogVisible }: { setDialogVisib
           <Button
             key="Apply"
             onClick={() => {
-              setPoleNumber(inputPoleNumber);
+              setPoleNumber(inputPoleNumberRef.current);
             }}
           >
             {i18n.t('word.Apply', lang)}
@@ -203,10 +203,12 @@ const SolarAbsorberPipePoleNumberInput = ({ setDialogVisible }: { setDialogVisib
               max={100}
               style={{ width: 120 }}
               step={1}
-              precision={2}
-              value={inputPoleNumber}
-              formatter={(a) => Number(a).toFixed(0)}
-              onChange={(value) => setInputPoleNumber(value)}
+              precision={0}
+              value={inputPoleNumberRef.current}
+              onChange={(value) => {
+                inputPoleNumberRef.current = value;
+                setUpdateFlag(!updateFlag);
+              }}
               onPressEnter={ok}
             />
             <div style={{ paddingTop: '20px', textAlign: 'left', fontSize: '11px' }}>

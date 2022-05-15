@@ -28,19 +28,20 @@ const SolarUpdraftTowerCollectorHeightInput = ({ setDialogVisible }: { setDialog
   const setApplyCount = useStore(Selector.setApplyCount);
   const revertApply = useStore(Selector.revertApply);
 
-  const [inputCollectorHeight, setInputCollectorHeight] = useState<number>(
-    foundation?.solarUpdraftTower?.collectorHeight ?? Math.max(3, 10 * foundation?.lz),
-  );
   const [updateFlag, setUpdateFlag] = useState<boolean>(false);
   const [dragEnabled, setDragEnabled] = useState<boolean>(false);
   const [bounds, setBounds] = useState<DraggableBounds>({ left: 0, top: 0, bottom: 0, right: 0 } as DraggableBounds);
   const dragRef = useRef<HTMLDivElement | null>(null);
+  const inputCollectorHeightRef = useRef<number>(
+    foundation?.solarUpdraftTower?.collectorHeight ?? Math.max(3, 10 * foundation?.lz),
+  );
 
   const lang = { lng: language };
 
   useEffect(() => {
     if (foundation) {
-      setInputCollectorHeight(foundation.solarUpdraftTower?.collectorHeight ?? Math.max(3, 10 * foundation.lz));
+      inputCollectorHeightRef.current =
+        foundation.solarUpdraftTower?.collectorHeight ?? Math.max(3, 10 * foundation.lz);
     }
   }, [foundation]);
 
@@ -155,7 +156,7 @@ const SolarUpdraftTowerCollectorHeightInput = ({ setDialogVisible }: { setDialog
   };
 
   const close = () => {
-    setInputCollectorHeight(foundation?.solarUpdraftTower?.collectorHeight ?? Math.max(3, 10 * foundation.lz));
+    inputCollectorHeightRef.current = foundation?.solarUpdraftTower?.collectorHeight ?? Math.max(3, 10 * foundation.lz);
     setDialogVisible(false);
   };
 
@@ -165,7 +166,7 @@ const SolarUpdraftTowerCollectorHeightInput = ({ setDialogVisible }: { setDialog
   };
 
   const ok = () => {
-    setCollectorHeight(inputCollectorHeight);
+    setCollectorHeight(inputCollectorHeightRef.current);
     setDialogVisible(false);
     setApplyCount(0);
   };
@@ -188,7 +189,7 @@ const SolarUpdraftTowerCollectorHeightInput = ({ setDialogVisible }: { setDialog
           <Button
             key="Apply"
             onClick={() => {
-              setCollectorHeight(inputCollectorHeight);
+              setCollectorHeight(inputCollectorHeightRef.current);
             }}
           >
             {i18n.t('word.Apply', lang)}
@@ -217,10 +218,12 @@ const SolarUpdraftTowerCollectorHeightInput = ({ setDialogVisible }: { setDialog
               max={20}
               style={{ width: 120 }}
               step={1}
-              precision={1}
-              value={inputCollectorHeight}
-              formatter={(a) => Number(a).toFixed(1)}
-              onChange={(value) => setInputCollectorHeight(value)}
+              precision={2}
+              value={inputCollectorHeightRef.current}
+              onChange={(value) => {
+                inputCollectorHeightRef.current = value;
+                setUpdateFlag(!updateFlag);
+              }}
               onPressEnter={ok}
             />
             <div style={{ paddingTop: '20px', textAlign: 'left', fontSize: '11px' }}>

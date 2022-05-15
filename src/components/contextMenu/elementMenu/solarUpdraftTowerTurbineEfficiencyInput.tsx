@@ -28,19 +28,17 @@ const SolarUpdraftTowerTurbineEfficiencyInput = ({ setDialogVisible }: { setDial
   const setApplyCount = useStore(Selector.setApplyCount);
   const revertApply = useStore(Selector.revertApply);
 
-  const [inputTurbineEfficiency, setInputTurbineEfficiency] = useState<number>(
-    foundation?.solarUpdraftTower?.turbineEfficiency ?? 0.3,
-  );
   const [updateFlag, setUpdateFlag] = useState<boolean>(false);
   const [dragEnabled, setDragEnabled] = useState<boolean>(false);
   const [bounds, setBounds] = useState<DraggableBounds>({ left: 0, top: 0, bottom: 0, right: 0 } as DraggableBounds);
   const dragRef = useRef<HTMLDivElement | null>(null);
+  const inputTurbineEfficiencyRef = useRef<number>(foundation?.solarUpdraftTower?.turbineEfficiency ?? 0.3);
 
   const lang = { lng: language };
 
   useEffect(() => {
     if (foundation) {
-      setInputTurbineEfficiency(foundation.solarUpdraftTower?.turbineEfficiency ?? 0.3);
+      inputTurbineEfficiencyRef.current = foundation.solarUpdraftTower?.turbineEfficiency ?? 0.3;
     }
   }, [foundation]);
 
@@ -155,7 +153,7 @@ const SolarUpdraftTowerTurbineEfficiencyInput = ({ setDialogVisible }: { setDial
   };
 
   const close = () => {
-    setInputTurbineEfficiency(foundation?.solarUpdraftTower?.turbineEfficiency ?? 0.3);
+    inputTurbineEfficiencyRef.current = foundation?.solarUpdraftTower?.turbineEfficiency ?? 0.3;
     setDialogVisible(false);
   };
 
@@ -165,7 +163,7 @@ const SolarUpdraftTowerTurbineEfficiencyInput = ({ setDialogVisible }: { setDial
   };
 
   const ok = () => {
-    setEfficiency(inputTurbineEfficiency);
+    setEfficiency(inputTurbineEfficiencyRef.current);
     setDialogVisible(false);
     setApplyCount(0);
   };
@@ -188,7 +186,7 @@ const SolarUpdraftTowerTurbineEfficiencyInput = ({ setDialogVisible }: { setDial
           <Button
             key="Apply"
             onClick={() => {
-              setEfficiency(inputTurbineEfficiency);
+              setEfficiency(inputTurbineEfficiencyRef.current);
             }}
           >
             {i18n.t('word.Apply', lang)}
@@ -218,9 +216,11 @@ const SolarUpdraftTowerTurbineEfficiencyInput = ({ setDialogVisible }: { setDial
               style={{ width: 120 }}
               step={0.01}
               precision={2}
-              value={inputTurbineEfficiency}
-              formatter={(a) => Number(a).toFixed(2)}
-              onChange={(value) => setInputTurbineEfficiency(value)}
+              value={inputTurbineEfficiencyRef.current}
+              onChange={(value) => {
+                inputTurbineEfficiencyRef.current = value;
+                setUpdateFlag(!updateFlag);
+              }}
               onPressEnter={ok}
             />
             <div style={{ paddingTop: '20px', textAlign: 'left', fontSize: '11px' }}>

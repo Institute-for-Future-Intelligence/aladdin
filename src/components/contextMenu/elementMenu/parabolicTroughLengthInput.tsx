@@ -34,19 +34,19 @@ const ParabolicTroughLengthInput = ({ setDialogVisible }: { setDialogVisible: (b
   const setApplyCount = useStore(Selector.setApplyCount);
   const revertApply = useStore(Selector.revertApply);
 
-  const [inputLength, setInputLength] = useState<number>(parabolicTrough?.ly ?? 9);
   const [updateFlag, setUpdateFlag] = useState<boolean>(false);
   const [dragEnabled, setDragEnabled] = useState<boolean>(false);
   const [bounds, setBounds] = useState<DraggableBounds>({ left: 0, top: 0, bottom: 0, right: 0 } as DraggableBounds);
   const dragRef = useRef<HTMLDivElement | null>(null);
   const rejectRef = useRef<boolean>(false);
   const rejectedValue = useRef<number | undefined>();
+  const inputLengthRef = useRef<number>(parabolicTrough?.ly ?? 9);
 
   const lang = { lng: language };
 
   useEffect(() => {
     if (parabolicTrough) {
-      setInputLength(parabolicTrough.ly);
+      inputLengthRef.current = parabolicTrough.ly;
     }
   }, [parabolicTrough]);
 
@@ -121,7 +121,7 @@ const ParabolicTroughLengthInput = ({ setDialogVisible }: { setDialogVisible: (b
         }
         if (rejectRef.current) {
           rejectedValue.current = value;
-          setInputLength(parabolicTrough.ly);
+          inputLengthRef.current = parabolicTrough.ly;
         } else {
           const oldLengthsAll = new Map<string, number>();
           for (const elem of elements) {
@@ -161,7 +161,7 @@ const ParabolicTroughLengthInput = ({ setDialogVisible }: { setDialogVisible: (b
           }
           if (rejectRef.current) {
             rejectedValue.current = value;
-            setInputLength(parabolicTrough.ly);
+            inputLengthRef.current = parabolicTrough.ly;
           } else {
             const oldLengthsAboveFoundation = new Map<string, number>();
             for (const elem of elements) {
@@ -202,7 +202,7 @@ const ParabolicTroughLengthInput = ({ setDialogVisible }: { setDialogVisible: (b
         rejectRef.current = rejectChange(parabolicTrough, value);
         if (rejectRef.current) {
           rejectedValue.current = value;
-          setInputLength(oldLength);
+          inputLengthRef.current = oldLength;
         } else {
           const undoableChange = {
             name: 'Set Parabolic Trough Length',
@@ -240,7 +240,7 @@ const ParabolicTroughLengthInput = ({ setDialogVisible }: { setDialogVisible: (b
   };
 
   const close = () => {
-    setInputLength(parabolicTrough.ly);
+    inputLengthRef.current = parabolicTrough.ly;
     rejectRef.current = false;
     setDialogVisible(false);
   };
@@ -251,7 +251,7 @@ const ParabolicTroughLengthInput = ({ setDialogVisible }: { setDialogVisible: (b
   };
 
   const ok = () => {
-    setLength(inputLength);
+    setLength(inputLengthRef.current);
     if (!rejectRef.current) {
       setDialogVisible(false);
       setApplyCount(0);
@@ -290,7 +290,7 @@ const ParabolicTroughLengthInput = ({ setDialogVisible }: { setDialogVisible: (b
           <Button
             key="Apply"
             onClick={() => {
-              setLength(inputLength);
+              setLength(inputLengthRef.current);
             }}
           >
             {i18n.t('word.Apply', lang)}
@@ -318,11 +318,13 @@ const ParabolicTroughLengthInput = ({ setDialogVisible }: { setDialogVisible: (b
               min={parabolicTrough.moduleLength}
               max={100 * parabolicTrough.moduleLength}
               step={parabolicTrough.moduleLength}
-              style={{ width: 120 }}
               precision={2}
-              value={inputLength}
-              formatter={(a) => Number(a).toFixed(2)}
-              onChange={(value) => setInputLength(modularize(value))}
+              style={{ width: 120 }}
+              value={inputLengthRef.current}
+              onChange={(value) => {
+                inputLengthRef.current = modularize(value);
+                setUpdateFlag(!updateFlag);
+              }}
               onPressEnter={ok}
             />
             <div style={{ paddingTop: '20px', textAlign: 'left', fontSize: '11px' }}>
@@ -332,7 +334,7 @@ const ParabolicTroughLengthInput = ({ setDialogVisible }: { setDialogVisible: (b
                 ' ' +
                 i18n.t('word.MeterAbbreviation', lang)}
               <br />
-              {Math.round(inputLength / parabolicTrough.moduleLength) +
+              {Math.round(inputLengthRef.current / parabolicTrough.moduleLength) +
                 ' ' +
                 i18n.t('parabolicTroughMenu.ModulesLong', lang)}
               <br />

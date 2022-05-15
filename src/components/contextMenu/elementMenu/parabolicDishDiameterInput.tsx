@@ -34,19 +34,19 @@ const ParabolicDishDiameterInput = ({ setDialogVisible }: { setDialogVisible: (b
   const setApplyCount = useStore(Selector.setApplyCount);
   const revertApply = useStore(Selector.revertApply);
 
-  const [inputDiameter, setInputDiameter] = useState<number>(parabolicDish?.lx ?? 2);
   const [updateFlag, setUpdateFlag] = useState<boolean>(false);
   const [dragEnabled, setDragEnabled] = useState<boolean>(false);
   const [bounds, setBounds] = useState<DraggableBounds>({ left: 0, top: 0, bottom: 0, right: 0 } as DraggableBounds);
   const dragRef = useRef<HTMLDivElement | null>(null);
   const rejectRef = useRef<boolean>(false);
   const rejectedValue = useRef<number | undefined>();
+  const inputDiameterRef = useRef<number>(parabolicDish?.lx ?? 2);
 
   const lang = { lng: language };
 
   useEffect(() => {
     if (parabolicDish) {
-      setInputDiameter(parabolicDish.lx);
+      inputDiameterRef.current = parabolicDish.lx;
     }
   }, [parabolicDish]);
 
@@ -121,7 +121,7 @@ const ParabolicDishDiameterInput = ({ setDialogVisible }: { setDialogVisible: (b
         }
         if (rejectRef.current) {
           rejectedValue.current = value;
-          setInputDiameter(parabolicDish.lx);
+          inputDiameterRef.current = parabolicDish.lx;
         } else {
           const oldDiametersAll = new Map<string, number>();
           for (const elem of elements) {
@@ -165,7 +165,7 @@ const ParabolicDishDiameterInput = ({ setDialogVisible }: { setDialogVisible: (b
           }
           if (rejectRef.current) {
             rejectedValue.current = value;
-            setInputDiameter(parabolicDish.lx);
+            inputDiameterRef.current = parabolicDish.lx;
           } else {
             const oldDiametersAboveFoundation = new Map<string, number>();
             for (const elem of elements) {
@@ -213,7 +213,7 @@ const ParabolicDishDiameterInput = ({ setDialogVisible }: { setDialogVisible: (b
         rejectRef.current = rejectChange(parabolicDish, value);
         if (rejectRef.current) {
           rejectedValue.current = value;
-          setInputDiameter(oldDiameter);
+          inputDiameterRef.current = oldDiameter;
         } else {
           const undoableChange = {
             name: 'Set Parabolic Dish Diameter',
@@ -254,7 +254,7 @@ const ParabolicDishDiameterInput = ({ setDialogVisible }: { setDialogVisible: (b
   };
 
   const close = () => {
-    setInputDiameter(parabolicDish.lx);
+    inputDiameterRef.current = parabolicDish.lx;
     rejectRef.current = false;
     setDialogVisible(false);
   };
@@ -265,7 +265,7 @@ const ParabolicDishDiameterInput = ({ setDialogVisible }: { setDialogVisible: (b
   };
 
   const ok = () => {
-    setDiameter(inputDiameter);
+    setDiameter(inputDiameterRef.current);
     if (!rejectRef.current) {
       setDialogVisible(false);
       setApplyCount(0);
@@ -298,7 +298,7 @@ const ParabolicDishDiameterInput = ({ setDialogVisible }: { setDialogVisible: (b
           <Button
             key="Apply"
             onClick={() => {
-              setDiameter(inputDiameter);
+              setDiameter(inputDiameterRef.current);
             }}
           >
             {i18n.t('word.Apply', lang)}
@@ -326,11 +326,13 @@ const ParabolicDishDiameterInput = ({ setDialogVisible }: { setDialogVisible: (b
               min={1}
               max={10}
               step={0.5}
-              style={{ width: 120 }}
               precision={2}
-              value={inputDiameter}
-              formatter={(a) => Number(a).toFixed(2)}
-              onChange={(value) => setInputDiameter(value)}
+              style={{ width: 120 }}
+              value={inputDiameterRef.current}
+              onChange={(value) => {
+                inputDiameterRef.current = value;
+                setUpdateFlag(!updateFlag);
+              }}
               onPressEnter={ok}
             />
             <div style={{ paddingTop: '20px', textAlign: 'left', fontSize: '11px' }}>

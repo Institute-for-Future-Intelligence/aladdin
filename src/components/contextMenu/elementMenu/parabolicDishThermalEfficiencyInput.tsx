@@ -29,17 +29,17 @@ const ParabolicDishThermalEfficiencyInput = ({ setDialogVisible }: { setDialogVi
   const setApplyCount = useStore(Selector.setApplyCount);
   const revertApply = useStore(Selector.revertApply);
 
-  const [inputThermalEfficiency, setInputThermalEfficiency] = useState<number>(parabolicDish?.thermalEfficiency ?? 0.3);
   const [updateFlag, setUpdateFlag] = useState<boolean>(false);
   const [dragEnabled, setDragEnabled] = useState<boolean>(false);
   const [bounds, setBounds] = useState<DraggableBounds>({ left: 0, top: 0, bottom: 0, right: 0 } as DraggableBounds);
   const dragRef = useRef<HTMLDivElement | null>(null);
+  const inputThermalEfficiencyRef = useRef<number>(parabolicDish?.thermalEfficiency ?? 0.3);
 
   const lang = { lng: language };
 
   useEffect(() => {
     if (parabolicDish) {
-      setInputThermalEfficiency(parabolicDish.thermalEfficiency);
+      inputThermalEfficiencyRef.current = parabolicDish.thermalEfficiency;
     }
   }, [parabolicDish]);
 
@@ -179,7 +179,7 @@ const ParabolicDishThermalEfficiencyInput = ({ setDialogVisible }: { setDialogVi
   };
 
   const close = () => {
-    setInputThermalEfficiency(parabolicDish.thermalEfficiency);
+    inputThermalEfficiencyRef.current = parabolicDish.thermalEfficiency;
     setDialogVisible(false);
   };
 
@@ -189,7 +189,7 @@ const ParabolicDishThermalEfficiencyInput = ({ setDialogVisible }: { setDialogVi
   };
 
   const ok = () => {
-    setThermalEfficiency(inputThermalEfficiency);
+    setThermalEfficiency(inputThermalEfficiencyRef.current);
     setDialogVisible(false);
     setApplyCount(0);
   };
@@ -212,7 +212,7 @@ const ParabolicDishThermalEfficiencyInput = ({ setDialogVisible }: { setDialogVi
           <Button
             key="Apply"
             onClick={() => {
-              setThermalEfficiency(inputThermalEfficiency);
+              setThermalEfficiency(inputThermalEfficiencyRef.current);
             }}
           >
             {i18n.t('word.Apply', lang)}
@@ -241,10 +241,12 @@ const ParabolicDishThermalEfficiencyInput = ({ setDialogVisible }: { setDialogVi
               max={1}
               style={{ width: 120 }}
               precision={2}
-              value={inputThermalEfficiency}
               step={0.01}
-              formatter={(a) => Number(a).toFixed(2)}
-              onChange={(value) => setInputThermalEfficiency(value)}
+              value={inputThermalEfficiencyRef.current}
+              onChange={(value) => {
+                inputThermalEfficiencyRef.current = value;
+                setUpdateFlag(!updateFlag);
+              }}
               onPressEnter={ok}
             />
             <div style={{ paddingTop: '20px', textAlign: 'left', fontSize: '11px' }}>

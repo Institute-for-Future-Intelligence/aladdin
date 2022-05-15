@@ -34,19 +34,17 @@ const SolarPowerTowerReceiverOpticalEfficiencyInput = ({
 
   const powerTower = foundation?.solarPowerTower;
 
-  const [inputOpticalEfficiency, setInputOpticalEfficiency] = useState<number>(
-    powerTower?.receiverOpticalEfficiency ?? 0.7,
-  );
   const [updateFlag, setUpdateFlag] = useState<boolean>(false);
   const [dragEnabled, setDragEnabled] = useState<boolean>(false);
   const [bounds, setBounds] = useState<DraggableBounds>({ left: 0, top: 0, bottom: 0, right: 0 } as DraggableBounds);
   const dragRef = useRef<HTMLDivElement | null>(null);
+  const inputOpticalEfficiencyRef = useRef<number>(powerTower?.receiverOpticalEfficiency ?? 0.7);
 
   const lang = { lng: language };
 
   useEffect(() => {
     if (powerTower) {
-      setInputOpticalEfficiency(powerTower.receiverOpticalEfficiency ?? 0.7);
+      inputOpticalEfficiencyRef.current = powerTower.receiverOpticalEfficiency ?? 0.7;
     }
   }, [foundation]);
 
@@ -157,7 +155,7 @@ const SolarPowerTowerReceiverOpticalEfficiencyInput = ({
   };
 
   const close = () => {
-    setInputOpticalEfficiency(powerTower?.receiverOpticalEfficiency ?? 0.7);
+    inputOpticalEfficiencyRef.current = powerTower?.receiverOpticalEfficiency ?? 0.7;
     setDialogVisible(false);
   };
 
@@ -167,7 +165,7 @@ const SolarPowerTowerReceiverOpticalEfficiencyInput = ({
   };
 
   const ok = () => {
-    setOpticalEfficiency(inputOpticalEfficiency);
+    setOpticalEfficiency(inputOpticalEfficiencyRef.current);
     setDialogVisible(false);
     setApplyCount(0);
   };
@@ -190,7 +188,7 @@ const SolarPowerTowerReceiverOpticalEfficiencyInput = ({
           <Button
             key="Apply"
             onClick={() => {
-              setOpticalEfficiency(inputOpticalEfficiency);
+              setOpticalEfficiency(inputOpticalEfficiencyRef.current);
             }}
           >
             {i18n.t('word.Apply', lang)}
@@ -220,9 +218,11 @@ const SolarPowerTowerReceiverOpticalEfficiencyInput = ({
               style={{ width: 120 }}
               step={0.01}
               precision={2}
-              value={inputOpticalEfficiency}
-              formatter={(a) => Number(a).toFixed(2)}
-              onChange={(value) => setInputOpticalEfficiency(value)}
+              value={inputOpticalEfficiencyRef.current}
+              onChange={(value) => {
+                inputOpticalEfficiencyRef.current = value;
+                setUpdateFlag(!updateFlag);
+              }}
               onPressEnter={ok}
             />
             <div style={{ paddingTop: '20px', textAlign: 'left', fontSize: '11px' }}>

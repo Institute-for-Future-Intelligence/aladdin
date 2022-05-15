@@ -31,19 +31,19 @@ const HeliostatLengthInput = ({ setDialogVisible }: { setDialogVisible: (b: bool
   const setApplyCount = useStore(Selector.setApplyCount);
   const revertApply = useStore(Selector.revertApply);
 
-  const [inputLength, setInputLength] = useState<number>(heliostat?.lx ?? 2);
   const [updateFlag, setUpdateFlag] = useState<boolean>(false);
   const [dragEnabled, setDragEnabled] = useState<boolean>(false);
   const [bounds, setBounds] = useState<DraggableBounds>({ left: 0, top: 0, bottom: 0, right: 0 } as DraggableBounds);
   const dragRef = useRef<HTMLDivElement | null>(null);
   const rejectRef = useRef<boolean>(false);
   const rejectedValue = useRef<number | undefined>();
+  const inputLengthRef = useRef<number>(heliostat?.lx ?? 2);
 
   const lang = { lng: language };
 
   useEffect(() => {
     if (heliostat) {
-      setInputLength(heliostat.lx);
+      inputLengthRef.current = heliostat.lx;
     }
   }, [heliostat]);
 
@@ -118,7 +118,7 @@ const HeliostatLengthInput = ({ setDialogVisible }: { setDialogVisible: (b: bool
         }
         if (rejectRef.current) {
           rejectedValue.current = value;
-          setInputLength(heliostat.lx);
+          inputLengthRef.current = heliostat.lx;
         } else {
           const oldValuesAll = new Map<string, number>();
           for (const elem of elements) {
@@ -158,7 +158,7 @@ const HeliostatLengthInput = ({ setDialogVisible }: { setDialogVisible: (b: bool
           }
           if (rejectRef.current) {
             rejectedValue.current = value;
-            setInputLength(heliostat.lx);
+            inputLengthRef.current = heliostat.lx;
           } else {
             const oldValuesAboveFoundation = new Map<string, number>();
             for (const elem of elements) {
@@ -200,7 +200,7 @@ const HeliostatLengthInput = ({ setDialogVisible }: { setDialogVisible: (b: bool
         rejectRef.current = rejectChange(heliostat, value);
         if (rejectRef.current) {
           rejectedValue.current = value;
-          setInputLength(oldValue);
+          inputLengthRef.current = oldValue;
         } else {
           const undoableChange = {
             name: 'Set Heliostat Length',
@@ -238,7 +238,7 @@ const HeliostatLengthInput = ({ setDialogVisible }: { setDialogVisible: (b: bool
   };
 
   const close = () => {
-    setInputLength(heliostat.lx);
+    inputLengthRef.current = heliostat.lx;
     rejectRef.current = false;
     setDialogVisible(false);
   };
@@ -249,7 +249,7 @@ const HeliostatLengthInput = ({ setDialogVisible }: { setDialogVisible: (b: bool
   };
 
   const ok = () => {
-    setLength(inputLength);
+    setLength(inputLengthRef.current);
     if (!rejectRef.current) {
       setDialogVisible(false);
       setApplyCount(0);
@@ -281,7 +281,7 @@ const HeliostatLengthInput = ({ setDialogVisible }: { setDialogVisible: (b: bool
           <Button
             key="Apply"
             onClick={() => {
-              setLength(inputLength);
+              setLength(inputLengthRef.current);
             }}
           >
             {i18n.t('word.Apply', lang)}
@@ -311,9 +311,11 @@ const HeliostatLengthInput = ({ setDialogVisible }: { setDialogVisible: (b: bool
               step={0.5}
               style={{ width: 120 }}
               precision={2}
-              value={inputLength}
-              formatter={(a) => Number(a).toFixed(2)}
-              onChange={(value) => setInputLength(value)}
+              value={inputLengthRef.current}
+              onChange={(value) => {
+                inputLengthRef.current = value;
+                setUpdateFlag(!updateFlag);
+              }}
               onPressEnter={ok}
             />
             <div style={{ paddingTop: '20px', textAlign: 'left', fontSize: '11px' }}>

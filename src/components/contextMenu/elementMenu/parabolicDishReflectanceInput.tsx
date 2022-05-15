@@ -29,17 +29,17 @@ const ParabolicDishReflectanceInput = ({ setDialogVisible }: { setDialogVisible:
   const setApplyCount = useStore(Selector.setApplyCount);
   const revertApply = useStore(Selector.revertApply);
 
-  const [inputReflectance, setInputReflectance] = useState<number>(parabolicDish?.reflectance ?? 0.9);
   const [updateFlag, setUpdateFlag] = useState<boolean>(false);
   const [dragEnabled, setDragEnabled] = useState<boolean>(false);
   const [bounds, setBounds] = useState<DraggableBounds>({ left: 0, top: 0, bottom: 0, right: 0 } as DraggableBounds);
   const dragRef = useRef<HTMLDivElement | null>(null);
+  const inputReflectanceRef = useRef<number>(parabolicDish?.reflectance ?? 0.9);
 
   const lang = { lng: language };
 
   useEffect(() => {
     if (parabolicDish) {
-      setInputReflectance(parabolicDish.reflectance);
+      inputReflectanceRef.current = parabolicDish.reflectance;
     }
   }, [parabolicDish]);
 
@@ -179,7 +179,7 @@ const ParabolicDishReflectanceInput = ({ setDialogVisible }: { setDialogVisible:
   };
 
   const close = () => {
-    setInputReflectance(parabolicDish.reflectance);
+    inputReflectanceRef.current = parabolicDish.reflectance;
     setDialogVisible(false);
   };
 
@@ -189,7 +189,7 @@ const ParabolicDishReflectanceInput = ({ setDialogVisible }: { setDialogVisible:
   };
 
   const ok = () => {
-    setReflectance(inputReflectance);
+    setReflectance(inputReflectanceRef.current);
     setDialogVisible(false);
     setApplyCount(0);
   };
@@ -212,7 +212,7 @@ const ParabolicDishReflectanceInput = ({ setDialogVisible }: { setDialogVisible:
           <Button
             key="Apply"
             onClick={() => {
-              setReflectance(inputReflectance);
+              setReflectance(inputReflectanceRef.current);
             }}
           >
             {i18n.t('word.Apply', lang)}
@@ -241,10 +241,12 @@ const ParabolicDishReflectanceInput = ({ setDialogVisible }: { setDialogVisible:
               max={1}
               style={{ width: 120 }}
               precision={2}
-              value={inputReflectance}
               step={0.01}
-              formatter={(a) => Number(a).toFixed(2)}
-              onChange={(value) => setInputReflectance(value)}
+              value={inputReflectanceRef.current}
+              onChange={(value) => {
+                inputReflectanceRef.current = value;
+                setUpdateFlag(!updateFlag);
+              }}
               onPressEnter={ok}
             />
             <div style={{ paddingTop: '20px', textAlign: 'left', fontSize: '11px' }}>

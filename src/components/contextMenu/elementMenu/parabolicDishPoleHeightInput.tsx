@@ -30,19 +30,19 @@ const ParabolicDishPoleHeightInput = ({ setDialogVisible }: { setDialogVisible: 
   const setApplyCount = useStore(Selector.setApplyCount);
   const revertApply = useStore(Selector.revertApply);
 
-  const [inputPoleHeight, setInputPoleHeight] = useState<number>(parabolicDish?.poleHeight ?? 1);
   const [updateFlag, setUpdateFlag] = useState<boolean>(false);
   const [dragEnabled, setDragEnabled] = useState<boolean>(false);
   const [bounds, setBounds] = useState<DraggableBounds>({ left: 0, top: 0, bottom: 0, right: 0 } as DraggableBounds);
   const dragRef = useRef<HTMLDivElement | null>(null);
   const rejectRef = useRef<boolean>(false);
   const rejectedValue = useRef<number | undefined>();
+  const inputPoleHeightRef = useRef<number>(parabolicDish?.poleHeight ?? 1);
 
   const lang = { lng: language };
 
   useEffect(() => {
     if (parabolicDish) {
-      setInputPoleHeight(parabolicDish.poleHeight);
+      inputPoleHeightRef.current = parabolicDish.poleHeight;
     }
   }, [parabolicDish]);
 
@@ -111,7 +111,7 @@ const ParabolicDishPoleHeightInput = ({ setDialogVisible }: { setDialogVisible: 
         }
         if (rejectRef.current) {
           rejectedValue.current = value;
-          setInputPoleHeight(parabolicDish.poleHeight);
+          inputPoleHeightRef.current = parabolicDish.poleHeight;
         } else {
           const oldPoleHeightsAll = new Map<string, number>();
           for (const elem of elements) {
@@ -151,7 +151,7 @@ const ParabolicDishPoleHeightInput = ({ setDialogVisible }: { setDialogVisible: 
           }
           if (rejectRef.current) {
             rejectedValue.current = value;
-            setInputPoleHeight(parabolicDish.poleHeight);
+            inputPoleHeightRef.current = parabolicDish.poleHeight;
           } else {
             const oldPoleHeightsAboveFoundation = new Map<string, number>();
             for (const elem of elements) {
@@ -192,7 +192,7 @@ const ParabolicDishPoleHeightInput = ({ setDialogVisible }: { setDialogVisible: 
         rejectRef.current = 0.5 * parabolicDish.lx * Math.abs(Math.sin(parabolicDish.tiltAngle)) > value;
         if (rejectRef.current) {
           rejectedValue.current = value;
-          setInputPoleHeight(oldPoleHeight);
+          inputPoleHeightRef.current = oldPoleHeight;
         } else {
           const undoableChange = {
             name: 'Set Parabolic Dish Pole Height',
@@ -230,7 +230,7 @@ const ParabolicDishPoleHeightInput = ({ setDialogVisible }: { setDialogVisible: 
   };
 
   const close = () => {
-    setInputPoleHeight(parabolicDish.poleHeight);
+    inputPoleHeightRef.current = parabolicDish.poleHeight;
     rejectRef.current = false;
     setDialogVisible(false);
   };
@@ -241,7 +241,7 @@ const ParabolicDishPoleHeightInput = ({ setDialogVisible }: { setDialogVisible: 
   };
 
   const ok = () => {
-    setPoleHeight(inputPoleHeight);
+    setPoleHeight(inputPoleHeightRef.current);
     if (!rejectRef.current) {
       setDialogVisible(false);
       setApplyCount(0);
@@ -273,7 +273,7 @@ const ParabolicDishPoleHeightInput = ({ setDialogVisible }: { setDialogVisible: 
           <Button
             key="Apply"
             onClick={() => {
-              setPoleHeight(inputPoleHeight);
+              setPoleHeight(inputPoleHeightRef.current);
             }}
           >
             {i18n.t('word.Apply', lang)}
@@ -303,9 +303,11 @@ const ParabolicDishPoleHeightInput = ({ setDialogVisible }: { setDialogVisible: 
               style={{ width: 120 }}
               step={0.1}
               precision={2}
-              value={inputPoleHeight}
-              formatter={(a) => Number(a).toFixed(2)}
-              onChange={(value) => setInputPoleHeight(value)}
+              value={inputPoleHeightRef.current}
+              onChange={(value) => {
+                inputPoleHeightRef.current = value;
+                setUpdateFlag(!updateFlag);
+              }}
               onPressEnter={ok}
             />
             <div style={{ paddingTop: '20px', textAlign: 'left', fontSize: '11px' }}>

@@ -29,17 +29,17 @@ const ParabolicDishOpticalEfficiencyInput = ({ setDialogVisible }: { setDialogVi
   const setApplyCount = useStore(Selector.setApplyCount);
   const revertApply = useStore(Selector.revertApply);
 
-  const [inputOpticalEfficiency, setInputOpticalEfficiency] = useState<number>(parabolicDish?.opticalEfficiency ?? 0.7);
   const [updateFlag, setUpdateFlag] = useState<boolean>(false);
   const [dragEnabled, setDragEnabled] = useState<boolean>(false);
   const [bounds, setBounds] = useState<DraggableBounds>({ left: 0, top: 0, bottom: 0, right: 0 } as DraggableBounds);
   const dragRef = useRef<HTMLDivElement | null>(null);
+  const inputOpticalEfficiencyRef = useRef<number>(parabolicDish?.opticalEfficiency ?? 0.7);
 
   const lang = { lng: language };
 
   useEffect(() => {
     if (parabolicDish) {
-      setInputOpticalEfficiency(parabolicDish.opticalEfficiency);
+      inputOpticalEfficiencyRef.current = parabolicDish.opticalEfficiency;
     }
   }, [parabolicDish]);
 
@@ -179,7 +179,7 @@ const ParabolicDishOpticalEfficiencyInput = ({ setDialogVisible }: { setDialogVi
   };
 
   const close = () => {
-    setInputOpticalEfficiency(parabolicDish.opticalEfficiency);
+    inputOpticalEfficiencyRef.current = parabolicDish.opticalEfficiency;
     setDialogVisible(false);
   };
 
@@ -189,7 +189,7 @@ const ParabolicDishOpticalEfficiencyInput = ({ setDialogVisible }: { setDialogVi
   };
 
   const ok = () => {
-    setOpticalEfficiency(inputOpticalEfficiency);
+    setOpticalEfficiency(inputOpticalEfficiencyRef.current);
     setDialogVisible(false);
     setApplyCount(0);
   };
@@ -212,7 +212,7 @@ const ParabolicDishOpticalEfficiencyInput = ({ setDialogVisible }: { setDialogVi
           <Button
             key="Apply"
             onClick={() => {
-              setOpticalEfficiency(inputOpticalEfficiency);
+              setOpticalEfficiency(inputOpticalEfficiencyRef.current);
             }}
           >
             {i18n.t('word.Apply', lang)}
@@ -241,10 +241,12 @@ const ParabolicDishOpticalEfficiencyInput = ({ setDialogVisible }: { setDialogVi
               max={1}
               style={{ width: 120 }}
               precision={2}
-              value={inputOpticalEfficiency}
               step={0.01}
-              formatter={(a) => Number(a).toFixed(2)}
-              onChange={(value) => setInputOpticalEfficiency(value)}
+              value={inputOpticalEfficiencyRef.current}
+              onChange={(value) => {
+                inputOpticalEfficiencyRef.current = value;
+                setUpdateFlag(!updateFlag);
+              }}
               onPressEnter={ok}
             />
             <div style={{ paddingTop: '20px', textAlign: 'left', fontSize: '11px' }}>

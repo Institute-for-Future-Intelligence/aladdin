@@ -27,17 +27,17 @@ const WallHeightInput = ({ setDialogVisible }: { setDialogVisible: (b: boolean) 
   const setApplyCount = useStore(Selector.setApplyCount);
   const revertApply = useStore(Selector.revertApply);
 
-  const [inputHeight, setInputHeight] = useState<number>(wall?.lz ?? 0);
   const [updateFlag, setUpdateFlag] = useState<boolean>(false);
   const [dragEnabled, setDragEnabled] = useState<boolean>(false);
   const [bounds, setBounds] = useState<DraggableBounds>({ left: 0, top: 0, bottom: 0, right: 0 } as DraggableBounds);
   const dragRef = useRef<HTMLDivElement | null>(null);
+  const inputHeightRef = useRef<number>(wall?.lz ?? 0);
 
   const lang = { lng: language };
 
   useEffect(() => {
     if (wall) {
-      setInputHeight(wall.lz);
+      inputHeightRef.current = wall.lz;
     }
   }, [wall]);
 
@@ -146,7 +146,7 @@ const WallHeightInput = ({ setDialogVisible }: { setDialogVisible: (b: boolean) 
   };
 
   const close = () => {
-    setInputHeight(wall.lz);
+    inputHeightRef.current = wall.lz;
     setDialogVisible(false);
   };
 
@@ -156,7 +156,7 @@ const WallHeightInput = ({ setDialogVisible }: { setDialogVisible: (b: boolean) 
   };
 
   const ok = () => {
-    setHeight(inputHeight);
+    setHeight(inputHeightRef.current);
     setDialogVisible(false);
     setApplyCount(0);
   };
@@ -179,7 +179,7 @@ const WallHeightInput = ({ setDialogVisible }: { setDialogVisible: (b: boolean) 
           <Button
             key="Apply"
             onClick={() => {
-              setHeight(inputHeight);
+              setHeight(inputHeightRef.current);
             }}
           >
             {i18n.t('word.Apply', lang)}
@@ -209,9 +209,11 @@ const WallHeightInput = ({ setDialogVisible }: { setDialogVisible: (b: boolean) 
               style={{ width: 120 }}
               step={0.1}
               precision={2}
-              value={inputHeight}
-              formatter={(a) => Number(a).toFixed(2)}
-              onChange={(value) => setInputHeight(value)}
+              value={inputHeightRef.current}
+              onChange={(value) => {
+                inputHeightRef.current = value;
+                setUpdateFlag(!updateFlag);
+              }}
               onPressEnter={ok}
             />
             <div style={{ paddingTop: '20px', textAlign: 'left', fontSize: '11px' }}>

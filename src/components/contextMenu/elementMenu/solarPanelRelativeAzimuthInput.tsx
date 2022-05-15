@@ -436,10 +436,10 @@ const SolarPanelRelativeAzimuthInput = ({ setDialogVisible }: { setDialogVisible
               min={-180}
               max={180}
               style={{ width: 120 }}
-              precision={1}
+              precision={2}
+              step={1}
               // make sure that we round up the number as toDegrees may cause things like .999999999
               value={parseFloat(Util.toDegrees(inputRelativeAzimuthRef.current).toFixed(2))}
-              step={1}
               formatter={(value) => `${value}°`}
               onChange={(value) => {
                 inputRelativeAzimuthRef.current = Util.toRadians(value);

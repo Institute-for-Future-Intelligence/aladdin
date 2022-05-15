@@ -31,19 +31,19 @@ const FresnelReflectorModuleLengthInput = ({ setDialogVisible }: { setDialogVisi
   const setApplyCount = useStore(Selector.setApplyCount);
   const revertApply = useStore(Selector.revertApply);
 
-  const [inputModuleLength, setInputModuleLength] = useState<number>(fresnelReflector?.moduleLength ?? 3);
   const [updateFlag, setUpdateFlag] = useState<boolean>(false);
   const [dragEnabled, setDragEnabled] = useState<boolean>(false);
   const [bounds, setBounds] = useState<DraggableBounds>({ left: 0, top: 0, bottom: 0, right: 0 } as DraggableBounds);
   const dragRef = useRef<HTMLDivElement | null>(null);
   const rejectRef = useRef<boolean>(false);
   const rejectedValue = useRef<number | undefined>();
+  const inputModuleLengthRef = useRef<number>(fresnelReflector?.moduleLength ?? 3);
 
   const lang = { lng: language };
 
   useEffect(() => {
     if (fresnelReflector) {
-      setInputModuleLength(fresnelReflector.moduleLength);
+      inputModuleLengthRef.current = fresnelReflector.moduleLength;
     }
   }, [fresnelReflector]);
 
@@ -122,7 +122,7 @@ const FresnelReflectorModuleLengthInput = ({ setDialogVisible }: { setDialogVisi
         }
         if (rejectRef.current) {
           rejectedValue.current = value;
-          setInputModuleLength(fresnelReflector.moduleLength);
+          inputModuleLengthRef.current = fresnelReflector.moduleLength;
         } else {
           const oldModuleLengthsAll = new Map<string, number>();
           for (const elem of elements) {
@@ -162,7 +162,7 @@ const FresnelReflectorModuleLengthInput = ({ setDialogVisible }: { setDialogVisi
           }
           if (rejectRef.current) {
             rejectedValue.current = value;
-            setInputModuleLength(fresnelReflector.moduleLength);
+            inputModuleLengthRef.current = fresnelReflector.moduleLength;
           } else {
             const oldModuleLengthsAboveFoundation = new Map<string, number>();
             for (const elem of elements) {
@@ -204,7 +204,7 @@ const FresnelReflectorModuleLengthInput = ({ setDialogVisible }: { setDialogVisi
         rejectRef.current = rejectChange(fresnelReflector, value);
         if (rejectRef.current) {
           rejectedValue.current = value;
-          setInputModuleLength(oldModuleLength);
+          inputModuleLengthRef.current = oldModuleLength;
         } else {
           const undoableChange = {
             name: 'Set Fresnel Reflector Module Length',
@@ -242,7 +242,7 @@ const FresnelReflectorModuleLengthInput = ({ setDialogVisible }: { setDialogVisi
   };
 
   const close = () => {
-    setInputModuleLength(fresnelReflector.moduleLength);
+    inputModuleLengthRef.current = fresnelReflector.moduleLength;
     rejectRef.current = false;
     setDialogVisible(false);
   };
@@ -253,7 +253,7 @@ const FresnelReflectorModuleLengthInput = ({ setDialogVisible }: { setDialogVisi
   };
 
   const ok = () => {
-    setModuleLength(inputModuleLength);
+    setModuleLength(inputModuleLengthRef.current);
     if (!rejectRef.current) {
       setDialogVisible(false);
       setApplyCount(0);
@@ -285,7 +285,7 @@ const FresnelReflectorModuleLengthInput = ({ setDialogVisible }: { setDialogVisi
           <Button
             key="Apply"
             onClick={() => {
-              setModuleLength(inputModuleLength);
+              setModuleLength(inputModuleLengthRef.current);
             }}
           >
             {i18n.t('word.Apply', lang)}
@@ -315,9 +315,11 @@ const FresnelReflectorModuleLengthInput = ({ setDialogVisible }: { setDialogVisi
               step={0.5}
               style={{ width: 120 }}
               precision={2}
-              value={inputModuleLength}
-              formatter={(a) => Number(a).toFixed(2)}
-              onChange={(value) => setInputModuleLength(value)}
+              value={inputModuleLengthRef.current}
+              onChange={(value) => {
+                inputModuleLengthRef.current = value;
+                setUpdateFlag(!updateFlag);
+              }}
               onPressEnter={ok}
             />
             <div style={{ paddingTop: '20px', textAlign: 'left', fontSize: '11px' }}>

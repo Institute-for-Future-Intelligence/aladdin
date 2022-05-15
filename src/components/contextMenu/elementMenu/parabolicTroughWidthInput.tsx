@@ -34,19 +34,19 @@ const ParabolicTroughWidthInput = ({ setDialogVisible }: { setDialogVisible: (b:
   const setApplyCount = useStore(Selector.setApplyCount);
   const revertApply = useStore(Selector.revertApply);
 
-  const [inputWidth, setInputWidth] = useState<number>(parabolicTrough?.lx ?? 2);
   const [updateFlag, setUpdateFlag] = useState<boolean>(false);
   const [dragEnabled, setDragEnabled] = useState<boolean>(false);
   const [bounds, setBounds] = useState<DraggableBounds>({ left: 0, top: 0, bottom: 0, right: 0 } as DraggableBounds);
   const dragRef = useRef<HTMLDivElement | null>(null);
   const rejectRef = useRef<boolean>(false);
   const rejectedValue = useRef<number | undefined>();
+  const inputWidthRef = useRef<number>(parabolicTrough?.lx ?? 2);
 
   const lang = { lng: language };
 
   useEffect(() => {
     if (parabolicTrough) {
-      setInputWidth(parabolicTrough.lx);
+      inputWidthRef.current = parabolicTrough.lx;
     }
   }, [parabolicTrough]);
 
@@ -121,7 +121,7 @@ const ParabolicTroughWidthInput = ({ setDialogVisible }: { setDialogVisible: (b:
         }
         if (rejectRef.current) {
           rejectedValue.current = value;
-          setInputWidth(parabolicTrough.lx);
+          inputWidthRef.current = parabolicTrough.lx;
         } else {
           const oldWidthsAll = new Map<string, number>();
           for (const elem of elements) {
@@ -161,7 +161,7 @@ const ParabolicTroughWidthInput = ({ setDialogVisible }: { setDialogVisible: (b:
           }
           if (rejectRef.current) {
             rejectedValue.current = value;
-            setInputWidth(parabolicTrough.lx);
+            inputWidthRef.current = parabolicTrough.lx;
           } else {
             const oldWidthsAboveFoundation = new Map<string, number>();
             for (const elem of elements) {
@@ -202,7 +202,7 @@ const ParabolicTroughWidthInput = ({ setDialogVisible }: { setDialogVisible: (b:
         rejectRef.current = rejectChange(parabolicTrough, value);
         if (rejectRef.current) {
           rejectedValue.current = value;
-          setInputWidth(oldWidth);
+          inputWidthRef.current = oldWidth;
         } else {
           const undoableChange = {
             name: 'Set Parabolic Trough Width',
@@ -240,7 +240,7 @@ const ParabolicTroughWidthInput = ({ setDialogVisible }: { setDialogVisible: (b:
   };
 
   const close = () => {
-    setInputWidth(parabolicTrough.lx);
+    inputWidthRef.current = parabolicTrough.lx;
     rejectRef.current = false;
     setDialogVisible(false);
   };
@@ -251,7 +251,7 @@ const ParabolicTroughWidthInput = ({ setDialogVisible }: { setDialogVisible: (b:
   };
 
   const ok = () => {
-    setWidth(inputWidth);
+    setWidth(inputWidthRef.current);
     if (!rejectRef.current) {
       setDialogVisible(false);
       setApplyCount(0);
@@ -284,7 +284,7 @@ const ParabolicTroughWidthInput = ({ setDialogVisible }: { setDialogVisible: (b:
           <Button
             key="Apply"
             onClick={() => {
-              setWidth(inputWidth);
+              setWidth(inputWidthRef.current);
             }}
           >
             {i18n.t('word.Apply', lang)}
@@ -312,11 +312,13 @@ const ParabolicTroughWidthInput = ({ setDialogVisible }: { setDialogVisible: (b:
               min={1}
               max={10}
               step={0.5}
-              style={{ width: 120 }}
               precision={2}
-              value={inputWidth}
-              formatter={(a) => Number(a).toFixed(2)}
-              onChange={(value) => setInputWidth(value)}
+              style={{ width: 120 }}
+              value={inputWidthRef.current}
+              onChange={(value) => {
+                inputWidthRef.current = value;
+                setUpdateFlag(!updateFlag);
+              }}
               onPressEnter={ok}
             />
             <div style={{ paddingTop: '20px', textAlign: 'left', fontSize: '11px' }}>

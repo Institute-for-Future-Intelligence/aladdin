@@ -30,19 +30,17 @@ const SolarAbsorberPipeOpticalEfficiencyInput = ({ setDialogVisible }: { setDial
 
   const absorberPipe = foundation?.solarAbsorberPipe;
 
-  const [inputOpticalEfficiency, setInputOpticalEfficiency] = useState<number>(
-    absorberPipe?.absorberOpticalEfficiency ?? 0.7,
-  );
   const [updateFlag, setUpdateFlag] = useState<boolean>(false);
   const [dragEnabled, setDragEnabled] = useState<boolean>(false);
   const [bounds, setBounds] = useState<DraggableBounds>({ left: 0, top: 0, bottom: 0, right: 0 } as DraggableBounds);
   const dragRef = useRef<HTMLDivElement | null>(null);
+  const inputOpticalEfficiencyRef = useRef<number>(absorberPipe?.absorberOpticalEfficiency ?? 0.7);
 
   const lang = { lng: language };
 
   useEffect(() => {
     if (absorberPipe) {
-      setInputOpticalEfficiency(absorberPipe.absorberOpticalEfficiency ?? 0.7);
+      inputOpticalEfficiencyRef.current = absorberPipe.absorberOpticalEfficiency ?? 0.7;
     }
   }, [foundation]);
 
@@ -153,7 +151,7 @@ const SolarAbsorberPipeOpticalEfficiencyInput = ({ setDialogVisible }: { setDial
   };
 
   const close = () => {
-    setInputOpticalEfficiency(absorberPipe?.absorberOpticalEfficiency ?? 0.7);
+    inputOpticalEfficiencyRef.current = absorberPipe?.absorberOpticalEfficiency ?? 0.7;
     setDialogVisible(false);
   };
 
@@ -163,7 +161,7 @@ const SolarAbsorberPipeOpticalEfficiencyInput = ({ setDialogVisible }: { setDial
   };
 
   const ok = () => {
-    setOpticalEfficiency(inputOpticalEfficiency);
+    setOpticalEfficiency(inputOpticalEfficiencyRef.current);
     setDialogVisible(false);
     setApplyCount(0);
   };
@@ -186,7 +184,7 @@ const SolarAbsorberPipeOpticalEfficiencyInput = ({ setDialogVisible }: { setDial
           <Button
             key="Apply"
             onClick={() => {
-              setOpticalEfficiency(inputOpticalEfficiency);
+              setOpticalEfficiency(inputOpticalEfficiencyRef.current);
             }}
           >
             {i18n.t('word.Apply', lang)}
@@ -216,9 +214,11 @@ const SolarAbsorberPipeOpticalEfficiencyInput = ({ setDialogVisible }: { setDial
               style={{ width: 120 }}
               step={0.01}
               precision={2}
-              value={inputOpticalEfficiency}
-              formatter={(a) => Number(a).toFixed(2)}
-              onChange={(value) => setInputOpticalEfficiency(value)}
+              value={inputOpticalEfficiencyRef.current}
+              onChange={(value) => {
+                inputOpticalEfficiencyRef.current = value;
+                setUpdateFlag(!updateFlag);
+              }}
               onPressEnter={ok}
             />
             <div style={{ paddingTop: '20px', textAlign: 'left', fontSize: '11px' }}>

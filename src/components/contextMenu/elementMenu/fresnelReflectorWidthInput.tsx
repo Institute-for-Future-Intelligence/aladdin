@@ -34,19 +34,19 @@ const FresnelReflectorWidthInput = ({ setDialogVisible }: { setDialogVisible: (b
   const setApplyCount = useStore(Selector.setApplyCount);
   const revertApply = useStore(Selector.revertApply);
 
-  const [inputWidth, setInputWidth] = useState<number>(fresnelReflector?.lx ?? 2);
   const [updateFlag, setUpdateFlag] = useState<boolean>(false);
   const [dragEnabled, setDragEnabled] = useState<boolean>(false);
   const [bounds, setBounds] = useState<DraggableBounds>({ left: 0, top: 0, bottom: 0, right: 0 } as DraggableBounds);
   const dragRef = useRef<HTMLDivElement | null>(null);
   const rejectRef = useRef<boolean>(false);
   const rejectedValue = useRef<number | undefined>();
+  const inputWidthRef = useRef<number>(fresnelReflector?.lx ?? 2);
 
   const lang = { lng: language };
 
   useEffect(() => {
     if (fresnelReflector) {
-      setInputWidth(fresnelReflector.lx);
+      inputWidthRef.current = fresnelReflector.lx;
     }
   }, [fresnelReflector]);
 
@@ -125,7 +125,7 @@ const FresnelReflectorWidthInput = ({ setDialogVisible }: { setDialogVisible: (b
         }
         if (rejectRef.current) {
           rejectedValue.current = value;
-          setInputWidth(fresnelReflector.lx);
+          inputWidthRef.current = fresnelReflector.lx;
         } else {
           const oldWidthsAll = new Map<string, number>();
           for (const elem of elements) {
@@ -165,7 +165,7 @@ const FresnelReflectorWidthInput = ({ setDialogVisible }: { setDialogVisible: (b
           }
           if (rejectRef.current) {
             rejectedValue.current = value;
-            setInputWidth(fresnelReflector.lx);
+            inputWidthRef.current = fresnelReflector.lx;
           } else {
             const oldWidthsAboveFoundation = new Map<string, number>();
             for (const elem of elements) {
@@ -207,7 +207,7 @@ const FresnelReflectorWidthInput = ({ setDialogVisible }: { setDialogVisible: (b
         rejectRef.current = rejectChange(fresnelReflector, value);
         if (rejectRef.current) {
           rejectedValue.current = value;
-          setInputWidth(oldWidth);
+          inputWidthRef.current = oldWidth;
         } else {
           const undoableChange = {
             name: 'Set Fresnel Reflector Width',
@@ -245,7 +245,7 @@ const FresnelReflectorWidthInput = ({ setDialogVisible }: { setDialogVisible: (b
   };
 
   const close = () => {
-    setInputWidth(fresnelReflector.lx);
+    inputWidthRef.current = fresnelReflector.lx;
     rejectRef.current = false;
     setDialogVisible(false);
   };
@@ -256,7 +256,7 @@ const FresnelReflectorWidthInput = ({ setDialogVisible }: { setDialogVisible: (b
   };
 
   const ok = () => {
-    setWidth(inputWidth);
+    setWidth(inputWidthRef.current);
     if (!rejectRef.current) {
       setDialogVisible(false);
       setApplyCount(0);
@@ -289,7 +289,7 @@ const FresnelReflectorWidthInput = ({ setDialogVisible }: { setDialogVisible: (b
           <Button
             key="Apply"
             onClick={() => {
-              setWidth(inputWidth);
+              setWidth(inputWidthRef.current);
             }}
           >
             {i18n.t('word.Apply', lang)}
@@ -319,9 +319,11 @@ const FresnelReflectorWidthInput = ({ setDialogVisible }: { setDialogVisible: (b
               step={0.5}
               style={{ width: 120 }}
               precision={2}
-              value={inputWidth}
-              formatter={(a) => Number(a).toFixed(2)}
-              onChange={(value) => setInputWidth(value)}
+              value={inputWidthRef.current}
+              onChange={(value) => {
+                inputWidthRef.current = value;
+                setUpdateFlag(!updateFlag);
+              }}
               onPressEnter={ok}
             />
             <div style={{ paddingTop: '20px', textAlign: 'left', fontSize: '11px' }}>

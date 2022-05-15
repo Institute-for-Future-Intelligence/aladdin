@@ -28,21 +28,20 @@ const SolarUpdraftTowerChimneyRadiusInput = ({ setDialogVisible }: { setDialogVi
   const setApplyCount = useStore(Selector.setApplyCount);
   const revertApply = useStore(Selector.revertApply);
 
-  const [inputChimneyRadius, setInputChimneyRadius] = useState<number>(
-    foundation?.solarUpdraftTower?.chimneyRadius ?? Math.max(1, 0.025 * Math.min(foundation?.lx, foundation?.ly)),
-  );
   const [updateFlag, setUpdateFlag] = useState<boolean>(false);
   const [dragEnabled, setDragEnabled] = useState<boolean>(false);
   const [bounds, setBounds] = useState<DraggableBounds>({ left: 0, top: 0, bottom: 0, right: 0 } as DraggableBounds);
   const dragRef = useRef<HTMLDivElement | null>(null);
+  const inputChimneyRadiusRef = useRef<number>(
+    foundation?.solarUpdraftTower?.chimneyRadius ?? Math.max(1, 0.025 * Math.min(foundation?.lx, foundation?.ly)),
+  );
 
   const lang = { lng: language };
 
   useEffect(() => {
     if (foundation) {
-      setInputChimneyRadius(
-        foundation.solarUpdraftTower?.chimneyRadius ?? Math.max(1, 0.025 * Math.min(foundation.lx, foundation.ly)),
-      );
+      inputChimneyRadiusRef.current =
+        foundation.solarUpdraftTower?.chimneyRadius ?? Math.max(1, 0.025 * Math.min(foundation.lx, foundation.ly));
     }
   }, [foundation]);
 
@@ -161,9 +160,8 @@ const SolarUpdraftTowerChimneyRadiusInput = ({ setDialogVisible }: { setDialogVi
   };
 
   const close = () => {
-    setInputChimneyRadius(
-      foundation?.solarUpdraftTower?.chimneyRadius ?? Math.max(1, 0.025 * Math.min(foundation.lx, foundation.ly)),
-    );
+    inputChimneyRadiusRef.current =
+      foundation?.solarUpdraftTower?.chimneyRadius ?? Math.max(1, 0.025 * Math.min(foundation.lx, foundation.ly));
     setDialogVisible(false);
   };
 
@@ -173,7 +171,7 @@ const SolarUpdraftTowerChimneyRadiusInput = ({ setDialogVisible }: { setDialogVi
   };
 
   const ok = () => {
-    setChimneyRadius(inputChimneyRadius);
+    setChimneyRadius(inputChimneyRadiusRef.current);
     setDialogVisible(false);
     setApplyCount(0);
   };
@@ -196,7 +194,7 @@ const SolarUpdraftTowerChimneyRadiusInput = ({ setDialogVisible }: { setDialogVi
           <Button
             key="Apply"
             onClick={() => {
-              setChimneyRadius(inputChimneyRadius);
+              setChimneyRadius(inputChimneyRadiusRef.current);
             }}
           >
             {i18n.t('word.Apply', lang)}
@@ -225,10 +223,12 @@ const SolarUpdraftTowerChimneyRadiusInput = ({ setDialogVisible }: { setDialogVi
               max={10}
               style={{ width: 120 }}
               step={1}
-              precision={1}
-              value={inputChimneyRadius}
-              formatter={(a) => Number(a).toFixed(1)}
-              onChange={(value) => setInputChimneyRadius(value)}
+              precision={2}
+              value={inputChimneyRadiusRef.current}
+              onChange={(value) => {
+                inputChimneyRadiusRef.current = value;
+                setUpdateFlag(!updateFlag);
+              }}
               onPressEnter={ok}
             />
             <div style={{ paddingTop: '20px', textAlign: 'left', fontSize: '11px' }}>

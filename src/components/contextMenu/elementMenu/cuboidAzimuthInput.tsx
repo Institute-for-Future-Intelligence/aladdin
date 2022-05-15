@@ -29,18 +29,18 @@ const CuboidAzimuthInput = ({ setDialogVisible }: { setDialogVisible: (b: boolea
   const setApplyCount = useStore(Selector.setApplyCount);
   const revertApply = useStore(Selector.revertApply);
 
-  // reverse the sign because rotation angle is positive counterclockwise whereas azimuth is positive clockwise
-  const [inputAzimuth, setInputAzimuth] = useState<number>(-cuboid?.rotation[2] ?? 0);
   const [updateFlag, setUpdateFlag] = useState<boolean>(false);
   const [dragEnabled, setDragEnabled] = useState<boolean>(false);
   const [bounds, setBounds] = useState<DraggableBounds>({ left: 0, top: 0, bottom: 0, right: 0 } as DraggableBounds);
   const dragRef = useRef<HTMLDivElement | null>(null);
+  // reverse the sign because rotation angle is positive counterclockwise whereas azimuth is positive clockwise
+  const inputAzimuthRef = useRef<number>(-cuboid?.rotation[2] ?? 0);
 
   const lang = { lng: language };
 
   useEffect(() => {
     if (cuboid) {
-      setInputAzimuth(-cuboid.rotation[2]);
+      inputAzimuthRef.current = -cuboid.rotation[2];
     }
   }, [cuboid]);
 
@@ -137,7 +137,7 @@ const CuboidAzimuthInput = ({ setDialogVisible }: { setDialogVisible: (b: boolea
   };
 
   const close = () => {
-    setInputAzimuth(-cuboid?.rotation[2]);
+    inputAzimuthRef.current = -cuboid?.rotation[2];
     setDialogVisible(false);
   };
 
@@ -147,7 +147,7 @@ const CuboidAzimuthInput = ({ setDialogVisible }: { setDialogVisible: (b: boolea
   };
 
   const ok = () => {
-    setAzimuth(inputAzimuth);
+    setAzimuth(inputAzimuthRef.current);
     setDialogVisible(false);
     setApplyCount(0);
   };
@@ -170,7 +170,7 @@ const CuboidAzimuthInput = ({ setDialogVisible }: { setDialogVisible: (b: boolea
           <Button
             key="Apply"
             onClick={() => {
-              setAzimuth(inputAzimuth);
+              setAzimuth(inputAzimuthRef.current);
             }}
           >
             {i18n.t('word.Apply', lang)}
@@ -199,10 +199,14 @@ const CuboidAzimuthInput = ({ setDialogVisible }: { setDialogVisible: (b: boolea
               max={180}
               style={{ width: 120 }}
               step={0.5}
-              precision={1}
-              value={Util.toDegrees(inputAzimuth)}
-              formatter={(a) => Number(a).toFixed(1) + '°'}
-              onChange={(value) => setInputAzimuth(Util.toRadians(value))}
+              precision={2}
+              // make sure that we round up the number as toDegrees may cause things like .999999999
+              value={parseFloat(Util.toDegrees(inputAzimuthRef.current).toFixed(2))}
+              formatter={(value) => `${value}°`}
+              onChange={(value) => {
+                inputAzimuthRef.current = Util.toRadians(value);
+                setUpdateFlag(!updateFlag);
+              }}
               onPressEnter={ok}
             />
             <div style={{ paddingTop: '20px', textAlign: 'left', fontSize: '11px' }}>

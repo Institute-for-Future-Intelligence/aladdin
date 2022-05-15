@@ -40,11 +40,11 @@ const FoundationLengthInput = ({ setDialogVisible }: { setDialogVisible: (b: boo
   const setApplyCount = useStore(Selector.setApplyCount);
   const revertApply = useStore(Selector.revertApply);
 
-  const [inputLx, setInputLx] = useState<number>(foundation?.lx ?? 0);
   const [updateFlag, setUpdateFlag] = useState<boolean>(false);
   const [dragEnabled, setDragEnabled] = useState<boolean>(false);
   const [bounds, setBounds] = useState<DraggableBounds>({ left: 0, top: 0, bottom: 0, right: 0 } as DraggableBounds);
 
+  const inputLxRef = useRef<number>(foundation?.lx ?? 0);
   const oldChildrenParentIdMapRef = useRef<Map<string, string>>(new Map<string, string>());
   const newChildrenParentIdMapRef = useRef<Map<string, string>>(new Map<string, string>());
   const oldChildrenPositionsMapRef = useRef<Map<string, Vector3>>(new Map<string, Vector3>());
@@ -61,7 +61,7 @@ const FoundationLengthInput = ({ setDialogVisible }: { setDialogVisible: (b: boo
 
   useEffect(() => {
     if (foundation) {
-      setInputLx(foundation.lx);
+      inputLxRef.current = foundation.lx;
     }
   }, [foundation]);
 
@@ -310,7 +310,7 @@ const FoundationLengthInput = ({ setDialogVisible }: { setDialogVisible: (b: boo
     rejectRef.current = rejectChange(value);
     if (rejectRef.current) {
       rejectedValue.current = value;
-      setInputLx(oldLx);
+      inputLxRef.current = oldLx;
     } else {
       oldChildrenPositionsMapRef.current.clear();
       newChildrenPositionsMapRef.current.clear();
@@ -460,7 +460,7 @@ const FoundationLengthInput = ({ setDialogVisible }: { setDialogVisible: (b: boo
   };
 
   const close = () => {
-    setInputLx(foundation?.lx);
+    inputLxRef.current = foundation?.lx;
     rejectRef.current = false;
     setDialogVisible(false);
   };
@@ -471,7 +471,7 @@ const FoundationLengthInput = ({ setDialogVisible }: { setDialogVisible: (b: boo
   };
 
   const ok = () => {
-    setLx(inputLx);
+    setLx(inputLxRef.current);
     if (!rejectRef.current) {
       setDialogVisible(false);
       setApplyCount(0);
@@ -503,7 +503,7 @@ const FoundationLengthInput = ({ setDialogVisible }: { setDialogVisible: (b: boo
           <Button
             key="Apply"
             onClick={() => {
-              setLx(inputLx);
+              setLx(inputLxRef.current);
             }}
           >
             {i18n.t('word.Apply', lang)}
@@ -532,10 +532,12 @@ const FoundationLengthInput = ({ setDialogVisible }: { setDialogVisible: (b: boo
               max={1000}
               style={{ width: 120 }}
               step={0.5}
-              precision={1}
-              value={inputLx}
-              formatter={(a) => Number(a).toFixed(1)}
-              onChange={(value) => setInputLx(value)}
+              precision={2}
+              value={inputLxRef.current}
+              onChange={(value) => {
+                inputLxRef.current = value;
+                setUpdateFlag(!updateFlag);
+              }}
               onPressEnter={ok}
             />
             <div style={{ paddingTop: '20px', textAlign: 'left', fontSize: '11px' }}>

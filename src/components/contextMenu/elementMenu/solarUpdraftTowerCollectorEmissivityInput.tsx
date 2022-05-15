@@ -32,19 +32,17 @@ const SolarUpdraftTowerCollectorEmissivityInput = ({
   const setApplyCount = useStore(Selector.setApplyCount);
   const revertApply = useStore(Selector.revertApply);
 
-  const [inputEmissivity, setInputEmissivity] = useState<number>(
-    foundation?.solarUpdraftTower?.collectorEmissivity ?? 0.95,
-  );
   const [updateFlag, setUpdateFlag] = useState<boolean>(false);
   const [dragEnabled, setDragEnabled] = useState<boolean>(false);
   const [bounds, setBounds] = useState<DraggableBounds>({ left: 0, top: 0, bottom: 0, right: 0 } as DraggableBounds);
   const dragRef = useRef<HTMLDivElement | null>(null);
+  const inputEmissivityRef = useRef<number>(foundation?.solarUpdraftTower?.collectorEmissivity ?? 0.95);
 
   const lang = { lng: language };
 
   useEffect(() => {
     if (foundation) {
-      setInputEmissivity(foundation.solarUpdraftTower?.collectorEmissivity ?? 0.95);
+      inputEmissivityRef.current = foundation.solarUpdraftTower?.collectorEmissivity ?? 0.95;
     }
   }, [foundation]);
 
@@ -159,7 +157,7 @@ const SolarUpdraftTowerCollectorEmissivityInput = ({
   };
 
   const close = () => {
-    setInputEmissivity(foundation?.solarUpdraftTower?.collectorEmissivity ?? 0.95);
+    inputEmissivityRef.current = foundation?.solarUpdraftTower?.collectorEmissivity ?? 0.95;
     setDialogVisible(false);
   };
 
@@ -169,7 +167,7 @@ const SolarUpdraftTowerCollectorEmissivityInput = ({
   };
 
   const ok = () => {
-    setEmissivity(inputEmissivity);
+    setEmissivity(inputEmissivityRef.current);
     setDialogVisible(false);
     setApplyCount(0);
   };
@@ -192,7 +190,7 @@ const SolarUpdraftTowerCollectorEmissivityInput = ({
           <Button
             key="Apply"
             onClick={() => {
-              setEmissivity(inputEmissivity);
+              setEmissivity(inputEmissivityRef.current);
             }}
           >
             {i18n.t('word.Apply', lang)}
@@ -222,9 +220,11 @@ const SolarUpdraftTowerCollectorEmissivityInput = ({
               style={{ width: 120 }}
               step={0.01}
               precision={2}
-              value={inputEmissivity}
-              formatter={(a) => Number(a).toFixed(2)}
-              onChange={(value) => setInputEmissivity(value)}
+              value={inputEmissivityRef.current}
+              onChange={(value) => {
+                inputEmissivityRef.current = value;
+                setUpdateFlag(!updateFlag);
+              }}
               onPressEnter={ok}
             />
             <div style={{ paddingTop: '20px', textAlign: 'left', fontSize: '11px' }}>

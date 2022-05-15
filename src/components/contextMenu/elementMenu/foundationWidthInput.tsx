@@ -40,11 +40,11 @@ const FoundationWidthInput = ({ setDialogVisible }: { setDialogVisible: (b: bool
   const setApplyCount = useStore(Selector.setApplyCount);
   const revertApply = useStore(Selector.revertApply);
 
-  const [inputLy, setInputLy] = useState<number>(foundation?.ly ?? 0);
   const [updateFlag, setUpdateFlag] = useState<boolean>(false);
   const [dragEnabled, setDragEnabled] = useState<boolean>(false);
   const [bounds, setBounds] = useState<DraggableBounds>({ left: 0, top: 0, bottom: 0, right: 0 } as DraggableBounds);
 
+  const inputLyRef = useRef<number>(foundation?.ly ?? 0);
   const oldChildrenParentIdMapRef = useRef<Map<string, string>>(new Map<string, string>());
   const newChildrenParentIdMapRef = useRef<Map<string, string>>(new Map<string, string>());
   const oldChildrenPositionsMapRef = useRef<Map<string, Vector3>>(new Map<string, Vector3>());
@@ -61,7 +61,7 @@ const FoundationWidthInput = ({ setDialogVisible }: { setDialogVisible: (b: bool
 
   useEffect(() => {
     if (foundation) {
-      setInputLy(foundation.ly);
+      inputLyRef.current = foundation.ly;
     }
   }, [foundation]);
 
@@ -311,7 +311,7 @@ const FoundationWidthInput = ({ setDialogVisible }: { setDialogVisible: (b: bool
     rejectRef.current = rejectChange(value);
     if (rejectRef.current) {
       rejectedValue.current = value;
-      setInputLy(oldLy);
+      inputLyRef.current = oldLy;
     } else {
       oldChildrenPositionsMapRef.current.clear();
       newChildrenPositionsMapRef.current.clear();
@@ -461,7 +461,7 @@ const FoundationWidthInput = ({ setDialogVisible }: { setDialogVisible: (b: bool
   };
 
   const close = () => {
-    setInputLy(foundation?.ly);
+    inputLyRef.current = foundation?.ly;
     rejectRef.current = false;
     setDialogVisible(false);
   };
@@ -472,7 +472,7 @@ const FoundationWidthInput = ({ setDialogVisible }: { setDialogVisible: (b: bool
   };
 
   const ok = () => {
-    setLy(inputLy);
+    setLy(inputLyRef.current);
     if (!rejectRef.current) {
       setDialogVisible(false);
       setApplyCount(0);
@@ -504,7 +504,7 @@ const FoundationWidthInput = ({ setDialogVisible }: { setDialogVisible: (b: bool
           <Button
             key="Apply"
             onClick={() => {
-              setLy(inputLy);
+              setLy(inputLyRef.current);
             }}
           >
             {i18n.t('word.Apply', lang)}
@@ -533,10 +533,12 @@ const FoundationWidthInput = ({ setDialogVisible }: { setDialogVisible: (b: bool
               max={1000}
               style={{ width: 120 }}
               step={0.5}
-              precision={1}
-              value={inputLy}
-              formatter={(a) => Number(a).toFixed(1)}
-              onChange={(value) => setInputLy(value)}
+              precision={2}
+              value={inputLyRef.current}
+              onChange={(value) => {
+                inputLyRef.current = value;
+                setUpdateFlag(!updateFlag);
+              }}
               onPressEnter={ok}
             />
             <div style={{ paddingTop: '20px', textAlign: 'left', fontSize: '11px' }}>

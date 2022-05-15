@@ -27,17 +27,17 @@ const WallThicknessInput = ({ setDialogVisible }: { setDialogVisible: (b: boolea
   const setApplyCount = useStore(Selector.setApplyCount);
   const revertApply = useStore(Selector.revertApply);
 
-  const [inputThickness, setInputThickness] = useState<number>(wall?.ly ?? 0.3);
   const [updateFlag, setUpdateFlag] = useState<boolean>(false);
   const [dragEnabled, setDragEnabled] = useState<boolean>(false);
   const [bounds, setBounds] = useState<DraggableBounds>({ left: 0, top: 0, bottom: 0, right: 0 } as DraggableBounds);
   const dragRef = useRef<HTMLDivElement | null>(null);
+  const inputThicknessRef = useRef<number>(wall?.ly ?? 0.3);
 
   const lang = { lng: language };
 
   useEffect(() => {
     if (wall) {
-      setInputThickness(wall?.ly ?? 0.3);
+      inputThicknessRef.current = wall?.ly ?? 0.3;
     }
   }, [wall]);
 
@@ -146,7 +146,7 @@ const WallThicknessInput = ({ setDialogVisible }: { setDialogVisible: (b: boolea
   };
 
   const close = () => {
-    setInputThickness(wall.ly ?? 0.3);
+    inputThicknessRef.current = wall.ly ?? 0.3;
     setDialogVisible(false);
   };
 
@@ -156,7 +156,7 @@ const WallThicknessInput = ({ setDialogVisible }: { setDialogVisible: (b: boolea
   };
 
   const ok = () => {
-    setThickness(inputThickness);
+    setThickness(inputThicknessRef.current);
     setDialogVisible(false);
     setApplyCount(0);
   };
@@ -179,7 +179,7 @@ const WallThicknessInput = ({ setDialogVisible }: { setDialogVisible: (b: boolea
           <Button
             key="Apply"
             onClick={() => {
-              setThickness(inputThickness);
+              setThickness(inputThicknessRef.current);
             }}
           >
             {i18n.t('word.Apply', lang)}
@@ -209,9 +209,11 @@ const WallThicknessInput = ({ setDialogVisible }: { setDialogVisible: (b: boolea
               style={{ width: 120 }}
               step={0.01}
               precision={2}
-              value={inputThickness}
-              formatter={(a) => Number(a).toFixed(2)}
-              onChange={(value) => setInputThickness(value)}
+              value={inputThicknessRef.current}
+              onChange={(value) => {
+                inputThicknessRef.current = value;
+                setUpdateFlag(!updateFlag);
+              }}
               onPressEnter={ok}
             />
             <div style={{ paddingTop: '20px', textAlign: 'left', fontSize: '11px' }}>

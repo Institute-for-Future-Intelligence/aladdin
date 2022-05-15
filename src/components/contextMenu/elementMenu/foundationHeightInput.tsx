@@ -37,12 +37,12 @@ const FoundationHeightInput = ({ setDialogVisible }: { setDialogVisible: (b: boo
   const setApplyCount = useStore(Selector.setApplyCount);
   const revertApply = useStore(Selector.revertApply);
 
-  const [inputLz, setInputLz] = useState<number>(foundation?.lz ?? 0);
   const [updateFlag, setUpdateFlag] = useState<boolean>(false);
   const [dragEnabled, setDragEnabled] = useState<boolean>(false);
   const [bounds, setBounds] = useState<DraggableBounds>({ left: 0, top: 0, bottom: 0, right: 0 } as DraggableBounds);
   const dragRef = useRef<HTMLDivElement | null>(null);
 
+  const inputLzRef = useRef<number>(foundation?.lz ?? 0);
   const oldChildrenParentIdMapRef = useRef<Map<string, string>>(new Map<string, string>());
   const newChildrenParentIdMapRef = useRef<Map<string, string>>(new Map<string, string>());
   const oldChildrenPositionsMapRef = useRef<Map<string, Vector3>>(new Map<string, Vector3>());
@@ -52,7 +52,7 @@ const FoundationHeightInput = ({ setDialogVisible }: { setDialogVisible: (b: boo
 
   useEffect(() => {
     if (foundation) {
-      setInputLz(foundation.lz);
+      inputLzRef.current = foundation.lz;
     }
   }, [foundation]);
 
@@ -308,7 +308,7 @@ const FoundationHeightInput = ({ setDialogVisible }: { setDialogVisible: (b: boo
   };
 
   const close = () => {
-    setInputLz(foundation?.lz);
+    inputLzRef.current = foundation?.lz;
     setDialogVisible(false);
   };
 
@@ -318,7 +318,7 @@ const FoundationHeightInput = ({ setDialogVisible }: { setDialogVisible: (b: boo
   };
 
   const ok = () => {
-    setLz(inputLz);
+    setLz(inputLzRef.current);
     setDialogVisible(false);
     setApplyCount(0);
   };
@@ -341,7 +341,7 @@ const FoundationHeightInput = ({ setDialogVisible }: { setDialogVisible: (b: boo
           <Button
             key="Apply"
             onClick={() => {
-              setLz(inputLz);
+              setLz(inputLzRef.current);
             }}
           >
             {i18n.t('word.Apply', lang)}
@@ -370,10 +370,12 @@ const FoundationHeightInput = ({ setDialogVisible }: { setDialogVisible: (b: boo
               max={10}
               style={{ width: 120 }}
               step={0.1}
-              precision={1}
-              value={inputLz}
-              formatter={(a) => Number(a).toFixed(1)}
-              onChange={(value) => setInputLz(value)}
+              precision={2}
+              value={inputLzRef.current}
+              onChange={(value) => {
+                inputLzRef.current = value;
+                setUpdateFlag(!updateFlag);
+              }}
               onPressEnter={ok}
             />
             <div style={{ paddingTop: '20px', textAlign: 'left', fontSize: '11px' }}>

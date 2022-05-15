@@ -29,19 +29,17 @@ const ParabolicTroughOpticalEfficiencyInput = ({ setDialogVisible }: { setDialog
   const setApplyCount = useStore(Selector.setApplyCount);
   const revertApply = useStore(Selector.revertApply);
 
-  const [inputOpticalEfficiency, setInputOpticalEfficiency] = useState<number>(
-    parabolicTrough?.opticalEfficiency ?? 0.7,
-  );
   const [updateFlag, setUpdateFlag] = useState<boolean>(false);
   const [dragEnabled, setDragEnabled] = useState<boolean>(false);
   const [bounds, setBounds] = useState<DraggableBounds>({ left: 0, top: 0, bottom: 0, right: 0 } as DraggableBounds);
   const dragRef = useRef<HTMLDivElement | null>(null);
+  const inputOpticalEfficiencyRef = useRef<number>(parabolicTrough?.opticalEfficiency ?? 0.7);
 
   const lang = { lng: language };
 
   useEffect(() => {
     if (parabolicTrough) {
-      setInputOpticalEfficiency(parabolicTrough.opticalEfficiency);
+      inputOpticalEfficiencyRef.current = parabolicTrough.opticalEfficiency;
     }
   }, [parabolicTrough]);
 
@@ -181,7 +179,7 @@ const ParabolicTroughOpticalEfficiencyInput = ({ setDialogVisible }: { setDialog
   };
 
   const close = () => {
-    setInputOpticalEfficiency(parabolicTrough.opticalEfficiency);
+    inputOpticalEfficiencyRef.current = parabolicTrough.opticalEfficiency;
     setDialogVisible(false);
   };
 
@@ -191,7 +189,7 @@ const ParabolicTroughOpticalEfficiencyInput = ({ setDialogVisible }: { setDialog
   };
 
   const ok = () => {
-    setOpticalEfficiency(inputOpticalEfficiency);
+    setOpticalEfficiency(inputOpticalEfficiencyRef.current);
     setDialogVisible(false);
     setApplyCount(0);
   };
@@ -214,7 +212,7 @@ const ParabolicTroughOpticalEfficiencyInput = ({ setDialogVisible }: { setDialog
           <Button
             key="Apply"
             onClick={() => {
-              setOpticalEfficiency(inputOpticalEfficiency);
+              setOpticalEfficiency(inputOpticalEfficiencyRef.current);
             }}
           >
             {i18n.t('word.Apply', lang)}
@@ -243,10 +241,12 @@ const ParabolicTroughOpticalEfficiencyInput = ({ setDialogVisible }: { setDialog
               max={1}
               style={{ width: 120 }}
               precision={2}
-              value={inputOpticalEfficiency}
               step={0.01}
-              formatter={(a) => Number(a).toFixed(2)}
-              onChange={(value) => setInputOpticalEfficiency(value)}
+              value={inputOpticalEfficiencyRef.current}
+              onChange={(value) => {
+                inputOpticalEfficiencyRef.current = value;
+                setUpdateFlag(!updateFlag);
+              }}
               onPressEnter={ok}
             />
             <div style={{ paddingTop: '20px', textAlign: 'left', fontSize: '11px' }}>

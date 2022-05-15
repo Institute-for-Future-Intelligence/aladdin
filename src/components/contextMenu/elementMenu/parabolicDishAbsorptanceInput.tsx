@@ -29,17 +29,17 @@ const ParabolicDishAbsorptanceInput = ({ setDialogVisible }: { setDialogVisible:
   const setApplyCount = useStore(Selector.setApplyCount);
   const revertApply = useStore(Selector.revertApply);
 
-  const [inputAbsorptance, setInputAbsorptance] = useState<number>(parabolicDish?.absorptance ?? 0.95);
   const [updateFlag, setUpdateFlag] = useState<boolean>(false);
   const [dragEnabled, setDragEnabled] = useState<boolean>(false);
   const [bounds, setBounds] = useState<DraggableBounds>({ left: 0, top: 0, bottom: 0, right: 0 } as DraggableBounds);
   const dragRef = useRef<HTMLDivElement | null>(null);
+  const inputAbsorptanceRef = useRef<number>(parabolicDish?.absorptance ?? 0.95);
 
   const lang = { lng: language };
 
   useEffect(() => {
     if (parabolicDish) {
-      setInputAbsorptance(parabolicDish.absorptance);
+      inputAbsorptanceRef.current = parabolicDish.absorptance;
     }
   }, [parabolicDish]);
 
@@ -179,7 +179,7 @@ const ParabolicDishAbsorptanceInput = ({ setDialogVisible }: { setDialogVisible:
   };
 
   const close = () => {
-    setInputAbsorptance(parabolicDish.absorptance);
+    inputAbsorptanceRef.current = parabolicDish.absorptance;
     setDialogVisible(false);
   };
 
@@ -189,7 +189,7 @@ const ParabolicDishAbsorptanceInput = ({ setDialogVisible }: { setDialogVisible:
   };
 
   const ok = () => {
-    setAbsorptance(inputAbsorptance);
+    setAbsorptance(inputAbsorptanceRef.current);
     setDialogVisible(false);
     setApplyCount(0);
   };
@@ -212,7 +212,7 @@ const ParabolicDishAbsorptanceInput = ({ setDialogVisible }: { setDialogVisible:
           <Button
             key="Apply"
             onClick={() => {
-              setAbsorptance(inputAbsorptance);
+              setAbsorptance(inputAbsorptanceRef.current);
             }}
           >
             {i18n.t('word.Apply', lang)}
@@ -241,10 +241,12 @@ const ParabolicDishAbsorptanceInput = ({ setDialogVisible }: { setDialogVisible:
               max={1}
               style={{ width: 120 }}
               precision={2}
-              value={inputAbsorptance}
               step={0.01}
-              formatter={(a) => Number(a).toFixed(2)}
-              onChange={(value) => setInputAbsorptance(value)}
+              value={inputAbsorptanceRef.current}
+              onChange={(value) => {
+                inputAbsorptanceRef.current = value;
+                setUpdateFlag(!updateFlag);
+              }}
               onPressEnter={ok}
             />
             <div style={{ paddingTop: '20px', textAlign: 'left', fontSize: '11px' }}>

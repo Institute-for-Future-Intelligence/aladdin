@@ -34,19 +34,19 @@ const FresnelReflectorLengthInput = ({ setDialogVisible }: { setDialogVisible: (
   const setApplyCount = useStore(Selector.setApplyCount);
   const revertApply = useStore(Selector.revertApply);
 
-  const [inputLength, setInputLength] = useState<number>(fresnelReflector?.ly ?? 9);
   const [updateFlag, setUpdateFlag] = useState<boolean>(false);
   const [dragEnabled, setDragEnabled] = useState<boolean>(false);
   const [bounds, setBounds] = useState<DraggableBounds>({ left: 0, top: 0, bottom: 0, right: 0 } as DraggableBounds);
   const dragRef = useRef<HTMLDivElement | null>(null);
   const rejectRef = useRef<boolean>(false);
   const rejectedValue = useRef<number | undefined>();
+  const inputLengthRef = useRef<number>(fresnelReflector?.ly ?? 9);
 
   const lang = { lng: language };
 
   useEffect(() => {
     if (fresnelReflector) {
-      setInputLength(fresnelReflector.ly);
+      inputLengthRef.current = fresnelReflector.ly;
     }
   }, [fresnelReflector]);
 
@@ -125,7 +125,7 @@ const FresnelReflectorLengthInput = ({ setDialogVisible }: { setDialogVisible: (
         }
         if (rejectRef.current) {
           rejectedValue.current = value;
-          setInputLength(fresnelReflector.ly);
+          inputLengthRef.current = fresnelReflector.ly;
         } else {
           const oldLengthsAll = new Map<string, number>();
           for (const elem of elements) {
@@ -165,7 +165,7 @@ const FresnelReflectorLengthInput = ({ setDialogVisible }: { setDialogVisible: (
           }
           if (rejectRef.current) {
             rejectedValue.current = value;
-            setInputLength(fresnelReflector.ly);
+            inputLengthRef.current = fresnelReflector.ly;
           } else {
             const oldLengthsAboveFoundation = new Map<string, number>();
             for (const elem of elements) {
@@ -207,7 +207,7 @@ const FresnelReflectorLengthInput = ({ setDialogVisible }: { setDialogVisible: (
         rejectRef.current = rejectChange(fresnelReflector, value);
         if (rejectRef.current) {
           rejectedValue.current = value;
-          setInputLength(oldLength);
+          inputLengthRef.current = oldLength;
         } else {
           const undoableChange = {
             name: 'Set Fresnel Reflector Length',
@@ -245,7 +245,7 @@ const FresnelReflectorLengthInput = ({ setDialogVisible }: { setDialogVisible: (
   };
 
   const close = () => {
-    setInputLength(fresnelReflector.ly);
+    inputLengthRef.current = fresnelReflector.ly;
     rejectRef.current = false;
     setDialogVisible(false);
   };
@@ -256,7 +256,7 @@ const FresnelReflectorLengthInput = ({ setDialogVisible }: { setDialogVisible: (
   };
 
   const ok = () => {
-    setLength(inputLength);
+    setLength(inputLengthRef.current);
     if (!rejectRef.current) {
       setDialogVisible(false);
       setApplyCount(0);
@@ -295,7 +295,7 @@ const FresnelReflectorLengthInput = ({ setDialogVisible }: { setDialogVisible: (
           <Button
             key="Apply"
             onClick={() => {
-              setLength(inputLength);
+              setLength(inputLengthRef.current);
             }}
           >
             {i18n.t('word.Apply', lang)}
@@ -325,9 +325,11 @@ const FresnelReflectorLengthInput = ({ setDialogVisible }: { setDialogVisible: (
               step={fresnelReflector.moduleLength}
               style={{ width: 120 }}
               precision={2}
-              value={inputLength}
-              formatter={(a) => Number(a).toFixed(2)}
-              onChange={(value) => setInputLength(modularize(value))}
+              value={inputLengthRef.current}
+              onChange={(value) => {
+                inputLengthRef.current = modularize(value);
+                setUpdateFlag(!updateFlag);
+              }}
               onPressEnter={ok}
             />
             <div style={{ paddingTop: '20px', textAlign: 'left', fontSize: '11px' }}>
@@ -337,7 +339,7 @@ const FresnelReflectorLengthInput = ({ setDialogVisible }: { setDialogVisible: (
                 ' ' +
                 i18n.t('word.MeterAbbreviation', lang)}
               <br />
-              {Math.round(inputLength / fresnelReflector.moduleLength) +
+              {Math.round(inputLengthRef.current / fresnelReflector.moduleLength) +
                 ' ' +
                 i18n.t('fresnelReflectorMenu.ModulesLong', lang)}
               <br />

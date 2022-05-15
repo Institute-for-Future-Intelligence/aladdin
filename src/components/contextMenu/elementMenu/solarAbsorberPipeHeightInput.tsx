@@ -30,17 +30,17 @@ const SolarAbsorberPipeHeightInput = ({ setDialogVisible }: { setDialogVisible: 
 
   const absorberPipe = foundation?.solarAbsorberPipe;
 
-  const [inputAbsorberHeight, setInputAbsorberHeight] = useState<number>(absorberPipe?.absorberHeight ?? 10);
   const [updateFlag, setUpdateFlag] = useState<boolean>(false);
   const [dragEnabled, setDragEnabled] = useState<boolean>(false);
   const [bounds, setBounds] = useState<DraggableBounds>({ left: 0, top: 0, bottom: 0, right: 0 } as DraggableBounds);
   const dragRef = useRef<HTMLDivElement | null>(null);
+  const inputAbsorberHeightRef = useRef<number>(absorberPipe?.absorberHeight ?? 10);
 
   const lang = { lng: language };
 
   useEffect(() => {
     if (absorberPipe) {
-      setInputAbsorberHeight(absorberPipe.absorberHeight ?? 10);
+      inputAbsorberHeightRef.current = absorberPipe.absorberHeight ?? 10;
     }
   }, [foundation]);
 
@@ -149,7 +149,7 @@ const SolarAbsorberPipeHeightInput = ({ setDialogVisible }: { setDialogVisible: 
   };
 
   const close = () => {
-    setInputAbsorberHeight(absorberPipe?.absorberHeight ?? 10);
+    inputAbsorberHeightRef.current = absorberPipe?.absorberHeight ?? 10;
     setDialogVisible(false);
   };
 
@@ -159,7 +159,7 @@ const SolarAbsorberPipeHeightInput = ({ setDialogVisible }: { setDialogVisible: 
   };
 
   const ok = () => {
-    setAbsorberHeight(inputAbsorberHeight);
+    setAbsorberHeight(inputAbsorberHeightRef.current);
     setDialogVisible(false);
     setApplyCount(0);
   };
@@ -182,7 +182,7 @@ const SolarAbsorberPipeHeightInput = ({ setDialogVisible }: { setDialogVisible: 
           <Button
             key="Apply"
             onClick={() => {
-              setAbsorberHeight(inputAbsorberHeight);
+              setAbsorberHeight(inputAbsorberHeightRef.current);
             }}
           >
             {i18n.t('word.Apply', lang)}
@@ -211,10 +211,12 @@ const SolarAbsorberPipeHeightInput = ({ setDialogVisible }: { setDialogVisible: 
               max={50}
               style={{ width: 120 }}
               step={0.5}
-              precision={1}
-              value={inputAbsorberHeight}
-              formatter={(a) => Number(a).toFixed(1)}
-              onChange={(value) => setInputAbsorberHeight(value)}
+              precision={2}
+              value={inputAbsorberHeightRef.current}
+              onChange={(value) => {
+                inputAbsorberHeightRef.current = value;
+                setUpdateFlag(!updateFlag);
+              }}
               onPressEnter={ok}
             />
             <div style={{ paddingTop: '20px', textAlign: 'left', fontSize: '11px' }}>

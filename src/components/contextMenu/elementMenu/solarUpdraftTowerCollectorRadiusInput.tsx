@@ -28,21 +28,20 @@ const SolarUpdraftTowerCollectorRadiusInput = ({ setDialogVisible }: { setDialog
   const setApplyCount = useStore(Selector.setApplyCount);
   const revertApply = useStore(Selector.revertApply);
 
-  const [inputCollectorRadius, setInputCollectorRadius] = useState<number>(
-    foundation?.solarUpdraftTower?.collectorRadius ?? Math.max(10, 0.5 * Math.min(foundation?.lx, foundation?.ly)),
-  );
   const [updateFlag, setUpdateFlag] = useState<boolean>(false);
   const [dragEnabled, setDragEnabled] = useState<boolean>(false);
   const [bounds, setBounds] = useState<DraggableBounds>({ left: 0, top: 0, bottom: 0, right: 0 } as DraggableBounds);
   const dragRef = useRef<HTMLDivElement | null>(null);
+  const inputCollectorRadiusRef = useRef<number>(
+    foundation?.solarUpdraftTower?.collectorRadius ?? Math.max(10, 0.5 * Math.min(foundation?.lx, foundation?.ly)),
+  );
 
   const lang = { lng: language };
 
   useEffect(() => {
     if (foundation) {
-      setInputCollectorRadius(
-        foundation.solarUpdraftTower?.collectorRadius ?? Math.max(10, 0.5 * Math.min(foundation.lx, foundation.ly)),
-      );
+      inputCollectorRadiusRef.current =
+        foundation.solarUpdraftTower?.collectorRadius ?? Math.max(10, 0.5 * Math.min(foundation.lx, foundation.ly));
     }
   }, [foundation]);
 
@@ -161,9 +160,8 @@ const SolarUpdraftTowerCollectorRadiusInput = ({ setDialogVisible }: { setDialog
   };
 
   const close = () => {
-    setInputCollectorRadius(
-      foundation?.solarUpdraftTower?.collectorRadius ?? Math.max(10, 0.5 * Math.min(foundation.lx, foundation.ly)),
-    );
+    inputCollectorRadiusRef.current =
+      foundation?.solarUpdraftTower?.collectorRadius ?? Math.max(10, 0.5 * Math.min(foundation.lx, foundation.ly));
     setDialogVisible(false);
   };
 
@@ -173,7 +171,7 @@ const SolarUpdraftTowerCollectorRadiusInput = ({ setDialogVisible }: { setDialog
   };
 
   const ok = () => {
-    setCollectorRadius(inputCollectorRadius);
+    setCollectorRadius(inputCollectorRadiusRef.current);
     setDialogVisible(false);
     setApplyCount(0);
   };
@@ -196,7 +194,7 @@ const SolarUpdraftTowerCollectorRadiusInput = ({ setDialogVisible }: { setDialog
           <Button
             key="Apply"
             onClick={() => {
-              setCollectorRadius(inputCollectorRadius);
+              setCollectorRadius(inputCollectorRadiusRef.current);
             }}
           >
             {i18n.t('word.Apply', lang)}
@@ -226,9 +224,11 @@ const SolarUpdraftTowerCollectorRadiusInput = ({ setDialogVisible }: { setDialog
               style={{ width: 120 }}
               step={1}
               precision={1}
-              value={inputCollectorRadius}
-              formatter={(a) => Number(a).toFixed(1)}
-              onChange={(value) => setInputCollectorRadius(value)}
+              value={inputCollectorRadiusRef.current}
+              onChange={(value) => {
+                inputCollectorRadiusRef.current = value;
+                setUpdateFlag(!updateFlag);
+              }}
               onPressEnter={ok}
             />
             <div style={{ paddingTop: '20px', textAlign: 'left', fontSize: '11px' }}>

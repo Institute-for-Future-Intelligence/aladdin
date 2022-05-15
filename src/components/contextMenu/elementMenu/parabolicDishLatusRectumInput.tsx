@@ -31,19 +31,19 @@ const ParabolicDishLatusRectumInput = ({ setDialogVisible }: { setDialogVisible:
   const setApplyCount = useStore(Selector.setApplyCount);
   const revertApply = useStore(Selector.revertApply);
 
-  const [inputLatusRectum, setInputLatusRectum] = useState<number>(parabolicDish?.latusRectum ?? 2);
   const [updateFlag, setUpdateFlag] = useState<boolean>(false);
   const [dragEnabled, setDragEnabled] = useState<boolean>(false);
   const [bounds, setBounds] = useState<DraggableBounds>({ left: 0, top: 0, bottom: 0, right: 0 } as DraggableBounds);
   const dragRef = useRef<HTMLDivElement | null>(null);
   const rejectRef = useRef<boolean>(false);
   const rejectedValue = useRef<number | undefined>();
+  const inputLatusRectumRef = useRef<number>(parabolicDish?.latusRectum ?? 2);
 
   const lang = { lng: language };
 
   useEffect(() => {
     if (parabolicDish) {
-      setInputLatusRectum(parabolicDish.latusRectum);
+      inputLatusRectumRef.current = parabolicDish.latusRectum;
     }
   }, [parabolicDish]);
 
@@ -118,7 +118,7 @@ const ParabolicDishLatusRectumInput = ({ setDialogVisible }: { setDialogVisible:
         }
         if (rejectRef.current) {
           rejectedValue.current = value;
-          setInputLatusRectum(parabolicDish.latusRectum);
+          inputLatusRectumRef.current = parabolicDish.latusRectum;
         } else {
           const oldLatusRectumsAll = new Map<string, number>();
           for (const elem of elements) {
@@ -158,7 +158,7 @@ const ParabolicDishLatusRectumInput = ({ setDialogVisible }: { setDialogVisible:
           }
           if (rejectRef.current) {
             rejectedValue.current = value;
-            setInputLatusRectum(parabolicDish.latusRectum);
+            inputLatusRectumRef.current = parabolicDish.latusRectum;
           } else {
             const oldLatusRectumsAboveFoundation = new Map<string, number>();
             for (const elem of elements) {
@@ -199,7 +199,7 @@ const ParabolicDishLatusRectumInput = ({ setDialogVisible }: { setDialogVisible:
         rejectRef.current = rejectChange(parabolicDish, value);
         if (rejectRef.current) {
           rejectedValue.current = value;
-          setInputLatusRectum(oldLatusRectum);
+          inputLatusRectumRef.current = oldLatusRectum;
         } else {
           const undoableChange = {
             name: 'Set Parabolic Dish Latus Rectum',
@@ -237,7 +237,7 @@ const ParabolicDishLatusRectumInput = ({ setDialogVisible }: { setDialogVisible:
   };
 
   const close = () => {
-    setInputLatusRectum(parabolicDish.latusRectum);
+    inputLatusRectumRef.current = parabolicDish.latusRectum;
     rejectRef.current = false;
     setDialogVisible(false);
   };
@@ -248,7 +248,7 @@ const ParabolicDishLatusRectumInput = ({ setDialogVisible }: { setDialogVisible:
   };
 
   const ok = () => {
-    setLatusRectum(inputLatusRectum);
+    setLatusRectum(inputLatusRectumRef.current);
     if (!rejectRef.current) {
       setDialogVisible(false);
       setApplyCount(0);
@@ -280,7 +280,7 @@ const ParabolicDishLatusRectumInput = ({ setDialogVisible }: { setDialogVisible:
           <Button
             key="Apply"
             onClick={() => {
-              setLatusRectum(inputLatusRectum);
+              setLatusRectum(inputLatusRectumRef.current);
             }}
           >
             {i18n.t('word.Apply', lang)}
@@ -310,9 +310,11 @@ const ParabolicDishLatusRectumInput = ({ setDialogVisible }: { setDialogVisible:
               step={0.5}
               style={{ width: 120 }}
               precision={2}
-              value={inputLatusRectum}
-              formatter={(a) => Number(a).toFixed(2)}
-              onChange={(value) => setInputLatusRectum(value)}
+              value={inputLatusRectumRef.current}
+              onChange={(value) => {
+                inputLatusRectumRef.current = value;
+                setUpdateFlag(!updateFlag);
+              }}
               onPressEnter={ok}
             />
             <div style={{ paddingTop: '20px', textAlign: 'left', fontSize: '11px' }}>

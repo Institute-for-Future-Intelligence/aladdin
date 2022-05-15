@@ -30,17 +30,17 @@ const SolarAbsorberPipeApertureWidthInput = ({ setDialogVisible }: { setDialogVi
 
   const absorberPipe = foundation?.solarAbsorberPipe;
 
-  const [inputApertureWidth, setInputApertureWidth] = useState<number>(absorberPipe?.apertureWidth ?? 0.6);
   const [updateFlag, setUpdateFlag] = useState<boolean>(false);
   const [dragEnabled, setDragEnabled] = useState<boolean>(false);
   const [bounds, setBounds] = useState<DraggableBounds>({ left: 0, top: 0, bottom: 0, right: 0 } as DraggableBounds);
   const dragRef = useRef<HTMLDivElement | null>(null);
+  const inputApertureWidthRef = useRef<number>(absorberPipe?.apertureWidth ?? 0.6);
 
   const lang = { lng: language };
 
   useEffect(() => {
     if (absorberPipe) {
-      setInputApertureWidth(absorberPipe.apertureWidth ?? 0.6);
+      inputApertureWidthRef.current = absorberPipe.apertureWidth ?? 0.6;
     }
   }, [foundation]);
 
@@ -149,7 +149,7 @@ const SolarAbsorberPipeApertureWidthInput = ({ setDialogVisible }: { setDialogVi
   };
 
   const close = () => {
-    setInputApertureWidth(absorberPipe?.apertureWidth ?? 0.6);
+    inputApertureWidthRef.current = absorberPipe?.apertureWidth ?? 0.6;
     setDialogVisible(false);
   };
 
@@ -159,7 +159,7 @@ const SolarAbsorberPipeApertureWidthInput = ({ setDialogVisible }: { setDialogVi
   };
 
   const ok = () => {
-    setApertureWidth(inputApertureWidth);
+    setApertureWidth(inputApertureWidthRef.current);
     setDialogVisible(false);
     setApplyCount(0);
   };
@@ -182,7 +182,7 @@ const SolarAbsorberPipeApertureWidthInput = ({ setDialogVisible }: { setDialogVi
           <Button
             key="Apply"
             onClick={() => {
-              setApertureWidth(inputApertureWidth);
+              setApertureWidth(inputApertureWidthRef.current);
             }}
           >
             {i18n.t('word.Apply', lang)}
@@ -212,9 +212,11 @@ const SolarAbsorberPipeApertureWidthInput = ({ setDialogVisible }: { setDialogVi
               style={{ width: 120 }}
               step={0.01}
               precision={2}
-              value={inputApertureWidth}
-              formatter={(a) => Number(a).toFixed(2)}
-              onChange={(value) => setInputApertureWidth(value)}
+              value={inputApertureWidthRef.current}
+              onChange={(value) => {
+                inputApertureWidthRef.current = value;
+                setUpdateFlag(!updateFlag);
+              }}
               onPressEnter={ok}
             />
             <div style={{ paddingTop: '20px', textAlign: 'left', fontSize: '11px' }}>
