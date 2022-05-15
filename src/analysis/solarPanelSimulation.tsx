@@ -65,7 +65,7 @@ const SolarPanelSimulation = ({ city }: SolarPanelSimulationProps) => {
   const { scene } = useThree();
   const lang = { lng: language };
   const weather = getWeather(city ?? 'Boston MA, USA');
-  const elevation = city ? weather.elevation : 0;
+  const elevation = city ? weather?.elevation : 0;
   const timesPerHour = world.timesPerHour ?? 4;
   const minuteInterval = 60 / timesPerHour;
   const daysPerYear = world.daysPerYear ?? 6;

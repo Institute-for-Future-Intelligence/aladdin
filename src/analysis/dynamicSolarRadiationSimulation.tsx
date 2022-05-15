@@ -56,7 +56,7 @@ const DynamicSolarRadiationSimulation = ({ city }: DynamicSolarRadiationSimulati
   const lang = { lng: language };
   const weather = getWeather(city ?? 'Boston MA, USA');
   const now = new Date(world.date);
-  const elevation = city ? weather.elevation : 0;
+  const elevation = city ? weather?.elevation : 0;
   const interval = 60 / world.timesPerHour;
   const ray = useMemo(() => new Raycaster(), []);
   const cellSize = world.solarRadiationHeatmapGridCellSize ?? 0.5;

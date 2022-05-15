@@ -149,9 +149,21 @@ const EconomicsPanel = ({ setDialogVisible }: { setDialogVisible: (b: boolean) =
             precision={2}
             value={electricitySellingPriceRef.current}
             step={0.01}
-            formatter={(value) => `\$${value}/kWh`}
+            formatter={(value) => `$${value}/kWh`}
             onChange={(value) => {
               electricitySellingPriceRef.current = value;
+              setUpdateFlag(!updateFlag);
+            }}
+            onBlur={(e) => {
+              const value = (e.target as HTMLInputElement).value.replace('$', '').replace('/kWh', '');
+              const v = parseFloat(value);
+              electricitySellingPriceRef.current = Number.isNaN(v) ? 0.1 : v;
+              setUpdateFlag(!updateFlag);
+            }}
+            onPressEnter={(e) => {
+              const value = (e.target as HTMLInputElement).value.replace('$', '').replace('/kWh', '');
+              const v = parseFloat(value);
+              electricitySellingPriceRef.current = Number.isNaN(v) ? 0.1 : v;
               setUpdateFlag(!updateFlag);
             }}
           />
@@ -170,9 +182,21 @@ const EconomicsPanel = ({ setDialogVisible }: { setDialogVisible: (b: boolean) =
             precision={2}
             value={operationalCostPerUnitRef.current}
             step={0.01}
-            formatter={(value) => `\$${value}/day`}
+            formatter={(value) => `$${value}/day`}
             onChange={(value) => {
               operationalCostPerUnitRef.current = value;
+              setUpdateFlag(!updateFlag);
+            }}
+            onBlur={(e) => {
+              const value = (e.target as HTMLInputElement).value.replace('$', '').replace('/day', '');
+              const v = parseFloat(value);
+              operationalCostPerUnitRef.current = Number.isNaN(v) ? 0.1 : v;
+              setUpdateFlag(!updateFlag);
+            }}
+            onPressEnter={(e) => {
+              const value = (e.target as HTMLInputElement).value.replace('$', '').replace('/day', '');
+              const v = parseFloat(value);
+              operationalCostPerUnitRef.current = Number.isNaN(v) ? 0.1 : v;
               setUpdateFlag(!updateFlag);
             }}
           />

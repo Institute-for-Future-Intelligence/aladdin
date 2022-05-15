@@ -56,7 +56,7 @@ const SensorSimulation = ({ city }: SensorSimulationProps) => {
   const weather = getWeather(city ?? 'Boston MA, USA');
   const measuredHorizontalRadiation = getHorizontalSolarRadiation(city ?? 'Boston MA, USA');
   const measuredVerticalRadiation = getVerticalSolarRadiation(city ?? 'Boston MA, USA');
-  const elevation = city ? getWeather(city).elevation : 0;
+  const elevation = city ? getWeather(city)?.elevation : 0;
   const timesPerHour = world.timesPerHour ?? 4;
   const minuteInterval = 60 / timesPerHour;
   const ray = useMemo(() => new Raycaster(), []);

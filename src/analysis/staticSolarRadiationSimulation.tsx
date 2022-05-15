@@ -45,7 +45,7 @@ const StaticSolarRadiationSimulation = ({ city }: StaticSolarRadiationSimulation
   const { scene } = useThree();
   const lang = { lng: language };
   const weather = getWeather(city ?? 'Boston MA, USA');
-  const elevation = city ? weather.elevation : 0;
+  const elevation = city ? weather?.elevation : 0;
   const interval = 60 / world.timesPerHour;
   const ray = useMemo(() => new Raycaster(), []);
   const now = new Date(world.date);
