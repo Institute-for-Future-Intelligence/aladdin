@@ -29,6 +29,7 @@ import {
 import { ConvexGeoProps, handleUndoableResizeRoofHeight, useRoofTexture } from './roof';
 import { CSG } from 'three-csg-ts';
 import { ConvexGeometry } from 'three/examples/jsm/geometries/ConvexGeometry';
+import { ObjectType } from '../../types';
 
 enum RoofHandleType {
   TopMid = 'TopMid',
@@ -133,9 +134,10 @@ const GambrelRoof = ({
 
   const handleUnoableResizeRidge = (elemId: string, type: RoofHandleType, oldVal: number, newVal: number) => {
     const undoable = {
-      name: 'ResizeGambrelRoofRidge',
+      name: 'Resize Gambrel Roof Ridge',
       timestamp: Date.now(),
       resizedElementId: elemId,
+      resizedElementType: ObjectType.Roof,
       oldVal: oldVal,
       newVal: newVal,
       type: type,

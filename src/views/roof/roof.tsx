@@ -30,6 +30,7 @@ import GambrelRoof from './gambrelRoof';
 import { UndoableResizeRoofHeight } from 'src/undo/UndoableResize';
 import MansardRoof from './mansardRoof';
 import { RepeatWrapping, TextureLoader, Vector3 } from 'three';
+import { ObjectType } from '../../types';
 
 export interface ConvexGeoProps {
   points: Vector3[];
@@ -39,9 +40,10 @@ export interface ConvexGeoProps {
 
 export const handleUndoableResizeRoofHeight = (elemId: string, oldHeight: number, newHeight: number) => {
   const undoableResizeRoofHeight = {
-    name: 'ResizeRoofHeight',
+    name: 'Resize Roof Height',
     timestamp: Date.now(),
     resizedElementId: elemId,
+    resizedElementType: ObjectType.Roof,
     oldHeight: oldHeight,
     newHeight: newHeight,
     undo: () => {

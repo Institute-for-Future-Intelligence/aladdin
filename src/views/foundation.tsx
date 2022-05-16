@@ -716,9 +716,10 @@ const Foundation = ({
 
   const handleUndoableResizeWall = (element: WallModel) => {
     const undoableResize = {
-      name: 'Resize',
+      name: 'Resize Wall',
       timestamp: Date.now(),
       resizedElementId: element.id,
+      resizedElementType: element.type,
       oldPosition: oldPositionRef.current.clone(),
       newPosition: newPositionRef.current.clone(),
       oldDimension: oldDimensionRef.current.clone(),

@@ -39,6 +39,7 @@ export interface UndoableResize extends Undoable {
 
 export interface UndoableResizeWindowOrDoor extends Undoable {
   resizedElementId: string;
+  resizedElementType: ObjectType;
   oldPosition: number[];
   newPosition: number[];
   oldDimension: number[];
@@ -47,6 +48,7 @@ export interface UndoableResizeWindowOrDoor extends Undoable {
 
 export interface UndoableResizeWall extends Undoable {
   resizedElementId: string;
+  resizedElementType: ObjectType;
   oldPosition: Vector3;
   newPosition: Vector3;
   oldDimension: Vector3;
@@ -62,12 +64,14 @@ export interface UndoableResizeWall extends Undoable {
 
 export interface UndoableResizeRoofHeight extends Undoable {
   resizedElementId: string;
+  resizedElementType: ObjectType;
   oldHeight: number;
   newHeight: number;
 }
 
 export interface UndoableResizeHipRoofRidge extends Undoable {
   resizedElementId: string;
+  resizedElementType: ObjectType;
   oldLeftRidgeLength: number;
   oldRightRidgeLength: number;
   newLeftRidgeLength: number;
@@ -76,6 +80,7 @@ export interface UndoableResizeHipRoofRidge extends Undoable {
 
 export interface UnoableResizeGableRoofRidge extends Undoable {
   resizedElementId: string;
+  resizedElementType: ObjectType;
   oldLeft: number;
   oldRight: number;
   newLeft: number;
@@ -84,6 +89,7 @@ export interface UnoableResizeGableRoofRidge extends Undoable {
 
 export interface UnoableResizeGambrelAndMansardRoofRidge extends Undoable {
   resizedElementId: string;
+  resizedElementType: ObjectType;
   type: string;
   oldVal: number;
   newVal: number;

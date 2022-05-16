@@ -17,6 +17,7 @@ import { UnoableResizeGambrelAndMansardRoofRidge } from 'src/undo/UndoableResize
 import { Util } from 'src/Util';
 import { DoubleSide, Euler, Mesh, Vector2, Vector3 } from 'three';
 import { ConvexGeoProps as ConvexGeometryProps, handleUndoableResizeRoofHeight, useRoofTexture } from './roof';
+import { ObjectType } from '../../types';
 
 const intersectionPlanePosition = new Vector3();
 const intersectionPlaneRotation = new Euler();
@@ -169,9 +170,10 @@ const MansardRoof = ({
 
   const handleUnoableResizeRidge = (elemId: string, type: RoofHandleType, oldVal: number, newVal: number) => {
     const undoable = {
-      name: 'ResizeMansardRoofRidge',
+      name: 'Resize Mansard Roof Ridge',
       timestamp: Date.now(),
       resizedElementId: elemId,
+      resizedElementType: ObjectType.Roof,
       oldVal: oldVal,
       newVal: newVal,
       type: type,

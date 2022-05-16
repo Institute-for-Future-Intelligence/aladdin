@@ -13,8 +13,9 @@ import { useStoreRef } from 'src/stores/commonRef';
 import { useThree } from '@react-three/fiber';
 import { HALF_PI } from 'src/constants';
 import { ElementModel } from 'src/models/ElementModel';
-import { handleUndoableResizeRoofHeight, ConvexGeoProps, useRoofTexture } from './roof';
+import { ConvexGeoProps, handleUndoableResizeRoofHeight, useRoofTexture } from './roof';
 import { UnoableResizeGableRoofRidge } from 'src/undo/UndoableResize';
+import { ObjectType } from '../../types';
 
 const intersectionPlanePosition = new Vector3();
 const intersectionPlaneRotation = new Euler();
@@ -92,9 +93,10 @@ const GableRoof = ({
     newRight: number,
   ) => {
     const undoable = {
-      name: 'ResizeGableRoofRidge',
+      name: 'Resize Gable Roof Ridge',
       timestamp: Date.now(),
       resizedElementId: elemId,
+      resizedElementType: ObjectType.Roof,
       oldLeft: oldLeft,
       oldRight: oldRight,
       newLeft: newLeft,

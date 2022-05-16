@@ -570,9 +570,10 @@ const Wall = ({
       case ObjectType.Door:
       case ObjectType.Window:
         const undoableResize = {
-          name: 'Resize',
+          name: 'Resize ' + (elem.type === ObjectType.Window ? 'Window' : 'Door'),
           timestamp: Date.now(),
           resizedElementId: elem.id,
+          resizedElementType: elem.type,
           oldPosition: [...oldPositionRef.current],
           oldDimension: [...oldDimensionRef.current],
           newPosition: [elem.cx, elem.cy, elem.cz],

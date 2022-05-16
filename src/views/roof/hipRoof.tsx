@@ -14,7 +14,8 @@ import * as Selector from 'src/stores/selector';
 import { UndoableResizeHipRoofRidge } from 'src/undo/UndoableResize';
 import { Util } from 'src/Util';
 import { DoubleSide, Euler, Mesh, Raycaster, Vector2, Vector3 } from 'three';
-import { handleUndoableResizeRoofHeight, ConvexGeoProps, useRoofTexture } from './roof';
+import { ConvexGeoProps, handleUndoableResizeRoofHeight, useRoofTexture } from './roof';
+import { ObjectType } from '../../types';
 
 interface RoofSegmentWireframeProps {
   leftRoof: Vector3;
@@ -115,9 +116,10 @@ const HipRoof = ({
     newRight: number,
   ) => {
     const undoable = {
-      name: 'ResizeHipRoofRidge',
+      name: 'Resize Hip Roof Ridge',
       timestamp: Date.now(),
       resizedElementId: elemId,
+      resizedElementType: ObjectType.Roof,
       oldLeftRidgeLength: oldLeft,
       oldRightRidgeLength: oldRight,
       newLeftRidgeLength: newLeft,
