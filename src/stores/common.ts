@@ -794,6 +794,8 @@ export const useStore = create<CommonStoreState>(
               state.fileChanged = !state.fileChanged;
               state.showSolarRadiationHeatmap = false;
               state.evolutionMethod = content.evolutionMethod ?? EvolutionMethod.GENETIC_ALGORITHM;
+              state.solarPanelArrayLayoutParams =
+                content.solarPanelArrayLayoutParams ?? new DefaultSolarPanelArrayLayoutParams();
               state.solarPanelArrayLayoutConstraints =
                 content.solarPanelArrayLayoutConstraints ?? new DefaultSolarPanelArrayLayoutConstraints();
               state.evolutionaryAlgorithmState =
@@ -844,6 +846,7 @@ export const useStore = create<CommonStoreState>(
               elements: JSON.parse(JSON.stringify(state.elements)),
               view: JSON.parse(JSON.stringify(state.viewState)),
               evolutionMethod: state.evolutionMethod,
+              solarPanelArrayLayoutParams: JSON.parse(JSON.stringify(state.solarPanelArrayLayoutParams)),
               solarPanelArrayLayoutConstraints: JSON.parse(JSON.stringify(state.solarPanelArrayLayoutConstraints)),
               evolutionaryAlgorithmState: JSON.parse(JSON.stringify(state.evolutionaryAlgorithmState)),
               economicsParams: JSON.parse(JSON.stringify(state.economicsParams)),

@@ -513,7 +513,7 @@ const SolarPanelLayoutWizard = ({ setDialogVisible }: { setDialogVisible: (b: bo
               min={-90}
               max={90}
               style={{ width: '100%' }}
-              precision={1}
+              precision={2}
               // make sure that we round up the number as toDegrees may cause things like .999999999
               value={parseFloat(Util.toDegrees(tiltAngleRef.current).toFixed(2))}
               step={1}
@@ -564,7 +564,7 @@ const SolarPanelLayoutWizard = ({ setDialogVisible }: { setDialogVisible: (b: bo
               min={1}
               max={20}
               style={{ width: '100%' }}
-              precision={1}
+              precision={2}
               value={interRowSpacingRef.current}
               step={0.5}
               onChange={(value) => {
@@ -588,7 +588,7 @@ const SolarPanelLayoutWizard = ({ setDialogVisible }: { setDialogVisible: (b: bo
               min={0}
               max={10}
               style={{ width: '100%' }}
-              precision={1}
+              precision={2}
               value={poleHeightRef.current}
               step={0.1}
               onChange={(value) => {
@@ -603,7 +603,7 @@ const SolarPanelLayoutWizard = ({ setDialogVisible }: { setDialogVisible: (b: bo
         <Row gutter={6} style={{ paddingBottom: '4px' }}>
           <Col className="gutter-row" span={14}>
             {i18n.t('polygonMenu.SolarPanelArrayPoleSpacing', lang) +
-              ' ([1, 10] ' +
+              ' ([2, 10] ' +
               i18n.t('word.MeterAbbreviation', lang) +
               '): '}
           </Col>
@@ -612,7 +612,7 @@ const SolarPanelLayoutWizard = ({ setDialogVisible }: { setDialogVisible: (b: bo
               min={2}
               max={10}
               style={{ width: '100%' }}
-              precision={1}
+              precision={2}
               value={poleSpacingRef.current}
               step={0.5}
               onChange={(value) => {
