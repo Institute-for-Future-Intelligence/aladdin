@@ -26,7 +26,15 @@ import {
   Vector2,
   Vector3,
 } from 'three';
-import { ConvexGeoProps, handleRoofContextMenu, handleUndoableResizeRoofHeight, useRoofTexture } from './roof';
+import {
+  ConvexGeoProps,
+  getDistance,
+  getIntersectionPoint,
+  getNormal,
+  handleRoofContextMenu,
+  handleUndoableResizeRoofHeight,
+  useRoofTexture,
+} from './roof';
 import { CSG } from 'three-csg-ts';
 import { ConvexGeometry } from 'three/examples/jsm/geometries/ConvexGeometry';
 import { RoofTexture, ObjectType } from 'src/types';
@@ -45,7 +53,6 @@ enum RoofHandleType {
 const intersectionPlanePosition = new Vector3();
 const intersectionPlaneRotation = new Euler();
 const zeroVector2 = new Vector2();
-const euler = new Euler(0, 0, HALF_PI);
 
 const GambrelRoof = ({
   id,
@@ -83,8 +90,6 @@ const GambrelRoof = ({
   const mouse = useMemo(() => new Vector2(), []);
   const oldHeight = useRef<number>(h);
   const oldRidgeVal = useRef<number>(0);
-
-  overhang = overhang ?? 0.4;
 
   // set position and rotation
   const parent = getElementById(parentId);
@@ -218,36 +223,6 @@ const GambrelRoof = ({
       rh = Math.max(w.lz, arr[i + 1].lz);
     }
     return { lh, rh };
-  };
-
-  const getNormal = (wall: WallModel) => {
-    return new Vector3()
-      .subVectors(
-        new Vector3(wall.leftPoint[0], wall.leftPoint[1]),
-        new Vector3(wall.rightPoint[0], wall.rightPoint[1]),
-      )
-      .applyEuler(euler)
-      .normalize();
-  };
-
-  const getIntersectionPoint = (v1: Vector3, v2: Vector3, v3: Vector3, v4: Vector3) => {
-    const x = [v1.x, v2.x, v3.x, v4.x];
-    const y = [v1.y, v2.y, v3.y, v4.y];
-    const x0 =
-      ((x[2] - x[3]) * (x[1] * y[0] - x[0] * y[1]) - (x[0] - x[1]) * (x[3] * y[2] - x[2] * y[3])) /
-      ((x[2] - x[3]) * (y[0] - y[1]) - (x[0] - x[1]) * (y[2] - y[3]));
-    const y0 =
-      ((y[2] - y[3]) * (y[1] * x[0] - y[0] * x[1]) - (y[0] - y[1]) * (y[3] * x[2] - y[2] * x[3])) /
-      ((y[2] - y[3]) * (x[0] - x[1]) - (y[0] - y[1]) * (x[2] - x[3]));
-    return new Vector3(x0, y0);
-  };
-
-  // distance from point p3 to line formed by p1 and p2
-  const getDistance = (p1: Vector3, p2: Vector3, p3: Vector3) => {
-    const A = p2.y - p1.y;
-    const B = p1.x - p2.x;
-    const C = p2.x * p1.y - p1.x * p2.y;
-    return Math.abs((A * p3.x + B * p3.y + C) / Math.sqrt(A * A + B * B));
   };
 
   const currentWallArray = useMemo(() => {
@@ -406,8 +381,8 @@ const GambrelRoof = ({
     );
 
     const frontDirection = -frontWall.relativeAngle;
-    const frontSideLenght = new Vector3(frontWall.cx, frontWall.cy).sub(topRidgeMidPointV3.setZ(0)).length();
-    segments.push({ points: frontSidePoints, direction: frontDirection, length: frontSideLenght });
+    const frontSideLength = new Vector3(frontWall.cx, frontWall.cy).sub(topRidgeMidPointV3.setZ(0)).length();
+    segments.push({ points: frontSidePoints, direction: frontDirection, length: frontSideLength });
 
     // front top
     const frontTopPoints: Vector3[] = [];
@@ -431,7 +406,7 @@ const GambrelRoof = ({
       topRidgeRightPointAfterOverhang,
       topRidgeLeftPointAfterOverhang,
     );
-    segments.push({ points: frontTopPoints, direction: frontDirection, length: frontSideLenght });
+    segments.push({ points: frontTopPoints, direction: frontDirection, length: frontSideLength });
 
     // back side
     const backSidePoints: Vector3[] = [];
