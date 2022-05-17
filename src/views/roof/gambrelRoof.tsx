@@ -381,7 +381,7 @@ const GambrelRoof = ({
     );
 
     const frontDirection = -frontWall.relativeAngle;
-    const frontSideLength = new Vector3(frontWall.cx, frontWall.cy).sub(topRidgeMidPointV3.setZ(0)).length();
+    const frontSideLength = new Vector3(frontWall.cx, frontWall.cy).sub(topRidgeMidPointV3.clone().setZ(0)).length();
     segments.push({ points: frontSidePoints, direction: frontDirection, length: frontSideLength });
 
     // front top
@@ -457,7 +457,7 @@ const GambrelRoof = ({
       leftWallRightPointAfterOffset.clone().sub(centroid),
     ).setZ(backRidgeRightPointV3.z);
 
-    const backSideLenght = new Vector3(backWall.cx, backWall.cy).sub(topRidgeMidPointV3.setZ(0)).length();
+    const backSideLenght = new Vector3(backWall.cx, backWall.cy).sub(topRidgeMidPointV3.clone().setZ(0)).length();
     backSidePoints.push(
       backWallLeftPointAfterOverhang,
       backWallRightPointAfterOverhang,
