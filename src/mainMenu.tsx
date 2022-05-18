@@ -8,8 +8,9 @@ import solar_radiation_to_box from './examples/solar_radiation_to_box.json';
 import sun_beam_at_center from './examples/sun_beam_at_center.json';
 import office_building_01 from './examples/office_building_01.json';
 import solar_farm_01 from './examples/solar_farm_01.json';
-import solar_farm_02 from './examples/solar_farm_02.json';
-import solar_farm_03 from './examples/solar_farm_03.json';
+import solar_farm_fixed_array from './examples/solar_farm_fixed_array.json';
+import solar_farm_hsat_array from './examples/solar_farm_hsat_array.json';
+import solar_farm_aadat_array from './examples/solar_farm_aadat_array.json';
 import solar_trackers from './examples/solar_trackers.json';
 import cape_cod_with_shed_dormer from './examples/cape_cod_with_shed_dormer.json';
 import barn_house from './examples/barn_house.json';
@@ -293,11 +294,14 @@ const MainMenu = ({ viewOnly, set2DView, resetView, zoomView, canvas }: MainMenu
       case 'solar_farm_01':
         input = solar_farm_01;
         break;
-      case 'solar_farm_02':
-        input = solar_farm_02;
+      case 'solar_farm_fixed_array':
+        input = solar_farm_fixed_array;
         break;
-      case 'solar_farm_03':
-        input = solar_farm_03;
+      case 'solar_farm_hsat_array':
+        input = solar_farm_hsat_array;
+        break;
+      case 'solar_farm_aadat_array':
+        input = solar_farm_aadat_array;
         break;
       case 'solar_trackers':
         input = solar_trackers;
@@ -1855,11 +1859,20 @@ const MainMenu = ({ viewOnly, set2DView, resetView, zoomView, canvas }: MainMenu
           <Menu.Item key="solar_farm_01" onClick={loadFile}>
             {i18n.t('menu.examples.SolarFarm', lang)}
           </Menu.Item>
-          <Menu.Item key="solar_canopy_form_factors" onClick={loadFile}>
-            {i18n.t('menu.examples.SolarCanopyFormFactors', lang)}
+          <Menu.Item key="solar_farm_fixed_array" onClick={loadFile}>
+            {i18n.t('menu.examples.FixedSolarPanelArraysInRealWorld', lang)}
+          </Menu.Item>
+          <Menu.Item key="solar_farm_hsat_array" onClick={loadFile}>
+            {i18n.t('menu.examples.HSATSolarTrackersInRealWorld', lang)}
+          </Menu.Item>
+          <Menu.Item key="solar_farm_aadat_array" onClick={loadFile}>
+            {i18n.t('menu.examples.AADATSolarTrackersInRealWorld', lang)}
           </Menu.Item>
           <Menu.Item key="vegetative_buffer_01" onClick={loadFile}>
             {i18n.t('menu.examples.VegetativeBuffer', lang)}
+          </Menu.Item>
+          <Menu.Item key="solar_canopy_form_factors" onClick={loadFile}>
+            {i18n.t('menu.examples.SolarCanopyFormFactors', lang)}
           </Menu.Item>
           <Menu.Item key="parabolic_trough_array" onClick={loadFile}>
             {i18n.t('menu.examples.ParabolicTroughArray', lang)}
@@ -1872,12 +1885,6 @@ const MainMenu = ({ viewOnly, set2DView, resetView, zoomView, canvas }: MainMenu
           </Menu.Item>
           <Menu.Item key="linear_fresnel_reflectors_two_absorbers" onClick={loadFile}>
             {i18n.t('menu.examples.LinearFresnelReflectorsWithTwoAbsorbers', lang)}
-          </Menu.Item>
-          <Menu.Item key="solar_farm_02" onClick={loadFile}>
-            {i18n.t('menu.examples.SolarFarmInRealWorld', lang)}
-          </Menu.Item>
-          <Menu.Item key="solar_farm_03" onClick={loadFile}>
-            {i18n.t('menu.examples.SolarTrackersInRealWorld', lang)}
           </Menu.Item>
           <Menu.Item key="solar_updraft_tower_city" onClick={loadFile}>
             {i18n.t('menu.examples.SolarUpdraftTowerInCity', lang)}

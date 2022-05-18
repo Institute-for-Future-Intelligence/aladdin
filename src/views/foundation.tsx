@@ -1147,7 +1147,6 @@ const Foundation = ({
       if (elementsToPaste && elementsToPaste.length > 0) {
         setCommonStore((state) => {
           state.pastePoint.copy(e.intersections[0].point);
-          console.log(state.pastePoint);
           state.clickObjectType = ObjectType.Foundation;
           state.pasteNormal = UNIT_VECTOR_POS_Z;
         });

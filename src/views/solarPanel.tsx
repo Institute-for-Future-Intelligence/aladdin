@@ -129,38 +129,44 @@ const SolarPanel = ({
   const pvModel = getPvModule(pvModelName) ?? getPvModule('SPR-X21-335-BLK');
   const lang = { lng: language };
 
+  const parent = useStore((state) => {
+    for (const e of state.elements) {
+      if (e.id === parentId) {
+        return e;
+      }
+    }
+  });
   if (parentId) {
-    const p = getElementById(parentId);
-    if (p) {
-      switch (p.type) {
+    if (parent) {
+      switch (parent.type) {
         case ObjectType.Foundation:
-          cz = poleHeight + lz / 2 + p.lz;
+          cz = poleHeight + lz / 2 + parent.lz;
           if (Util.isZero(rotation[2])) {
-            cx = p.cx + cx * p.lx;
-            cy = p.cy + cy * p.ly;
+            cx = parent.cx + cx * parent.lx;
+            cy = parent.cy + cy * parent.ly;
           } else {
             // we must rotate the real length, not normalized length
-            const v = new Vector3(cx * p.lx, cy * p.ly, 0);
+            const v = new Vector3(cx * parent.lx, cy * parent.ly, 0);
             v.applyAxisAngle(UNIT_VECTOR_POS_Z, rotation[2]);
-            cx = p.cx + v.x;
-            cy = p.cy + v.y;
+            cx = parent.cx + v.x;
+            cy = parent.cy + v.y;
           }
           break;
         case ObjectType.Cuboid:
           if (Util.isZero(rotation[2])) {
-            cx = p.cx + cx * p.lx;
-            cy = p.cy + cy * p.ly;
+            cx = parent.cx + cx * parent.lx;
+            cy = parent.cy + cy * parent.ly;
           } else {
             // we must rotate the real length, not normalized length
-            const v = new Vector3(cx * p.lx, cy * p.ly, cz * p.lz);
+            const v = new Vector3(cx * parent.lx, cy * parent.ly, cz * parent.lz);
             v.applyAxisAngle(UNIT_VECTOR_POS_Z, rotation[2]);
-            cx = p.cx + v.x;
-            cy = p.cy + v.y;
+            cx = parent.cx + v.x;
+            cy = parent.cy + v.y;
           }
           if (Util.isSame(panelNormal, UNIT_VECTOR_POS_Z)) {
-            cz = poleHeight + lz / 2 + p.lz;
+            cz = poleHeight + lz / 2 + parent.lz;
           } else {
-            cz = p.cz + cz * p.lz;
+            cz = parent.cz + cz * parent.lz;
           }
           break;
       }
@@ -937,6 +943,4 @@ const SolarPanel = ({
   );
 };
 
-// this one may not use React.memo as it needs to move with its parent.
-// there may be a way to notify a memorized component when its parent changes
-export default SolarPanel;
+export default React.memo(SolarPanel);
