@@ -338,7 +338,7 @@ export const i18n_es = {
         SunBeamAndHeliodon: 'Rayo de sol y heliodon',
         SolarFarm: 'Granja solar',
         ParabolicTroughArray: 'Parabolic Trough Array',
-        ParabolicDishArray: 'Parabolic Dish Array',
+        TooeleParabolicDishArray: 'Tooele Parabolic Dish Array',
         TucsonLinearFresnelReflectors: 'Tucson Linear Fresnel Reflectors',
         LinearFresnelReflectorsWithTwoAbsorbers: 'Linear Fresnel Reflectors with Two Absorbers',
         SolarCanopyFormFactors: 'Solar Canopy Form Factors',

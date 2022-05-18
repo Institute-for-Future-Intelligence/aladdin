@@ -335,7 +335,7 @@ export const i18n_zh_cn = {
         SunBeamAndHeliodon: '太阳光束和日影仪',
         SolarFarm: '太阳能农场',
         ParabolicTroughArray: '抛物线槽阵列',
-        ParabolicDishArray: '抛物线碟阵列',
+        TooeleParabolicDishArray: '犹他图埃勒抛物线碟阵列',
         TucsonLinearFresnelReflectors: '图森直线式菲涅尔反射镜阵列',
         LinearFresnelReflectorsWithTwoAbsorbers: '配备两个吸收管的直线式菲涅尔反射镜阵列',
         SolarCanopyFormFactors: '太阳能天篷外形设计',

@@ -339,7 +339,7 @@ export const i18n_tr = {
         SunBeamAndHeliodon: 'Güneþ Iþýný ve Heliodon',
         SolarFarm: 'Güneþ Tarlasý',
         ParabolicTroughArray: 'Parabolic Trough Array',
-        ParabolicDishArray: 'Parabolic Dish Array',
+        TooeleParabolicDishArray: 'Tooele Parabolic Dish Array',
         TucsonLinearFresnelReflectors: 'Tucson Linear Fresnel Reflectors',
         LinearFresnelReflectorsWithTwoAbsorbers: 'Linear Fresnel Reflectors with Two Absorbers',
         SolarCanopyFormFactors: 'Solar Canopy Form Factors',

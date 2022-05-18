@@ -28,7 +28,7 @@ import solar_canopy_form_factors from './examples/solar_canopy_form_factors.json
 import inter_row_spacing from './examples/inter_row_spacing.json';
 import parabolic_trough_array from './examples/parabolic_trough_array.json';
 import parabolic_dish_focus_sunlight from './examples/parabolic_dish_focus_sunlight.json';
-import parabolic_dish_array from './examples/parabolic_dish_array.json';
+import tooele_parabolic_dish_array from './examples/tooele_parabolic_dish_array.json';
 import linear_fresnel_reflectors from './examples/linear_fresnel_reflectors.json';
 import linear_fresnel_reflectors_two_absorbers from './examples/linear_fresnel_reflectors_two_absorbers.json';
 import effect_absorber_pipe_height from './examples/effect_absorber_pipe_height.json';
@@ -309,8 +309,8 @@ const MainMenu = ({ viewOnly, set2DView, resetView, zoomView, canvas }: MainMenu
       case 'parabolic_trough_array':
         input = parabolic_trough_array;
         break;
-      case 'parabolic_dish_array':
-        input = parabolic_dish_array;
+      case 'tooele_parabolic_dish_array':
+        input = tooele_parabolic_dish_array;
         break;
       case 'linear_fresnel_reflectors':
         input = linear_fresnel_reflectors;
@@ -1877,8 +1877,8 @@ const MainMenu = ({ viewOnly, set2DView, resetView, zoomView, canvas }: MainMenu
           <Menu.Item key="parabolic_trough_array" onClick={loadFile}>
             {i18n.t('menu.examples.ParabolicTroughArray', lang)}
           </Menu.Item>
-          <Menu.Item key="parabolic_dish_array" onClick={loadFile}>
-            {i18n.t('menu.examples.ParabolicDishArray', lang)}
+          <Menu.Item key="tooele_parabolic_dish_array" onClick={loadFile}>
+            {i18n.t('menu.examples.TooeleParabolicDishArray', lang)}
           </Menu.Item>
           <Menu.Item key="tucson_sundt_station" onClick={loadFile}>
             {i18n.t('menu.examples.TucsonLinearFresnelReflectors', lang)}
