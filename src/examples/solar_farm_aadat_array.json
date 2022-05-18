@@ -61,7 +61,7 @@
       "selected": false,
       "parentId": "Ground",
       "textureType": "No Foundation Texture",
-      "locked": false
+      "locked": true
     },
     {
       "type": "Human",
