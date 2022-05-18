@@ -1312,8 +1312,8 @@ export const useStore = create<CommonStoreState>(
                     } else {
                       elem.selected = false;
                     }
-                    state.updateDesignInfo();
                   }
+                  state.updateDesignInfo();
                   state.moveHandleType = null;
                   state.resizeHandleType = null;
                   state.rotateHandleType = null;

@@ -68,6 +68,7 @@ import { FresnelReflectorModel } from '../models/FresnelReflectorModel';
 import SolarUpdraftTower from './solarUpdraftTower';
 import SolarPowerTower from './solarPowerTower';
 import SolarReceiverPipe from './solarReceiverPipe';
+import { UndoablePaste } from '../undo/UndoablePaste';
 
 const Foundation = ({
   id,
@@ -101,6 +102,8 @@ const Foundation = ({
   const updateSolarCollectorRelativeAzimuthById = useStore(Selector.updateSolarCollectorRelativeAzimuthById);
   const updatePolygonVertexPositionById = useStore(Selector.updatePolygonVertexPositionById);
   const updatePolygonVerticesById = useStore(Selector.updatePolygonVerticesById);
+  const pasteElements = useStore(Selector.pasteElementsToPoint);
+  const elementsToPaste = useStore(Selector.elementsToPaste);
   const removeElementById = useStore(Selector.removeElementById);
   const selectMe = useStore(Selector.selectMe);
   const addElement = useStore(Selector.addElement);
@@ -996,7 +999,12 @@ const Foundation = ({
   };
 
   const handlePointerDown = (e: ThreeEvent<PointerEvent>) => {
-    if (e.button === 2) return; // ignore right-click
+    if (e.button === 2) {
+      if (e.altKey) {
+        selectMe(id, e, ActionType.Select);
+      }
+      return;
+    }
     setCommonStore((state) => {
       state.contextMenuObjectType = null;
     });
@@ -1133,7 +1141,38 @@ const Foundation = ({
     }
   };
 
-  const handlePointerUp = () => {
+  const handlePointerUp = (e: ThreeEvent<MouseEvent>) => {
+    if (e.altKey && e.button === 2) {
+      // for pasting to the right-clicked position while the alt key is held down
+      if (elementsToPaste && elementsToPaste.length > 0) {
+        setCommonStore((state) => {
+          state.pastePoint.copy(e.intersections[0].point);
+          console.log(state.pastePoint);
+          state.clickObjectType = ObjectType.Foundation;
+          state.pasteNormal = UNIT_VECTOR_POS_Z;
+        });
+        const pastedElements = pasteElements();
+        if (pastedElements.length > 0) {
+          const undoablePaste = {
+            name: 'Paste to Point',
+            timestamp: Date.now(),
+            pastedElements: pastedElements.map((m) => ({ ...m })),
+            undo: () => {
+              for (const elem of undoablePaste.pastedElements) {
+                removeElementById(elem.id, false);
+              }
+            },
+            redo: () => {
+              setCommonStore((state) => {
+                state.elements.push(...undoablePaste.pastedElements);
+                state.selectedElement = undoablePaste.pastedElements[0];
+              });
+            },
+          } as UndoablePaste;
+          addUndoable(undoablePaste);
+        }
+      }
+    }
     if (!grabRef.current || grabRef.current.parentId !== id) return;
     const elem = getElementById(grabRef.current.id);
     if (!elem) return;
@@ -1565,10 +1604,15 @@ const Foundation = ({
     setCommonStore((state) => {
       state.pastePoint.copy(e.intersections[0].point);
       state.clickObjectType = ObjectType.Foundation;
-      if (e.intersections.length > 0) {
-        const intersected = e.intersections[0].object === baseRef.current;
-        if (intersected) {
-          state.contextMenuObjectType = ObjectType.Foundation;
+      if (e.altKey) {
+        // when alt key is pressed, don't invoke context menu as it is reserved for fast click-paste
+        state.contextMenuObjectType = null;
+      } else {
+        if (e.intersections.length > 0) {
+          const intersected = e.intersections[0].object === baseRef.current;
+          if (intersected) {
+            state.contextMenuObjectType = ObjectType.Foundation;
+          }
         }
       }
       state.pasteNormal = UNIT_VECTOR_POS_Z;
