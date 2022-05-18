@@ -26,7 +26,6 @@ import i18n from '../i18n/i18n';
 import { LineData } from './LineData';
 import { FresnelReflectorModel } from '../models/FresnelReflectorModel';
 import { FoundationModel } from '../models/FoundationModel';
-import { SolarAbsorberPipeModel } from '../models/SolarAbsorberPipeModel';
 
 const FresnelReflector = ({
   id,
@@ -89,7 +88,15 @@ const FresnelReflector = ({
   const hy = ly / 2;
   const hz = lz / 2;
   const actualPoleHeight = poleHeight + hx;
-  const parent = getElementById(parentId);
+
+  // be sure to get the updated parent so that this memorized element can move with it
+  const parent = useStore((state) => {
+    for (const e of state.elements) {
+      if (e.id === parentId) {
+        return e;
+      }
+    }
+  });
 
   if (parent) {
     switch (parent.type) {
@@ -655,6 +662,4 @@ const FresnelReflector = ({
   );
 };
 
-// this one may not use React.memo as it needs to move with its parent.
-// there may be a way to notify a memorized component when its parent changes
-export default FresnelReflector;
+export default React.memo(FresnelReflector);

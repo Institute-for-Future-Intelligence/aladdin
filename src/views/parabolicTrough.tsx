@@ -91,21 +91,28 @@ const ParabolicTrough = ({
   const hz = lz / 2;
   const actualPoleHeight = poleHeight + hx;
 
+  // be sure to get the updated parent so that this memorized element can move with it
+  const parent = useStore((state) => {
+    for (const e of state.elements) {
+      if (e.id === parentId) {
+        return e;
+      }
+    }
+  });
   if (parentId) {
-    const p = getElementById(parentId);
-    if (p) {
-      switch (p.type) {
+    if (parent) {
+      switch (parent.type) {
         case ObjectType.Foundation:
-          cz = actualPoleHeight + hz + p.lz;
+          cz = actualPoleHeight + hz + parent.lz;
           if (Util.isZero(rotation[2])) {
-            cx = p.cx + cx * p.lx;
-            cy = p.cy + cy * p.ly;
+            cx = parent.cx + cx * parent.lx;
+            cy = parent.cy + cy * parent.ly;
           } else {
             // we must rotate the real length, not normalized length
-            const v = new Vector3(cx * p.lx, cy * p.ly, 0);
+            const v = new Vector3(cx * parent.lx, cy * parent.ly, 0);
             v.applyAxisAngle(UNIT_VECTOR_POS_Z, rotation[2]);
-            cx = p.cx + v.x;
-            cy = p.cy + v.y;
+            cx = parent.cx + v.x;
+            cy = parent.cy + v.y;
           }
           break;
       }
@@ -704,6 +711,4 @@ const ParabolicTrough = ({
   );
 };
 
-// this one may not use React.memo as it needs to move with its parent.
-// there may be a way to notify a memorized component when its parent changes
-export default ParabolicTrough;
+export default React.memo(ParabolicTrough);

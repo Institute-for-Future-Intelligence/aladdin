@@ -75,11 +75,18 @@ const Polygon = ({
   const baseRef = useRef<Mesh>();
   const centerRef = useRef<Mesh>();
 
-  const lang = { lng: language };
-  const parent = getElementById(parentId);
+  // be sure to get the updated parent so that this memorized element can move with it
+  const parent = useStore((state) => {
+    for (const e of state.elements) {
+      if (e.id === parentId) {
+        return e;
+      }
+    }
+  });
   const ratio = parent ? Math.max(1, Math.max(parent.lx, parent.ly) / 12) : 1;
   const resizeHandleSize = RESIZE_HANDLE_SIZE * ratio;
   const moveHandleSize = MOVE_HANDLE_RADIUS * ratio;
+  const lang = { lng: language };
 
   useEffect(() => {
     const unsubscribe = useStore.subscribe((state) => {
@@ -522,6 +529,4 @@ const Polygon = ({
   );
 };
 
-// this one may not use React.memo as it needs to move with its parent.
-// there may be a way to notify a memorized component when its parent changes
-export default Polygon;
+export default React.memo(Polygon);
