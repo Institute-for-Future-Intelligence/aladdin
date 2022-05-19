@@ -863,15 +863,12 @@ const SolarPanel = ({
         <group rotation={[-euler.x, 0, -euler.z]}>
           <Line
             userData={{ unintersectable: true }}
-            points={[[0, 0, 0], sunDirection.clone().multiplyScalar(sunBeamLength)]}
+            points={[
+              normalVector.clone().multiplyScalar(0.75),
+              [0, 0, 0],
+              sunDirection.clone().multiplyScalar(sunBeamLength),
+            ]}
             name={'Sun Beam'}
-            lineWidth={0.5}
-            color={'white'}
-          />
-          <Line
-            userData={{ unintersectable: true }}
-            points={[[0, 0, 0], normalVector.clone().multiplyScalar(0.75)]}
-            name={'Normal Vector'}
             lineWidth={0.5}
             color={'white'}
           />

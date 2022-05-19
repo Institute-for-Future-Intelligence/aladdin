@@ -608,25 +608,24 @@ const FresnelReflector = ({
 
       {/* draw sun beam */}
       {drawSunBeam && sunDirection.z > 0 && (
-        <group rotation={[-euler.x, 0, -euler.z]}>
-          <Line
-            userData={{ unintersectable: true }}
-            points={
-              receiverCenter
-                ? [
-                    shiftedReceiverCenter.current,
-                    new Vector3(0, 0, hz),
-                    sunDirection.clone().multiplyScalar(sunBeamLength),
-                  ]
-                : [new Vector3(0, 0, hz), sunDirection.clone().multiplyScalar(sunBeamLength)]
-            }
-            name={'Sun Beam'}
-            lineWidth={0.25}
-            color={'white'}
-            castShadow={false}
-            receiveShadow={false}
-          />
-        </group>
+        <Line
+          rotation={[-euler.x, 0, -euler.z]}
+          userData={{ unintersectable: true }}
+          points={
+            receiverCenter
+              ? [
+                  shiftedReceiverCenter.current,
+                  new Vector3(0, 0, hz),
+                  sunDirection.clone().multiplyScalar(sunBeamLength),
+                ]
+              : [new Vector3(0, 0, hz), sunDirection.clone().multiplyScalar(sunBeamLength)]
+          }
+          name={'Sun Beam'}
+          lineWidth={0.25}
+          color={'white'}
+          castShadow={false}
+          receiveShadow={false}
+        />
       )}
 
       {/* draw label */}

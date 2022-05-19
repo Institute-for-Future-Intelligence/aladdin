@@ -299,6 +299,8 @@ const ParabolicDish = ({
   const baseSize = Math.max(1, (lx + ly) / 16);
   const resizeHandleSize = RESIZE_HANDLE_SIZE * baseSize * 1.5;
   const moveHandleSize = MOVE_HANDLE_RADIUS * baseSize * 3;
+  const sunPoint = sunDirection.clone().multiplyScalar(sunBeamLength);
+  const focalPoint = new Vector3(0, 0, focalLength).applyEuler(relativeEuler);
 
   return (
     <group name={'Parabolic Dish Group ' + id} rotation={euler} position={[cx, cy, cz + hz]}>
@@ -700,84 +702,29 @@ const ParabolicDish = ({
 
       {/* draw sun beam */}
       {drawSunBeam && sunDirection.z > 0 && (
-        <group rotation={[-euler.x, 0, -euler.z]}>
-          <Line
-            userData={{ unintersectable: true }}
-            points={[
-              new Vector3(0, 0, focalLength).applyEuler(relativeEuler),
-              new Vector3(-0.3 * hx, 0, 0.09 * depth).applyEuler(relativeEuler),
-              sunDirection.clone().multiplyScalar(sunBeamLength),
-            ]}
-            name={'Sun Beam -0.3'}
-            lineWidth={0.25}
-            color={'white'}
-          />
-          <Line
-            userData={{ unintersectable: true }}
-            points={[
-              new Vector3(0, 0, focalLength).applyEuler(relativeEuler),
-              new Vector3(-0.6 * hx, 0, 0.36 * depth).applyEuler(relativeEuler),
-              sunDirection.clone().multiplyScalar(sunBeamLength),
-            ]}
-            name={'Sun Beam -0.6'}
-            lineWidth={0.25}
-            color={'white'}
-          />
-          <Line
-            userData={{ unintersectable: true }}
-            points={[
-              new Vector3(0, 0, focalLength).applyEuler(relativeEuler),
-              new Vector3(-0.9 * hx, 0, 0.81 * depth).applyEuler(relativeEuler),
-              sunDirection.clone().multiplyScalar(sunBeamLength),
-            ]}
-            name={'Sun Beam -0.9'}
-            lineWidth={0.25}
-            color={'white'}
-          />
-          <Line
-            userData={{ unintersectable: true }}
-            points={[
-              new Vector3(0, 0, focalLength).applyEuler(relativeEuler),
-              sunDirection.clone().multiplyScalar(sunBeamLength),
-            ]}
-            name={'Sun Beam 0.0'}
-            lineWidth={0.25}
-            color={'white'}
-          />
-          <Line
-            userData={{ unintersectable: true }}
-            points={[
-              new Vector3(0, 0, focalLength).applyEuler(relativeEuler),
-              new Vector3(0.3 * hx, 0, 0.09 * depth).applyEuler(relativeEuler),
-              sunDirection.clone().multiplyScalar(sunBeamLength),
-            ]}
-            name={'Sun Beam 0.3'}
-            lineWidth={0.25}
-            color={'white'}
-          />
-          <Line
-            userData={{ unintersectable: true }}
-            points={[
-              new Vector3(0, 0, focalLength).applyEuler(relativeEuler),
-              new Vector3(0.6 * hx, 0, 0.36 * depth).applyEuler(relativeEuler),
-              sunDirection.clone().multiplyScalar(sunBeamLength),
-            ]}
-            name={'Sun Beam 0.6'}
-            lineWidth={0.25}
-            color={'white'}
-          />
-          <Line
-            userData={{ unintersectable: true }}
-            points={[
-              new Vector3(0, 0, focalLength).applyEuler(relativeEuler),
-              new Vector3(0.9 * hx, 0, 0.81 * depth).applyEuler(relativeEuler),
-              sunDirection.clone().multiplyScalar(sunBeamLength),
-            ]}
-            name={'Sun Beam 0.9'}
-            lineWidth={0.25}
-            color={'white'}
-          />
-        </group>
+        <Line
+          rotation={[-euler.x, 0, -euler.z]}
+          userData={{ unintersectable: true }}
+          points={[
+            focalPoint,
+            new Vector3(-0.3 * hx, 0, 0.09 * depth).applyEuler(relativeEuler),
+            sunPoint,
+            new Vector3(-0.6 * hx, 0, 0.36 * depth).applyEuler(relativeEuler),
+            focalPoint,
+            new Vector3(-0.9 * hx, 0, 0.81 * depth).applyEuler(relativeEuler),
+            sunPoint,
+            focalPoint,
+            new Vector3(0.3 * hx, 0, 0.09 * depth).applyEuler(relativeEuler),
+            sunPoint,
+            new Vector3(0.6 * hx, 0, 0.36 * depth).applyEuler(relativeEuler),
+            focalPoint,
+            new Vector3(0.9 * hx, 0, 0.81 * depth).applyEuler(relativeEuler),
+            sunPoint,
+          ]}
+          name={'Sun Beams'}
+          lineWidth={0.25}
+          color={'white'}
+        />
       )}
 
       {/* draw label */}
