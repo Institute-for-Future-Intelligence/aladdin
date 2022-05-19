@@ -278,6 +278,18 @@ const AccountSettingsPanel = () => {
                   <Option key={ClassID.CLASS5} value={ClassID.CLASS5}>
                     {ClassID.CLASS5}
                   </Option>
+                  <Option key={ClassID.CLASS6} value={ClassID.CLASS6}>
+                    {ClassID.CLASS6}
+                  </Option>
+                  <Option key={ClassID.CLASS7} value={ClassID.CLASS7}>
+                    {ClassID.CLASS7}
+                  </Option>
+                  <Option key={ClassID.CLASS8} value={ClassID.CLASS8}>
+                    {ClassID.CLASS8}
+                  </Option>
+                  <Option key={ClassID.CLASS9} value={ClassID.CLASS9}>
+                    {ClassID.CLASS9}
+                  </Option>
                 </Select>
               </Col>
             </Row>

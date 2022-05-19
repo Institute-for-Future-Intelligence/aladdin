@@ -5,8 +5,8 @@
  * when there is a ground image.
  */
 
-import React, { useEffect, useRef } from 'react';
-import { BufferGeometry, LineBasicMaterial, Mesh, Vector3 } from 'three';
+import React from 'react';
+import { Line } from '@react-three/drei';
 
 export interface WireframeProps {
   hx: number;
@@ -17,61 +17,35 @@ export interface WireframeProps {
 }
 
 const Wireframe = ({ hx, hy, hz, lineColor = 'black', lineWidth = 0.2 }: WireframeProps) => {
-  const ref = useRef<Mesh>(null);
-
-  // Upper-Lower / Front-Back / Left-Right
-  const UFL = new Vector3(-hx, -hy, hz);
-  const UFR = new Vector3(hx, -hy, hz);
-  const UBL = new Vector3(-hx, hy, hz);
-  const UBR = new Vector3(hx, hy, hz);
-  const LFL = new Vector3(-hx, -hy, -hz);
-  const LFR = new Vector3(hx, -hy, -hz);
-  const LBL = new Vector3(-hx, hy, -hz);
-  const LBR = new Vector3(hx, hy, -hz);
-
-  useEffect(() => {
-    if (ref.current) {
-      const points = [
-        // upper
-        UFL,
-        UFR,
-        UFR,
-        UBR,
-        UBR,
-        UBL,
-        UBL,
-        UFL,
-
-        // lower
-        LFL,
-        LFR,
-        LFR,
-        LBR,
-        LBR,
-        LBL,
-        LBL,
-        LFL,
-
-        // vertical
-        UFL,
-        LFL,
-        UFR,
-        LFR,
-        UBR,
-        LBR,
-        UBL,
-        LBL,
-      ];
-
-      const geometry = new BufferGeometry().setFromPoints(points);
-      const material = new LineBasicMaterial({ color: lineColor, linewidth: lineWidth });
-
-      ref.current.geometry = geometry;
-      ref.current.material = material;
-    }
-  }, []);
-
-  return <lineSegments ref={ref} />;
+  return (
+    <Line
+      points={[
+        [-hx, -hy, -hz],
+        [hx, -hy, -hz],
+        // draw vertical line between faces
+        [hx, -hy, hz],
+        [hx, -hy, -hz],
+        [hx, hy, -hz],
+        // draw vertical line between faces
+        [hx, hy, hz],
+        [hx, hy, -hz],
+        [-hx, hy, -hz],
+        // draw vertical line between faces
+        [-hx, hy, hz],
+        [-hx, hy, -hz],
+        [-hx, -hy, -hz],
+        [-hx, -hy, hz],
+        [hx, -hy, hz],
+        [hx, hy, hz],
+        [-hx, hy, hz],
+        [-hx, -hy, hz],
+      ]}
+      name={'Wireframe'}
+      userData={{ unintersectable: true }}
+      lineWidth={lineWidth}
+      color={lineColor}
+    />
+  );
 };
 
 export default React.memo(Wireframe);

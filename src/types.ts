@@ -60,6 +60,10 @@ export enum ClassID {
   CLASS3 = 'CLASS 3',
   CLASS4 = 'CLASS 4',
   CLASS5 = 'CLASS 5',
+  CLASS6 = 'CLASS 6',
+  CLASS7 = 'CLASS 7',
+  CLASS8 = 'CLASS 8',
+  CLASS9 = 'CLASS 9',
 }
 
 export interface CloudFileInfo {

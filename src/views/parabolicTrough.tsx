@@ -632,53 +632,75 @@ const ParabolicTrough = ({
         <group>
           <Line
             userData={{ unintersectable: true }}
-            points={[focusPoint, new Vector3(-0.3 * hx, 0, 0.09 * depth).applyEuler(relativeEuler), sunPoint]}
+            points={[
+              focusPoint,
+              new Vector3(-0.3 * hx, 0, 0.09 * depth).applyEuler(relativeEuler),
+              sunPoint,
+              focusPoint,
+              new Vector3(-0.6 * hx, 0, 0.36 * depth).applyEuler(relativeEuler),
+              sunPoint,
+              focusPoint,
+              new Vector3(-0.9 * hx, 0, 0.81 * depth).applyEuler(relativeEuler),
+              sunPoint,
+              focusPoint,
+              new Vector3(0, 0, 0),
+              sunPoint,
+              focusPoint,
+              new Vector3(0.3 * hx, 0, 0.09 * depth).applyEuler(relativeEuler),
+              sunPoint,
+              focusPoint,
+              new Vector3(0.6 * hx, 0, 0.36 * depth).applyEuler(relativeEuler),
+              sunPoint,
+              focusPoint,
+              new Vector3(0.9 * hx, 0, 0.81 * depth).applyEuler(relativeEuler),
+              sunPoint,
+            ]}
             name={'Sun Beam -0.3'}
             lineWidth={0.25}
             color={'white'}
           />
-          <Line
-            userData={{ unintersectable: true }}
-            points={[focusPoint, new Vector3(-0.6 * hx, 0, 0.36 * depth).applyEuler(relativeEuler), sunPoint]}
-            name={'Sun Beam -0.6'}
-            lineWidth={0.25}
-            color={'white'}
-          />
-          <Line
-            userData={{ unintersectable: true }}
-            points={[focusPoint, new Vector3(-0.9 * hx, 0, 0.81 * depth).applyEuler(relativeEuler), sunPoint]}
-            name={'Sun Beam -0.9'}
-            lineWidth={0.25}
-            color={'white'}
-          />
-          <Line
-            userData={{ unintersectable: true }}
-            points={[focusPoint, new Vector3(0, 0, 0), sunPoint]}
-            name={'Sun Beam 0.0'}
-            lineWidth={0.25}
-            color={'white'}
-          />
-          <Line
-            userData={{ unintersectable: true }}
-            points={[focusPoint, new Vector3(0.3 * hx, 0, 0.09 * depth).applyEuler(relativeEuler), sunPoint]}
-            name={'Sun Beam 0.3'}
-            lineWidth={0.25}
-            color={'white'}
-          />
-          <Line
-            userData={{ unintersectable: true }}
-            points={[focusPoint, new Vector3(0.6 * hx, 0, 0.36 * depth).applyEuler(relativeEuler), sunPoint]}
-            name={'Sun Beam 0.6'}
-            lineWidth={0.25}
-            color={'white'}
-          />
-          <Line
-            userData={{ unintersectable: true }}
-            points={[focusPoint, new Vector3(0.9 * hx, 0, 0.81 * depth).applyEuler(relativeEuler), sunPoint]}
-            name={'Sun Beam 0.9'}
-            lineWidth={0.25}
-            color={'white'}
-          />
+          {/*<Line*/}
+          {/*  userData={{ unintersectable: true }}*/}
+          {/*  points={[focusPoint, new Vector3(-0.6 * hx, 0, 0.36 * depth).applyEuler(relativeEuler), sunPoint]}*/}
+          {/*  name={'Sun Beam -0.6'}*/}
+          {/*  lineWidth={0.25}*/}
+          {/*  color={'white'}*/}
+          {/*/>*/}
+          {/*<Line*/}
+          {/*  userData={{ unintersectable: true }}*/}
+          {/*  points={[focusPoint, new Vector3(-0.9 * hx, 0, 0.81 * depth).applyEuler(relativeEuler), sunPoint]}*/}
+          {/*  name={'Sun Beam -0.9'}*/}
+          {/*  lineWidth={0.25}*/}
+          {/*  color={'white'}*/}
+          {/*/>*/}
+          {/*<Line*/}
+          {/*  userData={{ unintersectable: true }}*/}
+          {/*  points={[focusPoint, new Vector3(0, 0, 0), sunPoint]}*/}
+          {/*  name={'Sun Beam 0.0'}*/}
+          {/*  lineWidth={0.25}*/}
+          {/*  color={'white'}*/}
+          {/*/>*/}
+          {/*<Line*/}
+          {/*  userData={{ unintersectable: true }}*/}
+          {/*  points={[focusPoint, new Vector3(0.3 * hx, 0, 0.09 * depth).applyEuler(relativeEuler), sunPoint]}*/}
+          {/*  name={'Sun Beam 0.3'}*/}
+          {/*  lineWidth={0.25}*/}
+          {/*  color={'white'}*/}
+          {/*/>*/}
+          {/*<Line*/}
+          {/*  userData={{ unintersectable: true }}*/}
+          {/*  points={[focusPoint, new Vector3(0.6 * hx, 0, 0.36 * depth).applyEuler(relativeEuler), sunPoint]}*/}
+          {/*  name={'Sun Beam 0.6'}*/}
+          {/*  lineWidth={0.25}*/}
+          {/*  color={'white'}*/}
+          {/*/>*/}
+          {/*<Line*/}
+          {/*  userData={{ unintersectable: true }}*/}
+          {/*  points={[focusPoint, new Vector3(0.9 * hx, 0, 0.81 * depth).applyEuler(relativeEuler), sunPoint]}*/}
+          {/*  name={'Sun Beam 0.9'}*/}
+          {/*  lineWidth={0.25}*/}
+          {/*  color={'white'}*/}
+          {/*/>*/}
         </group>
       )}
 
