@@ -50,7 +50,6 @@ import SolarPanelBlackLandscapeImage from '../resources/solar-panel-black-landsc
 import SolarPanelBlackPortraitImage from '../resources/solar-panel-black-portrait.png';
 import { getSunDirection } from '../analysis/sunTools';
 import RotateHandle from '../components/rotateHandle';
-import Wireframe from '../components/wireframe';
 import { UndoableChange } from '../undo/UndoableChange';
 import i18n from '../i18n/i18n';
 import { LineData } from './LineData';
@@ -86,6 +85,7 @@ const SolarPanel = ({
   const language = useStore(Selector.language);
   const date = useStore(Selector.world.date);
   const latitude = useStore(Selector.world.latitude);
+  const elements = useStore(Selector.elements);
   const showSolarRadiationHeatmap = useStore(Selector.showSolarRadiationHeatmap);
   const solarRadiationHeatmapMaxValue = useStore(Selector.viewState.solarRadiationHeatmapMaxValue);
   const getHeatmap = useStore(Selector.getHeatmap);
@@ -841,36 +841,20 @@ const SolarPanel = ({
       {poleHeight > 0 &&
         faceUp &&
         poles.map((p, i) => {
-          if (poles.length < 10) {
-            return (
-              <Cylinder
-                userData={{ unintersectable: true }}
-                key={i}
-                name={'Pole ' + i}
-                castShadow={false}
-                receiveShadow={false}
-                args={[poleRadius, poleRadius, poleHeight + (p.z - poleZ) * 2 + lz, 4, 2]}
-                position={p}
-                rotation={[HALF_PI, 0, 0]}
-              >
-                <meshStandardMaterial attach="material" color={color} />
-              </Cylinder>
-            );
-          }
+          const radialSegments = elements.length < 100 ? 4 : 2;
           return (
-            <Line
-              key={i}
-              name={'Pole line ' + i}
+            <Cylinder
               userData={{ unintersectable: true }}
-              points={[
-                [p.x, p.y, p.z - poleZ],
-                [p.x, p.y, p.z + poleZ],
-              ]}
+              key={i}
+              name={'Pole ' + i}
               castShadow={false}
               receiveShadow={false}
-              lineWidth={poleRadius * 20}
-              color={'gray'}
-            />
+              args={[poleRadius, poleRadius, poleHeight + (p.z - poleZ) * 2 + lz, radialSegments, 1]}
+              position={p}
+              rotation={[HALF_PI, 0, 0]}
+            >
+              <meshStandardMaterial attach="material" color={color} />
+            </Cylinder>
           );
         })}
 

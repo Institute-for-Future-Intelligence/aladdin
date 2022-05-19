@@ -66,6 +66,7 @@ const ParabolicDish = ({
   const language = useStore(Selector.language);
   const date = useStore(Selector.world.date);
   const latitude = useStore(Selector.world.latitude);
+  const elements = useStore(Selector.elements);
   const showSolarRadiationHeatmap = useStore(Selector.showSolarRadiationHeatmap);
   const solarRadiationHeatmapMaxValue = useStore(Selector.viewState.solarRadiationHeatmapMaxValue);
   const getHeatmap = useStore(Selector.getHeatmap);
@@ -232,31 +233,33 @@ const ParabolicDish = ({
 
   const wireframeLines = useMemo<LineData[]>(() => {
     const array: LineData[] = [];
-    // draw rim lines
-    const outer: Vector3[] = [];
-    const inner: Vector3[] = [];
-    let angle, cos, sin;
-    const depth4 = 0.25 * depth;
-    for (let i = 0; i <= radialSegments; i++) {
-      angle = (TWO_PI * i) / radialSegments;
-      cos = Math.cos(angle);
-      sin = Math.sin(angle);
-      outer.push(new Vector3(hx * cos, hx * sin, depth));
-      inner.push(new Vector3((hx * cos) / 2, (hx * sin) / 2, depth4));
-    }
-    array.push({ points: outer } as LineData);
-    array.push({ points: inner } as LineData);
-    // draw radial lines
-    for (let i = 0; i < 12; i++) {
-      angle = (TWO_PI * i) / 12;
-      cos = Math.cos(angle);
-      sin = Math.sin(angle);
-      const line: Vector3[] = [];
-      for (let j = 0; j <= depthSegments; j++) {
-        const dx = j === 0 ? 0 : (j / depthSegments) * hx;
-        line.push(new Vector3(dx * cos, dx * sin, (dx * dx) / latusRectum + 0.01));
+    if (elements.length < 50) {
+      // draw rim lines
+      const outer: Vector3[] = [];
+      const inner: Vector3[] = [];
+      let angle, cos, sin;
+      const depth4 = 0.25 * depth;
+      for (let i = 0; i <= radialSegments; i++) {
+        angle = (TWO_PI * i) / radialSegments;
+        cos = Math.cos(angle);
+        sin = Math.sin(angle);
+        outer.push(new Vector3(hx * cos, hx * sin, depth));
+        inner.push(new Vector3((hx * cos) / 2, (hx * sin) / 2, depth4));
       }
-      array.push({ points: line } as LineData);
+      array.push({ points: outer } as LineData);
+      array.push({ points: inner } as LineData);
+      // draw radial lines
+      for (let i = 0; i < 12; i++) {
+        angle = (TWO_PI * i) / 12;
+        cos = Math.cos(angle);
+        sin = Math.sin(angle);
+        const line: Vector3[] = [];
+        for (let j = 0; j <= depthSegments; j++) {
+          const dx = j === 0 ? 0 : (j / depthSegments) * hx;
+          line.push(new Vector3(dx * cos, dx * sin, (dx * dx) / latusRectum + 0.01));
+        }
+        array.push({ points: line } as LineData);
+      }
     }
     return array;
   }, [hx, latusRectum]);
@@ -392,6 +395,7 @@ const ParabolicDish = ({
         </Paraboloid>
 
         {wireframeLines &&
+          wireframeLines.length > 0 &&
           wireframeLines.map((lineData, index) => {
             return (
               <React.Fragment key={index}>
@@ -686,7 +690,7 @@ const ParabolicDish = ({
           name={'Pole'}
           castShadow={false}
           receiveShadow={false}
-          args={[poleRadius, poleRadius, actualPoleHeight + lz, 4, 2]}
+          args={[poleRadius, poleRadius, actualPoleHeight + lz, elements.length < 100 ? 4 : 2, 1]}
           position={[0, 0, poleZ]}
           rotation={[HALF_PI, 0, 0]}
         >
