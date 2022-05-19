@@ -56,6 +56,7 @@ const ParabolicTrough = ({
   const language = useStore(Selector.language);
   const date = useStore(Selector.world.date);
   const latitude = useStore(Selector.world.latitude);
+  const elements = useStore(Selector.elements);
   const showSolarRadiationHeatmap = useStore(Selector.showSolarRadiationHeatmap);
   const solarRadiationHeatmapMaxValue = useStore(Selector.viewState.solarRadiationHeatmapMaxValue);
   const getHeatmap = useStore(Selector.getHeatmap);
@@ -90,6 +91,7 @@ const ParabolicTrough = ({
   const hy = ly / 2;
   const hz = lz / 2;
   const actualPoleHeight = poleHeight + hx;
+  const radialSegmentsPole = elements.length < 100 ? 4 : 2;
 
   // be sure to get the updated parent so that this memorized element can move with it
   const parent = useStore((state) => {
@@ -361,15 +363,17 @@ const ParabolicTrough = ({
           moduleLines.map((lineData, index) => {
             return (
               <React.Fragment key={index}>
-                <Line
-                  name={'Parabolic Trough Rim Lines'}
-                  userData={{ unintersectable: true }}
-                  points={lineData.points}
-                  castShadow={false}
-                  receiveShadow={false}
-                  lineWidth={lineWidth}
-                  color={lineColor}
-                />
+                {elements.length < 50 && (
+                  <Line
+                    name={'Parabolic Trough Rim Lines'}
+                    userData={{ unintersectable: true }}
+                    points={lineData.points}
+                    castShadow={false}
+                    receiveShadow={false}
+                    lineWidth={lineWidth}
+                    color={lineColor}
+                  />
+                )}
                 <Line
                   name={'Parabolic Trough Focal Lines'}
                   userData={{ unintersectable: true }}
@@ -607,36 +611,19 @@ const ParabolicTrough = ({
       {/* draw poles */}
       {actualPoleHeight > 0 &&
         poles.map((p, i) => {
-          if (poles.length < 10) {
-            return (
-              <Cylinder
-                userData={{ unintersectable: true }}
-                key={i}
-                name={'Pole ' + i}
-                castShadow={false}
-                receiveShadow={false}
-                args={[poleRadius, poleRadius, actualPoleHeight + (p.z - poleZ) * 2 + lz, 4, 2]}
-                position={p}
-                rotation={[HALF_PI, 0, 0]}
-              >
-                <meshStandardMaterial attach="material" color={color} />
-              </Cylinder>
-            );
-          }
           return (
-            <Line
-              key={i}
-              name={'Pole line ' + i}
+            <Cylinder
               userData={{ unintersectable: true }}
-              points={[
-                [p.x, p.y, p.z - poleZ],
-                [p.x, p.y, p.z + poleZ],
-              ]}
+              key={i}
+              name={'Pole ' + i}
               castShadow={false}
               receiveShadow={false}
-              lineWidth={poleRadius * 20}
-              color={'gray'}
-            />
+              args={[poleRadius, poleRadius, actualPoleHeight + (p.z - poleZ) * 2 + lz, radialSegmentsPole, 1]}
+              position={p}
+              rotation={[HALF_PI, 0, 0]}
+            >
+              <meshStandardMaterial attach="material" color={color} />
+            </Cylinder>
           );
         })}
 

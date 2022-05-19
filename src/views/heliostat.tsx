@@ -45,6 +45,7 @@ const Heliostat = ({
   const language = useStore(Selector.language);
   const date = useStore(Selector.world.date);
   const latitude = useStore(Selector.world.latitude);
+  const elements = useStore(Selector.elements);
   const showSolarRadiationHeatmap = useStore(Selector.showSolarRadiationHeatmap);
   const solarRadiationHeatmapMaxValue = useStore(Selector.viewState.solarRadiationHeatmapMaxValue);
   const getHeatmap = useStore(Selector.getHeatmap);
@@ -339,7 +340,7 @@ const Heliostat = ({
           name={'Pole'}
           castShadow={false}
           receiveShadow={false}
-          args={[poleRadius, poleRadius, actualPoleHeight + lz, 4, 2]}
+          args={[poleRadius, poleRadius, actualPoleHeight + lz, elements.length < 100 ? 4 : 2, 1]}
           position={new Vector3(0, 0, poleZ)}
           rotation={[HALF_PI, 0, 0]}
         >

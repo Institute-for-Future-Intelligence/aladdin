@@ -185,6 +185,7 @@ const SolarPanel = ({
   const positionUL = new Vector3(-hx, hy, hz);
   const positionLR = new Vector3(hx, -hy, hz);
   const positionUR = new Vector3(hx, hy, hz);
+  const radialSegmentsPole = elements.length < 100 ? 4 : 2;
   const solarPanel = getElementById(id) as SolarPanelModel;
 
   useEffect(() => {
@@ -841,7 +842,6 @@ const SolarPanel = ({
       {poleHeight > 0 &&
         faceUp &&
         poles.map((p, i) => {
-          const radialSegments = elements.length < 100 ? 4 : 2;
           return (
             <Cylinder
               userData={{ unintersectable: true }}
@@ -849,7 +849,7 @@ const SolarPanel = ({
               name={'Pole ' + i}
               castShadow={false}
               receiveShadow={false}
-              args={[poleRadius, poleRadius, poleHeight + (p.z - poleZ) * 2 + lz, radialSegments, 1]}
+              args={[poleRadius, poleRadius, poleHeight + (p.z - poleZ) * 2 + lz, radialSegmentsPole, 1]}
               position={p}
               rotation={[HALF_PI, 0, 0]}
             >
