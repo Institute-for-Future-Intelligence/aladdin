@@ -337,7 +337,7 @@ export const i18n_es = {
       examples: {
         SunBeamAndHeliodon: 'Rayo de sol y heliodon',
         SolarFarm: 'Granja solar',
-        ParabolicTroughArray: 'Parabolic Trough Array',
+        NevadaSolarOneParabolicTroughArray: 'Nevada Solar One Parabolic Trough Array',
         TooeleParabolicDishArray: 'Tooele Parabolic Dish Array',
         TucsonLinearFresnelReflectors: 'Tucson Linear Fresnel Reflectors',
         LinearFresnelReflectorsWithTwoAbsorbers: 'Linear Fresnel Reflectors with Two Absorbers',

@@ -338,7 +338,7 @@ export const i18n_tr = {
       examples: {
         SunBeamAndHeliodon: 'Güneþ Iþýný ve Heliodon',
         SolarFarm: 'Güneþ Tarlasý',
-        ParabolicTroughArray: 'Parabolic Trough Array',
+        NevadaSolarOneParabolicTroughArray: 'Nevada Solar One Parabolic Trough Array',
         TooeleParabolicDishArray: 'Tooele Parabolic Dish Array',
         TucsonLinearFresnelReflectors: 'Tucson Linear Fresnel Reflectors',
         LinearFresnelReflectorsWithTwoAbsorbers: 'Linear Fresnel Reflectors with Two Absorbers',

@@ -334,7 +334,7 @@ export const i18n_zh_tw = {
       examples: {
         SunBeamAndHeliodon: '太陽光束和日影儀',
         SolarFarm: '太陽能農場',
-        ParabolicTroughArray: '拋物線槽陣列',
+        NevadaSolarOneParabolicTroughArray: '內華達太陽能一號的拋物線槽陣列',
         TooeleParabolicDishArray: '猶他圖埃勒拋物線碟陣列',
         TucsonLinearFresnelReflectors: '圖森直線式菲涅爾反射鏡陣列',
         LinearFresnelReflectorsWithTwoAbsorbers: '配備兩個吸收管的直線式菲涅爾反射鏡陣列',

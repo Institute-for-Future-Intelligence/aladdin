@@ -91,7 +91,6 @@ const ParabolicTrough = ({
   const hy = ly / 2;
   const hz = lz / 2;
   const actualPoleHeight = poleHeight + hx;
-  const radialSegmentsPole = elements.length < 100 ? 4 : 2;
 
   // be sure to get the updated parent so that this memorized element can move with it
   const parent = useStore((state) => {
@@ -264,6 +263,8 @@ const ParabolicTrough = ({
   const baseSize = Math.max(1, (lx + ly) / 16);
   const resizeHandleSize = RESIZE_HANDLE_SIZE * baseSize * 1.5;
   const moveHandleSize = MOVE_HANDLE_RADIUS * baseSize * 2;
+  const detailed = elements.length < 50 && moduleLines.length < 10;
+  const radialSegmentsPole = detailed ? 4 : 2;
 
   return (
     <group name={'Parabolic Trough Group ' + id} rotation={euler} position={[cx, cy, cz + hz]}>
@@ -363,7 +364,7 @@ const ParabolicTrough = ({
           moduleLines.map((lineData, index) => {
             return (
               <React.Fragment key={index}>
-                {elements.length < 50 && (
+                {detailed && (
                   <Line
                     name={'Parabolic Trough Rim Lines'}
                     userData={{ unintersectable: true }}
@@ -374,51 +375,57 @@ const ParabolicTrough = ({
                     color={lineColor}
                   />
                 )}
-                <Line
-                  name={'Parabolic Trough Focal Lines'}
-                  userData={{ unintersectable: true }}
-                  points={[
-                    lineData.points[parabolaSegments / 2].clone(),
-                    lineData.points[parabolaSegments / 2].clone().add(new Vector3(0, 0, focalLength)),
-                  ]}
-                  castShadow={false}
-                  receiveShadow={false}
-                  lineWidth={1}
-                  color={'white'}
-                />
+                {(index === 0 || index === moduleLines.length - 1 || detailed) && (
+                  <Line
+                    name={'Parabolic Trough Focal Lines'}
+                    userData={{ unintersectable: true }}
+                    points={[
+                      lineData.points[parabolaSegments / 2].clone(),
+                      lineData.points[parabolaSegments / 2].clone().add(new Vector3(0, 0, focalLength)),
+                    ]}
+                    castShadow={false}
+                    receiveShadow={false}
+                    lineWidth={lineWidth}
+                    color={'white'}
+                  />
+                )}
               </React.Fragment>
             );
           })}
-        <Line
-          name={'Parabolic Trough Outline 1'}
-          userData={{ unintersectable: true }}
-          points={[
-            [-hx, -hy, depth],
-            [-hx, hy, depth],
-          ]}
-          castShadow={false}
-          receiveShadow={false}
-          lineWidth={lineWidth}
-          color={lineColor}
-        />
-        <Line
-          name={'Parabolic Trough Outline 2'}
-          userData={{ unintersectable: true }}
-          points={[
-            [hx, -hy, depth],
-            [hx, hy, depth],
-          ]}
-          castShadow={false}
-          receiveShadow={false}
-          lineWidth={lineWidth}
-          color={lineColor}
-        />
+        {detailed && (
+          <Line
+            name={'Parabolic Trough Outline 1'}
+            userData={{ unintersectable: true }}
+            points={[
+              [-hx, -hy, depth],
+              [-hx, hy, depth],
+            ]}
+            castShadow={false}
+            receiveShadow={false}
+            lineWidth={lineWidth}
+            color={lineColor}
+          />
+        )}
+        {detailed && (
+          <Line
+            name={'Parabolic Trough Outline 2'}
+            userData={{ unintersectable: true }}
+            points={[
+              [hx, -hy, depth],
+              [hx, hy, depth],
+            ]}
+            castShadow={false}
+            receiveShadow={false}
+            lineWidth={lineWidth}
+            color={lineColor}
+          />
+        )}
 
         {/* absorber tube along the focal line (focal length = latus rectum / 4) */}
         <Cylinder
           name={'Parabolic Trough Absorber Tube'}
           uuid={id}
-          args={[absorberTubeRadius, absorberTubeRadius, ly, 6, 2]}
+          args={[absorberTubeRadius, absorberTubeRadius, ly, detailed ? 6 : 2, 1]}
           position={[0, 0, focalLength]}
           receiveShadow={false}
           castShadow={true}
@@ -611,6 +618,7 @@ const ParabolicTrough = ({
       {/* draw poles */}
       {actualPoleHeight > 0 &&
         poles.map((p, i) => {
+          if (i % 5 !== 0 && !detailed) return <></>;
           return (
             <Cylinder
               userData={{ unintersectable: true }}
