@@ -650,8 +650,7 @@ const SolarPanel = ({
           </>
         )}
 
-        {/* wireframe */}
-        {!selected && <Wireframe hx={hx} hy={hy} hz={hz} lineColor={lineColor} lineWidth={lineWidth} />}
+        {/*{!selected && <Wireframe hx={hx} hy={hy} hz={hz} lineColor={lineColor} lineWidth={lineWidth} />}*/}
       </group>
 
       {/* draw rotate handles */}
