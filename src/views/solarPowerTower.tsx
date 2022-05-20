@@ -24,10 +24,10 @@ const SolarPowerTower = ({ foundation }: { foundation: FoundationModel }) => {
 
   const { lz, solarPowerTower } = foundation;
 
-  const receiverHeight = solarPowerTower?.receiverHeight ?? 2;
-  const receiverRadius = solarPowerTower?.receiverRadius ?? 1;
-  const towerRadius = solarPowerTower?.towerRadius ?? 0.5;
+  const towerRadius = solarPowerTower?.towerRadius ?? 1;
   const towerHeight = solarPowerTower?.towerHeight ?? 20;
+  const receiverHeight = towerHeight / 10;
+  const receiverRadius = towerRadius * 1.5;
   const haloSize = receiverHeight * 2 + 1;
 
   return (

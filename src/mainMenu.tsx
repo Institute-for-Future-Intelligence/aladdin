@@ -26,6 +26,7 @@ import effect_orientation_solar_panel from './examples/effect_orientation_solar_
 import why_solar_array from './examples/why_solar_array.json';
 import solar_canopy_form_factors from './examples/solar_canopy_form_factors.json';
 import inter_row_spacing from './examples/inter_row_spacing.json';
+import ps10_solar_power_tower from './examples/ps10_solar_power_tower.json';
 import nevada_solar_one_parabolic_troughs from './examples/nevada_solar_one_parabolic_troughs.json';
 import parabolic_dish_focus_sunlight from './examples/parabolic_dish_focus_sunlight.json';
 import tooele_parabolic_dish_array from './examples/tooele_parabolic_dish_array.json';
@@ -311,6 +312,9 @@ const MainMenu = ({ viewOnly, set2DView, resetView, zoomView, canvas }: MainMenu
         break;
       case 'tooele_parabolic_dish_array':
         input = tooele_parabolic_dish_array;
+        break;
+      case 'ps10_solar_power_tower':
+        input = ps10_solar_power_tower;
         break;
       case 'linear_fresnel_reflectors':
         input = linear_fresnel_reflectors;
@@ -1890,6 +1894,9 @@ const MainMenu = ({ viewOnly, set2DView, resetView, zoomView, canvas }: MainMenu
           </Menu.Item>
           <Menu.Item key="linear_fresnel_reflectors_two_absorbers" onClick={loadFile}>
             {i18n.t('menu.examples.LinearFresnelReflectorsWithTwoAbsorbers', lang)}
+          </Menu.Item>
+          <Menu.Item key="ps10_solar_power_tower" onClick={loadFile}>
+            {i18n.t('menu.examples.PS10SolarPowerTower', lang)}
           </Menu.Item>
           <Menu.Item key="solar_updraft_tower_city" onClick={loadFile}>
             {i18n.t('menu.examples.SolarUpdraftTowerInCity', lang)}

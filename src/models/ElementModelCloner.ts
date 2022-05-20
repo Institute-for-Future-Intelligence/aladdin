@@ -392,6 +392,7 @@ export class ElementModelCloner {
       normal: [...reflector.normal],
       rotation: reflector.parentId ? [...parent.rotation] : [0, 0, 0],
       parentId: parent.id,
+      receiverId: reflector.receiverId,
       foundationId: foundationId,
       id: short.generate() as string,
     } as FresnelReflectorModel;
@@ -421,6 +422,7 @@ export class ElementModelCloner {
       normal: [...heliostat.normal],
       rotation: heliostat.parentId ? [...parent.rotation] : [0, 0, 0],
       parentId: parent.id,
+      towerId: heliostat.towerId,
       foundationId: foundationId,
       id: short.generate() as string,
     } as HeliostatModel;

@@ -319,6 +319,8 @@ export interface CommonStoreState {
   // for solar power towers
   updateSolarPowerTowerHeightById: (id: string, height: number) => void;
   updateSolarPowerTowerHeightForAll: (height: number) => void;
+  updateSolarPowerTowerRadiusById: (id: string, radius: number) => void;
+  updateSolarPowerTowerRadiusForAll: (radius: number) => void;
   updateSolarPowerTowerReceiverAbsorptanceById: (id: string, absorptance: number) => void;
   updateSolarPowerTowerReceiverAbsorptanceForAll: (absorptance: number) => void;
   updateSolarPowerTowerReceiverOpticalEfficiencyById: (id: string, efficiency: number) => void;
@@ -2252,6 +2254,35 @@ export const useStore = create<CommonStoreState>(
               }
             });
           },
+
+          updateSolarPowerTowerRadiusById(id, radius) {
+            immerSet((state: CommonStoreState) => {
+              for (const e of state.elements) {
+                if (e.type === ObjectType.Foundation && e.id === id && !e.locked) {
+                  const f = e as FoundationModel;
+                  if (f.solarStructure === SolarStructure.FocusTower) {
+                    if (!f.solarPowerTower) f.solarPowerTower = {} as SolarPowerTowerModel;
+                    f.solarPowerTower.towerRadius = radius;
+                  }
+                  break;
+                }
+              }
+            });
+          },
+          updateSolarPowerTowerRadiusForAll(radius) {
+            immerSet((state: CommonStoreState) => {
+              for (const e of state.elements) {
+                if (e.type === ObjectType.Foundation && !e.locked) {
+                  const f = e as FoundationModel;
+                  if (f.solarStructure === SolarStructure.FocusTower) {
+                    if (!f.solarPowerTower) f.solarPowerTower = {} as SolarPowerTowerModel;
+                    f.solarPowerTower.towerRadius = radius;
+                  }
+                }
+              }
+            });
+          },
+
           updateSolarPowerTowerReceiverAbsorptanceById(id, absorptance) {
             immerSet((state: CommonStoreState) => {
               for (const e of state.elements) {

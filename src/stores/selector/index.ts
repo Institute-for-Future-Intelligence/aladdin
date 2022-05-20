@@ -261,6 +261,10 @@ export const updateSolarPowerTowerHeightById = (state: CommonStoreState) => stat
 
 export const updateSolarPowerTowerHeightForAll = (state: CommonStoreState) => state.updateSolarPowerTowerHeightForAll;
 
+export const updateSolarPowerTowerRadiusById = (state: CommonStoreState) => state.updateSolarPowerTowerRadiusById;
+
+export const updateSolarPowerTowerRadiusForAll = (state: CommonStoreState) => state.updateSolarPowerTowerRadiusForAll;
+
 export const updateSolarPowerTowerReceiverAbsorptanceById = (state: CommonStoreState) =>
   state.updateSolarPowerTowerReceiverAbsorptanceById;
 

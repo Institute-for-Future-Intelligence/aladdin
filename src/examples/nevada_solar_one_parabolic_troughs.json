@@ -1,13 +1,13 @@
 {
-  "docid": "aqvUTPuDvYMCbqdz41YxTk",
-  "time": "05/19/2022 05:45 pm",
-  "timestamp": 1652996702103,
+  "docid": "vL1ZUsNydJJmwct15vHcrF",
+  "time": "05/19/2022 06:27 pm",
+  "timestamp": 1652999233628,
   "userid": "QWecNcxhyvP6j6sBN11hBsfZDau1",
   "owner": null,
   "email": null,
   "world": {
     "name": "default",
-    "date": "Thu Sep 22 2022 14:00:00 GMT-0400 (Eastern Daylight Time)",
+    "date": "Thu Sep 22 2022 10:30:00 GMT-0400 (Eastern Daylight Time)",
     "ground": {
       "albedo": 0.3,
       "thermalDiffusivity": 0.05,
@@ -29,12 +29,13 @@
     "latitude": 35.804781891550604,
     "longitude": -114.97646752496185,
     "address": "602 Eldorado Valley Dr, Boulder City, NV 89005, USA",
-    "timesPerHour": 4,
+    "timesPerHour": 1,
     "pvGridCellSize": 0.25,
     "discretization": "Approximate",
     "solarPanelVisibilityGridCellSize": 0.2,
-    "solarRadiationHeatmapGridCellSize": 0.7,
-    "airAttenuationCoefficient": 0.01
+    "solarRadiationHeatmapGridCellSize": 10,
+    "airAttenuationCoefficient": 0.01,
+    "cspGridCellSize": 2
   },
   "elements": [
     {
@@ -116,7 +117,8 @@
       "parentId": "fjnWik4gwK6dVzpp4PS9CN",
       "foundationId": "fjnWik4gwK6dVzpp4PS9CN",
       "id": "7L9JEMbgdkHJqyQYNhEPJq",
-      "selected": false
+      "selected": false,
+      "dailyYield": 2184.0376473630754
     },
     {
       "type": "Parabolic Trough",
@@ -151,7 +153,8 @@
       "parentId": "fjnWik4gwK6dVzpp4PS9CN",
       "foundationId": "fjnWik4gwK6dVzpp4PS9CN",
       "id": "irFPLxmMLT6rFDoJKoiKhb",
-      "selected": false
+      "selected": false,
+      "dailyYield": 2184.10105124523
     },
     {
       "type": "Parabolic Trough",
@@ -186,7 +189,8 @@
       "parentId": "fjnWik4gwK6dVzpp4PS9CN",
       "foundationId": "fjnWik4gwK6dVzpp4PS9CN",
       "id": "8eu7vDhv6KUhHi9npAWqM9",
-      "selected": false
+      "selected": false,
+      "dailyYield": 2184.142140950794
     },
     {
       "type": "Parabolic Trough",
@@ -221,7 +225,8 @@
       "parentId": "fjnWik4gwK6dVzpp4PS9CN",
       "foundationId": "fjnWik4gwK6dVzpp4PS9CN",
       "id": "qipbq8ah3yAaXFiTtNqwjz",
-      "selected": false
+      "selected": false,
+      "dailyYield": 2186.481668316609
     },
     {
       "type": "Parabolic Trough",
@@ -256,7 +261,8 @@
       "parentId": "fjnWik4gwK6dVzpp4PS9CN",
       "foundationId": "fjnWik4gwK6dVzpp4PS9CN",
       "id": "8jsKzdYVfC5Vf4Nnu5jMbP",
-      "selected": false
+      "selected": false,
+      "dailyYield": 2184.1530697342855
     },
     {
       "type": "Parabolic Trough",
@@ -291,7 +297,8 @@
       "parentId": "fjnWik4gwK6dVzpp4PS9CN",
       "foundationId": "fjnWik4gwK6dVzpp4PS9CN",
       "id": "9VBTZXtWX26kqjkAsCS6nu",
-      "selected": false
+      "selected": false,
+      "dailyYield": 2183.917234353839
     },
     {
       "type": "Parabolic Trough",
@@ -326,7 +333,8 @@
       "parentId": "fjnWik4gwK6dVzpp4PS9CN",
       "foundationId": "fjnWik4gwK6dVzpp4PS9CN",
       "id": "aUYdyUNGi8bnHineP3zqz5",
-      "selected": false
+      "selected": false,
+      "dailyYield": 2184.1029890605014
     },
     {
       "type": "Parabolic Trough",
@@ -361,7 +369,8 @@
       "parentId": "fjnWik4gwK6dVzpp4PS9CN",
       "foundationId": "fjnWik4gwK6dVzpp4PS9CN",
       "id": "bEQifGheSWzXErCQEX5jc9",
-      "selected": false
+      "selected": false,
+      "dailyYield": 2225.1916629818006
     },
     {
       "type": "Parabolic Trough",
@@ -396,7 +405,8 @@
       "parentId": "fjnWik4gwK6dVzpp4PS9CN",
       "foundationId": "fjnWik4gwK6dVzpp4PS9CN",
       "id": "r4v1okttD44Z3thaT999zr",
-      "selected": false
+      "selected": false,
+      "dailyYield": 2184.142140950794
     },
     {
       "type": "Parabolic Trough",
@@ -431,7 +441,8 @@
       "parentId": "fjnWik4gwK6dVzpp4PS9CN",
       "foundationId": "fjnWik4gwK6dVzpp4PS9CN",
       "id": "vbsjU2syn8u3VcPEUEvfUL",
-      "selected": false
+      "selected": false,
+      "dailyYield": 2183.9965576575114
     },
     {
       "type": "Parabolic Trough",
@@ -466,7 +477,8 @@
       "parentId": "fjnWik4gwK6dVzpp4PS9CN",
       "foundationId": "fjnWik4gwK6dVzpp4PS9CN",
       "id": "rS9gedRi7TPFSNSehAoH5T",
-      "selected": false
+      "selected": false,
+      "dailyYield": 2184.0618993549374
     },
     {
       "type": "Parabolic Trough",
@@ -501,7 +513,8 @@
       "parentId": "fjnWik4gwK6dVzpp4PS9CN",
       "foundationId": "fjnWik4gwK6dVzpp4PS9CN",
       "id": "oYPRYVsGHKMvvbMQksPZAx",
-      "selected": false
+      "selected": false,
+      "dailyYield": 2167.4086752704884
     },
     {
       "type": "Foundation",
@@ -562,7 +575,8 @@
       "parentId": "h3DXKV7Y684i3thRma6wLu",
       "foundationId": "h3DXKV7Y684i3thRma6wLu",
       "id": "somwUXH46rWWj2iEWaBpTH",
-      "selected": false
+      "selected": false,
+      "dailyYield": 2184.0376473630754
     },
     {
       "type": "Parabolic Trough",
@@ -597,7 +611,8 @@
       "parentId": "h3DXKV7Y684i3thRma6wLu",
       "foundationId": "h3DXKV7Y684i3thRma6wLu",
       "id": "f6fusQGihys5Uk5wRLiqtW",
-      "selected": false
+      "selected": false,
+      "dailyYield": 2184.10105124523
     },
     {
       "type": "Parabolic Trough",
@@ -632,7 +647,8 @@
       "parentId": "h3DXKV7Y684i3thRma6wLu",
       "foundationId": "h3DXKV7Y684i3thRma6wLu",
       "id": "xxRJM6MpW6jZoZtDe4gxTL",
-      "selected": false
+      "selected": false,
+      "dailyYield": 2184.142140950794
     },
     {
       "type": "Parabolic Trough",
@@ -667,7 +683,8 @@
       "parentId": "h3DXKV7Y684i3thRma6wLu",
       "foundationId": "h3DXKV7Y684i3thRma6wLu",
       "id": "67cNGKEATuXayJC7fa4ov6",
-      "selected": false
+      "selected": false,
+      "dailyYield": 2186.481668316609
     },
     {
       "type": "Parabolic Trough",
@@ -702,7 +719,8 @@
       "parentId": "h3DXKV7Y684i3thRma6wLu",
       "foundationId": "h3DXKV7Y684i3thRma6wLu",
       "id": "jTDbg2GsKFSXSL5kfEKwFM",
-      "selected": false
+      "selected": false,
+      "dailyYield": 2184.1530697342855
     },
     {
       "type": "Parabolic Trough",
@@ -737,7 +755,8 @@
       "parentId": "h3DXKV7Y684i3thRma6wLu",
       "foundationId": "h3DXKV7Y684i3thRma6wLu",
       "id": "otoVZiatBWpjEMBHcFE1vB",
-      "selected": false
+      "selected": false,
+      "dailyYield": 2183.917234353839
     },
     {
       "type": "Parabolic Trough",
@@ -772,7 +791,8 @@
       "parentId": "h3DXKV7Y684i3thRma6wLu",
       "foundationId": "h3DXKV7Y684i3thRma6wLu",
       "id": "a61aJ1UFYsWt4ci4mKq9SJ",
-      "selected": false
+      "selected": false,
+      "dailyYield": 2184.1029890605014
     },
     {
       "type": "Parabolic Trough",
@@ -807,7 +827,8 @@
       "parentId": "h3DXKV7Y684i3thRma6wLu",
       "foundationId": "h3DXKV7Y684i3thRma6wLu",
       "id": "3oeacHzGeVf2rX3iv6QkKf",
-      "selected": false
+      "selected": false,
+      "dailyYield": 2183.952515711261
     },
     {
       "type": "Parabolic Trough",
@@ -842,7 +863,8 @@
       "parentId": "h3DXKV7Y684i3thRma6wLu",
       "foundationId": "h3DXKV7Y684i3thRma6wLu",
       "id": "j4UdupxMbEhx9RPqd3Kxbe",
-      "selected": false
+      "selected": false,
+      "dailyYield": 2184.142140950794
     },
     {
       "type": "Parabolic Trough",
@@ -877,7 +899,8 @@
       "parentId": "h3DXKV7Y684i3thRma6wLu",
       "foundationId": "h3DXKV7Y684i3thRma6wLu",
       "id": "eU127LCRTi1gGCpMprsZjB",
-      "selected": false
+      "selected": false,
+      "dailyYield": 2183.9840846216266
     },
     {
       "type": "Parabolic Trough",
@@ -912,7 +935,8 @@
       "parentId": "h3DXKV7Y684i3thRma6wLu",
       "foundationId": "h3DXKV7Y684i3thRma6wLu",
       "id": "9dKhxKmMz8HYSCd8thjHfi",
-      "selected": false
+      "selected": false,
+      "dailyYield": 2184.0494263190526
     },
     {
       "type": "Parabolic Trough",
@@ -947,7 +971,8 @@
       "parentId": "h3DXKV7Y684i3thRma6wLu",
       "foundationId": "h3DXKV7Y684i3thRma6wLu",
       "id": "8niYJz4X5kqK7PxotD8v8w",
-      "selected": false
+      "selected": false,
+      "dailyYield": 2184.0217279415574
     },
     {
       "type": "Foundation",
@@ -1008,7 +1033,8 @@
       "parentId": "fiH8AWThFS5EVx7AwfngqL",
       "foundationId": "fiH8AWThFS5EVx7AwfngqL",
       "id": "bzpE1WucZoTcJnrQaFWosk",
-      "selected": false
+      "selected": false,
+      "dailyYield": 2184.0376473630754
     },
     {
       "type": "Parabolic Trough",
@@ -1043,7 +1069,8 @@
       "parentId": "fiH8AWThFS5EVx7AwfngqL",
       "foundationId": "fiH8AWThFS5EVx7AwfngqL",
       "id": "b18nYFHTAeTLPg9V3TAu6r",
-      "selected": false
+      "selected": false,
+      "dailyYield": 2184.10105124523
     },
     {
       "type": "Parabolic Trough",
@@ -1078,7 +1105,8 @@
       "parentId": "fiH8AWThFS5EVx7AwfngqL",
       "foundationId": "fiH8AWThFS5EVx7AwfngqL",
       "id": "vnJbcrncrmPTTZtSNizQZx",
-      "selected": false
+      "selected": false,
+      "dailyYield": 2184.142140950794
     },
     {
       "type": "Parabolic Trough",
@@ -1113,7 +1141,8 @@
       "parentId": "fiH8AWThFS5EVx7AwfngqL",
       "foundationId": "fiH8AWThFS5EVx7AwfngqL",
       "id": "uuobSx6wZMqJ4o9dEx6874",
-      "selected": false
+      "selected": false,
+      "dailyYield": 2186.481668316609
     },
     {
       "type": "Parabolic Trough",
@@ -1148,7 +1177,8 @@
       "parentId": "fiH8AWThFS5EVx7AwfngqL",
       "foundationId": "fiH8AWThFS5EVx7AwfngqL",
       "id": "fkkZPubbk2sVhakgHyJg8p",
-      "selected": false
+      "selected": false,
+      "dailyYield": 2184.1530697342855
     },
     {
       "type": "Parabolic Trough",
@@ -1183,7 +1213,8 @@
       "parentId": "fiH8AWThFS5EVx7AwfngqL",
       "foundationId": "fiH8AWThFS5EVx7AwfngqL",
       "id": "nKo71iVf2HXcRbr4UCGY4B",
-      "selected": false
+      "selected": false,
+      "dailyYield": 2183.917234353839
     },
     {
       "type": "Parabolic Trough",
@@ -1218,7 +1249,8 @@
       "parentId": "fiH8AWThFS5EVx7AwfngqL",
       "foundationId": "fiH8AWThFS5EVx7AwfngqL",
       "id": "s73CuihHSMyjifPJZbc7fj",
-      "selected": false
+      "selected": false,
+      "dailyYield": 2184.1029890605014
     },
     {
       "type": "Parabolic Trough",
@@ -1253,7 +1285,8 @@
       "parentId": "fiH8AWThFS5EVx7AwfngqL",
       "foundationId": "fiH8AWThFS5EVx7AwfngqL",
       "id": "bPUahAh6uikU5BjNj3PBL4",
-      "selected": false
+      "selected": false,
+      "dailyYield": 2184.314471867017
     },
     {
       "type": "Parabolic Trough",
@@ -1288,7 +1321,8 @@
       "parentId": "fiH8AWThFS5EVx7AwfngqL",
       "foundationId": "fiH8AWThFS5EVx7AwfngqL",
       "id": "uwbEdmDhH9hKvJBzSqoFEi",
-      "selected": false
+      "selected": false,
+      "dailyYield": 2184.142140950794
     },
     {
       "type": "Parabolic Trough",
@@ -1323,7 +1357,8 @@
       "parentId": "fiH8AWThFS5EVx7AwfngqL",
       "foundationId": "fiH8AWThFS5EVx7AwfngqL",
       "id": "ek8zDL6MWZ5xk3JieUZvVt",
-      "selected": false
+      "selected": false,
+      "dailyYield": 2183.9840846216266
     },
     {
       "type": "Parabolic Trough",
@@ -1358,7 +1393,8 @@
       "parentId": "fiH8AWThFS5EVx7AwfngqL",
       "foundationId": "fiH8AWThFS5EVx7AwfngqL",
       "id": "4f3PT1Wrj5UjbZFwB43q6Q",
-      "selected": false
+      "selected": false,
+      "dailyYield": 2184.0494263190526
     },
     {
       "type": "Parabolic Trough",
@@ -1393,7 +1429,8 @@
       "parentId": "fiH8AWThFS5EVx7AwfngqL",
       "foundationId": "fiH8AWThFS5EVx7AwfngqL",
       "id": "bV9jU3U5EG7hj1ZR9htRmc",
-      "selected": false
+      "selected": false,
+      "dailyYield": 2184.0217279415574
     },
     {
       "type": "Foundation",
@@ -1454,7 +1491,8 @@
       "parentId": "v1v8XPTexYoFXFrbQfvcXN",
       "foundationId": "v1v8XPTexYoFXFrbQfvcXN",
       "id": "t8xtXgJ4zQkhGJAogmq8d9",
-      "selected": false
+      "selected": false,
+      "dailyYield": 2184.0376473630754
     },
     {
       "type": "Parabolic Trough",
@@ -1489,7 +1527,8 @@
       "parentId": "v1v8XPTexYoFXFrbQfvcXN",
       "foundationId": "v1v8XPTexYoFXFrbQfvcXN",
       "id": "bUFAb96RGW7QwKBQMcxVPN",
-      "selected": false
+      "selected": false,
+      "dailyYield": 2184.10105124523
     },
     {
       "type": "Parabolic Trough",
@@ -1524,7 +1563,8 @@
       "parentId": "v1v8XPTexYoFXFrbQfvcXN",
       "foundationId": "v1v8XPTexYoFXFrbQfvcXN",
       "id": "6rj3ikzy3Q8n2yfz1CwRXN",
-      "selected": false
+      "selected": false,
+      "dailyYield": 2184.142140950794
     },
     {
       "type": "Parabolic Trough",
@@ -1559,7 +1599,8 @@
       "parentId": "v1v8XPTexYoFXFrbQfvcXN",
       "foundationId": "v1v8XPTexYoFXFrbQfvcXN",
       "id": "1WNeTRgxoSTT2DQJu5yyHb",
-      "selected": false
+      "selected": false,
+      "dailyYield": 2186.481668316609
     },
     {
       "type": "Parabolic Trough",
@@ -1594,7 +1635,8 @@
       "parentId": "v1v8XPTexYoFXFrbQfvcXN",
       "foundationId": "v1v8XPTexYoFXFrbQfvcXN",
       "id": "cWDWPkRX7GebUfNP1qoDPY",
-      "selected": false
+      "selected": false,
+      "dailyYield": 2184.1530697342855
     },
     {
       "type": "Parabolic Trough",
@@ -1629,7 +1671,8 @@
       "parentId": "v1v8XPTexYoFXFrbQfvcXN",
       "foundationId": "v1v8XPTexYoFXFrbQfvcXN",
       "id": "dC1wGpGBnzJBEAzPE8gK7z",
-      "selected": false
+      "selected": false,
+      "dailyYield": 2183.917234353839
     },
     {
       "type": "Parabolic Trough",
@@ -1664,7 +1707,8 @@
       "parentId": "v1v8XPTexYoFXFrbQfvcXN",
       "foundationId": "v1v8XPTexYoFXFrbQfvcXN",
       "id": "jLCGM5EGeijybwhJJbzYWo",
-      "selected": false
+      "selected": false,
+      "dailyYield": 2184.1029890605014
     },
     {
       "type": "Parabolic Trough",
@@ -1699,7 +1743,8 @@
       "parentId": "v1v8XPTexYoFXFrbQfvcXN",
       "foundationId": "v1v8XPTexYoFXFrbQfvcXN",
       "id": "fofxsexPNsKCB5DuhFZbhA",
-      "selected": false
+      "selected": false,
+      "dailyYield": 2184.249130169591
     },
     {
       "type": "Parabolic Trough",
@@ -1734,7 +1779,8 @@
       "parentId": "v1v8XPTexYoFXFrbQfvcXN",
       "foundationId": "v1v8XPTexYoFXFrbQfvcXN",
       "id": "scR8HVKLnxMfg5qeM5Lugw",
-      "selected": false
+      "selected": false,
+      "dailyYield": 2184.142140950794
     },
     {
       "type": "Parabolic Trough",
@@ -1769,7 +1815,8 @@
       "parentId": "v1v8XPTexYoFXFrbQfvcXN",
       "foundationId": "v1v8XPTexYoFXFrbQfvcXN",
       "id": "aJRfgV9p4QZ5EqYhzKMsGH",
-      "selected": false
+      "selected": false,
+      "dailyYield": 2183.9965576575114
     },
     {
       "type": "Parabolic Trough",
@@ -1804,7 +1851,8 @@
       "parentId": "v1v8XPTexYoFXFrbQfvcXN",
       "foundationId": "v1v8XPTexYoFXFrbQfvcXN",
       "id": "jbKhaZc18QopEFA48QhFGz",
-      "selected": false
+      "selected": false,
+      "dailyYield": 2184.0618993549374
     },
     {
       "type": "Parabolic Trough",
@@ -1839,7 +1887,8 @@
       "parentId": "v1v8XPTexYoFXFrbQfvcXN",
       "foundationId": "v1v8XPTexYoFXFrbQfvcXN",
       "id": "gfBbYgpDbuSQ6xjoAfmVTg",
-      "selected": false
+      "selected": false,
+      "dailyYield": 2186.5619099124656
     },
     {
       "type": "Foundation",
@@ -1900,7 +1949,8 @@
       "parentId": "v1v8XPTexYoFXFrbQfvcXN",
       "foundationId": "v1v8XPTexYoFXFrbQfvcXN",
       "id": "kni2ZMXaAJJiwviDVB1raV",
-      "selected": false
+      "selected": false,
+      "dailyYield": 2186.372284672933
     },
     {
       "type": "Parabolic Trough",
@@ -1935,7 +1985,8 @@
       "parentId": "v1v8XPTexYoFXFrbQfvcXN",
       "foundationId": "v1v8XPTexYoFXFrbQfvcXN",
       "id": "bETGj1xEbbAb2BVse1AQM2",
-      "selected": false
+      "selected": false,
+      "dailyYield": 2207.463112852368
     },
     {
       "type": "Parabolic Trough",
@@ -1970,7 +2021,8 @@
       "parentId": "er6dYYMfRpcyAunmGzAVCk",
       "foundationId": "er6dYYMfRpcyAunmGzAVCk",
       "id": "s7kVKBTAaDo2hjd87z12j1",
-      "selected": false
+      "selected": false,
+      "dailyYield": 2184.0376473630754
     },
     {
       "type": "Parabolic Trough",
@@ -2005,7 +2057,8 @@
       "parentId": "er6dYYMfRpcyAunmGzAVCk",
       "foundationId": "er6dYYMfRpcyAunmGzAVCk",
       "id": "2TcdonCE1i3zpYReX2SoLR",
-      "selected": false
+      "selected": false,
+      "dailyYield": 2184.10105124523
     },
     {
       "type": "Parabolic Trough",
@@ -2040,7 +2093,8 @@
       "parentId": "er6dYYMfRpcyAunmGzAVCk",
       "foundationId": "er6dYYMfRpcyAunmGzAVCk",
       "id": "a2NWUVKnwbFux2PYtz5CHH",
-      "selected": false
+      "selected": false,
+      "dailyYield": 2184.142140950794
     },
     {
       "type": "Parabolic Trough",
@@ -2075,7 +2129,8 @@
       "parentId": "er6dYYMfRpcyAunmGzAVCk",
       "foundationId": "er6dYYMfRpcyAunmGzAVCk",
       "id": "t3XK5N3foFHRBevW4hQYeH",
-      "selected": false
+      "selected": false,
+      "dailyYield": 2186.481668316609
     },
     {
       "type": "Parabolic Trough",
@@ -2110,7 +2165,8 @@
       "parentId": "er6dYYMfRpcyAunmGzAVCk",
       "foundationId": "er6dYYMfRpcyAunmGzAVCk",
       "id": "gX7yumpKKrmXnqYJweAwxw",
-      "selected": false
+      "selected": false,
+      "dailyYield": 2184.1530697342855
     },
     {
       "type": "Parabolic Trough",
@@ -2145,7 +2201,8 @@
       "parentId": "er6dYYMfRpcyAunmGzAVCk",
       "foundationId": "er6dYYMfRpcyAunmGzAVCk",
       "id": "wydrS5X5dqpbWyrqFYtYX6",
-      "selected": false
+      "selected": false,
+      "dailyYield": 2183.917234353839
     },
     {
       "type": "Parabolic Trough",
@@ -2180,7 +2237,8 @@
       "parentId": "er6dYYMfRpcyAunmGzAVCk",
       "foundationId": "er6dYYMfRpcyAunmGzAVCk",
       "id": "ko9LprY6zErxhRNVTa6b2k",
-      "selected": false
+      "selected": false,
+      "dailyYield": 2184.1029890605014
     },
     {
       "type": "Parabolic Trough",
@@ -2215,7 +2273,8 @@
       "parentId": "er6dYYMfRpcyAunmGzAVCk",
       "foundationId": "er6dYYMfRpcyAunmGzAVCk",
       "id": "tUbG4wALaTZBXqDzrZWjJa",
-      "selected": false
+      "selected": false,
+      "dailyYield": 2225.1916629818006
     },
     {
       "type": "Parabolic Trough",
@@ -2250,7 +2309,8 @@
       "parentId": "er6dYYMfRpcyAunmGzAVCk",
       "foundationId": "er6dYYMfRpcyAunmGzAVCk",
       "id": "cwror37w56snxd6Cu57GYv",
-      "selected": false
+      "selected": false,
+      "dailyYield": 2184.142140950794
     },
     {
       "type": "Parabolic Trough",
@@ -2285,7 +2345,8 @@
       "parentId": "er6dYYMfRpcyAunmGzAVCk",
       "foundationId": "er6dYYMfRpcyAunmGzAVCk",
       "id": "djRCaY4JYizuqL9V1t1Ef7",
-      "selected": false
+      "selected": false,
+      "dailyYield": 2186.416326619183
     },
     {
       "type": "Parabolic Trough",
@@ -2320,7 +2381,8 @@
       "parentId": "er6dYYMfRpcyAunmGzAVCk",
       "foundationId": "er6dYYMfRpcyAunmGzAVCk",
       "id": "wUb1oL88fa6vEHWZxPkspJ",
-      "selected": false
+      "selected": false,
+      "dailyYield": 2186.481668316609
     },
     {
       "type": "Parabolic Trough",
@@ -2355,7 +2417,8 @@
       "parentId": "er6dYYMfRpcyAunmGzAVCk",
       "foundationId": "er6dYYMfRpcyAunmGzAVCk",
       "id": "8CofMvmPY2z5bBHdRWwYyh",
-      "selected": false
+      "selected": false,
+      "dailyYield": 2184.2214642544664
     },
     {
       "type": "Foundation",
@@ -2416,7 +2479,8 @@
       "parentId": "7yEBa2PPK1oKGZhA24cAWz",
       "foundationId": "7yEBa2PPK1oKGZhA24cAWz",
       "id": "jrgrdJiY66ubYTKCaCxqTB",
-      "selected": false
+      "selected": false,
+      "dailyYield": 2184.0376473630754
     },
     {
       "type": "Parabolic Trough",
@@ -2451,7 +2515,8 @@
       "parentId": "7yEBa2PPK1oKGZhA24cAWz",
       "foundationId": "7yEBa2PPK1oKGZhA24cAWz",
       "id": "fs8ejjGyyEChaC8Ehk8T4z",
-      "selected": false
+      "selected": false,
+      "dailyYield": 2184.10105124523
     },
     {
       "type": "Parabolic Trough",
@@ -2486,7 +2551,8 @@
       "parentId": "7yEBa2PPK1oKGZhA24cAWz",
       "foundationId": "7yEBa2PPK1oKGZhA24cAWz",
       "id": "wXPY3K4zXtXUdVp4EU5wHC",
-      "selected": false
+      "selected": false,
+      "dailyYield": 2184.142140950794
     },
     {
       "type": "Parabolic Trough",
@@ -2521,7 +2587,8 @@
       "parentId": "7yEBa2PPK1oKGZhA24cAWz",
       "foundationId": "7yEBa2PPK1oKGZhA24cAWz",
       "id": "woCUpwEYEVwQQqjCWLCbcb",
-      "selected": false
+      "selected": false,
+      "dailyYield": 2186.481668316609
     },
     {
       "type": "Parabolic Trough",
@@ -2556,7 +2623,8 @@
       "parentId": "7yEBa2PPK1oKGZhA24cAWz",
       "foundationId": "7yEBa2PPK1oKGZhA24cAWz",
       "id": "8fA8M4gu6FFx9kstBhM3Gh",
-      "selected": false
+      "selected": false,
+      "dailyYield": 2184.1530697342855
     },
     {
       "type": "Parabolic Trough",
@@ -2591,7 +2659,8 @@
       "parentId": "7yEBa2PPK1oKGZhA24cAWz",
       "foundationId": "7yEBa2PPK1oKGZhA24cAWz",
       "id": "vdKSaNvMHXQ6c4CUhsUbjJ",
-      "selected": false
+      "selected": false,
+      "dailyYield": 2183.917234353839
     },
     {
       "type": "Parabolic Trough",
@@ -2626,7 +2695,8 @@
       "parentId": "7yEBa2PPK1oKGZhA24cAWz",
       "foundationId": "7yEBa2PPK1oKGZhA24cAWz",
       "id": "nfHAWXJBNrnZk4SZXBZRwQ",
-      "selected": false
+      "selected": false,
+      "dailyYield": 2184.1029890605014
     },
     {
       "type": "Parabolic Trough",
@@ -2661,7 +2731,8 @@
       "parentId": "7yEBa2PPK1oKGZhA24cAWz",
       "foundationId": "7yEBa2PPK1oKGZhA24cAWz",
       "id": "oG9kEtQxTKYAx4RBkRru4e",
-      "selected": false
+      "selected": false,
+      "dailyYield": 2200.564116598536
     },
     {
       "type": "Parabolic Trough",
@@ -2696,7 +2767,8 @@
       "parentId": "7yEBa2PPK1oKGZhA24cAWz",
       "foundationId": "7yEBa2PPK1oKGZhA24cAWz",
       "id": "eZZfAVvGcJQ4hyoRBRAHxH",
-      "selected": false
+      "selected": false,
+      "dailyYield": 2184.142140950794
     },
     {
       "type": "Parabolic Trough",
@@ -2731,7 +2803,8 @@
       "parentId": "7yEBa2PPK1oKGZhA24cAWz",
       "foundationId": "7yEBa2PPK1oKGZhA24cAWz",
       "id": "1fvahJfFg2KKz9NtwScfEZ",
-      "selected": false
+      "selected": false,
+      "dailyYield": 2183.9965576575114
     },
     {
       "type": "Parabolic Trough",
@@ -2766,7 +2839,8 @@
       "parentId": "7yEBa2PPK1oKGZhA24cAWz",
       "foundationId": "7yEBa2PPK1oKGZhA24cAWz",
       "id": "whVGRaA9vi5x7rhQNFg1yE",
-      "selected": false
+      "selected": false,
+      "dailyYield": 2184.0618993549374
     },
     {
       "type": "Parabolic Trough",
@@ -2801,7 +2875,8 @@
       "parentId": "7yEBa2PPK1oKGZhA24cAWz",
       "foundationId": "7yEBa2PPK1oKGZhA24cAWz",
       "id": "c9Dk9vaeTmZUcYmk8LG9yA",
-      "selected": false
+      "selected": false,
+      "dailyYield": 2184.142140950794
     },
     {
       "type": "Foundation",
@@ -2862,7 +2937,8 @@
       "parentId": "k36HZDupiVkAR6X1Ux85J2",
       "foundationId": "k36HZDupiVkAR6X1Ux85J2",
       "id": "9xAb6RCYhCVXhVokdoTNnm",
-      "selected": false
+      "selected": false,
+      "dailyYield": 2184.0376473630754
     },
     {
       "type": "Parabolic Trough",
@@ -2897,7 +2973,8 @@
       "parentId": "k36HZDupiVkAR6X1Ux85J2",
       "foundationId": "k36HZDupiVkAR6X1Ux85J2",
       "id": "mQojvngU3MK9E1WnMgnuYU",
-      "selected": false
+      "selected": false,
+      "dailyYield": 2184.10105124523
     },
     {
       "type": "Parabolic Trough",
@@ -2932,7 +3009,8 @@
       "parentId": "k36HZDupiVkAR6X1Ux85J2",
       "foundationId": "k36HZDupiVkAR6X1Ux85J2",
       "id": "fdpnWcCJudkZEj98eat8mA",
-      "selected": false
+      "selected": false,
+      "dailyYield": 2184.142140950794
     },
     {
       "type": "Parabolic Trough",
@@ -2967,7 +3045,8 @@
       "parentId": "k36HZDupiVkAR6X1Ux85J2",
       "foundationId": "k36HZDupiVkAR6X1Ux85J2",
       "id": "eXpPJSpHuPPrV44B7sxjrT",
-      "selected": false
+      "selected": false,
+      "dailyYield": 2186.481668316609
     },
     {
       "type": "Parabolic Trough",
@@ -3002,7 +3081,8 @@
       "parentId": "k36HZDupiVkAR6X1Ux85J2",
       "foundationId": "k36HZDupiVkAR6X1Ux85J2",
       "id": "bKjSqKtUrMBiHDZpPLvptN",
-      "selected": false
+      "selected": false,
+      "dailyYield": 2184.1530697342855
     },
     {
       "type": "Parabolic Trough",
@@ -3037,7 +3117,8 @@
       "parentId": "k36HZDupiVkAR6X1Ux85J2",
       "foundationId": "k36HZDupiVkAR6X1Ux85J2",
       "id": "bUtfJ12cGNMZZLy3onCpbF",
-      "selected": false
+      "selected": false,
+      "dailyYield": 2183.917234353839
     },
     {
       "type": "Parabolic Trough",
@@ -3072,7 +3153,8 @@
       "parentId": "k36HZDupiVkAR6X1Ux85J2",
       "foundationId": "k36HZDupiVkAR6X1Ux85J2",
       "id": "1coPe9Q5rGuZ2WSaiij8Le",
-      "selected": false
+      "selected": false,
+      "dailyYield": 2184.1029890605014
     },
     {
       "type": "Parabolic Trough",
@@ -3108,7 +3190,8 @@
       "foundationId": "k36HZDupiVkAR6X1Ux85J2",
       "id": "2yk58NVaRPhqHjxMFDwXYo",
       "selected": false,
-      "drawSunBeam": true
+      "drawSunBeam": true,
+      "dailyYield": 2184.5259546735324
     },
     {
       "type": "Parabolic Trough",
@@ -3143,7 +3226,8 @@
       "parentId": "k36HZDupiVkAR6X1Ux85J2",
       "foundationId": "k36HZDupiVkAR6X1Ux85J2",
       "id": "6x4yDGfJw4eCZ7ekCPhjNt",
-      "selected": false
+      "selected": false,
+      "dailyYield": 2184.142140950794
     },
     {
       "type": "Parabolic Trough",
@@ -3178,7 +3262,8 @@
       "parentId": "k36HZDupiVkAR6X1Ux85J2",
       "foundationId": "k36HZDupiVkAR6X1Ux85J2",
       "id": "xvTNCko8YFvfGqK1kgUt12",
-      "selected": false
+      "selected": false,
+      "dailyYield": 2183.9965576575114
     },
     {
       "type": "Parabolic Trough",
@@ -3213,7 +3298,8 @@
       "parentId": "k36HZDupiVkAR6X1Ux85J2",
       "foundationId": "k36HZDupiVkAR6X1Ux85J2",
       "id": "gVdwmaY8duSTrt1vAsGAxn",
-      "selected": false
+      "selected": false,
+      "dailyYield": 2184.0618993549374
     },
     {
       "type": "Parabolic Trough",
@@ -3248,7 +3334,8 @@
       "parentId": "k36HZDupiVkAR6X1Ux85J2",
       "foundationId": "k36HZDupiVkAR6X1Ux85J2",
       "id": "nYEBq3ov1hbfwdFnEPb7Kh",
-      "selected": false
+      "selected": false,
+      "dailyYield": 2167.507403284107
     },
     {
       "type": "Foundation",
@@ -3309,7 +3396,8 @@
       "parentId": "tnLBLu28SYP7t6wfKCqrkm",
       "foundationId": "tnLBLu28SYP7t6wfKCqrkm",
       "id": "ezm6CU1apADueQgyTsSmZn",
-      "selected": false
+      "selected": false,
+      "dailyYield": 2184.0376473630754
     },
     {
       "type": "Parabolic Trough",
@@ -3344,7 +3432,8 @@
       "parentId": "tnLBLu28SYP7t6wfKCqrkm",
       "foundationId": "tnLBLu28SYP7t6wfKCqrkm",
       "id": "kevGPawVmfF7HkTwPXwpqF",
-      "selected": false
+      "selected": false,
+      "dailyYield": 2184.10105124523
     },
     {
       "type": "Parabolic Trough",
@@ -3379,7 +3468,8 @@
       "parentId": "tnLBLu28SYP7t6wfKCqrkm",
       "foundationId": "tnLBLu28SYP7t6wfKCqrkm",
       "id": "uandqWKZFgnXJhXCrgQ2QQ",
-      "selected": false
+      "selected": false,
+      "dailyYield": 2184.142140950794
     },
     {
       "type": "Parabolic Trough",
@@ -3414,7 +3504,8 @@
       "parentId": "tnLBLu28SYP7t6wfKCqrkm",
       "foundationId": "tnLBLu28SYP7t6wfKCqrkm",
       "id": "kpSVEzPLMTEAVhEWUE8vrF",
-      "selected": false
+      "selected": false,
+      "dailyYield": 2186.481668316609
     },
     {
       "type": "Parabolic Trough",
@@ -3449,7 +3540,8 @@
       "parentId": "tnLBLu28SYP7t6wfKCqrkm",
       "foundationId": "tnLBLu28SYP7t6wfKCqrkm",
       "id": "xzPQyiCUDpURAjVcdpLis1",
-      "selected": false
+      "selected": false,
+      "dailyYield": 2184.1530697342855
     },
     {
       "type": "Parabolic Trough",
@@ -3484,7 +3576,8 @@
       "parentId": "tnLBLu28SYP7t6wfKCqrkm",
       "foundationId": "tnLBLu28SYP7t6wfKCqrkm",
       "id": "1oovrq6jnWYwDxtZ3cBFmK",
-      "selected": false
+      "selected": false,
+      "dailyYield": 2183.917234353839
     },
     {
       "type": "Parabolic Trough",
@@ -3519,7 +3612,8 @@
       "parentId": "tnLBLu28SYP7t6wfKCqrkm",
       "foundationId": "tnLBLu28SYP7t6wfKCqrkm",
       "id": "royQeirmSLt4FSVKZM7K9n",
-      "selected": false
+      "selected": false,
+      "dailyYield": 2184.1029890605014
     },
     {
       "type": "Parabolic Trough",
@@ -3554,7 +3648,8 @@
       "parentId": "tnLBLu28SYP7t6wfKCqrkm",
       "foundationId": "tnLBLu28SYP7t6wfKCqrkm",
       "id": "eHq1QWB15jeB3RweUWBig1",
-      "selected": false
+      "selected": false,
+      "dailyYield": 2183.9634444947524
     },
     {
       "type": "Parabolic Trough",
@@ -3589,7 +3684,8 @@
       "parentId": "tnLBLu28SYP7t6wfKCqrkm",
       "foundationId": "tnLBLu28SYP7t6wfKCqrkm",
       "id": "bX6TtHS7whnu5gLA4WYDBw",
-      "selected": false
+      "selected": false,
+      "dailyYield": 2184.142140950794
     },
     {
       "type": "Parabolic Trough",
@@ -3624,7 +3720,8 @@
       "parentId": "tnLBLu28SYP7t6wfKCqrkm",
       "foundationId": "tnLBLu28SYP7t6wfKCqrkm",
       "id": "vfvomP4GJj2bUfaeRmSTnY",
-      "selected": false
+      "selected": false,
+      "dailyYield": 2183.9965576575114
     },
     {
       "type": "Parabolic Trough",
@@ -3659,7 +3756,8 @@
       "parentId": "tnLBLu28SYP7t6wfKCqrkm",
       "foundationId": "tnLBLu28SYP7t6wfKCqrkm",
       "id": "aKsJXH85Pv1TJFkCUcHtaj",
-      "selected": false
+      "selected": false,
+      "dailyYield": 2184.074372390822
     },
     {
       "type": "Parabolic Trough",
@@ -3694,7 +3792,8 @@
       "parentId": "tnLBLu28SYP7t6wfKCqrkm",
       "foundationId": "tnLBLu28SYP7t6wfKCqrkm",
       "id": "5d1oEf681m2BEya8bQE3Zu",
-      "selected": false
+      "selected": false,
+      "dailyYield": 2186.5619099124656
     },
     {
       "type": "Foundation",
@@ -3755,7 +3854,8 @@
       "parentId": "tnLBLu28SYP7t6wfKCqrkm",
       "foundationId": "tnLBLu28SYP7t6wfKCqrkm",
       "id": "35zz9s2izu4bSZ895qaY5m",
-      "selected": false
+      "selected": false,
+      "dailyYield": 2186.4500637242113
     },
     {
       "type": "Parabolic Trough",
@@ -3790,7 +3890,8 @@
       "parentId": "tnLBLu28SYP7t6wfKCqrkm",
       "foundationId": "tnLBLu28SYP7t6wfKCqrkm",
       "id": "8LPfuFyav4kWtBZ6BHp2RQ",
-      "selected": false
+      "selected": false,
+      "dailyYield": 2207.323568286619
     }
   ],
   "view": {
@@ -3827,9 +3928,9 @@
     "showDailyLightSensorPanel": false,
     "shadowEnabled": true,
     "cameraPosition": [
-      59.39685888925809,
-      527.6140586733687,
-      81.99014430532247
+      415.56554854788317,
+      378.8681570116889,
+      50.208533152612546
     ],
     "panCenter": [
       53.36331727441414,
@@ -3853,7 +3954,7 @@
     ],
     "showSolarRadiationHeatmap": false,
     "showSolarPanelVisibilityResultsPanel": false,
-    "solarRadiationHeatMapMaxValue": 11.5,
+    "solarRadiationHeatMapMaxValue": 5.5,
     "showSunAngles": true,
     "showMapPanel": false,
     "showDesignInfoPanel": true,

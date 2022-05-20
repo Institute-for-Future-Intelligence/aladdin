@@ -35,6 +35,7 @@ import SolarUpdraftTowerChimneyRadiusInput from './solarUpdraftTowerChimneyRadiu
 import SolarUpdraftTowerCollectorRadiusInput from './solarUpdraftTowerCollectorRadiusInput';
 import SolarUpdraftTowerCollectorHeightInput from './solarUpdraftTowerCollectorHeightInput';
 import SolarPowerTowerHeightInput from './solarPowerTowerHeightInput';
+import SolarPowerTowerRadiusInput from './solarPowerTowerRadiusInput';
 import SolarPowerTowerReceiverAbsorptanceInput from './solarPowerTowerReceiverAbsorptanceInput';
 import SolarPowerTowerReceiverOpticalEfficiencyInput from './solarPowerTowerReceiverOpticalEfficiencyInput';
 import SolarPowerTowerReceiverThermalEfficiencyInput from './solarPowerTowerReceiverThermalEfficiencyInput';
@@ -80,6 +81,7 @@ export const FoundationMenu = () => {
     useState(false);
 
   const [solarPowerTowerHeightDialogVisible, setSolarPowerTowerHeightDialogVisible] = useState(false);
+  const [solarPowerTowerRadiusDialogVisible, setSolarPowerTowerRadiusDialogVisible] = useState(false);
   const [solarPowerTowerReceiverAbsorptanceDialogVisible, setSolarPowerTowerReceiverAbsorptanceDialogVisible] =
     useState(false);
   const [
@@ -896,6 +898,20 @@ export const FoundationMenu = () => {
               }}
             >
               {i18n.t('solarPowerTowerMenu.ReceiverTowerHeight', lang)} ...
+            </Menu.Item>
+
+            {solarPowerTowerRadiusDialogVisible && (
+              <SolarPowerTowerRadiusInput setDialogVisible={setSolarPowerTowerRadiusDialogVisible} />
+            )}
+            <Menu.Item
+              key={'solar-power-tower-radius'}
+              style={{ paddingLeft: '36px' }}
+              onClick={() => {
+                setApplyCount(0);
+                setSolarPowerTowerRadiusDialogVisible(true);
+              }}
+            >
+              {i18n.t('solarPowerTowerMenu.ReceiverTowerRadius', lang)} ...
             </Menu.Item>
 
             {solarPowerTowerReceiverAbsorptanceDialogVisible && (
