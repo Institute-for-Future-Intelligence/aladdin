@@ -16,7 +16,15 @@ import { UndoableResizeHipRoofRidge } from 'src/undo/UndoableResize';
 import { Util } from 'src/Util';
 import { DoubleSide, Euler, Mesh, Raycaster, Vector2, Vector3 } from 'three';
 import { ObjectType } from '../../types';
-import { handleUndoableResizeRoofHeight, ConvexGeoProps, useRoofTexture, handleRoofContextMenu } from './roof';
+import {
+  handleUndoableResizeRoofHeight,
+  ConvexGeoProps,
+  useRoofTexture,
+  handleRoofContextMenu,
+  getNormal,
+  getIntersectionPoint,
+  getDistance,
+} from './roof';
 
 interface RoofSegmentWireframeProps {
   leftRoof: Vector3;
@@ -48,6 +56,7 @@ const HipRoof = ({
   selected,
   textureType,
   color,
+  overhang,
 }: HipRoofModel) => {
   const texture = useRoofTexture(textureType);
 
@@ -219,41 +228,98 @@ const HipRoof = ({
     return { lh, rh };
   };
 
+  const getOverhangHeight = () => {
+    const [frontWall, rightWall, backWall, leftWall] = currentWallArray;
+    const wallPoint0 = new Vector3(frontWall.leftPoint[0], frontWall.leftPoint[1]);
+    const wallPoint1 = new Vector3(frontWall.rightPoint[0], frontWall.rightPoint[1]);
+    const wallPoint2 = new Vector3(backWall.leftPoint[0], backWall.leftPoint[1]);
+    const wallPoint3 = new Vector3(backWall.rightPoint[0], backWall.rightPoint[1]);
+
+    const wallPoints = [wallPoint0, wallPoint1, wallPoint2, wallPoint3];
+    const ridges = [ridgeLeftPoint, ridgeRightPoint, ridgeRightPoint, ridgeLeftPoint];
+
+    let height = Infinity;
+
+    for (let i = 0; i < 4; i++) {
+      const { lh, rh } = getWallHeight(currentWallArray, i);
+      const dLeft = getDistance(wallPoints[i], wallPoints[(i + 1) % 4], ridges[i]);
+      const overhangHeightLeft = Math.min((overhang / dLeft) * (ridges[i].z - lh), lh);
+      const dRight = getDistance(wallPoints[i], wallPoints[(i + 1) % 4], ridges[(i + 1) % 4]);
+      const overhangHeightRight = Math.min((overhang / dRight) * (ridges[(i + 1) % 4].z - rh), rh);
+      height = Math.min(Math.min(overhangHeightLeft, overhangHeightRight), height);
+    }
+
+    return Number.isNaN(height) ? 0 : height;
+  };
+
+  const overhangs = useMemo(() => {
+    return currentWallArray.map((wall) => getNormal(wall).multiplyScalar(overhang));
+  }, [currentWallArray, overhang]);
+
+  const wallPointsAfterOffset = useMemo(() => {
+    return currentWallArray.map((wall, idx) => {
+      return {
+        leftPoint: new Vector3(wall.leftPoint[0], wall.leftPoint[1]).add(overhangs[idx]),
+        rightPoint: new Vector3(wall.rightPoint[0], wall.rightPoint[1]).add(overhangs[idx]),
+      };
+    });
+  }, [overhangs]);
+
   const roofSegments = useMemo(() => {
     const segments: ConvexGeoProps[] = [];
     let minHeight = 0;
     if (currentWallArray.length !== 4) {
       return segments;
     }
+
+    const overhangHeight = getOverhangHeight();
+
     for (let i = 0; i < 4; i++) {
       const points: Vector3[] = [];
       const wall = currentWallArray[i];
-      const direction = -wall.relativeAngle;
       const { lh, rh } = getWallHeight(currentWallArray, i);
       minHeight = Math.max(minHeight, Math.max(lh, rh));
-      const wallLeftPoint = new Vector3(wall.leftPoint[0], wall.leftPoint[1], lh).sub(ridgeMidPoint);
-      const wallRightPoint = new Vector3(wall.rightPoint[0], wall.rightPoint[1], rh).sub(ridgeMidPoint);
+
+      const wallLeftPointAfterOverhang = getIntersectionPoint(
+        wallPointsAfterOffset[i].leftPoint,
+        wallPointsAfterOffset[i].rightPoint,
+        wallPointsAfterOffset[(i + 3) % 4].leftPoint,
+        wallPointsAfterOffset[(i + 3) % 4].rightPoint,
+      )
+        .setZ(lh - overhangHeight)
+        .sub(ridgeMidPoint);
+
+      const wallRightPointAfterOverhang = getIntersectionPoint(
+        wallPointsAfterOffset[i].leftPoint,
+        wallPointsAfterOffset[i].rightPoint,
+        wallPointsAfterOffset[(i + 1) % 4].leftPoint,
+        wallPointsAfterOffset[(i + 1) % 4].rightPoint,
+      )
+        .setZ(rh - overhangHeight)
+        .sub(ridgeMidPoint);
+
       const ridgeLeft = ridgeLeftPoint.clone().sub(ridgeMidPoint);
       const ridgeRight = ridgeRightPoint.clone().sub(ridgeMidPoint);
       let length = 0;
       switch (i) {
         case 0:
           length = new Vector3(wall.cx, wall.cy).sub(ridgeMidPoint.clone().setZ(0)).length();
-          makeSement(points, wallLeftPoint, wallRightPoint, ridgeRight, ridgeLeft);
+          makeSement(points, wallLeftPointAfterOverhang, wallRightPointAfterOverhang, ridgeRight, ridgeLeft);
           break;
         case 1:
           length = new Vector3(wall.cx, wall.cy).sub(ridgeRightPoint.clone().setZ(0)).length();
-          makeSement(points, wallLeftPoint, wallRightPoint, ridgeRight, ridgeRight);
+          makeSement(points, wallLeftPointAfterOverhang, wallRightPointAfterOverhang, ridgeRight, ridgeRight);
           break;
         case 2:
           length = new Vector3(wall.cx, wall.cy).sub(ridgeMidPoint.clone().setZ(0)).length();
-          makeSement(points, wallLeftPoint, wallRightPoint, ridgeLeft, ridgeRight);
+          makeSement(points, wallLeftPointAfterOverhang, wallRightPointAfterOverhang, ridgeLeft, ridgeRight);
           break;
         case 3:
           length = new Vector3(wall.cx, wall.cy).sub(ridgeLeftPoint.clone().setZ(0)).length();
-          makeSement(points, wallLeftPoint, wallRightPoint, ridgeLeft, ridgeLeft);
+          makeSement(points, wallLeftPointAfterOverhang, wallRightPointAfterOverhang, ridgeLeft, ridgeLeft);
           break;
       }
+      const direction = -wall.relativeAngle;
       segments.push({ points, direction, length });
     }
     setMinHeight(minHeight);
@@ -292,7 +358,6 @@ const HipRoof = ({
       <group
         name="Roof Segments Group"
         position={[centroid2D.x, centroid2D.y, h]}
-        scale={1.1}
         onPointerDown={(e) => {
           if (e.intersections[0].eventObject.name === e.eventObject.name) {
             setCommonStore((state) => {
