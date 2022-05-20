@@ -218,6 +218,13 @@ export enum SolarStructure {
   UpdraftTower = 3,
 }
 
+export enum SolarPanelTextureType {
+  BluePortrait = 'Blue Portrait',
+  BlueLandscape = 'Blue Landscape',
+  BlackPortrait = 'Black Portrait',
+  BlackLandscape = 'Black Landscape',
+}
+
 export enum ActionType {
   Select = 'Select',
   Move = 'Move',

@@ -40,6 +40,12 @@ export const loadPvModules = (state: CommonStoreState) => state.loadPvModules;
 
 export const getPvModule = (state: CommonStoreState) => state.getPvModule;
 
+export const solarPanelTextures = (state: CommonStoreState) => state.solarPanelTextures;
+
+export const loadSolarPanelTextures = (state: CommonStoreState) => state.loadSolarPanelTextures;
+
+export const getSolarPanelTexture = (state: CommonStoreState) => state.getSolarPanelTexture;
+
 export const floatingWindowOpacity = (state: CommonStoreState) => state.floatingWindowOpacity;
 
 export const language = (state: CommonStoreState) => state.language;

@@ -230,10 +230,11 @@ const ParabolicDish = ({
   }, [sunDirection, tiltAngle, relativeAzimuth]);
 
   const poleZ = -(actualPoleHeight + lz) / 2;
+  const detailed = elements.length < 50;
 
   const wireframeLines = useMemo<LineData[]>(() => {
     const array: LineData[] = [];
-    if (elements.length < 50) {
+    if (detailed) {
       // draw rim lines
       const outer: Vector3[] = [];
       const inner: Vector3[] = [];
@@ -418,7 +419,7 @@ const ParabolicDish = ({
         <Cylinder
           name={'Parabolic Dish Receiver'}
           uuid={id}
-          args={[receiverRadius, receiverRadius, 0.5, 12, 2]}
+          args={[receiverRadius, receiverRadius, 0.5, detailed ? 12 : 4, 1]}
           rotation={[HALF_PI, 0, 0]}
           position={[0, 0, focalLength - 0.1]}
           receiveShadow={false}
@@ -445,7 +446,7 @@ const ParabolicDish = ({
           <Cylinder
             name={'Parabolic Dish Receiver Pole'}
             uuid={id}
-            args={[receiverPoleRadius, receiverPoleRadius, focalLength, 6, 2]}
+            args={[receiverPoleRadius, receiverPoleRadius, focalLength, detailed ? 6 : 2, 1]}
             rotation={[HALF_PI, 0, 0]}
             position={[0, 0, focalLength / 2]}
             receiveShadow={false}
@@ -692,7 +693,7 @@ const ParabolicDish = ({
           name={'Pole'}
           castShadow={false}
           receiveShadow={false}
-          args={[poleRadius, poleRadius, actualPoleHeight + lz, elements.length < 100 ? 4 : 2, 1]}
+          args={[poleRadius, poleRadius, actualPoleHeight + lz, detailed ? 4 : 2, 1]}
           position={[0, 0, poleZ]}
           rotation={[HALF_PI, 0, 0]}
         >

@@ -4,17 +4,7 @@
 
 import React, { useEffect, useMemo, useRef, useState } from 'react';
 import { Box, Cone, Cylinder, Line, Plane, Ring, Sphere } from '@react-three/drei';
-import {
-  CanvasTexture,
-  DoubleSide,
-  Euler,
-  Mesh,
-  Raycaster,
-  RepeatWrapping,
-  TextureLoader,
-  Vector2,
-  Vector3,
-} from 'three';
+import { CanvasTexture, DoubleSide, Euler, Mesh, Raycaster, RepeatWrapping, Texture, Vector2, Vector3 } from 'three';
 import { useStore } from '../stores/common';
 import { useStoreRef } from 'src/stores/commonRef';
 import * as Selector from '../stores/selector';
@@ -40,14 +30,11 @@ import {
   Orientation,
   ResizeHandleType,
   RotateHandleType,
+  SolarPanelTextureType,
   TrackerType,
 } from '../types';
 import { Util } from '../Util';
 import { SolarPanelModel } from '../models/SolarPanelModel';
-import SolarPanelBlueLandscapeImage from '../resources/solar-panel-blue-landscape.png';
-import SolarPanelBluePortraitImage from '../resources/solar-panel-blue-portrait.png';
-import SolarPanelBlackLandscapeImage from '../resources/solar-panel-black-landscape.png';
-import SolarPanelBlackPortraitImage from '../resources/solar-panel-black-portrait.png';
 import { getSunDirection } from '../analysis/sunTools';
 import RotateHandle from '../components/rotateHandle';
 import { UndoableChange } from '../undo/UndoableChange';
@@ -98,6 +85,8 @@ const SolarPanel = ({
   const resizeHandleType = useStore(Selector.resizeHandleType);
   const rotateHandleType = useStore(Selector.rotateHandleType);
   const addUndoable = useStore(Selector.addUndoable);
+  const solarPanelTextures = useStore(Selector.solarPanelTextures);
+  const getSolarPanelTexture = useStore(Selector.getSolarPanelTexture);
 
   const {
     gl: { domElement },
@@ -110,7 +99,6 @@ const SolarPanel = ({
   const [ny, setNy] = useState(1);
   const [heatmapTexture, setHeatmapTexture] = useState<CanvasTexture | null>(null);
   const [faceUp, setFaceUp] = useState<boolean>();
-  const [updateFlag, setUpdateFlag] = useState(false);
   const baseRef = useRef<Mesh>();
   const moveHandleRef = useRef<Mesh>();
   const resizeHandleLowerRef = useRef<Mesh>();
@@ -260,34 +248,35 @@ const SolarPanel = ({
     );
   }, [solarPanel?.label, locked, language, cx, cy, cz]);
 
-  const texture = useMemo(() => {
-    const loader = new TextureLoader();
-    let tex;
+  const cachedTexture = useMemo(() => {
+    let cachedTexture: Texture;
     switch (orientation) {
       case Orientation.portrait:
-        tex = loader.load(
-          pvModel?.color === 'Blue' ? SolarPanelBluePortraitImage : SolarPanelBlackPortraitImage,
-          (t) => {
-            t.wrapS = t.wrapT = RepeatWrapping;
-            t.offset.set(0, 0);
-            t.repeat.set(nx, ny);
-            setUpdateFlag(!updateFlag);
-          },
-        );
+        cachedTexture =
+          pvModel?.color === 'Blue'
+            ? getSolarPanelTexture(SolarPanelTextureType.BluePortrait)
+            : getSolarPanelTexture(SolarPanelTextureType.BlackPortrait);
         break;
       default:
-        tex = loader.load(
-          pvModel?.color === 'Blue' ? SolarPanelBlueLandscapeImage : SolarPanelBlackLandscapeImage,
-          (t) => {
-            t.wrapS = t.wrapT = RepeatWrapping;
-            t.offset.set(0, 0);
-            t.repeat.set(nx, ny);
-            setUpdateFlag(!updateFlag);
-          },
-        );
+        cachedTexture =
+          pvModel?.color === 'Blue'
+            ? getSolarPanelTexture(SolarPanelTextureType.BlueLandscape)
+            : getSolarPanelTexture(SolarPanelTextureType.BlackLandscape);
     }
-    return tex;
-  }, [orientation, pvModel?.color, nx, ny]);
+    return cachedTexture;
+  }, [solarPanelTextures, orientation, pvModel?.color]);
+
+  const texture = useMemo(() => {
+    let t: Texture = new Texture();
+    if (cachedTexture && cachedTexture.image) {
+      t.image = cachedTexture.image;
+      t.needsUpdate = true;
+      t.wrapS = t.wrapT = RepeatWrapping;
+      t.offset.set(0, 0);
+      t.repeat.set(nx, ny);
+    }
+    return t;
+  }, [cachedTexture, nx, ny]);
 
   const euler = useMemo(() => {
     // east face in model coordinate system
