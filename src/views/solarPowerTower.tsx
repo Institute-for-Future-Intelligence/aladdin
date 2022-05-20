@@ -28,14 +28,14 @@ const SolarPowerTower = ({ foundation }: { foundation: FoundationModel }) => {
   const towerHeight = solarPowerTower?.towerHeight ?? 20;
   const receiverHeight = towerHeight / 10;
   const receiverRadius = towerRadius * 1.5;
-  const haloSize = receiverHeight * 2 + 1;
+  const haloSize = Math.max(receiverHeight, receiverRadius) * 2.4;
 
   return (
     <group>
       <Cylinder
         userData={{ unintersectable: true }}
         name={'Focus Tower'}
-        castShadow={false}
+        castShadow={true}
         receiveShadow={false}
         args={[towerRadius, towerRadius, towerHeight, 6, 2]}
         position={[0, 0, towerHeight / 2 + lz / 2]}
@@ -46,7 +46,7 @@ const SolarPowerTower = ({ foundation }: { foundation: FoundationModel }) => {
       <Cylinder
         userData={{ unintersectable: true }}
         name={'Center Receiver'}
-        castShadow={false}
+        castShadow={true}
         receiveShadow={false}
         args={[receiverRadius, receiverRadius, receiverHeight, 10, 2]}
         position={[0, 0, towerHeight + lz / 2]}

@@ -4557,9 +4557,18 @@ export const useStore = create<CommonStoreState>(
                         showError(i18n.t('message.CannotPasteBecauseOfOverlap', lang));
                       } else {
                         if (newParent) {
-                          approved = Util.isSolarCollectorWithinHorizontalSurface(e as SolarCollector, newParent);
-                          if (!approved) {
-                            showError(i18n.t('message.CannotPasteOutsideBoundary', lang));
+                          if (
+                            newParent.type === ObjectType.Foundation ||
+                            (newParent.type === ObjectType.Cuboid &&
+                              Util.isIdentical(e.normal, UNIT_VECTOR_POS_Z_ARRAY))
+                          ) {
+                            approved = Util.isSolarCollectorWithinHorizontalSurface(e as SolarCollector, newParent);
+                            if (!approved) {
+                              showError(i18n.t('message.CannotPasteOutsideBoundary', lang));
+                            }
+                          } else {
+                            // TODO: other surfaces
+                            approved = true;
                           }
                         } else {
                           approved = true;

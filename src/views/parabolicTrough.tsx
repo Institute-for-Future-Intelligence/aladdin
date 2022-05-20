@@ -618,7 +618,7 @@ const ParabolicTrough = ({
       {/* draw poles */}
       {actualPoleHeight > 0 &&
         poles.map((p, i) => {
-          if (i % 5 !== 0 && !detailed) return <></>;
+          if (i % 5 !== 0 && !detailed) return <React.Fragment key={i} />;
           return (
             <Cylinder
               userData={{ unintersectable: true }}
