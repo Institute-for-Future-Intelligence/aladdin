@@ -331,7 +331,7 @@ const GambrelRoof = ({
 
     const d0 = getDistance(wallPoint0, wallPoint1, frontRidgeLeftPointV3.clone().add(centroid));
     const overhangHeight0 = Math.min(
-      (overhang / d0) * (frontRidgeLeftPointV3.clone().add(centroid).z - frontWallRh),
+      (overhang / d0) * (frontRidgeLeftPointV3.clone().add(centroid).z - frontWallLh),
       frontWallLh,
     );
 
@@ -415,7 +415,7 @@ const GambrelRoof = ({
 
     const d2 = getDistance(wallPoint2, wallPoint3, backRidgeLeftPointV3.clone().add(centroid));
     const overhangHeight2 = Math.min(
-      (overhang / d2) * (backRidgeLeftPointV3.clone().add(centroid).z - backWallRh),
+      (overhang / d2) * (backRidgeLeftPointV3.clone().add(centroid).z - backWallLh),
       backWallLh,
     );
 

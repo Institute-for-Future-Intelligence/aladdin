@@ -299,13 +299,13 @@ const GableRoof = ({
       const { lh: backWallLh, rh: backWallRh } = getWallHeightShed(shiftedWallArray, 2);
 
       const d0 = getDistance(wallPoint0, wallPoint1, wallPoint3);
-      const overhangHeight0 = Math.min((overhang / d0) * (h - frontWallRh), frontWallLh);
+      const overhangHeight0 = Math.min((overhang / d0) * (h - frontWallLh), frontWallLh);
 
       const d1 = getDistance(wallPoint0, wallPoint1, wallPoint2);
-      const overhangHeight1 = Math.min((overhang / d1) * (h - frontWallRh), frontWallLh);
+      const overhangHeight1 = Math.min((overhang / d1) * (h - frontWallRh), frontWallRh);
 
       const d2 = getDistance(wallPoint2, wallPoint3, wallPoint1);
-      const overhangHeight2 = Math.min((overhang / d2) * (h - backWallRh), backWallLh);
+      const overhangHeight2 = Math.min((overhang / d2) * (h - backWallLh), backWallLh);
 
       const d3 = getDistance(wallPoint2, wallPoint3, wallPoint0);
       const overhangHeight3 = Math.min((overhang / d3) * (h - backWallRh), backWallRh);
@@ -399,7 +399,7 @@ const GableRoof = ({
       const { lh: frontWallLh, rh: frontWallRh } = getWallHeight(currentWallArray, 0);
 
       const d0 = getDistance(wallPoint0, wallPoint1, ridgeLeftPointV3);
-      const overhangHeight0 = Math.min((overhang / d0) * (ridgeLeftPointV3.z - frontWallRh), frontWallLh);
+      const overhangHeight0 = Math.min((overhang / d0) * (ridgeLeftPointV3.z - frontWallLh), frontWallLh);
 
       const d1 = getDistance(wallPoint0, wallPoint1, ridgeRightPointV3);
       const overhangHeight1 = Math.min((overhang / d1) * (ridgeRightPointV3.z - frontWallRh), frontWallRh);
@@ -437,7 +437,7 @@ const GableRoof = ({
       const backPoints: Vector3[] = [];
       const { lh: backWallLh, rh: backWallRh } = getWallHeight(currentWallArray, 2);
       const d2 = getDistance(wallPoint2, wallPoint3, ridgeRightPointV3);
-      const overhangHeight2 = Math.min((overhang / d2) * (ridgeRightPointV3.z - backWallRh), backWallLh);
+      const overhangHeight2 = Math.min((overhang / d2) * (ridgeRightPointV3.z - backWallLh), backWallLh);
 
       const d3 = getDistance(wallPoint2, wallPoint3, ridgeLeftPointV3);
       const overhangHeight3 = Math.min((overhang / d3) * (ridgeLeftPointV3.z - backWallRh), backWallRh);
