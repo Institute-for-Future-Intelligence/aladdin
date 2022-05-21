@@ -34,7 +34,7 @@ import { ThreeEvent } from '@react-three/fiber';
 import { WallModel } from 'src/models/WallModel';
 import { HALF_PI } from 'src/constants';
 
-const euler = new Euler(0, 0, HALF_PI);
+export const euler = new Euler(0, 0, HALF_PI);
 export interface ConvexGeoProps {
   points: Vector3[];
   direction: number;

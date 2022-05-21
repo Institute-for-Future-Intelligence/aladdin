@@ -17,14 +17,35 @@ import { Point2 } from 'src/models/Point2';
 import { Util } from 'src/Util';
 import { ObjectType, RoofTexture } from 'src/types';
 import { CSG } from 'three-csg-ts';
-import { ConvexGeoProps, handleRoofContextMenu, handleUndoableResizeRoofHeight, useRoofTexture } from './roof';
+import {
+  ConvexGeoProps,
+  euler,
+  getDistance,
+  getIntersectionPoint,
+  getNormal,
+  handleRoofContextMenu,
+  handleUndoableResizeRoofHeight,
+  useRoofTexture,
+} from './roof';
 
 const centerPointPosition = new Vector3();
 const intersectionPlanePosition = new Vector3();
 const intersectionPlaneRotation = new Euler();
 const zeroVector = new Vector3();
 
-const PyramidRoof = ({ cx, cy, cz, lz, id, parentId, wallsId, selected, textureType, color }: PyramidRoofModel) => {
+const PyramidRoof = ({
+  cx,
+  cy,
+  cz,
+  lz,
+  id,
+  parentId,
+  wallsId,
+  selected,
+  textureType,
+  color,
+  overhang,
+}: PyramidRoofModel) => {
   const setCommonStore = useStore(Selector.set);
   const getElementById = useStore(Selector.getElementById);
   const removeElementById = useStore(Selector.removeElementById);
@@ -108,6 +129,24 @@ const PyramidRoof = ({ cx, cy, cz, lz, id, parentId, wallsId, selected, textureT
     return false;
   };
 
+  const getOverhangHeight = () => {
+    let height = Infinity;
+
+    for (let i = 0; i < currentWallArray.length; i++) {
+      const w = currentWallArray[i];
+      const leftPoint = new Vector3(w.leftPoint[0], w.leftPoint[1]);
+      const rightPoint = new Vector3(w.rightPoint[0], w.rightPoint[1]);
+      const { lh, rh } = getWallHeight(currentWallArray, i);
+      const dLeft = getDistance(leftPoint, rightPoint, centerPointPosition);
+      const overhangHeightLeft = Math.min((overhang / dLeft) * (centerPointPosition.z - lh), lh);
+      const dRight = getDistance(leftPoint, rightPoint, centerPointPosition);
+      const overhangHeightRight = Math.min((overhang / dRight) * (centerPointPosition.z - rh), rh);
+      height = Math.min(Math.min(overhangHeightLeft, overhangHeightRight), height);
+    }
+
+    return Number.isNaN(height) ? 0 : height;
+  };
+
   // get Walls array from left to right
   const currentWallArray = useMemo(() => {
     for (const wid of wallsId) {
@@ -168,12 +207,53 @@ const PyramidRoof = ({ cx, cy, cz, lz, id, parentId, wallsId, selected, textureT
     return p;
   }, [currentWallArray, h]);
 
+  const overhangs = useMemo(() => {
+    const res = currentWallArray.map((wall) => getNormal(wall).multiplyScalar(overhang));
+    if (!isWallLoopRef.current) {
+      const n = new Vector3()
+        .subVectors(
+          new Vector3(
+            currentWallArray[currentWallArray.length - 1].rightPoint[0],
+            currentWallArray[currentWallArray.length - 1].rightPoint[1],
+          ),
+          new Vector3(currentWallArray[0].leftPoint[0], currentWallArray[0].leftPoint[1]),
+        )
+        .applyEuler(euler)
+        .normalize()
+        .multiplyScalar(overhang);
+      res.push(n);
+    }
+    return res;
+  }, [currentWallArray, overhang]);
+
+  const wallPointsAfterOffset = useMemo(() => {
+    const res = currentWallArray.map((wall, idx) => ({
+      leftPoint: new Vector3(wall.leftPoint[0], wall.leftPoint[1]).add(overhangs[idx]),
+      rightPoint: new Vector3(wall.rightPoint[0], wall.rightPoint[1]).add(overhangs[idx]),
+    }));
+    if (!isWallLoopRef.current) {
+      res.push({
+        leftPoint: new Vector3(
+          currentWallArray[currentWallArray.length - 1].rightPoint[0],
+          currentWallArray[currentWallArray.length - 1].rightPoint[1],
+        ).add(overhangs[overhangs.length - 1]),
+        rightPoint: new Vector3(currentWallArray[0].leftPoint[0], currentWallArray[0].leftPoint[1]).add(
+          overhangs[overhangs.length - 1],
+        ),
+      });
+    }
+    return res;
+  }, [overhangs]);
+
   const roofSegments = useMemo(() => {
     const segments: ConvexGeoProps[] = [];
     if (currentWallArray.length < 2) {
       return segments;
     }
     let minHeight = 0;
+
+    const overhangHeight = getOverhangHeight();
+
     for (let i = 0; i < currentWallArray.length; i++) {
       const w = currentWallArray[i];
       if (
@@ -182,35 +262,74 @@ const PyramidRoof = ({ cx, cy, cz, lz, id, parentId, wallsId, selected, textureT
         (w.leftPoint[0] !== w.rightPoint[0] || w.leftPoint[1] !== w.rightPoint[1])
       ) {
         const points = [];
-        const { lh, rh } = getWallHeight(currentWallArray, i);
+        let { lh, rh } = getWallHeight(currentWallArray, i);
+        if (!isWallLoopRef.current) {
+          if (i === 0) {
+            lh = currentWallArray[0].lz;
+          }
+          if (i === currentWallArray.length - 1) {
+            rh = currentWallArray[currentWallArray.length - 1].lz;
+          }
+        }
         minHeight = Math.max(minHeight, Math.max(lh, rh));
-        const leftPoint = new Vector3(w.leftPoint[0], w.leftPoint[1], lh).sub(centerPointPosition);
-        const rightPoint = new Vector3(w.rightPoint[0], w.rightPoint[1], rh).sub(centerPointPosition);
+
+        const wallLeftPointAfterOverhang = getIntersectionPoint(
+          wallPointsAfterOffset[i].leftPoint,
+          wallPointsAfterOffset[i].rightPoint,
+          wallPointsAfterOffset[(i + wallPointsAfterOffset.length - 1) % wallPointsAfterOffset.length].leftPoint,
+          wallPointsAfterOffset[(i + wallPointsAfterOffset.length - 1) % wallPointsAfterOffset.length].rightPoint,
+        )
+          .setZ(lh - overhangHeight)
+          .sub(centerPointPosition);
+
+        const wallRightPointAfterOverhang = getIntersectionPoint(
+          wallPointsAfterOffset[i].leftPoint,
+          wallPointsAfterOffset[i].rightPoint,
+          wallPointsAfterOffset[(i + 1) % wallPointsAfterOffset.length].leftPoint,
+          wallPointsAfterOffset[(i + 1) % wallPointsAfterOffset.length].rightPoint,
+        )
+          .setZ(rh - overhangHeight)
+          .sub(centerPointPosition);
+
         const direction = -w.relativeAngle;
         const length = new Vector3(w.cx, w.cy).sub(centerPointPosition.clone().setZ(0)).length();
-        points.push(leftPoint, rightPoint, zeroVector, zeroVector);
+        points.push(wallLeftPointAfterOverhang, wallRightPointAfterOverhang, zeroVector, zeroVector);
         segments.push({ points, direction, length });
       }
     }
     if (!isWallLoopRef.current) {
-      const firstWall = currentWallArray[0];
-      const lastWall = currentWallArray[currentWallArray.length - 1];
-      const leftPoint = new Vector3(
-        lastWall.rightPoint[0] ?? lastWall.leftPoint[0],
-        lastWall.rightPoint[1] ?? lastWall.leftPoint[1],
-        lastWall.lz,
-      ).sub(centerPointPosition);
-      const rightPoint = new Vector3(firstWall.leftPoint[0], firstWall.leftPoint[1], firstWall.lz).sub(
-        centerPointPosition,
+      const idx = wallPointsAfterOffset.length - 1;
+      const leftPointAfterOverhang = getIntersectionPoint(
+        wallPointsAfterOffset[idx].leftPoint,
+        wallPointsAfterOffset[idx].rightPoint,
+        wallPointsAfterOffset[idx - 1].leftPoint,
+        wallPointsAfterOffset[idx - 1].rightPoint,
+      )
+        .setZ(currentWallArray[currentWallArray.length - 1].lz - overhangHeight)
+        .sub(centerPointPosition);
+      const rightPointAfterOverhang = getIntersectionPoint(
+        wallPointsAfterOffset[idx].leftPoint,
+        wallPointsAfterOffset[idx].rightPoint,
+        wallPointsAfterOffset[0].leftPoint,
+        wallPointsAfterOffset[0].rightPoint,
+      )
+        .setZ(currentWallArray[0].lz - overhangHeight)
+        .sub(centerPointPosition);
+
+      let angle = Math.atan2(
+        rightPointAfterOverhang.y - leftPointAfterOverhang.y,
+        rightPointAfterOverhang.x - leftPointAfterOverhang.x,
       );
-      segments[0].points[0].setZ(firstWall.lz - centerPointPosition.z);
-      segments[segments.length - 1].points[1].setZ(lastWall.lz - centerPointPosition.z);
-      const points = [];
-      let angle = Math.atan2(rightPoint.y - leftPoint.y, rightPoint.x - leftPoint.x);
       angle = angle >= 0 ? angle : (TWO_PI + angle) % TWO_PI;
 
-      const length = new Vector3().addVectors(leftPoint, rightPoint).setZ(0).divideScalar(2).length();
-      points.push(leftPoint, rightPoint, zeroVector, zeroVector);
+      const length = new Vector3()
+        .addVectors(leftPointAfterOverhang, rightPointAfterOverhang)
+        .setZ(0)
+        .divideScalar(2)
+        .length();
+
+      const points = [];
+      points.push(leftPointAfterOverhang, rightPointAfterOverhang, zeroVector, zeroVector);
       segments.push({ points, direction: -angle, length });
     }
 
@@ -278,7 +397,6 @@ const PyramidRoof = ({ cx, cy, cz, lz, id, parentId, wallsId, selected, textureT
       <group
         name={`Roof Segments Group ${id}`}
         position={[centerPoint.x, centerPoint.y, h]}
-        scale={1.1}
         onPointerDown={(e) => {
           if (e.intersections[0].eventObject.name === e.eventObject.name) {
             setCommonStore((state) => {
