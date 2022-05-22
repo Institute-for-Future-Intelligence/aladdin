@@ -667,6 +667,9 @@ const GableRoof = ({
               const intersects = ray.intersectObjects([intersectionPlaneRef.current]);
               if (intersects[0]) {
                 const point = intersects[0].point;
+                if (point.z < 0.001) {
+                  return;
+                }
                 switch (roofHandleType) {
                   case RoofHandleType.Left: {
                     const wall = currentWallArray[3];

@@ -458,7 +458,6 @@ const MansardRoof = ({
     <group position={[cx, cy, cz + 0.01]} rotation={[0, 0, rotation]} name={`GambrelRoof Group ${id}`}>
       <group
         position={[centroid.x, centroid.y, centroid.z]}
-        scale={new Vector3(1.1, 1, 1)}
         onPointerDown={(e) => {
           if (e.intersections[0].eventObject.name === e.eventObject.name) {
             setCommonStore((state) => {

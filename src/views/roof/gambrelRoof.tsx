@@ -664,9 +664,12 @@ const GambrelRoof = ({
               const intersects = ray.intersectObjects([intersectionPlaneRef.current]);
               if (intersects[0] && parent) {
                 const point = intersects[0].point;
+                if (point.z < 0.001) {
+                  return;
+                }
                 switch (roofHandleType) {
                   case RoofHandleType.TopMid: {
-                    setH(Math.max(minHeight, point.z - (parent?.lz ?? 0) - 0.3));
+                    setH(Math.max(minHeight, point.z - (parent?.lz ?? 0)));
                     break;
                   }
                   case RoofHandleType.FrontLeft: {
@@ -674,13 +677,11 @@ const GambrelRoof = ({
                       for (const e of state.elements) {
                         if (e.id === id) {
                           if (parent && currentWallArray[3]) {
-                            let px = getRelPos(parent, currentWallArray[3], point);
-                            if (px < topRidgeLeftPoint[0]) {
-                              px = topRidgeLeftPoint[0];
-                            }
-                            if (px > 0.5) {
-                              px = 0.5;
-                            }
+                            const px = Util.clamp(
+                              getRelPos(parent, currentWallArray[3], point),
+                              topRidgeLeftPoint[0],
+                              0.5,
+                            );
                             (e as GambrelRoofModel).frontRidgeLeftPoint[0] = px;
                           }
                           break;
@@ -694,13 +695,11 @@ const GambrelRoof = ({
                       for (const e of state.elements) {
                         if (e.id === id) {
                           if (parent && currentWallArray[3]) {
-                            let px = getRelPos(parent, currentWallArray[3], point);
-                            if (px < backRidgeRightPoint[0]) {
-                              px = backRidgeRightPoint[0];
-                            }
-                            if (px > frontRidgeLeftPoint[0]) {
-                              px = frontRidgeLeftPoint[0];
-                            }
+                            const px = Util.clamp(
+                              getRelPos(parent, currentWallArray[3], point),
+                              backRidgeRightPoint[0],
+                              frontRidgeLeftPoint[0],
+                            );
                             (e as GambrelRoofModel).topRidgeLeftPoint[0] = px;
                           }
                           break;
@@ -714,13 +713,11 @@ const GambrelRoof = ({
                       for (const e of state.elements) {
                         if (e.id === id) {
                           if (parent && currentWallArray[3]) {
-                            let px = getRelPos(parent, currentWallArray[3], point);
-                            if (px > topRidgeLeftPoint[0]) {
-                              px = topRidgeLeftPoint[0];
-                            }
-                            if (px < -0.5) {
-                              px = -0.5;
-                            }
+                            const px = Util.clamp(
+                              getRelPos(parent, currentWallArray[3], point),
+                              -0.5,
+                              topRidgeLeftPoint[0],
+                            );
                             (e as GambrelRoofModel).backRidgeRightPoint[0] = px;
                           }
                           break;
@@ -734,13 +731,11 @@ const GambrelRoof = ({
                       for (const e of state.elements) {
                         if (e.id === id) {
                           if (parent && currentWallArray[1]) {
-                            let px = getRelPos(parent, currentWallArray[1], point);
-                            if (px < -0.5) {
-                              px = -0.5;
-                            }
-                            if (px > topRidgeRightPoint[0]) {
-                              px = topRidgeRightPoint[0];
-                            }
+                            const px = Util.clamp(
+                              getRelPos(parent, currentWallArray[1], point),
+                              -0.5,
+                              topRidgeRightPoint[0],
+                            );
                             (e as GambrelRoofModel).frontRidgeRightPoint[0] = px;
                           }
                           break;
@@ -754,13 +749,11 @@ const GambrelRoof = ({
                       for (const e of state.elements) {
                         if (e.id === id) {
                           if (parent && currentWallArray[1]) {
-                            let px = getRelPos(parent, currentWallArray[1], point);
-                            if (px < frontRidgeRightPoint[0]) {
-                              px = frontRidgeRightPoint[0];
-                            }
-                            if (px > backRidgeLeftPoint[0]) {
-                              px = backRidgeLeftPoint[0];
-                            }
+                            const px = Util.clamp(
+                              getRelPos(parent, currentWallArray[1], point),
+                              frontRidgeRightPoint[0],
+                              backRidgeLeftPoint[0],
+                            );
                             (e as GambrelRoofModel).topRidgeRightPoint[0] = px;
                           }
                           break;
@@ -774,13 +767,11 @@ const GambrelRoof = ({
                       for (const e of state.elements) {
                         if (e.id === id) {
                           if (parent && currentWallArray[1]) {
-                            let px = getRelPos(parent, currentWallArray[1], point);
-                            if (px > 0.5) {
-                              px = 0.5;
-                            }
-                            if (px < topRidgeRightPoint[0]) {
-                              px = topRidgeRightPoint[0];
-                            }
+                            const px = Util.clamp(
+                              getRelPos(parent, currentWallArray[1], point),
+                              topRidgeRightPoint[0],
+                              0.5,
+                            );
                             (e as GambrelRoofModel).backRidgeLeftPoint[0] = px;
                           }
                           break;

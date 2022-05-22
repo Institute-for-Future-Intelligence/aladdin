@@ -475,6 +475,9 @@ const PyramidRoof = ({
               const intersects = ray.intersectObjects([intersectionPlaneRef.current]);
               if (intersects[0]) {
                 const point = intersects[0].point;
+                if (point.z < 0.001) {
+                  return;
+                }
                 setH(Math.max(minHeight, point.z - (parent?.lz ?? 0) - 0.3));
               }
             }
