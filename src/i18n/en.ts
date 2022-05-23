@@ -764,6 +764,7 @@ export const i18n_en = {
     },
 
     designInfoPanel: {
+      NumberOfSelectedHeliostats: 'Number of selected heliostats',
       NumberOfSelectedSolarPanels: 'Number of selected solar panels',
       ElectricityGeneratedDailyBySolarPanels: 'Electricity generated daily by these solar panels',
       SceneRadius: 'Scene radius',

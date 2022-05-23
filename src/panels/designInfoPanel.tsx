@@ -2,12 +2,15 @@
  * @Copyright 2021-2022. Institute for Future Intelligence, Inc.
  */
 
+import SolarPanelImage from '../assets/solar-panel.png';
+import HeliostatImage from '../assets/heliostat.png';
+
 import React, { useEffect, useState } from 'react';
 import { useStore } from '../stores/common';
 import * as Selector from '../stores/selector';
 import styled from 'styled-components';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faArrowsAltH, faSolarPanel, faLightbulb } from '@fortawesome/free-solid-svg-icons';
+import { faArrowsAltH, faLightbulb } from '@fortawesome/free-solid-svg-icons';
 import { Space } from 'antd';
 import i18n from '../i18n/i18n';
 import { ObjectType } from '../types';
@@ -52,6 +55,8 @@ export interface DesignInfoPanelProps {}
 const DesignInfoPanel = ({}: DesignInfoPanelProps) => {
   const language = useStore(Selector.language);
   const sunlightDirection = useStore(Selector.sunlightDirection);
+  const countElementsByType = useStore(Selector.countElementsByType);
+  const countAllChildElementsByType = useStore(Selector.countAllChildElementsByType);
   const countAllSolarPanels = useStore(Selector.countAllSolarPanels);
   const countAllSolarPanelDailyYields = useStore(Selector.countAllSolarPanelDailyYields);
   const countAllChildSolarPanels = useStore(Selector.countAllChildSolarPanels);
@@ -64,6 +69,7 @@ const DesignInfoPanel = ({}: DesignInfoPanelProps) => {
 
   const [updateFlag, setUpdateFlag] = useState<boolean>(false);
   const [solarPanelCount, setSolarPanelCount] = useState<number>(0);
+  const [heliostatCount, setHeliostatCount] = useState<number>(0);
   const [solarPanelDailyYield, setSolarPanelDailyYield] = useState<number>(0);
   const daytime = sunlightDirection.y > 0;
   const lang = { lng: language };
@@ -82,10 +88,12 @@ const DesignInfoPanel = ({}: DesignInfoPanelProps) => {
       } else {
         setSolarPanelCount(countAllChildSolarPanels(selectedElement.id));
         setSolarPanelDailyYield(countAllChildSolarPanelDailyYields(selectedElement.id));
+        setHeliostatCount(countAllChildElementsByType(selectedElement.id, ObjectType.Heliostat));
       }
     } else {
       setSolarPanelCount(countAllSolarPanels());
       setSolarPanelDailyYield(countAllSolarPanelDailyYields());
+      setHeliostatCount(countElementsByType(ObjectType.Heliostat));
     }
     setUpdateFlag(!updateFlag);
   }, [sceneRadius, updateDesignInfoFlag, selectedElement]);
@@ -98,17 +106,32 @@ const DesignInfoPanel = ({}: DesignInfoPanelProps) => {
         <Space direction={'horizontal'} style={{ color: color, fontSize: '10px' }}>
           {solarPanelCount > 0 && (
             <>
-              <FontAwesomeIcon
+              <img
                 title={i18n.t('designInfoPanel.NumberOfSelectedSolarPanels', lang)}
-                icon={faSolarPanel}
-                size={'3x'}
-                color={color}
+                src={SolarPanelImage}
+                height={24}
+                width={36}
                 onClick={() => {
                   setUpdateFlag(!updateFlag);
                 }}
-                style={{ paddingLeft: '10px', cursor: 'pointer' }}
+                style={{ paddingLeft: '10px', cursor: 'pointer', filter: 'invert(100%) ' }}
               />
               <label>{solarPanelCount}</label>
+            </>
+          )}
+          {heliostatCount > 0 && (
+            <>
+              <img
+                title={i18n.t('designInfoPanel.NumberOfSelectedHeliostats', lang)}
+                src={HeliostatImage}
+                height={24}
+                width={36}
+                onClick={() => {
+                  setUpdateFlag(!updateFlag);
+                }}
+                style={{ paddingLeft: '10px', cursor: 'pointer', filter: 'invert(100%) ' }}
+              />
+              <label>{heliostatCount}</label>
             </>
           )}
           {solarPanelDailyYield > 0 && (

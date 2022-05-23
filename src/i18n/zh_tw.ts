@@ -747,6 +747,7 @@ export const i18n_zh_tw = {
     },
 
     designInfoPanel: {
+      NumberOfSelectedHeliostats: '選中的定日鏡總數',
       NumberOfSelectedSolarPanels: '選中的光伏板總數',
       ElectricityGeneratedDailyBySolarPanels: '這些光伏板的日發電量',
       SceneRadius: '場景半徑',
