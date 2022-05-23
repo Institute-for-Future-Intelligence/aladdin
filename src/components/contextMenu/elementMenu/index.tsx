@@ -18,3 +18,4 @@ export * from './heliostatMenu';
 export * from './treeMenu';
 export * from './wallMenu';
 export * from './windowMenu';
+export * from './roofMenu';

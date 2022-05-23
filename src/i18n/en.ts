@@ -758,6 +758,40 @@ export const i18n_en = {
 
     windowMenu: {},
 
+    roofMenu: {
+      TextureDefault: 'Default',
+      Texture01: 'Texture 1',
+      Texture02: 'Texture 2',
+      Texture03: 'Texture 3',
+      Texture04: 'Texture 4',
+      Texture05: 'Texture 5',
+      Texture06: 'Texture 6',
+      Texture07: 'Texture 7',
+      OnlyThisRoof: 'Only This Roof',
+      AllRoofsAboveFoundation: 'All Roofs Above the Same Foundation',
+      AllRoofs: 'All Roofs',
+      OverhangLength: 'Overhang Length',
+    },
+
+    doorMenu: {
+      TextureDefault: 'Default',
+      Texture01: 'Texture 1',
+      Texture02: 'Texture 2',
+      Texture03: 'Texture 3',
+      Texture04: 'Texture 4',
+      Texture05: 'Texture 5',
+      Texture06: 'Texture 6',
+      Texture07: 'Texture 7',
+      Texture08: 'Texture 8',
+      Texture09: 'Texture 9',
+      Texture10: 'Texture 10',
+      Texture11: 'Texture 11',
+      Texture12: 'Texture 12',
+      OnlyThisDoor: 'Only This Door',
+      AllDoorsAboveFoundation: 'All Doors Above the Same Foundation',
+      AllDoors: 'All Doors',
+    },
+
     siteInfoPanel: {
       High: 'High',
       Low: 'Low',

@@ -13,11 +13,20 @@ import { WallModel } from 'src/models/WallModel';
 import { useStore } from 'src/stores/common';
 import { useStoreRef } from 'src/stores/commonRef';
 import * as Selector from 'src/stores/selector';
+import { RoofTexture } from 'src/types';
 import { UnoableResizeGambrelAndMansardRoofRidge } from 'src/undo/UndoableResize';
 import { Util } from 'src/Util';
 import { DoubleSide, Euler, Mesh, Vector2, Vector3 } from 'three';
-import { ConvexGeoProps as ConvexGeometryProps, handleUndoableResizeRoofHeight, useRoofTexture } from './roof';
 import { ObjectType } from '../../types';
+import {
+  ConvexGeoProps as ConvexGeometryProps,
+  getDistance,
+  getIntersectionPoint,
+  getNormal,
+  handleRoofContextMenu,
+  handleUndoableResizeRoofHeight,
+  useRoofTexture,
+} from './roof';
 
 const intersectionPlanePosition = new Vector3();
 const intersectionPlaneRotation = new Euler();
@@ -45,6 +54,7 @@ const MansardRoof = ({
   selected,
   textureType,
   color,
+  overhang,
 }: MansardRoofModel) => {
   const texture = useRoofTexture(textureType);
 
@@ -238,6 +248,10 @@ const MansardRoof = ({
     return getRidgePoint(wall, backRidge).sub(centroid);
   }, [currentWallArray, centroid, backRidge]);
 
+  const overhangs = useMemo(() => {
+    return currentWallArray.map((wall) => getNormal(wall).multiplyScalar(overhang));
+  }, [currentWallArray, overhang]);
+
   const roofSegments = useMemo(() => {
     // const segments: Vector3[][] = [];
     const segments: ConvexGeometryProps[] = [];
@@ -246,34 +260,150 @@ const MansardRoof = ({
       return segments;
     }
 
+    const [frontWall, rightWall, backWall, leftWall] = currentWallArray;
+    const [frontOverhang, rightOverhang, backOverhang, leftOverhang] = overhangs;
+
+    const wallPoint0 = new Vector3(frontWall.leftPoint[0], frontWall.leftPoint[1]);
+    const wallPoint1 = new Vector3(frontWall.rightPoint[0], frontWall.rightPoint[1]);
+    const wallPoint2 = new Vector3(backWall.leftPoint[0], backWall.leftPoint[1]);
+    const wallPoint3 = new Vector3(backWall.rightPoint[0], backWall.rightPoint[1]);
+
+    const frontWallLeftPointAfterOffset = wallPoint0.clone().add(frontOverhang);
+    const frontWallRightPointAfterOffset = wallPoint1.clone().add(frontOverhang);
+    const leftWallLeftPointAfterOffset = wallPoint3.clone().add(leftOverhang);
+    const leftWallRightPointAfterOffset = wallPoint0.clone().add(leftOverhang);
+    const rightWallLeftPointAfterOffset = wallPoint1.clone().add(rightOverhang);
+    const rightWallRightPointAfterOffset = wallPoint2.clone().add(rightOverhang);
+    const backWallLeftPointAfterOffset = wallPoint2.clone().add(backOverhang);
+    const backWallRightPointAfterOffset = wallPoint3.clone().add(backOverhang);
+
     // front
     const frontSide: Vector3[] = [];
-    const frontWall = currentWallArray[0];
-    const frontDirection = -frontWall.relativeAngle;
     const { lh: frontWallLh, rh: frontWallRh } = getWallHeight(currentWallArray, 0);
-    const frontWallLeftPoint = new Vector3(frontWall.leftPoint[0], frontWall.leftPoint[1], frontWallLh).sub(centroid);
-    const frontWallRightPoint = new Vector3(frontWall.rightPoint[0], frontWall.rightPoint[1], frontWallRh).sub(
-      centroid,
-    );
-    const frontLength = new Vector3(frontWall.cx, frontWall.cy).sub(centroid.clone().setZ(0)).length();
-    frontSide.push(frontWallLeftPoint, frontWallRightPoint, frontRidgeRightPointV3, frontRidgeLeftPointV3);
-    segments.push({ points: frontSide, direction: frontDirection, length: frontLength });
 
-    // top
-    const top: Vector3[] = [];
-    top.push(frontRidgeLeftPointV3, frontRidgeRightPointV3, backRidgeLeftPointV3, backRidgeRightPointV3);
-    segments.push({ points: top, direction: frontDirection, length: 1 });
+    const d0 = getDistance(wallPoint0, wallPoint1, frontRidgeLeftPointV3.clone().add(centroid));
+    const overhangHeight0 = Math.min(
+      (overhang / d0) * (frontRidgeLeftPointV3.clone().add(centroid).z - frontWallLh),
+      frontWallLh,
+    );
+
+    const d1 = getDistance(wallPoint0, wallPoint1, frontRidgeRightPointV3.clone().add(centroid));
+    const overhangHeight1 = Math.min(
+      (overhang / d1) * (frontRidgeRightPointV3.clone().add(centroid).z - frontWallRh),
+      frontWallRh,
+    );
+
+    const frontWallLeftPointAfterOverhang = getIntersectionPoint(
+      frontWallLeftPointAfterOffset,
+      frontWallRightPointAfterOffset,
+      leftWallLeftPointAfterOffset,
+      leftWallRightPointAfterOffset,
+    )
+      .setZ(frontWallLh - overhangHeight0)
+      .sub(centroid);
+
+    const frontWallRightPointAfterOverhang = getIntersectionPoint(
+      frontWallLeftPointAfterOffset,
+      frontWallRightPointAfterOffset,
+      rightWallLeftPointAfterOffset,
+      rightWallRightPointAfterOffset,
+    )
+      .setZ(frontWallRh - overhangHeight1)
+      .sub(centroid);
+
+    const frontRidgeLeftPointAfterOverhang = getIntersectionPoint(
+      frontRidgeLeftPointV3,
+      frontRidgeRightPointV3,
+      leftWallLeftPointAfterOffset.clone().sub(centroid),
+      leftWallRightPointAfterOffset.clone().sub(centroid),
+    ).setZ(frontRidgeRightPointV3.z);
+
+    const frontRidgeRightPointAfterOverhang = getIntersectionPoint(
+      frontRidgeRightPointV3,
+      frontRidgeLeftPointV3,
+      rightWallLeftPointAfterOffset.clone().sub(centroid),
+      rightWallRightPointAfterOffset.clone().sub(centroid),
+    ).setZ(frontRidgeRightPointV3.z);
+
+    frontSide.push(
+      frontWallLeftPointAfterOverhang,
+      frontWallRightPointAfterOverhang,
+      frontRidgeRightPointAfterOverhang,
+      frontRidgeLeftPointAfterOverhang,
+    );
+    const frontDirection = -frontWall.relativeAngle;
+    const frontLength = new Vector3(frontWall.cx, frontWall.cy).sub(centroid.clone().setZ(0)).length();
+
+    segments.push({ points: frontSide, direction: frontDirection, length: frontLength });
 
     // back
     const backSide: Vector3[] = [];
-    const backWall = currentWallArray[2];
-    const backDirection = -backWall.relativeAngle;
     const { lh: backWallLh, rh: backWallRh } = getWallHeight(currentWallArray, 2);
-    const backWallLeftPoint = new Vector3(backWall.leftPoint[0], backWall.leftPoint[1], backWallLh).sub(centroid);
-    const backWallRightPoint = new Vector3(backWall.rightPoint[0], backWall.rightPoint[1], backWallRh).sub(centroid);
+
+    const d2 = getDistance(wallPoint2, wallPoint3, backRidgeLeftPointV3.clone().add(centroid));
+    const overhangHeight2 = Math.min(
+      (overhang / d2) * (backRidgeLeftPointV3.clone().add(centroid).z - backWallLh),
+      backWallLh,
+    );
+
+    const d3 = getDistance(wallPoint2, wallPoint3, backRidgeRightPointV3.clone().add(centroid));
+    const overhangHeight3 = Math.min(
+      (overhang / d3) * (backRidgeRightPointV3.clone().add(centroid).z - backWallRh),
+      backWallRh,
+    );
+
+    const backWallLeftPointAfterOverhang = getIntersectionPoint(
+      backWallLeftPointAfterOffset,
+      backWallRightPointAfterOffset,
+      rightWallLeftPointAfterOffset,
+      rightWallRightPointAfterOffset,
+    )
+      .setZ(backWallLh - overhangHeight2)
+      .sub(centroid);
+
+    const backWallRightPointAfterOverhang = getIntersectionPoint(
+      backWallLeftPointAfterOffset,
+      backWallRightPointAfterOffset,
+      leftWallLeftPointAfterOffset,
+      leftWallRightPointAfterOffset,
+    )
+      .setZ(backWallRh - overhangHeight3)
+      .sub(centroid);
+
+    const backRidgeLeftPointAfterOverhang = getIntersectionPoint(
+      backRidgeLeftPointV3,
+      backRidgeRightPointV3,
+      rightWallLeftPointAfterOffset.clone().sub(centroid),
+      rightWallRightPointAfterOffset.clone().sub(centroid),
+    ).setZ(backRidgeRightPointV3.z);
+
+    const backRidgeRightPointAfterOverhang = getIntersectionPoint(
+      backRidgeRightPointV3,
+      backRidgeLeftPointV3,
+      leftWallLeftPointAfterOffset.clone().sub(centroid),
+      leftWallRightPointAfterOffset.clone().sub(centroid),
+    ).setZ(backRidgeRightPointV3.z);
+
+    backSide.push(
+      backWallLeftPointAfterOverhang,
+      backWallRightPointAfterOverhang,
+      backRidgeRightPointAfterOverhang,
+      backRidgeLeftPointAfterOverhang,
+    );
+    const backDirection = -backWall.relativeAngle;
     const backLength = new Vector3(backWall.cx, backWall.cy).sub(centroid.clone().setZ(0)).length();
-    backSide.push(backWallLeftPoint, backWallRightPoint, backRidgeRightPointV3, backRidgeLeftPointV3);
+
     segments.push({ points: backSide, direction: backDirection, length: backLength });
+
+    // top
+    const top: Vector3[] = [];
+    top.push(
+      frontRidgeLeftPointAfterOverhang,
+      frontRidgeRightPointAfterOverhang,
+      backRidgeLeftPointAfterOverhang,
+      backRidgeRightPointAfterOverhang,
+    );
+    segments.push({ points: top, direction: frontDirection, length: 1 });
 
     return segments;
   }, [currentWallArray, h]);
@@ -328,7 +458,6 @@ const MansardRoof = ({
     <group position={[cx, cy, cz + 0.01]} rotation={[0, 0, rotation]} name={`GambrelRoof Group ${id}`}>
       <group
         position={[centroid.x, centroid.y, centroid.z]}
-        scale={new Vector3(1.1, 1, 1)}
         onPointerDown={(e) => {
           if (e.intersections[0].eventObject.name === e.eventObject.name) {
             setCommonStore((state) => {
@@ -342,6 +471,9 @@ const MansardRoof = ({
             });
           }
         }}
+        onContextMenu={(e) => {
+          handleRoofContextMenu(e, id);
+        }}
       >
         {roofSegments.map((segment, i, arr) => {
           const { points, direction, length } = segment;
@@ -351,7 +483,11 @@ const MansardRoof = ({
             <group key={i} name={`Roof segment ${i}`}>
               <mesh>
                 <convexGeometry args={[points, isFlat ? arr[0].direction : direction, isFlat ? 1 : length]} />
-                <meshStandardMaterial side={DoubleSide} color={color} map={texture} />
+                <meshStandardMaterial
+                  side={DoubleSide}
+                  color={textureType === RoofTexture.Default || textureType === RoofTexture.NoTexture ? color : 'white'}
+                  map={texture}
+                />
               </mesh>
             </group>
           );

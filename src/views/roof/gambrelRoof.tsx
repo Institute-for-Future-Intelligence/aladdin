@@ -26,10 +26,18 @@ import {
   Vector2,
   Vector3,
 } from 'three';
-import { ConvexGeoProps, handleUndoableResizeRoofHeight, useRoofTexture } from './roof';
+import {
+  ConvexGeoProps,
+  getDistance,
+  getIntersectionPoint,
+  getNormal,
+  handleRoofContextMenu,
+  handleUndoableResizeRoofHeight,
+  useRoofTexture,
+} from './roof';
 import { CSG } from 'three-csg-ts';
 import { ConvexGeometry } from 'three/examples/jsm/geometries/ConvexGeometry';
-import { ObjectType } from '../../types';
+import { RoofTexture, ObjectType } from 'src/types';
 
 enum RoofHandleType {
   TopMid = 'TopMid',
@@ -63,6 +71,7 @@ const GambrelRoof = ({
   selected,
   textureType,
   color,
+  overhang,
 }: GambrelRoofModel) => {
   const texture = useRoofTexture(textureType);
 
@@ -151,25 +160,32 @@ const GambrelRoof = ({
     useStore.getState().addUndoable(undoable);
   };
 
-  const currentWallArray = useMemo(() => {
-    const array: WallModel[] = [];
-    if (wallsId.length > 0) {
-      const wall = getElementById(wallsId[0]) as WallModel;
-      array.push(wall);
-      if (wall) {
-        const leftWall = getElementById(wall.leftJoints[0]) as WallModel;
-        const rightWall = getElementById(wall.rightJoints[0]) as WallModel;
-        if (leftWall && rightWall) {
-          const midWall = getElementById(leftWall.leftJoints[0]) as WallModel;
-          const checkWall = getElementById(rightWall.rightJoints[0]) as WallModel;
-          if (midWall && checkWall && midWall.id === checkWall.id) {
-            array.push(rightWall, midWall, leftWall);
-          }
-        }
-      }
+  const setRayCast = (e: PointerEvent) => {
+    mouse.x = (e.offsetX / gl.domElement.clientWidth) * 2 - 1;
+    mouse.y = -(e.offsetY / gl.domElement.clientHeight) * 2 + 1;
+    ray.setFromCamera(mouse, camera);
+  };
+
+  const setInterSectionPlane = (handlePointV3: Vector3, wall: WallModel) => {
+    setEnableIntersectionPlane(true);
+    useStoreRef.getState().setEnableOrbitController(false);
+    intersectionPlanePosition.set(handlePointV3.x, handlePointV3.y, h).add(centroid);
+    if (parent && wall) {
+      const r = wall.relativeAngle;
+      intersectionPlaneRotation.set(-HALF_PI, 0, r, 'ZXY');
     }
-    return array;
-  }, [elements]);
+  };
+
+  const getRelPos = (foundation: ElementModel, wall: WallModel, point: Vector3) => {
+    const foundationCenter = new Vector2(foundation.cx, foundation.cy);
+    const wallAbsCenter = new Vector2(wall.cx, wall.cy)
+      .rotateAround(zeroVector2, foundation.rotation[2])
+      .add(foundationCenter);
+    const wallAbsAngle = foundation.rotation[2] + wall.relativeAngle;
+    const p = new Vector2(point.x, point.y).sub(wallAbsCenter).rotateAround(zeroVector2, -wallAbsAngle);
+    const x = p.x / wall.lx;
+    return Math.min(Math.abs(x), 0.5) * (x >= 0 ? 1 : -1);
+  };
 
   const getRidgePoint = (wall: WallModel, px: number, ph: number) => {
     if (!wall) {
@@ -190,6 +206,44 @@ const GambrelRoof = ({
     }
     return arr;
   };
+
+  // todo: should determained by wall 0 and 2;
+  const getWallHeight = (arr: WallModel[], i: number) => {
+    const w = arr[i];
+    let lh = 0;
+    let rh = 0;
+    if (i === 0) {
+      lh = Math.max(w.lz, arr[arr.length - 1].lz);
+      rh = Math.max(w.lz, arr[i + 1].lz);
+    } else if (i === arr.length - 1) {
+      lh = Math.max(w.lz, arr[i - 1].lz);
+      rh = Math.max(w.lz, arr[0].lz);
+    } else {
+      lh = Math.max(w.lz, arr[i - 1].lz);
+      rh = Math.max(w.lz, arr[i + 1].lz);
+    }
+    return { lh, rh };
+  };
+
+  const currentWallArray = useMemo(() => {
+    const array: WallModel[] = [];
+    if (wallsId.length > 0) {
+      const wall = getElementById(wallsId[0]) as WallModel;
+      array.push(wall);
+      if (wall) {
+        const leftWall = getElementById(wall.leftJoints[0]) as WallModel;
+        const rightWall = getElementById(wall.rightJoints[0]) as WallModel;
+        if (leftWall && rightWall) {
+          const midWall = getElementById(leftWall.leftJoints[0]) as WallModel;
+          const checkWall = getElementById(rightWall.rightJoints[0]) as WallModel;
+          if (midWall && checkWall && midWall.id === checkWall.id) {
+            array.push(rightWall, midWall, leftWall);
+          }
+        }
+      }
+    }
+    return array;
+  }, [elements]);
 
   const centroid = useMemo(() => {
     if (currentWallArray.length !== 4) {
@@ -243,95 +297,187 @@ const GambrelRoof = ({
     return getRidgePoint(wall, x, h).sub(centroid);
   }, [currentWallArray, centroid, backRidgeRightPoint]);
 
-  // todo: should determained by wall 0 and 2;
-  const getWallHeight = (arr: WallModel[], i: number) => {
-    const w = arr[i];
-    let lh = 0;
-    let rh = 0;
-    if (i === 0) {
-      lh = Math.max(w.lz, arr[arr.length - 1].lz);
-      rh = Math.max(w.lz, arr[i + 1].lz);
-    } else if (i === arr.length - 1) {
-      lh = Math.max(w.lz, arr[i - 1].lz);
-      rh = Math.max(w.lz, arr[0].lz);
-    } else {
-      lh = Math.max(w.lz, arr[i - 1].lz);
-      rh = Math.max(w.lz, arr[i + 1].lz);
-    }
-    return { lh, rh };
-  };
+  const overhangs = useMemo(() => {
+    return currentWallArray.map((wall) => getNormal(wall).multiplyScalar(overhang));
+  }, [currentWallArray, overhang]);
 
   const roofSegments = useMemo(() => {
-    // const segments: Vector3[][] = [];
     const segments: ConvexGeoProps[] = [];
 
     if (currentWallArray.length != 4) {
       return segments;
     }
 
+    const [frontWall, rightWall, backWall, leftWall] = currentWallArray;
+    const [frontOverhang, rightOverhang, backOverhang, leftOverhang] = overhangs;
+
+    const wallPoint0 = new Vector3(frontWall.leftPoint[0], frontWall.leftPoint[1]);
+    const wallPoint1 = new Vector3(frontWall.rightPoint[0], frontWall.rightPoint[1]);
+    const wallPoint2 = new Vector3(backWall.leftPoint[0], backWall.leftPoint[1]);
+    const wallPoint3 = new Vector3(backWall.rightPoint[0], backWall.rightPoint[1]);
+
+    const frontWallLeftPointAfterOffset = wallPoint0.clone().add(frontOverhang);
+    const frontWallRightPointAfterOffset = wallPoint1.clone().add(frontOverhang);
+    const leftWallLeftPointAfterOffset = wallPoint3.clone().add(leftOverhang);
+    const leftWallRightPointAfterOffset = wallPoint0.clone().add(leftOverhang);
+    const rightWallLeftPointAfterOffset = wallPoint1.clone().add(rightOverhang);
+    const rightWallRightPointAfterOffset = wallPoint2.clone().add(rightOverhang);
+    const backWallLeftPointAfterOffset = wallPoint2.clone().add(backOverhang);
+    const backWallRightPointAfterOffset = wallPoint3.clone().add(backOverhang);
+
     // front side
-    const frontSide: Vector3[] = [];
-    const frontWall = currentWallArray[0];
-    const frontDirection = -frontWall.relativeAngle;
+    const frontSidePoints: Vector3[] = [];
     const { lh: frontWallLh, rh: frontWallRh } = getWallHeight(currentWallArray, 0);
-    const frontWallLeftPoint = new Vector3(frontWall.leftPoint[0], frontWall.leftPoint[1], frontWallLh).sub(centroid);
-    const frontWallRightPoint = new Vector3(frontWall.rightPoint[0], frontWall.rightPoint[1], frontWallRh).sub(
-      centroid,
+
+    const d0 = getDistance(wallPoint0, wallPoint1, frontRidgeLeftPointV3.clone().add(centroid));
+    const overhangHeight0 = Math.min(
+      (overhang / d0) * (frontRidgeLeftPointV3.clone().add(centroid).z - frontWallLh),
+      frontWallLh,
     );
-    const frontSideLenght = new Vector3(frontWall.cx, frontWall.cy).sub(topRidgeMidPointV3.setZ(0)).length();
-    frontSide.push(frontWallLeftPoint, frontWallRightPoint, frontRidgeRightPointV3, frontRidgeLeftPointV3);
-    segments.push({ points: frontSide, direction: frontDirection, length: frontSideLenght });
+
+    const d1 = getDistance(wallPoint0, wallPoint1, frontRidgeRightPointV3.clone().add(centroid));
+    const overhangHeight1 = Math.min(
+      (overhang / d1) * (frontRidgeRightPointV3.clone().add(centroid).z - frontWallRh),
+      frontWallRh,
+    );
+
+    const frontWallLeftPointAfterOverhang = getIntersectionPoint(
+      frontWallLeftPointAfterOffset,
+      frontWallRightPointAfterOffset,
+      leftWallLeftPointAfterOffset,
+      leftWallRightPointAfterOffset,
+    )
+      .setZ(frontWallLh - overhangHeight0)
+      .sub(centroid);
+
+    const frontWallRightPointAfterOverhang = getIntersectionPoint(
+      frontWallLeftPointAfterOffset,
+      frontWallRightPointAfterOffset,
+      rightWallLeftPointAfterOffset,
+      rightWallRightPointAfterOffset,
+    )
+      .setZ(frontWallRh - overhangHeight1)
+      .sub(centroid);
+
+    const frontRidgeLeftPointAfterOverhang = getIntersectionPoint(
+      frontRidgeLeftPointV3,
+      frontRidgeRightPointV3,
+      leftWallLeftPointAfterOffset.clone().sub(centroid),
+      leftWallRightPointAfterOffset.clone().sub(centroid),
+    ).setZ(frontRidgeRightPointV3.z);
+
+    const frontRidgeRightPointAfterOverhang = getIntersectionPoint(
+      frontRidgeRightPointV3,
+      frontRidgeLeftPointV3,
+      rightWallLeftPointAfterOffset.clone().sub(centroid),
+      rightWallRightPointAfterOffset.clone().sub(centroid),
+    ).setZ(frontRidgeRightPointV3.z);
+
+    frontSidePoints.push(
+      frontWallLeftPointAfterOverhang,
+      frontWallRightPointAfterOverhang,
+      frontRidgeRightPointAfterOverhang,
+      frontRidgeLeftPointAfterOverhang,
+    );
+
+    const frontDirection = -frontWall.relativeAngle;
+    const frontSideLength = new Vector3(frontWall.cx, frontWall.cy).sub(topRidgeMidPointV3.clone().setZ(0)).length();
+    segments.push({ points: frontSidePoints, direction: frontDirection, length: frontSideLength });
 
     // front top
-    const frontTop: Vector3[] = [];
-    frontTop.push(frontRidgeLeftPointV3, frontRidgeRightPointV3, topRidgeRightPointV3, topRidgeLeftPointV3);
-    segments.push({ points: frontTop, direction: frontDirection, length: frontSideLenght });
+    const frontTopPoints: Vector3[] = [];
+    const topRidgeLeftPointAfterOverhang = getIntersectionPoint(
+      topRidgeLeftPointV3,
+      topRidgeRightPointV3,
+      leftWallLeftPointAfterOffset.clone().sub(centroid),
+      leftWallRightPointAfterOffset.clone().sub(centroid),
+    ).setZ(topRidgeLeftPointV3.z);
+
+    const topRidgeRightPointAfterOverhang = getIntersectionPoint(
+      topRidgeLeftPointV3,
+      topRidgeRightPointV3,
+      rightWallLeftPointAfterOffset.clone().sub(centroid),
+      rightWallRightPointAfterOffset.clone().sub(centroid),
+    ).setZ(topRidgeRightPointV3.z);
+
+    frontTopPoints.push(
+      frontRidgeLeftPointAfterOverhang,
+      frontRidgeRightPointAfterOverhang,
+      topRidgeRightPointAfterOverhang,
+      topRidgeLeftPointAfterOverhang,
+    );
+    segments.push({ points: frontTopPoints, direction: frontDirection, length: frontSideLength });
 
     // back side
-    const backSide: Vector3[] = [];
-    const backWall = currentWallArray[2];
+    const backSidePoints: Vector3[] = [];
     const backDirection = -backWall.relativeAngle;
     const { lh: backWallLh, rh: backWallRh } = getWallHeight(currentWallArray, 2);
-    const backWallLeftPoint = new Vector3(backWall.leftPoint[0], backWall.leftPoint[1], backWallLh).sub(centroid);
-    const backWallRightPoint = new Vector3(backWall.rightPoint[0], backWall.rightPoint[1], backWallRh).sub(centroid);
-    const backSideLenght = new Vector3(backWall.cx, backWall.cy).sub(topRidgeMidPointV3.setZ(0)).length();
-    backSide.push(backWallLeftPoint, backWallRightPoint, backRidgeRightPointV3, backRidgeLeftPointV3);
-    segments.push({ points: backSide, direction: backDirection, length: backSideLenght });
+
+    const d2 = getDistance(wallPoint2, wallPoint3, backRidgeLeftPointV3.clone().add(centroid));
+    const overhangHeight2 = Math.min(
+      (overhang / d2) * (backRidgeLeftPointV3.clone().add(centroid).z - backWallLh),
+      backWallLh,
+    );
+
+    const d3 = getDistance(wallPoint2, wallPoint3, backRidgeRightPointV3.clone().add(centroid));
+    const overhangHeight3 = Math.min(
+      (overhang / d3) * (backRidgeRightPointV3.clone().add(centroid).z - backWallRh),
+      backWallRh,
+    );
+
+    const backWallLeftPointAfterOverhang = getIntersectionPoint(
+      backWallLeftPointAfterOffset,
+      backWallRightPointAfterOffset,
+      rightWallLeftPointAfterOffset,
+      rightWallRightPointAfterOffset,
+    )
+      .setZ(backWallLh - overhangHeight2)
+      .sub(centroid);
+
+    const backWallRightPointAfterOverhang = getIntersectionPoint(
+      backWallLeftPointAfterOffset,
+      backWallRightPointAfterOffset,
+      leftWallLeftPointAfterOffset,
+      leftWallRightPointAfterOffset,
+    )
+      .setZ(backWallRh - overhangHeight3)
+      .sub(centroid);
+
+    const backRidgeLeftPointAfterOverhang = getIntersectionPoint(
+      backRidgeLeftPointV3,
+      backRidgeRightPointV3,
+      rightWallLeftPointAfterOffset.clone().sub(centroid),
+      rightWallRightPointAfterOffset.clone().sub(centroid),
+    ).setZ(backRidgeRightPointV3.z);
+
+    const backRidgeRightPointAfterOverhang = getIntersectionPoint(
+      backRidgeRightPointV3,
+      backRidgeLeftPointV3,
+      leftWallLeftPointAfterOffset.clone().sub(centroid),
+      leftWallRightPointAfterOffset.clone().sub(centroid),
+    ).setZ(backRidgeRightPointV3.z);
+
+    const backSideLenght = new Vector3(backWall.cx, backWall.cy).sub(topRidgeMidPointV3.clone().setZ(0)).length();
+    backSidePoints.push(
+      backWallLeftPointAfterOverhang,
+      backWallRightPointAfterOverhang,
+      backRidgeRightPointAfterOverhang,
+      backRidgeLeftPointAfterOverhang,
+    );
+    segments.push({ points: backSidePoints, direction: backDirection, length: backSideLenght });
 
     // back top
-    const backTop: Vector3[] = [];
-    backTop.push(topRidgeLeftPointV3, topRidgeRightPointV3, backRidgeLeftPointV3, backRidgeRightPointV3);
-    segments.push({ points: backTop, direction: backDirection, length: backSideLenght });
+    const backTopPoints: Vector3[] = [];
+    backTopPoints.push(
+      topRidgeLeftPointAfterOverhang,
+      topRidgeRightPointAfterOverhang,
+      backRidgeLeftPointAfterOverhang,
+      backRidgeRightPointAfterOverhang,
+    );
+    segments.push({ points: backTopPoints, direction: backDirection, length: backSideLenght });
 
     return segments;
   }, [currentWallArray, h]);
-
-  const setRayCast = (e: PointerEvent) => {
-    mouse.x = (e.offsetX / gl.domElement.clientWidth) * 2 - 1;
-    mouse.y = -(e.offsetY / gl.domElement.clientHeight) * 2 + 1;
-    ray.setFromCamera(mouse, camera);
-  };
-
-  const setInterSectionPlane = (handlePointV3: Vector3, wall: WallModel) => {
-    setEnableIntersectionPlane(true);
-    useStoreRef.getState().setEnableOrbitController(false);
-    intersectionPlanePosition.set(handlePointV3.x, handlePointV3.y, h).add(centroid);
-    if (parent && wall) {
-      const r = wall.relativeAngle;
-      intersectionPlaneRotation.set(-HALF_PI, 0, r, 'ZXY');
-    }
-  };
-
-  const getRelPos = (foundation: ElementModel, wall: WallModel, point: Vector3) => {
-    const foundationCenter = new Vector2(foundation.cx, foundation.cy);
-    const wallAbsCenter = new Vector2(wall.cx, wall.cy)
-      .rotateAround(zeroVector2, foundation.rotation[2])
-      .add(foundationCenter);
-    const wallAbsAngle = foundation.rotation[2] + wall.relativeAngle;
-    const p = new Vector2(point.x, point.y).sub(wallAbsCenter).rotateAround(zeroVector2, -wallAbsAngle);
-    const x = p.x / wall.lx;
-    return Math.min(Math.abs(x), 0.5) * (x >= 0 ? 1 : -1);
-  };
 
   useEffect(() => {
     if (currentWallArray.length === 4) {
@@ -390,7 +536,6 @@ const GambrelRoof = ({
       {/* roof segments */}
       <group
         position={[centroid.x, centroid.y, centroid.z]}
-        scale={new Vector3(1.1, 1, 1)}
         onPointerDown={(e) => {
           if (e.intersections[0].eventObject.name === e.eventObject.name) {
             setCommonStore((state) => {
@@ -404,6 +549,9 @@ const GambrelRoof = ({
             });
           }
         }}
+        onContextMenu={(e) => {
+          handleRoofContextMenu(e, id);
+        }}
       >
         {roofSegments.map((segment, i, arr) => {
           const { points, direction, length } = segment;
@@ -413,7 +561,11 @@ const GambrelRoof = ({
             <group key={i} name={`Roof segment ${i}`}>
               <mesh>
                 <convexGeometry args={[points, isFlat ? arr[0].direction : direction, isFlat ? 1 : length]} />
-                <meshStandardMaterial map={texture} side={DoubleSide} color={color} />
+                <meshStandardMaterial
+                  map={texture}
+                  side={DoubleSide}
+                  color={textureType === RoofTexture.Default || textureType === RoofTexture.NoTexture ? color : 'white'}
+                />
               </mesh>
             </group>
           );
@@ -512,9 +664,12 @@ const GambrelRoof = ({
               const intersects = ray.intersectObjects([intersectionPlaneRef.current]);
               if (intersects[0] && parent) {
                 const point = intersects[0].point;
+                if (point.z < 0.001) {
+                  return;
+                }
                 switch (roofHandleType) {
                   case RoofHandleType.TopMid: {
-                    setH(Math.max(minHeight, point.z - (parent?.lz ?? 0) - 0.3));
+                    setH(Math.max(minHeight, point.z - (parent?.lz ?? 0)));
                     break;
                   }
                   case RoofHandleType.FrontLeft: {
@@ -522,13 +677,11 @@ const GambrelRoof = ({
                       for (const e of state.elements) {
                         if (e.id === id) {
                           if (parent && currentWallArray[3]) {
-                            let px = getRelPos(parent, currentWallArray[3], point);
-                            if (px < topRidgeLeftPoint[0]) {
-                              px = topRidgeLeftPoint[0];
-                            }
-                            if (px > 0.5) {
-                              px = 0.5;
-                            }
+                            const px = Util.clamp(
+                              getRelPos(parent, currentWallArray[3], point),
+                              topRidgeLeftPoint[0],
+                              0.5,
+                            );
                             (e as GambrelRoofModel).frontRidgeLeftPoint[0] = px;
                           }
                           break;
@@ -542,13 +695,11 @@ const GambrelRoof = ({
                       for (const e of state.elements) {
                         if (e.id === id) {
                           if (parent && currentWallArray[3]) {
-                            let px = getRelPos(parent, currentWallArray[3], point);
-                            if (px < backRidgeRightPoint[0]) {
-                              px = backRidgeRightPoint[0];
-                            }
-                            if (px > frontRidgeLeftPoint[0]) {
-                              px = frontRidgeLeftPoint[0];
-                            }
+                            const px = Util.clamp(
+                              getRelPos(parent, currentWallArray[3], point),
+                              backRidgeRightPoint[0],
+                              frontRidgeLeftPoint[0],
+                            );
                             (e as GambrelRoofModel).topRidgeLeftPoint[0] = px;
                           }
                           break;
@@ -562,13 +713,11 @@ const GambrelRoof = ({
                       for (const e of state.elements) {
                         if (e.id === id) {
                           if (parent && currentWallArray[3]) {
-                            let px = getRelPos(parent, currentWallArray[3], point);
-                            if (px > topRidgeLeftPoint[0]) {
-                              px = topRidgeLeftPoint[0];
-                            }
-                            if (px < -0.5) {
-                              px = -0.5;
-                            }
+                            const px = Util.clamp(
+                              getRelPos(parent, currentWallArray[3], point),
+                              -0.5,
+                              topRidgeLeftPoint[0],
+                            );
                             (e as GambrelRoofModel).backRidgeRightPoint[0] = px;
                           }
                           break;
@@ -582,13 +731,11 @@ const GambrelRoof = ({
                       for (const e of state.elements) {
                         if (e.id === id) {
                           if (parent && currentWallArray[1]) {
-                            let px = getRelPos(parent, currentWallArray[1], point);
-                            if (px < -0.5) {
-                              px = -0.5;
-                            }
-                            if (px > topRidgeRightPoint[0]) {
-                              px = topRidgeRightPoint[0];
-                            }
+                            const px = Util.clamp(
+                              getRelPos(parent, currentWallArray[1], point),
+                              -0.5,
+                              topRidgeRightPoint[0],
+                            );
                             (e as GambrelRoofModel).frontRidgeRightPoint[0] = px;
                           }
                           break;
@@ -602,13 +749,11 @@ const GambrelRoof = ({
                       for (const e of state.elements) {
                         if (e.id === id) {
                           if (parent && currentWallArray[1]) {
-                            let px = getRelPos(parent, currentWallArray[1], point);
-                            if (px < frontRidgeRightPoint[0]) {
-                              px = frontRidgeRightPoint[0];
-                            }
-                            if (px > backRidgeLeftPoint[0]) {
-                              px = backRidgeLeftPoint[0];
-                            }
+                            const px = Util.clamp(
+                              getRelPos(parent, currentWallArray[1], point),
+                              frontRidgeRightPoint[0],
+                              backRidgeLeftPoint[0],
+                            );
                             (e as GambrelRoofModel).topRidgeRightPoint[0] = px;
                           }
                           break;
@@ -622,13 +767,11 @@ const GambrelRoof = ({
                       for (const e of state.elements) {
                         if (e.id === id) {
                           if (parent && currentWallArray[1]) {
-                            let px = getRelPos(parent, currentWallArray[1], point);
-                            if (px > 0.5) {
-                              px = 0.5;
-                            }
-                            if (px < topRidgeRightPoint[0]) {
-                              px = topRidgeRightPoint[0];
-                            }
+                            const px = Util.clamp(
+                              getRelPos(parent, currentWallArray[1], point),
+                              topRidgeRightPoint[0],
+                              0.5,
+                            );
                             (e as GambrelRoofModel).backRidgeLeftPoint[0] = px;
                           }
                           break;

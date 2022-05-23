@@ -432,6 +432,18 @@ export enum DoorTexture {
   NoTexture = 'No Door Texture',
 }
 
+export enum RoofTexture {
+  Default = 'Roof Texture Default',
+  Texture01 = 'Roof Texture #1',
+  Texture02 = 'Roof Texture #2',
+  Texture03 = 'Roof Texture #3',
+  Texture04 = 'Roof Texture #4',
+  Texture05 = 'Roof Texture #5',
+  Texture06 = 'Roof Texture #6',
+  Texture07 = 'Roof Texture #7',
+  NoTexture = 'No Roof Texture',
+}
+
 export enum WallSide {
   Left = 'Left',
   Right = 'Right',

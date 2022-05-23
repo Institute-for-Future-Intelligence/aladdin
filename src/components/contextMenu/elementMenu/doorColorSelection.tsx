@@ -3,38 +3,35 @@
  */
 
 import React, { useEffect, useRef, useState } from 'react';
-import { Button, Col, Modal, Radio, RadioChangeEvent, Row, Space } from 'antd';
+import { Button, Col, Modal, Radio, Row, Space } from 'antd';
 import Draggable, { DraggableBounds, DraggableData, DraggableEvent } from 'react-draggable';
-import { useStore } from '../../../stores/common';
-import * as Selector from '../../../stores/selector';
-import { ObjectType, Scope } from '../../../types';
-import i18n from '../../../i18n/i18n';
-import { UndoableChange } from '../../../undo/UndoableChange';
-import { UndoableChangeGroup } from '../../../undo/UndoableChangeGroup';
-import { WallModel } from '../../../models/WallModel';
+import { useStore } from 'src/stores/common';
+import * as Selector from 'src/stores/selector';
+import { ObjectType, Scope } from 'src/types';
+import i18n from 'src/i18n/i18n';
+import { UndoableChange } from 'src/undo/UndoableChange';
+import { UndoableChangeGroup } from 'src/undo/UndoableChangeGroup';
 import { CompactPicker } from 'react-color';
+import { DoorModel } from 'src/models/DoorModel';
 
-const WallColorSelection = ({ setDialogVisible }: { setDialogVisible: (b: boolean) => void }) => {
+const DoorColorSelection = ({ setDialogVisible }: { setDialogVisible: (b: boolean) => void }) => {
+  const setCommonStore = useStore(Selector.set);
   const language = useStore(Selector.language);
-  const elements = useStore(Selector.elements);
-  const updateWallColorById = useStore(Selector.updateWallColorById);
-  const updateWallColorAboveFoundation = useStore(Selector.updateWallColorAboveFoundation);
-  const updateWallColorForAll = useStore(Selector.updateWallColorForAll);
-  const wall = useStore(Selector.selectedElement) as WallModel;
+  const door = useStore(Selector.selectedElement) as DoorModel;
   const addUndoable = useStore(Selector.addUndoable);
-  const wallActionScope = useStore(Selector.wallActionScope);
-  const setWallActionScope = useStore(Selector.setWallActionScope);
+  const doorActionScope = useStore(Selector.doorActionScope);
+  const setDoorActionScope = useStore(Selector.setDoorActionScope);
   const applyCount = useStore(Selector.applyCount);
   const setApplyCount = useStore(Selector.setApplyCount);
   const revertApply = useStore(Selector.revertApply);
   const getElementById = useStore(Selector.getElementById);
 
-  const [selectedColor, setSelectedColor] = useState<string>(wall?.color ?? 'white');
-  const [updateFlag, setUpdateFlag] = useState<boolean>(false);
+  const [selectedColor, setSelectedColor] = useState<string>(door?.color ?? 'white');
   const [dragEnabled, setDragEnabled] = useState<boolean>(false);
   const [bounds, setBounds] = useState<DraggableBounds>({ left: 0, top: 0, bottom: 0, right: 0 } as DraggableBounds);
   const dragRef = useRef<HTMLDivElement | null>(null);
   const okButtonRef = useRef<HTMLElement | null>(null);
+
   useEffect(() => {
     okButtonRef.current?.focus();
   });
@@ -42,101 +39,116 @@ const WallColorSelection = ({ setDialogVisible }: { setDialogVisible: (b: boolea
   const lang = { lng: language };
 
   useEffect(() => {
-    if (wall) {
-      setSelectedColor(wall?.color ?? 'white');
+    if (door) {
+      setSelectedColor(door?.color ?? 'white');
     }
-  }, [wall]);
+  }, [door]);
 
-  const onScopeChange = (e: RadioChangeEvent) => {
-    setWallActionScope(e.target.value);
-    setUpdateFlag(!updateFlag);
+  const updateColorById = (id: string, color: string) => {
+    setCommonStore((state) => {
+      for (const e of state.elements) {
+        if (e.id === id) {
+          if (!e.locked) {
+            e.color = color;
+          }
+          break;
+        }
+      }
+    });
+  };
+
+  const updateColorInMap = (map: Map<string, string>, color: string) => {
+    for (const id of map.keys()) {
+      updateColorById(id, color as string);
+    }
+  };
+
+  const undoColorInMap = (map: Map<string, string>) => {
+    for (const [id, color] of map.entries()) {
+      updateColorById(id, color as string);
+    }
   };
 
   const setColor = (value: string) => {
-    if (!wall) return;
-    switch (wallActionScope) {
+    if (!door) return;
+    switch (doorActionScope) {
       case Scope.AllObjectsOfThisType:
         const oldColorsAll = new Map<string, string>();
-        for (const elem of elements) {
-          if (elem.type === ObjectType.Wall) {
+        for (const elem of useStore.getState().elements) {
+          if (elem.type === ObjectType.Door && !elem.locked) {
             oldColorsAll.set(elem.id, elem.color ?? 'white');
           }
         }
         const undoableChangeAll = {
-          name: 'Set Color for All Walls',
+          name: 'Set Color for All Doors',
           timestamp: Date.now(),
           oldValues: oldColorsAll,
           newValue: value,
           undo: () => {
-            for (const [id, color] of undoableChangeAll.oldValues.entries()) {
-              updateWallColorById(id, color as string);
-            }
+            undoColorInMap(undoableChangeAll.oldValues as Map<string, string>);
           },
           redo: () => {
-            updateWallColorForAll(undoableChangeAll.newValue as string);
+            updateColorInMap(undoableChangeAll.oldValues as Map<string, string>, undoableChangeAll.newValue as string);
           },
         } as UndoableChangeGroup;
         addUndoable(undoableChangeAll);
-        updateWallColorForAll(value);
+        updateColorInMap(oldColorsAll, value);
         setApplyCount(applyCount + 1);
         break;
       case Scope.AllObjectsOfThisTypeAboveFoundation:
-        if (wall.foundationId) {
+        if (door.foundationId) {
           const oldColorsAboveFoundation = new Map<string, string>();
-          for (const elem of elements) {
-            if (elem.type === ObjectType.Wall && elem.foundationId === wall.foundationId) {
+          for (const elem of useStore.getState().elements) {
+            if (elem.type === ObjectType.Door && elem.foundationId === door.foundationId && !door.locked) {
               oldColorsAboveFoundation.set(elem.id, elem.color ?? 'white');
             }
           }
           const undoableChangeAboveFoundation = {
-            name: 'Set Color for All Walls Above Foundation',
+            name: 'Set Color for All Doors Above Foundation',
             timestamp: Date.now(),
             oldValues: oldColorsAboveFoundation,
             newValue: value,
-            groupId: wall.foundationId,
+            groupId: door.foundationId,
             undo: () => {
-              for (const [id, color] of undoableChangeAboveFoundation.oldValues.entries()) {
-                updateWallColorById(id, color as string);
-              }
+              undoColorInMap(undoableChangeAboveFoundation.oldValues as Map<string, string>);
             },
             redo: () => {
               if (undoableChangeAboveFoundation.groupId) {
-                updateWallColorAboveFoundation(
-                  undoableChangeAboveFoundation.groupId,
+                updateColorInMap(
+                  undoableChangeAboveFoundation.oldValues as Map<string, string>,
                   undoableChangeAboveFoundation.newValue as string,
                 );
               }
             },
           } as UndoableChangeGroup;
           addUndoable(undoableChangeAboveFoundation);
-          updateWallColorAboveFoundation(wall.foundationId, value);
+          updateColorInMap(oldColorsAboveFoundation, value);
           setApplyCount(applyCount + 1);
         }
         break;
       default:
-        if (wall) {
-          const updatedWall = getElementById(wall.id) as WallModel;
-          const oldColor = updatedWall?.color ?? wall.color ?? 'white';
+        if (door) {
+          const updatedDoor = getElementById(door.id) as DoorModel;
+          const oldColor = (updatedDoor ? updatedDoor.color : door.color) ?? 'white';
           const undoableChange = {
-            name: 'Set Color of Selected Wall',
+            name: 'Set Color of Selected Door',
             timestamp: Date.now(),
             oldValue: oldColor,
             newValue: value,
-            changedElementId: wall.id,
-            changedElementType: wall.type,
+            changedElementId: door.id,
+            changedElementType: door.type,
             undo: () => {
-              updateWallColorById(undoableChange.changedElementId, undoableChange.oldValue as string);
+              updateColorById(undoableChange.changedElementId, undoableChange.oldValue as string);
             },
             redo: () => {
-              updateWallColorById(undoableChange.changedElementId, undoableChange.newValue as string);
+              updateColorById(undoableChange.changedElementId, undoableChange.newValue as string);
             },
           } as UndoableChange;
           addUndoable(undoableChange);
-          updateWallColorById(wall.id, value);
+          updateColorById(door.id, value);
           setApplyCount(applyCount + 1);
         }
     }
-    setUpdateFlag(!updateFlag);
   };
 
   const onStart = (event: DraggableEvent, uiData: DraggableData) => {
@@ -153,21 +165,28 @@ const WallColorSelection = ({ setDialogVisible }: { setDialogVisible: (b: boolea
   };
 
   const close = () => {
-    if (wall?.color) {
-      setSelectedColor(wall.color);
+    if (door?.color) {
+      setSelectedColor(door.color);
     }
     setDialogVisible(false);
   };
 
-  const cancel = () => {
+  const handleCancel = () => {
     close();
     revertApply();
   };
 
-  const ok = () => {
-    setColor(selectedColor);
+  const handleOk = () => {
+    const updatedDoor = getElementById(door.id) as DoorModel;
+    if (updatedDoor && updatedDoor.color !== selectedColor) {
+      setColor(selectedColor);
+    }
     setDialogVisible(false);
     setApplyCount(0);
+  };
+
+  const handleApply = () => {
+    setColor(selectedColor);
   };
 
   return (
@@ -185,18 +204,13 @@ const WallColorSelection = ({ setDialogVisible }: { setDialogVisible: (b: boolea
           </div>
         }
         footer={[
-          <Button
-            key="Apply"
-            onClick={() => {
-              setColor(selectedColor);
-            }}
-          >
+          <Button key="Apply" onClick={handleApply}>
             {i18n.t('word.Apply', lang)}
           </Button>,
-          <Button key="Cancel" onClick={cancel}>
+          <Button key="Cancel" onClick={handleCancel}>
             {i18n.t('word.Cancel', lang)}
           </Button>,
-          <Button key="OK" type="primary" onClick={ok} ref={okButtonRef}>
+          <Button key="OK" type="primary" ref={okButtonRef} onClick={handleOk}>
             {i18n.t('word.OK', lang)}
           </Button>,
         ]}
@@ -213,10 +227,9 @@ const WallColorSelection = ({ setDialogVisible }: { setDialogVisible: (b: boolea
         <Row gutter={6}>
           <Col className="gutter-row" span={11}>
             <CompactPicker
-              color={selectedColor ?? wall?.color ?? 'white'}
+              color={selectedColor ?? door?.color ?? 'white'}
               onChangeComplete={(colorResult) => {
                 setSelectedColor(colorResult.hex);
-                setUpdateFlag(!updateFlag);
               }}
             />
           </Col>
@@ -225,13 +238,13 @@ const WallColorSelection = ({ setDialogVisible }: { setDialogVisible: (b: boolea
             style={{ border: '2px dashed #ccc', paddingTop: '8px', paddingLeft: '12px', paddingBottom: '8px' }}
             span={13}
           >
-            <Radio.Group onChange={onScopeChange} value={wallActionScope}>
+            <Radio.Group onChange={(e) => setDoorActionScope(e.target.value)} value={doorActionScope}>
               <Space direction="vertical">
-                <Radio value={Scope.OnlyThisObject}>{i18n.t('wallMenu.OnlyThisWall', lang)}</Radio>
+                <Radio value={Scope.OnlyThisObject}>{i18n.t('doorMenu.OnlyThisDoor', lang)}</Radio>
                 <Radio value={Scope.AllObjectsOfThisTypeAboveFoundation}>
-                  {i18n.t('wallMenu.AllWallsAboveFoundation', lang)}
+                  {i18n.t('doorMenu.AllDoorsAboveFoundation', lang)}
                 </Radio>
-                <Radio value={Scope.AllObjectsOfThisType}>{i18n.t('wallMenu.AllWalls', lang)}</Radio>
+                <Radio value={Scope.AllObjectsOfThisType}>{i18n.t('doorMenu.AllDoors', lang)}</Radio>
               </Space>
             </Radio.Group>
           </Col>
@@ -241,4 +254,4 @@ const WallColorSelection = ({ setDialogVisible }: { setDialogVisible: (b: boolea
   );
 };
 
-export default WallColorSelection;
+export default DoorColorSelection;

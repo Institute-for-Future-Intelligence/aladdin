@@ -593,6 +593,7 @@
     },
     {
       "type": "Roof",
+      "overhang": 0.4,
       "cx": 0,
       "cy": 0,
       "cz": 0,

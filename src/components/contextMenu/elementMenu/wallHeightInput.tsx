@@ -26,6 +26,7 @@ const WallHeightInput = ({ setDialogVisible }: { setDialogVisible: (b: boolean) 
   const applyCount = useStore(Selector.applyCount);
   const setApplyCount = useStore(Selector.setApplyCount);
   const revertApply = useStore(Selector.revertApply);
+  const getElementById = useStore(Selector.getElementById);
 
   const [updateFlag, setUpdateFlag] = useState<boolean>(false);
   const [dragEnabled, setDragEnabled] = useState<boolean>(false);
@@ -109,7 +110,8 @@ const WallHeightInput = ({ setDialogVisible }: { setDialogVisible: (b: boolean) 
         break;
       default:
         if (wall) {
-          const oldHeight = wall.lz;
+          const updatedWall = getElementById(wall.id) as WallModel;
+          const oldHeight = updatedWall.lz ?? wall.lz;
           const undoableChange = {
             name: 'Set Wall Height',
             timestamp: Date.now(),

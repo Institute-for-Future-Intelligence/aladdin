@@ -38,6 +38,7 @@ const WallTextureSelection = ({ setDialogVisible }: { setDialogVisible: (b: bool
   const applyCount = useStore(Selector.applyCount);
   const setApplyCount = useStore(Selector.setApplyCount);
   const revertApply = useStore(Selector.revertApply);
+  const getElementById = useStore(Selector.getElementById);
 
   const [selectedTexture, setSelectedTexture] = useState<WallTexture>(wall?.textureType ?? WallTexture.Default);
   const [updateFlag, setUpdateFlag] = useState<boolean>(false);
@@ -69,7 +70,7 @@ const WallTextureSelection = ({ setDialogVisible }: { setDialogVisible: (b: bool
       case Scope.AllObjectsOfThisType:
         const oldTexturesAll = new Map<string, WallTexture>();
         for (const elem of elements) {
-          if (elem.type === ObjectType.Wall) {
+          if (elem.type === ObjectType.Wall && !elem.locked) {
             oldTexturesAll.set(elem.id, (elem as WallModel).textureType ?? WallTexture.Default);
           }
         }
@@ -95,7 +96,7 @@ const WallTextureSelection = ({ setDialogVisible }: { setDialogVisible: (b: bool
         if (wall.foundationId) {
           const oldTexturesAboveFoundation = new Map<string, WallTexture>();
           for (const elem of elements) {
-            if (elem.type === ObjectType.Wall && elem.foundationId === wall.foundationId) {
+            if (elem.type === ObjectType.Wall && elem.foundationId === wall.foundationId && !elem.locked) {
               oldTexturesAboveFoundation.set(elem.id, (elem as WallModel).textureType);
             }
           }
@@ -126,7 +127,8 @@ const WallTextureSelection = ({ setDialogVisible }: { setDialogVisible: (b: bool
         break;
       default:
         if (wall) {
-          const oldTexture = wall.textureType;
+          const updatedWall = getElementById(wall.id) as WallModel;
+          const oldTexture = updatedWall?.textureType ?? wall.textureType;
           const undoableChange = {
             name: 'Set Texture of Selected Wall',
             timestamp: Date.now(),

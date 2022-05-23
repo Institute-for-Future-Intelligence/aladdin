@@ -13,9 +13,19 @@ import { useStoreRef } from 'src/stores/commonRef';
 import { useThree } from '@react-three/fiber';
 import { HALF_PI } from 'src/constants';
 import { ElementModel } from 'src/models/ElementModel';
-import { ConvexGeoProps, handleUndoableResizeRoofHeight, useRoofTexture } from './roof';
+import {
+  handleUndoableResizeRoofHeight,
+  ConvexGeoProps,
+  useRoofTexture,
+  handleRoofContextMenu,
+  getNormal,
+  getIntersectionPoint,
+  getDistance,
+} from './roof';
 import { UnoableResizeGableRoofRidge } from 'src/undo/UndoableResize';
-import { ObjectType } from '../../types';
+import { RoofTexture, ObjectType } from 'src/types';
+import { Util } from 'src/Util';
+import { Point2 } from 'src/models/Point2';
 
 const intersectionPlanePosition = new Vector3();
 const intersectionPlaneRotation = new Euler();
@@ -41,6 +51,7 @@ const GableRoof = ({
   ridgeRightPoint,
   textureType,
   color,
+  overhang,
 }: GableRoofModel) => {
   const texture = useRoofTexture(textureType);
 
@@ -172,6 +183,33 @@ const GableRoof = ({
     return { lh, rh };
   };
 
+  const getWallPoint = (wallArray: WallModel[]) => {
+    const arr: Point2[] = [];
+    for (const w of wallArray) {
+      if (w.leftPoint[0] && w.leftPoint[1]) {
+        arr.push({ x: w.leftPoint[0], y: w.leftPoint[1] });
+      }
+    }
+    return arr;
+  };
+
+  const getShiftedArr = <T,>(array: T[], idx: number) => {
+    const arr = array.slice().reverse();
+    swap(arr, 0, idx - 1);
+    swap(arr, idx, arr.length - 1);
+    return arr;
+  };
+
+  const swap = <T,>(arr: T[], i: number, j: number) => {
+    while (i < j) {
+      const temp = arr[i];
+      arr[i] = arr[j];
+      arr[j] = temp;
+      i++;
+      j--;
+    }
+  };
+
   const currentWallArray = useMemo(() => {
     const array: WallModel[] = [];
     if (wallsId.length > 0) {
@@ -191,6 +229,15 @@ const GableRoof = ({
     }
     return array;
   }, [elements]);
+
+  const centroid = useMemo(() => {
+    if (currentWallArray.length !== 4) {
+      return new Vector3();
+    }
+    const points = getWallPoint(currentWallArray);
+    const p = Util.calculatePolygonCentroid(points);
+    return new Vector3(p.x, p.y, h);
+  }, [currentWallArray, h]);
 
   const ridgeLeftPointV3 = useMemo(() => {
     const wall = currentWallArray[3];
@@ -212,6 +259,10 @@ const GableRoof = ({
     );
   }, [ridgeLeftPointV3, ridgeRightPointV3]);
 
+  const overhangs = useMemo(() => {
+    return currentWallArray.map((wall) => getNormal(wall).multiplyScalar(overhang));
+  }, [currentWallArray, overhang]);
+
   const roofSegments = useMemo(() => {
     const segments: ConvexGeoProps[] = [];
 
@@ -223,38 +274,202 @@ const GableRoof = ({
     if (currentWallArray[3].centerRoofHeight && Math.abs(currentWallArray[3].centerRoofHeight[0]) === 0.5) {
       const points: Vector3[] = [];
       const idx = currentWallArray[3].centerRoofHeight[0] < 0 ? 0 : 2;
-      const currWall = currentWallArray[idx];
-      const direction = -currWall.relativeAngle;
-      const { lh, rh } = getWallHeightShed(currentWallArray, idx);
-      const currLeftPoint = new Vector3(currWall.leftPoint[0], currWall.leftPoint[1], lh).sub(ridgeMidPoint);
-      const currRightPoint = new Vector3(currWall.rightPoint[0], currWall.rightPoint[1], rh).sub(ridgeMidPoint);
-      const length = new Vector3(currWall.cx, currWall.cy).sub(ridgeMidPoint.clone().setZ(0)).length();
+
+      const shiftedWallArray = getShiftedArr(currentWallArray, idx);
+      const shiftedOverhangs = getShiftedArr(overhangs, idx);
+
+      const [frontWall, rightWall, backWall, leftWall] = shiftedWallArray;
+      const [frontOverhang, rightOverhang, backOverhang, leftOverhang] = shiftedOverhangs;
+
+      const wallPoint0 = new Vector3(frontWall.leftPoint[0], frontWall.leftPoint[1]);
+      const wallPoint1 = new Vector3(frontWall.rightPoint[0], frontWall.rightPoint[1]);
+      const wallPoint2 = new Vector3(backWall.leftPoint[0], backWall.leftPoint[1]);
+      const wallPoint3 = new Vector3(backWall.rightPoint[0], backWall.rightPoint[1]);
+
+      const frontWallLeftPointAfterOffset = wallPoint0.clone().add(frontOverhang);
+      const frontWallRightPointAfterOffset = wallPoint1.clone().add(frontOverhang);
+      const leftWallLeftPointAfterOffset = wallPoint3.clone().add(leftOverhang);
+      const leftWallRightPointAfterOffset = wallPoint0.clone().add(leftOverhang);
+      const rightWallLeftPointAfterOffset = wallPoint1.clone().add(rightOverhang);
+      const rightWallRightPointAfterOffset = wallPoint2.clone().add(rightOverhang);
+      const backWallLeftPointAfterOffset = wallPoint2.clone().add(backOverhang);
+      const backWallRightPointAfterOffset = wallPoint3.clone().add(backOverhang);
+
+      const { lh: frontWallLh, rh: frontWallRh } = getWallHeightShed(currentWallArray, 0);
+      const { lh: backWallLh, rh: backWallRh } = getWallHeightShed(shiftedWallArray, 2);
+
+      const d0 = getDistance(wallPoint0, wallPoint1, wallPoint3);
+      const overhangHeight0 = Math.min((overhang / d0) * (h - frontWallLh), frontWallLh);
+
+      const d1 = getDistance(wallPoint0, wallPoint1, wallPoint2);
+      const overhangHeight1 = Math.min((overhang / d1) * (h - frontWallRh), frontWallRh);
+
+      const d2 = getDistance(wallPoint2, wallPoint3, wallPoint1);
+      const overhangHeight2 = Math.min((overhang / d2) * (h - backWallLh), backWallLh);
+
+      const d3 = getDistance(wallPoint2, wallPoint3, wallPoint0);
+      const overhangHeight3 = Math.min((overhang / d3) * (h - backWallRh), backWallRh);
+
+      const frontWallLeftPointAfterOverhang = getIntersectionPoint(
+        frontWallLeftPointAfterOffset,
+        frontWallRightPointAfterOffset,
+        leftWallLeftPointAfterOffset,
+        leftWallRightPointAfterOffset,
+      )
+        .setZ(frontWallLh - overhangHeight0)
+        .sub(centroid);
+
+      const frontWallRightPointAfterOverhang = getIntersectionPoint(
+        frontWallLeftPointAfterOffset,
+        frontWallRightPointAfterOffset,
+        rightWallLeftPointAfterOffset,
+        rightWallRightPointAfterOffset,
+      )
+        .setZ(frontWallRh - overhangHeight1)
+        .sub(centroid);
+
+      const backWallLeftPointAfterOverhang = getIntersectionPoint(
+        backWallLeftPointAfterOffset,
+        backWallRightPointAfterOffset,
+        rightWallLeftPointAfterOffset,
+        rightWallRightPointAfterOffset,
+      )
+        .setZ(h + overhangHeight2)
+        .sub(centroid);
+
+      const backWallRightPointAfterOverhang = getIntersectionPoint(
+        backWallLeftPointAfterOffset,
+        backWallRightPointAfterOffset,
+        leftWallLeftPointAfterOffset,
+        leftWallRightPointAfterOffset,
+      )
+        .setZ(h + overhangHeight3)
+        .sub(centroid);
+
       points.push(
-        currLeftPoint,
-        currRightPoint,
-        ridgeLeftPointV3.clone().sub(ridgeMidPoint),
-        ridgeRightPointV3.clone().sub(ridgeMidPoint),
+        frontWallLeftPointAfterOverhang,
+        frontWallRightPointAfterOverhang,
+        backWallLeftPointAfterOverhang,
+        backWallRightPointAfterOverhang,
       );
+
+      const direction = -frontWall.relativeAngle;
+      const length = new Vector3(frontWall.cx, frontWall.cy).sub(ridgeMidPoint.clone().setZ(0)).length();
       segments.push({ points, direction, length });
     }
     // gable roof
     else {
-      for (let i = 0; i < 4; i += 2) {
-        const points: Vector3[] = [];
-        const currWall = currentWallArray[i];
-        const direction = -currWall.relativeAngle;
-        const { lh, rh } = getWallHeight(currentWallArray, i);
-        const currLeftPoint = new Vector3(currWall.leftPoint[0], currWall.leftPoint[1], lh).sub(ridgeMidPoint);
-        const currRightPoint = new Vector3(currWall.rightPoint[0], currWall.rightPoint[1], rh).sub(ridgeMidPoint);
-        const length = new Vector3(currWall.cx, currWall.cy).sub(ridgeMidPoint.clone().setZ(0)).length();
-        points.push(
-          currLeftPoint,
-          currRightPoint,
-          ridgeLeftPointV3.clone().sub(ridgeMidPoint),
-          ridgeRightPointV3.clone().sub(ridgeMidPoint),
-        );
-        segments.push({ points, direction, length });
-      }
+      const [frontWall, rightWall, backWall, leftWall] = currentWallArray;
+      const [frontOverhang, rightOverhang, backOverhang, leftOverhang] = overhangs;
+
+      const wallPoint0 = new Vector3(frontWall.leftPoint[0], frontWall.leftPoint[1]);
+      const wallPoint1 = new Vector3(frontWall.rightPoint[0], frontWall.rightPoint[1]);
+      const wallPoint2 = new Vector3(backWall.leftPoint[0], backWall.leftPoint[1]);
+      const wallPoint3 = new Vector3(backWall.rightPoint[0], backWall.rightPoint[1]);
+
+      const frontWallLeftPointAfterOffset = wallPoint0.clone().add(frontOverhang);
+      const frontWallRightPointAfterOffset = wallPoint1.clone().add(frontOverhang);
+      const leftWallLeftPointAfterOffset = wallPoint3.clone().add(leftOverhang);
+      const leftWallRightPointAfterOffset = wallPoint0.clone().add(leftOverhang);
+      const rightWallLeftPointAfterOffset = wallPoint1.clone().add(rightOverhang);
+      const rightWallRightPointAfterOffset = wallPoint2.clone().add(rightOverhang);
+      const backWallLeftPointAfterOffset = wallPoint2.clone().add(backOverhang);
+      const backWallRightPointAfterOffset = wallPoint3.clone().add(backOverhang);
+
+      const ridgeLeftPointAfterOverhang = getIntersectionPoint(
+        ridgeLeftPointV3,
+        ridgeRightPointV3,
+        leftWallLeftPointAfterOffset.clone(),
+        leftWallRightPointAfterOffset.clone(),
+      )
+        .setZ(ridgeLeftPointV3.z)
+        .sub(centroid);
+
+      const ridgeRightPointAfterOverhang = getIntersectionPoint(
+        ridgeLeftPointV3,
+        ridgeRightPointV3,
+        rightWallLeftPointAfterOffset.clone(),
+        rightWallRightPointAfterOffset.clone(),
+      )
+        .setZ(ridgeRightPointV3.z)
+        .sub(centroid);
+
+      // front
+      const frontPoints: Vector3[] = [];
+      const { lh: frontWallLh, rh: frontWallRh } = getWallHeight(currentWallArray, 0);
+
+      const d0 = getDistance(wallPoint0, wallPoint1, ridgeLeftPointV3);
+      const overhangHeight0 = Math.min((overhang / d0) * (ridgeLeftPointV3.z - frontWallLh), frontWallLh);
+
+      const d1 = getDistance(wallPoint0, wallPoint1, ridgeRightPointV3);
+      const overhangHeight1 = Math.min((overhang / d1) * (ridgeRightPointV3.z - frontWallRh), frontWallRh);
+
+      const frontWallLeftPointAfterOverhang = getIntersectionPoint(
+        frontWallLeftPointAfterOffset,
+        frontWallRightPointAfterOffset,
+        leftWallLeftPointAfterOffset,
+        leftWallRightPointAfterOffset,
+      )
+        .setZ(frontWallLh - overhangHeight0)
+        .sub(centroid);
+
+      const frontWallRightPointAfterOverhang = getIntersectionPoint(
+        frontWallLeftPointAfterOffset,
+        frontWallRightPointAfterOffset,
+        rightWallLeftPointAfterOffset,
+        rightWallRightPointAfterOffset,
+      )
+        .setZ(frontWallRh - overhangHeight1)
+        .sub(centroid);
+
+      frontPoints.push(
+        frontWallLeftPointAfterOverhang,
+        frontWallRightPointAfterOverhang,
+        ridgeRightPointAfterOverhang,
+        ridgeLeftPointAfterOverhang,
+      );
+
+      const frontDirection = -frontWall.relativeAngle;
+      const frontLength = new Vector3(frontWall.cx, frontWall.cy).sub(centroid.clone().setZ(0)).length();
+      segments.push({ points: frontPoints, direction: frontDirection, length: frontLength });
+
+      // back
+      const backPoints: Vector3[] = [];
+      const { lh: backWallLh, rh: backWallRh } = getWallHeight(currentWallArray, 2);
+      const d2 = getDistance(wallPoint2, wallPoint3, ridgeRightPointV3);
+      const overhangHeight2 = Math.min((overhang / d2) * (ridgeRightPointV3.z - backWallLh), backWallLh);
+
+      const d3 = getDistance(wallPoint2, wallPoint3, ridgeLeftPointV3);
+      const overhangHeight3 = Math.min((overhang / d3) * (ridgeLeftPointV3.z - backWallRh), backWallRh);
+
+      const backWallLeftPointAfterOverhang = getIntersectionPoint(
+        backWallLeftPointAfterOffset,
+        backWallRightPointAfterOffset,
+        rightWallLeftPointAfterOffset,
+        rightWallRightPointAfterOffset,
+      )
+        .setZ(backWallLh - overhangHeight2)
+        .sub(centroid);
+
+      const backWallRightPointAfterOverhang = getIntersectionPoint(
+        backWallLeftPointAfterOffset,
+        backWallRightPointAfterOffset,
+        leftWallLeftPointAfterOffset,
+        leftWallRightPointAfterOffset,
+      )
+        .setZ(backWallRh - overhangHeight3)
+        .sub(centroid);
+
+      backPoints.push(
+        backWallLeftPointAfterOverhang,
+        backWallRightPointAfterOverhang,
+        ridgeLeftPointAfterOverhang,
+        ridgeRightPointAfterOverhang,
+      );
+
+      const backDirection = -backWall.relativeAngle;
+      const backLength = new Vector3(backWall.cx, backWall.cy).sub(centroid.clone().setZ(0)).length();
+      segments.push({ points: backPoints, direction: backDirection, length: backLength });
     }
 
     return segments;
@@ -347,8 +562,7 @@ const GableRoof = ({
       {/* roof segments group */}
       <group
         name={'Roof Segment Group'}
-        position={[ridgeMidPoint.x, ridgeMidPoint.y, ridgeMidPoint.z]}
-        scale={1.1} // todo: should use actual mid point
+        position={[centroid.x, centroid.y, centroid.z]}
         onPointerDown={(e) => {
           if (e.intersections[0].eventObject.name === e.eventObject.name) {
             setCommonStore((state) => {
@@ -362,6 +576,9 @@ const GableRoof = ({
             });
           }
         }}
+        onContextMenu={(e) => {
+          handleRoofContextMenu(e, id);
+        }}
       >
         {roofSegments.map((segment, i, arr) => {
           const { points, direction, length } = segment;
@@ -370,7 +587,11 @@ const GableRoof = ({
           return (
             <mesh key={i}>
               <convexGeometry args={[points, isFlat ? arr[0].direction : direction, isFlat ? 1 : length]} />
-              <meshStandardMaterial side={DoubleSide} map={texture} color={color} />
+              <meshStandardMaterial
+                side={DoubleSide}
+                map={texture}
+                color={textureType === RoofTexture.Default || textureType === RoofTexture.NoTexture ? color : 'white'}
+              />
             </mesh>
           );
         })}
@@ -446,6 +667,9 @@ const GableRoof = ({
               const intersects = ray.intersectObjects([intersectionPlaneRef.current]);
               if (intersects[0]) {
                 const point = intersects[0].point;
+                if (point.z < 0.001) {
+                  return;
+                }
                 switch (roofHandleType) {
                   case RoofHandleType.Left: {
                     const wall = currentWallArray[3];

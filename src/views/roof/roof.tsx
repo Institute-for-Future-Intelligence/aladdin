@@ -19,7 +19,6 @@ import {
   MansardRoofModel,
   PyramidRoofModel,
   RoofModel,
-  RoofTexture,
   RoofType,
 } from '../../models/RoofModel';
 import * as Selector from '../../stores/selector';
@@ -29,9 +28,13 @@ import HipRoof from './hipRoof';
 import GambrelRoof from './gambrelRoof';
 import { UndoableResizeRoofHeight } from 'src/undo/UndoableResize';
 import MansardRoof from './mansardRoof';
-import { RepeatWrapping, TextureLoader, Vector3 } from 'three';
-import { ObjectType } from '../../types';
+import { Euler, RepeatWrapping, TextureLoader, Vector3 } from 'three';
+import { ObjectType, RoofTexture } from 'src/types';
+import { ThreeEvent } from '@react-three/fiber';
+import { WallModel } from 'src/models/WallModel';
+import { HALF_PI } from 'src/constants';
 
+export const euler = new Euler(0, 0, HALF_PI);
 export interface ConvexGeoProps {
   points: Vector3[];
   direction: number;
@@ -111,6 +114,49 @@ export const useRoofTexture = (textureType: RoofTexture) => {
 
   const [texture, setTexture] = useState(textureLoader);
   return texture;
+};
+
+export const handleRoofContextMenu = (e: ThreeEvent<MouseEvent>, id: string) => {
+  useStore.getState().set((state) => {
+    if (e.intersections.length > 0 && e.intersections[0].eventObject.name === e.eventObject.name) {
+      state.contextMenuObjectType = ObjectType.Roof;
+      for (const e of state.elements) {
+        if (e.id === id) {
+          e.selected = true;
+          state.selectedElement = e;
+        } else {
+          e.selected = false;
+        }
+      }
+    }
+  });
+};
+
+export const getNormal = (wall: WallModel) => {
+  return new Vector3()
+    .subVectors(new Vector3(wall.leftPoint[0], wall.leftPoint[1]), new Vector3(wall.rightPoint[0], wall.rightPoint[1]))
+    .applyEuler(euler)
+    .normalize();
+};
+
+export const getIntersectionPoint = (v1: Vector3, v2: Vector3, v3: Vector3, v4: Vector3) => {
+  const x = [v1.x, v2.x, v3.x, v4.x];
+  const y = [v1.y, v2.y, v3.y, v4.y];
+  const x0 =
+    ((x[2] - x[3]) * (x[1] * y[0] - x[0] * y[1]) - (x[0] - x[1]) * (x[3] * y[2] - x[2] * y[3])) /
+    ((x[2] - x[3]) * (y[0] - y[1]) - (x[0] - x[1]) * (y[2] - y[3]));
+  const y0 =
+    ((y[2] - y[3]) * (y[1] * x[0] - y[0] * x[1]) - (y[0] - y[1]) * (y[3] * x[2] - y[2] * x[3])) /
+    ((y[2] - y[3]) * (x[0] - x[1]) - (y[0] - y[1]) * (x[2] - x[3]));
+  return new Vector3(x0, y0);
+};
+
+// distance from point p3 to line formed by p1 and p2
+export const getDistance = (p1: Vector3, p2: Vector3, p3: Vector3) => {
+  const A = p2.y - p1.y;
+  const B = p1.x - p2.x;
+  const C = p2.x * p1.y - p1.x * p2.y;
+  return Math.abs((A * p3.x + B * p3.y + C) / Math.sqrt(A * A + B * B));
 };
 
 const Roof = (props: RoofModel) => {
