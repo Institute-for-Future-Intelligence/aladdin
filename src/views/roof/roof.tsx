@@ -122,7 +122,7 @@ export const useRoofTexture = (textureType: RoofTexture) => {
 };
 
 export const handleRoofPointerDown = (e: ThreeEvent<PointerEvent>, id: string) => {
-  if (e.intersections[0].eventObject.name === e.eventObject.name) {
+  if (e.intersections.length > 0 && e.intersections[0].eventObject.name === e.eventObject.name) {
     e.stopPropagation();
     useStore.getState().set((state) => {
       for (const e of state.elements) {
@@ -137,8 +137,9 @@ export const handleRoofPointerDown = (e: ThreeEvent<PointerEvent>, id: string) =
 };
 
 export const handleRoofContextMenu = (e: ThreeEvent<MouseEvent>, id: string) => {
-  useStore.getState().set((state) => {
-    if (e.intersections.length > 0 && e.intersections[0].eventObject.name === e.eventObject.name) {
+  if (e.intersections.length > 0 && e.intersections[0].eventObject.name === e.eventObject.name) {
+    e.stopPropagation();
+    useStore.getState().set((state) => {
       state.contextMenuObjectType = ObjectType.Roof;
       for (const e of state.elements) {
         if (e.id === id) {
@@ -148,8 +149,8 @@ export const handleRoofContextMenu = (e: ThreeEvent<MouseEvent>, id: string) => 
           e.selected = false;
         }
       }
-    }
-  });
+    });
+  }
 };
 
 export const getNormal = (wall: WallModel) => {
