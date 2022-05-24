@@ -297,7 +297,7 @@ const GableRoof = ({
       const backWallLeftPointAfterOffset = wallPoint2.clone().add(backOverhang);
       const backWallRightPointAfterOffset = wallPoint3.clone().add(backOverhang);
 
-      const { lh: frontWallLh, rh: frontWallRh } = getWallHeightShed(currentWallArray, 0);
+      const { lh: frontWallLh, rh: frontWallRh } = getWallHeightShed(shiftedWallArray, 0);
       const { lh: backWallLh, rh: backWallRh } = getWallHeightShed(shiftedWallArray, 2);
 
       const d0 = getDistance(wallPoint0, wallPoint1, wallPoint3);
@@ -307,10 +307,10 @@ const GableRoof = ({
       const overhangHeight1 = Math.min((overhang / d1) * (h - frontWallRh), frontWallRh);
 
       const d2 = getDistance(wallPoint2, wallPoint3, wallPoint1);
-      const overhangHeight2 = Math.min((overhang / d2) * (h - backWallLh), backWallLh);
+      const overhangHeight2 = Math.min((overhang / d2) * (h - frontWallRh), backWallLh);
 
       const d3 = getDistance(wallPoint2, wallPoint3, wallPoint0);
-      const overhangHeight3 = Math.min((overhang / d3) * (h - backWallRh), backWallRh);
+      const overhangHeight3 = Math.min((overhang / d3) * (h - frontWallLh), backWallRh);
 
       const frontWallLeftPointAfterOverhang = getIntersectionPoint(
         frontWallLeftPointAfterOffset,
