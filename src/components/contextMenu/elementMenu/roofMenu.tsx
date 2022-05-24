@@ -13,6 +13,7 @@ import RoofTextureSelection from './roofTextureSelection';
 import RoofColorSelection from './roofColorSelection';
 import { RoofModel } from 'src/models/RoofModel';
 import RoofOverhangInput from './roofOverhangInput';
+import RoofThicknessInput from './roofThicknessInput';
 
 export const RoofMenu = () => {
   const roof = useStore(Selector.selectedElement) as RoofModel;
@@ -20,6 +21,7 @@ export const RoofMenu = () => {
   const setApplyCount = useStore(Selector.setApplyCount);
 
   const [overhangDialogVisible, setOverhangDialogVisible] = useState(false);
+  const [thicknessDialogVisible, setThicknessDialogVisible] = useState(false);
   const [textureDialogVisible, setTextureDialogVisible] = useState(false);
   const [colorDialogVisible, setColorDialogVisible] = useState(false);
 
@@ -41,6 +43,18 @@ export const RoofMenu = () => {
           }}
         >
           {i18n.t('roofMenu.OverhangLength', lang)} ...
+        </Menu.Item>
+
+        {thicknessDialogVisible && <RoofThicknessInput setDialogVisible={setThicknessDialogVisible} />}
+        <Menu.Item
+          key={'roof-thickness'}
+          style={{ paddingLeft: paddingLeft }}
+          onClick={() => {
+            setApplyCount(0);
+            setThicknessDialogVisible(true);
+          }}
+        >
+          {i18n.t('word.Thickness', lang)} ...
         </Menu.Item>
 
         {textureDialogVisible && <RoofTextureSelection setDialogVisible={setTextureDialogVisible} />}
