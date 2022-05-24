@@ -599,6 +599,7 @@
     {
       "type": "Roof",
       "overhang": 0.2,
+      "thickness": 0.3,
       "cx": 0,
       "cy": 0,
       "cz": 0,
@@ -1121,6 +1122,7 @@
       "ly": 0,
       "lz": 7.2527116161857075,
       "overhang": 0.2,
+      "thickness": 0.3,
       "roofType": "Mansard",
       "wallsId": [
         "beHqET5NN8aNdsuBncMpY7"

@@ -438,6 +438,7 @@
       "cx": 0,
       "type": "Roof",
       "overhang": 0.2,
+      "thickness": 0.3,
       "ridgeLeftPoint": [
         0.022465454047944533,
         1
@@ -552,6 +553,7 @@
       ],
       "type": "Roof",
       "overhang": 0.4,
+      "thickness": 0.3,
       "cx": 0,
       "ly": 0
     },

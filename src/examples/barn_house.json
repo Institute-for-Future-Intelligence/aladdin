@@ -293,6 +293,7 @@
       ],
       "type": "Roof",
       "overhang": 0.2,
+      "thickness": 0.3,
       "roofType": "Gable",
       "lx": 0,
       "textureType": "Roof Texture #7",
@@ -540,6 +541,7 @@
       "selected": false,
       "type": "Roof",
       "overhang": 0.2,
+      "thickness": 0.3,
       "lz": 7.5,
       "lx": 0,
       "roofType": "Gable",
@@ -893,6 +895,7 @@
       "textureType": "Roof Texture #7",
       "type": "Roof",
       "overhang": 0.2,
+      "thickness": 0.3,
       "wallsId": [
         "5spEvKcr5r35ajFtNP5ug4",
         "gSgPwypYb2qas3tXnXpzu5",
