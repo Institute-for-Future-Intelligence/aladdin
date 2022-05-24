@@ -10,6 +10,7 @@ export interface RoofModel extends ElementModel {
   roofType: RoofType;
   textureType: RoofTexture;
   overhang: number;
+  thickness: number;
 }
 
 export interface PyramidRoofModel extends RoofModel {}

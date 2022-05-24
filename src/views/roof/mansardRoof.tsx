@@ -32,6 +32,7 @@ import {
 const intersectionPlanePosition = new Vector3();
 const intersectionPlaneRotation = new Euler();
 const zeroVector2 = new Vector2();
+const zVector3 = new Vector3(0, 0, 1);
 
 enum RoofHandleType {
   Top = 'Top',
@@ -56,6 +57,7 @@ const MansardRoof = ({
   textureType,
   color,
   overhang,
+  thickness,
 }: MansardRoofModel) => {
   const texture = useRoofTexture(textureType);
 
@@ -253,6 +255,10 @@ const MansardRoof = ({
     return currentWallArray.map((wall) => getNormal(wall).multiplyScalar(overhang));
   }, [currentWallArray, overhang]);
 
+  const thicknessVector = useMemo(() => {
+    return zVector3.clone().multiplyScalar(thickness);
+  }, [thickness]);
+
   const roofSegments = useMemo(() => {
     // const segments: Vector3[][] = [];
     const segments: ConvexGeometryProps[] = [];
@@ -332,6 +338,12 @@ const MansardRoof = ({
       frontRidgeRightPointAfterOverhang,
       frontRidgeLeftPointAfterOverhang,
     );
+    frontSide.push(
+      frontWallLeftPointAfterOverhang.clone().add(thicknessVector),
+      frontWallRightPointAfterOverhang.clone().add(thicknessVector),
+      frontRidgeRightPointAfterOverhang.clone().add(thicknessVector),
+      frontRidgeLeftPointAfterOverhang.clone().add(thicknessVector),
+    );
     const frontDirection = -frontWall.relativeAngle;
     const frontLength = new Vector3(frontWall.cx, frontWall.cy).sub(centroid.clone().setZ(0)).length();
 
@@ -391,6 +403,12 @@ const MansardRoof = ({
       backRidgeRightPointAfterOverhang,
       backRidgeLeftPointAfterOverhang,
     );
+    backSide.push(
+      backWallLeftPointAfterOverhang.clone().add(thicknessVector),
+      backWallRightPointAfterOverhang.clone().add(thicknessVector),
+      backRidgeRightPointAfterOverhang.clone().add(thicknessVector),
+      backRidgeLeftPointAfterOverhang.clone().add(thicknessVector),
+    );
     const backDirection = -backWall.relativeAngle;
     const backLength = new Vector3(backWall.cx, backWall.cy).sub(centroid.clone().setZ(0)).length();
 
@@ -403,6 +421,12 @@ const MansardRoof = ({
       frontRidgeRightPointAfterOverhang,
       backRidgeLeftPointAfterOverhang,
       backRidgeRightPointAfterOverhang,
+    );
+    top.push(
+      frontRidgeLeftPointAfterOverhang.clone().add(thicknessVector),
+      frontRidgeRightPointAfterOverhang.clone().add(thicknessVector),
+      backRidgeLeftPointAfterOverhang.clone().add(thicknessVector),
+      backRidgeRightPointAfterOverhang.clone().add(thicknessVector),
     );
     segments.push({ points: top, direction: frontDirection, length: 1 });
 
@@ -487,7 +511,7 @@ const MansardRoof = ({
 
       {/* handles */}
       {selected && (
-        <group position={[centroid.x, centroid.y, centroid.z]}>
+        <group position={[centroid.x, centroid.y, centroid.z + thickness]}>
           <Sphere
             position={[0, 0, 0.3]}
             args={[0.3]}

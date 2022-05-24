@@ -31,6 +31,7 @@ import { Point2 } from 'src/models/Point2';
 const intersectionPlanePosition = new Vector3();
 const intersectionPlaneRotation = new Euler();
 const zeroVector2 = new Vector2();
+const zVector3 = new Vector3(0, 0, 1);
 
 enum RoofHandleType {
   Mid = 'Mid',
@@ -53,6 +54,7 @@ const GableRoof = ({
   textureType,
   color,
   overhang,
+  thickness,
 }: GableRoofModel) => {
   const texture = useRoofTexture(textureType);
 
@@ -265,6 +267,10 @@ const GableRoof = ({
     return currentWallArray.map((wall) => getNormal(wall).multiplyScalar(overhang));
   }, [currentWallArray, overhang]);
 
+  const thicknessVector = useMemo(() => {
+    return zVector3.clone().multiplyScalar(thickness);
+  }, [thickness]);
+
   const roofSegments = useMemo(() => {
     const segments: ConvexGeoProps[] = [];
 
@@ -354,6 +360,12 @@ const GableRoof = ({
         backWallLeftPointAfterOverhang,
         backWallRightPointAfterOverhang,
       );
+      points.push(
+        frontWallLeftPointAfterOverhang.clone().add(thicknessVector),
+        frontWallRightPointAfterOverhang.clone().add(thicknessVector),
+        backWallLeftPointAfterOverhang.clone().add(thicknessVector),
+        backWallRightPointAfterOverhang.clone().add(thicknessVector),
+      );
 
       const direction = -frontWall.relativeAngle;
       const length = new Vector3(frontWall.cx, frontWall.cy).sub(ridgeMidPoint.clone().setZ(0)).length();
@@ -430,6 +442,12 @@ const GableRoof = ({
         ridgeRightPointAfterOverhang,
         ridgeLeftPointAfterOverhang,
       );
+      frontPoints.push(
+        frontWallLeftPointAfterOverhang.clone().add(thicknessVector),
+        frontWallRightPointAfterOverhang.clone().add(thicknessVector),
+        ridgeRightPointAfterOverhang.clone().add(thicknessVector),
+        ridgeLeftPointAfterOverhang.clone().add(thicknessVector),
+      );
 
       const frontDirection = -frontWall.relativeAngle;
       const frontLength = new Vector3(frontWall.cx, frontWall.cy).sub(centroid.clone().setZ(0)).length();
@@ -467,6 +485,12 @@ const GableRoof = ({
         backWallRightPointAfterOverhang,
         ridgeLeftPointAfterOverhang,
         ridgeRightPointAfterOverhang,
+      );
+      backPoints.push(
+        backWallLeftPointAfterOverhang.clone().add(thicknessVector),
+        backWallRightPointAfterOverhang.clone().add(thicknessVector),
+        ridgeLeftPointAfterOverhang.clone().add(thicknessVector),
+        ridgeRightPointAfterOverhang.clone().add(thicknessVector),
       );
 
       const backDirection = -backWall.relativeAngle;
@@ -591,7 +615,7 @@ const GableRoof = ({
 
       {/* handles */}
       {selected && (
-        <group>
+        <group position={[0, 0, thickness]}>
           {/* mid handle */}
           <Sphere
             position={[ridgeMidPoint.x, ridgeMidPoint.y, ridgeMidPoint.z + 0.15]}

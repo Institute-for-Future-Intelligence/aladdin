@@ -33,6 +33,7 @@ const centerPointPosition = new Vector3();
 const intersectionPlanePosition = new Vector3();
 const intersectionPlaneRotation = new Euler();
 const zeroVector = new Vector3();
+const zVector3 = new Vector3(0, 0, 1);
 
 const PyramidRoof = ({
   cx,
@@ -46,6 +47,7 @@ const PyramidRoof = ({
   textureType,
   color,
   overhang,
+  thickness,
 }: PyramidRoofModel) => {
   const setCommonStore = useStore(Selector.set);
   const getElementById = useStore(Selector.getElementById);
@@ -246,6 +248,10 @@ const PyramidRoof = ({
     return res;
   }, [overhangs]);
 
+  const thicknessVector = useMemo(() => {
+    return zVector3.clone().multiplyScalar(thickness);
+  }, [thickness]);
+
   const roofSegments = useMemo(() => {
     const segments: ConvexGeoProps[] = [];
     if (currentWallArray.length < 2) {
@@ -295,6 +301,12 @@ const PyramidRoof = ({
         const direction = -w.relativeAngle;
         const length = new Vector3(w.cx, w.cy).sub(centerPointPosition.clone().setZ(0)).length();
         points.push(wallLeftPointAfterOverhang, wallRightPointAfterOverhang, zeroVector, zeroVector);
+        points.push(
+          wallLeftPointAfterOverhang.clone().add(thicknessVector),
+          wallRightPointAfterOverhang.clone().add(thicknessVector),
+          zeroVector.clone().add(thicknessVector),
+          zeroVector.clone().add(thicknessVector),
+        );
         segments.push({ points, direction, length });
       }
     }
@@ -331,6 +343,12 @@ const PyramidRoof = ({
 
       const points = [];
       points.push(leftPointAfterOverhang, rightPointAfterOverhang, zeroVector, zeroVector);
+      points.push(
+        leftPointAfterOverhang.clone().add(thicknessVector),
+        rightPointAfterOverhang.clone().add(thicknessVector),
+        zeroVector.clone().add(thicknessVector),
+        zeroVector.clone().add(thicknessVector),
+      );
       segments.push({ points, direction: -angle, length });
     }
 
@@ -438,7 +456,7 @@ const PyramidRoof = ({
       {selected && (
         <Sphere
           args={[0.3]}
-          position={[centerPoint.x, centerPoint.y, h + 0.3]}
+          position={[centerPoint.x, centerPoint.y, h + thickness + 0.15]}
           onPointerDown={() => {
             oldHeight.current = h;
             setShowIntersectionPlane(true);

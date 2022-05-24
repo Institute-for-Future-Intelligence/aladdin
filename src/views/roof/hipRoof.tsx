@@ -43,6 +43,7 @@ enum RoofHandleType {
 
 const intersectionPlanePosition = new Vector3();
 const intersectionPlaneRotation = new Euler();
+const zVector3 = new Vector3(0, 0, 1);
 
 const HipRoof = ({
   id,
@@ -58,6 +59,7 @@ const HipRoof = ({
   textureType,
   color,
   overhang,
+  thickness,
 }: HipRoofModel) => {
   const texture = useRoofTexture(textureType);
 
@@ -211,6 +213,12 @@ const HipRoof = ({
 
   const makeSement = (vector: Vector3[], p1: Vector3, p2: Vector3, p3: Vector3, p4: Vector3) => {
     vector.push(p1, p2, p3, p4);
+    vector.push(
+      p1.clone().add(thicknessVector),
+      p2.clone().add(thicknessVector),
+      p3.clone().add(thicknessVector),
+      p4.clone().add(thicknessVector),
+    );
   };
 
   const getWallHeight = (arr: WallModel[], i: number) => {
@@ -257,6 +265,10 @@ const HipRoof = ({
   const overhangs = useMemo(() => {
     return currentWallArray.map((wall) => getNormal(wall).multiplyScalar(overhang));
   }, [currentWallArray, overhang]);
+
+  const thicknessVector = useMemo(() => {
+    return zVector3.clone().multiplyScalar(thickness);
+  }, [thickness]);
 
   const wallPointsAfterOffset = useMemo(() => {
     return currentWallArray.map((wall, idx) => {
@@ -397,7 +409,7 @@ const HipRoof = ({
 
       {/* handles */}
       {selected && (
-        <group>
+        <group position={[0, 0, thickness + 0.15]}>
           {/* left handle */}
           <Sphere
             position={[ridgeLeftPoint.x, ridgeLeftPoint.y, ridgeLeftPoint.z]}

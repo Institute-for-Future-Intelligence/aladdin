@@ -54,6 +54,7 @@ enum RoofHandleType {
 const intersectionPlanePosition = new Vector3();
 const intersectionPlaneRotation = new Euler();
 const zeroVector2 = new Vector2();
+const zVector3 = new Vector3(0, 0, 1);
 
 const GambrelRoof = ({
   id,
@@ -73,6 +74,7 @@ const GambrelRoof = ({
   textureType,
   color,
   overhang,
+  thickness,
 }: GambrelRoofModel) => {
   const texture = useRoofTexture(textureType);
 
@@ -303,6 +305,10 @@ const GambrelRoof = ({
     return currentWallArray.map((wall) => getNormal(wall).multiplyScalar(overhang));
   }, [currentWallArray, overhang]);
 
+  const thicknessVector = useMemo(() => {
+    return zVector3.clone().multiplyScalar(thickness);
+  }, [thickness]);
+
   const roofSegments = useMemo(() => {
     const segments: ConvexGeoProps[] = [];
 
@@ -381,6 +387,12 @@ const GambrelRoof = ({
       frontRidgeRightPointAfterOverhang,
       frontRidgeLeftPointAfterOverhang,
     );
+    frontSidePoints.push(
+      frontWallLeftPointAfterOverhang.clone().add(thicknessVector),
+      frontWallRightPointAfterOverhang.clone().add(thicknessVector),
+      frontRidgeRightPointAfterOverhang.clone().add(thicknessVector),
+      frontRidgeLeftPointAfterOverhang.clone().add(thicknessVector),
+    );
 
     const frontDirection = -frontWall.relativeAngle;
     const frontSideLength = new Vector3(frontWall.cx, frontWall.cy).sub(topRidgeMidPointV3.clone().setZ(0)).length();
@@ -408,6 +420,13 @@ const GambrelRoof = ({
       topRidgeRightPointAfterOverhang,
       topRidgeLeftPointAfterOverhang,
     );
+    frontTopPoints.push(
+      frontRidgeLeftPointAfterOverhang.clone().add(thicknessVector),
+      frontRidgeRightPointAfterOverhang.clone().add(thicknessVector),
+      topRidgeRightPointAfterOverhang.clone().add(thicknessVector),
+      topRidgeLeftPointAfterOverhang.clone().add(thicknessVector),
+    );
+
     segments.push({ points: frontTopPoints, direction: frontDirection, length: frontSideLength });
 
     // back side
@@ -466,6 +485,12 @@ const GambrelRoof = ({
       backRidgeRightPointAfterOverhang,
       backRidgeLeftPointAfterOverhang,
     );
+    backSidePoints.push(
+      backWallLeftPointAfterOverhang.clone().add(thicknessVector),
+      backWallRightPointAfterOverhang.clone().add(thicknessVector),
+      backRidgeRightPointAfterOverhang.clone().add(thicknessVector),
+      backRidgeLeftPointAfterOverhang.clone().add(thicknessVector),
+    );
     segments.push({ points: backSidePoints, direction: backDirection, length: backSideLenght });
 
     // back top
@@ -475,6 +500,12 @@ const GambrelRoof = ({
       topRidgeRightPointAfterOverhang,
       backRidgeLeftPointAfterOverhang,
       backRidgeRightPointAfterOverhang,
+    );
+    backTopPoints.push(
+      topRidgeLeftPointAfterOverhang.clone().add(thicknessVector),
+      topRidgeRightPointAfterOverhang.clone().add(thicknessVector),
+      backRidgeLeftPointAfterOverhang.clone().add(thicknessVector),
+      backRidgeRightPointAfterOverhang.clone().add(thicknessVector),
     );
     segments.push({ points: backTopPoints, direction: backDirection, length: backSideLenght });
 
@@ -566,7 +597,7 @@ const GambrelRoof = ({
 
       {/* handles */}
       {selected && (
-        <group position={[centroid.x, centroid.y, centroid.z]}>
+        <group position={[centroid.x, centroid.y, centroid.z + thickness]}>
           <Sphere
             position={[topRidgeLeftPointV3.x, topRidgeLeftPointV3.y, topRidgeLeftPointV3.z]}
             args={[0.3]}

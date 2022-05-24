@@ -182,15 +182,27 @@ export const getDistance = (p1: Vector3, p2: Vector3, p3: Vector3) => {
 };
 
 const Roof = (props: RoofModel) => {
-  const { id, wallsId, roofType } = props;
-
   const removeElementById = useStore(Selector.removeElementById);
+  const setCommonStore = useStore(Selector.set);
+
+  const { id, wallsId, roofType } = props;
 
   useEffect(() => {
     if (wallsId.length === 0) {
       removeElementById(id, false);
     }
   }, [wallsId]);
+
+  if (!props.thickness) {
+    setCommonStore((state) => {
+      for (const e of state.elements) {
+        if (e.id === id) {
+          (e as RoofModel).thickness = 0.3;
+        }
+      }
+    });
+    return null;
+  }
 
   const renderRoof = () => {
     switch (roofType) {
