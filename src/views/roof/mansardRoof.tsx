@@ -577,7 +577,7 @@ const MansardRoof = ({
                       for (const e of state.elements) {
                         if (e.id === id) {
                           if (parent && currentWallArray[3]) {
-                            const px = Util.clamp(getRelPos(parent, currentWallArray[3], point), 0.01, 0.49);
+                            const px = Util.clamp(getRelPos(parent, currentWallArray[3], point), 0.01, 0.45);
                             (e as MansardRoofModel).frontRidge = px;
                             break;
                           }
@@ -591,7 +591,7 @@ const MansardRoof = ({
                       for (const e of state.elements) {
                         if (e.id === id) {
                           if (parent && currentWallArray[1]) {
-                            const px = Util.clamp(getRelPos(parent, currentWallArray[1], point), -0.49, -0.01);
+                            const px = Util.clamp(getRelPos(parent, currentWallArray[1], point), -0.45, -0.01);
                             (e as MansardRoofModel).frontRidge = -px;
                           }
                           break;
@@ -605,7 +605,7 @@ const MansardRoof = ({
                       for (const e of state.elements) {
                         if (e.id === id) {
                           if (parent && currentWallArray[3]) {
-                            const px = Util.clamp(getRelPos(parent, currentWallArray[3], point), -0.49, -0.01);
+                            const px = Util.clamp(getRelPos(parent, currentWallArray[3], point), -0.45, -0.01);
                             (e as MansardRoofModel).backRidge = px;
                           }
                           break;
@@ -619,7 +619,7 @@ const MansardRoof = ({
                       for (const e of state.elements) {
                         if (e.id === id) {
                           if (parent && currentWallArray[1]) {
-                            const px = Util.clamp(getRelPos(parent, currentWallArray[1], point), 0.01, 0.49);
+                            const px = Util.clamp(getRelPos(parent, currentWallArray[1], point), 0.01, 0.45);
                             (e as MansardRoofModel).backRidge = -px;
                           }
                           break;

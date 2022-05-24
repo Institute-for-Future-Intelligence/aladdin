@@ -176,7 +176,8 @@ export const getDistance = (p1: Vector3, p2: Vector3, p3: Vector3) => {
   const A = p2.y - p1.y;
   const B = p1.x - p2.x;
   const C = p2.x * p1.y - p1.x * p2.y;
-  return Math.abs((A * p3.x + B * p3.y + C) / Math.sqrt(A * A + B * B));
+  const res = Math.abs((A * p3.x + B * p3.y + C) / Math.sqrt(A * A + B * B));
+  return res === 0 ? Infinity : res;
 };
 
 const Roof = (props: RoofModel) => {

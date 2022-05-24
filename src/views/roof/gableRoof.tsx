@@ -671,7 +671,10 @@ const GableRoof = ({
                     if (wall) {
                       const foundation = getElementById(wall.parentId);
                       if (foundation) {
-                        const x = getRelPos(foundation, wall, point);
+                        let x = getRelPos(foundation, wall, point);
+                        if (Math.abs(x) >= 0.45 && Math.abs(x) < 0.5) {
+                          x = 0.45 * Math.sign(x);
+                        }
                         updateRoofTopRidge(id, x, -x);
                         if (Math.abs(x) === 0.5 && !isShed) {
                           setIsShed(true);
@@ -687,7 +690,10 @@ const GableRoof = ({
                     if (wall) {
                       const foundation = getElementById(wall.parentId);
                       if (foundation) {
-                        const x = getRelPos(foundation, wall, point);
+                        let x = getRelPos(foundation, wall, point);
+                        if (Math.abs(x) >= 0.45 && Math.abs(x) < 0.5) {
+                          x = 0.45 * Math.sign(x);
+                        }
                         updateRoofTopRidge(id, -x, x);
                         if (Math.abs(x) === 0.5 && !isShed) {
                           setIsShed(true);
