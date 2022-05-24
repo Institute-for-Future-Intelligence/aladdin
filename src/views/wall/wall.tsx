@@ -177,7 +177,7 @@ const Wall = ({
   const addedWindowIdRef = useRef<string | null>(null);
   const isSettingWindowStartPointRef = useRef(false);
   const isSettingWindowEndPointRef = useRef(false);
-  const invalidWindowIdRef = useRef<string | null>(null);
+  const invalidElementIdRef = useRef<string | null>(null);
   const isSettingDoorStartPointRef = useRef(false);
   const isSettingDoorEndPointRef = useRef(false);
   const oldPositionRef = useRef<number[]>([]);
@@ -292,7 +292,7 @@ const Wall = ({
     drawRectangle(wallShape, lx, lz, 0, 0, 0, 0);
 
     windows.forEach((w) => {
-      if (w.id !== invalidWindowIdRef.current) {
+      if (w.id !== invalidElementIdRef.current) {
         const window = new Shape();
         drawWindow(window, w.lx * lx, w.lz * lz, w.cx * lx, w.cz * lz);
         wallShape.holes.push(window);
@@ -309,7 +309,7 @@ const Wall = ({
     drawRectangle(wallShape, lx, lz, 0, 0, leftOffset, rightOffset);
 
     windows.forEach((w) => {
-      if (w.id !== invalidWindowIdRef.current) {
+      if (w.id !== invalidElementIdRef.current) {
         const window = new Shape();
         drawWindow(window, w.lx * lx, w.lz * lz, w.cx * lx, w.cz * lz);
         wallShape.holes.push(window);
@@ -406,46 +406,60 @@ const Wall = ({
     return new Vector3(x, v.y, z);
   };
 
-  const movingWindowInsideWall = (p: Vector3, wlx: number, wlz: number) => {
-    const margin = 0.1;
-    const maxX = (lx - wlx) / 2;
-    const maxZ = (lz - wlz) / 2;
-    if (p.x > maxX) {
-      p.setX(maxX - margin);
-    } else if (p.x < -maxX) {
-      p.setX(-maxX + margin);
+  const wallPoints2D = useMemo(() => {
+    const points: Point2[] = [];
+    const x = lx / 2;
+    const y = lz / 2;
+    points.push({ x: -x, y: -y });
+    points.push({ x: x, y: -y });
+    rightRoofHeight ? points.push({ x: x, y: rightRoofHeight - y }) : points.push({ x: x, y: y });
+    if (centerRightRoofHeight) {
+      points.push({ x: centerRightRoofHeight[0] * lx, y: centerRightRoofHeight[1] - y });
     }
-    if (p.z > maxZ) {
-      p.setZ(maxZ - margin);
-    } else if (p.z < -maxZ) {
-      p.setZ(-maxZ + margin);
+    if (centerRoofHeight) {
+      points.push({ x: centerRoofHeight[0] * lx, y: centerRoofHeight[1] - y });
     }
-    return p;
+    if (centerLeftRoofHeight) {
+      points.push({ x: centerLeftRoofHeight[0] * lx, y: centerLeftRoofHeight[1] - y });
+    }
+    leftRoofHeight ? points.push({ x: -x, y: leftRoofHeight - y }) : points.push({ x: -x, y: y });
+
+    return points;
+  }, [lx, lz, leftRoofHeight, rightRoofHeight, centerRoofHeight, centerLeftRoofHeight, centerRightRoofHeight]);
+
+  const isPointInside = (x: number, y: number) => {
+    let inside = false;
+    for (let i = 0, j = wallPoints2D.length - 1; i < wallPoints2D.length; j = i++) {
+      const xi = wallPoints2D[i].x;
+      const yi = wallPoints2D[i].y;
+      const xj = wallPoints2D[j].x;
+      const yj = wallPoints2D[j].y;
+      if (yi > y != yj > y && x < ((xj - xi) * (y - yi)) / (yj - yi) + xi) {
+        inside = !inside;
+      }
+    }
+    return inside;
   };
 
-  const resizingHandleInsideWall = (p: Vector3) => {
-    const margin = 0.1;
-    if (p.z > hz - margin) {
-      p.setZ(hz - margin);
+  const isMovingWindowInsideWall = (p: Vector3, wlx: number, wlz: number) => {
+    for (let i = -1; i <= 1; i += 2) {
+      for (let j = -1; j <= 1; j += 2) {
+        if (!isPointInside(p.x + (wlx / 2) * i, p.z + (wlz / 2) * j)) {
+          return false;
+        }
+      }
     }
-    if (p.z < -hz + margin) {
-      p.setZ(-hz + margin);
-    }
-    if (p.x > hx - margin) {
-      p.setX(hx - margin);
-    }
-    if (p.x < -hx + margin) {
-      p.setX(-hx + margin);
-    }
-    return p;
+    return true;
   };
 
-  const checkWindowCollision = (id: string, p: Vector3, wlx: number, wlz: number) => {
+  const checkCollision = (id: string, type: ObjectType, p: Vector3, wlx: number, wlz: number) => {
     if (wlx < 0.1 || wlz < 0.1) {
-      invalidWindowIdRef.current = id;
+      invalidElementIdRef.current = id;
       return false;
     }
-    for (const w of windows) {
+    const elementsOnWalls: ElementModel[] = [...windows, ...doors];
+
+    for (const w of elementsOnWalls) {
       if (w.id !== id) {
         const minX = w.cx * lx - (w.lx * lx) / 2; // target window left
         const maxX = w.cx * lx + (w.lx * lx) / 2; // target window right
@@ -465,12 +479,13 @@ const Wall = ({
             (minZ >= wMinZ && minZ <= wMaxZ) ||
             (maxZ >= wMinZ && maxZ <= wMaxZ))
         ) {
-          invalidWindowIdRef.current = id;
+          invalidElementIdRef.current = id;
           return false; // has collision
         }
       }
     }
-    invalidWindowIdRef.current = null;
+    invalidElementIdRef.current = null;
+
     return true; // no collision
   };
 
@@ -519,7 +534,7 @@ const Wall = ({
     addedWindowIdRef.current = null;
     isSettingWindowStartPointRef.current = false;
     isSettingWindowEndPointRef.current = false;
-    invalidWindowIdRef.current = null;
+    invalidElementIdRef.current = null;
     isSettingDoorStartPointRef.current = false;
     isSettingDoorEndPointRef.current = false;
   };
@@ -701,7 +716,7 @@ const Wall = ({
     if (e.button === 2 || grabRef.current === null || grabRef.current.parentId !== id) {
       return;
     }
-    if (invalidWindowIdRef.current) {
+    if (invalidElementIdRef.current) {
       if (isSettingWindowEndPointRef.current) {
         setCommonStore((state) => {
           state.elements.pop();
@@ -713,7 +728,7 @@ const Wall = ({
           }
         });
       }
-      invalidWindowIdRef.current = null;
+      invalidElementIdRef.current = null;
       setOriginElements(null);
     }
     // add undo for valid operation
@@ -776,26 +791,36 @@ const Wall = ({
               p = getPositionOnGrid(p);
 
               if (moveHandleType) {
-                p = movingWindowInsideWall(p, grabRef.current.lx * lx, grabRef.current.lz * lz);
-                checkWindowCollision(grabRef.current.id, p, grabRef.current.lx * lx, grabRef.current.lz * lz);
+                if (!isMovingWindowInsideWall(p, grabRef.current.lx * lx, grabRef.current.lz * lz)) {
+                  return;
+                }
+                checkCollision(
+                  grabRef.current.id,
+                  ObjectType.Window,
+                  p,
+                  grabRef.current.lx * lx,
+                  grabRef.current.lz * lz,
+                );
                 setCommonStore((state) => {
                   for (const e of state.elements) {
                     if (e.id === grabRef.current?.id) {
                       e.cx = p.x / lx;
                       e.cz = p.z / lz;
-                      e.color = e.id === invalidWindowIdRef.current ? 'red' : '#477395';
+                      e.color = e.id === invalidElementIdRef.current ? 'red' : '#477395';
                     }
                   }
                 });
               } else if (resizeHandleType) {
-                p = resizingHandleInsideWall(p);
+                if (!isPointInside(p.x, p.z)) {
+                  return;
+                }
                 let resizeAnchor = getRelativePosOnWall(resizeAnchorRef.current, wallModel);
                 if (isSettingWindowEndPointRef.current) {
                   resizeAnchor = getPositionOnGrid(resizeAnchor);
                 }
                 const v = new Vector3().subVectors(resizeAnchor, p); // window diagonal vector
                 let relativePos = new Vector3().addVectors(resizeAnchor, p).divideScalar(2);
-                checkWindowCollision(grabRef.current.id, relativePos, Math.abs(v.x), Math.abs(v.z));
+                checkCollision(grabRef.current.id, ObjectType.Window, relativePos, Math.abs(v.x), Math.abs(v.z));
                 setCommonStore((state) => {
                   for (const e of state.elements) {
                     if (e.id === grabRef.current?.id) {
@@ -803,7 +828,7 @@ const Wall = ({
                       e.lz = Math.abs(v.z) / lz;
                       e.cx = relativePos.x / lx;
                       e.cz = relativePos.z / lz;
-                      e.color = e.id === invalidWindowIdRef.current ? 'red' : '#477395';
+                      e.color = e.id === invalidElementIdRef.current ? 'red' : '#477395';
                     }
                   }
                 });
@@ -812,8 +837,10 @@ const Wall = ({
             }
             case ObjectType.Door: {
               let p = getRelativePosOnWall(pointer, wallModel);
-              p = resizingHandleInsideWall(getPositionOnGrid(p));
-
+              p = getPositionOnGrid(p);
+              if (!isPointInside(p.x, p.z)) {
+                return;
+              }
               // adding door
               if (moveHandleType) {
                 setCommonStore((state) => {
@@ -827,8 +854,12 @@ const Wall = ({
                 });
               } else if (resizeHandleType) {
                 let resizeAnchor = getRelativePosOnWall(resizeAnchorRef.current, wallModel);
+                if (isSettingDoorEndPointRef.current) {
+                  resizeAnchor = getPositionOnGrid(resizeAnchor);
+                }
                 const v = new Vector3().subVectors(resizeAnchor, p); // door diagonal vector
                 let relativePos = new Vector3().addVectors(resizeAnchor, p).divideScalar(2);
+                checkCollision(grabRef.current.id, ObjectType.Door, relativePos, Math.abs(v.x), Math.abs(v.z));
                 setCommonStore((state) => {
                   for (const e of state.elements) {
                     if (e.id === grabRef.current?.id) {
@@ -836,6 +867,7 @@ const Wall = ({
                       e.lx = Math.abs(v.x) / lx;
                       e.cz = (p.z - lz / 2) / 2 / lz;
                       e.lz = (p.z + lz / 2) / lz;
+                      e.color = e.id === invalidElementIdRef.current ? '#fe6f5e' : 'white';
                     }
                   }
                 });
