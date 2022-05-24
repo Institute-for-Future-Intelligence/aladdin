@@ -32,6 +32,7 @@ import {
   getIntersectionPoint,
   getNormal,
   handleRoofContextMenu,
+  handleRoofPointerDown,
   handleUndoableResizeRoofHeight,
   useRoofTexture,
 } from './roof';
@@ -538,17 +539,7 @@ const GambrelRoof = ({
       <group
         position={[centroid.x, centroid.y, centroid.z]}
         onPointerDown={(e) => {
-          if (e.intersections[0].eventObject.name === e.eventObject.name) {
-            setCommonStore((state) => {
-              for (const e of state.elements) {
-                if (e.id === id) {
-                  e.selected = true;
-                } else {
-                  e.selected = false;
-                }
-              }
-            });
-          }
+          handleRoofPointerDown(e, id);
         }}
         onContextMenu={(e) => {
           handleRoofContextMenu(e, id);

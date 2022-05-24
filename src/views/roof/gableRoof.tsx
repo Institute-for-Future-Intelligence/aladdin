@@ -21,6 +21,7 @@ import {
   getNormal,
   getIntersectionPoint,
   getDistance,
+  handleRoofPointerDown,
 } from './roof';
 import { UnoableResizeGableRoofRidge } from 'src/undo/UndoableResize';
 import { RoofTexture, ObjectType } from 'src/types';
@@ -565,17 +566,7 @@ const GableRoof = ({
         name={'Roof Segment Group'}
         position={[centroid.x, centroid.y, centroid.z]}
         onPointerDown={(e) => {
-          if (e.intersections[0].eventObject.name === e.eventObject.name) {
-            setCommonStore((state) => {
-              for (const e of state.elements) {
-                if (e.id === id) {
-                  e.selected = true;
-                } else {
-                  e.selected = false;
-                }
-              }
-            });
-          }
+          handleRoofPointerDown(e, id);
         }}
         onContextMenu={(e) => {
           handleRoofContextMenu(e, id);
