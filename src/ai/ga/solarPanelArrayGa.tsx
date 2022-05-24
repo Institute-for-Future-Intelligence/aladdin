@@ -48,6 +48,7 @@ const SolarPanelArrayGa = () => {
   const individualIndexRef = useRef<number>(0);
   const convergedRef = useRef<boolean>(false);
   const solarPanelArrayRef = useRef<SolarPanelModel[]>([]);
+  const initialSolarPanelArrayRef = useRef<SolarPanelModel[]>([]);
 
   const lang = { lng: language };
   const foundation = polygon ? (getParent(polygon) as FoundationModel) : undefined;
@@ -66,6 +67,14 @@ const SolarPanelArrayGa = () => {
           setCommonStore((state) => {
             state.evolutionInProgress = false;
           });
+          // revert to the initial solar panel array
+          if (solarPanelArrayRef.current.length > 0) {
+            removeElementsByReferenceId(polygon.id, false);
+          }
+          if (initialSolarPanelArrayRef.current.length > 0) {
+            solarPanelArrayRef.current = [...initialSolarPanelArrayRef.current];
+            runCallback(true);
+          }
         }
       };
     }
@@ -99,9 +108,9 @@ const SolarPanelArrayGa = () => {
     });
     evolutionCompletedRef.current = false;
     const originalSolarPanels = getChildrenOfType(ObjectType.SolarPanel, foundation.id) as SolarPanelModel[];
-    const copiedSolarPanels: SolarPanelModel[] = [];
+    initialSolarPanelArrayRef.current.length = 0;
     for (const osp of originalSolarPanels) {
-      copiedSolarPanels.push(JSON.parse(JSON.stringify(osp)) as SolarPanelModel);
+      initialSolarPanelArrayRef.current.push(JSON.parse(JSON.stringify(osp)) as SolarPanelModel);
     }
     optimizerRef.current = new SolarPanelArrayOptimizerGa(
       getPvModule(constraints.pvModelName ?? 'CS6X-355P-FG'),
@@ -109,7 +118,7 @@ const SolarPanelArrayGa = () => {
       constraints.orientation ?? Orientation.landscape,
       constraints.poleHeight ?? 1,
       constraints.poleSpacing ?? 3,
-      copiedSolarPanels,
+      initialSolarPanelArrayRef.current,
       polygon,
       foundation,
       params.populationSize,
