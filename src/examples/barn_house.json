@@ -1,6 +1,7 @@
 {
-  "docid": "r5zfZaWfGPGh6tB5HE7C4a",
-  "timestamp": 1649977197738,
+  "docid": "3hNQzCDbkH1zcbgY7hW4Fc",
+  "time": "05/24/2022 09:52 am",
+  "timestamp": 1653400329886,
   "userid": "QWecNcxhyvP6j6sBN11hBsfZDau1",
   "owner": null,
   "email": null,
@@ -291,10 +292,10 @@
         1
       ],
       "type": "Roof",
-      "overhang": 0.4,
+      "overhang": 0.2,
       "roofType": "Gable",
       "lx": 0,
-      "textureType": "Roof Texture Default",
+      "textureType": "Roof Texture #7",
       "id": "kA3Mxv4Z9tXUoTK3QPMaWL",
       "rotation": [
         0,
@@ -304,7 +305,8 @@
       "showLabel": false,
       "selected": false,
       "lz": 15.670843411742434,
-      "cx": 0
+      "cx": 0,
+      "color": "#666666"
     },
     {
       "solarPowerTower": {},
@@ -537,7 +539,7 @@
       ],
       "selected": false,
       "type": "Roof",
-      "overhang": 0.4,
+      "overhang": 0.2,
       "lz": 7.5,
       "lx": 0,
       "roofType": "Gable",
@@ -550,7 +552,7 @@
       "cz": 0,
       "id": "6c49g876wkgGNVBvgTNf4N",
       "cx": 0,
-      "textureType": "Roof Texture Default",
+      "textureType": "Roof Texture #7",
       "wallsId": [
         "6JeFi4vn6AoV5MBuK71Kj4"
       ],
@@ -559,7 +561,8 @@
         1
       ],
       "ly": 0,
-      "showLabel": false
+      "showLabel": false,
+      "color": "#666666"
     },
     {
       "cy": 0,
@@ -887,9 +890,9 @@
         0,
         0
       ],
-      "textureType": "Roof Texture Default",
+      "textureType": "Roof Texture #7",
       "type": "Roof",
-      "overhang": 0.4,
+      "overhang": 0.2,
       "wallsId": [
         "5spEvKcr5r35ajFtNP5ug4",
         "gSgPwypYb2qas3tXnXpzu5",
@@ -898,7 +901,8 @@
       ],
       "id": "bXyFJNv4LJba2AUhe3ZtVT",
       "foundationId": "rzzzSn5cSsCh41KW1dZ8o9",
-      "selected": false
+      "selected": false,
+      "color": "#666666"
     },
     {
       "cy": 0,
@@ -1198,8 +1202,8 @@
     {
       "type": "Tree",
       "name": "Oak",
-      "cx": 19.533236784784595,
-      "cy": 8.606072103202075,
+      "cx": 22.5813455450335,
+      "cy": 12.536753727419296,
       "cz": 0,
       "lx": 20,
       "lz": 24,
@@ -1410,7 +1414,7 @@
       "lx": 0.2761904761904762,
       "ly": 0,
       "lz": 0.42000000000000004,
-      "textureType": "Door Texture Default",
+      "textureType": "Door Texture #4",
       "selected": false,
       "showLabel": false,
       "normal": [
@@ -1437,9 +1441,9 @@
     "enableRotate": true,
     "weatherPanelY": 0,
     "cameraPosition": [
-      32.503689798569035,
-      -26.261918917991277,
-      7.827458424625398
+      17.831539587183624,
+      -40.6514410090035,
+      7.612952550759642
     ],
     "showYearlyUpdraftTowerYieldPanel": false,
     "showSunAngles": false,
@@ -1493,9 +1497,9 @@
     "showYearlyHeliostatYieldPanel": false,
     "mapZoom": 18,
     "panCenter": [
-      -1.5130496940543159,
-      0.9716462650968141,
-      7.827458424625394
+      -0.06272460961482956,
+      1.5799637193188953,
+      7.119466031124594
     ],
     "visibilityResultsPanelY": 0,
     "showZenithAngle": true,
@@ -1535,6 +1539,63 @@
     ],
     "yearlyLightSensorPanelX": 0,
     "showDailyParabolicTroughYieldPanel": false
+  },
+  "evolutionMethod": 1,
+  "solarPanelArrayLayoutParams": {
+    "pvModelName": "SPR-X21-335-BLK",
+    "rowAxis": "Zonal",
+    "orientation": "Landscape",
+    "tiltAngle": 0,
+    "rowsPerRack": 1,
+    "interRowSpacing": 2,
+    "poleHeight": 1,
+    "poleSpacing": 3
+  },
+  "solarPanelArrayLayoutConstraints": {
+    "minimumInterRowSpacing": 2,
+    "maximumInterRowSpacing": 10,
+    "minimumRowsPerRack": 1,
+    "maximumRowsPerRack": 6,
+    "minimumTiltAngle": -1.5707963267948966,
+    "maximumTiltAngle": 1.5707963267948966,
+    "poleHeight": 1,
+    "poleSpacing": 5,
+    "orientation": "Landscape",
+    "pvModelName": "CS6X-355P-FG",
+    "rowAxis": "Zonal"
+  },
+  "evolutionaryAlgorithmState": {
+    "geneticAlgorithmParams": {
+      "problem": "Solar Panel Tilt Angle",
+      "objectiveFunctionType": 1,
+      "selectionMethod": 1,
+      "searchMethod": 1,
+      "populationSize": 20,
+      "maximumGenerations": 5,
+      "selectionRate": 0.5,
+      "crossoverRate": 0.5,
+      "mutationRate": 0.1,
+      "convergenceThreshold": 0.01,
+      "localSearchRadius": 0.1
+    },
+    "particleSwarmOptimizationParams": {
+      "problem": "Solar Panel Tilt Angle",
+      "objectiveFunctionType": 1,
+      "searchMethod": 1,
+      "swarmSize": 20,
+      "maximumSteps": 5,
+      "vmax": 0.01,
+      "inertia": 0.8,
+      "cognitiveCoefficient": 0.1,
+      "socialCoefficient": 0.1,
+      "convergenceThreshold": 0.01,
+      "localSearchRadius": 0.1
+    }
+  },
+  "economicsParams": {
+    "projectLifeSpan": 25,
+    "electricitySellingPrice": 0.25,
+    "operationalCostPerUnit": 0.15
   },
   "notes": []
 }

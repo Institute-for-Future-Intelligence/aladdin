@@ -37,6 +37,7 @@ const SolarPanelTiltAnglePso = () => {
   const optimizerRef = useRef<SolarPanelTiltAngleOptimizerPso>();
   const particleIndexRef = useRef<number>(0);
   const convergedRef = useRef<boolean>(false);
+  const initialSolarPanelsRef = useRef<SolarPanelModel[]>([]);
 
   useEffect(() => {
     if (params.problem !== DesignProblem.SOLAR_PANEL_TILT_ANGLE) return;
@@ -52,6 +53,11 @@ const SolarPanelTiltAnglePso = () => {
           setCommonStore((state) => {
             state.evolutionInProgress = false;
           });
+          // revert to the initial solar panels
+          if (initialSolarPanelsRef.current.length > 0) {
+            solarPanelsRef.current = [...initialSolarPanelsRef.current];
+            runCallback(true);
+          }
         }
       };
     }
@@ -85,6 +91,11 @@ const SolarPanelTiltAnglePso = () => {
     });
     evolutionCompletedRef.current = false;
     const originalSolarPanels = getChildrenOfType(ObjectType.SolarPanel, foundation.id) as SolarPanelModel[];
+    // store a copy of the initial solar panels for possible reversion
+    initialSolarPanelsRef.current.length = 0;
+    for (const osp of originalSolarPanels) {
+      initialSolarPanelsRef.current.push(JSON.parse(JSON.stringify(osp)) as SolarPanelModel);
+    }
     solarPanelsRef.current = [];
     const labels: (string | undefined)[] = [];
     for (const osp of originalSolarPanels) {

@@ -108,6 +108,7 @@ const SolarPanelArrayGa = () => {
     });
     evolutionCompletedRef.current = false;
     const originalSolarPanels = getChildrenOfType(ObjectType.SolarPanel, foundation.id) as SolarPanelModel[];
+    // store a copy of the initial solar panels for possible reversion
     initialSolarPanelArrayRef.current.length = 0;
     for (const osp of originalSolarPanels) {
       initialSolarPanelArrayRef.current.push(JSON.parse(JSON.stringify(osp)) as SolarPanelModel);
@@ -280,6 +281,7 @@ const SolarPanelArrayGa = () => {
         state.evolutionInProgress = false;
         state.objectiveEvaluationIndex = 0;
       }
+      state.updateDesignInfo();
     });
   };
 

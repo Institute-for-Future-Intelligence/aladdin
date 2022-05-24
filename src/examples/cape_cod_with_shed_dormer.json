@@ -1,6 +1,7 @@
 {
-  "docid": "hTYyNKk3VBmKphBq2PLKSz",
-  "timestamp": 1649977079831,
+  "docid": "pGwReJKXhBTXjBR5LE5zoP",
+  "time": "05/24/2022 09:45 am",
+  "timestamp": 1653399920441,
   "userid": "QWecNcxhyvP6j6sBN11hBsfZDau1",
   "owner": null,
   "email": null,
@@ -436,12 +437,12 @@
       "ly": 0,
       "cx": 0,
       "type": "Roof",
-      "overhang": 0.4,
+      "overhang": 0.2,
       "ridgeLeftPoint": [
         0.022465454047944533,
         1
       ],
-      "textureType": "Roof Texture Default",
+      "textureType": "Roof Texture #1",
       "showLabel": false,
       "lz": 7.873287310605744,
       "normal": [
@@ -543,7 +544,7 @@
       "lx": 0,
       "showLabel": false,
       "parentId": "8fpWrU7qVyVgipB7LtABom",
-      "textureType": "Roof Texture Default",
+      "textureType": "Roof Texture #1",
       "normal": [
         0,
         0,
@@ -1168,8 +1169,8 @@
     "dailyHeliostatYieldPanelX": 0,
     "showDailyParabolicDishYieldPanel": false,
     "cameraPosition": [
-      -9.381048149358904,
-      -18.607476375064877,
+      -13.627685583418426,
+      -20.0940522525756,
       4.074781230070627
     ],
     "showYearlyHeliostatYieldPanel": false,
@@ -1219,8 +1220,8 @@
     "shadowEnabled": true,
     "showInstructionPanel": true,
     "panCenter": [
-      12.056190475317774,
-      9.679468592811917,
+      12.097893657206981,
+      9.651260531627447,
       4.074781230070627
     ],
     "yearlyFresnelReflectorYieldPanelY": 0,
@@ -1232,6 +1233,63 @@
     "stickyNotePanelY": 0,
     "showYearlyParabolicDishYieldPanel": false,
     "showYearlyFresnelReflectorYieldPanel": false
+  },
+  "evolutionMethod": 1,
+  "solarPanelArrayLayoutParams": {
+    "pvModelName": "SPR-X21-335-BLK",
+    "rowAxis": "Zonal",
+    "orientation": "Landscape",
+    "tiltAngle": 0,
+    "rowsPerRack": 1,
+    "interRowSpacing": 2,
+    "poleHeight": 1,
+    "poleSpacing": 3
+  },
+  "solarPanelArrayLayoutConstraints": {
+    "minimumInterRowSpacing": 2,
+    "maximumInterRowSpacing": 10,
+    "minimumRowsPerRack": 1,
+    "maximumRowsPerRack": 6,
+    "minimumTiltAngle": -1.5707963267948966,
+    "maximumTiltAngle": 1.5707963267948966,
+    "poleHeight": 1,
+    "poleSpacing": 5,
+    "orientation": "Landscape",
+    "pvModelName": "CS6X-355P-FG",
+    "rowAxis": "Zonal"
+  },
+  "evolutionaryAlgorithmState": {
+    "geneticAlgorithmParams": {
+      "problem": "Solar Panel Tilt Angle",
+      "objectiveFunctionType": 1,
+      "selectionMethod": 1,
+      "searchMethod": 1,
+      "populationSize": 20,
+      "maximumGenerations": 5,
+      "selectionRate": 0.5,
+      "crossoverRate": 0.5,
+      "mutationRate": 0.1,
+      "convergenceThreshold": 0.01,
+      "localSearchRadius": 0.1
+    },
+    "particleSwarmOptimizationParams": {
+      "problem": "Solar Panel Tilt Angle",
+      "objectiveFunctionType": 1,
+      "searchMethod": 1,
+      "swarmSize": 20,
+      "maximumSteps": 5,
+      "vmax": 0.01,
+      "inertia": 0.8,
+      "cognitiveCoefficient": 0.1,
+      "socialCoefficient": 0.1,
+      "convergenceThreshold": 0.01,
+      "localSearchRadius": 0.1
+    }
+  },
+  "economicsParams": {
+    "projectLifeSpan": 25,
+    "electricitySellingPrice": 0.25,
+    "operationalCostPerUnit": 0.15
   },
   "notes": []
 }
