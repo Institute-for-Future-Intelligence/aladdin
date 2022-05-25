@@ -193,11 +193,13 @@ const Roof = (props: RoofModel) => {
     }
   }, [wallsId]);
 
-  if (!props.thickness) {
+  if (!props.thickness || !props.overhang) {
     setCommonStore((state) => {
       for (const e of state.elements) {
         if (e.id === id) {
-          (e as RoofModel).thickness = 0.3;
+          (e as RoofModel).thickness = props.thickness ?? 0.3;
+          (e as RoofModel).overhang = props.overhang ?? 0.4;
+          return;
         }
       }
     });
