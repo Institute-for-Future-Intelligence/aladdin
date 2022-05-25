@@ -521,6 +521,7 @@ const RoofSegment = ({
   //   m.map = texture;
   //   return m;
   // }, []);
+  const shadowEnabled = useStore(Selector.viewState.shadowEnabled);
   const meshRef = useRef<Mesh>(null);
   const texture = useRoofTexture(textureType);
 
@@ -547,7 +548,7 @@ const RoofSegment = ({
   }
 
   return (
-    <mesh ref={meshRef} castShadow>
+    <mesh ref={meshRef} castShadow={shadowEnabled} receiveShadow={shadowEnabled}>
       <meshStandardMaterial
         side={DoubleSide}
         map={texture}

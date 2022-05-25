@@ -989,7 +989,7 @@ const Wall = ({
             }}
             onPointerDown={handleWallBodyPointerDown}
           >
-            <meshBasicMaterial
+            <meshStandardMaterial
               color={textureType === WallTexture.Default || textureType === WallTexture.NoTexture ? color : 'white'}
               map={texture}
             />

@@ -59,6 +59,7 @@ const GableRoof = ({
   const texture = useRoofTexture(textureType);
 
   const setCommonStore = useStore(Selector.set);
+  const shadowEnabled = useStore(Selector.viewState.shadowEnabled);
   const getElementById = useStore(Selector.getElementById);
   const removeElementById = useStore(Selector.removeElementById);
   const elements = useStore(Selector.elements);
@@ -601,7 +602,7 @@ const GableRoof = ({
           const [leftRoof, rightRoof, rightRidge, leftRidge] = points;
           const isFlat = Math.abs(leftRoof.z) < 0.1;
           return (
-            <mesh key={i}>
+            <mesh key={i} castShadow={shadowEnabled} receiveShadow={shadowEnabled}>
               <convexGeometry args={[points, isFlat ? arr[0].direction : direction, isFlat ? 1 : length]} />
               <meshStandardMaterial
                 side={DoubleSide}

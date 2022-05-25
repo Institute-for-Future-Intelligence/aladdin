@@ -79,6 +79,7 @@ const GambrelRoof = ({
   const texture = useRoofTexture(textureType);
 
   const getElementById = useStore(Selector.getElementById);
+  const shadowEnabled = useStore(Selector.viewState.shadowEnabled);
   const setCommonStore = useStore(Selector.set);
   const removeElementById = useStore(Selector.removeElementById);
   const elements = useStore(Selector.elements); // todo: could optimize
@@ -582,7 +583,7 @@ const GambrelRoof = ({
           const isFlat = Math.abs(leftRoof.z) < 0.1;
           return (
             <group key={i} name={`Roof segment ${i}`}>
-              <mesh>
+              <mesh castShadow={shadowEnabled} receiveShadow={shadowEnabled}>
                 <convexGeometry args={[points, isFlat ? arr[0].direction : direction, isFlat ? 1 : length]} />
                 <meshStandardMaterial
                   map={texture}

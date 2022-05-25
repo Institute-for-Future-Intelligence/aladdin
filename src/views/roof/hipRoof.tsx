@@ -66,6 +66,7 @@ const HipRoof = ({
   const getElementById = useStore(Selector.getElementById);
   const setCommonStore = useStore(Selector.set);
   const removeElementById = useStore(Selector.removeElementById);
+  const shadowEnabled = useStore(Selector.viewState.shadowEnabled);
   const elements = useStore(Selector.elements);
 
   // set position and rotation
@@ -385,7 +386,7 @@ const HipRoof = ({
           const isFlat = Math.abs(leftRoof.z) < 0.1;
           return (
             <group key={i} name={`Roof segment ${i}`}>
-              <mesh>
+              <mesh castShadow={shadowEnabled} receiveShadow={shadowEnabled}>
                 <convexGeometry args={[points, isFlat ? arr[0].direction : direction, isFlat ? 1 : length]} />
                 <meshStandardMaterial
                   side={DoubleSide}
