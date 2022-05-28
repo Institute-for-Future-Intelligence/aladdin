@@ -2,7 +2,7 @@
  * @Copyright 2022. Institute for Future Intelligence, Inc.
  */
 
-import { SearchMethod, GeneticAlgorithmSelectionMethod } from '../../../types';
+import { SearchMethod, GeneticAlgorithmSelectionMethod, ObjectiveFunctionType } from '../../../types';
 import { FoundationModel } from '../../../models/FoundationModel';
 import { Population } from './Population';
 import { Individual } from './Individual';
@@ -10,6 +10,7 @@ import { Constraint } from './Constraint';
 
 export abstract class OptimizerGa {
   population: Population;
+  objectiveFunctionType: ObjectiveFunctionType;
   convergenceThreshold: number;
   minima: number[];
   maxima: number[];
@@ -34,6 +35,7 @@ export abstract class OptimizerGa {
 
   protected constructor(
     foundation: FoundationModel,
+    objectiveFunctionType: ObjectiveFunctionType,
     populationSize: number,
     maximumGenerations: number,
     chromosomeLength: number,
@@ -44,6 +46,7 @@ export abstract class OptimizerGa {
     discretizationSteps?: number,
   ) {
     this.population = new Population(populationSize, chromosomeLength, selectionMethod, discretizationSteps);
+    this.objectiveFunctionType = objectiveFunctionType;
     this.convergenceThreshold = convergenceThreshold;
     this.maximumGenerations = maximumGenerations;
     this.searchMethod = searchMethod;

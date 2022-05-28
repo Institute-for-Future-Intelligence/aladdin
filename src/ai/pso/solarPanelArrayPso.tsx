@@ -23,6 +23,7 @@ import { PolygonModel } from '../../models/PolygonModel';
 
 const SolarPanelArrayPso = () => {
   const setCommonStore = useStore(Selector.set);
+  const loggable = useStore(Selector.loggable);
   const language = useStore(Selector.language);
   const daysPerYear = useStore(Selector.world.daysPerYear) ?? 6;
   const evolutionMethod = useStore(Selector.evolutionMethod);
@@ -122,6 +123,7 @@ const SolarPanelArrayPso = () => {
       initialSolarPanelArrayRef.current,
       polygon,
       foundation,
+      params.objectiveFunctionType,
       params.swarmSize,
       params.vmax,
       params.maximumSteps,
@@ -233,6 +235,20 @@ const SolarPanelArrayPso = () => {
               ? i18n.t('message.ConvergenceThresholdHasBeenReached', lang)
               : i18n.t('message.MaximumNumberOfStepsHasBeenReached', lang)),
         );
+        setCommonStore((state) => {
+          if (loggable) {
+            const bestPosition = optimizerRef.current?.swarm.bestPositionOfSwarm;
+            const fitness = optimizerRef.current?.swarm.bestFitness;
+            state.actionInfo = {
+              name:
+                'Result of Particle Swarm Optimization for Solar Panel Array Layout: ' +
+                (optimizerRef.current && bestPosition && fitness
+                  ? optimizerRef.current.particleToString(bestPosition, fitness)
+                  : ''),
+              timestamp: new Date().getTime(),
+            };
+          }
+        });
         return;
       }
       if (solarPanelArrayRef.current.length > 0) {

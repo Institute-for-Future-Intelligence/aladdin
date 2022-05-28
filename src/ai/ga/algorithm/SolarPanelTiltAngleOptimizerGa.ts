@@ -11,7 +11,7 @@ import { OptimizerGa } from './OptimizerGa';
 import { FoundationModel } from '../../../models/FoundationModel';
 import { Individual } from './Individual';
 import { SolarPanelModel } from '../../../models/SolarPanelModel';
-import { SearchMethod, GeneticAlgorithmSelectionMethod } from '../../../types';
+import { SearchMethod, GeneticAlgorithmSelectionMethod, ObjectiveFunctionType } from '../../../types';
 import { HALF_PI } from '../../../constants';
 import { Util } from '../../../Util';
 import { Random } from '../../../Random';
@@ -22,6 +22,7 @@ export class SolarPanelTiltAngleOptimizerGa extends OptimizerGa {
   constructor(
     solarPanels: SolarPanelModel[],
     foundation: FoundationModel,
+    objectiveFunctionType: ObjectiveFunctionType,
     populationSize: number,
     maximumGenerations: number,
     selectionMethod: GeneticAlgorithmSelectionMethod,
@@ -31,6 +32,7 @@ export class SolarPanelTiltAngleOptimizerGa extends OptimizerGa {
   ) {
     super(
       foundation,
+      objectiveFunctionType,
       populationSize,
       maximumGenerations,
       solarPanels.length,
@@ -74,9 +76,9 @@ export class SolarPanelTiltAngleOptimizerGa extends OptimizerGa {
     let s = '(';
     for (let i = 0; i < individual.chromosome.length; i++) {
       const gene = individual.getGene(i);
-      s += Util.toDegrees((2 * gene - 1) * HALF_PI).toFixed(3) + ', ';
+      s += Util.toDegrees((2 * gene - 1) * HALF_PI).toFixed(3) + '°, ';
     }
-    return s.substring(0, s.length - 2) + ') = ' + individual.fitness.toFixed(5);
+    return s.substring(0, s.length - 2) + ') = ' + individual.fitness.toFixed(5) + ' kWh';
   }
 
   startEvolving(): void {

@@ -1,6 +1,7 @@
 {
-  "docid": "rYwcdiKjBWwck9G28ECztG",
-  "timestamp": 1651526000202,
+  "docid": "ix7Ji7cQXRdaNyCMrFjGSE",
+  "time": "05/27/2022 07:44 am",
+  "timestamp": 1653651896256,
   "userid": "QWecNcxhyvP6j6sBN11hBsfZDau1",
   "owner": null,
   "email": null,
@@ -238,8 +239,8 @@
     "mapType": "roadmap",
     "cameraPosition": [
       14.238207538078159,
-      -23.111877532041458,
-      30.138555703667492
+      -23.11187753204144,
+      30.138555703667482
     ],
     "panCenter": [
       14.4714120590319,
@@ -273,6 +274,16 @@
     }
   },
   "evolutionMethod": 1,
+  "solarPanelArrayLayoutParams": {
+    "pvModelName": "CS6X-355P-FG",
+    "rowAxis": "Zonal",
+    "orientation": "Landscape",
+    "tiltAngle": 0,
+    "rowsPerRack": 1,
+    "interRowSpacing": 2,
+    "poleHeight": 1,
+    "poleSpacing": 3
+  },
   "solarPanelArrayLayoutConstraints": {
     "minimumInterRowSpacing": 2,
     "maximumInterRowSpacing": 10,

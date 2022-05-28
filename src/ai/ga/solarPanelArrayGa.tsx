@@ -23,6 +23,7 @@ import { SolarPanelArrayOptimizerGa } from './algorithm/SolarPanelArrayOptimizer
 
 const SolarPanelArrayGa = () => {
   const setCommonStore = useStore(Selector.set);
+  const loggable = useStore(Selector.loggable);
   const language = useStore(Selector.language);
   const daysPerYear = useStore(Selector.world.daysPerYear) ?? 6;
   const evolutionMethod = useStore(Selector.evolutionMethod);
@@ -122,6 +123,7 @@ const SolarPanelArrayGa = () => {
       initialSolarPanelArrayRef.current,
       polygon,
       foundation,
+      params.objectiveFunctionType,
       params.populationSize,
       params.maximumGenerations,
       params.selectionMethod,
@@ -237,7 +239,15 @@ const SolarPanelArrayGa = () => {
               : i18n.t('message.MaximumNumberOfGenerationsHasBeenReached', lang)),
         );
         setCommonStore((state) => {
-          state.viewState.showEvolutionPanel = true;
+          if (loggable) {
+            const best = optimizerRef.current?.population.getFittest();
+            state.actionInfo = {
+              name:
+                'Result of Genetic Algorithm for Solar Panel Array Layout: ' +
+                (optimizerRef.current && best ? optimizerRef.current.individualToString(best) : ''),
+              timestamp: new Date().getTime(),
+            };
+          }
         });
         return;
       }

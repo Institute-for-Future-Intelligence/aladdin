@@ -9,7 +9,13 @@
 import { OptimizerGa } from './OptimizerGa';
 import { FoundationModel } from '../../../models/FoundationModel';
 import { Individual } from './Individual';
-import { GeneticAlgorithmSelectionMethod, Orientation, RowAxis, SearchMethod } from '../../../types';
+import {
+  GeneticAlgorithmSelectionMethod,
+  ObjectiveFunctionType,
+  Orientation,
+  RowAxis,
+  SearchMethod,
+} from '../../../types';
 import { HALF_PI, UNIT_VECTOR_POS_Z } from '../../../constants';
 import { Util } from '../../../Util';
 import { PolygonModel } from '../../../models/PolygonModel';
@@ -48,6 +54,7 @@ export class SolarPanelArrayOptimizerGa extends OptimizerGa {
     initialSolarPanels: SolarPanelModel[],
     polygon: PolygonModel,
     foundation: FoundationModel,
+    objectiveFunctionType: ObjectiveFunctionType,
     populationSize: number,
     maximumGenerations: number,
     selectionMethod: GeneticAlgorithmSelectionMethod,
@@ -63,6 +70,7 @@ export class SolarPanelArrayOptimizerGa extends OptimizerGa {
   ) {
     super(
       foundation,
+      objectiveFunctionType,
       populationSize,
       maximumGenerations,
       3,
@@ -138,23 +146,37 @@ export class SolarPanelArrayOptimizerGa extends OptimizerGa {
     }
   }
 
-  private individualToString(individual: Individual): string {
+  private getObjectiveUnit(): string | null {
+    switch (this.objectiveFunctionType) {
+      case ObjectiveFunctionType.DAILY_TOTAL_OUTPUT:
+      case ObjectiveFunctionType.DAILY_AVERAGE_OUTPUT:
+      case ObjectiveFunctionType.YEARLY_TOTAL_OUTPUT:
+      case ObjectiveFunctionType.YEARLY_AVERAGE_OUTPUT:
+        return 'kWh';
+      case ObjectiveFunctionType.YEARLY_PROFIT:
+      case ObjectiveFunctionType.DAILY_PROFIT:
+        return 'dollars';
+    }
+    return null;
+  }
+
+  individualToString(individual: Individual): string {
     let s =
       '(' +
       Util.toDegrees(
         individual.getGene(0) * (this.maximumTiltAngle - this.minimumTiltAngle) + this.minimumTiltAngle,
       ).toFixed(3) +
-      ', ';
+      '°, ';
     s +=
       (
         individual.getGene(1) * (this.maximumInterRowSpacing - this.minimumInterRowSpacing) +
         this.minimumInterRowSpacing
-      ).toFixed(3) + ', ';
+      ).toFixed(3) + 'm, ';
     s +=
       Math.floor(
         individual.getGene(2) * (this.maximumRowsPerRack - this.minimumRowsPerRack) + this.minimumRowsPerRack,
       ) + ')';
-    return s + ' = ' + individual.fitness.toFixed(5);
+    return s + ' = ' + individual.fitness.toFixed(5) + ' ' + this.getObjectiveUnit();
   }
 
   startEvolving(): void {

@@ -8,7 +8,7 @@
 
 import { OptimizerPso } from './OptimizerPso';
 import { FoundationModel } from '../../../models/FoundationModel';
-import { Orientation, RowAxis, SearchMethod } from '../../../types';
+import { ObjectiveFunctionType, Orientation, RowAxis, SearchMethod } from '../../../types';
 import { HALF_PI, UNIT_VECTOR_POS_Z } from '../../../constants';
 import { Util } from '../../../Util';
 import { PolygonModel } from '../../../models/PolygonModel';
@@ -48,6 +48,7 @@ export class SolarPanelArrayOptimizerPso extends OptimizerPso {
     initialSolarPanels: SolarPanelModel[],
     polygon: PolygonModel,
     foundation: FoundationModel,
+    objectiveFunctionType: ObjectiveFunctionType,
     swarmSize: number,
     vmax: number,
     maximumSteps: number,
@@ -61,7 +62,17 @@ export class SolarPanelArrayOptimizerPso extends OptimizerPso {
     minimumTiltAngle: number,
     maximumTiltAngle: number,
   ) {
-    super(foundation, swarmSize, vmax, maximumSteps, 3, convergenceThreshold, searchMethod, localSearchRadius);
+    super(
+      foundation,
+      objectiveFunctionType,
+      swarmSize,
+      vmax,
+      maximumSteps,
+      3,
+      convergenceThreshold,
+      searchMethod,
+      localSearchRadius,
+    );
     this.polygon = polygon;
     this.pvModel = pvModel;
     this.rowAxis = rowAxis;
@@ -126,17 +137,31 @@ export class SolarPanelArrayOptimizerPso extends OptimizerPso {
     }
   }
 
-  private particleToString(position: number[], fitness: number): string {
+  private getObjectiveUnit(): string | null {
+    switch (this.objectiveFunctionType) {
+      case ObjectiveFunctionType.DAILY_TOTAL_OUTPUT:
+      case ObjectiveFunctionType.DAILY_AVERAGE_OUTPUT:
+      case ObjectiveFunctionType.YEARLY_TOTAL_OUTPUT:
+      case ObjectiveFunctionType.YEARLY_AVERAGE_OUTPUT:
+        return 'kWh';
+      case ObjectiveFunctionType.YEARLY_PROFIT:
+      case ObjectiveFunctionType.DAILY_PROFIT:
+        return 'dollars';
+    }
+    return null;
+  }
+
+  particleToString(position: number[], fitness: number): string {
     let s =
       '(' +
       Util.toDegrees(position[0] * (this.maximumTiltAngle - this.minimumTiltAngle) + this.minimumTiltAngle).toFixed(3) +
-      ', ';
+      '°, ';
     s +=
       (position[1] * (this.maximumInterRowSpacing - this.minimumInterRowSpacing) + this.minimumInterRowSpacing).toFixed(
         3,
-      ) + ', ';
+      ) + 'm, ';
     s += Math.floor(position[2] * (this.maximumRowsPerRack - this.minimumRowsPerRack) + this.minimumRowsPerRack) + ')';
-    return s + ' = ' + fitness.toFixed(5);
+    return s + ' = ' + fitness.toFixed(5) + ' ' + this.getObjectiveUnit();
   }
 
   startEvolving(): void {

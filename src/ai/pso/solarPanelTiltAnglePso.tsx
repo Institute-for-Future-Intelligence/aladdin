@@ -106,6 +106,7 @@ const SolarPanelTiltAnglePso = () => {
       optimizerRef.current = new SolarPanelTiltAngleOptimizerPso(
         solarPanelsRef.current,
         foundation,
+        params.objectiveFunctionType,
         params.swarmSize,
         params.vmax,
         params.maximumSteps,

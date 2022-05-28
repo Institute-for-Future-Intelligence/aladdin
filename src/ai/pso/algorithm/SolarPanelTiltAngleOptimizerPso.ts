@@ -14,7 +14,7 @@ import { Util } from '../../../Util';
 import { Random } from '../../../Random';
 import { OptimizerPso } from './OptimizerPso';
 import { Particle } from './Particle';
-import { SearchMethod } from '../../../types';
+import { ObjectiveFunctionType, SearchMethod } from '../../../types';
 
 export class SolarPanelTiltAngleOptimizerPso extends OptimizerPso {
   solarPanels: SolarPanelModel[];
@@ -22,6 +22,7 @@ export class SolarPanelTiltAngleOptimizerPso extends OptimizerPso {
   constructor(
     solarPanels: SolarPanelModel[],
     foundation: FoundationModel,
+    objectiveFunctionType: ObjectiveFunctionType,
     swarmSize: number,
     vmax: number,
     maximumSteps: number,
@@ -31,6 +32,7 @@ export class SolarPanelTiltAngleOptimizerPso extends OptimizerPso {
   ) {
     super(
       foundation,
+      objectiveFunctionType,
       swarmSize,
       vmax,
       maximumSteps,
@@ -71,9 +73,9 @@ export class SolarPanelTiltAngleOptimizerPso extends OptimizerPso {
   private static particleToString(position: number[], bestFitness: number): string {
     let s = '(';
     for (let i = 0; i < position.length; i++) {
-      s += Util.toDegrees((2 * position[i] - 1) * HALF_PI).toFixed(3) + ', ';
+      s += Util.toDegrees((2 * position[i] - 1) * HALF_PI).toFixed(3) + '°, ';
     }
-    return s.substring(0, s.length - 2) + ') = ' + bestFitness.toFixed(5);
+    return s.substring(0, s.length - 2) + ') = ' + bestFitness.toFixed(5) + ' kWh';
   }
 
   startEvolving(): void {

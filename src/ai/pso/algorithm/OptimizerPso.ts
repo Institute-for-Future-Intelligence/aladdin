@@ -4,10 +4,11 @@
 
 import { FoundationModel } from '../../../models/FoundationModel';
 import { Swarm } from './Swarm';
-import { SearchMethod } from '../../../types';
+import { ObjectiveFunctionType, SearchMethod } from '../../../types';
 
 export abstract class OptimizerPso {
   swarm: Swarm;
+  objectiveFunctionType: ObjectiveFunctionType;
   foundation: FoundationModel;
   stopped: boolean = true;
   inertia: number = 0.8;
@@ -26,6 +27,7 @@ export abstract class OptimizerPso {
 
   protected constructor(
     foundation: FoundationModel,
+    objectiveFunctionType: ObjectiveFunctionType,
     swarmSize: number,
     vmax: number,
     maximumSteps: number,
@@ -35,6 +37,7 @@ export abstract class OptimizerPso {
     localSearchRadius: number,
   ) {
     this.swarm = new Swarm(swarmSize, particleDimension, vmax);
+    this.objectiveFunctionType = objectiveFunctionType;
     this.convergenceThreshold = convergenceThreshold;
     this.searchMethod = searchMethod;
     this.localSearchRadius = localSearchRadius;

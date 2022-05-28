@@ -106,6 +106,7 @@ const SolarPanelTiltAngleGa = () => {
       optimizerRef.current = new SolarPanelTiltAngleOptimizerGa(
         solarPanelsRef.current,
         foundation,
+        params.objectiveFunctionType,
         params.populationSize,
         params.maximumGenerations,
         params.selectionMethod,
