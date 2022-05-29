@@ -253,9 +253,7 @@ const SolarPanelArrayGa = () => {
         }
         return;
       }
-      if (solarPanelArrayRef.current.length > 0) {
-        removeElementsByReferenceId(polygon.id, false);
-      }
+      removeElementsByReferenceId(polygon.id, false);
       solarPanelArrayRef.current = optimizerRef.current.translateIndividualByIndex(
         individualIndexRef.current % params.populationSize,
       );

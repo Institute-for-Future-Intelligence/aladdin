@@ -251,9 +251,7 @@ const SolarPanelArrayPso = () => {
         }
         return;
       }
-      if (solarPanelArrayRef.current.length > 0) {
-        removeElementsByReferenceId(polygon.id, false);
-      }
+      removeElementsByReferenceId(polygon.id, false);
       solarPanelArrayRef.current = optimizerRef.current.translateParticleByIndex(
         particleIndexRef.current % params.swarmSize,
       );
