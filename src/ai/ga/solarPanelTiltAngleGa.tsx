@@ -16,6 +16,7 @@ import { Util } from '../../Util';
 
 const SolarPanelTiltAngleGa = () => {
   const setCommonStore = useStore(Selector.set);
+  const loggable = useStore(Selector.loggable);
   const language = useStore(Selector.language);
   const daysPerYear = useStore(Selector.world.daysPerYear) ?? 6;
   const evolutionMethod = useStore(Selector.evolutionMethod);
@@ -195,6 +196,19 @@ const SolarPanelTiltAngleGa = () => {
               ? i18n.t('message.ConvergenceThresholdHasBeenReached', lang)
               : i18n.t('message.MaximumNumberOfGenerationsHasBeenReached', lang)),
         );
+        if (loggable && optimizerRef.current) {
+          const best = optimizerRef.current.population.getFittest();
+          if (best) {
+            setCommonStore((state) => {
+              state.actionInfo = {
+                name: 'Genetic Algorithm for Solar Panel Tilt Angle Completed',
+                result: SolarPanelTiltAngleOptimizerGa.individualToString(best),
+                steps: optimizerRef.current?.outsideGenerationCounter,
+                timestamp: new Date().getTime(),
+              };
+            });
+          }
+        }
         return;
       }
       optimizerRef.current.translateIndividual(individualIndexRef.current % params.populationSize);

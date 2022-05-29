@@ -72,8 +72,8 @@ export class SolarPanelTiltAngleOptimizerGa extends OptimizerGa {
     }
   }
 
-  private static individualToString(individual: Individual): string {
-    let s = '(';
+  static individualToString(individual: Individual): string {
+    let s = 'F(';
     for (let i = 0; i < individual.chromosome.length; i++) {
       const gene = individual.getGene(i);
       s += Util.toDegrees((2 * gene - 1) * HALF_PI).toFixed(3) + '°, ';

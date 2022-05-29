@@ -16,6 +16,7 @@ import { SolarPanelTiltAngleOptimizerPso } from './algorithm/SolarPanelTiltAngle
 
 const SolarPanelTiltAnglePso = () => {
   const setCommonStore = useStore(Selector.set);
+  const loggable = useStore(Selector.loggable);
   const language = useStore(Selector.language);
   const daysPerYear = useStore(Selector.world.daysPerYear) ?? 6;
   const evolutionMethod = useStore(Selector.evolutionMethod);
@@ -192,6 +193,20 @@ const SolarPanelTiltAnglePso = () => {
               ? i18n.t('message.ConvergenceThresholdHasBeenReached', lang)
               : i18n.t('message.MaximumNumberOfStepsHasBeenReached', lang)),
         );
+        if (loggable && optimizerRef.current) {
+          const bestPosition = optimizerRef.current.swarm.bestPositionOfSwarm;
+          const fitness = optimizerRef.current.swarm.bestFitness;
+          if (bestPosition && fitness) {
+            setCommonStore((state) => {
+              state.actionInfo = {
+                name: 'Particle Swarm Optimization for Solar Panel Tilt Angle Completed',
+                result: SolarPanelTiltAngleOptimizerPso.particleToString(bestPosition, fitness),
+                steps: optimizerRef.current?.outsideStepCounter,
+                timestamp: new Date().getTime(),
+              };
+            });
+          }
+        }
         return;
       }
       optimizerRef.current.translateParticle(particleIndexRef.current % params.swarmSize);

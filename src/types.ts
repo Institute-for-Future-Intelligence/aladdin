@@ -80,6 +80,8 @@ export interface ActionInfo {
   readonly name: string;
   readonly elementId?: string;
   readonly elementType?: ObjectType;
+  readonly result?: string;
+  readonly steps?: number;
 }
 
 export enum DesignProblem {

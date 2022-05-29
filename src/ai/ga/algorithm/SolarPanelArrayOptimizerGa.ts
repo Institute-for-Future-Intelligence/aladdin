@@ -162,7 +162,7 @@ export class SolarPanelArrayOptimizerGa extends OptimizerGa {
 
   individualToString(individual: Individual): string {
     let s =
-      '(' +
+      'F(' +
       Util.toDegrees(
         individual.getGene(0) * (this.maximumTiltAngle - this.minimumTiltAngle) + this.minimumTiltAngle,
       ).toFixed(3) +

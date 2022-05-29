@@ -235,20 +235,20 @@ const SolarPanelArrayPso = () => {
               ? i18n.t('message.ConvergenceThresholdHasBeenReached', lang)
               : i18n.t('message.MaximumNumberOfStepsHasBeenReached', lang)),
         );
-        setCommonStore((state) => {
-          if (loggable) {
-            const bestPosition = optimizerRef.current?.swarm.bestPositionOfSwarm;
-            const fitness = optimizerRef.current?.swarm.bestFitness;
-            state.actionInfo = {
-              name:
-                'Result of Particle Swarm Optimization for Solar Panel Array Layout: ' +
-                (optimizerRef.current && bestPosition && fitness
-                  ? optimizerRef.current.particleToString(bestPosition, fitness)
-                  : ''),
-              timestamp: new Date().getTime(),
-            };
+        if (loggable && optimizerRef.current) {
+          const bestPosition = optimizerRef.current.swarm.bestPositionOfSwarm;
+          const fitness = optimizerRef.current.swarm.bestFitness;
+          if (bestPosition && fitness) {
+            setCommonStore((state) => {
+              state.actionInfo = {
+                name: 'Particle Swarm Optimization for Solar Panel Array Layout Completed',
+                result: optimizerRef.current?.particleToString(bestPosition, fitness),
+                steps: optimizerRef.current?.outsideStepCounter,
+                timestamp: new Date().getTime(),
+              };
+            });
           }
-        });
+        }
         return;
       }
       if (solarPanelArrayRef.current.length > 0) {

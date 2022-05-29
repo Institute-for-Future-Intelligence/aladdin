@@ -238,17 +238,19 @@ const SolarPanelArrayGa = () => {
               ? i18n.t('message.ConvergenceThresholdHasBeenReached', lang)
               : i18n.t('message.MaximumNumberOfGenerationsHasBeenReached', lang)),
         );
-        setCommonStore((state) => {
-          if (loggable) {
-            const best = optimizerRef.current?.population.getFittest();
-            state.actionInfo = {
-              name:
-                'Result of Genetic Algorithm for Solar Panel Array Layout: ' +
-                (optimizerRef.current && best ? optimizerRef.current.individualToString(best) : ''),
-              timestamp: new Date().getTime(),
-            };
+        if (loggable && optimizerRef.current) {
+          const best = optimizerRef.current.population.getFittest();
+          if (best) {
+            setCommonStore((state) => {
+              state.actionInfo = {
+                name: 'Genetic Algorithm for Solar Panel Array Layout Completed',
+                result: optimizerRef.current?.individualToString(best),
+                steps: optimizerRef.current?.outsideGenerationCounter,
+                timestamp: new Date().getTime(),
+              };
+            });
           }
-        });
+        }
         return;
       }
       if (solarPanelArrayRef.current.length > 0) {

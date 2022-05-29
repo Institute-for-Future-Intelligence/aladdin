@@ -70,8 +70,8 @@ export class SolarPanelTiltAngleOptimizerPso extends OptimizerPso {
     }
   }
 
-  private static particleToString(position: number[], bestFitness: number): string {
-    let s = '(';
+  static particleToString(position: number[], bestFitness: number): string {
+    let s = 'F(';
     for (let i = 0; i < position.length; i++) {
       s += Util.toDegrees((2 * position[i] - 1) * HALF_PI).toFixed(3) + '°, ';
     }

@@ -153,7 +153,7 @@ export class SolarPanelArrayOptimizerPso extends OptimizerPso {
 
   particleToString(position: number[], fitness: number): string {
     let s =
-      '(' +
+      'F(' +
       Util.toDegrees(position[0] * (this.maximumTiltAngle - this.minimumTiltAngle) + this.minimumTiltAngle).toFixed(3) +
       '°, ';
     s +=
