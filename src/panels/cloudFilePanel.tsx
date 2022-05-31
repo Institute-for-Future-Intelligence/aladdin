@@ -285,7 +285,7 @@ const CloudFilePanel = ({ cloudFileArray, openCloudFile, deleteCloudFile, rename
                       color={'#666666'}
                       style={{ cursor: 'pointer' }}
                       onClick={() => {
-                        let url =
+                        const url =
                           HOME_URL +
                           '?client=web&userid=' +
                           record.userid +

@@ -38,6 +38,7 @@ const getPanelEfficiency = (temperature: number, panel: SolarPanelModel, pvModel
 
 const SolarPanelSimulation = ({ city }: SolarPanelSimulationProps) => {
   const setCommonStore = useStore(Selector.set);
+  const loggable = useStore(Selector.loggable);
   const language = useStore(Selector.language);
   const world = useStore.getState().world;
   const elements = useStore.getState().elements;
@@ -179,12 +180,21 @@ const SolarPanelSimulation = ({ city }: SolarPanelSimulationProps) => {
       state.simulationPaused = false;
       if (!runEvolution && !lastStep) state.viewState.showDailyPvYieldPanel = true;
     });
-    if (!runEvolution && !lastStep) {
-      // don't show info when this simulation is called by an evolution
-      showInfo(i18n.t('message.SimulationCompleted', lang));
-    }
     simulationCompletedRef.current = true;
     finishDaily();
+    if (!runEvolution && !lastStep) {
+      // don't show info or log data when this simulation is called by an evolution
+      showInfo(i18n.t('message.SimulationCompleted', lang));
+      if (loggable) {
+        setCommonStore((state) => {
+          state.actionInfo = {
+            name: 'Static Daily Simulation For Solar Panels Completed',
+            result: JSON.stringify(state.dailyPvYield),
+            timestamp: new Date().getTime(),
+          };
+        });
+      }
+    }
   };
 
   const initDaily = () => {
@@ -215,12 +225,21 @@ const SolarPanelSimulation = ({ city }: SolarPanelSimulationProps) => {
           state.world.date = originalDateRef.current.toString();
           if (!runEvolution) state.viewState.showDailyPvYieldPanel = true;
         });
-        if (!runEvolution) {
-          // don't show info when this simulation is called by an evolution
-          showInfo(i18n.t('message.SimulationCompleted', lang));
-        }
         simulationCompletedRef.current = true;
         finishDaily();
+        if (!runEvolution) {
+          // don't show info or log data when this simulation is called by an evolution
+          showInfo(i18n.t('message.SimulationCompleted', lang));
+          if (loggable) {
+            setCommonStore((state) => {
+              state.actionInfo = {
+                name: 'Dynamic Daily Simulation For Solar Panels Completed',
+                result: JSON.stringify(state.dailyPvYield),
+                timestamp: new Date().getTime(),
+              };
+            });
+          }
+        }
         return;
       }
       // this is where time advances (by incrementing the minutes with the given interval)
@@ -432,12 +451,21 @@ const SolarPanelSimulation = ({ city }: SolarPanelSimulationProps) => {
       state.world.date = originalDateRef.current.toString();
       if (!runEvolution && !lastStep) state.viewState.showYearlyPvYieldPanel = true;
     });
-    if (!runEvolution && !lastStep) {
-      // don't show info when this simulation is called by an evolution
-      showInfo(i18n.t('message.SimulationCompleted', lang));
-    }
     simulationCompletedRef.current = true;
     generateYearlyData();
+    if (!runEvolution && !lastStep) {
+      // don't show info or log data when this simulation is called by an evolution
+      showInfo(i18n.t('message.SimulationCompleted', lang));
+      if (loggable) {
+        setCommonStore((state) => {
+          state.actionInfo = {
+            name: 'Static Yearly Simulation For Solar Panels Completed',
+            result: JSON.stringify(state.yearlyPvYield),
+            timestamp: new Date().getTime(),
+          };
+        });
+      }
+    }
   };
 
   const simulateYearly = () => {
@@ -468,12 +496,21 @@ const SolarPanelSimulation = ({ city }: SolarPanelSimulationProps) => {
             state.world.date = originalDateRef.current.toString();
             if (!runEvolution) state.viewState.showYearlyPvYieldPanel = true;
           });
-          if (!runEvolution) {
-            // don't show info when this simulation is called by an evolution
-            showInfo(i18n.t('message.SimulationCompleted', lang));
-          }
           simulationCompletedRef.current = true;
           generateYearlyData();
+          if (!runEvolution) {
+            // don't show info or log data when this simulation is called by an evolution
+            showInfo(i18n.t('message.SimulationCompleted', lang));
+            if (loggable) {
+              setCommonStore((state) => {
+                state.actionInfo = {
+                  name: 'Dynamic Yearly Simulation For Solar Panels Completed',
+                  result: JSON.stringify(state.yearlyPvYield),
+                  timestamp: new Date().getTime(),
+                };
+              });
+            }
+          }
           return;
         }
         // go to the next month

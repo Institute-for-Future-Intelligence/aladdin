@@ -22,6 +22,7 @@ import MainToolBarButtons from './mainToolBarButtons';
 import Draggable, { DraggableBounds, DraggableData, DraggableEvent } from 'react-draggable';
 import { ExclamationCircleOutlined } from '@ant-design/icons';
 import { Util } from './Util';
+import { HOME_URL } from './constants';
 
 const ButtonsContainer = styled.div`
   position: absolute;
@@ -109,8 +110,21 @@ const MainToolBar = ({ viewOnly = false }: MainToolBarProps) => {
       }
       init(); // load the initial state after we recognize the user
     });
+    window.addEventListener('popstate', handlePopStateEvent);
+    return () => {
+      window.removeEventListener('popstate', handlePopStateEvent);
+    };
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
+
+  const handlePopStateEvent = () => {
+    const p = new URLSearchParams(window.location.search);
+    const userid = p.get('userid');
+    const title = p.get('title');
+    if (userid && title) {
+      openCloudFile(userid, title, true);
+    }
+  };
 
   useEffect(() => {
     if (cloudFiles.current) {
@@ -384,7 +398,7 @@ const MainToolBar = ({ viewOnly = false }: MainToolBarProps) => {
     }
   };
 
-  const openCloudFile = (userid: string, title: string) => {
+  const openCloudFile = (userid: string, title: string, popState?: boolean) => {
     if (userid && title) {
       undoManager.clear();
       setLoading(true);
@@ -406,6 +420,10 @@ const MainToolBar = ({ viewOnly = false }: MainToolBarProps) => {
             });
           }
           setLoading(false);
+          if (!popState) {
+            const newUrl = HOME_URL + '?client=web&userid=' + userid + '&title=' + encodeURIComponent(title);
+            window.history.pushState({}, document.title, newUrl);
+          }
         })
         .catch((error) => {
           showError(i18n.t('message.CannotOpenCloudFile', lang) + ': ' + error);
