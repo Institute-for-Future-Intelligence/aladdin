@@ -187,9 +187,12 @@ const SolarPanelSimulation = ({ city }: SolarPanelSimulationProps) => {
       showInfo(i18n.t('message.SimulationCompleted', lang));
       if (loggable) {
         setCommonStore((state) => {
+          const totalYield = state.sumDailyPvYield();
+          const profit = state.getDailyPvProfit();
           state.actionInfo = {
             name: 'Static Daily Simulation For Solar Panels Completed',
-            result: JSON.stringify(state.dailyPvYield),
+            result: { totalYield: totalYield, profit: profit },
+            details: state.dailyPvYield,
             timestamp: new Date().getTime(),
           };
         });
@@ -232,9 +235,12 @@ const SolarPanelSimulation = ({ city }: SolarPanelSimulationProps) => {
           showInfo(i18n.t('message.SimulationCompleted', lang));
           if (loggable) {
             setCommonStore((state) => {
+              const totalYield = state.sumDailyPvYield();
+              const profit = state.getDailyPvProfit();
               state.actionInfo = {
                 name: 'Dynamic Daily Simulation For Solar Panels Completed',
-                result: JSON.stringify(state.dailyPvYield),
+                result: { totalYield: totalYield, profit: profit },
+                details: state.dailyPvYield,
                 timestamp: new Date().getTime(),
               };
             });
@@ -458,9 +464,12 @@ const SolarPanelSimulation = ({ city }: SolarPanelSimulationProps) => {
       showInfo(i18n.t('message.SimulationCompleted', lang));
       if (loggable) {
         setCommonStore((state) => {
+          const totalYield = state.sumYearlyPvYield();
+          const profit = state.getYearlyPvProfit();
           state.actionInfo = {
             name: 'Static Yearly Simulation For Solar Panels Completed',
-            result: JSON.stringify(state.yearlyPvYield),
+            result: { totalYield: totalYield, profit: profit },
+            details: state.yearlyPvYield,
             timestamp: new Date().getTime(),
           };
         });
@@ -503,9 +512,12 @@ const SolarPanelSimulation = ({ city }: SolarPanelSimulationProps) => {
             showInfo(i18n.t('message.SimulationCompleted', lang));
             if (loggable) {
               setCommonStore((state) => {
+                const totalYield = state.sumYearlyPvYield();
+                const profit = state.getYearlyPvProfit();
                 state.actionInfo = {
                   name: 'Dynamic Yearly Simulation For Solar Panels Completed',
-                  result: JSON.stringify(state.yearlyPvYield),
+                  result: { totalYield: totalYield, profit: profit },
+                  details: state.yearlyPvYield,
                   timestamp: new Date().getTime(),
                 };
               });

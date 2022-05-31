@@ -80,7 +80,8 @@ export interface ActionInfo {
   readonly name: string;
   readonly elementId?: string;
   readonly elementType?: ObjectType;
-  readonly result?: string;
+  readonly result?: any;
+  readonly details?: any;
   readonly steps?: number;
 }
 

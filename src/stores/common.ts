@@ -571,9 +571,13 @@ export interface CommonStoreState {
   dailyPvYield: DatumEntry[];
   dailyPvIndividualOutputs: boolean;
   setDailyPvYield: (data: DatumEntry[]) => void;
+  sumDailyPvYield: () => number;
+  getDailyPvProfit: () => number;
   yearlyPvYield: DatumEntry[];
   yearlyPvIndividualOutputs: boolean;
   setYearlyPvYield: (data: DatumEntry[]) => void;
+  sumYearlyPvYield: () => number;
+  getYearlyPvProfit: () => number;
   solarPanelLabels: string[];
   setSolarPanelLabels: (labels: string[]) => void;
 
@@ -951,6 +955,27 @@ export const useStore = create<CommonStoreState>(
               }
             });
           },
+          sumDailyPvYield() {
+            let sum = 0;
+            for (const datum of this.dailyPvYield) {
+              for (const prop in datum) {
+                if (datum.hasOwnProperty(prop)) {
+                  if (prop !== 'Hour') {
+                    sum += datum[prop] as number;
+                  }
+                }
+              }
+            }
+            return sum;
+          },
+          getDailyPvProfit() {
+            const dailyYield = this.sumDailyPvYield();
+            const solarPanelNumber = this.countAllSolarPanels();
+            return (
+              dailyYield * this.economicsParams.electricitySellingPrice -
+              solarPanelNumber * this.economicsParams.operationalCostPerUnit
+            );
+          },
           yearlyPvYield: [],
           yearlyPvIndividualOutputs: false,
           setYearlyPvYield(data) {
@@ -962,6 +987,28 @@ export const useStore = create<CommonStoreState>(
                 state.objectiveEvaluationIndex++;
               }
             });
+          },
+          sumYearlyPvYield() {
+            let sum = 0;
+            for (const datum of this.yearlyPvYield) {
+              for (const prop in datum) {
+                if (datum.hasOwnProperty(prop)) {
+                  if (prop !== 'Month') {
+                    sum += datum[prop] as number;
+                  }
+                }
+              }
+            }
+            const yearScaleFactor = 12 / (this.world?.daysPerYear ?? 6);
+            return sum * yearScaleFactor;
+          },
+          getYearlyPvProfit() {
+            const solarPanelNumber = this.countAllSolarPanels();
+            const yearlyYield = this.sumYearlyPvYield();
+            return (
+              yearlyYield * this.economicsParams.electricitySellingPrice -
+              solarPanelNumber * this.economicsParams.operationalCostPerUnit * 365
+            );
           },
           solarPanelLabels: [],
           setSolarPanelLabels(labels) {
