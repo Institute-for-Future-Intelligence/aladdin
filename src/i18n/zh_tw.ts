@@ -748,7 +748,7 @@ export const i18n_zh_tw = {
       Texture05: '五號材質',
       Texture06: '六號材質',
       Texture07: '七號材質',
-      OnlyThisWall: '只這个屋顶',
+      OnlyThisRoof: '只這个屋顶',
       AllRoofsAboveFoundation: '同一地基上所有的屋顶',
       AllRoofs: '所有的屋顶',
       OverhangLength: '屋簷長度',

@@ -1,8 +1,8 @@
 {
-  "docid": "5TPmxknJNPowUMuAC8Kcrb",
-  "time": "05/19/2022 06:53 pm",
-  "timestamp": 1653000798744,
-  "userid": "QWecNcxhyvP6j6sBN11hBsfZDau1",
+  "docid": "cHs9AYp4AqXBu836dAb8Ty",
+  "time": "05/31/2022 11:29 am",
+  "timestamp": 1654010955278,
+  "userid": "HPwaZxo6jaPjQcD6cBGUWPpQkVw2",
   "owner": null,
   "email": null,
   "world": {
@@ -184,7 +184,7 @@
       "parentId": "of4fAMi2p9MKmo6JDUYnfX",
       "foundationId": "of4fAMi2p9MKmo6JDUYnfX",
       "selected": false,
-      "filled": true,
+      "filled": false,
       "selectedIndex": 6,
       "id": "1mf9SJGR5RjzYzk7AYxvf2",
       "lineColor": "#f44e3b"
@@ -266,9 +266,9 @@
     "showYearlyLightSensorPanel": false,
     "mapType": "hybrid",
     "cameraPosition": [
-      163.3845981830567,
-      -117.91480988023653,
-      162.04475988877374
+      163.38459818305665,
+      -117.91480988023643,
+      162.04475988877357
     ],
     "panCenter": [
       85.94985190690319,
