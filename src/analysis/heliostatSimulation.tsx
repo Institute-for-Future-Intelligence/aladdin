@@ -24,6 +24,7 @@ export interface HeliostatSimulationProps {
 
 const HeliostatSimulation = ({ city }: HeliostatSimulationProps) => {
   const setCommonStore = useStore(Selector.set);
+  const loggable = useStore(Selector.loggable);
   const language = useStore(Selector.language);
   const world = useStore.getState().world;
   const elements = useStore.getState().elements;
@@ -146,6 +147,17 @@ const HeliostatSimulation = ({ city }: HeliostatSimulationProps) => {
         showInfo(i18n.t('message.SimulationCompleted', lang));
         simulationCompletedRef.current = true;
         finishDaily();
+        if (loggable) {
+          setCommonStore((state) => {
+            const totalYield = state.sumDailyHeliostatYield();
+            state.actionInfo = {
+              name: 'Daily Simulation for Heliostats Completed',
+              result: { totalYield: totalYield },
+              details: state.dailyHeliostatYield,
+              timestamp: new Date().getTime(),
+            };
+          });
+        }
         return;
       }
       // this is where time advances (by incrementing the minutes with the given interval)
@@ -339,6 +351,17 @@ const HeliostatSimulation = ({ city }: HeliostatSimulationProps) => {
           showInfo(i18n.t('message.SimulationCompleted', lang));
           simulationCompletedRef.current = true;
           generateYearlyYieldData();
+          if (loggable) {
+            setCommonStore((state) => {
+              const totalYield = state.sumYearlyHeliostatYield();
+              state.actionInfo = {
+                name: 'Yearly Simulation for Heliostats Completed',
+                result: { totalYield: totalYield },
+                details: state.yearlyHeliostatYield,
+                timestamp: new Date().getTime(),
+              };
+            });
+          }
           return;
         }
         // go to the next month

@@ -588,9 +588,11 @@ export interface CommonStoreState {
   dailyParabolicTroughYield: DatumEntry[];
   dailyParabolicTroughIndividualOutputs: boolean;
   setDailyParabolicTroughYield: (data: DatumEntry[]) => void;
+  sumDailyParabolicTroughYield: () => number;
   yearlyParabolicTroughYield: DatumEntry[];
   yearlyParabolicTroughIndividualOutputs: boolean;
   setYearlyParabolicTroughYield: (data: DatumEntry[]) => void;
+  sumYearlyParabolicTroughYield: () => number;
   parabolicTroughLabels: string[];
   setParabolicTroughLabels: (labels: string[]) => void;
 
@@ -601,9 +603,11 @@ export interface CommonStoreState {
   dailyParabolicDishYield: DatumEntry[];
   dailyParabolicDishIndividualOutputs: boolean;
   setDailyParabolicDishYield: (data: DatumEntry[]) => void;
+  sumDailyParabolicDishYield: () => number;
   yearlyParabolicDishYield: DatumEntry[];
   yearlyParabolicDishIndividualOutputs: boolean;
   setYearlyParabolicDishYield: (data: DatumEntry[]) => void;
+  sumYearlyParabolicDishYield: () => number;
   parabolicDishLabels: string[];
   setParabolicDishLabels: (labels: string[]) => void;
 
@@ -614,9 +618,11 @@ export interface CommonStoreState {
   dailyFresnelReflectorYield: DatumEntry[];
   dailyFresnelReflectorIndividualOutputs: boolean;
   setDailyFresnelReflectorYield: (data: DatumEntry[]) => void;
+  sumDailyFresnelReflectorYield: () => number;
   yearlyFresnelReflectorYield: DatumEntry[];
   yearlyFresnelReflectorIndividualOutputs: boolean;
   setYearlyFresnelReflectorYield: (data: DatumEntry[]) => void;
+  sumYearlyFresnelReflectorYield: () => number;
   fresnelReflectorLabels: string[];
   setFresnelReflectorLabels: (labels: string[]) => void;
 
@@ -627,9 +633,11 @@ export interface CommonStoreState {
   dailyHeliostatYield: DatumEntry[];
   dailyHeliostatIndividualOutputs: boolean;
   setDailyHeliostatYield: (data: DatumEntry[]) => void;
+  sumDailyHeliostatYield: () => number;
   yearlyHeliostatYield: DatumEntry[];
   yearlyHeliostatIndividualOutputs: boolean;
   setYearlyHeliostatYield: (data: DatumEntry[]) => void;
+  sumYearlyHeliostatYield: () => number;
   heliostatLabels: string[];
   setHeliostatLabels: (labels: string[]) => void;
 
@@ -642,9 +650,11 @@ export interface CommonStoreState {
   dailyUpdraftTowerYield: DatumEntry[];
   setDailyUpdraftTowerResults: (data: DatumEntry[]) => void;
   setDailyUpdraftTowerYield: (data: DatumEntry[]) => void;
+  sumDailyUpdraftTowerYield: () => number;
   yearlyUpdraftTowerYield: DatumEntry[];
   yearlyUpdraftTowerIndividualOutputs: boolean;
   setYearlyUpdraftTowerYield: (data: DatumEntry[]) => void;
+  sumYearlyUpdraftTowerYield: () => number;
   updraftTowerLabels: string[];
   setUpdraftTowerLabels: (labels: string[]) => void;
 
@@ -1028,12 +1038,38 @@ export const useStore = create<CommonStoreState>(
               state.dailyParabolicTroughYield = [...data];
             });
           },
+          sumDailyParabolicTroughYield() {
+            let sum = 0;
+            for (const datum of this.dailyParabolicTroughYield) {
+              for (const prop in datum) {
+                if (datum.hasOwnProperty(prop)) {
+                  if (prop !== 'Hour') {
+                    sum += datum[prop] as number;
+                  }
+                }
+              }
+            }
+            return sum;
+          },
           yearlyParabolicTroughYield: [],
           yearlyParabolicTroughIndividualOutputs: false,
           setYearlyParabolicTroughYield(data) {
             immerSet((state: CommonStoreState) => {
               state.yearlyParabolicTroughYield = [...data];
             });
+          },
+          sumYearlyParabolicTroughYield() {
+            let sum = 0;
+            for (const datum of this.yearlyParabolicTroughYield) {
+              for (const prop in datum) {
+                if (datum.hasOwnProperty(prop)) {
+                  if (prop !== 'Month') {
+                    sum += datum[prop] as number;
+                  }
+                }
+              }
+            }
+            return sum;
           },
           parabolicTroughLabels: [],
           setParabolicTroughLabels(labels) {
@@ -1053,12 +1089,38 @@ export const useStore = create<CommonStoreState>(
               state.dailyParabolicDishYield = [...data];
             });
           },
+          sumDailyParabolicDishYield() {
+            let sum = 0;
+            for (const datum of this.dailyParabolicDishYield) {
+              for (const prop in datum) {
+                if (datum.hasOwnProperty(prop)) {
+                  if (prop !== 'Hour') {
+                    sum += datum[prop] as number;
+                  }
+                }
+              }
+            }
+            return sum;
+          },
           yearlyParabolicDishYield: [],
           yearlyParabolicDishIndividualOutputs: false,
           setYearlyParabolicDishYield(data) {
             immerSet((state: CommonStoreState) => {
               state.yearlyParabolicDishYield = [...data];
             });
+          },
+          sumYearlyParabolicDishYield() {
+            let sum = 0;
+            for (const datum of this.yearlyParabolicDishYield) {
+              for (const prop in datum) {
+                if (datum.hasOwnProperty(prop)) {
+                  if (prop !== 'Month') {
+                    sum += datum[prop] as number;
+                  }
+                }
+              }
+            }
+            return sum;
           },
           parabolicDishLabels: [],
           setParabolicDishLabels(labels) {
@@ -1078,12 +1140,38 @@ export const useStore = create<CommonStoreState>(
               state.dailyFresnelReflectorYield = [...data];
             });
           },
+          sumDailyFresnelReflectorYield() {
+            let sum = 0;
+            for (const datum of this.dailyFresnelReflectorYield) {
+              for (const prop in datum) {
+                if (datum.hasOwnProperty(prop)) {
+                  if (prop !== 'Hour') {
+                    sum += datum[prop] as number;
+                  }
+                }
+              }
+            }
+            return sum;
+          },
           yearlyFresnelReflectorYield: [],
           yearlyFresnelReflectorIndividualOutputs: false,
           setYearlyFresnelReflectorYield(data) {
             immerSet((state: CommonStoreState) => {
               state.yearlyFresnelReflectorYield = [...data];
             });
+          },
+          sumYearlyFresnelReflectorYield() {
+            let sum = 0;
+            for (const datum of this.yearlyFresnelReflectorYield) {
+              for (const prop in datum) {
+                if (datum.hasOwnProperty(prop)) {
+                  if (prop !== 'Month') {
+                    sum += datum[prop] as number;
+                  }
+                }
+              }
+            }
+            return sum;
           },
           fresnelReflectorLabels: [],
           setFresnelReflectorLabels(labels) {
@@ -1103,12 +1191,38 @@ export const useStore = create<CommonStoreState>(
               state.dailyHeliostatYield = [...data];
             });
           },
+          sumDailyHeliostatYield() {
+            let sum = 0;
+            for (const datum of this.dailyHeliostatYield) {
+              for (const prop in datum) {
+                if (datum.hasOwnProperty(prop)) {
+                  if (prop !== 'Hour') {
+                    sum += datum[prop] as number;
+                  }
+                }
+              }
+            }
+            return sum;
+          },
           yearlyHeliostatYield: [],
           yearlyHeliostatIndividualOutputs: false,
           setYearlyHeliostatYield(data) {
             immerSet((state: CommonStoreState) => {
               state.yearlyHeliostatYield = [...data];
             });
+          },
+          sumYearlyHeliostatYield() {
+            let sum = 0;
+            for (const datum of this.yearlyHeliostatYield) {
+              for (const prop in datum) {
+                if (datum.hasOwnProperty(prop)) {
+                  if (prop !== 'Month') {
+                    sum += datum[prop] as number;
+                  }
+                }
+              }
+            }
+            return sum;
           },
           heliostatLabels: [],
           setHeliostatLabels(labels) {
@@ -1134,12 +1248,38 @@ export const useStore = create<CommonStoreState>(
               state.dailyUpdraftTowerYield = [...data];
             });
           },
+          sumDailyUpdraftTowerYield() {
+            let sum = 0;
+            for (const datum of this.dailyUpdraftTowerYield) {
+              for (const prop in datum) {
+                if (datum.hasOwnProperty(prop)) {
+                  if (prop !== 'Hour') {
+                    sum += datum[prop] as number;
+                  }
+                }
+              }
+            }
+            return sum;
+          },
           yearlyUpdraftTowerYield: [],
           yearlyUpdraftTowerIndividualOutputs: false,
           setYearlyUpdraftTowerYield(data) {
             immerSet((state: CommonStoreState) => {
               state.yearlyUpdraftTowerYield = [...data];
             });
+          },
+          sumYearlyUpdraftTowerYield() {
+            let sum = 0;
+            for (const datum of this.yearlyUpdraftTowerYield) {
+              for (const prop in datum) {
+                if (datum.hasOwnProperty(prop)) {
+                  if (prop !== 'Month') {
+                    sum += datum[prop] as number;
+                  }
+                }
+              }
+            }
+            return sum;
           },
           updraftTowerLabels: [],
           setUpdraftTowerLabels(labels) {

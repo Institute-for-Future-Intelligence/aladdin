@@ -190,7 +190,7 @@ const SolarPanelSimulation = ({ city }: SolarPanelSimulationProps) => {
           const totalYield = state.sumDailyPvYield();
           const profit = state.getDailyPvProfit();
           state.actionInfo = {
-            name: 'Static Daily Simulation For Solar Panels Completed',
+            name: 'Static Daily Simulation for Solar Panels Completed',
             result: { totalYield: totalYield, profit: profit },
             details: state.dailyPvYield,
             timestamp: new Date().getTime(),
@@ -238,7 +238,7 @@ const SolarPanelSimulation = ({ city }: SolarPanelSimulationProps) => {
               const totalYield = state.sumDailyPvYield();
               const profit = state.getDailyPvProfit();
               state.actionInfo = {
-                name: 'Dynamic Daily Simulation For Solar Panels Completed',
+                name: 'Dynamic Daily Simulation for Solar Panels Completed',
                 result: { totalYield: totalYield, profit: profit },
                 details: state.dailyPvYield,
                 timestamp: new Date().getTime(),
@@ -467,7 +467,7 @@ const SolarPanelSimulation = ({ city }: SolarPanelSimulationProps) => {
           const totalYield = state.sumYearlyPvYield();
           const profit = state.getYearlyPvProfit();
           state.actionInfo = {
-            name: 'Static Yearly Simulation For Solar Panels Completed',
+            name: 'Static Yearly Simulation for Solar Panels Completed',
             result: { totalYield: totalYield, profit: profit },
             details: state.yearlyPvYield,
             timestamp: new Date().getTime(),
@@ -515,7 +515,7 @@ const SolarPanelSimulation = ({ city }: SolarPanelSimulationProps) => {
                 const totalYield = state.sumYearlyPvYield();
                 const profit = state.getYearlyPvProfit();
                 state.actionInfo = {
-                  name: 'Dynamic Yearly Simulation For Solar Panels Completed',
+                  name: 'Dynamic Yearly Simulation for Solar Panels Completed',
                   result: { totalYield: totalYield, profit: profit },
                   details: state.yearlyPvYield,
                   timestamp: new Date().getTime(),

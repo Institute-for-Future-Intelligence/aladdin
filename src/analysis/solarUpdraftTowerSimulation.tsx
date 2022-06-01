@@ -37,6 +37,7 @@ export interface SolarUpdraftTowerSimulationProps {
 
 const SolarUpdraftTowerSimulation = ({ city }: SolarUpdraftTowerSimulationProps) => {
   const setCommonStore = useStore(Selector.set);
+  const loggable = useStore(Selector.loggable);
   const language = useStore(Selector.language);
   const world = useStore.getState().world;
   const elements = useStore.getState().elements;
@@ -154,6 +155,17 @@ const SolarUpdraftTowerSimulation = ({ city }: SolarUpdraftTowerSimulationProps)
     showInfo(i18n.t('message.SimulationCompleted', lang));
     simulationCompletedRef.current = true;
     finishDaily();
+    if (loggable) {
+      setCommonStore((state) => {
+        const totalYield = state.sumDailyUpdraftTowerYield();
+        state.actionInfo = {
+          name: 'Static Daily Simulation for Updraft Tower Completed',
+          result: { totalYield: totalYield },
+          details: state.dailyUpdraftTowerYield,
+          timestamp: new Date().getTime(),
+        };
+      });
+    }
   };
 
   const initDaily = () => {
@@ -187,6 +199,17 @@ const SolarUpdraftTowerSimulation = ({ city }: SolarUpdraftTowerSimulationProps)
         showInfo(i18n.t('message.SimulationCompleted', lang));
         simulationCompletedRef.current = true;
         finishDaily();
+        if (loggable) {
+          setCommonStore((state) => {
+            const totalYield = state.sumDailyUpdraftTowerYield();
+            state.actionInfo = {
+              name: 'Dynamic Daily Simulation for Updraft Tower Completed',
+              result: { totalYield: totalYield },
+              details: state.dailyUpdraftTowerYield,
+              timestamp: new Date().getTime(),
+            };
+          });
+        }
         return;
       }
       // this is where time advances (by incrementing the minutes with the given interval)
@@ -435,6 +458,17 @@ const SolarUpdraftTowerSimulation = ({ city }: SolarUpdraftTowerSimulationProps)
     showInfo(i18n.t('message.SimulationCompleted', lang));
     simulationCompletedRef.current = true;
     generateYearlyData();
+    if (loggable) {
+      setCommonStore((state) => {
+        const totalYield = state.sumYearlyUpdraftTowerYield();
+        state.actionInfo = {
+          name: 'Static Yearly Simulation for Updraft Tower Completed',
+          result: { totalYield: totalYield },
+          details: state.yearlyUpdraftTowerYield,
+          timestamp: new Date().getTime(),
+        };
+      });
+    }
   };
 
   const simulateYearly = () => {
@@ -471,6 +505,17 @@ const SolarUpdraftTowerSimulation = ({ city }: SolarUpdraftTowerSimulationProps)
           showInfo(i18n.t('message.SimulationCompleted', lang));
           simulationCompletedRef.current = true;
           generateYearlyData();
+          if (loggable) {
+            setCommonStore((state) => {
+              const totalYield = state.sumYearlyUpdraftTowerYield();
+              state.actionInfo = {
+                name: 'Dynamic Yearly Simulation for Updraft Tower Completed',
+                result: { totalYield: totalYield },
+                details: state.yearlyUpdraftTowerYield,
+                timestamp: new Date().getTime(),
+              };
+            });
+          }
           return;
         }
         // go to the next month

@@ -23,6 +23,7 @@ export interface ParabolicTroughSimulationProps {
 
 const ParabolicTroughSimulation = ({ city }: ParabolicTroughSimulationProps) => {
   const setCommonStore = useStore(Selector.set);
+  const loggable = useStore(Selector.loggable);
   const language = useStore(Selector.language);
   const world = useStore.getState().world;
   const elements = useStore.getState().elements;
@@ -145,6 +146,17 @@ const ParabolicTroughSimulation = ({ city }: ParabolicTroughSimulationProps) => 
         showInfo(i18n.t('message.SimulationCompleted', lang));
         simulationCompletedRef.current = true;
         finishDaily();
+        if (loggable) {
+          setCommonStore((state) => {
+            const totalYield = state.sumDailyParabolicTroughYield();
+            state.actionInfo = {
+              name: 'Daily Simulation for Parabolic Troughs Completed',
+              result: { totalYield: totalYield },
+              details: state.dailyParabolicDishYield,
+              timestamp: new Date().getTime(),
+            };
+          });
+        }
         return;
       }
       // this is where time advances (by incrementing the minutes with the given interval)
@@ -338,6 +350,17 @@ const ParabolicTroughSimulation = ({ city }: ParabolicTroughSimulationProps) => 
           showInfo(i18n.t('message.SimulationCompleted', lang));
           simulationCompletedRef.current = true;
           generateYearlyYieldData();
+          if (loggable) {
+            setCommonStore((state) => {
+              const totalYield = state.sumYearlyParabolicTroughYield();
+              state.actionInfo = {
+                name: 'Yearly Simulation for Parabolic Troughs Completed',
+                result: { totalYield: totalYield },
+                details: state.yearlyParabolicDishYield,
+                timestamp: new Date().getTime(),
+              };
+            });
+          }
           return;
         }
         // go to the next month

@@ -24,6 +24,7 @@ export interface FresnelReflectorSimulationProps {
 
 const FresnelReflectorSimulation = ({ city }: FresnelReflectorSimulationProps) => {
   const setCommonStore = useStore(Selector.set);
+  const loggable = useStore(Selector.loggable);
   const language = useStore(Selector.language);
   const world = useStore.getState().world;
   const elements = useStore.getState().elements;
@@ -146,6 +147,17 @@ const FresnelReflectorSimulation = ({ city }: FresnelReflectorSimulationProps) =
         showInfo(i18n.t('message.SimulationCompleted', lang));
         simulationCompletedRef.current = true;
         finishDaily();
+        if (loggable) {
+          setCommonStore((state) => {
+            const totalYield = state.sumDailyFresnelReflectorYield;
+            state.actionInfo = {
+              name: 'Daily Simulation for Fresnel Reflectors Completed',
+              result: { totalYield: totalYield },
+              details: state.dailyFresnelReflectorYield,
+              timestamp: new Date().getTime(),
+            };
+          });
+        }
         return;
       }
       // this is where time advances (by incrementing the minutes with the given interval)
@@ -339,6 +351,17 @@ const FresnelReflectorSimulation = ({ city }: FresnelReflectorSimulationProps) =
           showInfo(i18n.t('message.SimulationCompleted', lang));
           simulationCompletedRef.current = true;
           generateYearlyYieldData();
+          if (loggable) {
+            setCommonStore((state) => {
+              const totalYield = state.sumYearlyFresnelReflectorYield;
+              state.actionInfo = {
+                name: 'Yearly Simulation for Fresnel Reflectors Completed',
+                result: { totalYield: totalYield },
+                details: state.yearlyFresnelReflectorYield,
+                timestamp: new Date().getTime(),
+              };
+            });
+          }
           return;
         }
         // go to the next month

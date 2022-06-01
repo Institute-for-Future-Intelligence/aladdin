@@ -34,6 +34,7 @@ export interface SensorSimulationProps {
 
 const SensorSimulation = ({ city }: SensorSimulationProps) => {
   const setCommonStore = useStore(Selector.set);
+  const loggable = useStore(Selector.loggable);
   const language = useStore(Selector.language);
   const world = useStore.getState().world;
   const elements = useStore.getState().elements;
@@ -145,6 +146,15 @@ const SensorSimulation = ({ city }: SensorSimulationProps) => {
     showInfo(i18n.t('message.SimulationCompleted', lang));
     simulationCompletedRef.current = true;
     finishDaily();
+    if (loggable) {
+      setCommonStore((state) => {
+        state.actionInfo = {
+          name: 'Static Daily Simulation for Sensors Completed',
+          details: state.dailyLightSensorData,
+          timestamp: new Date().getTime(),
+        };
+      });
+    }
   };
 
   const initDaily = () => {
@@ -178,6 +188,15 @@ const SensorSimulation = ({ city }: SensorSimulationProps) => {
         showInfo(i18n.t('message.SimulationCompleted', lang));
         simulationCompletedRef.current = true;
         finishDaily();
+        if (loggable) {
+          setCommonStore((state) => {
+            state.actionInfo = {
+              name: 'Dynamic Daily Simulation for Sensors Completed',
+              details: state.dailyLightSensorData,
+              timestamp: new Date().getTime(),
+            };
+          });
+        }
         return;
       }
       // this is where time advances (by incrementing the minutes with the given interval)
@@ -336,6 +355,15 @@ const SensorSimulation = ({ city }: SensorSimulationProps) => {
     showInfo(i18n.t('message.SimulationCompleted', lang));
     simulationCompletedRef.current = true;
     generateYearlyData();
+    if (loggable) {
+      setCommonStore((state) => {
+        state.actionInfo = {
+          name: 'Static Yearly Simulation for Sensors Completed',
+          details: state.yearlyLightSensorData,
+          timestamp: new Date().getTime(),
+        };
+      });
+    }
   };
 
   const simulateYearly = () => {
@@ -369,6 +397,15 @@ const SensorSimulation = ({ city }: SensorSimulationProps) => {
           showInfo(i18n.t('message.SimulationCompleted', lang));
           simulationCompletedRef.current = true;
           generateYearlyData();
+          if (loggable) {
+            setCommonStore((state) => {
+              state.actionInfo = {
+                name: 'Dynamic Yearly Simulation for Sensors Completed',
+                details: state.yearlyLightSensorData,
+                timestamp: new Date().getTime(),
+              };
+            });
+          }
           return;
         }
         // go to the next month
