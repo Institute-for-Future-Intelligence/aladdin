@@ -346,6 +346,7 @@ export const i18n_zh_cn = {
         AADATSolarTrackersInRealWorld: '一个真实世界里的双轴旋转追日光伏板阵列（AADAT）',
         SolarUpdraftTowerInCity: '太阳能上升气流塔在城市中的应用',
         CapeCodStyleHouseWithShedDormer: '有棚顶窗的科德角风格的住宅',
+        DutchColonialHouse: '荷兰殖民地风格的住宅',
         BarnStyleHouse: '谷仓式风格的住宅',
         GambrelRoofVsMansardRoof: '复斜屋顶和折线屋顶对比',
         OfficeBuilding: '一栋简单的办公楼',

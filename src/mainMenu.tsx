@@ -14,6 +14,7 @@ import solar_farm_aadat_array from './examples/solar_farm_aadat_array.json';
 import solar_trackers from './examples/solar_trackers.json';
 import cape_cod_with_shed_dormer from './examples/cape_cod_with_shed_dormer.json';
 import barn_house from './examples/barn_house.json';
+import dutch_colonial_house from './examples/dutch_colonial_house.json';
 import gambrel_roof_vs_mansard_roof from './examples/gambrel_roof_vs_mansard_roof.json';
 import hotel_01 from './examples/hotel_01.json';
 import heatmap_01 from './examples/heatmap_01.json';
@@ -351,6 +352,9 @@ const MainMenu = ({ viewOnly, set2DView, resetView, zoomView, canvas }: MainMenu
         break;
       case 'gambrel_roof_vs_mansard_roof':
         input = gambrel_roof_vs_mansard_roof;
+        break;
+      case 'dutch_colonial_house':
+        input = dutch_colonial_house;
         break;
       case 'barn_house':
         input = barn_house;
@@ -1911,6 +1915,9 @@ const MainMenu = ({ viewOnly, set2DView, resetView, zoomView, canvas }: MainMenu
             </Menu.Item>
             <Menu.Item key="gambrel_roof_vs_mansard_roof" onClick={loadFile}>
               {i18n.t('menu.examples.GambrelRoofVsMansardRoof', lang)}
+            </Menu.Item>
+            <Menu.Item key="dutch_colonial_house" onClick={loadFile}>
+              {i18n.t('menu.examples.DutchColonialHouse', lang)}
             </Menu.Item>
             <Menu.Item key="barn_house" onClick={loadFile}>
               {i18n.t('menu.examples.BarnStyleHouse', lang)}

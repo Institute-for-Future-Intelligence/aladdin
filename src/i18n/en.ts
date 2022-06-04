@@ -349,6 +349,7 @@ export const i18n_en = {
         AADATSolarTrackersInRealWorld: 'Azimuth–Altitude Dual Axis Trackers (AADAT) in the Real World',
         SolarUpdraftTowerInCity: 'Solar Updraft Tower in City',
         CapeCodStyleHouseWithShedDormer: 'Cape Cod Style House with Shed Dormer',
+        DutchColonialHouse: 'Dutch Colonial House',
         BarnStyleHouse: 'Barn Style House',
         GambrelRoofVsMansardRoof: 'Gambrel Roof vs. Mansard Roof',
         OfficeBuilding: 'Office Building',

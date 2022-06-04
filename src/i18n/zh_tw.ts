@@ -347,6 +347,7 @@ export const i18n_zh_tw = {
         SolarTrackersInRealWorld: '模擬',
         SolarUpdraftTowerInCity: '太陽能上升氣流塔在城市中的應用',
         CapeCodStyleHouseWithShedDormer: '有棚頂窗的科德角風格的住宅',
+        DutchColonialHouse: '荷蘭殖民地風格的住宅',
         BarnStyleHouse: '穀倉式風格的住宅',
         GambrelRoofVsMansardRoof: '复斜屋顶和折線屋頂對比',
         OfficeBuilding: '一棟簡單的寫字樓',
