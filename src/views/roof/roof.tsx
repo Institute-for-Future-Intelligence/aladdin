@@ -34,6 +34,7 @@ import { ObjectType, RoofTexture } from 'src/types';
 import { ThreeEvent } from '@react-three/fiber';
 import { WallModel } from 'src/models/WallModel';
 import { HALF_PI } from 'src/constants';
+import { Point2 } from 'src/models/Point2';
 
 export const euler = new Euler(0, 0, HALF_PI);
 export interface ConvexGeoProps {
@@ -179,6 +180,96 @@ export const getDistance = (p1: Vector3, p2: Vector3, p3: Vector3) => {
   const C = p2.x * p1.y - p1.x * p2.y;
   const res = Math.abs((A * p3.x + B * p3.y + C) / Math.sqrt(A * A + B * B));
   return res === 0 ? Infinity : res;
+};
+
+export const getWallPoints2D = (
+  wall: WallModel,
+  centerRoofHeight?: number[],
+  centerLeftRoofHeight?: number[],
+  centerRightRoofHeight?: number[],
+) => {
+  const { lx, lz, rightRoofHeight, leftRoofHeight } = wall;
+  const centerLeft = centerLeftRoofHeight ?? wall.centerLeftRoofHeight;
+  const center = centerRoofHeight ?? wall.centerRoofHeight;
+  const centerRight = centerRightRoofHeight ?? wall.centerRightRoofHeight;
+
+  const points: Point2[] = [];
+  const x = lx / 2;
+  const y = lz / 2;
+  points.push({ x: -x, y: -y });
+  points.push({ x: x, y: -y });
+  rightRoofHeight ? points.push({ x: x, y: rightRoofHeight - y }) : points.push({ x: x, y: y });
+  if (centerRight) {
+    points.push({ x: centerRight[0] * lx, y: centerRight[1] - y });
+  }
+  if (center) {
+    points.push({ x: center[0] * lx, y: center[1] - y });
+  }
+  if (centerLeft) {
+    points.push({ x: centerLeft[0] * lx, y: centerLeft[1] - y });
+  }
+  leftRoofHeight ? points.push({ x: -x, y: leftRoofHeight - y }) : points.push({ x: -x, y: y });
+  return points;
+};
+
+export const isPointInside = (wallPoints2D: Point2[], x: number, y: number) => {
+  let inside = false;
+  for (let i = 0, j = wallPoints2D.length - 1; i < wallPoints2D.length; j = i++) {
+    const xi = wallPoints2D[i].x;
+    const yi = wallPoints2D[i].y;
+    const xj = wallPoints2D[j].x;
+    const yj = wallPoints2D[j].y;
+    if (yi > y != yj > y && x < ((xj - xi) * (y - yi)) / (yj - yi) + xi) {
+      inside = !inside;
+    }
+  }
+  return inside;
+};
+
+export const isRoofValid = (
+  roofId: string,
+  currWallId?: string,
+  counterWallId?: string,
+  centerRoofHeight?: number[],
+  centerLeftRoofHeight?: number[],
+  centerRightRoofHeight?: number[],
+) => {
+  for (const element of useStore.getState().elements) {
+    if (element.type === ObjectType.Wall && (element as WallModel).roofId === roofId) {
+      const wall = element as WallModel;
+      let points: Point2[] = [];
+      if (wall.id === currWallId) {
+        points = getWallPoints2D(wall, centerRoofHeight, centerLeftRoofHeight, centerRightRoofHeight);
+      } else if (wall.id === counterWallId) {
+        let ch: number[] | undefined = undefined;
+        let cl: number[] | undefined = undefined;
+        let cr: number[] | undefined = undefined;
+        if (centerRoofHeight) {
+          ch = [-centerRoofHeight[0], centerRoofHeight[1]];
+        }
+        if (centerRightRoofHeight) {
+          cl = [-centerRightRoofHeight[0], centerRightRoofHeight[1]];
+        }
+        if (centerLeftRoofHeight) {
+          cr = [-centerLeftRoofHeight[0], centerLeftRoofHeight[1]];
+        }
+        points = getWallPoints2D(wall, ch, cl, cr);
+      }
+      if (wall.id === currWallId || wall.id === counterWallId) {
+        for (const e of useStore.getState().elements) {
+          if (e.parentId === wall.id) {
+            const minX = e.cx * wall.lx - (e.lx * wall.lx) / 2;
+            const maxX = e.cx * wall.lx + (e.lx * wall.lx) / 2;
+            const maxZ = e.cz * wall.lz + (e.lz * wall.lz) / 2 + 0.5;
+            if (!isPointInside(points, minX, maxZ) || !isPointInside(points, maxX, maxZ)) {
+              return false;
+            }
+          }
+        }
+      }
+    }
+  }
+  return true;
 };
 
 const Roof = (props: RoofModel) => {

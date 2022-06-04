@@ -22,6 +22,7 @@ import {
   getIntersectionPoint,
   getDistance,
   handleRoofPointerDown,
+  isRoofValid,
 } from './roof';
 import { UnoableResizeGableRoofRidge } from 'src/undo/UndoableResize';
 import { RoofTexture, ObjectType } from 'src/types';
@@ -700,11 +701,13 @@ const GableRoof = ({
                         if (Math.abs(x) >= 0.45 && Math.abs(x) < 0.5) {
                           x = 0.45 * Math.sign(x);
                         }
-                        updateRoofTopRidge(id, x, -x);
-                        if (Math.abs(x) === 0.5 && !isShed) {
-                          setIsShed(true);
-                        } else if (Math.abs(x) !== 0.5 && isShed) {
-                          setIsShed(false);
+                        if (isRoofValid(id, currentWallArray[3].id, currentWallArray[1].id, [x, h])) {
+                          updateRoofTopRidge(id, x, -x);
+                          if (Math.abs(x) === 0.5 && !isShed) {
+                            setIsShed(true);
+                          } else if (Math.abs(x) !== 0.5 && isShed) {
+                            setIsShed(false);
+                          }
                         }
                       }
                     }
@@ -719,18 +722,23 @@ const GableRoof = ({
                         if (Math.abs(x) >= 0.45 && Math.abs(x) < 0.5) {
                           x = 0.45 * Math.sign(x);
                         }
-                        updateRoofTopRidge(id, -x, x);
-                        if (Math.abs(x) === 0.5 && !isShed) {
-                          setIsShed(true);
-                        } else if (Math.abs(x) !== 0.5 && isShed) {
-                          setIsShed(false);
+                        if (isRoofValid(id, currentWallArray[1].id, currentWallArray[3].id, [x, h])) {
+                          updateRoofTopRidge(id, -x, x);
+                          if (Math.abs(x) === 0.5 && !isShed) {
+                            setIsShed(true);
+                          } else if (Math.abs(x) !== 0.5 && isShed) {
+                            setIsShed(false);
+                          }
                         }
                       }
                     }
                     break;
                   }
                   case RoofHandleType.Mid: {
-                    setH(Math.max(minHeight, point.z - (parent?.lz ?? 0) - 0.3));
+                    const height = Math.max(minHeight, point.z - (parent?.lz ?? 0) - 0.3);
+                    if (isRoofValid(id, currentWallArray[3].id, currentWallArray[1].id, [ridgeLeftPoint[0], height])) {
+                      setH(height);
+                    }
                     break;
                   }
                 }

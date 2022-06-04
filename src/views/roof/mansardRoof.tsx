@@ -26,6 +26,7 @@ import {
   handleRoofContextMenu,
   handleRoofPointerDown,
   handleUndoableResizeRoofHeight,
+  isRoofValid,
   useRoofTexture,
 } from './roof';
 
@@ -594,7 +595,10 @@ const MansardRoof = ({
                 }
                 switch (roofHandleType) {
                   case RoofHandleType.Top: {
-                    setH(Math.max(minHeight, point.z - (parent?.lz ?? 0) - 0.3));
+                    const height = Math.max(minHeight, point.z - (parent?.lz ?? 0) - 0.6);
+                    if (isRoofValid(id, undefined, undefined, [0, height])) {
+                      setH(height);
+                    }
                     break;
                   }
                   case RoofHandleType.FrontLeft: {
@@ -603,7 +607,14 @@ const MansardRoof = ({
                         if (e.id === id) {
                           if (parent && currentWallArray[3]) {
                             const px = Util.clamp(getRelPos(parent, currentWallArray[3], point), 0.01, 0.45);
-                            (e as MansardRoofModel).frontRidge = px;
+                            if (
+                              isRoofValid(id, currentWallArray[3].id, currentWallArray[1].id, undefined, undefined, [
+                                px,
+                                h,
+                              ])
+                            ) {
+                              (e as MansardRoofModel).frontRidge = px;
+                            }
                             break;
                           }
                         }
@@ -617,7 +628,18 @@ const MansardRoof = ({
                         if (e.id === id) {
                           if (parent && currentWallArray[1]) {
                             const px = Util.clamp(getRelPos(parent, currentWallArray[1], point), -0.45, -0.01);
-                            (e as MansardRoofModel).frontRidge = -px;
+                            if (
+                              isRoofValid(
+                                id,
+                                currentWallArray[1].id,
+                                currentWallArray[3].id,
+                                undefined,
+                                [px, h],
+                                undefined,
+                              )
+                            ) {
+                              (e as MansardRoofModel).frontRidge = -px;
+                            }
                           }
                           break;
                         }
@@ -631,7 +653,18 @@ const MansardRoof = ({
                         if (e.id === id) {
                           if (parent && currentWallArray[3]) {
                             const px = Util.clamp(getRelPos(parent, currentWallArray[3], point), -0.45, -0.01);
-                            (e as MansardRoofModel).backRidge = px;
+                            if (
+                              isRoofValid(
+                                id,
+                                currentWallArray[3].id,
+                                currentWallArray[1].id,
+                                undefined,
+                                [px, h],
+                                undefined,
+                              )
+                            ) {
+                              (e as MansardRoofModel).backRidge = px;
+                            }
                           }
                           break;
                         }
@@ -645,7 +678,14 @@ const MansardRoof = ({
                         if (e.id === id) {
                           if (parent && currentWallArray[1]) {
                             const px = Util.clamp(getRelPos(parent, currentWallArray[1], point), 0.01, 0.45);
-                            (e as MansardRoofModel).backRidge = -px;
+                            if (
+                              isRoofValid(id, currentWallArray[1].id, currentWallArray[3].id, undefined, undefined, [
+                                px,
+                                h,
+                              ])
+                            ) {
+                              (e as MansardRoofModel).backRidge = -px;
+                            }
                           }
                           break;
                         }

@@ -34,6 +34,7 @@ import {
   handleRoofContextMenu,
   handleRoofPointerDown,
   handleUndoableResizeRoofHeight,
+  isRoofValid,
   useRoofTexture,
 } from './roof';
 import { CSG } from 'three-csg-ts';
@@ -700,7 +701,12 @@ const GambrelRoof = ({
                 }
                 switch (roofHandleType) {
                   case RoofHandleType.TopMid: {
-                    setH(Math.max(minHeight, point.z - (parent?.lz ?? 0)));
+                    const height = Math.max(minHeight, point.z - (parent?.lz ?? 0));
+                    if (
+                      isRoofValid(id, currentWallArray[3].id, currentWallArray[1].id, [topRidgeLeftPoint[0], height])
+                    ) {
+                      setH(height);
+                    }
                     break;
                   }
                   case RoofHandleType.FrontLeft: {
@@ -713,12 +719,20 @@ const GambrelRoof = ({
                               topRidgeLeftPoint[0],
                               0.45,
                             );
-                            (e as GambrelRoofModel).frontRidgeLeftPoint[0] = px;
+                            if (
+                              isRoofValid(id, currentWallArray[3].id, undefined, undefined, undefined, [
+                                px,
+                                frontRidgeLeftPoint[1] * (h - minHeight) + minHeight,
+                              ])
+                            ) {
+                              (e as GambrelRoofModel).frontRidgeLeftPoint[0] = px;
+                            }
                           }
                           break;
                         }
                       }
                     });
+
                     break;
                   }
                   case RoofHandleType.TopLeft: {
@@ -731,7 +745,18 @@ const GambrelRoof = ({
                               backRidgeRightPoint[0],
                               frontRidgeLeftPoint[0],
                             );
-                            (e as GambrelRoofModel).topRidgeLeftPoint[0] = px;
+                            if (
+                              isRoofValid(
+                                id,
+                                currentWallArray[3].id,
+                                undefined,
+                                [px, topRidgeLeftPoint[1] * (h - minHeight) + minHeight],
+                                undefined,
+                                undefined,
+                              )
+                            ) {
+                              (e as GambrelRoofModel).topRidgeLeftPoint[0] = px;
+                            }
                           }
                           break;
                         }
@@ -749,7 +774,18 @@ const GambrelRoof = ({
                               -0.45,
                               topRidgeLeftPoint[0],
                             );
-                            (e as GambrelRoofModel).backRidgeRightPoint[0] = px;
+                            if (
+                              isRoofValid(
+                                id,
+                                currentWallArray[3].id,
+                                undefined,
+                                undefined,
+                                [px, backRidgeRightPoint[1] * (h - minHeight) + minHeight],
+                                undefined,
+                              )
+                            ) {
+                              (e as GambrelRoofModel).backRidgeRightPoint[0] = px;
+                            }
                           }
                           break;
                         }
@@ -767,7 +803,18 @@ const GambrelRoof = ({
                               -0.45,
                               topRidgeRightPoint[0],
                             );
-                            (e as GambrelRoofModel).frontRidgeRightPoint[0] = px;
+                            if (
+                              isRoofValid(
+                                id,
+                                currentWallArray[1].id,
+                                undefined,
+                                undefined,
+                                [px, frontRidgeRightPoint[1] * (h - minHeight) + minHeight],
+                                undefined,
+                              )
+                            ) {
+                              (e as GambrelRoofModel).frontRidgeRightPoint[0] = px;
+                            }
                           }
                           break;
                         }
@@ -785,7 +832,18 @@ const GambrelRoof = ({
                               frontRidgeRightPoint[0],
                               backRidgeLeftPoint[0],
                             );
-                            (e as GambrelRoofModel).topRidgeRightPoint[0] = px;
+                            if (
+                              isRoofValid(
+                                id,
+                                currentWallArray[1].id,
+                                undefined,
+                                [px, topRidgeRightPoint[1] * (h - minHeight) + minHeight],
+                                undefined,
+                                undefined,
+                              )
+                            ) {
+                              (e as GambrelRoofModel).topRidgeRightPoint[0] = px;
+                            }
                           }
                           break;
                         }
@@ -803,7 +861,14 @@ const GambrelRoof = ({
                               topRidgeRightPoint[0],
                               0.45,
                             );
-                            (e as GambrelRoofModel).backRidgeLeftPoint[0] = px;
+                            if (
+                              isRoofValid(id, currentWallArray[1].id, undefined, undefined, undefined, [
+                                px,
+                                backRidgeLeftPoint[1] * (h - minHeight) + minHeight,
+                              ])
+                            ) {
+                              (e as GambrelRoofModel).backRidgeLeftPoint[0] = px;
+                            }
                           }
                           break;
                         }
