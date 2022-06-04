@@ -118,6 +118,7 @@ const MainToolBar = ({ viewOnly = false }: MainToolBarProps) => {
   }, []);
 
   const handlePopStateEvent = () => {
+    if (viewOnly) return;
     const p = new URLSearchParams(window.location.search);
     const userid = p.get('userid');
     const title = p.get('title');
@@ -420,7 +421,7 @@ const MainToolBar = ({ viewOnly = false }: MainToolBarProps) => {
             });
           }
           setLoading(false);
-          if (!popState) {
+          if (!popState && !viewOnly) {
             const newUrl = HOME_URL + '?client=web&userid=' + userid + '&title=' + encodeURIComponent(title);
             window.history.pushState({}, document.title, newUrl);
           }

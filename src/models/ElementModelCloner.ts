@@ -4,7 +4,7 @@
 
 import short from 'short-uuid';
 import { HumanModel } from './HumanModel';
-import { CuboidTexture, ObjectType, SolarStructure } from '../types';
+import { CuboidTexture, ObjectType } from '../types';
 import { TreeModel } from './TreeModel';
 import { SensorModel } from './SensorModel';
 import { FoundationModel } from './FoundationModel';
@@ -530,6 +530,7 @@ export class ElementModelCloner {
     } as WindowModel;
   }
 
+  // TODO
   private static cloneRoof(parent: ElementModel, roof: RoofModel, x: number, y: number, z?: number) {
     // return {
     //   type: ObjectType.Roof,
@@ -547,6 +548,6 @@ export class ElementModelCloner {
     //   parentId: parent.id,
     //   foundationId: parent.id,
     // } as RoofModel;
-    return {} as ElementModel;
+    return { id: short.generate() as string, parentId: parent.id, foundationId: parent.id } as ElementModel;
   }
 }

@@ -82,7 +82,7 @@ const ElementsRenderer: React.FC = () => {
           case ObjectType.Polygon:
             return <Polygon key={e.id} {...(e as PolygonModel)} />;
           default:
-            return <React.Fragment key={e.id} />;
+            if (e.id) return <React.Fragment key={e.id} />;
         }
       })}
     </group>
