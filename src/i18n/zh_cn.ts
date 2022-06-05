@@ -297,21 +297,36 @@ export const i18n_zh_cn = {
         AnalyzeYearlyYield: '分析全年产出',
         SolarUpdraftTowerSimulationNoAnimation: '若无移动部件则省略动画',
       },
+
       tutorialsSubMenu: '教程',
+
       solarEnergyScienceSubMenu: '太阳能科学',
-      photovoltaicSolarPowerSubMenu: '光伏发电',
-      concentratedSolarPowerSubMenu: '光热发电',
-      otherTypesOfSolarPowerSubMenu: '其它类型的太阳能发电',
-      tutorials: {
+      solarEnergyScienceTutorials: {
         SunAngles: '太阳相对于地面观察者的角度',
         InsolationAndClimate: '太阳辐射和气候的关系',
         SolarRadiationToBox: '一个长方体受到的太阳能辐射分析',
+      },
+
+      buildingDesignSubMenu: '建筑设计',
+      buildingDesignTutorials: {
+        CapeCodStyleHouseWithShedDormer: '有棚顶窗的科德角风格的住宅',
+        GableRoofVsHipRoof: '双坡屋顶和四坡屋顶的对比',
+        ColonialVsSaltbox: '殖民地风格和盐盒风格的对比',
+        GambrelRoofVsMansardRoof: '复斜屋顶和折线屋顶的对比',
+      },
+
+      photovoltaicSolarPowerSubMenu: '光伏发电',
+      photovoltaicSolarPowerTutorials: {
         EffectOfTiltAngleOfSolarPanel: '光伏板倾斜角对发电量的影响',
         EffectOfAzimuthOfSolarPanel: '光伏板方位角对发电量的影响',
         SolarTrackers: '自动追日器',
         CoveringGroundWithSolarPanels: '为什么我们不简单地用光伏板覆盖地面',
         InterRowSpacingOfSolarPanelArray: '光伏板阵列行间距对发电量的影响',
         EffectOfOrientationOfSolarPanels: '光伏板排列方向对发电量的影响',
+      },
+
+      concentratedSolarPowerSubMenu: '光热发电',
+      concentratedSolarPowerTutorials: {
         EffectOfAzimuthOfParabolicTrough: '抛物线槽方位角对发电量的影响',
         EffectOfLatusRectumOfParabolicTrough: '抛物线槽通径对发电量的影响',
         FocusSunlightWithParabolicDish: '用抛物线碟聚焦陽光',
@@ -322,16 +337,17 @@ export const i18n_zh_cn = {
         ShadowingAndBlockingOfHeliostats: '定日镜的阴影和遮挡',
         EffectSolarPowerTowerHeight: '吸收塔高度对发电量的影响',
         SolarPowerTower: '塔式光热发电站',
+      },
+
+      otherTypesOfSolarPowerSubMenu: '其它类型的太阳能发电',
+      otherTypesOfSolarPowerTutorials: {
         SolarUpdraftTower: '太阳能上升气流塔',
       },
+
       examplesSubMenu: '例子',
+
       solarEnergySubMenu: '太阳能',
-      builtEnvironmentSubMenu: '建造环境',
-      residentialBuildingsSubMenu: '住宅建筑',
-      commercialBuildingsSubMenu: '商用建筑',
-      urbanPlanningSubMenu: '城市规划',
-      artificialIntelligenceSubMenu: '人工智能',
-      examples: {
+      solarEnergyExamples: {
         SunBeamAndHeliodon: '太阳光束和日影仪',
         SolarFarm: '太阳能农场',
         NevadaSolarOneParabolicTroughArray: '内华达太阳能一号的抛物线槽阵列',
@@ -345,20 +361,33 @@ export const i18n_zh_cn = {
         HSATSolarTrackersInRealWorld: '一个真实世界里的水平方向单轴旋转追日光伏板阵列（HSAT）',
         AADATSolarTrackersInRealWorld: '一个真实世界里的双轴旋转追日光伏板阵列（AADAT）',
         SolarUpdraftTowerInCity: '太阳能上升气流塔在城市中的应用',
-        CapeCodStyleHouseWithShedDormer: '有棚顶窗的科德角风格的住宅',
+      },
+
+      builtEnvironmentSubMenu: '建造环境',
+      residentialBuildingsSubMenu: '住宅建筑',
+      residentialBuildingExamples: {
         DutchColonialHouse: '荷兰殖民地风格的住宅',
         BarnStyleHouse: '谷仓式风格的住宅',
-        GableRoofVsHipRoof: '双坡屋顶和四坡屋顶的对比',
-        GambrelRoofVsMansardRoof: '复斜屋顶和折线屋顶的对比',
+      },
+      commercialBuildingsSubMenu: '商用建筑',
+      commercialBuildingExamples: {
         OfficeBuilding: '一栋简单的办公楼',
         Hotel: '一个旅馆场景',
+      },
+      urbanPlanningSubMenu: '城市规划',
+      urbanPlanningExamples: {
         Heatmap1: '热图例一',
+      },
+
+      artificialIntelligenceSubMenu: '人工智能',
+      artificialIntelligenceExamples: {
         OptimizingTiltAngleOfOneSolarPanelRow: '优化单排光伏板的倾斜角',
         OptimizingTiltAnglesOfMultipleSolarPanelRows: '优化多排光伏板的倾斜角',
         SolarFarmGenerativeDesign: '生成式设计太阳能农场',
         SolarFarmGenerativeDesignWithBlock: '生成式设计太阳能农场：周边有建筑物的情况',
         FitchburgSolarFarmGenerativeDesign: '生成式设计太阳能农场：真实世界案例',
       },
+
       languageSubMenu: '语言',
       AboutUs: '关于我们',
     },

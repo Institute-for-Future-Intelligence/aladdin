@@ -16,6 +16,7 @@ import cape_cod_with_shed_dormer from './examples/cape_cod_with_shed_dormer.json
 import barn_house from './examples/barn_house.json';
 import dutch_colonial_house from './examples/dutch_colonial_house.json';
 import gable_roof_vs_hip_roof from './examples/gable_roof_vs_hip_roof.json';
+import colonial_vs_saltbox from './examples/colonial_vs_saltbox.json';
 import gambrel_roof_vs_mansard_roof from './examples/gambrel_roof_vs_mansard_roof.json';
 import hotel_01 from './examples/hotel_01.json';
 import heatmap_01 from './examples/heatmap_01.json';
@@ -353,6 +354,9 @@ const MainMenu = ({ viewOnly, set2DView, resetView, zoomView, canvas }: MainMenu
         break;
       case 'gable_roof_vs_hip_roof':
         input = gable_roof_vs_hip_roof;
+        break;
+      case 'colonial_vs_saltbox':
+        input = colonial_vs_saltbox;
         break;
       case 'gambrel_roof_vs_mansard_roof':
         input = gambrel_roof_vs_mansard_roof;
@@ -1795,73 +1799,88 @@ const MainMenu = ({ viewOnly, set2DView, resetView, zoomView, canvas }: MainMenu
         {/* solar science */}
         <SubMenu key={'solar-energy-science'} title={i18n.t('menu.solarEnergyScienceSubMenu', lang)}>
           <Menu.Item key="sun_angles" onClick={loadFile}>
-            {i18n.t('menu.tutorials.SunAngles', lang)}
+            {i18n.t('menu.solarEnergyScienceTutorials.SunAngles', lang)}
           </Menu.Item>
           <Menu.Item key="insolation_and_climate" onClick={loadFile}>
-            {i18n.t('menu.tutorials.InsolationAndClimate', lang)}
+            {i18n.t('menu.solarEnergyScienceTutorials.InsolationAndClimate', lang)}
           </Menu.Item>
           <Menu.Item key="solar_radiation_to_box" onClick={loadFile}>
-            {i18n.t('menu.tutorials.SolarRadiationToBox', lang)}
+            {i18n.t('menu.solarEnergyScienceTutorials.SolarRadiationToBox', lang)}
+          </Menu.Item>
+        </SubMenu>
+        {/* building design */}
+        <SubMenu key={'building-design'} title={i18n.t('menu.buildingDesignSubMenu', lang)}>
+          <Menu.Item key="cape_cod_with_shed_dormer" onClick={loadFile}>
+            {i18n.t('menu.buildingDesignTutorials.CapeCodStyleHouseWithShedDormer', lang)}
+          </Menu.Item>
+          <Menu.Item key="gable_roof_vs_hip_roof" onClick={loadFile}>
+            {i18n.t('menu.buildingDesignTutorials.GableRoofVsHipRoof', lang)}
+          </Menu.Item>
+          <Menu.Item key="colonial_vs_saltbox" onClick={loadFile}>
+            {i18n.t('menu.buildingDesignTutorials.ColonialVsSaltbox', lang)}
+          </Menu.Item>
+          <Menu.Item key="gambrel_roof_vs_mansard_roof" onClick={loadFile}>
+            {i18n.t('menu.buildingDesignTutorials.GambrelRoofVsMansardRoof', lang)}
           </Menu.Item>
         </SubMenu>
         {/* photovoltaic solar power */}
         <SubMenu key={'photovoltaic-solar-power'} title={i18n.t('menu.photovoltaicSolarPowerSubMenu', lang)}>
           <Menu.Item key="effect_tilt_angle_solar_panel" onClick={loadFile}>
-            {i18n.t('menu.tutorials.EffectOfTiltAngleOfSolarPanel', lang)}
+            {i18n.t('menu.photovoltaicSolarPowerTutorials.EffectOfTiltAngleOfSolarPanel', lang)}
           </Menu.Item>
           <Menu.Item key="effect_azimuth_solar_panel" onClick={loadFile}>
-            {i18n.t('menu.tutorials.EffectOfAzimuthOfSolarPanel', lang)}
+            {i18n.t('menu.photovoltaicSolarPowerTutorials.EffectOfAzimuthOfSolarPanel', lang)}
           </Menu.Item>
           <Menu.Item key="solar_trackers" onClick={loadFile}>
-            {i18n.t('menu.tutorials.SolarTrackers', lang)}
+            {i18n.t('menu.photovoltaicSolarPowerTutorials.SolarTrackers', lang)}
           </Menu.Item>
           <Menu.Item key="why_solar_array" onClick={loadFile}>
-            {i18n.t('menu.tutorials.CoveringGroundWithSolarPanels', lang)}
+            {i18n.t('menu.photovoltaicSolarPowerTutorials.CoveringGroundWithSolarPanels', lang)}
           </Menu.Item>
           <Menu.Item key="inter_row_spacing" onClick={loadFile}>
-            {i18n.t('menu.tutorials.InterRowSpacingOfSolarPanelArray', lang)}
+            {i18n.t('menu.photovoltaicSolarPowerTutorials.InterRowSpacingOfSolarPanelArray', lang)}
           </Menu.Item>
           <Menu.Item key="effect_orientation_solar_panel" onClick={loadFile}>
-            {i18n.t('menu.tutorials.EffectOfOrientationOfSolarPanels', lang)}
+            {i18n.t('menu.photovoltaicSolarPowerTutorials.EffectOfOrientationOfSolarPanels', lang)}
           </Menu.Item>
         </SubMenu>
         {/* concentrated solar power */}
         <SubMenu key={'concentrated-solar-power'} title={i18n.t('menu.concentratedSolarPowerSubMenu', lang)}>
           <Menu.Item key="parabolic_dish_focus_sunlight" onClick={loadFile}>
-            {i18n.t('menu.tutorials.FocusSunlightWithParabolicDish', lang)}
+            {i18n.t('menu.concentratedSolarPowerTutorials.FocusSunlightWithParabolicDish', lang)}
           </Menu.Item>
           <Menu.Item key="effect_azimuth_parabolic_trough" onClick={loadFile}>
-            {i18n.t('menu.tutorials.EffectOfAzimuthOfParabolicTrough', lang)}
+            {i18n.t('menu.concentratedSolarPowerTutorials.EffectOfAzimuthOfParabolicTrough', lang)}
           </Menu.Item>
           <Menu.Item key="effect_latus_rectum_parabolic_trough" onClick={loadFile}>
-            {i18n.t('menu.tutorials.EffectOfLatusRectumOfParabolicTrough', lang)}
+            {i18n.t('menu.concentratedSolarPowerTutorials.EffectOfLatusRectumOfParabolicTrough', lang)}
           </Menu.Item>
           <Menu.Item key="linear_fresnel_reflectors" onClick={loadFile}>
-            {i18n.t('menu.tutorials.LinearFresnelReflectors', lang)}
+            {i18n.t('menu.concentratedSolarPowerTutorials.LinearFresnelReflectors', lang)}
           </Menu.Item>
           <Menu.Item key="effect_absorber_pipe_height" onClick={loadFile}>
-            {i18n.t('menu.tutorials.EffectOfAbsorberPipeHeightForLinearFresnelReflectors', lang)}
+            {i18n.t('menu.concentratedSolarPowerTutorials.EffectOfAbsorberPipeHeightForLinearFresnelReflectors', lang)}
           </Menu.Item>
           <Menu.Item key="effect_azimuth_fresnel_reflector" onClick={loadFile}>
-            {i18n.t('menu.tutorials.EffectOfAzimuthOfLinearFresnelReflectors', lang)}
+            {i18n.t('menu.concentratedSolarPowerTutorials.EffectOfAzimuthOfLinearFresnelReflectors', lang)}
           </Menu.Item>
           <Menu.Item key="solar_power_tower" onClick={loadFile}>
-            {i18n.t('menu.tutorials.SolarPowerTower', lang)}
+            {i18n.t('menu.concentratedSolarPowerTutorials.SolarPowerTower', lang)}
           </Menu.Item>
           <Menu.Item key="cosine_efficiency_heliostats" onClick={loadFile}>
-            {i18n.t('menu.tutorials.CosineEfficiencyOfHeliostats', lang)}
+            {i18n.t('menu.concentratedSolarPowerTutorials.CosineEfficiencyOfHeliostats', lang)}
           </Menu.Item>
           <Menu.Item key="shadowing_blocking_heliostats" onClick={loadFile}>
-            {i18n.t('menu.tutorials.ShadowingAndBlockingOfHeliostats', lang)}
+            {i18n.t('menu.concentratedSolarPowerTutorials.ShadowingAndBlockingOfHeliostats', lang)}
           </Menu.Item>
           <Menu.Item key="effect_solar_power_tower_height" onClick={loadFile}>
-            {i18n.t('menu.tutorials.EffectSolarPowerTowerHeight', lang)}
+            {i18n.t('menu.concentratedSolarPowerTutorials.EffectSolarPowerTowerHeight', lang)}
           </Menu.Item>
         </SubMenu>
         {/* other types of solar power */}
         <SubMenu key={'other-types-of-solar-power'} title={i18n.t('menu.otherTypesOfSolarPowerSubMenu', lang)}>
           <Menu.Item key="solar_updraft_tower" onClick={loadFile}>
-            {i18n.t('menu.tutorials.SolarUpdraftTower', lang)}
+            {i18n.t('menu.otherTypesOfSolarPowerTutorials.SolarUpdraftTower', lang)}
           </Menu.Item>
         </SubMenu>
       </SubMenu>
@@ -1871,76 +1890,67 @@ const MainMenu = ({ viewOnly, set2DView, resetView, zoomView, canvas }: MainMenu
         {/* solar energy */}
         <SubMenu key={'solar-energy'} title={i18n.t('menu.solarEnergySubMenu', lang)}>
           <Menu.Item key="sun_beam_at_center" onClick={loadFile}>
-            {i18n.t('menu.examples.SunBeamAndHeliodon', lang)}
+            {i18n.t('menu.solarEnergyExamples.SunBeamAndHeliodon', lang)}
           </Menu.Item>
           <Menu.Item key="solar_farm_01" onClick={loadFile}>
-            {i18n.t('menu.examples.SolarFarm', lang)}
+            {i18n.t('menu.solarEnergyExamples.SolarFarm', lang)}
           </Menu.Item>
           <Menu.Item key="solar_farm_fixed_array" onClick={loadFile}>
-            {i18n.t('menu.examples.FixedSolarPanelArraysInRealWorld', lang)}
+            {i18n.t('menu.solarEnergyExamples.FixedSolarPanelArraysInRealWorld', lang)}
           </Menu.Item>
           <Menu.Item key="solar_farm_hsat_array" onClick={loadFile}>
-            {i18n.t('menu.examples.HSATSolarTrackersInRealWorld', lang)}
+            {i18n.t('menu.solarEnergyExamples.HSATSolarTrackersInRealWorld', lang)}
           </Menu.Item>
           <Menu.Item key="solar_farm_aadat_array" onClick={loadFile}>
-            {i18n.t('menu.examples.AADATSolarTrackersInRealWorld', lang)}
+            {i18n.t('menu.solarEnergyExamples.AADATSolarTrackersInRealWorld', lang)}
           </Menu.Item>
           <Menu.Item key="vegetative_buffer_01" onClick={loadFile}>
-            {i18n.t('menu.examples.VegetativeBuffer', lang)}
+            {i18n.t('menu.solarEnergyExamples.VegetativeBuffer', lang)}
           </Menu.Item>
           <Menu.Item key="solar_canopy_form_factors" onClick={loadFile}>
-            {i18n.t('menu.examples.SolarCanopyFormFactors', lang)}
+            {i18n.t('menu.solarEnergyExamples.SolarCanopyFormFactors', lang)}
           </Menu.Item>
           <Menu.Item key="nevada_solar_one_parabolic_troughs" onClick={loadFile}>
-            {i18n.t('menu.examples.NevadaSolarOneParabolicTroughArray', lang)}
+            {i18n.t('menu.solarEnergyExamples.NevadaSolarOneParabolicTroughArray', lang)}
           </Menu.Item>
           <Menu.Item key="tooele_parabolic_dish_array" onClick={loadFile}>
-            {i18n.t('menu.examples.TooeleParabolicDishArray', lang)}
+            {i18n.t('menu.solarEnergyExamples.TooeleParabolicDishArray', lang)}
           </Menu.Item>
           <Menu.Item key="tucson_sundt_station" onClick={loadFile}>
-            {i18n.t('menu.examples.TucsonLinearFresnelReflectors', lang)}
+            {i18n.t('menu.solarEnergyExamples.TucsonLinearFresnelReflectors', lang)}
           </Menu.Item>
           <Menu.Item key="linear_fresnel_reflectors_two_absorbers" onClick={loadFile}>
-            {i18n.t('menu.examples.LinearFresnelReflectorsWithTwoAbsorbers', lang)}
+            {i18n.t('menu.solarEnergyExamples.LinearFresnelReflectorsWithTwoAbsorbers', lang)}
           </Menu.Item>
           <Menu.Item key="ps10_solar_power_tower" onClick={loadFile}>
-            {i18n.t('menu.examples.PS10SolarPowerTower', lang)}
+            {i18n.t('menu.solarEnergyExamples.PS10SolarPowerTower', lang)}
           </Menu.Item>
           <Menu.Item key="solar_updraft_tower_city" onClick={loadFile}>
-            {i18n.t('menu.examples.SolarUpdraftTowerInCity', lang)}
+            {i18n.t('menu.solarEnergyExamples.SolarUpdraftTowerInCity', lang)}
           </Menu.Item>
         </SubMenu>
 
         {/* built environments */}
         <SubMenu key={'built-environment'} title={i18n.t('menu.builtEnvironmentSubMenu', lang)}>
           <SubMenu key={'residential_buildings'} title={i18n.t('menu.residentialBuildingsSubMenu', lang)}>
-            <Menu.Item key="cape_cod_with_shed_dormer" onClick={loadFile}>
-              {i18n.t('menu.examples.CapeCodStyleHouseWithShedDormer', lang)}
-            </Menu.Item>
-            <Menu.Item key="gable_roof_vs_hip_roof" onClick={loadFile}>
-              {i18n.t('menu.examples.GableRoofVsHipRoof', lang)}
-            </Menu.Item>
-            <Menu.Item key="gambrel_roof_vs_mansard_roof" onClick={loadFile}>
-              {i18n.t('menu.examples.GambrelRoofVsMansardRoof', lang)}
-            </Menu.Item>
             <Menu.Item key="dutch_colonial_house" onClick={loadFile}>
-              {i18n.t('menu.examples.DutchColonialHouse', lang)}
+              {i18n.t('menu.residentialBuildingExamples.DutchColonialHouse', lang)}
             </Menu.Item>
             <Menu.Item key="barn_house" onClick={loadFile}>
-              {i18n.t('menu.examples.BarnStyleHouse', lang)}
+              {i18n.t('menu.residentialBuildingExamples.BarnStyleHouse', lang)}
             </Menu.Item>
           </SubMenu>
           <SubMenu key={'commercial_buildings'} title={i18n.t('menu.commercialBuildingsSubMenu', lang)}>
             <Menu.Item key="office_building_01" onClick={loadFile}>
-              {i18n.t('menu.examples.OfficeBuilding', lang)}
+              {i18n.t('menu.commercialBuildingExamples.OfficeBuilding', lang)}
             </Menu.Item>
             <Menu.Item key="hotel_01" onClick={loadFile}>
-              {i18n.t('menu.examples.Hotel', lang)}
+              {i18n.t('menu.commercialBuildingExamples.Hotel', lang)}
             </Menu.Item>
           </SubMenu>
           <SubMenu key={'urban_planning'} title={i18n.t('menu.urbanPlanningSubMenu', lang)}>
             <Menu.Item key="heatmap_01" onClick={loadFile}>
-              {i18n.t('menu.examples.Heatmap1', lang)}
+              {i18n.t('menu.urbanPlanningExamples.Heatmap1', lang)}
             </Menu.Item>
           </SubMenu>
         </SubMenu>
@@ -1948,19 +1958,19 @@ const MainMenu = ({ viewOnly, set2DView, resetView, zoomView, canvas }: MainMenu
         {/* artificial intelligence */}
         <SubMenu key={'artificial-intelligence'} title={i18n.t('menu.artificialIntelligenceSubMenu', lang)}>
           <Menu.Item key="ai_tilt_angle_one_row" onClick={loadFile}>
-            {i18n.t('menu.examples.OptimizingTiltAngleOfOneSolarPanelRow', lang)}
+            {i18n.t('menu.artificialIntelligenceExamples.OptimizingTiltAngleOfOneSolarPanelRow', lang)}
           </Menu.Item>
           <Menu.Item key="ai_tilt_angles_multiple_rows" onClick={loadFile}>
-            {i18n.t('menu.examples.OptimizingTiltAnglesOfMultipleSolarPanelRows', lang)}
+            {i18n.t('menu.artificialIntelligenceExamples.OptimizingTiltAnglesOfMultipleSolarPanelRows', lang)}
           </Menu.Item>
           <Menu.Item key="ai_solar_farm_design" onClick={loadFile}>
-            {i18n.t('menu.examples.SolarFarmGenerativeDesign', lang)}
+            {i18n.t('menu.artificialIntelligenceExamples.SolarFarmGenerativeDesign', lang)}
           </Menu.Item>
           <Menu.Item key="ai_solar_farm_design_block" onClick={loadFile}>
-            {i18n.t('menu.examples.SolarFarmGenerativeDesignWithBlock', lang)}
+            {i18n.t('menu.artificialIntelligenceExamples.SolarFarmGenerativeDesignWithBlock', lang)}
           </Menu.Item>
           <Menu.Item key="ai_fitchburg_solar_farm" onClick={loadFile}>
-            {i18n.t('menu.examples.FitchburgSolarFarmGenerativeDesign', lang)}
+            {i18n.t('menu.artificialIntelligenceExamples.FitchburgSolarFarmGenerativeDesign', lang)}
           </Menu.Item>
         </SubMenu>
       </SubMenu>

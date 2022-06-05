@@ -299,21 +299,36 @@ export const i18n_en = {
         AnalyzeYearlyYield: 'Analyze Yearly Yield',
         SolarUpdraftTowerSimulationNoAnimation: 'No Animation for Solar Updraft Tower Simulation',
       },
+
       tutorialsSubMenu: 'Tutorials',
+
       solarEnergyScienceSubMenu: 'Solar Science',
-      photovoltaicSolarPowerSubMenu: 'Photovoltaic Solar Power',
-      concentratedSolarPowerSubMenu: 'Concentrated Solar Power',
-      otherTypesOfSolarPowerSubMenu: 'Other Types of Solar Power',
-      tutorials: {
+      solarEnergyScienceTutorials: {
         SunAngles: 'Sun Angles Relative to an Observer on the Ground',
         InsolationAndClimate: 'Insolation and Climate',
         SolarRadiationToBox: 'Solar Radiation to a Box',
+      },
+
+      buildingDesignSubMenu: 'Building Design',
+      buildingDesignTutorials: {
+        CapeCodStyleHouseWithShedDormer: 'Cape Cod Style House with Shed Dormer',
+        GableRoofVsHipRoof: 'Gable Roof vs. Hip Roof',
+        ColonialVsSaltbox: 'Colonial vs. Saltbox',
+        GambrelRoofVsMansardRoof: 'Gambrel Roof vs. Mansard Roof',
+      },
+
+      photovoltaicSolarPowerSubMenu: 'Photovoltaic Solar Power',
+      photovoltaicSolarPowerTutorials: {
         EffectOfTiltAngleOfSolarPanel: 'Effect of Tilt Angle of a Solar Panel',
         EffectOfAzimuthOfSolarPanel: 'Effect of Azimuth of a Solar Panel',
         SolarTrackers: 'Solar Trackers',
         CoveringGroundWithSolarPanels: 'Why Just Covering the Ground with Solar Panels is not a Good Idea',
         InterRowSpacingOfSolarPanelArray: 'Effect of Inter-Row Spacing in a Solar Panel Array',
         EffectOfOrientationOfSolarPanels: 'Effect of Orientation of Solar Panels',
+      },
+
+      concentratedSolarPowerSubMenu: 'Concentrated Solar Power',
+      concentratedSolarPowerTutorials: {
         EffectOfAzimuthOfParabolicTrough: 'Effect of Azimuth of a Parabolic Trough',
         EffectOfLatusRectumOfParabolicTrough: 'Effect of Latus Rectum of a Parabolic Trough',
         FocusSunlightWithParabolicDish: 'Focus Sunlight with a Parabolic Dish',
@@ -325,16 +340,17 @@ export const i18n_en = {
         ShadowingAndBlockingOfHeliostats: 'Shadowing and Blocking of Heliostats',
         EffectSolarPowerTowerHeight: 'Effect of Solar Power Tower Height',
         SolarPowerTower: 'Solar Power Tower',
+      },
+
+      otherTypesOfSolarPowerSubMenu: 'Other Types of Solar Power',
+      otherTypesOfSolarPowerTutorials: {
         SolarUpdraftTower: 'Solar Updraft Tower',
       },
+
       examplesSubMenu: 'Examples',
+
       solarEnergySubMenu: 'Solar Energy',
-      builtEnvironmentSubMenu: 'Built Environment',
-      residentialBuildingsSubMenu: 'Residential Buildings',
-      commercialBuildingsSubMenu: 'Commercial Buildings',
-      urbanPlanningSubMenu: 'Urban Planning',
-      artificialIntelligenceSubMenu: 'Artificial Intelligence',
-      examples: {
+      solarEnergyExamples: {
         SunBeamAndHeliodon: 'Sun Beam and Heliodon',
         SolarFarm: 'Solar Farm',
         NevadaSolarOneParabolicTroughArray: 'Nevada Solar One Parabolic Trough Array',
@@ -348,20 +364,33 @@ export const i18n_en = {
         HSATSolarTrackersInRealWorld: 'Horizontal Single Axis Trackers (HSAT) in the Real World',
         AADATSolarTrackersInRealWorld: 'Azimuth–Altitude Dual Axis Trackers (AADAT) in the Real World',
         SolarUpdraftTowerInCity: 'Solar Updraft Tower in City',
-        CapeCodStyleHouseWithShedDormer: 'Cape Cod Style House with Shed Dormer',
+      },
+
+      builtEnvironmentSubMenu: 'Built Environment',
+      residentialBuildingsSubMenu: 'Residential Buildings',
+      residentialBuildingExamples: {
         DutchColonialHouse: 'Dutch Colonial House',
         BarnStyleHouse: 'Barn Style House',
-        GableRoofVsHipRoof: 'Gable Roof vs. Hip Roof',
-        GambrelRoofVsMansardRoof: 'Gambrel Roof vs. Mansard Roof',
+      },
+      commercialBuildingsSubMenu: 'Commercial Buildings',
+      commercialBuildingExamples: {
         OfficeBuilding: 'Office Building',
         Hotel: 'Hotel',
+      },
+      urbanPlanningSubMenu: 'Urban Planning',
+      urbanPlanningExamples: {
         Heatmap1: 'Heatmap',
+      },
+
+      artificialIntelligenceSubMenu: 'Artificial Intelligence',
+      artificialIntelligenceExamples: {
         OptimizingTiltAngleOfOneSolarPanelRow: 'Optimizing the Tilt Angle of a Solar Panel Row',
         OptimizingTiltAnglesOfMultipleSolarPanelRows: 'Optimizing the Tilt Angles of Multiple Solar Panel Rows',
         SolarFarmGenerativeDesign: 'Solar Farm Generative Design',
         SolarFarmGenerativeDesignWithBlock: 'Solar Farm Generative Design in the Presence of a Block',
         FitchburgSolarFarmGenerativeDesign: 'Fitchburg Solar Farm Generative Design',
       },
+
       languageSubMenu: 'Language',
       AboutUs: 'About Us',
     },
