@@ -352,6 +352,7 @@ export const i18n_tr = {
         CapeCodStyleHouseWithShedDormer: 'Cape Cod Style House with Shed Dormer',
         DutchColonialHouse: 'Dutch Colonial House',
         BarnStyleHouse: 'Barn Style House',
+        GableRoofVsHipRoof: 'Gable Roof vs. Hip Roof',
         GambrelRoofVsMansardRoof: 'Gambrel Roof vs. Mansard Roof',
         OfficeBuilding: 'Ofis Binasý',
         Hotel: 'Hotel',

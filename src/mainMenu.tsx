@@ -15,6 +15,7 @@ import solar_trackers from './examples/solar_trackers.json';
 import cape_cod_with_shed_dormer from './examples/cape_cod_with_shed_dormer.json';
 import barn_house from './examples/barn_house.json';
 import dutch_colonial_house from './examples/dutch_colonial_house.json';
+import gable_roof_vs_hip_roof from './examples/gable_roof_vs_hip_roof.json';
 import gambrel_roof_vs_mansard_roof from './examples/gambrel_roof_vs_mansard_roof.json';
 import hotel_01 from './examples/hotel_01.json';
 import heatmap_01 from './examples/heatmap_01.json';
@@ -349,6 +350,9 @@ const MainMenu = ({ viewOnly, set2DView, resetView, zoomView, canvas }: MainMenu
         break;
       case 'cape_cod_with_shed_dormer':
         input = cape_cod_with_shed_dormer;
+        break;
+      case 'gable_roof_vs_hip_roof':
+        input = gable_roof_vs_hip_roof;
         break;
       case 'gambrel_roof_vs_mansard_roof':
         input = gambrel_roof_vs_mansard_roof;
@@ -1912,6 +1916,9 @@ const MainMenu = ({ viewOnly, set2DView, resetView, zoomView, canvas }: MainMenu
           <SubMenu key={'residential_buildings'} title={i18n.t('menu.residentialBuildingsSubMenu', lang)}>
             <Menu.Item key="cape_cod_with_shed_dormer" onClick={loadFile}>
               {i18n.t('menu.examples.CapeCodStyleHouseWithShedDormer', lang)}
+            </Menu.Item>
+            <Menu.Item key="gable_roof_vs_hip_roof" onClick={loadFile}>
+              {i18n.t('menu.examples.GableRoofVsHipRoof', lang)}
             </Menu.Item>
             <Menu.Item key="gambrel_roof_vs_mansard_roof" onClick={loadFile}>
               {i18n.t('menu.examples.GambrelRoofVsMansardRoof', lang)}
