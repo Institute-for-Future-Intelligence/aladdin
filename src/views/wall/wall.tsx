@@ -263,16 +263,6 @@ const Wall = ({
       shape.lineTo(cx - x + leftOffset, cy + y); // upper left
     }
 
-    // reseved for pyramidRoof
-    // if (roofId && (leftRoofHeight || rightRoofHeight || centerRoofHeight)) {
-    //   shape.lineTo(cx + x - rightOffset, rightRoofHeight ? rightRoofHeight - y : cy + 2 * y - y);
-    //   centerRoofHeight && shape.lineTo(centerRoofHeight[0] * lx, centerRoofHeight[1] - y);
-    //   shape.lineTo(cx - x + leftOffset, leftRoofHeight ? leftRoofHeight - y : cy + 2 * y - y);
-    // } else {
-    //   shape.lineTo(cx + x - rightOffset, cy + y); // upper right
-    //   shape.lineTo(cx - x + leftOffset, cy + y); // upper left
-    // }
-
     shape.lineTo(cx - x + leftOffset, cy - y); // lower left
   };
 
@@ -760,13 +750,18 @@ const Wall = ({
 
   const handleIntersectionPointerMove = (e: ThreeEvent<PointerEvent>) => {
     // return if it's not first wall when adding new window
-    if (isSettingWindowStartPointRef.current && !checkIsFirstWall(e)) {
+    if ((isSettingWindowStartPointRef.current || isSettingDoorStartPointRef.current) && !checkIsFirstWall(e)) {
       if (grabRef.current) {
         removeElementById(grabRef.current.id, false);
       }
       setCommonStore((state) => {
-        state.objectTypeToAdd = ObjectType.Window;
-        state.addedWindowId = null;
+        if (isSettingWindowStartPointRef.current) {
+          state.objectTypeToAdd = ObjectType.Window;
+          state.addedWindowId = null;
+        } else if (isSettingDoorStartPointRef.current) {
+          state.objectTypeToAdd = ObjectType.Door;
+          state.addedDoorId = null;
+        }
       });
       setShowGrid(false);
       resetCurrentState();
