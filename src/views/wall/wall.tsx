@@ -183,7 +183,7 @@ const Wall = ({
   const oldPositionRef = useRef<number[]>([]);
   const oldDimensionRef = useRef<number[]>([]);
 
-  const [originElements, setOriginElements] = useState<ElementModel[] | null>([]);
+  const [originElements, setOriginElements] = useState<ElementModel[] | null>(null);
   const [showGrid, setShowGrid] = useState(false);
   const [windows, setWindows] = useState<WindowModel[]>([]);
   const [doors, setDoors] = useState<DoorModel[]>([]);
@@ -722,11 +722,11 @@ const Wall = ({
           state.elements.pop();
         });
       } else {
-        setCommonStore((state) => {
-          if (originElements) {
+        if (originElements) {
+          setCommonStore((state) => {
             state.elements = [...originElements];
-          }
-        });
+          });
+        }
       }
       invalidElementIdRef.current = null;
       setOriginElements(null);

@@ -123,6 +123,9 @@ export const useRoofTexture = (textureType: RoofTexture) => {
 };
 
 export const handleRoofPointerDown = (e: ThreeEvent<PointerEvent>, id: string) => {
+  if (useStore.getState().isAddingElement()) {
+    return;
+  }
   if (e.intersections.length > 0 && e.intersections[0].eventObject.name === e.eventObject.name) {
     e.stopPropagation();
     useStore.getState().set((state) => {
