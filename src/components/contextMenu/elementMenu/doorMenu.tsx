@@ -6,7 +6,7 @@ import React, { useState } from 'react';
 import { Menu } from 'antd';
 import { useStore } from 'src/stores/common';
 import * as Selector from 'src/stores/selector';
-import { Lock } from '../menuItems';
+import { Copy, Cut, Lock } from '../menuItems';
 import i18n from 'src/i18n/i18n';
 import { DoorModel } from 'src/models/DoorModel';
 import DoorTextureSelection from './doorTextureSelection';
@@ -27,6 +27,8 @@ export const DoorMenu = () => {
   return (
     door && (
       <>
+        <Copy keyName={'door-copy'} />
+        <Cut keyName={'door-cut'} />
         <Lock keyName={'door-lock'} />
 
         {textureDialogVisible && <DoorTextureSelection setDialogVisible={setTextureDialogVisible} />}

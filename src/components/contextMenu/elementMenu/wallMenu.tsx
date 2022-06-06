@@ -32,7 +32,7 @@ export const WallMenu = () => {
   const legalToPaste = () => {
     if (elementsToPaste && elementsToPaste.length > 0) {
       const e = elementsToPaste[0];
-      if (e.type === ObjectType.Window) {
+      if (e.type === ObjectType.Window || e.type === ObjectType.Door) {
         return true;
       }
     }

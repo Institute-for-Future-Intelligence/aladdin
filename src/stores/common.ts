@@ -38,7 +38,7 @@ import {
   TreeType,
   User,
   WallTexture,
-  WindowState,
+  ElementOnWallState,
 } from '../types';
 import { DefaultWorldModel } from './DefaultWorldModel';
 import { Box3, Euler, Raycaster, Texture, TextureLoader, Vector2, Vector3 } from 'three';
@@ -4804,15 +4804,16 @@ export const useStore = create<CommonStoreState>(
                       }
                       break;
                     }
+                    case ObjectType.Door:
                     case ObjectType.Window: {
-                      switch (Util.checkWindowState(e)) {
-                        case WindowState.Valid:
+                      switch (Util.checkElementOnWallState(e)) {
+                        case ElementOnWallState.Valid:
                           approved = true;
                           break;
-                        case WindowState.OverLap:
+                        case ElementOnWallState.OverLap:
                           showError(i18n.t('message.CannotPasteBecauseOfOverlap', lang));
                           break;
-                        case WindowState.OutsideBoundary:
+                        case ElementOnWallState.OutsideBoundary:
                           showError(i18n.t('message.CannotPasteOutsideBoundary', lang));
                           break;
                       }
@@ -4873,12 +4874,13 @@ export const useStore = create<CommonStoreState>(
                 if (e) {
                   let approved = false;
                   switch (e.type) {
+                    case ObjectType.Door:
                     case ObjectType.Window:
                       const hx = e.lx / 2;
                       e.cx += hx * 3;
                       // searching +x direction
                       while (e.cx + hx < 0.5) {
-                        if (Util.checkWindowState(e) === WindowState.Valid) {
+                        if (Util.checkElementOnWallState(e) === ElementOnWallState.Valid) {
                           state.elements.push(e);
                           // state.elementsToPaste = [e];
                           approved = true;
@@ -4891,7 +4893,7 @@ export const useStore = create<CommonStoreState>(
                       if (!approved) {
                         e.cx = elem.cx - hx * 3;
                         while (e.cx - hx > -0.5) {
-                          if (Util.checkWindowState(e) === WindowState.Valid) {
+                          if (Util.checkElementOnWallState(e) === ElementOnWallState.Valid) {
                             state.elements.push(e);
                             state.elementsToPaste = [e];
                             approved = true;

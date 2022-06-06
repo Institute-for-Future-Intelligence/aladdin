@@ -452,7 +452,7 @@ export enum WallSide {
   Right = 'Right',
 }
 
-export enum WindowState {
+export enum ElementOnWallState {
   Valid = 'Valid',
   OverLap = 'OverLap',
   OutsideBoundary = 'OutsideBoundary',

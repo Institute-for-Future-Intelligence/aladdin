@@ -28,6 +28,7 @@ import { ParabolicTroughModel } from './ParabolicTroughModel';
 import { ParabolicDishModel } from './ParabolicDishModel';
 import { FresnelReflectorModel } from './FresnelReflectorModel';
 import { HeliostatModel } from './HeliostatModel';
+import { DoorModel } from './DoorModel';
 
 export class ElementModelCloner {
   static clone(
@@ -92,6 +93,12 @@ export class ElementModelCloner {
         if (parent) {
           // must have a parent
           clone = ElementModelCloner.cloneWindow(parent, e as WindowModel, x, y, z);
+        }
+        break;
+      case ObjectType.Door:
+        if (parent) {
+          // must have a parent
+          clone = ElementModelCloner.cloneDoor(parent, e as DoorModel, x, y, z);
         }
         break;
       case ObjectType.Roof:
@@ -528,6 +535,35 @@ export class ElementModelCloner {
       parentId: parent.id,
       foundationId: foundationId,
     } as WindowModel;
+  }
+
+  private static cloneDoor(parent: ElementModel, door: DoorModel, x: number, y: number, z?: number) {
+    let foundationId;
+    switch (parent.type) {
+      case ObjectType.Cuboid:
+        foundationId = parent.id;
+        break;
+      case ObjectType.Wall:
+      case ObjectType.Roof:
+        foundationId = parent.parentId;
+        break;
+    }
+    return {
+      type: ObjectType.Door,
+      cx: x,
+      cy: door.cy,
+      cz: door.cz,
+      lx: door.lx,
+      ly: door.ly,
+      lz: door.lz,
+      color: door.color,
+      textureType: door.textureType,
+      normal: [...door.normal],
+      rotation: [...door.rotation],
+      id: short.generate() as string,
+      parentId: parent.id,
+      foundationId: foundationId,
+    } as DoorModel;
   }
 
   // TODO

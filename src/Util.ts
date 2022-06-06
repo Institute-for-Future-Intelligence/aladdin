@@ -25,7 +25,7 @@ import {
   ResizeHandleType,
   RotateHandleType,
   TrackerType,
-  WindowState,
+  ElementOnWallState,
 } from './types';
 import { PvModel } from './models/PvModel';
 import { SensorModel } from './models/SensorModel';
@@ -571,6 +571,7 @@ export class Util {
       objectType === ObjectType.Sensor ||
       objectType === ObjectType.Polygon ||
       objectType === ObjectType.Window ||
+      objectType === ObjectType.Door ||
       objectType === ObjectType.Roof ||
       objectType === ObjectType.Wall
     );
@@ -621,18 +622,22 @@ export class Util {
     return type === ObjectType.FresnelReflector || type === ObjectType.Heliostat;
   }
 
-  static checkWindowState(elem: ElementModel): WindowState {
+  static checkElementOnWallState(elem: ElementModel): ElementOnWallState {
     const eMinX = elem.cx - elem.lx / 2;
     const eMaxX = elem.cx + elem.lx / 2;
     const eMinZ = elem.cz - elem.lz / 2;
     const eMaxZ = elem.cz + elem.lz / 2;
     if (eMinX < -0.5 || eMaxX > 0.5 || eMinZ < -0.5 || eMaxZ > 0.5) {
-      return WindowState.OutsideBoundary;
+      return ElementOnWallState.OutsideBoundary;
     }
     for (const e of useStore.getState().elements) {
-      // check collision with other windows
-      if (e.type === ObjectType.Window && e.parentId === elem.parentId && e.id !== elem.id) {
-        // target window
+      // check collision with other elements
+      if (
+        (e.type === ObjectType.Window || e.type === ObjectType.Door) &&
+        e.parentId === elem.parentId &&
+        e.id !== elem.id
+      ) {
+        // target element
         const tMinX = e.cx - e.lx / 2;
         const tMaxX = e.cx + e.lx / 2;
         const tMinZ = e.cz - e.lz / 2;
@@ -647,11 +652,11 @@ export class Util {
             (tMinZ >= eMinZ && tMinZ <= eMaxZ) ||
             (tMaxZ >= eMinZ && tMaxZ <= eMaxZ))
         ) {
-          return WindowState.OverLap;
+          return ElementOnWallState.OverLap;
         }
       }
     }
-    return WindowState.Valid;
+    return ElementOnWallState.Valid;
   }
 
   static relativeCoordinates(x: number, y: number, z: number, parent: ElementModel): Vector3 {
