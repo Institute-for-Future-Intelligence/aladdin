@@ -1864,6 +1864,9 @@ const MainMenu = ({ viewOnly, set2DView, resetView, zoomView, canvas }: MainMenu
           <Menu.Item key="effect_azimuth_fresnel_reflector" onClick={loadFile}>
             {i18n.t('menu.concentratedSolarPowerTutorials.EffectOfAzimuthOfLinearFresnelReflectors', lang)}
           </Menu.Item>
+          <Menu.Item key="linear_fresnel_reflectors_two_absorbers" onClick={loadFile}>
+            {i18n.t('menu.concentratedSolarPowerTutorials.LinearFresnelReflectorsWithTwoAbsorbers', lang)}
+          </Menu.Item>
           <Menu.Item key="solar_power_tower" onClick={loadFile}>
             {i18n.t('menu.concentratedSolarPowerTutorials.SolarPowerTower', lang)}
           </Menu.Item>
@@ -1889,45 +1892,51 @@ const MainMenu = ({ viewOnly, set2DView, resetView, zoomView, canvas }: MainMenu
       <SubMenu key={'examples'} title={i18n.t('menu.examplesSubMenu', lang)}>
         {/* solar energy */}
         <SubMenu key={'solar-energy'} title={i18n.t('menu.solarEnergySubMenu', lang)}>
-          <Menu.Item key="sun_beam_at_center" onClick={loadFile}>
-            {i18n.t('menu.solarEnergyExamples.SunBeamAndHeliodon', lang)}
-          </Menu.Item>
-          <Menu.Item key="solar_farm_01" onClick={loadFile}>
-            {i18n.t('menu.solarEnergyExamples.SolarFarm', lang)}
-          </Menu.Item>
-          <Menu.Item key="solar_farm_fixed_array" onClick={loadFile}>
-            {i18n.t('menu.solarEnergyExamples.FixedSolarPanelArraysInRealWorld', lang)}
-          </Menu.Item>
-          <Menu.Item key="solar_farm_hsat_array" onClick={loadFile}>
-            {i18n.t('menu.solarEnergyExamples.HSATSolarTrackersInRealWorld', lang)}
-          </Menu.Item>
-          <Menu.Item key="solar_farm_aadat_array" onClick={loadFile}>
-            {i18n.t('menu.solarEnergyExamples.AADATSolarTrackersInRealWorld', lang)}
-          </Menu.Item>
-          <Menu.Item key="vegetative_buffer_01" onClick={loadFile}>
-            {i18n.t('menu.solarEnergyExamples.VegetativeBuffer', lang)}
-          </Menu.Item>
-          <Menu.Item key="solar_canopy_form_factors" onClick={loadFile}>
-            {i18n.t('menu.solarEnergyExamples.SolarCanopyFormFactors', lang)}
-          </Menu.Item>
-          <Menu.Item key="nevada_solar_one_parabolic_troughs" onClick={loadFile}>
-            {i18n.t('menu.solarEnergyExamples.NevadaSolarOneParabolicTroughArray', lang)}
-          </Menu.Item>
-          <Menu.Item key="tooele_parabolic_dish_array" onClick={loadFile}>
-            {i18n.t('menu.solarEnergyExamples.TooeleParabolicDishArray', lang)}
-          </Menu.Item>
-          <Menu.Item key="tucson_sundt_station" onClick={loadFile}>
-            {i18n.t('menu.solarEnergyExamples.TucsonLinearFresnelReflectors', lang)}
-          </Menu.Item>
-          <Menu.Item key="linear_fresnel_reflectors_two_absorbers" onClick={loadFile}>
-            {i18n.t('menu.solarEnergyExamples.LinearFresnelReflectorsWithTwoAbsorbers', lang)}
-          </Menu.Item>
-          <Menu.Item key="ps10_solar_power_tower" onClick={loadFile}>
-            {i18n.t('menu.solarEnergyExamples.PS10SolarPowerTower', lang)}
-          </Menu.Item>
-          <Menu.Item key="solar_updraft_tower_city" onClick={loadFile}>
-            {i18n.t('menu.solarEnergyExamples.SolarUpdraftTowerInCity', lang)}
-          </Menu.Item>
+          <SubMenu key={'photovoltaic-solar-power-examples'} title={i18n.t('menu.photovoltaicSolarPowerSubMenu', lang)}>
+            <Menu.Item key="sun_beam_at_center" onClick={loadFile}>
+              {i18n.t('menu.solarEnergyExamples.SunBeamAndHeliodon', lang)}
+            </Menu.Item>
+            <Menu.Item key="solar_farm_01" onClick={loadFile}>
+              {i18n.t('menu.solarEnergyExamples.SolarFarm', lang)}
+            </Menu.Item>
+            <Menu.Item key="vegetative_buffer_01" onClick={loadFile}>
+              {i18n.t('menu.solarEnergyExamples.VegetativeBuffer', lang)}
+            </Menu.Item>
+            <Menu.Item key="solar_canopy_form_factors" onClick={loadFile}>
+              {i18n.t('menu.solarEnergyExamples.SolarCanopyFormFactors', lang)}
+            </Menu.Item>
+            <Menu.Item key="solar_farm_fixed_array" onClick={loadFile}>
+              {i18n.t('menu.solarEnergyExamples.FixedSolarPanelArraysFraminghamMA', lang)}
+            </Menu.Item>
+            <Menu.Item key="solar_farm_hsat_array" onClick={loadFile}>
+              {i18n.t('menu.solarEnergyExamples.HSATSolarTrackersRaleighNC', lang)}
+            </Menu.Item>
+            <Menu.Item key="solar_farm_aadat_array" onClick={loadFile}>
+              {i18n.t('menu.solarEnergyExamples.AADATSolarTrackersLancasterCA', lang)}
+            </Menu.Item>
+          </SubMenu>
+          <SubMenu key={'concentrated-solar-power-examples'} title={i18n.t('menu.concentratedSolarPowerSubMenu', lang)}>
+            <Menu.Item key="nevada_solar_one_parabolic_troughs" onClick={loadFile}>
+              {i18n.t('menu.solarEnergyExamples.NevadaSolarOneParabolicTroughArray', lang)}
+            </Menu.Item>
+            <Menu.Item key="tooele_parabolic_dish_array" onClick={loadFile}>
+              {i18n.t('menu.solarEnergyExamples.TooeleParabolicDishArray', lang)}
+            </Menu.Item>
+            <Menu.Item key="tucson_sundt_station" onClick={loadFile}>
+              {i18n.t('menu.solarEnergyExamples.TucsonLinearFresnelReflectors', lang)}
+            </Menu.Item>
+            <Menu.Item key="ps10_solar_power_tower" onClick={loadFile}>
+              {i18n.t('menu.solarEnergyExamples.PS10SolarPowerTower', lang)}
+            </Menu.Item>
+          </SubMenu>
+          <SubMenu
+            key={'other-types-of-solar-power-examples'}
+            title={i18n.t('menu.otherTypesOfSolarPowerSubMenu', lang)}
+          >
+            <Menu.Item key="solar_updraft_tower_city" onClick={loadFile}>
+              {i18n.t('menu.solarEnergyExamples.SolarUpdraftTowerInCity', lang)}
+            </Menu.Item>
+          </SubMenu>
         </SubMenu>
 
         {/* built environments */}

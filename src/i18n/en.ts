@@ -336,6 +336,7 @@ export const i18n_en = {
         EffectOfAbsorberPipeHeightForLinearFresnelReflectors:
           'Effect of Absorber Pipe Height for Linear Fresnel Reflectors',
         EffectOfAzimuthOfLinearFresnelReflectors: 'Effect of Azimuth of Linear Fresnel Reflectors',
+        LinearFresnelReflectorsWithTwoAbsorbers: 'Linear Fresnel Reflectors with Two Absorbers',
         CosineEfficiencyOfHeliostats: 'Cosine Efficiency of Heliostats',
         ShadowingAndBlockingOfHeliostats: 'Shadowing and Blocking of Heliostats',
         EffectSolarPowerTowerHeight: 'Effect of Solar Power Tower Height',
@@ -357,12 +358,11 @@ export const i18n_en = {
         TooeleParabolicDishArray: 'Tooele Parabolic Dish Array',
         PS10SolarPowerTower: 'PS10 Solar Power Tower',
         TucsonLinearFresnelReflectors: 'Tucson Linear Fresnel Reflectors',
-        LinearFresnelReflectorsWithTwoAbsorbers: 'Linear Fresnel Reflectors with Two Absorbers',
         SolarCanopyFormFactors: 'Solar Canopy Form Factors',
         VegetativeBuffer: 'Vegetative Buffer',
-        FixedSolarPanelArraysInRealWorld: 'Fixed Solar Panel Arrays in the Real World',
-        HSATSolarTrackersInRealWorld: 'Horizontal Single Axis Trackers (HSAT) in the Real World',
-        AADATSolarTrackersInRealWorld: 'Azimuth–Altitude Dual Axis Trackers (AADAT) in the Real World',
+        FixedSolarPanelArraysFraminghamMA: 'Fixed Solar Panel Arrays in Framingham, MA',
+        HSATSolarTrackersRaleighNC: 'Horizontal Single Axis Trackers (HSAT) in Raleigh, NC',
+        AADATSolarTrackersLancasterCA: 'Azimuth–Altitude Dual Axis Trackers (AADAT) in Lancaster, CA',
         SolarUpdraftTowerInCity: 'Solar Updraft Tower in City',
       },
 
