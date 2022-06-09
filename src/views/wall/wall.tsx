@@ -47,7 +47,7 @@ import Window from '../window/window';
 import WallWireFrame from './wallWireFrame';
 import WallResizeHandleWarpper from './wallResizeHandleWarpper';
 import * as Selector from 'src/stores/selector';
-import { FINE_GRID_SCALE, HALF_PI, TWO_PI } from 'src/constants';
+import { FINE_GRID_SCALE, HALF_PI, NORMAL_GRID_SCALE, TWO_PI } from 'src/constants';
 import { UndoableMove } from 'src/undo/UndoableMove';
 import { UndoableAdd } from 'src/undo/UndoableAdd';
 import { UndoableResizeWindowOrDoor } from 'src/undo/UndoableResize';
@@ -387,7 +387,9 @@ const Wall = ({
   };
 
   const snapToNormalGrid = (v: Vector3) => {
-    return new Vector3(Math.round(v.x), v.y, Math.round(v.z));
+    const x = parseFloat((Math.round(v.x / NORMAL_GRID_SCALE) * NORMAL_GRID_SCALE).toFixed(1));
+    const z = parseFloat((Math.round(v.z / NORMAL_GRID_SCALE) * NORMAL_GRID_SCALE).toFixed(1));
+    return new Vector3(x, v.y, z);
   };
 
   const snapToFineGrid = (v: Vector3) => {
@@ -783,9 +785,9 @@ const Wall = ({
           switch (grabRef.current.type) {
             case ObjectType.Window: {
               let p = getRelativePosOnWall(pointer, wallModel);
-              p = getPositionOnGrid(p);
-
               if (moveHandleType) {
+                const v = new Vector3((-grabRef.current.lx / 2) * lx, 0, (grabRef.current.lz / 2) * lz);
+                p = getPositionOnGrid(p.clone().add(v)).sub(v);
                 if (!isMovingWindowInsideWall(p, grabRef.current.lx * lx, grabRef.current.lz * lz)) {
                   return;
                 }
@@ -806,6 +808,7 @@ const Wall = ({
                   }
                 });
               } else if (resizeHandleType) {
+                p = getPositionOnGrid(p);
                 if (!isPointInside(p.x, p.z)) {
                   return;
                 }
