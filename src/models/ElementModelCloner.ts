@@ -13,7 +13,7 @@ import { ElementModel } from './ElementModel';
 import { SolarPanelModel } from './SolarPanelModel';
 import { WallModel } from './WallModel';
 import { WindowModel } from './WindowModel';
-import { RoofModel } from './RoofModel';
+import { GableRoofModel, GambrelRoofModel, HipRoofModel, MansardRoofModel, RoofModel, RoofType } from './RoofModel';
 import { PolygonModel } from './PolygonModel';
 import { Util } from '../Util';
 import { Vector3 } from 'three';
@@ -566,24 +566,49 @@ export class ElementModelCloner {
     } as DoorModel;
   }
 
-  // TODO
   private static cloneRoof(parent: ElementModel, roof: RoofModel, x: number, y: number, z?: number) {
-    // return {
-    //   type: ObjectType.Roof,
-    //   cx: x,
-    //   cy: y,
-    //   cz: z,
-    //   lx: roof.lx,
-    //   ly: roof.ly,
-    //   lz: roof.lz,
-    //   points: [...roof.points],
-    //   color: roof.color,
-    //   normal: [...roof.normal],
-    //   rotation: [...roof.rotation],
-    //   id: short.generate() as string,
-    //   parentId: parent.id,
-    //   foundationId: parent.id,
-    // } as RoofModel;
-    return { id: short.generate() as string, parentId: parent.id, foundationId: parent.id } as ElementModel;
+    const newRoof = {
+      id: short.generate() as string,
+      type: ObjectType.Roof,
+      cx: x,
+      cy: y,
+      cz: z,
+      lx: roof.lx,
+      ly: roof.ly,
+      lz: roof.lz,
+      color: roof.color,
+      normal: [...roof.normal],
+      rotation: [...roof.rotation],
+      parentId: parent.id,
+      foundationId: parent.id,
+      roofType: roof.roofType,
+      textureType: roof.textureType,
+      overhang: roof.overhang,
+      thickness: roof.thickness,
+      wallsId: [...roof.wallsId], // handled in common store
+    } as RoofModel;
+    switch (roof.roofType) {
+      case RoofType.Gable:
+        (newRoof as GableRoofModel).ridgeLeftPoint = [...(roof as GableRoofModel).ridgeLeftPoint];
+        (newRoof as GableRoofModel).ridgeRightPoint = [...(roof as GableRoofModel).ridgeRightPoint];
+        break;
+      case RoofType.Gambrel:
+        (newRoof as GambrelRoofModel).topRidgeLeftPoint = [...(roof as GambrelRoofModel).topRidgeLeftPoint];
+        (newRoof as GambrelRoofModel).topRidgeRightPoint = [...(roof as GambrelRoofModel).topRidgeRightPoint];
+        (newRoof as GambrelRoofModel).frontRidgeLeftPoint = [...(roof as GambrelRoofModel).frontRidgeLeftPoint];
+        (newRoof as GambrelRoofModel).frontRidgeRightPoint = [...(roof as GambrelRoofModel).frontRidgeRightPoint];
+        (newRoof as GambrelRoofModel).backRidgeLeftPoint = [...(roof as GambrelRoofModel).backRidgeLeftPoint];
+        (newRoof as GambrelRoofModel).backRidgeRightPoint = [...(roof as GambrelRoofModel).backRidgeRightPoint];
+        break;
+      case RoofType.Hip:
+        (newRoof as HipRoofModel).rightRidgeLength = (roof as HipRoofModel).rightRidgeLength;
+        (newRoof as HipRoofModel).leftRidgeLength = (roof as HipRoofModel).leftRidgeLength;
+        break;
+      case RoofType.Mansard:
+        (newRoof as MansardRoofModel).frontRidge = (roof as MansardRoofModel).frontRidge;
+        (newRoof as MansardRoofModel).backRidge = (roof as MansardRoofModel).backRidge;
+        break;
+    }
+    return newRoof as ElementModel;
   }
 }

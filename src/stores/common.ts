@@ -4602,8 +4602,8 @@ export const useStore = create<CommonStoreState>(
             const copiedElements: ElementModel[] = [];
             immerSet((state: CommonStoreState) => {
               const map = new Map<ElementModel, ElementModel>();
-              const wallMapOldToNew = new Map<string, string>();
-              const wallMapNewToOld = new Map<string, string>();
+              const elementsMapOldToNew = new Map<string, string>();
+              const elementsMapNewToOld = new Map<string, string>();
               for (let i = 0; i < state.elementsToPaste.length; i++) {
                 const oldElem = state.elementsToPaste[i];
                 let e: ElementModel | null = null;
@@ -4634,25 +4634,44 @@ export const useStore = create<CommonStoreState>(
                 }
                 if (e) {
                   map.set(oldElem, e);
-                  wallMapOldToNew.set(oldElem.id, e.id);
-                  wallMapNewToOld.set(e.id, oldElem.id);
+                  elementsMapOldToNew.set(oldElem.id, e.id);
+                  elementsMapNewToOld.set(e.id, oldElem.id);
                   copiedElements.push(e);
                 }
               }
               for (const e of copiedElements) {
+                // search new roof
+                if (e.type === ObjectType.Roof) {
+                  const oldRoofId = elementsMapNewToOld.get(e.id);
+                  if (oldRoofId) {
+                    for (const o of state.elementsToPaste) {
+                      if (o.id === oldRoofId) {
+                        (e as RoofModel).wallsId = (o as RoofModel).wallsId.map(
+                          (v) => elementsMapOldToNew.get(v) as string,
+                        );
+                      }
+                    }
+                  }
+                }
                 // search new wall
                 if (e.type === ObjectType.Wall) {
-                  const oldWallId = wallMapNewToOld.get(e.id);
+                  const oldWallId = elementsMapNewToOld.get(e.id);
                   if (oldWallId) {
                     for (const o of state.elementsToPaste) {
                       if (o.id === oldWallId) {
-                        const left = wallMapOldToNew.get((o as WallModel).leftJoints[0]);
+                        const left = elementsMapOldToNew.get((o as WallModel).leftJoints[0]);
                         if (left) {
                           (e as WallModel).leftJoints = [left];
                         }
-                        const right = wallMapOldToNew.get((o as WallModel).rightJoints[0]);
+                        const right = elementsMapOldToNew.get((o as WallModel).rightJoints[0]);
                         if (right) {
                           (e as WallModel).rightJoints = [right];
+                        }
+                        if ((o as WallModel).roofId) {
+                          const roofId = elementsMapOldToNew.get((o as WallModel).roofId as string);
+                          if (roofId) {
+                            (e as WallModel).roofId = roofId;
+                          }
                         }
                         break;
                       }
@@ -4709,8 +4728,8 @@ export const useStore = create<CommonStoreState>(
                   switch (e.type) {
                     case ObjectType.Foundation:
                     case ObjectType.Cuboid: {
-                      const wallMapNewToOld = new Map<string, string>();
-                      const wallMapOldToNew = new Map<string, string>();
+                      const elementsMapNewToOld = new Map<string, string>();
+                      const elementsMapOldToNew = new Map<string, string>();
                       for (const child of state.elements) {
                         if (child.parentId === elem.id) {
                           const newChild = ElementModelCloner.clone(
@@ -4727,8 +4746,8 @@ export const useStore = create<CommonStoreState>(
                             }
                             pastedElements.push(newChild);
                             if (newChild?.type === ObjectType.Wall || newChild?.type === ObjectType.Roof) {
-                              wallMapNewToOld.set(newChild.id, child.id);
-                              wallMapOldToNew.set(child.id, newChild.id);
+                              elementsMapNewToOld.set(newChild.id, child.id);
+                              elementsMapOldToNew.set(child.id, newChild.id);
                               for (const grandchild of state.elements) {
                                 if (grandchild.parentId === child.id) {
                                   const newGrandChild = ElementModelCloner.clone(
@@ -4753,19 +4772,37 @@ export const useStore = create<CommonStoreState>(
                       state.elements.push(...pastedElements);
                       approved = true;
                       for (const e of state.elements) {
+                        // search new roof
+                        if (e.type === ObjectType.Roof) {
+                          const oldRoofId = elementsMapNewToOld.get(e.id);
+                          if (oldRoofId) {
+                            const oldRoof = get().getElementById(oldRoofId) as RoofModel;
+                            if (oldRoof) {
+                              (e as RoofModel).wallsId = oldRoof.wallsId.map(
+                                (v) => elementsMapOldToNew.get(v) as string,
+                              );
+                            }
+                          }
+                        }
                         // search new wall
                         if (e.type === ObjectType.Wall) {
-                          const oldWallId = wallMapNewToOld.get(e.id);
+                          const oldWallId = elementsMapNewToOld.get(e.id);
                           if (oldWallId) {
                             for (const o of state.elements) {
                               if (o.id === oldWallId) {
-                                const left = wallMapOldToNew.get((o as WallModel).leftJoints[0]);
+                                const left = elementsMapOldToNew.get((o as WallModel).leftJoints[0]);
                                 if (left) {
                                   (e as WallModel).leftJoints = [left];
                                 }
-                                const right = wallMapOldToNew.get((o as WallModel).rightJoints[0]);
+                                const right = elementsMapOldToNew.get((o as WallModel).rightJoints[0]);
                                 if (right) {
                                   (e as WallModel).rightJoints = [right];
+                                }
+                                if ((o as WallModel).roofId) {
+                                  const roofId = elementsMapOldToNew.get((o as WallModel).roofId as string);
+                                  if (roofId) {
+                                    (e as WallModel).roofId = roofId;
+                                  }
                                 }
                                 break;
                               }
@@ -5021,8 +5058,8 @@ export const useStore = create<CommonStoreState>(
                         // So we have to copy its children and grandchildren as well. This differs from the
                         // situation of cutting, in which case all the children and grandchildren must be
                         // stored in elementsToPaste.
-                        const wallMapNewToOld = new Map<string, string>();
-                        const wallMapOldToNew = new Map<string, string>();
+                        const elementsMapNewToOld = new Map<string, string>();
+                        const elementsMapOldToNew = new Map<string, string>();
                         for (const child of state.elements) {
                           if (child.parentId === elem.id) {
                             const newChild = ElementModelCloner.clone(
@@ -5039,8 +5076,8 @@ export const useStore = create<CommonStoreState>(
                               }
                               pastedElements.push(newChild);
                               if (newChild?.type === ObjectType.Wall || newChild?.type === ObjectType.Roof) {
-                                wallMapNewToOld.set(newChild.id, child.id);
-                                wallMapOldToNew.set(child.id, newChild.id);
+                                elementsMapNewToOld.set(newChild.id, child.id);
+                                elementsMapOldToNew.set(child.id, newChild.id);
                                 for (const grandchild of state.elements) {
                                   if (grandchild.parentId === child.id) {
                                     const newGrandChild = ElementModelCloner.clone(
@@ -5066,19 +5103,37 @@ export const useStore = create<CommonStoreState>(
                         state.elements.push(e);
                         state.elementsToPaste = [e];
                         for (const e of state.elements) {
+                          // search new roof
+                          if (e.type === ObjectType.Roof) {
+                            const oldRoofId = elementsMapNewToOld.get(e.id);
+                            if (oldRoofId) {
+                              const oldRoof = get().getElementById(oldRoofId) as RoofModel;
+                              if (oldRoof) {
+                                (e as RoofModel).wallsId = oldRoof.wallsId.map(
+                                  (v) => elementsMapOldToNew.get(v) as string,
+                                );
+                              }
+                            }
+                          }
                           // search new wall
                           if (e.type === ObjectType.Wall) {
-                            const oldWallId = wallMapNewToOld.get(e.id);
+                            const oldWallId = elementsMapNewToOld.get(e.id);
                             if (oldWallId) {
                               for (const o of state.elements) {
                                 if (o.id === oldWallId) {
-                                  const left = wallMapOldToNew.get((o as WallModel).leftJoints[0]);
+                                  const left = elementsMapOldToNew.get((o as WallModel).leftJoints[0]);
                                   if (left) {
                                     (e as WallModel).leftJoints = [left];
                                   }
-                                  const right = wallMapOldToNew.get((o as WallModel).rightJoints[0]);
+                                  const right = elementsMapOldToNew.get((o as WallModel).rightJoints[0]);
                                   if (right) {
                                     (e as WallModel).rightJoints = [right];
+                                  }
+                                  if ((o as WallModel).roofId) {
+                                    const roofId = elementsMapOldToNew.get((o as WallModel).roofId as string);
+                                    if (roofId) {
+                                      (e as WallModel).roofId = roofId;
+                                    }
                                   }
                                   break;
                                 }
