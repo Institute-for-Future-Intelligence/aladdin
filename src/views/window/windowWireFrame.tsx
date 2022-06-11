@@ -8,39 +8,23 @@ import { Line } from '@react-three/drei';
 interface WindowWireFrameProps {
   x: number;
   z: number;
+  lineColor: string;
   lineWidth?: number;
 }
 
-const WindowWireFrame = ({ x, z, lineWidth = 1 }: WindowWireFrameProps) => {
+const WindowWireFrame = ({ x, z, lineColor, lineWidth = 1 }: WindowWireFrameProps) => {
   return (
     <React.Fragment>
       <Line
         points={[
           [-x, 0, -z],
           [x, 0, -z],
-        ]}
-        linewidth={lineWidth}
-      />
-      <Line
-        points={[
+          [x, 0, z],
+          [-x, 0, z],
           [-x, 0, -z],
-          [-x, 0, z],
         ]}
         linewidth={lineWidth}
-      />
-      <Line
-        points={[
-          [x, 0, z],
-          [-x, 0, z],
-        ]}
-        linewidth={lineWidth}
-      />
-      <Line
-        points={[
-          [x, 0, z],
-          [x, 0, -z],
-        ]}
-        linewidth={lineWidth}
+        color={lineColor}
       />
       <Line
         points={[

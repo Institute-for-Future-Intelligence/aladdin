@@ -2,7 +2,7 @@
  * @Copyright 2021-2022. Institute for Future Intelligence, Inc.
  */
 
-import { Plane, Sphere } from '@react-three/drei';
+import { Line, Plane, Sphere } from '@react-three/drei';
 import React, { useEffect, useMemo, useRef, useState } from 'react';
 import { GableRoofModel } from 'src/models/RoofModel';
 import { WallModel } from 'src/models/WallModel';
@@ -23,6 +23,7 @@ import {
   getDistance,
   handleRoofPointerDown,
   isRoofValid,
+  RoofWireframeProps,
 } from './roof';
 import { UnoableResizeGableRoofRidge } from 'src/undo/UndoableResize';
 import { RoofTexture, ObjectType } from 'src/types';
@@ -41,6 +42,65 @@ enum RoofHandleType {
   Null = 'Null',
 }
 
+const GableRoofWireframe = React.memo(({ roofSegments, thickness, lineWidth, lineColor }: RoofWireframeProps) => {
+  const peripheryPoints: Vector3[] = [];
+  const thicknessVector = new Vector3(0, 0, thickness);
+
+  const isShed = roofSegments.length === 1;
+
+  for (const segment of roofSegments) {
+    const [leftRoof, rightRoof, rightRidge, leftRidge] = segment.points;
+    peripheryPoints.push(leftRidge, leftRoof, rightRoof, rightRidge);
+    if (isShed) {
+      peripheryPoints.push(leftRidge);
+    }
+  }
+
+  const isFlat = Math.abs(roofSegments[0].points[0].z) < 0.015;
+  const leftRidge = roofSegments[0].points[3];
+  const rightRidge = roofSegments[0].points[2];
+
+  const periphery = <Line points={peripheryPoints} lineWidth={lineWidth} color={lineColor} />;
+  const ridge = <Line points={[leftRidge, rightRidge]} lineWidth={lineWidth} color={lineColor} />;
+  return (
+    <>
+      {periphery}
+      {!isFlat && !isShed && ridge}
+      <group position={[0, 0, thickness]}>
+        {periphery}
+        {!isFlat && !isShed && ridge}
+      </group>
+      {roofSegments.map((segment, idx) => {
+        const [leftRoof, rightRoof, rightRidge, leftRidge] = segment.points;
+        return (
+          <group key={idx}>
+            <Line points={[leftRoof, leftRoof.clone().add(thicknessVector)]} lineWidth={lineWidth} color={lineColor} />
+            <Line
+              points={[rightRoof, rightRoof.clone().add(thicknessVector)]}
+              lineWidth={lineWidth}
+              color={lineColor}
+            />
+            {isShed && (
+              <>
+                <Line
+                  points={[rightRidge, rightRidge.clone().add(thicknessVector)]}
+                  lineWidth={lineWidth}
+                  color={lineColor}
+                />
+                <Line
+                  points={[leftRidge, leftRidge.clone().add(thicknessVector)]}
+                  lineWidth={lineWidth}
+                  color={lineColor}
+                />
+              </>
+            )}
+          </group>
+        );
+      })}
+    </>
+  );
+});
+
 const GableRoof = ({
   id,
   parentId,
@@ -56,6 +116,9 @@ const GableRoof = ({
   color,
   overhang,
   thickness,
+  locked,
+  lineColor = 'black',
+  lineWidth = 0.2,
 }: GableRoofModel) => {
   const texture = useRoofTexture(textureType);
 
@@ -613,10 +676,16 @@ const GableRoof = ({
             </mesh>
           );
         })}
+        <GableRoofWireframe
+          roofSegments={roofSegments}
+          thickness={thickness}
+          lineColor={lineColor}
+          lineWidth={lineWidth}
+        />
       </group>
 
       {/* handles */}
-      {selected && (
+      {selected && !locked && (
         <group position={[0, 0, thickness]}>
           {/* mid handle */}
           <Sphere

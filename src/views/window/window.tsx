@@ -11,6 +11,7 @@ import { ActionType, ObjectType } from 'src/types';
 import * as Selector from 'src/stores/selector';
 import WindowWireFrame from './windowWireFrame';
 import WindowHandleWrapper from './windowHandleWrapper';
+import { LOCKED_ELEMENT_SELECTION_COLOR } from 'src/constants';
 
 const Window = ({ id, parentId, lx, lz, cx, cz, selected, locked, color }: WindowModel) => {
   const setCommonStore = useStore(Selector.set);
@@ -95,7 +96,11 @@ const Window = ({ id, parentId, lx, lz, cx, cz, selected, locked, color }: Windo
       </Plane>
 
       {/* wireframes */}
-      <WindowWireFrame x={wlx / 2} z={wlz / 2} />
+      <WindowWireFrame
+        x={wlx / 2}
+        z={wlz / 2}
+        lineColor={locked && selected ? LOCKED_ELEMENT_SELECTION_COLOR : 'black'}
+      />
 
       {/* handles */}
       {selected && !locked && <WindowHandleWrapper lx={wlx} lz={wlz} />}

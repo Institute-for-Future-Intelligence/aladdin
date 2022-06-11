@@ -2,7 +2,7 @@
  * @Copyright 2021-2022. Institute for Future Intelligence, Inc.
  */
 
-import { Plane, Sphere } from '@react-three/drei';
+import { Line, Plane, Sphere } from '@react-three/drei';
 import { useThree } from '@react-three/fiber';
 import React, { useEffect, useMemo, useRef, useState } from 'react';
 import { HALF_PI } from 'src/constants';
@@ -27,6 +27,7 @@ import {
   handleRoofPointerDown,
   handleUndoableResizeRoofHeight,
   isRoofValid,
+  RoofWireframeProps,
   useRoofTexture,
 } from './roof';
 
@@ -44,6 +45,52 @@ enum RoofHandleType {
   Null = 'Null',
 }
 
+const MansardRoofWirefram = React.memo(({ roofSegments, thickness, lineWidth, lineColor }: RoofWireframeProps) => {
+  const peripheryPoints: Vector3[] = [];
+  const thicknessVector = new Vector3(0, 0, thickness);
+
+  for (let i = 0; i < roofSegments.length - 1; i++) {
+    const [leftRoof, rightRoof, rightRidge, leftRidge] = roofSegments[i].points;
+    peripheryPoints.push(leftRidge, leftRoof, rightRoof, rightRidge);
+  }
+
+  peripheryPoints.push(peripheryPoints[0]);
+
+  const periphery = <Line points={peripheryPoints} lineWidth={lineWidth} color={lineColor} />;
+  const ridges = (
+    <>
+      <Line points={[roofSegments[0].points[2], roofSegments[0].points[3]]} lineWidth={lineWidth} color={lineColor} />
+      <Line points={[roofSegments[1].points[2], roofSegments[1].points[3]]} lineWidth={lineWidth} color={lineColor} />
+    </>
+  );
+
+  const isFlat = Math.abs(roofSegments[0].points[0].z) < 0.015;
+
+  return (
+    <>
+      {periphery}
+      {!isFlat && ridges}
+      <group position={[0, 0, thickness]}>
+        {periphery}
+        {!isFlat && ridges}
+      </group>
+      {roofSegments.slice(0, 2).map((segment, idx) => {
+        const [leftRoof, rightRoof] = segment.points;
+        return (
+          <group key={idx}>
+            <Line points={[leftRoof, leftRoof.clone().add(thicknessVector)]} lineWidth={lineWidth} color={lineColor} />
+            <Line
+              points={[rightRoof, rightRoof.clone().add(thicknessVector)]}
+              lineWidth={lineWidth}
+              color={lineColor}
+            />
+          </group>
+        );
+      })}
+    </>
+  );
+});
+
 const MansardRoof = ({
   parentId,
   id,
@@ -59,6 +106,9 @@ const MansardRoof = ({
   color,
   overhang,
   thickness,
+  locked,
+  lineColor = 'black',
+  lineWidth = 0.2,
 }: MansardRoofModel) => {
   const texture = useRoofTexture(textureType);
 
@@ -509,10 +559,16 @@ const MansardRoof = ({
             </group>
           );
         })}
+        <MansardRoofWirefram
+          roofSegments={roofSegments}
+          thickness={thickness}
+          lineColor={lineColor}
+          lineWidth={lineWidth}
+        />
       </group>
 
       {/* handles */}
-      {selected && (
+      {selected && !locked && (
         <group position={[centroid.x, centroid.y, centroid.z + thickness]}>
           <Sphere
             position={[0, 0, 0.3]}

@@ -3,6 +3,7 @@
  */
 
 import RoofTextureDefault from 'src/resources/roof_edge.png';
+import RoofTexture00 from 'src/resources/wall_00.png';
 import RoofTexture01 from 'src/resources/roof_01.png';
 import RoofTexture02 from 'src/resources/roof_02.png';
 import RoofTexture03 from 'src/resources/roof_03.png';
@@ -33,7 +34,7 @@ import { Euler, RepeatWrapping, TextureLoader, Vector3 } from 'three';
 import { ObjectType, RoofTexture } from 'src/types';
 import { ThreeEvent } from '@react-three/fiber';
 import { WallModel } from 'src/models/WallModel';
-import { HALF_PI } from 'src/constants';
+import { HALF_PI, LOCKED_ELEMENT_SELECTION_COLOR } from 'src/constants';
 import { Point2 } from 'src/models/Point2';
 
 export const euler = new Euler(0, 0, HALF_PI);
@@ -41,6 +42,13 @@ export interface ConvexGeoProps {
   points: Vector3[];
   direction: number;
   length: number;
+}
+
+export interface RoofWireframeProps {
+  roofSegments: ConvexGeoProps[];
+  thickness: number;
+  lineWidth: number;
+  lineColor: string;
 }
 
 export const handleUndoableResizeRoofHeight = (elemId: string, oldHeight: number, newHeight: number) => {
@@ -69,6 +77,9 @@ export const useRoofTexture = (textureType: RoofTexture) => {
   const textureLoader = useMemo(() => {
     let textureImg;
     switch (textureType) {
+      case RoofTexture.NoTexture:
+        textureImg = RoofTexture00;
+        break;
       case RoofTexture.Texture01:
         textureImg = RoofTexture01;
         break;
@@ -279,7 +290,11 @@ const Roof = (props: RoofModel) => {
   const removeElementById = useStore(Selector.removeElementById);
   const setCommonStore = useStore(Selector.set);
 
-  const { id, wallsId, roofType } = props;
+  const { id, wallsId, roofType, selected, locked } = props;
+
+  // some old files don't have these props
+  const _lineColor = selected && locked ? LOCKED_ELEMENT_SELECTION_COLOR : props.lineColor ?? 'black';
+  const _lineWidth = selected && locked ? 1 : props.lineWidth ?? 0.2;
 
   useEffect(() => {
     if (wallsId.length === 0) {
@@ -303,15 +318,15 @@ const Roof = (props: RoofModel) => {
   const renderRoof = () => {
     switch (roofType) {
       case RoofType.Pyramid:
-        return <PyramidRoof {...(props as PyramidRoofModel)} />;
+        return <PyramidRoof {...(props as PyramidRoofModel)} lineColor={_lineColor} lineWidth={_lineWidth} />;
       case RoofType.Gable:
-        return <GableRoof {...(props as GableRoofModel)} />;
+        return <GableRoof {...(props as GableRoofModel)} lineColor={_lineColor} lineWidth={_lineWidth} />;
       case RoofType.Hip:
-        return <HipRoof {...(props as HipRoofModel)} />;
+        return <HipRoof {...(props as HipRoofModel)} lineColor={_lineColor} lineWidth={_lineWidth} />;
       case RoofType.Gambrel:
-        return <GambrelRoof {...(props as GambrelRoofModel)} />;
+        return <GambrelRoof {...(props as GambrelRoofModel)} lineColor={_lineColor} lineWidth={_lineWidth} />;
       case RoofType.Mansard:
-        return <MansardRoof {...(props as MansardRoofModel)} />;
+        return <MansardRoof {...(props as MansardRoofModel)} lineColor={_lineColor} lineWidth={_lineWidth} />;
       default:
         return null;
     }

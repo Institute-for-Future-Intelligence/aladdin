@@ -2,7 +2,7 @@
  * @Copyright 2022. Institute for Future Intelligence, Inc.
  */
 
-import { Plane, Sphere } from '@react-three/drei';
+import { Line, Plane, Sphere } from '@react-three/drei';
 import { useThree } from '@react-three/fiber';
 import React, { useEffect, useMemo, useRef, useState } from 'react';
 import { HALF_PI } from 'src/constants';
@@ -35,6 +35,7 @@ import {
   handleRoofPointerDown,
   handleUndoableResizeRoofHeight,
   isRoofValid,
+  RoofWireframeProps,
   useRoofTexture,
 } from './roof';
 import { CSG } from 'three-csg-ts';
@@ -51,6 +52,71 @@ enum RoofHandleType {
   BackRight = 'BackRight',
   Null = 'Null',
 }
+
+const GambrelRoofWirefram = React.memo(({ roofSegments, thickness, lineWidth, lineColor }: RoofWireframeProps) => {
+  const peripheryPoints: Vector3[] = [];
+  const thicknessVector = new Vector3(0, 0, thickness);
+
+  const frontSideSegmentPoints = roofSegments[0].points;
+  const frontTopSegmentPoints = roofSegments[1].points;
+  const backTopSegmentPoints = roofSegments[2].points;
+  const backSideSegmentPoints = roofSegments[3].points;
+
+  peripheryPoints.push(
+    frontTopSegmentPoints[3],
+    frontTopSegmentPoints[0],
+    frontSideSegmentPoints[0],
+    frontSideSegmentPoints[1],
+    frontSideSegmentPoints[2],
+    frontTopSegmentPoints[2],
+    backTopSegmentPoints[2],
+    backSideSegmentPoints[0],
+    backSideSegmentPoints[1],
+    backTopSegmentPoints[3],
+    frontTopSegmentPoints[3],
+  );
+
+  const isFlat = Math.abs(frontSideSegmentPoints[0].z) < 0.15;
+
+  const periphery = <Line points={peripheryPoints} lineWidth={lineWidth} color={lineColor} />;
+  const ridges = (
+    <>
+      <Line points={[frontTopSegmentPoints[0], frontTopSegmentPoints[1]]} lineWidth={lineWidth} color={lineColor} />
+      <Line points={[frontTopSegmentPoints[2], frontTopSegmentPoints[3]]} lineWidth={lineWidth} color={lineColor} />
+      <Line points={[backTopSegmentPoints[2], backTopSegmentPoints[3]]} lineWidth={lineWidth} color={lineColor} />
+    </>
+  );
+  return (
+    <>
+      {periphery}
+      {!isFlat && ridges}
+      <group position={[0, 0, thickness]}>
+        {periphery}
+        {!isFlat && ridges}
+      </group>
+      <Line
+        points={[frontSideSegmentPoints[0], frontSideSegmentPoints[0].clone().add(thicknessVector)]}
+        lineWidth={lineWidth}
+        color={lineColor}
+      />
+      <Line
+        points={[frontSideSegmentPoints[1], frontSideSegmentPoints[1].clone().add(thicknessVector)]}
+        lineWidth={lineWidth}
+        color={lineColor}
+      />
+      <Line
+        points={[backSideSegmentPoints[0], backSideSegmentPoints[0].clone().add(thicknessVector)]}
+        lineWidth={lineWidth}
+        color={lineColor}
+      />
+      <Line
+        points={[backSideSegmentPoints[1], backSideSegmentPoints[1].clone().add(thicknessVector)]}
+        lineWidth={lineWidth}
+        color={lineColor}
+      />
+    </>
+  );
+});
 
 const intersectionPlanePosition = new Vector3();
 const intersectionPlaneRotation = new Euler();
@@ -76,6 +142,9 @@ const GambrelRoof = ({
   color,
   overhang,
   thickness,
+  locked,
+  lineColor = 'black',
+  lineWidth = 0.2,
 }: GambrelRoofModel) => {
   const texture = useRoofTexture(textureType);
 
@@ -431,8 +500,7 @@ const GambrelRoof = ({
 
     segments.push({ points: frontTopPoints, direction: frontDirection, length: frontSideLength });
 
-    // back side
-    const backSidePoints: Vector3[] = [];
+    // back top
     const backDirection = -backWall.relativeAngle;
     const { lh: backWallLh, rh: backWallRh } = getWallHeight(currentWallArray, 2);
 
@@ -481,21 +549,7 @@ const GambrelRoof = ({
     ).setZ(backRidgeRightPointV3.z);
 
     const backSideLenght = new Vector3(backWall.cx, backWall.cy).sub(topRidgeMidPointV3.clone().setZ(0)).length();
-    backSidePoints.push(
-      backWallLeftPointAfterOverhang,
-      backWallRightPointAfterOverhang,
-      backRidgeRightPointAfterOverhang,
-      backRidgeLeftPointAfterOverhang,
-    );
-    backSidePoints.push(
-      backWallLeftPointAfterOverhang.clone().add(thicknessVector),
-      backWallRightPointAfterOverhang.clone().add(thicknessVector),
-      backRidgeRightPointAfterOverhang.clone().add(thicknessVector),
-      backRidgeLeftPointAfterOverhang.clone().add(thicknessVector),
-    );
-    segments.push({ points: backSidePoints, direction: backDirection, length: backSideLenght });
 
-    // back top
     const backTopPoints: Vector3[] = [];
     backTopPoints.push(
       topRidgeLeftPointAfterOverhang,
@@ -510,6 +564,22 @@ const GambrelRoof = ({
       backRidgeRightPointAfterOverhang.clone().add(thicknessVector),
     );
     segments.push({ points: backTopPoints, direction: backDirection, length: backSideLenght });
+
+    // back side
+    const backSidePoints: Vector3[] = [];
+    backSidePoints.push(
+      backWallLeftPointAfterOverhang,
+      backWallRightPointAfterOverhang,
+      backRidgeRightPointAfterOverhang,
+      backRidgeLeftPointAfterOverhang,
+    );
+    backSidePoints.push(
+      backWallLeftPointAfterOverhang.clone().add(thicknessVector),
+      backWallRightPointAfterOverhang.clone().add(thicknessVector),
+      backRidgeRightPointAfterOverhang.clone().add(thicknessVector),
+      backRidgeLeftPointAfterOverhang.clone().add(thicknessVector),
+    );
+    segments.push({ points: backSidePoints, direction: backDirection, length: backSideLenght });
 
     return segments;
   }, [currentWallArray, h]);
@@ -595,10 +665,16 @@ const GambrelRoof = ({
             </group>
           );
         })}
+        <GambrelRoofWirefram
+          roofSegments={roofSegments}
+          thickness={thickness}
+          lineColor={lineColor}
+          lineWidth={lineWidth}
+        />
       </group>
 
       {/* handles */}
-      {selected && (
+      {selected && !locked && (
         <group position={[centroid.x, centroid.y, centroid.z + thickness]}>
           <Sphere
             position={[topRidgeLeftPointV3.x, topRidgeLeftPointV3.y, topRidgeLeftPointV3.z]}
@@ -701,7 +777,7 @@ const GambrelRoof = ({
                 }
                 switch (roofHandleType) {
                   case RoofHandleType.TopMid: {
-                    const height = Math.max(minHeight, point.z - (parent?.lz ?? 0));
+                    const height = Math.max(minHeight, point.z - (parent?.lz ?? 0) - 0.3);
                     if (
                       isRoofValid(id, currentWallArray[3].id, currentWallArray[1].id, [topRidgeLeftPoint[0], height])
                     ) {

@@ -47,7 +47,7 @@ import Window from '../window/window';
 import WallWireFrame from './wallWireFrame';
 import WallResizeHandleWarpper from './wallResizeHandleWarpper';
 import * as Selector from 'src/stores/selector';
-import { FINE_GRID_SCALE, HALF_PI, NORMAL_GRID_SCALE, TWO_PI } from 'src/constants';
+import { FINE_GRID_SCALE, HALF_PI, LOCKED_ELEMENT_SELECTION_COLOR, NORMAL_GRID_SCALE, TWO_PI } from 'src/constants';
 import { UndoableMove } from 'src/undo/UndoableMove';
 import { UndoableAdd } from 'src/undo/UndoableAdd';
 import { UndoableResizeWindowOrDoor } from 'src/undo/UndoableResize';
@@ -66,6 +66,8 @@ const Wall = ({
   rightJoints,
   textureType,
   color,
+  lineColor = 'black',
+  lineWidth = 0.2,
   parentId,
   selected = false,
   locked = false,
@@ -1068,17 +1070,15 @@ const Wall = ({
           })}
 
           {/* wireFrame */}
-          {selected ? (
-            <WallWireFrame selected={selected} x={hx} z={hz} />
-          ) : (
-            <WallWireFrame
-              selected={selected}
-              x={hx}
-              z={hz}
-              leftHeight={leftRoofHeight}
-              rightHeight={rightRoofHeight}
-            />
-          )}
+          <WallWireFrame
+            selected={selected}
+            lineColor={selected && locked ? LOCKED_ELEMENT_SELECTION_COLOR : lineColor}
+            lineWidth={selected && locked ? 1 : lineWidth}
+            x={hx}
+            z={hz}
+            leftHeight={selected ? undefined : leftRoofHeight}
+            rightHeight={selected ? undefined : rightRoofHeight}
+          />
 
           {/* handles */}
           {selected && !locked && <WallResizeHandleWarpper x={hx} z={hz} id={id} highLight={highLight} />}

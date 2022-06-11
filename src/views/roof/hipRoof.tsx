@@ -25,14 +25,8 @@ import {
   getIntersectionPoint,
   getDistance,
   handleRoofPointerDown,
+  RoofWireframeProps,
 } from './roof';
-
-interface RoofSegmentWireframeProps {
-  leftRoof: Vector3;
-  rightRoof: Vector3;
-  leftRidge: Vector3;
-  rightRidge: Vector3;
-}
 
 enum RoofHandleType {
   Mid = 'Mid',
@@ -40,6 +34,44 @@ enum RoofHandleType {
   Right = 'Right',
   Null = 'Null',
 }
+
+const HipRoofWireframe = React.memo(({ roofSegments, thickness, lineWidth, lineColor }: RoofWireframeProps) => {
+  const peripheryPoints: Vector3[] = [];
+  const thicknessVector = new Vector3(0, 0, thickness);
+
+  for (let i = 0; i < roofSegments.length; i++) {
+    const [leftPoint, rightPoint] = roofSegments[i].points;
+    peripheryPoints.push(leftPoint);
+    if (i === roofSegments.length - 1) {
+      peripheryPoints.push(rightPoint);
+    }
+  }
+
+  const isFlat = Math.abs(roofSegments[0].points[0].z) < 0.015;
+  const leftRidge = roofSegments[0].points[3].clone().add(thicknessVector);
+  const rightRidge = roofSegments[0].points[2].clone().add(thicknessVector);
+
+  const periphery = <Line points={peripheryPoints} lineWidth={lineWidth} color={lineColor} />;
+
+  return (
+    <>
+      {periphery}
+      {!isFlat && <Line points={[leftRidge, rightRidge]} lineWidth={lineWidth} color={lineColor} />}
+      <group position={[0, 0, thickness]}>
+        {periphery}
+        {roofSegments.map((segment, idx) => {
+          const [leftRoof, rightRoof, rightRidge, leftRidge] = segment.points;
+          const isFlat = Math.abs(leftRoof.z) < 0.015;
+          const points = [leftRoof.clone().sub(thicknessVector), leftRoof];
+          if (!isFlat) {
+            points.push(leftRidge);
+          }
+          return <Line key={idx} points={points} lineWidth={lineWidth} color={lineColor} />;
+        })}
+      </group>
+    </>
+  );
+});
 
 const intersectionPlanePosition = new Vector3();
 const intersectionPlaneRotation = new Euler();
@@ -60,6 +92,9 @@ const HipRoof = ({
   color,
   overhang,
   thickness,
+  locked,
+  lineColor = 'black',
+  lineWidth = 0.2,
 }: HipRoofModel) => {
   const texture = useRoofTexture(textureType);
 
@@ -394,22 +429,19 @@ const HipRoof = ({
                   color={textureType === RoofTexture.Default || textureType === RoofTexture.NoTexture ? color : 'white'}
                 />
               </mesh>
-              <Line points={[leftRoof, rightRoof]} lineWidth={0.2} />
-              {!isFlat && (
-                <RoofSegmentWireframe
-                  leftRoof={leftRoof}
-                  leftRidge={leftRidge}
-                  rightRoof={rightRoof}
-                  rightRidge={rightRidge}
-                />
-              )}
             </group>
           );
         })}
+        <HipRoofWireframe
+          roofSegments={roofSegments}
+          thickness={thickness}
+          lineColor={lineColor}
+          lineWidth={lineWidth}
+        />
       </group>
 
       {/* handles */}
-      {selected && (
+      {selected && !locked && (
         <group position={[0, 0, thickness + 0.15]}>
           {/* left handle */}
           <Sphere
@@ -569,17 +601,6 @@ const HipRoof = ({
         </Plane>
       )}
     </group>
-  );
-};
-
-const RoofSegmentWireframe = ({ leftRoof, leftRidge, rightRoof, rightRidge }: RoofSegmentWireframeProps) => {
-  const lineWidth = 0.2;
-  return (
-    <>
-      <Line points={[rightRoof, rightRidge]} lineWidth={lineWidth} />
-      <Line points={[rightRidge, leftRidge]} lineWidth={lineWidth} />
-      <Line points={[leftRidge, leftRoof]} lineWidth={lineWidth} />
-    </>
   );
 };
 

@@ -27,6 +27,7 @@ import {
   handleRoofPointerDown,
   handleUndoableResizeRoofHeight,
   useRoofTexture,
+  RoofWireframeProps,
 } from './roof';
 
 const centerPointPosition = new Vector3();
@@ -34,6 +35,39 @@ const intersectionPlanePosition = new Vector3();
 const intersectionPlaneRotation = new Euler();
 const zeroVector = new Vector3();
 const zVector3 = new Vector3(0, 0, 1);
+
+const PyramidRoofWirefram = React.memo(({ roofSegments, thickness, lineWidth, lineColor }: RoofWireframeProps) => {
+  const peripheryPoints: Vector3[] = [];
+  const thicknessVector = new Vector3(0, 0, thickness);
+
+  for (let i = 0; i < roofSegments.length; i++) {
+    const [leftPoint, rightPoint] = roofSegments[i].points;
+    peripheryPoints.push(leftPoint);
+    if (i === roofSegments.length - 1) {
+      peripheryPoints.push(rightPoint);
+    }
+  }
+
+  const periphery = <Line points={peripheryPoints} lineWidth={lineWidth} color={lineColor} />;
+
+  return (
+    <>
+      {periphery}
+      <group position={[0, 0, thickness]}>
+        {periphery}
+        {roofSegments.map((segment, idx) => {
+          const [leftPoint, rightPoint, zeroVector] = segment.points;
+          const isFlat = Math.abs(leftPoint.z) < 0.015;
+          const points = [leftPoint.clone().sub(thicknessVector), leftPoint];
+          if (!isFlat) {
+            points.push(zeroVector);
+          }
+          return <Line key={idx} points={points} lineWidth={lineWidth} color={lineColor} />;
+        })}
+      </group>
+    </>
+  );
+});
 
 const PyramidRoof = ({
   cx,
@@ -48,6 +82,9 @@ const PyramidRoof = ({
   color,
   overhang,
   thickness,
+  locked,
+  lineWidth = 0.2,
+  lineColor = 'black',
 }: PyramidRoofModel) => {
   const setCommonStore = useStore(Selector.set);
   const getElementById = useStore(Selector.getElementById);
@@ -438,22 +475,21 @@ const PyramidRoof = ({
                     textureType={textureType}
                     color={color ?? 'white'}
                   />
-                  <Line points={[leftPoint, rightPoint]} lineWidth={0.2} />
-                  {!isFlat && (
-                    <>
-                      <Line points={[leftPoint, zeroVector]} lineWidth={0.2} />
-                      <Line points={[rightPoint, zeroVector]} lineWidth={0.2} />
-                    </>
-                  )}
                 </group>
               );
             }
           }
         })}
+        <PyramidRoofWirefram
+          roofSegments={roofSegments}
+          thickness={thickness}
+          lineColor={lineColor}
+          lineWidth={lineWidth}
+        />
       </group>
 
       {/* handle */}
-      {selected && (
+      {selected && !locked && (
         <Sphere
           args={[0.3]}
           position={[centerPoint.x, centerPoint.y, h + thickness + 0.15]}

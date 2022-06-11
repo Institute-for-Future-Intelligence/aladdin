@@ -4,12 +4,12 @@
 
 import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { DoubleSide, TextureLoader } from 'three';
-import { Plane } from '@react-three/drei';
-import { HALF_PI } from 'src/constants';
+import { Line, Plane } from '@react-three/drei';
+import { HALF_PI, LOCKED_ELEMENT_SELECTION_COLOR } from 'src/constants';
 import { DoorModel } from 'src/models/DoorModel';
 import { CommonStoreState, useStore } from 'src/stores/common';
 import * as Selector from 'src/stores/selector';
-import { ActionType, DoorTexture, ObjectType, ResizeHandleType } from 'src/types';
+import { ActionType, DoorTexture, LineWidth, ObjectType, ResizeHandleType } from 'src/types';
 import WindowResizeHandle from './window/windowResizeHandle';
 
 import DoorTexture00 from 'src/resources/door_00.png';
@@ -25,10 +25,18 @@ import DoorTexture09 from 'src/resources/door_09.png';
 import DoorTexture10 from 'src/resources/door_10.png';
 import DoorTexture11 from 'src/resources/door_11.png';
 import DoorTexture12 from 'src/resources/door_12.png';
+import Wireframe from 'src/components/wireframe';
 
 interface DoorHandleWapperProps {
   lx: number;
   lz: number;
+}
+
+interface DoorWireFrameProps {
+  lx: number;
+  lz: number;
+  lineColor: string;
+  lineWidth?: number;
 }
 
 const DoorHandleWapper = ({ lx, lz }: DoorHandleWapperProps) => {
@@ -37,13 +45,21 @@ const DoorHandleWapper = ({ lx, lz }: DoorHandleWapperProps) => {
     <group>
       {!isSettingNewWindow && (
         <>
-          <WindowResizeHandle x={-lx / 2} z={lz / 2} handleType={ResizeHandleType.UpperLeft} />
-          <WindowResizeHandle x={lx / 2} z={lz / 2} handleType={ResizeHandleType.UpperRight} />
+          <WindowResizeHandle x={-lx} z={lz} handleType={ResizeHandleType.UpperLeft} />
+          <WindowResizeHandle x={lx} z={lz} handleType={ResizeHandleType.UpperRight} />
         </>
       )}
     </group>
   );
 };
+
+const DoorWireFrame = React.memo(({ lx, lz, lineColor, lineWidth = 0.2 }: DoorWireFrameProps) => {
+  const ul: [number, number, number] = [-lx, 0, lz];
+  const ur: [number, number, number] = [lx, 0, lz];
+  const ll: [number, number, number] = [-lx, 0, -lz];
+  const lr: [number, number, number] = [lx, 0, -lz];
+  return <Line points={[ul, ll, lr, ur, ul]} lineWidth={lineWidth} color={lineColor} />;
+});
 
 const Door = ({ id, parentId, cx, cz, lx, lz, selected, locked, textureType, color }: DoorModel) => {
   const textureLoader = useMemo(() => {
@@ -134,6 +150,9 @@ const Door = ({ id, parentId, cx, cz, lx, lz, selected, locked, textureType, col
     }
   }, [lx, lz, cx, cz, parent?.lx, parent?.lz]);
 
+  const hx = wlx / 2;
+  const hz = wlz / 2;
+
   return (
     <group key={id} name={`Door group ${id}`} position={[wcx, -0.01, wcz]}>
       <Plane
@@ -171,7 +190,13 @@ const Door = ({ id, parentId, cx, cz, lx, lz, selected, locked, textureType, col
           color={textureType === DoorTexture.Default || textureType === DoorTexture.NoTexture ? color : 'white'}
         />
       </Plane>
-      {selected && !locked && <DoorHandleWapper lx={wlx} lz={wlz} />}
+      {selected && !locked && <DoorHandleWapper lx={hx} lz={hz} />}
+      <DoorWireFrame
+        lx={hx}
+        lz={hz}
+        lineColor={selected && locked ? LOCKED_ELEMENT_SELECTION_COLOR : 'black'}
+        lineWidth={selected && locked ? 1 : 0.2}
+      />
     </group>
   );
 };
