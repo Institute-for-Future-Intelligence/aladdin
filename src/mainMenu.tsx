@@ -12,6 +12,7 @@ import solar_farm_fixed_array from './examples/solar_farm_fixed_array.json';
 import solar_farm_hsat_array from './examples/solar_farm_hsat_array.json';
 import solar_farm_aadat_array from './examples/solar_farm_aadat_array.json';
 import solar_trackers from './examples/solar_trackers.json';
+import all_roof_types from './examples/all_roof_types.json';
 import cape_cod_with_shed_dormer from './examples/cape_cod_with_shed_dormer.json';
 import barn_house from './examples/barn_house.json';
 import dutch_colonial_house from './examples/dutch_colonial_house.json';
@@ -351,6 +352,9 @@ const MainMenu = ({ viewOnly, set2DView, resetView, zoomView, canvas }: MainMenu
         break;
       case 'cape_cod_with_shed_dormer':
         input = cape_cod_with_shed_dormer;
+        break;
+      case 'all_roof_types':
+        input = all_roof_types;
         break;
       case 'gable_roof_vs_hip_roof':
         input = gable_roof_vs_hip_roof;
@@ -1821,6 +1825,9 @@ const MainMenu = ({ viewOnly, set2DView, resetView, zoomView, canvas }: MainMenu
           </Menu.Item>
           <Menu.Item key="gambrel_roof_vs_mansard_roof" onClick={loadFile}>
             {i18n.t('menu.buildingDesignTutorials.GambrelRoofVsMansardRoof', lang)}
+          </Menu.Item>
+          <Menu.Item key="all_roof_types" onClick={loadFile}>
+            {i18n.t('menu.buildingDesignTutorials.AllRoofTypes', lang)}
           </Menu.Item>
         </SubMenu>
         {/* photovoltaic solar power */}

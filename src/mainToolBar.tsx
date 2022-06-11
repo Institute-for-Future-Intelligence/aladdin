@@ -220,6 +220,7 @@ const MainToolBar = ({ viewOnly = false }: MainToolBarProps) => {
       .catch((error) => {
         if (error.code !== 'auth/popup-closed-by-user' && error.code !== 'auth/cancelled-popup-request') {
           showError(i18n.t('message.CannotSignIn', lang) + ': ' + error);
+          console.log(error);
         }
       });
     resetToSelectMode();
@@ -361,6 +362,7 @@ const MainToolBar = ({ viewOnly = false }: MainToolBarProps) => {
               })
               .catch((error) => {
                 showError(i18n.t('message.CannotSaveYourFileToCloud', lang) + ': ' + error);
+                console.log(error);
               });
           }
         } catch (e) {

@@ -313,6 +313,7 @@ export const i18n_zh_tw = {
         GableRoofVsHipRoof: '雙坡屋頂和四坡屋顶的對比',
         ColonialVsSaltbox: '殖民地風格和鹽盒風格的對比',
         GambrelRoofVsMansardRoof: '复斜屋顶和折線屋頂的對比',
+        AllRoofTypes: '所有的屋頂類型',
       },
 
       photovoltaicSolarPowerSubMenu: '光伏發電',

@@ -315,6 +315,7 @@ export const i18n_en = {
         GableRoofVsHipRoof: 'Gable Roof vs. Hip Roof',
         ColonialVsSaltbox: 'Colonial vs. Saltbox',
         GambrelRoofVsMansardRoof: 'Gambrel Roof vs. Mansard Roof',
+        AllRoofTypes: 'All Roof Types',
       },
 
       photovoltaicSolarPowerSubMenu: 'Photovoltaic Solar Power',

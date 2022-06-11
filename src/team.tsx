@@ -106,8 +106,6 @@ const Team = ({ top, height, color }: TeamProps) => {
               </td>
               <td>
                 <h3 style={{ color: color }}>{i18n.t('aboutUs.Research', lang)}</h3>
-                Alex Barco
-                <br />
                 Shannon Sung
                 <br />
                 Charles Xie
@@ -128,7 +126,7 @@ const Team = ({ top, height, color }: TeamProps) => {
           color: color,
         }}
       >
-        {i18n.t('aboutUs.Translators', lang)}: {Language.Turkish} (Hasan Bircan)
+        {i18n.t('aboutUs.Translators', lang)}: {Language.Spanish} (Alex Barco), {Language.Turkish} (Hasan Bircan)
         <br />
         <br />
         {i18n.t('aboutUs.Acknowledgment', lang)}: {i18n.t('aboutUs.FundingInformation', lang)}{' '}
