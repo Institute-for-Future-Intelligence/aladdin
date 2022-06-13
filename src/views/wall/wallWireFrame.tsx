@@ -7,35 +7,58 @@ import { Line } from '@react-three/drei';
 import { HALF_PI } from '../../constants';
 
 interface WallWireFrameProps {
-  selected: boolean;
   lineColor: string;
   lineWidth: number;
   x: number;
   z: number;
   leftHeight?: number;
   rightHeight?: number;
+  center?: number[];
+  centerLeft?: number[];
+  centerRight?: number[];
 }
 
 const WallWireFrame = React.memo(
   ({
-    selected,
     lineColor = 'black',
     lineWidth = 0.2,
     x,
     z,
     leftHeight = 2 * z,
     rightHeight = 2 * z,
+    center,
+    centerLeft,
+    centerRight,
   }: WallWireFrameProps) => {
-    const lowerLeft: [number, number, number] = [-x, -z, 0];
-    const lowerRight: [number, number, number] = [x, -z, 0];
-    const upperLeft: [number, number, number] = [-x, leftHeight - z, 0];
-    const upperRight: [number, number, number] = [x, rightHeight - z, 0];
+    const lowerLeft: [number, number, number] = [-x, -z + 0.01, 0.01];
+    const lowerRight: [number, number, number] = [x, -z + 0.01, 0.01];
+    const upperLeft: [number, number, number] = [-x, leftHeight - z - 0.01, 0.01];
+    const upperRight: [number, number, number] = [x, rightHeight - z - 0.01, 0.01];
+
+    const points = [upperLeft, lowerLeft, lowerRight, upperRight];
+    const lx = x * 2;
+
+    if (centerRight) {
+      const cr: [number, number, number] = [centerRight[0] * lx, centerRight[1] - z, 0.01];
+      points.push(cr);
+    }
+
+    if (center) {
+      const c: [number, number, number] = [center[0] * lx, center[1] - z, 0.01];
+      points.push(c);
+    }
+
+    if (centerLeft) {
+      const cl: [number, number, number] = [centerLeft[0] * lx, centerLeft[1] - z, 0.01];
+      points.push(cl);
+    }
+
+    points.push(upperLeft);
 
     return (
       <React.Fragment>
         <group rotation={[HALF_PI, 0, 0]}>
-          <Line points={[upperLeft, lowerLeft, lowerRight, upperRight]} color={lineColor} lineWidth={lineWidth} />
-          {selected && <Line points={[upperLeft, upperRight]} lineWidth={lineWidth} color={lineColor} />}
+          <Line points={points} color={lineColor} lineWidth={lineWidth} />
         </group>
       </React.Fragment>
     );

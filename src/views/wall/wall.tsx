@@ -1071,13 +1071,15 @@ const Wall = ({
 
           {/* wireFrame */}
           <WallWireFrame
-            selected={selected}
             lineColor={selected && locked ? LOCKED_ELEMENT_SELECTION_COLOR : lineColor}
-            lineWidth={selected && locked ? 1 : lineWidth}
+            lineWidth={selected && locked ? 2 : lineWidth}
             x={hx}
             z={hz}
-            leftHeight={selected ? undefined : leftRoofHeight}
-            rightHeight={selected ? undefined : rightRoofHeight}
+            leftHeight={leftRoofHeight}
+            rightHeight={rightRoofHeight}
+            center={centerRoofHeight}
+            centerLeft={centerLeftRoofHeight}
+            centerRight={centerRightRoofHeight}
           />
 
           {/* handles */}
