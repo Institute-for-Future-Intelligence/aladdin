@@ -13,7 +13,19 @@ import WindowWireFrame from './windowWireFrame';
 import WindowHandleWrapper from './windowHandleWrapper';
 import { LOCKED_ELEMENT_SELECTION_COLOR } from 'src/constants';
 
-const Window = ({ id, parentId, lx, lz, cx, cz, selected, locked, color }: WindowModel) => {
+const Window = ({
+  id,
+  parentId,
+  lx,
+  lz,
+  cx,
+  cz,
+  selected,
+  locked,
+  color,
+  lineWidth = 0.2,
+  lineColor = 'black',
+}: WindowModel) => {
   const setCommonStore = useStore(Selector.set);
   const selectMe = useStore(Selector.selectMe);
   const isAddingElement = useStore(Selector.isAddingElement);
@@ -97,9 +109,10 @@ const Window = ({ id, parentId, lx, lz, cx, cz, selected, locked, color }: Windo
 
       {/* wireframes */}
       <WindowWireFrame
-        x={wlx / 2}
-        z={wlz / 2}
-        lineColor={locked && selected ? LOCKED_ELEMENT_SELECTION_COLOR : 'black'}
+        lx={wlx}
+        lz={wlz}
+        lineColor={locked && selected ? LOCKED_ELEMENT_SELECTION_COLOR : lineColor}
+        lineWidth={selected && locked ? 0.5 : lineWidth}
       />
 
       {/* handles */}

@@ -3,45 +3,68 @@
  */
 
 import React from 'react';
-import { Line } from '@react-three/drei';
+import { Cylinder, Line } from '@react-three/drei';
+import { HALF_PI } from 'src/constants';
 
 interface WindowWireFrameProps {
-  x: number;
-  z: number;
+  lx: number;
+  lz: number;
   lineColor: string;
   lineWidth?: number;
 }
 
-const WindowWireFrame = ({ x, z, lineColor, lineWidth = 1 }: WindowWireFrameProps) => {
+const WindowWireFrame = ({ lx, lz, lineColor, lineWidth = 0.2 }: WindowWireFrameProps) => {
+  lineWidth /= 20;
+
+  const radialSegments = 4;
+  const heightSegments = 1;
+
+  const radius = lineWidth / 2;
+  const rotation = HALF_PI / 2;
+
+  const hx = lx / 2;
+  const hz = lz / 2;
+
+  const outerMat = <meshStandardMaterial color={lineColor} />;
+  const innerMat = <meshStandardMaterial color={'white'} />;
+
   return (
     <React.Fragment>
-      <Line
-        points={[
-          [-x, 0, -z],
-          [x, 0, -z],
-          [x, 0, z],
-          [-x, 0, z],
-          [-x, 0, -z],
-        ]}
-        linewidth={lineWidth}
-        color={lineColor}
-      />
-      <Line
-        points={[
-          [-x, 0, 0],
-          [x, 0, 0],
-        ]}
-        linewidth={lineWidth}
-        color={'white'}
-      />
-      <Line
-        points={[
-          [0, 0, -z],
-          [0, 0, z],
-        ]}
-        linewidth={lineWidth}
-        color={'white'}
-      />
+      <Cylinder args={[0.01, 0.01, lx, radialSegments, heightSegments]} rotation={[0, 0, HALF_PI]} receiveShadow>
+        {innerMat}
+      </Cylinder>
+      <Cylinder args={[0.01, 0.01, lz, radialSegments, heightSegments]} rotation={[HALF_PI, 0, 0]} receiveShadow>
+        {innerMat}
+      </Cylinder>
+
+      <Cylinder
+        args={[lineWidth, lineWidth, lx, radialSegments, heightSegments]}
+        rotation={[rotation, 0, HALF_PI]}
+        position={[0, 0, hz - radius]}
+      >
+        {outerMat}
+      </Cylinder>
+      <Cylinder
+        args={[lineWidth, lineWidth, lx, radialSegments, heightSegments]}
+        rotation={[rotation, 0, HALF_PI]}
+        position={[0, 0, -hz + radius]}
+      >
+        {outerMat}
+      </Cylinder>
+      <Cylinder
+        args={[lineWidth, lineWidth, lz, radialSegments, heightSegments]}
+        rotation={[HALF_PI, rotation, 0]}
+        position={[hx - radius, 0, 0]}
+      >
+        {outerMat}
+      </Cylinder>
+      <Cylinder
+        args={[lineWidth, lineWidth, lz, radialSegments, heightSegments]}
+        rotation={[HALF_PI, rotation, 0]}
+        position={[-hx + radius, 0, 0]}
+      >
+        {outerMat}
+      </Cylinder>
     </React.Fragment>
   );
 };
