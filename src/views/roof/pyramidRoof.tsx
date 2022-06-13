@@ -448,10 +448,10 @@ const PyramidRoof = ({
   }, [currentWallArray]);
 
   return (
-    <group position={[cx, cy, cz]} rotation={[0, 0, rotation]} name={`PyramidRoof Group ${id}`}>
+    <group position={[cx, cy, cz]} rotation={[0, 0, rotation]} name={`Pyramid Roof Group ${id}`}>
       {/* roof segments group */}
       <group
-        name={`Roof Segments Group ${id}`}
+        name={`Pyramid Roof Segments Group`}
         position={[centerPoint.x, centerPoint.y, h]}
         onPointerDown={(e) => {
           handleRoofPointerDown(e, id);

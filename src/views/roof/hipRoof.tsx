@@ -403,10 +403,10 @@ const HipRoof = ({
   }, [currentWallArray]);
 
   return (
-    <group position={[cx, cy, cz + 0.01]} rotation={[0, 0, rotation]} name={`HipRoof Group ${id}`}>
+    <group position={[cx, cy, cz + 0.01]} rotation={[0, 0, rotation]} name={`Hip Roof Group ${id}`}>
       {/* roof segment group */}
       <group
-        name="Roof Segments Group"
+        name="Hip Roof Segments Group"
         position={[centroid2D.x, centroid2D.y, h]}
         onPointerDown={(e) => {
           handleRoofPointerDown(e, id);

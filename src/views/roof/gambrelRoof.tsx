@@ -637,9 +637,10 @@ const GambrelRoof = ({
   }, [currentWallArray, h]);
 
   return (
-    <group position={[cx, cy, cz + 0.01]} rotation={[0, 0, rotation]} name={`GambrelRoof Group ${id}`}>
+    <group position={[cx, cy, cz + 0.01]} rotation={[0, 0, rotation]} name={`Gambrel Roof Group ${id}`}>
       {/* roof segments */}
       <group
+        name={'Gambrel Roof Segments Group'}
         position={[centroid.x, centroid.y, centroid.z]}
         onPointerDown={(e) => {
           handleRoofPointerDown(e, id);
