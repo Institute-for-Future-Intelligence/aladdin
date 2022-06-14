@@ -351,26 +351,26 @@ const GambrelRoof = ({
     const wall = currentWallArray[3];
     const [x, h] = frontRidgeLeftPoint;
     return getRidgePoint(wall, x, h).sub(centroid);
-  }, [currentWallArray, centroid, frontRidgeLeftPoint]);
+  }, [currentWallArray, centroid, frontRidgeLeftPoint, minHeight]);
 
   const frontRidgeRightPointV3 = useMemo(() => {
     const wall = currentWallArray[1];
     const [x, h] = frontRidgeRightPoint;
     return getRidgePoint(wall, x, h).sub(centroid);
-  }, [currentWallArray, centroid, frontRidgeRightPoint]);
+  }, [currentWallArray, centroid, frontRidgeRightPoint, minHeight]);
 
   // back ridge
   const backRidgeLeftPointV3 = useMemo(() => {
     const wall = currentWallArray[1];
     const [x, h] = backRidgeLeftPoint;
     return getRidgePoint(wall, x, h).sub(centroid);
-  }, [currentWallArray, centroid, backRidgeLeftPoint]);
+  }, [currentWallArray, centroid, backRidgeLeftPoint, minHeight]);
 
   const backRidgeRightPointV3 = useMemo(() => {
     const wall = currentWallArray[3];
     const [x, h] = backRidgeRightPoint;
     return getRidgePoint(wall, x, h).sub(centroid);
-  }, [currentWallArray, centroid, backRidgeRightPoint]);
+  }, [currentWallArray, centroid, backRidgeRightPoint, minHeight]);
 
   const overhangs = useMemo(() => {
     return currentWallArray.map((wall) => getNormal(wall).multiplyScalar(overhang));
@@ -443,7 +443,7 @@ const GambrelRoof = ({
       frontRidgeRightPointV3,
       leftWallLeftPointAfterOffset.clone().sub(centroid),
       leftWallRightPointAfterOffset.clone().sub(centroid),
-    ).setZ(frontRidgeRightPointV3.z);
+    ).setZ(frontRidgeLeftPointV3.z);
 
     const frontRidgeRightPointAfterOverhang = getIntersectionPoint(
       frontRidgeRightPointV3,
@@ -582,7 +582,7 @@ const GambrelRoof = ({
     segments.push({ points: backSidePoints, direction: backDirection, length: backSideLenght });
 
     return segments;
-  }, [currentWallArray, h]);
+  }, [currentWallArray, h, minHeight]);
 
   useEffect(() => {
     if (currentWallArray.length === 4) {
