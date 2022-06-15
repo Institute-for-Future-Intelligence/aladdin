@@ -788,7 +788,13 @@ export const i18n_en = {
       AllWalls: 'All Walls',
     },
 
-    windowMenu: {},
+    windowMenu: {
+      OnlyThisWindow: 'Only This Window',
+      AllWindowsOnWall: 'All Windows on the Same Wall',
+      AllWindowsAboveFoundation: 'All Windows Above the Same Foundation',
+      AllWindows: 'All Windows',
+      MullionWidth: 'Mullion Width',
+    },
 
     roofMenu: {
       TextureDefault: 'Default',
@@ -820,6 +826,7 @@ export const i18n_en = {
       Texture11: 'Texture 11',
       Texture12: 'Texture 12',
       OnlyThisDoor: 'Only This Door',
+      AllDoorsOnWall: 'All Doors on the Same Wall',
       AllDoorsAboveFoundation: 'All Doors Above the Same Foundation',
       AllDoors: 'All Doors',
     },

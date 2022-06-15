@@ -804,6 +804,7 @@ export const i18n_tr = {
       Texture11: 'Tekstür 11',
       Texture12: 'Tekstür 12',
       OnlyThisDoor: 'Only This Door',
+      AllDoorsOnWall: 'All Doors on the Same Wall',
       AllDoorsAboveFoundation: 'All Doors Above the Same Foundation',
       AllDoors: 'All Doors',
     },
@@ -823,7 +824,13 @@ export const i18n_tr = {
       OverhangLength: 'Overhang Length',
     },
 
-    windowMenu: {},
+    windowMenu: {
+      OnlyThisWindow: 'Only This Window',
+      AllWindowsOnWall: 'All Windows on the Same Wall',
+      AllWindowsAboveFoundation: 'All Windows Above the Same Foundation',
+      AllWindows: 'All Windows',
+      MullionWidth: 'Mullion Width',
+    },
 
     siteInfoPanel: {
       High: 'Yüksek',

@@ -32,7 +32,7 @@ const WindowWireFrame = ({ lx, lz, mullionWidth, lineColor, lineWidth = 0.2 }: W
   const verticalMullion = useMemo(() => {
     const arr: number[] = [];
     const dividers = Math.round(lx / 0.5) - 1;
-    if (dividers <= 0) {
+    if (dividers <= 0 || mullionWidth === 0) {
       return arr;
     }
     let x = 0.25;
@@ -44,12 +44,12 @@ const WindowWireFrame = ({ lx, lz, mullionWidth, lineColor, lineWidth = 0.2 }: W
       arr.push(x, -x);
     }
     return arr;
-  }, [lx]);
+  }, [lx, mullionWidth]);
 
   const horizontalMullion = useMemo(() => {
     const arr: number[] = [];
     const dividers = Math.round(lz / 0.5) - 1;
-    if (dividers <= 0) {
+    if (dividers <= 0 || mullionWidth === 0) {
       return arr;
     }
     let z = 0.25;
@@ -61,7 +61,7 @@ const WindowWireFrame = ({ lx, lz, mullionWidth, lineColor, lineWidth = 0.2 }: W
       arr.push(z, -z);
     }
     return arr;
-  }, [lz]);
+  }, [lz, mullionWidth]);
 
   return (
     <group name={'Window Wireframe'} position={[0, -0.001, 0]}>

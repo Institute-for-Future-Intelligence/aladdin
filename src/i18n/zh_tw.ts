@@ -801,11 +801,18 @@ export const i18n_zh_tw = {
       Texture11: '十一號材質',
       Texture12: '十二號材質',
       OnlyThisDoor: '只這个門',
+      AllDoorsOnWall: '同一面牆上所有的門',
       AllDoorsAboveFoundation: '同一地基上所有的門',
       AllDoors: '所有的門',
     },
 
-    windowMenu: {},
+    windowMenu: {
+      OnlyThisWindow: '只這個窗戶',
+      AllWindowsOnWall: '同一面牆上所有的窗戶',
+      AllWindowsAboveFoundation: '同一地基上所有的窗戶',
+      AllWindows: '所有的窗戶',
+      MullionWidth: '豎梃寬度',
+    },
 
     siteInfoPanel: {
       High: '最高溫度',
