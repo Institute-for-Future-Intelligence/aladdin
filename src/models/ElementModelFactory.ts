@@ -476,6 +476,7 @@ export class ElementModelFactory {
       lx: 0,
       ly: 0,
       lz: 0,
+      mullionWidth: 0.06,
       selected: true,
       lineWidth: 0.2,
       lineColor: 'black',

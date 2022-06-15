@@ -9,19 +9,19 @@ import { HALF_PI } from 'src/constants';
 interface WindowWireFrameProps {
   lx: number;
   lz: number;
+  mullionWidth: number;
   lineColor: string;
   lineWidth?: number;
 }
 
-const WindowWireFrame = ({ lx, lz, lineColor, lineWidth = 0.2 }: WindowWireFrameProps) => {
+const WindowWireFrame = ({ lx, lz, mullionWidth, lineColor, lineWidth = 0.2 }: WindowWireFrameProps) => {
   lineWidth /= 20;
 
   const radialSegments = 2;
   const heightSegments = 1;
 
-  const radius = lineWidth / 2;
-  const rotation = HALF_PI / 2;
-  const mullionWidth = 0.03;
+  const wireframeRadius = lineWidth / 2;
+  const mullionRadius = mullionWidth / 2;
 
   const hx = lx / 2;
   const hz = lz / 2;
@@ -64,12 +64,12 @@ const WindowWireFrame = ({ lx, lz, lineColor, lineWidth = 0.2 }: WindowWireFrame
   }, [lz]);
 
   return (
-    <React.Fragment>
+    <group name={'Window Wireframe'} position={[0, -0.001, 0]}>
       {verticalMullion.map((x) => (
         <Cylinder
-          position={[x, 0, 0]}
-          args={[mullionWidth, mullionWidth, lz, radialSegments, heightSegments]}
-          rotation={[HALF_PI, 0, 0]}
+          position={[x, 0.00025, 0]}
+          args={[mullionRadius, mullionRadius, lz, radialSegments, heightSegments]}
+          rotation={[HALF_PI, HALF_PI, 0]}
           receiveShadow
         >
           {innerMat}
@@ -77,8 +77,8 @@ const WindowWireFrame = ({ lx, lz, lineColor, lineWidth = 0.2 }: WindowWireFrame
       ))}
       {horizontalMullion.map((z) => (
         <Cylinder
-          position={[0, 0, z]}
-          args={[mullionWidth, mullionWidth, lx, radialSegments, heightSegments]}
+          position={[0, 0.0005, z]}
+          args={[mullionRadius, mullionRadius, lx, radialSegments, heightSegments]}
           rotation={[0, 0, HALF_PI]}
           receiveShadow
         >
@@ -88,33 +88,33 @@ const WindowWireFrame = ({ lx, lz, lineColor, lineWidth = 0.2 }: WindowWireFrame
 
       <Cylinder
         args={[lineWidth, lineWidth, lx, radialSegments, heightSegments]}
-        rotation={[rotation, 0, HALF_PI]}
-        position={[0, 0, hz - radius]}
+        rotation={[0, 0, HALF_PI]}
+        position={[0, 0, hz - wireframeRadius]}
       >
         {outerMat}
       </Cylinder>
       <Cylinder
         args={[lineWidth, lineWidth, lx, radialSegments, heightSegments]}
-        rotation={[rotation, 0, HALF_PI]}
-        position={[0, 0, -hz + radius]}
+        rotation={[0, 0, HALF_PI]}
+        position={[0, 0, -hz + wireframeRadius]}
       >
         {outerMat}
       </Cylinder>
       <Cylinder
         args={[lineWidth, lineWidth, lz, radialSegments, heightSegments]}
-        rotation={[HALF_PI, rotation, 0]}
-        position={[hx - radius, 0, 0]}
+        rotation={[HALF_PI, HALF_PI, 0]}
+        position={[hx - wireframeRadius, 0, 0]}
       >
         {outerMat}
       </Cylinder>
       <Cylinder
         args={[lineWidth, lineWidth, lz, radialSegments, heightSegments]}
-        rotation={[HALF_PI, rotation, 0]}
-        position={[-hx + radius, 0, 0]}
+        rotation={[HALF_PI, HALF_PI, 0]}
+        position={[-hx + wireframeRadius, 0, 0]}
       >
         {outerMat}
       </Cylinder>
-    </React.Fragment>
+    </group>
   );
 };
 

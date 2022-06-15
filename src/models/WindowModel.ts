@@ -4,4 +4,6 @@
 
 import { ElementModel } from './ElementModel';
 
-export interface WindowModel extends ElementModel {}
+export interface WindowModel extends ElementModel {
+  mullionWidth: number;
+}

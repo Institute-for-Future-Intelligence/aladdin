@@ -25,6 +25,7 @@ const Window = ({
   color,
   lineWidth = 0.2,
   lineColor = 'black',
+  mullionWidth = 0.06,
 }: WindowModel) => {
   const setCommonStore = useStore(Selector.set);
   const selectMe = useStore(Selector.selectMe);
@@ -111,6 +112,7 @@ const Window = ({
       <WindowWireFrame
         lx={wlx}
         lz={wlz}
+        mullionWidth={mullionWidth}
         lineColor={locked && selected ? LOCKED_ELEMENT_SELECTION_COLOR : lineColor}
         lineWidth={selected && locked ? 0.5 : lineWidth}
       />

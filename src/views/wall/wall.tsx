@@ -354,7 +354,7 @@ const Wall = ({
 
   // windows
   useEffect(() => {
-    setWindows(elements.filter((e) => e.type === ObjectType.Window && e.parentId === id));
+    setWindows(elements.filter((e) => e.type === ObjectType.Window && e.parentId === id) as WindowModel[]);
     setDoors((elements as DoorModel[]).filter((e) => e.type === ObjectType.Door && e.parentId === id));
   }, [elements]);
 
