@@ -95,6 +95,37 @@ const DoorColorSelection = ({ setDialogVisible }: { setDialogVisible: (b: boolea
         updateColorInMap(oldColorsAll, value);
         setApplyCount(applyCount + 1);
         break;
+      case Scope.OnlyThisSide:
+        if (door.parentId) {
+          const oldColorsOnSameWall = new Map<string, string>();
+          for (const elem of useStore.getState().elements) {
+            if (elem.type === ObjectType.Door && elem.parentId === door.parentId && !door.locked) {
+              oldColorsOnSameWall.set(elem.id, elem.color ?? 'white');
+            }
+          }
+          const undoableChangeOnSameWall = {
+            name: 'Set Color for All Doors On the Same Wall',
+            timestamp: Date.now(),
+            oldValues: oldColorsOnSameWall,
+            newValue: value,
+            groupId: door.parentId,
+            undo: () => {
+              undoColorInMap(undoableChangeOnSameWall.oldValues as Map<string, string>);
+            },
+            redo: () => {
+              if (undoableChangeOnSameWall.groupId) {
+                updateColorInMap(
+                  undoableChangeOnSameWall.oldValues as Map<string, string>,
+                  undoableChangeOnSameWall.newValue as string,
+                );
+              }
+            },
+          } as UndoableChangeGroup;
+          addUndoable(undoableChangeOnSameWall);
+          updateColorInMap(oldColorsOnSameWall, value);
+          setApplyCount(applyCount + 1);
+        }
+        break;
       case Scope.AllObjectsOfThisTypeAboveFoundation:
         if (door.foundationId) {
           const oldColorsAboveFoundation = new Map<string, string>();
@@ -241,6 +272,7 @@ const DoorColorSelection = ({ setDialogVisible }: { setDialogVisible: (b: boolea
             <Radio.Group onChange={(e) => setDoorActionScope(e.target.value)} value={doorActionScope}>
               <Space direction="vertical">
                 <Radio value={Scope.OnlyThisObject}>{i18n.t('doorMenu.OnlyThisDoor', lang)}</Radio>
+                <Radio value={Scope.OnlyThisSide}>{i18n.t('doorMenu.AllDoorsOnWall', lang)}</Radio>
                 <Radio value={Scope.AllObjectsOfThisTypeAboveFoundation}>
                   {i18n.t('doorMenu.AllDoorsAboveFoundation', lang)}
                 </Radio>
