@@ -1,9 +1,9 @@
 /*
- * @Copyright 2021-2022. Institute for Future Intelligence, Inc.
+ * @Copyright 2022. Institute for Future Intelligence, Inc.
  */
 
 import React, { useMemo } from 'react';
-import { Cylinder, Line } from '@react-three/drei';
+import { Cylinder } from '@react-three/drei';
 import { HALF_PI } from 'src/constants';
 
 interface WindowWireFrameProps {
@@ -16,11 +16,12 @@ interface WindowWireFrameProps {
 const WindowWireFrame = ({ lx, lz, lineColor, lineWidth = 0.2 }: WindowWireFrameProps) => {
   lineWidth /= 20;
 
-  const radialSegments = 4;
+  const radialSegments = 2;
   const heightSegments = 1;
 
   const radius = lineWidth / 2;
   const rotation = HALF_PI / 2;
+  const mullionWidth = 0.03;
 
   const hx = lx / 2;
   const hz = lz / 2;
@@ -67,7 +68,7 @@ const WindowWireFrame = ({ lx, lz, lineColor, lineWidth = 0.2 }: WindowWireFrame
       {verticalMullion.map((x) => (
         <Cylinder
           position={[x, 0, 0]}
-          args={[0.01, 0.01, lz, radialSegments, heightSegments]}
+          args={[mullionWidth, mullionWidth, lz, radialSegments, heightSegments]}
           rotation={[HALF_PI, 0, 0]}
           receiveShadow
         >
@@ -77,7 +78,7 @@ const WindowWireFrame = ({ lx, lz, lineColor, lineWidth = 0.2 }: WindowWireFrame
       {horizontalMullion.map((z) => (
         <Cylinder
           position={[0, 0, z]}
-          args={[0.01, 0.01, lx, radialSegments, heightSegments]}
+          args={[mullionWidth, mullionWidth, lx, radialSegments, heightSegments]}
           rotation={[0, 0, HALF_PI]}
           receiveShadow
         >
