@@ -2,7 +2,7 @@
  * @Copyright 2021-2022. Institute for Future Intelligence, Inc.
  */
 
-import React from 'react';
+import React, { useMemo } from 'react';
 import { Cylinder, Line } from '@react-three/drei';
 import { HALF_PI } from 'src/constants';
 
@@ -25,17 +25,65 @@ const WindowWireFrame = ({ lx, lz, lineColor, lineWidth = 0.2 }: WindowWireFrame
   const hx = lx / 2;
   const hz = lz / 2;
 
-  const outerMat = <meshStandardMaterial color={lineColor} />;
-  const innerMat = <meshStandardMaterial color={'white'} />;
+  const outerMat = useMemo(() => <meshStandardMaterial color={lineColor} />, [lineColor]);
+  const innerMat = useMemo(() => <meshStandardMaterial color={'white'} />, []);
+
+  const verticalMullion = useMemo(() => {
+    const arr: number[] = [];
+    const dividers = Math.round(lx / 0.5) - 1;
+    if (dividers <= 0) {
+      return arr;
+    }
+    let x = 0.25;
+    if (dividers % 2 !== 0) {
+      arr.push(0);
+      x = 0.5;
+    }
+    for (let num = 0; num < Math.floor(dividers / 2); num++, x += 0.5) {
+      arr.push(x, -x);
+    }
+    return arr;
+  }, [lx]);
+
+  const horizontalMullion = useMemo(() => {
+    const arr: number[] = [];
+    const dividers = Math.round(lz / 0.5) - 1;
+    if (dividers <= 0) {
+      return arr;
+    }
+    let z = 0.25;
+    if (dividers % 2 !== 0) {
+      arr.push(0);
+      z = 0.5;
+    }
+    for (let num = 0; num < Math.floor(dividers / 2); num++, z += 0.5) {
+      arr.push(z, -z);
+    }
+    return arr;
+  }, [lz]);
 
   return (
     <React.Fragment>
-      <Cylinder args={[0.01, 0.01, lx, radialSegments, heightSegments]} rotation={[0, 0, HALF_PI]} receiveShadow>
-        {innerMat}
-      </Cylinder>
-      <Cylinder args={[0.01, 0.01, lz, radialSegments, heightSegments]} rotation={[HALF_PI, 0, 0]} receiveShadow>
-        {innerMat}
-      </Cylinder>
+      {verticalMullion.map((x) => (
+        <Cylinder
+          position={[x, 0, 0]}
+          args={[0.01, 0.01, lz, radialSegments, heightSegments]}
+          rotation={[HALF_PI, 0, 0]}
+          receiveShadow
+        >
+          {innerMat}
+        </Cylinder>
+      ))}
+      {horizontalMullion.map((z) => (
+        <Cylinder
+          position={[0, 0, z]}
+          args={[0.01, 0.01, lx, radialSegments, heightSegments]}
+          rotation={[0, 0, HALF_PI]}
+          receiveShadow
+        >
+          {innerMat}
+        </Cylinder>
+      ))}
 
       <Cylinder
         args={[lineWidth, lineWidth, lx, radialSegments, heightSegments]}
