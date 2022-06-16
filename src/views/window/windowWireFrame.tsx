@@ -5,6 +5,8 @@
 import React, { useMemo } from 'react';
 import { Cylinder } from '@react-three/drei';
 import { HALF_PI } from 'src/constants';
+import { useStore } from 'src/stores/common';
+import * as Selector from 'src/stores/selector';
 
 interface WindowWireFrameProps {
   lx: number;
@@ -16,6 +18,8 @@ interface WindowWireFrameProps {
 
 const WindowWireFrame = ({ lx, lz, mullionWidth, lineColor, lineWidth = 0.2 }: WindowWireFrameProps) => {
   lineWidth /= 20;
+
+  const shadowEnabled = useStore(Selector.viewState.shadowEnabled);
 
   const radialSegments = 2;
   const heightSegments = 1;
@@ -70,7 +74,8 @@ const WindowWireFrame = ({ lx, lz, mullionWidth, lineColor, lineWidth = 0.2 }: W
           position={[x, 0.00025, 0]}
           args={[mullionRadius, mullionRadius, lz, radialSegments, heightSegments]}
           rotation={[HALF_PI, HALF_PI, 0]}
-          receiveShadow
+          receiveShadow={shadowEnabled}
+          castShadow={shadowEnabled}
         >
           {innerMat}
         </Cylinder>
@@ -80,7 +85,8 @@ const WindowWireFrame = ({ lx, lz, mullionWidth, lineColor, lineWidth = 0.2 }: W
           position={[0, 0.0005, z]}
           args={[mullionRadius, mullionRadius, lx, radialSegments, heightSegments]}
           rotation={[0, 0, HALF_PI]}
-          receiveShadow
+          receiveShadow={shadowEnabled}
+          castShadow={shadowEnabled}
         >
           {innerMat}
         </Cylinder>
