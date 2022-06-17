@@ -1,7 +1,7 @@
 {
-  "docid": "s5sSc2UZ5LXf96eR9RuAAL",
-  "time": "06/04/2022 03:00 pm",
-  "timestamp": 1654369210958,
+  "docid": "82V3buJJibcoPaSw3N8qMZ",
+  "time": "06/17/2022 06:49 pm",
+  "timestamp": 1655506181891,
   "userid": "QWecNcxhyvP6j6sBN11hBsfZDau1",
   "owner": null,
   "email": null,
@@ -305,7 +305,8 @@
         0,
         1
       ],
-      "lx": 0.08333333333333333
+      "lx": 0.08333333333333333,
+      "mullionSpace": 1
     },
     {
       "id": "5ncRWHnRQyocXJujBx5jNE",
@@ -329,7 +330,8 @@
       "parentId": "cV8MyCuhWAsvEyyFuVqVqg",
       "lx": 0.08333333333333333,
       "ly": 0,
-      "lz": 0.44384979425833565
+      "lz": 0.44384979425833565,
+      "mullionSpace": 1
     },
     {
       "cx": 0.24999999999999992,
@@ -353,7 +355,8 @@
       "ly": 0,
       "selected": false,
       "lz": 0.44384979425833565,
-      "type": "Window"
+      "type": "Window",
+      "mullionSpace": 1
     },
     {
       "rotation": [
@@ -377,7 +380,8 @@
       "selected": false,
       "ly": 0,
       "id": "upiLr8uqx55GDieKSLsjPj",
-      "type": "Window"
+      "type": "Window",
+      "mullionSpace": 1
     },
     {
       "type": "Human",
@@ -448,7 +452,8 @@
       "id": "dGQYRX5aMuZKouydnVo1zc",
       "parentId": "2u4Fe7xnA6kkXXVGrQ4eyJ",
       "foundationId": "m7AH7DcnoGzAq9kryBy4RS",
-      "selected": false
+      "selected": false,
+      "mullionSpace": 1
     },
     {
       "type": "Window",
@@ -472,7 +477,8 @@
       "id": "cni5XLCGZ7vNfLqxjgsnua",
       "parentId": "2u4Fe7xnA6kkXXVGrQ4eyJ",
       "foundationId": "m7AH7DcnoGzAq9kryBy4RS",
-      "selected": false
+      "selected": false,
+      "mullionSpace": 1
     },
     {
       "type": "Roof",
@@ -844,7 +850,7 @@
       "cy": 0,
       "cz": 1,
       "lx": 0.2500000000000001,
-      "ly": 0,
+      "ly": 0.3,
       "lz": 0.4999999999999999,
       "selected": false,
       "showLabel": false,
@@ -861,7 +867,8 @@
       ],
       "parentId": "beHqET5NN8aNdsuBncMpY7",
       "foundationId": "fbqvzYqiEy79jeL8wsadib",
-      "id": "9sxNKgBrTJz5rbuB2EAigV"
+      "id": "9sxNKgBrTJz5rbuB2EAigV",
+      "mullionSpace": 1
     },
     {
       "type": "Door",
@@ -912,7 +919,8 @@
       ],
       "parentId": "8XDG3EHsQoX26MhuzwMYUM",
       "foundationId": "m7AH7DcnoGzAq9kryBy4RS",
-      "id": "qoQarTFv95tVF8owcPVUFr"
+      "id": "qoQarTFv95tVF8owcPVUFr",
+      "mullionSpace": 1
     },
     {
       "type": "Window",
@@ -937,7 +945,8 @@
       ],
       "parentId": "8XDG3EHsQoX26MhuzwMYUM",
       "foundationId": "m7AH7DcnoGzAq9kryBy4RS",
-      "id": "gFrpbUVsUk5Cyw1YgAc3Su"
+      "id": "gFrpbUVsUk5Cyw1YgAc3Su",
+      "mullionSpace": 1
     },
     {
       "type": "Window",
@@ -962,7 +971,8 @@
       ],
       "parentId": "8XDG3EHsQoX26MhuzwMYUM",
       "foundationId": "m7AH7DcnoGzAq9kryBy4RS",
-      "id": "4yxNuoacxD3HT5nPLe7wew"
+      "id": "4yxNuoacxD3HT5nPLe7wew",
+      "mullionSpace": 1
     },
     {
       "type": "Window",
@@ -987,7 +997,8 @@
       ],
       "parentId": "skm8dNPSkFaVkoUwiPNfq1",
       "foundationId": "m7AH7DcnoGzAq9kryBy4RS",
-      "id": "g7oggQtbGLCJnWDBEWrL6f"
+      "id": "g7oggQtbGLCJnWDBEWrL6f",
+      "mullionSpace": 1
     },
     {
       "type": "Window",
@@ -1012,7 +1023,8 @@
       ],
       "parentId": "skm8dNPSkFaVkoUwiPNfq1",
       "foundationId": "m7AH7DcnoGzAq9kryBy4RS",
-      "id": "9KXbYufDZik3nedxtSG2Wa"
+      "id": "9KXbYufDZik3nedxtSG2Wa",
+      "mullionSpace": 1
     },
     {
       "type": "Window",
@@ -1036,7 +1048,8 @@
       "id": "hP5LnWCZSyCWuh6LURpM1g",
       "parentId": "skm8dNPSkFaVkoUwiPNfq1",
       "foundationId": "m7AH7DcnoGzAq9kryBy4RS",
-      "selected": false
+      "selected": false,
+      "mullionSpace": 1
     },
     {
       "type": "Door",
@@ -1595,7 +1608,7 @@
       "cy": 0,
       "cz": 0.35714285714285715,
       "lx": 0.5,
-      "ly": 0,
+      "ly": 0.3,
       "lz": 0.24999999999999994,
       "selected": false,
       "showLabel": false,
@@ -1612,7 +1625,8 @@
       ],
       "parentId": "3LCPjAAvYioWiSGfdrWDra",
       "foundationId": "mJVE3dD5FuAaHn4NaQUVru",
-      "id": "nEpoC7XwMto4CjwuGq3WQ5"
+      "id": "nEpoC7XwMto4CjwuGq3WQ5",
+      "mullionSpace": 0.8
     },
     {
       "type": "Window",
@@ -1620,7 +1634,7 @@
       "cy": 0,
       "cz": 0.37142857142857144,
       "lx": 0.5599999999999997,
-      "ly": 0,
+      "ly": 0.3,
       "lz": 0.25714285714285723,
       "selected": false,
       "showLabel": false,
@@ -1637,7 +1651,8 @@
       ],
       "parentId": "6U3sDe4yzT2QH8iRY62SdZ",
       "foundationId": "vQQ15yke8RSPKZiM6iV1gf",
-      "id": "izgEX4RP4fMzobDmWztBrf"
+      "id": "izgEX4RP4fMzobDmWztBrf",
+      "mullionSpace": 0.8
     }
   ],
   "view": {
@@ -1669,9 +1684,9 @@
     "dailyHeliostatYieldPanelX": 0,
     "showDailyParabolicDishYieldPanel": false,
     "cameraPosition": [
-      -17.179841181495025,
-      -21.539911414450426,
-      4.750296035956932
+      -19.793156027693403,
+      -19.538919530277674,
+      3.623309406419104
     ],
     "showYearlyHeliostatYieldPanel": false,
     "orthographic": false,
@@ -1720,9 +1735,9 @@
     "shadowEnabled": true,
     "showInstructionPanel": true,
     "panCenter": [
-      -0.5658823040797247,
-      0.7700250059956308,
-      1.3890808153630778
+      -2.1813476112611654,
+      2.1458051568812255,
+      1.466557225777525
     ],
     "yearlyFresnelReflectorYieldPanelY": 0,
     "showHeliodonPanel": false,

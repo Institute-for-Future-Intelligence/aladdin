@@ -477,7 +477,7 @@ export class ElementModelFactory {
       ly: parent.ly,
       lz: 0,
       mullionWidth: 0.06,
-      mullionSpace: 0.5,
+      mullionSpace: 1,
       selected: true,
       lineWidth: 0.2,
       lineColor: 'black',

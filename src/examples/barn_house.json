@@ -1,7 +1,7 @@
 {
-  "docid": "3hNQzCDbkH1zcbgY7hW4Fc",
-  "time": "05/24/2022 09:52 am",
-  "timestamp": 1653400329886,
+  "docid": "wBKvcFG7AFDz7rcWr8SJva",
+  "time": "06/17/2022 06:54 pm",
+  "timestamp": 1655506492852,
   "userid": "QWecNcxhyvP6j6sBN11hBsfZDau1",
   "owner": null,
   "email": null,
@@ -113,7 +113,7 @@
       "leftRoofHeight": 12.06151335420406,
       "rightRoofHeight": 12.06151335420406,
       "windows": [],
-      "textureType": "Wall Texture #7",
+      "textureType": "Wall Texture #1",
       "ly": 0.3,
       "showLabel": false,
       "rightPoint": [
@@ -135,7 +135,7 @@
         1
       ],
       "cx": -11.627234602365457,
-      "textureType": "Wall Texture #7",
+      "textureType": "Wall Texture #1",
       "roofId": "kA3Mxv4Z9tXUoTK3QPMaWL",
       "cy": 0.6022355507170296,
       "leftJoints": [
@@ -185,7 +185,7 @@
       "lz": 10,
       "cz": 0,
       "leftRoofHeight": 11.34034853001343,
-      "textureType": "Wall Texture #7",
+      "textureType": "Wall Texture #1",
       "leftPoint": [
         11.872765397634543,
         -4.64776444928297,
@@ -266,7 +266,7 @@
         -4.64776444928297,
         0.1
       ],
-      "textureType": "Wall Texture #7",
+      "textureType": "Wall Texture #1",
       "parentId": "x9h6vgTSQ3QLh48G3oYMPN"
     },
     {
@@ -365,7 +365,7 @@
         4.783713178391496,
         0.1
       ],
-      "textureType": "Wall Texture #7",
+      "textureType": "Wall Texture #1",
       "leftRoofHeight": 7.5,
       "showLabel": false,
       "leftPoint": [
@@ -397,7 +397,7 @@
       "leftJoints": [
         "6i3LR3TEvtE6sm3KPPvawH"
       ],
-      "textureType": "Wall Texture #7",
+      "textureType": "Wall Texture #1",
       "leftPoint": [
         -8.279442981728478,
         -4.716286821608504,
@@ -473,7 +473,7 @@
       "rightRoofHeight": 5,
       "lx": 9.5,
       "cz": 0,
-      "textureType": "Wall Texture #7",
+      "textureType": "Wall Texture #1",
       "cx": 11.720557018271522
     },
     {
@@ -498,7 +498,7 @@
         "6JeFi4vn6AoV5MBuK71Kj4"
       ],
       "cz": 0,
-      "textureType": "Wall Texture #7",
+      "textureType": "Wall Texture #1",
       "relativeAngle": 4.71238898038469,
       "leftRoofHeight": 5,
       "windows": [],
@@ -572,7 +572,7 @@
       "cx": -0.2978723404255319,
       "lz": 0.17636142264118151,
       "cz": 0.2645421339617723,
-      "ly": 0,
+      "ly": 0.3,
       "normal": [
         0,
         0,
@@ -589,10 +589,12 @@
       "foundationId": "x9h6vgTSQ3QLh48G3oYMPN",
       "selected": false,
       "showLabel": false,
-      "type": "Window"
+      "type": "Window",
+      "mullionSpace": 2,
+      "mullionWidth": 0.1
     },
     {
-      "ly": 0,
+      "ly": 0.3,
       "foundationId": "x9h6vgTSQ3QLh48G3oYMPN",
       "rotation": [
         0,
@@ -613,7 +615,9 @@
       "type": "Window",
       "lz": 0.17636142264118151,
       "cz": 0.2645421339617723,
-      "color": "#477395"
+      "color": "#477395",
+      "mullionSpace": 2,
+      "mullionWidth": 0.1
     },
     {
       "id": "bpUvKGmm3pbG6LoUQVwyUS",
@@ -630,14 +634,16 @@
       "cz": 0.2645421339617723,
       "selected": false,
       "foundationId": "x9h6vgTSQ3QLh48G3oYMPN",
-      "ly": 0,
+      "ly": 0.3,
       "cy": 0,
       "normal": [
         0,
         0,
         1
       ],
-      "parentId": "56tPe5zv4S5mhoVrSD2NK7"
+      "parentId": "56tPe5zv4S5mhoVrSD2NK7",
+      "mullionSpace": 2,
+      "mullionWidth": 0.1
     },
     {
       "cz": 0.2645421339617723,
@@ -645,7 +651,7 @@
       "lz": 0.17636142264118151,
       "parentId": "56tPe5zv4S5mhoVrSD2NK7",
       "type": "Window",
-      "ly": 0,
+      "ly": 0.3,
       "cx": 0.3404255319148936,
       "cy": 0,
       "color": "#477395",
@@ -661,7 +667,9 @@
         0
       ],
       "foundationId": "x9h6vgTSQ3QLh48G3oYMPN",
-      "lx": 0.1702127659574468
+      "lx": 0.1702127659574468,
+      "mullionSpace": 2,
+      "mullionWidth": 0.1
     },
     {
       "rotation": [
@@ -732,7 +740,7 @@
       "lz": 20,
       "ly": 0.3,
       "lx": 4,
-      "textureType": "Wall Texture #7"
+      "textureType": "Wall Texture #1"
     },
     {
       "leftPoint": [
@@ -775,7 +783,7 @@
         0,
         0
       ],
-      "textureType": "Wall Texture #7",
+      "textureType": "Wall Texture #1",
       "id": "5spEvKcr5r35ajFtNP5ug4",
       "roofId": "bXyFJNv4LJba2AUhe3ZtVT",
       "relativeAngle": 1.5707963267948966
@@ -814,7 +822,7 @@
         0
       ],
       "parentId": "rzzzSn5cSsCh41KW1dZ8o9",
-      "textureType": "Wall Texture #7",
+      "textureType": "Wall Texture #1",
       "showLabel": false,
       "leftJoints": [
         "gSgPwypYb2qas3tXnXpzu5"
@@ -869,7 +877,7 @@
       "cz": 0,
       "parentId": "rzzzSn5cSsCh41KW1dZ8o9",
       "roofId": "bXyFJNv4LJba2AUhe3ZtVT",
-      "textureType": "Wall Texture #7",
+      "textureType": "Wall Texture #1",
       "cx": 0
     },
     {
@@ -913,7 +921,7 @@
       "cz": 0.35,
       "lz": 0.1,
       "foundationId": "rzzzSn5cSsCh41KW1dZ8o9",
-      "ly": 0,
+      "ly": 0.3,
       "id": "f3zJpwNA8T36dWKnnLB2Ue",
       "normal": [
         0,
@@ -930,7 +938,9 @@
         0
       ],
       "showLabel": false,
-      "color": "#477395"
+      "color": "#477395",
+      "mullionSpace": 1,
+      "mullionWidth": 0.1
     },
     {
       "cz": 0.35,
@@ -942,7 +952,7 @@
       ],
       "parentId": "5spEvKcr5r35ajFtNP5ug4",
       "lx": 0.5,
-      "ly": 0,
+      "ly": 0.3,
       "cx": 0,
       "color": "#477395",
       "foundationId": "rzzzSn5cSsCh41KW1dZ8o9",
@@ -955,7 +965,9 @@
         0
       ],
       "id": "vLvEkBDowmVtpuRDtw4SXE",
-      "cy": 0
+      "cy": 0,
+      "mullionSpace": 1,
+      "mullionWidth": 0.1
     },
     {
       "id": "8bXmzpgr9i9JFo2oBsPwmf",
@@ -979,8 +991,10 @@
       ],
       "lz": 0.6,
       "showLabel": false,
-      "ly": 0,
-      "cz": -0.1
+      "ly": 0.3,
+      "cz": -0.1,
+      "mullionSpace": 1,
+      "mullionWidth": 0.1
     },
     {
       "cz": -0.1,
@@ -1002,9 +1016,11 @@
         1
       ],
       "selected": false,
-      "ly": 0,
+      "ly": 0.3,
       "cy": 0,
-      "lz": 0.6
+      "lz": 0.6,
+      "mullionSpace": 1,
+      "mullionWidth": 0.1
     },
     {
       "cz": -0.1,
@@ -1021,18 +1037,20 @@
         0,
         1
       ],
-      "ly": 0,
+      "ly": 0.3,
       "foundationId": "46TKaVq8pvU97fq25w6FtQ",
       "lx": 0.1,
       "rotation": [
         0,
         0,
         0
-      ]
+      ],
+      "mullionSpace": 1,
+      "mullionWidth": 0.1
     },
     {
       "lz": 0.6,
-      "ly": 0,
+      "ly": 0.3,
       "parentId": "6JeFi4vn6AoV5MBuK71Kj4",
       "lx": 0.1,
       "foundationId": "46TKaVq8pvU97fq25w6FtQ",
@@ -1052,11 +1070,13 @@
         0,
         0,
         0
-      ]
+      ],
+      "mullionSpace": 1,
+      "mullionWidth": 0.1
     },
     {
       "selected": false,
-      "ly": 0,
+      "ly": 0.3,
       "color": "#477395",
       "foundationId": "46TKaVq8pvU97fq25w6FtQ",
       "type": "Window",
@@ -1076,7 +1096,9 @@
       "id": "1cwhsRjtvJtmfm2tgLVX5c",
       "cy": 0,
       "cz": -0.1,
-      "lz": 0.6
+      "lz": 0.6,
+      "mullionSpace": 1,
+      "mullionWidth": 0.1
     },
     {
       "normal": [
@@ -1092,7 +1114,7 @@
       "cy": 0,
       "lx": 0.1,
       "type": "Window",
-      "ly": 0,
+      "ly": 0.3,
       "selected": false,
       "lz": 0.6,
       "rotation": [
@@ -1100,10 +1122,12 @@
         0,
         0
       ],
-      "color": "#477395"
+      "color": "#477395",
+      "mullionSpace": 1,
+      "mullionWidth": 0.1
     },
     {
-      "ly": 0,
+      "ly": 0.3,
       "type": "Window",
       "rotation": [
         0,
@@ -1125,7 +1149,9 @@
         0,
         0,
         1
-      ]
+      ],
+      "mullionSpace": 1,
+      "mullionWidth": 0.1
     },
     {
       "type": "Window",
@@ -1150,7 +1176,9 @@
       "lx": 0.09523809523809523,
       "color": "#477395",
       "foundationId": "x9h6vgTSQ3QLh48G3oYMPN",
-      "ly": 0
+      "ly": 0.3,
+      "mullionSpace": 1,
+      "mullionWidth": 0.1
     },
     {
       "lx": 0.09523809523809523,
@@ -1175,7 +1203,9 @@
       ],
       "cx": 0.2857142857142857,
       "lz": 0.2,
-      "ly": 0
+      "ly": 0.3,
+      "mullionSpace": 1,
+      "mullionWidth": 0.1
     },
     {
       "lz": 0.19999999999999996,
@@ -1186,7 +1216,7 @@
       ],
       "id": "eu9mFgyuKTJ1jH9yK9yLSt",
       "color": "#477395",
-      "ly": 0,
+      "ly": 0.3,
       "cy": 0,
       "lx": 0.6285714285714286,
       "type": "Window",
@@ -1200,7 +1230,9 @@
         0,
         1
       ],
-      "foundationId": "x9h6vgTSQ3QLh48G3oYMPN"
+      "foundationId": "x9h6vgTSQ3QLh48G3oYMPN",
+      "mullionSpace": 2,
+      "mullionWidth": 0.1
     },
     {
       "type": "Tree",
@@ -1251,9 +1283,9 @@
     {
       "type": "Tree",
       "name": "Spruce",
-      "cx": 17.731841431942122,
-      "cy": -4.4628684123079765,
-      "cz": 0.05000000074505806,
+      "cx": 21.583522496202903,
+      "cy": -12.747067355660167,
+      "cz": 0,
       "lx": 5,
       "lz": 10,
       "normal": [
@@ -1266,7 +1298,7 @@
         0,
         0
       ],
-      "parentId": "46TKaVq8pvU97fq25w6FtQ",
+      "parentId": "Ground",
       "id": "qHZ7fmERvw5fp8C39Esnjg",
       "selected": false,
       "evergreen": false
@@ -1417,7 +1449,7 @@
       "lx": 0.2761904761904762,
       "ly": 0,
       "lz": 0.42000000000000004,
-      "textureType": "Door Texture #4",
+      "textureType": "Door Texture Default",
       "selected": false,
       "showLabel": false,
       "normal": [
@@ -1444,9 +1476,9 @@
     "enableRotate": true,
     "weatherPanelY": 0,
     "cameraPosition": [
-      17.831539587183624,
-      -40.6514410090035,
-      7.612952550759642
+      27.912192637406058,
+      -40.84765774279316,
+      7.7891177783489
     ],
     "showYearlyUpdraftTowerYieldPanel": false,
     "showSunAngles": false,
@@ -1500,9 +1532,9 @@
     "showYearlyHeliostatYieldPanel": false,
     "mapZoom": 18,
     "panCenter": [
-      -0.06272460961482956,
-      1.5799637193188953,
-      7.119466031124594
+      -0.06132441859955103,
+      1.5794739969196576,
+      7.077129808744748
     ],
     "visibilityResultsPanelY": 0,
     "showZenithAngle": true,

@@ -1,8 +1,8 @@
 {
-  "docid": "sAWdSLzcR8fVVq46RtgXDW",
-  "time": "05/31/2022 11:41 am",
-  "timestamp": 1654011661444,
-  "userid": "HPwaZxo6jaPjQcD6cBGUWPpQkVw2",
+  "docid": "4R2kxB9icic6PJWKdCFuPq",
+  "time": "06/17/2022 10:54 am",
+  "timestamp": 1655477692411,
+  "userid": "QWecNcxhyvP6j6sBN11hBsfZDau1",
   "owner": null,
   "email": null,
   "world": {
@@ -272,7 +272,7 @@
         0
       ],
       "cz": 0.05,
-      "cx": -0.12466971253155235,
+      "cx": 0.9973066585272083,
       "lx": 8.561071237194398,
       "parentId": "m7AH7DcnoGzAq9kryBy4RS",
       "solarAbsorberPipe": {},
@@ -284,7 +284,7 @@
         0,
         1
       ],
-      "cy": -1.6527286460400976,
+      "cy": -1.6012816223143584,
       "id": "8fpWrU7qVyVgipB7LtABom"
     },
     {
@@ -850,7 +850,8 @@
         0,
         1
       ],
-      "lx": 0.08333333333333333
+      "lx": 0.08333333333333333,
+      "mullionSpace": 1
     },
     {
       "id": "5ncRWHnRQyocXJujBx5jNE",
@@ -874,7 +875,8 @@
       "parentId": "cV8MyCuhWAsvEyyFuVqVqg",
       "lx": 0.08333333333333333,
       "ly": 0,
-      "lz": 0.44384979425833565
+      "lz": 0.44384979425833565,
+      "mullionSpace": 1
     },
     {
       "cx": 0.24999999999999992,
@@ -898,7 +900,8 @@
       "ly": 0,
       "selected": false,
       "lz": 0.44384979425833565,
-      "type": "Window"
+      "type": "Window",
+      "mullionSpace": 1
     },
     {
       "rotation": [
@@ -922,7 +925,8 @@
       "selected": false,
       "ly": 0,
       "id": "upiLr8uqx55GDieKSLsjPj",
-      "type": "Window"
+      "type": "Window",
+      "mullionSpace": 1
     },
     {
       "lz": 0.3942112571821837,
@@ -947,7 +951,8 @@
       "cx": 0.3466666666666667,
       "cz": -0.059131688577327556,
       "ly": 0,
-      "showLabel": false
+      "showLabel": false,
+      "mullionSpace": 1
     },
     {
       "ly": 0,
@@ -971,7 +976,8 @@
         0,
         0
       ],
-      "cx": 0.10666666666666667
+      "cx": 0.10666666666666667,
+      "mullionSpace": 1
     },
     {
       "selected": false,
@@ -995,7 +1001,8 @@
         0,
         0,
         0
-      ]
+      ],
+      "mullionSpace": 1
     },
     {
       "ly": 0,
@@ -1019,7 +1026,8 @@
       "cz": -0.059131688577327556,
       "lx": 0.13333333333333333,
       "color": "#477395",
-      "cy": 0
+      "cy": 0,
+      "mullionSpace": 1
     },
     {
       "type": "Human",
@@ -1090,7 +1098,8 @@
       "id": "dGQYRX5aMuZKouydnVo1zc",
       "parentId": "2u4Fe7xnA6kkXXVGrQ4eyJ",
       "foundationId": "m7AH7DcnoGzAq9kryBy4RS",
-      "selected": false
+      "selected": false,
+      "mullionSpace": 1
     },
     {
       "type": "Window",
@@ -1114,7 +1123,8 @@
       "id": "cni5XLCGZ7vNfLqxjgsnua",
       "parentId": "2u4Fe7xnA6kkXXVGrQ4eyJ",
       "foundationId": "m7AH7DcnoGzAq9kryBy4RS",
-      "selected": false
+      "selected": false,
+      "mullionSpace": 1
     },
     {
       "type": "Door",
@@ -1171,8 +1181,8 @@
     "dailyHeliostatYieldPanelX": 0,
     "showDailyParabolicDishYieldPanel": false,
     "cameraPosition": [
-      -14.525885552226878,
-      -16.55887123379374,
+      -12.018271082896604,
+      -21.413183099643256,
       4.074781230070627
     ],
     "showYearlyHeliostatYieldPanel": false,
