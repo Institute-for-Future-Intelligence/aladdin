@@ -528,6 +528,8 @@ export class ElementModelCloner {
       lx: window.lx,
       ly: window.ly,
       lz: window.lz,
+      mullionWidth: window.mullionWidth,
+      mullionSpace: window.mullionSpace,
       color: window.color,
       normal: [...window.normal],
       rotation: [...window.rotation],

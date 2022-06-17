@@ -811,6 +811,7 @@ export const i18n_zh_cn = {
       AllWindowsAboveFoundation: '同一地基上所有的窗户',
       AllWindows: '所有的窗户',
       MullionWidth: '竖梃宽度',
+      MullionSpace: '竖梃间距',
     },
 
     siteInfoPanel: {

@@ -12,11 +12,12 @@ interface WindowWireFrameProps {
   lx: number;
   lz: number;
   mullionWidth: number;
+  mullionSpace: number;
   lineColor: string;
   lineWidth?: number;
 }
 
-const WindowWireFrame = ({ lx, lz, mullionWidth, lineColor, lineWidth = 0.2 }: WindowWireFrameProps) => {
+const WindowWireFrame = ({ lx, lz, mullionWidth, mullionSpace, lineColor, lineWidth = 0.2 }: WindowWireFrameProps) => {
   lineWidth /= 20;
 
   const shadowEnabled = useStore(Selector.viewState.shadowEnabled);
@@ -35,37 +36,39 @@ const WindowWireFrame = ({ lx, lz, mullionWidth, lineColor, lineWidth = 0.2 }: W
 
   const verticalMullion = useMemo(() => {
     const arr: number[] = [];
-    const dividers = Math.round(lx / 0.5) - 1;
+    const dividers = Math.round(lx / mullionSpace) - 1;
     if (dividers <= 0 || mullionWidth === 0) {
       return arr;
     }
-    let x = 0.25;
+    const step = lx / (dividers + 1);
+    let x = step / 2;
     if (dividers % 2 !== 0) {
       arr.push(0);
-      x = 0.5;
+      x = step;
     }
-    for (let num = 0; num < Math.floor(dividers / 2); num++, x += 0.5) {
+    for (let num = 0; num < Math.floor(dividers / 2); num++, x += step) {
       arr.push(x, -x);
     }
     return arr;
-  }, [lx, mullionWidth]);
+  }, [lx, mullionWidth, mullionSpace]);
 
   const horizontalMullion = useMemo(() => {
     const arr: number[] = [];
-    const dividers = Math.round(lz / 0.5) - 1;
+    const dividers = Math.round(lz / mullionSpace) - 1;
     if (dividers <= 0 || mullionWidth === 0) {
       return arr;
     }
-    let z = 0.25;
+    const step = lz / (dividers + 1);
+    let z = step / 2;
     if (dividers % 2 !== 0) {
       arr.push(0);
-      z = 0.5;
+      z = step;
     }
-    for (let num = 0; num < Math.floor(dividers / 2); num++, z += 0.5) {
+    for (let num = 0; num < Math.floor(dividers / 2); num++, z += step) {
       arr.push(z, -z);
     }
     return arr;
-  }, [lz, mullionWidth]);
+  }, [lz, mullionWidth, mullionSpace]);
 
   return (
     <group name={'Window Wireframe'} position={[0, -0.001, 0]}>

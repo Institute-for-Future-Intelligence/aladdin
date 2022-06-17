@@ -28,6 +28,7 @@ const Window = ({
   lineWidth = 0.2,
   lineColor = 'black',
   mullionWidth = 0.06,
+  mullionSpace = 0.5,
 }: WindowModel) => {
   const setCommonStore = useStore(Selector.set);
   const selectMe = useStore(Selector.selectMe);
@@ -118,6 +119,7 @@ const Window = ({
           lx={wlx}
           lz={wlz}
           mullionWidth={mullionWidth}
+          mullionSpace={mullionSpace}
           lineColor={locked && selected ? LOCKED_ELEMENT_SELECTION_COLOR : lineColor}
           lineWidth={selected && locked ? 0.5 : lineWidth}
         />
@@ -137,14 +139,14 @@ const Window = ({
         material={material}
         receiveShadow
       />
-      <Plane args={[wlx, ply]} position={[0, ply / 2, -wlz / 2]} material={material} receiveShadow />
       <Plane
         args={[wlx, ply]}
-        position={[0, ply / 2, -wlz / 2]}
+        position={[0, ply / 2, wlz / 2]}
         rotation={[Math.PI, 0, 0]}
         material={material}
         receiveShadow
       />
+      <Plane args={[wlx, ply]} position={[0, ply / 2, -wlz / 2]} material={material} receiveShadow />
 
       {/* handles */}
       {selected && !locked && <WindowHandleWrapper lx={wlx} lz={wlz} />}
