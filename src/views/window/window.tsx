@@ -33,6 +33,7 @@ const Window = ({
   const setCommonStore = useStore(Selector.set);
   const selectMe = useStore(Selector.selectMe);
   const isAddingElement = useStore(Selector.isAddingElement);
+  const shadowEnabled = useStore(Selector.viewState.shadowEnabled);
 
   const addedWallIdRef = useRef(useStore.getState().addedWallId);
   const objectTypeToAddRef = useRef(useStore.getState().objectTypeToAdd);
@@ -80,7 +81,7 @@ const Window = ({
   }, [lx, lz, cx, cz, parent?.lx, parent?.lz]);
 
   return (
-    <group key={id} name={`Window group ${id}`} position={[wcx, 0, wcz]} castShadow receiveShadow>
+    <group key={id} name={`Window group ${id}`} position={[wcx, 0, wcz]}>
       <group position={[0, ply / 2, 0]}>
         <Plane
           name={'window ' + id}
@@ -130,23 +131,32 @@ const Window = ({
         position={[-wlx / 2, ply / 2, 0]}
         rotation={[HALF_PI, HALF_PI, 0]}
         material={material}
-        receiveShadow
+        receiveShadow={shadowEnabled}
+        castShadow={shadowEnabled}
       />
       <Plane
         args={[ply, wlz]}
         position={[wlx / 2, ply / 2, 0]}
         rotation={[HALF_PI, -HALF_PI, 0]}
         material={material}
-        receiveShadow
+        receiveShadow={shadowEnabled}
+        castShadow={shadowEnabled}
       />
       <Plane
         args={[wlx, ply]}
         position={[0, ply / 2, wlz / 2]}
         rotation={[Math.PI, 0, 0]}
         material={material}
-        receiveShadow
+        receiveShadow={shadowEnabled}
+        castShadow={shadowEnabled}
       />
-      <Plane args={[wlx, ply]} position={[0, ply / 2, -wlz / 2]} material={material} receiveShadow />
+      <Plane
+        args={[wlx, ply]}
+        position={[0, ply / 2, -wlz / 2]}
+        material={material}
+        receiveShadow={shadowEnabled}
+        castShadow={shadowEnabled}
+      />
 
       {/* handles */}
       {selected && !locked && <WindowHandleWrapper lx={wlx} lz={wlz} />}

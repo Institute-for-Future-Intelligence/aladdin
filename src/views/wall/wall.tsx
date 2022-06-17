@@ -171,7 +171,7 @@ const Wall = ({
 
   const intersectionPlaneRef = useRef<Mesh>(null);
   const outsideWallRef = useRef<Mesh>(null);
-  const outsideWallInnerFaceRef = useRef<Mesh>(null);
+  // const outsideWallInnerFaceRef = useRef<Mesh>(null);
   const insideWallRef = useRef<Mesh>(null);
   const topSurfaceRef = useRef<Mesh>(null);
   const grabRef = useRef<ElementModel | null>(null);
@@ -214,8 +214,8 @@ const Wall = ({
     const targetWall = getElementById(leftJoints[0]) as WallModel;
     if (targetWall) {
       const deltaAngle = (Math.PI * 3 - (relativeAngle - targetWall.relativeAngle)) % TWO_PI;
-      if (deltaAngle < HALF_PI && deltaAngle > 0) {
-        leftOffset = Math.min(ly / Math.tan(deltaAngle), lx);
+      if (deltaAngle <= HALF_PI + 0.01 && deltaAngle > 0) {
+        leftOffset = Math.min(ly / Math.tan(deltaAngle) + targetWall.ly, lx);
       }
     }
   }
@@ -224,8 +224,8 @@ const Wall = ({
     const targetWall = getElementById(rightJoints[0]) as WallModel;
     if (targetWall) {
       const deltaAngle = (Math.PI * 3 + relativeAngle - targetWall.relativeAngle) % TWO_PI;
-      if (deltaAngle < HALF_PI && deltaAngle > 0) {
-        rightOffset = Math.min(ly / Math.tan(deltaAngle), lx);
+      if (deltaAngle <= HALF_PI + 0.01 && deltaAngle > 0) {
+        rightOffset = Math.min(ly / Math.tan(deltaAngle) + targetWall.ly, lx);
       }
     }
   }
@@ -279,7 +279,7 @@ const Wall = ({
   };
 
   // outside wall
-  if (outsideWallRef.current && outsideWallInnerFaceRef.current) {
+  if (outsideWallRef.current /* && outsideWallInnerFaceRef.current */) {
     const wallShape = new Shape();
     drawRectangle(wallShape, lx, lz, 0, 0, 0, 0);
 
@@ -291,8 +291,8 @@ const Wall = ({
       }
     });
     outsideWallRef.current.geometry = new ShapeBufferGeometry(wallShape);
-    outsideWallInnerFaceRef.current.geometry = new ShapeBufferGeometry(wallShape);
-    outsideWallInnerFaceRef.current.material = new MeshBasicMaterial({ color: 'white', side: BackSide });
+    // outsideWallInnerFaceRef.current.geometry = new ShapeBufferGeometry(wallShape);
+    // outsideWallInnerFaceRef.current.material = new MeshBasicMaterial({ color: 'white', side: BackSide });
   }
 
   // inside wall
@@ -994,20 +994,18 @@ const Wall = ({
               map={texture}
             />
           </mesh>
-          <mesh ref={outsideWallInnerFaceRef} rotation={[HALF_PI, 0, 0]} castShadow={shadowEnabled} />
+          {/* <mesh ref={outsideWallInnerFaceRef} rotation={[HALF_PI, 0, 0]} castShadow={shadowEnabled} /> */}
 
           {/* inside wall */}
-          {!roofId && (
-            <mesh
-              name={'Inside Wall'}
-              ref={insideWallRef}
-              position={[0, ly, 0]}
-              rotation={[HALF_PI, 0, 0]}
-              castShadow={shadowEnabled}
-              receiveShadow={shadowEnabled}
-              onPointerDown={handleWallBodyPointerDown}
-            />
-          )}
+          <mesh
+            name={'Inside Wall'}
+            ref={insideWallRef}
+            position={[0, ly, 0]}
+            rotation={[HALF_PI, 0, 0]}
+            castShadow={shadowEnabled}
+            receiveShadow={shadowEnabled}
+            onPointerDown={handleWallBodyPointerDown}
+          />
 
           {/* top surface */}
           {!roofId && (
