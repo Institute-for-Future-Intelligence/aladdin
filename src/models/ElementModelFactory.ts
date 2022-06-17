@@ -457,7 +457,7 @@ export class ElementModelFactory {
     } as WallModel;
   }
 
-  static makeWindow(parent: ElementModel, x: number, y: number, z?: number, normal?: Vector3, rotation?: number[]) {
+  static makeWindow(parent: ElementModel, cx: number, cy: number, cz?: number, normal?: Vector3, rotation?: number[]) {
     let foundationId;
     switch (parent.type) {
       case ObjectType.Cuboid:
@@ -470,11 +470,11 @@ export class ElementModelFactory {
     }
     return {
       type: ObjectType.Window,
-      cx: x,
-      cy: 0,
-      cz: z,
+      cx: cx,
+      cy: 0.1,
+      cz: cz,
       lx: 0,
-      ly: 0,
+      ly: parent.ly,
       lz: 0,
       mullionWidth: 0.06,
       mullionSpace: 0.5,

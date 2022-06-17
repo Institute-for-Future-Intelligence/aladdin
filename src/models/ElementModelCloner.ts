@@ -523,10 +523,10 @@ export class ElementModelCloner {
     return {
       type: ObjectType.Window,
       cx: x,
-      cy: y,
+      cy: 0.1,
       cz: z,
       lx: window.lx,
-      ly: window.ly,
+      ly: parent.ly,
       lz: window.lz,
       mullionWidth: window.mullionWidth,
       mullionSpace: window.mullionSpace,

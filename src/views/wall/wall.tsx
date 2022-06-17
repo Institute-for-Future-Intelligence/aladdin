@@ -354,6 +354,16 @@ const Wall = ({
 
   // windows
   useEffect(() => {
+    setCommonStore((state) => {
+      for (const e of state.elements) {
+        if (e.type === ObjectType.Window && e.parentId === id) {
+          e.ly = ly;
+        }
+      }
+    });
+  }, [ly]);
+
+  useEffect(() => {
     setWindows(elements.filter((e) => e.type === ObjectType.Window && e.parentId === id) as WindowModel[]);
     setDoors((elements as DoorModel[]).filter((e) => e.type === ObjectType.Door && e.parentId === id));
   }, [elements]);
@@ -990,6 +1000,7 @@ const Wall = ({
             onPointerDown={handleWallBodyPointerDown}
           >
             <meshStandardMaterial
+              side={DoubleSide}
               color={textureType === WallTexture.Default || textureType === WallTexture.NoTexture ? color : 'white'}
               map={texture}
             />

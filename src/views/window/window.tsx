@@ -13,14 +13,16 @@ import WindowWireFrame from './windowWireFrame';
 import WindowHandleWrapper from './windowHandleWrapper';
 import { HALF_PI, LOCKED_ELEMENT_SELECTION_COLOR } from 'src/constants';
 
-const material = new MeshStandardMaterial({ color: 'white' });
+const material = new MeshStandardMaterial({ color: 'white', side: DoubleSide });
 
 const Window = ({
   id,
   parentId,
   lx,
+  ly,
   lz,
   cx,
+  cy,
   cz,
   selected,
   locked,
@@ -30,6 +32,11 @@ const Window = ({
   mullionWidth = 0.06,
   mullionSpace = 0.5,
 }: WindowModel) => {
+  // legacy problem
+  if (Math.abs(cy) < 0.001) {
+    cy = 0.1;
+  }
+
   const setCommonStore = useStore(Selector.set);
   const selectMe = useStore(Selector.selectMe);
   const isAddingElement = useStore(Selector.isAddingElement);
@@ -44,7 +51,6 @@ const Window = ({
   const [wlz, setWlz] = useState(lz);
   const [wcx, setWcx] = useState(cx);
   const [wcz, setWcz] = useState(cz);
-  const [ply, setPly] = useState(0);
 
   const parentSelector = useCallback((state: CommonStoreState) => {
     for (const e of state.elements) {
@@ -76,13 +82,12 @@ const Window = ({
       setWlz(lz * parent.lz);
       setWcx(cx * parent.lx);
       setWcz(cz * parent.lz);
-      setPly(parent.ly);
     }
   }, [lx, lz, cx, cz, parent?.lx, parent?.lz]);
 
   return (
     <group key={id} name={`Window group ${id}`} position={[wcx, 0, wcz]}>
-      <group position={[0, ply / 2, 0]}>
+      <group position={[0, cy, 0]}>
         <Plane
           name={'window ' + id}
           args={[wlx, wlz]}
@@ -127,32 +132,32 @@ const Window = ({
       </group>
 
       <Plane
-        args={[ply, wlz]}
-        position={[-wlx / 2, ply / 2, 0]}
+        args={[ly, wlz]}
+        position={[-wlx / 2, ly / 2, 0]}
         rotation={[HALF_PI, HALF_PI, 0]}
         material={material}
         receiveShadow={shadowEnabled}
         castShadow={shadowEnabled}
       />
       <Plane
-        args={[ply, wlz]}
-        position={[wlx / 2, ply / 2, 0]}
+        args={[ly, wlz]}
+        position={[wlx / 2, ly / 2, 0]}
         rotation={[HALF_PI, -HALF_PI, 0]}
         material={material}
         receiveShadow={shadowEnabled}
         castShadow={shadowEnabled}
       />
       <Plane
-        args={[wlx, ply]}
-        position={[0, ply / 2, wlz / 2]}
+        args={[wlx, ly]}
+        position={[0, ly / 2, wlz / 2]}
         rotation={[Math.PI, 0, 0]}
         material={material}
         receiveShadow={shadowEnabled}
         castShadow={shadowEnabled}
       />
       <Plane
-        args={[wlx, ply]}
-        position={[0, ply / 2, -wlz / 2]}
+        args={[wlx, ly]}
+        position={[0, ly / 2, -wlz / 2]}
         material={material}
         receiveShadow={shadowEnabled}
         castShadow={shadowEnabled}
