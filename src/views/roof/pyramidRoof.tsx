@@ -37,6 +37,9 @@ const zeroVector = new Vector3();
 const zVector3 = new Vector3(0, 0, 1);
 
 const PyramidRoofWirefram = React.memo(({ roofSegments, thickness, lineWidth, lineColor }: RoofWireframeProps) => {
+  if (roofSegments.length === 0) {
+    return null;
+  }
   const peripheryPoints: Vector3[] = [];
   const thicknessVector = new Vector3(0, 0, thickness);
 

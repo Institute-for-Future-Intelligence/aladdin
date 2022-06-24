@@ -43,6 +43,9 @@ enum RoofHandleType {
 }
 
 const GableRoofWireframe = React.memo(({ roofSegments, thickness, lineWidth, lineColor }: RoofWireframeProps) => {
+  if (roofSegments.length === 0) {
+    return null;
+  }
   const peripheryPoints: Vector3[] = [];
   const thicknessVector = new Vector3(0, 0, thickness);
 
