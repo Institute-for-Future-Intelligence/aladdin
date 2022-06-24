@@ -937,9 +937,19 @@ export const deletedWallId = (state: CommonStoreState) => state.deletedWallId;
 
 export const deletedRoofId = (state: CommonStoreState) => state.deletedRoofId;
 
+export const resizeWholeBuildingMode = (state: CommonStoreState) => state.resizeWholeBuildingMode;
+
+export const setResizeWholeBuildingMode = (state: CommonStoreState) => state.setResizeWholeBuildingMode;
+
+export const resizeWholeBuildingId = (state: CommonStoreState) => state.resizeWholeBuildingId;
+
+export const setResizeWholeBuildingId = (state: CommonStoreState) => state.setResizeWholeBuildingId;
+
 export const addedWindowId = (state: CommonStoreState) => state.addedWindowId;
 
 export const deletedWindowAndParentId = (state: CommonStoreState) => state.deletedWindowAndParentId;
+
+export const updateWallMapOnFoundationFlag = (state: CommonStoreState) => state.updateWallMapOnFoundationFlag;
 
 export const updateWallMapOnFoundation = (state: CommonStoreState) => state.updateWallMapOnFoundation;
 

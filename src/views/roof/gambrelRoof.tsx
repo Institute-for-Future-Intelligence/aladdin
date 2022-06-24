@@ -643,7 +643,7 @@ const GambrelRoof = ({
         name={'Gambrel Roof Segments Group'}
         position={[centroid.x, centroid.y, centroid.z]}
         onPointerDown={(e) => {
-          handleRoofPointerDown(e, id);
+          handleRoofPointerDown(e, id, parentId);
         }}
         onContextMenu={(e) => {
           handleRoofContextMenu(e, id);

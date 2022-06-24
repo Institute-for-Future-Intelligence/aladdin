@@ -155,12 +155,16 @@ const KeyboardListener = ({ canvas, set2DView, resetView, zoomView }: KeyboardLi
         undo: () => {
           setCommonStore((state) => {
             state.objectTypeToAdd = ObjectType.None;
+            state.resizeWholeBuildingMode = false;
+            state.resizeWholeBuildingId = null;
             state.viewState.autoRotate = !undoableCheck.checked;
           });
         },
         redo: () => {
           setCommonStore((state) => {
             state.objectTypeToAdd = ObjectType.None;
+            state.resizeWholeBuildingMode = false;
+            state.resizeWholeBuildingId = null;
             state.viewState.autoRotate = undoableCheck.checked;
           });
         },
@@ -168,6 +172,8 @@ const KeyboardListener = ({ canvas, set2DView, resetView, zoomView }: KeyboardLi
       addUndoable(undoableCheck);
       setCommonStore((state) => {
         state.objectTypeToAdd = ObjectType.None;
+        state.resizeWholeBuildingMode = false;
+        state.resizeWholeBuildingId = null;
         state.viewState.autoRotate = !state.viewState.autoRotate;
       });
     }
@@ -596,6 +602,8 @@ const KeyboardListener = ({ canvas, set2DView, resetView, zoomView }: KeyboardLi
             addUndoable(undoableResetView);
             setCommonStore((state) => {
               state.objectTypeToAdd = ObjectType.None;
+              state.resizeWholeBuildingMode = false;
+              state.resizeWholeBuildingId = null;
               state.viewState.orthographic = false;
             });
             resetView();
@@ -687,7 +695,7 @@ const KeyboardListener = ({ canvas, set2DView, resetView, zoomView }: KeyboardLi
                       }
                       state.selectedElement = deletedElements[0];
                       state.updateDesignInfo();
-                      state.updateWallMapOnFoundation = !state.updateWallMapOnFoundation;
+                      state.updateWallMapOnFoundationFlag = !state.updateWallMapOnFoundationFlag;
                       state.deletedRoofId = null;
                     });
                   }
@@ -749,6 +757,8 @@ const KeyboardListener = ({ canvas, set2DView, resetView, zoomView }: KeyboardLi
           state.objectTypeToAdd = ObjectType.None;
           state.moveHandleType = null;
           state.resizeHandleType = null;
+          state.resizeWholeBuildingId = null;
+          state.resizeWholeBuildingMode = false;
         });
         useStoreRef.getState().setEnableOrbitController(true);
         selectNone();

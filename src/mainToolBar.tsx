@@ -196,6 +196,8 @@ const MainToolBar = ({ viewOnly = false }: MainToolBarProps) => {
   const resetToSelectMode = () => {
     setCommonStore((state) => {
       state.objectTypeToAdd = ObjectType.None;
+      state.resizeWholeBuildingMode = false;
+      state.resizeWholeBuildingId = null;
     });
   };
 

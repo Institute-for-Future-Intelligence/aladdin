@@ -687,7 +687,8 @@ export interface CommonStoreState {
 
   addedWallId: string | null;
   deletedWallId: string | null;
-  updateWallMapOnFoundation: boolean;
+  updateWallMapOnFoundationFlag: boolean;
+  updateWallMapOnFoundation: () => void;
 
   addedWindowId: string | null;
   deletedWindowAndParentId: string[] | null;
@@ -696,6 +697,11 @@ export interface CommonStoreState {
   deletedDoorAndParentId: string[] | null;
 
   deletedRoofId: string | null;
+
+  resizeWholeBuildingMode: boolean;
+  setResizeWholeBuildingMode: (b: boolean) => void;
+  resizeWholeBuildingId: string | null;
+  setResizeWholeBuildingId: (id: string | null) => void;
 
   simulationInProgress: boolean;
   simulationPaused: boolean;
@@ -4430,7 +4436,7 @@ export const useStore = create<CommonStoreState>(
             immerSet((state: CommonStoreState) => {
               state.elements = state.elements.filter((x) => x.locked || x.type !== type || x.parentId !== parentId);
               if (type === ObjectType.Wall) {
-                state.updateWallMapOnFoundation = !state.updateWallMapOnFoundation;
+                state.updateWallMapOnFoundationFlag = !state.updateWallMapOnFoundationFlag;
               }
               state.updateDesignInfo();
             });
@@ -5413,7 +5419,12 @@ export const useStore = create<CommonStoreState>(
 
           addedWallId: null,
           deletedWallId: null,
-          updateWallMapOnFoundation: false,
+          updateWallMapOnFoundationFlag: false,
+          updateWallMapOnFoundation() {
+            immerSet((state: CommonStoreState) => {
+              state.updateWallMapOnFoundationFlag = !state.updateWallMapOnFoundationFlag;
+            });
+          },
 
           addedWindowId: null,
           deletedWindowAndParentId: null,
@@ -5428,6 +5439,22 @@ export const useStore = create<CommonStoreState>(
             });
           },
           deletedRoofId: null,
+
+          resizeWholeBuildingMode: false,
+          setResizeWholeBuildingMode(b: boolean) {
+            immerSet((state) => {
+              state.resizeWholeBuildingMode = b;
+            });
+          },
+          resizeWholeBuildingId: null,
+          setResizeWholeBuildingId(id: string | null) {
+            immerSet((state) => {
+              state.resizeWholeBuildingId = id;
+              for (const e of state.elements) {
+                e.selected = e.id === id;
+              }
+            });
+          },
 
           simulationInProgress: false,
           simulationPaused: false,

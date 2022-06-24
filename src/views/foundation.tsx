@@ -69,6 +69,7 @@ import SolarUpdraftTower from './solarUpdraftTower';
 import SolarPowerTower from './solarPowerTower';
 import SolarReceiverPipe from './solarReceiverPipe';
 import { UndoablePaste } from '../undo/UndoablePaste';
+import BuildingResizer from 'src/components/buildingResizer';
 
 const Foundation = ({
   id,
@@ -109,7 +110,7 @@ const Foundation = ({
   const addElement = useStore(Selector.addElement);
   const getPvModule = useStore(Selector.getPvModule);
   const deletedWallID = useStore(Selector.deletedWallId);
-  const updateWallMapOnFoundation = useStore(Selector.updateWallMapOnFoundation);
+  const updateWallMapOnFoundationFlag = useStore(Selector.updateWallMapOnFoundationFlag);
   const shadowEnabled = useStore(Selector.viewState.shadowEnabled);
   const groundImage = useStore(Selector.viewState.groundImage);
   const addedFoundationID = useStore(Selector.addedFoundationId);
@@ -121,6 +122,7 @@ const Foundation = ({
   const solarRadiationHeatmapMaxValue = useStore(Selector.viewState.solarRadiationHeatmapMaxValue);
   const solarRadiationHeatmapReflectionOnly = useStore(Selector.viewState.solarRadiationHeatmapReflectionOnly);
   const getHeatmap = useStore(Selector.getHeatmap);
+  const resizeWholeBuildingId = useStore(Selector.resizeWholeBuildingId);
 
   const {
     camera,
@@ -130,6 +132,7 @@ const Foundation = ({
   const [heatmapTexture, setHeatmapTexture] = useState<CanvasTexture | null>(null);
   const [showGrid, setShowGrid] = useState<boolean>(false);
   const [addedWallID, setAddedWallID] = useState<string | null>(null);
+  const [buildingResizerHeight, setBuildingResizerHeight] = useState<number | null>(null);
 
   const isSettingWallStartPointRef = useRef(false);
   const isSettingWallEndPointRef = useRef(false);
@@ -242,13 +245,27 @@ const Foundation = ({
   }, []);
 
   useEffect(() => {
+    if (resizeWholeBuildingId === id && selected) {
+      let maxHeight = 0;
+      for (const elem of useStore.getState().elements) {
+        if (elem.foundationId === id && (elem.type === ObjectType.Wall || elem.type === ObjectType.Roof)) {
+          maxHeight = Math.max(maxHeight, elem.lz);
+        }
+      }
+      setBuildingResizerHeight(maxHeight + lz);
+    } else {
+      setBuildingResizerHeight(null);
+    }
+  }, [resizeWholeBuildingId, selected]);
+
+  useEffect(() => {
     wallMapOnFoundation.current.clear();
     for (const e of useStore.getState().elements) {
       if (e.type === ObjectType.Wall && e.parentId === id) {
         wallMapOnFoundation.current.set(e.id, e as WallModel);
       }
     }
-  }, [updateWallMapOnFoundation]);
+  }, [updateWallMapOnFoundationFlag]);
 
   useEffect(() => {
     if (deletedWallID) {
@@ -458,7 +475,7 @@ const Foundation = ({
     }
 
     setCommonStore((state) => {
-      state.updateWallMapOnFoundation = !state.updateWallMapOnFoundation;
+      state.updateWallMapOnFoundationFlag = !state.updateWallMapOnFoundationFlag;
       state.resizeHandleType =
         resizeHandleTypeRef.current === ResizeHandleType.LowerLeft
           ? ResizeHandleType.LowerRight
@@ -520,7 +537,7 @@ const Foundation = ({
           }
         }
       }
-      state.updateWallMapOnFoundation = !state.updateWallMapOnFoundation;
+      state.updateWallMapOnFoundationFlag = !state.updateWallMapOnFoundationFlag;
       state.resizeHandleType = ResizeHandleType.LowerLeft;
     });
 
@@ -581,7 +598,7 @@ const Foundation = ({
         }
       }
 
-      state.updateWallMapOnFoundation = !state.updateWallMapOnFoundation;
+      state.updateWallMapOnFoundationFlag = !state.updateWallMapOnFoundationFlag;
       state.resizeHandleType = ResizeHandleType.LowerRight;
     });
 
@@ -710,7 +727,7 @@ const Foundation = ({
         setCommonStore((state) => {
           state.elements.push(wall);
           state.selectedElement = wall;
-          state.updateWallMapOnFoundation = !state.updateWallMapOnFoundation;
+          state.updateWallMapOnFoundationFlag = !state.updateWallMapOnFoundationFlag;
         });
       },
     } as UndoableAddWall;
@@ -877,7 +894,7 @@ const Foundation = ({
                       }
                     }
                   }
-                  state.updateWallMapOnFoundation = !state.updateWallMapOnFoundation;
+                  state.updateWallMapOnFoundationFlag = !state.updateWallMapOnFoundationFlag;
                   break;
                 }
               }
@@ -962,7 +979,7 @@ const Foundation = ({
                       }
                     }
                   }
-                  state.updateWallMapOnFoundation = !state.updateWallMapOnFoundation;
+                  state.updateWallMapOnFoundationFlag = !state.updateWallMapOnFoundationFlag;
                   break;
               }
               break;
@@ -1010,6 +1027,9 @@ const Foundation = ({
     });
     if (objectTypeToAddRef.current !== ObjectType.Window && !isAddingElement()) {
       selectMe(id, e, ActionType.Select);
+    }
+    if (useStore.getState().resizeWholeBuildingMode) {
+      useStore.getState().setResizeWholeBuildingId(id);
     }
     const selectedElement = getSelectedElement();
     let bypass = false;
@@ -1213,7 +1233,7 @@ const Foundation = ({
         }
         flippedWallSide.current = FlippedWallSide.null;
         setCommonStore((state) => {
-          state.updateWallMapOnFoundation = !state.updateWallMapOnFoundation;
+          state.updateWallMapOnFoundationFlag = !state.updateWallMapOnFoundationFlag;
         });
         break;
       }
@@ -2001,7 +2021,7 @@ const Foundation = ({
       )}
 
       {/* draw handles */}
-      {selected && !locked && (
+      {selected && !locked && !resizeWholeBuildingId && (
         <>
           {/* resize handles */}
           <Box
@@ -2243,6 +2263,14 @@ const Foundation = ({
             </>
           )}
         </>
+      )}
+
+      {selected && !locked && resizeWholeBuildingId === id && foundationModel && buildingResizerHeight && (
+        <BuildingResizer
+          foundation={foundationModel}
+          args={[lx, ly, buildingResizerHeight]}
+          handleSize={resizeHandleSize}
+        />
       )}
 
       {/* text */}

@@ -1032,6 +1032,7 @@ export const i18n_en = {
       AddHeliostat: 'Add heliostat',
       AddTree: 'Add tree',
       AddPeople: 'Add people',
+      ResizeWholeBuilding: 'Resize Whole Building',
       ClearScene: 'Clear scene',
       ShowSunAndTimeSettings: 'Show sun and time settings',
       ShowHeatmap: 'Show heatmap',

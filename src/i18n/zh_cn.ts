@@ -1014,6 +1014,7 @@ export const i18n_zh_cn = {
       AddHeliostat: '添加定日镜',
       AddTree: '添加树木',
       AddPeople: '添加人物',
+      ResizeWholeBuilding: '调整整个建筑的大小',
       ClearScene: '清空场景',
       ShowSunAndTimeSettings: '显示太阳和时间设置',
       ShowHeatmap: '显示热图',

@@ -454,7 +454,7 @@ const PyramidRoof = ({
         name={`Pyramid Roof Segments Group`}
         position={[centerPoint.x, centerPoint.y, h]}
         onPointerDown={(e) => {
-          handleRoofPointerDown(e, id);
+          handleRoofPointerDown(e, id, parentId);
         }}
         onContextMenu={(e) => {
           handleRoofContextMenu(e, id);

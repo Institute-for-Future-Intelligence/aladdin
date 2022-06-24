@@ -959,11 +959,21 @@ const Wall = ({
   };
 
   const handleWallBodyPointerDown = (e: ThreeEvent<PointerEvent>) => {
-    if (checkIfCanSelectMe(e)) {
+    if (useStore.getState().resizeWholeBuildingMode) {
       setCommonStore((state) => {
-        state.contextMenuObjectType = null;
+        for (const e of state.elements) {
+          e.selected = e.id === parentId;
+        }
+        state.resizeWholeBuildingId = parentId;
       });
-      selectMe(id, e, ActionType.Select);
+      e.stopPropagation();
+    } else {
+      if (checkIfCanSelectMe(e)) {
+        setCommonStore((state) => {
+          state.contextMenuObjectType = null;
+        });
+        selectMe(id, e, ActionType.Select);
+      }
     }
   };
 

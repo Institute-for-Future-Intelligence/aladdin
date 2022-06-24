@@ -28,7 +28,7 @@ import * as Selector from './stores/selector';
 import { Dropdown, Menu, Modal } from 'antd';
 import 'antd/dist/antd.css';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faEraser, faEye, faSun } from '@fortawesome/free-solid-svg-icons';
+import { faEraser, faEye, faSun, faExpandArrowsAlt } from '@fortawesome/free-solid-svg-icons';
 import { ObjectType } from './types';
 import { ExclamationCircleOutlined } from '@ant-design/icons';
 import i18n from './i18n/i18n';
@@ -71,6 +71,7 @@ const MainToolBarButtons = () => {
   const addUndoable = useStore(Selector.addUndoable);
   const runDynamicSimulation = useStore(Selector.runDynamicSimulation);
   const runStaticSimulation = useStore(Selector.runStaticSimulation);
+  const resizeWholeBuildingMode = useStore(Selector.resizeWholeBuildingMode);
 
   const [category1Flag, setCategory1Flag] = useState<ObjectType>(ObjectType.Foundation);
   const [category2Flag, setCategory2Flag] = useState<ObjectType>(ObjectType.Wall);
@@ -85,6 +86,33 @@ const MainToolBarButtons = () => {
   const resetToSelectMode = () => {
     setCommonStore((state) => {
       state.objectTypeToAdd = ObjectType.None;
+      state.resizeWholeBuildingMode = false;
+      state.resizeWholeBuildingId = null;
+    });
+  };
+
+  const handleResizeWholeBuildingMode = () => {
+    setCommonStore((state) => {
+      if (state.resizeWholeBuildingMode) {
+        state.resizeWholeBuildingId = null;
+      } else {
+        if (state.selectedElement) {
+          if (state.selectedElement.type === ObjectType.Foundation) {
+            state.resizeWholeBuildingId = state.selectedElement.id;
+          } else {
+            state.resizeWholeBuildingId = state.selectedElement.foundationId ?? null;
+            for (const e of state.elements) {
+              e.selected = e.id === state.selectedElement.foundationId;
+            }
+          }
+        } else {
+          for (const e of state.elements) {
+            e.selected = false;
+          }
+        }
+        state.objectTypeToAdd = ObjectType.None;
+      }
+      state.resizeWholeBuildingMode = !state.resizeWholeBuildingMode;
     });
   };
 
@@ -177,6 +205,8 @@ const MainToolBarButtons = () => {
   const setMode = (type: ObjectType) => {
     setCommonStore((state) => {
       state.objectTypeToAdd = type;
+      state.resizeWholeBuildingMode = false;
+      state.resizeWholeBuildingId = null;
     });
     useStoreRef.getState().setEnableOrbitController(false);
     selectNone();
@@ -352,7 +382,12 @@ const MainToolBarButtons = () => {
 
   const inSelectionMode = () => {
     return (
-      objectTypeToAdd === ObjectType.None && !addedFoundationId && !addedCuboidId && !addedWallId && !addedWindowId
+      objectTypeToAdd === ObjectType.None &&
+      !addedFoundationId &&
+      !addedCuboidId &&
+      !addedWallId &&
+      !addedWindowId &&
+      !resizeWholeBuildingMode
     );
   };
 
@@ -399,6 +434,14 @@ const MainToolBarButtons = () => {
         {dropdownButton(category4Menu)}
       </ToolBarButton>
 
+      <FontAwesomeIcon
+        title={i18n.t('toolbar.ResizeWholeBuilding', lang)}
+        icon={faExpandArrowsAlt}
+        size={'3x'}
+        color={resizeWholeBuildingMode ? 'antiquewhite' : '#666666'}
+        style={{ paddingRight: '12px', cursor: 'pointer' }}
+        onClick={handleResizeWholeBuildingMode}
+      />
       <FontAwesomeIcon
         title={i18n.t('toolbar.ClearScene', lang)}
         icon={faEraser}

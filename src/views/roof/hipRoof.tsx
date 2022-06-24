@@ -409,7 +409,7 @@ const HipRoof = ({
         name="Hip Roof Segments Group"
         position={[centroid2D.x, centroid2D.y, h]}
         onPointerDown={(e) => {
-          handleRoofPointerDown(e, id);
+          handleRoofPointerDown(e, id, parentId);
         }}
         onContextMenu={(e) => {
           handleRoofContextMenu(e, id);

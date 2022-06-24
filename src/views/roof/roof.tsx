@@ -133,18 +133,26 @@ export const useRoofTexture = (textureType: RoofTexture) => {
   return texture;
 };
 
-export const handleRoofPointerDown = (e: ThreeEvent<PointerEvent>, id: string) => {
+export const handleRoofPointerDown = (e: ThreeEvent<PointerEvent>, id: string, foundationId: string) => {
   if (useStore.getState().isAddingElement()) {
     return;
   }
   if (e.intersections.length > 0 && e.intersections[0].eventObject.name === e.eventObject.name) {
     e.stopPropagation();
     useStore.getState().set((state) => {
-      for (const e of state.elements) {
-        if (e.id === id) {
-          e.selected = true;
-        } else {
-          e.selected = false;
+      if (state.resizeWholeBuildingMode) {
+        for (const e of state.elements) {
+          e.selected = e.id === foundationId;
+        }
+        state.resizeWholeBuildingId = foundationId;
+      } else {
+        for (const e of state.elements) {
+          if (e.id === id) {
+            e.selected = true;
+            state.selectedElement = e;
+          } else {
+            e.selected = false;
+          }
         }
       }
     });
