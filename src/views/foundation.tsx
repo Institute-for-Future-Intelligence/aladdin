@@ -123,6 +123,7 @@ const Foundation = ({
   const solarRadiationHeatmapReflectionOnly = useStore(Selector.viewState.solarRadiationHeatmapReflectionOnly);
   const getHeatmap = useStore(Selector.getHeatmap);
   const resizeWholeBuildingId = useStore(Selector.resizeWholeBuildingId);
+  const buildingHeightChangedFlag = useStore(Selector.buildingHeightChangedFlag);
 
   const {
     camera,
@@ -256,7 +257,7 @@ const Foundation = ({
     } else {
       setBuildingResizerHeight(null);
     }
-  }, [resizeWholeBuildingId, selected]);
+  }, [resizeWholeBuildingId, selected, buildingHeightChangedFlag]);
 
   useEffect(() => {
     wallMapOnFoundation.current.clear();

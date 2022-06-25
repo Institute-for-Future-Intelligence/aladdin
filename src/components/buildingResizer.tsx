@@ -2,7 +2,7 @@
  * @Copyright 2021-2022. Institute for Future Intelligence, Inc.
  */
 
-import React, { useMemo, useRef, useState } from 'react';
+import React, { useEffect, useMemo, useRef, useState } from 'react';
 import { Euler, Mesh, Raycaster, Vector2, Vector3 } from 'three';
 import { ThreeEvent, useThree } from '@react-three/fiber';
 import { Box, Line, Plane, Sphere } from '@react-three/drei';
@@ -105,6 +105,11 @@ const BuildingResizer = ({ foundation, args, handleSize }: BuildingResizerProps)
   const setCommonStore = useStore(Selector.set);
   const setElementPosition = useStore(Selector.setElementPosition);
   const addUndoable = useStore(Selector.addUndoable);
+  const buildingHeightChangedFlag = useStore(Selector.buildingHeightChangedFlag);
+
+  useEffect(() => {
+    setHeight(lz);
+  }, [lz, buildingHeightChangedFlag]);
 
   const setRayCast = (e: PointerEvent) => {
     mouse.x = (e.offsetX / getThree().gl.domElement.clientWidth) * 2 - 1;
@@ -231,6 +236,7 @@ const BuildingResizer = ({ foundation, args, handleSize }: BuildingResizerProps)
           }
         }
       }
+      state.buildingHeightChangedFlag = !state.buildingHeightChangedFlag;
     });
   };
 
