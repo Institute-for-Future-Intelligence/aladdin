@@ -171,6 +171,55 @@ export class Util {
     return count;
   }
 
+  static doFoundationsOverlap(f1: ElementModel, f2: ElementModel): boolean {
+    const v1 = Util.fetchFoundationVertexCoordinates(f1);
+    const v2 = Util.fetchFoundationVertexCoordinates(f2);
+    v1.push(v1[0]);
+    v2.push(v2[0]);
+    for (let i1 = 0; i1 < v1.length - 1; i1++) {
+      const from1 = v1[i1];
+      const to1 = v1[i1 + 1];
+      for (let i2 = 0; i2 < v2.length - 1; i2++) {
+        const from2 = v2[i2];
+        const to2 = v2[i2 + 1];
+        if (Util.lineIntersection(from1, to1, from2, to2)) return true;
+      }
+    }
+    return false;
+  }
+
+  static fetchFoundationVertexCoordinates(foundation: ElementModel): Point2[] {
+    const xc = foundation.cx;
+    const yc = foundation.cy;
+    const cosaz = Math.cos(foundation.rotation[2]);
+    const sinaz = Math.sin(foundation.rotation[2]);
+    const rx = foundation.lx * 0.5;
+    const ry = foundation.ly * 0.5;
+    // corners are stored in the clockwise direction
+    const vertices: Point2[] = [];
+    // upper-right corner
+    vertices.push({
+      x: xc + rx * cosaz - ry * sinaz,
+      y: yc + rx * sinaz + ry * cosaz,
+    } as Point2);
+    // lower-right corner
+    vertices.push({
+      x: xc + rx * cosaz + ry * sinaz,
+      y: yc + rx * sinaz - ry * cosaz,
+    } as Point2);
+    // lower-left corner
+    vertices.push({
+      x: xc - rx * cosaz + ry * sinaz,
+      y: yc - rx * sinaz - ry * cosaz,
+    } as Point2);
+    // upper-left corner
+    vertices.push({
+      x: xc - rx * cosaz - ry * sinaz,
+      y: yc - rx * sinaz + ry * cosaz,
+    } as Point2);
+    return vertices;
+  }
+
   static doSolarPanelsOverlap(sp1: SolarPanelModel, sp2: SolarPanelModel, parent: ElementModel): boolean {
     if (sp1.parentId !== parent.id || sp2.parentId !== parent.id) return false;
     if (!Util.isIdentical(sp1.normal, sp2.normal)) return false;

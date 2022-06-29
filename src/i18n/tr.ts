@@ -492,6 +492,7 @@ export const i18n_tr = {
       AllFoundations: 'Tüm Temeller',
       AddPolygon: 'Poligon Ekle',
       SelectSolarStructure: 'Select Solar Structure',
+      GroupMaster: 'Group Master',
     },
 
     solarPowerTowerMenu: {

@@ -21,4 +21,7 @@ export interface FoundationModel extends ElementModel {
 
   // solar updraft tower
   solarUpdraftTower?: SolarUpdraftTowerModel;
+
+  // group master
+  enableGroupMaster?: boolean;
 }

@@ -491,6 +491,7 @@ export const i18n_es = {
       AllFoundations: 'Todas las bases',
       AddPolygon: 'Añadir polígono',
       SelectSolarStructure: 'Select Solar Structure',
+      GroupMaster: 'Group Master',
     },
 
     solarPowerTowerMenu: {

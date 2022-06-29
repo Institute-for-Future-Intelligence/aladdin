@@ -3,7 +3,7 @@
  */
 
 import React, { useEffect, useState } from 'react';
-import { Menu, Modal, Radio, Space } from 'antd';
+import { Checkbox, Menu, Modal, Radio, Space } from 'antd';
 import { Copy, Cut, Lock, Paste } from '../menuItems';
 import SubMenu from 'antd/lib/menu/SubMenu';
 import { ExclamationCircleOutlined } from '@ant-design/icons';
@@ -145,6 +145,25 @@ export const FoundationMenu = () => {
         <Copy keyName={'foundation-copy'} />
         {editable && <Cut keyName={'foundation-cut'} />}
         <Lock keyName={'foundation-lock'} />
+
+        <Menu.Item>
+          <Checkbox
+            checked={foundation.enableGroupMaster}
+            onChange={(e) => {
+              setCommonStore((state) => {
+                for (const e of state.elements) {
+                  if (e.id === foundation.id) {
+                    (e as FoundationModel).enableGroupMaster = !(e as FoundationModel).enableGroupMaster;
+                    break;
+                  }
+                }
+              });
+            }}
+          >
+            {i18n.t('foundationMenu.GroupMaster', { lng: language })}
+          </Checkbox>
+        </Menu.Item>
+
         {counter.gotSome() && contextMenuObjectType && (
           <SubMenu key={'clear'} title={i18n.t('word.Clear', lang)} style={{ paddingLeft: '24px' }}>
             {counter.wallCount > 0 && (

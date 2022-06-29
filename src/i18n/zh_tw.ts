@@ -479,6 +479,7 @@ export const i18n_zh_tw = {
       AllFoundations: '所有的地基',
       AddPolygon: '添加多邊形',
       SelectSolarStructure: '選擇太陽能構型',
+      GroupMaster: '組合',
     },
 
     solarPowerTowerMenu: {

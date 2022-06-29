@@ -20,3 +20,8 @@ export interface UndoableMove extends Undoable {
   oldParentId?: string;
   newParentId?: string;
 }
+
+export interface UndoableMoveFoundationGroup extends Undoable {
+  oldPositionMap: Map<string, number[]>;
+  newPositionMap: Map<string, number[]>;
+}

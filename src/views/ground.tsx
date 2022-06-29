@@ -22,7 +22,7 @@ import {
   ZERO_TOLERANCE,
 } from '../constants';
 import { Util } from '../Util';
-import { UndoableMove } from '../undo/UndoableMove';
+import { UndoableMove, UndoableMoveFoundationGroup } from '../undo/UndoableMove';
 import { UndoableResize } from '../undo/UndoableResize';
 import { UndoableRotate } from '../undo/UndoableRotate';
 import { UndoableAdd } from '../undo/UndoableAdd';
@@ -34,6 +34,7 @@ import { TreeModel } from '../models/TreeModel';
 import { UndoableChange } from '../undo/UndoableChange';
 import { showError } from '../helpers';
 import i18n from '../i18n/i18n';
+import { FoundationModel } from 'src/models/FoundationModel';
 
 const Ground = () => {
   const setCommonStore = useStore(Selector.set);
@@ -93,6 +94,9 @@ const Ground = () => {
   const isSettingCuboidStartPointRef = useRef(false);
   const isSettingCuboidEndPointRef = useRef(false);
   const isHumanOrTreeMovedRef = useRef(false);
+  const foundationGroupRelPosMapRef = useRef<Map<string, Vector3>>(new Map());
+  const foundationGroupOldPosMapRef = useRef<Map<string, number[]>>(new Map());
+  const foundationGroupNewPosMapRef = useRef<Map<string, number[]>>(new Map());
 
   const lang = { lng: language };
 
@@ -662,6 +666,21 @@ const Ground = () => {
     return ray.intersectObjects([groundPlaneRef.current!]).length === 0;
   };
 
+  const updateFoundationGroupPosition = (map: Map<string, number[]>) => {
+    setCommonStore((state) => {
+      for (const elem of state.elements) {
+        if (elem.type === ObjectType.Foundation && map.has(elem.id)) {
+          const pos = map.get(elem.id);
+          if (pos) {
+            elem.cx = pos[0];
+            elem.cy = pos[1];
+            elem.cz = pos[2];
+          }
+        }
+      }
+    });
+  };
+
   const moveElementOnPointerUp = (elem: ElementModel, e: PointerEvent) => {
     if (elem.locked) return;
     newPositionRef.current.set(elem.cx, elem.cy, elem.cz);
@@ -754,31 +773,63 @@ const Ground = () => {
         }
         showError(i18n.t('message.CannotMoveObjectTooFar', lang));
       } else {
-        const undoableMove = {
-          name: 'Move',
-          timestamp: Date.now(),
-          movedElementId: elem.id,
-          movedElementType: elem.type,
-          oldCx: oldPositionRef.current.x,
-          oldCy: oldPositionRef.current.y,
-          oldCz: oldPositionRef.current.z,
-          newCx: newPositionRef.current.x,
-          newCy: newPositionRef.current.y,
-          newCz: newPositionRef.current.z,
-          oldParentId: oldHumanOrTreeParentIdRef.current,
-          newParentId: newHumanOrTreeParentId,
-          undo: () => {
-            setElementPosition(undoableMove.movedElementId, undoableMove.oldCx, undoableMove.oldCy, undoableMove.oldCz);
-            setParentIdById(undoableMove.oldParentId, undoableMove.movedElementId);
-            attachToGroup(undoableMove.oldParentId, undoableMove.newParentId, undoableMove.movedElementId);
-          },
-          redo: () => {
-            setElementPosition(undoableMove.movedElementId, undoableMove.newCx, undoableMove.newCy, undoableMove.newCz);
-            setParentIdById(undoableMove.newParentId, undoableMove.movedElementId);
-            attachToGroup(undoableMove.newParentId, undoableMove.oldParentId, undoableMove.movedElementId);
-          },
-        } as UndoableMove;
-        addUndoable(undoableMove);
+        if (foundationGroupRelPosMapRef.current.size > 1) {
+          foundationGroupNewPosMapRef.current.clear();
+          for (const elem of useStore.getState().elements) {
+            if (elem.type === ObjectType.Foundation && foundationGroupOldPosMapRef.current.has(elem.id)) {
+              foundationGroupNewPosMapRef.current.set(elem.id, [elem.cx, elem.cy, elem.cz]);
+            }
+          }
+          const undoableMove = {
+            name: 'Move Foundation Group',
+            timestamp: Date.now(),
+            oldPositionMap: new Map(foundationGroupOldPosMapRef.current),
+            newPositionMap: new Map(foundationGroupNewPosMapRef.current),
+            undo: () => {
+              updateFoundationGroupPosition(undoableMove.oldPositionMap);
+            },
+            redo: () => {
+              updateFoundationGroupPosition(undoableMove.newPositionMap);
+            },
+          } as UndoableMoveFoundationGroup;
+          addUndoable(undoableMove);
+        } else {
+          const undoableMove = {
+            name: 'Move',
+            timestamp: Date.now(),
+            movedElementId: elem.id,
+            movedElementType: elem.type,
+            oldCx: oldPositionRef.current.x,
+            oldCy: oldPositionRef.current.y,
+            oldCz: oldPositionRef.current.z,
+            newCx: newPositionRef.current.x,
+            newCy: newPositionRef.current.y,
+            newCz: newPositionRef.current.z,
+            oldParentId: oldHumanOrTreeParentIdRef.current,
+            newParentId: newHumanOrTreeParentId,
+            undo: () => {
+              setElementPosition(
+                undoableMove.movedElementId,
+                undoableMove.oldCx,
+                undoableMove.oldCy,
+                undoableMove.oldCz,
+              );
+              setParentIdById(undoableMove.oldParentId, undoableMove.movedElementId);
+              attachToGroup(undoableMove.oldParentId, undoableMove.newParentId, undoableMove.movedElementId);
+            },
+            redo: () => {
+              setElementPosition(
+                undoableMove.movedElementId,
+                undoableMove.newCx,
+                undoableMove.newCy,
+                undoableMove.newCz,
+              );
+              setParentIdById(undoableMove.newParentId, undoableMove.movedElementId);
+              attachToGroup(undoableMove.newParentId, undoableMove.oldParentId, undoableMove.movedElementId);
+            },
+          } as UndoableMove;
+          addUndoable(undoableMove);
+        }
         updateSceneRadius();
       }
     }
@@ -908,6 +959,43 @@ const Ground = () => {
       state.humanRef = null;
       state.treeRef = null;
     });
+  };
+
+  const setFoundationPosMap = (element: ElementModel, pointer: Vector3) => {
+    const center = new Vector3(element.cx, element.cy);
+    const diff = new Vector3().subVectors(center, pointer);
+    foundationGroupRelPosMapRef.current.set(element.id, diff);
+    foundationGroupOldPosMapRef.current.set(element.id, [element.cx, element.cy, element.cz]);
+  };
+
+  const checkOverlapWithAllFoundation = (event: ThreeEvent<PointerEvent>, foundation: ElementModel) => {
+    const pointer = event.intersections[0].point.clone().setZ(0);
+    for (const element of useStore.getState().elements) {
+      if (
+        element.type === ObjectType.Foundation &&
+        !element.locked &&
+        element.id !== foundation.id &&
+        !foundationGroupRelPosMapRef.current.has(element.id) &&
+        Util.doFoundationsOverlap(element, foundation)
+      ) {
+        setFoundationPosMap(element, pointer);
+        checkOverlapWithAllFoundation(event, element);
+      }
+      if (element.id === foundation.id) {
+        setFoundationPosMap(element, pointer);
+      }
+    }
+  };
+
+  const handleGroupMaster = (event: ThreeEvent<PointerEvent>, currElem: ElementModel) => {
+    foundationGroupRelPosMapRef.current.clear();
+    foundationGroupOldPosMapRef.current.clear();
+    if (!(currElem as FoundationModel).enableGroupMaster) {
+      return;
+    }
+    if (useStore.getState().moveHandleType) {
+      checkOverlapWithAllFoundation(event, currElem);
+    }
   };
 
   const handlePointerDown = (e: ThreeEvent<PointerEvent>) => {
@@ -1071,6 +1159,7 @@ const Ground = () => {
               }
               break;
             case ObjectType.Foundation:
+              handleGroupMaster(e, selectedElement);
               // getting ready for resizing even though it may not happen
               absPosMapRef.current.clear();
               polygonsAbsPosMapRef.current.clear();
@@ -1597,6 +1686,20 @@ const Ground = () => {
   };
 
   const handleMove = (p: Vector3) => {
+    if (foundationGroupRelPosMapRef.current.size > 0) {
+      setCommonStore((state) => {
+        for (const elem of state.elements) {
+          if (elem.type === ObjectType.Foundation && foundationGroupRelPosMapRef.current.has(elem.id)) {
+            const v = foundationGroupRelPosMapRef.current.get(elem.id);
+            if (v) {
+              elem.cx = p.x + v.x;
+              elem.cy = p.y + v.y;
+            }
+          }
+        }
+      });
+      return;
+    }
     let x0, y0;
     const hx = grabRef.current!.lx / 2;
     const hy = grabRef.current!.ly / 2;
