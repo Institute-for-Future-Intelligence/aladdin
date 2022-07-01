@@ -157,6 +157,7 @@ export const FoundationMenu = () => {
                     break;
                   }
                 }
+                state.buildingResizerUpdateFlag = !state.buildingResizerUpdateFlag;
               });
             }}
           >

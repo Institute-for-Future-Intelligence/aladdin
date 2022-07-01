@@ -5,23 +5,22 @@
 import React, { useEffect, useMemo, useRef, useState } from 'react';
 import { Euler, Mesh, Raycaster, Vector2, Vector3 } from 'three';
 import { ThreeEvent, useThree } from '@react-three/fiber';
-import { Box, Line, Plane, Sphere } from '@react-three/drei';
+import { Box, Plane, Sphere } from '@react-three/drei';
 import { MoveHandleType, ObjectType, ResizeHandleType } from 'src/types';
 import { useStoreRef } from 'src/stores/commonRef';
 import { useStore } from 'src/stores/common';
 import * as Selector from '../stores/selector';
-import { HALF_PI, HIGHLIGHT_HANDLE_COLOR, RESIZE_HANDLE_COLOR } from 'src/constants';
-import { FoundationModel } from 'src/models/FoundationModel';
+import { HALF_PI, HIGHLIGHT_HANDLE_COLOR, RESIZE_HANDLE_COLOR, RESIZE_HANDLE_SIZE } from 'src/constants';
 import { WallModel } from 'src/models/WallModel';
 import Wireframe from './wireframe';
-import { UndoableMove } from 'src/undo/UndoableMove';
+import { UndoableMoveFoundationGroup } from 'src/undo/UndoableMove';
 import { UndoableResizeBuildingXY, UndoableResizeBuildingZ } from 'src/undo/UndoableResizeBuilding';
-import { ElementModel } from 'src/models/ElementModel';
 
 interface BuildingResizerProps {
-  foundation: FoundationModel;
-  args: number[];
-  handleSize: number;
+  foundationGroupSet: Set<string>;
+  initalPosition: number[];
+  initalDimension: number[];
+  rotation: number;
 }
 
 interface HandleProps {
@@ -70,46 +69,53 @@ const MoveHandle = ({ args, handleType }: HandleProps) => {
   );
 };
 
-const BuildingResizer = ({ foundation, args, handleSize }: BuildingResizerProps) => {
-  const [lx, ly, lz] = args;
-  const [hx, hy] = [lx / 2, ly / 2];
+const BuildingResizer = ({ foundationGroupSet, initalPosition, initalDimension, rotation }: BuildingResizerProps) => {
+  const [cx, cy, cz] = initalPosition;
+  const [lx, ly, lz] = initalDimension;
+  const aspectRatio = lx === 0 ? 1 : ly / lx;
+  const lockAspectRatio = foundationGroupSet.size > 1 ? true : false;
 
   const intersectionPlaneRef = useRef<Mesh>(null);
   const intersectionPlanePositionRef = useRef(new Vector3());
   const intersectionPlaneRotationRef = useRef(new Euler());
   const resizeAnchorRef = useRef(new Vector2());
-  const wallPointsMapRef = useRef<Map<string, Vector2[]>>(new Map<string, Vector2[]>());
-  const wallHeightMapRef = useRef<Map<string, number>>(new Map<string, number>());
-  const roofHeightMapRef = useRef<Map<string, number>>(new Map<string, number>());
-  const moveCenterPosRef = useRef(new Vector2());
+  const elementHeightMapRef = useRef<Map<string, number>>(new Map());
+  const wallRelPointsMapRef = useRef<Map<string, Vector2[]>>(new Map<string, Vector2[]>());
+  const foundatonRelPosMapRef = useRef<Map<string, Vector3>>(new Map());
+  const foundationPosRatioMapRef = useRef<Map<string, number[]>>(new Map()); // 2d
+  const foundationDmsRatioMapRef = useRef<Map<string, number[]>>(new Map()); // 2d
+  const resizerCenterRelPosRef = useRef(new Vector3());
   const pointerDownRef = useRef(false); // for performance reason
 
   // undo
-  const oldPositionRef = useRef<number[]>([]);
-  const newPositionRef = useRef<number[]>([]);
-  const oldDimensionRef = useRef<number[]>([]);
-  const newDimensionRef = useRef<number[]>([]);
-  const oldChildsMapXYRef = useRef(new Map<string, WallModel>());
-  const oldChildsMapZRef = useRef(new Map<string, number>());
+  const foundatonOldDataMapRef = useRef<Map<string, number[]>>(new Map());
+  const wallOldPointsMapRef = useRef<Map<string, number[]>>(new Map());
+  const elementOldHeightMapRef = useRef<Map<string, number>>(new Map());
 
-  const [showIntersectionPlane, setShowIntersectionPlane] = useState(false);
+  const [position, setPosition] = useState<Vector3>(new Vector3(cx, cy, cz));
+  const [hx, setHx] = useState(lx / 2);
+  const [hy, setHy] = useState(ly / 2);
   const [height, setHeight] = useState(lz);
+  const [showIntersectionPlane, setShowIntersectionPlane] = useState(false);
   const [operation, setOperation] = useState<Operation>(Operation.Null);
 
   const { get: getThree } = useThree();
   const ray = useMemo(() => new Raycaster(), []);
   const mouse = useMemo(() => new Vector2(), []);
 
+  const getElementById = useStore(Selector.getElementById);
   const getCameraDirection = useStore(Selector.getCameraDirection);
-  const updateWallMapOnFoundation = useStore(Selector.updateWallMapOnFoundation);
   const setCommonStore = useStore(Selector.set);
-  const setElementPosition = useStore(Selector.setElementPosition);
   const addUndoable = useStore(Selector.addUndoable);
-  const buildingHeightChangedFlag = useStore(Selector.buildingHeightChangedFlag);
 
   useEffect(() => {
     setHeight(lz);
-  }, [lz, buildingHeightChangedFlag]);
+  }, [lz]);
+
+  useEffect(() => {
+    setPosition(new Vector3(cx, cy, cz));
+    setDimension(lx, ly);
+  }, [initalPosition, initalDimension]);
 
   const setRayCast = (e: PointerEvent) => {
     mouse.x = (e.offsetX / getThree().gl.domElement.clientWidth) * 2 - 1;
@@ -117,61 +123,9 @@ const BuildingResizer = ({ foundation, args, handleSize }: BuildingResizerProps)
     ray.setFromCamera(mouse, getThree().camera);
   };
 
-  const resizeXY = (p: Vector3) => {
-    const pointer2D = new Vector2(p.x, p.y);
-    const anchor = resizeAnchorRef.current.clone();
-    const diagonal = anchor.distanceTo(pointer2D);
-    const angle = Math.atan2(pointer2D.x - anchor.x, pointer2D.y - anchor.y) + foundation.rotation[2];
-    const lx = Math.abs(diagonal * Math.sin(angle));
-    const ly = Math.abs(diagonal * Math.cos(angle));
-    const center = new Vector2().addVectors(pointer2D, anchor).multiplyScalar(0.5);
-
-    setCommonStore((state) => {
-      for (const elem of state.elements) {
-        if (elem.id === foundation.id) {
-          elem.lx = lx;
-          elem.ly = ly;
-          elem.cx = center.x;
-          elem.cy = center.y;
-          newDimensionRef.current = [lx, ly, elem.lz];
-          newPositionRef.current = [center.x, center.y, 0];
-        }
-        if (elem.parentId === foundation.id && elem.type === ObjectType.Wall) {
-          const wall = elem as WallModel;
-          const relativePosition = wallPointsMapRef.current.get(wall.id);
-          if (relativePosition) {
-            const [leftRelPoint, rightRelPoint] = relativePosition;
-            const leftPoint = [leftRelPoint.x * lx, leftRelPoint.y * ly, foundation.lz];
-            const rightPoint = [rightRelPoint.x * lx, rightRelPoint.y * ly, foundation.lz];
-            wall.cx = (leftPoint[0] + rightPoint[0]) / 2;
-            wall.cy = (leftPoint[1] + rightPoint[1]) / 2;
-            wall.lx = Math.sqrt(Math.pow(leftPoint[0] - rightPoint[0], 2) + Math.pow(leftPoint[1] - rightPoint[1], 2));
-            wall.relativeAngle = Math.atan2(rightPoint[1] - leftPoint[1], rightPoint[0] - leftPoint[0]);
-            wall.leftPoint = [...leftPoint];
-            wall.rightPoint = [...rightPoint];
-          }
-        }
-      }
-    });
-  };
-
-  const resizeZ = (p: Vector3) => {
-    if (p.z < 0.1) {
-      return;
-    }
-    const height = Math.max(p.z, foundation.lz + 1);
-    setHeight(height);
-    setCommonStore((state) => {
-      for (const elem of state.elements) {
-        if (elem.foundationId === foundation.id) {
-          if (elem.type === ObjectType.Wall) {
-            elem.lz = (height - foundation.lz) * wallHeightMapRef.current.get(elem.id)!;
-          } else if (elem.type === ObjectType.Roof) {
-            elem.lz = (height - foundation.lz) * roofHeightMapRef.current.get(elem.id)!;
-          }
-        }
-      }
-    });
+  const setDimension = (lx: number, ly: number) => {
+    setHx(lx / 2);
+    setHy(ly / 2);
   };
 
   const initPointerDown = () => {
@@ -182,141 +136,122 @@ const BuildingResizer = ({ foundation, args, handleSize }: BuildingResizerProps)
     intersectionPlaneRotationRef.current.set(0, 0, 0);
   };
 
-  const pointerDownBottomResizeHandle = (x: number, y: number) => {
-    resizeAnchorRef.current.set(x, y).rotateAround(zeroVector2, foundation.rotation[2]);
-    setOperation(Operation.ResizeXY);
-    setCommonStoreHandleType(MoveHandleType.Default);
-  };
-
-  const pointerDonwTopResizeHandle = (x: number, y: number, z: number) => {
-    const { x: cameraX, y: cameraY } = getCameraDirection();
-    intersectionPlanePositionRef.current.set(x, y, z);
-    intersectionPlaneRotationRef.current.set(
-      -HALF_PI,
-      0,
-      -Math.atan2(cameraX, cameraY) - foundation.rotation[2],
-      'ZXY',
-    );
-
-    setOperation(Operation.ResizeZ);
-  };
-
-  const isBuildingPart = (fId: string, elem: ElementModel) => {
-    return elem.foundationId === foundation.id && (elem.type === ObjectType.Wall || elem.type === ObjectType.Roof);
-  };
-
-  const updateUndoableResizeXY = (fId: string, fPos: number[], fDim: number[], childsMap: Map<string, WallModel>) => {
+  const updateUndoableResizeXY = (foundationDataMap: Map<string, number[]>, wallPointsMap: Map<string, number[]>) => {
     setCommonStore((state) => {
       for (const elem of state.elements) {
-        if (elem.id === fId) {
-          [elem.cx, elem.cy, elem.cz] = fPos;
-          [elem.lx, elem.ly, elem.lz] = fDim;
-        } else if (elem.foundationId === fId && elem.type === ObjectType.Wall) {
-          const wall = childsMap.get(elem.id);
-          if (wall) {
-            elem.cx = wall.cx;
-            elem.cy = wall.cy;
-            elem.lx = wall.lx;
-            (elem as WallModel).relativeAngle = wall.relativeAngle;
-            (elem as WallModel).leftPoint = [...wall.leftPoint];
-            (elem as WallModel).rightPoint = [...wall.rightPoint];
-          }
+        if (elem.type === ObjectType.Foundation && foundationDataMap.has(elem.id)) {
+          [elem.cx, elem.cy, elem.lx, elem.ly] = foundationDataMap.get(elem.id)!;
+        } else if (elem.type === ObjectType.Wall && wallPointsMap.has(elem.id)) {
+          const points = wallPointsMap.get(elem.id)!;
+          const w = elem as WallModel;
+          const leftPoint = points.slice(0, 3);
+          const rightPoint = points.slice(3);
+          w.cx = (leftPoint[0] + rightPoint[0]) / 2;
+          w.cy = (leftPoint[1] + rightPoint[1]) / 2;
+          w.lx = Math.sqrt(Math.pow(leftPoint[0] - rightPoint[0], 2) + Math.pow(leftPoint[1] - rightPoint[1], 2));
+          w.relativeAngle = Math.atan2(rightPoint[1] - leftPoint[1], rightPoint[0] - leftPoint[0]);
+          w.leftPoint = [...leftPoint];
+          w.rightPoint = [...rightPoint];
         }
       }
+      state.buildingResizerUpdateFlag = !state.buildingResizerUpdateFlag;
     });
   };
 
-  const updateUndoableResizeZ = (fId: string, childsMap: Map<string, number>) => {
+  const updateUndoableResizeZ = (map: Map<string, number>) => {
     setCommonStore((state) => {
       for (const elem of state.elements) {
-        if (isBuildingPart(fId, elem)) {
-          const lz = childsMap.get(elem.id);
-          if (lz) {
-            elem.lz = lz;
+        if (map.has(elem.id)) {
+          elem.lz = map.get(elem.id)!;
+        }
+      }
+      state.buildingResizerUpdateFlag = !state.buildingResizerUpdateFlag;
+    });
+  };
+
+  const updateFoundationGroupPosition = (map: Map<string, number[]>) => {
+    setCommonStore((state) => {
+      for (const elem of state.elements) {
+        if (elem.type === ObjectType.Foundation && map.has(elem.id)) {
+          const pos = map.get(elem.id);
+          if (pos) {
+            elem.cx = pos[0];
+            elem.cy = pos[1];
+            elem.cz = pos[2];
           }
         }
       }
-      state.buildingHeightChangedFlag = !state.buildingHeightChangedFlag;
+      state.buildingResizerUpdateFlag = !state.buildingResizerUpdateFlag;
     });
   };
 
   const addUndoableMove = () => {
+    const map = new Map<string, number[]>();
+    for (const elem of useStore.getState().elements) {
+      if (elem.type === ObjectType.Foundation && foundationGroupSet.has(elem.id)) {
+        map.set(elem.id, [elem.cx, elem.cy, elem.cz]);
+      }
+    }
     const undoableMove = {
-      name: 'Move',
+      name: 'Move Foundation Group',
       timestamp: Date.now(),
-      movedElementId: foundation.id,
-      movedElementType: foundation.type,
-      oldCx: oldPositionRef.current[0],
-      oldCy: oldPositionRef.current[1],
-      oldCz: oldPositionRef.current[2],
-      newCx: newPositionRef.current[0],
-      newCy: newPositionRef.current[1],
-      newCz: newPositionRef.current[2],
+      oldPositionMap: new Map(foundatonOldDataMapRef.current),
+      newPositionMap: new Map(map),
       undo: () => {
-        setElementPosition(undoableMove.movedElementId, undoableMove.oldCx, undoableMove.oldCy, undoableMove.oldCz);
+        updateFoundationGroupPosition(undoableMove.oldPositionMap);
       },
       redo: () => {
-        setElementPosition(undoableMove.movedElementId, undoableMove.newCx, undoableMove.newCy, undoableMove.newCz);
+        updateFoundationGroupPosition(undoableMove.newPositionMap);
       },
-    } as UndoableMove;
+    } as UndoableMoveFoundationGroup;
     addUndoable(undoableMove);
   };
 
   const addUndoableResizeXY = () => {
-    const newChildsMap = new Map<string, WallModel>();
+    const foundationNewDataMap = new Map<string, number[]>();
+    const wallNewPointsMap = new Map<string, number[]>();
     for (const elem of useStore.getState().elements) {
-      if (elem.foundationId === foundation.id && elem.type === ObjectType.Wall) {
-        newChildsMap.set(elem.id, elem as WallModel);
+      if (elem.type === ObjectType.Foundation && foundatonOldDataMapRef.current.has(elem.id)) {
+        foundationNewDataMap.set(elem.id, [elem.cx, elem.cy, elem.lx, elem.ly]);
+      } else if (elem.type === ObjectType.Wall && wallOldPointsMapRef.current.has(elem.id)) {
+        const w = elem as WallModel;
+        wallNewPointsMap.set(elem.id, [...w.leftPoint, ...w.rightPoint]);
       }
     }
     const undoableReizeXY = {
       name: 'Resize Building XY',
       timestamp: Date.now(),
-      foundationId: foundation.id,
-      oldFoundationPosition: [...oldPositionRef.current],
-      newFoundationPosition: [...newPositionRef.current],
-      oldFoundationDimension: [...oldDimensionRef.current],
-      newFoundationDimension: [...newDimensionRef.current],
-      oldChilds: new Map(oldChildsMapXYRef.current),
-      newChilds: new Map(newChildsMap),
+      oldFoundationDataMap: new Map(foundatonOldDataMapRef.current),
+      newFoundationDataMap: new Map(foundationNewDataMap),
+      oldWallPointsMap: new Map(wallOldPointsMapRef.current),
+      newWallPointsMap: new Map(wallNewPointsMap),
       undo: () => {
-        updateUndoableResizeXY(
-          undoableReizeXY.foundationId,
-          undoableReizeXY.oldFoundationPosition,
-          undoableReizeXY.oldFoundationDimension,
-          undoableReizeXY.oldChilds,
-        );
+        updateUndoableResizeXY(undoableReizeXY.oldFoundationDataMap, undoableReizeXY.oldWallPointsMap);
       },
       redo: () => {
-        updateUndoableResizeXY(
-          undoableReizeXY.foundationId,
-          undoableReizeXY.newFoundationPosition,
-          undoableReizeXY.newFoundationDimension,
-          undoableReizeXY.newChilds,
-        );
+        updateUndoableResizeXY(undoableReizeXY.newFoundationDataMap, undoableReizeXY.newWallPointsMap);
       },
     } as UndoableResizeBuildingXY;
     addUndoable(undoableReizeXY);
   };
 
   const addUndoableReseizeZ = () => {
-    const newChildsMap = new Map<string, number>();
+    const newMap = new Map<string, number>();
     for (const elem of useStore.getState().elements) {
-      if (isBuildingPart(foundation.id, elem)) {
-        newChildsMap.set(elem.id, elem.lz);
+      if (elementOldHeightMapRef.current.has(elem.id)) {
+        newMap.set(elem.id, elem.lz);
       }
     }
     const undoableResizeZ = {
       name: 'Resize Building Z',
       timestamp: Date.now(),
-      foundationId: foundation.id,
-      oldChilds: new Map(oldChildsMapZRef.current),
-      newChilds: new Map(newChildsMap),
+      oldElementHeightMap: new Map(elementOldHeightMapRef.current),
+      newElementHeightMap: new Map(newMap),
       undo: () => {
-        updateUndoableResizeZ(undoableResizeZ.foundationId, undoableResizeZ.oldChilds);
+        updateUndoableResizeZ(undoableResizeZ.oldElementHeightMap);
       },
       redo: () => {
-        updateUndoableResizeZ(undoableResizeZ.foundationId, undoableResizeZ.newChilds);
+        updateUndoableResizeZ(undoableResizeZ.newElementHeightMap);
       },
     } as UndoableResizeBuildingZ;
     addUndoable(undoableResizeZ);
@@ -326,6 +261,173 @@ const BuildingResizer = ({ foundation, args, handleSize }: BuildingResizerProps)
     setCommonStore((state) => {
       state.moveHandleType = handleType;
     });
+  };
+
+  const resizeXY = (p: Vector3) => {
+    const pointer2D = new Vector2(p.x, p.y);
+    const anchor = resizeAnchorRef.current.clone();
+
+    if (lockAspectRatio) {
+      const diagonalVector = new Vector2().subVectors(pointer2D, anchor);
+      const diagonalDistance = Math.max(1, diagonalVector.length());
+
+      const lx = Math.sqrt(Math.pow(diagonalDistance, 2) / (Math.pow(aspectRatio, 2) + 1));
+      const ly = lx * aspectRatio;
+
+      const center = new Vector2(lx * Math.sign(diagonalVector.x), ly * Math.sign(diagonalVector.y))
+        .normalize()
+        .multiplyScalar(diagonalDistance / 2)
+        .add(anchor);
+
+      setPosition(new Vector3(center.x, center.y));
+      setDimension(lx, ly);
+      setCommonStore((state) => {
+        for (const elem of state.elements) {
+          if (elem.type === ObjectType.Foundation && foundationGroupSet.has(elem.id)) {
+            const posRatio = foundationPosRatioMapRef.current.get(elem.id);
+            const dmsRatio = foundationDmsRatioMapRef.current.get(elem.id);
+            if (posRatio && dmsRatio) {
+              const newLx = dmsRatio[0] * lx;
+              const newLy = dmsRatio[1] * ly;
+
+              elem.cx = posRatio[0] * lx + center.x;
+              elem.cy = posRatio[1] * ly + center.y;
+              elem.lx = newLx;
+              elem.ly = newLy;
+
+              for (const e of state.elements) {
+                if (e.type === ObjectType.Wall && e.foundationId === elem.id) {
+                  const wall = e as WallModel;
+                  const relativePosition = wallRelPointsMapRef.current.get(wall.id);
+                  if (relativePosition) {
+                    const [leftRelPoint, rightRelPoint] = relativePosition;
+                    const leftPoint = [leftRelPoint.x * newLx, leftRelPoint.y * newLy, elem.lz];
+                    const rightPoint = [rightRelPoint.x * newLx, rightRelPoint.y * newLy, elem.lz];
+                    wall.cx = (leftPoint[0] + rightPoint[0]) / 2;
+                    wall.cy = (leftPoint[1] + rightPoint[1]) / 2;
+                    wall.lx = Math.sqrt(
+                      Math.pow(leftPoint[0] - rightPoint[0], 2) + Math.pow(leftPoint[1] - rightPoint[1], 2),
+                    );
+                    wall.relativeAngle = Math.atan2(rightPoint[1] - leftPoint[1], rightPoint[0] - leftPoint[0]);
+                    wall.leftPoint = [...leftPoint];
+                    wall.rightPoint = [...rightPoint];
+                  }
+                }
+              }
+            }
+          }
+        }
+      });
+    } else {
+      const diagonal = anchor.distanceTo(pointer2D);
+      const angle = Math.atan2(pointer2D.x - anchor.x, pointer2D.y - anchor.y) + rotation;
+      const lx = Math.abs(diagonal * Math.sin(angle));
+      const ly = Math.abs(diagonal * Math.cos(angle));
+      const center = new Vector2().addVectors(pointer2D, anchor).multiplyScalar(0.5);
+      setPosition(new Vector3(center.x, center.y));
+      setDimension(lx, ly);
+      setCommonStore((state) => {
+        for (const elem of state.elements) {
+          // foundationGroupSet only has one element here
+          if (foundationGroupSet.has(elem.id)) {
+            elem.lx = lx;
+            elem.ly = ly;
+            elem.cx = center.x;
+            elem.cy = center.y;
+          } else if (elem.type === ObjectType.Wall && foundationGroupSet.has(elem.parentId)) {
+            const wall = elem as WallModel;
+            const relativePosition = wallRelPointsMapRef.current.get(wall.id);
+            if (relativePosition) {
+              const [leftRelPoint, rightRelPoint] = relativePosition;
+              const leftPoint = [leftRelPoint.x * lx, leftRelPoint.y * ly, 0];
+              const rightPoint = [rightRelPoint.x * lx, rightRelPoint.y * ly, 0];
+              wall.cx = (leftPoint[0] + rightPoint[0]) / 2;
+              wall.cy = (leftPoint[1] + rightPoint[1]) / 2;
+              wall.lx = Math.sqrt(
+                Math.pow(leftPoint[0] - rightPoint[0], 2) + Math.pow(leftPoint[1] - rightPoint[1], 2),
+              );
+              wall.relativeAngle = Math.atan2(rightPoint[1] - leftPoint[1], rightPoint[0] - leftPoint[0]);
+              wall.leftPoint = [...leftPoint];
+              wall.rightPoint = [...rightPoint];
+            }
+          }
+        }
+      });
+    }
+  };
+
+  const resizeZ = (p: Vector3) => {
+    if (p.z < 0.1) {
+      return;
+    }
+    const height = p.z;
+    setHeight(height);
+    setCommonStore((state) => {
+      for (const elem of state.elements) {
+        if (elementHeightMapRef.current.has(elem.id)) {
+          elem.lz = height * elementHeightMapRef.current.get(elem.id)!;
+        }
+      }
+    });
+  };
+
+  const pointerDownBottomResizeHandle = (x: number, y: number) => {
+    resizeAnchorRef.current.set(x, y).rotateAround(zeroVector2, rotation).add(new Vector2(position.x, position.y));
+    setOperation(Operation.ResizeXY);
+    setCommonStoreHandleType(MoveHandleType.Default);
+
+    foundationPosRatioMapRef.current.clear();
+    foundationDmsRatioMapRef.current.clear();
+    wallRelPointsMapRef.current.clear();
+    foundatonOldDataMapRef.current.clear();
+    wallOldPointsMapRef.current.clear();
+
+    const [currLx, currLy] = [hx * 2, hy * 2];
+    for (const elem of useStore.getState().elements) {
+      if (elem.type === ObjectType.Foundation && foundationGroupSet.has(elem.id)) {
+        foundationPosRatioMapRef.current.set(elem.id, [
+          (elem.cx - position.x) / currLx,
+          (elem.cy - position.y) / currLy,
+        ]);
+        foundationDmsRatioMapRef.current.set(elem.id, [elem.lx / currLx, elem.ly / currLy]);
+        foundatonOldDataMapRef.current.set(elem.id, [elem.cx, elem.cy, elem.lx, elem.ly]);
+      } else if (elem.type === ObjectType.Wall && elem.foundationId && foundationGroupSet.has(elem.foundationId)) {
+        const w = elem as WallModel;
+        const f = getElementById(elem.foundationId);
+        if (f) {
+          const leftPointRelative = new Vector2(w.leftPoint[0] / f.lx, w.leftPoint[1] / f.ly);
+          const rightPointRelative = new Vector2(w.rightPoint[0] / f.lx, w.rightPoint[1] / f.ly);
+          wallRelPointsMapRef.current.set(w.id, [leftPointRelative, rightPointRelative]);
+          wallOldPointsMapRef.current.set(w.id, [...w.leftPoint, ...w.rightPoint]);
+        }
+      }
+    }
+  };
+
+  const pointerDonwTopResizeHandle = (x: number, y: number, z: number) => {
+    const { x: cameraX, y: cameraY } = getCameraDirection();
+    intersectionPlanePositionRef.current.set(x, y, z);
+    intersectionPlaneRotationRef.current.set(-HALF_PI, 0, -Math.atan2(cameraX, cameraY) - rotation, 'ZXY');
+    setOperation(Operation.ResizeZ);
+
+    elementHeightMapRef.current.clear();
+    elementOldHeightMapRef.current.clear();
+    for (const elem of useStore.getState().elements) {
+      if (
+        (elem.type === ObjectType.Wall || elem.type === ObjectType.Roof) &&
+        elem.foundationId &&
+        foundationGroupSet.has(elem.foundationId)
+      ) {
+        const f = getElementById(elem.foundationId);
+        if (f) {
+          elementHeightMapRef.current.set(elem.id, elem.lz / height);
+          elementOldHeightMapRef.current.set(elem.id, elem.lz);
+        }
+      } else if (foundationGroupSet.has(elem.id)) {
+        elementHeightMapRef.current.set(elem.id, elem.lz / height);
+        elementOldHeightMapRef.current.set(elem.id, elem.lz);
+      }
+    }
   };
 
   const handleResizeHandlesPointerDown = (event: ThreeEvent<PointerEvent>) => {
@@ -367,29 +469,29 @@ const BuildingResizer = ({ foundation, args, handleSize }: BuildingResizerProps)
       }
     }
 
-    wallPointsMapRef.current.clear();
-    wallHeightMapRef.current.clear();
-    roofHeightMapRef.current.clear();
-    oldChildsMapXYRef.current.clear();
-    oldChildsMapZRef.current.clear();
-    for (const elem of useStore.getState().elements) {
-      if (elem.id === foundation.id) {
-        resizeAnchorRef.current.add(new Vector2(elem.cx, elem.cy));
-        oldDimensionRef.current = [elem.lx, elem.ly, elem.lz];
-        oldPositionRef.current = [elem.cx, elem.cy, 0];
-      } else if (elem.type === ObjectType.Wall && elem.foundationId === foundation.id) {
-        const w = elem as WallModel;
-        const leftPointRelative = new Vector2(w.leftPoint[0] / foundation.lx, w.leftPoint[1] / foundation.ly);
-        const rightPointRelative = new Vector2(w.rightPoint[0] / foundation.lx, w.rightPoint[1] / foundation.ly);
-        wallPointsMapRef.current.set(w.id, [leftPointRelative, rightPointRelative]);
-        wallHeightMapRef.current.set(w.id, w.lz / (height - foundation.lz));
-        oldChildsMapXYRef.current.set(w.id, Object.assign(w));
-        oldChildsMapZRef.current.set(w.id, w.lz);
-      } else if (elem.type === ObjectType.Roof && elem.foundationId === foundation.id) {
-        roofHeightMapRef.current.set(elem.id, elem.lz / (height - foundation.lz));
-        oldChildsMapZRef.current.set(elem.id, elem.lz);
-      }
-    }
+    // wallPointsMapRef.current.clear();
+    // wallHeightMapRef.current.clear();
+    // roofHeightMapRef.current.clear();
+    // oldChildsMapXYRef.current.clear();
+    // oldChildsMapZRef.current.clear();
+    // for (const elem of useStore.getState().elements) {
+    //   if (elem.id === foundation.id) {
+    //     resizeAnchorRef.current.add(new Vector2(elem.cx, elem.cy));
+    //     oldDimensionRef.current = [elem.lx, elem.ly, elem.lz];
+    //     oldPositionRef.current = [elem.cx, elem.cy, 0];
+    //   } else if (elem.type === ObjectType.Wall && elem.foundationId === foundation.id) {
+    //     const w = elem as WallModel;
+    //     const leftPointRelative = new Vector2(w.leftPoint[0] / foundation.lx, w.leftPoint[1] / foundation.ly);
+    //     const rightPointRelative = new Vector2(w.rightPoint[0] / foundation.lx, w.rightPoint[1] / foundation.ly);
+    //     wallPointsMapRef.current.set(w.id, [leftPointRelative, rightPointRelative]);
+    //     wallHeightMapRef.current.set(w.id, w.lz / (height - foundation.lz));
+    //     oldChildsMapXYRef.current.set(w.id, Object.assign(w));
+    //     oldChildsMapZRef.current.set(w.id, w.lz);
+    //   } else if (elem.type === ObjectType.Roof && elem.foundationId === foundation.id) {
+    //     roofHeightMapRef.current.set(elem.id, elem.lz / (height - foundation.lz));
+    //     oldChildsMapZRef.current.set(elem.id, elem.lz);
+    //   }
+    // }
   };
 
   const handleMoveHanldesPointerDown = (event: ThreeEvent<PointerEvent>) => {
@@ -398,11 +500,16 @@ const BuildingResizer = ({ foundation, args, handleSize }: BuildingResizerProps)
     setCommonStoreHandleType(MoveHandleType.Default);
     setOperation(Operation.Move);
     if (event.intersections.length > 0) {
-      const p = event.intersections[0].point;
-      const c = new Vector3(foundation.cx, foundation.cy);
-      const v = new Vector3().subVectors(c, p);
-      moveCenterPosRef.current.set(v.x, v.y);
-      oldPositionRef.current = [c.x, c.y, 0];
+      const p = event.intersections[0].point.clone().setZ(0);
+      resizerCenterRelPosRef.current.subVectors(position, p);
+      for (const elem of useStore.getState().elements) {
+        if (elem.type === ObjectType.Foundation && foundationGroupSet.has(elem.id)) {
+          const c = new Vector3(elem.cx, elem.cy);
+          const v = new Vector3().subVectors(c, p);
+          foundatonRelPosMapRef.current.set(elem.id, v);
+          foundatonOldDataMapRef.current.set(elem.id, [elem.cx, elem.cy, elem.cz]);
+        }
+      }
     }
   };
 
@@ -420,43 +527,57 @@ const BuildingResizer = ({ foundation, args, handleSize }: BuildingResizerProps)
     }
     setShowIntersectionPlane(false);
     useStoreRef.getState().setEnableOrbitController(true);
-    updateWallMapOnFoundation();
     pointerDownRef.current = false;
     setOperation(Operation.Null);
     setCommonStoreHandleType(null);
+    setCommonStore((state) => {
+      state.buildingResizerUpdateFlag = !state.buildingResizerUpdateFlag;
+      state.updateWallMapOnFoundationFlag = !state.updateWallMapOnFoundationFlag;
+    });
   };
 
   const handleIntersectionPlanePointerMove = (event: ThreeEvent<PointerEvent>) => {
     if (!intersectionPlaneRef.current || !pointerDownRef.current) {
       return;
     }
-
     setRayCast(event);
     const intersects = ray.intersectObjects([intersectionPlaneRef.current]);
     if (intersects.length > 0) {
       const p = intersects[0].point;
-      if (operation === Operation.ResizeXY || operation === Operation.ResizeZ) {
-        if (intersectionPlanePositionRef.current.z > 0) {
-          resizeZ(p);
-        } else {
+      switch (operation) {
+        case Operation.ResizeXY:
           resizeXY(p);
-        }
-      } else if (operation === Operation.Move) {
-        const cx = p.x + moveCenterPosRef.current.x;
-        const cy = p.y + moveCenterPosRef.current.y;
-        setElementPosition(foundation.id, cx, cy);
-        newPositionRef.current = [cx, cy, 0];
+          break;
+        case Operation.ResizeZ:
+          resizeZ(p);
+          break;
+        case Operation.Move:
+          setPosition(new Vector3().addVectors(p.clone().setZ(0), resizerCenterRelPosRef.current));
+          setCommonStore((state) => {
+            for (const elem of state.elements) {
+              if (elem.type === ObjectType.Foundation && foundationGroupSet.has(elem.id)) {
+                const v = foundatonRelPosMapRef.current.get(elem.id);
+                if (v) {
+                  elem.cx = p.x + v.x;
+                  elem.cy = p.y + v.y;
+                }
+              }
+            }
+          });
+          break;
       }
     }
   };
 
-  const bottomHanldeZ = (handleSize - foundation.lz) / 2;
+  const handleRatio = Math.max(1, Math.max(hx, hy) / 4);
+  const handleSize = RESIZE_HANDLE_SIZE * handleRatio;
+  const bottomHanldeZ = handleSize / 2;
   const topHanldeZ = height + bottomHanldeZ - handleSize / 2;
   const moveHanldeX = hx + handleSize;
   const moveHnadleY = hy + handleSize;
 
   return (
-    <group name={'Building Resizer'}>
+    <group name={'Building Resizer'} position={position} rotation={[0, 0, rotation]}>
       <group name={'Resize Handle Group'} onPointerDown={handleResizeHandlesPointerDown}>
         <ResizeHandle args={[hx, hy, bottomHanldeZ, handleSize]} handleType={ResizeHandleType.UpperRight} />
         <ResizeHandle args={[-hx, hy, bottomHanldeZ, handleSize]} handleType={ResizeHandleType.UpperLeft} />
@@ -479,7 +600,7 @@ const BuildingResizer = ({ foundation, args, handleSize }: BuildingResizerProps)
         <Plane
           name={'Intersection Plane'}
           ref={intersectionPlaneRef}
-          args={[Math.max(lx * 1.2, 1000), Math.max(lx * 1.2, 1000)]}
+          args={[Math.max(hx * 2.4, 1000), Math.max(hx * 2.4, 1000)]}
           visible={false}
           position={intersectionPlanePositionRef.current}
           rotation={intersectionPlaneRotationRef.current}
@@ -488,11 +609,11 @@ const BuildingResizer = ({ foundation, args, handleSize }: BuildingResizerProps)
         />
       )}
 
-      <group name={'Wireframe Group'} position={[0, 0, (height - foundation.lz) / 2]}>
+      <group name={'Wireframe Group'} position={[0, 0, height / 2]}>
         <Wireframe hx={hx} hy={hy} hz={height / 2} lineColor={'white'} />
       </group>
     </group>
   );
 };
 
-export default BuildingResizer;
+export default React.memo(BuildingResizer);

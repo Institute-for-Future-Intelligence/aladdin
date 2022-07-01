@@ -702,7 +702,7 @@ export interface CommonStoreState {
   setResizeWholeBuildingMode: (b: boolean) => void;
   resizeWholeBuildingId: string | null;
   setResizeWholeBuildingId: (id: string | null) => void;
-  buildingHeightChangedFlag: boolean;
+  buildingResizerUpdateFlag: boolean;
 
   simulationInProgress: boolean;
   simulationPaused: boolean;
@@ -5456,7 +5456,7 @@ export const useStore = create<CommonStoreState>(
               }
             });
           },
-          buildingHeightChangedFlag: false,
+          buildingResizerUpdateFlag: false,
 
           simulationInProgress: false,
           simulationPaused: false,

@@ -945,7 +945,7 @@ export const resizeWholeBuildingId = (state: CommonStoreState) => state.resizeWh
 
 export const setResizeWholeBuildingId = (state: CommonStoreState) => state.setResizeWholeBuildingId;
 
-export const buildingHeightChangedFlag = (state: CommonStoreState) => state.buildingHeightChangedFlag;
+export const buildingResizerUpdateFlag = (state: CommonStoreState) => state.buildingResizerUpdateFlag;
 
 export const addedWindowId = (state: CommonStoreState) => state.addedWindowId;
 
