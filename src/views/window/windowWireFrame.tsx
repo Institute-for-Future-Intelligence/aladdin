@@ -72,8 +72,9 @@ const WindowWireFrame = ({ lx, lz, mullionWidth, mullionSpace, lineColor, lineWi
 
   return (
     <group name={'Window Wireframe'} position={[0, -0.001, 0]}>
-      {verticalMullion.map((x) => (
+      {verticalMullion.map((x, index) => (
         <Cylinder
+          key={index}
           position={[x, 0.00025, 0]}
           args={[mullionRadius, mullionRadius, lz, radialSegments, heightSegments]}
           rotation={[HALF_PI, HALF_PI, 0]}
@@ -83,8 +84,9 @@ const WindowWireFrame = ({ lx, lz, mullionWidth, mullionSpace, lineColor, lineWi
           {innerMat}
         </Cylinder>
       ))}
-      {horizontalMullion.map((z) => (
+      {horizontalMullion.map((z, index) => (
         <Cylinder
+          key={index}
           position={[0, 0.0005, z]}
           args={[mullionRadius, mullionRadius, lx, radialSegments, heightSegments]}
           rotation={[0, 0, HALF_PI]}
