@@ -171,9 +171,33 @@ export class Util {
     return count;
   }
 
+  static isPointInside = (x: number, y: number, vertices: Point2[]) => {
+    let inside = false;
+    for (let i = 0, j = vertices.length - 1; i < vertices.length; j = i++) {
+      const xi = vertices[i].x;
+      const yi = vertices[i].y;
+      const xj = vertices[j].x;
+      const yj = vertices[j].y;
+      if (yi > y != yj > y && x < ((xj - xi) * (y - yi)) / (yj - yi) + xi) {
+        inside = !inside;
+      }
+    }
+    return inside;
+  };
+
   static doFoundationsOverlap(f1: ElementModel, f2: ElementModel): boolean {
     const v1 = Util.fetchFoundationVertexCoordinates(f1);
     const v2 = Util.fetchFoundationVertexCoordinates(f2);
+    for (const v of v1) {
+      if (Util.isPointInside(v.x, v.y, v2)) {
+        return true;
+      }
+    }
+    for (const v of v2) {
+      if (Util.isPointInside(v.x, v.y, v1)) {
+        return true;
+      }
+    }
     v1.push(v1[0]);
     v2.push(v2[0]);
     for (let i1 = 0; i1 < v1.length - 1; i1++) {
