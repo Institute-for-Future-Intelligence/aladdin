@@ -5,12 +5,12 @@
 import React, { useEffect, useMemo, useRef, useState } from 'react';
 import { Euler, Mesh, Raycaster, Vector2, Vector3 } from 'three';
 import { ThreeEvent, useThree } from '@react-three/fiber';
-import { Box, Plane, Sphere } from '@react-three/drei';
-import { MoveHandleType, ObjectType, ResizeHandleType } from 'src/types';
+import { Box, Circle, Cone, Plane, Sphere, Torus } from '@react-three/drei';
+import { MoveHandleType, ObjectType, ResizeHandleType, RotateHandleType } from 'src/types';
 import { useStoreRef } from 'src/stores/commonRef';
 import { useStore } from 'src/stores/common';
 import * as Selector from '../stores/selector';
-import { HALF_PI, HIGHLIGHT_HANDLE_COLOR, RESIZE_HANDLE_COLOR, RESIZE_HANDLE_SIZE } from 'src/constants';
+import { HALF_PI, HIGHLIGHT_HANDLE_COLOR, RESIZE_HANDLE_COLOR, RESIZE_HANDLE_SIZE, TWO_PI } from 'src/constants';
 import { WallModel } from 'src/models/WallModel';
 import Wireframe from './wireframe';
 import { UndoableMoveFoundationGroup } from 'src/undo/UndoableMove';
@@ -20,18 +20,20 @@ interface BuildingResizerProps {
   foundationGroupSet: Set<string>;
   initalPosition: number[];
   initalDimension: number[];
-  rotation: number;
+  initalRotation: number;
 }
 
 interface HandleProps {
   args: number[]; // [cx, cy, cz, handleSize];
-  handleType: MoveHandleType | ResizeHandleType;
+  handleType: MoveHandleType | ResizeHandleType | RotateHandleType;
 }
 
 enum Operation {
   Move = 'Move',
   ResizeXY = 'Resize XY',
   ResizeZ = 'Resize Z',
+  RotateUpper = 'Rotate Upper',
+  RotateLower = 'Rotate Lower',
   Null = 'Null',
 }
 
@@ -69,7 +71,47 @@ const MoveHandle = ({ args, handleType }: HandleProps) => {
   );
 };
 
-const BuildingResizer = ({ foundationGroupSet, initalPosition, initalDimension, rotation }: BuildingResizerProps) => {
+const RotateHandle = ({ args, handleType }: HandleProps) => {
+  const [cx, cy, cz, handleSize] = args;
+  const [color, setColor] = useState(RESIZE_HANDLE_COLOR);
+  const mesh = useMemo(() => <meshStandardMaterial color={color} />, [color]);
+  return (
+    <group
+      name={handleType}
+      position={[cx, cy, cz]}
+      rotation={[HALF_PI, 0, 0]}
+      onPointerOver={() => setColor(HIGHLIGHT_HANDLE_COLOR)}
+      onPointerOut={() => setColor(RESIZE_HANDLE_COLOR)}
+      scale={handleSize * 4}
+    >
+      <group>
+        <Torus args={[0.15, 0.05, 6, 8, (3 / 2) * Math.PI]} rotation={[HALF_PI, 0, HALF_PI]}>
+          {mesh}
+        </Torus>
+        <Cone args={[0.1, 0.1, 6]} rotation={[HALF_PI, 0, 0]} position={[0.15, 0, 0.05]}>
+          {mesh}
+        </Cone>
+        <Circle args={[0.05, 6]} rotation={[0, HALF_PI, 0]} position={[0, 0, 0.15]}>
+          {mesh}
+        </Circle>
+      </group>
+      <Plane
+        name={handleType}
+        args={[0.35, 0.35]}
+        position={[0, 0.05, 0]}
+        rotation={[-HALF_PI, 0, 0]}
+        visible={false}
+      />
+    </group>
+  );
+};
+
+const BuildingResizer = ({
+  foundationGroupSet,
+  initalPosition,
+  initalDimension,
+  initalRotation,
+}: BuildingResizerProps) => {
   const [cx, cy, cz] = initalPosition;
   const [lx, ly, lz] = initalDimension;
   const aspectRatio = lx === 0 ? 1 : ly / lx;
@@ -82,6 +124,7 @@ const BuildingResizer = ({ foundationGroupSet, initalPosition, initalDimension, 
   const elementHeightMapRef = useRef<Map<string, number>>(new Map());
   const wallRelPointsMapRef = useRef<Map<string, Vector2[]>>(new Map<string, Vector2[]>());
   const foundatonRelPosMapRef = useRef<Map<string, Vector3>>(new Map());
+  const foundatonRotationMapRef = useRef<Map<string, number>>(new Map());
   const foundationPosRatioMapRef = useRef<Map<string, number[]>>(new Map()); // 2d
   const foundationDmsRatioMapRef = useRef<Map<string, number[]>>(new Map()); // 2d
   const resizerCenterRelPosRef = useRef(new Vector3());
@@ -93,6 +136,7 @@ const BuildingResizer = ({ foundationGroupSet, initalPosition, initalDimension, 
   const elementOldHeightMapRef = useRef<Map<string, number>>(new Map());
 
   const [position, setPosition] = useState<Vector3>(new Vector3(cx, cy, cz));
+  const [rotation, setRotation] = useState<number>(initalRotation);
   const [hx, setHx] = useState(lx / 2);
   const [hy, setHy] = useState(ly / 2);
   const [height, setHeight] = useState(lz);
@@ -115,7 +159,8 @@ const BuildingResizer = ({ foundationGroupSet, initalPosition, initalDimension, 
   useEffect(() => {
     setPosition(new Vector3(cx, cy, cz));
     setDimension(lx, ly);
-  }, [initalPosition, initalDimension]);
+    setRotation(initalRotation);
+  }, [initalPosition, initalDimension, initalRotation]);
 
   const setRayCast = (e: PointerEvent) => {
     mouse.x = (e.offsetX / getThree().gl.domElement.clientWidth) * 2 - 1;
@@ -128,12 +173,14 @@ const BuildingResizer = ({ foundationGroupSet, initalPosition, initalDimension, 
     setHy(ly / 2);
   };
 
-  const initPointerDown = () => {
+  const initPointerDown = (event: ThreeEvent<PointerEvent>) => {
     setShowIntersectionPlane(true);
     useStoreRef.getState().setEnableOrbitController(false);
     pointerDownRef.current = true;
     intersectionPlanePositionRef.current.set(0, 0, 0);
     intersectionPlaneRotationRef.current.set(0, 0, 0);
+    setCommonStoreHandleType(MoveHandleType.Default);
+    event.stopPropagation();
   };
 
   const updateUndoableResizeXY = (foundationDataMap: Map<string, number[]>, wallPointsMap: Map<string, number[]>) => {
@@ -178,6 +225,7 @@ const BuildingResizer = ({ foundationGroupSet, initalPosition, initalDimension, 
             elem.cx = pos[0];
             elem.cy = pos[1];
             elem.cz = pos[2];
+            elem.rotation[2] = pos[3];
           }
         }
       }
@@ -189,11 +237,12 @@ const BuildingResizer = ({ foundationGroupSet, initalPosition, initalDimension, 
     const map = new Map<string, number[]>();
     for (const elem of useStore.getState().elements) {
       if (elem.type === ObjectType.Foundation && foundationGroupSet.has(elem.id)) {
-        map.set(elem.id, [elem.cx, elem.cy, elem.cz]);
+        map.set(elem.id, [elem.cx, elem.cy, elem.cz, elem.rotation[2]]);
       }
     }
+    const name = operation === Operation.Move ? 'Move' : 'Rotate';
     const undoableMove = {
-      name: 'Move Foundation Group',
+      name: `${name} Foundation Group`,
       timestamp: Date.now(),
       oldPositionMap: new Map(foundatonOldDataMapRef.current),
       newPositionMap: new Map(map),
@@ -371,10 +420,33 @@ const BuildingResizer = ({ foundationGroupSet, initalPosition, initalDimension, 
     });
   };
 
+  const rotate = (p: Vector3) => {
+    const resizerCenter = new Vector3(position.x, position.y);
+    const r =
+      Math.atan2(resizerCenter.x - p.x, p.y - resizerCenter.y) + (operation === Operation.RotateUpper ? 0 : Math.PI);
+    const offset = Math.abs(rotation) > Math.PI ? -Math.sign(rotation) * TWO_PI : 0;
+    const rotateAngle = r + offset;
+    const euler = new Euler(0, 0, rotateAngle);
+    setCommonStore((state) => {
+      for (const elem of state.elements) {
+        if (elem.type === ObjectType.Foundation && foundationGroupSet.has(elem.id)) {
+          const oldCenter = foundatonRelPosMapRef.current.get(elem.id);
+          const oldRotation = foundatonRotationMapRef.current.get(elem.id);
+          if (oldCenter && oldRotation !== undefined) {
+            const newCenter = oldCenter.clone().applyEuler(euler);
+            elem.cx = resizerCenter.x + newCenter.x;
+            elem.cy = resizerCenter.y + newCenter.y;
+            elem.rotation = [0, 0, oldRotation + rotateAngle];
+          }
+        }
+      }
+    });
+    setRotation(rotateAngle);
+  };
+
   const pointerDownBottomResizeHandle = (x: number, y: number) => {
     resizeAnchorRef.current.set(x, y).rotateAround(zeroVector2, rotation).add(new Vector2(position.x, position.y));
     setOperation(Operation.ResizeXY);
-    setCommonStoreHandleType(MoveHandleType.Default);
 
     foundationPosRatioMapRef.current.clear();
     foundationDmsRatioMapRef.current.clear();
@@ -431,9 +503,7 @@ const BuildingResizer = ({ foundationGroupSet, initalPosition, initalDimension, 
   };
 
   const handleResizeHandlesPointerDown = (event: ThreeEvent<PointerEvent>) => {
-    initPointerDown();
-    event.stopPropagation();
-
+    initPointerDown(event);
     switch (event.object.name) {
       case ResizeHandleType.UpperLeft: {
         pointerDownBottomResizeHandle(hx, -hy);
@@ -468,36 +538,10 @@ const BuildingResizer = ({ foundationGroupSet, initalPosition, initalDimension, 
         break;
       }
     }
-
-    // wallPointsMapRef.current.clear();
-    // wallHeightMapRef.current.clear();
-    // roofHeightMapRef.current.clear();
-    // oldChildsMapXYRef.current.clear();
-    // oldChildsMapZRef.current.clear();
-    // for (const elem of useStore.getState().elements) {
-    //   if (elem.id === foundation.id) {
-    //     resizeAnchorRef.current.add(new Vector2(elem.cx, elem.cy));
-    //     oldDimensionRef.current = [elem.lx, elem.ly, elem.lz];
-    //     oldPositionRef.current = [elem.cx, elem.cy, 0];
-    //   } else if (elem.type === ObjectType.Wall && elem.foundationId === foundation.id) {
-    //     const w = elem as WallModel;
-    //     const leftPointRelative = new Vector2(w.leftPoint[0] / foundation.lx, w.leftPoint[1] / foundation.ly);
-    //     const rightPointRelative = new Vector2(w.rightPoint[0] / foundation.lx, w.rightPoint[1] / foundation.ly);
-    //     wallPointsMapRef.current.set(w.id, [leftPointRelative, rightPointRelative]);
-    //     wallHeightMapRef.current.set(w.id, w.lz / (height - foundation.lz));
-    //     oldChildsMapXYRef.current.set(w.id, Object.assign(w));
-    //     oldChildsMapZRef.current.set(w.id, w.lz);
-    //   } else if (elem.type === ObjectType.Roof && elem.foundationId === foundation.id) {
-    //     roofHeightMapRef.current.set(elem.id, elem.lz / (height - foundation.lz));
-    //     oldChildsMapZRef.current.set(elem.id, elem.lz);
-    //   }
-    // }
   };
 
   const handleMoveHanldesPointerDown = (event: ThreeEvent<PointerEvent>) => {
-    initPointerDown();
-    event.stopPropagation();
-    setCommonStoreHandleType(MoveHandleType.Default);
+    initPointerDown(event);
     setOperation(Operation.Move);
     if (event.intersections.length > 0) {
       const p = event.intersections[0].point.clone().setZ(0);
@@ -507,7 +551,28 @@ const BuildingResizer = ({ foundationGroupSet, initalPosition, initalDimension, 
           const c = new Vector3(elem.cx, elem.cy);
           const v = new Vector3().subVectors(c, p);
           foundatonRelPosMapRef.current.set(elem.id, v);
-          foundatonOldDataMapRef.current.set(elem.id, [elem.cx, elem.cy, elem.cz]);
+          foundatonOldDataMapRef.current.set(elem.id, [elem.cx, elem.cy, elem.cz, elem.rotation[2]]);
+        }
+      }
+    }
+  };
+
+  const handleRotateHandlesPointerDown = (event: ThreeEvent<PointerEvent>) => {
+    initPointerDown(event);
+    if (event.object.name === RotateHandleType.Lower) {
+      setOperation(Operation.RotateLower);
+    } else if (event.object.name === RotateHandleType.Upper) {
+      setOperation(Operation.RotateUpper);
+    }
+    if (event.intersections.length > 0) {
+      const resizerCenter = new Vector3(position.x, position.y);
+      for (const elem of useStore.getState().elements) {
+        if (elem.type === ObjectType.Foundation && foundationGroupSet.has(elem.id)) {
+          const elemCenter = new Vector3(elem.cx, elem.cy);
+          const v = new Vector3().subVectors(elemCenter, resizerCenter);
+          foundatonRelPosMapRef.current.set(elem.id, v);
+          foundatonRotationMapRef.current.set(elem.id, elem.rotation[2]);
+          foundatonOldDataMapRef.current.set(elem.id, [elem.cx, elem.cy, elem.cz, elem.rotation[2]]);
         }
       }
     }
@@ -516,6 +581,8 @@ const BuildingResizer = ({ foundationGroupSet, initalPosition, initalDimension, 
   const handleIntersectionPlanePointerUp = (event: ThreeEvent<PointerEvent>) => {
     switch (operation) {
       case Operation.Move:
+      case Operation.RotateLower:
+      case Operation.RotateUpper:
         addUndoableMove();
         break;
       case Operation.ResizeXY:
@@ -551,6 +618,10 @@ const BuildingResizer = ({ foundationGroupSet, initalPosition, initalDimension, 
         case Operation.ResizeZ:
           resizeZ(p);
           break;
+        case Operation.RotateLower:
+        case Operation.RotateUpper:
+          rotate(p);
+          break;
         case Operation.Move:
           setPosition(new Vector3().addVectors(p.clone().setZ(0), resizerCenterRelPosRef.current));
           setCommonStore((state) => {
@@ -575,6 +646,7 @@ const BuildingResizer = ({ foundationGroupSet, initalPosition, initalDimension, 
   const topHanldeZ = height + bottomHanldeZ - handleSize / 2;
   const moveHanldeX = hx + handleSize;
   const moveHnadleY = hy + handleSize;
+  const resizeHandleY = moveHnadleY * 1.15;
 
   return (
     <group name={'Building Resizer'} position={position} rotation={[0, 0, rotation]}>
@@ -594,6 +666,11 @@ const BuildingResizer = ({ foundationGroupSet, initalPosition, initalDimension, 
         <MoveHandle args={[0, -moveHnadleY, bottomHanldeZ, handleSize]} handleType={MoveHandleType.Lower} />
         <MoveHandle args={[moveHanldeX, 0, bottomHanldeZ, handleSize]} handleType={MoveHandleType.Right} />
         <MoveHandle args={[-moveHanldeX, 0, bottomHanldeZ, handleSize]} handleType={MoveHandleType.Left} />
+      </group>
+
+      <group name={'Rotate Handle Group'} onPointerDown={handleRotateHandlesPointerDown}>
+        <RotateHandle args={[0, resizeHandleY, bottomHanldeZ, handleSize]} handleType={RotateHandleType.Upper} />
+        <RotateHandle args={[0, -resizeHandleY, bottomHanldeZ, handleSize]} handleType={RotateHandleType.Lower} />
       </group>
 
       {showIntersectionPlane && (

@@ -2418,7 +2418,7 @@ const Foundation = ({
           foundationGroupSet={foundationGroupSetRef.current}
           initalPosition={buildingResizerPosition}
           initalDimension={buildingResizerDimension}
-          rotation={buildingResizerRotation}
+          initalRotation={buildingResizerRotation}
         />
       )}
     </>
