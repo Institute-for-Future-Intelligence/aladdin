@@ -201,7 +201,7 @@ const BuildingResizer = ({
           w.rightPoint = [...rightPoint];
         }
       }
-      state.buildingResizerUpdateFlag = !state.buildingResizerUpdateFlag;
+      state.groupActionUpdateFlag = !state.groupActionUpdateFlag;
     });
   };
 
@@ -212,7 +212,7 @@ const BuildingResizer = ({
           elem.lz = map.get(elem.id)!;
         }
       }
-      state.buildingResizerUpdateFlag = !state.buildingResizerUpdateFlag;
+      state.groupActionUpdateFlag = !state.groupActionUpdateFlag;
     });
   };
 
@@ -229,7 +229,7 @@ const BuildingResizer = ({
           }
         }
       }
-      state.buildingResizerUpdateFlag = !state.buildingResizerUpdateFlag;
+      state.groupActionUpdateFlag = !state.groupActionUpdateFlag;
     });
   };
 
@@ -598,7 +598,7 @@ const BuildingResizer = ({
     setOperation(Operation.Null);
     setCommonStoreHandleType(null);
     setCommonStore((state) => {
-      state.buildingResizerUpdateFlag = !state.buildingResizerUpdateFlag;
+      state.groupActionUpdateFlag = !state.groupActionUpdateFlag;
       state.updateWallMapOnFoundationFlag = !state.updateWallMapOnFoundationFlag;
     });
   };

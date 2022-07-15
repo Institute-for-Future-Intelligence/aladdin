@@ -123,8 +123,8 @@ const Foundation = ({
   const solarRadiationHeatmapMaxValue = useStore(Selector.viewState.solarRadiationHeatmapMaxValue);
   const solarRadiationHeatmapReflectionOnly = useStore(Selector.viewState.solarRadiationHeatmapReflectionOnly);
   const getHeatmap = useStore(Selector.getHeatmap);
-  const resizeWholeBuildingId = useStore(Selector.resizeWholeBuildingId);
-  const buildingResizerUpdateFlag = useStore(Selector.buildingResizerUpdateFlag);
+  const elementGroupId = useStore(Selector.elementGroupId);
+  const buildingResizerUpdateFlag = useStore(Selector.groupActionUpdateFlag);
 
   const {
     camera,
@@ -251,7 +251,7 @@ const Foundation = ({
   }, []);
 
   useEffect(() => {
-    if (resizeWholeBuildingId === id && selected) {
+    if (elementGroupId === id && selected) {
       foundationGroupSetRef.current.clear();
       foundationVerticesRef.current = [];
 
@@ -272,7 +272,7 @@ const Foundation = ({
       setBuildingResizerDimension(null);
       setBuildingResizerRotation(0);
     }
-  }, [resizeWholeBuildingId, selected, buildingResizerUpdateFlag, enableGroupMaster]);
+  }, [elementGroupId, selected, buildingResizerUpdateFlag, enableGroupMaster]);
 
   useEffect(() => {
     wallMapOnFoundation.current.clear();
@@ -1107,8 +1107,8 @@ const Foundation = ({
     if (objectTypeToAddRef.current !== ObjectType.Window && !isAddingElement()) {
       selectMe(id, e, ActionType.Select);
     }
-    if (useStore.getState().resizeWholeBuildingMode) {
-      useStore.getState().setResizeWholeBuildingId(id);
+    if (useStore.getState().groupActionMode) {
+      useStore.getState().setElementGroupId(id);
     }
     const selectedElement = getSelectedElement();
     let bypass = false;
@@ -2101,7 +2101,7 @@ const Foundation = ({
         )}
 
         {/* draw handles */}
-        {selected && !locked && !resizeWholeBuildingId && (
+        {selected && !locked && !elementGroupId && (
           <>
             {/* resize handles */}
             <Box
@@ -2413,7 +2413,7 @@ const Foundation = ({
         {solarStructure === SolarStructure.UpdraftTower && <SolarUpdraftTower foundation={foundationModel} />}
       </group>
 
-      {selected && !locked && resizeWholeBuildingId === id && foundationModel && buildingResizerDimension && (
+      {selected && !locked && elementGroupId === id && foundationModel && buildingResizerDimension && (
         <BuildingResizer
           foundationGroupSet={foundationGroupSetRef.current}
           initalPosition={buildingResizerPosition}

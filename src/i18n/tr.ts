@@ -1034,7 +1034,7 @@ export const i18n_tr = {
       AddHeliostat: 'Add heliostat',
       AddTree: 'Aðaç ekle',
       AddPeople: 'Ýnsan ekle',
-      ResizeWholeBuilding: 'Resize Whole Building',
+      ManipulateGroup: 'Manipulate a group',
       ClearScene: 'alaný temizle',
       ShowSunAndTimeSettings: 'Show sun and time settings',
       ShowHeatmap: 'Show heatmap',

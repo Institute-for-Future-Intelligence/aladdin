@@ -937,15 +937,15 @@ export const deletedWallId = (state: CommonStoreState) => state.deletedWallId;
 
 export const deletedRoofId = (state: CommonStoreState) => state.deletedRoofId;
 
-export const resizeWholeBuildingMode = (state: CommonStoreState) => state.resizeWholeBuildingMode;
+export const groupActionMode = (state: CommonStoreState) => state.groupActionMode;
 
-export const setResizeWholeBuildingMode = (state: CommonStoreState) => state.setResizeWholeBuildingMode;
+export const setGroupActionMode = (state: CommonStoreState) => state.setGroupActionMode;
 
-export const resizeWholeBuildingId = (state: CommonStoreState) => state.resizeWholeBuildingId;
+export const elementGroupId = (state: CommonStoreState) => state.elementGroupId;
 
-export const setResizeWholeBuildingId = (state: CommonStoreState) => state.setResizeWholeBuildingId;
+export const setElementGroupId = (state: CommonStoreState) => state.setElementGroupId;
 
-export const buildingResizerUpdateFlag = (state: CommonStoreState) => state.buildingResizerUpdateFlag;
+export const groupActionUpdateFlag = (state: CommonStoreState) => state.groupActionUpdateFlag;
 
 export const addedWindowId = (state: CommonStoreState) => state.addedWindowId;
 

@@ -959,12 +959,12 @@ const Wall = ({
   };
 
   const handleWallBodyPointerDown = (e: ThreeEvent<PointerEvent>) => {
-    if (useStore.getState().resizeWholeBuildingMode) {
+    if (useStore.getState().groupActionMode) {
       setCommonStore((state) => {
         for (const e of state.elements) {
           e.selected = e.id === parentId;
         }
-        state.resizeWholeBuildingId = parentId;
+        state.elementGroupId = parentId;
       });
       e.stopPropagation();
     } else {

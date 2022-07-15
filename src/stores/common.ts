@@ -698,11 +698,11 @@ export interface CommonStoreState {
 
   deletedRoofId: string | null;
 
-  resizeWholeBuildingMode: boolean;
-  setResizeWholeBuildingMode: (b: boolean) => void;
-  resizeWholeBuildingId: string | null;
-  setResizeWholeBuildingId: (id: string | null) => void;
-  buildingResizerUpdateFlag: boolean;
+  groupActionMode: boolean;
+  setGroupActionMode: (b: boolean) => void;
+  elementGroupId: string | null;
+  setElementGroupId: (id: string | null) => void;
+  groupActionUpdateFlag: boolean;
 
   simulationInProgress: boolean;
   simulationPaused: boolean;
@@ -5441,22 +5441,22 @@ export const useStore = create<CommonStoreState>(
           },
           deletedRoofId: null,
 
-          resizeWholeBuildingMode: false,
-          setResizeWholeBuildingMode(b: boolean) {
+          groupActionMode: false,
+          setGroupActionMode(b: boolean) {
             immerSet((state) => {
-              state.resizeWholeBuildingMode = b;
+              state.groupActionMode = b;
             });
           },
-          resizeWholeBuildingId: null,
-          setResizeWholeBuildingId(id: string | null) {
+          elementGroupId: null,
+          setElementGroupId(id: string | null) {
             immerSet((state) => {
-              state.resizeWholeBuildingId = id;
+              state.elementGroupId = id;
               for (const e of state.elements) {
                 e.selected = e.id === id;
               }
             });
           },
-          buildingResizerUpdateFlag: false,
+          groupActionUpdateFlag: false,
 
           simulationInProgress: false,
           simulationPaused: false,

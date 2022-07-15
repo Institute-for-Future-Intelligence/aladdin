@@ -721,16 +721,16 @@ const MainMenu = ({ viewOnly, set2DView, resetView, zoomView, canvas }: MainMenu
         undo: () => {
           setCommonStore((state) => {
             state.objectTypeToAdd = ObjectType.None;
-            state.resizeWholeBuildingMode = false;
-            state.resizeWholeBuildingId = null;
+            state.groupActionMode = false;
+            state.elementGroupId = null;
             state.viewState.autoRotate = !undoableCheck.checked;
           });
         },
         redo: () => {
           setCommonStore((state) => {
             state.objectTypeToAdd = ObjectType.None;
-            state.resizeWholeBuildingMode = false;
-            state.resizeWholeBuildingId = null;
+            state.groupActionMode = false;
+            state.elementGroupId = null;
             state.viewState.autoRotate = undoableCheck.checked;
           });
         },
@@ -738,8 +738,8 @@ const MainMenu = ({ viewOnly, set2DView, resetView, zoomView, canvas }: MainMenu
       addUndoable(undoableCheck);
       setCommonStore((state) => {
         state.objectTypeToAdd = ObjectType.None;
-        state.resizeWholeBuildingMode = false;
-        state.resizeWholeBuildingId = null;
+        state.groupActionMode = false;
+        state.elementGroupId = null;
         state.viewState.autoRotate = !state.viewState.autoRotate;
       });
     }
@@ -876,8 +876,8 @@ const MainMenu = ({ viewOnly, set2DView, resetView, zoomView, canvas }: MainMenu
             setCommonStore((state) => {
               state.createNewFileFlag = !state.createNewFileFlag;
               state.objectTypeToAdd = ObjectType.None;
-              state.resizeWholeBuildingMode = false;
-              state.resizeWholeBuildingId = null;
+              state.groupActionMode = false;
+              state.elementGroupId = null;
               if (loggable) {
                 state.actionInfo = {
                   name: 'Create New File',
@@ -898,8 +898,8 @@ const MainMenu = ({ viewOnly, set2DView, resetView, zoomView, canvas }: MainMenu
             setCommonStore((state) => {
               state.openLocalFileFlag = !state.openLocalFileFlag;
               state.objectTypeToAdd = ObjectType.None;
-              state.resizeWholeBuildingMode = false;
-              state.resizeWholeBuildingId = null;
+              state.groupActionMode = false;
+              state.elementGroupId = null;
               if (loggable) {
                 state.actionInfo = {
                   name: 'Open Local File',
@@ -1102,8 +1102,8 @@ const MainMenu = ({ viewOnly, set2DView, resetView, zoomView, canvas }: MainMenu
               resetView();
               setCommonStore((state) => {
                 state.objectTypeToAdd = ObjectType.None;
-                state.resizeWholeBuildingMode = false;
-                state.resizeWholeBuildingId = null;
+                state.groupActionMode = false;
+                state.elementGroupId = null;
                 state.viewState.orthographic = false;
               });
             }}

@@ -155,16 +155,16 @@ const KeyboardListener = ({ canvas, set2DView, resetView, zoomView }: KeyboardLi
         undo: () => {
           setCommonStore((state) => {
             state.objectTypeToAdd = ObjectType.None;
-            state.resizeWholeBuildingMode = false;
-            state.resizeWholeBuildingId = null;
+            state.groupActionMode = false;
+            state.elementGroupId = null;
             state.viewState.autoRotate = !undoableCheck.checked;
           });
         },
         redo: () => {
           setCommonStore((state) => {
             state.objectTypeToAdd = ObjectType.None;
-            state.resizeWholeBuildingMode = false;
-            state.resizeWholeBuildingId = null;
+            state.groupActionMode = false;
+            state.elementGroupId = null;
             state.viewState.autoRotate = undoableCheck.checked;
           });
         },
@@ -172,8 +172,8 @@ const KeyboardListener = ({ canvas, set2DView, resetView, zoomView }: KeyboardLi
       addUndoable(undoableCheck);
       setCommonStore((state) => {
         state.objectTypeToAdd = ObjectType.None;
-        state.resizeWholeBuildingMode = false;
-        state.resizeWholeBuildingId = null;
+        state.groupActionMode = false;
+        state.elementGroupId = null;
         state.viewState.autoRotate = !state.viewState.autoRotate;
       });
     }
@@ -602,8 +602,8 @@ const KeyboardListener = ({ canvas, set2DView, resetView, zoomView }: KeyboardLi
             addUndoable(undoableResetView);
             setCommonStore((state) => {
               state.objectTypeToAdd = ObjectType.None;
-              state.resizeWholeBuildingMode = false;
-              state.resizeWholeBuildingId = null;
+              state.groupActionMode = false;
+              state.elementGroupId = null;
               state.viewState.orthographic = false;
             });
             resetView();
@@ -757,8 +757,8 @@ const KeyboardListener = ({ canvas, set2DView, resetView, zoomView }: KeyboardLi
           state.objectTypeToAdd = ObjectType.None;
           state.moveHandleType = null;
           state.resizeHandleType = null;
-          state.resizeWholeBuildingId = null;
-          state.resizeWholeBuildingMode = false;
+          state.elementGroupId = null;
+          state.groupActionMode = false;
         });
         useStoreRef.getState().setEnableOrbitController(true);
         selectNone();

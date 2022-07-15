@@ -140,11 +140,11 @@ export const handleRoofPointerDown = (e: ThreeEvent<PointerEvent>, id: string, f
   if (e.intersections.length > 0 && e.intersections[0].eventObject.name === e.eventObject.name) {
     e.stopPropagation();
     useStore.getState().set((state) => {
-      if (state.resizeWholeBuildingMode) {
+      if (state.groupActionMode) {
         for (const e of state.elements) {
           e.selected = e.id === foundationId;
         }
-        state.resizeWholeBuildingId = foundationId;
+        state.elementGroupId = foundationId;
       } else {
         for (const e of state.elements) {
           if (e.id === id) {

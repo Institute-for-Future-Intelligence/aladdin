@@ -65,7 +65,7 @@ const Ground = () => {
   const updatePolygonVerticesById = useStore(Selector.updatePolygonVerticesById);
   const updateSceneRadius = useStore(Selector.updateSceneRadius);
   const showSolarRadiationHeatmap = useStore(Selector.showSolarRadiationHeatmap);
-  const resizeWholeBuildingId = useStore(Selector.resizeWholeBuildingId);
+  const elementGroupId = useStore(Selector.elementGroupId);
 
   const { get: getThree, scene, invalidate } = useThree();
   const groundPlaneRef = useRef<Mesh>();
@@ -1532,7 +1532,7 @@ const Ground = () => {
             case ObjectType.Cuboid: // we can only deal with the top surface of a cuboid now
             case ObjectType.Foundation:
               const children = getChildren(e.id);
-              if (children.length > 0 && !resizeWholeBuildingId) {
+              if (children.length > 0 && !elementGroupId) {
                 // basically, we have to create a copy of parent and children, set them to the new values,
                 // check if the new values are OK, proceed to change the original elements in
                 // the common store only when they are OK.
@@ -1602,7 +1602,7 @@ const Ground = () => {
         }
       }
       // if the new size is okay, we can then change the relative positions of the children.
-      if (sizeOk && !resizeWholeBuildingId) {
+      if (sizeOk && !elementGroupId) {
         for (const e of state.elements) {
           if (e.parentId === grabRef.current!.id) {
             switch (e.type) {

@@ -1016,7 +1016,7 @@ export const i18n_zh_tw = {
       AddHeliostat: '添加定日鏡',
       AddTree: '添加樹木',
       AddPeople: '添加人物',
-      ResizeWholeBuilding: '調整整個建築的大小',
+      ManipulateGroup: '整體操作一個組',
       ClearScene: '清空場景',
       ShowSunAndTimeSettings: '顯示太陽和時間設置',
       ShowHeatmap: '顯示熱圖',
