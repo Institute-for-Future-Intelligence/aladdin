@@ -795,7 +795,7 @@ export const i18n_en = {
       AllWindowsAboveFoundation: 'All Windows Above the Same Foundation',
       AllWindows: 'All Windows',
       MullionWidth: 'Mullion Width',
-      MullionSpace: 'Mullion Space',
+      MullionSpacing: 'Mullion Spacing',
     },
 
     roofMenu: {

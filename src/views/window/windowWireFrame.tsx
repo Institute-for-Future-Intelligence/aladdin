@@ -12,12 +12,19 @@ interface WindowWireFrameProps {
   lx: number;
   lz: number;
   mullionWidth: number;
-  mullionSpace: number;
+  mullionSpacing: number;
   lineColor: string;
   lineWidth?: number;
 }
 
-const WindowWireFrame = ({ lx, lz, mullionWidth, mullionSpace, lineColor, lineWidth = 0.2 }: WindowWireFrameProps) => {
+const WindowWireFrame = ({
+  lx,
+  lz,
+  mullionWidth,
+  mullionSpacing,
+  lineColor,
+  lineWidth = 0.2,
+}: WindowWireFrameProps) => {
   lineWidth /= 20;
 
   const shadowEnabled = useStore(Selector.viewState.shadowEnabled);
@@ -36,7 +43,7 @@ const WindowWireFrame = ({ lx, lz, mullionWidth, mullionSpace, lineColor, lineWi
 
   const verticalMullion = useMemo(() => {
     const arr: number[] = [];
-    const dividers = Math.round(lx / mullionSpace) - 1;
+    const dividers = Math.round(lx / mullionSpacing) - 1;
     if (dividers <= 0 || mullionWidth === 0) {
       return arr;
     }
@@ -50,11 +57,11 @@ const WindowWireFrame = ({ lx, lz, mullionWidth, mullionSpace, lineColor, lineWi
       arr.push(x, -x);
     }
     return arr;
-  }, [lx, mullionWidth, mullionSpace]);
+  }, [lx, mullionWidth, mullionSpacing]);
 
   const horizontalMullion = useMemo(() => {
     const arr: number[] = [];
-    const dividers = Math.round(lz / mullionSpace) - 1;
+    const dividers = Math.round(lz / mullionSpacing) - 1;
     if (dividers <= 0 || mullionWidth === 0) {
       return arr;
     }
@@ -68,7 +75,7 @@ const WindowWireFrame = ({ lx, lz, mullionWidth, mullionSpace, lineColor, lineWi
       arr.push(z, -z);
     }
     return arr;
-  }, [lz, mullionWidth, mullionSpace]);
+  }, [lz, mullionWidth, mullionSpacing]);
 
   return (
     <group name={'Window Wireframe'} position={[0, -0.001, 0]}>

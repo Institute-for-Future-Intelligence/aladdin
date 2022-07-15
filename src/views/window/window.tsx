@@ -30,7 +30,7 @@ const Window = ({
   lineWidth = 0.2,
   lineColor = 'black',
   mullionWidth = 0.06,
-  mullionSpace = 0.5,
+  mullionSpacing = 0.5,
 }: WindowModel) => {
   // legacy problem
   if (Math.abs(cy) < 0.001) {
@@ -125,7 +125,7 @@ const Window = ({
           lx={wlx}
           lz={wlz}
           mullionWidth={mullionWidth}
-          mullionSpace={mullionSpace}
+          mullionSpacing={mullionSpacing}
           lineColor={locked && selected ? LOCKED_ELEMENT_SELECTION_COLOR : lineColor}
           lineWidth={selected && locked ? 0.5 : lineWidth}
         />

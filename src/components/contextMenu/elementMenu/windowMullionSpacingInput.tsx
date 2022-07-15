@@ -1,5 +1,5 @@
 /*
- * @Copyright 2021-2022. Institute for Future Intelligence, Inc.
+ * @Copyright 2022. Institute for Future Intelligence, Inc.
  */
 
 import React, { useEffect, useRef, useState } from 'react';
@@ -13,7 +13,7 @@ import { UndoableChange } from 'src/undo/UndoableChange';
 import { UndoableChangeGroup } from 'src/undo/UndoableChangeGroup';
 import { WindowModel } from 'src/models/WindowModel';
 
-const MullinoSpaceInput = ({ setDialogVisible }: { setDialogVisible: (b: boolean) => void }) => {
+const MullionSpacingInput = ({ setDialogVisible }: { setDialogVisible: (b: boolean) => void }) => {
   const language = useStore(Selector.language);
   const windowElement = useStore(Selector.selectedElement) as WindowModel;
   const addUndoable = useStore(Selector.addUndoable);
@@ -25,7 +25,7 @@ const MullinoSpaceInput = ({ setDialogVisible }: { setDialogVisible: (b: boolean
   const getElementById = useStore(Selector.getElementById);
   const setCommonStore = useStore(Selector.set);
 
-  const [inputSpace, setInputSpace] = useState<number>(windowElement?.mullionSpace ?? 0.5);
+  const [inputSpacing, setInputSpacing] = useState<number>(windowElement?.mullionSpacing ?? 0.5);
   const [dragEnabled, setDragEnabled] = useState<boolean>(false);
   const [bounds, setBounds] = useState<DraggableBounds>({ left: 0, top: 0, bottom: 0, right: 0 } as DraggableBounds);
   const dragRef = useRef<HTMLDivElement | null>(null);
@@ -34,15 +34,15 @@ const MullinoSpaceInput = ({ setDialogVisible }: { setDialogVisible: (b: boolean
 
   useEffect(() => {
     if (windowElement) {
-      setInputSpace(windowElement?.mullionSpace ?? 0.5);
+      setInputSpacing(windowElement?.mullionSpacing ?? 0.5);
     }
   }, [windowElement]);
 
-  const updateRoofMullionWidthById = (id: string, space: number) => {
+  const updateRoofMullionWidthById = (id: string, spacing: number) => {
     setCommonStore((state) => {
       for (const e of state.elements) {
         if (e.id === id) {
-          (e as WindowModel).mullionSpace = space;
+          (e as WindowModel).mullionSpacing = spacing;
           state.selectedElement = e;
           break;
         }
@@ -66,19 +66,19 @@ const MullinoSpaceInput = ({ setDialogVisible }: { setDialogVisible: (b: boolean
     if (!windowElement) return;
     switch (windowActionScope) {
       case Scope.AllObjectsOfThisType:
-        const oldMullionSpaceAll = new Map<string, number>();
+        const oldMullionSpacingAll = new Map<string, number>();
         setCommonStore((state) => {
           for (const e of state.elements) {
             if (e.type === ObjectType.Window && !e.locked) {
-              oldMullionSpaceAll.set(e.id, (e as WindowModel).mullionSpace);
-              (e as WindowModel).mullionSpace = value;
+              oldMullionSpacingAll.set(e.id, (e as WindowModel).mullionSpacing);
+              (e as WindowModel).mullionSpacing = value;
             }
           }
         });
         const undoableChangeAll = {
-          name: 'Set Mullion Space for All Windows',
+          name: 'Set Mullion Spacing for All Windows',
           timestamp: Date.now(),
-          oldValues: oldMullionSpaceAll,
+          oldValues: oldMullionSpacingAll,
           newValue: value,
           undo: () => {
             undoInMap(undoableChangeAll.oldValues as Map<string, number>);
@@ -92,19 +92,19 @@ const MullinoSpaceInput = ({ setDialogVisible }: { setDialogVisible: (b: boolean
         break;
       case Scope.OnlyThisSide:
         if (windowElement.parentId) {
-          const oldMullionSpaceOnSameWall = new Map<string, number>();
+          const oldMullionSpacingOnSameWall = new Map<string, number>();
           setCommonStore((state) => {
             for (const elem of state.elements) {
               if (elem.type === ObjectType.Window && elem.parentId === windowElement.parentId && !elem.locked) {
-                oldMullionSpaceOnSameWall.set(elem.id, (elem as WindowModel).mullionSpace);
-                (elem as WindowModel).mullionSpace = value;
+                oldMullionSpacingOnSameWall.set(elem.id, (elem as WindowModel).mullionSpacing);
+                (elem as WindowModel).mullionSpacing = value;
               }
             }
           });
           const undoableChangeOnSameWall = {
-            name: 'Set Mullion Space for All Windows On the Same Wall',
+            name: 'Set Mullion Spacing for All Windows On the Same Wall',
             timestamp: Date.now(),
-            oldValues: oldMullionSpaceOnSameWall,
+            oldValues: oldMullionSpacingOnSameWall,
             newValue: value,
             groupId: windowElement.parentId,
             undo: () => {
@@ -123,19 +123,19 @@ const MullinoSpaceInput = ({ setDialogVisible }: { setDialogVisible: (b: boolean
         break;
       case Scope.AllObjectsOfThisTypeAboveFoundation:
         if (windowElement.foundationId) {
-          const oldMullionSpaceAboveFoundation = new Map<string, number>();
+          const oldMullionSpacingAboveFoundation = new Map<string, number>();
           setCommonStore((state) => {
             for (const elem of state.elements) {
               if (elem.type === ObjectType.Window && elem.foundationId === windowElement.foundationId && !elem.locked) {
-                oldMullionSpaceAboveFoundation.set(elem.id, (elem as WindowModel).mullionSpace);
-                (elem as WindowModel).mullionSpace = value;
+                oldMullionSpacingAboveFoundation.set(elem.id, (elem as WindowModel).mullionSpacing);
+                (elem as WindowModel).mullionSpacing = value;
               }
             }
           });
           const undoableChangeAboveFoundation = {
-            name: 'Set Mullion Space for All Windows Above Foundation',
+            name: 'Set Mullion Spacing for All Windows Above Foundation',
             timestamp: Date.now(),
-            oldValues: oldMullionSpaceAboveFoundation,
+            oldValues: oldMullionSpacingAboveFoundation,
             newValue: value,
             groupId: windowElement.foundationId,
             undo: () => {
@@ -155,11 +155,11 @@ const MullinoSpaceInput = ({ setDialogVisible }: { setDialogVisible: (b: boolean
       default:
         if (windowElement) {
           const updatedWindow = getElementById(windowElement.id) as WindowModel;
-          const oldSpace = updatedWindow.mullionSpace ?? windowElement.mullionSpace ?? 0.5;
+          const oldSpacing = updatedWindow.mullionSpacing ?? windowElement.mullionSpacing ?? 0.5;
           const undoableChange = {
-            name: 'Set Window Mullion Space',
+            name: 'Set Window Mullion Spacing',
             timestamp: Date.now(),
-            oldValue: oldSpace,
+            oldValue: oldSpacing,
             newValue: value,
             changedElementId: windowElement.id,
             changedElementType: windowElement.type,
@@ -191,7 +191,7 @@ const MullinoSpaceInput = ({ setDialogVisible }: { setDialogVisible: (b: boolean
   };
 
   const close = () => {
-    setInputSpace(windowElement.mullionSpace ?? 0.4);
+    setInputSpacing(windowElement.mullionSpacing ?? 0.4);
     setDialogVisible(false);
   };
 
@@ -201,13 +201,13 @@ const MullinoSpaceInput = ({ setDialogVisible }: { setDialogVisible: (b: boolean
   };
 
   const handleOk = () => {
-    setMullionWidth(inputSpace);
+    setMullionWidth(inputSpacing);
     setDialogVisible(false);
     setApplyCount(0);
   };
 
   const handleApply = () => {
-    setMullionWidth(inputSpace);
+    setMullionWidth(inputSpacing);
   };
 
   return (
@@ -221,7 +221,7 @@ const MullinoSpaceInput = ({ setDialogVisible }: { setDialogVisible: (b: boolean
             onMouseOver={() => setDragEnabled(true)}
             onMouseOut={() => setDragEnabled(false)}
           >
-            {i18n.t('windowMenu.MullionSpace', lang)}
+            {i18n.t('windowMenu.MullionSpacing', lang)}
           </div>
         }
         footer={[
@@ -253,9 +253,9 @@ const MullinoSpaceInput = ({ setDialogVisible }: { setDialogVisible: (b: boolean
               style={{ width: 120 }}
               step={0.01}
               precision={2}
-              value={inputSpace}
+              value={inputSpacing}
               formatter={(a) => Number(a).toFixed(2)}
-              onChange={(value) => setInputSpace(value)}
+              onChange={(value) => setInputSpacing(value)}
               onPressEnter={handleOk}
             />
             <div style={{ paddingTop: '20px', textAlign: 'left', fontSize: '11px' }}>
@@ -287,4 +287,4 @@ const MullinoSpaceInput = ({ setDialogVisible }: { setDialogVisible: (b: boolean
   );
 };
 
-export default MullinoSpaceInput;
+export default MullionSpacingInput;

@@ -274,7 +274,7 @@
       "cz": 0.05,
       "cx": 0.9973066585272083,
       "lx": 8.561071237194398,
-      "parentId": "m7AH7DcnoGzAq9kryBy4RS",
+      "parentId": "Ground",
       "solarAbsorberPipe": {},
       "selected": false,
       "solarPowerTower": {},
@@ -851,7 +851,7 @@
         1
       ],
       "lx": 0.08333333333333333,
-      "mullionSpace": 1
+      "mullionSpacing": 1
     },
     {
       "id": "5ncRWHnRQyocXJujBx5jNE",
@@ -876,7 +876,7 @@
       "lx": 0.08333333333333333,
       "ly": 0,
       "lz": 0.44384979425833565,
-      "mullionSpace": 1
+      "mullionSpacing": 1
     },
     {
       "cx": 0.24999999999999992,
@@ -901,7 +901,7 @@
       "selected": false,
       "lz": 0.44384979425833565,
       "type": "Window",
-      "mullionSpace": 1
+      "mullionSpacing": 1
     },
     {
       "rotation": [
@@ -926,7 +926,7 @@
       "ly": 0,
       "id": "upiLr8uqx55GDieKSLsjPj",
       "type": "Window",
-      "mullionSpace": 1
+      "mullionSpacing": 1
     },
     {
       "lz": 0.3942112571821837,
@@ -952,7 +952,7 @@
       "cz": -0.059131688577327556,
       "ly": 0,
       "showLabel": false,
-      "mullionSpace": 1
+      "mullionSpacing": 1
     },
     {
       "ly": 0,
@@ -977,7 +977,7 @@
         0
       ],
       "cx": 0.10666666666666667,
-      "mullionSpace": 1
+      "mullionSpacing": 1
     },
     {
       "selected": false,
@@ -1002,7 +1002,7 @@
         0,
         0
       ],
-      "mullionSpace": 1
+      "mullionSpacing": 1
     },
     {
       "ly": 0,
@@ -1027,7 +1027,7 @@
       "lx": 0.13333333333333333,
       "color": "#477395",
       "cy": 0,
-      "mullionSpace": 1
+      "mullionSpacing": 1
     },
     {
       "type": "Human",
@@ -1099,7 +1099,7 @@
       "parentId": "2u4Fe7xnA6kkXXVGrQ4eyJ",
       "foundationId": "m7AH7DcnoGzAq9kryBy4RS",
       "selected": false,
-      "mullionSpace": 1
+      "mullionSpacing": 1
     },
     {
       "type": "Window",
@@ -1124,7 +1124,7 @@
       "parentId": "2u4Fe7xnA6kkXXVGrQ4eyJ",
       "foundationId": "m7AH7DcnoGzAq9kryBy4RS",
       "selected": false,
-      "mullionSpace": 1
+      "mullionSpacing": 1
     },
     {
       "type": "Door",

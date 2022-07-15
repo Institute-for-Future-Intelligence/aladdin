@@ -1,5 +1,5 @@
 /*
- * @Copyright 2021-2022. Institute for Future Intelligence, Inc.
+ * @Copyright 2022. Institute for Future Intelligence, Inc.
  */
 
 import React, { useState } from 'react';
@@ -8,7 +8,7 @@ import * as Selector from '../../../stores/selector';
 import { Copy, Cut, Lock } from '../menuItems';
 import { WindowModel } from '../../../models/WindowModel';
 import MullionWidthInput from './windowMullionWidthInput';
-import MullionSpaceInput from './windowMullionSpaceInput';
+import MullionSpacingInput from './windowMullionSpacingInput';
 import { Menu } from 'antd';
 import i18n from 'src/i18n/i18n';
 
@@ -19,7 +19,7 @@ export const WindowMenu = () => {
   const setApplyCount = useStore(Selector.setApplyCount);
 
   const [mullionWidthDialogVisible, setMullionWidthDialogVisible] = useState(false);
-  const [mullionSpaceDialogVisible, setMullionSpceDialogVisible] = useState(false);
+  const [mullionSpacingDialogVisible, setMullionSpacingDialogVisible] = useState(false);
 
   const lang = { lng: language };
   const paddingLeft = '36px';
@@ -33,7 +33,7 @@ export const WindowMenu = () => {
 
         {mullionWidthDialogVisible && <MullionWidthInput setDialogVisible={setMullionWidthDialogVisible} />}
         <Menu.Item
-          key={'window-mullionWidth'}
+          key={'window-mullion-width'}
           style={{ paddingLeft: paddingLeft }}
           onClick={() => {
             setApplyCount(0);
@@ -43,16 +43,16 @@ export const WindowMenu = () => {
           {i18n.t('windowMenu.MullionWidth', lang)} ...
         </Menu.Item>
 
-        {mullionSpaceDialogVisible && <MullionSpaceInput setDialogVisible={setMullionSpceDialogVisible} />}
+        {mullionSpacingDialogVisible && <MullionSpacingInput setDialogVisible={setMullionSpacingDialogVisible} />}
         <Menu.Item
-          key={'window-mullionSpace'}
+          key={'window-mullion-spacing'}
           style={{ paddingLeft: paddingLeft }}
           onClick={() => {
             setApplyCount(0);
-            setMullionSpceDialogVisible(true);
+            setMullionSpacingDialogVisible(true);
           }}
         >
-          {i18n.t('windowMenu.MullionSpace', lang)} ...
+          {i18n.t('windowMenu.MullionSpacing', lang)} ...
         </Menu.Item>
       </>
     )

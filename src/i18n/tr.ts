@@ -831,7 +831,7 @@ export const i18n_tr = {
       AllWindowsAboveFoundation: 'All Windows Above the Same Foundation',
       AllWindows: 'All Windows',
       MullionWidth: 'Mullion Width',
-      MullionSpace: 'Mullion Space',
+      MullionSpacing: 'Mullion Spacing',
     },
 
     siteInfoPanel: {

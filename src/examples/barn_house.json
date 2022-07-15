@@ -590,7 +590,7 @@
       "selected": false,
       "showLabel": false,
       "type": "Window",
-      "mullionSpace": 2,
+      "mullionSpacing": 2,
       "mullionWidth": 0.1
     },
     {
@@ -616,7 +616,7 @@
       "lz": 0.17636142264118151,
       "cz": 0.2645421339617723,
       "color": "#477395",
-      "mullionSpace": 2,
+      "mullionSpacing": 2,
       "mullionWidth": 0.1
     },
     {
@@ -642,7 +642,7 @@
         1
       ],
       "parentId": "56tPe5zv4S5mhoVrSD2NK7",
-      "mullionSpace": 2,
+      "mullionSpacing": 2,
       "mullionWidth": 0.1
     },
     {
@@ -668,7 +668,7 @@
       ],
       "foundationId": "x9h6vgTSQ3QLh48G3oYMPN",
       "lx": 0.1702127659574468,
-      "mullionSpace": 2,
+      "mullionSpacing": 2,
       "mullionWidth": 0.1
     },
     {
@@ -939,7 +939,7 @@
       ],
       "showLabel": false,
       "color": "#477395",
-      "mullionSpace": 1,
+      "mullionSpacing": 1,
       "mullionWidth": 0.1
     },
     {
@@ -966,7 +966,7 @@
       ],
       "id": "vLvEkBDowmVtpuRDtw4SXE",
       "cy": 0,
-      "mullionSpace": 1,
+      "mullionSpacing": 1,
       "mullionWidth": 0.1
     },
     {
@@ -993,7 +993,7 @@
       "showLabel": false,
       "ly": 0.3,
       "cz": -0.1,
-      "mullionSpace": 1,
+      "mullionSpacing": 1,
       "mullionWidth": 0.1
     },
     {
@@ -1019,7 +1019,7 @@
       "ly": 0.3,
       "cy": 0,
       "lz": 0.6,
-      "mullionSpace": 1,
+      "mullionSpacing": 1,
       "mullionWidth": 0.1
     },
     {
@@ -1045,7 +1045,7 @@
         0,
         0
       ],
-      "mullionSpace": 1,
+      "mullionSpacing": 1,
       "mullionWidth": 0.1
     },
     {
@@ -1071,7 +1071,7 @@
         0,
         0
       ],
-      "mullionSpace": 1,
+      "mullionSpacing": 1,
       "mullionWidth": 0.1
     },
     {
@@ -1097,7 +1097,7 @@
       "cy": 0,
       "cz": -0.1,
       "lz": 0.6,
-      "mullionSpace": 1,
+      "mullionSpacing": 1,
       "mullionWidth": 0.1
     },
     {
@@ -1123,7 +1123,7 @@
         0
       ],
       "color": "#477395",
-      "mullionSpace": 1,
+      "mullionSpacing": 1,
       "mullionWidth": 0.1
     },
     {
@@ -1150,7 +1150,7 @@
         0,
         1
       ],
-      "mullionSpace": 1,
+      "mullionSpacing": 1,
       "mullionWidth": 0.1
     },
     {
@@ -1177,7 +1177,7 @@
       "color": "#477395",
       "foundationId": "x9h6vgTSQ3QLh48G3oYMPN",
       "ly": 0.3,
-      "mullionSpace": 1,
+      "mullionSpacing": 1,
       "mullionWidth": 0.1
     },
     {
@@ -1204,7 +1204,7 @@
       "cx": 0.2857142857142857,
       "lz": 0.2,
       "ly": 0.3,
-      "mullionSpace": 1,
+      "mullionSpacing": 1,
       "mullionWidth": 0.1
     },
     {
@@ -1231,7 +1231,7 @@
         1
       ],
       "foundationId": "x9h6vgTSQ3QLh48G3oYMPN",
-      "mullionSpace": 2,
+      "mullionSpacing": 2,
       "mullionWidth": 0.1
     },
     {
