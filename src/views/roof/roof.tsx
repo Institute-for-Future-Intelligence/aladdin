@@ -3,7 +3,7 @@
  */
 
 import RoofTextureDefault from 'src/resources/roof_edge.png';
-import RoofTexture00 from 'src/resources/wall_00.png';
+import RoofTexture00 from 'src/resources/roof_00.png';
 import RoofTexture01 from 'src/resources/roof_01.png';
 import RoofTexture02 from 'src/resources/roof_02.png';
 import RoofTexture03 from 'src/resources/roof_03.png';
@@ -310,7 +310,7 @@ const Roof = (props: RoofModel) => {
     }
   }, [wallsId]);
 
-  if (!props.thickness || !props.overhang) {
+  if (props.thickness === undefined || props.overhang === undefined) {
     setCommonStore((state) => {
       for (const e of state.elements) {
         if (e.id === id) {
