@@ -788,6 +788,15 @@ export const i18n_tr = {
       OnlyThisWall: 'Sadece Bu Duvar',
       AllWallsAboveFoundation: ' Ayný Temelin Üzerindeki Tüm Duvarlar',
       AllWalls: 'Tüm Duvarlar',
+      Windows: 'Windows',
+      RemoveAllUnlockedWindows: 'Remove All Unlocked Windows',
+      DoYouReallyWantToRemoveAllWindowsOnThisWall: 'Do you really want to remove all the windows on this wall',
+      Doors: 'Doors',
+      RemoveAllUnlockedDoors: 'Remove All Unlocked Doors',
+      DoYouReallyWantToRemoveAllDoorsOnThisWall: 'Do you really want to remove all the doors on this wall',
+      SolarPanels: 'Solar Panels',
+      RemoveAllUnlockedSolarPanels: 'Remove All Unlocked Solar Panels',
+      DoYouReallyWantToRemoveAllSolarPanelsOnThisWall: 'Do you really want to remove all the solar panels on this wall',
     },
 
     doorMenu: {

@@ -770,6 +770,15 @@ export const i18n_zh_tw = {
       OnlyThisWall: '只這堵牆',
       AllWallsAboveFoundation: '同一地基上所有的牆',
       AllWalls: '所有的牆',
+      Windows: '窗戶',
+      RemoveAllUnlockedWindows: '刪除這堵牆上所有非固定的窗戶',
+      DoYouReallyWantToRemoveAllWindowsOnThisWall: '你確定刪除這堵牆上所有非固定的窗戶嗎',
+      Doors: '門',
+      RemoveAllUnlockedDoors: '刪除這堵牆上所有非固定的門',
+      DoYouReallyWantToRemoveAllDoorsOnThisWall: '你確定刪除這堵牆上所有非固定的門嗎',
+      SolarPanels: '光伏板',
+      RemoveAllUnlockedSolarPanels: '刪除這堵牆上所有非固定的光伏板',
+      DoYouReallyWantToRemoveAllSolarPanelsOnThisWall: '你確定刪除這堵牆上所有非固定的光伏板嗎',
     },
 
     roofMenu: {

@@ -4,6 +4,8 @@
 
 export class ElementCounter {
   wallCount: number = 0;
+  windowCount: number = 0;
+  doorCount: number = 0;
   humanCount: number = 0;
   treeCount: number = 0;
   polygonCount: number = 0;
@@ -18,6 +20,8 @@ export class ElementCounter {
   gotSome() {
     return (
       this.wallCount > 0 ||
+      this.windowCount > 0 ||
+      this.doorCount > 0 ||
       this.humanCount > 0 ||
       this.treeCount > 0 ||
       this.polygonCount > 0 ||

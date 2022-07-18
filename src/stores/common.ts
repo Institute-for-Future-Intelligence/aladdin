@@ -4452,6 +4452,12 @@ export const useStore = create<CommonStoreState>(
                     case ObjectType.Wall:
                       counter.wallCount++;
                       break;
+                    case ObjectType.Window:
+                      counter.windowCount++;
+                      break;
+                    case ObjectType.Door:
+                      counter.doorCount++;
+                      break;
                     case ObjectType.Human:
                       counter.humanCount++;
                       break;

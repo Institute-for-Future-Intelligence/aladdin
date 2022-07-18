@@ -769,6 +769,15 @@ export const i18n_zh_cn = {
       OnlyThisWall: '只这堵墙',
       AllWallsAboveFoundation: '同一地基上所有的墙',
       AllWalls: '所有的墙',
+      Windows: '窗户',
+      RemoveAllUnlockedWindows: '删除这堵墙上所有非固定的窗户',
+      DoYouReallyWantToRemoveAllWindowsOnThisWall: '你确定删除这堵墙上所有非固定的窗户吗',
+      Doors: '门',
+      RemoveAllUnlockedDoors: '删除这堵墙上所有非固定的门',
+      DoYouReallyWantToRemoveAllDoorsOnThisWall: '你确定删除这堵墙上所有非固定的门吗',
+      SolarPanels: '光伏板',
+      RemoveAllUnlockedSolarPanels: '删除这堵墙上所有非固定的光伏板',
+      DoYouReallyWantToRemoveAllSolarPanelsOnThisWall: '你确定删除这堵墙上所有非固定的光伏板吗',
     },
 
     roofMenu: {

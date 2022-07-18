@@ -787,6 +787,15 @@ export const i18n_en = {
       OnlyThisWall: 'Only This Wall',
       AllWallsAboveFoundation: 'All Walls Above the Same Foundation',
       AllWalls: 'All Walls',
+      Windows: 'Windows',
+      RemoveAllUnlockedWindows: 'Remove All Unlocked Windows',
+      DoYouReallyWantToRemoveAllWindowsOnThisWall: 'Do you really want to remove all the windows on this wall',
+      Doors: 'Doors',
+      RemoveAllUnlockedDoors: 'Remove All Unlocked Doors',
+      DoYouReallyWantToRemoveAllDoorsOnThisWall: 'Do you really want to remove all the doors on this wall',
+      SolarPanels: 'Solar Panels',
+      RemoveAllUnlockedSolarPanels: 'Remove All Unlocked Solar Panels',
+      DoYouReallyWantToRemoveAllSolarPanelsOnThisWall: 'Do you really want to remove all the solar panels on this wall',
     },
 
     windowMenu: {
