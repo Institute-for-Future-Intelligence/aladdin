@@ -662,7 +662,6 @@ const GambrelRoof = ({
                 <convexGeometry args={[points, isFlat ? arr[0].direction : direction, isFlat ? 1 : length]} />
                 <meshStandardMaterial
                   map={texture}
-                  side={DoubleSide}
                   color={textureType === RoofTexture.Default || textureType === RoofTexture.NoTexture ? color : 'white'}
                 />
               </mesh>

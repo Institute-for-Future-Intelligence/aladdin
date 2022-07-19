@@ -30,26 +30,26 @@ const WallWireFrame = React.memo(
     centerLeft,
     centerRight,
   }: WallWireFrameProps) => {
-    const lowerLeft: [number, number, number] = [-x, -z + 0.01, 0.01];
-    const lowerRight: [number, number, number] = [x, -z + 0.01, 0.01];
-    const upperLeft: [number, number, number] = [-x, leftHeight - z - 0.01, 0.01];
-    const upperRight: [number, number, number] = [x, rightHeight - z - 0.01, 0.01];
+    const lowerLeft: [number, number, number] = [-x, -z + 0.001, 0.001];
+    const lowerRight: [number, number, number] = [x, -z + 0.001, 0.001];
+    const upperLeft: [number, number, number] = [-x, leftHeight - z - 0.001, 0.001];
+    const upperRight: [number, number, number] = [x, rightHeight - z - 0.001, 0.001];
 
     const points = [upperLeft, lowerLeft, lowerRight, upperRight];
     const lx = x * 2;
 
     if (centerRight) {
-      const cr: [number, number, number] = [centerRight[0] * lx, centerRight[1] - z, 0.01];
+      const cr: [number, number, number] = [centerRight[0] * lx, centerRight[1] - z, 0.001];
       points.push(cr);
     }
 
     if (center) {
-      const c: [number, number, number] = [center[0] * lx, center[1] - z, 0.01];
+      const c: [number, number, number] = [center[0] * lx, center[1] - z, 0.001];
       points.push(c);
     }
 
     if (centerLeft) {
-      const cl: [number, number, number] = [centerLeft[0] * lx, centerLeft[1] - z, 0.01];
+      const cl: [number, number, number] = [centerLeft[0] * lx, centerLeft[1] - z, 0.001];
       points.push(cl);
     }
 

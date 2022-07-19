@@ -427,7 +427,6 @@ const HipRoof = ({
               <mesh castShadow={shadowEnabled} receiveShadow={shadowEnabled}>
                 <convexGeometry args={[points, isFlat ? arr[0].direction : direction, isFlat ? 1 : length]} />
                 <meshStandardMaterial
-                  side={DoubleSide}
                   map={texture}
                   color={textureType === RoofTexture.Default || textureType === RoofTexture.NoTexture ? color : 'white'}
                 />

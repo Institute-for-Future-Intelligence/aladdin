@@ -17,11 +17,9 @@ import WallTexture10 from 'src/resources/wall_10.png';
 
 import React, { useEffect, useMemo, useRef, useState } from 'react';
 import {
-  BackSide,
   DoubleSide,
   Euler,
   Mesh,
-  MeshBasicMaterial,
   MeshStandardMaterial,
   Raycaster,
   RepeatWrapping,
@@ -292,7 +290,7 @@ const Wall = ({
     });
     outsideWallRef.current.geometry = new ShapeBufferGeometry(wallShape);
     // outsideWallInnerFaceRef.current.geometry = new ShapeBufferGeometry(wallShape);
-    // outsideWallInnerFaceRef.current.material = new MeshBasicMaterial({ color: 'white', side: BackSide });
+    // outsideWallInnerFaceRef.current.material = new MeshStandardMaterial({ color: 'white', side: BackSide });
   }
 
   // inside wall
@@ -1010,7 +1008,6 @@ const Wall = ({
             onPointerDown={handleWallBodyPointerDown}
           >
             <meshStandardMaterial
-              side={DoubleSide}
               color={textureType === WallTexture.Default || textureType === WallTexture.NoTexture ? color : 'white'}
               map={texture}
             />
@@ -1041,7 +1038,7 @@ const Wall = ({
           )}
 
           {/* side surfaces */}
-          {leftOffset === 0 && !roofId && (
+          {leftOffset === 0 && (
             <Plane
               args={[leftRoofHeight ?? lz, ly]}
               position={[-hx + 0.01, hy, -(lz - (leftRoofHeight ?? lz)) / 2]}
@@ -1053,7 +1050,7 @@ const Wall = ({
               <meshStandardMaterial color={'white'} side={DoubleSide} />
             </Plane>
           )}
-          {rightOffset === 0 && !roofId && (
+          {rightOffset === 0 && (
             <Plane
               args={[rightRoofHeight ?? lz, ly]}
               position={[hx - 0.01, hy, -(lz - (rightRoofHeight ?? lz)) / 2]}

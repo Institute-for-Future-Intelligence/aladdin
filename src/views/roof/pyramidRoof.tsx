@@ -589,7 +589,6 @@ const RoofSegment = ({
   return (
     <mesh ref={meshRef} castShadow={shadowEnabled} receiveShadow={shadowEnabled}>
       <meshStandardMaterial
-        side={DoubleSide}
         map={texture}
         color={textureType === RoofTexture.Default || textureType === RoofTexture.NoTexture ? color : 'white'}
       />
