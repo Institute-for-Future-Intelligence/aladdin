@@ -1,7 +1,7 @@
 {
-  "docid": "6BU1RwPMFU9pkG4RE478nE",
-  "time": "07/15/2022 05:02 pm",
-  "timestamp": 1657918977413,
+  "docid": "cZ6sWLvQxvpcqfnKjBTFz1",
+  "time": "07/19/2022 08:41 am",
+  "timestamp": 1658234477939,
   "userid": "QWecNcxhyvP6j6sBN11hBsfZDau1",
   "owner": null,
   "email": null,
@@ -115,7 +115,8 @@
       "rightJoints": [
         "skm8dNPSkFaVkoUwiPNfq1"
       ],
-      "cy": 3.478026472724187
+      "cy": 3.478026472724187,
+      "color": "white"
     },
     {
       "type": "Wall",
@@ -165,7 +166,8 @@
       "relativeAngle": 1.5707963267948966,
       "textureType": "Wall Texture Default",
       "rightRoofHeight": 5,
-      "roofId": "nbw17kYeUHp1aouuScuF3Y"
+      "roofId": "nbw17kYeUHp1aouuScuF3Y",
+      "color": "white"
     },
     {
       "lx": 7.5,
@@ -215,7 +217,8 @@
       "type": "Wall",
       "leftRoofHeight": 5.073421835530448,
       "ly": 0.3,
-      "cx": -5.457020109151015
+      "cx": -5.457020109151015,
+      "color": "white"
     },
     {
       "showLabel": false,
@@ -261,7 +264,8 @@
         0
       ],
       "rightRoofHeight": 5,
-      "lx": 12
+      "lx": 12,
+      "color": "white"
     },
     {
       "type": "Foundation",
@@ -332,7 +336,8 @@
         1
       ],
       "selected": false,
-      "foundationId": "8fpWrU7qVyVgipB7LtABom"
+      "foundationId": "8fpWrU7qVyVgipB7LtABom",
+      "color": "white"
     },
     {
       "normal": [
@@ -382,7 +387,8 @@
         2.0137691668698383,
         0.1
       ],
-      "lx": 3.5
+      "lx": 3.5,
+      "color": "white"
     },
     {
       "rightJoints": [
@@ -432,14 +438,15 @@
       "cy": 0.2637691668698383,
       "windows": [],
       "ly": 0.3,
-      "rightRoofHeight": 7.220276960055778
+      "rightRoofHeight": 7.220276960055778,
+      "color": "white"
     },
     {
       "ly": 0,
       "cx": 0,
       "type": "Roof",
       "overhang": 0.2,
-      "thickness": 0.3,
+      "thickness": 0.2,
       "ridgeLeftPoint": [
         0.022465454047944533,
         1
@@ -517,7 +524,8 @@
       "showLabel": false,
       "textureType": "Wall Texture Default",
       "lx": 6.5,
-      "foundationId": "8fpWrU7qVyVgipB7LtABom"
+      "foundationId": "8fpWrU7qVyVgipB7LtABom",
+      "color": "white"
     },
     {
       "ridgeLeftPoint": [
@@ -554,7 +562,7 @@
       ],
       "type": "Roof",
       "overhang": 0.4,
-      "thickness": 0.3,
+      "thickness": 0.2,
       "cx": 0,
       "ly": 0
     },
@@ -950,7 +958,7 @@
       "color": "#477395",
       "lx": 0.13333333333333333,
       "cx": 0.3466666666666667,
-      "cz": -0.059131688577327556,
+      "cz": -0.05913168857732756,
       "ly": 0.3,
       "showLabel": false,
       "mullionSpacing": 1
@@ -961,7 +969,7 @@
       "type": "Window",
       "foundationId": "m7AH7DcnoGzAq9kryBy4RS",
       "cy": 0,
-      "cz": -0.059131688577327556,
+      "cz": 0.5913168857732756,
       "id": "9k4wgdGyyHM5BC1r2nJbQH",
       "lx": 0.13333333333333333,
       "color": "#477395",
@@ -977,12 +985,12 @@
         0,
         0
       ],
-      "cx": 0.10666666666666667,
+      "cx": 0,
       "mullionSpacing": 1
     },
     {
       "selected": false,
-      "cz": -0.059131688577327556,
+      "cz": -0.05913168857732756,
       "foundationId": "m7AH7DcnoGzAq9kryBy4RS",
       "type": "Window",
       "normal": [
@@ -997,7 +1005,7 @@
       "parentId": "skm8dNPSkFaVkoUwiPNfq1",
       "lz": 0.3942112571821837,
       "cy": 0,
-      "cx": -0.13333333333333333,
+      "cx": 0,
       "rotation": [
         0,
         0,
@@ -1008,7 +1016,7 @@
     {
       "ly": 0.3,
       "foundationId": "m7AH7DcnoGzAq9kryBy4RS",
-      "cx": -0.36000000000000004,
+      "cx": -0.3333333333333333,
       "rotation": [
         0,
         0,
@@ -1024,7 +1032,7 @@
       ],
       "selected": false,
       "parentId": "skm8dNPSkFaVkoUwiPNfq1",
-      "cz": -0.059131688577327556,
+      "cz": -0.05913168857732756,
       "lx": 0.13333333333333333,
       "color": "#477395",
       "cy": 0,
@@ -1182,8 +1190,8 @@
     "dailyHeliostatYieldPanelX": 0,
     "showDailyParabolicDishYieldPanel": false,
     "cameraPosition": [
-      -11.271232700749845,
-      -17.057753909006408,
+      -13.173471650258616,
+      -20.47829388487495,
       4.178702448990471
     ],
     "showYearlyHeliostatYieldPanel": false,

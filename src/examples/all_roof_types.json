@@ -1013,7 +1013,7 @@
       "ly": 0,
       "lz": 6,
       "overhang": 0.2,
-      "thickness": 0.3,
+      "thickness": 0.2,
       "roofType": "Hip",
       "wallsId": [
         "2u4Fe7xnA6kkXXVGrQ4eyJ"
@@ -1047,7 +1047,7 @@
       "ly": 0,
       "lz": 6,
       "overhang": 0.2,
-      "thickness": 0.3,
+      "thickness": 0.2,
       "roofType": "Gable",
       "wallsId": [
         "beHqET5NN8aNdsuBncMpY7"
@@ -1542,8 +1542,8 @@
       "lx": 0,
       "ly": 0,
       "lz": 6,
-      "overhang": 0.4,
-      "thickness": 0.3,
+      "overhang": 0.2,
+      "thickness": 0.2,
       "roofType": "Hip",
       "wallsId": [
         "tKvexMf8zrvPgydcZb5VYA"
@@ -3036,8 +3036,8 @@
       "lx": 0,
       "ly": 0,
       "lz": 5,
-      "overhang": 0.4,
-      "thickness": 0.3,
+      "overhang": 0.2,
+      "thickness": 0.2,
       "roofType": "Pyramid",
       "wallsId": [
         "xyaukKZz7A3TN7punm6ojQ",
@@ -3073,8 +3073,8 @@
       "lx": 0,
       "ly": 0,
       "lz": 7.592861140197524,
-      "overhang": 0.4,
-      "thickness": 0.3,
+      "overhang": 0.2,
+      "thickness": 0.2,
       "roofType": "Pyramid",
       "wallsId": [
         "f2RfmPbQBbQQB9B9qxgaGp",
@@ -3110,8 +3110,8 @@
       "lx": 0,
       "ly": 0,
       "lz": 6.780964087966274,
-      "overhang": 0.4,
-      "thickness": 0.3,
+      "overhang": 0.2,
+      "thickness": 0.2,
       "roofType": "Gambrel",
       "wallsId": [
         "m39f5UsRB2FwBXUr7e5PvG"
@@ -3655,7 +3655,7 @@
       "ly": 0,
       "lz": 5.42527244986548,
       "overhang": 0.1,
-      "thickness": 0.3,
+      "thickness": 0.2,
       "roofType": "Mansard",
       "wallsId": [
         "qjuHirmyC29jd4cf1J7Ub1"
@@ -4160,7 +4160,7 @@
       "roofType": "Gable",
       "textureType": "Roof Texture Default",
       "overhang": 0.2,
-      "thickness": 0.3,
+      "thickness": 0.2,
       "wallsId": [
         "ayZDPKzE28H2j3EL6h6FST"
       ],
@@ -4677,7 +4677,7 @@
       "roofType": "Gable",
       "textureType": "Roof Texture Default",
       "overhang": 0.2,
-      "thickness": 0.3,
+      "thickness": 0.2,
       "wallsId": [
         "5u61LU9xBr7HzdGUCwG4J6"
       ],

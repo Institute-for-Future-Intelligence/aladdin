@@ -534,7 +534,7 @@
       "foundationId": "m7AH7DcnoGzAq9kryBy4RS",
       "id": "sfGxVh6UQ5Rh5eXQutdage",
       "color": "#666666",
-      "thickness": 0.3
+      "thickness": 0.2
     },
     {
       "type": "Wall",
@@ -842,7 +842,7 @@
       "parentId": "fbqvzYqiEy79jeL8wsadib",
       "foundationId": "fbqvzYqiEy79jeL8wsadib",
       "id": "vCyCenkovRJf29DEpF24H5",
-      "thickness": 0.3
+      "thickness": 0.2
     },
     {
       "type": "Window",
@@ -1307,7 +1307,7 @@
       "ly": 0,
       "lz": 7.918539998167964,
       "overhang": 0.2,
-      "thickness": 0.3,
+      "thickness": 0.2,
       "roofType": "Gable",
       "wallsId": [
         "1F9rbQh1mAYkQprzoxJ12Q"
@@ -1570,8 +1570,8 @@
       "lx": 0,
       "ly": 0,
       "lz": 7.853077156935901,
-      "overhang": 0.4,
-      "thickness": 0.3,
+      "overhang": 0.3,
+      "thickness": 0.2,
       "roofType": "Gable",
       "wallsId": [
         "bpwfKUJNQLVoQQHt2xqi72"

@@ -314,8 +314,8 @@ const Roof = (props: RoofModel) => {
     setCommonStore((state) => {
       for (const e of state.elements) {
         if (e.id === id) {
-          (e as RoofModel).thickness = props.thickness ?? 0.3;
-          (e as RoofModel).overhang = props.overhang ?? 0.4;
+          (e as RoofModel).thickness = props.thickness ?? 0.2;
+          (e as RoofModel).overhang = props.overhang ?? 0.3;
           return;
         }
       }
