@@ -138,6 +138,7 @@ export class ElementModelFactory {
     rotation?: number[],
     lx?: number,
     ly?: number,
+    parentType?: ObjectType,
   ) {
     let foundationId;
     switch (parent.type) {
@@ -170,6 +171,8 @@ export class ElementModelFactory {
       showLabel: false,
       normal: normal ? normal.toArray() : [0, 0, 1],
       rotation: rotation ? rotation : [0, 0, 0],
+      color: '#fff',
+      parentType: parentType,
       parentId: parent.id,
       foundationId: foundationId,
       id: short.generate() as string,

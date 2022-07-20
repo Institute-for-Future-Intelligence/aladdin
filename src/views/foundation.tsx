@@ -70,6 +70,7 @@ import SolarPowerTower from './solarPowerTower';
 import SolarReceiverPipe from './solarReceiverPipe';
 import { UndoablePaste } from '../undo/UndoablePaste';
 import BuildingResizer from 'src/components/buildingResizer';
+import SolarPanel from './solarPanel';
 
 const Foundation = ({
   id,
@@ -2015,6 +2016,18 @@ const Foundation = ({
 
   const opacity = groundImage ? (orthographic ? 0.25 : 0.75) : 1;
 
+  const elements = useStore(Selector.elements);
+
+  const isValidOnRoof = (e: ElementModel) => {
+    return (
+      e.type === ObjectType.SolarPanel && (e as SolarPanelModel).parentType === ObjectType.Roof && e.foundationId === id
+    );
+  };
+
+  const elementsOnBuilding = useMemo(() => {
+    return elements.filter((e) => isValidOnRoof(e));
+  }, [elements]);
+
   return (
     <>
       <group
@@ -2064,6 +2077,10 @@ const Foundation = ({
           )}
           <meshStandardMaterial attachArray="material" color={color} transparent={groundImage} opacity={opacity} />
         </Box>
+
+        {elementsOnBuilding.map((e) => {
+          return <SolarPanel key={e.id} {...(e as SolarPanelModel)} />;
+        })}
 
         {/* intersection plane */}
         {grabRef.current && Util.isSolarCollector(grabRef.current) && !grabRef.current.locked && (

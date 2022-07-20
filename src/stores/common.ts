@@ -4761,18 +4761,18 @@ export const useStore = create<CommonStoreState>(
                             if (newChild?.type === ObjectType.Wall || newChild?.type === ObjectType.Roof) {
                               elementsMapNewToOld.set(newChild.id, child.id);
                               elementsMapOldToNew.set(child.id, newChild.id);
-                              for (const grandchild of state.elements) {
-                                if (grandchild.parentId === child.id) {
+                              for (const grandChild of state.elements) {
+                                if (grandChild.parentId === child.id) {
                                   const newGrandChild = ElementModelCloner.clone(
                                     newChild,
-                                    grandchild,
-                                    grandchild.cx,
-                                    grandchild.cy,
-                                    grandchild.cz,
+                                    grandChild,
+                                    grandChild.cx,
+                                    grandChild.cy,
+                                    grandChild.cz,
                                   );
                                   if (newGrandChild) {
                                     if (child.normal) {
-                                      grandchild.normal = [...child.normal];
+                                      newGrandChild.normal = [...grandChild.normal];
                                     }
                                     pastedElements.push(newGrandChild);
                                   }
@@ -4830,6 +4830,22 @@ export const useStore = create<CommonStoreState>(
                     case ObjectType.Heliostat:
                     case ObjectType.FresnelReflector:
                     case ObjectType.ParabolicTrough: {
+                      if (newParent?.type === ObjectType.Wall) {
+                        if (newParent) {
+                          switch (Util.checkElementOnWallState(e, newParent)) {
+                            case ElementOnWallState.Valid:
+                              approved = true;
+                              break;
+                            case ElementOnWallState.OverLap:
+                              showError(i18n.t('message.CannotPasteBecauseOfOverlap', lang));
+                              break;
+                            case ElementOnWallState.OutsideBoundary:
+                              showError(i18n.t('message.CannotPasteOutsideBoundary', lang));
+                              break;
+                          }
+                        }
+                        break;
+                      }
                       if (state.overlapWithSibling(e)) {
                         // overlap, do not approve
                         showError(i18n.t('message.CannotPasteBecauseOfOverlap', lang));
@@ -4856,16 +4872,18 @@ export const useStore = create<CommonStoreState>(
                     }
                     case ObjectType.Door:
                     case ObjectType.Window: {
-                      switch (Util.checkElementOnWallState(e)) {
-                        case ElementOnWallState.Valid:
-                          approved = true;
-                          break;
-                        case ElementOnWallState.OverLap:
-                          showError(i18n.t('message.CannotPasteBecauseOfOverlap', lang));
-                          break;
-                        case ElementOnWallState.OutsideBoundary:
-                          showError(i18n.t('message.CannotPasteOutsideBoundary', lang));
-                          break;
+                      if (newParent) {
+                        switch (Util.checkElementOnWallState(e, newParent)) {
+                          case ElementOnWallState.Valid:
+                            approved = true;
+                            break;
+                          case ElementOnWallState.OverLap:
+                            showError(i18n.t('message.CannotPasteBecauseOfOverlap', lang));
+                            break;
+                          case ElementOnWallState.OutsideBoundary:
+                            showError(i18n.t('message.CannotPasteOutsideBoundary', lang));
+                            break;
+                        }
                       }
                       break;
                     }
@@ -4926,36 +4944,38 @@ export const useStore = create<CommonStoreState>(
                   switch (e.type) {
                     case ObjectType.Door:
                     case ObjectType.Window:
-                      const hx = e.lx / 2;
-                      e.cx += hx * 3;
-                      // searching +x direction
-                      while (e.cx + hx < 0.5) {
-                        if (Util.checkElementOnWallState(e) === ElementOnWallState.Valid) {
-                          state.elements.push(e);
-                          // state.elementsToPaste = [e];
-                          approved = true;
-                          break;
-                        } else {
-                          e.cx += hx;
-                        }
-                      }
-                      // searching -x direction
-                      if (!approved) {
-                        e.cx = elem.cx - hx * 3;
-                        while (e.cx - hx > -0.5) {
-                          if (Util.checkElementOnWallState(e) === ElementOnWallState.Valid) {
+                      if (parent) {
+                        const hx = e.lx / 2;
+                        e.cx += hx * 3;
+                        // searching +x direction
+                        while (e.cx + hx < 0.5) {
+                          if (Util.checkElementOnWallState(e, parent) === ElementOnWallState.Valid) {
                             state.elements.push(e);
-                            state.elementsToPaste = [e];
+                            // state.elementsToPaste = [e];
                             approved = true;
                             break;
                           } else {
-                            e.cx -= hx;
+                            e.cx += hx;
                           }
                         }
-                      }
-                      if (!approved) {
-                        const lang = { lng: state.language };
-                        showError(i18n.t('message.CannotPasteOutsideBoundary', lang));
+                        // searching -x direction
+                        if (!approved) {
+                          e.cx = elem.cx - hx * 3;
+                          while (e.cx - hx > -0.5) {
+                            if (Util.checkElementOnWallState(e, parent) === ElementOnWallState.Valid) {
+                              state.elements.push(e);
+                              state.elementsToPaste = [e];
+                              approved = true;
+                              break;
+                            } else {
+                              e.cx -= hx;
+                            }
+                          }
+                        }
+                        if (!approved) {
+                          const lang = { lng: state.language };
+                          showError(i18n.t('message.CannotPasteOutsideBoundary', lang));
+                        }
                       }
                       break;
                     case ObjectType.Human:
@@ -4978,6 +4998,39 @@ export const useStore = create<CommonStoreState>(
                       if (e.parentId) {
                         const parent = state.getParent(e);
                         if (parent) {
+                          if (parent.type === ObjectType.Wall) {
+                            const hx = e.lx / parent.lx / 2;
+                            e.cx += hx * 3;
+                            // searching +x direction
+                            while (e.cx + hx < 0.5) {
+                              if (Util.checkElementOnWallState(e, parent) === ElementOnWallState.Valid) {
+                                state.elements.push(e);
+                                approved = true;
+                                break;
+                              } else {
+                                e.cx += hx;
+                              }
+                            }
+                            // searching -x direction
+                            if (!approved) {
+                              e.cx = elem.cx - hx * 3;
+                              while (e.cx - hx > -0.5) {
+                                if (Util.checkElementOnWallState(e, parent) === ElementOnWallState.Valid) {
+                                  state.elements.push(e);
+                                  state.elementsToPaste = [e];
+                                  approved = true;
+                                  break;
+                                } else {
+                                  e.cx -= hx;
+                                }
+                              }
+                            }
+                            if (!approved) {
+                              const lang = { lng: state.language };
+                              showError(i18n.t('message.CannotPasteOutsideBoundary', lang));
+                            }
+                            break;
+                          }
                           const nearestNeighborId = state.findNearestSibling(elem.id);
                           if (nearestNeighborId) {
                             const nearestNeighbor = state.getElementById(nearestNeighborId);
@@ -5091,18 +5144,18 @@ export const useStore = create<CommonStoreState>(
                               if (newChild?.type === ObjectType.Wall || newChild?.type === ObjectType.Roof) {
                                 elementsMapNewToOld.set(newChild.id, child.id);
                                 elementsMapOldToNew.set(child.id, newChild.id);
-                                for (const grandchild of state.elements) {
-                                  if (grandchild.parentId === child.id) {
+                                for (const grandChild of state.elements) {
+                                  if (grandChild.parentId === child.id) {
                                     const newGrandChild = ElementModelCloner.clone(
                                       newChild,
-                                      grandchild,
-                                      grandchild.cx,
-                                      grandchild.cy,
-                                      grandchild.cz,
+                                      grandChild,
+                                      grandChild.cx,
+                                      grandChild.cy,
+                                      grandChild.cz,
                                     );
                                     if (newGrandChild) {
                                       if (child.normal) {
-                                        grandchild.normal = [...child.normal];
+                                        newGrandChild.normal = [...grandChild.normal];
                                       }
                                       pastedElements.push(newGrandChild);
                                     }

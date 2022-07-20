@@ -66,6 +66,7 @@ const SolarPanel = ({
   showLabel = false,
   locked = false,
   parentId,
+  foundationId,
   orientation = Orientation.portrait,
 }: SolarPanelModel) => {
   const setCommonStore = useStore(Selector.set);
@@ -158,6 +159,21 @@ const SolarPanel = ({
             cz = parent.cz + cz * parent.lz;
           }
           break;
+        case ObjectType.Wall:
+          cx = cx * parent.lx;
+          cz = cz * parent.lz;
+          break;
+        case ObjectType.Roof:
+          if (foundationId) {
+            const foundation = getElementById(foundationId);
+            if (foundation) {
+              cx = foundation.lx * cx;
+              cy = foundation.ly * cy;
+              if (faceUp) {
+                cz = cz + poleHeight;
+              }
+            }
+          }
       }
     }
   }
@@ -279,6 +295,13 @@ const SolarPanel = ({
   }, [cachedTexture, nx, ny]);
 
   const euler = useMemo(() => {
+    if (parent?.type === ObjectType.Wall) {
+      return new Euler(HALF_PI, 0, 0);
+    }
+    if (parent?.type === ObjectType.Roof) {
+      return new Euler().fromArray([...rotation, 'ZXY']);
+      // return new Euler();
+    }
     // east face in model coordinate system
     if (Util.isSame(panelNormal, UNIT_VECTOR_POS_X)) {
       return new Euler(HALF_PI, 0, rotation[2] + HALF_PI, 'ZXY');
@@ -437,7 +460,7 @@ const SolarPanel = ({
           {showSolarRadiationHeatmap && heatmapTexture ? (
             <meshBasicMaterial attachArray="material" map={heatmapTexture} />
           ) : (
-            <meshStandardMaterial attachArray="material" map={texture} />
+            <meshStandardMaterial attachArray="material" map={texture} color={color} />
           )}
           <meshStandardMaterial attachArray="material" color={color} />
         </Box>
@@ -913,4 +936,4 @@ const SolarPanel = ({
   );
 };
 
-export default React.memo(SolarPanel);
+export default SolarPanel;

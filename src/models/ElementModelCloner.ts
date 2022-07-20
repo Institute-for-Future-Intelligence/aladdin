@@ -286,6 +286,7 @@ export class ElementModelCloner {
       showLabel: solarPanel.showLabel,
       normal: [...solarPanel.normal],
       rotation: solarPanel.parentId ? [...parent.rotation] : [0, 0, 0],
+      parentType: solarPanel.parentType,
       parentId: parent.id,
       foundationId: foundationId,
       id: short.generate() as string,

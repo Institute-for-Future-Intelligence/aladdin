@@ -49,7 +49,7 @@ const ElementsRenderer: React.FC = () => {
   }, []);
 
   // console.log(groupRef)
-  // console.log(elements);
+  console.log(elements);
 
   return (
     <group ref={groupRef} name={'Content'}>
@@ -66,7 +66,13 @@ const ElementsRenderer: React.FC = () => {
           case ObjectType.Tree:
             return <Tree key={e.id} {...(e as TreeModel)} />;
           case ObjectType.SolarPanel:
-            return <SolarPanel key={e.id} {...(e as SolarPanelModel)} />;
+            switch ((e as SolarPanelModel).parentType) {
+              case ObjectType.Roof:
+              case ObjectType.Wall:
+                return null;
+              default:
+                return <SolarPanel key={e.id} {...(e as SolarPanelModel)} />;
+            }
           case ObjectType.ParabolicDish:
             return <ParabolicDish key={e.id} {...(e as ParabolicDishModel)} />;
           case ObjectType.ParabolicTrough:

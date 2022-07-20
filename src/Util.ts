@@ -695,26 +695,45 @@ export class Util {
     return type === ObjectType.FresnelReflector || type === ObjectType.Heliostat;
   }
 
-  static checkElementOnWallState(elem: ElementModel): ElementOnWallState {
-    const eMinX = elem.cx - elem.lx / 2;
-    const eMaxX = elem.cx + elem.lx / 2;
-    const eMinZ = elem.cz - elem.lz / 2;
-    const eMaxZ = elem.cz + elem.lz / 2;
+  static isLegalOnWall(type: ObjectType) {
+    switch (type) {
+      case ObjectType.Window:
+      case ObjectType.Door:
+      case ObjectType.SolarPanel:
+        return true;
+    }
+    return false;
+  }
+
+  static checkElementOnWallState(elem: ElementModel, parent?: ElementModel): ElementOnWallState {
+    let hx = elem.lx / 2;
+    let hz = elem.lz / 2;
+    if (parent && elem.type === ObjectType.SolarPanel) {
+      hx = hx / parent.lx;
+      hz = elem.ly / 2 / parent.lz;
+    }
+    const eMinX = elem.cx - hx;
+    const eMaxX = elem.cx + hx;
+    const eMinZ = elem.cz - hz;
+    const eMaxZ = elem.cz + hz;
+
     if (eMinX < -0.5 || eMaxX > 0.5 || eMinZ < -0.5 || eMaxZ > 0.5) {
       return ElementOnWallState.OutsideBoundary;
     }
     for (const e of useStore.getState().elements) {
       // check collision with other elements
-      if (
-        (e.type === ObjectType.Window || e.type === ObjectType.Door) &&
-        e.parentId === elem.parentId &&
-        e.id !== elem.id
-      ) {
+      if (Util.isLegalOnWall(e.type) && e.parentId === elem.parentId && e.id !== elem.id) {
+        let ehx = e.lx / 2;
+        let ehz = e.lz / 2;
+        if (parent && e.type === ObjectType.SolarPanel) {
+          ehx = ehx / parent.lx;
+          ehz = e.ly / 2 / parent.lz;
+        }
         // target element
-        const tMinX = e.cx - e.lx / 2;
-        const tMaxX = e.cx + e.lx / 2;
-        const tMinZ = e.cz - e.lz / 2;
-        const tMaxZ = e.cz + e.lz / 2;
+        const tMinX = e.cx - ehx;
+        const tMaxX = e.cx + ehx;
+        const tMinZ = e.cz - ehz;
+        const tMaxZ = e.cz + ehz;
         if (
           ((eMinX >= tMinX && eMinX <= tMaxX) ||
             (eMaxX >= tMinX && eMaxX <= tMaxX) ||
@@ -914,5 +933,48 @@ export class Util {
 
   static clamp(num: number, min: number, max: number): number {
     return Math.min(Math.max(num, min), max);
+  }
+
+  static distanceFromPointToLine2D(p: Vector3, l1: Vector3, l2: Vector3) {
+    const [x, y] = [p.x, p.y];
+    const [x1, y1] = [l1.x, l1.y];
+    const [x2, y2] = [l2.x, l2.y];
+
+    const A = x - x1;
+    const B = y - y1;
+    const C = x2 - x1;
+    const D = y2 - y1;
+
+    const dot = A * C + B * D;
+    const len_sq = C * C + D * D;
+    let param = -1;
+    if (len_sq != 0) {
+      param = dot / len_sq;
+    }
+
+    let xx, yy;
+
+    if (param < 0) {
+      xx = x1;
+      yy = y1;
+    } else if (param > 1) {
+      xx = x2;
+      yy = y2;
+    } else {
+      xx = x1 + param * C;
+      yy = y1 + param * D;
+    }
+
+    const dx = x - xx;
+    const dy = y - yy;
+    return Math.sqrt(dx * dx + dy * dy);
+  }
+
+  static mapVector3ToPoint2(v: Vector3) {
+    return { x: v.x, y: v.y } as Point2;
+  }
+
+  static squareRootOfSquareSum(x: number, y: number) {
+    return Math.sqrt(Math.pow(x, 2) + Math.pow(y, 2));
   }
 }

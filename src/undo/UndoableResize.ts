@@ -37,7 +37,7 @@ export interface UndoableResize extends Undoable {
   newChildrenParentIdMap?: Map<string, string>;
 }
 
-export interface UndoableResizeWindowOrDoor extends Undoable {
+export interface UndoableResizeElementOnWall extends Undoable {
   resizedElementId: string;
   resizedElementType: ObjectType;
   oldPosition: number[];

@@ -2,7 +2,7 @@
  * @Copyright 2021-2022. Institute for Future Intelligence, Inc.
  */
 
-import { Orientation, TrackerType } from '../types';
+import { ObjectType, Orientation, TrackerType } from '../types';
 import { SolarCollector } from './SolarCollector';
 
 export interface SolarPanelModel extends SolarCollector {
@@ -11,4 +11,5 @@ export interface SolarPanelModel extends SolarCollector {
   orientation: Orientation;
   trackerType: TrackerType;
   poleSpacing: number;
+  parentType?: ObjectType;
 }

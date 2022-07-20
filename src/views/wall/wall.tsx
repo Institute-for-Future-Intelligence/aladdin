@@ -31,7 +31,7 @@ import {
 } from 'three';
 import { ThreeEvent, useThree } from '@react-three/fiber';
 import { Plane } from '@react-three/drei';
-import { ActionType, MoveHandleType, ObjectType, ResizeHandleType, WallTexture } from 'src/types';
+import { ActionType, MoveHandleType, ObjectType, Orientation, ResizeHandleType, WallTexture } from 'src/types';
 import { Util } from 'src/Util';
 import { useStore } from 'src/stores/common';
 import { useStoreRef } from 'src/stores/commonRef';
@@ -48,9 +48,11 @@ import * as Selector from 'src/stores/selector';
 import { FINE_GRID_SCALE, HALF_PI, LOCKED_ELEMENT_SELECTION_COLOR, NORMAL_GRID_SCALE, TWO_PI } from 'src/constants';
 import { UndoableMove } from 'src/undo/UndoableMove';
 import { UndoableAdd } from 'src/undo/UndoableAdd';
-import { UndoableResizeWindowOrDoor } from 'src/undo/UndoableResize';
+import { UndoableResizeElementOnWall } from 'src/undo/UndoableResize';
 import { DoorModel } from 'src/models/DoorModel';
 import Door from '../door';
+import { SolarPanelModel } from 'src/models/SolarPanelModel';
+import SolarPanel from '../solarPanel';
 
 const Wall = ({
   id,
@@ -185,8 +187,7 @@ const Wall = ({
 
   const [originElements, setOriginElements] = useState<ElementModel[] | null>(null);
   const [showGrid, setShowGrid] = useState(false);
-  const [windows, setWindows] = useState<WindowModel[]>([]);
-  const [doors, setDoors] = useState<DoorModel[]>([]);
+  const [elementsOnWall, setElementOnWall] = useState<ElementModel[]>([]);
 
   const { camera, gl } = useThree();
   const mouse = useMemo(() => new Vector2(), []);
@@ -281,8 +282,8 @@ const Wall = ({
     const wallShape = new Shape();
     drawRectangle(wallShape, lx, lz, 0, 0, 0, 0);
 
-    windows.forEach((w) => {
-      if (w.id !== invalidElementIdRef.current) {
+    elementsOnWall.forEach((w) => {
+      if (w.type === ObjectType.Window && w.id !== invalidElementIdRef.current) {
         const window = new Shape();
         drawWindow(window, w.lx * lx, w.lz * lz, w.cx * lx, w.cz * lz);
         wallShape.holes.push(window);
@@ -298,8 +299,8 @@ const Wall = ({
     const wallShape = new Shape();
     drawRectangle(wallShape, lx, lz, 0, 0, leftOffset, rightOffset);
 
-    windows.forEach((w) => {
-      if (w.id !== invalidElementIdRef.current) {
+    elementsOnWall.forEach((w) => {
+      if (w.type === ObjectType.Window && w.id !== invalidElementIdRef.current) {
         const window = new Shape();
         drawWindow(window, w.lx * lx, w.lz * lz, w.cx * lx, w.cz * lz);
         wallShape.holes.push(window);
@@ -362,8 +363,7 @@ const Wall = ({
   }, [ly]);
 
   useEffect(() => {
-    setWindows(elements.filter((e) => e.type === ObjectType.Window && e.parentId === id) as WindowModel[]);
-    setDoors((elements as DoorModel[]).filter((e) => e.type === ObjectType.Door && e.parentId === id));
+    setElementOnWall(elements.filter((e) => validElementOnWall(e)));
   }, [elements]);
 
   // roof
@@ -384,6 +384,13 @@ const Wall = ({
       });
     }
   }, [deletedRoofId]);
+
+  const validElementOnWall = (elem: ElementModel) => {
+    if (elem.parentId !== id) {
+      return false;
+    }
+    return Util.isLegalOnWall(elem.type);
+  };
 
   const getRelativePosOnWall = (p: Vector3, wall: WallModel) => {
     const { cx, cy, cz } = wall;
@@ -443,7 +450,7 @@ const Wall = ({
     return inside;
   };
 
-  const isMovingWindowInsideWall = (p: Vector3, wlx: number, wlz: number) => {
+  const isMovingElementInsideWall = (p: Vector3, wlx: number, wlz: number) => {
     for (let i = -1; i <= 1; i += 2) {
       for (let j = -1; j <= 1; j += 2) {
         if (!isPointInside(p.x + (wlx / 2) * i, p.z + (wlz / 2) * j)) {
@@ -454,35 +461,60 @@ const Wall = ({
     return true;
   };
 
+  const collisionHelper = (args: number[]) => {
+    const [tMinX, tMaxX, tMinZ, tMaxZ, cMinX, cMaxX, cMinZ, cMaxZ] = args;
+    if (
+      ((cMinX >= tMinX && cMinX <= tMaxX) ||
+        (cMaxX >= tMinX && cMaxX <= tMaxX) ||
+        (tMinX >= cMinX && tMinX <= cMaxX) ||
+        (tMaxX >= cMinX && tMaxX <= cMaxX)) &&
+      ((cMinZ >= tMinZ && cMinZ <= tMaxZ) ||
+        (cMaxZ >= tMinZ && cMaxZ <= tMaxZ) ||
+        (tMinZ >= cMinZ && tMinZ <= cMaxZ) ||
+        (tMaxZ >= cMinZ && tMaxZ <= cMaxZ))
+    ) {
+      return true;
+    }
+    return false;
+  };
+
   const checkCollision = (id: string, type: ObjectType, p: Vector3, wlx: number, wlz: number) => {
     if (wlx < 0.1 || wlz < 0.1) {
       invalidElementIdRef.current = id;
       return false;
     }
-    const elementsOnWalls: ElementModel[] = [...windows, ...doors];
 
-    for (const w of elementsOnWalls) {
-      if (w.id !== id) {
-        const minX = w.cx * lx - (w.lx * lx) / 2; // target window left
-        const maxX = w.cx * lx + (w.lx * lx) / 2; // target window right
-        const minZ = w.cz * lz - (w.lz * lz) / 2; // target window bot
-        const maxZ = w.cz * lz + (w.lz * lz) / 2; // target window up
-        const wMinX = p.x - wlx / 2; // current window left
-        const wMaxX = p.x + wlx / 2; // current window right
-        const wMinZ = p.z - wlz / 2; // current window bot
-        const wMaxZ = p.z + wlz / 2; // current window up
-        if (
-          ((wMinX >= minX && wMinX <= maxX) ||
-            (wMaxX >= minX && wMaxX <= maxX) ||
-            (minX >= wMinX && minX <= wMaxX) ||
-            (maxX >= wMinX && maxX <= wMaxX)) &&
-          ((wMinZ >= minZ && wMinZ <= maxZ) ||
-            (wMaxZ >= minZ && wMaxZ <= maxZ) ||
-            (minZ >= wMinZ && minZ <= wMaxZ) ||
-            (maxZ >= wMinZ && maxZ <= wMaxZ))
-        ) {
-          invalidElementIdRef.current = id;
-          return false; // has collision
+    for (const e of elementsOnWall) {
+      if (e.id !== id) {
+        const cMinX = p.x - wlx / 2; // current element left
+        const cMaxX = p.x + wlx / 2; // current element right
+        const cMinZ = p.z - wlz / 2; // current element bot
+        const cMaxZ = p.z + wlz / 2; // current element up
+        switch (e.type) {
+          case ObjectType.Door:
+          case ObjectType.Window: {
+            const tMinX = e.cx * lx - (e.lx * lx) / 2; // target element left
+            const tMaxX = e.cx * lx + (e.lx * lx) / 2; // target element right
+            const tMinZ = e.cz * lz - (e.lz * lz) / 2; // target element bot
+            const tMaxZ = e.cz * lz + (e.lz * lz) / 2; // target element up
+            if (collisionHelper([tMinX, tMaxX, tMinZ, tMaxZ, cMinX, cMaxX, cMinZ, cMaxZ])) {
+              invalidElementIdRef.current = id;
+              return false;
+            }
+            break;
+          }
+          case ObjectType.SolarPanel: {
+            const tMinX = e.cx * lx - e.lx / 2; // target element left
+            const tMaxX = e.cx * lx + e.lx / 2; // target element right
+            const tMinZ = e.cz * lz - e.ly / 2; // target element bot
+            const tMaxZ = e.cz * lz + e.ly / 2; // target element up
+
+            if (collisionHelper([tMinX, tMaxX, tMinZ, tMaxZ, cMinX, cMaxX, cMinZ, cMaxZ])) {
+              invalidElementIdRef.current = id;
+              return false;
+            }
+            break;
+          }
         }
       }
     }
@@ -541,6 +573,18 @@ const Wall = ({
     isSettingDoorEndPointRef.current = false;
   };
 
+  const setElementPosDms = (id: string, pos: number[], dms: number[]) => {
+    setCommonStore((state) => {
+      for (const e of state.elements) {
+        if (e.id === id) {
+          [e.cx, e.cy, e.cz] = pos;
+          [e.lx, e.ly, e.lz] = dms;
+          break;
+        }
+      }
+    });
+  };
+
   const handleUndoableAdd = (elem: ElementModel) => {
     const undoableAdd = {
       name: 'Add',
@@ -586,8 +630,9 @@ const Wall = ({
     switch (elem.type) {
       case ObjectType.Door:
       case ObjectType.Window:
+      case ObjectType.SolarPanel:
         const undoableResize = {
-          name: 'Resize ' + (elem.type === ObjectType.Window ? 'Window' : 'Door'),
+          name: `Resize ${elem.type}`,
           timestamp: Date.now(),
           resizedElementId: elem.id,
           resizedElementType: elem.type,
@@ -596,28 +641,12 @@ const Wall = ({
           newPosition: [elem.cx, elem.cy, elem.cz],
           newDimension: [elem.lx, elem.ly, elem.lz],
           undo: () => {
-            setCommonStore((state) => {
-              for (const e of state.elements) {
-                if (e.id === undoableResize.resizedElementId) {
-                  [e.cx, e.cy, e.cz] = undoableResize.oldPosition;
-                  [e.lx, e.ly, e.lz] = undoableResize.oldDimension;
-                  break;
-                }
-              }
-            });
+            setElementPosDms(undoableResize.resizedElementId, undoableResize.oldPosition, undoableResize.oldDimension);
           },
           redo: () => {
-            setCommonStore((state) => {
-              for (const e of state.elements) {
-                if (e.id === undoableResize.resizedElementId) {
-                  [e.cx, e.cy, e.cz] = undoableResize.newPosition;
-                  [e.lx, e.ly, e.lz] = undoableResize.newDimension;
-                  break;
-                }
-              }
-            });
+            setElementPosDms(undoableResize.resizedElementId, undoableResize.newPosition, undoableResize.newDimension);
           },
-        } as UndoableResizeWindowOrDoor;
+        } as UndoableResizeElementOnWall;
         addUndoable(undoableResize);
         break;
     }
@@ -664,34 +693,61 @@ const Wall = ({
         }
 
         // add new elements
-        if (parent && !roofId && objectTypeToAddRef.current) {
-          let roof: ElementModel | null = null;
+        if (parent && objectTypeToAddRef.current) {
+          let newElement: ElementModel | null = null;
           switch (objectTypeToAddRef.current) {
             case ObjectType.PyramidRoof: {
-              roof = ElementModelFactory.makePyramidRoof([wallModel.id], parent, lz);
+              if (!roofId) {
+                newElement = ElementModelFactory.makePyramidRoof([wallModel.id], parent, lz);
+              }
               break;
             }
             case ObjectType.GableRoof: {
-              roof = ElementModelFactory.makeGableRoof([wallModel.id], parent, lz);
+              if (!roofId) {
+                newElement = ElementModelFactory.makeGableRoof([wallModel.id], parent, lz);
+              }
               break;
             }
             case ObjectType.HipRoof: {
-              roof = ElementModelFactory.makeHipRoof([wallModel.id], parent, lz, lx / 2);
+              if (!roofId) {
+                newElement = ElementModelFactory.makeHipRoof([wallModel.id], parent, lz, lx / 2);
+              }
               break;
             }
             case ObjectType.GambrelRoof: {
-              roof = ElementModelFactory.makeGambrelRoof([wallModel.id], parent, lz);
+              if (!roofId) {
+                newElement = ElementModelFactory.makeGambrelRoof([wallModel.id], parent, lz);
+              }
               break;
             }
             case ObjectType.MansardRoof: {
-              roof = ElementModelFactory.makeMansardRoof([wallModel.id], parent, lz);
+              if (!roofId) {
+                newElement = ElementModelFactory.makeMansardRoof([wallModel.id], parent, lz);
+              }
+              break;
+            }
+            case ObjectType.SolarPanel: {
+              const p = getRelativePosOnWall(pointer, wallModel);
+              newElement = ElementModelFactory.makeSolarPanel(
+                wallModel,
+                useStore.getState().getPvModule('SPR-X21-335-BLK'),
+                p.x / lx,
+                0,
+                p.z / lz,
+                Orientation.landscape,
+                new Vector3(0, -1, 0),
+                [0, 0, 0],
+                undefined,
+                undefined,
+                ObjectType.Wall,
+              );
               break;
             }
           }
-          if (roof) {
-            handleUndoableAdd(roof);
+          if (newElement) {
+            handleUndoableAdd(newElement);
             setCommonStore((state) => {
-              state.elements.push(roof as ElementModel);
+              state.elements.push(newElement as ElementModel);
               state.objectTypeToAdd = ObjectType.None;
             });
             return;
@@ -798,7 +854,7 @@ const Wall = ({
               if (moveHandleType) {
                 const v = new Vector3((-grabRef.current.lx / 2) * lx, 0, (grabRef.current.lz / 2) * lz);
                 p = getPositionOnGrid(p.clone().add(v)).sub(v);
-                if (!isMovingWindowInsideWall(p, grabRef.current.lx * lx, grabRef.current.lz * lz)) {
+                if (!isMovingElementInsideWall(p, grabRef.current.lx * lx, grabRef.current.lz * lz)) {
                   return;
                 }
                 checkCollision(
@@ -813,6 +869,7 @@ const Wall = ({
                     if (e.id === grabRef.current?.id) {
                       e.cx = p.x / lx;
                       e.cz = p.z / lz;
+                      e.cy = e.id === invalidElementIdRef.current ? -0.1 : 0.1;
                       e.color = e.id === invalidElementIdRef.current ? 'red' : '#477395';
                     }
                   }
@@ -836,6 +893,7 @@ const Wall = ({
                       e.lz = Math.abs(v.z) / lz;
                       e.cx = relativePos.x / lx;
                       e.cz = relativePos.z / lz;
+                      e.cy = e.id === invalidElementIdRef.current ? -0.1 : 0.1;
                       e.color = e.id === invalidElementIdRef.current ? 'red' : '#477395';
                     }
                   }
@@ -883,6 +941,63 @@ const Wall = ({
               break;
             }
             case ObjectType.SolarPanel: {
+              const pvModel = useStore.getState().getPvModule((grabRef.current as SolarPanelModel).pvModelName);
+              let unitX = pvModel.width;
+              let unitY = pvModel.length;
+              if ((grabRef.current as SolarPanelModel).orientation === Orientation.landscape) {
+                [unitX, unitY] = [unitY, unitX];
+              }
+
+              let p = getRelativePosOnWall(pointer, wallModel);
+              if (moveHandleType) {
+                const v = new Vector3(-grabRef.current.lx / 2, 0, grabRef.current.ly / 2);
+                p = getPositionOnGrid(p.clone().add(v)).sub(v);
+                if (!isMovingElementInsideWall(p, grabRef.current.lx, grabRef.current.ly)) {
+                  return;
+                }
+                checkCollision(grabRef.current.id, ObjectType.SolarPanel, p, grabRef.current.lx, grabRef.current.ly);
+                setCommonStore((state) => {
+                  for (const e of state.elements) {
+                    if (e.id === grabRef.current?.id) {
+                      e.cx = p.x / lx;
+                      e.cz = p.z / lz;
+                      e.color = e.id === invalidElementIdRef.current ? 'red' : '#fff';
+                    }
+                  }
+                });
+              } else if (resizeHandleType) {
+                const resizeAnchor = getRelativePosOnWall(resizeAnchorRef.current, wallModel);
+                setCommonStore((state) => {
+                  for (const e of state.elements) {
+                    if (e.id === grabRef.current?.id) {
+                      if (
+                        state.resizeHandleType === ResizeHandleType.Lower ||
+                        state.resizeHandleType === ResizeHandleType.Upper
+                      ) {
+                        const ny = Math.max(1, Math.round(Math.abs(p.z - resizeAnchor.z) / unitY));
+                        const length = ny * unitY;
+                        const v = new Vector3(0, 0, p.z - resizeAnchor.z).normalize().multiplyScalar(length);
+                        const c = new Vector3().addVectors(resizeAnchor, v.clone().divideScalar(2));
+                        e.cz = c.z / lz;
+                        e.ly = Math.abs(v.z);
+                        checkCollision(grabRef.current.id, ObjectType.SolarPanel, c, Math.abs(v.z), e.lx);
+                      } else if (
+                        state.resizeHandleType === ResizeHandleType.Left ||
+                        state.resizeHandleType === ResizeHandleType.Right
+                      ) {
+                        const nx = Math.max(1, Math.round(Math.abs(p.x - resizeAnchor.x) / unitX));
+                        const length = nx * unitX;
+                        const v = new Vector3(p.x - resizeAnchor.x, 0, 0).normalize().multiplyScalar(length);
+                        const c = new Vector3().addVectors(resizeAnchor, v.clone().divideScalar(2));
+                        e.cx = c.x / lx;
+                        e.lx = Math.abs(v.x);
+                        checkCollision(grabRef.current.id, ObjectType.SolarPanel, c, Math.abs(v.x), e.ly);
+                      }
+                      e.color = e.id === invalidElementIdRef.current ? 'red' : '#fff';
+                    }
+                  }
+                });
+              }
               break;
             }
             case ObjectType.Sensor: {
@@ -1078,11 +1193,19 @@ const Wall = ({
             <meshBasicMaterial />
           </mesh>
 
-          {windows.map((e) => {
-            return <Window key={e.id} {...(e as WindowModel)} />;
-          })}
-          {doors.map((e) => {
-            return <Door key={e.id} {...(e as DoorModel)} />;
+          {elementsOnWall.map((e) => {
+            switch (e.type) {
+              case ObjectType.Window:
+                return <Window key={e.id} {...(e as WindowModel)} />;
+              case ObjectType.Door:
+                return <Door key={e.id} {...(e as DoorModel)} />;
+              case ObjectType.SolarPanel:
+                return (
+                  <group key={e.id} position={[0, -e.lz / 2, 0]}>
+                    <SolarPanel {...(e as SolarPanelModel)} />
+                  </group>
+                );
+            }
           })}
 
           {/* wireFrame */}

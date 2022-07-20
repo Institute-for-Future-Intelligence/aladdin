@@ -18,6 +18,7 @@ import { ObjectType, WallTexture } from 'src/types';
 import { ElementCounter } from '../../../stores/ElementCounter';
 import { ExclamationCircleOutlined } from '@ant-design/icons';
 import { UndoableRemoveAllChildren } from '../../../undo/UndoableRemoveAllChildren';
+import { Util } from 'src/Util';
 
 export const WallMenu = () => {
   const setCommonStore = useStore(Selector.set);
@@ -43,7 +44,7 @@ export const WallMenu = () => {
   const legalToPaste = () => {
     if (elementsToPaste && elementsToPaste.length > 0) {
       const e = elementsToPaste[0];
-      if (e.type === ObjectType.Window || e.type === ObjectType.Door) {
+      if (Util.isLegalOnWall(e.type)) {
         return true;
       }
     }

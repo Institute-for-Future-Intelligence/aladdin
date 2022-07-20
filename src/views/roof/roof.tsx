@@ -280,9 +280,15 @@ export const isRoofValid = (
       if (wall.id === currWallId || wall.id === counterWallId) {
         for (const e of useStore.getState().elements) {
           if (e.parentId === wall.id) {
-            const minX = e.cx * wall.lx - (e.lx * wall.lx) / 2;
-            const maxX = e.cx * wall.lx + (e.lx * wall.lx) / 2;
-            const maxZ = e.cz * wall.lz + (e.lz * wall.lz) / 2 + 0.5;
+            let hx = e.lx / 2;
+            let hz = e.lz / 2;
+            if (e.type === ObjectType.SolarPanel) {
+              hx = hx / wall.lx;
+              hz = e.ly / wall.lz / 2;
+            }
+            const minX = e.cx * wall.lx - hx * wall.lx;
+            const maxX = e.cx * wall.lx + hx * wall.lx;
+            const maxZ = e.cz * wall.lz + hz * wall.lz + 0.5;
             if (!isPointInside(points, minX, maxZ) || !isPointInside(points, maxX, maxZ)) {
               return false;
             }

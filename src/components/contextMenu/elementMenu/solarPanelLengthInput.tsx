@@ -8,7 +8,7 @@ import Draggable, { DraggableBounds, DraggableData, DraggableEvent } from 'react
 import { useStore } from '../../../stores/common';
 import * as Selector from '../../../stores/selector';
 import { SolarPanelModel } from '../../../models/SolarPanelModel';
-import { ObjectType, Orientation, Scope } from '../../../types';
+import { ElementOnWallState, ObjectType, Orientation, Scope } from '../../../types';
 import i18n from '../../../i18n/i18n';
 import { UndoableChange } from '../../../undo/UndoableChange';
 import { UndoableChangeGroup } from '../../../undo/UndoableChangeGroup';
@@ -69,6 +69,10 @@ const SolarPanelLengthInput = ({ setDialogVisible }: { setDialogVisible: (b: boo
       }
       const clone = JSON.parse(JSON.stringify(sp)) as SolarPanelModel;
       clone.lx = lx;
+      if (parent.type === ObjectType.Wall) {
+        // maybe outside bound or overlap with others
+        return Util.checkElementOnWallState(clone, parent) === ElementOnWallState.Valid;
+      }
       return Util.isSolarCollectorWithinHorizontalSurface(clone, parent);
     }
     return false;
