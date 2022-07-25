@@ -28,7 +28,7 @@ import {
   handleUndoableResizeRoofHeight,
   useRoofTexture,
   RoofWireframeProps,
-} from './roof';
+} from './roofRenderer';
 
 const centerPointPosition = new Vector3();
 const intersectionPlanePosition = new Vector3();

@@ -9,7 +9,6 @@ import { ElementModel } from 'src/models/ElementModel';
 import { ElementModelFactory } from 'src/models/ElementModelFactory';
 import { Point2 } from 'src/models/Point2';
 import { HipRoofModel } from 'src/models/RoofModel';
-import { SolarPanelModel } from 'src/models/SolarPanelModel';
 import { WallModel } from 'src/models/WallModel';
 import { useStore } from 'src/stores/common';
 import { useStoreRef } from 'src/stores/commonRef';
@@ -19,7 +18,6 @@ import { UndoableResizeHipRoofRidge } from 'src/undo/UndoableResize';
 import { Util } from 'src/Util';
 import { DoubleSide, Euler, Mesh, Raycaster, Vector2, Vector3 } from 'three';
 import { ObjectType } from '../../types';
-import SolarPanel from '../solarPanel';
 import {
   handleUndoableResizeRoofHeight,
   ConvexGeoProps,
@@ -30,7 +28,7 @@ import {
   getDistance,
   handleRoofPointerDown,
   RoofWireframeProps,
-} from './roof';
+} from './roofRenderer';
 
 enum RoofHandleType {
   Mid = 'Mid',
@@ -520,14 +518,10 @@ const HipRoof = ({
   const updateSolarPanelOnRoof = () => {
     setCommonStore((state) => {
       for (const e of state.elements) {
-        if (e.type === ObjectType.SolarPanel && e.foundationId) {
+        if (e.type === ObjectType.SolarPanel && e.parentId === id && e.foundationId) {
           const foundation = state.getElementById(e.foundationId);
           if (foundation) {
-            const posRelToFoundation = new Vector3(
-              e.cx * foundation.lx,
-              e.cy * foundation.ly,
-              e.cz + foundation.lz / 2,
-            );
+            const posRelToFoundation = new Vector3(e.cx * foundation.lx, e.cy * foundation.ly, e.cz + foundation.lz);
             const segmentIdx = getRoofSegmentIdxFromPostion(posRelToFoundation);
             const normal = getNormalOnRoof(segmentIdx, posRelToFoundation);
             const rotation = getSolarPanelRotation(segmentIdx, posRelToFoundation);
@@ -536,7 +530,7 @@ const HipRoof = ({
             if (rotation && z !== undefined) {
               e.normal = normal.toArray();
               e.rotation = [...rotation];
-              e.cz = z + e.lz;
+              e.cz = z;
             }
           }
         }
@@ -571,7 +565,7 @@ const HipRoof = ({
                 useStore.getState().getPvModule('SPR-X21-335-BLK'),
                 posRelToFoundation.x / foundation.lx,
                 posRelToFoundation.y / foundation.ly,
-                posRelToFoundation.z - foundation.lz / 2,
+                posRelToFoundation.z - foundation.lz,
                 Orientation.landscape,
                 normal,
                 rotation ?? [0, 0, 1],
@@ -616,7 +610,7 @@ const HipRoof = ({
                         if (e.id === grabRef.current?.id) {
                           e.cx = posRelToFoundation.x / foundation.lx;
                           e.cy = posRelToFoundation.y / foundation.ly;
-                          e.cz = posRelToFoundation.z - foundation.lz / 2;
+                          e.cz = posRelToFoundation.z - foundation.lz;
                           e.rotation = [...rotation];
                           e.normal = normal.toArray();
                           break;
@@ -631,6 +625,9 @@ const HipRoof = ({
         }}
         onPointerUp={() => {
           grabRef.current = null;
+          setCommonStore((state) => {
+            state.moveHandleType = null;
+          });
         }}
         onContextMenu={(e) => {
           handleRoofContextMenu(e, id);

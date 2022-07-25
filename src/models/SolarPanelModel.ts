@@ -3,6 +3,7 @@
  */
 
 import { ObjectType, Orientation, TrackerType } from '../types';
+import { FoundationModel } from './FoundationModel';
 import { SolarCollector } from './SolarCollector';
 
 export interface SolarPanelModel extends SolarCollector {
@@ -12,4 +13,5 @@ export interface SolarPanelModel extends SolarCollector {
   trackerType: TrackerType;
   poleSpacing: number;
   parentType?: ObjectType;
+  foundationModel?: FoundationModel;
 }

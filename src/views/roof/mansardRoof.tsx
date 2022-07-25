@@ -29,7 +29,7 @@ import {
   isRoofValid,
   RoofWireframeProps,
   useRoofTexture,
-} from './roof';
+} from './roofRenderer';
 
 const intersectionPlanePosition = new Vector3();
 const intersectionPlaneRotation = new Euler();

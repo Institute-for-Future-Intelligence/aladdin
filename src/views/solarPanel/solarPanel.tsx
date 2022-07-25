@@ -2,12 +2,12 @@
  * @Copyright 2021-2022. Institute for Future Intelligence, Inc.
  */
 
-import React, { useEffect, useMemo, useRef, useState } from 'react';
+import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { Box, Cone, Cylinder, Line, Plane, Ring, Sphere } from '@react-three/drei';
 import { CanvasTexture, DoubleSide, Euler, Mesh, Raycaster, RepeatWrapping, Texture, Vector2, Vector3 } from 'three';
-import { useStore } from '../stores/common';
+import { useStore } from '../../stores/common';
 import { useStoreRef } from 'src/stores/commonRef';
-import * as Selector from '../stores/selector';
+import * as Selector from '../../stores/selector';
 import { ThreeEvent, useThree } from '@react-three/fiber';
 import {
   HALF_PI,
@@ -22,7 +22,7 @@ import {
   UNIT_VECTOR_POS_Y,
   UNIT_VECTOR_POS_Z,
   ZERO_TOLERANCE,
-} from '../constants';
+} from '../../constants';
 import {
   ActionType,
   MoveHandleType,
@@ -32,14 +32,14 @@ import {
   RotateHandleType,
   SolarPanelTextureType,
   TrackerType,
-} from '../types';
-import { Util } from '../Util';
-import { SolarPanelModel } from '../models/SolarPanelModel';
-import { getSunDirection } from '../analysis/sunTools';
-import RotateHandle from '../components/rotateHandle';
-import { UndoableChange } from '../undo/UndoableChange';
-import i18n from '../i18n/i18n';
-import { LineData } from './LineData';
+} from '../../types';
+import { Util } from '../../Util';
+import { SolarPanelModel } from '../../models/SolarPanelModel';
+import { getSunDirection } from '../../analysis/sunTools';
+import RotateHandle from '../../components/rotateHandle';
+import { UndoableChange } from '../../undo/UndoableChange';
+import i18n from '../../i18n/i18n';
+import { LineData } from '../LineData';
 
 const SolarPanel = ({
   id,
@@ -66,7 +66,6 @@ const SolarPanel = ({
   showLabel = false,
   locked = false,
   parentId,
-  foundationId,
   orientation = Orientation.portrait,
 }: SolarPanelModel) => {
   const setCommonStore = useStore(Selector.set);
@@ -159,21 +158,6 @@ const SolarPanel = ({
             cz = parent.cz + cz * parent.lz;
           }
           break;
-        case ObjectType.Wall:
-          cx = cx * parent.lx;
-          cz = cz * parent.lz;
-          break;
-        case ObjectType.Roof:
-          if (foundationId) {
-            const foundation = getElementById(foundationId);
-            if (foundation) {
-              cx = foundation.lx * cx;
-              cy = foundation.ly * cy;
-              if (faceUp) {
-                cz = cz + poleHeight;
-              }
-            }
-          }
       }
     }
   }
@@ -295,13 +279,6 @@ const SolarPanel = ({
   }, [cachedTexture, nx, ny]);
 
   const euler = useMemo(() => {
-    if (parent?.type === ObjectType.Wall) {
-      return new Euler(HALF_PI, 0, 0);
-    }
-    if (parent?.type === ObjectType.Roof) {
-      return new Euler().fromArray([...rotation, 'ZXY']);
-      // return new Euler();
-    }
     // east face in model coordinate system
     if (Util.isSame(panelNormal, UNIT_VECTOR_POS_X)) {
       return new Euler(HALF_PI, 0, rotation[2] + HALF_PI, 'ZXY');
@@ -936,4 +913,4 @@ const SolarPanel = ({
   );
 };
 
-export default SolarPanel;
+export default React.memo(SolarPanel);

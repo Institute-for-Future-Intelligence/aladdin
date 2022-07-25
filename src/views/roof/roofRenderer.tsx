@@ -300,7 +300,7 @@ export const isRoofValid = (
   return true;
 };
 
-const Roof = (props: RoofModel) => {
+const RoofRenderer = (props: RoofModel) => {
   const removeElementById = useStore(Selector.removeElementById);
   const setCommonStore = useStore(Selector.set);
 
@@ -349,4 +349,4 @@ const Roof = (props: RoofModel) => {
   return renderRoof();
 };
 
-export default Roof;
+export default RoofRenderer;

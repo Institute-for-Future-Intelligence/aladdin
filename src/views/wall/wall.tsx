@@ -52,7 +52,7 @@ import { UndoableResizeElementOnWall } from 'src/undo/UndoableResize';
 import { DoorModel } from 'src/models/DoorModel';
 import Door from '../door';
 import { SolarPanelModel } from 'src/models/SolarPanelModel';
-import SolarPanel from '../solarPanel';
+import SolarPanelOnWall from '../solarPanel/solarPanelOnWall';
 
 const Wall = ({
   id,
@@ -1202,7 +1202,7 @@ const Wall = ({
               case ObjectType.SolarPanel:
                 return (
                   <group key={e.id} position={[0, -e.lz / 2, 0]}>
-                    <SolarPanel {...(e as SolarPanelModel)} />
+                    <SolarPanelOnWall {...(e as SolarPanelModel)} />
                   </group>
                 );
             }

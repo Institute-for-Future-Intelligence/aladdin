@@ -17,10 +17,9 @@ import Human from './views/human';
 import { TreeModel } from './models/TreeModel';
 import Tree from './views/tree';
 import { SolarPanelModel } from './models/SolarPanelModel';
-import SolarPanel from './views/solarPanel';
 import { WallModel } from './models/WallModel';
 import Wall from './views/wall/wall';
-import Roof from './views/roof/roof';
+import RoofRenderer from './views/roof/roofRenderer';
 import { RoofModel } from './models/RoofModel';
 import Polygon from './views/polygon';
 import { PolygonModel } from './models/PolygonModel';
@@ -34,6 +33,7 @@ import FresnelReflector from './views/fresnelReflector';
 import { FresnelReflectorModel } from './models/FresnelReflectorModel';
 import Heliostat from './views/heliostat';
 import { HeliostatModel } from './models/HeliostatModel';
+import SolarPanel from './views/solarPanel/solarPanel';
 
 const ElementsRenderer: React.FC = () => {
   const elements = useStore(Selector.elements);
@@ -49,7 +49,7 @@ const ElementsRenderer: React.FC = () => {
   }, []);
 
   // console.log(groupRef)
-  console.log(elements);
+  // console.log(elements);
 
   return (
     <group ref={groupRef} name={'Content'}>
@@ -84,7 +84,7 @@ const ElementsRenderer: React.FC = () => {
           case ObjectType.Wall:
             return <Wall key={e.id} {...(e as WallModel)} />;
           case ObjectType.Roof:
-            return <Roof key={e.id} {...(e as RoofModel)} />;
+            return <RoofRenderer key={e.id} {...(e as RoofModel)} />;
           case ObjectType.Polygon:
             return <Polygon key={e.id} {...(e as PolygonModel)} />;
           default:

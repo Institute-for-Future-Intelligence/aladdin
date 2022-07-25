@@ -70,7 +70,7 @@ import SolarPowerTower from './solarPowerTower';
 import SolarReceiverPipe from './solarReceiverPipe';
 import { UndoablePaste } from '../undo/UndoablePaste';
 import BuildingResizer from 'src/components/buildingResizer';
-import SolarPanel from './solarPanel';
+import SolarPanelOnRoof from './solarPanel/solarPanelOnRoof';
 
 const Foundation = ({
   id,
@@ -2079,7 +2079,16 @@ const Foundation = ({
         </Box>
 
         {elementsOnBuilding.map((e) => {
-          return <SolarPanel key={e.id} {...(e as SolarPanelModel)} />;
+          return (
+            <SolarPanelOnRoof
+              key={e.id}
+              {...(e as SolarPanelModel)}
+              cx={e.cx * lx}
+              cy={e.cy * ly}
+              cz={e.cz + hz}
+              foundationModel={foundationModel}
+            />
+          );
         })}
 
         {/* intersection plane */}

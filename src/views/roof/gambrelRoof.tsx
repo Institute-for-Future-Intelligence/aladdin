@@ -37,7 +37,7 @@ import {
   isRoofValid,
   RoofWireframeProps,
   useRoofTexture,
-} from './roof';
+} from './roofRenderer';
 import { CSG } from 'three-csg-ts';
 import { ConvexGeometry } from 'three/examples/jsm/geometries/ConvexGeometry';
 import { RoofTexture, ObjectType } from 'src/types';

@@ -24,7 +24,7 @@ import {
   handleRoofPointerDown,
   isRoofValid,
   RoofWireframeProps,
-} from './roof';
+} from './roofRenderer';
 import { UnoableResizeGableRoofRidge } from 'src/undo/UndoableResize';
 import { RoofTexture, ObjectType } from 'src/types';
 import { Util } from 'src/Util';
