@@ -257,15 +257,26 @@ export class ElementModelCloner {
 
   private static cloneSolarPanel(parent: ElementModel, solarPanel: SolarPanelModel, x: number, y: number, z?: number) {
     let foundationId;
+    let parentType;
     switch (parent.type) {
       case ObjectType.Foundation:
       case ObjectType.Cuboid:
         foundationId = parent.id;
         break;
       case ObjectType.Wall:
+        foundationId = parent.parentId;
+        parentType = ObjectType.Wall;
+        break;
       case ObjectType.Roof:
+        parentType = ObjectType.Roof;
         foundationId = parent.parentId;
         break;
+    }
+    let rotation;
+    if (solarPanel.parentType === ObjectType.Roof) {
+      rotation = [...solarPanel.rotation];
+    } else {
+      rotation = solarPanel.parentId ? [...parent.rotation] : [0, 0, 0];
     }
     return {
       type: ObjectType.SolarPanel,
@@ -285,8 +296,8 @@ export class ElementModelCloner {
       poleSpacing: solarPanel.poleSpacing,
       showLabel: solarPanel.showLabel,
       normal: [...solarPanel.normal],
-      rotation: solarPanel.parentId ? [...parent.rotation] : [0, 0, 0],
-      parentType: solarPanel.parentType,
+      rotation: rotation,
+      parentType: parentType,
       parentId: parent.id,
       foundationId: foundationId,
       id: short.generate() as string,

@@ -57,7 +57,7 @@ const SolarPanelTiltAngleInput = ({ setDialogVisible }: { setDialogVisible: (b: 
     switch (solarPanelActionScope) {
       case Scope.AllObjectsOfThisType:
         for (const e of elements) {
-          if (e.type === ObjectType.SolarPanel && !e.locked) {
+          if (e.type === ObjectType.SolarPanel && !e.locked && (e as SolarPanelModel).parentType !== ObjectType.Wall) {
             const sp = e as SolarPanelModel;
             if (Math.abs(sp.tiltAngle - tiltAngle) > ZERO_TOLERANCE) {
               return true;
@@ -67,7 +67,12 @@ const SolarPanelTiltAngleInput = ({ setDialogVisible }: { setDialogVisible: (b: 
         break;
       case Scope.AllObjectsOfThisTypeAboveFoundation:
         for (const e of elements) {
-          if (e.type === ObjectType.SolarPanel && e.foundationId === solarPanel?.foundationId && !e.locked) {
+          if (
+            e.type === ObjectType.SolarPanel &&
+            e.foundationId === solarPanel?.foundationId &&
+            !e.locked &&
+            (e as SolarPanelModel).parentType !== ObjectType.Wall
+          ) {
             const sp = e as SolarPanelModel;
             if (Math.abs(sp.tiltAngle - tiltAngle) > ZERO_TOLERANCE) {
               return true;
@@ -123,7 +128,7 @@ const SolarPanelTiltAngleInput = ({ setDialogVisible }: { setDialogVisible: (b: 
       case Scope.AllObjectsOfThisType:
         rejectRef.current = false;
         for (const elem of elements) {
-          if (elem.type === ObjectType.SolarPanel) {
+          if (elem.type === ObjectType.SolarPanel && (elem as SolarPanelModel).parentType !== ObjectType.Wall) {
             if (0.5 * elem.ly * Math.abs(Math.sin(value)) > (elem as SolarPanelModel).poleHeight) {
               rejectRef.current = true;
               break;
@@ -136,7 +141,7 @@ const SolarPanelTiltAngleInput = ({ setDialogVisible }: { setDialogVisible: (b: 
         } else {
           const oldTiltAnglesAll = new Map<string, number>();
           for (const elem of elements) {
-            if (elem.type === ObjectType.SolarPanel) {
+            if (elem.type === ObjectType.SolarPanel && (elem as SolarPanelModel).parentType !== ObjectType.Wall) {
               oldTiltAnglesAll.set(elem.id, (elem as SolarPanelModel).tiltAngle);
             }
           }
@@ -163,7 +168,11 @@ const SolarPanelTiltAngleInput = ({ setDialogVisible }: { setDialogVisible: (b: 
         if (solarPanel.foundationId) {
           rejectRef.current = false;
           for (const elem of elements) {
-            if (elem.type === ObjectType.SolarPanel && elem.foundationId === solarPanel.foundationId) {
+            if (
+              elem.type === ObjectType.SolarPanel &&
+              elem.foundationId === solarPanel.foundationId &&
+              (elem as SolarPanelModel).parentType !== ObjectType.Wall
+            ) {
               if (0.5 * elem.ly * Math.abs(Math.sin(value)) > (elem as SolarPanelModel).poleHeight) {
                 rejectRef.current = true;
                 break;
@@ -176,7 +185,11 @@ const SolarPanelTiltAngleInput = ({ setDialogVisible }: { setDialogVisible: (b: 
           } else {
             const oldTiltAnglesAboveFoundation = new Map<string, number>();
             for (const elem of elements) {
-              if (elem.type === ObjectType.SolarPanel && elem.foundationId === solarPanel.foundationId) {
+              if (
+                elem.type === ObjectType.SolarPanel &&
+                elem.foundationId === solarPanel.foundationId &&
+                (elem as SolarPanelModel).parentType !== ObjectType.Wall
+              ) {
                 oldTiltAnglesAboveFoundation.set(elem.id, (elem as SolarPanelModel).tiltAngle);
               }
             }

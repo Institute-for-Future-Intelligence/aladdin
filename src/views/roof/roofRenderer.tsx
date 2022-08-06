@@ -36,6 +36,11 @@ import { ThreeEvent } from '@react-three/fiber';
 import { WallModel } from 'src/models/WallModel';
 import { HALF_PI, LOCKED_ELEMENT_SELECTION_COLOR } from 'src/constants';
 import { Point2 } from 'src/models/Point2';
+import { Util } from 'src/Util';
+import { showError } from 'src/helpers';
+import i18n from 'src/i18n/i18n';
+import { SolarPanelModel } from 'src/models/SolarPanelModel';
+import { ElementModel } from 'src/models/ElementModel';
 
 export const euler = new Euler(0, 0, HALF_PI);
 export interface ConvexGeoProps {
@@ -164,6 +169,7 @@ export const handleRoofContextMenu = (e: ThreeEvent<MouseEvent>, id: string) => 
     e.stopPropagation();
     useStore.getState().set((state) => {
       state.contextMenuObjectType = ObjectType.Roof;
+      state.pastePoint.copy(e.intersections[0].point);
       for (const e of state.elements) {
         if (e.id === id) {
           e.selected = true;
@@ -298,6 +304,93 @@ export const isRoofValid = (
     }
   }
   return true;
+};
+
+const handleShowError = (type: 'overlap' | 'outside') => {
+  const lang = { lng: useStore.getState().language };
+  switch (type) {
+    case 'overlap': {
+      if (useStore.getState().moveHandleType) {
+        showError(i18n.t('message.MoveCancelledBecauseOfOverlap', lang));
+      } else if (useStore.getState().resizeHandleType) {
+        showError(i18n.t('message.ResizingCancelledBecauseOfOverlap', lang));
+      } else if (useStore.getState().rotateHandleType) {
+        showError(i18n.t('message.RotationCancelledBecauseOfOverlap', lang));
+      }
+      break;
+    }
+    case 'outside': {
+      if (useStore.getState().moveHandleType) {
+        showError(i18n.t('message.MoveOutsideBoundaryCancelled', lang));
+      } else if (useStore.getState().resizeHandleType) {
+        showError(i18n.t('message.ResizingOutsideBoundaryCancelled', lang));
+      } else if (useStore.getState().rotateHandleType) {
+        showError(i18n.t('message.RotationOutsideBoundaryCancelled', lang));
+      }
+      break;
+    }
+  }
+};
+
+export const spOnRoofBoundaryCheck = (solarPanelVertices: Vector3[], wallVertices: Point2[]) => {
+  for (const vertex of solarPanelVertices) {
+    if (!Util.isPointInside(vertex.x, vertex.y, wallVertices)) {
+      return false;
+    }
+  }
+  return true;
+};
+
+export const spOnRoofCollisionCheck = (sp: SolarPanelModel, foundation: ElementModel, spVertices: Vector3[]) => {
+  for (const elem of useStore.getState().elements) {
+    if (elem.type === sp.type && elem.parentId === sp.parentId && elem.id !== sp.id) {
+      const sp2Vertices = Util.getSolarPanelVerticesOnRoof(elem as SolarPanelModel, foundation);
+      for (const vertex of spVertices) {
+        if (Util.isPointInside(vertex.x, vertex.y, sp2Vertices)) {
+          return false;
+        }
+      }
+      for (const vertex of sp2Vertices) {
+        if (Util.isPointInside(vertex.x, vertex.y, spVertices)) {
+          return false;
+        }
+      }
+      const v1 = spVertices.map(Util.mapVector3ToPoint2);
+      const v2 = sp2Vertices.map(Util.mapVector3ToPoint2);
+      v1.push(v1[0]);
+      v2.push(v2[0]);
+      for (let i1 = 0; i1 < v1.length - 1; i1++) {
+        const from1 = v1[i1];
+        const to1 = v1[i1 + 1];
+        for (let i2 = 0; i2 < v2.length - 1; i2++) {
+          const from2 = v2[i2];
+          const to2 = v2[i2 + 1];
+          if (Util.lineIntersection(from1, to1, from2, to2)) {
+            return false;
+          }
+        }
+      }
+    }
+  }
+  return true;
+};
+
+export const spBoundaryCheckWithErrMsg = (solarPanelVertices: Vector3[], wallVertices: Point2[]) => {
+  if (spOnRoofBoundaryCheck(solarPanelVertices, wallVertices)) {
+    return true;
+  } else {
+    handleShowError('outside');
+    return false;
+  }
+};
+
+export const spCollisionCheckWithErrMsg = (sp: SolarPanelModel, foundation: ElementModel, spVertices: Vector3[]) => {
+  if (spOnRoofCollisionCheck(sp, foundation, spVertices)) {
+    return true;
+  } else {
+    handleShowError('overlap');
+    return false;
+  }
 };
 
 const RoofRenderer = (props: RoofModel) => {

@@ -35,6 +35,7 @@ import { UndoableChange } from '../undo/UndoableChange';
 import { showError } from '../helpers';
 import i18n from '../i18n/i18n';
 import { FoundationModel } from 'src/models/FoundationModel';
+import { SolarPanelModel } from 'src/models/SolarPanelModel';
 
 const Ground = () => {
   const setCommonStore = useStore(Selector.set);
@@ -998,6 +999,17 @@ const Ground = () => {
     }
   };
 
+  const getSolarPanelsOnRoof = (fId: string) => {
+    return useStore
+      .getState()
+      .elements.filter(
+        (e) =>
+          e.type === ObjectType.SolarPanel &&
+          e.foundationId === fId &&
+          (e as SolarPanelModel).parentType === ObjectType.Roof,
+      );
+  };
+
   const handlePointerDown = (e: ThreeEvent<PointerEvent>) => {
     if (e.button === 2) return; // ignore right-click
     if (e.intersections.length === 0 || !groundPlaneRef.current) return;
@@ -1226,6 +1238,16 @@ const Ground = () => {
                       polygonsAbsPosMapRef.current.set(polygon.id, vertexAbsPosArray);
                       break;
                   }
+                }
+              }
+              const solarsPanelOnRoof = getSolarPanelsOnRoof(selectedElement.id);
+              if (solarsPanelOnRoof.length > 0) {
+                for (const e of solarsPanelOnRoof) {
+                  const centerAbsPos = new Vector3(e.cx * selectedElement.lx, e.cy * selectedElement.ly).applyEuler(
+                    new Euler(0, 0, selectedElement.rotation[2]),
+                  );
+                  centerAbsPos.add(foundationCenter);
+                  absPosMapRef.current.set(e.id, centerAbsPos);
                 }
               }
               break;
@@ -1660,6 +1682,20 @@ const Ground = () => {
                   }
                 }
                 break;
+            }
+          }
+          if (
+            e.foundationId === grabRef.current.id &&
+            e.type === ObjectType.SolarPanel &&
+            (e as SolarPanelModel).parentType === ObjectType.Roof
+          ) {
+            const centerAbsPos = absPosMapRef.current.get(e.id);
+            if (centerAbsPos) {
+              const relativePos = new Vector2()
+                .subVectors(new Vector2(centerAbsPos.x, centerAbsPos.y), center)
+                .rotateAround(ORIGIN_VECTOR2, -grabRef.current!.rotation[2]);
+              e.cx = relativePos.x / lx;
+              e.cy = relativePos.y / ly;
             }
           }
         }

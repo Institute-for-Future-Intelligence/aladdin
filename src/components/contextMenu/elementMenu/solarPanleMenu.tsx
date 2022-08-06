@@ -213,17 +213,21 @@ export const SolarPanelMenu = () => {
               </Menu.Item>
 
               {/* solar tracker type */}
-              {trackerDialogVisible && <SolarPanelTrackerSelection setDialogVisible={setTrackerDialogVisible} />}
-              <Menu.Item
-                key={'solar-panel-tracker'}
-                style={{ paddingLeft: '36px' }}
-                onClick={() => {
-                  setApplyCount(0);
-                  setTrackerDialogVisible(true);
-                }}
-              >
-                {i18n.t('solarPanelMenu.Tracker', lang)} ...
-              </Menu.Item>
+              {solarPanel.parentType !== ObjectType.Roof && (
+                <>
+                  {trackerDialogVisible && <SolarPanelTrackerSelection setDialogVisible={setTrackerDialogVisible} />}
+                  <Menu.Item
+                    key={'solar-panel-tracker'}
+                    style={{ paddingLeft: '36px' }}
+                    onClick={() => {
+                      setApplyCount(0);
+                      setTrackerDialogVisible(true);
+                    }}
+                  >
+                    {i18n.t('solarPanelMenu.Tracker', lang)} ...
+                  </Menu.Item>
+                </>
+              )}
 
               {/* pole height */}
               {poleHeightDialogVisible && <SolarPanelPoleHeightInput setDialogVisible={setPoleHeightDialogVisible} />}
@@ -255,33 +259,37 @@ export const SolarPanelMenu = () => {
             </>
           )}
 
-          {/* draw sun beam or not */}
-          <Menu.Item key={'solar-panel-draw-sun-beam'}>
-            <Checkbox checked={!!solarPanel?.drawSunBeam} onChange={(e) => drawSunBeam(e.target.checked)}>
-              {i18n.t('solarCollectorMenu.DrawSunBeam', lang)}
-            </Checkbox>
-          </Menu.Item>
+          {solarPanel.parentType !== ObjectType.Wall && solarPanel.parentType !== ObjectType.Roof && (
+            <>
+              {/* draw sun beam or not */}
+              <Menu.Item key={'solar-panel-draw-sun-beam'}>
+                <Checkbox checked={!!solarPanel?.drawSunBeam} onChange={(e) => drawSunBeam(e.target.checked)}>
+                  {i18n.t('solarCollectorMenu.DrawSunBeam', lang)}
+                </Checkbox>
+              </Menu.Item>
 
-          {/* show label or not */}
-          <Menu.Item key={'solar-panel-show-label'}>
-            <Checkbox checked={!!solarPanel?.showLabel} onChange={(e) => showLabel(e.target.checked)}>
-              {i18n.t('solarCollectorMenu.KeepShowingLabel', lang)}
-            </Checkbox>
-          </Menu.Item>
+              {/* show label or not */}
+              <Menu.Item key={'solar-panel-show-label'}>
+                <Checkbox checked={!!solarPanel?.showLabel} onChange={(e) => showLabel(e.target.checked)}>
+                  {i18n.t('solarCollectorMenu.KeepShowingLabel', lang)}
+                </Checkbox>
+              </Menu.Item>
 
-          {/*have to wrap the text field with a Menu so that it can stay open when the user types in it */}
-          <Menu>
-            {/* label text */}
-            <Menu.Item key={'solar-panel-label-text'} style={{ paddingLeft: '36px' }}>
-              <Input
-                addonBefore={i18n.t('solarCollectorMenu.Label', lang) + ':'}
-                value={labelText}
-                onChange={(e: React.ChangeEvent<HTMLInputElement>) => setLabelText(e.target.value)}
-                onPressEnter={updateLabelText}
-                onBlur={updateLabelText}
-              />
-            </Menu.Item>
-          </Menu>
+              {/*have to wrap the text field with a Menu so that it can stay open when the user types in it */}
+              <Menu>
+                {/* label text */}
+                <Menu.Item key={'solar-panel-label-text'} style={{ paddingLeft: '36px' }}>
+                  <Input
+                    addonBefore={i18n.t('solarCollectorMenu.Label', lang) + ':'}
+                    value={labelText}
+                    onChange={(e: React.ChangeEvent<HTMLInputElement>) => setLabelText(e.target.value)}
+                    onPressEnter={updateLabelText}
+                    onBlur={updateLabelText}
+                  />
+                </Menu.Item>
+              </Menu>
+            </>
+          )}
         </>
       )}
     </>

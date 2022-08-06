@@ -94,3 +94,15 @@ export interface UnoableResizeGambrelAndMansardRoofRidge extends Undoable {
   oldVal: number;
   newVal: number;
 }
+
+export interface UnoableResizeSolarPanelOnRoof extends Undoable {
+  id: string;
+  oldPos: number[];
+  newPos: number[];
+  oldDms: number[];
+  newDms: number[];
+  oldRot: number[];
+  newRot: number[];
+  oldNor: number[];
+  newNor: number[];
+}

@@ -403,6 +403,8 @@ const BuildingResizer = ({
         }
       });
     }
+
+    useStore.getState().updateSolarPanelOnRoofFn();
   };
 
   const resizeZ = (p: Vector3) => {
@@ -417,6 +419,7 @@ const BuildingResizer = ({
           elem.lz = height * elementHeightMapRef.current.get(elem.id)!;
         }
       }
+      state.updateSolarPanelOnRoofFlag *= -1;
     });
   };
 
@@ -436,6 +439,12 @@ const BuildingResizer = ({
             const newCenter = oldCenter.clone().applyEuler(euler);
             elem.cx = resizerCenter.x + newCenter.x;
             elem.cy = resizerCenter.y + newCenter.y;
+            elem.rotation = [0, 0, oldRotation + rotateAngle];
+          }
+        }
+        if (elem.type === ObjectType.SolarPanel && foundationGroupSet.has(elem.parentId)) {
+          const oldRotation = foundatonRotationMapRef.current.get(elem.parentId);
+          if (oldRotation !== undefined) {
             elem.rotation = [0, 0, oldRotation + rotateAngle];
           }
         }
@@ -600,6 +609,7 @@ const BuildingResizer = ({
     setCommonStore((state) => {
       state.groupActionUpdateFlag = !state.groupActionUpdateFlag;
       state.updateWallMapOnFoundationFlag = !state.updateWallMapOnFoundationFlag;
+      state.updateSolarPanelOnRoofFlag *= -1;
     });
   };
 

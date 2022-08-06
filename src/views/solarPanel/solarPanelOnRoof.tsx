@@ -3,8 +3,8 @@
  */
 
 import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
-import { Box, Line, Plane, Sphere } from '@react-three/drei';
-import { CanvasTexture, Euler, Mesh, Raycaster, RepeatWrapping, Texture, Vector2, Vector3 } from 'three';
+import { Box, Circle, Cone, Cylinder, Line, Plane, Ring, Sphere, Torus } from '@react-three/drei';
+import { CanvasTexture, DoubleSide, Euler, Mesh, Raycaster, RepeatWrapping, Texture, Vector2, Vector3 } from 'three';
 import { useStore } from '../../stores/common';
 import { useStoreRef } from 'src/stores/commonRef';
 import * as Selector from '../../stores/selector';
@@ -13,9 +13,12 @@ import {
   HALF_PI,
   HIGHLIGHT_HANDLE_COLOR,
   MOVE_HANDLE_RADIUS,
+  ORIGIN_VECTOR2,
   RESIZE_HANDLE_COLOR,
   RESIZE_HANDLE_SIZE,
+  TWO_PI,
   UNIT_VECTOR_POS_Z,
+  ZERO_TOLERANCE,
 } from '../../constants';
 import {
   ActionType,
@@ -29,11 +32,13 @@ import {
 } from '../../types';
 import { Util } from '../../Util';
 import { SolarPanelModel } from '../../models/SolarPanelModel';
-import { getSunDirection } from '../../analysis/sunTools';
-import i18n from '../../i18n/i18n';
 import { LineData } from '../LineData';
 import { FoundationModel } from 'src/models/FoundationModel';
-import { init } from 'i18next';
+import { RoofModel } from 'src/models/RoofModel';
+import { WallModel } from 'src/models/WallModel';
+import { spBoundaryCheckWithErrMsg, spCollisionCheckWithErrMsg } from '../roof/roofRenderer';
+import { UndoableChange } from 'src/undo/UndoableChange';
+import { UnoableResizeSolarPanelOnRoof } from 'src/undo/UndoableResize';
 
 interface MoveHandleProps {
   id: string;
@@ -44,7 +49,23 @@ interface ResizeHandleProps {
   pos: number[]; // x, y, z
   dms: number[]; // lz, handleSize
   handleType: ResizeHandleType;
-  initResizeing: () => void;
+  initPointerDown: () => void;
+}
+
+interface RotateHandleProps {
+  position: [x: number, y: number, z: number];
+  ratio: number;
+  handleType: RotateHandleType;
+  initPointerDown: () => void;
+}
+
+interface TiltHanldeProps {
+  rotationZ: number;
+  tiltAngle: number;
+  handleSize: number;
+  initPointerDown: () => void;
+  handlePointerMove: (e: ThreeEvent<PointerEvent>, tiltHandleRef: React.MutableRefObject<Mesh | undefined>) => void;
+  handlePointerUp: () => void;
 }
 
 const MoveHandle = ({ id, handleSize }: MoveHandleProps) => {
@@ -69,7 +90,7 @@ const MoveHandle = ({ id, handleSize }: MoveHandleProps) => {
   );
 };
 
-const ResizeHandle = ({ pos, dms, handleType, initResizeing }: ResizeHandleProps) => {
+const ResizeHandle = ({ pos, dms, handleType, initPointerDown }: ResizeHandleProps) => {
   const [cx, cy, cz] = pos;
   const [lz, handleSize] = dms;
   const domElement = useThree().gl.domElement;
@@ -77,7 +98,7 @@ const ResizeHandle = ({ pos, dms, handleType, initResizeing }: ResizeHandleProps
   const ref = useRef<Mesh>(null);
 
   const handlePointerDown = () => {
-    initResizeing();
+    initPointerDown();
     const vector = new Vector3();
     switch (handleType) {
       case ResizeHandleType.Left:
@@ -115,6 +136,161 @@ const ResizeHandle = ({ pos, dms, handleType, initResizeing }: ResizeHandleProps
     >
       <meshStandardMaterial color={color} />
     </Box>
+  );
+};
+
+const RotateHandle = ({ position, ratio, handleType, initPointerDown }: RotateHandleProps) => {
+  const [color, setColor] = useState(RESIZE_HANDLE_COLOR);
+  const domElement = useThree().gl.domElement;
+  const rotationHandleLMesh = useMemo(() => <meshStandardMaterial color={color} />, [color]);
+
+  const handlePointerDown = () => {
+    initPointerDown();
+    useStore.getState().set((state) => {
+      state.rotateHandleType = handleType;
+    });
+  };
+
+  return (
+    <group position={position} rotation={[HALF_PI, 0, 0]} scale={ratio} name={handleType}>
+      <group>
+        <Torus args={[0.15, 0.05, 6, 8, (3 / 2) * Math.PI]} rotation={[HALF_PI, 0, HALF_PI]}>
+          {rotationHandleLMesh}
+        </Torus>
+        <Cone args={[0.1, 0.1, 6]} rotation={[HALF_PI, 0, 0]} position={[0.15, 0, 0.05]}>
+          {rotationHandleLMesh}
+        </Cone>
+        <Circle args={[0.05, 6]} rotation={[0, HALF_PI, 0]} position={[0, 0, 0.15]}>
+          {rotationHandleLMesh}
+        </Circle>
+      </group>
+      <Plane
+        name={handleType}
+        args={[0.35, 0.35]}
+        position={[0, 0.05, 0]}
+        rotation={[-HALF_PI, 0, 0]}
+        visible={false}
+        onPointerDown={handlePointerDown}
+        onPointerOver={(e) => {
+          domElement.style.cursor = 'grab';
+          setColor(HIGHLIGHT_HANDLE_COLOR);
+        }}
+        onPointerOut={() => {
+          domElement.style.cursor = 'default';
+          setColor(RESIZE_HANDLE_COLOR);
+        }}
+      />
+    </group>
+  );
+};
+
+const TiltHandle = ({
+  rotationZ,
+  tiltAngle,
+  handleSize,
+  initPointerDown,
+  handlePointerMove,
+  handlePointerUp,
+}: TiltHanldeProps) => {
+  const { gl } = useThree();
+  const [color, setColor] = useState(RESIZE_HANDLE_COLOR);
+  const [showTiltAngle, setShowTiltAngle] = useState(false);
+  const tiltHandleRef = useRef<Mesh>();
+  const degree = useMemo(() => new Array(13).fill(0), []);
+  const setCommonStore = useStore(Selector.set);
+
+  return (
+    <>
+      {/* ring handles */}
+      <Ring
+        name={RotateHandleType.Tilt}
+        args={[handleSize, 1.1 * handleSize, 18, 2, -HALF_PI, Math.PI]}
+        rotation={[0, -HALF_PI, rotationZ, 'ZXY']}
+        onPointerOver={() => {
+          gl.domElement.style.cursor = 'grab';
+          setColor(HIGHLIGHT_HANDLE_COLOR);
+        }}
+        onPointerOut={() => {
+          gl.domElement.style.cursor = 'default';
+          setColor(RESIZE_HANDLE_COLOR);
+        }}
+        onPointerDown={(e) => {
+          initPointerDown();
+          e.stopPropagation();
+          setShowTiltAngle(true);
+          setCommonStore((state) => {
+            state.rotateHandleType = RotateHandleType.Tilt;
+          });
+        }}
+      >
+        <meshStandardMaterial side={DoubleSide} color={color} />
+      </Ring>
+      {showTiltAngle && (
+        <>
+          {/* intersection plane */}
+          <Ring
+            ref={tiltHandleRef}
+            name={'Solar panel tilt handle'}
+            args={[handleSize, 2 * handleSize, 18, 2, -HALF_PI, Math.PI]}
+            rotation={[0, -HALF_PI, rotationZ, 'ZXY']}
+            onPointerDown={(e) => {}}
+            onPointerMove={(e) => {
+              handlePointerMove(e, tiltHandleRef);
+            }}
+            onPointerUp={() => {
+              setShowTiltAngle(false);
+              handlePointerUp();
+            }}
+          >
+            <meshStandardMaterial depthTest={false} transparent={true} opacity={0.5} side={DoubleSide} />
+          </Ring>
+          {/* pointer */}
+          <Line
+            points={[
+              [0, 0, handleSize],
+              [0, 0, 1.75 * handleSize],
+            ]}
+            rotation={new Euler(tiltAngle, 0, rotationZ, 'ZXY')}
+            lineWidth={1}
+          />
+          {/* scale */}
+          {degree.map((e, i) => {
+            return (
+              <group key={i} rotation={new Euler((Math.PI / 12) * i - HALF_PI, 0, rotationZ, 'ZXY')}>
+                <Line
+                  points={[
+                    [0, 0, 1.8 * handleSize],
+                    [0, 0, 2 * handleSize],
+                  ]}
+                  color={'white'}
+                  transparent={true}
+                  opacity={0.5}
+                />
+                <textSprite
+                  userData={{ unintersectable: true }}
+                  text={`${i * 15 - 90}°`}
+                  fontSize={20 * handleSize}
+                  fontFace={'Times Roman'}
+                  textHeight={0.15 * handleSize}
+                  position={[0, 0, 1.6 * handleSize]}
+                />
+              </group>
+            );
+          })}
+          {/* show current degree */}
+          <group rotation={new Euler(tiltAngle, 0, rotationZ, 'ZXY')}>
+            <textSprite
+              userData={{ unintersectable: true }}
+              text={`${Math.floor((tiltAngle / Math.PI) * 180)}°`}
+              fontSize={20 * handleSize}
+              fontFace={'Times Roman'}
+              textHeight={0.2 * handleSize}
+              position={[0, 0, 0.75 * handleSize]}
+            />
+          </group>
+        </>
+      )}
+    </>
   );
 };
 
@@ -183,7 +359,6 @@ const SolarPanelOnRoof = ({
   lz,
   tiltAngle,
   relativeAzimuth,
-  trackerType = TrackerType.NO_TRACKER,
   poleHeight,
   poleRadius,
   poleSpacing,
@@ -191,8 +366,6 @@ const SolarPanelOnRoof = ({
   rotation = [0, 0, 0],
   normal = [0, 0, 1],
   color = 'white',
-  lineColor = 'black',
-  lineWidth = 0.1,
   selected = false,
   showLabel = false,
   locked = false,
@@ -204,6 +377,7 @@ const SolarPanelOnRoof = ({
   const setCommonStore = useStore(Selector.set);
   const selectMe = useStore(Selector.selectMe);
   const getPvModule = useStore(Selector.getPvModule);
+  const getElementById = useStore(Selector.getElementById);
   const showSolarRadiationHeatmap = useStore(Selector.showSolarRadiationHeatmap);
   const shadowEnabled = useStore(Selector.viewState.shadowEnabled);
 
@@ -215,9 +389,12 @@ const SolarPanelOnRoof = ({
   const hx = lx / 2;
   const hy = ly / 2;
   const hz = lz / 2;
+  const radialSegmentsPole = useStore.getState().elements.length < 100 ? 4 : 2;
+  const poleZ = -poleHeight / 2 - lz / 2;
 
   const [nx, setNx] = useState(1);
   const [ny, setNy] = useState(1);
+  const [drawPole, setDrawPole] = useState(rotation[0] === 0);
   const [showIntersectionPlane, setShowIntersectionPlane] = useState(false);
   const { gl, camera } = useThree();
   const [texture, heapmapTexture] = useTexture(id, nx, ny, pvModelName, orientation);
@@ -227,10 +404,54 @@ const SolarPanelOnRoof = ({
   const intersectionPlaneRef = useRef<Mesh>(null);
   const pointerDownRef = useRef<boolean>(false);
 
-  const position = useMemo(() => new Vector3(cx, cy, cz + hz), [cx, cy, cz, hz]);
-  const euler = useMemo(() => new Euler().fromArray([...rotation, 'ZXY']), [rotation]);
+  const oldPosRef = useRef<number[] | null>(null);
+  const oldDmsRef = useRef<number[] | null>(null);
+  const oldAziRef = useRef<number | null>(null);
+  const oldTiltRef = useRef<number | null>(null);
+  const oldRotRef = useRef<number[] | null>(null);
+  const oldNorRef = useRef<number[] | null>(null);
+
   const ray = useMemo(() => new Raycaster(), []);
   const mouse = useMemo(() => new Vector2(), []);
+
+  const position = useMemo(() => {
+    if (drawPole) {
+      return new Vector3(cx, cy, cz + hz + poleHeight);
+    }
+    return new Vector3(cx, cy, cz + hz);
+  }, [cx, cy, cz, hz, drawPole, poleHeight]);
+
+  const euler = useMemo(() => {
+    return new Euler().fromArray([...rotation, 'ZXY']);
+  }, [rotation]);
+
+  const relativeEuler = useMemo(() => {
+    if (drawPole) {
+      return new Euler(tiltAngle, 0, relativeAzimuth, 'ZXY');
+    }
+    return new Euler();
+  }, [tiltAngle, relativeAzimuth, drawPole]);
+
+  const poles = useMemo<Vector3[]>(() => {
+    const poleArray: Vector3[] = [];
+    const poleNx = Math.floor((0.5 * lx) / poleSpacing);
+    const poleNy = Math.floor((0.5 * ly * Math.abs(Math.cos(tiltAngle))) / poleSpacing);
+    const sinTilt = 0.5 * Math.sin(tiltAngle);
+    const cosAz = Math.cos(relativeAzimuth) * poleSpacing;
+    const sinAz = Math.sin(relativeAzimuth) * poleSpacing;
+    for (let ix = -poleNx; ix <= poleNx; ix++) {
+      for (let iy = -poleNy; iy <= poleNy; iy++) {
+        const xi = ix * cosAz - iy * sinAz;
+        const yi = ix * sinAz + iy * cosAz;
+        poleArray.push(new Vector3(xi, yi, poleZ + sinTilt * poleSpacing * iy));
+      }
+    }
+    return poleArray;
+  }, [relativeAzimuth, tiltAngle, poleSpacing, lx, ly, poleHeight, lz]);
+
+  useEffect(() => {
+    setDrawPole(rotation[0] === 0);
+  }, [rotation]);
 
   useEffect(() => {
     if (pvModel) {
@@ -263,9 +484,55 @@ const SolarPanelOnRoof = ({
   // add pointerup eventlistener
   useEffect(() => {
     const handlePointerUp = () => {
-      useStoreRef.getState().setEnableOrbitController(true);
-      pointerDownRef.current = false;
-      setShowIntersectionPlane(false);
+      if (pointerDownRef.current && (useStore.getState().rotateHandleType || useStore.getState().resizeHandleType)) {
+        const roof = getElementById(parentId) as RoofModel;
+        if (roof) {
+          const wall = getElementById(roof.wallsId[0]) as WallModel;
+          const sp = getElementById(id) as SolarPanelModel;
+          const foundation = getElementById(foundationId ?? '') as FoundationModel;
+
+          if (sp && foundation && roof && wall) {
+            const boundaryVertices = Util.getWallPointsWithOverhang(roof.id, wall, roof.overhang);
+            const solarPanelVertices = Util.getSolarPanelVerticesOnRoof(sp, foundation);
+            if (
+              !spBoundaryCheckWithErrMsg(solarPanelVertices, boundaryVertices) ||
+              !spCollisionCheckWithErrMsg(sp, foundation, solarPanelVertices)
+            ) {
+              setCommonStore((state) => {
+                if (
+                  oldPosRef.current &&
+                  oldAziRef.current !== null &&
+                  oldNorRef.current &&
+                  oldDmsRef.current &&
+                  oldRotRef.current
+                ) {
+                  for (const e of state.elements) {
+                    if (e.id === id) {
+                      [e.cx, e.cy, e.cz] = [...oldPosRef.current];
+                      [e.lx, e.ly, e.lz] = [...oldDmsRef.current];
+                      (e as SolarPanelModel).relativeAzimuth = oldAziRef.current;
+                      e.normal = [...oldNorRef.current];
+                      e.rotation = [...oldRotRef.current];
+                      break;
+                    }
+                  }
+                }
+              });
+            } else {
+              handleUndoable(sp);
+            }
+          }
+        }
+        useStoreRef.getState().setEnableOrbitController(true);
+        pointerDownRef.current = false;
+        setShowIntersectionPlane(false);
+        setCommonStore((state) => {
+          state.moveHandleType = null;
+          state.resizeHandleType = null;
+          state.rotateHandleType = null;
+          state.updateSolarPanelOnRoofFlag *= -1;
+        });
+      }
     };
     window.addEventListener('pointerup', handlePointerUp);
     return () => {
@@ -276,8 +543,18 @@ const SolarPanelOnRoof = ({
   const baseSize = Math.max(1, (lx + ly) / 16);
   const moveHandleSize = MOVE_HANDLE_RADIUS * baseSize * 2;
   const resizeHandleSize = RESIZE_HANDLE_SIZE * baseSize * 1.5;
+  const rotateHandleSize = (baseSize * 2) / 3;
+  const tiltHandleSize = rotateHandleSize;
 
-  const initResizing = () => {
+  const initPointerDown = () => {
+    if (foundationModel) {
+      oldPosRef.current = [cx / foundationModel.lx, cy / foundationModel.ly, cz - foundationModel.lz / 2];
+      oldDmsRef.current = [lx, ly, lz];
+      oldAziRef.current = relativeAzimuth;
+      oldTiltRef.current = tiltAngle;
+      oldNorRef.current = [...normal];
+      oldRotRef.current = [...rotation];
+    }
     setShowIntersectionPlane(true);
     pointerDownRef.current = true;
     useStoreRef.getState().setEnableOrbitController(false);
@@ -289,8 +566,15 @@ const SolarPanelOnRoof = ({
     ray.setFromCamera(mouse, camera);
   };
 
-  const handleIntersectionPlanePointerMove = (event: ThreeEvent<PointerEvent>) => {
-    if (intersectionPlaneRef.current && pointerDownRef.current) {
+  const isTouchingRoof = (newLy: number, newTAngle: number) => {
+    if (drawPole && newTAngle !== 0 && 0.5 * newLy * Math.abs(Math.sin(newTAngle)) > poleHeight) {
+      return true;
+    }
+    return false;
+  };
+
+  const intersectionPlanePointerMove = (event: ThreeEvent<PointerEvent>) => {
+    if (intersectionPlaneRef.current && pointerDownRef.current && foundationModel) {
       setRayCast(event);
       const intersects = ray.intersectObjects([intersectionPlaneRef.current]);
       if (intersects.length > 0) {
@@ -298,70 +582,218 @@ const SolarPanelOnRoof = ({
         if (pointer.z < 0.001) {
           return;
         }
-        setCommonStore((state) => {
-          for (const e of state.elements) {
-            if (e.id === id && foundationModel) {
-              const anchor = state.resizeAnchor;
-              const fCenter = new Vector3(foundationModel.cx, foundationModel.cy, foundationModel.lz);
-              const r = new Vector3()
-                .subVectors(pointer, anchor)
-                .applyEuler(new Euler(0, 0, -rotation[2] - foundationModel.rotation[2]));
-
-              switch (state.resizeHandleType) {
-                case ResizeHandleType.Left:
-                case ResizeHandleType.Right: {
-                  const unitLenght =
-                    (e as SolarPanelModel).orientation === Orientation.landscape ? pvModel.length : pvModel.width;
-                  const dx = Math.abs(r.x);
-                  const nx = Math.max(1, Math.ceil((dx - unitLenght / 2) / unitLenght));
-                  const lx = nx * unitLenght;
-                  const v = new Vector3((Math.sign(r.x) * lx) / 2, 0, 0).applyEuler(
-                    new Euler(0, 0, rotation[2] + foundationModel.rotation[2]),
-                  );
-                  const center = new Vector3()
-                    .addVectors(anchor, v)
-                    .sub(fCenter)
-                    .applyEuler(new Euler(0, 0, -foundationModel.rotation[2]));
-                  e.lx = lx;
-                  e.cx = center.x / foundationModel.lx;
-                  e.cy = center.y / foundationModel.ly;
-                  break;
+        const rotateHandleType = useStore.getState().rotateHandleType;
+        if (useStore.getState().resizeHandleType) {
+          const azimuth = drawPole ? relativeAzimuth : 0;
+          const anchor = useStore.getState().resizeAnchor;
+          const fCenter = new Vector3(foundationModel.cx, foundationModel.cy, foundationModel.lz);
+          const r = new Vector3()
+            .subVectors(pointer, anchor)
+            .applyEuler(new Euler(0, 0, -rotation[2] - foundationModel.rotation[2] - azimuth));
+          setCommonStore((state) => {
+            for (const e of state.elements) {
+              if (e.id === id && foundationModel) {
+                switch (state.resizeHandleType) {
+                  case ResizeHandleType.Left:
+                  case ResizeHandleType.Right: {
+                    const unitLenght =
+                      (e as SolarPanelModel).orientation === Orientation.landscape ? pvModel.length : pvModel.width;
+                    const dx = Math.abs(r.x);
+                    const nx = Math.max(1, Math.ceil((dx - unitLenght / 2) / unitLenght));
+                    const lx = nx * unitLenght;
+                    const v = new Vector3((Math.sign(r.x) * lx) / 2, 0, 0).applyEuler(
+                      new Euler(0, 0, rotation[2] + foundationModel.rotation[2] + azimuth),
+                    );
+                    const center = new Vector3()
+                      .addVectors(anchor, v)
+                      .sub(fCenter)
+                      .applyEuler(new Euler(0, 0, -foundationModel.rotation[2]));
+                    e.lx = lx;
+                    e.cx = center.x / foundationModel.lx;
+                    e.cy = center.y / foundationModel.ly;
+                    break;
+                  }
+                  case ResizeHandleType.Upper:
+                  case ResizeHandleType.Lower: {
+                    const dy = Math.abs(r.y);
+                    const dz = Math.abs(r.z);
+                    const dl = Math.hypot(dy, dz);
+                    const unitLenght =
+                      (e as SolarPanelModel).orientation === Orientation.landscape ? pvModel.width : pvModel.length;
+                    const nl = Math.max(1, Math.ceil((dl - unitLenght / 2) / unitLenght));
+                    const l = nl * unitLenght;
+                    const v = new Vector3(0, (l * Math.sign(r.y)) / 2, 0).applyEuler(
+                      new Euler(rotation[0], rotation[1], rotation[2] + foundationModel.rotation[2] + azimuth, 'ZXY'),
+                    );
+                    const center = new Vector3()
+                      .addVectors(anchor, v)
+                      .sub(fCenter)
+                      .applyEuler(new Euler(0, 0, -foundationModel.rotation[2]));
+                    if (!isTouchingRoof(l, tiltAngle)) {
+                      e.ly = l;
+                      e.cx = center.x / foundationModel.lx;
+                      e.cy = center.y / foundationModel.ly;
+                      if (!drawPole) {
+                        e.cz = center.z - hz;
+                      }
+                    }
+                    break;
+                  }
                 }
-                case ResizeHandleType.Upper:
-                case ResizeHandleType.Lower: {
-                  const dy = Math.abs(r.y);
-                  const dz = Math.abs(r.z);
-                  const dl = Util.squareRootOfSquareSum(dy, dz);
-                  const unitLenght =
-                    (e as SolarPanelModel).orientation === Orientation.landscape ? pvModel.width : pvModel.length;
-                  const nl = Math.max(1, Math.ceil((dl - unitLenght / 2) / unitLenght));
-                  const l = nl * unitLenght;
-                  const v = new Vector3(0, (l * Math.sign(r.y)) / 2, 0).applyEuler(
-                    new Euler(rotation[0], rotation[1], rotation[2] + foundationModel.rotation[2], 'ZXY'),
-                  );
-                  const center = new Vector3()
-                    .addVectors(anchor, v)
-                    .sub(fCenter)
-                    .applyEuler(new Euler(0, 0, -foundationModel.rotation[2]));
-                  e.ly = l;
-                  e.cx = center.x / foundationModel.lx;
-                  e.cy = center.y / foundationModel.ly;
-                  e.cz = center.z - hz;
+                break;
+              }
+            }
+          });
+        } else if (rotateHandleType === RotateHandleType.Lower || rotateHandleType === RotateHandleType.Upper) {
+          const pr = foundationModel.rotation[2]; // parent rotation
+          const pc = new Vector2(foundationModel.cx, foundationModel.cy); // world parent center
+          const cc = new Vector2(cx, cy).rotateAround(ORIGIN_VECTOR2, pr);
+          const wc = new Vector2().addVectors(cc, pc); // world current center
+          const rotation =
+            Math.atan2(-pointer.x + wc.x, pointer.y - wc.y) -
+            pr +
+            (rotateHandleType === RotateHandleType.Lower ? Math.PI : 0);
+          const offset = Math.abs(rotation) > Math.PI ? -Math.sign(rotation) * TWO_PI : 0; // make sure angle is between -PI to PI
+          const newAzimuth = rotation + offset;
+          useStore.getState().updateSolarCollectorRelativeAzimuthById(id, newAzimuth);
+        }
+      }
+    }
+  };
+
+  const tiltHandlePointerMove = (
+    e: ThreeEvent<PointerEvent>,
+    tiltHandleRef: React.MutableRefObject<Mesh | undefined>,
+  ) => {
+    if (pointerDownRef.current) {
+      setRayCast(e);
+      if (tiltHandleRef.current && useStore.getState().rotateHandleType === RotateHandleType.Tilt) {
+        const intersects = ray.intersectObjects([tiltHandleRef.current]);
+        if (intersects.length > 0) {
+          const pointer = intersects[0].point;
+          const center = tiltHandleRef.current.parent?.localToWorld(new Vector3()); // rotate center in world coordinate
+          if (center) {
+            const cv = new Vector3().subVectors(pointer, center);
+            let angle = cv.angleTo(UNIT_VECTOR_POS_Z);
+            const touch = 0.5 * ly * Math.abs(Math.sin(angle)) > poleHeight;
+            if (!touch) {
+              const wr = relativeAzimuth + rotation[2];
+              const sign =
+                wr % Math.PI === 0
+                  ? Math.sign(-cv.y) * Math.sign(Math.cos(wr))
+                  : Math.sign(cv.x) * Math.sign(Math.sin(wr));
+              angle *= sign;
+              useStore.getState().updateSolarPanelTiltAngleById(id, angle);
+            }
+          }
+        }
+      }
+    }
+  };
+
+  const tiltHandlePointerUp = () => {
+    const sp = getElementById(id) as SolarPanelModel;
+    if (sp && oldTiltRef.current && Math.abs(sp.tiltAngle - oldTiltRef.current) > ZERO_TOLERANCE) {
+      const undoableChange = {
+        name: 'Set Solar Panel Tilt Angle',
+        timestamp: Date.now(),
+        oldValue: oldTiltRef.current,
+        newValue: sp.tiltAngle,
+        changedElementId: id,
+        changedElementType: ObjectType.SolarPanel,
+        undo: () => {
+          useStore
+            .getState()
+            .updateSolarPanelTiltAngleById(undoableChange.changedElementId, undoableChange.oldValue as number);
+        },
+        redo: () => {
+          useStore
+            .getState()
+            .updateSolarPanelTiltAngleById(undoableChange.changedElementId, undoableChange.newValue as number);
+        },
+      } as UndoableChange;
+      useStore.getState().addUndoable(undoableChange);
+    }
+  };
+
+  const handleUndoable = (sp: SolarPanelModel) => {
+    if (useStore.getState().resizeHandleType) {
+      if (oldDmsRef.current && oldPosRef.current && oldNorRef.current && oldRotRef.current) {
+        const undoableResize = {
+          name: 'Resize Solar Panel On Roof',
+          timestamp: Date.now(),
+          id: sp.id,
+          oldDms: [...oldDmsRef.current],
+          oldNor: [...oldNorRef.current],
+          oldPos: [...oldPosRef.current],
+          oldRot: [...oldRotRef.current],
+          newDms: [sp.lx, sp.ly, sp.lz],
+          newPos: [sp.cx, sp.cy, sp.cz],
+          newNor: [...sp.normal],
+          newRot: [...sp.rotation],
+          undo() {
+            setCommonStore((state) => {
+              for (const e of state.elements) {
+                if (e.id === undoableResize.id) {
+                  [e.cx, e.cy, e.cz] = [...undoableResize.oldPos];
+                  [e.lx, e.ly, e.lz] = [...undoableResize.oldDms];
+                  e.normal = [...undoableResize.oldNor];
+                  e.rotation = [...undoableResize.oldRot];
                   break;
                 }
               }
-
-              break;
-            }
-          }
-        });
+            });
+          },
+          redo() {
+            setCommonStore((state) => {
+              for (const e of state.elements) {
+                if (e.id === undoableResize.id) {
+                  [e.cx, e.cy, e.cz] = [...undoableResize.newPos];
+                  [e.lx, e.ly, e.lz] = [...undoableResize.newDms];
+                  e.normal = [...undoableResize.newNor];
+                  e.rotation = [...undoableResize.newRot];
+                  break;
+                }
+              }
+            });
+          },
+        } as UnoableResizeSolarPanelOnRoof;
+        useStore.getState().addUndoable(undoableResize);
+      }
+    } else if (useStore.getState().rotateHandleType) {
+      if (oldAziRef.current !== undefined) {
+        const undoableRotate = {
+          name: 'Rotate Solar Panel On Roof',
+          timestamp: Date.now(),
+          oldValue: oldAziRef.current,
+          newValue: sp.relativeAzimuth,
+          changedElementId: sp.id,
+          changedElementType: sp.type,
+          undo: () => {
+            useStore
+              .getState()
+              .updateSolarCollectorRelativeAzimuthById(
+                undoableRotate.changedElementId,
+                undoableRotate.oldValue as number,
+              );
+          },
+          redo: () => {
+            useStore
+              .getState()
+              .updateSolarCollectorRelativeAzimuthById(
+                undoableRotate.changedElementId,
+                undoableRotate.newValue as number,
+              );
+          },
+        } as UndoableChange;
+        useStore.getState().addUndoable(undoableRotate);
       }
     }
   };
 
   return (
     <group name={'Solar Panel Group Grandpa ' + id} rotation={euler} position={position}>
-      <group name={'Solar Panel Group Dad ' + id}>
+      <group name={'Solar Panel Group Dad ' + id} rotation={relativeEuler}>
         {/* draw panel */}
         <Box
           receiveShadow={shadowEnabled}
@@ -410,39 +842,42 @@ const SolarPanelOnRoof = ({
                 pos={[-hx, 0, hz]}
                 dms={[lz, resizeHandleSize]}
                 handleType={ResizeHandleType.Left}
-                initResizeing={initResizing}
+                initPointerDown={initPointerDown}
               />
               <ResizeHandle
                 pos={[hx, 0, hz]}
                 dms={[lz, resizeHandleSize]}
                 handleType={ResizeHandleType.Right}
-                initResizeing={initResizing}
+                initPointerDown={initPointerDown}
               />
               <ResizeHandle
                 pos={[0, -hy, hz]}
                 dms={[lz, resizeHandleSize]}
                 handleType={ResizeHandleType.Lower}
-                initResizeing={initResizing}
+                initPointerDown={initPointerDown}
               />
               <ResizeHandle
                 pos={[0, hy, hz]}
                 dms={[lz, resizeHandleSize]}
                 handleType={ResizeHandleType.Upper}
-                initResizeing={initResizing}
+                initPointerDown={initPointerDown}
               />
             </group>
-
-            {/* intersection plane */}
-            {showIntersectionPlane && (
-              <Plane
-                ref={intersectionPlaneRef}
-                args={[1000, 1000]} // todo
-                visible={false}
-                onPointerMove={handleIntersectionPlanePointerMove}
-              />
-            )}
           </>
         )}
+
+        {/* simulation panel */}
+        <Plane
+          name={'Solar Panel Simulation Plane'}
+          uuid={id}
+          args={[lx, ly]}
+          userData={{ simulation: true }}
+          receiveShadow={false}
+          castShadow={false}
+          visible={false}
+        >
+          <meshBasicMaterial side={DoubleSide} />
+        </Plane>
 
         {showSolarRadiationHeatmap &&
           heapmapTexture &&
@@ -462,6 +897,63 @@ const SolarPanelOnRoof = ({
             );
           })}
       </group>
+
+      {/* rotate and tilt handles */}
+      {drawPole && selected && !locked && (
+        <>
+          <group name={'Rotate Handle Group'} rotation={[0, 0, relativeEuler.z]}>
+            <RotateHandle
+              position={[0, -hy - 1, 0]}
+              ratio={1}
+              handleType={RotateHandleType.Lower}
+              initPointerDown={initPointerDown}
+            />
+            <RotateHandle
+              position={[0, hy + 1, 0]}
+              ratio={1}
+              handleType={RotateHandleType.Upper}
+              initPointerDown={initPointerDown}
+            />
+          </group>
+          <TiltHandle
+            rotationZ={relativeAzimuth}
+            tiltAngle={tiltAngle}
+            handleSize={tiltHandleSize}
+            initPointerDown={initPointerDown}
+            handlePointerMove={tiltHandlePointerMove}
+            handlePointerUp={tiltHandlePointerUp}
+          />
+        </>
+      )}
+
+      {/* intersection plane */}
+      {showIntersectionPlane && (
+        <Plane
+          ref={intersectionPlaneRef}
+          args={[1000, 1000]}
+          visible={false}
+          onPointerMove={intersectionPlanePointerMove}
+        />
+      )}
+
+      {drawPole &&
+        poleHeight > 0 &&
+        poles.map((p, i) => {
+          return (
+            <Cylinder
+              userData={{ unintersectable: true }}
+              key={i}
+              name={'Pole ' + i}
+              castShadow={false}
+              receiveShadow={false}
+              args={[poleRadius, poleRadius, poleHeight + (p.z - poleZ) * 2 + lz, radialSegmentsPole, 1]}
+              position={p}
+              rotation={[HALF_PI, 0, 0]}
+            >
+              <meshStandardMaterial attach="material" color={color} />
+            </Cylinder>
+          );
+        })}
     </group>
   );
 };

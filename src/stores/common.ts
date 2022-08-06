@@ -38,7 +38,7 @@ import {
   TreeType,
   User,
   WallTexture,
-  ElementOnWallState,
+  ElementState,
 } from '../types';
 import { DefaultWorldModel } from './DefaultWorldModel';
 import { Box3, Euler, Raycaster, Texture, TextureLoader, Vector2, Vector3 } from 'three';
@@ -95,6 +95,12 @@ import SolarPanelBluePortraitImage from '../resources/solar-panel-blue-portrait.
 import SolarPanelBlackPortraitImage from '../resources/solar-panel-black-portrait.png';
 import SolarPanelBlueLandscapeImage from '../resources/solar-panel-blue-landscape.png';
 import SolarPanelBlackLandscapeImage from '../resources/solar-panel-black-landscape.png';
+import {
+  spBoundaryCheckWithErrMsg,
+  spCollisionCheckWithErrMsg,
+  spOnRoofBoundaryCheck,
+  spOnRoofCollisionCheck,
+} from 'src/views/roof/roofRenderer';
 
 enableMapSet();
 
@@ -689,6 +695,9 @@ export interface CommonStoreState {
   deletedWallId: string | null;
   updateWallMapOnFoundationFlag: boolean;
   updateWallMapOnFoundation: () => void;
+
+  updateSolarPanelOnRoofFlag: number;
+  updateSolarPanelOnRoofFn: () => void;
 
   addedWindowId: string | null;
   deletedWindowAndParentId: string[] | null;
@@ -1995,7 +2004,12 @@ export const useStore = create<CommonStoreState>(
             if (!Util.isSolarCollectorType(type)) return;
             immerSet((state: CommonStoreState) => {
               for (const e of state.elements) {
-                if (e.type === type && e.foundationId === foundationId && !e.locked) {
+                if (
+                  e.type === type &&
+                  e.foundationId === foundationId &&
+                  !e.locked &&
+                  (e as SolarPanelModel).parentType !== ObjectType.Wall
+                ) {
                   (e as SolarCollector).relativeAzimuth = relativeAzimuth;
                 }
               }
@@ -2023,7 +2037,7 @@ export const useStore = create<CommonStoreState>(
             if (!Util.isSolarCollectorType(type)) return;
             immerSet((state: CommonStoreState) => {
               for (const e of state.elements) {
-                if (e.type === type && !e.locked) {
+                if (e.type === type && !e.locked && (e as SolarPanelModel).parentType !== ObjectType.Wall) {
                   (e as SolarCollector).relativeAzimuth = relativeAzimuth;
                 }
               }
@@ -3324,7 +3338,12 @@ export const useStore = create<CommonStoreState>(
           updateSolarPanelTiltAngleAboveFoundation(foundationId, tiltAngle) {
             immerSet((state: CommonStoreState) => {
               for (const e of state.elements) {
-                if (e.type === ObjectType.SolarPanel && e.foundationId === foundationId && !e.locked) {
+                if (
+                  e.type === ObjectType.SolarPanel &&
+                  e.foundationId === foundationId &&
+                  !e.locked &&
+                  (e as SolarPanelModel).parentType !== ObjectType.Wall
+                ) {
                   const sp = e as SolarPanelModel;
                   sp.tiltAngle = tiltAngle;
                 }
@@ -3352,7 +3371,11 @@ export const useStore = create<CommonStoreState>(
           updateSolarPanelTiltAngleForAll(tiltAngle) {
             immerSet((state: CommonStoreState) => {
               for (const e of state.elements) {
-                if (e.type === ObjectType.SolarPanel && !e.locked) {
+                if (
+                  e.type === ObjectType.SolarPanel &&
+                  !e.locked &&
+                  (e as SolarPanelModel).parentType !== ObjectType.Wall
+                ) {
                   const sp = e as SolarPanelModel;
                   sp.tiltAngle = tiltAngle;
                 }
@@ -4717,6 +4740,18 @@ export const useStore = create<CommonStoreState>(
                         m = Util.relativeCoordinates(m.x, m.y, m.z, newParent);
                       }
                     }
+                  } else if (newParent.type === ObjectType.Roof) {
+                    if (newParent.parentId) {
+                      const foundation = state.getElementById(newParent.parentId);
+                      if (foundation) {
+                        m.sub(new Vector3(foundation.cx, foundation.cy)).applyEuler(
+                          new Euler(0, 0, -foundation.rotation[2]),
+                        );
+                        m.setX(m.x / foundation.lx);
+                        m.setY(m.y / foundation.ly);
+                        m.setZ(m.z - foundation.lz);
+                      }
+                    }
                   } else {
                     // if the old parent is ground, it has no type definition, but we use it to check its type
                     if (oldParent && oldParent.type) {
@@ -4833,15 +4868,44 @@ export const useStore = create<CommonStoreState>(
                       if (newParent?.type === ObjectType.Wall) {
                         if (newParent) {
                           switch (Util.checkElementOnWallState(e, newParent)) {
-                            case ElementOnWallState.Valid:
+                            case ElementState.Valid:
                               approved = true;
                               break;
-                            case ElementOnWallState.OverLap:
+                            case ElementState.OverLap:
                               showError(i18n.t('message.CannotPasteBecauseOfOverlap', lang));
                               break;
-                            case ElementOnWallState.OutsideBoundary:
+                            case ElementState.OutsideBoundary:
                               showError(i18n.t('message.CannotPasteOutsideBoundary', lang));
                               break;
+                          }
+                        }
+                        break;
+                      }
+                      if (newParent?.type === ObjectType.Roof) {
+                        if (newParent && e.foundationId) {
+                          const foundation = state.getElementById(e.foundationId);
+                          const wall = state.getElementById((newParent as RoofModel).wallsId[0]) as WallModel;
+                          if (foundation && wall) {
+                            const solarPanelVertices = Util.getSolarPanelVerticesOnRoof(
+                              e as SolarPanelModel,
+                              foundation,
+                            );
+                            const boundaryVertices = Util.getWallPointsWithOverhang(
+                              newParent.id,
+                              wall,
+                              (newParent as RoofModel).overhang,
+                            );
+
+                            if (!spOnRoofBoundaryCheck(solarPanelVertices, boundaryVertices)) {
+                              showError(i18n.t('message.CannotPasteOutsideBoundary', lang));
+                              break;
+                            }
+                            if (!spOnRoofCollisionCheck(e as SolarPanelModel, foundation, solarPanelVertices)) {
+                              showError(i18n.t('message.CannotPasteBecauseOfOverlap', lang));
+                              break;
+                            }
+                            approved = true;
+                            state.updateSolarPanelOnRoofFlag *= -1;
                           }
                         }
                         break;
@@ -4874,13 +4938,13 @@ export const useStore = create<CommonStoreState>(
                     case ObjectType.Window: {
                       if (newParent) {
                         switch (Util.checkElementOnWallState(e, newParent)) {
-                          case ElementOnWallState.Valid:
+                          case ElementState.Valid:
                             approved = true;
                             break;
-                          case ElementOnWallState.OverLap:
+                          case ElementState.OverLap:
                             showError(i18n.t('message.CannotPasteBecauseOfOverlap', lang));
                             break;
-                          case ElementOnWallState.OutsideBoundary:
+                          case ElementState.OutsideBoundary:
                             showError(i18n.t('message.CannotPasteOutsideBoundary', lang));
                             break;
                         }
@@ -4949,7 +5013,7 @@ export const useStore = create<CommonStoreState>(
                         e.cx += hx * 3;
                         // searching +x direction
                         while (e.cx + hx < 0.5) {
-                          if (Util.checkElementOnWallState(e, parent) === ElementOnWallState.Valid) {
+                          if (Util.checkElementOnWallState(e, parent) === ElementState.Valid) {
                             state.elements.push(e);
                             // state.elementsToPaste = [e];
                             approved = true;
@@ -4962,7 +5026,7 @@ export const useStore = create<CommonStoreState>(
                         if (!approved) {
                           e.cx = elem.cx - hx * 3;
                           while (e.cx - hx > -0.5) {
-                            if (Util.checkElementOnWallState(e, parent) === ElementOnWallState.Valid) {
+                            if (Util.checkElementOnWallState(e, parent) === ElementState.Valid) {
                               state.elements.push(e);
                               state.elementsToPaste = [e];
                               approved = true;
@@ -5003,7 +5067,7 @@ export const useStore = create<CommonStoreState>(
                             e.cx += hx * 3;
                             // searching +x direction
                             while (e.cx + hx < 0.5) {
-                              if (Util.checkElementOnWallState(e, parent) === ElementOnWallState.Valid) {
+                              if (Util.checkElementOnWallState(e, parent) === ElementState.Valid) {
                                 state.elements.push(e);
                                 approved = true;
                                 break;
@@ -5015,7 +5079,7 @@ export const useStore = create<CommonStoreState>(
                             if (!approved) {
                               e.cx = elem.cx - hx * 3;
                               while (e.cx - hx > -0.5) {
-                                if (Util.checkElementOnWallState(e, parent) === ElementOnWallState.Valid) {
+                                if (Util.checkElementOnWallState(e, parent) === ElementState.Valid) {
                                   state.elements.push(e);
                                   state.elementsToPaste = [e];
                                   approved = true;
@@ -5028,6 +5092,65 @@ export const useStore = create<CommonStoreState>(
                             if (!approved) {
                               const lang = { lng: state.language };
                               showError(i18n.t('message.CannotPasteOutsideBoundary', lang));
+                            }
+                            break;
+                          }
+                          if (parent.type === ObjectType.Roof) {
+                            if (elem.foundationId) {
+                              const foundation = state.getElementById(elem.foundationId);
+                              const wall = state.getElementById((parent as RoofModel).wallsId[0]) as WallModel;
+                              if (foundation && wall) {
+                                const boundaryVertices = Util.getWallPointsWithOverhang(
+                                  parent.id,
+                                  wall,
+                                  (parent as RoofModel).overhang,
+                                );
+
+                                const hx = e.lx / foundation.lx / 2;
+                                e.cx += hx * 1.25;
+
+                                while (e.cx + hx < 0.5) {
+                                  const solarPanelVertices = Util.getSolarPanelVerticesOnRoof(
+                                    e as SolarPanelModel,
+                                    foundation,
+                                  );
+                                  if (
+                                    spOnRoofBoundaryCheck(solarPanelVertices, boundaryVertices) &&
+                                    spOnRoofCollisionCheck(e as SolarPanelModel, foundation, solarPanelVertices)
+                                  ) {
+                                    state.elements.push(e);
+                                    approved = true;
+                                    break;
+                                  } else {
+                                    e.cx += hx * 1.25;
+                                  }
+                                }
+                                if (!approved) {
+                                  e.cx = elem.cx - hx * 1.25;
+                                  while (e.cx - hx > -0.5) {
+                                    const solarPanelVertices = Util.getSolarPanelVerticesOnRoof(
+                                      e as SolarPanelModel,
+                                      foundation,
+                                    );
+                                    if (
+                                      spOnRoofBoundaryCheck(solarPanelVertices, boundaryVertices) &&
+                                      spOnRoofCollisionCheck(e as SolarPanelModel, foundation, solarPanelVertices)
+                                    ) {
+                                      state.elements.push(e);
+                                      approved = true;
+                                      break;
+                                    } else {
+                                      e.cx -= hx * 1.25;
+                                    }
+                                  }
+                                }
+                                if (!approved) {
+                                  const lang = { lng: state.language };
+                                  showError(i18n.t('message.CannotPasteOutsideBoundary', lang));
+                                } else {
+                                  state.updateSolarPanelOnRoofFlag *= -1;
+                                }
+                              }
                             }
                             break;
                           }
@@ -5483,6 +5606,13 @@ export const useStore = create<CommonStoreState>(
           updateWallMapOnFoundation() {
             immerSet((state: CommonStoreState) => {
               state.updateWallMapOnFoundationFlag = !state.updateWallMapOnFoundationFlag;
+            });
+          },
+
+          updateSolarPanelOnRoofFlag: 1,
+          updateSolarPanelOnRoofFn() {
+            immerSet((state: CommonStoreState) => {
+              state.updateSolarPanelOnRoofFlag *= -1;
             });
           },
 

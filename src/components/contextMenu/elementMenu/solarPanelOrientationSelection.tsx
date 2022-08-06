@@ -8,12 +8,13 @@ import Draggable, { DraggableBounds, DraggableData, DraggableEvent } from 'react
 import { useStore } from '../../../stores/common';
 import * as Selector from '../../../stores/selector';
 import { SolarPanelModel } from '../../../models/SolarPanelModel';
-import { ElementOnWallState, ObjectType, Orientation, Scope } from '../../../types';
+import { ElementState, ObjectType, Orientation, Scope } from '../../../types';
 import i18n from '../../../i18n/i18n';
 import { UndoableChange } from '../../../undo/UndoableChange';
 import { UndoableChangeGroup } from '../../../undo/UndoableChangeGroup';
 import { Util } from '../../../Util';
 import { UNIT_VECTOR_POS_Z_ARRAY } from '../../../constants';
+import { RoofModel } from 'src/models/RoofModel';
 
 const { Option } = Select;
 
@@ -109,7 +110,10 @@ const SolarPanelOrientationSelection = ({ setDialogVisible }: { setDialogVisible
       }
       if (parent.type === ObjectType.Wall) {
         // maybe outside bound or overlap with others
-        return Util.checkElementOnWallState(clone, parent) === ElementOnWallState.Valid;
+        return Util.checkElementOnWallState(clone, parent) === ElementState.Valid;
+      }
+      if (parent.type === ObjectType.Roof) {
+        return Util.checkElementOnRoofState(clone, parent as RoofModel) === ElementState.Valid;
       }
       return Util.isSolarCollectorWithinHorizontalSurface(clone, parent);
     }

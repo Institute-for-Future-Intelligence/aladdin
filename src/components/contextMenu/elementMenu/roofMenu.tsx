@@ -6,9 +6,9 @@ import React, { useState } from 'react';
 import { Menu } from 'antd';
 import { useStore } from 'src/stores/common';
 import * as Selector from 'src/stores/selector';
-import { Lock } from '../menuItems';
+import { Lock, Paste } from '../menuItems';
 import i18n from 'src/i18n/i18n';
-import { RoofTexture } from 'src/types';
+import { ObjectType, RoofTexture } from 'src/types';
 import RoofTextureSelection from './roofTextureSelection';
 import RoofColorSelection from './roofColorSelection';
 import { RoofModel } from 'src/models/RoofModel';
@@ -28,9 +28,21 @@ export const RoofMenu = () => {
   const lang = { lng: language };
   const paddingLeft = '36px';
 
+  const legalToPaste = () => {
+    const elementsToPaste = useStore.getState().elementsToPaste;
+    if (elementsToPaste && elementsToPaste.length > 0) {
+      const e = elementsToPaste[0];
+      if (e.type === ObjectType.SolarPanel) {
+        return true;
+      }
+    }
+    return false;
+  };
+
   return (
     roof && (
       <>
+        {legalToPaste() && <Paste keyName={'roof-paste'} />}
         <Lock keyName={'roof-lock'} />
 
         {overhangDialogVisible && <RoofOverhangInput setDialogVisible={setOverhangDialogVisible} />}

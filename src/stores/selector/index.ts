@@ -728,6 +728,8 @@ export const solarPanelLabels = (state: CommonStoreState) => state.solarPanelLab
 
 export const setSolarPanelLabels = (state: CommonStoreState) => state.setSolarPanelLabels;
 
+export const updateSolarPanelOnRoofFlag = (state: CommonStoreState) => state.updateSolarPanelOnRoofFlag;
+
 // parabolic troughs (CSP)
 
 export const runDailySimulationForParabolicTroughs = (state: CommonStoreState) =>

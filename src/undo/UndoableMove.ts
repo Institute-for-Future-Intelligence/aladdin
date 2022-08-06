@@ -25,3 +25,13 @@ export interface UndoableMoveFoundationGroup extends Undoable {
   oldPositionMap: Map<string, number[]>;
   newPositionMap: Map<string, number[]>;
 }
+
+export interface UndoableMoveSolarPanelOnRoof extends Undoable {
+  id: string;
+  oldPos: number[];
+  newPos: number[];
+  oldRot: number[];
+  newRot: number[];
+  oldNor: number[];
+  newNor: number[];
+}

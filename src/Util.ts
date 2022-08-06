@@ -25,7 +25,7 @@ import {
   ResizeHandleType,
   RotateHandleType,
   TrackerType,
-  ElementOnWallState,
+  ElementState,
 } from './types';
 import { PvModel } from './models/PvModel';
 import { SensorModel } from './models/SensorModel';
@@ -36,6 +36,8 @@ import { useStore } from './stores/common';
 import { SolarCollector } from './models/SolarCollector';
 import { Rectangle } from './models/Rectangle';
 import platform from 'platform';
+import { RoofModel } from './models/RoofModel';
+import { spOnRoofBoundaryCheck, spOnRoofCollisionCheck } from './views/roof/roofRenderer';
 
 export class Util {
   static fetchIntersectables(scene: Scene): Object3D[] {
@@ -705,7 +707,7 @@ export class Util {
     return false;
   }
 
-  static checkElementOnWallState(elem: ElementModel, parent?: ElementModel): ElementOnWallState {
+  static checkElementOnWallState(elem: ElementModel, parent?: ElementModel): ElementState {
     let hx = elem.lx / 2;
     let hz = elem.lz / 2;
     if (parent && elem.type === ObjectType.SolarPanel) {
@@ -718,7 +720,7 @@ export class Util {
     const eMaxZ = elem.cz + hz;
 
     if (eMinX < -0.5 || eMaxX > 0.5 || eMinZ < -0.5 || eMaxZ > 0.5) {
-      return ElementOnWallState.OutsideBoundary;
+      return ElementState.OutsideBoundary;
     }
     for (const e of useStore.getState().elements) {
       // check collision with other elements
@@ -744,11 +746,30 @@ export class Util {
             (tMinZ >= eMinZ && tMinZ <= eMaxZ) ||
             (tMaxZ >= eMinZ && tMaxZ <= eMaxZ))
         ) {
-          return ElementOnWallState.OverLap;
+          return ElementState.OverLap;
         }
       }
     }
-    return ElementOnWallState.Valid;
+    return ElementState.Valid;
+  }
+
+  static checkElementOnRoofState(sp: SolarPanelModel, parent: RoofModel) {
+    if (sp.foundationId) {
+      const foundation = useStore.getState().getElementById(sp.foundationId);
+      const wall = useStore.getState().getElementById(parent.wallsId[0]) as WallModel;
+      if (foundation && wall) {
+        const solarPanelVertices = Util.getSolarPanelVerticesOnRoof(sp as SolarPanelModel, foundation);
+        const wallVertices = Util.getWallPointsWithOverhang(parent.id, wall, parent.overhang);
+        if (!spOnRoofBoundaryCheck(solarPanelVertices, wallVertices)) {
+          return ElementState.OutsideBoundary;
+        }
+        if (!spOnRoofCollisionCheck(sp as SolarPanelModel, foundation, solarPanelVertices)) {
+          return ElementState.OverLap;
+        }
+        return ElementState.Valid;
+      }
+    }
+    return ElementState.Invalid;
   }
 
   static relativeCoordinates(x: number, y: number, z: number, parent: ElementModel): Vector3 {
@@ -974,7 +995,70 @@ export class Util {
     return { x: v.x, y: v.y } as Point2;
   }
 
-  static squareRootOfSquareSum(x: number, y: number) {
-    return Math.sqrt(Math.pow(x, 2) + Math.pow(y, 2));
+  static getSolarPanelVerticesOnRoof(sp: SolarPanelModel, foundation: ElementModel) {
+    const vertices: Vector3[] = [];
+    const center = new Vector3(sp.cx * foundation.lx, sp.cy * foundation.ly, sp.cz + foundation.lz);
+    for (let i = -1; i <= 1; i += 2) {
+      for (let j = -1; j <= 1; j += 2) {
+        const vertex = new Vector3((sp.lx / 2) * i, (sp.ly / 2) * j * i, 0);
+        // has pole
+        if (sp.rotation[0] === 0) {
+          vertex.applyEuler(new Euler(sp.tiltAngle, 0, sp.relativeAzimuth + foundation.rotation[2], 'ZXY')).add(center);
+        } else {
+          vertex
+            .applyEuler(new Euler(sp.rotation[0], sp.rotation[1], sp.rotation[2] + foundation.rotation[2], 'ZXY'))
+            .add(center);
+        }
+        vertices.push(vertex);
+      }
+    }
+    return vertices;
+  }
+
+  static getWallPoints(roofId: string, wall: WallModel) {
+    const array = [];
+    const startWall = wall;
+    while (wall && (!wall.roofId || wall.roofId === roofId)) {
+      array.push({ x: wall.leftPoint[0], y: wall.leftPoint[1] } as Point2);
+      if (wall.leftJoints[0]) {
+        if (wall.leftJoints[0] !== startWall.id) {
+          wall = useStore.getState().getElementById(wall.leftJoints[0]) as WallModel;
+        }
+        // is a loop
+        else {
+          array.reverse();
+          return array;
+        }
+      } else {
+        break;
+      }
+    }
+
+    array.reverse();
+
+    wall = useStore.getState().getElementById(startWall.rightJoints[0]) as WallModel;
+    while (wall && (!wall.roofId || wall.roofId === roofId)) {
+      array.push({ x: wall.leftPoint[0], y: wall.leftPoint[1] } as Point2);
+      if (wall.rightJoints[0] && wall.rightJoints[0] !== startWall.id) {
+        wall = useStore.getState().getElementById(wall.rightJoints[0]) as WallModel;
+      } else {
+        break;
+      }
+    }
+    return array;
+  }
+
+  static getWallPointsWithOverhang(roofId: string, wall: WallModel, overhang: number) {
+    const vertices = Util.getWallPoints(roofId, wall);
+    const centroid = Util.calculatePolygonCentroid(vertices);
+    const centroidVector = new Vector3(centroid.x, centroid.y);
+    overhang += 0.1;
+    return vertices.map((v) => {
+      const diff = new Vector3(v.x, v.y).sub(centroidVector);
+      diff.setX(diff.x + overhang * Math.sign(diff.x));
+      diff.setY(diff.y + overhang * Math.sign(diff.y));
+      const res = new Vector3().addVectors(centroidVector, diff);
+      return { x: res.x, y: res.y };
+    });
   }
 }

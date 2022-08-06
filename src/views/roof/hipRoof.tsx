@@ -7,13 +7,17 @@ import React, { useEffect, useMemo, useRef, useState } from 'react';
 import { HALF_PI, UNIT_VECTOR_POS_Z } from 'src/constants';
 import { ElementModel } from 'src/models/ElementModel';
 import { ElementModelFactory } from 'src/models/ElementModelFactory';
+import { FoundationModel } from 'src/models/FoundationModel';
 import { Point2 } from 'src/models/Point2';
 import { HipRoofModel } from 'src/models/RoofModel';
+import { SolarPanelModel } from 'src/models/SolarPanelModel';
 import { WallModel } from 'src/models/WallModel';
 import { useStore } from 'src/stores/common';
 import { useStoreRef } from 'src/stores/commonRef';
 import * as Selector from 'src/stores/selector';
 import { RoofTexture, Orientation } from 'src/types';
+import { UndoableAdd } from 'src/undo/UndoableAdd';
+import { UndoableMoveSolarPanelOnRoof } from 'src/undo/UndoableMove';
 import { UndoableResizeHipRoofRidge } from 'src/undo/UndoableResize';
 import { Util } from 'src/Util';
 import { DoubleSide, Euler, Mesh, Raycaster, Vector2, Vector3 } from 'three';
@@ -28,6 +32,8 @@ import {
   getDistance,
   handleRoofPointerDown,
   RoofWireframeProps,
+  spBoundaryCheckWithErrMsg,
+  spCollisionCheckWithErrMsg,
 } from './roofRenderer';
 
 enum RoofHandleType {
@@ -109,6 +115,7 @@ const HipRoof = ({
   const removeElementById = useStore(Selector.removeElementById);
   const shadowEnabled = useStore(Selector.viewState.shadowEnabled);
   const elements = useStore(Selector.elements);
+  const updateSolarPanelOnRoofFlag = useStore(Selector.updateSolarPanelOnRoofFlag);
 
   // set position and rotation
   const foundation = getElementById(parentId);
@@ -136,6 +143,10 @@ const HipRoof = ({
   const grabRef = useRef<ElementModel | null>(null);
 
   useEffect(() => {
+    updateSolarPanelOnRoof();
+  }, [updateSolarPanelOnRoofFlag]);
+
+  useEffect(() => {
     if (h < minHeight) {
       setH(minHeight * 1.5);
     }
@@ -159,6 +170,7 @@ const HipRoof = ({
         if (e.id === elemId) {
           (e as HipRoofModel).leftRidgeLength = leftRidge;
           (e as HipRoofModel).rightRidgeLength = rightRidge;
+          state.updateSolarPanelOnRoofFlag *= -1;
           break;
         }
       }
@@ -461,7 +473,7 @@ const HipRoof = ({
 
   const getRotationFromNormal = (normal: Vector3) => {
     return [
-      Math.PI / 2 - Math.atan2(normal.z, Util.squareRootOfSquareSum(normal.x, normal.y)),
+      Math.PI / 2 - Math.atan2(normal.z, Math.hypot(normal.x, normal.y)),
       0,
       Math.atan2(normal.y, normal.x) + Math.PI / 2,
     ];
@@ -524,7 +536,7 @@ const HipRoof = ({
             const posRelToFoundation = new Vector3(e.cx * foundation.lx, e.cy * foundation.ly, e.cz + foundation.lz);
             const segmentIdx = getRoofSegmentIdxFromPostion(posRelToFoundation);
             const normal = getNormalOnRoof(segmentIdx, posRelToFoundation);
-            const rotation = getSolarPanelRotation(segmentIdx, posRelToFoundation);
+            const rotation = normal.z > 0.999999 ? [0, 0, 0] : getSolarPanelRotation(segmentIdx, posRelToFoundation);
             const vertices = getPlaneVertices(segmentIdx, posRelToFoundation);
             const z = getSolarPanelZ(vertices, posRelToFoundation);
             if (rotation && z !== undefined) {
@@ -536,6 +548,69 @@ const HipRoof = ({
         }
       }
     });
+  };
+
+  const oldPostionRef = useRef<number[] | null>(null);
+  const oldRotationRef = useRef<number[] | null>(null);
+  const oldNormalRef = useRef<number[] | null>(null);
+
+  const handleUndoableAdd = (elem: ElementModel) => {
+    const undoableAdd = {
+      name: 'Add Solar Panel On Roof',
+      timestamp: Date.now(),
+      addedElement: elem,
+      undo: () => {
+        removeElementById(elem.id, false);
+      },
+      redo: () => {
+        setCommonStore((state) => {
+          state.elements.push(undoableAdd.addedElement);
+          state.selectedElement = undoableAdd.addedElement;
+        });
+      },
+    } as UndoableAdd;
+    useStore.getState().addUndoable(undoableAdd);
+  };
+
+  const handleUndoableMove = (sp: SolarPanelModel) => {
+    if (oldPostionRef.current && oldRotationRef.current && oldNormalRef.current) {
+      const undoabeMove = {
+        name: 'Move Solar Panel On Roof',
+        timestamp: Date.now(),
+        id: sp.id,
+        oldPos: [...oldPostionRef.current],
+        newPos: [sp.cx, sp.cy, sp.cz],
+        oldRot: [...oldRotationRef.current],
+        newRot: [...sp.rotation],
+        oldNor: [...oldNormalRef.current],
+        newNor: [...sp.normal],
+        undo: () => {
+          setCommonStore((state) => {
+            for (const e of state.elements) {
+              if (e.id === undoabeMove.id) {
+                [e.cx, e.cy, e.cz] = [...undoabeMove.oldPos];
+                e.rotation = [...undoabeMove.oldRot];
+                e.normal = [...undoabeMove.oldNor];
+                break;
+              }
+            }
+          });
+        },
+        redo: () => {
+          setCommonStore((state) => {
+            for (const e of state.elements) {
+              if (e.id === undoabeMove.id) {
+                [e.cx, e.cy, e.cz] = [...undoabeMove.newPos];
+                e.rotation = [...undoabeMove.newRot];
+                e.normal = [...undoabeMove.newNor];
+                break;
+              }
+            }
+          });
+        },
+      } as UndoableMoveSolarPanelOnRoof;
+      useStore.getState().addUndoable(undoabeMove);
+    }
   };
 
   return (
@@ -558,7 +633,8 @@ const HipRoof = ({
                 return null;
               }
               const normal = getNormalOnRoof(roofSegmentIdx, posRelToFoundation);
-              const rotation = getSolarPanelRotation(roofSegmentIdx, posRelToFoundation);
+              const rotation =
+                normal.z > 0.999999 ? [0, 0, 0] : getSolarPanelRotation(roofSegmentIdx, posRelToFoundation);
 
               const newElement = ElementModelFactory.makeSolarPanel(
                 roof,
@@ -577,12 +653,16 @@ const HipRoof = ({
                 state.elements.push(newElement as ElementModel);
                 state.objectTypeToAdd = ObjectType.None;
               });
+              handleUndoableAdd(newElement);
             }
           }
           if (e.intersections[0].eventObject.name !== 'Hip Roof Segments Group') {
             const selectedElement = useStore.getState().getSelectedElement();
             if (selectedElement && selectedElement.id !== id) {
               grabRef.current = selectedElement;
+              oldPostionRef.current = [selectedElement.cx, selectedElement.cy, selectedElement.cz];
+              oldRotationRef.current = [...selectedElement.rotation];
+              oldNormalRef.current = [...selectedElement.normal];
             }
           } else {
             handleRoofPointerDown(e, id, parentId);
@@ -604,7 +684,8 @@ const HipRoof = ({
                       return null;
                     }
                     const normal = getNormalOnRoof(roofSegmentIdx, posRelToFoundation);
-                    const rotation = getSolarPanelRotation(roofSegmentIdx, posRelToFoundation);
+                    const rotation =
+                      normal.z > 0.999999 ? [0, 0, 0] : getSolarPanelRotation(roofSegmentIdx, posRelToFoundation);
                     setCommonStore((state) => {
                       for (const e of state.elements) {
                         if (e.id === grabRef.current?.id) {
@@ -624,6 +705,34 @@ const HipRoof = ({
           }
         }}
         onPointerUp={() => {
+          if (grabRef.current && useStore.getState().moveHandleType) {
+            const sp = getElementById(grabRef.current.id) as SolarPanelModel;
+            if (sp && foundation) {
+              const boundaryVertices = Util.getWallPointsWithOverhang(id, currentWallArray[0], overhang);
+              const solarPanelVertices = Util.getSolarPanelVerticesOnRoof(sp, foundation);
+              if (
+                !spBoundaryCheckWithErrMsg(solarPanelVertices, boundaryVertices) ||
+                !spCollisionCheckWithErrMsg(sp, foundation, solarPanelVertices)
+              ) {
+                setCommonStore((state) => {
+                  if (oldPostionRef.current && oldRotationRef.current && oldNormalRef.current) {
+                    for (const e of state.elements) {
+                      if (e.id === grabRef.current?.id) {
+                        e.cx = oldPostionRef.current[0];
+                        e.cy = oldPostionRef.current[1];
+                        e.cz = oldPostionRef.current[2];
+                        e.rotation = [...oldRotationRef.current];
+                        e.normal = [...oldNormalRef.current];
+                        break;
+                      }
+                    }
+                  }
+                });
+              } else {
+                handleUndoableMove(sp);
+              }
+            }
+          }
           grabRef.current = null;
           setCommonStore((state) => {
             state.moveHandleType = null;
