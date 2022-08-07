@@ -107,7 +107,7 @@ const HipRoof = ({
   lineColor = 'black',
   lineWidth = 0.2,
 }: HipRoofModel) => {
-  color = '#fb9e00';
+  // color = '#fb9e00';
   const texture = useRoofTexture(textureType);
 
   const getElementById = useStore(Selector.getElementById);
