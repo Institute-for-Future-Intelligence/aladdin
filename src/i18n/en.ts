@@ -354,6 +354,7 @@ export const i18n_en = {
       solarEnergySubMenu: 'Solar Energy',
       solarEnergyExamples: {
         SunBeamAndHeliodon: 'Sun Beam and Heliodon',
+        RooftopSolarPanels: 'Rooftop Solar Panels',
         SolarFarm: 'Solar Farm',
         NevadaSolarOneParabolicTroughArray: 'Nevada Solar One Parabolic Trough Array',
         TooeleParabolicDishArray: 'Tooele Parabolic Dish Array',

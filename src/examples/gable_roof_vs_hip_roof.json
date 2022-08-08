@@ -1,7 +1,7 @@
 {
-  "docid": "jo6J61xWNpbfnabM8HCw9K",
-  "time": "06/17/2022 06:57 pm",
-  "timestamp": 1655506622336,
+  "docid": "mTHAL1zjf5e4jmfPmr8RxW",
+  "time": "08/06/2022 09:02 am",
+  "timestamp": 1659790952665,
   "userid": "QWecNcxhyvP6j6sBN11hBsfZDau1",
   "owner": null,
   "email": null,
@@ -1084,7 +1084,7 @@
       "wallsId": [
         "2u4Fe7xnA6kkXXVGrQ4eyJ"
       ],
-      "textureType": "Roof Texture Default",
+      "textureType": "Roof Texture #1",
       "color": "#cccccc",
       "selected": false,
       "showLabel": false,
@@ -1118,9 +1118,9 @@
       "wallsId": [
         "beHqET5NN8aNdsuBncMpY7"
       ],
-      "textureType": "Roof Texture Default",
+      "textureType": "Roof Texture #1",
       "color": "#cccccc",
-      "selected": false,
+      "selected": true,
       "showLabel": false,
       "normal": [
         0,
@@ -1647,7 +1647,7 @@
       "wallsId": [
         "tKvexMf8zrvPgydcZb5VYA"
       ],
-      "textureType": "Roof Texture Default",
+      "textureType": "Roof Texture #1",
       "color": "#cccccc",
       "selected": false,
       "showLabel": false,
@@ -1723,9 +1723,9 @@
     "dailyHeliostatYieldPanelX": 0,
     "showDailyParabolicDishYieldPanel": false,
     "cameraPosition": [
-      -24.700613018022167,
-      -28.98018071209091,
-      6.577151744607509
+      -24.70061301802216,
+      -28.980180712090895,
+      6.577151744607507
     ],
     "showYearlyHeliostatYieldPanel": false,
     "orthographic": false,

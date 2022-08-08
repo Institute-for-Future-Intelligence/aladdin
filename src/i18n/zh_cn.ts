@@ -351,6 +351,7 @@ export const i18n_zh_cn = {
       solarEnergySubMenu: '太阳能',
       solarEnergyExamples: {
         SunBeamAndHeliodon: '太阳光束和日影仪',
+        RooftopSolarPanels: '屋顶光伏板',
         SolarFarm: '太阳能农场',
         NevadaSolarOneParabolicTroughArray: '内华达州太阳能一号的抛物线槽阵列',
         TooeleParabolicDishArray: '犹他州图埃勒的抛物线碟阵列',

@@ -1,7 +1,7 @@
 {
-  "docid": "sVtpYq7zGGpBeQhBWaSQQE",
-  "time": "06/05/2022 10:02 am",
-  "timestamp": 1654437778650,
+  "docid": "toiEeoN8SemtxN3711hq7P",
+  "time": "08/06/2022 09:04 am",
+  "timestamp": 1659791098698,
   "userid": "QWecNcxhyvP6j6sBN11hBsfZDau1",
   "owner": null,
   "email": null,
@@ -481,7 +481,7 @@
       "parentId": "fbqvzYqiEy79jeL8wsadib",
       "id": "3LYQCPYTZ6WYqLSGF4X7Lr",
       "selected": false,
-      "ly": 0.6
+      "ly": 0.4
     },
     {
       "type": "Window",
@@ -856,7 +856,7 @@
       "wallsId": [
         "beHqET5NN8aNdsuBncMpY7"
       ],
-      "textureType": "Roof Texture #6",
+      "textureType": "Roof Texture #2",
       "color": "#cccccc",
       "selected": false,
       "showLabel": false,
@@ -896,7 +896,7 @@
       "wallsId": [
         "cV8MyCuhWAsvEyyFuVqVqg"
       ],
-      "textureType": "Roof Texture #6",
+      "textureType": "Roof Texture #2",
       "color": "#ffffff",
       "selected": false,
       "showLabel": false,
@@ -1624,9 +1624,9 @@
     "dailyHeliostatYieldPanelX": 0,
     "showDailyParabolicDishYieldPanel": false,
     "cameraPosition": [
-      -14.713513471682024,
-      -27.382130211129965,
-      5.668244314102163
+      -14.510102899825792,
+      -27.454932405466494,
+      5.668244314102164
     ],
     "showYearlyHeliostatYieldPanel": false,
     "orthographic": false,

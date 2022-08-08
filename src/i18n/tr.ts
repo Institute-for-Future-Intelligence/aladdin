@@ -355,6 +355,7 @@ export const i18n_tr = {
       solarEnergySubMenu: 'Güneþ Enerjisi',
       solarEnergyxamples: {
         SunBeamAndHeliodon: 'Güneþ Iþýný ve Heliodon',
+        RooftopSolarPanels: 'Rooftop Solar Panels',
         SolarFarm: 'Güneþ Tarlasý',
         NevadaSolarOneParabolicTroughArray: 'Nevada Solar One Parabolic Trough Array',
         TooeleParabolicDishArray: 'Tooele Parabolic Dish Array',

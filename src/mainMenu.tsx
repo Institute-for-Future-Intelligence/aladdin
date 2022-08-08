@@ -7,6 +7,7 @@ import insolation_and_climate from './examples/insolation_and_climate.json';
 import solar_radiation_to_box from './examples/solar_radiation_to_box.json';
 import sun_beam_at_center from './examples/sun_beam_at_center.json';
 import office_building_01 from './examples/office_building_01.json';
+import rooftop_solar_panels from './examples/rooftop_solar_panels.json';
 import solar_farm_01 from './examples/solar_farm_01.json';
 import solar_farm_fixed_array from './examples/solar_farm_fixed_array.json';
 import solar_farm_hsat_array from './examples/solar_farm_hsat_array.json';
@@ -295,6 +296,9 @@ const MainMenu = ({ viewOnly, set2DView, resetView, zoomView, canvas }: MainMenu
         break;
       case 'inter_row_spacing':
         input = inter_row_spacing;
+        break;
+      case 'rooftop_solar_panels':
+        input = rooftop_solar_panels;
         break;
       case 'solar_farm_01':
         input = solar_farm_01;
@@ -1914,6 +1918,9 @@ const MainMenu = ({ viewOnly, set2DView, resetView, zoomView, canvas }: MainMenu
           <SubMenu key={'photovoltaic-solar-power-examples'} title={i18n.t('menu.photovoltaicSolarPowerSubMenu', lang)}>
             <Menu.Item key="sun_beam_at_center" onClick={loadFile}>
               {i18n.t('menu.solarEnergyExamples.SunBeamAndHeliodon', lang)}
+            </Menu.Item>
+            <Menu.Item key="rooftop_solar_panels" onClick={loadFile}>
+              {i18n.t('menu.solarEnergyExamples.RooftopSolarPanels', lang)}
             </Menu.Item>
             <Menu.Item key="solar_farm_01" onClick={loadFile}>
               {i18n.t('menu.solarEnergyExamples.SolarFarm', lang)}
