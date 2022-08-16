@@ -144,7 +144,7 @@ const HipRoof = ({
 
   useEffect(() => {
     updateSolarPanelOnRoof();
-  }, [updateSolarPanelOnRoofFlag]);
+  }, [updateSolarPanelOnRoofFlag, h]);
 
   useEffect(() => {
     if (h < minHeight) {
@@ -170,7 +170,7 @@ const HipRoof = ({
         if (e.id === elemId) {
           (e as HipRoofModel).leftRidgeLength = leftRidge;
           (e as HipRoofModel).rightRidgeLength = rightRidge;
-          state.updateSolarPanelOnRoofFlag *= -1;
+          state.updateSolarPanelOnRoofFlag = !state.updateSolarPanelOnRoofFlag;
           break;
         }
       }

@@ -39,6 +39,8 @@ import { WallModel } from 'src/models/WallModel';
 import { spBoundaryCheckWithErrMsg, spCollisionCheckWithErrMsg } from '../roof/roofRenderer';
 import { UndoableChange } from 'src/undo/UndoableChange';
 import { UnoableResizeSolarPanelOnRoof } from 'src/undo/UndoableResize';
+import { getSunDirection } from 'src/analysis/sunTools';
+import i18n from 'src/i18n/i18n';
 
 interface MoveHandleProps {
   id: string;
@@ -66,6 +68,18 @@ interface TiltHanldeProps {
   initPointerDown: () => void;
   handlePointerMove: (e: ThreeEvent<PointerEvent>, tiltHandleRef: React.MutableRefObject<Mesh | undefined>) => void;
   handlePointerUp: () => void;
+}
+
+interface SumbeamProps {
+  drawSunbeam: boolean;
+  rotation: number[];
+  normal: number[];
+  relativeEuler: Euler;
+  fRotation: number;
+}
+
+interface LabelProps {
+  id: string;
 }
 
 const MoveHandle = ({ id, handleSize }: MoveHandleProps) => {
@@ -294,6 +308,138 @@ const TiltHandle = ({
   );
 };
 
+const Sunbeam = React.memo(({ drawSunbeam, rotation, normal, relativeEuler, fRotation }: SumbeamProps) => {
+  const euler = new Euler().fromArray([...rotation, 'ZXY']);
+
+  const normalVector = useMemo(() => {
+    if (rotation[0] === 0) {
+      return new Vector3()
+        .fromArray(normal)
+        .applyEuler(new Euler(relativeEuler.x, relativeEuler.y, relativeEuler.z + rotation[2] + fRotation, 'ZXY'));
+    }
+    return new Vector3(0, 0, 1).applyEuler(euler).applyEuler(new Euler(0, 0, fRotation));
+  }, [rotation, relativeEuler, fRotation]);
+
+  const date = useStore(Selector.world.date);
+  const latitude = useStore(Selector.world.latitude);
+  const sceneRadius = useStore(Selector.sceneRadius);
+  const sunBeamLength = Math.max(100, 10 * sceneRadius);
+
+  const sunDirection = useMemo(() => {
+    return getSunDirection(new Date(date), latitude);
+  }, [date, latitude]);
+
+  return (
+    <>
+      {drawSunbeam && sunDirection.z > 0 && (
+        <group rotation={[-euler.x, 0, -euler.z - fRotation]}>
+          <Line
+            userData={{ unintersectable: true }}
+            points={[
+              normalVector.clone().multiplyScalar(0.75),
+              [0, 0, 0],
+              sunDirection.clone().multiplyScalar(sunBeamLength),
+            ]}
+            name={'Sun Beam'}
+            lineWidth={0.5}
+            color={'white'}
+          />
+          <Line
+            userData={{ unintersectable: true }}
+            points={[sunDirection.clone().multiplyScalar(0.5), normalVector.clone().multiplyScalar(0.5)]}
+            name={'Angle'}
+            lineWidth={0.5}
+            color={'white'}
+          />
+          <textSprite
+            userData={{ unintersectable: true }}
+            name={'Angle Value'}
+            text={Util.toDegrees(sunDirection.angleTo(normalVector)).toFixed(1) + '°'}
+            fontSize={20}
+            fontFace={'Times Roman'}
+            textHeight={0.1}
+            position={sunDirection
+              .clone()
+              .multiplyScalar(0.75)
+              .add(normalVector.clone().multiplyScalar(0.75))
+              .multiplyScalar(0.5)}
+          />
+          <group
+            position={normalVector.clone().multiplyScalar(0.75)}
+            rotation={[HALF_PI + euler.x + relativeEuler.x, 0, euler.z + relativeEuler.z + fRotation, 'ZXY']}
+          >
+            <Cone
+              userData={{ unintersectable: true }}
+              args={[0.04, 0.2, 4, 2]}
+              name={'Normal Vector Arrow Head'}
+              rotation={[0, 0, -relativeEuler.y]}
+            >
+              <meshStandardMaterial color={'white'} />
+            </Cone>
+          </group>
+        </group>
+      )}
+    </>
+  );
+});
+
+const Label = ({ id }: LabelProps) => {
+  useStore(Selector.elements);
+  const getElementById = useStore(Selector.getElementById);
+  const language = useStore(Selector.language);
+  const lang = { lng: language };
+
+  const sp = getElementById(id) as SolarPanelModel;
+
+  if (!sp || !sp.foundationId) {
+    return null;
+  }
+
+  const foundation = getElementById(sp.foundationId) as FoundationModel;
+
+  if (!foundation) {
+    return null;
+  }
+
+  const fCenter = new Vector3(foundation.cx, foundation.cy, foundation.cz);
+
+  const center = new Vector3(
+    sp.cx * foundation.lx,
+    sp.cy * foundation.ly,
+    foundation.lz / 2 + sp.cz + sp.lz / 2 + sp.poleHeight,
+  )
+    .applyEuler(new Euler(0, 0, foundation.rotation[2]))
+    .add(fCenter);
+
+  const labelText =
+    (sp.label ?? i18n.t('shared.SolarPanelElement', lang)) +
+    (sp.locked ? ` ( + ${i18n.t('shared.ElementLocked', lang)} + )` : '') +
+    (sp.label
+      ? ''
+      : '\n' +
+        i18n.t('word.Coordinates', lang) +
+        ': (' +
+        center.x.toFixed(1) +
+        ', ' +
+        center.y.toFixed(1) +
+        ', ' +
+        center.z.toFixed(1) +
+        ') ' +
+        i18n.t('word.MeterAbbreviation', lang));
+
+  return (
+    <textSprite
+      userData={{ unintersectable: true }}
+      name={'Label'}
+      text={labelText}
+      fontSize={20}
+      fontFace={'Times Roman'}
+      textHeight={0.2}
+      position={[0, 0, Math.max((sp.ly / 2) * Math.abs(Math.sin(sp.tiltAngle)) + 0.1, 0.2)]}
+    />
+  );
+};
+
 export const useTexture = (id: string, nx: number, ny: number, pvModelName: string, orientation: Orientation) => {
   const showSolarRadiationHeatmap = useStore(Selector.showSolarRadiationHeatmap);
   const solarRadiationHeatmapMaxValue = useStore(Selector.viewState.solarRadiationHeatmapMaxValue);
@@ -396,6 +542,7 @@ const SolarPanelOnRoof = ({
   const [ny, setNy] = useState(1);
   const [drawPole, setDrawPole] = useState(rotation[0] === 0);
   const [showIntersectionPlane, setShowIntersectionPlane] = useState(false);
+  const [hovered, setHovered] = useState(false);
   const { gl, camera } = useThree();
   const [texture, heapmapTexture] = useTexture(id, nx, ny, pvModelName, orientation);
 
@@ -530,7 +677,7 @@ const SolarPanelOnRoof = ({
           state.moveHandleType = null;
           state.resizeHandleType = null;
           state.rotateHandleType = null;
-          state.updateSolarPanelOnRoofFlag *= -1;
+          state.updateSolarPanelOnRoofFlag = !state.updateSolarPanelOnRoofFlag;
         });
       }
     };
@@ -677,7 +824,7 @@ const SolarPanelOnRoof = ({
             let angle = cv.angleTo(UNIT_VECTOR_POS_Z);
             const touch = 0.5 * ly * Math.abs(Math.sin(angle)) > poleHeight;
             if (!touch) {
-              const wr = relativeAzimuth + rotation[2];
+              const wr = relativeAzimuth + rotation[2] + (foundationModel?.rotation[2] ?? 0);
               const sign =
                 wr % Math.PI === 0
                   ? Math.sign(-cv.y) * Math.sign(Math.cos(wr))
@@ -817,6 +964,17 @@ const SolarPanelOnRoof = ({
               }
             });
           }}
+          onPointerOver={(e) => {
+            if (e.intersections.length > 0) {
+              const intersected = e.intersections[0].object === baseRef.current;
+              if (intersected) {
+                setHovered(true);
+              }
+            }
+          }}
+          onPointerOut={(e) => {
+            setHovered(false);
+          }}
         >
           <meshStandardMaterial attachArray="material" color={color} />
           <meshStandardMaterial attachArray="material" color={color} />
@@ -954,6 +1112,18 @@ const SolarPanelOnRoof = ({
             </Cylinder>
           );
         })}
+
+      {/*draw sun beam*/}
+      <Sunbeam
+        drawSunbeam={drawSunBeam}
+        rotation={rotation}
+        normal={normal}
+        relativeEuler={relativeEuler}
+        fRotation={foundationModel?.rotation[2] ?? 0}
+      />
+
+      {/*draw label */}
+      {(hovered || showLabel) && !selected && <Label id={id} />}
     </group>
   );
 };

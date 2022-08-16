@@ -15,3 +15,7 @@ export interface SolarPanelModel extends SolarCollector {
   parentType?: ObjectType;
   foundationModel?: FoundationModel;
 }
+
+export interface SolarPanelModelOnWall extends SolarPanelModel {
+  absRotation: number;
+}

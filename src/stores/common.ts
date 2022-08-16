@@ -696,7 +696,7 @@ export interface CommonStoreState {
   updateWallMapOnFoundationFlag: boolean;
   updateWallMapOnFoundation: () => void;
 
-  updateSolarPanelOnRoofFlag: number;
+  updateSolarPanelOnRoofFlag: boolean;
   updateSolarPanelOnRoofFn: () => void;
 
   addedWindowId: string | null;
@@ -4905,7 +4905,7 @@ export const useStore = create<CommonStoreState>(
                               break;
                             }
                             approved = true;
-                            state.updateSolarPanelOnRoofFlag *= -1;
+                            state.updateSolarPanelOnRoofFlag = !state.updateSolarPanelOnRoofFlag;
                           }
                         }
                         break;
@@ -5148,7 +5148,7 @@ export const useStore = create<CommonStoreState>(
                                   const lang = { lng: state.language };
                                   showError(i18n.t('message.CannotPasteOutsideBoundary', lang));
                                 } else {
-                                  state.updateSolarPanelOnRoofFlag *= -1;
+                                  state.updateSolarPanelOnRoofFlag = !state.updateSolarPanelOnRoofFlag;
                                 }
                               }
                             }
@@ -5609,10 +5609,10 @@ export const useStore = create<CommonStoreState>(
             });
           },
 
-          updateSolarPanelOnRoofFlag: 1,
+          updateSolarPanelOnRoofFlag: false,
           updateSolarPanelOnRoofFn() {
             immerSet((state: CommonStoreState) => {
-              state.updateSolarPanelOnRoofFlag *= -1;
+              state.updateSolarPanelOnRoofFlag = !state.updateSolarPanelOnRoofFlag;
             });
           },
 

@@ -348,7 +348,9 @@ const Ground = () => {
                   if (e.id === id) {
                     e.cx = p.x;
                     e.cy = p.y;
-                    e.cz = p.z;
+                    if (e.type !== ObjectType.SolarPanel || (e as SolarPanelModel).parentType !== ObjectType.Roof) {
+                      e.cz = p.z;
+                    }
                     if (e.type === ObjectType.Wall) {
                       const w = e as WallModel;
                       const oldPoints = undoableResize.oldWallPointsMap.get(w.id);
@@ -403,7 +405,9 @@ const Ground = () => {
                 if (e.id === id) {
                   e.cx = p.x;
                   e.cy = p.y;
-                  e.cz = p.z;
+                  if (e.type !== ObjectType.SolarPanel || (e as SolarPanelModel).parentType !== ObjectType.Roof) {
+                    e.cz = p.z;
+                  }
                   if (e.type === ObjectType.Wall) {
                     const w = e as WallModel;
                     const oldPoints = undoableResize.newWallPointsMap.get(w.id);
@@ -643,6 +647,15 @@ const Ground = () => {
                 newWallPointsMapRef.current.set(c.id, [leftPoint, rightPoint]);
               }
               newChildrenPositionsMapRef.current.set(c.id, new Vector3(c.cx, c.cy, c.cz));
+            }
+          }
+        }
+        if (elem.type === ObjectType.Foundation) {
+          const solarsPanelOnRoof = getSolarPanelsOnRoof(elem.id);
+          if (solarsPanelOnRoof.length > 0) {
+            for (const e of solarsPanelOnRoof) {
+              const centerRelPos = new Vector3(e.cx, e.cy);
+              newChildrenPositionsMapRef.current.set(e.id, centerRelPos);
             }
           }
         }
@@ -1111,6 +1124,15 @@ const Ground = () => {
                     oldWallPointsMapRef.current.set(c.id, [leftPoint, rightPoint]);
                   }
                   oldChildrenPositionsMapRef.current.set(c.id, new Vector3(c.cx, c.cy, c.cz));
+                }
+              }
+            }
+            if (selectedElement.type === ObjectType.Foundation) {
+              const solarsPanelOnRoof = getSolarPanelsOnRoof(selectedElement.id);
+              if (solarsPanelOnRoof.length > 0) {
+                for (const e of solarsPanelOnRoof) {
+                  const centerRelPos = new Vector3(e.cx, e.cy);
+                  oldChildrenPositionsMapRef.current.set(e.id, centerRelPos);
                 }
               }
             }

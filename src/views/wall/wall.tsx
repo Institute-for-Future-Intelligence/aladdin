@@ -1200,9 +1200,13 @@ const Wall = ({
               case ObjectType.Door:
                 return <Door key={e.id} {...(e as DoorModel)} />;
               case ObjectType.SolarPanel:
+                let r = 0;
+                if (parent && wallModel) {
+                  r = parent.rotation[2] + wallModel.relativeAngle;
+                }
                 return (
                   <group key={e.id} position={[0, -e.lz / 2, 0]}>
-                    <SolarPanelOnWall {...(e as SolarPanelModel)} />
+                    <SolarPanelOnWall {...(e as SolarPanelModel)} absRotation={r} />
                   </group>
                 );
             }

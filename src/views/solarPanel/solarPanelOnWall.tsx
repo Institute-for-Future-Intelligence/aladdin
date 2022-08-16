@@ -3,7 +3,7 @@
  */
 
 import React, { useEffect, useMemo, useRef, useState } from 'react';
-import { Box, Line, Plane, Sphere } from '@react-three/drei';
+import { Box, Cone, Line, Plane, Sphere } from '@react-three/drei';
 import { CanvasTexture, DoubleSide, Euler, Mesh, RepeatWrapping, Texture, Vector3 } from 'three';
 import { useStore } from '../../stores/common';
 import { useStoreRef } from 'src/stores/commonRef';
@@ -27,8 +27,134 @@ import {
   SolarPanelTextureType,
 } from '../../types';
 import { Util } from '../../Util';
-import { SolarPanelModel } from '../../models/SolarPanelModel';
+import { SolarPanelModelOnWall } from '../../models/SolarPanelModel';
 import { LineData } from '../LineData';
+import { getSunDirection } from 'src/analysis/sunTools';
+import i18n from 'src/i18n/i18n';
+import { WallModel } from 'src/models/WallModel';
+import { FoundationModel } from 'src/models/FoundationModel';
+
+interface SumbeamProps {
+  drawSunbeam: boolean;
+  absRotation: number;
+}
+
+interface LabelProps {
+  sp: SolarPanelModelOnWall;
+}
+
+const Sunbeam = React.memo(({ drawSunbeam, absRotation }: SumbeamProps) => {
+  const normalVector = new Vector3(0, 0, 1);
+
+  const date = useStore(Selector.world.date);
+  const latitude = useStore(Selector.world.latitude);
+  const sceneRadius = useStore(Selector.sceneRadius);
+  const sunBeamLength = Math.max(100, 10 * sceneRadius);
+
+  const sunDirection = useMemo(() => {
+    return getSunDirection(new Date(date), latitude).applyEuler(new Euler(-HALF_PI, 0, -absRotation));
+  }, [date, latitude, absRotation]);
+
+  return (
+    <>
+      {drawSunbeam && sunDirection.z > 0 && (
+        <group>
+          <Line
+            userData={{ unintersectable: true }}
+            points={[
+              normalVector.clone().multiplyScalar(0.75),
+              [0, 0, 0],
+              sunDirection.clone().multiplyScalar(sunBeamLength),
+            ]}
+            name={'Sun Beam'}
+            lineWidth={0.5}
+            color={'white'}
+          />
+          <Line
+            userData={{ unintersectable: true }}
+            points={[sunDirection.clone().multiplyScalar(0.5), normalVector.clone().multiplyScalar(0.5)]}
+            name={'Angle'}
+            lineWidth={0.5}
+            color={'white'}
+          />
+          <textSprite
+            userData={{ unintersectable: true }}
+            name={'Angle Value'}
+            text={Util.toDegrees(sunDirection.angleTo(normalVector)).toFixed(1) + '°'}
+            fontSize={20}
+            fontFace={'Times Roman'}
+            textHeight={0.1}
+            position={sunDirection
+              .clone()
+              .multiplyScalar(0.75)
+              .add(normalVector.clone().multiplyScalar(0.75))
+              .multiplyScalar(0.5)}
+          />
+          <group position={normalVector.clone().multiplyScalar(0.75)} rotation={[HALF_PI, 0, 0]}>
+            <Cone userData={{ unintersectable: true }} args={[0.04, 0.2, 4, 2]} name={'Normal Vector Arrow Head'}>
+              <meshStandardMaterial color={'white'} />
+            </Cone>
+          </group>
+        </group>
+      )}
+    </>
+  );
+});
+
+const Label = ({ sp }: LabelProps) => {
+  useStore(Selector.elements);
+  const getElementById = useStore(Selector.getElementById);
+  const language = useStore(Selector.language);
+  const lang = { lng: language };
+
+  if (!sp.foundationId) {
+    return null;
+  }
+
+  const wall = getElementById(sp.parentId) as WallModel;
+  const foundation = getElementById(sp.foundationId) as FoundationModel;
+
+  if (!wall || !foundation) {
+    return null;
+  }
+
+  const fCenter = new Vector3(foundation.cx, foundation.cy, foundation.cz);
+  const wCenter = new Vector3(wall.cx, wall.cy, wall.cz);
+
+  const center = new Vector3(sp.cx * wall.lx, 0, sp.cz * wall.lz)
+    .applyEuler(new Euler(0, 0, wall.relativeAngle))
+    .add(wCenter)
+    .applyEuler(new Euler(0, 0, foundation.rotation[2]))
+    .add(fCenter);
+
+  const labelText =
+    (sp.label ?? i18n.t('shared.SolarPanelElement', lang)) +
+    (sp.locked ? ` ( + ${i18n.t('shared.ElementLocked', lang)} + )` : '') +
+    (sp.label
+      ? ''
+      : '\n' +
+        i18n.t('word.Coordinates', lang) +
+        ': (' +
+        center.x.toFixed(1) +
+        ', ' +
+        center.y.toFixed(1) +
+        ', ' +
+        center.z.toFixed(1) +
+        ') ' +
+        i18n.t('word.MeterAbbreviation', lang));
+
+  return (
+    <textSprite
+      userData={{ unintersectable: true }}
+      name={'Label'}
+      text={labelText}
+      fontSize={20}
+      fontFace={'Times Roman'}
+      textHeight={0.2}
+      position={[0, 0, Math.max((sp.ly / 2) * Math.abs(Math.sin(sp.tiltAngle)) + 0.1, 0.2)]}
+    />
+  );
+};
 
 const SolarPanelOnWall = ({
   id,
@@ -44,7 +170,10 @@ const SolarPanelOnWall = ({
   locked = false,
   parentId,
   orientation = Orientation.portrait,
-}: SolarPanelModel) => {
+  showLabel,
+  drawSunBeam,
+  absRotation,
+}: SolarPanelModelOnWall) => {
   const setCommonStore = useStore(Selector.set);
   const showSolarRadiationHeatmap = useStore(Selector.showSolarRadiationHeatmap);
   const solarRadiationHeatmapMaxValue = useStore(Selector.viewState.solarRadiationHeatmapMaxValue);
@@ -61,6 +190,7 @@ const SolarPanelOnWall = ({
     gl: { domElement },
   } = useThree();
 
+  const [hovered, setHovered] = useState(false);
   const [hoveredHandle, setHoveredHandle] = useState<MoveHandleType | ResizeHandleType | RotateHandleType | null>(null);
   const [nx, setNx] = useState(1);
   const [ny, setNy] = useState(1);
@@ -100,7 +230,7 @@ const SolarPanelOnWall = ({
   const positionUL = new Vector3(-hx, hy, hz);
   const positionLR = new Vector3(hx, -hy, hz);
   const positionUR = new Vector3(hx, hy, hz);
-  const solarPanel = getElementById(id) as SolarPanelModel;
+  const solarPanel = getElementById(id) as SolarPanelModelOnWall;
 
   useEffect(() => {
     if (solarPanel && showSolarRadiationHeatmap) {
@@ -244,11 +374,13 @@ const SolarPanelOnWall = ({
               const intersected = e.intersections[0].object === baseRef.current;
               if (intersected) {
                 domElement.style.cursor = 'move';
+                setHovered(true);
               }
             }
           }}
           onPointerOut={(e) => {
             domElement.style.cursor = 'default';
+            setHovered(false);
           }}
         >
           <meshStandardMaterial attachArray="material" color={color} />
@@ -460,6 +592,11 @@ const SolarPanelOnWall = ({
             </group>
           </>
         )}
+
+        <Sunbeam drawSunbeam={drawSunBeam} absRotation={absRotation} />
+
+        {/*draw label */}
+        {(hovered || showLabel) && !selected && <Label sp={solarPanel} />}
       </group>
     </group>
   );

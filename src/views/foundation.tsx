@@ -2078,19 +2078,6 @@ const Foundation = ({
           <meshStandardMaterial attachArray="material" color={color} transparent={groundImage} opacity={opacity} />
         </Box>
 
-        {elementsOnBuilding.map((e) => {
-          return (
-            <SolarPanelOnRoof
-              key={e.id}
-              {...(e as SolarPanelModel)}
-              cx={e.cx * lx}
-              cy={e.cy * ly}
-              cz={e.cz + hz}
-              foundationModel={foundationModel}
-            />
-          );
-        })}
-
         {/* intersection plane */}
         {grabRef.current && Util.isSolarCollector(grabRef.current) && !grabRef.current.locked && (
           <Plane
@@ -2437,6 +2424,21 @@ const Foundation = ({
         {solarStructure === SolarStructure.FocusPipe && <SolarReceiverPipe foundation={foundationModel} />}
         {solarStructure === SolarStructure.FocusTower && <SolarPowerTower foundation={foundationModel} />}
         {solarStructure === SolarStructure.UpdraftTower && <SolarUpdraftTower foundation={foundationModel} />}
+      </group>
+
+      <group position={[cx, cy, hz]} rotation={[0, 0, rotation[2]]}>
+        {elementsOnBuilding.map((e) => {
+          return (
+            <SolarPanelOnRoof
+              key={e.id}
+              {...(e as SolarPanelModel)}
+              cx={e.cx * lx}
+              cy={e.cy * ly}
+              cz={e.cz + hz}
+              foundationModel={foundationModel}
+            />
+          );
+        })}
       </group>
 
       {selected && !locked && elementGroupId === id && foundationModel && buildingResizerDimension && (
