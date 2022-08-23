@@ -186,6 +186,7 @@ export interface CommonStoreState {
   getResizeHandlePosition: (e: ElementModel, type: ResizeHandleType) => Vector3;
   getElementById: (id: string) => ElementModel | null;
   getParent: (child: ElementModel) => ElementModel | null;
+  getFoundation: (elem: ElementModel) => FoundationModel | null;
   selectMe: (id: string, e: ThreeEvent<MouseEvent>, action?: ActionType) => void;
   selectNone: () => void;
   setElementPosition: (id: string, x: number, y: number, z?: number) => void;
@@ -1510,6 +1511,15 @@ export const useStore = create<CommonStoreState>(
             for (const e of elements) {
               if (e.id === child.parentId) {
                 return e;
+              }
+            }
+            return null;
+          },
+          getFoundation(elem) {
+            const elements = get().elements;
+            for (const e of elements) {
+              if (e.id === elem.foundationId && e.type === ObjectType.Foundation) {
+                return e as FoundationModel;
               }
             }
             return null;

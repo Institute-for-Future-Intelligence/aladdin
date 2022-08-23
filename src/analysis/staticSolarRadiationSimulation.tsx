@@ -39,6 +39,7 @@ const StaticSolarRadiationSimulation = ({ city }: StaticSolarRadiationSimulation
   const elements = useStore.getState().elements;
   const getWeather = useStore(Selector.getWeather);
   const getParent = useStore(Selector.getParent);
+  const getFoundation = useStore(Selector.getFoundation);
   const setHeatmap = useStore(Selector.setHeatmap);
   const runSimulation = useStore(Selector.runStaticSimulation);
 
@@ -410,10 +411,19 @@ const StaticSolarRadiationSimulation = ({ city }: StaticSolarRadiationSimulation
   };
 
   const generateHeatmapForSolarPanel = (panel: SolarPanelModel) => {
-    const parent = getParent(panel);
+    let parent = getParent(panel);
     if (!parent) throw new Error('parent of solar panel does not exist');
+    let rooftop = false;
+    if (parent.type === ObjectType.Roof) {
+      parent = getFoundation(parent);
+      if (!parent) throw new Error('foundation of solar panel does not exist');
+      rooftop = true;
+    }
     if (panel.trackerType !== TrackerType.NO_TRACKER) throw new Error('trackers cannot use static simulation');
     const center = Util.absoluteCoordinates(panel.cx, panel.cy, panel.cz, parent);
+    if (rooftop) {
+      center.z = panel.cz + parent.cz + parent.lz / 2;
+    }
     const normal = new Vector3().fromArray(panel.normal);
     const rot = parent.rotation[2];
     const zRot = rot + panel.relativeAzimuth;
@@ -433,7 +443,7 @@ const StaticSolarRadiationSimulation = ({ city }: StaticSolarRadiationSimulation
     // shift half cell size to the center of each grid cell
     const x0 = center.x - (lx - cellSize) / 2;
     const y0 = center.y - (ly - cellSize) / 2;
-    const z0 = parent.lz + panel.poleHeight + panel.lz;
+    const z0 = rooftop ? center.z : parent.lz + panel.poleHeight + panel.lz;
     const center2d = new Vector2(center.x, center.y);
     const v = new Vector3();
     const cellOutputTotals = Array(nx)

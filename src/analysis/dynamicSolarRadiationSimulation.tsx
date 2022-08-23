@@ -46,6 +46,7 @@ const DynamicSolarRadiationSimulation = ({ city }: DynamicSolarRadiationSimulati
   const elements = useStore.getState().elements;
   const getWeather = useStore(Selector.getWeather);
   const getParent = useStore(Selector.getParent);
+  const getFoundation = useStore(Selector.getFoundation);
   const setHeatmap = useStore(Selector.setHeatmap);
   const clearHeatmaps = useStore(Selector.clearHeatmaps);
   const runSimulation = useStore(Selector.runDynamicSimulation);
@@ -528,10 +529,19 @@ const DynamicSolarRadiationSimulation = ({ city }: DynamicSolarRadiationSimulati
   const calculateSolarPanel = (panel: SolarPanelModel) => {
     const sunDirection = getSunDirection(now, world.latitude);
     if (sunDirection.z <= 0) return; // when the sun is not out
-    const parent = getParent(panel);
+    let parent = getParent(panel);
     if (!parent) throw new Error('parent of solar panel does not exist');
+    let rooftop = false;
+    if (parent.type === ObjectType.Roof) {
+      parent = getFoundation(parent);
+      if (!parent) throw new Error('foundation of solar panel does not exist');
+      rooftop = true;
+    }
     const dayOfYear = Util.dayOfYear(now);
     const center = Util.absoluteCoordinates(panel.cx, panel.cy, panel.cz, parent);
+    if (rooftop) {
+      center.z = panel.cz + parent.cz + parent.lz / 2;
+    }
     const normal = new Vector3().fromArray(panel.normal);
     const rot = parent.rotation[2];
     const zRot = rot + panel.relativeAzimuth;
@@ -544,7 +554,7 @@ const DynamicSolarRadiationSimulation = ({ city }: DynamicSolarRadiationSimulati
     // shift half cell size to the center of each grid cell
     const x0 = center.x - (lx - cellSize) / 2;
     const y0 = center.y - (ly - cellSize) / 2;
-    const z0 = parent.lz + panel.poleHeight + panel.lz;
+    const z0 = rooftop ? center.z : parent.lz + panel.poleHeight + panel.lz;
     const center2d = new Vector2(center.x, center.y);
     const v = new Vector3();
     let cellOutputs = cellOutputsMapRef.current.get(panel.id);
