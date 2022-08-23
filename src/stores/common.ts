@@ -95,12 +95,7 @@ import SolarPanelBluePortraitImage from '../resources/solar-panel-blue-portrait.
 import SolarPanelBlackPortraitImage from '../resources/solar-panel-black-portrait.png';
 import SolarPanelBlueLandscapeImage from '../resources/solar-panel-blue-landscape.png';
 import SolarPanelBlackLandscapeImage from '../resources/solar-panel-black-landscape.png';
-import {
-  spBoundaryCheckWithErrMsg,
-  spCollisionCheckWithErrMsg,
-  spOnRoofBoundaryCheck,
-  spOnRoofCollisionCheck,
-} from 'src/views/roof/roofRenderer';
+import { spOnRoofBoundaryCheck, spOnRoofCollisionCheck } from 'src/views/roof/roofRenderer';
 
 enableMapSet();
 
@@ -888,6 +883,8 @@ export const useStore = create<CommonStoreState>(
           exportContent() {
             const state = get();
             const date = new Date();
+            const elements = JSON.parse(JSON.stringify(state.elements));
+            Util.fixElements(elements);
             return {
               docid: short.generate(),
               time: dayjs(date).format('MM/DD/YYYY hh:mm a'),
@@ -896,7 +893,7 @@ export const useStore = create<CommonStoreState>(
               owner: state.user.signFile ? state.user.displayName : null,
               email: state.user.signFile ? state.user.email : null,
               world: JSON.parse(JSON.stringify(state.world)),
-              elements: JSON.parse(JSON.stringify(state.elements)),
+              elements: elements,
               view: JSON.parse(JSON.stringify(state.viewState)),
               evolutionMethod: state.evolutionMethod,
               solarPanelArrayLayoutParams: JSON.parse(JSON.stringify(state.solarPanelArrayLayoutParams)),

@@ -588,6 +588,20 @@ export class Util {
     }
   }
 
+  static fixElements(elements: ElementModel[]) {
+    const found: ElementModel[] = [];
+    for (const e of elements) {
+      if (!e.type) {
+        found.push(e);
+      }
+    }
+    if (found.length > 0) {
+      for (const e of found) {
+        Util.deleteElement(elements, e);
+      }
+    }
+  }
+
   static isResizingVertical(handle: ResizeHandleType | null): boolean {
     switch (handle) {
       case ResizeHandleType.LowerLeftTop:

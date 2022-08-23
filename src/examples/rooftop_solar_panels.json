@@ -499,17 +499,6 @@
       "mullionSpacing": 1
     },
     {
-      "id": "pm6DAaPA32rfhyK74s4fmY",
-      "parentId": "1rAGH78b5nt7cXyGU9vNRV",
-      "foundationId": "1rAGH78b5nt7cXyGU9vNRV",
-      "normal": [
-        0,
-        0,
-        1
-      ],
-      "selected": false
-    },
-    {
       "type": "Foundation",
       "cx": -0.07737809374999927,
       "cy": -0.08634488504745477,

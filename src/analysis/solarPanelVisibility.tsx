@@ -21,6 +21,7 @@ const SolarPanelVisibility = () => {
   const elements = useStore.getState().elements;
   const setCommonStore = useStore(Selector.set);
   const getParent = useStore(Selector.getParent);
+  const getFoundation = useStore(Selector.getFoundation);
   const runAnalysis = useStore(Selector.runSolarPanelVisibilityAnalysis);
 
   const { scene } = useThree();
@@ -107,9 +108,18 @@ const SolarPanelVisibility = () => {
 
   // view factor: https://en.wikipedia.org/wiki/View_factor
   const getViewFactor = (panel: SolarPanelModel, vantage: Vector3) => {
-    const parent = getParent(panel);
+    let parent = getParent(panel);
     if (!parent) throw new Error('parent of solar panel does not exist');
+    let rooftop = false;
+    if (parent.type === ObjectType.Roof) {
+      parent = getFoundation(parent);
+      if (!parent) throw new Error('foundation of solar panel does not exist');
+      rooftop = true;
+    }
     const center = Util.absoluteCoordinates(panel.cx, panel.cy, panel.cz, parent);
+    if (rooftop) {
+      center.z = panel.cz + parent.cz + parent.lz / 2;
+    }
     const normal = new Vector3().fromArray(panel.normal);
     const zRot = parent.rotation[2] + panel.relativeAzimuth;
     if (Math.abs(panel.tiltAngle) > 0.001) {
@@ -125,7 +135,7 @@ const SolarPanelVisibility = () => {
     const dz = lz / ny;
     const x0 = center.x - lx / 2;
     const y0 = center.y - ly / 2;
-    const z0 = panel.poleHeight + center.z - lz / 2;
+    const z0 = (rooftop ? center.z : panel.poleHeight + center.z) - lz / 2;
     const center2d = new Vector2(center.x, center.y);
     let integral = 0;
     const point = new Vector3();
