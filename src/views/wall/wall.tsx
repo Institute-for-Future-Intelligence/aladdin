@@ -692,67 +692,7 @@ const Wall = ({
           return;
         }
 
-        // add new elements
-        if (parent && objectTypeToAddRef.current) {
-          let newElement: ElementModel | null = null;
-          switch (objectTypeToAddRef.current) {
-            case ObjectType.PyramidRoof: {
-              if (!roofId) {
-                newElement = ElementModelFactory.makePyramidRoof([wallModel.id], parent, lz);
-              }
-              break;
-            }
-            case ObjectType.GableRoof: {
-              if (!roofId) {
-                newElement = ElementModelFactory.makeGableRoof([wallModel.id], parent, lz);
-              }
-              break;
-            }
-            case ObjectType.HipRoof: {
-              if (!roofId) {
-                newElement = ElementModelFactory.makeHipRoof([wallModel.id], parent, lz, lx / 2);
-              }
-              break;
-            }
-            case ObjectType.GambrelRoof: {
-              if (!roofId) {
-                newElement = ElementModelFactory.makeGambrelRoof([wallModel.id], parent, lz);
-              }
-              break;
-            }
-            case ObjectType.MansardRoof: {
-              if (!roofId) {
-                newElement = ElementModelFactory.makeMansardRoof([wallModel.id], parent, lz);
-              }
-              break;
-            }
-            case ObjectType.SolarPanel: {
-              const p = getRelativePosOnWall(pointer, wallModel);
-              newElement = ElementModelFactory.makeSolarPanel(
-                wallModel,
-                useStore.getState().getPvModule('SPR-X21-335-BLK'),
-                p.x / lx,
-                0,
-                p.z / lz,
-                Orientation.landscape,
-                new Vector3(0, -1, 0),
-                [0, 0, 0],
-                undefined,
-                undefined,
-                ObjectType.Wall,
-              );
-              break;
-            }
-          }
-          if (newElement) {
-            handleUndoableAdd(newElement);
-            setCommonStore((state) => {
-              state.elements.push(newElement as ElementModel);
-              state.objectTypeToAdd = ObjectType.None;
-            });
-            return;
-          }
-        }
+        handleAddElement(pointer);
 
         const selectedElement = getSelectedElement();
 
@@ -1086,6 +1026,73 @@ const Wall = ({
           state.contextMenuObjectType = null;
         });
         selectMe(id, e, ActionType.Select);
+      }
+      handleAddElement();
+    }
+  };
+
+  const handleAddElement = (pointer?: Vector3) => {
+    // add new elements
+    if (parent && objectTypeToAddRef.current) {
+      let newElement: ElementModel | null = null;
+      switch (objectTypeToAddRef.current) {
+        case ObjectType.PyramidRoof: {
+          if (!roofId) {
+            newElement = ElementModelFactory.makePyramidRoof([wallModel.id], parent, lz);
+          }
+          break;
+        }
+        case ObjectType.GableRoof: {
+          if (!roofId) {
+            newElement = ElementModelFactory.makeGableRoof([wallModel.id], parent, lz);
+          }
+          break;
+        }
+        case ObjectType.HipRoof: {
+          if (!roofId) {
+            newElement = ElementModelFactory.makeHipRoof([wallModel.id], parent, lz, lx / 2);
+          }
+          break;
+        }
+        case ObjectType.GambrelRoof: {
+          if (!roofId) {
+            newElement = ElementModelFactory.makeGambrelRoof([wallModel.id], parent, lz);
+          }
+          break;
+        }
+        case ObjectType.MansardRoof: {
+          if (!roofId) {
+            newElement = ElementModelFactory.makeMansardRoof([wallModel.id], parent, lz);
+          }
+          break;
+        }
+        case ObjectType.SolarPanel: {
+          if (pointer) {
+            const p = getRelativePosOnWall(pointer, wallModel);
+            newElement = ElementModelFactory.makeSolarPanel(
+              wallModel,
+              useStore.getState().getPvModule('SPR-X21-335-BLK'),
+              p.x / lx,
+              0,
+              p.z / lz,
+              Orientation.landscape,
+              new Vector3(0, -1, 0),
+              [0, 0, 0],
+              undefined,
+              undefined,
+              ObjectType.Wall,
+            );
+          }
+          break;
+        }
+      }
+      if (newElement) {
+        handleUndoableAdd(newElement);
+        setCommonStore((state) => {
+          state.elements.push(newElement as ElementModel);
+          state.objectTypeToAdd = ObjectType.None;
+        });
+        return;
       }
     }
   };
