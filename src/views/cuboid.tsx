@@ -16,7 +16,18 @@ import Facade_Texture_10 from '../resources/building_facade_10.png';
 
 import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { Box, Plane, Sphere } from '@react-three/drei';
-import { CanvasTexture, Euler, Group, Mesh, Raycaster, RepeatWrapping, TextureLoader, Vector2, Vector3 } from 'three';
+import {
+  CanvasTexture,
+  Euler,
+  FrontSide,
+  Group,
+  Mesh,
+  Raycaster,
+  RepeatWrapping,
+  TextureLoader,
+  Vector2,
+  Vector3,
+} from 'three';
 import { useStore } from '../stores/common';
 import { useStoreRef } from '../stores/commonRef';
 import * as Selector from '../stores/selector';
@@ -1125,16 +1136,23 @@ const Cuboid = ({
           faces.map((i) => {
             if (textureTypes && textureTypes[i] !== CuboidTexture.NoTexture) {
               return showSolarRadiationHeatmap ? (
-                <meshBasicMaterial key={i} attachArray="material" color={'white'} map={textures[i]} />
-              ) : (
-                <meshStandardMaterial key={i} attachArray="material" color={'white'} map={textures[i]} />
-              );
-            } else {
-              return showSolarRadiationHeatmap ? (
-                <meshBasicMaterial key={i} attachArray="material" color={'white'} map={textures[i]} />
+                <meshBasicMaterial key={i} side={FrontSide} attachArray="material" color={'white'} map={textures[i]} />
               ) : (
                 <meshStandardMaterial
                   key={i}
+                  side={FrontSide}
+                  attachArray="material"
+                  color={'white'}
+                  map={textures[i]}
+                />
+              );
+            } else {
+              return showSolarRadiationHeatmap ? (
+                <meshBasicMaterial key={i} side={FrontSide} attachArray="material" color={'white'} map={textures[i]} />
+              ) : (
+                <meshStandardMaterial
+                  key={i}
+                  side={FrontSide}
                   attachArray="material"
                   color={cuboidModel.faceColors ? cuboidModel.faceColors[i] : color}
                   map={textures[i]}
@@ -1143,7 +1161,7 @@ const Cuboid = ({
             }
           })
         ) : (
-          <meshStandardMaterial attach="material" color={color} />
+          <meshStandardMaterial side={FrontSide} attach="material" color={color} />
         )}
       </Box>
 
