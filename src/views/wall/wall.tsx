@@ -1138,6 +1138,17 @@ const Wall = ({
             castShadow={shadowEnabled}
             receiveShadow={shadowEnabled}
             onPointerDown={handleWallBodyPointerDown}
+            onContextMenu={(e) => {
+              if (grabRef.current) {
+                return;
+              }
+              selectMe(id, e, ActionType.Select);
+              setCommonStore((state) => {
+                if (e.intersections.length > 0 && e.intersections[0].object === insideWallRef.current) {
+                  state.contextMenuObjectType = ObjectType.Wall;
+                }
+              });
+            }}
           />
 
           {/* top surface */}
@@ -1149,6 +1160,17 @@ const Wall = ({
               castShadow={shadowEnabled}
               receiveShadow={shadowEnabled}
               onPointerDown={handleWallBodyPointerDown}
+              onContextMenu={(e) => {
+                if (grabRef.current) {
+                  return;
+                }
+                selectMe(id, e, ActionType.Select);
+                setCommonStore((state) => {
+                  if (e.intersections.length > 0 && e.intersections[0].object === topSurfaceRef.current) {
+                    state.contextMenuObjectType = ObjectType.Wall;
+                  }
+                });
+              }}
             />
           )}
 
