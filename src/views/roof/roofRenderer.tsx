@@ -2,17 +2,7 @@
  * @Copyright 2021-2022. Institute for Future Intelligence, Inc.
  */
 
-import RoofTextureDefault from 'src/resources/roof_edge.png';
-import RoofTexture00 from 'src/resources/roof_00.png';
-import RoofTexture01 from 'src/resources/roof_01.png';
-import RoofTexture02 from 'src/resources/roof_02.png';
-import RoofTexture03 from 'src/resources/roof_03.png';
-import RoofTexture04 from 'src/resources/roof_04.png';
-import RoofTexture05 from 'src/resources/roof_05.png';
-import RoofTexture06 from 'src/resources/roof_06.png';
-import RoofTexture07 from 'src/resources/roof_07.png';
-
-import React, { useEffect, useMemo, useState } from 'react';
+import React, { useEffect } from 'react';
 import { useStore } from '../../stores/common';
 import {
   GableRoofModel,
@@ -30,19 +20,20 @@ import HipRoof from './hipRoof';
 import GambrelRoof from './gambrelRoof';
 import { UndoableResizeRoofHeight } from 'src/undo/UndoableResize';
 import MansardRoof from './mansardRoof';
-import { Euler, RepeatWrapping, TextureLoader, Vector3 } from 'three';
-import { ObjectType, RoofTexture } from 'src/types';
+import { Euler, Vector3 } from 'three';
+import { ObjectType, Orientation } from 'src/types';
 import { ThreeEvent } from '@react-three/fiber';
 import { WallModel } from 'src/models/WallModel';
-import { HALF_PI, LOCKED_ELEMENT_SELECTION_COLOR } from 'src/constants';
+import { LOCKED_ELEMENT_SELECTION_COLOR } from 'src/constants';
 import { Point2 } from 'src/models/Point2';
-import { Util } from 'src/Util';
 import { showError } from 'src/helpers';
 import i18n from 'src/i18n/i18n';
 import { SolarPanelModel } from 'src/models/SolarPanelModel';
 import { ElementModel } from 'src/models/ElementModel';
+import { RoofUtil } from './RoofUtil';
+import { ElementModelFactory } from 'src/models/ElementModelFactory';
+import { UndoableAdd } from 'src/undo/UndoableAdd';
 
-export const euler = new Euler(0, 0, HALF_PI);
 export interface ConvexGeoProps {
   points: Vector3[];
   direction: number;
@@ -56,89 +47,75 @@ export interface RoofWireframeProps {
   lineColor: string;
 }
 
-export const handleUndoableResizeRoofHeight = (elemId: string, oldHeight: number, newHeight: number) => {
-  const undoableResizeRoofHeight = {
-    name: 'Resize Roof Height',
+const addUndoableAddSP = (elem: ElementModel) => {
+  const undoableAdd = {
+    name: 'Add Solar Panel On Roof',
     timestamp: Date.now(),
-    resizedElementId: elemId,
-    resizedElementType: ObjectType.Roof,
-    oldHeight: oldHeight,
-    newHeight: newHeight,
+    addedElement: elem,
     undo: () => {
-      useStore
-        .getState()
-        .updateRoofHeight(undoableResizeRoofHeight.resizedElementId, undoableResizeRoofHeight.oldHeight);
+      useStore.getState().removeElementById(elem.id, false);
     },
     redo: () => {
-      useStore
-        .getState()
-        .updateRoofHeight(undoableResizeRoofHeight.resizedElementId, undoableResizeRoofHeight.newHeight);
+      useStore.getState().set((state) => {
+        state.elements.push(undoableAdd.addedElement);
+        state.selectedElement = undoableAdd.addedElement;
+      });
     },
-  } as UndoableResizeRoofHeight;
-  useStore.getState().addUndoable(undoableResizeRoofHeight);
+  } as UndoableAdd;
+  useStore.getState().addUndoable(undoableAdd);
 };
 
-export const useRoofTexture = (textureType: RoofTexture) => {
-  const textureLoader = useMemo(() => {
-    let textureImg;
-    switch (textureType) {
-      case RoofTexture.NoTexture:
-        textureImg = RoofTexture00;
-        break;
-      case RoofTexture.Texture01:
-        textureImg = RoofTexture01;
-        break;
-      case RoofTexture.Texture02:
-        textureImg = RoofTexture02;
-        break;
-      case RoofTexture.Texture03:
-        textureImg = RoofTexture03;
-        break;
-      case RoofTexture.Texture04:
-        textureImg = RoofTexture04;
-        break;
-      case RoofTexture.Texture05:
-        textureImg = RoofTexture05;
-        break;
-      case RoofTexture.Texture06:
-        textureImg = RoofTexture06;
-        break;
-      case RoofTexture.Texture07:
-        textureImg = RoofTexture07;
-        break;
-      default:
-        textureImg = RoofTextureDefault;
+const getPointerOnRoof = (e: ThreeEvent<PointerEvent>, roofType: RoofType) => {
+  for (const intersection of e.intersections) {
+    if (intersection.eventObject.name === `${roofType} Roof Segments Group`) {
+      return intersection.point;
     }
-    return new TextureLoader().load(textureImg, (texture) => {
-      texture.wrapS = texture.wrapT = RepeatWrapping;
-      switch (textureType) {
-        case RoofTexture.NoTexture:
-        case RoofTexture.Default:
-          texture.repeat.set(4, 4);
-          break;
-        case RoofTexture.Texture01:
-          texture.repeat.set(0.5, 0.5);
-          break;
-        case RoofTexture.Texture03:
-          texture.repeat.set(0.9, 0.9);
-          break;
-        case RoofTexture.Texture04:
-        case RoofTexture.Texture05:
-        case RoofTexture.Texture06:
-          texture.repeat.set(0.75, 0.75);
-          break;
-        default:
-          texture.repeat.set(0.5, 0.5);
-      }
-      setTexture(texture);
-    });
-  }, [textureType]);
-
-  const [texture, setTexture] = useState(textureLoader);
-  return texture;
+  }
+  return e.intersections[0].point;
 };
 
-export const handleRoofPointerDown = (e: ThreeEvent<PointerEvent>, id: string, foundationId: string) => {
+const handlAddElementOnRoof = (
+  e: ThreeEvent<PointerEvent>,
+  roofId: string,
+  foundation: ElementModel,
+  roofSegments: ConvexGeoProps[],
+  ridgeMidPoint: Vector3,
+) => {
+  switch (useStore.getState().objectTypeToAdd) {
+    case ObjectType.SolarPanel:
+      const roof = useStore.getState().getElementById(roofId);
+      if (roof && foundation && e.intersections[0]) {
+        const pointer = e.intersections[0].point;
+        const posRelToFoundation = new Vector3()
+          .subVectors(pointer, new Vector3(foundation.cx, foundation.cy))
+          .applyEuler(new Euler(0, 0, -foundation.rotation[2]));
+        const posRelToCentroid = posRelToFoundation.clone().sub(ridgeMidPoint);
+
+        const { normal, rotation } = RoofUtil.computeState(roofSegments, posRelToCentroid);
+        const newElement = ElementModelFactory.makeSolarPanel(
+          roof,
+          useStore.getState().getPvModule('SPR-X21-335-BLK'),
+          posRelToFoundation.x / foundation.lx,
+          posRelToFoundation.y / foundation.ly,
+          posRelToFoundation.z - foundation.lz,
+          Orientation.landscape,
+          normal,
+          rotation ?? [0, 0, 1],
+          undefined,
+          undefined,
+          ObjectType.Roof,
+        );
+        useStore.getState().set((state) => {
+          state.elements.push(newElement as ElementModel);
+          state.objectTypeToAdd = ObjectType.None;
+        });
+        addUndoableAddSP(newElement);
+      }
+      break;
+  }
+};
+
+const handleRoofBodyPointerDown = (e: ThreeEvent<PointerEvent>, id: string, foundationId: string) => {
   if (useStore.getState().isAddingElement()) {
     return;
   }
@@ -164,7 +141,181 @@ export const handleRoofPointerDown = (e: ThreeEvent<PointerEvent>, id: string, f
   }
 };
 
-export const handleRoofContextMenu = (e: ThreeEvent<MouseEvent>, id: string) => {
+export const addUndoableResizeRoofHeight = (elemId: string, oldHeight: number, newHeight: number) => {
+  const undoableResizeRoofHeight = {
+    name: 'Resize Roof Height',
+    timestamp: Date.now(),
+    resizedElementId: elemId,
+    resizedElementType: ObjectType.Roof,
+    oldHeight: oldHeight,
+    newHeight: newHeight,
+    undo: () => {
+      useStore
+        .getState()
+        .updateRoofHeight(undoableResizeRoofHeight.resizedElementId, undoableResizeRoofHeight.oldHeight);
+    },
+    redo: () => {
+      useStore
+        .getState()
+        .updateRoofHeight(undoableResizeRoofHeight.resizedElementId, undoableResizeRoofHeight.newHeight);
+    },
+  } as UndoableResizeRoofHeight;
+  useStore.getState().addUndoable(undoableResizeRoofHeight);
+};
+
+export const spBoundaryCheck = (solarPanelVertices: Vector3[], wallVertices: Point2[]) => {
+  const lang = { lng: useStore.getState().language };
+  if (RoofUtil.rooftopSPBoundaryCheck(solarPanelVertices, wallVertices)) {
+    return true;
+  } else {
+    if (useStore.getState().moveHandleType) {
+      showError(i18n.t('message.MoveOutsideBoundaryCancelled', lang));
+    } else if (useStore.getState().resizeHandleType) {
+      showError(i18n.t('message.ResizingOutsideBoundaryCancelled', lang));
+    } else if (useStore.getState().rotateHandleType) {
+      showError(i18n.t('message.RotationOutsideBoundaryCancelled', lang));
+    }
+    return false;
+  }
+};
+
+export const spCollisionCheck = (sp: SolarPanelModel, foundation: ElementModel, spVertices: Vector3[]) => {
+  const lang = { lng: useStore.getState().language };
+  if (RoofUtil.rooftopSPCollisionCheck(sp, foundation, spVertices)) {
+    return true;
+  } else {
+    if (useStore.getState().moveHandleType) {
+      showError(i18n.t('message.MoveCancelledBecauseOfOverlap', lang));
+    } else if (useStore.getState().resizeHandleType) {
+      showError(i18n.t('message.ResizingCancelledBecauseOfOverlap', lang));
+    } else if (useStore.getState().rotateHandleType) {
+      showError(i18n.t('message.RotationCancelledBecauseOfOverlap', lang));
+    }
+    return false;
+  }
+};
+
+export const updateRooftopSolarPanel = (
+  foundation: ElementModel | null,
+  roofId: string,
+  roofSegments: ConvexGeoProps[],
+  centroid: Vector3,
+  h: number,
+  thickness: number,
+) => {
+  useStore.getState().set((state) => {
+    if (foundation === null) return;
+    for (const e of state.elements) {
+      if (e.type === ObjectType.SolarPanel && e.parentId === roofId && e.foundationId) {
+        const posRelToFoundation = new Vector3(e.cx * foundation.lx, e.cy * foundation.ly, e.cz + foundation.lz);
+        const posRelToCentroid = posRelToFoundation.clone().sub(centroid);
+        const { segmentVertices, normal, rotation } = RoofUtil.computeState(roofSegments, posRelToCentroid);
+        const z = RoofUtil.getSolarPanelZ(segmentVertices, posRelToCentroid, h + thickness);
+        if (normal && rotation && z !== undefined) {
+          e.normal = normal.toArray();
+          e.rotation = [...rotation];
+          e.cz = z;
+        }
+      }
+    }
+  });
+};
+
+// handle pointer events
+export const handlePointerDown = (
+  e: ThreeEvent<PointerEvent>,
+  roofId: string,
+  foundation: ElementModel | null,
+  roofSegments: ConvexGeoProps[],
+  centroid: Vector3,
+  setOldRefData: (elem: ElementModel) => void,
+) => {
+  if (!foundation) return;
+  handlAddElementOnRoof(e, roofId, foundation, roofSegments, centroid);
+  // click on child
+  if (e.intersections[0].eventObject.name !== e.eventObject.name) {
+    const selectedElement = useStore.getState().getSelectedElement();
+    if (selectedElement && selectedElement.id !== roofId) {
+      setOldRefData(selectedElement);
+    }
+  }
+  // click on roof body
+  else {
+    handleRoofBodyPointerDown(e, roofId, foundation.id);
+  }
+};
+
+export const handlePointerUp = (
+  grabRef: React.MutableRefObject<ElementModel | null>,
+  foundation: ElementModel | null,
+  wall: WallModel,
+  roofId: string,
+  overhang: number,
+  undoMove: () => void,
+  addUndoableMove: (sp: SolarPanelModel) => void,
+) => {
+  if (grabRef.current && useStore.getState().moveHandleType) {
+    const sp = useStore.getState().getElementById(grabRef.current.id) as SolarPanelModel;
+    if (sp && foundation) {
+      const boundaryVertices = RoofUtil.getBoundaryVertices(roofId, wall, overhang);
+      const solarPanelVertices = RoofUtil.getSolarPanelVerticesOnRoof(sp, foundation);
+      if (
+        !spBoundaryCheck(solarPanelVertices, boundaryVertices) ||
+        !spCollisionCheck(sp, foundation, solarPanelVertices)
+      ) {
+        undoMove();
+      } else {
+        addUndoableMove(sp);
+      }
+    }
+  }
+  grabRef.current = null;
+  useStore.getState().set((state) => {
+    state.moveHandleType = null;
+  });
+};
+
+export const handlePointerMove = (
+  event: ThreeEvent<PointerEvent>,
+  elem: ElementModel | null,
+  foundation: ElementModel | null,
+  roofType: RoofType,
+  roofSegments: ConvexGeoProps[],
+  centroid: Vector3,
+) => {
+  if (elem === null) {
+    return;
+  }
+  switch (elem.type) {
+    case ObjectType.SolarPanel:
+      if (useStore.getState().moveHandleType) {
+        if (foundation) {
+          const pointer = getPointerOnRoof(event, roofType);
+          const posRelToFoundation = new Vector3()
+            .subVectors(pointer, new Vector3(foundation.cx, foundation.cy))
+            .applyEuler(new Euler(0, 0, -foundation.rotation[2]));
+          const posRelToCentroid = posRelToFoundation.clone().sub(centroid);
+
+          const { normal, rotation } = RoofUtil.computeState(roofSegments, posRelToCentroid);
+          useStore.getState().set((state) => {
+            for (const e of state.elements) {
+              if (e.id === elem.id) {
+                e.cx = posRelToFoundation.x / foundation.lx;
+                e.cy = posRelToFoundation.y / foundation.ly;
+                e.cz = posRelToFoundation.z - foundation.lz;
+                e.rotation = [...rotation];
+                e.normal = normal.toArray();
+                break;
+              }
+            }
+          });
+        }
+      }
+      break;
+  }
+};
+
+export const handleContextMenu = (e: ThreeEvent<MouseEvent>, id: string) => {
   if (e.intersections.length > 0 && e.intersections[0].eventObject.name === e.eventObject.name) {
     e.stopPropagation();
     useStore.getState().set((state) => {
@@ -179,217 +330,6 @@ export const handleRoofContextMenu = (e: ThreeEvent<MouseEvent>, id: string) => 
         }
       }
     });
-  }
-};
-
-export const getNormal = (wall: WallModel) => {
-  return new Vector3()
-    .subVectors(new Vector3(wall.leftPoint[0], wall.leftPoint[1]), new Vector3(wall.rightPoint[0], wall.rightPoint[1]))
-    .applyEuler(euler)
-    .normalize();
-};
-
-export const getIntersectionPoint = (v1: Vector3, v2: Vector3, v3: Vector3, v4: Vector3) => {
-  const x = [v1.x, v2.x, v3.x, v4.x];
-  const y = [v1.y, v2.y, v3.y, v4.y];
-  const x0 =
-    ((x[2] - x[3]) * (x[1] * y[0] - x[0] * y[1]) - (x[0] - x[1]) * (x[3] * y[2] - x[2] * y[3])) /
-    ((x[2] - x[3]) * (y[0] - y[1]) - (x[0] - x[1]) * (y[2] - y[3]));
-  const y0 =
-    ((y[2] - y[3]) * (y[1] * x[0] - y[0] * x[1]) - (y[0] - y[1]) * (y[3] * x[2] - y[2] * x[3])) /
-    ((y[2] - y[3]) * (x[0] - x[1]) - (y[0] - y[1]) * (x[2] - x[3]));
-  return new Vector3(x0, y0);
-};
-
-// distance from point p3 to line formed by p1 and p2
-export const getDistance = (p1: Vector3, p2: Vector3, p3: Vector3) => {
-  const A = p2.y - p1.y;
-  const B = p1.x - p2.x;
-  const C = p2.x * p1.y - p1.x * p2.y;
-  const res = Math.abs((A * p3.x + B * p3.y + C) / Math.sqrt(A * A + B * B));
-  return res === 0 ? Infinity : res;
-};
-
-export const getWallPoints2D = (
-  wall: WallModel,
-  centerRoofHeight?: number[],
-  centerLeftRoofHeight?: number[],
-  centerRightRoofHeight?: number[],
-) => {
-  const { lx, lz, rightRoofHeight, leftRoofHeight } = wall;
-  const centerLeft = centerLeftRoofHeight ?? wall.centerLeftRoofHeight;
-  const center = centerRoofHeight ?? wall.centerRoofHeight;
-  const centerRight = centerRightRoofHeight ?? wall.centerRightRoofHeight;
-
-  const points: Point2[] = [];
-  const x = lx / 2;
-  const y = lz / 2;
-  points.push({ x: -x, y: -y });
-  points.push({ x: x, y: -y });
-  rightRoofHeight ? points.push({ x: x, y: rightRoofHeight - y }) : points.push({ x: x, y: y });
-  if (centerRight) {
-    points.push({ x: centerRight[0] * lx, y: centerRight[1] - y });
-  }
-  if (center) {
-    points.push({ x: center[0] * lx, y: center[1] - y });
-  }
-  if (centerLeft) {
-    points.push({ x: centerLeft[0] * lx, y: centerLeft[1] - y });
-  }
-  leftRoofHeight ? points.push({ x: -x, y: leftRoofHeight - y }) : points.push({ x: -x, y: y });
-  return points;
-};
-
-export const isPointInside = (wallPoints2D: Point2[], x: number, y: number) => {
-  let inside = false;
-  for (let i = 0, j = wallPoints2D.length - 1; i < wallPoints2D.length; j = i++) {
-    const xi = wallPoints2D[i].x;
-    const yi = wallPoints2D[i].y;
-    const xj = wallPoints2D[j].x;
-    const yj = wallPoints2D[j].y;
-    if (yi > y != yj > y && x < ((xj - xi) * (y - yi)) / (yj - yi) + xi) {
-      inside = !inside;
-    }
-  }
-  return inside;
-};
-
-export const isRoofValid = (
-  roofId: string,
-  currWallId?: string,
-  counterWallId?: string,
-  centerRoofHeight?: number[],
-  centerLeftRoofHeight?: number[],
-  centerRightRoofHeight?: number[],
-) => {
-  for (const element of useStore.getState().elements) {
-    if (element.type === ObjectType.Wall && (element as WallModel).roofId === roofId) {
-      const wall = element as WallModel;
-      let points: Point2[] = [];
-      if (wall.id === currWallId) {
-        points = getWallPoints2D(wall, centerRoofHeight, centerLeftRoofHeight, centerRightRoofHeight);
-      } else if (wall.id === counterWallId) {
-        let ch: number[] | undefined = undefined;
-        let cl: number[] | undefined = undefined;
-        let cr: number[] | undefined = undefined;
-        if (centerRoofHeight) {
-          ch = [-centerRoofHeight[0], centerRoofHeight[1]];
-        }
-        if (centerRightRoofHeight) {
-          cl = [-centerRightRoofHeight[0], centerRightRoofHeight[1]];
-        }
-        if (centerLeftRoofHeight) {
-          cr = [-centerLeftRoofHeight[0], centerLeftRoofHeight[1]];
-        }
-        points = getWallPoints2D(wall, ch, cl, cr);
-      }
-      if (wall.id === currWallId || wall.id === counterWallId) {
-        for (const e of useStore.getState().elements) {
-          if (e.parentId === wall.id) {
-            let hx = e.lx / 2;
-            let hz = e.lz / 2;
-            if (e.type === ObjectType.SolarPanel) {
-              hx = hx / wall.lx;
-              hz = e.ly / wall.lz / 2;
-            }
-            const minX = e.cx * wall.lx - hx * wall.lx;
-            const maxX = e.cx * wall.lx + hx * wall.lx;
-            const maxZ = e.cz * wall.lz + hz * wall.lz + 0.5;
-            if (!isPointInside(points, minX, maxZ) || !isPointInside(points, maxX, maxZ)) {
-              return false;
-            }
-          }
-        }
-      }
-    }
-  }
-  return true;
-};
-
-const handleShowError = (type: 'overlap' | 'outside') => {
-  const lang = { lng: useStore.getState().language };
-  switch (type) {
-    case 'overlap': {
-      if (useStore.getState().moveHandleType) {
-        showError(i18n.t('message.MoveCancelledBecauseOfOverlap', lang));
-      } else if (useStore.getState().resizeHandleType) {
-        showError(i18n.t('message.ResizingCancelledBecauseOfOverlap', lang));
-      } else if (useStore.getState().rotateHandleType) {
-        showError(i18n.t('message.RotationCancelledBecauseOfOverlap', lang));
-      }
-      break;
-    }
-    case 'outside': {
-      if (useStore.getState().moveHandleType) {
-        showError(i18n.t('message.MoveOutsideBoundaryCancelled', lang));
-      } else if (useStore.getState().resizeHandleType) {
-        showError(i18n.t('message.ResizingOutsideBoundaryCancelled', lang));
-      } else if (useStore.getState().rotateHandleType) {
-        showError(i18n.t('message.RotationOutsideBoundaryCancelled', lang));
-      }
-      break;
-    }
-  }
-};
-
-export const spOnRoofBoundaryCheck = (solarPanelVertices: Vector3[], wallVertices: Point2[]) => {
-  for (const vertex of solarPanelVertices) {
-    if (!Util.isPointInside(vertex.x, vertex.y, wallVertices)) {
-      return false;
-    }
-  }
-  return true;
-};
-
-export const spOnRoofCollisionCheck = (sp: SolarPanelModel, foundation: ElementModel, spVertices: Vector3[]) => {
-  for (const elem of useStore.getState().elements) {
-    if (elem.type === sp.type && elem.parentId === sp.parentId && elem.id !== sp.id) {
-      const sp2Vertices = Util.getSolarPanelVerticesOnRoof(elem as SolarPanelModel, foundation);
-      for (const vertex of spVertices) {
-        if (Util.isPointInside(vertex.x, vertex.y, sp2Vertices)) {
-          return false;
-        }
-      }
-      for (const vertex of sp2Vertices) {
-        if (Util.isPointInside(vertex.x, vertex.y, spVertices)) {
-          return false;
-        }
-      }
-      const v1 = spVertices.map(Util.mapVector3ToPoint2);
-      const v2 = sp2Vertices.map(Util.mapVector3ToPoint2);
-      v1.push(v1[0]);
-      v2.push(v2[0]);
-      for (let i1 = 0; i1 < v1.length - 1; i1++) {
-        const from1 = v1[i1];
-        const to1 = v1[i1 + 1];
-        for (let i2 = 0; i2 < v2.length - 1; i2++) {
-          const from2 = v2[i2];
-          const to2 = v2[i2 + 1];
-          if (Util.lineIntersection(from1, to1, from2, to2)) {
-            return false;
-          }
-        }
-      }
-    }
-  }
-  return true;
-};
-
-export const spBoundaryCheckWithErrMsg = (solarPanelVertices: Vector3[], wallVertices: Point2[]) => {
-  if (spOnRoofBoundaryCheck(solarPanelVertices, wallVertices)) {
-    return true;
-  } else {
-    handleShowError('outside');
-    return false;
-  }
-};
-
-export const spCollisionCheckWithErrMsg = (sp: SolarPanelModel, foundation: ElementModel, spVertices: Vector3[]) => {
-  if (spOnRoofCollisionCheck(sp, foundation, spVertices)) {
-    return true;
-  } else {
-    handleShowError('overlap');
-    return false;
   }
 };
 

@@ -36,11 +36,12 @@ import { LineData } from '../LineData';
 import { FoundationModel } from 'src/models/FoundationModel';
 import { RoofModel } from 'src/models/RoofModel';
 import { WallModel } from 'src/models/WallModel';
-import { spBoundaryCheckWithErrMsg, spCollisionCheckWithErrMsg } from '../roof/roofRenderer';
+import { spBoundaryCheck, spCollisionCheck } from '../roof/roofRenderer';
 import { UndoableChange } from 'src/undo/UndoableChange';
 import { UnoableResizeSolarPanelOnRoof } from 'src/undo/UndoableResize';
 import { getSunDirection } from 'src/analysis/sunTools';
 import i18n from 'src/i18n/i18n';
+import { RoofUtil } from '../roof/RoofUtil';
 
 interface MoveHandleProps {
   id: string;
@@ -440,7 +441,7 @@ const Label = ({ id }: LabelProps) => {
   );
 };
 
-export const useTexture = (id: string, nx: number, ny: number, pvModelName: string, orientation: Orientation) => {
+export const useSPTexture = (id: string, nx: number, ny: number, pvModelName: string, orientation: Orientation) => {
   const showSolarRadiationHeatmap = useStore(Selector.showSolarRadiationHeatmap);
   const solarRadiationHeatmapMaxValue = useStore(Selector.viewState.solarRadiationHeatmapMaxValue);
   const solarPanelTextures = useStore(Selector.solarPanelTextures);
@@ -544,7 +545,7 @@ const SolarPanelOnRoof = ({
   const [showIntersectionPlane, setShowIntersectionPlane] = useState(false);
   const [hovered, setHovered] = useState(false);
   const { gl, camera } = useThree();
-  const [texture, heapmapTexture] = useTexture(id, nx, ny, pvModelName, orientation);
+  const [texture, heapmapTexture] = useSPTexture(id, nx, ny, pvModelName, orientation);
 
   const baseRef = useRef<Mesh>();
   const solarPanelLinesRef = useRef<LineData[]>();
@@ -628,45 +629,49 @@ const SolarPanelOnRoof = ({
     }
   }, [orientation, pvModelName, lx, ly, lz]);
 
+  const undoOperation = () => {
+    setCommonStore((state) => {
+      if (
+        oldPosRef.current &&
+        oldAziRef.current !== null &&
+        oldNorRef.current &&
+        oldDmsRef.current &&
+        oldRotRef.current
+      ) {
+        for (const e of state.elements) {
+          if (e.id === id) {
+            [e.cx, e.cy, e.cz] = [...oldPosRef.current];
+            [e.lx, e.ly, e.lz] = [...oldDmsRef.current];
+            (e as SolarPanelModel).relativeAzimuth = oldAziRef.current;
+            e.normal = [...oldNorRef.current];
+            e.rotation = [...oldRotRef.current];
+            break;
+          }
+        }
+      }
+    });
+  };
+
   // add pointerup eventlistener
   useEffect(() => {
     const handlePointerUp = () => {
       if (pointerDownRef.current && (useStore.getState().rotateHandleType || useStore.getState().resizeHandleType)) {
         const roof = getElementById(parentId) as RoofModel;
-        if (roof) {
+        if (roof && foundationId) {
           const wall = getElementById(roof.wallsId[0]) as WallModel;
           const sp = getElementById(id) as SolarPanelModel;
-          const foundation = getElementById(foundationId ?? '') as FoundationModel;
+          const foundation = getElementById(foundationId) as FoundationModel;
 
-          if (sp && foundation && roof && wall) {
-            const boundaryVertices = Util.getWallPointsWithOverhang(roof.id, wall, roof.overhang);
-            const solarPanelVertices = Util.getSolarPanelVerticesOnRoof(sp, foundation);
+          if (sp && foundation && wall) {
+            const boundaryVertices = RoofUtil.getBoundaryVertices(roof.id, wall, roof.overhang);
+            const solarPanelVertices = RoofUtil.getSolarPanelVerticesOnRoof(sp, foundation);
             if (
-              !spBoundaryCheckWithErrMsg(solarPanelVertices, boundaryVertices) ||
-              !spCollisionCheckWithErrMsg(sp, foundation, solarPanelVertices)
+              !spBoundaryCheck(solarPanelVertices, boundaryVertices) ||
+              !spCollisionCheck(sp, foundation, solarPanelVertices)
             ) {
-              setCommonStore((state) => {
-                if (
-                  oldPosRef.current &&
-                  oldAziRef.current !== null &&
-                  oldNorRef.current &&
-                  oldDmsRef.current &&
-                  oldRotRef.current
-                ) {
-                  for (const e of state.elements) {
-                    if (e.id === id) {
-                      [e.cx, e.cy, e.cz] = [...oldPosRef.current];
-                      [e.lx, e.ly, e.lz] = [...oldDmsRef.current];
-                      (e as SolarPanelModel).relativeAzimuth = oldAziRef.current;
-                      e.normal = [...oldNorRef.current];
-                      e.rotation = [...oldRotRef.current];
-                      break;
-                    }
-                  }
-                }
-              });
+              undoOperation();
             } else {
-              handleUndoable(sp);
+              AddUndoableOperation(sp);
             }
           }
         }
@@ -863,7 +868,7 @@ const SolarPanelOnRoof = ({
     }
   };
 
-  const handleUndoable = (sp: SolarPanelModel) => {
+  const AddUndoableOperation = (sp: SolarPanelModel) => {
     if (useStore.getState().resizeHandleType) {
       if (oldDmsRef.current && oldPosRef.current && oldNorRef.current && oldRotRef.current) {
         const undoableResize = {

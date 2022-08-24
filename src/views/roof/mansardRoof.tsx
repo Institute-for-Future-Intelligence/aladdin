@@ -9,27 +9,29 @@ import { HALF_PI } from 'src/constants';
 import { ElementModel } from 'src/models/ElementModel';
 import { Point2 } from 'src/models/Point2';
 import { MansardRoofModel } from 'src/models/RoofModel';
+import { SolarPanelModel } from 'src/models/SolarPanelModel';
 import { WallModel } from 'src/models/WallModel';
 import { useStore } from 'src/stores/common';
 import { useStoreRef } from 'src/stores/commonRef';
 import * as Selector from 'src/stores/selector';
 import { RoofTexture } from 'src/types';
+import { UndoableMoveSolarPanelOnRoof } from 'src/undo/UndoableMove';
 import { UnoableResizeGambrelAndMansardRoofRidge } from 'src/undo/UndoableResize';
 import { Util } from 'src/Util';
 import { DoubleSide, Euler, Mesh, Vector2, Vector3 } from 'three';
 import { ObjectType } from '../../types';
+import { useRoofTexture, useSolarPanelUndoable } from './hooks';
 import {
   ConvexGeoProps as ConvexGeometryProps,
-  getDistance,
-  getIntersectionPoint,
-  getNormal,
-  handleRoofContextMenu,
-  handleRoofPointerDown,
-  handleUndoableResizeRoofHeight,
-  isRoofValid,
+  handleContextMenu,
+  addUndoableResizeRoofHeight,
   RoofWireframeProps,
-  useRoofTexture,
+  updateRooftopSolarPanel,
+  handlePointerDown,
+  handlePointerUp,
+  handlePointerMove,
 } from './roofRenderer';
+import { RoofUtil } from './RoofUtil';
 
 const intersectionPlanePosition = new Vector3();
 const intersectionPlaneRotation = new Euler();
@@ -112,6 +114,7 @@ const MansardRoof = ({
   locked,
   lineColor = 'black',
   lineWidth = 0.2,
+  roofType,
 }: MansardRoofModel) => {
   const texture = useRoofTexture(textureType);
 
@@ -134,13 +137,13 @@ const MansardRoof = ({
   const isPointerMovingRef = useRef(false);
   const { gl, camera } = useThree();
 
-  const parent = getElementById(parentId);
+  const foundation = getElementById(parentId);
   let rotation = 0;
-  if (parent) {
-    cx = parent.cx;
-    cy = parent.cy;
-    cz = parent.lz;
-    rotation = parent.rotation[2];
+  if (foundation) {
+    cx = foundation.cx;
+    cy = foundation.cy;
+    cz = foundation.lz;
+    rotation = foundation.rotation[2];
   }
 
   useEffect(() => {
@@ -210,7 +213,7 @@ const MansardRoof = ({
     setEnableIntersectionPlane(true);
     useStoreRef.getState().setEnableOrbitController(false);
     intersectionPlanePosition.set(handlePointV3.x, handlePointV3.y, h);
-    if (parent && wall) {
+    if (foundation && wall) {
       const r = wall.relativeAngle;
       intersectionPlaneRotation.set(-HALF_PI, 0, r, 'ZXY');
     }
@@ -307,7 +310,7 @@ const MansardRoof = ({
   }, [currentWallArray, centroid, backRidge]);
 
   const overhangs = useMemo(() => {
-    return currentWallArray.map((wall) => getNormal(wall).multiplyScalar(overhang));
+    return currentWallArray.map((wall) => RoofUtil.getWallNormal(wall).multiplyScalar(overhang));
   }, [currentWallArray, overhang]);
 
   const thicknessVector = useMemo(() => {
@@ -343,19 +346,19 @@ const MansardRoof = ({
     const frontSide: Vector3[] = [];
     const { lh: frontWallLh, rh: frontWallRh } = getWallHeight(currentWallArray, 0);
 
-    const d0 = getDistance(wallPoint0, wallPoint1, frontRidgeLeftPointV3.clone().add(centroid));
+    const d0 = RoofUtil.getDistance(wallPoint0, wallPoint1, frontRidgeLeftPointV3.clone().add(centroid));
     const overhangHeight0 = Math.min(
       (overhang / d0) * (frontRidgeLeftPointV3.clone().add(centroid).z - frontWallLh),
       frontWallLh,
     );
 
-    const d1 = getDistance(wallPoint0, wallPoint1, frontRidgeRightPointV3.clone().add(centroid));
+    const d1 = RoofUtil.getDistance(wallPoint0, wallPoint1, frontRidgeRightPointV3.clone().add(centroid));
     const overhangHeight1 = Math.min(
       (overhang / d1) * (frontRidgeRightPointV3.clone().add(centroid).z - frontWallRh),
       frontWallRh,
     );
 
-    const frontWallLeftPointAfterOverhang = getIntersectionPoint(
+    const frontWallLeftPointAfterOverhang = RoofUtil.getIntersectionPoint(
       frontWallLeftPointAfterOffset,
       frontWallRightPointAfterOffset,
       leftWallLeftPointAfterOffset,
@@ -364,7 +367,7 @@ const MansardRoof = ({
       .setZ(frontWallLh - overhangHeight0)
       .sub(centroid);
 
-    const frontWallRightPointAfterOverhang = getIntersectionPoint(
+    const frontWallRightPointAfterOverhang = RoofUtil.getIntersectionPoint(
       frontWallLeftPointAfterOffset,
       frontWallRightPointAfterOffset,
       rightWallLeftPointAfterOffset,
@@ -373,14 +376,14 @@ const MansardRoof = ({
       .setZ(frontWallRh - overhangHeight1)
       .sub(centroid);
 
-    const frontRidgeLeftPointAfterOverhang = getIntersectionPoint(
+    const frontRidgeLeftPointAfterOverhang = RoofUtil.getIntersectionPoint(
       frontRidgeLeftPointV3,
       frontRidgeRightPointV3,
       leftWallLeftPointAfterOffset.clone().sub(centroid),
       leftWallRightPointAfterOffset.clone().sub(centroid),
     ).setZ(frontRidgeRightPointV3.z);
 
-    const frontRidgeRightPointAfterOverhang = getIntersectionPoint(
+    const frontRidgeRightPointAfterOverhang = RoofUtil.getIntersectionPoint(
       frontRidgeRightPointV3,
       frontRidgeLeftPointV3,
       rightWallLeftPointAfterOffset.clone().sub(centroid),
@@ -408,19 +411,19 @@ const MansardRoof = ({
     const backSide: Vector3[] = [];
     const { lh: backWallLh, rh: backWallRh } = getWallHeight(currentWallArray, 2);
 
-    const d2 = getDistance(wallPoint2, wallPoint3, backRidgeLeftPointV3.clone().add(centroid));
+    const d2 = RoofUtil.getDistance(wallPoint2, wallPoint3, backRidgeLeftPointV3.clone().add(centroid));
     const overhangHeight2 = Math.min(
       (overhang / d2) * (backRidgeLeftPointV3.clone().add(centroid).z - backWallLh),
       backWallLh,
     );
 
-    const d3 = getDistance(wallPoint2, wallPoint3, backRidgeRightPointV3.clone().add(centroid));
+    const d3 = RoofUtil.getDistance(wallPoint2, wallPoint3, backRidgeRightPointV3.clone().add(centroid));
     const overhangHeight3 = Math.min(
       (overhang / d3) * (backRidgeRightPointV3.clone().add(centroid).z - backWallRh),
       backWallRh,
     );
 
-    const backWallLeftPointAfterOverhang = getIntersectionPoint(
+    const backWallLeftPointAfterOverhang = RoofUtil.getIntersectionPoint(
       backWallLeftPointAfterOffset,
       backWallRightPointAfterOffset,
       rightWallLeftPointAfterOffset,
@@ -429,7 +432,7 @@ const MansardRoof = ({
       .setZ(backWallLh - overhangHeight2)
       .sub(centroid);
 
-    const backWallRightPointAfterOverhang = getIntersectionPoint(
+    const backWallRightPointAfterOverhang = RoofUtil.getIntersectionPoint(
       backWallLeftPointAfterOffset,
       backWallRightPointAfterOffset,
       leftWallLeftPointAfterOffset,
@@ -438,14 +441,14 @@ const MansardRoof = ({
       .setZ(backWallRh - overhangHeight3)
       .sub(centroid);
 
-    const backRidgeLeftPointAfterOverhang = getIntersectionPoint(
+    const backRidgeLeftPointAfterOverhang = RoofUtil.getIntersectionPoint(
       backRidgeLeftPointV3,
       backRidgeRightPointV3,
       rightWallLeftPointAfterOffset.clone().sub(centroid),
       rightWallRightPointAfterOffset.clone().sub(centroid),
     ).setZ(backRidgeRightPointV3.z);
 
-    const backRidgeRightPointAfterOverhang = getIntersectionPoint(
+    const backRidgeRightPointAfterOverhang = RoofUtil.getIntersectionPoint(
       backRidgeRightPointV3,
       backRidgeLeftPointV3,
       leftWallLeftPointAfterOffset.clone().sub(centroid),
@@ -534,16 +537,30 @@ const MansardRoof = ({
     }
   }, [currentWallArray, h]);
 
+  const updateSolarPanelOnRoofFlag = useStore(Selector.updateSolarPanelOnRoofFlag);
+
+  useEffect(() => {
+    updateRooftopSolarPanel(foundation, id, roofSegments, centroid, h, thickness);
+  }, [updateSolarPanelOnRoofFlag, h, thickness, frontRidge, backRidge]);
+
+  const { grabRef, addUndoableMove, undoMove, setOldRefData } = useSolarPanelUndoable();
+
   return (
     <group position={[cx, cy, cz + 0.01]} rotation={[0, 0, rotation]} name={`Mansard Roof Group ${id}`}>
       <group
         name={'Mansard Roof Segments Group'}
         position={[centroid.x, centroid.y, centroid.z]}
         onPointerDown={(e) => {
-          handleRoofPointerDown(e, id, parentId);
+          handlePointerDown(e, id, foundation, roofSegments, centroid, setOldRefData);
+        }}
+        onPointerMove={(e) => {
+          handlePointerMove(e, grabRef.current, foundation, roofType, roofSegments, centroid);
+        }}
+        onPointerUp={() => {
+          handlePointerUp(grabRef, foundation, currentWallArray[0], id, overhang, undoMove, addUndoableMove);
         }}
         onContextMenu={(e) => {
-          handleRoofContextMenu(e, id);
+          handleContextMenu(e, id);
         }}
       >
         {roofSegments.map((segment, i, arr) => {
@@ -580,8 +597,8 @@ const MansardRoof = ({
               isPointerMovingRef.current = true;
               setEnableIntersectionPlane(true);
               intersectionPlanePosition.set(centroid.x, centroid.y, h);
-              if (parent) {
-                const r = -Math.atan2(camera.position.x - cx, camera.position.y - cy) - parent.rotation[2];
+              if (foundation) {
+                const r = -Math.atan2(camera.position.x - cx, camera.position.y - cy) - foundation.rotation[2];
                 intersectionPlaneRotation.set(-HALF_PI, 0, r, 'ZXY');
               }
               setRoofHandleType(RoofHandleType.Top);
@@ -647,15 +664,15 @@ const MansardRoof = ({
             if (intersectionPlaneRef.current && isPointerMovingRef.current) {
               setRayCast(e);
               const intersects = ray.intersectObjects([intersectionPlaneRef.current]);
-              if (intersects[0] && parent) {
+              if (intersects[0] && foundation) {
                 const point = intersects[0].point;
                 if (point.z < 0.001) {
                   return;
                 }
                 switch (roofHandleType) {
                   case RoofHandleType.Top: {
-                    const height = Math.max(minHeight, point.z - (parent?.lz ?? 0) - 0.6);
-                    if (isRoofValid(id, undefined, undefined, [0, height])) {
+                    const height = Math.max(minHeight, point.z - (foundation?.lz ?? 0) - 0.6);
+                    if (RoofUtil.isRoofValid(id, undefined, undefined, [0, height])) {
                       setH(height);
                     }
                     break;
@@ -664,13 +681,17 @@ const MansardRoof = ({
                     setCommonStore((state) => {
                       for (const e of state.elements) {
                         if (e.id === id) {
-                          if (parent && currentWallArray[3]) {
-                            const px = Util.clamp(getRelPos(parent, currentWallArray[3], point), 0.01, 0.45);
+                          if (foundation && currentWallArray[3]) {
+                            const px = Util.clamp(getRelPos(foundation, currentWallArray[3], point), 0.01, 0.45);
                             if (
-                              isRoofValid(id, currentWallArray[3].id, currentWallArray[1].id, undefined, undefined, [
-                                px,
-                                h,
-                              ])
+                              RoofUtil.isRoofValid(
+                                id,
+                                currentWallArray[3].id,
+                                currentWallArray[1].id,
+                                undefined,
+                                undefined,
+                                [px, h],
+                              )
                             ) {
                               (e as MansardRoofModel).frontRidge = px;
                             }
@@ -685,10 +706,10 @@ const MansardRoof = ({
                     setCommonStore((state) => {
                       for (const e of state.elements) {
                         if (e.id === id) {
-                          if (parent && currentWallArray[1]) {
-                            const px = Util.clamp(getRelPos(parent, currentWallArray[1], point), -0.45, -0.01);
+                          if (foundation && currentWallArray[1]) {
+                            const px = Util.clamp(getRelPos(foundation, currentWallArray[1], point), -0.45, -0.01);
                             if (
-                              isRoofValid(
+                              RoofUtil.isRoofValid(
                                 id,
                                 currentWallArray[1].id,
                                 currentWallArray[3].id,
@@ -710,10 +731,10 @@ const MansardRoof = ({
                     setCommonStore((state) => {
                       for (const e of state.elements) {
                         if (e.id === id) {
-                          if (parent && currentWallArray[3]) {
-                            const px = Util.clamp(getRelPos(parent, currentWallArray[3], point), -0.45, -0.01);
+                          if (foundation && currentWallArray[3]) {
+                            const px = Util.clamp(getRelPos(foundation, currentWallArray[3], point), -0.45, -0.01);
                             if (
-                              isRoofValid(
+                              RoofUtil.isRoofValid(
                                 id,
                                 currentWallArray[3].id,
                                 currentWallArray[1].id,
@@ -735,13 +756,17 @@ const MansardRoof = ({
                     setCommonStore((state) => {
                       for (const e of state.elements) {
                         if (e.id === id) {
-                          if (parent && currentWallArray[1]) {
-                            const px = Util.clamp(getRelPos(parent, currentWallArray[1], point), 0.01, 0.45);
+                          if (foundation && currentWallArray[1]) {
+                            const px = Util.clamp(getRelPos(foundation, currentWallArray[1], point), 0.01, 0.45);
                             if (
-                              isRoofValid(id, currentWallArray[1].id, currentWallArray[3].id, undefined, undefined, [
-                                px,
-                                h,
-                              ])
+                              RoofUtil.isRoofValid(
+                                id,
+                                currentWallArray[1].id,
+                                currentWallArray[3].id,
+                                undefined,
+                                undefined,
+                                [px, h],
+                              )
                             ) {
                               (e as MansardRoofModel).backRidge = -px;
                             }
@@ -753,6 +778,7 @@ const MansardRoof = ({
                     break;
                   }
                 }
+                updateRooftopSolarPanel(foundation, id, roofSegments, centroid, h, thickness);
               }
             }
           }}
@@ -763,7 +789,7 @@ const MansardRoof = ({
             useStoreRef.getState().setEnableOrbitController(true);
             switch (roofHandleType) {
               case RoofHandleType.Top: {
-                handleUndoableResizeRoofHeight(id, oldHeight.current, h);
+                addUndoableResizeRoofHeight(id, oldHeight.current, h);
                 break;
               }
               case RoofHandleType.FrontLeft:
@@ -785,6 +811,7 @@ const MansardRoof = ({
                 }
               }
             });
+            updateRooftopSolarPanel(foundation, id, roofSegments, centroid, h, thickness);
           }}
         >
           <meshBasicMaterial side={DoubleSide} transparent={true} opacity={0.5} />

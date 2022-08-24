@@ -28,19 +28,21 @@ import {
 } from 'three';
 import {
   ConvexGeoProps,
-  getDistance,
-  getIntersectionPoint,
-  getNormal,
-  handleRoofContextMenu,
-  handleRoofPointerDown,
-  handleUndoableResizeRoofHeight,
-  isRoofValid,
+  handleContextMenu,
+  addUndoableResizeRoofHeight,
   RoofWireframeProps,
-  useRoofTexture,
+  updateRooftopSolarPanel,
+  handlePointerDown,
+  handlePointerUp,
+  handlePointerMove,
 } from './roofRenderer';
 import { CSG } from 'three-csg-ts';
 import { ConvexGeometry } from 'three/examples/jsm/geometries/ConvexGeometry';
 import { RoofTexture, ObjectType } from 'src/types';
+import { RoofUtil } from './RoofUtil';
+import { SolarPanelModel } from 'src/models/SolarPanelModel';
+import { UndoableMoveSolarPanelOnRoof } from 'src/undo/UndoableMove';
+import { useRoofTexture, useSolarPanelUndoable } from './hooks';
 
 enum RoofHandleType {
   TopMid = 'TopMid',
@@ -72,10 +74,10 @@ const GambrelRoofWirefram = React.memo(({ roofSegments, thickness, lineWidth, li
     frontSideSegmentPoints[1],
     frontSideSegmentPoints[2],
     frontTopSegmentPoints[2],
-    backTopSegmentPoints[2],
+    backTopSegmentPoints[0],
     backSideSegmentPoints[0],
     backSideSegmentPoints[1],
-    backTopSegmentPoints[3],
+    backTopSegmentPoints[1],
     frontTopSegmentPoints[3],
   );
 
@@ -148,6 +150,7 @@ const GambrelRoof = ({
   locked,
   lineColor = 'black',
   lineWidth = 0.2,
+  roofType,
 }: GambrelRoofModel) => {
   const texture = useRoofTexture(textureType);
 
@@ -170,13 +173,13 @@ const GambrelRoof = ({
   const isPointerMovingRef = useRef(false);
 
   // set position and rotation
-  const parent = getElementById(parentId);
+  const foundation = getElementById(parentId);
   let rotation = 0;
-  if (parent) {
-    cx = parent.cx;
-    cy = parent.cy;
-    cz = parent.lz;
-    rotation = parent.rotation[2];
+  if (foundation) {
+    cx = foundation.cx;
+    cy = foundation.cy;
+    cz = foundation.lz;
+    rotation = foundation.rotation[2];
   }
 
   useEffect(() => {
@@ -248,7 +251,7 @@ const GambrelRoof = ({
     setEnableIntersectionPlane(true);
     useStoreRef.getState().setEnableOrbitController(false);
     intersectionPlanePosition.set(handlePointV3.x, handlePointV3.y, h).add(centroid);
-    if (parent && wall) {
+    if (foundation && wall) {
       const r = wall.relativeAngle;
       intersectionPlaneRotation.set(-HALF_PI, 0, r, 'ZXY');
     }
@@ -376,7 +379,7 @@ const GambrelRoof = ({
   }, [currentWallArray, centroid, backRidgeRightPoint, minHeight]);
 
   const overhangs = useMemo(() => {
-    return currentWallArray.map((wall) => getNormal(wall).multiplyScalar(overhang));
+    return currentWallArray.map((wall) => RoofUtil.getWallNormal(wall).multiplyScalar(overhang));
   }, [currentWallArray, overhang]);
 
   const thicknessVector = useMemo(() => {
@@ -411,19 +414,19 @@ const GambrelRoof = ({
     const frontSidePoints: Vector3[] = [];
     const { lh: frontWallLh, rh: frontWallRh } = getWallHeight(currentWallArray, 0);
 
-    const d0 = getDistance(wallPoint0, wallPoint1, frontRidgeLeftPointV3.clone().add(centroid));
+    const d0 = RoofUtil.getDistance(wallPoint0, wallPoint1, frontRidgeLeftPointV3.clone().add(centroid));
     const overhangHeight0 = Math.min(
       (overhang / d0) * (frontRidgeLeftPointV3.clone().add(centroid).z - frontWallLh),
       frontWallLh,
     );
 
-    const d1 = getDistance(wallPoint0, wallPoint1, frontRidgeRightPointV3.clone().add(centroid));
+    const d1 = RoofUtil.getDistance(wallPoint0, wallPoint1, frontRidgeRightPointV3.clone().add(centroid));
     const overhangHeight1 = Math.min(
       (overhang / d1) * (frontRidgeRightPointV3.clone().add(centroid).z - frontWallRh),
       frontWallRh,
     );
 
-    const frontWallLeftPointAfterOverhang = getIntersectionPoint(
+    const frontWallLeftPointAfterOverhang = RoofUtil.getIntersectionPoint(
       frontWallLeftPointAfterOffset,
       frontWallRightPointAfterOffset,
       leftWallLeftPointAfterOffset,
@@ -432,7 +435,7 @@ const GambrelRoof = ({
       .setZ(frontWallLh - overhangHeight0)
       .sub(centroid);
 
-    const frontWallRightPointAfterOverhang = getIntersectionPoint(
+    const frontWallRightPointAfterOverhang = RoofUtil.getIntersectionPoint(
       frontWallLeftPointAfterOffset,
       frontWallRightPointAfterOffset,
       rightWallLeftPointAfterOffset,
@@ -441,14 +444,14 @@ const GambrelRoof = ({
       .setZ(frontWallRh - overhangHeight1)
       .sub(centroid);
 
-    const frontRidgeLeftPointAfterOverhang = getIntersectionPoint(
+    const frontRidgeLeftPointAfterOverhang = RoofUtil.getIntersectionPoint(
       frontRidgeLeftPointV3,
       frontRidgeRightPointV3,
       leftWallLeftPointAfterOffset.clone().sub(centroid),
       leftWallRightPointAfterOffset.clone().sub(centroid),
     ).setZ(frontRidgeLeftPointV3.z);
 
-    const frontRidgeRightPointAfterOverhang = getIntersectionPoint(
+    const frontRidgeRightPointAfterOverhang = RoofUtil.getIntersectionPoint(
       frontRidgeRightPointV3,
       frontRidgeLeftPointV3,
       rightWallLeftPointAfterOffset.clone().sub(centroid),
@@ -474,14 +477,14 @@ const GambrelRoof = ({
 
     // front top
     const frontTopPoints: Vector3[] = [];
-    const topRidgeLeftPointAfterOverhang = getIntersectionPoint(
+    const topRidgeLeftPointAfterOverhang = RoofUtil.getIntersectionPoint(
       topRidgeLeftPointV3,
       topRidgeRightPointV3,
       leftWallLeftPointAfterOffset.clone().sub(centroid),
       leftWallRightPointAfterOffset.clone().sub(centroid),
     ).setZ(topRidgeLeftPointV3.z);
 
-    const topRidgeRightPointAfterOverhang = getIntersectionPoint(
+    const topRidgeRightPointAfterOverhang = RoofUtil.getIntersectionPoint(
       topRidgeLeftPointV3,
       topRidgeRightPointV3,
       rightWallLeftPointAfterOffset.clone().sub(centroid),
@@ -507,19 +510,19 @@ const GambrelRoof = ({
     const backDirection = -backWall.relativeAngle;
     const { lh: backWallLh, rh: backWallRh } = getWallHeight(currentWallArray, 2);
 
-    const d2 = getDistance(wallPoint2, wallPoint3, backRidgeLeftPointV3.clone().add(centroid));
+    const d2 = RoofUtil.getDistance(wallPoint2, wallPoint3, backRidgeLeftPointV3.clone().add(centroid));
     const overhangHeight2 = Math.min(
       (overhang / d2) * (backRidgeLeftPointV3.clone().add(centroid).z - backWallLh),
       backWallLh,
     );
 
-    const d3 = getDistance(wallPoint2, wallPoint3, backRidgeRightPointV3.clone().add(centroid));
+    const d3 = RoofUtil.getDistance(wallPoint2, wallPoint3, backRidgeRightPointV3.clone().add(centroid));
     const overhangHeight3 = Math.min(
       (overhang / d3) * (backRidgeRightPointV3.clone().add(centroid).z - backWallRh),
       backWallRh,
     );
 
-    const backWallLeftPointAfterOverhang = getIntersectionPoint(
+    const backWallLeftPointAfterOverhang = RoofUtil.getIntersectionPoint(
       backWallLeftPointAfterOffset,
       backWallRightPointAfterOffset,
       rightWallLeftPointAfterOffset,
@@ -528,7 +531,7 @@ const GambrelRoof = ({
       .setZ(backWallLh - overhangHeight2)
       .sub(centroid);
 
-    const backWallRightPointAfterOverhang = getIntersectionPoint(
+    const backWallRightPointAfterOverhang = RoofUtil.getIntersectionPoint(
       backWallLeftPointAfterOffset,
       backWallRightPointAfterOffset,
       leftWallLeftPointAfterOffset,
@@ -537,14 +540,14 @@ const GambrelRoof = ({
       .setZ(backWallRh - overhangHeight3)
       .sub(centroid);
 
-    const backRidgeLeftPointAfterOverhang = getIntersectionPoint(
+    const backRidgeLeftPointAfterOverhang = RoofUtil.getIntersectionPoint(
       backRidgeLeftPointV3,
       backRidgeRightPointV3,
       rightWallLeftPointAfterOffset.clone().sub(centroid),
       rightWallRightPointAfterOffset.clone().sub(centroid),
     ).setZ(backRidgeRightPointV3.z);
 
-    const backRidgeRightPointAfterOverhang = getIntersectionPoint(
+    const backRidgeRightPointAfterOverhang = RoofUtil.getIntersectionPoint(
       backRidgeRightPointV3,
       backRidgeLeftPointV3,
       leftWallLeftPointAfterOffset.clone().sub(centroid),
@@ -555,16 +558,16 @@ const GambrelRoof = ({
 
     const backTopPoints: Vector3[] = [];
     backTopPoints.push(
-      topRidgeLeftPointAfterOverhang,
-      topRidgeRightPointAfterOverhang,
       backRidgeLeftPointAfterOverhang,
       backRidgeRightPointAfterOverhang,
+      topRidgeLeftPointAfterOverhang,
+      topRidgeRightPointAfterOverhang,
     );
     backTopPoints.push(
-      topRidgeLeftPointAfterOverhang.clone().add(thicknessVector),
-      topRidgeRightPointAfterOverhang.clone().add(thicknessVector),
       backRidgeLeftPointAfterOverhang.clone().add(thicknessVector),
       backRidgeRightPointAfterOverhang.clone().add(thicknessVector),
+      topRidgeLeftPointAfterOverhang.clone().add(thicknessVector),
+      topRidgeRightPointAfterOverhang.clone().add(thicknessVector),
     );
     segments.push({ points: backTopPoints, direction: backDirection, length: backSideLenght });
 
@@ -639,6 +642,24 @@ const GambrelRoof = ({
     }
   }, [currentWallArray, h]);
 
+  const updateSolarPanelOnRoofFlag = useStore(Selector.updateSolarPanelOnRoofFlag);
+
+  useEffect(() => {
+    updateRooftopSolarPanel(foundation, id, roofSegments, centroid, h, thickness);
+  }, [
+    updateSolarPanelOnRoofFlag,
+    h,
+    thickness,
+    topRidgeLeftPoint,
+    topRidgeRightPoint,
+    frontRidgeLeftPoint,
+    frontRidgeRightPoint,
+    backRidgeLeftPoint,
+    backRidgeRightPoint,
+  ]);
+
+  const { grabRef, addUndoableMove, undoMove, setOldRefData } = useSolarPanelUndoable();
+
   return (
     <group position={[cx, cy, cz + 0.01]} rotation={[0, 0, rotation]} name={`Gambrel Roof Group ${id}`}>
       {/* roof segments */}
@@ -646,10 +667,16 @@ const GambrelRoof = ({
         name={'Gambrel Roof Segments Group'}
         position={[centroid.x, centroid.y, centroid.z]}
         onPointerDown={(e) => {
-          handleRoofPointerDown(e, id, parentId);
+          handlePointerDown(e, id, foundation, roofSegments, centroid, setOldRefData);
+        }}
+        onPointerMove={(e) => {
+          handlePointerMove(e, grabRef.current, foundation, roofType, roofSegments, centroid);
+        }}
+        onPointerUp={() => {
+          handlePointerUp(grabRef, foundation, currentWallArray[0], id, overhang, undoMove, addUndoableMove);
         }}
         onContextMenu={(e) => {
-          handleRoofContextMenu(e, id);
+          handleContextMenu(e, id);
         }}
       >
         {roofSegments.map((segment, i, arr) => {
@@ -706,8 +733,8 @@ const GambrelRoof = ({
               isPointerMovingRef.current = true;
               setEnableIntersectionPlane(true);
               intersectionPlanePosition.set(topRidgeMidPointV3.x, topRidgeMidPointV3.y, h).add(centroid);
-              if (parent) {
-                const r = -Math.atan2(camera.position.x - cx, camera.position.y - cy) - parent.rotation[2];
+              if (foundation) {
+                const r = -Math.atan2(camera.position.x - cx, camera.position.y - cy) - foundation.rotation[2];
                 intersectionPlaneRotation.set(-HALF_PI, 0, r, 'ZXY');
               }
               setRoofHandleType(RoofHandleType.TopMid);
@@ -773,16 +800,19 @@ const GambrelRoof = ({
             if (intersectionPlaneRef.current && isPointerMovingRef.current) {
               setRayCast(e);
               const intersects = ray.intersectObjects([intersectionPlaneRef.current]);
-              if (intersects[0] && parent) {
+              if (intersects[0] && foundation) {
                 const point = intersects[0].point;
                 if (point.z < 0.001) {
                   return;
                 }
                 switch (roofHandleType) {
                   case RoofHandleType.TopMid: {
-                    const height = Math.max(minHeight, point.z - (parent?.lz ?? 0) - 0.3);
+                    const height = Math.max(minHeight, point.z - (foundation?.lz ?? 0) - 0.3);
                     if (
-                      isRoofValid(id, currentWallArray[3].id, currentWallArray[1].id, [topRidgeLeftPoint[0], height])
+                      RoofUtil.isRoofValid(id, currentWallArray[3].id, currentWallArray[1].id, [
+                        topRidgeLeftPoint[0],
+                        height,
+                      ])
                     ) {
                       setH(height);
                     }
@@ -792,14 +822,14 @@ const GambrelRoof = ({
                     setCommonStore((state) => {
                       for (const e of state.elements) {
                         if (e.id === id) {
-                          if (parent && currentWallArray[3]) {
+                          if (foundation && currentWallArray[3]) {
                             const px = Util.clamp(
-                              getRelPos(parent, currentWallArray[3], point),
+                              getRelPos(foundation, currentWallArray[3], point),
                               topRidgeLeftPoint[0],
                               0.45,
                             );
                             if (
-                              isRoofValid(id, currentWallArray[3].id, undefined, undefined, undefined, [
+                              RoofUtil.isRoofValid(id, currentWallArray[3].id, undefined, undefined, undefined, [
                                 px,
                                 frontRidgeLeftPoint[1] * (h - minHeight) + minHeight,
                               ])
@@ -818,14 +848,14 @@ const GambrelRoof = ({
                     setCommonStore((state) => {
                       for (const e of state.elements) {
                         if (e.id === id) {
-                          if (parent && currentWallArray[3]) {
+                          if (foundation && currentWallArray[3]) {
                             const px = Util.clamp(
-                              getRelPos(parent, currentWallArray[3], point),
+                              getRelPos(foundation, currentWallArray[3], point),
                               backRidgeRightPoint[0],
                               frontRidgeLeftPoint[0],
                             );
                             if (
-                              isRoofValid(
+                              RoofUtil.isRoofValid(
                                 id,
                                 currentWallArray[3].id,
                                 undefined,
@@ -847,14 +877,14 @@ const GambrelRoof = ({
                     setCommonStore((state) => {
                       for (const e of state.elements) {
                         if (e.id === id) {
-                          if (parent && currentWallArray[3]) {
+                          if (foundation && currentWallArray[3]) {
                             const px = Util.clamp(
-                              getRelPos(parent, currentWallArray[3], point),
+                              getRelPos(foundation, currentWallArray[3], point),
                               -0.45,
                               topRidgeLeftPoint[0],
                             );
                             if (
-                              isRoofValid(
+                              RoofUtil.isRoofValid(
                                 id,
                                 currentWallArray[3].id,
                                 undefined,
@@ -876,14 +906,14 @@ const GambrelRoof = ({
                     setCommonStore((state) => {
                       for (const e of state.elements) {
                         if (e.id === id) {
-                          if (parent && currentWallArray[1]) {
+                          if (foundation && currentWallArray[1]) {
                             const px = Util.clamp(
-                              getRelPos(parent, currentWallArray[1], point),
+                              getRelPos(foundation, currentWallArray[1], point),
                               -0.45,
                               topRidgeRightPoint[0],
                             );
                             if (
-                              isRoofValid(
+                              RoofUtil.isRoofValid(
                                 id,
                                 currentWallArray[1].id,
                                 undefined,
@@ -905,14 +935,14 @@ const GambrelRoof = ({
                     setCommonStore((state) => {
                       for (const e of state.elements) {
                         if (e.id === id) {
-                          if (parent && currentWallArray[1]) {
+                          if (foundation && currentWallArray[1]) {
                             const px = Util.clamp(
-                              getRelPos(parent, currentWallArray[1], point),
+                              getRelPos(foundation, currentWallArray[1], point),
                               frontRidgeRightPoint[0],
                               backRidgeLeftPoint[0],
                             );
                             if (
-                              isRoofValid(
+                              RoofUtil.isRoofValid(
                                 id,
                                 currentWallArray[1].id,
                                 undefined,
@@ -934,14 +964,14 @@ const GambrelRoof = ({
                     setCommonStore((state) => {
                       for (const e of state.elements) {
                         if (e.id === id) {
-                          if (parent && currentWallArray[1]) {
+                          if (foundation && currentWallArray[1]) {
                             const px = Util.clamp(
-                              getRelPos(parent, currentWallArray[1], point),
+                              getRelPos(foundation, currentWallArray[1], point),
                               topRidgeRightPoint[0],
                               0.45,
                             );
                             if (
-                              isRoofValid(id, currentWallArray[1].id, undefined, undefined, undefined, [
+                              RoofUtil.isRoofValid(id, currentWallArray[1].id, undefined, undefined, undefined, [
                                 px,
                                 backRidgeLeftPoint[1] * (h - minHeight) + minHeight,
                               ])
@@ -956,13 +986,14 @@ const GambrelRoof = ({
                     break;
                   }
                 }
+                updateRooftopSolarPanel(foundation, id, roofSegments, centroid, h, thickness);
               }
             }
           }}
           onPointerUp={() => {
             switch (roofHandleType) {
               case RoofHandleType.TopMid: {
-                handleUndoableResizeRoofHeight(id, oldHeight.current, h);
+                addUndoableResizeRoofHeight(id, oldHeight.current, h);
                 break;
               }
               case RoofHandleType.TopLeft: {
@@ -1003,6 +1034,7 @@ const GambrelRoof = ({
                 }
               }
             });
+            updateRooftopSolarPanel(foundation, id, roofSegments, centroid, h, thickness);
           }}
         >
           <meshBasicMaterial side={DoubleSide} transparent={true} opacity={0.5} />

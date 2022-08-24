@@ -2,7 +2,7 @@
  * @Copyright 2021-2022. Institute for Future Intelligence, Inc.
  */
 
-import { Color, Vector2, Vector3 } from 'three';
+import { Color, Euler, Vector2, Vector3 } from 'three';
 
 export const VERSION = '0.2.8';
 
@@ -70,3 +70,5 @@ export const ORIGIN_VECTOR2 = new Vector2(0, 0);
 export const PARABOLIC_DISH_STRUCTURE_CENTRAL_POLE = 1;
 
 export const PARABOLIC_DISH_STRUCTURE_TRIPOD = 2;
+
+export const HALF_PI_Z_EULER = new Euler(0, 0, HALF_PI);

@@ -95,7 +95,7 @@ import SolarPanelBluePortraitImage from '../resources/solar-panel-blue-portrait.
 import SolarPanelBlackPortraitImage from '../resources/solar-panel-black-portrait.png';
 import SolarPanelBlueLandscapeImage from '../resources/solar-panel-blue-landscape.png';
 import SolarPanelBlackLandscapeImage from '../resources/solar-panel-black-landscape.png';
-import { spOnRoofBoundaryCheck, spOnRoofCollisionCheck } from 'src/views/roof/roofRenderer';
+import { RoofUtil } from 'src/views/roof/RoofUtil';
 
 enableMapSet();
 
@@ -4893,21 +4893,23 @@ export const useStore = create<CommonStoreState>(
                           const foundation = state.getElementById(e.foundationId);
                           const wall = state.getElementById((newParent as RoofModel).wallsId[0]) as WallModel;
                           if (foundation && wall) {
-                            const solarPanelVertices = Util.getSolarPanelVerticesOnRoof(
+                            const solarPanelVertices = RoofUtil.getSolarPanelVerticesOnRoof(
                               e as SolarPanelModel,
                               foundation,
                             );
-                            const boundaryVertices = Util.getWallPointsWithOverhang(
+                            const boundaryVertices = RoofUtil.getBoundaryVertices(
                               newParent.id,
                               wall,
                               (newParent as RoofModel).overhang,
                             );
 
-                            if (!spOnRoofBoundaryCheck(solarPanelVertices, boundaryVertices)) {
+                            if (!RoofUtil.rooftopSPBoundaryCheck(solarPanelVertices, boundaryVertices)) {
                               showError(i18n.t('message.CannotPasteOutsideBoundary', lang));
                               break;
                             }
-                            if (!spOnRoofCollisionCheck(e as SolarPanelModel, foundation, solarPanelVertices)) {
+                            if (
+                              !RoofUtil.rooftopSPCollisionCheck(e as SolarPanelModel, foundation, solarPanelVertices)
+                            ) {
                               showError(i18n.t('message.CannotPasteBecauseOfOverlap', lang));
                               break;
                             }
@@ -5107,7 +5109,7 @@ export const useStore = create<CommonStoreState>(
                               const foundation = state.getElementById(elem.foundationId);
                               const wall = state.getElementById((parent as RoofModel).wallsId[0]) as WallModel;
                               if (foundation && wall) {
-                                const boundaryVertices = Util.getWallPointsWithOverhang(
+                                const boundaryVertices = RoofUtil.getBoundaryVertices(
                                   parent.id,
                                   wall,
                                   (parent as RoofModel).overhang,
@@ -5117,13 +5119,17 @@ export const useStore = create<CommonStoreState>(
                                 e.cx += hx * 1.25;
 
                                 while (e.cx + hx < 0.5) {
-                                  const solarPanelVertices = Util.getSolarPanelVerticesOnRoof(
+                                  const solarPanelVertices = RoofUtil.getSolarPanelVerticesOnRoof(
                                     e as SolarPanelModel,
                                     foundation,
                                   );
                                   if (
-                                    spOnRoofBoundaryCheck(solarPanelVertices, boundaryVertices) &&
-                                    spOnRoofCollisionCheck(e as SolarPanelModel, foundation, solarPanelVertices)
+                                    RoofUtil.rooftopSPBoundaryCheck(solarPanelVertices, boundaryVertices) &&
+                                    RoofUtil.rooftopSPCollisionCheck(
+                                      e as SolarPanelModel,
+                                      foundation,
+                                      solarPanelVertices,
+                                    )
                                   ) {
                                     state.elements.push(e);
                                     approved = true;
@@ -5135,13 +5141,17 @@ export const useStore = create<CommonStoreState>(
                                 if (!approved) {
                                   e.cx = elem.cx - hx * 1.25;
                                   while (e.cx - hx > -0.5) {
-                                    const solarPanelVertices = Util.getSolarPanelVerticesOnRoof(
+                                    const solarPanelVertices = RoofUtil.getSolarPanelVerticesOnRoof(
                                       e as SolarPanelModel,
                                       foundation,
                                     );
                                     if (
-                                      spOnRoofBoundaryCheck(solarPanelVertices, boundaryVertices) &&
-                                      spOnRoofCollisionCheck(e as SolarPanelModel, foundation, solarPanelVertices)
+                                      RoofUtil.rooftopSPBoundaryCheck(solarPanelVertices, boundaryVertices) &&
+                                      RoofUtil.rooftopSPCollisionCheck(
+                                        e as SolarPanelModel,
+                                        foundation,
+                                        solarPanelVertices,
+                                      )
                                     ) {
                                       state.elements.push(e);
                                       approved = true;

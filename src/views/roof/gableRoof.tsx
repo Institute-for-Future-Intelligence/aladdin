@@ -14,21 +14,21 @@ import { useThree } from '@react-three/fiber';
 import { HALF_PI } from 'src/constants';
 import { ElementModel } from 'src/models/ElementModel';
 import {
-  handleUndoableResizeRoofHeight,
+  addUndoableResizeRoofHeight,
   ConvexGeoProps,
-  useRoofTexture,
-  handleRoofContextMenu,
-  getNormal,
-  getIntersectionPoint,
-  getDistance,
-  handleRoofPointerDown,
-  isRoofValid,
+  handleContextMenu,
   RoofWireframeProps,
+  handlePointerDown,
+  handlePointerMove,
+  handlePointerUp,
+  updateRooftopSolarPanel,
 } from './roofRenderer';
 import { UnoableResizeGableRoofRidge } from 'src/undo/UndoableResize';
 import { RoofTexture, ObjectType } from 'src/types';
 import { Util } from 'src/Util';
 import { Point2 } from 'src/models/Point2';
+import { RoofUtil } from './RoofUtil';
+import { useRoofTexture, useSolarPanelUndoable } from './hooks';
 
 const intersectionPlanePosition = new Vector3();
 const intersectionPlaneRotation = new Euler();
@@ -122,6 +122,7 @@ const GableRoof = ({
   locked,
   lineColor = 'black',
   lineWidth = 0.2,
+  roofType,
 }: GableRoofModel) => {
   const texture = useRoofTexture(textureType);
 
@@ -130,6 +131,8 @@ const GableRoof = ({
   const getElementById = useStore(Selector.getElementById);
   const removeElementById = useStore(Selector.removeElementById);
   const elements = useStore(Selector.elements);
+  const updateSolarPanelOnRoofFlag = useStore(Selector.updateSolarPanelOnRoofFlag);
+
   const { gl, camera } = useThree();
   const ray = useMemo(() => new Raycaster(), []);
   const mouse = useMemo(() => new Vector2(), []);
@@ -145,6 +148,10 @@ const GableRoof = ({
   const oldRidgeLeft = useRef<number>(ridgeLeftPoint[0]);
   const oldRidgeRight = useRef<number>(ridgeRightPoint[0]);
   const isPointerMovingRef = useRef(false);
+
+  useEffect(() => {
+    updateRooftopSolarPanel(foundation, id, roofSegments, centroid, h, thickness);
+  }, [updateSolarPanelOnRoofFlag, h, thickness, ridgeLeftPoint, ridgeRightPoint]);
 
   useEffect(() => {
     if (h < minHeight) {
@@ -332,7 +339,7 @@ const GableRoof = ({
   }, [ridgeLeftPointV3, ridgeRightPointV3]);
 
   const overhangs = useMemo(() => {
-    return currentWallArray.map((wall) => getNormal(wall).multiplyScalar(overhang));
+    return currentWallArray.map((wall) => RoofUtil.getWallNormal(wall).multiplyScalar(overhang));
   }, [currentWallArray, overhang]);
 
   const thicknessVector = useMemo(() => {
@@ -374,19 +381,19 @@ const GableRoof = ({
       const { lh: frontWallLh, rh: frontWallRh } = getWallHeightShed(shiftedWallArray, 0);
       const { lh: backWallLh, rh: backWallRh } = getWallHeightShed(shiftedWallArray, 2);
 
-      const d0 = getDistance(wallPoint0, wallPoint1, wallPoint3);
+      const d0 = RoofUtil.getDistance(wallPoint0, wallPoint1, wallPoint3);
       const overhangHeight0 = Math.min((overhang / d0) * (h - frontWallLh), frontWallLh);
 
-      const d1 = getDistance(wallPoint0, wallPoint1, wallPoint2);
+      const d1 = RoofUtil.getDistance(wallPoint0, wallPoint1, wallPoint2);
       const overhangHeight1 = Math.min((overhang / d1) * (h - frontWallRh), frontWallRh);
 
-      const d2 = getDistance(wallPoint2, wallPoint3, wallPoint1);
+      const d2 = RoofUtil.getDistance(wallPoint2, wallPoint3, wallPoint1);
       const overhangHeight2 = Math.min((overhang / d2) * (h - frontWallRh), backWallLh);
 
-      const d3 = getDistance(wallPoint2, wallPoint3, wallPoint0);
+      const d3 = RoofUtil.getDistance(wallPoint2, wallPoint3, wallPoint0);
       const overhangHeight3 = Math.min((overhang / d3) * (h - frontWallLh), backWallRh);
 
-      const frontWallLeftPointAfterOverhang = getIntersectionPoint(
+      const frontWallLeftPointAfterOverhang = RoofUtil.getIntersectionPoint(
         frontWallLeftPointAfterOffset,
         frontWallRightPointAfterOffset,
         leftWallLeftPointAfterOffset,
@@ -395,7 +402,7 @@ const GableRoof = ({
         .setZ(frontWallLh - overhangHeight0)
         .sub(centroid);
 
-      const frontWallRightPointAfterOverhang = getIntersectionPoint(
+      const frontWallRightPointAfterOverhang = RoofUtil.getIntersectionPoint(
         frontWallLeftPointAfterOffset,
         frontWallRightPointAfterOffset,
         rightWallLeftPointAfterOffset,
@@ -404,7 +411,7 @@ const GableRoof = ({
         .setZ(frontWallRh - overhangHeight1)
         .sub(centroid);
 
-      const backWallLeftPointAfterOverhang = getIntersectionPoint(
+      const backWallLeftPointAfterOverhang = RoofUtil.getIntersectionPoint(
         backWallLeftPointAfterOffset,
         backWallRightPointAfterOffset,
         rightWallLeftPointAfterOffset,
@@ -413,7 +420,7 @@ const GableRoof = ({
         .setZ(h + overhangHeight2)
         .sub(centroid);
 
-      const backWallRightPointAfterOverhang = getIntersectionPoint(
+      const backWallRightPointAfterOverhang = RoofUtil.getIntersectionPoint(
         backWallLeftPointAfterOffset,
         backWallRightPointAfterOffset,
         leftWallLeftPointAfterOffset,
@@ -458,7 +465,7 @@ const GableRoof = ({
       const backWallLeftPointAfterOffset = wallPoint2.clone().add(backOverhang);
       const backWallRightPointAfterOffset = wallPoint3.clone().add(backOverhang);
 
-      const ridgeLeftPointAfterOverhang = getIntersectionPoint(
+      const ridgeLeftPointAfterOverhang = RoofUtil.getIntersectionPoint(
         ridgeLeftPointV3,
         ridgeRightPointV3,
         leftWallLeftPointAfterOffset.clone(),
@@ -467,7 +474,7 @@ const GableRoof = ({
         .setZ(ridgeLeftPointV3.z)
         .sub(centroid);
 
-      const ridgeRightPointAfterOverhang = getIntersectionPoint(
+      const ridgeRightPointAfterOverhang = RoofUtil.getIntersectionPoint(
         ridgeLeftPointV3,
         ridgeRightPointV3,
         rightWallLeftPointAfterOffset.clone(),
@@ -480,13 +487,13 @@ const GableRoof = ({
       const frontPoints: Vector3[] = [];
       const { lh: frontWallLh, rh: frontWallRh } = getWallHeight(currentWallArray, 0);
 
-      const d0 = getDistance(wallPoint0, wallPoint1, ridgeLeftPointV3);
+      const d0 = RoofUtil.getDistance(wallPoint0, wallPoint1, ridgeLeftPointV3);
       const overhangHeight0 = Math.min((overhang / d0) * (ridgeLeftPointV3.z - frontWallLh), frontWallLh);
 
-      const d1 = getDistance(wallPoint0, wallPoint1, ridgeRightPointV3);
+      const d1 = RoofUtil.getDistance(wallPoint0, wallPoint1, ridgeRightPointV3);
       const overhangHeight1 = Math.min((overhang / d1) * (ridgeRightPointV3.z - frontWallRh), frontWallRh);
 
-      const frontWallLeftPointAfterOverhang = getIntersectionPoint(
+      const frontWallLeftPointAfterOverhang = RoofUtil.getIntersectionPoint(
         frontWallLeftPointAfterOffset,
         frontWallRightPointAfterOffset,
         leftWallLeftPointAfterOffset,
@@ -495,7 +502,7 @@ const GableRoof = ({
         .setZ(frontWallLh - overhangHeight0)
         .sub(centroid);
 
-      const frontWallRightPointAfterOverhang = getIntersectionPoint(
+      const frontWallRightPointAfterOverhang = RoofUtil.getIntersectionPoint(
         frontWallLeftPointAfterOffset,
         frontWallRightPointAfterOffset,
         rightWallLeftPointAfterOffset,
@@ -524,13 +531,13 @@ const GableRoof = ({
       // back
       const backPoints: Vector3[] = [];
       const { lh: backWallLh, rh: backWallRh } = getWallHeight(currentWallArray, 2);
-      const d2 = getDistance(wallPoint2, wallPoint3, ridgeRightPointV3);
+      const d2 = RoofUtil.getDistance(wallPoint2, wallPoint3, ridgeRightPointV3);
       const overhangHeight2 = Math.min((overhang / d2) * (ridgeRightPointV3.z - backWallLh), backWallLh);
 
-      const d3 = getDistance(wallPoint2, wallPoint3, ridgeLeftPointV3);
+      const d3 = RoofUtil.getDistance(wallPoint2, wallPoint3, ridgeLeftPointV3);
       const overhangHeight3 = Math.min((overhang / d3) * (ridgeLeftPointV3.z - backWallRh), backWallRh);
 
-      const backWallLeftPointAfterOverhang = getIntersectionPoint(
+      const backWallLeftPointAfterOverhang = RoofUtil.getIntersectionPoint(
         backWallLeftPointAfterOffset,
         backWallRightPointAfterOffset,
         rightWallLeftPointAfterOffset,
@@ -539,7 +546,7 @@ const GableRoof = ({
         .setZ(backWallLh - overhangHeight2)
         .sub(centroid);
 
-      const backWallRightPointAfterOverhang = getIntersectionPoint(
+      const backWallRightPointAfterOverhang = RoofUtil.getIntersectionPoint(
         backWallLeftPointAfterOffset,
         backWallRightPointAfterOffset,
         leftWallLeftPointAfterOffset,
@@ -570,13 +577,13 @@ const GableRoof = ({
   }, [currentWallArray, ridgeLeftPointV3, ridgeRightPointV3, h]);
 
   // set position and rotation
-  const parent = getElementById(parentId);
+  const foundation = getElementById(parentId);
   let rotation = 0;
-  if (parent) {
-    cx = parent.cx;
-    cy = parent.cy;
-    cz = parent.lz;
-    rotation = parent.rotation[2];
+  if (foundation) {
+    cx = foundation.cx;
+    cy = foundation.cy;
+    cz = foundation.lz;
+    rotation = foundation.rotation[2];
   }
 
   useEffect(() => {
@@ -651,6 +658,8 @@ const GableRoof = ({
     }
   }, [currentWallArray, h]);
 
+  const { grabRef, addUndoableMove, undoMove, setOldRefData } = useSolarPanelUndoable();
+
   return (
     <group position={[cx, cy, cz]} rotation={[0, 0, rotation]} name={`Gable Roof Group ${id}`}>
       {/* roof segments group */}
@@ -658,10 +667,16 @@ const GableRoof = ({
         name={'Gable Roof Segments Group'}
         position={[centroid.x, centroid.y, centroid.z]}
         onPointerDown={(e) => {
-          handleRoofPointerDown(e, id, parentId);
+          handlePointerDown(e, id, foundation, roofSegments, centroid, setOldRefData);
+        }}
+        onPointerMove={(e) => {
+          handlePointerMove(e, grabRef.current, foundation, roofType, roofSegments, centroid);
+        }}
+        onPointerUp={() => {
+          handlePointerUp(grabRef, foundation, currentWallArray[0], id, overhang, undoMove, addUndoableMove);
         }}
         onContextMenu={(e) => {
-          handleRoofContextMenu(e, id);
+          handleContextMenu(e, id);
         }}
       >
         {roofSegments.map((segment, i, arr) => {
@@ -669,7 +684,7 @@ const GableRoof = ({
           const [leftRoof, rightRoof, rightRidge, leftRidge] = points;
           const isFlat = Math.abs(leftRoof.z) < 0.1;
           return (
-            <mesh key={i} castShadow={shadowEnabled} receiveShadow={shadowEnabled}>
+            <mesh key={i} name={`Roof segment ${i}`} castShadow={shadowEnabled} receiveShadow={shadowEnabled}>
               <convexGeometry args={[points, isFlat ? arr[0].direction : direction, isFlat ? 1 : length]} />
               <meshStandardMaterial
                 map={texture}
@@ -697,8 +712,8 @@ const GableRoof = ({
               isPointerMovingRef.current = true;
               setShowIntersectionPlane(true);
               intersectionPlanePosition.set(ridgeMidPoint.x, ridgeMidPoint.y, h);
-              if (parent) {
-                const r = -Math.atan2(camera.position.x - cx, camera.position.y - cy) - parent.rotation[2];
+              if (foundation) {
+                const r = -Math.atan2(camera.position.x - cx, camera.position.y - cy) - foundation.rotation[2];
                 intersectionPlaneRotation.set(-HALF_PI, 0, r, 'ZXY');
               }
               setRoofHandleType(RoofHandleType.Mid);
@@ -716,7 +731,7 @@ const GableRoof = ({
               oldRidgeRight.current = ridgeRightPoint[0];
               setShowIntersectionPlane(true);
               intersectionPlanePosition.set(ridgeLeftPointV3.x, ridgeLeftPointV3.y, h);
-              if (parent && currentWallArray[3]) {
+              if (foundation && currentWallArray[3]) {
                 const r = currentWallArray[3].relativeAngle;
                 intersectionPlaneRotation.set(-HALF_PI, 0, r, 'ZXY');
               }
@@ -733,7 +748,7 @@ const GableRoof = ({
               oldRidgeRight.current = ridgeRightPoint[0];
               setShowIntersectionPlane(true);
               intersectionPlanePosition.set(ridgeRightPointV3.x, ridgeRightPointV3.y, h);
-              if (parent && currentWallArray[1]) {
+              if (foundation && currentWallArray[1]) {
                 const r = currentWallArray[1].relativeAngle;
                 intersectionPlaneRotation.set(-HALF_PI, 0, r, 'ZXY');
               }
@@ -772,7 +787,7 @@ const GableRoof = ({
                         if (Math.abs(x) >= 0.45 && Math.abs(x) < 0.5) {
                           x = 0.45 * Math.sign(x);
                         }
-                        if (isRoofValid(id, currentWallArray[3].id, currentWallArray[1].id, [x, h])) {
+                        if (RoofUtil.isRoofValid(id, currentWallArray[3].id, currentWallArray[1].id, [x, h])) {
                           updateRoofTopRidge(id, x, -x);
                           if (Math.abs(x) === 0.5 && !isShed) {
                             setIsShed(true);
@@ -793,7 +808,7 @@ const GableRoof = ({
                         if (Math.abs(x) >= 0.45 && Math.abs(x) < 0.5) {
                           x = 0.45 * Math.sign(x);
                         }
-                        if (isRoofValid(id, currentWallArray[1].id, currentWallArray[3].id, [x, h])) {
+                        if (RoofUtil.isRoofValid(id, currentWallArray[1].id, currentWallArray[3].id, [x, h])) {
                           updateRoofTopRidge(id, -x, x);
                           if (Math.abs(x) === 0.5 && !isShed) {
                             setIsShed(true);
@@ -806,20 +821,26 @@ const GableRoof = ({
                     break;
                   }
                   case RoofHandleType.Mid: {
-                    const height = Math.max(minHeight, point.z - (parent?.lz ?? 0) - 0.3);
-                    if (isRoofValid(id, currentWallArray[3].id, currentWallArray[1].id, [ridgeLeftPoint[0], height])) {
+                    const height = Math.max(minHeight, point.z - (foundation?.lz ?? 0) - 0.3);
+                    if (
+                      RoofUtil.isRoofValid(id, currentWallArray[3].id, currentWallArray[1].id, [
+                        ridgeLeftPoint[0],
+                        height,
+                      ])
+                    ) {
                       setH(height);
                     }
                     break;
                   }
                 }
+                updateRooftopSolarPanel(foundation, id, roofSegments, centroid, h, thickness);
               }
             }
           }}
           onPointerUp={() => {
             switch (roofHandleType) {
               case RoofHandleType.Mid: {
-                handleUndoableResizeRoofHeight(id, oldHeight.current, h);
+                addUndoableResizeRoofHeight(id, oldHeight.current, h);
                 break;
               }
               case RoofHandleType.Left:
@@ -845,6 +866,7 @@ const GableRoof = ({
                 }
               }
             });
+            updateRooftopSolarPanel(foundation, id, roofSegments, centroid, h, thickness);
           }}
         >
           <meshBasicMaterial side={DoubleSide} transparent={true} opacity={0.5} />

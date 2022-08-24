@@ -10,7 +10,7 @@ import * as Selector from 'src/stores/selector';
 import { WallModel } from 'src/models/WallModel';
 import { Box, Line, Plane, Sphere } from '@react-three/drei';
 import { ConvexGeometry } from 'src/js/ConvexGeometry.js';
-import { HALF_PI, TWO_PI } from 'src/constants';
+import { HALF_PI, HALF_PI_Z_EULER, TWO_PI } from 'src/constants';
 import { useStoreRef } from 'src/stores/commonRef';
 import { useThree } from '@react-three/fiber';
 import { Point2 } from 'src/models/Point2';
@@ -19,16 +19,16 @@ import { ObjectType, RoofTexture } from 'src/types';
 import { CSG } from 'three-csg-ts';
 import {
   ConvexGeoProps,
-  euler,
-  getDistance,
-  getIntersectionPoint,
-  getNormal,
-  handleRoofContextMenu,
-  handleRoofPointerDown,
-  handleUndoableResizeRoofHeight,
-  useRoofTexture,
+  handleContextMenu,
+  handlePointerDown,
+  handlePointerUp,
+  handlePointerMove,
+  addUndoableResizeRoofHeight,
   RoofWireframeProps,
+  updateRooftopSolarPanel,
 } from './roofRenderer';
+import { RoofUtil } from './RoofUtil';
+import { useRoofTexture, useSolarPanelUndoable } from './hooks';
 
 const centerPointPosition = new Vector3();
 const intersectionPlanePosition = new Vector3();
@@ -88,6 +88,7 @@ const PyramidRoof = ({
   locked,
   lineWidth = 0.2,
   lineColor = 'black',
+  roofType,
 }: PyramidRoofModel) => {
   const setCommonStore = useStore(Selector.set);
   const getElementById = useStore(Selector.getElementById);
@@ -180,9 +181,9 @@ const PyramidRoof = ({
       const leftPoint = new Vector3(w.leftPoint[0], w.leftPoint[1]);
       const rightPoint = new Vector3(w.rightPoint[0], w.rightPoint[1]);
       const { lh, rh } = getWallHeight(currentWallArray, i);
-      const dLeft = getDistance(leftPoint, rightPoint, centerPointPosition);
+      const dLeft = RoofUtil.getDistance(leftPoint, rightPoint, centerPointPosition);
       const overhangHeightLeft = Math.min((overhang / dLeft) * (centerPointPosition.z - lh), lh);
-      const dRight = getDistance(leftPoint, rightPoint, centerPointPosition);
+      const dRight = RoofUtil.getDistance(leftPoint, rightPoint, centerPointPosition);
       const overhangHeightRight = Math.min((overhang / dRight) * (centerPointPosition.z - rh), rh);
       height = Math.min(Math.min(overhangHeightLeft, overhangHeightRight), height);
     }
@@ -246,12 +247,12 @@ const PyramidRoof = ({
     if (Number.isNaN(p.x) || Number.isNaN(p.y)) {
       return { x: 0, y: 0 };
     }
-    centerPointPosition.set(p.x, p.y, h - 0.01);
+    centerPointPosition.set(p.x, p.y, h);
     return p;
   }, [currentWallArray, h]);
 
   const overhangs = useMemo(() => {
-    const res = currentWallArray.map((wall) => getNormal(wall).multiplyScalar(overhang));
+    const res = currentWallArray.map((wall) => RoofUtil.getWallNormal(wall).multiplyScalar(overhang));
     if (!isWallLoopRef.current) {
       const n = new Vector3()
         .subVectors(
@@ -261,7 +262,7 @@ const PyramidRoof = ({
           ),
           new Vector3(currentWallArray[0].leftPoint[0], currentWallArray[0].leftPoint[1]),
         )
-        .applyEuler(euler)
+        .applyEuler(HALF_PI_Z_EULER)
         .normalize()
         .multiplyScalar(overhang);
       res.push(n);
@@ -320,7 +321,7 @@ const PyramidRoof = ({
         }
         minHeight = Math.max(minHeight, Math.max(lh, rh));
 
-        const wallLeftPointAfterOverhang = getIntersectionPoint(
+        const wallLeftPointAfterOverhang = RoofUtil.getIntersectionPoint(
           wallPointsAfterOffset[i].leftPoint,
           wallPointsAfterOffset[i].rightPoint,
           wallPointsAfterOffset[(i + wallPointsAfterOffset.length - 1) % wallPointsAfterOffset.length].leftPoint,
@@ -329,7 +330,7 @@ const PyramidRoof = ({
           .setZ(lh - overhangHeight)
           .sub(centerPointPosition);
 
-        const wallRightPointAfterOverhang = getIntersectionPoint(
+        const wallRightPointAfterOverhang = RoofUtil.getIntersectionPoint(
           wallPointsAfterOffset[i].leftPoint,
           wallPointsAfterOffset[i].rightPoint,
           wallPointsAfterOffset[(i + 1) % wallPointsAfterOffset.length].leftPoint,
@@ -352,7 +353,7 @@ const PyramidRoof = ({
     }
     if (!isWallLoopRef.current) {
       const idx = wallPointsAfterOffset.length - 1;
-      const leftPointAfterOverhang = getIntersectionPoint(
+      const leftPointAfterOverhang = RoofUtil.getIntersectionPoint(
         wallPointsAfterOffset[idx].leftPoint,
         wallPointsAfterOffset[idx].rightPoint,
         wallPointsAfterOffset[idx - 1].leftPoint,
@@ -360,7 +361,7 @@ const PyramidRoof = ({
       )
         .setZ(currentWallArray[currentWallArray.length - 1].lz - overhangHeight)
         .sub(centerPointPosition);
-      const rightPointAfterOverhang = getIntersectionPoint(
+      const rightPointAfterOverhang = RoofUtil.getIntersectionPoint(
         wallPointsAfterOffset[idx].leftPoint,
         wallPointsAfterOffset[idx].rightPoint,
         wallPointsAfterOffset[0].leftPoint,
@@ -397,13 +398,13 @@ const PyramidRoof = ({
   }, [currentWallArray, centerPoint]);
 
   // set position and rotation
-  const parent = getElementById(parentId);
+  const foundation = getElementById(parentId);
   let rotation = 0;
-  if (parent) {
-    cx = parent.cx;
-    cy = parent.cy;
-    cz = parent.lz;
-    rotation = parent.rotation[2];
+  if (foundation) {
+    cx = foundation.cx;
+    cy = foundation.cy;
+    cz = foundation.lz;
+    rotation = foundation.rotation[2];
 
     const r = -Math.atan2(camera.position.x - cx, camera.position.y - cy) - rotation;
     intersectionPlanePosition.set(centerPoint.x, centerPoint.y, h);
@@ -450,6 +451,14 @@ const PyramidRoof = ({
     }
   }, [currentWallArray]);
 
+  const { grabRef, addUndoableMove, undoMove, setOldRefData } = useSolarPanelUndoable();
+
+  const updateSolarPanelOnRoofFlag = useStore(Selector.updateSolarPanelOnRoofFlag);
+
+  useEffect(() => {
+    updateRooftopSolarPanel(foundation, id, roofSegments, centerPointPosition, h, thickness);
+  }, [updateSolarPanelOnRoofFlag, h, thickness]);
+
   return (
     <group position={[cx, cy, cz]} rotation={[0, 0, rotation]} name={`Pyramid Roof Group ${id}`}>
       {/* roof segments group */}
@@ -457,16 +466,22 @@ const PyramidRoof = ({
         name={`Pyramid Roof Segments Group`}
         position={[centerPoint.x, centerPoint.y, h]}
         onPointerDown={(e) => {
-          handleRoofPointerDown(e, id, parentId);
+          handlePointerDown(e, id, foundation, roofSegments, centerPointPosition, setOldRefData);
+        }}
+        onPointerMove={(e) => {
+          handlePointerMove(e, grabRef.current, foundation, roofType, roofSegments, centerPointPosition);
+        }}
+        onPointerUp={() => {
+          handlePointerUp(grabRef, foundation, currentWallArray[0], id, overhang, undoMove, addUndoableMove);
         }}
         onContextMenu={(e) => {
-          handleRoofContextMenu(e, id);
+          handleContextMenu(e, id);
         }}
       >
         {roofSegments.map((segment, idx) => {
           const { points, direction, length } = segment;
           if (points.length > 0) {
-            const [leftPoint, rightPoint, zeroVector] = points;
+            const [leftPoint, rightPoint] = points;
             const isFlat = Math.abs(leftPoint.z) < 0.01;
             if (leftPoint.distanceTo(rightPoint) > 0.1) {
               return (
@@ -526,15 +541,17 @@ const PyramidRoof = ({
                 if (point.z < 0.001) {
                   return;
                 }
-                setH(Math.max(minHeight, point.z - (parent?.lz ?? 0) - 0.3));
+                setH(Math.max(minHeight, point.z - (foundation?.lz ?? 0) - 0.3));
+                updateRooftopSolarPanel(foundation, id, roofSegments, centerPointPosition, h, thickness);
               }
             }
           }}
           onPointerUp={(e) => {
             updateRoofHeight(id, h);
-            handleUndoableResizeRoofHeight(id, oldHeight.current, h);
+            addUndoableResizeRoofHeight(id, oldHeight.current, h);
             setShowIntersectionPlane(false);
             useStoreRef.getState().setEnableOrbitController(true);
+            updateRooftopSolarPanel(foundation, id, roofSegments, centerPointPosition, h, thickness);
           }}
         />
       )}

@@ -4,10 +4,8 @@
 import { Line, Plane, Sphere } from '@react-three/drei';
 import { ThreeEvent, useThree } from '@react-three/fiber';
 import React, { useEffect, useMemo, useRef, useState } from 'react';
-import { HALF_PI, UNIT_VECTOR_POS_Z } from 'src/constants';
+import { HALF_PI } from 'src/constants';
 import { ElementModel } from 'src/models/ElementModel';
-import { ElementModelFactory } from 'src/models/ElementModelFactory';
-import { FoundationModel } from 'src/models/FoundationModel';
 import { Point2 } from 'src/models/Point2';
 import { HipRoofModel } from 'src/models/RoofModel';
 import { SolarPanelModel } from 'src/models/SolarPanelModel';
@@ -15,26 +13,24 @@ import { WallModel } from 'src/models/WallModel';
 import { useStore } from 'src/stores/common';
 import { useStoreRef } from 'src/stores/commonRef';
 import * as Selector from 'src/stores/selector';
-import { RoofTexture, Orientation } from 'src/types';
-import { UndoableAdd } from 'src/undo/UndoableAdd';
+import { RoofTexture } from 'src/types';
 import { UndoableMoveSolarPanelOnRoof } from 'src/undo/UndoableMove';
 import { UndoableResizeHipRoofRidge } from 'src/undo/UndoableResize';
 import { Util } from 'src/Util';
 import { DoubleSide, Euler, Mesh, Raycaster, Vector2, Vector3 } from 'three';
 import { ObjectType } from '../../types';
+import { useRoofTexture, useSolarPanelUndoable } from './hooks';
 import {
-  handleUndoableResizeRoofHeight,
+  addUndoableResizeRoofHeight,
   ConvexGeoProps,
-  useRoofTexture,
-  handleRoofContextMenu,
-  getNormal,
-  getIntersectionPoint,
-  getDistance,
-  handleRoofPointerDown,
+  handleContextMenu,
   RoofWireframeProps,
-  spBoundaryCheckWithErrMsg,
-  spCollisionCheckWithErrMsg,
+  handlePointerMove,
+  updateRooftopSolarPanel,
+  handlePointerUp,
+  handlePointerDown,
 } from './roofRenderer';
+import { RoofUtil } from './RoofUtil';
 
 enum RoofHandleType {
   Mid = 'Mid',
@@ -106,6 +102,7 @@ const HipRoof = ({
   locked,
   lineColor = 'black',
   lineWidth = 0.2,
+  roofType,
 }: HipRoofModel) => {
   // color = '#fb9e00';
   const texture = useRoofTexture(textureType);
@@ -140,11 +137,10 @@ const HipRoof = ({
   const mouse = useMemo(() => new Vector2(), []);
   const oldHeight = useRef<number>(h);
   const isPointerMovingRef = useRef(false);
-  const grabRef = useRef<ElementModel | null>(null);
 
   useEffect(() => {
-    updateSolarPanelOnRoof();
-  }, [updateSolarPanelOnRoofFlag, h]);
+    updateRooftopSolarPanel(foundation, id, roofSegments, ridgeMidPoint, h, thickness);
+  }, [updateSolarPanelOnRoofFlag, h, thickness]);
 
   useEffect(() => {
     if (h < minHeight) {
@@ -307,9 +303,9 @@ const HipRoof = ({
 
     for (let i = 0; i < 4; i++) {
       const { lh, rh } = getWallHeight(currentWallArray, i);
-      const dLeft = getDistance(wallPoints[i], wallPoints[(i + 1) % 4], ridges[i]);
+      const dLeft = RoofUtil.getDistance(wallPoints[i], wallPoints[(i + 1) % 4], ridges[i]);
       const overhangHeightLeft = Math.min((overhang / dLeft) * (ridges[i].z - lh), lh);
-      const dRight = getDistance(wallPoints[i], wallPoints[(i + 1) % 4], ridges[(i + 1) % 4]);
+      const dRight = RoofUtil.getDistance(wallPoints[i], wallPoints[(i + 1) % 4], ridges[(i + 1) % 4]);
       const overhangHeightRight = Math.min((overhang / dRight) * (ridges[(i + 1) % 4].z - rh), rh);
       height = Math.min(Math.min(overhangHeightLeft, overhangHeightRight), height);
     }
@@ -318,7 +314,7 @@ const HipRoof = ({
   };
 
   const overhangs = useMemo(() => {
-    return currentWallArray.map((wall) => getNormal(wall).multiplyScalar(overhang));
+    return currentWallArray.map((wall) => RoofUtil.getWallNormal(wall).multiplyScalar(overhang));
   }, [currentWallArray, overhang]);
 
   const thicknessVector = useMemo(() => {
@@ -349,7 +345,7 @@ const HipRoof = ({
       const { lh, rh } = getWallHeight(currentWallArray, i);
       minHeight = Math.max(minHeight, Math.max(lh, rh));
 
-      const wallLeftPointAfterOverhang = getIntersectionPoint(
+      const wallLeftPointAfterOverhang = RoofUtil.getIntersectionPoint(
         wallPointsAfterOffset[i].leftPoint,
         wallPointsAfterOffset[i].rightPoint,
         wallPointsAfterOffset[(i + 3) % 4].leftPoint,
@@ -358,7 +354,7 @@ const HipRoof = ({
         .setZ(lh - overhangHeight)
         .sub(ridgeMidPoint);
 
-      const wallRightPointAfterOverhang = getIntersectionPoint(
+      const wallRightPointAfterOverhang = RoofUtil.getIntersectionPoint(
         wallPointsAfterOffset[i].leftPoint,
         wallPointsAfterOffset[i].rightPoint,
         wallPointsAfterOffset[(i + 1) % 4].leftPoint,
@@ -421,325 +417,25 @@ const HipRoof = ({
     }
   }, [currentWallArray]);
 
-  const getPlaneVertices = (segmentIdx: number, pointer: Vector3) => {
-    // return orders matter: couter clockwise
-    const [wallLeft, wallRight, ridgeRight, ridgeLeft] = roofSegments[segmentIdx].points;
-    const leftDis = Util.distanceFromPointToLine2D(ridgeLeft, wallLeft, wallRight);
-    const rightDis = Util.distanceFromPointToLine2D(ridgeRight, wallLeft, wallRight);
-    const p = pointer.clone().sub(ridgeMidPoint);
-    if (Math.abs(leftDis - rightDis) < 0.01) {
-      if (wallLeft.z > wallRight.z) {
-        const upperHalf = [ridgeLeft, ridgeRight, wallLeft];
-        if (Util.isPointInside(p.x, p.y, upperHalf.map(Util.mapVector3ToPoint2))) {
-          return [wallLeft, ridgeRight, ridgeLeft];
-        } else {
-          return [wallLeft, wallRight, ridgeRight];
-        }
-      } else {
-        const upperHalf = [ridgeLeft, ridgeRight, wallRight];
-        if (Util.isPointInside(p.x, p.y, upperHalf.map(Util.mapVector3ToPoint2))) {
-          return [wallRight, ridgeRight, ridgeLeft];
-        } else {
-          return [wallRight, ridgeLeft, wallLeft];
-        }
-      }
-    } else if (leftDis <= rightDis) {
-      const upperHalf = [ridgeLeft, ridgeRight, wallRight];
-      if (Util.isPointInside(p.x, p.y, upperHalf.map(Util.mapVector3ToPoint2))) {
-        return [wallRight, ridgeRight, ridgeLeft];
-      } else {
-        return [wallRight, ridgeLeft, wallLeft];
-      }
-    } else {
-      const upperHalf = [ridgeLeft, ridgeRight, wallLeft];
-      if (Util.isPointInside(p.x, p.y, upperHalf.map(Util.mapVector3ToPoint2))) {
-        return [wallLeft, ridgeRight, ridgeLeft];
-      } else {
-        return [wallLeft, wallRight, ridgeRight];
-      }
-    }
-  };
-
-  const getNormalBasedOnVertices = (vertices: Vector3[]) => {
-    const [v1, v2, v3] = vertices;
-    // order matters for cross product, counter clockwise, v1 is shared vertice
-    return new Vector3().crossVectors(new Vector3().subVectors(v1, v2), new Vector3().subVectors(v1, v3)).normalize();
-  };
-
-  const getNormalOnRoof = (segmentIdx: number, pointer: Vector3) => {
-    const vertices = getPlaneVertices(segmentIdx, pointer);
-    return getNormalBasedOnVertices(vertices);
-  };
-
-  const getRotationFromNormal = (normal: Vector3) => {
-    return [
-      Math.PI / 2 - Math.atan2(normal.z, Math.hypot(normal.x, normal.y)),
-      0,
-      Math.atan2(normal.y, normal.x) + Math.PI / 2,
-    ];
-  };
-
-  const getPointerOnRoof = (e: ThreeEvent<PointerEvent>) => {
-    for (const intersection of e.intersections) {
-      if (intersection.eventObject.name === 'Hip Roof Segments Group') {
-        return intersection.point;
-      }
-    }
-    return e.intersections[0].point;
-  };
-
-  const getRoofSegmentIdxFromEvent = (e: ThreeEvent<PointerEvent>) => {
-    for (const intersection of e.intersections) {
-      if (intersection.object.name.includes('Roof segment')) {
-        return parseInt(intersection.object.name.slice(-1));
-      }
-    }
-    return Number.NaN;
-  };
-
-  const getRoofSegmentIdxFromPostion = (posRelToFoundation: Vector3) => {
-    const p = posRelToFoundation.clone().sub(ridgeMidPoint);
-    for (let i = 0; i < roofSegments.length; i++) {
-      const points = roofSegments[i].points.slice(0, 4);
-      if (Util.isPointInside(p.x, p.y, points.map(Util.mapVector3ToPoint2))) {
-        return i;
-      }
-    }
-    return 0;
-  };
-
-  const getSolarPanelRotation = (roofSegmentIdx: number, posRelToFoundation: Vector3) => {
-    const normal = getNormalOnRoof(roofSegmentIdx, posRelToFoundation);
-    const rotation = Util.isSame(normal.normalize(), UNIT_VECTOR_POS_Z)
-      ? [0, 0, currentWallArray[roofSegmentIdx].relativeAngle]
-      : getRotationFromNormal(normal);
-    return rotation;
-  };
-
-  const getSolarPanelZ = (vertices: Vector3[], pos: Vector3) => {
-    const [v1, v2, v3] = vertices;
-    const p = pos.clone().sub(ridgeMidPoint);
-    const A = (v2.y - v1.y) * (v3.z - v1.z) - (v2.z - v1.z) * (v3.y - v1.y);
-    const B = (v2.z - v1.z) * (v3.x - v1.x) - (v2.x - v1.x) * (v3.z - v1.z);
-    const C = (v2.x - v1.x) * (v3.y - v1.y) - (v2.y - v1.y) * (v3.x - v1.x);
-    const D = -(A * v1.x + B * v1.y + C * v1.z);
-    const z = -(D + A * p.x + B * p.y) / C + ridgeMidPoint.z + thickness;
-    return z;
-  };
-
-  const updateSolarPanelOnRoof = () => {
-    setCommonStore((state) => {
-      for (const e of state.elements) {
-        if (e.type === ObjectType.SolarPanel && e.parentId === id && e.foundationId) {
-          const foundation = state.getElementById(e.foundationId);
-          if (foundation) {
-            const posRelToFoundation = new Vector3(e.cx * foundation.lx, e.cy * foundation.ly, e.cz + foundation.lz);
-            const segmentIdx = getRoofSegmentIdxFromPostion(posRelToFoundation);
-            const normal = getNormalOnRoof(segmentIdx, posRelToFoundation);
-            const rotation = normal.z > 0.999999 ? [0, 0, 0] : getSolarPanelRotation(segmentIdx, posRelToFoundation);
-            const vertices = getPlaneVertices(segmentIdx, posRelToFoundation);
-            const z = getSolarPanelZ(vertices, posRelToFoundation);
-            if (rotation && z !== undefined) {
-              e.normal = normal.toArray();
-              e.rotation = [...rotation];
-              e.cz = z;
-            }
-          }
-        }
-      }
-    });
-  };
-
-  const oldPostionRef = useRef<number[] | null>(null);
-  const oldRotationRef = useRef<number[] | null>(null);
-  const oldNormalRef = useRef<number[] | null>(null);
-
-  const handleUndoableAdd = (elem: ElementModel) => {
-    const undoableAdd = {
-      name: 'Add Solar Panel On Roof',
-      timestamp: Date.now(),
-      addedElement: elem,
-      undo: () => {
-        removeElementById(elem.id, false);
-      },
-      redo: () => {
-        setCommonStore((state) => {
-          state.elements.push(undoableAdd.addedElement);
-          state.selectedElement = undoableAdd.addedElement;
-        });
-      },
-    } as UndoableAdd;
-    useStore.getState().addUndoable(undoableAdd);
-  };
-
-  const handleUndoableMove = (sp: SolarPanelModel) => {
-    if (oldPostionRef.current && oldRotationRef.current && oldNormalRef.current) {
-      const undoabeMove = {
-        name: 'Move Solar Panel On Roof',
-        timestamp: Date.now(),
-        id: sp.id,
-        oldPos: [...oldPostionRef.current],
-        newPos: [sp.cx, sp.cy, sp.cz],
-        oldRot: [...oldRotationRef.current],
-        newRot: [...sp.rotation],
-        oldNor: [...oldNormalRef.current],
-        newNor: [...sp.normal],
-        undo: () => {
-          setCommonStore((state) => {
-            for (const e of state.elements) {
-              if (e.id === undoabeMove.id) {
-                [e.cx, e.cy, e.cz] = [...undoabeMove.oldPos];
-                e.rotation = [...undoabeMove.oldRot];
-                e.normal = [...undoabeMove.oldNor];
-                break;
-              }
-            }
-          });
-        },
-        redo: () => {
-          setCommonStore((state) => {
-            for (const e of state.elements) {
-              if (e.id === undoabeMove.id) {
-                [e.cx, e.cy, e.cz] = [...undoabeMove.newPos];
-                e.rotation = [...undoabeMove.newRot];
-                e.normal = [...undoabeMove.newNor];
-                break;
-              }
-            }
-          });
-        },
-      } as UndoableMoveSolarPanelOnRoof;
-      useStore.getState().addUndoable(undoabeMove);
-    }
-  };
+  const { grabRef, addUndoableMove, undoMove, setOldRefData } = useSolarPanelUndoable();
 
   return (
     <group position={[cx, cy, cz + 0.01]} rotation={[0, 0, rotation]} name={`Hip Roof Group ${id}`}>
       {/* roof segment group */}
       <group
-        name="Hip Roof Segments Group"
+        name={`Hip Roof Segments Group`}
         position={[centroid2D.x, centroid2D.y, h]}
         onPointerDown={(e) => {
-          if (useStore.getState().objectTypeToAdd === ObjectType.SolarPanel) {
-            const roof = useStore.getState().getElementById(id);
-            if (roof && foundation && e.intersections[0]) {
-              const pointer = e.intersections[0].point;
-              const posRelToFoundation = new Vector3()
-                .subVectors(pointer, new Vector3(foundation.cx, foundation.cy))
-                .applyEuler(new Euler(0, 0, -foundation.rotation[2]));
-
-              const roofSegmentIdx = getRoofSegmentIdxFromEvent(e);
-              if (Number.isNaN(roofSegmentIdx)) {
-                return null;
-              }
-              const normal = getNormalOnRoof(roofSegmentIdx, posRelToFoundation);
-              const rotation =
-                normal.z > 0.999999 ? [0, 0, 0] : getSolarPanelRotation(roofSegmentIdx, posRelToFoundation);
-
-              const newElement = ElementModelFactory.makeSolarPanel(
-                roof,
-                useStore.getState().getPvModule('SPR-X21-335-BLK'),
-                posRelToFoundation.x / foundation.lx,
-                posRelToFoundation.y / foundation.ly,
-                posRelToFoundation.z - foundation.lz,
-                Orientation.landscape,
-                normal,
-                rotation ?? [0, 0, 1],
-                undefined,
-                undefined,
-                ObjectType.Roof,
-              );
-              setCommonStore((state) => {
-                state.elements.push(newElement as ElementModel);
-                state.objectTypeToAdd = ObjectType.None;
-              });
-              handleUndoableAdd(newElement);
-            }
-          }
-          if (e.intersections[0].eventObject.name !== 'Hip Roof Segments Group') {
-            const selectedElement = useStore.getState().getSelectedElement();
-            if (selectedElement && selectedElement.id !== id) {
-              grabRef.current = selectedElement;
-              oldPostionRef.current = [selectedElement.cx, selectedElement.cy, selectedElement.cz];
-              oldRotationRef.current = [...selectedElement.rotation];
-              oldNormalRef.current = [...selectedElement.normal];
-            }
-          } else {
-            handleRoofPointerDown(e, id, parentId);
-          }
+          handlePointerDown(e, id, foundation, roofSegments, ridgeMidPoint, setOldRefData);
         }}
         onPointerMove={(e) => {
-          if (grabRef.current) {
-            switch (grabRef.current.type) {
-              case ObjectType.SolarPanel:
-                if (useStore.getState().moveHandleType) {
-                  if (foundation) {
-                    const pointer = getPointerOnRoof(e);
-                    const posRelToFoundation = new Vector3()
-                      .subVectors(pointer, new Vector3(foundation.cx, foundation.cy))
-                      .applyEuler(new Euler(0, 0, -foundation.rotation[2]));
-
-                    const roofSegmentIdx = getRoofSegmentIdxFromEvent(e);
-                    if (Number.isNaN(roofSegmentIdx)) {
-                      return null;
-                    }
-                    const normal = getNormalOnRoof(roofSegmentIdx, posRelToFoundation);
-                    const rotation =
-                      normal.z > 0.999999 ? [0, 0, 0] : getSolarPanelRotation(roofSegmentIdx, posRelToFoundation);
-                    setCommonStore((state) => {
-                      for (const e of state.elements) {
-                        if (e.id === grabRef.current?.id) {
-                          e.cx = posRelToFoundation.x / foundation.lx;
-                          e.cy = posRelToFoundation.y / foundation.ly;
-                          e.cz = posRelToFoundation.z - foundation.lz;
-                          e.rotation = [...rotation];
-                          e.normal = normal.toArray();
-                          break;
-                        }
-                      }
-                    });
-                  }
-                }
-                break;
-            }
-          }
+          handlePointerMove(e, grabRef.current, foundation, roofType, roofSegments, ridgeMidPoint);
         }}
         onPointerUp={() => {
-          if (grabRef.current && useStore.getState().moveHandleType) {
-            const sp = getElementById(grabRef.current.id) as SolarPanelModel;
-            if (sp && foundation) {
-              const boundaryVertices = Util.getWallPointsWithOverhang(id, currentWallArray[0], overhang);
-              const solarPanelVertices = Util.getSolarPanelVerticesOnRoof(sp, foundation);
-              if (
-                !spBoundaryCheckWithErrMsg(solarPanelVertices, boundaryVertices) ||
-                !spCollisionCheckWithErrMsg(sp, foundation, solarPanelVertices)
-              ) {
-                setCommonStore((state) => {
-                  if (oldPostionRef.current && oldRotationRef.current && oldNormalRef.current) {
-                    for (const e of state.elements) {
-                      if (e.id === grabRef.current?.id) {
-                        e.cx = oldPostionRef.current[0];
-                        e.cy = oldPostionRef.current[1];
-                        e.cz = oldPostionRef.current[2];
-                        e.rotation = [...oldRotationRef.current];
-                        e.normal = [...oldNormalRef.current];
-                        break;
-                      }
-                    }
-                  }
-                });
-              } else {
-                handleUndoableMove(sp);
-              }
-            }
-          }
-          grabRef.current = null;
-          setCommonStore((state) => {
-            state.moveHandleType = null;
-          });
+          handlePointerUp(grabRef, foundation, currentWallArray[0], id, overhang, undoMove, addUndoableMove);
         }}
         onContextMenu={(e) => {
-          handleRoofContextMenu(e, id);
+          handleContextMenu(e, id);
         }}
       >
         {roofSegments.map((segment, i, arr) => {
@@ -886,14 +582,14 @@ const HipRoof = ({
                     break;
                   }
                 }
-                updateSolarPanelOnRoof();
+                updateRooftopSolarPanel(foundation, id, roofSegments, ridgeMidPoint, h, thickness);
               }
             }
           }}
           onPointerUp={() => {
             switch (roofHandleType) {
               case RoofHandleType.Mid: {
-                handleUndoableResizeRoofHeight(id, oldHeight.current, h);
+                addUndoableResizeRoofHeight(id, oldHeight.current, h);
                 break;
               }
               case RoofHandleType.Left:
@@ -921,7 +617,7 @@ const HipRoof = ({
                 }
               }
             });
-            updateSolarPanelOnRoof();
+            updateRooftopSolarPanel(foundation, id, roofSegments, ridgeMidPoint, h, thickness);
           }}
         >
           <meshBasicMaterial side={DoubleSide} transparent={true} opacity={0.5} />
