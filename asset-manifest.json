@@ -1,19 +1,19 @@
 {
   "files": {
     "main.css": "/aladdin/static/css/main.c1ee157d.chunk.css",
-    "main.js": "/aladdin/static/js/main.e67bbb24.chunk.js",
-    "main.js.map": "/aladdin/static/js/main.e67bbb24.chunk.js.map",
+    "main.js": "/aladdin/static/js/main.04eb9b89.chunk.js",
+    "main.js.map": "/aladdin/static/js/main.04eb9b89.chunk.js.map",
     "runtime-main.js": "/aladdin/static/js/runtime-main.b7168b26.js",
     "runtime-main.js.map": "/aladdin/static/js/runtime-main.b7168b26.js.map",
     "static/css/2.447301e6.chunk.css": "/aladdin/static/css/2.447301e6.chunk.css",
-    "static/js/2.67262eea.chunk.js": "/aladdin/static/js/2.67262eea.chunk.js",
-    "static/js/2.67262eea.chunk.js.map": "/aladdin/static/js/2.67262eea.chunk.js.map",
+    "static/js/2.d44b235d.chunk.js": "/aladdin/static/js/2.d44b235d.chunk.js",
+    "static/js/2.d44b235d.chunk.js.map": "/aladdin/static/js/2.d44b235d.chunk.js.map",
     "static/js/3.d2368716.chunk.js": "/aladdin/static/js/3.d2368716.chunk.js",
     "static/js/3.d2368716.chunk.js.map": "/aladdin/static/js/3.d2368716.chunk.js.map",
     "index.html": "/aladdin/index.html",
     "static/css/2.447301e6.chunk.css.map": "/aladdin/static/css/2.447301e6.chunk.css.map",
     "static/css/main.c1ee157d.chunk.css.map": "/aladdin/static/css/main.c1ee157d.chunk.css.map",
-    "static/js/2.67262eea.chunk.js.LICENSE.txt": "/aladdin/static/js/2.67262eea.chunk.js.LICENSE.txt",
+    "static/js/2.d44b235d.chunk.js.LICENSE.txt": "/aladdin/static/js/2.d44b235d.chunk.js.LICENSE.txt",
     "static/media/building_facade_01.15119408.png": "/aladdin/static/media/building_facade_01.15119408.png",
     "static/media/building_facade_02.a8bad934.png": "/aladdin/static/media/building_facade_02.a8bad934.png",
     "static/media/building_facade_03.60816e85.png": "/aladdin/static/media/building_facade_03.60816e85.png",
@@ -141,8 +141,8 @@
   "entrypoints": [
     "static/js/runtime-main.b7168b26.js",
     "static/css/2.447301e6.chunk.css",
-    "static/js/2.67262eea.chunk.js",
+    "static/js/2.d44b235d.chunk.js",
     "static/css/main.c1ee157d.chunk.css",
-    "static/js/main.e67bbb24.chunk.js"
+    "static/js/main.04eb9b89.chunk.js"
   ]
 }
