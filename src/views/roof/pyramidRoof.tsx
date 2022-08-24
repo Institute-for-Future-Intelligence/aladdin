@@ -253,7 +253,7 @@ const PyramidRoof = ({
 
   const overhangs = useMemo(() => {
     const res = currentWallArray.map((wall) => RoofUtil.getWallNormal(wall).multiplyScalar(overhang));
-    if (!isWallLoopRef.current) {
+    if (!isWallLoopRef.current && res.length !== 0) {
       const n = new Vector3()
         .subVectors(
           new Vector3(
@@ -275,7 +275,7 @@ const PyramidRoof = ({
       leftPoint: new Vector3(wall.leftPoint[0], wall.leftPoint[1]).add(overhangs[idx]),
       rightPoint: new Vector3(wall.rightPoint[0], wall.rightPoint[1]).add(overhangs[idx]),
     }));
-    if (!isWallLoopRef.current) {
+    if (!isWallLoopRef.current && res.length !== 0) {
       res.push({
         leftPoint: new Vector3(
           currentWallArray[currentWallArray.length - 1].rightPoint[0],
