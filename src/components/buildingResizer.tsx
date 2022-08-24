@@ -147,6 +147,8 @@ const BuildingResizer = ({
   const ray = useMemo(() => new Raycaster(), []);
   const mouse = useMemo(() => new Vector2(), []);
 
+  const orthographic = useStore(Selector.viewState.orthographic);
+
   const getElementById = useStore(Selector.getElementById);
   const getCameraDirection = useStore(Selector.getCameraDirection);
   const setCommonStore = useStore(Selector.set);
@@ -667,10 +669,14 @@ const BuildingResizer = ({
         <ResizeHandle args={[-hx, hy, bottomHanldeZ, handleSize]} handleType={ResizeHandleType.UpperLeft} />
         <ResizeHandle args={[hx, -hy, bottomHanldeZ, handleSize]} handleType={ResizeHandleType.LowerRight} />
         <ResizeHandle args={[-hx, -hy, bottomHanldeZ, handleSize]} handleType={ResizeHandleType.LowerLeft} />
-        <ResizeHandle args={[hx, hy, topHanldeZ, handleSize]} handleType={ResizeHandleType.UpperRightTop} />
-        <ResizeHandle args={[-hx, hy, topHanldeZ, handleSize]} handleType={ResizeHandleType.UpperLeftTop} />
-        <ResizeHandle args={[hx, -hy, topHanldeZ, handleSize]} handleType={ResizeHandleType.LowerRightTop} />
-        <ResizeHandle args={[-hx, -hy, topHanldeZ, handleSize]} handleType={ResizeHandleType.LowerLeftTop} />
+        {!orthographic && (
+          <>
+            <ResizeHandle args={[hx, hy, topHanldeZ, handleSize]} handleType={ResizeHandleType.UpperRightTop} />
+            <ResizeHandle args={[-hx, hy, topHanldeZ, handleSize]} handleType={ResizeHandleType.UpperLeftTop} />
+            <ResizeHandle args={[hx, -hy, topHanldeZ, handleSize]} handleType={ResizeHandleType.LowerRightTop} />
+            <ResizeHandle args={[-hx, -hy, topHanldeZ, handleSize]} handleType={ResizeHandleType.LowerLeftTop} />
+          </>
+        )}
       </group>
 
       <group name={'Move Handle Group'} onPointerDown={handleMoveHanldesPointerDown}>
