@@ -192,7 +192,8 @@ const Wall = ({
   const { camera, gl } = useThree();
   const mouse = useMemo(() => new Vector2(), []);
   const ray = useMemo(() => new Raycaster(), []);
-  const whiteWallMaterial = useMemo(() => new MeshStandardMaterial({ color: 'white', side: DoubleSide }), []);
+  const whiteMaterialSingle = useMemo(() => new MeshStandardMaterial({ color: 'white' }), []);
+  const whiteMaterialDouble = useMemo(() => new MeshStandardMaterial({ color: 'white', side: DoubleSide }), []);
 
   const hx = lx / 2;
   const hy = ly / 2;
@@ -277,8 +278,7 @@ const Wall = ({
     shape.lineTo(cx - x, cy - y);
   };
 
-  // outside wall
-  if (outsideWallRef.current /* && outsideWallInnerFaceRef.current */) {
+  const outsiedWallShape = useMemo(() => {
     const wallShape = new Shape();
     drawRectangle(wallShape, lx, lz, 0, 0, 0, 0);
 
@@ -289,13 +289,11 @@ const Wall = ({
         wallShape.holes.push(window);
       }
     });
-    outsideWallRef.current.geometry = new ShapeBufferGeometry(wallShape);
-    // outsideWallInnerFaceRef.current.geometry = new ShapeBufferGeometry(wallShape);
-    // outsideWallInnerFaceRef.current.material = new MeshStandardMaterial({ color: 'white', side: BackSide });
-  }
 
-  // inside wall
-  if (insideWallRef.current) {
+    return wallShape;
+  }, [lx, lz, elementsOnWall]);
+
+  const insideWallShape = useMemo(() => {
     const wallShape = new Shape();
     drawRectangle(wallShape, lx, lz, 0, 0, leftOffset, rightOffset);
 
@@ -306,25 +304,20 @@ const Wall = ({
         wallShape.holes.push(window);
       }
     });
+    return wallShape;
+  }, [lx, lz, leftOffset, rightOffset, elementsOnWall]);
 
-    insideWallRef.current.geometry = new ShapeBufferGeometry(wallShape);
-    insideWallRef.current.material = whiteWallMaterial;
-  }
-
-  // intersection plane
-  if (intersectionPlaneRef.current) {
+  const intersectionPlaneShape = useMemo(() => {
     const wallShape = new Shape();
     drawRectangle(wallShape, lx, lz, 0, 0, 0, 0);
-    intersectionPlaneRef.current.geometry = new ShapeBufferGeometry(wallShape);
-  }
+    return wallShape;
+  }, [lx, lz]);
 
-  // top surface
-  if (topSurfaceRef.current) {
-    const topSurfaceShape = new Shape();
-    drawTopSurface(topSurfaceShape, lx, ly, leftOffset, rightOffset);
-    topSurfaceRef.current.geometry = new ShapeBufferGeometry(topSurfaceShape);
-    topSurfaceRef.current.material = whiteWallMaterial;
-  }
+  const topWallShape = useMemo(() => {
+    const shape = new Shape();
+    drawTopSurface(shape, lx, ly, leftOffset, rightOffset);
+    return shape;
+  }, [lx, ly, leftOffset, rightOffset]);
 
   // subscribe common store
   useEffect(() => {
@@ -1097,6 +1090,21 @@ const Wall = ({
     }
   };
 
+  const handleContextMenu = (e: ThreeEvent<MouseEvent>, mesh: Mesh | null, canPaste?: boolean) => {
+    if (grabRef.current) {
+      return;
+    }
+    selectMe(id, e, ActionType.Select);
+    setCommonStore((state) => {
+      if (e.intersections.length > 0 && e.intersections[0].object === mesh) {
+        state.contextMenuObjectType = ObjectType.Wall;
+        if (canPaste) {
+          state.pastePoint.copy(e.intersections[0].point);
+        }
+      }
+    });
+  };
+
   return (
     <>
       {parent && wallAbsPosition && wallAbsAngle !== undefined && (
@@ -1116,95 +1124,78 @@ const Wall = ({
             castShadow={shadowEnabled}
             receiveShadow={shadowEnabled}
             onContextMenu={(e) => {
-              if (grabRef.current) {
-                return;
-              }
-              selectMe(id, e, ActionType.Select);
-              setCommonStore((state) => {
-                if (e.intersections.length > 0 && e.intersections[0].object === outsideWallRef.current) {
-                  state.contextMenuObjectType = ObjectType.Wall;
-                  state.pastePoint.copy(e.intersections[0].point);
-                }
-              });
+              handleContextMenu(e, outsideWallRef.current, true);
             }}
             onPointerDown={handleWallBodyPointerDown}
           >
+            <shapeBufferGeometry args={[outsiedWallShape]} />
             <meshStandardMaterial
               color={textureType === WallTexture.Default || textureType === WallTexture.NoTexture ? color : 'white'}
               map={texture}
             />
           </mesh>
-          {/* <mesh ref={outsideWallInnerFaceRef} rotation={[HALF_PI, 0, 0]} castShadow={shadowEnabled} /> */}
+
+          <mesh rotation={[-HALF_PI, 0, 0]} material={whiteMaterialSingle} castShadow={shadowEnabled}>
+            <shapeBufferGeometry args={[outsiedWallShape]} />
+          </mesh>
 
           {/* inside wall */}
           <mesh
             name={'Inside Wall'}
             ref={insideWallRef}
+            material={whiteMaterialDouble}
             position={[0, ly, 0]}
             rotation={[HALF_PI, 0, 0]}
             castShadow={shadowEnabled}
             receiveShadow={shadowEnabled}
             onPointerDown={handleWallBodyPointerDown}
             onContextMenu={(e) => {
-              if (grabRef.current) {
-                return;
-              }
-              selectMe(id, e, ActionType.Select);
-              setCommonStore((state) => {
-                if (e.intersections.length > 0 && e.intersections[0].object === insideWallRef.current) {
-                  state.contextMenuObjectType = ObjectType.Wall;
-                }
-              });
+              handleContextMenu(e, insideWallRef.current);
             }}
-          />
+          >
+            <shapeBufferGeometry args={[insideWallShape]} />
+          </mesh>
 
           {/* top surface */}
           {!roofId && (
             <mesh
               name={'Top Wall'}
               ref={topSurfaceRef}
+              material={whiteMaterialDouble}
               position={[0, hy, hz]}
               castShadow={shadowEnabled}
               receiveShadow={shadowEnabled}
               onPointerDown={handleWallBodyPointerDown}
               onContextMenu={(e) => {
-                if (grabRef.current) {
-                  return;
-                }
-                selectMe(id, e, ActionType.Select);
-                setCommonStore((state) => {
-                  if (e.intersections.length > 0 && e.intersections[0].object === topSurfaceRef.current) {
-                    state.contextMenuObjectType = ObjectType.Wall;
-                  }
-                });
+                handleContextMenu(e, topSurfaceRef.current);
               }}
-            />
+            >
+              <shapeBufferGeometry args={[topWallShape]} />
+            </mesh>
           )}
 
           {/* side surfaces */}
           {leftOffset === 0 && (
             <Plane
               args={[leftRoofHeight ?? lz, ly]}
+              material={whiteMaterialDouble}
               position={[-hx + 0.01, hy, -(lz - (leftRoofHeight ?? lz)) / 2]}
               rotation={[0, HALF_PI, 0]}
               castShadow={shadowEnabled}
               receiveShadow={shadowEnabled}
               onPointerDown={handleWallBodyPointerDown}
-            >
-              <meshStandardMaterial color={'white'} side={DoubleSide} />
-            </Plane>
+            />
           )}
           {rightOffset === 0 && (
             <Plane
               args={[rightRoofHeight ?? lz, ly]}
+              material={whiteMaterialDouble}
               position={[hx - 0.01, hy, -(lz - (rightRoofHeight ?? lz)) / 2]}
               rotation={[0, HALF_PI, 0]}
               castShadow={shadowEnabled}
               receiveShadow={shadowEnabled}
               onPointerDown={handleWallBodyPointerDown}
-            >
-              <meshStandardMaterial color={'white'} side={DoubleSide} />
-            </Plane>
+            />
           )}
 
           {/* intersection plane */}
@@ -1219,6 +1210,7 @@ const Wall = ({
             onPointerMove={handleIntersectionPointerMove}
             onPointerOut={handleIntersectionPointerOut}
           >
+            <shapeBufferGeometry args={[intersectionPlaneShape]} />
             <meshBasicMaterial />
           </mesh>
 
