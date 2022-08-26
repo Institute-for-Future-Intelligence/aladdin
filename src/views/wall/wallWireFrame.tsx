@@ -5,6 +5,7 @@
 import React from 'react';
 import { Line } from '@react-three/drei';
 import { HALF_PI } from '../../constants';
+import { useStore } from 'src/stores/common';
 
 interface WallWireFrameProps {
   lineColor: string;
@@ -30,36 +31,42 @@ const WallWireFrame = React.memo(
     centerLeft,
     centerRight,
   }: WallWireFrameProps) => {
+    const orthographic = useStore((state) => state.viewState.orthographic);
+
     const lowerLeft: [number, number, number] = [-x, -z + 0.001, 0.001];
     const lowerRight: [number, number, number] = [x, -z + 0.001, 0.001];
     const upperLeft: [number, number, number] = [-x, leftHeight - z - 0.001, 0.001];
     const upperRight: [number, number, number] = [x, rightHeight - z - 0.001, 0.001];
 
-    const points = [upperLeft, lowerLeft, lowerRight, upperRight];
     const lx = x * 2;
+    const points = [];
 
-    if (centerRight) {
-      const cr: [number, number, number] = [centerRight[0] * lx, centerRight[1] - z, 0.001];
-      points.push(cr);
-    }
+    if (orthographic) {
+      lineWidth = 2;
+      points.push(upperRight);
+    } else {
+      points.push(upperLeft, lowerLeft, lowerRight, upperRight);
+      if (centerRight) {
+        const cr: [number, number, number] = [centerRight[0] * lx, centerRight[1] - z, 0.001];
+        points.push(cr);
+      }
 
-    if (center) {
-      const c: [number, number, number] = [center[0] * lx, center[1] - z, 0.001];
-      points.push(c);
-    }
+      if (center) {
+        const c: [number, number, number] = [center[0] * lx, center[1] - z, 0.001];
+        points.push(c);
+      }
 
-    if (centerLeft) {
-      const cl: [number, number, number] = [centerLeft[0] * lx, centerLeft[1] - z, 0.001];
-      points.push(cl);
+      if (centerLeft) {
+        const cl: [number, number, number] = [centerLeft[0] * lx, centerLeft[1] - z, 0.001];
+        points.push(cl);
+      }
     }
 
     points.push(upperLeft);
 
     return (
       <React.Fragment>
-        <group rotation={[HALF_PI, 0, 0]}>
-          <Line points={points} color={lineColor} lineWidth={lineWidth} />
-        </group>
+        <Line rotation={[HALF_PI, 0, 0]} points={points} color={lineColor} lineWidth={lineWidth} />
       </React.Fragment>
     );
   },
