@@ -17,6 +17,7 @@ import WallTexture10 from 'src/resources/wall_10.png';
 
 import React, { useEffect, useMemo, useRef, useState } from 'react';
 import {
+  BackSide,
   DoubleSide,
   Euler,
   Mesh,
@@ -192,7 +193,7 @@ const Wall = ({
   const { camera, gl } = useThree();
   const mouse = useMemo(() => new Vector2(), []);
   const ray = useMemo(() => new Raycaster(), []);
-  const whiteMaterialSingle = useMemo(() => new MeshStandardMaterial({ color: 'white' }), []);
+  const whiteMaterialBack = useMemo(() => new MeshStandardMaterial({ color: 'white', side: BackSide }), []);
   const whiteMaterialDouble = useMemo(() => new MeshStandardMaterial({ color: 'white', side: DoubleSide }), []);
 
   const hx = lx / 2;
@@ -1135,7 +1136,7 @@ const Wall = ({
             />
           </mesh>
 
-          <mesh rotation={[-HALF_PI, 0, 0]} material={whiteMaterialSingle} castShadow={shadowEnabled}>
+          <mesh rotation={[HALF_PI, 0, 0]} material={whiteMaterialBack} castShadow={shadowEnabled}>
             <shapeBufferGeometry args={[outsiedWallShape]} />
           </mesh>
 
