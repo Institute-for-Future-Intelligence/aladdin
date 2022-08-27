@@ -169,7 +169,7 @@ export const FoundationMenu = () => {
         </Menu.Item>
 
         {counter.gotSome() && contextMenuObjectType && (
-          <SubMenu key={'clear'} title={i18n.t('foundationMenu.ClearOrLock', lang)} style={{ paddingLeft: '24px' }}>
+          <SubMenu key={'clear'} title={i18n.t('word.Elements', lang)} style={{ paddingLeft: '24px' }}>
             <Menu.Item
               key={'lock-all-offsprings'}
               onClick={() => {

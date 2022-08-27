@@ -109,6 +109,7 @@ export const i18n_zh_cn = {
       EastInitial: '东',
       WestInitial: '西',
       Fixed: '固定',
+      Elements: '部件',
     },
 
     shared: {
@@ -435,7 +436,6 @@ export const i18n_zh_cn = {
     },
 
     foundationMenu: {
-      ClearOrLock: '清空或固定',
       RemoveAllUnlockedSolarPanels: '删除此地基上所有非固定的光伏板',
       RemoveAllUnlockedParabolicTroughs: '删除此地基上所有非固定的抛物线槽',
       RemoveAllUnlockedParabolicDishes: '删除此地基上所有非固定的抛物线碟',

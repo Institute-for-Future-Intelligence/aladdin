@@ -109,6 +109,7 @@ export const i18n_es = {
       EastInitial: 'E',
       WestInitial: 'O',
       Fixed: 'Fixed',
+      Elements: 'Elements',
     },
 
     shared: {
@@ -438,7 +439,6 @@ export const i18n_es = {
     },
 
     foundationMenu: {
-      ClearOrLock: 'Clear or Lock',
       RemoveAllUnlockedSolarPanels: 'Eliminar todos los paneles solares',
       RemoveAllUnlockedParabolicTroughs: 'Remove All Unlocked Parabolic Troughs',
       RemoveAllUnlockedParabolicDishes: 'Remove All Unlocked Parabolic Dishes',
