@@ -34,6 +34,7 @@ const CameraController = () => {
     camera.up.set(0, 0, 1);
     return camera;
   }, []);
+
   const initialOrbitDomElement = useMemo(() => {
     return gl.domElement;
   }, []);

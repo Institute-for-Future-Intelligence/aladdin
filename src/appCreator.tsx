@@ -103,7 +103,6 @@ const AppCreator = ({ viewOnly = false }: AppCreatorProps) => {
   const evolutionPaused = useStore(Selector.evolutionPaused);
   const objectTypeToAdd = useStore(Selector.objectTypeToAdd);
   const sceneRadius = useStore(Selector.sceneRadius);
-  const cameraZoom = useStore(Selector.viewState.cameraZoom) ?? 20;
   const cloudFile = useStore(Selector.cloudFile);
   const axes = useStore(Selector.viewState.axes);
   const theme = useStore(Selector.viewState.theme);
@@ -173,6 +172,9 @@ const AppCreator = ({ viewOnly = false }: AppCreatorProps) => {
 
   const zoomView = (scale: number) => {
     if (orthographic) {
+      // Previously, we declared this in the header: const cameraZoom = useStore(Selector.viewState.cameraZoom) ?? 20;
+      // But it causes the app to be re-rendered every time zoom is called.
+      const cameraZoom = useStore.getState().viewState.cameraZoom ?? 20;
       const oldZoom = cameraZoom;
       const newZoom = cameraZoom / scale;
       const undoableChange = {
