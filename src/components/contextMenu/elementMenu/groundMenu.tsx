@@ -15,7 +15,7 @@ import i18n from '../../../i18n/i18n';
 import { UndoableRemoveAll } from '../../../undo/UndoableRemoveAll';
 import { UndoableCheck } from '../../../undo/UndoableCheck';
 import { UndoableChange } from '../../../undo/UndoableChange';
-import { UndoableLockAll } from '../../../undo/UndoableLockAll';
+import { UndoableChangeGroup } from '../../../undo/UndoableChangeGroup';
 
 export const GroundMenu = () => {
   const language = useStore(Selector.language);
@@ -232,13 +232,13 @@ export const GroundMenu = () => {
                 newValue: true,
                 undo: () => {
                   for (const [id, locked] of undoableLockAllElements.oldValues.entries()) {
-                    updateElementLockById(id, locked);
+                    updateElementLockById(id, locked as boolean);
                   }
                 },
                 redo: () => {
                   updateAllElementLocks(true);
                 },
-              } as UndoableLockAll;
+              } as UndoableChangeGroup;
               addUndoable(undoableLockAllElements);
             }}
           >
@@ -260,13 +260,13 @@ export const GroundMenu = () => {
                 newValue: false,
                 undo: () => {
                   for (const [id, locked] of undoableLockAllElements.oldValues.entries()) {
-                    updateElementLockById(id, locked);
+                    updateElementLockById(id, locked as boolean);
                   }
                 },
                 redo: () => {
                   updateAllElementLocks(false);
                 },
-              } as UndoableLockAll;
+              } as UndoableChangeGroup;
               addUndoable(undoableLockAllElements);
             }}
           >
