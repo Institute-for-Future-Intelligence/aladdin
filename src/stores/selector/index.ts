@@ -153,6 +153,8 @@ export const setElementNormal = (state: CommonStoreState) => state.setElementNor
 
 export const updateAllElementLocks = (state: CommonStoreState) => state.updateAllElementLocks;
 
+export const updateElementLockByFoundationId = (state: CommonStoreState) => state.updateElementLockByFoundationId;
+
 export const updateElementLockById = (state: CommonStoreState) => state.updateElementLockById;
 
 export const updateElementReferenceById = (state: CommonStoreState) => state.updateElementReferenceById;

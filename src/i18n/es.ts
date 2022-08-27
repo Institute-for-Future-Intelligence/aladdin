@@ -438,6 +438,7 @@ export const i18n_es = {
     },
 
     foundationMenu: {
+      ClearOrLock: 'Clear or Lock',
       RemoveAllUnlockedSolarPanels: 'Eliminar todos los paneles solares',
       RemoveAllUnlockedParabolicTroughs: 'Remove All Unlocked Parabolic Troughs',
       RemoveAllUnlockedParabolicDishes: 'Remove All Unlocked Parabolic Dishes',
@@ -495,6 +496,8 @@ export const i18n_es = {
       AddPolygon: 'Añadir polígono',
       SelectSolarStructure: 'Select Solar Structure',
       GroupMaster: 'Group Master',
+      LockAllElementsOnThisFoundation: 'Lock All Elements on This Foundation',
+      UnlockAllElementsOnThisFoundation: 'Unlock All Elements on This Foundation',
     },
 
     solarPowerTowerMenu: {

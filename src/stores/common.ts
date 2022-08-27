@@ -190,6 +190,7 @@ export interface CommonStoreState {
 
   // for all types of elements
   updateAllElementLocks: (locked: boolean) => void;
+  updateElementLockByFoundationId: (foundationId: string, locked: boolean) => void;
   updateElementLockById: (id: string, locked: boolean) => void;
   updateElementReferenceById: (id: string, referenceId: string) => void;
   updateElementLabelById: (id: string, label: string) => void;
@@ -1591,6 +1592,15 @@ export const useStore = create<CommonStoreState>(
             immerSet((state: CommonStoreState) => {
               for (const e of state.elements) {
                 e.locked = locked;
+              }
+            });
+          },
+          updateElementLockByFoundationId(foundationId, locked) {
+            immerSet((state: CommonStoreState) => {
+              for (const e of state.elements) {
+                if (e.foundationId === foundationId || e.id === foundationId) {
+                  e.locked = locked;
+                }
               }
             });
           },

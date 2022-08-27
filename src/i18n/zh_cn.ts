@@ -435,6 +435,7 @@ export const i18n_zh_cn = {
     },
 
     foundationMenu: {
+      ClearOrLock: '清空或固定',
       RemoveAllUnlockedSolarPanels: '删除此地基上所有非固定的光伏板',
       RemoveAllUnlockedParabolicTroughs: '删除此地基上所有非固定的抛物线槽',
       RemoveAllUnlockedParabolicDishes: '删除此地基上所有非固定的抛物线碟',
@@ -482,6 +483,8 @@ export const i18n_zh_cn = {
       AddPolygon: '添加多边形',
       SelectSolarStructure: '选择太阳能构型',
       GroupMaster: '主地基',
+      LockAllElementsOnThisFoundation: '固定此地基上所有的部件',
+      UnlockAllElementsOnThisFoundation: '解除此地基上所有的固定',
     },
 
     solarPowerTowerMenu: {

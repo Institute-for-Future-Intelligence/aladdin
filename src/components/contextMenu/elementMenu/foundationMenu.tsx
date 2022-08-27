@@ -45,6 +45,7 @@ import SolarUpdraftTowerTurbineEfficiencyInput from './solarUpdraftTowerTurbineE
 import SolarUpdraftTowerCollectorEmissivityInput from './solarUpdraftTowerCollectorEmissivityInput';
 import SolarPanelTiltAngleGaWizard from './solarPanelTiltAngleGaWizard';
 import SolarPanelTiltAnglePsoWizard from './solarPanelTiltAnglePsoWizard';
+import { UndoableChangeGroup } from '../../../undo/UndoableChangeGroup';
 
 export const FoundationMenu = () => {
   const setCommonStore = useStore(Selector.set);
@@ -54,6 +55,8 @@ export const FoundationMenu = () => {
   const addUndoable = useStore(Selector.addUndoable);
   const countAllOffspringsByType = useStore(Selector.countAllOffspringsByTypeAtOnce);
   const removeAllChildElementsByType = useStore(Selector.removeAllChildElementsByType);
+  const updateElementLockById = useStore(Selector.updateElementLockById);
+  const updateElementLockByFoundationId = useStore(Selector.updateElementLockByFoundationId);
   const contextMenuObjectType = useStore(Selector.contextMenuObjectType);
   const elementsToPaste = useStore(Selector.elementsToPaste);
   const addElement = useStore(Selector.addElement);
@@ -166,7 +169,65 @@ export const FoundationMenu = () => {
         </Menu.Item>
 
         {counter.gotSome() && contextMenuObjectType && (
-          <SubMenu key={'clear'} title={i18n.t('word.Clear', lang)} style={{ paddingLeft: '24px' }}>
+          <SubMenu key={'clear'} title={i18n.t('foundationMenu.ClearOrLock', lang)} style={{ paddingLeft: '24px' }}>
+            <Menu.Item
+              key={'lock-all-offsprings'}
+              onClick={() => {
+                const oldLocks = new Map<string, boolean>();
+                for (const elem of elements) {
+                  if (elem.foundationId === foundation.id || elem.id === foundation.id) {
+                    oldLocks.set(elem.id, !!elem.locked);
+                  }
+                }
+                updateElementLockByFoundationId(foundation.id, true);
+                const undoableLockAllElements = {
+                  name: 'Lock All Offsprings',
+                  timestamp: Date.now(),
+                  oldValues: oldLocks,
+                  newValue: true,
+                  undo: () => {
+                    for (const [id, locked] of undoableLockAllElements.oldValues.entries()) {
+                      updateElementLockById(id, locked as boolean);
+                    }
+                  },
+                  redo: () => {
+                    updateElementLockByFoundationId(foundation.id, true);
+                  },
+                } as UndoableChangeGroup;
+                addUndoable(undoableLockAllElements);
+              }}
+            >
+              {i18n.t('foundationMenu.LockAllElementsOnThisFoundation', lang)}
+            </Menu.Item>
+            <Menu.Item
+              key={'unlock-all-offsprings'}
+              onClick={() => {
+                const oldLocks = new Map<string, boolean>();
+                for (const elem of elements) {
+                  if (elem.foundationId === foundation.id || elem.id === foundation.id) {
+                    oldLocks.set(elem.id, !!elem.locked);
+                  }
+                }
+                updateElementLockByFoundationId(foundation.id, false);
+                const undoableLockAllElements = {
+                  name: 'Unlock All Offsprings',
+                  timestamp: Date.now(),
+                  oldValues: oldLocks,
+                  newValue: true,
+                  undo: () => {
+                    for (const [id, locked] of undoableLockAllElements.oldValues.entries()) {
+                      updateElementLockById(id, locked as boolean);
+                    }
+                  },
+                  redo: () => {
+                    updateElementLockByFoundationId(foundation.id, false);
+                  },
+                } as UndoableChangeGroup;
+                addUndoable(undoableLockAllElements);
+              }}
+            >
+              {i18n.t('foundationMenu.UnlockAllElementsOnThisFoundation', lang)}
+            </Menu.Item>
             {counter.wallCount > 0 && (
               <Menu.Item
                 key={'remove-all-walls-on-foundation'}
