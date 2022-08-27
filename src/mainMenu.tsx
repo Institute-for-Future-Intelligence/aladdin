@@ -12,6 +12,7 @@ import solar_farm_01 from './examples/solar_farm_01.json';
 import solar_farm_fixed_array from './examples/solar_farm_fixed_array.json';
 import solar_farm_hsat_array from './examples/solar_farm_hsat_array.json';
 import solar_farm_aadat_array from './examples/solar_farm_aadat_array.json';
+import solar_panels_over_canal from './examples/solar_panels_over_canal.json';
 import solar_trackers from './examples/solar_trackers.json';
 import all_roof_types from './examples/all_roof_types.json';
 import cape_cod_with_shed_dormer from './examples/cape_cod_with_shed_dormer.json';
@@ -302,6 +303,9 @@ const MainMenu = ({ viewOnly, set2DView, resetView, zoomView, canvas }: MainMenu
         break;
       case 'solar_farm_01':
         input = solar_farm_01;
+        break;
+      case 'solar_panels_over_canal':
+        input = solar_panels_over_canal;
         break;
       case 'solar_farm_fixed_array':
         input = solar_farm_fixed_array;
@@ -1933,6 +1937,9 @@ const MainMenu = ({ viewOnly, set2DView, resetView, zoomView, canvas }: MainMenu
             </Menu.Item>
             <Menu.Item key="solar_farm_fixed_array" onClick={loadFile}>
               {i18n.t('menu.solarEnergyExamples.FixedSolarPanelArraysFraminghamMA', lang)}
+            </Menu.Item>
+            <Menu.Item key="solar_panels_over_canal" onClick={loadFile}>
+              {i18n.t('menu.solarEnergyExamples.SolarPanelsOverCanalBakersfieldCA', lang)}
             </Menu.Item>
             <Menu.Item key="solar_farm_hsat_array" onClick={loadFile}>
               {i18n.t('menu.solarEnergyExamples.HSATSolarTrackersRaleighNC', lang)}

@@ -364,6 +364,7 @@ export const i18n_es = {
         SolarCanopyFormFactors: 'Solar Canopy Form Factors',
         VegetativeBuffer: 'Vegetative Buffer',
         FixedSolarPanelArraysFraminghamMA: 'Fixed Solar Panel Arrays in Framingham, MA',
+        SolarPanelsOverCanalBakersfieldCA: 'Hypothetical Solar Panels Over Canal in Bakersfield, CA',
         HSATSolarTrackersRaleighNC: 'Horizontal Single Axis Trackers (HSAT) in Raleigh, NC',
         AADATSolarTrackersLancasterCA: 'Azimuth–Altitude Dual Axis Trackers (AADAT) in Lancaster, CA',
         SolarUpdraftTowerInCity: 'Solar Updraft Tower in City',

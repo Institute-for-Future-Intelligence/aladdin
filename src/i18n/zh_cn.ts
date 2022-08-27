@@ -361,6 +361,7 @@ export const i18n_zh_cn = {
         SolarCanopyFormFactors: '太阳能天篷外形设计',
         VegetativeBuffer: '太阳能农场绿化带',
         FixedSolarPanelArraysFraminghamMA: '马萨诸塞州弗雷明翰的一个固定角度光伏板阵列',
+        SolarPanelsOverCanalBakersfieldCA: '加利福尼亚州贝克斯菲尔德灌溉渠上假想的光伏板阵列',
         HSATSolarTrackersRaleighNC: '北卡罗来纳州罗利的一个水平方向单轴旋转追日光伏板阵列（HSAT）',
         AADATSolarTrackersLancasterCA: '加利福尼亚州兰开斯特的一个双轴旋转追日光伏板阵列（AADAT）',
         SolarUpdraftTowerInCity: '太阳能上升气流塔在城市中的应用',
