@@ -203,8 +203,8 @@ const HipRoof = ({
     const array: WallModel[] = [];
     if (wallsId.length > 0) {
       const wall = getElementById(wallsId[0]) as WallModel;
-      array.push(wall);
       if (wall) {
+        array.push(wall);
         const leftWall = getElementById(wall.leftJoints[0]) as WallModel;
         const rightWall = getElementById(wall.rightJoints[0]) as WallModel;
         if (leftWall && rightWall) {
@@ -322,12 +322,10 @@ const HipRoof = ({
   }, [thickness]);
 
   const wallPointsAfterOffset = useMemo(() => {
-    return currentWallArray.map((wall, idx) => {
-      return {
-        leftPoint: new Vector3(wall.leftPoint[0], wall.leftPoint[1]).add(overhangs[idx]),
-        rightPoint: new Vector3(wall.rightPoint[0], wall.rightPoint[1]).add(overhangs[idx]),
-      };
-    });
+    return currentWallArray.map((wall, idx) => ({
+      leftPoint: new Vector3(wall.leftPoint[0], wall.leftPoint[1]).add(overhangs[idx]),
+      rightPoint: new Vector3(wall.rightPoint[0], wall.rightPoint[1]).add(overhangs[idx]),
+    }));
   }, [overhangs]);
 
   const roofSegments = useMemo(() => {

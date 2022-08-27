@@ -262,8 +262,8 @@ const MansardRoof = ({
     const array: WallModel[] = [];
     if (wallsId.length > 0) {
       const wall = getElementById(wallsId[0]) as WallModel;
-      array.push(wall);
       if (wall) {
+        array.push(wall);
         const leftWall = getElementById(wall.leftJoints[0]) as WallModel;
         const rightWall = getElementById(wall.rightJoints[0]) as WallModel;
         if (leftWall && rightWall) {

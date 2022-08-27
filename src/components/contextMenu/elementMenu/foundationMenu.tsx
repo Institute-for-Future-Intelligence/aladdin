@@ -243,10 +243,16 @@ export const FoundationMenu = () => {
                     icon: <ExclamationCircleOutlined />,
                     onOk: () => {
                       if (foundation) {
-                        const removed = elements.filter(
-                          (e) => !e.locked && e.type === ObjectType.Wall && e.parentId === foundation.id,
-                        );
-                        removeAllChildElementsByType(foundation.id, ObjectType.Wall);
+                        const wallsIdSet = new Set();
+                        elements.forEach((e) => {
+                          if (!e.locked && e.type === ObjectType.Wall && e.parentId === foundation.id) {
+                            wallsIdSet.add(e.id);
+                          }
+                        });
+                        const removed = elements.filter((e) => wallsIdSet.has(e.id) || wallsIdSet.has(e.parentId));
+                        setCommonStore((state) => {
+                          state.elements = elements.filter((e) => !wallsIdSet.has(e.id) && !wallsIdSet.has(e.parentId));
+                        });
                         const removedElements = JSON.parse(JSON.stringify(removed));
                         const undoableRemoveAllWallChildren = {
                           name: 'Remove All Walls on Foundation',
@@ -260,7 +266,21 @@ export const FoundationMenu = () => {
                             });
                           },
                           redo: () => {
-                            removeAllChildElementsByType(undoableRemoveAllWallChildren.parentId, ObjectType.Wall);
+                            const wallsIdSet = new Set();
+                            elements.forEach((e) => {
+                              if (
+                                !e.locked &&
+                                e.type === ObjectType.Wall &&
+                                e.parentId === undoableRemoveAllWallChildren.parentId
+                              ) {
+                                wallsIdSet.add(e.id);
+                              }
+                            });
+                            setCommonStore((state) => {
+                              state.elements = elements.filter(
+                                (e) => !wallsIdSet.has(e.id) && !wallsIdSet.has(e.parentId),
+                              );
+                            });
                           },
                         } as UndoableRemoveAllChildren;
                         addUndoable(undoableRemoveAllWallChildren);
