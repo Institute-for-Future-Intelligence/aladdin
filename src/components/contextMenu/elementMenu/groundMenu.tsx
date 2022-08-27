@@ -15,14 +15,18 @@ import i18n from '../../../i18n/i18n';
 import { UndoableRemoveAll } from '../../../undo/UndoableRemoveAll';
 import { UndoableCheck } from '../../../undo/UndoableCheck';
 import { UndoableChange } from '../../../undo/UndoableChange';
+import { UndoableLockAll } from '../../../undo/UndoableLockAll';
 
 export const GroundMenu = () => {
   const language = useStore(Selector.language);
   const albedo = useStore((state) => state.world.ground.albedo);
   const groundColor = useStore(Selector.viewState.groundColor);
   const setCommonStore = useStore(Selector.set);
+  const countAllElements = useStore(Selector.countAllElements);
   const countElementsByType = useStore(Selector.countElementsByType);
   const removeElementsByType = useStore(Selector.removeElementsByType);
+  const updateElementLockById = useStore(Selector.updateElementLockById);
+  const updateAllElementLocks = useStore(Selector.updateAllElementLocks);
   const addUndoable = useStore(Selector.addUndoable);
   const elements = useStore(Selector.elements);
   const groundImage = useStore(Selector.viewState.groundImage);
@@ -30,6 +34,7 @@ export const GroundMenu = () => {
 
   const [updateFlag, setUpdateFlag] = useState<boolean>(false);
 
+  const elementCount = countAllElements();
   const treeCount = countElementsByType(ObjectType.Tree, true);
   const humanCount = countElementsByType(ObjectType.Human, true);
   const foundationCount = countElementsByType(ObjectType.Foundation, true);
@@ -207,6 +212,67 @@ export const GroundMenu = () => {
         >
           {i18n.t('groundMenu.RemoveAllUnlockedCuboids', lang)} ({cuboidCount})
         </Menu.Item>
+      )}
+
+      {elementCount > 0 && (
+        <>
+          <Menu.Item
+            style={{ paddingLeft: '36px' }}
+            key={'lock-all-elements'}
+            onClick={() => {
+              const oldLocks = new Map<string, boolean>();
+              for (const elem of elements) {
+                oldLocks.set(elem.id, !!elem.locked);
+              }
+              updateAllElementLocks(true);
+              const undoableLockAllElements = {
+                name: 'Lock All Elements',
+                timestamp: Date.now(),
+                oldValues: oldLocks,
+                newValue: true,
+                undo: () => {
+                  for (const [id, locked] of undoableLockAllElements.oldValues.entries()) {
+                    updateElementLockById(id, locked);
+                  }
+                },
+                redo: () => {
+                  updateAllElementLocks(true);
+                },
+              } as UndoableLockAll;
+              addUndoable(undoableLockAllElements);
+            }}
+          >
+            {i18n.t('groundMenu.LockAllElements', lang)} ({elementCount})
+          </Menu.Item>
+          <Menu.Item
+            style={{ paddingLeft: '36px' }}
+            key={'unlock-all-elements'}
+            onClick={() => {
+              const oldLocks = new Map<string, boolean>();
+              for (const elem of elements) {
+                oldLocks.set(elem.id, !!elem.locked);
+              }
+              updateAllElementLocks(false);
+              const undoableLockAllElements = {
+                name: 'Lock All Elements',
+                timestamp: Date.now(),
+                oldValues: oldLocks,
+                newValue: false,
+                undo: () => {
+                  for (const [id, locked] of undoableLockAllElements.oldValues.entries()) {
+                    updateElementLockById(id, locked);
+                  }
+                },
+                redo: () => {
+                  updateAllElementLocks(false);
+                },
+              } as UndoableLockAll;
+              addUndoable(undoableLockAllElements);
+            }}
+          >
+            {i18n.t('groundMenu.UnlockAllElements', lang)} ({elementCount})
+          </Menu.Item>
+        </>
       )}
 
       <Menu.Item key={'image-on-ground'}>

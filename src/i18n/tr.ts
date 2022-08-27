@@ -434,6 +434,8 @@ export const i18n_tr = {
       DoYouReallyWantToRemoveAllTrees: 'Gerçekten tüm aðaçlarý kaldýrmak istiyor musunuz that are not locked',
       DoYouReallyWantToRemoveAllFoundations: 'Gerçekten tüm temelleri kaldýrmak istiyor musunuz that are not locked',
       DoYouReallyWantToRemoveAllCuboids: 'Gerçekten tüm küboidleri kaldýrmak istiyor musunuz that are not locked',
+      LockAllElements: 'Lock All Elements',
+      UnlockAllElements: 'Unlock All Elements',
     },
 
     foundationMenu: {

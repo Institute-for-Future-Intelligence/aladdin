@@ -431,6 +431,8 @@ export const i18n_zh_tw = {
       DoYouReallyWantToRemoveAllTrees: '你確定刪除所有非固定的樹木嗎',
       DoYouReallyWantToRemoveAllFoundations: '你確定刪除所有非固定的地基嗎',
       DoYouReallyWantToRemoveAllCuboids: '你確定刪除所有非固定的長方體嗎',
+      LockAllElements: '固定所有的部件',
+      UnlockAllElements: '解除所有的固定',
     },
 
     foundationMenu: {

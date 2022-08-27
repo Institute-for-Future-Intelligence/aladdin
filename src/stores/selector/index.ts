@@ -151,6 +151,8 @@ export const setElementSize = (state: CommonStoreState) => state.setElementSize;
 
 export const setElementNormal = (state: CommonStoreState) => state.setElementNormal;
 
+export const updateAllElementLocks = (state: CommonStoreState) => state.updateAllElementLocks;
+
 export const updateElementLockById = (state: CommonStoreState) => state.updateElementLockById;
 
 export const updateElementReferenceById = (state: CommonStoreState) => state.updateElementReferenceById;
@@ -621,6 +623,8 @@ export const countElementsByType = (state: CommonStoreState) => state.countEleme
 export const countSolarStructuresByType = (state: CommonStoreState) => state.countSolarStructuresByType;
 
 export const countObservers = (state: CommonStoreState) => state.countObservers;
+
+export const countAllElements = (state: CommonStoreState) => state.countAllElements;
 
 export const countAllChildElementsByType = (state: CommonStoreState) => state.countAllChildElementsByType;
 

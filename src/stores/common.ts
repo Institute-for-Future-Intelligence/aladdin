@@ -189,6 +189,7 @@ export interface CommonStoreState {
   setElementSize: (id: string, lx: number, ly: number, lz?: number) => void;
 
   // for all types of elements
+  updateAllElementLocks: (locked: boolean) => void;
   updateElementLockById: (id: string, locked: boolean) => void;
   updateElementReferenceById: (id: string, referenceId: string) => void;
   updateElementLabelById: (id: string, label: string) => void;
@@ -541,6 +542,7 @@ export interface CommonStoreState {
   getChildren: (id: string) => ElementModel[];
   getChildrenOfType: (type: ObjectType, id: string) => ElementModel[];
   // the following goes faster than counting individual types of children through multiple loops
+  countAllElements: (excludeLocked?: boolean) => number;
   countAllOffspringsByTypeAtOnce: (ancestorId: string) => ElementCounter;
   countAllChildElementsByType: (parentId: string, type: ObjectType, excludeLocked?: boolean) => number;
   countAllChildSolarPanels: (parentId: string, excludeLocked?: boolean) => number; // special case as a rack may have many solar panels
@@ -1585,6 +1587,13 @@ export const useStore = create<CommonStoreState>(
           },
 
           // for all types of elements
+          updateAllElementLocks(locked) {
+            immerSet((state: CommonStoreState) => {
+              for (const e of state.elements) {
+                e.locked = locked;
+              }
+            });
+          },
           updateElementLockById(id, locked) {
             immerSet((state: CommonStoreState) => {
               for (const e of state.elements) {
@@ -4471,6 +4480,23 @@ export const useStore = create<CommonStoreState>(
               }
               state.updateDesignInfo();
             });
+          },
+          countAllElements(excludeLocked) {
+            let count = 0;
+            immerSet((state: CommonStoreState) => {
+              if (excludeLocked) {
+                for (const e of state.elements) {
+                  if (!e.locked) {
+                    count++;
+                  }
+                }
+              } else {
+                for (const e of state.elements) {
+                  count++;
+                }
+              }
+            });
+            return count;
           },
           countAllOffspringsByTypeAtOnce(ancestorId) {
             const counter = new ElementCounter();

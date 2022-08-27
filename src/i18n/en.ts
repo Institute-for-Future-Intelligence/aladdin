@@ -433,6 +433,8 @@ export const i18n_en = {
       DoYouReallyWantToRemoveAllTrees: 'Do you really want to remove all the trees that are not locked',
       DoYouReallyWantToRemoveAllFoundations: 'Do you really want to remove all the foundations that are not locked',
       DoYouReallyWantToRemoveAllCuboids: 'Do you really want to remove all the cuboids that are not locked',
+      LockAllElements: 'Lock All Elements',
+      UnlockAllElements: 'Unlock All Elements',
     },
 
     foundationMenu: {
