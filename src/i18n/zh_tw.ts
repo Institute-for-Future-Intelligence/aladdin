@@ -362,6 +362,7 @@ export const i18n_zh_tw = {
         VegetativeBuffer: '太陽能農場绿化带',
         FixedSolarPanelArraysFraminghamMA: '馬薩諸塞州弗雷明翰的一個固定角度光伏板陣列',
         SolarPanelsOverCanalBakersfieldCA: '加利福尼亞州貝克斯菲爾德灌溉渠上假想的光伏板陣列',
+        SolarNoiseBarrierLexingtonMA: '馬薩諸塞州列剋星敦高速公路噪音牆上假想的光伏板',
         HSATSolarTrackersRaleighNC: '北卡羅來納州羅利的一個水平方向單軸旋轉追日光伏板陣列（HSAT）',
         AADATSolarTrackersLancasterCA: '加利福尼亞州蘭開斯特的一個雙軸旋轉追日光伏板陣列（AADAT）',
         SolarTrackersInRealWorld: '模擬',
