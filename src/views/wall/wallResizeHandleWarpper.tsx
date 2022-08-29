@@ -2,7 +2,7 @@
  * @Copyright 2021-2022. Institute for Future Intelligence, Inc.
  */
 
-import React, { useRef, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { Box } from '@react-three/drei';
 import { Mesh, Vector3 } from 'three';
 import { useStore } from 'src/stores/common';
@@ -10,6 +10,7 @@ import { useStoreRef } from 'src/stores/commonRef';
 import { ActionType, ResizeHandleType, ResizeHandleType as RType } from 'src/types';
 import { HIGHLIGHT_HANDLE_COLOR, RESIZE_HANDLE_COLOR } from 'src/constants';
 import * as Selector from 'src/stores/selector';
+import { useThree } from '@react-three/fiber';
 
 interface ResizeHandlesProps {
   x: number;
@@ -95,14 +96,73 @@ const WallResizeHandle = React.memo(({ x, z, id, handleType, highLight, handleSi
 
 const WallResizeHandleWarpper = React.memo(({ x, z, id, highLight }: WallResizeHandleWarpperProps) => {
   const orthographic = useStore(Selector.viewState.orthographic);
+  const handleSize = useHandleSize();
+
+  if (orthographic) {
+    z = -z;
+  }
+
   return (
     <React.Fragment>
-      <WallResizeHandle x={-x} z={-z} id={id} handleType={RType.LowerLeft} highLight={highLight} />
-      <WallResizeHandle x={x} z={-z} id={id} handleType={RType.LowerRight} highLight={highLight} />
-      {!orthographic && <WallResizeHandle x={-x} z={z} id={id} handleType={RType.UpperLeft} highLight={highLight} />}
-      {!orthographic && <WallResizeHandle x={x} z={z} id={id} handleType={RType.UpperRight} highLight={highLight} />}
+      <WallResizeHandle
+        x={-x}
+        z={-z}
+        id={id}
+        handleType={RType.LowerLeft}
+        highLight={highLight}
+        handleSize={handleSize}
+      />
+      <WallResizeHandle
+        x={x}
+        z={-z}
+        id={id}
+        handleType={RType.LowerRight}
+        highLight={highLight}
+        handleSize={handleSize}
+      />
+      {!orthographic && (
+        <WallResizeHandle
+          x={-x}
+          z={z}
+          id={id}
+          handleType={RType.UpperLeft}
+          highLight={highLight}
+          handleSize={handleSize}
+        />
+      )}
+      {!orthographic && (
+        <WallResizeHandle
+          x={x}
+          z={z}
+          id={id}
+          handleType={RType.UpperRight}
+          highLight={highLight}
+          handleSize={handleSize}
+        />
+      )}
     </React.Fragment>
   );
 });
+
+const useHandleSize = () => {
+  const orthographic = useStore((state) => state.viewState.orthographic);
+  const cameraPosition = useStore((state) => state.viewState.cameraPosition);
+  const cameraZoom = useStore((state) => state.viewState.cameraZoom);
+  const [handleSize, setHandleSize] = useState(0.3);
+
+  useEffect(() => {
+    if (orthographic) {
+      setHandleSize(Math.max(0.3, 15 / cameraZoom));
+    } else {
+      const panCenter = useStore.getState().viewState.panCenter;
+      const p = new Vector3(...panCenter);
+      const c = new Vector3(...cameraPosition);
+      const distance = c.distanceTo(p);
+      setHandleSize(Math.max(0.3, distance / 100));
+    }
+  }, [cameraPosition, cameraZoom]);
+
+  return handleSize;
+};
 
 export default WallResizeHandleWarpper;
