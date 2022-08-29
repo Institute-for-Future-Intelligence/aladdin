@@ -28,7 +28,7 @@ import {
   updateRooftopSolarPanel,
 } from './roofRenderer';
 import { RoofUtil } from './RoofUtil';
-import { useRoofTexture, useSolarPanelUndoable } from './hooks';
+import { useRoofTexture, useSolarPanelUndoable, useTransparent } from './hooks';
 
 const centerPointPosition = new Vector3();
 const intersectionPlanePosition = new Vector3();
@@ -580,6 +580,7 @@ const RoofSegment = ({
   const shadowEnabled = useStore(Selector.viewState.shadowEnabled);
   const meshRef = useRef<Mesh>(null);
   const texture = useRoofTexture(textureType);
+  const { transparent, opacity } = useTransparent();
 
   if (meshRef.current) {
     points.push(new Vector3(0, 0, -0.001));
@@ -608,6 +609,8 @@ const RoofSegment = ({
       <meshStandardMaterial
         map={texture}
         color={textureType === RoofTexture.Default || textureType === RoofTexture.NoTexture ? color : 'white'}
+        transparent={transparent}
+        opacity={opacity}
       />
     </mesh>
   );

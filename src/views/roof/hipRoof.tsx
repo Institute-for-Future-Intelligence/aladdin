@@ -5,21 +5,18 @@ import { Line, Plane, Sphere } from '@react-three/drei';
 import { ThreeEvent, useThree } from '@react-three/fiber';
 import React, { useEffect, useMemo, useRef, useState } from 'react';
 import { HALF_PI } from 'src/constants';
-import { ElementModel } from 'src/models/ElementModel';
 import { Point2 } from 'src/models/Point2';
 import { HipRoofModel } from 'src/models/RoofModel';
-import { SolarPanelModel } from 'src/models/SolarPanelModel';
 import { WallModel } from 'src/models/WallModel';
 import { useStore } from 'src/stores/common';
 import { useStoreRef } from 'src/stores/commonRef';
 import * as Selector from 'src/stores/selector';
 import { RoofTexture } from 'src/types';
-import { UndoableMoveSolarPanelOnRoof } from 'src/undo/UndoableMove';
 import { UndoableResizeHipRoofRidge } from 'src/undo/UndoableResize';
 import { Util } from 'src/Util';
 import { DoubleSide, Euler, Mesh, Raycaster, Vector2, Vector3 } from 'three';
 import { ObjectType } from '../../types';
-import { useRoofTexture, useSolarPanelUndoable } from './hooks';
+import { useRoofTexture, useSolarPanelUndoable, useTransparent } from './hooks';
 import {
   addUndoableResizeRoofHeight,
   ConvexGeoProps,
@@ -416,6 +413,7 @@ const HipRoof = ({
   }, [currentWallArray]);
 
   const { grabRef, addUndoableMove, undoMove, setOldRefData } = useSolarPanelUndoable();
+  const { transparent, opacity } = useTransparent();
 
   return (
     <group position={[cx, cy, cz + 0.01]} rotation={[0, 0, rotation]} name={`Hip Roof Group ${id}`}>
@@ -447,6 +445,8 @@ const HipRoof = ({
               <meshStandardMaterial
                 map={texture}
                 color={textureType === RoofTexture.Default || textureType === RoofTexture.NoTexture ? color : 'white'}
+                transparent={transparent}
+                opacity={opacity}
               />
             </mesh>
           );

@@ -28,7 +28,7 @@ import { RoofTexture, ObjectType } from 'src/types';
 import { Util } from 'src/Util';
 import { Point2 } from 'src/models/Point2';
 import { RoofUtil } from './RoofUtil';
-import { useRoofTexture, useSolarPanelUndoable } from './hooks';
+import { useRoofTexture, useSolarPanelUndoable, useTransparent } from './hooks';
 
 const intersectionPlanePosition = new Vector3();
 const intersectionPlaneRotation = new Euler();
@@ -659,6 +659,7 @@ const GableRoof = ({
   }, [currentWallArray, h]);
 
   const { grabRef, addUndoableMove, undoMove, setOldRefData } = useSolarPanelUndoable();
+  const { transparent, opacity } = useTransparent();
 
   return (
     <group position={[cx, cy, cz]} rotation={[0, 0, rotation]} name={`Gable Roof Group ${id}`}>
@@ -689,6 +690,8 @@ const GableRoof = ({
               <meshStandardMaterial
                 map={texture}
                 color={textureType === RoofTexture.Default || textureType === RoofTexture.NoTexture ? color : 'white'}
+                transparent={transparent}
+                opacity={opacity}
               />
             </mesh>
           );

@@ -1,4 +1,4 @@
-import React, { useMemo, useRef, useState } from 'react';
+import React, { useEffect, useMemo, useRef, useState } from 'react';
 import { ElementModel } from 'src/models/ElementModel';
 import { SolarPanelModel } from 'src/models/SolarPanelModel';
 import { useStore } from 'src/stores/common';
@@ -15,6 +15,7 @@ import RoofTexture05 from 'src/resources/roof_05.png';
 import RoofTexture06 from 'src/resources/roof_06.png';
 import RoofTexture07 from 'src/resources/roof_07.png';
 import { RepeatWrapping, TextureLoader } from 'three';
+import * as Selector from 'src/stores/selector';
 
 export const useSolarPanelUndoable = () => {
   const grabRef = useRef<ElementModel | null>(null);
@@ -148,4 +149,13 @@ export const useRoofTexture = (textureType: RoofTexture) => {
 
   const [texture, setTexture] = useState(textureLoader);
   return texture;
+};
+
+export const useTransparent = () => {
+  const groundImage = useStore(Selector.viewState.groundImage);
+  const orthographic = useStore(Selector.viewState.orthographic);
+
+  const opacity = groundImage ? (orthographic ? 0.25 : 0.75) : 1;
+
+  return { transparent: groundImage, opacity };
 };

@@ -20,7 +20,7 @@ import { UnoableResizeGambrelAndMansardRoofRidge } from 'src/undo/UndoableResize
 import { Util } from 'src/Util';
 import { DoubleSide, Euler, Mesh, Vector2, Vector3 } from 'three';
 import { ObjectType } from '../../types';
-import { useRoofTexture, useSolarPanelUndoable } from './hooks';
+import { useRoofTexture, useSolarPanelUndoable, useTransparent } from './hooks';
 import {
   ConvexGeoProps as ConvexGeometryProps,
   handleContextMenu,
@@ -544,6 +544,7 @@ const MansardRoof = ({
   }, [updateSolarPanelOnRoofFlag, h, thickness, frontRidge, backRidge]);
 
   const { grabRef, addUndoableMove, undoMove, setOldRefData } = useSolarPanelUndoable();
+  const { transparent, opacity } = useTransparent();
 
   return (
     <group position={[cx, cy, cz + 0.01]} rotation={[0, 0, rotation]} name={`Mansard Roof Group ${id}`}>
@@ -574,6 +575,8 @@ const MansardRoof = ({
                 <meshStandardMaterial
                   color={textureType === RoofTexture.Default || textureType === RoofTexture.NoTexture ? color : 'white'}
                   map={texture}
+                  transparent={transparent}
+                  opacity={opacity}
                 />
               </mesh>
             </group>

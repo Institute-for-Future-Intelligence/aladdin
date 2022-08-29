@@ -42,7 +42,7 @@ import { RoofTexture, ObjectType } from 'src/types';
 import { RoofUtil } from './RoofUtil';
 import { SolarPanelModel } from 'src/models/SolarPanelModel';
 import { UndoableMoveSolarPanelOnRoof } from 'src/undo/UndoableMove';
-import { useRoofTexture, useSolarPanelUndoable } from './hooks';
+import { useRoofTexture, useSolarPanelUndoable, useTransparent } from './hooks';
 
 enum RoofHandleType {
   TopMid = 'TopMid',
@@ -659,6 +659,7 @@ const GambrelRoof = ({
   ]);
 
   const { grabRef, addUndoableMove, undoMove, setOldRefData } = useSolarPanelUndoable();
+  const { transparent, opacity } = useTransparent();
 
   return (
     <group position={[cx, cy, cz + 0.01]} rotation={[0, 0, rotation]} name={`Gambrel Roof Group ${id}`}>
@@ -690,6 +691,8 @@ const GambrelRoof = ({
                 <meshStandardMaterial
                   map={texture}
                   color={textureType === RoofTexture.Default || textureType === RoofTexture.NoTexture ? color : 'white'}
+                  transparent={transparent}
+                  opacity={opacity}
                 />
               </mesh>
             </group>
