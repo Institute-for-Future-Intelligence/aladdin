@@ -155,7 +155,7 @@ export const useTransparent = () => {
   const groundImage = useStore(Selector.viewState.groundImage);
   const orthographic = useStore(Selector.viewState.orthographic);
 
-  const opacity = groundImage ? (orthographic ? 0.25 : 0.75) : 1;
+  const opacity = groundImage && orthographic ? 0.25 : 1;
 
   return { transparent: groundImage, opacity };
 };
