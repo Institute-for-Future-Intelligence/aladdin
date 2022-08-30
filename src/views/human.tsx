@@ -68,6 +68,7 @@ const Human = ({
   const getElementById = useStore(Selector.getElementById);
   const moveHandleType = useStore(Selector.moveHandleType);
   const hoveredHandle = useStore(Selector.hoveredHandle);
+  const sunlightDirection = useStore(Selector.sunlightDirection);
 
   const { gl } = useThree();
   const [hovered, setHovered] = useState(false);
@@ -80,6 +81,7 @@ const Human = ({
 
   const lang = { lng: language };
   const humanModel = getElementById(id) as HumanModel;
+  const night = sunlightDirection.z <= 0;
 
   const fileChangedRef = useRef(false);
   const fileChangedState = useStore(Selector.fileChanged);
@@ -269,7 +271,11 @@ const Human = ({
                   setHovered(false);
                 }}
               >
-                <meshBasicMaterial map={texture} alphaTest={0.5} side={DoubleSide} />
+                {night ? (
+                  <meshStandardMaterial map={texture} alphaTest={0.5} side={DoubleSide} />
+                ) : (
+                  <meshBasicMaterial map={texture} alphaTest={0.5} side={DoubleSide} />
+                )}
               </Plane>
             </Billboard>
 

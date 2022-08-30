@@ -75,6 +75,7 @@ const ParabolicDish = ({
   const selectMe = useStore(Selector.selectMe);
   const sceneRadius = useStore(Selector.sceneRadius);
   const resizeHandleType = useStore(Selector.resizeHandleType);
+  const sunlightDirection = useStore(Selector.sunlightDirection);
 
   const {
     gl: { domElement },
@@ -96,6 +97,7 @@ const ParabolicDish = ({
   const lang = { lng: language };
   const radialSegments = 32;
   const depthSegments = 8;
+  const night = sunlightDirection.z <= 0;
 
   const hx = lx / 2; // lx and ly both represent the diameter of the dish, so they are identical
   const hy = ly / 2;
@@ -425,7 +427,7 @@ const ParabolicDish = ({
           receiveShadow={false}
           castShadow={true}
         >
-          <meshBasicMaterial color={color} />
+          <meshStandardMaterial color={color} />
         </Cylinder>
         {/* simple glow effect to create a halo */}
         {sunDirection.z > 0 && (
@@ -452,7 +454,7 @@ const ParabolicDish = ({
             receiveShadow={false}
             castShadow={true}
           >
-            <meshBasicMaterial color={color} />
+            <meshStandardMaterial color={color} />
           </Cylinder>
         )}
         {structureType === ParabolicDishStructureType.CentralPoleWithTripod &&
@@ -467,14 +469,14 @@ const ParabolicDish = ({
                   castShadow={false}
                   receiveShadow={false}
                   lineWidth={1}
-                  color={color}
+                  color={night ? 'dimgray' : color}
                 />
                 <Sphere
                   position={new Vector3(lineData.points[0].x, lineData.points[0].y, lineData.points[0].z)}
                   args={[receiverPoleRadius / 2, 4, 4]}
                   name={'Parabolic Dish Tripod Joint'}
                 >
-                  <meshBasicMaterial attach="material" color={color} />
+                  <meshStandardMaterial attach="material" color={color} />
                 </Sphere>
               </React.Fragment>
             );
@@ -491,14 +493,14 @@ const ParabolicDish = ({
                   castShadow={false}
                   receiveShadow={false}
                   lineWidth={2}
-                  color={color}
+                  color={night ? 'dimgray' : color}
                 />
                 <Sphere
                   position={new Vector3(lineData.points[0].x, lineData.points[0].y, lineData.points[0].z)}
                   args={[receiverPoleRadius / 2, 4, 4]}
                   name={'Parabolic Dish Quadrupod Joint'}
                 >
-                  <meshBasicMaterial attach="material" color={color} />
+                  <meshStandardMaterial attach="material" color={color} />
                 </Sphere>
               </React.Fragment>
             );

@@ -77,6 +77,7 @@ const Tree = ({
   const moveHandleType = useStore(Selector.moveHandleType);
   const resizeHandleType = useStore(Selector.resizeHandleType);
   const hoveredHandle = useStore(Selector.hoveredHandle);
+  const sunlightDirection = useStore(Selector.sunlightDirection);
 
   const now = new Date(date);
   const [hovered, setHovered] = useState(false);
@@ -100,6 +101,7 @@ const Tree = ({
   const month = now.getMonth() + 1;
   const noLeaves = !evergreen && (month < 4 || month > 10); // TODO: This needs to depend on location
   const lang = { lng: language };
+  const night = sunlightDirection.z <= 0;
 
   const fileChangedRef = useRef(false);
   const fileChangedState = useStore(Selector.fileChanged);
@@ -265,7 +267,11 @@ const Tree = ({
           <group position={[0, 0, lz / 2]}>
             <Billboard ref={solidTreeRef} uuid={id} name={name} follow={false}>
               <Plane args={[lx, lz]}>
-                <meshBasicMaterial map={texture} side={DoubleSide} alphaTest={0.5} />
+                {night ? (
+                  <meshStandardMaterial map={texture} side={DoubleSide} alphaTest={0.5} />
+                ) : (
+                  <meshBasicMaterial map={texture} side={DoubleSide} alphaTest={0.5} />
+                )}
               </Plane>
             </Billboard>
 

@@ -65,6 +65,7 @@ const ParabolicTrough = ({
   const selectMe = useStore(Selector.selectMe);
   const sceneRadius = useStore(Selector.sceneRadius);
   const resizeHandleType = useStore(Selector.resizeHandleType);
+  const sunlightDirection = useStore(Selector.sunlightDirection);
 
   const {
     gl: { domElement },
@@ -86,6 +87,7 @@ const ParabolicTrough = ({
   const sunBeamLength = Math.max(100, 10 * sceneRadius);
   const lang = { lng: language };
   const parabolaSegments = 16;
+  const night = sunlightDirection.z <= 0;
 
   const hx = lx / 2;
   const hy = ly / 2;
@@ -386,7 +388,7 @@ const ParabolicTrough = ({
                     castShadow={false}
                     receiveShadow={false}
                     lineWidth={lineWidth}
-                    color={'white'}
+                    color={night ? 'dimgray' : 'white'}
                   />
                 )}
               </React.Fragment>
@@ -430,7 +432,7 @@ const ParabolicTrough = ({
           receiveShadow={false}
           castShadow={true}
         >
-          <meshBasicMaterial color={'white'} />
+          <meshStandardMaterial color={'white'} />
         </Cylinder>
 
         {/* simulation element */}

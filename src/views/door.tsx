@@ -184,7 +184,7 @@ const Door = ({ id, parentId, cx, cz, lx, lz, selected, locked, textureType, col
           }
         }}
       >
-        <meshBasicMaterial
+        <meshStandardMaterial
           map={texture}
           side={DoubleSide}
           color={textureType === DoorTexture.Default || textureType === DoorTexture.NoTexture ? color : 'white'}

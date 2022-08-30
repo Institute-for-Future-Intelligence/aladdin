@@ -1,7 +1,7 @@
 {
-  "docid": "s42NwqZaF4yuXiTDNFbFCD",
-  "time": "08/27/2022 06:34 pm",
-  "timestamp": 1661639699174,
+  "docid": "18NUH6Rbm1jQZqd3siUz59",
+  "time": "08/28/2022 12:49 pm",
+  "timestamp": 1661705360453,
   "userid": "QWecNcxhyvP6j6sBN11hBsfZDau1",
   "owner": null,
   "email": null,
@@ -46,1044 +46,10 @@
   },
   "elements": [
     {
-      "type": "Foundation",
-      "cx": 0.08821875981169391,
-      "cy": 4.889990165702369,
-      "cz": 0.05,
-      "lx": 16.007737033866203,
-      "ly": 14.65720835111559,
-      "lz": 0.1,
-      "normal": [
-        0,
-        0,
-        1
-      ],
-      "rotation": [
-        0,
-        0,
-        0
-      ],
-      "parentId": "Ground",
-      "selected": false,
-      "solarUpdraftTower": {},
-      "solarAbsorberPipe": {},
-      "solarPowerTower": {},
-      "id": "iqz8uznJwgYmVWggrDSYRN"
-    },
-    {
       "type": "Solar Panel",
       "pvModelName": "CS6X-355P-FG",
-      "trackerType": "None",
-      "relativeAzimuth": -1.5707963267948966,
-      "tiltAngle": 0.17453292519943295,
-      "orientation": "Landscape",
-      "drawSunBeam": false,
-      "poleHeight": 1,
-      "poleRadius": 0.05,
-      "poleSpacing": 4,
-      "cx": 0.3703365384615382,
-      "cy": 0.007255944643780046,
-      "cz": 0.5000000074505806,
-      "lx": 13.776,
-      "ly": 2.976,
-      "lz": 0.046,
-      "showLabel": false,
-      "normal": [
-        0,
-        0,
-        1
-      ],
-      "rotation": [
-        0,
-        0,
-        0
-      ],
-      "color": "#fff",
-      "parentId": "iqz8uznJwgYmVWggrDSYRN",
-      "foundationId": "iqz8uznJwgYmVWggrDSYRN",
-      "id": "xAvgMXgJV6YLngWbN75Dxs",
-      "selected": false
-    },
-    {
-      "type": "Solar Panel",
-      "pvModelName": "CS6X-355P-FG",
-      "cx": -0.37321820719602977,
-      "cy": 0.0060941899012326595,
-      "cz": 0.5000000074505806,
-      "lx": 13.776,
-      "ly": 2.976,
-      "lz": 0.046,
-      "trackerType": "None",
-      "tiltAngle": -0.17453292519943295,
-      "relativeAzimuth": -1.5707963267948966,
-      "orientation": "Landscape",
-      "poleRadius": 0.05,
-      "poleHeight": 1,
-      "poleSpacing": 4,
-      "showLabel": false,
-      "normal": [
-        0,
-        0,
-        1
-      ],
-      "rotation": [
-        0,
-        0,
-        0
-      ],
-      "parentId": "iqz8uznJwgYmVWggrDSYRN",
-      "foundationId": "iqz8uznJwgYmVWggrDSYRN",
-      "id": "mJX6tyV59tXKnhuvahdJJX",
-      "selected": false
-    },
-    {
-      "type": "Solar Panel",
-      "pvModelName": "CS6X-355P-FG",
-      "cx": -0.0008156863343058756,
-      "cy": 0.006513728717341129,
-      "cz": 0.5000000074505806,
-      "lx": 13.776,
-      "ly": 8.928,
-      "lz": 0.046,
-      "trackerType": "None",
-      "tiltAngle": 0,
-      "relativeAzimuth": -1.5707963267948966,
-      "orientation": "Landscape",
-      "poleRadius": 0.05,
-      "poleHeight": 0.75,
-      "poleSpacing": 4,
-      "showLabel": false,
-      "normal": [
-        0,
-        0,
-        1
-      ],
-      "rotation": [
-        0,
-        0,
-        0
-      ],
-      "parentId": "iqz8uznJwgYmVWggrDSYRN",
-      "foundationId": "iqz8uznJwgYmVWggrDSYRN",
-      "id": "dZ14dcMefXiJs528jzFTXd",
-      "selected": false
-    },
-    {
-      "type": "Solar Panel",
-      "pvModelName": "CS6X-355P-FG",
-      "cx": 0.3703365384615382,
-      "cy": 0.007255944643780046,
-      "cz": 0.5000000074505806,
-      "lx": 13.776,
-      "ly": 2.976,
-      "lz": 0.046,
-      "trackerType": "None",
-      "tiltAngle": 0.17453292519943295,
-      "relativeAzimuth": -1.5707963267948966,
-      "orientation": "Landscape",
-      "poleRadius": 0.05,
-      "poleHeight": 1,
-      "poleSpacing": 4,
-      "showLabel": false,
-      "normal": [
-        0,
-        0,
-        1
-      ],
-      "rotation": [
-        0,
-        0,
-        0
-      ],
-      "parentId": "aLM9QL4jVY4daXAbFuHRRz",
-      "foundationId": "aLM9QL4jVY4daXAbFuHRRz",
-      "id": "sUsJfSxQEgprEa89knBp3m",
-      "selected": false
-    },
-    {
-      "type": "Solar Panel",
-      "pvModelName": "CS6X-355P-FG",
-      "cx": -0.37321820719602977,
-      "cy": 0.0060941899012326595,
-      "cz": 0.5000000074505806,
-      "lx": 13.776,
-      "ly": 2.976,
-      "lz": 0.046,
-      "trackerType": "None",
-      "tiltAngle": -0.17453292519943295,
-      "relativeAzimuth": -1.5707963267948966,
-      "orientation": "Landscape",
-      "poleRadius": 0.05,
-      "poleHeight": 1,
-      "poleSpacing": 4,
-      "showLabel": false,
-      "normal": [
-        0,
-        0,
-        1
-      ],
-      "rotation": [
-        0,
-        0,
-        0
-      ],
-      "parentId": "aLM9QL4jVY4daXAbFuHRRz",
-      "foundationId": "aLM9QL4jVY4daXAbFuHRRz",
-      "id": "hbsX6poLwkxHJx22ALg6eY",
-      "selected": false
-    },
-    {
-      "type": "Solar Panel",
-      "pvModelName": "CS6X-355P-FG",
-      "cx": -0.0008156863343058756,
-      "cy": 0.006513728717341129,
-      "cz": 0.5000000074505806,
-      "lx": 13.776,
-      "ly": 8.928,
-      "lz": 0.046,
-      "trackerType": "None",
-      "tiltAngle": 0,
-      "relativeAzimuth": -1.5707963267948966,
-      "orientation": "Landscape",
-      "poleRadius": 0.05,
-      "poleHeight": 0.75,
-      "poleSpacing": 4,
-      "showLabel": false,
-      "normal": [
-        0,
-        0,
-        1
-      ],
-      "rotation": [
-        0,
-        0,
-        0
-      ],
-      "parentId": "aLM9QL4jVY4daXAbFuHRRz",
-      "foundationId": "aLM9QL4jVY4daXAbFuHRRz",
-      "id": "q2UU6FaCD1apbwwrgSFVHq",
-      "selected": false
-    },
-    {
-      "type": "Foundation",
-      "cx": 0.09566195279447776,
-      "cy": 19.575065078119447,
-      "cz": 0.05,
-      "lx": 16.007737033866203,
-      "ly": 14.65720835111559,
-      "lz": 0.1,
-      "normal": [
-        0,
-        0,
-        1
-      ],
-      "rotation": [
-        0,
-        0,
-        0
-      ],
-      "parentId": "Ground",
-      "solarUpdraftTower": {},
-      "solarAbsorberPipe": {},
-      "solarPowerTower": {},
-      "id": "aLM9QL4jVY4daXAbFuHRRz",
-      "selected": false
-    },
-    {
-      "type": "Solar Panel",
-      "pvModelName": "CS6X-355P-FG",
-      "cx": 0.3703365384615382,
-      "cy": 0.007255944643780046,
-      "cz": 0.5000000074505806,
-      "lx": 13.776,
-      "ly": 2.976,
-      "lz": 0.046,
-      "trackerType": "None",
-      "tiltAngle": 0.17453292519943295,
-      "relativeAzimuth": -1.5707963267948966,
-      "orientation": "Landscape",
-      "poleRadius": 0.05,
-      "poleHeight": 1,
-      "poleSpacing": 4,
-      "showLabel": false,
-      "normal": [
-        0,
-        0,
-        1
-      ],
-      "rotation": [
-        0,
-        0,
-        0
-      ],
-      "parentId": "53ZbNgwy2sFw9csmPrffHC",
-      "foundationId": "53ZbNgwy2sFw9csmPrffHC",
-      "id": "tPRt3gNh9hCZUiJV6fbukb",
-      "selected": false
-    },
-    {
-      "type": "Solar Panel",
-      "pvModelName": "CS6X-355P-FG",
-      "cx": -0.37321820719602977,
-      "cy": 0.0060941899012326595,
-      "cz": 0.5000000074505806,
-      "lx": 13.776,
-      "ly": 2.976,
-      "lz": 0.046,
-      "trackerType": "None",
-      "tiltAngle": -0.17453292519943295,
-      "relativeAzimuth": -1.5707963267948966,
-      "orientation": "Landscape",
-      "poleRadius": 0.05,
-      "poleHeight": 1,
-      "poleSpacing": 4,
-      "showLabel": false,
-      "normal": [
-        0,
-        0,
-        1
-      ],
-      "rotation": [
-        0,
-        0,
-        0
-      ],
-      "parentId": "53ZbNgwy2sFw9csmPrffHC",
-      "foundationId": "53ZbNgwy2sFw9csmPrffHC",
-      "id": "qAQZZ7E2TKq1EGrsToW27p",
-      "selected": false
-    },
-    {
-      "type": "Solar Panel",
-      "pvModelName": "CS6X-355P-FG",
-      "cx": -0.0008156863343058756,
-      "cy": 0.006513728717341129,
-      "cz": 0.5000000074505806,
-      "lx": 13.776,
-      "ly": 8.928,
-      "lz": 0.046,
-      "trackerType": "None",
-      "tiltAngle": 0,
-      "relativeAzimuth": -1.5707963267948966,
-      "orientation": "Landscape",
-      "poleRadius": 0.05,
-      "poleHeight": 0.75,
-      "poleSpacing": 4,
-      "showLabel": false,
-      "normal": [
-        0,
-        0,
-        1
-      ],
-      "rotation": [
-        0,
-        0,
-        0
-      ],
-      "parentId": "53ZbNgwy2sFw9csmPrffHC",
-      "foundationId": "53ZbNgwy2sFw9csmPrffHC",
-      "id": "cZRfYdP9yXw2M918GFLvif",
-      "selected": false
-    },
-    {
-      "type": "Foundation",
-      "cx": 0.15710883429730949,
-      "cy": 34.150724780593514,
-      "cz": 0.05,
-      "lx": 16.007737033866203,
-      "ly": 14.65720835111559,
-      "lz": 0.1,
-      "normal": [
-        0,
-        0,
-        1
-      ],
-      "rotation": [
-        0,
-        0,
-        0
-      ],
-      "parentId": "Ground",
-      "solarUpdraftTower": {},
-      "solarAbsorberPipe": {},
-      "solarPowerTower": {},
-      "id": "53ZbNgwy2sFw9csmPrffHC",
-      "selected": false
-    },
-    {
-      "type": "Solar Panel",
-      "pvModelName": "CS6X-355P-FG",
-      "cx": 0.3703365384615382,
-      "cy": 0.007255944643780046,
-      "cz": 0.5000000074505806,
-      "lx": 13.776,
-      "ly": 2.976,
-      "lz": 0.046,
-      "trackerType": "None",
-      "tiltAngle": 0.17453292519943295,
-      "relativeAzimuth": -1.5707963267948966,
-      "orientation": "Landscape",
-      "poleRadius": 0.05,
-      "poleHeight": 1,
-      "poleSpacing": 4,
-      "showLabel": false,
-      "normal": [
-        0,
-        0,
-        1
-      ],
-      "rotation": [
-        0,
-        0,
-        0
-      ],
-      "parentId": "37SaeffuK6fjthCGpQGZmV",
-      "foundationId": "37SaeffuK6fjthCGpQGZmV",
-      "id": "rHXk1nYKjnQ6M1fvWRMRUi",
-      "selected": false
-    },
-    {
-      "type": "Solar Panel",
-      "pvModelName": "CS6X-355P-FG",
-      "cx": -0.37321820719602977,
-      "cy": 0.0060941899012326595,
-      "cz": 0.5000000074505806,
-      "lx": 13.776,
-      "ly": 2.976,
-      "lz": 0.046,
-      "trackerType": "None",
-      "tiltAngle": -0.17453292519943295,
-      "relativeAzimuth": -1.5707963267948966,
-      "orientation": "Landscape",
-      "poleRadius": 0.05,
-      "poleHeight": 1,
-      "poleSpacing": 4,
-      "showLabel": false,
-      "normal": [
-        0,
-        0,
-        1
-      ],
-      "rotation": [
-        0,
-        0,
-        0
-      ],
-      "parentId": "37SaeffuK6fjthCGpQGZmV",
-      "foundationId": "37SaeffuK6fjthCGpQGZmV",
-      "id": "kKKWNWwRiu5TLtbmF7Q7X1",
-      "selected": false
-    },
-    {
-      "type": "Solar Panel",
-      "pvModelName": "CS6X-355P-FG",
-      "cx": -0.0008156863343058756,
-      "cy": 0.006513728717341129,
-      "cz": 0.5000000074505806,
-      "lx": 13.776,
-      "ly": 8.928,
-      "lz": 0.046,
-      "trackerType": "None",
-      "tiltAngle": 0,
-      "relativeAzimuth": -1.5707963267948966,
-      "orientation": "Landscape",
-      "poleRadius": 0.05,
-      "poleHeight": 0.75,
-      "poleSpacing": 4,
-      "showLabel": false,
-      "normal": [
-        0,
-        0,
-        1
-      ],
-      "rotation": [
-        0,
-        0,
-        0
-      ],
-      "parentId": "37SaeffuK6fjthCGpQGZmV",
-      "foundationId": "37SaeffuK6fjthCGpQGZmV",
-      "id": "6sEjKfcBiynsmZsxihWMFG",
-      "selected": false
-    },
-    {
-      "type": "Foundation",
-      "cx": 0.1358235026635768,
-      "cy": 48.70478547308861,
-      "cz": 0.05,
-      "lx": 16.007737033866203,
-      "ly": 14.65720835111559,
-      "lz": 0.1,
-      "normal": [
-        0,
-        0,
-        1
-      ],
-      "rotation": [
-        0,
-        0,
-        0
-      ],
-      "parentId": "Ground",
-      "solarUpdraftTower": {},
-      "solarAbsorberPipe": {},
-      "solarPowerTower": {},
-      "id": "37SaeffuK6fjthCGpQGZmV",
-      "selected": false
-    },
-    {
-      "type": "Solar Panel",
-      "pvModelName": "CS6X-355P-FG",
-      "cx": 0.3703365384615382,
-      "cy": 0.007255944643780046,
-      "cz": 0.5000000074505806,
-      "lx": 13.776,
-      "ly": 2.976,
-      "lz": 0.046,
-      "trackerType": "None",
-      "tiltAngle": 0.17453292519943295,
-      "relativeAzimuth": -1.5707963267948966,
-      "orientation": "Landscape",
-      "poleRadius": 0.05,
-      "poleHeight": 1,
-      "poleSpacing": 4,
-      "showLabel": false,
-      "normal": [
-        0,
-        0,
-        1
-      ],
-      "rotation": [
-        0,
-        0,
-        0
-      ],
-      "parentId": "9kKN5zTWAFWwv5gvyQtM5T",
-      "foundationId": "9kKN5zTWAFWwv5gvyQtM5T",
-      "id": "bRed23DHNm4mze7RyoP7wj",
-      "selected": false
-    },
-    {
-      "type": "Solar Panel",
-      "pvModelName": "CS6X-355P-FG",
-      "cx": -0.37321820719602977,
-      "cy": 0.0060941899012326595,
-      "cz": 0.5000000074505806,
-      "lx": 13.776,
-      "ly": 2.976,
-      "lz": 0.046,
-      "trackerType": "None",
-      "tiltAngle": -0.17453292519943295,
-      "relativeAzimuth": -1.5707963267948966,
-      "orientation": "Landscape",
-      "poleRadius": 0.05,
-      "poleHeight": 1,
-      "poleSpacing": 4,
-      "showLabel": false,
-      "normal": [
-        0,
-        0,
-        1
-      ],
-      "rotation": [
-        0,
-        0,
-        0
-      ],
-      "parentId": "9kKN5zTWAFWwv5gvyQtM5T",
-      "foundationId": "9kKN5zTWAFWwv5gvyQtM5T",
-      "id": "ajupAbppzdakCAe2pWcJD9",
-      "selected": false
-    },
-    {
-      "type": "Solar Panel",
-      "pvModelName": "CS6X-355P-FG",
-      "cx": -0.0008156863343058756,
-      "cy": 0.006513728717341129,
-      "cz": 0.5000000074505806,
-      "lx": 13.776,
-      "ly": 8.928,
-      "lz": 0.046,
-      "trackerType": "None",
-      "tiltAngle": 0,
-      "relativeAzimuth": -1.5707963267948966,
-      "orientation": "Landscape",
-      "poleRadius": 0.05,
-      "poleHeight": 0.75,
-      "poleSpacing": 4,
-      "showLabel": false,
-      "normal": [
-        0,
-        0,
-        1
-      ],
-      "rotation": [
-        0,
-        0,
-        0
-      ],
-      "parentId": "9kKN5zTWAFWwv5gvyQtM5T",
-      "foundationId": "9kKN5zTWAFWwv5gvyQtM5T",
-      "id": "mcgLjpLumyrbmcTJj8tWKT",
-      "selected": false
-    },
-    {
-      "type": "Foundation",
-      "cx": 0.19153166433366486,
-      "cy": 63.27443398799359,
-      "cz": 0.05,
-      "lx": 16.007737033866203,
-      "ly": 14.65720835111559,
-      "lz": 0.1,
-      "normal": [
-        0,
-        0,
-        1
-      ],
-      "rotation": [
-        0,
-        0,
-        0
-      ],
-      "parentId": "Ground",
-      "solarUpdraftTower": {},
-      "solarAbsorberPipe": {},
-      "solarPowerTower": {},
-      "id": "9kKN5zTWAFWwv5gvyQtM5T",
-      "selected": false
-    },
-    {
-      "type": "Solar Panel",
-      "pvModelName": "CS6X-355P-FG",
-      "cx": 0.3703365384615382,
-      "cy": 0.007255944643780046,
-      "cz": 0.5000000074505806,
-      "lx": 13.776,
-      "ly": 2.976,
-      "lz": 0.046,
-      "trackerType": "None",
-      "tiltAngle": 0.17453292519943295,
-      "relativeAzimuth": -1.5707963267948966,
-      "orientation": "Landscape",
-      "poleRadius": 0.05,
-      "poleHeight": 1,
-      "poleSpacing": 4,
-      "showLabel": false,
-      "normal": [
-        0,
-        0,
-        1
-      ],
-      "rotation": [
-        0,
-        0,
-        0
-      ],
-      "parentId": "mH1HA1dQDDzyTbF8NTDj27",
-      "foundationId": "mH1HA1dQDDzyTbF8NTDj27",
-      "id": "1Um9n2A3Mz3kxYAUTfMFjn",
-      "selected": false
-    },
-    {
-      "type": "Solar Panel",
-      "pvModelName": "CS6X-355P-FG",
-      "cx": -0.37321820719602977,
-      "cy": 0.0060941899012326595,
-      "cz": 0.5000000074505806,
-      "lx": 13.776,
-      "ly": 2.976,
-      "lz": 0.046,
-      "trackerType": "None",
-      "tiltAngle": -0.17453292519943295,
-      "relativeAzimuth": -1.5707963267948966,
-      "orientation": "Landscape",
-      "poleRadius": 0.05,
-      "poleHeight": 1,
-      "poleSpacing": 4,
-      "showLabel": false,
-      "normal": [
-        0,
-        0,
-        1
-      ],
-      "rotation": [
-        0,
-        0,
-        0
-      ],
-      "parentId": "mH1HA1dQDDzyTbF8NTDj27",
-      "foundationId": "mH1HA1dQDDzyTbF8NTDj27",
-      "id": "4Bdn9bPmjmrRhWbN5F4ViE",
-      "selected": false
-    },
-    {
-      "type": "Solar Panel",
-      "pvModelName": "CS6X-355P-FG",
-      "cx": -0.0008156863343058756,
-      "cy": 0.006513728717341129,
-      "cz": 0.5000000074505806,
-      "lx": 13.776,
-      "ly": 8.928,
-      "lz": 0.046,
-      "trackerType": "None",
-      "tiltAngle": 0,
-      "relativeAzimuth": -1.5707963267948966,
-      "orientation": "Landscape",
-      "poleRadius": 0.05,
-      "poleHeight": 0.75,
-      "poleSpacing": 4,
-      "showLabel": false,
-      "normal": [
-        0,
-        0,
-        1
-      ],
-      "rotation": [
-        0,
-        0,
-        0
-      ],
-      "parentId": "mH1HA1dQDDzyTbF8NTDj27",
-      "foundationId": "mH1HA1dQDDzyTbF8NTDj27",
-      "id": "asHBuL4Wykrcg5gxHEAWeT",
-      "selected": false
-    },
-    {
-      "type": "Foundation",
-      "cx": -0.07052071102650892,
-      "cy": -9.693451468197903,
-      "cz": 0.05,
-      "lx": 16.007737033866203,
-      "ly": 14.65720835111559,
-      "lz": 0.1,
-      "normal": [
-        0,
-        0,
-        1
-      ],
-      "rotation": [
-        0,
-        0,
-        0
-      ],
-      "parentId": "Ground",
-      "solarUpdraftTower": {},
-      "solarAbsorberPipe": {},
-      "solarPowerTower": {},
-      "id": "mH1HA1dQDDzyTbF8NTDj27",
-      "selected": false
-    },
-    {
-      "type": "Solar Panel",
-      "pvModelName": "CS6X-355P-FG",
-      "cx": 0.3703365384615382,
-      "cy": 0.007255944643780046,
-      "cz": 0.5000000074505806,
-      "lx": 13.776,
-      "ly": 2.976,
-      "lz": 0.046,
-      "trackerType": "None",
-      "tiltAngle": 0.17453292519943295,
-      "relativeAzimuth": -1.5707963267948966,
-      "orientation": "Landscape",
-      "poleRadius": 0.05,
-      "poleHeight": 1,
-      "poleSpacing": 4,
-      "showLabel": false,
-      "normal": [
-        0,
-        0,
-        1
-      ],
-      "rotation": [
-        0,
-        0,
-        0
-      ],
-      "parentId": "99QES5Afc9q7XSHLo8QRvT",
-      "foundationId": "99QES5Afc9q7XSHLo8QRvT",
-      "id": "ger8Hx4am95Pv4dWNhNt9j",
-      "selected": false
-    },
-    {
-      "type": "Solar Panel",
-      "pvModelName": "CS6X-355P-FG",
-      "cx": -0.37321820719602977,
-      "cy": 0.0060941899012326595,
-      "cz": 0.5000000074505806,
-      "lx": 13.776,
-      "ly": 2.976,
-      "lz": 0.046,
-      "trackerType": "None",
-      "tiltAngle": -0.17453292519943295,
-      "relativeAzimuth": -1.5707963267948966,
-      "orientation": "Landscape",
-      "poleRadius": 0.05,
-      "poleHeight": 1,
-      "poleSpacing": 4,
-      "showLabel": false,
-      "normal": [
-        0,
-        0,
-        1
-      ],
-      "rotation": [
-        0,
-        0,
-        0
-      ],
-      "parentId": "99QES5Afc9q7XSHLo8QRvT",
-      "foundationId": "99QES5Afc9q7XSHLo8QRvT",
-      "id": "5H74RgkE4Fs5faTHqPcY6t",
-      "selected": false
-    },
-    {
-      "type": "Solar Panel",
-      "pvModelName": "CS6X-355P-FG",
-      "cx": -0.0008156863343058756,
-      "cy": 0.006513728717341129,
-      "cz": 0.5000000074505806,
-      "lx": 13.776,
-      "ly": 8.928,
-      "lz": 0.046,
-      "trackerType": "None",
-      "tiltAngle": 0,
-      "relativeAzimuth": -1.5707963267948966,
-      "orientation": "Landscape",
-      "poleRadius": 0.05,
-      "poleHeight": 0.75,
-      "poleSpacing": 4,
-      "showLabel": false,
-      "normal": [
-        0,
-        0,
-        1
-      ],
-      "rotation": [
-        0,
-        0,
-        0
-      ],
-      "parentId": "99QES5Afc9q7XSHLo8QRvT",
-      "foundationId": "99QES5Afc9q7XSHLo8QRvT",
-      "id": "chJ38NRja7unXtKS2MSZgH",
-      "selected": false
-    },
-    {
-      "type": "Foundation",
-      "cx": -0.19597547352397804,
-      "cy": -24.576698969930636,
-      "cz": 0.05,
-      "lx": 16.007737033866203,
-      "ly": 14.65720835111559,
-      "lz": 0.1,
-      "normal": [
-        0,
-        0,
-        1
-      ],
-      "rotation": [
-        0,
-        0,
-        0
-      ],
-      "parentId": "Ground",
-      "solarUpdraftTower": {},
-      "solarAbsorberPipe": {},
-      "solarPowerTower": {},
-      "id": "99QES5Afc9q7XSHLo8QRvT",
-      "selected": false
-    },
-    {
-      "type": "Solar Panel",
-      "pvModelName": "CS6X-355P-FG",
-      "cx": 0.3703365384615382,
-      "cy": 0.007255944643780046,
-      "cz": 0.5000000074505806,
-      "lx": 13.776,
-      "ly": 2.976,
-      "lz": 0.046,
-      "trackerType": "None",
-      "tiltAngle": 0.17453292519943295,
-      "relativeAzimuth": -1.5707963267948966,
-      "orientation": "Landscape",
-      "poleRadius": 0.05,
-      "poleHeight": 1,
-      "poleSpacing": 4,
-      "showLabel": false,
-      "normal": [
-        0,
-        0,
-        1
-      ],
-      "rotation": [
-        0,
-        0,
-        0
-      ],
-      "parentId": "cZS4zY44VTJkBWzoFP6UCN",
-      "foundationId": "cZS4zY44VTJkBWzoFP6UCN",
-      "id": "rU5fFrRmBUnSstHnuvAEMK",
-      "selected": false
-    },
-    {
-      "type": "Solar Panel",
-      "pvModelName": "CS6X-355P-FG",
-      "cx": -0.37321820719602977,
-      "cy": 0.0060941899012326595,
-      "cz": 0.5000000074505806,
-      "lx": 13.776,
-      "ly": 2.976,
-      "lz": 0.046,
-      "trackerType": "None",
-      "tiltAngle": -0.17453292519943295,
-      "relativeAzimuth": -1.5707963267948966,
-      "orientation": "Landscape",
-      "poleRadius": 0.05,
-      "poleHeight": 1,
-      "poleSpacing": 4,
-      "showLabel": false,
-      "normal": [
-        0,
-        0,
-        1
-      ],
-      "rotation": [
-        0,
-        0,
-        0
-      ],
-      "parentId": "cZS4zY44VTJkBWzoFP6UCN",
-      "foundationId": "cZS4zY44VTJkBWzoFP6UCN",
-      "id": "5PY7Spp8mh43c2cETWEDQq",
-      "selected": false
-    },
-    {
-      "type": "Solar Panel",
-      "pvModelName": "CS6X-355P-FG",
-      "cx": -0.0008156863343058756,
-      "cy": 0.006513728717341129,
-      "cz": 0.5000000074505806,
-      "lx": 13.776,
-      "ly": 8.928,
-      "lz": 0.046,
-      "trackerType": "None",
-      "tiltAngle": 0,
-      "relativeAzimuth": -1.5707963267948966,
-      "orientation": "Landscape",
-      "poleRadius": 0.05,
-      "poleHeight": 0.75,
-      "poleSpacing": 4,
-      "showLabel": false,
-      "normal": [
-        0,
-        0,
-        1
-      ],
-      "rotation": [
-        0,
-        0,
-        0
-      ],
-      "parentId": "cZS4zY44VTJkBWzoFP6UCN",
-      "foundationId": "cZS4zY44VTJkBWzoFP6UCN",
-      "id": "ogYDkrJwwFWfopxm4YvUHW",
-      "selected": false
-    },
-    {
-      "type": "Foundation",
-      "cx": -0.3548061737962618,
-      "cy": -39.25526845024893,
-      "cz": 0.05,
-      "lx": 16.007737033866203,
-      "ly": 14.65720835111559,
-      "lz": 0.1,
-      "normal": [
-        0,
-        0,
-        1
-      ],
-      "rotation": [
-        0,
-        0,
-        0
-      ],
-      "parentId": "Ground",
-      "solarUpdraftTower": {},
-      "solarAbsorberPipe": {},
-      "solarPowerTower": {},
-      "id": "cZS4zY44VTJkBWzoFP6UCN",
-      "selected": false
-    },
-    {
-      "type": "Solar Panel",
-      "pvModelName": "CS6X-355P-FG",
-      "cx": 0.3703365384615382,
-      "cy": 0.007255944643780046,
-      "cz": 0.5000000074505806,
-      "lx": 13.776,
-      "ly": 2.976,
-      "lz": 0.046,
-      "trackerType": "None",
-      "tiltAngle": 0.17453292519943295,
-      "relativeAzimuth": -1.5707963267948966,
-      "orientation": "Landscape",
-      "poleRadius": 0.05,
-      "poleHeight": 1,
-      "poleSpacing": 4,
-      "showLabel": false,
-      "normal": [
-        0,
-        0,
-        1
-      ],
-      "rotation": [
-        0,
-        0,
-        0
-      ],
-      "parentId": "121ogbDPhqFdjF1EqsotWr",
-      "foundationId": "121ogbDPhqFdjF1EqsotWr",
-      "id": "fx6hcHXT2rN2wyC7SU3ovS",
-      "selected": false
-    },
-    {
-      "type": "Solar Panel",
-      "pvModelName": "CS6X-355P-FG",
-      "cx": -0.37321820719602977,
-      "cy": 0.0060941899012326595,
-      "cz": 0.5000000074505806,
-      "lx": 13.776,
-      "ly": 2.976,
-      "lz": 0.046,
-      "trackerType": "None",
-      "tiltAngle": -0.17453292519943295,
-      "relativeAzimuth": -1.5707963267948966,
-      "orientation": "Landscape",
-      "poleRadius": 0.05,
-      "poleHeight": 1,
-      "poleSpacing": 4,
-      "showLabel": false,
-      "normal": [
-        0,
-        0,
-        1
-      ],
-      "rotation": [
-        0,
-        0,
-        0
-      ],
-      "parentId": "121ogbDPhqFdjF1EqsotWr",
-      "foundationId": "121ogbDPhqFdjF1EqsotWr",
-      "id": "bVbvirdkxakd6QC42i1VBe",
-      "selected": false
-    },
-    {
-      "type": "Solar Panel",
-      "pvModelName": "CS6X-355P-FG",
-      "cx": -0.0008156863343058756,
-      "cy": 0.006513728717341129,
+      "cx": -0.003863684501694478,
+      "cy": 0.01352080389279529,
       "cz": 0.5000000074505806,
       "lx": 13.776,
       "ly": 8.928,
@@ -1113,11 +79,11 @@
     },
     {
       "type": "Foundation",
-      "cx": -0.3890167001120579,
-      "cy": -53.90658423972995,
+      "cx": -0.355148183178954,
+      "cy": -68.66520831611422,
       "cz": 0.05,
-      "lx": 16.007737033866203,
-      "ly": 14.65720835111559,
+      "lx": 9.850000000000009,
+      "ly": 14.457208351115582,
       "lz": 0.1,
       "normal": [
         0,
@@ -1134,51 +100,20 @@
       "solarAbsorberPipe": {},
       "solarPowerTower": {},
       "id": "121ogbDPhqFdjF1EqsotWr",
-      "selected": false
+      "selected": false,
+      "textureType": "Foundation Texture #5"
     },
     {
       "type": "Solar Panel",
       "pvModelName": "CS6X-355P-FG",
-      "cx": 0.3703365384615382,
-      "cy": 0.007255944643780046,
+      "cx": 0.10063950048686088,
+      "cy": 0.012876862495727583,
       "cz": 0.5000000074505806,
       "lx": 13.776,
       "ly": 2.976,
       "lz": 0.046,
       "trackerType": "None",
-      "tiltAngle": 0.17453292519943295,
-      "relativeAzimuth": -1.5707963267948966,
-      "orientation": "Landscape",
-      "poleRadius": 0.05,
-      "poleHeight": 1,
-      "poleSpacing": 4,
-      "showLabel": false,
-      "normal": [
-        0,
-        0,
-        1
-      ],
-      "rotation": [
-        0,
-        0,
-        0
-      ],
-      "parentId": "e1EQqVFfXevnZt4eaeuVPE",
-      "foundationId": "e1EQqVFfXevnZt4eaeuVPE",
-      "id": "peAqwzdSbebN2FEn4Cj9hS",
-      "selected": false
-    },
-    {
-      "type": "Solar Panel",
-      "pvModelName": "CS6X-355P-FG",
-      "cx": -0.37321820719602977,
-      "cy": 0.0060941899012326595,
-      "cz": 0.5000000074505806,
-      "lx": 13.776,
-      "ly": 2.976,
-      "lz": 0.046,
-      "trackerType": "None",
-      "tiltAngle": -0.17453292519943295,
+      "tiltAngle": -0.5235987755982988,
       "relativeAzimuth": -1.5707963267948966,
       "orientation": "Landscape",
       "poleRadius": 0.05,
@@ -1201,10 +136,342 @@
       "selected": false
     },
     {
+      "type": "Foundation",
+      "cx": -6.512082441645507,
+      "cy": -68.66019836570281,
+      "cz": 0.3,
+      "lx": 3.7538685169331028,
+      "ly": 14.407188450292779,
+      "lz": 0.6,
+      "normal": [
+        0,
+        0,
+        1
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "parentId": "Ground",
+      "solarUpdraftTower": {},
+      "solarAbsorberPipe": {},
+      "solarPowerTower": {},
+      "id": "e1EQqVFfXevnZt4eaeuVPE",
+      "selected": false
+    },
+    {
       "type": "Solar Panel",
       "pvModelName": "CS6X-355P-FG",
-      "cx": -0.0008156863343058756,
-      "cy": 0.006513728717341129,
+      "cx": -0.1167079978734572,
+      "cy": -0.006668963284178641,
+      "cz": 0.5000000074505806,
+      "lx": 13.776,
+      "ly": 2.976,
+      "lz": 0.046,
+      "trackerType": "None",
+      "tiltAngle": 0.5235987755982988,
+      "relativeAzimuth": -1.5707963267948966,
+      "orientation": "Landscape",
+      "poleRadius": 0.05,
+      "poleHeight": 1,
+      "poleSpacing": 4,
+      "showLabel": false,
+      "normal": [
+        0,
+        0,
+        1
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "parentId": "5AYGqMpb7MY45GfUGrAPx7",
+      "foundationId": "5AYGqMpb7MY45GfUGrAPx7",
+      "id": "pHgsi4FBAPcCENbBFq8nJi",
+      "selected": false
+    },
+    {
+      "type": "Foundation",
+      "cx": 5.789049041421398,
+      "cy": -68.36660414055642,
+      "cz": 0.3,
+      "lx": 3.6116055507992932,
+      "ly": 14.100000000000009,
+      "lz": 0.6,
+      "normal": [
+        0,
+        0,
+        1
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "parentId": "Ground",
+      "solarUpdraftTower": {},
+      "solarAbsorberPipe": {},
+      "solarPowerTower": {},
+      "id": "5AYGqMpb7MY45GfUGrAPx7",
+      "selected": false
+    },
+    {
+      "type": "Human",
+      "name": "Jack",
+      "cx": 1.2131787149033482,
+      "cy": -5.683681388279453,
+      "cz": 0.300000011920929,
+      "lx": 0.6,
+      "lz": 1.8,
+      "normal": [
+        0,
+        1,
+        0
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "parentId": "5AYGqMpb7MY45GfUGrAPx7",
+      "id": "echEghBkfqunhtqJQz95fM",
+      "selected": false
+    },
+    {
+      "type": "Solar Panel",
+      "pvModelName": "CS6X-355P-FG",
+      "cx": -0.1207079978734572,
+      "cy": -0.004668963284178641,
+      "cz": 0.5000000074505806,
+      "lx": 13.776,
+      "ly": 2.976,
+      "lz": 0.046,
+      "trackerType": "None",
+      "tiltAngle": 0.5235987755982988,
+      "relativeAzimuth": -1.5707963267948966,
+      "orientation": "Landscape",
+      "poleRadius": 0.05,
+      "poleHeight": 1,
+      "poleSpacing": 4,
+      "showLabel": false,
+      "normal": [
+        0,
+        0,
+        1
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "parentId": "xgFeRbJGihUVnyEf5m22ib",
+      "foundationId": "xgFeRbJGihUVnyEf5m22ib",
+      "id": "1ZYTz63nWtEEsbRNhgdFaw",
+      "selected": false
+    },
+    {
+      "type": "Foundation",
+      "cx": 5.809815585913138,
+      "cy": -54.46106108413,
+      "cz": 0.3,
+      "lx": 3.6116055507992932,
+      "ly": 14.100000000000009,
+      "lz": 0.6,
+      "normal": [
+        0,
+        0,
+        1
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "parentId": "Ground",
+      "solarUpdraftTower": {},
+      "solarAbsorberPipe": {},
+      "solarPowerTower": {},
+      "id": "xgFeRbJGihUVnyEf5m22ib",
+      "selected": false
+    },
+    {
+      "type": "Solar Panel",
+      "pvModelName": "CS6X-355P-FG",
+      "cx": -0.1167079978734572,
+      "cy": -0.006668963284178641,
+      "cz": 0.5000000074505806,
+      "lx": 13.776,
+      "ly": 2.976,
+      "lz": 0.046,
+      "trackerType": "None",
+      "tiltAngle": 0.5235987755982988,
+      "relativeAzimuth": -1.5707963267948966,
+      "orientation": "Landscape",
+      "poleRadius": 0.05,
+      "poleHeight": 1,
+      "poleSpacing": 4,
+      "showLabel": false,
+      "normal": [
+        0,
+        0,
+        1
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "parentId": "nAmb8PRM1R6jeNzPW5C8VV",
+      "foundationId": "nAmb8PRM1R6jeNzPW5C8VV",
+      "id": "4zJUqXV3Fnf2nuwbpsMiXs",
+      "selected": false
+    },
+    {
+      "type": "Foundation",
+      "cx": 5.7835484198244025,
+      "cy": -40.561453025263894,
+      "cz": 0.3,
+      "lx": 3.6116055507992932,
+      "ly": 14.100000000000009,
+      "lz": 0.6,
+      "normal": [
+        0,
+        0,
+        1
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "parentId": "Ground",
+      "solarUpdraftTower": {},
+      "solarAbsorberPipe": {},
+      "solarPowerTower": {},
+      "id": "nAmb8PRM1R6jeNzPW5C8VV",
+      "selected": false
+    },
+    {
+      "type": "Solar Panel",
+      "pvModelName": "CS6X-355P-FG",
+      "cx": -0.1167079978734572,
+      "cy": -0.006668963284178641,
+      "cz": 0.5000000074505806,
+      "lx": 13.776,
+      "ly": 2.976,
+      "lz": 0.046,
+      "trackerType": "None",
+      "tiltAngle": 0.5235987755982988,
+      "relativeAzimuth": -1.5707963267948966,
+      "orientation": "Landscape",
+      "poleRadius": 0.05,
+      "poleHeight": 1,
+      "poleSpacing": 4,
+      "showLabel": false,
+      "normal": [
+        0,
+        0,
+        1
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "parentId": "2Jpks6qcta7oxTq8g15yvM",
+      "foundationId": "2Jpks6qcta7oxTq8g15yvM",
+      "id": "nTqyuFThYbp62RDDvj69Tn",
+      "selected": false
+    },
+    {
+      "type": "Foundation",
+      "cx": 5.765589353420241,
+      "cy": -26.70562418723046,
+      "cz": 0.3,
+      "lx": 3.6116055507992932,
+      "ly": 14.100000000000009,
+      "lz": 0.6,
+      "normal": [
+        0,
+        0,
+        1
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "parentId": "Ground",
+      "solarUpdraftTower": {},
+      "solarAbsorberPipe": {},
+      "solarPowerTower": {},
+      "id": "2Jpks6qcta7oxTq8g15yvM",
+      "selected": false
+    },
+    {
+      "type": "Solar Panel",
+      "pvModelName": "CS6X-355P-FG",
+      "cx": -0.1167079978734572,
+      "cy": -0.006668963284178641,
+      "cz": 0.5000000074505806,
+      "lx": 13.776,
+      "ly": 2.976,
+      "lz": 0.046,
+      "trackerType": "None",
+      "tiltAngle": 0.5235987755982988,
+      "relativeAzimuth": -1.5707963267948966,
+      "orientation": "Landscape",
+      "poleRadius": 0.05,
+      "poleHeight": 1,
+      "poleSpacing": 4,
+      "showLabel": false,
+      "normal": [
+        0,
+        0,
+        1
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "parentId": "4XXqf2vXZ7ZFawMdYuzXJR",
+      "foundationId": "4XXqf2vXZ7ZFawMdYuzXJR",
+      "id": "8xX37o12HQw79GgWaPoJra",
+      "selected": false
+    },
+    {
+      "type": "Foundation",
+      "cx": 5.7629992141008515,
+      "cy": -12.846184608655223,
+      "cz": 0.3,
+      "lx": 3.6116055507992932,
+      "ly": 14.100000000000009,
+      "lz": 0.6,
+      "normal": [
+        0,
+        0,
+        1
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "parentId": "Ground",
+      "solarUpdraftTower": {},
+      "solarAbsorberPipe": {},
+      "solarPowerTower": {},
+      "id": "4XXqf2vXZ7ZFawMdYuzXJR",
+      "selected": false
+    },
+    {
+      "type": "Solar Panel",
+      "pvModelName": "CS6X-355P-FG",
+      "cx": -0.003863684501694478,
+      "cy": 0.01352080389279529,
       "cz": 0.5000000074505806,
       "lx": 13.776,
       "ly": 8.928,
@@ -1227,19 +494,599 @@
         0,
         0
       ],
-      "parentId": "e1EQqVFfXevnZt4eaeuVPE",
-      "foundationId": "e1EQqVFfXevnZt4eaeuVPE",
-      "id": "3cEdyvgGfJkyAT5uRT7FoJ",
+      "parentId": "nhfGp8zoAtBhBtTRQS5X4A",
+      "foundationId": "nhfGp8zoAtBhBtTRQS5X4A",
+      "id": "xtX3Yeicb1xmckA4hRhAbT",
       "selected": false
     },
     {
       "type": "Foundation",
-      "cx": -0.3851481831789574,
-      "cy": -68.5351884152914,
+      "cx": -0.3660148444167448,
+      "cy": -54.735545319487315,
       "cz": 0.05,
-      "lx": 16.007737033866203,
-      "ly": 14.65720835111559,
+      "lx": 9.850000000000009,
+      "ly": 14.457208351115582,
       "lz": 0.1,
+      "normal": [
+        0,
+        0,
+        1
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "parentId": "Ground",
+      "textureType": "Foundation Texture #5",
+      "solarUpdraftTower": {},
+      "solarAbsorberPipe": {},
+      "solarPowerTower": {},
+      "id": "nhfGp8zoAtBhBtTRQS5X4A",
+      "selected": false
+    },
+    {
+      "type": "Solar Panel",
+      "pvModelName": "CS6X-355P-FG",
+      "cx": -0.003863684501694478,
+      "cy": 0.01352080389279529,
+      "cz": 0.5000000074505806,
+      "lx": 13.776,
+      "ly": 8.928,
+      "lz": 0.046,
+      "trackerType": "None",
+      "tiltAngle": 0,
+      "relativeAzimuth": -1.5707963267948966,
+      "orientation": "Landscape",
+      "poleRadius": 0.05,
+      "poleHeight": 0.75,
+      "poleSpacing": 4,
+      "showLabel": false,
+      "normal": [
+        0,
+        0,
+        1
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "parentId": "ibdbY4z7waLLai5mudLon8",
+      "foundationId": "ibdbY4z7waLLai5mudLon8",
+      "id": "uUyvA9DB8ymLg6XLaLfYFQ",
+      "selected": false
+    },
+    {
+      "type": "Foundation",
+      "cx": -0.35970964251660265,
+      "cy": -40.85602650039143,
+      "cz": 0.05,
+      "lx": 9.850000000000009,
+      "ly": 14.457208351115582,
+      "lz": 0.1,
+      "normal": [
+        0,
+        0,
+        1
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "parentId": "Ground",
+      "textureType": "Foundation Texture #5",
+      "solarUpdraftTower": {},
+      "solarAbsorberPipe": {},
+      "solarPowerTower": {},
+      "id": "ibdbY4z7waLLai5mudLon8",
+      "selected": false
+    },
+    {
+      "type": "Solar Panel",
+      "pvModelName": "CS6X-355P-FG",
+      "cx": -0.003863684501694478,
+      "cy": 0.01352080389279529,
+      "cz": 0.5000000074505806,
+      "lx": 13.776,
+      "ly": 8.928,
+      "lz": 0.046,
+      "trackerType": "None",
+      "tiltAngle": 0,
+      "relativeAzimuth": -1.5707963267948966,
+      "orientation": "Landscape",
+      "poleRadius": 0.05,
+      "poleHeight": 0.75,
+      "poleSpacing": 4,
+      "showLabel": false,
+      "normal": [
+        0,
+        0,
+        1
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "parentId": "vXadeokGJ9NmeA6ewhjvBy",
+      "foundationId": "vXadeokGJ9NmeA6ewhjvBy",
+      "id": "ippQMjL5WuoRmncEHb3ng3",
+      "selected": false
+    },
+    {
+      "type": "Foundation",
+      "cx": -0.35809920705666,
+      "cy": -27.00228253941227,
+      "cz": 0.05,
+      "lx": 9.850000000000009,
+      "ly": 14.457208351115582,
+      "lz": 0.1,
+      "normal": [
+        0,
+        0,
+        1
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "parentId": "Ground",
+      "textureType": "Foundation Texture #5",
+      "solarUpdraftTower": {},
+      "solarAbsorberPipe": {},
+      "solarPowerTower": {},
+      "id": "vXadeokGJ9NmeA6ewhjvBy",
+      "selected": false
+    },
+    {
+      "type": "Solar Panel",
+      "pvModelName": "CS6X-355P-FG",
+      "cx": -0.003863684501694478,
+      "cy": 0.01352080389279529,
+      "cz": 0.5000000074505806,
+      "lx": 13.776,
+      "ly": 8.928,
+      "lz": 0.046,
+      "trackerType": "None",
+      "tiltAngle": 0,
+      "relativeAzimuth": -1.5707963267948966,
+      "orientation": "Landscape",
+      "poleRadius": 0.05,
+      "poleHeight": 0.75,
+      "poleSpacing": 4,
+      "showLabel": false,
+      "normal": [
+        0,
+        0,
+        1
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "parentId": "j9vK8NMr2vp4GiSK1DtxRq",
+      "foundationId": "j9vK8NMr2vp4GiSK1DtxRq",
+      "id": "ntm7qPuXg8vaHHDMEfMv14",
+      "selected": false
+    },
+    {
+      "type": "Foundation",
+      "cx": -0.35734216826093124,
+      "cy": -13.132067218686498,
+      "cz": 0.05,
+      "lx": 9.850000000000009,
+      "ly": 14.457208351115582,
+      "lz": 0.1,
+      "normal": [
+        0,
+        0,
+        1
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "parentId": "Ground",
+      "textureType": "Foundation Texture #5",
+      "solarUpdraftTower": {},
+      "solarAbsorberPipe": {},
+      "solarPowerTower": {},
+      "id": "j9vK8NMr2vp4GiSK1DtxRq",
+      "selected": false
+    },
+    {
+      "type": "Solar Panel",
+      "pvModelName": "CS6X-355P-FG",
+      "cx": -0.003863684501694478,
+      "cy": 0.01352080389279529,
+      "cz": 0.5000000074505806,
+      "lx": 13.776,
+      "ly": 8.928,
+      "lz": 0.046,
+      "trackerType": "None",
+      "tiltAngle": 0,
+      "relativeAzimuth": -1.5707963267948966,
+      "orientation": "Landscape",
+      "poleRadius": 0.05,
+      "poleHeight": 0.75,
+      "poleSpacing": 4,
+      "showLabel": false,
+      "normal": [
+        0,
+        0,
+        1
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "parentId": "2WSX6m9s99dM4WhZbyuvff",
+      "foundationId": "2WSX6m9s99dM4WhZbyuvff",
+      "id": "gkBV2ZfxJtfhuZjj7rHAoZ",
+      "selected": false
+    },
+    {
+      "type": "Foundation",
+      "cx": -0.3463719972166439,
+      "cy": 0.7317163979243815,
+      "cz": 0.05,
+      "lx": 9.850000000000009,
+      "ly": 14.457208351115582,
+      "lz": 0.1,
+      "normal": [
+        0,
+        0,
+        1
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "parentId": "Ground",
+      "textureType": "Foundation Texture #5",
+      "solarUpdraftTower": {},
+      "solarAbsorberPipe": {},
+      "solarPowerTower": {},
+      "id": "2WSX6m9s99dM4WhZbyuvff",
+      "selected": false
+    },
+    {
+      "type": "Solar Panel",
+      "pvModelName": "CS6X-355P-FG",
+      "cx": -0.003863684501694478,
+      "cy": 0.01352080389279529,
+      "cz": 0.5000000074505806,
+      "lx": 13.776,
+      "ly": 8.928,
+      "lz": 0.046,
+      "trackerType": "None",
+      "tiltAngle": 0,
+      "relativeAzimuth": -1.5707963267948966,
+      "orientation": "Landscape",
+      "poleRadius": 0.05,
+      "poleHeight": 0.75,
+      "poleSpacing": 4,
+      "showLabel": false,
+      "normal": [
+        0,
+        0,
+        1
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "parentId": "eLNa4YNCioCE3UNDGya3Up",
+      "foundationId": "eLNa4YNCioCE3UNDGya3Up",
+      "id": "rWFuzCeuZszy77yBB8jveg",
+      "selected": false
+    },
+    {
+      "type": "Foundation",
+      "cx": -0.3586608333447727,
+      "cy": 14.590396355482044,
+      "cz": 0.05,
+      "lx": 9.850000000000009,
+      "ly": 14.457208351115582,
+      "lz": 0.1,
+      "normal": [
+        0,
+        0,
+        1
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "parentId": "Ground",
+      "textureType": "Foundation Texture #5",
+      "solarUpdraftTower": {},
+      "solarAbsorberPipe": {},
+      "solarPowerTower": {},
+      "id": "eLNa4YNCioCE3UNDGya3Up",
+      "selected": false
+    },
+    {
+      "type": "Solar Panel",
+      "pvModelName": "CS6X-355P-FG",
+      "cx": -0.003863684501694478,
+      "cy": 0.01352080389279529,
+      "cz": 0.5000000074505806,
+      "lx": 13.776,
+      "ly": 8.928,
+      "lz": 0.046,
+      "trackerType": "None",
+      "tiltAngle": 0,
+      "relativeAzimuth": -1.5707963267948966,
+      "orientation": "Landscape",
+      "poleRadius": 0.05,
+      "poleHeight": 0.75,
+      "poleSpacing": 4,
+      "showLabel": false,
+      "normal": [
+        0,
+        0,
+        1
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "parentId": "o1CCZc1sDeTQWrwG46TfNN",
+      "foundationId": "o1CCZc1sDeTQWrwG46TfNN",
+      "id": "qShFLxfnobEyyoPeMTASuG",
+      "selected": false
+    },
+    {
+      "type": "Foundation",
+      "cx": -0.3518720954179425,
+      "cy": 28.454375484604732,
+      "cz": 0.05,
+      "lx": 9.850000000000009,
+      "ly": 14.457208351115582,
+      "lz": 0.1,
+      "normal": [
+        0,
+        0,
+        1
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "parentId": "Ground",
+      "textureType": "Foundation Texture #5",
+      "solarUpdraftTower": {},
+      "solarAbsorberPipe": {},
+      "solarPowerTower": {},
+      "id": "o1CCZc1sDeTQWrwG46TfNN",
+      "selected": false
+    },
+    {
+      "type": "Solar Panel",
+      "pvModelName": "CS6X-355P-FG",
+      "cx": -0.003863684501694478,
+      "cy": 0.01352080389279529,
+      "cz": 0.5000000074505806,
+      "lx": 13.776,
+      "ly": 8.928,
+      "lz": 0.046,
+      "trackerType": "None",
+      "tiltAngle": 0,
+      "relativeAzimuth": -1.5707963267948966,
+      "orientation": "Landscape",
+      "poleRadius": 0.05,
+      "poleHeight": 0.75,
+      "poleSpacing": 4,
+      "showLabel": false,
+      "normal": [
+        0,
+        0,
+        1
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "parentId": "u1RK5NeNA9j7qFSmCR8hid",
+      "foundationId": "u1RK5NeNA9j7qFSmCR8hid",
+      "id": "rCYT7zsMynuWwB4Gj2Fsd3",
+      "selected": false
+    },
+    {
+      "type": "Foundation",
+      "cx": -0.35131046912982616,
+      "cy": 42.32211519647182,
+      "cz": 0.05,
+      "lx": 9.850000000000009,
+      "ly": 14.457208351115582,
+      "lz": 0.1,
+      "normal": [
+        0,
+        0,
+        1
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "parentId": "Ground",
+      "textureType": "Foundation Texture #5",
+      "solarUpdraftTower": {},
+      "solarAbsorberPipe": {},
+      "solarPowerTower": {},
+      "id": "u1RK5NeNA9j7qFSmCR8hid",
+      "selected": false
+    },
+    {
+      "type": "Solar Panel",
+      "pvModelName": "CS6X-355P-FG",
+      "cx": -0.003863684501694478,
+      "cy": 0.01352080389279529,
+      "cz": 0.5000000074505806,
+      "lx": 13.776,
+      "ly": 8.928,
+      "lz": 0.046,
+      "trackerType": "None",
+      "tiltAngle": 0,
+      "relativeAzimuth": -1.5707963267948966,
+      "orientation": "Landscape",
+      "poleRadius": 0.05,
+      "poleHeight": 0.75,
+      "poleSpacing": 4,
+      "showLabel": false,
+      "normal": [
+        0,
+        0,
+        1
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "parentId": "h9eRaQKsYCgZDNL6TBSdkG",
+      "foundationId": "h9eRaQKsYCgZDNL6TBSdkG",
+      "id": "iciTKiFoWiSSRXfRV2jKAY",
+      "selected": false
+    },
+    {
+      "type": "Foundation",
+      "cx": -0.35806918169835766,
+      "cy": 56.17571570619225,
+      "cz": 0.05,
+      "lx": 9.850000000000009,
+      "ly": 14.457208351115582,
+      "lz": 0.1,
+      "normal": [
+        0,
+        0,
+        1
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "parentId": "Ground",
+      "textureType": "Foundation Texture #5",
+      "solarUpdraftTower": {},
+      "solarAbsorberPipe": {},
+      "solarPowerTower": {},
+      "id": "h9eRaQKsYCgZDNL6TBSdkG",
+      "selected": false
+    },
+    {
+      "type": "Solar Panel",
+      "pvModelName": "CS6X-355P-FG",
+      "cx": -0.003863684501694478,
+      "cy": 0.01352080389279529,
+      "cz": 0.5000000074505806,
+      "lx": 13.776,
+      "ly": 8.928,
+      "lz": 0.046,
+      "trackerType": "None",
+      "tiltAngle": 0,
+      "relativeAzimuth": -1.5707963267948966,
+      "orientation": "Landscape",
+      "poleRadius": 0.05,
+      "poleHeight": 0.75,
+      "poleSpacing": 4,
+      "showLabel": false,
+      "normal": [
+        0,
+        0,
+        1
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "parentId": "gdwqBp4tF8xLp9yJkFqCx6",
+      "foundationId": "gdwqBp4tF8xLp9yJkFqCx6",
+      "id": "88NfQv74cDhjrzSepw9B7g",
+      "selected": false
+    },
+    {
+      "type": "Foundation",
+      "cx": -0.3684777264545248,
+      "cy": 70.01231995987031,
+      "cz": 0.05,
+      "lx": 9.850000000000009,
+      "ly": 14.457208351115582,
+      "lz": 0.1,
+      "normal": [
+        0,
+        0,
+        1
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "parentId": "Ground",
+      "textureType": "Foundation Texture #5",
+      "solarUpdraftTower": {},
+      "solarAbsorberPipe": {},
+      "solarPowerTower": {},
+      "id": "gdwqBp4tF8xLp9yJkFqCx6",
+      "selected": false
+    },
+    {
+      "type": "Solar Panel",
+      "pvModelName": "CS6X-355P-FG",
+      "cx": -0.1167079978734572,
+      "cy": -0.006668963284178641,
+      "cz": 0.5000000074505806,
+      "lx": 13.776,
+      "ly": 2.976,
+      "lz": 0.046,
+      "trackerType": "None",
+      "tiltAngle": 0.5235987755982988,
+      "relativeAzimuth": -1.5707963267948966,
+      "orientation": "Landscape",
+      "poleRadius": 0.05,
+      "poleHeight": 1,
+      "poleSpacing": 4,
+      "showLabel": false,
+      "normal": [
+        0,
+        0,
+        1
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "parentId": "16YsecagZdQFboT8cHk3zY",
+      "foundationId": "16YsecagZdQFboT8cHk3zY",
+      "id": "uWF3E9dPiegXh2L5b6Vsn8",
+      "selected": false
+    },
+    {
+      "type": "Foundation",
+      "cx": 5.774616554678275,
+      "cy": 1.0295178181583675,
+      "cz": 0.3,
+      "lx": 3.6116055507992932,
+      "ly": 14.100000000000009,
+      "lz": 0.6,
       "normal": [
         0,
         0,
@@ -1254,7 +1101,862 @@
       "solarUpdraftTower": {},
       "solarAbsorberPipe": {},
       "solarPowerTower": {},
-      "id": "e1EQqVFfXevnZt4eaeuVPE",
+      "id": "16YsecagZdQFboT8cHk3zY",
+      "selected": false
+    },
+    {
+      "type": "Solar Panel",
+      "pvModelName": "CS6X-355P-FG",
+      "cx": -0.1167079978734572,
+      "cy": -0.006668963284178641,
+      "cz": 0.5000000074505806,
+      "lx": 13.776,
+      "ly": 2.976,
+      "lz": 0.046,
+      "trackerType": "None",
+      "tiltAngle": 0.5235987755982988,
+      "relativeAzimuth": -1.5707963267948966,
+      "orientation": "Landscape",
+      "poleRadius": 0.05,
+      "poleHeight": 1,
+      "poleSpacing": 4,
+      "showLabel": false,
+      "normal": [
+        0,
+        0,
+        1
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "parentId": "gdCn75FBte524E9epTDvqA",
+      "foundationId": "gdCn75FBte524E9epTDvqA",
+      "id": "tFCws2tPQDLM5HKxxJGgWv",
+      "selected": false
+    },
+    {
+      "type": "Foundation",
+      "cx": 5.773867010320257,
+      "cy": 14.885614964778393,
+      "cz": 0.3,
+      "lx": 3.6116055507992932,
+      "ly": 14.100000000000009,
+      "lz": 0.6,
+      "normal": [
+        0,
+        0,
+        1
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "parentId": "Ground",
+      "solarUpdraftTower": {},
+      "solarAbsorberPipe": {},
+      "solarPowerTower": {},
+      "id": "gdCn75FBte524E9epTDvqA",
+      "selected": false
+    },
+    {
+      "type": "Solar Panel",
+      "pvModelName": "CS6X-355P-FG",
+      "cx": -0.1167079978734572,
+      "cy": -0.006668963284178641,
+      "cz": 0.5000000074505806,
+      "lx": 13.776,
+      "ly": 2.976,
+      "lz": 0.046,
+      "trackerType": "None",
+      "tiltAngle": 0.5235987755982988,
+      "relativeAzimuth": -1.5707963267948966,
+      "orientation": "Landscape",
+      "poleRadius": 0.05,
+      "poleHeight": 1,
+      "poleSpacing": 4,
+      "showLabel": false,
+      "normal": [
+        0,
+        0,
+        1
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "parentId": "qLVXWryBBGmRgAroLqVwdi",
+      "foundationId": "qLVXWryBBGmRgAroLqVwdi",
+      "id": "ud1b2bEhTi9i92Q8c8D373",
+      "selected": false
+    },
+    {
+      "type": "Foundation",
+      "cx": 5.778389095695882,
+      "cy": 28.74465191336493,
+      "cz": 0.3,
+      "lx": 3.6116055507992932,
+      "ly": 14.100000000000009,
+      "lz": 0.6,
+      "normal": [
+        0,
+        0,
+        1
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "parentId": "Ground",
+      "solarUpdraftTower": {},
+      "solarAbsorberPipe": {},
+      "solarPowerTower": {},
+      "id": "qLVXWryBBGmRgAroLqVwdi",
+      "selected": false
+    },
+    {
+      "type": "Solar Panel",
+      "pvModelName": "CS6X-355P-FG",
+      "cx": -0.1167079978734572,
+      "cy": -0.006668963284178641,
+      "cz": 0.5000000074505806,
+      "lx": 13.776,
+      "ly": 2.976,
+      "lz": 0.046,
+      "trackerType": "None",
+      "tiltAngle": 0.5235987755982988,
+      "relativeAzimuth": -1.5707963267948966,
+      "orientation": "Landscape",
+      "poleRadius": 0.05,
+      "poleHeight": 1,
+      "poleSpacing": 4,
+      "showLabel": false,
+      "normal": [
+        0,
+        0,
+        1
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "parentId": "bVwMiP2aUzVjjeaX792zXn",
+      "foundationId": "bVwMiP2aUzVjjeaX792zXn",
+      "id": "c9QcDJ4K8yR1ng4dRJ4D4t",
+      "selected": false
+    },
+    {
+      "type": "Foundation",
+      "cx": 5.784822839568983,
+      "cy": 42.61795388645869,
+      "cz": 0.3,
+      "lx": 3.6116055507992932,
+      "ly": 14.100000000000009,
+      "lz": 0.6,
+      "normal": [
+        0,
+        0,
+        1
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "parentId": "Ground",
+      "solarUpdraftTower": {},
+      "solarAbsorberPipe": {},
+      "solarPowerTower": {},
+      "id": "bVwMiP2aUzVjjeaX792zXn",
+      "selected": false
+    },
+    {
+      "type": "Solar Panel",
+      "pvModelName": "CS6X-355P-FG",
+      "cx": -0.1167079978734572,
+      "cy": -0.006668963284178641,
+      "cz": 0.5000000074505806,
+      "lx": 13.776,
+      "ly": 2.976,
+      "lz": 0.046,
+      "trackerType": "None",
+      "tiltAngle": 0.5235987755982988,
+      "relativeAzimuth": -1.5707963267948966,
+      "orientation": "Landscape",
+      "poleRadius": 0.05,
+      "poleHeight": 1,
+      "poleSpacing": 4,
+      "showLabel": false,
+      "normal": [
+        0,
+        0,
+        1
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "parentId": "nW5ArCP1HhxjesUyKCR3at",
+      "foundationId": "nW5ArCP1HhxjesUyKCR3at",
+      "id": "gxJYgTJqcdLmnzufEv3zS9",
+      "selected": false
+    },
+    {
+      "type": "Foundation",
+      "cx": 5.772865019410357,
+      "cy": 56.469133301847506,
+      "cz": 0.3,
+      "lx": 3.6116055507992932,
+      "ly": 14.100000000000009,
+      "lz": 0.6,
+      "normal": [
+        0,
+        0,
+        1
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "parentId": "Ground",
+      "solarUpdraftTower": {},
+      "solarAbsorberPipe": {},
+      "solarPowerTower": {},
+      "id": "nW5ArCP1HhxjesUyKCR3at",
+      "selected": false
+    },
+    {
+      "type": "Solar Panel",
+      "pvModelName": "CS6X-355P-FG",
+      "cx": -0.1167079978734572,
+      "cy": -0.006668963284178641,
+      "cz": 0.5000000074505806,
+      "lx": 13.776,
+      "ly": 2.976,
+      "lz": 0.046,
+      "trackerType": "None",
+      "tiltAngle": 0.5235987755982988,
+      "relativeAzimuth": -1.5707963267948966,
+      "orientation": "Landscape",
+      "poleRadius": 0.05,
+      "poleHeight": 1,
+      "poleSpacing": 4,
+      "showLabel": false,
+      "normal": [
+        0,
+        0,
+        1
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "parentId": "ez9S4TjyRrt69CUc8NCPjT",
+      "foundationId": "ez9S4TjyRrt69CUc8NCPjT",
+      "id": "715S84avByaQTs2A6QaRyi",
+      "selected": false
+    },
+    {
+      "type": "Foundation",
+      "cx": 5.767433266447149,
+      "cy": 70.31691119865602,
+      "cz": 0.3,
+      "lx": 3.6116055507992932,
+      "ly": 14.100000000000009,
+      "lz": 0.6,
+      "normal": [
+        0,
+        0,
+        1
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "parentId": "Ground",
+      "solarUpdraftTower": {},
+      "solarAbsorberPipe": {},
+      "solarPowerTower": {},
+      "id": "ez9S4TjyRrt69CUc8NCPjT",
+      "selected": false
+    },
+    {
+      "type": "Solar Panel",
+      "pvModelName": "CS6X-355P-FG",
+      "cx": 0.10063950048686088,
+      "cy": 0.012876862495727583,
+      "cz": 0.5000000074505806,
+      "lx": 13.776,
+      "ly": 2.976,
+      "lz": 0.046,
+      "trackerType": "None",
+      "tiltAngle": -0.5235987755982988,
+      "relativeAzimuth": -1.5707963267948966,
+      "orientation": "Landscape",
+      "poleRadius": 0.05,
+      "poleHeight": 1,
+      "poleSpacing": 4,
+      "showLabel": false,
+      "normal": [
+        0,
+        0,
+        1
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "parentId": "k7PuJZ5ck1CDCnF49AEbze",
+      "foundationId": "k7PuJZ5ck1CDCnF49AEbze",
+      "id": "rBjhWRGRVr5rhJmJ7ZHt5W",
+      "selected": false
+    },
+    {
+      "type": "Foundation",
+      "cx": -6.527392714190696,
+      "cy": -54.732229116611116,
+      "cz": 0.3,
+      "lx": 3.7538685169331028,
+      "ly": 14.407188450292779,
+      "lz": 0.6,
+      "normal": [
+        0,
+        0,
+        1
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "parentId": "Ground",
+      "solarUpdraftTower": {},
+      "solarAbsorberPipe": {},
+      "solarPowerTower": {},
+      "id": "k7PuJZ5ck1CDCnF49AEbze",
+      "selected": false
+    },
+    {
+      "type": "Solar Panel",
+      "pvModelName": "CS6X-355P-FG",
+      "cx": 0.10063950048686088,
+      "cy": 0.012876862495727583,
+      "cz": 0.5000000074505806,
+      "lx": 13.776,
+      "ly": 2.976,
+      "lz": 0.046,
+      "trackerType": "None",
+      "tiltAngle": -0.5235987755982988,
+      "relativeAzimuth": -1.5707963267948966,
+      "orientation": "Landscape",
+      "poleRadius": 0.05,
+      "poleHeight": 1,
+      "poleSpacing": 4,
+      "showLabel": false,
+      "normal": [
+        0,
+        0,
+        1
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "parentId": "rU3754fwdgKoDWv2zoFH3R",
+      "foundationId": "rU3754fwdgKoDWv2zoFH3R",
+      "id": "1Wbh9tZMmYnYRWgQs2oxcg",
+      "selected": false
+    },
+    {
+      "type": "Foundation",
+      "cx": -6.534711172615536,
+      "cy": -40.8521892213242,
+      "cz": 0.3,
+      "lx": 3.7538685169331028,
+      "ly": 14.407188450292779,
+      "lz": 0.6,
+      "normal": [
+        0,
+        0,
+        1
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "parentId": "Ground",
+      "solarUpdraftTower": {},
+      "solarAbsorberPipe": {},
+      "solarPowerTower": {},
+      "id": "rU3754fwdgKoDWv2zoFH3R",
+      "selected": false
+    },
+    {
+      "type": "Solar Panel",
+      "pvModelName": "CS6X-355P-FG",
+      "cx": 0.10063950048686088,
+      "cy": 0.012876862495727583,
+      "cz": 0.5000000074505806,
+      "lx": 13.776,
+      "ly": 2.976,
+      "lz": 0.046,
+      "trackerType": "None",
+      "tiltAngle": -0.5235987755982988,
+      "relativeAzimuth": -1.5707963267948966,
+      "orientation": "Landscape",
+      "poleRadius": 0.05,
+      "poleHeight": 1,
+      "poleSpacing": 4,
+      "showLabel": false,
+      "normal": [
+        0,
+        0,
+        1
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "parentId": "rmvt2utUNYmiSjixPNE6cB",
+      "foundationId": "rmvt2utUNYmiSjixPNE6cB",
+      "id": "hgGCNRfRRjgNRbKehkHZRR",
+      "selected": false
+    },
+    {
+      "type": "Foundation",
+      "cx": -6.531475518119176,
+      "cy": -27.005759344492336,
+      "cz": 0.3,
+      "lx": 3.7538685169331028,
+      "ly": 14.407188450292779,
+      "lz": 0.6,
+      "normal": [
+        0,
+        0,
+        1
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "parentId": "Ground",
+      "solarUpdraftTower": {},
+      "solarAbsorberPipe": {},
+      "solarPowerTower": {},
+      "id": "rmvt2utUNYmiSjixPNE6cB",
+      "selected": false
+    },
+    {
+      "type": "Solar Panel",
+      "pvModelName": "CS6X-355P-FG",
+      "cx": 0.10063950048686088,
+      "cy": 0.012876862495727583,
+      "cz": 0.5000000074505806,
+      "lx": 13.776,
+      "ly": 2.976,
+      "lz": 0.046,
+      "trackerType": "None",
+      "tiltAngle": -0.5235987755982988,
+      "relativeAzimuth": -1.5707963267948966,
+      "orientation": "Landscape",
+      "poleRadius": 0.05,
+      "poleHeight": 1,
+      "poleSpacing": 4,
+      "showLabel": false,
+      "normal": [
+        0,
+        0,
+        1
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "parentId": "5D8LWb5KSCQa5CzJgeqTzQ",
+      "foundationId": "5D8LWb5KSCQa5CzJgeqTzQ",
+      "id": "4q6sn5L82weCVDGzpuu2sX",
+      "selected": false
+    },
+    {
+      "type": "Foundation",
+      "cx": -6.531475518119178,
+      "cy": -13.125523095938771,
+      "cz": 0.3,
+      "lx": 3.7538685169331028,
+      "ly": 14.407188450292779,
+      "lz": 0.6,
+      "normal": [
+        0,
+        0,
+        1
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "parentId": "Ground",
+      "solarUpdraftTower": {},
+      "solarAbsorberPipe": {},
+      "solarPowerTower": {},
+      "id": "5D8LWb5KSCQa5CzJgeqTzQ",
+      "selected": false
+    },
+    {
+      "type": "Solar Panel",
+      "pvModelName": "CS6X-355P-FG",
+      "cx": 0.10063950048686088,
+      "cy": 0.012876862495727583,
+      "cz": 0.5000000074505806,
+      "lx": 13.776,
+      "ly": 2.976,
+      "lz": 0.046,
+      "trackerType": "None",
+      "tiltAngle": -0.5235987755982988,
+      "relativeAzimuth": -1.5707963267948966,
+      "orientation": "Landscape",
+      "poleRadius": 0.05,
+      "poleHeight": 1,
+      "poleSpacing": 4,
+      "showLabel": false,
+      "normal": [
+        0,
+        0,
+        1
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "parentId": "kvv1recmXZdZQMtZey2snR",
+      "foundationId": "kvv1recmXZdZQMtZey2snR",
+      "id": "iy2Xwp5VW7Kj9siFtt7QWd",
+      "selected": false
+    },
+    {
+      "type": "Foundation",
+      "cx": -6.508807101463274,
+      "cy": 0.7373815692707449,
+      "cz": 0.3,
+      "lx": 3.7538685169331028,
+      "ly": 14.407188450292779,
+      "lz": 0.6,
+      "normal": [
+        0,
+        0,
+        1
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "parentId": "Ground",
+      "solarUpdraftTower": {},
+      "solarAbsorberPipe": {},
+      "solarPowerTower": {},
+      "id": "kvv1recmXZdZQMtZey2snR",
+      "selected": false
+    },
+    {
+      "type": "Solar Panel",
+      "pvModelName": "CS6X-355P-FG",
+      "cx": 0.10063950048686088,
+      "cy": 0.012876862495727583,
+      "cz": 0.5000000074505806,
+      "lx": 13.776,
+      "ly": 2.976,
+      "lz": 0.046,
+      "trackerType": "None",
+      "tiltAngle": -0.5235987755982988,
+      "relativeAzimuth": -1.5707963267948966,
+      "orientation": "Landscape",
+      "poleRadius": 0.05,
+      "poleHeight": 1,
+      "poleSpacing": 4,
+      "showLabel": false,
+      "normal": [
+        0,
+        0,
+        1
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "parentId": "xb3DDtTRb2xE4U4z4K1hXE",
+      "foundationId": "xb3DDtTRb2xE4U4z4K1hXE",
+      "id": "nMuKPt4koMQGztfZfy8jfD",
+      "selected": false
+    },
+    {
+      "type": "Foundation",
+      "cx": -6.5258084139552,
+      "cy": 14.606283609496337,
+      "cz": 0.3,
+      "lx": 3.7538685169331028,
+      "ly": 14.407188450292779,
+      "lz": 0.6,
+      "normal": [
+        0,
+        0,
+        1
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "parentId": "Ground",
+      "solarUpdraftTower": {},
+      "solarAbsorberPipe": {},
+      "solarPowerTower": {},
+      "id": "xb3DDtTRb2xE4U4z4K1hXE",
+      "selected": false
+    },
+    {
+      "type": "Solar Panel",
+      "pvModelName": "CS6X-355P-FG",
+      "cx": 0.10063950048686088,
+      "cy": 0.012876862495727583,
+      "cz": 0.5000000074505806,
+      "lx": 13.776,
+      "ly": 2.976,
+      "lz": 0.046,
+      "trackerType": "None",
+      "tiltAngle": -0.5235987755982988,
+      "relativeAzimuth": -1.5707963267948966,
+      "orientation": "Landscape",
+      "poleRadius": 0.05,
+      "poleHeight": 1,
+      "poleSpacing": 4,
+      "showLabel": false,
+      "normal": [
+        0,
+        0,
+        1
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "parentId": "gwy36bVzcps8LsRhJTof4Q",
+      "foundationId": "gwy36bVzcps8LsRhJTof4Q",
+      "id": "i67r94XMRFM3jCvyxogFNy",
+      "selected": false
+    },
+    {
+      "type": "Foundation",
+      "cx": -6.511475518119177,
+      "cy": 28.4721869622139,
+      "cz": 0.3,
+      "lx": 3.7538685169331028,
+      "ly": 14.407188450292779,
+      "lz": 0.6,
+      "normal": [
+        0,
+        0,
+        1
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "parentId": "Ground",
+      "solarUpdraftTower": {},
+      "solarAbsorberPipe": {},
+      "solarPowerTower": {},
+      "id": "gwy36bVzcps8LsRhJTof4Q",
+      "selected": false
+    },
+    {
+      "type": "Solar Panel",
+      "pvModelName": "CS6X-355P-FG",
+      "cx": 0.10063950048686088,
+      "cy": 0.012876862495727583,
+      "cz": 0.5000000074505806,
+      "lx": 13.776,
+      "ly": 2.976,
+      "lz": 0.046,
+      "trackerType": "None",
+      "tiltAngle": -0.5235987755982988,
+      "relativeAzimuth": -1.5707963267948966,
+      "orientation": "Landscape",
+      "poleRadius": 0.05,
+      "poleHeight": 1,
+      "poleSpacing": 4,
+      "showLabel": false,
+      "normal": [
+        0,
+        0,
+        1
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "parentId": "7zg5mcdSFwxHKAWZT3Ek6v",
+      "foundationId": "7zg5mcdSFwxHKAWZT3Ek6v",
+      "id": "eRWg2zs6foonE5xuNEVRz9",
+      "selected": false
+    },
+    {
+      "type": "Foundation",
+      "cx": -6.511051943403113,
+      "cy": 42.34375751909987,
+      "cz": 0.3,
+      "lx": 3.7538685169331028,
+      "ly": 14.407188450292779,
+      "lz": 0.6,
+      "normal": [
+        0,
+        0,
+        1
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "parentId": "Ground",
+      "solarUpdraftTower": {},
+      "solarAbsorberPipe": {},
+      "solarPowerTower": {},
+      "id": "7zg5mcdSFwxHKAWZT3Ek6v",
+      "selected": false
+    },
+    {
+      "type": "Solar Panel",
+      "pvModelName": "CS6X-355P-FG",
+      "cx": 0.10063950048686088,
+      "cy": 0.012876862495727583,
+      "cz": 0.5000000074505806,
+      "lx": 13.776,
+      "ly": 2.976,
+      "lz": 0.046,
+      "trackerType": "None",
+      "tiltAngle": -0.5235987755982988,
+      "relativeAzimuth": -1.5707963267948966,
+      "orientation": "Landscape",
+      "poleRadius": 0.05,
+      "poleHeight": 1,
+      "poleSpacing": 4,
+      "showLabel": false,
+      "normal": [
+        0,
+        0,
+        1
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "parentId": "suByeHBWYCe52G1Gv4ZeSU",
+      "foundationId": "suByeHBWYCe52G1Gv4ZeSU",
+      "id": "phLDTcCNd2W2ZnrjoTkBjB",
+      "selected": false
+    },
+    {
+      "type": "Foundation",
+      "cx": -6.52880710146327,
+      "cy": 56.18132525099307,
+      "cz": 0.3,
+      "lx": 3.7538685169331028,
+      "ly": 14.407188450292779,
+      "lz": 0.6,
+      "normal": [
+        0,
+        0,
+        1
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "parentId": "Ground",
+      "solarUpdraftTower": {},
+      "solarAbsorberPipe": {},
+      "solarPowerTower": {},
+      "id": "suByeHBWYCe52G1Gv4ZeSU",
+      "selected": false
+    },
+    {
+      "type": "Solar Panel",
+      "pvModelName": "CS6X-355P-FG",
+      "cx": 0.10063950048686088,
+      "cy": 0.012876862495727583,
+      "cz": 0.5000000074505806,
+      "lx": 13.776,
+      "ly": 2.976,
+      "lz": 0.046,
+      "trackerType": "None",
+      "tiltAngle": -0.5235987755982988,
+      "relativeAzimuth": -1.5707963267948966,
+      "orientation": "Landscape",
+      "poleRadius": 0.05,
+      "poleHeight": 1,
+      "poleSpacing": 4,
+      "showLabel": false,
+      "normal": [
+        0,
+        0,
+        1
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "parentId": "jfGqSpqYfY4BpzvBjow99u",
+      "foundationId": "jfGqSpqYfY4BpzvBjow99u",
+      "id": "shmgnG7kSY3iWfHSTksGd3",
+      "selected": false
+    },
+    {
+      "type": "Foundation",
+      "cx": -6.53447420562725,
+      "cy": 70.03322597872673,
+      "cz": 0.3,
+      "lx": 3.7538685169331028,
+      "ly": 14.407188450292779,
+      "lz": 0.6,
+      "normal": [
+        0,
+        0,
+        1
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "parentId": "Ground",
+      "solarUpdraftTower": {},
+      "solarAbsorberPipe": {},
+      "solarPowerTower": {},
+      "id": "jfGqSpqYfY4BpzvBjow99u",
       "selected": false
     }
   ],
@@ -1263,17 +1965,17 @@
     "mapPanelY": 0,
     "dailyFresnelReflectorYieldPanelX": 0,
     "panCenter2D": [
-      7.164851816821048,
-      -62.23158413966743,
-      -0.0000622343502964039
+      7.48786322173483,
+      69.21304781831628,
+      0.00006921612429673364
     ],
     "yearlyHeliostatYieldPanelY": 0,
     "mapPanelX": 0,
     "yearlyHeliostatYieldPanelX": 0,
     "cameraPosition2D": [
-      7.164851816821048,
-      -62.23160414055642,
-      19.999937765629593
+      7.48786322173483,
+      69.2130278174273,
+      20.000069216086263
     ],
     "theme": "Default",
     "showDesignInfoPanel": true,
@@ -1287,9 +1989,9 @@
     "dailyHeliostatYieldPanelX": 0,
     "showDailyParabolicDishYieldPanel": false,
     "cameraPosition": [
-      33.6301000960338,
-      -63.89837289719753,
-      38.971520290925426
+      14.985665341192856,
+      -94.01207606498474,
+      5.484037741591008
     ],
     "showYearlyHeliostatYieldPanel": false,
     "orthographic": false,
@@ -1306,7 +2008,7 @@
     "dailyLightSensorPanelX": 0,
     "heliodon": false,
     "solarRadiationHeatMapReflectionOnly": false,
-    "cameraZoom": 19.999999999999993,
+    "cameraZoom": 38.96037486782548,
     "mapType": "hybrid",
     "showMapPanel": false,
     "yearlyParabolicDishYieldPanelY": 0,
@@ -1338,14 +2040,14 @@
     "shadowEnabled": true,
     "showInstructionPanel": true,
     "panCenter": [
-      -5.130091844964399,
-      -32.863670023342344,
-      0
+      -22.269354989815284,
+      10.551050181634587,
+      0.4104687909980791
     ],
     "yearlyFresnelReflectorYieldPanelY": 0,
     "showHeliodonPanel": false,
     "axes": false,
-    "solarRadiationHeatMapMaxValue": 6,
+    "solarRadiationHeatMapMaxValue": 5.5,
     "dailyParabolicDishYieldPanelX": 0,
     "showSolarPanelVisibilityResultsPanel": false,
     "stickyNotePanelY": 0,
