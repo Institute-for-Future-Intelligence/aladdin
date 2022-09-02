@@ -61,6 +61,7 @@ export const i18n_tr = {
       Cut: 'Kes',
       Delete: 'Sil',
       Lock: 'Kilitle',
+      Translucent: 'Translucent',
       Color: 'Renk',
       Texture: 'Tekstür',
       Size: 'Boyut',
@@ -840,6 +841,7 @@ export const i18n_tr = {
       AllRoofsAboveFoundation: 'All Walls Above the Same Foundation',
       AllRoofs: 'All Roofs',
       OverhangLength: 'Overhang Length',
+      RafterSpacing: 'Rafter Spacing',
     },
 
     windowMenu: {

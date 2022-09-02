@@ -60,6 +60,7 @@ export const i18n_zh_cn = {
       Cut: '剪切',
       Delete: '删除',
       Lock: '固定',
+      Translucent: '半透明',
       Color: '颜色',
       Texture: '材质',
       Thickness: '厚度',
@@ -801,6 +802,7 @@ export const i18n_zh_cn = {
       AllRoofsAboveFoundation: '同一地基上所有的房顶',
       AllRoofs: '所有的房顶',
       OverhangLength: '屋檐长度',
+      RafterSpacing: '屋椽间距',
     },
 
     doorMenu: {

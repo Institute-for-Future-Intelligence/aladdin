@@ -59,189 +59,199 @@ export const WallMenu = () => {
         {/* <Cut keyName={'wall-cut'} /> */}
         <Lock keyName={'wall-lock'} />
 
-        {counter.gotSome() && contextMenuObjectType && (
-          <SubMenu key={'clear'} title={i18n.t('word.Clear', lang)} style={{ paddingLeft: '24px' }}>
-            {counter.windowCount > 0 && (
+        {!wall.locked && (
+          <>
+            {counter.gotSome() && contextMenuObjectType && (
+              <SubMenu key={'clear'} title={i18n.t('word.Clear', lang)} style={{ paddingLeft: '24px' }}>
+                {counter.windowCount > 0 && (
+                  <Menu.Item
+                    key={'remove-all-windows-on-wall'}
+                    onClick={() => {
+                      Modal.confirm({
+                        title:
+                          i18n.t('wallMenu.DoYouReallyWantToRemoveAllWindowsOnThisWall', lang) +
+                          ' (' +
+                          counter.windowCount +
+                          ' ' +
+                          i18n.t('wallMenu.Windows', lang) +
+                          ')?',
+                        icon: <ExclamationCircleOutlined />,
+                        onOk: () => {
+                          if (wall) {
+                            const removed = elements.filter(
+                              (e) => !e.locked && e.type === ObjectType.Window && e.parentId === wall.id,
+                            );
+                            removeAllChildElementsByType(wall.id, ObjectType.Window);
+                            const removedElements = JSON.parse(JSON.stringify(removed));
+                            const undoableRemoveAllWindowChildren = {
+                              name: 'Remove All Windows on Wall',
+                              timestamp: Date.now(),
+                              parentId: wall.id,
+                              removedElements: removedElements,
+                              undo: () => {
+                                setCommonStore((state) => {
+                                  state.elements.push(...undoableRemoveAllWindowChildren.removedElements);
+                                });
+                              },
+                              redo: () => {
+                                removeAllChildElementsByType(
+                                  undoableRemoveAllWindowChildren.parentId,
+                                  ObjectType.Window,
+                                );
+                              },
+                            } as UndoableRemoveAllChildren;
+                            addUndoable(undoableRemoveAllWindowChildren);
+                          }
+                        },
+                      });
+                    }}
+                  >
+                    {i18n.t('wallMenu.RemoveAllUnlockedWindows', lang)} ({counter.windowCount})
+                  </Menu.Item>
+                )}
+                {counter.doorCount > 0 && (
+                  <Menu.Item
+                    key={'remove-all-doors-on-wall'}
+                    onClick={() => {
+                      Modal.confirm({
+                        title:
+                          i18n.t('wallMenu.DoYouReallyWantToRemoveAllDoorsOnThisWall', lang) +
+                          ' (' +
+                          counter.windowCount +
+                          ' ' +
+                          i18n.t('wallMenu.Doors', lang) +
+                          ')?',
+                        icon: <ExclamationCircleOutlined />,
+                        onOk: () => {
+                          if (wall) {
+                            const removed = elements.filter(
+                              (e) => !e.locked && e.type === ObjectType.Door && e.parentId === wall.id,
+                            );
+                            removeAllChildElementsByType(wall.id, ObjectType.Door);
+                            const removedElements = JSON.parse(JSON.stringify(removed));
+                            const undoableRemoveAllDoorChildren = {
+                              name: 'Remove All Doors on Wall',
+                              timestamp: Date.now(),
+                              parentId: wall.id,
+                              removedElements: removedElements,
+                              undo: () => {
+                                setCommonStore((state) => {
+                                  state.elements.push(...undoableRemoveAllDoorChildren.removedElements);
+                                });
+                              },
+                              redo: () => {
+                                removeAllChildElementsByType(undoableRemoveAllDoorChildren.parentId, ObjectType.Door);
+                              },
+                            } as UndoableRemoveAllChildren;
+                            addUndoable(undoableRemoveAllDoorChildren);
+                          }
+                        },
+                      });
+                    }}
+                  >
+                    {i18n.t('wallMenu.RemoveAllUnlockedDoors', lang)} ({counter.doorCount})
+                  </Menu.Item>
+                )}
+                {counter.solarPanelCount > 0 && (
+                  <Menu.Item
+                    key={'remove-all-solar-panels-on-wall'}
+                    onClick={() => {
+                      Modal.confirm({
+                        title:
+                          i18n.t('wallMenu.DoYouReallyWantToRemoveAllSolarPanelsOnThisWall', lang) +
+                          ' (' +
+                          counter.solarPanelCount +
+                          ' ' +
+                          i18n.t('wallMenu.SolarPanels', lang) +
+                          ')?',
+                        icon: <ExclamationCircleOutlined />,
+                        onOk: () => {
+                          if (wall) {
+                            const removed = elements.filter(
+                              (e) => !e.locked && e.type === ObjectType.SolarPanel && e.parentId === wall.id,
+                            );
+                            removeAllChildElementsByType(wall.id, ObjectType.SolarPanel);
+                            const removedElements = JSON.parse(JSON.stringify(removed));
+                            const undoableRemoveAllSolarPanelChildren = {
+                              name: 'Remove All Solar Panels on Wall',
+                              timestamp: Date.now(),
+                              parentId: wall.id,
+                              removedElements: removedElements,
+                              undo: () => {
+                                setCommonStore((state) => {
+                                  state.elements.push(...undoableRemoveAllSolarPanelChildren.removedElements);
+                                });
+                              },
+                              redo: () => {
+                                removeAllChildElementsByType(
+                                  undoableRemoveAllSolarPanelChildren.parentId,
+                                  ObjectType.Door,
+                                );
+                              },
+                            } as UndoableRemoveAllChildren;
+                            addUndoable(undoableRemoveAllSolarPanelChildren);
+                          }
+                        },
+                      });
+                    }}
+                  >
+                    {i18n.t('wallMenu.RemoveAllUnlockedSolarPanels', lang)} ({counter.solarPanelCount})
+                  </Menu.Item>
+                )}
+              </SubMenu>
+            )}
+
+            {textureDialogVisible && <WallTextureSelection setDialogVisible={setTextureDialogVisible} />}
+            <Menu.Item
+              key={'wall-texture'}
+              style={{ paddingLeft: paddingLeft }}
+              onClick={() => {
+                setApplyCount(0);
+                setTextureDialogVisible(true);
+              }}
+            >
+              {i18n.t('word.Texture', lang)} ...
+            </Menu.Item>
+
+            {colorDialogVisible && <WallColorSelection setDialogVisible={setColorDialogVisible} />}
+            {(wall.textureType === WallTexture.NoTexture || wall.textureType === WallTexture.Default) && (
               <Menu.Item
-                key={'remove-all-windows-on-wall'}
+                key={'wall-color'}
+                style={{ paddingLeft: paddingLeft }}
                 onClick={() => {
-                  Modal.confirm({
-                    title:
-                      i18n.t('wallMenu.DoYouReallyWantToRemoveAllWindowsOnThisWall', lang) +
-                      ' (' +
-                      counter.windowCount +
-                      ' ' +
-                      i18n.t('wallMenu.Windows', lang) +
-                      ')?',
-                    icon: <ExclamationCircleOutlined />,
-                    onOk: () => {
-                      if (wall) {
-                        const removed = elements.filter(
-                          (e) => !e.locked && e.type === ObjectType.Window && e.parentId === wall.id,
-                        );
-                        removeAllChildElementsByType(wall.id, ObjectType.Window);
-                        const removedElements = JSON.parse(JSON.stringify(removed));
-                        const undoableRemoveAllWindowChildren = {
-                          name: 'Remove All Windows on Wall',
-                          timestamp: Date.now(),
-                          parentId: wall.id,
-                          removedElements: removedElements,
-                          undo: () => {
-                            setCommonStore((state) => {
-                              state.elements.push(...undoableRemoveAllWindowChildren.removedElements);
-                            });
-                          },
-                          redo: () => {
-                            removeAllChildElementsByType(undoableRemoveAllWindowChildren.parentId, ObjectType.Window);
-                          },
-                        } as UndoableRemoveAllChildren;
-                        addUndoable(undoableRemoveAllWindowChildren);
-                      }
-                    },
-                  });
+                  setApplyCount(0);
+                  setColorDialogVisible(true);
                 }}
               >
-                {i18n.t('wallMenu.RemoveAllUnlockedWindows', lang)} ({counter.windowCount})
+                {i18n.t('word.Color', lang)} ...
               </Menu.Item>
             )}
-            {counter.doorCount > 0 && (
-              <Menu.Item
-                key={'remove-all-doors-on-wall'}
-                onClick={() => {
-                  Modal.confirm({
-                    title:
-                      i18n.t('wallMenu.DoYouReallyWantToRemoveAllDoorsOnThisWall', lang) +
-                      ' (' +
-                      counter.windowCount +
-                      ' ' +
-                      i18n.t('wallMenu.Doors', lang) +
-                      ')?',
-                    icon: <ExclamationCircleOutlined />,
-                    onOk: () => {
-                      if (wall) {
-                        const removed = elements.filter(
-                          (e) => !e.locked && e.type === ObjectType.Door && e.parentId === wall.id,
-                        );
-                        removeAllChildElementsByType(wall.id, ObjectType.Door);
-                        const removedElements = JSON.parse(JSON.stringify(removed));
-                        const undoableRemoveAllDoorChildren = {
-                          name: 'Remove All Doors on Wall',
-                          timestamp: Date.now(),
-                          parentId: wall.id,
-                          removedElements: removedElements,
-                          undo: () => {
-                            setCommonStore((state) => {
-                              state.elements.push(...undoableRemoveAllDoorChildren.removedElements);
-                            });
-                          },
-                          redo: () => {
-                            removeAllChildElementsByType(undoableRemoveAllDoorChildren.parentId, ObjectType.Door);
-                          },
-                        } as UndoableRemoveAllChildren;
-                        addUndoable(undoableRemoveAllDoorChildren);
-                      }
-                    },
-                  });
-                }}
-              >
-                {i18n.t('wallMenu.RemoveAllUnlockedDoors', lang)} ({counter.doorCount})
-              </Menu.Item>
-            )}
-            {counter.solarPanelCount > 0 && (
-              <Menu.Item
-                key={'remove-all-solar-panels-on-wall'}
-                onClick={() => {
-                  Modal.confirm({
-                    title:
-                      i18n.t('wallMenu.DoYouReallyWantToRemoveAllSolarPanelsOnThisWall', lang) +
-                      ' (' +
-                      counter.solarPanelCount +
-                      ' ' +
-                      i18n.t('wallMenu.SolarPanels', lang) +
-                      ')?',
-                    icon: <ExclamationCircleOutlined />,
-                    onOk: () => {
-                      if (wall) {
-                        const removed = elements.filter(
-                          (e) => !e.locked && e.type === ObjectType.SolarPanel && e.parentId === wall.id,
-                        );
-                        removeAllChildElementsByType(wall.id, ObjectType.SolarPanel);
-                        const removedElements = JSON.parse(JSON.stringify(removed));
-                        const undoableRemoveAllSolarPanelChildren = {
-                          name: 'Remove All Solar Panels on Wall',
-                          timestamp: Date.now(),
-                          parentId: wall.id,
-                          removedElements: removedElements,
-                          undo: () => {
-                            setCommonStore((state) => {
-                              state.elements.push(...undoableRemoveAllSolarPanelChildren.removedElements);
-                            });
-                          },
-                          redo: () => {
-                            removeAllChildElementsByType(undoableRemoveAllSolarPanelChildren.parentId, ObjectType.Door);
-                          },
-                        } as UndoableRemoveAllChildren;
-                        addUndoable(undoableRemoveAllSolarPanelChildren);
-                      }
-                    },
-                  });
-                }}
-              >
-                {i18n.t('wallMenu.RemoveAllUnlockedSolarPanels', lang)} ({counter.solarPanelCount})
-              </Menu.Item>
-            )}
-          </SubMenu>
+
+            {heightDialogVisible && <WallHeightInput setDialogVisible={setHeightDialogVisible} />}
+            <Menu.Item
+              key={'wall-height'}
+              style={{ paddingLeft: paddingLeft }}
+              onClick={() => {
+                setApplyCount(0);
+                setHeightDialogVisible(true);
+              }}
+            >
+              {i18n.t('word.Height', lang)} ...
+            </Menu.Item>
+
+            {thicknessDialogVisible && <WallThicknessInput setDialogVisible={setThicknessDialogVisible} />}
+            <Menu.Item
+              key={'wall-thickness'}
+              style={{ paddingLeft: paddingLeft }}
+              onClick={() => {
+                setApplyCount(0);
+                setThicknessDialogVisible(true);
+              }}
+            >
+              {i18n.t('word.Thickness', lang)} ...
+            </Menu.Item>
+          </>
         )}
-
-        {textureDialogVisible && <WallTextureSelection setDialogVisible={setTextureDialogVisible} />}
-        <Menu.Item
-          key={'wall-texture'}
-          style={{ paddingLeft: paddingLeft }}
-          onClick={() => {
-            setApplyCount(0);
-            setTextureDialogVisible(true);
-          }}
-        >
-          {i18n.t('word.Texture', lang)} ...
-        </Menu.Item>
-
-        {colorDialogVisible && <WallColorSelection setDialogVisible={setColorDialogVisible} />}
-        {(wall.textureType === WallTexture.NoTexture || wall.textureType === WallTexture.Default) && (
-          <Menu.Item
-            key={'wall-color'}
-            style={{ paddingLeft: paddingLeft }}
-            onClick={() => {
-              setApplyCount(0);
-              setColorDialogVisible(true);
-            }}
-          >
-            {i18n.t('word.Color', lang)} ...
-          </Menu.Item>
-        )}
-
-        {heightDialogVisible && <WallHeightInput setDialogVisible={setHeightDialogVisible} />}
-        <Menu.Item
-          key={'wall-height'}
-          style={{ paddingLeft: paddingLeft }}
-          onClick={() => {
-            setApplyCount(0);
-            setHeightDialogVisible(true);
-          }}
-        >
-          {i18n.t('word.Height', lang)} ...
-        </Menu.Item>
-
-        {thicknessDialogVisible && <WallThicknessInput setDialogVisible={setThicknessDialogVisible} />}
-        <Menu.Item
-          key={'wall-thickness'}
-          style={{ paddingLeft: paddingLeft }}
-          onClick={() => {
-            setApplyCount(0);
-            setThicknessDialogVisible(true);
-          }}
-        >
-          {i18n.t('word.Thickness', lang)} ...
-        </Menu.Item>
       </>
     )
   );

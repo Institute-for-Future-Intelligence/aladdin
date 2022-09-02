@@ -60,6 +60,7 @@ export const i18n_es = {
       Cut: 'Cortar',
       Delete: 'Eliminar',
       Lock: 'Cerrar con llave',
+      Translucent: 'Translucent',
       Color: 'Color',
       Texture: 'Textura',
       Size: 'Tamaño',
@@ -839,6 +840,7 @@ export const i18n_es = {
       AllRoofsAboveFoundation: 'All Walls Above the Same Foundation',
       AllRoofs: 'All Roofs',
       OverhangLength: 'Overhang Length',
+      RafterSpacing: 'Rafter Spacing',
     },
 
     windowMenu: {

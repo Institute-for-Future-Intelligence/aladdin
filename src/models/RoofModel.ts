@@ -11,6 +11,8 @@ export interface RoofModel extends ElementModel {
   textureType: RoofTexture;
   overhang: number;
   thickness: number;
+  translucent?: boolean;
+  rafterSpacing?: number;
 }
 
 export interface PyramidRoofModel extends RoofModel {}

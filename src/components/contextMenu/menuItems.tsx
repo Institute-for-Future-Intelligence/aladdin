@@ -11,7 +11,8 @@ import { Util } from '../../Util';
 import { UndoableDelete } from '../../undo/UndoableDelete';
 import { UndoablePaste } from '../../undo/UndoablePaste';
 import { UndoableCheck } from '../../undo/UndoableCheck';
-import { ActionInfo } from '../../types';
+import { ActionInfo, ObjectType } from '../../types';
+import { RoofModel } from 'src/models/RoofModel';
 
 export const Paste = ({ paddingLeft = '36px', keyName }: { paddingLeft?: string; keyName: string }) => {
   const setCommonStore = useStore(Selector.set);
@@ -173,6 +174,56 @@ export const Lock = ({ keyName }: { keyName: string }) => {
         }}
       >
         {i18n.t('word.Lock', { lng: language })}
+      </Checkbox>
+    </Menu.Item>
+  );
+};
+
+export const Translucent = ({ keyName }: { keyName: string }) => {
+  const selectedElement = useStore(Selector.selectedElement);
+  const language = useStore(Selector.language);
+  const addUndoable = useStore(Selector.addUndoable);
+
+  if (selectedElement?.type !== ObjectType.Roof) {
+    return null;
+  }
+
+  const translucentElement = (id: string | undefined, b: boolean) => {
+    if (!id) return;
+    useStore.getState().set((state) => {
+      for (const e of state.elements) {
+        if (e.id === id) {
+          (e as RoofModel).translucent = b;
+          break;
+        }
+      }
+    });
+  };
+
+  return (
+    <Menu.Item key={keyName}>
+      <Checkbox
+        checked={(selectedElement as RoofModel).translucent}
+        onChange={(e) => {
+          const checked = e.target.checked;
+          translucentElement(selectedElement.id, checked);
+          const undoableCheck = {
+            name: 'Translucent',
+            timestamp: Date.now(),
+            checked: checked,
+            selectedElementId: selectedElement?.id,
+            selectedElementType: selectedElement?.type,
+            undo: () => {
+              translucentElement(undoableCheck.selectedElementId, !undoableCheck.checked);
+            },
+            redo: () => {
+              translucentElement(undoableCheck.selectedElementId, undoableCheck.checked);
+            },
+          } as UndoableCheck;
+          addUndoable(undoableCheck);
+        }}
+      >
+        {i18n.t('word.Translucent', { lng: language })}
       </Checkbox>
     </Menu.Item>
   );
