@@ -337,6 +337,11 @@ const MainToolBar = ({ viewOnly = false }: MainToolBarProps) => {
         try {
           const doc = firebase.firestore().collection('users').doc(user.uid);
           if (doc) {
+            if (localContentToImportAfterCloudFileUpdate) {
+              setCommonStore((state) => {
+                state.loadingFile = true;
+              });
+            }
             doc
               .collection('files')
               .doc(t)
@@ -355,6 +360,9 @@ const MainToolBar = ({ viewOnly = false }: MainToolBarProps) => {
                   } else {
                     importContent(localContentToImportAfterCloudFileUpdate);
                   }
+                  setCommonStore((state) => {
+                    state.loadingFile = false;
+                  });
                 }
                 if (showCloudFilePanel) {
                   fetchMyCloudFiles().then(() => {
@@ -407,6 +415,9 @@ const MainToolBar = ({ viewOnly = false }: MainToolBarProps) => {
     if (userid && title) {
       undoManager.clear();
       setLoading(true);
+      setCommonStore((state) => {
+        state.loadingFile = true;
+      });
       firebase
         .firestore()
         .collection('users')
@@ -425,6 +436,9 @@ const MainToolBar = ({ viewOnly = false }: MainToolBarProps) => {
             });
           }
           setLoading(false);
+          setCommonStore((state) => {
+            state.loadingFile = false;
+          });
           if (!popState && !viewOnly) {
             const newUrl = HOME_URL + '?client=web&userid=' + userid + '&title=' + encodeURIComponent(title);
             window.history.pushState({}, document.title, newUrl);

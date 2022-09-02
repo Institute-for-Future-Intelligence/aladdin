@@ -135,6 +135,9 @@ const LocalFileManager = ({ viewOnly = false }: LocalFileManagerProps) => {
     const fileDialog = document.getElementById('file-dialog') as HTMLInputElement;
     fileDialog.onchange = () => {
       if (fileDialog.files && fileDialog.files.length > 0) {
+        setCommonStore((state) => {
+          state.loadingFile = true;
+        });
         const reader = new FileReader();
         reader.readAsText(fileDialog.files[0]);
         const fn = fileDialog.files[0].name;
@@ -156,6 +159,9 @@ const LocalFileManager = ({ viewOnly = false }: LocalFileManagerProps) => {
             }
           }
           fileDialog.value = '';
+          setCommonStore((state) => {
+            state.loadingFile = false;
+          });
         };
       }
     };

@@ -97,6 +97,7 @@ const AppCreator = ({ viewOnly = false }: AppCreatorProps) => {
   const worldLatitude = useStore(Selector.world.latitude);
   const worldLongitude = useStore(Selector.world.longitude);
   const orthographic = useStore(Selector.viewState.orthographic) ?? false;
+  const loadingFile = useStore(Selector.loadingFile);
   const simulationInProgress = useStore(Selector.simulationInProgress);
   const simulationPaused = useStore(Selector.simulationPaused);
   const evolutionInProgress = useStore(Selector.evolutionInProgress);
@@ -268,7 +269,7 @@ const AppCreator = ({ viewOnly = false }: AppCreatorProps) => {
 
   return (
     <div className="App">
-      {(loading || simulationInProgress || evolutionInProgress) && (
+      {(loading || loadingFile || simulationInProgress || evolutionInProgress) && (
         <>
           {simulationInProgress && (!noAnimationForHeatmapSimulation || Util.hasMovingParts(elements)) && (
             <SimulationControlPanel />

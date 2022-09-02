@@ -712,6 +712,7 @@ export interface CommonStoreState {
   setElementGroupId: (id: string | null) => void;
   groupActionUpdateFlag: boolean;
 
+  loadingFile: boolean;
   simulationInProgress: boolean;
   simulationPaused: boolean;
   evolutionInProgress: boolean;
@@ -5700,6 +5701,7 @@ export const useStore = create<CommonStoreState>(
           },
           groupActionUpdateFlag: false,
 
+          loadingFile: false,
           simulationInProgress: false,
           simulationPaused: false,
           evolutionInProgress: false,
