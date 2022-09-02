@@ -366,7 +366,7 @@ const ParabolicDish = ({
           ref={backSideRef}
           args={[latusRectum / 2, hx, radialSegments, depthSegments]}
           name={'Parabolic Dish Back Side'}
-          // position={[0, 0, -hz]}
+          position={[0, 0, -hz / 4]}
           onPointerDown={(e) => {
             if (e.button === 2) return; // ignore right-click
             selectMe(id, e, ActionType.Select);

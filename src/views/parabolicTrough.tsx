@@ -329,7 +329,7 @@ const ParabolicTrough = ({
           ref={backSideRef}
           args={[latusRectum / 2, lx, ly, parabolaSegments, 4]}
           name={'Parabolic Trough Back Side'}
-          // position={[0, 0, -hz]}
+          position={[0, 0, -hz / 2]}
           onPointerDown={(e) => {
             if (e.button === 2) return; // ignore right-click
             selectMe(id, e, ActionType.Select);
