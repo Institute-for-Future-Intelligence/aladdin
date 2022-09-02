@@ -1136,7 +1136,12 @@ const Wall = ({
             />
           </mesh>
 
-          <mesh rotation={[HALF_PI, 0, 0]} material={whiteMaterialBack} castShadow={shadowEnabled}>
+          <mesh
+            rotation={[HALF_PI, 0, 0]}
+            position={[0, 0.1, 0]}
+            material={whiteMaterialBack}
+            castShadow={shadowEnabled}
+          >
             <shapeBufferGeometry args={[outsiedWallShape]} />
           </mesh>
 
