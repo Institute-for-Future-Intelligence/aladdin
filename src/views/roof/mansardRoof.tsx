@@ -115,6 +115,7 @@ const MansardRoof = ({
   lineColor = 'black',
   lineWidth = 0.2,
   roofType,
+  translucent,
 }: MansardRoofModel) => {
   const texture = useRoofTexture(textureType);
 
@@ -544,7 +545,7 @@ const MansardRoof = ({
   }, [updateSolarPanelOnRoofFlag, h, thickness, frontRidge, backRidge]);
 
   const { grabRef, addUndoableMove, undoMove, setOldRefData } = useSolarPanelUndoable();
-  const { transparent, opacity } = useTransparent();
+  const { transparent, opacity } = useTransparent(translucent);
 
   return (
     <group position={[cx, cy, cz + 0.01]} rotation={[0, 0, rotation]} name={`Mansard Roof Group ${id}`}>
@@ -570,7 +571,7 @@ const MansardRoof = ({
           const isFlat = Math.abs(leftRoof.z) < 0.1;
           return (
             <group key={i} name={`Roof segment ${i}`}>
-              <mesh castShadow={shadowEnabled} receiveShadow={shadowEnabled}>
+              <mesh castShadow={shadowEnabled && !transparent} receiveShadow={shadowEnabled}>
                 <convexGeometry args={[points, isFlat ? arr[0].direction : direction, isFlat ? 1 : length]} />
                 <meshStandardMaterial
                   color={textureType === RoofTexture.Default || textureType === RoofTexture.NoTexture ? color : 'white'}

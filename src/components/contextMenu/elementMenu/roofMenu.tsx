@@ -11,7 +11,7 @@ import i18n from 'src/i18n/i18n';
 import { ObjectType, RoofTexture } from 'src/types';
 import RoofTextureSelection from './roofTextureSelection';
 import RoofColorSelection from './roofColorSelection';
-import { RoofModel } from 'src/models/RoofModel';
+import { RoofModel, RoofType } from 'src/models/RoofModel';
 import RoofOverhangInput from './roofOverhangInput';
 import RoofThicknessInput from './roofThicknessInput';
 import RoofRafterSpacingInput from './roofRafterSpacingInput';
@@ -50,18 +50,24 @@ export const RoofMenu = () => {
         {!roof.locked && (
           <>
             <Translucent keyName={'roof-translucent'} />
-            {rafterSpacingDialogVisible && <RoofRafterSpacingInput setDialogVisible={setRafterSpacingDialogVisible} />}
-            {roof.translucent && (
-              <Menu.Item
-                key={'roof-rafterSpacing'}
-                style={{ paddingLeft: paddingLeft }}
-                onClick={() => {
-                  setApplyCount(0);
-                  setRafterSpacingDialogVisible(true);
-                }}
-              >
-                {i18n.t('roofMenu.RafterSpacing', lang)} ...
-              </Menu.Item>
+            {roof.roofType === RoofType.Gable && (
+              <>
+                {rafterSpacingDialogVisible && (
+                  <RoofRafterSpacingInput setDialogVisible={setRafterSpacingDialogVisible} />
+                )}
+                {roof.translucent && (
+                  <Menu.Item
+                    key={'roof-rafterSpacing'}
+                    style={{ paddingLeft: paddingLeft }}
+                    onClick={() => {
+                      setApplyCount(0);
+                      setRafterSpacingDialogVisible(true);
+                    }}
+                  >
+                    {i18n.t('roofMenu.RafterSpacing', lang)} ...
+                  </Menu.Item>
+                )}
+              </>
             )}
 
             {overhangDialogVisible && <RoofOverhangInput setDialogVisible={setOverhangDialogVisible} />}

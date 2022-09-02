@@ -857,7 +857,12 @@ const GableRoof = ({
           const [leftRoof, rightRoof, rightRidge, leftRidge] = points;
           const isFlat = Math.abs(leftRoof.z) < 0.1;
           return (
-            <mesh key={i} name={`Roof segment ${i}`} castShadow={shadowEnabled} receiveShadow={shadowEnabled}>
+            <mesh
+              key={i}
+              name={`Roof segment ${i}`}
+              castShadow={shadowEnabled && !transparent}
+              receiveShadow={shadowEnabled}
+            >
               <convexGeometry args={[points, isFlat ? arr[0].direction : direction, isFlat ? 1 : length]} />
               <meshStandardMaterial
                 map={texture}

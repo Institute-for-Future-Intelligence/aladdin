@@ -89,6 +89,7 @@ const PyramidRoof = ({
   lineWidth = 0.2,
   lineColor = 'black',
   roofType,
+  translucent,
 }: PyramidRoofModel) => {
   const setCommonStore = useStore(Selector.set);
   const getElementById = useStore(Selector.getElementById);
@@ -492,6 +493,7 @@ const PyramidRoof = ({
                     length={isFlat ? 1 : length}
                     textureType={textureType}
                     color={color ?? 'white'}
+                    translucent={translucent}
                   />
                 </group>
               );
@@ -565,12 +567,14 @@ const RoofSegment = ({
   length,
   textureType,
   color,
+  translucent,
 }: {
   points: Vector3[];
   direction: number;
   length: number;
   textureType: RoofTexture;
   color: string;
+  translucent: boolean | undefined;
 }) => {
   // const mat = useMemo(() => {
   //   const m = new MeshStandardMaterial();
@@ -580,7 +584,7 @@ const RoofSegment = ({
   const shadowEnabled = useStore(Selector.viewState.shadowEnabled);
   const meshRef = useRef<Mesh>(null);
   const texture = useRoofTexture(textureType);
-  const { transparent, opacity } = useTransparent();
+  const { transparent, opacity } = useTransparent(translucent);
 
   if (meshRef.current) {
     points.push(new Vector3(0, 0, -0.001));
@@ -605,7 +609,7 @@ const RoofSegment = ({
   }
 
   return (
-    <mesh ref={meshRef} castShadow={shadowEnabled} receiveShadow={shadowEnabled}>
+    <mesh ref={meshRef} castShadow={shadowEnabled && !transparent} receiveShadow={shadowEnabled}>
       <meshStandardMaterial
         map={texture}
         color={textureType === RoofTexture.Default || textureType === RoofTexture.NoTexture ? color : 'white'}

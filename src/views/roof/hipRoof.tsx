@@ -100,6 +100,7 @@ const HipRoof = ({
   lineColor = 'black',
   lineWidth = 0.2,
   roofType,
+  translucent,
 }: HipRoofModel) => {
   // color = '#fb9e00';
   const texture = useRoofTexture(textureType);
@@ -413,7 +414,7 @@ const HipRoof = ({
   }, [currentWallArray]);
 
   const { grabRef, addUndoableMove, undoMove, setOldRefData } = useSolarPanelUndoable();
-  const { transparent, opacity } = useTransparent();
+  const { transparent, opacity } = useTransparent(translucent);
 
   return (
     <group position={[cx, cy, cz + 0.01]} rotation={[0, 0, rotation]} name={`Hip Roof Group ${id}`}>
@@ -440,7 +441,12 @@ const HipRoof = ({
           const isFlat = Math.abs(leftRoof.z) < 0.1;
           return (
             // Roof segment idx is important for calculate normal
-            <mesh key={i} name={`Roof segment ${i}`} castShadow={shadowEnabled} receiveShadow={shadowEnabled}>
+            <mesh
+              key={i}
+              name={`Roof segment ${i}`}
+              castShadow={shadowEnabled && !transparent}
+              receiveShadow={shadowEnabled}
+            >
               <convexGeometry args={[points, isFlat ? arr[0].direction : direction, isFlat ? 1 : length]} />
               <meshStandardMaterial
                 map={texture}
