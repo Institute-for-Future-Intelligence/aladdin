@@ -412,16 +412,31 @@ const MainMenu = ({ viewOnly, set2DView, resetView, zoomView, canvas }: MainMenu
           icon: <ExclamationCircleOutlined />,
           onOk: () => saveAndImport(input),
           onCancel: () => {
+            setCommonStore((state) => {
+              state.loadingFile = true;
+            });
             // give it 0.1 second for this modal to close
             setTimeout(() => {
               importContent(input);
+              setCommonStore((state) => {
+                state.loadingFile = false;
+              });
             }, 100);
           },
           okText: i18n.t('word.Yes', lang),
           cancelText: i18n.t('word.No', lang),
         });
       } else {
-        importContent(input);
+        setCommonStore((state) => {
+          state.loadingFile = true;
+        });
+        // give it 0.05 second for the loading spinner to show
+        setTimeout(() => {
+          importContent(input);
+          setCommonStore((state) => {
+            state.loadingFile = false;
+          });
+        }, 50);
       }
       setCommonStore((state) => {
         if (loggable) {
