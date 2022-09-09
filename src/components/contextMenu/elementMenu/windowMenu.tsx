@@ -11,6 +11,8 @@ import MullionWidthInput from './windowMullionWidthInput';
 import MullionSpacingInput from './windowMullionSpacingInput';
 import { Menu } from 'antd';
 import i18n from 'src/i18n/i18n';
+import WindowTintSelection from './windowTintSelection';
+import WindowOpacityInput from './windowOpacityInput';
 
 export const WindowMenu = () => {
   const window = useStore(Selector.selectedElement) as WindowModel;
@@ -20,6 +22,8 @@ export const WindowMenu = () => {
 
   const [mullionWidthDialogVisible, setMullionWidthDialogVisible] = useState(false);
   const [mullionSpacingDialogVisible, setMullionSpacingDialogVisible] = useState(false);
+  const [tintDialogVisible, setTintDialogVisible] = useState(false);
+  const [opacityDialogVisible, setOpacityDialogVisible] = useState(false);
 
   const lang = { lng: language };
   const paddingLeft = '36px';
@@ -30,6 +34,30 @@ export const WindowMenu = () => {
         <Copy keyName={'window-copy'} />
         <Cut keyName={'window-cut'} />
         <Lock keyName={'window-lock'} />
+
+        {tintDialogVisible && <WindowTintSelection setDialogVisible={setTintDialogVisible} />}
+        <Menu.Item
+          key={'window-tint'}
+          style={{ paddingLeft: paddingLeft }}
+          onClick={() => {
+            setApplyCount(0);
+            setTintDialogVisible(true);
+          }}
+        >
+          {i18n.t('windowMenu.Tint', lang)} ...
+        </Menu.Item>
+
+        {opacityDialogVisible && <WindowOpacityInput setDialogVisible={setOpacityDialogVisible} />}
+        <Menu.Item
+          key={'window-opacity'}
+          style={{ paddingLeft: paddingLeft }}
+          onClick={() => {
+            setApplyCount(0);
+            setOpacityDialogVisible(true);
+          }}
+        >
+          {i18n.t('windowMenu.Opacity', lang)} ...
+        </Menu.Item>
 
         {mullionWidthDialogVisible && <MullionWidthInput setDialogVisible={setMullionWidthDialogVisible} />}
         <Menu.Item

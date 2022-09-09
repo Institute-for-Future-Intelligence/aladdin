@@ -26,11 +26,12 @@ const Window = ({
   cz,
   selected,
   locked,
-  color,
   lineWidth = 0.2,
   lineColor = 'black',
   mullionWidth = 0.06,
   mullionSpacing = 0.5,
+  tint = '#73D8FF',
+  opacity = 0.5,
 }: WindowModel) => {
   // legacy problem
   if (Math.abs(cy) < 0.001) {
@@ -117,7 +118,7 @@ const Window = ({
             }
           }}
         >
-          <meshBasicMaterial side={DoubleSide} color={color} opacity={0.5} transparent={true} />
+          <meshBasicMaterial side={DoubleSide} color={tint} opacity={opacity} transparent={true} />
         </Plane>
 
         {/* wireframes */}

@@ -853,6 +853,8 @@ export const i18n_es = {
       AllWindows: 'All Windows',
       MullionWidth: 'Mullion Width',
       MullionSpacing: 'Mullion Spacing',
+      Tint: 'Tint',
+      Opacity: 'Opacity',
     },
 
     siteInfoPanel: {

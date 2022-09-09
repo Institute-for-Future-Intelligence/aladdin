@@ -814,6 +814,8 @@ export const i18n_en = {
       AllWindows: 'All Windows',
       MullionWidth: 'Mullion Width',
       MullionSpacing: 'Mullion Spacing',
+      Tint: 'Tint',
+      Opacity: 'Opacity',
     },
 
     roofMenu: {

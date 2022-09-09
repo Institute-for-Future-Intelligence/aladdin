@@ -835,6 +835,8 @@ export const i18n_zh_cn = {
       AllWindows: '所有的窗户',
       MullionWidth: '直棂宽度',
       MullionSpacing: '直棂间距',
+      Tint: '着色',
+      Opacity: '不透明度',
     },
 
     siteInfoPanel: {

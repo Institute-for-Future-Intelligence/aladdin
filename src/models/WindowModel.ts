@@ -7,4 +7,6 @@ import { ElementModel } from './ElementModel';
 export interface WindowModel extends ElementModel {
   mullionWidth: number;
   mullionSpacing: number;
+  opacity: number;
+  tint: string;
 }

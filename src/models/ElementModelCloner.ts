@@ -548,6 +548,8 @@ export class ElementModelCloner {
       id: short.generate() as string,
       parentId: parent.id,
       foundationId: foundationId,
+      tint: window.tint,
+      opacity: window.opacity,
     } as WindowModel;
   }
 
@@ -600,6 +602,9 @@ export class ElementModelCloner {
       overhang: roof.overhang,
       thickness: roof.thickness,
       wallsId: [...roof.wallsId], // handled in common store
+      sunroom: roof.sunroom,
+      sunroomOpacity: roof.sunroomOpacity,
+      sunroomTint: roof.sunroomTint,
     } as RoofModel;
     switch (roof.roofType) {
       case RoofType.Gable:
