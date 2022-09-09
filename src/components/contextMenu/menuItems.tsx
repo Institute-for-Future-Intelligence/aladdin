@@ -228,3 +228,53 @@ export const Translucent = ({ keyName }: { keyName: string }) => {
     </Menu.Item>
   );
 };
+
+export const Sunroom = ({ keyName }: { keyName: string }) => {
+  const selectedElement = useStore(Selector.selectedElement);
+  const language = useStore(Selector.language);
+  const addUndoable = useStore(Selector.addUndoable);
+
+  if (selectedElement?.type !== ObjectType.Roof) {
+    return null;
+  }
+
+  const sunroomElement = (id: string | undefined, b: boolean) => {
+    if (!id) return;
+    useStore.getState().set((state) => {
+      for (const e of state.elements) {
+        if (e.id === id) {
+          (e as RoofModel).sunroom = b;
+          break;
+        }
+      }
+    });
+  };
+
+  return (
+    <Menu.Item key={keyName}>
+      <Checkbox
+        checked={(selectedElement as RoofModel).sunroom}
+        onChange={(e) => {
+          const checked = e.target.checked;
+          sunroomElement(selectedElement.id, checked);
+          const undoableCheck = {
+            name: 'Sunroom',
+            timestamp: Date.now(),
+            checked: checked,
+            selectedElementId: selectedElement?.id,
+            selectedElementType: selectedElement?.type,
+            undo: () => {
+              sunroomElement(undoableCheck.selectedElementId, !undoableCheck.checked);
+            },
+            redo: () => {
+              sunroomElement(undoableCheck.selectedElementId, undoableCheck.checked);
+            },
+          } as UndoableCheck;
+          addUndoable(undoableCheck);
+        }}
+      >
+        {i18n.t('roofMenu.sunroom', { lng: language })}
+      </Checkbox>
+    </Menu.Item>
+  );
+};

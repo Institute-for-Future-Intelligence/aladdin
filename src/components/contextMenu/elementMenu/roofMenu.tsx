@@ -6,7 +6,7 @@ import React, { useState } from 'react';
 import { Menu } from 'antd';
 import { useStore } from 'src/stores/common';
 import * as Selector from 'src/stores/selector';
-import { Lock, Paste, Translucent } from '../menuItems';
+import { Lock, Paste, Sunroom, Translucent } from '../menuItems';
 import i18n from 'src/i18n/i18n';
 import { ObjectType, RoofTexture } from 'src/types';
 import RoofTextureSelection from './roofTextureSelection';
@@ -15,6 +15,8 @@ import { RoofModel, RoofType } from 'src/models/RoofModel';
 import RoofOverhangInput from './roofOverhangInput';
 import RoofThicknessInput from './roofThicknessInput';
 import RoofRafterSpacingInput from './roofRafterSpacingInput';
+import SunroomTintSelection from './sunRoomTintSelection';
+import SunroomOpacityInput from './sunroomOpacityInput';
 
 export const RoofMenu = () => {
   const roof = useStore(Selector.selectedElement) as RoofModel;
@@ -26,6 +28,8 @@ export const RoofMenu = () => {
   const [thicknessDialogVisible, setThicknessDialogVisible] = useState(false);
   const [textureDialogVisible, setTextureDialogVisible] = useState(false);
   const [colorDialogVisible, setColorDialogVisible] = useState(false);
+  const [sunroomTintDialogVisible, setSunroomTintDialogVisible] = useState(false);
+  const [sunroomOpacityDialogVisible, setSunroomOpacityDialogVisible] = useState(false);
 
   const lang = { lng: language };
   const paddingLeft = '36px';
@@ -49,23 +53,63 @@ export const RoofMenu = () => {
 
         {!roof.locked && (
           <>
-            <Translucent keyName={'roof-translucent'} />
-            {roof.roofType === RoofType.Gable && (
+            {!roof.sunroom && (
               <>
-                {rafterSpacingDialogVisible && (
-                  <RoofRafterSpacingInput setDialogVisible={setRafterSpacingDialogVisible} />
+                <Translucent keyName={'roof-translucent'} />
+                {roof.roofType === RoofType.Gable && (
+                  <>
+                    {rafterSpacingDialogVisible && (
+                      <RoofRafterSpacingInput setDialogVisible={setRafterSpacingDialogVisible} />
+                    )}
+                    {roof.translucent && (
+                      <Menu.Item
+                        key={'roof-rafterSpacing'}
+                        style={{ paddingLeft: paddingLeft }}
+                        onClick={() => {
+                          setApplyCount(0);
+                          setRafterSpacingDialogVisible(true);
+                        }}
+                      >
+                        {i18n.t('roofMenu.RafterSpacing', lang)} ...
+                      </Menu.Item>
+                    )}
+                  </>
                 )}
-                {roof.translucent && (
-                  <Menu.Item
-                    key={'roof-rafterSpacing'}
-                    style={{ paddingLeft: paddingLeft }}
-                    onClick={() => {
-                      setApplyCount(0);
-                      setRafterSpacingDialogVisible(true);
-                    }}
-                  >
-                    {i18n.t('roofMenu.RafterSpacing', lang)} ...
-                  </Menu.Item>
+              </>
+            )}
+
+            {!roof.translucent && roof.roofType === RoofType.Gable && (
+              <>
+                <Sunroom keyName={'roof-sunroom'} />
+                {roof.sunroom && (
+                  <>
+                    {sunroomTintDialogVisible && (
+                      <SunroomTintSelection setDialogVisible={setSunroomTintDialogVisible} />
+                    )}
+                    <Menu.Item
+                      key={'roof-sunroomTintSelection'}
+                      style={{ paddingLeft: paddingLeft }}
+                      onClick={() => {
+                        setApplyCount(0);
+                        setSunroomTintDialogVisible(true);
+                      }}
+                    >
+                      {i18n.t('roofMenu.sunroomTint', lang)} ...
+                    </Menu.Item>
+                    {sunroomOpacityDialogVisible && (
+                      <SunroomOpacityInput setDialogVisible={setSunroomOpacityDialogVisible} />
+                    )}
+                    <Menu.Item
+                      key={'roof-sunroomOpacityInput'}
+                      style={{ paddingLeft: paddingLeft }}
+                      onClick={() => {
+                        setApplyCount(0);
+                        setSunroomOpacityDialogVisible(true);
+                      }}
+                    >
+                      {i18n.t('roofMenu.sunroomOpacity', lang)} ...
+                    </Menu.Item>
+                  </>
                 )}
               </>
             )}

@@ -8,7 +8,7 @@ import { GableRoofModel } from 'src/models/RoofModel';
 import { WallModel } from 'src/models/WallModel';
 import { useStore } from 'src/stores/common';
 import * as Selector from 'src/stores/selector';
-import { DoubleSide, Euler, Mesh, Raycaster, Shape, Vector2, Vector3 } from 'three';
+import { DoubleSide, Euler, Mesh, MeshStandardMaterial, Raycaster, Shape, Vector2, Vector3 } from 'three';
 import { useStoreRef } from 'src/stores/commonRef';
 import { useThree } from '@react-three/fiber';
 import { HALF_PI } from 'src/constants';
@@ -29,6 +29,9 @@ import { Util } from 'src/Util';
 import { Point2 } from 'src/models/Point2';
 import { RoofUtil } from './RoofUtil';
 import { useRoofTexture, useSolarPanelUndoable, useTransparent } from './hooks';
+import { ConvexGeometry } from 'src/js/ConvexGeometry';
+import { CSG } from 'three-csg-ts';
+import WindowWireFrame from '../window/windowWireFrame';
 
 const intersectionPlanePosition = new Vector3();
 const intersectionPlaneRotation = new Euler();
@@ -295,11 +298,11 @@ const GableRoof = ({
   roofType,
   translucent,
   rafterSpacing,
+  sunroom,
+  sunroomTint = '#73D8FF',
+  sunroomOpacity = 0.5,
 }: GableRoofModel) => {
-  const texture = useRoofTexture(textureType);
-
   const setCommonStore = useStore(Selector.set);
-  const shadowEnabled = useStore(Selector.viewState.shadowEnabled);
   const getElementById = useStore(Selector.getElementById);
   const removeElementById = useStore(Selector.removeElementById);
   const elements = useStore(Selector.elements);
@@ -831,7 +834,6 @@ const GableRoof = ({
   }, [currentWallArray, h]);
 
   const { grabRef, addUndoableMove, undoMove, setOldRefData } = useSolarPanelUndoable();
-  const { transparent, opacity } = useTransparent(translucent);
 
   return (
     <group position={[cx, cy, cz]} rotation={[0, 0, rotation]} name={`Gable Roof Group ${id}`}>
@@ -857,20 +859,19 @@ const GableRoof = ({
           const [leftRoof, rightRoof, rightRidge, leftRidge] = points;
           const isFlat = Math.abs(leftRoof.z) < 0.1;
           return (
-            <mesh
+            <RoofSegment
               key={i}
-              name={`Roof segment ${i}`}
-              castShadow={shadowEnabled && !transparent}
-              receiveShadow={shadowEnabled}
-            >
-              <convexGeometry args={[points, isFlat ? arr[0].direction : direction, isFlat ? 1 : length]} />
-              <meshStandardMaterial
-                map={texture}
-                color={textureType === RoofTexture.Default || textureType === RoofTexture.NoTexture ? color : 'white'}
-                transparent={transparent}
-                opacity={opacity}
-              />
-            </mesh>
+              points={points}
+              direction={isFlat ? arr[0].direction : direction}
+              length={isFlat ? 1 : length}
+              textureType={textureType}
+              color={color}
+              translucent={translucent}
+              sunroom={sunroom}
+              sunroomTint={sunroomTint}
+              sunroomOpacity={sunroomOpacity}
+              currWall={i === 0 ? currentWallArray[0] : currentWallArray[2]}
+            />
           );
         })}
         <GableRoofWireframe
@@ -881,6 +882,7 @@ const GableRoof = ({
         />
       </group>
 
+      {/* rafter */}
       {translucent && (
         <Rafter
           ridgeLeftPoint={ridgeLeftPointV3}
@@ -1065,6 +1067,159 @@ const GableRoof = ({
         </Plane>
       )}
     </group>
+  );
+};
+
+const RoofSegment = ({
+  points,
+  direction,
+  length,
+  textureType,
+  color,
+  translucent,
+  currWall,
+  sunroom,
+  sunroomTint,
+  sunroomOpacity,
+}: {
+  points: Vector3[];
+  direction: number;
+  length: number;
+  textureType: RoofTexture;
+  color: string | undefined;
+  translucent: boolean | undefined;
+  currWall: WallModel;
+  sunroom?: boolean;
+  sunroomTint?: string;
+  sunroomOpacity?: number;
+}) => {
+  const shadowEnabled = useStore(Selector.viewState.shadowEnabled);
+  const texture = useRoofTexture(textureType);
+  const { transparent, opacity } = useTransparent(translucent);
+  const { invalidate } = useThree();
+
+  const meshRef = useRef<Mesh>(null);
+  const planeRef = useRef<Mesh>(null);
+  const mullionRef = useRef<Mesh>(null);
+
+  const [mullionLx, setMullionLx] = useState(0);
+  const [mullionLz, setMullionLz] = useState(0);
+  const [show, setShow] = useState(true);
+
+  const checkValid = (v1: Vector3, v2: Vector3) => {
+    return v1.clone().setZ(0).distanceTo(v2.clone().setZ(0)) > 2;
+  };
+
+  const isNorthWest = (wall: WallModel) => {
+    return Math.abs(wall.relativeAngle) < 0.01 || Math.abs(wall.relativeAngle - Math.PI) < 0.01;
+  };
+
+  useEffect(() => {
+    if (!meshRef.current) return;
+
+    meshRef.current.geometry = new ConvexGeometry(points, direction, length);
+
+    const [wallLeft, wallRight, ridgeRight, ridgeLeft, wallLeftAfterOverhang] = points;
+    const thickness = wallLeftAfterOverhang.z - wallLeft.z;
+
+    const isValid = checkValid(wallLeft, ridgeLeft) && checkValid(wallRight, ridgeRight);
+    setShow(isValid);
+
+    if (sunroom && isValid) {
+      const center = Util.calculatePolygonCentroid(points.map(Util.mapVector3ToPoint2));
+      const centerV3 = new Vector3(center.x, center.y, 0);
+
+      const width = 0.75;
+      const wl = new Vector3().addVectors(
+        wallLeft,
+        centerV3.clone().sub(wallLeft).setZ(0).normalize().multiplyScalar(width),
+      );
+      const wr = new Vector3().addVectors(
+        wallRight,
+        centerV3.clone().sub(wallRight).setZ(0).normalize().multiplyScalar(width),
+      );
+      const rr = new Vector3().addVectors(
+        ridgeRight,
+        centerV3.clone().sub(ridgeRight).normalize().multiplyScalar(width),
+      );
+      const rl = new Vector3().addVectors(ridgeLeft, centerV3.clone().sub(ridgeLeft).normalize().multiplyScalar(width));
+
+      const h: Vector3[] = [];
+      h.push(wl);
+      h.push(wr);
+      h.push(rr.setZ(wr.z));
+      h.push(rl.setZ(wl.z));
+      h.push(wl.clone().setZ(1));
+      h.push(wr.clone().setZ(1));
+      h.push(rr.clone().setZ(1));
+      h.push(rl.clone().setZ(1));
+
+      const holeMesh = new Mesh(new ConvexGeometry(h));
+      const resMesh = CSG.subtract(meshRef.current, holeMesh);
+      meshRef.current.geometry = resMesh.geometry;
+
+      if (planeRef.current && mullionRef.current) {
+        const cz = (wallLeft.z + ridgeLeft.z) / 2 + thickness * 0.75;
+        planeRef.current.position.set(center.x, center.y, cz);
+        mullionRef.current.position.set(center.x, center.y, cz);
+
+        if (isNorthWest(currWall)) {
+          const lx = wl.distanceTo(wr);
+          const ly = wallLeft.distanceTo(ridgeLeft);
+
+          setMullionLx(lx);
+          setMullionLz(ly);
+
+          planeRef.current.scale.set(lx, ly, 1);
+
+          const rotationX = new Vector3().subVectors(wallLeft, ridgeLeft).angleTo(new Vector3(0, -1, 0));
+          planeRef.current.rotation.set(rotationX, 0, 0);
+          mullionRef.current.rotation.set(rotationX - HALF_PI, 0, 0);
+        } else {
+          const lx = wallLeft.distanceTo(ridgeLeft);
+          const ly = wl.distanceTo(wr);
+
+          setMullionLx(lx);
+          setMullionLz(ly);
+
+          planeRef.current.scale.set(lx, ly, 1);
+
+          const rotationY = new Vector3().subVectors(wallLeft, ridgeLeft).angleTo(new Vector3(1, 0, 0));
+          planeRef.current.rotation.set(0, rotationY, 0);
+          mullionRef.current.rotation.set(HALF_PI, rotationY, 0, 'YXZ');
+        }
+        invalidate();
+      }
+    }
+  }, [points, direction, length, currWall, show]);
+
+  return (
+    <>
+      <mesh ref={meshRef} castShadow={shadowEnabled && !transparent} receiveShadow={shadowEnabled}>
+        <meshStandardMaterial
+          map={texture}
+          color={textureType === RoofTexture.Default || textureType === RoofTexture.NoTexture ? color : 'white'}
+          transparent={transparent}
+          opacity={opacity}
+        />
+      </mesh>
+      {sunroom && show && (
+        <>
+          <Plane ref={planeRef}>
+            <meshBasicMaterial side={DoubleSide} color={sunroomTint} opacity={sunroomOpacity} transparent={true} />
+          </Plane>
+          <group ref={mullionRef}>
+            <WindowWireFrame
+              lx={mullionLx}
+              lz={mullionLz}
+              mullionWidth={0.05}
+              mullionSpacing={2.5}
+              mullionSpacingY={3}
+            />
+          </group>
+        </>
+      )}
+    </>
   );
 };
 

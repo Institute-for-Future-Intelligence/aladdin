@@ -13,6 +13,9 @@ export interface RoofModel extends ElementModel {
   thickness: number;
   translucent?: boolean;
   rafterSpacing?: number;
+  sunroom?: boolean;
+  sunroomTint?: string;
+  sunroomOpacity?: number;
 }
 
 export interface PyramidRoofModel extends RoofModel {}

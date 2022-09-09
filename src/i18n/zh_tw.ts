@@ -804,6 +804,9 @@ export const i18n_zh_tw = {
       AllRoofs: '所有的屋顶',
       OverhangLength: '屋簷長度',
       RafterSpacing: '屋椽間距',
+      sunroom: '陽光房',
+      sunroomTint: '阳光房著色',
+      sunroomOpacity: '阳光房不透明度',
     },
 
     doorMenu: {

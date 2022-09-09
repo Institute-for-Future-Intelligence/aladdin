@@ -13,7 +13,8 @@ interface WindowWireFrameProps {
   lz: number;
   mullionWidth: number;
   mullionSpacing: number;
-  lineColor: string;
+  mullionSpacingY?: number;
+  lineColor?: string;
   lineWidth?: number;
 }
 
@@ -22,14 +23,15 @@ const WindowWireFrame = ({
   lz,
   mullionWidth,
   mullionSpacing,
-  lineColor,
+  mullionSpacingY = mullionSpacing,
+  lineColor = 'black',
   lineWidth = 0.2,
 }: WindowWireFrameProps) => {
   lineWidth /= 20;
 
   const shadowEnabled = useStore(Selector.viewState.shadowEnabled);
 
-  const radialSegments = 2;
+  const radialSegments = 3;
   const heightSegments = 1;
 
   const wireframeRadius = lineWidth / 2;
@@ -61,7 +63,7 @@ const WindowWireFrame = ({
 
   const horizontalMullion = useMemo(() => {
     const arr: number[] = [];
-    const dividers = Math.round(lz / mullionSpacing) - 1;
+    const dividers = Math.round(lz / mullionSpacingY) - 1;
     if (dividers <= 0 || mullionWidth === 0) {
       return arr;
     }
@@ -75,7 +77,7 @@ const WindowWireFrame = ({
       arr.push(z, -z);
     }
     return arr;
-  }, [lz, mullionWidth, mullionSpacing]);
+  }, [lz, mullionWidth, mullionSpacingY]);
 
   return (
     <group name={'Window Wireframe'} position={[0, -0.001, 0]}>
