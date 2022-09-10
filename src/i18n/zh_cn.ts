@@ -373,6 +373,7 @@ export const i18n_zh_cn = {
       residentialBuildingsSubMenu: '住宅建筑',
       residentialBuildingExamples: {
         DutchColonialHouse: '荷兰殖民地风格的住宅',
+        Solarium: '有日光浴室的房子',
         BarnStyleHouse: '谷仓式风格的住宅',
       },
       commercialBuildingsSubMenu: '商用建筑',

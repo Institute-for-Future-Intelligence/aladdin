@@ -1,7 +1,7 @@
 {
-  "docid": "82V3buJJibcoPaSw3N8qMZ",
-  "time": "06/17/2022 06:49 pm",
-  "timestamp": 1655506181891,
+  "docid": "xy9UxsvquAv73mmnVdsZsX",
+  "time": "09/10/2022 12:52 pm",
+  "timestamp": 1662828721290,
   "userid": "QWecNcxhyvP6j6sBN11hBsfZDau1",
   "owner": null,
   "email": null,
@@ -55,7 +55,7 @@
       "type": "Foundation",
       "solarPowerTower": {},
       "lx": 18.159918676696766,
-      "lz": 0.1,
+      "lz": 0.08304003951954272,
       "solarAbsorberPipe": {},
       "normal": [
         0,
@@ -68,7 +68,8 @@
         0,
         0
       ],
-      "cz": 0.05
+      "cz": 0.05,
+      "enableGroupMaster": true
     },
     {
       "id": "2u4Fe7xnA6kkXXVGrQ4eyJ",
@@ -76,7 +77,7 @@
       "cz": 2.2408122612280286,
       "lx": 12,
       "relativeAngle": 3.141592653589793,
-      "lz": 4,
+      "lz": 3.3216015807817088,
       "roofId": "sfGxVh6UQ5Rh5eXQutdage",
       "ly": 0.3,
       "rightPoint": [
@@ -99,14 +100,14 @@
         0.1
       ],
       "type": "Wall",
-      "rightRoofHeight": 4,
+      "rightRoofHeight": 3.3216015807817088,
       "normal": [
         0,
         0,
         1
       ],
       "parentId": "m7AH7DcnoGzAq9kryBy4RS",
-      "leftRoofHeight": 4,
+      "leftRoofHeight": 3.3216015807817088,
       "showLabel": false,
       "foundationId": "m7AH7DcnoGzAq9kryBy4RS",
       "cx": 0.6999433978555056,
@@ -128,7 +129,7 @@
         0.1
       ],
       "cy": 0.6732245690928105,
-      "leftRoofHeight": 4,
+      "leftRoofHeight": 3.3216015807817088,
       "foundationId": "m7AH7DcnoGzAq9kryBy4RS",
       "selected": false,
       "rightPoint": [
@@ -145,10 +146,10 @@
         0,
         1
       ],
-      "lz": 4,
+      "lz": 3.3216015807817088,
       "centerRoofHeight": [
         0,
-        8
+        6.6432031615634175
       ],
       "leftJoints": [
         "cV8MyCuhWAsvEyyFuVqVqg"
@@ -164,22 +165,22 @@
       ],
       "relativeAngle": 1.5707963267948963,
       "textureType": "Wall Texture Default",
-      "rightRoofHeight": 4,
+      "rightRoofHeight": 3.3216015807817088,
       "roofId": "sfGxVh6UQ5Rh5eXQutdage",
       "centerLeftRoofHeight": [
         -0.35,
-        6
+        4.982402371172563
       ],
       "centerRightRoofHeight": [
         0.35,
-        6
+        4.982402371172563
       ],
       "color": "#f44e3b"
     },
     {
       "lx": 10,
       "windows": [],
-      "lz": 4,
+      "lz": 3.3216015807817088,
       "id": "skm8dNPSkFaVkoUwiPNfq1",
       "roofId": "sfGxVh6UQ5Rh5eXQutdage",
       "selected": false,
@@ -191,7 +192,7 @@
       ],
       "centerRoofHeight": [
         0,
-        8
+        6.6432031615634175
       ],
       "rightPoint": [
         -5.300056602144494,
@@ -209,7 +210,7 @@
         0
       ],
       "textureType": "Wall Texture Default",
-      "rightRoofHeight": 4,
+      "rightRoofHeight": 3.3216015807817088,
       "parentId": "m7AH7DcnoGzAq9kryBy4RS",
       "relativeAngle": 4.71238898038469,
       "foundationId": "m7AH7DcnoGzAq9kryBy4RS",
@@ -222,16 +223,16 @@
         "cV8MyCuhWAsvEyyFuVqVqg"
       ],
       "type": "Wall",
-      "leftRoofHeight": 4,
+      "leftRoofHeight": 3.3216015807817088,
       "ly": 0.3,
       "cx": -5.300056602144494,
       "centerLeftRoofHeight": [
         -0.35,
-        6
+        4.982402371172563
       ],
       "centerRightRoofHeight": [
         0.35,
-        6
+        4.982402371172563
       ],
       "color": "#f44e3b"
     },
@@ -270,15 +271,15 @@
         1
       ],
       "ly": 0.3,
-      "lz": 4,
-      "leftRoofHeight": 4,
+      "lz": 3.3216015807817088,
+      "leftRoofHeight": 3.3216015807817088,
       "relativeAngle": 0,
       "rotation": [
         0,
         0,
         0
       ],
-      "rightRoofHeight": 4,
+      "rightRoofHeight": 3.3216015807817088,
       "lx": 12,
       "color": "#f44e3b"
     },
@@ -306,7 +307,7 @@
         1
       ],
       "lx": 0.08333333333333333,
-      "mullionSpacing": 1
+      "mullionSpacing": 0.9
     },
     {
       "id": "5ncRWHnRQyocXJujBx5jNE",
@@ -331,7 +332,7 @@
       "lx": 0.08333333333333333,
       "ly": 0,
       "lz": 0.44384979425833565,
-      "mullionSpacing": 1
+      "mullionSpacing": 0.9
     },
     {
       "cx": 0.24999999999999992,
@@ -356,7 +357,7 @@
       "selected": false,
       "lz": 0.44384979425833565,
       "type": "Window",
-      "mullionSpacing": 1
+      "mullionSpacing": 0.9
     },
     {
       "rotation": [
@@ -381,14 +382,14 @@
       "ly": 0,
       "id": "upiLr8uqx55GDieKSLsjPj",
       "type": "Window",
-      "mullionSpacing": 1
+      "mullionSpacing": 0.9
     },
     {
       "type": "Human",
       "name": "Judy",
-      "cx": -3.8270430299453384,
-      "cy": -9.59921234768752,
-      "cz": 0,
+      "cx": -17.713408887077,
+      "cy": -11.550447387502688,
+      "cz": 4.440892098500626e-16,
       "lx": 0.45,
       "lz": 1.55,
       "normal": [
@@ -453,7 +454,7 @@
       "parentId": "2u4Fe7xnA6kkXXVGrQ4eyJ",
       "foundationId": "m7AH7DcnoGzAq9kryBy4RS",
       "selected": false,
-      "mullionSpacing": 1
+      "mullionSpacing": 0.9
     },
     {
       "type": "Window",
@@ -478,7 +479,7 @@
       "parentId": "2u4Fe7xnA6kkXXVGrQ4eyJ",
       "foundationId": "m7AH7DcnoGzAq9kryBy4RS",
       "selected": false,
-      "mullionSpacing": 1
+      "mullionSpacing": 0.9
     },
     {
       "type": "Roof",
@@ -488,7 +489,7 @@
       "cz": 0,
       "lx": 0,
       "ly": 0,
-      "lz": 8,
+      "lz": 6.6432031615634175,
       "roofType": "Gambrel",
       "wallsId": [
         "cV8MyCuhWAsvEyyFuVqVqg"
@@ -543,7 +544,7 @@
       "cz": 2.2408122612280286,
       "lx": 4,
       "ly": 0.3,
-      "lz": 4,
+      "lz": 3.3216015807817088,
       "leftJoints": [
         "pPpJHGJ2bGVqLdA1FpXi4V"
       ],
@@ -578,19 +579,19 @@
       "foundationId": "fbqvzYqiEy79jeL8wsadib",
       "selected": false,
       "roofId": "vCyCenkovRJf29DEpF24H5",
-      "leftRoofHeight": 4,
-      "rightRoofHeight": 4,
+      "leftRoofHeight": 3.3216015807817088,
+      "rightRoofHeight": 3.3216015807817088,
       "centerRoofHeight": [
         0,
-        8
+        6.6432031615634175
       ],
       "centerLeftRoofHeight": [
         -0.35,
-        6
+        4.982402371172563
       ],
       "centerRightRoofHeight": [
         0.35,
-        6
+        4.982402371172563
       ]
     },
     {
@@ -600,7 +601,7 @@
       "cz": 2.2301039869226305,
       "lx": 6.500000000000001,
       "ly": 0.3,
-      "lz": 4,
+      "lz": 3.3216015807817088,
       "leftJoints": [
         "beHqET5NN8aNdsuBncMpY7"
       ],
@@ -635,8 +636,8 @@
       "foundationId": "fbqvzYqiEy79jeL8wsadib",
       "selected": false,
       "roofId": "vCyCenkovRJf29DEpF24H5",
-      "leftRoofHeight": 4,
-      "rightRoofHeight": 4
+      "leftRoofHeight": 3.3216015807817088,
+      "rightRoofHeight": 3.3216015807817088
     },
     {
       "type": "Wall",
@@ -645,7 +646,7 @@
       "cz": 2.228839888904333,
       "lx": 6.5,
       "ly": 0.3,
-      "lz": 4,
+      "lz": 3.3216015807817088,
       "leftJoints": [
         "giYTP9Qg6uJ3yfkS1RoDqG"
       ],
@@ -680,8 +681,8 @@
       "foundationId": "fbqvzYqiEy79jeL8wsadib",
       "selected": false,
       "roofId": "vCyCenkovRJf29DEpF24H5",
-      "leftRoofHeight": 4,
-      "rightRoofHeight": 4
+      "leftRoofHeight": 3.3216015807817088,
+      "rightRoofHeight": 3.3216015807817088
     },
     {
       "type": "Wall",
@@ -690,7 +691,7 @@
       "cz": 2.268765007024547,
       "lx": 3.9999999999999982,
       "ly": 0.3,
-      "lz": 4,
+      "lz": 3.3216015807817088,
       "leftJoints": [
         "2RETAxyRMzZBEQkBGms56R"
       ],
@@ -725,19 +726,19 @@
       "foundationId": "fbqvzYqiEy79jeL8wsadib",
       "selected": false,
       "roofId": "vCyCenkovRJf29DEpF24H5",
-      "leftRoofHeight": 4,
-      "rightRoofHeight": 4,
+      "leftRoofHeight": 3.3216015807817088,
+      "rightRoofHeight": 3.3216015807817088,
       "centerRoofHeight": [
         0,
-        8
+        6.6432031615634175
       ],
       "centerLeftRoofHeight": [
         -0.326769752502783,
-        6
+        4.982402371172563
       ],
       "centerRightRoofHeight": [
         0.35,
-        6
+        4.982402371172563
       ]
     },
     {
@@ -747,7 +748,7 @@
       "cz": 0.05,
       "lx": 6.98034726695105,
       "ly": 11.023012573230504,
-      "lz": 0.1,
+      "lz": 0.08304003951954272,
       "normal": [
         0,
         0,
@@ -768,9 +769,9 @@
     {
       "type": "Human",
       "name": "Joel",
-      "cx": -17.545440346293198,
-      "cy": -10.066243799976066,
-      "cz": 8.881784197001252e-16,
+      "cx": -7.085472618116681,
+      "cy": -11.838842671576732,
+      "cz": 0,
       "lx": 1,
       "ly": 1,
       "lz": 1.75,
@@ -795,7 +796,7 @@
       "cz": 0,
       "lx": 0,
       "ly": 0,
-      "lz": 8,
+      "lz": 6.6432031615634175,
       "overhang": 0.4,
       "roofType": "Gambrel",
       "wallsId": [
@@ -920,7 +921,7 @@
       "parentId": "8XDG3EHsQoX26MhuzwMYUM",
       "foundationId": "m7AH7DcnoGzAq9kryBy4RS",
       "id": "qoQarTFv95tVF8owcPVUFr",
-      "mullionSpacing": 1
+      "mullionSpacing": 0.9
     },
     {
       "type": "Window",
@@ -946,7 +947,7 @@
       "parentId": "8XDG3EHsQoX26MhuzwMYUM",
       "foundationId": "m7AH7DcnoGzAq9kryBy4RS",
       "id": "gFrpbUVsUk5Cyw1YgAc3Su",
-      "mullionSpacing": 1
+      "mullionSpacing": 0.9
     },
     {
       "type": "Window",
@@ -972,7 +973,7 @@
       "parentId": "8XDG3EHsQoX26MhuzwMYUM",
       "foundationId": "m7AH7DcnoGzAq9kryBy4RS",
       "id": "4yxNuoacxD3HT5nPLe7wew",
-      "mullionSpacing": 1
+      "mullionSpacing": 0.9
     },
     {
       "type": "Window",
@@ -998,7 +999,7 @@
       "parentId": "skm8dNPSkFaVkoUwiPNfq1",
       "foundationId": "m7AH7DcnoGzAq9kryBy4RS",
       "id": "g7oggQtbGLCJnWDBEWrL6f",
-      "mullionSpacing": 1
+      "mullionSpacing": 0.9
     },
     {
       "type": "Window",
@@ -1024,7 +1025,7 @@
       "parentId": "skm8dNPSkFaVkoUwiPNfq1",
       "foundationId": "m7AH7DcnoGzAq9kryBy4RS",
       "id": "9KXbYufDZik3nedxtSG2Wa",
-      "mullionSpacing": 1
+      "mullionSpacing": 0.9
     },
     {
       "type": "Window",
@@ -1049,7 +1050,7 @@
       "parentId": "skm8dNPSkFaVkoUwiPNfq1",
       "foundationId": "m7AH7DcnoGzAq9kryBy4RS",
       "selected": false,
-      "mullionSpacing": 1
+      "mullionSpacing": 0.9
     },
     {
       "type": "Door",
@@ -1084,7 +1085,7 @@
       "cz": 0.05,
       "lx": 4.85091064049592,
       "ly": 8.877618502980704,
-      "lz": 0.1,
+      "lz": 0.08304003951954272,
       "normal": [
         0,
         0,
@@ -1109,7 +1110,7 @@
       "cz": 0,
       "lx": 4.5,
       "ly": 0.3,
-      "lz": 7,
+      "lz": 5.812802766367991,
       "relativeAngle": 4.71238898038469,
       "leftPoint": [
         -1.0798585007379167,
@@ -1146,8 +1147,8 @@
       "id": "1F9rbQh1mAYkQprzoxJ12Q",
       "color": "#f44e3b",
       "roofId": "9Jb55MpdEHfaQRtH1w8w7c",
-      "leftRoofHeight": 7,
-      "rightRoofHeight": 7
+      "leftRoofHeight": 5.812802766367991,
+      "rightRoofHeight": 5.812802766367991
     },
     {
       "type": "Wall",
@@ -1156,7 +1157,7 @@
       "cz": 0,
       "lx": 2.5,
       "ly": 0.3,
-      "lz": 7,
+      "lz": 5.812802766367991,
       "relativeAngle": 3.141592653589793,
       "leftPoint": [
         1.4201414992620833,
@@ -1193,11 +1194,11 @@
       "id": "9UyBScab4vxjAdrfwjXhxP",
       "color": "#f44e3b",
       "roofId": "9Jb55MpdEHfaQRtH1w8w7c",
-      "leftRoofHeight": 7,
-      "rightRoofHeight": 7,
+      "leftRoofHeight": 5.812802766367991,
+      "rightRoofHeight": 5.812802766367991,
       "centerRoofHeight": [
         0,
-        7.918539998167964
+        6.575558743849475
       ]
     },
     {
@@ -1207,7 +1208,7 @@
       "cz": 0,
       "lx": 4.5,
       "ly": 0.3,
-      "lz": 7,
+      "lz": 5.812802766367991,
       "relativeAngle": 1.5707963267948966,
       "leftPoint": [
         1.4201414992620833,
@@ -1244,8 +1245,8 @@
       "id": "vy2WJt6CvVCYvqCPAeFYe5",
       "color": "#f44e3b",
       "roofId": "9Jb55MpdEHfaQRtH1w8w7c",
-      "leftRoofHeight": 7,
-      "rightRoofHeight": 7
+      "leftRoofHeight": 5.812802766367991,
+      "rightRoofHeight": 5.812802766367991
     },
     {
       "type": "Wall",
@@ -1254,7 +1255,7 @@
       "cz": 0,
       "lx": 2.5,
       "ly": 0.3,
-      "lz": 7,
+      "lz": 5.812802766367991,
       "relativeAngle": 0,
       "leftPoint": [
         -1.0798585007379167,
@@ -1291,11 +1292,11 @@
       "id": "6U3sDe4yzT2QH8iRY62SdZ",
       "color": "#f44e3b",
       "roofId": "9Jb55MpdEHfaQRtH1w8w7c",
-      "leftRoofHeight": 7,
-      "rightRoofHeight": 7,
+      "leftRoofHeight": 5.812802766367991,
+      "rightRoofHeight": 5.812802766367991,
       "centerRoofHeight": [
         0,
-        7.918539998167964
+        6.575558743849475
       ]
     },
     {
@@ -1305,7 +1306,7 @@
       "cz": 0,
       "lx": 0,
       "ly": 0,
-      "lz": 7.918539998167964,
+      "lz": 6.575558743849475,
       "overhang": 0.2,
       "thickness": 0.2,
       "roofType": "Gable",
@@ -1345,7 +1346,7 @@
       "cz": 0,
       "lx": 4.5,
       "ly": 0.3,
-      "lz": 7,
+      "lz": 5.812802766367991,
       "leftJoints": [
         "1nb1rRhk5XTwkqRDvamK5g"
       ],
@@ -1380,8 +1381,8 @@
       "foundationId": "mJVE3dD5FuAaHn4NaQUVru",
       "selected": false,
       "roofId": "3RtfyZgDoXZ3wGixrorVUM",
-      "leftRoofHeight": 7,
-      "rightRoofHeight": 7
+      "leftRoofHeight": 5.812802766367991,
+      "rightRoofHeight": 5.812802766367991
     },
     {
       "type": "Wall",
@@ -1390,7 +1391,7 @@
       "cz": 0,
       "lx": 2.5,
       "ly": 0.3,
-      "lz": 7,
+      "lz": 5.812802766367991,
       "leftJoints": [
         "mMwirEeb4r8mhYQ7E9qdX2"
       ],
@@ -1425,11 +1426,11 @@
       "foundationId": "mJVE3dD5FuAaHn4NaQUVru",
       "selected": false,
       "roofId": "3RtfyZgDoXZ3wGixrorVUM",
-      "leftRoofHeight": 7,
-      "rightRoofHeight": 7,
+      "leftRoofHeight": 5.812802766367991,
+      "rightRoofHeight": 5.812802766367991,
       "centerRoofHeight": [
         0,
-        7.853077156935901
+        6.521198374619754
       ]
     },
     {
@@ -1439,7 +1440,7 @@
       "cz": 0,
       "lx": 4.5,
       "ly": 0.3,
-      "lz": 7,
+      "lz": 5.812802766367991,
       "leftJoints": [
         "3LCPjAAvYioWiSGfdrWDra"
       ],
@@ -1474,8 +1475,8 @@
       "foundationId": "mJVE3dD5FuAaHn4NaQUVru",
       "selected": false,
       "roofId": "3RtfyZgDoXZ3wGixrorVUM",
-      "leftRoofHeight": 7,
-      "rightRoofHeight": 7
+      "leftRoofHeight": 5.812802766367991,
+      "rightRoofHeight": 5.812802766367991
     },
     {
       "type": "Wall",
@@ -1484,7 +1485,7 @@
       "cz": 0,
       "lx": 2.5,
       "ly": 0.3,
-      "lz": 7,
+      "lz": 5.812802766367991,
       "leftJoints": [
         "bpwfKUJNQLVoQQHt2xqi72"
       ],
@@ -1519,23 +1520,12 @@
       "foundationId": "mJVE3dD5FuAaHn4NaQUVru",
       "selected": false,
       "roofId": "3RtfyZgDoXZ3wGixrorVUM",
-      "leftRoofHeight": 7,
-      "rightRoofHeight": 7,
+      "leftRoofHeight": 5.812802766367991,
+      "rightRoofHeight": 5.812802766367991,
       "centerRoofHeight": [
         0,
-        7.853077156935901
+        6.521198374619754
       ]
-    },
-    {
-      "id": "hzRKATNimGjTFGAGQh91VJ",
-      "parentId": "mJVE3dD5FuAaHn4NaQUVru",
-      "foundationId": "mJVE3dD5FuAaHn4NaQUVru",
-      "normal": [
-        0,
-        0,
-        1
-      ],
-      "selected": false
     },
     {
       "type": "Foundation",
@@ -1544,7 +1534,7 @@
       "cz": 0.05,
       "lx": 5.8904557376658255,
       "ly": 8.67915969134569,
-      "lz": 0.1,
+      "lz": 0.08304003951954272,
       "normal": [
         0,
         0,
@@ -1569,7 +1559,7 @@
       "cz": 0,
       "lx": 0,
       "ly": 0,
-      "lz": 7.853077156935901,
+      "lz": 6.521198374619754,
       "overhang": 0.3,
       "thickness": 0.2,
       "roofType": "Gable",
@@ -1684,9 +1674,9 @@
     "dailyHeliostatYieldPanelX": 0,
     "showDailyParabolicDishYieldPanel": false,
     "cameraPosition": [
-      -19.793156027693403,
-      -19.538919530277674,
-      3.623309406419104
+      -23.206169016661672,
+      -18.51229187904101,
+      2.4993066988877986
     ],
     "showYearlyHeliostatYieldPanel": false,
     "orthographic": false,
