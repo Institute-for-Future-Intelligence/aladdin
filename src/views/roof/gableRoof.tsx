@@ -64,43 +64,41 @@ interface RafterProps {
   rafterSpacing?: number;
 }
 
-const RafterUnit = React.memo(
-  ({ start, end, rafterWidth, rafterHeight, offset, color = 'orange' }: RafterUnitProps) => {
-    const startV2 = useMemo(() => new Vector2(start.x, start.y), [start]);
-    const endV2 = useMemo(() => new Vector2(end.x, end.y), [end]);
+const RafterUnit = React.memo(({ start, end, rafterWidth, rafterHeight, offset, color = 'white' }: RafterUnitProps) => {
+  const startV2 = useMemo(() => new Vector2(start.x, start.y), [start]);
+  const endV2 = useMemo(() => new Vector2(end.x, end.y), [end]);
 
-    const rotationZ = useMemo(() => new Vector2().subVectors(endV2, startV2).angle(), [startV2, endV2]);
+  const rotationZ = useMemo(() => new Vector2().subVectors(endV2, startV2).angle(), [startV2, endV2]);
 
-    const shape = useMemo(() => {
-      const s = new Shape();
+  const shape = useMemo(() => {
+    const s = new Shape();
 
-      const x = startV2.distanceTo(endV2);
-      const y = start.z - end.z;
+    const x = startV2.distanceTo(endV2);
+    const y = start.z - end.z;
 
-      s.moveTo(0, 0);
-      s.lineTo(x, -y);
-      s.lineTo(x, -y + rafterHeight);
-      s.lineTo(0, rafterHeight);
-      s.lineTo(0, 0);
+    s.moveTo(0, 0);
+    s.lineTo(x, -y);
+    s.lineTo(x, -y + rafterHeight);
+    s.lineTo(0, rafterHeight);
+    s.lineTo(0, 0);
 
-      return s;
-    }, [start, end, startV2, endV2, rafterHeight]);
+    return s;
+  }, [start, end, startV2, endV2, rafterHeight]);
 
-    return (
-      <group position={offset}>
-        <Extrude
-          args={[shape, { steps: 1, depth: rafterWidth, bevelEnabled: false }]}
-          position={start}
-          rotation={[HALF_PI, 0, rotationZ, 'ZXY']}
-          castShadow={true}
-          receiveShadow={true}
-        >
-          <meshStandardMaterial color={color} />
-        </Extrude>
-      </group>
-    );
-  },
-);
+  return (
+    <group position={offset}>
+      <Extrude
+        args={[shape, { steps: 1, depth: rafterWidth, bevelEnabled: false }]}
+        position={start}
+        rotation={[HALF_PI, 0, rotationZ, 'ZXY']}
+        castShadow={true}
+        receiveShadow={true}
+      >
+        <meshStandardMaterial color={color} />
+      </Extrude>
+    </group>
+  );
+});
 
 const Rafter = ({
   ridgeLeftPoint,
@@ -188,13 +186,6 @@ const Rafter = ({
               <RafterUnit start={v.ridge} end={v.front} rafterWidth={rafterWidth} rafterHeight={rafterHeight} />
               <RafterUnit
                 start={v.ridge}
-                end={v.back}
-                rafterWidth={rafterWidth}
-                rafterHeight={rafterHeight}
-                offset={offset}
-              />
-              <RafterUnit
-                start={v.front}
                 end={v.back}
                 rafterWidth={rafterWidth}
                 rafterHeight={rafterHeight}
@@ -300,7 +291,7 @@ const GableRoof = ({
   rafterSpacing,
   sunroom,
   sunroomTint = '#73D8FF',
-  sunroomOpacity = 0.5,
+  opacity = 0.5,
 }: GableRoofModel) => {
   const setCommonStore = useStore(Selector.set);
   const getElementById = useStore(Selector.getElementById);
@@ -869,7 +860,7 @@ const GableRoof = ({
               translucent={translucent}
               sunroom={sunroom}
               sunroomTint={sunroomTint}
-              sunroomOpacity={sunroomOpacity}
+              opacity={opacity}
               currWall={i === 0 ? currentWallArray[0] : currentWallArray[2]}
             />
           );
@@ -1080,7 +1071,7 @@ const RoofSegment = ({
   currWall,
   sunroom,
   sunroomTint,
-  sunroomOpacity,
+  opacity,
 }: {
   points: Vector3[];
   direction: number;
@@ -1091,11 +1082,11 @@ const RoofSegment = ({
   currWall: WallModel;
   sunroom?: boolean;
   sunroomTint?: string;
-  sunroomOpacity?: number;
+  opacity?: number;
 }) => {
   const shadowEnabled = useStore(Selector.viewState.shadowEnabled);
   const texture = useRoofTexture(textureType);
-  const { transparent, opacity } = useTransparent(translucent);
+  const { transparent, opacity: _opacity } = useTransparent(translucent);
   const { invalidate } = useThree();
 
   const meshRef = useRef<Mesh>(null);
@@ -1200,13 +1191,13 @@ const RoofSegment = ({
           map={texture}
           color={textureType === RoofTexture.Default || textureType === RoofTexture.NoTexture ? color : 'white'}
           transparent={transparent}
-          opacity={opacity}
+          opacity={translucent ? opacity : _opacity}
         />
       </mesh>
       {sunroom && show && (
         <>
           <Plane ref={planeRef}>
-            <meshBasicMaterial side={DoubleSide} color={sunroomTint} opacity={sunroomOpacity} transparent={true} />
+            <meshBasicMaterial side={DoubleSide} color={sunroomTint} opacity={opacity} transparent={true} />
           </Plane>
           <group ref={mullionRef}>
             <WindowWireFrame

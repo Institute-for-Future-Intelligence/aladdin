@@ -13,7 +13,7 @@ import { UndoableChange } from 'src/undo/UndoableChange';
 import { UndoableChangeGroup } from 'src/undo/UndoableChangeGroup';
 import { RoofModel } from 'src/models/RoofModel';
 
-const SunroomOpacityInput = ({ setDialogVisible }: { setDialogVisible: (b: boolean) => void }) => {
+const RoofOpacityInput = ({ setDialogVisible }: { setDialogVisible: (b: boolean) => void }) => {
   const language = useStore(Selector.language);
   const roof = useStore(Selector.selectedElement) as RoofModel;
   const addUndoable = useStore(Selector.addUndoable);
@@ -25,7 +25,7 @@ const SunroomOpacityInput = ({ setDialogVisible }: { setDialogVisible: (b: boole
   const getElementById = useStore(Selector.getElementById);
   const setCommonStore = useStore(Selector.set);
 
-  const [input, setInput] = useState<number>(roof?.sunroomOpacity ?? 0.5);
+  const [input, setInput] = useState<number>(roof?.opacity ?? 0.5);
   const [dragEnabled, setDragEnabled] = useState<boolean>(false);
   const [bounds, setBounds] = useState<DraggableBounds>({ left: 0, top: 0, bottom: 0, right: 0 } as DraggableBounds);
   const dragRef = useRef<HTMLDivElement | null>(null);
@@ -34,15 +34,15 @@ const SunroomOpacityInput = ({ setDialogVisible }: { setDialogVisible: (b: boole
 
   useEffect(() => {
     if (roof) {
-      setInput(roof?.sunroomOpacity ?? 0.5);
+      setInput(roof?.opacity ?? 0.5);
     }
   }, [roof]);
 
-  const updateSunroomOpacityById = (id: string, input: number) => {
+  const updateopacityById = (id: string, input: number) => {
     setCommonStore((state) => {
       for (const e of state.elements) {
         if (e.id === id) {
-          (e as RoofModel).sunroomOpacity = input;
+          (e as RoofModel).opacity = input;
           break;
         }
       }
@@ -51,13 +51,13 @@ const SunroomOpacityInput = ({ setDialogVisible }: { setDialogVisible: (b: boole
 
   const undoInMap = (map: Map<string, number>) => {
     for (const [id, val] of map.entries()) {
-      updateSunroomOpacityById(id, val);
+      updateopacityById(id, val);
     }
   };
 
   const updateInMap = (map: Map<string, number>, value: number) => {
     for (const id of map.keys()) {
-      updateSunroomOpacityById(id, value);
+      updateopacityById(id, value);
     }
   };
 
@@ -69,8 +69,8 @@ const SunroomOpacityInput = ({ setDialogVisible }: { setDialogVisible: (b: boole
         setCommonStore((state) => {
           for (const e of state.elements) {
             if (e.type === ObjectType.Roof && !e.locked) {
-              oldValuesAll.set(e.id, (e as RoofModel).sunroomOpacity);
-              (e as RoofModel).sunroomOpacity = value;
+              oldValuesAll.set(e.id, (e as RoofModel).opacity);
+              (e as RoofModel).opacity = value;
             }
           }
         });
@@ -95,8 +95,8 @@ const SunroomOpacityInput = ({ setDialogVisible }: { setDialogVisible: (b: boole
           setCommonStore((state) => {
             for (const elem of state.elements) {
               if (elem.type === ObjectType.Roof && elem.foundationId === roof.foundationId && !elem.locked) {
-                oldValuesAboveFoundation.set(elem.id, (elem as RoofModel).sunroomOpacity);
-                (elem as RoofModel).sunroomOpacity = value;
+                oldValuesAboveFoundation.set(elem.id, (elem as RoofModel).opacity);
+                (elem as RoofModel).opacity = value;
               }
             }
           });
@@ -123,7 +123,7 @@ const SunroomOpacityInput = ({ setDialogVisible }: { setDialogVisible: (b: boole
       default:
         if (roof) {
           const updatedRoof = getElementById(roof.id) as RoofModel;
-          const oldOverhangLength = updatedRoof.sunroomOpacity ?? roof.sunroomOpacity ?? 0.5;
+          const oldOverhangLength = updatedRoof.opacity ?? roof.opacity ?? 0.5;
           const undoableChange = {
             name: 'Set Sunroom Opacity',
             timestamp: Date.now(),
@@ -132,14 +132,14 @@ const SunroomOpacityInput = ({ setDialogVisible }: { setDialogVisible: (b: boole
             changedElementId: roof.id,
             changedElementType: roof.type,
             undo: () => {
-              updateSunroomOpacityById(undoableChange.changedElementId, undoableChange.oldValue as number);
+              updateopacityById(undoableChange.changedElementId, undoableChange.oldValue as number);
             },
             redo: () => {
-              updateSunroomOpacityById(undoableChange.changedElementId, undoableChange.newValue as number);
+              updateopacityById(undoableChange.changedElementId, undoableChange.newValue as number);
             },
           } as UndoableChange;
           addUndoable(undoableChange);
-          updateSunroomOpacityById(roof.id, value);
+          updateopacityById(roof.id, value);
           setApplyCount(applyCount + 1);
         }
     }
@@ -159,7 +159,7 @@ const SunroomOpacityInput = ({ setDialogVisible }: { setDialogVisible: (b: boole
   };
 
   const close = () => {
-    setInput(roof.sunroomOpacity ?? 0.5);
+    setInput(roof.opacity ?? 0.5);
     setDialogVisible(false);
   };
 
@@ -189,7 +189,7 @@ const SunroomOpacityInput = ({ setDialogVisible }: { setDialogVisible: (b: boole
             onMouseOver={() => setDragEnabled(true)}
             onMouseOut={() => setDragEnabled(false)}
           >
-            {i18n.t('roofMenu.sunroomOpacity', lang)}
+            {i18n.t('roofMenu.opacity', lang)}
           </div>
         }
         footer={[
@@ -251,4 +251,4 @@ const SunroomOpacityInput = ({ setDialogVisible }: { setDialogVisible: (b: boole
   );
 };
 
-export default SunroomOpacityInput;
+export default RoofOpacityInput;

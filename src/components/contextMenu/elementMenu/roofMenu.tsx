@@ -16,7 +16,7 @@ import RoofOverhangInput from './roofOverhangInput';
 import RoofThicknessInput from './roofThicknessInput';
 import RoofRafterSpacingInput from './roofRafterSpacingInput';
 import SunroomTintSelection from './sunRoomTintSelection';
-import SunroomOpacityInput from './sunroomOpacityInput';
+import RoofOpacityInput from './roofOpacityInput';
 
 export const RoofMenu = () => {
   const roof = useStore(Selector.selectedElement) as RoofModel;
@@ -29,7 +29,7 @@ export const RoofMenu = () => {
   const [textureDialogVisible, setTextureDialogVisible] = useState(false);
   const [colorDialogVisible, setColorDialogVisible] = useState(false);
   const [sunroomTintDialogVisible, setSunroomTintDialogVisible] = useState(false);
-  const [sunroomOpacityDialogVisible, setSunroomOpacityDialogVisible] = useState(false);
+  const [opacityDialogVisible, setopacityDialogVisible] = useState(false);
 
   const lang = { lng: language };
   const paddingLeft = '36px';
@@ -96,21 +96,24 @@ export const RoofMenu = () => {
                     >
                       {i18n.t('roofMenu.sunroomTint', lang)} ...
                     </Menu.Item>
-                    {sunroomOpacityDialogVisible && (
-                      <SunroomOpacityInput setDialogVisible={setSunroomOpacityDialogVisible} />
-                    )}
-                    <Menu.Item
-                      key={'roof-sunroomOpacityInput'}
-                      style={{ paddingLeft: paddingLeft }}
-                      onClick={() => {
-                        setApplyCount(0);
-                        setSunroomOpacityDialogVisible(true);
-                      }}
-                    >
-                      {i18n.t('roofMenu.sunroomOpacity', lang)} ...
-                    </Menu.Item>
                   </>
                 )}
+              </>
+            )}
+
+            {(roof.translucent || roof.sunroom) && (
+              <>
+                {opacityDialogVisible && <RoofOpacityInput setDialogVisible={setopacityDialogVisible} />}
+                <Menu.Item
+                  key={'roof-opacityInput'}
+                  style={{ paddingLeft: paddingLeft }}
+                  onClick={() => {
+                    setApplyCount(0);
+                    setopacityDialogVisible(true);
+                  }}
+                >
+                  {i18n.t('roofMenu.opacity', lang)} ...
+                </Menu.Item>
               </>
             )}
 

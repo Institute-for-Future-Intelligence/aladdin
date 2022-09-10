@@ -805,7 +805,7 @@ export const i18n_zh_cn = {
       RafterSpacing: '屋椽间距',
       sunroom: '阳光房',
       sunroomTint: '阳光房着色',
-      sunroomOpacity: '阳光房不透明度',
+      opacity: '阳光房不透明度',
     },
 
     doorMenu: {

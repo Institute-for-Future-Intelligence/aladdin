@@ -834,7 +834,7 @@ export const i18n_en = {
       RafterSpacing: 'Rafter Spacing',
       sunroom: 'Sunroom',
       sunroomTint: 'Sunroom Tint',
-      sunroomOpacity: 'Sunroom Opacity',
+      opacity: 'Opacity',
     },
 
     doorMenu: {

@@ -603,7 +603,7 @@ export class ElementModelCloner {
       thickness: roof.thickness,
       wallsId: [...roof.wallsId], // handled in common store
       sunroom: roof.sunroom,
-      sunroomOpacity: roof.sunroomOpacity,
+      opacity: roof.opacity,
       sunroomTint: roof.sunroomTint,
     } as RoofModel;
     switch (roof.roofType) {
