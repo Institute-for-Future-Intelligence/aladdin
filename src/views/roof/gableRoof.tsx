@@ -1120,7 +1120,7 @@ const RoofSegment = ({
       const center = Util.calculatePolygonCentroid(points.map(Util.mapVector3ToPoint2));
       const centerV3 = new Vector3(center.x, center.y, 0);
 
-      const width = 0.75;
+      const width = 0.25;
       const wl = new Vector3().addVectors(
         wallLeft,
         centerV3.clone().sub(wallLeft).setZ(0).normalize().multiplyScalar(width),
