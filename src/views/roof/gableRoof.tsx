@@ -2,13 +2,13 @@
  * @Copyright 2021-2022. Institute for Future Intelligence, Inc.
  */
 
-import { Box, Extrude, Line, Plane, Sphere } from '@react-three/drei';
+import { Extrude, Line, Plane, Sphere } from '@react-three/drei';
 import React, { useEffect, useMemo, useRef, useState } from 'react';
-import { GableRoofModel } from 'src/models/RoofModel';
+import { GableRoofModel, RoofStructure } from 'src/models/RoofModel';
 import { WallModel } from 'src/models/WallModel';
 import { useStore } from 'src/stores/common';
 import * as Selector from 'src/stores/selector';
-import { DoubleSide, Euler, Mesh, MeshStandardMaterial, Raycaster, Shape, Vector2, Vector3 } from 'three';
+import { DoubleSide, Euler, Mesh, Raycaster, Shape, Vector2, Vector3 } from 'three';
 import { useStoreRef } from 'src/stores/commonRef';
 import { useThree } from '@react-three/fiber';
 import { HALF_PI } from 'src/constants';
@@ -17,14 +17,14 @@ import {
   addUndoableResizeRoofHeight,
   ConvexGeoProps,
   handleContextMenu,
-  RoofWireframeProps,
   handlePointerDown,
   handlePointerMove,
   handlePointerUp,
+  RoofWireframeProps,
   updateRooftopSolarPanel,
 } from './roofRenderer';
 import { UnoableResizeGableRoofRidge } from 'src/undo/UndoableResize';
-import { RoofTexture, ObjectType } from 'src/types';
+import { ObjectType, RoofTexture } from 'src/types';
 import { Util } from 'src/Util';
 import { Point2 } from 'src/models/Point2';
 import { RoofUtil } from './RoofUtil';
@@ -287,10 +287,10 @@ const GableRoof = ({
   lineColor = 'black',
   lineWidth = 0.2,
   roofType,
+  roofStructure,
   translucent,
   rafterSpacing,
-  sunroom,
-  sunroomTint = '#73D8FF',
+  glassTint = '#73D8FF',
   opacity = 0.5,
 }: GableRoofModel) => {
   const setCommonStore = useStore(Selector.set);
@@ -858,8 +858,8 @@ const GableRoof = ({
               textureType={textureType}
               color={color}
               translucent={translucent}
-              sunroom={sunroom}
-              sunroomTint={sunroomTint}
+              roofStructure={roofStructure}
+              glassTint={glassTint}
               opacity={opacity}
               currWall={i === 0 ? currentWallArray[0] : currentWallArray[2]}
             />
@@ -1069,8 +1069,8 @@ const RoofSegment = ({
   color,
   translucent,
   currWall,
-  sunroom,
-  sunroomTint,
+  roofStructure,
+  glassTint,
   opacity,
 }: {
   points: Vector3[];
@@ -1080,8 +1080,8 @@ const RoofSegment = ({
   color: string | undefined;
   translucent: boolean | undefined;
   currWall: WallModel;
-  sunroom?: boolean;
-  sunroomTint?: string;
+  roofStructure?: RoofStructure;
+  glassTint?: string;
   opacity?: number;
 }) => {
   const shadowEnabled = useStore(Selector.viewState.shadowEnabled);
@@ -1116,7 +1116,7 @@ const RoofSegment = ({
     const isValid = checkValid(wallLeft, ridgeLeft) && checkValid(wallRight, ridgeRight);
     setShow(isValid);
 
-    if (sunroom && isValid) {
+    if (roofStructure === RoofStructure.Glass && isValid) {
       const center = Util.calculatePolygonCentroid(points.map(Util.mapVector3ToPoint2));
       const centerV3 = new Vector3(center.x, center.y, 0);
 
@@ -1194,10 +1194,10 @@ const RoofSegment = ({
           opacity={translucent ? opacity : _opacity}
         />
       </mesh>
-      {sunroom && show && (
+      {roofStructure === RoofStructure.Glass && show && (
         <>
           <Plane ref={planeRef}>
-            <meshBasicMaterial side={DoubleSide} color={sunroomTint} opacity={opacity} transparent={true} />
+            <meshBasicMaterial side={DoubleSide} color={glassTint} opacity={opacity} transparent={true} />
           </Plane>
           <group ref={mullionRef}>
             <WindowWireFrame

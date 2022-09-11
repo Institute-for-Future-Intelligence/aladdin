@@ -8,13 +8,13 @@ import { ElementModel } from './ElementModel';
 export interface RoofModel extends ElementModel {
   wallsId: string[];
   roofType: RoofType;
+  roofStructure?: RoofStructure;
   textureType: RoofTexture;
   overhang: number;
   thickness: number;
   translucent?: boolean;
   rafterSpacing?: number;
-  sunroom?: boolean;
-  sunroomTint?: string;
+  glassTint?: string;
   opacity?: number;
 }
 
@@ -54,4 +54,10 @@ export enum RoofType {
   Hip = 'Hip',
   Gambrel = 'Gambrel',
   Mansard = 'Mansard',
+}
+
+export enum RoofStructure {
+  Default = 'Default',
+  Rafter = 'Rafter',
+  Glass = 'Glass',
 }

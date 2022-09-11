@@ -152,12 +152,12 @@ export const addUndoableResizeRoofHeight = (elemId: string, oldHeight: number, n
     undo: () => {
       useStore
         .getState()
-        .updateRoofHeight(undoableResizeRoofHeight.resizedElementId, undoableResizeRoofHeight.oldHeight);
+        .updateRoofHeightById(undoableResizeRoofHeight.resizedElementId, undoableResizeRoofHeight.oldHeight);
     },
     redo: () => {
       useStore
         .getState()
-        .updateRoofHeight(undoableResizeRoofHeight.resizedElementId, undoableResizeRoofHeight.newHeight);
+        .updateRoofHeightById(undoableResizeRoofHeight.resizedElementId, undoableResizeRoofHeight.newHeight);
     },
   } as UndoableResizeRoofHeight;
   useStore.getState().addUndoable(undoableResizeRoofHeight);

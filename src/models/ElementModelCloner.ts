@@ -598,13 +598,13 @@ export class ElementModelCloner {
       parentId: parent.id,
       foundationId: parent.id,
       roofType: roof.roofType,
+      roofStructure: roof.roofStructure,
       textureType: roof.textureType,
       overhang: roof.overhang,
       thickness: roof.thickness,
       wallsId: [...roof.wallsId], // handled in common store
-      sunroom: roof.sunroom,
       opacity: roof.opacity,
-      sunroomTint: roof.sunroomTint,
+      glassTint: roof.glassTint,
     } as RoofModel;
     switch (roof.roofType) {
       case RoofType.Gable:

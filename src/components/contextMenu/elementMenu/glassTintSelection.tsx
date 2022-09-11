@@ -1,5 +1,5 @@
 /*
- * @Copyright 2021-2022. Institute for Future Intelligence, Inc.
+ * @Copyright 2022. Institute for Future Intelligence, Inc.
  */
 
 import React, { useEffect, useRef, useState } from 'react';
@@ -14,7 +14,7 @@ import { UndoableChangeGroup } from 'src/undo/UndoableChangeGroup';
 import { CompactPicker } from 'react-color';
 import { RoofModel } from 'src/models/RoofModel';
 
-const SunroomTintSelection = ({ setDialogVisible }: { setDialogVisible: (b: boolean) => void }) => {
+const GlassTintSelection = ({ setDialogVisible }: { setDialogVisible: (b: boolean) => void }) => {
   const setCommonStore = useStore(Selector.set);
   const language = useStore(Selector.language);
   const roof = useStore(Selector.selectedElement) as RoofModel;
@@ -26,7 +26,7 @@ const SunroomTintSelection = ({ setDialogVisible }: { setDialogVisible: (b: bool
   const revertApply = useStore(Selector.revertApply);
   const getElementById = useStore(Selector.getElementById);
 
-  const [selectedTint, setSelectedTint] = useState<string>(roof?.sunroomTint ?? '#73D8FF');
+  const [selectedTint, setSelectedTint] = useState<string>(roof?.glassTint ?? '#73D8FF');
   const [dragEnabled, setDragEnabled] = useState<boolean>(false);
   const [bounds, setBounds] = useState<DraggableBounds>({ left: 0, top: 0, bottom: 0, right: 0 } as DraggableBounds);
   const dragRef = useRef<HTMLDivElement | null>(null);
@@ -40,16 +40,16 @@ const SunroomTintSelection = ({ setDialogVisible }: { setDialogVisible: (b: bool
 
   useEffect(() => {
     if (roof) {
-      setSelectedTint(roof?.sunroomTint ?? '#73D8FF');
+      setSelectedTint(roof?.glassTint ?? '#73D8FF');
     }
   }, [roof]);
 
-  const updateTintById = (id: string, sunroomTint: string) => {
+  const updateTintById = (id: string, glassTint: string) => {
     setCommonStore((state) => {
       for (const e of state.elements) {
         if (e.id === id) {
           if (!e.locked) {
-            (e as RoofModel).sunroomTint = sunroomTint;
+            (e as RoofModel).glassTint = glassTint;
           }
           break;
         }
@@ -57,30 +57,30 @@ const SunroomTintSelection = ({ setDialogVisible }: { setDialogVisible: (b: bool
     });
   };
 
-  const updateColorInMap = (map: Map<string, string>, sunroomTint: string) => {
+  const updateColorInMap = (map: Map<string, string>, tint: string) => {
     for (const id of map.keys()) {
-      updateTintById(id, sunroomTint as string);
+      updateTintById(id, tint as string);
     }
   };
 
   const undoTintInMap = (map: Map<string, string>) => {
-    for (const [id, sunroomTint] of map.entries()) {
-      updateTintById(id, sunroomTint as string);
+    for (const [id, tint] of map.entries()) {
+      updateTintById(id, tint as string);
     }
   };
 
-  const setSunroomTint = (value: string) => {
+  const setTint = (value: string) => {
     if (!roof) return;
     switch (roofActionScope) {
       case Scope.AllObjectsOfThisType:
         const oldTintsAll = new Map<string, string>();
         for (const elem of useStore.getState().elements) {
           if (elem.type === ObjectType.Roof && !elem.locked) {
-            oldTintsAll.set(elem.id, (elem as RoofModel).sunroomTint ?? '#73D8FF');
+            oldTintsAll.set(elem.id, (elem as RoofModel).glassTint ?? '#73D8FF');
           }
         }
         const undoableChangeAll = {
-          name: 'Set Sunroom Tint for All Roofs',
+          name: 'Set Glass Tint for All Roofs',
           timestamp: Date.now(),
           oldValues: oldTintsAll,
           newValue: value,
@@ -100,11 +100,11 @@ const SunroomTintSelection = ({ setDialogVisible }: { setDialogVisible: (b: bool
           const oldTintsAboveFoundation = new Map<string, string>();
           for (const elem of useStore.getState().elements) {
             if (elem.type === ObjectType.Roof && elem.foundationId === roof.foundationId && !roof.locked) {
-              oldTintsAboveFoundation.set(elem.id, (elem as RoofModel).sunroomTint ?? '#73D8FF');
+              oldTintsAboveFoundation.set(elem.id, (elem as RoofModel).glassTint ?? '#73D8FF');
             }
           }
           const undoableChangeAboveFoundation = {
-            name: 'Set Sunroom Tint for All Roofs Above Foundation',
+            name: 'Set Glass Tint for All Roofs Above Foundation',
             timestamp: Date.now(),
             oldValues: oldTintsAboveFoundation,
             newValue: value,
@@ -129,9 +129,9 @@ const SunroomTintSelection = ({ setDialogVisible }: { setDialogVisible: (b: bool
       default:
         if (roof) {
           const updatedRoof = getElementById(roof.id) as RoofModel;
-          const oldTint = (updatedRoof ? updatedRoof.sunroomTint : roof.sunroomTint) ?? '#73D8FF';
+          const oldTint = (updatedRoof ? updatedRoof.glassTint : roof.glassTint) ?? '#73D8FF';
           const undoableChange = {
-            name: 'Set Sunroom Tint of Selected Roof',
+            name: 'Set Glass Tint of Selected Roof',
             timestamp: Date.now(),
             oldValue: oldTint,
             newValue: value,
@@ -165,8 +165,8 @@ const SunroomTintSelection = ({ setDialogVisible }: { setDialogVisible: (b: bool
   };
 
   const close = () => {
-    if (roof?.sunroomTint) {
-      setSelectedTint(roof.sunroomTint);
+    if (roof?.glassTint) {
+      setSelectedTint(roof.glassTint);
     }
     setDialogVisible(false);
   };
@@ -178,18 +178,17 @@ const SunroomTintSelection = ({ setDialogVisible }: { setDialogVisible: (b: bool
 
   const handleOk = () => {
     const updatedRoof = getElementById(roof.id) as RoofModel;
-    if (updatedRoof && updatedRoof.sunroomTint !== selectedTint) {
-      setSunroomTint(selectedTint);
+    if (updatedRoof && updatedRoof.glassTint !== selectedTint) {
+      setTint(selectedTint);
     }
     setDialogVisible(false);
     setApplyCount(0);
   };
 
   const handleApply = () => {
-    setSunroomTint(selectedTint);
+    setTint(selectedTint);
   };
 
-  console.log('tintttt');
   return (
     <>
       <Modal
@@ -201,7 +200,7 @@ const SunroomTintSelection = ({ setDialogVisible }: { setDialogVisible: (b: bool
             onMouseOver={() => setDragEnabled(true)}
             onMouseOut={() => setDragEnabled(false)}
           >
-            {i18n.t('roofMenu.sunroomTint', lang)}
+            {i18n.t('roofMenu.GlassTint', lang)}
           </div>
         }
         footer={[
@@ -228,7 +227,7 @@ const SunroomTintSelection = ({ setDialogVisible }: { setDialogVisible: (b: bool
         <Row gutter={6}>
           <Col className="gutter-row" span={11}>
             <CompactPicker
-              color={selectedTint ?? roof?.sunroomTint ?? '#73D8FF'}
+              color={selectedTint ?? roof?.glassTint ?? '#73D8FF'}
               onChangeComplete={(colorResult) => {
                 setSelectedTint(colorResult.hex);
               }}
@@ -255,4 +254,4 @@ const SunroomTintSelection = ({ setDialogVisible }: { setDialogVisible: (b: bool
   );
 };
 
-export default SunroomTintSelection;
+export default GlassTintSelection;

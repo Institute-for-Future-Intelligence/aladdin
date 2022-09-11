@@ -833,9 +833,12 @@ export const i18n_en = {
       AllRoofs: 'All Roofs',
       OverhangLength: 'Overhang Length',
       RafterSpacing: 'Rafter Spacing',
-      sunroom: 'Sunroom',
-      sunroomTint: 'Sunroom Tint',
-      opacity: 'Opacity',
+      GlassTint: 'Glass Tint',
+      Opacity: 'Opacity',
+      RoofStructure: 'Roof Structure',
+      DefaultStructure: 'Default',
+      RafterStructure: 'Rafter',
+      GlassStructure: 'Glass',
     },
 
     doorMenu: {

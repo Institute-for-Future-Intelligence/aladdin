@@ -1017,7 +1017,9 @@ export const updateWallThicknessAboveFoundation = (state: CommonStoreState) => s
 
 export const updateWallThicknessForAll = (state: CommonStoreState) => state.updateWallThicknessForAll;
 
-export const updateRoofHeight = (state: CommonStoreState) => state.updateRoofHeight;
+export const updateRoofHeightById = (state: CommonStoreState) => state.updateRoofHeightById;
+
+export const updateRoofStructureById = (state: CommonStoreState) => state.updateRoofStructureById;
 
 export * as solarPanelArrayLayoutParams from './solarPanelArrayLayoutParams';
 

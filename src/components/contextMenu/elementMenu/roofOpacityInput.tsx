@@ -189,7 +189,7 @@ const RoofOpacityInput = ({ setDialogVisible }: { setDialogVisible: (b: boolean)
             onMouseOver={() => setDragEnabled(true)}
             onMouseOut={() => setDragEnabled(false)}
           >
-            {i18n.t('roofMenu.opacity', lang)}
+            {i18n.t('roofMenu.Opacity', lang)}
           </div>
         }
         footer={[

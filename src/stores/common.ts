@@ -20,6 +20,7 @@ import {
   CuboidTexture,
   DatumEntry,
   DiurnalTemperatureModel,
+  ElementState,
   EvolutionMethod,
   FoundationTexture,
   HumanName,
@@ -38,7 +39,6 @@ import {
   TreeType,
   User,
   WallTexture,
-  ElementState,
 } from '../types';
 import { DefaultWorldModel } from './DefaultWorldModel';
 import { Box3, Euler, Raycaster, Texture, TextureLoader, Vector2, Vector3 } from 'three';
@@ -85,7 +85,7 @@ import { SolarAbsorberPipeModel } from '../models/SolarAbsorberPipeModel';
 import { SolarPowerTowerModel } from '../models/SolarPowerTowerModel';
 import { EvolutionaryAlgorithmState } from './EvolutionaryAlgorithmState';
 import { DefaultEvolutionaryAlgorithmState } from './DefaultEvolutionaryAlgorithmState';
-import { RoofModel } from 'src/models/RoofModel';
+import { RoofModel, RoofStructure } from 'src/models/RoofModel';
 import { SolarPanelArrayLayoutConstraints } from './SolarPanelArrayLayoutConstraints';
 import { DefaultSolarPanelArrayLayoutConstraints } from './DefaultSolarPanelArrayLayoutConstraints';
 import { EconomicsParams } from './EconomicsParams';
@@ -511,7 +511,8 @@ export interface CommonStoreState {
   updateWallThicknessForAll: (thickness: number) => void;
 
   // for roofs
-  updateRoofHeight: (id: string, height: number) => void;
+  updateRoofHeightById: (id: string, height: number) => void;
+  updateRoofStructureById: (id: string, structure: RoofStructure) => void;
 
   // for trees
   updateTreeTypeById: (id: string, type: TreeType) => void;
@@ -3971,11 +3972,23 @@ export const useStore = create<CommonStoreState>(
             });
           },
 
-          updateRoofHeight(id, height) {
+          updateRoofHeightById(id, height) {
             immerSet((state: CommonStoreState) => {
               for (const e of state.elements) {
                 if (e.id === id) {
                   e.lz = height;
+                  break;
+                }
+              }
+            });
+          },
+          updateRoofStructureById(id, structure) {
+            immerSet((state: CommonStoreState) => {
+              for (const e of state.elements) {
+                if (e.id === id && e.type === ObjectType.Roof) {
+                  const roofModel = e as RoofModel;
+                  roofModel.roofStructure = structure;
+                  roofModel.translucent = structure === RoofStructure.Rafter;
                   break;
                 }
               }

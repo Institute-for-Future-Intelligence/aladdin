@@ -41,7 +41,7 @@ const RoofOverhangInput = ({ setDialogVisible }: { setDialogVisible: (b: boolean
   const updateRoofOverhangById = (id: string, length: number) => {
     setCommonStore((state) => {
       for (const e of state.elements) {
-        if (e.id === id) {
+        if (e.id === id && e.type === ObjectType.Roof) {
           (e as RoofModel).overhang = length;
           break;
         }
