@@ -1,7 +1,7 @@
 {
-  "docid": "eDs7G5J2PSNPrrYgSMJcCC",
-  "time": "09/10/2022 12:49 pm",
-  "timestamp": 1662828576049,
+  "docid": "eTPwszGGMAHYQAV9yNkUih",
+  "time": "09/11/2022 06:44 pm",
+  "timestamp": 1662936259309,
   "userid": "QWecNcxhyvP6j6sBN11hBsfZDau1",
   "owner": null,
   "email": null,
@@ -1229,7 +1229,8 @@
       ],
       "selected": false,
       "translucent": true,
-      "rafterSpacing": 2
+      "rafterSpacing": 2,
+      "roofStructure": "Rafter"
     },
     {
       "type": "Foundation",
@@ -1818,9 +1819,9 @@
     "dailyHeliostatYieldPanelX": 0,
     "showDailyParabolicDishYieldPanel": false,
     "cameraPosition": [
-      -16.59743292164862,
-      -17.240506355148213,
-      4.113144321513237
+      -10.826015527208794,
+      -15.074388188847518,
+      4.451024987505629
     ],
     "showYearlyHeliostatYieldPanel": false,
     "orthographic": false,
