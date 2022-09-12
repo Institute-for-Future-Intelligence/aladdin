@@ -31,14 +31,14 @@ import {
   Vector3,
 } from 'three';
 import { ThreeEvent, useThree } from '@react-three/fiber';
-import { Plane } from '@react-three/drei';
+import { Box, Plane } from '@react-three/drei';
 import { ActionType, MoveHandleType, ObjectType, Orientation, ResizeHandleType, WallTexture } from 'src/types';
 import { Util } from 'src/Util';
 import { useStore } from 'src/stores/common';
 import { useStoreRef } from 'src/stores/commonRef';
 import { ElementModel } from 'src/models/ElementModel';
 import { WindowModel } from 'src/models/WindowModel';
-import { WallModel } from 'src/models/WallModel';
+import { WallModel, WallStructure } from 'src/models/WallModel';
 import { ElementModelFactory } from 'src/models/ElementModelFactory';
 import { Point2 } from 'src/models/Point2';
 import { ElementGrid } from '../elementGrid';
@@ -78,6 +78,9 @@ const Wall = ({
   centerRoofHeight,
   centerLeftRoofHeight,
   centerRightRoofHeight,
+  wallStructure = WallStructure.Default,
+  studSpacing = 2,
+  opacity = 0.5,
 }: WallModel) => {
   const textureLoader = useMemo(() => {
     let textureImg;
@@ -190,11 +193,15 @@ const Wall = ({
   const [showGrid, setShowGrid] = useState(false);
   const [elementsOnWall, setElementOnWall] = useState<ElementModel[]>([]);
 
+  const transparent = wallStructure === WallStructure.Stud;
+
   const { camera, gl } = useThree();
   const mouse = useMemo(() => new Vector2(), []);
   const ray = useMemo(() => new Raycaster(), []);
-  const whiteMaterialBack = useMemo(() => new MeshStandardMaterial({ color: 'white', side: BackSide }), []);
-  const whiteMaterialDouble = useMemo(() => new MeshStandardMaterial({ color: 'white', side: DoubleSide }), []);
+  const whiteMaterialDouble = useMemo(
+    () => new MeshStandardMaterial({ color: 'white', side: DoubleSide, transparent: transparent, opacity: opacity }),
+    [transparent, opacity],
+  );
 
   const hx = lx / 2;
   const hy = ly / 2;
@@ -1106,6 +1113,22 @@ const Wall = ({
     });
   };
 
+  const studWidth = 0.1;
+
+  const studs = useMemo(() => {
+    const arr: number[] = [];
+    if (wallStructure === WallStructure.Stud) {
+      let pos = -hx + studWidth / 2;
+      while (pos <= hx) {
+        arr.push(pos);
+        pos += studSpacing;
+      }
+    }
+    return arr;
+  }, [wallStructure, lx, ly, lz]);
+
+  const castShadow = shadowEnabled && !transparent;
+
   return (
     <>
       {parent && wallAbsPosition && wallAbsAngle !== undefined && (
@@ -1122,7 +1145,7 @@ const Wall = ({
             userData={{ simulation: true }}
             ref={outsideWallRef}
             rotation={[HALF_PI, 0, 0]}
-            castShadow={shadowEnabled}
+            castShadow={castShadow}
             receiveShadow={shadowEnabled}
             onContextMenu={(e) => {
               handleContextMenu(e, outsideWallRef.current, true);
@@ -1133,16 +1156,14 @@ const Wall = ({
             <meshStandardMaterial
               color={textureType === WallTexture.Default || textureType === WallTexture.NoTexture ? color : 'white'}
               map={texture}
+              transparent={transparent}
+              opacity={opacity}
             />
           </mesh>
 
-          <mesh
-            rotation={[HALF_PI, 0, 0]}
-            position={[0, 0.1, 0]}
-            material={whiteMaterialBack}
-            castShadow={shadowEnabled}
-          >
+          <mesh rotation={[HALF_PI, 0, 0]} position={[0, 0.1, 0]} castShadow={castShadow}>
             <shapeBufferGeometry args={[outsiedWallShape]} />
+            <meshStandardMaterial color={'white'} side={BackSide} transparent={transparent} opacity={opacity} />
           </mesh>
 
           {/* inside wall */}
@@ -1152,7 +1173,7 @@ const Wall = ({
             material={whiteMaterialDouble}
             position={[0, ly, 0]}
             rotation={[HALF_PI, 0, 0]}
-            castShadow={shadowEnabled}
+            castShadow={castShadow}
             receiveShadow={shadowEnabled}
             onPointerDown={handleWallBodyPointerDown}
             onContextMenu={(e) => {
@@ -1169,7 +1190,7 @@ const Wall = ({
               ref={topSurfaceRef}
               material={whiteMaterialDouble}
               position={[0, hy, hz]}
-              castShadow={shadowEnabled}
+              castShadow={castShadow}
               receiveShadow={shadowEnabled}
               onPointerDown={handleWallBodyPointerDown}
               onContextMenu={(e) => {
@@ -1187,7 +1208,7 @@ const Wall = ({
               material={whiteMaterialDouble}
               position={[-hx + 0.01, hy, -(lz - (leftRoofHeight ?? lz)) / 2]}
               rotation={[0, HALF_PI, 0]}
-              castShadow={shadowEnabled}
+              castShadow={castShadow}
               receiveShadow={shadowEnabled}
               onPointerDown={handleWallBodyPointerDown}
             />
@@ -1198,7 +1219,7 @@ const Wall = ({
               material={whiteMaterialDouble}
               position={[hx - 0.01, hy, -(lz - (rightRoofHeight ?? lz)) / 2]}
               rotation={[0, HALF_PI, 0]}
-              castShadow={shadowEnabled}
+              castShadow={castShadow}
               receiveShadow={shadowEnabled}
               onPointerDown={handleWallBodyPointerDown}
             />
@@ -1219,6 +1240,35 @@ const Wall = ({
             <shapeBufferGeometry args={[intersectionPlaneShape]} />
             <meshBasicMaterial />
           </mesh>
+
+          {wallStructure === WallStructure.Stud && (
+            <>
+              {studs.map((pos, idx) => {
+                let height = lz;
+                if (centerRoofHeight) {
+                  const [roofCenter, roofHeight] = centerRoofHeight;
+                  if (pos < roofCenter) {
+                    height = ((pos + hx) * (roofHeight - lz)) / (roofCenter + hx) + lz;
+                  } else {
+                    height = ((pos - hx) * (roofHeight - lz)) / (roofCenter - hx) + lz;
+                  }
+                }
+                return (
+                  <Box
+                    key={idx}
+                    args={[studWidth, ly, height]}
+                    position={[pos, hy, (height - lz) / 2]}
+                    castShadow={shadowEnabled}
+                  >
+                    <meshStandardMaterial color={'white'} />
+                  </Box>
+                );
+              })}
+              <Box args={[lx, ly, studWidth]} position={[0, hy, hz]} castShadow={shadowEnabled}>
+                <meshStandardMaterial color={'white'} />
+              </Box>
+            </>
+          )}
 
           {elementsOnWall.map((e) => {
             switch (e.type) {

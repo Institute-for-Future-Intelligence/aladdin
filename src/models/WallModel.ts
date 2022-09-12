@@ -20,4 +20,13 @@ export interface WallModel extends ElementModel {
   centerRoofHeight?: number[]; // [x, h];
   centerLeftRoofHeight?: number[]; // [x, h];
   centerRightRoofHeight?: number[]; // [x, h];
+
+  wallStructure?: WallStructure;
+  studSpacing?: number;
+  opacity?: number;
+}
+
+export enum WallStructure {
+  Default = 'Default',
+  Stud = 'Stud',
 }

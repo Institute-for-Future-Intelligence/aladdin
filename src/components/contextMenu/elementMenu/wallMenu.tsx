@@ -3,22 +3,23 @@
  */
 
 import React, { useState } from 'react';
-import { Menu, Modal } from 'antd';
+import { Menu, Modal, Radio } from 'antd';
 import SubMenu from 'antd/lib/menu/SubMenu';
 import { useStore } from '../../../stores/common';
 import * as Selector from '../../../stores/selector';
 import { Lock, Paste } from '../menuItems';
 import i18n from '../../../i18n/i18n';
 import WallTextureSelection from './wallTextureSelection';
-import WallHeightInput from './wallHeightInput';
+import WallOpacityInput from './wallOpacityInput';
 import WallThicknessInput from './wallThicknessInput';
 import WallColorSelection from './wallColorSelection';
-import { WallModel } from 'src/models/WallModel';
+import { WallModel, WallStructure } from 'src/models/WallModel';
 import { ObjectType, WallTexture } from 'src/types';
 import { ElementCounter } from '../../../stores/ElementCounter';
 import { ExclamationCircleOutlined } from '@ant-design/icons';
 import { UndoableRemoveAllChildren } from '../../../undo/UndoableRemoveAllChildren';
 import { Util } from 'src/Util';
+import WallHeightInput from './wallHeightInput';
 
 export const WallMenu = () => {
   const setCommonStore = useStore(Selector.set);
@@ -31,10 +32,13 @@ export const WallMenu = () => {
   const removeAllChildElementsByType = useStore(Selector.removeAllChildElementsByType);
   const contextMenuObjectType = useStore(Selector.contextMenuObjectType);
   const addUndoable = useStore(Selector.addUndoable);
+  const updateWallStructureById = useStore(Selector.updateWallStructureById);
+  const [selectedStructure, setSelectedStructure] = useState(wall?.wallStructure ?? WallStructure.Default);
 
   const [textureDialogVisible, setTextureDialogVisible] = useState(false);
   const [colorDialogVisible, setColorDialogVisible] = useState(false);
   const [heightDialogVisible, setHeightDialogVisible] = useState(false);
+  const [opacityDialogVisible, setOpacityDialogVisible] = useState(false);
   const [thicknessDialogVisible, setThicknessDialogVisible] = useState(false);
 
   const counter = wall ? countAllOffspringsByType(wall.id) : new ElementCounter();
@@ -51,9 +55,16 @@ export const WallMenu = () => {
     return false;
   };
 
+  const radioStyle = {
+    display: 'block',
+    height: '30px',
+    paddingLeft: '10px',
+    lineHeight: '30px',
+  };
+
   return (
     wall && (
-      <>
+      <Menu.ItemGroup>
         {legalToPaste() && <Paste keyName={'wall-paste'} />}
         {/* <Copy keyName={'wall-copy'} /> */}
         {/* <Cut keyName={'wall-cut'} /> */}
@@ -61,6 +72,28 @@ export const WallMenu = () => {
 
         {!wall.locked && (
           <>
+            <SubMenu
+              key={'wall-structure'}
+              title={i18n.t('wallMenu.WallStructure', lang)}
+              style={{ paddingLeft: '24px' }}
+            >
+              <Radio.Group
+                value={selectedStructure}
+                style={{ height: '75px' }}
+                onChange={(e) => {
+                  updateWallStructureById(wall.id, e.target.value);
+                  setSelectedStructure(e.target.value);
+                }}
+              >
+                <Radio style={radioStyle} value={WallStructure.Default}>
+                  {i18n.t('wallMenu.DefaultStructure', lang)}
+                </Radio>
+                <Radio style={radioStyle} value={WallStructure.Stud}>
+                  {i18n.t('wallMenu.StudStructure', lang)}
+                </Radio>
+              </Radio.Group>
+            </SubMenu>
+
             {counter.gotSome() && contextMenuObjectType && (
               <SubMenu key={'clear'} title={i18n.t('word.Clear', lang)} style={{ paddingLeft: '24px' }}>
                 {counter.windowCount > 0 && (
@@ -227,6 +260,22 @@ export const WallMenu = () => {
               </Menu.Item>
             )}
 
+            {selectedStructure === WallStructure.Stud && (
+              <>
+                {opacityDialogVisible && <WallOpacityInput setDialogVisible={setOpacityDialogVisible} />}
+                <Menu.Item
+                  key={'wall-opacity'}
+                  style={{ paddingLeft: paddingLeft }}
+                  onClick={() => {
+                    setApplyCount(0);
+                    setOpacityDialogVisible(true);
+                  }}
+                >
+                  {i18n.t('wallMenu.Opacity', lang)} ...
+                </Menu.Item>
+              </>
+            )}
+
             {heightDialogVisible && <WallHeightInput setDialogVisible={setHeightDialogVisible} />}
             <Menu.Item
               key={'wall-height'}
@@ -252,7 +301,7 @@ export const WallMenu = () => {
             </Menu.Item>
           </>
         )}
-      </>
+      </Menu.ItemGroup>
     )
   );
 };

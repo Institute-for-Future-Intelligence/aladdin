@@ -51,7 +51,7 @@ import { GroundModel } from '../models/GroundModel';
 import { PvModel } from '../models/PvModel';
 import { ThreeEvent } from '@react-three/fiber';
 import { SolarPanelModel } from '../models/SolarPanelModel';
-import { WallModel } from '../models/WallModel';
+import { WallModel, WallStructure } from '../models/WallModel';
 import { Locale } from 'antd/lib/locale-provider';
 import enUS from 'antd/lib/locale/en_US';
 import { Undoable } from '../undo/Undoable';
@@ -509,6 +509,8 @@ export interface CommonStoreState {
   updateWallThicknessById: (id: string, thickness: number) => void;
   updateWallThicknessAboveFoundation: (foundationId: string, thickness: number) => void;
   updateWallThicknessForAll: (thickness: number) => void;
+
+  updateWallStructureById: (id: string, structure: WallStructure) => void;
 
   // for roofs
   updateRoofHeightById: (id: string, height: number) => void;
@@ -3967,6 +3969,18 @@ export const useStore = create<CommonStoreState>(
               for (const e of state.elements) {
                 if (e.type === ObjectType.Wall && !e.locked) {
                   (e as WallModel).ly = thickness;
+                }
+              }
+            });
+          },
+
+          updateWallStructureById(id, structure) {
+            immerSet((state: CommonStoreState) => {
+              for (const e of state.elements) {
+                if (e.id === id && e.type === ObjectType.Wall) {
+                  const wallModel = e as WallModel;
+                  wallModel.wallStructure = structure;
+                  break;
                 }
               }
             });

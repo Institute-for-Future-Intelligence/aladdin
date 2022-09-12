@@ -1017,6 +1017,8 @@ export const updateWallThicknessAboveFoundation = (state: CommonStoreState) => s
 
 export const updateWallThicknessForAll = (state: CommonStoreState) => state.updateWallThicknessForAll;
 
+export const updateWallStructureById = (state: CommonStoreState) => state.updateWallStructureById;
+
 export const updateRoofHeightById = (state: CommonStoreState) => state.updateRoofHeightById;
 
 export const updateRoofStructureById = (state: CommonStoreState) => state.updateRoofStructureById;

@@ -791,6 +791,10 @@ export const i18n_zh_tw = {
       SolarPanels: '光伏板',
       RemoveAllUnlockedSolarPanels: '刪除這堵牆上所有非固定的光伏板',
       DoYouReallyWantToRemoveAllSolarPanelsOnThisWall: '你確定刪除這堵牆上所有非固定的光伏板嗎',
+      WallStructure: '牆結構',
+      DefaultStructure: '默認',
+      RafterStructure: '牆柱',
+      Opacity: '遮光度',
     },
 
     roofMenu: {

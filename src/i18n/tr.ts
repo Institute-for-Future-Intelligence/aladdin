@@ -809,6 +809,10 @@ export const i18n_tr = {
       SolarPanels: 'Solar Panels',
       RemoveAllUnlockedSolarPanels: 'Remove All Unlocked Solar Panels',
       DoYouReallyWantToRemoveAllSolarPanelsOnThisWall: 'Do you really want to remove all the solar panels on this wall',
+      WallStructure: 'Wall Structure',
+      DefaultStructure: 'Default',
+      StudStructure: 'Stud',
+      Opacity: 'Opacity',
     },
 
     doorMenu: {

@@ -108,7 +108,7 @@ const Rafter = ({
   rafterHeight,
   isShed,
   rafterWidth = 0.1,
-  rafterSpacing = 1,
+  rafterSpacing = 2,
 }: RafterProps) => {
   const [frontWall, rightWall, backWall, leftWall] = wallArray;
 
@@ -148,9 +148,9 @@ const Rafter = ({
     const frontWallLength = frontWall.lx;
     const backWallLength = backWall.lx;
 
-    const offset = rafterWidth + 0.05;
+    const offset = rafterWidth;
     const number =
-      Math.floor((Math.min(ridgeLength, frontWallLength, backWallLength) - rafterWidth - 0.1) / rafterSpacing) + 1;
+      Math.floor((Math.min(ridgeLength, frontWallLength, backWallLength) - rafterWidth) / rafterSpacing) + 1;
     const res = new Array(number).fill(0).map((v, i) => {
       const len = i * rafterSpacing + offset;
       const ridge = ridgeLeftPoint.clone().add(ridgeUnitVector.clone().multiplyScalar(len));
