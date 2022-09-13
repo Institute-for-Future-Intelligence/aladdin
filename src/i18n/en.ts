@@ -363,6 +363,7 @@ export const i18n_en = {
         PS10SolarPowerTower: 'PS10 Solar Power Tower',
         TucsonLinearFresnelReflectors: 'Tucson Linear Fresnel Reflectors',
         SolarCanopyFormFactors: 'Solar Canopy Form Factors',
+        SolarCanopyOverBleachers: 'Solar Canopy Over Bleachers',
         VegetativeBuffer: 'Vegetative Buffer',
         FixedSolarPanelArraysFraminghamMA: 'Fixed Solar Panel Arrays in Framingham, MA',
         SolarPanelsOverCanalBakersfieldCA: 'Hypothetical Solar Panels Over Canal in Bakersfield, CA',

@@ -4051,7 +4051,7 @@
     "heliodonPanelY": 0,
     "showSolarPanelVisibilityResultsPanel": false,
     "showDailyHeliostatYieldPanel": false,
-    "shadowEnabled": false,
+    "shadowEnabled": true,
     "dailyUpdraftTowerYieldPanelRect": {
       "x": 0,
       "width": 640,

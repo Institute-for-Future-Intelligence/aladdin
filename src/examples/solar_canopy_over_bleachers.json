@@ -1,0 +1,800 @@
+{
+  "docid": "dCWjn3TJoRNCEuiSSgiGzS",
+  "time": "09/13/2022 12:50 pm",
+  "timestamp": 1663087854453,
+  "userid": "QWecNcxhyvP6j6sBN11hBsfZDau1",
+  "owner": null,
+  "email": null,
+  "world": {
+    "airAttenuationCoefficient": 0.01,
+    "cspTimesPerHour": 4,
+    "timesPerHour": 2,
+    "solarPanelVisibilityGridCellSize": 0.2,
+    "latitude": 44.454924,
+    "noAnimationForSensorDataCollection": false,
+    "noAnimationForSolarUpdraftTowerSimulation": false,
+    "discretization": "Approximate",
+    "date": "Wed Jun 22 2022 15:00:00 GMT-0400 (Eastern Daylight Time)",
+    "highestTemperatureTimeInMinutes": 900,
+    "cspDaysPerYear": 4,
+    "address": "550 Dorset St, South Burlington, VT 05403, USA",
+    "diurnalTemperatureModel": 1,
+    "airConvectiveCoefficient": 5,
+    "cspGridCellSize": 0.5,
+    "noAnimationForSolarPanelSimulation": true,
+    "sutGridCellSize": 1,
+    "name": "default",
+    "dustLoss": 0.05,
+    "sutDaysPerYear": 4,
+    "pvGridCellSize": 0.5,
+    "noAnimationForHeatmapSimulation": true,
+    "sutTimesPerHour": 4,
+    "ground": {
+      "snowReflectionFactors": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "thermalDiffusivity": 0.05,
+      "albedo": 0.3
+    },
+    "daysPerYear": 4,
+    "solarRadiationHeatmapGridCellSize": 5,
+    "longitude": -73.177891
+  },
+  "elements": [
+    {
+      "type": "Foundation",
+      "cx": 179.45847099490584,
+      "cy": 145.85951451290708,
+      "cz": 0.1,
+      "lx": 46.64912192730487,
+      "ly": 16.598079304638254,
+      "lz": 0.2,
+      "normal": [
+        0,
+        0,
+        1
+      ],
+      "rotation": [
+        0,
+        0,
+        0.1434660645139339
+      ],
+      "parentId": "Ground",
+      "selected": false,
+      "solarUpdraftTower": {},
+      "solarAbsorberPipe": {},
+      "solarPowerTower": {},
+      "id": "73zFNy4Kytq2jGeHP8hybB",
+      "locked": true,
+      "enableGroupMaster": true
+    },
+    {
+      "type": "Solar Panel",
+      "pvModelName": "SPR-X21-335-BLK",
+      "trackerType": "None",
+      "relativeAzimuth": 0,
+      "tiltAngle": 0.08726646259971647,
+      "orientation": "Landscape",
+      "drawSunBeam": true,
+      "poleHeight": 4.8,
+      "poleRadius": 0.05,
+      "poleSpacing": 5,
+      "cx": 0.013487121407959702,
+      "cy": -0.12279534594195182,
+      "cz": 0.5000000074505806,
+      "lx": 43.624,
+      "ly": 11.506,
+      "lz": 0.046,
+      "showLabel": false,
+      "normal": [
+        0,
+        0,
+        1
+      ],
+      "rotation": [
+        0,
+        0,
+        0.1434660645139339
+      ],
+      "color": "#fff",
+      "parentId": "73zFNy4Kytq2jGeHP8hybB",
+      "foundationId": "73zFNy4Kytq2jGeHP8hybB",
+      "id": "5B4Rr9X9rqJjgERVH84xem",
+      "selected": false,
+      "locked": false
+    },
+    {
+      "type": "Human",
+      "name": "Jack",
+      "cx": 17.67723145811599,
+      "cy": -0.20440352705893639,
+      "cz": 1.7999999523162837,
+      "lx": 0.6,
+      "lz": 1.8,
+      "normal": [
+        0,
+        1,
+        0
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "parentId": "mvQonCDuxqjgZkeWBbRQ73",
+      "id": "e5UykxeUAcAAsmgFcznP9J",
+      "selected": false,
+      "locked": false
+    },
+    {
+      "type": "Human",
+      "name": "Judy",
+      "cx": 20.01192531152404,
+      "cy": -7.5775477995610565,
+      "cz": 0.1,
+      "lx": 0.45,
+      "lz": 1.55,
+      "normal": [
+        0,
+        1,
+        0
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "parentId": "73zFNy4Kytq2jGeHP8hybB",
+      "id": "9v3zq1A3MmHnKeqiCTkYcc",
+      "selected": false,
+      "locked": false
+    },
+    {
+      "type": "Cuboid",
+      "cx": 178.74973834889272,
+      "cy": 151.23959562318993,
+      "cz": 3,
+      "lx": 12.107420150412665,
+      "ly": 3.6361191766113197,
+      "lz": 6,
+      "color": "#ffffff",
+      "faceColors": [
+        "#ffffff",
+        "#ffffff",
+        "#ffffff",
+        "#ffffff",
+        "#ffffff",
+        "gray"
+      ],
+      "textureTypes": [
+        "No Facade Texture",
+        "No Facade Texture",
+        "No Facade Texture",
+        "No Facade Texture",
+        "No Facade Texture",
+        "No Facade Texture"
+      ],
+      "normal": [
+        0,
+        0,
+        1
+      ],
+      "rotation": [
+        0,
+        0,
+        0.1434557633128617
+      ],
+      "parentId": "Ground",
+      "selected": false,
+      "id": "stfeWojM9fq1rRFvV8kFrw",
+      "locked": true
+    },
+    {
+      "type": "Cuboid",
+      "cx": 179.70526882974113,
+      "cy": 148.87674866966486,
+      "cz": 1.8,
+      "lx": 42.703465320212665,
+      "ly": 1.2033870245364555,
+      "lz": 3.6,
+      "color": "#ffffff",
+      "faceColors": [
+        "#ffffff",
+        "#ffffff",
+        "#ffffff",
+        "#ffffff",
+        "#ffffff",
+        "gray"
+      ],
+      "textureTypes": [
+        "No Facade Texture",
+        "No Facade Texture",
+        "No Facade Texture",
+        "No Facade Texture",
+        "No Facade Texture",
+        "No Facade Texture"
+      ],
+      "normal": [
+        0,
+        0,
+        1
+      ],
+      "rotation": [
+        0,
+        0,
+        0.1434557633128617
+      ],
+      "parentId": "Ground",
+      "id": "mvQonCDuxqjgZkeWBbRQ73",
+      "selected": false,
+      "locked": true
+    },
+    {
+      "type": "Cuboid",
+      "cx": 179.86870093281857,
+      "cy": 147.67018638185647,
+      "cz": 1.5,
+      "lx": 42.703465320212665,
+      "ly": 1.2033870245364555,
+      "lz": 3,
+      "color": "#ffffff",
+      "faceColors": [
+        "#ffffff",
+        "#ffffff",
+        "#ffffff",
+        "#ffffff",
+        "#ffffff",
+        "gray"
+      ],
+      "textureTypes": [
+        "No Facade Texture",
+        "No Facade Texture",
+        "No Facade Texture",
+        "No Facade Texture",
+        "No Facade Texture",
+        "No Facade Texture"
+      ],
+      "normal": [
+        0,
+        0,
+        1
+      ],
+      "rotation": [
+        0,
+        0,
+        0.1434557633128617
+      ],
+      "parentId": "Ground",
+      "id": "nAoWaWCXnJrVeXtGcCdhsQ",
+      "selected": false,
+      "locked": true
+    },
+    {
+      "type": "Cuboid",
+      "cx": 180.03030758101804,
+      "cy": 146.47434150650943,
+      "cz": 1.3,
+      "lx": 42.703465320212665,
+      "ly": 1.2033870245364555,
+      "lz": 2.6,
+      "color": "#ffffff",
+      "faceColors": [
+        "#ffffff",
+        "#ffffff",
+        "#ffffff",
+        "#ffffff",
+        "#ffffff",
+        "gray"
+      ],
+      "textureTypes": [
+        "No Facade Texture",
+        "No Facade Texture",
+        "No Facade Texture",
+        "No Facade Texture",
+        "No Facade Texture",
+        "No Facade Texture"
+      ],
+      "normal": [
+        0,
+        0,
+        1
+      ],
+      "rotation": [
+        0,
+        0,
+        0.1434557633128617
+      ],
+      "parentId": "Ground",
+      "id": "hEEbCeJXouC5MRLwbMLUXU",
+      "selected": false,
+      "locked": true
+    },
+    {
+      "type": "Cuboid",
+      "cx": 180.18731589126733,
+      "cy": 145.26767530633435,
+      "cz": 1.1,
+      "lx": 42.703465320212665,
+      "ly": 1.2033870245364555,
+      "lz": 2.2,
+      "color": "#ffffff",
+      "faceColors": [
+        "#ffffff",
+        "#ffffff",
+        "#ffffff",
+        "#ffffff",
+        "#ffffff",
+        "gray"
+      ],
+      "textureTypes": [
+        "No Facade Texture",
+        "No Facade Texture",
+        "No Facade Texture",
+        "No Facade Texture",
+        "No Facade Texture",
+        "No Facade Texture"
+      ],
+      "normal": [
+        0,
+        0,
+        1
+      ],
+      "rotation": [
+        0,
+        0,
+        0.1434557633128617
+      ],
+      "parentId": "Ground",
+      "id": "ewYiSC3NgUrSGS9bNScvyi",
+      "selected": false,
+      "locked": true
+    },
+    {
+      "type": "Cuboid",
+      "cx": 180.34892253946674,
+      "cy": 144.0718304309881,
+      "cz": 0.9,
+      "lx": 42.703465320212665,
+      "ly": 1.2033870245364555,
+      "lz": 1.8,
+      "color": "#ffffff",
+      "faceColors": [
+        "#ffffff",
+        "#ffffff",
+        "#ffffff",
+        "#ffffff",
+        "#ffffff",
+        "gray"
+      ],
+      "textureTypes": [
+        "No Facade Texture",
+        "No Facade Texture",
+        "No Facade Texture",
+        "No Facade Texture",
+        "No Facade Texture",
+        "No Facade Texture"
+      ],
+      "normal": [
+        0,
+        0,
+        1
+      ],
+      "rotation": [
+        0,
+        0,
+        0.1434557633128617
+      ],
+      "parentId": "Ground",
+      "id": "dUwnUoWvbFx2hdh7SmwvjQ",
+      "selected": false,
+      "locked": true
+    },
+    {
+      "type": "Cuboid",
+      "cx": 180.505930849716,
+      "cy": 142.93138721769165,
+      "cz": 0.7,
+      "lx": 42.703465320212665,
+      "ly": 1.2033870245364555,
+      "lz": 1.4,
+      "color": "#ffffff",
+      "faceColors": [
+        "#ffffff",
+        "#ffffff",
+        "#ffffff",
+        "#ffffff",
+        "#ffffff",
+        "gray"
+      ],
+      "textureTypes": [
+        "No Facade Texture",
+        "No Facade Texture",
+        "No Facade Texture",
+        "No Facade Texture",
+        "No Facade Texture",
+        "No Facade Texture"
+      ],
+      "normal": [
+        0,
+        0,
+        1
+      ],
+      "rotation": [
+        0,
+        0,
+        0.1434557633128617
+      ],
+      "parentId": "Ground",
+      "id": "2wek6yYK17CpmBuG1P6f8D",
+      "selected": false,
+      "locked": true
+    },
+    {
+      "type": "Cuboid",
+      "cx": 180.6629391599653,
+      "cy": 141.79094400439524,
+      "cz": 0.5,
+      "lx": 42.703465320212665,
+      "ly": 1.2033870245364555,
+      "lz": 1,
+      "color": "#ffffff",
+      "faceColors": [
+        "#ffffff",
+        "#ffffff",
+        "#ffffff",
+        "#ffffff",
+        "#ffffff",
+        "gray"
+      ],
+      "textureTypes": [
+        "No Facade Texture",
+        "No Facade Texture",
+        "No Facade Texture",
+        "No Facade Texture",
+        "No Facade Texture",
+        "No Facade Texture"
+      ],
+      "normal": [
+        0,
+        0,
+        1
+      ],
+      "rotation": [
+        0,
+        0,
+        0.1434557633128617
+      ],
+      "parentId": "Ground",
+      "id": "cyVdcaHRiaSZbNdcjQVuiw",
+      "selected": false,
+      "locked": false
+    },
+    {
+      "type": "Cuboid",
+      "cx": 180.8270823782518,
+      "cy": 140.57464564227953,
+      "cz": 0.3,
+      "lx": 42.703465320212665,
+      "ly": 1.2033870245364555,
+      "lz": 0.6,
+      "color": "#ffffff",
+      "faceColors": [
+        "#ffffff",
+        "#ffffff",
+        "#ffffff",
+        "#ffffff",
+        "#ffffff",
+        "gray"
+      ],
+      "textureTypes": [
+        "No Facade Texture",
+        "No Facade Texture",
+        "No Facade Texture",
+        "No Facade Texture",
+        "No Facade Texture",
+        "No Facade Texture"
+      ],
+      "normal": [
+        0,
+        0,
+        1
+      ],
+      "rotation": [
+        0,
+        0,
+        0.1434557633128617
+      ],
+      "parentId": "Ground",
+      "id": "2io4wkR5VXLTD2R8fop411",
+      "selected": false,
+      "locked": false
+    }
+  ],
+  "view": {
+    "showYearlyFresnelReflectorYieldPanel": false,
+    "yearlyParabolicTroughYieldPanelY": 0,
+    "showZenithAngle": true,
+    "yearlyPvYieldPanelRect": {
+      "x": 0,
+      "height": 400,
+      "y": 0,
+      "width": 600
+    },
+    "showAzimuthAngle": true,
+    "dailyPvYieldPanelRect": {
+      "height": 400,
+      "y": 0,
+      "x": 0,
+      "width": 600
+    },
+    "dailyUpdraftTowerYieldPanelRect": {
+      "width": 640,
+      "x": 0,
+      "y": 0,
+      "height": 550
+    },
+    "diurnalTemperaturePanelRect": {
+      "width": 600,
+      "height": 400,
+      "y": 0,
+      "x": 0
+    },
+    "showHeliodonPanel": false,
+    "weatherPanelX": 0,
+    "theme": "Default",
+    "enableRotate": true,
+    "dailyFresnelReflectorYieldPanelRect": {
+      "y": 0,
+      "width": 600,
+      "height": 400,
+      "x": 0
+    },
+    "dailyHeliostatYieldPanelX": 0,
+    "yearlyParabolicDishYieldPanelX": 0,
+    "dailyHeliostatYieldPanelY": 0,
+    "yearlyHeliostatYieldPanelRect": {
+      "y": 0,
+      "width": 600,
+      "height": 400,
+      "x": 0
+    },
+    "yearlyLightSensorPanelRect": {
+      "x": 0,
+      "width": 600,
+      "y": 0,
+      "height": 500
+    },
+    "yearlyParabolicTroughYieldPanelRect": {
+      "height": 400,
+      "y": 0,
+      "width": 600,
+      "x": 0
+    },
+    "dailyParabolicDishYieldPanelX": 0,
+    "ambientLightIntensity": 0.1,
+    "dailyParabolicTroughYieldPanelRect": {
+      "width": 600,
+      "y": 0,
+      "x": 0,
+      "height": 400
+    },
+    "yearlyLightSensorPanelShowClearness": false,
+    "mapPanelX": 0,
+    "yearlyLightSensorPanelShowDaylight": false,
+    "showDiurnalTemperaturePanel": false,
+    "mapZoom": 17,
+    "yearlyPvYieldPanelX": 0,
+    "showElevationAngle": true,
+    "showYearlyParabolicDishYieldPanel": false,
+    "dailyLightSensorPanelRect": {
+      "y": 0,
+      "height": 360,
+      "x": 0,
+      "width": 600
+    },
+    "evolutionPanelRect": {
+      "y": 0,
+      "height": 400,
+      "x": 0,
+      "width": 640
+    },
+    "mapWeatherStations": false,
+    "showDesignInfoPanel": true,
+    "mapPanelY": 0,
+    "showDailyParabolicTroughYieldPanel": false,
+    "showSolarPanelVisibilityResultsPanel": false,
+    "weatherPanelY": 0,
+    "showSiteInfoPanel": true,
+    "showYearlyParabolicTroughYieldPanel": false,
+    "showDailyPvYieldPanel": false,
+    "yearlyUpdraftTowerYieldPanelRect": {
+      "width": 600,
+      "x": 0,
+      "height": 400,
+      "y": 0
+    },
+    "showMapPanel": false,
+    "dailyParabolicTroughYieldPanelY": 0,
+    "cameraPosition": [
+      215.01427070252956,
+      112.59505828306587,
+      2.3328749647903324
+    ],
+    "showYearlyLightSensorPanel": false,
+    "cameraZoom": 23.327015599941678,
+    "heliodonPanelY": 0,
+    "autoRotate": false,
+    "shadowEnabled": true,
+    "showWeatherPanel": false,
+    "yearlyFresnelReflectorYieldPanelX": 0,
+    "yearlyParabolicDishYieldPanelRect": {
+      "x": 0,
+      "y": 0,
+      "height": 400,
+      "width": 600
+    },
+    "dailyFresnelReflectorYieldPanelY": 0,
+    "yearlyLightSensorPanelY": 0,
+    "yearlyHeliostatYieldPanelY": 0,
+    "mapTilt": 0,
+    "visibilityResultsPanelRect": {
+      "height": 470,
+      "y": 0,
+      "width": 600,
+      "x": 0
+    },
+    "stickyNotePanelRect": {
+      "y": 0,
+      "x": 0,
+      "height": 300,
+      "width": 400
+    },
+    "visibilityResultsPanelX": 0,
+    "showYearlyUpdraftTowerYieldPanel": false,
+    "showDailyLightSensorPanel": false,
+    "yearlyPvYieldPanelY": 0,
+    "dailyLightSensorPanelX": 0,
+    "yearlyParabolicTroughYieldPanelX": 0,
+    "weatherPanelRect": {
+      "y": 0,
+      "height": 500,
+      "width": 500,
+      "x": 0
+    },
+    "panCenter2D": [
+      183.8188163621815,
+      139.3629304846877,
+      -0.00008002863814434504
+    ],
+    "dailyParabolicTroughYieldPanelX": 0,
+    "showDailyUpdraftTowerYieldPanel": false,
+    "cameraPosition2D": [
+      183.8188163621815,
+      139.36291048379871,
+      19.999919971295522
+    ],
+    "showYearlyHeliostatYieldPanel": false,
+    "showEconomicsPanel": false,
+    "heliodonPanelX": 0,
+    "yearlyParabolicDishYieldPanelY": 0,
+    "showDailyParabolicDishYieldPanel": false,
+    "dailyPvYieldPanelX": 0,
+    "solarRadiationHeatMapMaxValue": 5,
+    "dailyParabolicDishYieldPanelRect": {
+      "x": 0,
+      "width": 600,
+      "y": 0,
+      "height": 400
+    },
+    "orthographic": false,
+    "panCenter": [
+      183.4734277951513,
+      166.54260166068389,
+      1.4573563728510532
+    ],
+    "dailyPvYieldPanelY": 0,
+    "showDailyFresnelReflectorYieldPanel": false,
+    "mapType": "hybrid",
+    "groundImage": false,
+    "groundColor": "#16a5a5",
+    "showDailyHeliostatYieldPanel": false,
+    "dailyParabolicDishYieldPanelY": 0,
+    "yearlyFresnelReflectorYieldPanelRect": {
+      "x": 0,
+      "width": 600,
+      "height": 400,
+      "y": 0
+    },
+    "showStickyNotePanel": false,
+    "heliodon": false,
+    "dailyLightSensorPanelY": 0,
+    "solarRadiationHeatMapReflectionOnly": false,
+    "showEvolutionPanel": false,
+    "showInstructionPanel": true,
+    "showSunAngles": false,
+    "showYearlyPvYieldPanel": false,
+    "dailyHeliostatYieldPanelRect": {
+      "height": 400,
+      "x": 0,
+      "y": 0,
+      "width": 600
+    },
+    "yearlyLightSensorPanelX": 0,
+    "yearlyFresnelReflectorYieldPanelY": 0,
+    "yearlyHeliostatYieldPanelX": 0,
+    "stickyNotePanelX": 0,
+    "stickyNotePanelY": 0,
+    "dailyFresnelReflectorYieldPanelX": 0,
+    "axes": false,
+    "visibilityResultsPanelY": 0
+  },
+  "evolutionMethod": 1,
+  "solarPanelArrayLayoutParams": {
+    "orientation": "Landscape",
+    "interRowSpacing": 2,
+    "pvModelName": "SPR-X21-335-BLK",
+    "rowAxis": "Zonal",
+    "poleSpacing": 3,
+    "rowsPerRack": 1,
+    "tiltAngle": 0,
+    "poleHeight": 1
+  },
+  "solarPanelArrayLayoutConstraints": {
+    "maximumTiltAngle": 1.5707963267948966,
+    "rowAxis": "Zonal",
+    "maximumInterRowSpacing": 10,
+    "maximumRowsPerRack": 6,
+    "minimumInterRowSpacing": 2,
+    "pvModelName": "CS6X-355P-FG",
+    "minimumTiltAngle": -1.5707963267948966,
+    "orientation": "Landscape",
+    "minimumRowsPerRack": 1,
+    "poleSpacing": 5,
+    "poleHeight": 1
+  },
+  "evolutionaryAlgorithmState": {
+    "particleSwarmOptimizationParams": {
+      "objectiveFunctionType": 1,
+      "socialCoefficient": 0.1,
+      "localSearchRadius": 0.1,
+      "vmax": 0.01,
+      "swarmSize": 20,
+      "problem": "Solar Panel Tilt Angle",
+      "maximumSteps": 5,
+      "inertia": 0.8,
+      "cognitiveCoefficient": 0.1,
+      "searchMethod": 1,
+      "convergenceThreshold": 0.01
+    },
+    "geneticAlgorithmParams": {
+      "maximumGenerations": 5,
+      "mutationRate": 0.1,
+      "objectiveFunctionType": 1,
+      "selectionRate": 0.5,
+      "crossoverRate": 0.5,
+      "localSearchRadius": 0.1,
+      "searchMethod": 1,
+      "problem": "Solar Panel Tilt Angle",
+      "selectionMethod": 1,
+      "populationSize": 20,
+      "convergenceThreshold": 0.01
+    }
+  },
+  "economicsParams": {
+    "electricitySellingPrice": 0.25,
+    "operationalCostPerUnit": 0.15,
+    "projectLifeSpan": 25
+  },
+  "notes": []
+}

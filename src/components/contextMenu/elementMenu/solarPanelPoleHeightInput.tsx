@@ -402,7 +402,7 @@ const SolarPanelPoleHeightInput = ({ setDialogVisible }: { setDialogVisible: (b:
           <Col className="gutter-row" span={6}>
             <InputNumber
               min={0}
-              max={5}
+              max={10}
               style={{ width: 120 }}
               step={0.1}
               precision={2}
@@ -416,7 +416,7 @@ const SolarPanelPoleHeightInput = ({ setDialogVisible }: { setDialogVisible: (b:
               onPressEnter={ok}
             />
             <div style={{ paddingTop: '20px', textAlign: 'left', fontSize: '11px' }}>
-              {i18n.t('word.Range', lang)}: [0, 5] {i18n.t('word.MeterAbbreviation', lang)}
+              {i18n.t('word.Range', lang)}: [0, 10] {i18n.t('word.MeterAbbreviation', lang)}
             </div>
           </Col>
           <Col className="gutter-row" span={1} style={{ verticalAlign: 'middle', paddingTop: '6px' }}>

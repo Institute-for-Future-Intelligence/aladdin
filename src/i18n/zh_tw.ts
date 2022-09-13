@@ -360,6 +360,7 @@ export const i18n_zh_tw = {
         PS10SolarPowerTower: '西班牙塞維利亞的PS10太陽能發電塔',
         TucsonLinearFresnelReflectors: '亞利桑那州圖森的直線式菲涅爾反射鏡陣列',
         SolarCanopyFormFactors: '太陽能天篷外形設計',
+        SolarCanopyOverBleachers: '看台太陽能天篷',
         VegetativeBuffer: '太陽能農場绿化带',
         FixedSolarPanelArraysFraminghamMA: '馬薩諸塞州弗雷明翰的一個固定角度光伏板陣列',
         SolarPanelsOverCanalBakersfieldCA: '加利福尼亞州貝克斯菲爾德灌溉渠上假想的光伏板陣列',
