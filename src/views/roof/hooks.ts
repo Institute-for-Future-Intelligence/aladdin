@@ -151,11 +151,12 @@ export const useRoofTexture = (textureType: RoofTexture) => {
   return texture;
 };
 
-export const useTransparent = (translucent?: boolean) => {
+export const useTransparent = (transparent?: boolean, opacity?: number) => {
   const groundImage = useStore(Selector.viewState.groundImage);
   const orthographic = useStore(Selector.viewState.orthographic);
 
-  const opacity = (groundImage && orthographic) || translucent ? 0.25 : 1;
+  const _transparent = groundImage && orthographic;
+  const _opacity = _transparent ? 0.25 : 1;
 
-  return { transparent: groundImage || translucent, opacity };
+  return { transparent: transparent || _transparent, opacity: Math.min(opacity ?? 1, _opacity) };
 };

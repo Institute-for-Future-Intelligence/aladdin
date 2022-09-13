@@ -288,7 +288,6 @@ const GableRoof = ({
   lineWidth = 0.2,
   roofType,
   roofStructure,
-  translucent,
   rafterSpacing,
   glassTint = '#73D8FF',
   opacity = 0.5,
@@ -857,7 +856,6 @@ const GableRoof = ({
               length={isFlat ? 1 : length}
               textureType={textureType}
               color={color}
-              translucent={translucent}
               roofStructure={roofStructure}
               glassTint={glassTint}
               opacity={opacity}
@@ -874,7 +872,7 @@ const GableRoof = ({
       </group>
 
       {/* rafter */}
-      {translucent && (
+      {roofStructure === RoofStructure.Rafter && (
         <Rafter
           ridgeLeftPoint={ridgeLeftPointV3}
           ridgeRightPoint={ridgeRightPointV3}
@@ -1067,18 +1065,16 @@ const RoofSegment = ({
   length,
   textureType,
   color,
-  translucent,
   currWall,
   roofStructure,
   glassTint,
-  opacity,
+  opacity = 0.5,
 }: {
   points: Vector3[];
   direction: number;
   length: number;
   textureType: RoofTexture;
   color: string | undefined;
-  translucent: boolean | undefined;
   currWall: WallModel;
   roofStructure?: RoofStructure;
   glassTint?: string;
@@ -1086,7 +1082,7 @@ const RoofSegment = ({
 }) => {
   const shadowEnabled = useStore(Selector.viewState.shadowEnabled);
   const texture = useRoofTexture(textureType);
-  const { transparent, opacity: _opacity } = useTransparent(translucent);
+  const { transparent, opacity: _opacity } = useTransparent(roofStructure === RoofStructure.Rafter, opacity);
   const { invalidate } = useThree();
 
   const meshRef = useRef<Mesh>(null);
@@ -1191,7 +1187,7 @@ const RoofSegment = ({
           map={texture}
           color={textureType === RoofTexture.Default || textureType === RoofTexture.NoTexture ? color : 'white'}
           transparent={transparent}
-          opacity={translucent ? opacity : _opacity}
+          opacity={_opacity}
         />
       </mesh>
       {roofStructure === RoofStructure.Glass && show && (

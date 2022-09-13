@@ -4002,7 +4002,6 @@ export const useStore = create<CommonStoreState>(
                 if (e.id === id && e.type === ObjectType.Roof) {
                   const roofModel = e as RoofModel;
                   roofModel.roofStructure = structure;
-                  roofModel.translucent = structure === RoofStructure.Rafter;
                   break;
                 }
               }

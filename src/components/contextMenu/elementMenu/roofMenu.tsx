@@ -98,18 +98,16 @@ export const RoofMenu = () => {
                 {rafterSpacingDialogVisible && (
                   <RoofRafterSpacingInput setDialogVisible={setRafterSpacingDialogVisible} />
                 )}
-                {updatedRoof.translucent && (
-                  <Menu.Item
-                    key={'roof-rafter-spacing'}
-                    style={{ paddingLeft: paddingLeft }}
-                    onClick={() => {
-                      setApplyCount(0);
-                      setRafterSpacingDialogVisible(true);
-                    }}
-                  >
-                    {i18n.t('roofMenu.RafterSpacing', lang)} ...
-                  </Menu.Item>
-                )}
+                <Menu.Item
+                  key={'roof-rafter-spacing'}
+                  style={{ paddingLeft: paddingLeft }}
+                  onClick={() => {
+                    setApplyCount(0);
+                    setRafterSpacingDialogVisible(true);
+                  }}
+                >
+                  {i18n.t('roofMenu.RafterSpacing', lang)} ...
+                </Menu.Item>
               </>
             )}
 

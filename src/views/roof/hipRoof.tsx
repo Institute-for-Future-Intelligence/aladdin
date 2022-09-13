@@ -100,7 +100,6 @@ const HipRoof = ({
   lineColor = 'black',
   lineWidth = 0.2,
   roofType,
-  translucent,
 }: HipRoofModel) => {
   // color = '#fb9e00';
   const texture = useRoofTexture(textureType);
@@ -414,7 +413,7 @@ const HipRoof = ({
   }, [currentWallArray]);
 
   const { grabRef, addUndoableMove, undoMove, setOldRefData } = useSolarPanelUndoable();
-  const { transparent, opacity } = useTransparent(translucent);
+  const { transparent, opacity } = useTransparent();
 
   return (
     <group position={[cx, cy, cz + 0.01]} rotation={[0, 0, rotation]} name={`Hip Roof Group ${id}`}>
