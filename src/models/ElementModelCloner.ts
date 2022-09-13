@@ -518,6 +518,7 @@ export class ElementModelCloner {
       id: short.generate() as string,
       parentId: parent.id,
       foundationId: parent.id,
+      wallStructure: wall.wallStructure,
     } as WallModel;
   }
 
