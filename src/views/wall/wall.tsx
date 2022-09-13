@@ -1113,6 +1113,34 @@ const Wall = ({
     });
   };
 
+  const handleStudPointerDown = (e: ThreeEvent<PointerEvent>) => {
+    if (useStore.getState().groupActionMode) {
+      setCommonStore((state) => {
+        for (const e of state.elements) {
+          e.selected = e.id === parentId;
+        }
+        state.elementGroupId = parentId;
+      });
+      e.stopPropagation();
+    } else {
+      if (checkIfCanSelectMe(e)) {
+        setCommonStore((state) => {
+          state.contextMenuObjectType = null;
+        });
+        selectMe(id, e, ActionType.Select);
+      }
+    }
+  };
+
+  const handleStudContextMenu = (e: ThreeEvent<MouseEvent>) => {
+    if (e.intersections.length > 0 && e.intersections[0].object === e.eventObject) {
+      setCommonStore((state) => {
+        state.contextMenuObjectType = ObjectType.Wall;
+      });
+      selectMe(id, e, ActionType.Select);
+    }
+  };
+
   const studWidth = 0.1;
 
   const studs = useMemo(() => {
@@ -1124,10 +1152,75 @@ const Wall = ({
         pos += studSpacing;
       }
     }
+    arr.push(hx - studWidth / 2);
     return arr;
   }, [wallStructure, lx, ly, lz]);
 
   const castShadow = shadowEnabled && !transparent;
+
+  const wallStuds = () => {
+    const wallLeftHeight = leftRoofHeight ?? lz;
+    const wallRightHeight = rightRoofHeight ?? lz;
+    let [wallCenterPos, wallCenterHeight] = centerRoofHeight ?? [0, (wallLeftHeight + wallRightHeight) / 2];
+    wallCenterPos = wallCenterPos * lx;
+
+    const leftX = wallCenterPos + hx;
+    const leftLength = Math.hypot(leftX, wallCenterHeight - wallLeftHeight);
+    const leftRotationY = -Math.atan2(wallCenterHeight - wallLeftHeight, leftX);
+
+    const rightX = hx - wallCenterPos;
+    const rightLength = Math.hypot(rightX, wallRightHeight - wallCenterHeight);
+    const rightRotationY = -Math.atan2(wallRightHeight - wallCenterHeight, rightX);
+
+    return (
+      <group name={'wall stud group'}>
+        {studs.map((pos, idx) => {
+          let height;
+          if (pos < wallCenterPos) {
+            height = ((pos + hx) * (wallCenterHeight - wallLeftHeight)) / (wallCenterPos + hx) + wallLeftHeight;
+          } else {
+            height = ((pos - hx) * (wallCenterHeight - wallRightHeight)) / (wallCenterPos - hx) + wallRightHeight;
+          }
+
+          return (
+            <Box
+              key={idx}
+              args={[studWidth, ly, height]}
+              position={[pos, hy, (height - lz) / 2]}
+              castShadow={shadowEnabled}
+              receiveShadow={shadowEnabled}
+              onContextMenu={handleStudContextMenu}
+              onPointerDown={handleStudPointerDown}
+            >
+              <meshStandardMaterial color={'white'} />
+            </Box>
+          );
+        })}
+        <Box
+          args={[leftLength, ly, studWidth]}
+          position={[-hx + leftX / 2, hy, (wallLeftHeight + wallCenterHeight) / 2 - hz]}
+          rotation={[0, leftRotationY, 0]}
+          castShadow={shadowEnabled}
+          receiveShadow={shadowEnabled}
+          onContextMenu={handleStudContextMenu}
+          onPointerDown={handleStudPointerDown}
+        >
+          <meshStandardMaterial color={'white'} />
+        </Box>
+        <Box
+          args={[rightLength, ly, studWidth]}
+          position={[hx - rightX / 2, hy, (wallRightHeight + wallCenterHeight) / 2 - hz]}
+          rotation={[0, rightRotationY, 0]}
+          castShadow={shadowEnabled}
+          receiveShadow={shadowEnabled}
+          onContextMenu={handleStudContextMenu}
+          onPointerDown={handleStudPointerDown}
+        >
+          <meshStandardMaterial color={'white'} />
+        </Box>
+      </group>
+    );
+  };
 
   return (
     <>
@@ -1138,156 +1231,133 @@ const Wall = ({
           rotation={[0, 0, wallAbsAngle]}
           userData={{ aabb: true }}
         >
-          {/* outside wall */}
-          <mesh
-            name={'Outside Wall'}
-            uuid={id}
-            userData={{ simulation: true }}
-            ref={outsideWallRef}
-            rotation={[HALF_PI, 0, 0]}
-            castShadow={castShadow}
-            receiveShadow={shadowEnabled}
-            onContextMenu={(e) => {
-              handleContextMenu(e, outsideWallRef.current, true);
-            }}
-            onPointerDown={handleWallBodyPointerDown}
-          >
-            <shapeBufferGeometry args={[outsiedWallShape]} />
-            <meshStandardMaterial
-              color={textureType === WallTexture.Default || textureType === WallTexture.NoTexture ? color : 'white'}
-              map={texture}
-              transparent={transparent}
-              opacity={opacity}
-            />
-          </mesh>
-
-          <mesh rotation={[HALF_PI, 0, 0]} position={[0, 0.1, 0]} castShadow={castShadow}>
-            <shapeBufferGeometry args={[outsiedWallShape]} />
-            <meshStandardMaterial color={'white'} side={BackSide} transparent={transparent} opacity={opacity} />
-          </mesh>
-
-          {/* inside wall */}
-          <mesh
-            name={'Inside Wall'}
-            ref={insideWallRef}
-            material={whiteMaterialDouble}
-            position={[0, ly, 0]}
-            rotation={[HALF_PI, 0, 0]}
-            castShadow={castShadow}
-            receiveShadow={shadowEnabled}
-            onPointerDown={handleWallBodyPointerDown}
-            onContextMenu={(e) => {
-              handleContextMenu(e, insideWallRef.current);
-            }}
-          >
-            <shapeBufferGeometry args={[insideWallShape]} />
-          </mesh>
-
-          {/* top surface */}
-          {!roofId && (
-            <mesh
-              name={'Top Wall'}
-              ref={topSurfaceRef}
-              material={whiteMaterialDouble}
-              position={[0, hy, hz]}
-              castShadow={castShadow}
-              receiveShadow={shadowEnabled}
-              onPointerDown={handleWallBodyPointerDown}
-              onContextMenu={(e) => {
-                handleContextMenu(e, topSurfaceRef.current);
-              }}
-            >
-              <shapeBufferGeometry args={[topWallShape]} />
-            </mesh>
-          )}
-
-          {/* side surfaces */}
-          {leftOffset === 0 && (
-            <Plane
-              args={[leftRoofHeight ?? lz, ly]}
-              material={whiteMaterialDouble}
-              position={[-hx + 0.01, hy, -(lz - (leftRoofHeight ?? lz)) / 2]}
-              rotation={[0, HALF_PI, 0]}
-              castShadow={castShadow}
-              receiveShadow={shadowEnabled}
-              onPointerDown={handleWallBodyPointerDown}
-            />
-          )}
-          {rightOffset === 0 && (
-            <Plane
-              args={[rightRoofHeight ?? lz, ly]}
-              material={whiteMaterialDouble}
-              position={[hx - 0.01, hy, -(lz - (rightRoofHeight ?? lz)) / 2]}
-              rotation={[0, HALF_PI, 0]}
-              castShadow={castShadow}
-              receiveShadow={shadowEnabled}
-              onPointerDown={handleWallBodyPointerDown}
-            />
-          )}
-
-          {/* intersection plane */}
-          <mesh
-            name={`Wall Intersection Plane ${id}`}
-            ref={intersectionPlaneRef}
-            position={[0, ly / 2 + 0.01, 0]}
-            rotation={[HALF_PI, 0, 0]}
-            visible={false}
-            onPointerDown={handleIntersectionPointerDown}
-            onPointerUp={handleIntersectionPointerUp}
-            onPointerMove={handleIntersectionPointerMove}
-            onPointerOut={handleIntersectionPointerOut}
-          >
-            <shapeBufferGeometry args={[intersectionPlaneShape]} />
-            <meshBasicMaterial />
-          </mesh>
-
-          {wallStructure === WallStructure.Stud && (
+          {opacity !== 0 && (
             <>
-              {studs.map((pos, idx) => {
-                let height = lz;
-                if (centerRoofHeight) {
-                  const [roofCenter, roofHeight] = centerRoofHeight;
-                  if (pos < roofCenter) {
-                    height = ((pos + hx) * (roofHeight - lz)) / (roofCenter + hx) + lz;
-                  } else {
-                    height = ((pos - hx) * (roofHeight - lz)) / (roofCenter - hx) + lz;
-                  }
+              {/* outside wall */}
+              <mesh
+                name={'Outside Wall'}
+                uuid={id}
+                userData={{ simulation: true }}
+                ref={outsideWallRef}
+                rotation={[HALF_PI, 0, 0]}
+                castShadow={castShadow}
+                receiveShadow={shadowEnabled}
+                onContextMenu={(e) => {
+                  handleContextMenu(e, outsideWallRef.current, true);
+                }}
+                onPointerDown={handleWallBodyPointerDown}
+              >
+                <shapeBufferGeometry args={[outsiedWallShape]} />
+                <meshStandardMaterial
+                  color={textureType === WallTexture.Default || textureType === WallTexture.NoTexture ? color : 'white'}
+                  map={texture}
+                  transparent={transparent}
+                  opacity={opacity}
+                />
+              </mesh>
+
+              <mesh rotation={[HALF_PI, 0, 0]} position={[0, 0.1, 0]} castShadow={castShadow}>
+                <shapeBufferGeometry args={[outsiedWallShape]} />
+                <meshStandardMaterial color={'white'} side={BackSide} transparent={transparent} opacity={opacity} />
+              </mesh>
+
+              {/* inside wall */}
+              <mesh
+                name={'Inside Wall'}
+                ref={insideWallRef}
+                material={whiteMaterialDouble}
+                position={[0, ly, 0]}
+                rotation={[HALF_PI, 0, 0]}
+                castShadow={castShadow}
+                receiveShadow={shadowEnabled}
+                onPointerDown={handleWallBodyPointerDown}
+                onContextMenu={(e) => {
+                  handleContextMenu(e, insideWallRef.current);
+                }}
+              >
+                <shapeBufferGeometry args={[insideWallShape]} />
+              </mesh>
+
+              {/* top surface */}
+              {!roofId && (
+                <mesh
+                  name={'Top Wall'}
+                  ref={topSurfaceRef}
+                  material={whiteMaterialDouble}
+                  position={[0, hy, hz]}
+                  castShadow={castShadow}
+                  receiveShadow={shadowEnabled}
+                  onPointerDown={handleWallBodyPointerDown}
+                  onContextMenu={(e) => {
+                    handleContextMenu(e, topSurfaceRef.current);
+                  }}
+                >
+                  <shapeBufferGeometry args={[topWallShape]} />
+                </mesh>
+              )}
+
+              {/* side surfaces */}
+              {leftOffset === 0 && (
+                <Plane
+                  args={[leftRoofHeight ?? lz, ly]}
+                  material={whiteMaterialDouble}
+                  position={[-hx + 0.01, hy, -(lz - (leftRoofHeight ?? lz)) / 2]}
+                  rotation={[0, HALF_PI, 0]}
+                  castShadow={castShadow}
+                  receiveShadow={shadowEnabled}
+                  onPointerDown={handleWallBodyPointerDown}
+                />
+              )}
+              {rightOffset === 0 && (
+                <Plane
+                  args={[rightRoofHeight ?? lz, ly]}
+                  material={whiteMaterialDouble}
+                  position={[hx - 0.01, hy, -(lz - (rightRoofHeight ?? lz)) / 2]}
+                  rotation={[0, HALF_PI, 0]}
+                  castShadow={castShadow}
+                  receiveShadow={shadowEnabled}
+                  onPointerDown={handleWallBodyPointerDown}
+                />
+              )}
+
+              {/* intersection plane */}
+              <mesh
+                name={`Wall Intersection Plane ${id}`}
+                ref={intersectionPlaneRef}
+                position={[0, ly / 2 + 0.01, 0]}
+                rotation={[HALF_PI, 0, 0]}
+                visible={false}
+                onPointerDown={handleIntersectionPointerDown}
+                onPointerUp={handleIntersectionPointerUp}
+                onPointerMove={handleIntersectionPointerMove}
+                onPointerOut={handleIntersectionPointerOut}
+              >
+                <shapeBufferGeometry args={[intersectionPlaneShape]} />
+                <meshBasicMaterial />
+              </mesh>
+
+              {elementsOnWall.map((e) => {
+                switch (e.type) {
+                  case ObjectType.Window:
+                    return <Window key={e.id} {...(e as WindowModel)} />;
+                  case ObjectType.Door:
+                    return <Door key={e.id} {...(e as DoorModel)} />;
+                  case ObjectType.SolarPanel:
+                    let r = 0;
+                    if (parent && wallModel) {
+                      r = parent.rotation[2] + wallModel.relativeAngle;
+                    }
+                    return (
+                      <group key={e.id} position={[0, -e.lz / 2, 0]}>
+                        <SolarPanelOnWall {...(e as SolarPanelModel)} absRotation={r} />
+                      </group>
+                    );
                 }
-                return (
-                  <Box
-                    key={idx}
-                    args={[studWidth, ly, height]}
-                    position={[pos, hy, (height - lz) / 2]}
-                    castShadow={shadowEnabled}
-                  >
-                    <meshStandardMaterial color={'white'} />
-                  </Box>
-                );
               })}
-              <Box args={[lx, ly, studWidth]} position={[0, hy, hz]} castShadow={shadowEnabled}>
-                <meshStandardMaterial color={'white'} />
-              </Box>
             </>
           )}
 
-          {elementsOnWall.map((e) => {
-            switch (e.type) {
-              case ObjectType.Window:
-                return <Window key={e.id} {...(e as WindowModel)} />;
-              case ObjectType.Door:
-                return <Door key={e.id} {...(e as DoorModel)} />;
-              case ObjectType.SolarPanel:
-                let r = 0;
-                if (parent && wallModel) {
-                  r = parent.rotation[2] + wallModel.relativeAngle;
-                }
-                return (
-                  <group key={e.id} position={[0, -e.lz / 2, 0]}>
-                    <SolarPanelOnWall {...(e as SolarPanelModel)} absRotation={r} />
-                  </group>
-                );
-            }
-          })}
+          {wallStructure === WallStructure.Stud && wallStuds()}
 
           {/* wireFrame */}
           <WallWireFrame

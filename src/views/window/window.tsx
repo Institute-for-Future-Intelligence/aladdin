@@ -51,6 +51,7 @@ const Window = ({
   const [wlx, setWlx] = useState(lx);
   const [wlz, setWlz] = useState(lz);
   const [wcx, setWcx] = useState(cx);
+  const [wcy, setWcy] = useState(cy);
   const [wcz, setWcz] = useState(cz);
 
   const parentSelector = useCallback((state: CommonStoreState) => {
@@ -82,13 +83,14 @@ const Window = ({
       setWlx(lx * parent.lx);
       setWlz(lz * parent.lz);
       setWcx(cx * parent.lx);
+      setWcy(0.33 * parent.ly);
       setWcz(cz * parent.lz);
     }
-  }, [lx, lz, cx, cz, parent?.lx, parent?.lz]);
+  }, [lx, lz, cx, cz, parent?.lx, parent?.ly, parent?.lz]);
 
   return (
     <group key={id} name={`Window group ${id}`} position={[wcx, 0, wcz]}>
-      <group position={[0, cy, 0]}>
+      <group position={[0, wcy, 0]}>
         <Plane
           name={'window ' + id}
           args={[wlx, wlz]}

@@ -2,7 +2,7 @@
  * @Copyright 2021-2022. Institute for Future Intelligence, Inc.
  */
 
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Menu, Modal, Radio } from 'antd';
 import SubMenu from 'antd/lib/menu/SubMenu';
 import { useStore } from '../../../stores/common';
@@ -61,6 +61,12 @@ export const WallMenu = () => {
     paddingLeft: '10px',
     lineHeight: '30px',
   };
+
+  useEffect(() => {
+    if (wall && selectedStructure !== wall?.wallStructure) {
+      setSelectedStructure(wall.wallStructure ?? WallStructure.Default);
+    }
+  }, [wall]);
 
   return (
     wall && (
