@@ -20,6 +20,7 @@ import { ExclamationCircleOutlined } from '@ant-design/icons';
 import { UndoableRemoveAllChildren } from '../../../undo/UndoableRemoveAllChildren';
 import { Util } from 'src/Util';
 import WallHeightInput from './wallHeightInput';
+import { UndoableChange } from 'src/undo/UndoableChange';
 
 export const WallMenu = () => {
   const setCommonStore = useStore(Selector.set);
@@ -87,6 +88,27 @@ export const WallMenu = () => {
                 value={selectedStructure}
                 style={{ height: '75px' }}
                 onChange={(e) => {
+                  const undoableChange = {
+                    name: 'Select Wall Structure',
+                    timestamp: Date.now(),
+                    oldValue: selectedStructure,
+                    newValue: e.target.value,
+                    changedElementId: wall.id,
+                    changedElementType: wall.type,
+                    undo: () => {
+                      updateWallStructureById(
+                        undoableChange.changedElementId,
+                        undoableChange.oldValue as WallStructure,
+                      );
+                    },
+                    redo: () => {
+                      updateWallStructureById(
+                        undoableChange.changedElementId,
+                        undoableChange.newValue as WallStructure,
+                      );
+                    },
+                  } as UndoableChange;
+                  addUndoable(undoableChange);
                   updateWallStructureById(wall.id, e.target.value);
                   setSelectedStructure(e.target.value);
                 }}

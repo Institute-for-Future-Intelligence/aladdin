@@ -18,12 +18,14 @@ import RoofRafterSpacingInput from './roofRafterSpacingInput';
 import RoofOpacityInput from './roofOpacityInput';
 import SubMenu from 'antd/lib/menu/SubMenu';
 import GlassTintSelection from './glassTintSelection';
+import { UndoableChange } from 'src/undo/UndoableChange';
 
 export const RoofMenu = () => {
   const roof = useStore(Selector.selectedElement) as RoofModel;
   const language = useStore(Selector.language);
   const updateRoofStructureById = useStore(Selector.updateRoofStructureById);
   const setApplyCount = useStore(Selector.setApplyCount);
+  const addUndoable = useStore(Selector.addUndoable);
 
   const [updateFlag, setUpdateFlag] = useState<boolean>(false);
   const [rafterSpacingDialogVisible, setRafterSpacingDialogVisible] = useState(false);
@@ -74,6 +76,21 @@ export const RoofMenu = () => {
               value={updatedRoof.roofStructure ?? RoofStructure.Default}
               style={{ height: '110px' }}
               onChange={(e) => {
+                const undoableChange = {
+                  name: 'Select Roof Structure',
+                  timestamp: Date.now(),
+                  oldValue: updatedRoof.roofStructure ?? RoofStructure.Default,
+                  newValue: e.target.value,
+                  changedElementId: roof.id,
+                  changedElementType: roof.type,
+                  undo: () => {
+                    updateRoofStructureById(undoableChange.changedElementId, undoableChange.oldValue as RoofStructure);
+                  },
+                  redo: () => {
+                    updateRoofStructureById(undoableChange.changedElementId, undoableChange.newValue as RoofStructure);
+                  },
+                } as UndoableChange;
+                addUndoable(undoableChange);
                 updateRoofStructureById(roof.id, e.target.value);
                 setUpdateFlag(!updateFlag);
               }}
