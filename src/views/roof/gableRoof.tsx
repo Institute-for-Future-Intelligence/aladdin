@@ -20,6 +20,7 @@ import {
   handlePointerDown,
   handlePointerMove,
   handlePointerUp,
+  handleRoofBodyPointerDown,
   RoofWireframeProps,
   updateRooftopSolarPanel,
 } from './roofRenderer';
@@ -149,10 +150,9 @@ const Rafter = ({
     const backWallLength = backWall.lx;
 
     const offset = rafterWidth;
-    const number =
-      Math.floor((Math.min(ridgeLength, frontWallLength, backWallLength) - rafterWidth) / rafterSpacing) + 1;
+    const number = Math.floor((Math.min(ridgeLength, frontWallLength, backWallLength) - rafterWidth) / rafterSpacing);
     const res = new Array(number).fill(0).map((v, i) => {
-      const len = i * rafterSpacing + offset;
+      const len = (i + 1) * rafterSpacing + offset;
       const ridge = ridgeLeftPoint.clone().add(ridgeUnitVector.clone().multiplyScalar(len));
       const front = frontWallLeftPoint.clone().add(frontWallUnitVector.clone().multiplyScalar(len));
       const back = backWallRightPoint.clone().add(backWallUnitVector.clone().multiplyScalar(len));
@@ -873,15 +873,24 @@ const GableRoof = ({
 
       {/* rafter */}
       {roofStructure === RoofStructure.Rafter && (
-        <Rafter
-          ridgeLeftPoint={ridgeLeftPointV3}
-          ridgeRightPoint={ridgeRightPointV3}
-          wallArray={currentWallArray}
-          overhang={overhang}
-          isShed={isShed}
-          rafterHeight={thickness}
-          rafterSpacing={rafterSpacing}
-        />
+        <group
+          onContextMenu={(e) => {
+            handleContextMenu(e, id);
+          }}
+          onPointerDown={(e) => {
+            handleRoofBodyPointerDown(e, id, parentId);
+          }}
+        >
+          <Rafter
+            ridgeLeftPoint={ridgeLeftPointV3}
+            ridgeRightPoint={ridgeRightPointV3}
+            wallArray={currentWallArray}
+            overhang={overhang}
+            isShed={isShed}
+            rafterHeight={thickness}
+            rafterSpacing={rafterSpacing}
+          />
+        </group>
       )}
 
       {/* handles */}
@@ -1098,7 +1107,11 @@ const RoofSegment = ({
   };
 
   const isNorthWest = (wall: WallModel) => {
-    return Math.abs(wall.relativeAngle) < 0.01 || Math.abs(wall.relativeAngle - Math.PI) < 0.01;
+    return (
+      Math.abs(wall.relativeAngle) < Math.PI / 4 ||
+      Math.abs(wall.relativeAngle - Math.PI * 2) < Math.PI / 4 ||
+      Math.abs(wall.relativeAngle - Math.PI) < Math.PI / 4
+    );
   };
 
   useEffect(() => {
@@ -1145,36 +1158,44 @@ const RoofSegment = ({
       const resMesh = CSG.subtract(meshRef.current, holeMesh);
       meshRef.current.geometry = resMesh.geometry;
 
-      if (planeRef.current && mullionRef.current) {
-        const cz = (wallLeft.z + ridgeLeft.z) / 2 + thickness * 0.75;
-        planeRef.current.position.set(center.x, center.y, cz);
-        mullionRef.current.position.set(center.x, center.y, cz);
+      if (isNorthWest(currWall)) {
+        const lx = wl.distanceTo(wr);
+        const ly = wallLeft.distanceTo(ridgeLeft);
 
-        if (isNorthWest(currWall)) {
-          const lx = wl.distanceTo(wr);
-          const ly = wallLeft.distanceTo(ridgeLeft);
+        setMullionLx(lx);
+        setMullionLz(ly);
 
-          setMullionLx(lx);
-          setMullionLz(ly);
-
+        const rotationX = new Vector3().subVectors(wallLeft, ridgeLeft).angleTo(new Vector3(0, -1, 0));
+        if (planeRef.current) {
           planeRef.current.scale.set(lx, ly, 1);
-
-          const rotationX = new Vector3().subVectors(wallLeft, ridgeLeft).angleTo(new Vector3(0, -1, 0));
           planeRef.current.rotation.set(rotationX, 0, 0);
+        }
+        if (mullionRef.current) {
           mullionRef.current.rotation.set(rotationX - HALF_PI, 0, 0);
-        } else {
-          const lx = wallLeft.distanceTo(ridgeLeft);
-          const ly = wl.distanceTo(wr);
+        }
+      } else {
+        const lx = wallLeft.distanceTo(ridgeLeft);
+        const ly = wl.distanceTo(wr);
 
-          setMullionLx(lx);
-          setMullionLz(ly);
+        setMullionLx(lx);
+        setMullionLz(ly);
 
+        const rotationY = new Vector3().subVectors(wallLeft, ridgeLeft).angleTo(new Vector3(1, 0, 0));
+        if (planeRef.current) {
           planeRef.current.scale.set(lx, ly, 1);
-
-          const rotationY = new Vector3().subVectors(wallLeft, ridgeLeft).angleTo(new Vector3(1, 0, 0));
           planeRef.current.rotation.set(0, rotationY, 0);
+        }
+        if (mullionRef.current) {
           mullionRef.current.rotation.set(HALF_PI, rotationY, 0, 'YXZ');
         }
+      }
+
+      const cz = (wallLeft.z + ridgeLeft.z) / 2 + thickness * 0.75;
+      if (planeRef.current) {
+        planeRef.current.position.set(center.x, center.y, cz);
+      }
+      if (mullionRef.current) {
+        mullionRef.current.position.set(center.x, center.y, cz);
         invalidate();
       }
     }
@@ -1182,19 +1203,23 @@ const RoofSegment = ({
 
   return (
     <>
-      <mesh ref={meshRef} castShadow={shadowEnabled && !transparent} receiveShadow={shadowEnabled}>
-        <meshStandardMaterial
-          map={texture}
-          color={textureType === RoofTexture.Default || textureType === RoofTexture.NoTexture ? color : 'white'}
-          transparent={transparent}
-          opacity={_opacity}
-        />
-      </mesh>
+      {((_opacity > 0 && roofStructure === RoofStructure.Rafter) || roofStructure !== RoofStructure.Rafter) && (
+        <mesh ref={meshRef} castShadow={shadowEnabled && !transparent} receiveShadow={shadowEnabled}>
+          <meshStandardMaterial
+            map={texture}
+            color={textureType === RoofTexture.Default || textureType === RoofTexture.NoTexture ? color : 'white'}
+            transparent={transparent}
+            opacity={_opacity}
+          />
+        </mesh>
+      )}
       {roofStructure === RoofStructure.Glass && show && (
         <>
-          <Plane ref={planeRef}>
-            <meshBasicMaterial side={DoubleSide} color={glassTint} opacity={opacity} transparent={true} />
-          </Plane>
+          {_opacity > 0 && (
+            <Plane ref={planeRef}>
+              <meshBasicMaterial side={DoubleSide} color={glassTint} opacity={opacity} transparent={true} />
+            </Plane>
+          )}
           <group ref={mullionRef}>
             <WindowWireFrame
               lx={mullionLx}

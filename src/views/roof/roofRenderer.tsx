@@ -115,7 +115,7 @@ const handlAddElementOnRoof = (
   }
 };
 
-const handleRoofBodyPointerDown = (e: ThreeEvent<PointerEvent>, id: string, foundationId: string) => {
+export const handleRoofBodyPointerDown = (e: ThreeEvent<PointerEvent>, id: string, foundationId: string) => {
   if (useStore.getState().isAddingElement()) {
     return;
   }

@@ -1121,14 +1121,12 @@ const Wall = ({
         }
         state.elementGroupId = parentId;
       });
-      e.stopPropagation();
     } else {
-      if (checkIfCanSelectMe(e)) {
-        setCommonStore((state) => {
-          state.contextMenuObjectType = null;
-        });
-        selectMe(id, e, ActionType.Select);
-      }
+      setCommonStore((state) => {
+        state.contextMenuObjectType = null;
+      });
+      selectMe(id, e, ActionType.Select);
+      e.stopPropagation();
     }
   };
 
@@ -1138,6 +1136,7 @@ const Wall = ({
         state.contextMenuObjectType = ObjectType.Wall;
       });
       selectMe(id, e, ActionType.Select);
+      e.stopPropagation();
     }
   };
 
@@ -1231,7 +1230,7 @@ const Wall = ({
           rotation={[0, 0, wallAbsAngle]}
           userData={{ aabb: true }}
         >
-          {opacity !== 0 && (
+          {(opacity > 0 || wallStructure === WallStructure.Default) && (
             <>
               {/* outside wall */}
               <mesh
@@ -1265,7 +1264,6 @@ const Wall = ({
               <mesh
                 name={'Inside Wall'}
                 ref={insideWallRef}
-                material={whiteMaterialDouble}
                 position={[0, ly, 0]}
                 rotation={[HALF_PI, 0, 0]}
                 castShadow={castShadow}
@@ -1276,6 +1274,12 @@ const Wall = ({
                 }}
               >
                 <shapeBufferGeometry args={[insideWallShape]} />
+                <meshStandardMaterial
+                  color={transparent ? color : 'white'}
+                  transparent={transparent}
+                  opacity={opacity}
+                  side={DoubleSide}
+                />
               </mesh>
 
               {/* top surface */}

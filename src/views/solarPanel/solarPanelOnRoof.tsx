@@ -942,6 +942,18 @@ const SolarPanelOnRoof = ({
     }
   };
 
+  const parent = useStore((state) => {
+    for (const e of state.elements) {
+      if (e.id === parentId) {
+        return e;
+      }
+    }
+  });
+
+  if (parent && parent.type === ObjectType.Roof && (parent as RoofModel).opacity === 0) {
+    return null;
+  }
+
   return (
     <group name={'Solar Panel Group Grandpa ' + id} rotation={euler} position={position}>
       <group name={'Solar Panel Group Dad ' + id} rotation={relativeEuler}>
