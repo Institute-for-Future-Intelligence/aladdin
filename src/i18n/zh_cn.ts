@@ -380,6 +380,7 @@ export const i18n_zh_cn = {
       commercialBuildingExamples: {
         OfficeBuilding: '一栋简单的办公楼',
         Hotel: '一个旅馆场景',
+        SouthBurlingtonHighSchoolVermont: '佛蒙特州南伯灵顿高中',
       },
       urbanPlanningSubMenu: '城市规划',
       urbanPlanningExamples: {

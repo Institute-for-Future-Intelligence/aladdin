@@ -24,6 +24,7 @@ import gable_roof_vs_hip_roof from './examples/gable_roof_vs_hip_roof.json';
 import colonial_vs_saltbox from './examples/colonial_vs_saltbox.json';
 import gambrel_roof_vs_mansard_roof from './examples/gambrel_roof_vs_mansard_roof.json';
 import hotel_01 from './examples/hotel_01.json';
+import south_burlington_high_school from './examples/south_burlington_high_school.json';
 import heatmap_01 from './examples/heatmap_01.json';
 import vegetative_buffer_01 from './examples/vegetative_buffer_01.json';
 import effect_tilt_angle_solar_panel from './examples/effect_tilt_angle_solar_panel.json';
@@ -266,6 +267,9 @@ const MainMenu = ({ viewOnly, set2DView, resetView, zoomView, canvas }: MainMenu
         break;
       case 'hotel_01':
         input = hotel_01;
+        break;
+      case 'south_burlington_high_school':
+        input = south_burlington_high_school;
         break;
       case 'heatmap_01':
         input = heatmap_01;
@@ -2017,6 +2021,9 @@ const MainMenu = ({ viewOnly, set2DView, resetView, zoomView, canvas }: MainMenu
             </Menu.Item>
             <Menu.Item key="hotel_01" onClick={loadFile}>
               {i18n.t('menu.commercialBuildingExamples.Hotel', lang)}
+            </Menu.Item>
+            <Menu.Item key="south_burlington_high_school" onClick={loadFile}>
+              {i18n.t('menu.commercialBuildingExamples.SouthBurlingtonHighSchoolVermont', lang)}
             </Menu.Item>
           </SubMenu>
           <SubMenu key={'urban_planning'} title={i18n.t('menu.urbanPlanningSubMenu', lang)}>

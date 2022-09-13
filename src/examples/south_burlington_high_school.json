@@ -1,0 +1,4133 @@
+{
+  "docid": "v9jcGRjXkJvRdWvm5jqrVN",
+  "time": "09/13/2022 09:34 am",
+  "timestamp": 1663076051835,
+  "userid": "QWecNcxhyvP6j6sBN11hBsfZDau1",
+  "owner": null,
+  "email": null,
+  "world": {
+    "daysPerYear": 4,
+    "noAnimationForSolarPanelSimulation": true,
+    "longitude": -73.177891,
+    "sutTimesPerHour": 4,
+    "noAnimationForSolarUpdraftTowerSimulation": false,
+    "diurnalTemperatureModel": 1,
+    "discretization": "Approximate",
+    "sutDaysPerYear": 4,
+    "sutGridCellSize": 1,
+    "cspTimesPerHour": 4,
+    "highestTemperatureTimeInMinutes": 900,
+    "pvGridCellSize": 0.5,
+    "noAnimationForSensorDataCollection": false,
+    "name": "default",
+    "cspGridCellSize": 0.5,
+    "dustLoss": 0.05,
+    "solarRadiationHeatmapGridCellSize": 5,
+    "latitude": 44.454924,
+    "cspDaysPerYear": 4,
+    "date": "Wed Jun 22 2022 12:00:00 GMT-0400 (Eastern Daylight Time)",
+    "address": "550 Dorset St, South Burlington, VT 05403, USA",
+    "ground": {
+      "thermalDiffusivity": 0.05,
+      "snowReflectionFactors": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "albedo": 0.3
+    },
+    "airAttenuationCoefficient": 0.01,
+    "solarPanelVisibilityGridCellSize": 0.2,
+    "timesPerHour": 2,
+    "airConvectiveCoefficient": 5,
+    "noAnimationForHeatmapSimulation": true
+  },
+  "elements": [
+    {
+      "rotation": [
+        0,
+        0,
+        0.11344640137963143
+      ],
+      "lx": 42.0955259862511,
+      "cy": -46.54215234653224,
+      "type": "Cuboid",
+      "ly": 34.92675303840907,
+      "id": "qsPqX4eMRADWLb6uFzZyu3",
+      "cz": 6.5,
+      "textureTypes": [
+        "No Facade Texture",
+        "No Facade Texture",
+        "No Facade Texture",
+        "No Facade Texture",
+        "No Facade Texture",
+        "No Facade Texture"
+      ],
+      "parentId": "Ground",
+      "locked": true,
+      "selected": false,
+      "cx": 1.8084891171279258,
+      "color": "#e27300",
+      "lz": 13,
+      "faceColors": [
+        "#e27300",
+        "#e27300",
+        "#e27300",
+        "#e27300",
+        "#d0d7da",
+        "gray"
+      ],
+      "normal": [
+        0,
+        0,
+        1
+      ]
+    },
+    {
+      "rotation": [
+        0,
+        0,
+        0.11344640137963143
+      ],
+      "type": "Cuboid",
+      "ly": 3.86445911605994,
+      "faceColors": [
+        "#e27300",
+        "#e27300",
+        "#e27300",
+        "#e27300",
+        "#eff3f4",
+        "gray"
+      ],
+      "id": "15SnZzWbRga2YXQjrHrMoH",
+      "locked": true,
+      "parentId": "Ground",
+      "cx": 23.280210785776593,
+      "color": "#e27300",
+      "cz": 3.5,
+      "selected": false,
+      "normal": [
+        0,
+        0,
+        1
+      ],
+      "lz": 7,
+      "textureTypes": [
+        "No Facade Texture",
+        "No Facade Texture",
+        "No Facade Texture",
+        "No Facade Texture",
+        "No Facade Texture",
+        "No Facade Texture"
+      ],
+      "cy": -63.54853637545297,
+      "lx": 12.707438928677645
+    },
+    {
+      "cx": -33.686845121145325,
+      "ly": 21.436523356683622,
+      "id": "jeaVPPnZw5Ed7yuuYuFjT4",
+      "cz": 3.5,
+      "color": "#e27300",
+      "locked": true,
+      "lx": 60,
+      "parentId": "Ground",
+      "type": "Cuboid",
+      "selected": false,
+      "cy": 5.924352450279141,
+      "normal": [
+        0,
+        0,
+        1
+      ],
+      "textureTypes": [
+        "No Facade Texture",
+        "No Facade Texture",
+        "Facade #1",
+        "Facade #1",
+        "No Facade Texture",
+        "No Facade Texture"
+      ],
+      "lz": 7,
+      "rotation": [
+        0,
+        0,
+        -0.22689280275926285
+      ],
+      "faceColors": [
+        "#e27300",
+        "#e27300",
+        "#e27300",
+        "#e27300",
+        "#dadedf",
+        "gray"
+      ]
+    },
+    {
+      "locked": true,
+      "lz": 7,
+      "selected": false,
+      "rotation": [
+        0,
+        0,
+        0.47123889803846897
+      ],
+      "lx": 70,
+      "faceColors": [
+        "#e27300",
+        "#e27300",
+        "#e27300",
+        "#e27300",
+        "#dadedf",
+        "gray"
+      ],
+      "ly": 22.005759208164513,
+      "parentId": "Ground",
+      "cy": 16.732974312474486,
+      "textureTypes": [
+        "No Facade Texture",
+        "No Facade Texture",
+        "No Facade Texture",
+        "No Facade Texture",
+        "No Facade Texture",
+        "No Facade Texture"
+      ],
+      "id": "w8SzPJTBSBctdCdhPMiQ8Y",
+      "color": "#e27300",
+      "type": "Cuboid",
+      "normal": [
+        0,
+        0,
+        1
+      ],
+      "cx": 34.50919214417893,
+      "cz": 3.5
+    },
+    {
+      "lz": 0.1,
+      "normal": [
+        0,
+        0,
+        1
+      ],
+      "locked": true,
+      "type": "Foundation",
+      "cz": 0.05,
+      "ly": 33.24144899129459,
+      "rotation": [
+        0,
+        0,
+        0.11344640137963143
+      ],
+      "parentId": "Ground",
+      "selected": false,
+      "cy": 6.225878764069708,
+      "solarUpdraftTower": {},
+      "solarAbsorberPipe": {},
+      "id": "pAENrJmYZCM1ckJVXJhbjf",
+      "cx": -3.0110805900742577,
+      "solarPowerTower": {},
+      "lx": 33.143096812026116
+    },
+    {
+      "cy": 13,
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "leftRoofHeight": 8,
+      "id": "etH6khoAQcue7DhdL3hKE4",
+      "windows": [],
+      "type": "Wall",
+      "leftPoint": [
+        7.5,
+        12,
+        0
+      ],
+      "lineWidth": 0.2,
+      "leftJoints": [
+        "8bjxpu3YEF3xWPcrbQwkhJ"
+      ],
+      "ly": 0.3,
+      "rightJoints": [
+        "kDgsBFAdDRYMKBfw4NrZmC"
+      ],
+      "color": "#e27300",
+      "lx": 8.24621125123532,
+      "relativeAngle": 2.896613990462928,
+      "normal": [
+        0,
+        0,
+        1
+      ],
+      "showLabel": false,
+      "lz": 8,
+      "cx": 3.5000000000000004,
+      "textureType": "Wall Texture Default",
+      "rightPoint": [
+        -0.49999999999999944,
+        14,
+        0
+      ],
+      "lineColor": "black",
+      "roofId": "k6bth8F9WX1VG1Z9xWAtQv",
+      "selected": false,
+      "foundationId": "pAENrJmYZCM1ckJVXJhbjf",
+      "rightRoofHeight": 8,
+      "parentId": "pAENrJmYZCM1ckJVXJhbjf",
+      "locked": true,
+      "cz": 0
+    },
+    {
+      "relativeAngle": 1.9379701606131157,
+      "rightJoints": [
+        "etH6khoAQcue7DhdL3hKE4"
+      ],
+      "cx": 10,
+      "lx": 13.928388277184117,
+      "leftPoint": [
+        12.5,
+        -1,
+        0
+      ],
+      "normal": [
+        0,
+        0,
+        1
+      ],
+      "id": "8bjxpu3YEF3xWPcrbQwkhJ",
+      "roofId": "k6bth8F9WX1VG1Z9xWAtQv",
+      "type": "Wall",
+      "rightPoint": [
+        7.5,
+        11.999999999999998,
+        0
+      ],
+      "lineColor": "black",
+      "textureType": "Wall Texture Default",
+      "leftJoints": [
+        "78z2ecrQQgcHrHfygTZ9jK"
+      ],
+      "leftRoofHeight": 8,
+      "rightRoofHeight": 8,
+      "showLabel": false,
+      "foundationId": "pAENrJmYZCM1ckJVXJhbjf",
+      "cy": 5.499999999999999,
+      "color": "#e27300",
+      "lz": 8,
+      "cz": 0,
+      "windows": [],
+      "selected": false,
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "locked": true,
+      "ly": 0.3,
+      "parentId": "pAENrJmYZCM1ckJVXJhbjf",
+      "lineWidth": 0.2
+    },
+    {
+      "lineWidth": 0.2,
+      "normal": [
+        0,
+        0,
+        1
+      ],
+      "selected": false,
+      "cx": 11.75,
+      "rightPoint": [
+        12.5,
+        -1,
+        0
+      ],
+      "rightJoints": [
+        "8bjxpu3YEF3xWPcrbQwkhJ"
+      ],
+      "id": "78z2ecrQQgcHrHfygTZ9jK",
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "textureType": "Wall Texture Default",
+      "leftJoints": [
+        "mDkaCjWbyiM41dnmEVWdxy"
+      ],
+      "parentId": "pAENrJmYZCM1ckJVXJhbjf",
+      "windows": [],
+      "leftPoint": [
+        11,
+        -10.5,
+        0
+      ],
+      "leftRoofHeight": 8,
+      "lx": 9.617692030835672,
+      "lineColor": "black",
+      "lz": 8,
+      "color": "#e27300",
+      "foundationId": "pAENrJmYZCM1ckJVXJhbjf",
+      "locked": true,
+      "showLabel": false,
+      "roofId": "k6bth8F9WX1VG1Z9xWAtQv",
+      "relativeAngle": 1.4141944498128813,
+      "rightRoofHeight": 8,
+      "ly": 0.3,
+      "cz": 0,
+      "type": "Wall",
+      "cy": -5.75
+    },
+    {
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "relativeAngle": 3.402195045337134,
+      "foundationId": "pAENrJmYZCM1ckJVXJhbjf",
+      "cx": -4.249999999999999,
+      "cy": 13,
+      "color": "#e27300",
+      "lineWidth": 0.2,
+      "lineColor": "black",
+      "showLabel": false,
+      "textureType": "Wall Texture Default",
+      "rightJoints": [
+        "hK2wY1qjEVKHhT5eT1oyYc"
+      ],
+      "locked": true,
+      "windows": [],
+      "rightPoint": [
+        -8,
+        12,
+        0
+      ],
+      "lz": 8,
+      "id": "kDgsBFAdDRYMKBfw4NrZmC",
+      "type": "Wall",
+      "leftJoints": [
+        "etH6khoAQcue7DhdL3hKE4"
+      ],
+      "lx": 7.762087348130014,
+      "ly": 0.3,
+      "rightRoofHeight": 8,
+      "selected": false,
+      "parentId": "pAENrJmYZCM1ckJVXJhbjf",
+      "cz": 0,
+      "leftPoint": [
+        -0.49999999999999856,
+        14,
+        0
+      ],
+      "leftRoofHeight": 8,
+      "roofId": "k6bth8F9WX1VG1Z9xWAtQv",
+      "normal": [
+        0,
+        0,
+        1
+      ]
+    },
+    {
+      "ly": 0.3,
+      "locked": true,
+      "showLabel": false,
+      "leftRoofHeight": 8,
+      "cx": -9.75,
+      "rightRoofHeight": 8,
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "id": "hK2wY1qjEVKHhT5eT1oyYc",
+      "leftJoints": [
+        "kDgsBFAdDRYMKBfw4NrZmC"
+      ],
+      "cz": 0,
+      "relativeAngle": 4.375714160997962,
+      "leftPoint": [
+        -8.000000000000002,
+        11.999999999999998,
+        0
+      ],
+      "normal": [
+        0,
+        0,
+        1
+      ],
+      "textureType": "Wall Texture Default",
+      "cy": 6.999999999999999,
+      "lz": 8,
+      "windows": [],
+      "foundationId": "pAENrJmYZCM1ckJVXJhbjf",
+      "rightJoints": [
+        "b4LV4TTeCfWqyehosbTDfi"
+      ],
+      "lx": 10.594810050208544,
+      "rightPoint": [
+        -11.5,
+        2,
+        0
+      ],
+      "color": "#e27300",
+      "selected": false,
+      "type": "Wall",
+      "parentId": "pAENrJmYZCM1ckJVXJhbjf",
+      "roofId": "k6bth8F9WX1VG1Z9xWAtQv",
+      "lineWidth": 0.2,
+      "lineColor": "black"
+    },
+    {
+      "lineColor": "black",
+      "roofId": "k6bth8F9WX1VG1Z9xWAtQv",
+      "normal": [
+        0,
+        0,
+        1
+      ],
+      "rightRoofHeight": 8,
+      "lz": 8,
+      "cy": -12.749999999999998,
+      "ly": 0.3,
+      "id": "mDkaCjWbyiM41dnmEVWdxy",
+      "leftPoint": [
+        1,
+        -15,
+        0
+      ],
+      "lx": 10.965856099730656,
+      "textureType": "Wall Texture Default",
+      "type": "Wall",
+      "showLabel": false,
+      "rightPoint": [
+        11,
+        -10.499999999999996,
+        0
+      ],
+      "rightJoints": [
+        "78z2ecrQQgcHrHfygTZ9jK"
+      ],
+      "lineWidth": 0.2,
+      "selected": false,
+      "foundationId": "pAENrJmYZCM1ckJVXJhbjf",
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "color": "#e27300",
+      "cx": 6,
+      "relativeAngle": 0.4228539261329409,
+      "locked": true,
+      "parentId": "pAENrJmYZCM1ckJVXJhbjf",
+      "windows": [],
+      "cz": 0,
+      "leftJoints": [
+        "2og8Xo997HNRwLdj5mnKCf"
+      ],
+      "leftRoofHeight": 8
+    },
+    {
+      "normal": [
+        0,
+        0,
+        1
+      ],
+      "leftPoint": [
+        -11.499999999999998,
+        2,
+        0
+      ],
+      "rightRoofHeight": 8,
+      "leftJoints": [
+        "hK2wY1qjEVKHhT5eT1oyYc"
+      ],
+      "parentId": "pAENrJmYZCM1ckJVXJhbjf",
+      "lx": 12.257650672131263,
+      "type": "Wall",
+      "selected": false,
+      "lz": 8,
+      "cx": -10.25,
+      "relativeAngle": 4.917784369574457,
+      "id": "b4LV4TTeCfWqyehosbTDfi",
+      "rightJoints": [
+        "2og8Xo997HNRwLdj5mnKCf"
+      ],
+      "leftRoofHeight": 8,
+      "rightPoint": [
+        -9,
+        -10,
+        0
+      ],
+      "color": "#e27300",
+      "foundationId": "pAENrJmYZCM1ckJVXJhbjf",
+      "ly": 0.3,
+      "cz": 0,
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "showLabel": false,
+      "locked": true,
+      "cy": -4,
+      "lineColor": "black",
+      "roofId": "k6bth8F9WX1VG1Z9xWAtQv",
+      "windows": [],
+      "textureType": "Wall Texture Default",
+      "lineWidth": 0.2
+    },
+    {
+      "ly": 0.3,
+      "leftPoint": [
+        -8.999999999999996,
+        -9.999999999999996,
+        0
+      ],
+      "foundationId": "pAENrJmYZCM1ckJVXJhbjf",
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "cz": 0,
+      "textureType": "Wall Texture Default",
+      "lx": 11.180339887498947,
+      "roofId": "k6bth8F9WX1VG1Z9xWAtQv",
+      "rightJoints": [
+        "mDkaCjWbyiM41dnmEVWdxy"
+      ],
+      "showLabel": false,
+      "id": "2og8Xo997HNRwLdj5mnKCf",
+      "lineWidth": 0.2,
+      "lz": 8,
+      "windows": [],
+      "normal": [
+        0,
+        0,
+        1
+      ],
+      "parentId": "pAENrJmYZCM1ckJVXJhbjf",
+      "selected": false,
+      "cy": -12.499999999999998,
+      "locked": true,
+      "leftJoints": [
+        "b4LV4TTeCfWqyehosbTDfi"
+      ],
+      "color": "#e27300",
+      "cx": -3.9999999999999982,
+      "lineColor": "black",
+      "rightPoint": [
+        1,
+        -15,
+        0
+      ],
+      "relativeAngle": 5.81953769817878,
+      "leftRoofHeight": 8,
+      "type": "Wall",
+      "rightRoofHeight": 8
+    },
+    {
+      "overhang": 0.3,
+      "cz": 0,
+      "locked": true,
+      "selected": false,
+      "cx": 0,
+      "type": "Roof",
+      "id": "k6bth8F9WX1VG1Z9xWAtQv",
+      "wallsId": [
+        "8bjxpu3YEF3xWPcrbQwkhJ",
+        "etH6khoAQcue7DhdL3hKE4",
+        "kDgsBFAdDRYMKBfw4NrZmC",
+        "hK2wY1qjEVKHhT5eT1oyYc",
+        "b4LV4TTeCfWqyehosbTDfi",
+        "2og8Xo997HNRwLdj5mnKCf",
+        "mDkaCjWbyiM41dnmEVWdxy",
+        "78z2ecrQQgcHrHfygTZ9jK"
+      ],
+      "textureType": "No Roof Texture",
+      "thickness": 0.2,
+      "showLabel": false,
+      "lineWidth": 0.2,
+      "lineColor": "black",
+      "normal": [
+        0,
+        0,
+        1
+      ],
+      "roofType": "Pyramid",
+      "lx": 0,
+      "color": "#bbc0c4",
+      "parentId": "pAENrJmYZCM1ckJVXJhbjf",
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "ly": 0,
+      "cy": 0,
+      "foundationId": "pAENrJmYZCM1ckJVXJhbjf",
+      "lz": 8
+    },
+    {
+      "id": "bJhvoWT5frHADN5rpErFAp",
+      "type": "Foundation",
+      "solarUpdraftTower": {},
+      "parentId": "Ground",
+      "solarAbsorberPipe": {},
+      "locked": true,
+      "ly": 20.929643657953434,
+      "cx": -14.3191636352593,
+      "lx": 30.96479094015392,
+      "lz": 0.1,
+      "normal": [
+        0,
+        0,
+        1
+      ],
+      "solarPowerTower": {},
+      "cy": -19.246790495991178,
+      "selected": false,
+      "cz": 0.05,
+      "rotation": [
+        0,
+        0,
+        0.11344640137963143
+      ]
+    },
+    {
+      "showLabel": false,
+      "selected": false,
+      "leftJoints": [
+        "u3McT1xxp22V2ArAdyDW3J"
+      ],
+      "windows": [],
+      "textureType": "Wall Texture Default",
+      "foundationId": "bJhvoWT5frHADN5rpErFAp",
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "normal": [
+        0,
+        0,
+        1
+      ],
+      "lz": 12,
+      "relativeAngle": 2.8068558162729786,
+      "id": "wERFjjYFCWERMhNEB9iuoK",
+      "cz": 0,
+      "type": "Wall",
+      "lineWidth": 0.2,
+      "leftRoofHeight": 12,
+      "locked": true,
+      "parentId": "bJhvoWT5frHADN5rpErFAp",
+      "color": "#e27300",
+      "ly": 0.3,
+      "rightRoofHeight": 12,
+      "lineColor": "black",
+      "leftPoint": [
+        12.5,
+        5.5,
+        0
+      ],
+      "cx": 6.75,
+      "rightPoint": [
+        0.9999999999999996,
+        9.5,
+        0
+      ],
+      "rightJoints": [
+        "7dQxN3e4X8QdrAXYYEN8WG"
+      ],
+      "cy": 7.5,
+      "roofId": "nGgWDMiF4t3mFWmEvV3G6V",
+      "lx": 12.175795661885921
+    },
+    {
+      "color": "#e27300",
+      "leftJoints": [
+        "pcWBDfha4S8aWQ8R18i4nV"
+      ],
+      "foundationId": "bJhvoWT5frHADN5rpErFAp",
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "lz": 12,
+      "id": "u3McT1xxp22V2ArAdyDW3J",
+      "parentId": "bJhvoWT5frHADN5rpErFAp",
+      "lineColor": "black",
+      "cz": 0,
+      "cy": -4.440892098500626e-16,
+      "leftRoofHeight": 12,
+      "relativeAngle": 1.5707963267948966,
+      "lx": 11,
+      "selected": false,
+      "locked": true,
+      "ly": 0.3,
+      "rightRoofHeight": 12,
+      "textureType": "Wall Texture Default",
+      "roofId": "nGgWDMiF4t3mFWmEvV3G6V",
+      "windows": [],
+      "normal": [
+        0,
+        0,
+        1
+      ],
+      "leftPoint": [
+        12.5,
+        -5.5,
+        0
+      ],
+      "type": "Wall",
+      "rightJoints": [
+        "wERFjjYFCWERMhNEB9iuoK"
+      ],
+      "showLabel": false,
+      "cx": 12.5,
+      "rightPoint": [
+        12.5,
+        5.499999999999999,
+        0
+      ],
+      "lineWidth": 0.2
+    },
+    {
+      "normal": [
+        0,
+        0,
+        1
+      ],
+      "lineWidth": 0.2,
+      "lx": 11.067971810589325,
+      "windows": [],
+      "selected": false,
+      "textureType": "Wall Texture Default",
+      "cx": 7.249999999999998,
+      "rightPoint": [
+        12.499999999999996,
+        -5.499999999999999,
+        0
+      ],
+      "cz": 0,
+      "id": "pcWBDfha4S8aWQ8R18i4nV",
+      "showLabel": false,
+      "relativeAngle": 0.32175055439664213,
+      "parentId": "bJhvoWT5frHADN5rpErFAp",
+      "leftPoint": [
+        2,
+        -9,
+        0
+      ],
+      "rightRoofHeight": 12,
+      "rightJoints": [
+        "u3McT1xxp22V2ArAdyDW3J"
+      ],
+      "foundationId": "bJhvoWT5frHADN5rpErFAp",
+      "lineColor": "black",
+      "leftRoofHeight": 12,
+      "roofId": "nGgWDMiF4t3mFWmEvV3G6V",
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "color": "#e27300",
+      "type": "Wall",
+      "ly": 0.3,
+      "cy": -7.25,
+      "leftJoints": [
+        "6ue5PfovkzS53Qu47dbJ2S"
+      ],
+      "lz": 12,
+      "locked": true
+    },
+    {
+      "windows": [],
+      "leftJoints": [
+        "wERFjjYFCWERMhNEB9iuoK"
+      ],
+      "roofId": "nGgWDMiF4t3mFWmEvV3G6V",
+      "showLabel": false,
+      "cx": -5.5,
+      "relativeAngle": 3.541833310623767,
+      "normal": [
+        0,
+        0,
+        1
+      ],
+      "rightRoofHeight": 12,
+      "lz": 12,
+      "leftPoint": [
+        0.9999999999999996,
+        9.5,
+        0
+      ],
+      "parentId": "bJhvoWT5frHADN5rpErFAp",
+      "locked": true,
+      "lineColor": "black",
+      "id": "7dQxN3e4X8QdrAXYYEN8WG",
+      "rightPoint": [
+        -12,
+        4,
+        0
+      ],
+      "rightJoints": [
+        "1kwWJQEGgHXq1W18rzcYh4"
+      ],
+      "lineWidth": 0.2,
+      "selected": false,
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "lx": 14.115594213493104,
+      "cy": 6.75,
+      "foundationId": "bJhvoWT5frHADN5rpErFAp",
+      "color": "#e27300",
+      "leftRoofHeight": 12,
+      "cz": 0,
+      "ly": 0.3,
+      "type": "Wall",
+      "textureType": "Wall Texture Default"
+    },
+    {
+      "cz": 0,
+      "foundationId": "bJhvoWT5frHADN5rpErFAp",
+      "leftJoints": [
+        "7dQxN3e4X8QdrAXYYEN8WG"
+      ],
+      "windows": [],
+      "leftRoofHeight": 12,
+      "normal": [
+        0,
+        0,
+        1
+      ],
+      "selected": false,
+      "roofId": "nGgWDMiF4t3mFWmEvV3G6V",
+      "rightRoofHeight": 12,
+      "relativeAngle": 4.71238898038469,
+      "cx": -12,
+      "color": "#e27300",
+      "parentId": "bJhvoWT5frHADN5rpErFAp",
+      "id": "1kwWJQEGgHXq1W18rzcYh4",
+      "lx": 8.499999999999998,
+      "textureType": "Wall Texture Default",
+      "type": "Wall",
+      "locked": true,
+      "lineWidth": 0.2,
+      "rightJoints": [
+        "6ue5PfovkzS53Qu47dbJ2S"
+      ],
+      "showLabel": false,
+      "lineColor": "black",
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "leftPoint": [
+        -11.999999999999998,
+        3.9999999999999982,
+        0
+      ],
+      "lz": 12,
+      "cy": -0.2500000000000009,
+      "rightPoint": [
+        -12,
+        -4.5,
+        0
+      ],
+      "ly": 0.3
+    },
+    {
+      "cx": -4.999999999999997,
+      "lx": 14.705441169852739,
+      "windows": [],
+      "lz": 12,
+      "rightPoint": [
+        2,
+        -9,
+        0
+      ],
+      "locked": true,
+      "ly": 0.3,
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "lineWidth": 0.2,
+      "normal": [
+        0,
+        0,
+        1
+      ],
+      "color": "#e27300",
+      "roofId": "nGgWDMiF4t3mFWmEvV3G6V",
+      "id": "6ue5PfovkzS53Qu47dbJ2S",
+      "leftPoint": [
+        -11.999999999999995,
+        -4.499999999999997,
+        0
+      ],
+      "textureType": "Wall Texture Default",
+      "rightRoofHeight": 12,
+      "foundationId": "bJhvoWT5frHADN5rpErFAp",
+      "showLabel": false,
+      "leftRoofHeight": 12,
+      "lineColor": "black",
+      "cy": -6.749999999999998,
+      "leftJoints": [
+        "1kwWJQEGgHXq1W18rzcYh4"
+      ],
+      "parentId": "bJhvoWT5frHADN5rpErFAp",
+      "relativeAngle": 5.972187026574045,
+      "cz": 0,
+      "type": "Wall",
+      "rightJoints": [
+        "pcWBDfha4S8aWQ8R18i4nV"
+      ],
+      "selected": false
+    },
+    {
+      "roofType": "Pyramid",
+      "lx": 0,
+      "lz": 12,
+      "foundationId": "bJhvoWT5frHADN5rpErFAp",
+      "ly": 0,
+      "normal": [
+        0,
+        0,
+        1
+      ],
+      "showLabel": false,
+      "lineWidth": 0.2,
+      "id": "nGgWDMiF4t3mFWmEvV3G6V",
+      "locked": true,
+      "cz": 0,
+      "lineColor": "black",
+      "overhang": 0.3,
+      "selected": false,
+      "color": "#bbc0c4",
+      "type": "Roof",
+      "cy": 0,
+      "textureType": "No Roof Texture",
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "thickness": 0.2,
+      "wallsId": [
+        "7dQxN3e4X8QdrAXYYEN8WG",
+        "1kwWJQEGgHXq1W18rzcYh4",
+        "6ue5PfovkzS53Qu47dbJ2S",
+        "pcWBDfha4S8aWQ8R18i4nV",
+        "u3McT1xxp22V2ArAdyDW3J",
+        "wERFjjYFCWERMhNEB9iuoK"
+      ],
+      "cx": 0,
+      "parentId": "bJhvoWT5frHADN5rpErFAp"
+    },
+    {
+      "textureTypes": [
+        "No Facade Texture",
+        "No Facade Texture",
+        "No Facade Texture",
+        "No Facade Texture",
+        "No Facade Texture",
+        "No Facade Texture"
+      ],
+      "rotation": [
+        0,
+        0,
+        -0.22689280275926285
+      ],
+      "lz": 7,
+      "selected": false,
+      "cx": -16.084384276720815,
+      "color": "#e27300",
+      "cy": 15.36794895618929,
+      "faceColors": [
+        "#e27300",
+        "#e27300",
+        "#e27300",
+        "#e27300",
+        "#f9fdfe",
+        "gray"
+      ],
+      "cz": 3.5,
+      "parentId": "Ground",
+      "locked": true,
+      "normal": [
+        0,
+        0,
+        1
+      ],
+      "type": "Cuboid",
+      "ly": 4.781704008793219,
+      "lx": 6.529460998348136,
+      "id": "gNV64yHSX1cBB43cygkyfk"
+    },
+    {
+      "parentId": "Ground",
+      "ly": 4.94412378095928,
+      "rotation": [
+        0,
+        0,
+        0.47123889803846897
+      ],
+      "cy": 18.145923422735436,
+      "type": "Cuboid",
+      "locked": true,
+      "normal": [
+        0,
+        0,
+        1
+      ],
+      "faceColors": [
+        "#e27300",
+        "#e27300",
+        "#e27300",
+        "#e27300",
+        "#f9fdfe",
+        "gray"
+      ],
+      "lx": 7.636154465642389,
+      "cz": 3.5,
+      "lz": 7,
+      "selected": false,
+      "color": "#e27300",
+      "id": "91GnsPRwrk88qGT8VmRMYg",
+      "textureTypes": [
+        "No Facade Texture",
+        "No Facade Texture",
+        "No Facade Texture",
+        "No Facade Texture",
+        "No Facade Texture",
+        "No Facade Texture"
+      ],
+      "cx": 8.05053425462394
+    },
+    {
+      "solarPowerTower": {},
+      "cy": 33.364915793093175,
+      "parentId": "Ground",
+      "id": "1nEGYML9Y5W4dWVRK3n5WW",
+      "locked": true,
+      "selected": false,
+      "cx": -5.596972605764655,
+      "ly": 39.876530801142074,
+      "lx": 39.61249197494745,
+      "solarUpdraftTower": {},
+      "rotation": [
+        0,
+        0,
+        0.11344640137963143
+      ],
+      "cz": 0.05,
+      "type": "Foundation",
+      "normal": [
+        0,
+        0,
+        1
+      ],
+      "lz": 0.1,
+      "solarAbsorberPipe": {}
+    },
+    {
+      "color": "#e27300",
+      "relativeAngle": 3.141592653589793,
+      "parentId": "1nEGYML9Y5W4dWVRK3n5WW",
+      "lx": 38.5,
+      "rightPoint": [
+        -19.489993841129074,
+        18.992592968189904,
+        0.1
+      ],
+      "showLabel": false,
+      "roofId": "vaDVUZ1uyEALYaHTbs211h",
+      "selected": false,
+      "windows": [],
+      "lz": 7,
+      "leftPoint": [
+        19.010006158870922,
+        18.992592968189896,
+        0.1
+      ],
+      "foundationId": "1nEGYML9Y5W4dWVRK3n5WW",
+      "normal": [
+        0,
+        0,
+        1
+      ],
+      "lineWidth": 0.2,
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "leftRoofHeight": 7,
+      "id": "97HokqKu917DTkAssZGbhE",
+      "type": "Wall",
+      "cz": 0,
+      "locked": true,
+      "textureType": "Wall Texture Default",
+      "cy": 18.992592968189904,
+      "cx": -0.23999384112907807,
+      "leftJoints": [
+        "2QQRWDofKjHid4D3rHXvwX"
+      ],
+      "ly": 0.3,
+      "rightJoints": [
+        "fPtvUV7Bzhezt9xwDuPEmF"
+      ],
+      "lineColor": "black",
+      "rightRoofHeight": 7
+    },
+    {
+      "type": "Wall",
+      "windows": [],
+      "lz": 7,
+      "rightJoints": [
+        "97HokqKu917DTkAssZGbhE"
+      ],
+      "relativeAngle": 1.5707963267948966,
+      "rightRoofHeight": 7,
+      "showLabel": false,
+      "selected": false,
+      "parentId": "1nEGYML9Y5W4dWVRK3n5WW",
+      "cy": 3.7425929681898977,
+      "leftRoofHeight": 7,
+      "normal": [
+        0,
+        0,
+        1
+      ],
+      "locked": true,
+      "id": "2QQRWDofKjHid4D3rHXvwX",
+      "lineColor": "black",
+      "textureType": "Wall Texture Default",
+      "ly": 0.3,
+      "roofId": "vaDVUZ1uyEALYaHTbs211h",
+      "leftPoint": [
+        19.010006158870922,
+        -11.507407031810096,
+        0.1
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "cz": 0,
+      "leftJoints": [
+        "v4k1Tt2DPV8adpDFKC5P12"
+      ],
+      "foundationId": "1nEGYML9Y5W4dWVRK3n5WW",
+      "lx": 30.499999999999996,
+      "cx": 19.01000615887092,
+      "color": "#e27300",
+      "rightPoint": [
+        19.010006158870922,
+        18.992592968189896,
+        0.1
+      ],
+      "lineWidth": 0.2
+    },
+    {
+      "id": "fPtvUV7Bzhezt9xwDuPEmF",
+      "textureType": "Wall Texture Default",
+      "foundationId": "1nEGYML9Y5W4dWVRK3n5WW",
+      "leftJoints": [
+        "97HokqKu917DTkAssZGbhE"
+      ],
+      "ly": 0.3,
+      "parentId": "1nEGYML9Y5W4dWVRK3n5WW",
+      "lineWidth": 0.2,
+      "leftPoint": [
+        -19.489993841129067,
+        18.992592968189896,
+        0
+      ],
+      "windows": [],
+      "leftRoofHeight": 7,
+      "cz": 0,
+      "cy": 3.746296484094948,
+      "roofId": "vaDVUZ1uyEALYaHTbs211h",
+      "locked": true,
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "rightJoints": [
+        "ebWW9yh8D9FYjir4ozAvaz"
+      ],
+      "selected": false,
+      "lx": 30.492594609952747,
+      "rightPoint": [
+        -19.5,
+        -11.5,
+        0
+      ],
+      "rightRoofHeight": 7,
+      "relativeAngle": 4.712060829921323,
+      "lineColor": "black",
+      "showLabel": false,
+      "normal": [
+        0,
+        0,
+        1
+      ],
+      "lz": 7,
+      "color": "#e27300",
+      "cx": -19.49499692056453,
+      "type": "Wall"
+    },
+    {
+      "parentId": "1nEGYML9Y5W4dWVRK3n5WW",
+      "leftJoints": [
+        "fPtvUV7Bzhezt9xwDuPEmF"
+      ],
+      "lineWidth": 0.2,
+      "textureType": "Wall Texture Default",
+      "leftPoint": [
+        -19.5,
+        -11.499999999999991,
+        0
+      ],
+      "cx": -10,
+      "color": "#e27300",
+      "normal": [
+        0,
+        0,
+        1
+      ],
+      "cy": -14.999999999999996,
+      "locked": true,
+      "rightJoints": [
+        "v4k1Tt2DPV8adpDFKC5P12"
+      ],
+      "selected": false,
+      "leftRoofHeight": 7,
+      "foundationId": "1nEGYML9Y5W4dWVRK3n5WW",
+      "lx": 20.24845673131659,
+      "windows": [],
+      "relativeAngle": 5.930194919352675,
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "roofId": "vaDVUZ1uyEALYaHTbs211h",
+      "showLabel": false,
+      "rightRoofHeight": 7,
+      "id": "ebWW9yh8D9FYjir4ozAvaz",
+      "rightPoint": [
+        -0.5,
+        -18.5,
+        0
+      ],
+      "ly": 0.3,
+      "cz": 0,
+      "lz": 7,
+      "lineColor": "black",
+      "type": "Wall"
+    },
+    {
+      "foundationId": "1nEGYML9Y5W4dWVRK3n5WW",
+      "rightJoints": [
+        "2QQRWDofKjHid4D3rHXvwX"
+      ],
+      "leftRoofHeight": 7,
+      "leftJoints": [
+        "ebWW9yh8D9FYjir4ozAvaz"
+      ],
+      "cy": -15.003703515905048,
+      "cx": 9.255003079435461,
+      "roofId": "vaDVUZ1uyEALYaHTbs211h",
+      "showLabel": false,
+      "color": "#e27300",
+      "lineWidth": 0.2,
+      "relativeAngle": 0.3441478196335668,
+      "lx": 20.725267108965333,
+      "selected": false,
+      "textureType": "Wall Texture Default",
+      "rightRoofHeight": 7,
+      "parentId": "1nEGYML9Y5W4dWVRK3n5WW",
+      "locked": true,
+      "normal": [
+        0,
+        0,
+        1
+      ],
+      "lineColor": "black",
+      "rightPoint": [
+        19.010006158870922,
+        -11.507407031810095,
+        0
+      ],
+      "lz": 7,
+      "ly": 0.3,
+      "id": "v4k1Tt2DPV8adpDFKC5P12",
+      "cz": 0,
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "windows": [],
+      "leftPoint": [
+        -0.5,
+        -18.5,
+        0
+      ],
+      "type": "Wall"
+    },
+    {
+      "cy": -16.63156986902993,
+      "lz": 5,
+      "lx": 8.20544233607179,
+      "id": "x3h1GsQhgRmq3SsscYfmB3",
+      "faceColors": [
+        "#e27300",
+        "#e27300",
+        "#e27300",
+        "#e27300",
+        "#eff3f4",
+        "gray"
+      ],
+      "color": "#e27300",
+      "type": "Cuboid",
+      "locked": true,
+      "normal": [
+        0,
+        0,
+        1
+      ],
+      "parentId": "Ground",
+      "textureTypes": [
+        "No Facade Texture",
+        "No Facade Texture",
+        "No Facade Texture",
+        "No Facade Texture",
+        "No Facade Texture",
+        "No Facade Texture"
+      ],
+      "ly": 11.4641129152687,
+      "selected": false,
+      "cx": 16.793944749049793,
+      "cz": 2.5,
+      "rotation": [
+        0,
+        0,
+        0.11344640137963143
+      ]
+    },
+    {
+      "lz": 6.5,
+      "ly": 9.79284174487727,
+      "color": "#e27300",
+      "selected": false,
+      "faceColors": [
+        "#e27300",
+        "#e27300",
+        "#e27300",
+        "#e27300",
+        "#cbced4",
+        "gray"
+      ],
+      "normal": [
+        0,
+        0,
+        1
+      ],
+      "rotation": [
+        0,
+        0,
+        0.11344640137963143
+      ],
+      "cx": 18.04602799184764,
+      "cy": -5.757381561584599,
+      "lx": 13.705205912378894,
+      "id": "pawpCxDgzEqhYUsyrbWbDa",
+      "parentId": "Ground",
+      "locked": true,
+      "cz": 3.25,
+      "textureTypes": [
+        "No Facade Texture",
+        "No Facade Texture",
+        "No Facade Texture",
+        "No Facade Texture",
+        "No Facade Texture",
+        "No Facade Texture"
+      ],
+      "type": "Cuboid"
+    },
+    {
+      "cz": 0.05,
+      "selected": false,
+      "cy": -71.07055697625319,
+      "id": "jqbU6DNc1hw25bSjkKpMiq",
+      "parentId": "Ground",
+      "ly": 19.18495691494635,
+      "solarPowerTower": {},
+      "rotation": [
+        0,
+        0,
+        0.47123889803846897
+      ],
+      "lz": 0.1,
+      "solarUpdraftTower": {},
+      "locked": true,
+      "type": "Foundation",
+      "lx": 30.387424337601402,
+      "normal": [
+        0,
+        0,
+        1
+      ],
+      "solarAbsorberPipe": {},
+      "cx": -4.462146546381112
+    },
+    {
+      "textureType": "Wall Texture Default",
+      "ly": 0.3,
+      "relativeAngle": 3.1415926535897927,
+      "roofId": "nbhyUPhsFS3FWduEBX5mR4",
+      "normal": [
+        0,
+        0,
+        1
+      ],
+      "locked": true,
+      "leftPoint": [
+        14.911466700814316,
+        8.908511607852175,
+        0.1
+      ],
+      "lineColor": "black",
+      "windows": [],
+      "type": "Wall",
+      "leftRoofHeight": 9,
+      "selected": false,
+      "id": "t45ndcq7s2gwo2wADp4LvF",
+      "lz": 9,
+      "rightRoofHeight": 9,
+      "rightJoints": [
+        "96Vsi7iFvTbA9KnjAiCzjC"
+      ],
+      "cz": 0,
+      "lx": 19.999999999999996,
+      "rightPoint": [
+        -5.088533299185682,
+        8.908511607852187,
+        0.1
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "showLabel": false,
+      "parentId": "jqbU6DNc1hw25bSjkKpMiq",
+      "leftJoints": [
+        "aUxdFcbeJNrCyc15FmwGK7"
+      ],
+      "foundationId": "jqbU6DNc1hw25bSjkKpMiq",
+      "cx": 4.911466700814314,
+      "cy": 8.908511607852173,
+      "color": "#e27300",
+      "lineWidth": 0.2
+    },
+    {
+      "lineWidth": 0.2,
+      "windows": [],
+      "roofId": "nbhyUPhsFS3FWduEBX5mR4",
+      "id": "2Q9JHTpdQziYaq1i4YVAfD",
+      "cy": -9.591488392147804,
+      "selected": false,
+      "textureType": "Wall Texture Default",
+      "parentId": "jqbU6DNc1hw25bSjkKpMiq",
+      "leftRoofHeight": 9,
+      "ly": 0.3,
+      "rightJoints": [
+        "aUxdFcbeJNrCyc15FmwGK7"
+      ],
+      "lz": 9,
+      "cz": 0,
+      "leftPoint": [
+        -14.588533299185684,
+        -9.591488392147816,
+        0.1
+      ],
+      "normal": [
+        0,
+        0,
+        1
+      ],
+      "rightRoofHeight": 9,
+      "lineColor": "black",
+      "showLabel": false,
+      "rightPoint": [
+        7.411466700814323,
+        -9.591488392147804,
+        0.1
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "foundationId": "jqbU6DNc1hw25bSjkKpMiq",
+      "relativeAngle": 0,
+      "cx": -3.588533299185679,
+      "color": "#e27300",
+      "type": "Wall",
+      "locked": true,
+      "leftJoints": [
+        "fjtHDsHPyFgzX4a1QCnEg1"
+      ],
+      "lx": 22.000000000000007
+    },
+    {
+      "lz": 9,
+      "leftJoints": [
+        "2Q9JHTpdQziYaq1i4YVAfD"
+      ],
+      "cy": -0.34148839214781823,
+      "lineWidth": 0.2,
+      "locked": true,
+      "selected": false,
+      "rightPoint": [
+        14.911466700814314,
+        8.90851160785218,
+        0.1
+      ],
+      "relativeAngle": 1.1856388204314217,
+      "cz": 0,
+      "leftRoofHeight": 9,
+      "lx": 19.962464777677127,
+      "parentId": "jqbU6DNc1hw25bSjkKpMiq",
+      "rightJoints": [
+        "t45ndcq7s2gwo2wADp4LvF"
+      ],
+      "cx": 11.161466700814309,
+      "normal": [
+        0,
+        0,
+        1
+      ],
+      "roofId": "nbhyUPhsFS3FWduEBX5mR4",
+      "lineColor": "black",
+      "foundationId": "jqbU6DNc1hw25bSjkKpMiq",
+      "id": "aUxdFcbeJNrCyc15FmwGK7",
+      "color": "#e27300",
+      "textureType": "Wall Texture Default",
+      "rightRoofHeight": 9,
+      "ly": 0.3,
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "type": "Wall",
+      "showLabel": false,
+      "leftPoint": [
+        7.411466700814304,
+        -9.59148839214781,
+        0.1
+      ],
+      "windows": []
+    },
+    {
+      "cx": -2.2158130411354513,
+      "lx": 3.4859481923608877,
+      "ly": 4.275960039070249,
+      "textureTypes": [
+        "No Facade Texture",
+        "No Facade Texture",
+        "No Facade Texture",
+        "No Facade Texture",
+        "No Facade Texture",
+        "No Facade Texture"
+      ],
+      "id": "nypM3mdmViZReBeYosY2yV",
+      "cz": 6,
+      "cy": -27.62799047977582,
+      "faceColors": [
+        "#808080",
+        "#808080",
+        "#808080",
+        "#808080",
+        "#ffffff",
+        "gray"
+      ],
+      "lz": 12,
+      "type": "Cuboid",
+      "parentId": "Ground",
+      "normal": [
+        0,
+        0,
+        1
+      ],
+      "color": "#808080",
+      "rotation": [
+        0,
+        0,
+        0.11344640137963143
+      ],
+      "locked": true,
+      "selected": false
+    },
+    {
+      "type": "Wall",
+      "lx": 13.499999999999998,
+      "foundationId": "jqbU6DNc1hw25bSjkKpMiq",
+      "selected": false,
+      "locked": true,
+      "normal": [
+        0,
+        0,
+        1
+      ],
+      "leftPoint": [
+        -14.588533299185688,
+        3.9085116078521778,
+        0.1
+      ],
+      "cx": -14.588533299185682,
+      "lineWidth": 0.2,
+      "textureType": "Wall Texture Default",
+      "leftRoofHeight": 9,
+      "relativeAngle": 4.71238898038469,
+      "color": "#e27300",
+      "rightJoints": [
+        "2Q9JHTpdQziYaq1i4YVAfD"
+      ],
+      "showLabel": false,
+      "windows": [],
+      "lineColor": "black",
+      "leftJoints": [
+        "iik8XWaEN3wPnYJVvNUf8N"
+      ],
+      "cz": 0,
+      "cy": -2.841488392147814,
+      "id": "fjtHDsHPyFgzX4a1QCnEg1",
+      "parentId": "jqbU6DNc1hw25bSjkKpMiq",
+      "ly": 0.3,
+      "lz": 9,
+      "roofId": "nbhyUPhsFS3FWduEBX5mR4",
+      "rightRoofHeight": 9,
+      "rightPoint": [
+        -14.588533299185684,
+        -9.591488392147816,
+        0.1
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ]
+    },
+    {
+      "showLabel": false,
+      "rightPoint": [
+        -14.588533299185688,
+        3.9085116078521778,
+        0.1
+      ],
+      "rightRoofHeight": 9,
+      "lineColor": "black",
+      "cx": -9.838533299185684,
+      "relativeAngle": 3.1415926535897936,
+      "foundationId": "jqbU6DNc1hw25bSjkKpMiq",
+      "windows": [],
+      "type": "Wall",
+      "parentId": "jqbU6DNc1hw25bSjkKpMiq",
+      "id": "iik8XWaEN3wPnYJVvNUf8N",
+      "roofId": "nbhyUPhsFS3FWduEBX5mR4",
+      "rightJoints": [
+        "fjtHDsHPyFgzX4a1QCnEg1"
+      ],
+      "leftRoofHeight": 9,
+      "cy": 3.9085116078521835,
+      "lx": 9.500000000000002,
+      "locked": true,
+      "textureType": "Wall Texture Default",
+      "normal": [
+        0,
+        0,
+        1
+      ],
+      "lz": 9,
+      "leftJoints": [
+        "96Vsi7iFvTbA9KnjAiCzjC"
+      ],
+      "selected": false,
+      "cz": 0,
+      "leftPoint": [
+        -5.088533299185688,
+        3.908511607852178,
+        0.1
+      ],
+      "lineWidth": 0.2,
+      "color": "#e27300",
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "ly": 0.3
+    },
+    {
+      "textureType": "Wall Texture Default",
+      "selected": false,
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "showLabel": false,
+      "lineColor": "black",
+      "roofId": "nbhyUPhsFS3FWduEBX5mR4",
+      "leftPoint": [
+        -5.088533299185681,
+        8.908511607852187,
+        0.1
+      ],
+      "cx": -5.088533299185681,
+      "lx": 5.000000000000002,
+      "type": "Wall",
+      "rightJoints": [
+        "iik8XWaEN3wPnYJVvNUf8N"
+      ],
+      "windows": [],
+      "lz": 9,
+      "locked": true,
+      "leftRoofHeight": 9,
+      "rightRoofHeight": 9,
+      "ly": 0.3,
+      "parentId": "jqbU6DNc1hw25bSjkKpMiq",
+      "rightPoint": [
+        -5.088533299185688,
+        3.908511607852178,
+        0.1
+      ],
+      "cy": 6.408511607852189,
+      "normal": [
+        0,
+        0,
+        1
+      ],
+      "color": "#e27300",
+      "leftJoints": [
+        "t45ndcq7s2gwo2wADp4LvF"
+      ],
+      "relativeAngle": 4.71238898038469,
+      "foundationId": "jqbU6DNc1hw25bSjkKpMiq",
+      "cz": 0,
+      "lineWidth": 0.2,
+      "id": "96Vsi7iFvTbA9KnjAiCzjC"
+    },
+    {
+      "ly": 18.600818138777164,
+      "normal": [
+        0,
+        0,
+        1
+      ],
+      "lz": 7,
+      "id": "9ZkQyqaEmTeYEWHbrCFRQb",
+      "type": "Cuboid",
+      "cx": -21.473353217856005,
+      "cz": 3.5,
+      "lx": 28.43689133843813,
+      "cy": -80.03483805963909,
+      "selected": false,
+      "faceColors": [
+        "#e27300",
+        "#e27300",
+        "#e27300",
+        "#e27300",
+        "#a0a8a1",
+        "gray"
+      ],
+      "rotation": [
+        0,
+        0,
+        0.47123889803846897
+      ],
+      "parentId": "Ground",
+      "textureTypes": [
+        "No Facade Texture",
+        "No Facade Texture",
+        "No Facade Texture",
+        "No Facade Texture",
+        "No Facade Texture",
+        "No Facade Texture"
+      ],
+      "color": "#e27300",
+      "locked": true
+    },
+    {
+      "overhang": 0.3,
+      "lineColor": "black",
+      "foundationId": "jqbU6DNc1hw25bSjkKpMiq",
+      "cz": 0,
+      "roofType": "Pyramid",
+      "locked": true,
+      "lz": 9,
+      "normal": [
+        0,
+        0,
+        1
+      ],
+      "id": "nbhyUPhsFS3FWduEBX5mR4",
+      "cy": 0,
+      "cx": 0,
+      "type": "Roof",
+      "ly": 0,
+      "lineWidth": 0.2,
+      "color": "#a0a8a1",
+      "selected": false,
+      "wallsId": [
+        "t45ndcq7s2gwo2wADp4LvF",
+        "96Vsi7iFvTbA9KnjAiCzjC",
+        "iik8XWaEN3wPnYJVvNUf8N",
+        "fjtHDsHPyFgzX4a1QCnEg1",
+        "2Q9JHTpdQziYaq1i4YVAfD",
+        "aUxdFcbeJNrCyc15FmwGK7"
+      ],
+      "showLabel": false,
+      "lx": 0,
+      "textureType": "No Roof Texture",
+      "thickness": 0.2,
+      "parentId": "jqbU6DNc1hw25bSjkKpMiq",
+      "rotation": [
+        0,
+        0,
+        0
+      ]
+    },
+    {
+      "rotation": [
+        0,
+        0,
+        0.11344640137963143
+      ],
+      "lx": 33.330266968334364,
+      "parentId": "Ground",
+      "locked": true,
+      "selected": false,
+      "cy": -18.068839609848254,
+      "color": "#e27300",
+      "id": "u9fp9k5YxThQWCBpcjSypa",
+      "ly": 24.01347765210959,
+      "textureTypes": [
+        "No Facade Texture",
+        "No Facade Texture",
+        "No Facade Texture",
+        "No Facade Texture",
+        "No Facade Texture",
+        "No Facade Texture"
+      ],
+      "normal": [
+        0,
+        0,
+        1
+      ],
+      "lz": 7,
+      "faceColors": [
+        "#e27300",
+        "#e27300",
+        "#e27300",
+        "#e27300",
+        "#dadedf",
+        "gray"
+      ],
+      "cz": 3.5,
+      "cx": -3.833297199689312,
+      "type": "Cuboid"
+    },
+    {
+      "parentId": "Ground",
+      "lx": 6.254852089156679,
+      "color": "#e27300",
+      "lz": 6,
+      "cy": -14.332630086328715,
+      "rotation": [
+        0,
+        0,
+        0.11344640137963143
+      ],
+      "textureTypes": [
+        "No Facade Texture",
+        "No Facade Texture",
+        "No Facade Texture",
+        "No Facade Texture",
+        "No Facade Texture",
+        "No Facade Texture"
+      ],
+      "ly": 8.529051468761843,
+      "cz": 3,
+      "cx": 23.820970949615347,
+      "normal": [
+        0,
+        0,
+        1
+      ],
+      "id": "g3WSwwiWWgknhD1TsV34bi",
+      "locked": true,
+      "type": "Cuboid",
+      "faceColors": [
+        "#e27300",
+        "#e27300",
+        "#e27300",
+        "#e27300",
+        "#eff3f4",
+        "gray"
+      ],
+      "selected": false
+    },
+    {
+      "selected": false,
+      "parentId": "Ground",
+      "rotation": [
+        0,
+        0,
+        0.11344640137963143
+      ],
+      "lx": 138.78684366347608,
+      "solarAbsorberPipe": {},
+      "cz": 0.05,
+      "textureType": "Foundation Texture #1",
+      "lz": 0.1,
+      "id": "reBHg6Exy2MChwcxtr3gj7",
+      "locked": true,
+      "color": "#808080",
+      "cx": -1.8708371231135246,
+      "solarUpdraftTower": {},
+      "type": "Foundation",
+      "ly": 56.63391373000898,
+      "cy": 89.14969979439752,
+      "solarPowerTower": {},
+      "normal": [
+        0,
+        0,
+        1
+      ]
+    },
+    {
+      "color": "#808080",
+      "cz": 0.05,
+      "solarPowerTower": {},
+      "textureType": "Foundation Texture #1",
+      "locked": true,
+      "ly": 114.12479182802815,
+      "id": "36nmeGQGETdJPm5rWVVRjJ",
+      "solarUpdraftTower": {},
+      "lx": 42.16787694736764,
+      "lz": 0.1,
+      "normal": [
+        0,
+        0,
+        1
+      ],
+      "solarAbsorberPipe": {},
+      "selected": false,
+      "cy": -148.8692182215829,
+      "parentId": "Ground",
+      "rotation": [
+        0,
+        0,
+        0.11344640137963143
+      ],
+      "type": "Foundation",
+      "cx": -28.614737300680485
+    },
+    {
+      "id": "bFksCZzoXd93c7MyivmV9K",
+      "faceColors": [
+        "gray",
+        "gray",
+        "gray",
+        "gray",
+        "gray",
+        "gray"
+      ],
+      "ly": 5.781774626442493,
+      "rotation": [
+        0,
+        0,
+        0.11344640137963143
+      ],
+      "cx": -8.05557182480289,
+      "normal": [
+        0,
+        0,
+        1
+      ],
+      "parentId": "Ground",
+      "color": "gray",
+      "cy": 28.559956693666173,
+      "textureTypes": [
+        "No Facade Texture",
+        "No Facade Texture",
+        "No Facade Texture",
+        "No Facade Texture",
+        "No Facade Texture",
+        "No Facade Texture"
+      ],
+      "locked": true,
+      "selected": false,
+      "cz": 4.5,
+      "lz": 9,
+      "lx": 2.7809448048857632,
+      "type": "Cuboid"
+    },
+    {
+      "id": "4uGXxDXoTLYvikq5fUL9dt",
+      "normal": [
+        0,
+        0,
+        1
+      ],
+      "parentId": "Ground",
+      "cz": 4.5,
+      "textureTypes": [
+        "No Facade Texture",
+        "No Facade Texture",
+        "No Facade Texture",
+        "No Facade Texture",
+        "No Facade Texture",
+        "No Facade Texture"
+      ],
+      "cy": 38.25979783456656,
+      "lx": 2.7809448048857632,
+      "faceColors": [
+        "gray",
+        "gray",
+        "gray",
+        "gray",
+        "gray",
+        "gray"
+      ],
+      "lz": 9,
+      "selected": false,
+      "locked": true,
+      "rotation": [
+        0,
+        0,
+        0.11344640137963143
+      ],
+      "cx": -6.727695250737455,
+      "type": "Cuboid",
+      "color": "gray",
+      "ly": 5.781774626442493
+    },
+    {
+      "type": "Tree",
+      "lx": 10,
+      "selected": false,
+      "name": "Dogwood",
+      "cz": 0,
+      "locked": true,
+      "id": "xmEmwPRar8iA32AgGqBDZo",
+      "cy": 44.65483300272308,
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "parentId": "Ground",
+      "cx": 15.962764438139406,
+      "normal": [
+        0,
+        1,
+        0
+      ],
+      "lz": 10
+    },
+    {
+      "cx": 4.786319195449075,
+      "name": "Dogwood",
+      "lz": 10,
+      "id": "2N9b6wPaP7vTT6v2GfUvci",
+      "cy": 57.504795212360165,
+      "selected": false,
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "parentId": "Ground",
+      "type": "Tree",
+      "locked": true,
+      "lx": 10,
+      "normal": [
+        0,
+        0,
+        1
+      ],
+      "cz": 0
+    },
+    {
+      "cz": 0,
+      "id": "tQuBdxiCZwsv3tPttqZcge",
+      "locked": true,
+      "type": "Tree",
+      "lz": 10,
+      "parentId": "Ground",
+      "lx": 10,
+      "cx": -37.72446755161796,
+      "name": "Dogwood",
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "selected": false,
+      "cy": 24.20884875644974,
+      "normal": [
+        0,
+        0,
+        1
+      ]
+    },
+    {
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "locked": true,
+      "normal": [
+        0,
+        0,
+        1
+      ],
+      "parentId": "Ground",
+      "cz": 0,
+      "cy": 27.53619242162998,
+      "name": "Dogwood",
+      "type": "Tree",
+      "lx": 10,
+      "cx": -56.12589485999845,
+      "id": "sBLygdm7dv2Y53q9fnNST7",
+      "selected": false,
+      "lz": 10
+    },
+    {
+      "ly": 1,
+      "type": "Cuboid",
+      "id": "dHHanjftUrSruBnauGJSLy",
+      "textureTypes": [
+        "No Facade Texture",
+        "No Facade Texture",
+        "No Facade Texture",
+        "No Facade Texture",
+        "No Facade Texture",
+        "No Facade Texture"
+      ],
+      "parentId": "Ground",
+      "cx": -5.870064866540858,
+      "lx": 2,
+      "normal": [
+        0,
+        0,
+        1
+      ],
+      "lz": 9,
+      "cy": 15.318325135239354,
+      "color": "gray",
+      "faceColors": [
+        "gray",
+        "gray",
+        "gray",
+        "gray",
+        "gray",
+        "gray"
+      ],
+      "rotation": [
+        0,
+        0,
+        0.11344640137963143
+      ],
+      "selected": false,
+      "locked": true,
+      "cz": 4.5
+    },
+    {
+      "id": "9vxhEg5mY7bnj3mASyLPuq",
+      "cz": 4.5,
+      "lx": 1.5,
+      "ly": 1,
+      "cx": -3.8512872137145457,
+      "normal": [
+        0,
+        0,
+        1
+      ],
+      "type": "Cuboid",
+      "faceColors": [
+        "gray",
+        "gray",
+        "gray",
+        "gray",
+        "gray",
+        "gray"
+      ],
+      "locked": true,
+      "textureTypes": [
+        "No Facade Texture",
+        "No Facade Texture",
+        "No Facade Texture",
+        "No Facade Texture",
+        "No Facade Texture",
+        "No Facade Texture"
+      ],
+      "cy": 11.777212358373532,
+      "lz": 9,
+      "rotation": [
+        0,
+        0,
+        0.11344640137963143
+      ],
+      "parentId": "Ground",
+      "selected": false,
+      "color": "gray"
+    },
+    {
+      "cz": 4.5,
+      "cy": 15.693005652428699,
+      "normal": [
+        0,
+        0,
+        1
+      ],
+      "cx": -2.6936903398761203,
+      "selected": false,
+      "locked": true,
+      "lz": 9,
+      "rotation": [
+        0,
+        0,
+        0.11344640137963143
+      ],
+      "color": "gray",
+      "ly": 1,
+      "faceColors": [
+        "gray",
+        "gray",
+        "gray",
+        "gray",
+        "gray",
+        "gray"
+      ],
+      "textureTypes": [
+        "No Facade Texture",
+        "No Facade Texture",
+        "No Facade Texture",
+        "No Facade Texture",
+        "No Facade Texture",
+        "No Facade Texture"
+      ],
+      "parentId": "Ground",
+      "id": "hvuDpXrEgC1sbzpcoS3Pv5",
+      "lx": 2,
+      "type": "Cuboid"
+    },
+    {
+      "cz": 4.5,
+      "id": "xtuommaSLMKZrejRaGGfMk",
+      "faceColors": [
+        "gray",
+        "gray",
+        "gray",
+        "gray",
+        "gray",
+        "gray"
+      ],
+      "normal": [
+        0,
+        0,
+        1
+      ],
+      "lz": 9,
+      "type": "Cuboid",
+      "cx": 6.443464344950151,
+      "locked": true,
+      "cy": 6.860194005695455,
+      "color": "gray",
+      "parentId": "Ground",
+      "rotation": [
+        0,
+        0,
+        0.47123889803846897
+      ],
+      "selected": false,
+      "lx": 1,
+      "ly": 1,
+      "textureTypes": [
+        "No Facade Texture",
+        "No Facade Texture",
+        "No Facade Texture",
+        "No Facade Texture",
+        "No Facade Texture",
+        "No Facade Texture"
+      ]
+    },
+    {
+      "color": "gray",
+      "ly": 2,
+      "parentId": "Ground",
+      "normal": [
+        0,
+        0,
+        1
+      ],
+      "faceColors": [
+        "gray",
+        "gray",
+        "gray",
+        "gray",
+        "gray",
+        "gray"
+      ],
+      "lz": 8,
+      "textureTypes": [
+        "No Facade Texture",
+        "No Facade Texture",
+        "No Facade Texture",
+        "No Facade Texture",
+        "No Facade Texture",
+        "No Facade Texture"
+      ],
+      "id": "sJYEUPNTzxmWik8iqk2zs1",
+      "cy": 25.83184970998569,
+      "locked": true,
+      "cz": 4,
+      "selected": false,
+      "rotation": [
+        0,
+        0,
+        0.47123889803846897
+      ],
+      "type": "Cuboid",
+      "lx": 2,
+      "cx": 46.69245220859119
+    },
+    {
+      "cz": 4,
+      "faceColors": [
+        "gray",
+        "gray",
+        "gray",
+        "gray",
+        "gray",
+        "gray"
+      ],
+      "lz": 8,
+      "cx": 57.51703501824526,
+      "lx": 2,
+      "locked": true,
+      "selected": false,
+      "color": "gray",
+      "ly": 2,
+      "parentId": "Ground",
+      "type": "Cuboid",
+      "textureTypes": [
+        "No Facade Texture",
+        "No Facade Texture",
+        "No Facade Texture",
+        "No Facade Texture",
+        "No Facade Texture",
+        "No Facade Texture"
+      ],
+      "cy": 32.45468730038977,
+      "rotation": [
+        0,
+        0,
+        0.47123889803846897
+      ],
+      "id": "bbqihnnqHMG2BadQAqxu4w",
+      "normal": [
+        0,
+        0,
+        1
+      ]
+    },
+    {
+      "id": "25nzwRphH2HZWasHbdyR9H",
+      "rotation": [
+        0,
+        0,
+        0.47123889803846897
+      ],
+      "cz": 4,
+      "cx": 9.64097434426713,
+      "textureTypes": [
+        "No Facade Texture",
+        "No Facade Texture",
+        "No Facade Texture",
+        "No Facade Texture",
+        "No Facade Texture",
+        "No Facade Texture"
+      ],
+      "faceColors": [
+        "gray",
+        "gray",
+        "gray",
+        "gray",
+        "gray",
+        "gray"
+      ],
+      "normal": [
+        0,
+        0,
+        1
+      ],
+      "lz": 8,
+      "ly": 2,
+      "selected": false,
+      "color": "gray",
+      "locked": true,
+      "type": "Cuboid",
+      "cy": 14.625073334021367,
+      "lx": 2,
+      "parentId": "Ground"
+    },
+    {
+      "locked": true,
+      "ly": 3.023435418581383,
+      "type": "Cuboid",
+      "textureTypes": [
+        "No Facade Texture",
+        "No Facade Texture",
+        "No Facade Texture",
+        "No Facade Texture",
+        "No Facade Texture",
+        "No Facade Texture"
+      ],
+      "faceColors": [
+        "gray",
+        "gray",
+        "gray",
+        "gray",
+        "gray",
+        "gray"
+      ],
+      "color": "gray",
+      "normal": [
+        0,
+        0,
+        1
+      ],
+      "lz": 8,
+      "id": "auEsiwZVDg1BpD4SLuxEMu",
+      "cz": 4,
+      "selected": false,
+      "cx": 13.735991450729825,
+      "rotation": [
+        0,
+        0,
+        0.47123889803846897
+      ],
+      "parentId": "Ground",
+      "lx": 1.956376737761125,
+      "cy": 11.519743764909009
+    },
+    {
+      "cx": 8.737674718750876,
+      "lz": 8,
+      "selected": false,
+      "lx": 1.6103314300645608,
+      "color": "gray",
+      "cz": 4,
+      "parentId": "Ground",
+      "faceColors": [
+        "gray",
+        "gray",
+        "gray",
+        "gray",
+        "gray",
+        "gray"
+      ],
+      "locked": true,
+      "ly": 6.078985704618435,
+      "rotation": [
+        0,
+        0,
+        0.47123889803846897
+      ],
+      "cy": 10.874631022787334,
+      "normal": [
+        0,
+        0,
+        1
+      ],
+      "textureTypes": [
+        "No Facade Texture",
+        "No Facade Texture",
+        "No Facade Texture",
+        "No Facade Texture",
+        "No Facade Texture",
+        "No Facade Texture"
+      ],
+      "type": "Cuboid",
+      "id": "hVeFrmw4X6UXNLJxSgFFTX"
+    },
+    {
+      "lz": 8,
+      "cy": 9.924339607771106,
+      "type": "Cuboid",
+      "lx": 4.469059126518252,
+      "faceColors": [
+        "gray",
+        "gray",
+        "gray",
+        "gray",
+        "gray",
+        "gray"
+      ],
+      "normal": [
+        0,
+        0,
+        1
+      ],
+      "cz": 4,
+      "parentId": "Ground",
+      "ly": 2.3777908106308545,
+      "locked": true,
+      "cx": 10.942483109442229,
+      "selected": false,
+      "id": "meaBMTA4CLhnmmXQkVUk4b",
+      "color": "gray",
+      "rotation": [
+        0,
+        0,
+        0.47123889803846897
+      ],
+      "textureTypes": [
+        "No Facade Texture",
+        "No Facade Texture",
+        "No Facade Texture",
+        "No Facade Texture",
+        "No Facade Texture",
+        "No Facade Texture"
+      ]
+    },
+    {
+      "rotation": [
+        0,
+        0,
+        -0.22689280275926285
+      ],
+      "id": "uaSYyvLxcyJGUeppQk2fkP",
+      "normal": [
+        0,
+        0,
+        1
+      ],
+      "locked": true,
+      "faceColors": [
+        "gray",
+        "gray",
+        "gray",
+        "gray",
+        "gray",
+        "gray"
+      ],
+      "color": "gray",
+      "cx": -58.373259464283144,
+      "selected": false,
+      "ly": 1,
+      "cz": 4,
+      "type": "Cuboid",
+      "textureTypes": [
+        "No Facade Texture",
+        "No Facade Texture",
+        "No Facade Texture",
+        "No Facade Texture",
+        "No Facade Texture",
+        "No Facade Texture"
+      ],
+      "lx": 1,
+      "parentId": "Ground",
+      "cy": 19.91282275388616,
+      "lz": 8
+    },
+    {
+      "lx": 1,
+      "parentId": "Ground",
+      "locked": true,
+      "ly": 1,
+      "selected": false,
+      "faceColors": [
+        "gray",
+        "gray",
+        "gray",
+        "gray",
+        "gray",
+        "gray"
+      ],
+      "cx": -18.92226089346107,
+      "rotation": [
+        0,
+        0,
+        -0.22689280275926285
+      ],
+      "type": "Cuboid",
+      "cz": 4,
+      "color": "gray",
+      "textureTypes": [
+        "No Facade Texture",
+        "No Facade Texture",
+        "No Facade Texture",
+        "No Facade Texture",
+        "No Facade Texture",
+        "No Facade Texture"
+      ],
+      "id": "aSJgYXr93BZfEPKkAwN8r7",
+      "lz": 8,
+      "normal": [
+        0,
+        0,
+        1
+      ],
+      "cy": -0.6960334472303071
+    },
+    {
+      "locked": true,
+      "lx": 2.0388988979736835,
+      "textureTypes": [
+        "No Facade Texture",
+        "No Facade Texture",
+        "No Facade Texture",
+        "No Facade Texture",
+        "No Facade Texture",
+        "No Facade Texture"
+      ],
+      "rotation": [
+        0,
+        0,
+        -0.22689280275926285
+      ],
+      "id": "vUyZDk5YRtPiBnYt1snpgt",
+      "selected": false,
+      "cy": 10.353201903334014,
+      "color": "gray",
+      "ly": 2.0216903725484365,
+      "normal": [
+        0,
+        0,
+        1
+      ],
+      "type": "Cuboid",
+      "cx": -16.847254368208766,
+      "parentId": "Ground",
+      "lz": 8,
+      "faceColors": [
+        "gray",
+        "gray",
+        "gray",
+        "gray",
+        "gray",
+        "gray"
+      ],
+      "cz": 4
+    },
+    {
+      "type": "Cuboid",
+      "cy": 11.088622268912289,
+      "cz": 4,
+      "rotation": [
+        0,
+        0,
+        -0.22689280275926285
+      ],
+      "ly": 2.9540425209021324,
+      "id": "dfGLJ9Zv1uAnvCfrcBHsCt",
+      "locked": true,
+      "lz": 8,
+      "parentId": "Ground",
+      "color": "gray",
+      "cx": -14.705676459927645,
+      "normal": [
+        0,
+        0,
+        1
+      ],
+      "faceColors": [
+        "gray",
+        "gray",
+        "gray",
+        "gray",
+        "gray",
+        "gray"
+      ],
+      "lx": 1.7677570935590694,
+      "selected": false,
+      "textureTypes": [
+        "No Facade Texture",
+        "No Facade Texture",
+        "No Facade Texture",
+        "No Facade Texture",
+        "No Facade Texture",
+        "No Facade Texture"
+      ]
+    },
+    {
+      "textureTypes": [
+        "No Facade Texture",
+        "No Facade Texture",
+        "No Facade Texture",
+        "No Facade Texture",
+        "No Facade Texture",
+        "No Facade Texture"
+      ],
+      "lz": 7.5,
+      "selected": false,
+      "cz": 3.75,
+      "lx": 0.9904096888649759,
+      "type": "Cuboid",
+      "color": "gray",
+      "cy": -4.822954202789914,
+      "parentId": "Ground",
+      "locked": true,
+      "id": "n5nBWKF2pcd87Hywxr4MmX",
+      "cx": 19.016528568953923,
+      "normal": [
+        0,
+        0,
+        1
+      ],
+      "ly": 1.9410657757772696,
+      "rotation": [
+        0,
+        0,
+        0.11344640137963143
+      ],
+      "faceColors": [
+        "gray",
+        "gray",
+        "gray",
+        "gray",
+        "gray",
+        "gray"
+      ]
+    },
+    {
+      "type": "Cuboid",
+      "ly": 1,
+      "cx": 22.516067022100426,
+      "color": "gray",
+      "parentId": "Ground",
+      "cz": 3.5,
+      "locked": true,
+      "selected": false,
+      "lx": 1,
+      "lz": 7,
+      "rotation": [
+        0,
+        0,
+        0.11344640137963143
+      ],
+      "id": "oDooft2rdfK7T7GeS22TTX",
+      "textureTypes": [
+        "No Facade Texture",
+        "No Facade Texture",
+        "No Facade Texture",
+        "No Facade Texture",
+        "No Facade Texture",
+        "No Facade Texture"
+      ],
+      "normal": [
+        0,
+        0,
+        1
+      ],
+      "faceColors": [
+        "gray",
+        "gray",
+        "gray",
+        "gray",
+        "gray",
+        "gray"
+      ],
+      "cy": -11.05785927501001
+    },
+    {
+      "rotation": [
+        0,
+        0,
+        0.11344640137963143
+      ],
+      "type": "Cuboid",
+      "selected": false,
+      "lz": 6,
+      "locked": true,
+      "lx": 1,
+      "parentId": "Ground",
+      "ly": 1,
+      "normal": [
+        0,
+        0,
+        1
+      ],
+      "textureTypes": [
+        "No Facade Texture",
+        "No Facade Texture",
+        "No Facade Texture",
+        "No Facade Texture",
+        "No Facade Texture",
+        "No Facade Texture"
+      ],
+      "color": "gray",
+      "faceColors": [
+        "gray",
+        "gray",
+        "gray",
+        "gray",
+        "gray",
+        "gray"
+      ],
+      "id": "5MNhY3je6nxRhgVTaQd4XD",
+      "cx": 17.344429933105552,
+      "cy": -13.822777502645632,
+      "cz": 3
+    },
+    {
+      "rotation": [
+        0,
+        0,
+        0.11344640137963143
+      ],
+      "id": "hTpGn7Ld64gegWm4tEbZhj",
+      "normal": [
+        0,
+        0,
+        1
+      ],
+      "lz": 6,
+      "locked": true,
+      "cz": 3,
+      "lx": 1,
+      "type": "Cuboid",
+      "ly": 1,
+      "selected": false,
+      "cx": 13.157095779673083,
+      "textureTypes": [
+        "No Facade Texture",
+        "No Facade Texture",
+        "No Facade Texture",
+        "No Facade Texture",
+        "No Facade Texture",
+        "No Facade Texture"
+      ],
+      "cy": -14.697109758746397,
+      "faceColors": [
+        "gray",
+        "gray",
+        "gray",
+        "gray",
+        "gray",
+        "gray"
+      ],
+      "parentId": "Ground",
+      "color": "gray"
+    },
+    {
+      "type": "Cuboid",
+      "parentId": "Ground",
+      "textureTypes": [
+        "No Facade Texture",
+        "No Facade Texture",
+        "No Facade Texture",
+        "No Facade Texture",
+        "No Facade Texture",
+        "No Facade Texture"
+      ],
+      "cy": -6.445109761249004,
+      "rotation": [
+        0,
+        0,
+        0.11344640137963143
+      ],
+      "faceColors": [
+        "gray",
+        "gray",
+        "gray",
+        "gray",
+        "gray",
+        "gray"
+      ],
+      "cz": 4.5,
+      "locked": true,
+      "cx": -1.5852019434320317,
+      "ly": 1,
+      "selected": false,
+      "normal": [
+        0,
+        0,
+        1
+      ],
+      "lz": 9,
+      "id": "rq5RGqs3gD3vGibJBsqSoL",
+      "color": "gray",
+      "lx": 1
+    },
+    {
+      "lx": 1,
+      "parentId": "Ground",
+      "rotation": [
+        0,
+        0,
+        0.11344640137963143
+      ],
+      "normal": [
+        0,
+        0,
+        1
+      ],
+      "type": "Cuboid",
+      "faceColors": [
+        "gray",
+        "gray",
+        "gray",
+        "gray",
+        "gray",
+        "gray"
+      ],
+      "textureTypes": [
+        "No Facade Texture",
+        "No Facade Texture",
+        "No Facade Texture",
+        "No Facade Texture",
+        "No Facade Texture",
+        "No Facade Texture"
+      ],
+      "color": "gray",
+      "locked": true,
+      "selected": false,
+      "cx": 1.8238223447270574,
+      "id": "pVxtrZrVGwkvEXjPsLSV95",
+      "cz": 4,
+      "ly": 1,
+      "cy": -11.816737963378758,
+      "lz": 8
+    },
+    {
+      "selected": false,
+      "ly": 1.3665925830167867,
+      "parentId": "Ground",
+      "faceColors": [
+        "gray",
+        "gray",
+        "gray",
+        "gray",
+        "gray",
+        "gray"
+      ],
+      "normal": [
+        0,
+        0,
+        1
+      ],
+      "rotation": [
+        0,
+        0,
+        0.11344640137963143
+      ],
+      "cz": 6.5,
+      "lz": 13,
+      "id": "kfMaGeiQgdSFzmbpVf6zVf",
+      "cx": -10.111227834366188,
+      "type": "Cuboid",
+      "lx": 1.8193596961081897,
+      "textureTypes": [
+        "No Facade Texture",
+        "No Facade Texture",
+        "No Facade Texture",
+        "No Facade Texture",
+        "No Facade Texture",
+        "No Facade Texture"
+      ],
+      "color": "gray",
+      "locked": true,
+      "cy": -15.497913514100716
+    },
+    {
+      "color": "gray",
+      "lx": 1,
+      "type": "Cuboid",
+      "cy": -27.533957889184162,
+      "cz": 6.5,
+      "parentId": "Ground",
+      "faceColors": [
+        "gray",
+        "gray",
+        "gray",
+        "gray",
+        "gray",
+        "gray"
+      ],
+      "textureTypes": [
+        "No Facade Texture",
+        "No Facade Texture",
+        "No Facade Texture",
+        "No Facade Texture",
+        "No Facade Texture",
+        "No Facade Texture"
+      ],
+      "rotation": [
+        0,
+        0,
+        0.11344640137963143
+      ],
+      "selected": false,
+      "lz": 13,
+      "id": "bkDAE3FxXTUCR13vm7LnmF",
+      "locked": true,
+      "normal": [
+        0,
+        0,
+        1
+      ],
+      "ly": 1,
+      "cx": -2.3075258042202
+    },
+    {
+      "normal": [
+        0,
+        0,
+        1
+      ],
+      "selected": false,
+      "locked": true,
+      "cx": -15.307775607494396,
+      "lx": 2.5676889546751847,
+      "color": "gray",
+      "ly": 1.3662836019362639,
+      "textureTypes": [
+        "No Facade Texture",
+        "No Facade Texture",
+        "No Facade Texture",
+        "No Facade Texture",
+        "No Facade Texture",
+        "No Facade Texture"
+      ],
+      "faceColors": [
+        "gray",
+        "gray",
+        "gray",
+        "gray",
+        "gray",
+        "gray"
+      ],
+      "rotation": [
+        0,
+        0,
+        0.11344640137963143
+      ],
+      "parentId": "Ground",
+      "type": "Cuboid",
+      "cz": 6.5,
+      "lz": 13,
+      "cy": -18.40230760434186,
+      "id": "aQcL3piZZWLrX5Ud8AM8Ke"
+    },
+    {
+      "textureTypes": [
+        "No Facade Texture",
+        "No Facade Texture",
+        "No Facade Texture",
+        "No Facade Texture",
+        "No Facade Texture",
+        "No Facade Texture"
+      ],
+      "selected": false,
+      "id": "i4oTzKRpveYkgD2Hd8SNHf",
+      "faceColors": [
+        "gray",
+        "gray",
+        "gray",
+        "gray",
+        "gray",
+        "gray"
+      ],
+      "ly": 1,
+      "lz": 14,
+      "color": "gray",
+      "lx": 1,
+      "parentId": "Ground",
+      "cy": -29.315479380504186,
+      "rotation": [
+        0,
+        0,
+        0.11344640137963143
+      ],
+      "cx": 16.7566929241104,
+      "cz": 7,
+      "type": "Cuboid",
+      "normal": [
+        0,
+        0,
+        1
+      ],
+      "locked": true
+    },
+    {
+      "ly": 1,
+      "normal": [
+        0,
+        0,
+        1
+      ],
+      "cx": 19.914283665719672,
+      "cy": -44.497740663585425,
+      "lz": 14,
+      "lx": 1,
+      "textureTypes": [
+        "No Facade Texture",
+        "No Facade Texture",
+        "No Facade Texture",
+        "No Facade Texture",
+        "No Facade Texture",
+        "No Facade Texture"
+      ],
+      "rotation": [
+        0,
+        0,
+        0.11344640137963143
+      ],
+      "id": "ah9bKoBGUiMWeHKfdxzpi9",
+      "cz": 7,
+      "color": "gray",
+      "type": "Cuboid",
+      "locked": true,
+      "selected": false,
+      "faceColors": [
+        "gray",
+        "gray",
+        "gray",
+        "gray",
+        "gray",
+        "gray"
+      ],
+      "parentId": "Ground"
+    },
+    {
+      "lz": 14,
+      "normal": [
+        0,
+        0,
+        1
+      ],
+      "locked": true,
+      "id": "vBZ2DA9y9KYiCwgzGpLfFD",
+      "color": "gray",
+      "lx": 1,
+      "rotation": [
+        0,
+        0,
+        0.11344640137963143
+      ],
+      "cz": 7,
+      "cy": -47.62693833888401,
+      "parentId": "Ground",
+      "faceColors": [
+        "gray",
+        "gray",
+        "gray",
+        "gray",
+        "gray",
+        "gray"
+      ],
+      "textureTypes": [
+        "No Facade Texture",
+        "No Facade Texture",
+        "No Facade Texture",
+        "No Facade Texture",
+        "No Facade Texture",
+        "No Facade Texture"
+      ],
+      "type": "Cuboid",
+      "selected": false,
+      "ly": 1,
+      "cx": 20.25452350291907
+    },
+    {
+      "cy": -38.0401954851006,
+      "type": "Cuboid",
+      "lx": 1,
+      "textureTypes": [
+        "No Facade Texture",
+        "No Facade Texture",
+        "No Facade Texture",
+        "No Facade Texture",
+        "No Facade Texture",
+        "No Facade Texture"
+      ],
+      "normal": [
+        0,
+        0,
+        1
+      ],
+      "ly": 1,
+      "rotation": [
+        0,
+        0,
+        0.11344640137963143
+      ],
+      "faceColors": [
+        "gray",
+        "gray",
+        "gray",
+        "gray",
+        "gray",
+        "gray"
+      ],
+      "cz": 7,
+      "locked": true,
+      "id": "2jpUuL1gcsjduHrhm3n43t",
+      "selected": false,
+      "parentId": "Ground",
+      "cx": -17.59480337417267,
+      "color": "gray",
+      "lz": 14
+    },
+    {
+      "faceColors": [
+        "gray",
+        "gray",
+        "gray",
+        "gray",
+        "gray",
+        "gray"
+      ],
+      "textureTypes": [
+        "No Facade Texture",
+        "No Facade Texture",
+        "No Facade Texture",
+        "No Facade Texture",
+        "No Facade Texture",
+        "No Facade Texture"
+      ],
+      "normal": [
+        0,
+        0,
+        1
+      ],
+      "ly": 1,
+      "cy": -50.768525050448105,
+      "lz": 14,
+      "lx": 1,
+      "id": "doc8sxSmKeL7RKrAnLUcoL",
+      "selected": false,
+      "type": "Cuboid",
+      "cx": -16.679482324891723,
+      "locked": true,
+      "color": "gray",
+      "rotation": [
+        0,
+        0,
+        0.11344640137963143
+      ],
+      "parentId": "Ground",
+      "cz": 7
+    },
+    {
+      "type": "Cuboid",
+      "textureTypes": [
+        "No Facade Texture",
+        "No Facade Texture",
+        "No Facade Texture",
+        "No Facade Texture",
+        "No Facade Texture",
+        "No Facade Texture"
+      ],
+      "faceColors": [
+        "gray",
+        "gray",
+        "gray",
+        "gray",
+        "gray",
+        "gray"
+      ],
+      "selected": false,
+      "id": "us3zCoK5ewuBS6QTdVwh5n",
+      "cz": 7,
+      "ly": 1,
+      "lx": 1,
+      "normal": [
+        0,
+        0,
+        1
+      ],
+      "color": "gray",
+      "locked": true,
+      "lz": 14,
+      "rotation": [
+        0,
+        0,
+        0.11344640137963143
+      ],
+      "cy": -63.79092407456009,
+      "cx": -15.262534505030402,
+      "parentId": "Ground"
+    },
+    {
+      "faceColors": [
+        "gray",
+        "gray",
+        "gray",
+        "gray",
+        "gray",
+        "gray"
+      ],
+      "rotation": [
+        0,
+        0,
+        0.47123889803846897
+      ],
+      "lz": 10,
+      "normal": [
+        0,
+        0,
+        1
+      ],
+      "lx": 1,
+      "type": "Cuboid",
+      "cy": -67.46996837049493,
+      "id": "t959VVjipFtQcWvuiVz2K9",
+      "parentId": "Ground",
+      "cx": -4.425598860553924,
+      "cz": 5,
+      "color": "gray",
+      "selected": false,
+      "ly": 1,
+      "textureTypes": [
+        "No Facade Texture",
+        "No Facade Texture",
+        "No Facade Texture",
+        "No Facade Texture",
+        "No Facade Texture",
+        "No Facade Texture"
+      ],
+      "locked": true
+    },
+    {
+      "ly": 1,
+      "lx": 1,
+      "locked": true,
+      "type": "Cuboid",
+      "rotation": [
+        0,
+        0,
+        0.47123889803846897
+      ],
+      "cx": -3.1466144543948023,
+      "normal": [
+        0,
+        0,
+        1
+      ],
+      "color": "gray",
+      "textureTypes": [
+        "No Facade Texture",
+        "No Facade Texture",
+        "No Facade Texture",
+        "No Facade Texture",
+        "No Facade Texture",
+        "No Facade Texture"
+      ],
+      "lz": 10,
+      "cy": -66.65602476858759,
+      "selected": false,
+      "id": "qhPJYtSXY5a7RZFHnh9sXY",
+      "faceColors": [
+        "gray",
+        "gray",
+        "gray",
+        "gray",
+        "gray",
+        "gray"
+      ],
+      "parentId": "Ground",
+      "cz": 5
+    },
+    {
+      "cx": -6.364270455130605,
+      "textureTypes": [
+        "No Facade Texture",
+        "No Facade Texture",
+        "No Facade Texture",
+        "No Facade Texture",
+        "No Facade Texture",
+        "No Facade Texture"
+      ],
+      "normal": [
+        0,
+        0,
+        1
+      ],
+      "lz": 10,
+      "ly": 1,
+      "locked": true,
+      "parentId": "Ground",
+      "faceColors": [
+        "gray",
+        "gray",
+        "gray",
+        "gray",
+        "gray",
+        "gray"
+      ],
+      "lx": 1,
+      "color": "gray",
+      "type": "Cuboid",
+      "selected": false,
+      "id": "uHN4GMMVvGcf6APcCUZnSj",
+      "cy": -75.21381547306636,
+      "rotation": [
+        0,
+        0,
+        0.47123889803846897
+      ],
+      "cz": 5
+    },
+    {
+      "ly": 1,
+      "cy": -83.03785791923461,
+      "rotation": [
+        0,
+        0,
+        0.47123889803846897
+      ],
+      "locked": true,
+      "lx": 1,
+      "normal": [
+        0,
+        0,
+        1
+      ],
+      "color": "gray",
+      "lz": 8,
+      "selected": false,
+      "cx": -23.111777972260608,
+      "id": "vtCxYC9fd4ntw6fFZCahnk",
+      "faceColors": [
+        "gray",
+        "gray",
+        "gray",
+        "gray",
+        "gray",
+        "gray"
+      ],
+      "cz": 4,
+      "parentId": "Ground",
+      "type": "Cuboid",
+      "textureTypes": [
+        "No Facade Texture",
+        "No Facade Texture",
+        "No Facade Texture",
+        "No Facade Texture",
+        "No Facade Texture",
+        "No Facade Texture"
+      ]
+    },
+    {
+      "selected": false,
+      "faceColors": [
+        "gray",
+        "gray",
+        "gray",
+        "gray",
+        "gray",
+        "gray"
+      ],
+      "locked": true,
+      "lz": 10,
+      "lx": 1,
+      "rotation": [
+        0,
+        0,
+        0.47123889803846897
+      ],
+      "textureTypes": [
+        "No Facade Texture",
+        "No Facade Texture",
+        "No Facade Texture",
+        "No Facade Texture",
+        "No Facade Texture",
+        "No Facade Texture"
+      ],
+      "ly": 1,
+      "color": "gray",
+      "type": "Cuboid",
+      "cy": -79.50076914190635,
+      "cx": -14.662733157197128,
+      "cz": 5,
+      "id": "hZWUtVcu3jjMB9HKr9R8ro",
+      "normal": [
+        0,
+        0,
+        1
+      ],
+      "parentId": "Ground"
+    },
+    {
+      "type": "Cuboid",
+      "textureTypes": [
+        "No Facade Texture",
+        "No Facade Texture",
+        "No Facade Texture",
+        "No Facade Texture",
+        "No Facade Texture",
+        "No Facade Texture"
+      ],
+      "locked": true,
+      "lx": 1,
+      "ly": 1,
+      "cz": 4,
+      "normal": [
+        0,
+        0,
+        1
+      ],
+      "color": "gray",
+      "rotation": [
+        0,
+        0,
+        0.47123889803846897
+      ],
+      "cy": -84.70748291923546,
+      "id": "iw4xNrSMGDSZJUGzJ8pTqm",
+      "cx": -28.436527972260606,
+      "lz": 8,
+      "selected": false,
+      "faceColors": [
+        "gray",
+        "gray",
+        "gray",
+        "gray",
+        "gray",
+        "gray"
+      ],
+      "parentId": "Ground"
+    },
+    {
+      "type": "Cuboid",
+      "cz": 4,
+      "locked": true,
+      "lz": 8,
+      "ly": 1,
+      "id": "iLtZHkfUgxkgeqhAZivYfe",
+      "cx": -30.88874837783922,
+      "color": "gray",
+      "faceColors": [
+        "gray",
+        "gray",
+        "gray",
+        "gray",
+        "gray",
+        "gray"
+      ],
+      "selected": false,
+      "cy": -84.0342920377216,
+      "normal": [
+        0,
+        0,
+        1
+      ],
+      "parentId": "Ground",
+      "rotation": [
+        0,
+        0,
+        0.47123889803846897
+      ],
+      "lx": 1,
+      "textureTypes": [
+        "No Facade Texture",
+        "No Facade Texture",
+        "No Facade Texture",
+        "No Facade Texture",
+        "No Facade Texture",
+        "No Facade Texture"
+      ]
+    },
+    {
+      "selected": false,
+      "lz": 8,
+      "parentId": "Ground",
+      "textureTypes": [
+        "No Facade Texture",
+        "No Facade Texture",
+        "No Facade Texture",
+        "No Facade Texture",
+        "No Facade Texture",
+        "No Facade Texture"
+      ],
+      "cx": -13.782520236054552,
+      "rotation": [
+        0,
+        0,
+        0.47123889803846897
+      ],
+      "type": "Cuboid",
+      "lx": 1,
+      "cz": 4,
+      "id": "ssCGfzEitaxtFqQF7Ga8kZ",
+      "color": "gray",
+      "ly": 1,
+      "normal": [
+        0,
+        0,
+        1
+      ],
+      "cy": -67.47809368871428,
+      "faceColors": [
+        "gray",
+        "gray",
+        "gray",
+        "gray",
+        "gray",
+        "gray"
+      ],
+      "locked": true
+    },
+    {
+      "selected": false,
+      "color": "#f9fdfe",
+      "ly": 0,
+      "foundationId": "1nEGYML9Y5W4dWVRK3n5WW",
+      "lz": 7,
+      "lx": 0,
+      "lineColor": "black",
+      "textureType": "No Roof Texture",
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "parentId": "1nEGYML9Y5W4dWVRK3n5WW",
+      "roofType": "Pyramid",
+      "wallsId": [
+        "97HokqKu917DTkAssZGbhE",
+        "fPtvUV7Bzhezt9xwDuPEmF",
+        "ebWW9yh8D9FYjir4ozAvaz",
+        "v4k1Tt2DPV8adpDFKC5P12",
+        "2QQRWDofKjHid4D3rHXvwX"
+      ],
+      "locked": true,
+      "type": "Roof",
+      "cx": 0,
+      "showLabel": false,
+      "lineWidth": 0.2,
+      "thickness": 0.2,
+      "overhang": 0.3,
+      "normal": [
+        0,
+        0,
+        1
+      ],
+      "cz": 0,
+      "cy": 0,
+      "id": "vaDVUZ1uyEALYaHTbs211h"
+    },
+    {
+      "selected": false,
+      "lz": 0.4,
+      "filled": false,
+      "id": "fdazNUtKFoSEAPgq9CQJES",
+      "type": "Polygon",
+      "locked": true,
+      "cx": 0,
+      "parentId": "qsPqX4eMRADWLb6uFzZyu3",
+      "color": "#d0d7da",
+      "selectedIndex": 3,
+      "foundationId": "qsPqX4eMRADWLb6uFzZyu3",
+      "cz": 0,
+      "rotation": [
+        0,
+        0,
+        0.11344640137963143
+      ],
+      "normal": [
+        0,
+        0,
+        1
+      ],
+      "vertices": [
+        {
+          "x": -0.3919656451231681,
+          "y": -0.44378588479022363
+        },
+        {
+          "x": -0.3919656451231681,
+          "y": 0.4581015584931341
+        },
+        {
+          "y": 0.4581015584931341,
+          "x": 0.3563324046574256
+        },
+        {
+          "y": -0.44378588479022363,
+          "x": 0.3563324046574256
+        }
+      ],
+      "cy": 0,
+      "ly": 0.4,
+      "lx": 0.4
+    },
+    {
+      "type": "Polygon",
+      "cz": 0,
+      "lx": 0.4,
+      "selected": false,
+      "color": "#dadedf",
+      "normal": [
+        0,
+        0,
+        1
+      ],
+      "lz": 0.4,
+      "filled": false,
+      "locked": true,
+      "parentId": "jeaVPPnZw5Ed7yuuYuFjT4",
+      "ly": 0.4,
+      "cy": 0,
+      "selectedIndex": 5,
+      "rotation": [
+        0,
+        0,
+        -0.22689280275926285
+      ],
+      "id": "4bjxP3DGK4dodwicaeMGrq",
+      "vertices": [
+        {
+          "x": -0.4583333333333333,
+          "y": -0.41984420002481043
+        },
+        {
+          "x": -0.4583333333333333,
+          "y": 0.2798961333498736
+        },
+        {
+          "y": 0.2798961333498736,
+          "x": -0.4083333333333333
+        },
+        {
+          "x": -0.4083333333333333,
+          "y": 0.41984420002481043
+        },
+        {
+          "x": 0.20833333333333334,
+          "y": 0.41984420002481043
+        },
+        {
+          "y": -0.41984420002481043,
+          "x": 0.20833333333333334
+        }
+      ],
+      "cx": 0,
+      "foundationId": "jeaVPPnZw5Ed7yuuYuFjT4"
+    }
+  ],
+  "view": {
+    "showDailyLightSensorPanel": false,
+    "yearlyHeliostatYieldPanelY": 0,
+    "yearlyFresnelReflectorYieldPanelY": 0,
+    "showInstructionPanel": true,
+    "yearlyParabolicDishYieldPanelRect": {
+      "x": 0,
+      "y": 0,
+      "width": 600,
+      "height": 400
+    },
+    "yearlyHeliostatYieldPanelX": 0,
+    "panCenter2D": [
+      -38.51386717609555,
+      9.861822957610682,
+      -0.00020795605672141833
+    ],
+    "dailyPvYieldPanelRect": {
+      "height": 400,
+      "width": 600,
+      "x": 0,
+      "y": 0
+    },
+    "panCenter": [
+      -35.340653578071375,
+      9.885203399166455,
+      13.04883842500549
+    ],
+    "showMapPanel": false,
+    "groundColor": "#16a5a5",
+    "yearlyFresnelReflectorYieldPanelRect": {
+      "x": 0,
+      "width": 600,
+      "y": 0,
+      "height": 400
+    },
+    "yearlyPvYieldPanelY": 0,
+    "mapWeatherStations": false,
+    "visibilityResultsPanelX": 0,
+    "evolutionPanelRect": {
+      "x": 0,
+      "y": 0,
+      "width": 640,
+      "height": 400
+    },
+    "stickyNotePanelRect": {
+      "width": 400,
+      "y": 0,
+      "x": 0,
+      "height": 300
+    },
+    "cameraPosition2D": [
+      -38.51386717609555,
+      9.861802956721695,
+      19.99979204387911
+    ],
+    "showYearlyParabolicTroughYieldPanel": false,
+    "showEvolutionPanel": false,
+    "showHeliodonPanel": false,
+    "theme": "Default",
+    "showYearlyParabolicDishYieldPanel": false,
+    "mapPanelX": 0,
+    "showDailyFresnelReflectorYieldPanel": false,
+    "dailyLightSensorPanelX": 0,
+    "dailyParabolicDishYieldPanelX": 0,
+    "heliodon": false,
+    "dailyPvYieldPanelX": 0,
+    "dailyFresnelReflectorYieldPanelRect": {
+      "y": 0,
+      "height": 400,
+      "x": 0,
+      "width": 600
+    },
+    "axes": true,
+    "mapTilt": 0,
+    "dailyFresnelReflectorYieldPanelX": 0,
+    "showEconomicsPanel": false,
+    "dailyParabolicTroughYieldPanelY": 0,
+    "dailyLightSensorPanelY": 0,
+    "visibilityResultsPanelY": 0,
+    "yearlyParabolicTroughYieldPanelX": 0,
+    "showYearlyFresnelReflectorYieldPanel": false,
+    "yearlyLightSensorPanelRect": {
+      "height": 500,
+      "y": 0,
+      "x": 0,
+      "width": 600
+    },
+    "dailyParabolicDishYieldPanelRect": {
+      "x": 0,
+      "height": 400,
+      "width": 600,
+      "y": 0
+    },
+    "showDesignInfoPanel": true,
+    "yearlyUpdraftTowerYieldPanelRect": {
+      "y": 0,
+      "height": 400,
+      "x": 0,
+      "width": 600
+    },
+    "yearlyPvYieldPanelRect": {
+      "x": 0,
+      "y": 0,
+      "height": 400,
+      "width": 600
+    },
+    "yearlyParabolicDishYieldPanelX": 0,
+    "solarRadiationHeatMapReflectionOnly": false,
+    "showZenithAngle": true,
+    "groundImage": true,
+    "showYearlyLightSensorPanel": false,
+    "mapZoom": 17,
+    "yearlyFresnelReflectorYieldPanelX": 0,
+    "visibilityResultsPanelRect": {
+      "width": 600,
+      "x": 0,
+      "y": 0,
+      "height": 470
+    },
+    "showStickyNotePanel": false,
+    "yearlyLightSensorPanelShowClearness": false,
+    "showElevationAngle": true,
+    "weatherPanelY": 0,
+    "yearlyLightSensorPanelShowDaylight": false,
+    "yearlyLightSensorPanelY": 0,
+    "mapType": "hybrid",
+    "showYearlyPvYieldPanel": false,
+    "yearlyParabolicDishYieldPanelY": 0,
+    "yearlyPvYieldPanelX": 0,
+    "diurnalTemperaturePanelRect": {
+      "width": 600,
+      "x": 0,
+      "y": 0,
+      "height": 400
+    },
+    "dailyHeliostatYieldPanelX": 0,
+    "heliodonPanelX": 0,
+    "showYearlyHeliostatYieldPanel": false,
+    "yearlyParabolicTroughYieldPanelRect": {
+      "width": 600,
+      "x": 0,
+      "height": 400,
+      "y": 0
+    },
+    "dailyHeliostatYieldPanelY": 0,
+    "yearlyParabolicTroughYieldPanelY": 0,
+    "stickyNotePanelY": 0,
+    "dailyParabolicTroughYieldPanelX": 0,
+    "dailyParabolicTroughYieldPanelRect": {
+      "height": 400,
+      "x": 0,
+      "width": 600,
+      "y": 0
+    },
+    "orthographic": false,
+    "cameraPosition": [
+      -103.03646711274416,
+      78.44056042873603,
+      107.88826188350532
+    ],
+    "showDailyUpdraftTowerYieldPanel": false,
+    "showDailyPvYieldPanel": false,
+    "enableRotate": true,
+    "showYearlyUpdraftTowerYieldPanel": false,
+    "showDailyParabolicDishYieldPanel": false,
+    "showDailyParabolicTroughYieldPanel": false,
+    "dailyFresnelReflectorYieldPanelY": 0,
+    "showWeatherPanel": false,
+    "yearlyLightSensorPanelX": 0,
+    "mapPanelY": 0,
+    "dailyHeliostatYieldPanelRect": {
+      "height": 400,
+      "width": 600,
+      "x": 0,
+      "y": 0
+    },
+    "autoRotate": false,
+    "dailyParabolicDishYieldPanelY": 0,
+    "cameraZoom": 22.160664819944596,
+    "showAzimuthAngle": true,
+    "weatherPanelRect": {
+      "y": 0,
+      "x": 0,
+      "height": 500,
+      "width": 500
+    },
+    "showSunAngles": false,
+    "dailyLightSensorPanelRect": {
+      "x": 0,
+      "width": 600,
+      "height": 360,
+      "y": 0
+    },
+    "heliodonPanelY": 0,
+    "showSolarPanelVisibilityResultsPanel": false,
+    "showDailyHeliostatYieldPanel": false,
+    "shadowEnabled": false,
+    "dailyUpdraftTowerYieldPanelRect": {
+      "x": 0,
+      "width": 640,
+      "height": 550,
+      "y": 0
+    },
+    "dailyPvYieldPanelY": 0,
+    "showDiurnalTemperaturePanel": false,
+    "weatherPanelX": 0,
+    "ambientLightIntensity": 0.1,
+    "solarRadiationHeatMapMaxValue": 5,
+    "stickyNotePanelX": 0,
+    "showSiteInfoPanel": true,
+    "yearlyHeliostatYieldPanelRect": {
+      "width": 600,
+      "x": 0,
+      "y": 0,
+      "height": 400
+    }
+  },
+  "evolutionMethod": 1,
+  "solarPanelArrayLayoutParams": {
+    "rowAxis": "Zonal",
+    "interRowSpacing": 2,
+    "tiltAngle": 0,
+    "poleSpacing": 3,
+    "rowsPerRack": 1,
+    "poleHeight": 1,
+    "pvModelName": "SPR-X21-335-BLK",
+    "orientation": "Landscape"
+  },
+  "solarPanelArrayLayoutConstraints": {
+    "maximumTiltAngle": 1.5707963267948966,
+    "minimumRowsPerRack": 1,
+    "rowAxis": "Zonal",
+    "orientation": "Landscape",
+    "maximumRowsPerRack": 6,
+    "minimumTiltAngle": -1.5707963267948966,
+    "maximumInterRowSpacing": 10,
+    "minimumInterRowSpacing": 2,
+    "poleSpacing": 5,
+    "poleHeight": 1,
+    "pvModelName": "CS6X-355P-FG"
+  },
+  "evolutionaryAlgorithmState": {
+    "particleSwarmOptimizationParams": {
+      "vmax": 0.01,
+      "localSearchRadius": 0.1,
+      "inertia": 0.8,
+      "searchMethod": 1,
+      "maximumSteps": 5,
+      "objectiveFunctionType": 1,
+      "problem": "Solar Panel Tilt Angle",
+      "socialCoefficient": 0.1,
+      "convergenceThreshold": 0.01,
+      "cognitiveCoefficient": 0.1,
+      "swarmSize": 20
+    },
+    "geneticAlgorithmParams": {
+      "localSearchRadius": 0.1,
+      "maximumGenerations": 5,
+      "mutationRate": 0.1,
+      "problem": "Solar Panel Tilt Angle",
+      "selectionRate": 0.5,
+      "populationSize": 20,
+      "objectiveFunctionType": 1,
+      "searchMethod": 1,
+      "convergenceThreshold": 0.01,
+      "selectionMethod": 1,
+      "crossoverRate": 0.5
+    }
+  },
+  "economicsParams": {
+    "electricitySellingPrice": 0.25,
+    "projectLifeSpan": 25,
+    "operationalCostPerUnit": 0.15
+  },
+  "notes": []
+}

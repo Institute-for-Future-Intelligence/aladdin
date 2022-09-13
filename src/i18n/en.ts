@@ -383,6 +383,7 @@ export const i18n_en = {
       commercialBuildingExamples: {
         OfficeBuilding: 'Office Building',
         Hotel: 'Hotel',
+        SouthBurlingtonHighSchoolVermont: 'South Burlington High School, VT',
       },
       urbanPlanningSubMenu: 'Urban Planning',
       urbanPlanningExamples: {

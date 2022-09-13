@@ -381,6 +381,7 @@ export const i18n_zh_tw = {
       commercialBuildingExamples: {
         OfficeBuilding: '一棟簡單的寫字樓',
         Hotel: '一個旅館場景',
+        SouthBurlingtonHighSchoolVermont: '佛蒙特州南伯靈頓高中',
       },
       urbanPlanningSubMenu: '城市規劃',
       urbanPlanningExamples: {

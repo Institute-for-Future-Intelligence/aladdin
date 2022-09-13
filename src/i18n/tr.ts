@@ -384,6 +384,7 @@ export const i18n_tr = {
       commercialBuildingExamples: {
         OfficeBuilding: 'Ofis Binasý',
         Hotel: 'Hotel',
+        SouthBurlingtonHighSchoolVermont: 'South Burlington High School, VT',
       },
       urbanPlanningSubMenu: 'Urban Planning',
       urbanPlanningExamples: {
