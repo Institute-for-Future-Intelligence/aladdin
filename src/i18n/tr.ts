@@ -378,6 +378,7 @@ export const i18n_tr = {
       residentialBuildingsSubMenu: 'Residential Buildings',
       residentialBuildingExamples: {
         DutchColonialHouse: 'Dutch Colonial House',
+        Greenhouse: 'Greenhouse',
         Solarium: 'Solarium',
         BarnStyleHouse: 'Barn Style House',
       },

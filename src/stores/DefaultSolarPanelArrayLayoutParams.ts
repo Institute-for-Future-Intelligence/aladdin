@@ -18,7 +18,7 @@ export class DefaultSolarPanelArrayLayoutParams implements SolarPanelArrayLayout
   poleSpacing: number;
 
   constructor() {
-    this.pvModelName = 'SPR-X21-335-BLK';
+    this.pvModelName = 'CS6X-355P-FG';
     this.rowAxis = RowAxis.zonal;
     this.orientation = Orientation.landscape;
     this.tiltAngle = 0;
