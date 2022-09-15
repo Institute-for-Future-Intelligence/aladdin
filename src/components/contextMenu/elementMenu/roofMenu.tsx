@@ -58,7 +58,7 @@ export const RoofMenu = () => {
 
   // for some reason, roof properties are not updated in the radio group action,
   // so we have to get the updated version here
-  const updatedRoof = roof.id ? (useStore.getState().getElementById(roof.id) as RoofModel) : roof;
+  const updatedRoof = roof?.id ? (useStore.getState().getElementById(roof.id) as RoofModel) : roof;
 
   return (
     roof && (
