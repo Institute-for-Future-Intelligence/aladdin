@@ -3980,6 +3980,9 @@ export const useStore = create<CommonStoreState>(
                 if (e.id === id && e.type === ObjectType.Wall) {
                   const wallModel = e as WallModel;
                   wallModel.wallStructure = structure;
+                  if (structure === WallStructure.Stud) {
+                    wallModel.opacity = 0;
+                  }
                   break;
                 }
               }

@@ -795,6 +795,11 @@ export const i18n_zh_cn = {
       DefaultStructure: '默认',
       StudStructure: '墙柱',
       Opacity: '遮光度',
+      StudSpacing: '墙柱间距',
+      StudWidth: '墙柱宽度',
+      StudThickness: '墙柱厚度',
+      StudColor: '墙柱颜色',
+      WallColor: '牆体颜色',
     },
 
     roofMenu: {

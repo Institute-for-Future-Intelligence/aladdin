@@ -81,6 +81,8 @@ const Wall = ({
   wallStructure = WallStructure.Default,
   studSpacing = 2,
   opacity = 0.5,
+  studColor = 'white',
+  studWidth = 0.1,
 }: WallModel) => {
   const textureLoader = useMemo(() => {
     let textureImg;
@@ -125,6 +127,10 @@ const Wall = ({
         textureImg = WallTexture00;
     }
 
+    if (wallStructure === WallStructure.Stud) {
+      textureImg = WallTexture00;
+    }
+
     return new TextureLoader().load(textureImg, (texture) => {
       texture.wrapS = texture.wrapT = RepeatWrapping;
       texture.offset.set(0, 0);
@@ -147,7 +153,7 @@ const Wall = ({
       texture.repeat.set(repeatX, repeatY);
       setTexture(texture);
     });
-  }, [textureType]);
+  }, [textureType, wallStructure]);
   const [texture, setTexture] = useState(textureLoader);
 
   const getElementById = useStore(Selector.getElementById);
@@ -1114,6 +1120,7 @@ const Wall = ({
   };
 
   const handleStudPointerDown = (e: ThreeEvent<PointerEvent>) => {
+    if (e.intersections.length === 0 || e.intersections[0].object !== e.eventObject) return;
     if (useStore.getState().groupActionMode) {
       setCommonStore((state) => {
         for (const e of state.elements) {
@@ -1140,8 +1147,6 @@ const Wall = ({
     }
   };
 
-  const studWidth = 0.1;
-
   const studs = useMemo(() => {
     const arr: number[] = [];
     if (wallStructure === WallStructure.Stud) {
@@ -1153,7 +1158,7 @@ const Wall = ({
     }
     arr.push(hx - studWidth / 2);
     return arr;
-  }, [wallStructure, lx, ly, lz]);
+  }, [wallStructure, studWidth, studSpacing, lx, ly, lz]);
 
   const castShadow = shadowEnabled && !transparent;
 
@@ -1172,7 +1177,7 @@ const Wall = ({
     const rightRotationY = -Math.atan2(wallRightHeight - wallCenterHeight, rightX);
 
     return (
-      <group name={'wall stud group'}>
+      <group name={`wall stud group ${id}`}>
         {studs.map((pos, idx) => {
           let height;
           if (pos < wallCenterPos) {
@@ -1191,31 +1196,31 @@ const Wall = ({
               onContextMenu={handleStudContextMenu}
               onPointerDown={handleStudPointerDown}
             >
-              <meshStandardMaterial color={'white'} />
+              <meshStandardMaterial color={studColor} />
             </Box>
           );
         })}
         <Box
           args={[leftLength, ly, studWidth]}
-          position={[-hx + leftX / 2, hy, (wallLeftHeight + wallCenterHeight) / 2 - hz]}
+          position={[-hx + leftX / 2, hy, (wallLeftHeight + wallCenterHeight) / 2 - hz - studWidth / 2]}
           rotation={[0, leftRotationY, 0]}
           castShadow={shadowEnabled}
           receiveShadow={shadowEnabled}
           onContextMenu={handleStudContextMenu}
           onPointerDown={handleStudPointerDown}
         >
-          <meshStandardMaterial color={'white'} />
+          <meshStandardMaterial color={studColor} />
         </Box>
         <Box
           args={[rightLength, ly, studWidth]}
-          position={[hx - rightX / 2, hy, (wallRightHeight + wallCenterHeight) / 2 - hz]}
+          position={[hx - rightX / 2, hy, (wallRightHeight + wallCenterHeight) / 2 - hz - studWidth / 2]}
           rotation={[0, rightRotationY, 0]}
           castShadow={shadowEnabled}
           receiveShadow={shadowEnabled}
           onContextMenu={handleStudContextMenu}
           onPointerDown={handleStudPointerDown}
         >
-          <meshStandardMaterial color={'white'} />
+          <meshStandardMaterial color={studColor} />
         </Box>
       </group>
     );
@@ -1364,17 +1369,20 @@ const Wall = ({
           {wallStructure === WallStructure.Stud && wallStuds()}
 
           {/* wireFrame */}
-          <WallWireFrame
-            lineColor={selected && locked ? LOCKED_ELEMENT_SELECTION_COLOR : lineColor}
-            lineWidth={selected && locked ? 2 : lineWidth}
-            x={hx}
-            z={hz}
-            leftHeight={leftRoofHeight}
-            rightHeight={rightRoofHeight}
-            center={centerRoofHeight}
-            centerLeft={centerLeftRoofHeight}
-            centerRight={centerRightRoofHeight}
-          />
+          {wallStructure === WallStructure.Default ||
+            (locked && selected && (
+              <WallWireFrame
+                lineColor={selected && locked ? LOCKED_ELEMENT_SELECTION_COLOR : lineColor}
+                lineWidth={selected && locked ? 2 : lineWidth}
+                x={hx}
+                z={hz}
+                leftHeight={leftRoofHeight}
+                rightHeight={rightRoofHeight}
+                center={centerRoofHeight}
+                centerLeft={centerLeftRoofHeight}
+                centerRight={centerRightRoofHeight}
+              />
+            ))}
 
           {/* handles */}
           {selected && !locked && <WallResizeHandleWarpper x={hx} z={hz} id={id} highLight={highLight} />}

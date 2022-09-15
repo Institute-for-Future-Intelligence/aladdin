@@ -23,6 +23,9 @@ export interface WallModel extends ElementModel {
 
   wallStructure?: WallStructure;
   studSpacing?: number;
+  studWidth?: number;
+  studColor?: string;
+
   opacity?: number;
 }
 

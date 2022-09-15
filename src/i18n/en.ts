@@ -813,6 +813,11 @@ export const i18n_en = {
       DefaultStructure: 'Default',
       StudStructure: 'Stud',
       Opacity: 'Opacity',
+      StudSpacing: 'Stud Spacing',
+      StudWidth: 'Stud Width',
+      StudThickness: 'Stud Thickness',
+      StudColor: 'Stud Color',
+      WallColor: 'Wall Color',
     },
 
     windowMenu: {

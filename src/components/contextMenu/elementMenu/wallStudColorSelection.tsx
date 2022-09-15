@@ -14,12 +14,9 @@ import { UndoableChangeGroup } from '../../../undo/UndoableChangeGroup';
 import { WallModel } from '../../../models/WallModel';
 import { CompactPicker } from 'react-color';
 
-const WallBodyColorSelection = ({ setDialogVisible }: { setDialogVisible: (b: boolean) => void }) => {
+const WallStudColorSelection = ({ setDialogVisible }: { setDialogVisible: (b: boolean) => void }) => {
   const language = useStore(Selector.language);
   const elements = useStore(Selector.elements);
-  const updateWallColorById = useStore(Selector.updateWallColorById);
-  const updateWallColorAboveFoundation = useStore(Selector.updateWallColorAboveFoundation);
-  const updateWallColorForAll = useStore(Selector.updateWallColorForAll);
   const wall = useStore(Selector.selectedElement) as WallModel;
   const addUndoable = useStore(Selector.addUndoable);
   const wallActionScope = useStore(Selector.wallActionScope);
@@ -28,8 +25,9 @@ const WallBodyColorSelection = ({ setDialogVisible }: { setDialogVisible: (b: bo
   const setApplyCount = useStore(Selector.setApplyCount);
   const revertApply = useStore(Selector.revertApply);
   const getElementById = useStore(Selector.getElementById);
+  const setCommonStore = useStore(Selector.set);
 
-  const [selectedColor, setSelectedColor] = useState<string>(wall?.color ?? 'white');
+  const [selectedColor, setSelectedColor] = useState<string>(wall?.studColor ?? 'white');
   const [updateFlag, setUpdateFlag] = useState<boolean>(false);
   const [dragEnabled, setDragEnabled] = useState<boolean>(false);
   const [bounds, setBounds] = useState<DraggableBounds>({ left: 0, top: 0, bottom: 0, right: 0 } as DraggableBounds);
@@ -43,13 +41,44 @@ const WallBodyColorSelection = ({ setDialogVisible }: { setDialogVisible: (b: bo
 
   useEffect(() => {
     if (wall) {
-      setSelectedColor(wall?.color ?? 'white');
+      setSelectedColor(wall?.studColor ?? 'white');
     }
   }, [wall]);
 
   const onScopeChange = (e: RadioChangeEvent) => {
     setWallActionScope(e.target.value);
     setUpdateFlag(!updateFlag);
+  };
+
+  const updateById = (id: string, color: string) => {
+    setCommonStore((state) => {
+      for (const e of state.elements) {
+        if (e.id === id && e.type === ObjectType.Wall && !e.locked) {
+          (e as WallModel).studColor = color;
+          break;
+        }
+      }
+    });
+  };
+
+  const updateAboveFoundation = (fId: string, color: string) => {
+    setCommonStore((state) => {
+      for (const e of state.elements) {
+        if (e.parentId === fId && e.type === ObjectType.Wall && !e.locked) {
+          (e as WallModel).studColor = color;
+        }
+      }
+    });
+  };
+
+  const updateForAll = (color: string) => {
+    setCommonStore((state) => {
+      for (const e of state.elements) {
+        if (e.type === ObjectType.Wall && !e.locked) {
+          (e as WallModel).studColor = color;
+        }
+      }
+    });
   };
 
   const setColor = (value: string) => {
@@ -59,25 +88,25 @@ const WallBodyColorSelection = ({ setDialogVisible }: { setDialogVisible: (b: bo
         const oldColorsAll = new Map<string, string>();
         for (const elem of elements) {
           if (elem.type === ObjectType.Wall) {
-            oldColorsAll.set(elem.id, elem.color ?? 'white');
+            oldColorsAll.set(elem.id, (elem as WallModel).studColor ?? 'white');
           }
         }
         const undoableChangeAll = {
-          name: 'Set Color for All Walls',
+          name: 'Set Stud Color for All Walls',
           timestamp: Date.now(),
           oldValues: oldColorsAll,
           newValue: value,
           undo: () => {
-            for (const [id, color] of undoableChangeAll.oldValues.entries()) {
-              updateWallColorById(id, color as string);
+            for (const [id, studColor] of undoableChangeAll.oldValues.entries()) {
+              updateById(id, studColor as string);
             }
           },
           redo: () => {
-            updateWallColorForAll(undoableChangeAll.newValue as string);
+            updateForAll(undoableChangeAll.newValue as string);
           },
         } as UndoableChangeGroup;
         addUndoable(undoableChangeAll);
-        updateWallColorForAll(value);
+        updateForAll(value);
         setApplyCount(applyCount + 1);
         break;
       case Scope.AllObjectsOfThisTypeAboveFoundation:
@@ -85,23 +114,23 @@ const WallBodyColorSelection = ({ setDialogVisible }: { setDialogVisible: (b: bo
           const oldColorsAboveFoundation = new Map<string, string>();
           for (const elem of elements) {
             if (elem.type === ObjectType.Wall && elem.foundationId === wall.foundationId) {
-              oldColorsAboveFoundation.set(elem.id, elem.color ?? 'white');
+              oldColorsAboveFoundation.set(elem.id, (elem as WallModel).studColor ?? 'white');
             }
           }
           const undoableChangeAboveFoundation = {
-            name: 'Set Color for All Walls Above Foundation',
+            name: 'Set Stud Color for All Walls Above Foundation',
             timestamp: Date.now(),
             oldValues: oldColorsAboveFoundation,
             newValue: value,
             groupId: wall.foundationId,
             undo: () => {
-              for (const [id, color] of undoableChangeAboveFoundation.oldValues.entries()) {
-                updateWallColorById(id, color as string);
+              for (const [id, studColor] of undoableChangeAboveFoundation.oldValues.entries()) {
+                updateById(id, studColor as string);
               }
             },
             redo: () => {
               if (undoableChangeAboveFoundation.groupId) {
-                updateWallColorAboveFoundation(
+                updateAboveFoundation(
                   undoableChangeAboveFoundation.groupId,
                   undoableChangeAboveFoundation.newValue as string,
                 );
@@ -109,30 +138,30 @@ const WallBodyColorSelection = ({ setDialogVisible }: { setDialogVisible: (b: bo
             },
           } as UndoableChangeGroup;
           addUndoable(undoableChangeAboveFoundation);
-          updateWallColorAboveFoundation(wall.foundationId, value);
+          updateAboveFoundation(wall.foundationId, value);
           setApplyCount(applyCount + 1);
         }
         break;
       default:
         if (wall) {
           const updatedWall = getElementById(wall.id) as WallModel;
-          const oldColor = updatedWall?.color ?? wall.color ?? 'white';
+          const oldColor = updatedWall?.studColor ?? wall.studColor ?? 'white';
           const undoableChange = {
-            name: 'Set Color of Selected Wall',
+            name: 'Set Stud Color of Selected Wall',
             timestamp: Date.now(),
             oldValue: oldColor,
             newValue: value,
             changedElementId: wall.id,
             changedElementType: wall.type,
             undo: () => {
-              updateWallColorById(undoableChange.changedElementId, undoableChange.oldValue as string);
+              updateById(undoableChange.changedElementId, undoableChange.oldValue as string);
             },
             redo: () => {
-              updateWallColorById(undoableChange.changedElementId, undoableChange.newValue as string);
+              updateById(undoableChange.changedElementId, undoableChange.newValue as string);
             },
           } as UndoableChange;
           addUndoable(undoableChange);
-          updateWallColorById(wall.id, value);
+          updateById(wall.id, value);
           setApplyCount(applyCount + 1);
         }
     }
@@ -153,8 +182,8 @@ const WallBodyColorSelection = ({ setDialogVisible }: { setDialogVisible: (b: bo
   };
 
   const close = () => {
-    if (wall?.color) {
-      setSelectedColor(wall.color);
+    if (wall?.studColor) {
+      setSelectedColor(wall.studColor);
     }
     setDialogVisible(false);
   };
@@ -181,7 +210,7 @@ const WallBodyColorSelection = ({ setDialogVisible }: { setDialogVisible: (b: bo
             onMouseOver={() => setDragEnabled(true)}
             onMouseOut={() => setDragEnabled(false)}
           >
-            {i18n.t('wallMenu.WallColor', lang)}
+            {i18n.t('wallMenu.StudColor', lang)}
           </div>
         }
         footer={[
@@ -213,7 +242,7 @@ const WallBodyColorSelection = ({ setDialogVisible }: { setDialogVisible: (b: bo
         <Row gutter={6}>
           <Col className="gutter-row" span={11}>
             <CompactPicker
-              color={selectedColor ?? wall?.color ?? 'white'}
+              color={selectedColor ?? wall?.studColor ?? 'white'}
               onChangeComplete={(colorResult) => {
                 setSelectedColor(colorResult.hex);
                 setUpdateFlag(!updateFlag);
@@ -241,4 +270,4 @@ const WallBodyColorSelection = ({ setDialogVisible }: { setDialogVisible: (b: bo
   );
 };
 
-export default WallBodyColorSelection;
+export default WallStudColorSelection;

@@ -796,6 +796,11 @@ export const i18n_zh_tw = {
       DefaultStructure: '默認',
       RafterStructure: '牆柱',
       Opacity: '遮光度',
+      StudSpacing: '牆柱間距',
+      StudWidth: '牆柱寬度',
+      StudThickness: '牆柱厚度',
+      StudColor: '牆柱颜色',
+      WallColor: '牆体颜色',
     },
 
     roofMenu: {

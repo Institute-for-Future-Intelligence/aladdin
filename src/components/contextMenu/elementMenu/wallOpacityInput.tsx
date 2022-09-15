@@ -238,7 +238,7 @@ const WallOpacityInput = ({ setDialogVisible }: { setDialogVisible: (b: boolean)
               min={0}
               max={1}
               style={{ width: 120 }}
-              step={0.1}
+              step={0.05}
               precision={2}
               value={inputRef.current}
               onChange={(value) => {
