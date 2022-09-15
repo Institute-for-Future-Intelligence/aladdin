@@ -20,6 +20,7 @@ import cape_cod_with_shed_dormer from './examples/cape_cod_with_shed_dormer.json
 import barn_house from './examples/barn_house.json';
 import greenhouse from './examples/greenhouse.json';
 import solarium from './examples/solarium.json';
+import pavilion from './examples/pavilion.json';
 import dutch_colonial_house from './examples/dutch_colonial_house.json';
 import gable_roof_vs_hip_roof from './examples/gable_roof_vs_hip_roof.json';
 import colonial_vs_saltbox from './examples/colonial_vs_saltbox.json';
@@ -36,6 +37,7 @@ import effect_orientation_solar_panel from './examples/effect_orientation_solar_
 import why_solar_array from './examples/why_solar_array.json';
 import solar_canopy_form_factors from './examples/solar_canopy_form_factors.json';
 import solar_canopy_over_bleachers from './examples/solar_canopy_over_bleachers.json';
+import solar_bus_stop from './examples/solar_bus_stop.json';
 import inter_row_spacing from './examples/inter_row_spacing.json';
 import ps10_solar_power_tower from './examples/ps10_solar_power_tower.json';
 import nevada_solar_one_parabolic_troughs from './examples/nevada_solar_one_parabolic_troughs.json';
@@ -285,6 +287,9 @@ const MainMenu = ({ viewOnly, set2DView, resetView, zoomView, canvas }: MainMenu
       case 'solar_canopy_over_bleachers':
         input = solar_canopy_over_bleachers;
         break;
+      case 'solar_bus_stop':
+        input = solar_bus_stop;
+        break;
       case 'effect_tilt_angle_solar_panel':
         input = effect_tilt_angle_solar_panel;
         break;
@@ -395,6 +400,9 @@ const MainMenu = ({ viewOnly, set2DView, resetView, zoomView, canvas }: MainMenu
         break;
       case 'solarium':
         input = solarium;
+        break;
+      case 'pavilion':
+        input = pavilion;
         break;
       case 'barn_house':
         input = barn_house;
@@ -1973,6 +1981,9 @@ const MainMenu = ({ viewOnly, set2DView, resetView, zoomView, canvas }: MainMenu
             <Menu.Item key="solar_canopy_over_bleachers" onClick={loadFile}>
               {i18n.t('menu.solarEnergyExamples.SolarCanopyOverBleachers', lang)}
             </Menu.Item>
+            <Menu.Item key="solar_bus_stop" onClick={loadFile}>
+              {i18n.t('menu.solarEnergyExamples.SolarBusStop', lang)}
+            </Menu.Item>
             <Menu.Item key="solar_farm_fixed_array" onClick={loadFile}>
               {i18n.t('menu.solarEnergyExamples.FixedSolarPanelArraysFraminghamMA', lang)}
             </Menu.Item>
@@ -2024,6 +2035,9 @@ const MainMenu = ({ viewOnly, set2DView, resetView, zoomView, canvas }: MainMenu
             </Menu.Item>
             <Menu.Item key="solarium" onClick={loadFile}>
               {i18n.t('menu.residentialBuildingExamples.Solarium', lang)}
+            </Menu.Item>
+            <Menu.Item key="pavilion" onClick={loadFile}>
+              {i18n.t('menu.residentialBuildingExamples.Pavilion', lang)}
             </Menu.Item>
             <Menu.Item key="barn_house" onClick={loadFile}>
               {i18n.t('menu.residentialBuildingExamples.BarnStyleHouse', lang)}

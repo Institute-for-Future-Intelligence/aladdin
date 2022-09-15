@@ -1,7 +1,7 @@
 {
-  "docid": "xro68hRSMuFY8HqiLd5DLL",
-  "time": "09/15/2022 06:55 pm",
-  "timestamp": 1663282555549,
+  "docid": "gUqEnZhesSEscBp6sjZjcY",
+  "time": "09/15/2022 07:23 pm",
+  "timestamp": 1663284216857,
   "userid": "QWecNcxhyvP6j6sBN11hBsfZDau1",
   "owner": null,
   "email": null,
@@ -46,16 +46,16 @@
   },
   "elements": [
     {
-      "ly": 14.613120903558068,
+      "ly": 3.258836461194841,
       "solarUpdraftTower": {},
       "parentId": "Ground",
-      "cx": -2.6557701490344776,
+      "cx": -0.0628073590395834,
       "id": "m7AH7DcnoGzAq9kryBy4RS",
-      "cy": -0.09987728198946044,
+      "cy": 1.7678944590969095,
       "type": "Foundation",
       "solarPowerTower": {},
-      "lx": 18.159918676696766,
-      "lz": 0.1,
+      "lx": 10.54713578879197,
+      "lz": 0.05733001510678199,
       "solarAbsorberPipe": {},
       "normal": [
         0,
@@ -68,21 +68,22 @@
         0,
         0
       ],
-      "cz": 0.05
+      "cz": 0.05,
+      "textureType": "Foundation Texture #2"
     },
     {
       "id": "2u4Fe7xnA6kkXXVGrQ4eyJ",
       "selected": false,
       "cz": 2.2408122612280286,
-      "lx": 12,
+      "lx": 6.322909236616773,
       "relativeAngle": 3.141592653589793,
-      "lz": 3,
-      "roofId": "vyQyu3QobXjxj1jDvhJ4sy",
-      "ly": 0.3,
+      "lz": 2.2932006042712794,
+      "roofId": "o9MiaiNtVRQTUvRdiEBPKe",
+      "ly": 0.1,
       "rightPoint": [
-        -5.300056602144494,
-        5.6732245690928105,
-        0.1
+        -3.281902734041268,
+        1.0926779224456118,
+        0
       ],
       "leftJoints": [
         "8XDG3EHsQoX26MhuzwMYUM"
@@ -92,62 +93,65 @@
         0,
         0
       ],
-      "textureType": "No Wall Texture",
+      "textureType": "Wall Texture Default",
       "leftPoint": [
-        6.699943397855505,
-        5.67322456909281,
-        0.1
+        3.041006502575506,
+        1.0926779224456111,
+        0
       ],
       "type": "Wall",
-      "rightRoofHeight": 3,
+      "rightRoofHeight": 2.5805079383405456,
       "normal": [
         0,
         0,
         1
       ],
       "parentId": "m7AH7DcnoGzAq9kryBy4RS",
-      "leftRoofHeight": 3,
+      "leftRoofHeight": 2.5805079383405456,
       "showLabel": false,
       "foundationId": "m7AH7DcnoGzAq9kryBy4RS",
-      "cx": 0.6999433978555056,
+      "cx": -0.12044811573288094,
       "windows": [],
       "rightJoints": [
         "skm8dNPSkFaVkoUwiPNfq1"
       ],
-      "cy": 5.6732245690928105,
+      "cy": 1.0926779224456116,
       "color": "#ffffff",
-      "opacity": 0.4,
-      "wallStructure": "Stud"
+      "opacity": 0.25,
+      "wallStructure": "Stud",
+      "studSpacing": 20,
+      "studColor": "#ffffff",
+      "studWidth": 0.2
     },
     {
       "type": "Wall",
       "windows": [],
       "parentId": "m7AH7DcnoGzAq9kryBy4RS",
-      "cx": 6.699943397855504,
+      "cx": 3.041006502575505,
       "leftPoint": [
-        6.6999433978555025,
-        -4.3267754309071895,
-        0.1
+        3.041006502575504,
+        -0.9667719612095651,
+        0
       ],
-      "cy": 0.6732245690928105,
-      "leftRoofHeight": 3,
+      "cy": 0.06295298061802335,
+      "leftRoofHeight": 2.2932006042712794,
       "foundationId": "m7AH7DcnoGzAq9kryBy4RS",
       "selected": false,
       "rightPoint": [
-        6.699943397855506,
-        5.6732245690928105,
-        0.1
+        3.041006502575506,
+        1.0926779224456118,
+        0
       ],
-      "ly": 0.3,
+      "ly": 0.1,
       "id": "8XDG3EHsQoX26MhuzwMYUM",
       "showLabel": false,
-      "lx": 10,
+      "lx": 2.059449883655177,
       "normal": [
         0,
         0,
         1
       ],
-      "lz": 3,
+      "lz": 2.2932006042712794,
       "leftJoints": [
         "cV8MyCuhWAsvEyyFuVqVqg"
       ],
@@ -160,35 +164,38 @@
       "rightJoints": [
         "2u4Fe7xnA6kkXXVGrQ4eyJ"
       ],
-      "relativeAngle": 1.5707963267948963,
-      "textureType": "No Wall Texture",
-      "rightRoofHeight": 3,
-      "roofId": "vyQyu3QobXjxj1jDvhJ4sy",
+      "relativeAngle": 1.5707963267948957,
+      "textureType": "Wall Texture Default",
+      "rightRoofHeight": 2.2932006042712794,
+      "roofId": "o9MiaiNtVRQTUvRdiEBPKe",
       "color": "#ffffff",
-      "opacity": 0.4,
+      "opacity": 0.25,
       "wallStructure": "Stud",
+      "studSpacing": 100,
+      "studColor": "#ffffff",
       "centerRoofHeight": [
-        0,
-        4.790804943100949
-      ]
+        0.5,
+        2.5805079383405456
+      ],
+      "studWidth": 0.2
     },
     {
-      "lx": 10,
+      "lx": 2.059449883655177,
       "windows": [],
-      "lz": 3,
+      "lz": 2.2932006042712794,
       "id": "skm8dNPSkFaVkoUwiPNfq1",
-      "roofId": "vyQyu3QobXjxj1jDvhJ4sy",
+      "roofId": "o9MiaiNtVRQTUvRdiEBPKe",
       "selected": false,
-      "cy": 0.6732245690928105,
+      "cy": 0.06295298061802335,
       "cz": 2.228839888904333,
       "showLabel": false,
       "leftJoints": [
         "2u4Fe7xnA6kkXXVGrQ4eyJ"
       ],
       "rightPoint": [
-        -5.300056602144494,
-        -4.3267754309071895,
-        0.1
+        -3.281902734041268,
+        -0.9667719612095651,
+        0
       ],
       "normal": [
         0,
@@ -200,43 +207,46 @@
         0,
         0
       ],
-      "textureType": "No Wall Texture",
-      "rightRoofHeight": 3,
+      "textureType": "Wall Texture Default",
+      "rightRoofHeight": 2.2932006042712794,
       "parentId": "m7AH7DcnoGzAq9kryBy4RS",
-      "relativeAngle": 4.71238898038469,
+      "relativeAngle": -1.5707963267948966,
       "foundationId": "m7AH7DcnoGzAq9kryBy4RS",
       "leftPoint": [
-        -5.300056602144493,
-        5.6732245690928105,
-        0.1
+        -3.281902734041268,
+        1.0926779224456118,
+        0
       ],
       "rightJoints": [
         "cV8MyCuhWAsvEyyFuVqVqg"
       ],
       "type": "Wall",
-      "leftRoofHeight": 3,
-      "ly": 0.3,
-      "cx": -5.300056602144494,
+      "leftRoofHeight": 2.2932006042712794,
+      "ly": 0.1,
+      "cx": -3.281902734041268,
       "color": "#ffffff",
-      "opacity": 0.4,
+      "opacity": 0.25,
       "wallStructure": "Stud",
+      "studSpacing": 100,
+      "studColor": "#ffffff",
       "centerRoofHeight": [
-        0,
-        4.790804943100949
-      ]
+        -0.5,
+        2.5805079383405456
+      ],
+      "studWidth": 0.2
     },
     {
       "showLabel": false,
-      "cx": 0.6999433978555061,
+      "cx": -0.12044811573288094,
       "parentId": "m7AH7DcnoGzAq9kryBy4RS",
       "rightPoint": [
-        6.699943397855506,
-        -4.3267754309071895,
-        0.1
+        3.041006502575506,
+        -0.9667719612095651,
+        0
       ],
       "cz": 2.268765007024547,
-      "textureType": "No Wall Texture",
-      "cy": -4.3267754309071895,
+      "textureType": "Wall Texture Default",
+      "cy": -0.9667719612095651,
       "id": "cV8MyCuhWAsvEyyFuVqVqg",
       "windows": [],
       "foundationId": "m7AH7DcnoGzAq9kryBy4RS",
@@ -248,40 +258,43 @@
       ],
       "selected": false,
       "type": "Wall",
-      "roofId": "vyQyu3QobXjxj1jDvhJ4sy",
+      "roofId": "o9MiaiNtVRQTUvRdiEBPKe",
       "leftPoint": [
-        -5.300056602144494,
-        -4.3267754309071895,
-        0.1
+        -3.281902734041268,
+        -0.9667719612095651,
+        0
       ],
       "normal": [
         0,
         0,
         1
       ],
-      "ly": 0.3,
-      "lz": 3,
-      "leftRoofHeight": 3,
+      "ly": 0.1,
+      "lz": 2.2932006042712794,
+      "leftRoofHeight": 2.2932006042712794,
       "relativeAngle": 0,
       "rotation": [
         0,
         0,
         0
       ],
-      "rightRoofHeight": 3,
-      "lx": 12,
+      "rightRoofHeight": 2.2932006042712794,
+      "lx": 6.322909236616773,
       "color": "#ffffff",
       "wallStructure": "Stud",
-      "opacity": 0.4
+      "opacity": 0,
+      "studSpacing": 100,
+      "studColor": "#ffffff",
+      "studWidth": 0.2
     },
     {
       "type": "Human",
-      "name": "Jaye",
-      "cx": -8.127462438051005,
-      "cy": 2.145813637051859,
+      "name": "Judd",
+      "cx": 1.1480908985199054,
+      "cy": -0.35174459086931265,
       "cz": 0.05000000074505806,
       "lx": 0.6,
-      "lz": 1.65,
+      "lz": 1.68,
       "normal": [
         0,
         1,
@@ -299,13 +312,13 @@
     },
     {
       "type": "Human",
-      "name": "Jess",
-      "cx": -0.7832975234984687,
-      "cy": -1.2247778965672946,
-      "cz": 0.05000000074505806,
+      "name": "Jade",
+      "cx": -2.4056687191409836,
+      "cy": -0.7214806671440712,
+      "cz": 0.02866500802338123,
       "lx": 0.6,
       "ly": 0.6,
-      "lz": 1.4,
+      "lz": 1.6,
       "normal": [
         0,
         0,
@@ -327,8 +340,8 @@
       "cz": 0,
       "lx": 0,
       "ly": 0,
-      "lz": 4.790804943100949,
-      "overhang": 0,
+      "lz": 2.5805079383405456,
+      "overhang": 0.3,
       "thickness": 0.05,
       "roofType": "Gable",
       "roofStructure": "Rafter",
@@ -353,46 +366,59 @@
       ],
       "parentId": "m7AH7DcnoGzAq9kryBy4RS",
       "foundationId": "m7AH7DcnoGzAq9kryBy4RS",
-      "id": "vyQyu3QobXjxj1jDvhJ4sy",
+      "id": "o9MiaiNtVRQTUvRdiEBPKe",
       "ridgeLeftPoint": [
-        0,
+        -0.5,
         1
       ],
       "ridgeRightPoint": [
-        0,
+        0.5,
         1
       ]
     },
     {
-      "type": "Tree",
-      "name": "Dogwood",
-      "cx": -1.968708014834963,
-      "cy": 0.38427915194161955,
-      "cz": 0.05000000074505806,
-      "lx": 2.580759929266248,
-      "lz": 2.5675408579714136,
+      "type": "Solar Panel",
+      "pvModelName": "SPR-X21-335-BLK",
+      "trackerType": "None",
+      "relativeAzimuth": 0,
+      "tiltAngle": 0,
+      "orientation": "Landscape",
+      "drawSunBeam": true,
+      "poleHeight": 1,
+      "poleRadius": 0.05,
+      "poleSpacing": 3,
+      "cx": -0.013581557939684385,
+      "cy": 0.026013281736561093,
+      "cz": 2.4898983132641606,
+      "lx": 6.232,
+      "ly": 2.092,
+      "lz": 0.046,
+      "showLabel": false,
       "normal": [
         0,
-        1,
-        0
+        -0.13816878221176504,
+        0.9904086972670011
       ],
       "rotation": [
-        0,
+        0.1386122234904732,
         0,
         0
       ],
-      "parentId": "m7AH7DcnoGzAq9kryBy4RS",
-      "id": "aPh8kST5vZXa1wssM2EXaQ",
+      "color": "#fff",
+      "parentType": "Roof",
+      "parentId": "o9MiaiNtVRQTUvRdiEBPKe",
+      "foundationId": "m7AH7DcnoGzAq9kryBy4RS",
+      "id": "gcgsZpEBMDbC2MoxXfdQ5z",
       "selected": false
     },
     {
       "type": "Tree",
       "name": "Dogwood",
-      "cx": 4.018798824544032,
-      "cy": 0.5065815899408364,
-      "cz": 0.05000000074505895,
-      "lx": 2.20973231076436,
-      "lz": 2.9792147393632353,
+      "cx": -6.069538614907841,
+      "cy": 1.7342109688811949,
+      "cz": 0,
+      "lx": 4.359847534209311,
+      "lz": 4,
       "normal": [
         0,
         1,
@@ -403,9 +429,32 @@
         0,
         0
       ],
-      "parentId": "m7AH7DcnoGzAq9kryBy4RS",
-      "id": "moxN71cpUBQpbcmAWV7DBw",
+      "parentId": "Ground",
+      "id": "9vtidDnwwZ7MMSCF9kkf1v",
       "selected": false
+    },
+    {
+      "type": "Tree",
+      "name": "Maple",
+      "cx": 6.687566552674898,
+      "cy": 1.8813516779449042,
+      "cz": 8.881784197001252e-16,
+      "lx": 3,
+      "lz": 5.56115204172439,
+      "normal": [
+        0,
+        1,
+        0
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "parentId": "Ground",
+      "id": "7y5foXVbpe2pYJ2ZMcNgG1",
+      "selected": false,
+      "evergreen": false
     }
   ],
   "view": {
@@ -437,9 +486,9 @@
     "dailyHeliostatYieldPanelX": 0,
     "showDailyParabolicDishYieldPanel": false,
     "cameraPosition": [
-      10.502574509207925,
-      -11.358701526080445,
-      2.799749288563403
+      -5.153084275109997,
+      -7.035883423114642,
+      5.757426791831461
     ],
     "showYearlyHeliostatYieldPanel": false,
     "orthographic": false,
@@ -488,8 +537,8 @@
     "shadowEnabled": true,
     "showInstructionPanel": true,
     "panCenter": [
-      -1.0250715498763552,
-      3.0410018152413794,
+      -0.8907784064251919,
+      2.8931645360465335,
       1.3756764021735797
     ],
     "yearlyFresnelReflectorYieldPanelY": 0,
