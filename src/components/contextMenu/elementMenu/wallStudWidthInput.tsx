@@ -203,7 +203,7 @@ const WallStudWidthInput = ({ setDialogVisible }: { setDialogVisible: (b: boolea
             onMouseOver={() => setDragEnabled(true)}
             onMouseOut={() => setDragEnabled(false)}
           >
-            {i18n.t('wallMenu.studWidth', lang)}
+            {i18n.t('wallMenu.StudWidth', lang)}
           </div>
         }
         footer={[

@@ -235,7 +235,12 @@ export const handlePointerDown = (
   // click on child
   if (e.intersections[0].eventObject.name !== e.eventObject.name) {
     const selectedElement = useStore.getState().getSelectedElement();
-    if (selectedElement && selectedElement.id !== roofId) {
+    if (
+      selectedElement &&
+      selectedElement.id !== roofId &&
+      selectedElement.type === ObjectType.SolarPanel &&
+      selectedElement.parentId === roofId
+    ) {
       setOldRefData(selectedElement);
     }
   }
