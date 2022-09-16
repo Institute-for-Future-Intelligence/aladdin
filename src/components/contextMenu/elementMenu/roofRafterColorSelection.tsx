@@ -3,7 +3,7 @@
  */
 
 import React, { useEffect, useRef, useState } from 'react';
-import { Button, Col, InputNumber, Modal, Radio, Row, Space } from 'antd';
+import { Button, Col, Modal, Radio, Row, Space } from 'antd';
 import Draggable, { DraggableBounds, DraggableData, DraggableEvent } from 'react-draggable';
 import { useStore } from 'src/stores/common';
 import * as Selector from 'src/stores/selector';
@@ -11,9 +11,11 @@ import { ObjectType, Scope } from 'src/types';
 import i18n from 'src/i18n/i18n';
 import { UndoableChange } from 'src/undo/UndoableChange';
 import { UndoableChangeGroup } from 'src/undo/UndoableChangeGroup';
+import { CompactPicker } from 'react-color';
 import { RoofModel } from 'src/models/RoofModel';
 
-const RoofRafterSpacingInput = ({ setDialogVisible }: { setDialogVisible: (b: boolean) => void }) => {
+const RoofColorSelection = ({ setDialogVisible }: { setDialogVisible: (b: boolean) => void }) => {
+  const setCommonStore = useStore(Selector.set);
   const language = useStore(Selector.language);
   const roof = useStore(Selector.selectedElement) as RoofModel;
   const addUndoable = useStore(Selector.addUndoable);
@@ -23,123 +25,127 @@ const RoofRafterSpacingInput = ({ setDialogVisible }: { setDialogVisible: (b: bo
   const setApplyCount = useStore(Selector.setApplyCount);
   const revertApply = useStore(Selector.revertApply);
   const getElementById = useStore(Selector.getElementById);
-  const setCommonStore = useStore(Selector.set);
 
-  const [input, setInput] = useState<number>(roof?.rafterSpacing ?? 1);
+  const [selectedColor, setSelectedColor] = useState<string>(roof?.rafterColor ?? 'white');
   const [dragEnabled, setDragEnabled] = useState<boolean>(false);
   const [bounds, setBounds] = useState<DraggableBounds>({ left: 0, top: 0, bottom: 0, right: 0 } as DraggableBounds);
   const dragRef = useRef<HTMLDivElement | null>(null);
+  const okButtonRef = useRef<HTMLElement | null>(null);
+
+  useEffect(() => {
+    okButtonRef.current?.focus();
+  });
 
   const lang = { lng: language };
 
   useEffect(() => {
     if (roof) {
-      setInput(roof?.rafterSpacing ?? 1);
+      setSelectedColor(roof?.rafterColor ?? 'white');
     }
   }, [roof]);
 
-  const updateRoofRafterSpacingById = (id: string, length: number) => {
+  const updateColorById = (id: string, color: string) => {
     setCommonStore((state) => {
       for (const e of state.elements) {
         if (e.id === id) {
-          (e as RoofModel).rafterSpacing = length;
+          if (!e.locked) {
+            (e as RoofModel).rafterColor = color;
+          }
           break;
         }
       }
     });
   };
 
-  const undoInMap = (map: Map<string, number>) => {
-    for (const [id, val] of map.entries()) {
-      updateRoofRafterSpacingById(id, val);
-    }
-  };
-
-  const updateInMap = (map: Map<string, number>, value: number) => {
+  const updateColorInMap = (map: Map<string, string>, color: string) => {
     for (const id of map.keys()) {
-      updateRoofRafterSpacingById(id, value);
+      updateColorById(id, color as string);
     }
   };
 
-  const setRafterSpacing = (value: number) => {
+  const undoColorInMap = (map: Map<string, string>) => {
+    for (const [id, color] of map.entries()) {
+      updateColorById(id, color as string);
+    }
+  };
+
+  const setColor = (value: string) => {
     if (!roof) return;
     switch (roofActionScope) {
       case Scope.AllObjectsOfThisType:
-        const oldSpacingAll = new Map<string, number>();
-        setCommonStore((state) => {
-          for (const e of state.elements) {
-            if (e.type === ObjectType.Roof && !e.locked) {
-              oldSpacingAll.set(e.id, (e as RoofModel).rafterSpacing ?? 1);
-              (e as RoofModel).rafterSpacing = value;
-            }
+        const oldColorsAll = new Map<string, string>();
+        for (const elem of useStore.getState().elements) {
+          if (elem.type === ObjectType.Roof && !elem.locked) {
+            oldColorsAll.set(elem.id, (elem as RoofModel).rafterColor ?? 'white');
           }
-        });
+        }
         const undoableChangeAll = {
-          name: 'Set Rafter Spacing for All Roofs',
+          name: 'Set Rafter Color for All Roofs',
           timestamp: Date.now(),
-          oldValues: oldSpacingAll,
+          oldValues: oldColorsAll,
           newValue: value,
           undo: () => {
-            undoInMap(undoableChangeAll.oldValues as Map<string, number>);
+            undoColorInMap(undoableChangeAll.oldValues as Map<string, string>);
           },
           redo: () => {
-            updateInMap(undoableChangeAll.oldValues as Map<string, number>, undoableChangeAll.newValue as number);
+            updateColorInMap(undoableChangeAll.oldValues as Map<string, string>, undoableChangeAll.newValue as string);
           },
         } as UndoableChangeGroup;
         addUndoable(undoableChangeAll);
+        updateColorInMap(oldColorsAll, value);
         setApplyCount(applyCount + 1);
         break;
       case Scope.AllObjectsOfThisTypeAboveFoundation:
         if (roof.foundationId) {
-          const oldSpacingAboveFoundation = new Map<string, number>();
-          setCommonStore((state) => {
-            for (const elem of state.elements) {
-              if (elem.type === ObjectType.Roof && elem.foundationId === roof.foundationId && !elem.locked) {
-                oldSpacingAboveFoundation.set(elem.id, (elem as RoofModel).rafterSpacing ?? 1);
-                (elem as RoofModel).rafterSpacing = value;
-              }
+          const oldColorsAboveFoundation = new Map<string, string>();
+          for (const elem of useStore.getState().elements) {
+            if (elem.type === ObjectType.Roof && elem.foundationId === roof.foundationId && !roof.locked) {
+              oldColorsAboveFoundation.set(elem.id, (elem as RoofModel).rafterColor ?? 'white');
             }
-          });
+          }
           const undoableChangeAboveFoundation = {
-            name: 'Set Rafter Spacing for All Roofs Above Foundation',
+            name: 'Set Rafter Color for All Roofs Above Foundation',
             timestamp: Date.now(),
-            oldValues: oldSpacingAboveFoundation,
+            oldValues: oldColorsAboveFoundation,
             newValue: value,
             groupId: roof.foundationId,
             undo: () => {
-              undoInMap(undoableChangeAboveFoundation.oldValues as Map<string, number>);
+              undoColorInMap(undoableChangeAboveFoundation.oldValues as Map<string, string>);
             },
             redo: () => {
-              updateInMap(
-                undoableChangeAboveFoundation.oldValues as Map<string, number>,
-                undoableChangeAboveFoundation.newValue as number,
-              );
+              if (undoableChangeAboveFoundation.groupId) {
+                updateColorInMap(
+                  undoableChangeAboveFoundation.oldValues as Map<string, string>,
+                  undoableChangeAboveFoundation.newValue as string,
+                );
+              }
             },
           } as UndoableChangeGroup;
           addUndoable(undoableChangeAboveFoundation);
+          updateColorInMap(oldColorsAboveFoundation, value);
           setApplyCount(applyCount + 1);
         }
         break;
       default:
         if (roof) {
           const updatedRoof = getElementById(roof.id) as RoofModel;
-          const oldSpacing = updatedRoof.rafterSpacing ?? roof.rafterSpacing ?? 1;
+          const oldColor = (updatedRoof ? updatedRoof.rafterColor : roof.rafterColor) ?? 'white';
           const undoableChange = {
-            name: 'Set Roof Rafter Spacing',
+            name: 'Set Rafter Color of Selected Roof',
             timestamp: Date.now(),
-            oldValue: oldSpacing,
+            oldValue: oldColor,
             newValue: value,
             changedElementId: roof.id,
             changedElementType: roof.type,
             undo: () => {
-              updateRoofRafterSpacingById(undoableChange.changedElementId, undoableChange.oldValue as number);
+              updateColorById(undoableChange.changedElementId, undoableChange.oldValue as string);
             },
             redo: () => {
-              updateRoofRafterSpacingById(undoableChange.changedElementId, undoableChange.newValue as number);
+              updateColorById(undoableChange.changedElementId, undoableChange.newValue as string);
             },
           } as UndoableChange;
           addUndoable(undoableChange);
-          updateRoofRafterSpacingById(roof.id, value);
+          updateColorById(roof.id, value);
           setApplyCount(applyCount + 1);
         }
     }
@@ -159,7 +165,9 @@ const RoofRafterSpacingInput = ({ setDialogVisible }: { setDialogVisible: (b: bo
   };
 
   const close = () => {
-    setInput(roof.rafterSpacing ?? 1);
+    if (roof?.rafterColor) {
+      setSelectedColor(roof.rafterColor);
+    }
     setDialogVisible(false);
   };
 
@@ -169,19 +177,22 @@ const RoofRafterSpacingInput = ({ setDialogVisible }: { setDialogVisible: (b: bo
   };
 
   const handleOk = () => {
-    setRafterSpacing(input);
+    const updatedRoof = getElementById(roof.id) as RoofModel;
+    if (updatedRoof && updatedRoof.rafterColor !== selectedColor) {
+      setColor(selectedColor);
+    }
     setDialogVisible(false);
     setApplyCount(0);
   };
 
   const handleApply = () => {
-    setRafterSpacing(input);
+    setColor(selectedColor);
   };
 
   return (
     <>
       <Modal
-        width={550}
+        width={640}
         visible={true}
         title={
           <div
@@ -189,7 +200,7 @@ const RoofRafterSpacingInput = ({ setDialogVisible }: { setDialogVisible: (b: bo
             onMouseOver={() => setDragEnabled(true)}
             onMouseOut={() => setDragEnabled(false)}
           >
-            {i18n.t('roofMenu.RafterSpacing', lang)}
+            {i18n.t('roofMenu.RoofColor', lang)}
           </div>
         }
         footer={[
@@ -199,7 +210,7 @@ const RoofRafterSpacingInput = ({ setDialogVisible }: { setDialogVisible: (b: bo
           <Button key="Cancel" onClick={handleCancel}>
             {i18n.t('word.Cancel', lang)}
           </Button>,
-          <Button key="OK" type="primary" onClick={handleOk}>
+          <Button key="OK" type="primary" ref={okButtonRef} onClick={handleOk}>
             {i18n.t('word.OK', lang)}
           </Button>,
         ]}
@@ -214,29 +225,18 @@ const RoofRafterSpacingInput = ({ setDialogVisible }: { setDialogVisible: (b: bo
         )}
       >
         <Row gutter={6}>
-          <Col className="gutter-row" span={6}>
-            <InputNumber
-              min={0.1}
-              max={5}
-              style={{ width: 120 }}
-              step={0.1}
-              precision={2}
-              value={input}
-              formatter={(a) => Number(a).toFixed(2)}
-              onChange={(value) => setInput(value)}
-              onPressEnter={handleOk}
+          <Col className="gutter-row" span={11}>
+            <CompactPicker
+              color={selectedColor ?? roof?.rafterColor ?? 'white'}
+              onChangeComplete={(colorResult) => {
+                setSelectedColor(colorResult.hex);
+              }}
             />
-            <div style={{ paddingTop: '20px', textAlign: 'left', fontSize: '11px' }}>
-              {i18n.t('word.Range', lang)}: [0.1, 5] {i18n.t('word.MeterAbbreviation', lang)}
-            </div>
-          </Col>
-          <Col className="gutter-row" span={1} style={{ verticalAlign: 'middle', paddingTop: '6px' }}>
-            {i18n.t('word.MeterAbbreviation', lang)}
           </Col>
           <Col
             className="gutter-row"
             style={{ border: '2px dashed #ccc', paddingTop: '8px', paddingLeft: '12px', paddingBottom: '8px' }}
-            span={16}
+            span={13}
           >
             <Radio.Group onChange={(e) => setRoofActionScope(e.target.value)} value={roofActionScope}>
               <Space direction="vertical">
@@ -254,4 +254,4 @@ const RoofRafterSpacingInput = ({ setDialogVisible }: { setDialogVisible: (b: bo
   );
 };
 
-export default RoofRafterSpacingInput;
+export default RoofColorSelection;

@@ -49,10 +49,10 @@ enum RoofHandleType {
 interface RafterUnitProps {
   start: Vector3;
   end: Vector3;
-  rafterWidth: number;
-  rafterHeight: number;
+  width: number;
+  height: number;
+  color: string;
   offset?: Vector3;
-  color?: string;
 }
 interface RafterProps {
   ridgeLeftPoint: Vector3;
@@ -60,12 +60,13 @@ interface RafterProps {
   wallArray: WallModel[];
   overhang: number;
   isShed: boolean;
-  rafterHeight: number;
-  rafterWidth?: number;
-  rafterSpacing?: number;
+  height: number;
+  width: number;
+  spacing: number;
+  color: string;
 }
 
-const RafterUnit = React.memo(({ start, end, rafterWidth, rafterHeight, offset, color = 'white' }: RafterUnitProps) => {
+const RafterUnit = React.memo(({ start, end, width, height, offset, color }: RafterUnitProps) => {
   const startV2 = useMemo(() => new Vector2(start.x, start.y), [start]);
   const endV2 = useMemo(() => new Vector2(end.x, end.y), [end]);
 
@@ -79,17 +80,17 @@ const RafterUnit = React.memo(({ start, end, rafterWidth, rafterHeight, offset, 
 
     s.moveTo(0, 0);
     s.lineTo(x, -y);
-    s.lineTo(x, -y + rafterHeight);
-    s.lineTo(0, rafterHeight);
+    s.lineTo(x, -y + height);
+    s.lineTo(0, height);
     s.lineTo(0, 0);
 
     return s;
-  }, [start, end, startV2, endV2, rafterHeight]);
+  }, [start, end, startV2, endV2, height]);
 
   return (
     <group position={offset}>
       <Extrude
-        args={[shape, { steps: 1, depth: rafterWidth, bevelEnabled: false }]}
+        args={[shape, { steps: 1, depth: width, bevelEnabled: false }]}
         position={start}
         rotation={[HALF_PI, 0, rotationZ, 'ZXY']}
         castShadow={true}
@@ -106,10 +107,11 @@ const Rafter = ({
   ridgeRightPoint,
   wallArray,
   overhang,
-  rafterHeight,
+  height,
   isShed,
-  rafterWidth = 0.1,
-  rafterSpacing = 2,
+  width,
+  spacing,
+  color,
 }: RafterProps) => {
   const [frontWall, rightWall, backWall, leftWall] = wallArray;
 
@@ -149,10 +151,15 @@ const Rafter = ({
     const frontWallLength = frontWall.lx;
     const backWallLength = backWall.lx;
 
-    const offset = rafterWidth;
-    const number = Math.floor((Math.min(ridgeLength, frontWallLength, backWallLength) - rafterWidth) / rafterSpacing);
+    const offset = width;
+    const number = Math.floor((Math.min(ridgeLength, frontWallLength, backWallLength) - width) / spacing) + 2;
     const res = new Array(number).fill(0).map((v, i) => {
-      const len = (i + 1) * rafterSpacing + offset;
+      let len;
+      if (i === number - 1) {
+        len = ridgeLength;
+      } else {
+        len = i * spacing + offset;
+      }
       const ridge = ridgeLeftPoint.clone().add(ridgeUnitVector.clone().multiplyScalar(len));
       const front = frontWallLeftPoint.clone().add(frontWallUnitVector.clone().multiplyScalar(len));
       const back = backWallRightPoint.clone().add(backWallUnitVector.clone().multiplyScalar(len));
@@ -164,12 +171,12 @@ const Rafter = ({
     });
 
     return res;
-  }, [rafterSpacing, ridgeLeftPoint]);
+  }, [spacing, ridgeLeftPoint]);
 
   const showFront = ridgeLeftPoint.distanceTo(frontWallLeftPoint) > ridgeLeftPoint.distanceTo(backWallRightPoint);
 
-  const offset = new Vector3(-rafterWidth, 0, 0);
-  const offsetTop = new Vector3(0, rafterWidth / 2, 0);
+  const offset = new Vector3(-width, 0, 0);
+  const offsetTop = new Vector3(0, width / 2, 0);
 
   return (
     <>
@@ -177,20 +184,14 @@ const Rafter = ({
         <React.Fragment key={i}>
           {isShed ? (
             showFront ? (
-              <RafterUnit start={v.ridge} end={v.front} rafterWidth={rafterWidth} rafterHeight={rafterHeight} />
+              <RafterUnit start={v.ridge} end={v.front} width={width} height={height} color={color} />
             ) : (
-              <RafterUnit start={v.ridge} end={v.back} rafterWidth={rafterWidth} rafterHeight={rafterHeight} />
+              <RafterUnit start={v.ridge} end={v.back} width={width} height={height} color={color} />
             )
           ) : (
             <>
-              <RafterUnit start={v.ridge} end={v.front} rafterWidth={rafterWidth} rafterHeight={rafterHeight} />
-              <RafterUnit
-                start={v.ridge}
-                end={v.back}
-                rafterWidth={rafterWidth}
-                rafterHeight={rafterHeight}
-                offset={offset}
-              />
+              <RafterUnit start={v.ridge} end={v.front} width={width} height={height} color={color} />
+              <RafterUnit start={v.ridge} end={v.back} width={width} height={height} color={color} offset={offset} />
             </>
           )}
         </React.Fragment>
@@ -198,8 +199,9 @@ const Rafter = ({
       <RafterUnit
         start={ridgeLeftPointAfterOverhang}
         end={ridgeRightPointAfterOverhang}
-        rafterWidth={rafterWidth}
-        rafterHeight={rafterHeight}
+        width={width}
+        height={height}
+        color={color}
         offset={offsetTop}
       />
     </>
@@ -288,7 +290,9 @@ const GableRoof = ({
   lineWidth = 0.2,
   roofType,
   roofStructure,
-  rafterSpacing,
+  rafterSpacing = 2,
+  rafterWidth = 0.1,
+  rafterColor = 'white',
   glassTint = '#73D8FF',
   opacity = 0.5,
 }: GableRoofModel) => {
@@ -610,6 +614,8 @@ const GableRoof = ({
       const direction = -frontWall.relativeAngle;
       const length = new Vector3(frontWall.cx, frontWall.cy).sub(ridgeMidPoint.clone().setZ(0)).length();
       segments.push({ points, direction, length });
+
+      setIsShed(true);
     }
     // gable roof
     else {
@@ -736,6 +742,8 @@ const GableRoof = ({
       const backDirection = -backWall.relativeAngle;
       const backLength = new Vector3(backWall.cx, backWall.cy).sub(centroid.clone().setZ(0)).length();
       segments.push({ points: backPoints, direction: backDirection, length: backLength });
+
+      setIsShed(false);
     }
 
     return segments;
@@ -863,12 +871,16 @@ const GableRoof = ({
             />
           );
         })}
-        <GableRoofWireframe
-          roofSegments={roofSegments}
-          thickness={thickness}
-          lineColor={lineColor}
-          lineWidth={lineWidth}
-        />
+
+        {/* wireframe */}
+        {opacity > 0 && (
+          <GableRoofWireframe
+            roofSegments={roofSegments}
+            thickness={thickness}
+            lineColor={lineColor}
+            lineWidth={roofStructure === RoofStructure.Rafter ? 0.1 : lineWidth}
+          />
+        )}
       </group>
 
       {/* rafter */}
@@ -887,8 +899,10 @@ const GableRoof = ({
             wallArray={currentWallArray}
             overhang={overhang}
             isShed={isShed}
-            rafterHeight={thickness}
-            rafterSpacing={rafterSpacing}
+            height={thickness}
+            spacing={rafterSpacing}
+            color={rafterColor}
+            width={rafterWidth}
           />
         </group>
       )}
@@ -1090,7 +1104,7 @@ const RoofSegment = ({
   opacity?: number;
 }) => {
   const shadowEnabled = useStore(Selector.viewState.shadowEnabled);
-  const texture = useRoofTexture(textureType);
+  const texture = useRoofTexture(roofStructure === RoofStructure.Rafter ? RoofTexture.NoTexture : textureType);
   const { transparent, opacity: _opacity } = useTransparent(roofStructure === RoofStructure.Rafter, opacity);
   const { invalidate } = useThree();
 

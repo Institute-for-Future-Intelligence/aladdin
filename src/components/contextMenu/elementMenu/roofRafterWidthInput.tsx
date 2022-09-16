@@ -13,7 +13,7 @@ import { UndoableChange } from 'src/undo/UndoableChange';
 import { UndoableChangeGroup } from 'src/undo/UndoableChangeGroup';
 import { RoofModel } from 'src/models/RoofModel';
 
-const RoofRafterSpacingInput = ({ setDialogVisible }: { setDialogVisible: (b: boolean) => void }) => {
+const RoofRafterWidthInput = ({ setDialogVisible }: { setDialogVisible: (b: boolean) => void }) => {
   const language = useStore(Selector.language);
   const roof = useStore(Selector.selectedElement) as RoofModel;
   const addUndoable = useStore(Selector.addUndoable);
@@ -25,7 +25,7 @@ const RoofRafterSpacingInput = ({ setDialogVisible }: { setDialogVisible: (b: bo
   const getElementById = useStore(Selector.getElementById);
   const setCommonStore = useStore(Selector.set);
 
-  const [input, setInput] = useState<number>(roof?.rafterSpacing ?? 1);
+  const [input, setInput] = useState<number>(roof?.rafterWidth ?? 0.1);
   const [dragEnabled, setDragEnabled] = useState<boolean>(false);
   const [bounds, setBounds] = useState<DraggableBounds>({ left: 0, top: 0, bottom: 0, right: 0 } as DraggableBounds);
   const dragRef = useRef<HTMLDivElement | null>(null);
@@ -34,15 +34,15 @@ const RoofRafterSpacingInput = ({ setDialogVisible }: { setDialogVisible: (b: bo
 
   useEffect(() => {
     if (roof) {
-      setInput(roof?.rafterSpacing ?? 1);
+      setInput(roof?.rafterWidth ?? 0.1);
     }
   }, [roof]);
 
-  const updateRoofRafterSpacingById = (id: string, length: number) => {
+  const updateById = (id: string, length: number) => {
     setCommonStore((state) => {
       for (const e of state.elements) {
         if (e.id === id) {
-          (e as RoofModel).rafterSpacing = length;
+          (e as RoofModel).rafterWidth = length;
           break;
         }
       }
@@ -51,33 +51,33 @@ const RoofRafterSpacingInput = ({ setDialogVisible }: { setDialogVisible: (b: bo
 
   const undoInMap = (map: Map<string, number>) => {
     for (const [id, val] of map.entries()) {
-      updateRoofRafterSpacingById(id, val);
+      updateById(id, val);
     }
   };
 
   const updateInMap = (map: Map<string, number>, value: number) => {
     for (const id of map.keys()) {
-      updateRoofRafterSpacingById(id, value);
+      updateById(id, value);
     }
   };
 
-  const setRafterSpacing = (value: number) => {
+  const setValue = (value: number) => {
     if (!roof) return;
     switch (roofActionScope) {
       case Scope.AllObjectsOfThisType:
-        const oldSpacingAll = new Map<string, number>();
+        const oldValAll = new Map<string, number>();
         setCommonStore((state) => {
           for (const e of state.elements) {
             if (e.type === ObjectType.Roof && !e.locked) {
-              oldSpacingAll.set(e.id, (e as RoofModel).rafterSpacing ?? 1);
-              (e as RoofModel).rafterSpacing = value;
+              oldValAll.set(e.id, (e as RoofModel).rafterWidth ?? 0.1);
+              (e as RoofModel).rafterWidth = value;
             }
           }
         });
         const undoableChangeAll = {
-          name: 'Set Rafter Spacing for All Roofs',
+          name: 'Set Rafter Width for All Roofs',
           timestamp: Date.now(),
-          oldValues: oldSpacingAll,
+          oldValues: oldValAll,
           newValue: value,
           undo: () => {
             undoInMap(undoableChangeAll.oldValues as Map<string, number>);
@@ -91,19 +91,19 @@ const RoofRafterSpacingInput = ({ setDialogVisible }: { setDialogVisible: (b: bo
         break;
       case Scope.AllObjectsOfThisTypeAboveFoundation:
         if (roof.foundationId) {
-          const oldSpacingAboveFoundation = new Map<string, number>();
+          const oldValAboveFoundation = new Map<string, number>();
           setCommonStore((state) => {
             for (const elem of state.elements) {
               if (elem.type === ObjectType.Roof && elem.foundationId === roof.foundationId && !elem.locked) {
-                oldSpacingAboveFoundation.set(elem.id, (elem as RoofModel).rafterSpacing ?? 1);
-                (elem as RoofModel).rafterSpacing = value;
+                oldValAboveFoundation.set(elem.id, (elem as RoofModel).rafterWidth ?? 0.1);
+                (elem as RoofModel).rafterWidth = value;
               }
             }
           });
           const undoableChangeAboveFoundation = {
-            name: 'Set Rafter Spacing for All Roofs Above Foundation',
+            name: 'Set Rafter Width for All Roofs Above Foundation',
             timestamp: Date.now(),
-            oldValues: oldSpacingAboveFoundation,
+            oldValues: oldValAboveFoundation,
             newValue: value,
             groupId: roof.foundationId,
             undo: () => {
@@ -123,23 +123,23 @@ const RoofRafterSpacingInput = ({ setDialogVisible }: { setDialogVisible: (b: bo
       default:
         if (roof) {
           const updatedRoof = getElementById(roof.id) as RoofModel;
-          const oldSpacing = updatedRoof.rafterSpacing ?? roof.rafterSpacing ?? 1;
+          const oldVal = updatedRoof.rafterWidth ?? roof.rafterWidth ?? 0.1;
           const undoableChange = {
-            name: 'Set Roof Rafter Spacing',
+            name: 'Set Roof Rafter Width',
             timestamp: Date.now(),
-            oldValue: oldSpacing,
+            oldValue: oldVal,
             newValue: value,
             changedElementId: roof.id,
             changedElementType: roof.type,
             undo: () => {
-              updateRoofRafterSpacingById(undoableChange.changedElementId, undoableChange.oldValue as number);
+              updateById(undoableChange.changedElementId, undoableChange.oldValue as number);
             },
             redo: () => {
-              updateRoofRafterSpacingById(undoableChange.changedElementId, undoableChange.newValue as number);
+              updateById(undoableChange.changedElementId, undoableChange.newValue as number);
             },
           } as UndoableChange;
           addUndoable(undoableChange);
-          updateRoofRafterSpacingById(roof.id, value);
+          updateById(roof.id, value);
           setApplyCount(applyCount + 1);
         }
     }
@@ -159,7 +159,7 @@ const RoofRafterSpacingInput = ({ setDialogVisible }: { setDialogVisible: (b: bo
   };
 
   const close = () => {
-    setInput(roof.rafterSpacing ?? 1);
+    setInput(roof.rafterWidth ?? 0.1);
     setDialogVisible(false);
   };
 
@@ -169,13 +169,13 @@ const RoofRafterSpacingInput = ({ setDialogVisible }: { setDialogVisible: (b: bo
   };
 
   const handleOk = () => {
-    setRafterSpacing(input);
+    setValue(input);
     setDialogVisible(false);
     setApplyCount(0);
   };
 
   const handleApply = () => {
-    setRafterSpacing(input);
+    setValue(input);
   };
 
   return (
@@ -189,7 +189,7 @@ const RoofRafterSpacingInput = ({ setDialogVisible }: { setDialogVisible: (b: bo
             onMouseOver={() => setDragEnabled(true)}
             onMouseOut={() => setDragEnabled(false)}
           >
-            {i18n.t('roofMenu.RafterSpacing', lang)}
+            {i18n.t('roofMenu.RafterWidth', lang)}
           </div>
         }
         footer={[
@@ -216,10 +216,10 @@ const RoofRafterSpacingInput = ({ setDialogVisible }: { setDialogVisible: (b: bo
         <Row gutter={6}>
           <Col className="gutter-row" span={6}>
             <InputNumber
-              min={0.1}
-              max={5}
+              min={0.01}
+              max={1}
               style={{ width: 120 }}
-              step={0.1}
+              step={0.01}
               precision={2}
               value={input}
               formatter={(a) => Number(a).toFixed(2)}
@@ -227,7 +227,7 @@ const RoofRafterSpacingInput = ({ setDialogVisible }: { setDialogVisible: (b: bo
               onPressEnter={handleOk}
             />
             <div style={{ paddingTop: '20px', textAlign: 'left', fontSize: '11px' }}>
-              {i18n.t('word.Range', lang)}: [0.1, 5] {i18n.t('word.MeterAbbreviation', lang)}
+              {i18n.t('word.Range', lang)}: [0.01, 1] {i18n.t('word.MeterAbbreviation', lang)}
             </div>
           </Col>
           <Col className="gutter-row" span={1} style={{ verticalAlign: 'middle', paddingTop: '6px' }}>
@@ -254,4 +254,4 @@ const RoofRafterSpacingInput = ({ setDialogVisible }: { setDialogVisible: (b: bo
   );
 };
 
-export default RoofRafterSpacingInput;
+export default RoofRafterWidthInput;

@@ -200,7 +200,7 @@ const RoofColorSelection = ({ setDialogVisible }: { setDialogVisible: (b: boolea
             onMouseOver={() => setDragEnabled(true)}
             onMouseOut={() => setDragEnabled(false)}
           >
-            {i18n.t('word.Color', lang)}
+            {i18n.t('roofMenu.RoofColor', lang)}
           </div>
         }
         footer={[

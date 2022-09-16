@@ -19,6 +19,8 @@ import RoofOpacityInput from './roofOpacityInput';
 import SubMenu from 'antd/lib/menu/SubMenu';
 import GlassTintSelection from './glassTintSelection';
 import { UndoableChange } from 'src/undo/UndoableChange';
+import RoofRafterColorSelection from './roofRafterColorSelection';
+import RoofRafterWidthInput from './roofRafterWidthInput';
 
 export const RoofMenu = () => {
   const roof = useStore(Selector.selectedElement) as RoofModel;
@@ -29,10 +31,12 @@ export const RoofMenu = () => {
 
   const [updateFlag, setUpdateFlag] = useState<boolean>(false);
   const [rafterSpacingDialogVisible, setRafterSpacingDialogVisible] = useState(false);
+  const [rafterWidthDialogVisible, setRafterWidthDialogVisible] = useState(false);
+  const [rafterColorDialogVisible, setRafterColorDialogVisible] = useState(false);
   const [overhangDialogVisible, setOverhangDialogVisible] = useState(false);
   const [thicknessDialogVisible, setThicknessDialogVisible] = useState(false);
   const [textureDialogVisible, setTextureDialogVisible] = useState(false);
-  const [colorDialogVisible, setColorDialogVisible] = useState(false);
+  const [roofColorDialogVisible, setRoofColorDialogVisible] = useState(false);
   const [glassTintDialogVisible, setGlassTintDialogVisible] = useState(false);
   const [opacityDialogVisible, setOpacityDialogVisible] = useState(false);
 
@@ -66,7 +70,7 @@ export const RoofMenu = () => {
         {legalToPaste() && <Paste keyName={'roof-paste'} />}
         <Lock keyName={'roof-lock'} />
 
-        {!roof.locked && (
+        {!roof.locked && roof.roofType === RoofType.Gable && (
           <SubMenu
             key={'roof-structure'}
             title={i18n.t('roofMenu.RoofStructure', lang)}
@@ -110,40 +114,6 @@ export const RoofMenu = () => {
 
         {!roof.locked && (
           <>
-            {updatedRoof.roofStructure === RoofStructure.Rafter && roof.roofType === RoofType.Gable && (
-              <>
-                {rafterSpacingDialogVisible && (
-                  <RoofRafterSpacingInput setDialogVisible={setRafterSpacingDialogVisible} />
-                )}
-                <Menu.Item
-                  key={'roof-rafter-spacing'}
-                  style={{ paddingLeft: paddingLeft }}
-                  onClick={() => {
-                    setApplyCount(0);
-                    setRafterSpacingDialogVisible(true);
-                  }}
-                >
-                  {i18n.t('roofMenu.RafterSpacing', lang)} ...
-                </Menu.Item>
-              </>
-            )}
-
-            {updatedRoof.roofStructure === RoofStructure.Glass && roof.roofType === RoofType.Gable && (
-              <>
-                {glassTintDialogVisible && <GlassTintSelection setDialogVisible={setGlassTintDialogVisible} />}
-                <Menu.Item
-                  key={'roof-glass-tint-selection'}
-                  style={{ paddingLeft: paddingLeft }}
-                  onClick={() => {
-                    setApplyCount(0);
-                    setGlassTintDialogVisible(true);
-                  }}
-                >
-                  {i18n.t('roofMenu.GlassTint', lang)} ...
-                </Menu.Item>
-              </>
-            )}
-
             {(updatedRoof.roofStructure === RoofStructure.Rafter ||
               updatedRoof.roofStructure === RoofStructure.Glass) && (
               <>
@@ -161,6 +131,82 @@ export const RoofMenu = () => {
               </>
             )}
 
+            {updatedRoof.roofStructure === RoofStructure.Rafter && roof.roofType === RoofType.Gable && (
+              <>
+                {rafterColorDialogVisible && (
+                  <RoofRafterColorSelection setDialogVisible={setRafterColorDialogVisible} />
+                )}
+                <Menu.Item
+                  key={'roof-rafter-color'}
+                  style={{ paddingLeft: paddingLeft }}
+                  onClick={() => {
+                    setApplyCount(0);
+                    setRafterColorDialogVisible(true);
+                  }}
+                >
+                  {i18n.t('roofMenu.RafterColor', lang)} ...
+                </Menu.Item>
+
+                {rafterSpacingDialogVisible && (
+                  <RoofRafterSpacingInput setDialogVisible={setRafterSpacingDialogVisible} />
+                )}
+                <Menu.Item
+                  key={'roof-rafter-spacing'}
+                  style={{ paddingLeft: paddingLeft }}
+                  onClick={() => {
+                    setApplyCount(0);
+                    setRafterSpacingDialogVisible(true);
+                  }}
+                >
+                  {i18n.t('roofMenu.RafterSpacing', lang)} ...
+                </Menu.Item>
+
+                {rafterWidthDialogVisible && <RoofRafterWidthInput setDialogVisible={setRafterWidthDialogVisible} />}
+                <Menu.Item
+                  key={'roof-rafter-width'}
+                  style={{ paddingLeft: paddingLeft }}
+                  onClick={() => {
+                    setApplyCount(0);
+                    setRafterWidthDialogVisible(true);
+                  }}
+                >
+                  {i18n.t('roofMenu.RafterWidth', lang)} ...
+                </Menu.Item>
+              </>
+            )}
+
+            {thicknessDialogVisible && <RoofThicknessInput setDialogVisible={setThicknessDialogVisible} />}
+            <Menu.Item
+              key={'roof-thickness'}
+              style={{ paddingLeft: paddingLeft }}
+              onClick={() => {
+                setApplyCount(0);
+                setThicknessDialogVisible(true);
+              }}
+            >
+              {i18n.t(
+                updatedRoof.roofStructure === RoofStructure.Rafter ? 'roofMenu.RafterThickness' : 'word.Thickness',
+                lang,
+              )}{' '}
+              ...
+            </Menu.Item>
+
+            {updatedRoof.roofStructure === RoofStructure.Glass && roof.roofType === RoofType.Gable && (
+              <>
+                {glassTintDialogVisible && <GlassTintSelection setDialogVisible={setGlassTintDialogVisible} />}
+                <Menu.Item
+                  key={'roof-glass-tint-selection'}
+                  style={{ paddingLeft: paddingLeft }}
+                  onClick={() => {
+                    setApplyCount(0);
+                    setGlassTintDialogVisible(true);
+                  }}
+                >
+                  {i18n.t('roofMenu.GlassTint', lang)} ...
+                </Menu.Item>
+              </>
+            )}
+
             {overhangDialogVisible && <RoofOverhangInput setDialogVisible={setOverhangDialogVisible} />}
             <Menu.Item
               key={'roof-overhang'}
@@ -173,42 +219,40 @@ export const RoofMenu = () => {
               {i18n.t('roofMenu.OverhangLength', lang)} ...
             </Menu.Item>
 
-            {thicknessDialogVisible && <RoofThicknessInput setDialogVisible={setThicknessDialogVisible} />}
-            <Menu.Item
-              key={'roof-thickness'}
-              style={{ paddingLeft: paddingLeft }}
-              onClick={() => {
-                setApplyCount(0);
-                setThicknessDialogVisible(true);
-              }}
-            >
-              {i18n.t('word.Thickness', lang)} ...
-            </Menu.Item>
+            {updatedRoof.roofStructure !== RoofStructure.Rafter && (
+              <>
+                {textureDialogVisible && <RoofTextureSelection setDialogVisible={setTextureDialogVisible} />}
+                <Menu.Item
+                  key={'roof-texture'}
+                  style={{ paddingLeft: paddingLeft }}
+                  onClick={() => {
+                    setApplyCount(0);
+                    setTextureDialogVisible(true);
+                  }}
+                >
+                  {i18n.t('word.Texture', lang)} ...
+                </Menu.Item>
+              </>
+            )}
 
-            {textureDialogVisible && <RoofTextureSelection setDialogVisible={setTextureDialogVisible} />}
-            <Menu.Item
-              key={'roof-texture'}
-              style={{ paddingLeft: paddingLeft }}
-              onClick={() => {
-                setApplyCount(0);
-                setTextureDialogVisible(true);
-              }}
-            >
-              {i18n.t('word.Texture', lang)} ...
-            </Menu.Item>
-
-            {colorDialogVisible && <RoofColorSelection setDialogVisible={setColorDialogVisible} />}
-            {(roof.textureType === RoofTexture.NoTexture || roof.textureType === RoofTexture.Default) && (
-              <Menu.Item
-                key={'roof-color'}
-                style={{ paddingLeft: paddingLeft }}
-                onClick={() => {
-                  setApplyCount(0);
-                  setColorDialogVisible(true);
-                }}
-              >
-                {i18n.t('word.Color', lang)} ...
-              </Menu.Item>
+            {(updatedRoof.roofStructure !== RoofStructure.Rafter ||
+              updatedRoof.opacity === undefined ||
+              updatedRoof.opacity > 0) && (
+              <>
+                {roofColorDialogVisible && <RoofColorSelection setDialogVisible={setRoofColorDialogVisible} />}
+                {(roof.textureType === RoofTexture.NoTexture || roof.textureType === RoofTexture.Default) && (
+                  <Menu.Item
+                    key={'roof-color'}
+                    style={{ paddingLeft: paddingLeft }}
+                    onClick={() => {
+                      setApplyCount(0);
+                      setRoofColorDialogVisible(true);
+                    }}
+                  >
+                    {i18n.t('roofMenu.RoofColor', lang)} ...
+                  </Menu.Item>
+                )}
+              </>
             )}
           </>
         )}

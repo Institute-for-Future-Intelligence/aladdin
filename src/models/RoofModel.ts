@@ -13,6 +13,8 @@ export interface RoofModel extends ElementModel {
   overhang: number;
   thickness: number;
   rafterSpacing?: number;
+  rafterWidth?: number;
+  rafterColor?: string;
   glassTint?: string;
   opacity?: number;
 }
