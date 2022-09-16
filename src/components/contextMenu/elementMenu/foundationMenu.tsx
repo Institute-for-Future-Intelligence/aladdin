@@ -131,7 +131,8 @@ export const FoundationMenu = () => {
         e.type === ObjectType.ParabolicDish ||
         e.type === ObjectType.Heliostat ||
         e.type === ObjectType.FresnelReflector ||
-        e.type === ObjectType.ParabolicTrough
+        e.type === ObjectType.ParabolicTrough ||
+        e.type === ObjectType.Wall
       ) {
         return true;
       }

@@ -7,7 +7,7 @@ import { Menu, Modal, Radio } from 'antd';
 import SubMenu from 'antd/lib/menu/SubMenu';
 import { useStore } from '../../../stores/common';
 import * as Selector from '../../../stores/selector';
-import { Lock, Paste } from '../menuItems';
+import { Copy, Cut, Lock, Paste } from '../menuItems';
 import i18n from '../../../i18n/i18n';
 import WallTextureSelection from './wallTextureSelection';
 import WallOpacityInput from './wallOpacityInput';
@@ -79,8 +79,8 @@ export const WallMenu = () => {
     wall && (
       <Menu.ItemGroup>
         {legalToPaste() && <Paste keyName={'wall-paste'} />}
-        {/* <Copy keyName={'wall-copy'} /> */}
-        {/* <Cut keyName={'wall-cut'} /> */}
+        <Copy keyName={'wall-copy'} />
+        {!wall.locked && <Cut keyName={'wall-cut'} />}
         <Lock keyName={'wall-lock'} />
 
         {!wall.locked && (

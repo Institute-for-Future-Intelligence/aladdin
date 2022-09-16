@@ -4838,6 +4838,9 @@ export const useStore = create<CommonStoreState>(
                       }
                     }
                   }
+                  if (elem.type === ObjectType.Wall) {
+                    m.set(m.x * newParent.lx, m.y * newParent.ly, 0);
+                  }
                 }
                 const e = ElementModelCloner.clone(newParent, elem, m.x, m.y, m.z, false, state.pasteNormal);
                 if (e) {
@@ -5007,6 +5010,36 @@ export const useStore = create<CommonStoreState>(
                           approved = true;
                         }
                       }
+                      break;
+                    }
+                    case ObjectType.Wall: {
+                      const center = new Vector3(e.cx, e.cy, 0);
+                      const vrx = new Vector3(e.lx / 2, 0, 0);
+                      const vlx = new Vector3(-e.lx / 2, 0, 0);
+                      const euler = new Euler(0, 0, (e as WallModel).relativeAngle);
+                      (e as WallModel).leftPoint = center.clone().add(vlx.applyEuler(euler)).toArray();
+                      (e as WallModel).rightPoint = center.clone().add(vrx.applyEuler(euler)).toArray();
+                      for (const child of state.elements) {
+                        if (child.parentId === elem.id) {
+                          const newChild = ElementModelCloner.clone(
+                            e,
+                            child,
+                            child.cx,
+                            child.cy,
+                            child.cz,
+                            child.type === ObjectType.Polygon,
+                          );
+                          if (newChild) {
+                            if (e.normal) {
+                              newChild.normal = [...child.normal];
+                            }
+                            pastedElements.push(newChild);
+                          }
+                        }
+                      }
+                      state.elements.push(...pastedElements);
+                      state.updateWallMapOnFoundationFlag = !state.updateWallMapOnFoundationFlag;
+                      approved = true;
                       break;
                     }
                     case ObjectType.Door:
@@ -5424,6 +5457,51 @@ export const useStore = create<CommonStoreState>(
                           state.elementsToPaste = cutElements;
                         }
                       }
+                      approved = true;
+                      break;
+                    case ObjectType.Wall:
+                      const step = new Vector3(1, -1, 0).applyEuler(new Euler(0, 0, (e as WallModel).relativeAngle));
+                      e.cx += step.x;
+                      e.cy += step.y;
+                      if (state.elementsToPaste.length === 1) {
+                        const center = new Vector3(e.cx, e.cy, 0);
+                        const vrx = new Vector3(e.lx / 2, 0, 0);
+                        const vlx = new Vector3(-e.lx / 2, 0, 0);
+                        const euler = new Euler(0, 0, (e as WallModel).relativeAngle);
+                        (e as WallModel).leftPoint = center.clone().add(vlx.applyEuler(euler)).toArray();
+                        (e as WallModel).rightPoint = center.clone().add(vrx.applyEuler(euler)).toArray();
+                        for (const child of state.elements) {
+                          if (child.parentId === elem.id) {
+                            const newChild = ElementModelCloner.clone(
+                              e,
+                              child,
+                              child.cx,
+                              child.cy,
+                              child.cz,
+                              child.type === ObjectType.Polygon,
+                            );
+                            if (newChild) {
+                              if (e.normal) {
+                                newChild.normal = [...child.normal];
+                              }
+                              pastedElements.push(newChild);
+                            }
+                          }
+                        }
+                        state.elements.push(...pastedElements);
+                        state.elements.push(e);
+                        state.elementsToPaste = [e];
+                      } else if (state.elementsToPaste.length > 1) {
+                        const cutElements = state.copyCutElements();
+                        if (cutElements.length > 0) {
+                          cutElements[0].cx += step.x;
+                          cutElements[0].cy -= step.y;
+                          state.elements.push(...cutElements);
+                          pastedElements.push(...cutElements);
+                          state.elementsToPaste = cutElements;
+                        }
+                      }
+                      state.updateWallMapOnFoundationFlag = !state.updateWallMapOnFoundationFlag;
                       approved = true;
                       break;
                   }

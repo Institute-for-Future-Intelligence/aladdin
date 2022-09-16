@@ -506,8 +506,8 @@ export class ElementModelCloner {
       lx: wall.lx,
       ly: wall.ly,
       lz: wall.lz,
-      leftJoints: [], // todo: should link to cloned walls
-      rightJoints: [], // todo
+      leftJoints: [],
+      rightJoints: [],
       leftPoint: [...wall.leftPoint],
       rightPoint: [...wall.rightPoint],
       relativeAngle: wall.relativeAngle,
