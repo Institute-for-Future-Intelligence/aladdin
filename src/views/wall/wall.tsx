@@ -1129,10 +1129,13 @@ const Wall = ({
         state.elementGroupId = parentId;
       });
     } else {
-      setCommonStore((state) => {
-        state.contextMenuObjectType = null;
-      });
-      selectMe(id, e, ActionType.Select);
+      if (checkIfCanSelectMe(e)) {
+        setCommonStore((state) => {
+          state.contextMenuObjectType = null;
+        });
+        selectMe(id, e, ActionType.Select);
+      }
+      handleAddElement();
       e.stopPropagation();
     }
   };
