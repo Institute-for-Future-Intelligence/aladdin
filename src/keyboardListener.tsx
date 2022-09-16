@@ -220,6 +220,12 @@ const KeyboardListener = ({ canvas, set2DView, resetView, zoomView }: KeyboardLi
           case ObjectType.Human:
             displacement = -moveStepAbsolute;
             break;
+          case ObjectType.Wall:
+            const wall = selectedElement as WallModel;
+            if (wall.leftJoints.length === 0 && wall.rightJoints.length === 0) {
+              displacement = -moveStepAbsolute;
+            }
+            break;
           case ObjectType.Sensor:
             const parent = getParent(selectedElement);
             if (parent) {
@@ -282,6 +288,12 @@ const KeyboardListener = ({ canvas, set2DView, resetView, zoomView }: KeyboardLi
           case ObjectType.Tree:
           case ObjectType.Human:
             displacement = moveStepAbsolute;
+            break;
+          case ObjectType.Wall:
+            const wall = selectedElement as WallModel;
+            if (wall.leftJoints.length === 0 && wall.rightJoints.length === 0) {
+              displacement = moveStepAbsolute;
+            }
             break;
           case ObjectType.Sensor:
             const parent = getParent(selectedElement);
@@ -346,6 +358,12 @@ const KeyboardListener = ({ canvas, set2DView, resetView, zoomView }: KeyboardLi
           case ObjectType.Human:
             displacement = moveStepAbsolute;
             break;
+          case ObjectType.Wall:
+            const wall = selectedElement as WallModel;
+            if (wall.leftJoints.length === 0 && wall.rightJoints.length === 0) {
+              displacement = moveStepAbsolute;
+            }
+            break;
           case ObjectType.Sensor:
             const parent = getParent(selectedElement);
             if (parent) {
@@ -402,6 +420,12 @@ const KeyboardListener = ({ canvas, set2DView, resetView, zoomView }: KeyboardLi
           case ObjectType.Tree:
           case ObjectType.Human:
             displacement = -moveStepAbsolute;
+            break;
+          case ObjectType.Wall:
+            const wall = selectedElement as WallModel;
+            if (wall.leftJoints.length === 0 && wall.rightJoints.length === 0) {
+              displacement = -moveStepAbsolute;
+            }
             break;
           case ObjectType.Sensor:
             const parent = getParent(selectedElement);
