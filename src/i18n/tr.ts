@@ -382,6 +382,7 @@ export const i18n_tr = {
         Greenhouse: 'Greenhouse',
         Solarium: 'Solarium',
         Pavilion: 'Pavilion',
+        Church: 'Church',
         BarnStyleHouse: 'Barn Style House',
       },
       commercialBuildingsSubMenu: 'Commercial Buildings',

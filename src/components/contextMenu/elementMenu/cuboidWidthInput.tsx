@@ -519,7 +519,7 @@ const CuboidWidthInput = ({ setDialogVisible }: { setDialogVisible: (b: boolean)
         <Row gutter={6}>
           <Col className="gutter-row" span={6}>
             <InputNumber
-              min={0.5}
+              min={0.1}
               max={500}
               style={{ width: 120 }}
               step={0.5}
@@ -532,7 +532,7 @@ const CuboidWidthInput = ({ setDialogVisible }: { setDialogVisible: (b: boolean)
               onPressEnter={ok}
             />
             <div style={{ paddingTop: '20px', textAlign: 'left', fontSize: '11px' }}>
-              {i18n.t('word.Range', lang)}: [0.5, 500] {i18n.t('word.MeterAbbreviation', lang)}
+              {i18n.t('word.Range', lang)}: [0.1, 500] {i18n.t('word.MeterAbbreviation', lang)}
             </div>
           </Col>
           <Col className="gutter-row" span={1} style={{ verticalAlign: 'middle', paddingTop: '6px' }}>

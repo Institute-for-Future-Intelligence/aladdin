@@ -379,6 +379,7 @@ export const i18n_zh_tw = {
         Greenhouse: '溫室',
         Solarium: '有日光浴室的房子',
         Pavilion: '亭子',
+        Church: '教堂',
         BarnStyleHouse: '穀倉式風格的住宅',
       },
       commercialBuildingsSubMenu: '商用建築',

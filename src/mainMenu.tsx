@@ -21,6 +21,7 @@ import barn_house from './examples/barn_house.json';
 import greenhouse from './examples/greenhouse.json';
 import solarium from './examples/solarium.json';
 import pavilion from './examples/pavilion.json';
+import church_01 from './examples/church_01.json';
 import dutch_colonial_house from './examples/dutch_colonial_house.json';
 import gable_roof_vs_hip_roof from './examples/gable_roof_vs_hip_roof.json';
 import colonial_vs_saltbox from './examples/colonial_vs_saltbox.json';
@@ -403,6 +404,9 @@ const MainMenu = ({ viewOnly, set2DView, resetView, zoomView, canvas }: MainMenu
         break;
       case 'pavilion':
         input = pavilion;
+        break;
+      case 'church_01':
+        input = church_01;
         break;
       case 'barn_house':
         input = barn_house;
@@ -2038,6 +2042,9 @@ const MainMenu = ({ viewOnly, set2DView, resetView, zoomView, canvas }: MainMenu
             </Menu.Item>
             <Menu.Item key="pavilion" onClick={loadFile}>
               {i18n.t('menu.residentialBuildingExamples.Pavilion', lang)}
+            </Menu.Item>
+            <Menu.Item key="church_01" onClick={loadFile}>
+              {i18n.t('menu.residentialBuildingExamples.Church', lang)}
             </Menu.Item>
             <Menu.Item key="barn_house" onClick={loadFile}>
               {i18n.t('menu.residentialBuildingExamples.BarnStyleHouse', lang)}

@@ -1,7 +1,7 @@
 {
-  "docid": "v9jcGRjXkJvRdWvm5jqrVN",
-  "time": "09/13/2022 09:34 am",
-  "timestamp": 1663076051835,
+  "docid": "hT6X8uhMDXRksXCxhEAYq8",
+  "time": "09/17/2022 04:12 pm",
+  "timestamp": 1663445574043,
   "userid": "QWecNcxhyvP6j6sBN11hBsfZDau1",
   "owner": null,
   "email": null,
@@ -3761,7 +3761,7 @@
       "filled": false,
       "id": "fdazNUtKFoSEAPgq9CQJES",
       "type": "Polygon",
-      "locked": true,
+      "locked": false,
       "cx": 0,
       "parentId": "qsPqX4eMRADWLb6uFzZyu3",
       "color": "#d0d7da",
@@ -3798,7 +3798,9 @@
       ],
       "cy": 0,
       "ly": 0.4,
-      "lx": 0.4
+      "lx": 0.4,
+      "lineColor": "#ffffff",
+      "lineStyle": 2
     },
     {
       "type": "Polygon",
@@ -3813,7 +3815,7 @@
       ],
       "lz": 0.4,
       "filled": false,
-      "locked": true,
+      "locked": false,
       "parentId": "jeaVPPnZw5Ed7yuuYuFjT4",
       "ly": 0.4,
       "cy": 0,
@@ -3851,7 +3853,9 @@
         }
       ],
       "cx": 0,
-      "foundationId": "jeaVPPnZw5Ed7yuuYuFjT4"
+      "foundationId": "jeaVPPnZw5Ed7yuuYuFjT4",
+      "lineStyle": 2,
+      "lineColor": "#ffffff"
     }
   ],
   "view": {
@@ -3878,9 +3882,9 @@
       "y": 0
     },
     "panCenter": [
-      -35.340653578071375,
-      9.885203399166455,
-      13.04883842500549
+      -0.4243708300850131,
+      -19.28016562674967,
+      0
     ],
     "showMapPanel": false,
     "groundColor": "#16a5a5",
@@ -4011,9 +4015,9 @@
     },
     "orthographic": false,
     "cameraPosition": [
-      -103.03646711274416,
-      78.44056042873603,
-      107.88826188350532
+      42.5221293029564,
+      -128.74632289235763,
+      101.31173232941053
     ],
     "showDailyUpdraftTowerYieldPanel": false,
     "showDailyPvYieldPanel": false,
