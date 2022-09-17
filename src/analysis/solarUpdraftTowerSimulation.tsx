@@ -105,7 +105,7 @@ const SolarUpdraftTowerSimulation = ({ city }: SolarUpdraftTowerSimulationProps)
           if (!simulationCompletedRef.current) {
             showInfo(i18n.t('message.SimulationAborted', lang));
             setCommonStore((state) => {
-              state.world.date = originalDateRef.current.toString();
+              state.world.date = originalDateRef.current.toLocaleString('en-US');
               state.simulationInProgress = false;
               state.simulationPaused = false;
             });
@@ -193,7 +193,7 @@ const SolarUpdraftTowerSimulation = ({ city }: SolarUpdraftTowerSimulationProps)
           state.runDailySimulationForUpdraftTower = false;
           state.simulationInProgress = false;
           state.simulationPaused = false;
-          state.world.date = originalDateRef.current.toString();
+          state.world.date = originalDateRef.current.toLocaleString('en-US');
           state.viewState.showDailyUpdraftTowerYieldPanel = true;
         });
         showInfo(i18n.t('message.SimulationCompleted', lang));
@@ -217,7 +217,7 @@ const SolarUpdraftTowerSimulation = ({ city }: SolarUpdraftTowerSimulationProps)
       now.setHours(now.getHours(), now.getMinutes() + minuteInterval);
       // this forces the scene to be re-rendered
       setCommonStore((state) => {
-        state.world.date = now.toString();
+        state.world.date = now.toLocaleString('en-US');
       });
       // will the calculation immediately use the latest geometry after re-rendering?
       for (const e of elements) {
@@ -374,7 +374,7 @@ const SolarUpdraftTowerSimulation = ({ city }: SolarUpdraftTowerSimulationProps)
           if (!simulationCompletedRef.current) {
             showInfo(i18n.t('message.SimulationAborted', lang));
             setCommonStore((state) => {
-              state.world.date = originalDateRef.current.toString();
+              state.world.date = originalDateRef.current.toLocaleString('en-US');
               state.simulationInProgress = false;
               state.simulationPaused = false;
             });
@@ -418,7 +418,7 @@ const SolarUpdraftTowerSimulation = ({ city }: SolarUpdraftTowerSimulationProps)
       now.setHours(Math.floor(sunMinutesRef.current.sunrise / 60), -minuteInterval / 2);
       // set the initial date so that the scene gets a chance to render before the simulation starts
       setCommonStore((state) => {
-        state.world.date = now.toString();
+        state.world.date = now.toLocaleString('en-US');
       });
     }
     simulationCompletedRef.current = false;
@@ -452,7 +452,7 @@ const SolarUpdraftTowerSimulation = ({ city }: SolarUpdraftTowerSimulationProps)
       state.runYearlySimulationForUpdraftTower = false;
       state.simulationInProgress = false;
       state.simulationPaused = false;
-      state.world.date = originalDateRef.current.toString();
+      state.world.date = originalDateRef.current.toLocaleString('en-US');
       state.viewState.showYearlyUpdraftTowerYieldPanel = true;
     });
     showInfo(i18n.t('message.SimulationCompleted', lang));
@@ -478,7 +478,7 @@ const SolarUpdraftTowerSimulation = ({ city }: SolarUpdraftTowerSimulationProps)
         // this is where time advances (by incrementing the minutes with the given interval)
         now.setHours(now.getHours(), now.getMinutes() + minuteInterval);
         setCommonStore((state) => {
-          state.world.date = now.toString();
+          state.world.date = now.toLocaleString('en-US');
         });
         for (const e of elements) {
           if (e.type === ObjectType.Foundation) {
@@ -499,7 +499,7 @@ const SolarUpdraftTowerSimulation = ({ city }: SolarUpdraftTowerSimulationProps)
             state.runYearlySimulationForUpdraftTower = false;
             state.simulationInProgress = false;
             state.simulationPaused = false;
-            state.world.date = originalDateRef.current.toString();
+            state.world.date = originalDateRef.current.toLocaleString('en-US');
             state.viewState.showYearlyUpdraftTowerYieldPanel = true;
           });
           showInfo(i18n.t('message.SimulationCompleted', lang));

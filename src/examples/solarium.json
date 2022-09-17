@@ -1,13 +1,13 @@
 {
-  "docid": "qA9cooEkCQs1Ff3XVvQWLU",
-  "time": "09/15/2022 06:56 pm",
-  "timestamp": 1663282599166,
+  "docid": "isqCSvFR4c781JkZzVb1sw",
+  "time": "09/15/2022 08:23 pm",
+  "timestamp": 1663287793861,
   "userid": "QWecNcxhyvP6j6sBN11hBsfZDau1",
   "owner": null,
   "email": null,
   "world": {
     "solarRadiationHeatmapGridCellSize": 0.5,
-    "date": "Thu Sep 22 2022 10:00:00 GMT-0400 (Eastern Daylight Time)",
+    "date": "9/22/2022 11:00:00 AM",
     "cspTimesPerHour": 4,
     "noAnimationForHeatmapSimulation": false,
     "cspGridCellSize": 0.5,
@@ -1033,7 +1033,8 @@
       "rightRoofHeight": 3.799890056238193,
       "selected": false,
       "studWidth": 0.1,
-      "studColor": "white"
+      "studColor": "white",
+      "opacity": 0.25
     },
     {
       "type": "Wall",
@@ -1085,7 +1086,7 @@
       "selected": false,
       "studWidth": 0.1,
       "wallStructure": "Stud",
-      "opacity": 0.5,
+      "opacity": 0.25,
       "studSpacing": 1.5,
       "studColor": "white"
     },
@@ -1138,7 +1139,7 @@
       ],
       "selected": false,
       "wallStructure": "Stud",
-      "opacity": 0.5,
+      "opacity": 0.25,
       "studWidth": 0.1,
       "studSpacing": 1.5,
       "studColor": "white"
@@ -1186,10 +1187,10 @@
       "roofId": "9SPVWHTRZMkvFFbvi4Y4dK",
       "leftRoofHeight": 3.442308777851562,
       "rightRoofHeight": 3.442308777851562,
-      "selected": false,
+      "selected": true,
       "studWidth": 0.1,
       "wallStructure": "Stud",
-      "opacity": 0.5,
+      "opacity": 0.25,
       "studColor": "white",
       "studSpacing": 2
     },
@@ -1230,7 +1231,7 @@
         0.5,
         1
       ],
-      "selected": true,
+      "selected": false,
       "translucent": true,
       "rafterSpacing": 2,
       "roofStructure": "Rafter"
@@ -1768,8 +1769,8 @@
     "dailyHeliostatYieldPanelX": 0,
     "showDailyParabolicDishYieldPanel": false,
     "cameraPosition": [
-      -12.618441393972736,
-      -15.955232508386079,
+      -12.618441393972729,
+      -15.955232508386068,
       3.260888664311694
     ],
     "showYearlyHeliostatYieldPanel": false,

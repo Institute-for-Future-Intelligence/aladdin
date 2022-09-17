@@ -6,7 +6,7 @@
   "email": null,
   "world": {
     "name": "default",
-    "date": "Thu Sep 22 2022 14:00:00 GMT-0400 (Eastern Daylight Time)",
+    "date": "9/22/2022 2:30:00 PM",
     "ground": {
       "albedo": 0.3,
       "thermalDiffusivity": 0.05,

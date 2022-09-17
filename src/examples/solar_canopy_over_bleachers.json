@@ -14,7 +14,7 @@
     "noAnimationForSensorDataCollection": false,
     "noAnimationForSolarUpdraftTowerSimulation": false,
     "discretization": "Approximate",
-    "date": "Wed Jun 22 2022 15:00:00 GMT-0400 (Eastern Daylight Time)",
+    "date": "6/22/2022 3:30:00 PM",
     "highestTemperatureTimeInMinutes": 900,
     "cspDaysPerYear": 4,
     "address": "550 Dorset St, South Burlington, VT 05403, USA",

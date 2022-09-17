@@ -84,7 +84,7 @@ const DynamicSolarRadiationSimulation = ({ city }: DynamicSolarRadiationSimulati
         if (!simulationCompletedRef.current) {
           showInfo(i18n.t('message.SimulationAborted', lang));
           setCommonStore((state) => {
-            state.world.date = originalDateRef.current.toString();
+            state.world.date = originalDateRef.current.toLocaleString('en-US');
             state.simulationInProgress = false;
           });
         }
@@ -223,7 +223,7 @@ const DynamicSolarRadiationSimulation = ({ city }: DynamicSolarRadiationSimulati
         cancelAnimationFrame(requestRef.current);
         setCommonStore((state) => {
           state.runDynamicSimulation = false;
-          state.world.date = originalDateRef.current.toString();
+          state.world.date = originalDateRef.current.toLocaleString('en-US');
         });
         showInfo(i18n.t('message.SimulationCompleted', lang));
         simulationCompletedRef.current = true;
@@ -239,7 +239,7 @@ const DynamicSolarRadiationSimulation = ({ city }: DynamicSolarRadiationSimulati
       // this is where time advances (by incrementing the minutes with the given interval)
       now.setHours(now.getHours(), now.getMinutes() + interval);
       setCommonStore((state) => {
-        state.world.date = now.toString();
+        state.world.date = now.toLocaleString('en-US');
       });
       if (solarRadiationHeatmapReflectionOnly) {
         for (const e of elements) {

@@ -88,7 +88,7 @@ const FresnelReflectorSimulation = ({ city }: FresnelReflectorSimulationProps) =
         if (!simulationCompletedRef.current) {
           showInfo(i18n.t('message.SimulationAborted', lang));
           setCommonStore((state) => {
-            state.world.date = originalDateRef.current.toString();
+            state.world.date = originalDateRef.current.toLocaleString('en-US');
             state.simulationInProgress = false;
             state.simulationPaused = false;
           });
@@ -141,7 +141,7 @@ const FresnelReflectorSimulation = ({ city }: FresnelReflectorSimulationProps) =
           state.runDailySimulationForFresnelReflectors = false;
           state.simulationInProgress = false;
           state.simulationPaused = false;
-          state.world.date = originalDateRef.current.toString();
+          state.world.date = originalDateRef.current.toLocaleString('en-US');
           state.viewState.showDailyFresnelReflectorYieldPanel = true;
         });
         showInfo(i18n.t('message.SimulationCompleted', lang));
@@ -165,7 +165,7 @@ const FresnelReflectorSimulation = ({ city }: FresnelReflectorSimulationProps) =
       now.setHours(now.getHours(), now.getMinutes() + minuteInterval);
       // this forces the scene to be re-rendered
       setCommonStore((state) => {
-        state.world.date = now.toString();
+        state.world.date = now.toLocaleString('en-US');
       });
       // will the calculation immediately use the latest geometry after re-rendering?
       for (const e of elements) {
@@ -269,7 +269,7 @@ const FresnelReflectorSimulation = ({ city }: FresnelReflectorSimulationProps) =
         if (!simulationCompletedRef.current) {
           showInfo(i18n.t('message.SimulationAborted', lang));
           setCommonStore((state) => {
-            state.world.date = originalDateRef.current.toString();
+            state.world.date = originalDateRef.current.toLocaleString('en-US');
             state.simulationInProgress = false;
             state.simulationPaused = false;
           });
@@ -311,7 +311,7 @@ const FresnelReflectorSimulation = ({ city }: FresnelReflectorSimulationProps) =
       now.setHours(Math.floor(sunMinutesRef.current.sunrise / 60), minuteInterval / 2 - 30);
       // set the initial date so that the scene gets a chance to render before the simulation starts
       setCommonStore((state) => {
-        state.world.date = now.toString();
+        state.world.date = now.toLocaleString('en-US');
       });
     }
     simulationCompletedRef.current = false;
@@ -327,7 +327,7 @@ const FresnelReflectorSimulation = ({ city }: FresnelReflectorSimulationProps) =
         // this is where time advances (by incrementing the minutes with the given interval)
         now.setHours(now.getHours(), now.getMinutes() + minuteInterval);
         setCommonStore((state) => {
-          state.world.date = now.toString();
+          state.world.date = now.toLocaleString('en-US');
         });
         for (const e of elements) {
           if (e.type === ObjectType.FresnelReflector) {
@@ -345,7 +345,7 @@ const FresnelReflectorSimulation = ({ city }: FresnelReflectorSimulationProps) =
             state.runYearlySimulationForFresnelReflectors = false;
             state.simulationInProgress = false;
             state.simulationPaused = false;
-            state.world.date = originalDateRef.current.toString();
+            state.world.date = originalDateRef.current.toLocaleString('en-US');
             state.viewState.showYearlyFresnelReflectorYieldPanel = true;
           });
           showInfo(i18n.t('message.SimulationCompleted', lang));

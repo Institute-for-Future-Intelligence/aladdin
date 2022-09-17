@@ -54,7 +54,7 @@ export class DefaultWorldModel implements WorldModel {
     this.latitude = 42.2844063;
     this.longitude = -71.3488548;
     this.address = 'Natick, MA';
-    this.date = new Date(new Date().getFullYear(), 5, 22, 12).toString();
+    this.date = new Date(new Date().getFullYear(), 5, 22, 12).toLocaleString('en-US');
 
     this.name = 'default';
     this.ground = {
@@ -95,7 +95,7 @@ export class DefaultWorldModel implements WorldModel {
     worldModel.latitude = 42.2844063;
     worldModel.longitude = -71.3488548;
     worldModel.address = 'Natick, MA';
-    worldModel.date = new Date(new Date().getFullYear(), 5, 22, 12).toString();
+    worldModel.date = new Date(new Date().getFullYear(), 5, 22, 12).toLocaleString('en-US');
 
     worldModel.name = 'default';
     worldModel.ground.albedo = 0.3;

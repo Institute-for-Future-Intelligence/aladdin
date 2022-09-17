@@ -46,7 +46,7 @@
     "pvGridCellSize": 0.5,
     "airAttenuationCoefficient": 0.01,
     "sutDaysPerYear": 4,
-    "date": "Thu Sep 22 2022 10:00:00 GMT-0400 (Eastern Daylight Time)",
+    "date": "9/22/2022 10:00:00 AM",
     "cspGridCellSize": 0.5,
     "dustLoss": 0.05,
     "daysPerYear": 12

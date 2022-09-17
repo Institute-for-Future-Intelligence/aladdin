@@ -9,7 +9,7 @@
     "solarRadiationHeatmapGridCellSize": 1,
     "discretization": "Approximate",
     "timesPerHour": 4,
-    "date": "Thu Sep 22 2022 13:00:00 GMT-0400 (Eastern Daylight Time)",
+    "date": "9/22/2022 1:15:00 PM",
     "name": "default",
     "solarPanelVisibilityGridCellSize": 0.2,
     "airAttenuationCoefficient": 0.01,

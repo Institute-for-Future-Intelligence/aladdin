@@ -7,7 +7,7 @@
   "email": null,
   "world": {
     "solarRadiationHeatmapGridCellSize": 0.5,
-    "date": "Fri Apr 22 2022 10:00:00 GMT-0400 (Eastern Daylight Time)",
+    "date": "4/22/2022 10:15:00 AM",
     "cspTimesPerHour": 4,
     "noAnimationForHeatmapSimulation": false,
     "cspGridCellSize": 0.5,

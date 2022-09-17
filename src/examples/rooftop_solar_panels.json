@@ -1,13 +1,13 @@
 {
-  "docid": "toh4Aj9wpipZDhsaFqryKM",
-  "time": "08/08/2022 09:12 am",
-  "timestamp": 1659964354505,
+  "docid": "bAY45LKgF3XZbyKbEbU6z2",
+  "time": "09/15/2022 08:24 pm",
+  "timestamp": 1663287874457,
   "userid": "QWecNcxhyvP6j6sBN11hBsfZDau1",
   "owner": null,
   "email": null,
   "world": {
     "solarRadiationHeatmapGridCellSize": 0.5,
-    "date": "Fri Apr 22 2022 10:00:00 GMT-0400 (Eastern Daylight Time)",
+    "date": "4/22/2022 11:00:00 AM",
     "cspTimesPerHour": 4,
     "noAnimationForHeatmapSimulation": false,
     "cspGridCellSize": 0.5,
@@ -75,7 +75,7 @@
       "cz": 2.2408122612280286,
       "lx": 12,
       "ly": 0.3,
-      "lz": 4,
+      "lz": 3.22609431418537,
       "leftJoints": [
         "1k67G1W1gvb3E7EbmbG1h1"
       ],
@@ -110,8 +110,8 @@
       "foundationId": "1rAGH78b5nt7cXyGU9vNRV",
       "selected": false,
       "roofId": "45NB7k7GYboywbxoXsYHLH",
-      "leftRoofHeight": 4,
-      "rightRoofHeight": 4
+      "leftRoofHeight": 3.22609431418537,
+      "rightRoofHeight": 3.22609431418537
     },
     {
       "type": "Window",
@@ -136,7 +136,7 @@
       "parentId": "u1AdedeCmmKa3QYfwjJ4ya",
       "foundationId": "1rAGH78b5nt7cXyGU9vNRV",
       "selected": false,
-      "mullionSpacing": 1
+      "mullionSpacing": 0.5
     },
     {
       "type": "Window",
@@ -161,7 +161,7 @@
       "parentId": "u1AdedeCmmKa3QYfwjJ4ya",
       "foundationId": "1rAGH78b5nt7cXyGU9vNRV",
       "selected": false,
-      "mullionSpacing": 1
+      "mullionSpacing": 0.5
     },
     {
       "type": "Wall",
@@ -170,7 +170,7 @@
       "cz": 2.2301039869226305,
       "lx": 10,
       "ly": 0.3,
-      "lz": 4,
+      "lz": 3.22609431418537,
       "leftJoints": [
         "tKvexMf8zrvPgydcZb5VYA"
       ],
@@ -205,8 +205,8 @@
       "foundationId": "1rAGH78b5nt7cXyGU9vNRV",
       "selected": false,
       "roofId": "45NB7k7GYboywbxoXsYHLH",
-      "leftRoofHeight": 4,
-      "rightRoofHeight": 4
+      "leftRoofHeight": 3.22609431418537,
+      "rightRoofHeight": 3.22609431418537
     },
     {
       "type": "Wall",
@@ -215,7 +215,7 @@
       "cz": 2.228839888904333,
       "lx": 10,
       "ly": 0.3,
-      "lz": 4,
+      "lz": 3.22609431418537,
       "leftJoints": [
         "u1AdedeCmmKa3QYfwjJ4ya"
       ],
@@ -250,8 +250,8 @@
       "foundationId": "1rAGH78b5nt7cXyGU9vNRV",
       "selected": false,
       "roofId": "45NB7k7GYboywbxoXsYHLH",
-      "leftRoofHeight": 4,
-      "rightRoofHeight": 4
+      "leftRoofHeight": 3.22609431418537,
+      "rightRoofHeight": 3.22609431418537
     },
     {
       "type": "Window",
@@ -276,7 +276,7 @@
       "parentId": "uytQSeUom5oDsFC3PKa7q8",
       "foundationId": "1rAGH78b5nt7cXyGU9vNRV",
       "selected": false,
-      "mullionSpacing": 1
+      "mullionSpacing": 0.5
     },
     {
       "type": "Window",
@@ -301,7 +301,7 @@
       "parentId": "uytQSeUom5oDsFC3PKa7q8",
       "foundationId": "1rAGH78b5nt7cXyGU9vNRV",
       "selected": false,
-      "mullionSpacing": 1
+      "mullionSpacing": 0.5
     },
     {
       "type": "Window",
@@ -326,7 +326,7 @@
       "parentId": "uytQSeUom5oDsFC3PKa7q8",
       "foundationId": "1rAGH78b5nt7cXyGU9vNRV",
       "selected": false,
-      "mullionSpacing": 1
+      "mullionSpacing": 0.5
     },
     {
       "type": "Window",
@@ -351,7 +351,7 @@
       "parentId": "uytQSeUom5oDsFC3PKa7q8",
       "foundationId": "1rAGH78b5nt7cXyGU9vNRV",
       "selected": false,
-      "mullionSpacing": 1
+      "mullionSpacing": 0.5
     },
     {
       "type": "Wall",
@@ -360,7 +360,7 @@
       "cz": 2.268765007024547,
       "lx": 12,
       "ly": 0.3,
-      "lz": 4,
+      "lz": 3.22609431418537,
       "leftJoints": [
         "uytQSeUom5oDsFC3PKa7q8"
       ],
@@ -395,8 +395,8 @@
       "foundationId": "1rAGH78b5nt7cXyGU9vNRV",
       "selected": false,
       "roofId": "45NB7k7GYboywbxoXsYHLH",
-      "leftRoofHeight": 4,
-      "rightRoofHeight": 4
+      "leftRoofHeight": 3.22609431418537,
+      "rightRoofHeight": 3.22609431418537
     },
     {
       "type": "Window",
@@ -421,7 +421,7 @@
       "parentId": "tKvexMf8zrvPgydcZb5VYA",
       "foundationId": "1rAGH78b5nt7cXyGU9vNRV",
       "selected": false,
-      "mullionSpacing": 1
+      "mullionSpacing": 0.5
     },
     {
       "type": "Window",
@@ -446,7 +446,7 @@
       "parentId": "tKvexMf8zrvPgydcZb5VYA",
       "foundationId": "1rAGH78b5nt7cXyGU9vNRV",
       "selected": false,
-      "mullionSpacing": 1
+      "mullionSpacing": 0.5
     },
     {
       "type": "Window",
@@ -471,7 +471,7 @@
       "parentId": "tKvexMf8zrvPgydcZb5VYA",
       "foundationId": "1rAGH78b5nt7cXyGU9vNRV",
       "selected": false,
-      "mullionSpacing": 1
+      "mullionSpacing": 0.5
     },
     {
       "type": "Window",
@@ -496,7 +496,7 @@
       "parentId": "tKvexMf8zrvPgydcZb5VYA",
       "foundationId": "1rAGH78b5nt7cXyGU9vNRV",
       "selected": false,
-      "mullionSpacing": 1
+      "mullionSpacing": 0.5
     },
     {
       "type": "Foundation",
@@ -505,7 +505,7 @@
       "cz": 0.05,
       "lx": 18.159918676696766,
       "ly": 14.613120903558068,
-      "lz": 0.1,
+      "lz": 0.08065235785463425,
       "normal": [
         0,
         0,
@@ -530,7 +530,7 @@
       "cz": 0,
       "lx": 0,
       "ly": 0,
-      "lz": 6.367198148266466,
+      "lz": 5.135295435853515,
       "overhang": 0.3,
       "thickness": 0.2,
       "roofType": "Hip",
@@ -596,18 +596,18 @@
       "poleSpacing": 3,
       "cx": 0.03376389430564471,
       "cy": -0.06690391974402475,
-      "cz": 5.795596849394168,
+      "cz": 4.704915548019706,
       "lx": 6.232,
       "ly": 2.092,
       "lz": 0.046,
       "showLabel": false,
       "normal": [
         0,
-        -0.42790578890499265,
-        0.9038233432599512
+        -0.35671953784688426,
+        0.934211523862934
       ],
       "rotation": [
-        0.4421744445844735,
+        0.36475405203690126,
         0,
         0
       ],
@@ -623,7 +623,7 @@
       "pvModelName": "SPR-X21-335-BLK",
       "cx": 0.03747465449109987,
       "cy": -0.22623039668455128,
-      "cz": 4.6933076996238965,
+      "cz": 3.815893345848764,
       "lx": 9.348,
       "ly": 2.092,
       "lz": 0.046,
@@ -638,11 +638,11 @@
       "showLabel": false,
       "normal": [
         0,
-        -0.42790578890499265,
-        0.9038233432599514
+        -0.3567195378468842,
+        0.9342115238629342
       ],
       "rotation": [
-        0.4421744445844733,
+        0.36475405203690126,
         0,
         0
       ],
@@ -682,9 +682,9 @@
     "dailyHeliostatYieldPanelX": 0,
     "showDailyParabolicDishYieldPanel": false,
     "cameraPosition": [
-      -6.902192435958615,
-      -18.973190877938652,
-      5.298823916463385
+      -6.298926480755281,
+      -19.027436619044437,
+      6.20898005820759
     ],
     "showYearlyHeliostatYieldPanel": false,
     "orthographic": false,

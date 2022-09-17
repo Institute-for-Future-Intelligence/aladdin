@@ -119,7 +119,7 @@ const SolarPanelSimulation = ({ city }: SolarPanelSimulationProps) => {
           if (!simulationCompletedRef.current) {
             showInfo(i18n.t('message.SimulationAborted', lang));
             setCommonStore((state) => {
-              state.world.date = originalDateRef.current.toString();
+              state.world.date = originalDateRef.current.toLocaleString('en-US');
               state.simulationInProgress = false;
               state.simulationPaused = false;
             });
@@ -226,7 +226,7 @@ const SolarPanelSimulation = ({ city }: SolarPanelSimulationProps) => {
           state.runDailySimulationForSolarPanels = false;
           state.simulationInProgress = false;
           state.simulationPaused = false;
-          state.world.date = originalDateRef.current.toString();
+          state.world.date = originalDateRef.current.toLocaleString('en-US');
           if (!runEvolution) state.viewState.showDailyPvYieldPanel = true;
         });
         simulationCompletedRef.current = true;
@@ -254,7 +254,7 @@ const SolarPanelSimulation = ({ city }: SolarPanelSimulationProps) => {
       now.setHours(now.getHours(), now.getMinutes() + minuteInterval);
       // this forces the scene to be re-rendered
       setCommonStore((state) => {
-        state.world.date = now.toString();
+        state.world.date = now.toLocaleString('en-US');
       });
       // will the calculation immediately use the latest geometry after re-rendering?
       for (const e of elements) {
@@ -362,7 +362,7 @@ const SolarPanelSimulation = ({ city }: SolarPanelSimulationProps) => {
           if (!simulationCompletedRef.current) {
             showInfo(i18n.t('message.SimulationAborted', lang));
             setCommonStore((state) => {
-              state.world.date = originalDateRef.current.toString();
+              state.world.date = originalDateRef.current.toLocaleString('en-US');
               state.simulationInProgress = false;
               state.simulationPaused = false;
             });
@@ -420,7 +420,7 @@ const SolarPanelSimulation = ({ city }: SolarPanelSimulationProps) => {
       now.setHours(Math.floor(sunMinutesRef.current.sunrise / 60), -minuteInterval / 2);
       // set the initial date so that the scene gets a chance to render before the simulation starts
       setCommonStore((state) => {
-        state.world.date = now.toString();
+        state.world.date = now.toLocaleString('en-US');
       });
     }
     simulationCompletedRef.current = false;
@@ -455,7 +455,7 @@ const SolarPanelSimulation = ({ city }: SolarPanelSimulationProps) => {
       }
       state.simulationInProgress = false;
       state.simulationPaused = false;
-      state.world.date = originalDateRef.current.toString();
+      state.world.date = originalDateRef.current.toLocaleString('en-US');
       if (!runEvolution && !lastStep) state.viewState.showYearlyPvYieldPanel = true;
     });
     simulationCompletedRef.current = true;
@@ -485,7 +485,7 @@ const SolarPanelSimulation = ({ city }: SolarPanelSimulationProps) => {
         // this is where time advances (by incrementing the minutes with the given interval)
         now.setHours(now.getHours(), now.getMinutes() + minuteInterval);
         setCommonStore((state) => {
-          state.world.date = now.toString();
+          state.world.date = now.toLocaleString('en-US');
         });
         for (const e of elements) {
           if (e.type === ObjectType.SolarPanel) {
@@ -503,7 +503,7 @@ const SolarPanelSimulation = ({ city }: SolarPanelSimulationProps) => {
             state.runYearlySimulationForSolarPanels = false;
             state.simulationInProgress = false;
             state.simulationPaused = false;
-            state.world.date = originalDateRef.current.toString();
+            state.world.date = originalDateRef.current.toLocaleString('en-US');
             if (!runEvolution) state.viewState.showYearlyPvYieldPanel = true;
           });
           simulationCompletedRef.current = true;

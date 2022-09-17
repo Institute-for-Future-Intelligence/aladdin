@@ -99,7 +99,7 @@ const SensorSimulation = ({ city }: SensorSimulationProps) => {
           if (!simulationCompletedRef.current) {
             showInfo(i18n.t('message.SimulationAborted', lang));
             setCommonStore((state) => {
-              state.world.date = originalDateRef.current.toString();
+              state.world.date = originalDateRef.current.toLocaleString('en-US');
               state.simulationInProgress = false;
               state.simulationPaused = false;
             });
@@ -182,7 +182,7 @@ const SensorSimulation = ({ city }: SensorSimulationProps) => {
           state.runDailyLightSensor = false;
           state.simulationInProgress = false;
           state.simulationPaused = false;
-          state.world.date = originalDateRef.current.toString();
+          state.world.date = originalDateRef.current.toLocaleString('en-US');
           state.viewState.showDailyLightSensorPanel = true;
         });
         showInfo(i18n.t('message.SimulationCompleted', lang));
@@ -204,7 +204,7 @@ const SensorSimulation = ({ city }: SensorSimulationProps) => {
       now.setHours(now.getHours(), now.getMinutes() + minuteInterval);
       // this forces the scene to be re-rendered
       setCommonStore((state) => {
-        state.world.date = now.toString();
+        state.world.date = now.toLocaleString('en-US');
       });
       // will the calculation immediately use the latest geometry after re-rendering?
       for (const e of elements) {
@@ -274,7 +274,7 @@ const SensorSimulation = ({ city }: SensorSimulationProps) => {
           if (!simulationCompletedRef.current) {
             showInfo(i18n.t('message.SimulationAborted', lang));
             setCommonStore((state) => {
-              state.world.date = originalDateRef.current.toString();
+              state.world.date = originalDateRef.current.toLocaleString('en-US');
               state.simulationInProgress = false;
               state.simulationPaused = false;
             });
@@ -318,7 +318,7 @@ const SensorSimulation = ({ city }: SensorSimulationProps) => {
       now.setHours(Math.floor(sunMinutesRef.current.sunrise / 60), -minuteInterval / 2);
       // set the initial date so that the scene gets a chance to render before the simulation starts
       setCommonStore((state) => {
-        state.world.date = now.toString();
+        state.world.date = now.toLocaleString('en-US');
       });
     }
     simulationCompletedRef.current = false;
@@ -349,7 +349,7 @@ const SensorSimulation = ({ city }: SensorSimulationProps) => {
       state.runYearlyLightSensor = false;
       state.simulationInProgress = false;
       state.simulationPaused = false;
-      state.world.date = originalDateRef.current.toString();
+      state.world.date = originalDateRef.current.toLocaleString('en-US');
       state.viewState.showYearlyLightSensorPanel = true;
     });
     showInfo(i18n.t('message.SimulationCompleted', lang));
@@ -373,7 +373,7 @@ const SensorSimulation = ({ city }: SensorSimulationProps) => {
         // this is where time advances (by incrementing the minutes with the given interval)
         now.setHours(now.getHours(), now.getMinutes() + minuteInterval);
         setCommonStore((state) => {
-          state.world.date = now.toString();
+          state.world.date = now.toLocaleString('en-US');
         });
         for (const e of elements) {
           if (e.type === ObjectType.Sensor) {
@@ -391,7 +391,7 @@ const SensorSimulation = ({ city }: SensorSimulationProps) => {
             state.runYearlyLightSensor = false;
             state.simulationInProgress = false;
             state.simulationPaused = false;
-            state.world.date = originalDateRef.current.toString();
+            state.world.date = originalDateRef.current.toLocaleString('en-US');
             state.viewState.showYearlyLightSensorPanel = true;
           });
           showInfo(i18n.t('message.SimulationCompleted', lang));

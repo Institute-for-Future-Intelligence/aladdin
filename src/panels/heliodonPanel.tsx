@@ -163,7 +163,7 @@ const HeliodonPanel = () => {
         name: 'Set Time',
         timestamp: Date.now(),
         oldValue: dateString,
-        newValue: d.toString(),
+        newValue: d.toLocaleString(),
         undo: () => {
           setCommonStore((state) => {
             state.world.date = undoableChange.oldValue as string;
@@ -178,7 +178,7 @@ const HeliodonPanel = () => {
       addUndoable(undoableChange);
     }
     setCommonStore((state) => {
-      state.world.date = d.toString();
+      state.world.date = d.toLocaleString('en-US');
     });
   };
 
@@ -400,7 +400,7 @@ const HeliodonPanel = () => {
                     } as UndoableChange;
                     addUndoable(undoableChange);
                     setCommonStore((state) => {
-                      state.world.date = day.toString();
+                      state.world.date = day.toLocaleString('en-US');
                     });
                   }
                 }}

@@ -25,7 +25,7 @@
     "solarRadiationHeatmapGridCellSize": 5,
     "latitude": 44.454924,
     "cspDaysPerYear": 4,
-    "date": "Wed Jun 22 2022 12:00:00 GMT-0400 (Eastern Daylight Time)",
+    "date": "6/22/2022 1:00:00 PM",
     "address": "550 Dorset St, South Burlington, VT 05403, USA",
     "ground": {
       "thermalDiffusivity": 0.05,
