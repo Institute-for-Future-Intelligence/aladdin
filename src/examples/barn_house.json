@@ -1,7 +1,7 @@
 {
-  "docid": "wBKvcFG7AFDz7rcWr8SJva",
-  "time": "06/17/2022 06:54 pm",
-  "timestamp": 1655506492852,
+  "docid": "u9nhWBwkmNohTWj8NqMkMu",
+  "time": "09/20/2022 01:17 pm",
+  "timestamp": 1663694230127,
   "userid": "QWecNcxhyvP6j6sBN11hBsfZDau1",
   "owner": null,
   "email": null,
@@ -113,7 +113,7 @@
       "leftRoofHeight": 12.06151335420406,
       "rightRoofHeight": 12.06151335420406,
       "windows": [],
-      "textureType": "Wall Texture #1",
+      "textureType": "Wall Texture Default",
       "ly": 0.3,
       "showLabel": false,
       "rightPoint": [
@@ -121,7 +121,8 @@
         5.85223555071703,
         0.1
       ],
-      "foundationId": "x9h6vgTSQ3QLh48G3oYMPN"
+      "foundationId": "x9h6vgTSQ3QLh48G3oYMPN",
+      "color": "#9f0500"
     },
     {
       "lz": 10,
@@ -135,7 +136,7 @@
         1
       ],
       "cx": -11.627234602365457,
-      "textureType": "Wall Texture #1",
+      "textureType": "Wall Texture Default",
       "roofId": "kA3Mxv4Z9tXUoTK3QPMaWL",
       "cy": 0.6022355507170296,
       "leftJoints": [
@@ -171,7 +172,8 @@
       "centerRoofHeight": [
         -0.17143303829280856,
         15.670843411742434
-      ]
+      ],
+      "color": "#9f0500"
     },
     {
       "cy": 0.6022355507170296,
@@ -185,7 +187,7 @@
       "lz": 10,
       "cz": 0,
       "leftRoofHeight": 11.34034853001343,
-      "textureType": "Wall Texture #1",
+      "textureType": "Wall Texture Default",
       "leftPoint": [
         11.872765397634543,
         -4.64776444928297,
@@ -221,7 +223,8 @@
         11.872765397634543,
         5.85223555071703,
         0.1
-      ]
+      ],
+      "color": "#9f0500"
     },
     {
       "showLabel": false,
@@ -266,8 +269,9 @@
         -4.64776444928297,
         0.1
       ],
-      "textureType": "Wall Texture #1",
-      "parentId": "x9h6vgTSQ3QLh48G3oYMPN"
+      "textureType": "Wall Texture Default",
+      "parentId": "x9h6vgTSQ3QLh48G3oYMPN",
+      "color": "#9f0500"
     },
     {
       "parentId": "x9h6vgTSQ3QLh48G3oYMPN",
@@ -293,10 +297,10 @@
       ],
       "type": "Roof",
       "overhang": 0.2,
-      "thickness": 0.2,
+      "thickness": 0.1,
       "roofType": "Gable",
       "lx": 0,
-      "textureType": "Roof Texture #7",
+      "textureType": "Roof Texture Default",
       "id": "kA3Mxv4Z9tXUoTK3QPMaWL",
       "rotation": [
         0,
@@ -365,7 +369,7 @@
         4.783713178391496,
         0.1
       ],
-      "textureType": "Wall Texture #1",
+      "textureType": "Wall Texture Default",
       "leftRoofHeight": 7.5,
       "showLabel": false,
       "leftPoint": [
@@ -378,7 +382,8 @@
       "parentId": "46TKaVq8pvU97fq25w6FtQ",
       "leftJoints": [
         "7N5hq7UW6d1NtoD4SxrS8y"
-      ]
+      ],
+      "color": "#9f0500"
     },
     {
       "type": "Wall",
@@ -397,7 +402,7 @@
       "leftJoints": [
         "6i3LR3TEvtE6sm3KPPvawH"
       ],
-      "textureType": "Wall Texture #1",
+      "textureType": "Wall Texture Default",
       "leftPoint": [
         -8.279442981728478,
         -4.716286821608504,
@@ -424,7 +429,8 @@
       "ly": 0.3,
       "parentId": "46TKaVq8pvU97fq25w6FtQ",
       "selected": false,
-      "cx": 1.7205570182715224
+      "cx": 1.7205570182715224,
+      "color": "#9f0500"
     },
     {
       "leftJoints": [
@@ -473,8 +479,9 @@
       "rightRoofHeight": 5,
       "lx": 9.5,
       "cz": 0,
-      "textureType": "Wall Texture #1",
-      "cx": 11.720557018271522
+      "textureType": "Wall Texture Default",
+      "cx": 11.720557018271522,
+      "color": "#9f0500"
     },
     {
       "foundationId": "46TKaVq8pvU97fq25w6FtQ",
@@ -498,7 +505,7 @@
         "6JeFi4vn6AoV5MBuK71Kj4"
       ],
       "cz": 0,
-      "textureType": "Wall Texture #1",
+      "textureType": "Wall Texture Default",
       "relativeAngle": 4.71238898038469,
       "leftRoofHeight": 5,
       "windows": [],
@@ -524,7 +531,8 @@
         -4.716286821608504,
         0.1
       ],
-      "cy": 0.0337131783914959
+      "cy": 0.0337131783914959,
+      "color": "#9f0500"
     },
     {
       "cy": 0,
@@ -541,7 +549,7 @@
       "selected": false,
       "type": "Roof",
       "overhang": 0.2,
-      "thickness": 0.2,
+      "thickness": 0.1,
       "lz": 7.5,
       "lx": 0,
       "roofType": "Gable",
@@ -554,7 +562,7 @@
       "cz": 0,
       "id": "6c49g876wkgGNVBvgTNf4N",
       "cx": 0,
-      "textureType": "Roof Texture #7",
+      "textureType": "Roof Texture Default",
       "wallsId": [
         "6JeFi4vn6AoV5MBuK71Kj4"
       ],
@@ -740,7 +748,8 @@
       "lz": 20,
       "ly": 0.3,
       "lx": 4,
-      "textureType": "Wall Texture #1"
+      "textureType": "Wall Texture Default",
+      "color": "#9f0500"
     },
     {
       "leftPoint": [
@@ -783,10 +792,11 @@
         0,
         0
       ],
-      "textureType": "Wall Texture #1",
+      "textureType": "Wall Texture Default",
       "id": "5spEvKcr5r35ajFtNP5ug4",
       "roofId": "bXyFJNv4LJba2AUhe3ZtVT",
-      "relativeAngle": 1.5707963267948966
+      "relativeAngle": 1.5707963267948966,
+      "color": "#9f0500"
     },
     {
       "foundationId": "rzzzSn5cSsCh41KW1dZ8o9",
@@ -822,7 +832,7 @@
         0
       ],
       "parentId": "rzzzSn5cSsCh41KW1dZ8o9",
-      "textureType": "Wall Texture #1",
+      "textureType": "Wall Texture Default",
       "showLabel": false,
       "leftJoints": [
         "gSgPwypYb2qas3tXnXpzu5"
@@ -832,7 +842,8 @@
         0,
         1
       ],
-      "id": "ne9d3ykDCR9vMZ2sfPqRBL"
+      "id": "ne9d3ykDCR9vMZ2sfPqRBL",
+      "color": "#9f0500"
     },
     {
       "ly": 0.3,
@@ -877,8 +888,9 @@
       "cz": 0,
       "parentId": "rzzzSn5cSsCh41KW1dZ8o9",
       "roofId": "bXyFJNv4LJba2AUhe3ZtVT",
-      "textureType": "Wall Texture #1",
-      "cx": 0
+      "textureType": "Wall Texture Default",
+      "cx": 0,
+      "color": "#9f0500"
     },
     {
       "normal": [
@@ -900,10 +912,10 @@
         0,
         0
       ],
-      "textureType": "Roof Texture #7",
+      "textureType": "Roof Texture Default",
       "type": "Roof",
       "overhang": 0.2,
-      "thickness": 0.2,
+      "thickness": 0.1,
       "wallsId": [
         "5spEvKcr5r35ajFtNP5ug4",
         "gSgPwypYb2qas3tXnXpzu5",
@@ -1237,8 +1249,8 @@
     {
       "type": "Tree",
       "name": "Oak",
-      "cx": 22.5813455450335,
-      "cy": 12.536753727419296,
+      "cx": 19.56401141811942,
+      "cy": 10.290496053535222,
       "cz": 0,
       "lx": 20,
       "lz": 24,
@@ -1449,7 +1461,7 @@
       "lx": 0.2761904761904762,
       "ly": 0,
       "lz": 0.42000000000000004,
-      "textureType": "Door Texture Default",
+      "textureType": "Door Texture #4",
       "selected": false,
       "showLabel": false,
       "normal": [
@@ -1476,9 +1488,9 @@
     "enableRotate": true,
     "weatherPanelY": 0,
     "cameraPosition": [
-      27.912192637406058,
-      -40.84765774279316,
-      7.7891177783489
+      11.99866254887115,
+      -38.0599069901661,
+      7.03895793402045
     ],
     "showYearlyUpdraftTowerYieldPanel": false,
     "showSunAngles": false,
@@ -1532,9 +1544,9 @@
     "showYearlyHeliostatYieldPanel": false,
     "mapZoom": 18,
     "panCenter": [
-      -0.06132441859955103,
-      1.5794739969196576,
-      7.077129808744748
+      -0.06529106080995381,
+      1.539753511635937,
+      7.038957934020443
     ],
     "visibilityResultsPanelY": 0,
     "showZenithAngle": true,
