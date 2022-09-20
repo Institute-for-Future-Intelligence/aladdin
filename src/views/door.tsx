@@ -160,10 +160,8 @@ const Door = ({ id, parentId, cx, cz, lx, lz, selected, locked, textureType, col
         args={[wlx, wlz]}
         rotation={[HALF_PI, 0, 0]}
         onContextMenu={(e) => {
-          if (!selected) {
-            selectMe(id, e, ActionType.Select);
-          }
           if (e.intersections[0].object.name === `Door ${id}`) {
+            selectMe(id, e, ActionType.Select);
             setCommonStore((state) => {
               state.contextMenuObjectType = ObjectType.Door;
             });
