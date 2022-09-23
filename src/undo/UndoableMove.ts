@@ -35,3 +35,13 @@ export interface UndoableMoveSolarPanelOnRoof extends Undoable {
   oldNor: number[];
   newNor: number[];
 }
+
+export interface UndoableMoveWall extends Undoable {
+  id: string;
+  oldPoints: number[][];
+  newPoints: number[][];
+  oldJoints: string[];
+  newJoints: string[];
+  oldAngle: number;
+  newAngle: number;
+}

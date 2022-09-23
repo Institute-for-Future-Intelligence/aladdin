@@ -10,7 +10,6 @@ import { useStoreRef } from 'src/stores/commonRef';
 import { ActionType, ResizeHandleType, ResizeHandleType as RType } from 'src/types';
 import { HIGHLIGHT_HANDLE_COLOR, RESIZE_HANDLE_COLOR } from 'src/constants';
 import * as Selector from 'src/stores/selector';
-import { useThree } from '@react-three/fiber';
 
 interface ResizeHandlesProps {
   x: number;
@@ -144,7 +143,7 @@ const WallResizeHandleWarpper = React.memo(({ x, z, id, highLight }: WallResizeH
   );
 });
 
-const useHandleSize = () => {
+export const useHandleSize = () => {
   const orthographic = useStore((state) => state.viewState.orthographic);
   const cameraPosition = useStore((state) => state.viewState.cameraPosition);
   const cameraZoom = useStore((state) => state.viewState.cameraZoom);

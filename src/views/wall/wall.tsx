@@ -44,7 +44,8 @@ import { Point2 } from 'src/models/Point2';
 import { ElementGrid } from '../elementGrid';
 import Window from '../window/window';
 import WallWireFrame from './wallWireFrame';
-import WallResizeHandleWarpper from './wallResizeHandleWarpper';
+import WallResizeHandleWarpper from './wallResizeHandleWrapper';
+import WallMoveHandleWarpper from './wallMoveHandleWrapper';
 import * as Selector from 'src/stores/selector';
 import { FINE_GRID_SCALE, HALF_PI, LOCKED_ELEMENT_SELECTION_COLOR, NORMAL_GRID_SCALE, TWO_PI } from 'src/constants';
 import { UndoableMove } from 'src/undo/UndoableMove';
@@ -1263,7 +1264,7 @@ const Wall = ({
                 />
               </mesh>
 
-              <mesh rotation={[HALF_PI, 0, 0]} position={[0, 0.1, 0]} castShadow={castShadow}>
+              <mesh rotation={[HALF_PI, 0, 0]} position={[0, 0.05, 0]} castShadow={castShadow} scale={[0.95, 1, 1]}>
                 <shapeBufferGeometry args={[outsiedWallShape]} />
                 <meshStandardMaterial color={'white'} side={BackSide} transparent={transparent} opacity={opacity} />
               </mesh>
@@ -1389,6 +1390,7 @@ const Wall = ({
 
           {/* handles */}
           {selected && !locked && <WallResizeHandleWarpper x={hx} z={hz} id={id} highLight={highLight} />}
+          {selected && !locked && lx > 0.5 && <WallMoveHandleWarpper ply={ly} phz={hz} />}
 
           {/* grid */}
           {showGrid && (moveHandleTypeRef.current || resizeHandleTypeRef.current) && (

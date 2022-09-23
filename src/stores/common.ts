@@ -4352,6 +4352,7 @@ export const useStore = create<CommonStoreState>(
                           state.elements = state.elements.filter((x) => x.id !== e.id);
                         }
                       }
+                      state.updateWallMapOnFoundationFlag = !state.updateWallMapOnFoundationFlag;
                       state.deletedWallId = elem.id;
                       break;
                     }
