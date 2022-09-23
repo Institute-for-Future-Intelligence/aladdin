@@ -354,7 +354,7 @@ export const i18n_tr = {
       examplesSubMenu: 'Örnekler',
 
       solarEnergySubMenu: 'Güneş Enerjisi',
-      solarEnergyxamples: {
+      solarEnergyExamples: {
         SunBeamAndHeliodon: 'Güneş Işını ve Heliodon',
         RooftopSolarPanels: 'Çatı Üstü Güneş Panelleri',
         SolarFarm: 'Güneş Tarlası',
