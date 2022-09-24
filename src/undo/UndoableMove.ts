@@ -5,6 +5,7 @@
 import { Undoable } from './Undoable';
 import { Vector3 } from 'three';
 import { ObjectType } from '../types';
+import { FlippedWallSide } from './UndoableAdd';
 
 export interface UndoableMove extends Undoable {
   oldCx: number;
@@ -44,4 +45,5 @@ export interface UndoableMoveWall extends Undoable {
   newJoints: string[];
   oldAngle: number;
   newAngle: number;
+  flippedWallSide: FlippedWallSide;
 }

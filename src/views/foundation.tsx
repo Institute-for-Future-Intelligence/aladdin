@@ -566,10 +566,12 @@ const Foundation = ({
 
     setCommonStore((state) => {
       state.updateWallMapOnFoundationFlag = !state.updateWallMapOnFoundationFlag;
-      state.resizeHandleType =
-        resizeHandleTypeRef.current === ResizeHandleType.LowerLeft
-          ? ResizeHandleType.LowerRight
-          : ResizeHandleType.LowerLeft;
+      if (resizeHandleTypeRef.current) {
+        state.resizeHandleType =
+          resizeHandleTypeRef.current === ResizeHandleType.LowerLeft
+            ? ResizeHandleType.LowerRight
+            : ResizeHandleType.LowerLeft;
+      }
     });
 
     flippedWallSide.current =
@@ -1116,7 +1118,11 @@ const Foundation = ({
       newJoints: newJoints,
       oldAngle: oldAzimuthRef.current,
       newAngle: newAngle,
+      flippedWallSide: flippedWallSide.current,
       undo() {
+        if (this.flippedWallSide === FlippedWallSide.loop) {
+          flipWallLoop(this.id);
+        }
         const [oldLeftJoint, oldRightJoint] = this.oldJoints;
         const [newLeftJoint, newRightJoint] = this.newJoints;
         setCommonStore((state) => {
@@ -1134,7 +1140,9 @@ const Foundation = ({
               break;
             }
           }
-          state.updateWallMapOnFoundationFlag = !state.updateWallMapOnFoundationFlag;
+          if (this.flippedWallSide !== FlippedWallSide.loop) {
+            state.updateWallMapOnFoundationFlag = !state.updateWallMapOnFoundationFlag;
+          }
         });
         if (oldLeftJoint !== newLeftJoint) {
           setCommonStore((state) => {
@@ -1160,6 +1168,7 @@ const Foundation = ({
             }
           });
         }
+        flippedWallSide.current = FlippedWallSide.null;
       },
       redo() {
         const [oldLeftJoint, oldRightJoint] = this.oldJoints;
@@ -1179,7 +1188,9 @@ const Foundation = ({
               break;
             }
           }
-          state.updateWallMapOnFoundationFlag = !state.updateWallMapOnFoundationFlag;
+          if (this.flippedWallSide !== FlippedWallSide.loop) {
+            state.updateWallMapOnFoundationFlag = !state.updateWallMapOnFoundationFlag;
+          }
         });
         if (oldLeftJoint !== newLeftJoint) {
           setCommonStore((state) => {
@@ -1205,6 +1216,10 @@ const Foundation = ({
             }
           });
         }
+        if (this.flippedWallSide === FlippedWallSide.loop) {
+          checkWallLoop(this.id);
+        }
+        flippedWallSide.current = FlippedWallSide.null;
       },
     } as UndoableMoveWall;
     addUndoable(undoableMove);
@@ -1445,29 +1460,15 @@ const Foundation = ({
               // attach new
               if (doesWallNeedFlipRef.current) {
                 updateWallLeftJointsById(wallNewLeftJointIdRef.current, [wall.id]);
-                setCommonStore((state) => {
-                  for (const e of state.elements) {
-                    if (e.id === wall.id) {
-                      const w = e as WallModel;
-                      newAngle = (w.relativeAngle + Math.PI) % TWO_PI;
-                      newRightJoints = [wallNewLeftJointIdRef.current!];
-                      w.relativeAngle = newAngle;
-                      w.rightJoints = [wallNewLeftJointIdRef.current!];
-                      w.leftJoints = [];
-                      break;
-                    }
-                  }
-                });
+                newRightJoints = [wallNewLeftJointIdRef.current];
               } else {
                 newLeftJoints = [wallNewLeftJointIdRef.current];
-                updateWallLeftJointsById(wall.id, [wallNewLeftJointIdRef.current]);
                 updateWallRightJointsById(wallNewLeftJointIdRef.current, [wall.id]);
               }
             }
             // detach old
             else if (wall.leftJoints.length > 0) {
               newLeftJoints = [];
-              updateWallLeftJointsById(wall.id, []);
               updateWallRightJointsById(wall.leftJoints[0], []);
             }
 
@@ -1483,31 +1484,36 @@ const Foundation = ({
               // attach new
               if (doesWallNeedFlipRef.current) {
                 updateWallRightJointsById(wallNewRightJointIdRef.current, [wall.id]);
-                setCommonStore((state) => {
-                  for (const e of state.elements) {
-                    if (e.id === wall.id) {
-                      const w = e as WallModel;
-                      newAngle = (w.relativeAngle + Math.PI) % TWO_PI;
-                      w.relativeAngle = newAngle;
-                      newLeftJoints = [wallNewRightJointIdRef.current!];
-                      w.leftJoints = [wallNewRightJointIdRef.current!];
-                      w.rightJoints = [];
-                      break;
-                    }
-                  }
-                });
+                newLeftJoints = [wallNewRightJointIdRef.current!];
               } else {
                 newRightJoints = [wallNewRightJointIdRef.current];
-                updateWallRightJointsById(wall.id, [wallNewRightJointIdRef.current]);
                 updateWallLeftJointsById(wallNewRightJointIdRef.current, [wall.id]);
               }
             }
             // detach old
             else if (wall.rightJoints.length > 0) {
               newRightJoints = [];
-              updateWallRightJointsById(wall.id, []);
               updateWallLeftJointsById(wall.rightJoints[0], []);
             }
+
+            setCommonStore((state) => {
+              for (const e of state.elements) {
+                if (e.id === wall.id) {
+                  const w = e as WallModel;
+                  if (doesWallNeedFlipRef.current) {
+                    newAngle = (w.relativeAngle + Math.PI) % TWO_PI;
+                    w.relativeAngle = newAngle;
+                    [w.leftPoint, w.rightPoint] = [[...w.rightPoint], [...w.leftPoint]];
+                  }
+                  w.leftJoints = [...newLeftJoints];
+                  w.rightJoints = [...newRightJoints];
+                  break;
+                }
+              }
+              state.updateWallMapOnFoundationFlag = !state.updateWallMapOnFoundationFlag;
+            });
+
+            checkWallLoop(wall.id);
 
             handleUnoableMoveWall(wall, newAngle, [...newLeftJoints, ...newRightJoints]);
           }
