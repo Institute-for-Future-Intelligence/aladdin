@@ -1,0 +1,872 @@
+{
+  "docid": "sb8WjDaaiVp9MpvaKhHxCk",
+  "time": "09/25/2022 06:33 pm",
+  "timestamp": 1664145204805,
+  "userid": "QWecNcxhyvP6j6sBN11hBsfZDau1",
+  "owner": null,
+  "email": null,
+  "world": {
+    "latitude": 21.26999081653234,
+    "pvGridCellSize": 0.5,
+    "timesPerHour": 4,
+    "longitude": -157.79987618634874,
+    "ground": {
+      "albedo": 0.3,
+      "thermalDiffusivity": 0.05,
+      "snowReflectionFactors": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ]
+    },
+    "address": "4303 Diamond Head Rd, Honolulu, HI 96816, United States",
+    "date": "9/15/2022 12:00:00 PM",
+    "name": "default",
+    "orthographic": false,
+    "cameraZoom": 35.16173831821251,
+    "noAnimationForSolarPanelSimulation": true,
+    "noAnimationForHeatmapSimulation": true
+  },
+  "elements": [
+    {
+      "cy": 0.0145505850910366,
+      "normal": [
+        0,
+        0,
+        1
+      ],
+      "lz": 0.1,
+      "ly": 13.545143032428694,
+      "id": "of4fAMi2p9MKmo6JDUYnfX",
+      "type": "Foundation",
+      "cx": -0.011003166716293603,
+      "cz": 0.05,
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "lx": 18.837452107330996,
+      "selected": false,
+      "parentId": "Ground",
+      "textureType": "Foundation Texture #3"
+    },
+    {
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "normal": [
+        0,
+        0,
+        1
+      ],
+      "showLabel": false,
+      "label": "Row1",
+      "cy": -0.38935296591314916,
+      "poleRadius": 0.05,
+      "tiltAngle": 0.5235987755982988,
+      "cz": 0.5000000074505806,
+      "type": "Solar Panel",
+      "id": "c2J7QZr1z68dpk33yTT2Sd",
+      "orientation": "Landscape",
+      "cx": 0.01688904665567762,
+      "relativeAzimuth": 0,
+      "trackerType": "None",
+      "poleSpacing": 3,
+      "selected": false,
+      "lz": 0.046,
+      "lx": 17.712,
+      "poleHeight": 1,
+      "drawSunBeam": true,
+      "ly": 1.984,
+      "parentId": "of4fAMi2p9MKmo6JDUYnfX",
+      "foundationId": "of4fAMi2p9MKmo6JDUYnfX",
+      "pvModelName": "CS6X-350P-FG"
+    },
+    {
+      "poleRadius": 0.05,
+      "type": "Solar Panel",
+      "lx": 17.712,
+      "lz": 0.046,
+      "relativeAzimuth": 0,
+      "drawSunBeam": true,
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "ly": 1.984,
+      "normal": [
+        0,
+        0,
+        1
+      ],
+      "poleSpacing": 3,
+      "cx": 0.01109811276060147,
+      "trackerType": "None",
+      "cy": -0.00188664318968728,
+      "label": "Row3",
+      "cz": 0.5000000074506161,
+      "orientation": "Landscape",
+      "showLabel": false,
+      "selected": false,
+      "poleHeight": 1,
+      "tiltAngle": 0.5235987755982988,
+      "id": "mAv2C19w4RJA4u6knYxU3u",
+      "parentId": "of4fAMi2p9MKmo6JDUYnfX",
+      "foundationId": "of4fAMi2p9MKmo6JDUYnfX",
+      "pvModelName": "CS6X-350P-FG"
+    },
+    {
+      "tiltAngle": 0.5235987755982988,
+      "id": "nWKZve3r4PVxJM4YwShMJW",
+      "relativeAzimuth": 0,
+      "poleSpacing": 3,
+      "poleRadius": 0.05,
+      "cx": 0.011234729062103974,
+      "poleHeight": 1,
+      "type": "Solar Panel",
+      "trackerType": "None",
+      "label": "Row5",
+      "lz": 0.046,
+      "normal": [
+        0,
+        0,
+        1
+      ],
+      "showLabel": false,
+      "cz": 0.5000000074505806,
+      "selected": false,
+      "orientation": "Landscape",
+      "lx": 17.712,
+      "ly": 1.984,
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "cy": 0.35915527919266454,
+      "drawSunBeam": true,
+      "parentId": "of4fAMi2p9MKmo6JDUYnfX",
+      "foundationId": "of4fAMi2p9MKmo6JDUYnfX",
+      "pvModelName": "CS6X-350P-FG"
+    },
+    {
+      "type": "Foundation",
+      "cx": 0.3190918347725322,
+      "cy": -2.2556492768451117,
+      "cz": 0.15,
+      "lx": 17.098921077121087,
+      "ly": 1.3533895061041852,
+      "lz": 0.3,
+      "normal": [
+        0,
+        0,
+        1
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "parentId": "Ground",
+      "selected": false,
+      "solarUpdraftTower": {},
+      "solarAbsorberPipe": {},
+      "solarPowerTower": {},
+      "id": "gczoe9MamkUMzTbQUC2KQN",
+      "textureType": "Foundation Texture #4"
+    },
+    {
+      "type": "Foundation",
+      "cx": 0.28073712728172673,
+      "cy": 2.9801823965779324,
+      "cz": 0.15,
+      "lx": 17.098921077121087,
+      "ly": 1.3533895061041852,
+      "lz": 0.3,
+      "normal": [
+        0,
+        0,
+        1
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "parentId": "Ground",
+      "textureType": "Foundation Texture #4",
+      "solarUpdraftTower": {},
+      "solarAbsorberPipe": {},
+      "solarPowerTower": {},
+      "id": "1Tke71vAoWuRt2r5v2CSYZ",
+      "selected": false
+    },
+    {
+      "type": "Tree",
+      "name": "Dogwood",
+      "cx": 7.740549835438854,
+      "cy": 0.017840498094405355,
+      "cz": 0.15,
+      "lx": 1.4067907459441182,
+      "lz": 0.8956183337957155,
+      "normal": [
+        0,
+        1,
+        0
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "parentId": "1Tke71vAoWuRt2r5v2CSYZ",
+      "id": "35HtXQRVRTJqsvcy71eZBd",
+      "selected": false
+    },
+    {
+      "type": "Tree",
+      "name": "Dogwood",
+      "cx": -7.914181447469746,
+      "cy": -0.08805764356760193,
+      "cz": 0.15,
+      "lx": 1.4067907459441182,
+      "lz": 0.8956183337957155,
+      "normal": [
+        0,
+        1,
+        0
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "parentId": "1Tke71vAoWuRt2r5v2CSYZ",
+      "id": "fmSSfxugyyXcaFPGp5J2GH",
+      "selected": false
+    },
+    {
+      "type": "Tree",
+      "name": "Dogwood",
+      "cx": -6.507390701525628,
+      "cy": -0.08805764356760193,
+      "cz": 0.15,
+      "lx": 1.4067907459441182,
+      "lz": 0.8956183337957155,
+      "normal": [
+        0,
+        1,
+        0
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "parentId": "1Tke71vAoWuRt2r5v2CSYZ",
+      "id": "r1axrjm2UGjTBQPRnRKw1U",
+      "selected": false
+    },
+    {
+      "type": "Tree",
+      "name": "Dogwood",
+      "cx": -5.10059995558151,
+      "cy": -0.08805764356760193,
+      "cz": 0.15,
+      "lx": 1.4067907459441182,
+      "lz": 0.8956183337957155,
+      "normal": [
+        0,
+        1,
+        0
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "parentId": "1Tke71vAoWuRt2r5v2CSYZ",
+      "id": "o6SdXUMbUBjNMc2SCs1Pqu",
+      "selected": false
+    },
+    {
+      "type": "Tree",
+      "name": "Dogwood",
+      "cx": -3.693809209637392,
+      "cy": -0.08805764356760193,
+      "cz": 0.15,
+      "lx": 1.4067907459441182,
+      "lz": 0.8956183337957155,
+      "normal": [
+        0,
+        1,
+        0
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "parentId": "1Tke71vAoWuRt2r5v2CSYZ",
+      "id": "nkBbAZdoKvnThFLy1td116",
+      "selected": false
+    },
+    {
+      "type": "Tree",
+      "name": "Dogwood",
+      "cx": -2.2870184636932738,
+      "cy": -0.08805764356760193,
+      "cz": 0.15,
+      "lx": 1.4067907459441182,
+      "lz": 0.8956183337957155,
+      "normal": [
+        0,
+        1,
+        0
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "parentId": "1Tke71vAoWuRt2r5v2CSYZ",
+      "id": "srkmySETFJsYm7J8quA3u2",
+      "selected": false
+    },
+    {
+      "type": "Tree",
+      "name": "Dogwood",
+      "cx": -0.8802277177491555,
+      "cy": -0.08805764356760193,
+      "cz": 0.15,
+      "lx": 1.4067907459441182,
+      "lz": 0.8956183337957155,
+      "normal": [
+        0,
+        1,
+        0
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "parentId": "1Tke71vAoWuRt2r5v2CSYZ",
+      "id": "2kmwtuQn7hFn7tffKEXSXb",
+      "selected": false
+    },
+    {
+      "type": "Tree",
+      "name": "Dogwood",
+      "cx": 0.5265630281949627,
+      "cy": -0.08805764356760193,
+      "cz": 0.15,
+      "lx": 1.4067907459441182,
+      "lz": 0.8956183337957155,
+      "normal": [
+        0,
+        1,
+        0
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "parentId": "1Tke71vAoWuRt2r5v2CSYZ",
+      "id": "fG9ydmQQYpah6b1GcbZ59Q",
+      "selected": false
+    },
+    {
+      "type": "Tree",
+      "name": "Dogwood",
+      "cx": 1.933353774139081,
+      "cy": -0.08805764356760193,
+      "cz": 0.15,
+      "lx": 1.4067907459441182,
+      "lz": 0.8956183337957155,
+      "normal": [
+        0,
+        1,
+        0
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "parentId": "1Tke71vAoWuRt2r5v2CSYZ",
+      "id": "cgtEAVRi5nWuhmKxX6g4z5",
+      "selected": false
+    },
+    {
+      "type": "Tree",
+      "name": "Dogwood",
+      "cx": 3.340144520083199,
+      "cy": -0.08805764356760193,
+      "cz": 0.15,
+      "lx": 1.4067907459441182,
+      "lz": 0.8956183337957155,
+      "normal": [
+        0,
+        1,
+        0
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "parentId": "1Tke71vAoWuRt2r5v2CSYZ",
+      "id": "przZJKcdsmf3AyEn87SwPT",
+      "selected": false
+    },
+    {
+      "type": "Tree",
+      "name": "Dogwood",
+      "cx": 4.746935266027317,
+      "cy": -0.08805764356760193,
+      "cz": 0.15,
+      "lx": 1.4067907459441182,
+      "lz": 0.8956183337957155,
+      "normal": [
+        0,
+        1,
+        0
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "parentId": "1Tke71vAoWuRt2r5v2CSYZ",
+      "id": "wUrT7zxrNMXpZdhUKyq5x6",
+      "selected": false
+    },
+    {
+      "type": "Tree",
+      "name": "Dogwood",
+      "cx": 6.153726011971435,
+      "cy": -0.08805764356760193,
+      "cz": 0.15,
+      "lx": 1.4067907459441182,
+      "lz": 0.8956183337957155,
+      "normal": [
+        0,
+        1,
+        0
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "parentId": "1Tke71vAoWuRt2r5v2CSYZ",
+      "id": "wntymhbHuaV7gtGi2EKDo7",
+      "selected": false
+    },
+    {
+      "type": "Tree",
+      "name": "Dogwood",
+      "cx": -7.921728516250141,
+      "cy": -0.05952638858756654,
+      "cz": 0.15,
+      "lx": 1.4067907459441182,
+      "lz": 0.8956183337957155,
+      "normal": [
+        0,
+        0,
+        1
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "parentId": "gczoe9MamkUMzTbQUC2KQN",
+      "id": "v9KQQQuSFRs8JqvZtTpA91",
+      "selected": false
+    },
+    {
+      "type": "Tree",
+      "name": "Dogwood",
+      "cx": -6.514937770306023,
+      "cy": -0.05952638858756654,
+      "cz": 0.15,
+      "lx": 1.4067907459441182,
+      "lz": 0.8956183337957155,
+      "normal": [
+        0,
+        0,
+        1
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "parentId": "gczoe9MamkUMzTbQUC2KQN",
+      "id": "i9DpJbmib5K1p7nV3kHbAn",
+      "selected": false
+    },
+    {
+      "type": "Tree",
+      "name": "Dogwood",
+      "cx": -5.108147024361905,
+      "cy": -0.05952638858756654,
+      "cz": 0.15,
+      "lx": 1.4067907459441182,
+      "lz": 0.8956183337957155,
+      "normal": [
+        0,
+        0,
+        1
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "parentId": "gczoe9MamkUMzTbQUC2KQN",
+      "id": "abX7uxAMQEagSgZXGMDfc4",
+      "selected": false
+    },
+    {
+      "type": "Tree",
+      "name": "Dogwood",
+      "cx": -3.701356278417787,
+      "cy": -0.05952638858756654,
+      "cz": 0.15,
+      "lx": 1.4067907459441182,
+      "lz": 0.8956183337957155,
+      "normal": [
+        0,
+        0,
+        1
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "parentId": "gczoe9MamkUMzTbQUC2KQN",
+      "id": "8jDYNfHuAJ7p879PSFKFS7",
+      "selected": false
+    },
+    {
+      "type": "Tree",
+      "name": "Dogwood",
+      "cx": -2.294565532473669,
+      "cy": -0.05952638858756654,
+      "cz": 0.15,
+      "lx": 1.4067907459441182,
+      "lz": 0.8956183337957155,
+      "normal": [
+        0,
+        0,
+        1
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "parentId": "gczoe9MamkUMzTbQUC2KQN",
+      "id": "pFBywXTiVuv1AmsiPtaaxP",
+      "selected": false
+    },
+    {
+      "type": "Tree",
+      "name": "Dogwood",
+      "cx": -0.8877747865295509,
+      "cy": -0.05952638858756654,
+      "cz": 0.15,
+      "lx": 1.4067907459441182,
+      "lz": 0.8956183337957155,
+      "normal": [
+        0,
+        0,
+        1
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "parentId": "gczoe9MamkUMzTbQUC2KQN",
+      "id": "o4cGsZNPakmckwZS1qrg9m",
+      "selected": false
+    },
+    {
+      "type": "Tree",
+      "name": "Dogwood",
+      "cx": 0.5190159594145674,
+      "cy": -0.05952638858756654,
+      "cz": 0.15,
+      "lx": 1.4067907459441182,
+      "lz": 0.8956183337957155,
+      "normal": [
+        0,
+        0,
+        1
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "parentId": "gczoe9MamkUMzTbQUC2KQN",
+      "id": "34A3P6HT9WYg8AhiSpDvJ2",
+      "selected": false
+    },
+    {
+      "type": "Tree",
+      "name": "Dogwood",
+      "cx": 1.9258067053586856,
+      "cy": -0.05952638858756654,
+      "cz": 0.15,
+      "lx": 1.4067907459441182,
+      "lz": 0.8956183337957155,
+      "normal": [
+        0,
+        0,
+        1
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "parentId": "gczoe9MamkUMzTbQUC2KQN",
+      "id": "fjnQ1uMpj1Uu2GoJFhim85",
+      "selected": false
+    },
+    {
+      "type": "Tree",
+      "name": "Dogwood",
+      "cx": 3.332597451302804,
+      "cy": -0.05952638858756654,
+      "cz": 0.15,
+      "lx": 1.4067907459441182,
+      "lz": 0.8956183337957155,
+      "normal": [
+        0,
+        0,
+        1
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "parentId": "gczoe9MamkUMzTbQUC2KQN",
+      "id": "pPYcKdZTgMJwPHDdttFX1J",
+      "selected": false
+    },
+    {
+      "type": "Tree",
+      "name": "Dogwood",
+      "cx": 4.739388197246922,
+      "cy": -0.05952638858756654,
+      "cz": 0.15,
+      "lx": 1.4067907459441182,
+      "lz": 0.8956183337957155,
+      "normal": [
+        0,
+        0,
+        1
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "parentId": "gczoe9MamkUMzTbQUC2KQN",
+      "id": "f7JCh9VAUmcsaYDVz921MP",
+      "selected": false
+    },
+    {
+      "type": "Tree",
+      "name": "Dogwood",
+      "cx": 6.14617894319104,
+      "cy": -0.05952638858756654,
+      "cz": 0.15,
+      "lx": 1.4067907459441182,
+      "lz": 0.8956183337957155,
+      "normal": [
+        0,
+        0,
+        1
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "parentId": "gczoe9MamkUMzTbQUC2KQN",
+      "id": "dXMAvKBiQuUkM6raCwK6oQ",
+      "selected": false
+    },
+    {
+      "type": "Tree",
+      "name": "Dogwood",
+      "cx": 7.552969689135158,
+      "cy": -0.05952638858756654,
+      "cz": 0.15,
+      "lx": 1.4067907459441182,
+      "lz": 0.8956183337957155,
+      "normal": [
+        0,
+        0,
+        1
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "parentId": "gczoe9MamkUMzTbQUC2KQN",
+      "id": "jLd4TSy4qBALW8xPSrjLrR",
+      "selected": false
+    }
+  ],
+  "view": {
+    "yearlyPvYieldPanelX": -25,
+    "autoRotate": false,
+    "mapZoom": 21,
+    "axes": true,
+    "theme": "Default",
+    "showSiteInfoPanel": true,
+    "showDesignInfoPanel": true,
+    "showWeatherPanel": false,
+    "groundPanelX": 0,
+    "dailyPvYieldPanelX": -3,
+    "dailyLightSensorPanelY": 232,
+    "showDailyLightSensorPanel": false,
+    "mapTilt": 0,
+    "yearlyPvYieldPanelY": 16,
+    "yearlyLightSensorPanelX": 0,
+    "showGroundPanel": false,
+    "showHeliodonPanel": false,
+    "heliodon": false,
+    "weatherPanelY": 0,
+    "heliodonPanelX": -1175,
+    "dailyPvYieldPanelY": 8,
+    "mapWeatherStations": false,
+    "yearlyLightSensorPanelY": 0,
+    "showPvDailyYieldPanel": true,
+    "showYearlyPvYieldPanel": false,
+    "dailyLightSensorPanelX": -240,
+    "weatherPanelX": 0,
+    "heliodonPanelY": -33,
+    "groundColor": "#16a5a5",
+    "groundPanelY": 0,
+    "groundImage": false,
+    "showDailyPvYieldPanel": false,
+    "shadowEnabled": true,
+    "showYearlyLightSensorPanel": false,
+    "mapType": "hybrid",
+    "cameraPosition": [
+      17.256511339831487,
+      -14.52289817809533,
+      4.810604327848873
+    ],
+    "panCenter": [
+      0,
+      0,
+      0
+    ],
+    "orthographic": false,
+    "enableRotate": true,
+    "cameraZoom": 45.44146361606706,
+    "showInstructionPanel": true,
+    "cameraPosition2D": [
+      2.68477267877577,
+      -0.2201113364586017,
+      47.99999980190954
+    ],
+    "panCenter2D": [
+      2.68477267877577,
+      -0.22006333432578373,
+      5.501827899659354e-7
+    ],
+    "dailyPvYieldPanelRect": {
+      "x": 0,
+      "y": 0,
+      "width": 600,
+      "height": 400
+    },
+    "showMapPanel": false
+  },
+  "evolutionMethod": 1,
+  "solarPanelArrayLayoutParams": {
+    "pvModelName": "CS6X-355P-FG",
+    "rowAxis": "Zonal",
+    "orientation": "Landscape",
+    "tiltAngle": 0,
+    "rowsPerRack": 1,
+    "interRowSpacing": 2,
+    "poleHeight": 1,
+    "poleSpacing": 3
+  },
+  "solarPanelArrayLayoutConstraints": {
+    "minimumInterRowSpacing": 2,
+    "maximumInterRowSpacing": 10,
+    "minimumRowsPerRack": 1,
+    "maximumRowsPerRack": 6,
+    "minimumTiltAngle": -1.5707963267948966,
+    "maximumTiltAngle": 1.5707963267948966,
+    "poleHeight": 1,
+    "poleSpacing": 5,
+    "orientation": "Landscape",
+    "pvModelName": "CS6X-355P-FG",
+    "rowAxis": "Zonal"
+  },
+  "evolutionaryAlgorithmState": {
+    "geneticAlgorithmParams": {
+      "problem": "Solar Panel Tilt Angle",
+      "objectiveFunctionType": 1,
+      "selectionMethod": 1,
+      "searchMethod": 1,
+      "populationSize": 20,
+      "maximumGenerations": 5,
+      "selectionRate": 0.5,
+      "crossoverRate": 0.5,
+      "mutationRate": 0.1,
+      "convergenceThreshold": 0.01,
+      "localSearchRadius": 0.1
+    },
+    "particleSwarmOptimizationParams": {
+      "problem": "Solar Panel Tilt Angle",
+      "objectiveFunctionType": 1,
+      "searchMethod": 1,
+      "swarmSize": 20,
+      "maximumSteps": 5,
+      "vmax": 0.01,
+      "inertia": 0.8,
+      "cognitiveCoefficient": 0.1,
+      "socialCoefficient": 0.1,
+      "convergenceThreshold": 0.01,
+      "localSearchRadius": 0.1
+    }
+  },
+  "economicsParams": {
+    "projectLifeSpan": 25,
+    "electricitySellingPrice": 0.25,
+    "operationalCostPerUnit": 0.15
+  },
+  "notes": []
+}

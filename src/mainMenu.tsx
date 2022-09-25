@@ -39,6 +39,7 @@ import why_solar_array from './examples/why_solar_array.json';
 import solar_canopy_form_factors from './examples/solar_canopy_form_factors.json';
 import solar_canopy_over_bleachers from './examples/solar_canopy_over_bleachers.json';
 import solar_bus_stop from './examples/solar_bus_stop.json';
+import agrivoltaics from './examples/agrivoltaics.json';
 import inter_row_spacing from './examples/inter_row_spacing.json';
 import ps10_solar_power_tower from './examples/ps10_solar_power_tower.json';
 import nevada_solar_one_parabolic_troughs from './examples/nevada_solar_one_parabolic_troughs.json';
@@ -290,6 +291,9 @@ const MainMenu = ({ viewOnly, set2DView, resetView, zoomView, canvas }: MainMenu
         break;
       case 'solar_bus_stop':
         input = solar_bus_stop;
+        break;
+      case 'agrivoltaics':
+        input = agrivoltaics;
         break;
       case 'effect_tilt_angle_solar_panel':
         input = effect_tilt_angle_solar_panel;
@@ -1987,6 +1991,9 @@ const MainMenu = ({ viewOnly, set2DView, resetView, zoomView, canvas }: MainMenu
             </Menu.Item>
             <Menu.Item key="solar_bus_stop" onClick={loadFile}>
               {i18n.t('menu.solarEnergyExamples.SolarBusStop', lang)}
+            </Menu.Item>
+            <Menu.Item key="agrivoltaics" onClick={loadFile}>
+              {i18n.t('menu.solarEnergyExamples.Agrivoltaics', lang)}
             </Menu.Item>
             <Menu.Item key="solar_farm_fixed_array" onClick={loadFile}>
               {i18n.t('menu.solarEnergyExamples.FixedSolarPanelArraysFraminghamMA', lang)}

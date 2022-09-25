@@ -362,6 +362,7 @@ export const i18n_zh_tw = {
         SolarCanopyFormFactors: '太陽能天篷外形設計',
         SolarCanopyOverBleachers: '看台太陽能天篷',
         SolarBusStop: '太陽能候車亭',
+        Agrivoltaics: '農業光伏',
         VegetativeBuffer: '太陽能農場绿化带',
         FixedSolarPanelArraysFraminghamMA: '馬薩諸塞州弗雷明翰的一個固定角度光伏板陣列',
         SolarPanelsOverCanalBakersfieldCA: '加利福尼亞州貝克斯菲爾德灌溉渠上假想的光伏板陣列',

@@ -365,6 +365,7 @@ export const i18n_es = {
         SolarCanopyFormFactors: 'Solar Canopy Form Factors',
         SolarCanopyOverBleachers: 'Solar Canopy Over Bleachers',
         SolarBusStop: 'Solar Bus Stop',
+        Agrivoltaics: 'Agrivoltaics',
         VegetativeBuffer: 'Vegetative Buffer',
         FixedSolarPanelArraysFraminghamMA: 'Fixed Solar Panel Arrays in Framingham, MA',
         SolarPanelsOverCanalBakersfieldCA: 'Hypothetical Solar Panels Over Canal in Bakersfield, CA',
