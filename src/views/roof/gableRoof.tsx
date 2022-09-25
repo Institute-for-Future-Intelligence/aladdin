@@ -1,5 +1,5 @@
 /*
- * @Copyright 2021-2022. Institute for Future Intelligence, Inc.
+ * @Copyright 2022. Institute for Future Intelligence, Inc.
  */
 
 import { Extrude, Line, Plane, Sphere } from '@react-three/drei';
@@ -1218,7 +1218,13 @@ const RoofSegment = ({
   return (
     <>
       {((_opacity > 0 && roofStructure === RoofStructure.Rafter) || roofStructure !== RoofStructure.Rafter) && (
-        <mesh ref={meshRef} castShadow={shadowEnabled && !transparent} receiveShadow={shadowEnabled}>
+        <mesh
+          ref={meshRef}
+          name={'Gable Roof'}
+          castShadow={shadowEnabled && !transparent}
+          receiveShadow={shadowEnabled}
+          userData={{ simulation: true }}
+        >
           <meshStandardMaterial
             map={texture}
             color={textureType === RoofTexture.Default || textureType === RoofTexture.NoTexture ? color : 'white'}

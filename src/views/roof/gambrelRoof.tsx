@@ -40,8 +40,6 @@ import { CSG } from 'three-csg-ts';
 import { ConvexGeometry } from 'three/examples/jsm/geometries/ConvexGeometry';
 import { RoofTexture, ObjectType } from 'src/types';
 import { RoofUtil } from './RoofUtil';
-import { SolarPanelModel } from 'src/models/SolarPanelModel';
-import { UndoableMoveSolarPanelOnRoof } from 'src/undo/UndoableMove';
 import { useRoofTexture, useSolarPanelUndoable, useTransparent } from './hooks';
 
 enum RoofHandleType {
@@ -686,7 +684,11 @@ const GambrelRoof = ({
           const isFlat = Math.abs(leftRoof.z) < 0.1;
           return (
             <group key={i} name={`Roof segment ${i}`}>
-              <mesh castShadow={shadowEnabled && !transparent} receiveShadow={shadowEnabled}>
+              <mesh
+                castShadow={shadowEnabled && !transparent}
+                receiveShadow={shadowEnabled}
+                userData={{ simulation: true }}
+              >
                 <convexGeometry args={[points, isFlat ? arr[0].direction : direction, isFlat ? 1 : length]} />
                 <meshStandardMaterial
                   map={texture}

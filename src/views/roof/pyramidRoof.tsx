@@ -1,14 +1,14 @@
 /*
- * @Copyright 2021-2022. Institute for Future Intelligence, Inc.
+ * @Copyright 2022. Institute for Future Intelligence, Inc.
  */
 
 import React, { useEffect, useMemo, useRef, useState } from 'react';
 import { PyramidRoofModel, RoofModel } from 'src/models/RoofModel';
 import { useStore } from 'src/stores/common';
-import { DoubleSide, Euler, Mesh, Raycaster, Texture, Vector2, Vector3 } from 'three';
+import { Euler, Mesh, Raycaster, Vector2, Vector3 } from 'three';
 import * as Selector from 'src/stores/selector';
 import { WallModel } from 'src/models/WallModel';
-import { Box, Line, Plane, Sphere } from '@react-three/drei';
+import { Line, Plane, Sphere } from '@react-three/drei';
 import { ConvexGeometry } from 'src/js/ConvexGeometry.js';
 import { HALF_PI, HALF_PI_Z_EULER, TWO_PI } from 'src/constants';
 import { useStoreRef } from 'src/stores/commonRef';
@@ -16,7 +16,6 @@ import { useThree } from '@react-three/fiber';
 import { Point2 } from 'src/models/Point2';
 import { Util } from 'src/Util';
 import { ObjectType, RoofTexture } from 'src/types';
-import { CSG } from 'three-csg-ts';
 import {
   ConvexGeoProps,
   handleContextMenu,
@@ -605,7 +604,12 @@ const RoofSegment = ({
   }
 
   return (
-    <mesh ref={meshRef} castShadow={shadowEnabled && !transparent} receiveShadow={shadowEnabled}>
+    <mesh
+      ref={meshRef}
+      castShadow={shadowEnabled && !transparent}
+      receiveShadow={shadowEnabled}
+      userData={{ simulation: true }}
+    >
       <meshStandardMaterial
         map={texture}
         color={textureType === RoofTexture.Default || textureType === RoofTexture.NoTexture ? color : 'white'}

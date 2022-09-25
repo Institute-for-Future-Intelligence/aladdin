@@ -1,8 +1,8 @@
 /*
- * @Copyright 2021-2022. Institute for Future Intelligence, Inc.
+ * @Copyright 2022. Institute for Future Intelligence, Inc.
  */
 import { Line, Plane, Sphere } from '@react-three/drei';
-import { ThreeEvent, useThree } from '@react-three/fiber';
+import { useThree } from '@react-three/fiber';
 import React, { useEffect, useMemo, useRef, useState } from 'react';
 import { HALF_PI } from 'src/constants';
 import { Point2 } from 'src/models/Point2';
@@ -445,6 +445,7 @@ const HipRoof = ({
               name={`Roof segment ${i}`}
               castShadow={shadowEnabled && !transparent}
               receiveShadow={shadowEnabled}
+              userData={{ simulation: true }}
             >
               <convexGeometry args={[points, isFlat ? arr[0].direction : direction, isFlat ? 1 : length]} />
               <meshStandardMaterial

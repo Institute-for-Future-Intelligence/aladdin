@@ -1,5 +1,5 @@
 /*
- * @Copyright 2021-2022. Institute for Future Intelligence, Inc.
+ * @Copyright 2022. Institute for Future Intelligence, Inc.
  */
 
 import { Line, Plane, Sphere } from '@react-three/drei';
@@ -9,13 +9,11 @@ import { HALF_PI } from 'src/constants';
 import { ElementModel } from 'src/models/ElementModel';
 import { Point2 } from 'src/models/Point2';
 import { MansardRoofModel } from 'src/models/RoofModel';
-import { SolarPanelModel } from 'src/models/SolarPanelModel';
 import { WallModel } from 'src/models/WallModel';
 import { useStore } from 'src/stores/common';
 import { useStoreRef } from 'src/stores/commonRef';
 import * as Selector from 'src/stores/selector';
 import { RoofTexture } from 'src/types';
-import { UndoableMoveSolarPanelOnRoof } from 'src/undo/UndoableMove';
 import { UnoableResizeGambrelAndMansardRoofRidge } from 'src/undo/UndoableResize';
 import { Util } from 'src/Util';
 import { DoubleSide, Euler, Mesh, Vector2, Vector3 } from 'three';
@@ -570,7 +568,11 @@ const MansardRoof = ({
           const isFlat = Math.abs(leftRoof.z) < 0.1;
           return (
             <group key={i} name={`Roof segment ${i}`}>
-              <mesh castShadow={shadowEnabled && !transparent} receiveShadow={shadowEnabled}>
+              <mesh
+                castShadow={shadowEnabled && !transparent}
+                receiveShadow={shadowEnabled}
+                userData={{ simulation: true }}
+              >
                 <convexGeometry args={[points, isFlat ? arr[0].direction : direction, isFlat ? 1 : length]} />
                 <meshStandardMaterial
                   color={textureType === RoofTexture.Default || textureType === RoofTexture.NoTexture ? color : 'white'}
