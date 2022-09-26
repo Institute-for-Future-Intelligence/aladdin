@@ -326,7 +326,7 @@ const Wall = ({
     const wallShape = new Shape();
     drawRectangle(wallShape, lx, lz, 0, 0, 0, 0);
     return wallShape;
-  }, [lx, lz]);
+  }, [lx, lz, elementsOnWall]);
 
   const topWallShape = useMemo(() => {
     const shape = new Shape();
