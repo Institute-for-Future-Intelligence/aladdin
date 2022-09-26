@@ -1679,6 +1679,7 @@ const Foundation = ({
     grabRef.current = null;
     setCommonStore((state) => {
       state.resizeHandleType = null;
+      state.moveHandleType = null;
     });
   };
 

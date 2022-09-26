@@ -887,78 +887,77 @@ const Ground = () => {
     useStoreRef.setState((state) => {
       state.setEnableOrbitController(true);
     });
-    if (grabRef.current) {
-      const elem = getElementById(grabRef.current.id);
-      if (elem) {
-        // adding foundation end point
-        if (isSettingFoundationEndPointRef.current) {
-          isSettingFoundationStartPointRef.current = false;
-          isSettingFoundationEndPointRef.current = false;
-          setCommonStore((state) => {
-            state.addedFoundationId = null;
-            state.updateSceneRadius();
-          });
-          if (elem.lx <= 0.1 || elem.ly <= 0.1) {
-            removeElementById(elem.id, false);
-          } else {
-            const undoableAdd = {
-              name: 'Add',
-              timestamp: Date.now(),
-              addedElement: elem,
-              undo: () => {
-                removeElementById(undoableAdd.addedElement.id, false);
-                updateSceneRadius();
-              },
-              redo: () => {
-                setCommonStore((state) => {
-                  state.elements.push(undoableAdd.addedElement);
-                  state.selectedElement = undoableAdd.addedElement;
-                  state.updateSceneRadius();
-                });
-              },
-            } as UndoableAdd;
-            addUndoable(undoableAdd);
-          }
+    if (!grabRef.current) return;
+    const elem = getElementById(grabRef.current.id);
+    if (elem) {
+      // adding foundation end point
+      if (isSettingFoundationEndPointRef.current) {
+        isSettingFoundationStartPointRef.current = false;
+        isSettingFoundationEndPointRef.current = false;
+        setCommonStore((state) => {
+          state.addedFoundationId = null;
+          state.updateSceneRadius();
+        });
+        if (elem.lx <= 0.1 || elem.ly <= 0.1) {
+          removeElementById(elem.id, false);
+        } else {
+          const undoableAdd = {
+            name: 'Add',
+            timestamp: Date.now(),
+            addedElement: elem,
+            undo: () => {
+              removeElementById(undoableAdd.addedElement.id, false);
+              updateSceneRadius();
+            },
+            redo: () => {
+              setCommonStore((state) => {
+                state.elements.push(undoableAdd.addedElement);
+                state.selectedElement = undoableAdd.addedElement;
+                state.updateSceneRadius();
+              });
+            },
+          } as UndoableAdd;
+          addUndoable(undoableAdd);
         }
-        // adding cuboid end point
-        else if (isSettingCuboidEndPointRef.current) {
-          isSettingCuboidStartPointRef.current = false;
-          isSettingCuboidEndPointRef.current = false;
-          setCommonStore((state) => {
-            state.addedCuboidId = null;
-            state.updateSceneRadius();
-          });
-          if (elem.lx <= 0.1 || elem.ly <= 0.1) {
-            removeElementById(elem.id, false);
-          } else {
-            const undoableAdd = {
-              name: 'Add',
-              timestamp: Date.now(),
-              addedElement: elem,
-              undo: () => {
-                removeElementById(undoableAdd.addedElement.id, false);
-                updateSceneRadius();
-              },
-              redo: () => {
-                setCommonStore((state) => {
-                  state.elements.push(undoableAdd.addedElement);
-                  state.selectedElement = undoableAdd.addedElement;
-                  state.updateSceneRadius();
-                });
-              },
-            } as UndoableAdd;
-            addUndoable(undoableAdd);
-          }
+      }
+      // adding cuboid end point
+      else if (isSettingCuboidEndPointRef.current) {
+        isSettingCuboidStartPointRef.current = false;
+        isSettingCuboidEndPointRef.current = false;
+        setCommonStore((state) => {
+          state.addedCuboidId = null;
+          state.updateSceneRadius();
+        });
+        if (elem.lx <= 0.1 || elem.ly <= 0.1) {
+          removeElementById(elem.id, false);
+        } else {
+          const undoableAdd = {
+            name: 'Add',
+            timestamp: Date.now(),
+            addedElement: elem,
+            undo: () => {
+              removeElementById(undoableAdd.addedElement.id, false);
+              updateSceneRadius();
+            },
+            redo: () => {
+              setCommonStore((state) => {
+                state.elements.push(undoableAdd.addedElement);
+                state.selectedElement = undoableAdd.addedElement;
+                state.updateSceneRadius();
+              });
+            },
+          } as UndoableAdd;
+          addUndoable(undoableAdd);
         }
-        // handling editing events
-        else {
-          if (useStore.getState().resizeHandleType) {
-            resizeElementOnPointerUp(elem);
-          } else if (useStore.getState().rotateHandleType) {
-            rotateElementOnPointerUp(elem);
-          } else if (useStore.getState().moveHandleType) {
-            moveElementOnPointerUp(elem, e);
-          }
+      }
+      // handling editing events
+      else {
+        if (useStore.getState().resizeHandleType) {
+          resizeElementOnPointerUp(elem);
+        } else if (useStore.getState().rotateHandleType) {
+          rotateElementOnPointerUp(elem);
+        } else if (useStore.getState().moveHandleType) {
+          moveElementOnPointerUp(elem, e);
         }
       }
     }
