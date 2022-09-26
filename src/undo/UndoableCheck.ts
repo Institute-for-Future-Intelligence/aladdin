@@ -10,3 +10,10 @@ export interface UndoableCheck extends Undoable {
   selectedElementId?: string;
   selectedElementType?: ObjectType;
 }
+
+export interface UndoableCheckWindowShutter extends Undoable {
+  selectedElementId: string;
+  selectedElementType: ObjectType;
+  oldShow: boolean[];
+  newShow: boolean[];
+}

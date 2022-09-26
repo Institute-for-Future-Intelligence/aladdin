@@ -875,10 +875,17 @@ export const i18n_es = {
       AllWindowsOnWall: 'All Windows on the Same Wall',
       AllWindowsAboveFoundation: 'All Windows Above the Same Foundation',
       AllWindows: 'All Windows',
+      Mullion: 'Mullion',
       MullionWidth: 'Mullion Width',
       MullionSpacing: 'Mullion Spacing',
       Tint: 'Tint',
       Opacity: 'Opacity',
+      Shutter: 'Shutter',
+      LeftShutter: 'Left Shutter',
+      RightShutter: 'Right Shutter',
+      BothShutters: 'Both Shutters',
+      ShutterWidth: 'Relative Width',
+      ShutterColor: 'Shutter Color',
     },
 
     siteInfoPanel: {

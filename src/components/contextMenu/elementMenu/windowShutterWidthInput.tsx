@@ -1,9 +1,9 @@
 /*
- * @Copyright 2021-2022. Institute for Future Intelligence, Inc.
+ * @Copyright 2022. Institute for Future Intelligence, Inc.
  */
 
 import React, { useEffect, useRef, useState } from 'react';
-import { Button, Col, Modal, Radio, Row, Space } from 'antd';
+import { Button, Col, InputNumber, Modal, Radio, Row, Space } from 'antd';
 import Draggable, { DraggableBounds, DraggableData, DraggableEvent } from 'react-draggable';
 import { useStore } from 'src/stores/common';
 import * as Selector from 'src/stores/selector';
@@ -11,13 +11,11 @@ import { ObjectType, Scope } from 'src/types';
 import i18n from 'src/i18n/i18n';
 import { UndoableChange } from 'src/undo/UndoableChange';
 import { UndoableChangeGroup } from 'src/undo/UndoableChangeGroup';
-import { CompactPicker } from 'react-color';
 import { WindowModel } from 'src/models/WindowModel';
 
-const WindowTintSelection = ({ setDialogVisible }: { setDialogVisible: (b: boolean) => void }) => {
-  const setCommonStore = useStore(Selector.set);
+const WindowShutterWidthInput = ({ setDialogVisible }: { setDialogVisible: (b: boolean) => void }) => {
   const language = useStore(Selector.language);
-  const windowElement = useStore(Selector.selectedElement) as WindowModel;
+  const selectedElement = useStore(Selector.selectedElement) as WindowModel;
   const addUndoable = useStore(Selector.addUndoable);
   const windowActionScope = useStore(Selector.windowActionScope);
   const setWindowActionScope = useStore(Selector.setWindowActionScope);
@@ -25,100 +23,105 @@ const WindowTintSelection = ({ setDialogVisible }: { setDialogVisible: (b: boole
   const setApplyCount = useStore(Selector.setApplyCount);
   const revertApply = useStore(Selector.revertApply);
   const getElementById = useStore(Selector.getElementById);
+  const setCommonStore = useStore(Selector.set);
 
-  const [selectedTint, setSelectedTint] = useState<string>(windowElement?.tint ?? '#73D8FF');
+  const windowModel = useStore((state) => {
+    for (const e of state.elements) {
+      if (e.id === selectedElement.id) {
+        return e as WindowModel;
+      }
+    }
+    return null;
+  });
+
+  const [input, setInput] = useState<number>(windowModel?.shutter.width ?? 0.5);
   const [dragEnabled, setDragEnabled] = useState<boolean>(false);
   const [bounds, setBounds] = useState<DraggableBounds>({ left: 0, top: 0, bottom: 0, right: 0 } as DraggableBounds);
   const dragRef = useRef<HTMLDivElement | null>(null);
-  const okButtonRef = useRef<HTMLElement | null>(null);
-
-  useEffect(() => {
-    okButtonRef.current?.focus();
-  });
 
   const lang = { lng: language };
 
   useEffect(() => {
-    if (windowElement) {
-      setSelectedTint(windowElement?.tint ?? '#73D8FF');
+    if (windowModel) {
+      setInput(windowModel?.shutter.width ?? 0.5);
     }
-  }, [windowElement]);
+  }, [windowModel]);
 
-  const updateTintById = (id: string, tint: string) => {
+  const updateById = (id: string, input: number) => {
     setCommonStore((state) => {
       for (const e of state.elements) {
         if (e.id === id) {
-          if (!e.locked) {
-            (e as WindowModel).tint = tint;
-          }
+          (e as WindowModel).shutter.width = input;
           break;
         }
       }
     });
   };
 
-  const updateTintInMap = (map: Map<string, string>, tint: string) => {
+  const undoInMap = (map: Map<string, number>) => {
+    for (const [id, val] of map.entries()) {
+      updateById(id, val);
+    }
+  };
+
+  const updateInMap = (map: Map<string, number>, value: number) => {
     for (const id of map.keys()) {
-      updateTintById(id, tint as string);
+      updateById(id, value);
     }
   };
 
-  const undoTintInMap = (map: Map<string, string>) => {
-    for (const [id, tint] of map.entries()) {
-      updateTintById(id, tint as string);
-    }
-  };
-
-  const setTint = (value: string) => {
-    if (!windowElement) return;
+  const setValue = (value: number) => {
+    if (!windowModel) return;
     switch (windowActionScope) {
       case Scope.AllObjectsOfThisType:
-        const oldTintsAll = new Map<string, string>();
-        for (const elem of useStore.getState().elements) {
-          if (elem.type === ObjectType.Window && !elem.locked) {
-            oldTintsAll.set(elem.id, (elem as WindowModel).tint ?? '#73D8FF');
+        const oldValuesAll = new Map<string, number | undefined>();
+        setCommonStore((state) => {
+          for (const e of state.elements) {
+            if (e.type === ObjectType.Window && !e.locked) {
+              oldValuesAll.set(e.id, (e as WindowModel).shutter.width);
+              (e as WindowModel).shutter.width = value;
+            }
           }
-        }
+        });
         const undoableChangeAll = {
-          name: 'Set Tint for All Windows',
+          name: 'Set Window Shutter Width for All Windows',
           timestamp: Date.now(),
-          oldValues: oldTintsAll,
+          oldValues: oldValuesAll,
           newValue: value,
           undo: () => {
-            undoTintInMap(undoableChangeAll.oldValues as Map<string, string>);
+            undoInMap(undoableChangeAll.oldValues as Map<string, number>);
           },
           redo: () => {
-            updateTintInMap(undoableChangeAll.oldValues as Map<string, string>, undoableChangeAll.newValue as string);
+            updateInMap(undoableChangeAll.oldValues as Map<string, number>, undoableChangeAll.newValue as number);
           },
         } as UndoableChangeGroup;
         addUndoable(undoableChangeAll);
-        updateTintInMap(oldTintsAll, value);
         setApplyCount(applyCount + 1);
         break;
       case Scope.OnlyThisSide:
-        if (windowElement.parentId) {
-          const oldValues = new Map<string, string>();
+        if (windowModel.parentId) {
+          const oldValues = new Map<string, number>();
           setCommonStore((state) => {
             for (const elem of state.elements) {
-              if (elem.type === ObjectType.Window && elem.parentId === windowElement.parentId && !elem.locked) {
-                oldValues.set(elem.id, (elem as WindowModel).tint);
-                (elem as WindowModel).tint = value;
+              if (elem.type === ObjectType.Window && elem.parentId === windowModel.parentId && !elem.locked) {
+                oldValues.set(elem.id, (elem as WindowModel).shutter.width);
+                (elem as WindowModel).shutter.width = value;
               }
             }
           });
           const undoableChangeOnSameWall = {
-            name: 'Set Tint for All Windows On the Same Wall',
+            name: 'Set Window Shutter Width for All Windows On the Same Wall',
             timestamp: Date.now(),
             oldValues: oldValues,
             newValue: value,
-            groupId: windowElement.parentId,
+            groupId: windowModel.parentId,
             undo: () => {
-              undoTintInMap(undoableChangeOnSameWall.oldValues as Map<string, string>);
+              undoInMap(undoableChangeOnSameWall.oldValues as Map<string, number>);
             },
             redo: () => {
-              updateTintInMap(
-                undoableChangeOnSameWall.oldValues as Map<string, string>,
-                undoableChangeOnSameWall.newValue as string,
+              updateInMap(
+                undoableChangeOnSameWall.oldValues as Map<string, number>,
+                undoableChangeOnSameWall.newValue as number,
               );
             },
           } as UndoableChangeGroup;
@@ -127,60 +130,56 @@ const WindowTintSelection = ({ setDialogVisible }: { setDialogVisible: (b: boole
         }
         break;
       case Scope.AllObjectsOfThisTypeAboveFoundation:
-        if (windowElement.foundationId) {
-          const oldTintsAboveFoundation = new Map<string, string>();
-          for (const elem of useStore.getState().elements) {
-            if (
-              elem.type === ObjectType.Window &&
-              elem.foundationId === windowElement.foundationId &&
-              !windowElement.locked
-            ) {
-              oldTintsAboveFoundation.set(elem.id, (elem as WindowModel).tint ?? '#73D8FF');
+        if (windowModel.foundationId) {
+          const oldValuesAboveFoundation = new Map<string, number | undefined>();
+          setCommonStore((state) => {
+            for (const elem of state.elements) {
+              if (elem.type === ObjectType.Window && elem.foundationId === windowModel.foundationId && !elem.locked) {
+                oldValuesAboveFoundation.set(elem.id, (elem as WindowModel).shutter.width);
+                (elem as WindowModel).shutter.width = value;
+              }
             }
-          }
+          });
           const undoableChangeAboveFoundation = {
-            name: 'Set Tint for All Windows Above Foundation',
+            name: 'Set Window Shutter Width for All Windows Above Foundation',
             timestamp: Date.now(),
-            oldValues: oldTintsAboveFoundation,
+            oldValues: oldValuesAboveFoundation,
             newValue: value,
-            groupId: windowElement.foundationId,
+            groupId: windowModel.foundationId,
             undo: () => {
-              undoTintInMap(undoableChangeAboveFoundation.oldValues as Map<string, string>);
+              undoInMap(undoableChangeAboveFoundation.oldValues as Map<string, number>);
             },
             redo: () => {
-              if (undoableChangeAboveFoundation.groupId) {
-                updateTintInMap(
-                  undoableChangeAboveFoundation.oldValues as Map<string, string>,
-                  undoableChangeAboveFoundation.newValue as string,
-                );
-              }
+              updateInMap(
+                undoableChangeAboveFoundation.oldValues as Map<string, number>,
+                undoableChangeAboveFoundation.newValue as number,
+              );
             },
           } as UndoableChangeGroup;
           addUndoable(undoableChangeAboveFoundation);
-          updateTintInMap(oldTintsAboveFoundation, value);
           setApplyCount(applyCount + 1);
         }
         break;
       default:
-        if (windowElement) {
-          const updatedWindow = getElementById(windowElement.id) as WindowModel;
-          const oldTint = (updatedWindow ? updatedWindow.tint : windowElement.tint) ?? '#73D8FF';
+        if (windowModel) {
+          const updatedWindow = getElementById(windowModel.id) as WindowModel;
+          const oldOverhangLength = updatedWindow.shutter.width ?? windowModel.shutter.width ?? 0.5;
           const undoableChange = {
-            name: 'Set Tint of Selected window',
+            name: 'Set Window Shutter Width',
             timestamp: Date.now(),
-            oldValue: oldTint,
+            oldValue: oldOverhangLength,
             newValue: value,
-            changedElementId: windowElement.id,
-            changedElementType: windowElement.type,
+            changedElementId: windowModel.id,
+            changedElementType: windowModel.type,
             undo: () => {
-              updateTintById(undoableChange.changedElementId, undoableChange.oldValue as string);
+              updateById(undoableChange.changedElementId, undoableChange.oldValue as number);
             },
             redo: () => {
-              updateTintById(undoableChange.changedElementId, undoableChange.newValue as string);
+              updateById(undoableChange.changedElementId, undoableChange.newValue as number);
             },
           } as UndoableChange;
           addUndoable(undoableChange);
-          updateTintById(windowElement.id, value);
+          updateById(windowModel.id, value);
           setApplyCount(applyCount + 1);
         }
     }
@@ -200,9 +199,7 @@ const WindowTintSelection = ({ setDialogVisible }: { setDialogVisible: (b: boole
   };
 
   const close = () => {
-    if (windowElement?.tint) {
-      setSelectedTint(windowElement.tint);
-    }
+    setInput(windowModel?.shutter.width ?? 0.5);
     setDialogVisible(false);
   };
 
@@ -212,22 +209,19 @@ const WindowTintSelection = ({ setDialogVisible }: { setDialogVisible: (b: boole
   };
 
   const handleOk = () => {
-    const updatedRoof = getElementById(windowElement.id) as WindowModel;
-    if (updatedRoof && updatedRoof.tint !== selectedTint) {
-      setTint(selectedTint);
-    }
+    setValue(input);
     setDialogVisible(false);
     setApplyCount(0);
   };
 
   const handleApply = () => {
-    setTint(selectedTint);
+    setValue(input);
   };
 
   return (
     <>
       <Modal
-        width={640}
+        width={550}
         visible={true}
         title={
           <div
@@ -235,7 +229,7 @@ const WindowTintSelection = ({ setDialogVisible }: { setDialogVisible: (b: boole
             onMouseOver={() => setDragEnabled(true)}
             onMouseOut={() => setDragEnabled(false)}
           >
-            {i18n.t('roofMenu.tint', lang)}
+            {i18n.t('windowMenu.ShutterWidth', lang)}
           </div>
         }
         footer={[
@@ -245,7 +239,7 @@ const WindowTintSelection = ({ setDialogVisible }: { setDialogVisible: (b: boole
           <Button key="Cancel" onClick={handleCancel}>
             {i18n.t('word.Cancel', lang)}
           </Button>,
-          <Button key="OK" type="primary" ref={okButtonRef} onClick={handleOk}>
+          <Button key="OK" type="primary" onClick={handleOk}>
             {i18n.t('word.OK', lang)}
           </Button>,
         ]}
@@ -260,18 +254,26 @@ const WindowTintSelection = ({ setDialogVisible }: { setDialogVisible: (b: boole
         )}
       >
         <Row gutter={6}>
-          <Col className="gutter-row" span={11}>
-            <CompactPicker
-              color={selectedTint ?? windowElement?.tint ?? '#73D8FF'}
-              onChangeComplete={(colorResult) => {
-                setSelectedTint(colorResult.hex);
-              }}
+          <Col className="gutter-row" span={6}>
+            <InputNumber
+              min={0}
+              max={0.5}
+              style={{ width: 120 }}
+              step={0.01}
+              precision={2}
+              value={input}
+              formatter={(a) => Number(a).toFixed(2)}
+              onChange={(value) => setInput(value)}
+              onPressEnter={handleOk}
             />
+            <div style={{ paddingTop: '20px', textAlign: 'left', fontSize: '11px' }}>
+              {i18n.t('word.Range', lang)}: [0, 0.5]
+            </div>
           </Col>
           <Col
             className="gutter-row"
             style={{ border: '2px dashed #ccc', paddingTop: '8px', paddingLeft: '12px', paddingBottom: '8px' }}
-            span={13}
+            span={16}
           >
             <Radio.Group onChange={(e) => setWindowActionScope(e.target.value)} value={windowActionScope}>
               <Space direction="vertical">
@@ -290,4 +292,4 @@ const WindowTintSelection = ({ setDialogVisible }: { setDialogVisible: (b: boole
   );
 };
 
-export default WindowTintSelection;
+export default WindowShutterWidthInput;

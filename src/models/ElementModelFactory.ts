@@ -45,6 +45,7 @@ import { ParabolicDishModel } from './ParabolicDishModel';
 import { FresnelReflectorModel } from './FresnelReflectorModel';
 import { HeliostatModel } from './HeliostatModel';
 import { DoorModel } from './DoorModel';
+import { defaultShutter } from 'src/views/window/window';
 
 export class ElementModelFactory {
   static makeHuman(parentId: string, x: number, y: number, z?: number) {
@@ -478,6 +479,7 @@ export class ElementModelFactory {
       lx: 0,
       ly: parent.ly,
       lz: 0,
+      shutter: defaultShutter,
       mullionWidth: 0.06,
       mullionSpacing: 1,
       selected: true,

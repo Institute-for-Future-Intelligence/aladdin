@@ -555,6 +555,7 @@ export class ElementModelCloner {
       foundationId: foundationId,
       tint: window.tint,
       opacity: window.opacity,
+      shutter: { ...window.shutter },
     } as WindowModel;
   }
 

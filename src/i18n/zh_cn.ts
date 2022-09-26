@@ -857,10 +857,17 @@ export const i18n_zh_cn = {
       AllWindowsOnWall: '同一面墙上所有的窗户',
       AllWindowsAboveFoundation: '同一地基上所有的窗户',
       AllWindows: '所有的窗户',
+      Mullion: '直棂',
       MullionWidth: '直棂宽度',
       MullionSpacing: '直棂间距',
       Tint: '着色',
       Opacity: '不透明度',
+      Shutter: '百叶窗',
+      LeftShutter: '左侧百叶窗',
+      RightShutter: '右侧百叶窗',
+      BothShutters: '两侧百叶窗',
+      ShutterWidth: '相对宽度',
+      ShutterColor: '百叶窗颜色',
     },
 
     siteInfoPanel: {

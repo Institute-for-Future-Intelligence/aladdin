@@ -9,4 +9,12 @@ export interface WindowModel extends ElementModel {
   mullionSpacing: number;
   opacity: number;
   tint: string;
+  shutter: Shutter;
+}
+
+export interface Shutter {
+  showLeft: boolean;
+  showRight: boolean;
+  color: string;
+  width: number;
 }

@@ -874,10 +874,17 @@ export const i18n_tr = {
       AllWindowsOnWall: 'Aynı Duvardaki Tüm Pencereler',
       AllWindowsAboveFoundation: 'Aynı Temelin Üzerindeki Tüm Pencereler',
       AllWindows: 'Tüm Pencereler',
+      Mullion: 'Mullion',
       MullionWidth: 'Tiriz Genişliği',
       MullionSpacing: 'Tiriz Aralığı',
       Tint: 'Ton',
       Opacity: 'Opaklık',
+      Shutter: 'Shutter',
+      LeftShutter: 'Left Shutter',
+      RightShutter: 'Right Shutter',
+      BothShutters: 'Both Shutters',
+      ShutterWidth: 'Relative Width',
+      ShutterColor: 'Shutter Color',
     },
 
     siteInfoPanel: {
