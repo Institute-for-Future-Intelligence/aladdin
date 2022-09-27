@@ -110,7 +110,7 @@ const WindowShutterSubMenu = ({ windowId }: { windowId: string }) => {
         <SubMenu key={'window-shutter'} title={i18n.t('windowMenu.Shutter', lang)} style={{ paddingLeft: '24px' }}>
           <Menu.Item key={'left-shutter'}>
             <Checkbox
-              checked={window ? window?.shutter.showLeft : false}
+              checked={window ? window?.shutter?.showLeft : false}
               onChange={(e) => {
                 const checked = e.target.checked;
                 addUndoable(checked, ShutterSide.left);

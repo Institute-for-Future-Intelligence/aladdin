@@ -245,7 +245,7 @@ const WindowShutterColorSelection = ({ setDialogVisible }: { setDialogVisible: (
             onMouseOver={() => setDragEnabled(true)}
             onMouseOut={() => setDragEnabled(false)}
           >
-            {i18n.t('roofMenu.ShutterColor', lang)}
+            {i18n.t('windowMenu.ShutterColor', lang)}
           </div>
         }
         footer={[
