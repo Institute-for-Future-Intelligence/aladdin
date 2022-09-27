@@ -1373,20 +1373,19 @@ const Wall = ({
           {wallStructure === WallStructure.Stud && wallStuds()}
 
           {/* wireFrame */}
-          {wallStructure === WallStructure.Default ||
-            (locked && selected && (
-              <WallWireFrame
-                lineColor={selected && locked ? LOCKED_ELEMENT_SELECTION_COLOR : lineColor}
-                lineWidth={selected && locked ? 2 : lineWidth}
-                x={hx}
-                z={hz}
-                leftHeight={leftRoofHeight}
-                rightHeight={rightRoofHeight}
-                center={centerRoofHeight}
-                centerLeft={centerLeftRoofHeight}
-                centerRight={centerRightRoofHeight}
-              />
-            ))}
+          {(wallStructure === WallStructure.Default || (locked && selected)) && (
+            <WallWireFrame
+              lineColor={selected && locked ? LOCKED_ELEMENT_SELECTION_COLOR : lineColor}
+              lineWidth={selected && locked ? 2 : lineWidth}
+              x={hx}
+              z={hz}
+              leftHeight={leftRoofHeight}
+              rightHeight={rightRoofHeight}
+              center={centerRoofHeight}
+              centerLeft={centerLeftRoofHeight}
+              centerRight={centerRightRoofHeight}
+            />
+          )}
 
           {/* handles */}
           {selected && !locked && <WallResizeHandleWarpper x={hx} z={hz} id={id} highLight={highLight} />}

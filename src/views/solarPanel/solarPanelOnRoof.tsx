@@ -12,6 +12,7 @@ import { ThreeEvent, useThree } from '@react-three/fiber';
 import {
   HALF_PI,
   HIGHLIGHT_HANDLE_COLOR,
+  LOCKED_ELEMENT_SELECTION_COLOR,
   MOVE_HANDLE_RADIUS,
   ORIGIN_VECTOR2,
   RESIZE_HANDLE_COLOR,
@@ -1070,6 +1071,24 @@ const SolarPanelOnRoof = ({
               />
             );
           })}
+
+        {selected && locked && (
+          <Line
+            name={'Selection highlight lines'}
+            userData={{ unintersectable: true }}
+            points={[
+              [-hx, -hy, 0],
+              [-hx, hy, 0],
+              [hx, hy, 0],
+              [hx, -hy, 0],
+              [-hx, -hy, 0],
+            ]}
+            castShadow={false}
+            receiveShadow={false}
+            lineWidth={2}
+            color={LOCKED_ELEMENT_SELECTION_COLOR}
+          />
+        )}
       </group>
 
       {/* rotate and tilt handles */}
