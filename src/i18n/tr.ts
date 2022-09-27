@@ -365,6 +365,7 @@ export const i18n_tr = {
         SolarCanopyFormFactors: 'Solar Gölgelik Şekil Etkileri',
         SolarCanopyOverBleachers: 'Açık Tirübün Üzeri Solar Gölgelik',
         SolarBusStop: 'Solar Otobüs Durağı',
+        Agrivoltaics: 'Agrivoltaics',
         VegetativeBuffer: 'Bitkisel Tampon',
         FixedSolarPanelArraysFraminghamMA: 'Framingham Şehrinde Sabit Güneş Paneli Dizileri',
         SolarPanelsOverCanalBakersfieldCA: 'Bakersfield Şehrinde Kanal Üzerindeki Varsayımsal Güneş Panelleri',

@@ -1,7 +1,7 @@
 {
-  "docid": "sb8WjDaaiVp9MpvaKhHxCk",
-  "time": "09/25/2022 06:33 pm",
-  "timestamp": 1664145204805,
+  "docid": "39zZgziY5GAWqNka3134f1",
+  "time": "09/25/2022 06:42 pm",
+  "timestamp": 1664145746090,
   "userid": "QWecNcxhyvP6j6sBN11hBsfZDau1",
   "owner": null,
   "email": null,
@@ -741,6 +741,28 @@
       "parentId": "gczoe9MamkUMzTbQUC2KQN",
       "id": "jLd4TSy4qBALW8xPSrjLrR",
       "selected": false
+    },
+    {
+      "type": "Human",
+      "name": "Jack",
+      "cx": 4.64411436627465,
+      "cy": -1.2366715485892947,
+      "cz": 0.05000000074505806,
+      "lx": 0.6,
+      "lz": 1.8,
+      "normal": [
+        0,
+        1,
+        0
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "parentId": "of4fAMi2p9MKmo6JDUYnfX",
+      "id": "hYuqwxLBfjhYZrxPJu2S8L",
+      "selected": false
     }
   ],
   "view": {
@@ -780,13 +802,13 @@
     "showYearlyLightSensorPanel": false,
     "mapType": "hybrid",
     "cameraPosition": [
-      17.256511339831487,
-      -14.52289817809533,
-      4.810604327848873
+      18.488951441874196,
+      -11.785046125916915,
+      7.14950943337891
     ],
     "panCenter": [
-      0,
-      0,
+      -0.011430693478356556,
+      -0.017971518365828498,
       0
     ],
     "orthographic": false,
@@ -809,7 +831,8 @@
       "width": 600,
       "height": 400
     },
-    "showMapPanel": false
+    "showMapPanel": false,
+    "solarRadiationHeatMapMaxValue": 4
   },
   "evolutionMethod": 1,
   "solarPanelArrayLayoutParams": {
