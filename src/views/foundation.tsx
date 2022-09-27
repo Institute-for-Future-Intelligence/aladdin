@@ -353,7 +353,7 @@ const Foundation = ({
   };
 
   const setSingleFoundationBuildingResizer = () => {
-    let maxHeight = 1;
+    let maxHeight = 3;
     for (const elem of useStore.getState().elements) {
       if (
         (elem.type === ObjectType.Wall || elem.type === ObjectType.Roof) &&

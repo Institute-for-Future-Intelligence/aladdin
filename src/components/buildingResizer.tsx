@@ -15,6 +15,7 @@ import { WallModel } from 'src/models/WallModel';
 import Wireframe from './wireframe';
 import { UndoableMoveFoundationGroup } from 'src/undo/UndoableMove';
 import { UndoableResizeBuildingXY, UndoableResizeBuildingZ } from 'src/undo/UndoableResizeBuilding';
+import { useHandleSize } from 'src/views/wall/wallResizeHandleWrapper';
 
 interface BuildingResizerProps {
   foundationGroupSet: Set<string>;
@@ -223,7 +224,7 @@ const BuildingResizer = ({
   const updateFoundationGroupPosition = (map: Map<string, number[]>) => {
     setCommonStore((state) => {
       for (const elem of state.elements) {
-        if (elem.type === ObjectType.Foundation && map.has(elem.id)) {
+        if (map.has(elem.id)) {
           const pos = map.get(elem.id);
           if (pos) {
             elem.cx = pos[0];
@@ -240,7 +241,10 @@ const BuildingResizer = ({
   const addUndoableMove = () => {
     const map = new Map<string, number[]>();
     for (const elem of useStore.getState().elements) {
-      if (elem.type === ObjectType.Foundation && foundationGroupSet.has(elem.id)) {
+      if (
+        (elem.type === ObjectType.Foundation && foundationGroupSet.has(elem.id)) ||
+        foundationGroupSet.has(elem.parentId)
+      ) {
         map.set(elem.id, [elem.cx, elem.cy, elem.cz, elem.rotation[2]]);
       }
     }
@@ -431,14 +435,15 @@ const BuildingResizer = ({
     const resizerCenter = new Vector3(position.x, position.y);
     const r =
       Math.atan2(resizerCenter.x - p.x, p.y - resizerCenter.y) + (operation === Operation.RotateUpper ? 0 : Math.PI);
-    const offset = Math.abs(rotation) > Math.PI ? -Math.sign(rotation) * TWO_PI : 0;
+    const offset = Math.abs(r) > Math.PI ? -TWO_PI : 0;
     const rotateAngle = r + offset;
     const euler = new Euler(0, 0, rotateAngle);
+    const groupSize = foundatonRotationMapRef.current.size;
     setCommonStore((state) => {
       for (const elem of state.elements) {
         if (elem.type === ObjectType.Foundation && foundationGroupSet.has(elem.id)) {
           const oldCenter = foundatonRelPosMapRef.current.get(elem.id);
-          const oldRotation = foundatonRotationMapRef.current.get(elem.id);
+          const oldRotation = groupSize !== 1 ? foundatonRotationMapRef.current.get(elem.id) : 0;
           if (oldCenter && oldRotation !== undefined) {
             const newCenter = oldCenter.clone().applyEuler(euler);
             elem.cx = resizerCenter.x + newCenter.x;
@@ -446,8 +451,8 @@ const BuildingResizer = ({
             elem.rotation = [0, 0, oldRotation + rotateAngle];
           }
         }
-        if (elem.type === ObjectType.SolarPanel && foundationGroupSet.has(elem.parentId)) {
-          const oldRotation = foundatonRotationMapRef.current.get(elem.parentId);
+        if (foundationGroupSet.has(elem.parentId)) {
+          const oldRotation = groupSize !== 1 ? foundatonRotationMapRef.current.get(elem.parentId) : 0;
           if (oldRotation !== undefined) {
             elem.rotation = [0, 0, oldRotation + rotateAngle];
           }
@@ -587,6 +592,9 @@ const BuildingResizer = ({
           foundatonRotationMapRef.current.set(elem.id, elem.rotation[2]);
           foundatonOldDataMapRef.current.set(elem.id, [elem.cx, elem.cy, elem.cz, elem.rotation[2]]);
         }
+        if (foundationGroupSet.has(elem.parentId)) {
+          foundatonOldDataMapRef.current.set(elem.id, [elem.cx, elem.cy, elem.cz, elem.rotation[2]]);
+        }
       }
     }
   };
@@ -654,13 +662,12 @@ const BuildingResizer = ({
     }
   };
 
-  const handleRatio = Math.max(1, Math.max(hx, hy) / 4);
-  const handleSize = RESIZE_HANDLE_SIZE * handleRatio;
+  const handleSize = useHandleSize();
   const bottomHanldeZ = handleSize / 2;
   const topHanldeZ = height + bottomHanldeZ - handleSize / 2;
   const moveHanldeX = hx + handleSize;
   const moveHnadleY = hy + handleSize;
-  const resizeHandleY = moveHnadleY * 1.15;
+  const resizeHandleY = hy + handleSize * 4;
 
   return (
     <group name={'Building Resizer'} position={position} rotation={[0, 0, rotation]}>
