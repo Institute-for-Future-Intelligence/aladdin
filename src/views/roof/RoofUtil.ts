@@ -253,11 +253,9 @@ export class RoofUtil {
         const vertex = new Vector3((sp.lx / 2) * i, (sp.ly / 2) * j * i, 0);
         // has pole
         if (sp.rotation[0] === 0) {
-          vertex.applyEuler(new Euler(sp.tiltAngle, 0, sp.relativeAzimuth + foundation.rotation[2], 'ZXY')).add(center);
+          vertex.applyEuler(new Euler(sp.tiltAngle, 0, sp.relativeAzimuth, 'ZXY')).add(center);
         } else {
-          vertex
-            .applyEuler(new Euler(sp.rotation[0], sp.rotation[1], sp.rotation[2] + foundation.rotation[2], 'ZXY'))
-            .add(center);
+          vertex.applyEuler(new Euler(sp.rotation[0], sp.rotation[1], sp.rotation[2], 'ZXY')).add(center);
         }
         vertices.push(vertex);
       }
