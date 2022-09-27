@@ -156,18 +156,21 @@ const Window = ({
     }
   };
 
-  if (shutter === undefined) {
-    shutter = defaultShutter;
-    setCommonStore((state) => {
-      for (const e of state.elements) {
-        if (e.id === id) {
-          (e as WindowModel).shutter = defaultShutter;
-          break;
+  useEffect(() => {
+    if (shutter === undefined) {
+      shutter = defaultShutter;
+      setCommonStore((state) => {
+        for (const e of state.elements) {
+          if (e.id === id) {
+            (e as WindowModel).shutter = defaultShutter;
+            break;
+          }
         }
-      }
-    });
-  }
-  const shutterLength = useMemo(() => shutter.width * wlx, [wlx, shutter]);
+      });
+    }
+  }, []);
+
+  const shutterLength = useMemo(() => shutter?.width ?? 0.5 * wlx, [wlx, shutter]);
   const shutterPosX = useMemo(() => ((shutterLength + wlx) / 2) * 1.05, [wlx, shutterLength]);
 
   return (
@@ -194,14 +197,16 @@ const Window = ({
         />
       </group>
 
-      <Shutter
-        cx={shutterPosX}
-        lx={shutterLength}
-        lz={wlz}
-        color={shutter.color}
-        showLeft={shutter.showLeft}
-        showRight={shutter.showRight}
-      />
+      {shutter && (
+        <Shutter
+          cx={shutterPosX}
+          lx={shutterLength}
+          lz={wlz}
+          color={shutter.color}
+          showLeft={shutter.showLeft}
+          showRight={shutter.showRight}
+        />
+      )}
 
       <Plane
         args={[ly, wlz]}
