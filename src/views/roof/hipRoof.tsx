@@ -477,8 +477,10 @@ const HipRoof = ({
               setEnableIntersectionPlane(true);
               intersectionPlanePosition.set(ridgeLeftPoint.x, ridgeLeftPoint.y, h);
               if (foundation && currentWallArray[0]) {
-                const r = currentWallArray[0].relativeAngle;
-                intersectionPlaneRotation.set(-HALF_PI, 0, r, 'ZXY');
+                const dir = new Vector3().subVectors(ridgeLeftPoint, camera.position).normalize();
+                const rX = Math.atan2(dir.z, dir.y);
+                const rZ = currentWallArray[0].relativeAngle;
+                intersectionPlaneRotation.set(-HALF_PI + rX, 0, rZ, 'ZXY');
               }
               setRoofHandleType(RoofHandleType.Left);
               useStoreRef.getState().setEnableOrbitController(false);
@@ -510,8 +512,10 @@ const HipRoof = ({
               setEnableIntersectionPlane(true);
               intersectionPlanePosition.set(ridgeRightPoint.x, ridgeRightPoint.y, h);
               if (foundation && currentWallArray[0]) {
-                const r = currentWallArray[0].relativeAngle;
-                intersectionPlaneRotation.set(-HALF_PI, 0, r, 'ZXY');
+                const dir = new Vector3().subVectors(ridgeRightPoint, camera.position).normalize();
+                const rX = Math.atan2(dir.z, Math.hypot(dir.x, dir.y));
+                const rZ = currentWallArray[0].relativeAngle;
+                intersectionPlaneRotation.set(-HALF_PI + rX, 0, rZ, 'ZXY');
               }
               setRoofHandleType(RoofHandleType.Right);
               useStoreRef.getState().setEnableOrbitController(false);

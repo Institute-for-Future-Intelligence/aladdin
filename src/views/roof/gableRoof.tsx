@@ -938,8 +938,10 @@ const GableRoof = ({
               setShowIntersectionPlane(true);
               intersectionPlanePosition.set(ridgeLeftPointV3.x, ridgeLeftPointV3.y, h);
               if (foundation && currentWallArray[3]) {
-                const r = currentWallArray[3].relativeAngle;
-                intersectionPlaneRotation.set(-HALF_PI, 0, r, 'ZXY');
+                const dir = new Vector3().subVectors(ridgeLeftPointV3, camera.position).normalize();
+                const rX = Math.atan2(dir.z, Math.hypot(dir.x, dir.y));
+                const rZ = currentWallArray[3].relativeAngle;
+                intersectionPlaneRotation.set(-HALF_PI + rX, 0, rZ, 'ZXY');
               }
               setRoofHandleType(RoofHandleType.Left);
               useStoreRef.getState().setEnableOrbitController(false);
@@ -955,8 +957,10 @@ const GableRoof = ({
               setShowIntersectionPlane(true);
               intersectionPlanePosition.set(ridgeRightPointV3.x, ridgeRightPointV3.y, h);
               if (foundation && currentWallArray[1]) {
-                const r = currentWallArray[1].relativeAngle;
-                intersectionPlaneRotation.set(-HALF_PI, 0, r, 'ZXY');
+                const dir = new Vector3().subVectors(ridgeRightPointV3, camera.position).normalize();
+                const rX = Math.atan2(dir.z, Math.hypot(dir.x, dir.y));
+                const rZ = currentWallArray[1].relativeAngle;
+                intersectionPlaneRotation.set(-HALF_PI + rX, 0, rZ, 'ZXY');
               }
               setRoofHandleType(RoofHandleType.Right);
               useStoreRef.getState().setEnableOrbitController(false);

@@ -212,8 +212,10 @@ const MansardRoof = ({
     useStoreRef.getState().setEnableOrbitController(false);
     intersectionPlanePosition.set(handlePointV3.x, handlePointV3.y, h);
     if (foundation && wall) {
-      const r = wall.relativeAngle;
-      intersectionPlaneRotation.set(-HALF_PI, 0, r, 'ZXY');
+      const dir = new Vector3().subVectors(handlePointV3, camera.position).normalize();
+      const rX = Math.atan2(dir.z, Math.hypot(dir.x, dir.y));
+      const rZ = wall.relativeAngle;
+      intersectionPlaneRotation.set(-HALF_PI + rX, 0, rZ, 'ZXY');
     }
   };
 
