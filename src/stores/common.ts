@@ -1769,6 +1769,9 @@ export const useStore = create<CommonStoreState>(
               for (const e of state.elements) {
                 if (e.id === id && !e.locked) {
                   e.cx = cx;
+                  if (e.type === ObjectType.SolarPanel && (e as SolarPanelModel).parentType === ObjectType.Roof) {
+                    state.updateSolarPanelOnRoofFlag = !state.updateSolarPanelOnRoofFlag;
+                  }
                   break;
                 }
               }
@@ -1779,6 +1782,9 @@ export const useStore = create<CommonStoreState>(
               for (const e of state.elements) {
                 if (e.id === id && !e.locked) {
                   e.cy = cy;
+                  if (e.type === ObjectType.SolarPanel && (e as SolarPanelModel).parentType === ObjectType.Roof) {
+                    state.updateSolarPanelOnRoofFlag = !state.updateSolarPanelOnRoofFlag;
+                  }
                   break;
                 }
               }

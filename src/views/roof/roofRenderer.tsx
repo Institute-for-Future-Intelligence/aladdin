@@ -168,7 +168,7 @@ export const spBoundaryCheck = (solarPanelVertices: Vector3[], wallVertices: Poi
   if (RoofUtil.rooftopSPBoundaryCheck(solarPanelVertices, wallVertices)) {
     return true;
   } else {
-    if (useStore.getState().moveHandleType) {
+    if (useStore.getState().moveHandleType || useStore.getState().viewState.orthographic) {
       showError(i18n.t('message.MoveOutsideBoundaryCancelled', lang));
     } else if (useStore.getState().resizeHandleType) {
       showError(i18n.t('message.ResizingOutsideBoundaryCancelled', lang));
@@ -184,7 +184,7 @@ export const spCollisionCheck = (sp: SolarPanelModel, foundation: ElementModel, 
   if (RoofUtil.rooftopSPCollisionCheck(sp, foundation, spVertices)) {
     return true;
   } else {
-    if (useStore.getState().moveHandleType) {
+    if (useStore.getState().moveHandleType || useStore.getState().viewState.orthographic) {
       showError(i18n.t('message.MoveCancelledBecauseOfOverlap', lang));
     } else if (useStore.getState().resizeHandleType) {
       showError(i18n.t('message.ResizingCancelledBecauseOfOverlap', lang));

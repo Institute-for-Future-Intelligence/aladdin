@@ -21,6 +21,9 @@ import { SolarPanelModel } from './models/SolarPanelModel';
 import { Util } from './Util';
 import { ElementModel } from './models/ElementModel';
 import { FINE_GRID_RATIO } from './constants';
+import { RoofUtil } from './views/roof/RoofUtil';
+import { RoofModel } from './models/RoofModel';
+import { spBoundaryCheck, spCollisionCheck } from './views/roof/roofRenderer';
 
 export interface KeyboardListenerProps {
   canvas?: HTMLCanvasElement | null;
@@ -39,6 +42,7 @@ const KeyboardListener = ({ canvas, set2DView, resetView, zoomView }: KeyboardLi
   const orthographic = useStore(Selector.viewState.orthographic) ?? false;
   const autoRotate = useStore(Selector.viewState.autoRotate);
   const getSelectedElement = useStore(Selector.getSelectedElement);
+  const getElementById = useStore(Selector.getElementById);
   const copyElementById = useStore(Selector.copyElementById);
   const removeElementById = useStore(Selector.removeElementById);
   const pasteElements = useStore(Selector.pasteElementsByKey);
@@ -183,6 +187,26 @@ const KeyboardListener = ({ canvas, set2DView, resetView, zoomView }: KeyboardLi
     const clone = JSON.parse(JSON.stringify(elem)) as ElementModel;
     clone.cx = cx;
     clone.cy = cy;
+    if (elem.type === ObjectType.SolarPanel && (elem as SolarPanelModel).parentType === ObjectType.Roof) {
+      if (elem.parentId && elem.foundationId) {
+        const roof = getElementById(elem.parentId) as RoofModel;
+        const foundation = getElementById(elem.foundationId);
+        if (roof && foundation) {
+          const wall = getElementById(roof.wallsId[0]) as WallModel;
+          if (wall) {
+            const boundaryVertices = RoofUtil.getBoundaryVertices(roof.id, wall, roof.overhang);
+            const solarPanelVertices = RoofUtil.getSolarPanelVerticesOnRoof(clone as SolarPanelModel, foundation);
+            if (
+              !spBoundaryCheck(solarPanelVertices, boundaryVertices) ||
+              !spCollisionCheck(clone as SolarPanelModel, foundation, solarPanelVertices)
+            ) {
+              return false;
+            }
+          }
+        }
+      }
+      return true;
+    }
     if (overlapWithSibling(clone)) {
       showError(i18n.t('message.MoveCancelledBecauseOfOverlap', lang));
       return false;
