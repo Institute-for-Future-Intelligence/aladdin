@@ -698,6 +698,9 @@ export interface CommonStoreState {
   updateWallMapOnFoundationFlag: boolean;
   updateWallMapOnFoundation: () => void;
 
+  updateElementsOnWallFlag: boolean;
+  updateElementsOnWallFn: () => void;
+
   updateSolarPanelOnRoofFlag: boolean;
   updateSolarPanelOnRoofFn: () => void;
 
@@ -4406,6 +4409,7 @@ export const useStore = create<CommonStoreState>(
               });
               state.selectedElement = null;
               state.updateDesignInfo();
+              state.updateElementsOnWallFlag = !state.updateElementsOnWallFlag;
             });
           },
           removeElementsByType(type) {
@@ -4953,6 +4957,7 @@ export const useStore = create<CommonStoreState>(
                           switch (Util.checkElementOnWallState(e, newParent)) {
                             case ElementState.Valid:
                               approved = true;
+                              state.updateElementsOnWallFlag = !state.updateElementsOnWallFlag;
                               break;
                             case ElementState.OverLap:
                               showError(i18n.t('message.CannotPasteBecauseOfOverlap', lang));
@@ -5055,6 +5060,7 @@ export const useStore = create<CommonStoreState>(
                         switch (Util.checkElementOnWallState(e, newParent)) {
                           case ElementState.Valid:
                             approved = true;
+                            state.updateElementsOnWallFlag = !state.updateElementsOnWallFlag;
                             break;
                           case ElementState.OverLap:
                             showError(i18n.t('message.CannotPasteBecauseOfOverlap', lang));
@@ -5154,6 +5160,8 @@ export const useStore = create<CommonStoreState>(
                         if (!approved) {
                           const lang = { lng: state.language };
                           showError(i18n.t('message.CannotPasteOutsideBoundary', lang));
+                        } else {
+                          state.updateElementsOnWallFn();
                         }
                       }
                       break;
@@ -5207,6 +5215,8 @@ export const useStore = create<CommonStoreState>(
                             if (!approved) {
                               const lang = { lng: state.language };
                               showError(i18n.t('message.CannotPasteOutsideBoundary', lang));
+                            } else {
+                              state.updateElementsOnWallFlag = !state.updateElementsOnWallFlag;
                             }
                             break;
                           }
@@ -5774,6 +5784,13 @@ export const useStore = create<CommonStoreState>(
           updateWallMapOnFoundation() {
             immerSet((state: CommonStoreState) => {
               state.updateWallMapOnFoundationFlag = !state.updateWallMapOnFoundationFlag;
+            });
+          },
+
+          updateElementsOnWallFlag: false,
+          updateElementsOnWallFn() {
+            immerSet((state: CommonStoreState) => {
+              state.updateElementsOnWallFlag = !state.updateElementsOnWallFlag;
             });
           },
 

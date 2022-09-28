@@ -301,6 +301,7 @@ const GableRoof = ({
   const removeElementById = useStore(Selector.removeElementById);
   const elements = useStore(Selector.elements);
   const updateSolarPanelOnRoofFlag = useStore(Selector.updateSolarPanelOnRoofFlag);
+  const updateElementsOnWallFn = useStore(Selector.updateElementsOnWallFn);
 
   const { gl, camera } = useThree();
   const ray = useMemo(() => new Raycaster(), []);
@@ -1077,6 +1078,7 @@ const GableRoof = ({
               }
             });
             updateRooftopSolarPanel(foundation, id, roofSegments, centroid, h, thickness);
+            useStore.getState().updateElementsOnWallFn();
           }}
         >
           <meshBasicMaterial side={DoubleSide} transparent={true} opacity={0.5} />

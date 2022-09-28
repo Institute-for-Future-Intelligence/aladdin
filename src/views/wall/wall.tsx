@@ -158,10 +158,22 @@ const Wall = ({
   const [texture, setTexture] = useState(textureLoader);
 
   const getElementById = useStore(Selector.getElementById);
-  const parent = getElementById(parentId);
   const wallModel = getElementById(id) as WallModel;
+  const parent = useStore((state) => {
+    for (const e of state.elements) {
+      if (e.id === parentId) {
+        return e;
+      }
+    }
+  });
+  const selectedElementId = useStore((state) => {
+    for (const e of state.elements) {
+      if (e.selected) {
+        return e.id;
+      }
+    }
+  });
 
-  const elements = useStore(Selector.elements);
   const deletedWindowAndParentId = useStore(Selector.deletedWindowAndParentId);
   const deletedRoofId = useStore(Selector.deletedRoofId);
   const shadowEnabled = useStore(Selector.viewState.shadowEnabled);
@@ -172,6 +184,7 @@ const Wall = ({
   const isAddingElement = useStore(Selector.isAddingElement);
   const addUndoable = useStore(Selector.addUndoable);
   const setElementPosition = useStore(Selector.setElementPosition);
+  const updateElementsOnWallFlag = useStore(Selector.updateElementsOnWallFlag);
 
   const objectTypeToAddRef = useRef(useStore.getState().objectTypeToAdd);
   const moveHandleTypeRef = useRef(useStore.getState().moveHandleType);
@@ -334,6 +347,10 @@ const Wall = ({
     return shape;
   }, [lx, ly, leftOffset, rightOffset]);
 
+  const updateElementsOnWall = () => {
+    setElementOnWall(useStore.getState().elements.filter((e) => validElementOnWall(e)));
+  };
+
   // subscribe common store
   useEffect(() => {
     const unsubscribe = useStore.subscribe((state) => {
@@ -371,8 +388,8 @@ const Wall = ({
   }, [ly]);
 
   useEffect(() => {
-    setElementOnWall(elements.filter((e) => validElementOnWall(e)));
-  }, [elements]);
+    updateElementsOnWall();
+  }, [updateElementsOnWallFlag, selectedElementId]);
 
   // roof
   useEffect(() => {
@@ -600,6 +617,7 @@ const Wall = ({
       addedElement: elem,
       undo: () => {
         removeElementById(elem.id, false);
+        updateElementsOnWall();
       },
       redo: () => {
         setCommonStore((state) => {
@@ -607,6 +625,7 @@ const Wall = ({
           state.selectedElement = undoableAdd.addedElement;
           state.deletedRoofId = null;
         });
+        updateElementsOnWall();
       },
     } as UndoableAdd;
     addUndoable(undoableAdd);
@@ -626,9 +645,11 @@ const Wall = ({
       newCz: elem.cz,
       undo: () => {
         setElementPosition(undoableMove.movedElementId, undoableMove.oldCx, undoableMove.oldCy, undoableMove.oldCz);
+        updateElementsOnWall();
       },
       redo: () => {
         setElementPosition(undoableMove.movedElementId, undoableMove.newCx, undoableMove.newCy, undoableMove.newCz);
+        updateElementsOnWall();
       },
     } as UndoableMove;
     addUndoable(undoableMove);
@@ -650,9 +671,11 @@ const Wall = ({
           newDimension: [elem.lx, elem.ly, elem.lz],
           undo: () => {
             setElementPosDms(undoableResize.resizedElementId, undoableResize.oldPosition, undoableResize.oldDimension);
+            updateElementsOnWall();
           },
           redo: () => {
             setElementPosDms(undoableResize.resizedElementId, undoableResize.newPosition, undoableResize.newDimension);
+            updateElementsOnWall();
           },
         } as UndoableResizeElementOnWall;
         addUndoable(undoableResize);
@@ -703,17 +726,17 @@ const Wall = ({
         handleAddElement(pointer);
 
         const selectedElement = getSelectedElement();
-
         // a child of this wall is clicked
         if (selectedElement && selectedElement.parentId === id) {
           grabRef.current = selectedElement;
           if (moveHandleTypeRef.current || resizeHandleTypeRef.current) {
             setShowGrid(true);
-            setOriginElements([...elements]);
+            setOriginElements([...useStore.getState().elements]);
             oldPositionRef.current = [selectedElement.cx, selectedElement.cy, selectedElement.cz];
             oldDimensionRef.current = [selectedElement.lx, selectedElement.ly, selectedElement.lz];
           }
         }
+        updateElementsOnWall();
       }
     }
   };
@@ -736,6 +759,7 @@ const Wall = ({
       }
       invalidElementIdRef.current = null;
       setOriginElements(null);
+      updateElementsOnWall();
     }
     // add undo for valid operation
     else {
@@ -952,6 +976,8 @@ const Wall = ({
               break;
             }
           }
+
+          updateElementsOnWall();
         }
 
         // add new element

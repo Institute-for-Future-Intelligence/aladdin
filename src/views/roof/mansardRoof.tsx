@@ -819,6 +819,7 @@ const MansardRoof = ({
               }
             });
             updateRooftopSolarPanel(foundation, id, roofSegments, centroid, h, thickness);
+            useStore.getState().updateElementsOnWallFn();
           }}
         >
           <meshBasicMaterial side={DoubleSide} transparent={true} opacity={0.5} />
