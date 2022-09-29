@@ -1111,6 +1111,7 @@ export const i18n_es = {
       SwitchToAddingParabolicTrough: 'Switch to Adding Parabolic Trough',
       SwitchToAddingFresnelReflector: 'Switch to Adding Fresnel Reflector',
       SwitchToAddingHeliostat: 'Switch to Adding Heliostat',
+      SwitchToAddingWindTurbine: 'Switch to Adding Wind Turbine',
       SwitchToAddingTree: 'Switch to Adding Tree',
       SwitchToAddingPeople: 'Switch to Adding People',
     },

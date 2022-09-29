@@ -1111,6 +1111,7 @@ export const i18n_tr = {
       SwitchToAddingParabolicTrough: 'Parabolik Oluk Ekle',
       SwitchToAddingFresnelReflector: 'Fresnel Reflektör Ekle',
       SwitchToAddingHeliostat: 'Heliostat Ekle',
+      SwitchToAddingWindTurbine: 'Switch to Adding Wind Turbine',
       SwitchToAddingTree: 'Ağaç Ekle',
       SwitchToAddingPeople: 'Kişi Ekle',
     },

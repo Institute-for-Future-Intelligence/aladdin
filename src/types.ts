@@ -200,6 +200,7 @@ export enum ObjectType {
   ParabolicTrough = 'Parabolic Trough',
   FresnelReflector = 'Fresnel Reflector',
   Heliostat = 'Heliostat',
+  WindTurbine = 'Wind Turbine',
   Cuboid = 'Cuboid',
   Human = 'Human',
   Tree = 'Tree',

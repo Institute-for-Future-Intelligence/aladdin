@@ -1094,6 +1094,7 @@ export const i18n_zh_tw = {
       SwitchToAddingParabolicTrough: '切換到添加拋物線槽模式',
       SwitchToAddingFresnelReflector: '切換到添加菲涅耳反射鏡模式',
       SwitchToAddingHeliostat: '切換到添加定日鏡模式',
+      SwitchToAddingWindTurbine: '切換到添加風力渦輪機模式',
       SwitchToAddingTree: '切換到添加樹木模式',
       SwitchToAddingPeople: '切換到添加人物模式',
     },

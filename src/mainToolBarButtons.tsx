@@ -21,6 +21,7 @@ import ParabolicTroughImage from './assets/parabolic_trough.png';
 import ParabolicDishImage from './assets/parabolic_dish.png';
 import FresnelReflectorImage from './assets/fresnel_reflector.png';
 import HeliostatImage from './assets/heliostat.png';
+import WindTurbineImage from './assets/wind_turbine.png';
 
 import React, { useState } from 'react';
 import { useStore } from './stores/common';
@@ -314,6 +315,7 @@ const MainToolBarButtons = () => {
       {menuItem(ObjectType.FresnelReflector, FresnelReflectorImage, setCategory3Flag)}
       {menuItem(ObjectType.Heliostat, HeliostatImage, setCategory3Flag)}
       {menuItem(ObjectType.Sensor, SensorImage, setCategory3Flag)}
+      {menuItem(ObjectType.WindTurbine, WindTurbineImage, setCategory3Flag)}
     </Menu>
   );
 
@@ -368,6 +370,8 @@ const MainToolBarButtons = () => {
         return buttonImg(objectType, HeliostatImage);
       case ObjectType.Sensor:
         return buttonImg(objectType, SensorImage);
+      case ObjectType.WindTurbine:
+        return buttonImg(objectType, WindTurbineImage);
     }
   };
 
