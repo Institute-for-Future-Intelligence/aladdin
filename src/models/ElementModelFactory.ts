@@ -45,6 +45,7 @@ import { ParabolicDishModel } from './ParabolicDishModel';
 import { FresnelReflectorModel } from './FresnelReflectorModel';
 import { HeliostatModel } from './HeliostatModel';
 import { DoorModel } from './DoorModel';
+import { WindTurbineModel } from './WindTurbineModel';
 import { defaultShutter } from 'src/views/window/window';
 
 export class ElementModelFactory {
@@ -348,6 +349,21 @@ export class ElementModelFactory {
       foundationId: foundationId,
       id: short.generate() as string,
     } as HeliostatModel;
+  }
+
+  static makeWindTurbine(parentId: string, x: number, y: number, z?: number) {
+    return {
+      type: ObjectType.WindTurbine,
+      cx: x,
+      cy: y,
+      cz: z,
+      lx: 3,
+      lz: 15,
+      normal: [0, 1, 0],
+      rotation: [0, 0, 0],
+      parentId: parentId,
+      id: short.generate() as string,
+    } as WindTurbineModel;
   }
 
   static makePolygon(parent: ElementModel, x: number, y: number, z: number, normal?: Vector3, rotation?: number[]) {

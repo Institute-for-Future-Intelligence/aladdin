@@ -29,6 +29,7 @@ import { ParabolicDishModel } from './ParabolicDishModel';
 import { FresnelReflectorModel } from './FresnelReflectorModel';
 import { HeliostatModel } from './HeliostatModel';
 import { DoorModel } from './DoorModel';
+import { WindTurbineModel } from './WindTurbineModel';
 
 export class ElementModelCloner {
   static clone(
@@ -82,6 +83,12 @@ export class ElementModelCloner {
         if (parent) {
           // must have a parent
           clone = ElementModelCloner.cloneHeliostat(parent, e as HeliostatModel, x, y, z);
+        }
+        break;
+      case ObjectType.WindTurbine:
+        if (parent) {
+          // must have a parent
+          clone = ElementModelCloner.cloneWindTurbine(parent, e as WindTurbineModel, x, y, z);
         }
         break;
       case ObjectType.Wall:
@@ -445,6 +452,36 @@ export class ElementModelCloner {
       foundationId: foundationId,
       id: short.generate() as string,
     } as HeliostatModel;
+  }
+
+  private static cloneWindTurbine(
+    parent: ElementModel,
+    windTurbine: WindTurbineModel,
+    x: number,
+    y: number,
+    z?: number,
+  ) {
+    let foundationId;
+    switch (parent.type) {
+      case ObjectType.Foundation:
+        foundationId = parent.id;
+        break;
+    }
+    return {
+      type: ObjectType.WindTurbine,
+      cx: x,
+      cy: y,
+      cz: z,
+      lx: windTurbine.lx,
+      ly: windTurbine.ly,
+      lz: windTurbine.lz,
+      showLabel: windTurbine.showLabel,
+      normal: [...windTurbine.normal],
+      rotation: windTurbine.parentId ? [...parent.rotation] : [0, 0, 0],
+      parentId: parent.id,
+      foundationId: foundationId,
+      id: short.generate() as string,
+    } as WindTurbineModel;
   }
 
   private static cloneFoundation(foundation: FoundationModel, x: number, y: number) {
