@@ -96,8 +96,12 @@ const Window = ({
       setWly(parent.ly);
       setWlz(lz * parent.lz);
       setWcx(cx * parent.lx);
-      setWcy(0.33 * parent.ly);
       setWcz(cz * parent.lz);
+      if (cy > 0) {
+        setWcy(0.33 * parent.ly);
+      } else {
+        setWcy(cy);
+      }
     }
   }, [lx, ly, lz, cx, cy, cz, parent?.lx, parent?.ly, parent?.lz]);
 

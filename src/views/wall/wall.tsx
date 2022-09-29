@@ -806,8 +806,8 @@ const Wall = ({
                     if (e.id === grabRef.current?.id) {
                       e.cx = p.x / lx;
                       e.cz = p.z / lz;
-                      e.cy = e.id === invalidElementIdRef.current ? -0.1 : 0.1;
-                      e.color = e.id === invalidElementIdRef.current ? 'red' : '#477395';
+                      e.cy = e.id === invalidElementIdRef.current ? -0.01 : 0.1;
+                      (e as WindowModel).tint = e.id === invalidElementIdRef.current ? 'red' : '#73D8FF';
                     }
                   }
                 });
@@ -830,8 +830,8 @@ const Wall = ({
                       e.lz = Math.abs(v.z) / lz;
                       e.cx = relativePos.x / lx;
                       e.cz = relativePos.z / lz;
-                      e.cy = e.id === invalidElementIdRef.current ? -0.1 : 0.1;
-                      e.color = e.id === invalidElementIdRef.current ? 'red' : '#477395';
+                      e.cy = e.id === invalidElementIdRef.current ? -0.01 : 0.1;
+                      (e as WindowModel).tint = e.id === invalidElementIdRef.current ? 'red' : '#73D8FF';
                     }
                   }
                 });
