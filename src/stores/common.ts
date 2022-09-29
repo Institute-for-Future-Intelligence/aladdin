@@ -1602,7 +1602,7 @@ export const useStore = create<CommonStoreState>(
           updateElementLockByFoundationId(foundationId, locked) {
             immerSet((state: CommonStoreState) => {
               for (const e of state.elements) {
-                if (e.foundationId === foundationId || e.id === foundationId) {
+                if (e.foundationId === foundationId || e.parentId === foundationId || e.id === foundationId) {
                   e.locked = locked;
                 }
               }
