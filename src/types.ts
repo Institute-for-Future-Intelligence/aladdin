@@ -176,7 +176,7 @@ export enum Language {
   English = 'English',
   ChineseSimplified = '简体中文',
   ChineseTraditional = '繁体中文',
-  Turkish = 'Türk',
+  Turkish = 'Türkçe',
   Spanish = 'Español',
 }
 
