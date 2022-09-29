@@ -1404,7 +1404,13 @@ const Foundation = ({
         }
       }
     }
-    if (!grabRef.current || grabRef.current.parentId !== id) return;
+    if (
+      !grabRef.current ||
+      grabRef.current.parentId !== id ||
+      grabRef.current.type === ObjectType.Tree ||
+      grabRef.current.type === ObjectType.Human
+    )
+      return;
     const elem = getElementById(grabRef.current.id);
     if (!elem) return;
     switch (elem.type) {
