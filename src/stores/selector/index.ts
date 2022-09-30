@@ -738,9 +738,11 @@ export const solarPanelLabels = (state: CommonStoreState) => state.solarPanelLab
 
 export const setSolarPanelLabels = (state: CommonStoreState) => state.setSolarPanelLabels;
 
+export const updateRoofFlag = (state: CommonStoreState) => state.updateRoofFlag;
+
 export const updateSolarPanelOnRoofFlag = (state: CommonStoreState) => state.updateSolarPanelOnRoofFlag;
 
-export const updateElementsOnWallFlag = (state: CommonStoreState) => state.updateElementsOnWallFlag;
+export const updateWallFlag = (state: CommonStoreState) => state.updateWallFlag;
 
 export const updateElementsOnWallFn = (state: CommonStoreState) => state.updateElementsOnWallFn;
 

@@ -404,6 +404,8 @@ const Sky = ({ theme = 'Default' }: SkyProps) => {
                     }
                   }
                   state.selectedElementHeight = Math.max(1, p.z);
+                  state.updateRoofFlag = !state.updateRoofFlag;
+                  state.updateWallFlag = !state.updateWallFlag;
                 });
               }
               break;

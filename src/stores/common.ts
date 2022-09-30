@@ -698,11 +698,13 @@ export interface CommonStoreState {
   updateWallMapOnFoundationFlag: boolean;
   updateWallMapOnFoundation: () => void;
 
-  updateElementsOnWallFlag: boolean;
+  updateWallFlag: boolean;
   updateElementsOnWallFn: () => void;
 
   updateSolarPanelOnRoofFlag: boolean;
   updateSolarPanelOnRoofFn: () => void;
+
+  updateRoofFlag: boolean;
 
   addedWindowId: string | null;
   deletedWindowAndParentId: string[] | null;
@@ -4362,6 +4364,7 @@ export const useStore = create<CommonStoreState>(
                         }
                       }
                       state.updateWallMapOnFoundationFlag = !state.updateWallMapOnFoundationFlag;
+                      state.updateRoofFlag = !state.updateRoofFlag;
                       state.deletedWallId = elem.id;
                       break;
                     }
@@ -4409,7 +4412,7 @@ export const useStore = create<CommonStoreState>(
               });
               state.selectedElement = null;
               state.updateDesignInfo();
-              state.updateElementsOnWallFlag = !state.updateElementsOnWallFlag;
+              state.updateWallFlag = !state.updateWallFlag;
             });
           },
           removeElementsByType(type) {
@@ -4957,7 +4960,7 @@ export const useStore = create<CommonStoreState>(
                           switch (Util.checkElementOnWallState(e, newParent)) {
                             case ElementState.Valid:
                               approved = true;
-                              state.updateElementsOnWallFlag = !state.updateElementsOnWallFlag;
+                              state.updateWallFlag = !state.updateWallFlag;
                               break;
                             case ElementState.OverLap:
                               showError(i18n.t('message.CannotPasteBecauseOfOverlap', lang));
@@ -5060,7 +5063,7 @@ export const useStore = create<CommonStoreState>(
                         switch (Util.checkElementOnWallState(e, newParent)) {
                           case ElementState.Valid:
                             approved = true;
-                            state.updateElementsOnWallFlag = !state.updateElementsOnWallFlag;
+                            state.updateWallFlag = !state.updateWallFlag;
                             break;
                           case ElementState.OverLap:
                             showError(i18n.t('message.CannotPasteBecauseOfOverlap', lang));
@@ -5216,7 +5219,7 @@ export const useStore = create<CommonStoreState>(
                               const lang = { lng: state.language };
                               showError(i18n.t('message.CannotPasteOutsideBoundary', lang));
                             } else {
-                              state.updateElementsOnWallFlag = !state.updateElementsOnWallFlag;
+                              state.updateWallFlag = !state.updateWallFlag;
                             }
                             break;
                           }
@@ -5787,10 +5790,10 @@ export const useStore = create<CommonStoreState>(
             });
           },
 
-          updateElementsOnWallFlag: false,
+          updateWallFlag: false,
           updateElementsOnWallFn() {
             immerSet((state: CommonStoreState) => {
-              state.updateElementsOnWallFlag = !state.updateElementsOnWallFlag;
+              state.updateWallFlag = !state.updateWallFlag;
             });
           },
 
@@ -5800,6 +5803,8 @@ export const useStore = create<CommonStoreState>(
               state.updateSolarPanelOnRoofFlag = !state.updateSolarPanelOnRoofFlag;
             });
           },
+
+          updateRoofFlag: false,
 
           addedWindowId: null,
           deletedWindowAndParentId: null,

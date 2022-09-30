@@ -569,7 +569,7 @@ const KeyboardListener = ({ canvas, set2DView, resetView, zoomView }: KeyboardLi
                     state.elements.push(e);
                   }
                   state.selectedElement = undoableCut.deletedElements[0];
-                  state.updateElementsOnWallFlag = !state.updateElementsOnWallFlag;
+                  state.updateWallFlag = !state.updateWallFlag;
                 }
               });
             },
@@ -599,7 +599,7 @@ const KeyboardListener = ({ canvas, set2DView, resetView, zoomView }: KeyboardLi
               setCommonStore((state) => {
                 state.elements.push(...undoablePaste.pastedElements);
                 state.selectedElement = undoablePaste.pastedElements[0];
-                state.updateElementsOnWallFlag = !state.updateElementsOnWallFlag;
+                state.updateWallFlag = !state.updateWallFlag;
                 state.updateDesignInfo();
               });
             },
@@ -746,7 +746,7 @@ const KeyboardListener = ({ canvas, set2DView, resetView, zoomView }: KeyboardLi
                       state.selectedElement = deletedElements[0];
                       state.updateDesignInfo();
                       state.updateWallMapOnFoundationFlag = !state.updateWallMapOnFoundationFlag;
-                      state.updateElementsOnWallFlag = !state.updateElementsOnWallFlag;
+                      state.updateWallFlag = !state.updateWallFlag;
                       state.deletedRoofId = null;
                     });
                   }

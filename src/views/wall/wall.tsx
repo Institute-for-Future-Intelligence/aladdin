@@ -166,13 +166,6 @@ const Wall = ({
       }
     }
   });
-  const selectedElementId = useStore((state) => {
-    for (const e of state.elements) {
-      if (e.selected) {
-        return e.id;
-      }
-    }
-  });
 
   const deletedWindowAndParentId = useStore(Selector.deletedWindowAndParentId);
   const deletedRoofId = useStore(Selector.deletedRoofId);
@@ -184,7 +177,7 @@ const Wall = ({
   const isAddingElement = useStore(Selector.isAddingElement);
   const addUndoable = useStore(Selector.addUndoable);
   const setElementPosition = useStore(Selector.setElementPosition);
-  const updateElementsOnWallFlag = useStore(Selector.updateElementsOnWallFlag);
+  const updateWallFlag = useStore(Selector.updateWallFlag);
 
   const objectTypeToAddRef = useRef(useStore.getState().objectTypeToAdd);
   const moveHandleTypeRef = useRef(useStore.getState().moveHandleType);
@@ -389,7 +382,7 @@ const Wall = ({
 
   useEffect(() => {
     updateElementsOnWall();
-  }, [updateElementsOnWallFlag, selectedElementId]);
+  }, [updateWallFlag, leftRoofHeight, rightRoofHeight, centerRoofHeight, centerLeftRoofHeight, centerRightRoofHeight]);
 
   // roof
   useEffect(() => {
@@ -1125,6 +1118,7 @@ const Wall = ({
         setCommonStore((state) => {
           state.elements.push(newElement as ElementModel);
           state.objectTypeToAdd = ObjectType.None;
+          state.updateWallFlag = !state.updateWallFlag;
         });
         return;
       }

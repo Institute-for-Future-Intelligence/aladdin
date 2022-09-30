@@ -29,7 +29,7 @@ import { ObjectType, RoofTexture } from 'src/types';
 import { Util } from 'src/Util';
 import { Point2 } from 'src/models/Point2';
 import { RoofUtil } from './RoofUtil';
-import { useRoofTexture, useSolarPanelUndoable, useTransparent } from './hooks';
+import { useCurrWallArray, useRoofTexture, useSolarPanelUndoable, useTransparent } from './hooks';
 import { ConvexGeometry } from 'src/js/ConvexGeometry';
 import { CSG } from 'three-csg-ts';
 import WindowWireFrame from '../window/windowWireFrame';
@@ -459,25 +459,7 @@ const GableRoof = ({
     }
   };
 
-  const currentWallArray = useMemo(() => {
-    const array: WallModel[] = [];
-    if (wallsId.length > 0) {
-      const wall = getElementById(wallsId[0]) as WallModel;
-      if (wall) {
-        array.push(wall);
-        const leftWall = getElementById(wall.leftJoints[0]) as WallModel;
-        const rightWall = getElementById(wall.rightJoints[0]) as WallModel;
-        if (leftWall && rightWall) {
-          const midWall = getElementById(leftWall.leftJoints[0]) as WallModel;
-          const checkWall = getElementById(rightWall.rightJoints[0]) as WallModel;
-          if (midWall && checkWall && midWall.id === checkWall.id) {
-            array.push(rightWall, midWall, leftWall);
-          }
-        }
-      }
-    }
-    return array;
-  }, [elements]);
+  const currentWallArray = useCurrWallArray(wallsId[0]);
 
   const centroid = useMemo(() => {
     if (currentWallArray.length !== 4) {
@@ -751,7 +733,14 @@ const GableRoof = ({
   }, [currentWallArray, ridgeLeftPointV3, ridgeRightPointV3, h]);
 
   // set position and rotation
-  const foundation = getElementById(parentId);
+  const foundation = useStore((state) => {
+    for (const e of state.elements) {
+      if (e.id === parentId) {
+        return e;
+      }
+    }
+    return null;
+  });
   let rotation = 0;
   if (foundation) {
     cx = foundation.cx;
@@ -830,7 +819,7 @@ const GableRoof = ({
     } else {
       removeElementById(id, false);
     }
-  }, [currentWallArray, h]);
+  }, [currentWallArray, h, ridgeLeftPoint, ridgeRightPoint]);
 
   const { grabRef, addUndoableMove, undoMove, setOldRefData } = useSolarPanelUndoable();
 
@@ -1076,9 +1065,9 @@ const GableRoof = ({
                   break;
                 }
               }
+              // state.updateWallFlag = !state.updateWallFlag;
             });
             updateRooftopSolarPanel(foundation, id, roofSegments, centroid, h, thickness);
-            useStore.getState().updateElementsOnWallFn();
           }}
         >
           <meshBasicMaterial side={DoubleSide} transparent={true} opacity={0.5} />
@@ -1261,4 +1250,4 @@ const RoofSegment = ({
   );
 };
 
-export default GableRoof;
+export default React.memo(GableRoof);

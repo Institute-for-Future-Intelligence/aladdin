@@ -40,7 +40,7 @@ import { CSG } from 'three-csg-ts';
 import { ConvexGeometry } from 'three/examples/jsm/geometries/ConvexGeometry';
 import { RoofTexture, ObjectType } from 'src/types';
 import { RoofUtil } from './RoofUtil';
-import { useRoofTexture, useSolarPanelUndoable, useTransparent } from './hooks';
+import { useCurrWallArray, useRoofTexture, useSolarPanelUndoable, useTransparent } from './hooks';
 
 enum RoofHandleType {
   TopMid = 'TopMid',
@@ -152,11 +152,9 @@ const GambrelRoof = ({
 }: GambrelRoofModel) => {
   const texture = useRoofTexture(textureType);
 
-  const getElementById = useStore(Selector.getElementById);
   const shadowEnabled = useStore(Selector.viewState.shadowEnabled);
   const setCommonStore = useStore(Selector.set);
   const removeElementById = useStore(Selector.removeElementById);
-  const elements = useStore(Selector.elements); // todo: could optimize
 
   const [h, setH] = useState(lz); // todo: should have one when build
   const [minHeight, setMinHeight] = useState(lz / 2);
@@ -171,7 +169,14 @@ const GambrelRoof = ({
   const isPointerMovingRef = useRef(false);
 
   // set position and rotation
-  const foundation = getElementById(parentId);
+  const foundation = useStore((state) => {
+    for (const e of state.elements) {
+      if (e.id === parentId) {
+        return e;
+      }
+    }
+    return null;
+  });
   let rotation = 0;
   if (foundation) {
     cx = foundation.cx;
@@ -306,25 +311,7 @@ const GambrelRoof = ({
     return { lh, rh };
   };
 
-  const currentWallArray = useMemo(() => {
-    const array: WallModel[] = [];
-    if (wallsId.length > 0) {
-      const wall = getElementById(wallsId[0]) as WallModel;
-      if (wall) {
-        array.push(wall);
-        const leftWall = getElementById(wall.leftJoints[0]) as WallModel;
-        const rightWall = getElementById(wall.rightJoints[0]) as WallModel;
-        if (leftWall && rightWall) {
-          const midWall = getElementById(leftWall.leftJoints[0]) as WallModel;
-          const checkWall = getElementById(rightWall.rightJoints[0]) as WallModel;
-          if (midWall && checkWall && midWall.id === checkWall.id) {
-            array.push(rightWall, midWall, leftWall);
-          }
-        }
-      }
-    }
-    return array;
-  }, [elements]);
+  const currentWallArray = useCurrWallArray(wallsId[0]);
 
   const centroid = useMemo(() => {
     if (currentWallArray.length !== 4) {
@@ -640,7 +627,17 @@ const GambrelRoof = ({
     } else {
       removeElementById(id, false);
     }
-  }, [currentWallArray, h]);
+  }, [
+    currentWallArray,
+    h,
+    thickness,
+    topRidgeLeftPoint,
+    topRidgeRightPoint,
+    frontRidgeLeftPoint,
+    frontRidgeRightPoint,
+    backRidgeLeftPoint,
+    backRidgeRightPoint,
+  ]);
 
   const updateSolarPanelOnRoofFlag = useStore(Selector.updateSolarPanelOnRoofFlag);
 
@@ -1042,7 +1039,6 @@ const GambrelRoof = ({
               }
             });
             updateRooftopSolarPanel(foundation, id, roofSegments, centroid, h, thickness);
-            useStore.getState().updateElementsOnWallFn();
           }}
         >
           <meshBasicMaterial side={DoubleSide} transparent={true} opacity={0.5} />
@@ -1118,4 +1114,4 @@ const RoofSegment = ({ texture }: { texture: Texture }) => {
   );
 };
 
-export default GambrelRoof;
+export default React.memo(GambrelRoof);

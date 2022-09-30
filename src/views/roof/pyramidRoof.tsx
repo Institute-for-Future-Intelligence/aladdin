@@ -29,7 +29,6 @@ import {
 import { RoofUtil } from './RoofUtil';
 import { useRoofTexture, useSolarPanelUndoable, useTransparent } from './hooks';
 
-const centerPointPosition = new Vector3();
 const intersectionPlanePosition = new Vector3();
 const intersectionPlaneRotation = new Euler();
 const zeroVector = new Vector3();
@@ -93,6 +92,8 @@ const PyramidRoof = ({
   const getElementById = useStore(Selector.getElementById);
   const removeElementById = useStore(Selector.removeElementById);
   const updateRoofHeight = useStore(Selector.updateRoofHeightById);
+  const updateRoofFlag = useStore(Selector.updateRoofFlag);
+
   const elements = useStore(Selector.elements);
   const { camera, gl } = useThree();
   const ray = useMemo(() => new Raycaster(), []);
@@ -180,10 +181,10 @@ const PyramidRoof = ({
       const leftPoint = new Vector3(w.leftPoint[0], w.leftPoint[1]);
       const rightPoint = new Vector3(w.rightPoint[0], w.rightPoint[1]);
       const { lh, rh } = getWallHeight(currentWallArray, i);
-      const dLeft = RoofUtil.getDistance(leftPoint, rightPoint, centerPointPosition);
-      const overhangHeightLeft = Math.min((overhang / dLeft) * (centerPointPosition.z - lh), lh);
-      const dRight = RoofUtil.getDistance(leftPoint, rightPoint, centerPointPosition);
-      const overhangHeightRight = Math.min((overhang / dRight) * (centerPointPosition.z - rh), rh);
+      const dLeft = RoofUtil.getDistance(leftPoint, rightPoint, centerPointV3);
+      const overhangHeightLeft = Math.min((overhang / dLeft) * (centerPointV3.z - lh), lh);
+      const dRight = RoofUtil.getDistance(leftPoint, rightPoint, centerPointV3);
+      const overhangHeightRight = Math.min((overhang / dRight) * (centerPointV3.z - rh), rh);
       height = Math.min(Math.min(overhangHeightLeft, overhangHeightRight), height);
     }
 
@@ -246,9 +247,12 @@ const PyramidRoof = ({
     if (Number.isNaN(p.x) || Number.isNaN(p.y)) {
       return { x: 0, y: 0 };
     }
-    centerPointPosition.set(p.x, p.y, h);
     return p;
   }, [currentWallArray, h]);
+
+  const centerPointV3 = useMemo(() => {
+    return new Vector3(centerPoint.x, centerPoint.y, h);
+  }, [centerPoint, h]);
 
   const overhangs = useMemo(() => {
     const res = currentWallArray.map((wall) => RoofUtil.getWallNormal(wall).multiplyScalar(overhang));
@@ -327,7 +331,7 @@ const PyramidRoof = ({
           wallPointsAfterOffset[(i + wallPointsAfterOffset.length - 1) % wallPointsAfterOffset.length].rightPoint,
         )
           .setZ(lh - overhangHeight)
-          .sub(centerPointPosition);
+          .sub(centerPointV3);
 
         const wallRightPointAfterOverhang = RoofUtil.getIntersectionPoint(
           wallPointsAfterOffset[i].leftPoint,
@@ -336,10 +340,10 @@ const PyramidRoof = ({
           wallPointsAfterOffset[(i + 1) % wallPointsAfterOffset.length].rightPoint,
         )
           .setZ(rh - overhangHeight)
-          .sub(centerPointPosition);
+          .sub(centerPointV3);
 
         const direction = -w.relativeAngle;
-        const length = new Vector3(w.cx, w.cy).sub(centerPointPosition.clone().setZ(0)).length();
+        const length = new Vector3(w.cx, w.cy).sub(centerPointV3.clone().setZ(0)).length();
         points.push(wallLeftPointAfterOverhang, wallRightPointAfterOverhang, zeroVector, zeroVector);
         points.push(
           wallLeftPointAfterOverhang.clone().add(thicknessVector),
@@ -359,7 +363,7 @@ const PyramidRoof = ({
         wallPointsAfterOffset[idx - 1].rightPoint,
       )
         .setZ(currentWallArray[currentWallArray.length - 1].lz - overhangHeight)
-        .sub(centerPointPosition);
+        .sub(centerPointV3);
       const rightPointAfterOverhang = RoofUtil.getIntersectionPoint(
         wallPointsAfterOffset[idx].leftPoint,
         wallPointsAfterOffset[idx].rightPoint,
@@ -367,7 +371,7 @@ const PyramidRoof = ({
         wallPointsAfterOffset[0].rightPoint,
       )
         .setZ(currentWallArray[0].lz - overhangHeight)
-        .sub(centerPointPosition);
+        .sub(centerPointV3);
 
       let angle = Math.atan2(
         rightPointAfterOverhang.y - leftPointAfterOverhang.y,
@@ -394,7 +398,7 @@ const PyramidRoof = ({
 
     setMinHeight(minHeight);
     return segments;
-  }, [currentWallArray, centerPoint]);
+  }, [updateRoofFlag, centerPoint]);
 
   // set position and rotation
   const foundation = getElementById(parentId);
@@ -428,7 +432,7 @@ const PyramidRoof = ({
         }
       });
     }
-  }, [currentWallArray, prevWallsIdSet]);
+  }, [updateRoofFlag, prevWallsIdSet]);
 
   useEffect(() => {
     if (currentWallArray.length > 1) {
@@ -448,14 +452,14 @@ const PyramidRoof = ({
     } else {
       removeElementById(id, false);
     }
-  }, [currentWallArray]);
+  }, [updateRoofFlag, h]);
 
   const { grabRef, addUndoableMove, undoMove, setOldRefData } = useSolarPanelUndoable();
 
   const updateSolarPanelOnRoofFlag = useStore(Selector.updateSolarPanelOnRoofFlag);
 
   useEffect(() => {
-    updateRooftopSolarPanel(foundation, id, roofSegments, centerPointPosition, h, thickness);
+    updateRooftopSolarPanel(foundation, id, roofSegments, centerPointV3, h, thickness);
   }, [updateSolarPanelOnRoofFlag, h, thickness]);
 
   return (
@@ -465,10 +469,10 @@ const PyramidRoof = ({
         name={`Pyramid Roof Segments Group`}
         position={[centerPoint.x, centerPoint.y, h]}
         onPointerDown={(e) => {
-          handlePointerDown(e, id, foundation, roofSegments, centerPointPosition, setOldRefData);
+          handlePointerDown(e, id, foundation, roofSegments, centerPointV3, setOldRefData);
         }}
         onPointerMove={(e) => {
-          handlePointerMove(e, grabRef.current, foundation, roofType, roofSegments, centerPointPosition);
+          handlePointerMove(e, grabRef.current, foundation, roofType, roofSegments, centerPointV3);
         }}
         onPointerUp={() => {
           handlePointerUp(grabRef, foundation, currentWallArray[0], id, overhang, undoMove, addUndoableMove);
@@ -541,7 +545,7 @@ const PyramidRoof = ({
                   return;
                 }
                 setH(Math.max(minHeight, point.z - (foundation?.lz ?? 0) - 0.3));
-                updateRooftopSolarPanel(foundation, id, roofSegments, centerPointPosition, h, thickness);
+                updateRooftopSolarPanel(foundation, id, roofSegments, centerPointV3, h, thickness);
               }
             }
           }}
@@ -550,7 +554,7 @@ const PyramidRoof = ({
             addUndoableResizeRoofHeight(id, oldHeight.current, h);
             setShowIntersectionPlane(false);
             useStoreRef.getState().setEnableOrbitController(true);
-            updateRooftopSolarPanel(foundation, id, roofSegments, centerPointPosition, h, thickness);
+            updateRooftopSolarPanel(foundation, id, roofSegments, centerPointV3, h, thickness);
           }}
         />
       )}

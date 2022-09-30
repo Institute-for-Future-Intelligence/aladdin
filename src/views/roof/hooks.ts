@@ -16,6 +16,7 @@ import RoofTexture06 from 'src/resources/roof_06.png';
 import RoofTexture07 from 'src/resources/roof_07.png';
 import { RepeatWrapping, TextureLoader } from 'three';
 import * as Selector from 'src/stores/selector';
+import { WallModel } from 'src/models/WallModel';
 
 export const useSolarPanelUndoable = () => {
   const grabRef = useRef<ElementModel | null>(null);
@@ -159,4 +160,64 @@ export const useTransparent = (transparent?: boolean, opacity?: number) => {
   const _opacity = _transparent ? 0.25 : 1;
 
   return { transparent: transparent || _transparent, opacity: Math.min(opacity ?? 1, _opacity) };
+};
+
+export const useCurrWallArray = (frontWallId: string) => {
+  const getElementById = useStore.getState().getElementById;
+
+  const getWallsId = () => {
+    const frontWall = getElementById(frontWallId) as WallModel;
+    if (frontWall) {
+      const leftWall = getElementById(frontWall.leftJoints[0]) as WallModel;
+      const rightWall = getElementById(frontWall.rightJoints[0]) as WallModel;
+      if (leftWall && rightWall) {
+        const backWall = getElementById(leftWall.leftJoints[0]) as WallModel;
+        const checkWall = getElementById(rightWall.rightJoints[0]) as WallModel;
+        if (backWall && checkWall && backWall.id === checkWall.id) {
+          return [frontWall.id, rightWall.id, backWall.id, leftWall.id];
+        }
+      }
+    }
+    return [frontWallId];
+  };
+
+  const wallsId = getWallsId();
+
+  const frontWall = useStore((state) => {
+    for (const e of state.elements) {
+      if (e.id === wallsId[0]) {
+        return e as WallModel;
+      }
+    }
+  });
+  const rightWall = useStore((state) => {
+    for (const e of state.elements) {
+      if (e.id === wallsId[1]) {
+        return e as WallModel;
+      }
+    }
+  });
+  const backWall = useStore((state) => {
+    for (const e of state.elements) {
+      if (e.id === wallsId[2]) {
+        return e as WallModel;
+      }
+    }
+  });
+  const leftWall = useStore((state) => {
+    for (const e of state.elements) {
+      if (e.id === wallsId[3]) {
+        return e as WallModel;
+      }
+    }
+  });
+
+  const currentWallArray = useMemo(() => {
+    if (frontWall && rightWall && backWall && leftWall) {
+      return [frontWall, rightWall, backWall, leftWall];
+    }
+    return [] as WallModel[];
+  }, [frontWall, rightWall, backWall, leftWall]);
+
+  return currentWallArray;
 };

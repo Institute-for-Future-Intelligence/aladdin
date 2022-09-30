@@ -18,7 +18,7 @@ import { UnoableResizeGambrelAndMansardRoofRidge } from 'src/undo/UndoableResize
 import { Util } from 'src/Util';
 import { DoubleSide, Euler, Mesh, Vector2, Vector3 } from 'three';
 import { ObjectType } from '../../types';
-import { useRoofTexture, useSolarPanelUndoable, useTransparent } from './hooks';
+import { useCurrWallArray, useRoofTexture, useSolarPanelUndoable, useTransparent } from './hooks';
 import {
   ConvexGeoProps as ConvexGeometryProps,
   handleContextMenu,
@@ -135,7 +135,14 @@ const MansardRoof = ({
   const isPointerMovingRef = useRef(false);
   const { gl, camera } = useThree();
 
-  const foundation = getElementById(parentId);
+  const foundation = useStore((state) => {
+    for (const e of state.elements) {
+      if (e.id === parentId) {
+        return e;
+      }
+    }
+    return null;
+  });
   let rotation = 0;
   if (foundation) {
     cx = foundation.cx;
@@ -258,25 +265,7 @@ const MansardRoof = ({
     useStore.getState().addUndoable(undoable);
   };
 
-  const currentWallArray = useMemo(() => {
-    const array: WallModel[] = [];
-    if (wallsId.length > 0) {
-      const wall = getElementById(wallsId[0]) as WallModel;
-      if (wall) {
-        array.push(wall);
-        const leftWall = getElementById(wall.leftJoints[0]) as WallModel;
-        const rightWall = getElementById(wall.rightJoints[0]) as WallModel;
-        if (leftWall && rightWall) {
-          const midWall = getElementById(leftWall.leftJoints[0]) as WallModel;
-          const checkWall = getElementById(rightWall.rightJoints[0]) as WallModel;
-          if (midWall && checkWall && midWall.id === checkWall.id) {
-            array.push(rightWall, midWall, leftWall);
-          }
-        }
-      }
-    }
-    return array;
-  }, [elements]);
+  const currentWallArray = useCurrWallArray(wallsId[0]);
 
   const centroid = useMemo(() => {
     if (currentWallArray.length !== 4) {
@@ -535,7 +524,7 @@ const MansardRoof = ({
     } else {
       removeElementById(id, false);
     }
-  }, [currentWallArray, h]);
+  }, [currentWallArray, h, frontRidge, backRidge]);
 
   const updateSolarPanelOnRoofFlag = useStore(Selector.updateSolarPanelOnRoofFlag);
 
@@ -829,4 +818,4 @@ const MansardRoof = ({
   );
 };
 
-export default MansardRoof;
+export default React.memo(MansardRoof);

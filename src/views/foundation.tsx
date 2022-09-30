@@ -1974,6 +1974,7 @@ const Foundation = ({
                     break;
                   }
                 }
+                state.updateRoofFlag = !state.updateRoofFlag;
               });
             }
             break;

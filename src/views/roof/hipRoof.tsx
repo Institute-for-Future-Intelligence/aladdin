@@ -16,7 +16,7 @@ import { UndoableResizeHipRoofRidge } from 'src/undo/UndoableResize';
 import { Util } from 'src/Util';
 import { DoubleSide, Euler, Mesh, Raycaster, Vector2, Vector3 } from 'three';
 import { ObjectType } from '../../types';
-import { useRoofTexture, useSolarPanelUndoable, useTransparent } from './hooks';
+import { useCurrWallArray, useRoofTexture, useSolarPanelUndoable, useTransparent } from './hooks';
 import {
   addUndoableResizeRoofHeight,
   ConvexGeoProps,
@@ -108,11 +108,17 @@ const HipRoof = ({
   const setCommonStore = useStore(Selector.set);
   const removeElementById = useStore(Selector.removeElementById);
   const shadowEnabled = useStore(Selector.viewState.shadowEnabled);
-  const elements = useStore(Selector.elements);
   const updateSolarPanelOnRoofFlag = useStore(Selector.updateSolarPanelOnRoofFlag);
 
   // set position and rotation
-  const foundation = getElementById(parentId);
+  const foundation = useStore((state) => {
+    for (const e of state.elements) {
+      if (e.id === parentId) {
+        return e;
+      }
+    }
+    return null;
+  });
   let rotation = 0;
   if (foundation) {
     cx = foundation.cx;
@@ -157,6 +163,8 @@ const HipRoof = ({
     setRightRidgeLengthCurr(rightRidgeLength);
   }, [rightRidgeLength]);
 
+  const currentWallArray = useCurrWallArray(wallsId[0]);
+
   const setHipRoofRidgeLength = (elemId: string, leftRidge: number, rightRidge: number) => {
     setCommonStore((state) => {
       for (const e of state.elements) {
@@ -195,26 +203,6 @@ const HipRoof = ({
     } as UndoableResizeHipRoofRidge;
     useStore.getState().addUndoable(undoable);
   };
-
-  const currentWallArray = useMemo(() => {
-    const array: WallModel[] = [];
-    if (wallsId.length > 0) {
-      const wall = getElementById(wallsId[0]) as WallModel;
-      if (wall) {
-        array.push(wall);
-        const leftWall = getElementById(wall.leftJoints[0]) as WallModel;
-        const rightWall = getElementById(wall.rightJoints[0]) as WallModel;
-        if (leftWall && rightWall) {
-          const midWall = getElementById(leftWall.leftJoints[0]) as WallModel;
-          const checkWall = getElementById(rightWall.rightJoints[0]) as WallModel;
-          if (midWall && checkWall && midWall.id === checkWall.id) {
-            array.push(rightWall, midWall, leftWall);
-          }
-        }
-      }
-    }
-    return array;
-  }, [elements]);
 
   const getWallPoint = (wallArray: WallModel[]) => {
     const arr: Point2[] = [];
@@ -635,4 +623,4 @@ const HipRoof = ({
   );
 };
 
-export default HipRoof;
+export default React.memo(HipRoof);
