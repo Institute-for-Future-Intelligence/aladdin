@@ -1433,7 +1433,7 @@ const Foundation = ({
           isSettingWallEndPointRef.current = false;
         } else {
           if (resizeHandleTypeRef.current) {
-            if (wall.lx > 0.01) {
+            if (wall.lx > 0.45) {
               wallMapOnFoundation.current.set(wall.id, wall);
               newPositionRef.current.set(wall.cx, wall.cy, wall.cz);
               newDimensionRef.current.set(wall.lx, wall.ly, wall.lz);
@@ -1929,7 +1929,11 @@ const Foundation = ({
                     leftPoint.add(magnetOffset);
                     rightPoint.add(magnetOffset);
                   }
-                  if (rightTarget.id && (!rightTarget.jointId || rightTarget.jointId === currWall.id)) {
+                  if (
+                    rightTarget.id &&
+                    (!rightTarget.jointId || rightTarget.jointId === currWall.id) &&
+                    (leftTarget.id !== rightTarget.id || leftTarget.side !== rightTarget.side)
+                  ) {
                     wallNewRightJointIdRef.current = rightTarget.id;
                     rightFlip = rightTarget.side === WallSide.Right;
                   }
@@ -1945,9 +1949,11 @@ const Foundation = ({
                 }
 
                 if (leftTarget.point && rightTarget.point) {
-                  leftPoint.copy(leftTarget.point);
-                  rightPoint.copy(rightTarget.point);
-                  stretched = true;
+                  if (leftTarget.id !== rightTarget.id || leftTarget.side !== rightTarget.side) {
+                    leftPoint.copy(leftTarget.point);
+                    rightPoint.copy(rightTarget.point);
+                    stretched = true;
+                  }
                 }
               } else {
                 wallNewLeftJointIdRef.current = null;
