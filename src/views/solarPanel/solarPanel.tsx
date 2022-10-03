@@ -117,6 +117,7 @@ const SolarPanel = ({
   const pvModel = getPvModule(pvModelName) ?? getPvModule('SPR-X21-335-BLK');
   const lang = { lng: language };
 
+  console.log('solar');
   // be sure to get the updated parent so that this memorized element can move with it
   const parent = useStore((state) => {
     for (const e of state.elements) {

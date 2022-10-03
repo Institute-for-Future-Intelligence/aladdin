@@ -116,11 +116,9 @@ const MansardRoof = ({
 }: MansardRoofModel) => {
   const texture = useRoofTexture(textureType);
 
-  const getElementById = useStore(Selector.getElementById);
   const setCommonStore = useStore(Selector.set);
   const removeElementById = useStore(Selector.removeElementById);
   const shadowEnabled = useStore(Selector.viewState.shadowEnabled);
-  const elements = useStore(Selector.elements); // todo: could optimize
   const ray = useStore((state) => state.ray);
   const mouse = useStore((state) => state.mouse);
 
@@ -130,6 +128,7 @@ const MansardRoof = ({
   const [roofHandleType, setRoofHandleType] = useState(RoofHandleType.Null);
   const oldHeight = useRef<number>(h);
   const oldRidgeVal = useRef<number>(0);
+  const isFirstMountRef = useRef(true);
 
   const intersectionPlaneRef = useRef<Mesh>(null);
   const isPointerMovingRef = useRef(false);
@@ -152,13 +151,17 @@ const MansardRoof = ({
   }
 
   useEffect(() => {
-    if (h < minHeight) {
-      setH(minHeight);
+    if (!isFirstMountRef.current) {
+      if (h < minHeight) {
+        setH(minHeight);
+      }
     }
   }, [minHeight]);
 
   useEffect(() => {
-    setH(lz);
+    if (!isFirstMountRef.current) {
+      setH(lz);
+    }
   }, [lz]);
 
   const getWallPoint = (wallArray: WallModel[]) => {
@@ -481,56 +484,64 @@ const MansardRoof = ({
   }, [currentWallArray, h]);
 
   useEffect(() => {
-    if (currentWallArray.length === 4) {
-      let minHeight = 0;
-      for (let i = 0; i < currentWallArray.length; i++) {
-        const { lh, rh } = getWallHeight(currentWallArray, i);
-        minHeight = Math.max(minHeight, Math.max(lh, rh));
-        setCommonStore((state) => {
-          for (const e of state.elements) {
-            if (e.id === currentWallArray[i].id) {
-              const w = e as WallModel;
-              w.roofId = id;
-              w.leftRoofHeight = lh;
-              w.rightRoofHeight = rh;
-              if (i === 1) {
-                if (w.centerLeftRoofHeight && w.centerRightRoofHeight) {
-                  w.centerLeftRoofHeight[0] = -frontRidge;
-                  w.centerLeftRoofHeight[1] = h;
-                  w.centerRightRoofHeight[0] = -backRidge;
-                  w.centerRightRoofHeight[1] = h;
-                } else {
-                  w.centerLeftRoofHeight = [-frontRidge, h];
-                  w.centerRightRoofHeight = [-backRidge, h];
+    if (!isFirstMountRef.current) {
+      if (currentWallArray.length === 4) {
+        let minHeight = 0;
+        for (let i = 0; i < currentWallArray.length; i++) {
+          const { lh, rh } = getWallHeight(currentWallArray, i);
+          minHeight = Math.max(minHeight, Math.max(lh, rh));
+          setCommonStore((state) => {
+            for (const e of state.elements) {
+              if (e.id === currentWallArray[i].id) {
+                const w = e as WallModel;
+                w.roofId = id;
+                w.leftRoofHeight = lh;
+                w.rightRoofHeight = rh;
+                if (i === 1) {
+                  if (w.centerLeftRoofHeight && w.centerRightRoofHeight) {
+                    w.centerLeftRoofHeight[0] = -frontRidge;
+                    w.centerLeftRoofHeight[1] = h;
+                    w.centerRightRoofHeight[0] = -backRidge;
+                    w.centerRightRoofHeight[1] = h;
+                  } else {
+                    w.centerLeftRoofHeight = [-frontRidge, h];
+                    w.centerRightRoofHeight = [-backRidge, h];
+                  }
                 }
-              }
-              if (i === 3) {
-                if (w.centerLeftRoofHeight && w.centerRightRoofHeight) {
-                  w.centerLeftRoofHeight[0] = backRidge;
-                  w.centerLeftRoofHeight[1] = h;
-                  w.centerRightRoofHeight[0] = frontRidge;
-                  w.centerRightRoofHeight[1] = h;
-                } else {
-                  w.centerLeftRoofHeight = [backRidge, h];
-                  w.centerRightRoofHeight = [frontRidge, h];
+                if (i === 3) {
+                  if (w.centerLeftRoofHeight && w.centerRightRoofHeight) {
+                    w.centerLeftRoofHeight[0] = backRidge;
+                    w.centerLeftRoofHeight[1] = h;
+                    w.centerRightRoofHeight[0] = frontRidge;
+                    w.centerRightRoofHeight[1] = h;
+                  } else {
+                    w.centerLeftRoofHeight = [backRidge, h];
+                    w.centerRightRoofHeight = [frontRidge, h];
+                  }
                 }
+                break;
               }
-              break;
             }
-          }
-        });
+          });
+        }
+        setMinHeight(minHeight);
+      } else {
+        removeElementById(id, false);
       }
-      setMinHeight(minHeight);
-    } else {
-      removeElementById(id, false);
     }
   }, [currentWallArray, h, frontRidge, backRidge]);
 
   const updateSolarPanelOnRoofFlag = useStore(Selector.updateSolarPanelOnRoofFlag);
 
   useEffect(() => {
-    updateRooftopSolarPanel(foundation, id, roofSegments, centroid, h, thickness);
+    if (!isFirstMountRef.current) {
+      updateRooftopSolarPanel(foundation, id, roofSegments, centroid, h, thickness);
+    }
   }, [updateSolarPanelOnRoofFlag, h, thickness, frontRidge, backRidge]);
+
+  useEffect(() => {
+    isFirstMountRef.current = false;
+  }, []);
 
   const { grabRef, addUndoableMove, undoMove, setOldRefData } = useSolarPanelUndoable();
   const { transparent, opacity } = useTransparent();

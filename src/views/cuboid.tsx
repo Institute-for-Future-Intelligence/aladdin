@@ -179,9 +179,6 @@ const Cuboid = ({
   const oldVerticesRef = useRef<Point2[]>([]);
   const newVerticesRef = useRef<Point2[]>([]);
   const intersectPlaneRef = useRef<Mesh>();
-  const resizeAnchorRef = useRef(useStore.getState().resizeAnchor);
-  const enableFineGridRef = useRef(useStore.getState().enableFineGrid);
-  const hoveredHandleRef = useRef(useStore.getState().hoveredHandle);
 
   const lang = { lng: language };
   const hx = lx / 2;
@@ -202,17 +199,6 @@ const Cuboid = ({
   if (grabRef.current && grabRef.current.type === ObjectType.SolarPanel) {
     intersectionPlanePosition.set(0, 0, cuboidModel.lz / 2 + (grabRef.current as SolarPanelModel).poleHeight);
   }
-
-  useEffect(() => {
-    const unsubscribe = useStore.subscribe((state) => {
-      hoveredHandleRef.current = state.hoveredHandle;
-      resizeAnchorRef.current = state.resizeAnchor;
-      enableFineGridRef.current = state.enableFineGrid;
-    });
-    return () => {
-      unsubscribe();
-    };
-  }, []);
 
   useEffect(() => {
     const handlePointerUp = () => {
@@ -685,7 +671,7 @@ const Cuboid = ({
                       lx = cuboidModel.lx;
                       ly = cuboidModel.ly;
                     }
-                    q = enableFineGridRef.current ? Util.snapToFineGrid(q) : Util.snapToNormalGrid(q);
+                    q = useStore.getState().enableFineGrid ? Util.snapToFineGrid(q) : Util.snapToNormalGrid(q);
                     q.x /= lx;
                     q.y /= ly;
                     updatePolygonVertexPositionById(polygon.id, polygon.selectedIndex, q.x, q.y);
@@ -728,7 +714,7 @@ const Cuboid = ({
           updateSolarPanelRelativeAzimuthById(solarPanel.id, newAzimuth);
           newAzimuthRef.current = newAzimuth;
         } else if (resizeHandleType) {
-          const resizeAnchor = resizeAnchorRef.current;
+          const resizeAnchor = useStore.getState().resizeAnchor;
           const pvModel = getPvModule(solarPanel.pvModelName);
           const wp = new Vector2(p.x, p.y);
           const resizeAnchor2D = new Vector2(resizeAnchor.x, resizeAnchor.y);

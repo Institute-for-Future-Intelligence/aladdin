@@ -179,19 +179,13 @@ const Wall = ({
   const setElementPosition = useStore(Selector.setElementPosition);
   const updateWallFlag = useStore(Selector.updateWallFlag);
 
-  const objectTypeToAddRef = useRef(useStore.getState().objectTypeToAdd);
-  const moveHandleTypeRef = useRef(useStore.getState().moveHandleType);
-  const resizeHandleTypeRef = useRef(useStore.getState().resizeHandleType);
-  const resizeAnchorRef = useRef(useStore.getState().resizeAnchor);
-  const addedWallIdRef = useRef(useStore.getState().addedWallId);
-  const enableFineGridRef = useRef(useStore.getState().enableFineGrid);
-
   const intersectionPlaneRef = useRef<Mesh>(null);
   const outsideWallRef = useRef<Mesh>(null);
   // const outsideWallInnerFaceRef = useRef<Mesh>(null);
   const insideWallRef = useRef<Mesh>(null);
   const topSurfaceRef = useRef<Mesh>(null);
   const grabRef = useRef<ElementModel | null>(null);
+  const isFirstMountRef = useRef(true);
 
   const addedWindowIdRef = useRef<string | null>(null);
   const isSettingWindowStartPointRef = useRef(false);
@@ -344,21 +338,6 @@ const Wall = ({
     setElementOnWall(useStore.getState().elements.filter((e) => validElementOnWall(e)));
   };
 
-  // subscribe common store
-  useEffect(() => {
-    const unsubscribe = useStore.subscribe((state) => {
-      objectTypeToAddRef.current = state.objectTypeToAdd;
-      moveHandleTypeRef.current = state.moveHandleType;
-      resizeHandleTypeRef.current = state.resizeHandleType;
-      addedWallIdRef.current = state.addedWallId;
-      enableFineGridRef.current = state.enableFineGrid;
-      resizeAnchorRef.current = state.resizeAnchor;
-    });
-    return () => {
-      unsubscribe();
-    };
-  }, []);
-
   useEffect(() => {
     if (deletedWindowAndParentId && deletedWindowAndParentId[1] === id) {
       resetCurrentState();
@@ -368,17 +347,6 @@ const Wall = ({
       });
     }
   }, [deletedWindowAndParentId]);
-
-  // windows
-  useEffect(() => {
-    setCommonStore((state) => {
-      for (const e of state.elements) {
-        if (e.type === ObjectType.Window && e.parentId === id) {
-          e.ly = ly;
-        }
-      }
-    });
-  }, [ly]);
 
   useEffect(() => {
     updateElementsOnWall();
@@ -402,6 +370,10 @@ const Wall = ({
       });
     }
   }, [deletedRoofId]);
+
+  useEffect(() => {
+    isFirstMountRef.current = false;
+  }, []);
 
   const validElementOnWall = (elem: ElementModel) => {
     if (elem.parentId !== id) {
@@ -548,7 +520,7 @@ const Wall = ({
   };
 
   const getPositionOnGrid = (p: Vector3) => {
-    if (enableFineGridRef.current) {
+    if (useStore.getState().enableFineGrid) {
       p = snapToFineGrid(p);
     } else {
       p = snapToNormalGrid(p);
@@ -568,10 +540,10 @@ const Wall = ({
   const checkIfCanSelectMe = (e: ThreeEvent<PointerEvent>) => {
     if (
       e.button === 2 ||
-      addedWallIdRef.current ||
+      useStore.getState().addedWallId ||
       addedWindowIdRef.current ||
-      moveHandleTypeRef.current ||
-      resizeHandleTypeRef.current ||
+      useStore.getState().moveHandleType ||
+      useStore.getState().resizeHandleType ||
       useStore.getState().objectTypeToAdd !== ObjectType.None ||
       selected ||
       isAddingElement()
@@ -678,7 +650,7 @@ const Wall = ({
 
   const handleIntersectionPointerDown = (e: ThreeEvent<PointerEvent>) => {
     // return on right-click or not first wall
-    if (e.button === 2 || addedWallIdRef.current || !checkIsFirstWall(e)) {
+    if (e.button === 2 || useStore.getState().addedWallId || !checkIsFirstWall(e)) {
       return;
     }
 
@@ -722,7 +694,7 @@ const Wall = ({
         // a child of this wall is clicked
         if (selectedElement && selectedElement.parentId === id) {
           grabRef.current = selectedElement;
-          if (moveHandleTypeRef.current || resizeHandleTypeRef.current) {
+          if (useStore.getState().moveHandleType || useStore.getState().resizeHandleType) {
             setShowGrid(true);
             setOriginElements([...useStore.getState().elements]);
             oldPositionRef.current = [selectedElement.cx, selectedElement.cy, selectedElement.cz];
@@ -758,9 +730,9 @@ const Wall = ({
     else {
       const elem = getElementById(grabRef.current.id);
       if (elem) {
-        if (moveHandleTypeRef.current) {
+        if (useStore.getState().moveHandleType) {
           handleUndoableMove(elem);
-        } else if (resizeHandleTypeRef.current) {
+        } else if (useStore.getState().resizeHandleType) {
           if (isSettingWindowEndPointRef.current || isSettingDoorEndPointRef.current) {
             handleUndoableAdd(elem);
           } else {
@@ -810,8 +782,8 @@ const Wall = ({
 
         // move or resize
         if (grabRef.current && grabRef.current.parentId === id) {
-          const moveHandleType = moveHandleTypeRef.current;
-          const resizeHandleType = resizeHandleTypeRef.current;
+          const moveHandleType = useStore.getState().moveHandleType;
+          const resizeHandleType = useStore.getState().resizeHandleType;
 
           switch (grabRef.current.type) {
             case ObjectType.Window: {
@@ -844,7 +816,7 @@ const Wall = ({
                 if (!isPointInside(p.x, p.z)) {
                   return;
                 }
-                let resizeAnchor = getRelativePosOnWall(resizeAnchorRef.current, wallModel);
+                let resizeAnchor = getRelativePosOnWall(useStore.getState().resizeAnchor, wallModel);
                 if (isSettingWindowEndPointRef.current) {
                   resizeAnchor = getPositionOnGrid(resizeAnchor);
                 }
@@ -884,7 +856,7 @@ const Wall = ({
                   }
                 });
               } else if (resizeHandleType) {
-                let resizeAnchor = getRelativePosOnWall(resizeAnchorRef.current, wallModel);
+                let resizeAnchor = getRelativePosOnWall(useStore.getState().resizeAnchor, wallModel);
                 if (isSettingDoorEndPointRef.current) {
                   resizeAnchor = getPositionOnGrid(resizeAnchor);
                 }
@@ -931,7 +903,7 @@ const Wall = ({
                   }
                 });
               } else if (resizeHandleType) {
-                const resizeAnchor = getRelativePosOnWall(resizeAnchorRef.current, wallModel);
+                const resizeAnchor = getRelativePosOnWall(useStore.getState().resizeAnchor, wallModel);
                 setCommonStore((state) => {
                   for (const e of state.elements) {
                     if (e.id === grabRef.current?.id) {
@@ -974,7 +946,7 @@ const Wall = ({
         }
 
         // add new element
-        switch (objectTypeToAddRef.current) {
+        switch (useStore.getState().objectTypeToAdd) {
           case ObjectType.Window: {
             let relativePos = getRelativePosOnWall(pointer, wallModel);
             relativePos = getPositionOnGrid(relativePos);
@@ -1060,9 +1032,9 @@ const Wall = ({
 
   const handleAddElement = (pointer?: Vector3) => {
     // add new elements
-    if (parent && objectTypeToAddRef.current) {
+    if (parent && useStore.getState().objectTypeToAdd) {
       let newElement: ElementModel | null = null;
-      switch (objectTypeToAddRef.current) {
+      switch (useStore.getState().objectTypeToAdd) {
         case ObjectType.PyramidRoof: {
           if (!roofId) {
             newElement = ElementModelFactory.makePyramidRoof([wallModel.id], parent, lz);
@@ -1412,7 +1384,7 @@ const Wall = ({
           {selected && !locked && lx > 0.5 && <WallMoveHandleWarpper ply={ly} phz={hz} />}
 
           {/* grid */}
-          {showGrid && (moveHandleTypeRef.current || resizeHandleTypeRef.current) && (
+          {showGrid && (useStore.getState().moveHandleType || useStore.getState().resizeHandleType) && (
             <group position={[0, -0.001, 0]} rotation={[HALF_PI, 0, 0]}>
               <ElementGrid hx={hx} hy={hz} hz={0} />
             </group>

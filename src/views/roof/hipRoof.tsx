@@ -140,27 +140,38 @@ const HipRoof = ({
   const mouse = useMemo(() => new Vector2(), []);
   const oldHeight = useRef<number>(h);
   const isPointerMovingRef = useRef(false);
+  const isFirstMountRef = useRef(true);
 
   useEffect(() => {
-    updateRooftopSolarPanel(foundation, id, roofSegments, ridgeMidPoint, h, thickness);
+    if (!isFirstMountRef.current) {
+      updateRooftopSolarPanel(foundation, id, roofSegments, ridgeMidPoint, h, thickness);
+    }
   }, [updateSolarPanelOnRoofFlag, h, thickness]);
 
   useEffect(() => {
-    if (h < minHeight) {
-      setH(minHeight * 1.5);
+    if (!isFirstMountRef.current) {
+      if (h < minHeight) {
+        setH(minHeight * 1.5);
+      }
     }
   }, [minHeight]);
 
   useEffect(() => {
-    setH(lz);
+    if (!isFirstMountRef.current) {
+      setH(lz);
+    }
   }, [lz]);
 
   useEffect(() => {
-    setLeftRidgeLengthCurr(leftRidgeLength);
+    if (!isFirstMountRef.current) {
+      setLeftRidgeLengthCurr(leftRidgeLength);
+    }
   }, [leftRidgeLength]);
 
   useEffect(() => {
-    setRightRidgeLengthCurr(rightRidgeLength);
+    if (!isFirstMountRef.current) {
+      setRightRidgeLengthCurr(rightRidgeLength);
+    }
   }, [rightRidgeLength]);
 
   const currentWallArray = useCurrWallArray(wallsId[0]);
@@ -381,24 +392,30 @@ const HipRoof = ({
   };
 
   useEffect(() => {
-    if (currentWallArray.length === 4) {
-      for (let i = 0; i < currentWallArray.length; i++) {
-        const { lh, rh } = getWallHeight(currentWallArray, i);
-        setCommonStore((state) => {
-          for (const e of state.elements) {
-            if (e.id === currentWallArray[i].id) {
-              (e as WallModel).roofId = id;
-              (e as WallModel).leftRoofHeight = lh;
-              (e as WallModel).rightRoofHeight = rh;
-              break;
+    if (!isFirstMountRef.current) {
+      if (currentWallArray.length === 4) {
+        for (let i = 0; i < currentWallArray.length; i++) {
+          const { lh, rh } = getWallHeight(currentWallArray, i);
+          setCommonStore((state) => {
+            for (const e of state.elements) {
+              if (e.id === currentWallArray[i].id) {
+                (e as WallModel).roofId = id;
+                (e as WallModel).leftRoofHeight = lh;
+                (e as WallModel).rightRoofHeight = rh;
+                break;
+              }
             }
-          }
-        });
+          });
+        }
+      } else {
+        removeElementById(id, false);
       }
-    } else {
-      removeElementById(id, false);
     }
   }, [currentWallArray]);
+
+  useEffect(() => {
+    isFirstMountRef.current = false;
+  }, []);
 
   const { grabRef, addUndoableMove, undoMove, setOldRefData } = useSolarPanelUndoable();
   const { transparent, opacity } = useTransparent();

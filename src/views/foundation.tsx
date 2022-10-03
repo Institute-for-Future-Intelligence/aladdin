@@ -150,13 +150,6 @@ const Foundation = ({
   // Use 2: Need update first before other use. Intend to reduce call getElementById()
   const wallMapOnFoundation = useRef<Map<string, WallModel>>(new Map());
 
-  const objectTypeToAddRef = useRef(useStore.getState().objectTypeToAdd);
-  const hoveredHandleRef = useRef(useStore.getState().hoveredHandle);
-  const moveHandleTypeRef = useRef(useStore.getState().moveHandleType);
-  const resizeHandleTypeRef = useRef(useStore.getState().resizeHandleType);
-  const resizeAnchorRef = useRef(useStore.getState().resizeAnchor);
-  const rotateHandleTypeRef = useRef(useStore.getState().rotateHandleType);
-  const enableFineGridRef = useRef(useStore.getState().enableFineGrid);
   const groupRef = useRef<Group>(null);
   const baseRef = useRef<Mesh>();
   const grabRef = useRef<ElementModel | null>(null);
@@ -240,21 +233,6 @@ const Foundation = ({
       intersectionPlanePosition.set(0, 0, foundationModel.lz / 2 + poleHeight);
     }
   }
-
-  useEffect(() => {
-    const unsubscribe = useStore.subscribe((state) => {
-      objectTypeToAddRef.current = state.objectTypeToAdd;
-      hoveredHandleRef.current = state.hoveredHandle;
-      moveHandleTypeRef.current = state.moveHandleType;
-      resizeHandleTypeRef.current = state.resizeHandleType;
-      resizeAnchorRef.current = state.resizeAnchor;
-      rotateHandleTypeRef.current = state.rotateHandleType;
-      enableFineGridRef.current = state.enableFineGrid;
-    });
-    return () => {
-      unsubscribe();
-    };
-  }, []);
 
   useEffect(() => {
     if (elementGroupId === id && selected) {
@@ -524,7 +502,7 @@ const Foundation = ({
   };
 
   const updatePointer = (p: Vector3, targetPoint?: Vector3 | null) => {
-    if (!enableFineGridRef.current) {
+    if (!useStore.getState().enableFineGrid) {
       if (targetPoint) {
         p = targetPoint;
       } else {
@@ -566,9 +544,9 @@ const Foundation = ({
 
     setCommonStore((state) => {
       state.updateWallMapOnFoundationFlag = !state.updateWallMapOnFoundationFlag;
-      if (resizeHandleTypeRef.current) {
+      if (useStore.getState().resizeHandleType) {
         state.resizeHandleType =
-          resizeHandleTypeRef.current === ResizeHandleType.LowerLeft
+          useStore.getState().resizeHandleType === ResizeHandleType.LowerLeft
             ? ResizeHandleType.LowerRight
             : ResizeHandleType.LowerLeft;
       }
@@ -1235,7 +1213,7 @@ const Foundation = ({
     setCommonStore((state) => {
       state.contextMenuObjectType = null;
     });
-    if (objectTypeToAddRef.current !== ObjectType.Window && !isAddingElement()) {
+    if (useStore.getState().objectTypeToAdd !== ObjectType.Window && !isAddingElement()) {
       selectMe(id, e, ActionType.Select);
     }
     if (useStore.getState().groupActionMode) {
@@ -1243,12 +1221,15 @@ const Foundation = ({
     }
     const selectedElement = getSelectedElement();
     let bypass = false;
-    if (e.intersections[0].object.name === ObjectType.Polygon && objectTypeToAddRef.current !== ObjectType.None) {
+    if (
+      e.intersections[0].object.name === ObjectType.Polygon &&
+      useStore.getState().objectTypeToAdd !== ObjectType.None
+    ) {
       bypass = true;
     }
     // no child of this foundation is clicked
     if (selectedElement?.id === id || bypass) {
-      if (legalOnFoundation(objectTypeToAddRef.current)) {
+      if (legalOnFoundation(useStore.getState().objectTypeToAdd)) {
         if (foundationModel) {
           setShowGrid(true);
           const position = e.intersections[0].point;
@@ -1304,7 +1285,7 @@ const Foundation = ({
       let targetPoint: Vector3 | null = null;
       let targetSide: WallSide | null = null;
       let jointId: string | undefined = undefined;
-      if (!enableFineGridRef.current) {
+      if (!useStore.getState().enableFineGrid) {
         let target = findMagnetPoint(p, 1.5);
         targetID = target.id;
         targetPoint = target.point;
@@ -1432,7 +1413,7 @@ const Foundation = ({
           setAddedWallID(null);
           isSettingWallEndPointRef.current = false;
         } else {
-          if (resizeHandleTypeRef.current) {
+          if (useStore.getState().resizeHandleType) {
             if (wall.lx > 0.45) {
               wallMapOnFoundation.current.set(wall.id, wall);
               newPositionRef.current.set(wall.cx, wall.cy, wall.cz);
@@ -1449,7 +1430,7 @@ const Foundation = ({
                 }
               });
             }
-          } else if (moveHandleTypeRef.current) {
+          } else if (useStore.getState().moveHandleType) {
             let newAngle = wall.relativeAngle;
             let newLeftJoints: string[] = [];
             let newRightJoints: string[] = [];
@@ -1531,10 +1512,10 @@ const Foundation = ({
         break;
       }
       case ObjectType.Polygon: {
-        if (moveHandleTypeRef.current || resizeHandleTypeRef.current) {
+        if (useStore.getState().moveHandleType || useStore.getState().resizeHandleType) {
           newVerticesRef.current = (elem as PolygonModel).vertices.map((v) => ({ ...v }));
           const undoableEditPolygon = {
-            name: moveHandleTypeRef.current ? 'Move Polygon' : 'Resize Polygon',
+            name: useStore.getState().moveHandleType ? 'Move Polygon' : 'Resize Polygon',
             timestamp: Date.now(),
             oldValue: oldVerticesRef.current,
             newValue: newVerticesRef.current,
@@ -1552,7 +1533,7 @@ const Foundation = ({
         break;
       }
       default: {
-        if (resizeHandleTypeRef.current) {
+        if (useStore.getState().resizeHandleType) {
           newPositionRef.current.set(elem.cx, elem.cy, elem.cz);
           newDimensionRef.current.set(elem.lx, elem.ly, elem.lz);
           if (
@@ -1607,7 +1588,7 @@ const Foundation = ({
             } as UndoableResize;
             addUndoable(undoableResize);
           }
-        } else if (rotateHandleTypeRef.current) {
+        } else if (useStore.getState().rotateHandleType) {
           // currently, solar collectors are the only type of child that can be rotated
           if (Util.isSolarCollector(grabRef.current)) {
             const collector = grabRef.current as SolarCollector;
@@ -1702,12 +1683,12 @@ const Foundation = ({
   const handlePointerMove = (e: ThreeEvent<PointerEvent>) => {
     if (!foundationModel) return;
     if (grabRef.current && Util.isSolarCollector(grabRef.current)) return;
-    const objectTypeToAdd = objectTypeToAddRef.current;
+    const objectTypeToAdd = useStore.getState().objectTypeToAdd;
     if (!grabRef.current && !addedWallID && objectTypeToAdd !== ObjectType.Wall) return;
     if (grabRef.current?.parentId !== id && objectTypeToAdd === ObjectType.None) return;
-    const moveHandleType = moveHandleTypeRef.current;
-    const resizeHandleType = resizeHandleTypeRef.current;
-    const resizeAnchor = resizeAnchorRef.current;
+    const moveHandleType = useStore.getState().moveHandleType;
+    const resizeHandleType = useStore.getState().resizeHandleType;
+    const resizeAnchor = useStore.getState().resizeAnchor;
     setRayCast(e);
     if (baseRef.current) {
       const intersects = ray.intersectObjects([baseRef.current]);
@@ -1740,7 +1721,7 @@ const Foundation = ({
               p.x -= foundationModel.cx;
               p.y -= foundationModel.cy;
               p.applyEuler(new Euler().fromArray(foundationModel.rotation.map((a) => -a)));
-              p = enableFineGridRef.current ? Util.snapToFineGrid(p) : Util.snapToNormalGrid(p);
+              p = useStore.getState().enableFineGrid ? Util.snapToFineGrid(p) : Util.snapToNormalGrid(p);
               p.x /= foundationModel.lx;
               p.y /= foundationModel.ly;
               updatePolygonVertexPositionById(polygon.id, polygon.selectedIndex, p.x, p.y);
@@ -1756,7 +1737,7 @@ const Foundation = ({
               let targetPoint: Vector3 | null = null;
               let targetSide: WallSide | null = null;
               let targetJointId: string | undefined = undefined;
-              if (!enableFineGridRef.current) {
+              if (!useStore.getState().enableFineGrid) {
                 let target = findMagnetPoint(p, 1.5);
                 targetID = target.id;
                 targetPoint = target.point;
@@ -1906,7 +1887,7 @@ const Foundation = ({
               doesWallNeedFlipRef.current = false;
               let stretched = false;
 
-              if (!enableFineGridRef.current) {
+              if (!useStore.getState().enableFineGrid) {
                 const leftTarget = findMagnetPoint(leftPoint, 1);
                 if (leftTarget.point) {
                   const magnetOffset = new Vector3().subVectors(leftTarget.point, leftPoint);
@@ -2115,7 +2096,7 @@ const Foundation = ({
     if (grabRef.current && Util.isSolarCollector(grabRef.current)) {
       // Have to get the latest from the store (we may change this to ref in the future)
       const sp = useStore.getState().getElementById(grabRef.current.id) as SolarCollector;
-      if (moveHandleTypeRef.current && !isSolarCollectorNewPositionOk(sp, sp.cx, sp.cy)) {
+      if (useStore.getState().moveHandleType && !isSolarCollectorNewPositionOk(sp, sp.cx, sp.cy)) {
         setElementPosition(sp.id, oldPositionRef.current.x, oldPositionRef.current.y, oldPositionRef.current.z);
       }
     }
@@ -2130,9 +2111,9 @@ const Foundation = ({
       const intersects = ray.intersectObjects([intersectPlaneRef.current]);
       if (intersects.length > 0) {
         let p = intersects[0].point; // world coordinate
-        const moveHandleType = moveHandleTypeRef.current;
-        const rotateHandleType = rotateHandleTypeRef.current;
-        const resizeHandleType = resizeHandleTypeRef.current;
+        const moveHandleType = useStore.getState().moveHandleType;
+        const rotateHandleType = useStore.getState().rotateHandleType;
+        const resizeHandleType = useStore.getState().resizeHandleType;
         if (moveHandleType && foundationModel) {
           p = Util.relativeCoordinates(p.x, p.y, p.z, foundationModel);
           setElementPosition(collector.id, p.x, p.y);
@@ -2152,7 +2133,7 @@ const Foundation = ({
             newAzimuthRef.current = newAzimuth;
           }
         } else if (resizeHandleType) {
-          const resizeAnchor = resizeAnchorRef.current;
+          const resizeAnchor = useStore.getState().resizeAnchor;
           const wp = new Vector2(p.x, p.y);
           const resizeAnchor2D = new Vector2(resizeAnchor.x, resizeAnchor.y);
           const distance = wp.distanceTo(resizeAnchor2D);
@@ -2414,10 +2395,10 @@ const Foundation = ({
 
         {showGrid && (
           <>
-            {rotateHandleTypeRef.current && grabRef.current && Util.isSolarCollector(grabRef.current) && (
+            {useStore.getState().rotateHandleType && grabRef.current && Util.isSolarCollector(grabRef.current) && (
               <PolarGrid element={grabRef.current} height={(grabRef.current as SolarCollector).poleHeight + hz} />
             )}
-            {(moveHandleTypeRef.current || resizeHandleTypeRef.current || addedWallID) && (
+            {(useStore.getState().moveHandleType || useStore.getState().resizeHandleType || addedWallID) && (
               <ElementGrid hx={hx} hy={hy} hz={hz} />
             )}
           </>
@@ -2461,7 +2442,7 @@ const Foundation = ({
                 attach="material"
                 color={
                   hoveredHandle === ResizeHandleType.LowerLeft ||
-                  resizeHandleTypeRef.current === ResizeHandleType.LowerLeft
+                  useStore.getState().resizeHandleType === ResizeHandleType.LowerLeft
                     ? HIGHLIGHT_HANDLE_COLOR
                     : RESIZE_HANDLE_COLOR
                 }
@@ -2490,7 +2471,7 @@ const Foundation = ({
                 attach="material"
                 color={
                   hoveredHandle === ResizeHandleType.UpperLeft ||
-                  resizeHandleTypeRef.current === ResizeHandleType.UpperLeft
+                  useStore.getState().resizeHandleType === ResizeHandleType.UpperLeft
                     ? HIGHLIGHT_HANDLE_COLOR
                     : RESIZE_HANDLE_COLOR
                 }
@@ -2519,7 +2500,7 @@ const Foundation = ({
                 attach="material"
                 color={
                   hoveredHandle === ResizeHandleType.LowerRight ||
-                  resizeHandleTypeRef.current === ResizeHandleType.LowerRight
+                  useStore.getState().resizeHandleType === ResizeHandleType.LowerRight
                     ? HIGHLIGHT_HANDLE_COLOR
                     : RESIZE_HANDLE_COLOR
                 }
@@ -2548,7 +2529,7 @@ const Foundation = ({
                 attach="material"
                 color={
                   hoveredHandle === ResizeHandleType.UpperRight ||
-                  resizeHandleTypeRef.current === ResizeHandleType.UpperRight
+                  useStore.getState().resizeHandleType === ResizeHandleType.UpperRight
                     ? HIGHLIGHT_HANDLE_COLOR
                     : RESIZE_HANDLE_COLOR
                 }
@@ -2574,7 +2555,8 @@ const Foundation = ({
                   <meshStandardMaterial
                     attach="material"
                     color={
-                      hoveredHandle === MoveHandleType.Lower || moveHandleTypeRef.current === MoveHandleType.Lower
+                      hoveredHandle === MoveHandleType.Lower ||
+                      useStore.getState().moveHandleType === MoveHandleType.Lower
                         ? HIGHLIGHT_HANDLE_COLOR
                         : MOVE_HANDLE_COLOR_2
                     }
@@ -2596,7 +2578,8 @@ const Foundation = ({
                   <meshStandardMaterial
                     attach="material"
                     color={
-                      hoveredHandle === MoveHandleType.Upper || moveHandleTypeRef.current === MoveHandleType.Upper
+                      hoveredHandle === MoveHandleType.Upper ||
+                      useStore.getState().moveHandleType === MoveHandleType.Upper
                         ? HIGHLIGHT_HANDLE_COLOR
                         : MOVE_HANDLE_COLOR_2
                     }
@@ -2618,7 +2601,8 @@ const Foundation = ({
                   <meshStandardMaterial
                     attach="material"
                     color={
-                      hoveredHandle === MoveHandleType.Left || moveHandleTypeRef.current === MoveHandleType.Left
+                      hoveredHandle === MoveHandleType.Left ||
+                      useStore.getState().moveHandleType === MoveHandleType.Left
                         ? HIGHLIGHT_HANDLE_COLOR
                         : MOVE_HANDLE_COLOR_1
                     }
@@ -2640,7 +2624,8 @@ const Foundation = ({
                   <meshStandardMaterial
                     attach="material"
                     color={
-                      hoveredHandle === MoveHandleType.Right || moveHandleTypeRef.current === MoveHandleType.Right
+                      hoveredHandle === MoveHandleType.Right ||
+                      useStore.getState().moveHandleType === MoveHandleType.Right
                         ? HIGHLIGHT_HANDLE_COLOR
                         : MOVE_HANDLE_COLOR_1
                     }
@@ -2652,7 +2637,8 @@ const Foundation = ({
                   id={id}
                   position={lowerRotateHandlePosition}
                   color={
-                    hoveredHandle === RotateHandleType.Lower || rotateHandleTypeRef.current === RotateHandleType.Lower
+                    hoveredHandle === RotateHandleType.Lower ||
+                    useStore.getState().rotateHandleType === RotateHandleType.Lower
                       ? HIGHLIGHT_HANDLE_COLOR
                       : RESIZE_HANDLE_COLOR
                   }
@@ -2665,7 +2651,8 @@ const Foundation = ({
                   id={id}
                   position={upperRotateHandlePosition}
                   color={
-                    hoveredHandle === RotateHandleType.Upper || rotateHandleTypeRef.current === RotateHandleType.Upper
+                    hoveredHandle === RotateHandleType.Upper ||
+                    useStore.getState().rotateHandleType === RotateHandleType.Upper
                       ? HIGHLIGHT_HANDLE_COLOR
                       : RESIZE_HANDLE_COLOR
                   }

@@ -106,17 +106,22 @@ const PyramidRoof = ({
   const intersectionPlaneRef = useRef<Mesh>(null);
   const isWallLoopRef = useRef(false);
   const oldHeight = useRef<number>(h);
+  const isFirstMountRef = useRef(true);
 
   const prevWallsIdSet = new Set<string>(wallsId);
 
   useEffect(() => {
-    if (h < minHeight) {
-      setH(minHeight);
+    if (!isFirstMountRef.current) {
+      if (h < minHeight) {
+        setH(minHeight);
+      }
     }
   }, [minHeight]);
 
   useEffect(() => {
-    setH(lz);
+    if (!isFirstMountRef.current) {
+      setH(lz);
+    }
   }, [lz]);
 
   const setRayCast = (e: PointerEvent) => {
@@ -416,41 +421,45 @@ const PyramidRoof = ({
 
   // update new roofId
   useEffect(() => {
-    if (currentWallArray.length >= 2 && needUpdateWallsId(currentWallArray, prevWallsIdSet)) {
-      const newWallsIdAray = currentWallArray.map((v) => v.id);
-      const newWallsIdSet = new Set(newWallsIdAray);
-      setCommonStore((state) => {
-        for (const e of state.elements) {
-          if (e.id === id) {
-            (e as RoofModel).wallsId = newWallsIdAray;
-          }
-          if (e.type === ObjectType.Wall && prevWallsIdSet.has(e.id) && !newWallsIdSet.has(e.id)) {
-            (e as WallModel).roofId = null;
-            (e as WallModel).leftRoofHeight = undefined;
-            (e as WallModel).rightRoofHeight = undefined;
-          }
-        }
-      });
-    }
-  }, [updateRoofFlag, prevWallsIdSet]);
-
-  useEffect(() => {
-    if (currentWallArray.length > 1) {
-      for (let i = 0; i < currentWallArray.length; i++) {
-        const { lh, rh } = getWallHeight(currentWallArray, i);
+    if (!isFirstMountRef.current) {
+      if (currentWallArray.length >= 2 && needUpdateWallsId(currentWallArray, prevWallsIdSet)) {
+        const newWallsIdAray = currentWallArray.map((v) => v.id);
+        const newWallsIdSet = new Set(newWallsIdAray);
         setCommonStore((state) => {
           for (const e of state.elements) {
-            if (e.id === currentWallArray[i].id) {
-              (e as WallModel).roofId = id;
-              (e as WallModel).leftRoofHeight = lh;
-              (e as WallModel).rightRoofHeight = rh;
-              break;
+            if (e.id === id) {
+              (e as RoofModel).wallsId = newWallsIdAray;
+            }
+            if (e.type === ObjectType.Wall && prevWallsIdSet.has(e.id) && !newWallsIdSet.has(e.id)) {
+              (e as WallModel).roofId = null;
+              (e as WallModel).leftRoofHeight = undefined;
+              (e as WallModel).rightRoofHeight = undefined;
             }
           }
         });
       }
-    } else {
-      removeElementById(id, false);
+    }
+  }, [updateRoofFlag, prevWallsIdSet]);
+
+  useEffect(() => {
+    if (!isFirstMountRef.current) {
+      if (currentWallArray.length > 1) {
+        for (let i = 0; i < currentWallArray.length; i++) {
+          const { lh, rh } = getWallHeight(currentWallArray, i);
+          setCommonStore((state) => {
+            for (const e of state.elements) {
+              if (e.id === currentWallArray[i].id) {
+                (e as WallModel).roofId = id;
+                (e as WallModel).leftRoofHeight = lh;
+                (e as WallModel).rightRoofHeight = rh;
+                break;
+              }
+            }
+          });
+        }
+      } else {
+        removeElementById(id, false);
+      }
     }
   }, [updateRoofFlag, h]);
 
@@ -459,8 +468,14 @@ const PyramidRoof = ({
   const updateSolarPanelOnRoofFlag = useStore(Selector.updateSolarPanelOnRoofFlag);
 
   useEffect(() => {
-    updateRooftopSolarPanel(foundation, id, roofSegments, centerPointV3, h, thickness);
+    if (!isFirstMountRef.current) {
+      updateRooftopSolarPanel(foundation, id, roofSegments, centerPointV3, h, thickness);
+    }
   }, [updateSolarPanelOnRoofFlag, h, thickness]);
+
+  useEffect(() => {
+    isFirstMountRef.current = false;
+  }, []);
 
   return (
     <group position={[cx, cy, cz]} rotation={[0, 0, rotation]} name={`Pyramid Roof Group ${id}`}>
@@ -585,27 +600,29 @@ const RoofSegment = ({
   const texture = useRoofTexture(textureType);
   const { transparent, opacity } = useTransparent();
 
-  if (meshRef.current) {
-    points.push(new Vector3(0, 0, -0.001));
+  useEffect(() => {
+    if (meshRef.current) {
+      points.push(new Vector3(0, 0, -0.001));
 
-    const geo = new ConvexGeometry(points, direction, length);
+      const geo = new ConvexGeometry(points, direction, length);
 
-    // todo: if has window
-    if (false) {
-      // const h: Vector3[] = [];
-      // h.push(new Vector3(0, 0, -3));
-      // h.push(new Vector3(0, 0, 3));
-      // h.push(new Vector3(1, 1, -3));
-      // h.push(new Vector3(1, 1, 3));
-      // h.push(new Vector3(1, -1, -3));
-      // h.push(new Vector3(1, -1, 3));
-      // const holeMesh = new Mesh(new ConvexGeometry(h), mat);
-      // const res = CSG.subtract(roofMesh, holeMesh);
-      // meshRef.current.geometry = res.geometry;
-    } else {
-      meshRef.current.geometry = geo;
+      // todo: if has window
+      if (false) {
+        // const h: Vector3[] = [];
+        // h.push(new Vector3(0, 0, -3));
+        // h.push(new Vector3(0, 0, 3));
+        // h.push(new Vector3(1, 1, -3));
+        // h.push(new Vector3(1, 1, 3));
+        // h.push(new Vector3(1, -1, -3));
+        // h.push(new Vector3(1, -1, 3));
+        // const holeMesh = new Mesh(new ConvexGeometry(h), mat);
+        // const res = CSG.subtract(roofMesh, holeMesh);
+        // meshRef.current.geometry = res.geometry;
+      } else {
+        meshRef.current.geometry = geo;
+      }
     }
-  }
+  }, [points, direction, length]);
 
   return (
     <mesh

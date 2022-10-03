@@ -71,7 +71,6 @@ const Polygon = ({
   const [centerY, setCenterY] = useState(0);
   const [hoveredHandle, setHoveredHandle] = useState<MoveHandleType | ResizeHandleType | null>(null);
 
-  const resizeHandleTypeRef = useRef(useStore.getState().resizeHandleType);
   const baseRef = useRef<Mesh>();
   const centerRef = useRef<Mesh>();
 
@@ -87,15 +86,6 @@ const Polygon = ({
   const resizeHandleSize = RESIZE_HANDLE_SIZE * ratio;
   const moveHandleSize = MOVE_HANDLE_RADIUS * ratio;
   const lang = { lng: language };
-
-  useEffect(() => {
-    const unsubscribe = useStore.subscribe((state) => {
-      resizeHandleTypeRef.current = state.resizeHandleType;
-    });
-    return () => {
-      unsubscribe();
-    };
-  }, []);
 
   const absoluteVertices = useMemo(() => {
     const av = new Array<Point2>();
@@ -492,7 +482,7 @@ const Polygon = ({
                   attach="material"
                   color={
                     (hoveredHandle === ResizeHandleType.Default ||
-                      resizeHandleTypeRef.current === ResizeHandleType.Default) &&
+                      useStore.getState().resizeHandleType === ResizeHandleType.Default) &&
                     polygonModel.selectedIndex === i
                       ? HIGHLIGHT_HANDLE_COLOR
                       : RESIZE_HANDLE_COLOR

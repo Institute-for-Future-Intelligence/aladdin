@@ -72,12 +72,8 @@ const Window = ({
   const isAddingElement = useStore(Selector.isAddingElement);
   const shadowEnabled = useStore(Selector.viewState.shadowEnabled);
 
-  const addedWallIdRef = useRef(useStore.getState().addedWallId);
-  const objectTypeToAddRef = useRef(useStore.getState().objectTypeToAdd);
-  const moveHandleTypeRef = useRef(useStore.getState().moveHandleType);
-  const resizeHandleTypeRef = useRef(useStore.getState().resizeHandleType);
-
   const [wlx, setWlx] = useState(lx);
+  const [wly, setWly] = useState(ly);
   const [wlz, setWlz] = useState(lz);
   const [wcx, setWcx] = useState(cx);
   const [wcy, setWcy] = useState(cy);
@@ -94,28 +90,16 @@ const Window = ({
 
   const parent = useStore(parentSelector);
 
-  // subscribe common store
-  useEffect(() => {
-    const unsubscribe = useStore.subscribe((state) => {
-      addedWallIdRef.current = state.addedWallId;
-      objectTypeToAddRef.current = state.objectTypeToAdd;
-      moveHandleTypeRef.current = state.moveHandleType;
-      resizeHandleTypeRef.current = state.resizeHandleType;
-    });
-    return () => {
-      unsubscribe();
-    };
-  }, []);
-
   useEffect(() => {
     if (parent) {
       setWlx(lx * parent.lx);
+      setWly(parent.ly);
       setWlz(lz * parent.lz);
       setWcx(cx * parent.lx);
       setWcy(0.33 * parent.ly);
       setWcz(cz * parent.lz);
     }
-  }, [lx, lz, cx, cz, parent?.lx, parent?.ly, parent?.lz]);
+  }, [lx, ly, lz, cx, cy, cz, parent?.lx, parent?.ly, parent?.lz]);
 
   const selectMe = () => {
     setCommonStore((state) => {
@@ -131,12 +115,12 @@ const Window = ({
   };
 
   const onPointerDown = (e: ThreeEvent<PointerEvent>) => {
-    if (e.button === 2 || addedWallIdRef.current) return; // ignore right-click
+    if (e.button === 2 || useStore.getState().addedWallId) return; // ignore right-click
     if (e.intersections.length > 0 && e.intersections[0].eventObject.name === `Window group ${id}`) {
       if (
-        !moveHandleTypeRef.current &&
-        !resizeHandleTypeRef.current &&
-        objectTypeToAddRef.current === ObjectType.None &&
+        !useStore.getState().moveHandleType &&
+        !useStore.getState().resizeHandleType &&
+        useStore.getState().objectTypeToAdd === ObjectType.None &&
         !selected &&
         !isAddingElement()
       ) {
@@ -209,32 +193,32 @@ const Window = ({
       )}
 
       <Plane
-        args={[ly, wlz]}
-        position={[-wlx / 2, ly / 2, 0]}
+        args={[wly, wlz]}
+        position={[-wlx / 2, wly / 2, 0]}
         rotation={[HALF_PI, HALF_PI, 0]}
         material={material}
         receiveShadow={shadowEnabled}
         castShadow={shadowEnabled}
       />
       <Plane
-        args={[ly, wlz]}
-        position={[wlx / 2, ly / 2, 0]}
+        args={[wly, wlz]}
+        position={[wlx / 2, wly / 2, 0]}
         rotation={[HALF_PI, -HALF_PI, 0]}
         material={material}
         receiveShadow={shadowEnabled}
         castShadow={shadowEnabled}
       />
       <Plane
-        args={[wlx, ly]}
-        position={[0, ly / 2, wlz / 2]}
+        args={[wlx, wly]}
+        position={[0, wly / 2, wlz / 2]}
         rotation={[Math.PI, 0, 0]}
         material={material}
         receiveShadow={shadowEnabled}
         castShadow={shadowEnabled}
       />
       <Plane
-        args={[wlx, ly]}
-        position={[0, ly / 2, -wlz / 2]}
+        args={[wlx, wly]}
+        position={[0, wly / 2, -wlz / 2]}
         material={material}
         receiveShadow={shadowEnabled}
         castShadow={shadowEnabled}

@@ -299,9 +299,7 @@ const GableRoof = ({
   const setCommonStore = useStore(Selector.set);
   const getElementById = useStore(Selector.getElementById);
   const removeElementById = useStore(Selector.removeElementById);
-  const elements = useStore(Selector.elements);
   const updateSolarPanelOnRoofFlag = useStore(Selector.updateSolarPanelOnRoofFlag);
-  const updateElementsOnWallFn = useStore(Selector.updateElementsOnWallFn);
 
   const { gl, camera } = useThree();
   const ray = useMemo(() => new Raycaster(), []);
@@ -318,19 +316,26 @@ const GableRoof = ({
   const oldRidgeLeft = useRef<number>(ridgeLeftPoint[0]);
   const oldRidgeRight = useRef<number>(ridgeRightPoint[0]);
   const isPointerMovingRef = useRef(false);
+  const isFirstMountRef = useRef(true);
 
   useEffect(() => {
-    updateRooftopSolarPanel(foundation, id, roofSegments, centroid, h, thickness);
+    if (!isFirstMountRef.current) {
+      updateRooftopSolarPanel(foundation, id, roofSegments, centroid, h, thickness);
+    }
   }, [updateSolarPanelOnRoofFlag, h, thickness, ridgeLeftPoint, ridgeRightPoint]);
 
   useEffect(() => {
-    if (h < minHeight) {
-      setH(minHeight);
+    if (!isFirstMountRef.current) {
+      if (h < minHeight) {
+        setH(minHeight);
+      }
     }
   }, [minHeight]);
 
   useEffect(() => {
-    setH(lz);
+    if (!isFirstMountRef.current) {
+      setH(lz);
+    }
   }, [lz]);
 
   const updateRoofTopRidge = (elemId: string, left: number, right: number) => {
@@ -750,76 +755,82 @@ const GableRoof = ({
   }
 
   useEffect(() => {
-    if (currentWallArray.length === 4) {
-      let minHeight = 0;
-      setCommonStore((state) => {
-        for (const e of state.elements) {
-          const w = e as WallModel;
-          switch (e.id) {
-            case currentWallArray[0].id: {
-              const { lh, rh } = isShed ? getWallHeightShed(currentWallArray, 0) : getWallHeight(currentWallArray, 0);
-              minHeight = Math.max(minHeight, Math.max(lh, rh));
-              w.roofId = id;
-              if (ridgeLeftPoint[0] === 0.5) {
-                w.leftRoofHeight = h;
-                w.rightRoofHeight = h;
-                w.centerRoofHeight = undefined;
-              } else {
+    if (!isFirstMountRef.current) {
+      if (currentWallArray.length === 4) {
+        let minHeight = 0;
+        setCommonStore((state) => {
+          for (const e of state.elements) {
+            const w = e as WallModel;
+            switch (e.id) {
+              case currentWallArray[0].id: {
+                const { lh, rh } = isShed ? getWallHeightShed(currentWallArray, 0) : getWallHeight(currentWallArray, 0);
+                minHeight = Math.max(minHeight, Math.max(lh, rh));
+                w.roofId = id;
+                if (ridgeLeftPoint[0] === 0.5) {
+                  w.leftRoofHeight = h;
+                  w.rightRoofHeight = h;
+                  w.centerRoofHeight = undefined;
+                } else {
+                  w.leftRoofHeight = lh;
+                  w.rightRoofHeight = rh;
+                }
+                break;
+              }
+              case currentWallArray[1].id: {
+                const { lh, rh } = isShed ? getWallHeightShed(currentWallArray, 1) : getWallHeight(currentWallArray, 1);
+                minHeight = Math.max(minHeight, Math.max(lh, rh));
+                w.roofId = id;
                 w.leftRoofHeight = lh;
                 w.rightRoofHeight = rh;
+                if (w.centerRoofHeight) {
+                  w.centerRoofHeight[0] = ridgeRightPoint[0];
+                } else {
+                  w.centerRoofHeight = [...ridgeRightPoint];
+                }
+                w.centerRoofHeight[1] = h;
+                break;
               }
-              break;
-            }
-            case currentWallArray[1].id: {
-              const { lh, rh } = isShed ? getWallHeightShed(currentWallArray, 1) : getWallHeight(currentWallArray, 1);
-              minHeight = Math.max(minHeight, Math.max(lh, rh));
-              w.roofId = id;
-              w.leftRoofHeight = lh;
-              w.rightRoofHeight = rh;
-              if (w.centerRoofHeight) {
-                w.centerRoofHeight[0] = ridgeRightPoint[0];
-              } else {
-                w.centerRoofHeight = [...ridgeRightPoint];
+              case currentWallArray[2].id: {
+                const { lh, rh } = isShed ? getWallHeightShed(currentWallArray, 2) : getWallHeight(currentWallArray, 2);
+                minHeight = Math.max(minHeight, Math.max(lh, rh));
+                w.roofId = id;
+                if (ridgeLeftPoint[0] === -0.5) {
+                  w.leftRoofHeight = h;
+                  w.rightRoofHeight = h;
+                  w.centerRoofHeight = undefined;
+                } else {
+                  w.leftRoofHeight = lh;
+                  w.rightRoofHeight = rh;
+                }
+                break;
               }
-              w.centerRoofHeight[1] = h;
-              break;
-            }
-            case currentWallArray[2].id: {
-              const { lh, rh } = isShed ? getWallHeightShed(currentWallArray, 2) : getWallHeight(currentWallArray, 2);
-              minHeight = Math.max(minHeight, Math.max(lh, rh));
-              w.roofId = id;
-              if (ridgeLeftPoint[0] === -0.5) {
-                w.leftRoofHeight = h;
-                w.rightRoofHeight = h;
-                w.centerRoofHeight = undefined;
-              } else {
+              case currentWallArray[3].id: {
+                const { lh, rh } = isShed ? getWallHeightShed(currentWallArray, 3) : getWallHeight(currentWallArray, 3);
+                minHeight = Math.max(minHeight, Math.max(lh, rh));
+                w.roofId = id;
                 w.leftRoofHeight = lh;
                 w.rightRoofHeight = rh;
+                if (w.centerRoofHeight) {
+                  w.centerRoofHeight[0] = ridgeLeftPoint[0];
+                } else {
+                  w.centerRoofHeight = [...ridgeLeftPoint];
+                }
+                w.centerRoofHeight[1] = h;
+                break;
               }
-              break;
-            }
-            case currentWallArray[3].id: {
-              const { lh, rh } = isShed ? getWallHeightShed(currentWallArray, 3) : getWallHeight(currentWallArray, 3);
-              minHeight = Math.max(minHeight, Math.max(lh, rh));
-              w.roofId = id;
-              w.leftRoofHeight = lh;
-              w.rightRoofHeight = rh;
-              if (w.centerRoofHeight) {
-                w.centerRoofHeight[0] = ridgeLeftPoint[0];
-              } else {
-                w.centerRoofHeight = [...ridgeLeftPoint];
-              }
-              w.centerRoofHeight[1] = h;
-              break;
             }
           }
-        }
-      });
-      setMinHeight(minHeight);
-    } else {
-      removeElementById(id, false);
+        });
+        setMinHeight(minHeight);
+      } else {
+        removeElementById(id, false);
+      }
     }
   }, [currentWallArray, h, ridgeLeftPoint, ridgeRightPoint]);
+
+  useEffect(() => {
+    isFirstMountRef.current = false;
+  }, []);
 
   const { grabRef, addUndoableMove, undoMove, setOldRefData } = useSolarPanelUndoable();
 

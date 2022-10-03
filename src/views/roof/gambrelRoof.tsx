@@ -167,6 +167,7 @@ const GambrelRoof = ({
   const oldHeight = useRef<number>(h);
   const oldRidgeVal = useRef<number>(0);
   const isPointerMovingRef = useRef(false);
+  const isFirstMountRef = useRef(true);
 
   // set position and rotation
   const foundation = useStore((state) => {
@@ -186,13 +187,17 @@ const GambrelRoof = ({
   }
 
   useEffect(() => {
-    if (h < minHeight) {
-      setH(minHeight);
+    if (!isFirstMountRef.current) {
+      if (h < minHeight) {
+        setH(minHeight);
+      }
     }
   }, [minHeight]);
 
   useEffect(() => {
-    setH(lz);
+    if (!isFirstMountRef.current) {
+      setH(lz);
+    }
   }, [lz]);
 
   const updateRidge = (elemId: string, type: string, val: number) => {
@@ -578,54 +583,56 @@ const GambrelRoof = ({
   }, [currentWallArray, h, minHeight]);
 
   useEffect(() => {
-    if (currentWallArray.length === 4) {
-      let minHeight = 0;
-      for (let i = 0; i < currentWallArray.length; i++) {
-        const { lh, rh } = getWallHeight(currentWallArray, i);
-        minHeight = Math.max(minHeight, Math.max(lh, rh));
-        setCommonStore((state) => {
-          for (const e of state.elements) {
-            if (e.id === currentWallArray[i].id) {
-              const w = e as WallModel;
-              w.roofId = id;
-              w.leftRoofHeight = lh;
-              w.rightRoofHeight = rh;
-              if (i === 1) {
-                if (w.centerRoofHeight && w.centerLeftRoofHeight && w.centerRightRoofHeight) {
-                  w.centerRoofHeight[0] = topRidgeRightPoint[0];
-                  w.centerRoofHeight[1] = topRidgeRightPoint[1] * (h - minHeight) + minHeight;
-                  w.centerLeftRoofHeight[0] = frontRidgeRightPoint[0];
-                  w.centerLeftRoofHeight[1] = frontRidgeRightPoint[1] * (h - minHeight) + minHeight;
-                  w.centerRightRoofHeight[0] = backRidgeLeftPoint[0];
-                  w.centerRightRoofHeight[1] = backRidgeLeftPoint[1] * (h - minHeight) + minHeight;
-                } else {
-                  w.centerRoofHeight = [...topRidgeRightPoint];
-                  w.centerLeftRoofHeight = [...frontRidgeRightPoint];
-                  w.centerRightRoofHeight = [...backRidgeLeftPoint];
+    if (!isFirstMountRef.current) {
+      if (currentWallArray.length === 4) {
+        let minHeight = 0;
+        for (let i = 0; i < currentWallArray.length; i++) {
+          const { lh, rh } = getWallHeight(currentWallArray, i);
+          minHeight = Math.max(minHeight, Math.max(lh, rh));
+          setCommonStore((state) => {
+            for (const e of state.elements) {
+              if (e.id === currentWallArray[i].id) {
+                const w = e as WallModel;
+                w.roofId = id;
+                w.leftRoofHeight = lh;
+                w.rightRoofHeight = rh;
+                if (i === 1) {
+                  if (w.centerRoofHeight && w.centerLeftRoofHeight && w.centerRightRoofHeight) {
+                    w.centerRoofHeight[0] = topRidgeRightPoint[0];
+                    w.centerRoofHeight[1] = topRidgeRightPoint[1] * (h - minHeight) + minHeight;
+                    w.centerLeftRoofHeight[0] = frontRidgeRightPoint[0];
+                    w.centerLeftRoofHeight[1] = frontRidgeRightPoint[1] * (h - minHeight) + minHeight;
+                    w.centerRightRoofHeight[0] = backRidgeLeftPoint[0];
+                    w.centerRightRoofHeight[1] = backRidgeLeftPoint[1] * (h - minHeight) + minHeight;
+                  } else {
+                    w.centerRoofHeight = [...topRidgeRightPoint];
+                    w.centerLeftRoofHeight = [...frontRidgeRightPoint];
+                    w.centerRightRoofHeight = [...backRidgeLeftPoint];
+                  }
                 }
-              }
-              if (i === 3) {
-                if (w.centerRoofHeight && w.centerLeftRoofHeight && w.centerRightRoofHeight) {
-                  w.centerRoofHeight[0] = topRidgeLeftPoint[0];
-                  w.centerRoofHeight[1] = topRidgeLeftPoint[1] * (h - minHeight) + minHeight;
-                  w.centerLeftRoofHeight[0] = backRidgeRightPoint[0];
-                  w.centerLeftRoofHeight[1] = backRidgeRightPoint[1] * (h - minHeight) + minHeight;
-                  w.centerRightRoofHeight[0] = frontRidgeLeftPoint[0];
-                  w.centerRightRoofHeight[1] = frontRidgeLeftPoint[1] * (h - minHeight) + minHeight;
-                } else {
-                  w.centerRoofHeight = [...topRidgeLeftPoint];
-                  w.centerLeftRoofHeight = [...backRidgeRightPoint];
-                  w.centerRightRoofHeight = [...frontRidgeLeftPoint];
+                if (i === 3) {
+                  if (w.centerRoofHeight && w.centerLeftRoofHeight && w.centerRightRoofHeight) {
+                    w.centerRoofHeight[0] = topRidgeLeftPoint[0];
+                    w.centerRoofHeight[1] = topRidgeLeftPoint[1] * (h - minHeight) + minHeight;
+                    w.centerLeftRoofHeight[0] = backRidgeRightPoint[0];
+                    w.centerLeftRoofHeight[1] = backRidgeRightPoint[1] * (h - minHeight) + minHeight;
+                    w.centerRightRoofHeight[0] = frontRidgeLeftPoint[0];
+                    w.centerRightRoofHeight[1] = frontRidgeLeftPoint[1] * (h - minHeight) + minHeight;
+                  } else {
+                    w.centerRoofHeight = [...topRidgeLeftPoint];
+                    w.centerLeftRoofHeight = [...backRidgeRightPoint];
+                    w.centerRightRoofHeight = [...frontRidgeLeftPoint];
+                  }
                 }
+                break;
               }
-              break;
             }
-          }
-        });
+          });
+        }
+        setMinHeight(minHeight);
+      } else {
+        removeElementById(id, false);
       }
-      setMinHeight(minHeight);
-    } else {
-      removeElementById(id, false);
     }
   }, [
     currentWallArray,
@@ -642,7 +649,9 @@ const GambrelRoof = ({
   const updateSolarPanelOnRoofFlag = useStore(Selector.updateSolarPanelOnRoofFlag);
 
   useEffect(() => {
-    updateRooftopSolarPanel(foundation, id, roofSegments, centroid, h, thickness);
+    if (!isFirstMountRef.current) {
+      updateRooftopSolarPanel(foundation, id, roofSegments, centroid, h, thickness);
+    }
   }, [
     updateSolarPanelOnRoofFlag,
     h,
@@ -654,6 +663,10 @@ const GambrelRoof = ({
     backRidgeLeftPoint,
     backRidgeRightPoint,
   ]);
+
+  useEffect(() => {
+    isFirstMountRef.current = false;
+  }, []);
 
   const { grabRef, addUndoableMove, undoMove, setOldRefData } = useSolarPanelUndoable();
   const { transparent, opacity } = useTransparent();
@@ -1048,70 +1061,70 @@ const GambrelRoof = ({
   );
 };
 
-interface RoofSegmentProps {
-  points: Vector3[];
-  texture: Texture;
-}
+// interface RoofSegmentProps {
+//   points: Vector3[];
+//   texture: Texture;
+// }
 
-// window test code
-const RoofSegment = ({ texture }: { texture: Texture }) => {
-  const ref = useRef<Mesh>(null);
-  useEffect(() => {
-    if (ref.current) {
-      const a = new Vector3(0, 0, 0);
-      const b = new Vector3(10, 0, 0);
-      const c = new Vector3(10, 10, 0);
+// // window test code
+// const RoofSegment = ({ texture }: { texture: Texture }) => {
+//   const ref = useRef<Mesh>(null);
+//   useEffect(() => {
+//     if (ref.current) {
+//       const a = new Vector3(0, 0, 0);
+//       const b = new Vector3(10, 0, 0);
+//       const c = new Vector3(10, 10, 0);
 
-      const d = new Vector3(0, 10, 5);
-      const e = new Vector3(10, 10, 0);
-      const f = new Vector3(0, 0, 0);
+//       const d = new Vector3(0, 10, 5);
+//       const e = new Vector3(10, 10, 0);
+//       const f = new Vector3(0, 0, 0);
 
-      const points = [a, b, c, d, e, f];
+//       const points = [a, b, c, d, e, f];
 
-      const uvs = [
-        a.x / 10,
-        a.y / 10,
-        b.x / 10,
-        b.y / 10,
-        c.x / 10,
-        c.y / 10,
-        d.x / 10,
-        d.y / 10,
-        e.x / 10,
-        e.y / 10,
-        f.x / 10,
-        f.y / 10,
-      ];
+//       const uvs = [
+//         a.x / 10,
+//         a.y / 10,
+//         b.x / 10,
+//         b.y / 10,
+//         c.x / 10,
+//         c.y / 10,
+//         d.x / 10,
+//         d.y / 10,
+//         e.x / 10,
+//         e.y / 10,
+//         f.x / 10,
+//         f.y / 10,
+//       ];
 
-      const roofGeometry = new BufferGeometry();
-      roofGeometry.setFromPoints(points);
-      roofGeometry.computeVertexNormals();
-      roofGeometry.setAttribute('uv', new Float32BufferAttribute(uvs, 2));
+//       const roofGeometry = new BufferGeometry();
+//       roofGeometry.setFromPoints(points);
+//       roofGeometry.computeVertexNormals();
+//       roofGeometry.setAttribute('uv', new Float32BufferAttribute(uvs, 2));
 
-      const roofMesh = new Mesh(roofGeometry);
+//       const roofMesh = new Mesh(roofGeometry);
 
-      const h: Vector3[] = [];
-      h.push(new Vector3(4, 4, -1));
-      h.push(new Vector3(6, 4, -1));
-      h.push(new Vector3(4, 6, -1));
-      h.push(new Vector3(6, 6, -1));
-      h.push(new Vector3(4, 4, 5));
-      h.push(new Vector3(6, 4, 5));
-      h.push(new Vector3(4, 6, 5));
-      h.push(new Vector3(6, 6, 5));
+//       const h: Vector3[] = [];
+//       h.push(new Vector3(4, 4, -1));
+//       h.push(new Vector3(6, 4, -1));
+//       h.push(new Vector3(4, 6, -1));
+//       h.push(new Vector3(6, 6, -1));
+//       h.push(new Vector3(4, 4, 5));
+//       h.push(new Vector3(6, 4, 5));
+//       h.push(new Vector3(4, 6, 5));
+//       h.push(new Vector3(6, 6, 5));
 
-      const holeMesh = new Mesh(new ConvexGeometry(h));
+//       const holeMesh = new Mesh(new ConvexGeometry(h));
 
-      const res = CSG.union(roofMesh, holeMesh); // ???
-      ref.current.geometry = res.geometry;
-    }
-  }, []);
+//       const res = CSG.union(roofMesh, holeMesh); // ???
+//       ref.current.geometry = res.geometry;
+//     }
+//   }, []);
 
-  return (
-    <mesh position={[0, 0, 8]} ref={ref}>
-      <meshBasicMaterial side={DoubleSide} map={texture} />
-    </mesh>
-  );
-};
+//   return (
+//     <mesh position={[0, 0, 8]} ref={ref}>
+//       <meshBasicMaterial side={DoubleSide} map={texture} />
+//     </mesh>
+//   );
+// };
 
 export default React.memo(GambrelRoof);
