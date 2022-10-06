@@ -151,10 +151,8 @@ const MansardRoof = ({
   }
 
   useEffect(() => {
-    if (!isFirstMountRef.current) {
-      if (h < minHeight) {
-        setH(minHeight);
-      }
+    if (h < minHeight) {
+      setH(minHeight);
     }
   }, [minHeight]);
 

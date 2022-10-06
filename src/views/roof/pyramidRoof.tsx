@@ -111,10 +111,8 @@ const PyramidRoof = ({
   const prevWallsIdSet = new Set<string>(wallsId);
 
   useEffect(() => {
-    if (!isFirstMountRef.current) {
-      if (h < minHeight) {
-        setH(minHeight);
-      }
+    if (h < minHeight) {
+      setH(minHeight);
     }
   }, [minHeight]);
 

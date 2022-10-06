@@ -149,10 +149,8 @@ const HipRoof = ({
   }, [updateSolarPanelOnRoofFlag, h, thickness]);
 
   useEffect(() => {
-    if (!isFirstMountRef.current) {
-      if (h < minHeight) {
-        setH(minHeight * 1.5);
-      }
+    if (h < minHeight) {
+      setH(minHeight * 1.5);
     }
   }, [minHeight]);
 

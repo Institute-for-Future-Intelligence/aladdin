@@ -325,10 +325,8 @@ const GableRoof = ({
   }, [updateSolarPanelOnRoofFlag, h, thickness, ridgeLeftPoint, ridgeRightPoint]);
 
   useEffect(() => {
-    if (!isFirstMountRef.current) {
-      if (h < minHeight) {
-        setH(minHeight);
-      }
+    if (h < minHeight) {
+      setH(minHeight);
     }
   }, [minHeight]);
 
