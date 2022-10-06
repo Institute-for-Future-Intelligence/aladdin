@@ -354,6 +354,9 @@ export class ElementModelFactory {
   static makeWindTurbine(parentId: string, x: number, y: number, z?: number) {
     return {
       type: ObjectType.WindTurbine,
+      bladeRadius: 10,
+      towerRadius: 0.5,
+      towerHeight: 20,
       cx: x,
       cy: y,
       cz: z,

@@ -4,4 +4,8 @@
 
 import { ElementModel } from './ElementModel';
 
-export interface WindTurbineModel extends ElementModel {}
+export interface WindTurbineModel extends ElementModel {
+  bladeRadius: number;
+  towerRadius: number;
+  towerHeight: number;
+}

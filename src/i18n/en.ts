@@ -125,6 +125,7 @@ export const i18n_en = {
       ParabolicTroughElement: 'Parabolic Trough',
       FresnelReflectorElement: 'Fresnel Reflector',
       HeliostatElement: 'Heliostat',
+      WindTurbineElement: 'Wind Turbine',
       ElementLocked: 'Locked',
     },
 

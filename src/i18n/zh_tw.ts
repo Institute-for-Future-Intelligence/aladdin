@@ -125,6 +125,7 @@ export const i18n_zh_tw = {
       ParabolicTroughElement: '拋物線槽',
       FresnelReflectorElement: '菲涅耳反射鏡',
       HeliostatElement: '定日鏡',
+      WindTurbineElement: '風力渦輪機',
       ElementLocked: '固定',
     },
 
