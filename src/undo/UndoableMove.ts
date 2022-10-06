@@ -41,8 +41,8 @@ export interface UndoableMoveWall extends Undoable {
   id: string;
   oldPoints: number[][];
   newPoints: number[][];
-  oldJoints: string[];
-  newJoints: string[];
+  oldJoints: string[][];
+  newJoints: string[][];
   oldAngle: number;
   newAngle: number;
   flippedWallSide: FlippedWallSide;

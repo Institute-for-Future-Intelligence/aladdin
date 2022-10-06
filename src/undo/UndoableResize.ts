@@ -55,8 +55,8 @@ export interface UndoableResizeWall extends Undoable {
   newDimension: Vector3;
   oldAngle: number;
   newAngle: number;
-  oldJoints: string[];
-  newJoints: string[];
+  oldJoints: string[][];
+  newJoints: string[][];
   oldPoint: number[][];
   newPoint: number[][];
   flippedWallSide: FlippedWallSide;

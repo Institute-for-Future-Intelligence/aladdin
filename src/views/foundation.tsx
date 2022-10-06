@@ -170,8 +170,8 @@ const Foundation = ({
   const newAzimuthRef = useRef<number>(0);
   const oldVerticesRef = useRef<Point2[]>([]);
   const newVerticesRef = useRef<Point2[]>([]);
-  const oldJointsRef = useRef<string[]>([]);
-  const newJointsRef = useRef<string[]>([]);
+  const oldJointsRef = useRef<string[][]>([]);
+  const newJointsRef = useRef<string[][]>([]);
   const oldPointRef = useRef<number[][]>([]);
   const newPointRef = useRef<number[][]>([]);
   const foundationGroupSetRef = useRef<Set<string>>(new Set());
@@ -491,7 +491,7 @@ const Foundation = ({
         min = dist;
         targetPoint = point;
         jointId = flag ? wall.leftJoints[0] : wall.rightJoints[0];
-        targetID = jointId ? null : id;
+        targetID = id;
         targetSide = flag ? WallSide.Left : WallSide.Right;
         if (targetID && !jointId) {
           return { id: targetID, point: targetPoint, side: targetSide, jointId };
@@ -516,6 +516,12 @@ const Foundation = ({
   };
 
   const flipWallLoop = (currentWallId: string) => {
+    wallMapOnFoundation.current.clear();
+    for (const e of useStore.getState().elements) {
+      if (e.type === ObjectType.Wall && e.parentId === id) {
+        wallMapOnFoundation.current.set(e.id, e as WallModel);
+      }
+    }
     let wall = wallMapOnFoundation.current.get(currentWallId);
     while (wall && wall.leftJoints.length > 0) {
       const wallCopy = wallMapOnFoundation.current.get(wall.id) as WallModel;
@@ -816,16 +822,16 @@ const Foundation = ({
       newDimension: newDimensionRef.current.clone(),
       oldAngle: oldAzimuthRef.current,
       newAngle: newAzimuthRef.current,
-      oldJoints: [...oldJointsRef.current],
-      newJoints: [...newJointsRef.current],
-      oldPoint: [...oldPointRef.current],
-      newPoint: [...newPointRef.current],
+      oldJoints: [[...oldJointsRef.current[0]], [...oldJointsRef.current[1]]],
+      newJoints: [[...newJointsRef.current[0]], [...newJointsRef.current[1]]],
+      oldPoint: [[...oldPointRef.current[0]], [...oldPointRef.current[1]]],
+      newPoint: [[...newPointRef.current[0]], [...newPointRef.current[1]]],
       flippedWallSide: flippedWallSide.current,
       undo: () => {
         switch (undoableResize.flippedWallSide) {
           case FlippedWallSide.right:
             if (undoableResize.newJoints[1]) {
-              const rightWall = getElementById(undoableResize.newJoints[1]);
+              const rightWall = getElementById(undoableResize.newJoints[1][0]);
               if (rightWall) {
                 flipWallsCounterClockwise(rightWall as WallModel);
               }
@@ -833,7 +839,7 @@ const Foundation = ({
             break;
           case FlippedWallSide.left:
             if (undoableResize.newJoints[0]) {
-              const leftWall = getElementById(undoableResize.newJoints[0]);
+              const leftWall = getElementById(undoableResize.newJoints[0][0]);
               if (leftWall) {
                 flipWallsClockwise(leftWall as WallModel);
               }
@@ -843,12 +849,12 @@ const Foundation = ({
             if (undoableResize.newJoints[0] && undoableResize.newJoints[1]) {
               flipWallLoop(undoableResize.resizedElementId);
             } else if (undoableResize.newJoints[1]) {
-              const rightWall = getElementById(undoableResize.newJoints[1]);
+              const rightWall = getElementById(undoableResize.newJoints[1][0]);
               if (rightWall) {
                 flipWallsCounterClockwise(rightWall as WallModel);
               }
             } else if (undoableResize.newJoints[0]) {
-              const leftWall = getElementById(undoableResize.newJoints[0]);
+              const leftWall = getElementById(undoableResize.newJoints[0][0]);
               if (leftWall) {
                 flipWallsClockwise(leftWall as WallModel);
               }
@@ -866,20 +872,20 @@ const Foundation = ({
               w.ly = undoableResize.oldDimension.y;
               w.lz = undoableResize.oldDimension.z;
               w.relativeAngle = undoableResize.oldAngle;
-              w.leftJoints = undoableResize.oldJoints[0] ? [undoableResize.oldJoints[0]] : [];
-              w.rightJoints = undoableResize.oldJoints[1] ? [undoableResize.oldJoints[1]] : [];
-              w.leftPoint = undoableResize.oldPoint[0];
-              w.rightPoint = undoableResize.oldPoint[1];
+              w.leftJoints = [...undoableResize.oldJoints[0]];
+              w.rightJoints = [...undoableResize.oldJoints[1]];
+              w.leftPoint = [...undoableResize.oldPoint[0]];
+              w.rightPoint = [...undoableResize.oldPoint[1]];
 
               switch (undoableResize.flippedWallSide) {
                 case FlippedWallSide.loop: {
                   // old left
                   if (undoableResize.oldJoints[0] !== undoableResize.newJoints[1]) {
                     for (const n of state.elements) {
-                      if (n.id === undoableResize.newJoints[1]) {
+                      if (n.id === undoableResize.newJoints[1][0]) {
                         (n as WallModel).rightJoints = [];
                       }
-                      if (n.id === undoableResize.oldJoints[0]) {
+                      if (n.id === undoableResize.oldJoints[0][0]) {
                         (n as WallModel).rightJoints = [undoableResize.resizedElementId];
                       }
                     }
@@ -887,10 +893,10 @@ const Foundation = ({
                   // old right
                   else if (undoableResize.oldJoints[1] !== undoableResize.newJoints[0]) {
                     for (const n of state.elements) {
-                      if (n.id === undoableResize.newJoints[0]) {
+                      if (n.id === undoableResize.newJoints[0][0]) {
                         (n as WallModel).leftJoints = [];
                       }
-                      if (n.id === undoableResize.oldJoints[1]) {
+                      if (n.id === undoableResize.oldJoints[1][0]) {
                         (n as WallModel).leftJoints = [undoableResize.resizedElementId];
                       }
                     }
@@ -902,7 +908,7 @@ const Foundation = ({
                   // old left attach, do: new right detach
                   if (!undoableResize.oldJoints[0] && undoableResize.newJoints[1]) {
                     for (const n of state.elements) {
-                      if (n.id === undoableResize.newJoints[1]) {
+                      if (n.id === undoableResize.newJoints[1][0]) {
                         (n as WallModel).leftJoints = [];
                         break;
                       }
@@ -911,7 +917,7 @@ const Foundation = ({
                   // old right attach, do: new left detach
                   else if (!undoableResize.oldJoints[1] && undoableResize.newJoints[0]) {
                     for (const n of state.elements) {
-                      if (n.id === undoableResize.newJoints[0]) {
+                      if (n.id === undoableResize.newJoints[0][0]) {
                         (n as WallModel).rightJoints = [];
                         break;
                       }
@@ -920,10 +926,10 @@ const Foundation = ({
                   // change old left attach side
                   else if (undoableResize.flippedWallSide === FlippedWallSide.left && undoableResize.oldJoints[0]) {
                     for (const n of state.elements) {
-                      if (n.id === undoableResize.newJoints[1]) {
+                      if (n.id === undoableResize.newJoints[1][0]) {
                         (n as WallModel).leftJoints = [];
                       }
-                      if (n.id === undoableResize.oldJoints[0]) {
+                      if (n.id === undoableResize.oldJoints[0][0]) {
                         (n as WallModel).rightJoints = [w.id];
                       }
                     }
@@ -931,10 +937,10 @@ const Foundation = ({
                   // change old right attach side
                   else if (undoableResize.flippedWallSide === FlippedWallSide.right && undoableResize.oldJoints[1]) {
                     for (const n of state.elements) {
-                      if (n.id === undoableResize.newJoints[0]) {
+                      if (n.id === undoableResize.newJoints[0][0]) {
                         (n as WallModel).rightJoints = [];
                       }
-                      if (n.id === undoableResize.oldJoints[1]) {
+                      if (n.id === undoableResize.oldJoints[1][0]) {
                         (n as WallModel).leftJoints = [w.id];
                       }
                     }
@@ -945,10 +951,10 @@ const Foundation = ({
                   // left handle
                   if (undoableResize.oldJoints[0] !== undoableResize.newJoints[0]) {
                     for (const n of state.elements) {
-                      if (n.id === undoableResize.newJoints[0]) {
+                      if (n.id === undoableResize.newJoints[0][0]) {
                         (n as WallModel).rightJoints = [];
                       }
-                      if (n.id === undoableResize.oldJoints[0]) {
+                      if (n.id === undoableResize.oldJoints[0][0]) {
                         (n as WallModel).rightJoints = [w.id];
                       }
                     }
@@ -956,10 +962,10 @@ const Foundation = ({
                   // right handle
                   if (undoableResize.oldJoints[1] !== undoableResize.newJoints[1]) {
                     for (const n of state.elements) {
-                      if (n.id === undoableResize.newJoints[1]) {
+                      if (n.id === undoableResize.newJoints[1][0]) {
                         (n as WallModel).leftJoints = [];
                       }
-                      if (n.id === undoableResize.oldJoints[1]) {
+                      if (n.id === undoableResize.oldJoints[1][0]) {
                         (n as WallModel).leftJoints = [w.id];
                       }
                     }
@@ -971,6 +977,7 @@ const Foundation = ({
               break;
             }
           }
+          state.resizeHandleType = null;
         });
         flippedWallSide.current = FlippedWallSide.null;
       },
@@ -990,7 +997,7 @@ const Foundation = ({
                 case FlippedWallSide.left:
                   w.relativeAngle = (undoableResize.newAngle + Math.PI) % TWO_PI;
                   for (const n of state.elements) {
-                    if (n.id === undoableResize.oldJoints[0]) {
+                    if (n.id === undoableResize.oldJoints[0][0]) {
                       (n as WallModel).rightJoints = [];
                       break;
                     }
@@ -999,7 +1006,7 @@ const Foundation = ({
                 case FlippedWallSide.right:
                   w.relativeAngle = (undoableResize.newAngle + Math.PI) % TWO_PI;
                   for (const n of state.elements) {
-                    if (n.id === undoableResize.oldJoints[1]) {
+                    if (n.id === undoableResize.oldJoints[1][0]) {
                       (n as WallModel).leftJoints = [];
                       break;
                     }
@@ -1007,33 +1014,33 @@ const Foundation = ({
                   break;
                 case FlippedWallSide.loop:
                   w.relativeAngle = (undoableResize.newAngle + Math.PI) % TWO_PI;
-                  w.leftJoints = undoableResize.newJoints[1] ? [undoableResize.newJoints[1]] : [];
-                  w.rightJoints = undoableResize.newJoints[0] ? [undoableResize.newJoints[0]] : [];
+                  w.leftJoints = [...undoableResize.newJoints[1]];
+                  w.rightJoints = [...undoableResize.newJoints[0]];
                   w.leftPoint = undoableResize.newPoint[1];
                   w.rightPoint = undoableResize.newPoint[0];
                   for (const n of state.elements) {
-                    if (n.id === undoableResize.newJoints[0]) {
+                    if (n.id === undoableResize.newJoints[0][0]) {
                       (n as WallModel).leftJoints = [w.id];
                     }
-                    if (n.id === undoableResize.newJoints[1]) {
+                    if (n.id === undoableResize.newJoints[1][0]) {
                       (n as WallModel).rightJoints = [w.id];
                     }
                   }
                   break;
                 case FlippedWallSide.null:
                   w.relativeAngle = undoableResize.newAngle;
-                  w.leftJoints = undoableResize.newJoints[0] ? [undoableResize.newJoints[0]] : [];
-                  w.rightJoints = undoableResize.newJoints[1] ? [undoableResize.newJoints[1]] : [];
+                  w.leftJoints = [...undoableResize.newJoints[0]];
+                  w.rightJoints = [...undoableResize.newJoints[1]];
                   w.leftPoint = undoableResize.newPoint[0];
                   w.rightPoint = undoableResize.newPoint[1];
                   // left handle
                   if (undoableResize.oldJoints[0] !== undoableResize.newJoints[0]) {
                     // left handle
                     for (const n of state.elements) {
-                      if (n.id === undoableResize.newJoints[0]) {
+                      if (n.id === undoableResize.newJoints[0][0]) {
                         (n as WallModel).rightJoints = [w.id];
                       }
-                      if (n.id === undoableResize.oldJoints[0]) {
+                      if (n.id === undoableResize.oldJoints[0][0]) {
                         (n as WallModel).rightJoints = [];
                       }
                     }
@@ -1041,10 +1048,10 @@ const Foundation = ({
                   // right handle
                   if (undoableResize.oldJoints[1] !== undoableResize.newJoints[1]) {
                     for (const n of state.elements) {
-                      if (n.id === undoableResize.newJoints[1]) {
+                      if (n.id === undoableResize.newJoints[1][0]) {
                         (n as WallModel).leftJoints = [w.id];
                       }
-                      if (n.id === undoableResize.oldJoints[1]) {
+                      if (n.id === undoableResize.oldJoints[1][0]) {
                         (n as WallModel).leftJoints = [];
                       }
                     }
@@ -1055,17 +1062,18 @@ const Foundation = ({
               break;
             }
           }
+          state.resizeHandleType = null;
         });
         switch (undoableResize.flippedWallSide) {
           case FlippedWallSide.left: {
             const currWall = getElementById(undoableResize.resizedElementId) as WallModel;
-            const targetWall = getElementById(undoableResize.newJoints[1]) as WallModel;
+            const targetWall = getElementById(undoableResize.newJoints[1][0]) as WallModel;
             flipWallsCounterClockwise(currWall, targetWall);
             break;
           }
           case FlippedWallSide.right: {
             const currWall = getElementById(undoableResize.resizedElementId) as WallModel;
-            const targetWall = getElementById(undoableResize.newJoints[0]) as WallModel;
+            const targetWall = getElementById(undoableResize.newJoints[0][0]) as WallModel;
             flipWallsClockwise(currWall, targetWall);
             break;
           }
@@ -1085,24 +1093,38 @@ const Foundation = ({
     addUndoable(undoableResize);
   };
 
-  const handleUnoableMoveWall = (wall: WallModel, newAngle: number, newJoints: string[]) => {
+  const handleUnoableMoveWall = (wall: WallModel, newAngle: number, newJoints: string[][]) => {
     const undoableMove = {
       name: 'Move Wall',
       timestamp: Date.now(),
       id: wall.id,
-      oldPoints: [...oldPointRef.current],
+      oldPoints: [[...oldPointRef.current[0]], [...oldPointRef.current[1]]],
       newPoints: [[...wall.leftPoint], [...wall.rightPoint]],
-      oldJoints: [...oldJointsRef.current],
-      newJoints: newJoints,
+      oldJoints: [[...oldJointsRef.current[0]], [...oldJointsRef.current[1]]],
+      newJoints: [[...newJoints[0]], [...newJoints[1]]],
       oldAngle: oldAzimuthRef.current,
       newAngle: newAngle,
       flippedWallSide: flippedWallSide.current,
       undo() {
-        if (this.flippedWallSide === FlippedWallSide.loop) {
-          flipWallLoop(this.id);
+        switch (this.flippedWallSide) {
+          case FlippedWallSide.loop:
+            flipWallLoop(this.id);
+            break;
+          case FlippedWallSide.left:
+            const lw = getElementById(this.newJoints[0][0]) as WallModel;
+            if (lw) {
+              flipWallsClockwise(lw);
+            }
+            break;
+          case FlippedWallSide.right:
+            const rw = getElementById(this.newJoints[1][0]) as WallModel;
+            if (rw) {
+              flipWallsCounterClockwise(rw);
+            }
+            break;
         }
-        const [oldLeftJoint, oldRightJoint] = this.oldJoints;
-        const [newLeftJoint, newRightJoint] = this.newJoints;
+        const [oldLeftJoints, oldRightJoints] = this.oldJoints;
+        const [newLeftJoints, newRightJoints] = this.newJoints;
         setCommonStore((state) => {
           for (const e of state.elements) {
             if (e.id === this.id) {
@@ -1113,35 +1135,41 @@ const Foundation = ({
               (e as WallModel).relativeAngle = this.oldAngle;
               (e as WallModel).leftPoint = [...leftPoint];
               (e as WallModel).rightPoint = [...rightPoint];
-              (e as WallModel).leftJoints = oldLeftJoint ? [oldLeftJoint] : [];
-              (e as WallModel).rightJoints = oldRightJoint ? [oldRightJoint] : [];
+              (e as WallModel).leftJoints = [...oldLeftJoints];
+              (e as WallModel).rightJoints = [...oldRightJoints];
               break;
             }
           }
-          if (this.flippedWallSide !== FlippedWallSide.loop) {
-            state.updateWallMapOnFoundationFlag = !state.updateWallMapOnFoundationFlag;
-          }
+          state.resizeHandleType = null;
         });
-        if (oldLeftJoint !== newLeftJoint) {
+        if (oldLeftJoints[0] !== newLeftJoints[0]) {
           setCommonStore((state) => {
             for (const e of state.elements) {
-              if (e.id === oldLeftJoint) {
+              if (e.id === oldLeftJoints[0]) {
                 (e as WallModel).rightJoints = [this.id];
               }
-              if (e.id === newLeftJoint) {
-                (e as WallModel).rightJoints = [];
+              if (e.id === newLeftJoints[0]) {
+                if (this.flippedWallSide !== FlippedWallSide.left) {
+                  (e as WallModel).rightJoints = [];
+                } else {
+                  (e as WallModel).leftJoints = [];
+                }
               }
             }
           });
         }
-        if (oldRightJoint !== newRightJoint) {
+        if (oldRightJoints[0] !== newRightJoints[0]) {
           setCommonStore((state) => {
             for (const e of state.elements) {
-              if (e.id === oldRightJoint) {
+              if (e.id === oldRightJoints[0]) {
                 (e as WallModel).leftJoints = [this.id];
               }
-              if (e.id === newRightJoint) {
-                (e as WallModel).leftJoints = [];
+              if (e.id === newRightJoints[0]) {
+                if (this.flippedWallSide !== FlippedWallSide.right) {
+                  (e as WallModel).leftJoints = [];
+                } else {
+                  (e as WallModel).rightJoints = [];
+                }
               }
             }
           });
@@ -1149,8 +1177,8 @@ const Foundation = ({
         flippedWallSide.current = FlippedWallSide.null;
       },
       redo() {
-        const [oldLeftJoint, oldRightJoint] = this.oldJoints;
-        const [newLeftJoint, newRightJoint] = this.newJoints;
+        const [oldLeftJoints, oldRightJoints] = this.oldJoints;
+        const [newLeftJoints, newRightJoints] = this.newJoints;
         setCommonStore((state) => {
           for (const e of state.elements) {
             if (e.id === this.id) {
@@ -1161,42 +1189,64 @@ const Foundation = ({
               (e as WallModel).relativeAngle = this.newAngle;
               (e as WallModel).leftPoint = [...leftPoint];
               (e as WallModel).rightPoint = [...rightPoint];
-              (e as WallModel).leftJoints = newLeftJoint ? [newLeftJoint] : [];
-              (e as WallModel).rightJoints = newRightJoint ? [newRightJoint] : [];
+              (e as WallModel).leftJoints = [...newLeftJoints];
+              (e as WallModel).rightJoints = [...newRightJoints];
               break;
             }
           }
-          if (this.flippedWallSide !== FlippedWallSide.loop) {
-            state.updateWallMapOnFoundationFlag = !state.updateWallMapOnFoundationFlag;
-          }
         });
-        if (oldLeftJoint !== newLeftJoint) {
+        if (oldLeftJoints[0] !== newLeftJoints[0]) {
           setCommonStore((state) => {
             for (const e of state.elements) {
-              if (e.id === oldLeftJoint) {
+              if (e.id === oldLeftJoints[0]) {
                 (e as WallModel).rightJoints = [];
               }
-              if (e.id === newLeftJoint) {
-                (e as WallModel).rightJoints = [this.id];
+              if (e.id === newLeftJoints[0]) {
+                if (this.flippedWallSide === FlippedWallSide.right) {
+                  (e as WallModel).leftJoints = [this.id];
+                } else {
+                  (e as WallModel).rightJoints = [this.id];
+                }
               }
             }
           });
         }
-        if (oldRightJoint !== newRightJoint) {
+        if (oldRightJoints[0] !== newRightJoints[0]) {
           setCommonStore((state) => {
             for (const e of state.elements) {
-              if (e.id === oldRightJoint) {
+              if (e.id === oldRightJoints[0]) {
                 (e as WallModel).leftJoints = [];
               }
-              if (e.id === newRightJoint) {
-                (e as WallModel).leftJoints = [this.id];
+              if (e.id === newRightJoints[0]) {
+                if (this.flippedWallSide === FlippedWallSide.right) {
+                  (e as WallModel).rightJoints = [this.id];
+                } else {
+                  (e as WallModel).leftJoints = [this.id];
+                }
               }
             }
           });
         }
-        if (this.flippedWallSide === FlippedWallSide.loop) {
-          checkWallLoop(this.id);
+        switch (this.flippedWallSide) {
+          case FlippedWallSide.loop:
+            flipWallLoop(this.id);
+            break;
+          case FlippedWallSide.left:
+            const lw = getElementById(this.newJoints[0][0]) as WallModel;
+            if (lw) {
+              flipWallsCounterClockwise(lw);
+            }
+            break;
+          case FlippedWallSide.right:
+            const rw = getElementById(this.newJoints[1][0]) as WallModel;
+            if (rw) {
+              flipWallsClockwise(rw);
+            }
+            break;
         }
+        setCommonStore((state) => {
+          state.resizeHandleType = null;
+        });
         flippedWallSide.current = FlippedWallSide.null;
       },
     } as UndoableMoveWall;
@@ -1271,8 +1321,14 @@ const Foundation = ({
             case ObjectType.Wall:
               const wall = selectedElement as WallModel;
               oldAzimuthRef.current = wall.relativeAngle;
-              oldJointsRef.current = [wall.leftJoints[0], wall.rightJoints[0]];
+              oldJointsRef.current = [[...wall.leftJoints], [...wall.rightJoints]];
               oldPointRef.current = [[...wall.leftPoint], [...wall.rightPoint]];
+              wallMapOnFoundation.current.clear();
+              for (const e of useStore.getState().elements) {
+                if (e.type === ObjectType.Wall && e.parentId === id) {
+                  wallMapOnFoundation.current.set(e.id, e as WallModel);
+                }
+              }
           }
         }
       }
@@ -1419,7 +1475,7 @@ const Foundation = ({
               newPositionRef.current.set(wall.cx, wall.cy, wall.cz);
               newDimensionRef.current.set(wall.lx, wall.ly, wall.lz);
               newAzimuthRef.current = wall.relativeAngle;
-              newJointsRef.current = [wall.leftJoints[0], wall.rightJoints[0]];
+              newJointsRef.current = [[...wall.leftJoints], [...wall.rightJoints]];
               newPointRef.current = [[...wall.leftPoint], [...wall.rightPoint]];
               handleUndoableResizeWall(wall);
             } else {
@@ -1440,21 +1496,30 @@ const Foundation = ({
               if (
                 wall.leftJoints.length > 0 &&
                 (wallNewLeftJointIdRef.current !== wall.leftJoints[0] ||
-                  (wallNewLeftJointIdRef.current === wall.leftJoints[0] && doesWallNeedFlipRef.current))
+                  (wallNewLeftJointIdRef.current === wall.leftJoints[0] && flipCurrWallRef.current))
               ) {
                 updateWallRightJointsById(wall.leftJoints[0], []);
               }
               // attach new
-              if (doesWallNeedFlipRef.current) {
+              if (flipCurrWallRef.current) {
+                console.log('1', wallNewLeftJointIdRef.current, [wall.id]);
                 updateWallLeftJointsById(wallNewLeftJointIdRef.current, [wall.id]);
                 newRightJoints = [wallNewLeftJointIdRef.current];
               } else {
                 newLeftJoints = [wallNewLeftJointIdRef.current];
-                updateWallRightJointsById(wallNewLeftJointIdRef.current, [wall.id]);
+                if (flipLeftHandSideWallRef.current) {
+                  updateWallLeftJointsById(wallNewLeftJointIdRef.current, [wall.id]);
+                  const lw = getElementById(wallNewLeftJointIdRef.current) as WallModel;
+                  if (lw) {
+                    flipWallsCounterClockwise(lw);
+                  }
+                } else {
+                  updateWallRightJointsById(wallNewLeftJointIdRef.current, [wall.id]);
+                }
               }
             }
             // detach old
-            else if (wall.leftJoints.length > 0) {
+            else if (wall.leftJoints.length > 0 && wall.leftJoints[0] !== wallNewRightJointIdRef.current) {
               newLeftJoints = [];
               updateWallRightJointsById(wall.leftJoints[0], []);
             }
@@ -1464,21 +1529,30 @@ const Foundation = ({
               if (
                 wall.rightJoints.length > 0 &&
                 (wallNewRightJointIdRef.current !== wall.rightJoints[0] ||
-                  (wallNewRightJointIdRef.current === wall.rightJoints[0] && doesWallNeedFlipRef.current))
+                  (wallNewRightJointIdRef.current === wall.rightJoints[0] && flipCurrWallRef.current)) &&
+                wall.rightJoints[0] !== wallNewLeftJointIdRef.current
               ) {
                 updateWallLeftJointsById(wall.rightJoints[0], []);
               }
               // attach new
-              if (doesWallNeedFlipRef.current) {
+              if (flipCurrWallRef.current) {
                 updateWallRightJointsById(wallNewRightJointIdRef.current, [wall.id]);
                 newLeftJoints = [wallNewRightJointIdRef.current!];
               } else {
                 newRightJoints = [wallNewRightJointIdRef.current];
-                updateWallLeftJointsById(wallNewRightJointIdRef.current, [wall.id]);
+                if (flipRightHandSideWallRef.current) {
+                  updateWallRightJointsById(wallNewRightJointIdRef.current, [wall.id]);
+                  const rw = getElementById(wallNewRightJointIdRef.current) as WallModel;
+                  if (rw) {
+                    flipWallsClockwise(rw);
+                  }
+                } else {
+                  updateWallLeftJointsById(wallNewRightJointIdRef.current, [wall.id]);
+                }
               }
             }
             // detach old
-            else if (wall.rightJoints.length > 0) {
+            else if (wall.rightJoints.length > 0 && wall.rightJoints[0] !== wallNewLeftJointIdRef.current) {
               newRightJoints = [];
               updateWallLeftJointsById(wall.rightJoints[0], []);
             }
@@ -1487,7 +1561,7 @@ const Foundation = ({
               for (const e of state.elements) {
                 if (e.id === wall.id) {
                   const w = e as WallModel;
-                  if (doesWallNeedFlipRef.current) {
+                  if (flipCurrWallRef.current) {
                     newAngle = (w.relativeAngle + Math.PI) % TWO_PI;
                     w.relativeAngle = newAngle;
                     [w.leftPoint, w.rightPoint] = [[...w.rightPoint], [...w.leftPoint]];
@@ -1502,7 +1576,13 @@ const Foundation = ({
 
             checkWallLoop(wall.id);
 
-            handleUnoableMoveWall(wall, newAngle, [...newLeftJoints, ...newRightJoints]);
+            handleUnoableMoveWall(wall, newAngle, [[...newLeftJoints], [...newRightJoints]]);
+
+            flipCurrWallRef.current = false;
+            flipLeftHandSideWallRef.current = false;
+            flipRightHandSideWallRef.current = false;
+            wallNewLeftJointIdRef.current = null;
+            wallNewRightJointIdRef.current = null;
           }
         }
         flippedWallSide.current = FlippedWallSide.null;
@@ -1678,7 +1758,9 @@ const Foundation = ({
 
   const wallNewLeftJointIdRef = useRef<string | null>(null);
   const wallNewRightJointIdRef = useRef<string | null>(null);
-  const doesWallNeedFlipRef = useRef(false);
+  const flipCurrWallRef = useRef(false);
+  const flipRightHandSideWallRef = useRef(false);
+  const flipLeftHandSideWallRef = useRef(false);
 
   const handlePointerMove = (e: ThreeEvent<PointerEvent>) => {
     if (!foundationModel) return;
@@ -1784,6 +1866,17 @@ const Foundation = ({
                         targetWall.leftJoints.length === 0 &&
                         targetSide === WallSide.Left
                       ) {
+                        if (currWall.leftJoints.length > 0 && currWall.leftJoints[0] !== targetID) {
+                          const detachId = currWall.leftJoints[0];
+                          setCommonStore((state) => {
+                            for (const e of state.elements) {
+                              if (e.id === detachId) {
+                                (e as WallModel).rightJoints = [];
+                                break;
+                              }
+                            }
+                          });
+                        }
                         flipWallsCounterClockwise(currWall, targetWall);
                       }
                       // right to right
@@ -1792,6 +1885,17 @@ const Foundation = ({
                         targetWall.rightJoints.length === 0 &&
                         targetSide === WallSide.Right
                       ) {
+                        if (currWall.rightJoints.length > 0 && currWall.rightJoints[0] !== targetID) {
+                          const detachId = currWall.rightJoints[0];
+                          setCommonStore((state) => {
+                            for (const e of state.elements) {
+                              if (e.id === detachId) {
+                                (e as WallModel).leftJoints = [];
+                                break;
+                              }
+                            }
+                          });
+                        }
                         flipWallsClockwise(currWall, targetWall);
                       }
                       // right to left side
@@ -1802,12 +1906,19 @@ const Foundation = ({
                         targetWall.rightJoints[0] !== currWall.id
                       ) {
                         setCommonStore((state) => {
+                          let detachId: string | null = null;
+                          if (currWall.rightJoints.length > 0 && currWall.rightJoints[0] !== targetID) {
+                            detachId = currWall.rightJoints[0];
+                          }
                           for (const e of state.elements) {
                             if (e.id === currWall.id) {
                               (e as WallModel).rightJoints = [targetWall.id];
                             }
                             if (e.id === targetWall.id) {
                               (e as WallModel).leftJoints = [currWall.id];
+                            }
+                            if (e.id === detachId) {
+                              (e as WallModel).leftJoints = [];
                             }
                           }
                         });
@@ -1820,12 +1931,19 @@ const Foundation = ({
                         targetWall.leftJoints[0] !== currWall.id
                       ) {
                         setCommonStore((state) => {
+                          let detachId: string | null = null;
+                          if (currWall.leftJoints.length > 0 && currWall.leftJoints[0] !== targetID) {
+                            detachId = currWall.leftJoints[0];
+                          }
                           for (const e of state.elements) {
                             if (e.id === currWall.id) {
                               (e as WallModel).leftJoints = [targetWall.id];
                             }
                             if (e.id === targetWall.id) {
                               (e as WallModel).rightJoints = [currWall.id];
+                            }
+                            if (e.id === detachId) {
+                              (e as WallModel).rightJoints = [];
                             }
                           }
                         });
@@ -1884,8 +2002,13 @@ const Foundation = ({
               const rightPoint = new Vector3().addVectors(p, new Vector3(currWall.lx / 2, 0, 0).applyEuler(euler));
               let leftFlip: boolean | null = null;
               let rightFlip: boolean | null = null;
-              doesWallNeedFlipRef.current = false;
               let stretched = false;
+
+              flipCurrWallRef.current = false;
+              flipLeftHandSideWallRef.current = false;
+              flipRightHandSideWallRef.current = false;
+              wallNewLeftJointIdRef.current = null;
+              wallNewRightJointIdRef.current = null;
 
               if (!useStore.getState().enableFineGrid) {
                 const leftTarget = findMagnetPoint(leftPoint, 1);
@@ -1922,11 +2045,12 @@ const Foundation = ({
                   wallNewRightJointIdRef.current = null;
                 }
 
+                // *notice the different between false and null
                 if ((leftFlip && rightFlip === null) || (rightFlip && leftFlip === null) || (leftFlip && rightFlip)) {
-                  doesWallNeedFlipRef.current = true;
+                  flipCurrWallRef.current = true;
                 } else if ((leftFlip && rightFlip === false) || (rightFlip && leftFlip === false)) {
-                  wallNewLeftJointIdRef.current = null;
-                  wallNewRightJointIdRef.current = null;
+                  flipLeftHandSideWallRef.current = leftFlip;
+                  flipRightHandSideWallRef.current = rightFlip;
                 }
 
                 if (leftTarget.point && rightTarget.point) {
@@ -1936,9 +2060,6 @@ const Foundation = ({
                     stretched = true;
                   }
                 }
-              } else {
-                wallNewLeftJointIdRef.current = null;
-                wallNewRightJointIdRef.current = null;
               }
 
               setCommonStore((state) => {

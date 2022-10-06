@@ -225,23 +225,39 @@ const Wall = ({
   let leftOffset = 0;
   let rightOffset = 0;
 
-  if (leftJoints.length > 0) {
-    const targetWall = getElementById(leftJoints[0]) as WallModel;
-    if (targetWall) {
-      const deltaAngle = (Math.PI * 3 - (relativeAngle - targetWall.relativeAngle)) % TWO_PI;
-      if (deltaAngle <= HALF_PI + 0.01 && deltaAngle > 0) {
-        leftOffset = Math.min(ly / Math.tan(deltaAngle) + targetWall.ly, lx);
+  const leftWall = useStore((state) => {
+    if (leftJoints.length > 0) {
+      for (const e of state.elements) {
+        if (e.id === leftJoints[0]) {
+          return e as WallModel;
+        }
       }
+    }
+    return null;
+  });
+
+  const rightWall = useStore((state) => {
+    if (rightJoints.length > 0) {
+      for (const e of state.elements) {
+        if (e.id === rightJoints[0]) {
+          return e as WallModel;
+        }
+      }
+    }
+    return null;
+  });
+
+  if (leftWall) {
+    const deltaAngle = (Math.PI * 3 - (relativeAngle - leftWall.relativeAngle)) % TWO_PI;
+    if (deltaAngle <= HALF_PI + 0.01 && deltaAngle > 0) {
+      leftOffset = Math.min(ly / Math.tan(deltaAngle) + leftWall.ly, lx);
     }
   }
 
-  if (rightJoints.length > 0) {
-    const targetWall = getElementById(rightJoints[0]) as WallModel;
-    if (targetWall) {
-      const deltaAngle = (Math.PI * 3 + relativeAngle - targetWall.relativeAngle) % TWO_PI;
-      if (deltaAngle <= HALF_PI + 0.01 && deltaAngle > 0) {
-        rightOffset = Math.min(ly / Math.tan(deltaAngle) + targetWall.ly, lx);
-      }
+  if (rightWall) {
+    const deltaAngle = (Math.PI * 3 + relativeAngle - rightWall.relativeAngle) % TWO_PI;
+    if (deltaAngle <= HALF_PI + 0.01 && deltaAngle > 0) {
+      rightOffset = Math.min(ly / Math.tan(deltaAngle) + rightWall.ly, lx);
     }
   }
 
