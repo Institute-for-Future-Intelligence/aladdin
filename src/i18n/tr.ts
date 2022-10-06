@@ -389,6 +389,7 @@ export const i18n_tr = {
         OfficeBuilding: 'Ofis Binası',
         Hotel: 'Hotel',
         SouthBurlingtonHighSchoolVermont: 'Güney Burlington Lisesi',
+        MescaleroApacheSchoolNewMexico: 'Mescalero Apache School, NM',
       },
       urbanPlanningSubMenu: 'Şehir Planlaması',
       urbanPlanningExamples: {

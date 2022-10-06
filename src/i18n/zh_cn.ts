@@ -387,6 +387,7 @@ export const i18n_zh_cn = {
         OfficeBuilding: '一栋简单的办公楼',
         Hotel: '一个旅馆场景',
         SouthBurlingtonHighSchoolVermont: '佛蒙特州南伯灵顿高中',
+        MescaleroApacheSchoolNewMexico: '新墨西哥州梅斯卡勒罗阿帕奇学校',
       },
       urbanPlanningSubMenu: '城市规划',
       urbanPlanningExamples: {

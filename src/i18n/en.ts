@@ -390,6 +390,7 @@ export const i18n_en = {
         OfficeBuilding: 'Office Building',
         Hotel: 'Hotel',
         SouthBurlingtonHighSchoolVermont: 'South Burlington High School, VT',
+        MescaleroApacheSchoolNewMexico: 'Mescalero Apache School, NM',
       },
       urbanPlanningSubMenu: 'Urban Planning',
       urbanPlanningExamples: {
