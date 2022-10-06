@@ -1069,6 +1069,7 @@ export const i18n_zh_cn = {
       AddParabolicTrough: '添加抛物线槽',
       AddFresnelReflector: '添加菲涅耳反射镜',
       AddHeliostat: '添加定日镜',
+      AddWindTurbine: '添加风力涡轮机',
       AddTree: '添加树木',
       AddPeople: '添加人物',
       ManipulateGroup: '整体操作一个组',

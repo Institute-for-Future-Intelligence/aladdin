@@ -1087,6 +1087,7 @@ export const i18n_tr = {
       AddParabolicTrough: 'Parabolik Oluk Ekle',
       AddFresnelReflector: 'Fresnel Reflektörü Ekle',
       AddHeliostat: 'Heliostat Ekle',
+      AddWindTurbine: 'Add wind turbine',
       AddTree: 'Ağaç Ekle',
       AddPeople: 'İnsan Ekle',
       ManipulateGroup: 'Ölçeklendirme',

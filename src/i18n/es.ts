@@ -1087,6 +1087,7 @@ export const i18n_es = {
       AddParabolicTrough: 'Add parabolic trough',
       AddFresnelReflector: 'Add Fresnel reflector',
       AddHeliostat: 'Add heliostat',
+      AddWindTurbine: 'Add wind turbine',
       AddTree: 'Añadir árbol',
       AddPeople: 'Añadir gente',
       ManipulateGroup: 'Manipulate a group',
