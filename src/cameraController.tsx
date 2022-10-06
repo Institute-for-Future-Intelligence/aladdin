@@ -43,6 +43,15 @@ const CameraController = () => {
   const persCameraRef = useRef<Camera>(null);
   const orthCameraRef = useRef<Camera>(null);
 
+  //
+  useEffect(() => {
+    if (useStore.getState().viewState.cameraPosition2D[2] < 100) {
+      setCommonStore((state) => {
+        state.viewState.cameraPosition2D[2] = 150;
+      });
+    }
+  }, []);
+
   // save orbitControlRef to common store
   useEffect(() => {
     if (orbitControlRef && orbitControlRef.current) {
@@ -87,7 +96,7 @@ const CameraController = () => {
       }
       if (orthCameraRef.current) {
         // old files have no cameraPosition2D and panCenter2D: 12/19/2021
-        const cameraPosition2D = getVector(viewState.cameraPosition2D ?? [0, 0, 20]);
+        const cameraPosition2D = getVector(viewState.cameraPosition2D ?? [0, 0, 150]).setZ(150);
         const panCenter2D = getVector(viewState.panCenter2D ?? [0, 0, 0]);
         orthCameraRef.current.position.copy(cameraPosition2D);
         orthCameraRef.current.rotation.set(0, 0, 0);
@@ -168,7 +177,7 @@ const CameraController = () => {
           } else {
             v.cameraZoom = 20;
           }
-          v.cameraPosition2D = [cameraPosition.x, cameraPosition.y, cameraPosition.z];
+          v.cameraPosition2D = [cameraPosition.x, cameraPosition.y, 150];
           v.panCenter2D = [targetPosition.x, targetPosition.y, targetPosition.z];
         } else {
           v.cameraPosition = [cameraPosition.x, cameraPosition.y, cameraPosition.z];

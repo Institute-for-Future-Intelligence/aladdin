@@ -93,7 +93,7 @@ export class DefaultViewState implements ViewState {
     this.enableRotate = true;
     this.ambientLightIntensity = 0.1;
     this.cameraPosition = [5, -30, 1];
-    this.cameraPosition2D = [0, 0, 20];
+    this.cameraPosition2D = [0, 0, 150];
     this.panCenter = [0, 0, 0];
     this.panCenter2D = [0, 0, 0];
     this.cameraZoom = 20;
