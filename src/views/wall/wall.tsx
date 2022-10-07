@@ -178,6 +178,7 @@ const Wall = ({
   const addUndoable = useStore(Selector.addUndoable);
   const setElementPosition = useStore(Selector.setElementPosition);
   const updateWallFlag = useStore(Selector.updateWallFlag);
+  const selectedElement = useStore(Selector.selectedElement);
 
   const intersectionPlaneRef = useRef<Mesh>(null);
   const outsideWallRef = useRef<Mesh>(null);
@@ -366,7 +367,15 @@ const Wall = ({
 
   useEffect(() => {
     updateElementsOnWall();
-  }, [updateWallFlag, leftRoofHeight, rightRoofHeight, centerRoofHeight, centerLeftRoofHeight, centerRightRoofHeight]);
+  }, [
+    selectedElement,
+    updateWallFlag,
+    leftRoofHeight,
+    rightRoofHeight,
+    centerRoofHeight,
+    centerLeftRoofHeight,
+    centerRightRoofHeight,
+  ]);
 
   // roof
   useEffect(() => {
