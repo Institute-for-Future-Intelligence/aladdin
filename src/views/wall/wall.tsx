@@ -1114,10 +1114,11 @@ const Wall = ({
         handleUndoableAdd(newElement);
         setCommonStore((state) => {
           state.elements.push(newElement as ElementModel);
+          if (newElement && newElement.type === ObjectType.Roof) {
+            state.addedRoofId = newElement.id;
+          }
           state.objectTypeToAdd = ObjectType.None;
-          state.updateWallFlag = !state.updateWallFlag;
         });
-        return;
       }
     }
   };

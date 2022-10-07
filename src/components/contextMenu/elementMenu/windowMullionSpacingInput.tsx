@@ -47,6 +47,7 @@ const MullionSpacingInput = ({ setDialogVisible }: { setDialogVisible: (b: boole
           break;
         }
       }
+      state.updateWallFlag = !state.updateWallFlag;
     });
   };
 

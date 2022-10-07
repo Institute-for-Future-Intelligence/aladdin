@@ -55,6 +55,7 @@ const WindowShutterWidthInput = ({ setDialogVisible }: { setDialogVisible: (b: b
           break;
         }
       }
+      state.updateWallFlag = !state.updateWallFlag;
     });
   };
 

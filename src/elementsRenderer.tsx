@@ -50,6 +50,7 @@ const ElementsRenderer: React.FC = () => {
 
   // console.log(groupRef)
   // console.log(elements);
+  console.debug(elements);
 
   return (
     <group ref={groupRef} name={'Content'}>

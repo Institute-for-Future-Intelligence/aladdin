@@ -54,6 +54,7 @@ const WindowTintSelection = ({ setDialogVisible }: { setDialogVisible: (b: boole
           break;
         }
       }
+      state.updateWallFlag = !state.updateWallFlag;
     });
   };
 
@@ -235,7 +236,7 @@ const WindowTintSelection = ({ setDialogVisible }: { setDialogVisible: (b: boole
             onMouseOver={() => setDragEnabled(true)}
             onMouseOut={() => setDragEnabled(false)}
           >
-            {i18n.t('roofMenu.tint', lang)}
+            {i18n.t('windowMenu.tint', lang)}
           </div>
         }
         footer={[

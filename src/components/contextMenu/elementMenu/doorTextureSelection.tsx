@@ -68,6 +68,7 @@ const DoorTextureSelection = ({ setDialogVisible }: { setDialogVisible: (b: bool
           break;
         }
       }
+      state.updateWallFlag = !state.updateWallFlag;
     });
   };
 

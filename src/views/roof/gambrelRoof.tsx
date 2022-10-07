@@ -581,7 +581,7 @@ const GambrelRoof = ({
   }, [currentWallArray, h, minHeight]);
 
   useEffect(() => {
-    if (!isFirstMountRef.current) {
+    if (!isFirstMountRef.current || useStore.getState().addedRoofId === id) {
       if (currentWallArray.length === 4) {
         let minHeight = 0;
         for (let i = 0; i < currentWallArray.length; i++) {
@@ -630,6 +630,9 @@ const GambrelRoof = ({
         setMinHeight(minHeight);
       } else {
         removeElementById(id, false);
+      }
+      if (useStore.getState().addedRoofId === id) {
+        useStore.getState().setAddedRoofId(null);
       }
     }
   }, [

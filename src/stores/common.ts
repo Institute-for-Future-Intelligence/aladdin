@@ -712,7 +712,9 @@ export interface CommonStoreState {
   addedDoorId: string | null;
   deletedDoorAndParentId: string[] | null;
 
+  addedRoofId: string | null;
   deletedRoofId: string | null;
+  setAddedRoofId: (id: string | null) => void;
 
   groupActionMode: boolean;
   setGroupActionMode: (b: boolean) => void;
@@ -1642,6 +1644,7 @@ export const useStore = create<CommonStoreState>(
                   break;
                 }
               }
+              state.updateWallFlag = !state.updateWallFlag;
             });
           },
           updateElementShowLabelById(id, showLabel) {
@@ -1652,6 +1655,7 @@ export const useStore = create<CommonStoreState>(
                   break;
                 }
               }
+              state.updateWallFlag = !state.updateWallFlag;
             });
           },
 
@@ -2004,6 +2008,7 @@ export const useStore = create<CommonStoreState>(
                   }
                 }
               }
+              state.updateWallFlag = !state.updateWallFlag;
             });
           },
           updateSolarCollectorDrawSunBeamAboveFoundation(type, foundationId, draw) {
@@ -2016,6 +2021,7 @@ export const useStore = create<CommonStoreState>(
                   }
                 }
               }
+              state.updateWallFlag = !state.updateWallFlag;
             });
           },
           updateSolarCollectorDrawSunBeamForAll(type, draw) {
@@ -2028,6 +2034,7 @@ export const useStore = create<CommonStoreState>(
                   }
                 }
               }
+              state.updateWallFlag = !state.updateWallFlag;
             });
           },
           updateSolarCollectorRelativeAzimuthById(id, relativeAzimuth) {
@@ -3171,6 +3178,9 @@ export const useStore = create<CommonStoreState>(
                     sp.lx = nx * pvModel.length;
                     sp.ly = ny * pvModel.width;
                   }
+                  if (sp.parentType === ObjectType.Wall) {
+                    state.updateWallFlag = !state.updateWallFlag;
+                  }
                   break;
                 }
               }
@@ -3179,6 +3189,7 @@ export const useStore = create<CommonStoreState>(
           updateSolarPanelModelAboveFoundation(foundationId, pvModelName) {
             immerSet((state: CommonStoreState) => {
               const pvModel = state.pvModules[pvModelName];
+              let updateWall = false;
               for (const e of state.elements) {
                 if (e.type === ObjectType.SolarPanel && e.foundationId === foundationId && !e.locked) {
                   const sp = e as SolarPanelModel;
@@ -3196,13 +3207,20 @@ export const useStore = create<CommonStoreState>(
                     sp.lx = nx * pvModel.length;
                     sp.ly = ny * pvModel.width;
                   }
+                  if (sp.parentType === ObjectType.Wall) {
+                    updateWall = true;
+                  }
                 }
+              }
+              if (updateWall) {
+                state.updateWallFlag = !state.updateWallFlag;
               }
             });
           },
           updateSolarPanelModelOnSurface(parentId, normal, pvModelName) {
             immerSet((state: CommonStoreState) => {
               const pvModel = state.pvModules[pvModelName];
+              let updateWall = false;
               for (const e of state.elements) {
                 if (e.type === ObjectType.SolarPanel && !e.locked) {
                   let found;
@@ -3227,14 +3245,21 @@ export const useStore = create<CommonStoreState>(
                       sp.lx = nx * pvModel.length;
                       sp.ly = ny * pvModel.width;
                     }
+                    if (sp.parentType === ObjectType.Wall) {
+                      updateWall = true;
+                    }
                   }
                 }
+              }
+              if (updateWall) {
+                state.updateWallFlag = !state.updateWallFlag;
               }
             });
           },
           updateSolarPanelModelForAll(pvModelName) {
             immerSet((state: CommonStoreState) => {
               const pvModel = state.pvModules[pvModelName];
+              let updateWall = false;
               for (const e of state.elements) {
                 if (e.type === ObjectType.SolarPanel && !e.locked) {
                   const sp = e as SolarPanelModel;
@@ -3252,7 +3277,13 @@ export const useStore = create<CommonStoreState>(
                     sp.lx = nx * pvModel.length;
                     sp.ly = ny * pvModel.width;
                   }
+                  if (sp.parentType === ObjectType.Wall) {
+                    updateWall = true;
+                  }
                 }
+              }
+              if (updateWall) {
+                state.updateWallFlag = !state.updateWallFlag;
               }
             });
           },
@@ -3267,6 +3298,7 @@ export const useStore = create<CommonStoreState>(
                   break;
                 }
               }
+              state.updateWallFlag = !state.updateWallFlag;
             });
           },
           updateSolarPanelLxAboveFoundation(foundationId, lx) {
@@ -3278,6 +3310,7 @@ export const useStore = create<CommonStoreState>(
                   e.lx = Util.panelizeLx(sp, pv, lx);
                 }
               }
+              state.updateWallFlag = !state.updateWallFlag;
             });
           },
           updateSolarPanelLxOnSurface(parentId, normal, lx) {
@@ -3297,6 +3330,7 @@ export const useStore = create<CommonStoreState>(
                   }
                 }
               }
+              state.updateWallFlag = !state.updateWallFlag;
             });
           },
           updateSolarPanelLxForAll(lx) {
@@ -3308,6 +3342,7 @@ export const useStore = create<CommonStoreState>(
                   e.lx = Util.panelizeLx(sp, pv, lx);
                 }
               }
+              state.updateWallFlag = !state.updateWallFlag;
             });
           },
 
@@ -3321,6 +3356,7 @@ export const useStore = create<CommonStoreState>(
                   break;
                 }
               }
+              state.updateWallFlag = !state.updateWallFlag;
             });
           },
           updateSolarPanelLyAboveFoundation(foundationId, ly) {
@@ -3332,6 +3368,7 @@ export const useStore = create<CommonStoreState>(
                   e.ly = Util.panelizeLy(sp, pv, ly);
                 }
               }
+              state.updateWallFlag = !state.updateWallFlag;
             });
           },
           updateSolarPanelLyOnSurface(parentId, normal, ly) {
@@ -3351,6 +3388,7 @@ export const useStore = create<CommonStoreState>(
                   }
                 }
               }
+              state.updateWallFlag = !state.updateWallFlag;
             });
           },
           updateSolarPanelLyForAll(ly) {
@@ -3362,6 +3400,7 @@ export const useStore = create<CommonStoreState>(
                   e.ly = Util.panelizeLy(sp, pv, ly);
                 }
               }
+              state.updateWallFlag = !state.updateWallFlag;
             });
           },
 
@@ -3374,6 +3413,7 @@ export const useStore = create<CommonStoreState>(
                   break;
                 }
               }
+              state.updateWallFlag = !state.updateWallFlag;
             });
           },
           updateSolarPanelTiltAngleAboveFoundation(foundationId, tiltAngle) {
@@ -3389,6 +3429,7 @@ export const useStore = create<CommonStoreState>(
                   sp.tiltAngle = tiltAngle;
                 }
               }
+              state.updateWallFlag = !state.updateWallFlag;
             });
           },
           updateSolarPanelTiltAngleOnSurface(parentId, normal, tiltAngle) {
@@ -3407,6 +3448,7 @@ export const useStore = create<CommonStoreState>(
                   }
                 }
               }
+              state.updateWallFlag = !state.updateWallFlag;
             });
           },
           updateSolarPanelTiltAngleForAll(tiltAngle) {
@@ -3421,6 +3463,7 @@ export const useStore = create<CommonStoreState>(
                   sp.tiltAngle = tiltAngle;
                 }
               }
+              state.updateWallFlag = !state.updateWallFlag;
             });
           },
 
@@ -3448,6 +3491,9 @@ export const useStore = create<CommonStoreState>(
                   const sp = e as SolarPanelModel;
                   const pvModel = state.pvModules[sp.pvModelName];
                   state.setSolarPanelOrientation(sp, pvModel, orientation);
+                  if (sp.parentType === ObjectType.Wall) {
+                    state.updateWallFlag = !state.updateWallFlag;
+                  }
                   break;
                 }
               }
@@ -3455,17 +3501,26 @@ export const useStore = create<CommonStoreState>(
           },
           updateSolarPanelOrientationAboveFoundation(foundationId, orientation) {
             immerSet((state: CommonStoreState) => {
+              let updateWall = false;
               for (const e of state.elements) {
                 if (e.type === ObjectType.SolarPanel && e.foundationId === foundationId && !e.locked) {
                   const sp = e as SolarPanelModel;
                   const pvModel = state.pvModules[sp.pvModelName];
                   state.setSolarPanelOrientation(sp, pvModel, orientation);
+                  if (sp.parentType === ObjectType.Wall) {
+                    updateWall = true;
+                  }
                 }
+              }
+              if (updateWall) {
+                state.updateWallFlag = !state.updateWallFlag;
               }
             });
           },
           updateSolarPanelOrientationOnSurface(parentId, normal, orientation) {
             immerSet((state: CommonStoreState) => {
+              let updateWall = false;
+
               for (const e of state.elements) {
                 if (e.type === ObjectType.SolarPanel && !e.locked) {
                   let found;
@@ -3478,19 +3533,32 @@ export const useStore = create<CommonStoreState>(
                     const sp = e as SolarPanelModel;
                     const pvModel = state.pvModules[sp.pvModelName];
                     state.setSolarPanelOrientation(sp, pvModel, orientation);
+                    if (sp.parentType === ObjectType.Wall) {
+                      updateWall = true;
+                    }
                   }
                 }
+              }
+              if (updateWall) {
+                state.updateWallFlag = !state.updateWallFlag;
               }
             });
           },
           updateSolarPanelOrientationForAll(orientation) {
             immerSet((state: CommonStoreState) => {
+              let updateWall = false;
               for (const e of state.elements) {
                 if (e.type === ObjectType.SolarPanel && !e.locked) {
                   const sp = e as SolarPanelModel;
                   const pvModel = state.pvModules[sp.pvModelName];
                   state.setSolarPanelOrientation(sp, pvModel, orientation);
+                  if (sp.parentType === ObjectType.Wall) {
+                    updateWall = true;
+                  }
                 }
+              }
+              if (updateWall) {
+                state.updateWallFlag = !state.updateWallFlag;
               }
             });
           },
@@ -5164,7 +5232,7 @@ export const useStore = create<CommonStoreState>(
                           const lang = { lng: state.language };
                           showError(i18n.t('message.CannotPasteOutsideBoundary', lang));
                         } else {
-                          state.updateElementsOnWallFn();
+                          state.updateWallFlag = !state.updateWallFlag;
                         }
                       }
                       break;
@@ -5818,7 +5886,13 @@ export const useStore = create<CommonStoreState>(
               state.updateDesignInfoFlag = !state.updateDesignInfoFlag;
             });
           },
+          addedRoofId: null,
           deletedRoofId: null,
+          setAddedRoofId(id: string | null) {
+            immerSet((state) => {
+              state.addedRoofId = id;
+            });
+          },
 
           groupActionMode: false,
           setGroupActionMode(b: boolean) {

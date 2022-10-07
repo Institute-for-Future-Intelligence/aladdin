@@ -54,6 +54,7 @@ const DoorColorSelection = ({ setDialogVisible }: { setDialogVisible: (b: boolea
           break;
         }
       }
+      state.updateWallFlag = !state.updateWallFlag;
     });
   };
 

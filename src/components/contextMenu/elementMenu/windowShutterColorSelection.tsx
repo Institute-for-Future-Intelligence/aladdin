@@ -63,6 +63,7 @@ const WindowShutterColorSelection = ({ setDialogVisible }: { setDialogVisible: (
           break;
         }
       }
+      state.updateWallFlag = !state.updateWallFlag;
     });
   };
 

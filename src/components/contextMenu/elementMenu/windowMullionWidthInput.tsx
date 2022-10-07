@@ -47,6 +47,7 @@ const MullinoWidthInput = ({ setDialogVisible }: { setDialogVisible: (b: boolean
           break;
         }
       }
+      state.updateWallFlag = !state.updateWallFlag;
     });
   };
 
