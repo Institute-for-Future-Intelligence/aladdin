@@ -632,7 +632,7 @@ const SolarPanelSimulation = ({ city }: SolarPanelSimulationProps) => {
     let angle = panel.tiltAngle;
     if (rooftop) {
       // z coordinate of a rooftop solar panel is absolute
-      center.z = panel.cz + parent.cz + parent.lz / 2;
+      center.z = panel.cz + panel.lz / 2 + parent.cz + parent.lz / 2;
       if (Util.isZero(panel.rotation[0])) {
         // on a flat roof, add pole height
         center.z += panel.poleHeight;
@@ -644,7 +644,9 @@ const SolarPanelSimulation = ({ city }: SolarPanelSimulationProps) => {
     const normal = new Vector3().fromArray(panel.normal);
     const zRot = parent.rotation[2] + panel.relativeAzimuth;
     // TODO: right now we assume a parent rotation is always around the z-axis
-    const normalEuler = new Euler(angle, 0, zRot, 'ZYX');
+    // normal has been set if it is on top of a tilted roof, but has not if it is on top of foundation.
+    // so we only need to tilt the normal for a solar panel on foundation
+    const normalEuler = new Euler(rooftop ? 0 : angle, 0, zRot, 'ZYX');
     normal.applyEuler(normalEuler);
     const year = now.getFullYear();
     const month = now.getMonth();
@@ -686,6 +688,9 @@ const SolarPanelSimulation = ({ city }: SolarPanelSimulationProps) => {
     const center2d = new Vector2(center.x, center.y);
     const v = new Vector3();
     const cellOutputs = Array.from(Array<number>(nx), () => new Array<number>(ny));
+    // the dot array on the solar panel has not been tilted (either on a roof or a foundation)
+    // so we need to set the tilt angle to the normal Euler
+    normalEuler.x = angle;
     for (let i = 0; i < 24; i++) {
       for (let j = 0; j < world.timesPerHour; j++) {
         // a shift of 30 minutes minute half of the interval ensures the symmetry of the result around noon
@@ -810,7 +815,7 @@ const SolarPanelSimulation = ({ city }: SolarPanelSimulationProps) => {
     let angle = panel.tiltAngle;
     if (rooftop) {
       // z coordinate of a rooftop solar panel is absolute
-      center.z = panel.cz + parent.cz + parent.lz / 2;
+      center.z = panel.cz + panel.lz / 2 + parent.cz + parent.lz / 2;
       if (Util.isZero(panel.rotation[0])) {
         // on a flat roof, add pole height
         center.z += panel.poleHeight;
@@ -860,7 +865,9 @@ const SolarPanelSimulation = ({ city }: SolarPanelSimulationProps) => {
     const center2d = new Vector2(center.x, center.y);
     const v = new Vector3();
     const cellOutputs = Array.from(Array<number>(nx), () => new Array<number>(ny));
-    let normalEuler = new Euler(angle, 0, zRot, 'ZYX');
+    // normal has been set if it is on top of a tilted roof, but has not if it is on top of foundation.
+    // so we only need to tilt the normal for a solar panel on foundation
+    let normalEuler = new Euler(rooftop ? 0 : angle, 0, zRot, 'ZYX');
     if (panel.trackerType !== TrackerType.NO_TRACKER) {
       // dynamic angles
       const rotatedSunDirection = rot
@@ -889,6 +896,9 @@ const SolarPanelSimulation = ({ city }: SolarPanelSimulationProps) => {
       }
     }
     normal.applyEuler(normalEuler);
+    // the dot array on the solar panel has not been tilted (either on a roof or a foundation)
+    // so we need to set the tilt angle to the normal Euler
+    normalEuler.x = angle;
     const peakRadiation = calculatePeakRadiation(sunDirection, dayOfYear, elevation, AirMass.SPHERE_MODEL);
     const indirectRadiation = calculateDiffuseAndReflectedRadiation(world.ground, month, normal, peakRadiation);
     const dot = normal.dot(sunDirection);
