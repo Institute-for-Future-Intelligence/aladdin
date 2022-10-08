@@ -531,16 +531,25 @@ const DynamicSolarRadiationSimulation = ({ city }: DynamicSolarRadiationSimulati
     if (sunDirection.z <= 0) return; // when the sun is not out
     let parent = getParent(panel);
     if (!parent) throw new Error('parent of solar panel does not exist');
-    let rooftop = false;
-    if (parent.type === ObjectType.Roof) {
+    let rooftop = panel.parentType === ObjectType.Roof;
+    if (rooftop) {
+      // x and y coordinates of a rooftop solar panel are relative to the foundation
       parent = getFoundation(parent);
       if (!parent) throw new Error('foundation of solar panel does not exist');
-      rooftop = true;
     }
     const dayOfYear = Util.dayOfYear(now);
     const center = Util.absoluteCoordinates(panel.cx, panel.cy, panel.cz, parent);
+    let angle = panel.tiltAngle;
     if (rooftop) {
+      // z coordinate of a rooftop solar panel is absolute
       center.z = panel.cz + parent.cz + parent.lz / 2;
+      if (Util.isZero(panel.rotation[0])) {
+        // on a flat roof, add pole height
+        center.z += panel.poleHeight;
+      } else {
+        // on a no-flat roof, ignore tilt angle
+        angle = panel.rotation[0];
+      }
     }
     const normal = new Vector3().fromArray(panel.normal);
     const rot = parent.rotation[2];
@@ -564,7 +573,7 @@ const DynamicSolarRadiationSimulation = ({ city }: DynamicSolarRadiationSimulati
         .map(() => Array(ny).fill(0));
       cellOutputsMapRef.current.set(panel.id, cellOutputs);
     }
-    let normalEuler = new Euler(panel.tiltAngle, 0, zRot, 'ZYX');
+    let normalEuler = new Euler(angle, 0, zRot, 'ZYX');
     if (panel.trackerType !== TrackerType.NO_TRACKER) {
       // dynamic angles
       const rotatedSunDirection = rot

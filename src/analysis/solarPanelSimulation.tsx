@@ -613,28 +613,38 @@ const SolarPanelSimulation = ({ city }: SolarPanelSimulationProps) => {
 
   // if there are no moving parts, this is way faster
   const calculateYieldWithoutAnimation = (panel: SolarPanelModel) => {
+    if (panel.trackerType !== TrackerType.NO_TRACKER)
+      throw new Error('static simulation is not for solar panel with tracker');
     let parent = getParent(panel);
     if (!parent) throw new Error('parent of solar panel does not exist');
-    let rooftop = false;
-    if (parent.type === ObjectType.Roof) {
+    let rooftop = panel.parentType === ObjectType.Roof;
+    if (rooftop) {
+      // x and y coordinates of a rooftop solar panel are relative to the foundation
       parent = getFoundation(parent);
       if (!parent) throw new Error('foundation of solar panel does not exist');
       rooftop = true;
     }
-    if (panel.trackerType !== TrackerType.NO_TRACKER)
-      throw new Error('static simulation is not for solar panel with tracker');
     const pvModel = getPvModule(panel.pvModelName);
     if (!pvModel) throw new Error('PV model not found');
     const output = dailyOutputsMapRef.current.get(panel.id);
     if (!output) return;
     const center = Util.absoluteCoordinates(panel.cx, panel.cy, panel.cz, parent);
+    let angle = panel.tiltAngle;
     if (rooftop) {
+      // z coordinate of a rooftop solar panel is absolute
       center.z = panel.cz + parent.cz + parent.lz / 2;
+      if (Util.isZero(panel.rotation[0])) {
+        // on a flat roof, add pole height
+        center.z += panel.poleHeight;
+      } else {
+        // on a no-flat roof, ignore tilt angle
+        angle = panel.rotation[0];
+      }
     }
     const normal = new Vector3().fromArray(panel.normal);
     const zRot = parent.rotation[2] + panel.relativeAzimuth;
     // TODO: right now we assume a parent rotation is always around the z-axis
-    const normalEuler = new Euler(panel.tiltAngle, 0, zRot, 'ZYX');
+    const normalEuler = new Euler(angle, 0, zRot, 'ZYX');
     normal.applyEuler(normalEuler);
     const year = now.getFullYear();
     const month = now.getMonth();
@@ -786,19 +796,28 @@ const SolarPanelSimulation = ({ city }: SolarPanelSimulationProps) => {
   const calculateYield = (panel: SolarPanelModel) => {
     let parent = getParent(panel);
     if (!parent) throw new Error('parent of solar panel does not exist');
-    let rooftop = false;
-    if (parent.type === ObjectType.Roof) {
+    let rooftop = panel.parentType === ObjectType.Roof;
+    if (rooftop) {
+      // x and y coordinates of a rooftop solar panel are relative to the foundation
       parent = getFoundation(parent);
       if (!parent) throw new Error('foundation of solar panel does not exist');
-      rooftop = true;
     }
     const pvModel = getPvModule(panel.pvModelName);
     if (!pvModel) throw new Error('PV model not found');
     const sunDirection = getSunDirection(now, world.latitude);
     if (sunDirection.z <= 0) return; // when the sun is not out
     const center = Util.absoluteCoordinates(panel.cx, panel.cy, panel.cz, parent);
+    let angle = panel.tiltAngle;
     if (rooftop) {
+      // z coordinate of a rooftop solar panel is absolute
       center.z = panel.cz + parent.cz + parent.lz / 2;
+      if (Util.isZero(panel.rotation[0])) {
+        // on a flat roof, add pole height
+        center.z += panel.poleHeight;
+      } else {
+        // on a no-flat roof, ignore tilt angle
+        angle = panel.rotation[0];
+      }
     }
     const normal = new Vector3().fromArray(panel.normal);
     const rot = parent.rotation[2];
@@ -841,7 +860,7 @@ const SolarPanelSimulation = ({ city }: SolarPanelSimulationProps) => {
     const center2d = new Vector2(center.x, center.y);
     const v = new Vector3();
     const cellOutputs = Array.from(Array<number>(nx), () => new Array<number>(ny));
-    let normalEuler = new Euler(panel.tiltAngle, 0, zRot, 'ZYX');
+    let normalEuler = new Euler(angle, 0, zRot, 'ZYX');
     if (panel.trackerType !== TrackerType.NO_TRACKER) {
       // dynamic angles
       const rotatedSunDirection = rot
