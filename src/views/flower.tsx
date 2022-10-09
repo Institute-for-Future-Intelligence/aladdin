@@ -67,6 +67,7 @@ const Flower = ({
   const language = useStore(Selector.language);
   const orthographic = useStore(Selector.viewState.orthographic) ?? false;
   const date = useStore(Selector.world.date);
+  const latitude = useStore(Selector.world.latitude);
   const shadowEnabled = useStore(Selector.viewState.shadowEnabled);
   const selectMe = useStore(Selector.selectMe);
   const getElementById = useStore(Selector.getElementById);
@@ -89,7 +90,8 @@ const Flower = ({
 
   const flowerModel = getElementById(id) as FlowerModel;
   const month = now.getMonth() + 1;
-  const noLeaves = month < 4 || month > 10; // TODO: This needs to depend on location
+  // TODO: This needs to depend on location more accurately
+  const noLeaves = latitude > 0 ? month < 4 || month > 10 : month >= 4 && month <= 10;
   const lang = { lng: language };
   const night = sunlightDirection.z <= 0;
 
