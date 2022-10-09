@@ -191,7 +191,7 @@ const CuboidWidthInput = ({ setDialogVisible }: { setDialogVisible: (b: boolean)
               break;
           }
         }
-        if (Util.isTreeOrHuman(c)) {
+        if (Util.isPlantOrHuman(c)) {
           oldChildrenPositionsMapRef.current.set(c.id, new Vector3(c.cx, c.cy, c.cz));
         }
       }
@@ -233,7 +233,7 @@ const CuboidWidthInput = ({ setDialogVisible }: { setDialogVisible: (b: boolean)
               break;
           }
         }
-        if (Util.isTreeOrHuman(c)) {
+        if (Util.isPlantOrHuman(c)) {
           newChildrenPositionsMapRef.current.set(c.id, new Vector3(c.cx, c.cy, c.cz));
           oldChildrenParentIdMapRef.current.set(c.id, parent.id);
           // top, north, south face

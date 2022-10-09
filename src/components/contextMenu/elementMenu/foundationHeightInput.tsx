@@ -122,7 +122,7 @@ const FoundationHeightInput = ({ setDialogVisible }: { setDialogVisible: (b: boo
         if (e.parentId === parent.id) {
           oldChildrenParentIdMapRef.current.set(e.id, parent.id);
           oldChildrenPositionsMapRef.current.set(e.id, new Vector3(e.cx, e.cy, e.cz));
-          if (Util.isTreeOrHuman(e)) {
+          if (Util.isPlantOrHuman(e)) {
             // top face
             if (Math.abs(e.cz - parent.lz / 2) < ZERO_TOLERANCE) {
               e.cz = value / 2;

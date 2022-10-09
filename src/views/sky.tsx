@@ -153,7 +153,7 @@ const Sky = ({ theme = 'Default' }: SkyProps) => {
         if (selectedElement) {
           if (legalOnGround(selectedElement.type)) {
             grabRef.current = selectedElement;
-            if (Util.isTreeOrHuman(grabRef.current)) {
+            if (Util.isPlantOrHuman(grabRef.current)) {
               setIntersectionPlaneType(IntersectionPlaneType.Vertical);
               intersectionPlaneAngle.set(-HALF_PI, 0, 0, 'ZXY');
             }
@@ -509,7 +509,7 @@ const Sky = ({ theme = 'Default' }: SkyProps) => {
                 setCommonStore((state) => {
                   // set ref children state
                   for (const e of state.elements) {
-                    if (Util.isTreeOrHuman(e)) {
+                    if (Util.isPlantOrHuman(e)) {
                       if (e.parentId === elem.id) {
                         oldChildrenParentIdMapRef.current.set(e.id, elem.id);
                         // stand on top face
@@ -695,7 +695,7 @@ const Sky = ({ theme = 'Default' }: SkyProps) => {
         }
         if (
           useStore.getState().moveHandleType &&
-          Util.isTreeOrHuman(elem) &&
+          Util.isPlantOrHuman(elem) &&
           (newPositionRef.current.distanceToSquared(oldPositionRef.current) > ZERO_TOLERANCE ||
             ray.intersectObjects([meshRef.current!]).length > 0)
         ) {
@@ -729,11 +729,11 @@ const Sky = ({ theme = 'Default' }: SkyProps) => {
           if (!moveOk || isMoveToSky()) {
             setElementPosition(elem.id, oldPositionRef.current.x, oldPositionRef.current.y, oldPositionRef.current.z);
             if (elementRef) {
-              if (Util.isTreeOrHuman(elem)) {
+              if (Util.isPlantOrHuman(elem)) {
                 elementRef.position.copy(oldPositionRef.current);
               }
             }
-            if (Util.isTreeOrHuman(elem)) {
+            if (Util.isPlantOrHuman(elem)) {
               setParentIdById(oldHumanOrTreeParentIdRef.current, elem.id);
             }
             const contentRef = useStoreRef.getState().contentRef;

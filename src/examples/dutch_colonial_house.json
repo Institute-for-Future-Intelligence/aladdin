@@ -1,7 +1,7 @@
 {
-  "docid": "6PtzFZaiNe4g5da8fK7pbG",
-  "time": "09/26/2022 09:01 pm",
-  "timestamp": 1664240495703,
+  "docid": "6nqDjJ7YicTNYDTaWr36Sv",
+  "time": "10/09/2022 02:05 pm",
+  "timestamp": 1665338752271,
   "userid": "QWecNcxhyvP6j6sBN11hBsfZDau1",
   "owner": null,
   "email": null,
@@ -2418,6 +2418,270 @@
       "id": "sgSHG9SfkfzrTceiA5T19b",
       "selected": false,
       "evergreen": false
+    },
+    {
+      "type": "Flower",
+      "name": "White Flower",
+      "cx": -5.439334470378643,
+      "cy": -1.7921476440913962,
+      "cz": 0.05000000074505806,
+      "lx": 0.8,
+      "lz": 0.5,
+      "normal": [
+        0,
+        1,
+        0
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "parentId": "jjxHg8QgQHBYMPjmTLKh9Y",
+      "id": "fwbwXjTKB4ejYpnXGBAaQt",
+      "selected": false
+    },
+    {
+      "type": "Flower",
+      "name": "White Flower",
+      "cx": -4.341639487064976,
+      "cy": -1.7404327001638826,
+      "cz": 0.05000000074505806,
+      "lx": 0.8,
+      "lz": 0.5,
+      "normal": [
+        0,
+        0,
+        1
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "parentId": "jjxHg8QgQHBYMPjmTLKh9Y",
+      "id": "24FmLU3mJkXNY53JzrL5Dt",
+      "selected": false
+    },
+    {
+      "type": "Flower",
+      "name": "White Flower",
+      "cx": -4.447507101830425,
+      "cy": -3.213800721042661,
+      "cz": 0.05000000074505806,
+      "lx": 0.8,
+      "lz": 0.5,
+      "normal": [
+        0,
+        0,
+        1
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "parentId": "jjxHg8QgQHBYMPjmTLKh9Y",
+      "id": "reEeBmqCcbQu2EtMT38ywZ",
+      "selected": false
+    },
+    {
+      "type": "Flower",
+      "name": "White Flower",
+      "cx": 4.2245144949783215,
+      "cy": -3.2122763850164144,
+      "cz": 0.05000000074505628,
+      "lx": 0.8,
+      "lz": 0.5,
+      "normal": [
+        0,
+        0,
+        1
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "parentId": "jjxHg8QgQHBYMPjmTLKh9Y",
+      "id": "o3P5EpuHXdx6pH3hYkfv1R",
+      "selected": false
+    },
+    {
+      "type": "Flower",
+      "name": "White Flower",
+      "cx": 4.188289275138224,
+      "cy": -1.6967878265471406,
+      "cz": 0.05000000074505806,
+      "lx": 0.8,
+      "lz": 0.5,
+      "normal": [
+        0,
+        0,
+        1
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "parentId": "jjxHg8QgQHBYMPjmTLKh9Y",
+      "id": "3LVtMLU8sBDE9SYSdKtA6S",
+      "selected": false
+    },
+    {
+      "type": "Flower",
+      "name": "White Flower",
+      "cx": 5.258086056002991,
+      "cy": -1.7226062494064553,
+      "cz": 0.05000000074505806,
+      "lx": 0.8,
+      "lz": 0.5,
+      "normal": [
+        0,
+        0,
+        1
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "parentId": "jjxHg8QgQHBYMPjmTLKh9Y",
+      "id": "2Y1swCnkjr3jQPeteyJshF",
+      "selected": false
+    },
+    {
+      "type": "Flower",
+      "name": "Bellflower",
+      "cx": 4.442449126895137,
+      "cy": -2.457906011191845,
+      "cz": 0.05000000074505628,
+      "lx": 0.4,
+      "lz": 0.8,
+      "normal": [
+        0,
+        0,
+        1
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "parentId": "jjxHg8QgQHBYMPjmTLKh9Y",
+      "id": "8t9PQbZw572ixzdS9MRLLW",
+      "selected": false
+    },
+    {
+      "type": "Flower",
+      "name": "Bellflower",
+      "cx": 5.16435203576324,
+      "cy": -2.196526552300039,
+      "cz": 0.05000000074505628,
+      "lx": 0.4,
+      "lz": 0.8,
+      "normal": [
+        0,
+        0,
+        1
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "parentId": "jjxHg8QgQHBYMPjmTLKh9Y",
+      "id": "4JVL5x9cWyH4LksfSY1fX3",
+      "selected": false
+    },
+    {
+      "type": "Flower",
+      "name": "Bellflower",
+      "cx": 4.917182677563554,
+      "cy": -2.3586241906156697,
+      "cz": 0.05000000074505628,
+      "lx": 0.4,
+      "lz": 0.8,
+      "normal": [
+        0,
+        0,
+        1
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "parentId": "jjxHg8QgQHBYMPjmTLKh9Y",
+      "id": "nGnmCTUqQFz7isWWpWK3Mz",
+      "selected": false
+    },
+    {
+      "type": "Flower",
+      "name": "Bellflower",
+      "cx": -4.916586473237876,
+      "cy": -2.6376202760580156,
+      "cz": 0.05000000074505828,
+      "lx": 0.4,
+      "lz": 0.8,
+      "normal": [
+        0,
+        0,
+        1
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "parentId": "jjxHg8QgQHBYMPjmTLKh9Y",
+      "id": "gZ9m1tT2VUgZsBDcfZh8HW",
+      "selected": false
+    },
+    {
+      "type": "Flower",
+      "name": "Bellflower",
+      "cx": -5.124148406024322,
+      "cy": -2.5675748414387414,
+      "cz": 0.05000000074505828,
+      "lx": 0.4,
+      "lz": 0.8,
+      "normal": [
+        0,
+        0,
+        1
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "parentId": "jjxHg8QgQHBYMPjmTLKh9Y",
+      "id": "9SxVYH5WbgA3HtDCqqfPhx",
+      "selected": false
+    },
+    {
+      "type": "Flower",
+      "name": "Bellflower",
+      "cx": -4.854014476225473,
+      "cy": -2.896497679258097,
+      "cz": 0.05000000074505806,
+      "lx": 0.4,
+      "lz": 0.8,
+      "normal": [
+        0,
+        0,
+        1
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "parentId": "jjxHg8QgQHBYMPjmTLKh9Y",
+      "id": "bJusUpxFXhNuVLWkwSgPDp",
+      "selected": false
     }
   ],
   "view": {
@@ -2435,7 +2699,7 @@
     "cameraPosition2D": [
       -7.155711852802593,
       -5.940703507323082,
-      19.999994059039015
+      150
     ],
     "theme": "Default",
     "showDesignInfoPanel": false,
@@ -2449,9 +2713,9 @@
     "dailyHeliostatYieldPanelX": 0,
     "showDailyParabolicDishYieldPanel": false,
     "cameraPosition": [
-      -18.130517492870766,
-      -15.44975714810709,
-      3.0153509800543854
+      -19.896272549425436,
+      -13.652656251287869,
+      2.847312898275407
     ],
     "showYearlyHeliostatYieldPanel": false,
     "orthographic": false,

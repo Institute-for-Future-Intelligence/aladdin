@@ -5176,7 +5176,7 @@ export const useStore = create<CommonStoreState>(
                     }
                     default: {
                       approved = true;
-                      if (Util.isTreeOrHuman(e)) {
+                      if (Util.isPlantOrHuman(e)) {
                         if (newParent) {
                           // paste on a parent
                           const parent = state.getParent(e);

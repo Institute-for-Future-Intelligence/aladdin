@@ -206,24 +206,28 @@ const Flower = ({
   useFrame(({ camera }) => {
     // rotation
     if (solidFlowerRef.current && groupRef.current && shadowFlowerRef.current && interactionPlaneRef.current) {
-      const { x: cameraX, y: cameraY } = camera.position;
-      const { x: currX, y: currY } = groupRef.current.position;
-      const { x: sunlightX, y: sunlightY } = useStore.getState().sunlightDirection;
-      if (parentRef.current) {
-        parentRotation.set(0, 0, parentRef.current.rotation.z);
-        worldPosition.addVectors(
-          groupRef.current.position.clone().applyEuler(parentRotation),
-          parentRef.current.position,
-        );
-        const e = Math.atan2(cameraX - worldPosition.x, cameraY - worldPosition.y) + parentRotation.z;
-        solidFlowerRef.current.rotation.set(HALF_PI, -e, 0);
-        interactionPlaneRef.current.rotation.set(-HALF_PI, e, 0);
-        shadowFlowerRef.current.rotation.set(HALF_PI, -Math.atan2(sunlightX, sunlightY) - parentRotation.z, 0);
+      if (!orthographic) {
+        const { x: cameraX, y: cameraY } = camera.position;
+        const { x: currX, y: currY } = groupRef.current.position;
+        const { x: sunlightX, y: sunlightY } = useStore.getState().sunlightDirection;
+        if (parentRef.current) {
+          parentRotation.set(0, 0, parentRef.current.rotation.z);
+          worldPosition.addVectors(
+            groupRef.current.position.clone().applyEuler(parentRotation),
+            parentRef.current.position,
+          );
+          const e = Math.atan2(cameraX - worldPosition.x, cameraY - worldPosition.y) + parentRotation.z;
+          solidFlowerRef.current.rotation.set(HALF_PI, -e, 0);
+          interactionPlaneRef.current.rotation.set(-HALF_PI, e, 0);
+          shadowFlowerRef.current.rotation.set(HALF_PI, -Math.atan2(sunlightX, sunlightY) - parentRotation.z, 0);
+        } else {
+          const e = Math.atan2(cameraX - currX, cameraY - currY);
+          solidFlowerRef.current.rotation.set(HALF_PI, -e, 0);
+          interactionPlaneRef.current.rotation.set(-HALF_PI, e, 0);
+          shadowFlowerRef.current.rotation.set(HALF_PI, -Math.atan2(sunlightX, sunlightY), 0);
+        }
       } else {
-        const e = Math.atan2(cameraX - currX, cameraY - currY);
-        solidFlowerRef.current.rotation.set(HALF_PI, -e, 0);
-        interactionPlaneRef.current.rotation.set(-HALF_PI, e, 0);
-        shadowFlowerRef.current.rotation.set(HALF_PI, -Math.atan2(sunlightX, sunlightY), 0);
+        // TODO: rotate to face z direction in 2D mode
       }
     }
   });

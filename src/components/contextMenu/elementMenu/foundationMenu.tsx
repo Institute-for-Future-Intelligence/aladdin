@@ -124,6 +124,7 @@ export const FoundationMenu = () => {
       if (
         e.type === ObjectType.Human ||
         e.type === ObjectType.Tree ||
+        e.type === ObjectType.Flower ||
         e.type === ObjectType.Polygon ||
         e.type === ObjectType.Sensor ||
         e.type === ObjectType.SolarPanel ||

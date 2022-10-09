@@ -1446,6 +1446,7 @@ const Foundation = ({
       !grabRef.current ||
       grabRef.current.parentId !== id ||
       grabRef.current.type === ObjectType.Tree ||
+      grabRef.current.type === ObjectType.Flower ||
       grabRef.current.type === ObjectType.Human
     )
       return;
@@ -2158,7 +2159,7 @@ const Foundation = ({
   };
 
   const handlePointerEnter = (e: ThreeEvent<PointerEvent>) => {
-    if (grabRef.current && Util.isTreeOrHuman(grabRef.current)) {
+    if (grabRef.current && Util.isPlantOrHuman(grabRef.current)) {
       const intersected = e.intersections[0].object === baseRef.current;
       if (intersected) {
         setShowGrid(true);

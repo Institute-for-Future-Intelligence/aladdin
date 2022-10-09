@@ -666,7 +666,7 @@ export class Util {
     );
   }
 
-  static isTreeOrHuman(elem: ElementModel): boolean {
+  static isPlantOrHuman(elem: ElementModel): boolean {
     return elem.type === ObjectType.Tree || elem.type === ObjectType.Flower || elem.type === ObjectType.Human;
   }
 

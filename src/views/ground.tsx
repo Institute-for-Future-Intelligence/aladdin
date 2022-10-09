@@ -86,7 +86,7 @@ const Ground = () => {
   const newDimensionRef = useRef<Vector3>(new Vector3(1, 1, 1));
   const oldRotationRef = useRef<number[]>([0, 0, 1]);
   const newRotationRef = useRef<number[]>([0, 0, 1]);
-  const oldHumanOrTreeParentIdRef = useRef<string | null>(null);
+  const oldHumanOrPlantParentIdRef = useRef<string | null>(null);
   const absPosMapRef = useRef<Map<string, Vector3>>(new Map());
   const polygonsAbsPosMapRef = useRef<Map<string, Vector2[]>>(new Map());
   const wallsAbsPosMapRef = useRef<Map<string, WallAbsPos>>(new Map());
@@ -94,7 +94,7 @@ const Ground = () => {
   const isSettingFoundationEndPointRef = useRef(false);
   const isSettingCuboidStartPointRef = useRef(false);
   const isSettingCuboidEndPointRef = useRef(false);
-  const isHumanOrTreeMovedRef = useRef(false);
+  const isHumanOrPlantMovedRef = useRef(false);
   const foundationGroupRelPosMapRef = useRef<Map<string, Vector3>>(new Map());
   const foundationGroupOldPosMapRef = useRef<Map<string, number[]>>(new Map());
   const foundationGroupNewPosMapRef = useRef<Map<string, number[]>>(new Map());
@@ -145,7 +145,7 @@ const Ground = () => {
   const elementParentRotation = useMemo(() => new Euler(), []);
 
   if (grabRef.current) {
-    if (Util.isTreeOrHuman(grabRef.current)) {
+    if (Util.isPlantOrHuman(grabRef.current)) {
       intersectionPlaneType = IntersectionPlaneType.Vertical;
       const a = useStore.getState().viewState.orthographic ? 0 : -HALF_PI;
       const { x: cameraX, y: cameraY } = camera.position;
@@ -238,7 +238,7 @@ const Ground = () => {
     }
   };
 
-  const handleTreeOrHumanRefMove = (elementRef: RefObject<Group> | null, e: ThreeEvent<PointerEvent>) => {
+  const handlePlantOrHumanRefMove = (elementRef: RefObject<Group> | null, e: ThreeEvent<PointerEvent>) => {
     if (elementRef && elementRef.current) {
       const intersection = getIntersectionToStand(e.intersections);
       if (intersection) {
@@ -276,14 +276,14 @@ const Ground = () => {
           }
         }
 
-        if (!isHumanOrTreeMovedRef.current) {
-          isHumanOrTreeMovedRef.current = true;
+        if (!isHumanOrPlantMovedRef.current) {
+          isHumanOrPlantMovedRef.current = true;
         }
       }
     }
   };
 
-  // for tree and human for now
+  // for tree, flower, and human for now
   const handleSetElementState = (elemId: string, standObjId: string, position: Vector3) => {
     setCommonStore((state) => {
       for (const e of state.elements) {
@@ -559,7 +559,7 @@ const Ground = () => {
       state.updateWallMapOnFoundationFlag = !state.updateWallMapOnFoundationFlag;
       // set ref children state
       for (const e of state.elements) {
-        if (Util.isTreeOrHuman(e)) {
+        if (Util.isPlantOrHuman(e)) {
           if (e.parentId === elem.id) {
             oldChildrenParentIdMapRef.current.set(e.id, elem.id);
             if (Util.isResizingVertical(useStore.getState().resizeHandleType)) {
@@ -698,7 +698,7 @@ const Ground = () => {
   const moveElementOnPointerUp = (elem: ElementModel, e: PointerEvent) => {
     if (elem.locked) return;
     newPositionRef.current.set(elem.cx, elem.cy, elem.cz);
-    let newHumanOrTreeParentId: string | null = oldHumanOrTreeParentIdRef.current;
+    let newHumanOrPlantParentId: string | null = oldHumanOrPlantParentIdRef.current;
     // elements modified by reference
     let elementRef: Group | null | undefined = null;
     setRayCast(e);
@@ -706,11 +706,14 @@ const Ground = () => {
       case ObjectType.Tree:
         elementRef = useStoreRef.getState().treeRef?.current;
         break;
+      case ObjectType.Flower:
+        elementRef = useStoreRef.getState().flowerRef?.current;
+        break;
       case ObjectType.Human:
         elementRef = useStoreRef.getState().humanRef?.current;
         break;
     }
-    if (elementRef && isHumanOrTreeMovedRef.current) {
+    if (elementRef && isHumanOrPlantMovedRef.current) {
       const intersections = ray.intersectObjects(Util.fetchIntersectables(scene), false);
       const intersection = getIntersectionToStand(intersections); // could simplify???
       if (intersection) {
@@ -719,7 +722,7 @@ const Ground = () => {
         if (intersection.object.name === 'Ground') {
           handleSetElementState(elem.id, GROUND_ID, p);
           newPositionRef.current.set(p.x, p.y, p.z);
-          newHumanOrTreeParentId = GROUND_ID;
+          newHumanOrPlantParentId = GROUND_ID;
         }
         // on other standable elements
         else if (intersection.object.userData.stand) {
@@ -729,11 +732,11 @@ const Ground = () => {
             const relPos = new Vector3().subVectors(p, intersectionObjGroup.position).applyEuler(elementParentRotation);
             handleSetElementState(elem.id, intersectionObjId, relPos);
             newPositionRef.current.set(relPos.x, relPos.y, relPos.z);
-            newHumanOrTreeParentId = intersectionObjId;
+            newHumanOrPlantParentId = intersectionObjId;
           }
         }
       }
-      isHumanOrTreeMovedRef.current = false;
+      isHumanOrPlantMovedRef.current = false;
     }
     if (
       newPositionRef.current.distanceToSquared(oldPositionRef.current) > ZERO_TOLERANCE ||
@@ -768,19 +771,19 @@ const Ground = () => {
       if (!moveOk || isMoveToSky()) {
         setElementPosition(elem.id, oldPositionRef.current.x, oldPositionRef.current.y, oldPositionRef.current.z);
         if (elementRef) {
-          if (Util.isTreeOrHuman(elem)) {
+          if (Util.isPlantOrHuman(elem)) {
             elementRef.position.copy(oldPositionRef.current);
           }
         }
-        if (Util.isTreeOrHuman(elem)) {
-          setParentIdById(oldHumanOrTreeParentIdRef.current, elem.id);
+        if (Util.isPlantOrHuman(elem)) {
+          setParentIdById(oldHumanOrPlantParentIdRef.current, elem.id);
         }
         const contentRef = useStoreRef.getState().contentRef;
-        if (contentRef?.current && oldHumanOrTreeParentIdRef.current && elementRef) {
-          if (oldHumanOrTreeParentIdRef.current === GROUND_ID) {
+        if (contentRef?.current && oldHumanOrPlantParentIdRef.current && elementRef) {
+          if (oldHumanOrPlantParentIdRef.current === GROUND_ID) {
             contentRef.current.add(elementRef);
           } else {
-            const attachParentObj = Util.getObjectChildById(contentRef.current, oldHumanOrTreeParentIdRef.current);
+            const attachParentObj = Util.getObjectChildById(contentRef.current, oldHumanOrPlantParentIdRef.current);
             attachParentObj?.add(elementRef);
           }
           invalidate();
@@ -819,8 +822,8 @@ const Ground = () => {
             newCx: newPositionRef.current.x,
             newCy: newPositionRef.current.y,
             newCz: newPositionRef.current.z,
-            oldParentId: oldHumanOrTreeParentIdRef.current,
-            newParentId: newHumanOrTreeParentId,
+            oldParentId: oldHumanOrPlantParentIdRef.current,
+            newParentId: newHumanOrPlantParentId,
             undo: () => {
               setElementPosition(
                 undoableMove.movedElementId,
@@ -971,6 +974,7 @@ const Ground = () => {
     useStoreRef.setState((state) => {
       state.humanRef = null;
       state.treeRef = null;
+      state.flowerRef = null;
     });
   };
 
@@ -1138,11 +1142,14 @@ const Ground = () => {
           }
           switch (selectedElement.type) {
             case ObjectType.Tree:
-              oldHumanOrTreeParentIdRef.current = selectedElement.parentId;
+              oldHumanOrPlantParentIdRef.current = selectedElement.parentId;
               oldDimensionRef.current.set(selectedElement.lx, selectedElement.ly, selectedElement.lz);
               break;
+            case ObjectType.Flower:
+              oldHumanOrPlantParentIdRef.current = selectedElement.parentId;
+              break;
             case ObjectType.Human:
-              oldHumanOrTreeParentIdRef.current = selectedElement.parentId;
+              oldHumanOrPlantParentIdRef.current = selectedElement.parentId;
               break;
             case ObjectType.Cuboid:
               // getting ready for resizing even though it may not happen
@@ -1154,6 +1161,7 @@ const Ground = () => {
                 for (const e of cuboidChildren) {
                   switch (e.type) {
                     case ObjectType.Tree:
+                    case ObjectType.Flower:
                     case ObjectType.Human: {
                       const centerAbsPos = new Vector3(e.cx, e.cy, e.cz).applyEuler(new Euler(0, 0, a));
                       centerAbsPos.add(cuboidCenter);
@@ -1225,6 +1233,7 @@ const Ground = () => {
                       });
                       break;
                     case ObjectType.Tree:
+                    case ObjectType.Flower:
                     case ObjectType.Human: {
                       const centerAbsPos = new Vector3(e.cx, e.cy, e.cz).applyEuler(new Euler(0, 0, a));
                       centerAbsPos.add(foundationCenter);
@@ -1426,10 +1435,14 @@ const Ground = () => {
                   updateElementLxById(tree.id, 2 * Math.hypot(p.x - tree.cx, p.y - tree.cy));
                   break;
               }
-              handleTreeOrHumanRefMove(useStoreRef.getState().treeRef, e);
+              handlePlantOrHumanRefMove(useStoreRef.getState().treeRef, e);
               break;
+            case ObjectType.Flower: {
+              handlePlantOrHumanRefMove(useStoreRef.getState().flowerRef, e);
+              break;
+            }
             case ObjectType.Human: {
-              handleTreeOrHumanRefMove(useStoreRef.getState().humanRef, e);
+              handlePlantOrHumanRefMove(useStoreRef.getState().humanRef, e);
               break;
             }
             case ObjectType.Cuboid:
@@ -1446,7 +1459,7 @@ const Ground = () => {
                 const cuboidRef = useStoreRef.getState().cuboidRef;
                 if (cuboidRef?.current) {
                   for (const obj of cuboidRef.current.children) {
-                    if (obj.name.includes('Human') || obj.name.includes('Tree')) {
+                    if (obj.name.includes('Human') || obj.name.includes('Tree') || obj.name.includes('Flower')) {
                       const absPos = absPosMapRef.current.get(getObjectId(obj));
                       if (absPos) {
                         // stand on top face
@@ -1523,10 +1536,10 @@ const Ground = () => {
   //   return new Vector3(x, y, v.z);
   // };
 
-  const handleHumanAndTreePositionFixedOnParent = (object: Object3D | null | undefined, lx: number, ly: number) => {
+  const handleHumanAndPlantPositionFixedOnParent = (object: Object3D | null | undefined, lx: number, ly: number) => {
     if (!object) return;
     for (const obj of object.children) {
-      if (obj.name.includes('Human') || obj.name.includes('Tree')) {
+      if (obj.name.includes('Human') || obj.name.includes('Tree') || obj.name.includes('Flower')) {
         const worldPos = absPosMapRef.current.get(getObjectId(obj));
         if (worldPos) {
           // top face
@@ -1584,7 +1597,7 @@ const Ground = () => {
                 // the common store only when they are OK.
                 const childrenClone: ElementModel[] = [];
                 for (const c of children) {
-                  if (Util.isTreeOrHuman(c)) continue;
+                  if (Util.isPlantOrHuman(c)) continue;
                   const childClone = JSON.parse(JSON.stringify(c));
                   childrenClone.push(childClone);
                   if (Util.isIdentical(childClone.normal, UNIT_VECTOR_POS_Z_ARRAY)) {
@@ -1729,11 +1742,11 @@ const Ground = () => {
     switch (grabRef.current.type) {
       case ObjectType.Foundation:
         const foundationRef = useStoreRef.getState().foundationRef;
-        handleHumanAndTreePositionFixedOnParent(foundationRef?.current, lx, ly);
+        handleHumanAndPlantPositionFixedOnParent(foundationRef?.current, lx, ly);
         break;
       case ObjectType.Cuboid:
         const cuboidRef = useStoreRef.getState().cuboidRef;
-        handleHumanAndTreePositionFixedOnParent(cuboidRef?.current, lx, ly);
+        handleHumanAndPlantPositionFixedOnParent(cuboidRef?.current, lx, ly);
         break;
     }
   };

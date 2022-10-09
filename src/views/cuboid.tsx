@@ -404,6 +404,7 @@ const Cuboid = ({
       case ObjectType.SolarPanel:
       case ObjectType.Human:
       case ObjectType.Tree:
+      case ObjectType.Flower:
         return true;
     }
     return false;
@@ -1026,8 +1027,8 @@ const Cuboid = ({
   };
 
   const handlePointerEnter = (e: ThreeEvent<PointerEvent>) => {
-    // TODO: make tree and human legal
-    if (grabRef.current && Util.isTreeOrHuman(grabRef.current)) {
+    // TODO: make tree, flower, and human legal
+    if (grabRef.current && Util.isPlantOrHuman(grabRef.current)) {
       const intersected = e.intersections[0].object === baseRef.current;
       if (intersected) {
         setShowGrid(true);
@@ -1041,6 +1042,7 @@ const Cuboid = ({
       switch (grabRef.current.type) {
         case ObjectType.Human:
         case ObjectType.Tree:
+        case ObjectType.Flower:
           setShowGrid(false);
           break;
         case ObjectType.SolarPanel:
