@@ -1,7 +1,7 @@
 {
-  "docid": "u9nhWBwkmNohTWj8NqMkMu",
-  "time": "09/20/2022 01:17 pm",
-  "timestamp": 1663694230127,
+  "docid": "s5pDuzsCHSa2tAg8WBUYba",
+  "time": "10/09/2022 03:46 pm",
+  "timestamp": 1665344788812,
   "userid": "QWecNcxhyvP6j6sBN11hBsfZDau1",
   "owner": null,
   "email": null,
@@ -599,7 +599,13 @@
       "showLabel": false,
       "type": "Window",
       "mullionSpacing": 2,
-      "mullionWidth": 0.1
+      "mullionWidth": 0.1,
+      "shutter": {
+        "showLeft": false,
+        "showRight": false,
+        "color": "grey",
+        "width": 0.5
+      }
     },
     {
       "ly": 0.3,
@@ -625,7 +631,13 @@
       "cz": 0.2645421339617723,
       "color": "#477395",
       "mullionSpacing": 2,
-      "mullionWidth": 0.1
+      "mullionWidth": 0.1,
+      "shutter": {
+        "showLeft": false,
+        "showRight": false,
+        "color": "grey",
+        "width": 0.5
+      }
     },
     {
       "id": "bpUvKGmm3pbG6LoUQVwyUS",
@@ -651,7 +663,13 @@
       ],
       "parentId": "56tPe5zv4S5mhoVrSD2NK7",
       "mullionSpacing": 2,
-      "mullionWidth": 0.1
+      "mullionWidth": 0.1,
+      "shutter": {
+        "showLeft": false,
+        "showRight": false,
+        "color": "grey",
+        "width": 0.5
+      }
     },
     {
       "cz": 0.2645421339617723,
@@ -677,7 +695,13 @@
       "foundationId": "x9h6vgTSQ3QLh48G3oYMPN",
       "lx": 0.1702127659574468,
       "mullionSpacing": 2,
-      "mullionWidth": 0.1
+      "mullionWidth": 0.1,
+      "shutter": {
+        "showLeft": false,
+        "showRight": false,
+        "color": "grey",
+        "width": 0.5
+      }
     },
     {
       "rotation": [
@@ -952,7 +976,13 @@
       "showLabel": false,
       "color": "#477395",
       "mullionSpacing": 1,
-      "mullionWidth": 0.1
+      "mullionWidth": 0.1,
+      "shutter": {
+        "showLeft": false,
+        "showRight": false,
+        "color": "grey",
+        "width": 0.5
+      }
     },
     {
       "cz": 0.35,
@@ -979,7 +1009,13 @@
       "id": "vLvEkBDowmVtpuRDtw4SXE",
       "cy": 0,
       "mullionSpacing": 1,
-      "mullionWidth": 0.1
+      "mullionWidth": 0.1,
+      "shutter": {
+        "showLeft": false,
+        "showRight": false,
+        "color": "grey",
+        "width": 0.5
+      }
     },
     {
       "id": "8bXmzpgr9i9JFo2oBsPwmf",
@@ -1006,7 +1042,13 @@
       "ly": 0.3,
       "cz": -0.1,
       "mullionSpacing": 1,
-      "mullionWidth": 0.1
+      "mullionWidth": 0.1,
+      "shutter": {
+        "showLeft": false,
+        "showRight": false,
+        "color": "grey",
+        "width": 0.5
+      }
     },
     {
       "cz": -0.1,
@@ -1032,7 +1074,13 @@
       "cy": 0,
       "lz": 0.6,
       "mullionSpacing": 1,
-      "mullionWidth": 0.1
+      "mullionWidth": 0.1,
+      "shutter": {
+        "showLeft": false,
+        "showRight": false,
+        "color": "grey",
+        "width": 0.5
+      }
     },
     {
       "cz": -0.1,
@@ -1058,7 +1106,13 @@
         0
       ],
       "mullionSpacing": 1,
-      "mullionWidth": 0.1
+      "mullionWidth": 0.1,
+      "shutter": {
+        "showLeft": false,
+        "showRight": false,
+        "color": "grey",
+        "width": 0.5
+      }
     },
     {
       "lz": 0.6,
@@ -1084,7 +1138,13 @@
         0
       ],
       "mullionSpacing": 1,
-      "mullionWidth": 0.1
+      "mullionWidth": 0.1,
+      "shutter": {
+        "showLeft": false,
+        "showRight": false,
+        "color": "grey",
+        "width": 0.5
+      }
     },
     {
       "selected": false,
@@ -1110,7 +1170,13 @@
       "cz": -0.1,
       "lz": 0.6,
       "mullionSpacing": 1,
-      "mullionWidth": 0.1
+      "mullionWidth": 0.1,
+      "shutter": {
+        "showLeft": false,
+        "showRight": false,
+        "color": "grey",
+        "width": 0.5
+      }
     },
     {
       "normal": [
@@ -1136,7 +1202,13 @@
       ],
       "color": "#477395",
       "mullionSpacing": 1,
-      "mullionWidth": 0.1
+      "mullionWidth": 0.1,
+      "shutter": {
+        "showLeft": false,
+        "showRight": false,
+        "color": "grey",
+        "width": 0.5
+      }
     },
     {
       "ly": 0.3,
@@ -1163,7 +1235,13 @@
         1
       ],
       "mullionSpacing": 1,
-      "mullionWidth": 0.1
+      "mullionWidth": 0.1,
+      "shutter": {
+        "showLeft": false,
+        "showRight": false,
+        "color": "grey",
+        "width": 0.5
+      }
     },
     {
       "type": "Window",
@@ -1190,7 +1268,13 @@
       "foundationId": "x9h6vgTSQ3QLh48G3oYMPN",
       "ly": 0.3,
       "mullionSpacing": 1,
-      "mullionWidth": 0.1
+      "mullionWidth": 0.1,
+      "shutter": {
+        "showLeft": false,
+        "showRight": false,
+        "color": "grey",
+        "width": 0.5
+      }
     },
     {
       "lx": 0.09523809523809523,
@@ -1217,7 +1301,13 @@
       "lz": 0.2,
       "ly": 0.3,
       "mullionSpacing": 1,
-      "mullionWidth": 0.1
+      "mullionWidth": 0.1,
+      "shutter": {
+        "showLeft": false,
+        "showRight": false,
+        "color": "grey",
+        "width": 0.5
+      }
     },
     {
       "lz": 0.19999999999999996,
@@ -1244,7 +1334,13 @@
       ],
       "foundationId": "x9h6vgTSQ3QLh48G3oYMPN",
       "mullionSpacing": 2,
-      "mullionWidth": 0.1
+      "mullionWidth": 0.1,
+      "shutter": {
+        "showLeft": false,
+        "showRight": false,
+        "color": "grey",
+        "width": 0.5
+      }
     },
     {
       "type": "Tree",
@@ -1272,9 +1368,9 @@
     {
       "type": "Tree",
       "name": "Linden",
-      "cx": -28.677338438143416,
-      "cy": -2.7109880136979,
-      "cz": 0,
+      "cx": -24.316954072705258,
+      "cy": -3.0346528908943142,
+      "cz": 1.7763568394002505e-15,
       "lx": 20,
       "lz": 20,
       "normal": [
@@ -1477,6 +1573,534 @@
       "parentId": "iF8yBnVR7zKfNKiVQ7M1op",
       "foundationId": "x9h6vgTSQ3QLh48G3oYMPN",
       "id": "1cqNEbnbmdgjFsj2KffdDW"
+    },
+    {
+      "type": "Flower",
+      "name": "Sunflower",
+      "cx": -6.4319318007753115,
+      "cy": -7.1585003500522255,
+      "cz": 0.05000000074505806,
+      "lx": 1,
+      "lz": 2,
+      "normal": [
+        0,
+        1,
+        0
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "parentId": "46TKaVq8pvU97fq25w6FtQ",
+      "id": "r3HRWGLTLtPMP6QPxaP2u9",
+      "selected": false
+    },
+    {
+      "type": "Flower",
+      "name": "Sunflower",
+      "cx": -5.4319318007753115,
+      "cy": -7.1585003500522255,
+      "cz": 0.05000000074505806,
+      "lx": 1,
+      "lz": 2,
+      "normal": [
+        0,
+        1,
+        0
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "parentId": "46TKaVq8pvU97fq25w6FtQ",
+      "id": "eB1sPWxNsgKXNP6CKxK1cQ",
+      "selected": false
+    },
+    {
+      "type": "Flower",
+      "name": "Sunflower",
+      "cx": -4.4319318007753115,
+      "cy": -7.1585003500522255,
+      "cz": 0.05000000074505806,
+      "lx": 1,
+      "lz": 2,
+      "normal": [
+        0,
+        1,
+        0
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "parentId": "46TKaVq8pvU97fq25w6FtQ",
+      "id": "pmPLWWXJMx6px3ffjyd7Xf",
+      "selected": false
+    },
+    {
+      "type": "Flower",
+      "name": "Sunflower",
+      "cx": -3.4319318007753115,
+      "cy": -7.1585003500522255,
+      "cz": 0.05000000074505806,
+      "lx": 1,
+      "lz": 2,
+      "normal": [
+        0,
+        1,
+        0
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "parentId": "46TKaVq8pvU97fq25w6FtQ",
+      "id": "rFPmR6A2xwJwzhvMRvDbF4",
+      "selected": false
+    },
+    {
+      "type": "Flower",
+      "name": "Sunflower",
+      "cx": -2.4319318007753115,
+      "cy": -7.1585003500522255,
+      "cz": 0.05000000074505806,
+      "lx": 1,
+      "lz": 2,
+      "normal": [
+        0,
+        1,
+        0
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "parentId": "46TKaVq8pvU97fq25w6FtQ",
+      "id": "3tR1Hnu1k94fCkXYFdPNCZ",
+      "selected": false
+    },
+    {
+      "type": "Flower",
+      "name": "Sunflower",
+      "cx": -1.4319318007753115,
+      "cy": -7.1585003500522255,
+      "cz": 0.05000000074505806,
+      "lx": 1,
+      "lz": 2,
+      "normal": [
+        0,
+        1,
+        0
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "parentId": "46TKaVq8pvU97fq25w6FtQ",
+      "id": "ac3W5UphRDEuZMMMxdg9a8",
+      "selected": false
+    },
+    {
+      "type": "Flower",
+      "name": "Sunflower",
+      "cx": -0.43193180077531146,
+      "cy": -7.1585003500522255,
+      "cz": 0.05000000074505806,
+      "lx": 1,
+      "lz": 2,
+      "normal": [
+        0,
+        1,
+        0
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "parentId": "46TKaVq8pvU97fq25w6FtQ",
+      "id": "3j517SjKVEgfCScaEPmkeg",
+      "selected": false
+    },
+    {
+      "type": "Flower",
+      "name": "Sunflower",
+      "cx": 0.5680681992246885,
+      "cy": -7.1585003500522255,
+      "cz": 0.05000000074505806,
+      "lx": 1,
+      "lz": 2,
+      "normal": [
+        0,
+        1,
+        0
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "parentId": "46TKaVq8pvU97fq25w6FtQ",
+      "id": "vLUgsZC1zUxAvajPJX9oRy",
+      "selected": false
+    },
+    {
+      "type": "Flower",
+      "name": "Sunflower",
+      "cx": 1.5680681992246885,
+      "cy": -7.1585003500522255,
+      "cz": 0.05000000074505806,
+      "lx": 1,
+      "lz": 2,
+      "normal": [
+        0,
+        1,
+        0
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "parentId": "46TKaVq8pvU97fq25w6FtQ",
+      "id": "kb5KssfCiZkY9jQ5M4fg79",
+      "selected": false
+    },
+    {
+      "type": "Flower",
+      "name": "Sunflower",
+      "cx": 2.5680681992246885,
+      "cy": -7.1585003500522255,
+      "cz": 0.05000000074505806,
+      "lx": 1,
+      "lz": 2,
+      "normal": [
+        0,
+        1,
+        0
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "parentId": "46TKaVq8pvU97fq25w6FtQ",
+      "id": "rvgmvqqddGgLnhBVWDH5Yi",
+      "selected": false
+    },
+    {
+      "type": "Flower",
+      "name": "Sunflower",
+      "cx": 3.5680681992246885,
+      "cy": -7.1585003500522255,
+      "cz": 0.05000000074505806,
+      "lx": 1,
+      "lz": 2,
+      "normal": [
+        0,
+        1,
+        0
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "parentId": "46TKaVq8pvU97fq25w6FtQ",
+      "id": "whxmnRSL5NJSpdaiWxZBom",
+      "selected": false
+    },
+    {
+      "type": "Flower",
+      "name": "Sunflower",
+      "cx": 4.5680681992246885,
+      "cy": -7.1585003500522255,
+      "cz": 0.05000000074505806,
+      "lx": 1,
+      "lz": 2,
+      "normal": [
+        0,
+        1,
+        0
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "parentId": "46TKaVq8pvU97fq25w6FtQ",
+      "id": "hcWpyraDuh7HTi6CTV9t8w",
+      "selected": false
+    },
+    {
+      "type": "Flower",
+      "name": "Sunflower",
+      "cx": 5.5680681992246885,
+      "cy": -7.1585003500522255,
+      "cz": 0.05000000074505806,
+      "lx": 1,
+      "lz": 2,
+      "normal": [
+        0,
+        1,
+        0
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "parentId": "46TKaVq8pvU97fq25w6FtQ",
+      "id": "k3fvYn4xsoNn35srPUnKcM",
+      "selected": false
+    },
+    {
+      "type": "Flower",
+      "name": "Sunflower",
+      "cx": 6.5680681992246885,
+      "cy": -7.1585003500522255,
+      "cz": 0.05000000074505806,
+      "lx": 1,
+      "lz": 2,
+      "normal": [
+        0,
+        1,
+        0
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "parentId": "46TKaVq8pvU97fq25w6FtQ",
+      "id": "rZdFV48y6NMFUVbnDpaSyZ",
+      "selected": false
+    },
+    {
+      "type": "Flower",
+      "name": "Sunflower",
+      "cx": 7.5680681992246885,
+      "cy": -7.1585003500522255,
+      "cz": 0.05000000074505806,
+      "lx": 1,
+      "lz": 2,
+      "normal": [
+        0,
+        1,
+        0
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "parentId": "46TKaVq8pvU97fq25w6FtQ",
+      "id": "codYgSxPq8Vks6hVgvEgs8",
+      "selected": false
+    },
+    {
+      "type": "Flower",
+      "name": "Sunflower",
+      "cx": 8.568068199224689,
+      "cy": -7.1585003500522255,
+      "cz": 0.05000000074505806,
+      "lx": 1,
+      "lz": 2,
+      "normal": [
+        0,
+        1,
+        0
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "parentId": "46TKaVq8pvU97fq25w6FtQ",
+      "id": "bTFFYv3CW8yhDsAPYPTsXV",
+      "selected": false
+    },
+    {
+      "type": "Flower",
+      "name": "Sunflower",
+      "cx": 9.568068199224689,
+      "cy": -7.1585003500522255,
+      "cz": 0.05000000074505806,
+      "lx": 1,
+      "lz": 2,
+      "normal": [
+        0,
+        1,
+        0
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "parentId": "46TKaVq8pvU97fq25w6FtQ",
+      "id": "iTZveGrwoNaRJaDLqodaup",
+      "selected": false
+    },
+    {
+      "type": "Flower",
+      "name": "Sunflower",
+      "cx": 10.568068199224689,
+      "cy": -7.1585003500522255,
+      "cz": 0.05000000074505806,
+      "lx": 1,
+      "lz": 2,
+      "normal": [
+        0,
+        1,
+        0
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "parentId": "46TKaVq8pvU97fq25w6FtQ",
+      "id": "ctEoy8WqpFPS2x5ac3G3Pw",
+      "selected": false
+    },
+    {
+      "type": "Flower",
+      "name": "White Flower",
+      "cx": 12.523044453398047,
+      "cy": 0.9706233738024181,
+      "cz": 0.05000000074505895,
+      "lx": 0.8,
+      "lz": 0.5,
+      "normal": [
+        0,
+        1,
+        0
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "parentId": "46TKaVq8pvU97fq25w6FtQ",
+      "id": "kGH6RHxnnVioxpEWe4i5gm",
+      "selected": false
+    },
+    {
+      "type": "Flower",
+      "name": "White Flower",
+      "cx": 12.485686931231406,
+      "cy": -1.233613837089397,
+      "cz": 0.05000000074505806,
+      "lx": 0.8,
+      "lz": 0.5,
+      "normal": [
+        0,
+        1,
+        0
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "parentId": "46TKaVq8pvU97fq25w6FtQ",
+      "id": "q26Eg31XYAcejy2Lefy1u6",
+      "selected": false
+    },
+    {
+      "type": "Flower",
+      "name": "White Flower",
+      "cx": 12.449360524283405,
+      "cy": -3.2127310317955775,
+      "cz": 0.05000000074505806,
+      "lx": 0.8,
+      "lz": 0.5,
+      "normal": [
+        0,
+        1,
+        0
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "parentId": "46TKaVq8pvU97fq25w6FtQ",
+      "id": "5yYM5vzDCoYXugAds8nGWB",
+      "selected": false
+    },
+    {
+      "type": "Flower",
+      "name": "White Flower",
+      "cx": -10.034806081670178,
+      "cy": -5.45833273413912,
+      "cz": 0.05000000074505806,
+      "lx": 0.8,
+      "lz": 0.5,
+      "normal": [
+        0,
+        1,
+        0
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "parentId": "x9h6vgTSQ3QLh48G3oYMPN",
+      "id": "1EBzai8Qd5Jq4dWcsiq8La",
+      "selected": false
+    },
+    {
+      "type": "Flower",
+      "name": "White Flower",
+      "cx": -8.803245994377429,
+      "cy": -0.22460281401169624,
+      "cz": 0.05000000074505628,
+      "lx": 0.8,
+      "lz": 0.5,
+      "normal": [
+        0,
+        1,
+        0
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "parentId": "46TKaVq8pvU97fq25w6FtQ",
+      "id": "o9s9NrSQqGhb4mKxZK73ZY",
+      "selected": false
+    },
+    {
+      "type": "Flower",
+      "name": "White Flower",
+      "cx": -8.941812324408284,
+      "cy": -2.4038554225206816,
+      "cz": 0.05000000074505806,
+      "lx": 0.8,
+      "lz": 0.5,
+      "normal": [
+        0,
+        1,
+        0
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "parentId": "46TKaVq8pvU97fq25w6FtQ",
+      "id": "phZdGJBNMcagm1hqvjyqar",
+      "selected": false
     }
   ],
   "view": {
@@ -1488,9 +2112,9 @@
     "enableRotate": true,
     "weatherPanelY": 0,
     "cameraPosition": [
-      11.99866254887115,
-      -38.0599069901661,
-      7.03895793402045
+      18.19466978069138,
+      -35.61190753627726,
+      7.038957934020447
     ],
     "showYearlyUpdraftTowerYieldPanel": false,
     "showSunAngles": false,
@@ -1582,7 +2206,7 @@
     "cameraPosition2D": [
       0.31512470486230393,
       -19.44321429088412,
-      19.99998187951364
+      150
     ],
     "yearlyLightSensorPanelX": 0,
     "showDailyParabolicTroughYieldPanel": false

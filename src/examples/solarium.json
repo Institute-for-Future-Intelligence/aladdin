@@ -1,7 +1,7 @@
 {
-  "docid": "reXgz9ipxtLE67S6vTLzwt",
-  "time": "09/26/2022 08:55 pm",
-  "timestamp": 1664240126230,
+  "docid": "m8qh2fNXMdEQv8DDsobzid",
+  "time": "10/09/2022 03:28 pm",
+  "timestamp": 1665343683025,
   "userid": "QWecNcxhyvP6j6sBN11hBsfZDau1",
   "owner": null,
   "email": null,
@@ -1739,9 +1739,9 @@
     {
       "type": "Tree",
       "name": "Elm",
-      "cx": -8.836708138626385,
-      "cy": 5.779399673991126,
-      "cz": 0,
+      "cx": -9.347181058392012,
+      "cy": 0.4242406854869252,
+      "cz": 4.440892098500626e-16,
       "lx": 6.683931290658929,
       "lz": 12.15197062280856,
       "normal": [
@@ -1804,6 +1804,182 @@
       "id": "fPgwwBmXz2LWV9vPRMmqzu",
       "selected": false,
       "ly": 0.6
+    },
+    {
+      "type": "Flower",
+      "name": "White Flower",
+      "cx": -4.783236075916601,
+      "cy": -4.868899367330014,
+      "cz": -8.881784197001252e-16,
+      "lx": 0.8,
+      "lz": 0.5,
+      "normal": [
+        0,
+        1,
+        0
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "parentId": "Ground",
+      "id": "1cAkMnRPZL6fG1dhWuUn14",
+      "selected": false
+    },
+    {
+      "type": "Flower",
+      "name": "White Flower",
+      "cx": 5.6352204006226705,
+      "cy": -5.080582428729858,
+      "cz": 0,
+      "lx": 0.8,
+      "lz": 0.5,
+      "normal": [
+        0,
+        1,
+        0
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "parentId": "Ground",
+      "id": "htN99q9wA5PLZNcJh1UgLF",
+      "selected": false
+    },
+    {
+      "type": "Flower",
+      "name": "White Flower",
+      "cx": -4.738544850931307,
+      "cy": -6.045285265352707,
+      "cz": -8.881784197001252e-16,
+      "lx": 0.8,
+      "lz": 0.5,
+      "normal": [
+        0,
+        1,
+        0
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "parentId": "Ground",
+      "id": "j1Fmf7QNoHATgNqGSJnptk",
+      "selected": false
+    },
+    {
+      "type": "Flower",
+      "name": "White Flower",
+      "cx": 5.621277500928149,
+      "cy": -6.190060319204097,
+      "cz": -8.881784197001252e-16,
+      "lx": 0.8,
+      "lz": 0.5,
+      "normal": [
+        0,
+        1,
+        0
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "parentId": "Ground",
+      "id": "b8aTi9NKLHSRuN9DAY2Dvd",
+      "selected": false
+    },
+    {
+      "type": "Flower",
+      "name": "Sunflower",
+      "cx": 5.595155158535762,
+      "cy": -5.487791010935521,
+      "cz": 0,
+      "lx": 1,
+      "lz": 2,
+      "normal": [
+        0,
+        0,
+        1
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "parentId": "Ground",
+      "id": "84bbtLrAVMTpW8zhkv6ac6",
+      "selected": false
+    },
+    {
+      "type": "Flower",
+      "name": "White Flower",
+      "cx": 6.45323558347782,
+      "cy": -5.952978273645982,
+      "cz": 0,
+      "lx": 0.8,
+      "lz": 0.5,
+      "normal": [
+        0,
+        0,
+        1
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "parentId": "Ground",
+      "id": "7PKC5BECKBBX3d4Za7d4Du",
+      "selected": false
+    },
+    {
+      "type": "Flower",
+      "name": "White Flower",
+      "cx": -5.636370155107206,
+      "cy": -5.9356799560829625,
+      "cz": 4.440892098500626e-16,
+      "lx": 0.8,
+      "lz": 0.5,
+      "normal": [
+        0,
+        0,
+        1
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "parentId": "Ground",
+      "id": "s9wwdrqZHX68urRnmZ9bDp",
+      "selected": false
+    },
+    {
+      "type": "Flower",
+      "name": "Sunflower",
+      "cx": -4.980866320620283,
+      "cy": -5.519337142964064,
+      "cz": 0,
+      "lx": 1,
+      "lz": 2,
+      "normal": [
+        0,
+        1,
+        0
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "parentId": "Ground",
+      "id": "vKDYbBm1LFSeCRbRGxpJzR",
+      "selected": false
     }
   ],
   "view": {
@@ -1835,9 +2011,9 @@
     "dailyHeliostatYieldPanelX": 0,
     "showDailyParabolicDishYieldPanel": false,
     "cameraPosition": [
-      -9.985496620805703,
-      -17.847327599109736,
-      3.260888664311694
+      -7.8217469333488285,
+      -15.102157077927906,
+      2.9494875587958296
     ],
     "showYearlyHeliostatYieldPanel": false,
     "orthographic": false,
@@ -1886,9 +2062,9 @@
     "shadowEnabled": true,
     "showInstructionPanel": true,
     "panCenter": [
-      9.674727181450612,
-      11.70232646822819,
-      3.260888664311694
+      8.011577165803306,
+      12.742853769682753,
+      2.9494875587958296
     ],
     "yearlyFresnelReflectorYieldPanelY": 0,
     "showHeliodonPanel": false,
