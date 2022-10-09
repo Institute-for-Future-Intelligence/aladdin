@@ -479,7 +479,7 @@ const MansardRoof = ({
     segments.push({ points: top, direction: frontDirection, length: 1 });
 
     return segments;
-  }, [currentWallArray, h]);
+  }, [currentWallArray, h, overhang, thickness]);
 
   useEffect(() => {
     if (!isFirstMountRef.current || useStore.getState().addedRoofId === id) {

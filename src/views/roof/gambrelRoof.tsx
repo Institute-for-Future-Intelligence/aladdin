@@ -578,7 +578,7 @@ const GambrelRoof = ({
     segments.push({ points: backSidePoints, direction: backDirection, length: backSideLenght });
 
     return segments;
-  }, [currentWallArray, h, minHeight]);
+  }, [currentWallArray, h, minHeight, overhang, thickness]);
 
   useEffect(() => {
     if (!isFirstMountRef.current || useStore.getState().addedRoofId === id) {

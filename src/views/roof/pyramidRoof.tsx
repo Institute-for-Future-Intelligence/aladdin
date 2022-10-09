@@ -401,7 +401,7 @@ const PyramidRoof = ({
 
     setMinHeight(minHeight);
     return segments;
-  }, [updateRoofFlag, centerPoint]);
+  }, [updateRoofFlag, centerPoint, overhang, thickness]);
 
   // set position and rotation
   const foundation = getElementById(parentId);

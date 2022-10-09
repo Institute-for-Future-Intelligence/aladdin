@@ -884,6 +884,7 @@ export const useStore = create<CommonStoreState>(
               state.dailyUpdraftTowerResults.length = 0;
               state.yearlyUpdraftTowerYield.length = 0;
               state.fittestIndividualResults.length = 0;
+              state.updateWallFlag = !state.updateWallFlag;
             });
             // 1/6/2022: Humans previously did not have dimension data (which probably was a mistake).
             // We do this for backward compatibility. Otherwise, humans cannot be moved in old files.

@@ -381,7 +381,7 @@ const HipRoof = ({
     }
     setMinHeight(minHeight);
     return segments;
-  }, [currentWallArray, ridgeLeftPoint, ridgeRightPoint, h]);
+  }, [currentWallArray, ridgeLeftPoint, ridgeRightPoint, h, overhang, thickness]);
 
   const setRayCast = (e: PointerEvent) => {
     mouse.x = (e.offsetX / gl.domElement.clientWidth) * 2 - 1;

@@ -179,6 +179,7 @@ const Wall = ({
   const setElementPosition = useStore(Selector.setElementPosition);
   const updateWallFlag = useStore(Selector.updateWallFlag);
   const selectedElement = useStore(Selector.selectedElement);
+  const openFileFlag = useStore(Selector.openLocalFileFlag);
 
   const intersectionPlaneRef = useRef<Mesh>(null);
   const outsideWallRef = useRef<Mesh>(null);
@@ -375,6 +376,7 @@ const Wall = ({
     centerRoofHeight,
     centerLeftRoofHeight,
     centerRightRoofHeight,
+    openFileFlag,
   ]);
 
   // roof

@@ -733,7 +733,7 @@ const GableRoof = ({
     }
 
     return segments;
-  }, [currentWallArray, ridgeLeftPointV3, ridgeRightPointV3, h]);
+  }, [currentWallArray, ridgeLeftPointV3, ridgeRightPointV3, h, overhang, thickness]);
 
   // set position and rotation
   const foundation = useStore((state) => {
