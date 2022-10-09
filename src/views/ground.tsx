@@ -1497,6 +1497,7 @@ const Ground = () => {
       type === ObjectType.Foundation ||
       type === ObjectType.Cuboid ||
       type === ObjectType.Tree ||
+      type === ObjectType.Flower ||
       type === ObjectType.Human
     );
   };

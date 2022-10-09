@@ -458,6 +458,7 @@ const Foundation = ({
     switch (type) {
       case ObjectType.Human:
       case ObjectType.Tree:
+      case ObjectType.Flower:
       case ObjectType.Polygon:
       case ObjectType.Sensor:
       case ObjectType.SolarPanel:

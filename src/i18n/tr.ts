@@ -439,6 +439,7 @@ export const i18n_tr = {
       Albedo: 'Albedo',
       ImageOnGround: 'Yer Görüntüsü',
       RemoveAllUnlockedTrees: 'Tüm Ağaçları Kaldır',
+      RemoveAllUnlockedFlowers: 'Remove All Unlocked Flowers',
       RemoveAllUnlockedPeople: 'Tüm Kişileri Kaldır',
       RemoveAllUnlockedFoundations: 'Tüm Temelleri Kaldır',
       RemoveAllUnlockedCuboids: 'Tüm Kübikleri Kaldır',
@@ -682,6 +683,11 @@ export const i18n_tr = {
       ShowModel: 'Modeli Göster',
       Type: 'Tür',
       Spread: 'Yayılım',
+    },
+
+    flowerMenu: {
+      Type: 'Type',
+      Spread: 'Spread',
     },
 
     peopleMenu: {
@@ -1090,6 +1096,7 @@ export const i18n_tr = {
       AddHeliostat: 'Heliostat Ekle',
       AddWindTurbine: 'Add wind turbine',
       AddTree: 'Ağaç Ekle',
+      AddFlower: 'Add flower',
       AddPeople: 'İnsan Ekle',
       ManipulateGroup: 'Ölçeklendirme',
       ClearScene: 'Herşeyi Sil',
@@ -1116,6 +1123,7 @@ export const i18n_tr = {
       SwitchToAddingHeliostat: 'Heliostat Ekle',
       SwitchToAddingWindTurbine: 'Switch to Adding Wind Turbine',
       SwitchToAddingTree: 'Ağaç Ekle',
+      SwitchToAddingFlower: 'Switch to Adding Flower',
       SwitchToAddingPeople: 'Kişi Ekle',
     },
 
@@ -1135,6 +1143,12 @@ export const i18n_tr = {
       Oak: 'Meşe Ağacı',
       Pine: 'Çam',
       Spruce: 'Alaçam',
+    },
+
+    flower: {
+      Daylily: 'Daylily',
+      Bellflower: 'Bellflower',
+      Sunflower: 'Sunflower',
     },
 
     people: {

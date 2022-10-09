@@ -440,6 +440,7 @@ export const i18n_en = {
       Albedo: 'Albedo',
       ImageOnGround: 'Image on Ground',
       RemoveAllUnlockedTrees: 'Remove All Unlocked Trees',
+      RemoveAllUnlockedFlowers: 'Remove All Unlocked Flowers',
       RemoveAllUnlockedPeople: 'Remove All Unlocked People',
       RemoveAllUnlockedFoundations: 'Remove All Unlocked Foundations',
       RemoveAllUnlockedCuboids: 'Remove All Unlocked Cuboids',
@@ -681,6 +682,11 @@ export const i18n_en = {
 
     treeMenu: {
       ShowModel: 'Show Model',
+      Type: 'Type',
+      Spread: 'Spread',
+    },
+
+    flowerMenu: {
       Type: 'Type',
       Spread: 'Spread',
     },
@@ -1090,6 +1096,7 @@ export const i18n_en = {
       AddHeliostat: 'Add heliostat',
       AddWindTurbine: 'Add wind turbine',
       AddTree: 'Add tree',
+      AddFlower: 'Add flower',
       AddPeople: 'Add people',
       ManipulateGroup: 'Manipulate a group',
       ClearScene: 'Clear scene',
@@ -1116,6 +1123,7 @@ export const i18n_en = {
       SwitchToAddingHeliostat: 'Switch to Adding Heliostat',
       SwitchToAddingWindTurbine: 'Switch to Adding Wind Turbine',
       SwitchToAddingTree: 'Switch to Adding Tree',
+      SwitchToAddingFlower: 'Switch to Adding Flower',
       SwitchToAddingPeople: 'Switch to Adding People',
     },
 
@@ -1135,6 +1143,12 @@ export const i18n_en = {
       Oak: 'Oak',
       Pine: 'Pine',
       Spruce: 'Spruce',
+    },
+
+    flower: {
+      Daylily: 'Daylily',
+      Bellflower: 'Bellflower',
+      Sunflower: 'Sunflower',
     },
 
     people: {

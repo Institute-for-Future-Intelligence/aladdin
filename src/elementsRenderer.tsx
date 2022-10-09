@@ -34,6 +34,8 @@ import { FresnelReflectorModel } from './models/FresnelReflectorModel';
 import Heliostat from './views/heliostat';
 import { HeliostatModel } from './models/HeliostatModel';
 import SolarPanel from './views/solarPanel/solarPanel';
+import Flower from './views/flower';
+import { FlowerModel } from './models/FlowerModel';
 
 const ElementsRenderer: React.FC = () => {
   const elements = useStore(Selector.elements);
@@ -66,6 +68,8 @@ const ElementsRenderer: React.FC = () => {
             return <Human key={e.id} {...(e as HumanModel)} />;
           case ObjectType.Tree:
             return <Tree key={e.id} {...(e as TreeModel)} />;
+          case ObjectType.Flower:
+            return <Flower key={e.id} {...(e as FlowerModel)} />;
           case ObjectType.SolarPanel:
             switch ((e as SolarPanelModel).parentType) {
               case ObjectType.Roof:

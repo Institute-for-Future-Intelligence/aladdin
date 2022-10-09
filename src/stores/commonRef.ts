@@ -15,6 +15,7 @@ export interface CommonStoreRef {
   orbitControlsRef: RefObject<MyOrbitControls> | null;
   humanRef: RefObject<Group> | null;
   treeRef: RefObject<Group> | null;
+  flowerRef: RefObject<Group> | null;
   foundationRef: RefObject<Group> | null;
   cuboidRef: RefObject<Group> | null;
 }
@@ -40,6 +41,7 @@ export const useStoreRef = create<CommonStoreRef>((set, get) => {
     orbitControlsRef: null,
     humanRef: null,
     treeRef: null,
+    flowerRef: null,
     foundationRef: null,
     cuboidRef: null,
   };

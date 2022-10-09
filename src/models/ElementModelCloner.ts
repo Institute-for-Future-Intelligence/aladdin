@@ -30,6 +30,7 @@ import { FresnelReflectorModel } from './FresnelReflectorModel';
 import { HeliostatModel } from './HeliostatModel';
 import { DoorModel } from './DoorModel';
 import { WindTurbineModel } from './WindTurbineModel';
+import { FlowerModel } from './FlowerModel';
 
 export class ElementModelCloner {
   static clone(
@@ -120,6 +121,9 @@ export class ElementModelCloner {
       case ObjectType.Tree:
         clone = ElementModelCloner.cloneTree(e as TreeModel, x, y, z, parent);
         break;
+      case ObjectType.Flower:
+        clone = ElementModelCloner.cloneFlower(e as FlowerModel, x, y, z, parent);
+        break;
       case ObjectType.Foundation:
         clone = ElementModelCloner.cloneFoundation(e as FoundationModel, x, y);
         break;
@@ -162,6 +166,23 @@ export class ElementModelCloner {
       parentId: parent?.id ?? tree.parentId,
       id: short.generate() as string,
     } as TreeModel;
+  }
+
+  private static cloneFlower(flower: FlowerModel, x: number, y: number, z?: number, parent?: ElementModel | null) {
+    return {
+      type: ObjectType.Flower,
+      name: flower.name,
+      cx: x,
+      cy: y,
+      cz: z,
+      lx: flower.lx,
+      ly: flower.ly,
+      lz: flower.lz,
+      normal: [...flower.normal],
+      rotation: [...flower.rotation],
+      parentId: parent?.id ?? flower.parentId,
+      id: short.generate() as string,
+    } as FlowerModel;
   }
 
   private static clonePolygon(

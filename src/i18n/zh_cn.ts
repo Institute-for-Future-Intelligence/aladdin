@@ -437,6 +437,7 @@ export const i18n_zh_cn = {
       Albedo: '反照率',
       ImageOnGround: '地面显示图像',
       RemoveAllUnlockedTrees: '删除所有非固定的树木',
+      RemoveAllUnlockedFlowers: '删除所有非固定的花草',
       RemoveAllUnlockedPeople: '删除所有非固定的人物',
       RemoveAllUnlockedFoundations: '删除所有非固定的地基',
       RemoveAllUnlockedCuboids: '删除所有非固定的长方体',
@@ -665,6 +666,11 @@ export const i18n_zh_cn = {
       ShowModel: '显示近似模型',
       Type: '树种',
       Spread: '树冠直径',
+    },
+
+    flowerMenu: {
+      Type: '品种',
+      Spread: '直径',
     },
 
     peopleMenu: {
@@ -1072,6 +1078,7 @@ export const i18n_zh_cn = {
       AddHeliostat: '添加定日镜',
       AddWindTurbine: '添加风力涡轮机',
       AddTree: '添加树木',
+      AddFlower: '添加花草',
       AddPeople: '添加人物',
       ManipulateGroup: '整体操作一个组',
       ClearScene: '清空场景',
@@ -1098,6 +1105,7 @@ export const i18n_zh_cn = {
       SwitchToAddingHeliostat: '切换到添加定日镜模式',
       SwitchToAddingWindTurbine: '切换到添加风力涡轮机模式',
       SwitchToAddingTree: '切换到添加树木模式',
+      SwitchToAddingFlower: '切换到添加花草模式',
       SwitchToAddingPeople: '切换到添加人物模式',
     },
 
@@ -1117,6 +1125,12 @@ export const i18n_zh_cn = {
       Oak: '橡树',
       Pine: '松树',
       Spruce: '云杉',
+    },
+
+    flower: {
+      Daylily: '萱草',
+      Bellflower: '风铃草',
+      Sunflower: '向日葵',
     },
 
     people: {

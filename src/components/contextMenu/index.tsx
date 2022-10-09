@@ -27,6 +27,7 @@ import {
   RoofMenu,
 } from './elementMenu';
 import { DoorMenu } from './elementMenu/doorMenu';
+import { FlowerMenu } from './elementMenu/flowerMenu';
 
 export interface ContextMenuProps {
   [key: string]: any;
@@ -119,6 +120,12 @@ const DropdownContextMenu: React.FC<ContextMenuProps> = ({ children }) => {
         return (
           <Menu triggerSubMenuAction={'click'}>
             <TreeMenu />
+          </Menu>
+        );
+      case ObjectType.Flower:
+        return (
+          <Menu triggerSubMenuAction={'click'}>
+            <FlowerMenu />
           </Menu>
         );
       case ObjectType.Wall:

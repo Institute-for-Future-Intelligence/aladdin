@@ -16,6 +16,7 @@ import GambrelRoofImage from './assets/gambrel_roof.png';
 import MansardRoofImage from './assets/mansard_roof.png';
 import GableRoofImage from './assets/gable_roof.png';
 import TreeImage from './assets/tree.png';
+import FlowerImage from './assets/flower.png';
 import HumanImage from './assets/human.png';
 import ParabolicTroughImage from './assets/parabolic_trough.png';
 import ParabolicDishImage from './assets/parabolic_dish.png';
@@ -322,6 +323,7 @@ const MainToolBarButtons = () => {
   const category4Menu = (
     <Menu>
       {menuItem(ObjectType.Tree, TreeImage, setCategory4Flag)}
+      {menuItem(ObjectType.Flower, FlowerImage, setCategory4Flag)}
       {menuItem(ObjectType.Human, HumanImage, setCategory4Flag, 'People')}
     </Menu>
   );
@@ -379,6 +381,8 @@ const MainToolBarButtons = () => {
     switch (objectType) {
       case ObjectType.Tree:
         return buttonImg(objectType, TreeImage);
+      case ObjectType.Flower:
+        return buttonImg(objectType, FlowerImage);
       case ObjectType.Human:
         return buttonImg(objectType, HumanImage, undefined, 'People');
     }

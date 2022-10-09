@@ -5,6 +5,7 @@
 import {
   CuboidTexture,
   DoorTexture,
+  FlowerType,
   HumanName,
   ObjectType,
   Orientation,
@@ -19,6 +20,7 @@ import { Vector3 } from 'three';
 import { ElementModel } from './ElementModel';
 import { HumanModel } from './HumanModel';
 import { TreeModel } from './TreeModel';
+import { FlowerModel } from './FlowerModel';
 import { SensorModel } from './SensorModel';
 import { CuboidModel } from './CuboidModel';
 import { FoundationModel } from './FoundationModel';
@@ -47,6 +49,7 @@ import { HeliostatModel } from './HeliostatModel';
 import { DoorModel } from './DoorModel';
 import { WindTurbineModel } from './WindTurbineModel';
 import { defaultShutter } from 'src/views/window/window';
+import { FlowerData } from '../FlowerData';
 
 export class ElementModelFactory {
   static makeHuman(parentId: string, x: number, y: number, z?: number) {
@@ -79,6 +82,22 @@ export class ElementModelFactory {
       parentId: parentId,
       id: short.generate() as string,
     } as TreeModel;
+  }
+
+  static makeFlower(parentId: string, x: number, y: number, z?: number) {
+    return {
+      type: ObjectType.Flower,
+      name: FlowerType.Daylily,
+      cx: x,
+      cy: y,
+      cz: z,
+      lx: FlowerData.fetchSpread(FlowerType.Daylily),
+      lz: FlowerData.fetchHeight(FlowerType.Daylily),
+      normal: [0, 1, 0],
+      rotation: [0, 0, 0],
+      parentId: parentId,
+      id: short.generate() as string,
+    } as FlowerModel;
   }
 
   static makeCuboid(x: number, y: number) {

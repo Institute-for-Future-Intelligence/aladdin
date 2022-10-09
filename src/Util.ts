@@ -667,7 +667,7 @@ export class Util {
   }
 
   static isTreeOrHuman(elem: ElementModel): boolean {
-    return elem.type === ObjectType.Tree || elem.type === ObjectType.Human;
+    return elem.type === ObjectType.Tree || elem.type === ObjectType.Flower || elem.type === ObjectType.Human;
   }
 
   static isFoundationOrCuboid(elem: ElementModel): boolean {
@@ -809,7 +809,7 @@ export class Util {
     return v;
   }
 
-  // don't use this for humans or trees
+  // don't use this for humans or trees or flowers
   static absoluteCoordinates(x: number, y: number, z: number, parent: ElementModel): Vector3 {
     const v = new Vector3(x * parent.lx, y * parent.ly, z * parent.lz);
     v.applyEuler(new Euler().fromArray(parent.rotation));
@@ -819,7 +819,7 @@ export class Util {
     return v;
   }
 
-  // use this only for humans or trees
+  // use this only for humans or trees or flowers
   static absoluteHumanOrTreeCoordinates(x: number, y: number, z: number, parent: ElementModel): Vector3 {
     const v = new Vector3(x, y, z);
     v.applyEuler(new Euler().fromArray(parent.rotation));

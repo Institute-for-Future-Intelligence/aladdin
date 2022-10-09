@@ -22,6 +22,7 @@ import {
   DiurnalTemperatureModel,
   ElementState,
   EvolutionMethod,
+  FlowerType,
   FoundationTexture,
   HumanName,
   LineStyle,
@@ -96,6 +97,8 @@ import SolarPanelBlackPortraitImage from '../resources/solar-panel-black-portrai
 import SolarPanelBlueLandscapeImage from '../resources/solar-panel-blue-landscape.png';
 import SolarPanelBlackLandscapeImage from '../resources/solar-panel-black-landscape.png';
 import { RoofUtil } from 'src/views/roof/RoofUtil';
+import { FlowerModel } from '../models/FlowerModel';
+import { FlowerData } from '../FlowerData';
 
 enableMapSet();
 
@@ -516,9 +519,10 @@ export interface CommonStoreState {
   updateRoofHeightById: (id: string, height: number) => void;
   updateRoofStructureById: (id: string, structure: RoofStructure) => void;
 
-  // for trees
+  // for plants
   updateTreeTypeById: (id: string, type: TreeType) => void;
   updateTreeShowModelById: (id: string, showModel: boolean) => void;
+  updateFlowerTypeById: (id: string, type: FlowerType) => void;
 
   // for humans
   updateHumanNameById: (id: string, name: HumanName) => void;
@@ -4096,7 +4100,7 @@ export const useStore = create<CommonStoreState>(
                 if (e.type === ObjectType.Tree && e.id === id) {
                   const tree = e as TreeModel;
                   tree.name = name;
-                  tree.evergreen = name === TreeType.Pine;
+                  tree.evergreen = name === TreeType.Pine || name === TreeType.Spruce;
                   break;
                 }
               }
@@ -4107,6 +4111,19 @@ export const useStore = create<CommonStoreState>(
               for (const e of state.elements) {
                 if (e.type === ObjectType.Tree && e.id === id) {
                   (e as TreeModel).showModel = showModel;
+                  break;
+                }
+              }
+            });
+          },
+          updateFlowerTypeById(id, name) {
+            immerSet((state: CommonStoreState) => {
+              for (const e of state.elements) {
+                if (e.type === ObjectType.Flower && e.id === id) {
+                  const flower = e as FlowerModel;
+                  flower.name = name;
+                  flower.lx = FlowerData.fetchSpread(name);
+                  flower.lz = FlowerData.fetchHeight(name);
                   break;
                 }
               }
@@ -4210,6 +4227,19 @@ export const useStore = create<CommonStoreState>(
                   const tree = ElementModelFactory.makeTree(parentId, position.x, position.y, position.z);
                   model = tree;
                   state.elements.push(tree);
+                  break;
+                }
+                case ObjectType.Flower: {
+                  const position = new Vector3().copy(p);
+                  if (parentId !== GROUND_ID) {
+                    const parentModel = parent as ElementModel;
+                    position
+                      .sub(new Vector3(parentModel.cx, parentModel.cy, parentModel.cz))
+                      .applyEuler(new Euler(0, 0, -parentModel.rotation[2]));
+                  }
+                  const flower = ElementModelFactory.makeFlower(parentId, position.x, position.y, position.z);
+                  model = flower;
+                  state.elements.push(flower);
                   break;
                 }
                 case ObjectType.Polygon:
@@ -5243,6 +5273,7 @@ export const useStore = create<CommonStoreState>(
                       approved = true;
                       break;
                     case ObjectType.Tree:
+                    case ObjectType.Flower:
                       e.cx += e.lx;
                       state.elements.push(e);
                       state.elementsToPaste = [e];

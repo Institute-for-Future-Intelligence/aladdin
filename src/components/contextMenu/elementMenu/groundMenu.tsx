@@ -36,6 +36,7 @@ export const GroundMenu = () => {
 
   const elementCount = countAllElements();
   const treeCount = countElementsByType(ObjectType.Tree, true);
+  const flowerCount = countElementsByType(ObjectType.Flower, true);
   const humanCount = countElementsByType(ObjectType.Human, true);
   const foundationCount = countElementsByType(ObjectType.Foundation, true);
   const cuboidCount = countElementsByType(ObjectType.Cuboid, true);
@@ -66,6 +67,7 @@ export const GroundMenu = () => {
       if (
         e.type === ObjectType.Human ||
         e.type === ObjectType.Tree ||
+        e.type === ObjectType.Flower ||
         e.type === ObjectType.Cuboid ||
         e.type === ObjectType.Foundation
       ) {
@@ -143,6 +145,40 @@ export const GroundMenu = () => {
           }}
         >
           {i18n.t('groundMenu.RemoveAllUnlockedTrees', lang)} ({treeCount})
+        </Menu.Item>
+      )}
+
+      {flowerCount > 0 && (
+        <Menu.Item
+          style={{ paddingLeft: '36px' }}
+          key={'ground-remove-all-flowers'}
+          onClick={() => {
+            Modal.confirm({
+              title: i18n.t('groundMenu.DoYouReallyWantToRemoveAllFlowers', lang) + ' (' + flowerCount + ')?',
+              icon: <ExclamationCircleOutlined />,
+              onOk: () => {
+                const removed = elements.filter((e) => !e.locked && e.type === ObjectType.Flower);
+                removeElementsByType(ObjectType.Flower);
+                const removedElements = JSON.parse(JSON.stringify(removed));
+                const undoableRemoveAll = {
+                  name: 'Remove All',
+                  timestamp: Date.now(),
+                  removedElements: removedElements,
+                  undo: () => {
+                    setCommonStore((state) => {
+                      state.elements.push(...undoableRemoveAll.removedElements);
+                    });
+                  },
+                  redo: () => {
+                    removeElementsByType(ObjectType.Flower);
+                  },
+                } as UndoableRemoveAll;
+                addUndoable(undoableRemoveAll);
+              },
+            });
+          }}
+        >
+          {i18n.t('groundMenu.RemoveAllUnlockedFlowers', lang)} ({flowerCount})
         </Menu.Item>
       )}
 

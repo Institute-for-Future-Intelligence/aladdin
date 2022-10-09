@@ -204,6 +204,7 @@ export enum ObjectType {
   Cuboid = 'Cuboid',
   Human = 'Human',
   Tree = 'Tree',
+  Flower = 'Flower',
   Polygon = 'Polygon',
   PolygonVertex = 'Polygon Vertex',
   None = 'None',
@@ -329,6 +330,12 @@ export enum TreeType {
   Oak = 'Oak',
   Spruce = 'Spruce',
   Pine = 'Pine',
+}
+
+export enum FlowerType {
+  Daylily = 'Daylily',
+  Bellflower = 'Bellflower',
+  Sunflower = 'Sunflower',
 }
 
 export enum Gender {

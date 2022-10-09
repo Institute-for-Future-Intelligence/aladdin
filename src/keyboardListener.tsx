@@ -241,6 +241,7 @@ const KeyboardListener = ({ canvas, set2DView, resetView, zoomView }: KeyboardLi
           case ObjectType.Foundation:
           case ObjectType.Cuboid:
           case ObjectType.Tree:
+          case ObjectType.Flower:
           case ObjectType.Human:
             displacement = -moveStepAbsolute;
             break;
@@ -310,6 +311,7 @@ const KeyboardListener = ({ canvas, set2DView, resetView, zoomView }: KeyboardLi
           case ObjectType.Foundation:
           case ObjectType.Cuboid:
           case ObjectType.Tree:
+          case ObjectType.Flower:
           case ObjectType.Human:
             displacement = moveStepAbsolute;
             break;
@@ -379,6 +381,7 @@ const KeyboardListener = ({ canvas, set2DView, resetView, zoomView }: KeyboardLi
           case ObjectType.Foundation:
           case ObjectType.Cuboid:
           case ObjectType.Tree:
+          case ObjectType.Flower:
           case ObjectType.Human:
             displacement = moveStepAbsolute;
             break;
@@ -442,6 +445,7 @@ const KeyboardListener = ({ canvas, set2DView, resetView, zoomView }: KeyboardLi
           case ObjectType.Foundation:
           case ObjectType.Cuboid:
           case ObjectType.Tree:
+          case ObjectType.Flower:
           case ObjectType.Human:
             displacement = -moveStepAbsolute;
             break;
