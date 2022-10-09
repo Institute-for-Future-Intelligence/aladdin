@@ -87,12 +87,12 @@ export class ElementModelFactory {
   static makeFlower(parentId: string, x: number, y: number, z?: number) {
     return {
       type: ObjectType.Flower,
-      name: FlowerType.Daylily,
+      name: FlowerType.WhiteFlower,
       cx: x,
       cy: y,
       cz: z,
-      lx: FlowerData.fetchSpread(FlowerType.Daylily),
-      lz: FlowerData.fetchHeight(FlowerType.Daylily),
+      lx: FlowerData.fetchSpread(FlowerType.WhiteFlower),
+      lz: FlowerData.fetchHeight(FlowerType.WhiteFlower),
       normal: [0, 1, 0],
       rotation: [0, 0, 0],
       parentId: parentId,

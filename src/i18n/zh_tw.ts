@@ -1130,9 +1130,10 @@ export const i18n_zh_tw = {
 
     flower: {
       Bellflower: '風鈴草',
-      Daylily: '萱草',
       Sunflower: '向日葵',
       Tulip: '鬱金香',
+      WhiteFlower: '白花',
+      YellowFlower: '黄花',
     },
 
     people: {

@@ -7,10 +7,11 @@ import { Select } from 'antd';
 import { useStore } from '../../../stores/common';
 import * as Selector from '../../../stores/selector';
 import { FlowerType } from '../../../types';
-import DaylilyImage from '../../../resources/daylily.png';
 import BellflowerImage from '../../../resources/bellflower.png';
 import SunflowerImage from '../../../resources/sunflower.png';
 import TulipImage from '../../../resources/tulip.png';
+import WhiteFlowerImage from '../../../resources/white_flower.png';
+import YellowFlowerImage from '../../../resources/yellow_flower.png';
 import { UndoableChange } from '../../../undo/UndoableChange';
 import i18n from '../../../i18n/i18n';
 import { FlowerModel } from '../../../models/FlowerModel';
@@ -29,7 +30,7 @@ const FlowerSelection = () => {
   return (
     <Select
       style={{ width: '160px' }}
-      value={flower?.name ?? FlowerType.Daylily}
+      value={flower?.name ?? FlowerType.WhiteFlower}
       onChange={(value) => {
         if (flower) {
           const oldFlower = flower.name;
@@ -55,10 +56,6 @@ const FlowerSelection = () => {
         }
       }}
     >
-      <Option key={FlowerType.Daylily} value={FlowerType.Daylily}>
-        <img alt={FlowerType.Daylily} src={DaylilyImage} height={20} style={{ paddingRight: '16px' }} />{' '}
-        {i18n.t('flower.Daylily', lang)}
-      </Option>
       <Option key={FlowerType.Bellflower} value={FlowerType.Bellflower}>
         <img alt={FlowerType.Bellflower} src={BellflowerImage} height={20} style={{ paddingRight: '16px' }} />{' '}
         {i18n.t('flower.Bellflower', lang)}
@@ -70,6 +67,14 @@ const FlowerSelection = () => {
       <Option key={FlowerType.Tulip} value={FlowerType.Tulip}>
         <img alt={FlowerType.Tulip} src={TulipImage} height={20} style={{ paddingRight: '16px' }} />{' '}
         {i18n.t('flower.Tulip', lang)}
+      </Option>
+      <Option key={FlowerType.WhiteFlower} value={FlowerType.WhiteFlower}>
+        <img alt={FlowerType.WhiteFlower} src={WhiteFlowerImage} height={20} style={{ paddingRight: '16px' }} />{' '}
+        {i18n.t('flower.WhiteFlower', lang)}
+      </Option>
+      <Option key={FlowerType.YellowFlower} value={FlowerType.YellowFlower}>
+        <img alt={FlowerType.YellowFlower} src={YellowFlowerImage} height={20} style={{ paddingRight: '16px' }} />{' '}
+        {i18n.t('flower.YellowFlower', lang)}
       </Option>
     </Select>
   );

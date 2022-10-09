@@ -2,7 +2,9 @@
  * @Copyright 2022. Institute for Future Intelligence, Inc.
  */
 
-import DaylilyImage from './resources/daylily.png';
+import NoLeafFlowerImage from './resources/no_leaf_flower.png';
+import WhiteFlowerImage from './resources/white_flower.png';
+import YellowFlowerImage from './resources/yellow_flower.png';
 import TulipImage from './resources/tulip.png';
 import BellflowerImage from './resources/bellflower.png';
 import SunflowerImage from './resources/sunflower.png';
@@ -19,7 +21,7 @@ export class FlowerData {
       case FlowerType.Tulip:
         return 0.4;
       default:
-        return 1;
+        return 0.8;
     }
   }
 
@@ -32,7 +34,7 @@ export class FlowerData {
       case FlowerType.Tulip:
         return 0.7;
       default:
-        return 1;
+        return 0.5;
     }
   }
 
@@ -44,12 +46,15 @@ export class FlowerData {
         return i18n.t('flower.Sunflower', lang);
       case FlowerType.Tulip:
         return i18n.t('flower.Tulip', lang);
+      case FlowerType.YellowFlower:
+        return i18n.t('flower.YellowFlower', lang);
       default:
-        return i18n.t('flower.Daylily', lang);
+        return i18n.t('flower.WhiteFlower', lang);
     }
   }
 
   static fetchTextureImage(name: string, noLeaves: boolean) {
+    if (noLeaves) return NoLeafFlowerImage;
     let textureImg;
     switch (name) {
       case FlowerType.Bellflower:
@@ -61,8 +66,11 @@ export class FlowerData {
       case FlowerType.Tulip:
         textureImg = TulipImage;
         break;
+      case FlowerType.YellowFlower:
+        textureImg = YellowFlowerImage;
+        break;
       default:
-        textureImg = DaylilyImage;
+        textureImg = WhiteFlowerImage;
     }
     return textureImg;
   }

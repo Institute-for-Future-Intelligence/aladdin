@@ -41,7 +41,7 @@ const Flower = ({
   cz,
   lx,
   lz,
-  name = FlowerType.Daylily,
+  name = FlowerType.WhiteFlower,
   selected = false,
   locked = false,
 }: FlowerModel) => {

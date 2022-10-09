@@ -1147,9 +1147,10 @@ export const i18n_en = {
 
     flower: {
       Bellflower: 'Bellflower',
-      Daylily: 'Daylily',
       Sunflower: 'Sunflower',
       Tulip: 'Tulip',
+      WhiteFlower: 'White Flower',
+      YellowFlower: 'Yellow Flower',
     },
 
     people: {
