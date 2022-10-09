@@ -1128,9 +1128,10 @@ export const i18n_zh_cn = {
     },
 
     flower: {
-      Daylily: '萱草',
       Bellflower: '风铃草',
+      Daylily: '萱草',
       Sunflower: '向日葵',
+      Tulip: '郁金香',
     },
 
     people: {

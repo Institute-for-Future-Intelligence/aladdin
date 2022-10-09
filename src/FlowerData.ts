@@ -3,6 +3,7 @@
  */
 
 import DaylilyImage from './resources/daylily.png';
+import TulipImage from './resources/tulip.png';
 import BellflowerImage from './resources/bellflower.png';
 import SunflowerImage from './resources/sunflower.png';
 import { FlowerType } from './types';
@@ -12,9 +13,11 @@ export class FlowerData {
   static fetchSpread(name: string): number {
     switch (name) {
       case FlowerType.Bellflower:
-        return 0.8;
+        return 0.4;
       case FlowerType.Sunflower:
         return 1;
+      case FlowerType.Tulip:
+        return 0.4;
       default:
         return 1;
     }
@@ -23,9 +26,11 @@ export class FlowerData {
   static fetchHeight(name: string): number {
     switch (name) {
       case FlowerType.Bellflower:
-        return 1;
+        return 0.8;
       case FlowerType.Sunflower:
         return 2;
+      case FlowerType.Tulip:
+        return 0.7;
       default:
         return 1;
     }
@@ -37,6 +42,8 @@ export class FlowerData {
         return i18n.t('flower.Bellflower', lang);
       case FlowerType.Sunflower:
         return i18n.t('flower.Sunflower', lang);
+      case FlowerType.Tulip:
+        return i18n.t('flower.Tulip', lang);
       default:
         return i18n.t('flower.Daylily', lang);
     }
@@ -50,6 +57,9 @@ export class FlowerData {
         break;
       case FlowerType.Sunflower:
         textureImg = SunflowerImage;
+        break;
+      case FlowerType.Tulip:
+        textureImg = TulipImage;
         break;
       default:
         textureImg = DaylilyImage;

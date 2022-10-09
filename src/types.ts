@@ -333,9 +333,10 @@ export enum TreeType {
 }
 
 export enum FlowerType {
-  Daylily = 'Daylily',
   Bellflower = 'Bellflower',
+  Daylily = 'Daylily',
   Sunflower = 'Sunflower',
+  Tulip = 'Tulip',
 }
 
 export enum Gender {

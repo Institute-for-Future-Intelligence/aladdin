@@ -10,6 +10,7 @@ import { FlowerType } from '../../../types';
 import DaylilyImage from '../../../resources/daylily.png';
 import BellflowerImage from '../../../resources/bellflower.png';
 import SunflowerImage from '../../../resources/sunflower.png';
+import TulipImage from '../../../resources/tulip.png';
 import { UndoableChange } from '../../../undo/UndoableChange';
 import i18n from '../../../i18n/i18n';
 import { FlowerModel } from '../../../models/FlowerModel';
@@ -65,6 +66,10 @@ const FlowerSelection = () => {
       <Option key={FlowerType.Sunflower} value={FlowerType.Sunflower}>
         <img alt={FlowerType.Sunflower} src={SunflowerImage} height={20} style={{ paddingRight: '16px' }} />{' '}
         {i18n.t('flower.Sunflower', lang)}
+      </Option>
+      <Option key={FlowerType.Tulip} value={FlowerType.Tulip}>
+        <img alt={FlowerType.Tulip} src={TulipImage} height={20} style={{ paddingRight: '16px' }} />{' '}
+        {i18n.t('flower.Tulip', lang)}
       </Option>
     </Select>
   );
