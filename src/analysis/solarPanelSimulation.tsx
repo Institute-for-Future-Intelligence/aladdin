@@ -690,7 +690,17 @@ const SolarPanelSimulation = ({ city }: SolarPanelSimulationProps) => {
     const cellOutputs = Array.from(Array<number>(nx), () => new Array<number>(ny));
     // the dot array on the solar panel has not been tilted (either on a roof or a foundation)
     // so we need to set the tilt angle to the normal Euler
-    normalEuler.x = angle;
+    if (rooftop) {
+      if (Util.isZero(panel.normal[0])) {
+        // on front and back sides
+        normalEuler.x = angle;
+      } else {
+        // on left and right sides
+        normalEuler.y = angle;
+      }
+    } else {
+      normalEuler.x = angle;
+    }
     for (let i = 0; i < 24; i++) {
       for (let j = 0; j < world.timesPerHour; j++) {
         // a shift of 30 minutes minute half of the interval ensures the symmetry of the result around noon
@@ -898,7 +908,17 @@ const SolarPanelSimulation = ({ city }: SolarPanelSimulationProps) => {
     normal.applyEuler(normalEuler);
     // the dot array on the solar panel has not been tilted (either on a roof or a foundation)
     // so we need to set the tilt angle to the normal Euler
-    normalEuler.x = angle;
+    if (rooftop) {
+      if (Util.isZero(panel.normal[0])) {
+        // on front and back sides
+        normalEuler.x = angle;
+      } else {
+        // on left and right sides
+        normalEuler.y = angle;
+      }
+    } else {
+      normalEuler.x = angle;
+    }
     const peakRadiation = calculatePeakRadiation(sunDirection, dayOfYear, elevation, AirMass.SPHERE_MODEL);
     const indirectRadiation = calculateDiffuseAndReflectedRadiation(world.ground, month, normal, peakRadiation);
     const dot = normal.dot(sunDirection);

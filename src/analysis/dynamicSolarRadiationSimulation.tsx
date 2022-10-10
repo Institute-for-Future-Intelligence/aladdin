@@ -608,7 +608,17 @@ const DynamicSolarRadiationSimulation = ({ city }: DynamicSolarRadiationSimulati
     normal.applyEuler(normalEuler);
     // the dot array on the solar panel has not been tilted (either on a roof or a foundation)
     // so we need to set the tilt angle to the normal Euler
-    normalEuler.x = angle;
+    if (rooftop) {
+      if (Util.isZero(panel.normal[0])) {
+        // on front and back sides
+        normalEuler.x = angle;
+      } else {
+        // on left and right sides
+        normalEuler.y = angle;
+      }
+    } else {
+      normalEuler.x = angle;
+    }
     const peakRadiation = calculatePeakRadiation(sunDirection, dayOfYear, elevation, AirMass.SPHERE_MODEL);
     const indirectRadiation = calculateDiffuseAndReflectedRadiation(
       world.ground,

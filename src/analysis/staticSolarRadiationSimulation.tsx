@@ -470,7 +470,17 @@ const StaticSolarRadiationSimulation = ({ city }: StaticSolarRadiationSimulation
     let count = 0;
     // the dot array on the solar panel has not been tilted (either on a roof or a foundation)
     // so we need to set the tilt angle to the normal Euler
-    normalEuler.x = angle;
+    if (rooftop) {
+      if (Util.isZero(panel.normal[0])) {
+        // on front and back sides
+        normalEuler.x = angle;
+      } else {
+        // on left and right sides
+        normalEuler.y = angle;
+      }
+    } else {
+      normalEuler.x = angle;
+    }
     for (let i = 0; i < 24; i++) {
       for (let j = 0; j < world.timesPerHour; j++) {
         const currentTime = new Date(year, month, date, i, j * interval);
