@@ -440,7 +440,7 @@ const PyramidRoof = ({
   }, [updateRoofFlag, prevWallsIdSet]);
 
   useEffect(() => {
-    if (!isFirstMountRef.current) {
+    if (!isFirstMountRef.current || useStore.getState().addedRoofId === id) {
       if (currentWallArray.length > 1) {
         for (let i = 0; i < currentWallArray.length; i++) {
           const { lh, rh } = getWallHeight(currentWallArray, i);
