@@ -611,7 +611,7 @@ const DynamicSolarRadiationSimulation = ({ city }: DynamicSolarRadiationSimulati
     if (rooftop) {
       if (Util.isZero(panel.normal[0])) {
         // on front and back sides
-        normalEuler.x = angle;
+        normalEuler.x = panel.normal[1] < 0 ? angle : -angle;
       } else {
         // on left and right sides
         normalEuler.y = panel.normal[0] > 0 ? angle : -angle;
