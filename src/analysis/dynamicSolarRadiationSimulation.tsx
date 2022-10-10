@@ -539,6 +539,8 @@ const DynamicSolarRadiationSimulation = ({ city }: DynamicSolarRadiationSimulati
     }
     const dayOfYear = Util.dayOfYear(now);
     const center = Util.absoluteCoordinates(panel.cx, panel.cy, panel.cz, parent);
+    const rot = parent.rotation[2];
+    let zRot = rot + panel.relativeAzimuth;
     let angle = panel.tiltAngle;
     if (rooftop) {
       // z coordinate of a rooftop solar panel is absolute
@@ -549,11 +551,10 @@ const DynamicSolarRadiationSimulation = ({ city }: DynamicSolarRadiationSimulati
       } else {
         // on a no-flat roof, ignore tilt angle
         angle = panel.rotation[0];
+        zRot = rot;
       }
     }
     const normal = new Vector3().fromArray(panel.normal);
-    const rot = parent.rotation[2];
-    const zRot = rot + panel.relativeAzimuth;
     const lx = panel.lx;
     const ly = panel.ly;
     const nx = Math.max(2, Math.round(panel.lx / cellSize));
@@ -606,18 +607,11 @@ const DynamicSolarRadiationSimulation = ({ city }: DynamicSolarRadiationSimulati
       }
     }
     normal.applyEuler(normalEuler);
-    // the dot array on the solar panel has not been tilted (either on a roof or a foundation)
-    // so we need to set the tilt angle to the normal Euler
+    // the dot array on the rooftop solar panel has not been tilted or rotated
+    // we need to set the normal Euler below for this case
     if (rooftop) {
-      if (Util.isZero(panel.normal[0])) {
-        // on front and back sides
-        normalEuler.x = panel.normal[1] < 0 ? angle : -angle;
-      } else {
-        // on left and right sides
-        normalEuler.y = panel.normal[0] > 0 ? angle : -angle;
-      }
-    } else {
-      normalEuler.x = angle;
+      normalEuler.x = panel.rotation[0];
+      normalEuler.z = panel.rotation[2] + rot;
     }
     const peakRadiation = calculatePeakRadiation(sunDirection, dayOfYear, elevation, AirMass.SPHERE_MODEL);
     const indirectRadiation = calculateDiffuseAndReflectedRadiation(

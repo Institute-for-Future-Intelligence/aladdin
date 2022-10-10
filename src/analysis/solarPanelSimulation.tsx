@@ -629,6 +629,8 @@ const SolarPanelSimulation = ({ city }: SolarPanelSimulationProps) => {
     const output = dailyOutputsMapRef.current.get(panel.id);
     if (!output) return;
     const center = Util.absoluteCoordinates(panel.cx, panel.cy, panel.cz, parent);
+    const rot = parent.rotation[2];
+    let zRot = rot + panel.relativeAzimuth;
     let angle = panel.tiltAngle;
     if (rooftop) {
       // z coordinate of a rooftop solar panel is absolute
@@ -639,10 +641,10 @@ const SolarPanelSimulation = ({ city }: SolarPanelSimulationProps) => {
       } else {
         // on a no-flat roof, ignore tilt angle
         angle = panel.rotation[0];
+        zRot = rot;
       }
     }
     const normal = new Vector3().fromArray(panel.normal);
-    const zRot = parent.rotation[2] + panel.relativeAzimuth;
     // TODO: right now we assume a parent rotation is always around the z-axis
     // normal has been set if it is on top of a tilted roof, but has not if it is on top of foundation.
     // so we only need to tilt the normal for a solar panel on foundation
@@ -688,18 +690,11 @@ const SolarPanelSimulation = ({ city }: SolarPanelSimulationProps) => {
     const center2d = new Vector2(center.x, center.y);
     const v = new Vector3();
     const cellOutputs = Array.from(Array<number>(nx), () => new Array<number>(ny));
-    // the dot array on the solar panel has not been tilted (either on a roof or a foundation)
-    // so we need to set the tilt angle to the normal Euler
+    // the dot array on the rooftop solar panel has not been tilted or rotated
+    // we need to set the normal Euler below for this case
     if (rooftop) {
-      if (Util.isZero(panel.normal[0])) {
-        // on front and back sides
-        normalEuler.x = panel.normal[1] < 0 ? angle : -angle;
-      } else {
-        // on left and right sides
-        normalEuler.y = panel.normal[0] > 0 ? angle : -angle;
-      }
-    } else {
-      normalEuler.x = angle;
+      normalEuler.x = panel.rotation[0];
+      normalEuler.z = panel.rotation[2] + rot;
     }
     for (let i = 0; i < 24; i++) {
       for (let j = 0; j < world.timesPerHour; j++) {
@@ -822,7 +817,9 @@ const SolarPanelSimulation = ({ city }: SolarPanelSimulationProps) => {
     const sunDirection = getSunDirection(now, world.latitude);
     if (sunDirection.z <= 0) return; // when the sun is not out
     const center = Util.absoluteCoordinates(panel.cx, panel.cy, panel.cz, parent);
+    const rot = parent.rotation[2];
     let angle = panel.tiltAngle;
+    let zRot = rot + panel.relativeAzimuth;
     if (rooftop) {
       // z coordinate of a rooftop solar panel is absolute
       center.z = panel.cz + panel.lz / 2 + parent.cz + parent.lz / 2;
@@ -832,11 +829,10 @@ const SolarPanelSimulation = ({ city }: SolarPanelSimulationProps) => {
       } else {
         // on a no-flat roof, ignore tilt angle
         angle = panel.rotation[0];
+        zRot = rot;
       }
     }
     const normal = new Vector3().fromArray(panel.normal);
-    const rot = parent.rotation[2];
-    const zRot = rot + panel.relativeAzimuth;
     const month = now.getMonth();
     const dayOfYear = Util.dayOfYear(now);
     let lx: number, ly: number, nx: number, ny: number;
@@ -906,18 +902,11 @@ const SolarPanelSimulation = ({ city }: SolarPanelSimulationProps) => {
       }
     }
     normal.applyEuler(normalEuler);
-    // the dot array on the solar panel has not been tilted (either on a roof or a foundation)
-    // so we need to set the tilt angle to the normal Euler
+    // the dot array on the rooftop solar panel has not been tilted or rotated
+    // we need to set the normal Euler below for this case
     if (rooftop) {
-      if (Util.isZero(panel.normal[0])) {
-        // on front and back sides
-        normalEuler.x = panel.normal[1] < 0 ? angle : -angle;
-      } else {
-        // on left and right sides
-        normalEuler.y = panel.normal[0] > 0 ? angle : -angle;
-      }
-    } else {
-      normalEuler.x = angle;
+      normalEuler.x = panel.rotation[0];
+      normalEuler.z = panel.rotation[2] + rot;
     }
     const peakRadiation = calculatePeakRadiation(sunDirection, dayOfYear, elevation, AirMass.SPHERE_MODEL);
     const indirectRadiation = calculateDiffuseAndReflectedRadiation(world.ground, month, normal, peakRadiation);
