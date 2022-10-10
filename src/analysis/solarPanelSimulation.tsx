@@ -696,7 +696,7 @@ const SolarPanelSimulation = ({ city }: SolarPanelSimulationProps) => {
         normalEuler.x = angle;
       } else {
         // on left and right sides
-        normalEuler.y = angle;
+        normalEuler.y = panel.normal[0] > 0 ? angle : -angle;
       }
     } else {
       normalEuler.x = angle;
@@ -914,7 +914,7 @@ const SolarPanelSimulation = ({ city }: SolarPanelSimulationProps) => {
         normalEuler.x = angle;
       } else {
         // on left and right sides
-        normalEuler.y = angle;
+        normalEuler.y = panel.normal[0] > 0 ? angle : -angle;
       }
     } else {
       normalEuler.x = angle;
