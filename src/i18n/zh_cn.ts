@@ -1129,7 +1129,10 @@ export const i18n_zh_cn = {
 
     flower: {
       Bellflower: '风铃草',
+      Hosta: '玉簪',
+      RedRose: '红玫瑰',
       Sunflower: '向日葵',
+      TallBush: '高灌木',
       Tulip: '郁金香',
       WhiteFlower: '白花',
       YellowFlower: '黄花',

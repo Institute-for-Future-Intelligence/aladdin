@@ -1,7 +1,7 @@
 {
-  "docid": "aQMGEjqAUgTbwdb9ivJ4rm",
-  "time": "09/26/2022 08:51 pm",
-  "timestamp": 1664239872222,
+  "docid": "uTahbRcNkpSyVDygKayhVf",
+  "time": "10/10/2022 04:41 pm",
+  "timestamp": 1665434501717,
   "userid": "QWecNcxhyvP6j6sBN11hBsfZDau1",
   "owner": null,
   "email": null,
@@ -1079,9 +1079,9 @@
     {
       "type": "Human",
       "name": "Judd",
-      "cx": -0.5283324541009691,
-      "cy": -2.891140806935058,
-      "cz": 0.03700868412852288,
+      "cx": -0.09889479147539992,
+      "cy": -3.5804269948570657,
+      "cz": 0.03700868412852199,
       "lx": 0.6,
       "lz": 1.68,
       "normal": [
@@ -1102,8 +1102,8 @@
     {
       "type": "Tree",
       "name": "Maple",
-      "cx": 10.348889082231242,
-      "cy": -5.581769254023385,
+      "cx": 10.961991009961471,
+      "cy": -4.7951994089128664,
       "cz": 0,
       "lx": 7.849178627898182,
       "lz": 8.26765132308192,
@@ -1214,9 +1214,9 @@
     {
       "type": "Human",
       "name": "Jess",
-      "cx": 9.327174322512693,
-      "cy": -4.909979237518961,
-      "cz": 8.881784197001252e-16,
+      "cx": 10.043178984637636,
+      "cy": -3.1477838439296697,
+      "cz": 0,
       "lx": 0.6,
       "lz": 1.4,
       "normal": [
@@ -1233,6 +1233,380 @@
       "id": "hDyRWYv3zznENZxyb7giJb",
       "selected": false,
       "ly": 0.6
+    },
+    {
+      "type": "Flower",
+      "name": "Hosta",
+      "cx": -4.865498633056688,
+      "cy": -5.35511145051621,
+      "cz": 4.440892098500626e-16,
+      "lx": 1,
+      "lz": 0.7,
+      "normal": [
+        0,
+        1,
+        0
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "parentId": "Ground",
+      "id": "rQBZjpiN17FBa7zVGS29EM",
+      "selected": false
+    },
+    {
+      "type": "Flower",
+      "name": "Hosta",
+      "cx": -5.913277609806336,
+      "cy": -5.374330832155909,
+      "cz": 0,
+      "lx": 1,
+      "lz": 0.7,
+      "normal": [
+        0,
+        1,
+        0
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "parentId": "Ground",
+      "id": "gc42wB2NVDE3XxmJXbCjzF",
+      "selected": false
+    },
+    {
+      "type": "Flower",
+      "name": "Hosta",
+      "cx": 5.365516144068206,
+      "cy": -5.032667389054726,
+      "cz": 0,
+      "lx": 1,
+      "lz": 0.7,
+      "normal": [
+        0,
+        1,
+        0
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "parentId": "Ground",
+      "id": "vUf5PGrUMVgXbqYPHJhogg",
+      "selected": false
+    },
+    {
+      "type": "Flower",
+      "name": "Hosta",
+      "cx": 6.451426749352761,
+      "cy": -5.0400985854852,
+      "cz": 0,
+      "lx": 1,
+      "lz": 0.7,
+      "normal": [
+        0,
+        1,
+        0
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "parentId": "Ground",
+      "id": "nQJ3744KdWm46uETjWgCgh",
+      "selected": false
+    },
+    {
+      "type": "Flower",
+      "name": "Bellflower",
+      "cx": 10.305907483983008,
+      "cy": -4.741244078804888,
+      "cz": -4.440892098500626e-16,
+      "lx": 0.4,
+      "lz": 0.8,
+      "normal": [
+        0,
+        1,
+        0
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "parentId": "Ground",
+      "id": "v55S46CRAfNBqtvC7SejWL",
+      "selected": false
+    },
+    {
+      "type": "Flower",
+      "name": "Bellflower",
+      "cx": 10.64587810641245,
+      "cy": -5.149011385356842,
+      "cz": 0,
+      "lx": 0.4,
+      "lz": 0.8,
+      "normal": [
+        0,
+        1,
+        0
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "parentId": "Ground",
+      "id": "cjq5zpMwEQ68Pvr3BHuvAN",
+      "selected": false
+    },
+    {
+      "type": "Flower",
+      "name": "Bellflower",
+      "cx": 11.069278217326396,
+      "cy": -5.113715548843749,
+      "cz": 0,
+      "lx": 0.4,
+      "lz": 0.8,
+      "normal": [
+        0,
+        1,
+        0
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "parentId": "Ground",
+      "id": "bq7T5SUabm6WYJRf7MELsr",
+      "selected": false
+    },
+    {
+      "type": "Flower",
+      "name": "Bellflower",
+      "cx": 10.087718880149556,
+      "cy": -5.171937637087455,
+      "cz": 0,
+      "lx": 0.4,
+      "lz": 0.8,
+      "normal": [
+        0,
+        0,
+        1
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "parentId": "Ground",
+      "id": "kGacG4GbyL6sr53BA3szew",
+      "selected": false
+    },
+    {
+      "type": "Flower",
+      "name": "Bellflower",
+      "cx": 11.337264912334188,
+      "cy": -4.906129973770318,
+      "cz": 0,
+      "lx": 0.4,
+      "lz": 0.8,
+      "normal": [
+        0,
+        0,
+        1
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "parentId": "Ground",
+      "id": "3mzXsN58FdxQCLpv8kVCYw",
+      "selected": false
+    },
+    {
+      "type": "Flower",
+      "name": "Bellflower",
+      "cx": 10.431075288929677,
+      "cy": -3.991597909938303,
+      "cz": 0,
+      "lx": 0.4,
+      "lz": 0.8,
+      "normal": [
+        0,
+        0,
+        1
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "parentId": "Ground",
+      "id": "acUhTF9RVe5riGAE9cfhJn",
+      "selected": false
+    },
+    {
+      "type": "Flower",
+      "name": "Bellflower",
+      "cx": 9.86441386534317,
+      "cy": -4.67810479084557,
+      "cz": -8.881784197001252e-16,
+      "lx": 0.4,
+      "lz": 0.8,
+      "normal": [
+        0,
+        0,
+        1
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "parentId": "Ground",
+      "id": "ooTJkhwo3iWiDqyRe6jwef",
+      "selected": false
+    },
+    {
+      "type": "Flower",
+      "name": "Yellow Flower",
+      "cx": 9.406250442154278,
+      "cy": -4.8162245440076354,
+      "cz": 0,
+      "lx": 0.8,
+      "lz": 0.5,
+      "normal": [
+        0,
+        1,
+        0
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "parentId": "Ground",
+      "id": "p8SDFTinzKkCMVNKYGXSQU",
+      "selected": false
+    },
+    {
+      "type": "Flower",
+      "name": "Yellow Flower",
+      "cx": 9.924833666037356,
+      "cy": -5.548260780564018,
+      "cz": 0,
+      "lx": 0.8,
+      "lz": 0.5,
+      "normal": [
+        0,
+        0,
+        1
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "parentId": "Ground",
+      "id": "vXr6WeGdxpL14pfLB8tAGS",
+      "selected": false
+    },
+    {
+      "type": "Flower",
+      "name": "Tall Bush",
+      "cx": -1.351032108101787,
+      "cy": -2.4562230440151045,
+      "cz": 0.03700868412852377,
+      "lx": 1,
+      "lz": 2,
+      "normal": [
+        0,
+        1,
+        0
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "parentId": "8fpWrU7qVyVgipB7LtABom",
+      "id": "8jaD71ndVi3Pxu67kBrHve",
+      "selected": false
+    },
+    {
+      "type": "Flower",
+      "name": "Tall Bush",
+      "cx": 1.8565274137588135,
+      "cy": -5.013031656604843,
+      "cz": 0.03700868412852288,
+      "lx": 1,
+      "lz": 2,
+      "normal": [
+        0,
+        0,
+        1
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "parentId": "m7AH7DcnoGzAq9kryBy4RS",
+      "id": "xu93thGDcf75KxzfVpckCK",
+      "selected": false
+    },
+    {
+      "type": "Flower",
+      "name": "Tall Bush",
+      "cx": -2.974917470063473,
+      "cy": -4.971526921550339,
+      "cz": 0.03700868412852377,
+      "lx": 1,
+      "lz": 2,
+      "normal": [
+        0,
+        0,
+        1
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "parentId": "m7AH7DcnoGzAq9kryBy4RS",
+      "id": "aPfi6ru8UEQvmRY7YmRfhQ",
+      "selected": false
+    },
+    {
+      "type": "Flower",
+      "name": "Tall Bush",
+      "cx": 3.0943532379673204,
+      "cy": -2.48007934118515,
+      "cz": 0.03700868412852288,
+      "lx": 1,
+      "lz": 2,
+      "normal": [
+        0,
+        0,
+        1
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "parentId": "8fpWrU7qVyVgipB7LtABom",
+      "id": "p12f94kQKCXpPNEEPe9ktz",
+      "selected": false
     }
   ],
   "view": {
@@ -1264,9 +1638,9 @@
     "dailyHeliostatYieldPanelX": 0,
     "showDailyParabolicDishYieldPanel": false,
     "cameraPosition": [
-      -9.778342776659498,
-      -11.326020628068825,
-      2.383315679656036
+      -8.080459566081968,
+      -12.651682053956737,
+      3.1261680388436694
     ],
     "showYearlyHeliostatYieldPanel": false,
     "orthographic": false,
@@ -1315,8 +1689,8 @@
     "shadowEnabled": true,
     "showInstructionPanel": true,
     "panCenter": [
-      1.1654587141412305,
-      0.2420735554541232,
+      1.183138674810763,
+      0.24317247065164654,
       1.7477661724791362
     ],
     "yearlyFresnelReflectorYieldPanelY": 0,
