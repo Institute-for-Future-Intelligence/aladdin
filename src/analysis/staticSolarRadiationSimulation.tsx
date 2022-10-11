@@ -432,6 +432,7 @@ const StaticSolarRadiationSimulation = ({ city }: StaticSolarRadiationSimulation
     const rot = parent.rotation[2];
     let zRot = rot + panel.relativeAzimuth;
     let angle = panel.tiltAngle;
+    let flat = true;
     if (rooftop) {
       // z coordinate of a rooftop solar panel is absolute
       center.z = panel.cz + panel.lz / 2 + parent.cz + parent.lz / 2;
@@ -442,12 +443,13 @@ const StaticSolarRadiationSimulation = ({ city }: StaticSolarRadiationSimulation
         // on a no-flat roof, ignore tilt angle and relative azimuth
         angle = panel.rotation[0];
         zRot = rot;
+        flat = false;
       }
     }
     // TODO: right now we assume a parent rotation is always around the z-axis
-    // normal has been set if it is on top of a tilted roof, but has not if it is on top of foundation.
-    // so we only need to tilt the normal for a solar panel on foundation
-    const normalEuler = new Euler(rooftop ? 0 : angle, 0, zRot, 'ZYX');
+    // normal has been set if it is on top of a tilted roof, but has not if it is on top of a foundation or flat roof.
+    // so we only need to tilt the normal for a solar panel on a foundation or flat roof
+    const normalEuler = new Euler(rooftop && !flat ? 0 : angle, 0, zRot, 'ZYX');
     normal.applyEuler(normalEuler);
     const year = now.getFullYear();
     const month = now.getMonth();
@@ -469,9 +471,9 @@ const StaticSolarRadiationSimulation = ({ city }: StaticSolarRadiationSimulation
       .fill(0)
       .map(() => Array(ny).fill(0));
     let count = 0;
-    // the dot array on the rooftop solar panel has not been tilted or rotated
+    // the dot array on a solar panel above a tilted roof has not been tilted or rotated
     // we need to set the normal Euler below for this case
-    if (rooftop) {
+    if (rooftop && !flat) {
       normalEuler.x = panel.rotation[0];
       normalEuler.z = panel.rotation[2] + rot;
     }

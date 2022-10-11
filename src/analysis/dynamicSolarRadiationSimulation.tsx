@@ -542,6 +542,7 @@ const DynamicSolarRadiationSimulation = ({ city }: DynamicSolarRadiationSimulati
     const rot = parent.rotation[2];
     let zRot = rot + panel.relativeAzimuth;
     let angle = panel.tiltAngle;
+    let flat = true;
     if (rooftop) {
       // z coordinate of a rooftop solar panel is absolute
       center.z = panel.cz + panel.lz / 2 + parent.cz + parent.lz / 2;
@@ -552,6 +553,7 @@ const DynamicSolarRadiationSimulation = ({ city }: DynamicSolarRadiationSimulati
         // on a no-flat roof, ignore tilt angle
         angle = panel.rotation[0];
         zRot = rot;
+        flat = false;
       }
     }
     const normal = new Vector3().fromArray(panel.normal);
@@ -574,9 +576,9 @@ const DynamicSolarRadiationSimulation = ({ city }: DynamicSolarRadiationSimulati
         .map(() => Array(ny).fill(0));
       cellOutputsMapRef.current.set(panel.id, cellOutputs);
     }
-    // normal has been set if it is on top of a tilted roof, but has not if it is on top of foundation.
-    // so we only need to tilt the normal for a solar panel on foundation
-    let normalEuler = new Euler(rooftop ? 0 : angle, 0, zRot, 'ZYX');
+    // normal has been set if it is on top of a tilted roof, but has not if it is on top of a foundation or flat roof.
+    // so we only need to tilt the normal for a solar panel on a foundation or flat roof
+    let normalEuler = new Euler(rooftop && !flat ? 0 : angle, 0, zRot, 'ZYX');
     if (panel.trackerType !== TrackerType.NO_TRACKER) {
       // dynamic angles
       const rotatedSunDirection = rot
@@ -607,9 +609,9 @@ const DynamicSolarRadiationSimulation = ({ city }: DynamicSolarRadiationSimulati
       }
     }
     normal.applyEuler(normalEuler);
-    // the dot array on the rooftop solar panel has not been tilted or rotated
+    // the dot array on a solar panel above a tilted roof has not been tilted or rotated
     // we need to set the normal Euler below for this case
-    if (rooftop) {
+    if (rooftop && !flat) {
       normalEuler.x = panel.rotation[0];
       normalEuler.z = panel.rotation[2] + rot;
     }
