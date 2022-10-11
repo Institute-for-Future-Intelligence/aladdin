@@ -3,9 +3,12 @@
  */
 
 import NoLeafFlowerImage from './resources/no_leaf_flower.png';
+import NoLeafShrubImage from './resources/no_leaf_shrub.png';
 import BellflowerImage from './resources/bellflower.png';
 import HibiscusImage from './resources/hibiscus.png';
+import HydrangeaImage from './resources/hydrangea.png';
 import HostaImage from './resources/hosta.png';
+import PeonyImage from './resources/peony.png';
 import RedRoseImage from './resources/red_rose.png';
 import SunflowerImage from './resources/sunflower.png';
 import TallBushImage from './resources/tall_bush.png';
@@ -23,6 +26,10 @@ export class FlowerData {
         return 1;
       case FlowerType.Hibiscus:
         return 2;
+      case FlowerType.Hydrangea:
+        return 2;
+      case FlowerType.Peony:
+        return 1.5;
       case FlowerType.RedRose:
         return 0.5;
       case FlowerType.Sunflower:
@@ -44,6 +51,10 @@ export class FlowerData {
         return 0.7;
       case FlowerType.Hibiscus:
         return 1.7;
+      case FlowerType.Hydrangea:
+        return 1.5;
+      case FlowerType.Peony:
+        return 1;
       case FlowerType.RedRose:
         return 0.8;
       case FlowerType.Sunflower:
@@ -63,8 +74,12 @@ export class FlowerData {
         return i18n.t('flower.Bellflower', lang);
       case FlowerType.Hibiscus:
         return i18n.t('flower.Hibiscus', lang);
+      case FlowerType.Hydrangea:
+        return i18n.t('flower.Hydrangea', lang);
       case FlowerType.Hosta:
         return i18n.t('flower.Hosta', lang);
+      case FlowerType.Peony:
+        return i18n.t('flower.Peony', lang);
       case FlowerType.RedRose:
         return i18n.t('flower.RedRose', lang);
       case FlowerType.Sunflower:
@@ -79,7 +94,15 @@ export class FlowerData {
   }
 
   static fetchTextureImage(name: string, noLeaves: boolean) {
-    if (noLeaves) return NoLeafFlowerImage;
+    if (noLeaves) {
+      if (name === FlowerType.Hibiscus || name === FlowerType.Hydrangea) {
+        return NoLeafShrubImage;
+      }
+      if (name === FlowerType.TallBush) {
+        return TallBushImage;
+      }
+      return NoLeafFlowerImage;
+    }
     let textureImg;
     switch (name) {
       case FlowerType.Bellflower:
@@ -88,8 +111,14 @@ export class FlowerData {
       case FlowerType.Hibiscus:
         textureImg = HibiscusImage;
         break;
+      case FlowerType.Hydrangea:
+        textureImg = HydrangeaImage;
+        break;
       case FlowerType.Hosta:
         textureImg = HostaImage;
+        break;
+      case FlowerType.Peony:
+        textureImg = PeonyImage;
         break;
       case FlowerType.RedRose:
         textureImg = RedRoseImage;

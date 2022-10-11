@@ -1,7 +1,7 @@
 {
-  "docid": "uTahbRcNkpSyVDygKayhVf",
-  "time": "10/10/2022 04:41 pm",
-  "timestamp": 1665434501717,
+  "docid": "64rmZeaNmuFBqrQ5qiZUWW",
+  "time": "10/10/2022 10:36 pm",
+  "timestamp": 1665455795186,
   "userid": "QWecNcxhyvP6j6sBN11hBsfZDau1",
   "owner": null,
   "email": null,
@@ -1566,12 +1566,12 @@
     },
     {
       "type": "Flower",
-      "name": "Tall Bush",
+      "name": "Hydrangea",
       "cx": -2.974917470063473,
       "cy": -4.971526921550339,
       "cz": 0.03700868412852377,
-      "lx": 1,
-      "lz": 2,
+      "lx": 2,
+      "lz": 1.5,
       "normal": [
         0,
         0,
@@ -1588,12 +1588,12 @@
     },
     {
       "type": "Flower",
-      "name": "Tall Bush",
+      "name": "Hydrangea",
       "cx": 3.0943532379673204,
       "cy": -2.48007934118515,
       "cz": 0.03700868412852288,
-      "lx": 1,
-      "lz": 2,
+      "lx": 2,
+      "lz": 1.5,
       "normal": [
         0,
         0,
@@ -1638,9 +1638,9 @@
     "dailyHeliostatYieldPanelX": 0,
     "showDailyParabolicDishYieldPanel": false,
     "cameraPosition": [
-      -8.080459566081968,
-      -12.651682053956737,
-      3.1261680388436694
+      -8.063018726729592,
+      -12.662058288062733,
+      3.146310857938336
     ],
     "showYearlyHeliostatYieldPanel": false,
     "orthographic": false,
@@ -1689,9 +1689,9 @@
     "shadowEnabled": true,
     "showInstructionPanel": true,
     "panCenter": [
-      1.183138674810763,
-      0.24317247065164654,
-      1.7477661724791362
+      1.2005795141631277,
+      0.23279623654563292,
+      1.767908991573803
     ],
     "yearlyFresnelReflectorYieldPanelY": 0,
     "showHeliodonPanel": false,

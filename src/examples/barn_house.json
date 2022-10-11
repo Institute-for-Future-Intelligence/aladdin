@@ -1,7 +1,7 @@
 {
-  "docid": "s5pDuzsCHSa2tAg8WBUYba",
-  "time": "10/09/2022 03:46 pm",
-  "timestamp": 1665344788812,
+  "docid": "fzqgMNK1qjXY1RVr7A3bgb",
+  "time": "10/10/2022 10:46 pm",
+  "timestamp": 1665456414839,
   "userid": "QWecNcxhyvP6j6sBN11hBsfZDau1",
   "owner": null,
   "email": null,
@@ -1345,8 +1345,8 @@
     {
       "type": "Tree",
       "name": "Oak",
-      "cx": 19.56401141811942,
-      "cy": 10.290496053535222,
+      "cx": 21.140698852411017,
+      "cy": -4.290883992834715,
       "cz": 0,
       "lx": 20,
       "lz": 24,
@@ -1362,15 +1362,15 @@
       ],
       "parentId": "Ground",
       "id": "b1PLNbuHYXMSFSk3EuJWpe",
-      "selected": false,
+      "selected": true,
       "evergreen": false
     },
     {
       "type": "Tree",
       "name": "Linden",
-      "cx": -24.316954072705258,
-      "cy": -3.0346528908943142,
-      "cz": 1.7763568394002505e-15,
+      "cx": -17.09775606984966,
+      "cy": -3.20526624414558,
+      "cz": 0.05000000074505895,
       "lx": 20,
       "lz": 20,
       "normal": [
@@ -1383,7 +1383,7 @@
         0,
         0
       ],
-      "parentId": "Ground",
+      "parentId": "46TKaVq8pvU97fq25w6FtQ",
       "id": "7jf8KwAp3jRyyjP9pa5nD6",
       "selected": false,
       "evergreen": false
@@ -1391,9 +1391,9 @@
     {
       "type": "Tree",
       "name": "Spruce",
-      "cx": 21.583522496202903,
-      "cy": -12.747067355660167,
-      "cz": 0,
+      "cx": 19.726688973475135,
+      "cy": -12.375509048801003,
+      "cz": -8.881784197001252e-16,
       "lx": 5,
       "lz": 10,
       "normal": [
@@ -1576,12 +1576,12 @@
     },
     {
       "type": "Flower",
-      "name": "Sunflower",
+      "name": "Peony",
       "cx": -6.4319318007753115,
       "cy": -7.1585003500522255,
       "cz": 0.05000000074505806,
-      "lx": 1,
-      "lz": 2,
+      "lx": 1.5,
+      "lz": 1,
       "normal": [
         0,
         1,
@@ -1620,12 +1620,12 @@
     },
     {
       "type": "Flower",
-      "name": "Sunflower",
+      "name": "Hosta",
       "cx": -4.4319318007753115,
       "cy": -7.1585003500522255,
       "cz": 0.05000000074505806,
       "lx": 1,
-      "lz": 2,
+      "lz": 0.7,
       "normal": [
         0,
         1,
@@ -1664,12 +1664,12 @@
     },
     {
       "type": "Flower",
-      "name": "Sunflower",
+      "name": "Hosta",
       "cx": -2.4319318007753115,
       "cy": -7.1585003500522255,
       "cz": 0.05000000074505806,
       "lx": 1,
-      "lz": 2,
+      "lz": 0.7,
       "normal": [
         0,
         1,
@@ -1708,12 +1708,12 @@
     },
     {
       "type": "Flower",
-      "name": "Sunflower",
+      "name": "Hosta",
       "cx": -0.43193180077531146,
       "cy": -7.1585003500522255,
       "cz": 0.05000000074505806,
       "lx": 1,
-      "lz": 2,
+      "lz": 0.7,
       "normal": [
         0,
         1,
@@ -1752,12 +1752,12 @@
     },
     {
       "type": "Flower",
-      "name": "Sunflower",
+      "name": "Hosta",
       "cx": 1.5680681992246885,
       "cy": -7.1585003500522255,
       "cz": 0.05000000074505806,
       "lx": 1,
-      "lz": 2,
+      "lz": 0.7,
       "normal": [
         0,
         1,
@@ -1796,12 +1796,12 @@
     },
     {
       "type": "Flower",
-      "name": "Sunflower",
+      "name": "Hosta",
       "cx": 3.5680681992246885,
       "cy": -7.1585003500522255,
       "cz": 0.05000000074505806,
       "lx": 1,
-      "lz": 2,
+      "lz": 0.7,
       "normal": [
         0,
         1,
@@ -1840,12 +1840,12 @@
     },
     {
       "type": "Flower",
-      "name": "Sunflower",
+      "name": "Hosta",
       "cx": 5.5680681992246885,
       "cy": -7.1585003500522255,
       "cz": 0.05000000074505806,
       "lx": 1,
-      "lz": 2,
+      "lz": 0.7,
       "normal": [
         0,
         1,
@@ -1884,12 +1884,12 @@
     },
     {
       "type": "Flower",
-      "name": "Sunflower",
+      "name": "Hosta",
       "cx": 7.5680681992246885,
       "cy": -7.1585003500522255,
       "cz": 0.05000000074505806,
       "lx": 1,
-      "lz": 2,
+      "lz": 0.7,
       "normal": [
         0,
         1,
@@ -1928,34 +1928,12 @@
     },
     {
       "type": "Flower",
-      "name": "Sunflower",
-      "cx": 9.568068199224689,
-      "cy": -7.1585003500522255,
-      "cz": 0.05000000074505806,
-      "lx": 1,
-      "lz": 2,
-      "normal": [
-        0,
-        1,
-        0
-      ],
-      "rotation": [
-        0,
-        0,
-        0
-      ],
-      "parentId": "46TKaVq8pvU97fq25w6FtQ",
-      "id": "iTZveGrwoNaRJaDLqodaup",
-      "selected": false
-    },
-    {
-      "type": "Flower",
-      "name": "Sunflower",
-      "cx": 10.568068199224689,
-      "cy": -7.1585003500522255,
-      "cz": 0.05000000074505806,
-      "lx": 1,
-      "lz": 2,
+      "name": "Peony",
+      "cx": 10.031333490603398,
+      "cy": -6.911845883533438,
+      "cz": 0.05000000074505895,
+      "lx": 1.5,
+      "lz": 1,
       "normal": [
         0,
         1,
@@ -1972,12 +1950,12 @@
     },
     {
       "type": "Flower",
-      "name": "White Flower",
+      "name": "Hydrangea",
       "cx": 12.523044453398047,
       "cy": 0.9706233738024181,
       "cz": 0.05000000074505895,
-      "lx": 0.8,
-      "lz": 0.5,
+      "lx": 2,
+      "lz": 1.5,
       "normal": [
         0,
         1,
@@ -1994,12 +1972,12 @@
     },
     {
       "type": "Flower",
-      "name": "White Flower",
+      "name": "Hydrangea",
       "cx": 12.485686931231406,
       "cy": -1.233613837089397,
       "cz": 0.05000000074505806,
-      "lx": 0.8,
-      "lz": 0.5,
+      "lx": 2,
+      "lz": 1.5,
       "normal": [
         0,
         1,
@@ -2016,12 +1994,12 @@
     },
     {
       "type": "Flower",
-      "name": "White Flower",
+      "name": "Hydrangea",
       "cx": 12.449360524283405,
       "cy": -3.2127310317955775,
       "cz": 0.05000000074505806,
-      "lx": 0.8,
-      "lz": 0.5,
+      "lx": 2,
+      "lz": 1.5,
       "normal": [
         0,
         1,
@@ -2038,12 +2016,12 @@
     },
     {
       "type": "Flower",
-      "name": "White Flower",
+      "name": "Hydrangea",
       "cx": -10.034806081670178,
       "cy": -5.45833273413912,
       "cz": 0.05000000074505806,
-      "lx": 0.8,
-      "lz": 0.5,
+      "lx": 2,
+      "lz": 1.5,
       "normal": [
         0,
         1,
@@ -2060,12 +2038,12 @@
     },
     {
       "type": "Flower",
-      "name": "White Flower",
+      "name": "Hydrangea",
       "cx": -8.803245994377429,
       "cy": -0.22460281401169624,
       "cz": 0.05000000074505628,
-      "lx": 0.8,
-      "lz": 0.5,
+      "lx": 2,
+      "lz": 1.5,
       "normal": [
         0,
         1,
@@ -2082,12 +2060,12 @@
     },
     {
       "type": "Flower",
-      "name": "White Flower",
+      "name": "Hydrangea",
       "cx": -8.941812324408284,
       "cy": -2.4038554225206816,
       "cz": 0.05000000074505806,
-      "lx": 0.8,
-      "lz": 0.5,
+      "lx": 2,
+      "lz": 1.5,
       "normal": [
         0,
         1,
@@ -2101,6 +2079,29 @@
       "parentId": "46TKaVq8pvU97fq25w6FtQ",
       "id": "phZdGJBNMcagm1hqvjyqar",
       "selected": false
+    },
+    {
+      "type": "Tree",
+      "name": "Cottonwood",
+      "cx": -10.690512148530066,
+      "cy": -24.372962750837047,
+      "cz": 0,
+      "lx": 20,
+      "lz": 16.05832090138246,
+      "normal": [
+        0,
+        0,
+        1
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "parentId": "Ground",
+      "id": "gkQDZPnaSVr9iatjDLPxBD",
+      "selected": false,
+      "evergreen": false
     }
   ],
   "view": {
@@ -2112,9 +2113,9 @@
     "enableRotate": true,
     "weatherPanelY": 0,
     "cameraPosition": [
-      18.19466978069138,
-      -35.61190753627726,
-      7.038957934020447
+      15.001671507294164,
+      -32.59316463135336,
+      7.179990263150549
     ],
     "showYearlyUpdraftTowerYieldPanel": false,
     "showSunAngles": false,
@@ -2168,9 +2169,9 @@
     "showYearlyHeliostatYieldPanel": false,
     "mapZoom": 18,
     "panCenter": [
-      -0.06529106080995381,
-      1.539753511635937,
-      7.038957934020443
+      1.4994097522659724,
+      2.19558863881693,
+      5.3832710359747455
     ],
     "visibilityResultsPanelY": 0,
     "showZenithAngle": true,

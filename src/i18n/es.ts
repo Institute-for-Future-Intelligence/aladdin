@@ -1150,6 +1150,8 @@ export const i18n_es = {
       Bellflower: 'Bellflower',
       Hibiscus: 'Hibiscus',
       Hosta: 'Hosta',
+      Hydrangea: 'Hydrangea',
+      Peony: 'Peony',
       RedRose: 'Red Rose',
       Sunflower: 'Sunflower',
       TallBush: 'Tall Bush',

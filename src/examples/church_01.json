@@ -1,7 +1,7 @@
 {
-  "docid": "dutnn9d3Q2CmW7jb2krRT8",
-  "time": "10/10/2022 08:05 pm",
-  "timestamp": 1665446729569,
+  "docid": "ow6assxmM4ozjdXkfVK4MT",
+  "time": "10/10/2022 10:40 pm",
+  "timestamp": 1665456041087,
   "userid": "QWecNcxhyvP6j6sBN11hBsfZDau1",
   "owner": null,
   "email": null,
@@ -2667,12 +2667,12 @@
     },
     {
       "type": "Flower",
-      "name": "Bellflower",
+      "name": "Hibiscus",
       "cx": 15.090503333801388,
       "cy": 2.6795845901554154,
       "cz": 0.5,
-      "lx": 0.4,
-      "lz": 0.8,
+      "lx": 2,
+      "lz": 1.7,
       "normal": [
         0,
         1,
@@ -2689,12 +2689,12 @@
     },
     {
       "type": "Flower",
-      "name": "Bellflower",
+      "name": "Hibiscus",
       "cx": 15.11041357320055,
       "cy": 3.9081085710241874,
       "cz": 0.4999999999999991,
-      "lx": 0.4,
-      "lz": 0.8,
+      "lx": 2,
+      "lz": 1.7,
       "normal": [
         0,
         0,
@@ -2711,56 +2711,12 @@
     },
     {
       "type": "Flower",
-      "name": "Bellflower",
-      "cx": 15.05997354472665,
-      "cy": 1.4739551423204862,
-      "cz": 0.5,
-      "lx": 0.4,
-      "lz": 0.8,
-      "normal": [
-        0,
-        0,
-        1
-      ],
-      "rotation": [
-        0,
-        0,
-        0
-      ],
-      "parentId": "m7AH7DcnoGzAq9kryBy4RS",
-      "id": "q67f1ueqfgmmvyuf7WyAuk",
-      "selected": false
-    },
-    {
-      "type": "Flower",
-      "name": "Bellflower",
-      "cx": 15.019398543264842,
-      "cy": -1.8053617567585674,
-      "cz": 0.5,
-      "lx": 0.4,
-      "lz": 0.8,
-      "normal": [
-        0,
-        0,
-        1
-      ],
-      "rotation": [
-        0,
-        0,
-        0
-      ],
-      "parentId": "m7AH7DcnoGzAq9kryBy4RS",
-      "id": "74Cdzid6ZdHfFQehYfpsyy",
-      "selected": false
-    },
-    {
-      "type": "Flower",
-      "name": "Bellflower",
+      "name": "Hibiscus",
       "cx": 14.913002609189407,
       "cy": -3.0774482324317782,
       "cz": 0.5000000000000009,
-      "lx": 0.4,
-      "lz": 0.8,
+      "lx": 2,
+      "lz": 1.7,
       "normal": [
         0,
         0,
@@ -2777,12 +2733,12 @@
     },
     {
       "type": "Flower",
-      "name": "Bellflower",
+      "name": "Hibiscus",
       "cx": 14.941871873418721,
       "cy": -4.383327895714419,
       "cz": 0.5,
-      "lx": 0.4,
-      "lz": 0.8,
+      "lx": 2,
+      "lz": 1.7,
       "normal": [
         0,
         0,
@@ -2827,9 +2783,9 @@
     "dailyHeliostatYieldPanelX": 0,
     "showDailyParabolicDishYieldPanel": false,
     "cameraPosition": [
-      29.529089978449612,
-      19.772851580781833,
-      12.332726856224147
+      22.592272496182872,
+      16.243638391134738,
+      6.167497818327282
     ],
     "showYearlyHeliostatYieldPanel": false,
     "orthographic": false,

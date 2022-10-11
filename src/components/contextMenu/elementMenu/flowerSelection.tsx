@@ -9,7 +9,9 @@ import * as Selector from '../../../stores/selector';
 import { FlowerType } from '../../../types';
 import BellflowerImage from '../../../resources/bellflower.png';
 import HibiscusImage from '../../../resources/hibiscus.png';
+import HydrangeaImage from '../../../resources/hydrangea.png';
 import HostaImage from '../../../resources/hosta.png';
+import PeonyImage from '../../../resources/peony.png';
 import SunflowerImage from '../../../resources/sunflower.png';
 import TallBushImage from '../../../resources/tall_bush.png';
 import TulipImage from '../../../resources/tulip.png';
@@ -67,9 +69,17 @@ const FlowerSelection = () => {
         <img alt={FlowerType.Hibiscus} src={HibiscusImage} height={20} style={{ paddingRight: '19px' }} />{' '}
         {i18n.t('flower.Hibiscus', lang)}
       </Option>
+      <Option key={FlowerType.Hydrangea} value={FlowerType.Hydrangea}>
+        <img alt={FlowerType.Hydrangea} src={HydrangeaImage} height={20} style={{ paddingRight: '19px' }} />{' '}
+        {i18n.t('flower.Hydrangea', lang)}
+      </Option>
       <Option key={FlowerType.Hosta} value={FlowerType.Hosta}>
         <img alt={FlowerType.Hosta} src={HostaImage} height={20} style={{ paddingRight: '17px' }} />{' '}
         {i18n.t('flower.Hosta', lang)}
+      </Option>
+      <Option key={FlowerType.Peony} value={FlowerType.Peony}>
+        <img alt={FlowerType.Peony} src={PeonyImage} height={20} style={{ paddingRight: '17px' }} />{' '}
+        {i18n.t('flower.Peony', lang)}
       </Option>
       <Option key={FlowerType.TallBush} value={FlowerType.TallBush}>
         <img alt={FlowerType.TallBush} src={TallBushImage} height={20} style={{ paddingRight: '32px' }} />{' '}

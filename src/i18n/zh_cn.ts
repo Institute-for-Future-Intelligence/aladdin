@@ -1132,6 +1132,8 @@ export const i18n_zh_cn = {
       Bellflower: '风铃草',
       Hibiscus: '木槿',
       Hosta: '玉簪',
+      Hydrangea: '绣球花',
+      Peony: '牡丹',
       RedRose: '红玫瑰',
       Sunflower: '向日葵',
       TallBush: '高灌木',
