@@ -1,7 +1,7 @@
 {
-  "docid": "ow6assxmM4ozjdXkfVK4MT",
-  "time": "10/10/2022 10:40 pm",
-  "timestamp": 1665456041087,
+  "docid": "ky5smeAuzf3RR9gPq24yZq",
+  "time": "10/11/2022 07:49 pm",
+  "timestamp": 1665532152290,
   "userid": "QWecNcxhyvP6j6sBN11hBsfZDau1",
   "owner": null,
   "email": null,
@@ -2783,9 +2783,9 @@
     "dailyHeliostatYieldPanelX": 0,
     "showDailyParabolicDishYieldPanel": false,
     "cameraPosition": [
-      22.592272496182872,
-      16.243638391134738,
-      6.167497818327282
+      26.43847027590503,
+      17.70252635628829,
+      7.229485929016996
     ],
     "showYearlyHeliostatYieldPanel": false,
     "orthographic": false,
@@ -2822,7 +2822,7 @@
     "dailyFresnelReflectorYieldPanelY": 0,
     "weatherPanelY": 0,
     "dailyLightSensorPanelY": 0,
-    "groundColor": "#16a5a5",
+    "groundColor": "#696635",
     "mapTilt": 0,
     "showYearlyPvYieldPanel": false,
     "dailyParabolicDishYieldPanelY": 0,
@@ -2834,9 +2834,9 @@
     "shadowEnabled": true,
     "showInstructionPanel": true,
     "panCenter": [
-      -5.232913550426323,
-      -6.636494264736172,
-      5.127331758911515
+      -5.777698750300634,
+      -5.8926607007251075,
+      7.229485929016996
     ],
     "yearlyFresnelReflectorYieldPanelY": 0,
     "showHeliodonPanel": false,

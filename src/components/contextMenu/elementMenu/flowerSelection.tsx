@@ -8,6 +8,7 @@ import { useStore } from '../../../stores/common';
 import * as Selector from '../../../stores/selector';
 import { FlowerType } from '../../../types';
 import BellflowerImage from '../../../resources/bellflower.png';
+import BoxwoodImage from '../../../resources/boxwood.png';
 import HibiscusImage from '../../../resources/hibiscus.png';
 import HydrangeaImage from '../../../resources/hydrangea.png';
 import HostaImage from '../../../resources/hosta.png';
@@ -70,35 +71,39 @@ const FlowerSelection = () => {
         {i18n.t('flower.Hibiscus', lang)}
       </Option>
       <Option key={FlowerType.Hydrangea} value={FlowerType.Hydrangea}>
-        <img alt={FlowerType.Hydrangea} src={HydrangeaImage} height={20} style={{ paddingRight: '19px' }} />{' '}
+        <img alt={FlowerType.Hydrangea} src={HydrangeaImage} height={20} style={{ paddingRight: '18px' }} />{' '}
         {i18n.t('flower.Hydrangea', lang)}
       </Option>
       <Option key={FlowerType.Hosta} value={FlowerType.Hosta}>
-        <img alt={FlowerType.Hosta} src={HostaImage} height={20} style={{ paddingRight: '17px' }} />{' '}
+        <img alt={FlowerType.Hosta} src={HostaImage} height={20} style={{ paddingRight: '18px' }} />{' '}
         {i18n.t('flower.Hosta', lang)}
       </Option>
       <Option key={FlowerType.Peony} value={FlowerType.Peony}>
         <img alt={FlowerType.Peony} src={PeonyImage} height={20} style={{ paddingRight: '17px' }} />{' '}
         {i18n.t('flower.Peony', lang)}
       </Option>
+      <Option key={FlowerType.Boxwood} value={FlowerType.Boxwood}>
+        <img alt={FlowerType.Boxwood} src={BoxwoodImage} height={20} style={{ paddingRight: '23px' }} />{' '}
+        {i18n.t('flower.Boxwood', lang)}
+      </Option>
       <Option key={FlowerType.TallBush} value={FlowerType.TallBush}>
         <img alt={FlowerType.TallBush} src={TallBushImage} height={20} style={{ paddingRight: '32px' }} />{' '}
         {i18n.t('flower.TallBush', lang)}
       </Option>
       <Option key={FlowerType.RedRose} value={FlowerType.RedRose}>
-        <img alt={FlowerType.RedRose} src={RedRoseImage} height={20} style={{ paddingRight: '29px' }} />{' '}
+        <img alt={FlowerType.RedRose} src={RedRoseImage} height={20} style={{ paddingRight: '28px' }} />{' '}
         {i18n.t('flower.RedRose', lang)}
       </Option>
       <Option key={FlowerType.Bellflower} value={FlowerType.Bellflower}>
-        <img alt={FlowerType.Bellflower} src={BellflowerImage} height={20} style={{ paddingRight: '29px' }} />{' '}
+        <img alt={FlowerType.Bellflower} src={BellflowerImage} height={20} style={{ paddingRight: '28px' }} />{' '}
         {i18n.t('flower.Bellflower', lang)}
       </Option>
       <Option key={FlowerType.Sunflower} value={FlowerType.Sunflower}>
-        <img alt={FlowerType.Sunflower} src={SunflowerImage} height={20} style={{ paddingRight: '34px' }} />{' '}
+        <img alt={FlowerType.Sunflower} src={SunflowerImage} height={20} style={{ paddingRight: '33px' }} />{' '}
         {i18n.t('flower.Sunflower', lang)}
       </Option>
       <Option key={FlowerType.Tulip} value={FlowerType.Tulip}>
-        <img alt={FlowerType.Tulip} src={TulipImage} height={20} style={{ paddingRight: '27px' }} />{' '}
+        <img alt={FlowerType.Tulip} src={TulipImage} height={20} style={{ paddingRight: '26px' }} />{' '}
         {i18n.t('flower.Tulip', lang)}
       </Option>
     </Select>

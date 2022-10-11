@@ -1,13 +1,13 @@
 {
-  "docid": "cNcAFcN8nabJRGk8SQBrB9",
-  "time": "10/10/2022 08:03 pm",
-  "timestamp": 1665446591627,
+  "docid": "ukFo2UEzo7x7xaiQSd3KTL",
+  "time": "10/11/2022 07:37 pm",
+  "timestamp": 1665531435647,
   "userid": "QWecNcxhyvP6j6sBN11hBsfZDau1",
   "owner": null,
   "email": null,
   "world": {
     "solarRadiationHeatmapGridCellSize": 0.5,
-    "date": "9/22/2022 11:00:00 AM",
+    "date": "5/22/2022, 11:00:00 AM",
     "cspTimesPerHour": 4,
     "noAnimationForHeatmapSimulation": false,
     "cspGridCellSize": 0.5,
@@ -1738,12 +1738,12 @@
     },
     {
       "type": "Tree",
-      "name": "Elm",
-      "cx": -9.347181058392012,
-      "cy": 0.4242406854869252,
-      "cz": 4.440892098500626e-16,
-      "lx": 6.683931290658929,
-      "lz": 12.15197062280856,
+      "name": "Magnolia",
+      "cx": -8.881503541908241,
+      "cy": 1.189320872789331,
+      "cz": 8.881784197001252e-16,
+      "lx": 4.912808046869838,
+      "lz": 6.392147967954518,
       "normal": [
         0,
         1,
@@ -1785,9 +1785,9 @@
     {
       "type": "Human",
       "name": "Jack",
-      "cx": -8.03216062204863,
-      "cy": -2.0902758018992014,
-      "cz": 0,
+      "cx": -7.974613533200657,
+      "cy": -4.521571410086505,
+      "cz": 8.881784197001252e-16,
       "lx": 0.6,
       "lz": 1.8,
       "normal": [
@@ -2068,6 +2068,72 @@
       "parentId": "Ground",
       "id": "kAuo84ejkCrSVu9PCaPugg",
       "selected": false
+    },
+    {
+      "type": "Flower",
+      "name": "Hydrangea",
+      "cx": -2.260730692923346,
+      "cy": -7.788294672680767,
+      "cz": 0,
+      "lx": 2,
+      "lz": 1.5,
+      "normal": [
+        0,
+        1,
+        0
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "parentId": "Ground",
+      "id": "kmbR9RJMfaDSwNReuSKCjQ",
+      "selected": false
+    },
+    {
+      "type": "Flower",
+      "name": "Hydrangea",
+      "cx": 2.715206673118412,
+      "cy": -8.09983822589874,
+      "cz": 8.881784197001252e-16,
+      "lx": 2,
+      "lz": 1.5,
+      "normal": [
+        0,
+        0,
+        1
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "parentId": "Ground",
+      "id": "8bs3duj4DEPj8B5fQB6m61",
+      "selected": false
+    },
+    {
+      "type": "Flower",
+      "name": "Hydrangea",
+      "cx": 0.1515942802289605,
+      "cy": -7.9071988397857425,
+      "cz": 8.881784197001252e-16,
+      "lx": 2,
+      "lz": 1.5,
+      "normal": [
+        0,
+        0,
+        1
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "parentId": "Ground",
+      "id": "xiFfAWcKYuiBh744RUaZyc",
+      "selected": false
     }
   ],
   "view": {
@@ -2087,7 +2153,7 @@
       -0.000020000888987681265,
       150
     ],
-    "theme": "Default",
+    "theme": "Forest",
     "showDesignInfoPanel": false,
     "weatherPanelX": 0,
     "dailyParabolicTroughYieldPanelX": 0,
@@ -2099,8 +2165,8 @@
     "dailyHeliostatYieldPanelX": 0,
     "showDailyParabolicDishYieldPanel": false,
     "cameraPosition": [
-      -9.659477084679908,
-      -13.97594791444969,
+      -10.307527491623615,
+      -17.65874023355402,
       2.910969821321196
     ],
     "showYearlyHeliostatYieldPanel": false,
@@ -2138,7 +2204,7 @@
     "dailyFresnelReflectorYieldPanelY": 0,
     "weatherPanelY": 0,
     "dailyLightSensorPanelY": 0,
-    "groundColor": "forestgreen",
+    "groundColor": "#3a8569",
     "mapTilt": 0,
     "showYearlyPvYieldPanel": false,
     "dailyParabolicDishYieldPanelY": 0,

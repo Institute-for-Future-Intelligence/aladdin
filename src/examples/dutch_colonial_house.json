@@ -1,7 +1,7 @@
 {
-  "docid": "6nqDjJ7YicTNYDTaWr36Sv",
-  "time": "10/09/2022 02:05 pm",
-  "timestamp": 1665338752271,
+  "docid": "4EDquAVpKS8pEKTH1KAnSq",
+  "time": "10/11/2022 07:25 pm",
+  "timestamp": 1665530746928,
   "userid": "QWecNcxhyvP6j6sBN11hBsfZDau1",
   "owner": null,
   "email": null,
@@ -434,8 +434,8 @@
     {
       "type": "Tree",
       "name": "Oak",
-      "cx": 2.0577952802140125,
-      "cy": -5.568044693326957,
+      "cx": 2.425104818250052,
+      "cy": -4.93868341616075,
       "cz": 0,
       "lx": 10.895960043710977,
       "lz": 11.07548039661273,
@@ -2682,6 +2682,94 @@
       "parentId": "jjxHg8QgQHBYMPjmTLKh9Y",
       "id": "bJusUpxFXhNuVLWkwSgPDp",
       "selected": false
+    },
+    {
+      "type": "Flower",
+      "name": "Boxwood",
+      "cx": -2.87321567923515,
+      "cy": -4.942444736907442,
+      "cz": 0.05000000074505806,
+      "lx": 1.6,
+      "lz": 1.44,
+      "normal": [
+        0,
+        1,
+        0
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "parentId": "jjxHg8QgQHBYMPjmTLKh9Y",
+      "id": "abgyaezp654EktrPW99LBw",
+      "selected": false
+    },
+    {
+      "type": "Flower",
+      "name": "Boxwood",
+      "cx": 2.7353017734058103,
+      "cy": -4.95948193072531,
+      "cz": 0.05000000074505717,
+      "lx": 1.6,
+      "lz": 1.44,
+      "normal": [
+        0,
+        0,
+        1
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "parentId": "jjxHg8QgQHBYMPjmTLKh9Y",
+      "id": "7MNjP1XvBJBd9d5PFunfnH",
+      "selected": false
+    },
+    {
+      "type": "Flower",
+      "name": "Hibiscus",
+      "cx": -7.11352542739583,
+      "cy": -0.10622517047163627,
+      "cz": 0.04152001813054085,
+      "lx": 2,
+      "lz": 1.7,
+      "normal": [
+        0,
+        0,
+        1
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "parentId": "m7AH7DcnoGzAq9kryBy4RS",
+      "id": "1FPVPX2cPwyJtX2iR6TB6X",
+      "selected": false
+    },
+    {
+      "type": "Flower",
+      "name": "Hydrangea",
+      "cx": 1.557927859324657,
+      "cy": -0.0863289361364008,
+      "cz": 0.05000000074505806,
+      "lx": 2,
+      "lz": 1.5,
+      "normal": [
+        0,
+        0,
+        1
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "parentId": "1tKxhv9RZ3WGSr4yfyFtGe",
+      "id": "qbSQDtvRnmoWesph95KY9z",
+      "selected": false
     }
   ],
   "view": {
@@ -2701,7 +2789,7 @@
       -5.940703507323082,
       150
     ],
-    "theme": "Default",
+    "theme": "Rural",
     "showDesignInfoPanel": false,
     "weatherPanelX": 0,
     "dailyParabolicTroughYieldPanelX": 0,
@@ -2713,9 +2801,9 @@
     "dailyHeliostatYieldPanelX": 0,
     "showDailyParabolicDishYieldPanel": false,
     "cameraPosition": [
-      -19.896272549425436,
-      -13.652656251287869,
-      2.847312898275407
+      -22.220435762648833,
+      -14.963325597941925,
+      2.2031852393982776
     ],
     "showYearlyHeliostatYieldPanel": false,
     "orthographic": false,
@@ -2764,9 +2852,9 @@
     "shadowEnabled": true,
     "showInstructionPanel": true,
     "panCenter": [
-      -1.8665308028228198,
-      2.178623048106929,
-      1.6698907706771755
+      -1.8603752280208514,
+      2.1733876724477237,
+      1.6438782201852316
     ],
     "yearlyFresnelReflectorYieldPanelY": 0,
     "showHeliodonPanel": false,

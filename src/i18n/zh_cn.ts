@@ -1134,6 +1134,7 @@ export const i18n_zh_cn = {
 
     flower: {
       Bellflower: '风铃草',
+      Boxwood: '黄杨',
       Hibiscus: '木槿',
       Hosta: '玉簪',
       Hydrangea: '绣球花',

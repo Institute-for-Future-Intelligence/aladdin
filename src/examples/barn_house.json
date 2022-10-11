@@ -1,7 +1,7 @@
 {
-  "docid": "fzqgMNK1qjXY1RVr7A3bgb",
-  "time": "10/10/2022 10:46 pm",
-  "timestamp": 1665456414839,
+  "docid": "kqmYmnbQLgsSYNd3pxwW8W",
+  "time": "10/11/2022 07:45 pm",
+  "timestamp": 1665531911397,
   "userid": "QWecNcxhyvP6j6sBN11hBsfZDau1",
   "owner": null,
   "email": null,
@@ -1362,7 +1362,7 @@
       ],
       "parentId": "Ground",
       "id": "b1PLNbuHYXMSFSk3EuJWpe",
-      "selected": true,
+      "selected": false,
       "evergreen": false
     },
     {
@@ -2113,7 +2113,7 @@
     "enableRotate": true,
     "weatherPanelY": 0,
     "cameraPosition": [
-      15.001671507294164,
+      15.001671507294162,
       -32.59316463135336,
       7.179990263150549
     ],
@@ -2182,7 +2182,7 @@
     "dailyParabolicDishYieldPanelY": 0,
     "showYearlyLightSensorPanel": false,
     "heliodonPanelX": 0,
-    "theme": "Default",
+    "theme": "Rural",
     "yearlyLightSensorPanelShowDaylight": false,
     "groundImage": false,
     "showAzimuthAngle": true,

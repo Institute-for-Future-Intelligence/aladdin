@@ -5,6 +5,7 @@
 import NoLeafFlowerImage from './resources/no_leaf_flower.png';
 import NoLeafShrubImage from './resources/no_leaf_shrub.png';
 import BellflowerImage from './resources/bellflower.png';
+import BoxwoodImage from './resources/boxwood.png';
 import HibiscusImage from './resources/hibiscus.png';
 import HydrangeaImage from './resources/hydrangea.png';
 import HostaImage from './resources/hosta.png';
@@ -22,6 +23,8 @@ export class FlowerData {
     switch (name) {
       case FlowerType.Bellflower:
         return 0.4;
+      case FlowerType.Boxwood:
+        return 1.6;
       case FlowerType.Hosta:
         return 1;
       case FlowerType.Hibiscus:
@@ -47,6 +50,8 @@ export class FlowerData {
     switch (name) {
       case FlowerType.Bellflower:
         return 0.8;
+      case FlowerType.Boxwood:
+        return 1.44;
       case FlowerType.Hosta:
         return 0.7;
       case FlowerType.Hibiscus:
@@ -72,6 +77,8 @@ export class FlowerData {
     switch (name) {
       case FlowerType.Bellflower:
         return i18n.t('flower.Bellflower', lang);
+      case FlowerType.Boxwood:
+        return i18n.t('flower.Boxwood', lang);
       case FlowerType.Hibiscus:
         return i18n.t('flower.Hibiscus', lang);
       case FlowerType.Hydrangea:
@@ -98,6 +105,9 @@ export class FlowerData {
       if (name === FlowerType.Hibiscus || name === FlowerType.Hydrangea) {
         return NoLeafShrubImage;
       }
+      if (name === FlowerType.Boxwood) {
+        return BoxwoodImage;
+      }
       if (name === FlowerType.TallBush) {
         return TallBushImage;
       }
@@ -107,6 +117,9 @@ export class FlowerData {
     switch (name) {
       case FlowerType.Bellflower:
         textureImg = BellflowerImage;
+        break;
+      case FlowerType.Boxwood:
+        textureImg = BoxwoodImage;
         break;
       case FlowerType.Hibiscus:
         textureImg = HibiscusImage;

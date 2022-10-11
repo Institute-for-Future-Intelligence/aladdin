@@ -106,35 +106,35 @@ const HumanSelection = () => {
         {i18n.t('people.Jena', lang)}
       </Option>
       <Option key={HumanName.Jeni} value={HumanName.Jeni}>
-        <img alt={HumanName.Jeni} src={JeniImage} height={20} style={{ paddingRight: '8px' }} />{' '}
+        <img alt={HumanName.Jeni} src={JeniImage} height={20} style={{ paddingRight: '4px' }} />{' '}
         {i18n.t('people.Jeni', lang)}
       </Option>
       <Option key={HumanName.Jess} value={HumanName.Jess}>
-        <img alt={HumanName.Jess} src={JessImage} height={20} style={{ paddingRight: '8px' }} />{' '}
+        <img alt={HumanName.Jess} src={JessImage} height={20} style={{ paddingRight: '4px' }} />{' '}
         {i18n.t('people.Jess', lang)}
       </Option>
       <Option key={HumanName.Jett} value={HumanName.Jett}>
-        <img alt={HumanName.Jett} src={JettImage} height={20} style={{ paddingRight: '8px' }} />{' '}
+        <img alt={HumanName.Jett} src={JettImage} height={20} style={{ paddingRight: '6px' }} />{' '}
         {i18n.t('people.Jett', lang)}
       </Option>
       <Option key={HumanName.Jill} value={HumanName.Jill}>
-        <img alt={HumanName.Jill} src={JillImage} height={20} style={{ paddingRight: '8px' }} />{' '}
+        <img alt={HumanName.Jill} src={JillImage} height={20} style={{ paddingRight: '4px' }} />{' '}
         {i18n.t('people.Jill', lang)}
       </Option>
       <Option key={HumanName.Joan} value={HumanName.Joan}>
-        <img alt={HumanName.Joan} src={JoanImage} height={20} style={{ paddingRight: '8px' }} />{' '}
+        <img alt={HumanName.Joan} src={JoanImage} height={20} style={{ paddingRight: '7px' }} />{' '}
         {i18n.t('people.Joan', lang)}
       </Option>
       <Option key={HumanName.Joel} value={HumanName.Joel}>
-        <img alt={HumanName.Joel} src={JoelImage} height={20} style={{ paddingRight: '8px' }} />{' '}
+        <img alt={HumanName.Joel} src={JoelImage} height={20} style={{ paddingRight: '4px' }} />{' '}
         {i18n.t('people.Joel', lang)}
       </Option>
       <Option key={HumanName.John} value={HumanName.John}>
-        <img alt={HumanName.John} src={JohnImage} height={20} style={{ paddingRight: '8px' }} />{' '}
+        <img alt={HumanName.John} src={JohnImage} height={20} style={{ paddingRight: '6px' }} />{' '}
         {i18n.t('people.John', lang)}
       </Option>
       <Option key={HumanName.Jose} value={HumanName.Jose}>
-        <img alt={HumanName.Jose} src={JoseImage} height={20} style={{ paddingRight: '8px' }} />{' '}
+        <img alt={HumanName.Jose} src={JoseImage} height={20} style={{ paddingRight: '0px' }} />{' '}
         {i18n.t('people.Jose', lang)}
       </Option>
       <Option key={HumanName.Judd} value={HumanName.Judd}>

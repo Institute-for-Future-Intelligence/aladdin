@@ -1152,6 +1152,7 @@ export const i18n_tr = {
 
     flower: {
       Bellflower: 'Bellflower',
+      Boxwood: 'Boxwood',
       Hibiscus: 'Hibiscus',
       Hosta: 'Hosta',
       Hydrangea: 'Hydrangea',

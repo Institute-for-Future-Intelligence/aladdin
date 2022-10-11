@@ -338,6 +338,7 @@ export enum TreeType {
 
 export enum FlowerType {
   Bellflower = 'Bellflower',
+  Boxwood = 'Boxwood',
   Hibiscus = 'Hibiscus',
   Hosta = 'Hosta',
   Hydrangea = 'Hydrangea',

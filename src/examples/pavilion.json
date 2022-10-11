@@ -1,7 +1,7 @@
 {
-  "docid": "76bNJtogbzpXZZDVjGWuRi",
-  "time": "10/09/2022 03:32 pm",
-  "timestamp": 1665343922461,
+  "docid": "ikXXe8Jou8Y5an7uWBeiGk",
+  "time": "10/11/2022 07:42 pm",
+  "timestamp": 1665531728950,
   "userid": "QWecNcxhyvP6j6sBN11hBsfZDau1",
   "owner": null,
   "email": null,
@@ -837,12 +837,12 @@
     },
     {
       "type": "Tree",
-      "name": "Oak",
-      "cx": 3.2424924889884394,
-      "cy": -11.34542001835042,
+      "name": "Palm",
+      "cx": 7.251715647212778,
+      "cy": -10.505968773741833,
       "cz": 0,
-      "lx": 11.555158252920656,
-      "lz": 7.773141490819702,
+      "lx": 6.375358320482912,
+      "lz": 8.451212523084012,
       "normal": [
         0,
         1,
@@ -897,12 +897,12 @@
     },
     {
       "type": "Flower",
-      "name": "White Flower",
+      "name": "Peony",
       "cx": 7.023550381410839,
       "cy": -3.8877826159721582,
       "cz": 0.12499999999999956,
-      "lx": 0.8,
-      "lz": 0.5,
+      "lx": 1.5,
+      "lz": 1,
       "normal": [
         0,
         1,
@@ -919,12 +919,12 @@
     },
     {
       "type": "Flower",
-      "name": "White Flower",
+      "name": "Peony",
       "cx": 6.9734776254848185,
       "cy": -2.9143031643660438,
       "cz": 0.125,
-      "lx": 0.8,
-      "lz": 0.5,
+      "lx": 1.5,
+      "lz": 1,
       "normal": [
         0,
         1,
@@ -941,12 +941,12 @@
     },
     {
       "type": "Flower",
-      "name": "White Flower",
+      "name": "Peony",
       "cx": 6.9889157221008045,
       "cy": -1.8856467808244108,
       "cz": 0.125,
-      "lx": 0.8,
-      "lz": 0.5,
+      "lx": 1.5,
+      "lz": 1,
       "normal": [
         0,
         1,
@@ -963,12 +963,12 @@
     },
     {
       "type": "Flower",
-      "name": "White Flower",
+      "name": "Peony",
       "cx": 7.056609460752512,
       "cy": 2.106696532214023,
       "cz": 0.125,
-      "lx": 0.8,
-      "lz": 0.5,
+      "lx": 1.5,
+      "lz": 1,
       "normal": [
         0,
         1,
@@ -985,12 +985,12 @@
     },
     {
       "type": "Flower",
-      "name": "White Flower",
+      "name": "Peony",
       "cx": 7.073130172902122,
       "cy": 3.1951278306332282,
       "cz": 0.125,
-      "lx": 0.8,
-      "lz": 0.5,
+      "lx": 1.5,
+      "lz": 1,
       "normal": [
         0,
         1,
@@ -1007,12 +1007,12 @@
     },
     {
       "type": "Flower",
-      "name": "White Flower",
+      "name": "Peony",
       "cx": 6.831179450888563,
       "cy": 4.436138900477424,
       "cz": 0.125,
-      "lx": 0.8,
-      "lz": 0.5,
+      "lx": 1.5,
+      "lz": 1,
       "normal": [
         0,
         1,
@@ -1025,6 +1025,50 @@
       ],
       "parentId": "m7AH7DcnoGzAq9kryBy4RS",
       "id": "7ETHmh5VY9WD7DqvsYegAD",
+      "selected": false
+    },
+    {
+      "type": "Tree",
+      "name": "Palm",
+      "cx": -5.244846493412208,
+      "cy": -10.273834492491718,
+      "cz": -2.842170943040401e-14,
+      "lx": 6.375358320482912,
+      "lz": 8.451212523084012,
+      "normal": [
+        0,
+        0,
+        1
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "parentId": "Ground",
+      "id": "stqfKSZKDeaDe1syQCZ2RQ",
+      "selected": false
+    },
+    {
+      "type": "Tree",
+      "name": "Palm",
+      "cx": 0.9840900534627863,
+      "cy": -10.428590679991792,
+      "cz": 0,
+      "lx": 6.375358320482912,
+      "lz": 8.451212523084012,
+      "normal": [
+        0,
+        0,
+        1
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "parentId": "Ground",
+      "id": "u5zC3LfHnyukcnd2TZGm5n",
       "selected": false
     }
   ],
@@ -1042,10 +1086,10 @@
     "yearlyHeliostatYieldPanelX": 0,
     "cameraPosition2D": [
       3.150676678462785,
-      4.331260701934754,
-      20.000004331460865
+      4.331130696160679,
+      150
     ],
-    "theme": "Default",
+    "theme": "Grassland",
     "showDesignInfoPanel": false,
     "weatherPanelX": 0,
     "dailyParabolicTroughYieldPanelX": 0,
@@ -1057,9 +1101,9 @@
     "dailyHeliostatYieldPanelX": 0,
     "showDailyParabolicDishYieldPanel": false,
     "cameraPosition": [
-      18.91754990904005,
-      0.055982750292218525,
-      3.3518820782840795
+      13.154360537657768,
+      -11.914490261826392,
+      3.0540051065770526
     ],
     "showYearlyHeliostatYieldPanel": false,
     "orthographic": false,
@@ -1076,7 +1120,7 @@
     "dailyLightSensorPanelX": 0,
     "heliodon": false,
     "solarRadiationHeatMapReflectionOnly": false,
-    "cameraZoom": 35.161738318212514,
+    "cameraZoom": 25.84710869799634,
     "mapType": "roadmap",
     "showMapPanel": false,
     "yearlyParabolicDishYieldPanelY": 0,
@@ -1108,9 +1152,9 @@
     "shadowEnabled": true,
     "showInstructionPanel": true,
     "panCenter": [
-      0.4827801267110169,
-      0.16897239338376177,
-      1.7986403142487255
+      0.4582145750848221,
+      0.21636723466539706,
+      2.315563190328741
     ],
     "yearlyFresnelReflectorYieldPanelY": 0,
     "showHeliodonPanel": false,
