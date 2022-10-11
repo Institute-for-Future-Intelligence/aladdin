@@ -427,6 +427,7 @@ export const i18n_tr = {
       ThemeForest: 'Orman',
       ThemeGrassland: 'Çayır',
       ThemeMountain: 'Mountain',
+      ThemeRural: 'Rural',
       SunlightAttenuationCoefficientInAir: 'Havan Güneş Işığı Zayıflatma Katsayısı',
       ConvectiveCoefficientOfAir: 'Havan Isı İletkenlik Katsayısı',
       HighestTemperatureTimeInMinutes: 'En Yüksek Sıcaklık Süresi (Dakika)',

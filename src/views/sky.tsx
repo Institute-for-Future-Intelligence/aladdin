@@ -11,10 +11,14 @@ import DefaultDaySkyImage from '../resources/daysky.jpg';
 import DefaultNightSkyImage from '../resources/nightsky.jpg';
 import DesertDaySkyImage from '../resources/desert.jpg';
 import DesertNightSkyImage from '../resources/desert-night.jpg';
-import MountainDaySkyImage from '../resources/mountain.jpg';
-import MountainNightSkyImage from '../resources/mountain-night.jpg';
+import ForestDaySkyImage from '../resources/forest.jpg';
+import ForestNightSkyImage from '../resources/forest-night.jpg';
 import GrasslandDaySkyImage from '../resources/grassland.jpg';
 import GrasslandNightSkyImage from '../resources/grassland-night.jpg';
+import MountainDaySkyImage from '../resources/mountain.jpg';
+import MountainNightSkyImage from '../resources/mountain-night.jpg';
+import RuralDaySkyImage from '../resources/rural.jpg';
+import RuralNightSkyImage from '../resources/rural-night.jpg';
 
 import { useStore } from '../stores/common';
 import { useStoreRef } from 'src/stores/commonRef';
@@ -104,10 +108,14 @@ const Sky = ({ theme = 'Default' }: SkyProps) => {
     switch (theme) {
       case 'Desert':
         return 0.5;
-      case 'Mountain':
-        return 0.3;
+      case 'Forest':
+        return 0.25;
       case 'Grassland':
-        return 0.2;
+        return 0.15;
+      case 'Mountain':
+        return 0.4;
+      case 'Rural':
+        return 0.25;
       default:
         return 0.2;
     }
@@ -117,10 +125,14 @@ const Sky = ({ theme = 'Default' }: SkyProps) => {
     switch (theme) {
       case 'Desert':
         return night ? DesertNightSkyImage : DesertDaySkyImage;
-      case 'Mountain':
-        return night ? MountainNightSkyImage : MountainDaySkyImage;
+      case 'Forest':
+        return night ? ForestNightSkyImage : ForestDaySkyImage;
       case 'Grassland':
         return night ? GrasslandNightSkyImage : GrasslandDaySkyImage;
+      case 'Mountain':
+        return night ? MountainNightSkyImage : MountainDaySkyImage;
+      case 'Rural':
+        return night ? RuralNightSkyImage : RuralDaySkyImage;
       default:
         return night ? DefaultNightSkyImage : DefaultDaySkyImage;
     }
@@ -133,6 +145,7 @@ const Sky = ({ theme = 'Default' }: SkyProps) => {
       type === ObjectType.Foundation ||
       type === ObjectType.Cuboid ||
       type === ObjectType.Tree ||
+      type === ObjectType.Flower ||
       type === ObjectType.Human
     );
   };
