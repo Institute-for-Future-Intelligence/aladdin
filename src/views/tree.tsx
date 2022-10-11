@@ -125,11 +125,11 @@ const Tree = ({
   }, [fileChangedState]);
 
   const textureLoader = useMemo(() => {
-    return new TextureLoader().load(TreeData.fetchTextureImage(name, noLeaves), (texture) => {
+    return new TextureLoader().load(TreeData.fetchTextureImage(name, month, latitude), (texture) => {
       setTexture(texture);
       setUpdateFlag(!updateFlag);
     });
-  }, [name, noLeaves]);
+  }, [name, month, latitude]);
   const [texture, setTexture] = useState(textureLoader);
 
   const labelText = useMemo(() => {

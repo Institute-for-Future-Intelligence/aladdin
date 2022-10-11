@@ -328,10 +328,12 @@ export enum TreeType {
   Dogwood = 'Dogwood',
   Elm = 'Elm',
   Linden = 'Linden',
+  Magnolia = 'Magnolia',
   Maple = 'Maple',
   Oak = 'Oak',
-  Spruce = 'Spruce',
+  Palm = 'Palm',
   Pine = 'Pine',
+  Spruce = 'Spruce',
 }
 
 export enum FlowerType {
