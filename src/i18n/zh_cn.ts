@@ -443,6 +443,7 @@ export const i18n_zh_cn = {
       RemoveAllUnlockedCuboids: '删除所有非固定的长方体',
       DoYouReallyWantToRemoveAllPeople: '你确定删除所有非固定的人物吗',
       DoYouReallyWantToRemoveAllTrees: '你确定删除所有非固定的树木吗',
+      DoYouReallyWantToRemoveAllFlowers: '你确定删除所有非固定的花草吗',
       DoYouReallyWantToRemoveAllFoundations: '你确定删除所有非固定的地基吗',
       DoYouReallyWantToRemoveAllCuboids: '你确定删除所有非固定的长方体吗',
       LockAllElements: '固定所有的部件',

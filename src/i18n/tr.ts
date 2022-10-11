@@ -445,6 +445,7 @@ export const i18n_tr = {
       RemoveAllUnlockedCuboids: 'Tüm Kübikleri Kaldır',
       DoYouReallyWantToRemoveAllPeople: 'Tüm Kişileri Kaldırmak İstiyor Musunuz?',
       DoYouReallyWantToRemoveAllTrees: 'Tüm Ağaçları Kaldırmak İstiyor Musunuz?',
+      DoYouReallyWantToRemoveAllFlowers: 'Do you really want to remove all the flowers that are not locked',
       DoYouReallyWantToRemoveAllFoundations: 'Tüm Temelleri Kaldırmak İstiyor Musunuz?',
       DoYouReallyWantToRemoveAllCuboids: 'Tüm Kübikleri Kaldırmak İstiyor Musunuz?',
       LockAllElements: 'Tüm Öğeleri Kilitle',

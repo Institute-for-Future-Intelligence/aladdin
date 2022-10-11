@@ -1,7 +1,7 @@
 {
-  "docid": "m8qh2fNXMdEQv8DDsobzid",
-  "time": "10/09/2022 03:28 pm",
-  "timestamp": 1665343683025,
+  "docid": "cNcAFcN8nabJRGk8SQBrB9",
+  "time": "10/10/2022 08:03 pm",
+  "timestamp": 1665446591627,
   "userid": "QWecNcxhyvP6j6sBN11hBsfZDau1",
   "owner": null,
   "email": null,
@@ -1785,9 +1785,9 @@
     {
       "type": "Human",
       "name": "Jack",
-      "cx": -7.925051209837608,
-      "cy": -0.6222679128302069,
-      "cz": -8.881784197001252e-16,
+      "cx": -8.03216062204863,
+      "cy": -2.0902758018992014,
+      "cz": 0,
       "lx": 0.6,
       "lz": 1.8,
       "normal": [
@@ -1807,12 +1807,12 @@
     },
     {
       "type": "Flower",
-      "name": "White Flower",
-      "cx": -4.783236075916601,
-      "cy": -4.868899367330014,
-      "cz": -8.881784197001252e-16,
-      "lx": 0.8,
-      "lz": 0.5,
+      "name": "Hosta",
+      "cx": -6.306441231413446,
+      "cy": -4.762303364786677,
+      "cz": 4.440892098500626e-16,
+      "lx": 1,
+      "lz": 0.7,
       "normal": [
         0,
         1,
@@ -1830,8 +1830,8 @@
     {
       "type": "Flower",
       "name": "White Flower",
-      "cx": 5.6352204006226705,
-      "cy": -5.080582428729858,
+      "cx": 6.169203623475488,
+      "cy": -5.72637309429814,
       "cz": 0,
       "lx": 0.8,
       "lz": 0.5,
@@ -1851,12 +1851,12 @@
     },
     {
       "type": "Flower",
-      "name": "White Flower",
-      "cx": -4.738544850931307,
-      "cy": -6.045285265352707,
-      "cz": -8.881784197001252e-16,
-      "lx": 0.8,
-      "lz": 0.5,
+      "name": "Hosta",
+      "cx": -5.061905234310647,
+      "cy": -5.806918097592128,
+      "cz": -1.7763568394002505e-15,
+      "lx": 1,
+      "lz": 0.7,
       "normal": [
         0,
         1,
@@ -1873,12 +1873,12 @@
     },
     {
       "type": "Flower",
-      "name": "White Flower",
+      "name": "Hosta",
       "cx": 5.621277500928149,
       "cy": -6.190060319204097,
       "cz": -8.881784197001252e-16,
-      "lx": 0.8,
-      "lz": 0.5,
+      "lx": 1,
+      "lz": 0.7,
       "normal": [
         0,
         1,
@@ -1895,7 +1895,7 @@
     },
     {
       "type": "Flower",
-      "name": "Sunflower",
+      "name": "Tall Bush",
       "cx": 5.595155158535762,
       "cy": -5.487791010935521,
       "cz": 0,
@@ -1917,12 +1917,12 @@
     },
     {
       "type": "Flower",
-      "name": "White Flower",
-      "cx": 6.45323558347782,
-      "cy": -5.952978273645982,
+      "name": "Hosta",
+      "cx": 6.558445661570947,
+      "cy": -5.148346193790616,
       "cz": 0,
-      "lx": 0.8,
-      "lz": 0.5,
+      "lx": 1,
+      "lz": 0.7,
       "normal": [
         0,
         0,
@@ -1939,12 +1939,12 @@
     },
     {
       "type": "Flower",
-      "name": "White Flower",
-      "cx": -5.636370155107206,
-      "cy": -5.9356799560829625,
-      "cz": 4.440892098500626e-16,
-      "lx": 0.8,
-      "lz": 0.5,
+      "name": "Red Rose",
+      "cx": -5.407028367581802,
+      "cy": -5.549301025270703,
+      "cz": 0,
+      "lx": 0.5,
+      "lz": 0.8,
       "normal": [
         0,
         0,
@@ -1961,10 +1961,10 @@
     },
     {
       "type": "Flower",
-      "name": "Sunflower",
-      "cx": -4.980866320620283,
-      "cy": -5.519337142964064,
-      "cz": 0,
+      "name": "Tall Bush",
+      "cx": -5.0983220142696055,
+      "cy": -4.5962129398780736,
+      "cz": 8.881784197001252e-16,
       "lx": 1,
       "lz": 2,
       "normal": [
@@ -1979,6 +1979,94 @@
       ],
       "parentId": "Ground",
       "id": "vKDYbBm1LFSeCRbRGxpJzR",
+      "selected": false
+    },
+    {
+      "type": "Flower",
+      "name": "White Flower",
+      "cx": -5.746710484862029,
+      "cy": -5.268820363710504,
+      "cz": 0,
+      "lx": 0.8,
+      "lz": 0.5,
+      "normal": [
+        0,
+        1,
+        0
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "parentId": "Ground",
+      "id": "qrfLBQvCQkPzUhnUEFDgC1",
+      "selected": false
+    },
+    {
+      "type": "Flower",
+      "name": "Red Rose",
+      "cx": 5.955104289170869,
+      "cy": -5.9761317798049545,
+      "cz": 0,
+      "lx": 0.5,
+      "lz": 0.8,
+      "normal": [
+        0,
+        0,
+        1
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "parentId": "Ground",
+      "id": "daEJUZv3vgUrqorbyNtAdL",
+      "selected": false
+    },
+    {
+      "type": "Flower",
+      "name": "Red Rose",
+      "cx": 6.380681139084028,
+      "cy": -5.4372416572511035,
+      "cz": 0,
+      "lx": 0.5,
+      "lz": 0.8,
+      "normal": [
+        0,
+        0,
+        1
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "parentId": "Ground",
+      "id": "oCHH6YeZ2ebkct1XeVw26T",
+      "selected": false
+    },
+    {
+      "type": "Flower",
+      "name": "Red Rose",
+      "cx": -6.0720221613270775,
+      "cy": -5.14772584317228,
+      "cz": 0,
+      "lx": 0.5,
+      "lz": 0.8,
+      "normal": [
+        0,
+        0,
+        1
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "parentId": "Ground",
+      "id": "kAuo84ejkCrSVu9PCaPugg",
       "selected": false
     }
   ],
@@ -1997,7 +2085,7 @@
     "cameraPosition2D": [
       0,
       -0.000020000888987681265,
-      19.99999999998953
+      150
     ],
     "theme": "Default",
     "showDesignInfoPanel": false,
@@ -2011,9 +2099,9 @@
     "dailyHeliostatYieldPanelX": 0,
     "showDailyParabolicDishYieldPanel": false,
     "cameraPosition": [
-      -7.8217469333488285,
-      -15.102157077927906,
-      2.9494875587958296
+      -9.659477084679908,
+      -13.97594791444969,
+      2.910969821321196
     ],
     "showYearlyHeliostatYieldPanel": false,
     "orthographic": false,
@@ -2062,9 +2150,9 @@
     "shadowEnabled": true,
     "showInstructionPanel": true,
     "panCenter": [
-      8.011577165803306,
-      12.742853769682753,
-      2.9494875587958296
+      8.012006845658975,
+      12.740291282552253,
+      2.910969821321196
     ],
     "yearlyFresnelReflectorYieldPanelY": 0,
     "showHeliodonPanel": false,

@@ -446,6 +446,7 @@ export const i18n_en = {
       RemoveAllUnlockedCuboids: 'Remove All Unlocked Cuboids',
       DoYouReallyWantToRemoveAllPeople: 'Do you really want to remove all the people who are not locked',
       DoYouReallyWantToRemoveAllTrees: 'Do you really want to remove all the trees that are not locked',
+      DoYouReallyWantToRemoveAllFlowers: 'Do you really want to remove all the flowers that are not locked',
       DoYouReallyWantToRemoveAllFoundations: 'Do you really want to remove all the foundations that are not locked',
       DoYouReallyWantToRemoveAllCuboids: 'Do you really want to remove all the cuboids that are not locked',
       LockAllElements: 'Lock All Elements',

@@ -444,6 +444,7 @@ export const i18n_zh_tw = {
       RemoveAllUnlockedCuboids: '删除所有非固定的長方體',
       DoYouReallyWantToRemoveAllPeople: '你確定刪除所有非固定的人物嗎',
       DoYouReallyWantToRemoveAllTrees: '你確定刪除所有非固定的樹木嗎',
+      DoYouReallyWantToRemoveAllFlowers: '你確定刪除所有非固定的花草嗎',
       DoYouReallyWantToRemoveAllFoundations: '你確定刪除所有非固定的地基嗎',
       DoYouReallyWantToRemoveAllCuboids: '你確定刪除所有非固定的長方體嗎',
       LockAllElements: '固定所有的部件',

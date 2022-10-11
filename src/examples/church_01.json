@@ -1,7 +1,7 @@
 {
-  "docid": "raueo3TePBctK9hrNzg55n",
-  "time": "10/09/2022 03:37 pm",
-  "timestamp": 1665344245042,
+  "docid": "dutnn9d3Q2CmW7jb2krRT8",
+  "time": "10/10/2022 08:05 pm",
+  "timestamp": 1665446729569,
   "userid": "QWecNcxhyvP6j6sBN11hBsfZDau1",
   "owner": null,
   "email": null,
@@ -559,7 +559,13 @@
       "id": "62Gv8U29wFJyJf1vgeLMyo",
       "parentId": "pPpJHGJ2bGVqLdA1FpXi4V",
       "foundationId": "fbqvzYqiEy79jeL8wsadib",
-      "selected": false
+      "selected": false,
+      "shutter": {
+        "showLeft": false,
+        "showRight": false,
+        "color": "grey",
+        "width": 0.5
+      }
     },
     {
       "type": "Wall",
@@ -2552,8 +2558,8 @@
     {
       "type": "Flower",
       "name": "White Flower",
-      "cx": 15.230954319870396,
-      "cy": 3.266361890815464,
+      "cx": 15.15556957531615,
+      "cy": 3.2795889445752495,
       "cz": 0.5,
       "lx": 0.8,
       "lz": 0.5,
@@ -2618,9 +2624,9 @@
     {
       "type": "Flower",
       "name": "White Flower",
-      "cx": 14.929595568948628,
-      "cy": -3.7198928799834055,
-      "cz": 0.5000000000000009,
+      "cx": 15.073985679510187,
+      "cy": -3.688355208079927,
+      "cz": 0.5,
       "lx": 0.8,
       "lz": 0.5,
       "normal": [
@@ -2821,9 +2827,9 @@
     "dailyHeliostatYieldPanelX": 0,
     "showDailyParabolicDishYieldPanel": false,
     "cameraPosition": [
-      29.161816191896015,
-      20.01964749610783,
-      13.141121637414276
+      29.529089978449612,
+      19.772851580781833,
+      12.332726856224147
     ],
     "showYearlyHeliostatYieldPanel": false,
     "orthographic": false,

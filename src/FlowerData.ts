@@ -22,7 +22,7 @@ export class FlowerData {
       case FlowerType.Hosta:
         return 1;
       case FlowerType.RedRose:
-        return 0;
+        return 0.5;
       case FlowerType.Sunflower:
         return 1;
       case FlowerType.TallBush:
@@ -41,7 +41,7 @@ export class FlowerData {
       case FlowerType.Hosta:
         return 0.7;
       case FlowerType.RedRose:
-        return 1;
+        return 0.8;
       case FlowerType.Sunflower:
         return 2;
       case FlowerType.TallBush:
