@@ -11,8 +11,8 @@ import DefaultDaySkyImage from '../resources/daysky.jpg';
 import DefaultNightSkyImage from '../resources/nightsky.jpg';
 import DesertDaySkyImage from '../resources/desert.jpg';
 import DesertNightSkyImage from '../resources/desert-night.jpg';
-import ForestDaySkyImage from '../resources/forest.jpg';
-import ForestNightSkyImage from '../resources/forest-night.jpg';
+import MountainDaySkyImage from '../resources/mountain.jpg';
+import MountainNightSkyImage from '../resources/mountain-night.jpg';
 import GrasslandDaySkyImage from '../resources/grassland.jpg';
 import GrasslandNightSkyImage from '../resources/grassland-night.jpg';
 
@@ -104,7 +104,7 @@ const Sky = ({ theme = 'Default' }: SkyProps) => {
     switch (theme) {
       case 'Desert':
         return 0.5;
-      case 'Forest':
+      case 'Mountain':
         return 0.3;
       case 'Grassland':
         return 0.2;
@@ -117,8 +117,8 @@ const Sky = ({ theme = 'Default' }: SkyProps) => {
     switch (theme) {
       case 'Desert':
         return night ? DesertNightSkyImage : DesertDaySkyImage;
-      case 'Forest':
-        return night ? ForestNightSkyImage : ForestDaySkyImage;
+      case 'Mountain':
+        return night ? MountainNightSkyImage : MountainDaySkyImage;
       case 'Grassland':
         return night ? GrasslandNightSkyImage : GrasslandDaySkyImage;
       default:

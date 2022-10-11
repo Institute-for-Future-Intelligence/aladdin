@@ -424,6 +424,7 @@ export const i18n_zh_cn = {
       ThemeDesert: '沙漠',
       ThemeForest: '森林',
       ThemeGrassland: '草原',
+      ThemeMountain: '山脉',
       SunlightAttenuationCoefficientInAir: '阳光在空气中传播的衰减系数',
       ConvectiveCoefficientOfAir: '空气对流传热系数',
       HighestTemperatureTimeInMinutes: '最高气温时间(分钟)',

@@ -427,6 +427,7 @@ export const i18n_es = {
       ThemeDesert: 'Desierto',
       ThemeForest: 'Bosque',
       ThemeGrassland: 'Campo',
+      ThemeMountain: 'Mountain',
       SunlightAttenuationCoefficientInAir: 'Sunlight Attenuation Coefficient in Air',
       ConvectiveCoefficientOfAir: 'Convective Coefficient of Air',
       HighestTemperatureTimeInMinutes: 'Highest Temperature Time (Minutes)',

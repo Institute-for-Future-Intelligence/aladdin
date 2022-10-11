@@ -165,6 +165,7 @@ export enum Theme {
   Desert = 'Desert',
   Forest = 'Forest',
   Grassland = 'Grassland',
+  Mountain = 'Mountain',
 }
 
 export enum DiurnalTemperatureModel {
