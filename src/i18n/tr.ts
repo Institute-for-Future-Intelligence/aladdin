@@ -1148,13 +1148,13 @@ export const i18n_tr = {
 
     flower: {
       Bellflower: 'Bellflower',
+      Hibiscus: 'Hibiscus',
       Hosta: 'Hosta',
       RedRose: 'Red Rose',
       Sunflower: 'Sunflower',
       TallBush: 'Tall Bush',
       Tulip: 'Tulip',
       WhiteFlower: 'White Flower',
-      YellowFlower: 'Yellow Flower',
     },
 
     people: {

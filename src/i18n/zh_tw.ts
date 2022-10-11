@@ -1131,13 +1131,13 @@ export const i18n_zh_tw = {
 
     flower: {
       Bellflower: '風鈴草',
+      Hibiscus: '木槿',
       Hosta: '玉簪',
       RedRose: '紅玫瑰',
       Sunflower: '向日葵',
       TallBush: '高灌木',
       Tulip: '鬱金香',
       WhiteFlower: '白花',
-      YellowFlower: '黄花',
     },
 
     people: {
