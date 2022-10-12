@@ -15,7 +15,13 @@ import { UndoableChangeGroup } from '../../../undo/UndoableChangeGroup';
 import { Util } from '../../../Util';
 import { ZERO_TOLERANCE } from '../../../constants';
 
-const SolarPanelTiltAngleInput = ({ setDialogVisible }: { setDialogVisible: (b: boolean) => void }) => {
+const SolarPanelTiltAngleInput = ({
+  setDialogVisible,
+  isOnWall,
+}: {
+  setDialogVisible: (b: boolean) => void;
+  isOnWall?: boolean;
+}) => {
   const language = useStore(Selector.language);
   const elements = useStore(Selector.elements);
   const getElementById = useStore(Selector.getElementById);
@@ -40,11 +46,18 @@ const SolarPanelTiltAngleInput = ({ setDialogVisible }: { setDialogVisible: (b: 
   const rejectedValue = useRef<number | undefined>();
   const inputTiltAngleRef = useRef<number>(solarPanel?.tiltAngle ?? 0);
 
+  if (isOnWall) {
+    inputTiltAngleRef.current = -inputTiltAngleRef.current;
+  }
+
   const lang = { lng: language };
 
   useEffect(() => {
     if (solarPanel) {
       inputTiltAngleRef.current = solarPanel.tiltAngle;
+      if (isOnWall) {
+        inputTiltAngleRef.current = -inputTiltAngleRef.current;
+      }
     }
   }, [solarPanel]);
 
@@ -121,6 +134,9 @@ const SolarPanelTiltAngleInput = ({ setDialogVisible }: { setDialogVisible: (b: 
   };
 
   const setTiltAngle = (value: number) => {
+    if (isOnWall) {
+      value = -value;
+    }
     if (!solarPanel) return;
     if (!needChange(value)) return;
     rejectedValue.current = undefined;
@@ -141,7 +157,7 @@ const SolarPanelTiltAngleInput = ({ setDialogVisible }: { setDialogVisible: (b: 
         } else {
           const oldTiltAnglesAll = new Map<string, number>();
           for (const elem of elements) {
-            if (elem.type === ObjectType.SolarPanel && (elem as SolarPanelModel).parentType !== ObjectType.Wall) {
+            if (elem.type === ObjectType.SolarPanel) {
               oldTiltAnglesAll.set(elem.id, (elem as SolarPanelModel).tiltAngle);
             }
           }
@@ -154,13 +170,18 @@ const SolarPanelTiltAngleInput = ({ setDialogVisible }: { setDialogVisible: (b: 
               for (const [id, ta] of undoableChangeAll.oldValues.entries()) {
                 updateSolarPanelTiltAngleById(id, ta as number);
               }
+              if (undoableChangeAll.oldValues.size % 2 === 0) {
+                useStore.getState().set((state) => {
+                  state.updateWallFlag = !state.updateWallFlag;
+                });
+              }
             },
             redo: () => {
-              updateSolarPanelTiltAngleForAll(undoableChangeAll.newValue as number);
+              updateSolarPanelTiltAngleForAll(undoableChangeAll.newValue as number, !isOnWall);
             },
           } as UndoableChangeGroup;
           addUndoable(undoableChangeAll);
-          updateSolarPanelTiltAngleForAll(value);
+          updateSolarPanelTiltAngleForAll(value, !isOnWall);
           setApplyCount(applyCount + 1);
         }
         break;
@@ -185,11 +206,7 @@ const SolarPanelTiltAngleInput = ({ setDialogVisible }: { setDialogVisible: (b: 
           } else {
             const oldTiltAnglesAboveFoundation = new Map<string, number>();
             for (const elem of elements) {
-              if (
-                elem.type === ObjectType.SolarPanel &&
-                elem.foundationId === solarPanel.foundationId &&
-                (elem as SolarPanelModel).parentType !== ObjectType.Wall
-              ) {
+              if (elem.type === ObjectType.SolarPanel && elem.foundationId === solarPanel.foundationId) {
                 oldTiltAnglesAboveFoundation.set(elem.id, (elem as SolarPanelModel).tiltAngle);
               }
             }
@@ -203,18 +220,24 @@ const SolarPanelTiltAngleInput = ({ setDialogVisible }: { setDialogVisible: (b: 
                 for (const [id, ta] of undoableChangeAboveFoundation.oldValues.entries()) {
                   updateSolarPanelTiltAngleById(id, ta as number);
                 }
+                if (undoableChangeAboveFoundation.oldValues.size % 2 === 0) {
+                  useStore.getState().set((state) => {
+                    state.updateWallFlag = !state.updateWallFlag;
+                  });
+                }
               },
               redo: () => {
                 if (undoableChangeAboveFoundation.groupId) {
                   updateSolarPanelTiltAngleAboveFoundation(
                     undoableChangeAboveFoundation.groupId,
                     undoableChangeAboveFoundation.newValue as number,
+                    !isOnWall,
                   );
                 }
               },
             } as UndoableChangeGroup;
             addUndoable(undoableChangeAboveFoundation);
-            updateSolarPanelTiltAngleAboveFoundation(solarPanel.foundationId, value);
+            updateSolarPanelTiltAngleAboveFoundation(solarPanel.foundationId, value, !isOnWall);
             setApplyCount(applyCount + 1);
           }
         }
@@ -238,6 +261,8 @@ const SolarPanelTiltAngleInput = ({ setDialogVisible }: { setDialogVisible: (b: 
                 }
               }
             }
+          } else if (solarPanel.parentType === ObjectType.Wall) {
+            rejectRef.current = false;
           } else {
             // tilt is only allowed on top of a foundation or a roof
             for (const elem of elements) {
@@ -283,6 +308,11 @@ const SolarPanelTiltAngleInput = ({ setDialogVisible }: { setDialogVisible: (b: 
                 for (const [id, ta] of undoableChangeOnSurface.oldValues.entries()) {
                   updateSolarPanelTiltAngleById(id, ta as number);
                 }
+                if (undoableChangeOnSurface.oldValues.size % 2 === 0) {
+                  useStore.getState().set((state) => {
+                    state.updateWallFlag = !state.updateWallFlag;
+                  });
+                }
               },
               redo: () => {
                 if (undoableChangeOnSurface.groupId) {
@@ -305,6 +335,9 @@ const SolarPanelTiltAngleInput = ({ setDialogVisible }: { setDialogVisible: (b: 
         const sp = getElementById(solarPanel.id) as SolarPanelModel;
         const oldTiltAngle = sp ? sp.tiltAngle : solarPanel.tiltAngle;
         rejectRef.current = 0.5 * solarPanel.ly * Math.abs(Math.sin(value)) > solarPanel.poleHeight;
+        if (solarPanel.parentType === ObjectType.Wall) {
+          rejectRef.current = false;
+        }
         if (rejectRef.current) {
           rejectedValue.current = value;
           inputTiltAngleRef.current = oldTiltAngle;
@@ -415,7 +448,7 @@ const SolarPanelTiltAngleInput = ({ setDialogVisible }: { setDialogVisible: (b: 
         <Row gutter={6}>
           <Col className="gutter-row" span={6}>
             <InputNumber
-              min={-90}
+              min={isOnWall ? 0 : -90}
               max={90}
               style={{ width: 120 }}
               precision={2}
@@ -430,7 +463,7 @@ const SolarPanelTiltAngleInput = ({ setDialogVisible }: { setDialogVisible: (b: 
               onPressEnter={ok}
             />
             <div style={{ paddingTop: '20px', textAlign: 'left', fontSize: '11px' }}>
-              {i18n.t('word.Range', lang)}: [-90°, 90°]
+              {i18n.t('word.Range', lang)}: [{isOnWall ? '0°' : '-90°'}, 90°]
               <br />
               {i18n.t('solarPanelMenu.SouthFacingIsPositive', lang)}
             </div>

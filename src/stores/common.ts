@@ -411,8 +411,8 @@ export interface CommonStoreState {
 
   updateSolarPanelTiltAngleById: (id: string, tiltAngle: number) => void;
   updateSolarPanelTiltAngleOnSurface: (parentId: string, normal: number[] | undefined, tiltAngle: number) => void;
-  updateSolarPanelTiltAngleAboveFoundation: (foundationId: string, tiltAngle: number) => void;
-  updateSolarPanelTiltAngleForAll: (tiltAngle: number) => void;
+  updateSolarPanelTiltAngleAboveFoundation: (foundationId: string, tiltAngle: number, isReverse?: boolean) => void;
+  updateSolarPanelTiltAngleForAll: (tiltAngle: number, isReverse?: boolean) => void;
 
   setSolarPanelOrientation: (sp: SolarPanelModel, pvModel: PvModel, orientation: Orientation) => void;
   updateSolarPanelOrientationById: (id: string, orientation: Orientation) => void;
@@ -3421,17 +3421,16 @@ export const useStore = create<CommonStoreState>(
               state.updateWallFlag = !state.updateWallFlag;
             });
           },
-          updateSolarPanelTiltAngleAboveFoundation(foundationId, tiltAngle) {
+          updateSolarPanelTiltAngleAboveFoundation(foundationId, tiltAngle, isReverse) {
             immerSet((state: CommonStoreState) => {
               for (const e of state.elements) {
-                if (
-                  e.type === ObjectType.SolarPanel &&
-                  e.foundationId === foundationId &&
-                  !e.locked &&
-                  (e as SolarPanelModel).parentType !== ObjectType.Wall
-                ) {
+                if (e.type === ObjectType.SolarPanel && e.foundationId === foundationId && !e.locked) {
                   const sp = e as SolarPanelModel;
-                  sp.tiltAngle = tiltAngle;
+                  if (sp.parentType === ObjectType.Wall) {
+                    sp.tiltAngle = Math.min(0, isReverse ? -tiltAngle : tiltAngle);
+                  } else {
+                    sp.tiltAngle = tiltAngle;
+                  }
                 }
               }
               state.updateWallFlag = !state.updateWallFlag;
@@ -3456,16 +3455,16 @@ export const useStore = create<CommonStoreState>(
               state.updateWallFlag = !state.updateWallFlag;
             });
           },
-          updateSolarPanelTiltAngleForAll(tiltAngle) {
+          updateSolarPanelTiltAngleForAll(tiltAngle, isReverse) {
             immerSet((state: CommonStoreState) => {
               for (const e of state.elements) {
-                if (
-                  e.type === ObjectType.SolarPanel &&
-                  !e.locked &&
-                  (e as SolarPanelModel).parentType !== ObjectType.Wall
-                ) {
+                if (e.type === ObjectType.SolarPanel && !e.locked) {
                   const sp = e as SolarPanelModel;
-                  sp.tiltAngle = tiltAngle;
+                  if (sp.parentType === ObjectType.Wall) {
+                    sp.tiltAngle = Math.min(0, isReverse ? -tiltAngle : tiltAngle);
+                  } else {
+                    sp.tiltAngle = tiltAngle;
+                  }
                 }
               }
               state.updateWallFlag = !state.updateWallFlag;
@@ -5058,6 +5057,7 @@ export const useStore = create<CommonStoreState>(
                         if (newParent) {
                           switch (Util.checkElementOnWallState(e, newParent)) {
                             case ElementState.Valid:
+                              e.normal = [0, -1, 0];
                               approved = true;
                               state.updateWallFlag = !state.updateWallFlag;
                               break;

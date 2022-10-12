@@ -1382,7 +1382,7 @@ const Wall = ({
                     }
                     return (
                       <group key={e.id} position={[0, -e.lz / 2, 0]}>
-                        <SolarPanelOnWall {...(e as SolarPanelModel)} absRotation={r} />
+                        <SolarPanelOnWall {...(e as SolarPanelModel)} cx={e.cx * lx} cz={e.cz * lz} absRotation={r} />
                       </group>
                     );
                 }

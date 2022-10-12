@@ -184,10 +184,31 @@ export const SolarPanelMenu = () => {
             {i18n.t('word.Width', lang)} ...
           </Menu.Item>
 
+          {solarPanel.parentType === ObjectType.Wall && (
+            <>
+              <Menu.Item
+                key={'solar-panel-tilt-angle'}
+                style={{ paddingLeft: '36px' }}
+                onClick={() => {
+                  setApplyCount(0);
+                  setTiltDialogVisible(true);
+                }}
+              >
+                {i18n.t('solarPanelMenu.TiltAngle', lang)} ...
+              </Menu.Item>
+            </>
+          )}
+
+          {tiltDialogVisible && (
+            <SolarPanelTiltAngleInput
+              setDialogVisible={setTiltDialogVisible}
+              isOnWall={solarPanel.parentType === ObjectType.Wall}
+            />
+          )}
+
           {panelNormal && Util.isSame(panelNormal, UNIT_VECTOR_POS_Z) && (
             <>
               {/* tilt angle */}
-              {tiltDialogVisible && <SolarPanelTiltAngleInput setDialogVisible={setTiltDialogVisible} />}
               <Menu.Item
                 key={'solar-panel-tilt-angle'}
                 style={{ paddingLeft: '36px' }}
