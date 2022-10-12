@@ -11,6 +11,8 @@ import DefaultDaySkyImage from '../resources/daysky.jpg';
 import DefaultNightSkyImage from '../resources/nightsky.jpg';
 import DesertDaySkyImage from '../resources/desert.jpg';
 import DesertNightSkyImage from '../resources/desert-night.jpg';
+import DuneDaySkyImage from '../resources/dune.jpg';
+import DuneNightSkyImage from '../resources/dune-night.jpg';
 import ForestDaySkyImage from '../resources/forest.jpg';
 import ForestNightSkyImage from '../resources/forest-night.jpg';
 import GrasslandDaySkyImage from '../resources/grassland.jpg';
@@ -23,7 +25,7 @@ import RuralNightSkyImage from '../resources/rural-night.jpg';
 import { useStore } from '../stores/common';
 import { useStoreRef } from 'src/stores/commonRef';
 import * as Selector from '../stores/selector';
-import { IntersectionPlaneType, ObjectType, ResizeHandleType } from '../types';
+import { IntersectionPlaneType, ObjectType, ResizeHandleType, Theme } from '../types';
 import { ElementModel } from '../models/ElementModel';
 import {
   DEFAULT_SKY_RADIUS,
@@ -106,15 +108,17 @@ const Sky = ({ theme = 'Default' }: SkyProps) => {
 
   const scale = useMemo(() => {
     switch (theme) {
-      case 'Desert':
+      case Theme.Desert:
         return 0.5;
-      case 'Forest':
+      case Theme.Dune:
         return 0.25;
-      case 'Grassland':
+      case Theme.Forest:
+        return 0.25;
+      case Theme.Grassland:
         return 0.15;
-      case 'Mountain':
+      case Theme.Mountain:
         return 0.4;
-      case 'Rural':
+      case Theme.Rural:
         return 0.25;
       default:
         return 0.2;
@@ -123,15 +127,17 @@ const Sky = ({ theme = 'Default' }: SkyProps) => {
 
   const textureImg = useMemo(() => {
     switch (theme) {
-      case 'Desert':
+      case Theme.Desert:
         return night ? DesertNightSkyImage : DesertDaySkyImage;
-      case 'Forest':
+      case Theme.Dune:
+        return night ? DuneNightSkyImage : DuneDaySkyImage;
+      case Theme.Forest:
         return night ? ForestNightSkyImage : ForestDaySkyImage;
-      case 'Grassland':
+      case Theme.Grassland:
         return night ? GrasslandNightSkyImage : GrasslandDaySkyImage;
-      case 'Mountain':
+      case Theme.Mountain:
         return night ? MountainNightSkyImage : MountainDaySkyImage;
-      case 'Rural':
+      case Theme.Rural:
         return night ? RuralNightSkyImage : RuralDaySkyImage;
       default:
         return night ? DefaultNightSkyImage : DefaultDaySkyImage;

@@ -425,6 +425,7 @@ export const i18n_es = {
       Theme: 'Tema',
       ThemeDefault: 'Por defecto',
       ThemeDesert: 'Desierto',
+      ThemeDune: 'Dune',
       ThemeForest: 'Bosque',
       ThemeGrassland: 'Campo',
       ThemeMountain: 'Mountain',

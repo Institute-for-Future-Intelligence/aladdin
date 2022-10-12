@@ -425,6 +425,7 @@ export const i18n_en = {
       Theme: 'Theme',
       ThemeDefault: 'Default',
       ThemeDesert: 'Desert',
+      ThemeDune: 'Dune',
       ThemeForest: 'Forest',
       ThemeGrassland: 'Grassland',
       ThemeMountain: 'Mountain',

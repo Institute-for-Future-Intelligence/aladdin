@@ -422,6 +422,7 @@ export const i18n_zh_cn = {
       Theme: '环境主题',
       ThemeDefault: '默认',
       ThemeDesert: '沙漠',
+      ThemeDune: '沙丘',
       ThemeForest: '森林',
       ThemeGrassland: '草原',
       ThemeMountain: '山脉',

@@ -163,6 +163,7 @@ export enum GraphDataType {
 export enum Theme {
   Default = 'Default',
   Desert = 'Desert',
+  Dune = 'Dune',
   Forest = 'Forest',
   Grassland = 'Grassland',
   Mountain = 'Mountain',

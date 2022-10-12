@@ -424,6 +424,7 @@ export const i18n_tr = {
       Theme: 'Tema',
       ThemeDefault: 'Varsayılan',
       ThemeDesert: 'Çöl',
+      ThemeDune: 'Dune',
       ThemeForest: 'Orman',
       ThemeGrassland: 'Çayır',
       ThemeMountain: 'Mountain',

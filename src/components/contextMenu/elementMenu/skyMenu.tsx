@@ -142,6 +142,9 @@ export const SkyMenu = () => {
           <Radio style={radioStyle} value={Theme.Desert}>
             {i18n.t('skyMenu.ThemeDesert', lang)}
           </Radio>
+          <Radio style={radioStyle} value={Theme.Dune}>
+            {i18n.t('skyMenu.ThemeDune', lang)}
+          </Radio>
           <Radio style={radioStyle} value={Theme.Forest}>
             {i18n.t('skyMenu.ThemeForest', lang)}
           </Radio>
