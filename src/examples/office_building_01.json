@@ -1,8 +1,10 @@
 {
-  "docid": "bmg6P6KQ8uRekE4Ug8TY2V",
-  "timestamp": 1639932362336,
-  "owner": "Charles Xie",
-  "email": "charles@intofuture.org",
+  "docid": "scFEJevPTG8ZLEjcTUwG1g",
+  "time": "10/11/2022 10:33 pm",
+  "timestamp": 1665542014491,
+  "userid": "QWecNcxhyvP6j6sBN11hBsfZDau1",
+  "owner": null,
+  "email": null,
   "world": {
     "name": "default",
     "date": "6/22/2022 4:00:00 PM",
@@ -53,7 +55,10 @@
         0
       ],
       "selected": false,
-      "parentId": "Ground"
+      "parentId": "Ground",
+      "lx": 0.6,
+      "ly": 0.6,
+      "lz": 1.8
     },
     {
       "ly": 17.026616933032848,
@@ -152,7 +157,10 @@
         0
       ],
       "name": "Jade",
-      "parentId": "Ground"
+      "parentId": "Ground",
+      "lx": 0.6,
+      "ly": 0.6,
+      "lz": 1.6
     },
     {
       "cx": -23.71712820078877,
@@ -195,7 +203,10 @@
         1,
         0
       ],
-      "parentId": "Ground"
+      "parentId": "Ground",
+      "lx": 0.6,
+      "ly": 0.6,
+      "lz": 1.75
     },
     {
       "name": "Jeni",
@@ -215,7 +226,10 @@
       "id": "8gaXxvd41d1wtkBveac2iT",
       "cy": -24.46034584888105,
       "selected": false,
-      "parentId": "Ground"
+      "parentId": "Ground",
+      "lx": 0.6,
+      "ly": 0.6,
+      "lz": 1.7
     },
     {
       "selected": false,
@@ -235,7 +249,10 @@
       "cz": -7.105427357601002e-15,
       "name": "Judd",
       "type": "Human",
-      "parentId": "Ground"
+      "parentId": "Ground",
+      "lx": 0.6,
+      "ly": 0.6,
+      "lz": 1.68
     },
     {
       "type": "Human",
@@ -255,7 +272,10 @@
         0
       ],
       "id": "649JwdxAWZ8uAmjtuwCu7m",
-      "parentId": "Ground"
+      "parentId": "Ground",
+      "lx": 0.6,
+      "ly": 0.6,
+      "lz": 1.65
     },
     {
       "id": "v8yuSV55idFvdSiztzVfkc",
@@ -275,7 +295,10 @@
         0
       ],
       "name": "Jena",
-      "parentId": "Ground"
+      "parentId": "Ground",
+      "lx": 0.4,
+      "ly": 0.4,
+      "lz": 1.5
     },
     {
       "type": "Tree",
@@ -361,6 +384,226 @@
       "parentId": "Ground",
       "id": "aj9AkMLHmiC7fiuGVPs4H7",
       "selected": false
+    },
+    {
+      "type": "Flower",
+      "name": "Yellow Flower",
+      "cx": -12.88108244582257,
+      "cy": -7.8862995083645835,
+      "cz": 0.05000000074505806,
+      "lx": 2,
+      "lz": 1.4,
+      "normal": [
+        0,
+        1,
+        0
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "parentId": "dqxcN6K9GVQLtZRykzonbS",
+      "id": "oHeGQDazJuZsZxKRzGGPDD",
+      "selected": false
+    },
+    {
+      "type": "Flower",
+      "name": "Hydrangea",
+      "cx": -10.88108244582257,
+      "cy": -7.8862995083645835,
+      "cz": 0.05000000074505806,
+      "lx": 2,
+      "lz": 1.5,
+      "normal": [
+        0,
+        1,
+        0
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "parentId": "dqxcN6K9GVQLtZRykzonbS",
+      "id": "n7tcVJNYuVeGnjeGQXZtpb",
+      "selected": false
+    },
+    {
+      "type": "Flower",
+      "name": "Yellow Flower",
+      "cx": -8.88108244582257,
+      "cy": -7.8862995083645835,
+      "cz": 0.05000000074505806,
+      "lx": 2,
+      "lz": 1.4,
+      "normal": [
+        0,
+        1,
+        0
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "parentId": "dqxcN6K9GVQLtZRykzonbS",
+      "id": "jY9Y4Lm3QMDVY6ThY32QL6",
+      "selected": false
+    },
+    {
+      "type": "Flower",
+      "name": "Hydrangea",
+      "cx": -6.881082445822569,
+      "cy": -7.8862995083645835,
+      "cz": 0.05000000074505806,
+      "lx": 2,
+      "lz": 1.5,
+      "normal": [
+        0,
+        1,
+        0
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "parentId": "dqxcN6K9GVQLtZRykzonbS",
+      "id": "ijsBYLU6Xgn2UahtDbM3ax",
+      "selected": false
+    },
+    {
+      "type": "Flower",
+      "name": "Yellow Flower",
+      "cx": -4.881082445822569,
+      "cy": -7.8862995083645835,
+      "cz": 0.05000000074505806,
+      "lx": 2,
+      "lz": 1.4,
+      "normal": [
+        0,
+        1,
+        0
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "parentId": "dqxcN6K9GVQLtZRykzonbS",
+      "id": "aMGVaSDxGidE4hAekjvzp1",
+      "selected": false
+    },
+    {
+      "type": "Flower",
+      "name": "Hydrangea",
+      "cx": -2.8810824458225692,
+      "cy": -7.8862995083645835,
+      "cz": 0.05000000074505806,
+      "lx": 2,
+      "lz": 1.5,
+      "normal": [
+        0,
+        1,
+        0
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "parentId": "dqxcN6K9GVQLtZRykzonbS",
+      "id": "jNS7CLQtTgERjMBryrJy3f",
+      "selected": false
+    },
+    {
+      "type": "Flower",
+      "name": "Yellow Flower",
+      "cx": -0.8810824458225692,
+      "cy": -7.8862995083645835,
+      "cz": 0.05000000074505806,
+      "lx": 2,
+      "lz": 1.4,
+      "normal": [
+        0,
+        1,
+        0
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "parentId": "dqxcN6K9GVQLtZRykzonbS",
+      "id": "m5iTV6jNY7ctTerZ1zT3mN",
+      "selected": false
+    },
+    {
+      "type": "Flower",
+      "name": "Hydrangea",
+      "cx": 1.1189175541774308,
+      "cy": -7.8862995083645835,
+      "cz": 0.05000000074505806,
+      "lx": 2,
+      "lz": 1.5,
+      "normal": [
+        0,
+        1,
+        0
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "parentId": "dqxcN6K9GVQLtZRykzonbS",
+      "id": "obmBrYQNng1HztDQMhFTdF",
+      "selected": false
+    },
+    {
+      "type": "Flower",
+      "name": "Yellow Flower",
+      "cx": 3.1189175541774308,
+      "cy": -7.8862995083645835,
+      "cz": 0.05000000074505806,
+      "lx": 2,
+      "lz": 1.4,
+      "normal": [
+        0,
+        1,
+        0
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "parentId": "dqxcN6K9GVQLtZRykzonbS",
+      "id": "bX5gWjKNUmXEpNE3CSVo5i",
+      "selected": false
+    },
+    {
+      "type": "Flower",
+      "name": "Hydrangea",
+      "cx": 5.118917554177431,
+      "cy": -7.8862995083645835,
+      "cz": 0.05000000074505806,
+      "lx": 2,
+      "lz": 1.5,
+      "normal": [
+        0,
+        1,
+        0
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "parentId": "dqxcN6K9GVQLtZRykzonbS",
+      "id": "e1T6XS94X1vuZYnmBeSzv3",
+      "selected": false
     }
   ],
   "view": {
@@ -381,7 +624,7 @@
     "axes": true,
     "weatherPanelY": 0,
     "groundPanelX": 0,
-    "theme": "Desert",
+    "theme": "Forest",
     "mapWeatherStations": false,
     "mapType": "roadmap",
     "yearlyLightSensorPanelY": 70,
@@ -396,9 +639,9 @@
     "groundPanelY": 0,
     "showMapPanel": false,
     "cameraPosition": [
-      -26.98143872995895,
-      -49.21916401002954,
-      10.797111671469317
+      -23.57824463572729,
+      -46.00644781799041,
+      6.793365364698089
     ],
     "panCenter": [
       2.1268141574348576,
@@ -419,6 +662,63 @@
       -8.791777719248431,
       0.0000016660811664248792
     ]
+  },
+  "evolutionMethod": 1,
+  "solarPanelArrayLayoutParams": {
+    "pvModelName": "CS6X-355P-FG",
+    "rowAxis": "Zonal",
+    "orientation": "Landscape",
+    "tiltAngle": 0,
+    "rowsPerRack": 1,
+    "interRowSpacing": 2,
+    "poleHeight": 1,
+    "poleSpacing": 3
+  },
+  "solarPanelArrayLayoutConstraints": {
+    "minimumInterRowSpacing": 2,
+    "maximumInterRowSpacing": 10,
+    "minimumRowsPerRack": 1,
+    "maximumRowsPerRack": 6,
+    "minimumTiltAngle": -1.5707963267948966,
+    "maximumTiltAngle": 1.5707963267948966,
+    "poleHeight": 1,
+    "poleSpacing": 5,
+    "orientation": "Landscape",
+    "pvModelName": "CS6X-355P-FG",
+    "rowAxis": "Zonal"
+  },
+  "evolutionaryAlgorithmState": {
+    "geneticAlgorithmParams": {
+      "problem": "Solar Panel Tilt Angle",
+      "objectiveFunctionType": 1,
+      "selectionMethod": 1,
+      "searchMethod": 1,
+      "populationSize": 20,
+      "maximumGenerations": 5,
+      "selectionRate": 0.5,
+      "crossoverRate": 0.5,
+      "mutationRate": 0.1,
+      "convergenceThreshold": 0.01,
+      "localSearchRadius": 0.1
+    },
+    "particleSwarmOptimizationParams": {
+      "problem": "Solar Panel Tilt Angle",
+      "objectiveFunctionType": 1,
+      "searchMethod": 1,
+      "swarmSize": 20,
+      "maximumSteps": 5,
+      "vmax": 0.01,
+      "inertia": 0.8,
+      "cognitiveCoefficient": 0.1,
+      "socialCoefficient": 0.1,
+      "convergenceThreshold": 0.01,
+      "localSearchRadius": 0.1
+    }
+  },
+  "economicsParams": {
+    "projectLifeSpan": 25,
+    "electricitySellingPrice": 0.25,
+    "operationalCostPerUnit": 0.15
   },
   "notes": [
     ""

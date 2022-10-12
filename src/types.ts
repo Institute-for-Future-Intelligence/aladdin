@@ -344,10 +344,12 @@ export enum FlowerType {
   Hydrangea = 'Hydrangea',
   Peony = 'Peony',
   RedRose = 'Red Rose',
+  Spirea = 'Spirea',
   Sunflower = 'Sunflower',
   TallBush = 'Tall Bush',
   Tulip = 'Tulip',
   WhiteFlower = 'White Flower',
+  YellowFlower = 'Yellow Flower',
 }
 
 export enum Gender {

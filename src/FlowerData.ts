@@ -11,10 +11,12 @@ import HydrangeaImage from './resources/hydrangea.png';
 import HostaImage from './resources/hosta.png';
 import PeonyImage from './resources/peony.png';
 import RedRoseImage from './resources/red_rose.png';
+import SpireaImage from './resources/spirea.png';
 import SunflowerImage from './resources/sunflower.png';
 import TallBushImage from './resources/tall_bush.png';
 import TulipImage from './resources/tulip.png';
 import WhiteFlowerImage from './resources/white_flower.png';
+import YellowFlowerImage from './resources/yellow_flower.png';
 import { FlowerType } from './types';
 import i18n from './i18n/i18n';
 
@@ -35,12 +37,16 @@ export class FlowerData {
         return 1.5;
       case FlowerType.RedRose:
         return 0.5;
+      case FlowerType.Spirea:
+        return 1.8;
       case FlowerType.Sunflower:
         return 1;
       case FlowerType.TallBush:
         return 1;
       case FlowerType.Tulip:
         return 0.4;
+      case FlowerType.YellowFlower:
+        return 2;
       default:
         return 0.8;
     }
@@ -62,12 +68,16 @@ export class FlowerData {
         return 1;
       case FlowerType.RedRose:
         return 0.8;
+      case FlowerType.Spirea:
+        return 1.6;
       case FlowerType.Sunflower:
         return 2;
       case FlowerType.TallBush:
         return 2;
       case FlowerType.Tulip:
         return 0.7;
+      case FlowerType.YellowFlower:
+        return 1.4;
       default:
         return 0.5;
     }
@@ -89,12 +99,16 @@ export class FlowerData {
         return i18n.t('flower.Peony', lang);
       case FlowerType.RedRose:
         return i18n.t('flower.RedRose', lang);
+      case FlowerType.Spirea:
+        return i18n.t('flower.Spirea', lang);
       case FlowerType.Sunflower:
         return i18n.t('flower.Sunflower', lang);
       case FlowerType.TallBush:
         return i18n.t('flower.TallBush', lang);
       case FlowerType.Tulip:
         return i18n.t('flower.Tulip', lang);
+      case FlowerType.YellowFlower:
+        return i18n.t('flower.YellowFlower', lang);
       default:
         return i18n.t('flower.WhiteFlower', lang);
     }
@@ -102,7 +116,12 @@ export class FlowerData {
 
   static fetchTextureImage(name: string, noLeaves: boolean) {
     if (noLeaves) {
-      if (name === FlowerType.Hibiscus || name === FlowerType.Hydrangea) {
+      if (
+        name === FlowerType.Hibiscus ||
+        name === FlowerType.Hydrangea ||
+        name === FlowerType.YellowFlower ||
+        name === FlowerType.Spirea
+      ) {
         return NoLeafShrubImage;
       }
       if (name === FlowerType.Boxwood) {
@@ -136,6 +155,9 @@ export class FlowerData {
       case FlowerType.RedRose:
         textureImg = RedRoseImage;
         break;
+      case FlowerType.Spirea:
+        textureImg = SpireaImage;
+        break;
       case FlowerType.Sunflower:
         textureImg = SunflowerImage;
         break;
@@ -144,6 +166,9 @@ export class FlowerData {
         break;
       case FlowerType.Tulip:
         textureImg = TulipImage;
+        break;
+      case FlowerType.YellowFlower:
+        textureImg = YellowFlowerImage;
         break;
       default:
         textureImg = WhiteFlowerImage;

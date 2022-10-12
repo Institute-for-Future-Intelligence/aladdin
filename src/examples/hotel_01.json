@@ -1,8 +1,10 @@
 {
-  "docid": "fVU5SqGa8dyCUUi9whuRJh",
-  "timestamp": 1641051217489,
-  "owner": "Charles Xie",
-  "email": "charles@intofuture.org",
+  "docid": "dbctG1WThq9utE4SMmvtjG",
+  "time": "10/11/2022 10:44 pm",
+  "timestamp": 1665542689618,
+  "userid": "QWecNcxhyvP6j6sBN11hBsfZDau1",
+  "owner": null,
+  "email": null,
   "world": {
     "longitude": -71.0588801,
     "timesPerHour": 20,
@@ -117,7 +119,10 @@
       ],
       "id": "4Vzhap6VgrCQ5NTbMiLqko",
       "name": "Xiaoli",
-      "selected": false
+      "selected": false,
+      "lx": 0.38,
+      "ly": 0.38,
+      "lz": 1.65
     },
     {
       "lz": 18,
@@ -256,7 +261,10 @@
         0,
         0,
         0
-      ]
+      ],
+      "lx": 0.4,
+      "ly": 0.4,
+      "lz": 1.85
     },
     {
       "type": "Human",
@@ -276,7 +284,10 @@
         1,
         0
       ],
-      "selected": false
+      "selected": false,
+      "lx": 0.6,
+      "ly": 0.6,
+      "lz": 1.75
     },
     {
       "cx": 14.572429350273456,
@@ -296,7 +307,10 @@
       "name": "Jose",
       "parentId": "Ground",
       "type": "Human",
-      "id": "h7GsvzmZmQv6Lgxa5TK46V"
+      "id": "h7GsvzmZmQv6Lgxa5TK46V",
+      "lx": 2,
+      "ly": 2,
+      "lz": 1.6
     },
     {
       "lx": 5,
@@ -411,7 +425,10 @@
       "cy": -14.554057740143271,
       "name": "Jill",
       "cz": 0.10000000074505806,
-      "cx": 5.006550016327088
+      "cx": 5.006550016327088,
+      "lx": 0.6,
+      "ly": 0.6,
+      "lz": 1.64
     },
     {
       "rotation": [
@@ -431,7 +448,10 @@
         0
       ],
       "selected": false,
-      "id": "npocC3zf2QhLeKj6LeXJvL"
+      "id": "npocC3zf2QhLeKj6LeXJvL",
+      "lx": 0.6,
+      "ly": 0.6,
+      "lz": 1.68
     },
     {
       "cy": 0.5804724345884147,
@@ -569,6 +589,732 @@
       ],
       "poleRadius": 0.05,
       "parentId": "6gVMaHq7VLa19eqMVECxpG"
+    },
+    {
+      "type": "Flower",
+      "name": "Boxwood",
+      "cx": 14.589782607955689,
+      "cy": -5.22248370768526,
+      "cz": 0.05000000074505806,
+      "lx": 1.6,
+      "lz": 1.44,
+      "normal": [
+        0,
+        1,
+        0
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "parentId": "6gVMaHq7VLa19eqMVECxpG",
+      "id": "6LyjhRYrjyMM94sWFxmsqL",
+      "selected": false
+    },
+    {
+      "type": "Flower",
+      "name": "Boxwood",
+      "cx": 14.487482209296324,
+      "cy": -7.284306500015294,
+      "cz": 0.05000000074505628,
+      "lx": 1.6,
+      "lz": 1.44,
+      "normal": [
+        0,
+        0,
+        1
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "parentId": "6gVMaHq7VLa19eqMVECxpG",
+      "id": "cAUoEVfsJryF5CiN2bA6FF",
+      "selected": false
+    },
+    {
+      "type": "Flower",
+      "name": "Boxwood",
+      "cx": 14.656720218433037,
+      "cy": -3.0619235461512933,
+      "cz": 0.05000000074505806,
+      "lx": 1.6,
+      "lz": 1.44,
+      "normal": [
+        0,
+        1,
+        0
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "parentId": "6gVMaHq7VLa19eqMVECxpG",
+      "id": "14ZankHi6YjP8eUwRAzc99",
+      "selected": false
+    },
+    {
+      "type": "Flower",
+      "name": "Boxwood",
+      "cx": 14.649968347802723,
+      "cy": -0.5953981727630122,
+      "cz": 0.05000000074505806,
+      "lx": 1.6,
+      "lz": 1.44,
+      "normal": [
+        0,
+        0,
+        1
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "parentId": "6gVMaHq7VLa19eqMVECxpG",
+      "id": "cKDzu7CNMKytpxg8x9M4vH",
+      "selected": false
+    },
+    {
+      "type": "Flower",
+      "name": "Boxwood",
+      "cx": 14.465946083296767,
+      "cy": 2.3705809858943816,
+      "cz": 0.05000000074505806,
+      "lx": 1.6,
+      "lz": 1.44,
+      "normal": [
+        0,
+        0,
+        1
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "parentId": "6gVMaHq7VLa19eqMVECxpG",
+      "id": "2nJegakb4Q3dsnpjrnazGL",
+      "selected": false
+    },
+    {
+      "type": "Flower",
+      "name": "Boxwood",
+      "cx": 14.535486123826292,
+      "cy": 5.258763702004629,
+      "cz": 0.05000000074505806,
+      "lx": 1.6,
+      "lz": 1.44,
+      "normal": [
+        0,
+        0,
+        1
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "parentId": "6gVMaHq7VLa19eqMVECxpG",
+      "id": "puhTw5YZiZX1mZayPv7eKr",
+      "selected": false
+    },
+    {
+      "type": "Flower",
+      "name": "Boxwood",
+      "cx": 14.562074464646393,
+      "cy": -9.421018376024211,
+      "cz": 0.05000000074505806,
+      "lx": 1.6,
+      "lz": 1.44,
+      "normal": [
+        0,
+        0,
+        1
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "parentId": "6gVMaHq7VLa19eqMVECxpG",
+      "id": "3aFBjoFzTN38LjxnNVca94",
+      "selected": false
+    },
+    {
+      "type": "Flower",
+      "name": "Boxwood",
+      "cx": 14.48848671206672,
+      "cy": -11.828589152852121,
+      "cz": 0.050000000745059836,
+      "lx": 1.6,
+      "lz": 1.44,
+      "normal": [
+        0,
+        0,
+        1
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "parentId": "6gVMaHq7VLa19eqMVECxpG",
+      "id": "ksddQtWpUymEExWqGah9pg",
+      "selected": false
+    },
+    {
+      "type": "Flower",
+      "name": "Hibiscus",
+      "cx": 14.602082126220235,
+      "cy": -10.642654606813768,
+      "cz": 0.05000000074505628,
+      "lx": 2,
+      "lz": 1.7,
+      "normal": [
+        0,
+        0,
+        1
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "parentId": "6gVMaHq7VLa19eqMVECxpG",
+      "id": "ftch5sGAxD2dLW85VDsCvD",
+      "selected": false
+    },
+    {
+      "type": "Flower",
+      "name": "Hibiscus",
+      "cx": 14.574840162280765,
+      "cy": -13.130340588937553,
+      "cz": 0.05000000074506161,
+      "lx": 2,
+      "lz": 1.7,
+      "normal": [
+        0,
+        0,
+        1
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "parentId": "6gVMaHq7VLa19eqMVECxpG",
+      "id": "oVgmk99C2S2KZF2CFR1hGP",
+      "selected": false
+    },
+    {
+      "type": "Flower",
+      "name": "Hibiscus",
+      "cx": 14.575588404543318,
+      "cy": -8.21343708444617,
+      "cz": 0.05000000074505806,
+      "lx": 2,
+      "lz": 1.7,
+      "normal": [
+        0,
+        0,
+        1
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "parentId": "6gVMaHq7VLa19eqMVECxpG",
+      "id": "9uo3Ts1QDRhb3aomxt4V2f",
+      "selected": false
+    },
+    {
+      "type": "Flower",
+      "name": "Hibiscus",
+      "cx": 14.557819941105063,
+      "cy": -6.106389769612514,
+      "cz": 0.05000000074505806,
+      "lx": 2,
+      "lz": 1.7,
+      "normal": [
+        0,
+        0,
+        1
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "parentId": "6gVMaHq7VLa19eqMVECxpG",
+      "id": "agCMuQbpTFk2RqkwtebyV4",
+      "selected": false
+    },
+    {
+      "type": "Flower",
+      "name": "Hibiscus",
+      "cx": 14.556683398866188,
+      "cy": -4.0576139533384525,
+      "cz": 0.05000000074505806,
+      "lx": 2,
+      "lz": 1.7,
+      "normal": [
+        0,
+        0,
+        1
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "parentId": "6gVMaHq7VLa19eqMVECxpG",
+      "id": "aFUE71bDFA2LjkNkJFEuii",
+      "selected": false
+    },
+    {
+      "type": "Flower",
+      "name": "Hibiscus",
+      "cx": 14.64239387314273,
+      "cy": -1.7994645182621838,
+      "cz": 0.050000000745059836,
+      "lx": 2,
+      "lz": 1.7,
+      "normal": [
+        0,
+        0,
+        1
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "parentId": "6gVMaHq7VLa19eqMVECxpG",
+      "id": "4Z9VuhUNw8DYwRbkqYhoHB",
+      "selected": false
+    },
+    {
+      "type": "Flower",
+      "name": "Hibiscus",
+      "cx": 14.529383383564124,
+      "cy": 0.8679517875801537,
+      "cz": 0.05000000074505806,
+      "lx": 2,
+      "lz": 1.7,
+      "normal": [
+        0,
+        0,
+        1
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "parentId": "6gVMaHq7VLa19eqMVECxpG",
+      "id": "nf7V66G4i2YFWuJXZENckj",
+      "selected": false
+    },
+    {
+      "type": "Flower",
+      "name": "Hibiscus",
+      "cx": 14.581939017157946,
+      "cy": 3.902214931587771,
+      "cz": 0.05000000074505806,
+      "lx": 2,
+      "lz": 1.7,
+      "normal": [
+        0,
+        0,
+        1
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "parentId": "6gVMaHq7VLa19eqMVECxpG",
+      "id": "kKWrifvQ6fGtZhJmgPvL5X",
+      "selected": false
+    },
+    {
+      "type": "Flower",
+      "name": "Hibiscus",
+      "cx": 14.45704330414372,
+      "cy": 6.704146476013747,
+      "cz": 0.05000000074505806,
+      "lx": 2,
+      "lz": 1.7,
+      "normal": [
+        0,
+        0,
+        1
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "parentId": "6gVMaHq7VLa19eqMVECxpG",
+      "id": "aL2Uhpp8HT6eUfWcMrtxWr",
+      "selected": false
+    },
+    {
+      "type": "Flower",
+      "name": "Tall Bush",
+      "cx": -8.820527407137332,
+      "cy": -21.01555787918438,
+      "cz": 0.05000000074505806,
+      "lx": 1,
+      "lz": 2,
+      "normal": [
+        0,
+        0,
+        1
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "parentId": "6gVMaHq7VLa19eqMVECxpG",
+      "id": "czSxXH8n5KnbYhnZp9414E",
+      "selected": false
+    },
+    {
+      "type": "Flower",
+      "name": "Tall Bush",
+      "cx": -5.64492924344334,
+      "cy": -20.928730058607652,
+      "cz": 0.05000000074505806,
+      "lx": 1,
+      "lz": 2,
+      "normal": [
+        0,
+        0,
+        1
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "parentId": "6gVMaHq7VLa19eqMVECxpG",
+      "id": "12s9PdvNM6rnixcYtcjVJm",
+      "selected": false
+    },
+    {
+      "type": "Flower",
+      "name": "Tall Bush",
+      "cx": -2.4233695148043557,
+      "cy": -21.043064672162302,
+      "cz": 0.05000000074506161,
+      "lx": 1,
+      "lz": 2,
+      "normal": [
+        0,
+        0,
+        1
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "parentId": "6gVMaHq7VLa19eqMVECxpG",
+      "id": "fnbqxsK1LLgKaQxJEJtzGY",
+      "selected": false
+    },
+    {
+      "type": "Flower",
+      "name": "Tall Bush",
+      "cx": 0.44859084832241436,
+      "cy": -21.025210125432253,
+      "cz": 0.05000000074505806,
+      "lx": 1,
+      "lz": 2,
+      "normal": [
+        0,
+        0,
+        1
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "parentId": "6gVMaHq7VLa19eqMVECxpG",
+      "id": "5HDDx2HYGe5rU4vkYUjLkn",
+      "selected": false
+    },
+    {
+      "type": "Flower",
+      "name": "Tall Bush",
+      "cx": -11.802690551407991,
+      "cy": -21.134263522232033,
+      "cz": 0.05000000074505895,
+      "lx": 1,
+      "lz": 2,
+      "normal": [
+        0,
+        0,
+        1
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "parentId": "6gVMaHq7VLa19eqMVECxpG",
+      "id": "ii2AHuBu7eNYp9zExhjpBk",
+      "selected": false
+    },
+    {
+      "type": "Flower",
+      "name": "Hosta",
+      "cx": 13.888302021073589,
+      "cy": -23.07433161468632,
+      "cz": 0.05000000074505806,
+      "lx": 1,
+      "lz": 0.7,
+      "normal": [
+        0,
+        1,
+        0
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "parentId": "6gVMaHq7VLa19eqMVECxpG",
+      "id": "ry52Vu3ZtWa5Z5S4Cv3Fns",
+      "selected": false
+    },
+    {
+      "type": "Flower",
+      "name": "Hosta",
+      "cx": 13.000536079398454,
+      "cy": -23.90262067298287,
+      "cz": 0.05000000074505895,
+      "lx": 1,
+      "lz": 0.7,
+      "normal": [
+        0,
+        0,
+        1
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "parentId": "6gVMaHq7VLa19eqMVECxpG",
+      "id": "2KvsyZDeNBQ15oEbTBWXTQ",
+      "selected": false
+    },
+    {
+      "type": "Flower",
+      "name": "Hosta",
+      "cx": 12.99992231969237,
+      "cy": -22.436277503833722,
+      "cz": 0.05000000074505806,
+      "lx": 1,
+      "lz": 0.7,
+      "normal": [
+        0,
+        0,
+        1
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "parentId": "6gVMaHq7VLa19eqMVECxpG",
+      "id": "sBdHaZQt67kBAXxPrttrkC",
+      "selected": false
+    },
+    {
+      "type": "Flower",
+      "name": "Hosta",
+      "cx": 7.96155182885969,
+      "cy": -24.919269939427444,
+      "cz": 0.05000000074505806,
+      "lx": 1,
+      "lz": 0.7,
+      "normal": [
+        0,
+        0,
+        1
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "parentId": "6gVMaHq7VLa19eqMVECxpG",
+      "id": "rErTYG7fvCUCgbP8phnFpb",
+      "selected": false
+    },
+    {
+      "type": "Flower",
+      "name": "Hosta",
+      "cx": 8.302339884724876,
+      "cy": -23.511029051299055,
+      "cz": 0.05000000074506161,
+      "lx": 1,
+      "lz": 0.7,
+      "normal": [
+        0,
+        0,
+        1
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "parentId": "6gVMaHq7VLa19eqMVECxpG",
+      "id": "qREs5pGeMh2bn8266bra52",
+      "selected": false
+    },
+    {
+      "type": "Flower",
+      "name": "Hosta",
+      "cx": 12.046100627532674,
+      "cy": -23.058422241294327,
+      "cz": 0.05000000074505806,
+      "lx": 1,
+      "lz": 0.7,
+      "normal": [
+        0,
+        0,
+        1
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "parentId": "6gVMaHq7VLa19eqMVECxpG",
+      "id": "cFutgv9ep2vsCmwtcQ32FT",
+      "selected": false
+    },
+    {
+      "type": "Flower",
+      "name": "Hosta",
+      "cx": 7.459817492896914,
+      "cy": -23.89304923816075,
+      "cz": 0.050000000745059836,
+      "lx": 1,
+      "lz": 0.7,
+      "normal": [
+        0,
+        0,
+        1
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "parentId": "6gVMaHq7VLa19eqMVECxpG",
+      "id": "meCdn2mUx41JAdUmabe62e",
+      "selected": false
+    },
+    {
+      "type": "Flower",
+      "name": "Hosta",
+      "cx": 8.773287043648144,
+      "cy": -24.33842489149061,
+      "cz": 0.05000000074505806,
+      "lx": 1,
+      "lz": 0.7,
+      "normal": [
+        0,
+        0,
+        1
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "parentId": "6gVMaHq7VLa19eqMVECxpG",
+      "id": "1zHSSdp6WfVgSDgmVd5A2g",
+      "selected": false
+    },
+    {
+      "type": "Flower",
+      "name": "Peony",
+      "cx": 15.825630097786828,
+      "cy": -25.16699394950085,
+      "cz": 0.05000000074505806,
+      "lx": 1.5,
+      "lz": 1,
+      "normal": [
+        0,
+        0,
+        1
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "parentId": "6gVMaHq7VLa19eqMVECxpG",
+      "id": "xi2HuxsfZQnvPjTKPQxrbF",
+      "selected": false
+    },
+    {
+      "type": "Flower",
+      "name": "Peony",
+      "cx": 16.48091229260942,
+      "cy": -24.316745367707185,
+      "cz": 0.05000000074505806,
+      "lx": 1.5,
+      "lz": 1,
+      "normal": [
+        0,
+        0,
+        1
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "parentId": "6gVMaHq7VLa19eqMVECxpG",
+      "id": "2Ake4uxrZPD3VybPtfduv3",
+      "selected": false
+    },
+    {
+      "type": "Flower",
+      "name": "Peony",
+      "cx": 16.886960727664686,
+      "cy": -25.34224361063938,
+      "cz": 0.05000000074505806,
+      "lx": 1.5,
+      "lz": 1,
+      "normal": [
+        0,
+        0,
+        1
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "parentId": "6gVMaHq7VLa19eqMVECxpG",
+      "id": "4obU3fsBjpjfoLx69cK5C6",
+      "selected": false
     }
   ],
   "view": {
@@ -592,9 +1338,9 @@
     "orthographic": false,
     "showWeatherPanel": false,
     "cameraPosition": [
-      23.58799117010189,
-      -27.12518619070502,
-      4.20652848893433
+      28.25598794500171,
+      -28.317242329022985,
+      5.4011791450669415
     ],
     "mapTilt": 0,
     "showMapPanel": false,
@@ -604,9 +1350,9 @@
     "showGroundPanel": false,
     "groundColor": "forestgreen",
     "panCenter": [
-      -0.9217313642426836,
-      1.2822726937281763,
-      2.047977169020576
+      -1.47122687022552,
+      0.7903326240819978,
+      3.651583135053916
     ],
     "showInstructionPanel": true,
     "heliodonPanelX": -1235,
@@ -629,6 +1375,63 @@
       3.5161738318194917,
       0.0000035163301233325335
     ]
+  },
+  "evolutionMethod": 1,
+  "solarPanelArrayLayoutParams": {
+    "pvModelName": "CS6X-355P-FG",
+    "rowAxis": "Zonal",
+    "orientation": "Landscape",
+    "tiltAngle": 0,
+    "rowsPerRack": 1,
+    "interRowSpacing": 2,
+    "poleHeight": 1,
+    "poleSpacing": 3
+  },
+  "solarPanelArrayLayoutConstraints": {
+    "minimumInterRowSpacing": 2,
+    "maximumInterRowSpacing": 10,
+    "minimumRowsPerRack": 1,
+    "maximumRowsPerRack": 6,
+    "minimumTiltAngle": -1.5707963267948966,
+    "maximumTiltAngle": 1.5707963267948966,
+    "poleHeight": 1,
+    "poleSpacing": 5,
+    "orientation": "Landscape",
+    "pvModelName": "CS6X-355P-FG",
+    "rowAxis": "Zonal"
+  },
+  "evolutionaryAlgorithmState": {
+    "geneticAlgorithmParams": {
+      "problem": "Solar Panel Tilt Angle",
+      "objectiveFunctionType": 1,
+      "selectionMethod": 1,
+      "searchMethod": 1,
+      "populationSize": 20,
+      "maximumGenerations": 5,
+      "selectionRate": 0.5,
+      "crossoverRate": 0.5,
+      "mutationRate": 0.1,
+      "convergenceThreshold": 0.01,
+      "localSearchRadius": 0.1
+    },
+    "particleSwarmOptimizationParams": {
+      "problem": "Solar Panel Tilt Angle",
+      "objectiveFunctionType": 1,
+      "searchMethod": 1,
+      "swarmSize": 20,
+      "maximumSteps": 5,
+      "vmax": 0.01,
+      "inertia": 0.8,
+      "cognitiveCoefficient": 0.1,
+      "socialCoefficient": 0.1,
+      "convergenceThreshold": 0.01,
+      "localSearchRadius": 0.1
+    }
+  },
+  "economicsParams": {
+    "projectLifeSpan": 25,
+    "electricitySellingPrice": 0.25,
+    "operationalCostPerUnit": 0.15
   },
   "notes": [
     ""

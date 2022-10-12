@@ -1140,10 +1140,12 @@ export const i18n_zh_cn = {
       Hydrangea: '绣球花',
       Peony: '牡丹',
       RedRose: '红玫瑰',
+      Spirea: '绣线菊',
       Sunflower: '向日葵',
       TallBush: '高灌木',
       Tulip: '郁金香',
       WhiteFlower: '白花',
+      YellowFlower: '黄花',
     },
 
     people: {

@@ -13,11 +13,13 @@ import HibiscusImage from '../../../resources/hibiscus.png';
 import HydrangeaImage from '../../../resources/hydrangea.png';
 import HostaImage from '../../../resources/hosta.png';
 import PeonyImage from '../../../resources/peony.png';
+import RedRoseImage from '../../../resources/red_rose.png';
+import SpireaImage from '../../../resources/spirea.png';
 import SunflowerImage from '../../../resources/sunflower.png';
 import TallBushImage from '../../../resources/tall_bush.png';
 import TulipImage from '../../../resources/tulip.png';
-import RedRoseImage from '../../../resources/red_rose.png';
 import WhiteFlowerImage from '../../../resources/white_flower.png';
+import YellowFlowerImage from '../../../resources/yellow_flower.png';
 import { UndoableChange } from '../../../undo/UndoableChange';
 import i18n from '../../../i18n/i18n';
 import { FlowerModel } from '../../../models/FlowerModel';
@@ -63,8 +65,12 @@ const FlowerSelection = () => {
       }}
     >
       <Option key={FlowerType.WhiteFlower} value={FlowerType.WhiteFlower}>
-        <img alt={FlowerType.WhiteFlower} src={WhiteFlowerImage} height={20} style={{ paddingRight: '16px' }} />{' '}
+        <img alt={FlowerType.WhiteFlower} src={WhiteFlowerImage} height={20} style={{ paddingRight: '17px' }} />{' '}
         {i18n.t('flower.WhiteFlower', lang)}
+      </Option>
+      <Option key={FlowerType.YellowFlower} value={FlowerType.YellowFlower}>
+        <img alt={FlowerType.YellowFlower} src={YellowFlowerImage} height={20} style={{ paddingRight: '16px' }} />{' '}
+        {i18n.t('flower.YellowFlower', lang)}
       </Option>
       <Option key={FlowerType.Hibiscus} value={FlowerType.Hibiscus}>
         <img alt={FlowerType.Hibiscus} src={HibiscusImage} height={20} style={{ paddingRight: '19px' }} />{' '}
@@ -73,6 +79,10 @@ const FlowerSelection = () => {
       <Option key={FlowerType.Hydrangea} value={FlowerType.Hydrangea}>
         <img alt={FlowerType.Hydrangea} src={HydrangeaImage} height={20} style={{ paddingRight: '18px' }} />{' '}
         {i18n.t('flower.Hydrangea', lang)}
+      </Option>
+      <Option key={FlowerType.Spirea} value={FlowerType.Spirea}>
+        <img alt={FlowerType.Spirea} src={SpireaImage} height={20} style={{ paddingRight: '18px' }} />{' '}
+        {i18n.t('flower.Spirea', lang)}
       </Option>
       <Option key={FlowerType.Hosta} value={FlowerType.Hosta}>
         <img alt={FlowerType.Hosta} src={HostaImage} height={20} style={{ paddingRight: '18px' }} />{' '}
