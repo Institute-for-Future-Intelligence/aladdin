@@ -1,8 +1,8 @@
 {
   "files": {
     "main.css": "/aladdin/static/css/main.c1ee157d.chunk.css",
-    "main.js": "/aladdin/static/js/main.73e46904.chunk.js",
-    "main.js.map": "/aladdin/static/js/main.73e46904.chunk.js.map",
+    "main.js": "/aladdin/static/js/main.afe2f80a.chunk.js",
+    "main.js.map": "/aladdin/static/js/main.afe2f80a.chunk.js.map",
     "runtime-main.js": "/aladdin/static/js/runtime-main.6b545fea.js",
     "runtime-main.js.map": "/aladdin/static/js/runtime-main.6b545fea.js.map",
     "static/css/2.447301e6.chunk.css": "/aladdin/static/css/2.447301e6.chunk.css",
@@ -101,7 +101,7 @@
     "static/media/mountain-night.c780cb50.jpg": "/aladdin/static/media/mountain-night.c780cb50.jpg",
     "static/media/mountain.af82417a.jpg": "/aladdin/static/media/mountain.af82417a.jpg",
     "static/media/nightsky.2ee37da6.jpg": "/aladdin/static/media/nightsky.2ee37da6.jpg",
-    "static/media/no_leaf_shrub.728d730a.png": "/aladdin/static/media/no_leaf_shrub.728d730a.png",
+    "static/media/no_leaf_shrub.7b01fa4a.png": "/aladdin/static/media/no_leaf_shrub.7b01fa4a.png",
     "static/media/oak.9fe6576e.png": "/aladdin/static/media/oak.9fe6576e.png",
     "static/media/oak_shed.8d388b0f.png": "/aladdin/static/media/oak_shed.8d388b0f.png",
     "static/media/palm.ce8d03e5.png": "/aladdin/static/media/palm.ce8d03e5.png",
@@ -136,6 +136,7 @@
     "static/media/solar-panel-blue-portrait.822f98fb.png": "/aladdin/static/media/solar-panel-blue-portrait.822f98fb.png",
     "static/media/solar_radiation_horizontal.38eaf9ed.csv": "/aladdin/static/media/solar_radiation_horizontal.38eaf9ed.csv",
     "static/media/solar_radiation_vertical.522681a8.csv": "/aladdin/static/media/solar_radiation_vertical.522681a8.csv",
+    "static/media/spirea.f1823a2e.png": "/aladdin/static/media/spirea.f1823a2e.png",
     "static/media/spruce.14823036.png": "/aladdin/static/media/spruce.14823036.png",
     "static/media/sunflower.a86c6f03.png": "/aladdin/static/media/sunflower.a86c6f03.png",
     "static/media/tall_bush.2f30c786.png": "/aladdin/static/media/tall_bush.2f30c786.png",
@@ -157,13 +158,14 @@
     "static/media/weather.990377ca.csv": "/aladdin/static/media/weather.990377ca.csv",
     "static/media/white_flower.7c33e894.png": "/aladdin/static/media/white_flower.7c33e894.png",
     "static/media/xiaoli.e3982b5b.png": "/aladdin/static/media/xiaoli.e3982b5b.png",
-    "static/media/xiaoming.787a8ea5.png": "/aladdin/static/media/xiaoming.787a8ea5.png"
+    "static/media/xiaoming.787a8ea5.png": "/aladdin/static/media/xiaoming.787a8ea5.png",
+    "static/media/yellow_flower.8eafef25.png": "/aladdin/static/media/yellow_flower.8eafef25.png"
   },
   "entrypoints": [
     "static/js/runtime-main.6b545fea.js",
     "static/css/2.447301e6.chunk.css",
     "static/js/2.3f229f99.chunk.js",
     "static/css/main.c1ee157d.chunk.css",
-    "static/js/main.73e46904.chunk.js"
+    "static/js/main.afe2f80a.chunk.js"
   ]
 }
