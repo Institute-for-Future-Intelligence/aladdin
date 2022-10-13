@@ -130,6 +130,8 @@ export class HumanData {
     switch (name) {
       case HumanName.Jack:
         return -0.05;
+      case HumanName.Jade:
+        return -0.04;
       case HumanName.Jane:
         return 0.04;
       case HumanName.Jaye:
@@ -228,6 +230,8 @@ export class HumanData {
     switch (name) {
       case HumanName.Jack:
         return 0.42;
+      case HumanName.Jade:
+        return 0.48;
       case HumanName.Jane:
         return 0.6;
       case HumanName.Jaye:
