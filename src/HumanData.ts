@@ -128,6 +128,8 @@ export class HumanData {
 
   static fetchHatOffset(name: string): number {
     switch (name) {
+      case HumanName.Jane:
+        return 0.04;
       case HumanName.Jaye:
         return 0.04;
       case HumanName.Jean:
@@ -135,33 +137,35 @@ export class HumanData {
       case HumanName.Jedi:
         return -0.05;
       case HumanName.Jeff:
-        return 0.05;
+        return -0.05;
       case HumanName.Jena:
         return 0.05;
       case HumanName.Jeni:
         return -0.1;
       case HumanName.Jess:
         return 0.09;
+      case HumanName.Jett:
+        return -0.04;
       case HumanName.Jill:
         return -0.03;
+      case HumanName.Joan:
+        return -0.45;
       case HumanName.Joel:
-        return 0.2;
+        return -0.48;
       case HumanName.John:
-        return -0.05;
+        return 0.01;
       case HumanName.Jose:
-        return -0.16;
+        return 0.05;
       case HumanName.Judd:
         return 0.06;
       case HumanName.Judy:
-        return -0.06;
+        return -0.04;
       case HumanName.June:
         return -0.04;
       case HumanName.Juro:
-        return 0.02;
+        return -0.08;
       case HumanName.Xiaoming:
         return 0.04;
-      case HumanName.Xiaoli:
-        return 0.01;
       default:
         return 0;
     }
@@ -190,7 +194,7 @@ export class HumanData {
       case HumanName.Jett:
         return 1.85;
       case HumanName.Jill:
-        return 1.64;
+        return 1.74;
       case HumanName.Joan:
         return 1.68;
       case HumanName.Joel:
@@ -202,11 +206,11 @@ export class HumanData {
       case HumanName.Judd:
         return 1.68;
       case HumanName.Judy:
-        return 1.55;
+        return 1.65;
       case HumanName.June:
         return 1.85;
       case HumanName.Juro:
-        return 1.9;
+        return 1.72;
       case HumanName.Xiaoming:
         return 1.75;
       case HumanName.Xiaoli:
@@ -219,21 +223,25 @@ export class HumanData {
   static fetchWidth(name: string): number {
     switch (name) {
       case HumanName.Jane:
-        return 0.45;
+        return 0.6;
       case HumanName.Jena:
         return 0.4;
+      case HumanName.Joan:
+        return 1.7;
       case HumanName.Joel:
-        return 1;
+        return 1.8;
       case HumanName.John:
-        return 0.8;
+        return 0.6;
       case HumanName.Jose:
         return 2;
       case HumanName.Judy:
-        return 0.45;
+        return 0.75;
       case HumanName.June:
         return 0.4;
+      case HumanName.Juro:
+        return 0.65;
       case HumanName.Xiaoli:
-        return 0.38;
+        return 0.43;
       default:
         return 0.6;
     }
