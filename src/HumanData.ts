@@ -169,7 +169,7 @@ export class HumanData {
       case HumanName.Juro:
         return -0.08;
       case HumanName.Xiaoming:
-        return 0.04;
+        return -0.07;
       default:
         return 0;
     }
@@ -256,6 +256,8 @@ export class HumanData {
         return 0.65;
       case HumanName.Xiaoli:
         return 0.43;
+      case HumanName.Xiaoming:
+        return 0.5;
       default:
         return 0.6;
     }
