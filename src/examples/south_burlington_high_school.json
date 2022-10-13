@@ -1,7 +1,7 @@
 {
-  "docid": "hT6X8uhMDXRksXCxhEAYq8",
-  "time": "09/17/2022 04:12 pm",
-  "timestamp": 1663445574043,
+  "docid": "81nnLg1vaauBAoU3PV3msg",
+  "time": "10/13/2022 12:50 pm",
+  "timestamp": 1665679803253,
   "userid": "QWecNcxhyvP6j6sBN11hBsfZDau1",
   "owner": null,
   "email": null,
@@ -25,7 +25,7 @@
     "solarRadiationHeatmapGridCellSize": 5,
     "latitude": 44.454924,
     "cspDaysPerYear": 4,
-    "date": "6/22/2022 1:00:00 PM",
+    "date": "6/22/2022, 1:00:00 PM",
     "address": "550 Dorset St, South Burlington, VT 05403, USA",
     "ground": {
       "thermalDiffusivity": 0.05,
@@ -2148,9 +2148,9 @@
       "type": "Tree",
       "lx": 10,
       "selected": false,
-      "name": "Dogwood",
+      "name": "Magnolia",
       "cz": 0,
-      "locked": true,
+      "locked": false,
       "id": "xmEmwPRar8iA32AgGqBDZo",
       "cy": 44.65483300272308,
       "rotation": [
@@ -2165,11 +2165,12 @@
         1,
         0
       ],
-      "lz": 10
+      "lz": 10,
+      "evergreen": false
     },
     {
       "cx": 4.786319195449075,
-      "name": "Dogwood",
+      "name": "Magnolia",
       "lz": 10,
       "id": "2N9b6wPaP7vTT6v2GfUvci",
       "cy": 57.504795212360165,
@@ -2181,14 +2182,15 @@
       ],
       "parentId": "Ground",
       "type": "Tree",
-      "locked": true,
+      "locked": false,
       "lx": 10,
       "normal": [
         0,
         0,
         1
       ],
-      "cz": 0
+      "cz": 0,
+      "evergreen": false
     },
     {
       "cz": 0,
@@ -2199,7 +2201,7 @@
       "parentId": "Ground",
       "lx": 10,
       "cx": -37.72446755161796,
-      "name": "Dogwood",
+      "name": "Magnolia",
       "rotation": [
         0,
         0,
@@ -2211,7 +2213,8 @@
         0,
         0,
         1
-      ]
+      ],
+      "evergreen": false
     },
     {
       "rotation": [
@@ -2228,13 +2231,14 @@
       "parentId": "Ground",
       "cz": 0,
       "cy": 27.53619242162998,
-      "name": "Dogwood",
+      "name": "Magnolia",
       "type": "Tree",
       "lx": 10,
       "cx": -56.12589485999845,
       "id": "sBLygdm7dv2Y53q9fnNST7",
       "selected": false,
-      "lz": 10
+      "lz": 10,
+      "evergreen": false
     },
     {
       "ly": 1,
@@ -3761,7 +3765,7 @@
       "filled": false,
       "id": "fdazNUtKFoSEAPgq9CQJES",
       "type": "Polygon",
-      "locked": false,
+      "locked": true,
       "cx": 0,
       "parentId": "qsPqX4eMRADWLb6uFzZyu3",
       "color": "#d0d7da",
@@ -3815,7 +3819,7 @@
       ],
       "lz": 0.4,
       "filled": false,
-      "locked": false,
+      "locked": true,
       "parentId": "jeaVPPnZw5Ed7yuuYuFjT4",
       "ly": 0.4,
       "cy": 0,
@@ -3856,6 +3860,73 @@
       "foundationId": "jeaVPPnZw5Ed7yuuYuFjT4",
       "lineStyle": 2,
       "lineColor": "#ffffff"
+    },
+    {
+      "type": "Tree",
+      "name": "Magnolia",
+      "cx": -42.801241972409024,
+      "cy": -41.7007983662498,
+      "cz": 0,
+      "lx": 9.278019576062961,
+      "lz": 8.643797542596442,
+      "normal": [
+        0,
+        1,
+        0
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "parentId": "Ground",
+      "id": "g1FsRLcUZdSt9Q2DU31zPA",
+      "selected": false,
+      "evergreen": false
+    },
+    {
+      "type": "Tree",
+      "name": "Magnolia",
+      "cx": -59.8787215366302,
+      "cy": -50.66068977312313,
+      "cz": -7.105427357601002e-15,
+      "lx": 9.278019576062961,
+      "lz": 11.78149367100265,
+      "normal": [
+        0,
+        0,
+        1
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "parentId": "Ground",
+      "id": "krmMVWEiKsnePivMXL7Nes",
+      "selected": false
+    },
+    {
+      "type": "Tree",
+      "name": "Magnolia",
+      "cx": -51.87839388003734,
+      "cy": -62.51980907480443,
+      "cz": 0,
+      "lx": 6.499371428507982,
+      "lz": 7.082169014620417,
+      "normal": [
+        0,
+        0,
+        1
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "parentId": "Ground",
+      "id": "rW1c33rx65WFpCNTzaAbaM",
+      "selected": false
     }
   ],
   "view": {
@@ -3882,9 +3953,9 @@
       "y": 0
     },
     "panCenter": [
-      -0.4243708300850131,
-      -19.28016562674967,
-      0
+      -0.5271231482294916,
+      -19.07340568381822,
+      1.1113277112999499e-17
     ],
     "showMapPanel": false,
     "groundColor": "#16a5a5",
@@ -4015,9 +4086,9 @@
     },
     "orthographic": false,
     "cameraPosition": [
-      42.5221293029564,
-      -128.74632289235763,
-      101.31173232941053
+      34.42294430409631,
+      -130.54447843537505,
+      114.20833146634695
     ],
     "showDailyUpdraftTowerYieldPanel": false,
     "showDailyPvYieldPanel": false,
