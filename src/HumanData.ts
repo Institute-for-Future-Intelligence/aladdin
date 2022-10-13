@@ -2,6 +2,7 @@
  * @Copyright 2021-2022. Institute for Future Intelligence, Inc.
  */
 
+import JaahImage from './resources/jaah.png';
 import JackImage from './resources/jack.png';
 import JadeImage from './resources/jade.png';
 import JaneImage from './resources/jane.png';
@@ -16,6 +17,7 @@ import JettImage from './resources/jett.png';
 import JillImage from './resources/jill.png';
 import JoanImage from './resources/joan.png';
 import JoelImage from './resources/joel.png';
+import JoeyImage from './resources/joey.png';
 import JohnImage from './resources/john.png';
 import JoseImage from './resources/jose.png';
 import JuddImage from './resources/judd.png';
@@ -30,6 +32,8 @@ import i18n from './i18n/i18n';
 export class HumanData {
   static fetchGender(name: string): Gender {
     switch (name) {
+      case HumanName.Jaah:
+        return Gender.Male;
       case HumanName.Jade:
         return Gender.Female;
       case HumanName.Jane:
@@ -56,6 +60,8 @@ export class HumanData {
         return Gender.Female;
       case HumanName.Joel:
         return Gender.Male;
+      case HumanName.Joey:
+        return Gender.Female;
       case HumanName.John:
         return Gender.Male;
       case HumanName.Jose:
@@ -79,6 +85,8 @@ export class HumanData {
 
   static fetchLabel(name: string, lang: {}): string {
     switch (name) {
+      case HumanName.Jaah:
+        return i18n.t('people.Jaah', lang);
       case HumanName.Jade:
         return i18n.t('people.Jade', lang);
       case HumanName.Jane:
@@ -105,6 +113,8 @@ export class HumanData {
         return i18n.t('people.Joan', lang);
       case HumanName.Joel:
         return i18n.t('people.Joel', lang);
+      case HumanName.Joey:
+        return i18n.t('people.Joey', lang);
       case HumanName.John:
         return i18n.t('people.John', lang);
       case HumanName.Jose:
@@ -128,6 +138,8 @@ export class HumanData {
 
   static fetchHatOffset(name: string): number {
     switch (name) {
+      case HumanName.Jaah:
+        return -0.05;
       case HumanName.Jack:
         return -0.05;
       case HumanName.Jade:
@@ -139,7 +151,7 @@ export class HumanData {
       case HumanName.Jean:
         return 0.05;
       case HumanName.Jedi:
-        return -0.05;
+        return -0.02;
       case HumanName.Jeff:
         return -0.05;
       case HumanName.Jena:
@@ -156,20 +168,18 @@ export class HumanData {
         return -0.45;
       case HumanName.Joel:
         return -0.48;
+      case HumanName.Joey:
+        return 0.01;
       case HumanName.John:
         return 0.01;
       case HumanName.Jose:
         return 0.05;
-      case HumanName.Judd:
-        return 0.06;
       case HumanName.Judy:
         return -0.04;
       case HumanName.June:
         return -0.04;
       case HumanName.Juro:
         return -0.08;
-      case HumanName.Xiaoming:
-        return -0.07;
       default:
         return 0;
     }
@@ -177,6 +187,8 @@ export class HumanData {
 
   static fetchHeight(name: string): number {
     switch (name) {
+      case HumanName.Jaah:
+        return 1.78;
       case HumanName.Jack:
         return 1.8;
       case HumanName.Jade:
@@ -192,11 +204,11 @@ export class HumanData {
       case HumanName.Jeff:
         return 1.65;
       case HumanName.Jena:
-        return 1.5;
+        return 1.6;
       case HumanName.Jeni:
         return 1.7;
       case HumanName.Jess:
-        return 1.4;
+        return 1.5;
       case HumanName.Jett:
         return 1.85;
       case HumanName.Jill:
@@ -205,6 +217,8 @@ export class HumanData {
         return 1.68;
       case HumanName.Joel:
         return 1.75;
+      case HumanName.Joey:
+        return 1.72;
       case HumanName.John:
         return 1.85;
       case HumanName.Jose:
@@ -228,6 +242,8 @@ export class HumanData {
 
   static fetchWidth(name: string): number {
     switch (name) {
+      case HumanName.Jaah:
+        return 0.74;
       case HumanName.Jack:
         return 0.42;
       case HumanName.Jade:
@@ -236,28 +252,38 @@ export class HumanData {
         return 0.6;
       case HumanName.Jaye:
         return 0.55;
+      case HumanName.Jean:
+        return 0.65;
+      case HumanName.Jedi:
+        return 0.56;
       case HumanName.Jena:
-        return 0.4;
+        return 0.695;
       case HumanName.Jeni:
         return 0.45;
+      case HumanName.Jess:
+        return 0.43;
       case HumanName.Joan:
         return 1.7;
       case HumanName.Joel:
         return 1.8;
+      case HumanName.Joey:
+        return 0.462;
       case HumanName.John:
         return 0.6;
       case HumanName.Jose:
         return 2;
+      case HumanName.Judd:
+        return 0.544;
       case HumanName.Judy:
         return 0.75;
       case HumanName.June:
-        return 0.4;
-      case HumanName.Juro:
         return 0.65;
+      case HumanName.Juro:
+        return 0.494;
       case HumanName.Xiaoli:
         return 0.43;
       case HumanName.Xiaoming:
-        return 0.5;
+        return 0.472;
       default:
         return 0.6;
     }
@@ -266,6 +292,9 @@ export class HumanData {
   static fetchTextureImage(name: string) {
     let textureImg;
     switch (name) {
+      case HumanName.Jaah:
+        textureImg = JaahImage;
+        break;
       case HumanName.Jade:
         textureImg = JadeImage;
         break;
@@ -304,6 +333,9 @@ export class HumanData {
         break;
       case HumanName.Joel:
         textureImg = JoelImage;
+        break;
+      case HumanName.Joey:
+        textureImg = JoeyImage;
         break;
       case HumanName.John:
         textureImg = JohnImage;

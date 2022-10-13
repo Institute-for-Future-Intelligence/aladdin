@@ -1168,6 +1168,7 @@ export const i18n_tr = {
     },
 
     people: {
+      Jaah: 'Jaah',
       Jack: 'Mete',
       Jade: 'Ece',
       Jane: 'Asya',
@@ -1182,6 +1183,7 @@ export const i18n_tr = {
       Jill: 'Elif',
       Joan: 'Ezgi',
       Joel: 'Cenk',
+      Joey: 'Joey',
       John: 'Can',
       Jose: 'Mert',
       Judd: 'Ozan',

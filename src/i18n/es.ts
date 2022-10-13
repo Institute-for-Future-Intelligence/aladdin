@@ -1168,6 +1168,7 @@ export const i18n_es = {
     },
 
     people: {
+      Jaah: 'Jaah',
       Jack: 'Jack',
       Jade: 'Jade',
       Jane: 'Jane',
@@ -1182,6 +1183,7 @@ export const i18n_es = {
       Jill: 'Jill',
       Joan: 'Joan',
       Joel: 'Joel',
+      Joey: 'Joey',
       John: 'John',
       Jose: 'Jose',
       Judd: 'Judd',

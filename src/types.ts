@@ -360,6 +360,7 @@ export enum Gender {
 }
 
 export enum HumanName {
+  Jaah = 'Jaah',
   Jack = 'Jack',
   Jade = 'Jade',
   Jane = 'Jane',
@@ -374,6 +375,7 @@ export enum HumanName {
   Jill = 'Jill',
   Joan = 'Joan',
   Joel = 'Joel',
+  Joey = 'Joey',
   John = 'John',
   Jose = 'Jose',
   Judd = 'Judd',

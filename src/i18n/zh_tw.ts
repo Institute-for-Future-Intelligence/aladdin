@@ -1151,6 +1151,7 @@ export const i18n_zh_tw = {
     },
 
     people: {
+      Jaah: '賈阿',
       Jack: '傑克',
       Jade: '美玉',
       Jane: '簡',
@@ -1165,6 +1166,7 @@ export const i18n_zh_tw = {
       Jill: '吉爾',
       Joan: '瓊',
       Joel: '喬爾',
+      Joey: '喬伊',
       John: '約翰',
       Jose: '何塞',
       Judd: '賈德',

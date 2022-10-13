@@ -5,6 +5,7 @@
 import React, { useState } from 'react';
 import { Select } from 'antd';
 import { HumanName } from '../../../types';
+import JaahImage from '../../../resources/jaah.png';
 import JackImage from '../../../resources/jack.png';
 import JadeImage from '../../../resources/jade.png';
 import JaneImage from '../../../resources/jane.png';
@@ -19,6 +20,7 @@ import JettImage from '../../../resources/jett.png';
 import JillImage from '../../../resources/jill.png';
 import JoanImage from '../../../resources/joan.png';
 import JoelImage from '../../../resources/joel.png';
+import JoeyImage from '../../../resources/joey.png';
 import JohnImage from '../../../resources/john.png';
 import JoseImage from '../../../resources/jose.png';
 import JuddImage from '../../../resources/judd.png';
@@ -77,6 +79,10 @@ const HumanSelection = () => {
         <img alt={HumanName.Jack} src={JackImage} height={20} style={{ paddingRight: '8px' }} />{' '}
         {i18n.t('people.Jack', lang)}
       </Option>
+      <Option key={HumanName.Jaah} value={HumanName.Jaah}>
+        <img alt={HumanName.Jaah} src={JaahImage} height={20} style={{ paddingRight: '8px' }} />{' '}
+        {i18n.t('people.Jaah', lang)}
+      </Option>
       <Option key={HumanName.Jade} value={HumanName.Jade}>
         <img alt={HumanName.Jade} src={JadeImage} height={20} style={{ paddingRight: '8px' }} />{' '}
         {i18n.t('people.Jade', lang)}
@@ -128,6 +134,10 @@ const HumanSelection = () => {
       <Option key={HumanName.Joel} value={HumanName.Joel}>
         <img alt={HumanName.Joel} src={JoelImage} height={20} style={{ paddingRight: '4px' }} />{' '}
         {i18n.t('people.Joel', lang)}
+      </Option>
+      <Option key={HumanName.Joey} value={HumanName.Joey}>
+        <img alt={HumanName.Joey} src={JoeyImage} height={20} style={{ paddingRight: '4px' }} />{' '}
+        {i18n.t('people.Joey', lang)}
       </Option>
       <Option key={HumanName.John} value={HumanName.John}>
         <img alt={HumanName.John} src={JohnImage} height={20} style={{ paddingRight: '6px' }} />{' '}
