@@ -383,6 +383,7 @@ export const i18n_tr = {
         Solarium: 'Solaryum',
         Pavilion: 'Çardak',
         Church: 'Kilise',
+        AdobeTaosHouse: 'Adobe Taos House',
         BarnStyleHouse: 'Çiftlik Evi',
       },
       commercialBuildingsSubMenu: 'Ticari Binalar',

@@ -17,6 +17,7 @@ import solar_panels_over_canal from './examples/solar_panels_over_canal.json';
 import solar_trackers from './examples/solar_trackers.json';
 import all_roof_types from './examples/all_roof_types.json';
 import cape_cod_with_shed_dormer from './examples/cape_cod_with_shed_dormer.json';
+import adobe_taos_house from './examples/adobe_taos_house.json';
 import barn_house from './examples/barn_house.json';
 import greenhouse from './examples/greenhouse.json';
 import solarium from './examples/solarium.json';
@@ -415,6 +416,9 @@ const MainMenu = ({ viewOnly, set2DView, resetView, zoomView, canvas }: MainMenu
         break;
       case 'church_01':
         input = church_01;
+        break;
+      case 'adobe_taos_house':
+        input = adobe_taos_house;
         break;
       case 'barn_house':
         input = barn_house;
@@ -2056,6 +2060,9 @@ const MainMenu = ({ viewOnly, set2DView, resetView, zoomView, canvas }: MainMenu
             </Menu.Item>
             <Menu.Item key="church_01" onClick={loadFile}>
               {i18n.t('menu.residentialBuildingExamples.Church', lang)}
+            </Menu.Item>
+            <Menu.Item key="adobe_taos_house" onClick={loadFile}>
+              {i18n.t('menu.residentialBuildingExamples.AdobeTaosHouse', lang)}
             </Menu.Item>
             <Menu.Item key="barn_house" onClick={loadFile}>
               {i18n.t('menu.residentialBuildingExamples.BarnStyleHouse', lang)}

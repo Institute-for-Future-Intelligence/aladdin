@@ -384,6 +384,7 @@ export const i18n_es = {
         Solarium: 'Solarium',
         Pavilion: 'Pavilion',
         Church: 'Church',
+        AdobeTaosHouse: 'Adobe Taos House',
         BarnStyleHouse: 'Barn Style House',
       },
       commercialBuildingsSubMenu: 'Commercial Buildings',

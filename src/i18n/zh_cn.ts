@@ -381,6 +381,7 @@ export const i18n_zh_cn = {
         Solarium: '有日光浴室的房子',
         Pavilion: '亭子',
         Church: '教堂',
+        AdobeTaosHouse: '陶斯土坯房',
         BarnStyleHouse: '谷仓式风格的住宅',
       },
       commercialBuildingsSubMenu: '商用建筑',
