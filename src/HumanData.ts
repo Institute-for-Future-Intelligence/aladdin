@@ -128,10 +128,12 @@ export class HumanData {
 
   static fetchHatOffset(name: string): number {
     switch (name) {
+      case HumanName.Jack:
+        return -0.05;
       case HumanName.Jane:
         return 0.04;
       case HumanName.Jaye:
-        return 0.04;
+        return 0;
       case HumanName.Jean:
         return 0.05;
       case HumanName.Jedi:
@@ -141,7 +143,7 @@ export class HumanData {
       case HumanName.Jena:
         return 0.05;
       case HumanName.Jeni:
-        return -0.1;
+        return 0.02;
       case HumanName.Jess:
         return 0.09;
       case HumanName.Jett:
@@ -173,6 +175,8 @@ export class HumanData {
 
   static fetchHeight(name: string): number {
     switch (name) {
+      case HumanName.Jack:
+        return 1.8;
       case HumanName.Jade:
         return 1.6;
       case HumanName.Jane:
@@ -222,10 +226,16 @@ export class HumanData {
 
   static fetchWidth(name: string): number {
     switch (name) {
+      case HumanName.Jack:
+        return 0.42;
       case HumanName.Jane:
         return 0.6;
+      case HumanName.Jaye:
+        return 0.55;
       case HumanName.Jena:
         return 0.4;
+      case HumanName.Jeni:
+        return 0.45;
       case HumanName.Joan:
         return 1.7;
       case HumanName.Joel:
