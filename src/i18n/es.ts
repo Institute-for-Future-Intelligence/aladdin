@@ -1154,6 +1154,10 @@ export const i18n_es = {
     flower: {
       Bellflower: 'Bellflower',
       Boxwood: 'Boxwood',
+      CactusCombo1: 'Cactus Combo 1',
+      CactusCombo2: 'Cactus Combo 2',
+      CactusCombo3: 'Cactus Combo 3',
+      CactusCombo4: 'Cactus Combo 4',
       Hibiscus: 'Hibiscus',
       Hosta: 'Hosta',
       Hydrangea: 'Hydrangea',

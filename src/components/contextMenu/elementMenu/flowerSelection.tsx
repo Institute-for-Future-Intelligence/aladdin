@@ -9,6 +9,10 @@ import * as Selector from '../../../stores/selector';
 import { FlowerType } from '../../../types';
 import BellflowerImage from '../../../resources/bellflower.png';
 import BoxwoodImage from '../../../resources/boxwood.png';
+import CactusCombo1Image from '../../../resources/cactus_combo_1.png';
+import CactusCombo2Image from '../../../resources/cactus_combo_2.png';
+import CactusCombo3Image from '../../../resources/cactus_combo_3.png';
+import CactusCombo4Image from '../../../resources/cactus_combo_4.png';
 import HibiscusImage from '../../../resources/hibiscus.png';
 import HydrangeaImage from '../../../resources/hydrangea.png';
 import HostaImage from '../../../resources/hosta.png';
@@ -37,7 +41,7 @@ const FlowerSelection = () => {
 
   return (
     <Select
-      style={{ width: '160px' }}
+      style={{ width: '200px' }}
       value={flower?.name ?? FlowerType.WhiteFlower}
       onChange={(value) => {
         if (flower) {
@@ -99,6 +103,22 @@ const FlowerSelection = () => {
       <Option key={FlowerType.TallBush} value={FlowerType.TallBush}>
         <img alt={FlowerType.TallBush} src={TallBushImage} height={20} style={{ paddingRight: '32px' }} />{' '}
         {i18n.t('flower.TallBush', lang)}
+      </Option>
+      <Option key={FlowerType.CactusCombo1} value={FlowerType.CactusCombo1}>
+        <img alt={FlowerType.CactusCombo1} src={CactusCombo1Image} height={20} style={{ paddingRight: '26px' }} />{' '}
+        {i18n.t('flower.CactusCombo1', lang)}
+      </Option>
+      <Option key={FlowerType.CactusCombo2} value={FlowerType.CactusCombo2}>
+        <img alt={FlowerType.CactusCombo2} src={CactusCombo2Image} height={20} style={{ paddingRight: '26px' }} />{' '}
+        {i18n.t('flower.CactusCombo2', lang)}
+      </Option>
+      <Option key={FlowerType.CactusCombo3} value={FlowerType.CactusCombo3}>
+        <img alt={FlowerType.CactusCombo3} src={CactusCombo3Image} height={20} style={{ paddingRight: '26px' }} />{' '}
+        {i18n.t('flower.CactusCombo3', lang)}
+      </Option>
+      <Option key={FlowerType.CactusCombo4} value={FlowerType.CactusCombo4}>
+        <img alt={FlowerType.CactusCombo4} src={CactusCombo4Image} height={20} style={{ paddingRight: '26px' }} />{' '}
+        {i18n.t('flower.CactusCombo4', lang)}
       </Option>
       <Option key={FlowerType.RedRose} value={FlowerType.RedRose}>
         <img alt={FlowerType.RedRose} src={RedRoseImage} height={20} style={{ paddingRight: '28px' }} />{' '}

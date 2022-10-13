@@ -6,6 +6,10 @@ import NoLeafFlowerImage from './resources/no_leaf_flower.png';
 import NoLeafShrubImage from './resources/no_leaf_shrub.png';
 import BellflowerImage from './resources/bellflower.png';
 import BoxwoodImage from './resources/boxwood.png';
+import CactusCombo1Image from './resources/cactus_combo_1.png';
+import CactusCombo2Image from './resources/cactus_combo_2.png';
+import CactusCombo3Image from './resources/cactus_combo_3.png';
+import CactusCombo4Image from './resources/cactus_combo_4.png';
 import HibiscusImage from './resources/hibiscus.png';
 import HydrangeaImage from './resources/hydrangea.png';
 import HostaImage from './resources/hosta.png';
@@ -27,6 +31,14 @@ export class FlowerData {
         return 0.4;
       case FlowerType.Boxwood:
         return 1.6;
+      case FlowerType.CactusCombo1:
+        return 2;
+      case FlowerType.CactusCombo2:
+        return 2;
+      case FlowerType.CactusCombo3:
+        return 2;
+      case FlowerType.CactusCombo4:
+        return 2;
       case FlowerType.Hosta:
         return 1;
       case FlowerType.Hibiscus:
@@ -58,6 +70,14 @@ export class FlowerData {
         return 0.8;
       case FlowerType.Boxwood:
         return 1.44;
+      case FlowerType.CactusCombo1:
+        return 2.35;
+      case FlowerType.CactusCombo2:
+        return 2.7;
+      case FlowerType.CactusCombo3:
+        return 2.45;
+      case FlowerType.CactusCombo4:
+        return 2.69;
       case FlowerType.Hosta:
         return 0.7;
       case FlowerType.Hibiscus:
@@ -89,6 +109,14 @@ export class FlowerData {
         return i18n.t('flower.Bellflower', lang);
       case FlowerType.Boxwood:
         return i18n.t('flower.Boxwood', lang);
+      case FlowerType.CactusCombo1:
+        return i18n.t('flower.CactusCombo1', lang);
+      case FlowerType.CactusCombo2:
+        return i18n.t('flower.CactusCombo2', lang);
+      case FlowerType.CactusCombo3:
+        return i18n.t('flower.CactusCombo3', lang);
+      case FlowerType.CactusCombo4:
+        return i18n.t('flower.CactusCombo4', lang);
       case FlowerType.Hibiscus:
         return i18n.t('flower.Hibiscus', lang);
       case FlowerType.Hydrangea:
@@ -130,6 +158,18 @@ export class FlowerData {
       if (name === FlowerType.TallBush) {
         return TallBushImage;
       }
+      if (name === FlowerType.CactusCombo1) {
+        return CactusCombo1Image;
+      }
+      if (name === FlowerType.CactusCombo2) {
+        return CactusCombo2Image;
+      }
+      if (name === FlowerType.CactusCombo3) {
+        return CactusCombo3Image;
+      }
+      if (name === FlowerType.CactusCombo4) {
+        return CactusCombo4Image;
+      }
       return NoLeafFlowerImage;
     }
     let textureImg;
@@ -139,6 +179,18 @@ export class FlowerData {
         break;
       case FlowerType.Boxwood:
         textureImg = BoxwoodImage;
+        break;
+      case FlowerType.CactusCombo1:
+        textureImg = CactusCombo1Image;
+        break;
+      case FlowerType.CactusCombo2:
+        textureImg = CactusCombo2Image;
+        break;
+      case FlowerType.CactusCombo3:
+        textureImg = CactusCombo3Image;
+        break;
+      case FlowerType.CactusCombo4:
+        textureImg = CactusCombo4Image;
         break;
       case FlowerType.Hibiscus:
         textureImg = HibiscusImage;
