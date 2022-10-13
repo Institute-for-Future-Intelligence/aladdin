@@ -1,8 +1,8 @@
 {
   "files": {
     "main.css": "/aladdin/static/css/main.c1ee157d.chunk.css",
-    "main.js": "/aladdin/static/js/main.f4ffcc48.chunk.js",
-    "main.js.map": "/aladdin/static/js/main.f4ffcc48.chunk.js.map",
+    "main.js": "/aladdin/static/js/main.ab2a2cd9.chunk.js",
+    "main.js.map": "/aladdin/static/js/main.ab2a2cd9.chunk.js.map",
     "runtime-main.js": "/aladdin/static/js/runtime-main.6b545fea.js",
     "runtime-main.js.map": "/aladdin/static/js/runtime-main.6b545fea.js.map",
     "static/css/2.447301e6.chunk.css": "/aladdin/static/css/2.447301e6.chunk.css",
@@ -29,6 +29,10 @@
     "static/media/building_facade_09.65f795a5.png": "/aladdin/static/media/building_facade_09.65f795a5.png",
     "static/media/building_facade_10.6520a3bf.png": "/aladdin/static/media/building_facade_10.6520a3bf.png",
     "static/media/building_facade_10_menu.de5158c9.png": "/aladdin/static/media/building_facade_10_menu.de5158c9.png",
+    "static/media/cactus_combo_1.21a73758.png": "/aladdin/static/media/cactus_combo_1.21a73758.png",
+    "static/media/cactus_combo_2.8b5298f8.png": "/aladdin/static/media/cactus_combo_2.8b5298f8.png",
+    "static/media/cactus_combo_3.2627c12d.png": "/aladdin/static/media/cactus_combo_3.2627c12d.png",
+    "static/media/cactus_combo_4.731b15b4.png": "/aladdin/static/media/cactus_combo_4.731b15b4.png",
     "static/media/compass.ddc4aa38.obj": "/aladdin/static/media/compass.ddc4aa38.obj",
     "static/media/cottonwood.581e0938.png": "/aladdin/static/media/cottonwood.581e0938.png",
     "static/media/cottonwood_shed.9c316396.png": "/aladdin/static/media/cottonwood_shed.9c316396.png",
@@ -179,13 +183,13 @@
     "static/media/white_flower.7c33e894.png": "/aladdin/static/media/white_flower.7c33e894.png",
     "static/media/xiaoli.7039f54f.png": "/aladdin/static/media/xiaoli.7039f54f.png",
     "static/media/xiaoming.bfd0036f.png": "/aladdin/static/media/xiaoming.bfd0036f.png",
-    "static/media/yellow_flower.8eafef25.png": "/aladdin/static/media/yellow_flower.8eafef25.png"
+    "static/media/yellow_flower.3da8cdb9.png": "/aladdin/static/media/yellow_flower.3da8cdb9.png"
   },
   "entrypoints": [
     "static/js/runtime-main.6b545fea.js",
     "static/css/2.447301e6.chunk.css",
     "static/js/2.1a0786d8.chunk.js",
     "static/css/main.c1ee157d.chunk.css",
-    "static/js/main.f4ffcc48.chunk.js"
+    "static/js/main.ab2a2cd9.chunk.js"
   ]
 }
