@@ -429,6 +429,7 @@ export const i18n_en = {
       ThemeDune: 'Dune',
       ThemeForest: 'Forest',
       ThemeGrassland: 'Grassland',
+      ThemeLake: 'Lake',
       ThemeMountain: 'Mountain',
       ThemeRural: 'Rural',
       SunlightAttenuationCoefficientInAir: 'Sunlight Attenuation Coefficient in Air',

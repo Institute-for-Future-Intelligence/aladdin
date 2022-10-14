@@ -427,6 +427,7 @@ export const i18n_zh_tw = {
       ThemeDune: '沙丘',
       ThemeForest: '森林',
       ThemeGrassland: '草原',
+      ThemeLake: '湖泊',
       ThemeMountain: '山脈',
       ThemeRural: '田園',
       SunlightAttenuationCoefficientInAir: '陽光在空氣中傳播的衰減係數',

@@ -428,6 +428,7 @@ export const i18n_tr = {
       ThemeDune: 'Dune',
       ThemeForest: 'Orman',
       ThemeGrassland: 'Çayır',
+      ThemeLake: 'Lake',
       ThemeMountain: 'Mountain',
       ThemeRural: 'Rural',
       SunlightAttenuationCoefficientInAir: 'Havan Güneş Işığı Zayıflatma Katsayısı',

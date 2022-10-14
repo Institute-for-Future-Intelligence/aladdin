@@ -1,8 +1,8 @@
 {
-  "docid": "64rmZeaNmuFBqrQ5qiZUWW",
-  "time": "10/10/2022 10:36 pm",
-  "timestamp": 1665455795186,
-  "userid": "QWecNcxhyvP6j6sBN11hBsfZDau1",
+  "docid": "avZnKUFo11KbS36dkarbbH",
+  "time": "10/14/2022 12:56 pm",
+  "timestamp": 1665766607727,
+  "userid": "HPwaZxo6jaPjQcD6cBGUWPpQkVw2",
   "owner": null,
   "email": null,
   "world": {
@@ -298,9 +298,9 @@
       "roofId": "bMyAZV3jeEtHec1SxNb6X8",
       "lz": 5.234219703671004,
       "ly": 0.3,
-      "leftRoofHeight": 5.777941691959145,
+      "leftRoofHeight": 5.234219703671004,
       "relativeAngle": 3.141592653589793,
-      "rightRoofHeight": 5.777941691959145,
+      "rightRoofHeight": 5.234219703671004,
       "leftJoints": [
         "4Q8KDQDxyuamkEtRJU3paR"
       ],
@@ -372,7 +372,7 @@
       "cx": 3.193391775146189,
       "centerRoofHeight": [
         0.5,
-        5.777941691959145
+        5.234219703671004
       ],
       "showLabel": false,
       "leftRoofHeight": 5.234219703671004,
@@ -419,7 +419,7 @@
       "type": "Wall",
       "centerRoofHeight": [
         -0.5,
-        5.777941691959145
+        5.234219703671004
       ],
       "cz": 3.660138480027889,
       "rotation": [
@@ -551,7 +551,7 @@
       "cz": 0,
       "cy": 0,
       "foundationId": "8fpWrU7qVyVgipB7LtABom",
-      "lz": 5.777941691959145,
+      "lz": 5.234219703671004,
       "lx": 0,
       "showLabel": false,
       "parentId": "8fpWrU7qVyVgipB7LtABom",
@@ -1082,7 +1082,7 @@
       "cx": -0.09889479147539992,
       "cy": -3.5804269948570657,
       "cz": 0.03700868412852199,
-      "lx": 0.6,
+      "lx": 0.544,
       "lz": 1.68,
       "normal": [
         0,
@@ -1097,7 +1097,7 @@
       "parentId": "8fpWrU7qVyVgipB7LtABom",
       "id": "3LYQCPYTZ6WYqLSGF4X7Lr",
       "selected": false,
-      "ly": 0.6
+      "ly": 0.544
     },
     {
       "type": "Tree",
@@ -1217,8 +1217,8 @@
       "cx": 10.043178984637636,
       "cy": -3.1477838439296697,
       "cz": 0,
-      "lx": 0.6,
-      "lz": 1.4,
+      "lx": 0.43,
+      "lz": 1.5,
       "normal": [
         0,
         1,
@@ -1232,7 +1232,7 @@
       "parentId": "Ground",
       "id": "hDyRWYv3zznENZxyb7giJb",
       "selected": false,
-      "ly": 0.6
+      "ly": 0.43
     },
     {
       "type": "Flower",
@@ -1626,7 +1626,7 @@
       -0.000020000888987681265,
       19.99999999998956
     ],
-    "theme": "Default",
+    "theme": "Lake",
     "showDesignInfoPanel": false,
     "weatherPanelX": 0,
     "dailyParabolicTroughYieldPanelX": 0,
@@ -1638,9 +1638,9 @@
     "dailyHeliostatYieldPanelX": 0,
     "showDailyParabolicDishYieldPanel": false,
     "cameraPosition": [
-      -8.063018726729592,
-      -12.662058288062733,
-      3.146310857938336
+      0.823478109149432,
+      -13.414726988302169,
+      1.767908991573803
     ],
     "showYearlyHeliostatYieldPanel": false,
     "orthographic": false,
@@ -1689,8 +1689,8 @@
     "shadowEnabled": true,
     "showInstructionPanel": true,
     "panCenter": [
-      1.2005795141631277,
-      0.23279623654563292,
+      1.184158950573558,
+      0.2445926863382625,
       1.767908991573803
     ],
     "yearlyFresnelReflectorYieldPanelY": 0,

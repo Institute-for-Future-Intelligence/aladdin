@@ -1,8 +1,8 @@
 {
-  "docid": "rWctrp8MtQkNt86EMCpQco",
-  "time": "10/13/2022 07:23 pm",
-  "timestamp": 1665703405218,
-  "userid": "QWecNcxhyvP6j6sBN11hBsfZDau1",
+  "docid": "fB6ttjDUmDJaNH8gYiB3vi",
+  "time": "10/14/2022 10:42 am",
+  "timestamp": 1665758545141,
+  "userid": "HPwaZxo6jaPjQcD6cBGUWPpQkVw2",
   "owner": null,
   "email": null,
   "world": {
@@ -2529,7 +2529,7 @@
       "cz": 0,
       "lx": 0,
       "ly": 0,
-      "lz": 5,
+      "lz": 7,
       "overhang": 0,
       "thickness": 0.05,
       "roofType": "Pyramid",
@@ -3711,9 +3711,9 @@
     {
       "type": "Flower",
       "name": "Cactus Combo 1",
-      "cx": 15.857626158266536,
-      "cy": 11.734808098461926,
-      "cz": 0.041681792587041855,
+      "cx": 15.634548540985584,
+      "cy": 11.876139460714374,
+      "cz": 0.04168179258704141,
       "lx": 2,
       "lz": 2.35,
       "normal": [
@@ -3943,6 +3943,323 @@
       "parentId": "j5t6bBkxWAT3r9CjT4GP8B",
       "foundationId": "7ZHXRj1w61cveRC3gvedyo",
       "id": "ibgD6gwHyvXo2UA5ceSEVw"
+    },
+    {
+      "type": "Human",
+      "name": "Jill",
+      "cx": 10.698394787136534,
+      "cy": 11.589493889667297,
+      "cz": 0.03336358582743005,
+      "lx": 0.6,
+      "lz": 1.74,
+      "normal": [
+        0,
+        1,
+        0
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "parentId": "7ZHXRj1w61cveRC3gvedyo",
+      "id": "mMaWsSyXEBfBHccaGNhNaS",
+      "selected": false
+    },
+    {
+      "type": "Human",
+      "name": "John",
+      "cx": 8.199832055622817,
+      "cy": 11.636996804402608,
+      "cz": 0.033363585827429154,
+      "lx": 0.6,
+      "lz": 1.85,
+      "normal": [
+        0,
+        1,
+        0
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "parentId": "7ZHXRj1w61cveRC3gvedyo",
+      "id": "48yGEsfjgkFf6JxD4AfTys",
+      "selected": false
+    },
+    {
+      "type": "Window",
+      "cx": -0.4058097887797344,
+      "cy": 0.1,
+      "cz": 0.24999999999999997,
+      "lx": 0.03528780771997702,
+      "ly": 0.3,
+      "lz": 0.1666666666666666,
+      "shutter": {
+        "showLeft": false,
+        "showRight": false,
+        "color": "grey",
+        "width": 0.5
+      },
+      "mullionWidth": 0.06,
+      "mullionSpacing": 1,
+      "selected": false,
+      "lineWidth": 0.2,
+      "lineColor": "black",
+      "showLabel": false,
+      "color": "#73D8FF",
+      "tint": "#73D8FF",
+      "normal": [
+        0,
+        0,
+        1
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "parentId": "hoTvGY2rqMy7seoYfMRRTd",
+      "foundationId": "7ZHXRj1w61cveRC3gvedyo",
+      "id": "aPAj9pnBrDVWusPRcoZUdo"
+    },
+    {
+      "type": "Window",
+      "cx": -0.2999463656198036,
+      "cy": 0.1,
+      "cz": 0.25000000000000006,
+      "lx": 0.03528780771997702,
+      "ly": 0.3,
+      "lz": 0.1666666666666666,
+      "mullionWidth": 0.06,
+      "mullionSpacing": 1,
+      "color": "#73D8FF",
+      "normal": [
+        0,
+        0,
+        1
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "id": "bhkdQB672T3sQvxXuVmHrR",
+      "parentId": "hoTvGY2rqMy7seoYfMRRTd",
+      "foundationId": "7ZHXRj1w61cveRC3gvedyo",
+      "tint": "#73D8FF",
+      "shutter": {
+        "showLeft": false,
+        "showRight": false,
+        "color": "grey",
+        "width": 0.5
+      },
+      "selected": false
+    },
+    {
+      "type": "Window",
+      "cx": -0.19408294245987287,
+      "cy": 0.1,
+      "cz": 0.25000000000000006,
+      "lx": 0.03528780771997702,
+      "ly": 0.3,
+      "lz": 0.1666666666666666,
+      "mullionWidth": 0.06,
+      "mullionSpacing": 1,
+      "color": "#73D8FF",
+      "normal": [
+        0,
+        0,
+        1
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "id": "hBEhSqRgj9NSNQa4oM7xNt",
+      "parentId": "hoTvGY2rqMy7seoYfMRRTd",
+      "foundationId": "7ZHXRj1w61cveRC3gvedyo",
+      "tint": "#73D8FF",
+      "shutter": {
+        "showLeft": false,
+        "showRight": false,
+        "color": "grey",
+        "width": 0.5
+      },
+      "selected": false
+    },
+    {
+      "type": "Window",
+      "cx": -0.08821951929994218,
+      "cy": 0.1,
+      "cz": 0.25000000000000006,
+      "lx": 0.03528780771997702,
+      "ly": 0.3,
+      "lz": 0.1666666666666666,
+      "mullionWidth": 0.06,
+      "mullionSpacing": 1,
+      "color": "#73D8FF",
+      "normal": [
+        0,
+        0,
+        1
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "id": "tB2iwRfd3qTWeCsYv7HiuW",
+      "parentId": "hoTvGY2rqMy7seoYfMRRTd",
+      "foundationId": "7ZHXRj1w61cveRC3gvedyo",
+      "tint": "#73D8FF",
+      "shutter": {
+        "showLeft": false,
+        "showRight": false,
+        "color": "grey",
+        "width": 0.5
+      },
+      "selected": false
+    },
+    {
+      "type": "Window",
+      "cx": 0.44109759649971125,
+      "cy": 0.1,
+      "cz": 0.25000000000000006,
+      "lx": 0.03528780771997702,
+      "ly": 0.3,
+      "lz": 0.1666666666666666,
+      "mullionWidth": 0.06,
+      "mullionSpacing": 1,
+      "color": "#73D8FF",
+      "normal": [
+        0,
+        0,
+        1
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "id": "5RkPZYVo3GN5X19Bn6Yr4D",
+      "parentId": "hoTvGY2rqMy7seoYfMRRTd",
+      "foundationId": "7ZHXRj1w61cveRC3gvedyo",
+      "tint": "#73D8FF",
+      "shutter": {
+        "showLeft": false,
+        "showRight": false,
+        "color": "grey",
+        "width": 0.5
+      },
+      "selected": false
+    },
+    {
+      "type": "Window",
+      "cx": 0.3705219810597575,
+      "cy": 0.1,
+      "cz": 0.25000000000000006,
+      "lx": 0.03528780771997702,
+      "ly": 0.3,
+      "lz": 0.1666666666666666,
+      "mullionWidth": 0.06,
+      "mullionSpacing": 1,
+      "color": "#73D8FF",
+      "normal": [
+        0,
+        0,
+        1
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "id": "59NsagWft1p9bwUyWDUzrn",
+      "parentId": "hoTvGY2rqMy7seoYfMRRTd",
+      "foundationId": "7ZHXRj1w61cveRC3gvedyo",
+      "tint": "#73D8FF",
+      "shutter": {
+        "showLeft": false,
+        "showRight": false,
+        "color": "grey",
+        "width": 0.5
+      },
+      "selected": false
+    },
+    {
+      "type": "Window",
+      "cx": 0.2999463656198037,
+      "cy": 0.1,
+      "cz": 0.25000000000000006,
+      "lx": 0.03528780771997702,
+      "ly": 0.3,
+      "lz": 0.1666666666666666,
+      "mullionWidth": 0.06,
+      "mullionSpacing": 1,
+      "color": "#73D8FF",
+      "normal": [
+        0,
+        0,
+        1
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "id": "77AhVqY63vBnmESEhniVsa",
+      "parentId": "hoTvGY2rqMy7seoYfMRRTd",
+      "foundationId": "7ZHXRj1w61cveRC3gvedyo",
+      "tint": "#73D8FF",
+      "shutter": {
+        "showLeft": false,
+        "showRight": false,
+        "color": "grey",
+        "width": 0.5
+      },
+      "selected": false
+    },
+    {
+      "type": "Cuboid",
+      "cx": -14.789681570981625,
+      "cy": -12.821724309505734,
+      "cz": 1.3499532304431159,
+      "lx": 3.0361328512402026,
+      "ly": 2.0173847404410545,
+      "lz": 2.6999064608862318,
+      "color": "#df9b6c",
+      "faceColors": [
+        "#df9b6c",
+        "#df9b6c",
+        "#df9b6c",
+        "#df9b6c",
+        "#df9b6c",
+        "gray"
+      ],
+      "textureTypes": [
+        "No Facade Texture",
+        "No Facade Texture",
+        "No Facade Texture",
+        "No Facade Texture",
+        "No Facade Texture",
+        "No Facade Texture"
+      ],
+      "normal": [
+        0,
+        0,
+        1
+      ],
+      "rotation": [
+        0,
+        0,
+        -1.0555294187969286
+      ],
+      "parentId": "Ground",
+      "selected": false,
+      "id": "8afBb85AbBXxrUxc1UJNK2"
     }
   ],
   "view": {
@@ -3950,16 +4267,16 @@
     "mapPanelY": 0,
     "dailyFresnelReflectorYieldPanelX": 0,
     "panCenter2D": [
-      2.7981320925182147,
-      -1.05974459674649,
-      -0.0000010597917020596957
+      -12.5485886969171,
+      -8.79449187461802,
+      -0.000008794882783709357
     ],
     "yearlyHeliostatYieldPanelY": 0,
     "mapPanelX": 0,
     "yearlyHeliostatYieldPanelX": 0,
     "cameraPosition2D": [
-      2.7981320925182147,
-      -1.059894603419827,
+      -12.5485886969171,
+      -8.794641881286468,
       150
     ],
     "theme": "Dune",
@@ -3974,9 +4291,9 @@
     "dailyHeliostatYieldPanelX": 0,
     "showDailyParabolicDishYieldPanel": false,
     "cameraPosition": [
-      4.921375159017451,
-      -41.4352948391442,
-      6.975610801907955
+      -14.147524383491486,
+      -26.668413122907417,
+      2.6479985465671287
     ],
     "showYearlyHeliostatYieldPanel": false,
     "orthographic": false,
@@ -3993,7 +4310,7 @@
     "dailyLightSensorPanelX": 0,
     "heliodon": false,
     "solarRadiationHeatMapReflectionOnly": false,
-    "cameraZoom": 13.966745921875004,
+    "cameraZoom": 37.01235612443423,
     "mapType": "roadmap",
     "showMapPanel": false,
     "yearlyParabolicDishYieldPanelY": 0,

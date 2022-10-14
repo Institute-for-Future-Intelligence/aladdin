@@ -855,7 +855,7 @@
       ],
       "parentId": "Ground",
       "id": "iQhcHctqyRJaG4XFZS4XMk",
-      "selected": true,
+      "selected": false,
       "evergreen": false
     },
     {
@@ -1571,7 +1571,7 @@
       4.331130696160679,
       150
     ],
-    "theme": "Grassland",
+    "theme": "Lake",
     "showDesignInfoPanel": false,
     "weatherPanelX": 0,
     "dailyParabolicTroughYieldPanelX": 0,
