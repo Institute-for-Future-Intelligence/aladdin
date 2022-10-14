@@ -5,10 +5,10 @@
 import React, { useEffect, useMemo, useRef, useState } from 'react';
 import { PyramidRoofModel, RoofModel } from 'src/models/RoofModel';
 import { useStore } from 'src/stores/common';
-import { Euler, Mesh, Raycaster, Vector2, Vector3 } from 'three';
+import { Euler, Mesh, Raycaster, Shape, Vector2, Vector3 } from 'three';
 import * as Selector from 'src/stores/selector';
 import { WallModel } from 'src/models/WallModel';
-import { Line, Plane, Sphere } from '@react-three/drei';
+import { Extrude, Line, Plane, Sphere } from '@react-three/drei';
 import { ConvexGeometry } from 'src/js/ConvexGeometry.js';
 import { HALF_PI, HALF_PI_Z_EULER, TWO_PI } from 'src/constants';
 import { useStoreRef } from 'src/stores/commonRef';
@@ -34,7 +34,73 @@ const intersectionPlaneRotation = new Euler();
 const zeroVector = new Vector3();
 const zVector3 = new Vector3(0, 0, 1);
 
-const PyramidRoofWirefram = React.memo(({ roofSegments, thickness, lineWidth, lineColor }: RoofWireframeProps) => {
+interface FlatRoofProps {
+  roofSegments: ConvexGeoProps[];
+  thickness: number;
+  children: React.ReactNode;
+  lineWidth: number;
+  lineColor: string;
+}
+
+const FlatRoof = ({ roofSegments, thickness, lineColor, lineWidth, children }: FlatRoofProps) => {
+  const shadowEnabled = useStore(Selector.viewState.shadowEnabled);
+  const { transparent } = useTransparent();
+
+  const wireFramePoints = useMemo(() => {
+    const startPoint = roofSegments[0].points[0];
+    const points = [startPoint];
+    for (const segment of roofSegments) {
+      const rightPoint = segment.points[1];
+      points.push(rightPoint);
+    }
+    return points;
+  }, [roofSegments]);
+
+  const shape = useMemo(() => {
+    const s = new Shape();
+
+    const startPoint = roofSegments[0].points[0];
+    s.moveTo(startPoint.x, startPoint.y);
+
+    for (const segment of roofSegments) {
+      const rightPoint = segment.points[1];
+      s.lineTo(rightPoint.x, rightPoint.y);
+    }
+
+    return s;
+  }, [roofSegments]);
+
+  const thicknessVector = useMemo(() => {
+    return new Vector3(0, 0, thickness);
+  }, [thickness]);
+
+  const periphery = <Line points={wireFramePoints} lineWidth={lineWidth} color={lineColor} />;
+
+  return (
+    <>
+      <Extrude
+        args={[shape, { steps: 1, depth: thickness, bevelEnabled: false }]}
+        castShadow={shadowEnabled && !transparent}
+        receiveShadow={shadowEnabled}
+        userData={{ simulation: true }}
+      >
+        {children}
+      </Extrude>
+
+      {/* wireframe */}
+      {periphery}
+      <group position={[0, 0, thickness]}>
+        {periphery}
+        {wireFramePoints.map((point, idx) => {
+          const points = [point.clone().sub(thicknessVector), point];
+          return <Line key={idx} points={points} lineWidth={lineWidth} color={lineColor} />;
+        })}
+      </group>
+    </>
+  );
+};
+
+const PyramidRoofWireframe = React.memo(({ roofSegments, thickness, lineWidth, lineColor }: RoofWireframeProps) => {
   if (roofSegments.length === 0) {
     return null;
   }
@@ -88,6 +154,9 @@ const PyramidRoof = ({
   lineColor = 'black',
   roofType,
 }: PyramidRoofModel) => {
+  const texture = useRoofTexture(textureType);
+  const { transparent, opacity } = useTransparent();
+
   const setCommonStore = useStore(Selector.set);
   const getElementById = useStore(Selector.getElementById);
   const removeElementById = useStore(Selector.removeElementById);
@@ -474,6 +543,46 @@ const PyramidRoof = ({
     isFirstMountRef.current = false;
   }, []);
 
+  const checkIsFlatRoof = () => {
+    if (currentWallArray.length < 2) {
+      return false;
+    }
+    const height = currentWallArray[0].lz;
+
+    for (const wall of currentWallArray) {
+      if (Math.abs(wall.lz - height) > 0.01) {
+        return false;
+      }
+    }
+
+    for (const segment of roofSegments) {
+      const [leftPoint, rightPoint] = segment.points;
+      if (Math.abs(leftPoint.z) > 0.01 || Math.abs(rightPoint.z) > 0.01) {
+        return false;
+      }
+    }
+
+    return true;
+  };
+
+  const [isFlatRoof, setIsFlatRoof] = useState(checkIsFlatRoof);
+
+  useEffect(() => {
+    setIsFlatRoof(checkIsFlatRoof());
+  }, [currentWallArray]);
+
+  const material = useMemo(
+    () => (
+      <meshStandardMaterial
+        map={texture}
+        color={textureType === RoofTexture.Default || textureType === RoofTexture.NoTexture ? color : 'white'}
+        transparent={transparent}
+        opacity={opacity}
+      />
+    ),
+    [texture, textureType, color, transparent, opacity],
+  );
+
   return (
     <group position={[cx, cy, cz]} rotation={[0, 0, rotation]} name={`Pyramid Roof Group ${id}`}>
       {/* roof segments group */}
@@ -493,32 +602,36 @@ const PyramidRoof = ({
           handleContextMenu(e, id);
         }}
       >
-        {roofSegments.map((segment, idx) => {
-          const { points, direction, length } = segment;
-          if (points.length > 0) {
-            const [leftPoint, rightPoint] = points;
-            const isFlat = Math.abs(leftPoint.z) < 0.01;
-            if (leftPoint.distanceTo(rightPoint) > 0.1) {
-              return (
-                <group name={`Roof segment ${idx}`} key={idx}>
-                  <RoofSegment
-                    points={points}
-                    direction={isFlat ? 0 : direction}
-                    length={isFlat ? 1 : length}
-                    textureType={textureType}
-                    color={color ?? 'white'}
-                  />
-                </group>
-              );
-            }
-          }
-        })}
-        <PyramidRoofWirefram
-          roofSegments={roofSegments}
-          thickness={thickness}
-          lineColor={lineColor}
-          lineWidth={lineWidth}
-        />
+        {isFlatRoof ? (
+          <FlatRoof roofSegments={roofSegments} thickness={thickness} lineWidth={lineWidth} lineColor={lineColor}>
+            {material}
+          </FlatRoof>
+        ) : (
+          <>
+            {roofSegments.map((segment, idx) => {
+              const { points, direction, length } = segment;
+              if (points.length > 0) {
+                const [leftPoint, rightPoint] = points;
+                const isFlat = Math.abs(leftPoint.z) < 0.01;
+                if (leftPoint.distanceTo(rightPoint) > 0.1) {
+                  return (
+                    <group name={`Roof segment ${idx}`} key={idx}>
+                      <RoofSegment points={points} direction={isFlat ? 0 : direction} length={isFlat ? 1 : length}>
+                        {material}
+                      </RoofSegment>
+                    </group>
+                  );
+                }
+              }
+            })}
+            <PyramidRoofWireframe
+              roofSegments={roofSegments}
+              thickness={thickness}
+              lineColor={lineColor}
+              lineWidth={lineWidth}
+            />
+          </>
+        )}
       </group>
 
       {/* handle */}
@@ -582,24 +695,16 @@ const RoofSegment = ({
   points,
   direction,
   length,
-  textureType,
-  color,
+  children,
 }: {
   points: Vector3[];
   direction: number;
   length: number;
-  textureType: RoofTexture;
-  color: string;
+  children: React.ReactNode;
 }) => {
-  // const mat = useMemo(() => {
-  //   const m = new MeshStandardMaterial();
-  //   m.map = texture;
-  //   return m;
-  // }, []);
   const shadowEnabled = useStore(Selector.viewState.shadowEnabled);
   const meshRef = useRef<Mesh>(null);
-  const texture = useRoofTexture(textureType);
-  const { transparent, opacity } = useTransparent();
+  const { transparent } = useTransparent();
 
   useEffect(() => {
     if (meshRef.current) {
@@ -632,12 +737,7 @@ const RoofSegment = ({
       receiveShadow={shadowEnabled}
       userData={{ simulation: true }}
     >
-      <meshStandardMaterial
-        map={texture}
-        color={textureType === RoofTexture.Default || textureType === RoofTexture.NoTexture ? color : 'white'}
-        transparent={transparent}
-        opacity={opacity}
-      />
+      {children}
     </mesh>
   );
 };
