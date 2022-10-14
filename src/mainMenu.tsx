@@ -95,7 +95,7 @@ import CspSimulationSettings from './components/contextMenu/elementMenu/cspSimul
 import PvSimulationSettings from './components/contextMenu/elementMenu/pvSimulationSettings';
 import SutSimulationSettings from './components/contextMenu/elementMenu/sutSimulationSettings';
 import { UndoableChange } from './undo/UndoableChange';
-import { FLOATING_WINDOW_OPACITY } from './constants';
+import { FLOATING_WINDOW_OPACITY, HOME_URL } from './constants';
 
 const { SubMenu } = Menu;
 
@@ -486,6 +486,7 @@ const MainMenu = ({ viewOnly, set2DView, resetView, zoomView, canvas }: MainMenu
           };
         }
       });
+      window.history.pushState({}, document.title, HOME_URL);
     }
   };
 
@@ -945,6 +946,7 @@ const MainMenu = ({ viewOnly, set2DView, resetView, zoomView, canvas }: MainMenu
               state.objectTypeToAdd = ObjectType.None;
               state.groupActionMode = false;
               state.elementGroupId = null;
+              window.history.pushState({}, document.title, HOME_URL);
               if (loggable) {
                 state.actionInfo = {
                   name: 'Create New File',
@@ -967,6 +969,8 @@ const MainMenu = ({ viewOnly, set2DView, resetView, zoomView, canvas }: MainMenu
               state.objectTypeToAdd = ObjectType.None;
               state.groupActionMode = false;
               state.elementGroupId = null;
+              state.cloudFile = undefined;
+              window.history.pushState({}, document.title, HOME_URL);
               if (loggable) {
                 state.actionInfo = {
                   name: 'Open Local File',
