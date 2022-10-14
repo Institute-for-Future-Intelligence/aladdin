@@ -2,7 +2,7 @@ import React, { useEffect, useMemo, useRef, useState } from 'react';
 import { ElementModel } from 'src/models/ElementModel';
 import { SolarPanelModel } from 'src/models/SolarPanelModel';
 import { useStore } from 'src/stores/common';
-import { RoofTexture } from 'src/types';
+import { ObjectType, RoofTexture } from 'src/types';
 import { UndoableMoveSolarPanelOnRoof } from 'src/undo/UndoableMove';
 
 import RoofTextureDefault from 'src/resources/roof_edge.png';
@@ -220,4 +220,59 @@ export const useCurrWallArray = (frontWallId: string) => {
   }, [frontWall, rightWall, backWall, leftWall]);
 
   return currentWallArray;
+};
+
+export const useMultiCurrWallArray = (fId: string | undefined, roofId: string, wallsId: string[]) => {
+  const getElementById = useStore.getState().getElementById;
+
+  const isLoopRef = useRef(false);
+
+  const wallsOnFoundation = useStore((state) => {
+    return state.elements.filter((el) => el.type === ObjectType.Wall && el.foundationId === fId);
+  });
+
+  const currentWallArray = useMemo(() => {
+    for (const wid of wallsId) {
+      let wall = getElementById(wid) as WallModel;
+      if (!wall) return [];
+
+      const array = [];
+      const startWall = wall;
+      while (wall && (!wall.roofId || wall.roofId === roofId)) {
+        array.push(wall);
+        if (wall.leftJoints[0]) {
+          if (wall.leftJoints[0] !== startWall.id) {
+            wall = getElementById(wall.leftJoints[0]) as WallModel;
+          }
+          // is a loop
+          else {
+            array.reverse();
+            isLoopRef.current = true;
+            return array;
+          }
+        } else {
+          break;
+        }
+      }
+
+      array.reverse();
+
+      wall = getElementById(startWall.rightJoints[0]) as WallModel;
+      while (wall && (!wall.roofId || wall.roofId === roofId)) {
+        array.push(wall);
+        if (wall.rightJoints[0] && wall.rightJoints[0] !== startWall.id) {
+          wall = getElementById(wall.rightJoints[0]) as WallModel;
+        } else {
+          break;
+        }
+      }
+      isLoopRef.current = false;
+      if (array.length > 1) {
+        return array;
+      }
+    }
+    return [];
+  }, [wallsId, JSON.stringify(wallsOnFoundation)]);
+
+  return { currentWallArray, isLoopRef };
 };

@@ -27,7 +27,7 @@ import {
   updateRooftopSolarPanel,
 } from './roofRenderer';
 import { RoofUtil } from './RoofUtil';
-import { useRoofTexture, useSolarPanelUndoable, useTransparent } from './hooks';
+import { useMultiCurrWallArray, useRoofTexture, useSolarPanelUndoable, useTransparent } from './hooks';
 
 const intersectionPlanePosition = new Vector3();
 const intersectionPlaneRotation = new Euler();
@@ -154,9 +154,11 @@ const PyramidRoof = ({
   lineWidth = 0.2,
   lineColor = 'black',
   roofType,
+  foundationId,
 }: PyramidRoofModel) => {
   const texture = useRoofTexture(textureType);
   const { transparent, opacity } = useTransparent();
+  const { currentWallArray, isLoopRef } = useMultiCurrWallArray(foundationId, id, wallsId);
 
   const setCommonStore = useStore(Selector.set);
   const getElementById = useStore(Selector.getElementById);
@@ -164,7 +166,6 @@ const PyramidRoof = ({
   const updateRoofHeight = useStore(Selector.updateRoofHeightById);
   const updateRoofFlag = useStore(Selector.updateRoofFlag);
 
-  const elements = useStore(Selector.elements);
   const { camera, gl } = useThree();
   const ray = useMemo(() => new Raycaster(), []);
   const mouse = useMemo(() => new Vector2(), []);
@@ -175,7 +176,6 @@ const PyramidRoof = ({
   const [showIntersectionPlane, setShowIntersectionPlane] = useState(false);
 
   const intersectionPlaneRef = useRef<Mesh>(null);
-  const isWallLoopRef = useRef(false);
   const oldHeight = useRef<number>(h);
   const isFirstMountRef = useRef(true);
 
@@ -201,7 +201,7 @@ const PyramidRoof = ({
         arr.push({ x: w.leftPoint[0], y: w.leftPoint[1] });
       }
     }
-    if (!isWallLoopRef.current) {
+    if (!isLoopRef.current) {
       if (
         (wallArray[length - 1].rightPoint[0] || wallArray[length - 1].rightPoint[0] === 0) &&
         (wallArray[length - 1].rightPoint[1] || wallArray[length - 1].rightPoint[1] === 0)
@@ -259,50 +259,6 @@ const PyramidRoof = ({
     return Number.isNaN(height) ? 0 : height;
   };
 
-  // get Walls array from left to right
-  const currentWallArray = useMemo(() => {
-    for (const wid of wallsId) {
-      let wall = getElementById(wid) as WallModel;
-      if (!wall) return [];
-
-      const array = [];
-      const startWall = wall;
-      while (wall && (!wall.roofId || wall.roofId === id)) {
-        array.push(wall);
-        if (wall.leftJoints[0]) {
-          if (wall.leftJoints[0] !== startWall.id) {
-            wall = getElementById(wall.leftJoints[0]) as WallModel;
-          }
-          // is a loop
-          else {
-            array.reverse();
-            isWallLoopRef.current = true;
-            return array;
-          }
-        } else {
-          break;
-        }
-      }
-
-      array.reverse();
-
-      wall = getElementById(startWall.rightJoints[0]) as WallModel;
-      while (wall && (!wall.roofId || wall.roofId === id)) {
-        array.push(wall);
-        if (wall.rightJoints[0] && wall.rightJoints[0] !== startWall.id) {
-          wall = getElementById(wall.rightJoints[0]) as WallModel;
-        } else {
-          break;
-        }
-      }
-      isWallLoopRef.current = false;
-      if (array.length > 1) {
-        return array;
-      }
-    }
-    return [];
-  }, [wallsId, elements]);
-
   const centerPoint = useMemo(() => {
     if (currentWallArray.length < 2) {
       return { x: 0, y: 0 };
@@ -324,7 +280,7 @@ const PyramidRoof = ({
 
   const overhangs = useMemo(() => {
     const res = currentWallArray.map((wall) => RoofUtil.getWallNormal(wall).multiplyScalar(overhang));
-    if (!isWallLoopRef.current && res.length !== 0) {
+    if (!isLoopRef.current && res.length !== 0) {
       const n = new Vector3()
         .subVectors(
           new Vector3(
@@ -346,7 +302,7 @@ const PyramidRoof = ({
       leftPoint: new Vector3(wall.leftPoint[0], wall.leftPoint[1]).add(overhangs[idx]),
       rightPoint: new Vector3(wall.rightPoint[0], wall.rightPoint[1]).add(overhangs[idx]),
     }));
-    if (!isWallLoopRef.current && res.length !== 0) {
+    if (!isLoopRef.current && res.length !== 0) {
       res.push({
         leftPoint: new Vector3(
           currentWallArray[currentWallArray.length - 1].rightPoint[0],
@@ -381,7 +337,7 @@ const PyramidRoof = ({
       ) {
         const points = [];
         let { lh, rh } = getWallHeight(currentWallArray, i);
-        if (!isWallLoopRef.current) {
+        if (!isLoopRef.current) {
           if (i === 0) {
             lh = currentWallArray[0].lz;
           }
@@ -420,7 +376,7 @@ const PyramidRoof = ({
         segments.push({ points, direction, length });
       }
     }
-    if (!isWallLoopRef.current) {
+    if (!isLoopRef.current) {
       const idx = wallPointsAfterOffset.length - 1;
       const leftPointAfterOverhang = RoofUtil.getIntersectionPoint(
         wallPointsAfterOffset[idx].leftPoint,
@@ -743,4 +699,4 @@ const RoofSegment = ({
   );
 };
 
-export default PyramidRoof;
+export default React.memo(PyramidRoof);
