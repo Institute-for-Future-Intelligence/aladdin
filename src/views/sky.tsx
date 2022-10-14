@@ -17,6 +17,14 @@ import ForestDaySkyImage from '../resources/forest.jpg';
 import ForestNightSkyImage from '../resources/forest-night.jpg';
 import GrasslandDaySkyImage from '../resources/grassland.jpg';
 import GrasslandNightSkyImage from '../resources/grassland-night.jpg';
+import HillSpringDaySkyImage from '../resources/hill-spring.jpg';
+import HillSpringNightSkyImage from '../resources/hill-spring-night.jpg';
+import HillSummerDaySkyImage from '../resources/hill-summer.jpg';
+import HillSummerNightSkyImage from '../resources/hill-summer-night.jpg';
+import HillFallDaySkyImage from '../resources/hill-fall.jpg';
+import HillFallNightSkyImage from '../resources/hill-fall-night.jpg';
+import HillWinterDaySkyImage from '../resources/hill-winter.jpg';
+import HillWinterNightSkyImage from '../resources/hill-winter-night.jpg';
 import LakeDaySkyImage from '../resources/lake.jpg';
 import LakeNightSkyImage from '../resources/lake-night.jpg';
 import MountainDaySkyImage from '../resources/mountain.jpg';
@@ -62,6 +70,8 @@ const Sky = ({ theme = 'Default' }: SkyProps) => {
   const updateElementLzById = useStore(Selector.updateElementLzById);
   const resizeHandleType = useStore(Selector.resizeHandleType);
   const sunlightDirection = useStore(Selector.sunlightDirection);
+  const latitude = useStore(Selector.world.latitude);
+  const date = useStore(Selector.world.date);
   const addUndoable = useStore(Selector.addUndoable);
   const setElementPosition = useStore(Selector.setElementPosition);
   const language = useStore(Selector.language);
@@ -92,6 +102,8 @@ const Sky = ({ theme = 'Default' }: SkyProps) => {
   const ray = useMemo(() => new Raycaster(), []);
   const elementParentRotation = useMemo(() => new Euler(), []);
 
+  const now = new Date(date);
+  const month = now.getMonth() + 1;
   const night = sunlightDirection.z <= 0;
 
   const [intersectionPlaneType, setIntersectionPlaneType] = useState(IntersectionPlaneType.Sky);
@@ -118,6 +130,8 @@ const Sky = ({ theme = 'Default' }: SkyProps) => {
         return 0.25;
       case Theme.Grassland:
         return 0.15;
+      case Theme.Hill:
+        return 0.3;
       case Theme.Lake:
         return 0.1;
       case Theme.Mountain:
@@ -139,6 +153,29 @@ const Sky = ({ theme = 'Default' }: SkyProps) => {
         return night ? ForestNightSkyImage : ForestDaySkyImage;
       case Theme.Grassland:
         return night ? GrasslandNightSkyImage : GrasslandDaySkyImage;
+      case Theme.Hill:
+        if (latitude > 0) {
+          if (month >= 12 || month <= 3) {
+            return night ? HillWinterNightSkyImage : HillWinterDaySkyImage;
+          } else if (month > 3 && month <= 5) {
+            return night ? HillSpringNightSkyImage : HillSpringDaySkyImage;
+          } else if (month > 5 && month <= 9) {
+            return night ? HillSpringNightSkyImage : HillSummerDaySkyImage;
+          } else {
+            // November
+            return night ? HillSpringNightSkyImage : HillFallDaySkyImage;
+          }
+        } else {
+          if (month >= 12 || month <= 3) {
+            return night ? HillSpringNightSkyImage : HillSummerDaySkyImage;
+          } else if (month > 3 && month <= 5) {
+            return night ? HillSpringNightSkyImage : HillFallDaySkyImage;
+          } else if (month > 5 && month <= 9) {
+            return night ? HillWinterNightSkyImage : HillWinterDaySkyImage;
+          } else {
+            return night ? HillSpringNightSkyImage : HillSpringDaySkyImage;
+          }
+        }
       case Theme.Lake:
         return night ? LakeNightSkyImage : LakeDaySkyImage;
       case Theme.Mountain:
@@ -148,7 +185,7 @@ const Sky = ({ theme = 'Default' }: SkyProps) => {
       default:
         return night ? DefaultNightSkyImage : DefaultDaySkyImage;
     }
-  }, [theme, night]);
+  }, [theme, night, date, latitude]);
 
   const texture = useTexture(textureImg);
 

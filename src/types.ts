@@ -166,6 +166,7 @@ export enum Theme {
   Dune = 'Dune',
   Forest = 'Forest',
   Grassland = 'Grassland',
+  Hill = 'Hill',
   Lake = 'Lake',
   Mountain = 'Mountain',
   Rural = 'Rural',

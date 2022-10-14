@@ -1,13 +1,13 @@
 {
-  "docid": "avZnKUFo11KbS36dkarbbH",
-  "time": "10/14/2022 12:56 pm",
-  "timestamp": 1665766607727,
+  "docid": "jEdzNXEgPYdRSsmuiuPgyD",
+  "time": "10/14/2022 03:52 pm",
+  "timestamp": 1665777122646,
   "userid": "HPwaZxo6jaPjQcD6cBGUWPpQkVw2",
   "owner": null,
   "email": null,
   "world": {
     "solarRadiationHeatmapGridCellSize": 0.5,
-    "date": "9/22/2022 10:00:00 AM",
+    "date": "5/22/2022, 10:00:00 AM",
     "cspTimesPerHour": 4,
     "noAnimationForHeatmapSimulation": false,
     "cspGridCellSize": 0.5,
@@ -1101,7 +1101,7 @@
     },
     {
       "type": "Tree",
-      "name": "Maple",
+      "name": "Magnolia",
       "cx": 10.961991009961471,
       "cy": -4.7951994089128664,
       "cz": 0,
@@ -1607,6 +1607,94 @@
       "parentId": "8fpWrU7qVyVgipB7LtABom",
       "id": "p12f94kQKCXpPNEEPe9ktz",
       "selected": false
+    },
+    {
+      "type": "Tree",
+      "name": "Magnolia",
+      "cx": -8.921750492715002,
+      "cy": -0.31081319431417676,
+      "cz": 8.881784197001252e-16,
+      "lx": 5.410682322966088,
+      "lz": 5.9930306282885,
+      "normal": [
+        0,
+        0,
+        1
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "parentId": "Ground",
+      "id": "8MCf8WzkvdtkVT9MPmDy4G",
+      "selected": false
+    },
+    {
+      "type": "Flower",
+      "name": "Yellow Flower",
+      "cx": -8.813697651847779,
+      "cy": -3.717743510806919,
+      "cz": -4.440892098500626e-16,
+      "lx": 2,
+      "lz": 1.4,
+      "normal": [
+        0,
+        0,
+        1
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "parentId": "Ground",
+      "id": "kwZdR8kant3eBoLCjjUQCJ",
+      "selected": false
+    },
+    {
+      "type": "Flower",
+      "name": "Hosta",
+      "cx": -9.660182286895216,
+      "cy": -0.10473626441648776,
+      "cz": 0,
+      "lx": 1,
+      "lz": 0.7,
+      "normal": [
+        0,
+        0,
+        1
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "parentId": "Ground",
+      "id": "hM4s39UWZUWNoUSUMHrmbJ",
+      "selected": false
+    },
+    {
+      "type": "Flower",
+      "name": "Hosta",
+      "cx": -9.04189556545002,
+      "cy": -0.8584081924043119,
+      "cz": 0,
+      "lx": 1,
+      "lz": 0.7,
+      "normal": [
+        0,
+        0,
+        1
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "parentId": "Ground",
+      "id": "nQgYQhsWvwPQorjAb4dSNv",
+      "selected": false
     }
   ],
   "view": {
@@ -1626,7 +1714,7 @@
       -0.000020000888987681265,
       19.99999999998956
     ],
-    "theme": "Lake",
+    "theme": "Hill",
     "showDesignInfoPanel": false,
     "weatherPanelX": 0,
     "dailyParabolicTroughYieldPanelX": 0,
@@ -1638,9 +1726,9 @@
     "dailyHeliostatYieldPanelX": 0,
     "showDailyParabolicDishYieldPanel": false,
     "cameraPosition": [
-      0.823478109149432,
-      -13.414726988302169,
-      1.767908991573803
+      -15.289410997796544,
+      -12.097889555144453,
+      2.3828483247730743
     ],
     "showYearlyHeliostatYieldPanel": false,
     "orthographic": false,
@@ -1689,9 +1777,9 @@
     "shadowEnabled": true,
     "showInstructionPanel": true,
     "panCenter": [
-      1.184158950573558,
-      0.2445926863382625,
-      1.767908991573803
+      1.1986292645008207,
+      0.23190341496736408,
+      1.8058398771360638
     ],
     "yearlyFresnelReflectorYieldPanelY": 0,
     "showHeliodonPanel": false,

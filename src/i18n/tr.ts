@@ -428,6 +428,7 @@ export const i18n_tr = {
       ThemeDune: 'Dune',
       ThemeForest: 'Orman',
       ThemeGrassland: 'Çayır',
+      ThemeHill: 'Hill',
       ThemeLake: 'Lake',
       ThemeMountain: 'Mountain',
       ThemeRural: 'Rural',
