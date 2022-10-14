@@ -807,7 +807,6 @@ const GableRoof = ({
   }, [currentWallArray, h, ridgeLeftPoint, ridgeRightPoint]);
 
   useEffect(() => {
-    setRoofRelativeHeight(lz - Math.max(currentWallArray[0].lz, currentWallArray[2].lz));
     isFirstMountRef.current = false;
   }, []);
 
