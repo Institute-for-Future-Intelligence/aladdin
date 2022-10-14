@@ -1,8 +1,8 @@
 {
   "files": {
     "main.css": "/aladdin/static/css/main.c1ee157d.chunk.css",
-    "main.js": "/aladdin/static/js/main.2daffc72.chunk.js",
-    "main.js.map": "/aladdin/static/js/main.2daffc72.chunk.js.map",
+    "main.js": "/aladdin/static/js/main.096bbfea.chunk.js",
+    "main.js.map": "/aladdin/static/js/main.096bbfea.chunk.js.map",
     "runtime-main.js": "/aladdin/static/js/runtime-main.1ec94485.js",
     "runtime-main.js.map": "/aladdin/static/js/runtime-main.1ec94485.js.map",
     "static/css/2.447301e6.chunk.css": "/aladdin/static/css/2.447301e6.chunk.css",
@@ -87,6 +87,12 @@
     "static/media/grassland.a0c4d0ac.jpg": "/aladdin/static/media/grassland.a0c4d0ac.jpg",
     "static/media/helvetiker_regular.typeface.9a3651b4.fnt": "/aladdin/static/media/helvetiker_regular.typeface.9a3651b4.fnt",
     "static/media/hibiscus.771d3166.png": "/aladdin/static/media/hibiscus.771d3166.png",
+    "static/media/hill-fall.9b0790b7.jpg": "/aladdin/static/media/hill-fall.9b0790b7.jpg",
+    "static/media/hill-spring-night.0dce58b6.jpg": "/aladdin/static/media/hill-spring-night.0dce58b6.jpg",
+    "static/media/hill-spring.f8b76c57.jpg": "/aladdin/static/media/hill-spring.f8b76c57.jpg",
+    "static/media/hill-summer.26c46362.jpg": "/aladdin/static/media/hill-summer.26c46362.jpg",
+    "static/media/hill-winter-night.a77dbd34.jpg": "/aladdin/static/media/hill-winter-night.a77dbd34.jpg",
+    "static/media/hill-winter.416b6801.jpg": "/aladdin/static/media/hill-winter.416b6801.jpg",
     "static/media/hosta.744059f3.png": "/aladdin/static/media/hosta.744059f3.png",
     "static/media/hydrangea.9367eebd.png": "/aladdin/static/media/hydrangea.9367eebd.png",
     "static/media/ifi-logo.eb360016.png": "/aladdin/static/media/ifi-logo.eb360016.png",
@@ -112,6 +118,8 @@
     "static/media/judy.26e47d67.png": "/aladdin/static/media/judy.26e47d67.png",
     "static/media/june.827a5c6e.png": "/aladdin/static/media/june.827a5c6e.png",
     "static/media/juro.c5460006.png": "/aladdin/static/media/juro.c5460006.png",
+    "static/media/lake-night.1df17db0.jpg": "/aladdin/static/media/lake-night.1df17db0.jpg",
+    "static/media/lake.a9a56bcc.jpg": "/aladdin/static/media/lake.a9a56bcc.jpg",
     "static/media/linden.7d9a7bf9.png": "/aladdin/static/media/linden.7d9a7bf9.png",
     "static/media/linden_shed.b0012a03.png": "/aladdin/static/media/linden_shed.b0012a03.png",
     "static/media/magic-lamp.b58f942d.png": "/aladdin/static/media/magic-lamp.b58f942d.png",
@@ -190,6 +198,6 @@
     "static/css/2.447301e6.chunk.css",
     "static/js/2.47d87b54.chunk.js",
     "static/css/main.c1ee157d.chunk.css",
-    "static/js/main.2daffc72.chunk.js"
+    "static/js/main.096bbfea.chunk.js"
   ]
 }
