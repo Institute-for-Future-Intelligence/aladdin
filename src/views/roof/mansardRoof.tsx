@@ -122,8 +122,13 @@ const MansardRoof = ({
   const ray = useStore((state) => state.ray);
   const mouse = useStore((state) => state.mouse);
 
+  const currentWallArray = useCurrWallArray(wallsId[0]);
+
   const [h, setH] = useState(lz);
-  const [minHeight, setMinHeight] = useState(lz / 1.5);
+  const [minHeight, setMinHeight] = useState(
+    currentWallArray.length === 4 ? Math.max(currentWallArray[0].lz, currentWallArray[2].lz) : lz / 2,
+  );
+  const [roofRelativeHeight, setRoofRelativeHeight] = useState(lz - minHeight);
   const [enableIntersectionPlane, setEnableIntersectionPlane] = useState(false);
   const [roofHandleType, setRoofHandleType] = useState(RoofHandleType.Null);
   const oldHeight = useRef<number>(h);
@@ -150,18 +155,6 @@ const MansardRoof = ({
     rotation = foundation.rotation[2];
   }
 
-  useEffect(() => {
-    if (h < minHeight) {
-      setH(minHeight);
-    }
-  }, [minHeight]);
-
-  useEffect(() => {
-    if (!isFirstMountRef.current) {
-      setH(lz);
-    }
-  }, [lz]);
-
   const getWallPoint = (wallArray: WallModel[]) => {
     const arr: Point2[] = [];
     for (const w of wallArray) {
@@ -185,15 +178,15 @@ const MansardRoof = ({
     const w = arr[i];
     let lh = 0;
     let rh = 0;
-    if (i === 0) {
-      lh = Math.max(w.lz, arr[arr.length - 1].lz);
-      rh = Math.max(w.lz, arr[i + 1].lz);
-    } else if (i === arr.length - 1) {
-      lh = Math.max(w.lz, arr[i - 1].lz);
-      rh = Math.max(w.lz, arr[0].lz);
+    if (i === 0 || i === 2) {
+      lh = w.lz;
+      rh = w.lz;
+    } else if (i === 1) {
+      lh = arr[0].lz;
+      rh = arr[2].lz;
     } else {
-      lh = Math.max(w.lz, arr[i - 1].lz);
-      rh = Math.max(w.lz, arr[i + 1].lz);
+      lh = arr[2].lz;
+      rh = arr[0].lz;
     }
     return { lh, rh };
   };
@@ -265,8 +258,6 @@ const MansardRoof = ({
     } as UnoableResizeGambrelAndMansardRoofRidge;
     useStore.getState().addUndoable(undoable);
   };
-
-  const currentWallArray = useCurrWallArray(wallsId[0]);
 
   const centroid = useMemo(() => {
     if (currentWallArray.length !== 4) {
@@ -523,6 +514,10 @@ const MansardRoof = ({
           });
         }
         setMinHeight(minHeight);
+        if (roofRelativeHeight !== null) {
+          setH(minHeight + roofRelativeHeight);
+          useStore.getState().updateRoofHeightById(id, minHeight + roofRelativeHeight);
+        }
       } else {
         removeElementById(id, false);
       }
@@ -541,6 +536,7 @@ const MansardRoof = ({
   }, [updateSolarPanelOnRoofFlag, h, thickness, frontRidge, backRidge]);
 
   useEffect(() => {
+    setRoofRelativeHeight(lz - Math.max(currentWallArray[0].lz, currentWallArray[2].lz));
     isFirstMountRef.current = false;
   }, []);
 
@@ -682,6 +678,7 @@ const MansardRoof = ({
                     const height = Math.max(minHeight, point.z - (foundation?.lz ?? 0) - 0.6);
                     if (RoofUtil.isRoofValid(id, undefined, undefined, [0, height])) {
                       setH(height);
+                      setRoofRelativeHeight(height - minHeight);
                     }
                     break;
                   }

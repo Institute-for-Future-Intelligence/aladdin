@@ -156,8 +156,14 @@ const GambrelRoof = ({
   const setCommonStore = useStore(Selector.set);
   const removeElementById = useStore(Selector.removeElementById);
 
-  const [h, setH] = useState(lz); // todo: should have one when build
-  const [minHeight, setMinHeight] = useState(lz / 2);
+  const currentWallArray = useCurrWallArray(wallsId[0]);
+
+  const [h, setH] = useState(lz);
+  const [minHeight, setMinHeight] = useState(
+    currentWallArray.length === 4 ? Math.max(currentWallArray[0].lz, currentWallArray[2].lz) : lz / 2,
+  );
+  const [roofRelativeHeight, setRoofRelativeHeight] = useState(lz - minHeight);
+
   const [roofHandleType, setRoofHandleType] = useState(RoofHandleType.Null);
   const [enableIntersectionPlane, setEnableIntersectionPlane] = useState(false);
   const intersectionPlaneRef = useRef<Mesh>(null);
@@ -186,17 +192,11 @@ const GambrelRoof = ({
     rotation = foundation.rotation[2];
   }
 
-  useEffect(() => {
-    if (h < minHeight) {
-      setH(minHeight);
-    }
-  }, [minHeight]);
-
-  useEffect(() => {
-    if (!isFirstMountRef.current) {
-      setH(lz);
-    }
-  }, [lz]);
+  // useEffect(() => {
+  //   if (!isFirstMountRef.current) {
+  //     setH(lz);
+  //   }
+  // }, [lz]);
 
   const updateRidge = (elemId: string, type: string, val: number) => {
     setCommonStore((state) => {
@@ -276,14 +276,17 @@ const GambrelRoof = ({
     return Math.min(Math.abs(x), 0.5) * (x >= 0 ? 1 : -1);
   };
 
-  const getRidgePoint = (wall: WallModel, px: number, ph: number) => {
-    if (!wall) {
+  const getRidgePoint = (currWall: WallModel, px: number, ph: number, sideWall?: WallModel) => {
+    if (!currWall) {
       return new Vector3();
     }
-    const e = new Euler(0, 0, wall.relativeAngle);
-    const v = new Vector3(px * wall.lx, 0, 0);
-    const height = ph * (h - minHeight) + minHeight;
-    return new Vector3(wall.cx, wall.cy, height).add(v.applyEuler(e));
+    const e = new Euler(0, 0, currWall.relativeAngle);
+    const v = new Vector3(px * currWall.lx, 0, 0);
+    let height = h;
+    if (sideWall) {
+      height = ph * (h - sideWall.lz) + sideWall.lz;
+    }
+    return new Vector3(currWall.cx, currWall.cy, height).add(v.applyEuler(e));
   };
 
   const getWallPoint = (wallArray: WallModel[]) => {
@@ -296,25 +299,22 @@ const GambrelRoof = ({
     return arr;
   };
 
-  // todo: should determained by wall 0 and 2;
   const getWallHeight = (arr: WallModel[], i: number) => {
     const w = arr[i];
     let lh = 0;
     let rh = 0;
-    if (i === 0) {
-      lh = Math.max(w.lz, arr[arr.length - 1].lz);
-      rh = Math.max(w.lz, arr[i + 1].lz);
-    } else if (i === arr.length - 1) {
-      lh = Math.max(w.lz, arr[i - 1].lz);
-      rh = Math.max(w.lz, arr[0].lz);
+    if (i === 0 || i === 2) {
+      lh = w.lz;
+      rh = w.lz;
+    } else if (i === 1) {
+      lh = arr[0].lz;
+      rh = arr[2].lz;
     } else {
-      lh = Math.max(w.lz, arr[i - 1].lz);
-      rh = Math.max(w.lz, arr[i + 1].lz);
+      lh = arr[2].lz;
+      rh = arr[0].lz;
     }
     return { lh, rh };
   };
-
-  const currentWallArray = useCurrWallArray(wallsId[0]);
 
   const centroid = useMemo(() => {
     if (currentWallArray.length !== 4) {
@@ -346,27 +346,27 @@ const GambrelRoof = ({
   const frontRidgeLeftPointV3 = useMemo(() => {
     const wall = currentWallArray[3];
     const [x, h] = frontRidgeLeftPoint;
-    return getRidgePoint(wall, x, h).sub(centroid);
-  }, [currentWallArray, centroid, frontRidgeLeftPoint, minHeight]);
+    return getRidgePoint(wall, x, h, currentWallArray[0]).sub(centroid);
+  }, [currentWallArray, centroid, frontRidgeLeftPoint]);
 
   const frontRidgeRightPointV3 = useMemo(() => {
     const wall = currentWallArray[1];
     const [x, h] = frontRidgeRightPoint;
-    return getRidgePoint(wall, x, h).sub(centroid);
-  }, [currentWallArray, centroid, frontRidgeRightPoint, minHeight]);
+    return getRidgePoint(wall, x, h, currentWallArray[0]).sub(centroid);
+  }, [currentWallArray, centroid, frontRidgeRightPoint]);
 
   // back ridge
   const backRidgeLeftPointV3 = useMemo(() => {
     const wall = currentWallArray[1];
     const [x, h] = backRidgeLeftPoint;
-    return getRidgePoint(wall, x, h).sub(centroid);
-  }, [currentWallArray, centroid, backRidgeLeftPoint, minHeight]);
+    return getRidgePoint(wall, x, h, currentWallArray[2]).sub(centroid);
+  }, [currentWallArray, centroid, backRidgeLeftPoint]);
 
   const backRidgeRightPointV3 = useMemo(() => {
     const wall = currentWallArray[3];
     const [x, h] = backRidgeRightPoint;
-    return getRidgePoint(wall, x, h).sub(centroid);
-  }, [currentWallArray, centroid, backRidgeRightPoint, minHeight]);
+    return getRidgePoint(wall, x, h, currentWallArray[2]).sub(centroid);
+  }, [currentWallArray, centroid, backRidgeRightPoint]);
 
   const overhangs = useMemo(() => {
     return currentWallArray.map((wall) => RoofUtil.getWallNormal(wall).multiplyScalar(overhang));
@@ -583,10 +583,8 @@ const GambrelRoof = ({
   useEffect(() => {
     if (!isFirstMountRef.current || useStore.getState().addedRoofId === id) {
       if (currentWallArray.length === 4) {
-        let minHeight = 0;
         for (let i = 0; i < currentWallArray.length; i++) {
           const { lh, rh } = getWallHeight(currentWallArray, i);
-          minHeight = Math.max(minHeight, Math.max(lh, rh));
           setCommonStore((state) => {
             for (const e of state.elements) {
               if (e.id === currentWallArray[i].id) {
@@ -597,11 +595,13 @@ const GambrelRoof = ({
                 if (i === 1) {
                   if (w.centerRoofHeight && w.centerLeftRoofHeight && w.centerRightRoofHeight) {
                     w.centerRoofHeight[0] = topRidgeRightPoint[0];
-                    w.centerRoofHeight[1] = topRidgeRightPoint[1] * (h - minHeight) + minHeight;
+                    w.centerRoofHeight[1] = h;
                     w.centerLeftRoofHeight[0] = frontRidgeRightPoint[0];
-                    w.centerLeftRoofHeight[1] = frontRidgeRightPoint[1] * (h - minHeight) + minHeight;
+                    w.centerLeftRoofHeight[1] =
+                      frontRidgeRightPoint[1] * (h - currentWallArray[0].lz) + currentWallArray[0].lz;
                     w.centerRightRoofHeight[0] = backRidgeLeftPoint[0];
-                    w.centerRightRoofHeight[1] = backRidgeLeftPoint[1] * (h - minHeight) + minHeight;
+                    w.centerRightRoofHeight[1] =
+                      backRidgeLeftPoint[1] * (h - currentWallArray[2].lz) + currentWallArray[2].lz;
                   } else {
                     w.centerRoofHeight = [...topRidgeRightPoint];
                     w.centerLeftRoofHeight = [...frontRidgeRightPoint];
@@ -611,11 +611,13 @@ const GambrelRoof = ({
                 if (i === 3) {
                   if (w.centerRoofHeight && w.centerLeftRoofHeight && w.centerRightRoofHeight) {
                     w.centerRoofHeight[0] = topRidgeLeftPoint[0];
-                    w.centerRoofHeight[1] = topRidgeLeftPoint[1] * (h - minHeight) + minHeight;
+                    w.centerRoofHeight[1] = h;
                     w.centerLeftRoofHeight[0] = backRidgeRightPoint[0];
-                    w.centerLeftRoofHeight[1] = backRidgeRightPoint[1] * (h - minHeight) + minHeight;
+                    w.centerLeftRoofHeight[1] =
+                      backRidgeRightPoint[1] * (h - currentWallArray[2].lz) + currentWallArray[2].lz;
                     w.centerRightRoofHeight[0] = frontRidgeLeftPoint[0];
-                    w.centerRightRoofHeight[1] = frontRidgeLeftPoint[1] * (h - minHeight) + minHeight;
+                    w.centerRightRoofHeight[1] =
+                      frontRidgeLeftPoint[1] * (h - currentWallArray[0].lz) + currentWallArray[0].lz;
                   } else {
                     w.centerRoofHeight = [...topRidgeLeftPoint];
                     w.centerLeftRoofHeight = [...backRidgeRightPoint];
@@ -627,7 +629,11 @@ const GambrelRoof = ({
             }
           });
         }
-        setMinHeight(minHeight);
+        setMinHeight(Math.max(currentWallArray[0].lz, currentWallArray[2].lz));
+        if (roofRelativeHeight !== null) {
+          setH(minHeight + roofRelativeHeight);
+          useStore.getState().updateRoofHeightById(id, minHeight + roofRelativeHeight);
+        }
       } else {
         removeElementById(id, false);
       }
@@ -833,6 +839,7 @@ const GambrelRoof = ({
                       ])
                     ) {
                       setH(height);
+                      setRoofRelativeHeight(height - minHeight);
                     }
                     break;
                   }

@@ -1504,7 +1504,6 @@ const Foundation = ({
               }
               // attach new
               if (flipCurrWallRef.current) {
-                console.log('1', wallNewLeftJointIdRef.current, [wall.id]);
                 updateWallLeftJointsById(wallNewLeftJointIdRef.current, [wall.id]);
                 newRightJoints = [wallNewLeftJointIdRef.current];
               } else {

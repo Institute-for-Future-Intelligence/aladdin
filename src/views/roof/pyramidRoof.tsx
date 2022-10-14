@@ -100,7 +100,8 @@ const PyramidRoof = ({
   const mouse = useMemo(() => new Vector2(), []);
 
   const [h, setH] = useState(lz);
-  const [minHeight, setMinHeight] = useState(lz);
+  const [minHeight, setMinHeight] = useState<number | null>(null);
+  const [roofRelativeHeight, setRoofRelativeHeight] = useState<number | null>(null);
   const [showIntersectionPlane, setShowIntersectionPlane] = useState(false);
 
   const intersectionPlaneRef = useRef<Mesh>(null);
@@ -111,16 +112,10 @@ const PyramidRoof = ({
   const prevWallsIdSet = new Set<string>(wallsId);
 
   useEffect(() => {
-    if (h < minHeight) {
-      setH(minHeight);
+    if (minHeight !== null) {
+      setRoofRelativeHeight(lz - minHeight);
     }
-  }, [minHeight]);
-
-  useEffect(() => {
-    if (!isFirstMountRef.current) {
-      setH(lz);
-    }
-  }, [lz]);
+  }, []);
 
   const setRayCast = (e: PointerEvent) => {
     mouse.x = (e.offsetX / gl.domElement.clientWidth) * 2 - 1;
@@ -400,6 +395,10 @@ const PyramidRoof = ({
     }
 
     setMinHeight(minHeight);
+    if (roofRelativeHeight !== null) {
+      setH(minHeight + roofRelativeHeight);
+      useStore.getState().updateRoofHeightById(id, minHeight + roofRelativeHeight);
+    }
     return segments;
   }, [updateRoofFlag, centerPoint, overhang, thickness]);
 
@@ -557,7 +556,11 @@ const PyramidRoof = ({
                 if (point.z < 0.001) {
                   return;
                 }
-                setH(Math.max(minHeight, point.z - (foundation?.lz ?? 0) - 0.3));
+                if (minHeight !== null) {
+                  const h = Math.max(minHeight, point.z - (foundation?.lz ?? 0) - 0.3);
+                  setH(h);
+                  setRoofRelativeHeight(h - minHeight);
+                }
                 updateRooftopSolarPanel(foundation, id, roofSegments, centerPointV3, h, thickness);
               }
             }

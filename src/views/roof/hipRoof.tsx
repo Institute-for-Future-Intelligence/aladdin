@@ -127,10 +127,15 @@ const HipRoof = ({
     rotation = foundation.rotation[2];
   }
 
+  const currentWallArray = useCurrWallArray(wallsId[0]);
+
   const [leftRidgeLengthCurr, setLeftRidgeLengthCurr] = useState(leftRidgeLength);
   const [rightRidgeLengthCurr, setRightRidgeLengthCurr] = useState(rightRidgeLength);
   const [h, setH] = useState(lz);
-  const [minHeight, setMinHeight] = useState(lz);
+  const [minHeight, setMinHeight] = useState(
+    currentWallArray.length === 4 ? Math.max(currentWallArray[0].lz, currentWallArray[2].lz) : lz / 2,
+  );
+  const [roofRelativeHeight, setRoofRelativeHeight] = useState(lz - minHeight);
   const [enableIntersectionPlane, setEnableIntersectionPlane] = useState(false);
   const [roofHandleType, setRoofHandleType] = useState<RoofHandleType>(RoofHandleType.Null);
 
@@ -149,16 +154,10 @@ const HipRoof = ({
   }, [updateSolarPanelOnRoofFlag, h, thickness]);
 
   useEffect(() => {
-    if (h < minHeight) {
-      setH(minHeight * 1.5);
+    if (minHeight !== null) {
+      setRoofRelativeHeight(lz - minHeight);
     }
-  }, [minHeight]);
-
-  useEffect(() => {
-    if (!isFirstMountRef.current) {
-      setH(lz);
-    }
-  }, [lz]);
+  }, []);
 
   useEffect(() => {
     if (!isFirstMountRef.current) {
@@ -171,8 +170,6 @@ const HipRoof = ({
       setRightRidgeLengthCurr(rightRidgeLength);
     }
   }, [rightRidgeLength]);
-
-  const currentWallArray = useCurrWallArray(wallsId[0]);
 
   const setHipRoofRidgeLength = (elemId: string, leftRidge: number, rightRidge: number) => {
     setCommonStore((state) => {
@@ -380,6 +377,10 @@ const HipRoof = ({
       segments.push({ points, direction, length });
     }
     setMinHeight(minHeight);
+    if (roofRelativeHeight !== null) {
+      setH(minHeight + roofRelativeHeight);
+      useStore.getState().updateRoofHeightById(id, minHeight + roofRelativeHeight);
+    }
     return segments;
   }, [currentWallArray, ridgeLeftPoint, ridgeRightPoint, h, overhang, thickness]);
 
@@ -589,7 +590,9 @@ const HipRoof = ({
                     break;
                   }
                   case RoofHandleType.Mid: {
-                    setH(Math.max(minHeight, point.z - (foundation?.lz ?? 0) - 0.3));
+                    const h = Math.max(minHeight, point.z - (foundation?.lz ?? 0) - 0.3);
+                    setH(h);
+                    setRoofRelativeHeight(h - minHeight);
                     break;
                   }
                 }
