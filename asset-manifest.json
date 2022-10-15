@@ -1,8 +1,8 @@
 {
   "files": {
     "main.css": "/aladdin/static/css/main.c1ee157d.chunk.css",
-    "main.js": "/aladdin/static/js/main.09ca04e1.chunk.js",
-    "main.js.map": "/aladdin/static/js/main.09ca04e1.chunk.js.map",
+    "main.js": "/aladdin/static/js/main.a77286fe.chunk.js",
+    "main.js.map": "/aladdin/static/js/main.a77286fe.chunk.js.map",
     "runtime-main.js": "/aladdin/static/js/runtime-main.a8196082.js",
     "runtime-main.js.map": "/aladdin/static/js/runtime-main.a8196082.js.map",
     "static/css/2.447301e6.chunk.css": "/aladdin/static/css/2.447301e6.chunk.css",
@@ -69,6 +69,7 @@
     "static/media/dune.5b4e54f9.jpg": "/aladdin/static/media/dune.5b4e54f9.jpg",
     "static/media/elm.acad800a.png": "/aladdin/static/media/elm.acad800a.png",
     "static/media/elm_shed.74f112de.png": "/aladdin/static/media/elm_shed.74f112de.png",
+    "static/media/fan_palm.ce8d03e5.png": "/aladdin/static/media/fan_palm.ce8d03e5.png",
     "static/media/forest-night.93a88a4d.jpg": "/aladdin/static/media/forest-night.93a88a4d.jpg",
     "static/media/forest.2bee647e.jpg": "/aladdin/static/media/forest.2bee647e.jpg",
     "static/media/foundation_01.bda6fc00.png": "/aladdin/static/media/foundation_01.bda6fc00.png",
@@ -136,7 +137,6 @@
     "static/media/no_leaf_shrub.7b01fa4a.png": "/aladdin/static/media/no_leaf_shrub.7b01fa4a.png",
     "static/media/oak.9fe6576e.png": "/aladdin/static/media/oak.9fe6576e.png",
     "static/media/oak_shed.8d388b0f.png": "/aladdin/static/media/oak_shed.8d388b0f.png",
-    "static/media/palm.ce8d03e5.png": "/aladdin/static/media/palm.ce8d03e5.png",
     "static/media/peony.f379953c.png": "/aladdin/static/media/peony.f379953c.png",
     "static/media/pine.9f632c67.png": "/aladdin/static/media/pine.9f632c67.png",
     "static/media/polygon_08.acf0bf8f.png": "/aladdin/static/media/polygon_08.acf0bf8f.png",
@@ -198,6 +198,6 @@
     "static/css/2.447301e6.chunk.css",
     "static/js/2.f58ca23e.chunk.js",
     "static/css/main.c1ee157d.chunk.css",
-    "static/js/main.09ca04e1.chunk.js"
+    "static/js/main.a77286fe.chunk.js"
   ]
 }
