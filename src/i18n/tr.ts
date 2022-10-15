@@ -358,7 +358,6 @@ export const i18n_tr = {
       solarEnergyExamples: {
         SunBeamAndHeliodon: 'Güneş Işını ve Heliodon',
         RooftopSolarPanels: 'Çatı Üstü Güneş Panelleri',
-        SolarFarm: 'Güneş Tarlası',
         NevadaSolarOneParabolicTroughArray: 'Nevada Eyaletinde Parabolik Oluk Dizisi',
         TooeleParabolicDishArray: 'Tooele Şehrinde Parabolik Çanak Dizisi',
         PS10SolarPowerTower: 'PS10 Güneş Güç Kulesi',
@@ -366,6 +365,8 @@ export const i18n_tr = {
         SolarCanopyFormFactors: 'Solar Gölgelik Biçim Etkileri',
         SolarCanopyOverBleachers: 'Tirübün Üzeri Solar Gölgelik',
         SolarBusStop: 'Solar Otobüs Durağı',
+        Floatovoltaics: 'Floatovoltaics',
+        Agrivoltaics: 'Agrivoltaics',
         VegetativeBuffer: 'Bitkisel Tampon',
         FixedSolarPanelArraysFraminghamMA: 'Framingham Şehrinde Sabit Güneş Paneli Dizileri',
         SolarPanelsOverCanalBakersfieldCA: 'Bakersfield Şehrinde Kanal Üzerindeki Varsayımsal Güneş Panelleri',
@@ -444,7 +445,7 @@ export const i18n_tr = {
     groundMenu: {
       Albedo: 'Albedo',
       ImageOnGround: 'Yer Görüntüsü',
-      Ocean: 'Ocean',
+      WaterSurface: 'Water Surface',
       RemoveAllUnlockedTrees: 'Tüm Ağaçları Kaldır',
       RemoveAllUnlockedFlowers: 'Remove All Unlocked Flowers',
       RemoveAllUnlockedPeople: 'Tüm Kişileri Kaldır',

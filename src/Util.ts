@@ -40,10 +40,10 @@ import { RoofModel } from './models/RoofModel';
 import { RoofUtil } from './views/roof/RoofUtil';
 
 export class Util {
-  static OCEAN_TEXTURE = Util.fetchOceanTexture(100, 100);
+  static WATER_TEXTURE = Util.fetchWaterTexture(100, 100);
   static WHITE_TEXTURE = Util.fetchWhiteTexture(2, 2);
 
-  static fetchOceanTexture(w: number, h: number): CanvasTexture | null {
+  static fetchWaterTexture(w: number, h: number): CanvasTexture | null {
     const canvas = document.createElement('canvas') as HTMLCanvasElement;
     canvas.width = w;
     canvas.height = h;

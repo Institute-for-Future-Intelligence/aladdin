@@ -8,7 +8,6 @@ import solar_radiation_to_box from './examples/solar_radiation_to_box.json';
 import sun_beam_at_center from './examples/sun_beam_at_center.json';
 import office_building_01 from './examples/office_building_01.json';
 import rooftop_solar_panels from './examples/rooftop_solar_panels.json';
-import solar_farm_01 from './examples/solar_farm_01.json';
 import solar_farm_fixed_array from './examples/solar_farm_fixed_array.json';
 import solar_farm_hsat_array from './examples/solar_farm_hsat_array.json';
 import solar_farm_aadat_array from './examples/solar_farm_aadat_array.json';
@@ -41,6 +40,7 @@ import why_solar_array from './examples/why_solar_array.json';
 import solar_canopy_form_factors from './examples/solar_canopy_form_factors.json';
 import solar_canopy_over_bleachers from './examples/solar_canopy_over_bleachers.json';
 import solar_bus_stop from './examples/solar_bus_stop.json';
+import floatovoltaics from './examples/floatovoltaics.json';
 import agrivoltaics from './examples/agrivoltaics.json';
 import inter_row_spacing from './examples/inter_row_spacing.json';
 import ps10_solar_power_tower from './examples/ps10_solar_power_tower.json';
@@ -297,6 +297,9 @@ const MainMenu = ({ viewOnly, set2DView, resetView, zoomView, canvas }: MainMenu
       case 'solar_bus_stop':
         input = solar_bus_stop;
         break;
+      case 'floatovoltaics':
+        input = floatovoltaics;
+        break;
       case 'agrivoltaics':
         input = agrivoltaics;
         break;
@@ -326,9 +329,6 @@ const MainMenu = ({ viewOnly, set2DView, resetView, zoomView, canvas }: MainMenu
         break;
       case 'rooftop_solar_panels':
         input = rooftop_solar_panels;
-        break;
-      case 'solar_farm_01':
-        input = solar_farm_01;
         break;
       case 'solar_panels_over_canal':
         input = solar_panels_over_canal;
@@ -1989,9 +1989,6 @@ const MainMenu = ({ viewOnly, set2DView, resetView, zoomView, canvas }: MainMenu
             <Menu.Item key="rooftop_solar_panels" onClick={loadFile}>
               {i18n.t('menu.solarEnergyExamples.RooftopSolarPanels', lang)}
             </Menu.Item>
-            <Menu.Item key="solar_farm_01" onClick={loadFile}>
-              {i18n.t('menu.solarEnergyExamples.SolarFarm', lang)}
-            </Menu.Item>
             <Menu.Item key="vegetative_buffer_01" onClick={loadFile}>
               {i18n.t('menu.solarEnergyExamples.VegetativeBuffer', lang)}
             </Menu.Item>
@@ -2003,6 +2000,9 @@ const MainMenu = ({ viewOnly, set2DView, resetView, zoomView, canvas }: MainMenu
             </Menu.Item>
             <Menu.Item key="solar_bus_stop" onClick={loadFile}>
               {i18n.t('menu.solarEnergyExamples.SolarBusStop', lang)}
+            </Menu.Item>
+            <Menu.Item key="floatovoltaics" onClick={loadFile}>
+              {i18n.t('menu.solarEnergyExamples.Floatovoltaics', lang)}
             </Menu.Item>
             <Menu.Item key="agrivoltaics" onClick={loadFile}>
               {i18n.t('menu.solarEnergyExamples.Agrivoltaics', lang)}

@@ -29,7 +29,7 @@ export class DefaultViewState implements ViewState {
   showZenithAngle: boolean;
   groundImage: boolean;
   groundColor: string;
-  ocean: boolean;
+  waterSurface: boolean;
 
   showMapPanel: boolean;
   showHeliodonPanel: boolean;
@@ -111,7 +111,7 @@ export class DefaultViewState implements ViewState {
     this.showZenithAngle = true;
     this.groundImage = false;
     this.groundColor = 'forestgreen';
-    this.ocean = false;
+    this.waterSurface = false;
 
     this.showMapPanel = false;
     this.showHeliodonPanel = false;
@@ -193,7 +193,7 @@ export class DefaultViewState implements ViewState {
     viewState.showZenithAngle = true;
     viewState.groundImage = false;
     viewState.groundColor = 'forestgreen';
-    viewState.ocean = false;
+    viewState.waterSurface = false;
 
     viewState.showMapPanel = false;
     viewState.showHeliodonPanel = false;

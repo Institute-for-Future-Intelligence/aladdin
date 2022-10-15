@@ -355,7 +355,6 @@ export const i18n_zh_cn = {
       solarEnergyExamples: {
         SunBeamAndHeliodon: '太阳光束和日影仪',
         RooftopSolarPanels: '屋顶光伏板',
-        SolarFarm: '太阳能农场',
         NevadaSolarOneParabolicTroughArray: '内华达州太阳能一号的抛物线槽阵列',
         TooeleParabolicDishArray: '犹他州图埃勒的抛物线碟阵列',
         PS10SolarPowerTower: '西班牙塞维利亚的PS10太阳能发电塔',
@@ -363,6 +362,7 @@ export const i18n_zh_cn = {
         SolarCanopyFormFactors: '太阳能天篷外形设计',
         SolarCanopyOverBleachers: '看台太阳能天篷',
         SolarBusStop: '太阳能候车亭',
+        Floatovoltaics: '浮动光伏',
         Agrivoltaics: '农业光伏',
         VegetativeBuffer: '太阳能农场绿化带',
         FixedSolarPanelArraysFraminghamMA: '马萨诸塞州弗雷明翰的一个固定角度光伏板阵列',
@@ -442,7 +442,7 @@ export const i18n_zh_cn = {
     groundMenu: {
       Albedo: '反照率',
       ImageOnGround: '地面显示图像',
-      Ocean: '海洋',
+      WaterSurface: '水面',
       RemoveAllUnlockedTrees: '删除所有非固定的树木',
       RemoveAllUnlockedFlowers: '删除所有非固定的花草',
       RemoveAllUnlockedPeople: '删除所有非固定的人物',

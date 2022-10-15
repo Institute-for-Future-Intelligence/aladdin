@@ -30,7 +30,7 @@ export const GroundMenu = () => {
   const addUndoable = useStore(Selector.addUndoable);
   const elements = useStore(Selector.elements);
   const groundImage = useStore(Selector.viewState.groundImage);
-  const ocean = useStore(Selector.viewState.ocean);
+  const waterSurface = useStore(Selector.viewState.waterSurface);
   const elementsToPaste = useStore(Selector.elementsToPaste);
 
   const [updateFlag, setUpdateFlag] = useState<boolean>(false);
@@ -44,9 +44,9 @@ export const GroundMenu = () => {
 
   const lang = { lng: language };
 
-  const setOcean = (checked: boolean) => {
+  const setWaterSurface = (checked: boolean) => {
     setCommonStore((state) => {
-      state.viewState.ocean = checked;
+      state.viewState.waterSurface = checked;
     });
   };
 
@@ -342,31 +342,31 @@ export const GroundMenu = () => {
         </Checkbox>
       </Menu.Item>
 
-      <Menu.Item key={'ocean'}>
+      <Menu.Item key={'water-surface'}>
         <Checkbox
-          checked={ocean}
+          checked={waterSurface}
           onChange={(e) => {
             const checked = e.target.checked;
             const undoableCheck = {
-              name: 'Ocean',
+              name: 'Water Surface',
               timestamp: Date.now(),
               checked: checked,
               undo: () => {
-                setOcean(!undoableCheck.checked);
+                setWaterSurface(!undoableCheck.checked);
               },
               redo: () => {
-                setOcean(undoableCheck.checked);
+                setWaterSurface(undoableCheck.checked);
               },
             } as UndoableCheck;
             addUndoable(undoableCheck);
-            setOcean(checked);
+            setWaterSurface(checked);
           }}
         >
-          {i18n.t('groundMenu.Ocean', lang)}
+          {i18n.t('groundMenu.WaterSurface', lang)}
         </Checkbox>
       </Menu.Item>
 
-      {!ocean && (
+      {!waterSurface && (
         <SubMenu key={'ground-color'} title={i18n.t('word.Color', { lng: language })} style={{ paddingLeft: '24px' }}>
           <CompactPicker
             color={groundColor}

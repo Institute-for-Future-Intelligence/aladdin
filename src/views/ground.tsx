@@ -60,7 +60,7 @@ const Ground = () => {
   const addUndoable = useStore(Selector.addUndoable);
   const shadowEnabled = useStore(Selector.viewState.shadowEnabled);
   const groundColor = useStore(Selector.viewState.groundColor);
-  const ocean = useStore(Selector.viewState.ocean);
+  const waterSurface = useStore(Selector.viewState.waterSurface);
   const groundModel = useStore((state) => state.world.ground);
   const deletedFoundationId = useStore(Selector.deletedFoundationId);
   const deletedCuboidId = useStore(Selector.deletedCuboidId);
@@ -1830,13 +1830,13 @@ const Ground = () => {
         onPointerMove={handleGroundPointerMove}
         onPointerOut={handleGroundPointerOut}
       >
-        {showSolarRadiationHeatmap && !ocean ? (
+        {showSolarRadiationHeatmap && !waterSurface ? (
           <meshBasicMaterial color={groundColor} />
         ) : (
           <meshStandardMaterial
             depthTest={false}
-            color={ocean ? 'white' : groundColor}
-            map={ocean ? Util.OCEAN_TEXTURE : Util.WHITE_TEXTURE}
+            color={waterSurface ? 'white' : groundColor}
+            map={waterSurface ? Util.WATER_TEXTURE : Util.WHITE_TEXTURE}
             needsUpdate={true}
           />
         )}

@@ -358,7 +358,6 @@ export const i18n_es = {
       solarEnergyExamples: {
         SunBeamAndHeliodon: 'Rayo de sol y heliodon',
         RooftopSolarPanels: 'Rooftop Solar Panels',
-        SolarFarm: 'Granja solar',
         NevadaSolarOneParabolicTroughArray: 'Nevada Solar One Parabolic Trough Array',
         TooeleParabolicDishArray: 'Tooele Parabolic Dish Array',
         PS10SolarPowerTower: 'PS10 Solar Power Tower',
@@ -366,6 +365,7 @@ export const i18n_es = {
         SolarCanopyFormFactors: 'Solar Canopy Form Factors',
         SolarCanopyOverBleachers: 'Solar Canopy Over Bleachers',
         SolarBusStop: 'Solar Bus Stop',
+        Floatovoltaics: 'Floatovoltaics',
         Agrivoltaics: 'Agrivoltaics',
         VegetativeBuffer: 'Vegetative Buffer',
         FixedSolarPanelArraysFraminghamMA: 'Fixed Solar Panel Arrays in Framingham, MA',
@@ -445,7 +445,7 @@ export const i18n_es = {
     groundMenu: {
       Albedo: 'Albedo',
       ImageOnGround: 'Imagen en el suelo',
-      Ocean: 'Ocean',
+      WaterSurface: 'Water Surface',
       RemoveAllUnlockedTrees: 'Eliminar todos los árboles',
       RemoveAllUnlockedFlowers: 'Remove All Unlocked Flowers',
       RemoveAllUnlockedPeople: 'Eliminar toda la gente',
