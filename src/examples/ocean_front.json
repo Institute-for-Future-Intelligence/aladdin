@@ -1,18 +1,31 @@
 {
-  "docid": "1SjUZWKjKQ5LEKrxY4MStT",
-  "time": "10/15/2022 03:36 pm",
-  "timestamp": 1665862613445,
+  "docid": "wQcHsKBfFQCd3ZM3VNiVfq",
+  "time": "10/15/2022 06:03 pm",
+  "timestamp": 1665871438941,
   "userid": "QWecNcxhyvP6j6sBN11hBsfZDau1",
   "owner": null,
   "email": null,
   "world": {
-    "latitude": 21.27726283505855,
+    "orthographic": false,
+    "noAnimationForSolarPanelSimulation": false,
+    "discretization": "Approximate",
+    "cspGridCellSize": 0.5,
+    "diurnalTemperatureModel": 1,
+    "sutDaysPerYear": 4,
+    "address": "Honolulu, HI, USA",
+    "sutGridCellSize": 1,
+    "solarPanelVisibilityGridCellSize": 0.2,
+    "airAttenuationCoefficient": 0.01,
+    "longitude": -157.86620385714326,
     "pvGridCellSize": 0.5,
+    "date": "4/22/2022, 10:00:00 AM",
+    "noAnimationForSolarUpdraftTowerSimulation": false,
+    "cameraZoom": 43.16939043526371,
+    "sutTimesPerHour": 4,
+    "daysPerYear": 12,
     "timesPerHour": 4,
-    "longitude": -157.83154812645873,
+    "cspDaysPerYear": 4,
     "ground": {
-      "albedo": 0.3,
-      "thermalDiffusivity": 0.05,
       "snowReflectionFactors": [
         0,
         0,
@@ -26,167 +39,1044 @@
         0,
         0,
         0
-      ]
+      ],
+      "albedo": 0.3,
+      "thermalDiffusivity": 0.05
     },
-    "address": "Beach Walk, Honolulu, HI 96815, USA",
-    "date": "9/15/2022 12:00:00 PM",
+    "latitude": 21.310722676290315,
+    "airConvectiveCoefficient": 5,
     "name": "default",
-    "orthographic": false,
-    "cameraZoom": 35.16173831821251,
-    "noAnimationForSolarPanelSimulation": true,
-    "noAnimationForHeatmapSimulation": true
+    "solarRadiationHeatmapGridCellSize": 0.5,
+    "cspTimesPerHour": 4,
+    "highestTemperatureTimeInMinutes": 900,
+    "dustLoss": 0.05,
+    "noAnimationForHeatmapSimulation": false,
+    "noAnimationForSensorDataCollection": false
   },
   "elements": [
     {
-      "cy": -0.03814023608482309,
+      "solarAbsorberPipe": {},
+      "solarPowerTower": {},
       "normal": [
         0,
         0,
         1
       ],
-      "lz": 0.1,
-      "ly": 30,
-      "id": "of4fAMi2p9MKmo6JDUYnfX",
+      "rotation": [
+        0,
+        0,
+        1.5707963267948966
+      ],
+      "color": "#009ce0",
+      "ly": 24.9333515261897,
       "type": "Foundation",
-      "cx": -0.09164937497423153,
+      "parentId": "Ground",
+      "lz": 0.1,
+      "selected": false,
       "cz": 0.05,
+      "cx": -0.9759327650956084,
+      "cy": 2.7473554645675557,
+      "id": "sfVVGvWfY1uFZBwuAeqDnU",
+      "solarUpdraftTower": {},
+      "lx": 10.57622536718512,
+      "locked": true,
+      "textureType": "No Foundation Texture"
+    },
+    {
+      "showLabel": false,
+      "cz": 0,
+      "drawSunBeam": false,
+      "cx": -0.0173882538930337,
+      "color": "#fff",
+      "poleRadius": 0.05,
+      "parentId": "sfVVGvWfY1uFZBwuAeqDnU",
+      "dailyYield": 25.00468094869397,
+      "selected": false,
+      "trackerType": "None",
+      "orientation": "Portrait",
+      "poleSpacing": 3,
+      "lx": 6.944,
+      "locked": true,
+      "type": "Solar Panel",
+      "rotation": [
+        0,
+        0,
+        1.5707963267948966
+      ],
+      "ly": 3.936,
+      "pvModelName": "CS6X-355P-FG",
+      "relativeAzimuth": 0,
+      "poleHeight": 1.5,
+      "normal": [
+        0,
+        0,
+        1
+      ],
+      "id": "4bpFrEwZJxbfGUTtn9R1sg",
+      "lz": 0.046,
+      "cy": -0.3535113399890203,
+      "foundationId": "sfVVGvWfY1uFZBwuAeqDnU",
+      "tiltAngle": 0
+    },
+    {
+      "solarAbsorberPipe": {},
+      "lz": 0.1,
+      "solarPowerTower": {},
+      "rotation": [
+        0,
+        0,
+        -0.7853981633974483
+      ],
+      "locked": true,
+      "cy": 3.3785331461228845,
+      "type": "Foundation",
+      "solarUpdraftTower": {},
+      "parentId": "Ground",
+      "cz": 0.05,
+      "selected": false,
+      "lx": 17.522626722458362,
+      "ly": 16.217549949540043,
+      "normal": [
+        0,
+        0,
+        1
+      ],
+      "color": "#009ce0",
+      "id": "c2gz3bi2QzLErUX4XmgVX7",
+      "cx": 2.825325314034343,
+      "textureType": "No Foundation Texture"
+    },
+    {
+      "ly": 0.1,
+      "lz": 1.75,
+      "selected": false,
+      "textureType": "No Wall Texture",
+      "foundationId": "c2gz3bi2QzLErUX4XmgVX7",
+      "lineColor": "black",
+      "windows": [],
+      "leftPoint": [
+        -0.41513844869064975,
+        -4.018227675100984,
+        0.1
+      ],
+      "id": "iQCq8L9uGMQTqYvdj9Zg8G",
+      "leftJoints": [
+        "cSJn7k7dHrZvyJZf7rCR3h"
+      ],
+      "rotation": [
+        0,
+        0,
+        -0.7853981633974483
+      ],
+      "showLabel": false,
+      "cz": 0,
+      "rightPoint": [
+        0.08486155130934736,
+        -4.01822767510099,
+        0.1
+      ],
+      "lineWidth": 0.2,
+      "color": "#ffffff",
+      "rightJoints": [
+        "8BLfCN1Rb2sjqzL81nEAF1"
+      ],
+      "locked": true,
+      "cx": -0.16513844869065064,
+      "lx": 0.4999999999999971,
+      "roofId": "95ywic4c9x92ks45ZbwSqV",
+      "type": "Wall",
+      "rightRoofHeight": 1.75,
+      "cy": -4.01822767510099,
+      "leftRoofHeight": 1.75,
+      "normal": [
+        0,
+        0,
+        1
+      ],
+      "relativeAngle": 6.283185307179577,
+      "parentId": "c2gz3bi2QzLErUX4XmgVX7"
+    },
+    {
+      "cz": 0,
+      "foundationId": "c2gz3bi2QzLErUX4XmgVX7",
+      "parentId": "c2gz3bi2QzLErUX4XmgVX7",
+      "ly": 0.1,
+      "cx": -0.16513844869065064,
+      "textureType": "No Wall Texture",
+      "roofId": "95ywic4c9x92ks45ZbwSqV",
+      "lx": 0.5000000000000003,
+      "locked": true,
+      "rightRoofHeight": 1.75,
+      "selected": false,
+      "leftPoint": [
+        0.0848615513093498,
+        2.481772324899016,
+        0.1
+      ],
+      "cy": 2.481772324899016,
+      "lz": 1.75,
+      "lineWidth": 0.2,
+      "normal": [
+        0,
+        0,
+        1
+      ],
+      "relativeAngle": 3.1415926535897922,
+      "rightPoint": [
+        -0.41513844869064953,
+        2.481772324899015,
+        0.1
+      ],
+      "leftJoints": [
+        "8BLfCN1Rb2sjqzL81nEAF1"
+      ],
+      "rotation": [
+        0,
+        0,
+        -0.7853981633974483
+      ],
+      "type": "Wall",
+      "id": "wXQ7LSxUUW2TWS968Lkeqi",
+      "showLabel": false,
+      "leftRoofHeight": 1.75,
+      "windows": [],
+      "color": "#ffffff",
+      "lineColor": "black",
+      "rightJoints": [
+        "cSJn7k7dHrZvyJZf7rCR3h"
+      ]
+    },
+    {
+      "leftPoint": [
+        -0.41513844869064953,
+        2.481772324899015,
+        0.1
+      ],
+      "locked": true,
+      "lineWidth": 0.2,
+      "ly": 0.1,
+      "windows": [],
+      "rightRoofHeight": 1.75,
+      "color": "#ffffff",
+      "leftRoofHeight": 1.75,
+      "cx": -0.4151384486906503,
+      "id": "cSJn7k7dHrZvyJZf7rCR3h",
+      "lx": 6.5,
+      "parentId": "c2gz3bi2QzLErUX4XmgVX7",
+      "rightPoint": [
+        -0.41513844869064975,
+        -4.018227675100984,
+        0.1
+      ],
+      "rotation": [
+        0,
+        0,
+        -0.7853981633974483
+      ],
+      "roofId": "95ywic4c9x92ks45ZbwSqV",
+      "cz": 0,
+      "textureType": "No Wall Texture",
+      "leftJoints": [
+        "wXQ7LSxUUW2TWS968Lkeqi"
+      ],
+      "selected": false,
+      "foundationId": "c2gz3bi2QzLErUX4XmgVX7",
+      "relativeAngle": 4.71238898038469,
+      "type": "Wall",
+      "cy": -0.7682276751009843,
+      "lz": 1.75,
+      "showLabel": false,
+      "lineColor": "black",
+      "rightJoints": [
+        "iQCq8L9uGMQTqYvdj9Zg8G"
+      ],
+      "normal": [
+        0,
+        0,
+        1
+      ]
+    },
+    {
+      "locked": true,
+      "selected": false,
+      "type": "Wall",
+      "lz": 1.75,
+      "leftRoofHeight": 1.75,
+      "textureType": "No Wall Texture",
+      "id": "8BLfCN1Rb2sjqzL81nEAF1",
+      "leftPoint": [
+        0.08486155130935003,
+        -4.0182276751009915,
+        0.1
+      ],
+      "cx": 0.08486155130935003,
+      "roofId": "95ywic4c9x92ks45ZbwSqV",
+      "cz": 0,
+      "ly": 0.1,
+      "relativeAngle": 1.5707963267948966,
+      "color": "#ffffff",
+      "foundationId": "c2gz3bi2QzLErUX4XmgVX7",
+      "lineColor": "black",
+      "rightPoint": [
+        0.0848615513093498,
+        2.481772324899016,
+        0.1
+      ],
+      "cy": -0.7682276751009878,
+      "showLabel": false,
+      "normal": [
+        0,
+        0,
+        1
+      ],
+      "rotation": [
+        0,
+        0,
+        -0.7853981633974483
+      ],
+      "lx": 6.500000000000005,
+      "leftJoints": [
+        "iQCq8L9uGMQTqYvdj9Zg8G"
+      ],
+      "parentId": "c2gz3bi2QzLErUX4XmgVX7",
+      "rightRoofHeight": 1.75,
+      "rightJoints": [
+        "wXQ7LSxUUW2TWS968Lkeqi"
+      ],
+      "windows": [],
+      "lineWidth": 0.2
+    },
+    {
+      "normal": [
+        0,
+        0,
+        1
+      ],
+      "wallsId": [
+        "8BLfCN1Rb2sjqzL81nEAF1"
+      ],
+      "cy": 0,
+      "rightRidgeLength": -3.1500000000000026,
+      "locked": true,
+      "lz": 17.848880019941728,
+      "id": "95ywic4c9x92ks45ZbwSqV",
+      "lineColor": "black",
+      "selected": false,
+      "lx": 0,
+      "textureType": "No Roof Texture",
+      "ly": 0,
+      "rotation": [
+        0,
+        0,
+        -0.7853981633974483
+      ],
+      "lineWidth": 0.2,
+      "cz": 0,
+      "foundationId": "c2gz3bi2QzLErUX4XmgVX7",
+      "color": "#ffffff",
+      "overhang": 0,
+      "parentId": "c2gz3bi2QzLErUX4XmgVX7",
+      "showLabel": false,
+      "thickness": 0.05,
+      "roofType": "Hip",
+      "leftRidgeLength": 3.2500000000000027,
+      "cx": 0,
+      "type": "Roof",
+      "roofStructure": "Default"
+    },
+    {
+      "cz": 0,
+      "rotation": [
+        0,
+        0,
+        -0.7853981633974483
+      ],
+      "parentId": "mcxY5unDv2pKvQAJXd1qqG",
+      "rightPoint": [
+        0.08486155130934736,
+        -4.01822767510099,
+        0.1
+      ],
+      "roofId": "7DEvyGzFf8SCPa5eeKTryQ",
+      "leftRoofHeight": 1.75,
+      "color": "#ffffff",
+      "textureType": "No Wall Texture",
+      "rightRoofHeight": 1.75,
+      "lz": 1.75,
+      "selected": false,
+      "foundationId": "mcxY5unDv2pKvQAJXd1qqG",
+      "cx": -0.16513844869065064,
+      "ly": 0.1,
+      "cy": -4.01822767510099,
+      "rightJoints": [
+        "81FqBBm7B8Cgn7RbBDkgTc"
+      ],
+      "type": "Wall",
+      "leftJoints": [
+        "wPbsRDuG2myaDXtTkpKWyU"
+      ],
+      "leftPoint": [
+        -0.41513844869064975,
+        -4.018227675100984,
+        0.1
+      ],
+      "normal": [
+        0,
+        0,
+        1
+      ],
+      "lx": 0.4999999999999971,
+      "relativeAngle": 6.283185307179577,
+      "id": "jPQHNjKitSZdUXrDLCKowL",
+      "locked": true
+    },
+    {
+      "rightRoofHeight": 1.75,
+      "id": "3DG2FvhMwMqXmaiYMPxgiv",
+      "cy": 2.481772324899016,
+      "color": "#ffffff",
+      "rotation": [
+        0,
+        0,
+        -0.7853981633974483
+      ],
+      "rightPoint": [
+        -0.41513844869064953,
+        2.481772324899015,
+        0.1
+      ],
+      "lx": 0.5000000000000003,
+      "selected": false,
+      "roofId": "7DEvyGzFf8SCPa5eeKTryQ",
+      "textureType": "No Wall Texture",
+      "leftPoint": [
+        0.0848615513093498,
+        2.481772324899016,
+        0.1
+      ],
+      "type": "Wall",
+      "parentId": "mcxY5unDv2pKvQAJXd1qqG",
+      "foundationId": "mcxY5unDv2pKvQAJXd1qqG",
+      "lz": 1.75,
+      "locked": true,
+      "leftJoints": [
+        "81FqBBm7B8Cgn7RbBDkgTc"
+      ],
+      "rightJoints": [
+        "wPbsRDuG2myaDXtTkpKWyU"
+      ],
+      "relativeAngle": 3.1415926535897922,
+      "cx": -0.16513844869065064,
+      "leftRoofHeight": 1.75,
+      "normal": [
+        0,
+        0,
+        1
+      ],
+      "ly": 0.1,
+      "cz": 0
+    },
+    {
+      "leftPoint": [
+        -0.41513844869064953,
+        2.481772324899015,
+        0.1
+      ],
+      "cx": -0.4151384486906503,
+      "foundationId": "mcxY5unDv2pKvQAJXd1qqG",
+      "selected": false,
+      "id": "wPbsRDuG2myaDXtTkpKWyU",
+      "leftRoofHeight": 1.75,
+      "textureType": "No Wall Texture",
+      "color": "#ffffff",
+      "rotation": [
+        0,
+        0,
+        -0.7853981633974483
+      ],
+      "normal": [
+        0,
+        0,
+        1
+      ],
+      "rightJoints": [
+        "jPQHNjKitSZdUXrDLCKowL"
+      ],
+      "cz": 0,
+      "locked": true,
+      "type": "Wall",
+      "ly": 0.1,
+      "roofId": "7DEvyGzFf8SCPa5eeKTryQ",
+      "cy": -0.7682276751009843,
+      "rightRoofHeight": 1.75,
+      "lz": 1.75,
+      "leftJoints": [
+        "3DG2FvhMwMqXmaiYMPxgiv"
+      ],
+      "lx": 6.5,
+      "parentId": "mcxY5unDv2pKvQAJXd1qqG",
+      "relativeAngle": 4.71238898038469,
+      "rightPoint": [
+        -0.41513844869064975,
+        -4.018227675100984,
+        0.1
+      ]
+    },
+    {
+      "type": "Wall",
+      "color": "#ffffff",
+      "rightRoofHeight": 1.75,
+      "foundationId": "mcxY5unDv2pKvQAJXd1qqG",
+      "cx": 0.08486155130935003,
+      "cz": 0,
+      "leftJoints": [
+        "jPQHNjKitSZdUXrDLCKowL"
+      ],
+      "rightJoints": [
+        "3DG2FvhMwMqXmaiYMPxgiv"
+      ],
+      "ly": 0.1,
+      "roofId": "7DEvyGzFf8SCPa5eeKTryQ",
+      "leftRoofHeight": 1.75,
+      "lz": 1.75,
+      "id": "81FqBBm7B8Cgn7RbBDkgTc",
+      "cy": -0.7682276751009878,
+      "parentId": "mcxY5unDv2pKvQAJXd1qqG",
+      "relativeAngle": 1.5707963267948966,
+      "rotation": [
+        0,
+        0,
+        -0.7853981633974483
+      ],
+      "selected": false,
+      "textureType": "No Wall Texture",
+      "locked": true,
+      "rightPoint": [
+        0.0848615513093498,
+        2.481772324899016,
+        0.1
+      ],
+      "normal": [
+        0,
+        0,
+        1
+      ],
+      "lx": 6.500000000000005,
+      "leftPoint": [
+        0.08486155130935003,
+        -4.0182276751009915,
+        0.1
+      ]
+    },
+    {
+      "roofStructure": "Default",
+      "textureType": "No Roof Texture",
+      "lz": 17.848880019941728,
+      "cz": 0,
+      "rotation": [
+        0,
+        0,
+        -0.7853981633974483
+      ],
+      "foundationId": "mcxY5unDv2pKvQAJXd1qqG",
+      "type": "Roof",
+      "color": "#ffffff",
+      "overhang": 0,
+      "wallsId": [
+        "81FqBBm7B8Cgn7RbBDkgTc"
+      ],
+      "lx": 0,
+      "cx": 0,
+      "leftRidgeLength": 3.2500000000000027,
+      "rightRidgeLength": -3.1500000000000026,
+      "id": "7DEvyGzFf8SCPa5eeKTryQ",
+      "cy": 0,
+      "parentId": "mcxY5unDv2pKvQAJXd1qqG",
+      "normal": [
+        0,
+        0,
+        1
+      ],
+      "roofType": "Hip",
+      "thickness": 0.05,
+      "locked": true,
+      "selected": false,
+      "ly": 0
+    },
+    {
+      "cx": -2.820889718788509,
+      "lx": 17.522626722458362,
+      "solarAbsorberPipe": {},
+      "cy": 3.1943110177197918,
+      "cz": 0.05,
+      "id": "mcxY5unDv2pKvQAJXd1qqG",
+      "lz": 0.1,
+      "normal": [
+        0,
+        0,
+        1
+      ],
+      "solarPowerTower": {},
+      "selected": false,
+      "solarUpdraftTower": {},
+      "type": "Foundation",
+      "locked": true,
+      "color": "#009ce0",
+      "rotation": [
+        0,
+        0,
+        -0.7853981633974483
+      ],
+      "ly": 16.217549949540043,
+      "parentId": "Ground",
+      "textureType": "No Foundation Texture",
+      "enableGroupMaster": true
+    },
+    {
       "rotation": [
         0,
         0,
         0
       ],
-      "lx": 30,
+      "leftJoints": [
+        "4jxSnG9vT4aBdW8AckRKYU"
+      ],
+      "windows": [],
+      "type": "Wall",
+      "lx": 12.5,
+      "cx": -3.4999999999999987,
+      "showLabel": false,
+      "rightRoofHeight": 1.6,
+      "normal": [
+        0,
+        0,
+        1
+      ],
+      "textureType": "No Wall Texture",
+      "parentId": "sfVVGvWfY1uFZBwuAeqDnU",
+      "ly": 0.3,
+      "cy": -0.25,
+      "roofId": "uRtLCjK4u6T6gpiAxaqJ4Y",
       "selected": false,
+      "leftPoint": [
+        -3.4999999999999973,
+        6,
+        0
+      ],
+      "relativeAngle": 4.71238898038469,
+      "lineColor": "black",
+      "locked": true,
+      "rightJoints": [
+        "dDiLTvTPyJXZvEWaFVYpwD"
+      ],
+      "lz": 1.6,
+      "lineWidth": 0.2,
+      "leftRoofHeight": 1.6,
+      "id": "fx2d8KZ2FbN5HXDjmbeNTq",
+      "foundationId": "sfVVGvWfY1uFZBwuAeqDnU",
+      "rightPoint": [
+        -3.5,
+        -6.5,
+        0
+      ],
+      "cz": 0,
+      "color": "#ffffff"
+    },
+    {
+      "roofId": "uRtLCjK4u6T6gpiAxaqJ4Y",
+      "locked": true,
+      "cy": -0.25000000000000044,
+      "rightPoint": [
+        2.9999999999999982,
+        5.999999999999999,
+        0
+      ],
+      "selected": false,
+      "rightRoofHeight": 1.6,
+      "rightJoints": [
+        "4jxSnG9vT4aBdW8AckRKYU"
+      ],
+      "leftRoofHeight": 1.6,
+      "showLabel": false,
+      "ly": 0.3,
+      "windows": [],
+      "parentId": "sfVVGvWfY1uFZBwuAeqDnU",
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "cz": 0,
+      "textureType": "No Wall Texture",
+      "leftJoints": [
+        "dDiLTvTPyJXZvEWaFVYpwD"
+      ],
+      "leftPoint": [
+        3,
+        -6.5,
+        0
+      ],
+      "lx": 12.5,
+      "lineWidth": 0.2,
+      "lz": 1.6,
+      "normal": [
+        0,
+        0,
+        1
+      ],
+      "relativeAngle": 1.5707963267948966,
+      "cx": 2.999999999999999,
+      "foundationId": "sfVVGvWfY1uFZBwuAeqDnU",
+      "type": "Wall",
+      "lineColor": "black",
+      "id": "kgt2xgas1aqzzJdjuE2oTU",
+      "color": "#ffffff"
+    },
+    {
+      "textureType": "No Wall Texture",
+      "parentId": "sfVVGvWfY1uFZBwuAeqDnU",
+      "selected": false,
+      "leftRoofHeight": 1.6,
+      "lz": 1.6,
+      "cx": -0.25,
+      "id": "dDiLTvTPyJXZvEWaFVYpwD",
+      "leftJoints": [
+        "fx2d8KZ2FbN5HXDjmbeNTq"
+      ],
+      "cy": -6.5,
+      "relativeAngle": 0,
+      "cz": 0,
+      "locked": true,
+      "centerRoofHeight": [
+        0,
+        1.6
+      ],
+      "lx": 6.5,
+      "type": "Wall",
+      "showLabel": false,
+      "roofId": "uRtLCjK4u6T6gpiAxaqJ4Y",
+      "ly": 0.3,
+      "windows": [],
+      "rightPoint": [
+        3,
+        -6.5,
+        0
+      ],
+      "lineWidth": 0.2,
+      "leftPoint": [
+        -3.5,
+        -6.5,
+        0
+      ],
+      "rightRoofHeight": 1.6,
+      "rightJoints": [
+        "kgt2xgas1aqzzJdjuE2oTU"
+      ],
+      "normal": [
+        0,
+        0,
+        1
+      ],
+      "lineColor": "black",
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "foundationId": "sfVVGvWfY1uFZBwuAeqDnU",
+      "color": "#ffffff"
+    },
+    {
+      "leftJoints": [
+        "kgt2xgas1aqzzJdjuE2oTU"
+      ],
+      "windows": [],
+      "ly": 0.3,
+      "locked": true,
+      "centerRoofHeight": [
+        0,
+        1.6
+      ],
+      "cy": 5.999999999999998,
+      "rightPoint": [
+        -3.4999999999999973,
+        5.999999999999998,
+        0
+      ],
+      "showLabel": false,
+      "parentId": "sfVVGvWfY1uFZBwuAeqDnU",
+      "textureType": "No Wall Texture",
+      "rightJoints": [
+        "fx2d8KZ2FbN5HXDjmbeNTq"
+      ],
+      "foundationId": "sfVVGvWfY1uFZBwuAeqDnU",
+      "type": "Wall",
+      "id": "4jxSnG9vT4aBdW8AckRKYU",
+      "lz": 1.6,
+      "leftRoofHeight": 1.6,
+      "rightRoofHeight": 1.6,
+      "lineWidth": 0.2,
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "roofId": "uRtLCjK4u6T6gpiAxaqJ4Y",
+      "lx": 6.499999999999996,
+      "leftPoint": [
+        2.9999999999999982,
+        5.999999999999999,
+        0
+      ],
+      "relativeAngle": 3.141592653589793,
+      "selected": false,
+      "cz": 0,
+      "cx": -0.24999999999999956,
+      "normal": [
+        0,
+        0,
+        1
+      ],
+      "lineColor": "black",
+      "color": "#ffffff"
+    },
+    {
+      "showLabel": false,
+      "wallsId": [
+        "fx2d8KZ2FbN5HXDjmbeNTq"
+      ],
+      "roofStructure": "Default",
+      "locked": true,
+      "ly": 0,
+      "normal": [
+        0,
+        0,
+        1
+      ],
+      "color": "#ffffff",
+      "foundationId": "sfVVGvWfY1uFZBwuAeqDnU",
+      "ridgeLeftPoint": [
+        0,
+        1
+      ],
+      "cz": 0,
+      "lineWidth": 0.2,
+      "overhang": 0,
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "parentId": "sfVVGvWfY1uFZBwuAeqDnU",
+      "roofType": "Gable",
+      "ridgeRightPoint": [
+        0,
+        1
+      ],
+      "cx": 0,
+      "type": "Roof",
+      "cy": 0,
+      "lineColor": "black",
+      "lx": 0,
+      "id": "uRtLCjK4u6T6gpiAxaqJ4Y",
+      "thickness": 0.4,
+      "selected": false,
+      "lz": 1.6,
+      "textureType": "No Roof Texture"
+    },
+    {
+      "type": "Human",
+      "name": "Jeff",
+      "cx": -6.502161132128585,
+      "cy": -0.11016766385402654,
+      "cz": 0.75,
+      "lx": 0.6,
+      "lz": 1.65,
+      "normal": [
+        0,
+        1,
+        0
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "parentId": "nxpfXTi8karHMZTuUfg7ua",
+      "id": "uohRAyGkaEQKAWQ4nxXd7n",
+      "selected": false,
+      "locked": true,
+      "ly": 0.6
+    },
+    {
+      "type": "Cuboid",
+      "cx": -1.5500000000000027,
+      "cy": 5.125000000000001,
+      "cz": 0.75,
+      "lx": 23.296674873649543,
+      "ly": 1.1460990537871516,
+      "lz": 1.5,
+      "color": "#ffffff",
+      "faceColors": [
+        "#ffffff",
+        "#ffffff",
+        "#ffffff",
+        "#ffffff",
+        "#ffffff",
+        "gray"
+      ],
+      "textureTypes": [
+        "No Facade Texture",
+        "No Facade Texture",
+        "No Facade Texture",
+        "No Facade Texture",
+        "No Facade Texture",
+        "No Facade Texture"
+      ],
+      "normal": [
+        0,
+        0,
+        1
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
       "parentId": "Ground",
-      "color": "#808080",
+      "selected": false,
+      "id": "jrdvuWjMZPwKCrsCkYbs2x",
+      "locked": true
+    },
+    {
+      "type": "Cuboid",
+      "cx": -1.5499999999999994,
+      "cy": -0.12500200000011227,
+      "cz": 0.75,
+      "lx": 23.296674873649543,
+      "ly": 1.1460990537871516,
+      "lz": 1.5,
+      "color": "#ffffff",
+      "faceColors": [
+        "#ffffff",
+        "#ffffff",
+        "#ffffff",
+        "#ffffff",
+        "#ffffff",
+        "gray"
+      ],
+      "textureTypes": [
+        "No Facade Texture",
+        "No Facade Texture",
+        "No Facade Texture",
+        "No Facade Texture",
+        "No Facade Texture",
+        "No Facade Texture"
+      ],
+      "normal": [
+        0,
+        0,
+        1
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "parentId": "Ground",
+      "id": "nxpfXTi8karHMZTuUfg7ua",
+      "selected": false,
+      "locked": true
+    },
+    {
+      "type": "Foundation",
+      "cx": -10.909919452819317,
+      "cy": -38.23219135346544,
+      "cz": 0.05,
+      "lx": 40,
+      "ly": 40,
+      "lz": 0.1,
+      "normal": [
+        0,
+        0,
+        1
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "parentId": "Ground",
+      "selected": false,
+      "solarUpdraftTower": {},
+      "solarAbsorberPipe": {},
+      "solarPowerTower": {},
+      "id": "ihXBcGst6vfG6pMnKjKmcM",
       "textureType": "Foundation Texture #7",
       "locked": true,
       "enableGroupMaster": true
     },
     {
-      "type": "Human",
-      "name": "Jack",
-      "cx": -2.6826298492498593,
-      "cy": -13.382599250634597,
-      "cz": 0.05000000074505806,
-      "lx": 0.42,
-      "lz": 1.8,
+      "type": "Foundation",
+      "cx": 9.459446755318861,
+      "cy": -38.145391781054165,
+      "cz": 0.5,
+      "lx": 1,
+      "ly": 40,
+      "lz": 1,
       "normal": [
         0,
-        1,
-        0
+        0,
+        1
       ],
       "rotation": [
         0,
         0,
         0
       ],
-      "parentId": "of4fAMi2p9MKmo6JDUYnfX",
-      "id": "tmVJY65HF3sgVftctUAMHa",
+      "parentId": "Ground",
       "selected": false,
-      "ly": 0.42,
-      "locked": true
-    },
-    {
-      "type": "Tree",
-      "name": "Palm",
-      "cx": -10.9,
-      "cy": -12.300149906670546,
-      "cz": 0.05000000074505806,
-      "lx": 3,
-      "lz": 4.556580211493021,
-      "normal": [
-        0,
-        1,
-        0
-      ],
-      "rotation": [
-        0,
-        0,
-        0
-      ],
-      "parentId": "of4fAMi2p9MKmo6JDUYnfX",
-      "id": "515nQqCbcQQ6YHPjc9DbKD",
-      "selected": false,
-      "evergreen": false,
-      "locked": true
-    },
-    {
-      "type": "Tree",
-      "name": "Palm",
-      "cx": -3.450000000000002,
-      "cy": -12.400149906670547,
-      "cz": 0.05000000074505806,
-      "lx": 3,
-      "lz": 4.502844343858161,
-      "normal": [
-        0,
-        1,
-        0
-      ],
-      "rotation": [
-        0,
-        0,
-        0
-      ],
-      "parentId": "of4fAMi2p9MKmo6JDUYnfX",
-      "id": "tTJn67k6BMHpHBDdaWM3ba",
-      "selected": false,
-      "locked": true
-    },
-    {
-      "type": "Tree",
-      "name": "Palm",
-      "cx": 3,
-      "cy": -12.400149906670547,
-      "cz": 0.05000000074505806,
-      "lx": 3,
-      "lz": 4.5558558822675845,
-      "normal": [
-        0,
-        1,
-        0
-      ],
-      "rotation": [
-        0,
-        0,
-        0
-      ],
-      "parentId": "of4fAMi2p9MKmo6JDUYnfX",
-      "id": "fMbPSHZLPsBcyuLxgHBCK1",
-      "selected": false,
-      "locked": true
-    },
-    {
-      "type": "Tree",
-      "name": "Linden",
-      "cx": 10.635323267305587,
-      "cy": 9.120457936722755,
-      "cz": 0.05000000074505806,
-      "lx": 8.647453630740776,
-      "lz": 6.099116502434057,
-      "normal": [
-        0,
-        1,
-        0
-      ],
-      "rotation": [
-        0,
-        0,
-        0
-      ],
-      "parentId": "of4fAMi2p9MKmo6JDUYnfX",
-      "id": "fHCS82yetSGRzh72zunT7D",
-      "selected": false,
-      "evergreen": false,
-      "locked": false
+      "solarUpdraftTower": {},
+      "solarAbsorberPipe": {},
+      "solarPowerTower": {},
+      "id": "vgW1NebabuY1wd8pyCtxcL",
+      "locked": true,
+      "textureType": "Foundation Texture #1",
+      "enableGroupMaster": true
     },
     {
       "type": "Foundation",
-      "cx": -0.1416493749742287,
-      "cy": -14.538140236099828,
+      "cx": -31.44493978697969,
+      "cy": -38.13185155550838,
       "cz": 0.5,
-      "lx": 30,
+      "lx": 1,
+      "ly": 40,
+      "lz": 1,
+      "normal": [
+        0,
+        0,
+        1
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "parentId": "Ground",
+      "textureType": "Foundation Texture #1",
+      "solarUpdraftTower": {},
+      "solarAbsorberPipe": {},
+      "solarPowerTower": {},
+      "id": "erWKhrLkVgeBGrkYbzkvdA",
+      "selected": false,
+      "locked": true
+    },
+    {
+      "type": "Foundation",
+      "cx": -11.0918649947359,
+      "cy": -17.740424962700125,
+      "cz": 0.5,
+      "lx": 42,
       "ly": 1,
       "lz": 1,
       "normal": [
@@ -200,74 +1090,20 @@
         0
       ],
       "parentId": "Ground",
-      "selected": false,
+      "textureType": "Foundation Texture #1",
       "solarUpdraftTower": {},
       "solarAbsorberPipe": {},
       "solarPowerTower": {},
-      "id": "xhkx7LMDLERSJNZrzoCQyS",
-      "textureType": "Foundation Texture #3",
-      "locked": true
-    },
-    {
-      "type": "Foundation",
-      "cx": 14.508350625025775,
-      "cy": 0.11185976390760086,
-      "cz": 0.5,
-      "lx": 1,
-      "ly": 30,
-      "lz": 1,
-      "normal": [
-        0,
-        0,
-        1
-      ],
-      "rotation": [
-        0,
-        0,
-        0
-      ],
-      "parentId": "Ground",
-      "textureType": "Foundation Texture #3",
-      "solarUpdraftTower": {},
-      "solarAbsorberPipe": {},
-      "solarPowerTower": {},
-      "id": "wpanc9VTMXo9e2FBWasUkE",
+      "id": "9pJgP99aRJ8Ucspa2Xmi3n",
       "selected": false,
       "locked": true
     },
     {
       "type": "Foundation",
-      "cx": -14.591649374974232,
-      "cy": -0.03814023609207148,
+      "cx": -11.091864994735907,
+      "cy": -58.74042496272019,
       "cz": 0.5,
-      "lx": 1,
-      "ly": 30,
-      "lz": 1,
-      "normal": [
-        0,
-        0,
-        1
-      ],
-      "rotation": [
-        0,
-        0,
-        0
-      ],
-      "parentId": "Ground",
-      "textureType": "Foundation Texture #3",
-      "solarUpdraftTower": {},
-      "solarAbsorberPipe": {},
-      "solarPowerTower": {},
-      "id": "wtzfqQBnKJcefZe11i7jr2",
-      "selected": false,
-      "locked": true
-    },
-    {
-      "type": "Foundation",
-      "cx": -0.04164937497422941,
-      "cy": 14.661859763915281,
-      "cz": 0.5,
-      "lx": 30,
+      "lx": 42,
       "ly": 1,
       "lz": 1,
       "normal": [
@@ -281,255 +1117,22 @@
         0
       ],
       "parentId": "Ground",
-      "textureType": "Foundation Texture #3",
+      "textureType": "Foundation Texture #1",
       "solarUpdraftTower": {},
       "solarAbsorberPipe": {},
       "solarPowerTower": {},
-      "id": "jfNkLbBUk5HE5FSJTKczHw",
+      "id": "vKsvgYQL3ATsUMrkRxNVtG",
       "selected": false,
       "locked": true
-    },
-    {
-      "type": "Tree",
-      "name": "Palm",
-      "cx": 9.95,
-      "cy": -12.35000000001368,
-      "cz": 0.05000000074505806,
-      "lx": 3,
-      "lz": 4.5089615657832525,
-      "normal": [
-        0,
-        0,
-        1
-      ],
-      "rotation": [
-        0,
-        0,
-        0
-      ],
-      "parentId": "of4fAMi2p9MKmo6JDUYnfX",
-      "id": "amCpkF95bnNieuVyAe8phU",
-      "selected": false,
-      "locked": true
-    },
-    {
-      "type": "Tree",
-      "name": "Linden",
-      "cx": 5.120611654288155,
-      "cy": 11.296492977129805,
-      "cz": 0.05000000074505806,
-      "lx": 6.126305324355701,
-      "lz": 4.528295321278675,
-      "normal": [
-        0,
-        1,
-        0
-      ],
-      "rotation": [
-        0,
-        0,
-        0
-      ],
-      "parentId": "of4fAMi2p9MKmo6JDUYnfX",
-      "id": "b2aivgvMGuf8FAwZprVCBL",
-      "selected": false,
-      "locked": true
-    },
-    {
-      "type": "Tree",
-      "name": "Linden",
-      "cx": 6.799304784203358,
-      "cy": 7.937222060052019,
-      "cz": 0.05000000074505806,
-      "lx": 4.634938422155624,
-      "lz": 5.0894781757873355,
-      "normal": [
-        0,
-        1,
-        0
-      ],
-      "rotation": [
-        0,
-        0,
-        0
-      ],
-      "parentId": "of4fAMi2p9MKmo6JDUYnfX",
-      "id": "vevoyat4tZ7XZuGU8GGyDN",
-      "selected": false,
-      "locked": true
-    },
-    {
-      "type": "Flower",
-      "name": "Spirea",
-      "cx": -11.573016268531264,
-      "cy": 0.9421039512590177,
-      "cz": 0.05000000074505806,
-      "lx": 1.8,
-      "lz": 1.6,
-      "normal": [
-        0,
-        1,
-        0
-      ],
-      "rotation": [
-        0,
-        0,
-        0
-      ],
-      "parentId": "of4fAMi2p9MKmo6JDUYnfX",
-      "id": "gwDkCr9yWQixvmGiucwADw",
-      "selected": false,
-      "locked": false
-    },
-    {
-      "type": "Flower",
-      "name": "Yellow Flower",
-      "cx": -7.915529711721373,
-      "cy": -12.737145465020022,
-      "cz": 0.05000000074505806,
-      "lx": 2,
-      "lz": 1.4,
-      "normal": [
-        0,
-        1,
-        0
-      ],
-      "rotation": [
-        0,
-        0,
-        0
-      ],
-      "parentId": "of4fAMi2p9MKmo6JDUYnfX",
-      "id": "eM7BQrR2R6ynajKQQzFqVa",
-      "selected": false,
-      "locked": true
-    },
-    {
-      "type": "Flower",
-      "name": "Yellow Flower",
-      "cx": -0.505068301677019,
-      "cy": -12.862087680092555,
-      "cz": 0.05000000074505806,
-      "lx": 2,
-      "lz": 1.4,
-      "normal": [
-        0,
-        1,
-        0
-      ],
-      "rotation": [
-        0,
-        0,
-        0
-      ],
-      "parentId": "of4fAMi2p9MKmo6JDUYnfX",
-      "id": "sLLXEmX5gbysBKvrYG3Fbm",
-      "selected": false,
-      "locked": true
-    },
-    {
-      "type": "Flower",
-      "name": "Yellow Flower",
-      "cx": 6.483911884058419,
-      "cy": -13.00192875540144,
-      "cz": 0.05000000074505451,
-      "lx": 2,
-      "lz": 1.4,
-      "normal": [
-        0,
-        1,
-        0
-      ],
-      "rotation": [
-        0,
-        0,
-        0
-      ],
-      "parentId": "of4fAMi2p9MKmo6JDUYnfX",
-      "id": "hx284bxcgV5gyUxdN5ovdK",
-      "selected": false,
-      "locked": true
-    },
-    {
-      "type": "Human",
-      "name": "Jeni",
-      "cx": -2.947611300050882,
-      "cy": -13.851439347508624,
-      "cz": 0.05000000074505806,
-      "lx": 0.45,
-      "ly": 0.42,
-      "lz": 1.7,
-      "normal": [
-        0,
-        1,
-        0
-      ],
-      "rotation": [
-        0,
-        0,
-        0
-      ],
-      "parentId": "of4fAMi2p9MKmo6JDUYnfX",
-      "id": "wAuGYcE41TzAvDgFwfFQi1",
-      "selected": false,
-      "locked": true
-    },
-    {
-      "type": "Human",
-      "name": "Jett",
-      "cx": -3.4411741055379705,
-      "cy": 0.1406890046239262,
-      "cz": 0.5,
-      "lx": 0.6,
-      "ly": 0.42,
-      "lz": 1.85,
-      "normal": [
-        0,
-        1,
-        0
-      ],
-      "rotation": [
-        0,
-        0,
-        0
-      ],
-      "parentId": "xhkx7LMDLERSJNZrzoCQyS",
-      "id": "w4nuwGqtug8LXurN1mzNvY",
-      "selected": false,
-      "locked": false
-    },
-    {
-      "type": "Human",
-      "name": "Jess",
-      "cx": -0.09454371807254525,
-      "cy": -11.842877840366317,
-      "cz": 0.05000000074505806,
-      "lx": 0.43,
-      "ly": 0.42,
-      "lz": 1.5,
-      "normal": [
-        0,
-        1,
-        0
-      ],
-      "rotation": [
-        0,
-        0,
-        0
-      ],
-      "parentId": "of4fAMi2p9MKmo6JDUYnfX",
-      "id": "bEwKWEqvcR6uiFaXS2KSQa",
-      "selected": false,
-      "locked": false
     },
     {
       "type": "Cuboid",
-      "cx": 0.05519428615020505,
-      "cy": 0.8569571272620315,
-      "cz": 3.4780985707471395,
-      "lx": 14.091526563826012,
-      "ly": 8.017558418457568,
-      "lz": 6.956197141494279,
+      "cx": -9.147430060039865,
+      "cy": -36.93984694288625,
+      "cz": 5.191514962418894,
+      "lx": 8.354862288390846,
+      "ly": 8.671196260050484,
+      "lz": 10.383029924837787,
       "color": "gray",
       "faceColors": [
         "gray",
@@ -559,17 +1162,17 @@
       ],
       "parentId": "Ground",
       "selected": false,
-      "id": "rgMeNsXAhJ7vF5n2eyoyZY",
+      "id": "arKQ1PtuWsYDLfWSr4e7Hs",
       "locked": true
     },
     {
-      "type": "Flower",
-      "name": "Spirea",
-      "cx": 12.070642916453558,
-      "cy": 0.2794560980479932,
-      "cz": 0.050000000745065165,
-      "lx": 1.8,
-      "lz": 1.6,
+      "type": "Human",
+      "name": "Jack",
+      "cx": 15.298805226660885,
+      "cy": -1.9550340605627667,
+      "cz": 0.050000000745058504,
+      "lx": 0.42,
+      "lz": 1.8,
       "normal": [
         0,
         1,
@@ -580,17 +1183,64 @@
         0,
         0
       ],
-      "parentId": "of4fAMi2p9MKmo6JDUYnfX",
-      "id": "jN7QkziGpv7nHSJoUf5y2G",
-      "selected": false
+      "parentId": "ihXBcGst6vfG6pMnKjKmcM",
+      "id": "ca1o8dHiZMnRxbmGVa2QgH",
+      "selected": false,
+      "locked": true
     },
     {
-      "type": "Flower",
-      "name": "Hibiscus",
-      "cx": -12.67757040993704,
-      "cy": 12.276603671856236,
+      "type": "Human",
+      "name": "Judd",
+      "cx": 11.217000715323973,
+      "cy": 12.983113554279665,
+      "cz": 0.050000000745058504,
+      "lx": 0.544,
+      "lz": 1.68,
+      "normal": [
+        0,
+        1,
+        0
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "parentId": "ihXBcGst6vfG6pMnKjKmcM",
+      "id": "aUp3bFMPfhPR555kq4RxtS",
+      "selected": false,
+      "locked": true
+    },
+    {
+      "type": "Human",
+      "name": "Jess",
+      "cx": 17.90365457686929,
+      "cy": 2.2169257546553,
       "cz": 0.05000000074505806,
-      "lx": 2,
+      "lx": 0.43,
+      "lz": 1.5,
+      "normal": [
+        0,
+        1,
+        0
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "parentId": "ihXBcGst6vfG6pMnKjKmcM",
+      "id": "wtw985egzP7m3E2u8Hzcug",
+      "selected": false,
+      "locked": true
+    },
+    {
+      "type": "Human",
+      "name": "Jeni",
+      "cx": 19.238997768660937,
+      "cy": -1.9390019470914979,
+      "cz": 0.05000000074505806,
+      "lx": 0.45,
       "lz": 1.7,
       "normal": [
         0,
@@ -602,15 +1252,16 @@
         0,
         0
       ],
-      "parentId": "of4fAMi2p9MKmo6JDUYnfX",
-      "id": "6UdQ5nrx6jmVcSsE8w5H9f",
-      "selected": false
+      "parentId": "ihXBcGst6vfG6pMnKjKmcM",
+      "id": "7CidBs9j2hdjoie9s47tSo",
+      "selected": false,
+      "locked": true
     },
     {
       "type": "Human",
       "name": "Jean",
-      "cx": -1.5815066438853425,
-      "cy": -4.366476541361612,
+      "cx": 16.569960042479757,
+      "cy": -4.5851729153738106,
       "cz": 0.05000000074505806,
       "lx": 0.65,
       "lz": 1.8,
@@ -624,18 +1275,19 @@
         0,
         0
       ],
-      "parentId": "of4fAMi2p9MKmo6JDUYnfX",
-      "id": "rtQUEET44qCuYVgAXc2iXC",
-      "selected": false
+      "parentId": "ihXBcGst6vfG6pMnKjKmcM",
+      "id": "9QoGq38Qc3iCuT9ChxbAyR",
+      "selected": false,
+      "locked": true
     },
     {
       "type": "Human",
-      "name": "Juro",
-      "cx": 0.7832189734653987,
-      "cy": -11.19308162208414,
+      "name": "Jane",
+      "cx": 17.721133919154003,
+      "cy": -5.518875626742528,
       "cz": 0.05000000074505806,
-      "lx": 0.494,
-      "lz": 1.72,
+      "lx": 0.6,
+      "lz": 1.55,
       "normal": [
         0,
         1,
@@ -646,136 +1298,571 @@
         0,
         0
       ],
-      "parentId": "of4fAMi2p9MKmo6JDUYnfX",
-      "id": "tXtvxVscRESKTxvG7HLtAw",
-      "selected": false
+      "parentId": "ihXBcGst6vfG6pMnKjKmcM",
+      "id": "85muF4mPeUfkVQindFk2SC",
+      "selected": false,
+      "locked": true
+    },
+    {
+      "type": "Human",
+      "name": "Jade",
+      "cx": 16.668962282876166,
+      "cy": 0.3637737788416331,
+      "cz": 0.050000000745058504,
+      "lx": 0.48,
+      "lz": 1.6,
+      "normal": [
+        0,
+        1,
+        0
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "parentId": "ihXBcGst6vfG6pMnKjKmcM",
+      "id": "jBLqkfTJCSVqqR4CU7nfJ2",
+      "selected": false,
+      "locked": true
+    },
+    {
+      "type": "Flower",
+      "name": "Yellow Flower",
+      "cx": 18.683881743553787,
+      "cy": 18.33607154360658,
+      "cz": 0.050000000745065165,
+      "lx": 2,
+      "lz": 1.4,
+      "normal": [
+        0,
+        1,
+        0
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "parentId": "ihXBcGst6vfG6pMnKjKmcM",
+      "id": "eB4WthSRNZpHrasisKTtYg",
+      "selected": false,
+      "locked": true
+    },
+    {
+      "type": "Flower",
+      "name": "Yellow Flower",
+      "cx": -18.795638463082337,
+      "cy": 18.660989204818456,
+      "cz": 0.05000000074505806,
+      "lx": 2,
+      "lz": 1.4,
+      "normal": [
+        0,
+        1,
+        0
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "parentId": "ihXBcGst6vfG6pMnKjKmcM",
+      "id": "h3cqaVZXomQdjmyTbFaSE7",
+      "selected": false,
+      "locked": true
+    },
+    {
+      "type": "Flower",
+      "name": "Yellow Flower",
+      "cx": -16.292595004641754,
+      "cy": -18.43048092235047,
+      "cz": 0.05000000074505806,
+      "lx": 2,
+      "lz": 1.4,
+      "normal": [
+        0,
+        1,
+        0
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "parentId": "ihXBcGst6vfG6pMnKjKmcM",
+      "id": "hEqgADfaTf5Syacb7QRfe6",
+      "selected": false,
+      "locked": true
+    },
+    {
+      "type": "Flower",
+      "name": "Yellow Flower",
+      "cx": 17.686932547560502,
+      "cy": -18.72635054653726,
+      "cz": 0.05000000074505806,
+      "lx": 2,
+      "lz": 1.4,
+      "normal": [
+        0,
+        1,
+        0
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "parentId": "ihXBcGst6vfG6pMnKjKmcM",
+      "id": "dViWZq883MztDQDT9tgFHg",
+      "selected": false,
+      "locked": true
+    },
+    {
+      "type": "Tree",
+      "name": "Palm",
+      "cx": 18.340044767234033,
+      "cy": 12.835308413075914,
+      "cz": 0.05000000074505806,
+      "lx": 6.929334761971469,
+      "lz": 6.813471569919312,
+      "normal": [
+        0,
+        1,
+        0
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "parentId": "ihXBcGst6vfG6pMnKjKmcM",
+      "id": "rK9Z4WmcdLBPe5DdK1mo3L",
+      "selected": false,
+      "evergreen": false,
+      "locked": true
+    },
+    {
+      "type": "Tree",
+      "name": "Palm",
+      "cx": 18.20400735303405,
+      "cy": 4.605044853977084,
+      "cz": 0.05000000074505806,
+      "lx": 6.415005134340998,
+      "lz": 6.813471569919312,
+      "normal": [
+        0,
+        1,
+        0
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "parentId": "ihXBcGst6vfG6pMnKjKmcM",
+      "id": "ko7TU1v7o4aKNwN5wszk6E",
+      "selected": false,
+      "locked": true
+    },
+    {
+      "type": "Tree",
+      "name": "Palm",
+      "cx": 18.06796993883407,
+      "cy": -3.9653122406216994,
+      "cz": 0.05000000074505806,
+      "lx": 5.516658633108942,
+      "lz": 6.813471569919312,
+      "normal": [
+        0,
+        1,
+        0
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "parentId": "ihXBcGst6vfG6pMnKjKmcM",
+      "id": "1zDByoeV2v4opENdb8nE73",
+      "selected": false,
+      "locked": true
+    },
+    {
+      "type": "Tree",
+      "name": "Palm",
+      "cx": 18.06796993883407,
+      "cy": -12.807744163620441,
+      "cz": 0.05000000074505806,
+      "lx": 3.7877637261892754,
+      "lz": 6.813471569919312,
+      "normal": [
+        0,
+        1,
+        0
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "parentId": "ihXBcGst6vfG6pMnKjKmcM",
+      "id": "5ynw27sYwALgCvbTKBPFuc",
+      "selected": false,
+      "locked": true
+    },
+    {
+      "type": "Flower",
+      "name": "Yellow Flower",
+      "cx": 18.73185271365966,
+      "cy": 9.091268351797737,
+      "cz": 0.05000000074505806,
+      "lx": 2,
+      "lz": 1.4,
+      "normal": [
+        0,
+        1,
+        0
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "parentId": "ihXBcGst6vfG6pMnKjKmcM",
+      "id": "5xUkwUkEF3nM4dp1f8ZjGH",
+      "selected": false,
+      "locked": true
+    },
+    {
+      "type": "Flower",
+      "name": "Yellow Flower",
+      "cx": 18.82807405354676,
+      "cy": 0.4545102937342307,
+      "cz": 0.05000000074505806,
+      "lx": 2,
+      "lz": 1.4,
+      "normal": [
+        0,
+        1,
+        0
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "parentId": "ihXBcGst6vfG6pMnKjKmcM",
+      "id": "9CUeHAtdXMGrojz43dddm7",
+      "selected": false,
+      "locked": true
+    },
+    {
+      "type": "Flower",
+      "name": "Yellow Flower",
+      "cx": 18.790525833741423,
+      "cy": -8.33811033147611,
+      "cz": 0.050000000745050954,
+      "lx": 2,
+      "lz": 1.4,
+      "normal": [
+        0,
+        1,
+        0
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "parentId": "ihXBcGst6vfG6pMnKjKmcM",
+      "id": "9werjyfGxz2ZnUBAmZUSeP",
+      "selected": false,
+      "locked": true
+    },
+    {
+      "type": "Tree",
+      "name": "Linden",
+      "cx": -13.237896819150908,
+      "cy": 7.786733045780586,
+      "cz": 0.05000000074505628,
+      "lx": 12.449941214324092,
+      "lz": 9.058629663838381,
+      "normal": [
+        0,
+        1,
+        0
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "parentId": "ihXBcGst6vfG6pMnKjKmcM",
+      "id": "9HVmsEYn5NmhERnCHtLeTG",
+      "selected": false,
+      "evergreen": false,
+      "locked": true
     }
   ],
   "view": {
-    "yearlyPvYieldPanelX": -25,
-    "autoRotate": false,
-    "mapZoom": 16,
-    "axes": false,
-    "theme": "Default",
-    "showSiteInfoPanel": true,
-    "showDesignInfoPanel": false,
-    "showWeatherPanel": false,
-    "groundPanelX": 0,
-    "dailyPvYieldPanelX": -3,
-    "dailyLightSensorPanelY": 232,
-    "showDailyLightSensorPanel": false,
-    "mapTilt": 0,
-    "yearlyPvYieldPanelY": 16,
-    "yearlyLightSensorPanelX": 0,
-    "showGroundPanel": false,
-    "showHeliodonPanel": false,
-    "heliodon": false,
-    "weatherPanelY": 0,
-    "heliodonPanelX": -1175,
-    "dailyPvYieldPanelY": 8,
-    "mapWeatherStations": false,
-    "yearlyLightSensorPanelY": 0,
-    "showPvDailyYieldPanel": true,
-    "showYearlyPvYieldPanel": false,
-    "dailyLightSensorPanelX": -240,
     "weatherPanelX": 0,
-    "heliodonPanelY": -33,
-    "groundColor": "forestgreen",
-    "groundPanelY": 0,
-    "groundImage": false,
-    "showDailyPvYieldPanel": false,
-    "shadowEnabled": true,
-    "showYearlyLightSensorPanel": false,
-    "mapType": "roadmap",
-    "cameraPosition": [
-      -13.060326584389326,
-      -9.713614207777294,
-      1.7479148403703157
-    ],
-    "panCenter": [
-      2.5037764748858575,
-      -9.427400928455505,
-      0.874682420452615
-    ],
+    "cameraZoom": 18.05,
+    "showInstructionPanel": false,
     "orthographic": false,
-    "enableRotate": true,
-    "cameraZoom": 20.000000000000004,
-    "showInstructionPanel": true,
-    "cameraPosition2D": [
-      2.50835062502577,
-      -0.16329014275536818,
-      150
-    ],
-    "panCenter2D": [
-      2.50835062502577,
-      -0.16314013608852546,
-      5.851012068003398e-7
-    ],
-    "dailyPvYieldPanelRect": {
+    "showYearlyUpdraftTowerYieldPanel": false,
+    "yearlyHeliostatYieldPanelRect": {
       "x": 0,
       "y": 0,
-      "width": 600,
+      "height": 400,
+      "width": 600
+    },
+    "cameraPosition": [
+      3.9364370669191775,
+      -53.38471838438048,
+      2.719376671569158
+    ],
+    "showYearlyHeliostatYieldPanel": false,
+    "mapTilt": 0,
+    "groundPanelY": 0,
+    "heliodonPanelX": 0,
+    "showMapPanel": false,
+    "heliodonPanelY": 0,
+    "showElevationAngle": true,
+    "solarRadiationHeatMapReflectionOnly": false,
+    "groundImage": false,
+    "mapWeatherStations": false,
+    "showDailyParabolicTroughYieldPanel": false,
+    "evolutionPanelRect": {
+      "x": 0,
+      "y": 0,
+      "width": 640,
       "height": 400
     },
-    "waterSurface": true,
-    "showMapPanel": false
+    "theme": "Default",
+    "dailyPvYieldPanelRect": {
+      "height": 400,
+      "x": 0,
+      "width": 600,
+      "y": 0
+    },
+    "dailyHeliostatYieldPanelRect": {
+      "height": 400,
+      "width": 600,
+      "y": 0,
+      "x": 0
+    },
+    "showDailyLightSensorPanel": false,
+    "yearlyUpdraftTowerYieldPanelRect": {
+      "y": 0,
+      "width": 600,
+      "height": 400,
+      "x": 0
+    },
+    "groundColor": "#0062b1",
+    "showGroundPanel": false,
+    "weatherPanelY": 0,
+    "yearlyLightSensorPanelX": 0,
+    "showDiurnalTemperaturePanel": false,
+    "showYearlyPvYieldPanel": false,
+    "yearlyLightSensorPanelY": 0,
+    "yearlyLightSensorPanelRect": {
+      "y": 0,
+      "x": 0,
+      "height": 500,
+      "width": 600
+    },
+    "showDailyParabolicDishYieldPanel": false,
+    "showDailyHeliostatYieldPanel": false,
+    "yearlyLightSensorPanelShowDaylight": false,
+    "autoRotate": false,
+    "dailyParabolicTroughYieldPanelRect": {
+      "width": 600,
+      "y": 0,
+      "x": 0,
+      "height": 400
+    },
+    "dailyPvYieldPanelY": 1,
+    "yearlyPvYieldPanelRect": {
+      "height": 400,
+      "y": 0,
+      "width": 600,
+      "x": 0
+    },
+    "mapPanelX": 0,
+    "yearlyLightSensorPanelShowClearness": false,
+    "dailyLightSensorPanelX": -1277,
+    "stickyNotePanelX": 5,
+    "yearlyFresnelReflectorYieldPanelRect": {
+      "width": 600,
+      "y": 0,
+      "height": 400,
+      "x": 0
+    },
+    "visibilityResultsPanelRect": {
+      "width": 600,
+      "y": 0,
+      "x": 0,
+      "height": 470
+    },
+    "mapType": "hybrid",
+    "yearlyParabolicTroughYieldPanelRect": {
+      "x": 0,
+      "height": 400,
+      "width": 600,
+      "y": 0
+    },
+    "solarRadiationHeatMapMaxValue": 5,
+    "dailyParabolicDishYieldPanelRect": {
+      "width": 600,
+      "x": 0,
+      "y": 0,
+      "height": 400
+    },
+    "showSolarPanelVisibilityResultsPanel": false,
+    "showEvolutionPanel": false,
+    "showDesignInfoPanel": false,
+    "showAzimuthAngle": true,
+    "showYearlyLightSensorPanel": false,
+    "dailyPvYieldPanelX": 4,
+    "showSunAngles": false,
+    "stickyNotePanelY": 2,
+    "dailyLightSensorPanelRect": {
+      "width": 600,
+      "y": 0,
+      "x": 0,
+      "height": 360
+    },
+    "showSiteInfoPanel": true,
+    "mapZoom": 17,
+    "shadowEnabled": true,
+    "showStickyNotePanel": false,
+    "showYearlyFresnelReflectorYieldPanel": false,
+    "cameraPosition2D": [
+      -3.1827237204976764,
+      -36.07443913526461,
+      150
+    ],
+    "yearlyParabolicDishYieldPanelRect": {
+      "width": 600,
+      "x": 0,
+      "height": 400,
+      "y": 0
+    },
+    "showHeliodonPanel": false,
+    "showDailyPvYieldPanel": false,
+    "showDailyFresnelReflectorYieldPanel": false,
+    "showZenithAngle": true,
+    "panCenter": [
+      6.725045983092798,
+      -31.494036468617427,
+      0
+    ],
+    "showYearlyParabolicTroughYieldPanel": false,
+    "showDailyUpdraftTowerYieldPanel": false,
+    "dailyLightSensorPanelY": 525,
+    "axes": false,
+    "dailyUpdraftTowerYieldPanelRect": {
+      "height": 550,
+      "x": 0,
+      "width": 640,
+      "y": 0
+    },
+    "enableRotate": true,
+    "dailyFresnelReflectorYieldPanelRect": {
+      "x": 0,
+      "y": 0,
+      "height": 400,
+      "width": 600
+    },
+    "showSolarRadiationHeatmap": false,
+    "stickyNotePanelRect": {
+      "height": 300,
+      "x": 0,
+      "y": 0,
+      "width": 400
+    },
+    "heliodon": false,
+    "weatherPanelRect": {
+      "height": 500,
+      "width": 500,
+      "x": 0,
+      "y": 0
+    },
+    "showWeatherPanel": false,
+    "diurnalTemperaturePanelRect": {
+      "height": 400,
+      "y": 0,
+      "width": 600,
+      "x": 0
+    },
+    "showEconomicsPanel": false,
+    "mapPanelY": 0,
+    "panCenter2D": [
+      -3.1827237204976764,
+      -36.074289128597215,
+      -0.00003588198864983672
+    ],
+    "groundPanelX": 0,
+    "showYearlyParabolicDishYieldPanel": false,
+    "waterSurface": true
   },
   "evolutionMethod": 1,
   "solarPanelArrayLayoutParams": {
-    "pvModelName": "CS6X-355P-FG",
-    "rowAxis": "Zonal",
-    "orientation": "Landscape",
     "tiltAngle": 0,
-    "rowsPerRack": 1,
-    "interRowSpacing": 2,
     "poleHeight": 1,
+    "rowAxis": "Zonal",
+    "rowsPerRack": 1,
+    "pvModelName": "SPR-X21-335-BLK",
+    "interRowSpacing": 2,
+    "orientation": "Landscape",
     "poleSpacing": 3
   },
   "solarPanelArrayLayoutConstraints": {
-    "minimumInterRowSpacing": 2,
-    "maximumInterRowSpacing": 10,
+    "rowAxis": "Zonal",
     "minimumRowsPerRack": 1,
-    "maximumRowsPerRack": 6,
-    "minimumTiltAngle": -1.5707963267948966,
-    "maximumTiltAngle": 1.5707963267948966,
-    "poleHeight": 1,
-    "poleSpacing": 5,
+    "maximumInterRowSpacing": 10,
     "orientation": "Landscape",
     "pvModelName": "CS6X-355P-FG",
-    "rowAxis": "Zonal"
+    "minimumTiltAngle": -1.5707963267948966,
+    "minimumInterRowSpacing": 2,
+    "maximumTiltAngle": 1.5707963267948966,
+    "maximumRowsPerRack": 6,
+    "poleSpacing": 5,
+    "poleHeight": 1
   },
   "evolutionaryAlgorithmState": {
-    "geneticAlgorithmParams": {
-      "problem": "Solar Panel Tilt Angle",
-      "objectiveFunctionType": 1,
-      "selectionMethod": 1,
-      "searchMethod": 1,
-      "populationSize": 20,
-      "maximumGenerations": 5,
-      "selectionRate": 0.5,
-      "crossoverRate": 0.5,
-      "mutationRate": 0.1,
-      "convergenceThreshold": 0.01,
-      "localSearchRadius": 0.1
-    },
     "particleSwarmOptimizationParams": {
-      "problem": "Solar Panel Tilt Angle",
-      "objectiveFunctionType": 1,
+      "convergenceThreshold": 0.01,
       "searchMethod": 1,
+      "vmax": 0.01,
+      "socialCoefficient": 0.1,
+      "cognitiveCoefficient": 0.1,
+      "objectiveFunctionType": 1,
+      "localSearchRadius": 0.1,
       "swarmSize": 20,
       "maximumSteps": 5,
-      "vmax": 0.01,
-      "inertia": 0.8,
-      "cognitiveCoefficient": 0.1,
-      "socialCoefficient": 0.1,
+      "problem": "Solar Panel Tilt Angle",
+      "inertia": 0.8
+    },
+    "geneticAlgorithmParams": {
       "convergenceThreshold": 0.01,
-      "localSearchRadius": 0.1
+      "localSearchRadius": 0.1,
+      "mutationRate": 0.1,
+      "populationSize": 20,
+      "searchMethod": 1,
+      "problem": "Solar Panel Tilt Angle",
+      "selectionRate": 0.5,
+      "crossoverRate": 0.5,
+      "objectiveFunctionType": 1,
+      "selectionMethod": 1,
+      "maximumGenerations": 5
     }
   },
   "economicsParams": {
     "projectLifeSpan": 25,
-    "electricitySellingPrice": 0.25,
-    "operationalCostPerUnit": 0.15
+    "operationalCostPerUnit": 0.15,
+    "electricitySellingPrice": 0.25
   },
   "notes": []
 }
