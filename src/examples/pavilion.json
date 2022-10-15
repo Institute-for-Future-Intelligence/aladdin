@@ -1,7 +1,7 @@
 {
-  "docid": "xu99K2FWu5h223hH2UisTD",
-  "time": "10/13/2022 12:26 pm",
-  "timestamp": 1665678389576,
+  "docid": "mZMwNufcvaFvQAzzBuzuW5",
+  "time": "10/14/2022 07:23 pm",
+  "timestamp": 1665789801762,
   "userid": "QWecNcxhyvP6j6sBN11hBsfZDau1",
   "owner": null,
   "email": null,
@@ -12,7 +12,7 @@
     "noAnimationForHeatmapSimulation": false,
     "cspGridCellSize": 0.5,
     "dustLoss": 0.05,
-    "address": "Natick, MA",
+    "address": "15-2717 Welea St, Pāhoa, HI 96778, USA",
     "cspDaysPerYear": 4,
     "ground": {
       "thermalDiffusivity": 0.05,
@@ -33,7 +33,7 @@
       ]
     },
     "daysPerYear": 12,
-    "latitude": 42.2844063,
+    "latitude": 19.562145402959715,
     "noAnimationForSensorDataCollection": false,
     "timesPerHour": 4,
     "discretization": "Approximate",
@@ -42,7 +42,7 @@
     "solarPanelVisibilityGridCellSize": 0.2,
     "pvGridCellSize": 0.5,
     "name": "default",
-    "longitude": -71.3488548
+    "longitude": -154.88943438792282
   },
   "elements": [
     {
@@ -1551,7 +1551,8 @@
       ],
       "parentId": "m7AH7DcnoGzAq9kryBy4RS",
       "id": "2ydVQyK8TCn9PXCMXcCTEy",
-      "selected": false
+      "selected": false,
+      "ly": 0.75
     }
   ],
   "view": {

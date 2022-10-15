@@ -381,7 +381,7 @@ export const i18n_tr = {
         DutchColonialHouse: 'Flemenk Koloni Evi',
         Greenhouse: 'Sera',
         Solarium: 'Solaryum',
-        Pavilion: 'Çardak',
+        Pavilion: 'Park Kamelyası',
         Church: 'Kilise',
         AdobeTaosHouse: 'Adobe Taos House',
         BarnStyleHouse: 'Çiftlik Evi',
