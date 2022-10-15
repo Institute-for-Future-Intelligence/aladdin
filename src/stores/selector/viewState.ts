@@ -30,6 +30,8 @@ export const groundImage = (state: CommonStoreState) => state.viewState.groundIm
 
 export const groundColor = (state: CommonStoreState) => state.viewState.groundColor;
 
+export const ocean = (state: CommonStoreState) => state.viewState.ocean;
+
 export const orthographic = (state: CommonStoreState) => state.viewState.orthographic;
 
 export const enableRotate = (state: CommonStoreState) => state.viewState.enableRotate;

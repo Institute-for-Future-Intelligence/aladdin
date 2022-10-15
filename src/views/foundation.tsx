@@ -72,7 +72,6 @@ import { UndoablePaste } from '../undo/UndoablePaste';
 import BuildingResizer from 'src/components/buildingResizer';
 import SolarPanelOnRoof from './solarPanel/solarPanelOnRoof';
 import { useHandleSize } from './wall/wallResizeHandleWrapper';
-import wall from './wall/wall';
 
 const Foundation = ({
   id,

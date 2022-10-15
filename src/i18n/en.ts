@@ -445,6 +445,7 @@ export const i18n_en = {
     groundMenu: {
       Albedo: 'Albedo',
       ImageOnGround: 'Image on Ground',
+      Ocean: 'Ocean',
       RemoveAllUnlockedTrees: 'Remove All Unlocked Trees',
       RemoveAllUnlockedFlowers: 'Remove All Unlocked Flowers',
       RemoveAllUnlockedPeople: 'Remove All Unlocked People',

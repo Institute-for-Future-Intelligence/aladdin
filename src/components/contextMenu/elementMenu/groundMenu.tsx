@@ -30,6 +30,7 @@ export const GroundMenu = () => {
   const addUndoable = useStore(Selector.addUndoable);
   const elements = useStore(Selector.elements);
   const groundImage = useStore(Selector.viewState.groundImage);
+  const ocean = useStore(Selector.viewState.ocean);
   const elementsToPaste = useStore(Selector.elementsToPaste);
 
   const [updateFlag, setUpdateFlag] = useState<boolean>(false);
@@ -42,6 +43,12 @@ export const GroundMenu = () => {
   const cuboidCount = countElementsByType(ObjectType.Cuboid, true);
 
   const lang = { lng: language };
+
+  const setOcean = (checked: boolean) => {
+    setCommonStore((state) => {
+      state.viewState.ocean = checked;
+    });
+  };
 
   const setGroundImage = (checked: boolean) => {
     setCommonStore((state) => {
@@ -335,30 +342,56 @@ export const GroundMenu = () => {
         </Checkbox>
       </Menu.Item>
 
-      <SubMenu key={'ground-color'} title={i18n.t('word.Color', { lng: language })} style={{ paddingLeft: '24px' }}>
-        <CompactPicker
-          color={groundColor}
-          onChangeComplete={(colorResult) => {
-            const oldColor = groundColor;
-            const newColor = colorResult.hex;
-            const undoableChange = {
-              name: 'Set Ground Color',
+      <Menu.Item key={'ocean'}>
+        <Checkbox
+          checked={ocean}
+          onChange={(e) => {
+            const checked = e.target.checked;
+            const undoableCheck = {
+              name: 'Ocean',
               timestamp: Date.now(),
-              oldValue: oldColor,
-              newValue: newColor,
+              checked: checked,
               undo: () => {
-                setGroundColor(undoableChange.oldValue as string);
+                setOcean(!undoableCheck.checked);
               },
               redo: () => {
-                setGroundColor(undoableChange.newValue as string);
+                setOcean(undoableCheck.checked);
               },
-            } as UndoableChange;
-            addUndoable(undoableChange);
-            setGroundColor(newColor);
-            setUpdateFlag(!updateFlag);
+            } as UndoableCheck;
+            addUndoable(undoableCheck);
+            setOcean(checked);
           }}
-        />
-      </SubMenu>
+        >
+          {i18n.t('groundMenu.Ocean', lang)}
+        </Checkbox>
+      </Menu.Item>
+
+      {!ocean && (
+        <SubMenu key={'ground-color'} title={i18n.t('word.Color', { lng: language })} style={{ paddingLeft: '24px' }}>
+          <CompactPicker
+            color={groundColor}
+            onChangeComplete={(colorResult) => {
+              const oldColor = groundColor;
+              const newColor = colorResult.hex;
+              const undoableChange = {
+                name: 'Set Ground Color',
+                timestamp: Date.now(),
+                oldValue: oldColor,
+                newValue: newColor,
+                undo: () => {
+                  setGroundColor(undoableChange.oldValue as string);
+                },
+                redo: () => {
+                  setGroundColor(undoableChange.newValue as string);
+                },
+              } as UndoableChange;
+              addUndoable(undoableChange);
+              setGroundColor(newColor);
+              setUpdateFlag(!updateFlag);
+            }}
+          />
+        </SubMenu>
+      )}
 
       <Menu>
         <Menu.Item style={{ paddingLeft: '36px' }} key={'ground-albedo'}>

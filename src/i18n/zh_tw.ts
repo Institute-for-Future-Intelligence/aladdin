@@ -443,6 +443,7 @@ export const i18n_zh_tw = {
     groundMenu: {
       Albedo: '反照率',
       ImageOnGround: '地面顯示圖像',
+      Ocean: '海洋',
       RemoveAllUnlockedTrees: '刪除所有非固定的樹木',
       RemoveAllUnlockedFlowers: '删除所有非固定的花草',
       RemoveAllUnlockedPeople: '删除所有非固定的人物',

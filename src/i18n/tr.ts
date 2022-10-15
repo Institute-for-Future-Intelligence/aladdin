@@ -444,6 +444,7 @@ export const i18n_tr = {
     groundMenu: {
       Albedo: 'Albedo',
       ImageOnGround: 'Yer Görüntüsü',
+      Ocean: 'Ocean',
       RemoveAllUnlockedTrees: 'Tüm Ağaçları Kaldır',
       RemoveAllUnlockedFlowers: 'Remove All Unlocked Flowers',
       RemoveAllUnlockedPeople: 'Tüm Kişileri Kaldır',

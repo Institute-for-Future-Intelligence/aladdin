@@ -27,6 +27,7 @@ export interface ViewState {
   showZenithAngle: boolean;
   groundImage: boolean;
   groundColor: string;
+  ocean: boolean;
 
   showMapPanel: boolean;
   showHeliodonPanel: boolean;

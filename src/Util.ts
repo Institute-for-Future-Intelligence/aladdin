@@ -40,6 +40,37 @@ import { RoofModel } from './models/RoofModel';
 import { RoofUtil } from './views/roof/RoofUtil';
 
 export class Util {
+  static OCEAN_TEXTURE = Util.fetchOceanTexture(100, 100);
+  static WHITE_TEXTURE = Util.fetchWhiteTexture(2, 2);
+
+  static fetchOceanTexture(w: number, h: number): CanvasTexture | null {
+    const canvas = document.createElement('canvas') as HTMLCanvasElement;
+    canvas.width = w;
+    canvas.height = h;
+    const ctx = canvas.getContext('2d');
+    if (ctx) {
+      const grd = ctx.createRadialGradient(w / 2, h / 2, 0, w / 2, h / 2, Math.max(w, h) / 2);
+      grd.addColorStop(0, '#45AAEA');
+      grd.addColorStop(0.04, '#2B65EC');
+      grd.addColorStop(0.2, '#0000FF');
+      ctx.fillStyle = grd;
+      ctx.fillRect(0, 0, w, h);
+    }
+    return new CanvasTexture(canvas);
+  }
+
+  static fetchWhiteTexture(w: number, h: number): CanvasTexture | null {
+    const canvas = document.createElement('canvas') as HTMLCanvasElement;
+    canvas.width = w;
+    canvas.height = h;
+    const ctx = canvas.getContext('2d');
+    if (ctx) {
+      ctx.fillStyle = 'white';
+      ctx.fillRect(0, 0, w, h);
+    }
+    return new CanvasTexture(canvas);
+  }
+
   static fetchIntersectables(scene: Scene): Object3D[] {
     const objects: Object3D[] = [];
     scene.traverse((o) => {
