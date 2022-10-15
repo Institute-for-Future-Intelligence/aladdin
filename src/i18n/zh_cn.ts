@@ -380,6 +380,7 @@ export const i18n_zh_cn = {
         Greenhouse: '温室',
         Solarium: '有日光浴室的房子',
         Pavilion: '公园的亭子',
+        OceanFront: '海边',
         Church: '教堂',
         AdobeTaosHouse: '陶斯土坯房',
         BarnStyleHouse: '谷仓式风格的住宅',

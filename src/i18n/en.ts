@@ -383,6 +383,7 @@ export const i18n_en = {
         Greenhouse: 'Greenhouse',
         Solarium: 'Solarium',
         Pavilion: 'Pavilion in a Park',
+        OceanFront: 'Ocean Front',
         Church: 'Church',
         AdobeTaosHouse: 'Adobe Taos House',
         BarnStyleHouse: 'Barn Style House',

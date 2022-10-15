@@ -381,6 +381,7 @@ export const i18n_zh_tw = {
         Greenhouse: '溫室',
         Solarium: '有日光浴室的房子',
         Pavilion: '公園的亭子',
+        OceanFront: '海邊',
         Church: '教堂',
         AdobeTaosHouse: '陶斯土坯房',
         BarnStyleHouse: '穀倉式風格的住宅',

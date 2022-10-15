@@ -1,0 +1,781 @@
+{
+  "docid": "1SjUZWKjKQ5LEKrxY4MStT",
+  "time": "10/15/2022 03:36 pm",
+  "timestamp": 1665862613445,
+  "userid": "QWecNcxhyvP6j6sBN11hBsfZDau1",
+  "owner": null,
+  "email": null,
+  "world": {
+    "latitude": 21.27726283505855,
+    "pvGridCellSize": 0.5,
+    "timesPerHour": 4,
+    "longitude": -157.83154812645873,
+    "ground": {
+      "albedo": 0.3,
+      "thermalDiffusivity": 0.05,
+      "snowReflectionFactors": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ]
+    },
+    "address": "Beach Walk, Honolulu, HI 96815, USA",
+    "date": "9/15/2022 12:00:00 PM",
+    "name": "default",
+    "orthographic": false,
+    "cameraZoom": 35.16173831821251,
+    "noAnimationForSolarPanelSimulation": true,
+    "noAnimationForHeatmapSimulation": true
+  },
+  "elements": [
+    {
+      "cy": -0.03814023608482309,
+      "normal": [
+        0,
+        0,
+        1
+      ],
+      "lz": 0.1,
+      "ly": 30,
+      "id": "of4fAMi2p9MKmo6JDUYnfX",
+      "type": "Foundation",
+      "cx": -0.09164937497423153,
+      "cz": 0.05,
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "lx": 30,
+      "selected": false,
+      "parentId": "Ground",
+      "color": "#808080",
+      "textureType": "Foundation Texture #7",
+      "locked": true,
+      "enableGroupMaster": true
+    },
+    {
+      "type": "Human",
+      "name": "Jack",
+      "cx": -2.6826298492498593,
+      "cy": -13.382599250634597,
+      "cz": 0.05000000074505806,
+      "lx": 0.42,
+      "lz": 1.8,
+      "normal": [
+        0,
+        1,
+        0
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "parentId": "of4fAMi2p9MKmo6JDUYnfX",
+      "id": "tmVJY65HF3sgVftctUAMHa",
+      "selected": false,
+      "ly": 0.42,
+      "locked": true
+    },
+    {
+      "type": "Tree",
+      "name": "Palm",
+      "cx": -10.9,
+      "cy": -12.300149906670546,
+      "cz": 0.05000000074505806,
+      "lx": 3,
+      "lz": 4.556580211493021,
+      "normal": [
+        0,
+        1,
+        0
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "parentId": "of4fAMi2p9MKmo6JDUYnfX",
+      "id": "515nQqCbcQQ6YHPjc9DbKD",
+      "selected": false,
+      "evergreen": false,
+      "locked": true
+    },
+    {
+      "type": "Tree",
+      "name": "Palm",
+      "cx": -3.450000000000002,
+      "cy": -12.400149906670547,
+      "cz": 0.05000000074505806,
+      "lx": 3,
+      "lz": 4.502844343858161,
+      "normal": [
+        0,
+        1,
+        0
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "parentId": "of4fAMi2p9MKmo6JDUYnfX",
+      "id": "tTJn67k6BMHpHBDdaWM3ba",
+      "selected": false,
+      "locked": true
+    },
+    {
+      "type": "Tree",
+      "name": "Palm",
+      "cx": 3,
+      "cy": -12.400149906670547,
+      "cz": 0.05000000074505806,
+      "lx": 3,
+      "lz": 4.5558558822675845,
+      "normal": [
+        0,
+        1,
+        0
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "parentId": "of4fAMi2p9MKmo6JDUYnfX",
+      "id": "fMbPSHZLPsBcyuLxgHBCK1",
+      "selected": false,
+      "locked": true
+    },
+    {
+      "type": "Tree",
+      "name": "Linden",
+      "cx": 10.635323267305587,
+      "cy": 9.120457936722755,
+      "cz": 0.05000000074505806,
+      "lx": 8.647453630740776,
+      "lz": 6.099116502434057,
+      "normal": [
+        0,
+        1,
+        0
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "parentId": "of4fAMi2p9MKmo6JDUYnfX",
+      "id": "fHCS82yetSGRzh72zunT7D",
+      "selected": false,
+      "evergreen": false,
+      "locked": false
+    },
+    {
+      "type": "Foundation",
+      "cx": -0.1416493749742287,
+      "cy": -14.538140236099828,
+      "cz": 0.5,
+      "lx": 30,
+      "ly": 1,
+      "lz": 1,
+      "normal": [
+        0,
+        0,
+        1
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "parentId": "Ground",
+      "selected": false,
+      "solarUpdraftTower": {},
+      "solarAbsorberPipe": {},
+      "solarPowerTower": {},
+      "id": "xhkx7LMDLERSJNZrzoCQyS",
+      "textureType": "Foundation Texture #3",
+      "locked": true
+    },
+    {
+      "type": "Foundation",
+      "cx": 14.508350625025775,
+      "cy": 0.11185976390760086,
+      "cz": 0.5,
+      "lx": 1,
+      "ly": 30,
+      "lz": 1,
+      "normal": [
+        0,
+        0,
+        1
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "parentId": "Ground",
+      "textureType": "Foundation Texture #3",
+      "solarUpdraftTower": {},
+      "solarAbsorberPipe": {},
+      "solarPowerTower": {},
+      "id": "wpanc9VTMXo9e2FBWasUkE",
+      "selected": false,
+      "locked": true
+    },
+    {
+      "type": "Foundation",
+      "cx": -14.591649374974232,
+      "cy": -0.03814023609207148,
+      "cz": 0.5,
+      "lx": 1,
+      "ly": 30,
+      "lz": 1,
+      "normal": [
+        0,
+        0,
+        1
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "parentId": "Ground",
+      "textureType": "Foundation Texture #3",
+      "solarUpdraftTower": {},
+      "solarAbsorberPipe": {},
+      "solarPowerTower": {},
+      "id": "wtzfqQBnKJcefZe11i7jr2",
+      "selected": false,
+      "locked": true
+    },
+    {
+      "type": "Foundation",
+      "cx": -0.04164937497422941,
+      "cy": 14.661859763915281,
+      "cz": 0.5,
+      "lx": 30,
+      "ly": 1,
+      "lz": 1,
+      "normal": [
+        0,
+        0,
+        1
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "parentId": "Ground",
+      "textureType": "Foundation Texture #3",
+      "solarUpdraftTower": {},
+      "solarAbsorberPipe": {},
+      "solarPowerTower": {},
+      "id": "jfNkLbBUk5HE5FSJTKczHw",
+      "selected": false,
+      "locked": true
+    },
+    {
+      "type": "Tree",
+      "name": "Palm",
+      "cx": 9.95,
+      "cy": -12.35000000001368,
+      "cz": 0.05000000074505806,
+      "lx": 3,
+      "lz": 4.5089615657832525,
+      "normal": [
+        0,
+        0,
+        1
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "parentId": "of4fAMi2p9MKmo6JDUYnfX",
+      "id": "amCpkF95bnNieuVyAe8phU",
+      "selected": false,
+      "locked": true
+    },
+    {
+      "type": "Tree",
+      "name": "Linden",
+      "cx": 5.120611654288155,
+      "cy": 11.296492977129805,
+      "cz": 0.05000000074505806,
+      "lx": 6.126305324355701,
+      "lz": 4.528295321278675,
+      "normal": [
+        0,
+        1,
+        0
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "parentId": "of4fAMi2p9MKmo6JDUYnfX",
+      "id": "b2aivgvMGuf8FAwZprVCBL",
+      "selected": false,
+      "locked": true
+    },
+    {
+      "type": "Tree",
+      "name": "Linden",
+      "cx": 6.799304784203358,
+      "cy": 7.937222060052019,
+      "cz": 0.05000000074505806,
+      "lx": 4.634938422155624,
+      "lz": 5.0894781757873355,
+      "normal": [
+        0,
+        1,
+        0
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "parentId": "of4fAMi2p9MKmo6JDUYnfX",
+      "id": "vevoyat4tZ7XZuGU8GGyDN",
+      "selected": false,
+      "locked": true
+    },
+    {
+      "type": "Flower",
+      "name": "Spirea",
+      "cx": -11.573016268531264,
+      "cy": 0.9421039512590177,
+      "cz": 0.05000000074505806,
+      "lx": 1.8,
+      "lz": 1.6,
+      "normal": [
+        0,
+        1,
+        0
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "parentId": "of4fAMi2p9MKmo6JDUYnfX",
+      "id": "gwDkCr9yWQixvmGiucwADw",
+      "selected": false,
+      "locked": false
+    },
+    {
+      "type": "Flower",
+      "name": "Yellow Flower",
+      "cx": -7.915529711721373,
+      "cy": -12.737145465020022,
+      "cz": 0.05000000074505806,
+      "lx": 2,
+      "lz": 1.4,
+      "normal": [
+        0,
+        1,
+        0
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "parentId": "of4fAMi2p9MKmo6JDUYnfX",
+      "id": "eM7BQrR2R6ynajKQQzFqVa",
+      "selected": false,
+      "locked": true
+    },
+    {
+      "type": "Flower",
+      "name": "Yellow Flower",
+      "cx": -0.505068301677019,
+      "cy": -12.862087680092555,
+      "cz": 0.05000000074505806,
+      "lx": 2,
+      "lz": 1.4,
+      "normal": [
+        0,
+        1,
+        0
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "parentId": "of4fAMi2p9MKmo6JDUYnfX",
+      "id": "sLLXEmX5gbysBKvrYG3Fbm",
+      "selected": false,
+      "locked": true
+    },
+    {
+      "type": "Flower",
+      "name": "Yellow Flower",
+      "cx": 6.483911884058419,
+      "cy": -13.00192875540144,
+      "cz": 0.05000000074505451,
+      "lx": 2,
+      "lz": 1.4,
+      "normal": [
+        0,
+        1,
+        0
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "parentId": "of4fAMi2p9MKmo6JDUYnfX",
+      "id": "hx284bxcgV5gyUxdN5ovdK",
+      "selected": false,
+      "locked": true
+    },
+    {
+      "type": "Human",
+      "name": "Jeni",
+      "cx": -2.947611300050882,
+      "cy": -13.851439347508624,
+      "cz": 0.05000000074505806,
+      "lx": 0.45,
+      "ly": 0.42,
+      "lz": 1.7,
+      "normal": [
+        0,
+        1,
+        0
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "parentId": "of4fAMi2p9MKmo6JDUYnfX",
+      "id": "wAuGYcE41TzAvDgFwfFQi1",
+      "selected": false,
+      "locked": true
+    },
+    {
+      "type": "Human",
+      "name": "Jett",
+      "cx": -3.4411741055379705,
+      "cy": 0.1406890046239262,
+      "cz": 0.5,
+      "lx": 0.6,
+      "ly": 0.42,
+      "lz": 1.85,
+      "normal": [
+        0,
+        1,
+        0
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "parentId": "xhkx7LMDLERSJNZrzoCQyS",
+      "id": "w4nuwGqtug8LXurN1mzNvY",
+      "selected": false,
+      "locked": false
+    },
+    {
+      "type": "Human",
+      "name": "Jess",
+      "cx": -0.09454371807254525,
+      "cy": -11.842877840366317,
+      "cz": 0.05000000074505806,
+      "lx": 0.43,
+      "ly": 0.42,
+      "lz": 1.5,
+      "normal": [
+        0,
+        1,
+        0
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "parentId": "of4fAMi2p9MKmo6JDUYnfX",
+      "id": "bEwKWEqvcR6uiFaXS2KSQa",
+      "selected": false,
+      "locked": false
+    },
+    {
+      "type": "Cuboid",
+      "cx": 0.05519428615020505,
+      "cy": 0.8569571272620315,
+      "cz": 3.4780985707471395,
+      "lx": 14.091526563826012,
+      "ly": 8.017558418457568,
+      "lz": 6.956197141494279,
+      "color": "gray",
+      "faceColors": [
+        "gray",
+        "gray",
+        "gray",
+        "gray",
+        "gray",
+        "gray"
+      ],
+      "textureTypes": [
+        "Facade #7",
+        "Facade #7",
+        "Facade #7",
+        "Facade #7",
+        "No Facade Texture",
+        "No Facade Texture"
+      ],
+      "normal": [
+        0,
+        0,
+        1
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "parentId": "Ground",
+      "selected": false,
+      "id": "rgMeNsXAhJ7vF5n2eyoyZY",
+      "locked": true
+    },
+    {
+      "type": "Flower",
+      "name": "Spirea",
+      "cx": 12.070642916453558,
+      "cy": 0.2794560980479932,
+      "cz": 0.050000000745065165,
+      "lx": 1.8,
+      "lz": 1.6,
+      "normal": [
+        0,
+        1,
+        0
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "parentId": "of4fAMi2p9MKmo6JDUYnfX",
+      "id": "jN7QkziGpv7nHSJoUf5y2G",
+      "selected": false
+    },
+    {
+      "type": "Flower",
+      "name": "Hibiscus",
+      "cx": -12.67757040993704,
+      "cy": 12.276603671856236,
+      "cz": 0.05000000074505806,
+      "lx": 2,
+      "lz": 1.7,
+      "normal": [
+        0,
+        1,
+        0
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "parentId": "of4fAMi2p9MKmo6JDUYnfX",
+      "id": "6UdQ5nrx6jmVcSsE8w5H9f",
+      "selected": false
+    },
+    {
+      "type": "Human",
+      "name": "Jean",
+      "cx": -1.5815066438853425,
+      "cy": -4.366476541361612,
+      "cz": 0.05000000074505806,
+      "lx": 0.65,
+      "lz": 1.8,
+      "normal": [
+        0,
+        1,
+        0
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "parentId": "of4fAMi2p9MKmo6JDUYnfX",
+      "id": "rtQUEET44qCuYVgAXc2iXC",
+      "selected": false
+    },
+    {
+      "type": "Human",
+      "name": "Juro",
+      "cx": 0.7832189734653987,
+      "cy": -11.19308162208414,
+      "cz": 0.05000000074505806,
+      "lx": 0.494,
+      "lz": 1.72,
+      "normal": [
+        0,
+        1,
+        0
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "parentId": "of4fAMi2p9MKmo6JDUYnfX",
+      "id": "tXtvxVscRESKTxvG7HLtAw",
+      "selected": false
+    }
+  ],
+  "view": {
+    "yearlyPvYieldPanelX": -25,
+    "autoRotate": false,
+    "mapZoom": 16,
+    "axes": false,
+    "theme": "Default",
+    "showSiteInfoPanel": true,
+    "showDesignInfoPanel": false,
+    "showWeatherPanel": false,
+    "groundPanelX": 0,
+    "dailyPvYieldPanelX": -3,
+    "dailyLightSensorPanelY": 232,
+    "showDailyLightSensorPanel": false,
+    "mapTilt": 0,
+    "yearlyPvYieldPanelY": 16,
+    "yearlyLightSensorPanelX": 0,
+    "showGroundPanel": false,
+    "showHeliodonPanel": false,
+    "heliodon": false,
+    "weatherPanelY": 0,
+    "heliodonPanelX": -1175,
+    "dailyPvYieldPanelY": 8,
+    "mapWeatherStations": false,
+    "yearlyLightSensorPanelY": 0,
+    "showPvDailyYieldPanel": true,
+    "showYearlyPvYieldPanel": false,
+    "dailyLightSensorPanelX": -240,
+    "weatherPanelX": 0,
+    "heliodonPanelY": -33,
+    "groundColor": "forestgreen",
+    "groundPanelY": 0,
+    "groundImage": false,
+    "showDailyPvYieldPanel": false,
+    "shadowEnabled": true,
+    "showYearlyLightSensorPanel": false,
+    "mapType": "roadmap",
+    "cameraPosition": [
+      -13.060326584389326,
+      -9.713614207777294,
+      1.7479148403703157
+    ],
+    "panCenter": [
+      2.5037764748858575,
+      -9.427400928455505,
+      0.874682420452615
+    ],
+    "orthographic": false,
+    "enableRotate": true,
+    "cameraZoom": 20.000000000000004,
+    "showInstructionPanel": true,
+    "cameraPosition2D": [
+      2.50835062502577,
+      -0.16329014275536818,
+      150
+    ],
+    "panCenter2D": [
+      2.50835062502577,
+      -0.16314013608852546,
+      5.851012068003398e-7
+    ],
+    "dailyPvYieldPanelRect": {
+      "x": 0,
+      "y": 0,
+      "width": 600,
+      "height": 400
+    },
+    "waterSurface": true,
+    "showMapPanel": false
+  },
+  "evolutionMethod": 1,
+  "solarPanelArrayLayoutParams": {
+    "pvModelName": "CS6X-355P-FG",
+    "rowAxis": "Zonal",
+    "orientation": "Landscape",
+    "tiltAngle": 0,
+    "rowsPerRack": 1,
+    "interRowSpacing": 2,
+    "poleHeight": 1,
+    "poleSpacing": 3
+  },
+  "solarPanelArrayLayoutConstraints": {
+    "minimumInterRowSpacing": 2,
+    "maximumInterRowSpacing": 10,
+    "minimumRowsPerRack": 1,
+    "maximumRowsPerRack": 6,
+    "minimumTiltAngle": -1.5707963267948966,
+    "maximumTiltAngle": 1.5707963267948966,
+    "poleHeight": 1,
+    "poleSpacing": 5,
+    "orientation": "Landscape",
+    "pvModelName": "CS6X-355P-FG",
+    "rowAxis": "Zonal"
+  },
+  "evolutionaryAlgorithmState": {
+    "geneticAlgorithmParams": {
+      "problem": "Solar Panel Tilt Angle",
+      "objectiveFunctionType": 1,
+      "selectionMethod": 1,
+      "searchMethod": 1,
+      "populationSize": 20,
+      "maximumGenerations": 5,
+      "selectionRate": 0.5,
+      "crossoverRate": 0.5,
+      "mutationRate": 0.1,
+      "convergenceThreshold": 0.01,
+      "localSearchRadius": 0.1
+    },
+    "particleSwarmOptimizationParams": {
+      "problem": "Solar Panel Tilt Angle",
+      "objectiveFunctionType": 1,
+      "searchMethod": 1,
+      "swarmSize": 20,
+      "maximumSteps": 5,
+      "vmax": 0.01,
+      "inertia": 0.8,
+      "cognitiveCoefficient": 0.1,
+      "socialCoefficient": 0.1,
+      "convergenceThreshold": 0.01,
+      "localSearchRadius": 0.1
+    }
+  },
+  "economicsParams": {
+    "projectLifeSpan": 25,
+    "electricitySellingPrice": 0.25,
+    "operationalCostPerUnit": 0.15
+  },
+  "notes": []
+}

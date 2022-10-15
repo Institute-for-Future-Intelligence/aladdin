@@ -383,6 +383,7 @@ export const i18n_tr = {
         Greenhouse: 'Sera',
         Solarium: 'Solaryum',
         Pavilion: 'Park Kamelyası',
+        OceanFront: 'Ocean Front',
         Church: 'Kilise',
         AdobeTaosHouse: 'Adobe Taos House',
         BarnStyleHouse: 'Çiftlik Evi',
