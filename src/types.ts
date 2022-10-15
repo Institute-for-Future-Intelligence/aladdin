@@ -330,11 +330,11 @@ export enum TreeType {
   Cottonwood = 'Cottonwood',
   Dogwood = 'Dogwood',
   Elm = 'Elm',
+  FanPalm = 'Fan Palm',
   Linden = 'Linden',
   Magnolia = 'Magnolia',
   Maple = 'Maple',
   Oak = 'Oak',
-  Palm = 'Palm',
   Pine = 'Pine',
   Spruce = 'Spruce',
 }

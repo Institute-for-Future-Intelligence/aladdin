@@ -14,7 +14,7 @@ import LindenImage from '../../../resources/linden.png';
 import MagnoliaImage from '../../../resources/magnolia_spring.png';
 import MapleImage from '../../../resources/maple.png';
 import OakImage from '../../../resources/oak.png';
-import PalmImage from '../../../resources/palm.png';
+import FanPalmImage from '../../../resources/fan_palm.png';
 import PineImage from '../../../resources/pine.png';
 import SpruceImage from '../../../resources/spruce.png';
 import { UndoableChange } from '../../../undo/UndoableChange';
@@ -73,6 +73,10 @@ const TreeSelection = () => {
         <img alt={TreeType.Elm} src={ElmImage} height={20} style={{ paddingRight: '22px' }} />
         {i18n.t('tree.Elm', lang)}
       </Option>
+      <Option key={TreeType.FanPalm} value={TreeType.FanPalm}>
+        <img alt={TreeType.FanPalm} src={FanPalmImage} height={20} style={{ paddingRight: '18px' }} />{' '}
+        {i18n.t('tree.FanPalm', lang)}
+      </Option>
       <Option key={TreeType.Linden} value={TreeType.Linden}>
         <img alt={TreeType.Linden} src={LindenImage} height={20} style={{ paddingRight: '18px' }} />{' '}
         {i18n.t('tree.Linden', lang)}
@@ -88,10 +92,6 @@ const TreeSelection = () => {
       <Option key={TreeType.Oak} value={TreeType.Oak}>
         <img alt={TreeType.Oak} src={OakImage} height={20} style={{ paddingRight: '17px' }} />
         {i18n.t('tree.Oak', lang)}
-      </Option>
-      <Option key={TreeType.Palm} value={TreeType.Palm}>
-        <img alt={TreeType.Palm} src={PalmImage} height={20} style={{ paddingRight: '18px' }} />{' '}
-        {i18n.t('tree.Palm', lang)}
       </Option>
       <Option key={TreeType.Pine} value={TreeType.Pine}>
         <img alt={TreeType.Pine} src={PineImage} height={20} style={{ paddingRight: '22px' }} />{' '}

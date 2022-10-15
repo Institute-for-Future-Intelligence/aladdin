@@ -8,6 +8,7 @@ import DogwoodImage from './resources/dogwood.png';
 import DogwoodShedImage from './resources/dogwood_shed.png';
 import ElmImage from './resources/elm.png';
 import ElmShedImage from './resources/elm_shed.png';
+import FanPalmImage from './resources/fan_palm.png';
 import LindenImage from './resources/linden.png';
 import LindenShedImage from './resources/linden_shed.png';
 import MagnoliaSpringImage from './resources/magnolia_spring.png';
@@ -18,7 +19,6 @@ import MapleImage from './resources/maple.png';
 import MapleShedImage from './resources/maple_shed.png';
 import OakImage from './resources/oak.png';
 import OakShedImage from './resources/oak_shed.png';
-import PalmImage from './resources/palm.png';
 import PineImage from './resources/pine.png';
 import SpruceImage from './resources/spruce.png';
 import { TreeType } from './types';
@@ -37,6 +37,8 @@ export class TreeData {
         return i18n.t('tree.Dogwood', lang);
       case TreeType.Elm:
         return i18n.t('tree.Elm', lang);
+      case TreeType.FanPalm:
+        return i18n.t('tree.FanPalm', lang);
       case TreeType.Linden:
         return i18n.t('tree.Linden', lang);
       case TreeType.Magnolia:
@@ -45,8 +47,6 @@ export class TreeData {
         return i18n.t('tree.Maple', lang);
       case TreeType.Oak:
         return i18n.t('tree.Oak', lang);
-      case TreeType.Palm:
-        return i18n.t('tree.Palm', lang);
       case TreeType.Spruce:
         return i18n.t('tree.Spruce', lang);
       default:
@@ -66,7 +66,7 @@ export class TreeData {
         return 0.65 * Math.PI;
       case TreeType.Oak:
         return 0.75 * Math.PI;
-      case TreeType.Palm:
+      case TreeType.FanPalm:
         return 0.5 * Math.PI;
       case TreeType.Spruce:
         return Math.PI;
@@ -127,8 +127,8 @@ export class TreeData {
       case TreeType.Oak:
         textureImg = (latitude > 0 ? month < 4 || month > 10 : month >= 4 && month <= 10) ? OakShedImage : OakImage;
         break;
-      case TreeType.Palm:
-        textureImg = PalmImage;
+      case TreeType.FanPalm:
+        textureImg = FanPalmImage;
         break;
       case TreeType.Spruce:
         textureImg = SpruceImage;
