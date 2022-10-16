@@ -110,7 +110,7 @@ export class DefaultViewState implements ViewState {
     this.showElevationAngle = true;
     this.showZenithAngle = true;
     this.groundImage = false;
-    this.groundColor = 'forestgreen';
+    this.groundColor = '#16A5A5';
     this.waterSurface = false;
 
     this.showMapPanel = false;
@@ -192,7 +192,7 @@ export class DefaultViewState implements ViewState {
     viewState.showElevationAngle = true;
     viewState.showZenithAngle = true;
     viewState.groundImage = false;
-    viewState.groundColor = 'forestgreen';
+    viewState.groundColor = '#16A5A5';
     viewState.waterSurface = false;
 
     viewState.showMapPanel = false;

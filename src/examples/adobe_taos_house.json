@@ -1,8 +1,8 @@
 {
-  "docid": "fB6ttjDUmDJaNH8gYiB3vi",
-  "time": "10/14/2022 10:42 am",
-  "timestamp": 1665758545141,
-  "userid": "HPwaZxo6jaPjQcD6cBGUWPpQkVw2",
+  "docid": "uqZqv6xo2s3tn1XpZjS6YY",
+  "time": "10/16/2022 11:20 am",
+  "timestamp": 1665933646392,
+  "userid": "QWecNcxhyvP6j6sBN11hBsfZDau1",
   "owner": null,
   "email": null,
   "world": {
@@ -3964,7 +3964,8 @@
       ],
       "parentId": "7ZHXRj1w61cveRC3gvedyo",
       "id": "mMaWsSyXEBfBHccaGNhNaS",
-      "selected": false
+      "selected": false,
+      "ly": 0.6
     },
     {
       "type": "Human",
@@ -3986,7 +3987,8 @@
       ],
       "parentId": "7ZHXRj1w61cveRC3gvedyo",
       "id": "48yGEsfjgkFf6JxD4AfTys",
-      "selected": false
+      "selected": false,
+      "ly": 0.6
     },
     {
       "type": "Window",
@@ -4260,6 +4262,73 @@
       "parentId": "Ground",
       "selected": false,
       "id": "8afBb85AbBXxrUxc1UJNK2"
+    },
+    {
+      "type": "Tree",
+      "name": "Coconut",
+      "cx": 10.01957056934475,
+      "cy": -11.043888206723011,
+      "cz": 0,
+      "lx": 4.98455928150696,
+      "lz": 7.122482384126237,
+      "normal": [
+        0,
+        1,
+        0
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "parentId": "Ground",
+      "id": "gHPxDQkjKxPPpDTbnNBT1s",
+      "selected": false,
+      "evergreen": false
+    },
+    {
+      "type": "Tree",
+      "name": "Coconut",
+      "cx": 19.62542663178017,
+      "cy": -0.8605656311368737,
+      "cz": 0.041681792587041855,
+      "lx": 4.98455928150696,
+      "lz": 7.122482384126237,
+      "normal": [
+        0,
+        1,
+        0
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "parentId": "7ZHXRj1w61cveRC3gvedyo",
+      "id": "ojssPm5w3H8Z5YiH8zAEzJ",
+      "selected": false
+    },
+    {
+      "type": "Tree",
+      "name": "Coconut",
+      "cx": -5.921845166656402,
+      "cy": -20.83835275090669,
+      "cz": -8.881784197001252e-16,
+      "lx": 4.98455928150696,
+      "lz": 7.122482384126237,
+      "normal": [
+        0,
+        1,
+        0
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "parentId": "Ground",
+      "id": "hiyUWsAKxmKF4tZmUy3NkH",
+      "selected": false
     }
   ],
   "view": {
@@ -4291,9 +4360,9 @@
     "dailyHeliostatYieldPanelX": 0,
     "showDailyParabolicDishYieldPanel": false,
     "cameraPosition": [
-      -14.147524383491486,
-      -26.668413122907417,
-      2.6479985465671287
+      -12.087499660276176,
+      -29.51441595484023,
+      2.0400853625348354
     ],
     "showYearlyHeliostatYieldPanel": false,
     "orthographic": false,

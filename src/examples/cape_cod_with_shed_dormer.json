@@ -1,8 +1,8 @@
 {
-  "docid": "jEdzNXEgPYdRSsmuiuPgyD",
-  "time": "10/14/2022 03:52 pm",
-  "timestamp": 1665777122646,
-  "userid": "HPwaZxo6jaPjQcD6cBGUWPpQkVw2",
+  "docid": "7kXY3ZeB6wTW6epSSNWj81",
+  "time": "10/16/2022 10:59 am",
+  "timestamp": 1665932389079,
+  "userid": "QWecNcxhyvP6j6sBN11hBsfZDau1",
   "owner": null,
   "email": null,
   "world": {
@@ -12,7 +12,7 @@
     "noAnimationForHeatmapSimulation": false,
     "cspGridCellSize": 0.5,
     "dustLoss": 0.05,
-    "address": "Natick, MA",
+    "address": "Leominster State Forest, Leominster, MA 01420, USA",
     "cspDaysPerYear": 4,
     "ground": {
       "thermalDiffusivity": 0.05,
@@ -33,7 +33,7 @@
       ]
     },
     "daysPerYear": 12,
-    "latitude": 42.2844063,
+    "latitude": 42.52092349999999,
     "noAnimationForSensorDataCollection": false,
     "timesPerHour": 4,
     "discretization": "Approximate",
@@ -42,7 +42,7 @@
     "solarPanelVisibilityGridCellSize": 0.2,
     "pvGridCellSize": 0.5,
     "name": "default",
-    "longitude": -71.3488548
+    "longitude": -71.8384068
   },
   "elements": [
     {

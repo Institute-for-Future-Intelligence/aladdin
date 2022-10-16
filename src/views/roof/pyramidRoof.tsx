@@ -47,6 +47,8 @@ const FlatRoof = ({ roofSegments, thickness, lineColor, lineWidth, children }: F
   const { transparent } = useTransparent();
 
   const wireFramePoints = useMemo(() => {
+    // this can still be triggered when the roof is deleted because all walls are removed
+    if (roofSegments.length === 0) return [new Vector3()];
     const startPoint = roofSegments[0].points[0];
     const points = [startPoint];
     for (const segment of roofSegments) {
@@ -58,15 +60,14 @@ const FlatRoof = ({ roofSegments, thickness, lineColor, lineWidth, children }: F
 
   const shape = useMemo(() => {
     const s = new Shape();
-
+    // this can still be triggered when the roof is deleted because all walls are removed
+    if (roofSegments.length === 0) return s;
     const startPoint = roofSegments[0].points[0];
     s.moveTo(startPoint.x, startPoint.y);
-
     for (const segment of roofSegments) {
       const rightPoint = segment.points[1];
       s.lineTo(rightPoint.x, rightPoint.y);
     }
-
     return s;
   }, [roofSegments]);
 

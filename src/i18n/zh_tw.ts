@@ -362,6 +362,7 @@ export const i18n_zh_tw = {
         SolarCanopyFormFactors: '太陽能天篷外形設計',
         SolarCanopyOverBleachers: '看台太陽能天篷',
         SolarBusStop: '太陽能候車亭',
+        BuildingIntegratedPhotovoltaics: '建築整合光伏',
         Floatovoltaics: '浮動光伏',
         Agrivoltaics: '農業光伏',
         VegetativeBuffer: '太陽能農場绿化带',

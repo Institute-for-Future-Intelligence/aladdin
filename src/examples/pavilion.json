@@ -1,7 +1,7 @@
 {
-  "docid": "mZMwNufcvaFvQAzzBuzuW5",
-  "time": "10/14/2022 07:23 pm",
-  "timestamp": 1665789801762,
+  "docid": "4Ses1F6EocZEh8AdYWRbTf",
+  "time": "10/16/2022 10:56 am",
+  "timestamp": 1665932162958,
   "userid": "QWecNcxhyvP6j6sBN11hBsfZDau1",
   "owner": null,
   "email": null,
@@ -12,7 +12,7 @@
     "noAnimationForHeatmapSimulation": false,
     "cspGridCellSize": 0.5,
     "dustLoss": 0.05,
-    "address": "15-2717 Welea St, Pāhoa, HI 96778, USA",
+    "address": "3019 Jameson Beach Rd, South Lake Tahoe, CA 96150, USA",
     "cspDaysPerYear": 4,
     "ground": {
       "thermalDiffusivity": 0.05,
@@ -33,7 +33,7 @@
       ]
     },
     "daysPerYear": 12,
-    "latitude": 19.562145402959715,
+    "latitude": 38.9379299,
     "noAnimationForSensorDataCollection": false,
     "timesPerHour": 4,
     "discretization": "Approximate",
@@ -42,7 +42,7 @@
     "solarPanelVisibilityGridCellSize": 0.2,
     "pvGridCellSize": 0.5,
     "name": "default",
-    "longitude": -154.88943438792282
+    "longitude": -120.0387964
   },
   "elements": [
     {

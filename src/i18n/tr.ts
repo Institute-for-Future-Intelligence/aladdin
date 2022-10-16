@@ -365,6 +365,7 @@ export const i18n_tr = {
         SolarCanopyFormFactors: 'Solar Gölgelik Biçim Etkileri',
         SolarCanopyOverBleachers: 'Tirübün Üzeri Solar Gölgelik',
         SolarBusStop: 'Solar Otobüs Durağı',
+        BuildingIntegratedPhotovoltaics: 'Building-Integrated Photovoltaics',
         Floatovoltaics: 'Floatovoltaics',
         Agrivoltaics: 'Agrivoltaics',
         VegetativeBuffer: 'Bitkisel Tampon',
