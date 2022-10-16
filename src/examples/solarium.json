@@ -1,7 +1,7 @@
 {
-  "docid": "ukFo2UEzo7x7xaiQSd3KTL",
-  "time": "10/11/2022 07:37 pm",
-  "timestamp": 1665531435647,
+  "docid": "h3disnWj92exz4CcFChoUt",
+  "time": "10/16/2022 03:54 pm",
+  "timestamp": 1665950093513,
   "userid": "QWecNcxhyvP6j6sBN11hBsfZDau1",
   "owner": null,
   "email": null,
@@ -150,7 +150,7 @@
       "lz": 4.0189625473598385,
       "centerRoofHeight": [
         -0.022465454047944533,
-        6.32848936518559
+        6.145694191429005
       ],
       "leftJoints": [
         "cV8MyCuhWAsvEyyFuVqVqg"
@@ -186,7 +186,7 @@
       ],
       "centerRoofHeight": [
         0.022465454047944533,
-        6.32848936518559
+        6.145694191429005
       ],
       "rightPoint": [
         -5.457020109151015,
@@ -456,7 +456,7 @@
       ],
       "textureType": "Roof Texture #7",
       "showLabel": false,
-      "lz": 6.32848936518559,
+      "lz": 6.145694191429005,
       "normal": [
         0,
         0,
@@ -1765,7 +1765,7 @@
       "cx": 0.5077215094390786,
       "cy": -5.182357959116953,
       "cz": 0,
-      "lx": 0.6,
+      "lx": 0.65,
       "lz": 1.8,
       "normal": [
         0,
@@ -1780,7 +1780,7 @@
       "parentId": "Ground",
       "id": "havSSZEB6mAoQ1s57LQVxN",
       "selected": false,
-      "ly": 0.6
+      "ly": 0.65
     },
     {
       "type": "Human",
@@ -1788,7 +1788,7 @@
       "cx": -7.974613533200657,
       "cy": -4.521571410086505,
       "cz": 8.881784197001252e-16,
-      "lx": 0.6,
+      "lx": 0.42,
       "lz": 1.8,
       "normal": [
         0,
@@ -1803,7 +1803,7 @@
       "parentId": "Ground",
       "id": "fPgwwBmXz2LWV9vPRMmqzu",
       "selected": false,
-      "ly": 0.6
+      "ly": 0.42
     },
     {
       "type": "Flower",
@@ -1896,9 +1896,9 @@
     {
       "type": "Flower",
       "name": "Tall Bush",
-      "cx": 5.595155158535762,
-      "cy": -5.487791010935521,
-      "cz": 0,
+      "cx": 4.749480770508441,
+      "cy": -0.15159788970171384,
+      "cz": 0.024338932707905773,
       "lx": 1,
       "lz": 2,
       "normal": [
@@ -1911,7 +1911,7 @@
         0,
         0
       ],
-      "parentId": "Ground",
+      "parentId": "91GS1aZ3DbZBjAVtatsatL",
       "id": "84bbtLrAVMTpW8zhkv6ac6",
       "selected": false
     },
@@ -1962,9 +1962,9 @@
     {
       "type": "Flower",
       "name": "Tall Bush",
-      "cx": -5.0983220142696055,
-      "cy": -4.5962129398780736,
-      "cz": 8.881784197001252e-16,
+      "cx": -4.834800784349908,
+      "cy": -4.621520750635222,
+      "cz": 0,
       "lx": 1,
       "lz": 2,
       "normal": [
@@ -2072,8 +2072,8 @@
     {
       "type": "Flower",
       "name": "Hydrangea",
-      "cx": -2.260730692923346,
-      "cy": -7.788294672680767,
+      "cx": -0.5688000922764607,
+      "cy": -7.664601244314282,
       "cz": 0,
       "lx": 2,
       "lz": 1.5,
@@ -2094,9 +2094,9 @@
     {
       "type": "Flower",
       "name": "Hydrangea",
-      "cx": 2.715206673118412,
-      "cy": -8.09983822589874,
-      "cz": 8.881784197001252e-16,
+      "cx": 3.3274805398172878,
+      "cy": -7.664601244314282,
+      "cz": 0,
       "lx": 2,
       "lz": 1.5,
       "normal": [
@@ -2116,9 +2116,9 @@
     {
       "type": "Flower",
       "name": "Hydrangea",
-      "cx": 0.1515942802289605,
-      "cy": -7.9071988397857425,
-      "cz": 8.881784197001252e-16,
+      "cx": 1.478880239918796,
+      "cy": -7.636161239700459,
+      "cz": 0,
       "lx": 2,
       "lz": 1.5,
       "normal": [
@@ -2133,6 +2133,28 @@
       ],
       "parentId": "Ground",
       "id": "xiFfAWcKYuiBh744RUaZyc",
+      "selected": false
+    },
+    {
+      "type": "Flower",
+      "name": "Hydrangea",
+      "cx": -2.6733604336993597,
+      "cy": -7.636161239700459,
+      "cz": 0,
+      "lx": 2,
+      "lz": 1.5,
+      "normal": [
+        0,
+        0,
+        1
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "parentId": "Ground",
+      "id": "wV1JQBxQxSUBFz9dC7xrav",
       "selected": false
     }
   ],
@@ -2165,9 +2187,9 @@
     "dailyHeliostatYieldPanelX": 0,
     "showDailyParabolicDishYieldPanel": false,
     "cameraPosition": [
-      -10.307527491623615,
-      -17.65874023355402,
-      2.910969821321196
+      -5.942751422513334,
+      -17.938736571912003,
+      3.884133541996008
     ],
     "showYearlyHeliostatYieldPanel": false,
     "orthographic": false,

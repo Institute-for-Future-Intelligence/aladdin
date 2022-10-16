@@ -39,8 +39,6 @@ const Flower = ({
   cx,
   cy,
   cz,
-  lx,
-  lz,
   name = FlowerType.WhiteFlower,
   selected = false,
   locked = false,
@@ -202,34 +200,50 @@ const Flower = ({
     return null;
   };
 
+  const width = useMemo(() => {
+    return FlowerData.fetchSpread(name);
+  }, [name]);
+
+  const height = useMemo(() => {
+    return FlowerData.fetchHeight(name);
+  }, [name]);
+
   const worldPosition = useMemo(() => new Vector3(), []);
   const parentRotation = useMemo(() => new Euler(), []);
 
   useFrame(({ camera }) => {
     // rotation
-    if (solidFlowerRef.current && groupRef.current && shadowFlowerRef.current && interactionPlaneRef.current) {
+    if (groupRef.current) {
       if (!orthographic) {
-        const { x: cameraX, y: cameraY } = camera.position;
-        const { x: currX, y: currY } = groupRef.current.position;
-        const { x: sunlightX, y: sunlightY } = useStore.getState().sunlightDirection;
-        if (parentRef.current) {
-          parentRotation.set(0, 0, parentRef.current.rotation.z);
-          worldPosition.addVectors(
-            groupRef.current.position.clone().applyEuler(parentRotation),
-            parentRef.current.position,
-          );
-          const e = Math.atan2(cameraX - worldPosition.x, cameraY - worldPosition.y) + parentRotation.z;
-          solidFlowerRef.current.rotation.set(HALF_PI, -e, 0);
-          interactionPlaneRef.current.rotation.set(-HALF_PI, e, 0);
-          shadowFlowerRef.current.rotation.set(HALF_PI, -Math.atan2(sunlightX, sunlightY) - parentRotation.z, 0);
-        } else {
-          const e = Math.atan2(cameraX - currX, cameraY - currY);
-          solidFlowerRef.current.rotation.set(HALF_PI, -e, 0);
-          interactionPlaneRef.current.rotation.set(-HALF_PI, e, 0);
-          shadowFlowerRef.current.rotation.set(HALF_PI, -Math.atan2(sunlightX, sunlightY), 0);
+        if (solidFlowerRef.current && shadowFlowerRef.current && interactionPlaneRef.current) {
+          const { x: cameraX, y: cameraY } = camera.position;
+          const { x: currX, y: currY } = groupRef.current.position;
+          const { x: sunlightX, y: sunlightY } = useStore.getState().sunlightDirection;
+          if (parentRef.current) {
+            parentRotation.set(0, 0, parentRef.current.rotation.z);
+            worldPosition.addVectors(
+              groupRef.current.position.clone().applyEuler(parentRotation),
+              parentRef.current.position,
+            );
+            const e = Math.atan2(cameraX - worldPosition.x, cameraY - worldPosition.y) + parentRotation.z;
+            solidFlowerRef.current.rotation.set(HALF_PI, -e, 0);
+            interactionPlaneRef.current.rotation.set(-HALF_PI, e, 0);
+            shadowFlowerRef.current.rotation.set(HALF_PI, -Math.atan2(sunlightX, sunlightY) - parentRotation.z, 0);
+          } else {
+            const e = Math.atan2(cameraX - currX, cameraY - currY);
+            solidFlowerRef.current.rotation.set(HALF_PI, -e, 0);
+            interactionPlaneRef.current.rotation.set(-HALF_PI, e, 0);
+            shadowFlowerRef.current.rotation.set(HALF_PI, -Math.atan2(sunlightX, sunlightY), 0);
+          }
         }
+        groupRef.current.rotation.set(0, 0, 0);
       } else {
-        // TODO: rotate to face z direction in 2D mode
+        if (solidFlowerRef.current && shadowFlowerRef.current && interactionPlaneRef.current) {
+          solidFlowerRef.current.rotation.set(HALF_PI, 0, 0);
+          interactionPlaneRef.current.rotation.set(0, 0, 0);
+          shadowFlowerRef.current.rotation.set(HALF_PI, 0, 0);
+        }
+        groupRef.current.rotation.set(-HALF_PI, 0, 0);
       }
     }
   });
@@ -239,10 +253,16 @@ const Flower = ({
   return (
     <>
       {isRender ? (
-        <group ref={groupRef} name={'Flower Group ' + id} userData={{ aabb: true }} position={[cx, cy, cz ?? 0]}>
-          <group position={[0, 0, lz / 2]}>
+        // in orthographic mode, we need to lift it up a bit so that it can be more easily picked
+        <group
+          ref={groupRef}
+          name={'Flower Group ' + id}
+          userData={{ aabb: true }}
+          position={[cx, cy, (cz ?? 0) + (orthographic ? 0.25 : 0)]}
+        >
+          <group position={[0, 0, height / 2]}>
             <Billboard ref={solidFlowerRef} uuid={id} name={name} follow={false}>
-              <Plane args={[lx, lz]}>
+              <Plane args={[width, height]}>
                 {night ? (
                   <meshStandardMaterial map={texture} side={DoubleSide} alphaTest={0.5} />
                 ) : (
@@ -253,7 +273,7 @@ const Flower = ({
 
             {/* cast shadow */}
             <Billboard ref={shadowFlowerRef} name={name + ' Shadow Billboard'} follow={false}>
-              <Plane castShadow={shadowEnabled} args={[lx, lz]} customDepthMaterial={customDepthMaterial}>
+              <Plane castShadow={shadowEnabled} args={[width, height]} customDepthMaterial={customDepthMaterial}>
                 <meshBasicMaterial side={DoubleSide} transparent={true} opacity={0} depthTest={false} />
               </Plane>
             </Billboard>
@@ -263,13 +283,13 @@ const Flower = ({
               ref={interactionPlaneRef}
               name={'Interaction Billboard'}
               visible={false}
-              position={[0, 0, -lz / 2]}
+              position={[0, 0, -height / 2]}
             >
               <Plane
                 ref={interactionMeshRef}
                 renderOrder={3}
                 name={name + ' plane'}
-                args={[lx / 2, lz * 2]}
+                args={[width / 2, height * 2]}
                 rotation={[orthographic ? HALF_PI : 0, 0, 0]}
                 onContextMenu={(e) => {
                   selectMe(id, e);
@@ -311,14 +331,14 @@ const Flower = ({
                 name={'Selection highlight lines'}
                 userData={{ unintersectable: true }}
                 points={[
-                  [-lx / 2, -lz / 2, 0],
-                  [-lx / 2, lz / 2, 0],
-                  [-lx / 2, lz / 2, 0],
-                  [lx / 2, lz / 2, 0],
-                  [lx / 2, -lz / 2, 0],
-                  [lx / 2, lz / 2, 0],
-                  [lx / 2, -lz / 2, 0],
-                  [-lx / 2, -lz / 2, 0],
+                  [-width / 2, -height / 2, 0],
+                  [-width / 2, height / 2, 0],
+                  [-width / 2, height / 2, 0],
+                  [width / 2, height / 2, 0],
+                  [width / 2, -height / 2, 0],
+                  [width / 2, height / 2, 0],
+                  [width / 2, -height / 2, 0],
+                  [-width / 2, -height / 2, 0],
                 ]}
                 castShadow={false}
                 receiveShadow={false}
@@ -333,7 +353,7 @@ const Flower = ({
               <>
                 {/* move handle */}
                 <Sphere
-                  position={new Vector3(0, 0, -lz / 2)}
+                  position={new Vector3(0, 0, -height / 2)}
                   args={[handleSize, 6, 6, 0, Math.PI]}
                   name={MoveHandleType.Default}
                   renderOrder={2}
@@ -369,7 +389,7 @@ const Flower = ({
                 fontSize={20}
                 fontFace={'Times Roman'}
                 textHeight={0.2}
-                position={[0, 0, lz / 2 + 0.4]}
+                position={[0, 0, height / 2 + 0.4]}
               />
             )}
           </group>
