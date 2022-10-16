@@ -712,6 +712,50 @@ export const FoundationMenu = () => {
                 {i18n.t('foundationMenu.RemoveAllUnlockedTrees', lang)} ({counter.treeCount})
               </Menu.Item>
             )}
+
+            {counter.flowerCount > 0 && (
+              <Menu.Item
+                key={'remove-all-flowers-on-foundation'}
+                onClick={() => {
+                  Modal.confirm({
+                    title:
+                      i18n.t('foundationMenu.DoYouReallyWantToRemoveAllFlowersOnFoundation', lang) +
+                      ' (' +
+                      counter.flowerCount +
+                      ' ' +
+                      i18n.t('foundationMenu.Flowers', lang) +
+                      ')?',
+                    icon: <ExclamationCircleOutlined />,
+                    onOk: () => {
+                      if (foundation) {
+                        const removed = elements.filter(
+                          (e) => !e.locked && e.type === ObjectType.Flower && e.parentId === foundation.id,
+                        );
+                        removeAllChildElementsByType(foundation.id, ObjectType.Flower);
+                        const removedElements = JSON.parse(JSON.stringify(removed));
+                        const undoableRemoveAllFlowerChildren = {
+                          name: 'Remove All Flowers on Foundation',
+                          timestamp: Date.now(),
+                          parentId: foundation.id,
+                          removedElements: removedElements,
+                          undo: () => {
+                            setCommonStore((state) => {
+                              state.elements.push(...undoableRemoveAllFlowerChildren.removedElements);
+                            });
+                          },
+                          redo: () => {
+                            removeAllChildElementsByType(undoableRemoveAllFlowerChildren.parentId, ObjectType.Flower);
+                          },
+                        } as UndoableRemoveAllChildren;
+                        addUndoable(undoableRemoveAllFlowerChildren);
+                      }
+                    },
+                  });
+                }}
+              >
+                {i18n.t('foundationMenu.RemoveAllUnlockedFlowers', lang)} ({counter.flowerCount})
+              </Menu.Item>
+            )}
           </SubMenu>
         )}
 

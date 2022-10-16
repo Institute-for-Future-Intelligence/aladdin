@@ -8,6 +8,7 @@ export class ElementCounter {
   doorCount: number = 0;
   humanCount: number = 0;
   treeCount: number = 0;
+  flowerCount: number = 0;
   polygonCount: number = 0;
   sensorCount: number = 0;
   solarPanelCount: number = 0;
@@ -24,6 +25,7 @@ export class ElementCounter {
       this.doorCount > 0 ||
       this.humanCount > 0 ||
       this.treeCount > 0 ||
+      this.flowerCount > 0 ||
       this.polygonCount > 0 ||
       this.sensorCount > 0 ||
       this.solarPanelCount > 0 ||

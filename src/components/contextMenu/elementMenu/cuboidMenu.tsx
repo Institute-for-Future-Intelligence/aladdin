@@ -317,6 +317,51 @@ export const CuboidMenu = () => {
                 {i18n.t('cuboidMenu.Trees', lang)})
               </Menu.Item>
             )}
+
+            {counter.flowerCount > 0 && (
+              <Menu.Item
+                key={'remove-all-flowers-on-cuboid'}
+                onClick={() => {
+                  Modal.confirm({
+                    title:
+                      i18n.t('cuboidMenu.DoYouReallyWantToRemoveAllFlowersOnCuboid', lang) +
+                      ' (' +
+                      counter.flowerCount +
+                      ' ' +
+                      i18n.t('cuboidMenu.Flowers', lang) +
+                      ')?',
+                    icon: <ExclamationCircleOutlined />,
+                    onOk: () => {
+                      if (cuboid) {
+                        const removed = elements.filter(
+                          (e) => !e.locked && e.type === ObjectType.Flower && e.parentId === cuboid.id,
+                        );
+                        removeAllChildElementsByType(cuboid.id, ObjectType.Flower);
+                        const removedElements = JSON.parse(JSON.stringify(removed));
+                        const undoableRemoveAllFlowerChildren = {
+                          name: 'Remove All Flowers on Cuboid',
+                          timestamp: Date.now(),
+                          parentId: cuboid.id,
+                          removedElements: removedElements,
+                          undo: () => {
+                            setCommonStore((state) => {
+                              state.elements.push(...undoableRemoveAllFlowerChildren.removedElements);
+                            });
+                          },
+                          redo: () => {
+                            removeAllChildElementsByType(undoableRemoveAllFlowerChildren.parentId, ObjectType.Flower);
+                          },
+                        } as UndoableRemoveAllChildren;
+                        addUndoable(undoableRemoveAllFlowerChildren);
+                      }
+                    },
+                  });
+                }}
+              >
+                {i18n.t('cuboidMenu.RemoveAllUnlockedFlowers', lang)} ({counter.flowerCount}{' '}
+                {i18n.t('cuboidMenu.Flowers', lang)})
+              </Menu.Item>
+            )}
           </SubMenu>
         )}
 

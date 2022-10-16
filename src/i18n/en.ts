@@ -473,6 +473,7 @@ export const i18n_en = {
       RemoveAllUnlockedPolygons: 'Remove All Unlocked Polygons',
       RemoveAllUnlockedHumans: 'Remove All Unlocked Humans',
       RemoveAllUnlockedTrees: 'Remove All Unlocked Trees',
+      RemoveAllUnlockedFlowers: 'Remove All Unlocked Flowers',
       Racks: 'Racks',
       Texture01: 'Texture 1',
       Texture02: 'Texture 2',
@@ -514,6 +515,9 @@ export const i18n_en = {
       Trees: 'Trees',
       DoYouReallyWantToRemoveAllTreesOnFoundation:
         'Do you really want to remove all the trees on this foundation that are not locked',
+      Flowers: 'Flowers',
+      DoYouReallyWantToRemoveAllFlowersOnFoundation:
+        'Do you really want to remove all the flowers on this foundation that are not locked',
       OnlyThisFoundation: 'Only This Foundation',
       AllConnectedFoundations: 'All Connected Foundations',
       AllFoundations: 'All Foundations',
@@ -574,6 +578,7 @@ export const i18n_en = {
       RemoveAllUnlockedPolygons: 'Remove All Unlocked Polygons',
       RemoveAllUnlockedHumans: 'Remove All Unlocked Humans',
       RemoveAllUnlockedTrees: 'Remove All Unlocked Trees',
+      RemoveAllUnlockedFlowers: 'Remove All Unlocked Flowers',
       Racks: 'Racks',
       SolarPanels: 'Solar Panels',
       DoYouReallyWantToRemoveAllSolarPanelsOnCuboid:
@@ -590,6 +595,9 @@ export const i18n_en = {
       Trees: 'Trees',
       DoYouReallyWantToRemoveAllTreesOnCuboid:
         'Do you really want to remove all the trees on this cuboid that are not locked',
+      Flowers: 'Flowers',
+      DoYouReallyWantToRemoveAllFlowersOnCuboid:
+        'Do you really want to remove all the flowers on this cuboid that are not locked',
       OnlyThisCuboid: 'Only This Cuboid',
       AllCuboids: 'All Cuboids',
       OnlyThisSide: 'Only This Side',

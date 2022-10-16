@@ -4672,6 +4672,9 @@ export const useStore = create<CommonStoreState>(
                     case ObjectType.Tree:
                       counter.treeCount++;
                       break;
+                    case ObjectType.Flower:
+                      counter.flowerCount++;
+                      break;
                     case ObjectType.Polygon:
                       counter.polygonCount++;
                       break;

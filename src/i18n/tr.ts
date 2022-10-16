@@ -473,6 +473,7 @@ export const i18n_tr = {
       RemoveAllUnlockedPolygons: 'Tüm Kilitlenmemiş Çokgenleri Kaldır',
       RemoveAllUnlockedHumans: 'Tüm Kilitlenmemiş İnsanları Kaldır',
       RemoveAllUnlockedTrees: 'Tüm Kilitlenmemiş Ağaçları Kaldır',
+      RemoveAllUnlockedFlowers: 'Remove All Unlocked Flowers',
       Racks: 'Çerçeveler',
       Texture01: 'Doku 1',
       Texture02: 'Doku 2',
@@ -514,6 +515,9 @@ export const i18n_tr = {
       Trees: 'Ağaçlar',
       DoYouReallyWantToRemoveAllTreesOnFoundation:
         '  Seçili temel üzerinde kilitli olmayan tüm ağaçları kaldırmak istiyor musunuz?',
+      Flowers: 'Flowers',
+      DoYouReallyWantToRemoveAllFlowersOnFoundation:
+        'Do you really want to remove all the flowers on this foundation that are not locked',
       OnlyThisFoundation: 'Sadece  Seçili Temel',
       AllConnectedFoundations: 'Tüm Bağlantılı Temeller',
       AllFoundations: 'Tüm Temeller',
@@ -574,6 +578,7 @@ export const i18n_tr = {
       RemoveAllUnlockedPolygons: 'Tüm Kilitlenmemiş Poligonları Kaldır',
       RemoveAllUnlockedHumans: 'Tüm Kilitlenmemiş Kişileri Kaldır',
       RemoveAllUnlockedTrees: 'Tüm Kilitlenmemiş Ağaçları Kaldır',
+      RemoveAllUnlockedFlowers: 'Remove All Unlocked Flowers',
       Racks: 'Çerçeveler',
       SolarPanels: 'Güneş Panelleri',
       DoYouReallyWantToRemoveAllSolarPanelsOnCuboid:
@@ -590,6 +595,9 @@ export const i18n_tr = {
       Trees: 'Ağaçlar',
       DoYouReallyWantToRemoveAllTreesOnCuboid:
         ' Seçili kübik üzerinde kilitlenmemiş tüm ağaçları kaldırmak istiyor musunuz?',
+      Flowers: 'Flowers',
+      DoYouReallyWantToRemoveAllFlowersOnCuboid:
+        'Do you really want to remove all the flowers on this cuboid that are not locked',
       OnlyThisCuboid: 'Sadece Seçili Kübik',
       AllCuboids: 'Tüm Kübikler',
       OnlyThisSide: 'Sadece Seçili Yüzey',
