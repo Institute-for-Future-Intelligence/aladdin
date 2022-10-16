@@ -1,8 +1,8 @@
 {
   "files": {
     "main.css": "/aladdin/static/css/main.c1ee157d.chunk.css",
-    "main.js": "/aladdin/static/js/main.90ada9d3.chunk.js",
-    "main.js.map": "/aladdin/static/js/main.90ada9d3.chunk.js.map",
+    "main.js": "/aladdin/static/js/main.75f8d4a2.chunk.js",
+    "main.js.map": "/aladdin/static/js/main.75f8d4a2.chunk.js.map",
     "runtime-main.js": "/aladdin/static/js/runtime-main.a8196082.js",
     "runtime-main.js.map": "/aladdin/static/js/runtime-main.a8196082.js.map",
     "static/css/2.447301e6.chunk.css": "/aladdin/static/css/2.447301e6.chunk.css",
@@ -33,6 +33,7 @@
     "static/media/cactus_combo_2.8b5298f8.png": "/aladdin/static/media/cactus_combo_2.8b5298f8.png",
     "static/media/cactus_combo_3.2627c12d.png": "/aladdin/static/media/cactus_combo_3.2627c12d.png",
     "static/media/cactus_combo_4.731b15b4.png": "/aladdin/static/media/cactus_combo_4.731b15b4.png",
+    "static/media/coconut.d38cdccd.png": "/aladdin/static/media/coconut.d38cdccd.png",
     "static/media/compass.ddc4aa38.obj": "/aladdin/static/media/compass.ddc4aa38.obj",
     "static/media/cottonwood.fd62a506.png": "/aladdin/static/media/cottonwood.fd62a506.png",
     "static/media/cottonwood_shed.9c316396.png": "/aladdin/static/media/cottonwood_shed.9c316396.png",
@@ -70,8 +71,8 @@
     "static/media/elm.acad800a.png": "/aladdin/static/media/elm.acad800a.png",
     "static/media/elm_shed.74f112de.png": "/aladdin/static/media/elm_shed.74f112de.png",
     "static/media/fan_palm.dd78413a.png": "/aladdin/static/media/fan_palm.dd78413a.png",
-    "static/media/forest-night.93a88a4d.jpg": "/aladdin/static/media/forest-night.93a88a4d.jpg",
-    "static/media/forest.2bee647e.jpg": "/aladdin/static/media/forest.2bee647e.jpg",
+    "static/media/forest-night.17456c1a.jpg": "/aladdin/static/media/forest-night.17456c1a.jpg",
+    "static/media/forest.7e47e4d2.jpg": "/aladdin/static/media/forest.7e47e4d2.jpg",
     "static/media/foundation_01.bda6fc00.png": "/aladdin/static/media/foundation_01.bda6fc00.png",
     "static/media/foundation_02.a1240091.png": "/aladdin/static/media/foundation_02.a1240091.png",
     "static/media/foundation_03.6be5f733.png": "/aladdin/static/media/foundation_03.6be5f733.png",
@@ -198,6 +199,6 @@
     "static/css/2.447301e6.chunk.css",
     "static/js/2.f58ca23e.chunk.js",
     "static/css/main.c1ee157d.chunk.css",
-    "static/js/main.90ada9d3.chunk.js"
+    "static/js/main.75f8d4a2.chunk.js"
   ]
 }
