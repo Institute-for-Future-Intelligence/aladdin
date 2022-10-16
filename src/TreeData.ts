@@ -2,6 +2,7 @@
  * @Copyright 2021-2022. Institute for Future Intelligence, Inc.
  */
 
+import CoconutImage from './resources/coconut.png';
 import CottonwoodImage from './resources/cottonwood.png';
 import CottonwoodShedImage from './resources/cottonwood_shed.png';
 import DogwoodImage from './resources/dogwood.png';
@@ -31,6 +32,8 @@ export class TreeData {
 
   static fetchLabel(name: string, lang: {}): string {
     switch (name) {
+      case TreeType.Coconut:
+        return i18n.t('tree.Coconut', lang);
       case TreeType.Cottonwood:
         return i18n.t('tree.Cottonwood', lang);
       case TreeType.Dogwood:
@@ -56,18 +59,20 @@ export class TreeData {
 
   static fetchTheta(name: string): number {
     switch (name) {
-      case TreeType.Elm:
-        return 0.78 * Math.PI;
+      case TreeType.Coconut:
+        return 0.5 * Math.PI;
       case TreeType.Dogwood:
         return 0.6 * Math.PI;
+      case TreeType.Elm:
+        return 0.78 * Math.PI;
+      case TreeType.FanPalm:
+        return 0.52 * Math.PI;
       case TreeType.Magnolia:
         return 0.68 * Math.PI;
       case TreeType.Maple:
         return 0.65 * Math.PI;
       case TreeType.Oak:
         return 0.75 * Math.PI;
-      case TreeType.FanPalm:
-        return 0.5 * Math.PI;
       case TreeType.Spruce:
         return Math.PI;
       default:
@@ -79,6 +84,9 @@ export class TreeData {
   static fetchTextureImage(name: string, month: number, latitude: number) {
     let textureImg;
     switch (name) {
+      case TreeType.Coconut:
+        textureImg = CoconutImage;
+        break;
       case TreeType.Cottonwood:
         textureImg = (latitude > 0 ? month < 4 || month > 10 : month >= 4 && month <= 10)
           ? CottonwoodShedImage
@@ -91,6 +99,9 @@ export class TreeData {
         break;
       case TreeType.Elm:
         textureImg = (latitude > 0 ? month < 4 || month > 10 : month >= 4 && month <= 10) ? ElmShedImage : ElmImage;
+        break;
+      case TreeType.FanPalm:
+        textureImg = FanPalmImage;
         break;
       case TreeType.Linden:
         textureImg = (latitude > 0 ? month < 4 || month > 10 : month >= 4 && month <= 10)
@@ -126,9 +137,6 @@ export class TreeData {
         break;
       case TreeType.Oak:
         textureImg = (latitude > 0 ? month < 4 || month > 10 : month >= 4 && month <= 10) ? OakShedImage : OakImage;
-        break;
-      case TreeType.FanPalm:
-        textureImg = FanPalmImage;
         break;
       case TreeType.Spruce:
         textureImg = SpruceImage;

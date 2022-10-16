@@ -1127,6 +1127,7 @@ export const i18n_zh_tw = {
     },
 
     tree: {
+      Coconut: '椰子樹',
       Cottonwood: '白楊',
       Dogwood: '茱萸',
       Elm: '榆樹',

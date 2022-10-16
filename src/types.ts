@@ -327,6 +327,7 @@ export enum Discretization {
 }
 
 export enum TreeType {
+  Coconut = 'Coconut',
   Cottonwood = 'Cottonwood',
   Dogwood = 'Dogwood',
   Elm = 'Elm',

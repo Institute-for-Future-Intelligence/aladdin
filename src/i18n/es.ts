@@ -1144,6 +1144,7 @@ export const i18n_es = {
     },
 
     tree: {
+      Coconut: 'Coconut',
       Cottonwood: 'Álamo',
       Dogwood: 'Cerezo silvestre',
       Elm: 'Olmo',
