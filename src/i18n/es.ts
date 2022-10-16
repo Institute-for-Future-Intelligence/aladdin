@@ -381,10 +381,7 @@ export const i18n_es = {
       residentialBuildingsSubMenu: 'Residential Buildings',
       residentialBuildingExamples: {
         DutchColonialHouse: 'Dutch Colonial House',
-        Greenhouse: 'Greenhouse',
         Solarium: 'Solarium',
-        Pavilion: 'Pavilion in a Park',
-        OceanFront: 'Ocean Front',
         Church: 'Church',
         AdobeTaosHouse: 'Adobe Taos House',
         BarnStyleHouse: 'Barn Style House',
@@ -399,6 +396,13 @@ export const i18n_es = {
       urbanPlanningSubMenu: 'Urban Planning',
       urbanPlanningExamples: {
         Heatmap1: 'Heatmap',
+      },
+      otherBuildingsSubMenu: 'Other Buildings',
+      otherBuildingExamples: {
+        Greenhouse: 'Greenhouse',
+        Pavilion: 'Pavilion in a Park',
+        OceanFront: 'Ocean Front',
+        EgyptianPyramids: 'Egyptian Pyramids',
       },
 
       artificialIntelligenceSubMenu: 'Artificial Intelligence',

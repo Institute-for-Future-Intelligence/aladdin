@@ -381,10 +381,7 @@ export const i18n_tr = {
       residentialBuildingsSubMenu: 'Konut inşaatları',
       residentialBuildingExamples: {
         DutchColonialHouse: 'Flemenk Koloni Evi',
-        Greenhouse: 'Sera',
         Solarium: 'Solaryum',
-        Pavilion: 'Park Kamelyası',
-        OceanFront: 'Ocean Front',
         Church: 'Kilise',
         AdobeTaosHouse: 'Adobe Taos House',
         BarnStyleHouse: 'Çiftlik Evi',
@@ -399,6 +396,13 @@ export const i18n_tr = {
       urbanPlanningSubMenu: 'Şehir Planlaması',
       urbanPlanningExamples: {
         Heatmap1: 'Isı Haritası',
+      },
+      otherBuildingsSubMenu: 'Other Buildings',
+      otherBuildingExamples: {
+        Greenhouse: 'Sera',
+        Pavilion: 'Park Kamelyası',
+        OceanFront: 'Ocean Front',
+        EgyptianPyramids: 'Egyptian Pyramids',
       },
 
       artificialIntelligenceSubMenu: 'Yapay Zeka',

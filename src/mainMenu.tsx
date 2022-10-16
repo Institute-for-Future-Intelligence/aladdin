@@ -17,6 +17,7 @@ import solar_trackers from './examples/solar_trackers.json';
 import all_roof_types from './examples/all_roof_types.json';
 import cape_cod_with_shed_dormer from './examples/cape_cod_with_shed_dormer.json';
 import adobe_taos_house from './examples/adobe_taos_house.json';
+import egyptian_pyramids from './examples/egyptian_pyramids.json';
 import barn_house from './examples/barn_house.json';
 import greenhouse from './examples/greenhouse.json';
 import solarium from './examples/solarium.json';
@@ -427,6 +428,9 @@ const MainMenu = ({ viewOnly, set2DView, resetView, zoomView, canvas }: MainMenu
         break;
       case 'adobe_taos_house':
         input = adobe_taos_house;
+        break;
+      case 'egyptian_pyramids':
+        input = egyptian_pyramids;
         break;
       case 'barn_house':
         input = barn_house;
@@ -2066,17 +2070,8 @@ const MainMenu = ({ viewOnly, set2DView, resetView, zoomView, canvas }: MainMenu
             <Menu.Item key="dutch_colonial_house" onClick={loadFile}>
               {i18n.t('menu.residentialBuildingExamples.DutchColonialHouse', lang)}
             </Menu.Item>
-            <Menu.Item key="greenhouse" onClick={loadFile}>
-              {i18n.t('menu.residentialBuildingExamples.Greenhouse', lang)}
-            </Menu.Item>
             <Menu.Item key="solarium" onClick={loadFile}>
               {i18n.t('menu.residentialBuildingExamples.Solarium', lang)}
-            </Menu.Item>
-            <Menu.Item key="pavilion" onClick={loadFile}>
-              {i18n.t('menu.residentialBuildingExamples.Pavilion', lang)}
-            </Menu.Item>
-            <Menu.Item key="ocean_front" onClick={loadFile}>
-              {i18n.t('menu.residentialBuildingExamples.OceanFront', lang)}
             </Menu.Item>
             <Menu.Item key="church_01" onClick={loadFile}>
               {i18n.t('menu.residentialBuildingExamples.Church', lang)}
@@ -2100,6 +2095,20 @@ const MainMenu = ({ viewOnly, set2DView, resetView, zoomView, canvas }: MainMenu
             </Menu.Item>
             <Menu.Item key="mescalero_apache_school" onClick={loadFile}>
               {i18n.t('menu.commercialBuildingExamples.MescaleroApacheSchoolNewMexico', lang)}
+            </Menu.Item>
+          </SubMenu>
+          <SubMenu key={'other_buildings'} title={i18n.t('menu.otherBuildingsSubMenu', lang)}>
+            <Menu.Item key="greenhouse" onClick={loadFile}>
+              {i18n.t('menu.otherBuildingExamples.Greenhouse', lang)}
+            </Menu.Item>
+            <Menu.Item key="pavilion" onClick={loadFile}>
+              {i18n.t('menu.otherBuildingExamples.Pavilion', lang)}
+            </Menu.Item>
+            <Menu.Item key="ocean_front" onClick={loadFile}>
+              {i18n.t('menu.otherBuildingExamples.OceanFront', lang)}
+            </Menu.Item>
+            <Menu.Item key="egyptian_pyramids" onClick={loadFile}>
+              {i18n.t('menu.otherBuildingExamples.EgyptianPyramids', lang)}
             </Menu.Item>
           </SubMenu>
           <SubMenu key={'urban_planning'} title={i18n.t('menu.urbanPlanningSubMenu', lang)}>

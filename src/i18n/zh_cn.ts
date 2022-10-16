@@ -378,10 +378,7 @@ export const i18n_zh_cn = {
       residentialBuildingsSubMenu: '住宅建筑',
       residentialBuildingExamples: {
         DutchColonialHouse: '荷兰殖民地风格的住宅',
-        Greenhouse: '温室',
         Solarium: '有日光浴室的房子',
-        Pavilion: '公园的亭子',
-        OceanFront: '海边',
         Church: '教堂',
         AdobeTaosHouse: '陶斯土坯房',
         BarnStyleHouse: '谷仓式风格的住宅',
@@ -396,6 +393,13 @@ export const i18n_zh_cn = {
       urbanPlanningSubMenu: '城市规划',
       urbanPlanningExamples: {
         Heatmap1: '热图例一',
+      },
+      otherBuildingsSubMenu: '其它建筑',
+      otherBuildingExamples: {
+        Greenhouse: '温室',
+        Pavilion: '公园的亭子',
+        OceanFront: '海边',
+        EgyptianPyramids: '埃及金字塔',
       },
 
       artificialIntelligenceSubMenu: '人工智能',
