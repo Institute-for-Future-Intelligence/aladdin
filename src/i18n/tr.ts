@@ -365,7 +365,7 @@ export const i18n_tr = {
         SolarCanopyFormFactors: 'Solar Gölgelik Biçim Etkileri',
         SolarCanopyOverBleachers: 'Tirübün Üzeri Solar Gölgelik',
         SolarBusStop: 'Solar Otobüs Durağı',
-        SolarWallTesla: 'Tesla Solar Wall',
+        SolarFacadeTesla: 'Tesla Solar Façade',
         BuildingIntegratedPhotovoltaics: 'Building-Integrated Photovoltaics',
         Floatovoltaics: 'Floatovoltaics',
         Agrivoltaics: 'Agrivoltaics',

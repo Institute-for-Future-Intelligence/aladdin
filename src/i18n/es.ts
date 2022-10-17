@@ -365,7 +365,7 @@ export const i18n_es = {
         SolarCanopyFormFactors: 'Solar Canopy Form Factors',
         SolarCanopyOverBleachers: 'Solar Canopy Over Bleachers',
         SolarBusStop: 'Solar Bus Stop',
-        SolarWallTesla: 'Tesla Solar Wall',
+        SolarFacadeTesla: 'Tesla Solar Façade',
         BuildingIntegratedPhotovoltaics: 'Building-Integrated Photovoltaics',
         Floatovoltaics: 'Floatovoltaics',
         Agrivoltaics: 'Agrivoltaics',

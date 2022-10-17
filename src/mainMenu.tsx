@@ -46,7 +46,7 @@ import solar_canopy_form_factors from './examples/solar_canopy_form_factors.json
 import solar_canopy_over_bleachers from './examples/solar_canopy_over_bleachers.json';
 import solar_bus_stop from './examples/solar_bus_stop.json';
 import bipv_01 from './examples/bipv_01.json';
-import solar_wall_tesla from './examples/solar_wall_tesla.json';
+import solar_facade_tesla from './examples/solar_facade_tesla.json';
 import floatovoltaics from './examples/floatovoltaics.json';
 import agrivoltaics from './examples/agrivoltaics.json';
 import inter_row_spacing from './examples/inter_row_spacing.json';
@@ -304,8 +304,8 @@ const MainMenu = ({ viewOnly, set2DView, resetView, zoomView, canvas }: MainMenu
       case 'solar_bus_stop':
         input = solar_bus_stop;
         break;
-      case 'solar_wall_tesla':
-        input = solar_wall_tesla;
+      case 'solar_facade_tesla':
+        input = solar_facade_tesla;
         break;
       case 'bipv_01':
         input = bipv_01;
@@ -2031,8 +2031,8 @@ const MainMenu = ({ viewOnly, set2DView, resetView, zoomView, canvas }: MainMenu
             <Menu.Item key="solar_bus_stop" onClick={loadFile}>
               {i18n.t('menu.solarEnergyExamples.SolarBusStop', lang)}
             </Menu.Item>
-            <Menu.Item key="solar_wall_tesla" onClick={loadFile}>
-              {i18n.t('menu.solarEnergyExamples.SolarWallTesla', lang)}
+            <Menu.Item key="solar_facade_tesla" onClick={loadFile}>
+              {i18n.t('menu.solarEnergyExamples.SolarFacadeTesla', lang)}
             </Menu.Item>
             <Menu.Item key="bipv_01" onClick={loadFile}>
               {i18n.t('menu.solarEnergyExamples.BuildingIntegratedPhotovoltaics', lang)}
