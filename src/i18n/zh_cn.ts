@@ -377,6 +377,7 @@ export const i18n_zh_cn = {
       builtEnvironmentSubMenu: '建造环境',
       residentialBuildingsSubMenu: '住宅建筑',
       residentialBuildingExamples: {
+        ColonialHouse: '殖民地风格的住宅',
         DutchColonialHouse: '荷兰殖民地风格的住宅',
         Solarium: '有日光浴室的房子',
         Church: '教堂',
@@ -400,6 +401,7 @@ export const i18n_zh_cn = {
         Pavilion: '公园的亭子',
         OceanFront: '海边',
         EgyptianPyramids: '埃及金字塔',
+        MayanPyramid: '玛雅金字塔',
       },
 
       artificialIntelligenceSubMenu: '人工智能',

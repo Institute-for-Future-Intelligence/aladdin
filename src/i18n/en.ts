@@ -380,6 +380,7 @@ export const i18n_en = {
       builtEnvironmentSubMenu: 'Built Environment',
       residentialBuildingsSubMenu: 'Residential Buildings',
       residentialBuildingExamples: {
+        ColonialHouse: 'Colonial House',
         DutchColonialHouse: 'Dutch Colonial House',
         Solarium: 'Solarium',
         Church: 'Church',
@@ -403,6 +404,7 @@ export const i18n_en = {
         Pavilion: 'Pavilion in a Park',
         OceanFront: 'Ocean Front',
         EgyptianPyramids: 'Egyptian Pyramids',
+        MayanPyramid: 'Mayan Pyramid',
       },
 
       artificialIntelligenceSubMenu: 'Artificial Intelligence',

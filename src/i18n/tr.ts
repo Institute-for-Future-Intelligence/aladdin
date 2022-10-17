@@ -380,6 +380,7 @@ export const i18n_tr = {
       builtEnvironmentSubMenu: 'Yapılı Çevre',
       residentialBuildingsSubMenu: 'Konut inşaatları',
       residentialBuildingExamples: {
+        ColonialHouse: 'Colonial House',
         DutchColonialHouse: 'Flemenk Koloni Evi',
         Solarium: 'Solaryum',
         Church: 'Kilise',
@@ -403,6 +404,7 @@ export const i18n_tr = {
         Pavilion: 'Park Kamelyası',
         OceanFront: 'Ocean Front',
         EgyptianPyramids: 'Egyptian Pyramids',
+        MayanPyramid: 'Mayan Pyramid',
       },
 
       artificialIntelligenceSubMenu: 'Yapay Zeka',

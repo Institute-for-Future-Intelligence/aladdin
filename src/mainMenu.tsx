@@ -17,13 +17,10 @@ import solar_trackers from './examples/solar_trackers.json';
 import all_roof_types from './examples/all_roof_types.json';
 import cape_cod_with_shed_dormer from './examples/cape_cod_with_shed_dormer.json';
 import adobe_taos_house from './examples/adobe_taos_house.json';
-import egyptian_pyramids from './examples/egyptian_pyramids.json';
 import barn_house from './examples/barn_house.json';
-import greenhouse from './examples/greenhouse.json';
 import solarium from './examples/solarium.json';
-import pavilion from './examples/pavilion.json';
-import ocean_front from './examples/ocean_front.json';
 import church_01 from './examples/church_01.json';
+import colonial_house from './examples/colonial_house.json';
 import dutch_colonial_house from './examples/dutch_colonial_house.json';
 import gable_roof_vs_hip_roof from './examples/gable_roof_vs_hip_roof.json';
 import colonial_vs_saltbox from './examples/colonial_vs_saltbox.json';
@@ -32,6 +29,11 @@ import hotel_01 from './examples/hotel_01.json';
 import south_burlington_high_school from './examples/south_burlington_high_school.json';
 import mescalero_apache_school from './examples/mescalero_apache_school.json';
 import heatmap_01 from './examples/heatmap_01.json';
+import greenhouse from './examples/greenhouse.json';
+import pavilion from './examples/pavilion.json';
+import ocean_front from './examples/ocean_front.json';
+import egyptian_pyramids from './examples/egyptian_pyramids.json';
+import mayan_pyramid from './examples/mayan_pyramid.json';
 import vegetative_buffer_01 from './examples/vegetative_buffer_01.json';
 import effect_tilt_angle_solar_panel from './examples/effect_tilt_angle_solar_panel.json';
 import effect_azimuth_solar_panel from './examples/effect_azimuth_solar_panel.json';
@@ -408,6 +410,9 @@ const MainMenu = ({ viewOnly, set2DView, resetView, zoomView, canvas }: MainMenu
       case 'gambrel_roof_vs_mansard_roof':
         input = gambrel_roof_vs_mansard_roof;
         break;
+      case 'colonial_house':
+        input = colonial_house;
+        break;
       case 'dutch_colonial_house':
         input = dutch_colonial_house;
         break;
@@ -431,6 +436,9 @@ const MainMenu = ({ viewOnly, set2DView, resetView, zoomView, canvas }: MainMenu
         break;
       case 'egyptian_pyramids':
         input = egyptian_pyramids;
+        break;
+      case 'mayan_pyramid':
+        input = mayan_pyramid;
         break;
       case 'barn_house':
         input = barn_house;
@@ -2067,6 +2075,9 @@ const MainMenu = ({ viewOnly, set2DView, resetView, zoomView, canvas }: MainMenu
         {/* built environments */}
         <SubMenu key={'built-environment'} title={i18n.t('menu.builtEnvironmentSubMenu', lang)}>
           <SubMenu key={'residential_buildings'} title={i18n.t('menu.residentialBuildingsSubMenu', lang)}>
+            <Menu.Item key="colonial_house" onClick={loadFile}>
+              {i18n.t('menu.residentialBuildingExamples.ColonialHouse', lang)}
+            </Menu.Item>
             <Menu.Item key="dutch_colonial_house" onClick={loadFile}>
               {i18n.t('menu.residentialBuildingExamples.DutchColonialHouse', lang)}
             </Menu.Item>
@@ -2109,6 +2120,9 @@ const MainMenu = ({ viewOnly, set2DView, resetView, zoomView, canvas }: MainMenu
             </Menu.Item>
             <Menu.Item key="egyptian_pyramids" onClick={loadFile}>
               {i18n.t('menu.otherBuildingExamples.EgyptianPyramids', lang)}
+            </Menu.Item>
+            <Menu.Item key="mayan_pyramid" onClick={loadFile}>
+              {i18n.t('menu.otherBuildingExamples.MayanPyramid', lang)}
             </Menu.Item>
           </SubMenu>
           <SubMenu key={'urban_planning'} title={i18n.t('menu.urbanPlanningSubMenu', lang)}>
