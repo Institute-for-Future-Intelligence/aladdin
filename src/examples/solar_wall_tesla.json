@@ -1,0 +1,2184 @@
+{
+  "docid": "hJ6wizcPQjsYWD7xBaCu6R",
+  "time": "10/17/2022 01:44 pm",
+  "timestamp": 1666028690850,
+  "userid": "QWecNcxhyvP6j6sBN11hBsfZDau1",
+  "owner": null,
+  "email": null,
+  "world": {
+    "noAnimationForSolarPanelSimulation": false,
+    "latitude": 37.4924685,
+    "cspTimesPerHour": 4,
+    "timesPerHour": 4,
+    "noAnimationForSensorDataCollection": false,
+    "noAnimationForSolarUpdraftTowerSimulation": false,
+    "ground": {
+      "snowReflectionFactors": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "thermalDiffusivity": 0.05,
+      "albedo": 0.3
+    },
+    "sutGridCellSize": 1,
+    "longitude": -121.944697,
+    "airConvectiveCoefficient": 5,
+    "name": "default",
+    "highestTemperatureTimeInMinutes": 900,
+    "sutTimesPerHour": 4,
+    "diurnalTemperatureModel": 1,
+    "discretization": "Approximate",
+    "address": "45500 Fremont Blvd, Fremont, CA 94538, USA",
+    "noAnimationForHeatmapSimulation": false,
+    "solarPanelVisibilityGridCellSize": 0.2,
+    "solarRadiationHeatmapGridCellSize": 0.5,
+    "cspDaysPerYear": 4,
+    "pvGridCellSize": 0.5,
+    "airAttenuationCoefficient": 0.01,
+    "sutDaysPerYear": 4,
+    "date": "6/22/2022, 12:00:00 PM",
+    "cspGridCellSize": 0.5,
+    "dustLoss": 0.05,
+    "daysPerYear": 12
+  },
+  "elements": [
+    {
+      "type": "Foundation",
+      "cx": -0.08114032291986462,
+      "cy": 0.04294942268642887,
+      "cz": 0.05,
+      "lx": 77.18969112756628,
+      "ly": 25.114558892189873,
+      "lz": 0.1,
+      "normal": [
+        0,
+        0,
+        1
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "parentId": "Ground",
+      "selected": false,
+      "solarUpdraftTower": {},
+      "solarAbsorberPipe": {},
+      "solarPowerTower": {},
+      "id": "9VUxbWr6Hk1HaeGiLpEeqj",
+      "locked": false
+    },
+    {
+      "type": "Wall",
+      "cx": 16.394958493767938,
+      "cy": -6.958678279965962,
+      "cz": 0,
+      "lx": 34.5,
+      "ly": 0.3,
+      "lz": 20,
+      "relativeAngle": 0,
+      "leftPoint": [
+        -0.6550415062320631,
+        -7.358678279965961,
+        0.1
+      ],
+      "rightPoint": [
+        33.84495849376793,
+        -7.358678279965961,
+        0.1
+      ],
+      "leftJoints": [],
+      "rightJoints": [],
+      "textureType": "No Wall Texture",
+      "selected": false,
+      "lineWidth": 0.2,
+      "lineColor": "black",
+      "windows": [],
+      "showLabel": false,
+      "normal": [
+        0,
+        0,
+        1
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "parentId": "9VUxbWr6Hk1HaeGiLpEeqj",
+      "foundationId": "9VUxbWr6Hk1HaeGiLpEeqj",
+      "id": "8BJFAiWAksi5iXqqAXG3m7",
+      "wallStructure": "Default",
+      "opacity": 0
+    },
+    {
+      "type": "Solar Panel",
+      "pvModelName": "FS-497",
+      "trackerType": "None",
+      "relativeAzimuth": 0,
+      "tiltAngle": 0,
+      "orientation": "Landscape",
+      "drawSunBeam": false,
+      "poleHeight": 1,
+      "poleRadius": 0.05,
+      "poleSpacing": 3,
+      "cx": -0.272463768115942,
+      "cy": 0,
+      "cz": 0.445,
+      "lx": 15.6,
+      "ly": 1.2,
+      "lz": 0.046,
+      "showLabel": false,
+      "normal": [
+        0,
+        -1,
+        0
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "color": "#fff",
+      "parentType": "Wall",
+      "parentId": "8BJFAiWAksi5iXqqAXG3m7",
+      "foundationId": "9VUxbWr6Hk1HaeGiLpEeqj",
+      "id": "wGRXvcE2DsAaZztwb6HksP",
+      "selected": false
+    },
+    {
+      "type": "Human",
+      "name": "Jedi",
+      "cx": 25.350323157691225,
+      "cy": -8.982865067578267,
+      "cz": 0.05000000074505806,
+      "lx": 0.56,
+      "lz": 1.75,
+      "normal": [
+        0,
+        1,
+        0
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "parentId": "9VUxbWr6Hk1HaeGiLpEeqj",
+      "id": "iDRReqKwNSn3MdzCD9xntV",
+      "selected": false,
+      "ly": 0.42
+    },
+    {
+      "type": "Solar Panel",
+      "pvModelName": "FS-497",
+      "trackerType": "None",
+      "relativeAzimuth": 0,
+      "tiltAngle": 0,
+      "orientation": "Landscape",
+      "drawSunBeam": false,
+      "poleHeight": 1,
+      "poleRadius": 0.05,
+      "poleSpacing": 3,
+      "cx": -0.23768115942028983,
+      "cy": 0,
+      "cz": -0.0050000000000000044,
+      "lx": 6,
+      "ly": 4.8,
+      "lz": 0.046,
+      "showLabel": false,
+      "normal": [
+        0,
+        -1,
+        0
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "color": "#fff",
+      "parentType": "Wall",
+      "parentId": "8BJFAiWAksi5iXqqAXG3m7",
+      "foundationId": "9VUxbWr6Hk1HaeGiLpEeqj",
+      "id": "kDSDBXNMTiTKABtDtEoTPM",
+      "selected": false
+    },
+    {
+      "type": "Solar Panel",
+      "pvModelName": "FS-497",
+      "cx": -0.4463768115942027,
+      "cy": 2.960594732333751e-15,
+      "cz": 0.17517500000000008,
+      "lx": 3.5999999999999996,
+      "ly": 9.6,
+      "lz": 0.046,
+      "trackerType": "None",
+      "tiltAngle": 0,
+      "relativeAzimuth": 0,
+      "orientation": "Landscape",
+      "poleRadius": 0.05,
+      "poleHeight": 1,
+      "poleSpacing": 3,
+      "showLabel": false,
+      "normal": [
+        0,
+        -1,
+        0
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "parentType": "Wall",
+      "parentId": "8BJFAiWAksi5iXqqAXG3m7",
+      "foundationId": "9VUxbWr6Hk1HaeGiLpEeqj",
+      "id": "3R99UFMtSTu8MpSzhFBEzM",
+      "selected": false,
+      "color": "#fff"
+    },
+    {
+      "type": "Solar Panel",
+      "pvModelName": "FS-497",
+      "cx": -0.3768115942028986,
+      "cy": 0,
+      "cz": 0.055525000000000005,
+      "lx": 1.2,
+      "ly": 14.399999999999999,
+      "lz": 0.046,
+      "trackerType": "None",
+      "tiltAngle": 0,
+      "relativeAzimuth": 0,
+      "orientation": "Landscape",
+      "poleRadius": 0.05,
+      "poleHeight": 1,
+      "poleSpacing": 3,
+      "showLabel": false,
+      "normal": [
+        0,
+        -1,
+        0
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "parentType": "Wall",
+      "parentId": "8BJFAiWAksi5iXqqAXG3m7",
+      "foundationId": "9VUxbWr6Hk1HaeGiLpEeqj",
+      "id": "2nC5kmMxK27nhcbuLchKpX",
+      "selected": false,
+      "color": "#fff"
+    },
+    {
+      "type": "Solar Panel",
+      "pvModelName": "FS-497",
+      "cx": -0.24057971014492754,
+      "cy": 0,
+      "cz": 0.26534999999999986,
+      "lx": 6,
+      "ly": 3.5999999999999996,
+      "lz": 0.046,
+      "trackerType": "None",
+      "tiltAngle": 0,
+      "relativeAzimuth": 0,
+      "orientation": "Landscape",
+      "poleRadius": 0.05,
+      "poleHeight": 1,
+      "poleSpacing": 3,
+      "showLabel": false,
+      "normal": [
+        0,
+        -1,
+        0
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "parentType": "Wall",
+      "parentId": "8BJFAiWAksi5iXqqAXG3m7",
+      "foundationId": "9VUxbWr6Hk1HaeGiLpEeqj",
+      "id": "2f53rLJkYN28GAXqDH43oC",
+      "selected": false,
+      "color": "#fff"
+    },
+    {
+      "type": "Solar Panel",
+      "pvModelName": "FS-497",
+      "cx": -0.08115942028985497,
+      "cy": 0,
+      "cz": -0.03447500000000003,
+      "lx": 2.4,
+      "ly": 18,
+      "lz": 0.046,
+      "trackerType": "None",
+      "tiltAngle": 0,
+      "relativeAzimuth": 0,
+      "orientation": "Landscape",
+      "poleRadius": 0.05,
+      "poleHeight": 1,
+      "poleSpacing": 3,
+      "showLabel": false,
+      "normal": [
+        0,
+        -1,
+        0
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "parentType": "Wall",
+      "parentId": "8BJFAiWAksi5iXqqAXG3m7",
+      "foundationId": "9VUxbWr6Hk1HaeGiLpEeqj",
+      "id": "1CLg3vw3R6Mjckp2zLGRcx",
+      "selected": false,
+      "color": "#fff"
+    },
+    {
+      "type": "Solar Panel",
+      "pvModelName": "FS-497",
+      "cx": -0.23768115942028983,
+      "cy": 0,
+      "cz": -0.21465000000000006,
+      "lx": 8.4,
+      "ly": 3.5999999999999996,
+      "lz": 0.046,
+      "trackerType": "None",
+      "tiltAngle": 0,
+      "relativeAzimuth": 0,
+      "orientation": "Landscape",
+      "poleRadius": 0.05,
+      "poleHeight": 1,
+      "poleSpacing": 3,
+      "showLabel": false,
+      "normal": [
+        0,
+        -1,
+        0
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "parentType": "Wall",
+      "parentId": "8BJFAiWAksi5iXqqAXG3m7",
+      "foundationId": "9VUxbWr6Hk1HaeGiLpEeqj",
+      "id": "3EcpwWTaBMzQ2Wh6WUSfZ2",
+      "selected": false,
+      "color": "#fff"
+    },
+    {
+      "type": "Solar Panel",
+      "pvModelName": "FS-497",
+      "cx": -0.005797101449275342,
+      "cy": 0,
+      "cz": 0.44517500000000004,
+      "lx": 33.6,
+      "ly": 1.2,
+      "lz": 0.046,
+      "trackerType": "None",
+      "tiltAngle": 0,
+      "relativeAzimuth": 0,
+      "orientation": "Landscape",
+      "poleRadius": 0.05,
+      "poleHeight": 1,
+      "poleSpacing": 3,
+      "showLabel": false,
+      "normal": [
+        0,
+        -1,
+        0
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "parentType": "Wall",
+      "parentId": "7cDw6CDEimwyt2K7C9p2yW",
+      "foundationId": "9VUxbWr6Hk1HaeGiLpEeqj",
+      "id": "afQFwUz294V81V8ekAFzoy",
+      "selected": false
+    },
+    {
+      "type": "Solar Panel",
+      "pvModelName": "FS-497",
+      "cx": -0.38840579710144923,
+      "cy": 0,
+      "cz": 0.025875000000000446,
+      "lx": 4.8,
+      "ly": 13.2,
+      "lz": 0.046,
+      "trackerType": "None",
+      "tiltAngle": 0,
+      "relativeAzimuth": 0,
+      "orientation": "Landscape",
+      "poleRadius": 0.05,
+      "poleHeight": 1,
+      "poleSpacing": 3,
+      "showLabel": false,
+      "normal": [
+        0,
+        -1,
+        0
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "parentType": "Wall",
+      "parentId": "7cDw6CDEimwyt2K7C9p2yW",
+      "foundationId": "9VUxbWr6Hk1HaeGiLpEeqj",
+      "id": "rvr7kALWbgFepgQwhgLdmn",
+      "selected": false,
+      "color": "#fff"
+    },
+    {
+      "type": "Solar Panel",
+      "pvModelName": "FS-497",
+      "cx": -0.47536231884057967,
+      "cy": 2.960594732333751e-15,
+      "cz": -0.034299999999999733,
+      "lx": 1.2,
+      "ly": 18,
+      "lz": 0.046,
+      "trackerType": "None",
+      "tiltAngle": 0,
+      "relativeAzimuth": 0,
+      "orientation": "Landscape",
+      "poleRadius": 0.05,
+      "poleHeight": 1,
+      "poleSpacing": 3,
+      "showLabel": false,
+      "normal": [
+        0,
+        -1,
+        0
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "parentType": "Wall",
+      "parentId": "7cDw6CDEimwyt2K7C9p2yW",
+      "foundationId": "9VUxbWr6Hk1HaeGiLpEeqj",
+      "id": "h8Kaodh1qXkhqWggo4XUhx",
+      "selected": false,
+      "color": "#fff"
+    },
+    {
+      "type": "Solar Panel",
+      "pvModelName": "FS-497",
+      "cx": -0.21449275362318843,
+      "cy": 0,
+      "cz": 0.02570000000000001,
+      "lx": 4.8,
+      "ly": 13.199999999999998,
+      "lz": 0.046,
+      "trackerType": "None",
+      "tiltAngle": 0,
+      "relativeAzimuth": 0,
+      "orientation": "Landscape",
+      "poleRadius": 0.05,
+      "poleHeight": 1,
+      "poleSpacing": 3,
+      "showLabel": false,
+      "normal": [
+        0,
+        -1,
+        0
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "parentType": "Wall",
+      "parentId": "7cDw6CDEimwyt2K7C9p2yW",
+      "foundationId": "9VUxbWr6Hk1HaeGiLpEeqj",
+      "id": "gb2jcBuVudWuAzaQrnkX6y",
+      "selected": false,
+      "color": "#fff"
+    },
+    {
+      "type": "Solar Panel",
+      "pvModelName": "FS-497",
+      "cx": -0.30144927536231886,
+      "cy": 0,
+      "cz": -0.2143,
+      "lx": 1.2,
+      "ly": 3.599999999999999,
+      "lz": 0.046,
+      "trackerType": "None",
+      "tiltAngle": 0,
+      "relativeAzimuth": 0,
+      "orientation": "Portrait",
+      "poleRadius": 0.05,
+      "poleHeight": 1,
+      "poleSpacing": 3,
+      "showLabel": false,
+      "normal": [
+        0,
+        -1,
+        0
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "parentType": "Wall",
+      "parentId": "7cDw6CDEimwyt2K7C9p2yW",
+      "foundationId": "9VUxbWr6Hk1HaeGiLpEeqj",
+      "id": "vUqRVHfCe86GnXDtKSxaw8",
+      "selected": false,
+      "color": "#fff"
+    },
+    {
+      "type": "Solar Panel",
+      "pvModelName": "FS-497",
+      "cx": -0.127536231884058,
+      "cy": 0,
+      "cz": 0.05552500000000036,
+      "lx": 1.2,
+      "ly": 14.399999999999999,
+      "lz": 0.046,
+      "trackerType": "None",
+      "tiltAngle": 0,
+      "relativeAzimuth": 0,
+      "orientation": "Landscape",
+      "poleRadius": 0.05,
+      "poleHeight": 1,
+      "poleSpacing": 3,
+      "showLabel": false,
+      "normal": [
+        0,
+        -1,
+        0
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "parentType": "Wall",
+      "parentId": "7cDw6CDEimwyt2K7C9p2yW",
+      "foundationId": "9VUxbWr6Hk1HaeGiLpEeqj",
+      "id": "uSBaFrGbhmQkQMurd3uJ8K",
+      "selected": false,
+      "color": "#fff"
+    },
+    {
+      "type": "Solar Panel",
+      "pvModelName": "FS-497",
+      "cx": 0.01159420289855071,
+      "cy": 0,
+      "cz": 0.265525,
+      "lx": 6,
+      "ly": 3.5999999999999996,
+      "lz": 0.046,
+      "trackerType": "None",
+      "tiltAngle": 0,
+      "relativeAzimuth": 0,
+      "orientation": "Landscape",
+      "poleRadius": 0.05,
+      "poleHeight": 1,
+      "poleSpacing": 3,
+      "showLabel": false,
+      "normal": [
+        0,
+        -1,
+        0
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "parentType": "Wall",
+      "parentId": "7cDw6CDEimwyt2K7C9p2yW",
+      "foundationId": "9VUxbWr6Hk1HaeGiLpEeqj",
+      "id": "n1zXsXRnujYqMASe1WUKNR",
+      "selected": false
+    },
+    {
+      "type": "Solar Panel",
+      "pvModelName": "FS-497",
+      "cx": 0.11594202898550725,
+      "cy": -1.1842378929335004e-14,
+      "cz": 0.05535000000000023,
+      "lx": 1.2,
+      "ly": 14.399999999999999,
+      "lz": 0.046,
+      "trackerType": "None",
+      "tiltAngle": 0,
+      "relativeAzimuth": 0,
+      "orientation": "Landscape",
+      "poleRadius": 0.05,
+      "poleHeight": 1,
+      "poleSpacing": 3,
+      "showLabel": false,
+      "normal": [
+        0,
+        -1,
+        0
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "parentType": "Wall",
+      "parentId": "7cDw6CDEimwyt2K7C9p2yW",
+      "foundationId": "9VUxbWr6Hk1HaeGiLpEeqj",
+      "id": "1bjxTFMmzz4rPmQkK5vxos",
+      "selected": false,
+      "color": "#fff"
+    },
+    {
+      "type": "Solar Panel",
+      "pvModelName": "FS-497",
+      "cx": 0.011594202898550721,
+      "cy": 0,
+      "cz": 0.025,
+      "lx": 6,
+      "ly": 3.5999999999999996,
+      "lz": 0.046,
+      "trackerType": "None",
+      "tiltAngle": 0,
+      "relativeAzimuth": 0,
+      "orientation": "Landscape",
+      "poleRadius": 0.05,
+      "poleHeight": 1,
+      "poleSpacing": 3,
+      "showLabel": false,
+      "normal": [
+        0,
+        -1,
+        0
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "parentType": "Wall",
+      "parentId": "7cDw6CDEimwyt2K7C9p2yW",
+      "foundationId": "9VUxbWr6Hk1HaeGiLpEeqj",
+      "id": "kXtBHayvf3Tvd93XA15jDA",
+      "selected": false
+    },
+    {
+      "type": "Solar Panel",
+      "pvModelName": "FS-497",
+      "cx": -0.005797101449275342,
+      "cy": 0,
+      "cz": -0.21447500000000003,
+      "lx": 7.199999999999999,
+      "ly": 3.599999999999999,
+      "lz": 0.046,
+      "trackerType": "None",
+      "tiltAngle": 0,
+      "relativeAzimuth": 0,
+      "orientation": "Landscape",
+      "poleRadius": 0.05,
+      "poleHeight": 1,
+      "poleSpacing": 3,
+      "showLabel": false,
+      "normal": [
+        0,
+        -1,
+        0
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "parentType": "Wall",
+      "parentId": "7cDw6CDEimwyt2K7C9p2yW",
+      "foundationId": "9VUxbWr6Hk1HaeGiLpEeqj",
+      "id": "7g2C2UieAJmWoyUM62ZQ2a",
+      "selected": false,
+      "color": "#fff"
+    },
+    {
+      "type": "Wall",
+      "cx": -17.344845563783142,
+      "cy": -6.9427205539050725,
+      "cz": 0,
+      "lx": 34.5,
+      "ly": 0.3,
+      "lz": 20,
+      "leftJoints": [
+        "gPxD8gV5byhzgQKdBBgMTy"
+      ],
+      "rightJoints": [],
+      "leftPoint": [
+        -34.59484556378314,
+        -6.9427205539050725,
+        0.1
+      ],
+      "rightPoint": [
+        -0.09484556378314224,
+        -6.9427205539050725,
+        0.1
+      ],
+      "relativeAngle": 0,
+      "textureType": "No Wall Texture",
+      "normal": [
+        0,
+        0,
+        1
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "id": "7cDw6CDEimwyt2K7C9p2yW",
+      "parentId": "9VUxbWr6Hk1HaeGiLpEeqj",
+      "foundationId": "9VUxbWr6Hk1HaeGiLpEeqj",
+      "wallStructure": "Default",
+      "opacity": 0,
+      "selected": false,
+      "roofId": "sGiZvGvnHnyEYkatVrLiX7",
+      "leftRoofHeight": 20,
+      "rightRoofHeight": 20
+    },
+    {
+      "type": "Solar Panel",
+      "pvModelName": "FS-497",
+      "cx": 0.255072463768116,
+      "cy": 0,
+      "cz": 0.265,
+      "lx": 6,
+      "ly": 3.5999999999999996,
+      "lz": 0.046,
+      "trackerType": "None",
+      "tiltAngle": 0,
+      "relativeAzimuth": 0,
+      "orientation": "Landscape",
+      "poleRadius": 0.05,
+      "poleHeight": 1,
+      "poleSpacing": 3,
+      "showLabel": false,
+      "normal": [
+        0,
+        -1,
+        0
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "parentType": "Wall",
+      "parentId": "7cDw6CDEimwyt2K7C9p2yW",
+      "foundationId": "9VUxbWr6Hk1HaeGiLpEeqj",
+      "id": "wFqugJCgR6UNZP8KrBbWpt",
+      "selected": false,
+      "color": "#fff"
+    },
+    {
+      "type": "Solar Panel",
+      "pvModelName": "FS-497",
+      "cx": 0.35942028985507246,
+      "cy": -1.1842378929335004e-14,
+      "cz": 0.05535000000000023,
+      "lx": 1.2,
+      "ly": 14.399999999999999,
+      "lz": 0.046,
+      "trackerType": "None",
+      "tiltAngle": 0,
+      "relativeAzimuth": 0,
+      "orientation": "Landscape",
+      "poleRadius": 0.05,
+      "poleHeight": 1,
+      "poleSpacing": 3,
+      "showLabel": false,
+      "normal": [
+        0,
+        -1,
+        0
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "parentType": "Wall",
+      "parentId": "7cDw6CDEimwyt2K7C9p2yW",
+      "foundationId": "9VUxbWr6Hk1HaeGiLpEeqj",
+      "id": "4jWvM8cSUfsXRSp6TmJ2Gg",
+      "selected": false,
+      "color": "#fff"
+    },
+    {
+      "type": "Solar Panel",
+      "pvModelName": "FS-497",
+      "cx": 0.22028985507246376,
+      "cy": 0,
+      "cz": 0.025174999999999993,
+      "lx": 5.999999999999999,
+      "ly": 3.5999999999999996,
+      "lz": 0.046,
+      "trackerType": "None",
+      "tiltAngle": 0,
+      "relativeAzimuth": 0,
+      "orientation": "Landscape",
+      "poleRadius": 0.05,
+      "poleHeight": 1,
+      "poleSpacing": 3,
+      "showLabel": false,
+      "normal": [
+        0,
+        -1,
+        0
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "parentType": "Wall",
+      "parentId": "7cDw6CDEimwyt2K7C9p2yW",
+      "foundationId": "9VUxbWr6Hk1HaeGiLpEeqj",
+      "id": "toAqeegGXNvuKLhennKVzP",
+      "selected": false,
+      "color": "#fff"
+    },
+    {
+      "type": "Solar Panel",
+      "pvModelName": "FS-497",
+      "cx": 0.23768115942028983,
+      "cy": 0,
+      "cz": -0.21447500000000003,
+      "lx": 7.199999999999998,
+      "ly": 3.599999999999999,
+      "lz": 0.046,
+      "trackerType": "None",
+      "tiltAngle": 0,
+      "relativeAzimuth": 0,
+      "orientation": "Landscape",
+      "poleRadius": 0.05,
+      "poleHeight": 1,
+      "poleSpacing": 3,
+      "showLabel": false,
+      "normal": [
+        0,
+        -1,
+        0
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "parentType": "Wall",
+      "parentId": "7cDw6CDEimwyt2K7C9p2yW",
+      "foundationId": "9VUxbWr6Hk1HaeGiLpEeqj",
+      "id": "saA7QrRCNPT5wTdbHg5J4Z",
+      "selected": false,
+      "color": "#fff"
+    },
+    {
+      "type": "Solar Panel",
+      "pvModelName": "FS-497",
+      "cx": 0.44637681159420284,
+      "cy": -1.1842378929335004e-14,
+      "cz": 0.1753500000000002,
+      "lx": 2.4,
+      "ly": 9.6,
+      "lz": 0.046,
+      "trackerType": "None",
+      "tiltAngle": 0,
+      "relativeAzimuth": 0,
+      "orientation": "Landscape",
+      "poleRadius": 0.05,
+      "poleHeight": 1,
+      "poleSpacing": 3,
+      "showLabel": false,
+      "normal": [
+        0,
+        -1,
+        0
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "parentType": "Wall",
+      "parentId": "7cDw6CDEimwyt2K7C9p2yW",
+      "foundationId": "9VUxbWr6Hk1HaeGiLpEeqj",
+      "id": "1muJg2Kq7Xbc14wrpktdBf",
+      "selected": false,
+      "color": "#fff"
+    },
+    {
+      "type": "Solar Panel",
+      "pvModelName": "FS-497",
+      "cx": 0.42898550724637674,
+      "cy": 0,
+      "cz": -0.21447500000000003,
+      "lx": 3.5999999999999996,
+      "ly": 3.5999999999999996,
+      "lz": 0.046,
+      "trackerType": "None",
+      "tiltAngle": 0,
+      "relativeAzimuth": 0,
+      "orientation": "Landscape",
+      "poleRadius": 0.05,
+      "poleHeight": 1,
+      "poleSpacing": 3,
+      "showLabel": false,
+      "normal": [
+        0,
+        -1,
+        0
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "parentType": "Wall",
+      "parentId": "7cDw6CDEimwyt2K7C9p2yW",
+      "foundationId": "9VUxbWr6Hk1HaeGiLpEeqj",
+      "id": "d7sb6VcbzjaYN3rbM9eNEy",
+      "selected": false,
+      "color": "#fff"
+    },
+    {
+      "type": "Solar Panel",
+      "pvModelName": "FS-497",
+      "cx": -0.4463768115942027,
+      "cy": 0,
+      "cz": -0.21447500000000003,
+      "lx": 3.5999999999999996,
+      "ly": 3.5999999999999996,
+      "lz": 0.046,
+      "trackerType": "None",
+      "tiltAngle": 0,
+      "relativeAzimuth": 0,
+      "orientation": "Landscape",
+      "poleRadius": 0.05,
+      "poleHeight": 1,
+      "poleSpacing": 3,
+      "showLabel": false,
+      "normal": [
+        0,
+        -1,
+        0
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "parentType": "Wall",
+      "parentId": "8BJFAiWAksi5iXqqAXG3m7",
+      "foundationId": "9VUxbWr6Hk1HaeGiLpEeqj",
+      "id": "cog6ySXPfBh8EbJAcymKkb",
+      "selected": false,
+      "color": "#fff"
+    },
+    {
+      "type": "Wall",
+      "cx": -34.64742278189158,
+      "cy": 2.0786397230474662,
+      "cz": 0,
+      "lx": 18.04302697558712,
+      "ly": 0.3,
+      "lz": 20,
+      "relativeAngle": 4.718216995364466,
+      "leftPoint": [
+        -34.7,
+        11.100000000000001,
+        0
+      ],
+      "rightPoint": [
+        -34.59484556378315,
+        -6.942720553905069,
+        0
+      ],
+      "leftJoints": [
+        "doTJdkASNxSDmLf9c3Pegr"
+      ],
+      "rightJoints": [
+        "7cDw6CDEimwyt2K7C9p2yW"
+      ],
+      "textureType": "No Wall Texture",
+      "selected": false,
+      "lineWidth": 0.2,
+      "lineColor": "black",
+      "windows": [],
+      "showLabel": false,
+      "normal": [
+        0,
+        0,
+        1
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "parentId": "9VUxbWr6Hk1HaeGiLpEeqj",
+      "foundationId": "9VUxbWr6Hk1HaeGiLpEeqj",
+      "id": "gPxD8gV5byhzgQKdBBgMTy",
+      "roofId": "sGiZvGvnHnyEYkatVrLiX7",
+      "leftRoofHeight": 20,
+      "rightRoofHeight": 20
+    },
+    {
+      "type": "Wall",
+      "cx": -0.4000000000000057,
+      "cy": 11.099999999999998,
+      "cz": 0,
+      "lx": 68.6,
+      "ly": 0.3,
+      "lz": 20,
+      "leftJoints": [
+        "6iADGugkaqZHafimZHuePH"
+      ],
+      "rightJoints": [
+        "gPxD8gV5byhzgQKdBBgMTy"
+      ],
+      "leftPoint": [
+        33.89999999999999,
+        11.099999999999996,
+        0
+      ],
+      "rightPoint": [
+        -34.7,
+        11.100000000000001,
+        0
+      ],
+      "relativeAngle": 3.141592653589793,
+      "textureType": "No Wall Texture",
+      "normal": [
+        0,
+        0,
+        1
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "id": "doTJdkASNxSDmLf9c3Pegr",
+      "parentId": "9VUxbWr6Hk1HaeGiLpEeqj",
+      "foundationId": "9VUxbWr6Hk1HaeGiLpEeqj",
+      "selected": false,
+      "roofId": "sGiZvGvnHnyEYkatVrLiX7",
+      "leftRoofHeight": 20,
+      "rightRoofHeight": 20
+    },
+    {
+      "type": "Wall",
+      "cx": 33.791618329408095,
+      "cy": 2.180852804801064,
+      "cz": 0,
+      "lx": 17.839611349594517,
+      "ly": 0.3,
+      "lz": 20,
+      "leftJoints": [],
+      "rightJoints": [
+        "doTJdkASNxSDmLf9c3Pegr"
+      ],
+      "leftPoint": [
+        33.6832366588162,
+        -6.738294390397874,
+        0
+      ],
+      "rightPoint": [
+        33.9,
+        11.100000000000001,
+        0
+      ],
+      "relativeAngle": 1.5586453515816485,
+      "textureType": "No Wall Texture",
+      "normal": [
+        0,
+        0,
+        1
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "id": "6iADGugkaqZHafimZHuePH",
+      "parentId": "9VUxbWr6Hk1HaeGiLpEeqj",
+      "foundationId": "9VUxbWr6Hk1HaeGiLpEeqj",
+      "selected": false,
+      "roofId": "sGiZvGvnHnyEYkatVrLiX7",
+      "leftRoofHeight": 20,
+      "rightRoofHeight": 20
+    },
+    {
+      "type": "Window",
+      "cx": 0.22463768115942012,
+      "cy": 0.1,
+      "cz": 0.4,
+      "lx": 0.4782608695652177,
+      "ly": 0.3,
+      "lz": 0.09999999999999991,
+      "shutter": {
+        "showLeft": false,
+        "showRight": false,
+        "color": "grey",
+        "width": 0.5
+      },
+      "mullionWidth": 0.1,
+      "mullionSpacing": 1,
+      "selected": false,
+      "lineWidth": 0.2,
+      "lineColor": "black",
+      "showLabel": false,
+      "color": "#73D8FF",
+      "tint": "#73D8FF",
+      "normal": [
+        0,
+        0,
+        1
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "parentId": "8BJFAiWAksi5iXqqAXG3m7",
+      "foundationId": "9VUxbWr6Hk1HaeGiLpEeqj",
+      "id": "qQynJ4ikT8Jys2hyueRjYG"
+    },
+    {
+      "type": "Roof",
+      "cx": 0,
+      "cy": 0,
+      "cz": 0,
+      "lx": 0,
+      "ly": 0,
+      "lz": 20,
+      "overhang": 0.3,
+      "thickness": 0.2,
+      "roofType": "Pyramid",
+      "roofStructure": "Default",
+      "wallsId": [
+        "6iADGugkaqZHafimZHuePH",
+        "doTJdkASNxSDmLf9c3Pegr",
+        "gPxD8gV5byhzgQKdBBgMTy",
+        "7cDw6CDEimwyt2K7C9p2yW"
+      ],
+      "textureType": "No Roof Texture",
+      "color": "#999999",
+      "selected": false,
+      "lineWidth": 0.2,
+      "lineColor": "black",
+      "showLabel": false,
+      "normal": [
+        0,
+        0,
+        1
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "parentId": "9VUxbWr6Hk1HaeGiLpEeqj",
+      "foundationId": "9VUxbWr6Hk1HaeGiLpEeqj",
+      "id": "sGiZvGvnHnyEYkatVrLiX7"
+    },
+    {
+      "type": "Window",
+      "cx": 0.22463768115942045,
+      "cy": 0.1,
+      "cz": 0.25000000000000006,
+      "lx": 0.4782608695652177,
+      "ly": 0.3,
+      "lz": 0.09999999999999991,
+      "mullionWidth": 0.1,
+      "mullionSpacing": 1,
+      "color": "#73D8FF",
+      "normal": [
+        0,
+        0,
+        1
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "id": "mccZjkcyZRSmv2aXyHTktz",
+      "parentId": "8BJFAiWAksi5iXqqAXG3m7",
+      "foundationId": "9VUxbWr6Hk1HaeGiLpEeqj",
+      "tint": "#73D8FF",
+      "shutter": {
+        "showLeft": false,
+        "showRight": false,
+        "color": "grey",
+        "width": 0.5
+      },
+      "selected": false
+    },
+    {
+      "type": "Window",
+      "cx": 0.22463768115942045,
+      "cy": 0.1,
+      "cz": 0.10000000000000005,
+      "lx": 0.4782608695652177,
+      "ly": 0.3,
+      "lz": 0.09999999999999991,
+      "mullionWidth": 0.1,
+      "mullionSpacing": 1,
+      "color": "#73D8FF",
+      "normal": [
+        0,
+        0,
+        1
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "id": "3yJpyFUpQvxf3cXdP1w8aa",
+      "parentId": "8BJFAiWAksi5iXqqAXG3m7",
+      "foundationId": "9VUxbWr6Hk1HaeGiLpEeqj",
+      "tint": "#73D8FF",
+      "shutter": {
+        "showLeft": false,
+        "showRight": false,
+        "color": "grey",
+        "width": 0.5
+      },
+      "selected": false
+    },
+    {
+      "type": "Window",
+      "cx": 0.22463768115942045,
+      "cy": 0.1,
+      "cz": -0.049999999999999954,
+      "lx": 0.4782608695652177,
+      "ly": 0.3,
+      "lz": 0.09999999999999991,
+      "mullionWidth": 0.1,
+      "mullionSpacing": 1,
+      "color": "#73D8FF",
+      "normal": [
+        0,
+        0,
+        1
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "id": "2J19NXdCjyS9NvLDMsVFLm",
+      "parentId": "8BJFAiWAksi5iXqqAXG3m7",
+      "foundationId": "9VUxbWr6Hk1HaeGiLpEeqj",
+      "tint": "#73D8FF",
+      "shutter": {
+        "showLeft": false,
+        "showRight": false,
+        "color": "grey",
+        "width": 0.5
+      },
+      "selected": false
+    },
+    {
+      "type": "Window",
+      "cx": 0.22463768115942023,
+      "cy": 0.1,
+      "cz": -0.325,
+      "lx": 0.4782608695652175,
+      "ly": 0.3,
+      "lz": 0.3,
+      "mullionWidth": 0.1,
+      "mullionSpacing": 2,
+      "color": "#73D8FF",
+      "normal": [
+        0,
+        0,
+        1
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "id": "jd3R2J1QYzh9JuC9phYqVK",
+      "parentId": "8BJFAiWAksi5iXqqAXG3m7",
+      "foundationId": "9VUxbWr6Hk1HaeGiLpEeqj",
+      "tint": "#73D8FF",
+      "shutter": {
+        "showLeft": false,
+        "showRight": false,
+        "color": "grey",
+        "width": 0.5
+      },
+      "selected": false
+    },
+    {
+      "type": "Human",
+      "name": "Joey",
+      "cx": 27.81441583822325,
+      "cy": -8.684480883806081,
+      "cz": 0.05000000074505806,
+      "lx": 0.462,
+      "ly": 0.42,
+      "lz": 1.72,
+      "normal": [
+        0,
+        1,
+        0
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "parentId": "9VUxbWr6Hk1HaeGiLpEeqj",
+      "id": "fGLWCfzEic9oaSWyEnfb8i",
+      "selected": false
+    },
+    {
+      "type": "Solar Panel",
+      "pvModelName": "FS-497",
+      "cx": 0.011594202898550683,
+      "cy": -5.921189464667502e-15,
+      "cz": -0.44000000000000006,
+      "lx": 32.4,
+      "ly": 1.7999999999999998,
+      "lz": 0.046,
+      "trackerType": "None",
+      "tiltAngle": 0,
+      "relativeAzimuth": 0,
+      "orientation": "Landscape",
+      "poleRadius": 0.05,
+      "poleHeight": 1,
+      "poleSpacing": 3,
+      "showLabel": false,
+      "normal": [
+        0,
+        -1,
+        0
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "parentType": "Wall",
+      "parentId": "7cDw6CDEimwyt2K7C9p2yW",
+      "foundationId": "9VUxbWr6Hk1HaeGiLpEeqj",
+      "id": "n8XPZ6tgzkn2e4GV2EzSXQ",
+      "selected": false,
+      "color": "#fff"
+    },
+    {
+      "type": "Solar Panel",
+      "pvModelName": "FS-497",
+      "cx": -0.30724637681159417,
+      "cy": -5.921189464667502e-15,
+      "cz": -0.44000000000000006,
+      "lx": 13.2,
+      "ly": 1.7999999999999998,
+      "lz": 0.046,
+      "trackerType": "None",
+      "tiltAngle": 0,
+      "relativeAzimuth": 0,
+      "orientation": "Landscape",
+      "poleRadius": 0.05,
+      "poleHeight": 1,
+      "poleSpacing": 3,
+      "showLabel": false,
+      "normal": [
+        0,
+        -1,
+        0
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "parentType": "Wall",
+      "parentId": "8BJFAiWAksi5iXqqAXG3m7",
+      "foundationId": "9VUxbWr6Hk1HaeGiLpEeqj",
+      "id": "ekdf8pAm7pTKeoNrT8Tsaw",
+      "selected": false,
+      "color": "#fff"
+    },
+    {
+      "type": "Tree",
+      "name": "Coconut",
+      "cx": -37.29836295160464,
+      "cy": 6.720238350736238,
+      "cz": 0.05000000074505806,
+      "lx": 3.701437012134672,
+      "lz": 5.8375624371425605,
+      "normal": [
+        0,
+        1,
+        0
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "parentId": "9VUxbWr6Hk1HaeGiLpEeqj",
+      "id": "bieAeuuP4wJ8YMzJZ42ius",
+      "selected": false,
+      "evergreen": false
+    },
+    {
+      "type": "Tree",
+      "name": "Coconut",
+      "cx": -37.9321629780283,
+      "cy": -10.933241760578944,
+      "cz": 0.050000000745059836,
+      "lx": 3.701437012134672,
+      "lz": 5.8375624371425605,
+      "normal": [
+        0,
+        0,
+        1
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "parentId": "9VUxbWr6Hk1HaeGiLpEeqj",
+      "id": "1BTxRyn2gu6uRotoQP2TPa",
+      "selected": false
+    },
+    {
+      "type": "Tree",
+      "name": "Coconut",
+      "cx": 36.96142302143514,
+      "cy": -12.152019969014674,
+      "cz": 0.05000000074505451,
+      "lx": 3.701437012134672,
+      "lz": 5.8375624371425605,
+      "normal": [
+        0,
+        0,
+        1
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "parentId": "9VUxbWr6Hk1HaeGiLpEeqj",
+      "id": "45HuTdkFeGkSbAuGPLxP7t",
+      "selected": false
+    },
+    {
+      "type": "Tree",
+      "name": "Coconut",
+      "cx": 37.37981081167908,
+      "cy": 8.010864765015526,
+      "cz": 0.05000000074505451,
+      "lx": 3.701437012134672,
+      "lz": 5.8375624371425605,
+      "normal": [
+        0,
+        0,
+        1
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "parentId": "9VUxbWr6Hk1HaeGiLpEeqj",
+      "id": "gQacj5zT5LnDR4eGQGkjvL",
+      "selected": false
+    },
+    {
+      "type": "Flower",
+      "name": "Yellow Flower",
+      "cx": -33.070014097339524,
+      "cy": -12.014184058139655,
+      "cz": 0.05000000074505806,
+      "lx": 2,
+      "lz": 1.4,
+      "normal": [
+        0,
+        1,
+        0
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "parentId": "9VUxbWr6Hk1HaeGiLpEeqj",
+      "id": "44herDyCWMPfkecuxzDveC",
+      "selected": false
+    },
+    {
+      "type": "Flower",
+      "name": "Yellow Flower",
+      "cx": -29.070014097339524,
+      "cy": -12.014184058139655,
+      "cz": 0.05000000074505806,
+      "lx": 2,
+      "lz": 1.4,
+      "normal": [
+        0,
+        1,
+        0
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "parentId": "9VUxbWr6Hk1HaeGiLpEeqj",
+      "id": "rszf4xc23vy1UGSNbhXmY5",
+      "selected": false
+    },
+    {
+      "type": "Flower",
+      "name": "Yellow Flower",
+      "cx": -25.070014097339524,
+      "cy": -12.014184058139655,
+      "cz": 0.05000000074505806,
+      "lx": 2,
+      "lz": 1.4,
+      "normal": [
+        0,
+        1,
+        0
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "parentId": "9VUxbWr6Hk1HaeGiLpEeqj",
+      "id": "ofjKPSQMaxzNo8aj5NJMVH",
+      "selected": false
+    },
+    {
+      "type": "Flower",
+      "name": "Yellow Flower",
+      "cx": -21.070014097339524,
+      "cy": -12.014184058139655,
+      "cz": 0.05000000074505806,
+      "lx": 2,
+      "lz": 1.4,
+      "normal": [
+        0,
+        1,
+        0
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "parentId": "9VUxbWr6Hk1HaeGiLpEeqj",
+      "id": "4AuEZh1b7h55De3pDYPTcH",
+      "selected": false
+    },
+    {
+      "type": "Flower",
+      "name": "Yellow Flower",
+      "cx": -17.070014097339524,
+      "cy": -12.014184058139655,
+      "cz": 0.05000000074505806,
+      "lx": 2,
+      "lz": 1.4,
+      "normal": [
+        0,
+        1,
+        0
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "parentId": "9VUxbWr6Hk1HaeGiLpEeqj",
+      "id": "gE44hxvKz8A2pqVCHt38QK",
+      "selected": false
+    },
+    {
+      "type": "Flower",
+      "name": "Yellow Flower",
+      "cx": -13.070014097339524,
+      "cy": -12.014184058139655,
+      "cz": 0.05000000074505806,
+      "lx": 2,
+      "lz": 1.4,
+      "normal": [
+        0,
+        1,
+        0
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "parentId": "9VUxbWr6Hk1HaeGiLpEeqj",
+      "id": "6ru9x1ouAZH4kB1td6cPiZ",
+      "selected": false
+    },
+    {
+      "type": "Flower",
+      "name": "Yellow Flower",
+      "cx": -9.070014097339524,
+      "cy": -12.014184058139655,
+      "cz": 0.05000000074505806,
+      "lx": 2,
+      "lz": 1.4,
+      "normal": [
+        0,
+        1,
+        0
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "parentId": "9VUxbWr6Hk1HaeGiLpEeqj",
+      "id": "s9PfkfqXcdzpUQoh5PWX1e",
+      "selected": false
+    },
+    {
+      "type": "Flower",
+      "name": "Yellow Flower",
+      "cx": -5.070014097339524,
+      "cy": -12.014184058139655,
+      "cz": 0.05000000074505806,
+      "lx": 2,
+      "lz": 1.4,
+      "normal": [
+        0,
+        1,
+        0
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "parentId": "9VUxbWr6Hk1HaeGiLpEeqj",
+      "id": "g6aoLuFJtP7qCCXyFwRT8o",
+      "selected": false
+    },
+    {
+      "type": "Flower",
+      "name": "Yellow Flower",
+      "cx": -1.0700140973395236,
+      "cy": -12.014184058139655,
+      "cz": 0.05000000074505806,
+      "lx": 2,
+      "lz": 1.4,
+      "normal": [
+        0,
+        1,
+        0
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "parentId": "9VUxbWr6Hk1HaeGiLpEeqj",
+      "id": "e52gmLbFym4nm4BiqcC9a7",
+      "selected": false
+    },
+    {
+      "type": "Flower",
+      "name": "Yellow Flower",
+      "cx": 2.9299859026604764,
+      "cy": -12.014184058139655,
+      "cz": 0.05000000074505806,
+      "lx": 2,
+      "lz": 1.4,
+      "normal": [
+        0,
+        1,
+        0
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "parentId": "9VUxbWr6Hk1HaeGiLpEeqj",
+      "id": "sLhU1MMiuvuCH1AjF2rzyp",
+      "selected": false
+    },
+    {
+      "type": "Flower",
+      "name": "Yellow Flower",
+      "cx": 6.929985902660476,
+      "cy": -12.014184058139655,
+      "cz": 0.05000000074505806,
+      "lx": 2,
+      "lz": 1.4,
+      "normal": [
+        0,
+        1,
+        0
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "parentId": "9VUxbWr6Hk1HaeGiLpEeqj",
+      "id": "hbQ9AaB1SWutCLo9prJB4S",
+      "selected": false
+    },
+    {
+      "type": "Flower",
+      "name": "Yellow Flower",
+      "cx": 10.929985902660476,
+      "cy": -12.014184058139655,
+      "cz": 0.05000000074505806,
+      "lx": 2,
+      "lz": 1.4,
+      "normal": [
+        0,
+        1,
+        0
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "parentId": "9VUxbWr6Hk1HaeGiLpEeqj",
+      "id": "rG3gDytSpK5em4BYcjcVf3",
+      "selected": false
+    },
+    {
+      "type": "Flower",
+      "name": "Yellow Flower",
+      "cx": 14.929985902660476,
+      "cy": -12.014184058139655,
+      "cz": 0.05000000074505806,
+      "lx": 2,
+      "lz": 1.4,
+      "normal": [
+        0,
+        1,
+        0
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "parentId": "9VUxbWr6Hk1HaeGiLpEeqj",
+      "id": "qRVJ4p7qxrH8QZXv3C3xSq",
+      "selected": false
+    },
+    {
+      "type": "Flower",
+      "name": "Yellow Flower",
+      "cx": 18.929985902660476,
+      "cy": -12.014184058139655,
+      "cz": 0.05000000074505806,
+      "lx": 2,
+      "lz": 1.4,
+      "normal": [
+        0,
+        1,
+        0
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "parentId": "9VUxbWr6Hk1HaeGiLpEeqj",
+      "id": "5D4WfRaQPd8QMZgf77HB1U",
+      "selected": false
+    },
+    {
+      "type": "Flower",
+      "name": "Yellow Flower",
+      "cx": 22.929985902660476,
+      "cy": -12.014184058139655,
+      "cz": 0.05000000074505806,
+      "lx": 2,
+      "lz": 1.4,
+      "normal": [
+        0,
+        1,
+        0
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "parentId": "9VUxbWr6Hk1HaeGiLpEeqj",
+      "id": "axfzkjWd5zbeU4uqbFU8wz",
+      "selected": false
+    },
+    {
+      "type": "Flower",
+      "name": "Yellow Flower",
+      "cx": 26.929985902660476,
+      "cy": -12.014184058139655,
+      "cz": 0.05000000074505806,
+      "lx": 2,
+      "lz": 1.4,
+      "normal": [
+        0,
+        1,
+        0
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "parentId": "9VUxbWr6Hk1HaeGiLpEeqj",
+      "id": "b2k5acp17xbkNc8uD5yL5h",
+      "selected": false
+    },
+    {
+      "type": "Flower",
+      "name": "Yellow Flower",
+      "cx": 30.929985902660476,
+      "cy": -12.014184058139655,
+      "cz": 0.05000000074505806,
+      "lx": 2,
+      "lz": 1.4,
+      "normal": [
+        0,
+        1,
+        0
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "parentId": "9VUxbWr6Hk1HaeGiLpEeqj",
+      "id": "tHwJPb63PGh65imfHqRWpW",
+      "selected": false
+    }
+  ],
+  "view": {
+    "yearlyParabolicTroughYieldPanelX": 0,
+    "dailyParabolicTroughYieldPanelY": 0,
+    "diurnalTemperaturePanelX": 0,
+    "showInstructionPanel": true,
+    "axes": true,
+    "enableRotate": true,
+    "weatherPanelY": 0,
+    "cameraPosition": [
+      -38.730039050408976,
+      -55.95244093475121,
+      7.33988438580206
+    ],
+    "showYearlyUpdraftTowerYieldPanel": false,
+    "showSunAngles": false,
+    "dailyPvYieldPanelX": 0,
+    "dailyHeliostatYieldPanelY": 0,
+    "showDailyHeliostatYieldPanel": false,
+    "yearlyParabolicTroughYieldPanelY": 0,
+    "showDailyLightSensorPanel": false,
+    "solarRadiationHeatMapReflectionOnly": false,
+    "autoRotate": false,
+    "showWeatherPanel": false,
+    "yearlyParabolicDishYieldPanelX": 0,
+    "showYearlyParabolicDishYieldPanel": false,
+    "dailyParabolicDishYieldPanelX": 0,
+    "yearlyPvYieldPanelX": 0,
+    "mapType": "roadmap",
+    "visibilityResultsPanelX": 0,
+    "heliodonPanelY": 0,
+    "showYearlyParabolicTroughYieldPanel": false,
+    "showSiteInfoPanel": true,
+    "mapTilt": 0,
+    "dailyLightSensorPanelX": 0,
+    "yearlyLightSensorPanelY": 0,
+    "mapPanelX": 0,
+    "orthographic": false,
+    "showDailyPvYieldPanel": false,
+    "yearlyUpdraftTowerYieldPanelY": 0,
+    "showHeliodonPanel": false,
+    "showDailyFresnelReflectorYieldPanel": false,
+    "heliodon": false,
+    "showMapPanel": false,
+    "shadowEnabled": true,
+    "dailyFresnelReflectorYieldPanelY": 0,
+    "showYearlyFresnelReflectorYieldPanel": false,
+    "weatherPanelX": 0,
+    "yearlyHeliostatYieldPanelX": 0,
+    "dailyLightSensorPanelY": 0,
+    "showDiurnalTemperaturePanel": false,
+    "showDailyUpdraftTowerYieldPanel": false,
+    "mapPanelY": 0,
+    "dailyPvYieldPanelY": 0,
+    "showStickyNotePanel": false,
+    "yearlyUpdraftTowerYieldPanelX": 0,
+    "yearlyFresnelReflectorYieldPanelX": 0,
+    "groundColor": "#16A5A5",
+    "dailyHeliostatYieldPanelX": 0,
+    "stickyNotePanelX": 0,
+    "dailyUpdraftTowerYieldPanelY": 0,
+    "showElevationAngle": true,
+    "yearlyFresnelReflectorYieldPanelY": 0,
+    "showYearlyHeliostatYieldPanel": false,
+    "mapZoom": 18,
+    "panCenter": [
+      9.464535354553778,
+      10.716177174439782,
+      6.18734055084135
+    ],
+    "visibilityResultsPanelY": 0,
+    "showZenithAngle": true,
+    "stickyNotePanelY": 0,
+    "showDesignInfoPanel": true,
+    "yearlyPvYieldPanelY": 0,
+    "dailyUpdraftTowerYieldPanelX": 0,
+    "dailyParabolicDishYieldPanelY": 0,
+    "showYearlyLightSensorPanel": false,
+    "heliodonPanelX": 0,
+    "theme": "Default",
+    "yearlyLightSensorPanelShowDaylight": false,
+    "groundImage": false,
+    "showAzimuthAngle": true,
+    "ambientLightIntensity": 0.1,
+    "dailyParabolicTroughYieldPanelX": 0,
+    "mapWeatherStations": false,
+    "showDailyParabolicDishYieldPanel": false,
+    "yearlyParabolicDishYieldPanelY": 0,
+    "solarRadiationHeatMapMaxValue": 5,
+    "showYearlyPvYieldPanel": false,
+    "yearlyLightSensorPanelShowClearness": false,
+    "showSolarPanelVisibilityResultsPanel": false,
+    "diurnalTemperaturePanelY": 0,
+    "yearlyHeliostatYieldPanelY": 0,
+    "cameraZoom": 13.26840862578125,
+    "dailyFresnelReflectorYieldPanelX": 0,
+    "panCenter2D": [
+      21.857600787569247,
+      2.944578579032461,
+      0.0000029447094632855078
+    ],
+    "cameraPosition2D": [
+      21.857600787569247,
+      2.944428572365064,
+      150
+    ],
+    "yearlyLightSensorPanelX": 0,
+    "showDailyParabolicTroughYieldPanel": false,
+    "waterSurface": false,
+    "showEconomicsPanel": false,
+    "showEvolutionPanel": false,
+    "weatherPanelRect": {
+      "x": 0,
+      "y": 0,
+      "width": 500,
+      "height": 500
+    },
+    "diurnalTemperaturePanelRect": {
+      "x": 0,
+      "y": 0,
+      "width": 600,
+      "height": 400
+    },
+    "stickyNotePanelRect": {
+      "x": 0,
+      "y": 0,
+      "width": 400,
+      "height": 300
+    },
+    "dailyLightSensorPanelRect": {
+      "x": 0,
+      "y": 0,
+      "width": 600,
+      "height": 360
+    },
+    "yearlyLightSensorPanelRect": {
+      "x": 0,
+      "y": 0,
+      "width": 600,
+      "height": 500
+    },
+    "dailyPvYieldPanelRect": {
+      "x": 0,
+      "y": 0,
+      "width": 600,
+      "height": 400
+    },
+    "yearlyPvYieldPanelRect": {
+      "x": 0,
+      "y": 0,
+      "width": 600,
+      "height": 400
+    },
+    "visibilityResultsPanelRect": {
+      "x": 0,
+      "y": 0,
+      "width": 600,
+      "height": 470
+    },
+    "dailyParabolicTroughYieldPanelRect": {
+      "x": 0,
+      "y": 0,
+      "width": 600,
+      "height": 400
+    },
+    "yearlyParabolicTroughYieldPanelRect": {
+      "x": 0,
+      "y": 0,
+      "width": 600,
+      "height": 400
+    },
+    "dailyParabolicDishYieldPanelRect": {
+      "x": 0,
+      "y": 0,
+      "width": 600,
+      "height": 400
+    },
+    "yearlyParabolicDishYieldPanelRect": {
+      "x": 0,
+      "y": 0,
+      "width": 600,
+      "height": 400
+    },
+    "dailyFresnelReflectorYieldPanelRect": {
+      "x": 0,
+      "y": 0,
+      "width": 600,
+      "height": 400
+    },
+    "yearlyFresnelReflectorYieldPanelRect": {
+      "x": 0,
+      "y": 0,
+      "width": 600,
+      "height": 400
+    },
+    "dailyHeliostatYieldPanelRect": {
+      "x": 0,
+      "y": 0,
+      "width": 600,
+      "height": 400
+    },
+    "yearlyHeliostatYieldPanelRect": {
+      "x": 0,
+      "y": 0,
+      "width": 600,
+      "height": 400
+    },
+    "dailyUpdraftTowerYieldPanelRect": {
+      "x": 0,
+      "y": 0,
+      "width": 640,
+      "height": 550
+    },
+    "yearlyUpdraftTowerYieldPanelRect": {
+      "x": 0,
+      "y": 0,
+      "width": 600,
+      "height": 400
+    },
+    "evolutionPanelRect": {
+      "x": 0,
+      "y": 0,
+      "width": 640,
+      "height": 400
+    }
+  },
+  "evolutionMethod": 1,
+  "solarPanelArrayLayoutParams": {
+    "pvModelName": "SPR-X21-335-BLK",
+    "rowAxis": "Zonal",
+    "orientation": "Landscape",
+    "tiltAngle": 0,
+    "rowsPerRack": 1,
+    "interRowSpacing": 2,
+    "poleHeight": 1,
+    "poleSpacing": 3
+  },
+  "solarPanelArrayLayoutConstraints": {
+    "minimumInterRowSpacing": 2,
+    "maximumInterRowSpacing": 10,
+    "minimumRowsPerRack": 1,
+    "maximumRowsPerRack": 6,
+    "minimumTiltAngle": -1.5707963267948966,
+    "maximumTiltAngle": 1.5707963267948966,
+    "poleHeight": 1,
+    "poleSpacing": 5,
+    "orientation": "Landscape",
+    "pvModelName": "CS6X-355P-FG",
+    "rowAxis": "Zonal"
+  },
+  "evolutionaryAlgorithmState": {
+    "geneticAlgorithmParams": {
+      "problem": "Solar Panel Tilt Angle",
+      "objectiveFunctionType": 1,
+      "selectionMethod": 1,
+      "searchMethod": 1,
+      "populationSize": 20,
+      "maximumGenerations": 5,
+      "selectionRate": 0.5,
+      "crossoverRate": 0.5,
+      "mutationRate": 0.1,
+      "convergenceThreshold": 0.01,
+      "localSearchRadius": 0.1
+    },
+    "particleSwarmOptimizationParams": {
+      "problem": "Solar Panel Tilt Angle",
+      "objectiveFunctionType": 1,
+      "searchMethod": 1,
+      "swarmSize": 20,
+      "maximumSteps": 5,
+      "vmax": 0.01,
+      "inertia": 0.8,
+      "cognitiveCoefficient": 0.1,
+      "socialCoefficient": 0.1,
+      "convergenceThreshold": 0.01,
+      "localSearchRadius": 0.1
+    }
+  },
+  "economicsParams": {
+    "projectLifeSpan": 25,
+    "electricitySellingPrice": 0.25,
+    "operationalCostPerUnit": 0.15
+  },
+  "notes": []
+}
