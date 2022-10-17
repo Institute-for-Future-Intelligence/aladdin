@@ -369,7 +369,6 @@ const PyramidRoof = ({
     if (currentWallArray.length < 2) {
       return segments;
     }
-    let minHeight = 0;
 
     const overhangHeight = getOverhangHeight();
 
@@ -390,7 +389,6 @@ const PyramidRoof = ({
             rh = currentWallArray[currentWallArray.length - 1].lz;
           }
         }
-        minHeight = Math.max(minHeight, Math.max(lh, rh));
 
         const wallLeftPointAfterOverhang = RoofUtil.getIntersectionPoint(
           wallPointsAfterOffset[i].leftPoint,
@@ -464,11 +462,6 @@ const PyramidRoof = ({
       segments.push({ points, direction: -angle, length });
     }
 
-    setMinHeight(minHeight);
-    if (roofRelativeHeight !== null) {
-      setH(minHeight + roofRelativeHeight);
-      useStore.getState().updateRoofHeightById(id, minHeight + roofRelativeHeight);
-    }
     return segments;
   }, [updateRoofFlag, centerPoint, overhang, thickness]);
 
@@ -511,8 +504,10 @@ const PyramidRoof = ({
   useEffect(() => {
     if (!isFirstMountRef.current || useStore.getState().addedRoofId === id) {
       if (currentWallArray.length > 1) {
+        let minHeight = 0;
         for (let i = 0; i < currentWallArray.length; i++) {
           const { lh, rh } = getWallHeight(currentWallArray, i);
+          minHeight = Math.max(minHeight, Math.max(lh, rh));
           setCommonStore((state) => {
             for (const e of state.elements) {
               if (e.id === currentWallArray[i].id) {
@@ -524,11 +519,16 @@ const PyramidRoof = ({
             }
           });
         }
+        setMinHeight(minHeight);
+        if (roofRelativeHeight !== null) {
+          setH(minHeight + roofRelativeHeight);
+          useStore.getState().updateRoofHeightById(id, minHeight + roofRelativeHeight);
+        }
       } else {
         removeElementById(id, false);
       }
     }
-  }, [updateRoofFlag, h]);
+  }, [currentWallArray, updateRoofFlag, h]);
 
   const { grabRef, addUndoableMove, undoMove, setOldRefData } = useSolarPanelUndoable();
 

@@ -321,7 +321,6 @@ const HipRoof = ({
 
   const roofSegments = useMemo(() => {
     const segments: ConvexGeoProps[] = [];
-    let minHeight = 0;
     if (currentWallArray.length !== 4) {
       return segments;
     }
@@ -332,7 +331,6 @@ const HipRoof = ({
       const points: Vector3[] = [];
       const wall = currentWallArray[i];
       const { lh, rh } = getWallHeight(currentWallArray, i);
-      minHeight = Math.max(minHeight, Math.max(lh, rh));
 
       const wallLeftPointAfterOverhang = RoofUtil.getIntersectionPoint(
         wallPointsAfterOffset[i].leftPoint,
@@ -376,11 +374,6 @@ const HipRoof = ({
       const direction = -wall.relativeAngle;
       segments.push({ points, direction, length });
     }
-    setMinHeight(minHeight);
-    if (roofRelativeHeight !== null) {
-      setH(minHeight + roofRelativeHeight);
-      useStore.getState().updateRoofHeightById(id, minHeight + roofRelativeHeight);
-    }
     return segments;
   }, [currentWallArray, ridgeLeftPoint, ridgeRightPoint, h, overhang, thickness]);
 
@@ -393,8 +386,10 @@ const HipRoof = ({
   useEffect(() => {
     if (!isFirstMountRef.current) {
       if (currentWallArray.length === 4) {
+        let minHeight = 0;
         for (let i = 0; i < currentWallArray.length; i++) {
           const { lh, rh } = getWallHeight(currentWallArray, i);
+          minHeight = Math.max(minHeight, Math.max(lh, rh));
           setCommonStore((state) => {
             for (const e of state.elements) {
               if (e.id === currentWallArray[i].id) {
@@ -405,6 +400,11 @@ const HipRoof = ({
               }
             }
           });
+        }
+        setMinHeight(minHeight);
+        if (roofRelativeHeight !== null) {
+          setH(minHeight + roofRelativeHeight);
+          useStore.getState().updateRoofHeightById(id, minHeight + roofRelativeHeight);
         }
       } else {
         removeElementById(id, false);
