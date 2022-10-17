@@ -479,7 +479,11 @@ const Wall = ({
   };
 
   const collisionHelper = (args: number[]) => {
-    const [tMinX, tMaxX, tMinZ, tMaxZ, cMinX, cMaxX, cMinZ, cMaxZ] = args;
+    let [tMinX, tMaxX, tMinZ, tMaxZ, cMinX, cMaxX, cMinZ, cMaxZ] = args;
+    cMinX += 0.1;
+    cMaxX -= 0.1;
+    cMinZ += 0.1;
+    cMaxZ -= 0.1;
     if (
       ((cMinX >= tMinX && cMinX <= tMaxX) ||
         (cMaxX >= tMinX && cMaxX <= tMaxX) ||
