@@ -944,7 +944,7 @@ const Wall = ({
                         const c = new Vector3().addVectors(resizeAnchor, v.clone().divideScalar(2));
                         e.cz = c.z / lz;
                         e.ly = Math.abs(v.z);
-                        checkCollision(grabRef.current.id, ObjectType.SolarPanel, c, Math.abs(v.z), e.lx);
+                        checkCollision(grabRef.current.id, ObjectType.SolarPanel, c, e.lx, Math.abs(v.z));
                       } else if (
                         state.resizeHandleType === ResizeHandleType.Left ||
                         state.resizeHandleType === ResizeHandleType.Right
