@@ -28,7 +28,7 @@ export class FlowerData {
   static fetchSpread(name: string): number {
     switch (name) {
       case FlowerType.Bellflower:
-        return 0.4;
+        return 0.45;
       case FlowerType.Boxwood:
         return 1.6;
       case FlowerType.CactusCombo1:
@@ -67,7 +67,7 @@ export class FlowerData {
   static fetchHeight(name: string): number {
     switch (name) {
       case FlowerType.Bellflower:
-        return 0.8;
+        return 0.4;
       case FlowerType.Boxwood:
         return 1.44;
       case FlowerType.CactusCombo1:

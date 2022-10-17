@@ -1156,7 +1156,7 @@ export const i18n_zh_tw = {
     },
 
     flower: {
-      Bellflower: '風鈴草',
+      Bellflower: '鈴蘭',
       Boxwood: '黃楊',
       CactusCombo1: '仙人掌組合一',
       CactusCombo2: '仙人掌組合二',

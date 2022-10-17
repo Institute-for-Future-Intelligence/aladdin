@@ -121,19 +121,19 @@ const FlowerSelection = () => {
         {i18n.t('flower.CactusCombo4', lang)}
       </Option>
       <Option key={FlowerType.RedRose} value={FlowerType.RedRose}>
-        <img alt={FlowerType.RedRose} src={RedRoseImage} height={20} style={{ paddingRight: '28px' }} />{' '}
+        <img alt={FlowerType.RedRose} src={RedRoseImage} height={20} style={{ paddingRight: '26px' }} />{' '}
         {i18n.t('flower.RedRose', lang)}
       </Option>
       <Option key={FlowerType.Bellflower} value={FlowerType.Bellflower}>
-        <img alt={FlowerType.Bellflower} src={BellflowerImage} height={20} style={{ paddingRight: '28px' }} />{' '}
+        <img alt={FlowerType.Bellflower} src={BellflowerImage} height={20} style={{ paddingRight: '20px' }} />{' '}
         {i18n.t('flower.Bellflower', lang)}
       </Option>
       <Option key={FlowerType.Sunflower} value={FlowerType.Sunflower}>
-        <img alt={FlowerType.Sunflower} src={SunflowerImage} height={20} style={{ paddingRight: '33px' }} />{' '}
+        <img alt={FlowerType.Sunflower} src={SunflowerImage} height={20} style={{ paddingRight: '32px' }} />{' '}
         {i18n.t('flower.Sunflower', lang)}
       </Option>
       <Option key={FlowerType.Tulip} value={FlowerType.Tulip}>
-        <img alt={FlowerType.Tulip} src={TulipImage} height={20} style={{ paddingRight: '26px' }} />{' '}
+        <img alt={FlowerType.Tulip} src={TulipImage} height={20} style={{ paddingRight: '24px' }} />{' '}
         {i18n.t('flower.Tulip', lang)}
       </Option>
     </Select>
