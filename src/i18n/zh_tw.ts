@@ -380,6 +380,7 @@ export const i18n_zh_tw = {
       residentialBuildingExamples: {
         ColonialHouse: '殖民地風格的住宅',
         DutchColonialHouse: '荷蘭殖民地風格的住宅',
+        CapeCodHouseWithGarage: '有車庫的科德角風格的住宅',
         Solarium: '有日光浴室的房子',
         Church: '教堂',
         AdobeTaosHouse: '陶斯土坯房',

@@ -382,6 +382,7 @@ export const i18n_tr = {
       residentialBuildingExamples: {
         ColonialHouse: 'Colonial House',
         DutchColonialHouse: 'Flemenk Koloni Evi',
+        CapeCodHouseWithGarage: 'Cape Cod House with Garage',
         Solarium: 'Solaryum',
         Church: 'Kilise',
         AdobeTaosHouse: 'Adobe Taos House',

@@ -16,6 +16,7 @@ import solar_panels_over_canal from './examples/solar_panels_over_canal.json';
 import solar_trackers from './examples/solar_trackers.json';
 import all_roof_types from './examples/all_roof_types.json';
 import cape_cod_with_shed_dormer from './examples/cape_cod_with_shed_dormer.json';
+import cape_cod_with_garage from './examples/cape_cod_with_garage.json';
 import adobe_taos_house from './examples/adobe_taos_house.json';
 import barn_house from './examples/barn_house.json';
 import solarium from './examples/solarium.json';
@@ -415,6 +416,9 @@ const MainMenu = ({ viewOnly, set2DView, resetView, zoomView, canvas }: MainMenu
         break;
       case 'dutch_colonial_house':
         input = dutch_colonial_house;
+        break;
+      case 'cape_cod_with_garage':
+        input = cape_cod_with_garage;
         break;
       case 'greenhouse':
         input = greenhouse;
@@ -2080,6 +2084,9 @@ const MainMenu = ({ viewOnly, set2DView, resetView, zoomView, canvas }: MainMenu
             </Menu.Item>
             <Menu.Item key="dutch_colonial_house" onClick={loadFile}>
               {i18n.t('menu.residentialBuildingExamples.DutchColonialHouse', lang)}
+            </Menu.Item>
+            <Menu.Item key="cape_cod_with_garage" onClick={loadFile}>
+              {i18n.t('menu.residentialBuildingExamples.CapeCodHouseWithGarage', lang)}
             </Menu.Item>
             <Menu.Item key="solarium" onClick={loadFile}>
               {i18n.t('menu.residentialBuildingExamples.Solarium', lang)}
