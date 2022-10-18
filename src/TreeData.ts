@@ -16,6 +16,7 @@ import ElmSummerImage from './resources/elm_summer.png';
 import ElmFallImage from './resources/elm_fall.png';
 import ElmWinterImage from './resources/elm_winter.png';
 import FanPalmImage from './resources/fan_palm.png';
+import LindenSpringImage from './resources/linden_spring.png';
 import LindenSummerImage from './resources/linden_summer.png';
 import LindenFallImage from './resources/linden_fall.png';
 import LindenWinterImage from './resources/linden_winter.png';
@@ -183,7 +184,7 @@ export class TreeData {
           if (month >= 12 || month <= 3) {
             textureImg = LindenWinterImage;
           } else if (month > 3 && month <= 5) {
-            textureImg = LindenSummerImage;
+            textureImg = LindenSpringImage;
           } else if (month > 5 && month <= 9) {
             textureImg = LindenSummerImage;
           } else {
@@ -197,7 +198,7 @@ export class TreeData {
           } else if (month > 5 && month <= 9) {
             textureImg = LindenWinterImage;
           } else {
-            textureImg = LindenSummerImage;
+            textureImg = LindenSpringImage;
           }
         }
         break;
