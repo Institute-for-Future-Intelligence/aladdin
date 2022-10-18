@@ -99,6 +99,7 @@ import SolarPanelBlackLandscapeImage from '../resources/solar-panel-black-landsc
 import { RoofUtil } from 'src/views/roof/RoofUtil';
 import { FlowerModel } from '../models/FlowerModel';
 import { FlowerData } from '../FlowerData';
+import { TreeData } from '../TreeData';
 
 enableMapSet();
 
@@ -4100,7 +4101,7 @@ export const useStore = create<CommonStoreState>(
                 if (e.type === ObjectType.Tree && e.id === id) {
                   const tree = e as TreeModel;
                   tree.name = name;
-                  tree.evergreen = name === TreeType.Pine || name === TreeType.Spruce;
+                  tree.evergreen = TreeData.isEvergreen(name);
                   break;
                 }
               }

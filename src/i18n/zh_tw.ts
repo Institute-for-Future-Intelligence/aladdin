@@ -1142,13 +1142,13 @@ export const i18n_zh_tw = {
     },
 
     tree: {
+      Apple: '蘋果樹',
       Coconut: '椰子樹',
-      Cottonwood: '白楊',
       Dogwood: '茱萸',
       Elm: '榆樹',
       FanPalm: '扇葉棕櫚',
       Linden: '菩提',
-      Magnolia: '木蘭',
+      Magnolia: '玉蘭',
       Maple: '楓樹',
       Oak: '橡樹',
       Pine: '松樹',

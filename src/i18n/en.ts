@@ -1161,8 +1161,8 @@ export const i18n_en = {
     },
 
     tree: {
+      Apple: 'Apple',
       Coconut: 'Coconut',
-      Cottonwood: 'Cottonwood',
       Dogwood: 'Dogwood',
       Elm: 'Elm',
       FanPalm: 'Fan Palm',

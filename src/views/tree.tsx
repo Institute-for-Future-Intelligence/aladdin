@@ -285,18 +285,7 @@ const Tree = ({
             </Billboard>
 
             {/* simulation model. use double side as some rays may intersect from backside */}
-            {TreeData.isDeciduous(name) ? (
-              <Sphere
-                visible={(showModel && !noLeaves) || orthographic}
-                userData={{ simulation: !noLeaves }}
-                name={name + ' Model'}
-                args={[lx / 2, 8, 8, 0, TWO_PI, 0, theta]}
-                scale={[1, lz / lx, 1]}
-                rotation={[HALF_PI, 0, 0]}
-              >
-                <meshStandardMaterial attach="material" side={DoubleSide} transparent={true} opacity={0.75} />
-              </Sphere>
-            ) : (
+            {TreeData.isConic(name) ? (
               <Cone
                 visible={showModel || orthographic}
                 name={name + ' Model'}
@@ -308,6 +297,17 @@ const Tree = ({
               >
                 <meshStandardMaterial attach="material" side={DoubleSide} transparent={true} opacity={0.75} />
               </Cone>
+            ) : (
+              <Sphere
+                visible={(showModel && !noLeaves) || orthographic}
+                userData={{ simulation: !noLeaves }}
+                name={name + ' Model'}
+                args={[lx / 2, 8, 8, 0, TWO_PI, 0, theta]}
+                scale={[1, lz / lx, 1]}
+                rotation={[HALF_PI, 0, 0]}
+              >
+                <meshStandardMaterial attach="material" side={DoubleSide} transparent={true} opacity={0.75} />
+              </Sphere>
             )}
 
             {/* billboard for interactions (don't use a plane as it may become unselected at some angle) */}

@@ -1162,8 +1162,8 @@ export const i18n_tr = {
     },
 
     tree: {
+      Apple: 'Apple',
       Coconut: 'Coconut',
-      Cottonwood: 'Kanada Kavağı',
       Dogwood: 'Kızılcık Ağacı',
       Elm: 'Karaağaç',
       FanPalm: 'Fan Palm',
