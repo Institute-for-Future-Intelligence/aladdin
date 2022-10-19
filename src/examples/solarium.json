@@ -1,7 +1,7 @@
 {
-  "docid": "h3disnWj92exz4CcFChoUt",
-  "time": "10/16/2022 03:54 pm",
-  "timestamp": 1665950093513,
+  "docid": "6JSNHbdsgwgmpPAeUqMG7a",
+  "time": "10/18/2022 08:39 pm",
+  "timestamp": 1666139961251,
   "userid": "QWecNcxhyvP6j6sBN11hBsfZDau1",
   "owner": null,
   "email": null,
@@ -150,7 +150,7 @@
       "lz": 4.0189625473598385,
       "centerRoofHeight": [
         -0.022465454047944533,
-        6.145694191429005
+        6.807600955038734
       ],
       "leftJoints": [
         "cV8MyCuhWAsvEyyFuVqVqg"
@@ -186,7 +186,7 @@
       ],
       "centerRoofHeight": [
         0.022465454047944533,
-        6.145694191429005
+        6.807600955038734
       ],
       "rightPoint": [
         -5.457020109151015,
@@ -456,7 +456,7 @@
       ],
       "textureType": "Roof Texture #7",
       "showLabel": false,
-      "lz": 6.145694191429005,
+      "lz": 6.807600955038734,
       "normal": [
         0,
         0,
@@ -1738,12 +1738,12 @@
     },
     {
       "type": "Tree",
-      "name": "Magnolia",
-      "cx": -8.881503541908241,
-      "cy": 1.189320872789331,
-      "cz": 8.881784197001252e-16,
-      "lx": 4.912808046869838,
-      "lz": 6.392147967954518,
+      "name": "Apple",
+      "cx": -8.870480061609383,
+      "cy": -0.6721812852789775,
+      "cz": 0,
+      "lx": 4.272747980812545,
+      "lz": 4.234704800641296,
       "normal": [
         0,
         1,
@@ -2156,6 +2156,51 @@
       "parentId": "Ground",
       "id": "wV1JQBxQxSUBFz9dC7xrav",
       "selected": false
+    },
+    {
+      "type": "Tree",
+      "name": "Pine",
+      "cx": 12.91228564196267,
+      "cy": -2.946405050818825,
+      "cz": 0,
+      "lx": 5.1791034594942555,
+      "lz": 5.428693136268209,
+      "normal": [
+        0,
+        1,
+        0
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "parentId": "Ground",
+      "id": "iVXpvVvo7CVsBLdZiLcmV8",
+      "selected": false,
+      "evergreen": true
+    },
+    {
+      "type": "Tree",
+      "name": "Pine",
+      "cx": 14.030494530217624,
+      "cy": 0.04081963902747532,
+      "cz": 0,
+      "lx": 4.05233280460769,
+      "lz": 7.181542362302404,
+      "normal": [
+        0,
+        1,
+        0
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "parentId": "Ground",
+      "id": "wTP4kg9xyU48nnBEmn3ppV",
+      "selected": false
     }
   ],
   "view": {
@@ -2187,9 +2232,9 @@
     "dailyHeliostatYieldPanelX": 0,
     "showDailyParabolicDishYieldPanel": false,
     "cameraPosition": [
-      -5.942751422513334,
-      -17.938736571912003,
-      3.884133541996008
+      -8.886473890857522,
+      -16.437207322414764,
+      2.910969821321196
     ],
     "showYearlyHeliostatYieldPanel": false,
     "orthographic": false,
@@ -2244,7 +2289,7 @@
     ],
     "yearlyFresnelReflectorYieldPanelY": 0,
     "showHeliodonPanel": false,
-    "axes": true,
+    "axes": false,
     "solarRadiationHeatMapMaxValue": 5,
     "dailyParabolicDishYieldPanelX": 0,
     "showSolarPanelVisibilityResultsPanel": false,

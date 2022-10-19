@@ -1143,6 +1143,7 @@ export const i18n_zh_tw = {
 
     tree: {
       Apple: '蘋果樹',
+      Birch: '白樺',
       Coconut: '椰子樹',
       Dogwood: '茱萸',
       Elm: '榆樹',

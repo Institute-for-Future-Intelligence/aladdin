@@ -1,7 +1,7 @@
 {
-  "docid": "bxCtxKJrkpEySs1P9bXmRL",
-  "time": "10/16/2022 03:47 pm",
-  "timestamp": 1665949670922,
+  "docid": "9xsy2KdfrBWd87FACu3XZv",
+  "time": "10/18/2022 08:29 pm",
+  "timestamp": 1666139375020,
   "userid": "QWecNcxhyvP6j6sBN11hBsfZDau1",
   "owner": null,
   "email": null,
@@ -445,9 +445,9 @@
     {
       "type": "Tree",
       "name": "Magnolia",
-      "cx": 2.5834808261564355,
-      "cy": 1.0413411809149995,
-      "cz": -1.7763568394002505e-15,
+      "cx": 2.83831023868078,
+      "cy": 0.3026770951383977,
+      "cz": 0,
       "lx": 4.909285741329502,
       "lz": 7.047282022546526,
       "normal": [
@@ -2260,7 +2260,7 @@
       "cz": 0,
       "lx": 1.5028901734104034,
       "ly": 0.3,
-      "lz": 7.8,
+      "lz": 8,
       "relativeAngle": 3.141592653589793,
       "leftPoint": [
         -2.6696692384049984e-16,
@@ -2306,7 +2306,7 @@
       "cz": 0,
       "lx": 1.4099687434951584,
       "ly": 0.3,
-      "lz": 7.8,
+      "lz": 8,
       "relativeAngle": 1.5709637646913654,
       "leftPoint": [
         0.00023608219939409838,
@@ -2352,7 +2352,7 @@
       "cz": 0,
       "lx": 1.4093242537861483,
       "ly": 0.3,
-      "lz": 7.8,
+      "lz": 8,
       "relativeAngle": -1.5707963267948966,
       "leftPoint": [
         -1.5028901734104037,
@@ -2398,7 +2398,7 @@
       "cz": 0,
       "lx": 1.5031263937690138,
       "ly": 0.3,
-      "lz": 7.8,
+      "lz": 8,
       "relativeAngle": -0.0004287530089774864,
       "leftPoint": [
         -1.5028901734104037,
@@ -2439,34 +2439,10 @@
     },
     {
       "type": "Tree",
-      "name": "Spruce",
-      "cx": -7.883055477551434,
-      "cy": 5.609093728803085,
-      "cz": 0.04152001813054129,
-      "lx": 4.430881847285305,
-      "lz": 7.331299603775207,
-      "normal": [
-        0,
-        1,
-        0
-      ],
-      "rotation": [
-        0,
-        0,
-        0
-      ],
-      "parentId": "m7AH7DcnoGzAq9kryBy4RS",
-      "id": "e3h75BKqVxVtMgj9GDby5Q",
-      "selected": false,
-      "evergreen": false,
-      "locked": false
-    },
-    {
-      "type": "Tree",
-      "name": "Maple",
-      "cx": -7.823944931587718,
-      "cy": -3.761666120791187,
-      "cz": 0.041520018130540404,
+      "name": "Dogwood",
+      "cx": -8.064174857641984,
+      "cy": -5.240704468707191,
+      "cz": 0.04152001813054085,
       "lx": 3,
       "lz": 4,
       "normal": [
@@ -2927,11 +2903,11 @@
     {
       "type": "Tree",
       "name": "Magnolia",
-      "cx": 2.4343490570953925,
-      "cy": -6.518747058873599,
+      "cx": 0.7722396694280711,
+      "cy": -7.227140256390566,
       "cz": 0,
-      "lx": 4.495603981330643,
-      "lz": 7.080505056955072,
+      "lx": 5.556994802603297,
+      "lz": 7.996988894474121,
       "normal": [
         0,
         1,
@@ -2968,7 +2944,30 @@
       "parentId": "jjxHg8QgQHBYMPjmTLKh9Y",
       "id": "gr5QDB4cbkGum8zoHp2N7d",
       "selected": false,
-      "locked": false
+      "locked": false,
+      "ly": 0.55
+    },
+    {
+      "type": "Tree",
+      "name": "Dogwood",
+      "cx": -8.035100055032231,
+      "cy": 4.587584489867993,
+      "cz": 0.04152001813054085,
+      "lx": 3,
+      "lz": 4,
+      "normal": [
+        0,
+        0,
+        1
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "parentId": "m7AH7DcnoGzAq9kryBy4RS",
+      "id": "tirzAP1CYKccDFYsQijz2n",
+      "selected": false
     }
   ],
   "view": {
@@ -3000,9 +2999,9 @@
     "dailyHeliostatYieldPanelX": 0,
     "showDailyParabolicDishYieldPanel": false,
     "cameraPosition": [
-      -17.920491963492662,
-      -16.307367226759126,
-      2.1678761477789457
+      -18.534700856618443,
+      -17.340658027029914,
+      2.3374631690344416
     ],
     "showYearlyHeliostatYieldPanel": false,
     "orthographic": false,
@@ -3051,9 +3050,9 @@
     "shadowEnabled": true,
     "showInstructionPanel": true,
     "panCenter": [
-      -4.2517675740778555,
-      1.956077699698603,
-      1.5091999094366026
+      -4.553367166475551,
+      2.1825768881553214,
+      1.6644689160683375
     ],
     "yearlyFresnelReflectorYieldPanelY": 0,
     "showHeliodonPanel": false,

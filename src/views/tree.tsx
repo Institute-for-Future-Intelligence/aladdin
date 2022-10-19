@@ -299,7 +299,7 @@ const Tree = ({
               </Cone>
             ) : (
               <Sphere
-                visible={(showModel && !noLeaves) || orthographic}
+                visible={showModel || orthographic}
                 userData={{ simulation: !noLeaves }}
                 name={name + ' Model'}
                 args={[lx / 2, 8, 8, 0, TWO_PI, 0, theta]}

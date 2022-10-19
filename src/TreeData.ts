@@ -6,6 +6,10 @@ import AppleSpringImage from './resources/apple_spring.png';
 import AppleSummerImage from './resources/apple_summer.png';
 import AppleFallImage from './resources/apple_fall.png';
 import AppleWinterImage from './resources/apple_winter.png';
+import BirchSpringImage from './resources/birch_spring.png';
+import BirchSummerImage from './resources/birch_summer.png';
+import BirchFallImage from './resources/birch_fall.png';
+import BirchWinterImage from './resources/birch_winter.png';
 import CoconutImage from './resources/coconut.png';
 import DogwoodSpringImage from './resources/dogwood_spring.png';
 import DogwoodSummerImage from './resources/dogwood_summer.png';
@@ -50,6 +54,8 @@ export class TreeData {
     switch (name) {
       case TreeType.Apple:
         return i18n.t('tree.Apple', lang);
+      case TreeType.Birch:
+        return i18n.t('tree.Birch', lang);
       case TreeType.Coconut:
         return i18n.t('tree.Coconut', lang);
       case TreeType.Dogwood:
@@ -77,6 +83,8 @@ export class TreeData {
     switch (name) {
       case TreeType.Apple:
         return 0.65 * Math.PI;
+      case TreeType.Birch:
+        return 0.72 * Math.PI;
       case TreeType.Coconut:
         return 0.5 * Math.PI;
       case TreeType.Dogwood:
@@ -124,6 +132,29 @@ export class TreeData {
             textureImg = AppleWinterImage;
           } else {
             textureImg = AppleSpringImage;
+          }
+        }
+        break;
+      case TreeType.Birch:
+        if (latitude > 0) {
+          if (month >= 12 || month <= 3) {
+            textureImg = BirchWinterImage;
+          } else if (month > 3 && month <= 5) {
+            textureImg = BirchSpringImage;
+          } else if (month > 5 && month <= 9) {
+            textureImg = BirchSummerImage;
+          } else {
+            textureImg = BirchFallImage;
+          }
+        } else {
+          if (month >= 12 || month <= 3) {
+            textureImg = BirchSummerImage;
+          } else if (month > 3 && month <= 5) {
+            textureImg = BirchFallImage;
+          } else if (month > 5 && month <= 9) {
+            textureImg = BirchWinterImage;
+          } else {
+            textureImg = BirchSpringImage;
           }
         }
         break;

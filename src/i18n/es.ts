@@ -1162,6 +1162,7 @@ export const i18n_es = {
 
     tree: {
       Apple: 'Apple',
+      Birch: 'Birch',
       Coconut: 'Coconut',
       Dogwood: 'Cerezo silvestre',
       Elm: 'Olmo',

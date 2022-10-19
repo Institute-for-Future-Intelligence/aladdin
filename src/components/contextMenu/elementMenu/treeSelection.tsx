@@ -7,7 +7,8 @@ import { Select } from 'antd';
 import { useStore } from '../../../stores/common';
 import * as Selector from '../../../stores/selector';
 import { TreeType } from '../../../types';
-import AppleImage from '../../../resources/maple_summer.png';
+import AppleImage from '../../../resources/apple_summer.png';
+import BirchImage from '../../../resources/birch_summer.png';
 import CoconutImage from '../../../resources/coconut.png';
 import DogwoodImage from '../../../resources/dogwood_summer.png';
 import ElmImage from '../../../resources/elm_summer.png';
@@ -63,8 +64,12 @@ const TreeSelection = () => {
       }}
     >
       <Option key={TreeType.Apple} value={TreeType.Apple}>
-        <img alt={TreeType.Apple} src={AppleImage} height={20} style={{ paddingRight: '10px' }} />{' '}
+        <img alt={TreeType.Apple} src={AppleImage} height={20} style={{ paddingRight: '8px' }} />{' '}
         {i18n.t('tree.Apple', lang)}
+      </Option>
+      <Option key={TreeType.Birch} value={TreeType.Birch}>
+        <img alt={TreeType.Birch} src={BirchImage} height={20} style={{ paddingRight: '20px' }} />{' '}
+        {i18n.t('tree.Birch', lang)}
       </Option>
       <Option key={TreeType.Coconut} value={TreeType.Coconut}>
         <img alt={TreeType.Coconut} src={CoconutImage} height={20} style={{ paddingRight: '18px' }} />{' '}

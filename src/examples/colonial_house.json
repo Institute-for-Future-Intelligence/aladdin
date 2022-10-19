@@ -1,13 +1,13 @@
 {
-  "docid": "uUGoQQ9xojAUaqFDcdAmC6",
-  "time": "10/16/2022 08:25 pm",
-  "timestamp": 1665966316200,
+  "docid": "a2oby2LaUEn1EA39zFGc4L",
+  "time": "10/18/2022 08:26 pm",
+  "timestamp": 1666139179357,
   "userid": "QWecNcxhyvP6j6sBN11hBsfZDau1",
   "owner": null,
   "email": null,
   "world": {
     "solarRadiationHeatmapGridCellSize": 0.5,
-    "date": "4/22/2022 10:00:00 AM",
+    "date": "6/22/2022, 10:00:00 AM",
     "cspTimesPerHour": 4,
     "noAnimationForHeatmapSimulation": false,
     "cspGridCellSize": 0.5,
@@ -2110,8 +2110,8 @@
     {
       "type": "Tree",
       "name": "Elm",
-      "cx": 10.83714670107494,
-      "cy": -2.4764636528158057,
+      "cx": 11.697190607949404,
+      "cy": -5.967883015953504,
       "cz": 0,
       "lx": 8.182228289296598,
       "lz": 10.259018050875072,
@@ -2133,11 +2133,11 @@
     {
       "type": "Tree",
       "name": "Maple",
-      "cx": -12.563384815612618,
-      "cy": -3.953023474597938,
+      "cx": -14.053228627664431,
+      "cy": -3.1648808638293726,
       "cz": 0,
-      "lx": 3.960334563100221,
-      "lz": 5.808292722920508,
+      "lx": 7.51702234293303,
+      "lz": 8.935898046217556,
       "normal": [
         0,
         1,
@@ -2240,52 +2240,6 @@
       "parentId": "eUQQcfUyWDHA7KoGuDBRyw",
       "id": "qPgjnRK2xBNDKQYWaqPEJW",
       "selected": false
-    },
-    {
-      "type": "Tree",
-      "name": "Pine",
-      "cx": -11.67178119181223,
-      "cy": 3.00861809531699,
-      "cz": 0,
-      "lx": 3.801169054989941,
-      "lz": 7.944113097631635,
-      "normal": [
-        0,
-        1,
-        0
-      ],
-      "rotation": [
-        0,
-        0,
-        0
-      ],
-      "parentId": "Ground",
-      "id": "8MRK6DV6UNbPX4BHogQVhb",
-      "selected": false,
-      "evergreen": true
-    },
-    {
-      "type": "Tree",
-      "name": "Spruce",
-      "cx": 10.098902558334984,
-      "cy": -7.0636913304487265,
-      "cz": 8.881784197001252e-16,
-      "lx": 2.9262723923518146,
-      "lz": 6.00414654163894,
-      "normal": [
-        0,
-        1,
-        0
-      ],
-      "rotation": [
-        0,
-        0,
-        0
-      ],
-      "parentId": "Ground",
-      "id": "3WW9TdiQiiEomUkhsnjAjr",
-      "selected": false,
-      "evergreen": true
     },
     {
       "type": "Flower",
@@ -2669,9 +2623,9 @@
     "dailyHeliostatYieldPanelX": 0,
     "showDailyParabolicDishYieldPanel": false,
     "cameraPosition": [
-      -15.40669187420261,
-      -18.196511465747527,
-      2.9811484191350806
+      -14.354774864981998,
+      -19.02591207611588,
+      3.316088490545952
     ],
     "showYearlyHeliostatYieldPanel": false,
     "orthographic": false,

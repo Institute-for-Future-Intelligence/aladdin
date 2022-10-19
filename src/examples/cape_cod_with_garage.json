@@ -1,13 +1,13 @@
 {
-  "docid": "kKcUSa3K2uKnXjP3jPVBYA",
-  "time": "10/16/2022 09:43 pm",
-  "timestamp": 1665971026586,
+  "docid": "cM4XYYDRPtHGpz7x6v6Qbz",
+  "time": "10/18/2022 08:35 pm",
+  "timestamp": 1666139748395,
   "userid": "QWecNcxhyvP6j6sBN11hBsfZDau1",
   "owner": null,
   "email": null,
   "world": {
     "solarRadiationHeatmapGridCellSize": 0.5,
-    "date": "5/22/2022, 11:00:00 AM",
+    "date": "10/22/2022, 11:00:00 AM",
     "cspTimesPerHour": 4,
     "noAnimationForHeatmapSimulation": false,
     "cspGridCellSize": 0.5,
@@ -1214,7 +1214,7 @@
       "parentId": "m7AH7DcnoGzAq9kryBy4RS",
       "id": "havSSZEB6mAoQ1s57LQVxN",
       "selected": false,
-      "ly": 0.65,
+      "ly": 0.43,
       "locked": true
     },
     {
@@ -3037,12 +3037,12 @@
     },
     {
       "type": "Tree",
-      "name": "Linden",
-      "cx": 16.42907009722812,
-      "cy": -2.0046661453671106,
-      "cz": -4.440892098500626e-16,
-      "lx": 5.4280165543263905,
-      "lz": 8.711352135161812,
+      "name": "Maple",
+      "cx": 17.865612413681372,
+      "cy": 0.16934792137261212,
+      "cz": -8.881784197001252e-16,
+      "lx": 7.6312730174756584,
+      "lz": 11.401453020556955,
       "normal": [
         0,
         1,
@@ -3057,7 +3057,7 @@
       "id": "fvxLBBmjibSLAyfoLcbVjh",
       "selected": false,
       "evergreen": false,
-      "locked": true
+      "locked": false
     },
     {
       "type": "Flower",
@@ -3203,8 +3203,8 @@
       "cx": -10.77654007007384,
       "cy": -2.788234414080616,
       "cz": 0,
-      "lx": 8.017717261198055,
-      "lz": 8.767558535233618,
+      "lx": 8.855861155358149,
+      "lz": 10.429490037118851,
       "normal": [
         0,
         1,
@@ -3219,7 +3219,7 @@
       "id": "qpT1N3VZfjdrNWS4GttCXC",
       "selected": false,
       "evergreen": false,
-      "locked": true
+      "locked": false
     },
     {
       "type": "Human",
@@ -3228,7 +3228,7 @@
       "cy": -7.852602748159519,
       "cz": -8.881784197001252e-16,
       "lx": 0.43,
-      "ly": 0.42,
+      "ly": 0.43,
       "lz": 1.5,
       "normal": [
         0,
@@ -3252,7 +3252,7 @@
       "cy": -2.663378139781919,
       "cz": 0.75,
       "lx": 0.56,
-      "ly": 0.42,
+      "ly": 0.56,
       "lz": 1.75,
       "normal": [
         0,
@@ -3268,6 +3268,29 @@
       "id": "gesRfpbEyibu8BUu8qDy6K",
       "selected": false,
       "locked": true
+    },
+    {
+      "type": "Tree",
+      "name": "Elm",
+      "cx": 18.432113714851354,
+      "cy": -4.238967926667648,
+      "cz": -8.881784197001252e-16,
+      "lx": 10.046562775206576,
+      "lz": 8.109426488433453,
+      "normal": [
+        0,
+        0,
+        1
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "parentId": "Ground",
+      "id": "rAcrYXcgzcVotvfd1MPBUS",
+      "selected": false,
+      "evergreen": false
     }
   ],
   "view": {
@@ -3299,9 +3322,9 @@
     "dailyHeliostatYieldPanelX": 0,
     "showDailyParabolicDishYieldPanel": false,
     "cameraPosition": [
-      10.450868026763377,
-      -21.223826829820336,
-      4.440545678536896
+      12.621369196696566,
+      -24.379734952507867,
+      4.082480888602587
     ],
     "showYearlyHeliostatYieldPanel": false,
     "orthographic": false,
@@ -3350,9 +3373,9 @@
     "shadowEnabled": true,
     "showInstructionPanel": true,
     "panCenter": [
-      1.6740288200991384,
-      6.308448609516777,
-      3.6306675133305077
+      4.60527224285208,
+      4.975710702300768,
+      4.082480888602587
     ],
     "yearlyFresnelReflectorYieldPanelY": 0,
     "showHeliodonPanel": false,

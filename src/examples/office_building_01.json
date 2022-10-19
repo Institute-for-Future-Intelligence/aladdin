@@ -1,7 +1,7 @@
 {
-  "docid": "scFEJevPTG8ZLEjcTUwG1g",
-  "time": "10/11/2022 10:33 pm",
-  "timestamp": 1665542014491,
+  "docid": "vqQ8wCya764TwjENwDJ3mU",
+  "time": "10/18/2022 08:47 pm",
+  "timestamp": 1666140447368,
   "userid": "QWecNcxhyvP6j6sBN11hBsfZDau1",
   "owner": null,
   "email": null,
@@ -56,8 +56,8 @@
       ],
       "selected": false,
       "parentId": "Ground",
-      "lx": 0.6,
-      "ly": 0.6,
+      "lx": 0.42,
+      "ly": 0.42,
       "lz": 1.8
     },
     {
@@ -96,14 +96,15 @@
         0
       ],
       "lx": 4,
-      "cx": -21.679262420444417,
+      "cx": -23.993252440580314,
       "id": "ibv7qyFAZNTUiSKfRnG81J",
-      "cz": -7.105427357601002e-15,
+      "cz": -8.881784197001252e-16,
       "selected": false,
-      "cy": -4.94325953849427,
+      "cy": -7.809220875702906,
       "lz": 10,
-      "name": "Pine",
-      "parentId": "Ground"
+      "name": "Birch",
+      "parentId": "Ground",
+      "evergreen": false
     },
     {
       "selected": false,
@@ -158,14 +159,14 @@
       ],
       "name": "Jade",
       "parentId": "Ground",
-      "lx": 0.6,
-      "ly": 0.6,
+      "lx": 0.48,
+      "ly": 0.48,
       "lz": 1.6
     },
     {
-      "cx": -23.71712820078877,
+      "cx": -23.340488252107782,
       "evergreen": false,
-      "cz": -7.105427357601002e-15,
+      "cz": 0,
       "id": "tJeB5NfeXNiu4x7bJzUo9c",
       "selected": false,
       "rotation": [
@@ -173,16 +174,16 @@
         0,
         0
       ],
-      "lz": 8,
-      "name": "Maple",
+      "lz": 4.164962493910564,
+      "name": "Apple",
       "normal": [
         0,
         0,
         1
       ],
       "type": "Tree",
-      "lx": 10,
-      "cy": -16.21725603874046,
+      "lx": 4.059299397551073,
+      "cy": -22.87864367350907,
       "parentId": "Ground"
     },
     {
@@ -204,8 +205,8 @@
         0
       ],
       "parentId": "Ground",
-      "lx": 0.6,
-      "ly": 0.6,
+      "lx": 0.56,
+      "ly": 0.56,
       "lz": 1.75
     },
     {
@@ -227,8 +228,8 @@
       "cy": -24.46034584888105,
       "selected": false,
       "parentId": "Ground",
-      "lx": 0.6,
-      "ly": 0.6,
+      "lx": 0.45,
+      "ly": 0.45,
       "lz": 1.7
     },
     {
@@ -239,19 +240,19 @@
         0
       ],
       "id": "tSCfpjZEaf2LdYnKVymp8f",
-      "cx": -23.913570227955294,
-      "cy": -9.372301870818516,
+      "cx": -24.035139369880795,
+      "cy": -11.60375573934435,
       "normal": [
         0,
         1,
         0
       ],
-      "cz": -7.105427357601002e-15,
+      "cz": 8.881784197001252e-16,
       "name": "Judd",
       "type": "Human",
       "parentId": "Ground",
-      "lx": 0.6,
-      "ly": 0.6,
+      "lx": 0.544,
+      "ly": 0.544,
       "lz": 1.68
     },
     {
@@ -296,9 +297,9 @@
       ],
       "name": "Jena",
       "parentId": "Ground",
-      "lx": 0.4,
-      "ly": 0.4,
-      "lz": 1.5
+      "lx": 0.695,
+      "ly": 0.695,
+      "lz": 1.6
     },
     {
       "type": "Tree",
@@ -325,10 +326,10 @@
     },
     {
       "type": "Tree",
-      "name": "Pine",
-      "cx": -21.097702474739503,
-      "cy": 4.55555290802413,
-      "cz": -7.105427357601002e-15,
+      "name": "Birch",
+      "cx": -23.798739662505156,
+      "cy": 3.0810007914333255,
+      "cz": 0,
       "lx": 4,
       "lz": 10,
       "normal": [
@@ -344,7 +345,7 @@
       "parentId": "Ground",
       "id": "rd1CFzdzbUa21QJwgHv8cP",
       "selected": false,
-      "evergreen": true
+      "evergreen": false
     },
     {
       "type": "Cuboid",
@@ -604,6 +605,29 @@
       "parentId": "dqxcN6K9GVQLtZRykzonbS",
       "id": "e1T6XS94X1vuZYnmBeSzv3",
       "selected": false
+    },
+    {
+      "type": "Tree",
+      "name": "Birch",
+      "cx": -23.930414200652432,
+      "cy": -2.885662218323219,
+      "cz": 8.881784197001252e-16,
+      "lx": 4,
+      "lz": 10,
+      "normal": [
+        0,
+        1,
+        0
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "parentId": "Ground",
+      "id": "jDrfaAvoEqu7y5suMRTWYc",
+      "selected": false,
+      "evergreen": false
     }
   ],
   "view": {
@@ -639,9 +663,9 @@
     "groundPanelY": 0,
     "showMapPanel": false,
     "cameraPosition": [
-      -23.57824463572729,
-      -46.00644781799041,
-      6.793365364698089
+      -31.790978941694085,
+      -45.62501931648296,
+      5.496187293258951
     ],
     "panCenter": [
       2.1268141574348576,

@@ -2319,7 +2319,7 @@
     },
     {
       "type": "Tree",
-      "name": "Pine",
+      "name": "Spruce",
       "cx": -9.332343084456326,
       "cy": -7.670721874044395,
       "cz": 0.49999999999999645,
@@ -2342,7 +2342,7 @@
     },
     {
       "type": "Tree",
-      "name": "Pine",
+      "name": "Spruce",
       "cx": -2.4224793125813298,
       "cy": -7.597212684981861,
       "cz": 0.49999999999999645,
@@ -2364,7 +2364,7 @@
     },
     {
       "type": "Tree",
-      "name": "Pine",
+      "name": "Spruce",
       "cx": 5.7002860788249174,
       "cy": -7.486948901388057,
       "cz": 0.5,
@@ -2386,7 +2386,7 @@
     },
     {
       "type": "Tree",
-      "name": "Pine",
+      "name": "Spruce",
       "cx": 12.904186606949914,
       "cy": -7.413439712325518,
       "cz": 0.49999999999999645,
@@ -2408,7 +2408,7 @@
     },
     {
       "type": "Tree",
-      "name": "Pine",
+      "name": "Spruce",
       "cx": -9.185324706331325,
       "cy": 6.884097560337873,
       "cz": 0.49999999999999645,
@@ -2430,7 +2430,7 @@
     },
     {
       "type": "Tree",
-      "name": "Pine",
+      "name": "Spruce",
       "cx": 5.884059051481165,
       "cy": 6.773833776744068,
       "cz": 0.5,
@@ -2452,7 +2452,7 @@
     },
     {
       "type": "Tree",
-      "name": "Pine",
+      "name": "Spruce",
       "cx": -1.9163053006129438,
       "cy": 6.972061722697195,
       "cz": 0.5,
@@ -2474,7 +2474,7 @@
     },
     {
       "type": "Tree",
-      "name": "Pine",
+      "name": "Spruce",
       "cx": 12.830677417887415,
       "cy": 6.810588371275337,
       "cz": 0.5,
@@ -2928,7 +2928,7 @@
     ],
     "yearlyFresnelReflectorYieldPanelY": 0,
     "showHeliodonPanel": false,
-    "axes": true,
+    "axes": false,
     "solarRadiationHeatMapMaxValue": 5,
     "dailyParabolicDishYieldPanelX": 0,
     "showSolarPanelVisibilityResultsPanel": false,

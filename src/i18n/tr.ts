@@ -1163,6 +1163,7 @@ export const i18n_tr = {
 
     tree: {
       Apple: 'Apple',
+      Birch: 'Birch',
       Coconut: 'Coconut',
       Dogwood: 'Kızılcık Ağacı',
       Elm: 'Karaağaç',

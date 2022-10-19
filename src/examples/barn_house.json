@@ -1,7 +1,7 @@
 {
-  "docid": "kqmYmnbQLgsSYNd3pxwW8W",
-  "time": "10/11/2022 07:45 pm",
-  "timestamp": 1665531911397,
+  "docid": "6VmVuxnhYhXJtaPTSrhQjw",
+  "time": "10/18/2022 08:43 pm",
+  "timestamp": 1666140209723,
   "userid": "QWecNcxhyvP6j6sBN11hBsfZDau1",
   "owner": null,
   "email": null,
@@ -1345,8 +1345,8 @@
     {
       "type": "Tree",
       "name": "Oak",
-      "cx": 21.140698852411017,
-      "cy": -4.290883992834715,
+      "cx": 23.40643527821828,
+      "cy": -4.031536481027835,
       "cz": 0,
       "lx": 20,
       "lz": 24,
@@ -1367,7 +1367,7 @@
     },
     {
       "type": "Tree",
-      "name": "Linden",
+      "name": "Elm",
       "cx": -17.09775606984966,
       "cy": -3.20526624414558,
       "cz": 0.05000000074505895,
@@ -1389,35 +1389,12 @@
       "evergreen": false
     },
     {
-      "type": "Tree",
-      "name": "Spruce",
-      "cx": 19.726688973475135,
-      "cy": -12.375509048801003,
-      "cz": -8.881784197001252e-16,
-      "lx": 5,
-      "lz": 10,
-      "normal": [
-        0,
-        1,
-        0
-      ],
-      "rotation": [
-        0,
-        0,
-        0
-      ],
-      "parentId": "Ground",
-      "id": "qHZ7fmERvw5fp8C39Esnjg",
-      "selected": false,
-      "evergreen": false
-    },
-    {
       "type": "Human",
       "name": "Jack",
       "cx": 13.126772369480532,
       "cy": -6.296277038686817,
       "cz": 0.05000000074505806,
-      "lx": 0.6,
+      "lx": 0.42,
       "lz": 1.8,
       "normal": [
         0,
@@ -1432,7 +1409,7 @@
       "parentId": "46TKaVq8pvU97fq25w6FtQ",
       "id": "fEgQo63aax49KtqEdPTNhE",
       "selected": false,
-      "ly": 0.6
+      "ly": 0.42
     },
     {
       "type": "Human",
@@ -1440,8 +1417,8 @@
       "cx": 8.655656401813271,
       "cy": -22.009482044859034,
       "cz": 8.881784197001252e-16,
-      "lx": 0.4,
-      "lz": 1.5,
+      "lx": 0.695,
+      "lz": 1.6,
       "normal": [
         0,
         1,
@@ -1455,7 +1432,7 @@
       "parentId": "Ground",
       "id": "4BmWg5mgbRSqHZB7i69JCr",
       "selected": false,
-      "ly": 0.4
+      "ly": 0.695
     },
     {
       "type": "Human",
@@ -1486,8 +1463,8 @@
       "cx": 1.9131369327500352,
       "cy": -23.336027774142128,
       "cz": 0,
-      "lx": 0.6,
-      "lz": 1.4,
+      "lx": 0.43,
+      "lz": 1.5,
       "normal": [
         0,
         1,
@@ -1501,7 +1478,7 @@
       "parentId": "Ground",
       "id": "pnZ17fTrUAQjd7ZGBi4LZw",
       "selected": false,
-      "ly": 0.6
+      "ly": 0.43
     },
     {
       "type": "Human",
@@ -1532,7 +1509,7 @@
       "cx": 10.432488052804295,
       "cy": -20.746396000851213,
       "cz": 0,
-      "lx": 0.4,
+      "lx": 0.65,
       "lz": 1.85,
       "normal": [
         0,
@@ -1547,7 +1524,7 @@
       "parentId": "Ground",
       "id": "neJBajzFYG5HwTAskcMmid",
       "selected": false,
-      "ly": 0.4
+      "ly": 0.65
     },
     {
       "type": "Door",
@@ -2083,9 +2060,9 @@
     {
       "type": "Tree",
       "name": "Maple",
-      "cx": -10.690512148530066,
-      "cy": -24.372962750837047,
-      "cz": 0,
+      "cx": -2.927331486626805,
+      "cy": -31.47115904815895,
+      "cz": -1.7763568394002505e-15,
       "lx": 20,
       "lz": 16.05832090138246,
       "normal": [
@@ -2102,6 +2079,50 @@
       "id": "gkQDZPnaSVr9iatjDLPxBD",
       "selected": false,
       "evergreen": false
+    },
+    {
+      "type": "Tree",
+      "name": "Oak",
+      "cx": 30.418606267863456,
+      "cy": -3.8118132200228914,
+      "cz": 0,
+      "lx": 16.237525350473454,
+      "lz": 14.730013828864193,
+      "normal": [
+        0,
+        1,
+        0
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "parentId": "Ground",
+      "id": "n7bLUe1p1rbbqq2FsGvzJ1",
+      "selected": false
+    },
+    {
+      "type": "Tree",
+      "name": "Oak",
+      "cx": 24.41587916882121,
+      "cy": -13.800192130025074,
+      "cz": 1.7763568394002505e-15,
+      "lx": 13.930205088796232,
+      "lz": 14.730013828864193,
+      "normal": [
+        0,
+        0,
+        1
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "parentId": "Ground",
+      "id": "64YqofbhUQNT1AUUrbAQFL",
+      "selected": false
     }
   ],
   "view": {
@@ -2109,13 +2130,13 @@
     "dailyParabolicTroughYieldPanelY": 0,
     "diurnalTemperaturePanelX": 0,
     "showInstructionPanel": true,
-    "axes": true,
+    "axes": false,
     "enableRotate": true,
     "weatherPanelY": 0,
     "cameraPosition": [
-      15.001671507294162,
-      -32.59316463135336,
-      7.179990263150549
+      34.012151645779056,
+      -54.30032902209319,
+      14.03082381786041
     ],
     "showYearlyUpdraftTowerYieldPanel": false,
     "showSunAngles": false,
@@ -2169,9 +2190,9 @@
     "showYearlyHeliostatYieldPanel": false,
     "mapZoom": 18,
     "panCenter": [
-      1.4994097522659724,
-      2.19558863881693,
-      5.3832710359747455
+      1.362208401252701,
+      2.1560254599495274,
+      6.227836503463481
     ],
     "visibilityResultsPanelY": 0,
     "showZenithAngle": true,
