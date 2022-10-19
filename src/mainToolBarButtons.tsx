@@ -78,7 +78,6 @@ const MainToolBarButtons = () => {
   const [category1Flag, setCategory1Flag] = useState<ObjectType>(ObjectType.Foundation);
   const [category2Flag, setCategory2Flag] = useState<ObjectType>(ObjectType.Wall);
   const [category3Flag, setCategory3Flag] = useState<ObjectType>(ObjectType.SolarPanel);
-  const [category4Flag, setCategory4Flag] = useState<ObjectType>(ObjectType.Tree);
   const lang = { lng: language };
 
   // CSS filter generator of color: https://codepen.io/sosuke/pen/Pjoqqp
@@ -218,7 +217,7 @@ const MainToolBarButtons = () => {
     objectType: ObjectType,
     srcImg: string,
     setFlag: (val: React.SetStateAction<ObjectType>) => void,
-    text?: string,
+    replacingText?: string, // sometimes we don't want to use the type name as the name in the menu
   ) => {
     const key = objectType.charAt(0).toLowerCase() + objectType.slice(1).replace(/\s+/g, '');
     return (
@@ -241,7 +240,7 @@ const MainToolBarButtons = () => {
             marginRight: '10px',
           }}
         />
-        {i18n.t(`toolbar.SwitchToAdding${text ?? objectType.replaceAll(' ', '')}`, lang)}
+        {i18n.t(`toolbar.SwitchToAdding${replacingText ?? objectType.replaceAll(' ', '')}`, lang)}
       </Menu.Item>
     );
   };
@@ -292,6 +291,9 @@ const MainToolBarButtons = () => {
     <Menu>
       {menuItem(ObjectType.Foundation, FoundationImage, setCategory1Flag)}
       {menuItem(ObjectType.Cuboid, CuboidImage, setCategory1Flag)}
+      {menuItem(ObjectType.Tree, TreeImage, setCategory1Flag)}
+      {menuItem(ObjectType.Flower, FlowerImage, setCategory1Flag)}
+      {menuItem(ObjectType.Human, HumanImage, setCategory1Flag, 'People')}
     </Menu>
   );
 
@@ -320,20 +322,18 @@ const MainToolBarButtons = () => {
     </Menu>
   );
 
-  const category4Menu = (
-    <Menu>
-      {menuItem(ObjectType.Tree, TreeImage, setCategory4Flag)}
-      {menuItem(ObjectType.Flower, FlowerImage, setCategory4Flag)}
-      {menuItem(ObjectType.Human, HumanImage, setCategory4Flag, 'People')}
-    </Menu>
-  );
-
   const category1Button = (objectType: ObjectType) => {
     switch (objectType) {
       case ObjectType.Foundation:
         return buttonImg(objectType, FoundationImage, useStore.getState().addedFoundationId);
       case ObjectType.Cuboid:
         return buttonImg(objectType, CuboidImage, useStore.getState().addedCuboidId);
+      case ObjectType.Tree:
+        return buttonImg(objectType, TreeImage);
+      case ObjectType.Flower:
+        return buttonImg(objectType, FlowerImage);
+      case ObjectType.Human:
+        return buttonImg(objectType, HumanImage, undefined, 'People');
     }
   };
 
@@ -374,17 +374,6 @@ const MainToolBarButtons = () => {
         return buttonImg(objectType, SensorImage);
       case ObjectType.WindTurbine:
         return buttonImg(objectType, WindTurbineImage);
-    }
-  };
-
-  const category4Button = (objectType: ObjectType) => {
-    switch (objectType) {
-      case ObjectType.Tree:
-        return buttonImg(objectType, TreeImage);
-      case ObjectType.Flower:
-        return buttonImg(objectType, FlowerImage);
-      case ObjectType.Human:
-        return buttonImg(objectType, HumanImage, undefined, 'People');
     }
   };
 
@@ -434,12 +423,6 @@ const MainToolBarButtons = () => {
       <ToolBarButton>
         {category3Button(category3Flag)}
         {dropdownButton(category3Menu)}
-      </ToolBarButton>
-
-      {/* add buttons in category 4 */}
-      <ToolBarButton>
-        {category4Button(category4Flag)}
-        {dropdownButton(category4Menu)}
       </ToolBarButton>
 
       <FontAwesomeIcon

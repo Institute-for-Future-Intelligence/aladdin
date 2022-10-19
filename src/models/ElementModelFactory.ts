@@ -71,7 +71,7 @@ export class ElementModelFactory {
   static makeTree(parentId: string, x: number, y: number, z?: number) {
     return {
       type: ObjectType.Tree,
-      name: TreeType.Magnolia,
+      name: TreeType.Dogwood,
       cx: x,
       cy: y,
       cz: z,

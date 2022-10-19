@@ -101,13 +101,6 @@ const Team = ({ top, height, color }: TeamProps) => {
                 <h3 style={{ color: color }}>{i18n.t('aboutUs.Support', lang)}</h3>
                 Rundong Jiang
                 <br />
-                Joy Massicotte
-                <br />
-              </td>
-              <td>
-                <h3 style={{ color: color }}>{i18n.t('aboutUs.Research', lang)}</h3>
-                Shannon Sung
-                <br />
                 Charles Xie
                 <br />
               </td>
