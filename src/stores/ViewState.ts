@@ -29,6 +29,7 @@ export interface ViewState {
   groundColor: string;
   waterSurface: boolean;
   solarPanelShiness?: number;
+  windowShiness?: number;
 
   showMapPanel: boolean;
   showHeliodonPanel: boolean;

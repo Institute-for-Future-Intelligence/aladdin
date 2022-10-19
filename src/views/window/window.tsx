@@ -3,7 +3,7 @@
  */
 
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
-import { DoubleSide, MeshStandardMaterial } from 'three';
+import { Color, DoubleSide, MeshStandardMaterial } from 'three';
 import { Box, Plane } from '@react-three/drei';
 import { WindowModel } from 'src/models/WindowModel';
 import { CommonStoreState, useStore } from 'src/stores/common';
@@ -11,7 +11,7 @@ import { ObjectType } from 'src/types';
 import * as Selector from 'src/stores/selector';
 import WindowWireFrame from './windowWireFrame';
 import WindowHandleWrapper from './windowHandleWrapper';
-import { HALF_PI, LOCKED_ELEMENT_SELECTION_COLOR } from 'src/constants';
+import { DEFAULT_WINDOW_SHINESS, HALF_PI, LOCKED_ELEMENT_SELECTION_COLOR } from 'src/constants';
 import { ThreeEvent } from '@react-three/fiber';
 
 const material = new MeshStandardMaterial({ color: 'white', side: DoubleSide });
@@ -71,6 +71,7 @@ const Window = ({
   const setCommonStore = useStore(Selector.set);
   const isAddingElement = useStore(Selector.isAddingElement);
   const shadowEnabled = useStore(Selector.viewState.shadowEnabled);
+  const windowShiness = useStore(Selector.viewState.windowShiness);
 
   const [wlx, setWlx] = useState(lx);
   const [wly, setWly] = useState(ly);
@@ -171,7 +172,14 @@ const Window = ({
     >
       <group position={[0, wcy, 0]}>
         <Plane name={'window ' + id} args={[wlx, wlz]} rotation={[Math.PI / 2, 0, 0]}>
-          <meshBasicMaterial side={DoubleSide} color={tint} opacity={opacity} transparent={true} />
+          <meshPhongMaterial
+            specular={new Color('white')}
+            shininess={windowShiness ?? DEFAULT_WINDOW_SHINESS}
+            color={tint}
+            side={DoubleSide}
+            opacity={opacity}
+            transparent={true}
+          />
         </Plane>
 
         {/* wireframes */}

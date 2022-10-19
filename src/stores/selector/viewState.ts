@@ -8,6 +8,8 @@ export const shadowEnabled = (state: CommonStoreState) => state.viewState.shadow
 
 export const solarPanelShiness = (state: CommonStoreState) => state.viewState.solarPanelShiness;
 
+export const windowShiness = (state: CommonStoreState) => state.viewState.windowShiness;
+
 export const solarRadiationHeatmapMaxValue = (state: CommonStoreState) => state.viewState.solarRadiationHeatMapMaxValue;
 
 export const solarRadiationHeatmapReflectionOnly = (state: CommonStoreState) =>
