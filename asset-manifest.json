@@ -1,8 +1,8 @@
 {
   "files": {
     "main.css": "/aladdin/static/css/main.c1ee157d.chunk.css",
-    "main.js": "/aladdin/static/js/main.7fcedd17.chunk.js",
-    "main.js.map": "/aladdin/static/js/main.7fcedd17.chunk.js.map",
+    "main.js": "/aladdin/static/js/main.4ef31bd4.chunk.js",
+    "main.js.map": "/aladdin/static/js/main.4ef31bd4.chunk.js.map",
     "runtime-main.js": "/aladdin/static/js/runtime-main.4881af45.js",
     "runtime-main.js.map": "/aladdin/static/js/runtime-main.4881af45.js.map",
     "static/css/2.447301e6.chunk.css": "/aladdin/static/css/2.447301e6.chunk.css",
@@ -79,7 +79,7 @@
     "static/media/elm_fall.720b87ef.png": "/aladdin/static/media/elm_fall.720b87ef.png",
     "static/media/elm_spring.a67f6f9c.png": "/aladdin/static/media/elm_spring.a67f6f9c.png",
     "static/media/elm_summer.0e729b1c.png": "/aladdin/static/media/elm_summer.0e729b1c.png",
-    "static/media/elm_winter.2022e03d.png": "/aladdin/static/media/elm_winter.2022e03d.png",
+    "static/media/elm_winter.49563d13.png": "/aladdin/static/media/elm_winter.49563d13.png",
     "static/media/fan_palm.dd78413a.png": "/aladdin/static/media/fan_palm.dd78413a.png",
     "static/media/forest-night.17456c1a.jpg": "/aladdin/static/media/forest-night.17456c1a.jpg",
     "static/media/forest.7e47e4d2.jpg": "/aladdin/static/media/forest.7e47e4d2.jpg",
@@ -215,6 +215,6 @@
     "static/css/2.447301e6.chunk.css",
     "static/js/2.528d2c36.chunk.js",
     "static/css/main.c1ee157d.chunk.css",
-    "static/js/main.7fcedd17.chunk.js"
+    "static/js/main.4ef31bd4.chunk.js"
   ]
 }
