@@ -236,7 +236,7 @@ const WindowTintSelection = ({ setDialogVisible }: { setDialogVisible: (b: boole
             onMouseOver={() => setDragEnabled(true)}
             onMouseOut={() => setDragEnabled(false)}
           >
-            {i18n.t('windowMenu.tint', lang)}
+            {i18n.t('windowMenu.Tint', lang)}
           </div>
         }
         footer={[

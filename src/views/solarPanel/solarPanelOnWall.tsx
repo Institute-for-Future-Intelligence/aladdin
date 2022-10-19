@@ -644,21 +644,24 @@ const SolarPanelOnWall = ({
             <meshStandardMaterial attachArray="material" color={color} />
             <meshStandardMaterial attachArray="material" color={color} />
             <meshStandardMaterial attachArray="material" color={color} />
-            {showSolarRadiationHeatmap && heatmapTexture ? (
-              <meshBasicMaterial attachArray="material" map={heatmapTexture} />
-            ) : orthographic || solarPanelShiness === 0 ? (
-              <meshStandardMaterial attachArray="material" map={texture} color={color} />
-            ) : (
-              <meshPhongMaterial
-                attachArray="material"
-                specular={new Color(pvModel?.color === 'Blue' ? SOLAR_PANEL_BLUE_SPECULAR : SOLAR_PANEL_BLACK_SPECULAR)}
-                shininess={solarPanelShiness ?? DEFAULT_SOLAR_PANEL_SHINESS}
-                side={FrontSide}
-                map={texture}
-                color={color}
-              />
-            )
-            // <meshStandardMaterial attachArray="material" map={texture} color={color} />
+            {
+              showSolarRadiationHeatmap && heatmapTexture ? (
+                <meshBasicMaterial attachArray="material" map={heatmapTexture} />
+              ) : orthographic || solarPanelShiness === 0 ? (
+                <meshStandardMaterial attachArray="material" map={texture} color={color} />
+              ) : (
+                <meshPhongMaterial
+                  attachArray="material"
+                  specular={
+                    new Color(pvModel?.color === 'Blue' ? SOLAR_PANEL_BLUE_SPECULAR : SOLAR_PANEL_BLACK_SPECULAR)
+                  }
+                  shininess={solarPanelShiness ?? DEFAULT_SOLAR_PANEL_SHINESS}
+                  side={FrontSide}
+                  map={texture}
+                  color={color}
+                />
+              )
+              // <meshStandardMaterial attachArray="material" map={texture} color={color} />
             }
             <meshStandardMaterial attachArray="material" color={color} />
           </Box>
@@ -867,7 +870,7 @@ const SolarPanelOnWall = ({
           {(hovered || showLabel) && !selected && <Label sp={solarPanel} />}
         </group>
 
-        {tiltAngle !== 0 && (
+        {tiltAngle !== 0 && pvModel && (
           <Mount
             tiltAngle={-tiltAngle}
             spCy={cy - hz}

@@ -742,7 +742,7 @@ const SolarPanelOnRoof = ({
   };
 
   const intersectionPlanePointerMove = (event: ThreeEvent<PointerEvent>) => {
-    if (intersectionPlaneRef.current && pointerDownRef.current && foundationModel) {
+    if (intersectionPlaneRef.current && pointerDownRef.current && foundationModel && pvModel) {
       setRayCast(event);
       const intersects = ray.intersectObjects([intersectionPlaneRef.current]);
       if (intersects.length > 0) {
