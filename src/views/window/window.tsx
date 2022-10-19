@@ -2,12 +2,12 @@
  * @Copyright 2021-2022. Institute for Future Intelligence, Inc.
  */
 
-import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import { DoubleSide, MeshStandardMaterial } from 'three';
 import { Box, Plane } from '@react-three/drei';
 import { WindowModel } from 'src/models/WindowModel';
 import { CommonStoreState, useStore } from 'src/stores/common';
-import { ActionType, ObjectType } from 'src/types';
+import { ObjectType } from 'src/types';
 import * as Selector from 'src/stores/selector';
 import WindowWireFrame from './windowWireFrame';
 import WindowHandleWrapper from './windowHandleWrapper';

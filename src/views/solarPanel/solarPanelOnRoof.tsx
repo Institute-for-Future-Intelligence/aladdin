@@ -4,7 +4,19 @@
 
 import React, { useEffect, useMemo, useRef, useState } from 'react';
 import { Box, Circle, Cone, Cylinder, Line, Plane, Ring, Sphere, Torus } from '@react-three/drei';
-import { CanvasTexture, DoubleSide, Euler, Mesh, Raycaster, RepeatWrapping, Texture, Vector2, Vector3 } from 'three';
+import {
+  CanvasTexture,
+  Color,
+  DoubleSide,
+  Euler,
+  FrontSide,
+  Mesh,
+  Raycaster,
+  RepeatWrapping,
+  Texture,
+  Vector2,
+  Vector3,
+} from 'three';
 import { useStore } from '../../stores/common';
 import { useStoreRef } from 'src/stores/commonRef';
 import * as Selector from '../../stores/selector';
@@ -513,6 +525,7 @@ const SolarPanelOnRoof = ({
   rotation = [0, 0, 0],
   normal = [0, 0, 1],
   color = 'white',
+  reflectance = 0.1,
   selected = false,
   showLabel = false,
   locked = false,
@@ -545,7 +558,7 @@ const SolarPanelOnRoof = ({
   const [showIntersectionPlane, setShowIntersectionPlane] = useState(false);
   const [hovered, setHovered] = useState(false);
   const { gl, camera } = useThree();
-  const [texture, heapmapTexture] = useSPTexture(id, nx, ny, pvModelName, orientation);
+  const [texture, heatmapTexture] = useSPTexture(id, nx, ny, pvModelName, orientation);
 
   const baseRef = useRef<Mesh>();
   const solarPanelLinesRef = useRef<LineData[]>();
@@ -695,8 +708,7 @@ const SolarPanelOnRoof = ({
   const baseSize = Math.max(1, (lx + ly) / 16);
   const moveHandleSize = MOVE_HANDLE_RADIUS * baseSize * 2;
   const resizeHandleSize = RESIZE_HANDLE_SIZE * baseSize * 1.5;
-  const rotateHandleSize = (baseSize * 2) / 3;
-  const tiltHandleSize = rotateHandleSize;
+  const tiltHandleSize = (baseSize * 2) / 3;
 
   const initPointerDown = () => {
     if (foundationModel) {
@@ -997,11 +1009,23 @@ const SolarPanelOnRoof = ({
           <meshStandardMaterial attachArray="material" color={color} />
           <meshStandardMaterial attachArray="material" color={color} />
           <meshStandardMaterial attachArray="material" color={color} />
-          <meshStandardMaterial
-            attachArray="material"
-            color={color}
-            map={showSolarRadiationHeatmap && heapmapTexture ? heapmapTexture : texture}
-          />
+          {showSolarRadiationHeatmap && heatmapTexture ? (
+            <meshBasicMaterial attachArray="material" map={heatmapTexture} />
+          ) : (
+            <meshPhongMaterial
+              attachArray="material"
+              specular={new Color('white')}
+              shininess={100 * reflectance}
+              side={FrontSide}
+              map={texture}
+              color={'white'}
+            />
+          )}
+          {/*<meshStandardMaterial*/}
+          {/*  attachArray="material"*/}
+          {/*  color={color}*/}
+          {/*  map={showSolarRadiationHeatmap && heatmapTexture ? heatmapTexture : texture}*/}
+          {/*/>*/}
           <meshStandardMaterial attachArray="material" color={color} />
         </Box>
 
@@ -1055,7 +1079,7 @@ const SolarPanelOnRoof = ({
         </Plane>
 
         {showSolarRadiationHeatmap &&
-          heapmapTexture &&
+          heatmapTexture &&
           solarPanelLinesRef.current &&
           solarPanelLinesRef.current.map((lineData, index) => {
             return (

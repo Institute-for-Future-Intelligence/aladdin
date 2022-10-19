@@ -4,7 +4,19 @@
 
 import React, { useEffect, useMemo, useRef, useState } from 'react';
 import { Box, Cone, Cylinder, Line, Plane, Ring, Sphere } from '@react-three/drei';
-import { CanvasTexture, DoubleSide, Euler, Mesh, Raycaster, RepeatWrapping, Texture, Vector2, Vector3 } from 'three';
+import {
+  CanvasTexture,
+  Color,
+  DoubleSide,
+  Euler,
+  FrontSide,
+  Mesh,
+  Raycaster,
+  RepeatWrapping,
+  Texture,
+  Vector2,
+  Vector3,
+} from 'three';
 import { useStore } from '../../stores/common';
 import { useStoreRef } from 'src/stores/commonRef';
 import * as Selector from '../../stores/selector';
@@ -60,6 +72,7 @@ const SolarPanel = ({
   rotation = [0, 0, 0],
   normal = [0, 0, 1],
   color = 'white',
+  reflectance = 0.1,
   lineColor = 'black',
   lineWidth = 0.1,
   selected = false,
@@ -437,7 +450,14 @@ const SolarPanel = ({
           {showSolarRadiationHeatmap && heatmapTexture ? (
             <meshBasicMaterial attachArray="material" map={heatmapTexture} />
           ) : (
-            <meshStandardMaterial attachArray="material" map={texture} color={color} />
+            <meshPhongMaterial
+              attachArray="material"
+              specular={new Color('white')}
+              shininess={100 * reflectance}
+              side={FrontSide}
+              map={texture}
+              color={color}
+            />
           )}
           <meshStandardMaterial attachArray="material" color={color} />
         </Box>
