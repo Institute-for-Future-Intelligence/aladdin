@@ -3,9 +3,10 @@
  */
 
 import { CommonStoreState } from '../common';
-import { DiurnalTemperaturePanelProps } from '../../panels/diurnalTemperaturePanel';
 
 export const shadowEnabled = (state: CommonStoreState) => state.viewState.shadowEnabled;
+
+export const solarPanelShiness = (state: CommonStoreState) => state.viewState.solarPanelShiness;
 
 export const solarRadiationHeatmapMaxValue = (state: CommonStoreState) => state.viewState.solarRadiationHeatMapMaxValue;
 

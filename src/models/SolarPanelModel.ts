@@ -14,7 +14,6 @@ export interface SolarPanelModel extends SolarCollector {
   poleSpacing: number;
   parentType?: ObjectType;
   foundationModel?: FoundationModel;
-  reflectance?: number;
 }
 
 export interface SolarPanelModelOnWall extends SolarPanelModel {

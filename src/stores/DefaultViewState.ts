@@ -5,6 +5,7 @@
 import { ViewState } from './ViewState';
 import { immerable } from 'immer';
 import { Rectangle } from '../models/Rectangle';
+import { DEFAULT_SOLAR_PANEL_SHINESS } from '../constants';
 
 export class DefaultViewState implements ViewState {
   [immerable] = true;
@@ -30,6 +31,7 @@ export class DefaultViewState implements ViewState {
   groundImage: boolean;
   groundColor: string;
   waterSurface: boolean;
+  solarPanelShiness: number;
 
   showMapPanel: boolean;
   showHeliodonPanel: boolean;
@@ -112,6 +114,7 @@ export class DefaultViewState implements ViewState {
     this.groundImage = false;
     this.groundColor = '#16A5A5';
     this.waterSurface = false;
+    this.solarPanelShiness = DEFAULT_SOLAR_PANEL_SHINESS;
 
     this.showMapPanel = false;
     this.showHeliodonPanel = false;
@@ -194,6 +197,7 @@ export class DefaultViewState implements ViewState {
     viewState.groundImage = false;
     viewState.groundColor = '#16A5A5';
     viewState.waterSurface = false;
+    viewState.solarPanelShiness = DEFAULT_SOLAR_PANEL_SHINESS;
 
     viewState.showMapPanel = false;
     viewState.showHeliodonPanel = false;

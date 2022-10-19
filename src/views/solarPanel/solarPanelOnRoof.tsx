@@ -22,6 +22,7 @@ import { useStoreRef } from 'src/stores/commonRef';
 import * as Selector from '../../stores/selector';
 import { ThreeEvent, useThree } from '@react-three/fiber';
 import {
+  DEFAULT_SOLAR_PANEL_SHINESS,
   HALF_PI,
   HIGHLIGHT_HANDLE_COLOR,
   LOCKED_ELEMENT_SELECTION_COLOR,
@@ -29,6 +30,8 @@ import {
   ORIGIN_VECTOR2,
   RESIZE_HANDLE_COLOR,
   RESIZE_HANDLE_SIZE,
+  SOLAR_PANEL_BLACK_SPECULAR,
+  SOLAR_PANEL_BLUE_SPECULAR,
   TWO_PI,
   UNIT_VECTOR_POS_Z,
   ZERO_TOLERANCE,
@@ -525,7 +528,6 @@ const SolarPanelOnRoof = ({
   rotation = [0, 0, 0],
   normal = [0, 0, 1],
   color = 'white',
-  reflectance = 0.1,
   selected = false,
   showLabel = false,
   locked = false,
@@ -540,6 +542,8 @@ const SolarPanelOnRoof = ({
   const getElementById = useStore(Selector.getElementById);
   const showSolarRadiationHeatmap = useStore(Selector.showSolarRadiationHeatmap);
   const shadowEnabled = useStore(Selector.viewState.shadowEnabled);
+  const solarPanelShiness = useStore(Selector.viewState.solarPanelShiness);
+  const orthographic = useStore(Selector.viewState.orthographic) ?? false;
 
   const pvModel = getPvModule(pvModelName) ?? getPvModule('SPR-X21-335-BLK');
   if (pvModel) {
@@ -1011,21 +1015,18 @@ const SolarPanelOnRoof = ({
           <meshStandardMaterial attachArray="material" color={color} />
           {showSolarRadiationHeatmap && heatmapTexture ? (
             <meshBasicMaterial attachArray="material" map={heatmapTexture} />
+          ) : orthographic || solarPanelShiness === 0 ? (
+            <meshStandardMaterial attachArray="material" map={texture} color={color} />
           ) : (
             <meshPhongMaterial
               attachArray="material"
-              specular={new Color('white')}
-              shininess={100 * reflectance}
+              specular={new Color(pvModel?.color === 'Blue' ? SOLAR_PANEL_BLUE_SPECULAR : SOLAR_PANEL_BLACK_SPECULAR)}
+              shininess={solarPanelShiness ?? DEFAULT_SOLAR_PANEL_SHINESS}
               side={FrontSide}
               map={texture}
               color={'white'}
             />
           )}
-          {/*<meshStandardMaterial*/}
-          {/*  attachArray="material"*/}
-          {/*  color={color}*/}
-          {/*  map={showSolarRadiationHeatmap && heatmapTexture ? heatmapTexture : texture}*/}
-          {/*/>*/}
           <meshStandardMaterial attachArray="material" color={color} />
         </Box>
 

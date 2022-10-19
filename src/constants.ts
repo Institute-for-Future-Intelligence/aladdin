@@ -21,6 +21,10 @@ export const YELLOW = new Color(1, 1, 0);
 export const RED = new Color(1, 0, 0);
 export const SOLAR_HEATMAP_COLORS = [BLUE, GREEN, YELLOW, RED];
 
+export const DEFAULT_SOLAR_PANEL_SHINESS = 100;
+export const SOLAR_PANEL_BLUE_SPECULAR = '#3BB9FF';
+export const SOLAR_PANEL_BLACK_SPECULAR = '#36454F';
+
 export const MONTHS = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
 
 export const DEFAULT_SKY_RADIUS = 5000;

@@ -28,6 +28,7 @@ export interface ViewState {
   groundImage: boolean;
   groundColor: string;
   waterSurface: boolean;
+  solarPanelShiness?: number;
 
   showMapPanel: boolean;
   showHeliodonPanel: boolean;
