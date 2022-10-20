@@ -389,6 +389,7 @@ export const i18n_tr = {
         Church: 'Kilise',
         AdobeTaosHouse: 'Adobe Taos House',
         BarnStyleHouse: 'Çiftlik Evi',
+        ModernHouse: 'Modern House',
       },
       commercialBuildingsSubMenu: 'Ticari Binalar',
       commercialBuildingExamples: {

@@ -387,6 +387,7 @@ export const i18n_zh_tw = {
         Church: '教堂',
         AdobeTaosHouse: '陶斯土坯房',
         BarnStyleHouse: '穀倉式風格的住宅',
+        ModernHouse: '現代風格的住宅',
       },
       commercialBuildingsSubMenu: '商用建築',
       commercialBuildingExamples: {

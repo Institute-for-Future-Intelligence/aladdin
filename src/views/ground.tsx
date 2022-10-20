@@ -1648,7 +1648,7 @@ const Ground = () => {
                 }
               } else {
                 // any size is okay for a childless parent
-                if (lx > 0.99 && ly > 0.99) {
+                if (lx > 0.49 && ly > 0.49) {
                   e.lx = lx;
                   e.ly = ly;
                   e.cx = center.x;

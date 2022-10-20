@@ -2709,7 +2709,7 @@ const Foundation = ({
                 <Sphere
                   ref={moveHandleLeftRef}
                   args={[moveHandleSize, 6, 6, 0, Math.PI]}
-                  position={[-hx, MOVE_HANDLE_RADIUS, 0]}
+                  position={[-hx, 0, 0]}
                   name={MoveHandleType.Left}
                   onPointerDown={(e) => {
                     selectMe(id, e, ActionType.Move);

@@ -389,6 +389,7 @@ export const i18n_es = {
         Church: 'Church',
         AdobeTaosHouse: 'Adobe Taos House',
         BarnStyleHouse: 'Barn Style House',
+        ModernHouse: 'Modern House',
       },
       commercialBuildingsSubMenu: 'Commercial Buildings',
       commercialBuildingExamples: {

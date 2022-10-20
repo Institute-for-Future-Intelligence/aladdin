@@ -20,6 +20,7 @@ import mansard_roof_with_dormers from './examples/mansard_roof_with_dormers.json
 import cape_cod_with_garage from './examples/cape_cod_with_garage.json';
 import adobe_taos_house from './examples/adobe_taos_house.json';
 import barn_house from './examples/barn_house.json';
+import modern_house_01 from './examples/modern_house_01.json';
 import solarium from './examples/solarium.json';
 import church_01 from './examples/church_01.json';
 import colonial_house from './examples/colonial_house.json';
@@ -458,6 +459,9 @@ const MainMenu = ({ viewOnly, set2DView, resetView, zoomView, canvas }: MainMenu
         break;
       case 'barn_house':
         input = barn_house;
+        break;
+      case 'modern_house_01':
+        input = modern_house_01;
         break;
       case 'solar_radiation_predicted_vs_measured':
         input = solar_radiation_predicted_vs_measured;
@@ -2117,6 +2121,9 @@ const MainMenu = ({ viewOnly, set2DView, resetView, zoomView, canvas }: MainMenu
             </Menu.Item>
             <Menu.Item key="barn_house" onClick={loadFile}>
               {i18n.t('menu.residentialBuildingExamples.BarnStyleHouse', lang)}
+            </Menu.Item>
+            <Menu.Item key="modern_house_01" onClick={loadFile}>
+              {i18n.t('menu.residentialBuildingExamples.ModernHouse', lang)}
             </Menu.Item>
           </SubMenu>
           <SubMenu key={'commercial_buildings'} title={i18n.t('menu.commercialBuildingsSubMenu', lang)}>
