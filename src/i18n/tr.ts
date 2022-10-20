@@ -314,6 +314,7 @@ export const i18n_tr = {
       buildingDesignSubMenu: 'Bina Tasarımı',
       buildingDesignTutorials: {
         CapeCodStyleHouseWithShedDormer: 'Çatı Pencereli Cape Cod Evi',
+        MansardRoofWithDormers: 'Mansard Roof with Dormers',
         GableRoofVsHipRoof: 'Beşik Çatı vs. Kırma Çatı',
         ColonialVsSaltbox: 'Koloni vs. Tuz Kutusu',
         GambrelRoofVsMansardRoof: 'Flemenk Çatı vs. Mansart Çatı',
@@ -404,6 +405,7 @@ export const i18n_tr = {
       otherBuildingExamples: {
         Greenhouse: 'Sera',
         Pavilion: 'Park Kamelyası',
+        OctagonalPagoda: 'Octagonal Pagoda',
         OceanFront: 'Ocean Front',
         EgyptianPyramids: 'Egyptian Pyramids',
         MayanPyramid: 'Mayan Pyramid',

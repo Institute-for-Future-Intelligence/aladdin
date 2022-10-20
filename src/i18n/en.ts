@@ -315,6 +315,7 @@ export const i18n_en = {
       buildingDesignSubMenu: 'Building Design',
       buildingDesignTutorials: {
         CapeCodStyleHouseWithShedDormer: 'Cape Cod Style House with Shed Dormer',
+        MansardRoofWithDormers: 'Mansard Roof with Dormers',
         GableRoofVsHipRoof: 'Gable Roof vs. Hip Roof',
         ColonialVsSaltbox: 'Colonial vs. Saltbox',
         GambrelRoofVsMansardRoof: 'Gambrel Roof vs. Mansard Roof',
@@ -404,6 +405,7 @@ export const i18n_en = {
       otherBuildingExamples: {
         Greenhouse: 'Greenhouse',
         Pavilion: 'Pavilion in a Park',
+        OctagonalPagoda: 'Octagonal Pagoda',
         OceanFront: 'Ocean Front',
         EgyptianPyramids: 'Egyptian Pyramids',
         MayanPyramid: 'Mayan Pyramid',

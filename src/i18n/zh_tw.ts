@@ -313,6 +313,7 @@ export const i18n_zh_tw = {
       buildingDesignSubMenu: '建築設計',
       buildingDesignTutorials: {
         CapeCodStyleHouseWithShedDormer: '有棚頂窗的科德角風格的住宅',
+        MansardRoofWithDormers: '有天窗的折線屋頂',
         GableRoofVsHipRoof: '雙坡屋頂和四坡屋顶的對比',
         ColonialVsSaltbox: '殖民地風格和鹽盒風格的對比',
         GambrelRoofVsMansardRoof: '复斜屋顶和折線屋頂的對比',
@@ -402,6 +403,7 @@ export const i18n_zh_tw = {
       otherBuildingExamples: {
         Greenhouse: '溫室',
         Pavilion: '公園的亭子',
+        OctagonalPagoda: '八角塔',
         OceanFront: '海邊',
         EgyptianPyramids: '埃及金字塔',
         MayanPyramid: '瑪雅金字塔',

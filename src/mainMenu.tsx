@@ -16,6 +16,7 @@ import solar_panels_over_canal from './examples/solar_panels_over_canal.json';
 import solar_trackers from './examples/solar_trackers.json';
 import all_roof_types from './examples/all_roof_types.json';
 import cape_cod_with_shed_dormer from './examples/cape_cod_with_shed_dormer.json';
+import mansard_roof_with_dormers from './examples/mansard_roof_with_dormers.json';
 import cape_cod_with_garage from './examples/cape_cod_with_garage.json';
 import adobe_taos_house from './examples/adobe_taos_house.json';
 import barn_house from './examples/barn_house.json';
@@ -32,6 +33,7 @@ import mescalero_apache_school from './examples/mescalero_apache_school.json';
 import heatmap_01 from './examples/heatmap_01.json';
 import greenhouse from './examples/greenhouse.json';
 import pavilion from './examples/pavilion.json';
+import octagonal_pagoda from './examples/octagonal_pagoda.json';
 import ocean_front from './examples/ocean_front.json';
 import egyptian_pyramids from './examples/egyptian_pyramids.json';
 import mayan_pyramid from './examples/mayan_pyramid.json';
@@ -403,6 +405,9 @@ const MainMenu = ({ viewOnly, set2DView, resetView, zoomView, canvas }: MainMenu
       case 'cape_cod_with_shed_dormer':
         input = cape_cod_with_shed_dormer;
         break;
+      case 'mansard_roof_with_dormers':
+        input = mansard_roof_with_dormers;
+        break;
       case 'all_roof_types':
         input = all_roof_types;
         break;
@@ -432,6 +437,9 @@ const MainMenu = ({ viewOnly, set2DView, resetView, zoomView, canvas }: MainMenu
         break;
       case 'pavilion':
         input = pavilion;
+        break;
+      case 'octagonal_pagoda':
+        input = octagonal_pagoda;
         break;
       case 'ocean_front':
         input = ocean_front;
@@ -1930,6 +1938,9 @@ const MainMenu = ({ viewOnly, set2DView, resetView, zoomView, canvas }: MainMenu
           <Menu.Item key="cape_cod_with_shed_dormer" onClick={loadFile}>
             {i18n.t('menu.buildingDesignTutorials.CapeCodStyleHouseWithShedDormer', lang)}
           </Menu.Item>
+          <Menu.Item key="mansard_roof_with_dormers" onClick={loadFile}>
+            {i18n.t('menu.buildingDesignTutorials.MansardRoofWithDormers', lang)}
+          </Menu.Item>
           <Menu.Item key="gable_roof_vs_hip_roof" onClick={loadFile}>
             {i18n.t('menu.buildingDesignTutorials.GableRoofVsHipRoof', lang)}
           </Menu.Item>
@@ -2128,6 +2139,9 @@ const MainMenu = ({ viewOnly, set2DView, resetView, zoomView, canvas }: MainMenu
             </Menu.Item>
             <Menu.Item key="pavilion" onClick={loadFile}>
               {i18n.t('menu.otherBuildingExamples.Pavilion', lang)}
+            </Menu.Item>
+            <Menu.Item key="octagonal_pagoda" onClick={loadFile}>
+              {i18n.t('menu.otherBuildingExamples.OctagonalPagoda', lang)}
             </Menu.Item>
             <Menu.Item key="ocean_front" onClick={loadFile}>
               {i18n.t('menu.otherBuildingExamples.OceanFront', lang)}
