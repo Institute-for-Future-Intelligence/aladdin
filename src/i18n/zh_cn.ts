@@ -688,11 +688,13 @@ export const i18n_zh_cn = {
 
     treeMenu: {
       ShowModel: '显示近似模型',
+      Flip: '翻转',
       Type: '树种',
       Spread: '树冠直径',
     },
 
     flowerMenu: {
+      Flip: '翻转',
       Type: '品种',
       Spread: '直径',
     },

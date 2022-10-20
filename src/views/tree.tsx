@@ -10,6 +10,7 @@ import {
   Mesh,
   MeshDepthMaterial,
   Object3D,
+  RepeatWrapping,
   RGBADepthPacking,
   TextureLoader,
   Vector3,
@@ -44,6 +45,7 @@ const Tree = ({
   lx,
   lz,
   name = TreeType.Pine,
+  flip = false,
   selected = false,
   locked = false,
   showModel = false,
@@ -126,10 +128,14 @@ const Tree = ({
 
   const textureLoader = useMemo(() => {
     return new TextureLoader().load(TreeData.fetchTextureImage(name, month, latitude), (texture) => {
+      if (flip) {
+        texture.wrapS = RepeatWrapping;
+        texture.repeat.x = -1;
+      }
       setTexture(texture);
       setUpdateFlag(!updateFlag);
     });
-  }, [name, month, latitude]);
+  }, [name, month, latitude, flip]);
   const [texture, setTexture] = useState(textureLoader);
 
   const labelText = useMemo(() => {

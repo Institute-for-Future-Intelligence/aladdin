@@ -10,6 +10,7 @@ import {
   Mesh,
   MeshDepthMaterial,
   Object3D,
+  RepeatWrapping,
   RGBADepthPacking,
   TextureLoader,
   Vector3,
@@ -40,6 +41,7 @@ const Flower = ({
   cy,
   cz,
   name = FlowerType.WhiteFlower,
+  flip = false,
   selected = false,
   locked = false,
 }: FlowerModel) => {
@@ -114,10 +116,14 @@ const Flower = ({
 
   const textureLoader = useMemo(() => {
     return new TextureLoader().load(FlowerData.fetchTextureImage(name, noLeaves), (texture) => {
+      if (flip) {
+        texture.wrapS = RepeatWrapping;
+        texture.repeat.x = -1;
+      }
       setTexture(texture);
       setUpdateFlag(!updateFlag);
     });
-  }, [name, noLeaves]);
+  }, [name, noLeaves, flip]);
   const [texture, setTexture] = useState(textureLoader);
 
   const labelText = useMemo(() => {

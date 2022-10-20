@@ -708,11 +708,13 @@ export const i18n_es = {
 
     treeMenu: {
       ShowModel: 'Mostrar modelo',
+      Flip: 'Flip',
       Type: 'Tipo',
       Spread: 'Extender',
     },
 
     flowerMenu: {
+      Flip: 'Flip',
       Type: 'Type',
       Spread: 'Spread',
     },

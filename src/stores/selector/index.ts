@@ -586,7 +586,11 @@ export const updateTreeTypeById = (state: CommonStoreState) => state.updateTreeT
 
 export const updateTreeShowModelById = (state: CommonStoreState) => state.updateTreeShowModelById;
 
+export const updateTreeFlipById = (state: CommonStoreState) => state.updateTreeFlipById;
+
 export const updateFlowerTypeById = (state: CommonStoreState) => state.updateFlowerTypeById;
+
+export const updateFlowerFlipById = (state: CommonStoreState) => state.updateFlowerFlipById;
 
 export const updateHumanNameById = (state: CommonStoreState) => state.updateHumanNameById;
 

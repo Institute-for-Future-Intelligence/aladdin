@@ -523,7 +523,9 @@ export interface CommonStoreState {
   // for plants
   updateTreeTypeById: (id: string, type: TreeType) => void;
   updateTreeShowModelById: (id: string, showModel: boolean) => void;
+  updateTreeFlipById: (id: string, flip: boolean) => void;
   updateFlowerTypeById: (id: string, type: FlowerType) => void;
+  updateFlowerFlipById: (id: string, flip: boolean) => void;
 
   // for humans
   updateHumanNameById: (id: string, name: HumanName) => void;
@@ -4118,6 +4120,16 @@ export const useStore = create<CommonStoreState>(
               }
             });
           },
+          updateTreeFlipById(id, flip) {
+            immerSet((state: CommonStoreState) => {
+              for (const e of state.elements) {
+                if (e.type === ObjectType.Tree && e.id === id) {
+                  (e as TreeModel).flip = flip;
+                  break;
+                }
+              }
+            });
+          },
           updateFlowerTypeById(id, name) {
             immerSet((state: CommonStoreState) => {
               for (const e of state.elements) {
@@ -4126,6 +4138,16 @@ export const useStore = create<CommonStoreState>(
                   flower.name = name;
                   flower.lx = FlowerData.fetchSpread(name);
                   flower.lz = FlowerData.fetchHeight(name);
+                  break;
+                }
+              }
+            });
+          },
+          updateFlowerFlipById(id, flip) {
+            immerSet((state: CommonStoreState) => {
+              for (const e of state.elements) {
+                if (e.type === ObjectType.Flower && e.id === id) {
+                  (e as FlowerModel).flip = flip;
                   break;
                 }
               }

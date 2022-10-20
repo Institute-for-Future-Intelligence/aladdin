@@ -708,11 +708,13 @@ export const i18n_tr = {
 
     treeMenu: {
       ShowModel: 'Modeli Göster',
+      Flip: 'Flip',
       Type: 'Tür',
       Spread: 'Yayılım',
     },
 
     flowerMenu: {
+      Flip: 'Flip',
       Type: 'Type',
       Spread: 'Spread',
     },

@@ -138,6 +138,7 @@ export class ElementModelCloner {
     return {
       type: ObjectType.Human,
       name: human.name,
+      flip: human.flip,
       cx: x,
       cy: y,
       cz: z,
@@ -155,6 +156,7 @@ export class ElementModelCloner {
     return {
       type: ObjectType.Tree,
       name: tree.name,
+      flip: tree.flip,
       cx: x,
       cy: y,
       cz: z,
@@ -172,6 +174,7 @@ export class ElementModelCloner {
     return {
       type: ObjectType.Flower,
       name: flower.name,
+      flip: flower.flip,
       cx: x,
       cy: y,
       cz: z,

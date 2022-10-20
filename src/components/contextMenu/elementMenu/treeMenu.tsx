@@ -19,6 +19,7 @@ export const TreeMenu = () => {
   const updateElementLxById = useStore(Selector.updateElementLxById);
   const updateElementLzById = useStore(Selector.updateElementLzById);
   const updateTreeShowModelById = useStore(Selector.updateTreeShowModelById);
+  const updateTreeFlipById = useStore(Selector.updateTreeFlipById);
   const tree = useStore(Selector.selectedElement) as TreeModel;
   const addUndoable = useStore(Selector.addUndoable);
 
@@ -106,6 +107,34 @@ export const TreeMenu = () => {
             {i18n.t('treeMenu.ShowModel', lang)}
           </Checkbox>
         </Menu.Item>
+
+        {editable && (
+          <Menu.Item key={'tree-flip'}>
+            <Checkbox
+              checked={tree.flip}
+              onChange={(e) => {
+                const checked = e.target.checked;
+                const undoableCheck = {
+                  name: 'Flip Tree',
+                  timestamp: Date.now(),
+                  checked: checked,
+                  selectedElementId: tree.id,
+                  selectedElementType: ObjectType.Tree,
+                  undo: () => {
+                    updateTreeFlipById(tree.id, !undoableCheck.checked);
+                  },
+                  redo: () => {
+                    updateTreeFlipById(tree.id, undoableCheck.checked);
+                  },
+                } as UndoableCheck;
+                addUndoable(undoableCheck);
+                updateTreeFlipById(tree.id, checked);
+              }}
+            >
+              {i18n.t('treeMenu.Flip', { lng: language })}
+            </Checkbox>
+          </Menu.Item>
+        )}
 
         {/* have to wrap the text field with a Menu so that it can stay open when the user types in it */}
         {editable && (
