@@ -38,7 +38,7 @@ const MullionSpacingInput = ({ setDialogVisible }: { setDialogVisible: (b: boole
     }
   }, [windowElement]);
 
-  const updateRoofMullionWidthById = (id: string, spacing: number) => {
+  const updateMullionSpacingById = (id: string, spacing: number) => {
     setCommonStore((state) => {
       for (const e of state.elements) {
         if (e.id === id) {
@@ -53,13 +53,13 @@ const MullionSpacingInput = ({ setDialogVisible }: { setDialogVisible: (b: boole
 
   const undoInMap = (map: Map<string, number>) => {
     for (const [id, val] of map.entries()) {
-      updateRoofMullionWidthById(id, val);
+      updateMullionSpacingById(id, val);
     }
   };
 
   const updateInMap = (map: Map<string, number>, value: number) => {
     for (const id of map.keys()) {
-      updateRoofMullionWidthById(id, value);
+      updateMullionSpacingById(id, value);
     }
   };
 
@@ -165,14 +165,14 @@ const MullionSpacingInput = ({ setDialogVisible }: { setDialogVisible: (b: boole
             changedElementId: windowElement.id,
             changedElementType: windowElement.type,
             undo: () => {
-              updateRoofMullionWidthById(undoableChange.changedElementId, undoableChange.oldValue as number);
+              updateMullionSpacingById(undoableChange.changedElementId, undoableChange.oldValue as number);
             },
             redo: () => {
-              updateRoofMullionWidthById(undoableChange.changedElementId, undoableChange.newValue as number);
+              updateMullionSpacingById(undoableChange.changedElementId, undoableChange.newValue as number);
             },
           } as UndoableChange;
           addUndoable(undoableChange);
-          updateRoofMullionWidthById(windowElement.id, value);
+          updateMullionSpacingById(windowElement.id, value);
           setApplyCount(applyCount + 1);
         }
     }

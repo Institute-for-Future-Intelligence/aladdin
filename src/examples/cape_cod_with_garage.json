@@ -1,7 +1,7 @@
 {
-  "docid": "cM4XYYDRPtHGpz7x6v6Qbz",
-  "time": "10/18/2022 08:35 pm",
-  "timestamp": 1666139748395,
+  "docid": "mpQDfWoQTV3cbB1pg1shsP",
+  "time": "10/20/2022 03:25 pm",
+  "timestamp": 1666293925485,
   "userid": "QWecNcxhyvP6j6sBN11hBsfZDau1",
   "owner": null,
   "email": null,
@@ -309,7 +309,7 @@
       "cz": 3.903941909848086,
       "roofId": "7MxSmgNk4kQf8eNqmnwjMJ",
       "lz": 6,
-      "ly": 0.3,
+      "ly": 0.1,
       "leftRoofHeight": 6,
       "relativeAngle": 3.141592653589793,
       "rightRoofHeight": 6,
@@ -368,7 +368,7 @@
       ],
       "lz": 6,
       "selected": false,
-      "ly": 0.3,
+      "ly": 0.1,
       "cz": 3.5644394786617815,
       "id": "4Q8KDQDxyuamkEtRJU3paR",
       "rotation": [
@@ -449,7 +449,7 @@
       "lx": 3.125623837644766,
       "cy": 0.25713866261073326,
       "windows": [],
-      "ly": 0.3,
+      "ly": 0.1,
       "rightRoofHeight": 6,
       "color": "#ffffff",
       "studWidth": 0.1,
@@ -511,7 +511,7 @@
         0
       ],
       "cx": -0.03446770657950715,
-      "ly": 0.3,
+      "ly": 0.1,
       "relativeAngle": 0,
       "cz": 3.535805069111796,
       "rightJoints": [
@@ -1220,9 +1220,9 @@
     {
       "type": "Human",
       "name": "Jack",
-      "cx": 2.646546458065604,
-      "cy": -7.224011893732605,
-      "cz": 0,
+      "cx": -0.27435952116767837,
+      "cy": -0.6581153273582458,
+      "cz": 0.10634221583826786,
       "lx": 0.42,
       "lz": 1.8,
       "normal": [
@@ -1235,11 +1235,12 @@
         0,
         0
       ],
-      "parentId": "Ground",
+      "parentId": "cGSH1ASJyBhQtxEpSahrE8",
       "id": "fPgwwBmXz2LWV9vPRMmqzu",
       "selected": false,
       "ly": 0.42,
-      "locked": true
+      "locked": true,
+      "flip": true
     },
     {
       "type": "Wall",
@@ -1247,7 +1248,7 @@
       "cy": 1.8156223325109586,
       "cz": 3.903941909848086,
       "lx": 1.1421683491180719,
-      "ly": 0.3,
+      "ly": 0.1,
       "lz": 6,
       "leftJoints": [
         "t6JjtmZmPqJRVZKJkbyzJi"
@@ -1298,7 +1299,7 @@
       "cy": 0.2528104136885755,
       "cz": 3.5644394786617815,
       "lx": 3.125623837644766,
-      "ly": 0.3,
+      "ly": 0.1,
       "lz": 6,
       "leftJoints": [
         "i4xUARQgNSf52ouooVSiS9"
@@ -1345,7 +1346,7 @@
       "cy": 0.2528104136885755,
       "cz": 3.660138480027889,
       "lx": 3.125623837644766,
-      "ly": 0.3,
+      "ly": 0.1,
       "lz": 6,
       "leftJoints": [
         "34NjUPzx48JorZ5wqGUvgg"
@@ -1392,7 +1393,7 @@
       "cy": -1.3100015051338076,
       "cz": 3.535805069111796,
       "lx": 1.1421683491180719,
-      "ly": 0.3,
+      "ly": 0.1,
       "lz": 6,
       "leftJoints": [
         "qnrZVcXW7sGmWiL5DxCcpP"
@@ -1544,7 +1545,7 @@
       "cy": 2.1936412961014904,
       "cz": 3.903941909848086,
       "lx": 1.1421683491180716,
-      "ly": 0.3,
+      "ly": 0.1,
       "lz": 6,
       "leftJoints": [
         "v49PfQ59VkByq57ohKX9uA"
@@ -1595,7 +1596,7 @@
       "cy": 0.6308293772791074,
       "cz": 3.5644394786617815,
       "lx": 3.125623837644766,
-      "ly": 0.3,
+      "ly": 0.1,
       "lz": 6,
       "leftJoints": [
         "dofmNpVnoyUD6poUbEH92H"
@@ -1642,7 +1643,7 @@
       "cy": 0.6308293772791074,
       "cz": 3.660138480027889,
       "lx": 3.125623837644766,
-      "ly": 0.3,
+      "ly": 0.1,
       "lz": 6,
       "leftJoints": [
         "j2TVMgjH32U1V7YuWfrYce"
@@ -1689,7 +1690,7 @@
       "cy": -0.9319825415432756,
       "cz": 3.535805069111796,
       "lx": 1.1421683491180716,
-      "ly": 0.3,
+      "ly": 0.1,
       "lz": 6,
       "leftJoints": [
         "eq4bXeL88bLi2xVeWkyogN"
@@ -3038,9 +3039,9 @@
     {
       "type": "Tree",
       "name": "Maple",
-      "cx": 17.865612413681372,
-      "cy": 0.16934792137261212,
-      "cz": -8.881784197001252e-16,
+      "cx": 17.67275693788636,
+      "cy": 1.4450419691745573,
+      "cz": 0,
       "lx": 7.6312730174756584,
       "lz": 11.401453020556955,
       "normal": [
@@ -3057,7 +3058,7 @@
       "id": "fvxLBBmjibSLAyfoLcbVjh",
       "selected": false,
       "evergreen": false,
-      "locked": false
+      "locked": true
     },
     {
       "type": "Flower",
@@ -3080,7 +3081,8 @@
       "parentId": "Ground",
       "id": "9CLZuQC6xH4DGcZvLruk4s",
       "selected": false,
-      "locked": true
+      "locked": true,
+      "flip": true
     },
     {
       "type": "Flower",
@@ -3126,7 +3128,8 @@
       "parentId": "Ground",
       "id": "2agGn2N16sYDjc7TtzRo77",
       "selected": false,
-      "locked": true
+      "locked": true,
+      "flip": true
     },
     {
       "type": "Flower",
@@ -3219,14 +3222,14 @@
       "id": "qpT1N3VZfjdrNWS4GttCXC",
       "selected": false,
       "evergreen": false,
-      "locked": false
+      "locked": true
     },
     {
       "type": "Human",
       "name": "Jess",
-      "cx": 0.7868734372493726,
-      "cy": -7.852602748159519,
-      "cz": -8.881784197001252e-16,
+      "cx": 2.2752160006176823,
+      "cy": -7.071591540443462,
+      "cz": 0,
       "lx": 0.43,
       "ly": 0.43,
       "lz": 1.5,
@@ -3272,9 +3275,9 @@
     {
       "type": "Tree",
       "name": "Elm",
-      "cx": 18.432113714851354,
-      "cy": -4.238967926667648,
-      "cz": -8.881784197001252e-16,
+      "cx": 18.756466652215924,
+      "cy": -2.7486876275390486,
+      "cz": 0,
       "lx": 10.046562775206576,
       "lz": 8.109426488433453,
       "normal": [
@@ -3290,7 +3293,31 @@
       "parentId": "Ground",
       "id": "rAcrYXcgzcVotvfd1MPBUS",
       "selected": false,
-      "evergreen": false
+      "evergreen": false,
+      "locked": true
+    },
+    {
+      "type": "Human",
+      "name": "Jeff",
+      "cx": 9.64461931687178,
+      "cy": -5.072637355639831,
+      "cz": 0,
+      "lx": 0.6,
+      "lz": 1.65,
+      "normal": [
+        0,
+        1,
+        0
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "parentId": "Ground",
+      "id": "73Mqjiw5uA1adJ6VuCj1Hf",
+      "selected": false,
+      "locked": true
     }
   ],
   "view": {
@@ -3322,9 +3349,9 @@
     "dailyHeliostatYieldPanelX": 0,
     "showDailyParabolicDishYieldPanel": false,
     "cameraPosition": [
-      12.621369196696566,
-      -24.379734952507867,
-      4.082480888602587
+      15.256270723186113,
+      -18.8413277799583,
+      4.049381693088146
     ],
     "showYearlyHeliostatYieldPanel": false,
     "orthographic": false,
@@ -3375,7 +3402,7 @@
     "panCenter": [
       4.60527224285208,
       4.975710702300768,
-      4.082480888602587
+      4.049381693088146
     ],
     "yearlyFresnelReflectorYieldPanelY": 0,
     "showHeliodonPanel": false,

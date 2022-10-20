@@ -609,6 +609,7 @@ export class ElementModelCloner {
       lx: window.lx,
       ly: parent.ly,
       lz: window.lz,
+      mullion: window.mullion,
       mullionWidth: window.mullionWidth,
       mullionSpacing: window.mullionSpacing,
       color: window.color,

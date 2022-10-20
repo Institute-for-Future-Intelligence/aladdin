@@ -38,7 +38,7 @@ const MullinoWidthInput = ({ setDialogVisible }: { setDialogVisible: (b: boolean
     }
   }, [windowElement]);
 
-  const updateRoofMullionWidthById = (id: string, width: number) => {
+  const updateMullionWidthById = (id: string, width: number) => {
     setCommonStore((state) => {
       for (const e of state.elements) {
         if (e.id === id) {
@@ -53,13 +53,13 @@ const MullinoWidthInput = ({ setDialogVisible }: { setDialogVisible: (b: boolean
 
   const undoInMap = (map: Map<string, number>) => {
     for (const [id, val] of map.entries()) {
-      updateRoofMullionWidthById(id, val);
+      updateMullionWidthById(id, val);
     }
   };
 
   const updateInMap = (map: Map<string, number>, value: number) => {
     for (const id of map.keys()) {
-      updateRoofMullionWidthById(id, value);
+      updateMullionWidthById(id, value);
     }
   };
 
@@ -165,14 +165,14 @@ const MullinoWidthInput = ({ setDialogVisible }: { setDialogVisible: (b: boolean
             changedElementId: windowElement.id,
             changedElementType: windowElement.type,
             undo: () => {
-              updateRoofMullionWidthById(undoableChange.changedElementId, undoableChange.oldValue as number);
+              updateMullionWidthById(undoableChange.changedElementId, undoableChange.oldValue as number);
             },
             redo: () => {
-              updateRoofMullionWidthById(undoableChange.changedElementId, undoableChange.newValue as number);
+              updateMullionWidthById(undoableChange.changedElementId, undoableChange.newValue as number);
             },
           } as UndoableChange;
           addUndoable(undoableChange);
-          updateRoofMullionWidthById(windowElement.id, value);
+          updateMullionWidthById(windowElement.id, value);
           setApplyCount(applyCount + 1);
         }
     }

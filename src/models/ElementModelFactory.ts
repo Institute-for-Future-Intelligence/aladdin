@@ -518,6 +518,7 @@ export class ElementModelFactory {
       ly: parent.ly,
       lz: 0,
       shutter: defaultShutter,
+      mullion: true,
       mullionWidth: 0.06,
       mullionSpacing: 1,
       selected: true,

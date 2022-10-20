@@ -1,7 +1,7 @@
 {
-  "docid": "iwHP3Ktn7j9E5pjkFx3EVE",
-  "time": "10/20/2022 12:55 pm",
-  "timestamp": 1666284931708,
+  "docid": "75k13oe3NtAs1fRenEED5M",
+  "time": "10/20/2022 01:10 pm",
+  "timestamp": 1666285856479,
   "userid": "QWecNcxhyvP6j6sBN11hBsfZDau1",
   "owner": null,
   "email": null,
@@ -101,8 +101,8 @@
     {
       "type": "Human",
       "name": "Jess",
-      "cx": 8.6596556631624,
-      "cy": -1.8127765705790644,
+      "cx": 8.032050597858934,
+      "cy": -6.960676244901867,
       "cz": 0.05000000074505806,
       "lx": 0.43,
       "ly": 0.43,
@@ -1645,9 +1645,9 @@
     {
       "type": "Human",
       "name": "Judd",
-      "cx": 8.215505581245434,
-      "cy": -0.05991618185886871,
-      "cz": 0.050000000745057616,
+      "cx": 7.8538131049134385,
+      "cy": -5.07106737312789,
+      "cz": 0.05000000074505828,
       "lx": 0.544,
       "lz": 1.68,
       "normal": [
@@ -1663,14 +1663,15 @@
       "parentId": "m7AH7DcnoGzAq9kryBy4RS",
       "id": "3PTeJ2nnhnU1658gE9hwVj",
       "selected": false,
-      "locked": false
+      "locked": false,
+      "ly": 0.544
     },
     {
       "type": "Human",
       "name": "Jeff",
-      "cx": 5.275384187454074,
-      "cy": 1.1294050102874467,
-      "cz": 0.05000000074505806,
+      "cx": 1.3294328409358478,
+      "cy": 0.0073529482213468,
+      "cz": 0.1500000059604645,
       "lx": 0.6,
       "lz": 1.65,
       "normal": [
@@ -1683,17 +1684,18 @@
         0,
         0
       ],
-      "parentId": "m7AH7DcnoGzAq9kryBy4RS",
+      "parentId": "3HGisFhi9kVGUkmKRBhKms",
       "id": "vmxzjFWTAjwTqms6QcsEP3",
       "selected": false,
-      "locked": false
+      "locked": false,
+      "ly": 0.6
     },
     {
       "type": "Human",
       "name": "Jean",
       "flip": true,
-      "cx": 8.865456827490569,
-      "cy": -1.406055862913397,
+      "cx": 8.040674150226515,
+      "cy": -6.334084712275156,
       "cz": 0.05000000074505806,
       "lx": 0.65,
       "lz": 1.8,
@@ -1710,7 +1712,8 @@
       "parentId": "m7AH7DcnoGzAq9kryBy4RS",
       "id": "5Qsgp8Gq1Jr7PUZmxevYZR",
       "selected": false,
-      "locked": false
+      "locked": false,
+      "ly": 0.65
     },
     {
       "type": "Human",
@@ -1732,7 +1735,8 @@
       ],
       "parentId": "m7AH7DcnoGzAq9kryBy4RS",
       "id": "sjU37oco1BJnmRhataWCxf",
-      "selected": false
+      "selected": false,
+      "ly": 0.45
     },
     {
       "type": "Tree",
@@ -1900,9 +1904,9 @@
     "dailyHeliostatYieldPanelX": 0,
     "showDailyParabolicDishYieldPanel": false,
     "cameraPosition": [
-      13.635942002692712,
-      -6.783098288199911,
-      3.0150047184827145
+      12.552371929954294,
+      -8.569263680125506,
+      1.7852443617626657
     ],
     "showYearlyHeliostatYieldPanel": false,
     "orthographic": false,
@@ -1948,7 +1952,7 @@
     "dailyPvYieldPanelY": 0,
     "yearlyPvYieldPanelX": 0,
     "yearlyParabolicDishYieldPanelX": 0,
-    "shadowEnabled": false,
+    "shadowEnabled": true,
     "showInstructionPanel": true,
     "panCenter": [
       -1.6534128402951076,

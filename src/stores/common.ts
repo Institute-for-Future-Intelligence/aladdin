@@ -100,6 +100,7 @@ import { RoofUtil } from 'src/views/roof/RoofUtil';
 import { FlowerModel } from '../models/FlowerModel';
 import { FlowerData } from '../FlowerData';
 import { TreeData } from '../TreeData';
+import { WindowModel } from '../models/WindowModel';
 
 enableMapSet();
 
@@ -487,6 +488,7 @@ export interface CommonStoreState {
   // for windows
   windowActionScope: Scope;
   setWindowActionScope: (scope: Scope) => void;
+  updateWindowMullionById: (id: string, mullion: boolean) => void;
 
   // for doors
   doorActionScope: Scope;
@@ -3886,6 +3888,19 @@ export const useStore = create<CommonStoreState>(
               state.windowActionScope = scope;
             });
           },
+          updateWindowMullionById(id, mullion) {
+            immerSet((state: CommonStoreState) => {
+              for (const e of state.elements) {
+                if (e.type === ObjectType.Window && e.id === id) {
+                  (e as WindowModel).mullion = mullion;
+                  state.selectedElement = e;
+                  break;
+                }
+              }
+              state.updateWallFlag = !state.updateWallFlag;
+            });
+          },
+
           // for doors
           doorActionScope: Scope.OnlyThisObject,
           setDoorActionScope(scope) {
