@@ -1,7 +1,7 @@
 {
-  "docid": "2F3iyHqtCiktvjrupmhYhU",
-  "time": "10/17/2022 02:09 pm",
-  "timestamp": 1666030185509,
+  "docid": "7BRDXRgpKZbLANzXbhsw9g",
+  "time": "10/19/2022 04:31 pm",
+  "timestamp": 1666211465648,
   "userid": "QWecNcxhyvP6j6sBN11hBsfZDau1",
   "owner": null,
   "email": null,
@@ -46,7 +46,7 @@
     "pvGridCellSize": 0.5,
     "airAttenuationCoefficient": 0.01,
     "sutDaysPerYear": 4,
-    "date": "6/22/2022, 12:00:00 PM",
+    "date": "1/1/2022, 9:00:00 AM",
     "cspGridCellSize": 0.5,
     "dustLoss": 0.05,
     "daysPerYear": 12
@@ -246,7 +246,8 @@
       "foundationId": "9VUxbWr6Hk1HaeGiLpEeqj",
       "id": "3R99UFMtSTu8MpSzhFBEzM",
       "selected": false,
-      "color": "#fff"
+      "color": "#fff",
+      "drawSunBeam": false
     },
     {
       "type": "Solar Panel",
@@ -1141,10 +1142,10 @@
       "type": "Window",
       "cx": 0.22463768115942012,
       "cy": 0.1,
-      "cz": 0.4,
+      "cz": 0.15000000000000005,
       "lx": 0.4782608695652177,
       "ly": 0.3,
-      "lz": 0.09999999999999991,
+      "lz": 0.6000000000000001,
       "shutter": {
         "showLeft": false,
         "showRight": false,
@@ -1152,13 +1153,13 @@
         "width": 0.5
       },
       "mullionWidth": 0.1,
-      "mullionSpacing": 1,
+      "mullionSpacing": 2,
       "selected": false,
       "lineWidth": 0.2,
       "lineColor": "black",
       "showLabel": false,
       "color": "#73D8FF",
-      "tint": "#73D8FF",
+      "tint": "#009ce0",
       "normal": [
         0,
         0,
@@ -1171,7 +1172,8 @@
       ],
       "parentId": "8BJFAiWAksi5iXqqAXG3m7",
       "foundationId": "9VUxbWr6Hk1HaeGiLpEeqj",
-      "id": "qQynJ4ikT8Jys2hyueRjYG"
+      "id": "qQynJ4ikT8Jys2hyueRjYG",
+      "opacity": 0.9
     },
     {
       "type": "Roof",
@@ -1213,105 +1215,6 @@
     },
     {
       "type": "Window",
-      "cx": 0.22463768115942045,
-      "cy": 0.1,
-      "cz": 0.25000000000000006,
-      "lx": 0.4782608695652177,
-      "ly": 0.3,
-      "lz": 0.09999999999999991,
-      "mullionWidth": 0.1,
-      "mullionSpacing": 1,
-      "color": "#73D8FF",
-      "normal": [
-        0,
-        0,
-        1
-      ],
-      "rotation": [
-        0,
-        0,
-        0
-      ],
-      "id": "mccZjkcyZRSmv2aXyHTktz",
-      "parentId": "8BJFAiWAksi5iXqqAXG3m7",
-      "foundationId": "9VUxbWr6Hk1HaeGiLpEeqj",
-      "tint": "#73D8FF",
-      "shutter": {
-        "showLeft": false,
-        "showRight": false,
-        "color": "grey",
-        "width": 0.5
-      },
-      "selected": false
-    },
-    {
-      "type": "Window",
-      "cx": 0.22463768115942045,
-      "cy": 0.1,
-      "cz": 0.10000000000000005,
-      "lx": 0.4782608695652177,
-      "ly": 0.3,
-      "lz": 0.09999999999999991,
-      "mullionWidth": 0.1,
-      "mullionSpacing": 1,
-      "color": "#73D8FF",
-      "normal": [
-        0,
-        0,
-        1
-      ],
-      "rotation": [
-        0,
-        0,
-        0
-      ],
-      "id": "3yJpyFUpQvxf3cXdP1w8aa",
-      "parentId": "8BJFAiWAksi5iXqqAXG3m7",
-      "foundationId": "9VUxbWr6Hk1HaeGiLpEeqj",
-      "tint": "#73D8FF",
-      "shutter": {
-        "showLeft": false,
-        "showRight": false,
-        "color": "grey",
-        "width": 0.5
-      },
-      "selected": false
-    },
-    {
-      "type": "Window",
-      "cx": 0.22463768115942045,
-      "cy": 0.1,
-      "cz": -0.049999999999999954,
-      "lx": 0.4782608695652177,
-      "ly": 0.3,
-      "lz": 0.09999999999999991,
-      "mullionWidth": 0.1,
-      "mullionSpacing": 1,
-      "color": "#73D8FF",
-      "normal": [
-        0,
-        0,
-        1
-      ],
-      "rotation": [
-        0,
-        0,
-        0
-      ],
-      "id": "2J19NXdCjyS9NvLDMsVFLm",
-      "parentId": "8BJFAiWAksi5iXqqAXG3m7",
-      "foundationId": "9VUxbWr6Hk1HaeGiLpEeqj",
-      "tint": "#73D8FF",
-      "shutter": {
-        "showLeft": false,
-        "showRight": false,
-        "color": "grey",
-        "width": 0.5
-      },
-      "selected": false
-    },
-    {
-      "type": "Window",
       "cx": 0.22463768115942023,
       "cy": 0.1,
       "cz": -0.325,
@@ -1334,14 +1237,15 @@
       "id": "jd3R2J1QYzh9JuC9phYqVK",
       "parentId": "8BJFAiWAksi5iXqqAXG3m7",
       "foundationId": "9VUxbWr6Hk1HaeGiLpEeqj",
-      "tint": "#73D8FF",
+      "tint": "#009ce0",
       "shutter": {
         "showLeft": false,
         "showRight": false,
         "color": "grey",
         "width": 0.5
       },
-      "selected": false
+      "selected": false,
+      "opacity": 0.8
     },
     {
       "type": "Human",
@@ -1521,380 +1425,6 @@
       ],
       "parentId": "9VUxbWr6Hk1HaeGiLpEeqj",
       "id": "gQacj5zT5LnDR4eGQGkjvL",
-      "selected": false
-    },
-    {
-      "type": "Flower",
-      "name": "Yellow Flower",
-      "cx": -33.070014097339524,
-      "cy": -12.014184058139655,
-      "cz": 0.05000000074505806,
-      "lx": 2,
-      "lz": 1.4,
-      "normal": [
-        0,
-        1,
-        0
-      ],
-      "rotation": [
-        0,
-        0,
-        0
-      ],
-      "parentId": "9VUxbWr6Hk1HaeGiLpEeqj",
-      "id": "44herDyCWMPfkecuxzDveC",
-      "selected": false
-    },
-    {
-      "type": "Flower",
-      "name": "Yellow Flower",
-      "cx": -29.070014097339524,
-      "cy": -12.014184058139655,
-      "cz": 0.05000000074505806,
-      "lx": 2,
-      "lz": 1.4,
-      "normal": [
-        0,
-        1,
-        0
-      ],
-      "rotation": [
-        0,
-        0,
-        0
-      ],
-      "parentId": "9VUxbWr6Hk1HaeGiLpEeqj",
-      "id": "rszf4xc23vy1UGSNbhXmY5",
-      "selected": false
-    },
-    {
-      "type": "Flower",
-      "name": "Yellow Flower",
-      "cx": -25.070014097339524,
-      "cy": -12.014184058139655,
-      "cz": 0.05000000074505806,
-      "lx": 2,
-      "lz": 1.4,
-      "normal": [
-        0,
-        1,
-        0
-      ],
-      "rotation": [
-        0,
-        0,
-        0
-      ],
-      "parentId": "9VUxbWr6Hk1HaeGiLpEeqj",
-      "id": "ofjKPSQMaxzNo8aj5NJMVH",
-      "selected": false
-    },
-    {
-      "type": "Flower",
-      "name": "Yellow Flower",
-      "cx": -21.070014097339524,
-      "cy": -12.014184058139655,
-      "cz": 0.05000000074505806,
-      "lx": 2,
-      "lz": 1.4,
-      "normal": [
-        0,
-        1,
-        0
-      ],
-      "rotation": [
-        0,
-        0,
-        0
-      ],
-      "parentId": "9VUxbWr6Hk1HaeGiLpEeqj",
-      "id": "4AuEZh1b7h55De3pDYPTcH",
-      "selected": false
-    },
-    {
-      "type": "Flower",
-      "name": "Yellow Flower",
-      "cx": -17.070014097339524,
-      "cy": -12.014184058139655,
-      "cz": 0.05000000074505806,
-      "lx": 2,
-      "lz": 1.4,
-      "normal": [
-        0,
-        1,
-        0
-      ],
-      "rotation": [
-        0,
-        0,
-        0
-      ],
-      "parentId": "9VUxbWr6Hk1HaeGiLpEeqj",
-      "id": "gE44hxvKz8A2pqVCHt38QK",
-      "selected": false
-    },
-    {
-      "type": "Flower",
-      "name": "Yellow Flower",
-      "cx": -13.070014097339524,
-      "cy": -12.014184058139655,
-      "cz": 0.05000000074505806,
-      "lx": 2,
-      "lz": 1.4,
-      "normal": [
-        0,
-        1,
-        0
-      ],
-      "rotation": [
-        0,
-        0,
-        0
-      ],
-      "parentId": "9VUxbWr6Hk1HaeGiLpEeqj",
-      "id": "6ru9x1ouAZH4kB1td6cPiZ",
-      "selected": false
-    },
-    {
-      "type": "Flower",
-      "name": "Yellow Flower",
-      "cx": -9.070014097339524,
-      "cy": -12.014184058139655,
-      "cz": 0.05000000074505806,
-      "lx": 2,
-      "lz": 1.4,
-      "normal": [
-        0,
-        1,
-        0
-      ],
-      "rotation": [
-        0,
-        0,
-        0
-      ],
-      "parentId": "9VUxbWr6Hk1HaeGiLpEeqj",
-      "id": "s9PfkfqXcdzpUQoh5PWX1e",
-      "selected": false
-    },
-    {
-      "type": "Flower",
-      "name": "Yellow Flower",
-      "cx": -5.070014097339524,
-      "cy": -12.014184058139655,
-      "cz": 0.05000000074505806,
-      "lx": 2,
-      "lz": 1.4,
-      "normal": [
-        0,
-        1,
-        0
-      ],
-      "rotation": [
-        0,
-        0,
-        0
-      ],
-      "parentId": "9VUxbWr6Hk1HaeGiLpEeqj",
-      "id": "g6aoLuFJtP7qCCXyFwRT8o",
-      "selected": false
-    },
-    {
-      "type": "Flower",
-      "name": "Yellow Flower",
-      "cx": -1.0700140973395236,
-      "cy": -12.014184058139655,
-      "cz": 0.05000000074505806,
-      "lx": 2,
-      "lz": 1.4,
-      "normal": [
-        0,
-        1,
-        0
-      ],
-      "rotation": [
-        0,
-        0,
-        0
-      ],
-      "parentId": "9VUxbWr6Hk1HaeGiLpEeqj",
-      "id": "e52gmLbFym4nm4BiqcC9a7",
-      "selected": false
-    },
-    {
-      "type": "Flower",
-      "name": "Yellow Flower",
-      "cx": 2.9299859026604764,
-      "cy": -12.014184058139655,
-      "cz": 0.05000000074505806,
-      "lx": 2,
-      "lz": 1.4,
-      "normal": [
-        0,
-        1,
-        0
-      ],
-      "rotation": [
-        0,
-        0,
-        0
-      ],
-      "parentId": "9VUxbWr6Hk1HaeGiLpEeqj",
-      "id": "sLhU1MMiuvuCH1AjF2rzyp",
-      "selected": false
-    },
-    {
-      "type": "Flower",
-      "name": "Yellow Flower",
-      "cx": 6.929985902660476,
-      "cy": -12.014184058139655,
-      "cz": 0.05000000074505806,
-      "lx": 2,
-      "lz": 1.4,
-      "normal": [
-        0,
-        1,
-        0
-      ],
-      "rotation": [
-        0,
-        0,
-        0
-      ],
-      "parentId": "9VUxbWr6Hk1HaeGiLpEeqj",
-      "id": "hbQ9AaB1SWutCLo9prJB4S",
-      "selected": false
-    },
-    {
-      "type": "Flower",
-      "name": "Yellow Flower",
-      "cx": 10.929985902660476,
-      "cy": -12.014184058139655,
-      "cz": 0.05000000074505806,
-      "lx": 2,
-      "lz": 1.4,
-      "normal": [
-        0,
-        1,
-        0
-      ],
-      "rotation": [
-        0,
-        0,
-        0
-      ],
-      "parentId": "9VUxbWr6Hk1HaeGiLpEeqj",
-      "id": "rG3gDytSpK5em4BYcjcVf3",
-      "selected": false
-    },
-    {
-      "type": "Flower",
-      "name": "Yellow Flower",
-      "cx": 14.929985902660476,
-      "cy": -12.014184058139655,
-      "cz": 0.05000000074505806,
-      "lx": 2,
-      "lz": 1.4,
-      "normal": [
-        0,
-        1,
-        0
-      ],
-      "rotation": [
-        0,
-        0,
-        0
-      ],
-      "parentId": "9VUxbWr6Hk1HaeGiLpEeqj",
-      "id": "qRVJ4p7qxrH8QZXv3C3xSq",
-      "selected": false
-    },
-    {
-      "type": "Flower",
-      "name": "Yellow Flower",
-      "cx": 18.929985902660476,
-      "cy": -12.014184058139655,
-      "cz": 0.05000000074505806,
-      "lx": 2,
-      "lz": 1.4,
-      "normal": [
-        0,
-        1,
-        0
-      ],
-      "rotation": [
-        0,
-        0,
-        0
-      ],
-      "parentId": "9VUxbWr6Hk1HaeGiLpEeqj",
-      "id": "5D4WfRaQPd8QMZgf77HB1U",
-      "selected": false
-    },
-    {
-      "type": "Flower",
-      "name": "Yellow Flower",
-      "cx": 22.929985902660476,
-      "cy": -12.014184058139655,
-      "cz": 0.05000000074505806,
-      "lx": 2,
-      "lz": 1.4,
-      "normal": [
-        0,
-        1,
-        0
-      ],
-      "rotation": [
-        0,
-        0,
-        0
-      ],
-      "parentId": "9VUxbWr6Hk1HaeGiLpEeqj",
-      "id": "axfzkjWd5zbeU4uqbFU8wz",
-      "selected": false
-    },
-    {
-      "type": "Flower",
-      "name": "Yellow Flower",
-      "cx": 26.929985902660476,
-      "cy": -12.014184058139655,
-      "cz": 0.05000000074505806,
-      "lx": 2,
-      "lz": 1.4,
-      "normal": [
-        0,
-        1,
-        0
-      ],
-      "rotation": [
-        0,
-        0,
-        0
-      ],
-      "parentId": "9VUxbWr6Hk1HaeGiLpEeqj",
-      "id": "b2k5acp17xbkNc8uD5yL5h",
-      "selected": false
-    },
-    {
-      "type": "Flower",
-      "name": "Yellow Flower",
-      "cx": 30.929985902660476,
-      "cy": -12.014184058139655,
-      "cz": 0.05000000074505806,
-      "lx": 2,
-      "lz": 1.4,
-      "normal": [
-        0,
-        1,
-        0
-      ],
-      "rotation": [
-        0,
-        0,
-        0
-      ],
-      "parentId": "9VUxbWr6Hk1HaeGiLpEeqj",
-      "id": "tHwJPb63PGh65imfHqRWpW",
       "selected": false
     },
     {
@@ -2616,6 +2146,358 @@
       "parentId": "8BJFAiWAksi5iXqqAXG3m7",
       "foundationId": "9VUxbWr6Hk1HaeGiLpEeqj",
       "id": "4sc4zQh2e4rskEdUjC7bwE"
+    },
+    {
+      "type": "Flower",
+      "name": "Boxwood",
+      "cx": -33.25171795779697,
+      "cy": -10.483343820985965,
+      "cz": 0.05000000074505806,
+      "lx": 1.6,
+      "lz": 1.44,
+      "normal": [
+        0,
+        1,
+        0
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "parentId": "9VUxbWr6Hk1HaeGiLpEeqj",
+      "id": "2qoyCTh6RmtgUKGjienf6c",
+      "selected": false
+    },
+    {
+      "type": "Flower",
+      "name": "Boxwood",
+      "cx": -30.051717957796967,
+      "cy": -10.483343820985965,
+      "cz": 0.05000000074505806,
+      "lx": 1.6,
+      "lz": 1.44,
+      "normal": [
+        0,
+        1,
+        0
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "parentId": "9VUxbWr6Hk1HaeGiLpEeqj",
+      "id": "27S95LNhtfhhNdrfhLb63X",
+      "selected": false
+    },
+    {
+      "type": "Flower",
+      "name": "Boxwood",
+      "cx": -26.851717957796964,
+      "cy": -10.483343820985965,
+      "cz": 0.05000000074505806,
+      "lx": 1.6,
+      "lz": 1.44,
+      "normal": [
+        0,
+        1,
+        0
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "parentId": "9VUxbWr6Hk1HaeGiLpEeqj",
+      "id": "4EzEYN7UN51NGA1h2gYf6h",
+      "selected": false
+    },
+    {
+      "type": "Flower",
+      "name": "Boxwood",
+      "cx": -23.65171795779696,
+      "cy": -10.483343820985965,
+      "cz": 0.05000000074505806,
+      "lx": 1.6,
+      "lz": 1.44,
+      "normal": [
+        0,
+        1,
+        0
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "parentId": "9VUxbWr6Hk1HaeGiLpEeqj",
+      "id": "aMDDZrStJb88k8cjNdHTyX",
+      "selected": false
+    },
+    {
+      "type": "Flower",
+      "name": "Boxwood",
+      "cx": -20.45171795779696,
+      "cy": -10.483343820985965,
+      "cz": 0.05000000074505806,
+      "lx": 1.6,
+      "lz": 1.44,
+      "normal": [
+        0,
+        1,
+        0
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "parentId": "9VUxbWr6Hk1HaeGiLpEeqj",
+      "id": "bmyWAH2NGyagaGJf2zR8wZ",
+      "selected": false
+    },
+    {
+      "type": "Flower",
+      "name": "Boxwood",
+      "cx": -17.251717957796956,
+      "cy": -10.483343820985965,
+      "cz": 0.05000000074505806,
+      "lx": 1.6,
+      "lz": 1.44,
+      "normal": [
+        0,
+        1,
+        0
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "parentId": "9VUxbWr6Hk1HaeGiLpEeqj",
+      "id": "qjnbGRzmuBcffGRPmRHiD4",
+      "selected": false
+    },
+    {
+      "type": "Flower",
+      "name": "Boxwood",
+      "cx": -14.051717957796956,
+      "cy": -10.483343820985965,
+      "cz": 0.05000000074505806,
+      "lx": 1.6,
+      "lz": 1.44,
+      "normal": [
+        0,
+        1,
+        0
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "parentId": "9VUxbWr6Hk1HaeGiLpEeqj",
+      "id": "2kbr1bEYWRM4qt64AXRioR",
+      "selected": false
+    },
+    {
+      "type": "Flower",
+      "name": "Boxwood",
+      "cx": -10.851717957796957,
+      "cy": -10.483343820985965,
+      "cz": 0.05000000074505806,
+      "lx": 1.6,
+      "lz": 1.44,
+      "normal": [
+        0,
+        1,
+        0
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "parentId": "9VUxbWr6Hk1HaeGiLpEeqj",
+      "id": "wPVJmyDJeSE1u47UPb87pe",
+      "selected": false
+    },
+    {
+      "type": "Flower",
+      "name": "Boxwood",
+      "cx": -7.651717957796958,
+      "cy": -10.483343820985965,
+      "cz": 0.05000000074505806,
+      "lx": 1.6,
+      "lz": 1.44,
+      "normal": [
+        0,
+        1,
+        0
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "parentId": "9VUxbWr6Hk1HaeGiLpEeqj",
+      "id": "7fEUD44paZGx4eApcgVBdW",
+      "selected": false
+    },
+    {
+      "type": "Flower",
+      "name": "Boxwood",
+      "cx": -4.451717957796959,
+      "cy": -10.483343820985965,
+      "cz": 0.05000000074505806,
+      "lx": 1.6,
+      "lz": 1.44,
+      "normal": [
+        0,
+        1,
+        0
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "parentId": "9VUxbWr6Hk1HaeGiLpEeqj",
+      "id": "iz1HshbMuyvDyuUFjjNVmm",
+      "selected": false
+    },
+    {
+      "type": "Flower",
+      "name": "Boxwood",
+      "cx": -1.2517179577969584,
+      "cy": -10.483343820985965,
+      "cz": 0.05000000074505806,
+      "lx": 1.6,
+      "lz": 1.44,
+      "normal": [
+        0,
+        1,
+        0
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "parentId": "9VUxbWr6Hk1HaeGiLpEeqj",
+      "id": "1HnQLoEVsBHHwYnQM4daRk",
+      "selected": false
+    },
+    {
+      "type": "Flower",
+      "name": "Boxwood",
+      "cx": 1.9482820422030418,
+      "cy": -10.483343820985965,
+      "cz": 0.05000000074505806,
+      "lx": 1.6,
+      "lz": 1.44,
+      "normal": [
+        0,
+        1,
+        0
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "parentId": "9VUxbWr6Hk1HaeGiLpEeqj",
+      "id": "tHugAGpHLnMfQJaJDiLNgW",
+      "selected": false
+    },
+    {
+      "type": "Flower",
+      "name": "Boxwood",
+      "cx": 5.148282042203042,
+      "cy": -10.483343820985965,
+      "cz": 0.05000000074505806,
+      "lx": 1.6,
+      "lz": 1.44,
+      "normal": [
+        0,
+        1,
+        0
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "parentId": "9VUxbWr6Hk1HaeGiLpEeqj",
+      "id": "fNGZwXhHJCEaTdeKtqi7LN",
+      "selected": false
+    },
+    {
+      "type": "Flower",
+      "name": "Boxwood",
+      "cx": 8.348282042203042,
+      "cy": -10.483343820985965,
+      "cz": 0.05000000074505806,
+      "lx": 1.6,
+      "lz": 1.44,
+      "normal": [
+        0,
+        1,
+        0
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "parentId": "9VUxbWr6Hk1HaeGiLpEeqj",
+      "id": "x9veDZdEDkbTP24vXAaH9a",
+      "selected": false
+    },
+    {
+      "type": "Flower",
+      "name": "Boxwood",
+      "cx": 11.548282042203041,
+      "cy": -10.483343820985965,
+      "cz": 0.05000000074505806,
+      "lx": 1.6,
+      "lz": 1.44,
+      "normal": [
+        0,
+        1,
+        0
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "parentId": "9VUxbWr6Hk1HaeGiLpEeqj",
+      "id": "aW9z1qFcCFUJKw1kfwTUs9",
+      "selected": false
+    },
+    {
+      "type": "Human",
+      "name": "Jack",
+      "cx": -36.639233371667494,
+      "cy": -11.25138408484107,
+      "cz": 0.05000000074505806,
+      "lx": 0.42,
+      "lz": 1.8,
+      "normal": [
+        0,
+        1,
+        0
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "parentId": "9VUxbWr6Hk1HaeGiLpEeqj",
+      "id": "bQ8SMNuHJbe3JAwpYi8Bx3",
+      "selected": false
     }
   ],
   "view": {
@@ -2623,13 +2505,13 @@
     "dailyParabolicTroughYieldPanelY": 0,
     "diurnalTemperaturePanelX": 0,
     "showInstructionPanel": true,
-    "axes": true,
+    "axes": false,
     "enableRotate": true,
     "weatherPanelY": 0,
     "cameraPosition": [
-      -43.394252654560056,
-      -42.319608653678216,
-      9.278787340540756
+      -36.37505805186715,
+      -46.122794152482285,
+      6.961313205634463
     ],
     "showYearlyUpdraftTowerYieldPanel": false,
     "showSunAngles": false,
@@ -2683,9 +2565,9 @@
     "showYearlyHeliostatYieldPanel": false,
     "mapZoom": 18,
     "panCenter": [
-      11.0360254105429,
-      19.242022462349777,
-      5.246368210182239
+      7.187719821125536,
+      18.770050283059465,
+      6.961313205634463
     ],
     "visibilityResultsPanelY": 0,
     "showZenithAngle": true,
