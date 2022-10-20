@@ -26,6 +26,7 @@ export const HumanMenu = () => {
   const human = useStore(Selector.selectedElement) as HumanModel;
   const getParent = useStore(Selector.getParent);
   const updateHumanObserverById = useStore(Selector.updateHumanObserverById);
+  const updateHumanFlipById = useStore(Selector.updateHumanFlipById);
   const selectNone = useStore(Selector.selectNone);
 
   const [animationFlag, setAnimationFlag] = useState(false);
@@ -130,6 +131,33 @@ export const HumanMenu = () => {
               }}
             >
               {i18n.t('peopleMenu.Observer', { lng: language })}
+            </Checkbox>
+          </Menu.Item>
+        )}
+        {editable && (
+          <Menu.Item key={'human-flip'}>
+            <Checkbox
+              checked={human.flip}
+              onChange={(e) => {
+                const checked = e.target.checked;
+                const undoableCheck = {
+                  name: 'Flip Human',
+                  timestamp: Date.now(),
+                  checked: checked,
+                  selectedElementId: human.id,
+                  selectedElementType: ObjectType.Human,
+                  undo: () => {
+                    updateHumanFlipById(human.id, !undoableCheck.checked);
+                  },
+                  redo: () => {
+                    updateHumanFlipById(human.id, undoableCheck.checked);
+                  },
+                } as UndoableCheck;
+                addUndoable(undoableCheck);
+                updateHumanFlipById(human.id, checked);
+              }}
+            >
+              {i18n.t('peopleMenu.Flip', { lng: language })}
             </Checkbox>
           </Menu.Item>
         )}

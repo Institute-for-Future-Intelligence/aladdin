@@ -719,6 +719,7 @@ export const i18n_en = {
 
     peopleMenu: {
       ChangePerson: 'Change Person',
+      Flip: 'Flip',
       Observer: 'Observer',
       ViewFromThisPerson: 'View from This Person',
     },

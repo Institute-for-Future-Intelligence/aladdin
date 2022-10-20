@@ -8,4 +8,5 @@ import { HumanName } from '../types';
 export interface HumanModel extends ElementModel {
   name: HumanName;
   observer: boolean; // used to view solar fields for visibility assessment
+  flip?: boolean; // used to flip the billboard horizontally so a human can face in a different direction
 }

@@ -527,6 +527,7 @@ export interface CommonStoreState {
 
   // for humans
   updateHumanNameById: (id: string, name: HumanName) => void;
+  updateHumanFlipById: (id: string, yes: boolean) => void;
   updateHumanObserverById: (id: string, yes: boolean) => void;
 
   objectTypeToAdd: ObjectType;
@@ -4139,6 +4140,17 @@ export const useStore = create<CommonStoreState>(
                   human.name = name;
                   human.lx = HumanData.fetchWidth(name);
                   human.lz = HumanData.fetchHeight(name);
+                  break;
+                }
+              }
+            });
+          },
+          updateHumanFlipById(id, yes) {
+            immerSet((state: CommonStoreState) => {
+              for (const e of state.elements) {
+                if (e.type === ObjectType.Human && e.id === id) {
+                  const human = e as HumanModel;
+                  human.flip = yes;
                   break;
                 }
               }

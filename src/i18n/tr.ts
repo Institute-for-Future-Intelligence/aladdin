@@ -719,6 +719,7 @@ export const i18n_tr = {
 
     peopleMenu: {
       ChangePerson: 'Kişi Değiştir',
+      Flip: 'Flip',
       Observer: 'Gözlemci',
       ViewFromThisPerson: ' Seçili Kişiye Göre Perspektif',
     },

@@ -3,7 +3,7 @@
  */
 
 import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
-import { DoubleSide, Euler, Group, Mesh, Object3D, TextureLoader, Vector3 } from 'three';
+import { DoubleSide, Euler, Group, Mesh, Object3D, RepeatWrapping, TextureLoader, Vector3 } from 'three';
 import { useStore } from '../stores/common';
 import * as Selector from '../stores/selector';
 import { invalidate, ThreeEvent, useFrame, useThree } from '@react-three/fiber';
@@ -40,6 +40,7 @@ const Human = ({
   name = HumanName.Jack,
   selected = false,
   locked = false,
+  flip = false,
   observer = false,
   parentId,
 }: HumanModel) => {
@@ -107,10 +108,14 @@ const Human = ({
 
   const textureLoader = useMemo(() => {
     return new TextureLoader().load(HumanData.fetchTextureImage(name), (texture) => {
+      if (flip) {
+        texture.wrapS = RepeatWrapping;
+        texture.repeat.x = -1;
+      }
       setTexture(texture);
       setUpdateFlag(!updateFlag);
     });
-  }, [name]);
+  }, [name, flip]);
   const [texture, setTexture] = useState(textureLoader);
 
   const width = useMemo(() => {

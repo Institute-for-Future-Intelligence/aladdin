@@ -590,6 +590,8 @@ export const updateFlowerTypeById = (state: CommonStoreState) => state.updateFlo
 
 export const updateHumanNameById = (state: CommonStoreState) => state.updateHumanNameById;
 
+export const updateHumanFlipById = (state: CommonStoreState) => state.updateHumanFlipById;
+
 export const updateHumanObserverById = (state: CommonStoreState) => state.updateHumanObserverById;
 
 export const copyElementById = (state: CommonStoreState) => state.copyElementById;
