@@ -210,7 +210,12 @@ export const updateRooftopSolarPanel = (
         const posRelToFoundation = new Vector3(e.cx * foundation.lx, e.cy * foundation.ly, e.cz + foundation.lz);
         const posRelToCentroid = posRelToFoundation.clone().sub(centroid);
         const { segmentVertices, normal, rotation } = RoofUtil.computeState(roofSegments, posRelToCentroid);
-        const z = RoofUtil.getSolarPanelZ(segmentVertices, posRelToCentroid, h + thickness);
+        let z;
+        if (segmentVertices) {
+          z = RoofUtil.getSolarPanelZ(segmentVertices, posRelToCentroid, h + thickness);
+        } else {
+          z = h + thickness;
+        }
         if (normal && rotation && z !== undefined) {
           e.normal = normal.toArray();
           e.rotation = [...rotation];

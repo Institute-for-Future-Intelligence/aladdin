@@ -187,6 +187,12 @@ const PyramidRoof = ({
     }
   }, []);
 
+  useEffect(() => {
+    if (lz !== h) {
+      setH(lz);
+    }
+  }, [lz]);
+
   const setRayCast = (e: PointerEvent) => {
     mouse.x = (e.offsetX / gl.domElement.clientWidth) * 2 - 1;
     mouse.y = -(e.offsetY / gl.domElement.clientHeight) * 2 + 1;
@@ -314,7 +320,7 @@ const PyramidRoof = ({
       });
     }
     return res;
-  }, [overhangs]);
+  }, [currentWallArray, overhangs]);
 
   const thicknessVector = useMemo(() => {
     return zVector3.clone().multiplyScalar(thickness);
@@ -419,7 +425,7 @@ const PyramidRoof = ({
     }
 
     return segments;
-  }, [updateRoofFlag, centerPoint, overhang, thickness]);
+  }, [currentWallArray, updateRoofFlag, centerPoint, overhang, thickness]);
 
   // set position and rotation
   const foundation = getElementById(parentId);
@@ -480,6 +486,7 @@ const PyramidRoof = ({
           setH(minHeight + roofRelativeHeight);
           useStore.getState().updateRoofHeightById(id, minHeight + roofRelativeHeight);
         }
+        updateRooftopSolarPanel(foundation, id, roofSegments, centerPointV3, h, thickness);
       } else {
         removeElementById(id, false);
       }
@@ -526,7 +533,7 @@ const PyramidRoof = ({
 
   useEffect(() => {
     setIsFlatRoof(checkIsFlatRoof());
-  }, [currentWallArray]);
+  }, [currentWallArray, h]);
 
   const material = useMemo(
     () => (

@@ -694,8 +694,7 @@ export class ElementModelCloner {
         (newRoof as HipRoofModel).leftRidgeLength = (roof as HipRoofModel).leftRidgeLength;
         break;
       case RoofType.Mansard:
-        (newRoof as MansardRoofModel).frontRidge = (roof as MansardRoofModel).frontRidge;
-        (newRoof as MansardRoofModel).backRidge = (roof as MansardRoofModel).backRidge;
+        (newRoof as MansardRoofModel).ridgeWidth = (roof as MansardRoofModel).ridgeWidth;
         break;
     }
     return newRoof as ElementModel;

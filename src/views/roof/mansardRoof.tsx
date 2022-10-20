@@ -2,11 +2,10 @@
  * @Copyright 2022. Institute for Future Intelligence, Inc.
  */
 
-import { Line, Plane, Sphere } from '@react-three/drei';
+import { Extrude, Line, Plane, Sphere } from '@react-three/drei';
 import { useThree } from '@react-three/fiber';
 import React, { useEffect, useMemo, useRef, useState } from 'react';
-import { HALF_PI } from 'src/constants';
-import { ElementModel } from 'src/models/ElementModel';
+import { HALF_PI, HALF_PI_Z_EULER, ORIGIN_VECTOR3, TWO_PI } from 'src/constants';
 import { Point2 } from 'src/models/Point2';
 import { MansardRoofModel } from 'src/models/RoofModel';
 import { WallModel } from 'src/models/WallModel';
@@ -16,78 +15,75 @@ import * as Selector from 'src/stores/selector';
 import { RoofTexture } from 'src/types';
 import { UnoableResizeGambrelAndMansardRoofRidge } from 'src/undo/UndoableResize';
 import { Util } from 'src/Util';
-import { DoubleSide, Euler, Mesh, Vector2, Vector3 } from 'three';
+import { DoubleSide, Euler, Mesh, Shape, Vector3 } from 'three';
 import { ObjectType } from '../../types';
-import { useCurrWallArray, useRoofTexture, useSolarPanelUndoable, useTransparent } from './hooks';
+import { useMultiCurrWallArray, useRoofTexture, useSolarPanelUndoable, useTransparent } from './hooks';
 import {
   ConvexGeoProps as ConvexGeometryProps,
   handleContextMenu,
   addUndoableResizeRoofHeight,
-  RoofWireframeProps,
   updateRooftopSolarPanel,
   handlePointerDown,
   handlePointerUp,
   handlePointerMove,
+  ConvexGeoProps,
+  RoofWireframeProps,
 } from './roofRenderer';
 import { RoofUtil } from './RoofUtil';
 
 const intersectionPlanePosition = new Vector3();
 const intersectionPlaneRotation = new Euler();
-const zeroVector2 = new Vector2();
 const zVector3 = new Vector3(0, 0, 1);
 
 enum RoofHandleType {
   Top = 'Top',
-  FrontLeft = 'FrontLeft',
-  FrontRight = 'FrontRight',
-  BackLeft = 'BackLeft',
-  BackRight = 'BackRight',
+  Ridge = 'Ridge',
   Null = 'Null',
 }
 
 const MansardRoofWirefram = React.memo(({ roofSegments, thickness, lineWidth, lineColor }: RoofWireframeProps) => {
-  if (roofSegments.length === 0) {
-    return null;
-  }
-  const peripheryPoints: Vector3[] = [];
-  const thicknessVector = new Vector3(0, 0, thickness);
-
-  for (let i = 0; i < roofSegments.length - 1; i++) {
-    const [leftRoof, rightRoof, rightRidge, leftRidge] = roofSegments[i].points;
-    peripheryPoints.push(leftRidge, leftRoof, rightRoof, rightRidge);
-  }
-
-  peripheryPoints.push(peripheryPoints[0]);
-
-  const periphery = <Line points={peripheryPoints} lineWidth={lineWidth} color={lineColor} />;
-  const ridges = (
-    <>
-      <Line points={[roofSegments[0].points[2], roofSegments[0].points[3]]} lineWidth={lineWidth} color={lineColor} />
-      <Line points={[roofSegments[1].points[2], roofSegments[1].points[3]]} lineWidth={lineWidth} color={lineColor} />
-    </>
+  const wallPoints = useMemo(
+    () => roofSegments.reduce((arr, segment) => arr.concat(segment.points[1]), [roofSegments[0].points[0]]),
+    [roofSegments],
   );
 
-  const isFlat = Math.abs(roofSegments[0].points[0].z) < 0.015;
+  const ridgePoints = useMemo(
+    () =>
+      roofSegments.reduce((arr, segment) => arr.concat(segment.points[6].clone()), [roofSegments[0].points[7].clone()]),
+    [roofSegments],
+  );
+
+  const wallLine = useMemo(
+    () => <Line points={wallPoints} lineWidth={lineWidth} color={lineColor} />,
+    [wallPoints, lineWidth, lineColor],
+  );
+
+  if (roofSegments.length < 2) {
+    return null;
+  }
+
+  // segments array
+  // [wallLeftPointAfterOverhang, wallRightPointAfterOverhang, ridgeRightPoint, ridgeLeftPoint,
+  //  wallLeftPointAfterOverhang.add(thicknessVector),
+  //  wallRightPointAfterOverhang.add(thicknessVector),
+  //  ridgeRightPoint.add(thicknessVector),
+  //  ridgeLeftPoint.add(thicknessVector)]
+
+  const isFlat = Math.abs(roofSegments[0].points[0].z - roofSegments[0].points[3].z) < 0.1;
 
   return (
     <>
-      {periphery}
-      {!isFlat && ridges}
-      <group position={[0, 0, thickness]}>
-        {periphery}
-        {!isFlat && ridges}
-      </group>
-      {roofSegments.slice(0, 2).map((segment, idx) => {
-        const [leftRoof, rightRoof] = segment.points;
+      {!isFlat && <Line points={ridgePoints} lineWidth={lineWidth} color={lineColor} />}
+      {wallLine}
+      <group position={[0, 0, thickness]}>{wallLine}</group>
+      {roofSegments.map((segment, idx) => {
         return (
-          <group key={idx}>
-            <Line points={[leftRoof, leftRoof.clone().add(thicknessVector)]} lineWidth={lineWidth} color={lineColor} />
-            <Line
-              points={[rightRoof, rightRoof.clone().add(thicknessVector)]}
-              lineWidth={lineWidth}
-              color={lineColor}
-            />
-          </group>
+          <React.Fragment key={idx}>
+            {!isFlat && (
+              <Line points={[segment.points[7], segment.points[4]]} lineWidth={lineWidth} color={lineColor} />
+            )}
+            <Line points={[segment.points[4], segment.points[0]]} lineWidth={lineWidth} color={lineColor} />
+          </React.Fragment>
         );
       })}
     </>
@@ -102,8 +98,6 @@ const MansardRoof = ({
   cy,
   cz,
   lz,
-  frontRidge,
-  backRidge,
   selected,
   textureType,
   color,
@@ -113,8 +107,40 @@ const MansardRoof = ({
   lineColor = 'black',
   lineWidth = 0.2,
   roofType,
+  foundationId,
+  ridgeWidth = 1,
+  // old files data
+  frontRidge,
+  backRidge,
 }: MansardRoofModel) => {
   const texture = useRoofTexture(textureType);
+  const { currentWallArray, isLoopRef } = useMultiCurrWallArray(foundationId, id, wallsId);
+
+  const getWallHeight = (arr: WallModel[], i: number) => {
+    const w = arr[i];
+    let lh = 0;
+    let rh = 0;
+    if (i === 0) {
+      lh = Math.max(w.lz, arr[arr.length - 1].lz);
+      rh = Math.max(w.lz, arr[i + 1].lz);
+    } else if (i === arr.length - 1) {
+      lh = Math.max(w.lz, arr[i - 1].lz);
+      rh = Math.max(w.lz, arr[0].lz);
+    } else {
+      lh = Math.max(w.lz, arr[i - 1].lz);
+      rh = Math.max(w.lz, arr[i + 1].lz);
+    }
+    return { lh, rh };
+  };
+
+  const getMinHeight = () => {
+    let minHeight = 0;
+    for (let i = 0; i < currentWallArray.length; i++) {
+      const { lh, rh } = getWallHeight(currentWallArray, i);
+      minHeight = Math.max(minHeight, Math.max(lh, rh));
+    }
+    return minHeight;
+  };
 
   const setCommonStore = useStore(Selector.set);
   const removeElementById = useStore(Selector.removeElementById);
@@ -122,17 +148,17 @@ const MansardRoof = ({
   const ray = useStore((state) => state.ray);
   const mouse = useStore((state) => state.mouse);
 
-  const currentWallArray = useCurrWallArray(wallsId[0]);
-
+  const [width, setWidth] = useState(ridgeWidth);
+  const [maxWidth, setMaxWidth] = useState<number | null>(null);
   const [h, setH] = useState(lz);
-  const [minHeight, setMinHeight] = useState(
-    currentWallArray.length === 4 ? Math.max(currentWallArray[0].lz, currentWallArray[2].lz) : lz / 2,
-  );
+  const [minHeight, setMinHeight] = useState(getMinHeight);
   const [roofRelativeHeight, setRoofRelativeHeight] = useState(lz - minHeight);
   const [enableIntersectionPlane, setEnableIntersectionPlane] = useState(false);
   const [roofHandleType, setRoofHandleType] = useState(RoofHandleType.Null);
-  const oldHeight = useRef<number>(h);
-  const oldRidgeVal = useRef<number>(0);
+  const [ridgeHandleIndex, setRidgeHandleIndex] = useState<number | null>(null);
+
+  const oldHeight = useRef(h);
+  const oldWidth = useRef(width);
   const isFirstMountRef = useRef(true);
 
   const intersectionPlaneRef = useRef<Mesh>(null);
@@ -147,59 +173,41 @@ const MansardRoof = ({
     }
     return null;
   });
-  let rotation = 0;
+  let rotationZ = 0;
   if (foundation) {
     cx = foundation.cx;
     cy = foundation.cy;
     cz = foundation.lz;
-    rotation = foundation.rotation[2];
+    rotationZ = foundation.rotation[2];
   }
 
-  const getWallPoint = (wallArray: WallModel[]) => {
+  const getWallPoint2 = (wallArray: WallModel[]) => {
     const arr: Point2[] = [];
+    const length = wallArray.length;
     for (const w of wallArray) {
       if (w.leftPoint[0] && w.leftPoint[1]) {
         arr.push({ x: w.leftPoint[0], y: w.leftPoint[1] });
       }
     }
+    if (!isLoopRef.current) {
+      if (
+        (wallArray[length - 1].rightPoint[0] || wallArray[length - 1].rightPoint[0] === 0) &&
+        (wallArray[length - 1].rightPoint[1] || wallArray[length - 1].rightPoint[1] === 0)
+      ) {
+        arr.push({ x: wallArray[length - 1].rightPoint[0], y: wallArray[length - 1].rightPoint[1] });
+      }
+    }
     return arr;
   };
 
-  const getRidgePoint = (wall: WallModel, px: number) => {
-    if (!wall) {
-      return new Vector3();
-    }
-    const e = new Euler(0, 0, wall.relativeAngle);
-    const v = new Vector3(px * wall.lx, 0, 0);
-    return new Vector3(wall.cx, wall.cy, h).add(v.applyEuler(e));
-  };
-
-  const getWallHeight = (arr: WallModel[], i: number) => {
-    const w = arr[i];
-    let lh = 0;
-    let rh = 0;
-    if (i === 0 || i === 2) {
-      lh = w.lz;
-      rh = w.lz;
-    } else if (i === 1) {
-      lh = arr[0].lz;
-      rh = arr[2].lz;
+  const getWallPointFromHandleIdx = (idx: number) => {
+    if (idx < currentWallArray.length) {
+      const wall = currentWallArray[idx];
+      return new Vector3(wall.leftPoint[0], wall.leftPoint[1]);
     } else {
-      lh = arr[2].lz;
-      rh = arr[0].lz;
+      const wall = currentWallArray[idx - 1];
+      return new Vector3(wall.rightPoint[0], wall.rightPoint[1]);
     }
-    return { lh, rh };
-  };
-
-  const getRelPos = (foundation: ElementModel, wall: WallModel, point: Vector3) => {
-    const foundationCenter = new Vector2(foundation.cx, foundation.cy);
-    const wallAbsCenter = new Vector2(wall.cx, wall.cy)
-      .rotateAround(zeroVector2, foundation.rotation[2])
-      .add(foundationCenter);
-    const wallAbsAngle = foundation.rotation[2] + wall.relativeAngle;
-    const p = new Vector2(point.x, point.y).sub(wallAbsCenter).rotateAround(zeroVector2, -wallAbsAngle);
-    const x = p.x / wall.lx;
-    return Math.min(Math.abs(x), 0.5) * (x >= 0 ? 1 : -1);
   };
 
   const setRayCast = (e: PointerEvent) => {
@@ -208,39 +216,36 @@ const MansardRoof = ({
     ray.setFromCamera(mouse, camera);
   };
 
-  const setInterSectionPlane = (handlePointV3: Vector3, wall: WallModel) => {
-    setEnableIntersectionPlane(true);
-    useStoreRef.getState().setEnableOrbitController(false);
-    intersectionPlanePosition.set(handlePointV3.x, handlePointV3.y, h);
-    if (foundation && wall) {
-      const dir = new Vector3().subVectors(handlePointV3, camera.position).normalize();
-      const rX = Math.atan2(dir.z, Math.hypot(dir.x, dir.y));
-      const rZ = wall.relativeAngle;
-      intersectionPlaneRotation.set(-HALF_PI + rX, 0, rZ, 'ZXY');
-    }
-  };
-
-  const updateRidge = (elemId: string, type: string, val: number) => {
+  const updateRidge = (elemId: string, val: number) => {
     setCommonStore((state) => {
       for (const e of state.elements) {
         if (e.id === elemId) {
-          switch (type) {
-            case RoofHandleType.FrontLeft:
-            case RoofHandleType.FrontRight:
-              (e as MansardRoofModel).frontRidge = val;
-              break;
-            case RoofHandleType.BackLeft:
-            case RoofHandleType.BackRight:
-              (e as MansardRoofModel).backRidge = val;
-              break;
-          }
+          (e as MansardRoofModel).ridgeWidth = val;
           break;
         }
       }
     });
   };
 
-  const handleUnoableResizeRidge = (elemId: string, type: RoofHandleType, oldVal: number, newVal: number) => {
+  const getOverhangHeight = () => {
+    let height = Infinity;
+
+    for (let i = 0; i < currentWallArray.length; i++) {
+      const w = currentWallArray[i];
+      const leftPoint = new Vector3(w.leftPoint[0], w.leftPoint[1]);
+      const rightPoint = new Vector3(w.rightPoint[0], w.rightPoint[1]);
+      const { lh, rh } = getWallHeight(currentWallArray, i);
+      const dLeft = RoofUtil.getDistance(leftPoint, rightPoint, ridgePoints[i].leftPoint);
+      const overhangHeightLeft = Math.min((overhang / dLeft) * (ridgePoints[i].leftPoint.z - lh), lh);
+      const dRight = RoofUtil.getDistance(leftPoint, rightPoint, ridgePoints[i].rightPoint);
+      const overhangHeightRight = Math.min((overhang / dRight) * (ridgePoints[i].rightPoint.z - rh), rh);
+      height = Math.min(Math.min(overhangHeightLeft, overhangHeightRight), height);
+    }
+
+    return Number.isNaN(height) ? 0 : height;
+  };
+
+  const addUnoableResizeRidge = (elemId: string, type: RoofHandleType, oldVal: number, newVal: number) => {
     const undoable = {
       name: 'Resize Mansard Roof Ridge',
       timestamp: Date.now(),
@@ -250,231 +255,216 @@ const MansardRoof = ({
       newVal: newVal,
       type: type,
       undo: () => {
-        updateRidge(undoable.resizedElementId, undoable.type, undoable.oldVal);
+        updateRidge(undoable.resizedElementId, undoable.oldVal);
       },
       redo: () => {
-        updateRidge(undoable.resizedElementId, undoable.type, undoable.newVal);
+        updateRidge(undoable.resizedElementId, undoable.newVal);
       },
     } as UnoableResizeGambrelAndMansardRoofRidge;
     useStore.getState().addUndoable(undoable);
   };
 
   const centroid = useMemo(() => {
-    if (currentWallArray.length !== 4) {
+    if (currentWallArray.length < 2) {
       return new Vector3();
     }
-    const points = getWallPoint(currentWallArray);
+    const points = getWallPoint2(currentWallArray);
     const p = Util.calculatePolygonCentroid(points);
+    if (Number.isNaN(p.x) || Number.isNaN(p.y)) {
+      return new Vector3();
+    }
     return new Vector3(p.x, p.y, h);
   }, [currentWallArray, h]);
 
-  // front ridge
-  const frontRidgeLeftPointV3 = useMemo(() => {
-    const wall = currentWallArray[3];
-    return getRidgePoint(wall, frontRidge).sub(centroid);
-  }, [currentWallArray, centroid, frontRidge]);
-
-  const frontRidgeRightPointV3 = useMemo(() => {
-    const wall = currentWallArray[1];
-    return getRidgePoint(wall, -frontRidge).sub(centroid);
-  }, [currentWallArray, centroid, frontRidge]);
-
-  // back ridge
-  const backRidgeLeftPointV3 = useMemo(() => {
-    const wall = currentWallArray[1];
-    return getRidgePoint(wall, -backRidge).sub(centroid);
-  }, [currentWallArray, centroid, backRidge]);
-
-  const backRidgeRightPointV3 = useMemo(() => {
-    const wall = currentWallArray[3];
-    return getRidgePoint(wall, backRidge).sub(centroid);
-  }, [currentWallArray, centroid, backRidge]);
-
   const overhangs = useMemo(() => {
-    return currentWallArray.map((wall) => RoofUtil.getWallNormal(wall).multiplyScalar(overhang));
+    const res = currentWallArray.map((wall) => RoofUtil.getWallNormal(wall).multiplyScalar(overhang));
+    if (!isLoopRef.current && res.length !== 0) {
+      const n = new Vector3()
+        .subVectors(
+          new Vector3(
+            currentWallArray[currentWallArray.length - 1].rightPoint[0],
+            currentWallArray[currentWallArray.length - 1].rightPoint[1],
+          ),
+          new Vector3(currentWallArray[0].leftPoint[0], currentWallArray[0].leftPoint[1]),
+        )
+        .applyEuler(HALF_PI_Z_EULER)
+        .normalize()
+        .multiplyScalar(overhang);
+      res.push(n);
+    }
+    return res;
   }, [currentWallArray, overhang]);
+
+  const wallPointsAfterOverhang = useMemo(() => {
+    const res = currentWallArray.map((wall, idx) => ({
+      leftPoint: new Vector3(wall.leftPoint[0], wall.leftPoint[1]).add(overhangs[idx]),
+      rightPoint: new Vector3(wall.rightPoint[0], wall.rightPoint[1]).add(overhangs[idx]),
+    }));
+    if (!isLoopRef.current && res.length !== 0) {
+      res.push({
+        leftPoint: new Vector3(
+          currentWallArray[currentWallArray.length - 1].rightPoint[0],
+          currentWallArray[currentWallArray.length - 1].rightPoint[1],
+        ).add(overhangs[overhangs.length - 1]),
+        rightPoint: new Vector3(currentWallArray[0].leftPoint[0], currentWallArray[0].leftPoint[1]).add(
+          overhangs[overhangs.length - 1],
+        ),
+      });
+    }
+    return res;
+  }, [currentWallArray, overhangs]);
+
+  const ridgePoints = useMemo(() => {
+    const res = currentWallArray.map((wall, idx) => {
+      const leftPoint = new Vector3(wall.leftPoint[0], wall.leftPoint[1]);
+      const rightPoint = new Vector3(wall.rightPoint[0], wall.rightPoint[1]);
+      const leftDiff = new Vector3().subVectors(centroid, leftPoint).setZ(0).normalize().multiplyScalar(width);
+      const rightDiff = new Vector3().subVectors(centroid, rightPoint).setZ(0).normalize().multiplyScalar(width);
+      leftPoint.add(leftDiff).setZ(h);
+      rightPoint.add(rightDiff).setZ(h);
+      return { leftPoint, rightPoint };
+    });
+    if (!isLoopRef.current && res.length !== 0) {
+      res.push({ leftPoint: res[res.length - 1].rightPoint, rightPoint: res[0].leftPoint });
+    }
+    return res;
+  }, [currentWallArray, centroid, width]);
 
   const thicknessVector = useMemo(() => {
     return zVector3.clone().multiplyScalar(thickness);
   }, [thickness]);
 
   const roofSegments = useMemo(() => {
-    // const segments: Vector3[][] = [];
-    const segments: ConvexGeometryProps[] = [];
-
-    if (currentWallArray.length != 4) {
+    const segments: ConvexGeoProps[] = [];
+    if (currentWallArray.length < 2) {
       return segments;
     }
+    const overhangHeight = getOverhangHeight();
 
-    const [frontWall, rightWall, backWall, leftWall] = currentWallArray;
-    const [frontOverhang, rightOverhang, backOverhang, leftOverhang] = overhangs;
+    for (let i = 0; i < currentWallArray.length; i++) {
+      const w = currentWallArray[i];
+      if (
+        w.leftPoint.length > 0 &&
+        w.rightPoint.length > 0 &&
+        (w.leftPoint[0] !== w.rightPoint[0] || w.leftPoint[1] !== w.rightPoint[1])
+      ) {
+        const points = [];
+        let { lh, rh } = getWallHeight(currentWallArray, i);
+        if (!isLoopRef.current) {
+          if (i === 0) {
+            lh = currentWallArray[0].lz;
+          }
+          if (i === currentWallArray.length - 1) {
+            rh = currentWallArray[currentWallArray.length - 1].lz;
+          }
+        }
 
-    const wallPoint0 = new Vector3(frontWall.leftPoint[0], frontWall.leftPoint[1]);
-    const wallPoint1 = new Vector3(frontWall.rightPoint[0], frontWall.rightPoint[1]);
-    const wallPoint2 = new Vector3(backWall.leftPoint[0], backWall.leftPoint[1]);
-    const wallPoint3 = new Vector3(backWall.rightPoint[0], backWall.rightPoint[1]);
+        const wallLeftPointAfterOverhang = RoofUtil.getIntersectionPoint(
+          wallPointsAfterOverhang[i].leftPoint,
+          wallPointsAfterOverhang[i].rightPoint,
+          wallPointsAfterOverhang[(i + wallPointsAfterOverhang.length - 1) % wallPointsAfterOverhang.length].leftPoint,
+          wallPointsAfterOverhang[(i + wallPointsAfterOverhang.length - 1) % wallPointsAfterOverhang.length].rightPoint,
+        )
+          .setZ(lh - overhangHeight)
+          .sub(centroid);
 
-    const frontWallLeftPointAfterOffset = wallPoint0.clone().add(frontOverhang);
-    const frontWallRightPointAfterOffset = wallPoint1.clone().add(frontOverhang);
-    const leftWallLeftPointAfterOffset = wallPoint3.clone().add(leftOverhang);
-    const leftWallRightPointAfterOffset = wallPoint0.clone().add(leftOverhang);
-    const rightWallLeftPointAfterOffset = wallPoint1.clone().add(rightOverhang);
-    const rightWallRightPointAfterOffset = wallPoint2.clone().add(rightOverhang);
-    const backWallLeftPointAfterOffset = wallPoint2.clone().add(backOverhang);
-    const backWallRightPointAfterOffset = wallPoint3.clone().add(backOverhang);
+        const wallRightPointAfterOverhang = RoofUtil.getIntersectionPoint(
+          wallPointsAfterOverhang[i].leftPoint,
+          wallPointsAfterOverhang[i].rightPoint,
+          wallPointsAfterOverhang[(i + 1) % wallPointsAfterOverhang.length].leftPoint,
+          wallPointsAfterOverhang[(i + 1) % wallPointsAfterOverhang.length].rightPoint,
+        )
+          .setZ(rh - overhangHeight)
+          .sub(centroid);
 
-    // front
-    const frontSide: Vector3[] = [];
-    const { lh: frontWallLh, rh: frontWallRh } = getWallHeight(currentWallArray, 0);
+        const ridgeLeftPoint = ridgePoints[i].leftPoint.clone().sub(centroid);
+        const ridgeRightPoint = ridgePoints[i].rightPoint.clone().sub(centroid);
 
-    const d0 = RoofUtil.getDistance(wallPoint0, wallPoint1, frontRidgeLeftPointV3.clone().add(centroid));
-    const overhangHeight0 = Math.min(
-      (overhang / d0) * (frontRidgeLeftPointV3.clone().add(centroid).z - frontWallLh),
-      frontWallLh,
-    );
+        const direction = -w.relativeAngle;
+        const length = new Vector3(w.cx, w.cy).sub(centroid.clone().setZ(0)).length();
+        points.push(wallLeftPointAfterOverhang, wallRightPointAfterOverhang, ridgeRightPoint, ridgeLeftPoint);
+        points.push(
+          wallLeftPointAfterOverhang.clone().add(thicknessVector),
+          wallRightPointAfterOverhang.clone().add(thicknessVector),
+          ridgeRightPoint.clone().add(thicknessVector),
+          ridgeLeftPoint.clone().add(thicknessVector),
+        );
+        segments.push({ points, direction, length });
+      }
+    }
+    if (!isLoopRef.current) {
+      const idx = wallPointsAfterOverhang.length - 1;
+      const leftPointAfterOverhang = RoofUtil.getIntersectionPoint(
+        wallPointsAfterOverhang[idx].leftPoint,
+        wallPointsAfterOverhang[idx].rightPoint,
+        wallPointsAfterOverhang[idx - 1].leftPoint,
+        wallPointsAfterOverhang[idx - 1].rightPoint,
+      )
+        .setZ(currentWallArray[currentWallArray.length - 1].lz - overhangHeight)
+        .sub(centroid);
+      const rightPointAfterOverhang = RoofUtil.getIntersectionPoint(
+        wallPointsAfterOverhang[idx].leftPoint,
+        wallPointsAfterOverhang[idx].rightPoint,
+        wallPointsAfterOverhang[0].leftPoint,
+        wallPointsAfterOverhang[0].rightPoint,
+      )
+        .setZ(currentWallArray[0].lz - overhangHeight)
+        .sub(centroid);
 
-    const d1 = RoofUtil.getDistance(wallPoint0, wallPoint1, frontRidgeRightPointV3.clone().add(centroid));
-    const overhangHeight1 = Math.min(
-      (overhang / d1) * (frontRidgeRightPointV3.clone().add(centroid).z - frontWallRh),
-      frontWallRh,
-    );
+      const ridgeLeftPoint = ridgePoints[idx].leftPoint.clone().sub(centroid);
+      const ridgeRightPoint = ridgePoints[idx].rightPoint.clone().sub(centroid);
 
-    const frontWallLeftPointAfterOverhang = RoofUtil.getIntersectionPoint(
-      frontWallLeftPointAfterOffset,
-      frontWallRightPointAfterOffset,
-      leftWallLeftPointAfterOffset,
-      leftWallRightPointAfterOffset,
-    )
-      .setZ(frontWallLh - overhangHeight0)
-      .sub(centroid);
+      let angle = Math.atan2(
+        rightPointAfterOverhang.y - leftPointAfterOverhang.y,
+        rightPointAfterOverhang.x - leftPointAfterOverhang.x,
+      );
+      angle = angle >= 0 ? angle : (TWO_PI + angle) % TWO_PI;
 
-    const frontWallRightPointAfterOverhang = RoofUtil.getIntersectionPoint(
-      frontWallLeftPointAfterOffset,
-      frontWallRightPointAfterOffset,
-      rightWallLeftPointAfterOffset,
-      rightWallRightPointAfterOffset,
-    )
-      .setZ(frontWallRh - overhangHeight1)
-      .sub(centroid);
+      const length = new Vector3()
+        .addVectors(leftPointAfterOverhang, rightPointAfterOverhang)
+        .setZ(0)
+        .divideScalar(2)
+        .length();
 
-    const frontRidgeLeftPointAfterOverhang = RoofUtil.getIntersectionPoint(
-      frontRidgeLeftPointV3,
-      frontRidgeRightPointV3,
-      leftWallLeftPointAfterOffset.clone().sub(centroid),
-      leftWallRightPointAfterOffset.clone().sub(centroid),
-    ).setZ(frontRidgeRightPointV3.z);
-
-    const frontRidgeRightPointAfterOverhang = RoofUtil.getIntersectionPoint(
-      frontRidgeRightPointV3,
-      frontRidgeLeftPointV3,
-      rightWallLeftPointAfterOffset.clone().sub(centroid),
-      rightWallRightPointAfterOffset.clone().sub(centroid),
-    ).setZ(frontRidgeRightPointV3.z);
-
-    frontSide.push(
-      frontWallLeftPointAfterOverhang,
-      frontWallRightPointAfterOverhang,
-      frontRidgeRightPointAfterOverhang,
-      frontRidgeLeftPointAfterOverhang,
-    );
-    frontSide.push(
-      frontWallLeftPointAfterOverhang.clone().add(thicknessVector),
-      frontWallRightPointAfterOverhang.clone().add(thicknessVector),
-      frontRidgeRightPointAfterOverhang.clone().add(thicknessVector),
-      frontRidgeLeftPointAfterOverhang.clone().add(thicknessVector),
-    );
-    const frontDirection = -frontWall.relativeAngle;
-    const frontLength = new Vector3(frontWall.cx, frontWall.cy).sub(centroid.clone().setZ(0)).length();
-
-    segments.push({ points: frontSide, direction: frontDirection, length: frontLength });
-
-    // back
-    const backSide: Vector3[] = [];
-    const { lh: backWallLh, rh: backWallRh } = getWallHeight(currentWallArray, 2);
-
-    const d2 = RoofUtil.getDistance(wallPoint2, wallPoint3, backRidgeLeftPointV3.clone().add(centroid));
-    const overhangHeight2 = Math.min(
-      (overhang / d2) * (backRidgeLeftPointV3.clone().add(centroid).z - backWallLh),
-      backWallLh,
-    );
-
-    const d3 = RoofUtil.getDistance(wallPoint2, wallPoint3, backRidgeRightPointV3.clone().add(centroid));
-    const overhangHeight3 = Math.min(
-      (overhang / d3) * (backRidgeRightPointV3.clone().add(centroid).z - backWallRh),
-      backWallRh,
-    );
-
-    const backWallLeftPointAfterOverhang = RoofUtil.getIntersectionPoint(
-      backWallLeftPointAfterOffset,
-      backWallRightPointAfterOffset,
-      rightWallLeftPointAfterOffset,
-      rightWallRightPointAfterOffset,
-    )
-      .setZ(backWallLh - overhangHeight2)
-      .sub(centroid);
-
-    const backWallRightPointAfterOverhang = RoofUtil.getIntersectionPoint(
-      backWallLeftPointAfterOffset,
-      backWallRightPointAfterOffset,
-      leftWallLeftPointAfterOffset,
-      leftWallRightPointAfterOffset,
-    )
-      .setZ(backWallRh - overhangHeight3)
-      .sub(centroid);
-
-    const backRidgeLeftPointAfterOverhang = RoofUtil.getIntersectionPoint(
-      backRidgeLeftPointV3,
-      backRidgeRightPointV3,
-      rightWallLeftPointAfterOffset.clone().sub(centroid),
-      rightWallRightPointAfterOffset.clone().sub(centroid),
-    ).setZ(backRidgeRightPointV3.z);
-
-    const backRidgeRightPointAfterOverhang = RoofUtil.getIntersectionPoint(
-      backRidgeRightPointV3,
-      backRidgeLeftPointV3,
-      leftWallLeftPointAfterOffset.clone().sub(centroid),
-      leftWallRightPointAfterOffset.clone().sub(centroid),
-    ).setZ(backRidgeRightPointV3.z);
-
-    backSide.push(
-      backWallLeftPointAfterOverhang,
-      backWallRightPointAfterOverhang,
-      backRidgeRightPointAfterOverhang,
-      backRidgeLeftPointAfterOverhang,
-    );
-    backSide.push(
-      backWallLeftPointAfterOverhang.clone().add(thicknessVector),
-      backWallRightPointAfterOverhang.clone().add(thicknessVector),
-      backRidgeRightPointAfterOverhang.clone().add(thicknessVector),
-      backRidgeLeftPointAfterOverhang.clone().add(thicknessVector),
-    );
-    const backDirection = -backWall.relativeAngle;
-    const backLength = new Vector3(backWall.cx, backWall.cy).sub(centroid.clone().setZ(0)).length();
-
-    segments.push({ points: backSide, direction: backDirection, length: backLength });
-
-    // top
-    const top: Vector3[] = [];
-    top.push(
-      frontRidgeLeftPointAfterOverhang,
-      frontRidgeRightPointAfterOverhang,
-      backRidgeLeftPointAfterOverhang,
-      backRidgeRightPointAfterOverhang,
-    );
-    top.push(
-      frontRidgeLeftPointAfterOverhang.clone().add(thicknessVector),
-      frontRidgeRightPointAfterOverhang.clone().add(thicknessVector),
-      backRidgeLeftPointAfterOverhang.clone().add(thicknessVector),
-      backRidgeRightPointAfterOverhang.clone().add(thicknessVector),
-    );
-    segments.push({ points: top, direction: frontDirection, length: 1 });
-
+      const points = [];
+      points.push(leftPointAfterOverhang, rightPointAfterOverhang, ridgeRightPoint, ridgeLeftPoint);
+      points.push(
+        leftPointAfterOverhang.clone().add(thicknessVector),
+        rightPointAfterOverhang.clone().add(thicknessVector),
+        ridgeRightPoint.clone().add(thicknessVector),
+        ridgeLeftPoint.clone().add(thicknessVector),
+      );
+      segments.push({ points, direction: -angle, length });
+    }
     return segments;
-  }, [currentWallArray, h, overhang, thickness]);
+  }, [currentWallArray, h, width, overhang, thickness]);
+
+  const topRidgeShape = useMemo(() => {
+    const s = new Shape();
+
+    const startPoint = ridgePoints[0].leftPoint.clone().sub(centroid);
+    s.moveTo(startPoint.x, startPoint.y);
+
+    for (const point of ridgePoints) {
+      const rightPoint = point.rightPoint.clone().sub(centroid);
+      s.lineTo(rightPoint.x, rightPoint.y);
+    }
+
+    return s;
+  }, [currentWallArray, ridgePoints]);
+
+  useEffect(() => {
+    if (lz !== h) {
+      setH(lz);
+    }
+    if (ridgeWidth !== width) {
+      setWidth(ridgeWidth);
+    }
+  }, [lz, ridgeWidth]);
 
   useEffect(() => {
     if (!isFirstMountRef.current || useStore.getState().addedRoofId === id) {
-      if (currentWallArray.length === 4) {
+      if (currentWallArray.length > 1) {
         let minHeight = 0;
         for (let i = 0; i < currentWallArray.length; i++) {
           const { lh, rh } = getWallHeight(currentWallArray, i);
@@ -486,28 +476,6 @@ const MansardRoof = ({
                 w.roofId = id;
                 w.leftRoofHeight = lh;
                 w.rightRoofHeight = rh;
-                if (i === 1) {
-                  if (w.centerLeftRoofHeight && w.centerRightRoofHeight) {
-                    w.centerLeftRoofHeight[0] = -frontRidge;
-                    w.centerLeftRoofHeight[1] = h;
-                    w.centerRightRoofHeight[0] = -backRidge;
-                    w.centerRightRoofHeight[1] = h;
-                  } else {
-                    w.centerLeftRoofHeight = [-frontRidge, h];
-                    w.centerRightRoofHeight = [-backRidge, h];
-                  }
-                }
-                if (i === 3) {
-                  if (w.centerLeftRoofHeight && w.centerRightRoofHeight) {
-                    w.centerLeftRoofHeight[0] = backRidge;
-                    w.centerLeftRoofHeight[1] = h;
-                    w.centerRightRoofHeight[0] = frontRidge;
-                    w.centerRightRoofHeight[1] = h;
-                  } else {
-                    w.centerLeftRoofHeight = [backRidge, h];
-                    w.centerRightRoofHeight = [frontRidge, h];
-                  }
-                }
                 break;
               }
             }
@@ -518,6 +486,7 @@ const MansardRoof = ({
           setH(minHeight + roofRelativeHeight);
           useStore.getState().updateRoofHeightById(id, minHeight + roofRelativeHeight);
         }
+        updateRooftopSolarPanel(foundation, id, roofSegments, centroid, h, thickness);
       } else {
         removeElementById(id, false);
       }
@@ -525,7 +494,7 @@ const MansardRoof = ({
         useStore.getState().setAddedRoofId(null);
       }
     }
-  }, [currentWallArray, h, frontRidge, backRidge]);
+  }, [currentWallArray, h]);
 
   const updateSolarPanelOnRoofFlag = useStore(Selector.updateSolarPanelOnRoofFlag);
 
@@ -533,17 +502,33 @@ const MansardRoof = ({
     if (!isFirstMountRef.current) {
       updateRooftopSolarPanel(foundation, id, roofSegments, centroid, h, thickness);
     }
-  }, [updateSolarPanelOnRoofFlag, h, thickness, frontRidge, backRidge]);
+  }, [updateSolarPanelOnRoofFlag, h, thickness]);
 
   useEffect(() => {
     isFirstMountRef.current = false;
+
+    // handle old files
+    if (frontRidge !== undefined || backRidge !== undefined) {
+      setCommonStore((state) => {
+        for (const el of state.elements) {
+          if (el.type === ObjectType.Wall && (el as WallModel).roofId === id) {
+            (el as WallModel).centerLeftRoofHeight = undefined;
+            (el as WallModel).centerRightRoofHeight = undefined;
+          }
+          if (el.id === id) {
+            (el as MansardRoofModel).frontRidge = undefined;
+            (el as MansardRoofModel).backRidge = undefined;
+          }
+        }
+      });
+    }
   }, []);
 
   const { grabRef, addUndoableMove, undoMove, setOldRefData } = useSolarPanelUndoable();
   const { transparent, opacity } = useTransparent();
 
   return (
-    <group position={[cx, cy, cz + 0.01]} rotation={[0, 0, rotation]} name={`Mansard Roof Group ${id}`}>
+    <group position={[cx, cy, cz + 0.01]} rotation={[0, 0, rotationZ]} name={`Mansard Roof Group ${id}`}>
       <group
         name={'Mansard Roof Segments Group'}
         position={[centroid.x, centroid.y, centroid.z]}
@@ -582,6 +567,19 @@ const MansardRoof = ({
             </group>
           );
         })}
+        <Extrude
+          args={[topRidgeShape, { steps: 1, depth: thickness, bevelEnabled: false }]}
+          castShadow={shadowEnabled && !transparent}
+          receiveShadow={shadowEnabled}
+          userData={{ simulation: true }}
+        >
+          <meshStandardMaterial
+            color={textureType === RoofTexture.Default || textureType === RoofTexture.NoTexture ? color : 'white'}
+            map={texture}
+            transparent={transparent}
+            opacity={opacity}
+          />
+        </Extrude>
         <MansardRoofWirefram
           roofSegments={roofSegments}
           thickness={thickness}
@@ -609,48 +607,33 @@ const MansardRoof = ({
               oldHeight.current = h;
             }}
           />
-
-          <Sphere
-            position={[frontRidgeLeftPointV3.x, frontRidgeLeftPointV3.y, frontRidgeLeftPointV3.z]}
-            args={[0.3]}
-            onPointerDown={() => {
-              isPointerMovingRef.current = true;
-              oldRidgeVal.current = frontRidge;
-              setInterSectionPlane(frontRidgeLeftPointV3, currentWallArray[3]);
-              setRoofHandleType(RoofHandleType.FrontLeft);
-            }}
-          />
-          <Sphere
-            position={[frontRidgeRightPointV3.x, frontRidgeRightPointV3.y, frontRidgeRightPointV3.z]}
-            args={[0.3]}
-            onPointerDown={() => {
-              isPointerMovingRef.current = true;
-              oldRidgeVal.current = frontRidge;
-              setInterSectionPlane(frontRidgeRightPointV3, currentWallArray[1]);
-              setRoofHandleType(RoofHandleType.FrontRight);
-            }}
-          />
-
-          <Sphere
-            position={[backRidgeLeftPointV3.x, backRidgeLeftPointV3.y, backRidgeLeftPointV3.z]}
-            args={[0.3]}
-            onPointerDown={() => {
-              isPointerMovingRef.current = true;
-              oldRidgeVal.current = backRidge;
-              setInterSectionPlane(backRidgeLeftPointV3, currentWallArray[1]);
-              setRoofHandleType(RoofHandleType.BackLeft);
-            }}
-          />
-          <Sphere
-            position={[backRidgeRightPointV3.x, backRidgeRightPointV3.y, backRidgeRightPointV3.z]}
-            args={[0.3]}
-            onPointerDown={() => {
-              isPointerMovingRef.current = true;
-              oldRidgeVal.current = backRidge;
-              setInterSectionPlane(backRidgeRightPointV3, currentWallArray[3]);
-              setRoofHandleType(RoofHandleType.BackRight);
-            }}
-          />
+          {ridgePoints.map((ridge, idx) => {
+            const point = ridge.leftPoint.clone().sub(centroid);
+            return (
+              <Sphere
+                key={idx}
+                position={[point.x, point.y, 0]}
+                args={[0.3]}
+                onPointerDown={() => {
+                  isPointerMovingRef.current = true;
+                  setEnableIntersectionPlane(true);
+                  intersectionPlanePosition.set(point.x, point.y, h + 0.15);
+                  intersectionPlaneRotation.set(0, 0, 0);
+                  setRoofHandleType(RoofHandleType.Ridge);
+                  setRidgeHandleIndex(idx);
+                  setMaxWidth(
+                    currentWallArray.reduce(
+                      (max, wall) =>
+                        Math.min(max, new Vector3(wall.leftPoint[0], wall.leftPoint[1], h).distanceTo(centroid) - 1),
+                      Infinity,
+                    ),
+                  );
+                  useStoreRef.getState().setEnableOrbitController(false);
+                  oldWidth.current = width;
+                }}
+              />
+            );
+          })}
         </group>
       )}
 
@@ -668,117 +651,37 @@ const MansardRoof = ({
               setRayCast(e);
               const intersects = ray.intersectObjects([intersectionPlaneRef.current]);
               if (intersects[0] && foundation) {
-                const point = intersects[0].point;
-                if (point.z < 0.001) {
+                const pointer = intersects[0].point;
+                if (pointer.z < 0.001) {
                   return;
                 }
                 switch (roofHandleType) {
                   case RoofHandleType.Top: {
-                    const height = Math.max(minHeight, point.z - (foundation?.lz ?? 0) - 0.6);
+                    const height = Math.max(minHeight, pointer.z - (foundation?.lz ?? 0) - 0.6);
                     if (RoofUtil.isRoofValid(id, undefined, undefined, [0, height])) {
                       setH(height);
                       setRoofRelativeHeight(height - minHeight);
                     }
                     break;
                   }
-                  case RoofHandleType.FrontLeft: {
-                    setCommonStore((state) => {
-                      for (const e of state.elements) {
-                        if (e.id === id) {
-                          if (foundation && currentWallArray[3]) {
-                            const px = Util.clamp(getRelPos(foundation, currentWallArray[3], point), 0.01, 0.45);
-                            if (
-                              RoofUtil.isRoofValid(
-                                id,
-                                currentWallArray[3].id,
-                                currentWallArray[1].id,
-                                undefined,
-                                undefined,
-                                [px, h],
-                              )
-                            ) {
-                              (e as MansardRoofModel).frontRidge = px;
-                            }
-                            break;
-                          }
-                        }
+                  case RoofHandleType.Ridge: {
+                    if (foundation && ridgeHandleIndex !== null) {
+                      const p = pointer
+                        .clone()
+                        .applyEuler(new Euler(0, 0, foundation.rotation[2]))
+                        .sub(new Vector3(foundation.cx, foundation.cy))
+                        .setZ(0);
+
+                      const wallPoint = getWallPointFromHandleIdx(ridgeHandleIndex);
+                      const d = p.distanceTo(wallPoint);
+                      const dir = new Vector3().subVectors(centroid.clone().setZ(0), wallPoint);
+                      const angle = p.clone().sub(wallPoint).angleTo(dir);
+                      if (angle < HALF_PI) {
+                        setWidth(Util.clamp(d, 0.5, maxWidth ?? dir.length() - 1));
+                      } else {
+                        setWidth(0.5);
                       }
-                    });
-                    break;
-                  }
-                  case RoofHandleType.FrontRight: {
-                    setCommonStore((state) => {
-                      for (const e of state.elements) {
-                        if (e.id === id) {
-                          if (foundation && currentWallArray[1]) {
-                            const px = Util.clamp(getRelPos(foundation, currentWallArray[1], point), -0.45, -0.01);
-                            if (
-                              RoofUtil.isRoofValid(
-                                id,
-                                currentWallArray[1].id,
-                                currentWallArray[3].id,
-                                undefined,
-                                [px, h],
-                                undefined,
-                              )
-                            ) {
-                              (e as MansardRoofModel).frontRidge = -px;
-                            }
-                          }
-                          break;
-                        }
-                      }
-                    });
-                    break;
-                  }
-                  case RoofHandleType.BackRight: {
-                    setCommonStore((state) => {
-                      for (const e of state.elements) {
-                        if (e.id === id) {
-                          if (foundation && currentWallArray[3]) {
-                            const px = Util.clamp(getRelPos(foundation, currentWallArray[3], point), -0.45, -0.01);
-                            if (
-                              RoofUtil.isRoofValid(
-                                id,
-                                currentWallArray[3].id,
-                                currentWallArray[1].id,
-                                undefined,
-                                [px, h],
-                                undefined,
-                              )
-                            ) {
-                              (e as MansardRoofModel).backRidge = px;
-                            }
-                          }
-                          break;
-                        }
-                      }
-                    });
-                    break;
-                  }
-                  case RoofHandleType.BackLeft: {
-                    setCommonStore((state) => {
-                      for (const e of state.elements) {
-                        if (e.id === id) {
-                          if (foundation && currentWallArray[1]) {
-                            const px = Util.clamp(getRelPos(foundation, currentWallArray[1], point), 0.01, 0.45);
-                            if (
-                              RoofUtil.isRoofValid(
-                                id,
-                                currentWallArray[1].id,
-                                currentWallArray[3].id,
-                                undefined,
-                                undefined,
-                                [px, h],
-                              )
-                            ) {
-                              (e as MansardRoofModel).backRidge = -px;
-                            }
-                          }
-                          break;
-                        }
-                      }
-                    });
+                    }
                     break;
                   }
                 }
@@ -787,23 +690,13 @@ const MansardRoof = ({
             }
           }}
           onPointerUp={() => {
-            isPointerMovingRef.current = false;
-            setEnableIntersectionPlane(false);
-            setRoofHandleType(RoofHandleType.Null);
-            useStoreRef.getState().setEnableOrbitController(true);
             switch (roofHandleType) {
               case RoofHandleType.Top: {
                 addUndoableResizeRoofHeight(id, oldHeight.current, h);
                 break;
               }
-              case RoofHandleType.FrontLeft:
-              case RoofHandleType.FrontRight: {
-                handleUnoableResizeRidge(id, roofHandleType, oldRidgeVal.current, frontRidge);
-                break;
-              }
-              case RoofHandleType.BackLeft:
-              case RoofHandleType.BackRight: {
-                handleUnoableResizeRidge(id, roofHandleType, oldRidgeVal.current, backRidge);
+              case RoofHandleType.Ridge: {
+                addUnoableResizeRidge(id, roofHandleType, oldWidth.current, width);
                 break;
               }
             }
@@ -811,12 +704,18 @@ const MansardRoof = ({
               for (const e of state.elements) {
                 if (e.id === id) {
                   e.lz = h;
+                  (e as MansardRoofModel).ridgeWidth = width;
                   break;
                 }
               }
               state.updateWallFlag = !state.updateWallFlag;
             });
             updateRooftopSolarPanel(foundation, id, roofSegments, centroid, h, thickness);
+            isPointerMovingRef.current = false;
+            setEnableIntersectionPlane(false);
+            setRoofHandleType(RoofHandleType.Null);
+            setRidgeHandleIndex(null);
+            useStoreRef.getState().setEnableOrbitController(true);
           }}
         >
           <meshBasicMaterial side={DoubleSide} transparent={true} opacity={0.5} />

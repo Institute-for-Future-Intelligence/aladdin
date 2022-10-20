@@ -39,8 +39,10 @@ export interface GambrelRoofModel extends RoofModel {
 }
 
 export interface MansardRoofModel extends RoofModel {
-  frontRidge: number;
-  backRidge: number;
+  ridgeWidth: number;
+  // old files
+  frontRidge?: number;
+  backRidge?: number;
 }
 
 export interface Point3 {

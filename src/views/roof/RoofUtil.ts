@@ -9,6 +9,7 @@ import { ElementModel } from 'src/models/ElementModel';
 import { Point2 } from 'src/models/Point2';
 import { useStore } from 'src/stores/common';
 import { ObjectType } from 'src/types';
+import { RoofType } from 'src/models/RoofModel';
 
 export class RoofUtil {
   // roof related
@@ -37,7 +38,13 @@ export class RoofUtil {
   // distance from point p3 to line formed by p1 and p2
   static getDistance(p1: Vector3, p2: Vector3, p3: Vector3) {
     const A = p2.y - p1.y;
+    if (A === 0) {
+      return Math.abs(p1.y - p3.y);
+    }
     const B = p1.x - p2.x;
+    if (B === 0) {
+      return Math.abs(p1.x - p3.x);
+    }
     const C = p2.x * p1.y - p1.x * p2.y;
     const res = Math.abs((A * p3.x + B * p3.y + C) / Math.sqrt(A * A + B * B));
     return res === 0 ? Infinity : res;
@@ -147,7 +154,7 @@ export class RoofUtil {
         return i;
       }
     }
-    return 0;
+    return -1;
   }
   // less compute but easier to appear bugs
   static getSegmentIdxFromPointerEvent(e: ThreeEvent<PointerEvent>) {
@@ -225,10 +232,14 @@ export class RoofUtil {
 
   static computeState(roofSegments: ConvexGeoProps[], posRelToCentroid: Vector3) {
     const segmentIdx = RoofUtil.getSegmentIdx(roofSegments, posRelToCentroid);
-    const segmentVertices = RoofUtil.getSegmentVertices(roofSegments, segmentIdx, posRelToCentroid);
-    const normal = RoofUtil.getSegmentNormal(segmentVertices);
-    const rotation = RoofUtil.getRotationFromNormal(normal);
-    return { segmentIdx, segmentVertices, normal, rotation };
+    if (segmentIdx !== -1) {
+      const segmentVertices = RoofUtil.getSegmentVertices(roofSegments, segmentIdx, posRelToCentroid);
+      const normal = RoofUtil.getSegmentNormal(segmentVertices);
+      const rotation = RoofUtil.getRotationFromNormal(normal);
+      return { segmentIdx, segmentVertices, normal, rotation };
+    }
+    // mansard roof top surface
+    return { segmentIdx: -1, segmentVertices: null, normal: new Vector3(0, 0, 1), rotation: [0, 0, 0] };
   }
 
   static getBoundaryVertices(roofId: string, wall: WallModel, overhang: number) {

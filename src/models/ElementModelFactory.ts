@@ -690,7 +690,6 @@ export class ElementModelFactory {
   }
 
   static makeMansardRoof(wallsId: string[], parent: ElementModel, lz: number) {
-    const xpercent = 0.35;
     return {
       type: ObjectType.Roof,
       cx: 0,
@@ -704,8 +703,7 @@ export class ElementModelFactory {
       roofType: RoofType.Mansard,
       roofStructure: RoofStructure.Default,
       wallsId: [...wallsId],
-      frontRidge: xpercent,
-      backRidge: -xpercent,
+      ridgeWidth: 1,
       textureType: RoofTexture.Default,
       color: '#454769',
       selected: false,
