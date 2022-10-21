@@ -32,13 +32,13 @@ export class FlowerData {
       case FlowerType.Boxwood:
         return 1.6;
       case FlowerType.CactusCombo1:
-        return 2;
+        return 1;
       case FlowerType.CactusCombo2:
-        return 2;
+        return 1;
       case FlowerType.CactusCombo3:
-        return 2;
+        return 1;
       case FlowerType.CactusCombo4:
-        return 2;
+        return 1;
       case FlowerType.Hosta:
         return 1;
       case FlowerType.Hibiscus:
@@ -71,13 +71,13 @@ export class FlowerData {
       case FlowerType.Boxwood:
         return 1.44;
       case FlowerType.CactusCombo1:
-        return 2.35;
+        return 1.18;
       case FlowerType.CactusCombo2:
-        return 2.7;
+        return 1.35;
       case FlowerType.CactusCombo3:
-        return 2.45;
+        return 1.24;
       case FlowerType.CactusCombo4:
-        return 2.69;
+        return 1.35;
       case FlowerType.Hosta:
         return 0.7;
       case FlowerType.Hibiscus:

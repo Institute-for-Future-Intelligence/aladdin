@@ -40,8 +40,7 @@ import { Auxiliary } from './auxiliary';
 import CompassContainer from './compassContainer';
 import i18n from './i18n/i18n';
 import KeyboardListener from './keyboardListener';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faCloud } from '@fortawesome/free-solid-svg-icons';
+import CloudImage from './assets/cloud.png';
 import SceneRadiusCalculator from './sceneRadiusCalculator';
 import { UndoableChange } from './undo/UndoableChange';
 import DesignInfoPanel from './panels/designInfoPanel';
@@ -311,10 +310,12 @@ const AppCreator = ({ viewOnly = false }: AppCreatorProps) => {
             }}
             title={i18n.t('toolbar.CloudFile', lang)}
           >
-            <FontAwesomeIcon
+            <img
               title={i18n.t('toolbar.CloudFile', lang)}
-              icon={faCloud}
-              size={'lg'}
+              alt={'Cloud'}
+              src={CloudImage}
+              height={32}
+              width={32}
               color={'#888888'}
               style={{ paddingRight: '8px' }}
             />

@@ -23,14 +23,16 @@ import ParabolicDishImage from './assets/parabolic_dish.png';
 import FresnelReflectorImage from './assets/fresnel_reflector.png';
 import HeliostatImage from './assets/heliostat.png';
 import WindTurbineImage from './assets/wind_turbine.png';
+import GroupImage from './assets/group.png';
+import ClearImage from './assets/clear.png';
+import HeliodonImage from './assets/heliodon.png';
+import PaletteImage from './assets/palette.png';
 
 import React, { useState } from 'react';
 import { useStore } from './stores/common';
 import * as Selector from './stores/selector';
 import { Dropdown, Menu, Modal } from 'antd';
 import 'antd/dist/antd.css';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faEraser, faEye, faSun, faObjectGroup } from '@fortawesome/free-solid-svg-icons';
 import { ObjectType } from './types';
 import { ExclamationCircleOutlined } from '@ant-design/icons';
 import i18n from './i18n/i18n';
@@ -407,6 +409,22 @@ const MainToolBarButtons = () => {
         />
       </ToolBarButton>
 
+      <ToolBarButton>
+        <img
+          title={i18n.t('toolbar.ManipulateGroup', lang)}
+          alt={'Group'}
+          src={GroupImage}
+          height={36}
+          width={36}
+          style={{
+            filter: groupAction ? selectFilter : defaultFilter,
+            cursor: 'pointer',
+            verticalAlign: 'middle',
+          }}
+          onClick={handleGroupActionMode}
+        />
+      </ToolBarButton>
+
       {/* add buttons in category 1 */}
       <ToolBarButton>
         {category1Button(category1Flag)}
@@ -425,42 +443,56 @@ const MainToolBarButtons = () => {
         {dropdownButton(category3Menu)}
       </ToolBarButton>
 
-      <FontAwesomeIcon
-        title={i18n.t('toolbar.ManipulateGroup', lang)}
-        icon={faObjectGroup}
-        size={'3x'}
-        color={groupAction ? 'antiquewhite' : '#666666'}
-        style={{ paddingRight: '12px', cursor: 'pointer' }}
-        onClick={handleGroupActionMode}
-      />
-      <FontAwesomeIcon
-        title={i18n.t('toolbar.ClearScene', lang)}
-        icon={faEraser}
-        size={'3x'}
-        color={'#666666'}
-        style={{ paddingRight: '12px', cursor: 'pointer' }}
-        onClick={removeAllContent}
-      />
-      <FontAwesomeIcon
-        title={i18n.t('toolbar.ShowHeatmap', lang)}
-        icon={faEye}
-        size={'3x'}
-        color={showSolarRadiationHeatmap ? 'antiquewhite' : '#666666'}
-        style={{ paddingRight: '12px', cursor: 'pointer' }}
-        onClick={
-          !noAnimationForHeatmapSimulation || Util.hasMovingParts(elements)
-            ? toggleDynamicSolarRadiationHeatmap
-            : toggleStaticSolarRadiationHeatmap
-        }
-      />
-      <FontAwesomeIcon
-        title={i18n.t('toolbar.ShowSunAndTimeSettings', lang)}
-        icon={faSun}
-        size={'3x'}
-        color={showHeliodonPanel ? 'antiquewhite' : '#666666'}
-        style={{ paddingRight: '12px', cursor: 'pointer' }}
-        onClick={toggleSunAndTimeSettingsPanel}
-      />
+      <ToolBarButton>
+        <img
+          title={i18n.t('toolbar.ClearScene', lang)}
+          alt={'Clear'}
+          src={ClearImage}
+          height={36}
+          width={36}
+          color={'#666666'}
+          style={{ cursor: 'pointer' }}
+          onClick={removeAllContent}
+        />
+      </ToolBarButton>
+
+      <ToolBarButton>
+        <img
+          title={i18n.t('toolbar.ShowHeatmap', lang)}
+          alt={'Heatmap'}
+          src={PaletteImage}
+          height={36}
+          width={36}
+          color={'#666666'}
+          style={{
+            filter: showSolarRadiationHeatmap ? selectFilter : defaultFilter,
+            cursor: 'pointer',
+            verticalAlign: 'middle',
+          }}
+          onClick={
+            !noAnimationForHeatmapSimulation || Util.hasMovingParts(elements)
+              ? toggleDynamicSolarRadiationHeatmap
+              : toggleStaticSolarRadiationHeatmap
+          }
+        />
+      </ToolBarButton>
+
+      <ToolBarButton>
+        <img
+          title={i18n.t('toolbar.ShowSunAndTimeSettings', lang)}
+          alt={'Heliodon'}
+          src={HeliodonImage}
+          height={36}
+          width={36}
+          color={'#666666'}
+          style={{
+            filter: showHeliodonPanel ? selectFilter : defaultFilter,
+            cursor: 'pointer',
+            verticalAlign: 'middle',
+          }}
+          onClick={toggleSunAndTimeSettingsPanel}
+        />
+      </ToolBarButton>
     </div>
   );
 };
