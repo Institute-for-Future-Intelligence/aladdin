@@ -315,6 +315,7 @@ export const i18n_tr = {
       buildingDesignTutorials: {
         CapeCodStyleHouseWithShedDormer: 'Çatı Pencereli Cape Cod Evi',
         MansardRoofWithDormers: 'Mansard Roof with Dormers',
+        TShapedHouse: 'T-Shaped House',
         GableRoofVsHipRoof: 'Beşik Çatı vs. Kırma Çatı',
         ColonialVsSaltbox: 'Koloni vs. Tuz Kutusu',
         GambrelRoofVsMansardRoof: 'Flemenk Çatı vs. Mansart Çatı',
@@ -365,6 +366,7 @@ export const i18n_tr = {
         TucsonLinearFresnelReflectors: 'Tucson Şehrinde Doğrusal Fresnel Reflektörleri',
         SolarCanopyFormFactors: 'Solar Gölgelik Biçim Etkileri',
         SolarCanopyOverBleachers: 'Tirübün Üzeri Solar Gölgelik',
+        SolarCanopyOverGarage: 'Solar Canopy Over Garage',
         SolarBusStop: 'Solar Otobüs Durağı',
         SolarFacadeTesla: 'Tesla Solar Façade',
         BuildingIntegratedPhotovoltaics: 'Building-Integrated Photovoltaics',

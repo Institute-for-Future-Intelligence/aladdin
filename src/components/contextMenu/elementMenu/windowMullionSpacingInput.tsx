@@ -250,7 +250,7 @@ const MullionSpacingInput = ({ setDialogVisible }: { setDialogVisible: (b: boole
           <Col className="gutter-row" span={6}>
             <InputNumber
               min={0.5}
-              max={2}
+              max={5}
               style={{ width: 120 }}
               step={0.01}
               precision={2}
@@ -260,7 +260,7 @@ const MullionSpacingInput = ({ setDialogVisible }: { setDialogVisible: (b: boole
               onPressEnter={handleOk}
             />
             <div style={{ paddingTop: '20px', textAlign: 'left', fontSize: '11px' }}>
-              {i18n.t('word.Range', lang)}: [0.5, 2] {i18n.t('word.MeterAbbreviation', lang)}
+              {i18n.t('word.Range', lang)}: [0.5, 5] {i18n.t('word.MeterAbbreviation', lang)}
             </div>
           </Col>
           <Col className="gutter-row" span={1} style={{ verticalAlign: 'middle', paddingTop: '6px' }}>

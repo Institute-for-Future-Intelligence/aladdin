@@ -17,6 +17,7 @@ import solar_trackers from './examples/solar_trackers.json';
 import all_roof_types from './examples/all_roof_types.json';
 import cape_cod_with_shed_dormer from './examples/cape_cod_with_shed_dormer.json';
 import mansard_roof_with_dormers from './examples/mansard_roof_with_dormers.json';
+import t_shaped_house from './examples/t_shaped_house.json';
 import cape_cod_with_garage from './examples/cape_cod_with_garage.json';
 import adobe_taos_house from './examples/adobe_taos_house.json';
 import barn_house from './examples/barn_house.json';
@@ -49,6 +50,7 @@ import solar_canopy_form_factors from './examples/solar_canopy_form_factors.json
 import solar_canopy_over_bleachers from './examples/solar_canopy_over_bleachers.json';
 import solar_bus_stop from './examples/solar_bus_stop.json';
 import bipv_01 from './examples/bipv_01.json';
+import solar_canopy_over_garage from './examples/solar_canopy_over_garage.json';
 import solar_facade_tesla from './examples/solar_facade_tesla.json';
 import floatovoltaics from './examples/floatovoltaics.json';
 import agrivoltaics from './examples/agrivoltaics.json';
@@ -310,6 +312,9 @@ const MainMenu = ({ viewOnly, set2DView, resetView, zoomView, canvas }: MainMenu
       case 'solar_facade_tesla':
         input = solar_facade_tesla;
         break;
+      case 'solar_canopy_over_garage':
+        input = solar_canopy_over_garage;
+        break;
       case 'bipv_01':
         input = bipv_01;
         break;
@@ -408,6 +413,9 @@ const MainMenu = ({ viewOnly, set2DView, resetView, zoomView, canvas }: MainMenu
         break;
       case 'mansard_roof_with_dormers':
         input = mansard_roof_with_dormers;
+        break;
+      case 't_shaped_house':
+        input = t_shaped_house;
         break;
       case 'all_roof_types':
         input = all_roof_types;
@@ -1945,6 +1953,9 @@ const MainMenu = ({ viewOnly, set2DView, resetView, zoomView, canvas }: MainMenu
           <Menu.Item key="mansard_roof_with_dormers" onClick={loadFile}>
             {i18n.t('menu.buildingDesignTutorials.MansardRoofWithDormers', lang)}
           </Menu.Item>
+          <Menu.Item key="t_shaped_house" onClick={loadFile}>
+            {i18n.t('menu.buildingDesignTutorials.TShapedHouse', lang)}
+          </Menu.Item>
           <Menu.Item key="gable_roof_vs_hip_roof" onClick={loadFile}>
             {i18n.t('menu.buildingDesignTutorials.GableRoofVsHipRoof', lang)}
           </Menu.Item>
@@ -2042,6 +2053,9 @@ const MainMenu = ({ viewOnly, set2DView, resetView, zoomView, canvas }: MainMenu
             </Menu.Item>
             <Menu.Item key="solar_canopy_over_bleachers" onClick={loadFile}>
               {i18n.t('menu.solarEnergyExamples.SolarCanopyOverBleachers', lang)}
+            </Menu.Item>
+            <Menu.Item key="solar_canopy_over_garage" onClick={loadFile}>
+              {i18n.t('menu.solarEnergyExamples.SolarCanopyOverGarage', lang)}
             </Menu.Item>
             <Menu.Item key="solar_bus_stop" onClick={loadFile}>
               {i18n.t('menu.solarEnergyExamples.SolarBusStop', lang)}

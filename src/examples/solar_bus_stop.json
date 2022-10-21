@@ -1,7 +1,7 @@
 {
-  "docid": "gUqEnZhesSEscBp6sjZjcY",
-  "time": "09/15/2022 07:23 pm",
-  "timestamp": 1663284216857,
+  "docid": "6QypYvCZrTAiG9Y3T3tieJ",
+  "time": "10/20/2022 08:53 pm",
+  "timestamp": 1666313580660,
   "userid": "QWecNcxhyvP6j6sBN11hBsfZDau1",
   "owner": null,
   "email": null,
@@ -77,7 +77,7 @@
       "cz": 2.2408122612280286,
       "lx": 6.322909236616773,
       "relativeAngle": 3.141592653589793,
-      "lz": 2.2932006042712794,
+      "lz": 2.707750558185909,
       "roofId": "o9MiaiNtVRQTUvRdiEBPKe",
       "ly": 0.1,
       "rightPoint": [
@@ -100,14 +100,14 @@
         0
       ],
       "type": "Wall",
-      "rightRoofHeight": 2.5805079383405456,
+      "rightRoofHeight": 2.707750558185909,
       "normal": [
         0,
         0,
         1
       ],
       "parentId": "m7AH7DcnoGzAq9kryBy4RS",
-      "leftRoofHeight": 2.5805079383405456,
+      "leftRoofHeight": 2.707750558185909,
       "showLabel": false,
       "foundationId": "m7AH7DcnoGzAq9kryBy4RS",
       "cx": -0.12044811573288094,
@@ -166,7 +166,7 @@
       ],
       "relativeAngle": 1.5707963267948957,
       "textureType": "Wall Texture Default",
-      "rightRoofHeight": 2.2932006042712794,
+      "rightRoofHeight": 2.707750558185909,
       "roofId": "o9MiaiNtVRQTUvRdiEBPKe",
       "color": "#ffffff",
       "opacity": 0.25,
@@ -175,7 +175,7 @@
       "studColor": "#ffffff",
       "centerRoofHeight": [
         0.5,
-        2.5805079383405456
+        2.707750558185909
       ],
       "studWidth": 0.2
     },
@@ -221,7 +221,7 @@
         "cV8MyCuhWAsvEyyFuVqVqg"
       ],
       "type": "Wall",
-      "leftRoofHeight": 2.2932006042712794,
+      "leftRoofHeight": 2.707750558185909,
       "ly": 0.1,
       "cx": -3.281902734041268,
       "color": "#ffffff",
@@ -231,7 +231,7 @@
       "studColor": "#ffffff",
       "centerRoofHeight": [
         -0.5,
-        2.5805079383405456
+        2.707750558185909
       ],
       "studWidth": 0.2
     },
@@ -293,7 +293,7 @@
       "cx": 1.1480908985199054,
       "cy": -0.35174459086931265,
       "cz": 0.05000000074505806,
-      "lx": 0.6,
+      "lx": 0.544,
       "lz": 1.68,
       "normal": [
         0,
@@ -308,7 +308,7 @@
       "parentId": "m7AH7DcnoGzAq9kryBy4RS",
       "id": "3LYQCPYTZ6WYqLSGF4X7Lr",
       "selected": false,
-      "ly": 0.6
+      "ly": 0.544
     },
     {
       "type": "Human",
@@ -316,8 +316,8 @@
       "cx": -2.4056687191409836,
       "cy": -0.7214806671440712,
       "cz": 0.02866500802338123,
-      "lx": 0.6,
-      "ly": 0.6,
+      "lx": 0.48,
+      "ly": 0.48,
       "lz": 1.6,
       "normal": [
         0,
@@ -340,7 +340,7 @@
       "cz": 0,
       "lx": 0,
       "ly": 0,
-      "lz": 2.5805079383405456,
+      "lz": 2.707750558185909,
       "overhang": 0.3,
       "thickness": 0.05,
       "roofType": "Gable",
@@ -389,18 +389,18 @@
       "poleSpacing": 3,
       "cx": -0.013581557939684385,
       "cy": 0.026013281736561093,
-      "cz": 2.4898983132641606,
+      "cz": 2.5548677739939563,
       "lx": 6.232,
       "ly": 2.092,
       "lz": 0.046,
       "showLabel": false,
       "normal": [
         0,
-        -0.13816878221176504,
-        0.9904086972670011
+        -0.19733348260296196,
+        0.9803364201353465
       ],
       "rotation": [
-        0.1386122234904732,
+        0.1986371700239986,
         0,
         0
       ],
@@ -417,8 +417,8 @@
       "cx": -6.069538614907841,
       "cy": 1.7342109688811949,
       "cz": 0,
-      "lx": 4.359847534209311,
-      "lz": 4,
+      "lx": 2.576376919790349,
+      "lz": 3.4569079447673756,
       "normal": [
         0,
         1,
@@ -435,12 +435,12 @@
     },
     {
       "type": "Tree",
-      "name": "Maple",
-      "cx": 6.687566552674898,
-      "cy": 1.8813516779449042,
-      "cz": 8.881784197001252e-16,
-      "lx": 3,
-      "lz": 5.56115204172439,
+      "name": "Magnolia",
+      "cx": 6.029325159381688,
+      "cy": 1.1288413497919034,
+      "cz": 0,
+      "lx": 5.866636356742361,
+      "lz": 7.0242541599963335,
       "normal": [
         0,
         1,
@@ -486,9 +486,9 @@
     "dailyHeliostatYieldPanelX": 0,
     "showDailyParabolicDishYieldPanel": false,
     "cameraPosition": [
-      -5.153084275109997,
-      -7.035883423114642,
-      5.757426791831461
+      -7.1118584802319385,
+      -12.177881926052862,
+      4.972837670439114
     ],
     "showYearlyHeliostatYieldPanel": false,
     "orthographic": false,

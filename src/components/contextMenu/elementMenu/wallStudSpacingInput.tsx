@@ -1,5 +1,5 @@
 /*
- * @Copyright 2021-2022. Institute for Future Intelligence, Inc.
+ * @Copyright 2022. Institute for Future Intelligence, Inc.
  */
 
 import React, { useEffect, useRef, useState } from 'react';
@@ -236,7 +236,7 @@ const WallStudSpacingInput = ({ setDialogVisible }: { setDialogVisible: (b: bool
           <Col className="gutter-row" span={6}>
             <InputNumber
               min={0.1}
-              max={100}
+              max={1000}
               style={{ width: 120 }}
               step={0.1}
               precision={2}
@@ -248,7 +248,7 @@ const WallStudSpacingInput = ({ setDialogVisible }: { setDialogVisible: (b: bool
               onPressEnter={ok}
             />
             <div style={{ paddingTop: '20px', textAlign: 'left', fontSize: '11px' }}>
-              {i18n.t('word.Range', lang)}: [0.1, 100] {i18n.t('word.MeterAbbreviation', lang)}
+              {i18n.t('word.Range', lang)}: [0.1, 1000] {i18n.t('word.MeterAbbreviation', lang)}
             </div>
           </Col>
           <Col className="gutter-row" span={1} style={{ verticalAlign: 'middle', paddingTop: '6px' }}>

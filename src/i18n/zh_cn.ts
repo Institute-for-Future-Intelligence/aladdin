@@ -314,6 +314,7 @@ export const i18n_zh_cn = {
       buildingDesignTutorials: {
         CapeCodStyleHouseWithShedDormer: '有棚顶窗的科德角风格的住宅',
         MansardRoofWithDormers: '有天窗的折线屋顶',
+        TShapedHouse: 'T字型房子',
         GableRoofVsHipRoof: '双坡屋顶和四坡屋顶的对比',
         ColonialVsSaltbox: '殖民地风格和盐盒风格的对比',
         GambrelRoofVsMansardRoof: '复斜屋顶和折线屋顶的对比',
@@ -362,6 +363,7 @@ export const i18n_zh_cn = {
         TucsonLinearFresnelReflectors: '亚利桑那州图森的直线式菲涅尔反射镜阵列',
         SolarCanopyFormFactors: '太阳能天篷外形设计',
         SolarCanopyOverBleachers: '看台太阳能天篷',
+        SolarCanopyOverGarage: '车库太阳能天篷',
         SolarBusStop: '太阳能候车亭',
         SolarFacadeTesla: '特斯拉光伏墙',
         BuildingIntegratedPhotovoltaics: '建筑整合光伏',

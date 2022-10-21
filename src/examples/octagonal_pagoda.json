@@ -1,15 +1,15 @@
 {
-  "docid": "4hHakVnguUdZYdjrwHwH1u",
-  "time": "10/20/2022 11:44 am",
-  "timestamp": 1666280682642,
+  "docid": "4t4XCAJp8WW8QA6LcEVG2U",
+  "time": "10/20/2022 04:44 pm",
+  "timestamp": 1666298640902,
   "userid": "QWecNcxhyvP6j6sBN11hBsfZDau1",
   "owner": null,
   "email": null,
   "world": {
-    "latitude": 42.2844063,
+    "latitude": 31.29833989999999,
     "pvGridCellSize": 0.5,
     "timesPerHour": 4,
-    "longitude": -71.3488548,
+    "longitude": 120.58319,
     "ground": {
       "albedo": 0.3,
       "thermalDiffusivity": 0.05,
@@ -28,7 +28,7 @@
         0
       ]
     },
-    "address": "Natick, MA",
+    "address": "Suzhou, Jiangsu, China",
     "date": "6/22/2022, 12:00:00 PM",
     "name": "default",
     "orthographic": false,
@@ -60,7 +60,7 @@
       "lx": 13.149110146454165,
       "selected": false,
       "parentId": "Ground",
-      "locked": true
+      "locked": false
     },
     {
       "type": "Wall",
@@ -110,7 +110,7 @@
       "leftRoofHeight": 4,
       "rightRoofHeight": 4,
       "color": "#d8cdbb",
-      "locked": true
+      "locked": false
     },
     {
       "type": "Wall",
@@ -160,7 +160,7 @@
       "leftRoofHeight": 4,
       "rightRoofHeight": 4,
       "color": "#d8cdbb",
-      "locked": true
+      "locked": false
     },
     {
       "type": "Wall",
@@ -210,7 +210,7 @@
       "leftRoofHeight": 4,
       "rightRoofHeight": 4,
       "color": "#d8cdbb",
-      "locked": true
+      "locked": false
     },
     {
       "type": "Wall",
@@ -260,7 +260,7 @@
       "leftRoofHeight": 4,
       "rightRoofHeight": 4,
       "color": "#d8cdbb",
-      "locked": true
+      "locked": false
     },
     {
       "type": "Wall",
@@ -310,7 +310,7 @@
       "leftRoofHeight": 4,
       "rightRoofHeight": 4,
       "color": "#d8cdbb",
-      "locked": true
+      "locked": false
     },
     {
       "type": "Wall",
@@ -360,7 +360,7 @@
       "leftRoofHeight": 4,
       "rightRoofHeight": 4,
       "color": "#d8cdbb",
-      "locked": true
+      "locked": false
     },
     {
       "type": "Wall",
@@ -406,7 +406,7 @@
       "leftRoofHeight": 4,
       "rightRoofHeight": 4,
       "color": "#d8cdbb",
-      "locked": true
+      "locked": false
     },
     {
       "type": "Wall",
@@ -452,7 +452,7 @@
       "leftRoofHeight": 4,
       "rightRoofHeight": 4,
       "color": "#d8cdbb",
-      "locked": true
+      "locked": false
     },
     {
       "type": "Human",
@@ -476,7 +476,7 @@
       "id": "wvAyR5FHsaRG2ToXMAXh87",
       "selected": false,
       "ly": 0.42,
-      "locked": true
+      "locked": false
     },
     {
       "type": "Roof",
@@ -513,7 +513,7 @@
       "parentId": "of4fAMi2p9MKmo6JDUYnfX",
       "foundationId": "of4fAMi2p9MKmo6JDUYnfX",
       "id": "cqv2PuQ6Ct8FunGC5Rsg5E",
-      "locked": true
+      "locked": false
     },
     {
       "type": "Wall",
@@ -559,7 +559,7 @@
       "selected": false,
       "leftRoofHeight": 7.5,
       "rightRoofHeight": 7.5,
-      "locked": true
+      "locked": false
     },
     {
       "type": "Wall",
@@ -605,7 +605,7 @@
       "selected": false,
       "leftRoofHeight": 7.5,
       "rightRoofHeight": 7.5,
-      "locked": true
+      "locked": false
     },
     {
       "type": "Wall",
@@ -651,7 +651,7 @@
       "selected": false,
       "leftRoofHeight": 7.5,
       "rightRoofHeight": 7.5,
-      "locked": true
+      "locked": false
     },
     {
       "type": "Wall",
@@ -697,7 +697,7 @@
       "selected": false,
       "leftRoofHeight": 7.5,
       "rightRoofHeight": 7.5,
-      "locked": true
+      "locked": false
     },
     {
       "type": "Wall",
@@ -743,7 +743,7 @@
       "selected": false,
       "leftRoofHeight": 7.5,
       "rightRoofHeight": 7.5,
-      "locked": true
+      "locked": false
     },
     {
       "type": "Wall",
@@ -789,7 +789,7 @@
       "selected": false,
       "leftRoofHeight": 7.5,
       "rightRoofHeight": 7.5,
-      "locked": true
+      "locked": false
     },
     {
       "type": "Wall",
@@ -835,7 +835,7 @@
       "selected": false,
       "leftRoofHeight": 7.5,
       "rightRoofHeight": 7.5,
-      "locked": true
+      "locked": false
     },
     {
       "type": "Wall",
@@ -881,7 +881,7 @@
       "selected": false,
       "leftRoofHeight": 7.5,
       "rightRoofHeight": 7.5,
-      "locked": true
+      "locked": false
     },
     {
       "id": "56kE8YxGS5vZT15DARe55m",
@@ -915,7 +915,7 @@
       ],
       "ridgeWidth": 1,
       "selected": false,
-      "locked": true
+      "locked": false
     },
     {
       "type": "Foundation",
@@ -941,7 +941,7 @@
       "solarPowerTower": {},
       "id": "eTosNnXwuFCRGqZWfF7TsY",
       "selected": false,
-      "locked": true
+      "locked": false
     },
     {
       "type": "Wall",
@@ -985,7 +985,7 @@
       "selected": false,
       "leftRoofHeight": 11,
       "rightRoofHeight": 11,
-      "locked": true
+      "locked": false
     },
     {
       "type": "Wall",
@@ -1029,7 +1029,7 @@
       "selected": false,
       "leftRoofHeight": 11,
       "rightRoofHeight": 11,
-      "locked": true
+      "locked": false
     },
     {
       "type": "Wall",
@@ -1073,7 +1073,7 @@
       "selected": false,
       "leftRoofHeight": 11,
       "rightRoofHeight": 11,
-      "locked": true
+      "locked": false
     },
     {
       "type": "Wall",
@@ -1117,7 +1117,7 @@
       "selected": false,
       "leftRoofHeight": 11,
       "rightRoofHeight": 11,
-      "locked": true
+      "locked": false
     },
     {
       "type": "Wall",
@@ -1161,7 +1161,7 @@
       "selected": false,
       "leftRoofHeight": 11,
       "rightRoofHeight": 11,
-      "locked": true
+      "locked": false
     },
     {
       "type": "Wall",
@@ -1205,7 +1205,7 @@
       "selected": false,
       "leftRoofHeight": 11,
       "rightRoofHeight": 11,
-      "locked": true
+      "locked": false
     },
     {
       "type": "Wall",
@@ -1249,7 +1249,7 @@
       "selected": false,
       "leftRoofHeight": 11,
       "rightRoofHeight": 11,
-      "locked": true
+      "locked": false
     },
     {
       "type": "Wall",
@@ -1293,7 +1293,7 @@
       "selected": false,
       "leftRoofHeight": 11,
       "rightRoofHeight": 11,
-      "locked": true
+      "locked": false
     },
     {
       "id": "kXXsWtzhvHq2DAaXZEi8ju",
@@ -1327,7 +1327,7 @@
       ],
       "ridgeWidth": 1,
       "selected": false,
-      "locked": true
+      "locked": false
     },
     {
       "type": "Foundation",
@@ -1353,7 +1353,7 @@
       "solarPowerTower": {},
       "id": "67a4Cj7mTjUcKpS9UXcYMf",
       "selected": false,
-      "locked": true
+      "locked": false
     },
     {
       "type": "Wall",
@@ -1399,7 +1399,7 @@
       "selected": false,
       "leftRoofHeight": 14.5,
       "rightRoofHeight": 14.5,
-      "locked": true
+      "locked": false
     },
     {
       "type": "Wall",
@@ -1445,7 +1445,7 @@
       "selected": false,
       "leftRoofHeight": 14.5,
       "rightRoofHeight": 14.5,
-      "locked": true
+      "locked": false
     },
     {
       "type": "Wall",
@@ -1491,7 +1491,7 @@
       "selected": false,
       "leftRoofHeight": 14.5,
       "rightRoofHeight": 14.5,
-      "locked": true
+      "locked": false
     },
     {
       "type": "Wall",
@@ -1537,7 +1537,7 @@
       "selected": false,
       "leftRoofHeight": 14.5,
       "rightRoofHeight": 14.5,
-      "locked": true
+      "locked": false
     },
     {
       "type": "Wall",
@@ -1583,7 +1583,7 @@
       "selected": false,
       "leftRoofHeight": 14.5,
       "rightRoofHeight": 14.5,
-      "locked": true
+      "locked": false
     },
     {
       "type": "Wall",
@@ -1629,7 +1629,7 @@
       "selected": false,
       "leftRoofHeight": 14.5,
       "rightRoofHeight": 14.5,
-      "locked": true
+      "locked": false
     },
     {
       "type": "Wall",
@@ -1675,7 +1675,7 @@
       "selected": false,
       "leftRoofHeight": 14.5,
       "rightRoofHeight": 14.5,
-      "locked": true
+      "locked": false
     },
     {
       "type": "Wall",
@@ -1721,7 +1721,7 @@
       "selected": false,
       "leftRoofHeight": 14.5,
       "rightRoofHeight": 14.5,
-      "locked": true
+      "locked": false
     },
     {
       "id": "pHdzF3ngGjARqDaSnrPCbJ",
@@ -1755,7 +1755,7 @@
       ],
       "ridgeWidth": 1,
       "selected": false,
-      "locked": true
+      "locked": false
     },
     {
       "type": "Foundation",
@@ -1781,7 +1781,7 @@
       "solarPowerTower": {},
       "id": "mZUacXWS8C3iqt3FX2P392",
       "selected": false,
-      "locked": true
+      "locked": false
     },
     {
       "type": "Wall",
@@ -1827,7 +1827,7 @@
       "selected": false,
       "leftRoofHeight": 18,
       "rightRoofHeight": 18,
-      "locked": true
+      "locked": false
     },
     {
       "type": "Wall",
@@ -1873,7 +1873,7 @@
       "selected": false,
       "leftRoofHeight": 18,
       "rightRoofHeight": 18,
-      "locked": true
+      "locked": false
     },
     {
       "type": "Wall",
@@ -1919,7 +1919,7 @@
       "selected": false,
       "leftRoofHeight": 18,
       "rightRoofHeight": 18,
-      "locked": true
+      "locked": false
     },
     {
       "type": "Wall",
@@ -1965,7 +1965,7 @@
       "selected": false,
       "leftRoofHeight": 18,
       "rightRoofHeight": 18,
-      "locked": true
+      "locked": false
     },
     {
       "type": "Wall",
@@ -2011,7 +2011,7 @@
       "selected": false,
       "leftRoofHeight": 18,
       "rightRoofHeight": 18,
-      "locked": true
+      "locked": false
     },
     {
       "type": "Wall",
@@ -2057,7 +2057,7 @@
       "selected": false,
       "leftRoofHeight": 18,
       "rightRoofHeight": 18,
-      "locked": true
+      "locked": false
     },
     {
       "type": "Wall",
@@ -2103,7 +2103,7 @@
       "selected": false,
       "leftRoofHeight": 18,
       "rightRoofHeight": 18,
-      "locked": true
+      "locked": false
     },
     {
       "type": "Wall",
@@ -2149,7 +2149,7 @@
       "selected": false,
       "leftRoofHeight": 18,
       "rightRoofHeight": 18,
-      "locked": true
+      "locked": false
     },
     {
       "type": "Foundation",
@@ -2183,10 +2183,10 @@
       "type": "Window",
       "cx": 0,
       "cy": 0.1,
-      "cz": -0.1875,
+      "cz": -0.125,
       "lx": 0.3982929957049007,
       "ly": 0.3,
-      "lz": 0.625,
+      "lz": 0.75,
       "shutter": {
         "showLeft": false,
         "showRight": false,
@@ -2215,7 +2215,8 @@
       "foundationId": "of4fAMi2p9MKmo6JDUYnfX",
       "id": "kJ99yCt5NwrUx6aeyLQD19",
       "opacity": 0,
-      "locked": true
+      "locked": false,
+      "mullion": false
     },
     {
       "type": "Window",
@@ -2253,7 +2254,8 @@
       "foundationId": "t3DvVsTxEUmLPJ5qyzz1Cq",
       "id": "2i6NJTsHZcvu5DZpjL2nTf",
       "opacity": 0,
-      "locked": true
+      "locked": false,
+      "mullion": false
     },
     {
       "type": "Window",
@@ -2288,7 +2290,8 @@
         "width": 0.5
       },
       "selected": false,
-      "locked": true
+      "locked": false,
+      "mullion": false
     },
     {
       "type": "Window",
@@ -2323,7 +2326,8 @@
         "width": 0.5
       },
       "selected": false,
-      "locked": true
+      "locked": false,
+      "mullion": false
     },
     {
       "type": "Window",
@@ -2358,7 +2362,8 @@
         "width": 0.5
       },
       "selected": false,
-      "locked": true
+      "locked": false,
+      "mullion": false
     },
     {
       "type": "Window",
@@ -2393,7 +2398,8 @@
         "width": 0.5
       },
       "selected": false,
-      "locked": true
+      "locked": false,
+      "mullion": false
     },
     {
       "type": "Window",
@@ -2428,7 +2434,8 @@
         "width": 0.5
       },
       "selected": false,
-      "locked": true
+      "locked": false,
+      "mullion": false
     },
     {
       "type": "Window",
@@ -2463,7 +2470,8 @@
         "width": 0.5
       },
       "selected": false,
-      "locked": true
+      "locked": false,
+      "mullion": false
     },
     {
       "type": "Window",
@@ -2498,7 +2506,8 @@
         "width": 0.5
       },
       "selected": false,
-      "locked": true
+      "locked": false,
+      "mullion": false
     },
     {
       "type": "Window",
@@ -2533,7 +2542,8 @@
         "width": 0.5
       },
       "selected": false,
-      "locked": true
+      "locked": false,
+      "mullion": false
     },
     {
       "type": "Window",
@@ -2568,7 +2578,8 @@
         "width": 0.5
       },
       "selected": false,
-      "locked": true
+      "locked": false,
+      "mullion": false
     },
     {
       "type": "Window",
@@ -2603,7 +2614,8 @@
         "width": 0.5
       },
       "selected": false,
-      "locked": true
+      "locked": false,
+      "mullion": false
     },
     {
       "type": "Window",
@@ -2638,7 +2650,8 @@
         "width": 0.5
       },
       "selected": false,
-      "locked": true
+      "locked": false,
+      "mullion": false
     },
     {
       "type": "Window",
@@ -2673,7 +2686,8 @@
         "width": 0.5
       },
       "selected": false,
-      "locked": true
+      "locked": false,
+      "mullion": false
     },
     {
       "type": "Window",
@@ -2708,7 +2722,8 @@
         "width": 0.5
       },
       "selected": false,
-      "locked": true
+      "locked": false,
+      "mullion": false
     },
     {
       "type": "Window",
@@ -2743,7 +2758,8 @@
         "width": 0.5
       },
       "selected": false,
-      "locked": true
+      "locked": false,
+      "mullion": false
     },
     {
       "type": "Window",
@@ -2778,7 +2794,8 @@
         "width": 0.5
       },
       "selected": false,
-      "locked": true
+      "locked": false,
+      "mullion": false
     },
     {
       "type": "Window",
@@ -2813,7 +2830,8 @@
         "width": 0.5
       },
       "selected": false,
-      "locked": true
+      "locked": false,
+      "mullion": false
     },
     {
       "type": "Window",
@@ -2848,7 +2866,8 @@
         "width": 0.5
       },
       "selected": false,
-      "locked": true
+      "locked": false,
+      "mullion": false
     },
     {
       "type": "Window",
@@ -2883,7 +2902,8 @@
         "width": 0.5
       },
       "selected": false,
-      "locked": true
+      "locked": false,
+      "mullion": false
     },
     {
       "type": "Window",
@@ -2918,7 +2938,8 @@
         "width": 0.5
       },
       "selected": false,
-      "locked": true
+      "locked": false,
+      "mullion": false
     },
     {
       "type": "Window",
@@ -2953,7 +2974,8 @@
         "width": 0.5
       },
       "selected": false,
-      "locked": true
+      "locked": false,
+      "mullion": false
     },
     {
       "type": "Window",
@@ -2988,7 +3010,8 @@
         "width": 0.5
       },
       "selected": false,
-      "locked": true
+      "locked": false,
+      "mullion": false
     },
     {
       "type": "Window",
@@ -3023,7 +3046,8 @@
         "width": 0.5
       },
       "selected": false,
-      "locked": true
+      "locked": false,
+      "mullion": false
     },
     {
       "type": "Window",
@@ -3058,7 +3082,8 @@
         "width": 0.5
       },
       "selected": false,
-      "locked": true
+      "locked": false,
+      "mullion": false
     },
     {
       "type": "Window",
@@ -3093,7 +3118,8 @@
         "width": 0.5
       },
       "selected": false,
-      "locked": true
+      "locked": false,
+      "mullion": false
     },
     {
       "type": "Window",
@@ -3128,7 +3154,8 @@
         "width": 0.5
       },
       "selected": false,
-      "locked": true
+      "locked": false,
+      "mullion": false
     },
     {
       "type": "Window",
@@ -3163,7 +3190,8 @@
         "width": 0.5
       },
       "selected": false,
-      "locked": true
+      "locked": false,
+      "mullion": false
     },
     {
       "type": "Window",
@@ -3198,7 +3226,8 @@
         "width": 0.5
       },
       "selected": false,
-      "locked": true
+      "locked": false,
+      "mullion": false
     },
     {
       "type": "Window",
@@ -3233,7 +3262,8 @@
         "width": 0.5
       },
       "selected": false,
-      "locked": true
+      "locked": false,
+      "mullion": false
     },
     {
       "type": "Window",
@@ -3268,7 +3298,8 @@
         "width": 0.5
       },
       "selected": false,
-      "locked": true
+      "locked": false,
+      "mullion": false
     },
     {
       "type": "Window",
@@ -3303,7 +3334,8 @@
         "width": 0.5
       },
       "selected": false,
-      "locked": true
+      "locked": false,
+      "mullion": false
     },
     {
       "type": "Window",
@@ -3338,16 +3370,17 @@
         "width": 0.5
       },
       "selected": false,
-      "locked": true
+      "locked": false,
+      "mullion": false
     },
     {
       "type": "Window",
-      "cx": -0.006854767015790452,
+      "cx": 0,
       "cy": 0.1,
-      "cz": -0.1875,
-      "lx": 0.3982929957049007,
+      "cz": -0.125,
+      "lx": 0.4120025297364816,
       "ly": 0.3,
-      "lz": 0.625,
+      "lz": 0.75,
       "mullionWidth": 0.06,
       "mullionSpacing": 2,
       "color": "#73D8FF",
@@ -3373,16 +3406,17 @@
         "width": 0.5
       },
       "selected": false,
-      "locked": true
+      "locked": false,
+      "mullion": false
     },
     {
       "type": "Window",
-      "cx": 0.00954405136926988,
+      "cx": 0,
       "cy": 0.1,
-      "cz": -0.1875,
-      "lx": 0.3982929957049007,
+      "cz": -0.125,
+      "lx": 0.3792048929663609,
       "ly": 0.3,
-      "lz": 0.625,
+      "lz": 0.75,
       "mullionWidth": 0.06,
       "mullionSpacing": 2,
       "color": "#73D8FF",
@@ -3408,16 +3442,17 @@
         "width": 0.5
       },
       "selected": false,
-      "locked": true
+      "locked": false,
+      "mullion": false
     },
     {
       "type": "Window",
-      "cx": -0.025660743539764445,
+      "cx": -2.4958617549610238e-17,
       "cy": 0.1,
-      "cz": -0.1875,
-      "lx": 0.3982929957049007,
+      "cz": -0.125,
+      "lx": 0.44961448278442956,
       "ly": 0.3,
-      "lz": 0.625,
+      "lz": 0.75,
       "mullionWidth": 0.06,
       "mullionSpacing": 2,
       "color": "#73D8FF",
@@ -3443,16 +3478,17 @@
         "width": 0.5
       },
       "selected": false,
-      "locked": true
+      "locked": false,
+      "mullion": false
     },
     {
       "type": "Window",
-      "cx": -0.00004542133946892896,
+      "cx": 0,
       "cy": 0.1,
-      "cz": -0.1875,
-      "lx": 0.3982929957049007,
+      "cz": -0.125,
+      "lx": 0.39838383838383856,
       "ly": 0.3,
-      "lz": 0.625,
+      "lz": 0.75,
       "mullionWidth": 0.06,
       "mullionSpacing": 2,
       "color": "#73D8FF",
@@ -3478,16 +3514,17 @@
         "width": 0.5
       },
       "selected": false,
-      "locked": true
+      "locked": false,
+      "mullion": false
     },
     {
       "type": "Window",
-      "cx": -0.025660743539764413,
+      "cx": 0,
       "cy": 0.1,
-      "cz": -0.1875,
-      "lx": 0.3982929957049007,
+      "cz": -0.125,
+      "lx": 0.4496144827844295,
       "ly": 0.3,
-      "lz": 0.625,
+      "lz": 0.75,
       "mullionWidth": 0.06,
       "mullionSpacing": 2,
       "color": "#73D8FF",
@@ -3513,16 +3550,17 @@
         "width": 0.5
       },
       "selected": false,
-      "locked": true
+      "locked": false,
+      "mullion": false
     },
     {
       "type": "Window",
-      "cx": 0.009544051369269961,
+      "cx": 3.157515024163289e-17,
       "cy": 0.1,
-      "cz": -0.1875,
-      "lx": 0.3982929957049007,
+      "cz": -0.12499999999999994,
+      "lx": 0.3792048929663607,
       "ly": 0.3,
-      "lz": 0.625,
+      "lz": 0.7499999999999999,
       "mullionWidth": 0.06,
       "mullionSpacing": 2,
       "color": "#73D8FF",
@@ -3548,16 +3586,17 @@
         "width": 0.5
       },
       "selected": false,
-      "locked": true
+      "locked": false,
+      "mullion": false
     },
     {
       "type": "Window",
-      "cx": -0.006854767015790452,
+      "cx": 8.004757157551921e-17,
       "cy": 0.1,
-      "cz": -0.1875,
-      "lx": 0.3982929957049007,
+      "cz": -0.125,
+      "lx": 0.4120025297364814,
       "ly": 0.3,
-      "lz": 0.625,
+      "lz": 0.75,
       "mullionWidth": 0.06,
       "mullionSpacing": 2,
       "color": "#73D8FF",
@@ -3583,16 +3622,17 @@
         "width": 0.5
       },
       "selected": false,
-      "locked": true
+      "locked": false,
+      "mullion": false
     },
     {
       "type": "Human",
-      "name": "Jane",
+      "name": "Xiaoli",
       "cx": 4.255864387589413,
       "cy": -6.242196181277151,
       "cz": 0.1,
-      "lx": 0.6,
-      "lz": 1.55,
+      "lx": 0.43,
+      "lz": 1.65,
       "normal": [
         0,
         1,
@@ -3606,7 +3646,8 @@
       "parentId": "t3DvVsTxEUmLPJ5qyzz1Cq",
       "id": "wfWT37sYApxTzWzUncAoR9",
       "selected": false,
-      "locked": true
+      "locked": false,
+      "ly": 0.6
     },
     {
       "type": "Roof",
@@ -3649,7 +3690,7 @@
       "parentId": "t3DvVsTxEUmLPJ5qyzz1Cq",
       "foundationId": "t3DvVsTxEUmLPJ5qyzz1Cq",
       "id": "rdzur4ggFrcghzk546PTce",
-      "locked": true
+      "locked": false
     },
     {
       "type": "Tree",
@@ -3671,7 +3712,8 @@
       ],
       "parentId": "t3DvVsTxEUmLPJ5qyzz1Cq",
       "id": "jBw9RYvUZrnME36Vm8DaPW",
-      "selected": false
+      "selected": false,
+      "locked": false
     },
     {
       "type": "Flower",
@@ -3693,7 +3735,8 @@
       ],
       "parentId": "t3DvVsTxEUmLPJ5qyzz1Cq",
       "id": "5kQBFtBdW6bwiFWnzf9wwH",
-      "selected": false
+      "selected": false,
+      "locked": false
     },
     {
       "type": "Flower",
@@ -3715,7 +3758,8 @@
       ],
       "parentId": "t3DvVsTxEUmLPJ5qyzz1Cq",
       "id": "2GfJNYSop6f5v7xSek1ytE",
-      "selected": false
+      "selected": false,
+      "locked": false
     },
     {
       "type": "Flower",
@@ -3737,7 +3781,8 @@
       ],
       "parentId": "t3DvVsTxEUmLPJ5qyzz1Cq",
       "id": "adVq8AGmfbAWANd1ERqtLC",
-      "selected": false
+      "selected": false,
+      "locked": false
     },
     {
       "type": "Flower",
@@ -3759,7 +3804,8 @@
       ],
       "parentId": "t3DvVsTxEUmLPJ5qyzz1Cq",
       "id": "okSKfXzr6RNLYQU4kZsQEZ",
-      "selected": false
+      "selected": false,
+      "locked": false
     },
     {
       "type": "Flower",
@@ -3781,7 +3827,8 @@
       ],
       "parentId": "t3DvVsTxEUmLPJ5qyzz1Cq",
       "id": "cbRLDrHAkXSVreLWjbyF5V",
-      "selected": false
+      "selected": false,
+      "locked": false
     },
     {
       "type": "Flower",
@@ -3803,7 +3850,8 @@
       ],
       "parentId": "t3DvVsTxEUmLPJ5qyzz1Cq",
       "id": "buHEZW6R7p71SuhwZZJ2PT",
-      "selected": false
+      "selected": false,
+      "locked": false
     },
     {
       "type": "Flower",
@@ -3825,7 +3873,8 @@
       ],
       "parentId": "t3DvVsTxEUmLPJ5qyzz1Cq",
       "id": "9DD3bFQeXC1bN3n5JNfTHY",
-      "selected": false
+      "selected": false,
+      "locked": false
     },
     {
       "type": "Flower",
@@ -3847,7 +3896,8 @@
       ],
       "parentId": "t3DvVsTxEUmLPJ5qyzz1Cq",
       "id": "bnApLQ8V1oJiPKXxDRPxb4",
-      "selected": false
+      "selected": false,
+      "locked": false
     },
     {
       "type": "Tree",
@@ -3869,7 +3919,8 @@
       ],
       "parentId": "t3DvVsTxEUmLPJ5qyzz1Cq",
       "id": "g8PvSEYYsCu2XWBqG3iX5a",
-      "selected": false
+      "selected": false,
+      "locked": false
     },
     {
       "type": "Tree",
@@ -3891,7 +3942,8 @@
       ],
       "parentId": "t3DvVsTxEUmLPJ5qyzz1Cq",
       "id": "eFc8WGqQzEfKvVgDn3e4Wq",
-      "selected": false
+      "selected": false,
+      "locked": false
     },
     {
       "type": "Tree",
@@ -3913,7 +3965,8 @@
       ],
       "parentId": "t3DvVsTxEUmLPJ5qyzz1Cq",
       "id": "288KLWR7KewUpd13gMeuAi",
-      "selected": false
+      "selected": false,
+      "locked": false
     }
   ],
   "view": {
@@ -3922,7 +3975,7 @@
     "mapZoom": 16,
     "axes": true,
     "theme": "Grassland",
-    "showSiteInfoPanel": false,
+    "showSiteInfoPanel": true,
     "showDesignInfoPanel": false,
     "showWeatherPanel": false,
     "groundPanelX": 0,
@@ -3953,14 +4006,14 @@
     "showYearlyLightSensorPanel": false,
     "mapType": "roadmap",
     "cameraPosition": [
-      24.755980929093276,
-      -27.247839588407164,
-      7.384398299711638
+      16.63686587441512,
+      -30.960974919121995,
+      7.353899835340717
     ],
     "panCenter": [
-      -0.2043684666211701,
-      -0.4912564992654939,
-      7.384398299711638
+      -0.1969062794133504,
+      -0.5469674220880094,
+      7.353899835340717
     ],
     "orthographic": false,
     "enableRotate": true,
@@ -3986,7 +4039,8 @@
       "width": 498,
       "height": 340
     },
-    "waterSurface": false
+    "waterSurface": false,
+    "showMapPanel": false
   },
   "evolutionMethod": 1,
   "solarPanelArrayLayoutParams": {

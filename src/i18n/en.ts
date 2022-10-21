@@ -316,6 +316,7 @@ export const i18n_en = {
       buildingDesignTutorials: {
         CapeCodStyleHouseWithShedDormer: 'Cape Cod Style House with Shed Dormer',
         MansardRoofWithDormers: 'Mansard Roof with Dormers',
+        TShapedHouse: 'T-Shaped House',
         GableRoofVsHipRoof: 'Gable Roof vs. Hip Roof',
         ColonialVsSaltbox: 'Colonial vs. Saltbox',
         GambrelRoofVsMansardRoof: 'Gambrel Roof vs. Mansard Roof',
@@ -365,6 +366,7 @@ export const i18n_en = {
         TucsonLinearFresnelReflectors: 'Tucson Linear Fresnel Reflectors',
         SolarCanopyFormFactors: 'Solar Canopy Form Factors',
         SolarCanopyOverBleachers: 'Solar Canopy Over Bleachers',
+        SolarCanopyOverGarage: 'Solar Canopy Over Garage',
         SolarBusStop: 'Solar Bus Stop',
         SolarFacadeTesla: 'Tesla Solar Façade',
         BuildingIntegratedPhotovoltaics: 'Building-Integrated Photovoltaics',
