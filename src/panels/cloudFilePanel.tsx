@@ -9,13 +9,14 @@ import * as Selector from '../stores/selector';
 import ReactDraggable, { DraggableBounds, DraggableData, DraggableEvent, DraggableEventHandler } from 'react-draggable';
 import { Input, Modal, Space, Table } from 'antd';
 import { ExclamationCircleOutlined } from '@ant-design/icons';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faEdit, faFile, faTrashAlt } from '@fortawesome/free-regular-svg-icons';
-import { faLink } from '@fortawesome/free-solid-svg-icons';
 import { HOME_URL } from '../constants';
 import { copyTextToClipboard, showSuccess } from '../helpers';
 import i18n from '../i18n/i18n';
 import Draggable from 'react-draggable';
+import RenameImage from '../assets/rename.png';
+import DeleteImage from '../assets/delete.png';
+import LinkImage from '../assets/create_link.png';
+import OpenImage from '../assets/open_file.png';
 
 const { Column } = Table;
 
@@ -246,44 +247,54 @@ const CloudFilePanel = ({ cloudFileArray, openCloudFile, deleteCloudFile, rename
                 key="action"
                 render={(text, record: any) => (
                   <Space size="middle">
-                    <FontAwesomeIcon
+                    <img
                       title={i18n.t('word.Open', lang)}
-                      icon={faFile}
-                      size={'lg'}
-                      color={'#666666'}
-                      style={{ cursor: 'pointer' }}
+                      alt={'Open'}
+                      src={OpenImage}
                       onClick={() => {
                         openCloudFile(record.userid, record.title);
                       }}
+                      height={20}
+                      width={20}
+                      style={{
+                        cursor: 'pointer',
+                        verticalAlign: 'middle',
+                      }}
                     />
-                    <FontAwesomeIcon
+                    <img
                       title={i18n.t('word.Delete', lang)}
-                      icon={faTrashAlt}
-                      size={'lg'}
-                      color={'#666666'}
-                      style={{ cursor: 'pointer' }}
+                      alt={'Delete'}
+                      src={DeleteImage}
                       onClick={() => {
                         deleteFile(record.userid, record.title);
                       }}
+                      height={20}
+                      width={20}
+                      style={{
+                        cursor: 'pointer',
+                        verticalAlign: 'middle',
+                      }}
                     />
-                    <FontAwesomeIcon
+                    <img
                       title={i18n.t('word.Rename', lang)}
-                      icon={faEdit}
-                      size={'lg'}
-                      color={'#666666'}
-                      style={{ cursor: 'pointer' }}
+                      alt={'Rename'}
+                      src={RenameImage}
                       onClick={() => {
                         setOldTitle(record.title);
                         setUserid(record.userid);
                         setRenameDialogVisible(true);
                       }}
+                      height={20}
+                      width={20}
+                      style={{
+                        cursor: 'pointer',
+                        verticalAlign: 'middle',
+                      }}
                     />
-                    <FontAwesomeIcon
+                    <img
                       title={i18n.t('cloudFilePanel.GenerateLink', lang)}
-                      icon={faLink}
-                      size={'lg'}
-                      color={'#666666'}
-                      style={{ cursor: 'pointer' }}
+                      alt={'Link'}
+                      src={LinkImage}
                       onClick={() => {
                         const url =
                           HOME_URL +
@@ -293,6 +304,12 @@ const CloudFilePanel = ({ cloudFileArray, openCloudFile, deleteCloudFile, rename
                           encodeURIComponent(record.title);
                         copyTextToClipboard(url);
                         showSuccess(i18n.t('cloudFilePanel.LinkGeneratedInClipBoard', lang) + '.');
+                      }}
+                      height={20}
+                      width={20}
+                      style={{
+                        cursor: 'pointer',
+                        verticalAlign: 'middle',
                       }}
                     />
                   </Space>

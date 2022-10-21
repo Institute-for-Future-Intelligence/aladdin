@@ -6,14 +6,15 @@ import React, { useEffect, useMemo, useState } from 'react';
 import { useStore } from '../stores/common';
 import * as Selector from '../stores/selector';
 import styled from 'styled-components';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faCalendarDay, faCloudSunRain, faMapMarkerAlt } from '@fortawesome/free-solid-svg-icons';
 import { Space } from 'antd';
 import { computeOutsideTemperature, getOutsideTemperatureAtMinute } from '../analysis/heatTools';
 import dayjs from 'dayjs';
 import { Util } from '../Util';
 import i18n from '../i18n/i18n';
 import { computeSunriseAndSunsetInMinutes } from '../analysis/sunTools';
+import LocationImage from '../assets/location.png';
+import DateImage from '../assets/date.png';
+import ThermometerImage from '../assets/thermometer.png';
 
 const Container = styled.div`
   position: absolute;
@@ -94,17 +95,25 @@ const SiteInfoPanel = ({ city }: SiteInfoPanelProps) => {
   }, [dateString, latitude]);
 
   const color = daytime ? 'navajowhite' : 'antiquewhite';
+  const filter = daytime
+    ? 'invert(85%) sepia(45%) saturate(335%) hue-rotate(329deg) brightness(100%) contrast(101%)'
+    : 'invert(95%) sepia(7%) saturate(1598%) hue-rotate(312deg) brightness(106%) contrast(96%)';
 
   return (
     <Container>
       <ColumnWrapper>
         <Space direction={'horizontal'} style={{ color: color, fontSize: '10px' }}>
-          <FontAwesomeIcon
+          <img
             title={i18n.t('word.Location', lang)}
-            icon={faMapMarkerAlt}
-            size={'3x'}
-            color={color}
-            style={{ paddingLeft: '10px' }}
+            alt={'Location'}
+            src={LocationImage}
+            height={20}
+            width={20}
+            style={{
+              filter: filter,
+              cursor: 'pointer',
+              verticalAlign: 'middle',
+            }}
           />
           {(address ?? '') +
             ' (' +
@@ -116,20 +125,30 @@ const SiteInfoPanel = ({ city }: SiteInfoPanelProps) => {
             '° ' +
             (longitude > 0 ? 'E' : 'W') +
             ')'}
-          <FontAwesomeIcon
+          <img
             title={i18n.t('word.Date', lang)}
-            icon={faCalendarDay}
-            size={'3x'}
-            color={color}
-            style={{ paddingLeft: '10px' }}
+            alt={'Date'}
+            src={DateImage}
+            height={20}
+            width={20}
+            style={{
+              filter: filter,
+              cursor: 'pointer',
+              verticalAlign: 'middle',
+            }}
           />
           {dayjs(now).format('MM/DD hh:mm a')}
-          <FontAwesomeIcon
-            title={i18n.t('word.Weather', lang)}
-            icon={faCloudSunRain}
-            size={'3x'}
-            color={color}
-            style={{ paddingLeft: '10px' }}
+          <img
+            title={i18n.t('word.Temperature', lang)}
+            alt={'Temperature'}
+            src={ThermometerImage}
+            height={20}
+            width={20}
+            style={{
+              filter: filter,
+              cursor: 'pointer',
+              verticalAlign: 'middle',
+            }}
           />
           {dailyTemperatures
             ? currentTemperature.toFixed(1) +

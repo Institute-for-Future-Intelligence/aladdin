@@ -940,7 +940,7 @@ export const i18n_tr = {
       NumberOfSelectedHeliostats: 'Seçilen heliostat sayısı',
       NumberOfSelectedSolarPanels: 'Seçilen güneş paneli sayısı',
       ElectricityGeneratedDailyBySolarPanels: 'Güneş panellerinin günlük elektrik üretimi',
-      SceneRadius: 'Sahne Yarıçapı',
+      SceneDiameter: 'Scene diameter',
     },
 
     heatmapControlPanel: {

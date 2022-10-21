@@ -939,7 +939,7 @@ export const i18n_es = {
       NumberOfSelectedHeliostats: 'Number of selected heliostats',
       NumberOfSelectedSolarPanels: 'Number of selected solar panels',
       ElectricityGeneratedDailyBySolarPanels: 'Electricity generated daily by these solar panels',
-      EstimatedSceneScope: 'Alcance de la escena estimado',
+      SceneDiameter: 'Scene diameter',
     },
 
     heatmapControlPanel: {
