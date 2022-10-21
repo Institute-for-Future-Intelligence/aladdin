@@ -1944,6 +1944,9 @@ const MainMenu = ({ viewOnly, set2DView, resetView, zoomView, canvas }: MainMenu
           <Menu.Item key="solar_radiation_to_box" onClick={loadFile}>
             {i18n.t('menu.solarEnergyScienceTutorials.SolarRadiationToBox', lang)}
           </Menu.Item>
+          <Menu.Item key="sun_beam_at_center" onClick={loadFile}>
+            {i18n.t('menu.solarEnergyExamples.SunBeamAndHeliodon', lang)}
+          </Menu.Item>
         </SubMenu>
         {/* building design */}
         <SubMenu key={'building-design'} title={i18n.t('menu.buildingDesignSubMenu', lang)}>
@@ -1988,6 +1991,15 @@ const MainMenu = ({ viewOnly, set2DView, resetView, zoomView, canvas }: MainMenu
           </Menu.Item>
           <Menu.Item key="effect_orientation_solar_panel" onClick={loadFile}>
             {i18n.t('menu.photovoltaicSolarPowerTutorials.EffectOfOrientationOfSolarPanels', lang)}
+          </Menu.Item>
+          <Menu.Item key="rooftop_solar_panels" onClick={loadFile}>
+            {i18n.t('menu.solarEnergyExamples.RooftopSolarPanels', lang)}
+          </Menu.Item>
+          <Menu.Item key="solar_canopy_form_factors" onClick={loadFile}>
+            {i18n.t('menu.solarEnergyExamples.SolarCanopyFormFactors', lang)}
+          </Menu.Item>
+          <Menu.Item key="bipv_01" onClick={loadFile}>
+            {i18n.t('menu.solarEnergyExamples.BuildingIntegratedPhotovoltaics', lang)}
           </Menu.Item>
         </SubMenu>
         {/* concentrated solar power */}
@@ -2039,17 +2051,8 @@ const MainMenu = ({ viewOnly, set2DView, resetView, zoomView, canvas }: MainMenu
         {/* solar energy */}
         <SubMenu key={'solar-energy'} title={i18n.t('menu.solarEnergySubMenu', lang)}>
           <SubMenu key={'photovoltaic-solar-power-examples'} title={i18n.t('menu.photovoltaicSolarPowerSubMenu', lang)}>
-            <Menu.Item key="sun_beam_at_center" onClick={loadFile}>
-              {i18n.t('menu.solarEnergyExamples.SunBeamAndHeliodon', lang)}
-            </Menu.Item>
-            <Menu.Item key="rooftop_solar_panels" onClick={loadFile}>
-              {i18n.t('menu.solarEnergyExamples.RooftopSolarPanels', lang)}
-            </Menu.Item>
             <Menu.Item key="vegetative_buffer_01" onClick={loadFile}>
               {i18n.t('menu.solarEnergyExamples.VegetativeBuffer', lang)}
-            </Menu.Item>
-            <Menu.Item key="solar_canopy_form_factors" onClick={loadFile}>
-              {i18n.t('menu.solarEnergyExamples.SolarCanopyFormFactors', lang)}
             </Menu.Item>
             <Menu.Item key="solar_canopy_over_bleachers" onClick={loadFile}>
               {i18n.t('menu.solarEnergyExamples.SolarCanopyOverBleachers', lang)}
@@ -2062,9 +2065,6 @@ const MainMenu = ({ viewOnly, set2DView, resetView, zoomView, canvas }: MainMenu
             </Menu.Item>
             <Menu.Item key="solar_facade_tesla" onClick={loadFile}>
               {i18n.t('menu.solarEnergyExamples.SolarFacadeTesla', lang)}
-            </Menu.Item>
-            <Menu.Item key="bipv_01" onClick={loadFile}>
-              {i18n.t('menu.solarEnergyExamples.BuildingIntegratedPhotovoltaics', lang)}
             </Menu.Item>
             <Menu.Item key="floatovoltaics" onClick={loadFile}>
               {i18n.t('menu.solarEnergyExamples.Floatovoltaics', lang)}
