@@ -54,7 +54,6 @@ const WindowTintSelection = ({ setDialogVisible }: { setDialogVisible: (b: boole
           break;
         }
       }
-      state.updateWallFlag = !state.updateWallFlag;
     });
   };
 

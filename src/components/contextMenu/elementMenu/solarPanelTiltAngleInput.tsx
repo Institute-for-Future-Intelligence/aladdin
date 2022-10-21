@@ -171,9 +171,7 @@ const SolarPanelTiltAngleInput = ({
                 updateSolarPanelTiltAngleById(id, ta as number);
               }
               if (undoableChangeAll.oldValues.size % 2 === 0) {
-                useStore.getState().set((state) => {
-                  state.updateWallFlag = !state.updateWallFlag;
-                });
+                useStore.getState().set((state) => {});
               }
             },
             redo: () => {
@@ -221,9 +219,7 @@ const SolarPanelTiltAngleInput = ({
                   updateSolarPanelTiltAngleById(id, ta as number);
                 }
                 if (undoableChangeAboveFoundation.oldValues.size % 2 === 0) {
-                  useStore.getState().set((state) => {
-                    state.updateWallFlag = !state.updateWallFlag;
-                  });
+                  useStore.getState().set((state) => {});
                 }
               },
               redo: () => {
@@ -309,9 +305,7 @@ const SolarPanelTiltAngleInput = ({
                   updateSolarPanelTiltAngleById(id, ta as number);
                 }
                 if (undoableChangeOnSurface.oldValues.size % 2 === 0) {
-                  useStore.getState().set((state) => {
-                    state.updateWallFlag = !state.updateWallFlag;
-                  });
+                  useStore.getState().set((state) => {});
                 }
               },
               redo: () => {

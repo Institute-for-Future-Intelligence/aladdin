@@ -1071,7 +1071,7 @@ const GableRoof = ({
                   break;
                 }
               }
-              // state.updateWallFlag = !state.updateWallFlag;
+              //
             });
             updateRooftopSolarPanel(foundation, id, roofSegments, centroid, h, thickness);
           }}
@@ -1211,9 +1211,9 @@ const RoofSegment = ({
       }
       if (mullionRef.current) {
         mullionRef.current.position.set(center.x, center.y, cz);
-        invalidate();
       }
     }
+    invalidate();
   }, [points, direction, length, currWall, show]);
 
   return (

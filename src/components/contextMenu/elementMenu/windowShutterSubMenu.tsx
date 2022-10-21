@@ -58,7 +58,6 @@ const WindowShutterSubMenu = ({ windowId }: { windowId: string }) => {
           break;
         }
       }
-      state.updateWallFlag = !state.updateWallFlag;
     });
   };
 

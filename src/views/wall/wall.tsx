@@ -56,6 +56,46 @@ import Door from '../door';
 import { SolarPanelModel } from 'src/models/SolarPanelModel';
 import SolarPanelOnWall from '../solarPanel/solarPanelOnWall';
 
+const useElements = (id: string, leftWallId?: string, rightWallId?: string, roofId?: string) => {
+  const isElementTriggerWallChange = (elem: ElementModel) => {
+    if (elem.parentId === id || elem.id === roofId) {
+      return true;
+    }
+    return false;
+  };
+
+  const leftWall = useStore((state) => {
+    if (leftWallId) {
+      for (const e of state.elements) {
+        if (e.id === leftWallId) {
+          return e as WallModel;
+        }
+      }
+    }
+    return null;
+  });
+
+  const rightWall = useStore((state) => {
+    if (rightWallId) {
+      for (const e of state.elements) {
+        if (e.id === rightWallId) {
+          return e as WallModel;
+        }
+      }
+    }
+    return null;
+  });
+
+  const elementsTriggerChange = useStore((state) => state.elements.filter(isElementTriggerWallChange));
+
+  const elementsOnWall = useMemo(
+    () => elementsTriggerChange.filter((el) => Util.isLegalOnWall(el.type)),
+    [JSON.stringify(elementsTriggerChange)],
+  );
+
+  return { elementsOnWall, leftWall, rightWall };
+};
+
 const Wall = ({
   id,
   cx,
@@ -177,9 +217,6 @@ const Wall = ({
   const isAddingElement = useStore(Selector.isAddingElement);
   const addUndoable = useStore(Selector.addUndoable);
   const setElementPosition = useStore(Selector.setElementPosition);
-  const updateWallFlag = useStore(Selector.updateWallFlag);
-  const selectedElement = useStore(Selector.selectedElement);
-  const openFileFlag = useStore(Selector.openLocalFileFlag);
 
   const intersectionPlaneRef = useRef<Mesh>(null);
   const outsideWallRef = useRef<Mesh>(null);
@@ -200,7 +237,8 @@ const Wall = ({
 
   const [originElements, setOriginElements] = useState<ElementModel[] | null>(null);
   const [showGrid, setShowGrid] = useState(false);
-  const [elementsOnWall, setElementOnWall] = useState<ElementModel[]>([]);
+
+  const { elementsOnWall, leftWall, rightWall } = useElements(id, leftJoints[0], rightJoints[0]);
 
   const transparent = wallStructure === WallStructure.Stud;
 
@@ -226,28 +264,6 @@ const Wall = ({
 
   let leftOffset = 0;
   let rightOffset = 0;
-
-  const leftWall = useStore((state) => {
-    if (leftJoints.length > 0) {
-      for (const e of state.elements) {
-        if (e.id === leftJoints[0]) {
-          return e as WallModel;
-        }
-      }
-    }
-    return null;
-  });
-
-  const rightWall = useStore((state) => {
-    if (rightJoints.length > 0) {
-      for (const e of state.elements) {
-        if (e.id === rightJoints[0]) {
-          return e as WallModel;
-        }
-      }
-    }
-    return null;
-  });
 
   if (leftWall) {
     const deltaAngle = (Math.PI * 3 - (relativeAngle - leftWall.relativeAngle)) % TWO_PI;
@@ -324,7 +340,16 @@ const Wall = ({
     });
 
     return wallShape;
-  }, [lx, lz, elementsOnWall]);
+  }, [
+    lx,
+    lz,
+    elementsOnWall,
+    leftRoofHeight,
+    rightRoofHeight,
+    centerRoofHeight,
+    centerLeftRoofHeight,
+    centerRightRoofHeight,
+  ]);
 
   const insideWallShape = useMemo(() => {
     const wallShape = new Shape();
@@ -338,7 +363,18 @@ const Wall = ({
       }
     });
     return wallShape;
-  }, [lx, lz, leftOffset, rightOffset, elementsOnWall]);
+  }, [
+    lx,
+    lz,
+    leftOffset,
+    rightOffset,
+    elementsOnWall,
+    leftRoofHeight,
+    rightRoofHeight,
+    centerRoofHeight,
+    centerLeftRoofHeight,
+    centerRightRoofHeight,
+  ]);
 
   const intersectionPlaneShape = useMemo(() => {
     const wallShape = new Shape();
@@ -352,10 +388,6 @@ const Wall = ({
     return shape;
   }, [lx, ly, leftOffset, rightOffset]);
 
-  const updateElementsOnWall = () => {
-    setElementOnWall(useStore.getState().elements.filter((e) => validElementOnWall(e)));
-  };
-
   useEffect(() => {
     if (deletedWindowAndParentId && deletedWindowAndParentId[1] === id) {
       resetCurrentState();
@@ -365,19 +397,6 @@ const Wall = ({
       });
     }
   }, [deletedWindowAndParentId]);
-
-  useEffect(() => {
-    updateElementsOnWall();
-  }, [
-    selectedElement,
-    updateWallFlag,
-    leftRoofHeight,
-    rightRoofHeight,
-    centerRoofHeight,
-    centerLeftRoofHeight,
-    centerRightRoofHeight,
-    openFileFlag,
-  ]);
 
   // roof
   useEffect(() => {
@@ -401,13 +420,6 @@ const Wall = ({
   useEffect(() => {
     isFirstMountRef.current = false;
   }, []);
-
-  const validElementOnWall = (elem: ElementModel) => {
-    if (elem.parentId !== id) {
-      return false;
-    }
-    return Util.isLegalOnWall(elem.type);
-  };
 
   const getRelativePosOnWall = (p: Vector3, wall: WallModel) => {
     const { cx, cy, cz } = wall;
@@ -613,7 +625,6 @@ const Wall = ({
       addedElement: elem,
       undo: () => {
         removeElementById(elem.id, false);
-        updateElementsOnWall();
       },
       redo: () => {
         setCommonStore((state) => {
@@ -621,7 +632,6 @@ const Wall = ({
           state.selectedElement = undoableAdd.addedElement;
           state.deletedRoofId = null;
         });
-        updateElementsOnWall();
       },
     } as UndoableAdd;
     addUndoable(undoableAdd);
@@ -641,11 +651,9 @@ const Wall = ({
       newCz: elem.cz,
       undo: () => {
         setElementPosition(undoableMove.movedElementId, undoableMove.oldCx, undoableMove.oldCy, undoableMove.oldCz);
-        updateElementsOnWall();
       },
       redo: () => {
         setElementPosition(undoableMove.movedElementId, undoableMove.newCx, undoableMove.newCy, undoableMove.newCz);
-        updateElementsOnWall();
       },
     } as UndoableMove;
     addUndoable(undoableMove);
@@ -667,11 +675,9 @@ const Wall = ({
           newDimension: [elem.lx, elem.ly, elem.lz],
           undo: () => {
             setElementPosDms(undoableResize.resizedElementId, undoableResize.oldPosition, undoableResize.oldDimension);
-            updateElementsOnWall();
           },
           redo: () => {
             setElementPosDms(undoableResize.resizedElementId, undoableResize.newPosition, undoableResize.newDimension);
-            updateElementsOnWall();
           },
         } as UndoableResizeElementOnWall;
         addUndoable(undoableResize);
@@ -732,7 +738,6 @@ const Wall = ({
             oldDimensionRef.current = [selectedElement.lx, selectedElement.ly, selectedElement.lz];
           }
         }
-        updateElementsOnWall();
       }
     }
   };
@@ -755,7 +760,6 @@ const Wall = ({
       }
       invalidElementIdRef.current = null;
       setOriginElements(null);
-      updateElementsOnWall();
     }
     // add undo for valid operation
     else {
@@ -972,8 +976,6 @@ const Wall = ({
               break;
             }
           }
-
-          updateElementsOnWall();
         }
 
         // add new element

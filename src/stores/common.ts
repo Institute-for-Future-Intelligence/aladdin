@@ -708,9 +708,6 @@ export interface CommonStoreState {
   updateWallMapOnFoundationFlag: boolean;
   updateWallMapOnFoundation: () => void;
 
-  updateWallFlag: boolean;
-  updateElementsOnWallFn: () => void;
-
   updateSolarPanelOnRoofFlag: boolean;
   updateSolarPanelOnRoofFn: () => void;
 
@@ -890,7 +887,6 @@ export const useStore = create<CommonStoreState>(
               state.dailyUpdraftTowerResults.length = 0;
               state.yearlyUpdraftTowerYield.length = 0;
               state.fittestIndividualResults.length = 0;
-              state.updateWallFlag = !state.updateWallFlag;
             });
             // 1/6/2022: Humans previously did not have dimension data (which probably was a mistake).
             // We do this for backward compatibility. Otherwise, humans cannot be moved in old files.
@@ -1655,7 +1651,6 @@ export const useStore = create<CommonStoreState>(
                   break;
                 }
               }
-              state.updateWallFlag = !state.updateWallFlag;
             });
           },
           updateElementShowLabelById(id, showLabel) {
@@ -1666,7 +1661,6 @@ export const useStore = create<CommonStoreState>(
                   break;
                 }
               }
-              state.updateWallFlag = !state.updateWallFlag;
             });
           },
 
@@ -2019,7 +2013,6 @@ export const useStore = create<CommonStoreState>(
                   }
                 }
               }
-              state.updateWallFlag = !state.updateWallFlag;
             });
           },
           updateSolarCollectorDrawSunBeamAboveFoundation(type, foundationId, draw) {
@@ -2032,7 +2025,6 @@ export const useStore = create<CommonStoreState>(
                   }
                 }
               }
-              state.updateWallFlag = !state.updateWallFlag;
             });
           },
           updateSolarCollectorDrawSunBeamForAll(type, draw) {
@@ -2045,7 +2037,6 @@ export const useStore = create<CommonStoreState>(
                   }
                 }
               }
-              state.updateWallFlag = !state.updateWallFlag;
             });
           },
           updateSolarCollectorRelativeAzimuthById(id, relativeAzimuth) {
@@ -3190,7 +3181,6 @@ export const useStore = create<CommonStoreState>(
                     sp.ly = ny * pvModel.width;
                   }
                   if (sp.parentType === ObjectType.Wall) {
-                    state.updateWallFlag = !state.updateWallFlag;
                   }
                   break;
                 }
@@ -3224,7 +3214,6 @@ export const useStore = create<CommonStoreState>(
                 }
               }
               if (updateWall) {
-                state.updateWallFlag = !state.updateWallFlag;
               }
             });
           },
@@ -3263,7 +3252,6 @@ export const useStore = create<CommonStoreState>(
                 }
               }
               if (updateWall) {
-                state.updateWallFlag = !state.updateWallFlag;
               }
             });
           },
@@ -3294,7 +3282,6 @@ export const useStore = create<CommonStoreState>(
                 }
               }
               if (updateWall) {
-                state.updateWallFlag = !state.updateWallFlag;
               }
             });
           },
@@ -3309,7 +3296,6 @@ export const useStore = create<CommonStoreState>(
                   break;
                 }
               }
-              state.updateWallFlag = !state.updateWallFlag;
             });
           },
           updateSolarPanelLxAboveFoundation(foundationId, lx) {
@@ -3321,7 +3307,6 @@ export const useStore = create<CommonStoreState>(
                   e.lx = Util.panelizeLx(sp, pv, lx);
                 }
               }
-              state.updateWallFlag = !state.updateWallFlag;
             });
           },
           updateSolarPanelLxOnSurface(parentId, normal, lx) {
@@ -3341,7 +3326,6 @@ export const useStore = create<CommonStoreState>(
                   }
                 }
               }
-              state.updateWallFlag = !state.updateWallFlag;
             });
           },
           updateSolarPanelLxForAll(lx) {
@@ -3353,7 +3337,6 @@ export const useStore = create<CommonStoreState>(
                   e.lx = Util.panelizeLx(sp, pv, lx);
                 }
               }
-              state.updateWallFlag = !state.updateWallFlag;
             });
           },
 
@@ -3367,7 +3350,6 @@ export const useStore = create<CommonStoreState>(
                   break;
                 }
               }
-              state.updateWallFlag = !state.updateWallFlag;
             });
           },
           updateSolarPanelLyAboveFoundation(foundationId, ly) {
@@ -3379,7 +3361,6 @@ export const useStore = create<CommonStoreState>(
                   e.ly = Util.panelizeLy(sp, pv, ly);
                 }
               }
-              state.updateWallFlag = !state.updateWallFlag;
             });
           },
           updateSolarPanelLyOnSurface(parentId, normal, ly) {
@@ -3399,7 +3380,6 @@ export const useStore = create<CommonStoreState>(
                   }
                 }
               }
-              state.updateWallFlag = !state.updateWallFlag;
             });
           },
           updateSolarPanelLyForAll(ly) {
@@ -3411,7 +3391,6 @@ export const useStore = create<CommonStoreState>(
                   e.ly = Util.panelizeLy(sp, pv, ly);
                 }
               }
-              state.updateWallFlag = !state.updateWallFlag;
             });
           },
 
@@ -3424,7 +3403,6 @@ export const useStore = create<CommonStoreState>(
                   break;
                 }
               }
-              state.updateWallFlag = !state.updateWallFlag;
             });
           },
           updateSolarPanelTiltAngleAboveFoundation(foundationId, tiltAngle, isReverse) {
@@ -3439,7 +3417,6 @@ export const useStore = create<CommonStoreState>(
                   }
                 }
               }
-              state.updateWallFlag = !state.updateWallFlag;
             });
           },
           updateSolarPanelTiltAngleOnSurface(parentId, normal, tiltAngle) {
@@ -3458,7 +3435,6 @@ export const useStore = create<CommonStoreState>(
                   }
                 }
               }
-              state.updateWallFlag = !state.updateWallFlag;
             });
           },
           updateSolarPanelTiltAngleForAll(tiltAngle, isReverse) {
@@ -3473,7 +3449,6 @@ export const useStore = create<CommonStoreState>(
                   }
                 }
               }
-              state.updateWallFlag = !state.updateWallFlag;
             });
           },
 
@@ -3502,7 +3477,6 @@ export const useStore = create<CommonStoreState>(
                   const pvModel = state.pvModules[sp.pvModelName];
                   state.setSolarPanelOrientation(sp, pvModel, orientation);
                   if (sp.parentType === ObjectType.Wall) {
-                    state.updateWallFlag = !state.updateWallFlag;
                   }
                   break;
                 }
@@ -3523,7 +3497,6 @@ export const useStore = create<CommonStoreState>(
                 }
               }
               if (updateWall) {
-                state.updateWallFlag = !state.updateWallFlag;
               }
             });
           },
@@ -3550,7 +3523,6 @@ export const useStore = create<CommonStoreState>(
                 }
               }
               if (updateWall) {
-                state.updateWallFlag = !state.updateWallFlag;
               }
             });
           },
@@ -3568,7 +3540,6 @@ export const useStore = create<CommonStoreState>(
                 }
               }
               if (updateWall) {
-                state.updateWallFlag = !state.updateWallFlag;
               }
             });
           },
@@ -3897,7 +3868,6 @@ export const useStore = create<CommonStoreState>(
                   break;
                 }
               }
-              state.updateWallFlag = !state.updateWallFlag;
             });
           },
 
@@ -4560,7 +4530,6 @@ export const useStore = create<CommonStoreState>(
               });
               state.selectedElement = null;
               state.updateDesignInfo();
-              state.updateWallFlag = !state.updateWallFlag;
             });
           },
           removeElementsByType(type) {
@@ -5112,7 +5081,7 @@ export const useStore = create<CommonStoreState>(
                             case ElementState.Valid:
                               e.normal = [0, -1, 0];
                               approved = true;
-                              state.updateWallFlag = !state.updateWallFlag;
+
                               break;
                             case ElementState.OverLap:
                               showError(i18n.t('message.CannotPasteBecauseOfOverlap', lang));
@@ -5215,7 +5184,7 @@ export const useStore = create<CommonStoreState>(
                         switch (Util.checkElementOnWallState(e, newParent)) {
                           case ElementState.Valid:
                             approved = true;
-                            state.updateWallFlag = !state.updateWallFlag;
+
                             break;
                           case ElementState.OverLap:
                             showError(i18n.t('message.CannotPasteBecauseOfOverlap', lang));
@@ -5316,7 +5285,6 @@ export const useStore = create<CommonStoreState>(
                           const lang = { lng: state.language };
                           showError(i18n.t('message.CannotPasteOutsideBoundary', lang));
                         } else {
-                          state.updateWallFlag = !state.updateWallFlag;
                         }
                       }
                       break;
@@ -5372,7 +5340,6 @@ export const useStore = create<CommonStoreState>(
                               const lang = { lng: state.language };
                               showError(i18n.t('message.CannotPasteOutsideBoundary', lang));
                             } else {
-                              state.updateWallFlag = !state.updateWallFlag;
                             }
                             break;
                           }
@@ -5940,13 +5907,6 @@ export const useStore = create<CommonStoreState>(
           updateWallMapOnFoundation() {
             immerSet((state: CommonStoreState) => {
               state.updateWallMapOnFoundationFlag = !state.updateWallMapOnFoundationFlag;
-            });
-          },
-
-          updateWallFlag: false,
-          updateElementsOnWallFn() {
-            immerSet((state: CommonStoreState) => {
-              state.updateWallFlag = !state.updateWallFlag;
             });
           },
 

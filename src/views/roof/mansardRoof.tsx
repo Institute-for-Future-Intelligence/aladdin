@@ -708,7 +708,6 @@ const MansardRoof = ({
                   break;
                 }
               }
-              state.updateWallFlag = !state.updateWallFlag;
             });
             updateRooftopSolarPanel(foundation, id, roofSegments, centroid, h, thickness);
             isPointerMovingRef.current = false;
