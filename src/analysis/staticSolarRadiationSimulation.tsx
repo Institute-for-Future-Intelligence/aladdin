@@ -538,7 +538,6 @@ const StaticSolarRadiationSimulation = ({ city }: StaticSolarRadiationSimulation
     const zRot = rot + panel.relativeAzimuth;
     const normalEuler = new Euler(0, 0, 0, 'ZYX');
     normal.applyEuler(normalEuler);
-    console.log(normal, center, normalEuler);
     const year = now.getFullYear();
     const month = now.getMonth();
     const date = now.getDate();
@@ -553,7 +552,6 @@ const StaticSolarRadiationSimulation = ({ city }: StaticSolarRadiationSimulation
     const x0 = center.x - (lx - cellSize) / 2;
     const y0 = center.y - (ly - cellSize) / 2;
     const z0 = center.z;
-    console.log(x0, y0, z0, lx, ly, dx, dy);
     const center2d = new Vector2(center.x, center.z);
     const v = new Vector3();
     const cellOutputTotals = Array(nx)

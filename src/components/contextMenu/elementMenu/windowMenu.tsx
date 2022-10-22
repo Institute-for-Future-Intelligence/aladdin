@@ -90,7 +90,8 @@ export const WindowMenu = () => {
           </Checkbox>
         </Menu.Item>
 
-        {window.mullion && (
+        {/* mullion may not have been defined, but by default it is on */}
+        {(window.mullion || window.mullion === undefined) && (
           <SubMenu key={'window-mullion'} title={i18n.t('windowMenu.Mullion', lang)} style={{ paddingLeft: '24px' }}>
             {mullionWidthDialogVisible && <MullionWidthInput setDialogVisible={setMullionWidthDialogVisible} />}
             <Menu.Item
