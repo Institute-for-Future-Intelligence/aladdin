@@ -5506,7 +5506,8 @@ export const useStore = create<CommonStoreState>(
                         const elementsMapNewToOld = new Map<string, string>();
                         const elementsMapOldToNew = new Map<string, string>();
                         for (const child of state.elements) {
-                          if (child.parentId === elem.id) {
+                          // technically, parentId must not be the same as ID, but just to be sure...
+                          if (child.parentId === elem.id && child.parentId !== child.id) {
                             const newChild = ElementModelCloner.clone(
                               e,
                               child,

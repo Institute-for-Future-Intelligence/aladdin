@@ -198,7 +198,8 @@ const Ground = () => {
     if (!parentId) return;
     setCommonStore((state) => {
       for (const e of state.elements) {
-        if (e.id === elementId) {
+        // don't set parentId for foundations or cuboids as their parents are allowed to be ground only (for now)
+        if (e.id === elementId && !Util.isFoundationOrCuboid(e)) {
           e.parentId = parentId;
           break;
         }
@@ -289,7 +290,8 @@ const Ground = () => {
     setCommonStore((state) => {
       for (const e of state.elements) {
         if (e.id === elemId) {
-          e.parentId = standObjId;
+          // don't set parentId for foundations or cuboids as their parents are allowed to be ground only (for now)
+          if (!Util.isFoundationOrCuboid(e)) e.parentId = standObjId;
           e.cx = position.x;
           e.cy = position.y;
           e.cz = position.z;
