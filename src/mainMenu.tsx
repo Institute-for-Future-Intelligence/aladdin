@@ -24,6 +24,7 @@ import barn_house from './examples/barn_house.json';
 import modern_house_01 from './examples/modern_house_01.json';
 import solarium from './examples/solarium.json';
 import church_01 from './examples/church_01.json';
+import cathedral_01 from './examples/cathedral_01.json';
 import colonial_house from './examples/colonial_house.json';
 import dutch_colonial_house from './examples/dutch_colonial_house.json';
 import gable_roof_vs_hip_roof from './examples/gable_roof_vs_hip_roof.json';
@@ -455,6 +456,9 @@ const MainMenu = ({ viewOnly, set2DView, resetView, zoomView, canvas }: MainMenu
         break;
       case 'church_01':
         input = church_01;
+        break;
+      case 'cathedral_01':
+        input = cathedral_01;
         break;
       case 'adobe_taos_house':
         input = adobe_taos_house;
@@ -1052,7 +1056,7 @@ const MainMenu = ({ viewOnly, set2DView, resetView, zoomView, canvas }: MainMenu
           <label style={{ paddingLeft: '2px', fontSize: 9 }}>({isMac ? '⌘' : 'Ctrl'}+S)</label>...
         </Menu.Item>
 
-        {user.uid && (
+        {user.uid && !viewOnly && (
           <Menu.Item
             key="open-cloud-file"
             onClick={() => {
@@ -1072,7 +1076,7 @@ const MainMenu = ({ viewOnly, set2DView, resetView, zoomView, canvas }: MainMenu
           </Menu.Item>
         )}
 
-        {user.uid && cloudFile && (
+        {user.uid && cloudFile && !viewOnly && (
           <Menu.Item
             key="save-cloud-file"
             onClick={() => {
@@ -1092,7 +1096,7 @@ const MainMenu = ({ viewOnly, set2DView, resetView, zoomView, canvas }: MainMenu
           </Menu.Item>
         )}
 
-        {user.uid && (
+        {user.uid && !viewOnly && (
           <Menu.Item
             key="save-as-cloud-file"
             onClick={() => {
@@ -2127,9 +2131,6 @@ const MainMenu = ({ viewOnly, set2DView, resetView, zoomView, canvas }: MainMenu
             <Menu.Item key="solarium" onClick={loadFile}>
               {i18n.t('menu.residentialBuildingExamples.Solarium', lang)}
             </Menu.Item>
-            <Menu.Item key="church_01" onClick={loadFile}>
-              {i18n.t('menu.residentialBuildingExamples.Church', lang)}
-            </Menu.Item>
             <Menu.Item key="adobe_taos_house" onClick={loadFile}>
               {i18n.t('menu.residentialBuildingExamples.AdobeTaosHouse', lang)}
             </Menu.Item>
@@ -2157,6 +2158,12 @@ const MainMenu = ({ viewOnly, set2DView, resetView, zoomView, canvas }: MainMenu
           <SubMenu key={'other_buildings'} title={i18n.t('menu.otherBuildingsSubMenu', lang)}>
             <Menu.Item key="greenhouse" onClick={loadFile}>
               {i18n.t('menu.otherBuildingExamples.Greenhouse', lang)}
+            </Menu.Item>
+            <Menu.Item key="church_01" onClick={loadFile}>
+              {i18n.t('menu.residentialBuildingExamples.Church', lang)}
+            </Menu.Item>
+            <Menu.Item key="cathedral_01" onClick={loadFile}>
+              {i18n.t('menu.residentialBuildingExamples.Cathedral', lang)}
             </Menu.Item>
             <Menu.Item key="pavilion" onClick={loadFile}>
               {i18n.t('menu.otherBuildingExamples.Pavilion', lang)}

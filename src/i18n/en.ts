@@ -389,6 +389,7 @@ export const i18n_en = {
         CapeCodHouseWithGarage: 'Cape Cod House with Garage',
         Solarium: 'Solarium',
         Church: 'Church',
+        Cathedral: 'Cathedral',
         AdobeTaosHouse: 'Adobe Taos House',
         BarnStyleHouse: 'Barn Style House',
         ModernHouse: 'Modern House',

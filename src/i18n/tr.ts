@@ -389,6 +389,7 @@ export const i18n_tr = {
         CapeCodHouseWithGarage: 'Cape Cod House with Garage',
         Solarium: 'Solaryum',
         Church: 'Kilise',
+        Cathedral: 'Cathedral',
         AdobeTaosHouse: 'Adobe Taos House',
         BarnStyleHouse: 'Çiftlik Evi',
         ModernHouse: 'Modern House',
