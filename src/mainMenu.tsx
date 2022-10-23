@@ -25,6 +25,7 @@ import modern_house_01 from './examples/modern_house_01.json';
 import solarium from './examples/solarium.json';
 import church_01 from './examples/church_01.json';
 import cathedral_01 from './examples/cathedral_01.json';
+import cathedral_02 from './examples/cathedral_02.json';
 import colonial_house from './examples/colonial_house.json';
 import dutch_colonial_house from './examples/dutch_colonial_house.json';
 import gable_roof_vs_hip_roof from './examples/gable_roof_vs_hip_roof.json';
@@ -459,6 +460,9 @@ const MainMenu = ({ viewOnly, set2DView, resetView, zoomView, canvas }: MainMenu
         break;
       case 'cathedral_01':
         input = cathedral_01;
+        break;
+      case 'cathedral_02':
+        input = cathedral_02;
         break;
       case 'adobe_taos_house':
         input = adobe_taos_house;
@@ -2163,7 +2167,10 @@ const MainMenu = ({ viewOnly, set2DView, resetView, zoomView, canvas }: MainMenu
               {i18n.t('menu.residentialBuildingExamples.Church', lang)}
             </Menu.Item>
             <Menu.Item key="cathedral_01" onClick={loadFile}>
-              {i18n.t('menu.residentialBuildingExamples.Cathedral', lang)}
+              {i18n.t('menu.residentialBuildingExamples.Cathedral1', lang)}
+            </Menu.Item>
+            <Menu.Item key="cathedral_02" onClick={loadFile}>
+              {i18n.t('menu.residentialBuildingExamples.Cathedral2', lang)}
             </Menu.Item>
             <Menu.Item key="pavilion" onClick={loadFile}>
               {i18n.t('menu.otherBuildingExamples.Pavilion', lang)}
