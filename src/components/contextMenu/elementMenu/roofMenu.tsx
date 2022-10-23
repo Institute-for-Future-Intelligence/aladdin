@@ -70,7 +70,7 @@ export const RoofMenu = () => {
         {legalToPaste() && <Paste keyName={'roof-paste'} />}
         <Lock keyName={'roof-lock'} />
 
-        {!roof.locked && roof.roofType === RoofType.Gable && (
+        {!roof.locked && roof.roofType === RoofType.Gable && updatedRoof && (
           <SubMenu
             key={'roof-structure'}
             title={i18n.t('roofMenu.RoofStructure', lang)}
@@ -112,7 +112,7 @@ export const RoofMenu = () => {
           </SubMenu>
         )}
 
-        {!roof.locked && (
+        {!roof.locked && updatedRoof && (
           <>
             {(updatedRoof.roofStructure === RoofStructure.Rafter ||
               updatedRoof.roofStructure === RoofStructure.Glass) && (

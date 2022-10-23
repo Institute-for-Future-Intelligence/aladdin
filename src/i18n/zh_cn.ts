@@ -386,7 +386,7 @@ export const i18n_zh_cn = {
         CapeCodHouseWithGarage: '有车库的科德角风格的住宅',
         Solarium: '有日光浴室的房子',
         Church: '教堂',
-        Cathedral: '大教堂',
+        Cathedral: '主教座堂',
         AdobeTaosHouse: '陶斯土坯房',
         BarnStyleHouse: '谷仓式风格的住宅',
         ModernHouse: '现代风格的住宅',
