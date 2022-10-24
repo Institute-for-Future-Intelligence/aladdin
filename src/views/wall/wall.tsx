@@ -193,9 +193,11 @@ const Wall = ({
       }
       texture.repeat.set(repeatX, repeatY);
       setTexture(texture);
+      invalidate();
     });
   }, [textureType, wallStructure]);
   const [texture, setTexture] = useState(textureLoader);
+  const { invalidate } = useThree();
 
   const getElementById = useStore(Selector.getElementById);
   const wallModel = getElementById(id) as WallModel;

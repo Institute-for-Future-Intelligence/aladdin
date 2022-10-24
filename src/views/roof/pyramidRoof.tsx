@@ -681,6 +681,7 @@ const RoofSegment = ({
   const shadowEnabled = useStore(Selector.viewState.shadowEnabled);
   const meshRef = useRef<Mesh>(null);
   const { transparent } = useTransparent();
+  const { invalidate } = useThree();
 
   useEffect(() => {
     if (meshRef.current) {
@@ -702,6 +703,7 @@ const RoofSegment = ({
         // meshRef.current.geometry = res.geometry;
       } else {
         meshRef.current.geometry = geo;
+        invalidate();
       }
     }
   }, [points, direction, length]);

@@ -17,6 +17,7 @@ import RoofTexture07 from 'src/resources/roof_07.png';
 import { RepeatWrapping, TextureLoader } from 'three';
 import * as Selector from 'src/stores/selector';
 import { WallModel } from 'src/models/WallModel';
+import { useThree } from '@react-three/fiber';
 
 export const useSolarPanelUndoable = () => {
   const grabRef = useRef<ElementModel | null>(null);
@@ -145,10 +146,12 @@ export const useRoofTexture = (textureType: RoofTexture) => {
           texture.repeat.set(0.5, 0.5);
       }
       setTexture(texture);
+      invalidate();
     });
   }, [textureType]);
 
   const [texture, setTexture] = useState(textureLoader);
+  const { invalidate } = useThree();
   return texture;
 };
 
