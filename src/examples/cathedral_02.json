@@ -1,13 +1,13 @@
 {
-  "docid": "8aa1upJgD3Bti4xGZh1ZY5",
-  "time": "10/23/2022 06:12 pm",
-  "timestamp": 1666563152677,
+  "docid": "eLG23nBMeDJ6FZjUi1YTwg",
+  "time": "10/23/2022 08:54 pm",
+  "timestamp": 1666572889807,
   "userid": "QWecNcxhyvP6j6sBN11hBsfZDau1",
   "owner": null,
   "email": null,
   "world": {
     "solarRadiationHeatmapGridCellSize": 0.5,
-    "date": "4/22/2022, 9:00:00 AM",
+    "date": "4/22/2022, 4:00:00 PM",
     "cspTimesPerHour": 4,
     "noAnimationForHeatmapSimulation": false,
     "cspGridCellSize": 0.5,
@@ -104,7 +104,7 @@
       "cy": 3.2723372961326387,
       "cz": 0,
       "lx": 2.2370509461013435,
-      "ly": 0.3,
+      "ly": 0.1,
       "lz": 61,
       "relativeAngle": 4.301576093475627,
       "leftPoint": [
@@ -154,7 +154,7 @@
       "cy": 0.9968770622699568,
       "cz": 0,
       "lx": 2.5,
-      "ly": 0.3,
+      "ly": 0.1,
       "lz": 61,
       "relativeAngle": 4.71238898038469,
       "leftPoint": [
@@ -202,7 +202,7 @@
       "cy": 5.04779752999532,
       "cz": 0,
       "lx": 2.1213203435596424,
-      "ly": 0.3,
+      "ly": 0.1,
       "lz": 61,
       "leftJoints": [
         "o7owRXdGmtoUmGe7aMBfwD"
@@ -248,7 +248,7 @@
       "cy": 6.29779752999532,
       "cz": 0,
       "lx": 2.23606797749979,
-      "ly": 0.3,
+      "ly": 0.1,
       "lz": 61,
       "leftJoints": [
         "7oCL7hfQ9Q5pKtbUKfbhxC"
@@ -294,7 +294,7 @@
       "cy": 6.797797529995318,
       "cz": 0,
       "lx": 2.5,
-      "ly": 0.3,
+      "ly": 0.1,
       "lz": 61,
       "leftJoints": [
         "9Qfx6trBssgAGuZJMWpoN4"
@@ -340,7 +340,7 @@
       "cy": 6.29779752999532,
       "cz": 0,
       "lx": 2.23606797749979,
-      "ly": 0.3,
+      "ly": 0.1,
       "lz": 61,
       "leftJoints": [
         "nXkkPMC5GnQsGGo6pXGf1J"
@@ -386,7 +386,7 @@
       "cy": 5.04779752999532,
       "cz": 0,
       "lx": 2.1213203435596424,
-      "ly": 0.3,
+      "ly": 0.1,
       "lz": 61,
       "leftJoints": [
         "ukLTgjquG74WrHxQMTeCGR"
@@ -432,7 +432,7 @@
       "cy": 3.2977975299953197,
       "cz": 0,
       "lx": 2.23606797749979,
-      "ly": 0.3,
+      "ly": 0.1,
       "lz": 61,
       "leftJoints": [
         "ieCZYgGYnWFZFTUUeDJ4Kc"
@@ -478,7 +478,7 @@
       "cy": 1.0477975299953193,
       "cz": 0,
       "lx": 2.5,
-      "ly": 0.3,
+      "ly": 0.1,
       "lz": 61,
       "leftJoints": [
         "1mFHht66LtQmGXw2uwQpTW"
@@ -524,7 +524,7 @@
       "cy": -1.2276627038673618,
       "cz": 0,
       "lx": 2.144069307100406,
-      "ly": 0.3,
+      "ly": 0.1,
       "lz": 61,
       "leftJoints": [],
       "rightJoints": [
@@ -568,7 +568,7 @@
       "cy": -1.2022024700046807,
       "cz": 0,
       "lx": 2.23606797749979,
-      "ly": 0.3,
+      "ly": 0.1,
       "lz": 61,
       "leftJoints": [
         "hDTYb7CsL6KjhaG3K3ZaEb"
@@ -614,7 +614,7 @@
       "cy": -2.9522024700046807,
       "cz": 0,
       "lx": 2.1213203435596424,
-      "ly": 0.3,
+      "ly": 0.1,
       "lz": 61,
       "leftJoints": [
         "ngivbbtv3RRgTjMZ9HM5iJ"
@@ -660,7 +660,7 @@
       "cy": -4.20220247000468,
       "cz": 0,
       "lx": 2.23606797749979,
-      "ly": 0.3,
+      "ly": 0.1,
       "lz": 61,
       "leftJoints": [
         "2sbTRgNVHvPNpK2pDRUNQN"
@@ -706,7 +706,7 @@
       "cy": -4.70220247000468,
       "cz": 0,
       "lx": 2.5,
-      "ly": 0.3,
+      "ly": 0.1,
       "lz": 61,
       "leftJoints": [
         "7kjEcCQNbaUjRAbeSyBXZx"
@@ -752,7 +752,7 @@
       "cy": -4.202202470004682,
       "cz": 0,
       "lx": 2.2360679774997907,
-      "ly": 0.3,
+      "ly": 0.1,
       "lz": 61,
       "leftJoints": [
         "ne25yHm9jCD9Vx7iYW9GUg"
@@ -798,7 +798,7 @@
       "cy": -2.9522024700046807,
       "cz": 0,
       "lx": 2.1213203435596424,
-      "ly": 0.3,
+      "ly": 0.1,
       "lz": 61,
       "leftJoints": [
         "rnDe8ZUbiedJjvYKnAx9vs"
@@ -844,7 +844,7 @@
       "cy": -12.89173870425908,
       "cz": 2.2408122612280286,
       "lx": 16.92215779250457,
-      "ly": 0.3,
+      "ly": 0.1,
       "lz": 60,
       "leftJoints": [
         "55SwaH9QxLHmcgrnQzAWTs"
@@ -892,7 +892,7 @@
       "cy": -21.23052296081884,
       "cz": 2.2301039869226305,
       "lx": 16.677568513119517,
-      "ly": 0.3,
+      "ly": 0.1,
       "lz": 60,
       "leftJoints": [
         "szxkDJ4zvsmCjRAjDwr4oT"
@@ -938,9 +938,9 @@
       "type": "Wall",
       "cx": -8.777680692293703,
       "cy": -21.230522960818842,
-      "cz": 2.228839888904333,
+      "cz": 28.5009781424094,
       "lx": 16.67756851311951,
-      "ly": 0.3,
+      "ly": 0.1,
       "lz": 60,
       "leftJoints": [
         "rCFFBj6A2tyxuTVf5rPe81"
@@ -988,7 +988,7 @@
       "cy": -29.569307217378597,
       "cz": 2.268765007024547,
       "lx": 16.92215779250457,
-      "ly": 0.3,
+      "ly": 0.1,
       "lz": 60,
       "leftJoints": [
         "ho8wYRGhLSJb2djJKqwSe1"
@@ -1064,7 +1064,7 @@
       "cy": 1.4333132304343623,
       "cz": 2.2408122612280286,
       "lx": 2.93252723673689,
-      "ly": 0.3,
+      "ly": 0.1,
       "lz": 61,
       "leftJoints": [
         "vHsRxkqZrsLbc2Cw1mShNh"
@@ -1114,7 +1114,7 @@
       "cy": 0.014860193091425167,
       "cz": 2.2301039869226305,
       "lx": 2.836906074685875,
-      "ly": 0.3,
+      "ly": 0.1,
       "lz": 61,
       "leftJoints": [
         "3apukdsSG9Q7tUtWvyHP14"
@@ -1164,7 +1164,7 @@
       "cy": 0.014860193091424279,
       "cz": 2.228839888904333,
       "lx": 2.8369060746858734,
-      "ly": 0.3,
+      "ly": 0.1,
       "lz": 61,
       "leftJoints": [
         "q4Q62RYECS7ssEQGWwMQaR"
@@ -1214,7 +1214,7 @@
       "cy": -1.4035928442515129,
       "cz": 2.268765007024547,
       "lx": 2.93252723673689,
-      "ly": 0.3,
+      "ly": 0.1,
       "lz": 61,
       "leftJoints": [
         "wC1WzjegFNTFT2ZnHmoM1U"
@@ -1292,7 +1292,7 @@
       "cy": 3.0551015103684858,
       "cz": 2.2408122612280286,
       "lx": 20.586914175189918,
-      "ly": 0.3,
+      "ly": 0.1,
       "lz": 40,
       "leftJoints": [
         "vFwZn47p27JhuJCUwo66PB"
@@ -1342,7 +1342,7 @@
       "cy": -7.284137744601432,
       "cz": 2.2301039869226305,
       "lx": 20.678478509939843,
-      "ly": 0.3,
+      "ly": 0.1,
       "lz": 40,
       "leftJoints": [
         "tF3vwD5MeKKihs6KSsJULW"
@@ -1392,7 +1392,7 @@
       "cy": -7.2841377446014395,
       "cz": 2.228839888904333,
       "lx": 20.678478509939836,
-      "ly": 0.3,
+      "ly": 0.1,
       "lz": 40,
       "leftJoints": [
         "eQty63hcTNfqGkZ1bn9pou"
@@ -1442,7 +1442,7 @@
       "cy": -17.623376999571356,
       "cz": 1.780425728663789,
       "lx": 20.586914175189918,
-      "ly": 0.3,
+      "ly": 0.1,
       "lz": 40,
       "leftJoints": [
         "jz5YKDY6NpWFeAzmZZgmMG"
@@ -1688,7 +1688,7 @@
       "cy": 1.4333132304343623,
       "cz": 2.2408122612280286,
       "lx": 2.93252723673689,
-      "ly": 0.3,
+      "ly": 0.1,
       "lz": 61,
       "leftJoints": [
         "b5Ed9Q8H2ZuAnTPt364rFi"
@@ -1738,7 +1738,7 @@
       "cy": 0.014860193091425167,
       "cz": 2.2301039869226305,
       "lx": 2.836906074685875,
-      "ly": 0.3,
+      "ly": 0.1,
       "lz": 61,
       "leftJoints": [
         "we96ZZsqRukzrDQLzGsXgd"
@@ -1788,7 +1788,7 @@
       "cy": 0.014860193091424279,
       "cz": 2.228839888904333,
       "lx": 2.8369060746858734,
-      "ly": 0.3,
+      "ly": 0.1,
       "lz": 61,
       "leftJoints": [
         "ogWsiwSVu2siW9Ju34ZuiD"
@@ -1838,7 +1838,7 @@
       "cy": -1.4035928442515129,
       "cz": 2.268765007024547,
       "lx": 2.93252723673689,
-      "ly": 0.3,
+      "ly": 0.1,
       "lz": 61,
       "leftJoints": [
         "iPw21WkbFfNGs2GducHHkL"
@@ -1952,7 +1952,7 @@
       "cy": 1.4333132304343623,
       "cz": 2.2408122612280286,
       "lx": 2.93252723673689,
-      "ly": 0.3,
+      "ly": 0.1,
       "lz": 61,
       "leftJoints": [
         "pGdyGz8Q2yqRKAUSe2WBaZ"
@@ -2002,7 +2002,7 @@
       "cy": 0.014860193091425167,
       "cz": 2.2301039869226305,
       "lx": 2.836906074685875,
-      "ly": 0.3,
+      "ly": 0.1,
       "lz": 61,
       "leftJoints": [
         "appL8aespWEHwPfTvg3Tnj"
@@ -2052,7 +2052,7 @@
       "cy": 0.014860193091424279,
       "cz": 2.228839888904333,
       "lx": 2.8369060746858734,
-      "ly": 0.3,
+      "ly": 0.1,
       "lz": 61,
       "leftJoints": [
         "13XtQDNCzy1wcfpbyh4hjG"
@@ -2102,7 +2102,7 @@
       "cy": -1.4035928442515129,
       "cz": 2.268765007024547,
       "lx": 2.93252723673689,
-      "ly": 0.3,
+      "ly": 0.1,
       "lz": 61,
       "leftJoints": [
         "gqtNTDTyYXafiDYDAD7TP5"
@@ -2216,7 +2216,7 @@
       "cy": 1.4333132304343623,
       "cz": 2.2408122612280286,
       "lx": 2.93252723673689,
-      "ly": 0.3,
+      "ly": 0.1,
       "lz": 61,
       "leftJoints": [
         "fBMuUvUm2XHqZj1rfF2pKe"
@@ -2266,7 +2266,7 @@
       "cy": 0.014860193091425167,
       "cz": 2.2301039869226305,
       "lx": 2.836906074685875,
-      "ly": 0.3,
+      "ly": 0.1,
       "lz": 61,
       "leftJoints": [
         "fSWzmQwwSCpa4XTiCWadFJ"
@@ -2316,7 +2316,7 @@
       "cy": 0.014860193091424279,
       "cz": 2.228839888904333,
       "lx": 2.8369060746858734,
-      "ly": 0.3,
+      "ly": 0.1,
       "lz": 61,
       "leftJoints": [
         "iqStzfwWhLGQQWnV7zYbVJ"
@@ -2366,7 +2366,7 @@
       "cy": -1.4035928442515129,
       "cz": 2.268765007024547,
       "lx": 2.93252723673689,
-      "ly": 0.3,
+      "ly": 0.1,
       "lz": 61,
       "leftJoints": [
         "fFbhZTcnWojs6r2gfNC8Ac"
@@ -2508,7 +2508,7 @@
       "cy": 1.4333132304343623,
       "cz": 2.2408122612280286,
       "lx": 2.93252723673689,
-      "ly": 0.3,
+      "ly": 0.1,
       "lz": 41,
       "leftJoints": [
         "n8WrLFfhmR5MpuvGmKysZG"
@@ -2558,7 +2558,7 @@
       "cy": 0.014860193091425167,
       "cz": 2.2301039869226305,
       "lx": 2.836906074685875,
-      "ly": 0.3,
+      "ly": 0.1,
       "lz": 41,
       "leftJoints": [
         "jKVT2MfeRaz2it59upaJsG"
@@ -2608,7 +2608,7 @@
       "cy": 0.014860193091424279,
       "cz": 2.228839888904333,
       "lx": 2.8369060746858734,
-      "ly": 0.3,
+      "ly": 0.1,
       "lz": 41,
       "leftJoints": [
         "wq86d5bWa3b2DNCBna4CeP"
@@ -2658,7 +2658,7 @@
       "cy": -1.4035928442515129,
       "cz": 2.268765007024547,
       "lx": 2.93252723673689,
-      "ly": 0.3,
+      "ly": 0.1,
       "lz": 41,
       "leftJoints": [
         "dbVfVNYCWAroMTmBEqYeR4"
@@ -2747,7 +2747,7 @@
       "cy": 1.4333132304343623,
       "cz": 2.2408122612280286,
       "lx": 2.93252723673689,
-      "ly": 0.3,
+      "ly": 0.1,
       "lz": 41,
       "leftJoints": [
         "fGunkFZDLaHCN1Y4VqozG5"
@@ -2797,7 +2797,7 @@
       "cy": 0.014860193091425167,
       "cz": 2.2301039869226305,
       "lx": 2.836906074685875,
-      "ly": 0.3,
+      "ly": 0.1,
       "lz": 41,
       "leftJoints": [
         "cVUWnxaNHTTX4XSarmyvut"
@@ -2847,7 +2847,7 @@
       "cy": 0.014860193091424279,
       "cz": 2.228839888904333,
       "lx": 2.8369060746858734,
-      "ly": 0.3,
+      "ly": 0.1,
       "lz": 41,
       "leftJoints": [
         "ic7X4VUc5364fhg7VH2Xt9"
@@ -2897,7 +2897,7 @@
       "cy": -1.4035928442515129,
       "cz": 2.268765007024547,
       "lx": 2.93252723673689,
-      "ly": 0.3,
+      "ly": 0.1,
       "lz": 41,
       "leftJoints": [
         "xgMnQPMYvVygU1qre3rtoQ"
@@ -3011,7 +3011,7 @@
       "cy": 1.4333132304343623,
       "cz": 2.2408122612280286,
       "lx": 2.93252723673689,
-      "ly": 0.3,
+      "ly": 0.1,
       "lz": 41,
       "leftJoints": [
         "gh1M1f9qhMGoNQ2Sc4Z2Dn"
@@ -3061,7 +3061,7 @@
       "cy": 0.014860193091425167,
       "cz": 2.2301039869226305,
       "lx": 2.836906074685875,
-      "ly": 0.3,
+      "ly": 0.1,
       "lz": 41,
       "leftJoints": [
         "eHHmL4t3wnDWyiwmvPPcdG"
@@ -3111,7 +3111,7 @@
       "cy": 0.014860193091424279,
       "cz": 2.228839888904333,
       "lx": 2.8369060746858734,
-      "ly": 0.3,
+      "ly": 0.1,
       "lz": 41,
       "leftJoints": [
         "5gcHNbuEXkTtST9vsf3C1N"
@@ -3161,7 +3161,7 @@
       "cy": -1.4035928442515129,
       "cz": 2.268765007024547,
       "lx": 2.93252723673689,
-      "ly": 0.3,
+      "ly": 0.1,
       "lz": 41,
       "leftJoints": [
         "pnLNuXyTY2gSJ1DpTuU4uT"
@@ -3275,7 +3275,7 @@
       "cy": 1.4333132304343623,
       "cz": 2.2408122612280286,
       "lx": 2.93252723673689,
-      "ly": 0.3,
+      "ly": 0.1,
       "lz": 41,
       "leftJoints": [
         "8RHz5EYxWVxY6Jt5vozUe7"
@@ -3325,7 +3325,7 @@
       "cy": 0.014860193091425167,
       "cz": 2.2301039869226305,
       "lx": 2.836906074685875,
-      "ly": 0.3,
+      "ly": 0.1,
       "lz": 41,
       "leftJoints": [
         "iYVes92EX4HBiJvFdVLp4v"
@@ -3375,7 +3375,7 @@
       "cy": 0.014860193091424279,
       "cz": 2.228839888904333,
       "lx": 2.8369060746858734,
-      "ly": 0.3,
+      "ly": 0.1,
       "lz": 41,
       "leftJoints": [
         "qovzxCb6vspTrPrifJg8FE"
@@ -3425,7 +3425,7 @@
       "cy": -1.4035928442515129,
       "cz": 2.268765007024547,
       "lx": 2.93252723673689,
-      "ly": 0.3,
+      "ly": 0.1,
       "lz": 41,
       "leftJoints": [
         "2uW5rRCde8ts2eAbydroXA"
@@ -3567,7 +3567,7 @@
       "cy": 27.168552176842663,
       "cz": 2.2408122612280286,
       "lx": 16.254908005168197,
-      "ly": 0.3,
+      "ly": 0.1,
       "lz": 19.97553636241532,
       "leftJoints": [
         "t9LGJeHDCScMaYt1JPTD25"
@@ -3621,7 +3621,7 @@
       "cy": 0.8572306983972329,
       "cz": 2.2301039869226305,
       "lx": 52.62264295689086,
-      "ly": 0.3,
+      "ly": 0.1,
       "lz": 19.97553636241532,
       "leftJoints": [
         "rzCwiAsS4K7UKzev4QiQCA"
@@ -3671,7 +3671,7 @@
       "cy": 0.8572306983972151,
       "cz": 2.228839888904333,
       "lx": 52.62264295689083,
-      "ly": 0.3,
+      "ly": 0.1,
       "lz": 19.97553636241532,
       "leftJoints": [
         "kCsahZfC53mhXpdE7TMKTD"
@@ -3721,7 +3721,7 @@
       "cy": -25.454090780048197,
       "cz": 2.268765007024547,
       "lx": 16.254908005168197,
-      "ly": 0.3,
+      "ly": 0.1,
       "lz": 19.97553636241532,
       "leftJoints": [
         "8ygPss7hAjTnN2gdGp6ttV"
@@ -4043,7 +4043,7 @@
       "cy": 0.48701542341002635,
       "cz": 0,
       "lx": 0.7619228017884919,
-      "ly": 0.3,
+      "ly": 0.1,
       "lz": 30.522600729435336,
       "leftJoints": [
         "xjtDHvujcFtzK6uxUtDUQW"
@@ -4089,7 +4089,7 @@
       "cy": -0.29019732073449356,
       "cz": 0,
       "lx": 0.8539071926837931,
-      "ly": 0.3,
+      "ly": 0.1,
       "lz": 30.522600729435336,
       "leftJoints": [
         "eZcF1TXGmmHdWSo1nGEuPP"
@@ -4133,7 +4133,7 @@
       "cy": 1.0934467290177876,
       "cz": 0,
       "lx": 0.7180910553661809,
-      "ly": 0.3,
+      "ly": 0.1,
       "lz": 30.522600729435336,
       "leftJoints": [
         "1n1zoL6MhaLiDGbiwa1f2P"
@@ -4179,7 +4179,7 @@
       "cy": 1.520400325359684,
       "cz": 0,
       "lx": 0.7528107219608302,
-      "ly": 0.3,
+      "ly": 0.1,
       "lz": 30.522600729435336,
       "leftJoints": [
         "mriUigHEL4wunXM4kHrR6L"
@@ -4225,7 +4225,7 @@
       "cy": 1.6911817638964426,
       "cz": 0,
       "lx": 0.8385802586295528,
-      "ly": 0.3,
+      "ly": 0.1,
       "lz": 30.522600729435336,
       "leftJoints": [
         "swhHhwagxik9xtVxu4wfTo"
@@ -4271,7 +4271,7 @@
       "cy": 1.520400325359684,
       "cz": 0,
       "lx": 0.7528107219608307,
-      "ly": 0.3,
+      "ly": 0.1,
       "lz": 30.522600729435336,
       "leftJoints": [
         "hi3umDHUNXmBT4vcsRpTQy"
@@ -4317,7 +4317,7 @@
       "cy": 1.0934467290177876,
       "cz": 0,
       "lx": 0.7180910553661805,
-      "ly": 0.3,
+      "ly": 0.1,
       "lz": 30.522600729435336,
       "leftJoints": [
         "dRRWEjS64akBN9tsLF4oVT"
@@ -4363,7 +4363,7 @@
       "cy": 0.4957116941391323,
       "cz": 0,
       "lx": 0.7610358020520893,
-      "ly": 0.3,
+      "ly": 0.1,
       "lz": 30.522600729435336,
       "leftJoints": [
         "uQk2JFg84bBpGZQkpPmwje"
@@ -4409,7 +4409,7 @@
       "cy": -0.2728047792762874,
       "cz": 0,
       "lx": 0.8539071926838048,
-      "ly": 0.3,
+      "ly": 0.1,
       "lz": 30.522600729435336,
       "leftJoints": [
         "muL5NfgYyKhfqV3h7fsQsn"
@@ -4455,7 +4455,7 @@
       "cy": -1.0500175234208071,
       "cz": 0,
       "lx": 0.7300693007410605,
-      "ly": 0.3,
+      "ly": 0.1,
       "lz": 30.522600729435336,
       "leftJoints": [],
       "rightJoints": [
@@ -4499,7 +4499,7 @@
       "cy": -1.041321252691707,
       "cz": 0,
       "lx": 0.7610358020520893,
-      "ly": 0.3,
+      "ly": 0.1,
       "lz": 30.522600729435336,
       "leftJoints": [
         "oikWBJjQhAPNedPGNcE3gc"
@@ -4545,7 +4545,7 @@
       "cy": -1.6390562875703623,
       "cz": 0,
       "lx": 0.7180910553661803,
-      "ly": 0.3,
+      "ly": 0.1,
       "lz": 30.522600729435336,
       "leftJoints": [
         "i4ifyJQtiXdLMSDpWxEVF4"
@@ -4591,7 +4591,7 @@
       "cy": -2.0660098839122587,
       "cz": 0,
       "lx": 0.7528107219608308,
-      "ly": 0.3,
+      "ly": 0.1,
       "lz": 30.522600729435336,
       "leftJoints": [
         "wop6FQVjsmsgGpEYiRnuWv"
@@ -4637,7 +4637,7 @@
       "cy": -2.2367913224490175,
       "cz": 0,
       "lx": 0.8385802586295528,
-      "ly": 0.3,
+      "ly": 0.1,
       "lz": 30.522600729435336,
       "leftJoints": [
         "xvpmoVyQtt5PQRMqAmpsxP"
@@ -4683,7 +4683,7 @@
       "cy": -2.0660098839122587,
       "cz": 0,
       "lx": 0.7528107219608304,
-      "ly": 0.3,
+      "ly": 0.1,
       "lz": 30.522600729435336,
       "leftJoints": [
         "7EX6pFLmgKqJLtfcWEpofK"
@@ -4729,7 +4729,7 @@
       "cy": -1.6390562875703623,
       "cz": 0,
       "lx": 0.7180910553661808,
-      "ly": 0.3,
+      "ly": 0.1,
       "lz": 30.522600729435336,
       "leftJoints": [
         "5WHTbyH9BzzN64KTDCgoMv"
@@ -4851,7 +4851,7 @@
       "cy": 25.564628992279733,
       "cz": 2.2408122612280286,
       "lx": 20.32057068547883,
-      "ly": 0.3,
+      "ly": 0.1,
       "lz": 11.54977608077218,
       "leftJoints": [
         "s1xEbSBtShW5kWkbmjYKyT"
@@ -4905,7 +4905,7 @@
       "cy": 0.806623209903595,
       "cz": 2.2301039869226305,
       "lx": 49.516011564752276,
-      "ly": 0.3,
+      "ly": 0.1,
       "lz": 11.54977608077218,
       "leftJoints": [
         "4soX2cVpCLxg8TgMMdUsVJ"
@@ -4955,7 +4955,7 @@
       "cy": 0.806623209903579,
       "cz": 2.228839888904333,
       "lx": 49.51601156475225,
-      "ly": 0.3,
+      "ly": 0.1,
       "lz": 11.54977608077218,
       "leftJoints": [
         "6NAiyB2LDnaumetDroz2SP"
@@ -5005,7 +5005,7 @@
       "cy": -23.951382572472543,
       "cz": 2.268765007024547,
       "lx": 20.32057068547883,
-      "ly": 0.3,
+      "ly": 0.1,
       "lz": 11.54977608077218,
       "leftJoints": [
         "kdHDzULPWJfMLCpsjYsWA1"
@@ -5128,7 +5128,7 @@
       "cy": 1.4333132304343623,
       "cz": 2.2408122612280286,
       "lx": 2.93252723673689,
-      "ly": 0.3,
+      "ly": 0.1,
       "lz": 14,
       "leftJoints": [
         "rY4g4se9c9Ac81ycfZ2psF"
@@ -5178,7 +5178,7 @@
       "cy": 0.014860193091425167,
       "cz": 2.2301039869226305,
       "lx": 2.836906074685875,
-      "ly": 0.3,
+      "ly": 0.1,
       "lz": 14,
       "leftJoints": [
         "hnGSq9jjoBBqypZ4j6i4tD"
@@ -5228,7 +5228,7 @@
       "cy": 0.014860193091424279,
       "cz": 2.228839888904333,
       "lx": 2.8369060746858734,
-      "ly": 0.3,
+      "ly": 0.1,
       "lz": 14,
       "leftJoints": [
         "m2HcdaunRK2mJDqZ6u7zB2"
@@ -5278,7 +5278,7 @@
       "cy": -1.4035928442515129,
       "cz": 2.268765007024547,
       "lx": 2.93252723673689,
-      "ly": 0.3,
+      "ly": 0.1,
       "lz": 14,
       "leftJoints": [
         "edLYKiK67rcWj7yEjSg5Gw"
@@ -5392,7 +5392,7 @@
       "cy": 1.4333132304343623,
       "cz": 2.2408122612280286,
       "lx": 2.93252723673689,
-      "ly": 0.3,
+      "ly": 0.1,
       "lz": 14,
       "leftJoints": [
         "iDdbvKHdvp7bwG9TRH7Z1s"
@@ -5442,7 +5442,7 @@
       "cy": 0.014860193091425167,
       "cz": 2.2301039869226305,
       "lx": 2.836906074685875,
-      "ly": 0.3,
+      "ly": 0.1,
       "lz": 14,
       "leftJoints": [
         "o3YcepgLVkYe1C12rYuUcN"
@@ -5492,7 +5492,7 @@
       "cy": 0.014860193091424279,
       "cz": 2.228839888904333,
       "lx": 2.8369060746858734,
-      "ly": 0.3,
+      "ly": 0.1,
       "lz": 14,
       "leftJoints": [
         "4SRnxg5YyewBKp25hu7pX6"
@@ -5542,7 +5542,7 @@
       "cy": -1.4035928442515129,
       "cz": 2.268765007024547,
       "lx": 2.93252723673689,
-      "ly": 0.3,
+      "ly": 0.1,
       "lz": 14,
       "leftJoints": [
         "qCdtrWKEz7G85zz6r7u1bg"
@@ -5656,7 +5656,7 @@
       "cy": 1.4333132304343623,
       "cz": 2.2408122612280286,
       "lx": 2.93252723673689,
-      "ly": 0.3,
+      "ly": 0.1,
       "lz": 14,
       "leftJoints": [
         "pqDxrgVJyRAZkmJDZW8KxP"
@@ -5706,7 +5706,7 @@
       "cy": 0.014860193091425167,
       "cz": 2.2301039869226305,
       "lx": 2.836906074685875,
-      "ly": 0.3,
+      "ly": 0.1,
       "lz": 14,
       "leftJoints": [
         "osM7biMJmfhnN53neDAWtn"
@@ -5756,7 +5756,7 @@
       "cy": 0.014860193091424279,
       "cz": 2.228839888904333,
       "lx": 2.8369060746858734,
-      "ly": 0.3,
+      "ly": 0.1,
       "lz": 14,
       "leftJoints": [
         "wgaVoeaxZnDaQiMJmkWwKa"
@@ -5806,7 +5806,7 @@
       "cy": -1.4035928442515129,
       "cz": 2.268765007024547,
       "lx": 2.93252723673689,
-      "ly": 0.3,
+      "ly": 0.1,
       "lz": 14,
       "leftJoints": [
         "5YtUmRWQdNuxWqery1ymqA"
@@ -5920,7 +5920,7 @@
       "cy": 1.4333132304343623,
       "cz": 2.2408122612280286,
       "lx": 2.93252723673689,
-      "ly": 0.3,
+      "ly": 0.1,
       "lz": 14,
       "leftJoints": [
         "aWFGP4t67ffRZBsCFNikXA"
@@ -5970,7 +5970,7 @@
       "cy": 0.014860193091425167,
       "cz": 2.2301039869226305,
       "lx": 2.836906074685875,
-      "ly": 0.3,
+      "ly": 0.1,
       "lz": 14,
       "leftJoints": [
         "1Q3HJwHJv2PVY4SzR42Cjo"
@@ -6020,7 +6020,7 @@
       "cy": 0.014860193091424279,
       "cz": 2.228839888904333,
       "lx": 2.8369060746858734,
-      "ly": 0.3,
+      "ly": 0.1,
       "lz": 14,
       "leftJoints": [
         "iWxYLc7ffDzpRdJiYsnbXJ"
@@ -6070,7 +6070,7 @@
       "cy": -1.4035928442515129,
       "cz": 2.268765007024547,
       "lx": 2.93252723673689,
-      "ly": 0.3,
+      "ly": 0.1,
       "lz": 14,
       "leftJoints": [
         "2uYJDU198peC8Tg5ojQxP4"
@@ -6184,7 +6184,7 @@
       "cy": 1.4333132304343623,
       "cz": 2.2408122612280286,
       "lx": 2.93252723673689,
-      "ly": 0.3,
+      "ly": 0.1,
       "lz": 14,
       "leftJoints": [
         "fY4i2vP6PHczLiFYJKL6Wv"
@@ -6234,7 +6234,7 @@
       "cy": 0.014860193091425167,
       "cz": 2.2301039869226305,
       "lx": 2.836906074685875,
-      "ly": 0.3,
+      "ly": 0.1,
       "lz": 14,
       "leftJoints": [
         "amBCThLtBnL1J1PMrwDbZv"
@@ -6284,7 +6284,7 @@
       "cy": 0.014860193091424279,
       "cz": 2.228839888904333,
       "lx": 2.8369060746858734,
-      "ly": 0.3,
+      "ly": 0.1,
       "lz": 14,
       "leftJoints": [
         "eMNaM3G63snsMKbM8u6oYY"
@@ -6334,7 +6334,7 @@
       "cy": -1.4035928442515129,
       "cz": 2.268765007024547,
       "lx": 2.93252723673689,
-      "ly": 0.3,
+      "ly": 0.1,
       "lz": 14,
       "leftJoints": [
         "idjrGY3KVjR98yX9Yu1Ra6"
@@ -6448,7 +6448,7 @@
       "cy": 1.4333132304343623,
       "cz": 2.2408122612280286,
       "lx": 2.93252723673689,
-      "ly": 0.3,
+      "ly": 0.1,
       "lz": 14,
       "leftJoints": [
         "6pg1zB89qcq9dmq7s1ptPG"
@@ -6498,7 +6498,7 @@
       "cy": 0.014860193091425167,
       "cz": 2.2301039869226305,
       "lx": 2.836906074685875,
-      "ly": 0.3,
+      "ly": 0.1,
       "lz": 14,
       "leftJoints": [
         "27GGc5fv8LG1vuW4Uncogs"
@@ -6548,7 +6548,7 @@
       "cy": 0.014860193091424279,
       "cz": 2.228839888904333,
       "lx": 2.8369060746858734,
-      "ly": 0.3,
+      "ly": 0.1,
       "lz": 14,
       "leftJoints": [
         "vbW8e5Fx8RtgYAGG2GpRxh"
@@ -6598,7 +6598,7 @@
       "cy": -1.4035928442515129,
       "cz": 2.268765007024547,
       "lx": 2.93252723673689,
-      "ly": 0.3,
+      "ly": 0.1,
       "lz": 14,
       "leftJoints": [
         "q4CuysQYWEW74wVhnGoz38"
@@ -6712,7 +6712,7 @@
       "cy": 1.4333132304343623,
       "cz": 2.2408122612280286,
       "lx": 2.93252723673689,
-      "ly": 0.3,
+      "ly": 0.1,
       "lz": 14,
       "leftJoints": [
         "pNFepfvePvMvRyTFP4sbzs"
@@ -6762,7 +6762,7 @@
       "cy": 0.014860193091425167,
       "cz": 2.2301039869226305,
       "lx": 2.836906074685875,
-      "ly": 0.3,
+      "ly": 0.1,
       "lz": 14,
       "leftJoints": [
         "qjgvxRHbZgjaPsgRgW2rKY"
@@ -6812,7 +6812,7 @@
       "cy": 0.014860193091424279,
       "cz": 2.228839888904333,
       "lx": 2.8369060746858734,
-      "ly": 0.3,
+      "ly": 0.1,
       "lz": 14,
       "leftJoints": [
         "49srqvHCqp7LPpHj4YFmnX"
@@ -6862,7 +6862,7 @@
       "cy": -1.4035928442515129,
       "cz": 2.268765007024547,
       "lx": 2.93252723673689,
-      "ly": 0.3,
+      "ly": 0.1,
       "lz": 14,
       "leftJoints": [
         "kf6UY9oxBvAS9oizmQi2UF"
@@ -6976,7 +6976,7 @@
       "cy": 1.4333132304343623,
       "cz": 2.2408122612280286,
       "lx": 2.93252723673689,
-      "ly": 0.3,
+      "ly": 0.1,
       "lz": 14,
       "leftJoints": [
         "4FTkcMtCn8GmJne1UmBSnm"
@@ -7026,7 +7026,7 @@
       "cy": 0.014860193091425167,
       "cz": 2.2301039869226305,
       "lx": 2.836906074685875,
-      "ly": 0.3,
+      "ly": 0.1,
       "lz": 14,
       "leftJoints": [
         "8SkMwYmnPtJVtGW2vvZau2"
@@ -7076,7 +7076,7 @@
       "cy": 0.014860193091424279,
       "cz": 2.228839888904333,
       "lx": 2.8369060746858734,
-      "ly": 0.3,
+      "ly": 0.1,
       "lz": 14,
       "leftJoints": [
         "1P5iFtakfLrTXAgXy2xEwu"
@@ -7126,7 +7126,7 @@
       "cy": -1.4035928442515129,
       "cz": 2.268765007024547,
       "lx": 2.93252723673689,
-      "ly": 0.3,
+      "ly": 0.1,
       "lz": 14,
       "leftJoints": [
         "1fYMNpakzjWFH4TGNYecnG"
@@ -7240,7 +7240,7 @@
       "cy": 1.4333132304343623,
       "cz": 2.2408122612280286,
       "lx": 2.93252723673689,
-      "ly": 0.3,
+      "ly": 0.1,
       "lz": 14,
       "leftJoints": [
         "eKwrTnqzoru7h1ejKJfQMg"
@@ -7290,7 +7290,7 @@
       "cy": 0.014860193091425167,
       "cz": 2.2301039869226305,
       "lx": 2.836906074685875,
-      "ly": 0.3,
+      "ly": 0.1,
       "lz": 14,
       "leftJoints": [
         "rD8sjfgNgEk8eR9fGvg7qv"
@@ -7340,7 +7340,7 @@
       "cy": 0.014860193091424279,
       "cz": 2.228839888904333,
       "lx": 2.8369060746858734,
-      "ly": 0.3,
+      "ly": 0.1,
       "lz": 14,
       "leftJoints": [
         "sduDhLeTnLnC5gSRR1knQa"
@@ -7390,7 +7390,7 @@
       "cy": -1.4035928442515129,
       "cz": 2.268765007024547,
       "lx": 2.93252723673689,
-      "ly": 0.3,
+      "ly": 0.1,
       "lz": 14,
       "leftJoints": [
         "aepE6idhiAJ636esCgz28B"
@@ -7504,7 +7504,7 @@
       "cy": 1.4333132304343623,
       "cz": 2.2408122612280286,
       "lx": 2.93252723673689,
-      "ly": 0.3,
+      "ly": 0.1,
       "lz": 14,
       "leftJoints": [
         "rmuH4rirvchW582N8rYFag"
@@ -7554,7 +7554,7 @@
       "cy": 0.014860193091425167,
       "cz": 2.2301039869226305,
       "lx": 2.836906074685875,
-      "ly": 0.3,
+      "ly": 0.1,
       "lz": 14,
       "leftJoints": [
         "wbwhMTBcYQcbgteFUcRUx7"
@@ -7604,7 +7604,7 @@
       "cy": 0.014860193091424279,
       "cz": 2.228839888904333,
       "lx": 2.8369060746858734,
-      "ly": 0.3,
+      "ly": 0.1,
       "lz": 14,
       "leftJoints": [
         "uUKBr4jcQhby6GvNzKqUHH"
@@ -7654,7 +7654,7 @@
       "cy": -1.4035928442515129,
       "cz": 2.268765007024547,
       "lx": 2.93252723673689,
-      "ly": 0.3,
+      "ly": 0.1,
       "lz": 14,
       "leftJoints": [
         "uW9vVgQVERMAHeNEoWkYEh"
@@ -7768,7 +7768,7 @@
       "cy": 1.4333132304343623,
       "cz": 2.2408122612280286,
       "lx": 2.93252723673689,
-      "ly": 0.3,
+      "ly": 0.1,
       "lz": 14,
       "leftJoints": [
         "ash2NaiDiFh6y8HJuTzbUe"
@@ -7818,7 +7818,7 @@
       "cy": 0.014860193091425167,
       "cz": 2.2301039869226305,
       "lx": 2.836906074685875,
-      "ly": 0.3,
+      "ly": 0.1,
       "lz": 14,
       "leftJoints": [
         "4a5mwkpfWp9Ti3rrftjFDZ"
@@ -7868,7 +7868,7 @@
       "cy": 0.014860193091424279,
       "cz": 2.228839888904333,
       "lx": 2.8369060746858734,
-      "ly": 0.3,
+      "ly": 0.1,
       "lz": 14,
       "leftJoints": [
         "ui6xC8viC2GKhF7W4v6W1c"
@@ -7918,7 +7918,7 @@
       "cy": -1.4035928442515129,
       "cz": 2.268765007024547,
       "lx": 2.93252723673689,
-      "ly": 0.3,
+      "ly": 0.1,
       "lz": 14,
       "leftJoints": [
         "rQ2xEkb62W6Hz14LruJt4U"
@@ -8032,7 +8032,7 @@
       "cy": 1.4333132304343623,
       "cz": 2.2408122612280286,
       "lx": 2.93252723673689,
-      "ly": 0.3,
+      "ly": 0.1,
       "lz": 14,
       "leftJoints": [
         "9KWwq22ziFFGjGozMGZDJy"
@@ -8082,7 +8082,7 @@
       "cy": 0.014860193091425167,
       "cz": 2.2301039869226305,
       "lx": 2.836906074685875,
-      "ly": 0.3,
+      "ly": 0.1,
       "lz": 14,
       "leftJoints": [
         "47gofCM28sUzgssGChu6rj"
@@ -8132,7 +8132,7 @@
       "cy": 0.014860193091424279,
       "cz": 2.228839888904333,
       "lx": 2.8369060746858734,
-      "ly": 0.3,
+      "ly": 0.1,
       "lz": 14,
       "leftJoints": [
         "2xmth77a7rM6NqB4LYTVg3"
@@ -8182,7 +8182,7 @@
       "cy": -1.4035928442515129,
       "cz": 2.268765007024547,
       "lx": 2.93252723673689,
-      "ly": 0.3,
+      "ly": 0.1,
       "lz": 14,
       "leftJoints": [
         "axJwDxU9qufHCzbi6cJjRE"
@@ -8296,7 +8296,7 @@
       "cy": 0.6870154234100241,
       "cz": 0,
       "lx": 0.7619228017884919,
-      "ly": 0.3,
+      "ly": 0.1,
       "lz": 30.522600729435336,
       "leftJoints": [
         "eyhcnsCSVemrG9SDzg4nJ2"
@@ -8342,7 +8342,7 @@
       "cy": -0.0901973207344966,
       "cz": 0,
       "lx": 0.8539071926837931,
-      "ly": 0.3,
+      "ly": 0.1,
       "lz": 30.522600729435336,
       "leftJoints": [
         "aU3ZWFitC4Fgrww9n7FaQe"
@@ -8386,7 +8386,7 @@
       "cy": 1.2934467290177807,
       "cz": 0,
       "lx": 0.7180910553661809,
-      "ly": 0.3,
+      "ly": 0.1,
       "lz": 30.522600729435336,
       "leftJoints": [
         "xcRtMosaXc2kjoRaazGNSd"
@@ -8432,7 +8432,7 @@
       "cy": 1.7204003253596767,
       "cz": 0,
       "lx": 0.7528107219608302,
-      "ly": 0.3,
+      "ly": 0.1,
       "lz": 30.522600729435336,
       "leftJoints": [
         "fsM3HFbdwGctcxehK1sWSn"
@@ -8478,7 +8478,7 @@
       "cy": 1.8911817638964408,
       "cz": 0,
       "lx": 0.8385802586295528,
-      "ly": 0.3,
+      "ly": 0.1,
       "lz": 30.522600729435336,
       "leftJoints": [
         "6XgmyJyqgEv5ifchExpE81"
@@ -8524,7 +8524,7 @@
       "cy": 1.7204003253596767,
       "cz": 0,
       "lx": 0.7528107219608307,
-      "ly": 0.3,
+      "ly": 0.1,
       "lz": 30.522600729435336,
       "leftJoints": [
         "fYWGXixdnmhXJQ9obJmEx4"
@@ -8570,7 +8570,7 @@
       "cy": 1.2934467290177807,
       "cz": 0,
       "lx": 0.7180910553661805,
-      "ly": 0.3,
+      "ly": 0.1,
       "lz": 30.522600729435336,
       "leftJoints": [
         "4GwFXBtR54ZnyGA71jYYZc"
@@ -8616,7 +8616,7 @@
       "cy": 0.6957116941391277,
       "cz": 0,
       "lx": 0.7610358020520893,
-      "ly": 0.3,
+      "ly": 0.1,
       "lz": 30.522600729435336,
       "leftJoints": [
         "eBehuFBXFQvHTyVLAdaGdf"
@@ -8662,7 +8662,7 @@
       "cy": -0.07280477927628937,
       "cz": 0,
       "lx": 0.8539071926838048,
-      "ly": 0.3,
+      "ly": 0.1,
       "lz": 30.522600729435336,
       "leftJoints": [
         "d7o4BGzTN8VdkyE1cWq7ia"
@@ -8708,7 +8708,7 @@
       "cy": -0.85001752342081,
       "cz": 0,
       "lx": 0.7300693007410605,
-      "ly": 0.3,
+      "ly": 0.1,
       "lz": 30.522600729435336,
       "leftJoints": [],
       "rightJoints": [
@@ -8752,7 +8752,7 @@
       "cy": -0.8413212526917135,
       "cz": 0,
       "lx": 0.7610358020520893,
-      "ly": 0.3,
+      "ly": 0.1,
       "lz": 30.522600729435336,
       "leftJoints": [
         "gKowPySkxP5QDpYS45Ky87"
@@ -8798,7 +8798,7 @@
       "cy": -1.4390562875703665,
       "cz": 0,
       "lx": 0.7180910553661803,
-      "ly": 0.3,
+      "ly": 0.1,
       "lz": 30.522600729435336,
       "leftJoints": [
         "w2pokb3YWg3yZ7YCCbdX1w"
@@ -8844,7 +8844,7 @@
       "cy": -1.8660098839122625,
       "cz": 0,
       "lx": 0.7528107219608308,
-      "ly": 0.3,
+      "ly": 0.1,
       "lz": 30.522600729435336,
       "leftJoints": [
         "6uEEWTZCV76LChiCEwjXou"
@@ -8890,7 +8890,7 @@
       "cy": -2.0367913224490195,
       "cz": 0,
       "lx": 0.8385802586295528,
-      "ly": 0.3,
+      "ly": 0.1,
       "lz": 30.522600729435336,
       "leftJoints": [
         "t5GH8Xd8h7kQ1uXXK7nK76"
@@ -8936,7 +8936,7 @@
       "cy": -1.8660098839122625,
       "cz": 0,
       "lx": 0.7528107219608304,
-      "ly": 0.3,
+      "ly": 0.1,
       "lz": 30.522600729435336,
       "leftJoints": [
         "71Xv23m81dcuvYBk8UDpg2"
@@ -8982,7 +8982,7 @@
       "cy": -1.4390562875703665,
       "cz": 0,
       "lx": 0.7180910553661808,
-      "ly": 0.3,
+      "ly": 0.1,
       "lz": 30.522600729435336,
       "leftJoints": [
         "xewwKY8wmraW5H3W8KA3XV"
@@ -10479,6 +10479,702 @@
       "id": "mP3Am8ZtiUAtGfBZJbxuUF",
       "opacity": 0.7,
       "locked": true
+    },
+    {
+      "type": "Window",
+      "cx": -0.2659770155408789,
+      "cy": 0.1,
+      "cz": 0.28125,
+      "lx": 0.09671891474213778,
+      "ly": 0.3,
+      "lz": 0.3625,
+      "shutter": {
+        "showLeft": false,
+        "showRight": false,
+        "color": "grey",
+        "width": 0.5
+      },
+      "mullion": true,
+      "mullionWidth": 0.06,
+      "mullionSpacing": 1,
+      "selected": false,
+      "lineWidth": 0.2,
+      "lineColor": "black",
+      "showLabel": false,
+      "color": "#73D8FF",
+      "tint": "#009ce0",
+      "normal": [
+        0,
+        0,
+        1
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "parentId": "vFwZn47p27JhuJCUwo66PB",
+      "foundationId": "fD1unP99uJ2AUvKzSqaqv1",
+      "id": "dJZj2sUCxXenPrW2Jawxrw",
+      "opacity": 0.7,
+      "locked": true
+    },
+    {
+      "type": "Window",
+      "cx": -0.09671891474213778,
+      "cy": 0.1,
+      "cz": 0.28125,
+      "lx": 0.09671891474213778,
+      "ly": 0.3,
+      "lz": 0.3625,
+      "mullion": true,
+      "mullionWidth": 0.06,
+      "mullionSpacing": 1,
+      "color": "#73D8FF",
+      "normal": [
+        0,
+        0,
+        1
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "id": "ta3rrvA6SZ71h7JpdQ8H9v",
+      "parentId": "vFwZn47p27JhuJCUwo66PB",
+      "foundationId": "fD1unP99uJ2AUvKzSqaqv1",
+      "tint": "#009ce0",
+      "opacity": 0.7,
+      "shutter": {
+        "showLeft": false,
+        "showRight": false,
+        "color": "grey",
+        "width": 0.5
+      },
+      "selected": false,
+      "locked": true
+    },
+    {
+      "type": "Window",
+      "cx": 0.07253918605660334,
+      "cy": 0.1,
+      "cz": 0.28125,
+      "lx": 0.09671891474213778,
+      "ly": 0.3,
+      "lz": 0.3625,
+      "mullion": true,
+      "mullionWidth": 0.06,
+      "mullionSpacing": 1,
+      "color": "#73D8FF",
+      "normal": [
+        0,
+        0,
+        1
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "id": "ka6Tnds7o2rpeQbTUL5XNR",
+      "parentId": "vFwZn47p27JhuJCUwo66PB",
+      "foundationId": "fD1unP99uJ2AUvKzSqaqv1",
+      "tint": "#009ce0",
+      "opacity": 0.7,
+      "shutter": {
+        "showLeft": false,
+        "showRight": false,
+        "color": "grey",
+        "width": 0.5
+      },
+      "selected": false,
+      "locked": true
+    },
+    {
+      "type": "Window",
+      "cx": 0.2659770155408789,
+      "cy": 0.1,
+      "cz": 0.28125,
+      "lx": 0.09671891474213778,
+      "ly": 0.3,
+      "lz": 0.3625,
+      "mullion": true,
+      "mullionWidth": 0.06,
+      "mullionSpacing": 1,
+      "color": "#73D8FF",
+      "normal": [
+        0,
+        0,
+        1
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "id": "3AmRpUZe9Zieufb9NFpKUe",
+      "parentId": "vFwZn47p27JhuJCUwo66PB",
+      "foundationId": "fD1unP99uJ2AUvKzSqaqv1",
+      "tint": "#009ce0",
+      "opacity": 0.7,
+      "shutter": {
+        "showLeft": false,
+        "showRight": false,
+        "color": "grey",
+        "width": 0.5
+      },
+      "selected": false,
+      "locked": true
+    },
+    {
+      "type": "Window",
+      "cx": -0.2659770155408789,
+      "cy": 0.1,
+      "cz": -0.15625,
+      "lx": 0.09671891474213778,
+      "ly": 0.3,
+      "lz": 0.3625,
+      "mullion": true,
+      "mullionWidth": 0.06,
+      "mullionSpacing": 1,
+      "color": "#73D8FF",
+      "normal": [
+        0,
+        0,
+        1
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "id": "9wNFWndGsb6CZofrG9Fupa",
+      "parentId": "vFwZn47p27JhuJCUwo66PB",
+      "foundationId": "fD1unP99uJ2AUvKzSqaqv1",
+      "tint": "#009ce0",
+      "opacity": 0.7,
+      "shutter": {
+        "showLeft": false,
+        "showRight": false,
+        "color": "grey",
+        "width": 0.5
+      },
+      "selected": false,
+      "locked": true
+    },
+    {
+      "type": "Window",
+      "cx": -0.09671891474213778,
+      "cy": 0.1,
+      "cz": -0.15625,
+      "lx": 0.09671891474213778,
+      "ly": 0.3,
+      "lz": 0.3625,
+      "mullion": true,
+      "mullionWidth": 0.06,
+      "mullionSpacing": 1,
+      "color": "#73D8FF",
+      "normal": [
+        0,
+        0,
+        1
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "id": "ss9gxEkgAKKu97XBUXNM54",
+      "parentId": "vFwZn47p27JhuJCUwo66PB",
+      "foundationId": "fD1unP99uJ2AUvKzSqaqv1",
+      "tint": "#009ce0",
+      "opacity": 0.7,
+      "shutter": {
+        "showLeft": false,
+        "showRight": false,
+        "color": "grey",
+        "width": 0.5
+      },
+      "selected": false,
+      "locked": true
+    },
+    {
+      "type": "Window",
+      "cx": 0.07253918605660334,
+      "cy": 0.1,
+      "cz": -0.15625,
+      "lx": 0.09671891474213778,
+      "ly": 0.3,
+      "lz": 0.3625,
+      "mullion": true,
+      "mullionWidth": 0.06,
+      "mullionSpacing": 1,
+      "color": "#73D8FF",
+      "normal": [
+        0,
+        0,
+        1
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "id": "u7JMjGgg9RrLGWHEohLHUW",
+      "parentId": "vFwZn47p27JhuJCUwo66PB",
+      "foundationId": "fD1unP99uJ2AUvKzSqaqv1",
+      "tint": "#009ce0",
+      "opacity": 0.7,
+      "shutter": {
+        "showLeft": false,
+        "showRight": false,
+        "color": "grey",
+        "width": 0.5
+      },
+      "selected": false,
+      "locked": true
+    },
+    {
+      "type": "Window",
+      "cx": 0.2659770155408789,
+      "cy": 0.1,
+      "cz": -0.15625,
+      "lx": 0.09671891474213778,
+      "ly": 0.3,
+      "lz": 0.3625,
+      "mullion": true,
+      "mullionWidth": 0.06,
+      "mullionSpacing": 1,
+      "color": "#73D8FF",
+      "normal": [
+        0,
+        0,
+        1
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "id": "seZJReiTn7AB935XPj7nmi",
+      "parentId": "vFwZn47p27JhuJCUwo66PB",
+      "foundationId": "fD1unP99uJ2AUvKzSqaqv1",
+      "tint": "#009ce0",
+      "opacity": 0.7,
+      "shutter": {
+        "showLeft": false,
+        "showRight": false,
+        "color": "grey",
+        "width": 0.5
+      },
+      "selected": false,
+      "locked": true
+    },
+    {
+      "type": "Window",
+      "cx": -0.29015674422641347,
+      "cy": 0.1,
+      "cz": 0.28125,
+      "lx": 0.09671891474213778,
+      "ly": 0.3,
+      "lz": 0.3625,
+      "mullion": true,
+      "mullionWidth": 0.06,
+      "mullionSpacing": 1,
+      "color": "#73D8FF",
+      "normal": [
+        0,
+        0,
+        1
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "id": "j44vXPNj93wPQunzLh8T1Q",
+      "parentId": "jz5YKDY6NpWFeAzmZZgmMG",
+      "foundationId": "fD1unP99uJ2AUvKzSqaqv1",
+      "tint": "#009ce0",
+      "opacity": 0.7,
+      "shutter": {
+        "showLeft": false,
+        "showRight": false,
+        "color": "grey",
+        "width": 0.5
+      },
+      "selected": false,
+      "locked": true
+    },
+    {
+      "type": "Window",
+      "cx": -0.09671891474213784,
+      "cy": 0.1,
+      "cz": 0.28125,
+      "lx": 0.09671891474213778,
+      "ly": 0.3,
+      "lz": 0.3625,
+      "mullion": true,
+      "mullionWidth": 0.06,
+      "mullionSpacing": 1,
+      "color": "#73D8FF",
+      "normal": [
+        0,
+        0,
+        1
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "id": "shnTbDVozQrbvzKdN1MMK9",
+      "parentId": "jz5YKDY6NpWFeAzmZZgmMG",
+      "foundationId": "fD1unP99uJ2AUvKzSqaqv1",
+      "tint": "#009ce0",
+      "opacity": 0.7,
+      "shutter": {
+        "showLeft": false,
+        "showRight": false,
+        "color": "grey",
+        "width": 0.5
+      },
+      "selected": false,
+      "locked": true
+    },
+    {
+      "type": "Window",
+      "cx": 0.0967189147421378,
+      "cy": 0.1,
+      "cz": 0.28125,
+      "lx": 0.09671891474213778,
+      "ly": 0.3,
+      "lz": 0.3625,
+      "mullion": true,
+      "mullionWidth": 0.06,
+      "mullionSpacing": 1,
+      "color": "#73D8FF",
+      "normal": [
+        0,
+        0,
+        1
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "id": "33HVy94BzEoDPXtrspXujk",
+      "parentId": "jz5YKDY6NpWFeAzmZZgmMG",
+      "foundationId": "fD1unP99uJ2AUvKzSqaqv1",
+      "tint": "#009ce0",
+      "opacity": 0.7,
+      "shutter": {
+        "showLeft": false,
+        "showRight": false,
+        "color": "grey",
+        "width": 0.5
+      },
+      "selected": false,
+      "locked": true
+    },
+    {
+      "type": "Window",
+      "cx": 0.29015674422641347,
+      "cy": 0.1,
+      "cz": 0.28125,
+      "lx": 0.09671891474213778,
+      "ly": 0.3,
+      "lz": 0.3625,
+      "mullion": true,
+      "mullionWidth": 0.06,
+      "mullionSpacing": 1,
+      "color": "#73D8FF",
+      "normal": [
+        0,
+        0,
+        1
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "id": "j4J8y7JeZK4qxfinaK39hR",
+      "parentId": "jz5YKDY6NpWFeAzmZZgmMG",
+      "foundationId": "fD1unP99uJ2AUvKzSqaqv1",
+      "tint": "#009ce0",
+      "opacity": 0.7,
+      "shutter": {
+        "showLeft": false,
+        "showRight": false,
+        "color": "grey",
+        "width": 0.5
+      },
+      "selected": false,
+      "locked": true
+    },
+    {
+      "type": "Window",
+      "cx": -0.29015674422641347,
+      "cy": 0.1,
+      "cz": -0.16875,
+      "lx": 0.09671891474213778,
+      "ly": 0.3,
+      "lz": 0.3625,
+      "mullion": true,
+      "mullionWidth": 0.06,
+      "mullionSpacing": 1,
+      "color": "#73D8FF",
+      "normal": [
+        0,
+        0,
+        1
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "id": "cRf1jRTwuR2e4zLg6vFDLv",
+      "parentId": "jz5YKDY6NpWFeAzmZZgmMG",
+      "foundationId": "fD1unP99uJ2AUvKzSqaqv1",
+      "tint": "#009ce0",
+      "opacity": 0.7,
+      "shutter": {
+        "showLeft": false,
+        "showRight": false,
+        "color": "grey",
+        "width": 0.5
+      },
+      "selected": false,
+      "locked": true
+    },
+    {
+      "type": "Window",
+      "cx": -0.09671891474213784,
+      "cy": 0.1,
+      "cz": -0.16875,
+      "lx": 0.09671891474213778,
+      "ly": 0.3,
+      "lz": 0.3625,
+      "mullion": true,
+      "mullionWidth": 0.06,
+      "mullionSpacing": 1,
+      "color": "#73D8FF",
+      "normal": [
+        0,
+        0,
+        1
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "id": "vkoYTRq9mT4PwEwXPraM2s",
+      "parentId": "jz5YKDY6NpWFeAzmZZgmMG",
+      "foundationId": "fD1unP99uJ2AUvKzSqaqv1",
+      "tint": "#009ce0",
+      "opacity": 0.7,
+      "shutter": {
+        "showLeft": false,
+        "showRight": false,
+        "color": "grey",
+        "width": 0.5
+      },
+      "selected": false,
+      "locked": true
+    },
+    {
+      "type": "Window",
+      "cx": 0.0967189147421378,
+      "cy": 0.1,
+      "cz": -0.16875,
+      "lx": 0.09671891474213778,
+      "ly": 0.3,
+      "lz": 0.3625,
+      "mullion": true,
+      "mullionWidth": 0.06,
+      "mullionSpacing": 1,
+      "color": "#73D8FF",
+      "normal": [
+        0,
+        0,
+        1
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "id": "mwATeDbSxAHev6LkxaPgTD",
+      "parentId": "jz5YKDY6NpWFeAzmZZgmMG",
+      "foundationId": "fD1unP99uJ2AUvKzSqaqv1",
+      "tint": "#009ce0",
+      "opacity": 0.7,
+      "shutter": {
+        "showLeft": false,
+        "showRight": false,
+        "color": "grey",
+        "width": 0.5
+      },
+      "selected": false,
+      "locked": true
+    },
+    {
+      "type": "Window",
+      "cx": 0.3143364729119479,
+      "cy": 0.1,
+      "cz": -0.16875,
+      "lx": 0.09671891474213778,
+      "ly": 0.3,
+      "lz": 0.3625,
+      "mullion": true,
+      "mullionWidth": 0.06,
+      "mullionSpacing": 1,
+      "color": "#73D8FF",
+      "normal": [
+        0,
+        0,
+        1
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "id": "foK7LkvSM2WCizQJfUWA13",
+      "parentId": "jz5YKDY6NpWFeAzmZZgmMG",
+      "foundationId": "fD1unP99uJ2AUvKzSqaqv1",
+      "tint": "#009ce0",
+      "opacity": 0.7,
+      "shutter": {
+        "showLeft": false,
+        "showRight": false,
+        "color": "grey",
+        "width": 0.5
+      },
+      "selected": false,
+      "locked": true
+    },
+    {
+      "type": "Window",
+      "cx": 0.029980389503821973,
+      "cy": 0.1,
+      "cz": 0.3416666666666667,
+      "lx": 0.4796862320611516,
+      "ly": 0.1,
+      "lz": 0.2,
+      "shutter": {
+        "showLeft": false,
+        "showRight": false,
+        "color": "grey",
+        "width": 0.5
+      },
+      "mullion": true,
+      "mullionWidth": 0.06,
+      "mullionSpacing": 1,
+      "selected": false,
+      "lineWidth": 0.2,
+      "lineColor": "black",
+      "showLabel": false,
+      "color": "#73D8FF",
+      "tint": "#009ce0",
+      "normal": [
+        0,
+        0,
+        1
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "parentId": "ho8wYRGhLSJb2djJKqwSe1",
+      "foundationId": "d5JiHWyULwssBmiBFfBkPJ",
+      "id": "kNDuFavJnC2DWCruSM8Yz5",
+      "opacity": 0.7,
+      "locked": true
+    },
+    {
+      "type": "Window",
+      "cx": 0.04497058425573294,
+      "cy": 0.1,
+      "cz": 0.3416666666666667,
+      "lx": 0.5096666215649733,
+      "ly": 0.1,
+      "lz": 0.2,
+      "shutter": {
+        "showLeft": false,
+        "showRight": false,
+        "color": "grey",
+        "width": 0.5
+      },
+      "mullion": true,
+      "mullionWidth": 0.06,
+      "mullionSpacing": 1,
+      "selected": false,
+      "lineWidth": 0.2,
+      "lineColor": "black",
+      "showLabel": false,
+      "color": "#73D8FF",
+      "tint": "#009ce0",
+      "normal": [
+        0,
+        0,
+        1
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "parentId": "55SwaH9QxLHmcgrnQzAWTs",
+      "foundationId": "d5JiHWyULwssBmiBFfBkPJ",
+      "id": "1zwyQ7SmozfQ7SawBNjqnG",
+      "opacity": 0.7,
+      "locked": true
+    },
+    {
+      "type": "Window",
+      "cx": 0.029547059313054503,
+      "cy": 0.1,
+      "cz": 0.3416666666666667,
+      "lx": 0.47275294900887205,
+      "ly": 0.1,
+      "lz": 0.21666666666666667,
+      "shutter": {
+        "showLeft": false,
+        "showRight": false,
+        "color": "grey",
+        "width": 0.5
+      },
+      "mullion": true,
+      "mullionWidth": 0.06,
+      "mullionSpacing": 1,
+      "selected": false,
+      "lineWidth": 0.2,
+      "lineColor": "black",
+      "showLabel": false,
+      "color": "#73D8FF",
+      "tint": "#009ce0",
+      "normal": [
+        0,
+        0,
+        1
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "parentId": "rCFFBj6A2tyxuTVf5rPe81",
+      "foundationId": "d5JiHWyULwssBmiBFfBkPJ",
+      "id": "pNX7KUpUJwgYkqu5xoyYFx",
+      "opacity": 0.7,
+      "locked": true
     }
   ],
   "view": {
@@ -10498,7 +11194,7 @@
       16.25858596239243,
       150
     ],
-    "theme": "Grassland",
+    "theme": "Default",
     "showDesignInfoPanel": false,
     "weatherPanelX": 0,
     "dailyParabolicTroughYieldPanelX": 0,
@@ -10510,9 +11206,9 @@
     "dailyHeliostatYieldPanelX": 0,
     "showDailyParabolicDishYieldPanel": false,
     "cameraPosition": [
-      116.78991209252658,
-      88.85967699886201,
-      30.625123531577184
+      -77.43042952971089,
+      -58.607176746808285,
+      36.52461431767768
     ],
     "showYearlyHeliostatYieldPanel": false,
     "orthographic": false,
@@ -10558,12 +11254,12 @@
     "dailyPvYieldPanelY": 0,
     "yearlyPvYieldPanelX": 0,
     "yearlyParabolicDishYieldPanelX": 0,
-    "shadowEnabled": false,
+    "shadowEnabled": true,
     "showInstructionPanel": true,
     "panCenter": [
-      19.602365270993154,
-      34.71493733458168,
-      30.625123531577174
+      55.03815639047284,
+      14.586427781524227,
+      36.524614317677674
     ],
     "yearlyFresnelReflectorYieldPanelY": 0,
     "showHeliodonPanel": false,
