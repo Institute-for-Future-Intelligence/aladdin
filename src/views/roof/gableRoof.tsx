@@ -523,10 +523,10 @@ const GableRoof = ({
       const overhangHeight3 = Math.min((overhang / d3) * (h - frontWallLh), backWallRh);
 
       const frontWallLeftPointAfterOverhang = RoofUtil.getIntersectionPoint(
-        frontWallLeftPointAfterOffset,
-        frontWallRightPointAfterOffset,
         leftWallLeftPointAfterOffset,
         leftWallRightPointAfterOffset,
+        frontWallLeftPointAfterOffset,
+        frontWallRightPointAfterOffset,
       )
         .setZ(frontWallLh - overhangHeight0)
         .sub(centroid);
@@ -541,10 +541,10 @@ const GableRoof = ({
         .sub(centroid);
 
       const backWallLeftPointAfterOverhang = RoofUtil.getIntersectionPoint(
-        backWallLeftPointAfterOffset,
-        backWallRightPointAfterOffset,
         rightWallLeftPointAfterOffset,
         rightWallRightPointAfterOffset,
+        backWallLeftPointAfterOffset,
+        backWallRightPointAfterOffset,
       )
         .setZ(h + overhangHeight2)
         .sub(centroid);
@@ -625,10 +625,10 @@ const GableRoof = ({
       const overhangHeight1 = Math.min((overhang / d1) * (ridgeRightPointV3.z - frontWallRh), frontWallRh);
 
       const frontWallLeftPointAfterOverhang = RoofUtil.getIntersectionPoint(
-        frontWallLeftPointAfterOffset,
-        frontWallRightPointAfterOffset,
         leftWallLeftPointAfterOffset,
         leftWallRightPointAfterOffset,
+        frontWallLeftPointAfterOffset,
+        frontWallRightPointAfterOffset,
       )
         .setZ(frontWallLh - overhangHeight0)
         .sub(centroid);
@@ -669,10 +669,10 @@ const GableRoof = ({
       const overhangHeight3 = Math.min((overhang / d3) * (ridgeLeftPointV3.z - backWallRh), backWallRh);
 
       const backWallLeftPointAfterOverhang = RoofUtil.getIntersectionPoint(
-        backWallLeftPointAfterOffset,
-        backWallRightPointAfterOffset,
         rightWallLeftPointAfterOffset,
         rightWallRightPointAfterOffset,
+        backWallLeftPointAfterOffset,
+        backWallRightPointAfterOffset,
       )
         .setZ(backWallLh - overhangHeight2)
         .sub(centroid);

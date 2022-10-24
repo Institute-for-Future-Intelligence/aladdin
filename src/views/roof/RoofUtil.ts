@@ -9,7 +9,6 @@ import { ElementModel } from 'src/models/ElementModel';
 import { Point2 } from 'src/models/Point2';
 import { useStore } from 'src/stores/common';
 import { ObjectType } from 'src/types';
-import { RoofType } from 'src/models/RoofModel';
 
 export class RoofUtil {
   // roof related
@@ -24,6 +23,14 @@ export class RoofUtil {
   }
 
   static getIntersectionPoint(v1: Vector3, v2: Vector3, v3: Vector3, v4: Vector3) {
+    if (Math.abs(v1.x - v2.x) < 0.001 && Math.abs(v3.x - v4.x) < 0.001) {
+      return v2.clone();
+    }
+    const k1 = (v2.y - v1.y) / (v2.x - v1.x);
+    const k2 = (v4.y - v3.y) / (v4.x - v3.x);
+    if (Math.abs(k1 - k2) < 0.001) {
+      return v2.clone();
+    }
     const x = [v1.x, v2.x, v3.x, v4.x];
     const y = [v1.y, v2.y, v3.y, v4.y];
     const x0 =
@@ -32,6 +39,9 @@ export class RoofUtil {
     const y0 =
       ((y[2] - y[3]) * (y[1] * x[0] - y[0] * x[1]) - (y[0] - y[1]) * (y[3] * x[2] - y[2] * x[3])) /
       ((y[2] - y[3]) * (x[0] - x[1]) - (y[0] - y[1]) * (x[2] - x[3]));
+    if (!Number.isFinite(x0) || !Number.isFinite(y0)) {
+      return v2.clone();
+    }
     return new Vector3(x0, y0);
   }
 

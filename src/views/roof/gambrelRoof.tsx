@@ -417,10 +417,10 @@ const GambrelRoof = ({
     );
 
     const frontWallLeftPointAfterOverhang = RoofUtil.getIntersectionPoint(
-      frontWallLeftPointAfterOffset,
-      frontWallRightPointAfterOffset,
       leftWallLeftPointAfterOffset,
       leftWallRightPointAfterOffset,
+      frontWallLeftPointAfterOffset,
+      frontWallRightPointAfterOffset,
     )
       .setZ(frontWallLh - overhangHeight0)
       .sub(centroid);
@@ -513,10 +513,10 @@ const GambrelRoof = ({
     );
 
     const backWallLeftPointAfterOverhang = RoofUtil.getIntersectionPoint(
-      backWallLeftPointAfterOffset,
-      backWallRightPointAfterOffset,
       rightWallLeftPointAfterOffset,
       rightWallRightPointAfterOffset,
+      backWallLeftPointAfterOffset,
+      backWallRightPointAfterOffset,
     )
       .setZ(backWallLh - overhangHeight2)
       .sub(centroid);

@@ -360,10 +360,10 @@ const MansardRoof = ({
         }
 
         const wallLeftPointAfterOverhang = RoofUtil.getIntersectionPoint(
-          wallPointsAfterOverhang[i].leftPoint,
-          wallPointsAfterOverhang[i].rightPoint,
           wallPointsAfterOverhang[(i + wallPointsAfterOverhang.length - 1) % wallPointsAfterOverhang.length].leftPoint,
           wallPointsAfterOverhang[(i + wallPointsAfterOverhang.length - 1) % wallPointsAfterOverhang.length].rightPoint,
+          wallPointsAfterOverhang[i].leftPoint,
+          wallPointsAfterOverhang[i].rightPoint,
         )
           .setZ(lh - overhangHeight)
           .sub(centroid);
@@ -395,10 +395,10 @@ const MansardRoof = ({
     if (!isLoopRef.current) {
       const idx = wallPointsAfterOverhang.length - 1;
       const leftPointAfterOverhang = RoofUtil.getIntersectionPoint(
-        wallPointsAfterOverhang[idx].leftPoint,
-        wallPointsAfterOverhang[idx].rightPoint,
         wallPointsAfterOverhang[idx - 1].leftPoint,
         wallPointsAfterOverhang[idx - 1].rightPoint,
+        wallPointsAfterOverhang[idx].leftPoint,
+        wallPointsAfterOverhang[idx].rightPoint,
       )
         .setZ(currentWallArray[currentWallArray.length - 1].lz - overhangHeight)
         .sub(centroid);

@@ -356,10 +356,10 @@ const PyramidRoof = ({
         }
 
         const wallLeftPointAfterOverhang = RoofUtil.getIntersectionPoint(
-          wallPointsAfterOffset[i].leftPoint,
-          wallPointsAfterOffset[i].rightPoint,
           wallPointsAfterOffset[(i + wallPointsAfterOffset.length - 1) % wallPointsAfterOffset.length].leftPoint,
           wallPointsAfterOffset[(i + wallPointsAfterOffset.length - 1) % wallPointsAfterOffset.length].rightPoint,
+          wallPointsAfterOffset[i].leftPoint,
+          wallPointsAfterOffset[i].rightPoint,
         )
           .setZ(lh - overhangHeight)
           .sub(centerPointV3);
@@ -388,10 +388,10 @@ const PyramidRoof = ({
     if (!isLoopRef.current) {
       const idx = wallPointsAfterOffset.length - 1;
       const leftPointAfterOverhang = RoofUtil.getIntersectionPoint(
-        wallPointsAfterOffset[idx].leftPoint,
-        wallPointsAfterOffset[idx].rightPoint,
         wallPointsAfterOffset[idx - 1].leftPoint,
         wallPointsAfterOffset[idx - 1].rightPoint,
+        wallPointsAfterOffset[idx].leftPoint,
+        wallPointsAfterOffset[idx].rightPoint,
       )
         .setZ(currentWallArray[currentWallArray.length - 1].lz - overhangHeight)
         .sub(centerPointV3);

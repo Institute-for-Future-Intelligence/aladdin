@@ -333,10 +333,10 @@ const HipRoof = ({
       const { lh, rh } = getWallHeight(currentWallArray, i);
 
       const wallLeftPointAfterOverhang = RoofUtil.getIntersectionPoint(
-        wallPointsAfterOffset[i].leftPoint,
-        wallPointsAfterOffset[i].rightPoint,
         wallPointsAfterOffset[(i + 3) % 4].leftPoint,
         wallPointsAfterOffset[(i + 3) % 4].rightPoint,
+        wallPointsAfterOffset[i].leftPoint,
+        wallPointsAfterOffset[i].rightPoint,
       )
         .setZ(lh - overhangHeight)
         .sub(ridgeMidPoint);
