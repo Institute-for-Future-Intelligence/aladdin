@@ -171,6 +171,7 @@ const GambrelRoof = ({
   const ray = useMemo(() => new Raycaster(), []);
   const mouse = useMemo(() => new Vector2(), []);
   const oldHeight = useRef<number>(h);
+  const oldRelativeHeightRef = useRef<number>(roofRelativeHeight);
   const oldRidgeVal = useRef<number>(0);
   const isPointerMovingRef = useRef(false);
   const isFirstMountRef = useRef(true);
@@ -192,11 +193,11 @@ const GambrelRoof = ({
     rotation = foundation.rotation[2];
   }
 
-  // useEffect(() => {
-  //   if (!isFirstMountRef.current) {
-  //     setH(lz);
-  //   }
-  // }, [lz]);
+  useEffect(() => {
+    if (lz !== h) {
+      setH(lz);
+    }
+  }, [lz]);
 
   const updateRidge = (elemId: string, type: string, val: number) => {
     setCommonStore((state) => {
@@ -764,6 +765,7 @@ const GambrelRoof = ({
               setRoofHandleType(RoofHandleType.TopMid);
               useStoreRef.getState().setEnableOrbitController(false);
               oldHeight.current = h;
+              oldRelativeHeightRef.current = roofRelativeHeight;
             }}
           />
 
@@ -1018,7 +1020,14 @@ const GambrelRoof = ({
           onPointerUp={() => {
             switch (roofHandleType) {
               case RoofHandleType.TopMid: {
-                addUndoableResizeRoofHeight(id, oldHeight.current, h);
+                addUndoableResizeRoofHeight(
+                  id,
+                  oldHeight.current,
+                  h,
+                  oldRelativeHeightRef.current,
+                  roofRelativeHeight,
+                  setRoofRelativeHeight,
+                );
                 break;
               }
               case RoofHandleType.TopLeft: {

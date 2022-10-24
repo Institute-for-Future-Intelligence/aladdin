@@ -158,6 +158,7 @@ const MansardRoof = ({
   const [ridgeHandleIndex, setRidgeHandleIndex] = useState<number | null>(null);
 
   const oldHeight = useRef(h);
+  const oldRelativeHeightRef = useRef<number>(roofRelativeHeight);
   const oldWidth = useRef(width);
   const isFirstMountRef = useRef(true);
 
@@ -605,6 +606,7 @@ const MansardRoof = ({
               setRoofHandleType(RoofHandleType.Top);
               useStoreRef.getState().setEnableOrbitController(false);
               oldHeight.current = h;
+              oldRelativeHeightRef.current = roofRelativeHeight;
             }}
           />
           {ridgePoints.map((ridge, idx) => {
@@ -692,7 +694,14 @@ const MansardRoof = ({
           onPointerUp={() => {
             switch (roofHandleType) {
               case RoofHandleType.Top: {
-                addUndoableResizeRoofHeight(id, oldHeight.current, h);
+                addUndoableResizeRoofHeight(
+                  id,
+                  oldHeight.current,
+                  h,
+                  oldRelativeHeightRef.current,
+                  roofRelativeHeight,
+                  setRoofRelativeHeight,
+                );
                 break;
               }
               case RoofHandleType.Ridge: {

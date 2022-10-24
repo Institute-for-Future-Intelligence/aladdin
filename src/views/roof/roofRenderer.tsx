@@ -141,26 +141,33 @@ export const handleRoofBodyPointerDown = (e: ThreeEvent<PointerEvent>, id: strin
   }
 };
 
-export const addUndoableResizeRoofHeight = (elemId: string, oldHeight: number, newHeight: number) => {
-  const undoableResizeRoofHeight = {
+export const addUndoableResizeRoofHeight = (
+  elemId: string,
+  oldHeight: number,
+  newHeight: number,
+  oldRelativeHeight: number,
+  newRelativeHeight: number,
+  updateRelativeHeight: (h: number) => void,
+) => {
+  const undoable = {
     name: 'Resize Roof Height',
     timestamp: Date.now(),
     resizedElementId: elemId,
     resizedElementType: ObjectType.Roof,
     oldHeight: oldHeight,
     newHeight: newHeight,
+    oldRelativeHeight: oldRelativeHeight,
+    newRelativeHeight: newRelativeHeight,
     undo: () => {
-      useStore
-        .getState()
-        .updateRoofHeightById(undoableResizeRoofHeight.resizedElementId, undoableResizeRoofHeight.oldHeight);
+      useStore.getState().updateRoofHeightById(undoable.resizedElementId, undoable.oldHeight);
+      updateRelativeHeight(oldRelativeHeight);
     },
     redo: () => {
-      useStore
-        .getState()
-        .updateRoofHeightById(undoableResizeRoofHeight.resizedElementId, undoableResizeRoofHeight.newHeight);
+      useStore.getState().updateRoofHeightById(undoable.resizedElementId, undoable.newHeight);
+      updateRelativeHeight(newRelativeHeight);
     },
   } as UndoableResizeRoofHeight;
-  useStore.getState().addUndoable(undoableResizeRoofHeight);
+  useStore.getState().addUndoable(undoable);
 };
 
 export const spBoundaryCheck = (solarPanelVertices: Vector3[], wallVertices: Point2[]) => {

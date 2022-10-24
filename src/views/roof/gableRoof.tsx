@@ -318,6 +318,7 @@ const GableRoof = ({
 
   const intersectionPlaneRef = useRef<Mesh>(null);
   const oldHeight = useRef<number>(h);
+  const oldRelativeHeightRef = useRef<number>(roofRelativeHeight);
   const oldRidgeLeft = useRef<number>(ridgeLeftPoint[0]);
   const oldRidgeRight = useRef<number>(ridgeRightPoint[0]);
   const isPointerMovingRef = useRef(false);
@@ -328,6 +329,12 @@ const GableRoof = ({
       updateRooftopSolarPanel(foundation, id, roofSegments, centroid, h, thickness);
     }
   }, [updateSolarPanelOnRoofFlag, h, thickness, ridgeLeftPoint, ridgeRightPoint]);
+
+  useEffect(() => {
+    if (lz !== h) {
+      setH(lz);
+    }
+  }, [lz]);
 
   const updateRoofTopRidge = (elemId: string, left: number, right: number) => {
     setCommonStore((state) => {
@@ -904,6 +911,7 @@ const GableRoof = ({
               setRoofHandleType(RoofHandleType.Mid);
               useStoreRef.getState().setEnableOrbitController(false);
               oldHeight.current = h;
+              oldRelativeHeightRef.current = roofRelativeHeight;
             }}
           />
           {/* side handles */}
@@ -1046,7 +1054,14 @@ const GableRoof = ({
           onPointerUp={() => {
             switch (roofHandleType) {
               case RoofHandleType.Mid: {
-                addUndoableResizeRoofHeight(id, oldHeight.current, h);
+                addUndoableResizeRoofHeight(
+                  id,
+                  oldHeight.current,
+                  h,
+                  oldRelativeHeightRef.current,
+                  roofRelativeHeight,
+                  setRoofRelativeHeight,
+                );
                 break;
               }
               case RoofHandleType.Left:

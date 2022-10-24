@@ -203,6 +203,7 @@ const PyramidRoof = ({
 
   const intersectionPlaneRef = useRef<Mesh>(null);
   const oldHeight = useRef<number>(h);
+  const oldRelativeHeightRef = useRef<number>(roofRelativeHeight);
   const isFirstMountRef = useRef(true);
 
   const prevWallsIdSet = new Set<string>(wallsId);
@@ -608,6 +609,7 @@ const PyramidRoof = ({
           position={[centerPoint.x, centerPoint.y, h + thickness + 0.15]}
           onPointerDown={() => {
             oldHeight.current = h;
+            oldRelativeHeightRef.current = roofRelativeHeight;
             setShowIntersectionPlane(true);
             useStoreRef.getState().setEnableOrbitController(false);
           }}
@@ -647,7 +649,14 @@ const PyramidRoof = ({
           }}
           onPointerUp={(e) => {
             updateRoofHeight(id, h);
-            addUndoableResizeRoofHeight(id, oldHeight.current, h);
+            addUndoableResizeRoofHeight(
+              id,
+              oldHeight.current,
+              h,
+              oldRelativeHeightRef.current,
+              roofRelativeHeight,
+              setRoofRelativeHeight,
+            );
             setShowIntersectionPlane(false);
             useStoreRef.getState().setEnableOrbitController(true);
             updateRooftopSolarPanel(foundation, id, roofSegments, centerPointV3, h, thickness);

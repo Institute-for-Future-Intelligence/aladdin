@@ -144,6 +144,7 @@ const HipRoof = ({
   const ray = useMemo(() => new Raycaster(), []);
   const mouse = useMemo(() => new Vector2(), []);
   const oldHeight = useRef<number>(h);
+  const oldRelativeHeightRef = useRef<number>(roofRelativeHeight);
   const isPointerMovingRef = useRef(false);
   const isFirstMountRef = useRef(true);
 
@@ -158,6 +159,12 @@ const HipRoof = ({
       setRoofRelativeHeight(lz - minHeight);
     }
   }, []);
+
+  useEffect(() => {
+    if (lz !== h) {
+      setH(lz);
+    }
+  }, [lz]);
 
   useEffect(() => {
     if (!isFirstMountRef.current) {
@@ -505,6 +512,7 @@ const HipRoof = ({
               setRoofHandleType(RoofHandleType.Mid);
               useStoreRef.getState().setEnableOrbitController(false);
               oldHeight.current = h;
+              oldRelativeHeightRef.current = roofRelativeHeight;
             }}
           />
           {/* right handle */}
@@ -603,7 +611,14 @@ const HipRoof = ({
           onPointerUp={() => {
             switch (roofHandleType) {
               case RoofHandleType.Mid: {
-                addUndoableResizeRoofHeight(id, oldHeight.current, h);
+                addUndoableResizeRoofHeight(
+                  id,
+                  oldHeight.current,
+                  h,
+                  oldRelativeHeightRef.current,
+                  roofRelativeHeight,
+                  setRoofRelativeHeight,
+                );
                 break;
               }
               case RoofHandleType.Left:
