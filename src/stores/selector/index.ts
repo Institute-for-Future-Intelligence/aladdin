@@ -612,6 +612,9 @@ export const removeElementsByReferenceId = (state: CommonStoreState) => state.re
 
 export const removeAllChildElementsByType = (state: CommonStoreState) => state.removeAllChildElementsByType;
 
+export const removeAllElementsOnFoundationByType = (state: CommonStoreState) =>
+  state.removeAllElementsOnFoundationByType;
+
 export const pasteElementsToPoint = (state: CommonStoreState) => state.pasteElementsToPoint;
 
 export const pasteElementsByKey = (state: CommonStoreState) => state.pasteElementsByKey;

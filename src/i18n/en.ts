@@ -322,6 +322,7 @@ export const i18n_en = {
         GambrelRoofVsMansardRoof: 'Gambrel Roof vs. Mansard Roof',
         DutchGableRoof: 'Dutch Gable Roof',
         CombinationRoof: 'Combination Roof',
+        BonnetRoof: 'Bonnet Roof',
         AllRoofTypes: 'All Roof Types',
       },
 
@@ -487,6 +488,8 @@ export const i18n_en = {
       RemoveAllUnlockedHeliostats: 'Remove All Unlocked Heliostats',
       RemoveAllUnlockedSensors: 'Remove All Unlocked Sensors',
       RemoveAllUnlockedWalls: 'Remove All Unlocked Walls',
+      RemoveAllUnlockedWindows: 'Remove All Unlocked Windows',
+      RemoveAllUnlockedDoors: 'Remove All Unlocked Doors',
       RemoveAllUnlockedPolygons: 'Remove All Unlocked Polygons',
       RemoveAllUnlockedHumans: 'Remove All Unlocked Humans',
       RemoveAllUnlockedTrees: 'Remove All Unlocked Trees',
@@ -523,6 +526,12 @@ export const i18n_en = {
       Walls: 'Walls',
       DoYouReallyWantToRemoveAllWallsOnFoundation:
         'Do you really want to remove all the walls on this foundation that are not locked',
+      Windows: 'Windows',
+      DoYouReallyWantToRemoveAllWindowsOnFoundation:
+        'Do you really want to remove all the windows on this foundation that are not locked',
+      Doors: 'Doors',
+      DoYouReallyWantToRemoveAllDoorsOnFoundation:
+        'Do you really want to remove all the doors on this foundation that are not locked',
       Polygons: 'Polygons',
       DoYouReallyWantToRemoveAllPolygonsOnFoundation:
         'Do you really want to remove all the polygons on this foundation that are not locked',

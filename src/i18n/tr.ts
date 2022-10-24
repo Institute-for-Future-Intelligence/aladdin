@@ -321,6 +321,7 @@ export const i18n_tr = {
         GambrelRoofVsMansardRoof: 'Flemenk Çatı vs. Mansart Çatı',
         DutchGableRoof: 'Dutch Gable Roof',
         CombinationRoof: 'Combination Roof',
+        BonnetRoof: 'Bonnet Roof',
         AllRoofTypes: 'Tüm Çatı Tipleri',
       },
 
@@ -487,6 +488,8 @@ export const i18n_tr = {
       RemoveAllUnlockedHeliostats: 'Tüm Kilitlenmemiş Heliostatları Kaldır',
       RemoveAllUnlockedSensors: 'Tüm Kilitlenmemiş Sensörleri Kaldır',
       RemoveAllUnlockedWalls: 'Tüm Kilitlenmemiş Duvarları Kaldır',
+      RemoveAllUnlockedWindows: 'Remove All Unlocked Windows',
+      RemoveAllUnlockedDoors: 'Remove All Unlocked Doors',
       RemoveAllUnlockedPolygons: 'Tüm Kilitlenmemiş Çokgenleri Kaldır',
       RemoveAllUnlockedHumans: 'Tüm Kilitlenmemiş İnsanları Kaldır',
       RemoveAllUnlockedTrees: 'Tüm Kilitlenmemiş Ağaçları Kaldır',
@@ -523,6 +526,12 @@ export const i18n_tr = {
       Walls: 'Duvarlar',
       DoYouReallyWantToRemoveAllWallsOnFoundation:
         ' Seçili temel üzerinde kilitli olmayan tüm duvarları kaldırmak istiyor musunuz? ',
+      Windows: 'Windows',
+      DoYouReallyWantToRemoveAllWindowsOnFoundation:
+        'Do you really want to remove all the windows on this foundation that are not locked',
+      Doors: 'Doors',
+      DoYouReallyWantToRemoveAllDoorsOnFoundation:
+        'Do you really want to remove all the doors on this foundation that are not locked',
       Polygons: 'Poligonlar',
       DoYouReallyWantToRemoveAllPolygonsOnFoundation:
         ' Seçili temel üzerinde kilitli olmayan tüm poligonları kaldırmak istiyor musunuz?',

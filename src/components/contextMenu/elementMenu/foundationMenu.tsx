@@ -55,6 +55,7 @@ export const FoundationMenu = () => {
   const addUndoable = useStore(Selector.addUndoable);
   const countAllOffspringsByType = useStore(Selector.countAllOffspringsByTypeAtOnce);
   const removeAllChildElementsByType = useStore(Selector.removeAllChildElementsByType);
+  const removeAllElementsOnFoundationByType = useStore(Selector.removeAllElementsOnFoundationByType);
   const updateElementLockById = useStore(Selector.updateElementLockById);
   const updateElementLockByFoundationId = useStore(Selector.updateElementLockByFoundationId);
   const contextMenuObjectType = useStore(Selector.contextMenuObjectType);
@@ -171,7 +172,7 @@ export const FoundationMenu = () => {
         </Menu.Item>
 
         {counter.gotSome() && contextMenuObjectType && (
-          <SubMenu key={'clear'} title={i18n.t('word.Elements', lang)} style={{ paddingLeft: '24px' }}>
+          <SubMenu key={'lock-unlock'} title={i18n.t('word.Elements', lang)} style={{ paddingLeft: '24px' }}>
             <Menu.Item
               key={'lock-all-offsprings'}
               onClick={() => {
@@ -292,6 +293,100 @@ export const FoundationMenu = () => {
                 }}
               >
                 {i18n.t('foundationMenu.RemoveAllUnlockedWalls', lang)} ({counter.wallCount})
+              </Menu.Item>
+            )}
+
+            {counter.windowCount > 0 && (
+              <Menu.Item
+                key={'remove-all-windows-on-foundation'}
+                onClick={() => {
+                  Modal.confirm({
+                    title:
+                      i18n.t('foundationMenu.DoYouReallyWantToRemoveAllWindowsOnFoundation', lang) +
+                      ' (' +
+                      counter.windowCount +
+                      ' ' +
+                      i18n.t('foundationMenu.Windows', lang) +
+                      ')?',
+                    icon: <ExclamationCircleOutlined />,
+                    onOk: () => {
+                      if (foundation) {
+                        const removed = elements.filter(
+                          (e) => !e.locked && e.type === ObjectType.Window && e.foundationId === foundation.id,
+                        );
+                        removeAllElementsOnFoundationByType(foundation.id, ObjectType.Window);
+                        const removedElements = JSON.parse(JSON.stringify(removed));
+                        const undoableRemoveAllWindowGrandchildren = {
+                          name: 'Remove All Windows on Foundation',
+                          timestamp: Date.now(),
+                          parentId: foundation.id,
+                          removedElements: removedElements,
+                          undo: () => {
+                            setCommonStore((state) => {
+                              state.elements.push(...undoableRemoveAllWindowGrandchildren.removedElements);
+                            });
+                          },
+                          redo: () => {
+                            removeAllElementsOnFoundationByType(
+                              undoableRemoveAllWindowGrandchildren.parentId,
+                              ObjectType.Window,
+                            );
+                          },
+                        } as UndoableRemoveAllChildren;
+                        addUndoable(undoableRemoveAllWindowGrandchildren);
+                      }
+                    },
+                  });
+                }}
+              >
+                {i18n.t('foundationMenu.RemoveAllUnlockedWindows', lang)} ({counter.windowCount})
+              </Menu.Item>
+            )}
+
+            {counter.doorCount > 0 && (
+              <Menu.Item
+                key={'remove-all-doors-on-foundation'}
+                onClick={() => {
+                  Modal.confirm({
+                    title:
+                      i18n.t('foundationMenu.DoYouReallyWantToRemoveAllDoorsOnFoundation', lang) +
+                      ' (' +
+                      counter.doorCount +
+                      ' ' +
+                      i18n.t('foundationMenu.Doors', lang) +
+                      ')?',
+                    icon: <ExclamationCircleOutlined />,
+                    onOk: () => {
+                      if (foundation) {
+                        const removed = elements.filter(
+                          (e) => !e.locked && e.type === ObjectType.Door && e.foundationId === foundation.id,
+                        );
+                        removeAllElementsOnFoundationByType(foundation.id, ObjectType.Door);
+                        const removedElements = JSON.parse(JSON.stringify(removed));
+                        const undoableRemoveAllDoorGrandchildren = {
+                          name: 'Remove All Doors on Foundation',
+                          timestamp: Date.now(),
+                          parentId: foundation.id,
+                          removedElements: removedElements,
+                          undo: () => {
+                            setCommonStore((state) => {
+                              state.elements.push(...undoableRemoveAllDoorGrandchildren.removedElements);
+                            });
+                          },
+                          redo: () => {
+                            removeAllElementsOnFoundationByType(
+                              undoableRemoveAllDoorGrandchildren.parentId,
+                              ObjectType.Door,
+                            );
+                          },
+                        } as UndoableRemoveAllChildren;
+                        addUndoable(undoableRemoveAllDoorGrandchildren);
+                      }
+                    },
+                  });
+                }}
+              >
+                {i18n.t('foundationMenu.RemoveAllUnlockedDoors', lang)} ({counter.doorCount})
               </Menu.Item>
             )}
 

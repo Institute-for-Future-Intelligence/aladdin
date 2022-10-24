@@ -30,6 +30,7 @@ import colonial_house from './examples/colonial_house.json';
 import dutch_colonial_house from './examples/dutch_colonial_house.json';
 import dutch_gable_roof from './examples/dutch_gable_roof.json';
 import combination_roof from './examples/combination_roof.json';
+import bonnet_roof from './examples/bonnet_roof.json';
 import gable_roof_vs_hip_roof from './examples/gable_roof_vs_hip_roof.json';
 import colonial_vs_saltbox from './examples/colonial_vs_saltbox.json';
 import gambrel_roof_vs_mansard_roof from './examples/gambrel_roof_vs_mansard_roof.json';
@@ -429,6 +430,9 @@ const MainMenu = ({ viewOnly, set2DView, resetView, zoomView, canvas }: MainMenu
         break;
       case 'combination_roof':
         input = combination_roof;
+        break;
+      case 'bonnet_roof':
+        input = bonnet_roof;
         break;
       case 'gable_roof_vs_hip_roof':
         input = gable_roof_vs_hip_roof;
@@ -1993,6 +1997,9 @@ const MainMenu = ({ viewOnly, set2DView, resetView, zoomView, canvas }: MainMenu
           </Menu.Item>
           <Menu.Item key="combination_roof" onClick={loadFile}>
             {i18n.t('menu.buildingDesignTutorials.CombinationRoof', lang)}
+          </Menu.Item>
+          <Menu.Item key="bonnet_roof" onClick={loadFile}>
+            {i18n.t('menu.buildingDesignTutorials.BonnetRoof', lang)}
           </Menu.Item>
           <Menu.Item key="all_roof_types" onClick={loadFile}>
             {i18n.t('menu.buildingDesignTutorials.AllRoofTypes', lang)}

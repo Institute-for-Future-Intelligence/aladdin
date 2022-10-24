@@ -566,6 +566,7 @@ export interface CommonStoreState {
   countAllChildSolarPanelDailyYields: (parentId: string) => number;
   clearAllSolarPanelYields: () => void;
   removeAllChildElementsByType: (parentId: string, type: ObjectType) => void;
+  removeAllElementsOnFoundationByType: (foundationId: string, type: ObjectType) => void;
 
   runDailyLightSensor: boolean;
   pauseDailyLightSensor: boolean;
@@ -4647,6 +4648,17 @@ export const useStore = create<CommonStoreState>(
           removeAllChildElementsByType(parentId, type) {
             immerSet((state: CommonStoreState) => {
               state.elements = state.elements.filter((x) => x.locked || x.type !== type || x.parentId !== parentId);
+              if (type === ObjectType.Wall) {
+                state.updateWallMapOnFoundationFlag = !state.updateWallMapOnFoundationFlag;
+              }
+              state.updateDesignInfo();
+            });
+          },
+          removeAllElementsOnFoundationByType(foundationId, type) {
+            immerSet((state: CommonStoreState) => {
+              state.elements = state.elements.filter(
+                (x) => x.locked || x.type !== type || x.foundationId !== foundationId,
+              );
               if (type === ObjectType.Wall) {
                 state.updateWallMapOnFoundationFlag = !state.updateWallMapOnFoundationFlag;
               }
