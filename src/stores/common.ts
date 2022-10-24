@@ -849,6 +849,7 @@ export const useStore = create<CommonStoreState>(
 
           importContent(content, title) {
             immerSet((state: CommonStoreState) => {
+              state.undoManager.clear();
               state.world = content.world;
               state.viewState = content.view;
               state.elements = content.elements;

@@ -28,6 +28,8 @@ import cathedral_01 from './examples/cathedral_01.json';
 import cathedral_02 from './examples/cathedral_02.json';
 import colonial_house from './examples/colonial_house.json';
 import dutch_colonial_house from './examples/dutch_colonial_house.json';
+import dutch_gable_roof from './examples/dutch_gable_roof.json';
+import combination_roof from './examples/combination_roof.json';
 import gable_roof_vs_hip_roof from './examples/gable_roof_vs_hip_roof.json';
 import colonial_vs_saltbox from './examples/colonial_vs_saltbox.json';
 import gambrel_roof_vs_mansard_roof from './examples/gambrel_roof_vs_mansard_roof.json';
@@ -421,6 +423,12 @@ const MainMenu = ({ viewOnly, set2DView, resetView, zoomView, canvas }: MainMenu
         break;
       case 'all_roof_types':
         input = all_roof_types;
+        break;
+      case 'dutch_gable_roof':
+        input = dutch_gable_roof;
+        break;
+      case 'combination_roof':
+        input = combination_roof;
         break;
       case 'gable_roof_vs_hip_roof':
         input = gable_roof_vs_hip_roof;
@@ -995,52 +1003,56 @@ const MainMenu = ({ viewOnly, set2DView, resetView, zoomView, canvas }: MainMenu
     <Menu triggerSubMenuAction={'click'}>
       {/* file menu */}
       <SubMenu key={'file'} title={i18n.t('menu.fileSubMenu', lang)}>
-        <Menu.Item
-          key="create-new-file"
-          onClick={() => {
-            undoManager.clear();
-            setCommonStore((state) => {
-              state.createNewFileFlag = !state.createNewFileFlag;
-              state.objectTypeToAdd = ObjectType.None;
-              state.groupActionMode = false;
-              state.elementGroupId = null;
-              window.history.pushState({}, document.title, HOME_URL);
-              if (loggable) {
-                state.actionInfo = {
-                  name: 'Create New File',
-                  timestamp: new Date().getTime(),
-                };
-              }
-            });
-          }}
-        >
-          {i18n.t('menu.file.CreateNewFile', lang)}
-          <label style={{ paddingLeft: '2px', fontSize: 9 }}>({isMac ? '⌘' : 'Ctrl'}+F)</label>
-        </Menu.Item>
+        {!viewOnly && (
+          <Menu.Item
+            key="create-new-file"
+            onClick={() => {
+              undoManager.clear();
+              setCommonStore((state) => {
+                state.createNewFileFlag = !state.createNewFileFlag;
+                state.objectTypeToAdd = ObjectType.None;
+                state.groupActionMode = false;
+                state.elementGroupId = null;
+                window.history.pushState({}, document.title, HOME_URL);
+                if (loggable) {
+                  state.actionInfo = {
+                    name: 'Create New File',
+                    timestamp: new Date().getTime(),
+                  };
+                }
+              });
+            }}
+          >
+            {i18n.t('menu.file.CreateNewFile', lang)}
+            <label style={{ paddingLeft: '2px', fontSize: 9 }}>({isMac ? '⌘' : 'Ctrl'}+F)</label>
+          </Menu.Item>
+        )}
 
-        <Menu.Item
-          key="open-local-file"
-          onClick={() => {
-            undoManager.clear();
-            setCommonStore((state) => {
-              state.openLocalFileFlag = !state.openLocalFileFlag;
-              state.objectTypeToAdd = ObjectType.None;
-              state.groupActionMode = false;
-              state.elementGroupId = null;
-              state.cloudFile = undefined;
-              window.history.pushState({}, document.title, HOME_URL);
-              if (loggable) {
-                state.actionInfo = {
-                  name: 'Open Local File',
-                  timestamp: new Date().getTime(),
-                };
-              }
-            });
-          }}
-        >
-          {i18n.t('menu.file.OpenLocalFile', lang)}
-          <label style={{ paddingLeft: '2px', fontSize: 9 }}>({isMac ? '⌘' : 'Ctrl'}+O)</label>...
-        </Menu.Item>
+        {!viewOnly && (
+          <Menu.Item
+            key="open-local-file"
+            onClick={() => {
+              undoManager.clear();
+              setCommonStore((state) => {
+                state.openLocalFileFlag = !state.openLocalFileFlag;
+                state.objectTypeToAdd = ObjectType.None;
+                state.groupActionMode = false;
+                state.elementGroupId = null;
+                state.cloudFile = undefined;
+                window.history.pushState({}, document.title, HOME_URL);
+                if (loggable) {
+                  state.actionInfo = {
+                    name: 'Open Local File',
+                    timestamp: new Date().getTime(),
+                  };
+                }
+              });
+            }}
+          >
+            {i18n.t('menu.file.OpenLocalFile', lang)}
+            <label style={{ paddingLeft: '2px', fontSize: 9 }}>({isMac ? '⌘' : 'Ctrl'}+O)</label>...
+          </Menu.Item>
+        )}
 
         <Menu.Item
           key="save-local-file"
@@ -1975,6 +1987,12 @@ const MainMenu = ({ viewOnly, set2DView, resetView, zoomView, canvas }: MainMenu
           </Menu.Item>
           <Menu.Item key="gambrel_roof_vs_mansard_roof" onClick={loadFile}>
             {i18n.t('menu.buildingDesignTutorials.GambrelRoofVsMansardRoof', lang)}
+          </Menu.Item>
+          <Menu.Item key="dutch_gable_roof" onClick={loadFile}>
+            {i18n.t('menu.buildingDesignTutorials.DutchGableRoof', lang)}
+          </Menu.Item>
+          <Menu.Item key="combination_roof" onClick={loadFile}>
+            {i18n.t('menu.buildingDesignTutorials.CombinationRoof', lang)}
           </Menu.Item>
           <Menu.Item key="all_roof_types" onClick={loadFile}>
             {i18n.t('menu.buildingDesignTutorials.AllRoofTypes', lang)}

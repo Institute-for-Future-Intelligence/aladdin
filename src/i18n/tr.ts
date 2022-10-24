@@ -319,6 +319,8 @@ export const i18n_tr = {
         GableRoofVsHipRoof: 'Beşik Çatı vs. Kırma Çatı',
         ColonialVsSaltbox: 'Koloni vs. Tuz Kutusu',
         GambrelRoofVsMansardRoof: 'Flemenk Çatı vs. Mansart Çatı',
+        DutchGableRoof: 'Dutch Gable Roof',
+        CombinationRoof: 'Combination Roof',
         AllRoofTypes: 'Tüm Çatı Tipleri',
       },
 

@@ -320,6 +320,8 @@ export const i18n_es = {
         GableRoofVsHipRoof: 'Gable Roof vs. Hip Roof',
         ColonialVsSaltbox: 'Colonial vs. Saltbox',
         GambrelRoofVsMansardRoof: 'Gambrel Roof vs. Mansard Roof',
+        DutchGableRoof: 'Dutch Gable Roof',
+        CombinationRoof: 'Combination Roof',
         AllRoofTypes: 'All Roof Types',
       },
 

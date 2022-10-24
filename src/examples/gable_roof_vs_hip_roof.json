@@ -1120,7 +1120,7 @@
       ],
       "textureType": "Roof Texture #1",
       "color": "#cccccc",
-      "selected": true,
+      "selected": false,
       "showLabel": false,
       "normal": [
         0,
