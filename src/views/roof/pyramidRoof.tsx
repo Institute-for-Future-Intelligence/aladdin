@@ -160,6 +160,32 @@ const PyramidRoof = ({
   const { transparent, opacity } = useTransparent();
   const { currentWallArray, isLoopRef } = useMultiCurrWallArray(foundationId, id, wallsId);
 
+  const getWallHeight = (arr: WallModel[], i: number) => {
+    const w = arr[i];
+    let lh = 0;
+    let rh = 0;
+    if (i === 0) {
+      lh = Math.max(w.lz, arr[arr.length - 1].lz);
+      rh = Math.max(w.lz, arr[i + 1].lz);
+    } else if (i === arr.length - 1) {
+      lh = Math.max(w.lz, arr[i - 1].lz);
+      rh = Math.max(w.lz, arr[0].lz);
+    } else {
+      lh = Math.max(w.lz, arr[i - 1].lz);
+      rh = Math.max(w.lz, arr[i + 1].lz);
+    }
+    return { lh, rh };
+  };
+
+  const getMinHeight = () => {
+    let minHeight = 0;
+    for (let i = 0; i < currentWallArray.length; i++) {
+      const { lh, rh } = getWallHeight(currentWallArray, i);
+      minHeight = Math.max(minHeight, Math.max(lh, rh));
+    }
+    return minHeight;
+  };
+
   const setCommonStore = useStore(Selector.set);
   const getElementById = useStore(Selector.getElementById);
   const removeElementById = useStore(Selector.removeElementById);
@@ -171,8 +197,8 @@ const PyramidRoof = ({
   const mouse = useMemo(() => new Vector2(), []);
 
   const [h, setH] = useState(lz);
-  const [minHeight, setMinHeight] = useState<number | null>(null);
-  const [roofRelativeHeight, setRoofRelativeHeight] = useState<number | null>(null);
+  const [minHeight, setMinHeight] = useState(getMinHeight);
+  const [roofRelativeHeight, setRoofRelativeHeight] = useState(lz - minHeight);
   const [showIntersectionPlane, setShowIntersectionPlane] = useState(false);
 
   const intersectionPlaneRef = useRef<Mesh>(null);
@@ -180,12 +206,6 @@ const PyramidRoof = ({
   const isFirstMountRef = useRef(true);
 
   const prevWallsIdSet = new Set<string>(wallsId);
-
-  useEffect(() => {
-    if (minHeight !== null) {
-      setRoofRelativeHeight(lz - minHeight);
-    }
-  }, []);
 
   useEffect(() => {
     if (lz !== h) {
@@ -216,23 +236,6 @@ const PyramidRoof = ({
       }
     }
     return arr;
-  };
-
-  const getWallHeight = (arr: WallModel[], i: number) => {
-    const w = arr[i];
-    let lh = 0;
-    let rh = 0;
-    if (i === 0) {
-      lh = Math.max(w.lz, arr[arr.length - 1].lz);
-      rh = Math.max(w.lz, arr[i + 1].lz);
-    } else if (i === arr.length - 1) {
-      lh = Math.max(w.lz, arr[i - 1].lz);
-      rh = Math.max(w.lz, arr[0].lz);
-    } else {
-      lh = Math.max(w.lz, arr[i - 1].lz);
-      rh = Math.max(w.lz, arr[i + 1].lz);
-    }
-    return { lh, rh };
   };
 
   const needUpdateWallsId = (wallArray: WallModel[], wallsIdSet: Set<string>) => {
