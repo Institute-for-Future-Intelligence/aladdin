@@ -1,8 +1,8 @@
 {
   "files": {
     "main.css": "/aladdin/static/css/main.c1ee157d.chunk.css",
-    "main.js": "/aladdin/static/js/main.5e563777.chunk.js",
-    "main.js.map": "/aladdin/static/js/main.5e563777.chunk.js.map",
+    "main.js": "/aladdin/static/js/main.3f840ba6.chunk.js",
+    "main.js.map": "/aladdin/static/js/main.3f840ba6.chunk.js.map",
     "runtime-main.js": "/aladdin/static/js/runtime-main.629a787f.js",
     "runtime-main.js.map": "/aladdin/static/js/runtime-main.629a787f.js.map",
     "static/css/2.447301e6.chunk.css": "/aladdin/static/css/2.447301e6.chunk.css",
@@ -204,7 +204,7 @@
     "static/media/wall_09_menu.5124ae81.png": "/aladdin/static/media/wall_09_menu.5124ae81.png",
     "static/media/wall_10.ad1052ed.png": "/aladdin/static/media/wall_10.ad1052ed.png",
     "static/media/wall_10_menu.a934991d.png": "/aladdin/static/media/wall_10_menu.a934991d.png",
-    "static/media/weather.9c48b735.csv": "/aladdin/static/media/weather.9c48b735.csv",
+    "static/media/weather.4f078f34.csv": "/aladdin/static/media/weather.4f078f34.csv",
     "static/media/white_flower.7c33e894.png": "/aladdin/static/media/white_flower.7c33e894.png",
     "static/media/xiaoli.7039f54f.png": "/aladdin/static/media/xiaoli.7039f54f.png",
     "static/media/xiaoming.bfd0036f.png": "/aladdin/static/media/xiaoming.bfd0036f.png",
@@ -215,6 +215,6 @@
     "static/css/2.447301e6.chunk.css",
     "static/js/2.a55598a4.chunk.js",
     "static/css/main.c1ee157d.chunk.css",
-    "static/js/main.5e563777.chunk.js"
+    "static/js/main.3f840ba6.chunk.js"
   ]
 }
