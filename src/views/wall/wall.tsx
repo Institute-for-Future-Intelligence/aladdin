@@ -235,6 +235,7 @@ const Wall = ({
   const isSettingDoorEndPointRef = useRef(false);
   const oldPositionRef = useRef<number[]>([]);
   const oldDimensionRef = useRef<number[]>([]);
+  const oldTintRef = useRef<string>('#73D8FF');
 
   const [originElements, setOriginElements] = useState<ElementModel[] | null>(null);
   const [showGrid, setShowGrid] = useState(false);
@@ -737,6 +738,9 @@ const Wall = ({
             setOriginElements([...useStore.getState().elements]);
             oldPositionRef.current = [selectedElement.cx, selectedElement.cy, selectedElement.cz];
             oldDimensionRef.current = [selectedElement.lx, selectedElement.ly, selectedElement.lz];
+            if (selectedElement.type === ObjectType.Window) {
+              oldTintRef.current = (selectedElement as WindowModel).tint;
+            }
           }
         }
       }
@@ -843,7 +847,7 @@ const Wall = ({
                       e.cx = p.x / lx;
                       e.cz = p.z / lz;
                       e.cy = e.id === invalidElementIdRef.current ? -0.01 : 0.1;
-                      (e as WindowModel).tint = e.id === invalidElementIdRef.current ? 'red' : '#73D8FF';
+                      (e as WindowModel).tint = e.id === invalidElementIdRef.current ? 'red' : oldTintRef.current;
                     }
                   }
                 });
@@ -867,7 +871,7 @@ const Wall = ({
                       e.cx = relativePos.x / lx;
                       e.cz = relativePos.z / lz;
                       e.cy = e.id === invalidElementIdRef.current ? -0.01 : 0.1;
-                      (e as WindowModel).tint = e.id === invalidElementIdRef.current ? 'red' : '#73D8FF';
+                      (e as WindowModel).tint = e.id === invalidElementIdRef.current ? 'red' : oldTintRef.current;
                     }
                   }
                 });
