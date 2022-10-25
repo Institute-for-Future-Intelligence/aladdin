@@ -322,7 +322,9 @@ export const i18n_tr = {
         DutchGableRoof: 'Dutch Gable Roof',
         CombinationRoof: 'Combination Roof',
         BonnetRoof: 'Bonnet Roof',
-        AllRoofTypes: 'Tüm Çatı Tipleri',
+        GableAndValleyRoof: 'Gable and Valley Roof',
+        ClerestoryRoof: 'Clerestory Roof',
+        AllBasicRoofTypes: 'Tüm Çatı Tipleri',
       },
 
       photovoltaicSolarPowerSubMenu: 'Fotovoltaik Güneş Enerjisi',
@@ -400,6 +402,7 @@ export const i18n_tr = {
       },
       commercialBuildingsSubMenu: 'Ticari Binalar',
       commercialBuildingExamples: {
+        WhiteHouse: 'White House',
         OfficeBuilding: 'Ofis Binası',
         Hotel: 'Hotel',
         SouthBurlingtonHighSchoolVermont: 'Güney Burlington Lisesi',

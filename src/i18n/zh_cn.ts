@@ -321,7 +321,9 @@ export const i18n_zh_cn = {
         DutchGableRoof: '荷兰双坡屋顶',
         CombinationRoof: '组合屋顶',
         BonnetRoof: '帽檐屋顶',
-        AllRoofTypes: '所有的屋顶类型',
+        GableAndValleyRoof: '坡谷屋顶',
+        ClerestoryRoof: '天窗屋顶',
+        AllBasicRoofTypes: '所有的基本屋顶类型',
       },
 
       photovoltaicSolarPowerSubMenu: '光伏发电',
@@ -397,6 +399,7 @@ export const i18n_zh_cn = {
       },
       commercialBuildingsSubMenu: '商用建筑',
       commercialBuildingExamples: {
+        WhiteHouse: '白宫',
         OfficeBuilding: '一栋简单的办公楼',
         Hotel: '一个旅馆场景',
         SouthBurlingtonHighSchoolVermont: '佛蒙特州南伯灵顿高中',

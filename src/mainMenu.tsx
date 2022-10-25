@@ -32,8 +32,11 @@ import dutch_gable_roof from './examples/dutch_gable_roof.json';
 import combination_roof from './examples/combination_roof.json';
 import bonnet_roof from './examples/bonnet_roof.json';
 import gable_roof_vs_hip_roof from './examples/gable_roof_vs_hip_roof.json';
+import gable_and_valley_roof from './examples/gable_and_valley_roof.json';
+import clerestory_roof from './examples/clerestory_roof.json';
 import colonial_vs_saltbox from './examples/colonial_vs_saltbox.json';
 import gambrel_roof_vs_mansard_roof from './examples/gambrel_roof_vs_mansard_roof.json';
+import white_house from './examples/white_house.json';
 import hotel_01 from './examples/hotel_01.json';
 import south_burlington_high_school from './examples/south_burlington_high_school.json';
 import mescalero_apache_school from './examples/mescalero_apache_school.json';
@@ -293,6 +296,9 @@ const MainMenu = ({ viewOnly, set2DView, resetView, zoomView, canvas }: MainMenu
       case 'hotel_01':
         input = hotel_01;
         break;
+      case 'white_house':
+        input = white_house;
+        break;
       case 'south_burlington_high_school':
         input = south_burlington_high_school;
         break;
@@ -436,6 +442,12 @@ const MainMenu = ({ viewOnly, set2DView, resetView, zoomView, canvas }: MainMenu
         break;
       case 'gable_roof_vs_hip_roof':
         input = gable_roof_vs_hip_roof;
+        break;
+      case 'gable_and_valley_roof':
+        input = gable_and_valley_roof;
+        break;
+      case 'clerestory_roof':
+        input = clerestory_roof;
         break;
       case 'colonial_vs_saltbox':
         input = colonial_vs_saltbox;
@@ -2001,8 +2013,14 @@ const MainMenu = ({ viewOnly, set2DView, resetView, zoomView, canvas }: MainMenu
           <Menu.Item key="bonnet_roof" onClick={loadFile}>
             {i18n.t('menu.buildingDesignTutorials.BonnetRoof', lang)}
           </Menu.Item>
+          <Menu.Item key="gable_and_valley_roof" onClick={loadFile}>
+            {i18n.t('menu.buildingDesignTutorials.GableAndValleyRoof', lang)}
+          </Menu.Item>
+          <Menu.Item key="clerestory_roof" onClick={loadFile}>
+            {i18n.t('menu.buildingDesignTutorials.ClerestoryRoof', lang)}
+          </Menu.Item>
           <Menu.Item key="all_roof_types" onClick={loadFile}>
-            {i18n.t('menu.buildingDesignTutorials.AllRoofTypes', lang)}
+            {i18n.t('menu.buildingDesignTutorials.AllBasicRoofTypes', lang)}
           </Menu.Item>
         </SubMenu>
         {/* photovoltaic solar power */}
@@ -2171,6 +2189,9 @@ const MainMenu = ({ viewOnly, set2DView, resetView, zoomView, canvas }: MainMenu
             </Menu.Item>
           </SubMenu>
           <SubMenu key={'commercial_buildings'} title={i18n.t('menu.commercialBuildingsSubMenu', lang)}>
+            <Menu.Item key="white_house" onClick={loadFile}>
+              {i18n.t('menu.commercialBuildingExamples.WhiteHouse', lang)}
+            </Menu.Item>
             <Menu.Item key="office_building_01" onClick={loadFile}>
               {i18n.t('menu.commercialBuildingExamples.OfficeBuilding', lang)}
             </Menu.Item>
