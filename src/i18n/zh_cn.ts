@@ -314,13 +314,11 @@ export const i18n_zh_cn = {
       buildingDesignTutorials: {
         CapeCodStyleHouseWithShedDormer: '有棚顶窗的科德角风格的住宅',
         MansardRoofWithDormers: '有天窗的折线屋顶',
-        TShapedHouse: 'T字型房子',
         GableRoofVsHipRoof: '双坡屋顶和四坡屋顶的对比',
         ColonialVsSaltbox: '殖民地风格和盐盒风格的对比',
         GambrelRoofVsMansardRoof: '复斜屋顶和折线屋顶的对比',
+        CombinationRoofVsBonnetRoof: '组合屋顶和帽檐屋顶的对比',
         DutchGableRoof: '荷兰双坡屋顶',
-        CombinationRoof: '组合屋顶',
-        BonnetRoof: '帽檐屋顶',
         ButterflyRoof: '蝴蝶型屋顶',
         GableAndValleyRoof: '坡谷屋顶',
         ClerestoryRoof: '天窗屋顶',
@@ -389,6 +387,7 @@ export const i18n_zh_cn = {
       residentialBuildingExamples: {
         ColonialHouse: '殖民地风格的住宅',
         DutchColonialHouse: '荷兰殖民地风格的住宅',
+        TShapedHouse: 'T字型房子',
         CapeCodHouseWithGarage: '有车库的科德角风格的住宅',
         Solarium: '有日光浴室的房子',
         Church: '教堂',

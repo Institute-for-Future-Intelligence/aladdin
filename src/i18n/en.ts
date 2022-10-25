@@ -316,13 +316,11 @@ export const i18n_en = {
       buildingDesignTutorials: {
         CapeCodStyleHouseWithShedDormer: 'Cape Cod Style House with Shed Dormer',
         MansardRoofWithDormers: 'Mansard Roof with Dormers',
-        TShapedHouse: 'T-Shaped House',
         GableRoofVsHipRoof: 'Gable Roof vs. Hip Roof',
         ColonialVsSaltbox: 'Colonial vs. Saltbox',
         GambrelRoofVsMansardRoof: 'Gambrel Roof vs. Mansard Roof',
+        CombinationRoofVsBonnetRoof: 'Combination Roof vs. Bonnet Roof',
         DutchGableRoof: 'Dutch Gable Roof',
-        CombinationRoof: 'Combination Roof',
-        BonnetRoof: 'Bonnet Roof',
         ButterflyRoof: 'Butterfly Roof',
         GableAndValleyRoof: 'Gable and Valley Roof',
         ClerestoryRoof: 'Clerestory Roof',
@@ -392,6 +390,7 @@ export const i18n_en = {
       residentialBuildingExamples: {
         ColonialHouse: 'Colonial House',
         DutchColonialHouse: 'Dutch Colonial House',
+        TShapedHouse: 'T-Shaped House',
         CapeCodHouseWithGarage: 'Cape Cod House with Garage',
         Solarium: 'Solarium',
         Church: 'Church',

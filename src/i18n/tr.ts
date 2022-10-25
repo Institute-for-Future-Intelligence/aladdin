@@ -315,13 +315,11 @@ export const i18n_tr = {
       buildingDesignTutorials: {
         CapeCodStyleHouseWithShedDormer: 'Çatı Pencereli Cape Cod Evi',
         MansardRoofWithDormers: 'Mansard Roof with Dormers',
-        TShapedHouse: 'T-Shaped House',
         GableRoofVsHipRoof: 'Beşik Çatı vs. Kırma Çatı',
         ColonialVsSaltbox: 'Koloni vs. Tuz Kutusu',
         GambrelRoofVsMansardRoof: 'Flemenk Çatı vs. Mansart Çatı',
+        CombinationRoofVsBonnetRoof: 'Combination Roof vs. Bonnet Roof',
         DutchGableRoof: 'Dutch Gable Roof',
-        CombinationRoof: 'Combination Roof',
-        BonnetRoof: 'Bonnet Roof',
         ButterflyRoof: 'Butterfly Roof',
         GableAndValleyRoof: 'Gable and Valley Roof',
         ClerestoryRoof: 'Clerestory Roof',
@@ -392,6 +390,7 @@ export const i18n_tr = {
       residentialBuildingExamples: {
         ColonialHouse: 'Colonial House',
         DutchColonialHouse: 'Flemenk Koloni Evi',
+        TShapedHouse: 'T-Shaped House',
         CapeCodHouseWithGarage: 'Cape Cod House with Garage',
         Solarium: 'Solaryum',
         Church: 'Kilise',

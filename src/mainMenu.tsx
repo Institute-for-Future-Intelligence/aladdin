@@ -30,8 +30,7 @@ import cathedral_02 from './examples/cathedral_02.json';
 import colonial_house from './examples/colonial_house.json';
 import dutch_colonial_house from './examples/dutch_colonial_house.json';
 import dutch_gable_roof from './examples/dutch_gable_roof.json';
-import combination_roof from './examples/combination_roof.json';
-import bonnet_roof from './examples/bonnet_roof.json';
+import combination_roof_vs_bonnet_roof from './examples/combination_roof_vs_bonnet_roof.json';
 import butterfly_roof from './examples/butterfly_roof.json';
 import gable_roof_vs_hip_roof from './examples/gable_roof_vs_hip_roof.json';
 import gable_and_valley_roof from './examples/gable_and_valley_roof.json';
@@ -436,11 +435,8 @@ const MainMenu = ({ viewOnly, set2DView, resetView, zoomView, canvas }: MainMenu
       case 'dutch_gable_roof':
         input = dutch_gable_roof;
         break;
-      case 'combination_roof':
-        input = combination_roof;
-        break;
-      case 'bonnet_roof':
-        input = bonnet_roof;
+      case 'combination_roof_vs_bonnet_roof':
+        input = combination_roof_vs_bonnet_roof;
         break;
       case 'butterfly_roof':
         input = butterfly_roof;
@@ -2000,9 +1996,6 @@ const MainMenu = ({ viewOnly, set2DView, resetView, zoomView, canvas }: MainMenu
           <Menu.Item key="mansard_roof_with_dormers" onClick={loadFile}>
             {i18n.t('menu.buildingDesignTutorials.MansardRoofWithDormers', lang)}
           </Menu.Item>
-          <Menu.Item key="t_shaped_house" onClick={loadFile}>
-            {i18n.t('menu.buildingDesignTutorials.TShapedHouse', lang)}
-          </Menu.Item>
           <Menu.Item key="gable_roof_vs_hip_roof" onClick={loadFile}>
             {i18n.t('menu.buildingDesignTutorials.GableRoofVsHipRoof', lang)}
           </Menu.Item>
@@ -2012,14 +2005,11 @@ const MainMenu = ({ viewOnly, set2DView, resetView, zoomView, canvas }: MainMenu
           <Menu.Item key="gambrel_roof_vs_mansard_roof" onClick={loadFile}>
             {i18n.t('menu.buildingDesignTutorials.GambrelRoofVsMansardRoof', lang)}
           </Menu.Item>
+          <Menu.Item key="combination_roof_vs_bonnet_roof" onClick={loadFile}>
+            {i18n.t('menu.buildingDesignTutorials.CombinationRoofVsBonnetRoof', lang)}
+          </Menu.Item>
           <Menu.Item key="dutch_gable_roof" onClick={loadFile}>
             {i18n.t('menu.buildingDesignTutorials.DutchGableRoof', lang)}
-          </Menu.Item>
-          <Menu.Item key="combination_roof" onClick={loadFile}>
-            {i18n.t('menu.buildingDesignTutorials.CombinationRoof', lang)}
-          </Menu.Item>
-          <Menu.Item key="bonnet_roof" onClick={loadFile}>
-            {i18n.t('menu.buildingDesignTutorials.BonnetRoof', lang)}
           </Menu.Item>
           <Menu.Item key="butterfly_roof" onClick={loadFile}>
             {i18n.t('menu.buildingDesignTutorials.ButterflyRoof', lang)}
@@ -2182,6 +2172,9 @@ const MainMenu = ({ viewOnly, set2DView, resetView, zoomView, canvas }: MainMenu
             </Menu.Item>
             <Menu.Item key="dutch_colonial_house" onClick={loadFile}>
               {i18n.t('menu.residentialBuildingExamples.DutchColonialHouse', lang)}
+            </Menu.Item>
+            <Menu.Item key="t_shaped_house" onClick={loadFile}>
+              {i18n.t('menu.residentialBuildingExamples.TShapedHouse', lang)}
             </Menu.Item>
             <Menu.Item key="cape_cod_with_garage" onClick={loadFile}>
               {i18n.t('menu.residentialBuildingExamples.CapeCodHouseWithGarage', lang)}
