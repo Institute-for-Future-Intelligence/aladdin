@@ -279,3 +279,18 @@ export const useMultiCurrWallArray = (fId: string | undefined, roofId: string, w
 
   return { currentWallArray, isLoopRef };
 };
+export const useRoofHeight = (lz: number, initalMinHeight: number) => {
+  const [h, setH] = useState(lz);
+
+  const minHeight = useRef(initalMinHeight);
+  const setMinHeight = (val: number) => {
+    minHeight.current = val;
+  };
+
+  const relHeight = useRef(lz - minHeight.current);
+  const setRelHeight = (val: number) => {
+    relHeight.current = val;
+  };
+
+  return { h, setH, minHeight, setMinHeight, relHeight, setRelHeight };
+};

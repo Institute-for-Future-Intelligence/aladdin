@@ -17,7 +17,7 @@ import { UnoableResizeGambrelAndMansardRoofRidge } from 'src/undo/UndoableResize
 import { Util } from 'src/Util';
 import { DoubleSide, Euler, Mesh, Shape, Vector3 } from 'three';
 import { ObjectType } from '../../types';
-import { useMultiCurrWallArray, useRoofTexture, useSolarPanelUndoable, useTransparent } from './hooks';
+import { useMultiCurrWallArray, useRoofHeight, useRoofTexture, useSolarPanelUndoable, useTransparent } from './hooks';
 import {
   ConvexGeoProps as ConvexGeometryProps,
   handleContextMenu,
@@ -133,7 +133,7 @@ const MansardRoof = ({
     return { lh, rh };
   };
 
-  const getMinHeight = () => {
+  const initMinHeight = () => {
     let minHeight = 0;
     for (let i = 0; i < currentWallArray.length; i++) {
       const { lh, rh } = getWallHeight(currentWallArray, i);
@@ -147,18 +147,18 @@ const MansardRoof = ({
   const shadowEnabled = useStore(Selector.viewState.shadowEnabled);
   const ray = useStore((state) => state.ray);
   const mouse = useStore((state) => state.mouse);
+  const fileChanged = useStore(Selector.fileChanged);
+
+  const { h, setH, minHeight, setMinHeight, relHeight, setRelHeight } = useRoofHeight(lz, initMinHeight());
 
   const [width, setWidth] = useState(ridgeWidth);
   const [maxWidth, setMaxWidth] = useState<number | null>(null);
-  const [h, setH] = useState(lz);
-  const [minHeight, setMinHeight] = useState(getMinHeight);
-  const [roofRelativeHeight, setRoofRelativeHeight] = useState(lz - minHeight);
   const [enableIntersectionPlane, setEnableIntersectionPlane] = useState(false);
   const [roofHandleType, setRoofHandleType] = useState(RoofHandleType.Null);
   const [ridgeHandleIndex, setRidgeHandleIndex] = useState<number | null>(null);
 
   const oldHeight = useRef(h);
-  const oldRelativeHeightRef = useRef<number>(roofRelativeHeight);
+  const oldRelativeHeightRef = useRef<number>(relHeight.current);
   const oldWidth = useRef(width);
   const isFirstMountRef = useRef(true);
 
@@ -455,6 +455,12 @@ const MansardRoof = ({
   }, [currentWallArray, ridgePoints]);
 
   useEffect(() => {
+    const minHeight = currentWallArray.length === 4 ? Math.max(currentWallArray[0].lz, currentWallArray[2].lz) : lz / 2;
+    setMinHeight(minHeight);
+    setRelHeight(lz - minHeight);
+  }, [fileChanged]);
+
+  useEffect(() => {
     if (lz !== h) {
       setH(lz);
     }
@@ -483,9 +489,9 @@ const MansardRoof = ({
           });
         }
         setMinHeight(minHeight);
-        if (roofRelativeHeight !== null) {
-          setH(minHeight + roofRelativeHeight);
-          useStore.getState().updateRoofHeightById(id, minHeight + roofRelativeHeight);
+        if (relHeight !== null) {
+          setH(minHeight + relHeight.current);
+          useStore.getState().updateRoofHeightById(id, minHeight + relHeight.current);
         }
         updateRooftopSolarPanel(foundation, id, roofSegments, centroid, h, thickness);
       } else {
@@ -606,7 +612,7 @@ const MansardRoof = ({
               setRoofHandleType(RoofHandleType.Top);
               useStoreRef.getState().setEnableOrbitController(false);
               oldHeight.current = h;
-              oldRelativeHeightRef.current = roofRelativeHeight;
+              oldRelativeHeightRef.current = relHeight.current;
             }}
           />
           {ridgePoints.map((ridge, idx) => {
@@ -659,10 +665,10 @@ const MansardRoof = ({
                 }
                 switch (roofHandleType) {
                   case RoofHandleType.Top: {
-                    const height = Math.max(minHeight, pointer.z - (foundation?.lz ?? 0) - 0.6);
+                    const height = Math.max(minHeight.current, pointer.z - (foundation?.lz ?? 0) - 0.6);
                     if (RoofUtil.isRoofValid(id, undefined, undefined, [0, height])) {
                       setH(height);
-                      setRoofRelativeHeight(height - minHeight);
+                      setRelHeight(height - minHeight.current);
                     }
                     break;
                   }
@@ -699,8 +705,8 @@ const MansardRoof = ({
                   oldHeight.current,
                   h,
                   oldRelativeHeightRef.current,
-                  roofRelativeHeight,
-                  setRoofRelativeHeight,
+                  relHeight.current,
+                  setRelHeight,
                 );
                 break;
               }

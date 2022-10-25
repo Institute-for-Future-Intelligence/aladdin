@@ -29,7 +29,7 @@ import { ObjectType, RoofTexture } from 'src/types';
 import { Util } from 'src/Util';
 import { Point2 } from 'src/models/Point2';
 import { RoofUtil } from './RoofUtil';
-import { useCurrWallArray, useRoofTexture, useSolarPanelUndoable, useTransparent } from './hooks';
+import { useCurrWallArray, useRoofHeight, useRoofTexture, useSolarPanelUndoable, useTransparent } from './hooks';
 import { ConvexGeometry } from 'src/js/ConvexGeometry';
 import { CSG } from 'three-csg-ts';
 import WindowWireFrame from '../window/windowWireFrame';
@@ -300,6 +300,7 @@ const GableRoof = ({
   const getElementById = useStore(Selector.getElementById);
   const removeElementById = useStore(Selector.removeElementById);
   const updateSolarPanelOnRoofFlag = useStore(Selector.updateSolarPanelOnRoofFlag);
+  const fileChanged = useStore(Selector.fileChanged);
 
   const { gl, camera } = useThree();
   const ray = useMemo(() => new Raycaster(), []);
@@ -307,18 +308,18 @@ const GableRoof = ({
 
   const currentWallArray = useCurrWallArray(wallsId[0]);
 
-  const [h, setH] = useState(lz);
-  const [minHeight, setMinHeight] = useState(
-    currentWallArray.length === 4 ? Math.max(currentWallArray[0].lz, currentWallArray[2].lz) : lz / 2,
-  );
-  const [roofRelativeHeight, setRoofRelativeHeight] = useState(lz - minHeight);
+  const initMinHeight = () =>
+    currentWallArray.length === 4 ? Math.max(currentWallArray[0].lz, currentWallArray[2].lz) : lz / 2;
+
+  const { h, setH, minHeight, setMinHeight, relHeight, setRelHeight } = useRoofHeight(lz, initMinHeight());
+
   const [showIntersectionPlane, setShowIntersectionPlane] = useState(false);
   const [roofHandleType, setRoofHandleType] = useState<RoofHandleType>(RoofHandleType.Null);
   const [isShed, setIsShed] = useState(false);
 
   const intersectionPlaneRef = useRef<Mesh>(null);
   const oldHeight = useRef<number>(h);
-  const oldRelativeHeightRef = useRef<number>(roofRelativeHeight);
+  const oldRelativeHeightRef = useRef<number>(relHeight.current);
   const oldRidgeLeft = useRef<number>(ridgeLeftPoint[0]);
   const oldRidgeRight = useRef<number>(ridgeRightPoint[0]);
   const isPointerMovingRef = useRef(false);
@@ -329,6 +330,12 @@ const GableRoof = ({
       updateRooftopSolarPanel(foundation, id, roofSegments, centroid, h, thickness);
     }
   }, [updateSolarPanelOnRoofFlag, h, thickness, ridgeLeftPoint, ridgeRightPoint]);
+
+  useEffect(() => {
+    const minHeight = currentWallArray.length === 4 ? Math.max(currentWallArray[0].lz, currentWallArray[2].lz) : lz / 2;
+    setMinHeight(minHeight);
+    setRelHeight(lz - minHeight);
+  }, [fileChanged]);
 
   useEffect(() => {
     if (lz !== h) {
@@ -397,7 +404,7 @@ const GableRoof = ({
     }
     const e = new Euler(0, 0, wall.relativeAngle);
     const v = new Vector3(px * wall.lx, 0, 0);
-    const height = ph * (h - minHeight) + minHeight;
+    const height = ph * (h - minHeight.current) + minHeight.current;
     return new Vector3(wall.cx, wall.cy, height).add(v.applyEuler(e));
   };
 
@@ -741,7 +748,7 @@ const GableRoof = ({
             const w = e as WallModel;
             switch (e.id) {
               case currentWallArray[0].id: {
-                const { lh, rh } = isShed ? getWallHeight(currentWallArray, 0) : getWallHeight(currentWallArray, 0);
+                const { lh, rh } = getWallHeight(currentWallArray, 0);
                 w.roofId = id;
                 if (ridgeLeftPoint[0] === 0.5) {
                   w.leftRoofHeight = h;
@@ -754,7 +761,7 @@ const GableRoof = ({
                 break;
               }
               case currentWallArray[1].id: {
-                const { lh, rh } = isShed ? getWallHeight(currentWallArray, 1) : getWallHeight(currentWallArray, 1);
+                const { lh, rh } = getWallHeight(currentWallArray, 1);
                 w.roofId = id;
                 w.leftRoofHeight = lh;
                 w.rightRoofHeight = rh;
@@ -767,7 +774,7 @@ const GableRoof = ({
                 break;
               }
               case currentWallArray[2].id: {
-                const { lh, rh } = isShed ? getWallHeight(currentWallArray, 2) : getWallHeight(currentWallArray, 2);
+                const { lh, rh } = getWallHeight(currentWallArray, 2);
                 w.roofId = id;
                 if (ridgeLeftPoint[0] === -0.5) {
                   w.leftRoofHeight = h;
@@ -780,7 +787,7 @@ const GableRoof = ({
                 break;
               }
               case currentWallArray[3].id: {
-                const { lh, rh } = isShed ? getWallHeight(currentWallArray, 3) : getWallHeight(currentWallArray, 3);
+                const { lh, rh } = getWallHeight(currentWallArray, 3);
                 w.roofId = id;
                 w.leftRoofHeight = lh;
                 w.rightRoofHeight = rh;
@@ -800,9 +807,9 @@ const GableRoof = ({
         if (isShed) {
           setH(minHeight);
           useStore.getState().updateRoofHeightById(id, minHeight);
-        } else if (roofRelativeHeight !== null) {
-          setH(minHeight + roofRelativeHeight);
-          useStore.getState().updateRoofHeightById(id, minHeight + roofRelativeHeight);
+        } else {
+          setH(minHeight + relHeight.current);
+          useStore.getState().updateRoofHeightById(id, minHeight + relHeight.current);
         }
       } else {
         removeElementById(id, false);
@@ -911,7 +918,7 @@ const GableRoof = ({
               setRoofHandleType(RoofHandleType.Mid);
               useStoreRef.getState().setEnableOrbitController(false);
               oldHeight.current = h;
-              oldRelativeHeightRef.current = roofRelativeHeight;
+              oldRelativeHeightRef.current = relHeight.current;
             }}
           />
           {/* side handles */}
@@ -1033,14 +1040,14 @@ const GableRoof = ({
                         }
                       }
                     } else {
-                      height = Math.max(minHeight, height);
+                      height = Math.max(minHeight.current, height);
                       if (
                         RoofUtil.isRoofValid(id, currentWallArray[3].id, currentWallArray[1].id, [
                           ridgeLeftPoint[0],
                           height,
                         ])
                       ) {
-                        setRoofRelativeHeight(height - minHeight);
+                        setRelHeight(height - minHeight.current);
                         setH(height);
                       }
                     }
@@ -1059,8 +1066,8 @@ const GableRoof = ({
                   oldHeight.current,
                   h,
                   oldRelativeHeightRef.current,
-                  roofRelativeHeight,
-                  setRoofRelativeHeight,
+                  relHeight.current,
+                  setRelHeight,
                 );
                 break;
               }

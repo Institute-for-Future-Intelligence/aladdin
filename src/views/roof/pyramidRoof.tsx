@@ -27,7 +27,7 @@ import {
   updateRooftopSolarPanel,
 } from './roofRenderer';
 import { RoofUtil } from './RoofUtil';
-import { useMultiCurrWallArray, useRoofTexture, useSolarPanelUndoable, useTransparent } from './hooks';
+import { useMultiCurrWallArray, useRoofHeight, useRoofTexture, useSolarPanelUndoable, useTransparent } from './hooks';
 
 const intersectionPlanePosition = new Vector3();
 const intersectionPlaneRotation = new Euler();
@@ -177,7 +177,7 @@ const PyramidRoof = ({
     return { lh, rh };
   };
 
-  const getMinHeight = () => {
+  const initMinHeight = () => {
     let minHeight = 0;
     for (let i = 0; i < currentWallArray.length; i++) {
       const { lh, rh } = getWallHeight(currentWallArray, i);
@@ -191,22 +191,28 @@ const PyramidRoof = ({
   const removeElementById = useStore(Selector.removeElementById);
   const updateRoofHeight = useStore(Selector.updateRoofHeightById);
   const updateRoofFlag = useStore(Selector.updateRoofFlag);
+  const fileChanged = useStore(Selector.fileChanged);
 
   const { camera, gl } = useThree();
   const ray = useMemo(() => new Raycaster(), []);
   const mouse = useMemo(() => new Vector2(), []);
 
-  const [h, setH] = useState(lz);
-  const [minHeight, setMinHeight] = useState(getMinHeight);
-  const [roofRelativeHeight, setRoofRelativeHeight] = useState(lz - minHeight);
+  const { h, setH, minHeight, setMinHeight, relHeight, setRelHeight } = useRoofHeight(lz, initMinHeight());
+
   const [showIntersectionPlane, setShowIntersectionPlane] = useState(false);
 
   const intersectionPlaneRef = useRef<Mesh>(null);
   const oldHeight = useRef<number>(h);
-  const oldRelativeHeightRef = useRef<number>(roofRelativeHeight);
+  const oldRelativeHeightRef = useRef<number>(relHeight.current);
   const isFirstMountRef = useRef(true);
 
   const prevWallsIdSet = new Set<string>(wallsId);
+
+  useEffect(() => {
+    const minHeight = currentWallArray.length === 4 ? Math.max(currentWallArray[0].lz, currentWallArray[2].lz) : lz / 2;
+    setMinHeight(minHeight);
+    setRelHeight(lz - minHeight);
+  }, [fileChanged]);
 
   useEffect(() => {
     if (lz !== h) {
@@ -486,10 +492,8 @@ const PyramidRoof = ({
           });
         }
         setMinHeight(minHeight);
-        if (roofRelativeHeight !== null) {
-          setH(minHeight + roofRelativeHeight);
-          useStore.getState().updateRoofHeightById(id, minHeight + roofRelativeHeight);
-        }
+        setH(minHeight + relHeight.current);
+        useStore.getState().updateRoofHeightById(id, minHeight + relHeight.current);
         updateRooftopSolarPanel(foundation, id, roofSegments, centerPointV3, h, thickness);
       } else {
         removeElementById(id, false);
@@ -609,7 +613,7 @@ const PyramidRoof = ({
           position={[centerPoint.x, centerPoint.y, h + thickness + 0.15]}
           onPointerDown={() => {
             oldHeight.current = h;
-            oldRelativeHeightRef.current = roofRelativeHeight;
+            oldRelativeHeightRef.current = relHeight.current;
             setShowIntersectionPlane(true);
             useStoreRef.getState().setEnableOrbitController(false);
           }}
@@ -638,11 +642,9 @@ const PyramidRoof = ({
                 if (point.z < 0.001) {
                   return;
                 }
-                if (minHeight !== null) {
-                  const h = Math.max(minHeight, point.z - (foundation?.lz ?? 0) - 0.3);
-                  setH(h);
-                  setRoofRelativeHeight(h - minHeight);
-                }
+                const h = Math.max(minHeight.current, point.z - (foundation?.lz ?? 0) - 0.3);
+                setH(h);
+                setRelHeight(h - minHeight.current);
                 updateRooftopSolarPanel(foundation, id, roofSegments, centerPointV3, h, thickness);
               }
             }
@@ -654,8 +656,8 @@ const PyramidRoof = ({
               oldHeight.current,
               h,
               oldRelativeHeightRef.current,
-              roofRelativeHeight,
-              setRoofRelativeHeight,
+              relHeight.current,
+              setRelHeight,
             );
             setShowIntersectionPlane(false);
             useStoreRef.getState().setEnableOrbitController(true);
