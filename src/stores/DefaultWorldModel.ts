@@ -172,7 +172,7 @@ export class DefaultWorldModel implements WorldModel {
 
     const woman = {
       type: ObjectType.Human,
-      name: HumanName.Joey,
+      name: HumanName.Judd,
       cx: 1,
       cy: -1,
       cz: 0,
