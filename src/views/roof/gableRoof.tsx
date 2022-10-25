@@ -1040,7 +1040,7 @@ const GableRoof = ({
                         }
                       }
                     } else {
-                      height = Math.max(minHeight.current, height);
+                      height = Math.max(0, height);
                       if (
                         RoofUtil.isRoofValid(id, currentWallArray[3].id, currentWallArray[1].id, [
                           ridgeLeftPoint[0],
