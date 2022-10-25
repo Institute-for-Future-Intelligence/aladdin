@@ -4402,7 +4402,12 @@ export const useStore = create<CommonStoreState>(
                   state.elements.push(heliostat);
                   break;
                 case ObjectType.Foundation:
-                  const foundation = ElementModelFactory.makeFoundation(p.x, p.y);
+                  const foundation = ElementModelFactory.makeFoundation(
+                    p.x,
+                    p.y,
+                    state.actionState.foundationColor,
+                    state.actionState.foundationTexture,
+                  );
                   model = foundation;
                   state.elements.push(foundation);
                   break;

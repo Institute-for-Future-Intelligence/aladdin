@@ -6,6 +6,7 @@ import {
   CuboidTexture,
   DoorTexture,
   FlowerType,
+  FoundationTexture,
   HumanName,
   ObjectType,
   Orientation,
@@ -127,7 +128,7 @@ export class ElementModelFactory {
     } as CuboidModel;
   }
 
-  static makeFoundation(x: number, y: number) {
+  static makeFoundation(x: number, y: number, color: string, texture: FoundationTexture) {
     return {
       type: ObjectType.Foundation,
       cx: x,
@@ -140,6 +141,8 @@ export class ElementModelFactory {
       rotation: [0, 0, 0],
       parentId: GROUND_ID,
       selected: true,
+      color: color ?? 'gray',
+      textureType: texture ?? FoundationTexture.NoTexture,
       solarUpdraftTower: {},
       solarAbsorberPipe: {},
       solarPowerTower: {},

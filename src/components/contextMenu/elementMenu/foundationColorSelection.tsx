@@ -15,6 +15,7 @@ import { UndoableChangeGroup } from '../../../undo/UndoableChangeGroup';
 import { FoundationModel } from '../../../models/FoundationModel';
 
 const FoundationColorSelection = ({ setDialogVisible }: { setDialogVisible: (b: boolean) => void }) => {
+  const setCommonStore = useStore(Selector.set);
   const language = useStore(Selector.language);
   const elements = useStore(Selector.elements);
   const updateElementColorById = useStore(Selector.updateElementColorById);
@@ -123,6 +124,9 @@ const FoundationColorSelection = ({ setDialogVisible }: { setDialogVisible: (b: 
         updateElementColorById(foundation.id, value);
         setApplyCount(applyCount + 1);
     }
+    setCommonStore((state) => {
+      state.actionState.foundationColor = value;
+    });
     setUpdateFlag(!updateFlag);
   };
 

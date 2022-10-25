@@ -22,6 +22,7 @@ import { UndoableChangeGroup } from '../../../undo/UndoableChangeGroup';
 import { FoundationModel } from '../../../models/FoundationModel';
 
 const FoundationTextureSelection = ({ setDialogVisible }: { setDialogVisible: (b: boolean) => void }) => {
+  const setCommonStore = useStore(Selector.set);
   const language = useStore(Selector.language);
   const elements = useStore(Selector.elements);
   const getElementById = useStore(Selector.getElementById);
@@ -132,6 +133,9 @@ const FoundationTextureSelection = ({ setDialogVisible }: { setDialogVisible: (b
         updateFoundationTextureById(foundation.id, value);
         setApplyCount(applyCount + 1);
     }
+    setCommonStore((state) => {
+      state.actionState.foundationTexture = value;
+    });
     setUpdateFlag(!updateFlag);
   };
 
