@@ -394,6 +394,7 @@ export const i18n_zh_cn = {
         Cathedral1: '主教座堂例一',
         Cathedral2: '主教座堂例二',
         AdobeTaosHouse: '陶斯土坯房',
+        BonnetHouse: '有帽檐屋顶的住宅',
         BarnStyleHouse: '谷仓式风格的住宅',
         ModernHouse: '现代风格的住宅',
       },

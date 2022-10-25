@@ -397,6 +397,7 @@ export const i18n_en = {
         Cathedral1: 'Cathedral 1',
         Cathedral2: 'Cathedral 2',
         AdobeTaosHouse: 'Adobe Taos House',
+        BonnetHouse: 'Bonnet House',
         BarnStyleHouse: 'Barn Style House',
         ModernHouse: 'Modern House',
       },

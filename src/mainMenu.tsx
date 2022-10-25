@@ -20,6 +20,7 @@ import mansard_roof_with_dormers from './examples/mansard_roof_with_dormers.json
 import t_shaped_house from './examples/t_shaped_house.json';
 import cape_cod_with_garage from './examples/cape_cod_with_garage.json';
 import adobe_taos_house from './examples/adobe_taos_house.json';
+import bonnet_house from './examples/bonnet_house.json';
 import barn_house from './examples/barn_house.json';
 import modern_house_01 from './examples/modern_house_01.json';
 import solarium from './examples/solarium.json';
@@ -499,6 +500,9 @@ const MainMenu = ({ viewOnly, set2DView, resetView, zoomView, canvas }: MainMenu
         break;
       case 'barn_house':
         input = barn_house;
+        break;
+      case 'bonnet_house':
+        input = bonnet_house;
         break;
       case 'modern_house_01':
         input = modern_house_01;
@@ -2180,6 +2184,9 @@ const MainMenu = ({ viewOnly, set2DView, resetView, zoomView, canvas }: MainMenu
             </Menu.Item>
             <Menu.Item key="adobe_taos_house" onClick={loadFile}>
               {i18n.t('menu.residentialBuildingExamples.AdobeTaosHouse', lang)}
+            </Menu.Item>
+            <Menu.Item key="bonnet_house" onClick={loadFile}>
+              {i18n.t('menu.residentialBuildingExamples.BonnetHouse', lang)}
             </Menu.Item>
             <Menu.Item key="barn_house" onClick={loadFile}>
               {i18n.t('menu.residentialBuildingExamples.BarnStyleHouse', lang)}
