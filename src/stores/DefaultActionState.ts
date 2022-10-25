@@ -4,7 +4,7 @@
 
 import { immerable } from 'immer';
 import { ActionState } from './ActionState';
-import { CuboidTexture, FlowerType, FoundationTexture, HumanName, TreeType } from '../types';
+import { CuboidTexture, FlowerType, FoundationTexture, HumanName, Orientation, TreeType } from '../types';
 
 export class DefaultActionState implements ActionState {
   // Needed for immer drafting to work properly: https://immerjs.github.io/immer/docs/complex-objects
@@ -25,6 +25,13 @@ export class DefaultActionState implements ActionState {
   cuboidHeight: number;
   cuboidFaceColors: string[];
   cuboidFaceTextures: CuboidTexture[];
+
+  solarPanelModelName: string;
+  solarPanelOrientation: Orientation;
+  solarPanelPoleHeight: number;
+  solarPanelPoleSpacing: number;
+  solarPanelTiltAngle: number;
+  solarPanelRelativeAzimuth: number;
 
   constructor() {
     this.humanName = HumanName.Jack;
@@ -49,5 +56,12 @@ export class DefaultActionState implements ActionState {
       CuboidTexture.NoTexture,
       CuboidTexture.NoTexture,
     ];
+
+    this.solarPanelModelName = 'SPR-X21-335-BLK';
+    this.solarPanelOrientation = Orientation.landscape;
+    this.solarPanelPoleHeight = 1;
+    this.solarPanelPoleSpacing = 3;
+    this.solarPanelTiltAngle = 0;
+    this.solarPanelRelativeAzimuth = 0;
   }
 }

@@ -19,6 +19,7 @@ import { RoofModel } from 'src/models/RoofModel';
 const { Option } = Select;
 
 const SolarPanelOrientationSelection = ({ setDialogVisible }: { setDialogVisible: (b: boolean) => void }) => {
+  const setCommonStore = useStore(Selector.set);
   const language = useStore(Selector.language);
   const elements = useStore(Selector.elements);
   const getElementById = useStore(Selector.getElementById);
@@ -388,6 +389,9 @@ const SolarPanelOrientationSelection = ({ setDialogVisible }: { setDialogVisible
           setApplyCount(applyCount + 1);
         }
     }
+    setCommonStore((state) => {
+      state.actionState.solarPanelOrientation = value;
+    });
     setUpdateFlag(!updateFlag);
   };
 

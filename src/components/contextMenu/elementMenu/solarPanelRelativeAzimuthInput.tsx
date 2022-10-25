@@ -17,6 +17,7 @@ import { UNIT_VECTOR_POS_Z_ARRAY, ZERO_TOLERANCE } from '../../../constants';
 import { RoofModel } from 'src/models/RoofModel';
 
 const SolarPanelRelativeAzimuthInput = ({ setDialogVisible }: { setDialogVisible: (b: boolean) => void }) => {
+  const setCommonStore = useStore(Selector.set);
   const language = useStore(Selector.language);
   const elements = useStore(Selector.elements);
   const getElementById = useStore(Selector.getElementById);
@@ -363,6 +364,9 @@ const SolarPanelRelativeAzimuthInput = ({ setDialogVisible }: { setDialogVisible
           setApplyCount(applyCount + 1);
         }
     }
+    setCommonStore((state) => {
+      state.actionState.solarPanelRelativeAzimuth = -value;
+    });
     setUpdateFlag(!updateFlag);
   };
 

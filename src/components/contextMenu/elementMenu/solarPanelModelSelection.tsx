@@ -18,6 +18,7 @@ import { Util } from '../../../Util';
 const { Option } = Select;
 
 const SolarPanelModelSelection = ({ setDialogVisible }: { setDialogVisible: (b: boolean) => void }) => {
+  const setCommonStore = useStore(Selector.set);
   const language = useStore(Selector.language);
   const elements = useStore(Selector.elements);
   const getElementById = useStore(Selector.getElementById);
@@ -269,6 +270,9 @@ const SolarPanelModelSelection = ({ setDialogVisible }: { setDialogVisible: (b: 
         updateSolarPanelModelById(solarPanel.id, value);
         setApplyCount(applyCount + 1);
     }
+    setCommonStore((state) => {
+      state.actionState.solarPanelModelName = value;
+    });
     setUpdateFlag(!updateFlag);
   };
 

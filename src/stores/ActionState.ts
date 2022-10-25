@@ -2,7 +2,7 @@
  * @Copyright 2022. Institute for Future Intelligence, Inc.
  */
 
-import { CuboidTexture, FlowerType, FoundationTexture, HumanName, TreeType } from '../types';
+import { CuboidTexture, FlowerType, FoundationTexture, HumanName, Orientation, TreeType } from '../types';
 
 export interface ActionState {
   humanName: HumanName;
@@ -20,4 +20,11 @@ export interface ActionState {
   cuboidHeight: number;
   cuboidFaceColors: string[];
   cuboidFaceTextures: CuboidTexture[];
+
+  solarPanelModelName: string;
+  solarPanelOrientation: Orientation;
+  solarPanelPoleHeight: number;
+  solarPanelPoleSpacing: number;
+  solarPanelTiltAngle: number;
+  solarPanelRelativeAzimuth: number;
 }

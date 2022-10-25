@@ -233,15 +233,15 @@ export class SolarPanelArrayOptimizerPso extends OptimizerPso {
               (y1 + y2) / 2,
               this.foundation.lz,
               Orientation.portrait,
+              this.poleHeight,
+              this.poleSpacing,
+              tiltAngle,
+              HALF_PI,
               UNIT_VECTOR_POS_Z,
               rotation,
               lx * this.foundation.ly,
               ly,
             );
-            solarPanel.tiltAngle = tiltAngle;
-            solarPanel.relativeAzimuth = HALF_PI;
-            solarPanel.poleHeight = this.poleHeight;
-            solarPanel.poleSpacing = this.poleSpacing;
             solarPanel.referenceId = this.polygon.id;
             Util.changeOrientation(solarPanel, this.pvModel, this.orientation);
             solarPanels.push(JSON.parse(JSON.stringify(solarPanel)));
@@ -277,15 +277,15 @@ export class SolarPanelArrayOptimizerPso extends OptimizerPso {
               cy,
               this.foundation.lz,
               Orientation.portrait,
+              this.poleHeight,
+              this.poleSpacing,
+              tiltAngle,
+              0,
               UNIT_VECTOR_POS_Z,
               rotation,
               lx * this.foundation.lx,
               ly,
             );
-            solarPanel.tiltAngle = tiltAngle;
-            solarPanel.relativeAzimuth = 0;
-            solarPanel.poleHeight = this.poleHeight;
-            solarPanel.poleSpacing = this.poleSpacing;
             solarPanel.referenceId = this.polygon.id;
             Util.changeOrientation(solarPanel, this.pvModel, this.orientation);
             solarPanels.push(JSON.parse(JSON.stringify(solarPanel)));

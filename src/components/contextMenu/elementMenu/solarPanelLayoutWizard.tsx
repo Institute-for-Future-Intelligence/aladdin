@@ -162,15 +162,15 @@ const SolarPanelLayoutWizard = ({ setDialogVisible }: { setDialogVisible: (b: bo
                   (y1 + y2) / 2,
                   foundation.lz,
                   Orientation.portrait,
+                  poleHeightRef.current,
+                  poleSpacingRef.current,
+                  tiltAngleRef.current,
+                  HALF_PI,
                   UNIT_VECTOR_POS_Z,
                   rotation,
                   lx * foundation.ly,
                   ly,
                 );
-                solarPanel.tiltAngle = tiltAngleRef.current;
-                solarPanel.relativeAzimuth = HALF_PI;
-                solarPanel.poleHeight = poleHeightRef.current;
-                solarPanel.poleSpacing = poleSpacingRef.current;
                 solarPanel.referenceId = area.id;
                 Util.changeOrientation(solarPanel, pvModel, orientationRef.current);
                 newElements.push(JSON.parse(JSON.stringify(solarPanel)));
@@ -208,15 +208,15 @@ const SolarPanelLayoutWizard = ({ setDialogVisible }: { setDialogVisible: (b: bo
                   cy,
                   foundation.lz,
                   Orientation.portrait,
+                  poleHeightRef.current,
+                  poleSpacingRef.current,
+                  tiltAngleRef.current,
+                  0,
                   UNIT_VECTOR_POS_Z,
                   rotation,
                   lx * foundation.lx,
                   ly,
                 );
-                solarPanel.tiltAngle = tiltAngleRef.current;
-                solarPanel.relativeAzimuth = 0;
-                solarPanel.poleHeight = poleHeightRef.current;
-                solarPanel.poleSpacing = poleSpacingRef.current;
                 solarPanel.referenceId = area.id;
                 Util.changeOrientation(solarPanel, pvModel, orientationRef.current);
                 newElements.push(JSON.parse(JSON.stringify(solarPanel)));

@@ -22,6 +22,7 @@ const SolarPanelTiltAngleInput = ({
   setDialogVisible: (b: boolean) => void;
   isOnWall?: boolean;
 }) => {
+  const setCommonStore = useStore(Selector.set);
   const language = useStore(Selector.language);
   const elements = useStore(Selector.elements);
   const getElementById = useStore(Selector.getElementById);
@@ -355,6 +356,9 @@ const SolarPanelTiltAngleInput = ({
           setApplyCount(applyCount + 1);
         }
     }
+    setCommonStore((state) => {
+      state.actionState.solarPanelTiltAngle = value;
+    });
     setUpdateFlag(!updateFlag);
   };
 

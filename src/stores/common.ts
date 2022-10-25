@@ -4321,11 +4321,15 @@ export const useStore = create<CommonStoreState>(
                   const solarPanelRelativeCoordinates = Util.relativeCoordinates(p.x, p.y, p.z, solarPanelParentModel);
                   const solarPanel = ElementModelFactory.makeSolarPanel(
                     solarPanelParentModel,
-                    state.getPvModule('SPR-X21-335-BLK'),
+                    state.getPvModule(state.actionState.solarPanelModelName ?? 'SPR-X21-335-BLK'),
                     solarPanelRelativeCoordinates.x,
                     solarPanelRelativeCoordinates.y,
                     solarPanelRelativeCoordinates.z,
-                    Orientation.landscape,
+                    state.actionState.solarPanelOrientation ?? Orientation.landscape,
+                    state.actionState.solarPanelPoleHeight ?? 1,
+                    state.actionState.solarPanelPoleSpacing ?? 3,
+                    state.actionState.solarPanelTiltAngle ?? 0,
+                    state.actionState.solarPanelRelativeAzimuth ?? 0,
                     normal,
                     'rotation' in parent ? parent.rotation : undefined,
                   );

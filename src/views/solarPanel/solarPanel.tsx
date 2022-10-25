@@ -81,7 +81,7 @@ const SolarPanel = ({
   showLabel = false,
   locked = false,
   parentId,
-  orientation = Orientation.portrait,
+  orientation = Orientation.landscape,
 }: SolarPanelModel) => {
   const setCommonStore = useStore(Selector.set);
   const language = useStore(Selector.language);
