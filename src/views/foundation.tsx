@@ -1132,11 +1132,12 @@ const Foundation = ({
               e.cx = (leftPoint[0] + rightPoint[0]) / 2;
               e.cy = (leftPoint[1] + rightPoint[1]) / 2;
               e.lx = Math.hypot(leftPoint[0] - rightPoint[0], leftPoint[1] - rightPoint[1]);
-              (e as WallModel).relativeAngle = this.oldAngle;
-              (e as WallModel).leftPoint = [...leftPoint];
-              (e as WallModel).rightPoint = [...rightPoint];
-              (e as WallModel).leftJoints = [...oldLeftJoints];
-              (e as WallModel).rightJoints = [...oldRightJoints];
+              const w = e as WallModel;
+              w.relativeAngle = this.oldAngle;
+              w.leftPoint = [...leftPoint];
+              w.rightPoint = [...rightPoint];
+              w.leftJoints = [...oldLeftJoints];
+              w.rightJoints = [...oldRightJoints];
               break;
             }
           }
@@ -1186,11 +1187,12 @@ const Foundation = ({
               e.cx = (leftPoint[0] + rightPoint[0]) / 2;
               e.cy = (leftPoint[1] + rightPoint[1]) / 2;
               e.lx = Math.hypot(leftPoint[0] - rightPoint[0], leftPoint[1] - rightPoint[1]);
-              (e as WallModel).relativeAngle = this.newAngle;
-              (e as WallModel).leftPoint = [...leftPoint];
-              (e as WallModel).rightPoint = [...rightPoint];
-              (e as WallModel).leftJoints = [...newLeftJoints];
-              (e as WallModel).rightJoints = [...newRightJoints];
+              const w = e as WallModel;
+              w.relativeAngle = this.newAngle;
+              w.leftPoint = [...leftPoint];
+              w.rightPoint = [...rightPoint];
+              w.leftJoints = [...newLeftJoints];
+              w.rightJoints = [...newRightJoints];
               break;
             }
           }
@@ -1986,104 +1988,105 @@ const Foundation = ({
               }
             } else if (moveHandleType) {
               const currWall = getElementById(grabRef.current.id) as WallModel;
+              if (currWall) {
+                p = Util.wallRelativePosition(p, foundationModel);
 
-              p = Util.wallRelativePosition(p, foundationModel);
-
-              const handleOffset = new Vector3();
-              const euler = new Euler(0, 0, currWall.relativeAngle);
-              if (moveHandleType === MoveHandleType.Lower) {
-                handleOffset.setY(wallHandleSize);
-              } else if (moveHandleType === MoveHandleType.Upper) {
-                handleOffset.setY(-wallHandleSize - currWall.ly);
-              }
-              p.add(handleOffset.applyEuler(euler));
-
-              const leftPoint = new Vector3().addVectors(p, new Vector3(-currWall.lx / 2, 0, 0).applyEuler(euler));
-              const rightPoint = new Vector3().addVectors(p, new Vector3(currWall.lx / 2, 0, 0).applyEuler(euler));
-              let leftFlip: boolean | null = null;
-              let rightFlip: boolean | null = null;
-              let stretched = false;
-
-              flipCurrWallRef.current = false;
-              flipLeftHandSideWallRef.current = false;
-              flipRightHandSideWallRef.current = false;
-              wallNewLeftJointIdRef.current = null;
-              wallNewRightJointIdRef.current = null;
-
-              if (!useStore.getState().enableFineGrid) {
-                const leftTarget = findMagnetPoint(leftPoint, 1);
-                if (leftTarget.point) {
-                  const magnetOffset = new Vector3().subVectors(leftTarget.point, leftPoint);
-                  p.add(magnetOffset);
-                  leftPoint.add(magnetOffset);
-                  rightPoint.add(magnetOffset);
-                  if (leftTarget.id && (!leftTarget.jointId || leftTarget.jointId === currWall.id)) {
-                    wallNewLeftJointIdRef.current = leftTarget.id;
-                    leftFlip = leftTarget.side === WallSide.Left;
-                  }
-                } else {
-                  wallNewLeftJointIdRef.current = null;
+                const handleOffset = new Vector3();
+                const euler = new Euler(0, 0, currWall.relativeAngle);
+                if (moveHandleType === MoveHandleType.Lower) {
+                  handleOffset.setY(wallHandleSize);
+                } else if (moveHandleType === MoveHandleType.Upper) {
+                  handleOffset.setY(-wallHandleSize - currWall.ly);
                 }
+                p.add(handleOffset.applyEuler(euler));
 
-                const rightTarget = findMagnetPoint(rightPoint, 1);
-                if (rightTarget.point) {
-                  if (!leftTarget.id) {
-                    const magnetOffset = new Vector3().subVectors(rightTarget.point, rightPoint);
+                const leftPoint = new Vector3().addVectors(p, new Vector3(-currWall.lx / 2, 0, 0).applyEuler(euler));
+                const rightPoint = new Vector3().addVectors(p, new Vector3(currWall.lx / 2, 0, 0).applyEuler(euler));
+                let leftFlip: boolean | null = null;
+                let rightFlip: boolean | null = null;
+                let stretched = false;
+
+                flipCurrWallRef.current = false;
+                flipLeftHandSideWallRef.current = false;
+                flipRightHandSideWallRef.current = false;
+                wallNewLeftJointIdRef.current = null;
+                wallNewRightJointIdRef.current = null;
+
+                if (!useStore.getState().enableFineGrid) {
+                  const leftTarget = findMagnetPoint(leftPoint, 1);
+                  if (leftTarget.point) {
+                    const magnetOffset = new Vector3().subVectors(leftTarget.point, leftPoint);
                     p.add(magnetOffset);
                     leftPoint.add(magnetOffset);
                     rightPoint.add(magnetOffset);
-                  }
-                  if (
-                    rightTarget.id &&
-                    (!rightTarget.jointId || rightTarget.jointId === currWall.id) &&
-                    (leftTarget.id !== rightTarget.id || leftTarget.side !== rightTarget.side)
-                  ) {
-                    wallNewRightJointIdRef.current = rightTarget.id;
-                    rightFlip = rightTarget.side === WallSide.Right;
-                  }
-                } else {
-                  wallNewRightJointIdRef.current = null;
-                }
-
-                // *notice the different between false and null
-                if ((leftFlip && rightFlip === null) || (rightFlip && leftFlip === null) || (leftFlip && rightFlip)) {
-                  flipCurrWallRef.current = true;
-                } else if ((leftFlip && rightFlip === false) || (rightFlip && leftFlip === false)) {
-                  flipLeftHandSideWallRef.current = leftFlip;
-                  flipRightHandSideWallRef.current = rightFlip;
-                }
-
-                if (leftTarget.point && rightTarget.point) {
-                  if (leftTarget.id !== rightTarget.id || leftTarget.side !== rightTarget.side) {
-                    leftPoint.copy(leftTarget.point);
-                    rightPoint.copy(rightTarget.point);
-                    stretched = true;
-                  }
-                }
-              }
-
-              setCommonStore((state) => {
-                for (const e of state.elements) {
-                  if (e.id === grabRef.current?.id) {
-                    const wall = e as WallModel;
-                    if (stretched) {
-                      wall.cx = (leftPoint.x + rightPoint.x) / 2;
-                      wall.cy = (leftPoint.y + rightPoint.y) / 2;
-                      wall.lx = leftPoint.distanceTo(rightPoint);
-                      let angle = Math.atan2(rightPoint.y - leftPoint.y, rightPoint.x - leftPoint.x);
-                      angle = angle >= 0 ? angle : (TWO_PI + angle) % TWO_PI;
-                      wall.relativeAngle = angle;
-                    } else {
-                      wall.cx = p.x;
-                      wall.cy = p.y;
+                    if (leftTarget.id && (!leftTarget.jointId || leftTarget.jointId === currWall.id)) {
+                      wallNewLeftJointIdRef.current = leftTarget.id;
+                      leftFlip = leftTarget.side === WallSide.Left;
                     }
-                    wall.leftPoint = leftPoint.toArray();
-                    wall.rightPoint = rightPoint.toArray();
-                    break;
+                  } else {
+                    wallNewLeftJointIdRef.current = null;
+                  }
+
+                  const rightTarget = findMagnetPoint(rightPoint, 1);
+                  if (rightTarget.point) {
+                    if (!leftTarget.id) {
+                      const magnetOffset = new Vector3().subVectors(rightTarget.point, rightPoint);
+                      p.add(magnetOffset);
+                      leftPoint.add(magnetOffset);
+                      rightPoint.add(magnetOffset);
+                    }
+                    if (
+                      rightTarget.id &&
+                      (!rightTarget.jointId || rightTarget.jointId === currWall.id) &&
+                      (leftTarget.id !== rightTarget.id || leftTarget.side !== rightTarget.side)
+                    ) {
+                      wallNewRightJointIdRef.current = rightTarget.id;
+                      rightFlip = rightTarget.side === WallSide.Right;
+                    }
+                  } else {
+                    wallNewRightJointIdRef.current = null;
+                  }
+
+                  // *notice the different between false and null
+                  if ((leftFlip && rightFlip === null) || (rightFlip && leftFlip === null) || (leftFlip && rightFlip)) {
+                    flipCurrWallRef.current = true;
+                  } else if ((leftFlip && rightFlip === false) || (rightFlip && leftFlip === false)) {
+                    flipLeftHandSideWallRef.current = leftFlip;
+                    flipRightHandSideWallRef.current = rightFlip;
+                  }
+
+                  if (leftTarget.point && rightTarget.point) {
+                    if (leftTarget.id !== rightTarget.id || leftTarget.side !== rightTarget.side) {
+                      leftPoint.copy(leftTarget.point);
+                      rightPoint.copy(rightTarget.point);
+                      stretched = true;
+                    }
                   }
                 }
-                state.updateRoofFlag = !state.updateRoofFlag;
-              });
+
+                setCommonStore((state) => {
+                  for (const e of state.elements) {
+                    if (e.id === grabRef.current?.id) {
+                      const wall = e as WallModel;
+                      if (stretched) {
+                        wall.cx = (leftPoint.x + rightPoint.x) / 2;
+                        wall.cy = (leftPoint.y + rightPoint.y) / 2;
+                        wall.lx = leftPoint.distanceTo(rightPoint);
+                        let angle = Math.atan2(rightPoint.y - leftPoint.y, rightPoint.x - leftPoint.x);
+                        angle = angle >= 0 ? angle : (TWO_PI + angle) % TWO_PI;
+                        wall.relativeAngle = angle;
+                      } else {
+                        wall.cx = p.x;
+                        wall.cy = p.y;
+                      }
+                      wall.leftPoint = leftPoint.toArray();
+                      wall.rightPoint = rightPoint.toArray();
+                      break;
+                    }
+                  }
+                  state.updateRoofFlag = !state.updateRoofFlag;
+                });
+              }
             }
             break;
         }
