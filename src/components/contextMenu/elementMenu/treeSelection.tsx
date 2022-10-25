@@ -26,6 +26,7 @@ import { TreeModel } from '../../../models/TreeModel';
 const { Option } = Select;
 
 const TreeSelection = () => {
+  const setCommonStore = useStore(Selector.set);
   const language = useStore(Selector.language);
   const updateTreeTypeById = useStore(Selector.updateTreeTypeById);
   const addUndoable = useStore(Selector.addUndoable);
@@ -58,6 +59,9 @@ const TreeSelection = () => {
             } as UndoableChange;
             addUndoable(undoableChange);
             updateTreeTypeById(tree.id, value);
+            setCommonStore((state) => {
+              state.actionState.treeType = value;
+            });
             setUpdateFlag(!updateFlag);
           }
         }

@@ -4256,7 +4256,13 @@ export const useStore = create<CommonStoreState>(
                       .sub(new Vector3(parentModel.cx, parentModel.cy, parentModel.cz))
                       .applyEuler(new Euler(0, 0, -parentModel.rotation[2]));
                   }
-                  const tree = ElementModelFactory.makeTree(parentId, position.x, position.y, position.z);
+                  const tree = ElementModelFactory.makeTree(
+                    state.actionState.treeType,
+                    parentId,
+                    position.x,
+                    position.y,
+                    position.z,
+                  );
                   model = tree;
                   state.elements.push(tree);
                   break;
@@ -4269,7 +4275,13 @@ export const useStore = create<CommonStoreState>(
                       .sub(new Vector3(parentModel.cx, parentModel.cy, parentModel.cz))
                       .applyEuler(new Euler(0, 0, -parentModel.rotation[2]));
                   }
-                  const flower = ElementModelFactory.makeFlower(parentId, position.x, position.y, position.z);
+                  const flower = ElementModelFactory.makeFlower(
+                    state.actionState.flowerType,
+                    parentId,
+                    position.x,
+                    position.y,
+                    position.z,
+                  );
                   model = flower;
                   state.elements.push(flower);
                   break;

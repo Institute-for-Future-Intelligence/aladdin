@@ -31,6 +31,7 @@ import { FlowerModel } from '../../../models/FlowerModel';
 const { Option } = Select;
 
 const FlowerSelection = () => {
+  const setCommonStore = useStore(Selector.set);
   const language = useStore(Selector.language);
   const updateFlowerTypeById = useStore(Selector.updateFlowerTypeById);
   const addUndoable = useStore(Selector.addUndoable);
@@ -63,6 +64,9 @@ const FlowerSelection = () => {
             } as UndoableChange;
             addUndoable(undoableChange);
             updateFlowerTypeById(flower.id, value);
+            setCommonStore((state) => {
+              state.actionState.flowerType = value;
+            });
             setUpdateFlag(!updateFlag);
           }
         }

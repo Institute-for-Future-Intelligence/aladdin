@@ -55,12 +55,12 @@ export class ElementModelFactory {
   static makeHuman(name: HumanName, parentId: string, x: number, y: number, z?: number) {
     return {
       type: ObjectType.Human,
-      name: name,
+      name: name ?? HumanName.Jack,
       cx: x,
       cy: y,
       cz: z,
-      lx: HumanData.fetchWidth(name),
-      lz: HumanData.fetchHeight(name),
+      lx: HumanData.fetchWidth(name ?? HumanName.Jack),
+      lz: HumanData.fetchHeight(name ?? HumanName.Jack),
       normal: [0, 1, 0],
       rotation: [0, 0, 0],
       parentId: parentId,
@@ -68,10 +68,10 @@ export class ElementModelFactory {
     } as HumanModel;
   }
 
-  static makeTree(parentId: string, x: number, y: number, z?: number) {
+  static makeTree(name: TreeType, parentId: string, x: number, y: number, z?: number) {
     return {
       type: ObjectType.Tree,
-      name: TreeType.Dogwood,
+      name: name ?? TreeType.Dogwood,
       cx: x,
       cy: y,
       cz: z,
@@ -84,15 +84,15 @@ export class ElementModelFactory {
     } as TreeModel;
   }
 
-  static makeFlower(parentId: string, x: number, y: number, z?: number) {
+  static makeFlower(name: FlowerType, parentId: string, x: number, y: number, z?: number) {
     return {
       type: ObjectType.Flower,
-      name: FlowerType.YellowFlower,
+      name: name ?? FlowerType.YellowFlower,
       cx: x,
       cy: y,
       cz: z,
-      lx: FlowerData.fetchSpread(FlowerType.YellowFlower),
-      lz: FlowerData.fetchHeight(FlowerType.YellowFlower),
+      lx: FlowerData.fetchSpread(name ?? FlowerType.YellowFlower),
+      lz: FlowerData.fetchHeight(name ?? FlowerType.YellowFlower),
       normal: [0, 1, 0],
       rotation: [0, 0, 0],
       parentId: parentId,
