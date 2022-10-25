@@ -20,6 +20,7 @@ import { invalidate } from '@react-three/fiber';
 import { Util } from '../../../Util';
 
 const CuboidHeightInput = ({ setDialogVisible }: { setDialogVisible: (b: boolean) => void }) => {
+  const setCommonStore = useStore(Selector.set);
   const language = useStore(Selector.language);
   const elements = useStore(Selector.elements);
   const getElementById = useStore(Selector.getElementById);
@@ -31,7 +32,6 @@ const CuboidHeightInput = ({ setDialogVisible }: { setDialogVisible: (b: boolean
   const addUndoable = useStore(Selector.addUndoable);
   const cuboidActionScope = useStore(Selector.cuboidActionScope);
   const setCuboidActionScope = useStore(Selector.setCuboidActionScope);
-  const setCommonStore = useStore(Selector.set);
   const setElementPosition = useStore(Selector.setElementPosition);
   const applyCount = useStore(Selector.applyCount);
   const setApplyCount = useStore(Selector.setApplyCount);
@@ -291,6 +291,9 @@ const CuboidHeightInput = ({ setDialogVisible }: { setDialogVisible: (b: boolean
         addUndoable(undoableChange);
         setApplyCount(applyCount + 1);
     }
+    setCommonStore((state) => {
+      state.actionState.cuboidHeight = value;
+    });
     setUpdateFlag(!updateFlag);
   };
 

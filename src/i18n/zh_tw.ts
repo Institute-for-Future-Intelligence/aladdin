@@ -321,6 +321,7 @@ export const i18n_zh_tw = {
         DutchGableRoof: '荷蘭雙坡屋頂',
         CombinationRoof: '組合屋頂',
         BonnetRoof: '帽簷屋頂',
+        ButterflyRoof: '蝴蝶型屋頂',
         GableAndValleyRoof: '坡谷屋頂',
         ClerestoryRoof: '天窗屋頂',
         AllBasicRoofTypes: '所有的基本屋頂類型',

@@ -20,6 +20,7 @@ import { invalidate } from '@react-three/fiber';
 import { Util } from '../../../Util';
 
 const FoundationHeightInput = ({ setDialogVisible }: { setDialogVisible: (b: boolean) => void }) => {
+  const setCommonStore = useStore(Selector.set);
   const language = useStore(Selector.language);
   const elements = useStore(Selector.elements);
   const getElementById = useStore(Selector.getElementById);
@@ -31,7 +32,6 @@ const FoundationHeightInput = ({ setDialogVisible }: { setDialogVisible: (b: boo
   const addUndoable = useStore(Selector.addUndoable);
   const foundationActionScope = useStore(Selector.foundationActionScope);
   const setFoundationActionScope = useStore(Selector.setFoundationActionScope);
-  const setCommonStore = useStore(Selector.set);
   const setElementPosition = useStore(Selector.setElementPosition);
   const applyCount = useStore(Selector.applyCount);
   const setApplyCount = useStore(Selector.setApplyCount);
@@ -291,6 +291,9 @@ const FoundationHeightInput = ({ setDialogVisible }: { setDialogVisible: (b: boo
         addUndoable(undoableChange);
         setApplyCount(applyCount + 1);
     }
+    setCommonStore((state) => {
+      state.actionState.foundationHeight = value;
+    });
     setUpdateFlag(!updateFlag);
   };
 

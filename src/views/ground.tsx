@@ -506,6 +506,9 @@ const Ground = () => {
               },
             } as UndoableChange;
             addUndoable(undoableChangeHeight);
+            setCommonStore((state) => {
+              state.actionState.treeHeight = elem.lz;
+            });
             return;
           case ResizeHandleType.Left:
           case ResizeHandleType.Right:
@@ -526,6 +529,9 @@ const Ground = () => {
               },
             } as UndoableChange;
             addUndoable(undoableChangeSpread);
+            setCommonStore((state) => {
+              state.actionState.treeSpread = elem.lx;
+            });
             return;
         }
         break;
@@ -558,6 +564,9 @@ const Ground = () => {
     newPolygonVerticesMapRef.current.clear();
     newWallPointsMapRef.current.clear();
     setCommonStore((state) => {
+      if (elem.type === ObjectType.Cuboid) {
+        state.actionState.cuboidHeight = elem.lz;
+      }
       state.updateSceneRadius();
       state.updateWallMapOnFoundationFlag = !state.updateWallMapOnFoundationFlag;
       // set ref children state

@@ -570,6 +570,7 @@ const Sky = ({ theme = 'Default' }: SkyProps) => {
               case ResizeHandleType.LowerRightTop:
                 oldChildrenParentIdMapRef.current.clear();
                 setCommonStore((state) => {
+                  state.actionState.cuboidHeight = elem.lz;
                   // set ref children state
                   for (const e of state.elements) {
                     if (Util.isPlantOrHuman(e)) {
@@ -685,6 +686,9 @@ const Sky = ({ theme = 'Default' }: SkyProps) => {
                   },
                 } as UndoableChange;
                 addUndoable(undoableChangeHeight);
+                setCommonStore((state) => {
+                  state.actionState.treeHeight = elem.lz;
+                });
                 break;
               case ResizeHandleType.Left:
               case ResizeHandleType.Right:
@@ -705,6 +709,9 @@ const Sky = ({ theme = 'Default' }: SkyProps) => {
                   },
                 } as UndoableChange;
                 addUndoable(undoableChangeSpread);
+                setCommonStore((state) => {
+                  state.actionState.treeSpread = elem.lx;
+                });
                 break;
             }
             elementRef = useStoreRef.getState().treeRef?.current;

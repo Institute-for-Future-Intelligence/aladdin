@@ -4258,6 +4258,8 @@ export const useStore = create<CommonStoreState>(
                   }
                   const tree = ElementModelFactory.makeTree(
                     state.actionState.treeType,
+                    state.actionState.treeSpread,
+                    state.actionState.treeHeight,
                     parentId,
                     position.x,
                     position.y,
@@ -4405,6 +4407,7 @@ export const useStore = create<CommonStoreState>(
                   const foundation = ElementModelFactory.makeFoundation(
                     p.x,
                     p.y,
+                    state.actionState.foundationHeight,
                     state.actionState.foundationColor,
                     state.actionState.foundationTexture,
                   );
@@ -4412,7 +4415,13 @@ export const useStore = create<CommonStoreState>(
                   state.elements.push(foundation);
                   break;
                 case ObjectType.Cuboid:
-                  const cuboid = ElementModelFactory.makeCuboid(p.x, p.y);
+                  const cuboid = ElementModelFactory.makeCuboid(
+                    p.x,
+                    p.y,
+                    state.actionState.cuboidHeight,
+                    state.actionState.cuboidFaceColors,
+                    state.actionState.cuboidFaceTextures,
+                  );
                   model = cuboid;
                   state.elements.push(cuboid);
                   break;

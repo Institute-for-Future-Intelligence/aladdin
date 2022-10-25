@@ -69,15 +69,15 @@ export class ElementModelFactory {
     } as HumanModel;
   }
 
-  static makeTree(name: TreeType, parentId: string, x: number, y: number, z?: number) {
+  static makeTree(name: TreeType, spread: number, height: number, parentId: string, x: number, y: number, z?: number) {
     return {
       type: ObjectType.Tree,
       name: name ?? TreeType.Dogwood,
       cx: x,
       cy: y,
       cz: z,
-      lx: 3,
-      lz: 4,
+      lx: spread ?? 3,
+      lz: height ?? 4,
       normal: [0, 1, 0],
       rotation: [0, 0, 0],
       parentId: parentId,
@@ -101,18 +101,18 @@ export class ElementModelFactory {
     } as FlowerModel;
   }
 
-  static makeCuboid(x: number, y: number) {
+  static makeCuboid(x: number, y: number, height: number, faceColors: string[], faceTextures: CuboidTexture[]) {
     return {
       type: ObjectType.Cuboid,
       cx: x,
       cy: y,
-      cz: 2,
+      cz: height ? height / 2 : 2,
       lx: 0.1,
       ly: 0.1,
-      lz: 4,
+      lz: height ?? 4,
       color: 'gray',
-      faceColors: ['gray', 'gray', 'gray', 'gray', 'gray', 'gray'],
-      textureTypes: [
+      faceColors: faceColors ?? ['gray', 'gray', 'gray', 'gray', 'gray', 'gray'],
+      textureTypes: faceTextures ?? [
         CuboidTexture.NoTexture,
         CuboidTexture.NoTexture,
         CuboidTexture.NoTexture,
@@ -128,15 +128,15 @@ export class ElementModelFactory {
     } as CuboidModel;
   }
 
-  static makeFoundation(x: number, y: number, color: string, texture: FoundationTexture) {
+  static makeFoundation(x: number, y: number, height: number, color: string, texture: FoundationTexture) {
     return {
       type: ObjectType.Foundation,
       cx: x,
       cy: y,
-      cz: 0.05,
+      cz: height ? height / 2 : 0.05,
       lx: 0,
       ly: 0,
-      lz: 0.1,
+      lz: height ?? 0.1,
       normal: [0, 0, 1],
       rotation: [0, 0, 0],
       parentId: GROUND_ID,

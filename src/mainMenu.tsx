@@ -32,6 +32,7 @@ import dutch_colonial_house from './examples/dutch_colonial_house.json';
 import dutch_gable_roof from './examples/dutch_gable_roof.json';
 import combination_roof from './examples/combination_roof.json';
 import bonnet_roof from './examples/bonnet_roof.json';
+import bufferfly_roof from './examples/bufferfly_roof.json';
 import gable_roof_vs_hip_roof from './examples/gable_roof_vs_hip_roof.json';
 import gable_and_valley_roof from './examples/gable_and_valley_roof.json';
 import clerestory_roof from './examples/clerestory_roof.json';
@@ -440,6 +441,9 @@ const MainMenu = ({ viewOnly, set2DView, resetView, zoomView, canvas }: MainMenu
         break;
       case 'bonnet_roof':
         input = bonnet_roof;
+        break;
+      case 'bufferfly_roof':
+        input = bufferfly_roof;
         break;
       case 'gable_roof_vs_hip_roof':
         input = gable_roof_vs_hip_roof;
@@ -2016,6 +2020,9 @@ const MainMenu = ({ viewOnly, set2DView, resetView, zoomView, canvas }: MainMenu
           </Menu.Item>
           <Menu.Item key="bonnet_roof" onClick={loadFile}>
             {i18n.t('menu.buildingDesignTutorials.BonnetRoof', lang)}
+          </Menu.Item>
+          <Menu.Item key="bufferfly_roof" onClick={loadFile}>
+            {i18n.t('menu.buildingDesignTutorials.ButterflyRoof', lang)}
           </Menu.Item>
           <Menu.Item key="gable_and_valley_roof" onClick={loadFile}>
             {i18n.t('menu.buildingDesignTutorials.GableAndValleyRoof', lang)}

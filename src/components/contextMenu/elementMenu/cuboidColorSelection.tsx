@@ -15,6 +15,7 @@ import { UndoableChangeGroup } from '../../../undo/UndoableChangeGroup';
 import { CuboidModel } from '../../../models/CuboidModel';
 
 const CuboidColorSelection = ({ setDialogVisible }: { setDialogVisible: (b: boolean) => void }) => {
+  const setCommonStore = useStore(Selector.set);
   const language = useStore(Selector.language);
   const elements = useStore(Selector.elements);
   const updateCuboidColorBySide = useStore(Selector.updateCuboidColorBySide);
@@ -148,6 +149,13 @@ const CuboidColorSelection = ({ setDialogVisible }: { setDialogVisible: (b: bool
         addUndoable(undoableChangeAll);
         updateCuboidColorForAll(value);
         setApplyCount(applyCount + 1);
+        setCommonStore((state) => {
+          if (!state.actionState.cuboidFaceColors)
+            state.actionState.cuboidFaceColors = ['gray', 'gray', 'gray', 'gray', 'gray', 'gray'];
+          for (let i = 0; i < 4; i++) {
+            state.actionState.cuboidFaceColors[i] = value;
+          }
+        });
         break;
       case Scope.OnlyThisObject:
         let oldColors;
@@ -178,6 +186,13 @@ const CuboidColorSelection = ({ setDialogVisible }: { setDialogVisible: (b: bool
         addUndoable(undoableChange);
         updateCuboidColorById(cuboid.id, value);
         setApplyCount(applyCount + 1);
+        setCommonStore((state) => {
+          if (!state.actionState.cuboidFaceColors)
+            state.actionState.cuboidFaceColors = ['gray', 'gray', 'gray', 'gray', 'gray', 'gray'];
+          for (let i = 0; i < 4; i++) {
+            state.actionState.cuboidFaceColors[i] = value;
+          }
+        });
         break;
       default:
         if (selectedSideIndex >= 0) {
@@ -212,6 +227,11 @@ const CuboidColorSelection = ({ setDialogVisible }: { setDialogVisible: (b: bool
           addUndoable(undoableChange);
           updateCuboidColorBySide(selectedSideIndex, cuboid.id, value);
           setApplyCount(applyCount + 1);
+          setCommonStore((state) => {
+            if (!state.actionState.cuboidFaceColors)
+              state.actionState.cuboidFaceColors = ['gray', 'gray', 'gray', 'gray', 'gray', 'gray'];
+            state.actionState.cuboidFaceColors[selectedSideIndex] = value;
+          });
         }
     }
     setUpdateFlag(!updateFlag);

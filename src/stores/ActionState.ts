@@ -2,7 +2,7 @@
  * @Copyright 2022. Institute for Future Intelligence, Inc.
  */
 
-import { FlowerType, FoundationTexture, HumanName, TreeType } from '../types';
+import { CuboidTexture, FlowerType, FoundationTexture, HumanName, TreeType } from '../types';
 
 export interface ActionState {
   humanName: HumanName;
@@ -10,7 +10,14 @@ export interface ActionState {
   flowerType: FlowerType;
 
   treeType: TreeType;
+  treeSpread: number;
+  treeHeight: number;
 
+  foundationHeight: number;
   foundationColor: string;
   foundationTexture: FoundationTexture;
+
+  cuboidHeight: number;
+  cuboidFaceColors: string[];
+  cuboidFaceTextures: CuboidTexture[];
 }

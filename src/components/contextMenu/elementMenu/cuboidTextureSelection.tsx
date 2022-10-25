@@ -25,6 +25,7 @@ import { UndoableChangeGroup } from '../../../undo/UndoableChangeGroup';
 import { CuboidModel } from '../../../models/CuboidModel';
 
 const CuboidTextureSelection = ({ setDialogVisible }: { setDialogVisible: (b: boolean) => void }) => {
+  const setCommonStore = useStore(Selector.set);
   const language = useStore(Selector.language);
   const elements = useStore(Selector.elements);
   const updateCuboidTextureBySide = useStore(Selector.updateCuboidTextureBySide);
@@ -141,6 +142,20 @@ const CuboidTextureSelection = ({ setDialogVisible }: { setDialogVisible: (b: bo
         addUndoable(undoableChangeAll);
         updateCuboidTextureForAll(value);
         setApplyCount(applyCount + 1);
+        setCommonStore((state) => {
+          if (!state.actionState.cuboidFaceTextures)
+            state.actionState.cuboidFaceTextures = [
+              CuboidTexture.NoTexture,
+              CuboidTexture.NoTexture,
+              CuboidTexture.NoTexture,
+              CuboidTexture.NoTexture,
+              CuboidTexture.NoTexture,
+              CuboidTexture.NoTexture,
+            ];
+          for (let i = 0; i < 4; i++) {
+            state.actionState.cuboidFaceTextures[i] = value;
+          }
+        });
         break;
       case Scope.OnlyThisObject:
         const oldTextures = cuboid.textureTypes ? [...cuboid.textureTypes] : undefined;
@@ -169,6 +184,20 @@ const CuboidTextureSelection = ({ setDialogVisible }: { setDialogVisible: (b: bo
         addUndoable(undoableChange);
         updateCuboidTextureById(cuboid.id, value);
         setApplyCount(applyCount + 1);
+        setCommonStore((state) => {
+          if (!state.actionState.cuboidFaceTextures)
+            state.actionState.cuboidFaceTextures = [
+              CuboidTexture.NoTexture,
+              CuboidTexture.NoTexture,
+              CuboidTexture.NoTexture,
+              CuboidTexture.NoTexture,
+              CuboidTexture.NoTexture,
+              CuboidTexture.NoTexture,
+            ];
+          for (let i = 0; i < 4; i++) {
+            state.actionState.cuboidFaceTextures[i] = value;
+          }
+        });
         break;
       default:
         if (selectedSideIndex >= 0) {
@@ -203,6 +232,18 @@ const CuboidTextureSelection = ({ setDialogVisible }: { setDialogVisible: (b: bo
           addUndoable(undoableChange);
           updateCuboidTextureBySide(selectedSideIndex, cuboid.id, value);
           setApplyCount(applyCount + 1);
+          setCommonStore((state) => {
+            if (!state.actionState.cuboidFaceTextures)
+              state.actionState.cuboidFaceTextures = [
+                CuboidTexture.NoTexture,
+                CuboidTexture.NoTexture,
+                CuboidTexture.NoTexture,
+                CuboidTexture.NoTexture,
+                CuboidTexture.NoTexture,
+                CuboidTexture.NoTexture,
+              ];
+            state.actionState.cuboidFaceTextures[selectedSideIndex] = value;
+          });
         }
     }
     setUpdateFlag(!updateFlag);

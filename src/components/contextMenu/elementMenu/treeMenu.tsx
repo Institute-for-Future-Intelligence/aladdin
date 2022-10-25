@@ -15,6 +15,7 @@ import { UndoableChange } from '../../../undo/UndoableChange';
 import { TreeModel } from '../../../models/TreeModel';
 
 export const TreeMenu = () => {
+  const setCommonStore = useStore(Selector.set);
   const language = useStore(Selector.language);
   const updateElementLxById = useStore(Selector.updateElementLxById);
   const updateElementLzById = useStore(Selector.updateElementLzById);
@@ -67,6 +68,9 @@ export const TreeMenu = () => {
     addUndoable(undoableChange);
     updateElementLxById(tree.id, value);
     setInputSpread(value);
+    setCommonStore((state) => {
+      state.actionState.treeSpread = value;
+    });
   };
 
   const setHeight = (value: number) => {
@@ -89,6 +93,9 @@ export const TreeMenu = () => {
     addUndoable(undoableChange);
     updateElementLzById(tree.id, value);
     setInputHeight(value);
+    setCommonStore((state) => {
+      state.actionState.treeHeight = value;
+    });
   };
 
   const editable = !tree?.locked;

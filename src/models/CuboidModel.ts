@@ -7,5 +7,5 @@ import { CuboidTexture } from '../types';
 
 export interface CuboidModel extends ElementModel {
   textureTypes?: CuboidTexture[];
-  faceColors?: string[]; // if defined, these colors supercede the color attribute
+  faceColors?: string[]; // if defined, these colors supersede the color attribute
 }
