@@ -11,7 +11,9 @@ import { DesignProblem } from '../types';
 import { immerable } from 'immer';
 
 export class DefaultEvolutionaryAlgorithmState implements EvolutionaryAlgorithmState {
+  // Needed for immer drafting to work properly: https://immerjs.github.io/immer/docs/complex-objects
   [immerable] = true;
+
   geneticAlgorithmParams: GeneticAlgorithmParams;
   particleSwarmOptimizationParams: ParticleSwarmOptimizationParams;
 

@@ -7,7 +7,9 @@ import { ParticleSwarmOptimizationParams } from './ParticleSwarmOptimizationPara
 import { immerable } from 'immer';
 
 export class DefaultParticleSwarmOptimizationParams implements ParticleSwarmOptimizationParams {
+  // Needed for immer drafting to work properly: https://immerjs.github.io/immer/docs/complex-objects
   [immerable] = true;
+
   problem: DesignProblem;
   objectiveFunctionType: ObjectiveFunctionType;
   searchMethod: SearchMethod;

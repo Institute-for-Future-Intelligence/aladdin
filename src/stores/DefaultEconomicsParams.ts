@@ -6,7 +6,9 @@ import { EconomicsParams } from './EconomicsParams';
 import { immerable } from 'immer';
 
 export class DefaultEconomicsParams implements EconomicsParams {
+  // Needed for immer drafting to work properly: https://immerjs.github.io/immer/docs/complex-objects
   [immerable] = true;
+
   projectLifeSpan: number;
   electricitySellingPrice: number;
   operationalCostPerUnit: number;

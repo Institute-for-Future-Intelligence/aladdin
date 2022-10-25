@@ -8,7 +8,9 @@ import { Rectangle } from '../models/Rectangle';
 import { DEFAULT_SOLAR_PANEL_SHINESS, DEFAULT_WINDOW_SHINESS } from '../constants';
 
 export class DefaultViewState implements ViewState {
+  // Needed for immer drafting to work properly: https://immerjs.github.io/immer/docs/complex-objects
   [immerable] = true;
+
   orthographic: boolean;
   enableRotate: boolean;
   ambientLightIntensity: number;

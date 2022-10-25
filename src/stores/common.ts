@@ -101,6 +101,8 @@ import { FlowerModel } from '../models/FlowerModel';
 import { FlowerData } from '../FlowerData';
 import { TreeData } from '../TreeData';
 import { WindowModel } from '../models/WindowModel';
+import { ActionState } from './ActionState';
+import { DefaultActionState } from './DefaultActionState';
 
 enableMapSet();
 
@@ -111,6 +113,7 @@ export interface CommonStoreState {
   world: WorldModel;
   elements: ElementModel[];
   viewState: ViewState;
+  actionState: ActionState;
   notes: string[];
   user: User;
   userCount: number;
@@ -788,6 +791,7 @@ export const useStore = create<CommonStoreState>(
           world: defaultWorldModel,
           elements: defaultElements,
           viewState: new DefaultViewState(),
+          actionState: new DefaultActionState(),
           solarPanelArrayLayoutParams: new DefaultSolarPanelArrayLayoutParams(),
           solarPanelArrayLayoutConstraints: new DefaultSolarPanelArrayLayoutConstraints(),
           evolutionaryAlgorithmState: new DefaultEvolutionaryAlgorithmState(),
@@ -4233,7 +4237,13 @@ export const useStore = create<CommonStoreState>(
                       .sub(new Vector3(parentModel.cx, parentModel.cy, parentModel.cz))
                       .applyEuler(new Euler(0, 0, -parentModel.rotation[2]));
                   }
-                  const human = ElementModelFactory.makeHuman(parentId, position.x, position.y, position.z);
+                  const human = ElementModelFactory.makeHuman(
+                    state.actionState.humanName,
+                    parentId,
+                    position.x,
+                    position.y,
+                    position.z,
+                  );
                   model = human;
                   state.elements.push(human);
                   break;
@@ -6016,6 +6026,7 @@ export const useStore = create<CommonStoreState>(
           'world',
           'elements',
           'viewState',
+          'actionState',
           'notes',
           'user',
           'sceneRadius',

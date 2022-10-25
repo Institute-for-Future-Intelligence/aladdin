@@ -7,7 +7,9 @@ import { Orientation, RowAxis } from '../types';
 import { immerable } from 'immer';
 
 export class DefaultSolarPanelArrayLayoutParams implements SolarPanelArrayLayoutParams {
+  // Needed for immer drafting to work properly: https://immerjs.github.io/immer/docs/complex-objects
   [immerable] = true;
+
   pvModelName: string;
   rowAxis: RowAxis;
   orientation: Orientation;

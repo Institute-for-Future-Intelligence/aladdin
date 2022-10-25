@@ -38,6 +38,7 @@ import i18n from '../../../i18n/i18n';
 const { Option } = Select;
 
 const HumanSelection = () => {
+  const setCommonStore = useStore(Selector.set);
   const language = useStore(Selector.language);
   const updateHumanNameById = useStore(Selector.updateHumanNameById);
   const addUndoable = useStore(Selector.addUndoable);
@@ -70,6 +71,9 @@ const HumanSelection = () => {
             } as UndoableChange;
             addUndoable(undoableChange);
             updateHumanNameById(human.id, value);
+            setCommonStore((state) => {
+              state.actionState.humanName = value;
+            });
             setUpdateFlag(!updateFlag);
           }
         }

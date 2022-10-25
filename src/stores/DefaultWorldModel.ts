@@ -17,7 +17,9 @@ import { immerable } from 'immer';
 // default scene
 
 export class DefaultWorldModel implements WorldModel {
+  // Needed for immer drafting to work properly: https://immerjs.github.io/immer/docs/complex-objects
   [immerable] = true;
+
   name: string;
   date: string;
   ground: GroundModel;

@@ -52,15 +52,15 @@ import { defaultShutter } from 'src/views/window/window';
 import { FlowerData } from '../FlowerData';
 
 export class ElementModelFactory {
-  static makeHuman(parentId: string, x: number, y: number, z?: number) {
+  static makeHuman(name: HumanName, parentId: string, x: number, y: number, z?: number) {
     return {
       type: ObjectType.Human,
-      name: HumanName.Jack,
+      name: name,
       cx: x,
       cy: y,
       cz: z,
-      lx: HumanData.fetchWidth(HumanName.Jack),
-      lz: HumanData.fetchHeight(HumanName.Jack),
+      lx: HumanData.fetchWidth(name),
+      lz: HumanData.fetchHeight(name),
       normal: [0, 1, 0],
       rotation: [0, 0, 0],
       parentId: parentId,

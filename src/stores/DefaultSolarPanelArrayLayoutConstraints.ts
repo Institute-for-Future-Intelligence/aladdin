@@ -8,7 +8,9 @@ import { immerable } from 'immer';
 import { Orientation, RowAxis } from '../types';
 
 export class DefaultSolarPanelArrayLayoutConstraints implements SolarPanelArrayLayoutConstraints {
+  // Needed for immer drafting to work properly: https://immerjs.github.io/immer/docs/complex-objects
   [immerable] = true;
+
   minimumInterRowSpacing: number;
   maximumInterRowSpacing: number;
   minimumRowsPerRack: number;

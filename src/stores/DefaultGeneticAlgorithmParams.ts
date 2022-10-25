@@ -7,7 +7,9 @@ import { SearchMethod, GeneticAlgorithmSelectionMethod, ObjectiveFunctionType, D
 import { immerable } from 'immer';
 
 export class DefaultGeneticAlgorithmParams implements GeneticAlgorithmParams {
+  // Needed for immer drafting to work properly: https://immerjs.github.io/immer/docs/complex-objects
   [immerable] = true;
+
   problem: DesignProblem;
   objectiveFunctionType: ObjectiveFunctionType;
   selectionMethod: GeneticAlgorithmSelectionMethod;

@@ -1063,4 +1063,6 @@ export const particleSwarmOptimizationWizardSelectedTab = (state: CommonStoreSta
 
 export * as viewState from './viewState';
 
+export * as actionState from './actionState';
+
 export * as world from './world';
