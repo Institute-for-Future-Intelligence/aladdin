@@ -27,7 +27,7 @@ import { CuboidModel } from './CuboidModel';
 import { FoundationModel } from './FoundationModel';
 import { SolarPanelModel } from './SolarPanelModel';
 import { PvModel } from './PvModel';
-import { WallModel } from './WallModel';
+import { WallModel, WallStructure } from './WallModel';
 import {
   GableRoofModel,
   GambrelRoofModel,
@@ -483,6 +483,11 @@ export class ElementModelFactory {
     thickness: number,
     color: string,
     texture: WallTexture,
+    structure: WallStructure,
+    studSpacing: number,
+    studWidth: number,
+    studColor: string,
+    opacity: number,
     x: number,
     y: number,
     z?: number,
@@ -504,6 +509,11 @@ export class ElementModelFactory {
       rightJoints: [],
       textureType: texture ?? WallTexture.Default,
       color: color ?? 'white',
+      wallStructure: structure ?? WallStructure.Default,
+      studSpacing: studSpacing ?? 2,
+      studWidth: studWidth ?? 0.1,
+      studColor: studColor ?? 'white',
+      opacity: opacity ?? 0.5,
       selected: true,
       lineWidth: 0.2,
       lineColor: 'black',

@@ -15,6 +15,7 @@ import { WallModel } from '../../../models/WallModel';
 import { CompactPicker } from 'react-color';
 
 const WallStudColorSelection = ({ setDialogVisible }: { setDialogVisible: (b: boolean) => void }) => {
+  const setCommonStore = useStore(Selector.set);
   const language = useStore(Selector.language);
   const elements = useStore(Selector.elements);
   const wall = useStore(Selector.selectedElement) as WallModel;
@@ -25,7 +26,6 @@ const WallStudColorSelection = ({ setDialogVisible }: { setDialogVisible: (b: bo
   const setApplyCount = useStore(Selector.setApplyCount);
   const revertApply = useStore(Selector.revertApply);
   const getElementById = useStore(Selector.getElementById);
-  const setCommonStore = useStore(Selector.set);
 
   const [selectedColor, setSelectedColor] = useState<string>(wall?.studColor ?? 'white');
   const [updateFlag, setUpdateFlag] = useState<boolean>(false);
@@ -165,6 +165,9 @@ const WallStudColorSelection = ({ setDialogVisible }: { setDialogVisible: (b: bo
           setApplyCount(applyCount + 1);
         }
     }
+    setCommonStore((state) => {
+      state.actionState.wallStudColor = value;
+    });
     setUpdateFlag(!updateFlag);
   };
 

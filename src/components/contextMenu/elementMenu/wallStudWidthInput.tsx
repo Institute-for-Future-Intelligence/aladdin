@@ -160,6 +160,9 @@ const WallStudWidthInput = ({ setDialogVisible }: { setDialogVisible: (b: boolea
           setApplyCount(applyCount + 1);
         }
     }
+    setCommonStore((state) => {
+      state.actionState.wallStudWidth = value;
+    });
     setUpdateFlag(!updateFlag);
   };
 

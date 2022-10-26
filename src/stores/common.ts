@@ -4061,6 +4061,8 @@ export const useStore = create<CommonStoreState>(
                   if (structure === WallStructure.Stud) {
                     wallModel.opacity = 0;
                   }
+                  state.actionState.wallStructure = structure;
+                  state.actionState.wallOpacity = 0;
                   break;
                 }
               }
@@ -4438,6 +4440,11 @@ export const useStore = create<CommonStoreState>(
                     state.actionState.wallThickness,
                     state.actionState.wallColor,
                     state.actionState.wallTexture,
+                    state.actionState.wallStructure,
+                    state.actionState.wallStudSpacing,
+                    state.actionState.wallStudWidth,
+                    state.actionState.wallStudColor,
+                    state.actionState.wallOpacity,
                     relativePos.x,
                     relativePos.y,
                     relativePos.z,
