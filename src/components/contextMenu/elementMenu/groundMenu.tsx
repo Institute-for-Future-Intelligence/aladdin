@@ -65,7 +65,6 @@ export const GroundMenu = () => {
   const setAlbedo = (value: number) => {
     setCommonStore((state) => {
       state.world.ground.albedo = value;
-      state.viewState.ambientLightIntensity = value / 3;
     });
   };
 
@@ -395,7 +394,7 @@ export const GroundMenu = () => {
       )}
 
       <Menu>
-        <Menu.Item style={{ paddingLeft: '36px' }} key={'ground-albedo'}>
+        <Menu.Item style={{ height: '36px', paddingLeft: '36px', marginTop: 0 }} key={'ground-albedo'}>
           <Space style={{ width: '60px' }}>{i18n.t('groundMenu.Albedo', lang)}:</Space>
           <InputNumber
             min={0.05}

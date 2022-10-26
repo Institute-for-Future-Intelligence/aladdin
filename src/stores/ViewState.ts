@@ -7,6 +7,7 @@ import { Rectangle } from '../models/Rectangle';
 export interface ViewState {
   orthographic: boolean;
   enableRotate: boolean;
+  directLightIntensity: number;
   ambientLightIntensity: number;
   cameraPosition: number[]; // 3D mode
   panCenter: number[]; // 3D mode

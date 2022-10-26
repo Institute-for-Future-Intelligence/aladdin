@@ -193,7 +193,7 @@ const CuboidAzimuthInput = ({ setDialogVisible }: { setDialogVisible: (b: boolea
         )}
       >
         <Row gutter={6}>
-          <Col className="gutter-row" span={6}>
+          <Col className="gutter-row" span={7}>
             <InputNumber
               min={-180}
               max={180}
@@ -209,7 +209,7 @@ const CuboidAzimuthInput = ({ setDialogVisible }: { setDialogVisible: (b: boolea
               }}
               onPressEnter={ok}
             />
-            <div style={{ paddingTop: '20px', textAlign: 'left', fontSize: '11px' }}>
+            <div style={{ paddingTop: '20px', paddingRight: '6px', textAlign: 'left', fontSize: '11px' }}>
               {i18n.t('word.Range', lang)}: [-180°, 180°]
               <br />
               {i18n.t('message.AzimuthOfNorthIsZero', lang)}
@@ -220,7 +220,7 @@ const CuboidAzimuthInput = ({ setDialogVisible }: { setDialogVisible: (b: boolea
           <Col
             className="gutter-row"
             style={{ border: '2px dashed #ccc', paddingTop: '8px', paddingLeft: '12px', paddingBottom: '8px' }}
-            span={16}
+            span={17}
           >
             <Radio.Group onChange={onScopeChange} value={cuboidActionScope}>
               <Space direction="vertical">

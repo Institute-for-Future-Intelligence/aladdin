@@ -214,7 +214,7 @@ const RoofOpacityInput = ({ setDialogVisible }: { setDialogVisible: (b: boolean)
         )}
       >
         <Row gutter={6}>
-          <Col className="gutter-row" span={6}>
+          <Col className="gutter-row" span={7}>
             <InputNumber
               min={0}
               max={1}
@@ -233,7 +233,7 @@ const RoofOpacityInput = ({ setDialogVisible }: { setDialogVisible: (b: boolean)
           <Col
             className="gutter-row"
             style={{ border: '2px dashed #ccc', paddingTop: '8px', paddingLeft: '12px', paddingBottom: '8px' }}
-            span={16}
+            span={17}
           >
             <Radio.Group onChange={(e) => setRoofActionScope(e.target.value)} value={roofActionScope}>
               <Space direction="vertical">

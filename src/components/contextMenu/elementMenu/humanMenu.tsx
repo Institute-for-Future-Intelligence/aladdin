@@ -175,7 +175,7 @@ export const HumanMenu = () => {
         )}
         {editable && (
           <Menu>
-            <Menu.Item key={'human-change-person'} style={{ paddingLeft: '36px' }}>
+            <Menu.Item key={'human-change-person'} style={{ height: '36px', paddingLeft: '36px', marginTop: 0 }}>
               <Space style={{ width: '120px' }}>{i18n.t('peopleMenu.ChangePerson', { lng: language })}: </Space>
               <HumanSelection key={'humans'} />
             </Menu.Item>

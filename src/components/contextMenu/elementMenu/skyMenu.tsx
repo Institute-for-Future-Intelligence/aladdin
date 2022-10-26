@@ -15,6 +15,7 @@ import { computeSunriseAndSunsetInMinutes } from '../../../analysis/sunTools';
 
 export const SkyMenu = () => {
   const setCommonStore = useStore(Selector.set);
+  const language = useStore(Selector.language);
   const addUndoable = useStore(Selector.addUndoable);
   const world = useStore.getState().world;
   const axes = useStore(Selector.viewState.axes);
@@ -22,7 +23,8 @@ export const SkyMenu = () => {
   const showAzimuthAngle = useStore(Selector.viewState.showAzimuthAngle) ?? true;
   const showElevationAngle = useStore(Selector.viewState.showElevationAngle) ?? true;
   const showZenithAngle = useStore(Selector.viewState.showZenithAngle) ?? true;
-  const language = useStore(Selector.language);
+  const directLightIntensity = useStore(Selector.viewState.directLightIntensity) ?? 0.5;
+  const ambientLightIntensity = useStore(Selector.viewState.ambientLightIntensity) ?? 0.1;
   const airAttenuationCoefficient = useStore(Selector.world.airAttenuationCoefficient) ?? 0.01;
   const airConvectiveCoefficient = useStore(Selector.world.airConvectiveCoefficient) ?? 5;
   const highestTemperatureTimeInMinutes = useStore(Selector.world.highestTemperatureTimeInMinutes) ?? 900;
@@ -66,6 +68,18 @@ export const SkyMenu = () => {
   const setShowZenithAngle = (value: boolean) => {
     setCommonStore((state) => {
       state.viewState.showZenithAngle = value;
+    });
+  };
+
+  const setDirectLightIntensity = (value: number) => {
+    setCommonStore((state) => {
+      state.viewState.directLightIntensity = value;
+    });
+  };
+
+  const setAmbientLightIntensity = (value: number) => {
+    setCommonStore((state) => {
+      state.viewState.ambientLightIntensity = value;
     });
   };
 
@@ -247,7 +261,78 @@ export const SkyMenu = () => {
       </SubMenu>
 
       <Menu>
-        <Menu.Item style={{ paddingLeft: '36px' }} key={'air-attenuation-coefficient'}>
+        <Menu.Item
+          style={{ height: '36px', paddingLeft: '36px', marginBottom: 0, marginTop: 0 }}
+          key={'direct-light-intensity'}
+        >
+          <Space style={{ width: '260px' }}>{i18n.t('skyMenu.DirectLightIntensity', lang) + ' [0.1-2]:'}</Space>
+          <InputNumber
+            min={0.1}
+            max={2}
+            step={0.1}
+            precision={2}
+            value={directLightIntensity}
+            onChange={(value) => {
+              if (value) {
+                const oldValue = directLightIntensity;
+                const newValue = value;
+                const undoableChange = {
+                  name: 'Set Direct Light Intensity',
+                  timestamp: Date.now(),
+                  oldValue: oldValue,
+                  newValue: newValue,
+                  undo: () => {
+                    setDirectLightIntensity(undoableChange.oldValue as number);
+                  },
+                  redo: () => {
+                    setDirectLightIntensity(undoableChange.newValue as number);
+                  },
+                } as UndoableChange;
+                addUndoable(undoableChange);
+                setDirectLightIntensity(newValue);
+              }
+            }}
+          />
+        </Menu.Item>
+
+        <Menu.Item
+          style={{ height: '36px', paddingLeft: '36px', marginBottom: 0, marginTop: 0 }}
+          key={'ambient-light-intensity'}
+        >
+          <Space style={{ width: '260px' }}>{i18n.t('skyMenu.AmbientLightIntensity', lang) + ' [0.01-1]:'}</Space>
+          <InputNumber
+            min={0.01}
+            max={1}
+            step={0.01}
+            precision={2}
+            value={ambientLightIntensity}
+            onChange={(value) => {
+              if (value) {
+                const oldValue = ambientLightIntensity;
+                const newValue = value;
+                const undoableChange = {
+                  name: 'Set Ambient Light Intensity',
+                  timestamp: Date.now(),
+                  oldValue: oldValue,
+                  newValue: newValue,
+                  undo: () => {
+                    setAmbientLightIntensity(undoableChange.oldValue as number);
+                  },
+                  redo: () => {
+                    setAmbientLightIntensity(undoableChange.newValue as number);
+                  },
+                } as UndoableChange;
+                addUndoable(undoableChange);
+                setAmbientLightIntensity(newValue);
+              }
+            }}
+          />
+        </Menu.Item>
+
+        <Menu.Item
+          style={{ height: '36px', paddingLeft: '36px', marginBottom: 0, marginTop: 0 }}
+          key={'air-attenuation-coefficient'}
+        >
           <Space style={{ width: '260px' }}>{i18n.t('skyMenu.SunlightAttenuationCoefficientInAir', lang) + ':'}</Space>
           <InputNumber
             min={0}
@@ -278,7 +363,10 @@ export const SkyMenu = () => {
           />
         </Menu.Item>
 
-        <Menu.Item style={{ paddingLeft: '36px' }} key={'air-convective-coefficient'}>
+        <Menu.Item
+          style={{ height: '36px', paddingLeft: '36px', marginBottom: 0, marginTop: 0 }}
+          key={'air-convective-coefficient'}
+        >
           <Space style={{ width: '260px' }}>
             {i18n.t('skyMenu.ConvectiveCoefficientOfAir', lang) + ' [W/(m²×K)]:'}
           </Space>
@@ -311,7 +399,10 @@ export const SkyMenu = () => {
           />
         </Menu.Item>
 
-        <Menu.Item style={{ paddingLeft: '36px' }} key={'highest-temperature-time-in-minutes'}>
+        <Menu.Item
+          style={{ height: '36px', paddingLeft: '36px', marginTop: 0 }}
+          key={'highest-temperature-time-in-minutes'}
+        >
           <Space style={{ width: '260px' }}>{i18n.t('skyMenu.HighestTemperatureTimeInMinutes', lang) + ':'}</Space>
           <InputNumber
             min={720}

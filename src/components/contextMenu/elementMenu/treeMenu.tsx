@@ -146,12 +146,18 @@ export const TreeMenu = () => {
         {/* have to wrap the text field with a Menu so that it can stay open when the user types in it */}
         {editable && (
           <Menu>
-            <Menu.Item key={'tree-change-type'} style={{ paddingLeft: '36px' }}>
+            <Menu.Item
+              key={'tree-change-type'}
+              style={{ height: '36px', paddingLeft: '36px', marginBottom: 0, marginTop: 0 }}
+            >
               <Space style={{ width: '100px' }}>{i18n.t('treeMenu.Type', lang)}: </Space>
               <TreeSelection key={'trees'} />
             </Menu.Item>
 
-            <Menu.Item key={'tree-spread'} style={{ paddingLeft: '36px' }}>
+            <Menu.Item
+              key={'tree-spread'}
+              style={{ height: '36px', paddingLeft: '36px', marginBottom: 0, marginTop: 0 }}
+            >
               <Space style={{ width: '100px' }}>
                 {i18n.t('treeMenu.Spread', lang) + ' (' + i18n.t('word.MeterAbbreviation', lang) + ')'}:
               </Space>
@@ -166,7 +172,7 @@ export const TreeMenu = () => {
               />
             </Menu.Item>
 
-            <Menu.Item key={'tree-height'} style={{ paddingLeft: '36px' }}>
+            <Menu.Item key={'tree-height'} style={{ height: '36px', paddingLeft: '36px', marginTop: 0 }}>
               <Space style={{ width: '100px' }}>
                 {i18n.t('word.Height', lang) + ' (' + i18n.t('word.MeterAbbreviation', lang) + ')'}:
               </Space>

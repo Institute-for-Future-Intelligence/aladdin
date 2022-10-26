@@ -236,7 +236,7 @@ const RoofOverhangInput = ({ setDialogVisible }: { setDialogVisible: (b: boolean
           <Col
             className="gutter-row"
             style={{ border: '2px dashed #ccc', paddingTop: '8px', paddingLeft: '12px', paddingBottom: '8px' }}
-            span={16}
+            span={17}
           >
             <Radio.Group onChange={(e) => setRoofActionScope(e.target.value)} value={roofActionScope}>
               <Space direction="vertical">

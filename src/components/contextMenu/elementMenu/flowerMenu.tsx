@@ -60,7 +60,7 @@ export const FlowerMenu = () => {
         {/* have to wrap the text field with a Menu so that it can stay open when the user types in it */}
         {editable && (
           <Menu>
-            <Menu.Item key={'flower-change-type'} style={{ paddingLeft: '36px' }}>
+            <Menu.Item key={'flower-change-type'} style={{ height: '36px', paddingLeft: '36px', marginTop: 0 }}>
               <Space style={{ width: '100px' }}>{i18n.t('flowerMenu.Type', lang)}: </Space>
               <FlowerSelection key={'flowers'} />
             </Menu.Item>

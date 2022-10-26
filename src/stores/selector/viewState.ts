@@ -19,6 +19,8 @@ export const axes = (state: CommonStoreState) => state.viewState.axes;
 
 export const ambientLightIntensity = (state: CommonStoreState) => state.viewState.ambientLightIntensity;
 
+export const directLightIntensity = (state: CommonStoreState) => state.viewState.directLightIntensity;
+
 export const theme = (state: CommonStoreState) => state.viewState.theme;
 
 export const showAzimuthAngle = (state: CommonStoreState) => state.viewState.showAzimuthAngle;

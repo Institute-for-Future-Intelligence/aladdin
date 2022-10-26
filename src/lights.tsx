@@ -9,6 +9,7 @@ import { DirectionalLight } from 'three';
 import { DEFAULT_FAR } from './constants';
 
 const Lights = () => {
+  const directLightIntensity = useStore(Selector.viewState.directLightIntensity);
   const ambientLightIntensity = useStore(Selector.viewState.ambientLightIntensity);
   const sunlightDirection = useStore(Selector.sunlightDirection);
   const sceneRadius = useStore(Selector.sceneRadius);
@@ -33,7 +34,7 @@ const Lights = () => {
         name={'Directional Light'}
         color="white"
         position={sunlightDirection.normalize().multiplyScalar(positionExtent)}
-        intensity={sunlightDirection.z > 0 ? 0.5 : 0}
+        intensity={sunlightDirection.z > 0 ? directLightIntensity ?? 0.5 : 0}
         castShadow
         shadow-mapSize-height={4096 * 4}
         shadow-mapSize-width={4096 * 4}

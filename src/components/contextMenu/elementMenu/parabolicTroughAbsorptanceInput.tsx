@@ -235,7 +235,7 @@ const ParabolicTroughAbsorptanceInput = ({ setDialogVisible }: { setDialogVisibl
         )}
       >
         <Row gutter={6}>
-          <Col className="gutter-row" span={6}>
+          <Col className="gutter-row" span={7}>
             <InputNumber
               min={0}
               max={1}

@@ -197,7 +197,7 @@ const SolarAbsorberPipePoleNumberInput = ({ setDialogVisible }: { setDialogVisib
         )}
       >
         <Row gutter={6}>
-          <Col className="gutter-row" span={6}>
+          <Col className="gutter-row" span={7}>
             <InputNumber
               min={1}
               max={100}
@@ -218,7 +218,7 @@ const SolarAbsorberPipePoleNumberInput = ({ setDialogVisible }: { setDialogVisib
           <Col
             className="gutter-row"
             style={{ border: '2px dashed #ccc', paddingTop: '8px', paddingLeft: '12px', paddingBottom: '8px' }}
-            span={16}
+            span={17}
           >
             <Radio.Group onChange={onScopeChange} value={foundationActionScope}>
               <Space direction="vertical">

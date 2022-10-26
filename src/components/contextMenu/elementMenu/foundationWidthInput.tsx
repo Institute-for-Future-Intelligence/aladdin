@@ -551,7 +551,7 @@ const FoundationWidthInput = ({ setDialogVisible }: { setDialogVisible: (b: bool
           <Col
             className="gutter-row"
             style={{ border: '2px dashed #ccc', paddingTop: '8px', paddingLeft: '12px', paddingBottom: '8px' }}
-            span={16}
+            span={17}
           >
             <Radio.Group onChange={onScopeChange} value={foundationActionScope}>
               <Space direction="vertical">

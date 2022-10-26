@@ -324,7 +324,7 @@ const SolarPanelTrackerSelection = ({ setDialogVisible }: { setDialogVisible: (b
         )}
       >
         <Row gutter={6}>
-          <Col className="gutter-row" span={6}>
+          <Col className="gutter-row" span={7}>
             <Select
               style={{ width: '120px' }}
               value={selectedTrackerType}
@@ -355,14 +355,14 @@ const SolarPanelTrackerSelection = ({ setDialogVisible }: { setDialogVisible: (b
                 AADAT
               </Option>
             </Select>
-            <div style={{ paddingTop: '20px', textAlign: 'left', fontSize: '11px' }}>
+            <div style={{ paddingTop: '20px', paddingRight: '10px', textAlign: 'left', fontSize: '11px' }}>
               {i18n.t('solarPanelMenu.SolarTrackerFollowsSun', lang)}
             </div>
           </Col>
           <Col
             className="gutter-row"
             style={{ border: '2px dashed #ccc', paddingTop: '8px', paddingLeft: '12px', paddingBottom: '8px' }}
-            span={16}
+            span={17}
           >
             <Radio.Group onChange={onScopeChange} value={solarPanelActionScope}>
               <Space direction="vertical">
