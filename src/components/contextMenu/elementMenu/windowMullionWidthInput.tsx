@@ -175,6 +175,9 @@ const MullinoWidthInput = ({ setDialogVisible }: { setDialogVisible: (b: boolean
           setApplyCount(applyCount + 1);
         }
     }
+    setCommonStore((state) => {
+      state.actionState.windowMullionWidth = value;
+    });
   };
 
   const onStart = (event: DraggableEvent, uiData: DraggableData) => {

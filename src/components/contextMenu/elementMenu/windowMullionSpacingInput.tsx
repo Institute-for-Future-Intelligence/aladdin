@@ -175,6 +175,9 @@ const MullionSpacingInput = ({ setDialogVisible }: { setDialogVisible: (b: boole
           setApplyCount(applyCount + 1);
         }
     }
+    setCommonStore((state) => {
+      state.actionState.windowMullionSpacing = value;
+    });
   };
 
   const onStart = (event: DraggableEvent, uiData: DraggableData) => {

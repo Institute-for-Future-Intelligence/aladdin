@@ -18,6 +18,7 @@ import SubMenu from 'antd/lib/menu/SubMenu';
 import { UndoableCheck } from '../../../undo/UndoableCheck';
 
 export const WindowMenu = () => {
+  const setCommonStore = useStore(Selector.set);
   const language = useStore(Selector.language);
   const addUndoable = useStore(Selector.addUndoable);
   const setApplyCount = useStore(Selector.setApplyCount);
@@ -83,6 +84,9 @@ export const WindowMenu = () => {
               } as UndoableCheck;
               addUndoable(undoableCheck);
               updateWindowMullionById(window.id, checked);
+              setCommonStore((state) => {
+                state.actionState.windowMullion = checked;
+              });
             }}
           >
             {i18n.t('windowMenu.Mullion', { lng: language })}
