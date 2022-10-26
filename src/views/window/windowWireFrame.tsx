@@ -13,6 +13,7 @@ interface WindowWireFrameProps {
   lz: number;
   mullionWidth: number;
   mullionSpacing: number;
+  showMullion?: boolean;
   mullionSpacingY?: number;
   lineColor?: string;
   lineWidth?: number;
@@ -21,6 +22,7 @@ interface WindowWireFrameProps {
 const WindowWireFrame = ({
   lx,
   lz,
+  showMullion = true,
   mullionWidth,
   mullionSpacing,
   mullionSpacingY = mullionSpacing,
@@ -81,31 +83,34 @@ const WindowWireFrame = ({
 
   return (
     <group name={'Window Wireframe'} position={[0, -0.001, 0]}>
-      {verticalMullion.map((x, index) => (
-        <Cylinder
-          key={index}
-          position={[x, 0.00025, 0]}
-          args={[mullionRadius, mullionRadius, lz, radialSegments, heightSegments]}
-          rotation={[HALF_PI, HALF_PI, 0]}
-          receiveShadow={shadowEnabled}
-          castShadow={shadowEnabled}
-        >
-          {innerMat}
-        </Cylinder>
-      ))}
-      {horizontalMullion.map((z, index) => (
-        <Cylinder
-          key={index}
-          position={[0, 0.0005, z]}
-          args={[mullionRadius, mullionRadius, lx, radialSegments, heightSegments]}
-          rotation={[0, 0, HALF_PI]}
-          receiveShadow={shadowEnabled}
-          castShadow={shadowEnabled}
-        >
-          {innerMat}
-        </Cylinder>
-      ))}
-
+      {showMullion && (
+        <>
+          {verticalMullion.map((x, index) => (
+            <Cylinder
+              key={index}
+              position={[x, 0.00025, 0]}
+              args={[mullionRadius, mullionRadius, lz, radialSegments, heightSegments]}
+              rotation={[HALF_PI, HALF_PI, 0]}
+              receiveShadow={shadowEnabled}
+              castShadow={shadowEnabled}
+            >
+              {innerMat}
+            </Cylinder>
+          ))}
+          {horizontalMullion.map((z, index) => (
+            <Cylinder
+              key={index}
+              position={[0, 0.0005, z]}
+              args={[mullionRadius, mullionRadius, lx, radialSegments, heightSegments]}
+              rotation={[0, 0, HALF_PI]}
+              receiveShadow={shadowEnabled}
+              castShadow={shadowEnabled}
+            >
+              {innerMat}
+            </Cylinder>
+          ))}
+        </>
+      )}
       <Cylinder
         args={[lineWidth, lineWidth, lx, radialSegments, heightSegments]}
         rotation={[0, 0, HALF_PI]}

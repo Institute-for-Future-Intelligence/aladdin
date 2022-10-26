@@ -184,16 +184,15 @@ const Window = ({
         </Plane>
 
         {/* wireframes */}
-        {mullion && (
-          <WindowWireFrame
-            lx={wlx}
-            lz={wlz}
-            mullionWidth={mullionWidth}
-            mullionSpacing={mullionSpacing}
-            lineColor={locked && selected ? LOCKED_ELEMENT_SELECTION_COLOR : lineColor}
-            lineWidth={selected && locked ? 0.5 : lineWidth}
-          />
-        )}
+        <WindowWireFrame
+          lx={wlx}
+          lz={wlz}
+          showMullion={mullion}
+          mullionWidth={mullionWidth}
+          mullionSpacing={mullionSpacing}
+          lineColor={locked && selected ? LOCKED_ELEMENT_SELECTION_COLOR : lineColor}
+          lineWidth={selected && locked ? 0.5 : lineWidth}
+        />
       </group>
 
       {shutter && (
