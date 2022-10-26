@@ -28,6 +28,7 @@ import {
   handlePointerMove,
   ConvexGeoProps,
   RoofWireframeProps,
+  RoofHandle,
 } from './roofRenderer';
 import { RoofUtil } from './RoofUtil';
 
@@ -598,9 +599,8 @@ const MansardRoof = ({
       {/* handles */}
       {selected && !locked && (
         <group position={[centroid.x, centroid.y, centroid.z + thickness]}>
-          <Sphere
+          <RoofHandle
             position={[0, 0, 0.3]}
-            args={[0.3]}
             onPointerDown={() => {
               isPointerMovingRef.current = true;
               setEnableIntersectionPlane(true);
@@ -618,10 +618,9 @@ const MansardRoof = ({
           {ridgePoints.map((ridge, idx) => {
             const point = ridge.leftPoint.clone().sub(centroid);
             return (
-              <Sphere
+              <RoofHandle
                 key={idx}
                 position={[point.x, point.y, 0]}
-                args={[0.3]}
                 onPointerDown={() => {
                   isPointerMovingRef.current = true;
                   setEnableIntersectionPlane(true);

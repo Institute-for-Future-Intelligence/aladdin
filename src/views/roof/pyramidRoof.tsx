@@ -25,6 +25,7 @@ import {
   addUndoableResizeRoofHeight,
   RoofWireframeProps,
   updateRooftopSolarPanel,
+  RoofHandle,
 } from './roofRenderer';
 import { RoofUtil } from './RoofUtil';
 import { useMultiCurrWallArray, useRoofHeight, useRoofTexture, useSolarPanelUndoable, useTransparent } from './hooks';
@@ -608,8 +609,7 @@ const PyramidRoof = ({
 
       {/* handle */}
       {selected && !locked && (
-        <Sphere
-          args={[0.3]}
+        <RoofHandle
           position={[centerPoint.x, centerPoint.y, h + thickness + 0.15]}
           onPointerDown={() => {
             oldHeight.current = h;

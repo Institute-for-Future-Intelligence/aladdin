@@ -26,6 +26,7 @@ import {
   updateRooftopSolarPanel,
   handlePointerUp,
   handlePointerDown,
+  RoofHandle,
 } from './roofRenderer';
 import { RoofUtil } from './RoofUtil';
 
@@ -479,9 +480,8 @@ const HipRoof = ({
       {selected && !locked && (
         <group position={[0, 0, thickness + 0.15]}>
           {/* left handle */}
-          <Sphere
+          <RoofHandle
             position={[ridgeLeftPoint.x, ridgeLeftPoint.y, ridgeLeftPoint.z]}
-            args={[0.3]}
             onPointerDown={() => {
               isPointerMovingRef.current = true;
               setEnableIntersectionPlane(true);
@@ -497,9 +497,8 @@ const HipRoof = ({
             }}
           />
           {/* mid handle */}
-          <Sphere
+          <RoofHandle
             position={[ridgeMidPoint.x, ridgeMidPoint.y, ridgeMidPoint.z]}
-            args={[0.3]}
             onPointerDown={() => {
               isPointerMovingRef.current = true;
               setEnableIntersectionPlane(true);
@@ -515,9 +514,8 @@ const HipRoof = ({
             }}
           />
           {/* right handle */}
-          <Sphere
+          <RoofHandle
             position={[ridgeRightPoint.x, ridgeRightPoint.y, ridgeRightPoint.z]}
-            args={[0.3]}
             onPointerDown={() => {
               isPointerMovingRef.current = true;
               setEnableIntersectionPlane(true);

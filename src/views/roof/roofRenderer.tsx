@@ -2,7 +2,7 @@
  * @Copyright 2021-2022. Institute for Future Intelligence, Inc.
  */
 
-import React, { useEffect } from 'react';
+import React, { useEffect, useMemo, useRef, useState } from 'react';
 import { useStore } from '../../stores/common';
 import {
   GableRoofModel,
@@ -20,11 +20,11 @@ import HipRoof from './hipRoof';
 import GambrelRoof from './gambrelRoof';
 import { UndoableResizeRoofHeight } from 'src/undo/UndoableResize';
 import MansardRoof from './mansardRoof';
-import { Euler, Vector3 } from 'three';
+import { Euler, Mesh, Vector3 } from 'three';
 import { ObjectType, Orientation } from 'src/types';
-import { ThreeEvent } from '@react-three/fiber';
+import { ThreeEvent, useThree } from '@react-three/fiber';
 import { WallModel } from 'src/models/WallModel';
-import { LOCKED_ELEMENT_SELECTION_COLOR } from 'src/constants';
+import { HIGHLIGHT_HANDLE_COLOR, LOCKED_ELEMENT_SELECTION_COLOR } from 'src/constants';
 import { Point2 } from 'src/models/Point2';
 import { showError } from 'src/helpers';
 import i18n from 'src/i18n/i18n';
@@ -33,6 +33,8 @@ import { ElementModel } from 'src/models/ElementModel';
 import { RoofUtil } from './RoofUtil';
 import { ElementModelFactory } from 'src/models/ElementModelFactory';
 import { UndoableAdd } from 'src/undo/UndoableAdd';
+import { Sphere } from '@react-three/drei';
+import { useHandleSize } from '../wall/wallResizeHandleWrapper';
 
 export interface ConvexGeoProps {
   points: Vector3[];
@@ -45,6 +47,12 @@ export interface RoofWireframeProps {
   thickness: number;
   lineWidth: number;
   lineColor: string;
+}
+
+interface RoofHandleProps {
+  position: [x: number, y: number, z: number];
+  onPointerDown?: (event: ThreeEvent<PointerEvent>) => void;
+  onPointerUp?: (event: ThreeEvent<PointerEvent>) => void;
 }
 
 const addUndoableAddSP = (elem: ElementModel) => {
@@ -352,6 +360,107 @@ export const handleContextMenu = (e: ThreeEvent<MouseEvent>, id: string) => {
       }
     });
   }
+};
+
+export const RoofHandle = ({ position, onPointerDown, onPointerUp }: RoofHandleProps) => {
+  const roofHandleSize = useHandleSize();
+  const { gl } = useThree();
+
+  const pointerDownRef = useRef(false);
+  const hoveredRef = useRef(false);
+  const havefiredEvent = useRef(false);
+  const handleRef = useRef<Mesh>();
+
+  const [color, setColor] = useState('white');
+
+  const setHightLight = (b: boolean) => {
+    if (b) {
+      setColor(HIGHLIGHT_HANDLE_COLOR);
+      gl.domElement.style.cursor = 'pointer';
+    } else {
+      setColor('white');
+      gl.domElement.style.cursor = 'default';
+    }
+  };
+
+  useEffect(() => {
+    const handlePointerUp = () => {
+      if (hoveredRef.current) {
+        havefiredEvent.current = true;
+      }
+
+      if (!hoveredRef.current && pointerDownRef.current) {
+        setHightLight(false);
+      }
+      pointerDownRef.current = false;
+    };
+    window.addEventListener('pointerup', handlePointerUp);
+    return () => {
+      window.removeEventListener('pointerup', handlePointerUp);
+    };
+  }, []);
+
+  const isFirstHandle = (e: ThreeEvent<PointerEvent>) => {
+    if (e.intersections.length > 0) {
+      for (const { eventObject } of e.intersections) {
+        if (eventObject.name === 'Roof Handle') {
+          return eventObject === handleRef.current;
+        }
+      }
+    }
+    return false;
+  };
+
+  return (
+    <Sphere
+      name={'Roof Handle'}
+      ref={handleRef}
+      args={[roofHandleSize]}
+      position={position}
+      onPointerMove={(e) => {
+        if (isFirstHandle(e)) {
+          havefiredEvent.current = false;
+          if (!hoveredRef.current) {
+            hoveredRef.current = true;
+            setHightLight(true);
+          }
+        } else {
+          setColor('white');
+        }
+      }}
+      // this will fire once after pointerup when hovered
+      onPointerOut={(e) => {
+        if (havefiredEvent.current) {
+          return;
+        }
+        if (!pointerDownRef.current) {
+          if (e.intersections.length > 0 && e.intersections[0].eventObject.name === 'Roof Handle') {
+            setColor('white');
+          } else {
+            setHightLight(false);
+          }
+        }
+        hoveredRef.current = false;
+      }}
+      onPointerDown={(e) => {
+        if (isFirstHandle(e)) {
+          if (onPointerDown) {
+            onPointerDown(e);
+          }
+          pointerDownRef.current = true;
+        }
+      }}
+      onPointerUp={(e) => {
+        if (isFirstHandle(e)) {
+          if (onPointerUp) {
+            onPointerUp(e);
+          }
+        }
+      }}
+    >
+      <meshStandardMaterial color={color} />
+    </Sphere>
+  );
 };
 
 const RoofRenderer = (props: RoofModel) => {
