@@ -2,7 +2,16 @@
  * @Copyright 2022. Institute for Future Intelligence, Inc.
  */
 
-import { CuboidTexture, FlowerType, FoundationTexture, HumanName, Orientation, TreeType, WallTexture } from '../types';
+import {
+  CuboidTexture,
+  DoorTexture,
+  FlowerType,
+  FoundationTexture,
+  HumanName,
+  Orientation,
+  TreeType,
+  WallTexture,
+} from '../types';
 import { WallStructure } from '../models/WallModel';
 
 export interface ActionState {
@@ -31,6 +40,9 @@ export interface ActionState {
   wallStudWidth: number;
   wallStudColor: string;
   wallOpacity: number;
+
+  doorColor: string;
+  doorTexture: DoorTexture;
 
   windowColor: string;
   windowTint: string;
