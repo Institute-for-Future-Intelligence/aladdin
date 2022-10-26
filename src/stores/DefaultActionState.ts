@@ -6,6 +6,7 @@ import { immerable } from 'immer';
 import { ActionState } from './ActionState';
 import { CuboidTexture, FlowerType, FoundationTexture, HumanName, Orientation, TreeType, WallTexture } from '../types';
 import { WallStructure } from '../models/WallModel';
+import { defaultShutter } from '../views/window/window';
 
 export class DefaultActionState implements ActionState {
   // Needed for immer drafting to work properly: https://immerjs.github.io/immer/docs/complex-objects
@@ -36,6 +37,13 @@ export class DefaultActionState implements ActionState {
   wallStudWidth: number;
   wallStudColor: string;
   wallOpacity: number;
+
+  windowColor: string;
+  windowTint: string;
+  windowShutterLeft: boolean;
+  windowShutterRight: boolean;
+  windowShutterColor: string;
+  windowShutterWidth: number;
 
   solarPanelModelName: string;
   solarPanelOrientation: Orientation;
@@ -77,6 +85,14 @@ export class DefaultActionState implements ActionState {
     this.wallStudWidth = 0.1;
     this.wallStudColor = 'white';
     this.wallOpacity = 0.5;
+
+    this.windowColor = 'white';
+    this.windowTint = '#73D8FF';
+    // I worry about this using Shutter objects may cause default to be accidentally overwritten.
+    this.windowShutterLeft = defaultShutter.showLeft;
+    this.windowShutterRight = defaultShutter.showRight;
+    this.windowShutterColor = defaultShutter.color;
+    this.windowShutterWidth = defaultShutter.width;
 
     this.solarPanelModelName = 'SPR-X21-335-BLK';
     this.solarPanelOrientation = Orientation.landscape;

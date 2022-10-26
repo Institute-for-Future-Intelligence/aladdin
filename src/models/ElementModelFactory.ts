@@ -38,7 +38,7 @@ import {
   RoofType,
 } from './RoofModel';
 import { GROUND_ID } from '../constants';
-import { WindowModel } from './WindowModel';
+import { Shutter, WindowModel } from './WindowModel';
 import { Point2 } from './Point2';
 import { PolygonModel } from './PolygonModel';
 import { Util } from '../Util';
@@ -527,7 +527,17 @@ export class ElementModelFactory {
     } as WallModel;
   }
 
-  static makeWindow(parent: ElementModel, cx: number, cy: number, cz?: number, normal?: Vector3, rotation?: number[]) {
+  static makeWindow(
+    parent: ElementModel,
+    color: string,
+    tint: string,
+    shutter: Shutter,
+    cx: number,
+    cy: number,
+    cz?: number,
+    normal?: Vector3,
+    rotation?: number[],
+  ) {
     let foundationId;
     switch (parent.type) {
       case ObjectType.Cuboid:
@@ -546,7 +556,7 @@ export class ElementModelFactory {
       lx: 0,
       ly: parent.ly,
       lz: 0,
-      shutter: defaultShutter,
+      shutter: shutter ?? defaultShutter,
       mullion: true,
       mullionWidth: 0.06,
       mullionSpacing: 1,
@@ -554,8 +564,8 @@ export class ElementModelFactory {
       lineWidth: 0.2,
       lineColor: 'black',
       showLabel: false,
-      color: '#73D8FF',
-      tint: '#73D8FF',
+      color: color ?? 'white', // frame color
+      tint: tint ?? '#73D8FF', // glass color
       normal: normal ? normal.toArray() : [0, 0, 1],
       rotation: rotation ? rotation : [0, 0, 0],
       parentId: parent.id,

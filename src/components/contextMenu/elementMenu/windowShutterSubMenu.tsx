@@ -21,6 +21,7 @@ enum ShutterSide {
 }
 
 const WindowShutterSubMenu = ({ windowId }: { windowId: string }) => {
+  const setCommonStore = useStore(Selector.set);
   const language = useStore(Selector.language);
   const setApplyCount = useStore(Selector.setApplyCount);
 
@@ -115,6 +116,9 @@ const WindowShutterSubMenu = ({ windowId }: { windowId: string }) => {
                 const checked = e.target.checked;
                 addUndoable(checked, ShutterSide.left);
                 selectShutter(checked, ShutterSide.left);
+                setCommonStore((state) => {
+                  state.actionState.windowShutterLeft = checked;
+                });
               }}
             >
               {i18n.t('windowMenu.LeftShutter', { lng: language })}
@@ -128,6 +132,9 @@ const WindowShutterSubMenu = ({ windowId }: { windowId: string }) => {
                 const checked = e.target.checked;
                 addUndoable(checked, ShutterSide.right);
                 selectShutter(checked, ShutterSide.right);
+                setCommonStore((state) => {
+                  state.actionState.windowShutterRight = checked;
+                });
               }}
             >
               {i18n.t('windowMenu.RightShutter', { lng: language })}
@@ -141,6 +148,10 @@ const WindowShutterSubMenu = ({ windowId }: { windowId: string }) => {
                 const checked = e.target.checked;
                 addUndoable(checked, ShutterSide.both);
                 selectShutter(checked, ShutterSide.both);
+                setCommonStore((state) => {
+                  state.actionState.windowShutterLeft = checked;
+                  state.actionState.windowShutterRight = checked;
+                });
               }}
             >
               {i18n.t('windowMenu.BothShutters', { lng: language })}

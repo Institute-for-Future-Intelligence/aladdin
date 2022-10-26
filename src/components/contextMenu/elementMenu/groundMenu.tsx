@@ -65,6 +65,7 @@ export const GroundMenu = () => {
   const setAlbedo = (value: number) => {
     setCommonStore((state) => {
       state.world.ground.albedo = value;
+      state.viewState.ambientLightIntensity = value / 3;
     });
   };
 

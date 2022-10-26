@@ -18,12 +18,11 @@ import SubMenu from 'antd/lib/menu/SubMenu';
 import { UndoableCheck } from '../../../undo/UndoableCheck';
 
 export const WindowMenu = () => {
-  const window = useStore(Selector.selectedElement) as WindowModel;
-
   const language = useStore(Selector.language);
   const addUndoable = useStore(Selector.addUndoable);
   const setApplyCount = useStore(Selector.setApplyCount);
   const updateWindowMullionById = useStore(Selector.updateWindowMullionById);
+  const window = useStore(Selector.selectedElement) as WindowModel;
 
   const [mullionWidthDialogVisible, setMullionWidthDialogVisible] = useState(false);
   const [mullionSpacingDialogVisible, setMullionSpacingDialogVisible] = useState(false);

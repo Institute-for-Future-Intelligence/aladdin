@@ -193,6 +193,9 @@ const WindowShutterColorSelection = ({ setDialogVisible }: { setDialogVisible: (
           setApplyCount(applyCount + 1);
         }
     }
+    setCommonStore((state) => {
+      state.actionState.windowShutterColor = value;
+    });
   };
 
   const onStart = (event: DraggableEvent, uiData: DraggableData) => {

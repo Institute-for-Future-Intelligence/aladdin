@@ -184,6 +184,9 @@ const WindowTintSelection = ({ setDialogVisible }: { setDialogVisible: (b: boole
           setApplyCount(applyCount + 1);
         }
     }
+    setCommonStore((state) => {
+      state.actionState.windowTint = value;
+    });
   };
 
   const onStart = (event: DraggableEvent, uiData: DraggableData) => {

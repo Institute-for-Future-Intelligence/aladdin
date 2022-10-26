@@ -32,6 +32,13 @@ export interface ActionState {
   wallStudColor: string;
   wallOpacity: number;
 
+  windowColor: string;
+  windowTint: string;
+  windowShutterLeft: boolean;
+  windowShutterRight: boolean;
+  windowShutterColor: string;
+  windowShutterWidth: number;
+
   solarPanelModelName: string;
   solarPanelOrientation: Orientation;
   solarPanelPoleHeight: number;

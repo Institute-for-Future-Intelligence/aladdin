@@ -36,7 +36,7 @@ import { Util } from 'src/Util';
 import { useStore } from 'src/stores/common';
 import { useStoreRef } from 'src/stores/commonRef';
 import { ElementModel } from 'src/models/ElementModel';
-import { WindowModel } from 'src/models/WindowModel';
+import { Shutter, WindowModel } from 'src/models/WindowModel';
 import { WallModel, WallStructure } from 'src/models/WallModel';
 import { ElementModelFactory } from 'src/models/ElementModelFactory';
 import { Point2 } from 'src/models/Point2';
@@ -218,6 +218,7 @@ const Wall = ({
   const isAddingElement = useStore(Selector.isAddingElement);
   const addUndoable = useStore(Selector.addUndoable);
   const setElementPosition = useStore(Selector.setElementPosition);
+  const actionState = useStore.getState().actionState;
 
   const intersectionPlaneRef = useRef<Mesh>(null);
   const outsideWallRef = useRef<Mesh>(null);
@@ -988,8 +989,21 @@ const Wall = ({
           case ObjectType.Window: {
             let relativePos = getRelativePosOnWall(pointer, wallModel);
             relativePos = getPositionOnGrid(relativePos);
-
-            const newWindow = ElementModelFactory.makeWindow(wallModel, relativePos.x / lx, 0, relativePos.z / lz);
+            const shutter = {
+              showLeft: actionState.windowShutterLeft,
+              showRight: actionState.windowShutterRight,
+              color: actionState.windowShutterColor,
+              width: actionState.windowShutterWidth,
+            } as Shutter;
+            const newWindow = ElementModelFactory.makeWindow(
+              wallModel,
+              actionState.windowColor,
+              actionState.windowTint,
+              shutter,
+              relativePos.x / lx,
+              0,
+              relativePos.z / lz,
+            );
             useStoreRef.getState().setEnableOrbitController(false);
             setCommonStore((state) => {
               state.objectTypeToAdd = ObjectType.None;

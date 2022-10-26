@@ -183,6 +183,9 @@ const WindowShutterWidthInput = ({ setDialogVisible }: { setDialogVisible: (b: b
           setApplyCount(applyCount + 1);
         }
     }
+    setCommonStore((state) => {
+      state.actionState.windowShutterWidth = value;
+    });
   };
 
   const onStart = (event: DraggableEvent, uiData: DraggableData) => {
