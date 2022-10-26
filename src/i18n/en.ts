@@ -883,9 +883,10 @@ export const i18n_en = {
       StructureWidth: 'Structure Width',
       StructureThickness: 'Structure Thickness',
       StructureColor: 'Structure Color',
-      WallColor: 'Wall Color',
+      Color: 'Wall Color',
       Height: 'Height',
       Thickness: 'Thickness',
+      Texture: 'Texture',
     },
 
     windowMenu: {
@@ -896,6 +897,7 @@ export const i18n_en = {
       Mullion: 'Mullion',
       MullionWidth: 'Mullion Width',
       MullionSpacing: 'Mullion Spacing',
+      Color: 'Frame Color',
       Tint: 'Tint',
       Opacity: 'Opacity',
       Shutter: 'Shutter',

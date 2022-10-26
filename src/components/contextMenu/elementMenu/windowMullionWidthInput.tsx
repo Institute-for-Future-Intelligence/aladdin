@@ -13,7 +13,7 @@ import { UndoableChange } from 'src/undo/UndoableChange';
 import { UndoableChangeGroup } from 'src/undo/UndoableChangeGroup';
 import { WindowModel } from 'src/models/WindowModel';
 
-const MullinoWidthInput = ({ setDialogVisible }: { setDialogVisible: (b: boolean) => void }) => {
+const MullinoWidthInput = ({ setDialogVisible }: { setDialogVisible: () => void }) => {
   const language = useStore(Selector.language);
   const windowElement = useStore(Selector.selectedElement) as WindowModel;
   const addUndoable = useStore(Selector.addUndoable);
@@ -195,7 +195,7 @@ const MullinoWidthInput = ({ setDialogVisible }: { setDialogVisible: (b: boolean
 
   const close = () => {
     setInputWidth(windowElement.mullionWidth ?? 0.4);
-    setDialogVisible(false);
+    setDialogVisible();
   };
 
   const handleCancel = () => {
@@ -205,7 +205,7 @@ const MullinoWidthInput = ({ setDialogVisible }: { setDialogVisible: (b: boolean
 
   const handleOk = () => {
     setMullionWidth(inputWidth);
-    setDialogVisible(false);
+    setDialogVisible();
     setApplyCount(0);
   };
 

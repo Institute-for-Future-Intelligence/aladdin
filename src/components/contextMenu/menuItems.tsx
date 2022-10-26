@@ -141,8 +141,15 @@ export const Cut = ({ paddingLeft = '36px', keyName }: { paddingLeft?: string; k
 export const Lock = ({ keyName }: { keyName: string }) => {
   const language = useStore(Selector.language);
   const updateElementLockById = useStore(Selector.updateElementLockById);
-  const selectedElement = useStore(Selector.selectedElement);
   const addUndoable = useStore(Selector.addUndoable);
+  const selectedElement = useStore((state) => {
+    for (const e of state.elements) {
+      if (e.selected) {
+        return e;
+      }
+    }
+    return null;
+  });
 
   const lockElement = (on: boolean) => {
     if (selectedElement) {

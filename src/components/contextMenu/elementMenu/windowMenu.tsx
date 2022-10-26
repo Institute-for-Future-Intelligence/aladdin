@@ -3,70 +3,93 @@
  */
 
 import React, { useState } from 'react';
-import { useStore } from '../../../stores/common';
+import { CommonStoreState, useStore } from '../../../stores/common';
 import * as Selector from '../../../stores/selector';
 import { Copy, Cut, Lock } from '../menuItems';
 import { WindowModel } from '../../../models/WindowModel';
 import MullionWidthInput from './windowMullionWidthInput';
 import MullionSpacingInput from './windowMullionSpacingInput';
-import { Checkbox, Menu } from 'antd';
+import { Checkbox, Divider, Menu } from 'antd';
 import i18n from 'src/i18n/i18n';
-import WindowTintSelection from './windowTintSelection';
-import WindowOpacityInput from './windowOpacityInput';
 import WindowShutterSubMenu from './windowShutterSubMenu';
 import SubMenu from 'antd/lib/menu/SubMenu';
 import { UndoableCheck } from '../../../undo/UndoableCheck';
+import { ObjectType } from 'src/types';
+import WindowItemSelection from './windowItemSelection';
+import WindowOpacityInput from './windowOpacityInput';
+
+export enum WindowDataType {
+  Color = 'Color',
+  Tint = 'Tint',
+  Opacity = 'Opacity',
+  MullionWidth = 'MullionWidth',
+  MullionSpacing = 'MullionSpacing',
+}
+
+type ItemSelectionSettingType = {
+  attributeKey: keyof WindowModel;
+};
+
+const DialogSetting = {
+  Color: { attributeKey: 'color' },
+  Tint: { attributeKey: 'tint' },
+  Opacity: { attributeKey: 'opaticy' },
+  MullionWidth: { attributeKey: 'mullionWidth' },
+  MullionSpacing: { attributeKey: 'mullionSpacing' },
+};
+
+const getSelectedWindow = (state: CommonStoreState) => {
+  for (const el of state.elements) {
+    if (el.selected && el.type === ObjectType.Window) {
+      return el as WindowModel;
+    }
+  }
+  return null;
+};
 
 export const WindowMenu = () => {
+  const window = useStore(getSelectedWindow);
   const setCommonStore = useStore(Selector.set);
   const language = useStore(Selector.language);
   const addUndoable = useStore(Selector.addUndoable);
   const setApplyCount = useStore(Selector.setApplyCount);
   const updateWindowMullionById = useStore(Selector.updateWindowMullionById);
-  const window = useStore(Selector.selectedElement) as WindowModel;
 
-  const [mullionWidthDialogVisible, setMullionWidthDialogVisible] = useState(false);
-  const [mullionSpacingDialogVisible, setMullionSpacingDialogVisible] = useState(false);
-  const [tintDialogVisible, setTintDialogVisible] = useState(false);
-  const [opacityDialogVisible, setOpacityDialogVisible] = useState(false);
+  const [visibleType, setVisibleType] = useState<WindowDataType | null>(null);
 
   const lang = { lng: language };
   const paddingLeft = '36px';
 
-  return (
-    window && (
-      <Menu.ItemGroup>
-        <Copy keyName={'window-copy'} />
-        <Cut keyName={'window-cut'} />
-        <Lock keyName={'window-lock'} />
+  const renderCut = () => {
+    if (!window || window.locked) {
+      return null;
+    }
+    return <Cut keyName={'window-cut'} />;
+  };
 
-        {tintDialogVisible && <WindowTintSelection setDialogVisible={setTintDialogVisible} />}
-        <Menu.Item
-          key={'window-tint'}
-          style={{ paddingLeft: paddingLeft }}
-          onClick={() => {
-            setApplyCount(0);
-            setTintDialogVisible(true);
-          }}
-        >
-          {i18n.t('windowMenu.Tint', lang)} ...
-        </Menu.Item>
+  const renderMenuItem = (dataType: WindowDataType) => {
+    return (
+      <Menu.Item
+        key={`window-${dataType}`}
+        style={{ paddingLeft: paddingLeft }}
+        onClick={() => {
+          setApplyCount(0);
+          setVisibleType(dataType);
+        }}
+      >
+        {i18n.t(`windowMenu.${dataType}`, lang)} ...
+      </Menu.Item>
+    );
+  };
 
-        {opacityDialogVisible && <WindowOpacityInput setDialogVisible={setOpacityDialogVisible} />}
-        <Menu.Item
-          key={'window-opacity'}
-          style={{ paddingLeft: paddingLeft }}
-          onClick={() => {
-            setApplyCount(0);
-            setOpacityDialogVisible(true);
-          }}
-        >
-          {i18n.t('windowMenu.Opacity', lang)} ...
-        </Menu.Item>
+  const renderMullionSubMenu = () => {
+    if (!window) return null;
 
+    return (
+      <SubMenu key={'window-mullion'} title={i18n.t('windowMenu.Mullion', lang)} style={{ paddingLeft: '24px' }}>
         <Menu.Item key={'mullion'}>
           <Checkbox
-            checked={window.mullion === undefined ? true : window.mullion}
+            checked={window.mullion}
             onChange={(e) => {
               const checked = e.target.checked;
               const undoableCheck = {
@@ -93,37 +116,58 @@ export const WindowMenu = () => {
           </Checkbox>
         </Menu.Item>
 
-        {/* mullion may not have been defined, but by default it is on */}
-        {(window.mullion || window.mullion === undefined) && (
-          <SubMenu key={'window-mullion'} title={i18n.t('windowMenu.Mullion', lang)} style={{ paddingLeft: '24px' }}>
-            {mullionWidthDialogVisible && <MullionWidthInput setDialogVisible={setMullionWidthDialogVisible} />}
-            <Menu.Item
-              key={'window-mullion-width'}
-              style={{ paddingLeft: paddingLeft }}
-              onClick={() => {
-                setApplyCount(0);
-                setMullionWidthDialogVisible(true);
-              }}
-            >
-              {i18n.t('windowMenu.MullionWidth', lang)} ...
-            </Menu.Item>
+        <Divider plain style={{ margin: '6px' }} />
 
-            {mullionSpacingDialogVisible && <MullionSpacingInput setDialogVisible={setMullionSpacingDialogVisible} />}
-            <Menu.Item
-              key={'window-mullion-spacing'}
-              style={{ paddingLeft: paddingLeft }}
-              onClick={() => {
-                setApplyCount(0);
-                setMullionSpacingDialogVisible(true);
-              }}
-            >
-              {i18n.t('windowMenu.MullionSpacing', lang)} ...
-            </Menu.Item>
-          </SubMenu>
-        )}
+        {renderMenuItem(WindowDataType.MullionWidth)}
 
-        <WindowShutterSubMenu windowId={window.id} />
-      </Menu.ItemGroup>
-    )
+        {renderMenuItem(WindowDataType.MullionSpacing)}
+      </SubMenu>
+    );
+  };
+
+  const renderDialogs = () => {
+    switch (visibleType) {
+      case WindowDataType.Color:
+      case WindowDataType.Tint:
+        const setting = DialogSetting[visibleType] as ItemSelectionSettingType;
+        if (!setting) return null;
+        return (
+          <WindowItemSelection
+            window={window!}
+            dataType={visibleType}
+            attributeKey={setting.attributeKey}
+            setDialogVisible={() => setVisibleType(null)}
+          />
+        );
+      case WindowDataType.Opacity:
+        return <WindowOpacityInput setDialogVisible={() => setVisibleType(null)} />;
+      case WindowDataType.MullionSpacing:
+        return <MullionSpacingInput setDialogVisible={() => setVisibleType(null)} />;
+      case WindowDataType.MullionWidth:
+        return <MullionWidthInput setDialogVisible={() => setVisibleType(null)} />;
+    }
+  };
+
+  if (!window) return null;
+  return (
+    <Menu.ItemGroup>
+      {renderCut()}
+      <Copy keyName={'window-copy'} />
+      <Lock keyName={'window-lock'} />
+
+      {!window.locked && (
+        <>
+          {renderMenuItem(WindowDataType.Opacity)}
+
+          {renderMenuItem(WindowDataType.Tint)}
+
+          {renderMullionSubMenu()}
+
+          <WindowShutterSubMenu windowId={window.id} />
+
+          {renderDialogs()}
+        </>
+      )}
+    </Menu.ItemGroup>
   );
 };

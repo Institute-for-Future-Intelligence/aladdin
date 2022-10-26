@@ -862,9 +862,10 @@ export const i18n_zh_tw = {
       StructureWidth: '結構寬度',
       StructureThickness: '結構厚度',
       StructureColor: '結構颜色',
-      WallColor: '牆体颜色',
+      Color: '牆体颜色',
       Height: '高度',
       Thickness: '厚度',
+      Texture: '材質',
     },
 
     roofMenu: {
@@ -921,6 +922,7 @@ export const i18n_zh_tw = {
       Mullion: '直櫺',
       MullionWidth: '直櫺寬度',
       MullionSpacing: '直櫺間距',
+      Color: '邊框顔色',
       Tint: '著色',
       Opacity: '不透明度',
       Shutter: '百葉窗',

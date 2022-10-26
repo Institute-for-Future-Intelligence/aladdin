@@ -44,6 +44,37 @@ const Shutter = ({ cx, lx, lz, color, showLeft, showRight }: ShutterProps) => {
   );
 };
 
+const useUpdataOldFiles = (id: string) => {
+  useEffect(() => {
+    useStore.getState().set((state) => {
+      for (const e of state.elements) {
+        if (e.id === id) {
+          const w = e as WindowModel;
+          if (w.mullion === undefined) {
+            w.mullion = true;
+          }
+          if (w.mullionWidth === undefined) {
+            w.mullionWidth = 0.06;
+          }
+          if (w.mullionSpacing === undefined) {
+            w.mullionSpacing = 0.5;
+          }
+          if (w.tint === undefined) {
+            w.tint = '#73D8FF';
+          }
+          if (w.opacity === undefined) {
+            w.opacity = 0.5;
+          }
+          if (w.shutter === undefined) {
+            w.shutter = defaultShutter;
+          }
+          break;
+        }
+      }
+    });
+  }, []);
+};
+
 const Window = ({
   id,
   parentId,
@@ -68,6 +99,8 @@ const Window = ({
   if (Math.abs(cy) < 0.001) {
     cy = 0.1;
   }
+
+  useUpdataOldFiles(id);
 
   const setCommonStore = useStore(Selector.set);
   const isAddingElement = useStore(Selector.isAddingElement);
@@ -145,20 +178,6 @@ const Window = ({
       });
     }
   };
-
-  useEffect(() => {
-    if (shutter === undefined) {
-      shutter = defaultShutter;
-      setCommonStore((state) => {
-        for (const e of state.elements) {
-          if (e.id === id) {
-            (e as WindowModel).shutter = defaultShutter;
-            break;
-          }
-        }
-      });
-    }
-  }, []);
 
   const shutterLength = useMemo(() => shutter?.width ?? 0.5 * wlx, [wlx, shutter]);
   const shutterPosX = useMemo(() => ((shutterLength + wlx) / 2) * 1.05, [wlx, shutterLength]);

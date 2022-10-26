@@ -879,13 +879,14 @@ export const i18n_es = {
       StudStructure: 'Stud',
       PillarStructure: 'Pillar',
       Opacity: 'Opacity',
-      WallColor: 'Wall Color',
+      Color: 'Wall Color',
       StudSpacing: 'Stud Spacing',
       StudWidth: 'Stud Width',
       StudThickness: 'Stud Thickness',
       StudColor: 'Stud Color',
       Height: 'Height',
       Thickness: 'Thickness',
+      Texture: 'Texture',
     },
 
     doorMenu: {
@@ -942,6 +943,7 @@ export const i18n_es = {
       Mullion: 'Mullion',
       MullionWidth: 'Mullion Width',
       MullionSpacing: 'Mullion Spacing',
+      Color: 'Frame Color',
       Tint: 'Tint',
       Opacity: 'Opacity',
       Shutter: 'Shutter',

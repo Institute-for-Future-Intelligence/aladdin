@@ -32,7 +32,7 @@ enum DataType {
   Texture = 'Texture',
 }
 
-type NumberDialogSetting = {
+type NumberDialogSettingType = {
   attributeKey: keyof WallModel;
   range: [min: number, max: number];
   step: number;
@@ -45,6 +45,13 @@ const DialogSetting = {
   StructureSpacing: { attributeKey: 'structureSpacing', range: [0.1, 1000], step: 0.1, unit: 'word.MeterAbbreviation' },
   StructureWidth: { attributeKey: 'structureWidth', range: [0.01, 1], step: 0.1, unit: 'word.MeterAbbreviation' },
   Thickness: { attributeKey: 'ly', range: [0.1, 1], step: 0.01, unit: 'word.MeterAbbreviation' },
+};
+
+const radioStyle = {
+  display: 'block',
+  height: '30px',
+  paddingLeft: '10px',
+  lineHeight: '30px',
 };
 
 const getSelectedWall = (state: CommonStoreState) => {
@@ -106,13 +113,6 @@ export const WallMenu = () => {
       } as UndoableRemoveAllChildren;
       addUndoable(undoableRemoveAllWindowChildren);
     }
-  };
-
-  const radioStyle = {
-    display: 'block',
-    height: '30px',
-    paddingLeft: '10px',
-    lineHeight: '30px',
   };
 
   const renderCopy = () => <Copy keyName={'wall-copy'} />;
@@ -188,37 +188,37 @@ export const WallMenu = () => {
     if (wall?.wallStructure === WallStructure.Stud || wall?.wallStructure === WallStructure.Pillar) {
       return (
         <>
-          {renderMenuItem('wallMenu.StructureSpacing', DataType.StructureSpacing)}
+          {renderMenuItem(DataType.StructureSpacing)}
 
-          {renderMenuItem('wallMenu.StructureWidth', DataType.StructureWidth)}
+          {renderMenuItem(DataType.StructureWidth)}
 
-          {renderMenuItem('wallMenu.StructureColor', DataType.StructureColor)}
+          {renderMenuItem(DataType.StructureColor)}
 
-          {renderMenuItem('wallMenu.Opacity', DataType.Opacity)}
+          {renderMenuItem(DataType.Opacity)}
         </>
       );
     }
     return null;
   };
 
-  const renderMenuItem = (i18nText: string, dataType: DataType) => {
+  const renderMenuItem = (dataType: DataType) => {
     return (
       <Menu.Item
-        key={`wall-${i18nText}`}
+        key={`wall-${dataType}`}
         style={{ paddingLeft: paddingLeft }}
         onClick={() => {
           setApplyCount(0);
           setVisibleType(dataType);
         }}
       >
-        {i18n.t(i18nText, lang)} ...
+        {i18n.t(`wallMenu.${dataType}`, lang)} ...
       </Menu.Item>
     );
   };
 
   const renderTexture = () => {
     if (wall?.wallStructure === WallStructure.Default) {
-      return renderMenuItem('word.Texture', DataType.Texture);
+      return renderMenuItem(DataType.Texture);
     }
     return null;
   };
@@ -228,7 +228,7 @@ export const WallMenu = () => {
       (wall?.wallStructure === WallStructure.Default || wall?.opacity === undefined || wall?.opacity > 0) &&
       (wall?.textureType === WallTexture.NoTexture || wall?.textureType === WallTexture.Default)
     ) {
-      return renderMenuItem('wallMenu.WallColor', DataType.Color);
+      return renderMenuItem(DataType.Color);
     }
     return null;
   };
@@ -284,7 +284,7 @@ export const WallMenu = () => {
       case DataType.Thickness:
       case DataType.StructureSpacing:
       case DataType.StructureWidth:
-        const setting = DialogSetting[visibleType] as NumberDialogSetting;
+        const setting = DialogSetting[visibleType] as NumberDialogSettingType;
         if (!setting) return null;
         return (
           <WallNumberInput
@@ -326,9 +326,9 @@ export const WallMenu = () => {
 
           {renderStructureItems()}
 
-          {renderMenuItem('word.Thickness', DataType.Thickness)}
+          {renderMenuItem(DataType.Thickness)}
 
-          {renderMenuItem('word.Height', DataType.Height)}
+          {renderMenuItem(DataType.Height)}
 
           {renderTexture()}
 

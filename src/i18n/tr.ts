@@ -884,9 +884,10 @@ export const i18n_tr = {
       StructureWidth: 'Structure Width',
       StructureThickness: 'Structure Thickness',
       StructureColor: 'Structure Color',
-      WallColor: 'Wall Color',
+      Color: 'Wall Color',
       Height: 'Height',
       Thickness: 'Thickness',
+      Texture: 'Texture',
     },
 
     doorMenu: {
@@ -943,6 +944,7 @@ export const i18n_tr = {
       Mullion: 'Tiriz',
       MullionWidth: 'Tiriz Genişliği',
       MullionSpacing: 'Tiriz Aralığı',
+      Color: 'Frame Color',
       Tint: 'Ton',
       Opacity: 'Opaklık',
       Shutter: 'Kepenk',

@@ -13,7 +13,7 @@ import { UndoableChange } from 'src/undo/UndoableChange';
 import { UndoableChangeGroup } from 'src/undo/UndoableChangeGroup';
 import { WindowModel } from 'src/models/WindowModel';
 
-const WindowOpacityInput = ({ setDialogVisible }: { setDialogVisible: (b: boolean) => void }) => {
+const WindowOpacityInput = ({ setDialogVisible }: { setDialogVisible: () => void }) => {
   const language = useStore(Selector.language);
   const windowModel = useStore(Selector.selectedElement) as WindowModel;
   const addUndoable = useStore(Selector.addUndoable);
@@ -194,7 +194,7 @@ const WindowOpacityInput = ({ setDialogVisible }: { setDialogVisible: (b: boolea
 
   const close = () => {
     setInput(windowModel.opacity ?? 0.5);
-    setDialogVisible(false);
+    setDialogVisible();
   };
 
   const handleCancel = () => {
@@ -204,7 +204,7 @@ const WindowOpacityInput = ({ setDialogVisible }: { setDialogVisible: (b: boolea
 
   const handleOk = () => {
     setValue(input);
-    setDialogVisible(false);
+    setDialogVisible();
     setApplyCount(0);
   };
 
