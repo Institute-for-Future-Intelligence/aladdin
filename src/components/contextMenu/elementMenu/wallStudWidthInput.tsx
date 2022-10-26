@@ -30,7 +30,7 @@ const WallStudWidthInput = ({ setDialogVisible }: { setDialogVisible: (b: boolea
   const [dragEnabled, setDragEnabled] = useState<boolean>(false);
   const [bounds, setBounds] = useState<DraggableBounds>({ left: 0, top: 0, bottom: 0, right: 0 } as DraggableBounds);
   const dragRef = useRef<HTMLDivElement | null>(null);
-  const inputRef = useRef<number>(wall?.studWidth ?? 0.1);
+  const inputRef = useRef<number>(wall?.structureWidth ?? 0.1);
 
   const lang = { lng: language };
 
@@ -38,7 +38,7 @@ const WallStudWidthInput = ({ setDialogVisible }: { setDialogVisible: (b: boolea
     setCommonStore((state) => {
       for (const e of state.elements) {
         if (e.id === id && e.type === ObjectType.Wall && !e.locked) {
-          (e as WallModel).studWidth = val;
+          (e as WallModel).structureWidth = val;
           break;
         }
       }
@@ -49,7 +49,7 @@ const WallStudWidthInput = ({ setDialogVisible }: { setDialogVisible: (b: boolea
     setCommonStore((state) => {
       for (const e of state.elements) {
         if (e.parentId === fId && e.type === ObjectType.Wall && !e.locked) {
-          (e as WallModel).studWidth = val;
+          (e as WallModel).structureWidth = val;
         }
       }
     });
@@ -59,7 +59,7 @@ const WallStudWidthInput = ({ setDialogVisible }: { setDialogVisible: (b: boolea
     setCommonStore((state) => {
       for (const e of state.elements) {
         if (e.type === ObjectType.Wall && !e.locked) {
-          (e as WallModel).studWidth = val;
+          (e as WallModel).structureWidth = val;
         }
       }
     });
@@ -67,7 +67,7 @@ const WallStudWidthInput = ({ setDialogVisible }: { setDialogVisible: (b: boolea
 
   useEffect(() => {
     if (wall) {
-      inputRef.current = wall.studWidth ?? 0.1;
+      inputRef.current = wall.structureWidth ?? 0.1;
     }
   }, [wall]);
 
@@ -83,7 +83,7 @@ const WallStudWidthInput = ({ setDialogVisible }: { setDialogVisible: (b: boolea
         const oldValsAll = new Map<string, number>();
         for (const elem of elements) {
           if (elem.type === ObjectType.Wall) {
-            oldValsAll.set(elem.id, (elem as WallModel).studWidth ?? 0.1);
+            oldValsAll.set(elem.id, (elem as WallModel).structureWidth ?? 0.1);
           }
         }
         const undoableChangeAll = {
@@ -109,7 +109,7 @@ const WallStudWidthInput = ({ setDialogVisible }: { setDialogVisible: (b: boolea
           const oldValsAboveFoundation = new Map<string, number>();
           for (const elem of elements) {
             if (elem.type === ObjectType.Wall && elem.foundationId === wall.foundationId) {
-              oldValsAboveFoundation.set(elem.id, (elem as WallModel).studWidth ?? 0.1);
+              oldValsAboveFoundation.set(elem.id, (elem as WallModel).structureWidth ?? 0.1);
             }
           }
           const undoableChangeAboveFoundation = {
@@ -140,7 +140,7 @@ const WallStudWidthInput = ({ setDialogVisible }: { setDialogVisible: (b: boolea
       default:
         if (wall) {
           const updatedWall = getElementById(wall.id) as WallModel;
-          const oldVal = updatedWall.studWidth ?? wall.studWidth ?? 0.1;
+          const oldVal = updatedWall.structureWidth ?? wall.structureWidth ?? 0.1;
           const undoableChange = {
             name: 'Set Wall Stud Width',
             timestamp: Date.now(),
@@ -180,7 +180,7 @@ const WallStudWidthInput = ({ setDialogVisible }: { setDialogVisible: (b: boolea
   };
 
   const close = () => {
-    inputRef.current = wall.studWidth ?? 0.1;
+    inputRef.current = wall.structureWidth ?? 0.1;
     setDialogVisible(false);
   };
 

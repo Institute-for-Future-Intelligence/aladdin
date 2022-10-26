@@ -30,7 +30,7 @@ const WallStudSpacingInput = ({ setDialogVisible }: { setDialogVisible: (b: bool
   const [dragEnabled, setDragEnabled] = useState<boolean>(false);
   const [bounds, setBounds] = useState<DraggableBounds>({ left: 0, top: 0, bottom: 0, right: 0 } as DraggableBounds);
   const dragRef = useRef<HTMLDivElement | null>(null);
-  const inputRef = useRef<number>(wall?.studSpacing ?? 2);
+  const inputRef = useRef<number>(wall?.structureSpacing ?? 2);
 
   const lang = { lng: language };
 
@@ -38,7 +38,7 @@ const WallStudSpacingInput = ({ setDialogVisible }: { setDialogVisible: (b: bool
     setCommonStore((state) => {
       for (const e of state.elements) {
         if (e.id === id && e.type === ObjectType.Wall && !e.locked) {
-          (e as WallModel).studSpacing = val;
+          (e as WallModel).structureSpacing = val;
           break;
         }
       }
@@ -49,7 +49,7 @@ const WallStudSpacingInput = ({ setDialogVisible }: { setDialogVisible: (b: bool
     setCommonStore((state) => {
       for (const e of state.elements) {
         if (e.parentId === fId && e.type === ObjectType.Wall && !e.locked) {
-          (e as WallModel).studSpacing = val;
+          (e as WallModel).structureSpacing = val;
         }
       }
     });
@@ -59,7 +59,7 @@ const WallStudSpacingInput = ({ setDialogVisible }: { setDialogVisible: (b: bool
     setCommonStore((state) => {
       for (const e of state.elements) {
         if (e.type === ObjectType.Wall && !e.locked) {
-          (e as WallModel).studSpacing = val;
+          (e as WallModel).structureSpacing = val;
         }
       }
     });
@@ -67,7 +67,7 @@ const WallStudSpacingInput = ({ setDialogVisible }: { setDialogVisible: (b: bool
 
   useEffect(() => {
     if (wall) {
-      inputRef.current = wall.studSpacing ?? 2;
+      inputRef.current = wall.structureSpacing ?? 2;
     }
   }, [wall]);
 
@@ -83,7 +83,7 @@ const WallStudSpacingInput = ({ setDialogVisible }: { setDialogVisible: (b: bool
         const oldValsAll = new Map<string, number>();
         for (const elem of elements) {
           if (elem.type === ObjectType.Wall) {
-            oldValsAll.set(elem.id, (elem as WallModel).studSpacing ?? 2);
+            oldValsAll.set(elem.id, (elem as WallModel).structureSpacing ?? 2);
           }
         }
         const undoableChangeAll = {
@@ -109,7 +109,7 @@ const WallStudSpacingInput = ({ setDialogVisible }: { setDialogVisible: (b: bool
           const oldValsAboveFoundation = new Map<string, number>();
           for (const elem of elements) {
             if (elem.type === ObjectType.Wall && elem.foundationId === wall.foundationId) {
-              oldValsAboveFoundation.set(elem.id, (elem as WallModel).studSpacing ?? 2);
+              oldValsAboveFoundation.set(elem.id, (elem as WallModel).structureSpacing ?? 2);
             }
           }
           const undoableChangeAboveFoundation = {
@@ -140,7 +140,7 @@ const WallStudSpacingInput = ({ setDialogVisible }: { setDialogVisible: (b: bool
       default:
         if (wall) {
           const updatedWall = getElementById(wall.id) as WallModel;
-          const oldVal = updatedWall.studSpacing ?? wall.studSpacing ?? 2;
+          const oldVal = updatedWall.structureSpacing ?? wall.structureSpacing ?? 2;
           const undoableChange = {
             name: 'Set Wall Stud Spacing',
             timestamp: Date.now(),
@@ -180,7 +180,7 @@ const WallStudSpacingInput = ({ setDialogVisible }: { setDialogVisible: (b: bool
   };
 
   const close = () => {
-    inputRef.current = wall.studSpacing ?? 2;
+    inputRef.current = wall.structureSpacing ?? 2;
     setDialogVisible(false);
   };
 

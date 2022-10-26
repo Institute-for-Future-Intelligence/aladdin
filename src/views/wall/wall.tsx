@@ -30,7 +30,7 @@ import {
   Vector3,
 } from 'three';
 import { ThreeEvent, useThree } from '@react-three/fiber';
-import { Box, Plane } from '@react-three/drei';
+import { Box, Cylinder, Plane } from '@react-three/drei';
 import { ActionType, MoveHandleType, ObjectType, Orientation, ResizeHandleType, WallTexture } from 'src/types';
 import { Util } from 'src/Util';
 import { useStore } from 'src/stores/common';
@@ -119,10 +119,10 @@ const Wall = ({
   centerLeftRoofHeight,
   centerRightRoofHeight,
   wallStructure = WallStructure.Default,
-  studSpacing = 2,
+  structureSpacing = 2,
+  structureWidth = 0.1,
+  structureColor = 'white',
   opacity = 0.5,
-  studColor = 'white',
-  studWidth = 0.1,
 }: WallModel) => {
   const textureLoader = useMemo(() => {
     let textureImg;
@@ -1215,22 +1215,22 @@ const Wall = ({
     }
   };
 
-  const studs = useMemo(() => {
+  const structureUnitArray = useMemo(() => {
     const arr: number[] = [];
     if (wallStructure === WallStructure.Stud) {
-      let pos = -hx + studWidth / 2;
+      let pos = -hx + structureWidth / 2;
       while (pos <= hx) {
         arr.push(pos);
-        pos += studSpacing;
+        pos += structureSpacing;
       }
     }
-    arr.push(hx - studWidth / 2);
+    arr.push(hx - structureWidth / 2);
     return arr;
-  }, [wallStructure, studWidth, studSpacing, lx, ly, lz]);
+  }, [wallStructure, structureWidth, structureSpacing, lx, ly, lz]);
 
   const castShadow = shadowEnabled && !transparent;
 
-  const wallStuds = () => {
+  const renderStuds = () => {
     const wallLeftHeight = leftRoofHeight ?? lz;
     const wallRightHeight = rightRoofHeight ?? lz;
     let [wallCenterPos, wallCenterHeight] = centerRoofHeight ?? [0, (wallLeftHeight + wallRightHeight) / 2];
@@ -1246,7 +1246,7 @@ const Wall = ({
 
     return (
       <group name={`wall stud group ${id}`}>
-        {studs.map((pos, idx) => {
+        {structureUnitArray.map((pos, idx) => {
           let height;
           if (pos < wallCenterPos) {
             height = ((pos + hx) * (wallCenterHeight - wallLeftHeight)) / (wallCenterPos + hx) + wallLeftHeight;
@@ -1257,39 +1257,73 @@ const Wall = ({
           return (
             <Box
               key={idx}
-              args={[studWidth, ly, height]}
+              args={[structureWidth, ly, height]}
               position={[pos, hy, (height - lz) / 2]}
               castShadow={shadowEnabled}
               receiveShadow={shadowEnabled}
               onContextMenu={handleStudContextMenu}
               onPointerDown={handleStudPointerDown}
             >
-              <meshStandardMaterial color={studColor} />
+              <meshStandardMaterial color={structureColor} />
             </Box>
           );
         })}
         <Box
-          args={[leftLength, ly, studWidth]}
-          position={[-hx + leftX / 2, hy, (wallLeftHeight + wallCenterHeight) / 2 - hz - studWidth / 2]}
+          args={[leftLength, ly, structureWidth]}
+          position={[-hx + leftX / 2, hy, (wallLeftHeight + wallCenterHeight) / 2 - hz - structureWidth / 2]}
           rotation={[0, leftRotationY, 0]}
           castShadow={shadowEnabled}
           receiveShadow={shadowEnabled}
           onContextMenu={handleStudContextMenu}
           onPointerDown={handleStudPointerDown}
         >
-          <meshStandardMaterial color={studColor} />
+          <meshStandardMaterial color={structureColor} />
         </Box>
         <Box
-          args={[rightLength, ly, studWidth]}
-          position={[hx - rightX / 2, hy, (wallRightHeight + wallCenterHeight) / 2 - hz - studWidth / 2]}
+          args={[rightLength, ly, structureWidth]}
+          position={[hx - rightX / 2, hy, (wallRightHeight + wallCenterHeight) / 2 - hz - structureWidth / 2]}
           rotation={[0, rightRotationY, 0]}
           castShadow={shadowEnabled}
           receiveShadow={shadowEnabled}
           onContextMenu={handleStudContextMenu}
           onPointerDown={handleStudPointerDown}
         >
-          <meshStandardMaterial color={studColor} />
+          <meshStandardMaterial color={structureColor} />
         </Box>
+      </group>
+    );
+  };
+
+  const renderPillars = () => {
+    const wallLeftHeight = leftRoofHeight ?? lz;
+    const wallRightHeight = rightRoofHeight ?? lz;
+    let [wallCenterPos, wallCenterHeight] = centerRoofHeight ?? [0, (wallLeftHeight + wallRightHeight) / 2];
+    wallCenterPos = wallCenterPos * lx;
+
+    return (
+      <group name={`wall pillar group ${id}`}>
+        {structureUnitArray.map((pos, idx) => {
+          let height;
+          if (pos < wallCenterPos) {
+            height = ((pos + hx) * (wallCenterHeight - wallLeftHeight)) / (wallCenterPos + hx) + wallLeftHeight;
+          } else {
+            height = ((pos - hx) * (wallCenterHeight - wallRightHeight)) / (wallCenterPos - hx) + wallRightHeight;
+          }
+          return (
+            <Cylinder
+              key={idx}
+              args={[structureWidth / 2, structureWidth / 2, height]}
+              position={[pos, hy, (height - lz) / 2]}
+              rotation={[-HALF_PI, 0, 0]}
+              castShadow={shadowEnabled}
+              receiveShadow={shadowEnabled}
+              onContextMenu={handleStudContextMenu}
+              onPointerDown={handleStudPointerDown}
+            >
+              <meshStandardMaterial color={structureColor} />
+            </Cylinder>
+          );
+        })}
       </group>
     );
   };
@@ -1434,7 +1468,8 @@ const Wall = ({
             </>
           )}
 
-          {wallStructure === WallStructure.Stud && wallStuds()}
+          {/* {wallStructure === WallStructure.Stud && renderStuds()} */}
+          {wallStructure === WallStructure.Stud && renderPillars()}
 
           {/* wireFrame */}
           {(wallStructure === WallStructure.Default || (locked && selected)) && (

@@ -583,9 +583,9 @@ export class ElementModelCloner {
       parentId: parent.id,
       foundationId: parent.id,
       wallStructure: wall.wallStructure,
-      studSpacing: wall.studSpacing,
-      studColor: wall.studColor,
-      studWidth: wall.studWidth,
+      structureSpacing: wall.structureSpacing,
+      structureColor: wall.structureColor,
+      structureWidth: wall.structureWidth,
       opacity: wall.opacity,
     } as WallModel;
   }
