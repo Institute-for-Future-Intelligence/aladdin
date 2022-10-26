@@ -237,7 +237,7 @@ const Wall = ({
   const oldPositionRef = useRef<number[]>([]);
   const oldDimensionRef = useRef<number[]>([]);
   const oldTintRef = useRef<string>(actionState.windowTint ?? '#73D8FF');
-  const oldColorRef = useRef<string>('#73D8FF');
+  const oldColorRef = useRef<string>('white');
 
   const [originElements, setOriginElements] = useState<ElementModel[] | null>(null);
   const [showGrid, setShowGrid] = useState(false);
