@@ -57,7 +57,6 @@ const Sky = ({ theme = 'Default' }: SkyProps) => {
   const updateElementLxById = useStore(Selector.updateElementLxById);
   const updateElementLzById = useStore(Selector.updateElementLzById);
   const resizeHandleType = useStore(Selector.resizeHandleType);
-  const sunlightDirection = useStore(Selector.sunlightDirection);
   const latitude = useStore(Selector.world.latitude);
   const date = useStore(Selector.world.date);
   const addUndoable = useStore(Selector.addUndoable);
@@ -92,7 +91,6 @@ const Sky = ({ theme = 'Default' }: SkyProps) => {
 
   const now = new Date(date);
   const month = now.getMonth() + 1;
-  const night = sunlightDirection.z <= 0;
 
   const [intersectionPlaneType, setIntersectionPlaneType] = useState(IntersectionPlaneType.Sky);
   const intersectionPlanePosition = useMemo(() => new Vector3(), []);
@@ -885,11 +883,7 @@ const Sky = ({ theme = 'Default' }: SkyProps) => {
         onPointerDown={handlePointerDown}
       >
         <sphereBufferGeometry args={[DEFAULT_SKY_RADIUS, 16, 8, 0, TWO_PI, 0, HALF_PI]} />
-        {night ? (
-          <meshStandardMaterial map={texture} side={BackSide} opacity={1} color={'skyblue'} />
-        ) : (
-          <meshBasicMaterial map={texture} side={BackSide} opacity={1} color={'skyblue'} />
-        )}
+        <meshToonMaterial map={texture} side={BackSide} opacity={1} color={'skyblue'} />
       </mesh>
       {grabRef.current && intersectionPlaneType !== IntersectionPlaneType.Sky && (
         <Plane

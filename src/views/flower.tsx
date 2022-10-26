@@ -73,7 +73,6 @@ const Flower = ({
   const getElementById = useStore(Selector.getElementById);
   const moveHandleType = useStore(Selector.moveHandleType);
   const hoveredHandle = useStore(Selector.hoveredHandle);
-  const sunlightDirection = useStore(Selector.sunlightDirection);
 
   const now = new Date(date);
   const [hovered, setHovered] = useState(false);
@@ -93,7 +92,6 @@ const Flower = ({
   // TODO: This needs to depend on location more accurately
   const noLeaves = latitude > 0 ? month < 4 || month > 10 : month >= 4 && month <= 10;
   const lang = { lng: language };
-  const night = sunlightDirection.z <= 0;
 
   const fileChangedRef = useRef(false);
   const fileChangedState = useStore(Selector.fileChanged);
@@ -269,11 +267,7 @@ const Flower = ({
           <group position={[0, 0, height / 2]}>
             <Billboard ref={solidFlowerRef} uuid={id} name={name} follow={false}>
               <Plane args={[width, height]}>
-                {night ? (
-                  <meshStandardMaterial map={texture} side={DoubleSide} alphaTest={0.5} />
-                ) : (
-                  <meshBasicMaterial map={texture} side={DoubleSide} alphaTest={0.5} />
-                )}
+                <meshToonMaterial map={texture} side={DoubleSide} alphaTest={0.5} />
               </Plane>
             </Billboard>
 

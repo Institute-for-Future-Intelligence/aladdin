@@ -6,7 +6,7 @@ import React, { useRef } from 'react';
 import { useStore } from './stores/common';
 import * as Selector from './stores/selector';
 import { DirectionalLight } from 'three';
-import { DEFAULT_FAR, UNIT_VECTOR_POS_Z } from './constants';
+import { DEFAULT_FAR, STARLIGHT_INTENSITY, UNIT_VECTOR_POS_Z } from './constants';
 
 const Lights = () => {
   const directLightIntensity = useStore(Selector.viewState.directLightIntensity);
@@ -31,7 +31,10 @@ const Lights = () => {
 
   return (
     <>
-      <ambientLight intensity={0.08 + (day ? (ambientLightIntensity ?? 0.1) * dot : 0)} name={'Ambient Light'} />
+      <ambientLight
+        intensity={STARLIGHT_INTENSITY + (day ? (ambientLightIntensity ?? 0.1) * dot : 0)}
+        name={'Ambient Light'}
+      />
       <directionalLight
         ref={ref}
         name={'Directional Light'}
