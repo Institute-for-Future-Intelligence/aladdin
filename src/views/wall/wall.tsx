@@ -237,7 +237,7 @@ const Wall = ({
   const oldPositionRef = useRef<number[]>([]);
   const oldDimensionRef = useRef<number[]>([]);
   const oldTintRef = useRef<string>(actionState.windowTint ?? '#73D8FF');
-  const oldColorRef = useRef<string>('white');
+  const oldDoorColorRef = useRef<string>(actionState.doorColor ?? 'white');
 
   const [originElements, setOriginElements] = useState<ElementModel[] | null>(null);
   const [showGrid, setShowGrid] = useState(false);
@@ -428,6 +428,10 @@ const Wall = ({
   useEffect(() => {
     oldTintRef.current = actionState.windowTint;
   }, [actionState.windowTint]);
+
+  useEffect(() => {
+    oldDoorColorRef.current = actionState.doorColor;
+  }, [actionState.doorColor]);
 
   const getRelativePosOnWall = (p: Vector3, wall: WallModel) => {
     const { cx, cy, cz } = wall;
@@ -747,7 +751,7 @@ const Wall = ({
               oldTintRef.current = (selectedElement as WindowModel).tint;
             }
             if (selectedElement.type === ObjectType.Door) {
-              oldColorRef.current = (selectedElement as DoorModel).color ?? 'white';
+              oldDoorColorRef.current = (selectedElement as DoorModel).color ?? 'white';
             }
           }
         }
@@ -918,7 +922,7 @@ const Wall = ({
                       e.lx = Math.abs(v.x) / lx;
                       e.cz = (p.z - lz / 2) / 2 / lz;
                       e.lz = (p.z + lz / 2) / lz;
-                      e.color = e.id === invalidElementIdRef.current ? '#fe6f5e' : oldColorRef.current;
+                      e.color = e.id === invalidElementIdRef.current ? '#fe6f5e' : oldDoorColorRef.current;
                     }
                   }
                 });
