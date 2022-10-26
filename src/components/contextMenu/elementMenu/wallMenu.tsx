@@ -10,8 +10,6 @@ import * as Selector from '../../../stores/selector';
 import { Copy, Cut, Lock, Paste } from '../menuItems';
 import i18n from '../../../i18n/i18n';
 import WallTextureSelection from './wallTextureSelection';
-import WallOpacityInput from './wallOpacityInput';
-import WallThicknessInput from './wallThicknessInput';
 import WallBodyColorSelection from './wallColorSelection';
 import { WallModel, WallStructure } from 'src/models/WallModel';
 import { ObjectType, WallTexture } from 'src/types';
@@ -19,11 +17,35 @@ import { ElementCounter } from '../../../stores/ElementCounter';
 import { ExclamationCircleOutlined } from '@ant-design/icons';
 import { UndoableRemoveAllChildren } from '../../../undo/UndoableRemoveAllChildren';
 import { Util } from 'src/Util';
-import WallHeightInput from './wallHeightInput';
 import { UndoableChange } from 'src/undo/UndoableChange';
-import WallStudSpacingInput from './wallStudSpacingInput';
-import WallStudWidthInput from './wallStudWidthInput';
-import WallStudColorSelection from './wallStudColorSelection';
+import WallStructureColorSelection from './wallStructureColorSelection';
+import WallNumberInput from './wallNumberInput';
+
+enum DataType {
+  Height = 'Height',
+  Opacity = 'Opacity',
+  StructureSpacing = 'StructureSpacing',
+  StructureWidth = 'StructureWidth',
+  Thickness = 'Thickness',
+  StructureColor = 'StructureColor',
+  Color = 'Color',
+  Texture = 'Texture',
+}
+
+type NumberDialogSetting = {
+  attributeKey: keyof WallModel;
+  range: [min: number, max: number];
+  step: number;
+  unit?: string;
+};
+
+const DialogSetting = {
+  Height: { attributeKey: 'lz', range: [0.1, 100], step: 0.1, unit: 'word.MeterAbbreviation' },
+  Opacity: { attributeKey: 'opacity', range: [0, 1], step: 0.01 },
+  StructureSpacing: { attributeKey: 'structureSpacing', range: [0.1, 1000], step: 0.1, unit: 'word.MeterAbbreviation' },
+  StructureWidth: { attributeKey: 'structureWidth', range: [0.01, 1], step: 0.1, unit: 'word.MeterAbbreviation' },
+  Thickness: { attributeKey: 'ly', range: [0.1, 1], step: 0.01, unit: 'word.MeterAbbreviation' },
+};
 
 const getSelectedWall = (state: CommonStoreState) => {
   for (const el of state.elements) {
@@ -45,14 +67,7 @@ export const WallMenu = () => {
   const addUndoable = useStore(Selector.addUndoable);
   const updateWallStructureById = useStore(Selector.updateWallStructureById);
 
-  const [textureDialogVisible, setTextureDialogVisible] = useState(false);
-  const [colorDialogVisible, setColorDialogVisible] = useState(false);
-  const [heightDialogVisible, setHeightDialogVisible] = useState(false);
-  const [opacityDialogVisible, setOpacityDialogVisible] = useState(false);
-  const [structureSpacingDialogVisible, setStructureSpacingDialogVisible] = useState(false);
-  const [structureWidthDialogVisible, setStructureWidthDialogVisible] = useState(false);
-  const [structureColorDialogVisible, setStructureColorDialogVisible] = useState(false);
-  const [thicknessDialogVisible, setThicknessDialogVisible] = useState(false);
+  const [visibleType, setVisibleType] = useState<DataType | null>(null);
 
   const lang = { lng: language };
   const paddingLeft = '36px';
@@ -144,6 +159,15 @@ export const WallMenu = () => {
             } as UndoableChange;
             addUndoable(undoableChange);
             updateWallStructureById(wall.id, e.target.value);
+            setCommonStore((state) => {
+              state.actionState.wallStructure = e.target.value;
+              if (
+                state.actionState.wallStructure === WallStructure.Stud ||
+                state.actionState.wallStructure === WallStructure.Pillar
+              ) {
+                state.actionState.wallOpacity = 0;
+              }
+            });
           }}
         >
           <Radio style={radioStyle} value={WallStructure.Default}>
@@ -164,27 +188,27 @@ export const WallMenu = () => {
     if (wall?.wallStructure === WallStructure.Stud || wall?.wallStructure === WallStructure.Pillar) {
       return (
         <>
-          {renderMenuItem('wallMenu.StructureSpacing', setStructureSpacingDialogVisible)}
+          {renderMenuItem('wallMenu.StructureSpacing', DataType.StructureSpacing)}
 
-          {renderMenuItem('wallMenu.StructureWidth', setStructureWidthDialogVisible)}
+          {renderMenuItem('wallMenu.StructureWidth', DataType.StructureWidth)}
 
-          {renderMenuItem('wallMenu.StructureColor', setStructureColorDialogVisible)}
+          {renderMenuItem('wallMenu.StructureColor', DataType.StructureColor)}
 
-          {renderMenuItem('wallMenu.Opacity', setOpacityDialogVisible)}
+          {renderMenuItem('wallMenu.Opacity', DataType.Opacity)}
         </>
       );
     }
     return null;
   };
 
-  const renderMenuItem = (i18nText: string, setDialogVisible: (b: boolean) => void) => {
+  const renderMenuItem = (i18nText: string, dataType: DataType) => {
     return (
       <Menu.Item
         key={`wall-${i18nText}`}
         style={{ paddingLeft: paddingLeft }}
         onClick={() => {
           setApplyCount(0);
-          setDialogVisible(true);
+          setVisibleType(dataType);
         }}
       >
         {i18n.t(i18nText, lang)} ...
@@ -194,7 +218,7 @@ export const WallMenu = () => {
 
   const renderTexture = () => {
     if (wall?.wallStructure === WallStructure.Default) {
-      return renderMenuItem('word.Texture', setTextureDialogVisible);
+      return renderMenuItem('word.Texture', DataType.Texture);
     }
     return null;
   };
@@ -204,7 +228,7 @@ export const WallMenu = () => {
       (wall?.wallStructure === WallStructure.Default || wall?.opacity === undefined || wall?.opacity > 0) &&
       (wall?.textureType === WallTexture.NoTexture || wall?.textureType === WallTexture.Default)
     ) {
-      return renderMenuItem('wallMenu.WallColor', setColorDialogVisible);
+      return renderMenuItem('wallMenu.WallColor', DataType.Color);
     }
     return null;
   };
@@ -254,18 +278,32 @@ export const WallMenu = () => {
   };
 
   const renderDialogs = () => {
-    return (
-      <>
-        {opacityDialogVisible && <WallOpacityInput setDialogVisible={setOpacityDialogVisible} />}
-        {structureColorDialogVisible && <WallStudColorSelection setDialogVisible={setStructureColorDialogVisible} />}
-        {structureSpacingDialogVisible && <WallStudSpacingInput setDialogVisible={setStructureSpacingDialogVisible} />}
-        {structureWidthDialogVisible && <WallStudWidthInput setDialogVisible={setStructureWidthDialogVisible} />}
-        {thicknessDialogVisible && <WallThicknessInput setDialogVisible={setThicknessDialogVisible} />}
-        {heightDialogVisible && <WallHeightInput setDialogVisible={setHeightDialogVisible} />}
-        {textureDialogVisible && <WallTextureSelection setDialogVisible={setTextureDialogVisible} />}
-        {colorDialogVisible && <WallBodyColorSelection setDialogVisible={setColorDialogVisible} />}
-      </>
-    );
+    switch (visibleType) {
+      case DataType.Height:
+      case DataType.Opacity:
+      case DataType.Thickness:
+      case DataType.StructureSpacing:
+      case DataType.StructureWidth:
+        const setting = DialogSetting[visibleType] as NumberDialogSetting;
+        if (!setting) return null;
+        return (
+          <WallNumberInput
+            wall={wall!}
+            dataType={visibleType}
+            attributeKey={setting.attributeKey}
+            range={setting.range}
+            step={setting.step}
+            setDialogVisible={() => setVisibleType(null)}
+            unit={setting.unit ? i18n.t(setting.unit, lang) : undefined}
+          />
+        );
+      case DataType.Color:
+        return <WallBodyColorSelection setDialogVisible={() => setVisibleType(null)} />;
+      case DataType.StructureColor:
+        return <WallStructureColorSelection setDialogVisible={() => setVisibleType(null)} />;
+      case DataType.Texture:
+        return <WallTextureSelection setDialogVisible={() => setVisibleType(null)} />;
+    }
   };
 
   if (!wall) return null;
@@ -288,9 +326,9 @@ export const WallMenu = () => {
 
           {renderStructureItems()}
 
-          {renderMenuItem('word.Thickness', setThicknessDialogVisible)}
+          {renderMenuItem('word.Thickness', DataType.Thickness)}
 
-          {renderMenuItem('word.Height', setHeightDialogVisible)}
+          {renderMenuItem('word.Height', DataType.Height)}
 
           {renderTexture()}
 

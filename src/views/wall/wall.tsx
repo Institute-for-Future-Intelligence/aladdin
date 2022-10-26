@@ -95,6 +95,35 @@ const useElements = (id: string, leftWallId?: string, rightWallId?: string, roof
   return { elementsOnWall, leftWall, rightWall };
 };
 
+const useUpdataOldFiles = (id: string) => {
+  // wallStructure, structureSpacing, structureWidth, structureColor, opacity
+  useEffect(() => {
+    useStore.getState().set((state) => {
+      for (const e of state.elements) {
+        if (e.id === id) {
+          const wall = e as WallModel;
+          if (wall.wallStructure === undefined) {
+            wall.wallStructure = WallStructure.Default;
+          }
+          if (wall.structureSpacing === undefined) {
+            wall.structureSpacing = 2;
+          }
+          if (wall.structureWidth === undefined) {
+            wall.structureWidth = 0.1;
+          }
+          if (wall.structureColor === undefined) {
+            wall.structureColor = 'white';
+          }
+          if (wall.opacity === undefined) {
+            wall.opacity = 0.5;
+          }
+          break;
+        }
+      }
+    });
+  }, []);
+};
+
 const Wall = ({
   id,
   cx,
@@ -124,6 +153,7 @@ const Wall = ({
   structureColor = 'white',
   opacity = 0.5,
 }: WallModel) => {
+  useUpdataOldFiles(id);
   const textureLoader = useMemo(() => {
     let textureImg;
     switch (textureType) {

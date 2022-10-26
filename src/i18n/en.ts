@@ -884,6 +884,8 @@ export const i18n_en = {
       StructureThickness: 'Structure Thickness',
       StructureColor: 'Structure Color',
       WallColor: 'Wall Color',
+      Height: 'Height',
+      Thickness: 'Thickness',
     },
 
     windowMenu: {

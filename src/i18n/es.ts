@@ -884,6 +884,8 @@ export const i18n_es = {
       StudWidth: 'Stud Width',
       StudThickness: 'Stud Thickness',
       StudColor: 'Stud Color',
+      Height: 'Height',
+      Thickness: 'Thickness',
     },
 
     doorMenu: {

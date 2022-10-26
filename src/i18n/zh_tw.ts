@@ -863,6 +863,8 @@ export const i18n_zh_tw = {
       StructureThickness: '結構厚度',
       StructureColor: '結構颜色',
       WallColor: '牆体颜色',
+      Height: '高度',
+      Thickness: '厚度',
     },
 
     roofMenu: {

@@ -1,9 +1,9 @@
 /*
- * @Copyright 2021-2022. Institute for Future Intelligence, Inc.
+ * @Copyright 2022. Institute for Future Intelligence, Inc.
  */
 
 import React, { useEffect, useRef, useState } from 'react';
-import { Button, Col, InputNumber, Modal, Radio, RadioChangeEvent, Row, Space } from 'antd';
+import { Button, Col, Modal, Radio, RadioChangeEvent, Row, Space } from 'antd';
 import Draggable, { DraggableBounds, DraggableData, DraggableEvent } from 'react-draggable';
 import { useStore } from '../../../stores/common';
 import * as Selector from '../../../stores/selector';
@@ -12,8 +12,10 @@ import i18n from '../../../i18n/i18n';
 import { UndoableChange } from '../../../undo/UndoableChange';
 import { UndoableChangeGroup } from '../../../undo/UndoableChangeGroup';
 import { WallModel } from '../../../models/WallModel';
+import { CompactPicker } from 'react-color';
 
-const WallOpacityInput = ({ setDialogVisible }: { setDialogVisible: (b: boolean) => void }) => {
+const WallStructureColorSelection = ({ setDialogVisible }: { setDialogVisible: () => void }) => {
+  const setCommonStore = useStore(Selector.set);
   const language = useStore(Selector.language);
   const elements = useStore(Selector.elements);
   const wall = useStore(Selector.selectedElement) as WallModel;
@@ -24,50 +26,22 @@ const WallOpacityInput = ({ setDialogVisible }: { setDialogVisible: (b: boolean)
   const setApplyCount = useStore(Selector.setApplyCount);
   const revertApply = useStore(Selector.revertApply);
   const getElementById = useStore(Selector.getElementById);
-  const setCommonStore = useStore(Selector.set);
 
+  const [selectedColor, setSelectedColor] = useState<string>(wall?.structureColor ?? 'white');
   const [updateFlag, setUpdateFlag] = useState<boolean>(false);
   const [dragEnabled, setDragEnabled] = useState<boolean>(false);
   const [bounds, setBounds] = useState<DraggableBounds>({ left: 0, top: 0, bottom: 0, right: 0 } as DraggableBounds);
   const dragRef = useRef<HTMLDivElement | null>(null);
-  const inputRef = useRef<number>(wall?.opacity ?? 0.5);
+  const okButtonRef = useRef<HTMLElement | null>(null);
+  useEffect(() => {
+    okButtonRef.current?.focus();
+  });
 
   const lang = { lng: language };
 
-  const updateById = (id: string, val: number) => {
-    setCommonStore((state) => {
-      for (const e of state.elements) {
-        if (e.id === id && e.type === ObjectType.Wall && !e.locked) {
-          (e as WallModel).opacity = val;
-          break;
-        }
-      }
-    });
-  };
-
-  const updateAboveFoundation = (fId: string, val: number) => {
-    setCommonStore((state) => {
-      for (const e of state.elements) {
-        if (e.parentId === fId && e.type === ObjectType.Wall && !e.locked) {
-          (e as WallModel).opacity = val;
-        }
-      }
-    });
-  };
-
-  const updateForAll = (val: number) => {
-    setCommonStore((state) => {
-      for (const e of state.elements) {
-        if (e.type === ObjectType.Wall && !e.locked) {
-          (e as WallModel).opacity = val;
-        }
-      }
-    });
-  };
-
   useEffect(() => {
     if (wall) {
-      inputRef.current = wall.opacity ?? 0.5;
+      setSelectedColor(wall?.structureColor ?? 'white');
     }
   }, [wall]);
 
@@ -76,28 +50,59 @@ const WallOpacityInput = ({ setDialogVisible }: { setDialogVisible: (b: boolean)
     setUpdateFlag(!updateFlag);
   };
 
-  const setVal = (value: number) => {
+  const updateById = (id: string, color: string) => {
+    setCommonStore((state) => {
+      for (const e of state.elements) {
+        if (e.id === id && e.type === ObjectType.Wall && !e.locked) {
+          (e as WallModel).structureColor = color;
+          break;
+        }
+      }
+    });
+  };
+
+  const updateAboveFoundation = (fId: string, color: string) => {
+    setCommonStore((state) => {
+      for (const e of state.elements) {
+        if (e.parentId === fId && e.type === ObjectType.Wall && !e.locked) {
+          (e as WallModel).structureColor = color;
+        }
+      }
+    });
+  };
+
+  const updateForAll = (color: string) => {
+    setCommonStore((state) => {
+      for (const e of state.elements) {
+        if (e.type === ObjectType.Wall && !e.locked) {
+          (e as WallModel).structureColor = color;
+        }
+      }
+    });
+  };
+
+  const setColor = (value: string) => {
     if (!wall) return;
     switch (wallActionScope) {
       case Scope.AllObjectsOfThisType:
-        const oldValsAll = new Map<string, number>();
+        const oldColorsAll = new Map<string, string>();
         for (const elem of elements) {
           if (elem.type === ObjectType.Wall) {
-            oldValsAll.set(elem.id, (elem as WallModel).opacity ?? 0.5);
+            oldColorsAll.set(elem.id, (elem as WallModel).structureColor ?? 'white');
           }
         }
         const undoableChangeAll = {
-          name: 'Set Opacity for All Walls',
+          name: 'Set Stud Color for All Walls',
           timestamp: Date.now(),
-          oldValues: oldValsAll,
+          oldValues: oldColorsAll,
           newValue: value,
           undo: () => {
-            for (const [id, wh] of undoableChangeAll.oldValues.entries()) {
-              updateById(id, wh as number);
+            for (const [id, studColor] of undoableChangeAll.oldValues.entries()) {
+              updateById(id, studColor as string);
             }
           },
           redo: () => {
-            updateForAll(undoableChangeAll.newValue as number);
+            updateForAll(undoableChangeAll.newValue as string);
           },
         } as UndoableChangeGroup;
         addUndoable(undoableChangeAll);
@@ -106,28 +111,28 @@ const WallOpacityInput = ({ setDialogVisible }: { setDialogVisible: (b: boolean)
         break;
       case Scope.AllObjectsOfThisTypeAboveFoundation:
         if (wall.foundationId) {
-          const oldValsAboveFoundation = new Map<string, number>();
+          const oldColorsAboveFoundation = new Map<string, string>();
           for (const elem of elements) {
             if (elem.type === ObjectType.Wall && elem.foundationId === wall.foundationId) {
-              oldValsAboveFoundation.set(elem.id, (elem as WallModel).opacity ?? 0.5);
+              oldColorsAboveFoundation.set(elem.id, (elem as WallModel).structureColor ?? 'white');
             }
           }
           const undoableChangeAboveFoundation = {
-            name: 'Set Opacity for All Walls Above Foundation',
+            name: 'Set Stud Color for All Walls Above Foundation',
             timestamp: Date.now(),
-            oldValues: oldValsAboveFoundation,
+            oldValues: oldColorsAboveFoundation,
             newValue: value,
             groupId: wall.foundationId,
             undo: () => {
-              for (const [id, wh] of undoableChangeAboveFoundation.oldValues.entries()) {
-                updateById(id, wh as number);
+              for (const [id, studColor] of undoableChangeAboveFoundation.oldValues.entries()) {
+                updateById(id, studColor as string);
               }
             },
             redo: () => {
               if (undoableChangeAboveFoundation.groupId) {
                 updateAboveFoundation(
                   undoableChangeAboveFoundation.groupId,
-                  undoableChangeAboveFoundation.newValue as number,
+                  undoableChangeAboveFoundation.newValue as string,
                 );
               }
             },
@@ -140,19 +145,19 @@ const WallOpacityInput = ({ setDialogVisible }: { setDialogVisible: (b: boolean)
       default:
         if (wall) {
           const updatedWall = getElementById(wall.id) as WallModel;
-          const oldVal = updatedWall.opacity ?? wall.opacity ?? 0.5;
+          const oldColor = updatedWall?.structureColor ?? wall.structureColor ?? 'white';
           const undoableChange = {
-            name: 'Set Wall Opacity',
+            name: 'Set Stud Color of Selected Wall',
             timestamp: Date.now(),
-            oldValue: oldVal,
+            oldValue: oldColor,
             newValue: value,
             changedElementId: wall.id,
             changedElementType: wall.type,
             undo: () => {
-              updateById(undoableChange.changedElementId, undoableChange.oldValue as number);
+              updateById(undoableChange.changedElementId, undoableChange.oldValue as string);
             },
             redo: () => {
-              updateById(undoableChange.changedElementId, undoableChange.newValue as number);
+              updateById(undoableChange.changedElementId, undoableChange.newValue as string);
             },
           } as UndoableChange;
           addUndoable(undoableChange);
@@ -161,7 +166,7 @@ const WallOpacityInput = ({ setDialogVisible }: { setDialogVisible: (b: boolean)
         }
     }
     setCommonStore((state) => {
-      state.actionState.wallOpacity = value;
+      state.actionState.wallStudColor = value;
     });
     setUpdateFlag(!updateFlag);
   };
@@ -180,8 +185,10 @@ const WallOpacityInput = ({ setDialogVisible }: { setDialogVisible: (b: boolean)
   };
 
   const close = () => {
-    inputRef.current = wall.opacity ?? 0.5;
-    setDialogVisible(false);
+    if (wall?.structureColor) {
+      setSelectedColor(wall.structureColor);
+    }
+    setDialogVisible();
   };
 
   const cancel = () => {
@@ -190,15 +197,15 @@ const WallOpacityInput = ({ setDialogVisible }: { setDialogVisible: (b: boolean)
   };
 
   const ok = () => {
-    setVal(inputRef.current);
-    setDialogVisible(false);
+    setColor(selectedColor);
+    setDialogVisible();
     setApplyCount(0);
   };
 
   return (
     <>
       <Modal
-        width={550}
+        width={640}
         visible={true}
         title={
           <div
@@ -206,14 +213,14 @@ const WallOpacityInput = ({ setDialogVisible }: { setDialogVisible: (b: boolean)
             onMouseOver={() => setDragEnabled(true)}
             onMouseOut={() => setDragEnabled(false)}
           >
-            {i18n.t('wallMenu.Opacity', lang)}
+            {i18n.t('wallMenu.StudColor', lang)}
           </div>
         }
         footer={[
           <Button
             key="Apply"
             onClick={() => {
-              setVal(inputRef.current);
+              setColor(selectedColor);
             }}
           >
             {i18n.t('word.Apply', lang)}
@@ -221,7 +228,7 @@ const WallOpacityInput = ({ setDialogVisible }: { setDialogVisible: (b: boolean)
           <Button key="Cancel" onClick={cancel}>
             {i18n.t('word.Cancel', lang)}
           </Button>,
-          <Button key="OK" type="primary" onClick={ok}>
+          <Button key="OK" type="primary" onClick={ok} ref={okButtonRef}>
             {i18n.t('word.OK', lang)}
           </Button>,
         ]}
@@ -236,28 +243,19 @@ const WallOpacityInput = ({ setDialogVisible }: { setDialogVisible: (b: boolean)
         )}
       >
         <Row gutter={6}>
-          <Col className="gutter-row" span={7}>
-            <InputNumber
-              min={0}
-              max={1}
-              style={{ width: 120 }}
-              step={0.05}
-              precision={2}
-              value={inputRef.current}
-              onChange={(value) => {
-                inputRef.current = value;
+          <Col className="gutter-row" span={11}>
+            <CompactPicker
+              color={selectedColor ?? wall?.structureColor ?? 'white'}
+              onChangeComplete={(colorResult) => {
+                setSelectedColor(colorResult.hex);
                 setUpdateFlag(!updateFlag);
               }}
-              onPressEnter={ok}
             />
-            <div style={{ paddingTop: '20px', textAlign: 'left', fontSize: '11px' }}>
-              {i18n.t('word.Range', lang)}: [0, 1]
-            </div>
           </Col>
           <Col
             className="gutter-row"
             style={{ border: '2px dashed #ccc', paddingTop: '8px', paddingLeft: '12px', paddingBottom: '8px' }}
-            span={17}
+            span={13}
           >
             <Radio.Group onChange={onScopeChange} value={wallActionScope}>
               <Space direction="vertical">
@@ -275,4 +273,4 @@ const WallOpacityInput = ({ setDialogVisible }: { setDialogVisible: (b: boolean)
   );
 };
 
-export default WallOpacityInput;
+export default WallStructureColorSelection;

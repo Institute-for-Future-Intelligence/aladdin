@@ -25,7 +25,7 @@ import { UndoableChange } from 'src/undo/UndoableChange';
 import { UndoableChangeGroup } from 'src/undo/UndoableChangeGroup';
 import { WallModel } from 'src/models/WallModel';
 
-const WallTextureSelection = ({ setDialogVisible }: { setDialogVisible: (b: boolean) => void }) => {
+const WallTextureSelection = ({ setDialogVisible }: { setDialogVisible: () => void }) => {
   const setCommonStore = useStore(Selector.set);
   const language = useStore(Selector.language);
   const elements = useStore(Selector.elements);
@@ -172,7 +172,7 @@ const WallTextureSelection = ({ setDialogVisible }: { setDialogVisible: (b: bool
     if (wall?.textureType) {
       setSelectedTexture(wall.textureType);
     }
-    setDialogVisible(false);
+    setDialogVisible();
   };
 
   const cancel = () => {
@@ -182,7 +182,7 @@ const WallTextureSelection = ({ setDialogVisible }: { setDialogVisible: (b: bool
 
   const ok = () => {
     setTexture(selectedTexture);
-    setDialogVisible(false);
+    setDialogVisible();
     setApplyCount(0);
   };
 

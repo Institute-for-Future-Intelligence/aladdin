@@ -13,91 +13,118 @@ import { UndoableChange } from '../../../undo/UndoableChange';
 import { UndoableChangeGroup } from '../../../undo/UndoableChangeGroup';
 import { WallModel } from '../../../models/WallModel';
 
-const WallHeightInput = ({ setDialogVisible }: { setDialogVisible: (b: boolean) => void }) => {
-  const setCommonStore = useStore(Selector.set);
+interface WallInputProps {
+  wall: WallModel;
+  dataType: string;
+  attributeKey: keyof WallModel;
+  range: [min: number, max: number];
+  step: number;
+  setDialogVisible: () => void;
+  unit?: string;
+}
+
+const WallNumberInput = ({ wall, dataType, attributeKey, range, step, unit, setDialogVisible }: WallInputProps) => {
   const language = useStore(Selector.language);
-  const elements = useStore(Selector.elements);
-  const updateWallHeightById = useStore(Selector.updateWallHeightById);
-  const updateWallHeightAboveFoundation = useStore(Selector.updateWallHeightAboveFoundation);
-  const updateWallHeightForAll = useStore(Selector.updateWallHeightForAll);
-  const wall = useStore(Selector.selectedElement) as WallModel;
   const addUndoable = useStore(Selector.addUndoable);
   const wallActionScope = useStore(Selector.wallActionScope);
   const setWallActionScope = useStore(Selector.setWallActionScope);
   const applyCount = useStore(Selector.applyCount);
   const setApplyCount = useStore(Selector.setApplyCount);
   const revertApply = useStore(Selector.revertApply);
-  const getElementById = useStore(Selector.getElementById);
+  const setCommonStore = useStore(Selector.set);
 
-  const [updateFlag, setUpdateFlag] = useState<boolean>(false);
   const [dragEnabled, setDragEnabled] = useState<boolean>(false);
   const [bounds, setBounds] = useState<DraggableBounds>({ left: 0, top: 0, bottom: 0, right: 0 } as DraggableBounds);
   const dragRef = useRef<HTMLDivElement | null>(null);
-  const inputHeightRef = useRef<number>(wall?.lz ?? 0);
+  const inputRef = useRef<number>(wall[attributeKey] as number);
 
   const lang = { lng: language };
 
-  useEffect(() => {
-    if (wall) {
-      inputHeightRef.current = wall.lz;
-    }
-  }, [wall]);
+  const updateById = (id: string, val: number) => {
+    setCommonStore((state) => {
+      for (const e of state.elements) {
+        if (e.id === id && e.type === ObjectType.Wall && !e.locked) {
+          ((e as WallModel)[attributeKey] as number) = val;
+          break;
+        }
+      }
+    });
+  };
+
+  const updateAboveFoundation = (fId: string, val: number) => {
+    setCommonStore((state) => {
+      for (const e of state.elements) {
+        if (e.parentId === fId && e.type === ObjectType.Wall && !e.locked) {
+          ((e as WallModel)[attributeKey] as number) = val;
+        }
+      }
+    });
+  };
+
+  const updateForAll = (val: number) => {
+    setCommonStore((state) => {
+      for (const e of state.elements) {
+        if (e.type === ObjectType.Wall && !e.locked) {
+          ((e as WallModel)[attributeKey] as number) = val;
+        }
+      }
+    });
+  };
 
   const onScopeChange = (e: RadioChangeEvent) => {
     setWallActionScope(e.target.value);
-    setUpdateFlag(!updateFlag);
   };
 
-  const setHeight = (value: number) => {
+  const setVal = (value: number) => {
     if (!wall) return;
     switch (wallActionScope) {
       case Scope.AllObjectsOfThisType:
-        const oldHeightsAll = new Map<string, number>();
-        for (const elem of elements) {
+        const oldValsAll = new Map<string, number>();
+        for (const elem of useStore.getState().elements) {
           if (elem.type === ObjectType.Wall) {
-            oldHeightsAll.set(elem.id, elem.lz);
+            oldValsAll.set(elem.id, (elem as WallModel)[attributeKey] as number);
           }
         }
         const undoableChangeAll = {
-          name: 'Set Height for All Walls',
+          name: `Set ${dataType} for All Walls`,
           timestamp: Date.now(),
-          oldValues: oldHeightsAll,
+          oldValues: oldValsAll,
           newValue: value,
           undo: () => {
             for (const [id, wh] of undoableChangeAll.oldValues.entries()) {
-              updateWallHeightById(id, wh as number);
+              updateById(id, wh as number);
             }
           },
           redo: () => {
-            updateWallHeightForAll(undoableChangeAll.newValue as number);
+            updateForAll(undoableChangeAll.newValue as number);
           },
         } as UndoableChangeGroup;
         addUndoable(undoableChangeAll);
-        updateWallHeightForAll(value);
+        updateForAll(value);
         setApplyCount(applyCount + 1);
         break;
       case Scope.AllObjectsOfThisTypeAboveFoundation:
         if (wall.foundationId) {
-          const oldHeightsAboveFoundation = new Map<string, number>();
-          for (const elem of elements) {
+          const oldValsAboveFoundation = new Map<string, number>();
+          for (const elem of useStore.getState().elements) {
             if (elem.type === ObjectType.Wall && elem.foundationId === wall.foundationId) {
-              oldHeightsAboveFoundation.set(elem.id, elem.lz);
+              oldValsAboveFoundation.set(elem.id, (elem as WallModel)[attributeKey] as number);
             }
           }
           const undoableChangeAboveFoundation = {
-            name: 'Set Height for All Walls Above Foundation',
+            name: `Set ${dataType} for All Walls Above Foundation`,
             timestamp: Date.now(),
-            oldValues: oldHeightsAboveFoundation,
+            oldValues: oldValsAboveFoundation,
             newValue: value,
             groupId: wall.foundationId,
             undo: () => {
               for (const [id, wh] of undoableChangeAboveFoundation.oldValues.entries()) {
-                updateWallHeightById(id, wh as number);
+                updateById(id, wh as number);
               }
             },
             redo: () => {
               if (undoableChangeAboveFoundation.groupId) {
-                updateWallHeightAboveFoundation(
+                updateAboveFoundation(
                   undoableChangeAboveFoundation.groupId,
                   undoableChangeAboveFoundation.newValue as number,
                 );
@@ -105,37 +132,33 @@ const WallHeightInput = ({ setDialogVisible }: { setDialogVisible: (b: boolean) 
             },
           } as UndoableChangeGroup;
           addUndoable(undoableChangeAboveFoundation);
-          updateWallHeightAboveFoundation(wall.foundationId, value);
+          updateAboveFoundation(wall.foundationId, value);
           setApplyCount(applyCount + 1);
         }
         break;
       default:
-        if (wall) {
-          const updatedWall = getElementById(wall.id) as WallModel;
-          const oldHeight = updatedWall.lz ?? wall.lz;
-          const undoableChange = {
-            name: 'Set Wall Height',
-            timestamp: Date.now(),
-            oldValue: oldHeight,
-            newValue: value,
-            changedElementId: wall.id,
-            changedElementType: wall.type,
-            undo: () => {
-              updateWallHeightById(undoableChange.changedElementId, undoableChange.oldValue as number);
-            },
-            redo: () => {
-              updateWallHeightById(undoableChange.changedElementId, undoableChange.newValue as number);
-            },
-          } as UndoableChange;
-          addUndoable(undoableChange);
-          updateWallHeightById(wall.id, value);
-          setApplyCount(applyCount + 1);
-        }
+        const oldVal = wall[attributeKey] as number;
+        const undoableChange = {
+          name: `Set Wall ${dataType}`,
+          timestamp: Date.now(),
+          oldValue: oldVal,
+          newValue: value,
+          changedElementId: wall.id,
+          changedElementType: wall.type,
+          undo: () => {
+            updateById(undoableChange.changedElementId, undoableChange.oldValue as number);
+          },
+          redo: () => {
+            updateById(undoableChange.changedElementId, undoableChange.newValue as number);
+          },
+        } as UndoableChange;
+        addUndoable(undoableChange);
+        updateById(wall.id, value);
+        setApplyCount(applyCount + 1);
     }
     setCommonStore((state) => {
-      state.actionState.wallHeight = value;
+      state.actionState.wallOpacity = value;
     });
-    setUpdateFlag(!updateFlag);
   };
 
   const onStart = (event: DraggableEvent, uiData: DraggableData) => {
@@ -152,8 +175,8 @@ const WallHeightInput = ({ setDialogVisible }: { setDialogVisible: (b: boolean) 
   };
 
   const close = () => {
-    inputHeightRef.current = wall.lz;
-    setDialogVisible(false);
+    inputRef.current = wall.opacity ?? 0.5;
+    setDialogVisible();
   };
 
   const cancel = () => {
@@ -162,8 +185,8 @@ const WallHeightInput = ({ setDialogVisible }: { setDialogVisible: (b: boolean) 
   };
 
   const ok = () => {
-    setHeight(inputHeightRef.current);
-    setDialogVisible(false);
+    setVal(inputRef.current);
+    setDialogVisible();
     setApplyCount(0);
   };
 
@@ -178,14 +201,14 @@ const WallHeightInput = ({ setDialogVisible }: { setDialogVisible: (b: boolean) 
             onMouseOver={() => setDragEnabled(true)}
             onMouseOut={() => setDragEnabled(false)}
           >
-            {i18n.t('word.Height', lang)}
+            {i18n.t(`wallMenu.${dataType}`, lang)}
           </div>
         }
         footer={[
           <Button
             key="Apply"
             onClick={() => {
-              setHeight(inputHeightRef.current);
+              setVal(inputRef.current);
             }}
           >
             {i18n.t('word.Apply', lang)}
@@ -210,25 +233,24 @@ const WallHeightInput = ({ setDialogVisible }: { setDialogVisible: (b: boolean) 
         <Row gutter={6}>
           <Col className="gutter-row" span={6}>
             <InputNumber
-              min={0.1}
-              max={100}
+              min={range[0]}
+              max={range[1]}
               style={{ width: 120 }}
-              step={0.1}
+              step={step}
               precision={2}
-              value={inputHeightRef.current}
-              onChange={(value) => {
-                inputHeightRef.current = value;
-                setUpdateFlag(!updateFlag);
-              }}
+              defaultValue={wall[attributeKey] as number}
+              onChange={(val) => (inputRef.current = val)}
               onPressEnter={ok}
             />
             <div style={{ paddingTop: '20px', textAlign: 'left', fontSize: '11px' }}>
-              {i18n.t('word.Range', lang)}: [0.1, 100] {i18n.t('word.MeterAbbreviation', lang)}
+              {i18n.t('word.Range', lang)}: [{range.toString()}] {unit}
             </div>
           </Col>
-          <Col className="gutter-row" span={1} style={{ verticalAlign: 'middle', paddingTop: '6px' }}>
-            {i18n.t('word.MeterAbbreviation', lang)}
-          </Col>
+          {unit && (
+            <Col className="gutter-row" span={1} style={{ verticalAlign: 'middle', paddingTop: '6px' }}>
+              {i18n.t('word.MeterAbbreviation', lang)}
+            </Col>
+          )}
           <Col
             className="gutter-row"
             style={{ border: '2px dashed #ccc', paddingTop: '8px', paddingLeft: '12px', paddingBottom: '8px' }}
@@ -250,4 +272,4 @@ const WallHeightInput = ({ setDialogVisible }: { setDialogVisible: (b: boolean) 
   );
 };
 
-export default WallHeightInput;
+export default WallNumberInput;
