@@ -117,6 +117,12 @@ export const WallMenu = () => {
                   addUndoable(undoableChange);
                   updateWallStructureById(wall.id, e.target.value);
                   setSelectedStructure(e.target.value);
+                  setCommonStore((state) => {
+                    state.actionState.wallStructure = e.target.value;
+                    if (state.actionState.wallStructure === WallStructure.Stud) {
+                      state.actionState.wallOpacity = 0;
+                    }
+                  });
                 }}
               >
                 <Radio style={radioStyle} value={WallStructure.Default}>

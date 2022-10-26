@@ -4061,8 +4061,6 @@ export const useStore = create<CommonStoreState>(
                   if (structure === WallStructure.Stud) {
                     wallModel.opacity = 0;
                   }
-                  state.actionState.wallStructure = structure;
-                  state.actionState.wallOpacity = 0;
                   break;
                 }
               }
