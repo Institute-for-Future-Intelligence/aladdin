@@ -7,30 +7,18 @@ import { BackSide, DoubleSide, Euler, Group, Intersection, Mesh, Object3D, Rayca
 import { invalidate, ThreeEvent, useThree } from '@react-three/fiber';
 import { Plane, useTexture } from '@react-three/drei';
 
-import DefaultDaySkyImage from '../resources/daysky.jpg';
-import DefaultNightSkyImage from '../resources/nightsky.jpg';
-import DesertDaySkyImage from '../resources/desert.jpg';
-import DesertNightSkyImage from '../resources/desert-night.jpg';
-import DuneDaySkyImage from '../resources/dune.jpg';
-import DuneNightSkyImage from '../resources/dune-night.jpg';
-import ForestDaySkyImage from '../resources/forest.jpg';
-import ForestNightSkyImage from '../resources/forest-night.jpg';
-import GrasslandDaySkyImage from '../resources/grassland.jpg';
-import GrasslandNightSkyImage from '../resources/grassland-night.jpg';
-import HillSpringDaySkyImage from '../resources/hill-spring.jpg';
-import HillSpringNightSkyImage from '../resources/hill-spring-night.jpg';
-import HillSummerDaySkyImage from '../resources/hill-summer.jpg';
-import HillSummerNightSkyImage from '../resources/hill-summer-night.jpg';
-import HillFallDaySkyImage from '../resources/hill-fall.jpg';
-import HillFallNightSkyImage from '../resources/hill-fall-night.jpg';
-import HillWinterDaySkyImage from '../resources/hill-winter.jpg';
-import HillWinterNightSkyImage from '../resources/hill-winter-night.jpg';
-import LakeDaySkyImage from '../resources/lake.jpg';
-import LakeNightSkyImage from '../resources/lake-night.jpg';
-import MountainDaySkyImage from '../resources/mountain.jpg';
-import MountainNightSkyImage from '../resources/mountain-night.jpg';
-import RuralDaySkyImage from '../resources/rural.jpg';
-import RuralNightSkyImage from '../resources/rural-night.jpg';
+import DefaultImage from '../resources/daysky.jpg';
+import DesertImage from '../resources/desert.jpg';
+import DuneImage from '../resources/dune.jpg';
+import ForestImage from '../resources/forest.jpg';
+import GrasslandImage from '../resources/grassland.jpg';
+import HillSpringImage from '../resources/hill-spring.jpg';
+import HillSummerImage from '../resources/hill-summer.jpg';
+import HillFallImage from '../resources/hill-fall.jpg';
+import HillWinterImage from '../resources/hill-winter.jpg';
+import LakeImage from '../resources/lake.jpg';
+import MountainImage from '../resources/mountain.jpg';
+import RuralImage from '../resources/rural.jpg';
 
 import { useStore } from '../stores/common';
 import { useStoreRef } from 'src/stores/commonRef';
@@ -146,46 +134,46 @@ const Sky = ({ theme = 'Default' }: SkyProps) => {
   const textureImg = useMemo(() => {
     switch (theme) {
       case Theme.Desert:
-        return night ? DesertNightSkyImage : DesertDaySkyImage;
+        return DesertImage;
       case Theme.Dune:
-        return night ? DuneNightSkyImage : DuneDaySkyImage;
+        return DuneImage;
       case Theme.Forest:
-        return night ? ForestNightSkyImage : ForestDaySkyImage;
+        return ForestImage;
       case Theme.Grassland:
-        return night ? GrasslandNightSkyImage : GrasslandDaySkyImage;
+        return GrasslandImage;
       case Theme.Hill:
         if (latitude > 0) {
           if (month >= 12 || month <= 3) {
-            return night ? HillWinterNightSkyImage : HillWinterDaySkyImage;
+            return HillWinterImage;
           } else if (month > 3 && month <= 5) {
-            return night ? HillSpringNightSkyImage : HillSpringDaySkyImage;
+            return HillSpringImage;
           } else if (month > 5 && month <= 9) {
-            return night ? HillSpringNightSkyImage : HillSummerDaySkyImage;
+            return HillSummerImage;
           } else {
             // November
-            return night ? HillSpringNightSkyImage : HillFallDaySkyImage;
+            return HillFallImage;
           }
         } else {
           if (month >= 12 || month <= 3) {
-            return night ? HillSpringNightSkyImage : HillSummerDaySkyImage;
+            return HillSummerImage;
           } else if (month > 3 && month <= 5) {
-            return night ? HillSpringNightSkyImage : HillFallDaySkyImage;
+            return HillFallImage;
           } else if (month > 5 && month <= 9) {
-            return night ? HillWinterNightSkyImage : HillWinterDaySkyImage;
+            return HillWinterImage;
           } else {
-            return night ? HillSpringNightSkyImage : HillSpringDaySkyImage;
+            return HillSpringImage;
           }
         }
       case Theme.Lake:
-        return night ? LakeNightSkyImage : LakeDaySkyImage;
+        return LakeImage;
       case Theme.Mountain:
-        return night ? MountainNightSkyImage : MountainDaySkyImage;
+        return MountainImage;
       case Theme.Rural:
-        return night ? RuralNightSkyImage : RuralDaySkyImage;
+        return RuralImage;
       default:
-        return night ? DefaultNightSkyImage : DefaultDaySkyImage;
+        return DefaultImage;
     }
-  }, [theme, night, date, latitude]);
+  }, [theme, date, latitude]);
 
   const texture = useTexture(textureImg);
 
@@ -897,7 +885,11 @@ const Sky = ({ theme = 'Default' }: SkyProps) => {
         onPointerDown={handlePointerDown}
       >
         <sphereBufferGeometry args={[DEFAULT_SKY_RADIUS, 16, 8, 0, TWO_PI, 0, HALF_PI]} />
-        <meshBasicMaterial map={texture} side={BackSide} opacity={1} color={'skyblue'} />
+        {night ? (
+          <meshStandardMaterial map={texture} side={BackSide} opacity={1} color={'skyblue'} />
+        ) : (
+          <meshBasicMaterial map={texture} side={BackSide} opacity={1} color={'skyblue'} />
+        )}
       </mesh>
       {grabRef.current && intersectionPlaneType !== IntersectionPlaneType.Sky && (
         <Plane

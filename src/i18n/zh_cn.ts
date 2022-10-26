@@ -461,8 +461,8 @@ export const i18n_zh_cn = {
       ShowAzimuthAngle: '显示方位角',
       ShowElevationAngle: '显示高度角',
       ShowZenithAngle: '显示天顶角',
-      DirectLightIntensity: '直射光照度',
-      AmbientLightIntensity: '环境光照度',
+      DirectLightIntensityAtNoon: '正午直射光照度',
+      AmbientLightIntensityAtNoon: '正午环境光照度',
     },
 
     groundMenu: {

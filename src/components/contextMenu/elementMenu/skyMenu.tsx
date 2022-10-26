@@ -23,7 +23,7 @@ export const SkyMenu = () => {
   const showAzimuthAngle = useStore(Selector.viewState.showAzimuthAngle) ?? true;
   const showElevationAngle = useStore(Selector.viewState.showElevationAngle) ?? true;
   const showZenithAngle = useStore(Selector.viewState.showZenithAngle) ?? true;
-  const directLightIntensity = useStore(Selector.viewState.directLightIntensity) ?? 0.5;
+  const directLightIntensity = useStore(Selector.viewState.directLightIntensity) ?? 1;
   const ambientLightIntensity = useStore(Selector.viewState.ambientLightIntensity) ?? 0.1;
   const airAttenuationCoefficient = useStore(Selector.world.airAttenuationCoefficient) ?? 0.01;
   const airConvectiveCoefficient = useStore(Selector.world.airConvectiveCoefficient) ?? 5;
@@ -265,7 +265,7 @@ export const SkyMenu = () => {
           style={{ height: '36px', paddingLeft: '36px', marginBottom: 0, marginTop: 0 }}
           key={'direct-light-intensity'}
         >
-          <Space style={{ width: '260px' }}>{i18n.t('skyMenu.DirectLightIntensity', lang) + ' [0.1-2]:'}</Space>
+          <Space style={{ width: '270px' }}>{i18n.t('skyMenu.DirectLightIntensityAtNoon', lang) + ' [0.1-2]:'}</Space>
           <InputNumber
             min={0.1}
             max={2}
@@ -299,7 +299,7 @@ export const SkyMenu = () => {
           style={{ height: '36px', paddingLeft: '36px', marginBottom: 0, marginTop: 0 }}
           key={'ambient-light-intensity'}
         >
-          <Space style={{ width: '260px' }}>{i18n.t('skyMenu.AmbientLightIntensity', lang) + ' [0.01-1]:'}</Space>
+          <Space style={{ width: '270px' }}>{i18n.t('skyMenu.AmbientLightIntensityAtNoon', lang) + ' [0.01-1]:'}</Space>
           <InputNumber
             min={0.01}
             max={1}
@@ -333,7 +333,7 @@ export const SkyMenu = () => {
           style={{ height: '36px', paddingLeft: '36px', marginBottom: 0, marginTop: 0 }}
           key={'air-attenuation-coefficient'}
         >
-          <Space style={{ width: '260px' }}>{i18n.t('skyMenu.SunlightAttenuationCoefficientInAir', lang) + ':'}</Space>
+          <Space style={{ width: '270px' }}>{i18n.t('skyMenu.SunlightAttenuationCoefficientInAir', lang) + ':'}</Space>
           <InputNumber
             min={0}
             max={0.1}
@@ -367,7 +367,7 @@ export const SkyMenu = () => {
           style={{ height: '36px', paddingLeft: '36px', marginBottom: 0, marginTop: 0 }}
           key={'air-convective-coefficient'}
         >
-          <Space style={{ width: '260px' }}>
+          <Space style={{ width: '270px' }}>
             {i18n.t('skyMenu.ConvectiveCoefficientOfAir', lang) + ' [W/(m²×K)]:'}
           </Space>
           <InputNumber
@@ -403,7 +403,7 @@ export const SkyMenu = () => {
           style={{ height: '36px', paddingLeft: '36px', marginTop: 0 }}
           key={'highest-temperature-time-in-minutes'}
         >
-          <Space style={{ width: '260px' }}>{i18n.t('skyMenu.HighestTemperatureTimeInMinutes', lang) + ':'}</Space>
+          <Space style={{ width: '270px' }}>{i18n.t('skyMenu.HighestTemperatureTimeInMinutes', lang) + ':'}</Space>
           <InputNumber
             min={720}
             max={sunMinutes.sunset}

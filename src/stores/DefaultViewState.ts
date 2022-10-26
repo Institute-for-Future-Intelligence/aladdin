@@ -98,7 +98,7 @@ export class DefaultViewState implements ViewState {
   constructor() {
     this.orthographic = false;
     this.enableRotate = true;
-    this.directLightIntensity = 0.5;
+    this.directLightIntensity = 1;
     this.ambientLightIntensity = 0.1;
     this.cameraPosition = [5, -30, 1];
     this.cameraPosition2D = [0, 0, 150];
@@ -189,7 +189,7 @@ export class DefaultViewState implements ViewState {
     viewState.cameraZoom = 20;
     viewState.cameraPosition2D = [0, 0, 20];
     viewState.panCenter2D = [0, 0, 0];
-    viewState.directLightIntensity = 0.5;
+    viewState.directLightIntensity = 1;
     viewState.ambientLightIntensity = 0.1;
 
     viewState.axes = true;

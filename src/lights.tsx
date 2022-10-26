@@ -6,7 +6,7 @@ import React, { useRef } from 'react';
 import { useStore } from './stores/common';
 import * as Selector from './stores/selector';
 import { DirectionalLight } from 'three';
-import { DEFAULT_FAR } from './constants';
+import { DEFAULT_FAR, UNIT_VECTOR_POS_Z } from './constants';
 
 const Lights = () => {
   const directLightIntensity = useStore(Selector.viewState.directLightIntensity);
@@ -26,15 +26,18 @@ const Lights = () => {
     ref.current.shadow.camera.updateProjectionMatrix();
   }
 
+  const day = sunlightDirection.z > 0;
+  const dot = day ? sunlightDirection.normalize().dot(UNIT_VECTOR_POS_Z) : 0;
+
   return (
     <>
-      <ambientLight intensity={ambientLightIntensity ?? 0.1} name={'Ambient Light'} />
+      <ambientLight intensity={0.08 + (day ? (ambientLightIntensity ?? 0.1) * dot : 0)} name={'Ambient Light'} />
       <directionalLight
         ref={ref}
         name={'Directional Light'}
         color="white"
         position={sunlightDirection.normalize().multiplyScalar(positionExtent)}
-        intensity={sunlightDirection.z > 0 ? directLightIntensity ?? 0.5 : 0}
+        intensity={day ? (directLightIntensity ?? 1) * dot : 0}
         castShadow
         shadow-mapSize-height={4096 * 4}
         shadow-mapSize-width={4096 * 4}

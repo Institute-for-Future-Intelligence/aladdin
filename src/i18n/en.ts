@@ -464,8 +464,8 @@ export const i18n_en = {
       ShowAzimuthAngle: 'Show Azimuth Angle',
       ShowElevationAngle: 'Show Elevation Angle',
       ShowZenithAngle: 'Show Zenith Angle',
-      DirectLightIntensity: 'Direct Light Intensity',
-      AmbientLightIntensity: 'Ambient Light Intensity',
+      DirectLightIntensityAtNoon: 'Direct Light Intensity at Noon',
+      AmbientLightIntensityAtNoon: 'Ambient Light Intensity at Noon',
     },
 
     groundMenu: {
