@@ -180,6 +180,9 @@ const DoorColorSelection = ({ setDialogVisible }: { setDialogVisible: (b: boolea
           setApplyCount(applyCount + 1);
         }
     }
+    setCommonStore((state) => {
+      state.actionState.doorColor = value;
+    });
   };
 
   const onStart = (event: DraggableEvent, uiData: DraggableData) => {

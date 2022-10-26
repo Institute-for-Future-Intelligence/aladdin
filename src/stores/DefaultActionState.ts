@@ -4,7 +4,16 @@
 
 import { immerable } from 'immer';
 import { ActionState } from './ActionState';
-import { CuboidTexture, FlowerType, FoundationTexture, HumanName, Orientation, TreeType, WallTexture } from '../types';
+import {
+  CuboidTexture,
+  DoorTexture,
+  FlowerType,
+  FoundationTexture,
+  HumanName,
+  Orientation,
+  TreeType,
+  WallTexture,
+} from '../types';
 import { WallStructure } from '../models/WallModel';
 import { defaultShutter } from '../views/window/window';
 
@@ -37,6 +46,9 @@ export class DefaultActionState implements ActionState {
   wallStudWidth: number;
   wallStudColor: string;
   wallOpacity: number;
+
+  doorColor: string;
+  doorTexture: DoorTexture;
 
   windowColor: string;
   windowTint: string;
@@ -89,6 +101,9 @@ export class DefaultActionState implements ActionState {
     this.wallStudWidth = 0.1;
     this.wallStudColor = 'white';
     this.wallOpacity = 0.5;
+
+    this.doorColor = 'white';
+    this.doorTexture = DoorTexture.Default;
 
     this.windowColor = 'white';
     this.windowTint = '#73D8FF';

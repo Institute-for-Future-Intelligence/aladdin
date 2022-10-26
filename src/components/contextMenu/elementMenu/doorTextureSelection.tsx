@@ -196,6 +196,9 @@ const DoorTextureSelection = ({ setDialogVisible }: { setDialogVisible: (b: bool
           setApplyCount(applyCount + 1);
         }
     }
+    setCommonStore((state) => {
+      state.actionState.doorTexture = value;
+    });
   };
 
   const onStart = (event: DraggableEvent, uiData: DraggableData) => {

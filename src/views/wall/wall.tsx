@@ -1030,7 +1030,7 @@ const Wall = ({
             break;
           }
           case ObjectType.Door: {
-            const newDoor = ElementModelFactory.makeDoor(wallModel); //todo
+            const newDoor = ElementModelFactory.makeDoor(wallModel, actionState.doorColor, actionState.doorTexture);
             useStoreRef.getState().setEnableOrbitController(false);
             setCommonStore((state) => {
               state.objectTypeToAdd = ObjectType.None;
