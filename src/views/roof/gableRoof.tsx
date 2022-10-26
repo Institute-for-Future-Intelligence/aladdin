@@ -21,6 +21,7 @@ import {
   handlePointerMove,
   handlePointerUp,
   handleRoofBodyPointerDown,
+  RoofHandle,
   RoofWireframeProps,
   updateRooftopSolarPanel,
 } from './roofRenderer';
@@ -904,9 +905,8 @@ const GableRoof = ({
       {selected && !locked && (
         <group position={[0, 0, thickness]}>
           {/* mid handle */}
-          <Sphere
+          <RoofHandle
             position={[ridgeMidPoint.x, ridgeMidPoint.y, ridgeMidPoint.z + 0.15]}
-            args={[0.3]}
             onPointerDown={() => {
               isPointerMovingRef.current = true;
               setShowIntersectionPlane(true);
@@ -922,9 +922,8 @@ const GableRoof = ({
             }}
           />
           {/* side handles */}
-          <Sphere
+          <RoofHandle
             position={[ridgeLeftPointV3.x, ridgeLeftPointV3.y, ridgeLeftPointV3.z + 0.15]}
-            args={[0.3]}
             onPointerDown={() => {
               isPointerMovingRef.current = true;
               oldRidgeLeft.current = ridgeLeftPoint[0];
@@ -941,9 +940,8 @@ const GableRoof = ({
               useStoreRef.getState().setEnableOrbitController(false);
             }}
           />
-          <Sphere
+          <RoofHandle
             position={[ridgeRightPointV3.x, ridgeRightPointV3.y, ridgeRightPointV3.z + 0.15]}
-            args={[0.3]}
             onPointerDown={() => {
               isPointerMovingRef.current = true;
               oldRidgeLeft.current = ridgeLeftPoint[0];

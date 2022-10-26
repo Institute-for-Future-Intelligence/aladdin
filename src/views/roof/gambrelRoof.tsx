@@ -35,6 +35,7 @@ import {
   handlePointerDown,
   handlePointerUp,
   handlePointerMove,
+  RoofHandle,
 } from './roofRenderer';
 import { CSG } from 'three-csg-ts';
 import { ConvexGeometry } from 'three/examples/jsm/geometries/ConvexGeometry';
@@ -263,7 +264,7 @@ const GambrelRoof = ({
   const setInterSectionPlane = (handlePointV3: Vector3, wall: WallModel) => {
     setEnableIntersectionPlane(true);
     useStoreRef.getState().setEnableOrbitController(false);
-    intersectionPlanePosition.set(handlePointV3.x, handlePointV3.y, 0).add(centroid);
+    intersectionPlanePosition.set(handlePointV3.x, handlePointV3.y, handlePointV3.z).add(centroid);
     if (foundation && wall) {
       const dir = new Vector3().subVectors(handlePointV3, camera.position).normalize();
       const rX = Math.atan2(dir.z, Math.hypot(dir.x, dir.y));
@@ -736,9 +737,8 @@ const GambrelRoof = ({
       {/* handles */}
       {selected && !locked && (
         <group position={[centroid.x, centroid.y, centroid.z + thickness]}>
-          <Sphere
+          <RoofHandle
             position={[topRidgeLeftPointV3.x, topRidgeLeftPointV3.y, topRidgeLeftPointV3.z]}
-            args={[0.3]}
             onPointerDown={() => {
               isPointerMovingRef.current = true;
               oldRidgeVal.current = topRidgeLeftPoint[0];
@@ -746,9 +746,8 @@ const GambrelRoof = ({
               setRoofHandleType(RoofHandleType.TopLeft);
             }}
           />
-          <Sphere
+          <RoofHandle
             position={[topRidgeRightPointV3.x, topRidgeRightPointV3.y, topRidgeRightPointV3.z]}
-            args={[0.3]}
             onPointerDown={() => {
               isPointerMovingRef.current = true;
               oldRidgeVal.current = topRidgeRightPoint[0];
@@ -756,9 +755,8 @@ const GambrelRoof = ({
               setRoofHandleType(RoofHandleType.TopRight);
             }}
           />
-          <Sphere
+          <RoofHandle
             position={[topRidgeMidPointV3.x, topRidgeMidPointV3.y, topRidgeMidPointV3.z]}
-            args={[0.3]}
             onPointerDown={() => {
               isPointerMovingRef.current = true;
               setEnableIntersectionPlane(true);
@@ -774,9 +772,8 @@ const GambrelRoof = ({
             }}
           />
 
-          <Sphere
+          <RoofHandle
             position={[frontRidgeLeftPointV3.x, frontRidgeLeftPointV3.y, frontRidgeLeftPointV3.z]}
-            args={[0.3]}
             onPointerDown={() => {
               isPointerMovingRef.current = true;
               oldRidgeVal.current = frontRidgeLeftPoint[0];
@@ -784,9 +781,8 @@ const GambrelRoof = ({
               setRoofHandleType(RoofHandleType.FrontLeft);
             }}
           />
-          <Sphere
+          <RoofHandle
             position={[frontRidgeRightPointV3.x, frontRidgeRightPointV3.y, frontRidgeRightPointV3.z]}
-            args={[0.3]}
             onPointerDown={() => {
               isPointerMovingRef.current = true;
               oldRidgeVal.current = frontRidgeRightPoint[0];
@@ -795,9 +791,8 @@ const GambrelRoof = ({
             }}
           />
 
-          <Sphere
+          <RoofHandle
             position={[backRidgeLeftPointV3.x, backRidgeLeftPointV3.y, backRidgeLeftPointV3.z]}
-            args={[0.3]}
             onPointerDown={() => {
               isPointerMovingRef.current = true;
               oldRidgeVal.current = backRidgeLeftPoint[0];
@@ -805,9 +800,8 @@ const GambrelRoof = ({
               setRoofHandleType(RoofHandleType.BackLeft);
             }}
           />
-          <Sphere
+          <RoofHandle
             position={[backRidgeRightPointV3.x, backRidgeRightPointV3.y, backRidgeRightPointV3.z]}
-            args={[0.3]}
             onPointerDown={() => {
               isPointerMovingRef.current = true;
               oldRidgeVal.current = backRidgeRightPoint[0];
