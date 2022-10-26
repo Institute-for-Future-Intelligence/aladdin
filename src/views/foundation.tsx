@@ -1091,6 +1091,9 @@ const Foundation = ({
       },
     } as UndoableResizeWall;
     addUndoable(undoableResize);
+    setCommonStore((state) => {
+      state.actionState.wallHeight = element.lz;
+    });
   };
 
   const handleUnoableMoveWall = (wall: WallModel, newAngle: number, newJoints: string[][]) => {

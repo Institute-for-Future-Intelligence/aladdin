@@ -14,6 +14,7 @@ import { UndoableChangeGroup } from '../../../undo/UndoableChangeGroup';
 import { WallModel } from '../../../models/WallModel';
 
 const WallHeightInput = ({ setDialogVisible }: { setDialogVisible: (b: boolean) => void }) => {
+  const setCommonStore = useStore(Selector.set);
   const language = useStore(Selector.language);
   const elements = useStore(Selector.elements);
   const updateWallHeightById = useStore(Selector.updateWallHeightById);
@@ -131,6 +132,9 @@ const WallHeightInput = ({ setDialogVisible }: { setDialogVisible: (b: boolean) 
           setApplyCount(applyCount + 1);
         }
     }
+    setCommonStore((state) => {
+      state.actionState.wallHeight = value;
+    });
     setUpdateFlag(!updateFlag);
   };
 

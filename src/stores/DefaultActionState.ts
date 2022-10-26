@@ -26,6 +26,9 @@ export class DefaultActionState implements ActionState {
   cuboidFaceColors: string[];
   cuboidFaceTextures: CuboidTexture[];
 
+  wallHeight: number;
+  wallThickness: number;
+
   solarPanelModelName: string;
   solarPanelOrientation: Orientation;
   solarPanelPoleHeight: number;
@@ -56,6 +59,9 @@ export class DefaultActionState implements ActionState {
       CuboidTexture.NoTexture,
       CuboidTexture.NoTexture,
     ];
+
+    this.wallHeight = 5;
+    this.wallThickness = 0.3;
 
     this.solarPanelModelName = 'SPR-X21-335-BLK';
     this.solarPanelOrientation = Orientation.landscape;

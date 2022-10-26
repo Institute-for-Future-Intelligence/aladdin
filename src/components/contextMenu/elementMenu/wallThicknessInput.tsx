@@ -14,6 +14,7 @@ import { UndoableChangeGroup } from '../../../undo/UndoableChangeGroup';
 import { WallModel } from '../../../models/WallModel';
 
 const WallThicknessInput = ({ setDialogVisible }: { setDialogVisible: (b: boolean) => void }) => {
+  const setCommonStore = useStore(Selector.set);
   const language = useStore(Selector.language);
   const elements = useStore(Selector.elements);
   const updateWallThicknessById = useStore(Selector.updateWallThicknessById);
@@ -131,6 +132,9 @@ const WallThicknessInput = ({ setDialogVisible }: { setDialogVisible: (b: boolea
           setApplyCount(applyCount + 1);
         }
     }
+    setCommonStore((state) => {
+      state.actionState.wallThickness = value;
+    });
     setUpdateFlag(!updateFlag);
   };
 

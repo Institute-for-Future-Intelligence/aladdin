@@ -4434,6 +4434,8 @@ export const useStore = create<CommonStoreState>(
                   const relativePos = Util.wallRelativePosition(new Vector3(p.x, p.y), wallParentModel);
                   const wall = ElementModelFactory.makeWall(
                     wallParentModel,
+                    state.actionState.wallHeight,
+                    state.actionState.wallThickness,
                     relativePos.x,
                     relativePos.y,
                     relativePos.z,

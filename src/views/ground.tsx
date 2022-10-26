@@ -551,6 +551,9 @@ const Ground = () => {
           },
         } as UndoableChange;
         addUndoable(undoableChangeHeight);
+        setCommonStore((state) => {
+          state.actionState.wallHeight = elem.lz;
+        });
         return;
       }
     }

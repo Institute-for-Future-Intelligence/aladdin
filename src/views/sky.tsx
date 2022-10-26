@@ -735,6 +735,9 @@ const Sky = ({ theme = 'Default' }: SkyProps) => {
               },
             } as UndoableChange;
             addUndoable(undoableChangeHeight);
+            setCommonStore((state) => {
+              state.actionState.wallHeight = elem.lz;
+            });
             break;
         }
         if (elementRef) {

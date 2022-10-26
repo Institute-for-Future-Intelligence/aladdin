@@ -477,15 +477,24 @@ export class ElementModelFactory {
     } as SensorModel;
   }
 
-  static makeWall(parent: ElementModel, x: number, y: number, z?: number, normal?: Vector3, rotation?: number[]) {
+  static makeWall(
+    parent: ElementModel,
+    height: number,
+    thickness: number,
+    x: number,
+    y: number,
+    z?: number,
+    normal?: Vector3,
+    rotation?: number[],
+  ) {
     return {
       type: ObjectType.Wall,
       cx: x,
       cy: y,
       cz: z,
       lx: 0,
-      ly: 0.3,
-      lz: 5,
+      ly: thickness ?? 0.3,
+      lz: height ?? 5,
       relativeAngle: 0,
       leftPoint: [],
       rightPoint: [],

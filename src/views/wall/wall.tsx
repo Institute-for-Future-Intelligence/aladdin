@@ -25,7 +25,6 @@ import {
   Raycaster,
   RepeatWrapping,
   Shape,
-  ShapeBufferGeometry,
   TextureLoader,
   Vector2,
   Vector3,

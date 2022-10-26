@@ -21,6 +21,9 @@ export interface ActionState {
   cuboidFaceColors: string[];
   cuboidFaceTextures: CuboidTexture[];
 
+  wallHeight: number;
+  wallThickness: number;
+
   solarPanelModelName: string;
   solarPanelOrientation: Orientation;
   solarPanelPoleHeight: number;
