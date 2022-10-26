@@ -4059,7 +4059,7 @@ export const useStore = create<CommonStoreState>(
                 if (e.id === id && e.type === ObjectType.Wall) {
                   const wallModel = e as WallModel;
                   wallModel.wallStructure = structure;
-                  if (structure === WallStructure.Stud) {
+                  if (structure === WallStructure.Stud || structure === WallStructure.Pillar) {
                     wallModel.opacity = 0;
                   }
                   break;

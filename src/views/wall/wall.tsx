@@ -244,7 +244,7 @@ const Wall = ({
 
   const { elementsOnWall, leftWall, rightWall } = useElements(id, leftJoints[0], rightJoints[0]);
 
-  const transparent = wallStructure === WallStructure.Stud;
+  const transparent = wallStructure === WallStructure.Stud || wallStructure === WallStructure.Pillar;
 
   const { camera, gl } = useThree();
   const mouse = useMemo(() => new Vector2(), []);
@@ -1217,7 +1217,7 @@ const Wall = ({
 
   const structureUnitArray = useMemo(() => {
     const arr: number[] = [];
-    if (wallStructure === WallStructure.Stud) {
+    if (wallStructure === WallStructure.Stud || wallStructure === WallStructure.Pillar) {
       let pos = -hx + structureWidth / 2;
       while (pos <= hx) {
         arr.push(pos);
@@ -1468,8 +1468,8 @@ const Wall = ({
             </>
           )}
 
-          {/* {wallStructure === WallStructure.Stud && renderStuds()} */}
-          {wallStructure === WallStructure.Stud && renderPillars()}
+          {wallStructure === WallStructure.Stud && renderStuds()}
+          {wallStructure === WallStructure.Pillar && renderPillars()}
 
           {/* wireFrame */}
           {(wallStructure === WallStructure.Default || (locked && selected)) && (

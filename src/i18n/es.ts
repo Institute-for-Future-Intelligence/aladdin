@@ -877,12 +877,13 @@ export const i18n_es = {
       WallStructure: 'Wall Structure',
       DefaultStructure: 'Default',
       StudStructure: 'Stud',
+      PillarStructure: 'Pillar',
       Opacity: 'Opacity',
+      WallColor: 'Wall Color',
       StudSpacing: 'Stud Spacing',
       StudWidth: 'Stud Width',
       StudThickness: 'Stud Thickness',
       StudColor: 'Stud Color',
-      WallColor: 'Wall Color',
     },
 
     doorMenu: {

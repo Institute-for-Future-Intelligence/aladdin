@@ -2,10 +2,10 @@
  * @Copyright 2021-2022. Institute for Future Intelligence, Inc.
  */
 
-import React, { useEffect, useState } from 'react';
+import React, { useState } from 'react';
 import { Menu, Modal, Radio } from 'antd';
 import SubMenu from 'antd/lib/menu/SubMenu';
-import { useStore } from '../../../stores/common';
+import { CommonStoreState, useStore } from '../../../stores/common';
 import * as Selector from '../../../stores/selector';
 import { Copy, Cut, Lock, Paste } from '../menuItems';
 import i18n from '../../../i18n/i18n';
@@ -25,34 +25,40 @@ import WallStudSpacingInput from './wallStudSpacingInput';
 import WallStudWidthInput from './wallStudWidthInput';
 import WallStudColorSelection from './wallStudColorSelection';
 
+const getSelectedWall = (state: CommonStoreState) => {
+  for (const el of state.elements) {
+    if (el.selected && el.type === ObjectType.Wall) {
+      return el as WallModel;
+    }
+  }
+  return null;
+};
+
 export const WallMenu = () => {
-  const setCommonStore = useStore(Selector.set);
-  const elements = useStore(Selector.elements);
-  const wall = useStore(Selector.selectedElement) as WallModel;
-  const elementsToPaste = useStore(Selector.elementsToPaste);
+  const wall = useStore(getSelectedWall);
+
   const language = useStore(Selector.language);
+  const setCommonStore = useStore(Selector.set);
   const setApplyCount = useStore(Selector.setApplyCount);
   const countAllOffspringsByType = useStore(Selector.countAllOffspringsByTypeAtOnce);
   const removeAllChildElementsByType = useStore(Selector.removeAllChildElementsByType);
-  const contextMenuObjectType = useStore(Selector.contextMenuObjectType);
   const addUndoable = useStore(Selector.addUndoable);
   const updateWallStructureById = useStore(Selector.updateWallStructureById);
-  const [selectedStructure, setSelectedStructure] = useState(wall?.wallStructure ?? WallStructure.Default);
 
   const [textureDialogVisible, setTextureDialogVisible] = useState(false);
   const [colorDialogVisible, setColorDialogVisible] = useState(false);
   const [heightDialogVisible, setHeightDialogVisible] = useState(false);
   const [opacityDialogVisible, setOpacityDialogVisible] = useState(false);
-  const [studSpacingDialogVisible, setStudSpacingDialogVisible] = useState(false);
-  const [studWidthDialogVisible, setStudWidthDialogVisible] = useState(false);
-  const [studColorDialogVisible, setStudColorDialogVisible] = useState(false);
+  const [structureSpacingDialogVisible, setStructureSpacingDialogVisible] = useState(false);
+  const [structureWidthDialogVisible, setStructureWidthDialogVisible] = useState(false);
+  const [structureColorDialogVisible, setStructureColorDialogVisible] = useState(false);
   const [thicknessDialogVisible, setThicknessDialogVisible] = useState(false);
 
-  const counter = wall ? countAllOffspringsByType(wall.id) : new ElementCounter();
   const lang = { lng: language };
   const paddingLeft = '36px';
 
   const legalToPaste = () => {
+    const elementsToPaste = useStore.getState().elementsToPaste;
     if (elementsToPaste && elementsToPaste.length > 0) {
       const e = elementsToPaste[0];
       if (Util.isLegalOnWall(e.type)) {
@@ -62,6 +68,31 @@ export const WallMenu = () => {
     return false;
   };
 
+  const handleClearOk = (objectType: ObjectType) => {
+    if (wall) {
+      const removed = useStore
+        .getState()
+        .elements.filter((e) => !e.locked && e.type === objectType && e.parentId === wall.id);
+      removeAllChildElementsByType(wall.id, objectType);
+      const removedElements = JSON.parse(JSON.stringify(removed));
+      const undoableRemoveAllWindowChildren = {
+        name: `Remove All ${objectType}s on Wall`,
+        timestamp: Date.now(),
+        parentId: wall.id,
+        removedElements: removedElements,
+        undo: () => {
+          setCommonStore((state) => {
+            state.elements.push(...undoableRemoveAllWindowChildren.removedElements);
+          });
+        },
+        redo: () => {
+          removeAllChildElementsByType(undoableRemoveAllWindowChildren.parentId, objectType);
+        },
+      } as UndoableRemoveAllChildren;
+      addUndoable(undoableRemoveAllWindowChildren);
+    }
+  };
+
   const radioStyle = {
     display: 'block',
     height: '30px',
@@ -69,323 +100,205 @@ export const WallMenu = () => {
     lineHeight: '30px',
   };
 
-  useEffect(() => {
-    if (wall && selectedStructure !== wall?.wallStructure) {
-      setSelectedStructure(wall.wallStructure ?? WallStructure.Default);
+  const renderCopy = () => <Copy keyName={'wall-copy'} />;
+
+  const renderLock = () => <Lock keyName={'wall-lock'} />;
+
+  const renderCut = () => {
+    if (!wall || wall.locked) {
+      return null;
     }
-  }, [wall]);
+    return <Cut keyName={'wall-cut'} />;
+  };
+
+  const renderPaste = () => {
+    if (!legalToPaste()) {
+      return null;
+    }
+    return <Paste keyName={'wall-paste'} />;
+  };
+
+  const renderSturctureSubMenu = () => {
+    if (!wall) {
+      return null;
+    }
+    return (
+      <SubMenu key={'wall-structure'} title={i18n.t('wallMenu.WallStructure', lang)} style={{ paddingLeft: '24px' }}>
+        <Radio.Group
+          value={wall.wallStructure ?? WallStructure.Default}
+          style={{ height: '75px' }}
+          onChange={(e) => {
+            const undoableChange = {
+              name: 'Select Wall Structure',
+              timestamp: Date.now(),
+              oldValue: wall.wallStructure,
+              newValue: e.target.value,
+              changedElementId: wall.id,
+              changedElementType: wall.type,
+              undo: () => {
+                updateWallStructureById(undoableChange.changedElementId, undoableChange.oldValue as WallStructure);
+              },
+              redo: () => {
+                updateWallStructureById(undoableChange.changedElementId, undoableChange.newValue as WallStructure);
+              },
+            } as UndoableChange;
+            addUndoable(undoableChange);
+            updateWallStructureById(wall.id, e.target.value);
+          }}
+        >
+          <Radio style={radioStyle} value={WallStructure.Default}>
+            {i18n.t('wallMenu.DefaultStructure', lang)}
+          </Radio>
+          <Radio style={radioStyle} value={WallStructure.Stud}>
+            {i18n.t('wallMenu.StudStructure', lang)}
+          </Radio>
+          <Radio style={radioStyle} value={WallStructure.Pillar}>
+            {i18n.t('wallMenu.PillarStructure', lang)}
+          </Radio>
+        </Radio.Group>
+      </SubMenu>
+    );
+  };
+
+  const renderStructureItems = () => {
+    if (wall?.wallStructure === WallStructure.Stud || wall?.wallStructure === WallStructure.Pillar) {
+      return (
+        <>
+          {renderMenuItem('wallMenu.StructureSpacing', setStructureSpacingDialogVisible)}
+
+          {renderMenuItem('wallMenu.StructureWidth', setStructureWidthDialogVisible)}
+
+          {renderMenuItem('wallMenu.StructureColor', setStructureColorDialogVisible)}
+
+          {renderMenuItem('wallMenu.Opacity', setOpacityDialogVisible)}
+        </>
+      );
+    }
+    return null;
+  };
+
+  const renderMenuItem = (i18nText: string, setDialogVisible: (b: boolean) => void) => {
+    return (
+      <Menu.Item
+        key={`wall-${i18nText}`}
+        style={{ paddingLeft: paddingLeft }}
+        onClick={() => {
+          setApplyCount(0);
+          setDialogVisible(true);
+        }}
+      >
+        {i18n.t(i18nText, lang)} ...
+      </Menu.Item>
+    );
+  };
+
+  const renderTexture = () => {
+    if (wall?.wallStructure === WallStructure.Default) {
+      return renderMenuItem('word.Texture', setTextureDialogVisible);
+    }
+    return null;
+  };
+
+  const renderWallColor = () => {
+    if (
+      (wall?.wallStructure === WallStructure.Default || wall?.opacity === undefined || wall?.opacity > 0) &&
+      (wall?.textureType === WallTexture.NoTexture || wall?.textureType === WallTexture.Default)
+    ) {
+      return renderMenuItem('wallMenu.WallColor', setColorDialogVisible);
+    }
+    return null;
+  };
+
+  const renderClearItem = (objectType: ObjectType, count: number) => {
+    if (count === 0) return null;
+
+    const titleText = (type: string, count: number) =>
+      `${i18n.t(`wallMenu.DoYouReallyWantToRemoveAll${type}sOnThisWall`, lang)} (${count} ${i18n.t(
+        `wallMenu.${type}s`,
+        lang,
+      )})?`;
+
+    const objectTypeText = objectType.replaceAll(' ', '');
+
+    return (
+      <Menu.Item
+        key={`remove-all-${objectTypeText}s-on-wall`}
+        onClick={() => {
+          Modal.confirm({
+            title: titleText(objectTypeText, count),
+            icon: <ExclamationCircleOutlined />,
+            onOk: () => {
+              handleClearOk(objectType);
+            },
+          });
+        }}
+      >
+        {i18n.t(`wallMenu.RemoveAllUnlocked${objectTypeText}s`, lang)} ({count})
+      </Menu.Item>
+    );
+  };
+
+  const renderClearSubMenu = () => {
+    const counter = wall ? countAllOffspringsByType(wall.id) : new ElementCounter();
+
+    if (counter.gotSome() && useStore.getState().contextMenuObjectType) {
+      return (
+        <SubMenu key={'clear'} title={i18n.t('word.Clear', lang)} style={{ paddingLeft: '24px' }}>
+          {renderClearItem(ObjectType.Window, counter.windowCount)}
+          {renderClearItem(ObjectType.Door, counter.doorCount)}
+          {renderClearItem(ObjectType.SolarPanel, counter.solarPanelCount)}
+        </SubMenu>
+      );
+    }
+    return null;
+  };
+
+  const renderDialogs = () => {
+    return (
+      <>
+        {opacityDialogVisible && <WallOpacityInput setDialogVisible={setOpacityDialogVisible} />}
+        {structureColorDialogVisible && <WallStudColorSelection setDialogVisible={setStructureColorDialogVisible} />}
+        {structureSpacingDialogVisible && <WallStudSpacingInput setDialogVisible={setStructureSpacingDialogVisible} />}
+        {structureWidthDialogVisible && <WallStudWidthInput setDialogVisible={setStructureWidthDialogVisible} />}
+        {thicknessDialogVisible && <WallThicknessInput setDialogVisible={setThicknessDialogVisible} />}
+        {heightDialogVisible && <WallHeightInput setDialogVisible={setHeightDialogVisible} />}
+        {textureDialogVisible && <WallTextureSelection setDialogVisible={setTextureDialogVisible} />}
+        {colorDialogVisible && <WallBodyColorSelection setDialogVisible={setColorDialogVisible} />}
+      </>
+    );
+  };
+
+  if (!wall) return null;
 
   return (
-    wall && (
-      <Menu.ItemGroup>
-        {legalToPaste() && <Paste keyName={'wall-paste'} />}
-        <Copy keyName={'wall-copy'} />
-        {!wall.locked && <Cut keyName={'wall-cut'} />}
-        <Lock keyName={'wall-lock'} />
+    <Menu.ItemGroup>
+      {renderCut()}
 
-        {!wall.locked && (
-          <>
-            <SubMenu
-              key={'wall-structure'}
-              title={i18n.t('wallMenu.WallStructure', lang)}
-              style={{ paddingLeft: '24px' }}
-            >
-              <Radio.Group
-                value={selectedStructure}
-                style={{ height: '75px' }}
-                onChange={(e) => {
-                  const undoableChange = {
-                    name: 'Select Wall Structure',
-                    timestamp: Date.now(),
-                    oldValue: selectedStructure,
-                    newValue: e.target.value,
-                    changedElementId: wall.id,
-                    changedElementType: wall.type,
-                    undo: () => {
-                      updateWallStructureById(
-                        undoableChange.changedElementId,
-                        undoableChange.oldValue as WallStructure,
-                      );
-                    },
-                    redo: () => {
-                      updateWallStructureById(
-                        undoableChange.changedElementId,
-                        undoableChange.newValue as WallStructure,
-                      );
-                    },
-                  } as UndoableChange;
-                  addUndoable(undoableChange);
-                  updateWallStructureById(wall.id, e.target.value);
-                  setSelectedStructure(e.target.value);
-                  setCommonStore((state) => {
-                    state.actionState.wallStructure = e.target.value;
-                    if (state.actionState.wallStructure === WallStructure.Stud) {
-                      state.actionState.wallOpacity = 0;
-                    }
-                  });
-                }}
-              >
-                <Radio style={radioStyle} value={WallStructure.Default}>
-                  {i18n.t('wallMenu.DefaultStructure', lang)}
-                </Radio>
-                <Radio style={radioStyle} value={WallStructure.Stud}>
-                  {i18n.t('wallMenu.StudStructure', lang)}
-                </Radio>
-              </Radio.Group>
-            </SubMenu>
+      {renderCopy()}
 
-            {selectedStructure === WallStructure.Stud && (
-              <>
-                {opacityDialogVisible && <WallOpacityInput setDialogVisible={setOpacityDialogVisible} />}
-                <Menu.Item
-                  key={'wall-opacity'}
-                  style={{ paddingLeft: paddingLeft }}
-                  onClick={() => {
-                    setApplyCount(0);
-                    setOpacityDialogVisible(true);
-                  }}
-                >
-                  {i18n.t('wallMenu.Opacity', lang)} ...
-                </Menu.Item>
+      {renderPaste()}
 
-                {studColorDialogVisible && <WallStudColorSelection setDialogVisible={setStudColorDialogVisible} />}
-                <Menu.Item
-                  key={'wall-studColor'}
-                  style={{ paddingLeft: paddingLeft }}
-                  onClick={() => {
-                    setApplyCount(0);
-                    setStudColorDialogVisible(true);
-                  }}
-                >
-                  {i18n.t('wallMenu.StudColor', lang)} ...
-                </Menu.Item>
+      {renderLock()}
 
-                {studSpacingDialogVisible && <WallStudSpacingInput setDialogVisible={setStudSpacingDialogVisible} />}
-                <Menu.Item
-                  key={'wall-studSpacing'}
-                  style={{ paddingLeft: paddingLeft }}
-                  onClick={() => {
-                    setApplyCount(0);
-                    setStudSpacingDialogVisible(true);
-                  }}
-                >
-                  {i18n.t('wallMenu.StudSpacing', lang)} ...
-                </Menu.Item>
+      {!wall.locked && (
+        <>
+          {renderDialogs()}
 
-                {studWidthDialogVisible && <WallStudWidthInput setDialogVisible={setStudWidthDialogVisible} />}
-                <Menu.Item
-                  key={'wall-studWidth'}
-                  style={{ paddingLeft: paddingLeft }}
-                  onClick={() => {
-                    setApplyCount(0);
-                    setStudWidthDialogVisible(true);
-                  }}
-                >
-                  {i18n.t('wallMenu.StudWidth', lang)} ...
-                </Menu.Item>
-              </>
-            )}
+          {renderSturctureSubMenu()}
 
-            {thicknessDialogVisible && <WallThicknessInput setDialogVisible={setThicknessDialogVisible} />}
-            <Menu.Item
-              key={'wall-thickness'}
-              style={{ paddingLeft: paddingLeft }}
-              onClick={() => {
-                setApplyCount(0);
-                setThicknessDialogVisible(true);
-              }}
-            >
-              {i18n.t(selectedStructure === WallStructure.Stud ? 'wallMenu.StudThickness' : 'word.Thickness', lang)} ...
-            </Menu.Item>
+          {renderStructureItems()}
 
-            {heightDialogVisible && <WallHeightInput setDialogVisible={setHeightDialogVisible} />}
-            <Menu.Item
-              key={'wall-height'}
-              style={{ paddingLeft: paddingLeft }}
-              onClick={() => {
-                setApplyCount(0);
-                setHeightDialogVisible(true);
-              }}
-            >
-              {i18n.t('word.Height', lang)} ...
-            </Menu.Item>
+          {renderMenuItem('word.Thickness', setThicknessDialogVisible)}
 
-            {counter.gotSome() && contextMenuObjectType && (
-              <SubMenu key={'clear'} title={i18n.t('word.Clear', lang)} style={{ paddingLeft: '24px' }}>
-                {counter.windowCount > 0 && (
-                  <Menu.Item
-                    key={'remove-all-windows-on-wall'}
-                    onClick={() => {
-                      Modal.confirm({
-                        title:
-                          i18n.t('wallMenu.DoYouReallyWantToRemoveAllWindowsOnThisWall', lang) +
-                          ' (' +
-                          counter.windowCount +
-                          ' ' +
-                          i18n.t('wallMenu.Windows', lang) +
-                          ')?',
-                        icon: <ExclamationCircleOutlined />,
-                        onOk: () => {
-                          if (wall) {
-                            const removed = elements.filter(
-                              (e) => !e.locked && e.type === ObjectType.Window && e.parentId === wall.id,
-                            );
-                            removeAllChildElementsByType(wall.id, ObjectType.Window);
-                            const removedElements = JSON.parse(JSON.stringify(removed));
-                            const undoableRemoveAllWindowChildren = {
-                              name: 'Remove All Windows on Wall',
-                              timestamp: Date.now(),
-                              parentId: wall.id,
-                              removedElements: removedElements,
-                              undo: () => {
-                                setCommonStore((state) => {
-                                  state.elements.push(...undoableRemoveAllWindowChildren.removedElements);
-                                });
-                              },
-                              redo: () => {
-                                removeAllChildElementsByType(
-                                  undoableRemoveAllWindowChildren.parentId,
-                                  ObjectType.Window,
-                                );
-                              },
-                            } as UndoableRemoveAllChildren;
-                            addUndoable(undoableRemoveAllWindowChildren);
-                          }
-                        },
-                      });
-                    }}
-                  >
-                    {i18n.t('wallMenu.RemoveAllUnlockedWindows', lang)} ({counter.windowCount})
-                  </Menu.Item>
-                )}
-                {counter.doorCount > 0 && (
-                  <Menu.Item
-                    key={'remove-all-doors-on-wall'}
-                    onClick={() => {
-                      Modal.confirm({
-                        title:
-                          i18n.t('wallMenu.DoYouReallyWantToRemoveAllDoorsOnThisWall', lang) +
-                          ' (' +
-                          counter.windowCount +
-                          ' ' +
-                          i18n.t('wallMenu.Doors', lang) +
-                          ')?',
-                        icon: <ExclamationCircleOutlined />,
-                        onOk: () => {
-                          if (wall) {
-                            const removed = elements.filter(
-                              (e) => !e.locked && e.type === ObjectType.Door && e.parentId === wall.id,
-                            );
-                            removeAllChildElementsByType(wall.id, ObjectType.Door);
-                            const removedElements = JSON.parse(JSON.stringify(removed));
-                            const undoableRemoveAllDoorChildren = {
-                              name: 'Remove All Doors on Wall',
-                              timestamp: Date.now(),
-                              parentId: wall.id,
-                              removedElements: removedElements,
-                              undo: () => {
-                                setCommonStore((state) => {
-                                  state.elements.push(...undoableRemoveAllDoorChildren.removedElements);
-                                });
-                              },
-                              redo: () => {
-                                removeAllChildElementsByType(undoableRemoveAllDoorChildren.parentId, ObjectType.Door);
-                              },
-                            } as UndoableRemoveAllChildren;
-                            addUndoable(undoableRemoveAllDoorChildren);
-                          }
-                        },
-                      });
-                    }}
-                  >
-                    {i18n.t('wallMenu.RemoveAllUnlockedDoors', lang)} ({counter.doorCount})
-                  </Menu.Item>
-                )}
-                {counter.solarPanelCount > 0 && (
-                  <Menu.Item
-                    key={'remove-all-solar-panels-on-wall'}
-                    onClick={() => {
-                      Modal.confirm({
-                        title:
-                          i18n.t('wallMenu.DoYouReallyWantToRemoveAllSolarPanelsOnThisWall', lang) +
-                          ' (' +
-                          counter.solarPanelCount +
-                          ' ' +
-                          i18n.t('wallMenu.SolarPanels', lang) +
-                          ')?',
-                        icon: <ExclamationCircleOutlined />,
-                        onOk: () => {
-                          if (wall) {
-                            const removed = elements.filter(
-                              (e) => !e.locked && e.type === ObjectType.SolarPanel && e.parentId === wall.id,
-                            );
-                            removeAllChildElementsByType(wall.id, ObjectType.SolarPanel);
-                            const removedElements = JSON.parse(JSON.stringify(removed));
-                            const undoableRemoveAllSolarPanelChildren = {
-                              name: 'Remove All Solar Panels on Wall',
-                              timestamp: Date.now(),
-                              parentId: wall.id,
-                              removedElements: removedElements,
-                              undo: () => {
-                                setCommonStore((state) => {
-                                  state.elements.push(...undoableRemoveAllSolarPanelChildren.removedElements);
-                                });
-                              },
-                              redo: () => {
-                                removeAllChildElementsByType(
-                                  undoableRemoveAllSolarPanelChildren.parentId,
-                                  ObjectType.Door,
-                                );
-                              },
-                            } as UndoableRemoveAllChildren;
-                            addUndoable(undoableRemoveAllSolarPanelChildren);
-                          }
-                        },
-                      });
-                    }}
-                  >
-                    {i18n.t('wallMenu.RemoveAllUnlockedSolarPanels', lang)} ({counter.solarPanelCount})
-                  </Menu.Item>
-                )}
-              </SubMenu>
-            )}
+          {renderMenuItem('word.Height', setHeightDialogVisible)}
 
-            {selectedStructure === WallStructure.Default && (
-              <>
-                {textureDialogVisible && <WallTextureSelection setDialogVisible={setTextureDialogVisible} />}
-                <Menu.Item
-                  key={'wall-texture'}
-                  style={{ paddingLeft: paddingLeft }}
-                  onClick={() => {
-                    setApplyCount(0);
-                    setTextureDialogVisible(true);
-                  }}
-                >
-                  {i18n.t('word.Texture', lang)} ...
-                </Menu.Item>
-              </>
-            )}
+          {renderTexture()}
 
-            {(selectedStructure === WallStructure.Default || wall.opacity === undefined || wall.opacity > 0) && (
-              <>
-                {colorDialogVisible && <WallBodyColorSelection setDialogVisible={setColorDialogVisible} />}
-                {(wall.textureType === WallTexture.NoTexture || wall.textureType === WallTexture.Default) && (
-                  <Menu.Item
-                    key={'wall-color'}
-                    style={{ paddingLeft: paddingLeft }}
-                    onClick={() => {
-                      setApplyCount(0);
-                      setColorDialogVisible(true);
-                    }}
-                  >
-                    {i18n.t('wallMenu.WallColor', lang)} ...
-                  </Menu.Item>
-                )}
-              </>
-            )}
-          </>
-        )}
-      </Menu.ItemGroup>
-    )
+          {renderWallColor()}
+
+          {renderClearSubMenu()}
+        </>
+      )}
+    </Menu.ItemGroup>
   );
 };
