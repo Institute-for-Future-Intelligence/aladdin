@@ -4436,6 +4436,8 @@ export const useStore = create<CommonStoreState>(
                     wallParentModel,
                     state.actionState.wallHeight,
                     state.actionState.wallThickness,
+                    state.actionState.wallColor,
+                    state.actionState.wallTexture,
                     relativePos.x,
                     relativePos.y,
                     relativePos.z,

@@ -15,6 +15,7 @@ import { WallModel } from '../../../models/WallModel';
 import { CompactPicker } from 'react-color';
 
 const WallBodyColorSelection = ({ setDialogVisible }: { setDialogVisible: (b: boolean) => void }) => {
+  const setCommonStore = useStore(Selector.set);
   const language = useStore(Selector.language);
   const elements = useStore(Selector.elements);
   const updateWallColorById = useStore(Selector.updateWallColorById);
@@ -136,6 +137,9 @@ const WallBodyColorSelection = ({ setDialogVisible }: { setDialogVisible: (b: bo
           setApplyCount(applyCount + 1);
         }
     }
+    setCommonStore((state) => {
+      state.actionState.wallColor = value;
+    });
     setUpdateFlag(!updateFlag);
   };
 

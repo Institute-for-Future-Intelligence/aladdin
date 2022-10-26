@@ -106,7 +106,7 @@ const Wall = ({
   leftJoints,
   rightJoints,
   textureType,
-  color,
+  color = 'white',
   lineColor = 'black',
   lineWidth = 0.2,
   parentId,

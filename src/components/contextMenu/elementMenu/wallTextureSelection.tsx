@@ -26,6 +26,7 @@ import { UndoableChangeGroup } from 'src/undo/UndoableChangeGroup';
 import { WallModel } from 'src/models/WallModel';
 
 const WallTextureSelection = ({ setDialogVisible }: { setDialogVisible: (b: boolean) => void }) => {
+  const setCommonStore = useStore(Selector.set);
   const language = useStore(Selector.language);
   const elements = useStore(Selector.elements);
   const updateWallTextureById = useStore(Selector.updateWallTextureById);
@@ -148,6 +149,9 @@ const WallTextureSelection = ({ setDialogVisible }: { setDialogVisible: (b: bool
           setApplyCount(applyCount + 1);
         }
     }
+    setCommonStore((state) => {
+      state.actionState.wallTexture = value;
+    });
     setUpdateFlag(!updateFlag);
   };
 

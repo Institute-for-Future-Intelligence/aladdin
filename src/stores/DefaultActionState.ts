@@ -4,7 +4,8 @@
 
 import { immerable } from 'immer';
 import { ActionState } from './ActionState';
-import { CuboidTexture, FlowerType, FoundationTexture, HumanName, Orientation, TreeType } from '../types';
+import { CuboidTexture, FlowerType, FoundationTexture, HumanName, Orientation, TreeType, WallTexture } from '../types';
+import { WallStructure } from '../models/WallModel';
 
 export class DefaultActionState implements ActionState {
   // Needed for immer drafting to work properly: https://immerjs.github.io/immer/docs/complex-objects
@@ -28,6 +29,13 @@ export class DefaultActionState implements ActionState {
 
   wallHeight: number;
   wallThickness: number;
+  wallColor: string;
+  wallTexture: WallTexture;
+  wallStructure: WallStructure;
+  wallStudSpacing: number;
+  wallStudWidth: number;
+  wallStudColor: string;
+  wallOpacity: number;
 
   solarPanelModelName: string;
   solarPanelOrientation: Orientation;
@@ -62,6 +70,13 @@ export class DefaultActionState implements ActionState {
 
     this.wallHeight = 5;
     this.wallThickness = 0.3;
+    this.wallColor = 'white';
+    this.wallTexture = WallTexture.Default;
+    this.wallStructure = WallStructure.Default;
+    this.wallStudSpacing = 2;
+    this.wallStudWidth = 0.1;
+    this.wallStudColor = 'white';
+    this.wallOpacity = 0.5;
 
     this.solarPanelModelName = 'SPR-X21-335-BLK';
     this.solarPanelOrientation = Orientation.landscape;

@@ -2,7 +2,8 @@
  * @Copyright 2022. Institute for Future Intelligence, Inc.
  */
 
-import { CuboidTexture, FlowerType, FoundationTexture, HumanName, Orientation, TreeType } from '../types';
+import { CuboidTexture, FlowerType, FoundationTexture, HumanName, Orientation, TreeType, WallTexture } from '../types';
+import { WallStructure } from '../models/WallModel';
 
 export interface ActionState {
   humanName: HumanName;
@@ -23,6 +24,13 @@ export interface ActionState {
 
   wallHeight: number;
   wallThickness: number;
+  wallColor: string;
+  wallTexture: WallTexture;
+  wallStructure: WallStructure;
+  wallStudSpacing: number;
+  wallStudWidth: number;
+  wallStudColor: string;
+  wallOpacity: number;
 
   solarPanelModelName: string;
   solarPanelOrientation: Orientation;
