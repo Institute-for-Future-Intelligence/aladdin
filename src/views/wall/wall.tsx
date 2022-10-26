@@ -236,7 +236,7 @@ const Wall = ({
   const isSettingDoorEndPointRef = useRef(false);
   const oldPositionRef = useRef<number[]>([]);
   const oldDimensionRef = useRef<number[]>([]);
-  const oldTintRef = useRef<string>('#73D8FF');
+  const oldTintRef = useRef<string>(actionState.windowTint ?? '#73D8FF');
 
   const [originElements, setOriginElements] = useState<ElementModel[] | null>(null);
   const [showGrid, setShowGrid] = useState(false);
@@ -424,13 +424,16 @@ const Wall = ({
     isFirstMountRef.current = false;
   }, []);
 
+  useEffect(() => {
+    oldTintRef.current = actionState.windowTint;
+  }, [actionState.windowTint]);
+
   const getRelativePosOnWall = (p: Vector3, wall: WallModel) => {
     const { cx, cy, cz } = wall;
     const foundation = getElementById(wall.parentId);
     if (foundation && wallAbsAngle !== undefined) {
       const wallAbsPos = Util.wallAbsolutePosition(new Vector3(cx, cy, cz), foundation).setZ(lz / 2 + foundation.lz);
-      const relativePos = new Vector3().subVectors(p, wallAbsPos).applyEuler(new Euler(0, 0, -wallAbsAngle));
-      return relativePos;
+      return new Vector3().subVectors(p, wallAbsPos).applyEuler(new Euler(0, 0, -wallAbsAngle));
     }
     return new Vector3();
   };
@@ -939,7 +942,7 @@ const Wall = ({
                     if (e.id === grabRef.current?.id) {
                       e.cx = p.x / lx;
                       e.cz = p.z / lz;
-                      e.color = e.id === invalidElementIdRef.current ? 'red' : '#fff';
+                      e.color = e.id === invalidElementIdRef.current ? 'red' : actionState.windowColor ?? '#fff';
                     }
                   }
                 });
@@ -971,7 +974,7 @@ const Wall = ({
                         e.lx = Math.abs(v.x);
                         checkCollision(grabRef.current.id, ObjectType.SolarPanel, c, Math.abs(v.x), e.ly);
                       }
-                      e.color = e.id === invalidElementIdRef.current ? 'red' : '#fff';
+                      e.color = e.id === invalidElementIdRef.current ? 'red' : actionState.windowColor ?? '#fff';
                     }
                   }
                 });
