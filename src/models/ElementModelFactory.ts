@@ -208,6 +208,13 @@ export class ElementModelFactory {
 
   static makeParabolicTrough(
     parent: ElementModel,
+    reflectance: number,
+    absorptance: number,
+    opticalEfficiency: number,
+    thermalEfficiency: number,
+    latusRectum: number,
+    poleHeight: number,
+    moduleLength: number,
     x: number,
     y: number,
     z?: number,
@@ -224,17 +231,17 @@ export class ElementModelFactory {
     }
     return {
       type: ObjectType.ParabolicTrough,
-      reflectance: 0.9,
-      absorptance: 0.95,
-      opticalEfficiency: 0.7,
-      thermalEfficiency: 0.3,
-      moduleLength: 3,
-      latusRectum: 2,
+      reflectance: reflectance ?? 0.9,
+      absorptance: absorptance ?? 0.95,
+      opticalEfficiency: opticalEfficiency ?? 0.7,
+      thermalEfficiency: thermalEfficiency ?? 0.3,
+      moduleLength: moduleLength ?? 3,
+      latusRectum: latusRectum ?? 2,
       relativeAzimuth: 0,
       tiltAngle: 0,
       absorberTubeRadius: 0.05,
       drawSunBeam: false,
-      poleHeight: 0.2, // extra pole height in addition to half of the width
+      poleHeight: poleHeight ?? 0.2, // extra pole height in addition to half of the width
       poleRadius: 0.05,
       cx: x,
       cy: y,
@@ -254,7 +261,7 @@ export class ElementModelFactory {
   static makeParabolicDish(
     parent: ElementModel,
     reflectance: number,
-    adsorptance: number,
+    absorptance: number,
     opticalEfficiency: number,
     thermalEfficiency: number,
     latusRectum: number,
@@ -277,7 +284,7 @@ export class ElementModelFactory {
     return {
       type: ObjectType.ParabolicDish,
       reflectance: reflectance ?? 0.9,
-      absorptance: adsorptance ?? 0.95,
+      absorptance: absorptance ?? 0.95,
       opticalEfficiency: opticalEfficiency ?? 0.7,
       thermalEfficiency: thermalEfficiency ?? 0.3,
       moduleLength: 3,

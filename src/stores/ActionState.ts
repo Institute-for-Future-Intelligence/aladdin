@@ -64,11 +64,20 @@ export interface ActionState {
   solarPanelRelativeAzimuth: number;
 
   parabolicDishReflectance: number;
-  parabolicDishReceiverAbsorptance: number;
+  parabolicDishAbsorptance: number;
   parabolicDishOpticalEfficiency: number;
   parabolicDishThermalEfficiency: number;
   parabolicDishRimDiameter: number;
   parabolicDishLatusRectum: number;
   parabolicDishPoleHeight: number;
   parabolicDishReceiverStructure: ParabolicDishStructureType;
+
+  parabolicTroughReflectance: number;
+  parabolicTroughAbsorptance: number;
+  parabolicTroughOpticalEfficiency: number;
+  parabolicTroughThermalEfficiency: number;
+  parabolicTroughLatusRectum: number;
+  parabolicTroughPoleHeight: number;
+  parabolicTroughWidth: number;
+  parabolicTroughModuleLength: number;
 }

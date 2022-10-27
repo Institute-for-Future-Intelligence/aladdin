@@ -70,13 +70,22 @@ export class DefaultActionState implements ActionState {
   solarPanelRelativeAzimuth: number;
 
   parabolicDishReflectance: number;
-  parabolicDishReceiverAbsorptance: number;
+  parabolicDishAbsorptance: number;
   parabolicDishOpticalEfficiency: number;
   parabolicDishThermalEfficiency: number;
   parabolicDishRimDiameter: number;
   parabolicDishLatusRectum: number;
   parabolicDishPoleHeight: number;
   parabolicDishReceiverStructure: ParabolicDishStructureType;
+
+  parabolicTroughReflectance: number;
+  parabolicTroughAbsorptance: number;
+  parabolicTroughOpticalEfficiency: number;
+  parabolicTroughThermalEfficiency: number;
+  parabolicTroughLatusRectum: number;
+  parabolicTroughPoleHeight: number;
+  parabolicTroughWidth: number;
+  parabolicTroughModuleLength: number;
 
   constructor() {
     this.humanName = HumanName.Jack;
@@ -135,12 +144,21 @@ export class DefaultActionState implements ActionState {
     this.solarPanelRelativeAzimuth = 0;
 
     this.parabolicDishReflectance = 0.9;
-    this.parabolicDishReceiverAbsorptance = 0.95;
+    this.parabolicDishAbsorptance = 0.95;
     this.parabolicDishOpticalEfficiency = 0.7;
     this.parabolicDishThermalEfficiency = 0.3;
     this.parabolicDishRimDiameter = 4;
     this.parabolicDishLatusRectum = 8;
     this.parabolicDishPoleHeight = 0.2;
     this.parabolicDishReceiverStructure = ParabolicDishStructureType.CentralPole;
+
+    this.parabolicTroughReflectance = 0.9;
+    this.parabolicTroughAbsorptance = 0.95;
+    this.parabolicTroughOpticalEfficiency = 0.7;
+    this.parabolicTroughThermalEfficiency = 0.3;
+    this.parabolicTroughLatusRectum = 2;
+    this.parabolicTroughPoleHeight = 0.2;
+    this.parabolicTroughWidth = 2;
+    this.parabolicTroughModuleLength = 3;
   }
 }

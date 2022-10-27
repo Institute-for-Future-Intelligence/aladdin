@@ -16,6 +16,7 @@ import { ZERO_TOLERANCE } from '../../../constants';
 import { Util } from '../../../Util';
 
 const ParabolicTroughLatusRectumInput = ({ setDialogVisible }: { setDialogVisible: (b: boolean) => void }) => {
+  const setCommonStore = useStore(Selector.set);
   const language = useStore(Selector.language);
   const elements = useStore(Selector.elements);
   const getElementById = useStore(Selector.getElementById);
@@ -220,6 +221,9 @@ const ParabolicTroughLatusRectumInput = ({ setDialogVisible }: { setDialogVisibl
           setApplyCount(applyCount + 1);
         }
     }
+    setCommonStore((state) => {
+      state.actionState.parabolicTroughLatusRectum = value;
+    });
     setUpdateFlag(!updateFlag);
   };
 

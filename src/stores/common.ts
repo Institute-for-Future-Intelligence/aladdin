@@ -4346,11 +4346,19 @@ export const useStore = create<CommonStoreState>(
                   );
                   const parabolicTrough = ElementModelFactory.makeParabolicTrough(
                     parabolicTroughParentModel,
+                    state.actionState.parabolicTroughReflectance,
+                    state.actionState.parabolicTroughAbsorptance,
+                    state.actionState.parabolicTroughOpticalEfficiency,
+                    state.actionState.parabolicTroughThermalEfficiency,
+                    state.actionState.parabolicTroughLatusRectum,
+                    state.actionState.parabolicTroughPoleHeight,
+                    state.actionState.parabolicTroughModuleLength,
                     parabolicTroughRelativeCoordinates.x,
                     parabolicTroughRelativeCoordinates.y,
                     parabolicTroughRelativeCoordinates.z,
                     normal,
                     'rotation' in parent ? parent.rotation : undefined,
+                    state.actionState.parabolicTroughWidth,
                   );
                   model = parabolicTrough;
                   state.elements.push(parabolicTrough);
@@ -4366,7 +4374,7 @@ export const useStore = create<CommonStoreState>(
                   const parabolicDish = ElementModelFactory.makeParabolicDish(
                     parabolicDishParentModel,
                     state.actionState.parabolicDishReflectance,
-                    state.actionState.parabolicDishReceiverAbsorptance,
+                    state.actionState.parabolicDishAbsorptance,
                     state.actionState.parabolicDishOpticalEfficiency,
                     state.actionState.parabolicDishThermalEfficiency,
                     state.actionState.parabolicDishLatusRectum,

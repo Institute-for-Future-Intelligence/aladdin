@@ -15,6 +15,7 @@ import { UndoableChangeGroup } from '../../../undo/UndoableChangeGroup';
 import { ZERO_TOLERANCE } from '../../../constants';
 
 const ParabolicTroughAbsorptanceInput = ({ setDialogVisible }: { setDialogVisible: (b: boolean) => void }) => {
+  const setCommonStore = useStore(Selector.set);
   const language = useStore(Selector.language);
   const elements = useStore(Selector.elements);
   const getElementById = useStore(Selector.getElementById);
@@ -162,6 +163,9 @@ const ParabolicTroughAbsorptanceInput = ({ setDialogVisible }: { setDialogVisibl
         updateById(parabolicTrough.id, value);
         setApplyCount(applyCount + 1);
     }
+    setCommonStore((state) => {
+      state.actionState.parabolicTroughAbsorptance = value;
+    });
     setUpdateFlag(!updateFlag);
   };
 

@@ -164,7 +164,7 @@ const ParabolicDishAbsorptanceInput = ({ setDialogVisible }: { setDialogVisible:
         setApplyCount(applyCount + 1);
     }
     setCommonStore((state) => {
-      state.actionState.parabolicDishReceiverAbsorptance = value;
+      state.actionState.parabolicDishAbsorptance = value;
     });
     setUpdateFlag(!updateFlag);
   };
