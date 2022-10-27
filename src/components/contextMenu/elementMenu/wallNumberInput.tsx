@@ -13,7 +13,7 @@ import { UndoableChange } from '../../../undo/UndoableChange';
 import { UndoableChangeGroup } from '../../../undo/UndoableChangeGroup';
 import { WallModel } from '../../../models/WallModel';
 
-interface WallInputProps {
+interface WallNumberInputProps {
   wall: WallModel;
   dataType: string;
   attributeKey: keyof WallModel;
@@ -23,7 +23,15 @@ interface WallInputProps {
   unit?: string;
 }
 
-const WallNumberInput = ({ wall, dataType, attributeKey, range, step, unit, setDialogVisible }: WallInputProps) => {
+const WallNumberInput = ({
+  wall,
+  dataType,
+  attributeKey,
+  range,
+  step,
+  unit,
+  setDialogVisible,
+}: WallNumberInputProps) => {
   const language = useStore(Selector.language);
   const addUndoable = useStore(Selector.addUndoable);
   const wallActionScope = useStore(Selector.wallActionScope);
@@ -246,11 +254,9 @@ const WallNumberInput = ({ wall, dataType, attributeKey, range, step, unit, setD
               {i18n.t('word.Range', lang)}: [{range.toString()}] {unit}
             </div>
           </Col>
-          {unit && (
-            <Col className="gutter-row" span={1} style={{ verticalAlign: 'middle', paddingTop: '6px' }}>
-              {i18n.t('word.MeterAbbreviation', lang)}
-            </Col>
-          )}
+          <Col className="gutter-row" span={1} style={{ verticalAlign: 'middle', paddingTop: '6px' }}>
+            {unit ?? ' '}
+          </Col>
           <Col
             className="gutter-row"
             style={{ border: '2px dashed #ccc', paddingTop: '8px', paddingLeft: '12px', paddingBottom: '8px' }}

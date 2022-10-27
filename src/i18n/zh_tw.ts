@@ -933,6 +933,7 @@ export const i18n_zh_tw = {
       ShutterWidth: '相對寬度',
       ShutterColor: '百葉窗顏色',
       Frame: '邊框',
+      FrameWidth: '邊框寬度',
       Color: '邊框顔色',
     },
 

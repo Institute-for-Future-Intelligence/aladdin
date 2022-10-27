@@ -17,6 +17,7 @@ import { UndoableCheck } from '../../../undo/UndoableCheck';
 import { ObjectType } from 'src/types';
 import WindowItemSelection from './windowItemSelection';
 import WindowOpacityInput from './windowOpacityInput';
+import WindowNumberInput from './windowNumberInput';
 
 export enum WindowDataType {
   Color = 'Color',
@@ -25,19 +26,32 @@ export enum WindowDataType {
   MullionWidth = 'MullionWidth',
   MullionSpacing = 'MullionSpacing',
   MullionColor = 'MullionColor',
+  FrameWidth = 'FrameWidth',
 }
 
 type ItemSelectionSettingType = {
   attributeKey: keyof WindowModel;
 };
 
-const DialogSetting = {
+type NumberDialogSettingType = {
+  attributeKey: keyof WindowModel;
+  range: [min: number, max: number];
+  step: number;
+  unit?: string;
+};
+
+const SelectionDialogSettings = {
   Tint: { attributeKey: 'tint' },
   Opacity: { attributeKey: 'opaticy' },
-  MullionWidth: { attributeKey: 'mullionWidth' },
-  MullionSpacing: { attributeKey: 'mullionSpacing' },
-  MullionColor: { attributeKey: 'mullionColor' },
   Color: { attributeKey: 'color' },
+  MullionColor: { attributeKey: 'mullionColor' },
+};
+
+const NumberDialogSettings = {
+  Opacity: { attributeKey: 'opacity', range: [0.1, 100], step: 0.1 },
+  MullionWidth: { attributeKey: 'mullionWidth', range: [0, 0.2], step: 0.1, unit: 'word.MeterAbbreviation' },
+  MullionSpacing: { attributeKey: 'mullionSpacing', range: [0.1, 5], step: 0.01, unit: 'word.MeterAbbreviation' },
+  FrameWidth: { attributeKey: 'frameWidth', range: [0.05, 0.2], step: 0.01, unit: 'word.MeterAbbreviation' },
 };
 
 const getSelectedWindow = (state: CommonStoreState) => {
@@ -174,6 +188,7 @@ export const WindowMenu = () => {
 
         <Divider plain style={{ margin: '6px' }} />
 
+        {renderMenuItem(WindowDataType.FrameWidth)}
         {renderMenuItem(WindowDataType.Color)}
       </SubMenu>
     );
@@ -183,8 +198,8 @@ export const WindowMenu = () => {
     switch (visibleType) {
       case WindowDataType.Tint:
       case WindowDataType.MullionColor:
-      case WindowDataType.Color:
-        const setting = DialogSetting[visibleType] as ItemSelectionSettingType;
+      case WindowDataType.Color: {
+        const setting = SelectionDialogSettings[visibleType] as ItemSelectionSettingType;
         if (!setting) return null;
         return (
           <WindowItemSelection
@@ -194,12 +209,25 @@ export const WindowMenu = () => {
             setDialogVisible={() => setVisibleType(null)}
           />
         );
+      }
       case WindowDataType.Opacity:
-        return <WindowOpacityInput setDialogVisible={() => setVisibleType(null)} />;
       case WindowDataType.MullionSpacing:
-        return <MullionSpacingInput setDialogVisible={() => setVisibleType(null)} />;
       case WindowDataType.MullionWidth:
-        return <MullionWidthInput setDialogVisible={() => setVisibleType(null)} />;
+      case WindowDataType.FrameWidth: {
+        const setting = NumberDialogSettings[visibleType] as NumberDialogSettingType;
+        if (!setting) return null;
+        return (
+          <WindowNumberInput
+            windowElement={window!}
+            dataType={visibleType}
+            attributeKey={setting.attributeKey}
+            range={setting.range}
+            step={setting.step}
+            setDialogVisible={() => setVisibleType(null)}
+            unit={setting.unit ? i18n.t(setting.unit, lang) : undefined}
+          />
+        );
+      }
     }
   };
 

@@ -25,19 +25,30 @@ interface ShutterProps {
   color: string;
   showLeft: boolean;
   showRight: boolean;
+  spacing: number;
 }
 
-const Shutter = ({ cx, lx, lz, color, showLeft, showRight }: ShutterProps) => {
+const Shutter = ({ cx, lx, lz, color, showLeft, showRight, spacing }: ShutterProps) => {
   const shadowEnabled = useStore(Selector.viewState.shadowEnabled);
   return (
     <group name={'Shutter Group'}>
       {showRight && (
-        <Box args={[lx, 0.1, lz]} position={[cx, 0, 0]} castShadow={shadowEnabled} receiveShadow={shadowEnabled}>
+        <Box
+          args={[lx, 0.1, lz]}
+          position={[cx + spacing, 0, 0]}
+          castShadow={shadowEnabled}
+          receiveShadow={shadowEnabled}
+        >
           <meshStandardMaterial color={color} />
         </Box>
       )}
       {showLeft && (
-        <Box args={[lx, 0.1, lz]} position={[-cx, 0, 0]} castShadow={shadowEnabled} receiveShadow={shadowEnabled}>
+        <Box
+          args={[lx, 0.1, lz]}
+          position={[-cx - spacing, 0, 0]}
+          castShadow={shadowEnabled}
+          receiveShadow={shadowEnabled}
+        >
           <meshStandardMaterial color={color} />
         </Box>
       )}
@@ -239,6 +250,7 @@ const Window = ({
           color={shutter.color}
           showLeft={shutter.showLeft}
           showRight={shutter.showRight}
+          spacing={frame ? frameWidth / 2 : 0}
         />
       )}
 

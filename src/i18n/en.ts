@@ -907,6 +907,7 @@ export const i18n_en = {
       ShutterWidth: 'Relative Width',
       ShutterColor: 'Shutter Color',
       Frame: 'Frame',
+      FrameWidth: 'FrameWidth',
       Color: 'Frame Color',
     },
 

@@ -1,9 +1,9 @@
 /*
- * @Copyright 2021-2022. Institute for Future Intelligence, Inc.
+ * @Copyright 2022. Institute for Future Intelligence, Inc.
  */
 
 import React, { useEffect, useRef, useState } from 'react';
-import { Button, Col, Modal, Radio, Row, Space } from 'antd';
+import { Button, Col, InputNumber, Modal, Radio, Row, Space } from 'antd';
 import Draggable, { DraggableBounds, DraggableData, DraggableEvent } from 'react-draggable';
 import { useStore } from 'src/stores/common';
 import * as Selector from 'src/stores/selector';
@@ -11,24 +11,28 @@ import { ObjectType, Scope } from 'src/types';
 import i18n from 'src/i18n/i18n';
 import { UndoableChange } from 'src/undo/UndoableChange';
 import { UndoableChangeGroup } from 'src/undo/UndoableChangeGroup';
-import { CompactPicker } from 'react-color';
 import { WindowModel } from 'src/models/WindowModel';
 import { WindowDataType } from './windowMenu';
 
-interface WindowItemSelectionProps {
-  window: WindowModel;
+interface WindowNumberInputProps {
+  windowElement: WindowModel;
   dataType: string;
   attributeKey: keyof WindowModel;
+  range: [min: number, max: number];
+  step: number;
   setDialogVisible: () => void;
+  unit?: string;
 }
 
-const WindowItemSelection = ({
-  window: windowModel,
+const MullionSpacingInput = ({
+  windowElement,
   dataType,
   attributeKey,
+  range,
+  step,
+  unit,
   setDialogVisible,
-}: WindowItemSelectionProps) => {
-  const setCommonStore = useStore(Selector.set);
+}: WindowNumberInputProps) => {
   const language = useStore(Selector.language);
   const addUndoable = useStore(Selector.addUndoable);
   const windowActionScope = useStore(Selector.windowActionScope);
@@ -36,25 +40,21 @@ const WindowItemSelection = ({
   const applyCount = useStore(Selector.applyCount);
   const setApplyCount = useStore(Selector.setApplyCount);
   const revertApply = useStore(Selector.revertApply);
+  const setCommonStore = useStore(Selector.set);
 
-  const [selectedItem, setSelectedItem] = useState<string>(windowModel[attributeKey] as string);
+  const [inputVal, setInputVal] = useState<number>(windowElement[attributeKey] as number);
   const [dragEnabled, setDragEnabled] = useState<boolean>(false);
   const [bounds, setBounds] = useState<DraggableBounds>({ left: 0, top: 0, bottom: 0, right: 0 } as DraggableBounds);
   const dragRef = useRef<HTMLDivElement | null>(null);
-  const okButtonRef = useRef<HTMLElement | null>(null);
-
-  useEffect(() => {
-    okButtonRef.current?.focus();
-  });
 
   const lang = { lng: language };
 
-  const updateById = (id: string, val: string) => {
+  const updateById = (id: string, val: number) => {
     setCommonStore((state) => {
       for (const e of state.elements) {
         if (e.id === id) {
           if (!e.locked && e.type === ObjectType.Window) {
-            ((e as WindowModel)[attributeKey] as string) = val;
+            ((e as WindowModel)[attributeKey] as number) = val;
           }
           break;
         }
@@ -62,90 +62,94 @@ const WindowItemSelection = ({
     });
   };
 
-  const updateOnSameWall = (wId: string, val: string) => {
+  const updateOnSameWall = (wId: string | undefined, val: number) => {
+    if (!wId) return;
     setCommonStore((state) => {
       for (const e of state.elements) {
         if (!e.locked && e.type === ObjectType.Window && e.parentId === wId) {
-          ((e as WindowModel)[attributeKey] as string) = val;
+          ((e as WindowModel)[attributeKey] as number) = val;
         }
       }
     });
   };
 
-  const updateAboveFoundation = (fId: string, val: string) => {
+  const updateAboveFoundation = (fId: string | undefined, val: number) => {
+    if (!fId) return;
     setCommonStore((state) => {
       for (const e of state.elements) {
         if (!e.locked && e.type === ObjectType.Window && e.foundationId === fId) {
-          ((e as WindowModel)[attributeKey] as string) = val;
+          ((e as WindowModel)[attributeKey] as number) = val;
         }
       }
     });
   };
 
-  const updateForAll = (val: string) => {
+  const updateForAll = (val: number) => {
     setCommonStore((state) => {
       for (const e of state.elements) {
         if (!e.locked && e.type === ObjectType.Window) {
-          ((e as WindowModel)[attributeKey] as string) = val;
+          ((e as WindowModel)[attributeKey] as number) = val;
         }
       }
     });
   };
 
-  const undoInMap = (map: Map<string, string>) => {
+  const undoInMap = (map: Map<string, number>) => {
     for (const [id, val] of map.entries()) {
-      updateById(id, val as string);
+      updateById(id, val);
     }
   };
 
-  const setValue = (value: string) => {
-    if (!windowModel) return;
+  const setVal = (value: number) => {
+    if (!windowElement) return;
     switch (windowActionScope) {
       case Scope.AllObjectsOfThisType:
-        const oldValsAll = new Map<string, string>();
-        for (const elem of useStore.getState().elements) {
-          if (elem.type === ObjectType.Window && !elem.locked) {
-            oldValsAll.set(elem.id, (elem as WindowModel)[attributeKey] as string);
+        const oldValsAll = new Map<string, number>();
+        setCommonStore((state) => {
+          for (const e of state.elements) {
+            if (e.type === ObjectType.Window && !e.locked) {
+              oldValsAll.set(e.id, (e as WindowModel)[attributeKey] as number);
+              ((e as WindowModel)[attributeKey] as number) = value;
+            }
           }
-        }
+        });
         const undoableChangeAll = {
           name: `Set ${dataType} for All Windows`,
           timestamp: Date.now(),
           oldValues: oldValsAll,
           newValue: value,
           undo: () => {
-            undoInMap(undoableChangeAll.oldValues as Map<string, string>);
+            undoInMap(undoableChangeAll.oldValues as Map<string, number>);
           },
           redo: () => {
-            updateForAll(undoableChangeAll.newValue as string);
+            updateForAll(undoableChangeAll.newValue as number);
           },
         } as UndoableChangeGroup;
         addUndoable(undoableChangeAll);
-        updateForAll(value);
         setApplyCount(applyCount + 1);
         break;
       case Scope.OnlyThisSide:
-        if (windowModel.parentId) {
-          const oldValues = new Map<string, string>();
+        if (windowElement.parentId) {
+          const oldValOnSameWall = new Map<string, number>();
           setCommonStore((state) => {
             for (const elem of state.elements) {
-              if (elem.type === ObjectType.Window && elem.parentId === windowModel.parentId && !elem.locked) {
-                oldValues.set(elem.id, (elem as WindowModel)[attributeKey] as string);
-                ((elem as WindowModel)[attributeKey] as string) = value;
+              if (elem.type === ObjectType.Window && elem.parentId === windowElement.parentId && !elem.locked) {
+                oldValOnSameWall.set(elem.id, (elem as WindowModel)[attributeKey] as number);
+                ((elem as WindowModel)[attributeKey] as number) = value;
               }
             }
           });
           const undoableChangeOnSameWall = {
             name: `Set ${dataType} for All Windows On the Same Wall`,
             timestamp: Date.now(),
-            oldValues: oldValues,
+            oldValues: oldValOnSameWall,
             newValue: value,
-            groupId: windowModel.parentId,
+            groupId: windowElement.parentId,
             undo: () => {
-              undoInMap(undoableChangeOnSameWall.oldValues as Map<string, string>);
+              undoInMap(undoableChangeOnSameWall.oldValues as Map<string, number>);
             },
             redo: () => {
-              updateOnSameWall(windowModel.parentId, undoableChangeOnSameWall.newValue as string);
+              updateOnSameWall(windowElement.parentId, undoableChangeOnSameWall.newValue as number);
             },
           } as UndoableChangeGroup;
           addUndoable(undoableChangeOnSameWall);
@@ -153,70 +157,65 @@ const WindowItemSelection = ({
         }
         break;
       case Scope.AllObjectsOfThisTypeAboveFoundation:
-        if (windowModel.foundationId) {
-          const oldValsAboveFoundation = new Map<string, string>();
-          for (const elem of useStore.getState().elements) {
-            if (
-              elem.type === ObjectType.Window &&
-              elem.foundationId === windowModel.foundationId &&
-              !windowModel.locked
-            ) {
-              oldValsAboveFoundation.set(elem.id, (elem as WindowModel)[attributeKey] as string);
+        if (windowElement.foundationId) {
+          const oldValAboveFoundation = new Map<string, number>();
+          setCommonStore((state) => {
+            for (const elem of state.elements) {
+              if (elem.type === ObjectType.Window && elem.foundationId === windowElement.foundationId && !elem.locked) {
+                oldValAboveFoundation.set(elem.id, (elem as WindowModel)[attributeKey] as number);
+                ((elem as WindowModel)[attributeKey] as number) = value;
+              }
             }
-          }
+          });
           const undoableChangeAboveFoundation = {
             name: `Set ${dataType} for All Windows Above Foundation`,
             timestamp: Date.now(),
-            oldValues: oldValsAboveFoundation,
+            oldValues: oldValAboveFoundation,
             newValue: value,
-            groupId: windowModel.foundationId,
+            groupId: windowElement.foundationId,
             undo: () => {
-              undoInMap(undoableChangeAboveFoundation.oldValues as Map<string, string>);
+              undoInMap(undoableChangeAboveFoundation.oldValues as Map<string, number>);
             },
             redo: () => {
-              updateAboveFoundation(
-                undoableChangeAboveFoundation.groupId,
-                undoableChangeAboveFoundation.newValue as string,
-              );
+              updateAboveFoundation(windowElement.foundationId, undoableChangeAboveFoundation.newValue as number);
             },
           } as UndoableChangeGroup;
           addUndoable(undoableChangeAboveFoundation);
-          updateAboveFoundation(windowModel.foundationId, value);
           setApplyCount(applyCount + 1);
         }
         break;
       default:
-        if (windowModel) {
-          const oldVal = windowModel[attributeKey] as string;
+        if (windowElement) {
+          const oldVal = windowElement[attributeKey] as number;
           const undoableChange = {
-            name: `Set ${dataType} of Selected window`,
+            name: `Set Window ${dataType}`,
             timestamp: Date.now(),
             oldValue: oldVal,
             newValue: value,
-            changedElementId: windowModel.id,
-            changedElementType: windowModel.type,
+            changedElementId: windowElement.id,
+            changedElementType: windowElement.type,
             undo: () => {
-              updateById(undoableChange.changedElementId, undoableChange.oldValue as string);
+              updateById(undoableChange.changedElementId, undoableChange.oldValue as number);
             },
             redo: () => {
-              updateById(undoableChange.changedElementId, undoableChange.newValue as string);
+              updateById(undoableChange.changedElementId, undoableChange.newValue as number);
             },
           } as UndoableChange;
           addUndoable(undoableChange);
-          updateById(windowModel.id, value);
+          updateById(windowElement.id, value);
           setApplyCount(applyCount + 1);
         }
     }
     setCommonStore((state) => {
       switch (dataType) {
-        case WindowDataType.Tint:
-          state.actionState.windowTint = value;
+        case WindowDataType.FrameWidth:
+          state.actionState.windowFrameWidth = value;
           break;
-        case WindowDataType.MullionColor:
-          state.actionState.windowMullionColor = value;
+        case WindowDataType.MullionSpacing:
+          state.actionState.windowMullionSpacing = value;
           break;
-        case WindowDataType.Color:
-          state.actionState.windowColor = value;
+        case WindowDataType.MullionWidth:
+          state.actionState.windowMullionWidth = value;
           break;
       }
     });
@@ -236,6 +235,7 @@ const WindowItemSelection = ({
   };
 
   const close = () => {
+    setInputVal(windowElement.mullionSpacing ?? 0.4);
     setDialogVisible();
   };
 
@@ -245,23 +245,19 @@ const WindowItemSelection = ({
   };
 
   const handleOk = () => {
-    if (windowModel[attributeKey] !== selectedItem) {
-      setValue(selectedItem);
-    }
+    setVal(inputVal);
     setDialogVisible();
     setApplyCount(0);
   };
 
   const handleApply = () => {
-    if (windowModel[attributeKey] !== selectedItem) {
-      setValue(selectedItem);
-    }
+    setVal(inputVal);
   };
 
   return (
     <>
       <Modal
-        width={640}
+        width={550}
         visible={true}
         title={
           <div
@@ -279,7 +275,7 @@ const WindowItemSelection = ({
           <Button key="Cancel" onClick={handleCancel}>
             {i18n.t('word.Cancel', lang)}
           </Button>,
-          <Button key="OK" type="primary" ref={okButtonRef} onClick={handleOk}>
+          <Button key="OK" type="primary" onClick={handleOk}>
             {i18n.t('word.OK', lang)}
           </Button>,
         ]}
@@ -294,18 +290,29 @@ const WindowItemSelection = ({
         )}
       >
         <Row gutter={6}>
-          <Col className="gutter-row" span={11}>
-            <CompactPicker
-              color={selectedItem ?? '#73D8FF'}
-              onChangeComplete={(colorResult) => {
-                setSelectedItem(colorResult.hex);
-              }}
+          <Col className="gutter-row" span={6}>
+            <InputNumber
+              min={range[0]}
+              max={range[1]}
+              style={{ width: 120 }}
+              step={step}
+              precision={2}
+              value={inputVal}
+              formatter={(a) => Number(a).toFixed(2)}
+              onChange={(value) => setInputVal(value)}
+              onPressEnter={handleOk}
             />
+            <div style={{ paddingTop: '20px', textAlign: 'left', fontSize: '11px' }}>
+              {i18n.t('word.Range', lang)}: [{range.toString()}] {unit}
+            </div>
+          </Col>
+          <Col className="gutter-row" span={1} style={{ verticalAlign: 'middle', paddingTop: '6px' }}>
+            {unit}
           </Col>
           <Col
             className="gutter-row"
             style={{ border: '2px dashed #ccc', paddingTop: '8px', paddingLeft: '12px', paddingBottom: '8px' }}
-            span={13}
+            span={17}
           >
             <Radio.Group onChange={(e) => setWindowActionScope(e.target.value)} value={windowActionScope}>
               <Space direction="vertical">
@@ -324,4 +331,4 @@ const WindowItemSelection = ({
   );
 };
 
-export default WindowItemSelection;
+export default MullionSpacingInput;

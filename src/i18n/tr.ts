@@ -954,6 +954,7 @@ export const i18n_tr = {
       ShutterWidth: 'Genişlik',
       ShutterColor: 'Kepenk Rengi',
       Frame: 'Frame',
+      FrameWidth: 'FrameWidth',
       Color: 'Frame Color',
     },
 
