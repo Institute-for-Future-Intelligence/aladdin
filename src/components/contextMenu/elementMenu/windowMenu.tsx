@@ -32,12 +32,12 @@ type ItemSelectionSettingType = {
 };
 
 const DialogSetting = {
-  Color: { attributeKey: 'color' },
   Tint: { attributeKey: 'tint' },
   Opacity: { attributeKey: 'opaticy' },
   MullionWidth: { attributeKey: 'mullionWidth' },
   MullionSpacing: { attributeKey: 'mullionSpacing' },
   MullionColor: { attributeKey: 'mullionColor' },
+  Color: { attributeKey: 'color' },
 };
 
 const getSelectedWindow = (state: CommonStoreState) => {
@@ -61,6 +61,17 @@ export const WindowMenu = () => {
 
   const lang = { lng: language };
   const paddingLeft = '36px';
+
+  const updateWindowFrameById = (id: string, checked: boolean) => {
+    setCommonStore((state) => {
+      for (const e of state.elements) {
+        if (e.id === id) {
+          (e as WindowModel).frame = checked;
+          break;
+        }
+      }
+    });
+  };
 
   const renderCut = () => {
     if (!window || window.locked) {
@@ -127,11 +138,52 @@ export const WindowMenu = () => {
     );
   };
 
+  const renderFrameSubMenu = () => {
+    if (!window) return null;
+
+    return (
+      <SubMenu key={'window-frame'} title={i18n.t('windowMenu.Frame', lang)} style={{ paddingLeft: '24px' }}>
+        <Menu.Item key={'frame'}>
+          <Checkbox
+            checked={window.frame}
+            onChange={(e) => {
+              const checked = e.target.checked;
+              const undoableCheck = {
+                name: 'Frame',
+                timestamp: Date.now(),
+                checked: checked,
+                selectedElementId: window.id,
+                selectedElementType: window.type,
+                undo: () => {
+                  updateWindowFrameById(window.id, !undoableCheck.checked);
+                },
+                redo: () => {
+                  updateWindowFrameById(window.id, undoableCheck.checked);
+                },
+              } as UndoableCheck;
+              addUndoable(undoableCheck);
+              updateWindowFrameById(window.id, checked);
+              setCommonStore((state) => {
+                state.actionState.windowFrame = checked;
+              });
+            }}
+          >
+            {i18n.t('windowMenu.Frame', { lng: language })}
+          </Checkbox>
+        </Menu.Item>
+
+        <Divider plain style={{ margin: '6px' }} />
+
+        {renderMenuItem(WindowDataType.Color)}
+      </SubMenu>
+    );
+  };
+
   const renderDialogs = () => {
     switch (visibleType) {
-      case WindowDataType.Color:
       case WindowDataType.Tint:
       case WindowDataType.MullionColor:
+      case WindowDataType.Color:
         const setting = DialogSetting[visibleType] as ItemSelectionSettingType;
         if (!setting) return null;
         return (
@@ -165,6 +217,8 @@ export const WindowMenu = () => {
           {renderMenuItem(WindowDataType.Tint)}
 
           {renderMullionSubMenu()}
+
+          {renderFrameSubMenu()}
 
           <WindowShutterSubMenu windowId={window.id} />
 

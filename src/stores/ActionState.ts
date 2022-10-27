@@ -45,7 +45,6 @@ export interface ActionState {
   doorColor: string;
   doorTexture: DoorTexture;
 
-  windowColor: string;
   windowTint: string;
   windowOpacity: number;
   windowMullion: boolean;
@@ -56,6 +55,8 @@ export interface ActionState {
   windowShutterRight: boolean;
   windowShutterColor: string;
   windowShutterWidth: number;
+  windowColor: string; // frame color
+  windowFrame: boolean;
 
   solarPanelModelName: string;
   solarPanelOrientation: Orientation;

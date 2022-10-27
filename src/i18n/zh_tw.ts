@@ -923,7 +923,7 @@ export const i18n_zh_tw = {
       MullionWidth: '直櫺寬度',
       MullionSpacing: '直櫺間距',
       MullionColor: '直櫺颜色',
-      Color: '邊框顔色',
+
       Tint: '著色',
       Opacity: '不透明度',
       Shutter: '百葉窗',
@@ -932,6 +932,8 @@ export const i18n_zh_tw = {
       BothShutters: '兩側百葉窗',
       ShutterWidth: '相對寬度',
       ShutterColor: '百葉窗顏色',
+      Frame: '邊框',
+      Color: '邊框顔色',
     },
 
     siteInfoPanel: {

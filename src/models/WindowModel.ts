@@ -5,13 +5,18 @@
 import { ElementModel } from './ElementModel';
 
 export interface WindowModel extends ElementModel {
+  opacity: number;
+  tint: string;
+
+  shutter: Shutter;
+
   mullion: boolean;
   mullionWidth: number;
   mullionSpacing: number;
   mullionColor: string;
-  opacity: number;
-  tint: string;
-  shutter: Shutter;
+
+  // frameColor is using color
+  frame: boolean;
 }
 
 export interface Shutter {

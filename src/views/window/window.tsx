@@ -71,6 +71,12 @@ const useUpdataOldFiles = (id: string) => {
           if (w.mullionColor === undefined) {
             w.mullionColor = 'white';
           }
+          if (w.frame === undefined) {
+            w.frame = false;
+          }
+          if (w.color === undefined) {
+            w.color = 'white';
+          }
           break;
         }
       }
@@ -98,12 +104,13 @@ const Window = ({
   opacity = 0.5,
   shutter,
   mullionColor = 'white',
+  frame = false,
+  color = 'white',
 }: WindowModel) => {
   // legacy problem
   if (Math.abs(cy) < 0.001) {
     cy = 0.1;
   }
-
   useUpdataOldFiles(id);
 
   const setCommonStore = useStore(Selector.set);

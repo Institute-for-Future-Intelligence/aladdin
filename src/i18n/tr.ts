@@ -945,7 +945,6 @@ export const i18n_tr = {
       MullionWidth: 'Tiriz Genişliği',
       MullionSpacing: 'Tiriz Aralığı',
       MullionColor: 'Mullion Color',
-      Color: 'Frame Color',
       Tint: 'Ton',
       Opacity: 'Opaklık',
       Shutter: 'Kepenk',
@@ -954,6 +953,8 @@ export const i18n_tr = {
       BothShutters: 'Kepenkler',
       ShutterWidth: 'Genişlik',
       ShutterColor: 'Kepenk Rengi',
+      Frame: 'Frame',
+      Color: 'Frame Color',
     },
 
     siteInfoPanel: {

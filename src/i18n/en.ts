@@ -898,7 +898,6 @@ export const i18n_en = {
       MullionWidth: 'Mullion Width',
       MullionSpacing: 'Mullion Spacing',
       MullionColor: 'Mullion Color',
-      Color: 'Frame Color',
       Tint: 'Tint',
       Opacity: 'Opacity',
       Shutter: 'Shutter',
@@ -907,6 +906,8 @@ export const i18n_en = {
       BothShutters: 'Both Shutters',
       ShutterWidth: 'Relative Width',
       ShutterColor: 'Shutter Color',
+      Frame: 'Frame',
+      Color: 'Frame Color',
     },
 
     roofMenu: {
