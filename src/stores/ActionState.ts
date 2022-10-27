@@ -80,4 +80,10 @@ export interface ActionState {
   parabolicTroughPoleHeight: number;
   parabolicTroughWidth: number;
   parabolicTroughModuleLength: number;
+
+  fresnelReflectorReceiver: string;
+  fresnelReflectorReflectance: number;
+  fresnelReflectorPoleHeight: number;
+  fresnelReflectorWidth: number;
+  fresnelReflectorModuleLength: number;
 }

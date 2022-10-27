@@ -314,6 +314,10 @@ export class ElementModelFactory {
 
   static makeFresnelReflector(
     parent: ElementModel,
+    receiverId: string,
+    reflectance: number,
+    poleHeight: number,
+    moduleLength: number,
     x: number,
     y: number,
     z?: number,
@@ -330,12 +334,13 @@ export class ElementModelFactory {
     }
     return {
       type: ObjectType.FresnelReflector,
-      reflectance: 0.9,
-      moduleLength: 3,
+      receiverId: receiverId ?? 'None',
+      reflectance: reflectance ?? 0.9,
+      moduleLength: moduleLength ?? 3,
       relativeAzimuth: 0,
       tiltAngle: 0,
       drawSunBeam: false,
-      poleHeight: 0.2, // extra pole height in addition to half of the width
+      poleHeight: poleHeight ?? 0.2, // extra pole height in addition to half of the width
       poleRadius: 0.05,
       cx: x,
       cy: y,

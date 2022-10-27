@@ -17,6 +17,7 @@ import { FoundationModel } from '../../../models/FoundationModel';
 const { Option } = Select;
 
 const FresnelReflectorAbsorberSelection = ({ setDialogVisible }: { setDialogVisible: (b: boolean) => void }) => {
+  const setCommonStore = useStore(Selector.set);
   const language = useStore(Selector.language);
   const elements = useStore(Selector.elements);
   const getElementById = useStore(Selector.getElementById);
@@ -199,6 +200,9 @@ const FresnelReflectorAbsorberSelection = ({ setDialogVisible }: { setDialogVisi
         updateById(fresnelReflector.id, value);
         setApplyCount(applyCount + 1);
     }
+    setCommonStore((state) => {
+      state.actionState.fresnelReflectorReceiver = value;
+    });
     setUpdateFlag(!updateFlag);
   };
 

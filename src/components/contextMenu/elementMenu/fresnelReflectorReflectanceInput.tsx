@@ -15,6 +15,7 @@ import { UndoableChangeGroup } from '../../../undo/UndoableChangeGroup';
 import { ZERO_TOLERANCE } from '../../../constants';
 
 const FresnelReflectorReflectanceInput = ({ setDialogVisible }: { setDialogVisible: (b: boolean) => void }) => {
+  const setCommonStore = useStore(Selector.set);
   const language = useStore(Selector.language);
   const elements = useStore(Selector.elements);
   const getElementById = useStore(Selector.getElementById);
@@ -167,6 +168,9 @@ const FresnelReflectorReflectanceInput = ({ setDialogVisible }: { setDialogVisib
         updateById(fresnelReflector.id, value);
         setApplyCount(applyCount + 1);
     }
+    setCommonStore((state) => {
+      state.actionState.fresnelReflectorReflectance = value;
+    });
     setUpdateFlag(!updateFlag);
   };
 

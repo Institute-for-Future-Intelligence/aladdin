@@ -19,6 +19,7 @@ import { Util } from '../../../Util';
 // to agree with the convention, we call ly length and lx width, reversed from most other elements in Aladdin.
 
 const FresnelReflectorWidthInput = ({ setDialogVisible }: { setDialogVisible: (b: boolean) => void }) => {
+  const setCommonStore = useStore(Selector.set);
   const language = useStore(Selector.language);
   const elements = useStore(Selector.elements);
   const getElementById = useStore(Selector.getElementById);
@@ -228,6 +229,9 @@ const FresnelReflectorWidthInput = ({ setDialogVisible }: { setDialogVisible: (b
           setApplyCount(applyCount + 1);
         }
     }
+    setCommonStore((state) => {
+      state.actionState.fresnelReflectorWidth = value;
+    });
     setUpdateFlag(!updateFlag);
   };
 

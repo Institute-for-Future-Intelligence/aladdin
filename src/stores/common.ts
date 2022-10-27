@@ -4401,11 +4401,16 @@ export const useStore = create<CommonStoreState>(
                   );
                   const fresnelReflector = ElementModelFactory.makeFresnelReflector(
                     fresnelReflectorParentModel,
+                    state.actionState.fresnelReflectorReceiver,
+                    state.actionState.fresnelReflectorReflectance,
+                    state.actionState.fresnelReflectorPoleHeight,
+                    state.actionState.fresnelReflectorModuleLength,
                     fresnelReflectorRelativeCoordinates.x,
                     fresnelReflectorRelativeCoordinates.y,
                     fresnelReflectorRelativeCoordinates.z,
                     normal,
                     'rotation' in parent ? parent.rotation : undefined,
+                    state.actionState.fresnelReflectorWidth,
                   );
                   model = fresnelReflector;
                   state.elements.push(fresnelReflector);

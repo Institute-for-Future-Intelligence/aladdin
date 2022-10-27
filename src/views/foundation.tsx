@@ -2369,6 +2369,9 @@ const Foundation = ({
                     updateElementLxById(collector.id, dxl);
                     setElementPosition(collector.id, newCx, newCy);
                     updateDesignInfo();
+                    setCommonStore((state) => {
+                      state.actionState.parabolicTroughWidth = dxl;
+                    });
                   }
                 }
                 break;
@@ -2418,6 +2421,9 @@ const Foundation = ({
                     updateElementLxById(collector.id, dxl);
                     setElementPosition(collector.id, newCx, newCy);
                     updateDesignInfo();
+                    setCommonStore((state) => {
+                      state.actionState.fresnelReflectorWidth = dxl;
+                    });
                   }
                 }
                 break;

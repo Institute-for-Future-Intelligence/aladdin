@@ -16,6 +16,7 @@ import { ZERO_TOLERANCE } from '../../../constants';
 import { Util } from '../../../Util';
 
 const FresnelReflectorModuleLengthInput = ({ setDialogVisible }: { setDialogVisible: (b: boolean) => void }) => {
+  const setCommonStore = useStore(Selector.set);
   const language = useStore(Selector.language);
   const elements = useStore(Selector.elements);
   const getElementById = useStore(Selector.getElementById);
@@ -225,6 +226,9 @@ const FresnelReflectorModuleLengthInput = ({ setDialogVisible }: { setDialogVisi
           setApplyCount(applyCount + 1);
         }
     }
+    setCommonStore((state) => {
+      state.actionState.fresnelReflectorModuleLength = value;
+    });
     setUpdateFlag(!updateFlag);
   };
 

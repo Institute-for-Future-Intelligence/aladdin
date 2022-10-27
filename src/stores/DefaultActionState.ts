@@ -87,6 +87,12 @@ export class DefaultActionState implements ActionState {
   parabolicTroughWidth: number;
   parabolicTroughModuleLength: number;
 
+  fresnelReflectorReceiver: string;
+  fresnelReflectorReflectance: number;
+  fresnelReflectorPoleHeight: number;
+  fresnelReflectorWidth: number;
+  fresnelReflectorModuleLength: number;
+
   constructor() {
     this.humanName = HumanName.Jack;
 
@@ -160,5 +166,11 @@ export class DefaultActionState implements ActionState {
     this.parabolicTroughPoleHeight = 0.2;
     this.parabolicTroughWidth = 2;
     this.parabolicTroughModuleLength = 3;
+
+    this.fresnelReflectorReceiver = 'None';
+    this.fresnelReflectorReflectance = 0.9;
+    this.fresnelReflectorPoleHeight = 0.2;
+    this.fresnelReflectorWidth = 2;
+    this.fresnelReflectorModuleLength = 3;
   }
 }
