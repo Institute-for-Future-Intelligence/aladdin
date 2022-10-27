@@ -16,6 +16,7 @@ import { ZERO_TOLERANCE } from '../../../constants';
 import { Util } from '../../../Util';
 
 const HeliostatWidthInput = ({ setDialogVisible }: { setDialogVisible: (b: boolean) => void }) => {
+  const setCommonStore = useStore(Selector.set);
   const language = useStore(Selector.language);
   const elements = useStore(Selector.elements);
   const getElementById = useStore(Selector.getElementById);
@@ -221,6 +222,9 @@ const HeliostatWidthInput = ({ setDialogVisible }: { setDialogVisible: (b: boole
           setApplyCount(applyCount + 1);
         }
     }
+    setCommonStore((state) => {
+      state.actionState.heliostatWidth = value;
+    });
     setUpdateFlag(!updateFlag);
   };
 

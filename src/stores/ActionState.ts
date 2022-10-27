@@ -86,4 +86,10 @@ export interface ActionState {
   fresnelReflectorPoleHeight: number;
   fresnelReflectorWidth: number;
   fresnelReflectorModuleLength: number;
+
+  heliostatTower: string;
+  heliostatReflectance: number;
+  heliostatPoleHeight: number;
+  heliostatWidth: number;
+  heliostatLength: number;
 }

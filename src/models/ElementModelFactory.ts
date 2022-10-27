@@ -359,6 +359,9 @@ export class ElementModelFactory {
 
   static makeHeliostat(
     parent: ElementModel,
+    towerId: string,
+    reflectance: number,
+    poleHeight: number,
     x: number,
     y: number,
     z?: number,
@@ -375,11 +378,12 @@ export class ElementModelFactory {
     }
     return {
       type: ObjectType.Heliostat,
-      reflectance: 0.9,
+      towerId: towerId ?? 'None',
+      reflectance: reflectance ?? 0.9,
       relativeAzimuth: 0,
       tiltAngle: 0,
       drawSunBeam: false,
-      poleHeight: 0.2, // extra pole height in addition to half of the width or height, whichever is larger
+      poleHeight: poleHeight ?? 0.2, // extra pole height in addition to half of the width or height, whichever is larger
       poleRadius: 0.1,
       cx: x,
       cy: y,

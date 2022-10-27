@@ -93,6 +93,12 @@ export class DefaultActionState implements ActionState {
   fresnelReflectorWidth: number;
   fresnelReflectorModuleLength: number;
 
+  heliostatTower: string;
+  heliostatReflectance: number;
+  heliostatPoleHeight: number;
+  heliostatWidth: number;
+  heliostatLength: number;
+
   constructor() {
     this.humanName = HumanName.Jack;
 
@@ -172,5 +178,11 @@ export class DefaultActionState implements ActionState {
     this.fresnelReflectorPoleHeight = 0.2;
     this.fresnelReflectorWidth = 2;
     this.fresnelReflectorModuleLength = 3;
+
+    this.heliostatTower = 'None';
+    this.heliostatReflectance = 0.9;
+    this.heliostatPoleHeight = 0.2;
+    this.heliostatWidth = 4;
+    this.heliostatLength = 2;
   }
 }

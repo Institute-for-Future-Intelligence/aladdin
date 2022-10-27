@@ -17,6 +17,7 @@ import { FoundationModel } from '../../../models/FoundationModel';
 const { Option } = Select;
 
 const HeliostatTowerSelection = ({ setDialogVisible }: { setDialogVisible: (b: boolean) => void }) => {
+  const setCommonStore = useStore(Selector.set);
   const language = useStore(Selector.language);
   const elements = useStore(Selector.elements);
   const getElementById = useStore(Selector.getElementById);
@@ -195,6 +196,9 @@ const HeliostatTowerSelection = ({ setDialogVisible }: { setDialogVisible: (b: b
         updateById(heliostat.id, value);
         setApplyCount(applyCount + 1);
     }
+    setCommonStore((state) => {
+      state.actionState.heliostatTower = value;
+    });
     setUpdateFlag(!updateFlag);
   };
 

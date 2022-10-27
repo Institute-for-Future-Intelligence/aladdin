@@ -15,6 +15,7 @@ import { ZERO_TOLERANCE } from '../../../constants';
 import { HeliostatModel } from '../../../models/HeliostatModel';
 
 const HeliostatPoleHeightInput = ({ setDialogVisible }: { setDialogVisible: (b: boolean) => void }) => {
+  const setCommonStore = useStore(Selector.set);
   const language = useStore(Selector.language);
   const elements = useStore(Selector.elements);
   const getElementById = useStore(Selector.getElementById);
@@ -215,6 +216,9 @@ const HeliostatPoleHeightInput = ({ setDialogVisible }: { setDialogVisible: (b: 
           setApplyCount(applyCount + 1);
         }
     }
+    setCommonStore((state) => {
+      state.actionState.heliostatPoleHeight = value;
+    });
     setUpdateFlag(!updateFlag);
   };
 

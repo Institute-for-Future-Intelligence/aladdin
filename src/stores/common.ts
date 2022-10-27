@@ -4420,11 +4420,16 @@ export const useStore = create<CommonStoreState>(
                   const heliostatRelativeCoordinates = Util.relativeCoordinates(p.x, p.y, p.z, heliostatParentModel);
                   const heliostat = ElementModelFactory.makeHeliostat(
                     heliostatParentModel,
+                    state.actionState.heliostatTower,
+                    state.actionState.heliostatReflectance,
+                    state.actionState.heliostatPoleHeight,
                     heliostatRelativeCoordinates.x,
                     heliostatRelativeCoordinates.y,
                     heliostatRelativeCoordinates.z,
                     normal,
                     'rotation' in parent ? parent.rotation : undefined,
+                    state.actionState.heliostatLength,
+                    state.actionState.heliostatWidth,
                   );
                   model = heliostat;
                   state.elements.push(heliostat);
