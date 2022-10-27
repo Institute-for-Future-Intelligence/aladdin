@@ -2434,6 +2434,9 @@ const Foundation = ({
                   updateElementLxById(collector.id, diameter);
                   updateElementLyById(collector.id, diameter);
                   updateDesignInfo();
+                  setCommonStore((state) => {
+                    state.actionState.parabolicDishRimDiameter = diameter;
+                  });
                 }
                 break;
             }

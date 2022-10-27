@@ -15,6 +15,7 @@ import { UndoableChangeGroup } from '../../../undo/UndoableChangeGroup';
 import { ZERO_TOLERANCE } from '../../../constants';
 
 const ParabolicDishPoleHeightInput = ({ setDialogVisible }: { setDialogVisible: (b: boolean) => void }) => {
+  const setCommonStore = useStore(Selector.set);
   const language = useStore(Selector.language);
   const elements = useStore(Selector.elements);
   const getElementById = useStore(Selector.getElementById);
@@ -213,6 +214,9 @@ const ParabolicDishPoleHeightInput = ({ setDialogVisible }: { setDialogVisible: 
           setApplyCount(applyCount + 1);
         }
     }
+    setCommonStore((state) => {
+      state.actionState.parabolicDishPoleHeight = value;
+    });
     setUpdateFlag(!updateFlag);
   };
 

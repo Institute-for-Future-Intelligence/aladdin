@@ -11,6 +11,7 @@ import {
   FoundationTexture,
   HumanName,
   Orientation,
+  ParabolicDishStructureType,
   TreeType,
   WallTexture,
 } from '../types';
@@ -68,6 +69,15 @@ export class DefaultActionState implements ActionState {
   solarPanelTiltAngle: number;
   solarPanelRelativeAzimuth: number;
 
+  parabolicDishReflectance: number;
+  parabolicDishReceiverAbsorptance: number;
+  parabolicDishOpticalEfficiency: number;
+  parabolicDishThermalEfficiency: number;
+  parabolicDishRimDiameter: number;
+  parabolicDishLatusRectum: number;
+  parabolicDishPoleHeight: number;
+  parabolicDishReceiverStructure: ParabolicDishStructureType;
+
   constructor() {
     this.humanName = HumanName.Jack;
 
@@ -123,5 +133,14 @@ export class DefaultActionState implements ActionState {
     this.solarPanelPoleSpacing = 3;
     this.solarPanelTiltAngle = 0;
     this.solarPanelRelativeAzimuth = 0;
+
+    this.parabolicDishReflectance = 0.9;
+    this.parabolicDishReceiverAbsorptance = 0.95;
+    this.parabolicDishOpticalEfficiency = 0.7;
+    this.parabolicDishThermalEfficiency = 0.3;
+    this.parabolicDishRimDiameter = 4;
+    this.parabolicDishLatusRectum = 8;
+    this.parabolicDishPoleHeight = 0.2;
+    this.parabolicDishReceiverStructure = ParabolicDishStructureType.CentralPole;
   }
 }

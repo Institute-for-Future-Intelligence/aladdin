@@ -14,6 +14,7 @@ import { UndoableChange } from '../../../undo/UndoableChange';
 import { UndoableChangeGroup } from '../../../undo/UndoableChangeGroup';
 
 const ParabolicDishStructureTypeInput = ({ setDialogVisible }: { setDialogVisible: (b: boolean) => void }) => {
+  const setCommonStore = useStore(Selector.set);
   const language = useStore(Selector.language);
   const elements = useStore(Selector.elements);
   const getElementById = useStore(Selector.getElementById);
@@ -167,6 +168,9 @@ const ParabolicDishStructureTypeInput = ({ setDialogVisible }: { setDialogVisibl
         updateById(parabolicDish.id, type);
         setApplyCount(applyCount + 1);
     }
+    setCommonStore((state) => {
+      state.actionState.parabolicDishReceiverStructure = type;
+    });
     setUpdateFlag(!updateFlag);
   };
 

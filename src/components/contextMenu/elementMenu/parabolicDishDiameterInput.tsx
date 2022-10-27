@@ -16,6 +16,7 @@ import { ZERO_TOLERANCE } from '../../../constants';
 import { Util } from '../../../Util';
 
 const ParabolicDishDiameterInput = ({ setDialogVisible }: { setDialogVisible: (b: boolean) => void }) => {
+  const setCommonStore = useStore(Selector.set);
   const language = useStore(Selector.language);
   const elements = useStore(Selector.elements);
   const getElementById = useStore(Selector.getElementById);
@@ -237,6 +238,9 @@ const ParabolicDishDiameterInput = ({ setDialogVisible }: { setDialogVisible: (b
           setApplyCount(applyCount + 1);
         }
     }
+    setCommonStore((state) => {
+      state.actionState.parabolicDishRimDiameter = value;
+    });
     setUpdateFlag(!updateFlag);
   };
 

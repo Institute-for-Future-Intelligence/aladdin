@@ -4365,11 +4365,20 @@ export const useStore = create<CommonStoreState>(
                   );
                   const parabolicDish = ElementModelFactory.makeParabolicDish(
                     parabolicDishParentModel,
+                    state.actionState.parabolicDishReflectance,
+                    state.actionState.parabolicDishReceiverAbsorptance,
+                    state.actionState.parabolicDishOpticalEfficiency,
+                    state.actionState.parabolicDishThermalEfficiency,
+                    state.actionState.parabolicDishLatusRectum,
+                    state.actionState.parabolicDishPoleHeight,
+                    state.actionState.parabolicDishReceiverStructure,
                     parabolicDishRelativeCoordinates.x,
                     parabolicDishRelativeCoordinates.y,
                     parabolicDishRelativeCoordinates.z,
                     normal,
                     'rotation' in parent ? parent.rotation : undefined,
+                    state.actionState.parabolicDishRimDiameter,
+                    state.actionState.parabolicDishRimDiameter,
                   );
                   model = parabolicDish;
                   state.elements.push(parabolicDish);

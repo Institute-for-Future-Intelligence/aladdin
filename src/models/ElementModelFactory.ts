@@ -253,6 +253,13 @@ export class ElementModelFactory {
 
   static makeParabolicDish(
     parent: ElementModel,
+    reflectance: number,
+    adsorptance: number,
+    opticalEfficiency: number,
+    thermalEfficiency: number,
+    latusRectum: number,
+    poleHeight: number,
+    receiverStructure: ParabolicDishStructureType,
     x: number,
     y: number,
     z?: number,
@@ -269,19 +276,19 @@ export class ElementModelFactory {
     }
     return {
       type: ObjectType.ParabolicDish,
-      reflectance: 0.9,
-      absorptance: 0.95,
-      opticalEfficiency: 0.7,
-      thermalEfficiency: 0.3,
+      reflectance: reflectance ?? 0.9,
+      absorptance: adsorptance ?? 0.95,
+      opticalEfficiency: opticalEfficiency ?? 0.7,
+      thermalEfficiency: thermalEfficiency ?? 0.3,
       moduleLength: 3,
-      latusRectum: 8,
+      latusRectum: latusRectum ?? 8,
       relativeAzimuth: 0,
       tiltAngle: 0,
-      structureType: ParabolicDishStructureType.CentralPole,
+      structureType: receiverStructure ?? ParabolicDishStructureType.CentralPole,
       receiverRadius: 0.25,
       receiverPoleRadius: 0.1,
       drawSunBeam: false,
-      poleHeight: 0.2, // extra pole height in addition to the radius (half of lx or ly)
+      poleHeight: poleHeight ?? 0.2, // extra pole height in addition to the radius (half of lx or ly)
       poleRadius: 0.2,
       cx: x,
       cy: y,

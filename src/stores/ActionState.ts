@@ -9,6 +9,7 @@ import {
   FoundationTexture,
   HumanName,
   Orientation,
+  ParabolicDishStructureType,
   TreeType,
   WallTexture,
 } from '../types';
@@ -61,4 +62,13 @@ export interface ActionState {
   solarPanelPoleSpacing: number;
   solarPanelTiltAngle: number;
   solarPanelRelativeAzimuth: number;
+
+  parabolicDishReflectance: number;
+  parabolicDishReceiverAbsorptance: number;
+  parabolicDishOpticalEfficiency: number;
+  parabolicDishThermalEfficiency: number;
+  parabolicDishRimDiameter: number;
+  parabolicDishLatusRectum: number;
+  parabolicDishPoleHeight: number;
+  parabolicDishReceiverStructure: ParabolicDishStructureType;
 }
