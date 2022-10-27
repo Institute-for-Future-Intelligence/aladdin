@@ -320,7 +320,6 @@ export const i18n_tr = {
         GambrelRoofVsMansardRoof: 'Flemenk Çatı vs. Mansart Çatı',
         CombinationRoofVsBonnetRoof: 'Combination Roof vs. Bonnet Roof',
         DutchGableRoof: 'Dutch Gable Roof',
-        ButterflyRoof: 'Butterfly Roof',
         GableAndValleyRoof: 'Gable and Valley Roof',
         ClerestoryRoof: 'Clerestory Roof',
         AllBasicRoofTypes: 'Tüm Çatı Tipleri',
@@ -400,6 +399,7 @@ export const i18n_tr = {
         BonnetHouse: 'Bonnet House',
         BarnStyleHouse: 'Çiftlik Evi',
         ModernHouse: 'Modern House',
+        ButterflyRoofHouse: 'Butterfly Roof House',
       },
       commercialBuildingsSubMenu: 'Ticari Binalar',
       commercialBuildingExamples: {

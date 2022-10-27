@@ -31,7 +31,7 @@ import colonial_house from './examples/colonial_house.json';
 import dutch_colonial_house from './examples/dutch_colonial_house.json';
 import dutch_gable_roof from './examples/dutch_gable_roof.json';
 import combination_roof_vs_bonnet_roof from './examples/combination_roof_vs_bonnet_roof.json';
-import butterfly_roof from './examples/butterfly_roof.json';
+import butterfly_roof_house from './examples/butterfly_roof_house.json';
 import gable_roof_vs_hip_roof from './examples/gable_roof_vs_hip_roof.json';
 import gable_and_valley_roof from './examples/gable_and_valley_roof.json';
 import clerestory_roof from './examples/clerestory_roof.json';
@@ -438,8 +438,8 @@ const MainMenu = ({ viewOnly, set2DView, resetView, zoomView, canvas }: MainMenu
       case 'combination_roof_vs_bonnet_roof':
         input = combination_roof_vs_bonnet_roof;
         break;
-      case 'butterfly_roof':
-        input = butterfly_roof;
+      case 'butterfly_roof_house':
+        input = butterfly_roof_house;
         break;
       case 'gable_roof_vs_hip_roof':
         input = gable_roof_vs_hip_roof;
@@ -2011,9 +2011,6 @@ const MainMenu = ({ viewOnly, set2DView, resetView, zoomView, canvas }: MainMenu
           <Menu.Item key="dutch_gable_roof" onClick={loadFile}>
             {i18n.t('menu.buildingDesignTutorials.DutchGableRoof', lang)}
           </Menu.Item>
-          <Menu.Item key="butterfly_roof" onClick={loadFile}>
-            {i18n.t('menu.buildingDesignTutorials.ButterflyRoof', lang)}
-          </Menu.Item>
           <Menu.Item key="gable_and_valley_roof" onClick={loadFile}>
             {i18n.t('menu.buildingDesignTutorials.GableAndValleyRoof', lang)}
           </Menu.Item>
@@ -2181,6 +2178,9 @@ const MainMenu = ({ viewOnly, set2DView, resetView, zoomView, canvas }: MainMenu
             </Menu.Item>
             <Menu.Item key="solarium" onClick={loadFile}>
               {i18n.t('menu.residentialBuildingExamples.Solarium', lang)}
+            </Menu.Item>
+            <Menu.Item key="butterfly_roof_house" onClick={loadFile}>
+              {i18n.t('menu.residentialBuildingExamples.ButterflyRoofHouse', lang)}
             </Menu.Item>
             <Menu.Item key="adobe_taos_house" onClick={loadFile}>
               {i18n.t('menu.residentialBuildingExamples.AdobeTaosHouse', lang)}

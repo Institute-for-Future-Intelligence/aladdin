@@ -321,7 +321,6 @@ export const i18n_en = {
         GambrelRoofVsMansardRoof: 'Gambrel Roof vs. Mansard Roof',
         CombinationRoofVsBonnetRoof: 'Combination Roof vs. Bonnet Roof',
         DutchGableRoof: 'Dutch Gable Roof',
-        ButterflyRoof: 'Butterfly Roof',
         GableAndValleyRoof: 'Gable and Valley Roof',
         ClerestoryRoof: 'Clerestory Roof',
         AllBasicRoofTypes: 'All Basic Roof Types',
@@ -400,6 +399,7 @@ export const i18n_en = {
         BonnetHouse: 'Bonnet House',
         BarnStyleHouse: 'Barn Style House',
         ModernHouse: 'Modern House',
+        ButterflyRoofHouse: 'Butterfly Roof House',
       },
       commercialBuildingsSubMenu: 'Commercial Buildings',
       commercialBuildingExamples: {

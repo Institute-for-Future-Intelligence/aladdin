@@ -319,7 +319,6 @@ export const i18n_zh_cn = {
         GambrelRoofVsMansardRoof: '复斜屋顶和折线屋顶的对比',
         CombinationRoofVsBonnetRoof: '组合屋顶和帽檐屋顶的对比',
         DutchGableRoof: '荷兰双坡屋顶',
-        ButterflyRoof: '蝴蝶型屋顶',
         GableAndValleyRoof: '坡谷屋顶',
         ClerestoryRoof: '天窗屋顶',
         AllBasicRoofTypes: '所有的基本屋顶类型',
@@ -397,6 +396,7 @@ export const i18n_zh_cn = {
         BonnetHouse: '有帽檐屋顶的住宅',
         BarnStyleHouse: '谷仓式风格的住宅',
         ModernHouse: '现代风格的住宅',
+        ButterflyRoofHouse: '蝴蝶型屋顶的住宅',
       },
       commercialBuildingsSubMenu: '商用建筑',
       commercialBuildingExamples: {

@@ -1,7 +1,7 @@
 {
-  "docid": "iQ3egxEhCB3BRJJm6cxxaL",
-  "time": "10/25/2022 05:33 pm",
-  "timestamp": 1666733585102,
+  "docid": "7n2c5vPVL81jMfuXtF4ohG",
+  "time": "10/26/2022 09:53 pm",
+  "timestamp": 1666835597320,
   "userid": "QWecNcxhyvP6j6sBN11hBsfZDau1",
   "owner": null,
   "email": null,
@@ -48,8 +48,8 @@
     {
       "type": "Human",
       "name": "Jeff",
-      "cx": 4.899599196366802,
-      "cy": -9.056201425087737,
+      "cx": 4.760747320802601,
+      "cy": -8.894692771923143,
       "cz": 1.05,
       "lx": 0.6,
       "lz": 1.65,
@@ -66,12 +66,12 @@
       "parentId": "fbqvzYqiEy79jeL8wsadib",
       "id": "3LYQCPYTZ6WYqLSGF4X7Lr",
       "selected": false,
-      "ly": 0.56
+      "ly": 0.6
     },
     {
       "type": "Wall",
-      "cx": 0.5442086930077252,
-      "cy": 5.248689681381938,
+      "cx": 0.40535681744352425,
+      "cy": 5.410198334546533,
       "cz": 2.2408122612280286,
       "lx": 6.331471207996493,
       "ly": 0.3,
@@ -83,14 +83,14 @@
         "2RETAxyRMzZBEQkBGms56R"
       ],
       "leftPoint": [
-        3.709944297005972,
-        5.248689681381937,
-        0.07583876063100005
+        3.571092421441771,
+        5.410198334546532,
+        2.1
       ],
       "rightPoint": [
-        -2.621526910990522,
-        5.248689681381939,
-        0.07583876063100005
+        -2.760378786554723,
+        5.410198334546534,
+        2.1
       ],
       "relativeAngle": 3.141592653589793,
       "textureType": "No Wall Texture",
@@ -115,8 +115,8 @@
     },
     {
       "type": "Wall",
-      "cx": 3.709944297005971,
-      "cy": -0.5121088272410041,
+      "cx": 3.57109242144177,
+      "cy": -0.3506001740764093,
       "cz": 2.2301039869226305,
       "lx": 11.521597017245886,
       "ly": 0.3,
@@ -128,14 +128,14 @@
         "giYTP9Qg6uJ3yfkS1RoDqG"
       ],
       "leftPoint": [
-        3.709944297005971,
-        -6.272907335863947,
-        0.07583876063100005
+        3.57109242144177,
+        -6.1113986826993525,
+        2.1
       ],
       "rightPoint": [
-        3.709944297005973,
-        5.248689681381939,
-        0.07583876063100005
+        3.571092421441772,
+        5.410198334546534,
+        2.1
       ],
       "relativeAngle": 1.5707963267948966,
       "textureType": "No Wall Texture",
@@ -164,8 +164,8 @@
     },
     {
       "type": "Wall",
-      "cx": -2.6215269109905215,
-      "cy": -0.5121088272410041,
+      "cx": -2.7603787865547225,
+      "cy": -0.3506001740764093,
       "cz": 2.228839888904333,
       "lx": 11.521597017245886,
       "ly": 0.3,
@@ -177,14 +177,14 @@
         "8VKLBEAuMJxaXGp1WaM9mU"
       ],
       "leftPoint": [
-        -2.621526910990521,
-        5.248689681381939,
-        0.07583876063100005
+        -2.760378786554722,
+        5.410198334546534,
+        2.1
       ],
       "rightPoint": [
-        -2.621526910990522,
-        -6.272907335863947,
-        0.07583876063100005
+        -2.760378786554723,
+        -6.1113986826993525,
+        2.1
       ],
       "relativeAngle": -1.5707963267948968,
       "textureType": "No Wall Texture",
@@ -213,11 +213,11 @@
     },
     {
       "type": "Foundation",
-      "cx": -0.7766952456204024,
-      "cy": 1.493429833788988,
+      "cx": -0.6378433700562014,
+      "cy": 1.3319211806243931,
       "cz": 1.05,
-      "lx": 14.771283676483996,
-      "ly": 21.684773054455395,
+      "lx": 15.0489874276124,
+      "ly": 21.361755748126203,
       "lz": 2.1,
       "normal": [
         0,
@@ -240,22 +240,22 @@
     },
     {
       "type": "Wall",
-      "cx": 0.5442086930077243,
-      "cy": -6.272907335863947,
+      "cx": 0.40535681744352337,
+      "cy": -6.1113986826993525,
       "cz": 3.5404855174251457,
       "lx": 6.3314712079964925,
       "ly": 0.3,
       "lz": 7.940403297082102,
       "relativeAngle": 0,
       "leftPoint": [
-        -2.621526910990522,
-        -6.272907335863947,
-        0.07583876063100005
+        -2.760378786554723,
+        -6.1113986826993525,
+        2.1
       ],
       "rightPoint": [
-        3.709944297005971,
-        -6.272907335863947,
-        0.07583876063100005
+        3.57109242144177,
+        -6.1113986826993525,
+        2.1
       ],
       "leftJoints": [
         "2RETAxyRMzZBEQkBGms56R"
@@ -984,10 +984,10 @@
       "type": "Window",
       "cx": -0.23691176200967903,
       "cy": 0.1,
-      "cz": 0.09445364069550549,
+      "cz": 0.18890728139101098,
       "lx": 0.15794117467311936,
       "ly": 0.3,
-      "lz": 0.3148454689850183,
+      "lz": 0.5037527503760293,
       "shutter": {
         "showLeft": false,
         "showRight": false,
@@ -1021,10 +1021,10 @@
       "type": "Window",
       "cx": 0,
       "cy": 0.1,
-      "cz": 0.09445364069550549,
+      "cz": 0.18890728139101098,
       "lx": 0.15794117467311936,
       "ly": 0.3,
-      "lz": 0.3148454689850183,
+      "lz": 0.5037527503760293,
       "mullion": true,
       "mullionWidth": 0.06,
       "mullionSpacing": 1,
@@ -1055,10 +1055,10 @@
       "type": "Window",
       "cx": 0.23691176200967903,
       "cy": 0.1,
-      "cz": 0.09445364069550549,
+      "cz": 0.18890728139101098,
       "lx": 0.15794117467311936,
       "ly": 0.3,
-      "lz": 0.3148454689850183,
+      "lz": 0.5037527503760293,
       "mullion": true,
       "mullionWidth": 0.06,
       "mullionSpacing": 1,
@@ -1226,6 +1226,227 @@
         "width": 0.5
       },
       "selected": false
+    },
+    {
+      "type": "Human",
+      "name": "Jett",
+      "cx": 3.30154460456002,
+      "cy": -9.422479646769895,
+      "cz": 1.0499999523162848,
+      "lx": 0.6,
+      "lz": 1.85,
+      "normal": [
+        0,
+        1,
+        0
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "parentId": "fbqvzYqiEy79jeL8wsadib",
+      "id": "rw9LaiB1TVsCjU7r3gxtva",
+      "selected": false
+    },
+    {
+      "type": "Flower",
+      "name": "Yellow Flower",
+      "cx": -1.3048004341950468,
+      "cy": -9.630820519777313,
+      "cz": 1.049999952316284,
+      "lx": 2,
+      "lz": 1.4,
+      "normal": [
+        0,
+        1,
+        0
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "parentId": "fbqvzYqiEy79jeL8wsadib",
+      "id": "eSJdzinPpHu96SbrVMAjVK",
+      "selected": false
+    },
+    {
+      "type": "Flower",
+      "name": "Hydrangea",
+      "cx": 6.510735678336653,
+      "cy": -3.1958389696925,
+      "cz": 1.049999952316284,
+      "lx": 2,
+      "lz": 1.5,
+      "normal": [
+        0,
+        1,
+        0
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "parentId": "fbqvzYqiEy79jeL8wsadib",
+      "id": "5HazbJmLvszfXVAspqP44n",
+      "selected": false
+    },
+    {
+      "type": "Flower",
+      "name": "Hydrangea",
+      "cx": 6.4905736887835115,
+      "cy": 3.679225460437303,
+      "cz": 1.049999952316284,
+      "lx": 2,
+      "lz": 1.5,
+      "normal": [
+        0,
+        1,
+        0
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "parentId": "fbqvzYqiEy79jeL8wsadib",
+      "id": "ksxkAyWQERG2x1K1PGLm2t",
+      "selected": false
+    },
+    {
+      "type": "Flower",
+      "name": "Hydrangea",
+      "cx": -5.9613745486693706,
+      "cy": -2.773042180475202,
+      "cz": 1.049999952316284,
+      "lx": 2,
+      "lz": 1.5,
+      "normal": [
+        0,
+        1,
+        0
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "parentId": "fbqvzYqiEy79jeL8wsadib",
+      "id": "iMujo9QXGncnBDqpZ8cWcv",
+      "selected": false
+    },
+    {
+      "type": "Flower",
+      "name": "Hydrangea",
+      "cx": -6.2101179268188,
+      "cy": 3.9102946709381,
+      "cz": 1.049999952316284,
+      "lx": 2,
+      "lz": 1.5,
+      "normal": [
+        0,
+        1,
+        0
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "parentId": "fbqvzYqiEy79jeL8wsadib",
+      "id": "6cWk3x2UFqbqvZgzUcoLmx",
+      "selected": false
+    },
+    {
+      "type": "Flower",
+      "name": "Yellow Flower",
+      "cx": 1.8508428108951245,
+      "cy": -9.658677131415082,
+      "cz": 1.049999952316284,
+      "lx": 2,
+      "lz": 1.4,
+      "normal": [
+        0,
+        1,
+        0
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "parentId": "fbqvzYqiEy79jeL8wsadib",
+      "id": "tgueUXSjzrifiN4jQuumWf",
+      "selected": false
+    },
+    {
+      "type": "Tree",
+      "name": "Apple",
+      "cx": 4.2722952783844,
+      "cy": 9.642444933222748,
+      "cz": 1.049999952316284,
+      "lx": 4.174402972815023,
+      "lz": 5.46894817384739,
+      "normal": [
+        0,
+        1,
+        0
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "parentId": "fbqvzYqiEy79jeL8wsadib",
+      "id": "aKSdbZwyPvicQCB2BLjJKk",
+      "selected": false,
+      "evergreen": false
+    },
+    {
+      "type": "Tree",
+      "name": "Apple",
+      "cx": -4.751677608888578,
+      "cy": 9.57403740937577,
+      "cz": 1.0499999523162857,
+      "lx": 4.174402972815023,
+      "lz": 5.46894817384739,
+      "normal": [
+        0,
+        1,
+        0
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "parentId": "fbqvzYqiEy79jeL8wsadib",
+      "id": "izwDJguiBhY5ey4Ujd2R3z",
+      "selected": false
+    },
+    {
+      "type": "Human",
+      "name": "Jena",
+      "cx": 6.033929508116577,
+      "cy": -7.919499781166563,
+      "cz": 1.049999952316284,
+      "lx": 0.695,
+      "lz": 1.6,
+      "normal": [
+        0,
+        1,
+        0
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "parentId": "fbqvzYqiEy79jeL8wsadib",
+      "id": "q9UXGHJuymt18ppM1rZtbi",
+      "selected": false
     }
   ],
   "view": {
@@ -1257,9 +1478,9 @@
     "dailyHeliostatYieldPanelX": 0,
     "showDailyParabolicDishYieldPanel": false,
     "cameraPosition": [
-      21.454931951266573,
-      -13.459263737146323,
-      5.169350339142368
+      17.475322173084283,
+      -11.070224911282502,
+      5.659884476215908
     ],
     "showYearlyHeliostatYieldPanel": false,
     "orthographic": false,
@@ -1308,9 +1529,9 @@
     "shadowEnabled": true,
     "showInstructionPanel": true,
     "panCenter": [
-      0.7964843956731121,
-      0.8884043552733195,
-      4.28808045809798
+      0.5570674153465462,
+      0.5049896876550715,
+      5.659884476215908
     ],
     "yearlyFresnelReflectorYieldPanelY": 0,
     "showHeliodonPanel": false,
