@@ -57,6 +57,7 @@ export class DefaultActionState implements ActionState {
   windowMullion: boolean;
   windowMullionWidth: number;
   windowMullionSpacing: number;
+  windowMullionColor: string;
   windowShutterLeft: boolean;
   windowShutterRight: boolean;
   windowShutterColor: string;
@@ -142,6 +143,7 @@ export class DefaultActionState implements ActionState {
     this.windowMullion = true;
     this.windowMullionWidth = 0.06;
     this.windowMullionSpacing = 0.5;
+    this.windowMullionColor = 'white';
     // I worry about this using Shutter objects may cause default to be accidentally overwritten.
     this.windowShutterLeft = defaultShutter.showLeft;
     this.windowShutterRight = defaultShutter.showRight;

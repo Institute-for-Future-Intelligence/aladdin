@@ -897,6 +897,7 @@ export const i18n_en = {
       Mullion: 'Mullion',
       MullionWidth: 'Mullion Width',
       MullionSpacing: 'Mullion Spacing',
+      MullionColor: 'Mullion Color',
       Color: 'Frame Color',
       Tint: 'Tint',
       Opacity: 'Opacity',

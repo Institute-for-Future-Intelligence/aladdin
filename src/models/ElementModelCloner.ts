@@ -612,6 +612,7 @@ export class ElementModelCloner {
       mullion: window.mullion,
       mullionWidth: window.mullionWidth,
       mullionSpacing: window.mullionSpacing,
+      mullionColor: window.mullionColor,
       color: window.color,
       normal: [...window.normal],
       rotation: [...window.rotation],

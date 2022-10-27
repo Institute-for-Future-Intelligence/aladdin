@@ -24,6 +24,7 @@ export enum WindowDataType {
   Opacity = 'Opacity',
   MullionWidth = 'MullionWidth',
   MullionSpacing = 'MullionSpacing',
+  MullionColor = 'MullionColor',
 }
 
 type ItemSelectionSettingType = {
@@ -36,6 +37,7 @@ const DialogSetting = {
   Opacity: { attributeKey: 'opaticy' },
   MullionWidth: { attributeKey: 'mullionWidth' },
   MullionSpacing: { attributeKey: 'mullionSpacing' },
+  MullionColor: { attributeKey: 'mullionColor' },
 };
 
 const getSelectedWindow = (state: CommonStoreState) => {
@@ -119,8 +121,8 @@ export const WindowMenu = () => {
         <Divider plain style={{ margin: '6px' }} />
 
         {renderMenuItem(WindowDataType.MullionWidth)}
-
         {renderMenuItem(WindowDataType.MullionSpacing)}
+        {renderMenuItem(WindowDataType.MullionColor)}
       </SubMenu>
     );
   };
@@ -129,6 +131,7 @@ export const WindowMenu = () => {
     switch (visibleType) {
       case WindowDataType.Color:
       case WindowDataType.Tint:
+      case WindowDataType.MullionColor:
         const setting = DialogSetting[visibleType] as ItemSelectionSettingType;
         if (!setting) return null;
         return (

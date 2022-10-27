@@ -36,7 +36,6 @@ const WindowItemSelection = ({
   const applyCount = useStore(Selector.applyCount);
   const setApplyCount = useStore(Selector.setApplyCount);
   const revertApply = useStore(Selector.revertApply);
-  const getElementById = useStore(Selector.getElementById);
 
   const [selectedItem, setSelectedItem] = useState<string>(windowModel[attributeKey] as string);
   const [dragEnabled, setDragEnabled] = useState<boolean>(false);
@@ -63,6 +62,36 @@ const WindowItemSelection = ({
     });
   };
 
+  const updateOnSameWall = (wId: string, val: string) => {
+    setCommonStore((state) => {
+      for (const e of state.elements) {
+        if (!e.locked && e.type === ObjectType.Window && e.parentId === wId) {
+          ((e as WindowModel)[attributeKey] as string) = val;
+        }
+      }
+    });
+  };
+
+  const updateAboveFoundation = (fId: string, val: string) => {
+    setCommonStore((state) => {
+      for (const e of state.elements) {
+        if (!e.locked && e.type === ObjectType.Window && e.foundationId === fId) {
+          ((e as WindowModel)[attributeKey] as string) = val;
+        }
+      }
+    });
+  };
+
+  const updateForAll = (val: string) => {
+    setCommonStore((state) => {
+      for (const e of state.elements) {
+        if (!e.locked && e.type === ObjectType.Window) {
+          ((e as WindowModel)[attributeKey] as string) = val;
+        }
+      }
+    });
+  };
+
   const updateInMap = (map: Map<string, string>, val: string) => {
     for (const id of map.keys()) {
       updateById(id, val as string);
@@ -70,12 +99,12 @@ const WindowItemSelection = ({
   };
 
   const undoInMap = (map: Map<string, string>) => {
-    for (const [id, tint] of map.entries()) {
-      updateById(id, tint as string);
+    for (const [id, val] of map.entries()) {
+      updateById(id, val as string);
     }
   };
 
-  const setTint = (value: string) => {
+  const setValue = (value: string) => {
     if (!windowModel) return;
     switch (windowActionScope) {
       case Scope.AllObjectsOfThisType:
@@ -94,11 +123,11 @@ const WindowItemSelection = ({
             undoInMap(undoableChangeAll.oldValues as Map<string, string>);
           },
           redo: () => {
-            updateInMap(undoableChangeAll.oldValues as Map<string, string>, undoableChangeAll.newValue as string);
+            updateForAll(undoableChangeAll.newValue as string);
           },
         } as UndoableChangeGroup;
         addUndoable(undoableChangeAll);
-        updateInMap(oldValsAll, value);
+        updateForAll(value);
         setApplyCount(applyCount + 1);
         break;
       case Scope.OnlyThisSide:
@@ -107,7 +136,7 @@ const WindowItemSelection = ({
           setCommonStore((state) => {
             for (const elem of state.elements) {
               if (elem.type === ObjectType.Window && elem.parentId === windowModel.parentId && !elem.locked) {
-                oldValues.set(elem.id, (elem as WindowModel).tint);
+                oldValues.set(elem.id, (elem as WindowModel)[attributeKey] as string);
                 ((elem as WindowModel)[attributeKey] as string) = value;
               }
             }
@@ -122,10 +151,7 @@ const WindowItemSelection = ({
               undoInMap(undoableChangeOnSameWall.oldValues as Map<string, string>);
             },
             redo: () => {
-              updateInMap(
-                undoableChangeOnSameWall.oldValues as Map<string, string>,
-                undoableChangeOnSameWall.newValue as string,
-              );
+              updateOnSameWall(windowModel.parentId, undoableChangeOnSameWall.newValue as string);
             },
           } as UndoableChangeGroup;
           addUndoable(undoableChangeOnSameWall);
@@ -154,27 +180,24 @@ const WindowItemSelection = ({
               undoInMap(undoableChangeAboveFoundation.oldValues as Map<string, string>);
             },
             redo: () => {
-              if (undoableChangeAboveFoundation.groupId) {
-                updateInMap(
-                  undoableChangeAboveFoundation.oldValues as Map<string, string>,
-                  undoableChangeAboveFoundation.newValue as string,
-                );
-              }
+              updateAboveFoundation(
+                undoableChangeAboveFoundation.groupId,
+                undoableChangeAboveFoundation.newValue as string,
+              );
             },
           } as UndoableChangeGroup;
           addUndoable(undoableChangeAboveFoundation);
-          updateInMap(oldValsAboveFoundation, value);
+          updateAboveFoundation(windowModel.foundationId, value);
           setApplyCount(applyCount + 1);
         }
         break;
       default:
         if (windowModel) {
-          const updatedWindow = getElementById(windowModel.id) as WindowModel;
-          const oldTint = (updatedWindow ? updatedWindow.tint : windowModel.tint) ?? '#73D8FF';
+          const oldVal = windowModel[attributeKey] as string;
           const undoableChange = {
             name: `Set ${dataType} of Selected window`,
             timestamp: Date.now(),
-            oldValue: oldTint,
+            oldValue: oldVal,
             newValue: value,
             changedElementId: windowModel.id,
             changedElementType: windowModel.type,
@@ -195,8 +218,8 @@ const WindowItemSelection = ({
         case WindowDataType.Tint:
           state.actionState.windowTint = value;
           break;
-        case WindowDataType.Color:
-          state.actionState.windowColor = value;
+        case WindowDataType.MullionColor:
+          state.actionState.windowMullionColor = value;
           break;
       }
     });
@@ -216,7 +239,6 @@ const WindowItemSelection = ({
   };
 
   const close = () => {
-    setSelectedItem(windowModel.tint);
     setDialogVisible();
   };
 
@@ -226,16 +248,17 @@ const WindowItemSelection = ({
   };
 
   const handleOk = () => {
-    const updatedRoof = getElementById(windowModel.id) as WindowModel;
-    if (updatedRoof && updatedRoof.tint !== selectedItem) {
-      setTint(selectedItem);
+    if (windowModel[attributeKey] !== selectedItem) {
+      setValue(selectedItem);
     }
     setDialogVisible();
     setApplyCount(0);
   };
 
   const handleApply = () => {
-    setTint(selectedItem);
+    if (windowModel[attributeKey] !== selectedItem) {
+      setValue(selectedItem);
+    }
   };
 
   return (
@@ -276,7 +299,7 @@ const WindowItemSelection = ({
         <Row gutter={6}>
           <Col className="gutter-row" span={11}>
             <CompactPicker
-              color={selectedItem ?? windowModel?.tint ?? '#73D8FF'}
+              color={selectedItem ?? '#73D8FF'}
               onChangeComplete={(colorResult) => {
                 setSelectedItem(colorResult.hex);
               }}

@@ -13,6 +13,7 @@ interface WindowWireFrameProps {
   lz: number;
   mullionWidth: number;
   mullionSpacing: number;
+  mullionColor?: string;
   showMullion?: boolean;
   mullionSpacingY?: number;
   lineColor?: string;
@@ -26,6 +27,7 @@ const WindowWireFrame = ({
   mullionWidth,
   mullionSpacing,
   mullionSpacingY = mullionSpacing,
+  mullionColor = 'white',
   lineColor = 'black',
   lineWidth = 0.2,
 }: WindowWireFrameProps) => {
@@ -43,7 +45,7 @@ const WindowWireFrame = ({
   const hz = lz / 2;
 
   const outerMat = useMemo(() => <meshStandardMaterial color={lineColor} />, [lineColor]);
-  const innerMat = useMemo(() => <meshStandardMaterial color={'white'} />, []);
+  const innerMat = useMemo(() => <meshStandardMaterial color={mullionColor} />, [mullionColor]);
 
   const verticalMullion = useMemo(() => {
     const arr: number[] = [];

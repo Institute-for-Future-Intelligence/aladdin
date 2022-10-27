@@ -944,6 +944,7 @@ export const i18n_tr = {
       Mullion: 'Tiriz',
       MullionWidth: 'Tiriz Genişliği',
       MullionSpacing: 'Tiriz Aralığı',
+      MullionColor: 'Mullion Color',
       Color: 'Frame Color',
       Tint: 'Ton',
       Opacity: 'Opaklık',

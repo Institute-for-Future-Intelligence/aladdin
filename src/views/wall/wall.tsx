@@ -96,7 +96,6 @@ const useElements = (id: string, leftWallId?: string, rightWallId?: string, roof
 };
 
 const useUpdataOldFiles = (id: string) => {
-  // wallStructure, structureSpacing, structureWidth, structureColor, opacity
   useEffect(() => {
     useStore.getState().set((state) => {
       for (const e of state.elements) {
@@ -1044,6 +1043,7 @@ const Wall = ({
               actionState.windowMullion,
               actionState.windowMullionWidth,
               actionState.windowMullionSpacing,
+              actionState.windowMullionColor,
               shutter,
               relativePos.x / lx,
               0,

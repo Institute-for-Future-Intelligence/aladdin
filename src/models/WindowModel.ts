@@ -8,6 +8,7 @@ export interface WindowModel extends ElementModel {
   mullion: boolean;
   mullionWidth: number;
   mullionSpacing: number;
+  mullionColor: string;
   opacity: number;
   tint: string;
   shutter: Shutter;

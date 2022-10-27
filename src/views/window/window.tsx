@@ -68,6 +68,9 @@ const useUpdataOldFiles = (id: string) => {
           if (w.shutter === undefined) {
             w.shutter = defaultShutter;
           }
+          if (w.mullionColor === undefined) {
+            w.mullionColor = 'white';
+          }
           break;
         }
       }
@@ -94,6 +97,7 @@ const Window = ({
   tint = '#73D8FF',
   opacity = 0.5,
   shutter,
+  mullionColor = 'white',
 }: WindowModel) => {
   // legacy problem
   if (Math.abs(cy) < 0.001) {
@@ -209,6 +213,7 @@ const Window = ({
           showMullion={mullion}
           mullionWidth={mullionWidth}
           mullionSpacing={mullionSpacing}
+          mullionColor={mullionColor}
           lineColor={locked && selected ? LOCKED_ELEMENT_SELECTION_COLOR : lineColor}
           lineWidth={selected && locked ? 0.5 : lineWidth}
         />

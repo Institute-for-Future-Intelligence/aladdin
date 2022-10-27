@@ -922,6 +922,7 @@ export const i18n_zh_tw = {
       Mullion: '直櫺',
       MullionWidth: '直櫺寬度',
       MullionSpacing: '直櫺間距',
+      MullionColor: '直櫺颜色',
       Color: '邊框顔色',
       Tint: '著色',
       Opacity: '不透明度',
