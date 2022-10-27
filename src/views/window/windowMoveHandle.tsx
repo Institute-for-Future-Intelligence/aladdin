@@ -50,7 +50,7 @@ const WindowMoveHandle = ({ handleType }: WindowMoveHandleProps) => {
         }
       }}
     >
-      <meshBasicMaterial color={color} />
+      <meshStandardMaterial color={color} />
     </Sphere>
   );
 };

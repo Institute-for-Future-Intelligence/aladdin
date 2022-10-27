@@ -247,7 +247,6 @@ const Wall = ({
   const isAddingElement = useStore(Selector.isAddingElement);
   const addUndoable = useStore(Selector.addUndoable);
   const setElementPosition = useStore(Selector.setElementPosition);
-  const actionState = useStore.getState().actionState;
 
   const intersectionPlaneRef = useRef<Mesh>(null);
   const outsideWallRef = useRef<Mesh>(null);
@@ -265,8 +264,8 @@ const Wall = ({
   const isSettingDoorEndPointRef = useRef(false);
   const oldPositionRef = useRef<number[]>([]);
   const oldDimensionRef = useRef<number[]>([]);
-  const oldTintRef = useRef<string>(actionState.windowTint ?? '#73D8FF');
-  const oldDoorColorRef = useRef<string>(actionState.doorColor ?? 'white');
+  const oldTintRef = useRef<string>('#73D8FF');
+  const oldDoorColorRef = useRef<string>('white');
 
   const [originElements, setOriginElements] = useState<ElementModel[] | null>(null);
   const [showGrid, setShowGrid] = useState(false);
@@ -453,14 +452,6 @@ const Wall = ({
   useEffect(() => {
     isFirstMountRef.current = false;
   }, []);
-
-  useEffect(() => {
-    oldTintRef.current = actionState.windowTint;
-  }, [actionState.windowTint]);
-
-  useEffect(() => {
-    oldDoorColorRef.current = actionState.doorColor;
-  }, [actionState.doorColor]);
 
   const getRelativePosOnWall = (p: Vector3, wall: WallModel) => {
     const { cx, cy, cz } = wall;
@@ -979,7 +970,7 @@ const Wall = ({
                     if (e.id === grabRef.current?.id) {
                       e.cx = p.x / lx;
                       e.cz = p.z / lz;
-                      e.color = e.id === invalidElementIdRef.current ? 'red' : actionState.windowColor ?? '#fff';
+                      e.color = e.id === invalidElementIdRef.current ? 'red' : '#fff';
                     }
                   }
                 });
@@ -1011,14 +1002,11 @@ const Wall = ({
                         e.lx = Math.abs(v.x);
                         checkCollision(grabRef.current.id, ObjectType.SolarPanel, c, Math.abs(v.x), e.ly);
                       }
-                      e.color = e.id === invalidElementIdRef.current ? 'red' : actionState.windowColor ?? '#fff';
+                      e.color = e.id === invalidElementIdRef.current ? 'red' : '#fff';
                     }
                   }
                 });
               }
-              break;
-            }
-            case ObjectType.Sensor: {
               break;
             }
           }
@@ -1027,6 +1015,7 @@ const Wall = ({
         // add new element
         switch (useStore.getState().objectTypeToAdd) {
           case ObjectType.Window: {
+            const actionState = useStore.getState().actionState;
             let relativePos = getRelativePosOnWall(pointer, wallModel);
             relativePos = getPositionOnGrid(relativePos);
             const shutter = {
@@ -1045,6 +1034,8 @@ const Wall = ({
               actionState.windowMullionSpacing,
               actionState.windowMullionColor,
               shutter,
+              actionState.windowFrame,
+              actionState.windowFrameWidth,
               relativePos.x / lx,
               0,
               relativePos.z / lz,
@@ -1064,6 +1055,7 @@ const Wall = ({
             break;
           }
           case ObjectType.Door: {
+            const actionState = useStore.getState().actionState;
             const newDoor = ElementModelFactory.makeDoor(wallModel, actionState.doorColor, actionState.doorTexture);
             useStoreRef.getState().setEnableOrbitController(false);
             setCommonStore((state) => {
@@ -1076,12 +1068,6 @@ const Wall = ({
             setShowGrid(true);
             grabRef.current = newDoor;
             isSettingDoorStartPointRef.current = true;
-            break;
-          }
-          case ObjectType.SolarPanel: {
-            break;
-          }
-          case ObjectType.Sensor: {
             break;
           }
         }

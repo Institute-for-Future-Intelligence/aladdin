@@ -13,6 +13,7 @@ import WindowWireFrame from './windowWireFrame';
 import WindowHandleWrapper from './windowHandleWrapper';
 import { DEFAULT_WINDOW_SHINESS, HALF_PI, LOCKED_ELEMENT_SELECTION_COLOR } from 'src/constants';
 import { ThreeEvent } from '@react-three/fiber';
+import WindowFrame from './windowFrame';
 
 const material = new MeshStandardMaterial({ color: 'white', side: DoubleSide });
 export const defaultShutter = { showLeft: false, showRight: false, color: 'grey', width: 0.5 };
@@ -77,6 +78,9 @@ const useUpdataOldFiles = (id: string) => {
           if (w.color === undefined) {
             w.color = 'white';
           }
+          if (w.frameWidth === undefined) {
+            w.frameWidth = 0.1;
+          }
           break;
         }
       }
@@ -106,6 +110,7 @@ const Window = ({
   mullionColor = 'white',
   frame = false,
   color = 'white',
+  frameWidth = 0.1,
 }: WindowModel) => {
   // legacy problem
   if (Math.abs(cy) < 0.001) {
@@ -236,6 +241,8 @@ const Window = ({
           showRight={shutter.showRight}
         />
       )}
+
+      {frame && <WindowFrame lx={wlx} ly={wcy} lz={wlz} width={frameWidth} color={color} />}
 
       <Plane
         args={[wly, wlz]}

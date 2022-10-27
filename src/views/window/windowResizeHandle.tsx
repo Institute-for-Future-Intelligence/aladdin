@@ -57,7 +57,7 @@ const WindowResizeHandle = ({ x, z, handleType }: WindowResizeHandleProps) => {
         }
       }}
     >
-      <meshBasicMaterial color={color} />
+      <meshStandardMaterial color={color} />
     </Box>
   );
 };

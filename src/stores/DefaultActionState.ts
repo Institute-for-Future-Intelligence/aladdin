@@ -63,6 +63,7 @@ export class DefaultActionState implements ActionState {
   windowShutterColor: string;
   windowShutterWidth: number;
   windowFrame: boolean;
+  windowFrameWidth: number;
 
   solarPanelModelName: string;
   solarPanelOrientation: Orientation;
@@ -146,6 +147,7 @@ export class DefaultActionState implements ActionState {
     this.windowMullionSpacing = 0.5;
     this.windowMullionColor = 'white';
     this.windowFrame = false;
+    this.windowFrameWidth = 0.1;
     // I worry about this using Shutter objects may cause default to be accidentally overwritten.
     this.windowShutterLeft = defaultShutter.showLeft;
     this.windowShutterRight = defaultShutter.showRight;

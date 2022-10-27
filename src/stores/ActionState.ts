@@ -57,6 +57,7 @@ export interface ActionState {
   windowShutterWidth: number;
   windowColor: string; // frame color
   windowFrame: boolean;
+  windowFrameWidth: number;
 
   solarPanelModelName: string;
   solarPanelOrientation: Orientation;

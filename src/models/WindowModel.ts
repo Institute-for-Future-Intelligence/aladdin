@@ -17,6 +17,7 @@ export interface WindowModel extends ElementModel {
 
   // frameColor is using color
   frame: boolean;
+  frameWidth: number;
 }
 
 export interface Shutter {
