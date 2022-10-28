@@ -1316,6 +1316,14 @@ const Wall = ({
     let [wallCenterPos, wallCenterHeight] = centerRoofHeight ?? [0, (wallLeftHeight + wallRightHeight) / 2];
     wallCenterPos = wallCenterPos * lx;
 
+    const leftX = wallCenterPos + hx;
+    const leftLength = Math.hypot(leftX, wallCenterHeight - wallLeftHeight);
+    const leftRotationY = -Math.atan2(wallCenterHeight - wallLeftHeight, leftX);
+
+    const rightX = hx - wallCenterPos;
+    const rightLength = Math.hypot(rightX, wallRightHeight - wallCenterHeight);
+    const rightRotationY = -Math.atan2(wallRightHeight - wallCenterHeight, rightX);
+
     return (
       <group name={`wall pillar group ${id}`}>
         {structureUnitArray.map((pos, idx) => {
@@ -1340,6 +1348,28 @@ const Wall = ({
             </Cylinder>
           );
         })}
+        <Box
+          args={[leftLength, structureWidth, structureWidth]}
+          position={[-hx + leftX / 2, hy, (wallLeftHeight + wallCenterHeight) / 2 - hz - structureWidth / 2]}
+          rotation={[0, leftRotationY, 0]}
+          castShadow={shadowEnabled}
+          receiveShadow={shadowEnabled}
+          onContextMenu={handleStudContextMenu}
+          onPointerDown={handleStudPointerDown}
+        >
+          <meshStandardMaterial color={structureColor} />
+        </Box>
+        <Box
+          args={[rightLength, structureWidth, structureWidth]}
+          position={[hx - rightX / 2, hy, (wallRightHeight + wallCenterHeight) / 2 - hz - structureWidth / 2]}
+          rotation={[0, rightRotationY, 0]}
+          castShadow={shadowEnabled}
+          receiveShadow={shadowEnabled}
+          onContextMenu={handleStudContextMenu}
+          onPointerDown={handleStudPointerDown}
+        >
+          <meshStandardMaterial color={structureColor} />
+        </Box>
       </group>
     );
   };
