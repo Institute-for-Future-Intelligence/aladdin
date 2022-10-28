@@ -4,6 +4,8 @@
 
 import { Box } from '@react-three/drei';
 import React, { useMemo } from 'react';
+import { useStore } from 'src/stores/common';
+import * as Selector from 'src/stores/selector';
 
 interface WindowFrameProps {
   lx: number;
@@ -14,6 +16,8 @@ interface WindowFrameProps {
 }
 
 const WindowFrame = ({ lx, ly, lz, width, color }: WindowFrameProps) => {
+  const shadowEnabled = useStore(Selector.viewState.shadowEnabled);
+
   const material = useMemo(() => <meshStandardMaterial color={color} />, [color]);
 
   const halfWidth = width / 2;
@@ -25,27 +29,42 @@ const WindowFrame = ({ lx, ly, lz, width, color }: WindowFrameProps) => {
   return (
     <group name={'Window Frame Group'} position={[0, 0, 0]}>
       {/* top */}
-      <Box position={[0, -halfWidth, lz / 2]} args={[lx + width, width, width]}>
+      <Box
+        position={[0, -halfWidth, lz / 2]}
+        args={[lx + width, width, width]}
+        castShadow={shadowEnabled}
+        receiveShadow={shadowEnabled}
+      >
         {material}
       </Box>
 
       {/* left */}
-      <Box position={[-lx / 2, -halfWidth, 0]} args={[width, width, lz]}>
+      <Box
+        position={[-lx / 2, -halfWidth, 0]}
+        args={[width, width, lz]}
+        castShadow={shadowEnabled}
+        receiveShadow={shadowEnabled}
+      >
         {material}
       </Box>
 
       {/* right */}
-      <Box position={[lx / 2, -halfWidth, 0]} args={[width, width, lz]}>
+      <Box
+        position={[lx / 2, -halfWidth, 0]}
+        args={[width, width, lz]}
+        castShadow={shadowEnabled}
+        receiveShadow={shadowEnabled}
+      >
         {material}
       </Box>
 
       {/* bottom */}
-      <Box position={[0, -sillDepth / 2, -lz / 2 - sillThickness / 2]} args={[sillLength, sillDepth, sillThickness]}>
-        {material}
-      </Box>
-
-      {/* center */}
-      <Box position={[0, ly, 0]} args={[lx, width, width]}>
+      <Box
+        position={[0, -sillDepth / 2, -lz / 2 - sillThickness / 2]}
+        args={[sillLength, sillDepth, sillThickness]}
+        castShadow={shadowEnabled}
+        receiveShadow={shadowEnabled}
+      >
         {material}
       </Box>
     </group>
