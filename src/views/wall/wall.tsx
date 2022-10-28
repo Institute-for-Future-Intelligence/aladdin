@@ -1233,14 +1233,22 @@ const Wall = ({
 
   const structureUnitArray = useMemo(() => {
     const arr: number[] = [];
-    if (wallStructure === WallStructure.Stud || wallStructure === WallStructure.Pillar) {
+    if (wallStructure === WallStructure.Stud) {
       let pos = -hx + structureWidth / 2;
       while (pos <= hx) {
         arr.push(pos);
         pos += structureSpacing;
       }
+      arr.push(hx - structureWidth / 2);
+    } else if (wallStructure === WallStructure.Pillar) {
+      let pos = -hx;
+      while (pos <= hx) {
+        arr.push(pos);
+        pos += structureSpacing;
+      }
+      arr.push(hx);
     }
-    arr.push(hx - structureWidth / 2);
+
     return arr;
   }, [wallStructure, structureWidth, structureSpacing, lx, ly, lz]);
 
@@ -1325,7 +1333,7 @@ const Wall = ({
     const rightRotationY = -Math.atan2(wallRightHeight - wallCenterHeight, rightX);
 
     return (
-      <group name={`wall pillar group ${id}`}>
+      <group name={`wall pillar group ${id}`} position={[0, -ly / 2, 0]}>
         {structureUnitArray.map((pos, idx) => {
           let height;
           if (pos < wallCenterPos) {
