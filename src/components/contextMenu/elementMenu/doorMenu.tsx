@@ -44,18 +44,17 @@ export const DoorMenu = () => {
         </Menu.Item>
 
         {colorDialogVisible && <DoorColorSelection setDialogVisible={setColorDialogVisible} />}
-        {(door.textureType === DoorTexture.NoTexture || door.textureType === DoorTexture.Default) && (
-          <Menu.Item
-            key={'door-color'}
-            style={{ paddingLeft: paddingLeft }}
-            onClick={() => {
-              setApplyCount(0);
-              setColorDialogVisible(true);
-            }}
-          >
-            {i18n.t('word.Color', lang)} ...
-          </Menu.Item>
-        )}
+
+        <Menu.Item
+          key={'door-color'}
+          style={{ paddingLeft: paddingLeft }}
+          onClick={() => {
+            setApplyCount(0);
+            setColorDialogVisible(true);
+          }}
+        >
+          {i18n.t('word.Color', lang)} ...
+        </Menu.Item>
       </>
     )
   );

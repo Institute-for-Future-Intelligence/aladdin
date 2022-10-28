@@ -4,7 +4,7 @@
 
 import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { DoubleSide, TextureLoader } from 'three';
-import { Line, Plane } from '@react-three/drei';
+import { Box, Line, Plane } from '@react-three/drei';
 import { HALF_PI, LOCKED_ELEMENT_SELECTION_COLOR } from 'src/constants';
 import { DoorModel } from 'src/models/DoorModel';
 import { CommonStoreState, useStore } from 'src/stores/common';
@@ -25,7 +25,6 @@ import DoorTexture09 from 'src/resources/door_09.png';
 import DoorTexture10 from 'src/resources/door_10.png';
 import DoorTexture11 from 'src/resources/door_11.png';
 import DoorTexture12 from 'src/resources/door_12.png';
-import Wireframe from 'src/components/wireframe';
 
 interface DoorHandleWapperProps {
   lx: number;
@@ -37,6 +36,12 @@ interface DoorWireFrameProps {
   lz: number;
   lineColor: string;
   lineWidth?: number;
+}
+
+interface DoorFrameProps {
+  lx: number;
+  lz: number;
+  color: string;
 }
 
 const DoorHandleWapper = ({ lx, lz }: DoorHandleWapperProps) => {
@@ -61,7 +66,45 @@ const DoorWireFrame = React.memo(({ lx, lz, lineColor, lineWidth = 0.2 }: DoorWi
   return <Line points={[ul, ll, lr, ur, ul]} lineWidth={lineWidth} color={lineColor} />;
 });
 
-const Door = ({ id, parentId, cx, cz, lx, lz, selected, locked, textureType, color }: DoorModel) => {
+const DoorFrame = React.memo(({ lx, lz, color }: DoorFrameProps) => {
+  const shadowEnabled = useStore(Selector.viewState.shadowEnabled);
+
+  const material = useMemo(() => <meshStandardMaterial color={color} />, [color]);
+
+  const width = 0.1;
+  const halfWidth = width / 2;
+
+  return (
+    <group name={'Door Frame Group'}>
+      {/* top */}
+      <Box position={[0, 0, lz / 2]} args={[lx, width, width]} castShadow={shadowEnabled} receiveShadow={shadowEnabled}>
+        {material}
+      </Box>
+
+      {/* left */}
+      <Box
+        position={[-lx / 2 + halfWidth, 0, 0]}
+        args={[width, width, lz]}
+        castShadow={shadowEnabled}
+        receiveShadow={shadowEnabled}
+      >
+        {material}
+      </Box>
+
+      {/* right */}
+      <Box
+        position={[lx / 2 - halfWidth, 0, 0]}
+        args={[width, width, lz]}
+        castShadow={shadowEnabled}
+        receiveShadow={shadowEnabled}
+      >
+        {material}
+      </Box>
+    </group>
+  );
+});
+
+const Door = ({ id, parentId, cx, cz, lx, lz, selected, locked, textureType, color = 'white' }: DoorModel) => {
   const textureLoader = useMemo(() => {
     let textureImg;
     switch (textureType) {
@@ -182,11 +225,7 @@ const Door = ({ id, parentId, cx, cz, lx, lz, selected, locked, textureType, col
           }
         }}
       >
-        <meshStandardMaterial
-          map={texture}
-          side={DoubleSide}
-          color={textureType === DoorTexture.Default || textureType === DoorTexture.NoTexture ? color : 'white'}
-        />
+        <meshStandardMaterial map={texture} side={DoubleSide} />
       </Plane>
       {selected && !locked && <DoorHandleWapper lx={hx} lz={hz} />}
       <DoorWireFrame
@@ -195,6 +234,8 @@ const Door = ({ id, parentId, cx, cz, lx, lz, selected, locked, textureType, col
         lineColor={selected && locked ? LOCKED_ELEMENT_SELECTION_COLOR : 'black'}
         lineWidth={selected && locked ? 1 : 0.2}
       />
+
+      <DoorFrame lx={wlx} lz={wlz} color={color} />
     </group>
   );
 };
