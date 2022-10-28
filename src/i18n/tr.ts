@@ -1152,6 +1152,8 @@ export const i18n_tr = {
       AddTree: 'Ağaç Ekle',
       AddFlower: 'Add flower',
       AddPeople: 'İnsan Ekle',
+      DoubleClickToLockThisModeForNextAction: 'Double-click to lock this mode for next action',
+      ClickToUnlockThisModeForNextAction: 'Click to unlock this mode for next action',
       ManipulateGroup: 'Ölçeklendirme',
       ClearScene: 'Herşeyi Sil',
       ShowSunAndTimeSettings: 'Güneş & Zaman Ayarlarını Göster',

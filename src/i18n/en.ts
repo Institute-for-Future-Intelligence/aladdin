@@ -1151,6 +1151,8 @@ export const i18n_en = {
       AddTree: 'Add tree',
       AddFlower: 'Add flower',
       AddPeople: 'Add people',
+      DoubleClickToLockThisModeForNextAction: 'Double-click to lock this mode for next action',
+      ClickToUnlockThisModeForNextAction: 'Click to unlock this mode for next action',
       ManipulateGroup: 'Manipulate a group',
       ClearScene: 'Clear scene',
       ShowSunAndTimeSettings: 'Show sun and time settings',

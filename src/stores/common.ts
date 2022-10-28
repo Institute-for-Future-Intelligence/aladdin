@@ -537,6 +537,7 @@ export interface CommonStoreState {
   updateHumanFlipById: (id: string, yes: boolean) => void;
   updateHumanObserverById: (id: string, yes: boolean) => void;
 
+  actionModeLock: boolean;
   objectTypeToAdd: ObjectType;
   addElement: (parent: ElementModel | GroundModel, position: Vector3, normal?: Vector3) => ElementModel | null;
 
@@ -4223,6 +4224,7 @@ export const useStore = create<CommonStoreState>(
             });
           },
 
+          actionModeLock: false,
           objectTypeToAdd: ObjectType.None,
           addElement(parent, p, normal) {
             let model: ElementModel | null = null;

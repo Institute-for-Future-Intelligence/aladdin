@@ -1129,6 +1129,8 @@ export const i18n_zh_cn = {
       AddTree: '添加树木',
       AddFlower: '添加花草',
       AddPeople: '添加人物',
+      DoubleClickToLockThisModeForNextAction: '双击按钮给下个动作锁定此模式',
+      ClickToUnlockThisModeForNextAction: '点击按钮让动作完成即离开此模式',
       ManipulateGroup: '整体操作一个组',
       ClearScene: '清空场景',
       ShowSunAndTimeSettings: '显示太阳和时间设置',

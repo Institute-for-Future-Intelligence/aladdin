@@ -2,6 +2,7 @@
  * @Copyright 2021-2022. Institute for Future Intelligence, Inc.
  */
 
+import TinyLockImage from './assets/tiny_lock.png';
 import SelectImage from './assets/select.png';
 import FoundationImage from './assets/foundation.png';
 import CuboidImage from './assets/cuboid.png';
@@ -63,6 +64,7 @@ const MainToolBarButtons = () => {
   const elements = useStore.getState().elements;
   const language = useStore(Selector.language);
   const selectNone = useStore(Selector.selectNone);
+  const actionModeLock = useStore(Selector.actionModeLock);
   const showHeliodonPanel = useStore(Selector.viewState.showHeliodonPanel);
   const noAnimationForHeatmapSimulation = useStore(Selector.world.noAnimationForHeatmapSimulation);
   const showSolarRadiationHeatmap = useStore(Selector.showSolarRadiationHeatmap);
@@ -91,6 +93,7 @@ const MainToolBarButtons = () => {
       state.objectTypeToAdd = ObjectType.None;
       state.groupActionMode = false;
       state.elementGroupId = null;
+      state.actionModeLock = false;
     });
   };
 
@@ -210,9 +213,16 @@ const MainToolBarButtons = () => {
       state.objectTypeToAdd = type;
       state.groupActionMode = false;
       state.elementGroupId = null;
+      state.actionModeLock = false;
     });
     useStoreRef.getState().setEnableOrbitController(false);
     selectNone();
+  };
+
+  const lockActionMode = () => {
+    setCommonStore((state) => {
+      state.actionModeLock = true;
+    });
   };
 
   const menuItem = (
@@ -249,21 +259,42 @@ const MainToolBarButtons = () => {
 
   const buttonImg = (objectType: ObjectType, srcImg: string, addedElemId?: string | null, text?: string) => {
     return (
-      <img
-        title={i18n.t(`toolbar.Add${text ?? objectType.replaceAll(' ', '')}`, lang)}
-        alt={objectType}
-        src={srcImg}
-        height={36}
-        width={36}
-        style={{
-          filter: objectTypeToAdd === objectType || addedElemId ? selectFilter : defaultFilter,
-          cursor: 'pointer',
-          verticalAlign: 'middle',
-        }}
-        onClick={() => {
-          setMode(objectType);
-        }}
-      />
+      <>
+        <img
+          title={
+            i18n.t(`toolbar.Add${text ?? objectType.replaceAll(' ', '')}`, lang) +
+            '\n' +
+            (actionModeLock
+              ? i18n.t(`toolbar.ClickToUnlockThisModeForNextAction`, lang)
+              : i18n.t(`toolbar.DoubleClickToLockThisModeForNextAction`, lang))
+          }
+          alt={objectType}
+          src={srcImg}
+          height={36}
+          width={36}
+          style={{
+            filter: objectTypeToAdd === objectType || addedElemId ? selectFilter : defaultFilter,
+            cursor: 'pointer',
+            verticalAlign: 'middle',
+          }}
+          onClick={() => {
+            setMode(objectType);
+          }}
+          onDoubleClick={() => {
+            lockActionMode();
+          }}
+        />
+        {objectTypeToAdd === objectType && actionModeLock && (
+          <img
+            src={TinyLockImage}
+            style={{
+              marginLeft: '-2px', // this is used to overlay the images a bit
+              filter: objectTypeToAdd === objectType || addedElemId ? selectFilter : defaultFilter,
+              verticalAlign: 'top',
+            }}
+          />
+        )}
+      </>
     );
   };
 

@@ -1130,6 +1130,8 @@ export const i18n_zh_tw = {
       AddTree: '添加樹木',
       AddFlower: '添加花草',
       AddPeople: '添加人物',
+      DoubleClickToLockThisModeForNextAction: '雙擊按鈕給下個動作鎖定此模式',
+      ClickToUnlockThisModeForNextAction: '點擊按鈕讓動作完成即離開此模式',
       ManipulateGroup: '整體操作一個組',
       ClearScene: '清空場景',
       ShowSunAndTimeSettings: '顯示太陽和時間設置',

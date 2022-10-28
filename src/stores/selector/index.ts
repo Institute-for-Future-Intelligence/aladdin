@@ -631,6 +631,8 @@ export const addElement = (state: CommonStoreState) => state.addElement;
 
 export const objectTypeToAdd = (state: CommonStoreState) => state.objectTypeToAdd;
 
+export const actionModeLock = (state: CommonStoreState) => state.actionModeLock;
+
 export const countElementsByType = (state: CommonStoreState) => state.countElementsByType;
 
 export const countSolarStructuresByType = (state: CommonStoreState) => state.countSolarStructuresByType;

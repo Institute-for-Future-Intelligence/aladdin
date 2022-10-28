@@ -1105,7 +1105,7 @@ const Ground = () => {
         } as UndoableAdd;
         addUndoable(undoableAdd);
         setCommonStore((state) => {
-          state.objectTypeToAdd = ObjectType.None;
+          if (!state.actionModeLock) state.objectTypeToAdd = ObjectType.None;
           state.updateSceneRadius();
           state.updateDesignInfo();
         });
