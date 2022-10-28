@@ -465,6 +465,7 @@ const Foundation = ({
       case ObjectType.ParabolicTrough:
       case ObjectType.FresnelReflector:
       case ObjectType.Heliostat:
+      case ObjectType.WindTurbine:
       case ObjectType.Wall:
         return true;
       default:
@@ -1293,7 +1294,7 @@ const Foundation = ({
             handleUndoableAdd(addedElement);
           }
           setCommonStore((state) => {
-            state.objectTypeToAdd = ObjectType.None;
+            if (!state.actionModeLock) state.objectTypeToAdd = ObjectType.None;
           });
         }
       } else {

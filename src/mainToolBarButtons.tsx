@@ -219,12 +219,6 @@ const MainToolBarButtons = () => {
     selectNone();
   };
 
-  const lockActionMode = () => {
-    setCommonStore((state) => {
-      state.actionModeLock = true;
-    });
-  };
-
   const menuItem = (
     objectType: ObjectType,
     srcImg: string,
@@ -257,16 +251,39 @@ const MainToolBarButtons = () => {
     );
   };
 
+  // only the following types of elements need to be added in a large quantity
+  const needToLock = (type: ObjectType) => {
+    switch (type) {
+      case ObjectType.Human:
+      case ObjectType.Tree:
+      case ObjectType.Flower:
+      case ObjectType.SolarPanel:
+      case ObjectType.ParabolicDish:
+      case ObjectType.ParabolicTrough:
+      case ObjectType.FresnelReflector:
+      case ObjectType.Heliostat:
+      case ObjectType.WindTurbine:
+      case ObjectType.Wall:
+      case ObjectType.Window:
+        return true;
+      default:
+        return false;
+    }
+  };
+
   const buttonImg = (objectType: ObjectType, srcImg: string, addedElemId?: string | null, text?: string) => {
+    const needLock = needToLock(objectType);
     return (
       <>
         <img
           title={
             i18n.t(`toolbar.Add${text ?? objectType.replaceAll(' ', '')}`, lang) +
-            '\n' +
-            (actionModeLock
-              ? i18n.t(`toolbar.ClickToUnlockThisModeForNextAction`, lang)
-              : i18n.t(`toolbar.DoubleClickToLockThisModeForNextAction`, lang))
+            (needLock
+              ? '\n' +
+                (actionModeLock
+                  ? i18n.t(`toolbar.ClickToUnlockThisModeForNextAction`, lang)
+                  : i18n.t(`toolbar.DoubleClickToLockThisModeForNextAction`, lang))
+              : '')
           }
           alt={objectType}
           src={srcImg}
@@ -281,10 +298,14 @@ const MainToolBarButtons = () => {
             setMode(objectType);
           }}
           onDoubleClick={() => {
-            lockActionMode();
+            if (needLock) {
+              setCommonStore((state) => {
+                state.actionModeLock = true;
+              });
+            }
           }}
         />
-        {objectTypeToAdd === objectType && actionModeLock && (
+        {objectTypeToAdd === objectType && needLock && actionModeLock && (
           <img
             src={TinyLockImage}
             style={{
