@@ -1293,8 +1293,8 @@ const Wall = ({
           );
         })}
         <Box
-          args={[leftLength, ly, structureWidth]}
-          position={[-hx + leftX / 2, hy, (wallLeftHeight + wallCenterHeight) / 2 - hz - structureWidth / 2]}
+          args={[leftLength, ly, ly]}
+          position={[-hx + leftX / 2, hy, (wallLeftHeight + wallCenterHeight) / 2 - hz - ly / 2]}
           rotation={[0, leftRotationY, 0]}
           castShadow={shadowEnabled}
           receiveShadow={shadowEnabled}
@@ -1304,8 +1304,8 @@ const Wall = ({
           <meshStandardMaterial color={structureColor} />
         </Box>
         <Box
-          args={[rightLength, ly, structureWidth]}
-          position={[hx - rightX / 2, hy, (wallRightHeight + wallCenterHeight) / 2 - hz - structureWidth / 2]}
+          args={[rightLength, ly, ly]}
+          position={[hx - rightX / 2, hy, (wallRightHeight + wallCenterHeight) / 2 - hz - ly / 2]}
           rotation={[0, rightRotationY, 0]}
           castShadow={shadowEnabled}
           receiveShadow={shadowEnabled}
@@ -1357,8 +1357,8 @@ const Wall = ({
           );
         })}
         <Box
-          args={[leftLength, structureWidth, structureWidth]}
-          position={[-hx + leftX / 2, hy, (wallLeftHeight + wallCenterHeight) / 2 - hz - structureWidth / 2]}
+          args={[leftLength, structureWidth, ly]}
+          position={[-hx + leftX / 2, hy, (wallLeftHeight + wallCenterHeight) / 2 - hz - ly / 2]}
           rotation={[0, leftRotationY, 0]}
           castShadow={shadowEnabled}
           receiveShadow={shadowEnabled}
@@ -1368,8 +1368,8 @@ const Wall = ({
           <meshStandardMaterial color={structureColor} />
         </Box>
         <Box
-          args={[rightLength, structureWidth, structureWidth]}
-          position={[hx - rightX / 2, hy, (wallRightHeight + wallCenterHeight) / 2 - hz - structureWidth / 2]}
+          args={[rightLength, structureWidth, ly]}
+          position={[hx - rightX / 2, hy, (wallRightHeight + wallCenterHeight) / 2 - hz - ly / 2]}
           rotation={[0, rightRotationY, 0]}
           castShadow={shadowEnabled}
           receiveShadow={shadowEnabled}
