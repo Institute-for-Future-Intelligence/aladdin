@@ -178,7 +178,7 @@ const PyramidRoof = ({
     return { lh, rh };
   };
 
-  const initMinHeight = () => {
+  const getMinHeight = () => {
     let minHeight = 0;
     for (let i = 0; i < currentWallArray.length; i++) {
       const { lh, rh } = getWallHeight(currentWallArray, i);
@@ -198,7 +198,9 @@ const PyramidRoof = ({
   const ray = useMemo(() => new Raycaster(), []);
   const mouse = useMemo(() => new Vector2(), []);
 
-  const { h, setH, minHeight, setMinHeight, relHeight, setRelHeight } = useRoofHeight(lz, initMinHeight());
+  const { h, setH, minHeight, setMinHeight, relHeight, setRelHeight } = useRoofHeight(lz, getMinHeight());
+
+  console.log(lz, h);
 
   const [showIntersectionPlane, setShowIntersectionPlane] = useState(false);
 
@@ -210,7 +212,7 @@ const PyramidRoof = ({
   const prevWallsIdSet = new Set<string>(wallsId);
 
   useEffect(() => {
-    const minHeight = currentWallArray.length === 4 ? Math.max(currentWallArray[0].lz, currentWallArray[2].lz) : lz / 2;
+    const minHeight = getMinHeight();
     setMinHeight(minHeight);
     setRelHeight(lz - minHeight);
   }, [fileChanged]);

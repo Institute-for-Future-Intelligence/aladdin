@@ -134,7 +134,7 @@ const MansardRoof = ({
     return { lh, rh };
   };
 
-  const initMinHeight = () => {
+  const getMinHeight = () => {
     let minHeight = 0;
     for (let i = 0; i < currentWallArray.length; i++) {
       const { lh, rh } = getWallHeight(currentWallArray, i);
@@ -150,7 +150,7 @@ const MansardRoof = ({
   const mouse = useStore((state) => state.mouse);
   const fileChanged = useStore(Selector.fileChanged);
 
-  const { h, setH, minHeight, setMinHeight, relHeight, setRelHeight } = useRoofHeight(lz, initMinHeight());
+  const { h, setH, minHeight, setMinHeight, relHeight, setRelHeight } = useRoofHeight(lz, getMinHeight());
 
   const [width, setWidth] = useState(ridgeWidth);
   const [maxWidth, setMaxWidth] = useState<number | null>(null);
@@ -456,7 +456,7 @@ const MansardRoof = ({
   }, [currentWallArray, ridgePoints]);
 
   useEffect(() => {
-    const minHeight = currentWallArray.length === 4 ? Math.max(currentWallArray[0].lz, currentWallArray[2].lz) : lz / 2;
+    const minHeight = getMinHeight();
     setMinHeight(minHeight);
     setRelHeight(lz - minHeight);
   }, [fileChanged]);
