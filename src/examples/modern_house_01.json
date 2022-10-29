@@ -1,7 +1,7 @@
 {
-  "docid": "75k13oe3NtAs1fRenEED5M",
-  "time": "10/20/2022 01:10 pm",
-  "timestamp": 1666285856479,
+  "docid": "gkJdB3VtBeJMHKJFEZ81Mt",
+  "time": "10/28/2022 05:52 pm",
+  "timestamp": 1666993950685,
   "userid": "QWecNcxhyvP6j6sBN11hBsfZDau1",
   "owner": null,
   "email": null,
@@ -101,8 +101,8 @@
     {
       "type": "Human",
       "name": "Jess",
-      "cx": 8.032050597858934,
-      "cy": -6.960676244901867,
+      "cx": 8.450674550954435,
+      "cy": -2.040964169794302,
       "cz": 0.05000000074505806,
       "lx": 0.43,
       "ly": 0.43,
@@ -170,7 +170,12 @@
       "leftRoofHeight": 6,
       "rightRoofHeight": 6,
       "color": "#cccccc",
-      "locked": false
+      "locked": false,
+      "wallStructure": "Default",
+      "structureSpacing": 2,
+      "structureWidth": 0.1,
+      "structureColor": "white",
+      "opacity": 0.5
     },
     {
       "type": "Wall",
@@ -220,7 +225,12 @@
       "leftRoofHeight": 6,
       "rightRoofHeight": 6,
       "color": "#cccccc",
-      "locked": false
+      "locked": false,
+      "wallStructure": "Default",
+      "structureSpacing": 2,
+      "structureWidth": 0.1,
+      "structureColor": "white",
+      "opacity": 0.5
     },
     {
       "type": "Wall",
@@ -270,7 +280,12 @@
       "leftRoofHeight": 6,
       "rightRoofHeight": 6,
       "color": "#cccccc",
-      "locked": false
+      "locked": false,
+      "wallStructure": "Default",
+      "structureSpacing": 2,
+      "structureWidth": 0.1,
+      "structureColor": "white",
+      "opacity": 0.5
     },
     {
       "type": "Wall",
@@ -320,7 +335,12 @@
       "leftRoofHeight": 6,
       "rightRoofHeight": 6,
       "color": "#cccccc",
-      "locked": false
+      "locked": false,
+      "wallStructure": "Default",
+      "structureSpacing": 2,
+      "structureWidth": 0.1,
+      "structureColor": "white",
+      "opacity": 0.5
     },
     {
       "type": "Wall",
@@ -370,7 +390,12 @@
       "leftRoofHeight": 6,
       "rightRoofHeight": 6,
       "color": "#cccccc",
-      "locked": false
+      "locked": false,
+      "wallStructure": "Default",
+      "structureSpacing": 2,
+      "structureWidth": 0.1,
+      "structureColor": "white",
+      "opacity": 0.5
     },
     {
       "type": "Wall",
@@ -420,7 +445,12 @@
       "leftRoofHeight": 6,
       "rightRoofHeight": 6,
       "color": "#cccccc",
-      "locked": false
+      "locked": false,
+      "wallStructure": "Default",
+      "structureSpacing": 2,
+      "structureWidth": 0.1,
+      "structureColor": "white",
+      "opacity": 0.5
     },
     {
       "type": "Foundation",
@@ -604,7 +634,7 @@
       "lineWidth": 0.2,
       "lineColor": "black",
       "showLabel": false,
-      "color": "#73D8FF",
+      "color": "#ffffff",
       "tint": "#73D8FF",
       "normal": [
         0,
@@ -619,16 +649,21 @@
       "parentId": "vGUEcuvyBtUte9nHKMMtRK",
       "foundationId": "m7AH7DcnoGzAq9kryBy4RS",
       "id": "jrakT4hmGTpA5xVoQK7Sx3",
-      "locked": false
+      "locked": false,
+      "frame": true,
+      "frameWidth": 0.05,
+      "mullion": true,
+      "opacity": 0.5,
+      "mullionColor": "white"
     },
     {
       "type": "Window",
-      "cx": -3.416070845000482e-17,
+      "cx": -0.000040953643875444483,
       "cy": 0.1,
-      "cz": -0.2916666666666667,
-      "lx": 0.9230769230769231,
+      "cz": -0.2833333333333333,
+      "lx": 0.9229950157891724,
       "ly": 0.3,
-      "lz": 0.4166666666666667,
+      "lz": 0.39999999999999997,
       "shutter": {
         "showLeft": false,
         "showRight": false,
@@ -641,7 +676,7 @@
       "lineWidth": 0.2,
       "lineColor": "black",
       "showLabel": false,
-      "color": "#73D8FF",
+      "color": "#ffffff",
       "tint": "#73D8FF",
       "normal": [
         0,
@@ -656,7 +691,12 @@
       "parentId": "vGUEcuvyBtUte9nHKMMtRK",
       "foundationId": "m7AH7DcnoGzAq9kryBy4RS",
       "id": "e19pGWtpLkqWbfXdnaZhjy",
-      "locked": false
+      "locked": false,
+      "frame": true,
+      "frameWidth": 0.1,
+      "mullion": true,
+      "opacity": 0.5,
+      "mullionColor": "white"
     },
     {
       "type": "Window",
@@ -678,7 +718,7 @@
       "lineWidth": 0.2,
       "lineColor": "black",
       "showLabel": false,
-      "color": "#73D8FF",
+      "color": "#ffffff",
       "tint": "#73D8FF",
       "normal": [
         0,
@@ -693,7 +733,12 @@
       "parentId": "jREcPkJHS2ha1J5przL31q",
       "foundationId": "m7AH7DcnoGzAq9kryBy4RS",
       "id": "sovEYSXhGEu5Ldj2kgneVg",
-      "locked": false
+      "locked": false,
+      "frame": true,
+      "frameWidth": 0.05,
+      "mullion": true,
+      "opacity": 0.5,
+      "mullionColor": "white"
     },
     {
       "type": "Window",
@@ -705,7 +750,7 @@
       "lz": 0.24999999999999992,
       "mullionWidth": 0.06,
       "mullionSpacing": 1,
-      "color": "#73D8FF",
+      "color": "#ffffff",
       "normal": [
         0,
         0,
@@ -727,7 +772,12 @@
         "width": 0.5
       },
       "selected": false,
-      "locked": false
+      "locked": false,
+      "frame": true,
+      "frameWidth": 0.05,
+      "mullion": true,
+      "opacity": 0.5,
+      "mullionColor": "white"
     },
     {
       "type": "Window",
@@ -739,7 +789,7 @@
       "lz": 0.24999999999999992,
       "mullionWidth": 0.06,
       "mullionSpacing": 1,
-      "color": "#73D8FF",
+      "color": "#ffffff",
       "normal": [
         0,
         0,
@@ -761,7 +811,12 @@
         "width": 0.5
       },
       "selected": false,
-      "locked": false
+      "locked": false,
+      "frame": true,
+      "frameWidth": 0.05,
+      "mullion": true,
+      "opacity": 0.5,
+      "mullionColor": "white"
     },
     {
       "type": "Window",
@@ -773,7 +828,7 @@
       "lz": 0.24999999999999992,
       "mullionWidth": 0.06,
       "mullionSpacing": 1,
-      "color": "#73D8FF",
+      "color": "#ffffff",
       "normal": [
         0,
         0,
@@ -795,7 +850,12 @@
         "width": 0.5
       },
       "selected": false,
-      "locked": false
+      "locked": false,
+      "frame": true,
+      "frameWidth": 0.05,
+      "mullion": true,
+      "opacity": 0.5,
+      "mullionColor": "white"
     },
     {
       "type": "Window",
@@ -807,7 +867,7 @@
       "lz": 0.24999999999999992,
       "mullionWidth": 0.06,
       "mullionSpacing": 1,
-      "color": "#73D8FF",
+      "color": "#ffffff",
       "normal": [
         0,
         0,
@@ -829,7 +889,12 @@
         "width": 0.5
       },
       "selected": false,
-      "locked": false
+      "locked": false,
+      "frameWidth": 0.05,
+      "frame": true,
+      "mullion": true,
+      "opacity": 0.5,
+      "mullionColor": "white"
     },
     {
       "type": "Window",
@@ -841,7 +906,7 @@
       "lz": 0.25,
       "mullionWidth": 0.06,
       "mullionSpacing": 1,
-      "color": "#73D8FF",
+      "color": "#ffffff",
       "normal": [
         0,
         0,
@@ -863,7 +928,12 @@
         "width": 0.5
       },
       "selected": false,
-      "locked": false
+      "locked": false,
+      "frameWidth": 0.05,
+      "frame": true,
+      "mullion": true,
+      "opacity": 0.5,
+      "mullionColor": "white"
     },
     {
       "type": "Window",
@@ -875,7 +945,7 @@
       "lz": 0.24999999999999992,
       "mullionWidth": 0.06,
       "mullionSpacing": 1,
-      "color": "#73D8FF",
+      "color": "#ffffff",
       "normal": [
         0,
         0,
@@ -897,7 +967,12 @@
         "width": 0.5
       },
       "selected": false,
-      "locked": false
+      "locked": false,
+      "frameWidth": 0.05,
+      "frame": true,
+      "mullion": true,
+      "opacity": 0.5,
+      "mullionColor": "white"
     },
     {
       "type": "Window",
@@ -909,7 +984,7 @@
       "lz": 0.24999999999999992,
       "mullionWidth": 0.06,
       "mullionSpacing": 1,
-      "color": "#73D8FF",
+      "color": "#ffffff",
       "normal": [
         0,
         0,
@@ -931,7 +1006,12 @@
         "width": 0.5
       },
       "selected": false,
-      "locked": false
+      "locked": false,
+      "frameWidth": 0.05,
+      "frame": true,
+      "mullion": true,
+      "opacity": 0.5,
+      "mullionColor": "white"
     },
     {
       "type": "Window",
@@ -943,7 +1023,7 @@
       "lz": 0.24999999999999992,
       "mullionWidth": 0.06,
       "mullionSpacing": 1,
-      "color": "#73D8FF",
+      "color": "#ffffff",
       "normal": [
         0,
         0,
@@ -965,7 +1045,12 @@
         "width": 0.5
       },
       "selected": false,
-      "locked": false
+      "locked": false,
+      "frameWidth": 0.05,
+      "frame": true,
+      "mullion": true,
+      "opacity": 0.5,
+      "mullionColor": "white"
     },
     {
       "type": "Window",
@@ -977,7 +1062,7 @@
       "lz": 0.24999999999999992,
       "mullionWidth": 0.06,
       "mullionSpacing": 1,
-      "color": "#73D8FF",
+      "color": "#ffffff",
       "normal": [
         0,
         0,
@@ -999,7 +1084,12 @@
         "width": 0.5
       },
       "selected": false,
-      "locked": false
+      "locked": false,
+      "frameWidth": 0.05,
+      "frame": true,
+      "mullion": true,
+      "opacity": 0.5,
+      "mullionColor": "white"
     },
     {
       "type": "Window",
@@ -1011,7 +1101,7 @@
       "lz": 0.24999999999999992,
       "mullionWidth": 0.06,
       "mullionSpacing": 1,
-      "color": "#73D8FF",
+      "color": "#ffffff",
       "normal": [
         0,
         0,
@@ -1033,7 +1123,12 @@
         "width": 0.5
       },
       "selected": false,
-      "locked": false
+      "locked": false,
+      "frameWidth": 0.05,
+      "frame": true,
+      "mullion": true,
+      "opacity": 0.5,
+      "mullionColor": "white"
     },
     {
       "type": "Roof",
@@ -1086,7 +1181,7 @@
       "lz": 0.24999999999999992,
       "mullionWidth": 0.06,
       "mullionSpacing": 1,
-      "color": "#73D8FF",
+      "color": "#ffffff",
       "normal": [
         0,
         0,
@@ -1108,7 +1203,12 @@
         "width": 0.5
       },
       "selected": false,
-      "locked": false
+      "locked": false,
+      "frameWidth": 0.05,
+      "frame": true,
+      "mullion": true,
+      "opacity": 0.5,
+      "mullionColor": "white"
     },
     {
       "type": "Window",
@@ -1120,7 +1220,7 @@
       "lz": 0.24999999999999992,
       "mullionWidth": 0.06,
       "mullionSpacing": 1,
-      "color": "#73D8FF",
+      "color": "#ffffff",
       "normal": [
         0,
         0,
@@ -1142,7 +1242,12 @@
         "width": 0.5
       },
       "selected": false,
-      "locked": false
+      "locked": false,
+      "frameWidth": 0.05,
+      "frame": true,
+      "mullion": true,
+      "opacity": 0.5,
+      "mullionColor": "white"
     },
     {
       "type": "Window",
@@ -1154,7 +1259,7 @@
       "lz": 0.24999999999999992,
       "mullionWidth": 0.06,
       "mullionSpacing": 1,
-      "color": "#73D8FF",
+      "color": "#ffffff",
       "normal": [
         0,
         0,
@@ -1176,7 +1281,12 @@
         "width": 0.5
       },
       "selected": false,
-      "locked": false
+      "locked": false,
+      "frameWidth": 0.05,
+      "frame": true,
+      "mullion": true,
+      "opacity": 0.5,
+      "mullionColor": "white"
     },
     {
       "type": "Window",
@@ -1188,7 +1298,7 @@
       "lz": 0.24999999999999992,
       "mullionWidth": 0.06,
       "mullionSpacing": 1,
-      "color": "#73D8FF",
+      "color": "#ffffff",
       "normal": [
         0,
         0,
@@ -1210,7 +1320,12 @@
         "width": 0.5
       },
       "selected": false,
-      "locked": false
+      "locked": false,
+      "frame": true,
+      "frameWidth": 0.05,
+      "mullion": true,
+      "opacity": 0.5,
+      "mullionColor": "white"
     },
     {
       "type": "Window",
@@ -1222,7 +1337,7 @@
       "lz": 0.24999999999999992,
       "mullionWidth": 0.06,
       "mullionSpacing": 1,
-      "color": "#73D8FF",
+      "color": "#ffffff",
       "normal": [
         0,
         0,
@@ -1244,7 +1359,12 @@
         "width": 0.5
       },
       "selected": false,
-      "locked": false
+      "locked": false,
+      "frame": true,
+      "frameWidth": 0.05,
+      "mullion": true,
+      "opacity": 0.5,
+      "mullionColor": "white"
     },
     {
       "type": "Window",
@@ -1256,7 +1376,7 @@
       "lz": 0.25,
       "mullionWidth": 0.06,
       "mullionSpacing": 1,
-      "color": "#73D8FF",
+      "color": "#ffffff",
       "normal": [
         0,
         0,
@@ -1278,7 +1398,12 @@
         "width": 0.5
       },
       "selected": false,
-      "locked": false
+      "locked": false,
+      "frame": true,
+      "frameWidth": 0.05,
+      "mullion": true,
+      "opacity": 0.5,
+      "mullionColor": "white"
     },
     {
       "type": "Window",
@@ -1290,7 +1415,7 @@
       "lz": 0.25,
       "mullionWidth": 0.06,
       "mullionSpacing": 1,
-      "color": "#73D8FF",
+      "color": "#ffffff",
       "normal": [
         0,
         0,
@@ -1312,7 +1437,12 @@
         "width": 0.5
       },
       "selected": false,
-      "locked": false
+      "locked": false,
+      "frame": true,
+      "frameWidth": 0.05,
+      "mullion": true,
+      "opacity": 0.5,
+      "mullionColor": "white"
     },
     {
       "type": "Tree",
@@ -1904,9 +2034,9 @@
     "dailyHeliostatYieldPanelX": 0,
     "showDailyParabolicDishYieldPanel": false,
     "cameraPosition": [
-      12.552371929954294,
-      -8.569263680125506,
-      1.7852443617626657
+      15.210029225479815,
+      -5.780692667116817,
+      2.4571051399935793
     ],
     "showYearlyHeliostatYieldPanel": false,
     "orthographic": false,
@@ -1955,9 +2085,9 @@
     "shadowEnabled": true,
     "showInstructionPanel": true,
     "panCenter": [
-      -1.6534128402951076,
-      1.778472576262438,
-      1.662135476415381
+      -1.6563214275080296,
+      1.8214306688802133,
+      2.457105139993578
     ],
     "yearlyFresnelReflectorYieldPanelY": 0,
     "showHeliodonPanel": false,

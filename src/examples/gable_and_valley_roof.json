@@ -1,7 +1,7 @@
 {
-  "docid": "9w5W51sKcSmVxUgVWosnGN",
-  "time": "10/24/2022 06:53 pm",
-  "timestamp": 1666652030196,
+  "docid": "9HrE2iprASbneEsaji64sr",
+  "time": "10/28/2022 06:06 pm",
+  "timestamp": 1666994811500,
   "userid": "QWecNcxhyvP6j6sBN11hBsfZDau1",
   "owner": null,
   "email": null,
@@ -111,7 +111,12 @@
       "selected": false,
       "roofId": "1iq4TPqH8xr1w2VxMAh8MU",
       "leftRoofHeight": 4.671023197562504,
-      "rightRoofHeight": 4.671023197562504
+      "rightRoofHeight": 4.671023197562504,
+      "wallStructure": "Default",
+      "structureSpacing": 2,
+      "structureWidth": 0.1,
+      "structureColor": "white",
+      "opacity": 0.5
     },
     {
       "type": "Wall",
@@ -160,7 +165,12 @@
       "centerRoofHeight": [
         0,
         6.671023197562504
-      ]
+      ],
+      "wallStructure": "Default",
+      "structureSpacing": 2,
+      "structureWidth": 0.1,
+      "structureColor": "white",
+      "opacity": 0.5
     },
     {
       "type": "Wall",
@@ -209,7 +219,12 @@
       "centerRoofHeight": [
         0,
         6.671023197562504
-      ]
+      ],
+      "wallStructure": "Default",
+      "structureSpacing": 2,
+      "structureWidth": 0.1,
+      "structureColor": "white",
+      "opacity": 0.5
     },
     {
       "type": "Wall",
@@ -254,7 +269,12 @@
       "selected": false,
       "roofId": "1iq4TPqH8xr1w2VxMAh8MU",
       "leftRoofHeight": 4.671023197562504,
-      "rightRoofHeight": 4.671023197562504
+      "rightRoofHeight": 4.671023197562504,
+      "wallStructure": "Default",
+      "structureSpacing": 2,
+      "structureWidth": 0.1,
+      "structureColor": "white",
+      "opacity": 0.5
     },
     {
       "type": "Foundation",
@@ -365,7 +385,12 @@
       "roofId": "atFqzWxSt7aWP6ZqiaDGq7",
       "selected": false,
       "leftRoofHeight": 4.671023197562504,
-      "rightRoofHeight": 4.671023197562504
+      "rightRoofHeight": 4.671023197562504,
+      "wallStructure": "Default",
+      "structureSpacing": 2,
+      "structureWidth": 0.1,
+      "structureColor": "white",
+      "opacity": 0.5
     },
     {
       "type": "Wall",
@@ -414,7 +439,12 @@
       "centerRoofHeight": [
         0,
         6.671023197562504
-      ]
+      ],
+      "wallStructure": "Default",
+      "structureSpacing": 2,
+      "structureWidth": 0.1,
+      "structureColor": "white",
+      "opacity": 0.5
     },
     {
       "type": "Wall",
@@ -463,7 +493,12 @@
       "centerRoofHeight": [
         0,
         6.671023197562504
-      ]
+      ],
+      "wallStructure": "Default",
+      "structureSpacing": 2,
+      "structureWidth": 0.1,
+      "structureColor": "white",
+      "opacity": 0.5
     },
     {
       "type": "Wall",
@@ -508,7 +543,12 @@
       "roofId": "atFqzWxSt7aWP6ZqiaDGq7",
       "selected": false,
       "leftRoofHeight": 4.671023197562504,
-      "rightRoofHeight": 4.671023197562504
+      "rightRoofHeight": 4.671023197562504,
+      "wallStructure": "Default",
+      "structureSpacing": 2,
+      "structureWidth": 0.1,
+      "structureColor": "white",
+      "opacity": 0.5
     },
     {
       "id": "atFqzWxSt7aWP6ZqiaDGq7",
@@ -609,7 +649,11 @@
       ],
       "parentId": "vKjEHsN5hVHi8S9tPzBesN",
       "foundationId": "35YTYxrb8rDJ1XNYjgkPTK",
-      "id": "aZCLoUJL2oqSdY1EPAoZaK"
+      "id": "aZCLoUJL2oqSdY1EPAoZaK",
+      "opacity": 0.5,
+      "mullionColor": "white",
+      "frame": true,
+      "frameWidth": 0.05
     },
     {
       "type": "Window",
@@ -643,14 +687,18 @@
         "color": "grey",
         "width": 0.5
       },
-      "selected": false
+      "selected": false,
+      "opacity": 0.5,
+      "mullionColor": "white",
+      "frame": true,
+      "frameWidth": 0.05
     },
     {
       "type": "Door",
-      "cx": 7.894875130155282e-18,
+      "cx": 0.007111071338860792,
       "cy": 0,
       "cz": -0.25,
-      "lx": 0.2844428535544314,
+      "lx": 0.21333214016582355,
       "ly": 0,
       "lz": 0.5,
       "color": "white",
@@ -705,7 +753,11 @@
       ],
       "parentId": "vKjEHsN5hVHi8S9tPzBesN",
       "foundationId": "35YTYxrb8rDJ1XNYjgkPTK",
-      "id": "kXNUWsGU11pAFUKwvU2cgP"
+      "id": "kXNUWsGU11pAFUKwvU2cgP",
+      "opacity": 0.5,
+      "mullionColor": "white",
+      "frame": true,
+      "frameWidth": 0.05
     },
     {
       "type": "Window",
@@ -739,7 +791,11 @@
         "color": "grey",
         "width": 0.5
       },
-      "selected": false
+      "selected": false,
+      "opacity": 0.5,
+      "mullionColor": "white",
+      "frame": true,
+      "frameWidth": 0.05
     },
     {
       "type": "Window",
@@ -773,7 +829,11 @@
         "color": "grey",
         "width": 0.5
       },
-      "selected": false
+      "selected": false,
+      "opacity": 0.5,
+      "mullionColor": "white",
+      "frame": true,
+      "frameWidth": 0.05
     },
     {
       "type": "Window",
@@ -807,7 +867,11 @@
         "color": "grey",
         "width": 0.5
       },
-      "selected": false
+      "selected": false,
+      "opacity": 0.5,
+      "mullionColor": "white",
+      "frame": true,
+      "frameWidth": 0.05
     },
     {
       "type": "Window",
@@ -841,7 +905,11 @@
         "color": "grey",
         "width": 0.5
       },
-      "selected": false
+      "selected": false,
+      "opacity": 0.5,
+      "mullionColor": "white",
+      "frame": true,
+      "frameWidth": 0.05
     },
     {
       "type": "Window",
@@ -875,7 +943,11 @@
         "color": "grey",
         "width": 0.5
       },
-      "selected": false
+      "selected": false,
+      "opacity": 0.5,
+      "mullionColor": "white",
+      "frame": true,
+      "frameWidth": 0.05
     },
     {
       "type": "Window",
@@ -909,7 +981,11 @@
         "color": "grey",
         "width": 0.5
       },
-      "selected": false
+      "selected": false,
+      "opacity": 0.5,
+      "mullionColor": "white",
+      "frame": true,
+      "frameWidth": 0.05
     },
     {
       "type": "Window",
@@ -943,16 +1019,20 @@
         "color": "grey",
         "width": 0.5
       },
-      "selected": false
+      "selected": false,
+      "opacity": 0.5,
+      "mullionColor": "white",
+      "frame": true,
+      "frameWidth": 0.05
     },
     {
       "type": "Window",
       "cx": -0.2788258283789978,
       "cy": 0.1,
-      "cz": 0.3211287841136713,
+      "cz": 0.2676073200947261,
       "lx": 0.1394129141894989,
       "ly": 0.3,
-      "lz": 0.21408585607578087,
+      "lz": 0.3211287841136713,
       "mullion": true,
       "mullionWidth": 0.06,
       "mullionSpacing": 0.5,
@@ -977,16 +1057,20 @@
         "color": "grey",
         "width": 0.5
       },
-      "selected": false
+      "selected": false,
+      "opacity": 0.5,
+      "mullionColor": "white",
+      "frame": true,
+      "frameWidth": 0.05
     },
     {
       "type": "Window",
       "cx": 0.2788258283789978,
       "cy": 0.1,
-      "cz": 0.3211287841136713,
+      "cz": 0.2676073200947261,
       "lx": 0.1394129141894989,
       "ly": 0.3,
-      "lz": 0.21408585607578087,
+      "lz": 0.3211287841136713,
       "mullion": true,
       "mullionWidth": 0.06,
       "mullionSpacing": 0.5,
@@ -1011,7 +1095,11 @@
         "color": "grey",
         "width": 0.5
       },
-      "selected": false
+      "selected": false,
+      "opacity": 0.5,
+      "mullionColor": "white",
+      "frame": true,
+      "frameWidth": 0.05
     },
     {
       "type": "Window",
@@ -1045,7 +1133,11 @@
         "color": "grey",
         "width": 0.5
       },
-      "selected": false
+      "selected": false,
+      "opacity": 0.5,
+      "mullionColor": "white",
+      "frame": true,
+      "frameWidth": 0.05
     },
     {
       "type": "Window",
@@ -1079,7 +1171,11 @@
         "color": "grey",
         "width": 0.5
       },
-      "selected": false
+      "selected": false,
+      "opacity": 0.5,
+      "mullionColor": "white",
+      "frame": true,
+      "frameWidth": 0.05
     },
     {
       "type": "Window",
@@ -1113,7 +1209,11 @@
         "color": "grey",
         "width": 0.5
       },
-      "selected": false
+      "selected": false,
+      "opacity": 0.5,
+      "mullionColor": "white",
+      "frame": true,
+      "frameWidth": 0.05
     },
     {
       "type": "Window",
@@ -1147,7 +1247,11 @@
         "color": "grey",
         "width": 0.5
       },
-      "selected": false
+      "selected": false,
+      "opacity": 0.5,
+      "mullionColor": "white",
+      "frame": true,
+      "frameWidth": 0.05
     },
     {
       "type": "Window",
@@ -1181,7 +1285,11 @@
         "color": "grey",
         "width": 0.5
       },
-      "selected": false
+      "selected": false,
+      "opacity": 0.5,
+      "mullionColor": "white",
+      "frame": true,
+      "frameWidth": 0.05
     },
     {
       "type": "Window",
@@ -1215,7 +1323,11 @@
         "color": "grey",
         "width": 0.5
       },
-      "selected": false
+      "selected": false,
+      "opacity": 0.5,
+      "mullionColor": "white",
+      "frame": true,
+      "frameWidth": 0.05
     },
     {
       "type": "Window",
@@ -1249,7 +1361,11 @@
         "color": "grey",
         "width": 0.5
       },
-      "selected": false
+      "selected": false,
+      "opacity": 0.5,
+      "mullionColor": "white",
+      "frame": true,
+      "frameWidth": 0.05
     },
     {
       "type": "Window",
@@ -1283,7 +1399,11 @@
         "color": "grey",
         "width": 0.5
       },
-      "selected": false
+      "selected": false,
+      "opacity": 0.5,
+      "mullionColor": "white",
+      "frame": true,
+      "frameWidth": 0.05
     },
     {
       "type": "Window",
@@ -1317,7 +1437,11 @@
         "color": "grey",
         "width": 0.5
       },
-      "selected": false
+      "selected": false,
+      "opacity": 0.5,
+      "mullionColor": "white",
+      "frame": true,
+      "frameWidth": 0.05
     },
     {
       "type": "Window",
@@ -1351,7 +1475,11 @@
         "color": "grey",
         "width": 0.5
       },
-      "selected": false
+      "selected": false,
+      "opacity": 0.5,
+      "mullionColor": "white",
+      "frame": true,
+      "frameWidth": 0.05
     },
     {
       "type": "Window",
@@ -1385,7 +1513,11 @@
         "color": "grey",
         "width": 0.5
       },
-      "selected": false
+      "selected": false,
+      "opacity": 0.5,
+      "mullionColor": "white",
+      "frame": true,
+      "frameWidth": 0.05
     }
   ],
   "view": {
@@ -1417,9 +1549,9 @@
     "dailyHeliostatYieldPanelX": 0,
     "showDailyParabolicDishYieldPanel": false,
     "cameraPosition": [
-      16.91512762287771,
-      -16.996480412510763,
-      5.019558407180723
+      0.5667639681593168,
+      -20.6074247516284,
+      4.898443451669491
     ],
     "showYearlyHeliostatYieldPanel": false,
     "orthographic": false,
@@ -1468,9 +1600,9 @@
     "shadowEnabled": true,
     "showInstructionPanel": true,
     "panCenter": [
-      1.8225221634677506,
-      -0.7185885779482946,
-      0.383041570535445
+      0.8869368952374999,
+      -0.4419257986452074,
+      1.4180601784554174
     ],
     "yearlyFresnelReflectorYieldPanelY": 0,
     "showHeliodonPanel": false,

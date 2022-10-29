@@ -1,7 +1,7 @@
 {
-  "docid": "4Ses1F6EocZEh8AdYWRbTf",
-  "time": "10/16/2022 10:56 am",
-  "timestamp": 1665932162958,
+  "docid": "vtg25WAkjhDeedwER5EhHu",
+  "time": "10/28/2022 08:36 pm",
+  "timestamp": 1667003773853,
   "userid": "QWecNcxhyvP6j6sBN11hBsfZDau1",
   "owner": null,
   "email": null,
@@ -120,8 +120,8 @@
       "color": "#ffffff",
       "opacity": 0,
       "wallStructure": "Stud",
-      "studSpacing": 100,
-      "studColor": "#666666"
+      "structureSpacing": 100,
+      "structureColor": "#666666"
     },
     {
       "type": "Wall",
@@ -171,8 +171,8 @@
       "color": "#ffffff",
       "opacity": 0,
       "wallStructure": "Stud",
-      "studSpacing": 100,
-      "studColor": "#666666"
+      "structureSpacing": 100,
+      "structureColor": "#666666"
     },
     {
       "lx": 10,
@@ -222,8 +222,8 @@
       "color": "#ffffff",
       "opacity": 0,
       "wallStructure": "Stud",
-      "studSpacing": 100,
-      "studColor": "#666666"
+      "structureSpacing": 100,
+      "structureColor": "#666666"
     },
     {
       "showLabel": false,
@@ -273,8 +273,8 @@
       "color": "#ffffff",
       "wallStructure": "Stud",
       "opacity": 0,
-      "studSpacing": 100,
-      "studColor": "#666666"
+      "structureSpacing": 100,
+      "structureColor": "#666666"
     },
     {
       "type": "Human",
@@ -572,15 +572,15 @@
     },
     {
       "type": "Window",
-      "cx": -0.023873137489038364,
+      "cx": 0.023873137489038417,
       "cy": 0.1,
-      "cz": 0.35952349709100717,
+      "cz": 0.3595234970910072,
       "lx": 0.5252090247588448,
       "ly": 0.2,
-      "lz": 0.16995656226120343,
+      "lz": 0.11766223541160228,
       "mullionWidth": 0.06,
       "mullionSpacing": 0.5,
-      "color": "#477395",
+      "color": "#ffffff",
       "normal": [
         0,
         0,
@@ -600,7 +600,8 @@
         "showRight": false,
         "color": "grey",
         "width": 0.5
-      }
+      },
+      "frame": true
     },
     {
       "type": "Wall",
@@ -638,8 +639,8 @@
       "parentId": "m7AH7DcnoGzAq9kryBy4RS",
       "foundationId": "m7AH7DcnoGzAq9kryBy4RS",
       "wallStructure": "Stud",
-      "studSpacing": 0.2,
-      "studWidth": 0.05,
+      "structureSpacing": 0.2,
+      "structureWidth": 0.05,
       "opacity": 0,
       "selected": false
     },
@@ -679,8 +680,8 @@
       "parentId": "m7AH7DcnoGzAq9kryBy4RS",
       "foundationId": "m7AH7DcnoGzAq9kryBy4RS",
       "wallStructure": "Stud",
-      "studSpacing": 0.2,
-      "studWidth": 0.05,
+      "structureSpacing": 0.2,
+      "structureWidth": 0.05,
       "opacity": 0,
       "selected": false
     },
@@ -720,8 +721,8 @@
       "parentId": "m7AH7DcnoGzAq9kryBy4RS",
       "foundationId": "m7AH7DcnoGzAq9kryBy4RS",
       "wallStructure": "Stud",
-      "studSpacing": 0.2,
-      "studWidth": 0.05,
+      "structureSpacing": 0.2,
+      "structureWidth": 0.05,
       "opacity": 0,
       "selected": false
     },
@@ -761,8 +762,8 @@
       "parentId": "m7AH7DcnoGzAq9kryBy4RS",
       "foundationId": "m7AH7DcnoGzAq9kryBy4RS",
       "wallStructure": "Stud",
-      "studSpacing": 0.2,
-      "studWidth": 0.05,
+      "structureSpacing": 0.2,
+      "structureWidth": 0.05,
       "opacity": 0,
       "selected": false
     },
@@ -802,8 +803,8 @@
       "parentId": "m7AH7DcnoGzAq9kryBy4RS",
       "foundationId": "m7AH7DcnoGzAq9kryBy4RS",
       "wallStructure": "Stud",
-      "studSpacing": 0.2,
-      "studWidth": 0.05,
+      "structureSpacing": 0.2,
+      "structureWidth": 0.05,
       "opacity": 0,
       "selected": false
     },
@@ -838,8 +839,8 @@
     {
       "type": "Tree",
       "name": "Fan Palm",
-      "cx": 7.251715647212778,
-      "cy": -10.505968773741833,
+      "cx": 7.658070317196305,
+      "cy": -10.547888846321625,
       "cz": 0,
       "lx": 6.375358320482912,
       "lz": 8.451212523084012,
@@ -1584,9 +1585,9 @@
     "dailyHeliostatYieldPanelX": 0,
     "showDailyParabolicDishYieldPanel": false,
     "cameraPosition": [
-      13.34447026184184,
-      -11.735342192911018,
-      2.2830995372802136
+      14.167671959715303,
+      -9.317810221117865,
+      2.2830995372802154
     ],
     "showYearlyHeliostatYieldPanel": false,
     "orthographic": false,

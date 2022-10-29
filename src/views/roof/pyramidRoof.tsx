@@ -200,8 +200,6 @@ const PyramidRoof = ({
 
   const { h, setH, minHeight, setMinHeight, relHeight, setRelHeight } = useRoofHeight(lz, getMinHeight());
 
-  console.log(lz, h);
-
   const [showIntersectionPlane, setShowIntersectionPlane] = useState(false);
 
   const intersectionPlaneRef = useRef<Mesh>(null);

@@ -208,6 +208,9 @@ const MullionSpacingInput = ({
     }
     setCommonStore((state) => {
       switch (dataType) {
+        case WindowDataType.Opacity:
+          state.actionState.windowOpacity = value;
+          break;
         case WindowDataType.FrameWidth:
           state.actionState.windowFrameWidth = value;
           break;
