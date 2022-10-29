@@ -56,78 +56,93 @@ const Shutter = ({ cx, lx, lz, color, showLeft, showRight, spacing }: ShutterPro
   );
 };
 
-const useUpdataOldFiles = (id: string) => {
+const useUpdataOldFiles = (windowModel: WindowModel) => {
   useEffect(() => {
-    useStore.getState().set((state) => {
-      for (const e of state.elements) {
-        if (e.id === id) {
-          const w = e as WindowModel;
-          if (w.mullion === undefined) {
-            w.mullion = true;
+    if (
+      windowModel.mullion === undefined ||
+      windowModel.mullionWidth === undefined ||
+      windowModel.mullionSpacing === undefined ||
+      windowModel.tint === undefined ||
+      windowModel.opacity === undefined ||
+      windowModel.shutter === undefined ||
+      windowModel.mullionColor === undefined ||
+      windowModel.frame === undefined ||
+      windowModel.color === undefined ||
+      windowModel.frameWidth === undefined
+    ) {
+      useStore.getState().set((state) => {
+        for (const e of state.elements) {
+          if (e.id === windowModel.id) {
+            const w = e as WindowModel;
+            if (w.mullion === undefined) {
+              w.mullion = true;
+            }
+            if (w.mullionWidth === undefined) {
+              w.mullionWidth = 0.06;
+            }
+            if (w.mullionSpacing === undefined) {
+              w.mullionSpacing = 0.5;
+            }
+            if (w.tint === undefined) {
+              w.tint = '#73D8FF';
+            }
+            if (w.opacity === undefined) {
+              w.opacity = 0.5;
+            }
+            if (w.shutter === undefined) {
+              w.shutter = defaultShutter;
+            }
+            if (w.mullionColor === undefined) {
+              w.mullionColor = 'white';
+            }
+            if (w.frame === undefined) {
+              w.frame = false;
+            }
+            if (w.color === undefined) {
+              w.color = 'white';
+            }
+            if (w.frameWidth === undefined) {
+              w.frameWidth = 0.1;
+            }
+            break;
           }
-          if (w.mullionWidth === undefined) {
-            w.mullionWidth = 0.06;
-          }
-          if (w.mullionSpacing === undefined) {
-            w.mullionSpacing = 0.5;
-          }
-          if (w.tint === undefined) {
-            w.tint = '#73D8FF';
-          }
-          if (w.opacity === undefined) {
-            w.opacity = 0.5;
-          }
-          if (w.shutter === undefined) {
-            w.shutter = defaultShutter;
-          }
-          if (w.mullionColor === undefined) {
-            w.mullionColor = 'white';
-          }
-          if (w.frame === undefined) {
-            w.frame = false;
-          }
-          if (w.color === undefined) {
-            w.color = 'white';
-          }
-          if (w.frameWidth === undefined) {
-            w.frameWidth = 0.1;
-          }
-          break;
         }
-      }
-    });
+      });
+    }
   }, []);
 };
 
-const Window = ({
-  id,
-  parentId,
-  lx,
-  ly,
-  lz,
-  cx,
-  cy,
-  cz,
-  selected,
-  locked,
-  lineWidth = 0.2,
-  lineColor = 'black',
-  mullion = true,
-  mullionWidth = 0.06,
-  mullionSpacing = 0.5,
-  tint = '#73D8FF',
-  opacity = 0.5,
-  shutter,
-  mullionColor = 'white',
-  frame = false,
-  color = 'white',
-  frameWidth = 0.1,
-}: WindowModel) => {
+const Window = (windowModel: WindowModel) => {
+  let {
+    id,
+    parentId,
+    lx,
+    ly,
+    lz,
+    cx,
+    cy,
+    cz,
+    selected,
+    locked,
+    lineWidth = 0.2,
+    lineColor = 'black',
+    mullion = true,
+    mullionWidth = 0.06,
+    mullionSpacing = 0.5,
+    tint = '#73D8FF',
+    opacity = 0.5,
+    shutter,
+    mullionColor = 'white',
+    frame = false,
+    color = 'white',
+    frameWidth = 0.1,
+  } = windowModel;
+
   // legacy problem
   if (Math.abs(cy) < 0.001) {
     cy = 0.1;
   }
-  useUpdataOldFiles(id);
+  useUpdataOldFiles(windowModel);
 
   const setCommonStore = useStore(Selector.set);
   const isAddingElement = useStore(Selector.isAddingElement);

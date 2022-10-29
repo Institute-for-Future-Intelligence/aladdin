@@ -95,64 +95,75 @@ const useElements = (id: string, leftWallId?: string, rightWallId?: string, roof
   return { elementsOnWall, leftWall, rightWall };
 };
 
-const useUpdataOldFiles = (id: string) => {
+const useUpdataOldFiles = (wallModel: WallModel) => {
   useEffect(() => {
-    useStore.getState().set((state) => {
-      for (const e of state.elements) {
-        if (e.id === id) {
-          const wall = e as WallModel;
-          if (wall.wallStructure === undefined) {
-            wall.wallStructure = WallStructure.Default;
+    if (
+      wallModel.wallStructure === undefined ||
+      wallModel.structureSpacing === undefined ||
+      wallModel.structureWidth === undefined ||
+      wallModel.structureColor === undefined ||
+      wallModel.opacity === undefined
+    ) {
+      useStore.getState().set((state) => {
+        for (const e of state.elements) {
+          if (e.id === wallModel.id) {
+            const wall = e as WallModel;
+            if (wall.wallStructure === undefined) {
+              wall.wallStructure = WallStructure.Default;
+            }
+            if (wall.structureSpacing === undefined) {
+              wall.structureSpacing = 2;
+            }
+            if (wall.structureWidth === undefined) {
+              wall.structureWidth = 0.1;
+            }
+            if (wall.structureColor === undefined) {
+              wall.structureColor = 'white';
+            }
+            if (wall.opacity === undefined) {
+              wall.opacity = 0.5;
+            }
+            break;
           }
-          if (wall.structureSpacing === undefined) {
-            wall.structureSpacing = 2;
-          }
-          if (wall.structureWidth === undefined) {
-            wall.structureWidth = 0.1;
-          }
-          if (wall.structureColor === undefined) {
-            wall.structureColor = 'white';
-          }
-          if (wall.opacity === undefined) {
-            wall.opacity = 0.5;
-          }
-          break;
         }
-      }
-    });
+      });
+    }
   }, []);
 };
 
-const Wall = ({
-  id,
-  cx,
-  cy,
-  lx = 1,
-  ly = 0.5,
-  lz = 4,
-  relativeAngle,
-  leftJoints,
-  rightJoints,
-  textureType,
-  color = 'white',
-  lineColor = 'black',
-  lineWidth = 0.2,
-  parentId,
-  selected = false,
-  locked = false,
-  roofId,
-  leftRoofHeight,
-  rightRoofHeight,
-  centerRoofHeight,
-  centerLeftRoofHeight,
-  centerRightRoofHeight,
-  wallStructure = WallStructure.Default,
-  structureSpacing = 2,
-  structureWidth = 0.1,
-  structureColor = 'white',
-  opacity = 0.5,
-}: WallModel) => {
-  useUpdataOldFiles(id);
+const Wall = (wallModel: WallModel) => {
+  let {
+    id,
+    cx,
+    cy,
+    lx = 1,
+    ly = 0.5,
+    lz = 4,
+    relativeAngle,
+    leftJoints,
+    rightJoints,
+    textureType,
+    color = 'white',
+    lineColor = 'black',
+    lineWidth = 0.2,
+    parentId,
+    selected = false,
+    locked = false,
+    roofId,
+    leftRoofHeight,
+    rightRoofHeight,
+    centerRoofHeight,
+    centerLeftRoofHeight,
+    centerRightRoofHeight,
+    wallStructure = WallStructure.Default,
+    structureSpacing = 2,
+    structureWidth = 0.1,
+    structureColor = 'white',
+    opacity = 0.5,
+  } = wallModel;
+
+  useUpdataOldFiles(wallModel);
+
   const textureLoader = useMemo(() => {
     let textureImg;
     switch (textureType) {
@@ -227,9 +238,7 @@ const Wall = ({
   const [texture, setTexture] = useState(textureLoader);
   const { invalidate } = useThree();
 
-  const getElementById = useStore(Selector.getElementById);
-  const wallModel = getElementById(id) as WallModel;
-  const parent = useStore((state) => {
+  const foundation = useStore((state) => {
     for (const e of state.elements) {
       if (e.id === parentId) {
         return e;
@@ -247,6 +256,7 @@ const Wall = ({
   const isAddingElement = useStore(Selector.isAddingElement);
   const addUndoable = useStore(Selector.addUndoable);
   const setElementPosition = useStore(Selector.setElementPosition);
+  const getElementById = useStore(Selector.getElementById);
 
   const intersectionPlaneRef = useRef<Mesh>(null);
   const outsideWallRef = useRef<Mesh>(null);
@@ -286,10 +296,10 @@ const Wall = ({
   const hy = ly / 2;
   const hz = lz / 2;
   const highLight = lx === 0;
-  const wallAbsPosition = parent
-    ? Util.wallAbsolutePosition(new Vector3(cx, cy), parent).setZ(hz + parent.lz)
+  const wallAbsPosition = foundation
+    ? Util.wallAbsolutePosition(new Vector3(cx, cy), foundation).setZ(hz + foundation.lz)
     : new Vector3(cx, cy, hz);
-  const wallAbsAngle = parent ? parent.rotation[2] + relativeAngle : relativeAngle;
+  const wallAbsAngle = foundation ? foundation.rotation[2] + relativeAngle : relativeAngle;
 
   leftRoofHeight = leftJoints.length > 0 ? leftRoofHeight : lz;
   rightRoofHeight = rightJoints.length > 0 ? rightRoofHeight : lz;
@@ -455,7 +465,6 @@ const Wall = ({
 
   const getRelativePosOnWall = (p: Vector3, wall: WallModel) => {
     const { cx, cy, cz } = wall;
-    const foundation = getElementById(wall.parentId);
     if (foundation && wallAbsAngle !== undefined) {
       const wallAbsPos = Util.wallAbsolutePosition(new Vector3(cx, cy, cz), foundation).setZ(lz / 2 + foundation.lz);
       return new Vector3().subVectors(p, wallAbsPos).applyEuler(new Euler(0, 0, -wallAbsAngle));
@@ -1115,36 +1124,36 @@ const Wall = ({
 
   const handleAddElement = (pointer?: Vector3) => {
     // add new elements
-    if (parent && useStore.getState().objectTypeToAdd) {
+    if (foundation && useStore.getState().objectTypeToAdd) {
       let newElement: ElementModel | null = null;
       switch (useStore.getState().objectTypeToAdd) {
         case ObjectType.PyramidRoof: {
           if (!roofId) {
-            newElement = ElementModelFactory.makePyramidRoof([wallModel.id], parent, lz);
+            newElement = ElementModelFactory.makePyramidRoof([wallModel.id], foundation, lz);
           }
           break;
         }
         case ObjectType.GableRoof: {
           if (!roofId) {
-            newElement = ElementModelFactory.makeGableRoof([wallModel.id], parent, lz);
+            newElement = ElementModelFactory.makeGableRoof([wallModel.id], foundation, lz);
           }
           break;
         }
         case ObjectType.HipRoof: {
           if (!roofId) {
-            newElement = ElementModelFactory.makeHipRoof([wallModel.id], parent, lz, lx / 2);
+            newElement = ElementModelFactory.makeHipRoof([wallModel.id], foundation, lz, lx / 2);
           }
           break;
         }
         case ObjectType.GambrelRoof: {
           if (!roofId) {
-            newElement = ElementModelFactory.makeGambrelRoof([wallModel.id], parent, lz);
+            newElement = ElementModelFactory.makeGambrelRoof([wallModel.id], foundation, lz);
           }
           break;
         }
         case ObjectType.MansardRoof: {
           if (!roofId) {
-            newElement = ElementModelFactory.makeMansardRoof([wallModel.id], parent, lz);
+            newElement = ElementModelFactory.makeMansardRoof([wallModel.id], foundation, lz);
           }
           break;
         }
@@ -1384,7 +1393,7 @@ const Wall = ({
 
   return (
     <>
-      {parent && wallAbsPosition && wallAbsAngle !== undefined && (
+      {foundation && wallAbsPosition && wallAbsAngle !== undefined && (
         <group
           name={`Wall Group ${id}`}
           position={wallAbsPosition}
@@ -1509,8 +1518,8 @@ const Wall = ({
                     return <Door key={e.id} {...(e as DoorModel)} />;
                   case ObjectType.SolarPanel:
                     let r = 0;
-                    if (parent && wallModel) {
-                      r = parent.rotation[2] + wallModel.relativeAngle;
+                    if (foundation && wallModel) {
+                      r = foundation.rotation[2] + wallModel.relativeAngle;
                     }
                     return (
                       <group key={e.id} position={[0, -e.lz / 2, 0]}>
