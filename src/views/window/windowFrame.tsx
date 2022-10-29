@@ -21,17 +21,18 @@ const WindowFrame = ({ lx, ly, lz, width, color }: WindowFrameProps) => {
   const material = useMemo(() => <meshStandardMaterial color={color} />, [color]);
 
   const halfWidth = width / 2;
+  const depth = halfWidth;
 
   const sillLength = lx + width * 3;
   const sillThickness = width;
-  const sillDepth = width * 2;
+  const sillDepth = width;
 
   return (
     <group name={'Window Frame Group'} position={[0, 0, 0]}>
       {/* top */}
       <Box
-        position={[0, -halfWidth, lz / 2]}
-        args={[lx + width, width, width]}
+        position={[0, 0, lz / 2]}
+        args={[lx + width, depth, width]}
         castShadow={shadowEnabled}
         receiveShadow={shadowEnabled}
       >
@@ -40,8 +41,8 @@ const WindowFrame = ({ lx, ly, lz, width, color }: WindowFrameProps) => {
 
       {/* left */}
       <Box
-        position={[-lx / 2, -halfWidth, 0]}
-        args={[width, width, lz]}
+        position={[-lx / 2, 0, 0]}
+        args={[width, depth, lz]}
         castShadow={shadowEnabled}
         receiveShadow={shadowEnabled}
       >
@@ -49,12 +50,7 @@ const WindowFrame = ({ lx, ly, lz, width, color }: WindowFrameProps) => {
       </Box>
 
       {/* right */}
-      <Box
-        position={[lx / 2, -halfWidth, 0]}
-        args={[width, width, lz]}
-        castShadow={shadowEnabled}
-        receiveShadow={shadowEnabled}
-      >
+      <Box position={[lx / 2, 0, 0]} args={[width, depth, lz]} castShadow={shadowEnabled} receiveShadow={shadowEnabled}>
         {material}
       </Box>
 
