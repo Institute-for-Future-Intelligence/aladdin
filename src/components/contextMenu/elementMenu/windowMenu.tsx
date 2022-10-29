@@ -7,8 +7,6 @@ import { CommonStoreState, useStore } from '../../../stores/common';
 import * as Selector from '../../../stores/selector';
 import { Copy, Cut, Lock } from '../menuItems';
 import { WindowModel } from '../../../models/WindowModel';
-import MullionWidthInput from './windowMullionWidthInput';
-import MullionSpacingInput from './windowMullionSpacingInput';
 import { Checkbox, Divider, Menu } from 'antd';
 import i18n from 'src/i18n/i18n';
 import WindowShutterSubMenu from './windowShutterSubMenu';
@@ -16,7 +14,6 @@ import SubMenu from 'antd/lib/menu/SubMenu';
 import { UndoableCheck } from '../../../undo/UndoableCheck';
 import { ObjectType } from 'src/types';
 import WindowItemSelection from './windowItemSelection';
-import WindowOpacityInput from './windowOpacityInput';
 import WindowNumberInput from './windowNumberInput';
 
 export enum WindowDataType {
@@ -234,8 +231,8 @@ export const WindowMenu = () => {
   if (!window) return null;
   return (
     <Menu.ItemGroup>
-      {renderCut()}
       <Copy keyName={'window-copy'} />
+      {renderCut()}
       <Lock keyName={'window-lock'} />
 
       {!window.locked && (

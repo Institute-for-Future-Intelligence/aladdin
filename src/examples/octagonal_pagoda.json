@@ -1,7 +1,7 @@
 {
-  "docid": "4t4XCAJp8WW8QA6LcEVG2U",
-  "time": "10/20/2022 04:44 pm",
-  "timestamp": 1666298640902,
+  "docid": "beERfj1WRvLrqp3BCs3A67",
+  "time": "10/29/2022 11:06 am",
+  "timestamp": 1667055977326,
   "userid": "QWecNcxhyvP6j6sBN11hBsfZDau1",
   "owner": null,
   "email": null,
@@ -110,7 +110,12 @@
       "leftRoofHeight": 4,
       "rightRoofHeight": 4,
       "color": "#d8cdbb",
-      "locked": false
+      "locked": false,
+      "wallStructure": "Default",
+      "structureSpacing": 2,
+      "structureWidth": 0.1,
+      "structureColor": "white",
+      "opacity": 0.5
     },
     {
       "type": "Wall",
@@ -160,7 +165,12 @@
       "leftRoofHeight": 4,
       "rightRoofHeight": 4,
       "color": "#d8cdbb",
-      "locked": false
+      "locked": false,
+      "wallStructure": "Default",
+      "structureSpacing": 2,
+      "structureWidth": 0.1,
+      "structureColor": "white",
+      "opacity": 0.5
     },
     {
       "type": "Wall",
@@ -210,7 +220,12 @@
       "leftRoofHeight": 4,
       "rightRoofHeight": 4,
       "color": "#d8cdbb",
-      "locked": false
+      "locked": false,
+      "wallStructure": "Default",
+      "structureSpacing": 2,
+      "structureWidth": 0.1,
+      "structureColor": "white",
+      "opacity": 0.5
     },
     {
       "type": "Wall",
@@ -260,7 +275,12 @@
       "leftRoofHeight": 4,
       "rightRoofHeight": 4,
       "color": "#d8cdbb",
-      "locked": false
+      "locked": false,
+      "wallStructure": "Default",
+      "structureSpacing": 2,
+      "structureWidth": 0.1,
+      "structureColor": "white",
+      "opacity": 0.5
     },
     {
       "type": "Wall",
@@ -310,7 +330,12 @@
       "leftRoofHeight": 4,
       "rightRoofHeight": 4,
       "color": "#d8cdbb",
-      "locked": false
+      "locked": false,
+      "wallStructure": "Default",
+      "structureSpacing": 2,
+      "structureWidth": 0.1,
+      "structureColor": "white",
+      "opacity": 0.5
     },
     {
       "type": "Wall",
@@ -360,7 +385,12 @@
       "leftRoofHeight": 4,
       "rightRoofHeight": 4,
       "color": "#d8cdbb",
-      "locked": false
+      "locked": false,
+      "wallStructure": "Default",
+      "structureSpacing": 2,
+      "structureWidth": 0.1,
+      "structureColor": "white",
+      "opacity": 0.5
     },
     {
       "type": "Wall",
@@ -406,7 +436,12 @@
       "leftRoofHeight": 4,
       "rightRoofHeight": 4,
       "color": "#d8cdbb",
-      "locked": false
+      "locked": false,
+      "wallStructure": "Default",
+      "structureSpacing": 2,
+      "structureWidth": 0.1,
+      "structureColor": "white",
+      "opacity": 0.5
     },
     {
       "type": "Wall",
@@ -452,7 +487,12 @@
       "leftRoofHeight": 4,
       "rightRoofHeight": 4,
       "color": "#d8cdbb",
-      "locked": false
+      "locked": false,
+      "wallStructure": "Default",
+      "structureSpacing": 2,
+      "structureWidth": 0.1,
+      "structureColor": "white",
+      "opacity": 0.5
     },
     {
       "type": "Human",
@@ -559,7 +599,12 @@
       "selected": false,
       "leftRoofHeight": 7.5,
       "rightRoofHeight": 7.5,
-      "locked": false
+      "locked": false,
+      "wallStructure": "Default",
+      "structureSpacing": 2,
+      "structureWidth": 0.1,
+      "structureColor": "white",
+      "opacity": 0.5
     },
     {
       "type": "Wall",
@@ -605,7 +650,12 @@
       "selected": false,
       "leftRoofHeight": 7.5,
       "rightRoofHeight": 7.5,
-      "locked": false
+      "locked": false,
+      "wallStructure": "Default",
+      "structureSpacing": 2,
+      "structureWidth": 0.1,
+      "structureColor": "white",
+      "opacity": 0.5
     },
     {
       "type": "Wall",
@@ -651,7 +701,12 @@
       "selected": false,
       "leftRoofHeight": 7.5,
       "rightRoofHeight": 7.5,
-      "locked": false
+      "locked": false,
+      "wallStructure": "Default",
+      "structureSpacing": 2,
+      "structureWidth": 0.1,
+      "structureColor": "white",
+      "opacity": 0.5
     },
     {
       "type": "Wall",
@@ -697,7 +752,12 @@
       "selected": false,
       "leftRoofHeight": 7.5,
       "rightRoofHeight": 7.5,
-      "locked": false
+      "locked": false,
+      "wallStructure": "Default",
+      "structureSpacing": 2,
+      "structureWidth": 0.1,
+      "structureColor": "white",
+      "opacity": 0.5
     },
     {
       "type": "Wall",
@@ -743,7 +803,12 @@
       "selected": false,
       "leftRoofHeight": 7.5,
       "rightRoofHeight": 7.5,
-      "locked": false
+      "locked": false,
+      "wallStructure": "Default",
+      "structureSpacing": 2,
+      "structureWidth": 0.1,
+      "structureColor": "white",
+      "opacity": 0.5
     },
     {
       "type": "Wall",
@@ -789,7 +854,12 @@
       "selected": false,
       "leftRoofHeight": 7.5,
       "rightRoofHeight": 7.5,
-      "locked": false
+      "locked": false,
+      "wallStructure": "Default",
+      "structureSpacing": 2,
+      "structureWidth": 0.1,
+      "structureColor": "white",
+      "opacity": 0.5
     },
     {
       "type": "Wall",
@@ -835,7 +905,12 @@
       "selected": false,
       "leftRoofHeight": 7.5,
       "rightRoofHeight": 7.5,
-      "locked": false
+      "locked": false,
+      "wallStructure": "Default",
+      "structureSpacing": 2,
+      "structureWidth": 0.1,
+      "structureColor": "white",
+      "opacity": 0.5
     },
     {
       "type": "Wall",
@@ -881,7 +956,12 @@
       "selected": false,
       "leftRoofHeight": 7.5,
       "rightRoofHeight": 7.5,
-      "locked": false
+      "locked": false,
+      "wallStructure": "Default",
+      "structureSpacing": 2,
+      "structureWidth": 0.1,
+      "structureColor": "white",
+      "opacity": 0.5
     },
     {
       "id": "56kE8YxGS5vZT15DARe55m",
@@ -985,7 +1065,12 @@
       "selected": false,
       "leftRoofHeight": 11,
       "rightRoofHeight": 11,
-      "locked": false
+      "locked": false,
+      "wallStructure": "Default",
+      "structureSpacing": 2,
+      "structureWidth": 0.1,
+      "structureColor": "white",
+      "opacity": 0.5
     },
     {
       "type": "Wall",
@@ -1029,7 +1114,12 @@
       "selected": false,
       "leftRoofHeight": 11,
       "rightRoofHeight": 11,
-      "locked": false
+      "locked": false,
+      "wallStructure": "Default",
+      "structureSpacing": 2,
+      "structureWidth": 0.1,
+      "structureColor": "white",
+      "opacity": 0.5
     },
     {
       "type": "Wall",
@@ -1073,7 +1163,12 @@
       "selected": false,
       "leftRoofHeight": 11,
       "rightRoofHeight": 11,
-      "locked": false
+      "locked": false,
+      "wallStructure": "Default",
+      "structureSpacing": 2,
+      "structureWidth": 0.1,
+      "structureColor": "white",
+      "opacity": 0.5
     },
     {
       "type": "Wall",
@@ -1117,7 +1212,12 @@
       "selected": false,
       "leftRoofHeight": 11,
       "rightRoofHeight": 11,
-      "locked": false
+      "locked": false,
+      "wallStructure": "Default",
+      "structureSpacing": 2,
+      "structureWidth": 0.1,
+      "structureColor": "white",
+      "opacity": 0.5
     },
     {
       "type": "Wall",
@@ -1161,7 +1261,12 @@
       "selected": false,
       "leftRoofHeight": 11,
       "rightRoofHeight": 11,
-      "locked": false
+      "locked": false,
+      "wallStructure": "Default",
+      "structureSpacing": 2,
+      "structureWidth": 0.1,
+      "structureColor": "white",
+      "opacity": 0.5
     },
     {
       "type": "Wall",
@@ -1205,7 +1310,12 @@
       "selected": false,
       "leftRoofHeight": 11,
       "rightRoofHeight": 11,
-      "locked": false
+      "locked": false,
+      "wallStructure": "Default",
+      "structureSpacing": 2,
+      "structureWidth": 0.1,
+      "structureColor": "white",
+      "opacity": 0.5
     },
     {
       "type": "Wall",
@@ -1249,7 +1359,12 @@
       "selected": false,
       "leftRoofHeight": 11,
       "rightRoofHeight": 11,
-      "locked": false
+      "locked": false,
+      "wallStructure": "Default",
+      "structureSpacing": 2,
+      "structureWidth": 0.1,
+      "structureColor": "white",
+      "opacity": 0.5
     },
     {
       "type": "Wall",
@@ -1293,7 +1408,12 @@
       "selected": false,
       "leftRoofHeight": 11,
       "rightRoofHeight": 11,
-      "locked": false
+      "locked": false,
+      "wallStructure": "Default",
+      "structureSpacing": 2,
+      "structureWidth": 0.1,
+      "structureColor": "white",
+      "opacity": 0.5
     },
     {
       "id": "kXXsWtzhvHq2DAaXZEi8ju",
@@ -1399,7 +1519,12 @@
       "selected": false,
       "leftRoofHeight": 14.5,
       "rightRoofHeight": 14.5,
-      "locked": false
+      "locked": false,
+      "wallStructure": "Default",
+      "structureSpacing": 2,
+      "structureWidth": 0.1,
+      "structureColor": "white",
+      "opacity": 0.5
     },
     {
       "type": "Wall",
@@ -1445,7 +1570,12 @@
       "selected": false,
       "leftRoofHeight": 14.5,
       "rightRoofHeight": 14.5,
-      "locked": false
+      "locked": false,
+      "wallStructure": "Default",
+      "structureSpacing": 2,
+      "structureWidth": 0.1,
+      "structureColor": "white",
+      "opacity": 0.5
     },
     {
       "type": "Wall",
@@ -1491,7 +1621,12 @@
       "selected": false,
       "leftRoofHeight": 14.5,
       "rightRoofHeight": 14.5,
-      "locked": false
+      "locked": false,
+      "wallStructure": "Default",
+      "structureSpacing": 2,
+      "structureWidth": 0.1,
+      "structureColor": "white",
+      "opacity": 0.5
     },
     {
       "type": "Wall",
@@ -1537,7 +1672,12 @@
       "selected": false,
       "leftRoofHeight": 14.5,
       "rightRoofHeight": 14.5,
-      "locked": false
+      "locked": false,
+      "wallStructure": "Default",
+      "structureSpacing": 2,
+      "structureWidth": 0.1,
+      "structureColor": "white",
+      "opacity": 0.5
     },
     {
       "type": "Wall",
@@ -1583,7 +1723,12 @@
       "selected": false,
       "leftRoofHeight": 14.5,
       "rightRoofHeight": 14.5,
-      "locked": false
+      "locked": false,
+      "wallStructure": "Default",
+      "structureSpacing": 2,
+      "structureWidth": 0.1,
+      "structureColor": "white",
+      "opacity": 0.5
     },
     {
       "type": "Wall",
@@ -1629,7 +1774,12 @@
       "selected": false,
       "leftRoofHeight": 14.5,
       "rightRoofHeight": 14.5,
-      "locked": false
+      "locked": false,
+      "wallStructure": "Default",
+      "structureSpacing": 2,
+      "structureWidth": 0.1,
+      "structureColor": "white",
+      "opacity": 0.5
     },
     {
       "type": "Wall",
@@ -1675,7 +1825,12 @@
       "selected": false,
       "leftRoofHeight": 14.5,
       "rightRoofHeight": 14.5,
-      "locked": false
+      "locked": false,
+      "wallStructure": "Default",
+      "structureSpacing": 2,
+      "structureWidth": 0.1,
+      "structureColor": "white",
+      "opacity": 0.5
     },
     {
       "type": "Wall",
@@ -1721,7 +1876,12 @@
       "selected": false,
       "leftRoofHeight": 14.5,
       "rightRoofHeight": 14.5,
-      "locked": false
+      "locked": false,
+      "wallStructure": "Default",
+      "structureSpacing": 2,
+      "structureWidth": 0.1,
+      "structureColor": "white",
+      "opacity": 0.5
     },
     {
       "id": "pHdzF3ngGjARqDaSnrPCbJ",
@@ -1827,7 +1987,12 @@
       "selected": false,
       "leftRoofHeight": 18,
       "rightRoofHeight": 18,
-      "locked": false
+      "locked": false,
+      "wallStructure": "Default",
+      "structureSpacing": 2,
+      "structureWidth": 0.1,
+      "structureColor": "white",
+      "opacity": 0.5
     },
     {
       "type": "Wall",
@@ -1873,7 +2038,12 @@
       "selected": false,
       "leftRoofHeight": 18,
       "rightRoofHeight": 18,
-      "locked": false
+      "locked": false,
+      "wallStructure": "Default",
+      "structureSpacing": 2,
+      "structureWidth": 0.1,
+      "structureColor": "white",
+      "opacity": 0.5
     },
     {
       "type": "Wall",
@@ -1919,7 +2089,12 @@
       "selected": false,
       "leftRoofHeight": 18,
       "rightRoofHeight": 18,
-      "locked": false
+      "locked": false,
+      "wallStructure": "Default",
+      "structureSpacing": 2,
+      "structureWidth": 0.1,
+      "structureColor": "white",
+      "opacity": 0.5
     },
     {
       "type": "Wall",
@@ -1965,7 +2140,12 @@
       "selected": false,
       "leftRoofHeight": 18,
       "rightRoofHeight": 18,
-      "locked": false
+      "locked": false,
+      "wallStructure": "Default",
+      "structureSpacing": 2,
+      "structureWidth": 0.1,
+      "structureColor": "white",
+      "opacity": 0.5
     },
     {
       "type": "Wall",
@@ -2011,7 +2191,12 @@
       "selected": false,
       "leftRoofHeight": 18,
       "rightRoofHeight": 18,
-      "locked": false
+      "locked": false,
+      "wallStructure": "Default",
+      "structureSpacing": 2,
+      "structureWidth": 0.1,
+      "structureColor": "white",
+      "opacity": 0.5
     },
     {
       "type": "Wall",
@@ -2057,7 +2242,12 @@
       "selected": false,
       "leftRoofHeight": 18,
       "rightRoofHeight": 18,
-      "locked": false
+      "locked": false,
+      "wallStructure": "Default",
+      "structureSpacing": 2,
+      "structureWidth": 0.1,
+      "structureColor": "white",
+      "opacity": 0.5
     },
     {
       "type": "Wall",
@@ -2103,7 +2293,12 @@
       "selected": false,
       "leftRoofHeight": 18,
       "rightRoofHeight": 18,
-      "locked": false
+      "locked": false,
+      "wallStructure": "Default",
+      "structureSpacing": 2,
+      "structureWidth": 0.1,
+      "structureColor": "white",
+      "opacity": 0.5
     },
     {
       "type": "Wall",
@@ -2149,7 +2344,12 @@
       "selected": false,
       "leftRoofHeight": 18,
       "rightRoofHeight": 18,
-      "locked": false
+      "locked": false,
+      "wallStructure": "Default",
+      "structureSpacing": 2,
+      "structureWidth": 0.1,
+      "structureColor": "white",
+      "opacity": 0.5
     },
     {
       "type": "Foundation",
@@ -2216,7 +2416,10 @@
       "id": "kJ99yCt5NwrUx6aeyLQD19",
       "opacity": 0,
       "locked": false,
-      "mullion": false
+      "mullion": false,
+      "mullionColor": "white",
+      "frame": false,
+      "frameWidth": 0.1
     },
     {
       "type": "Window",
@@ -2255,7 +2458,10 @@
       "id": "2i6NJTsHZcvu5DZpjL2nTf",
       "opacity": 0,
       "locked": false,
-      "mullion": false
+      "mullion": false,
+      "mullionColor": "white",
+      "frame": false,
+      "frameWidth": 0.1
     },
     {
       "type": "Window",
@@ -2291,7 +2497,10 @@
       },
       "selected": false,
       "locked": false,
-      "mullion": false
+      "mullion": false,
+      "mullionColor": "white",
+      "frame": false,
+      "frameWidth": 0.1
     },
     {
       "type": "Window",
@@ -2327,7 +2536,10 @@
       },
       "selected": false,
       "locked": false,
-      "mullion": false
+      "mullion": false,
+      "mullionColor": "white",
+      "frame": false,
+      "frameWidth": 0.1
     },
     {
       "type": "Window",
@@ -2363,7 +2575,10 @@
       },
       "selected": false,
       "locked": false,
-      "mullion": false
+      "mullion": false,
+      "mullionColor": "white",
+      "frame": false,
+      "frameWidth": 0.1
     },
     {
       "type": "Window",
@@ -2399,7 +2614,10 @@
       },
       "selected": false,
       "locked": false,
-      "mullion": false
+      "mullion": false,
+      "mullionColor": "white",
+      "frame": false,
+      "frameWidth": 0.1
     },
     {
       "type": "Window",
@@ -2435,7 +2653,10 @@
       },
       "selected": false,
       "locked": false,
-      "mullion": false
+      "mullion": false,
+      "mullionColor": "white",
+      "frame": false,
+      "frameWidth": 0.1
     },
     {
       "type": "Window",
@@ -2471,7 +2692,10 @@
       },
       "selected": false,
       "locked": false,
-      "mullion": false
+      "mullion": false,
+      "mullionColor": "white",
+      "frame": false,
+      "frameWidth": 0.1
     },
     {
       "type": "Window",
@@ -2507,7 +2731,10 @@
       },
       "selected": false,
       "locked": false,
-      "mullion": false
+      "mullion": false,
+      "mullionColor": "white",
+      "frame": false,
+      "frameWidth": 0.1
     },
     {
       "type": "Window",
@@ -2543,7 +2770,10 @@
       },
       "selected": false,
       "locked": false,
-      "mullion": false
+      "mullion": false,
+      "mullionColor": "white",
+      "frame": false,
+      "frameWidth": 0.1
     },
     {
       "type": "Window",
@@ -2579,7 +2809,10 @@
       },
       "selected": false,
       "locked": false,
-      "mullion": false
+      "mullion": false,
+      "mullionColor": "white",
+      "frame": false,
+      "frameWidth": 0.1
     },
     {
       "type": "Window",
@@ -2615,7 +2848,10 @@
       },
       "selected": false,
       "locked": false,
-      "mullion": false
+      "mullion": false,
+      "mullionColor": "white",
+      "frame": false,
+      "frameWidth": 0.1
     },
     {
       "type": "Window",
@@ -2651,7 +2887,10 @@
       },
       "selected": false,
       "locked": false,
-      "mullion": false
+      "mullion": false,
+      "mullionColor": "white",
+      "frame": false,
+      "frameWidth": 0.1
     },
     {
       "type": "Window",
@@ -2687,7 +2926,10 @@
       },
       "selected": false,
       "locked": false,
-      "mullion": false
+      "mullion": false,
+      "mullionColor": "white",
+      "frame": false,
+      "frameWidth": 0.1
     },
     {
       "type": "Window",
@@ -2723,7 +2965,10 @@
       },
       "selected": false,
       "locked": false,
-      "mullion": false
+      "mullion": false,
+      "mullionColor": "white",
+      "frame": false,
+      "frameWidth": 0.1
     },
     {
       "type": "Window",
@@ -2759,7 +3004,10 @@
       },
       "selected": false,
       "locked": false,
-      "mullion": false
+      "mullion": false,
+      "mullionColor": "white",
+      "frame": false,
+      "frameWidth": 0.1
     },
     {
       "type": "Window",
@@ -2795,7 +3043,10 @@
       },
       "selected": false,
       "locked": false,
-      "mullion": false
+      "mullion": false,
+      "mullionColor": "white",
+      "frame": false,
+      "frameWidth": 0.1
     },
     {
       "type": "Window",
@@ -2831,7 +3082,10 @@
       },
       "selected": false,
       "locked": false,
-      "mullion": false
+      "mullion": false,
+      "mullionColor": "white",
+      "frame": false,
+      "frameWidth": 0.1
     },
     {
       "type": "Window",
@@ -2867,7 +3121,10 @@
       },
       "selected": false,
       "locked": false,
-      "mullion": false
+      "mullion": false,
+      "mullionColor": "white",
+      "frame": false,
+      "frameWidth": 0.1
     },
     {
       "type": "Window",
@@ -2903,7 +3160,10 @@
       },
       "selected": false,
       "locked": false,
-      "mullion": false
+      "mullion": false,
+      "mullionColor": "white",
+      "frame": false,
+      "frameWidth": 0.1
     },
     {
       "type": "Window",
@@ -2939,7 +3199,10 @@
       },
       "selected": false,
       "locked": false,
-      "mullion": false
+      "mullion": false,
+      "mullionColor": "white",
+      "frame": false,
+      "frameWidth": 0.1
     },
     {
       "type": "Window",
@@ -2975,7 +3238,10 @@
       },
       "selected": false,
       "locked": false,
-      "mullion": false
+      "mullion": false,
+      "mullionColor": "white",
+      "frame": false,
+      "frameWidth": 0.1
     },
     {
       "type": "Window",
@@ -3011,7 +3277,10 @@
       },
       "selected": false,
       "locked": false,
-      "mullion": false
+      "mullion": false,
+      "mullionColor": "white",
+      "frame": false,
+      "frameWidth": 0.1
     },
     {
       "type": "Window",
@@ -3047,7 +3316,10 @@
       },
       "selected": false,
       "locked": false,
-      "mullion": false
+      "mullion": false,
+      "mullionColor": "white",
+      "frame": false,
+      "frameWidth": 0.1
     },
     {
       "type": "Window",
@@ -3083,7 +3355,10 @@
       },
       "selected": false,
       "locked": false,
-      "mullion": false
+      "mullion": false,
+      "mullionColor": "white",
+      "frame": false,
+      "frameWidth": 0.1
     },
     {
       "type": "Window",
@@ -3119,7 +3394,10 @@
       },
       "selected": false,
       "locked": false,
-      "mullion": false
+      "mullion": false,
+      "mullionColor": "white",
+      "frame": false,
+      "frameWidth": 0.1
     },
     {
       "type": "Window",
@@ -3155,7 +3433,10 @@
       },
       "selected": false,
       "locked": false,
-      "mullion": false
+      "mullion": false,
+      "mullionColor": "white",
+      "frame": false,
+      "frameWidth": 0.1
     },
     {
       "type": "Window",
@@ -3191,7 +3472,10 @@
       },
       "selected": false,
       "locked": false,
-      "mullion": false
+      "mullion": false,
+      "mullionColor": "white",
+      "frame": false,
+      "frameWidth": 0.1
     },
     {
       "type": "Window",
@@ -3227,7 +3511,10 @@
       },
       "selected": false,
       "locked": false,
-      "mullion": false
+      "mullion": false,
+      "mullionColor": "white",
+      "frame": false,
+      "frameWidth": 0.1
     },
     {
       "type": "Window",
@@ -3263,7 +3550,10 @@
       },
       "selected": false,
       "locked": false,
-      "mullion": false
+      "mullion": false,
+      "mullionColor": "white",
+      "frame": false,
+      "frameWidth": 0.1
     },
     {
       "type": "Window",
@@ -3299,7 +3589,10 @@
       },
       "selected": false,
       "locked": false,
-      "mullion": false
+      "mullion": false,
+      "mullionColor": "white",
+      "frame": false,
+      "frameWidth": 0.1
     },
     {
       "type": "Window",
@@ -3335,7 +3628,10 @@
       },
       "selected": false,
       "locked": false,
-      "mullion": false
+      "mullion": false,
+      "mullionColor": "white",
+      "frame": false,
+      "frameWidth": 0.1
     },
     {
       "type": "Window",
@@ -3371,7 +3667,10 @@
       },
       "selected": false,
       "locked": false,
-      "mullion": false
+      "mullion": false,
+      "mullionColor": "white",
+      "frame": false,
+      "frameWidth": 0.1
     },
     {
       "type": "Window",
@@ -3407,7 +3706,10 @@
       },
       "selected": false,
       "locked": false,
-      "mullion": false
+      "mullion": false,
+      "mullionColor": "white",
+      "frame": false,
+      "frameWidth": 0.1
     },
     {
       "type": "Window",
@@ -3443,7 +3745,10 @@
       },
       "selected": false,
       "locked": false,
-      "mullion": false
+      "mullion": false,
+      "mullionColor": "white",
+      "frame": false,
+      "frameWidth": 0.1
     },
     {
       "type": "Window",
@@ -3479,7 +3784,10 @@
       },
       "selected": false,
       "locked": false,
-      "mullion": false
+      "mullion": false,
+      "mullionColor": "white",
+      "frame": false,
+      "frameWidth": 0.1
     },
     {
       "type": "Window",
@@ -3515,7 +3823,10 @@
       },
       "selected": false,
       "locked": false,
-      "mullion": false
+      "mullion": false,
+      "mullionColor": "white",
+      "frame": false,
+      "frameWidth": 0.1
     },
     {
       "type": "Window",
@@ -3551,7 +3862,10 @@
       },
       "selected": false,
       "locked": false,
-      "mullion": false
+      "mullion": false,
+      "mullionColor": "white",
+      "frame": false,
+      "frameWidth": 0.1
     },
     {
       "type": "Window",
@@ -3587,7 +3901,10 @@
       },
       "selected": false,
       "locked": false,
-      "mullion": false
+      "mullion": false,
+      "mullionColor": "white",
+      "frame": false,
+      "frameWidth": 0.1
     },
     {
       "type": "Window",
@@ -3623,7 +3940,10 @@
       },
       "selected": false,
       "locked": false,
-      "mullion": false
+      "mullion": false,
+      "mullionColor": "white",
+      "frame": false,
+      "frameWidth": 0.1
     },
     {
       "type": "Human",
@@ -3647,7 +3967,7 @@
       "id": "wfWT37sYApxTzWzUncAoR9",
       "selected": false,
       "locked": false,
-      "ly": 0.6
+      "ly": 0.43
     },
     {
       "type": "Roof",
@@ -4006,9 +4326,9 @@
     "showYearlyLightSensorPanel": false,
     "mapType": "roadmap",
     "cameraPosition": [
-      16.63686587441512,
-      -30.960974919121995,
-      7.353899835340717
+      11.137409699675949,
+      -36.881012702818694,
+      13.266054364780363
     ],
     "panCenter": [
       -0.1969062794133504,

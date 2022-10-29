@@ -35,7 +35,7 @@ const WindowShutterColorSelection = ({ setDialogVisible }: { setDialogVisible: (
     return null;
   });
 
-  const [selectedColor, setSelectedColor] = useState<string>(windowElement?.shutter.color ?? 'grey');
+  const [selectedColor, setSelectedColor] = useState<string>(windowElement?.shutter?.color ?? 'grey');
   const [dragEnabled, setDragEnabled] = useState<boolean>(false);
   const [bounds, setBounds] = useState<DraggableBounds>({ left: 0, top: 0, bottom: 0, right: 0 } as DraggableBounds);
   const dragRef = useRef<HTMLDivElement | null>(null);
@@ -49,7 +49,7 @@ const WindowShutterColorSelection = ({ setDialogVisible }: { setDialogVisible: (
 
   useEffect(() => {
     if (windowElement) {
-      setSelectedColor(windowElement?.shutter.color ?? 'grey');
+      setSelectedColor(windowElement?.shutter?.color ?? 'grey');
     }
   }, [windowElement]);
 
@@ -58,7 +58,10 @@ const WindowShutterColorSelection = ({ setDialogVisible }: { setDialogVisible: (
       for (const e of state.elements) {
         if (e.id === id) {
           if (!e.locked) {
-            (e as WindowModel).shutter.color = color;
+            const w = e as WindowModel;
+            if (w.shutter) {
+              w.shutter.color = color;
+            }
           }
           break;
         }
@@ -85,7 +88,7 @@ const WindowShutterColorSelection = ({ setDialogVisible }: { setDialogVisible: (
         const oldValsAll = new Map<string, string>();
         for (const elem of useStore.getState().elements) {
           if (elem.type === ObjectType.Window && !elem.locked) {
-            oldValsAll.set(elem.id, (elem as WindowModel).shutter.color ?? 'grey');
+            oldValsAll.set(elem.id, (elem as WindowModel).shutter?.color ?? 'grey');
           }
         }
         const undoableChangeAll = {
@@ -110,8 +113,11 @@ const WindowShutterColorSelection = ({ setDialogVisible }: { setDialogVisible: (
           setCommonStore((state) => {
             for (const elem of state.elements) {
               if (elem.type === ObjectType.Window && elem.parentId === windowElement.parentId && !elem.locked) {
-                oldValues.set(elem.id, (elem as WindowModel).shutter.color);
-                (elem as WindowModel).shutter.color = value;
+                const w = elem as WindowModel;
+                if (w.shutter) {
+                  oldValues.set(elem.id, w.shutter.color);
+                  w.shutter.color = value;
+                }
               }
             }
           });
@@ -144,7 +150,7 @@ const WindowShutterColorSelection = ({ setDialogVisible }: { setDialogVisible: (
               elem.foundationId === windowElement.foundationId &&
               !windowElement.locked
             ) {
-              oldValsAboveFoundation.set(elem.id, (elem as WindowModel).shutter.color ?? 'grey');
+              oldValsAboveFoundation.set(elem.id, (elem as WindowModel).shutter?.color ?? 'grey');
             }
           }
           const undoableChangeAboveFoundation = {

@@ -44,17 +44,19 @@ const WindowShutterSubMenu = ({ windowId }: { windowId: string }) => {
       for (const e of state.elements) {
         if (e.id === windowId) {
           const w = e as WindowModel;
-          switch (side) {
-            case ShutterSide.left:
-              w.shutter.showLeft = checked;
-              break;
-            case ShutterSide.right:
-              w.shutter.showRight = checked;
-              break;
-            case ShutterSide.both:
-              w.shutter.showLeft = checked;
-              w.shutter.showRight = checked;
-              break;
+          if (w.shutter) {
+            switch (side) {
+              case ShutterSide.left:
+                w.shutter.showLeft = checked;
+                break;
+              case ShutterSide.right:
+                w.shutter.showRight = checked;
+                break;
+              case ShutterSide.both:
+                w.shutter.showLeft = checked;
+                w.shutter.showRight = checked;
+                break;
+            }
           }
           break;
         }
@@ -63,8 +65,8 @@ const WindowShutterSubMenu = ({ windowId }: { windowId: string }) => {
   };
 
   const addUndoable = (checked: boolean, side: ShutterSide) => {
-    let newLeft = window?.shutter.showLeft;
-    let newRight = window?.shutter.showRight;
+    let newLeft = window?.shutter?.showLeft;
+    let newRight = window?.shutter?.showRight;
 
     if (side === ShutterSide.left) {
       newLeft = checked;
@@ -80,8 +82,11 @@ const WindowShutterSubMenu = ({ windowId }: { windowId: string }) => {
         for (const e of state.elements) {
           if (e.id === id) {
             const [showLeft, showRight] = show;
-            (e as WindowModel).shutter.showLeft = showLeft;
-            (e as WindowModel).shutter.showRight = showRight;
+            const w = e as WindowModel;
+            if (w.shutter) {
+              w.shutter.showLeft = showLeft;
+              w.shutter.showRight = showRight;
+            }
             break;
           }
         }
@@ -93,7 +98,7 @@ const WindowShutterSubMenu = ({ windowId }: { windowId: string }) => {
       timestamp: Date.now(),
       selectedElementId: windowId,
       selectedElementType: ObjectType.Window,
-      oldShow: [window?.shutter.showLeft, window?.shutter.showRight],
+      oldShow: [window?.shutter?.showLeft, window?.shutter?.showRight],
       newShow: [newLeft, newRight],
       undo() {
         setWindowShutter(this.selectedElementId, this.oldShow);
@@ -127,7 +132,7 @@ const WindowShutterSubMenu = ({ windowId }: { windowId: string }) => {
 
           <Menu.Item key={'right-shutter'}>
             <Checkbox
-              checked={window ? window?.shutter.showRight : false}
+              checked={window ? window?.shutter?.showRight : false}
               onChange={(e) => {
                 const checked = e.target.checked;
                 addUndoable(checked, ShutterSide.right);
@@ -143,7 +148,7 @@ const WindowShutterSubMenu = ({ windowId }: { windowId: string }) => {
 
           <Menu.Item key={'both-shutters'}>
             <Checkbox
-              checked={window ? window?.shutter.showLeft && window?.shutter.showRight : false}
+              checked={window ? window?.shutter?.showLeft && window?.shutter?.showRight : false}
               onChange={(e) => {
                 const checked = e.target.checked;
                 addUndoable(checked, ShutterSide.both);

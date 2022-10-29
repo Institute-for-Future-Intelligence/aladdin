@@ -310,11 +310,11 @@ export const WallMenu = () => {
 
   return (
     <Menu.ItemGroup>
-      {renderCut()}
+      {renderPaste()}
 
       {renderCopy()}
 
-      {renderPaste()}
+      {renderCut()}
 
       {renderLock()}
 

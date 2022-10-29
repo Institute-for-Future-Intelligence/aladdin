@@ -34,7 +34,7 @@ const WindowShutterWidthInput = ({ setDialogVisible }: { setDialogVisible: (b: b
     return null;
   });
 
-  const [input, setInput] = useState<number>(windowModel?.shutter.width ?? 0.5);
+  const [input, setInput] = useState<number>(windowModel?.shutter?.width ?? 0.5);
   const [dragEnabled, setDragEnabled] = useState<boolean>(false);
   const [bounds, setBounds] = useState<DraggableBounds>({ left: 0, top: 0, bottom: 0, right: 0 } as DraggableBounds);
   const dragRef = useRef<HTMLDivElement | null>(null);
@@ -43,7 +43,7 @@ const WindowShutterWidthInput = ({ setDialogVisible }: { setDialogVisible: (b: b
 
   useEffect(() => {
     if (windowModel) {
-      setInput(windowModel?.shutter.width ?? 0.5);
+      setInput(windowModel?.shutter?.width ?? 0.5);
     }
   }, [windowModel]);
 
@@ -51,7 +51,10 @@ const WindowShutterWidthInput = ({ setDialogVisible }: { setDialogVisible: (b: b
     setCommonStore((state) => {
       for (const e of state.elements) {
         if (e.id === id) {
-          (e as WindowModel).shutter.width = input;
+          const w = e as WindowModel;
+          if (w.shutter) {
+            w.shutter.width = input;
+          }
           break;
         }
       }
@@ -78,8 +81,11 @@ const WindowShutterWidthInput = ({ setDialogVisible }: { setDialogVisible: (b: b
         setCommonStore((state) => {
           for (const e of state.elements) {
             if (e.type === ObjectType.Window && !e.locked) {
-              oldValuesAll.set(e.id, (e as WindowModel).shutter.width);
-              (e as WindowModel).shutter.width = value;
+              const w = e as WindowModel;
+              if (w.shutter) {
+                oldValuesAll.set(e.id, w.shutter.width);
+                w.shutter.width = value;
+              }
             }
           }
         });
@@ -104,8 +110,11 @@ const WindowShutterWidthInput = ({ setDialogVisible }: { setDialogVisible: (b: b
           setCommonStore((state) => {
             for (const elem of state.elements) {
               if (elem.type === ObjectType.Window && elem.parentId === windowModel.parentId && !elem.locked) {
-                oldValues.set(elem.id, (elem as WindowModel).shutter.width);
-                (elem as WindowModel).shutter.width = value;
+                const w = elem as WindowModel;
+                if (w.shutter) {
+                  oldValues.set(elem.id, w.shutter.width);
+                  w.shutter.width = value;
+                }
               }
             }
           });
@@ -135,8 +144,11 @@ const WindowShutterWidthInput = ({ setDialogVisible }: { setDialogVisible: (b: b
           setCommonStore((state) => {
             for (const elem of state.elements) {
               if (elem.type === ObjectType.Window && elem.foundationId === windowModel.foundationId && !elem.locked) {
-                oldValuesAboveFoundation.set(elem.id, (elem as WindowModel).shutter.width);
-                (elem as WindowModel).shutter.width = value;
+                const w = elem as WindowModel;
+                if (w.shutter) {
+                  oldValuesAboveFoundation.set(elem.id, w.shutter.width);
+                  w.shutter.width = value;
+                }
               }
             }
           });
@@ -163,7 +175,7 @@ const WindowShutterWidthInput = ({ setDialogVisible }: { setDialogVisible: (b: b
       default:
         if (windowModel) {
           const updatedWindow = getElementById(windowModel.id) as WindowModel;
-          const oldOverhangLength = updatedWindow.shutter.width ?? windowModel.shutter.width ?? 0.5;
+          const oldOverhangLength = updatedWindow.shutter?.width ?? windowModel.shutter?.width ?? 0.5;
           const undoableChange = {
             name: 'Set Window Shutter Width',
             timestamp: Date.now(),
@@ -202,7 +214,7 @@ const WindowShutterWidthInput = ({ setDialogVisible }: { setDialogVisible: (b: b
   };
 
   const close = () => {
-    setInput(windowModel?.shutter.width ?? 0.5);
+    setInput(windowModel?.shutter?.width ?? 0.5);
     setDialogVisible(false);
   };
 

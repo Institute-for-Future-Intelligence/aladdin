@@ -213,7 +213,7 @@ const WallStructureColorSelection = ({ setDialogVisible }: { setDialogVisible: (
             onMouseOver={() => setDragEnabled(true)}
             onMouseOut={() => setDragEnabled(false)}
           >
-            {i18n.t('wallMenu.StudColor', lang)}
+            {i18n.t('wallMenu.StructureColor', lang)}
           </div>
         }
         footer={[
