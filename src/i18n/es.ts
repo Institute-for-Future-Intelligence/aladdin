@@ -323,6 +323,7 @@ export const i18n_es = {
         DutchGableRoof: 'Dutch Gable Roof',
         GableAndValleyRoof: 'Gable and Valley Roof',
         ClerestoryRoof: 'Clerestory Roof',
+        MonitorRoof: 'Monitor Roof',
         AFrameHouse: 'A-Frame House',
         AllBasicRoofTypes: 'All Basic Roof Types',
       },

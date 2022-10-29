@@ -36,6 +36,7 @@ import butterfly_roof_house from './examples/butterfly_roof_house.json';
 import gable_roof_vs_hip_roof from './examples/gable_roof_vs_hip_roof.json';
 import gable_and_valley_roof from './examples/gable_and_valley_roof.json';
 import clerestory_roof from './examples/clerestory_roof.json';
+import monitor_roof from './examples/monitor_roof.json';
 import colonial_vs_saltbox from './examples/colonial_vs_saltbox.json';
 import gambrel_roof_vs_mansard_roof from './examples/gambrel_roof_vs_mansard_roof.json';
 import white_house from './examples/white_house.json';
@@ -453,6 +454,9 @@ const MainMenu = ({ viewOnly, set2DView, resetView, zoomView, canvas }: MainMenu
         break;
       case 'clerestory_roof':
         input = clerestory_roof;
+        break;
+      case 'monitor_roof':
+        input = monitor_roof;
         break;
       case 'colonial_vs_saltbox':
         input = colonial_vs_saltbox;
@@ -2020,6 +2024,9 @@ const MainMenu = ({ viewOnly, set2DView, resetView, zoomView, canvas }: MainMenu
           </Menu.Item>
           <Menu.Item key="clerestory_roof" onClick={loadFile}>
             {i18n.t('menu.buildingDesignTutorials.ClerestoryRoof', lang)}
+          </Menu.Item>
+          <Menu.Item key="monitor_roof" onClick={loadFile}>
+            {i18n.t('menu.buildingDesignTutorials.MonitorRoof', lang)}
           </Menu.Item>
           <Menu.Item key="a_frame_house" onClick={loadFile}>
             {i18n.t('menu.buildingDesignTutorials.AFrameHouse', lang)}

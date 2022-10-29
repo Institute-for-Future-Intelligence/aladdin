@@ -321,6 +321,7 @@ export const i18n_zh_cn = {
         DutchGableRoof: '荷兰双坡屋顶',
         GableAndValleyRoof: '坡谷屋顶',
         ClerestoryRoof: '天窗屋顶',
+        MonitorRoof: '采光屋顶',
         AFrameHouse: 'A字形房子',
         AllBasicRoofTypes: '所有的基本屋顶类型',
       },

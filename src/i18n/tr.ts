@@ -322,6 +322,7 @@ export const i18n_tr = {
         DutchGableRoof: 'Dutch Gable Roof',
         GableAndValleyRoof: 'Gable and Valley Roof',
         ClerestoryRoof: 'Clerestory Roof',
+        MonitorRoof: 'Monitor Roof',
         AFrameHouse: 'A-Frame House',
         AllBasicRoofTypes: 'Tüm Çatı Tipleri',
       },
