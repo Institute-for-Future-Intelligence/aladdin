@@ -1,7 +1,7 @@
 {
-  "docid": "wpt77kFvYrBm24xkFsWK37",
-  "time": "10/09/2022 03:23 pm",
-  "timestamp": 1665343384289,
+  "docid": "6qCUnUAVq7qn7WTpjF1Xwc",
+  "time": "10/28/2022 09:00 pm",
+  "timestamp": 1667005204347,
   "userid": "QWecNcxhyvP6j6sBN11hBsfZDau1",
   "owner": null,
   "email": null,
@@ -276,12 +276,12 @@
     },
     {
       "type": "Human",
-      "name": "Jaye",
+      "name": "Jean",
       "cx": -1.8741011733558182,
       "cy": -5.8416164272427595,
       "cz": 0.05000000074505806,
-      "lx": 0.6,
-      "lz": 1.65,
+      "lx": 0.65,
+      "lz": 1.8,
       "normal": [
         0,
         1,
@@ -295,7 +295,7 @@
       "parentId": "m7AH7DcnoGzAq9kryBy4RS",
       "id": "3LYQCPYTZ6WYqLSGF4X7Lr",
       "selected": false,
-      "ly": 0.6
+      "ly": 0.55
     },
     {
       "type": "Human",
@@ -303,9 +303,9 @@
       "cx": -4.0157582744754965,
       "cy": 3.8617380009978506,
       "cz": 0.050000000745058504,
-      "lx": 0.6,
-      "ly": 0.6,
-      "lz": 1.4,
+      "lx": 0.43,
+      "ly": 0.43,
+      "lz": 1.5,
       "normal": [
         0,
         0,
@@ -2637,9 +2637,9 @@
     "dailyHeliostatYieldPanelX": 0,
     "showDailyParabolicDishYieldPanel": false,
     "cameraPosition": [
-      -10.807183464306933,
-      -10.433338210411048,
-      2.644417763016519
+      -10.807183464306929,
+      -10.433338210411042,
+      2.64441776301652
     ],
     "showYearlyHeliostatYieldPanel": false,
     "orthographic": false,
