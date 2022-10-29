@@ -7,13 +7,13 @@ import { Euler } from 'three';
 import { ConvexHull } from 'three/examples/jsm/math/ConvexHull.js';
 
 class ConvexGeometry extends THREE.BufferGeometry {
-  constructor(points, dirction, length) {
+  constructor(points, angle, length) {
     super();
 
     const vertices = [];
     const normals = [];
     const uvs = [];
-    const euler = new Euler(0, 0, dirction);
+    const euler = new Euler(0, 0, angle);
 
     const convexHull = new ConvexHull().setFromPoints(points);
 

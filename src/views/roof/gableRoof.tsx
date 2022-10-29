@@ -2,7 +2,7 @@
  * @Copyright 2022. Institute for Future Intelligence, Inc.
  */
 
-import { Extrude, Line, Plane, Sphere } from '@react-three/drei';
+import { Extrude, Line, Plane } from '@react-three/drei';
 import React, { useEffect, useMemo, useRef, useState } from 'react';
 import { GableRoofModel, RoofStructure } from 'src/models/RoofModel';
 import { WallModel } from 'src/models/WallModel';
@@ -1152,7 +1152,12 @@ const RoofSegment = ({
   useEffect(() => {
     if (!meshRef.current) return;
 
-    meshRef.current.geometry = new ConvexGeometry(points, direction, length);
+    try {
+      meshRef.current.geometry = new ConvexGeometry(points, direction, length);
+    } catch (e) {
+      console.log(e);
+      return;
+    }
 
     const [wallLeft, wallRight, ridgeRight, ridgeLeft, wallLeftAfterOverhang] = points;
     const thickness = wallLeftAfterOverhang.z - wallLeft.z;
