@@ -392,7 +392,7 @@
       "mullionWidth": 0.06,
       "mullionSpacing": 3,
       "mullionColor": "#999999",
-      "frame": true,
+      "frame": false,
       "frameWidth": 0.08,
       "color": "#999999",
       "normal": [
@@ -431,7 +431,7 @@
       "mullionWidth": 0.06,
       "mullionSpacing": 2,
       "mullionColor": "#999999",
-      "frame": true,
+      "frame": false,
       "frameWidth": 0.08,
       "color": "#999999",
       "normal": [
@@ -470,7 +470,7 @@
       "mullionWidth": 0.06,
       "mullionSpacing": 2,
       "mullionColor": "#999999",
-      "frame": true,
+      "frame": false,
       "frameWidth": 0.08,
       "color": "#999999",
       "normal": [
@@ -611,7 +611,7 @@
       "mullionWidth": 0.06,
       "mullionSpacing": 2,
       "mullionColor": "#999999",
-      "frame": true,
+      "frame": false,
       "frameWidth": 0.08,
       "color": "#999999",
       "normal": [
@@ -650,7 +650,7 @@
       "mullionWidth": 0.06,
       "mullionSpacing": 2,
       "mullionColor": "#999999",
-      "frame": true,
+      "frame": false,
       "frameWidth": 0.08,
       "color": "#999999",
       "normal": [
@@ -689,7 +689,7 @@
       "mullionWidth": 0.06,
       "mullionSpacing": 3,
       "mullionColor": "#999999",
-      "frame": true,
+      "frame": false,
       "frameWidth": 0.08,
       "color": "#999999",
       "normal": [
@@ -823,7 +823,7 @@
       "mullionWidth": 0.1,
       "mullionSpacing": 2,
       "mullionColor": "#999999",
-      "frame": true,
+      "frame": false,
       "frameWidth": 0.05,
       "selected": false,
       "lineWidth": 0.2,
@@ -859,7 +859,7 @@
       "mullionWidth": 0.06,
       "mullionSpacing": 2,
       "mullionColor": "#999999",
-      "frame": true,
+      "frame": false,
       "frameWidth": 0.08,
       "color": "#999999",
       "normal": [
@@ -898,7 +898,7 @@
       "mullionWidth": 0.06,
       "mullionSpacing": 2,
       "mullionColor": "#999999",
-      "frame": true,
+      "frame": false,
       "frameWidth": 0.08,
       "color": "#999999",
       "normal": [
@@ -937,7 +937,7 @@
       "mullionWidth": 0.06,
       "mullionSpacing": 2,
       "mullionColor": "#999999",
-      "frame": true,
+      "frame": false,
       "frameWidth": 0.08,
       "color": "#999999",
       "normal": [
@@ -976,7 +976,7 @@
       "mullionWidth": 0.06,
       "mullionSpacing": 2,
       "mullionColor": "#999999",
-      "frame": true,
+      "frame": false,
       "frameWidth": 0.08,
       "color": "#999999",
       "normal": [
@@ -1014,7 +1014,7 @@
       "mullionWidth": 0.06,
       "mullionSpacing": 2,
       "mullionColor": "#999999",
-      "frame": true,
+      "frame": false,
       "frameWidth": 0.08,
       "color": "#999999",
       "normal": [
@@ -1052,7 +1052,7 @@
       "mullionWidth": 0.06,
       "mullionSpacing": 2,
       "mullionColor": "#999999",
-      "frame": true,
+      "frame": false,
       "frameWidth": 0.08,
       "color": "#999999",
       "normal": [
@@ -1090,7 +1090,7 @@
       "mullionWidth": 0.06,
       "mullionSpacing": 2,
       "mullionColor": "#999999",
-      "frame": true,
+      "frame": false,
       "frameWidth": 0.08,
       "color": "#999999",
       "normal": [
@@ -1128,7 +1128,7 @@
       "mullionWidth": 0.06,
       "mullionSpacing": 2,
       "mullionColor": "#999999",
-      "frame": true,
+      "frame": false,
       "frameWidth": 0.08,
       "color": "#999999",
       "normal": [
@@ -1166,7 +1166,7 @@
       "mullionWidth": 0.06,
       "mullionSpacing": 2,
       "mullionColor": "#999999",
-      "frame": true,
+      "frame": false,
       "frameWidth": 0.08,
       "color": "#999999",
       "normal": [
@@ -1242,7 +1242,7 @@
       "mullionWidth": 0.1,
       "mullionSpacing": 2,
       "mullionColor": "#999999",
-      "frame": true,
+      "frame": false,
       "frameWidth": 0.05,
       "color": "#999999",
       "normal": [
@@ -1280,7 +1280,7 @@
       "mullionWidth": 0.1,
       "mullionSpacing": 2,
       "mullionColor": "#999999",
-      "frame": true,
+      "frame": false,
       "frameWidth": 0.05,
       "color": "#999999",
       "normal": [
@@ -1318,7 +1318,7 @@
       "mullionWidth": 0.1,
       "mullionSpacing": 2,
       "mullionColor": "#999999",
-      "frame": true,
+      "frame": false,
       "frameWidth": 0.05,
       "color": "#999999",
       "normal": [
@@ -1356,7 +1356,7 @@
       "mullionWidth": 0.1,
       "mullionSpacing": 2,
       "mullionColor": "#999999",
-      "frame": true,
+      "frame": false,
       "frameWidth": 0.05,
       "color": "#999999",
       "normal": [
@@ -1394,7 +1394,7 @@
       "mullionWidth": 0.1,
       "mullionSpacing": 2,
       "mullionColor": "#999999",
-      "frame": true,
+      "frame": false,
       "frameWidth": 0.05,
       "color": "#999999",
       "normal": [
@@ -1432,7 +1432,7 @@
       "mullionWidth": 0.1,
       "mullionSpacing": 2,
       "mullionColor": "#999999",
-      "frame": true,
+      "frame": false,
       "frameWidth": 0.05,
       "color": "#999999",
       "normal": [
@@ -1470,7 +1470,7 @@
       "mullionWidth": 0.1,
       "mullionSpacing": 2,
       "mullionColor": "#999999",
-      "frame": true,
+      "frame": false,
       "frameWidth": 0.05,
       "color": "#999999",
       "normal": [
@@ -1508,7 +1508,7 @@
       "mullionWidth": 0.1,
       "mullionSpacing": 2,
       "mullionColor": "#999999",
-      "frame": true,
+      "frame": false,
       "frameWidth": 0.05,
       "color": "#999999",
       "normal": [
@@ -1546,7 +1546,7 @@
       "mullionWidth": 0.1,
       "mullionSpacing": 2,
       "mullionColor": "#999999",
-      "frame": true,
+      "frame": false,
       "frameWidth": 0.05,
       "color": "#999999",
       "normal": [
@@ -1584,7 +1584,7 @@
       "mullionWidth": 0.1,
       "mullionSpacing": 2,
       "mullionColor": "#999999",
-      "frame": true,
+      "frame": false,
       "frameWidth": 0.05,
       "color": "#999999",
       "normal": [
@@ -1622,7 +1622,7 @@
       "mullionWidth": 0.1,
       "mullionSpacing": 2,
       "mullionColor": "#999999",
-      "frame": true,
+      "frame": false,
       "frameWidth": 0.05,
       "color": "#999999",
       "normal": [
@@ -1660,7 +1660,7 @@
       "mullionWidth": 0.1,
       "mullionSpacing": 2,
       "mullionColor": "#999999",
-      "frame": true,
+      "frame": false,
       "frameWidth": 0.05,
       "color": "#999999",
       "normal": [
@@ -1698,7 +1698,7 @@
       "mullionWidth": 0.1,
       "mullionSpacing": 2,
       "mullionColor": "#999999",
-      "frame": true,
+      "frame": false,
       "frameWidth": 0.05,
       "color": "#999999",
       "normal": [
@@ -1736,7 +1736,7 @@
       "mullionWidth": 0.1,
       "mullionSpacing": 2,
       "mullionColor": "#999999",
-      "frame": true,
+      "frame": false,
       "frameWidth": 0.05,
       "color": "#999999",
       "normal": [
@@ -1774,7 +1774,7 @@
       "mullionWidth": 0.1,
       "mullionSpacing": 2,
       "mullionColor": "#999999",
-      "frame": true,
+      "frame": false,
       "frameWidth": 0.05,
       "color": "#999999",
       "normal": [
@@ -1812,7 +1812,7 @@
       "mullionWidth": 0.1,
       "mullionSpacing": 2,
       "mullionColor": "#999999",
-      "frame": true,
+      "frame": false,
       "frameWidth": 0.05,
       "color": "#999999",
       "normal": [
@@ -1850,7 +1850,7 @@
       "mullionWidth": 0.1,
       "mullionSpacing": 2,
       "mullionColor": "#999999",
-      "frame": true,
+      "frame": false,
       "frameWidth": 0.05,
       "color": "#999999",
       "normal": [
@@ -1888,7 +1888,7 @@
       "mullionWidth": 0.1,
       "mullionSpacing": 2,
       "mullionColor": "#999999",
-      "frame": true,
+      "frame": false,
       "frameWidth": 0.05,
       "color": "#999999",
       "normal": [
@@ -1926,7 +1926,7 @@
       "mullionWidth": 0.1,
       "mullionSpacing": 2,
       "mullionColor": "#999999",
-      "frame": true,
+      "frame": false,
       "frameWidth": 0.05,
       "color": "#999999",
       "normal": [
@@ -1964,7 +1964,7 @@
       "mullionWidth": 0.1,
       "mullionSpacing": 2,
       "mullionColor": "#999999",
-      "frame": true,
+      "frame": false,
       "frameWidth": 0.05,
       "color": "#999999",
       "normal": [
@@ -2002,7 +2002,7 @@
       "mullionWidth": 0.1,
       "mullionSpacing": 2,
       "mullionColor": "#999999",
-      "frame": true,
+      "frame": false,
       "frameWidth": 0.05,
       "color": "#999999",
       "normal": [
@@ -2040,7 +2040,7 @@
       "mullionWidth": 0.1,
       "mullionSpacing": 2,
       "mullionColor": "#999999",
-      "frame": true,
+      "frame": false,
       "frameWidth": 0.05,
       "color": "#999999",
       "normal": [
@@ -2078,7 +2078,7 @@
       "mullionWidth": 0.1,
       "mullionSpacing": 2,
       "mullionColor": "#999999",
-      "frame": true,
+      "frame": false,
       "frameWidth": 0.05,
       "color": "#999999",
       "normal": [
@@ -2116,7 +2116,7 @@
       "mullionWidth": 0.1,
       "mullionSpacing": 2,
       "mullionColor": "#999999",
-      "frame": true,
+      "frame": false,
       "frameWidth": 0.05,
       "color": "#999999",
       "normal": [
@@ -2154,7 +2154,7 @@
       "mullionWidth": 0.1,
       "mullionSpacing": 2,
       "mullionColor": "#999999",
-      "frame": true,
+      "frame": false,
       "frameWidth": 0.05,
       "color": "#999999",
       "normal": [
@@ -2192,7 +2192,7 @@
       "mullionWidth": 0.1,
       "mullionSpacing": 2,
       "mullionColor": "#999999",
-      "frame": true,
+      "frame": false,
       "frameWidth": 0.05,
       "color": "#999999",
       "normal": [
@@ -2230,7 +2230,7 @@
       "mullionWidth": 0.1,
       "mullionSpacing": 2,
       "mullionColor": "#999999",
-      "frame": true,
+      "frame": false,
       "frameWidth": 0.05,
       "color": "#999999",
       "normal": [
@@ -2268,7 +2268,7 @@
       "mullionWidth": 0.1,
       "mullionSpacing": 2,
       "mullionColor": "#999999",
-      "frame": true,
+      "frame": false,
       "frameWidth": 0.05,
       "color": "#999999",
       "normal": [
@@ -2306,7 +2306,7 @@
       "mullionWidth": 0.1,
       "mullionSpacing": 2,
       "mullionColor": "#999999",
-      "frame": true,
+      "frame": false,
       "frameWidth": 0.05,
       "color": "#999999",
       "normal": [
@@ -2344,7 +2344,7 @@
       "mullionWidth": 0.1,
       "mullionSpacing": 2,
       "mullionColor": "#999999",
-      "frame": true,
+      "frame": false,
       "frameWidth": 0.05,
       "color": "#999999",
       "normal": [
@@ -2382,7 +2382,7 @@
       "mullionWidth": 0.1,
       "mullionSpacing": 2,
       "mullionColor": "#999999",
-      "frame": true,
+      "frame": false,
       "frameWidth": 0.05,
       "color": "#999999",
       "normal": [
@@ -2420,7 +2420,7 @@
       "mullionWidth": 0.1,
       "mullionSpacing": 2,
       "mullionColor": "#999999",
-      "frame": true,
+      "frame": false,
       "frameWidth": 0.05,
       "color": "#999999",
       "normal": [
@@ -2458,7 +2458,7 @@
       "mullionWidth": 0.1,
       "mullionSpacing": 2,
       "mullionColor": "#999999",
-      "frame": true,
+      "frame": false,
       "frameWidth": 0.05,
       "color": "#999999",
       "normal": [
@@ -2496,7 +2496,7 @@
       "mullionWidth": 0.1,
       "mullionSpacing": 2,
       "mullionColor": "#999999",
-      "frame": true,
+      "frame": false,
       "frameWidth": 0.05,
       "color": "#999999",
       "normal": [
@@ -2534,7 +2534,7 @@
       "mullionWidth": 0.1,
       "mullionSpacing": 2,
       "mullionColor": "#999999",
-      "frame": true,
+      "frame": false,
       "frameWidth": 0.05,
       "color": "#999999",
       "normal": [
@@ -2572,7 +2572,7 @@
       "mullionWidth": 0.1,
       "mullionSpacing": 2,
       "mullionColor": "#999999",
-      "frame": true,
+      "frame": false,
       "frameWidth": 0.05,
       "color": "#999999",
       "normal": [
@@ -2610,7 +2610,7 @@
       "mullionWidth": 0.1,
       "mullionSpacing": 2,
       "mullionColor": "#999999",
-      "frame": true,
+      "frame": false,
       "frameWidth": 0.05,
       "color": "#999999",
       "normal": [
@@ -2648,7 +2648,7 @@
       "mullionWidth": 0.1,
       "mullionSpacing": 2,
       "mullionColor": "#999999",
-      "frame": true,
+      "frame": false,
       "frameWidth": 0.05,
       "color": "#999999",
       "normal": [
@@ -2686,7 +2686,7 @@
       "mullionWidth": 0.1,
       "mullionSpacing": 2,
       "mullionColor": "#999999",
-      "frame": true,
+      "frame": false,
       "frameWidth": 0.05,
       "color": "#999999",
       "normal": [
@@ -2724,7 +2724,7 @@
       "mullionWidth": 0.1,
       "mullionSpacing": 2,
       "mullionColor": "#999999",
-      "frame": true,
+      "frame": false,
       "frameWidth": 0.05,
       "color": "#999999",
       "normal": [
@@ -2762,7 +2762,7 @@
       "mullionWidth": 0.1,
       "mullionSpacing": 2,
       "mullionColor": "#999999",
-      "frame": true,
+      "frame": false,
       "frameWidth": 0.05,
       "color": "#999999",
       "normal": [
@@ -2800,7 +2800,7 @@
       "mullionWidth": 0.1,
       "mullionSpacing": 2,
       "mullionColor": "#999999",
-      "frame": true,
+      "frame": false,
       "frameWidth": 0.05,
       "color": "#999999",
       "normal": [
@@ -2838,7 +2838,7 @@
       "mullionWidth": 0.1,
       "mullionSpacing": 2,
       "mullionColor": "#999999",
-      "frame": true,
+      "frame": false,
       "frameWidth": 0.05,
       "color": "#999999",
       "normal": [
@@ -2876,7 +2876,7 @@
       "mullionWidth": 0.1,
       "mullionSpacing": 2,
       "mullionColor": "#999999",
-      "frame": true,
+      "frame": false,
       "frameWidth": 0.05,
       "color": "#999999",
       "normal": [
@@ -2914,7 +2914,7 @@
       "mullionWidth": 0.1,
       "mullionSpacing": 2,
       "mullionColor": "#999999",
-      "frame": true,
+      "frame": false,
       "frameWidth": 0.05,
       "color": "#999999",
       "normal": [
@@ -2952,7 +2952,7 @@
       "mullionWidth": 0.1,
       "mullionSpacing": 2,
       "mullionColor": "#999999",
-      "frame": true,
+      "frame": false,
       "frameWidth": 0.05,
       "color": "#999999",
       "normal": [
@@ -2990,7 +2990,7 @@
       "mullionWidth": 0.1,
       "mullionSpacing": 2,
       "mullionColor": "#999999",
-      "frame": true,
+      "frame": false,
       "frameWidth": 0.05,
       "color": "#999999",
       "normal": [
@@ -3028,7 +3028,7 @@
       "mullionWidth": 0.1,
       "mullionSpacing": 2,
       "mullionColor": "#999999",
-      "frame": true,
+      "frame": false,
       "frameWidth": 0.05,
       "color": "#999999",
       "normal": [
@@ -3066,7 +3066,7 @@
       "mullionWidth": 0.1,
       "mullionSpacing": 2,
       "mullionColor": "#999999",
-      "frame": true,
+      "frame": false,
       "frameWidth": 0.05,
       "color": "#999999",
       "normal": [
@@ -3104,7 +3104,7 @@
       "mullionWidth": 0.1,
       "mullionSpacing": 2,
       "mullionColor": "#999999",
-      "frame": true,
+      "frame": false,
       "frameWidth": 0.05,
       "color": "#999999",
       "normal": [
@@ -3142,7 +3142,7 @@
       "mullionWidth": 0.1,
       "mullionSpacing": 2,
       "mullionColor": "#999999",
-      "frame": true,
+      "frame": false,
       "frameWidth": 0.05,
       "color": "#999999",
       "normal": [
@@ -3180,7 +3180,7 @@
       "mullionWidth": 0.1,
       "mullionSpacing": 2,
       "mullionColor": "#999999",
-      "frame": true,
+      "frame": false,
       "frameWidth": 0.05,
       "color": "#999999",
       "normal": [
@@ -3218,7 +3218,7 @@
       "mullionWidth": 0.1,
       "mullionSpacing": 2,
       "mullionColor": "#999999",
-      "frame": true,
+      "frame": false,
       "frameWidth": 0.05,
       "color": "#999999",
       "normal": [
@@ -3256,7 +3256,7 @@
       "mullionWidth": 0.1,
       "mullionSpacing": 2,
       "mullionColor": "#999999",
-      "frame": true,
+      "frame": false,
       "frameWidth": 0.05,
       "color": "#999999",
       "normal": [
@@ -3294,7 +3294,7 @@
       "mullionWidth": 0.1,
       "mullionSpacing": 2,
       "mullionColor": "#999999",
-      "frame": true,
+      "frame": false,
       "frameWidth": 0.05,
       "color": "#999999",
       "normal": [
@@ -3332,7 +3332,7 @@
       "mullionWidth": 0.06,
       "mullionSpacing": 2,
       "mullionColor": "#999999",
-      "frame": true,
+      "frame": false,
       "frameWidth": 0.08,
       "color": "#999999",
       "normal": [
@@ -3370,7 +3370,7 @@
       "mullionWidth": 0.06,
       "mullionSpacing": 2,
       "mullionColor": "#999999",
-      "frame": true,
+      "frame": false,
       "frameWidth": 0.08,
       "color": "#999999",
       "normal": [
@@ -3408,7 +3408,7 @@
       "mullionWidth": 0.06,
       "mullionSpacing": 2,
       "mullionColor": "#999999",
-      "frame": true,
+      "frame": false,
       "frameWidth": 0.08,
       "color": "#999999",
       "normal": [
@@ -3446,7 +3446,7 @@
       "mullionWidth": 0.06,
       "mullionSpacing": 2,
       "mullionColor": "#999999",
-      "frame": true,
+      "frame": false,
       "frameWidth": 0.08,
       "color": "#999999",
       "normal": [
@@ -3484,7 +3484,7 @@
       "mullionWidth": 0.06,
       "mullionSpacing": 2,
       "mullionColor": "#999999",
-      "frame": true,
+      "frame": false,
       "frameWidth": 0.08,
       "color": "#999999",
       "normal": [
@@ -3522,7 +3522,7 @@
       "mullionWidth": 0.06,
       "mullionSpacing": 2,
       "mullionColor": "#999999",
-      "frame": true,
+      "frame": false,
       "frameWidth": 0.08,
       "color": "#999999",
       "normal": [
@@ -3560,7 +3560,7 @@
       "mullionWidth": 0.06,
       "mullionSpacing": 2,
       "mullionColor": "#999999",
-      "frame": true,
+      "frame": false,
       "frameWidth": 0.08,
       "color": "#999999",
       "normal": [
@@ -3598,7 +3598,7 @@
       "mullionWidth": 0.06,
       "mullionSpacing": 2,
       "mullionColor": "#999999",
-      "frame": true,
+      "frame": false,
       "frameWidth": 0.08,
       "color": "#999999",
       "normal": [
@@ -3636,7 +3636,7 @@
       "mullionWidth": 0.06,
       "mullionSpacing": 2,
       "mullionColor": "#999999",
-      "frame": true,
+      "frame": false,
       "frameWidth": 0.08,
       "color": "#999999",
       "normal": [
@@ -3674,7 +3674,7 @@
       "mullionWidth": 0.06,
       "mullionSpacing": 2,
       "mullionColor": "#999999",
-      "frame": true,
+      "frame": false,
       "frameWidth": 0.08,
       "color": "#999999",
       "normal": [
@@ -3712,7 +3712,7 @@
       "mullionWidth": 0.06,
       "mullionSpacing": 2,
       "mullionColor": "#999999",
-      "frame": true,
+      "frame": false,
       "frameWidth": 0.08,
       "color": "#999999",
       "normal": [
@@ -3750,7 +3750,7 @@
       "mullionWidth": 0.06,
       "mullionSpacing": 2,
       "mullionColor": "#999999",
-      "frame": true,
+      "frame": false,
       "frameWidth": 0.08,
       "color": "#999999",
       "normal": [
@@ -3788,7 +3788,7 @@
       "mullionWidth": 0.06,
       "mullionSpacing": 2,
       "mullionColor": "#999999",
-      "frame": true,
+      "frame": false,
       "frameWidth": 0.08,
       "color": "#999999",
       "normal": [
@@ -3826,7 +3826,7 @@
       "mullionWidth": 0.06,
       "mullionSpacing": 2,
       "mullionColor": "#999999",
-      "frame": true,
+      "frame": false,
       "frameWidth": 0.08,
       "color": "#999999",
       "normal": [
@@ -3864,7 +3864,7 @@
       "mullionWidth": 0.06,
       "mullionSpacing": 2,
       "mullionColor": "#999999",
-      "frame": true,
+      "frame": false,
       "frameWidth": 0.08,
       "color": "#999999",
       "normal": [
@@ -3902,7 +3902,7 @@
       "mullionWidth": 0.06,
       "mullionSpacing": 2,
       "mullionColor": "#999999",
-      "frame": true,
+      "frame": false,
       "frameWidth": 0.08,
       "color": "#999999",
       "normal": [
@@ -3940,7 +3940,7 @@
       "mullionWidth": 0.06,
       "mullionSpacing": 2,
       "mullionColor": "#999999",
-      "frame": true,
+      "frame": false,
       "frameWidth": 0.08,
       "color": "#999999",
       "normal": [
@@ -3978,7 +3978,7 @@
       "mullionWidth": 0.06,
       "mullionSpacing": 2,
       "mullionColor": "#999999",
-      "frame": true,
+      "frame": false,
       "frameWidth": 0.08,
       "color": "#999999",
       "normal": [
@@ -4016,7 +4016,7 @@
       "mullionWidth": 0.06,
       "mullionSpacing": 2,
       "mullionColor": "#999999",
-      "frame": true,
+      "frame": false,
       "frameWidth": 0.08,
       "color": "#999999",
       "normal": [
@@ -4054,7 +4054,7 @@
       "mullionWidth": 0.06,
       "mullionSpacing": 2,
       "mullionColor": "#999999",
-      "frame": true,
+      "frame": false,
       "frameWidth": 0.08,
       "color": "#999999",
       "normal": [
@@ -4092,7 +4092,7 @@
       "mullionWidth": 0.06,
       "mullionSpacing": 2,
       "mullionColor": "#999999",
-      "frame": true,
+      "frame": false,
       "frameWidth": 0.08,
       "color": "#999999",
       "normal": [
@@ -4130,7 +4130,7 @@
       "mullionWidth": 0.06,
       "mullionSpacing": 2,
       "mullionColor": "#999999",
-      "frame": true,
+      "frame": false,
       "frameWidth": 0.08,
       "color": "#999999",
       "normal": [
@@ -4168,7 +4168,7 @@
       "mullionWidth": 0.06,
       "mullionSpacing": 2,
       "mullionColor": "#999999",
-      "frame": true,
+      "frame": false,
       "frameWidth": 0.08,
       "color": "#999999",
       "normal": [
@@ -4206,7 +4206,7 @@
       "mullionWidth": 0.06,
       "mullionSpacing": 2,
       "mullionColor": "#999999",
-      "frame": true,
+      "frame": false,
       "frameWidth": 0.08,
       "color": "#999999",
       "normal": [
@@ -4244,7 +4244,7 @@
       "mullionWidth": 0.06,
       "mullionSpacing": 2,
       "mullionColor": "#999999",
-      "frame": true,
+      "frame": false,
       "frameWidth": 0.08,
       "color": "#999999",
       "normal": [
@@ -4282,7 +4282,7 @@
       "mullionWidth": 0.06,
       "mullionSpacing": 2,
       "mullionColor": "#999999",
-      "frame": true,
+      "frame": false,
       "frameWidth": 0.08,
       "color": "#999999",
       "normal": [
@@ -4320,7 +4320,7 @@
       "mullionWidth": 0.06,
       "mullionSpacing": 2,
       "mullionColor": "#999999",
-      "frame": true,
+      "frame": false,
       "frameWidth": 0.08,
       "color": "#999999",
       "normal": [
@@ -4624,7 +4624,7 @@
       "mullionWidth": 0.1,
       "mullionSpacing": 5,
       "mullionColor": "#999999",
-      "frame": true,
+      "frame": false,
       "frameWidth": 0.05,
       "selected": false,
       "lineWidth": 0.2,
@@ -4665,7 +4665,7 @@
       "mullionWidth": 0.1,
       "mullionSpacing": 5,
       "mullionColor": "#999999",
-      "frame": true,
+      "frame": false,
       "frameWidth": 0.05,
       "selected": false,
       "lineWidth": 0.2,
@@ -4700,7 +4700,7 @@
       "mullionWidth": 0.1,
       "mullionSpacing": 5,
       "mullionColor": "#999999",
-      "frame": true,
+      "frame": false,
       "frameWidth": 0.05,
       "color": "#999999",
       "normal": [
@@ -4738,7 +4738,7 @@
       "mullionWidth": 0.1,
       "mullionSpacing": 5,
       "mullionColor": "#999999",
-      "frame": true,
+      "frame": false,
       "frameWidth": 0.05,
       "color": "#999999",
       "normal": [
@@ -4776,7 +4776,7 @@
       "mullionWidth": 0.1,
       "mullionSpacing": 5,
       "mullionColor": "#999999",
-      "frame": true,
+      "frame": false,
       "frameWidth": 0.05,
       "color": "#999999",
       "normal": [
@@ -4814,7 +4814,7 @@
       "mullionWidth": 0.1,
       "mullionSpacing": 5,
       "mullionColor": "#999999",
-      "frame": true,
+      "frame": false,
       "frameWidth": 0.05,
       "color": "#999999",
       "normal": [
@@ -4852,7 +4852,7 @@
       "mullionWidth": 0.1,
       "mullionSpacing": 5,
       "mullionColor": "#999999",
-      "frame": true,
+      "frame": false,
       "frameWidth": 0.05,
       "color": "#999999",
       "normal": [
@@ -4890,7 +4890,7 @@
       "mullionWidth": 0.1,
       "mullionSpacing": 5,
       "mullionColor": "#999999",
-      "frame": true,
+      "frame": false,
       "frameWidth": 0.05,
       "color": "#999999",
       "normal": [
@@ -5128,7 +5128,7 @@
       "mullionWidth": 0.1,
       "mullionSpacing": 2,
       "mullionColor": "#999999",
-      "frame": true,
+      "frame": false,
       "frameWidth": 0.05,
       "color": "#999999",
       "normal": [
@@ -5166,7 +5166,7 @@
       "mullionWidth": 0.1,
       "mullionSpacing": 2,
       "mullionColor": "#999999",
-      "frame": true,
+      "frame": false,
       "frameWidth": 0.05,
       "color": "#999999",
       "normal": [
@@ -5204,7 +5204,7 @@
       "mullionWidth": 0.1,
       "mullionSpacing": 2,
       "mullionColor": "#999999",
-      "frame": true,
+      "frame": false,
       "frameWidth": 0.05,
       "color": "#999999",
       "normal": [
@@ -5242,7 +5242,7 @@
       "mullionWidth": 0.1,
       "mullionSpacing": 2,
       "mullionColor": "#999999",
-      "frame": true,
+      "frame": false,
       "frameWidth": 0.05,
       "color": "#999999",
       "normal": [
@@ -5280,7 +5280,7 @@
       "mullionWidth": 0.1,
       "mullionSpacing": 2,
       "mullionColor": "#999999",
-      "frame": true,
+      "frame": false,
       "frameWidth": 0.05,
       "color": "#999999",
       "normal": [
@@ -5318,7 +5318,7 @@
       "mullionWidth": 0.1,
       "mullionSpacing": 2,
       "mullionColor": "#999999",
-      "frame": true,
+      "frame": false,
       "frameWidth": 0.05,
       "color": "#999999",
       "normal": [
@@ -5356,7 +5356,7 @@
       "mullionWidth": 0.1,
       "mullionSpacing": 2,
       "mullionColor": "#999999",
-      "frame": true,
+      "frame": false,
       "frameWidth": 0.05,
       "color": "#999999",
       "normal": [
@@ -5394,7 +5394,7 @@
       "mullionWidth": 0.1,
       "mullionSpacing": 2,
       "mullionColor": "#999999",
-      "frame": true,
+      "frame": false,
       "frameWidth": 0.05,
       "color": "#999999",
       "normal": [
@@ -5432,7 +5432,7 @@
       "mullionWidth": 0.1,
       "mullionSpacing": 2,
       "mullionColor": "#999999",
-      "frame": true,
+      "frame": false,
       "frameWidth": 0.05,
       "color": "#999999",
       "normal": [
@@ -5470,7 +5470,7 @@
       "mullionWidth": 0.1,
       "mullionSpacing": 2,
       "mullionColor": "#999999",
-      "frame": true,
+      "frame": false,
       "frameWidth": 0.05,
       "color": "#999999",
       "normal": [
@@ -5508,7 +5508,7 @@
       "mullionWidth": 0.1,
       "mullionSpacing": 2,
       "mullionColor": "#999999",
-      "frame": true,
+      "frame": false,
       "frameWidth": 0.05,
       "color": "#999999",
       "normal": [
@@ -5546,7 +5546,7 @@
       "mullionWidth": 0.1,
       "mullionSpacing": 2,
       "mullionColor": "#999999",
-      "frame": true,
+      "frame": false,
       "frameWidth": 0.05,
       "color": "#999999",
       "normal": [
@@ -5584,7 +5584,7 @@
       "mullionWidth": 0.1,
       "mullionSpacing": 2,
       "mullionColor": "#999999",
-      "frame": true,
+      "frame": false,
       "frameWidth": 0.05,
       "color": "#999999",
       "normal": [
@@ -5622,7 +5622,7 @@
       "mullionWidth": 0.1,
       "mullionSpacing": 2,
       "mullionColor": "#999999",
-      "frame": true,
+      "frame": false,
       "frameWidth": 0.05,
       "color": "#999999",
       "normal": [
@@ -5660,7 +5660,7 @@
       "mullionWidth": 0.1,
       "mullionSpacing": 2,
       "mullionColor": "#999999",
-      "frame": true,
+      "frame": false,
       "frameWidth": 0.05,
       "color": "#999999",
       "normal": [
@@ -5698,7 +5698,7 @@
       "mullionWidth": 0.1,
       "mullionSpacing": 2,
       "mullionColor": "#999999",
-      "frame": true,
+      "frame": false,
       "frameWidth": 0.05,
       "color": "#999999",
       "normal": [
@@ -5736,7 +5736,7 @@
       "mullionWidth": 0.1,
       "mullionSpacing": 2,
       "mullionColor": "#999999",
-      "frame": true,
+      "frame": false,
       "frameWidth": 0.05,
       "color": "#999999",
       "normal": [
@@ -5774,7 +5774,7 @@
       "mullionWidth": 0.1,
       "mullionSpacing": 2,
       "mullionColor": "#999999",
-      "frame": true,
+      "frame": false,
       "frameWidth": 0.05,
       "color": "#999999",
       "normal": [
@@ -5812,7 +5812,7 @@
       "mullionWidth": 0.1,
       "mullionSpacing": 2,
       "mullionColor": "#999999",
-      "frame": true,
+      "frame": false,
       "frameWidth": 0.05,
       "color": "#999999",
       "normal": [
@@ -5850,7 +5850,7 @@
       "mullionWidth": 0.1,
       "mullionSpacing": 2,
       "mullionColor": "#999999",
-      "frame": true,
+      "frame": false,
       "frameWidth": 0.05,
       "color": "#999999",
       "normal": [
@@ -5888,7 +5888,7 @@
       "mullionWidth": 0.1,
       "mullionSpacing": 2,
       "mullionColor": "#999999",
-      "frame": true,
+      "frame": false,
       "frameWidth": 0.05,
       "color": "#999999",
       "normal": [
@@ -5926,7 +5926,7 @@
       "mullionWidth": 0.1,
       "mullionSpacing": 2,
       "mullionColor": "#999999",
-      "frame": true,
+      "frame": false,
       "frameWidth": 0.05,
       "color": "#999999",
       "normal": [
@@ -5964,7 +5964,7 @@
       "mullionWidth": 0.1,
       "mullionSpacing": 2,
       "mullionColor": "#999999",
-      "frame": true,
+      "frame": false,
       "frameWidth": 0.05,
       "color": "#999999",
       "normal": [
@@ -6002,7 +6002,7 @@
       "mullionWidth": 0.1,
       "mullionSpacing": 2,
       "mullionColor": "#999999",
-      "frame": true,
+      "frame": false,
       "frameWidth": 0.05,
       "color": "#999999",
       "normal": [
@@ -6040,7 +6040,7 @@
       "mullionWidth": 0.1,
       "mullionSpacing": 2,
       "mullionColor": "#999999",
-      "frame": true,
+      "frame": false,
       "frameWidth": 0.05,
       "color": "#999999",
       "normal": [
@@ -6078,7 +6078,7 @@
       "mullionWidth": 0.1,
       "mullionSpacing": 2,
       "mullionColor": "#999999",
-      "frame": true,
+      "frame": false,
       "frameWidth": 0.05,
       "color": "#999999",
       "normal": [
@@ -6116,7 +6116,7 @@
       "mullionWidth": 0.1,
       "mullionSpacing": 2,
       "mullionColor": "#999999",
-      "frame": true,
+      "frame": false,
       "frameWidth": 0.05,
       "color": "#999999",
       "normal": [
@@ -6154,7 +6154,7 @@
       "mullionWidth": 0.1,
       "mullionSpacing": 2,
       "mullionColor": "#999999",
-      "frame": true,
+      "frame": false,
       "frameWidth": 0.05,
       "color": "#999999",
       "normal": [
@@ -6192,7 +6192,7 @@
       "mullionWidth": 0.1,
       "mullionSpacing": 2,
       "mullionColor": "#999999",
-      "frame": true,
+      "frame": false,
       "frameWidth": 0.05,
       "color": "#999999",
       "normal": [
@@ -6230,7 +6230,7 @@
       "mullionWidth": 0.1,
       "mullionSpacing": 2,
       "mullionColor": "#999999",
-      "frame": true,
+      "frame": false,
       "frameWidth": 0.05,
       "color": "#999999",
       "normal": [
@@ -6268,7 +6268,7 @@
       "mullionWidth": 0.1,
       "mullionSpacing": 2,
       "mullionColor": "#999999",
-      "frame": true,
+      "frame": false,
       "frameWidth": 0.05,
       "color": "#999999",
       "normal": [
@@ -6306,7 +6306,7 @@
       "mullionWidth": 0.1,
       "mullionSpacing": 2,
       "mullionColor": "#999999",
-      "frame": true,
+      "frame": false,
       "frameWidth": 0.05,
       "color": "#999999",
       "normal": [
@@ -6344,7 +6344,7 @@
       "mullionWidth": 0.1,
       "mullionSpacing": 2,
       "mullionColor": "#999999",
-      "frame": true,
+      "frame": false,
       "frameWidth": 0.05,
       "color": "#999999",
       "normal": [
@@ -6382,7 +6382,7 @@
       "mullionWidth": 0.1,
       "mullionSpacing": 2,
       "mullionColor": "#999999",
-      "frame": true,
+      "frame": false,
       "frameWidth": 0.05,
       "color": "#999999",
       "normal": [
@@ -6420,7 +6420,7 @@
       "mullionWidth": 0.1,
       "mullionSpacing": 2,
       "mullionColor": "#999999",
-      "frame": true,
+      "frame": false,
       "frameWidth": 0.05,
       "color": "#999999",
       "normal": [
@@ -6458,7 +6458,7 @@
       "mullionWidth": 0.1,
       "mullionSpacing": 2,
       "mullionColor": "#999999",
-      "frame": true,
+      "frame": false,
       "frameWidth": 0.05,
       "color": "#999999",
       "normal": [
@@ -6496,7 +6496,7 @@
       "mullionWidth": 0.1,
       "mullionSpacing": 2,
       "mullionColor": "#999999",
-      "frame": true,
+      "frame": false,
       "frameWidth": 0.05,
       "color": "#999999",
       "normal": [
@@ -6534,7 +6534,7 @@
       "mullionWidth": 0.1,
       "mullionSpacing": 2,
       "mullionColor": "#999999",
-      "frame": true,
+      "frame": false,
       "frameWidth": 0.05,
       "color": "#999999",
       "normal": [
@@ -6572,7 +6572,7 @@
       "mullionWidth": 0.1,
       "mullionSpacing": 2,
       "mullionColor": "#999999",
-      "frame": true,
+      "frame": false,
       "frameWidth": 0.05,
       "color": "#999999",
       "normal": [
@@ -6610,7 +6610,7 @@
       "mullionWidth": 0.1,
       "mullionSpacing": 2,
       "mullionColor": "#999999",
-      "frame": true,
+      "frame": false,
       "frameWidth": 0.05,
       "color": "#999999",
       "normal": [
@@ -6648,7 +6648,7 @@
       "mullionWidth": 0.1,
       "mullionSpacing": 2,
       "mullionColor": "#999999",
-      "frame": true,
+      "frame": false,
       "frameWidth": 0.05,
       "color": "#999999",
       "normal": [
@@ -6686,7 +6686,7 @@
       "mullionWidth": 0.1,
       "mullionSpacing": 2,
       "mullionColor": "#999999",
-      "frame": true,
+      "frame": false,
       "frameWidth": 0.05,
       "color": "#999999",
       "normal": [
@@ -6724,7 +6724,7 @@
       "mullionWidth": 0.1,
       "mullionSpacing": 2,
       "mullionColor": "#999999",
-      "frame": true,
+      "frame": false,
       "frameWidth": 0.05,
       "color": "#999999",
       "normal": [
@@ -6762,7 +6762,7 @@
       "mullionWidth": 0.1,
       "mullionSpacing": 2,
       "mullionColor": "#999999",
-      "frame": true,
+      "frame": false,
       "frameWidth": 0.05,
       "color": "#999999",
       "normal": [
@@ -6800,7 +6800,7 @@
       "mullionWidth": 0.1,
       "mullionSpacing": 2,
       "mullionColor": "#999999",
-      "frame": true,
+      "frame": false,
       "frameWidth": 0.05,
       "color": "#999999",
       "normal": [
@@ -6838,7 +6838,7 @@
       "mullionWidth": 0.1,
       "mullionSpacing": 2,
       "mullionColor": "#999999",
-      "frame": true,
+      "frame": false,
       "frameWidth": 0.05,
       "color": "#999999",
       "normal": [
@@ -6876,7 +6876,7 @@
       "mullionWidth": 0.1,
       "mullionSpacing": 2,
       "mullionColor": "#999999",
-      "frame": true,
+      "frame": false,
       "frameWidth": 0.05,
       "color": "#999999",
       "normal": [
@@ -6914,7 +6914,7 @@
       "mullionWidth": 0.1,
       "mullionSpacing": 2,
       "mullionColor": "#999999",
-      "frame": true,
+      "frame": false,
       "frameWidth": 0.05,
       "color": "#999999",
       "normal": [
@@ -6952,7 +6952,7 @@
       "mullionWidth": 0.1,
       "mullionSpacing": 2,
       "mullionColor": "#999999",
-      "frame": true,
+      "frame": false,
       "frameWidth": 0.05,
       "color": "#999999",
       "normal": [
@@ -6990,7 +6990,7 @@
       "mullionWidth": 0.1,
       "mullionSpacing": 2,
       "mullionColor": "#999999",
-      "frame": true,
+      "frame": false,
       "frameWidth": 0.05,
       "color": "#999999",
       "normal": [
@@ -7028,7 +7028,7 @@
       "mullionWidth": 0.1,
       "mullionSpacing": 2,
       "mullionColor": "#999999",
-      "frame": true,
+      "frame": false,
       "frameWidth": 0.05,
       "color": "#999999",
       "normal": [
@@ -7066,7 +7066,7 @@
       "mullionWidth": 0.1,
       "mullionSpacing": 2,
       "mullionColor": "#999999",
-      "frame": true,
+      "frame": false,
       "frameWidth": 0.05,
       "color": "#999999",
       "normal": [
@@ -7104,7 +7104,7 @@
       "mullionWidth": 0.1,
       "mullionSpacing": 2,
       "mullionColor": "#999999",
-      "frame": true,
+      "frame": false,
       "frameWidth": 0.05,
       "color": "#999999",
       "normal": [
@@ -7142,7 +7142,7 @@
       "mullionWidth": 0.1,
       "mullionSpacing": 2,
       "mullionColor": "#999999",
-      "frame": true,
+      "frame": false,
       "frameWidth": 0.05,
       "color": "#999999",
       "normal": [
@@ -7180,7 +7180,7 @@
       "mullionWidth": 0.1,
       "mullionSpacing": 2,
       "mullionColor": "#999999",
-      "frame": true,
+      "frame": false,
       "frameWidth": 0.05,
       "color": "#999999",
       "normal": [
@@ -7218,7 +7218,7 @@
       "mullionWidth": 0.1,
       "mullionSpacing": 2,
       "mullionColor": "#999999",
-      "frame": true,
+      "frame": false,
       "frameWidth": 0.05,
       "color": "#999999",
       "normal": [
@@ -7516,7 +7516,7 @@
       "mullionWidth": 0.1,
       "mullionSpacing": 5,
       "mullionColor": "#999999",
-      "frame": true,
+      "frame": false,
       "frameWidth": 0.05,
       "color": "#999999",
       "normal": [
@@ -7554,7 +7554,7 @@
       "mullionWidth": 0.1,
       "mullionSpacing": 5,
       "mullionColor": "#999999",
-      "frame": true,
+      "frame": false,
       "frameWidth": 0.05,
       "color": "#999999",
       "normal": [
@@ -7652,7 +7652,7 @@
       "mullionWidth": 0.1,
       "mullionSpacing": 5,
       "mullionColor": "#999999",
-      "frame": true,
+      "frame": false,
       "frameWidth": 0.05,
       "color": "#999999",
       "normal": [
@@ -7690,7 +7690,7 @@
       "mullionWidth": 0.1,
       "mullionSpacing": 5,
       "mullionColor": "#999999",
-      "frame": true,
+      "frame": false,
       "frameWidth": 0.05,
       "color": "#999999",
       "normal": [
@@ -7728,7 +7728,7 @@
       "mullionWidth": 0.1,
       "mullionSpacing": 5,
       "mullionColor": "#999999",
-      "frame": true,
+      "frame": false,
       "frameWidth": 0.05,
       "color": "#999999",
       "normal": [
@@ -7766,7 +7766,7 @@
       "mullionWidth": 0.1,
       "mullionSpacing": 5,
       "mullionColor": "#999999",
-      "frame": true,
+      "frame": false,
       "frameWidth": 0.05,
       "color": "#999999",
       "normal": [
@@ -7804,7 +7804,7 @@
       "mullionWidth": 0.1,
       "mullionSpacing": 5,
       "mullionColor": "#999999",
-      "frame": true,
+      "frame": false,
       "frameWidth": 0.05,
       "color": "#999999",
       "normal": [
@@ -7842,7 +7842,7 @@
       "mullionWidth": 0.1,
       "mullionSpacing": 5,
       "mullionColor": "#999999",
-      "frame": true,
+      "frame": false,
       "frameWidth": 0.05,
       "color": "#999999",
       "normal": [
@@ -7880,7 +7880,7 @@
       "mullionWidth": 0.1,
       "mullionSpacing": 5,
       "mullionColor": "#999999",
-      "frame": true,
+      "frame": false,
       "frameWidth": 0.05,
       "color": "#999999",
       "normal": [
@@ -7918,7 +7918,7 @@
       "mullionWidth": 0.1,
       "mullionSpacing": 5,
       "mullionColor": "#999999",
-      "frame": true,
+      "frame": false,
       "frameWidth": 0.05,
       "color": "#999999",
       "normal": [
@@ -7956,7 +7956,7 @@
       "mullionWidth": 0.1,
       "mullionSpacing": 5,
       "mullionColor": "#999999",
-      "frame": true,
+      "frame": false,
       "frameWidth": 0.05,
       "color": "#999999",
       "normal": [
@@ -7994,7 +7994,7 @@
       "mullionWidth": 0.1,
       "mullionSpacing": 5,
       "mullionColor": "#999999",
-      "frame": true,
+      "frame": false,
       "frameWidth": 0.05,
       "color": "#999999",
       "normal": [

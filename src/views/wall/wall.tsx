@@ -1448,7 +1448,7 @@ const Wall = (wallModel: WallModel) => {
                   color={transparent ? color : 'white'}
                   transparent={transparent}
                   opacity={opacity}
-                  side={DoubleSide}
+                  side={BackSide}
                 />
               </mesh>
 

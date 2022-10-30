@@ -3,7 +3,7 @@
  */
 
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
-import { Color, DoubleSide, MeshStandardMaterial } from 'three';
+import { Color, DoubleSide, FrontSide, MeshStandardMaterial } from 'three';
 import { Box, Plane } from '@react-three/drei';
 import { WindowModel } from 'src/models/WindowModel';
 import { CommonStoreState, useStore } from 'src/stores/common';
@@ -15,7 +15,7 @@ import { DEFAULT_WINDOW_SHINESS, HALF_PI, LOCKED_ELEMENT_SELECTION_COLOR } from 
 import { ThreeEvent } from '@react-three/fiber';
 import WindowFrame from './windowFrame';
 
-const material = new MeshStandardMaterial({ color: 'white', side: DoubleSide });
+const material = new MeshStandardMaterial({ color: 'white', side: FrontSide });
 export const defaultShutter = { showLeft: false, showRight: false, color: 'grey', width: 0.5 };
 
 interface ShutterProps {
