@@ -3,19 +3,33 @@
  */
 
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
-import { Color, DoubleSide, FrontSide, MeshStandardMaterial } from 'three';
-import { Box, Plane } from '@react-three/drei';
-import { WindowModel } from 'src/models/WindowModel';
+import { Color, DoubleSide, FrontSide, MeshStandardMaterial, Shape } from 'three';
+import { Box } from '@react-three/drei';
+import { WindowModel, WindowStyle } from 'src/models/WindowModel';
 import { CommonStoreState, useStore } from 'src/stores/common';
 import { ObjectType } from 'src/types';
 import * as Selector from 'src/stores/selector';
-import WindowWireFrame from './windowWireFrame';
 import WindowHandleWrapper from './windowHandleWrapper';
-import { DEFAULT_WINDOW_SHINESS, HALF_PI, LOCKED_ELEMENT_SELECTION_COLOR } from 'src/constants';
+import { DEFAULT_WINDOW_SHINESS } from 'src/constants';
 import { ThreeEvent } from '@react-three/fiber';
-import WindowFrame from './windowFrame';
+import RectangleWindow from './rectangleWindow';
+import { WallModel } from 'src/models/WallModel';
 
 export const defaultShutter = { showLeft: false, showRight: false, color: 'grey', width: 0.5 };
+
+export type MullionDataType = {
+  showMullion: boolean;
+  width: number;
+  spacingX: number;
+  spacingY: number;
+  color: string;
+};
+
+export type FrameDataType = {
+  showFrame: boolean;
+  width: number;
+  color: string;
+};
 
 interface ShutterProps {
   cx: number;
@@ -125,7 +139,7 @@ const Window = (windowModel: WindowModel) => {
     locked,
     lineWidth = 0.2,
     lineColor = 'black',
-    mullion = true,
+    mullion: showMullion = true,
     mullionWidth = 0.06,
     mullionSpacing = 0.5,
     tint = '#73D8FF',
@@ -135,6 +149,7 @@ const Window = (windowModel: WindowModel) => {
     frame = false,
     color = 'white',
     frameWidth = 0.1,
+    style = WindowStyle.Default,
   } = windowModel;
 
   // legacy problem
@@ -170,7 +185,7 @@ const Window = (windowModel: WindowModel) => {
     return null;
   }, []);
 
-  const parent = useStore(parentSelector);
+  const parent = useStore(parentSelector) as WallModel;
 
   useEffect(() => {
     if (parent) {
@@ -229,6 +244,78 @@ const Window = (windowModel: WindowModel) => {
   const shutterLength = useMemo(() => shutter?.width ?? 0.5 * wlx, [wlx, shutter]);
   const shutterPosX = useMemo(() => ((shutterLength + wlx) / 2) * 1.05, [wlx, shutterLength]);
 
+  const glassMaterial = useMemo(
+    () => (
+      <meshPhongMaterial
+        specular={new Color('white')}
+        shininess={windowShiness ?? DEFAULT_WINDOW_SHINESS}
+        color={tint}
+        side={DoubleSide}
+        opacity={opacity}
+        transparent={true}
+      />
+    ),
+    [windowShiness, tint, opacity],
+  );
+
+  const dimensionData = useMemo(() => [wlx, wly, wlz], [wlx, wly, wlz]);
+
+  const positionData = useMemo(() => [wcx, wcy, wcz], [wcx, wcy, wcz]);
+
+  const mullionData = useMemo(
+    () =>
+      ({
+        showMullion,
+        width: mullionWidth,
+        spacingX: mullionSpacing,
+        spacingY: mullionSpacing,
+        color: mullionColor,
+      } as MullionDataType),
+    [showMullion, mullionWidth, mullionSpacing, mullionColor],
+  );
+
+  const frameData = useMemo(() => ({ showFrame: frame, width: frameWidth, color } as FrameDataType), []);
+
+  const renderWindow = () => {
+    switch (style) {
+      case WindowStyle.Default:
+        return (
+          <RectangleWindow
+            dimension={dimensionData}
+            position={positionData}
+            mullionData={mullionData}
+            frameData={frameData}
+            glassMaterial={glassMaterial}
+          />
+        );
+      case WindowStyle.Arch:
+        return null;
+    }
+  };
+
+  // const shape = useMemo(() => {
+  //   const s = new Shape();
+  //   const hx = wlx / 2;
+  //   const hy = wlz / 2;
+
+  //   s.moveTo(-hx, -hy);
+
+  //   s.lineTo(hx, -hy);
+
+  //   if (hx < hy) {
+  //     s.lineTo(hx, hy - hx);
+  //     s.quadraticCurveTo(hx, hy, 0, hy);
+  //     s.quadraticCurveTo(-hx, hy, -hx, hy - hx);
+  //   } else {
+  //     s.lineTo(hx, 0);
+  //     s.quadraticCurveTo(hx, hy, 0, hy);
+  //     s.quadraticCurveTo(-hx, hy, -hx, 0);
+  //   }
+  //   s.lineTo(-hx, -hy);
+
+  //   return s;
+  // }, [wlx, wlz]);
+
   return (
     <group
       key={id}
@@ -237,30 +324,14 @@ const Window = (windowModel: WindowModel) => {
       onPointerDown={onPointerDown}
       onContextMenu={onContextMenu}
     >
-      <group position={[0, wcy, 0]}>
-        <Plane name={'window ' + id} args={[wlx, wlz]} rotation={[Math.PI / 2, 0, 0]}>
-          <meshPhongMaterial
-            specular={new Color('white')}
-            shininess={windowShiness ?? DEFAULT_WINDOW_SHINESS}
-            color={tint}
-            side={DoubleSide}
-            opacity={opacity}
-            transparent={true}
-          />
-        </Plane>
+      {renderWindow()}
 
-        {/* wireframes */}
-        <WindowWireFrame
-          lx={wlx}
-          lz={wlz}
-          showMullion={mullion}
-          mullionWidth={mullionWidth}
-          mullionSpacing={mullionSpacing}
-          mullionColor={mullionColor}
-          lineColor={locked && selected ? LOCKED_ELEMENT_SELECTION_COLOR : lineColor}
-          lineWidth={selected && locked ? 2 : lineWidth}
-        />
-      </group>
+      {/* <mesh rotation={[HALF_PI, 0, 0]}>
+        <shapeBufferGeometry args={[shape]} />
+        {windowMaterial}
+      </mesh> */}
+
+      {/* todo: wireframe when locked */}
 
       {shutter && (
         <Shutter
@@ -273,40 +344,6 @@ const Window = (windowModel: WindowModel) => {
           spacing={frame ? frameWidth / 2 : 0}
         />
       )}
-
-      {frame && <WindowFrame lx={wlx} ly={wcy} lz={wlz} width={frameWidth} color={color} />}
-
-      <Plane
-        args={[wly, wlz]}
-        position={[-wlx / 2, wly / 2, 0]}
-        rotation={[HALF_PI, HALF_PI, 0]}
-        material={material}
-        receiveShadow={shadowEnabled}
-        castShadow={shadowEnabled}
-      />
-      <Plane
-        args={[wly, wlz]}
-        position={[wlx / 2, wly / 2, 0]}
-        rotation={[HALF_PI, -HALF_PI, 0]}
-        material={material}
-        receiveShadow={shadowEnabled}
-        castShadow={shadowEnabled}
-      />
-      <Plane
-        args={[wlx, wly]}
-        position={[0, wly / 2, wlz / 2]}
-        rotation={[Math.PI, 0, 0]}
-        material={material}
-        receiveShadow={shadowEnabled}
-        castShadow={shadowEnabled}
-      />
-      <Plane
-        args={[wlx, wly]}
-        position={[0, wly / 2, -wlz / 2]}
-        material={material}
-        receiveShadow={shadowEnabled}
-        castShadow={shadowEnabled}
-      />
 
       {/* handles */}
       {selected && !locked && <WindowHandleWrapper lx={wlx} lz={wlz} />}

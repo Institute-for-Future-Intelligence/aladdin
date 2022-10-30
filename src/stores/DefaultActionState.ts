@@ -17,6 +17,7 @@ import {
 } from '../types';
 import { WallStructure } from '../models/WallModel';
 import { defaultShutter } from '../views/window/window';
+import { WindowStyle } from 'src/models/WindowModel';
 
 export class DefaultActionState implements ActionState {
   // Needed for immer drafting to work properly: https://immerjs.github.io/immer/docs/complex-objects
@@ -64,6 +65,7 @@ export class DefaultActionState implements ActionState {
   windowShutterWidth: number;
   windowFrame: boolean;
   windowFrameWidth: number;
+  windowStyle: WindowStyle;
 
   solarPanelModelName: string;
   solarPanelOrientation: Orientation;
@@ -152,6 +154,7 @@ export class DefaultActionState implements ActionState {
     this.windowMullionColor = 'white';
     this.windowFrame = false;
     this.windowFrameWidth = 0.1;
+    this.windowStyle = WindowStyle.Default;
     // I worry about this using Shutter objects may cause default to be accidentally overwritten.
     this.windowShutterLeft = defaultShutter.showLeft;
     this.windowShutterRight = defaultShutter.showRight;

@@ -38,7 +38,7 @@ import {
   RoofType,
 } from './RoofModel';
 import { GROUND_ID } from '../constants';
-import { Shutter, WindowModel } from './WindowModel';
+import { Shutter, WindowModel, WindowStyle } from './WindowModel';
 import { Point2 } from './Point2';
 import { PolygonModel } from './PolygonModel';
 import { Util } from '../Util';
@@ -607,6 +607,7 @@ export class ElementModelFactory {
     shutter: Shutter,
     frame: boolean,
     frameWidth: number,
+    style: WindowStyle,
     cx: number,
     cy: number,
     cz?: number,
@@ -638,6 +639,7 @@ export class ElementModelFactory {
       mullionColor: mullionColor,
       frame: frame,
       frameWidth: frameWidth,
+      style: style,
       selected: true,
       lineWidth: 0.2,
       lineColor: 'black',

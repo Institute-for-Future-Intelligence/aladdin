@@ -1072,6 +1072,7 @@ const Wall = (wallModel: WallModel) => {
               shutter,
               actionState.windowFrame,
               actionState.windowFrameWidth,
+              actionState.windowStyle,
               relativePos.x / lx,
               0,
               relativePos.z / lz,
@@ -1404,6 +1405,8 @@ const Wall = (wallModel: WallModel) => {
     const rightLength = Math.hypot(rightX, wallRightHeight - wallCenterHeight);
     const rightRotationY = -Math.atan2(wallRightHeight - wallCenterHeight, rightX);
 
+    const topBarThicnkess = ly;
+
     return (
       <group name={`wall pillar group ${id}`} position={[0, -ly / 2, 0]}>
         {structureUnitArray.map((pos, idx) => {
@@ -1429,8 +1432,8 @@ const Wall = (wallModel: WallModel) => {
           );
         })}
         <Box
-          args={[leftLength, structureWidth, ly]}
-          position={[-hx + leftX / 2, hy, (wallLeftHeight + wallCenterHeight) / 2 - hz - ly / 2]}
+          args={[leftLength, structureWidth, topBarThicnkess]}
+          position={[-hx + leftX / 2, hy, (wallLeftHeight + wallCenterHeight) / 2 - hz - topBarThicnkess / 2]}
           rotation={[0, leftRotationY, 0]}
           castShadow={shadowEnabled}
           receiveShadow={shadowEnabled}
@@ -1440,8 +1443,8 @@ const Wall = (wallModel: WallModel) => {
           <meshStandardMaterial color={structureColor} />
         </Box>
         <Box
-          args={[rightLength, structureWidth, ly]}
-          position={[hx - rightX / 2, hy, (wallRightHeight + wallCenterHeight) / 2 - hz - ly / 2]}
+          args={[rightLength, structureWidth, topBarThicnkess]}
+          position={[hx - rightX / 2, hy, (wallRightHeight + wallCenterHeight) / 2 - hz - topBarThicnkess / 2]}
           rotation={[0, rightRotationY, 0]}
           castShadow={shadowEnabled}
           receiveShadow={shadowEnabled}

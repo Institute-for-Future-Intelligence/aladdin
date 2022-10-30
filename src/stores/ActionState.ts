@@ -14,6 +14,7 @@ import {
   WallTexture,
 } from '../types';
 import { WallStructure } from '../models/WallModel';
+import { WindowStyle } from 'src/models/WindowModel';
 
 export interface ActionState {
   humanName: HumanName;
@@ -58,6 +59,7 @@ export interface ActionState {
   windowColor: string; // frame color
   windowFrame: boolean;
   windowFrameWidth: number;
+  windowStyle: WindowStyle;
 
   solarPanelModelName: string;
   solarPanelOrientation: Orientation;

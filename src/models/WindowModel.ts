@@ -18,6 +18,8 @@ export interface WindowModel extends ElementModel {
   // frameColor is using color
   frame: boolean;
   frameWidth: number;
+
+  style: WindowStyle;
 }
 
 export interface Shutter {
@@ -25,4 +27,10 @@ export interface Shutter {
   showRight: boolean;
   color: string;
   width: number;
+}
+
+export enum WindowStyle {
+  Default = 'Default',
+  Arch = 'Arch',
+  Circle = 'Circle',
 }
