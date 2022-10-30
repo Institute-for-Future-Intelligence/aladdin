@@ -253,7 +253,7 @@ const Window = (windowModel: WindowModel) => {
           mullionSpacing={mullionSpacing}
           mullionColor={mullionColor}
           lineColor={locked && selected ? LOCKED_ELEMENT_SELECTION_COLOR : lineColor}
-          lineWidth={selected && locked ? 0.5 : lineWidth}
+          lineWidth={selected && locked ? 2 : lineWidth}
         />
       </group>
 

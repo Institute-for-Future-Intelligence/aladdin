@@ -155,6 +155,8 @@ export const updateAllElementLocks = (state: CommonStoreState) => state.updateAl
 
 export const updateElementLockByFoundationId = (state: CommonStoreState) => state.updateElementLockByFoundationId;
 
+export const updateElementLockByParentId = (state: CommonStoreState) => state.updateElementLockByParentId;
+
 export const updateElementLockById = (state: CommonStoreState) => state.updateElementLockById;
 
 export const updateElementReferenceById = (state: CommonStoreState) => state.updateElementReferenceById;

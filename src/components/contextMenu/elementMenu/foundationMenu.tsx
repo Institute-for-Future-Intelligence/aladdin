@@ -108,7 +108,8 @@ export const FoundationMenu = () => {
   const [solarPanelTiltAngleGaWizardVisible, setSolarPanelTiltAngleGaWizardVisible] = useState(false);
   const [solarPanelTiltAnglePsoWizardVisible, setSolarPanelTiltAnglePsoWizardVisible] = useState(false);
 
-  const counter = foundation ? countAllOffspringsByType(foundation.id) : new ElementCounter();
+  const counterAll = foundation ? countAllOffspringsByType(foundation.id, true) : new ElementCounter();
+  const counterUnlocked = foundation ? countAllOffspringsByType(foundation.id, false) : new ElementCounter();
   const lang = { lng: language };
 
   useEffect(() => {
@@ -171,37 +172,43 @@ export const FoundationMenu = () => {
           </Checkbox>
         </Menu.Item>
 
-        {counter.gotSome() && contextMenuObjectType && (
-          <SubMenu key={'lock-unlock'} title={i18n.t('word.Elements', lang)} style={{ paddingLeft: '24px' }}>
-            <Menu.Item
-              key={'lock-all-offsprings'}
-              onClick={() => {
-                const oldLocks = new Map<string, boolean>();
-                for (const elem of elements) {
-                  if (elem.foundationId === foundation.id || elem.id === foundation.id) {
-                    oldLocks.set(elem.id, !!elem.locked);
-                  }
-                }
-                updateElementLockByFoundationId(foundation.id, true);
-                const undoableLockAllElements = {
-                  name: 'Lock All Offsprings',
-                  timestamp: Date.now(),
-                  oldValues: oldLocks,
-                  newValue: true,
-                  undo: () => {
-                    for (const [id, locked] of undoableLockAllElements.oldValues.entries()) {
-                      updateElementLockById(id, locked as boolean);
+        {counterAll.gotSome() && contextMenuObjectType && (
+          <SubMenu
+            key={'lock-unlock-clear-on-foundation'}
+            title={i18n.t('word.Elements', lang)}
+            style={{ paddingLeft: '24px' }}
+          >
+            {counterUnlocked.gotSome() && (
+              <Menu.Item
+                key={'lock-all-offsprings'}
+                onClick={() => {
+                  const oldLocks = new Map<string, boolean>();
+                  for (const elem of elements) {
+                    if (elem.foundationId === foundation.id || elem.id === foundation.id) {
+                      oldLocks.set(elem.id, !!elem.locked);
                     }
-                  },
-                  redo: () => {
-                    updateElementLockByFoundationId(foundation.id, true);
-                  },
-                } as UndoableChangeGroup;
-                addUndoable(undoableLockAllElements);
-              }}
-            >
-              {i18n.t('foundationMenu.LockAllElementsOnThisFoundation', lang)}
-            </Menu.Item>
+                  }
+                  updateElementLockByFoundationId(foundation.id, true);
+                  const undoableLockAllElements = {
+                    name: 'Lock All Offsprings',
+                    timestamp: Date.now(),
+                    oldValues: oldLocks,
+                    newValue: true,
+                    undo: () => {
+                      for (const [id, locked] of undoableLockAllElements.oldValues.entries()) {
+                        updateElementLockById(id, locked as boolean);
+                      }
+                    },
+                    redo: () => {
+                      updateElementLockByFoundationId(foundation.id, true);
+                    },
+                  } as UndoableChangeGroup;
+                  addUndoable(undoableLockAllElements);
+                }}
+              >
+                {i18n.t('foundationMenu.LockAllElementsOnThisFoundation', lang)}
+              </Menu.Item>
+            )}
             <Menu.Item
               key={'unlock-all-offsprings'}
               onClick={() => {
@@ -231,7 +238,7 @@ export const FoundationMenu = () => {
             >
               {i18n.t('foundationMenu.UnlockAllElementsOnThisFoundation', lang)}
             </Menu.Item>
-            {counter.wallCount > 0 && (
+            {counterUnlocked.wallCount > 0 && (
               <Menu.Item
                 key={'remove-all-walls-on-foundation'}
                 onClick={() => {
@@ -239,7 +246,7 @@ export const FoundationMenu = () => {
                     title:
                       i18n.t('foundationMenu.DoYouReallyWantToRemoveAllWallsOnFoundation', lang) +
                       ' (' +
-                      counter.wallCount +
+                      counterUnlocked.wallCount +
                       ' ' +
                       i18n.t('foundationMenu.Walls', lang) +
                       ')?',
@@ -292,11 +299,11 @@ export const FoundationMenu = () => {
                   });
                 }}
               >
-                {i18n.t('foundationMenu.RemoveAllUnlockedWalls', lang)} ({counter.wallCount})
+                {i18n.t('foundationMenu.RemoveAllUnlockedWalls', lang)} ({counterUnlocked.wallCount})
               </Menu.Item>
             )}
 
-            {counter.windowCount > 0 && (
+            {counterUnlocked.windowCount > 0 && (
               <Menu.Item
                 key={'remove-all-windows-on-foundation'}
                 onClick={() => {
@@ -304,7 +311,7 @@ export const FoundationMenu = () => {
                     title:
                       i18n.t('foundationMenu.DoYouReallyWantToRemoveAllWindowsOnFoundation', lang) +
                       ' (' +
-                      counter.windowCount +
+                      counterUnlocked.windowCount +
                       ' ' +
                       i18n.t('foundationMenu.Windows', lang) +
                       ')?',
@@ -339,11 +346,11 @@ export const FoundationMenu = () => {
                   });
                 }}
               >
-                {i18n.t('foundationMenu.RemoveAllUnlockedWindows', lang)} ({counter.windowCount})
+                {i18n.t('foundationMenu.RemoveAllUnlockedWindows', lang)} ({counterUnlocked.windowCount})
               </Menu.Item>
             )}
 
-            {counter.doorCount > 0 && (
+            {counterUnlocked.doorCount > 0 && (
               <Menu.Item
                 key={'remove-all-doors-on-foundation'}
                 onClick={() => {
@@ -351,7 +358,7 @@ export const FoundationMenu = () => {
                     title:
                       i18n.t('foundationMenu.DoYouReallyWantToRemoveAllDoorsOnFoundation', lang) +
                       ' (' +
-                      counter.doorCount +
+                      counterUnlocked.doorCount +
                       ' ' +
                       i18n.t('foundationMenu.Doors', lang) +
                       ')?',
@@ -386,11 +393,11 @@ export const FoundationMenu = () => {
                   });
                 }}
               >
-                {i18n.t('foundationMenu.RemoveAllUnlockedDoors', lang)} ({counter.doorCount})
+                {i18n.t('foundationMenu.RemoveAllUnlockedDoors', lang)} ({counterUnlocked.doorCount})
               </Menu.Item>
             )}
 
-            {counter.sensorCount > 0 && (
+            {counterUnlocked.sensorCount > 0 && (
               <Menu.Item
                 key={'remove-all-sensors-on-foundation'}
                 onClick={() => {
@@ -398,7 +405,7 @@ export const FoundationMenu = () => {
                     title:
                       i18n.t('foundationMenu.DoYouReallyWantToRemoveAllSensorsOnFoundation', lang) +
                       ' (' +
-                      counter.sensorCount +
+                      counterUnlocked.sensorCount +
                       ' ' +
                       i18n.t('foundationMenu.Sensors', lang) +
                       ')?',
@@ -430,11 +437,11 @@ export const FoundationMenu = () => {
                   });
                 }}
               >
-                {i18n.t('foundationMenu.RemoveAllUnlockedSensors', lang)} ({counter.sensorCount})
+                {i18n.t('foundationMenu.RemoveAllUnlockedSensors', lang)} ({counterUnlocked.sensorCount})
               </Menu.Item>
             )}
 
-            {counter.solarPanelCount > 0 && (
+            {counterUnlocked.solarPanelCount > 0 && (
               <Menu.Item
                 key={'remove-all-solar-panels-on-foundation'}
                 onClick={() => {
@@ -442,11 +449,11 @@ export const FoundationMenu = () => {
                     title:
                       i18n.t('foundationMenu.DoYouReallyWantToRemoveAllSolarPanelsOnFoundation', lang) +
                       ' (' +
-                      counter.solarPanelModuleCount +
+                      counterUnlocked.solarPanelModuleCount +
                       ' ' +
                       i18n.t('foundationMenu.SolarPanels', lang) +
                       ', ' +
-                      counter.solarPanelCount +
+                      counterUnlocked.solarPanelCount +
                       ' ' +
                       i18n.t('foundationMenu.Racks', lang) +
                       ')?',
@@ -482,13 +489,13 @@ export const FoundationMenu = () => {
                   });
                 }}
               >
-                {i18n.t('foundationMenu.RemoveAllUnlockedSolarPanels', lang)}&nbsp; ({counter.solarPanelModuleCount}{' '}
-                {i18n.t('foundationMenu.SolarPanels', lang)}, {counter.solarPanelCount}{' '}
-                {i18n.t('foundationMenu.Racks', lang)})
+                {i18n.t('foundationMenu.RemoveAllUnlockedSolarPanels', lang)}&nbsp; (
+                {counterUnlocked.solarPanelModuleCount} {i18n.t('foundationMenu.SolarPanels', lang)},{' '}
+                {counterUnlocked.solarPanelCount} {i18n.t('foundationMenu.Racks', lang)})
               </Menu.Item>
             )}
 
-            {counter.parabolicTroughCount > 0 && (
+            {counterUnlocked.parabolicTroughCount > 0 && (
               <Menu.Item
                 key={'remove-all-parabolic-troughs-on-foundation'}
                 onClick={() => {
@@ -496,7 +503,7 @@ export const FoundationMenu = () => {
                     title:
                       i18n.t('foundationMenu.DoYouReallyWantToRemoveAllParabolicTroughsOnFoundation', lang) +
                       ' (' +
-                      counter.parabolicTroughCount +
+                      counterUnlocked.parabolicTroughCount +
                       ' ' +
                       i18n.t('foundationMenu.ParabolicTroughs', lang) +
                       ')?',
@@ -531,11 +538,12 @@ export const FoundationMenu = () => {
                   });
                 }}
               >
-                {i18n.t('foundationMenu.RemoveAllUnlockedParabolicTroughs', lang)} ({counter.parabolicTroughCount})
+                {i18n.t('foundationMenu.RemoveAllUnlockedParabolicTroughs', lang)} (
+                {counterUnlocked.parabolicTroughCount})
               </Menu.Item>
             )}
 
-            {counter.parabolicDishCount > 0 && (
+            {counterUnlocked.parabolicDishCount > 0 && (
               <Menu.Item
                 key={'remove-all-parabolic-dishes-on-foundation'}
                 onClick={() => {
@@ -543,7 +551,7 @@ export const FoundationMenu = () => {
                     title:
                       i18n.t('foundationMenu.DoYouReallyWantToRemoveAllParabolicDishesOnFoundation', lang) +
                       ' (' +
-                      counter.parabolicDishCount +
+                      counterUnlocked.parabolicDishCount +
                       ' ' +
                       i18n.t('foundationMenu.ParabolicDishes', lang) +
                       ')?',
@@ -578,11 +586,11 @@ export const FoundationMenu = () => {
                   });
                 }}
               >
-                {i18n.t('foundationMenu.RemoveAllUnlockedParabolicDishes', lang)} ({counter.parabolicDishCount})
+                {i18n.t('foundationMenu.RemoveAllUnlockedParabolicDishes', lang)} ({counterUnlocked.parabolicDishCount})
               </Menu.Item>
             )}
 
-            {counter.fresnelReflectorCount > 0 && (
+            {counterUnlocked.fresnelReflectorCount > 0 && (
               <Menu.Item
                 key={'remove-all-fresnel-reflector-on-foundation'}
                 onClick={() => {
@@ -590,7 +598,7 @@ export const FoundationMenu = () => {
                     title:
                       i18n.t('foundationMenu.DoYouReallyWantToRemoveAllFresnelReflectorsOnFoundation', lang) +
                       ' (' +
-                      counter.fresnelReflectorCount +
+                      counterUnlocked.fresnelReflectorCount +
                       ' ' +
                       i18n.t('foundationMenu.FresnelReflectors', lang) +
                       ')?',
@@ -625,11 +633,12 @@ export const FoundationMenu = () => {
                   });
                 }}
               >
-                {i18n.t('foundationMenu.RemoveAllUnlockedFresnelReflectors', lang)} ({counter.fresnelReflectorCount})
+                {i18n.t('foundationMenu.RemoveAllUnlockedFresnelReflectors', lang)} (
+                {counterUnlocked.fresnelReflectorCount})
               </Menu.Item>
             )}
 
-            {counter.heliostatCount > 0 && (
+            {counterUnlocked.heliostatCount > 0 && (
               <Menu.Item
                 key={'remove-all-heliostats-on-foundation'}
                 onClick={() => {
@@ -637,7 +646,7 @@ export const FoundationMenu = () => {
                     title:
                       i18n.t('foundationMenu.DoYouReallyWantToRemoveAllHeliostatsOnFoundation', lang) +
                       ' (' +
-                      counter.heliostatCount +
+                      counterUnlocked.heliostatCount +
                       ' ' +
                       i18n.t('foundationMenu.Heliostats', lang) +
                       ')?',
@@ -672,11 +681,11 @@ export const FoundationMenu = () => {
                   });
                 }}
               >
-                {i18n.t('foundationMenu.RemoveAllUnlockedHeliostats', lang)} ({counter.heliostatCount})
+                {i18n.t('foundationMenu.RemoveAllUnlockedHeliostats', lang)} ({counterUnlocked.heliostatCount})
               </Menu.Item>
             )}
 
-            {counter.polygonCount > 0 && (
+            {counterUnlocked.polygonCount > 0 && (
               <Menu.Item
                 key={'remove-all-polygons-on-foundation'}
                 onClick={() => {
@@ -684,7 +693,7 @@ export const FoundationMenu = () => {
                     title:
                       i18n.t('foundationMenu.DoYouReallyWantToRemoveAllPolygonsOnFoundation', lang) +
                       ' (' +
-                      counter.polygonCount +
+                      counterUnlocked.polygonCount +
                       ' ' +
                       i18n.t('foundationMenu.Polygons', lang) +
                       ')?',
@@ -716,11 +725,11 @@ export const FoundationMenu = () => {
                   });
                 }}
               >
-                {i18n.t('foundationMenu.RemoveAllUnlockedPolygons', lang)} ({counter.polygonCount})
+                {i18n.t('foundationMenu.RemoveAllUnlockedPolygons', lang)} ({counterUnlocked.polygonCount})
               </Menu.Item>
             )}
 
-            {counter.humanCount > 0 && (
+            {counterUnlocked.humanCount > 0 && (
               <Menu.Item
                 key={'remove-all-humans-on-foundation'}
                 onClick={() => {
@@ -728,7 +737,7 @@ export const FoundationMenu = () => {
                     title:
                       i18n.t('foundationMenu.DoYouReallyWantToRemoveAllHumansOnFoundation', lang) +
                       ' (' +
-                      counter.humanCount +
+                      counterUnlocked.humanCount +
                       ' ' +
                       i18n.t('foundationMenu.Humans', lang) +
                       ')?',
@@ -760,11 +769,11 @@ export const FoundationMenu = () => {
                   });
                 }}
               >
-                {i18n.t('foundationMenu.RemoveAllUnlockedHumans', lang)} ({counter.humanCount})
+                {i18n.t('foundationMenu.RemoveAllUnlockedHumans', lang)} ({counterUnlocked.humanCount})
               </Menu.Item>
             )}
 
-            {counter.treeCount > 0 && (
+            {counterUnlocked.treeCount > 0 && (
               <Menu.Item
                 key={'remove-all-trees-on-foundation'}
                 onClick={() => {
@@ -772,7 +781,7 @@ export const FoundationMenu = () => {
                     title:
                       i18n.t('foundationMenu.DoYouReallyWantToRemoveAllTreesOnFoundation', lang) +
                       ' (' +
-                      counter.treeCount +
+                      counterUnlocked.treeCount +
                       ' ' +
                       i18n.t('foundationMenu.Trees', lang) +
                       ')?',
@@ -804,11 +813,11 @@ export const FoundationMenu = () => {
                   });
                 }}
               >
-                {i18n.t('foundationMenu.RemoveAllUnlockedTrees', lang)} ({counter.treeCount})
+                {i18n.t('foundationMenu.RemoveAllUnlockedTrees', lang)} ({counterUnlocked.treeCount})
               </Menu.Item>
             )}
 
-            {counter.flowerCount > 0 && (
+            {counterUnlocked.flowerCount > 0 && (
               <Menu.Item
                 key={'remove-all-flowers-on-foundation'}
                 onClick={() => {
@@ -816,7 +825,7 @@ export const FoundationMenu = () => {
                     title:
                       i18n.t('foundationMenu.DoYouReallyWantToRemoveAllFlowersOnFoundation', lang) +
                       ' (' +
-                      counter.flowerCount +
+                      counterUnlocked.flowerCount +
                       ' ' +
                       i18n.t('foundationMenu.Flowers', lang) +
                       ')?',
@@ -848,7 +857,7 @@ export const FoundationMenu = () => {
                   });
                 }}
               >
-                {i18n.t('foundationMenu.RemoveAllUnlockedFlowers', lang)} ({counter.flowerCount})
+                {i18n.t('foundationMenu.RemoveAllUnlockedFlowers', lang)} ({counterUnlocked.flowerCount})
               </Menu.Item>
             )}
           </SubMenu>
@@ -1333,7 +1342,7 @@ export const FoundationMenu = () => {
           style={{ paddingLeft: '24px' }}
         >
           <SubMenu key={'genetic-algorithms'} title={i18n.t('optimizationMenu.GeneticAlgorithm', lang)}>
-            {counter.solarPanelCount > 0 && (
+            {counterUnlocked.solarPanelCount > 0 && (
               <>
                 {solarPanelTiltAngleGaWizardVisible && (
                   <SolarPanelTiltAngleGaWizard setDialogVisible={setSolarPanelTiltAngleGaWizardVisible} />
@@ -1354,7 +1363,7 @@ export const FoundationMenu = () => {
             key={'particle-swarm-optimization'}
             title={i18n.t('optimizationMenu.ParticleSwarmOptimization', lang)}
           >
-            {counter.solarPanelCount > 0 && (
+            {counterUnlocked.solarPanelCount > 0 && (
               <>
                 {solarPanelTiltAnglePsoWizardVisible && (
                   <SolarPanelTiltAnglePsoWizard setDialogVisible={setSolarPanelTiltAnglePsoWizardVisible} />

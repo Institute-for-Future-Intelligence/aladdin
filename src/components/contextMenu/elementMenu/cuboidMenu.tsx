@@ -54,7 +54,7 @@ export const CuboidMenu = () => {
   const [heightDialogVisible, setHeightDialogVisible] = useState(false);
   const [azimuthDialogVisible, setAzimuthDialogVisible] = useState(false);
 
-  const counter = cuboid ? countAllOffspringsByType(cuboid.id) : new ElementCounter();
+  const counterUnlocked = cuboid ? countAllOffspringsByType(cuboid.id, false) : new ElementCounter();
   const lang = { lng: language };
 
   const legalToPaste = () => {
@@ -84,9 +84,9 @@ export const CuboidMenu = () => {
         {editable && <Cut keyName={'cuboid-cut'} />}
         <Lock keyName={'cuboid-lock'} />
 
-        {counter.gotSome() && contextMenuObjectType && (
+        {counterUnlocked.gotSome() && contextMenuObjectType && (
           <SubMenu key={'clear'} title={i18n.t('word.Clear', lang)} style={{ paddingLeft: '24px' }}>
-            {counter.sensorCount > 0 && (
+            {counterUnlocked.sensorCount > 0 && (
               <Menu.Item
                 key={'remove-all-sensors-on-cuboid'}
                 onClick={() => {
@@ -94,7 +94,7 @@ export const CuboidMenu = () => {
                     title:
                       i18n.t('cuboidMenu.DoYouReallyWantToRemoveAllSensorsOnCuboid', lang) +
                       ' (' +
-                      counter.sensorCount +
+                      counterUnlocked.sensorCount +
                       ' ' +
                       i18n.t('cuboidMenu.Sensors', lang) +
                       ')?',
@@ -126,12 +126,12 @@ export const CuboidMenu = () => {
                   });
                 }}
               >
-                {i18n.t('cuboidMenu.RemoveAllUnlockedSensors', lang)} ({counter.sensorCount}{' '}
+                {i18n.t('cuboidMenu.RemoveAllUnlockedSensors', lang)} ({counterUnlocked.sensorCount}{' '}
                 {i18n.t('cuboidMenu.Sensors', lang)})
               </Menu.Item>
             )}
 
-            {counter.solarPanelCount > 0 && (
+            {counterUnlocked.solarPanelCount > 0 && (
               <Menu.Item
                 key={'remove-all-solar-panels-on-cuboid'}
                 onClick={() => {
@@ -139,11 +139,11 @@ export const CuboidMenu = () => {
                     title:
                       i18n.t('cuboidMenu.DoYouReallyWantToRemoveAllSolarPanelsOnCuboid', lang) +
                       ' (' +
-                      counter.solarPanelModuleCount +
+                      counterUnlocked.solarPanelModuleCount +
                       ' ' +
                       i18n.t('cuboidMenu.SolarPanels', lang) +
                       ', ' +
-                      counter.solarPanelCount +
+                      counterUnlocked.solarPanelCount +
                       ' ' +
                       i18n.t('cuboidMenu.Racks', lang) +
                       ')?',
@@ -178,12 +178,13 @@ export const CuboidMenu = () => {
                   });
                 }}
               >
-                {i18n.t('cuboidMenu.RemoveAllUnlockedSolarPanels', lang)}&nbsp; ({counter.solarPanelModuleCount}{' '}
-                {i18n.t('cuboidMenu.SolarPanels', lang)},{counter.solarPanelCount} {i18n.t('cuboidMenu.Racks', lang)})
+                {i18n.t('cuboidMenu.RemoveAllUnlockedSolarPanels', lang)}&nbsp; ({counterUnlocked.solarPanelModuleCount}{' '}
+                {i18n.t('cuboidMenu.SolarPanels', lang)},{counterUnlocked.solarPanelCount}{' '}
+                {i18n.t('cuboidMenu.Racks', lang)})
               </Menu.Item>
             )}
 
-            {counter.polygonCount > 0 && (
+            {counterUnlocked.polygonCount > 0 && (
               <Menu.Item
                 key={'remove-all-polygons-on-cuboid'}
                 onClick={() => {
@@ -191,7 +192,7 @@ export const CuboidMenu = () => {
                     title:
                       i18n.t('cuboidMenu.DoYouReallyWantToRemoveAllPolygonsOnCuboid', lang) +
                       ' (' +
-                      counter.polygonCount +
+                      counterUnlocked.polygonCount +
                       ' ' +
                       i18n.t('cuboidMenu.Polygons', lang) +
                       ')?',
@@ -223,12 +224,12 @@ export const CuboidMenu = () => {
                   });
                 }}
               >
-                {i18n.t('cuboidMenu.RemoveAllUnlockedPolygons', lang)} ({counter.polygonCount}{' '}
+                {i18n.t('cuboidMenu.RemoveAllUnlockedPolygons', lang)} ({counterUnlocked.polygonCount}{' '}
                 {i18n.t('cuboidMenu.Polygons', lang)})
               </Menu.Item>
             )}
 
-            {counter.humanCount > 0 && (
+            {counterUnlocked.humanCount > 0 && (
               <Menu.Item
                 key={'remove-all-humans-on-cuboid'}
                 onClick={() => {
@@ -236,7 +237,7 @@ export const CuboidMenu = () => {
                     title:
                       i18n.t('cuboidMenu.DoYouReallyWantToRemoveAllHumansOnCuboid', lang) +
                       ' (' +
-                      counter.humanCount +
+                      counterUnlocked.humanCount +
                       ' ' +
                       i18n.t('cuboidMenu.Humans', lang) +
                       ')?',
@@ -268,12 +269,12 @@ export const CuboidMenu = () => {
                   });
                 }}
               >
-                {i18n.t('cuboidMenu.RemoveAllUnlockedHumans', lang)} ({counter.humanCount}{' '}
+                {i18n.t('cuboidMenu.RemoveAllUnlockedHumans', lang)} ({counterUnlocked.humanCount}{' '}
                 {i18n.t('cuboidMenu.Humans', lang)})
               </Menu.Item>
             )}
 
-            {counter.treeCount > 0 && (
+            {counterUnlocked.treeCount > 0 && (
               <Menu.Item
                 key={'remove-all-trees-on-cuboid'}
                 onClick={() => {
@@ -281,7 +282,7 @@ export const CuboidMenu = () => {
                     title:
                       i18n.t('cuboidMenu.DoYouReallyWantToRemoveAllTreesOnCuboid', lang) +
                       ' (' +
-                      counter.treeCount +
+                      counterUnlocked.treeCount +
                       ' ' +
                       i18n.t('cuboidMenu.Trees', lang) +
                       ')?',
@@ -313,12 +314,12 @@ export const CuboidMenu = () => {
                   });
                 }}
               >
-                {i18n.t('cuboidMenu.RemoveAllUnlockedTrees', lang)} ({counter.treeCount}{' '}
+                {i18n.t('cuboidMenu.RemoveAllUnlockedTrees', lang)} ({counterUnlocked.treeCount}{' '}
                 {i18n.t('cuboidMenu.Trees', lang)})
               </Menu.Item>
             )}
 
-            {counter.flowerCount > 0 && (
+            {counterUnlocked.flowerCount > 0 && (
               <Menu.Item
                 key={'remove-all-flowers-on-cuboid'}
                 onClick={() => {
@@ -326,7 +327,7 @@ export const CuboidMenu = () => {
                     title:
                       i18n.t('cuboidMenu.DoYouReallyWantToRemoveAllFlowersOnCuboid', lang) +
                       ' (' +
-                      counter.flowerCount +
+                      counterUnlocked.flowerCount +
                       ' ' +
                       i18n.t('cuboidMenu.Flowers', lang) +
                       ')?',
@@ -358,7 +359,7 @@ export const CuboidMenu = () => {
                   });
                 }}
               >
-                {i18n.t('cuboidMenu.RemoveAllUnlockedFlowers', lang)} ({counter.flowerCount}{' '}
+                {i18n.t('cuboidMenu.RemoveAllUnlockedFlowers', lang)} ({counterUnlocked.flowerCount}{' '}
                 {i18n.t('cuboidMenu.Flowers', lang)})
               </Menu.Item>
             )}

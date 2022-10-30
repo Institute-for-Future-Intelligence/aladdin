@@ -199,6 +199,7 @@ export interface CommonStoreState {
   // for all types of elements
   updateAllElementLocks: (locked: boolean) => void;
   updateElementLockByFoundationId: (foundationId: string, locked: boolean) => void;
+  updateElementLockByParentId: (parentId: string, type: ObjectType, locked: boolean) => void;
   updateElementLockById: (id: string, locked: boolean) => void;
   updateElementReferenceById: (id: string, referenceId: string) => void;
   updateElementLabelById: (id: string, label: string) => void;
@@ -561,7 +562,7 @@ export interface CommonStoreState {
   getChildrenOfType: (type: ObjectType, id: string) => ElementModel[];
   // the following goes faster than counting individual types of children through multiple loops
   countAllElements: (excludeLocked?: boolean) => number;
-  countAllOffspringsByTypeAtOnce: (ancestorId: string) => ElementCounter;
+  countAllOffspringsByTypeAtOnce: (ancestorId: string, includingLocked: boolean) => ElementCounter;
   countAllChildElementsByType: (parentId: string, type: ObjectType, excludeLocked?: boolean) => number;
   countAllChildSolarPanels: (parentId: string, excludeLocked?: boolean) => number; // special case as a rack may have many solar panels
   countAllSolarPanels: () => number;
@@ -1624,6 +1625,15 @@ export const useStore = create<CommonStoreState>(
             immerSet((state: CommonStoreState) => {
               for (const e of state.elements) {
                 if (e.foundationId === foundationId || e.parentId === foundationId || e.id === foundationId) {
+                  e.locked = locked;
+                }
+              }
+            });
+          },
+          updateElementLockByParentId(parentId, type: ObjectType, locked) {
+            immerSet((state: CommonStoreState) => {
+              for (const e of state.elements) {
+                if (e.parentId === parentId && type === e.type) {
                   e.locked = locked;
                 }
               }
@@ -4760,12 +4770,13 @@ export const useStore = create<CommonStoreState>(
             });
             return count;
           },
-          countAllOffspringsByTypeAtOnce(ancestorId) {
+          countAllOffspringsByTypeAtOnce(ancestorId, includingLocked) {
             const counter = new ElementCounter();
             immerSet((state: CommonStoreState) => {
               for (const e of state.elements) {
                 // foundationId applies to both foundations and cuboids, should have been named ancestorId
-                if (!e.locked && (e.parentId === ancestorId || e.foundationId === ancestorId)) {
+                const idOk = e.parentId === ancestorId || e.foundationId === ancestorId;
+                if (includingLocked ? idOk : !e.locked && idOk) {
                   switch (e.type) {
                     case ObjectType.Wall:
                       counter.wallCount++;

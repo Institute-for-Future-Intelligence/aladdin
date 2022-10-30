@@ -20,6 +20,7 @@ import { Util } from 'src/Util';
 import { UndoableChange } from 'src/undo/UndoableChange';
 import WallStructureColorSelection from './wallStructureColorSelection';
 import WallNumberInput from './wallNumberInput';
+import { UndoableChangeGroup } from '../../../undo/UndoableChangeGroup';
 
 enum DataType {
   Height = 'Height',
@@ -68,11 +69,14 @@ export const WallMenu = () => {
 
   const language = useStore(Selector.language);
   const setCommonStore = useStore(Selector.set);
+  const elements = useStore(Selector.elements);
   const setApplyCount = useStore(Selector.setApplyCount);
   const countAllOffspringsByType = useStore(Selector.countAllOffspringsByTypeAtOnce);
   const removeAllChildElementsByType = useStore(Selector.removeAllChildElementsByType);
   const addUndoable = useStore(Selector.addUndoable);
   const updateWallStructureById = useStore(Selector.updateWallStructureById);
+  const updateElementLockById = useStore(Selector.updateElementLockById);
+  const updateElementUnlockByParentId = useStore(Selector.updateElementLockByParentId);
 
   const [visibleType, setVisibleType] = useState<DataType | null>(null);
 
@@ -262,15 +266,97 @@ export const WallMenu = () => {
     );
   };
 
-  const renderClearSubMenu = () => {
-    const counter = wall ? countAllOffspringsByType(wall.id) : new ElementCounter();
+  const renderLockItem = (objectType: ObjectType, count: number) => {
+    if (count === 0) return null;
+    const objectTypeText = objectType.replaceAll(' ', '');
+    return (
+      <Menu.Item
+        key={`lock-all-${objectTypeText}s-on-wall`}
+        onClick={() => {
+          if (!wall) return;
+          const oldLocks = new Map<string, boolean>();
+          for (const elem of elements) {
+            if (elem.parentId === wall.id && elem.type === objectType) {
+              oldLocks.set(elem.id, !!elem.locked);
+            }
+          }
+          updateElementUnlockByParentId(wall.id, objectType, true);
+          const undoableLockAllElementsOfType = {
+            name: 'Lock All ' + objectTypeText + ' on Wall',
+            timestamp: Date.now(),
+            oldValues: oldLocks,
+            newValue: true,
+            undo: () => {
+              for (const [id, locked] of undoableLockAllElementsOfType.oldValues.entries()) {
+                updateElementLockById(id, locked as boolean);
+              }
+            },
+            redo: () => {
+              updateElementUnlockByParentId(wall.id, objectType, true);
+            },
+          } as UndoableChangeGroup;
+          addUndoable(undoableLockAllElementsOfType);
+        }}
+      >
+        {i18n.t(`wallMenu.LockAll${objectTypeText}s`, lang)} ({count})
+      </Menu.Item>
+    );
+  };
 
-    if (counter.gotSome() && useStore.getState().contextMenuObjectType) {
+  const renderUnlockItem = (objectType: ObjectType, count: number) => {
+    if (count === 0) return null;
+    const objectTypeText = objectType.replaceAll(' ', '');
+    return (
+      <Menu.Item
+        key={`unlock-all-${objectTypeText}s-on-wall`}
+        onClick={() => {
+          if (!wall) return;
+          const oldLocks = new Map<string, boolean>();
+          for (const elem of elements) {
+            if (elem.parentId === wall.id && elem.type === objectType) {
+              oldLocks.set(elem.id, !!elem.locked);
+            }
+          }
+          updateElementUnlockByParentId(wall.id, objectType, false);
+          const undoableUnlockAllElementsOfType = {
+            name: 'Unlock All ' + objectTypeText + ' on Wall',
+            timestamp: Date.now(),
+            oldValues: oldLocks,
+            newValue: true,
+            undo: () => {
+              for (const [id, locked] of undoableUnlockAllElementsOfType.oldValues.entries()) {
+                updateElementLockById(id, locked as boolean);
+              }
+            },
+            redo: () => {
+              updateElementUnlockByParentId(wall.id, objectType, false);
+            },
+          } as UndoableChangeGroup;
+          addUndoable(undoableUnlockAllElementsOfType);
+        }}
+      >
+        {i18n.t(`wallMenu.UnlockAll${objectTypeText}s`, lang)}
+      </Menu.Item>
+    );
+  };
+
+  const renderElementsSubMenu = () => {
+    const counterAll = wall ? countAllOffspringsByType(wall.id, true) : new ElementCounter();
+    if (counterAll.gotSome() && useStore.getState().contextMenuObjectType) {
+      const counterUnlocked = wall ? countAllOffspringsByType(wall.id, false) : new ElementCounter();
       return (
-        <SubMenu key={'clear'} title={i18n.t('word.Clear', lang)} style={{ paddingLeft: '24px' }}>
-          {renderClearItem(ObjectType.Window, counter.windowCount)}
-          {renderClearItem(ObjectType.Door, counter.doorCount)}
-          {renderClearItem(ObjectType.SolarPanel, counter.solarPanelCount)}
+        <SubMenu
+          key={'lock-unlock-clear-on-wall'}
+          title={i18n.t('word.Elements', lang)}
+          style={{ paddingLeft: '24px' }}
+        >
+          {renderClearItem(ObjectType.Window, counterUnlocked.windowCount)}
+          {renderClearItem(ObjectType.Door, counterUnlocked.doorCount)}
+          {renderClearItem(ObjectType.SolarPanel, counterUnlocked.solarPanelCount)}
+          {renderLockItem(ObjectType.Window, counterUnlocked.windowCount)}
+          {renderUnlockItem(ObjectType.Window, counterAll.windowCount)}
+          {renderLockItem(ObjectType.SolarPanel, counterUnlocked.solarPanelCount)}
+          {renderUnlockItem(ObjectType.SolarPanel, counterAll.solarPanelCount)}
         </SubMenu>
       );
     }
@@ -322,6 +408,8 @@ export const WallMenu = () => {
         <>
           {renderDialogs()}
 
+          {renderElementsSubMenu()}
+
           {renderSturctureSubMenu()}
 
           {renderStructureItems()}
@@ -333,8 +421,6 @@ export const WallMenu = () => {
           {renderTexture()}
 
           {renderWallColor()}
-
-          {renderClearSubMenu()}
         </>
       )}
     </Menu.ItemGroup>
