@@ -6,7 +6,6 @@ import sun_angles from './examples/sun_angles.json';
 import insolation_and_climate from './examples/insolation_and_climate.json';
 import solar_radiation_to_box from './examples/solar_radiation_to_box.json';
 import sun_beam_at_center from './examples/sun_beam_at_center.json';
-import office_building_01 from './examples/office_building_01.json';
 import rooftop_solar_panels from './examples/rooftop_solar_panels.json';
 import solar_farm_fixed_array from './examples/solar_farm_fixed_array.json';
 import solar_farm_hsat_array from './examples/solar_farm_hsat_array.json';
@@ -40,7 +39,9 @@ import monitor_roof from './examples/monitor_roof.json';
 import colonial_vs_saltbox from './examples/colonial_vs_saltbox.json';
 import gambrel_roof_vs_mansard_roof from './examples/gambrel_roof_vs_mansard_roof.json';
 import white_house from './examples/white_house.json';
+import office_building_01 from './examples/office_building_01.json';
 import hotel_01 from './examples/hotel_01.json';
+import apartment_building_01 from './examples/apartment_building_01.json';
 import south_burlington_high_school from './examples/south_burlington_high_school.json';
 import mescalero_apache_school from './examples/mescalero_apache_school.json';
 import heatmap_01 from './examples/heatmap_01.json';
@@ -298,6 +299,9 @@ const MainMenu = ({ viewOnly, set2DView, resetView, zoomView, canvas }: MainMenu
         break;
       case 'hotel_01':
         input = hotel_01;
+        break;
+      case 'apartment_building_01':
+        input = apartment_building_01;
         break;
       case 'white_house':
         input = white_house;
@@ -2212,6 +2216,9 @@ const MainMenu = ({ viewOnly, set2DView, resetView, zoomView, canvas }: MainMenu
           <SubMenu key={'commercial_buildings'} title={i18n.t('menu.commercialBuildingsSubMenu', lang)}>
             <Menu.Item key="white_house" onClick={loadFile}>
               {i18n.t('menu.commercialBuildingExamples.WhiteHouse', lang)}
+            </Menu.Item>
+            <Menu.Item key="apartment_building_01" onClick={loadFile}>
+              {i18n.t('menu.commercialBuildingExamples.ApartmentBuilding', lang)}
             </Menu.Item>
             <Menu.Item key="office_building_01" onClick={loadFile}>
               {i18n.t('menu.commercialBuildingExamples.OfficeBuilding', lang)}

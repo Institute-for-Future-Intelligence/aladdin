@@ -406,6 +406,7 @@ export const i18n_tr = {
       commercialBuildingsSubMenu: 'Ticari Binalar',
       commercialBuildingExamples: {
         WhiteHouse: 'White House',
+        ApartmentBuilding: 'Apartment Building',
         OfficeBuilding: 'Ofis Binası',
         Hotel: 'Hotel',
         SouthBurlingtonHighSchoolVermont: 'Güney Burlington Lisesi',

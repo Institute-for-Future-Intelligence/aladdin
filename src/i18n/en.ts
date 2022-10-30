@@ -406,6 +406,7 @@ export const i18n_en = {
       commercialBuildingsSubMenu: 'Commercial Buildings',
       commercialBuildingExamples: {
         WhiteHouse: 'White House',
+        ApartmentBuilding: 'Apartment Building',
         OfficeBuilding: 'Office Building',
         Hotel: 'Hotel',
         SouthBurlingtonHighSchoolVermont: 'South Burlington High School, VT',
