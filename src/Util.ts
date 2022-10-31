@@ -746,6 +746,8 @@ export class Util {
     switch (type) {
       case ObjectType.Window:
       case ObjectType.Door:
+      case ObjectType.Sensor:
+      case ObjectType.Light:
       case ObjectType.SolarPanel:
         return true;
     }

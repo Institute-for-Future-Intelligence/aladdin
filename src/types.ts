@@ -212,6 +212,7 @@ export enum ObjectType {
   Flower = 'Flower',
   Polygon = 'Polygon',
   PolygonVertex = 'Polygon Vertex',
+  Light = 'Light',
   None = 'None',
 }
 

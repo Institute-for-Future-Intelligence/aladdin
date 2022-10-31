@@ -3,7 +3,7 @@
  */
 
 import React, { useMemo, useRef, useState } from 'react';
-import { Box, Sphere } from '@react-three/drei';
+import { Box, Cylinder, Sphere } from '@react-three/drei';
 import { Euler, Mesh, Vector3 } from 'three';
 import { useStore } from '../stores/common';
 import * as Selector from '../stores/selector';
@@ -24,6 +24,7 @@ import { ActionType, MoveHandleType, ObjectType } from '../types';
 import { Util } from '../Util';
 import Wireframe from '../components/wireframe';
 import i18n from '../i18n/i18n';
+import { WallModel } from '../models/WallModel';
 
 const Sensor = ({
   id,
@@ -42,6 +43,7 @@ const Sensor = ({
   locked = false,
   showLabel = false,
   parentId,
+  foundationId,
   light = true,
   heatFlux = false,
 }: SensorModel) => {
@@ -64,6 +66,14 @@ const Sensor = ({
   const parent = useStore((state) => {
     for (const e of state.elements) {
       if (e.id === parentId) {
+        return e;
+      }
+    }
+  });
+
+  const foundation = useStore((state) => {
+    for (const e of state.elements) {
+      if (e.id === foundationId) {
         return e;
       }
     }
@@ -99,30 +109,33 @@ const Sensor = ({
             cz = parent.cz + v.z;
           }
           break;
+        case ObjectType.Wall:
+          const wall = parent as WallModel;
+          const wallAbsAngle = foundation ? foundation.rotation[2] + wall.relativeAngle : wall.relativeAngle;
+          if (foundation && wallAbsAngle !== undefined) {
+            const wallAbsPos = Util.wallAbsolutePosition(new Vector3(wall.cx, wall.cy, wall.cz), foundation).setZ(
+              wall.lz / 2 + foundation.lz,
+            );
+            const v = new Vector3(cx * wall.lx, cy * wall.ly, cz * wall.lz);
+            v.applyAxisAngle(UNIT_VECTOR_POS_Z, wallAbsAngle);
+            cx = wallAbsPos.x + v.x;
+            cy = wallAbsPos.y + v.y;
+            cz = wallAbsPos.z + v.z;
+          }
+          break;
       }
     }
   }
   const hz = lz / 2;
   const sensorModel = getElementById(id) as SensorModel;
 
-  const labelText = useMemo(() => {
-    return (
-      (sensorModel?.label ? sensorModel.label : i18n.t('shared.SensorElement', lang)) +
-      (sensorModel.locked ? ' (' + i18n.t('shared.ElementLocked', lang) + ')' : '') +
-      '\n' +
-      i18n.t('word.Coordinates', lang) +
-      ': (' +
-      cx.toFixed(1) +
-      ', ' +
-      cy.toFixed(1) +
-      ', ' +
-      cz.toFixed(1) +
-      ') ' +
-      i18n.t('word.MeterAbbreviation', lang)
-    );
-  }, [sensorModel?.label, locked, language, cx, cy, cz]);
-
   const euler = useMemo(() => {
+    if (parent?.type === ObjectType.Wall) {
+      const wall = parent as WallModel;
+      const wallAbsAngle = foundation ? foundation.rotation[2] + wall.relativeAngle : wall.relativeAngle;
+      return new Euler(HALF_PI, 0, wallAbsAngle, 'ZXY');
+    }
+    // the normal below seems to be relative to its parent
     const n = new Vector3().fromArray(normal);
     // east face in model coordinate system
     if (Util.isSame(n, UNIT_VECTOR_POS_X)) {
@@ -142,7 +155,24 @@ const Sensor = ({
     }
     // top face in model coordinate system
     return new Euler(0, 0, rotation[2]);
-  }, [normal, rotation]);
+  }, [normal, rotation, foundation?.rotation]);
+
+  const labelText = useMemo(() => {
+    return (
+      (sensorModel?.label ? sensorModel.label : i18n.t('shared.SensorElement', lang)) +
+      (sensorModel.locked ? ' (' + i18n.t('shared.ElementLocked', lang) + ')' : '') +
+      '\n' +
+      i18n.t('word.Coordinates', lang) +
+      ': (' +
+      cx.toFixed(1) +
+      ', ' +
+      cy.toFixed(1) +
+      ', ' +
+      cz.toFixed(1) +
+      ') ' +
+      i18n.t('word.MeterAbbreviation', lang)
+    );
+  }, [sensorModel?.label, locked, language, cx, cy, cz]);
 
   return (
     <group name={'Sensor Group ' + id} rotation={euler} position={[cx, cy, cz + hz]}>
@@ -184,6 +214,17 @@ const Sensor = ({
       >
         <meshStandardMaterial attach="material" color={sensorModel?.lit ? HIGHLIGHT_HANDLE_COLOR : color} />
       </Box>
+      <Cylinder
+        userData={{ unintersectable: true }}
+        name={'Meter'}
+        castShadow={false}
+        receiveShadow={false}
+        args={[lx * 0.3, ly * 0.3, hz, 8, 1]}
+        position={new Vector3(0, 0, hz)}
+        rotation={[HALF_PI, 0, 0]}
+      >
+        <meshBasicMaterial attach="material" color={'black'} />
+      </Cylinder>
 
       {/* wireFrame */}
       {!selected && <Wireframe hx={lx / 2} hy={ly / 2} hz={lz / 2} lineColor={lineColor} lineWidth={lineWidth} />}

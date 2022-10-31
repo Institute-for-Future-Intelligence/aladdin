@@ -1180,6 +1180,24 @@ const Wall = (wallModel: WallModel) => {
           }
           break;
         }
+        case ObjectType.Sensor: {
+          if (pointer) {
+            const p = getRelativePosOnWall(pointer, wallModel);
+            newElement = ElementModelFactory.makeSensor(
+              wallModel,
+              (p.x - 0.05) / lx,
+              0,
+              (p.z - 0.05) / lz,
+              new Vector3(0, -1, 0),
+              [0, 0, 0],
+            );
+          }
+          break;
+        }
+        case ObjectType.Light: {
+          // TODO
+          break;
+        }
       }
       if (newElement) {
         handleUndoableAdd(newElement);

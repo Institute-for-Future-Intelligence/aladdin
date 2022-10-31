@@ -413,9 +413,9 @@ export const FoundationMenu = () => {
                     onOk: () => {
                       if (foundation) {
                         const removed = elements.filter(
-                          (e) => !e.locked && e.type === ObjectType.Sensor && e.parentId === foundation.id,
+                          (e) => !e.locked && e.type === ObjectType.Sensor && e.foundationId === foundation.id,
                         );
-                        removeAllChildElementsByType(foundation.id, ObjectType.Sensor);
+                        removeAllElementsOnFoundationByType(foundation.id, ObjectType.Sensor);
                         const removedElements = JSON.parse(JSON.stringify(removed));
                         const undoableRemoveAllSensorChildren = {
                           name: 'Remove All Sensors on Foundation',
