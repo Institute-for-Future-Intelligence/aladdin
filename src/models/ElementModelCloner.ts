@@ -587,6 +587,12 @@ export class ElementModelCloner {
       structureColor: wall.structureColor,
       structureWidth: wall.structureWidth,
       opacity: wall.opacity,
+      roofId: wall.roofId,
+      leftRoofHeight: wall.leftRoofHeight,
+      rightRoofHeight: wall.rightRoofHeight,
+      centerRoofHeight: wall.centerRoofHeight,
+      centerLeftRoofHeight: wall.centerLeftRoofHeight,
+      centerRightRoofHeight: wall.centerRightRoofHeight,
     } as WallModel;
   }
 
