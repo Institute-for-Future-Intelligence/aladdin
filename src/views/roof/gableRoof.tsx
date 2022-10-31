@@ -1152,12 +1152,7 @@ const RoofSegment = ({
   useEffect(() => {
     if (!meshRef.current) return;
 
-    try {
-      meshRef.current.geometry = new ConvexGeometry(points, direction, length);
-    } catch (e) {
-      console.log(e);
-      return;
-    }
+    meshRef.current.geometry = new ConvexGeometry(points, direction, length);
 
     const [wallLeft, wallRight, ridgeRight, ridgeLeft, wallLeftAfterOverhang] = points;
     const thickness = wallLeftAfterOverhang.z - wallLeft.z;
