@@ -3,18 +3,7 @@
  */
 
 import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
-import {
-  DoubleSide,
-  Euler,
-  Group,
-  Mesh,
-  MeshDepthMaterial,
-  Object3D,
-  RepeatWrapping,
-  RGBADepthPacking,
-  TextureLoader,
-  Vector3,
-} from 'three';
+import { DoubleSide, Euler, Group, Mesh, Object3D, RepeatWrapping, TextureLoader, Vector3 } from 'three';
 import { useStore } from '../stores/common';
 import * as Selector from '../stores/selector';
 import { invalidate, ThreeEvent, useFrame, useThree } from '@react-three/fiber';
@@ -68,7 +57,6 @@ const Flower = ({
   const orthographic = useStore(Selector.viewState.orthographic) ?? false;
   const date = useStore(Selector.world.date);
   const latitude = useStore(Selector.world.latitude);
-  const shadowEnabled = useStore(Selector.viewState.shadowEnabled);
   const selectMe = useStore(Selector.selectMe);
   const getElementById = useStore(Selector.getElementById);
   const moveHandleType = useStore(Selector.moveHandleType);
@@ -82,8 +70,7 @@ const Flower = ({
   const contentRef = useStoreRef((state) => state.contentRef);
   const parentRef = useRef<Object3D | null>(null);
   const groupRef = useRef<Group>(null);
-  const solidFlowerRef = useRef<Mesh>(null);
-  const shadowFlowerRef = useRef<Mesh>(null);
+  const flowerRef = useRef<Mesh>(null);
   const interactionMeshRef = useRef<Mesh>(null);
   const interactionPlaneRef = useRef<Mesh>(null);
 
@@ -138,12 +125,6 @@ const Flower = ({
       i18n.t('word.MeterAbbreviation', lang)
     );
   }, [name, cx, cy, locked, language]);
-
-  const customDepthMaterial = new MeshDepthMaterial({
-    depthPacking: RGBADepthPacking,
-    map: texture,
-    alphaTest: 0.1,
-  });
 
   const hoverHandle = useCallback(
     (e: ThreeEvent<MouseEvent>, handle: MoveHandleType | ResizeHandleType | RotateHandleType) => {
@@ -219,10 +200,9 @@ const Flower = ({
     // rotation
     if (groupRef.current) {
       if (!orthographic) {
-        if (solidFlowerRef.current && shadowFlowerRef.current && interactionPlaneRef.current) {
+        if (flowerRef.current && interactionPlaneRef.current) {
           const { x: cameraX, y: cameraY } = camera.position;
           const { x: currX, y: currY } = groupRef.current.position;
-          const { x: sunlightX, y: sunlightY } = useStore.getState().sunlightDirection;
           if (parentRef.current) {
             parentRotation.set(0, 0, parentRef.current.rotation.z);
             worldPosition.addVectors(
@@ -230,22 +210,19 @@ const Flower = ({
               parentRef.current.position,
             );
             const e = Math.atan2(cameraX - worldPosition.x, cameraY - worldPosition.y) + parentRotation.z;
-            solidFlowerRef.current.rotation.set(HALF_PI, -e, 0);
+            flowerRef.current.rotation.set(HALF_PI, -e, 0);
             interactionPlaneRef.current.rotation.set(-HALF_PI, e, 0);
-            shadowFlowerRef.current.rotation.set(HALF_PI, -Math.atan2(sunlightX, sunlightY) - parentRotation.z, 0);
           } else {
             const e = Math.atan2(cameraX - currX, cameraY - currY);
-            solidFlowerRef.current.rotation.set(HALF_PI, -e, 0);
+            flowerRef.current.rotation.set(HALF_PI, -e, 0);
             interactionPlaneRef.current.rotation.set(-HALF_PI, e, 0);
-            shadowFlowerRef.current.rotation.set(HALF_PI, -Math.atan2(sunlightX, sunlightY), 0);
           }
         }
         groupRef.current.rotation.set(0, 0, 0);
       } else {
-        if (solidFlowerRef.current && shadowFlowerRef.current && interactionPlaneRef.current) {
-          solidFlowerRef.current.rotation.set(HALF_PI, 0, 0);
+        if (flowerRef.current && interactionPlaneRef.current) {
+          flowerRef.current.rotation.set(HALF_PI, 0, 0);
           interactionPlaneRef.current.rotation.set(0, 0, 0);
-          shadowFlowerRef.current.rotation.set(HALF_PI, 0, 0);
         }
         groupRef.current.rotation.set(-HALF_PI, 0, 0);
       }
@@ -265,16 +242,9 @@ const Flower = ({
           position={[cx, cy, (cz ?? 0) + (orthographic ? 0.25 : 0)]}
         >
           <group position={[0, 0, height / 2]}>
-            <Billboard ref={solidFlowerRef} uuid={id} name={name} follow={false}>
-              <Plane args={[width, height]}>
+            <Billboard ref={flowerRef} uuid={id} name={name} follow={false} rotation={[HALF_PI, 0, 0]}>
+              <Plane args={[width, height]} receiveShadow={true}>
                 <meshToonMaterial map={texture} side={DoubleSide} alphaTest={0.5} />
-              </Plane>
-            </Billboard>
-
-            {/* cast shadow */}
-            <Billboard ref={shadowFlowerRef} name={name + ' Shadow Billboard'} follow={false}>
-              <Plane castShadow={shadowEnabled} args={[width, height]} customDepthMaterial={customDepthMaterial}>
-                <meshBasicMaterial side={DoubleSide} transparent={true} opacity={0} depthTest={false} />
               </Plane>
             </Billboard>
 
@@ -343,7 +313,7 @@ const Flower = ({
                 castShadow={false}
                 receiveShadow={false}
                 lineWidth={0.5}
-                rotation={solidFlowerRef.current?.rotation}
+                rotation={flowerRef.current?.rotation}
                 color={LOCKED_ELEMENT_SELECTION_COLOR}
               />
             )}

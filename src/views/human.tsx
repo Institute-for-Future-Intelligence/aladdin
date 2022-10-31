@@ -240,6 +240,7 @@ const Human = ({
               <Plane
                 ref={planeRef}
                 renderOrder={3}
+                receiveShadow={true}
                 name={`Human ${name} plane`}
                 args={[width, height]}
                 onContextMenu={(e) => {
