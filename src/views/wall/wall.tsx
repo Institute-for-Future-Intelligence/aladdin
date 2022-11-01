@@ -446,12 +446,13 @@ const Wall = (wallModel: WallModel) => {
       setCommonStore((state) => {
         for (const e of state.elements) {
           if (e.id === id) {
-            (e as WallModel).roofId = null;
-            (e as WallModel).leftRoofHeight = undefined;
-            (e as WallModel).rightRoofHeight = undefined;
-            (e as WallModel).centerRoofHeight = undefined;
-            (e as WallModel).centerLeftRoofHeight = undefined;
-            (e as WallModel).centerRightRoofHeight = undefined;
+            const w = e as WallModel;
+            w.roofId = null;
+            w.leftRoofHeight = undefined;
+            w.rightRoofHeight = undefined;
+            w.centerRoofHeight = undefined;
+            w.centerLeftRoofHeight = undefined;
+            w.centerRightRoofHeight = undefined;
             break;
           }
         }
@@ -512,7 +513,7 @@ const Wall = (wallModel: WallModel) => {
       const yi = wallPoints2D[i].y;
       const xj = wallPoints2D[j].x;
       const yj = wallPoints2D[j].y;
-      if (yi > y != yj > y && x < ((xj - xi) * (y - yi)) / (yj - yi) + xi) {
+      if (yi > y !== yj > y && x < ((xj - xi) * (y - yi)) / (yj - yi) + xi) {
         inside = !inside;
       }
     }
@@ -581,7 +582,6 @@ const Wall = (wallModel: WallModel) => {
             const tMaxX = e.cx * lx + e.lx / 2; // target element right
             const tMinZ = e.cz * lz - e.ly / 2; // target element bot
             const tMaxZ = e.cz * lz + e.ly / 2; // target element up
-
             if (collisionHelper([tMinX, tMaxX, tMinZ, tMaxZ, cMinX, cMaxX, cMinZ, cMaxZ])) {
               invalidElementIdRef.current = id;
               return false;
@@ -592,7 +592,6 @@ const Wall = (wallModel: WallModel) => {
       }
     }
     invalidElementIdRef.current = null;
-
     return true; // no collision
   };
 
@@ -889,6 +888,7 @@ const Wall = (wallModel: WallModel) => {
                       e.cz = p.z / lz;
                       e.cy = e.id === invalidElementIdRef.current ? -0.01 : 0.1;
                       (e as WindowModel).tint = e.id === invalidElementIdRef.current ? 'red' : oldTintRef.current;
+                      break;
                     }
                   }
                 });
@@ -913,6 +913,7 @@ const Wall = (wallModel: WallModel) => {
                       e.cz = relativePos.z / lz;
                       e.cy = e.id === invalidElementIdRef.current ? -0.01 : 0.1;
                       (e as WindowModel).tint = e.id === invalidElementIdRef.current ? 'red' : oldTintRef.current;
+                      break;
                     }
                   }
                 });
@@ -933,6 +934,7 @@ const Wall = (wallModel: WallModel) => {
                       e.cx = p.x / lx;
                       e.cz = (p.z - lz / 2) / 2 / lz;
                       e.lz = (p.z + lz / 2) / lz;
+                      break;
                     }
                   }
                 });
@@ -952,6 +954,7 @@ const Wall = (wallModel: WallModel) => {
                       e.cz = (p.z - lz / 2) / 2 / lz;
                       e.lz = (p.z + lz / 2) / lz;
                       e.color = e.id === invalidElementIdRef.current ? '#fe6f5e' : oldDoorColorRef.current;
+                      break;
                     }
                   }
                 });
@@ -965,7 +968,6 @@ const Wall = (wallModel: WallModel) => {
               if ((grabRef.current as SolarPanelModel).orientation === Orientation.landscape) {
                 [unitX, unitY] = [unitY, unitX];
               }
-
               let p = getRelativePosOnWall(pointer, wallModel);
               if (moveHandleType) {
                 const v = new Vector3(-grabRef.current.lx / 2, 0, grabRef.current.ly / 2);
@@ -980,6 +982,7 @@ const Wall = (wallModel: WallModel) => {
                       e.cx = p.x / lx;
                       e.cz = p.z / lz;
                       e.color = e.id === invalidElementIdRef.current ? 'red' : '#fff';
+                      break;
                     }
                   }
                 });
@@ -1012,10 +1015,34 @@ const Wall = (wallModel: WallModel) => {
                         checkCollision(grabRef.current.id, ObjectType.SolarPanel, c, Math.abs(v.x), e.ly);
                       }
                       e.color = e.id === invalidElementIdRef.current ? 'red' : '#fff';
+                      break;
                     }
                   }
                 });
               }
+              break;
+            }
+            case ObjectType.Sensor: {
+              let p = getRelativePosOnWall(pointer, wallModel);
+              if (moveHandleType) {
+                const v = new Vector3(-grabRef.current.lx / 2, 0, grabRef.current.ly / 2);
+                p = getPositionOnGrid(p.clone().add(v)).sub(v);
+                if (!isMovingElementInsideWall(p, grabRef.current.lx, grabRef.current.ly)) {
+                  return;
+                }
+                setCommonStore((state) => {
+                  for (const e of state.elements) {
+                    if (e.id === grabRef.current?.id) {
+                      e.cx = p.x / lx;
+                      e.cz = p.z / lz;
+                      break;
+                    }
+                  }
+                });
+              }
+              break;
+            }
+            case ObjectType.Light: {
               break;
             }
           }
