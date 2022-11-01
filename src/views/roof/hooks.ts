@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo, useRef, useState } from 'react';
+import { useMemo, useRef, useState } from 'react';
 import { ElementModel } from 'src/models/ElementModel';
 import { SolarPanelModel } from 'src/models/SolarPanelModel';
 import { useStore } from 'src/stores/common';
@@ -188,28 +188,28 @@ export const useCurrWallArray = (frontWallId: string) => {
 
   const frontWall = useStore((state) => {
     for (const e of state.elements) {
-      if (e.id === wallsId[0]) {
+      if (e.id === wallsId[0] && e.type === ObjectType.Wall) {
         return e as WallModel;
       }
     }
   });
   const rightWall = useStore((state) => {
     for (const e of state.elements) {
-      if (e.id === wallsId[1]) {
+      if (e.id === wallsId[1] && e.type === ObjectType.Wall) {
         return e as WallModel;
       }
     }
   });
   const backWall = useStore((state) => {
     for (const e of state.elements) {
-      if (e.id === wallsId[2]) {
+      if (e.id === wallsId[2] && e.type === ObjectType.Wall) {
         return e as WallModel;
       }
     }
   });
   const leftWall = useStore((state) => {
     for (const e of state.elements) {
-      if (e.id === wallsId[3]) {
+      if (e.id === wallsId[3] && e.type === ObjectType.Wall) {
         return e as WallModel;
       }
     }
@@ -221,7 +221,6 @@ export const useCurrWallArray = (frontWallId: string) => {
     }
     return [] as WallModel[];
   }, [frontWall, rightWall, backWall, leftWall]);
-
   return currentWallArray;
 };
 

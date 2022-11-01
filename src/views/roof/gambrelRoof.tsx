@@ -2,7 +2,7 @@
  * @Copyright 2022. Institute for Future Intelligence, Inc.
  */
 
-import { Line, Plane, Sphere } from '@react-three/drei';
+import { Line, Plane } from '@react-three/drei';
 import { useThree } from '@react-three/fiber';
 import React, { useEffect, useMemo, useRef, useState } from 'react';
 import { HALF_PI } from 'src/constants';
@@ -15,31 +15,19 @@ import { useStoreRef } from 'src/stores/commonRef';
 import * as Selector from 'src/stores/selector';
 import { UnoableResizeGambrelAndMansardRoofRidge } from 'src/undo/UndoableResize';
 import { Util } from 'src/Util';
+import { DoubleSide, Euler, Mesh, Raycaster, Vector2, Vector3 } from 'three';
 import {
-  BufferGeometry,
-  DoubleSide,
-  Euler,
-  Float32BufferAttribute,
-  Mesh,
-  Raycaster,
-  Texture,
-  Vector2,
-  Vector3,
-} from 'three';
-import {
+  addUndoableResizeRoofHeight,
   ConvexGeoProps,
   handleContextMenu,
-  addUndoableResizeRoofHeight,
+  handlePointerDown,
+  handlePointerMove,
+  handlePointerUp,
+  RoofHandle,
   RoofWireframeProps,
   updateRooftopSolarPanel,
-  handlePointerDown,
-  handlePointerUp,
-  handlePointerMove,
-  RoofHandle,
 } from './roofRenderer';
-import { CSG } from 'three-csg-ts';
-import { ConvexGeometry } from 'three/examples/jsm/geometries/ConvexGeometry';
-import { RoofTexture, ObjectType } from 'src/types';
+import { ObjectType, RoofTexture } from 'src/types';
 import { RoofUtil } from './RoofUtil';
 import { useCurrWallArray, useRoofHeight, useRoofTexture, useSolarPanelUndoable, useTransparent } from './hooks';
 
@@ -209,7 +197,7 @@ const GambrelRoof = ({
   const updateRidge = (elemId: string, type: string, val: number) => {
     setCommonStore((state) => {
       for (const e of state.elements) {
-        if (e.id === elemId) {
+        if (e.id === elemId && e.type === ObjectType.GambrelRoof) {
           const gr = e as GambrelRoofModel;
           switch (type) {
             case RoofHandleType.FrontLeft:
@@ -596,7 +584,7 @@ const GambrelRoof = ({
           const { lh, rh } = getWallHeight(currentWallArray, i);
           setCommonStore((state) => {
             for (const e of state.elements) {
-              if (e.id === currentWallArray[i].id) {
+              if (e.id === currentWallArray[i].id && e.type === ObjectType.Wall) {
                 const w = e as WallModel;
                 w.roofId = id;
                 w.leftRoofHeight = lh;
@@ -848,7 +836,7 @@ const GambrelRoof = ({
                   case RoofHandleType.FrontLeft: {
                     setCommonStore((state) => {
                       for (const e of state.elements) {
-                        if (e.id === id) {
+                        if (e.id === id && e.type === ObjectType.GambrelRoof) {
                           if (foundation && currentWallArray[3]) {
                             const px = Util.clamp(
                               getRelPos(foundation, currentWallArray[3], point),
@@ -874,7 +862,7 @@ const GambrelRoof = ({
                   case RoofHandleType.TopLeft: {
                     setCommonStore((state) => {
                       for (const e of state.elements) {
-                        if (e.id === id) {
+                        if (e.id === id && e.type === ObjectType.GambrelRoof) {
                           if (foundation && currentWallArray[3]) {
                             const px = Util.clamp(
                               getRelPos(foundation, currentWallArray[3], point),
@@ -903,7 +891,7 @@ const GambrelRoof = ({
                   case RoofHandleType.BackRight: {
                     setCommonStore((state) => {
                       for (const e of state.elements) {
-                        if (e.id === id) {
+                        if (e.id === id && e.type === ObjectType.GambrelRoof) {
                           if (foundation && currentWallArray[3]) {
                             const px = Util.clamp(
                               getRelPos(foundation, currentWallArray[3], point),
@@ -932,7 +920,7 @@ const GambrelRoof = ({
                   case RoofHandleType.FrontRight: {
                     setCommonStore((state) => {
                       for (const e of state.elements) {
-                        if (e.id === id) {
+                        if (e.id === id && e.type === ObjectType.GambrelRoof) {
                           if (foundation && currentWallArray[1]) {
                             const px = Util.clamp(
                               getRelPos(foundation, currentWallArray[1], point),
@@ -961,7 +949,7 @@ const GambrelRoof = ({
                   case RoofHandleType.TopRight: {
                     setCommonStore((state) => {
                       for (const e of state.elements) {
-                        if (e.id === id) {
+                        if (e.id === id && e.type === ObjectType.GambrelRoof) {
                           if (foundation && currentWallArray[1]) {
                             const px = Util.clamp(
                               getRelPos(foundation, currentWallArray[1], point),
@@ -990,7 +978,7 @@ const GambrelRoof = ({
                   case RoofHandleType.BackLeft: {
                     setCommonStore((state) => {
                       for (const e of state.elements) {
-                        if (e.id === id) {
+                        if (e.id === id && e.type === ObjectType.GambrelRoof) {
                           if (foundation && currentWallArray[1]) {
                             const px = Util.clamp(
                               getRelPos(foundation, currentWallArray[1], point),
@@ -1061,7 +1049,7 @@ const GambrelRoof = ({
             useStoreRef.getState().setEnableOrbitController(true);
             setCommonStore((state) => {
               for (const e of state.elements) {
-                if (e.id === id) {
+                if (e.id === id && e.type === ObjectType.GambrelRoof) {
                   const r = e as GambrelRoofModel;
                   r.lz = h;
                   break;
@@ -1077,71 +1065,5 @@ const GambrelRoof = ({
     </group>
   );
 };
-
-// interface RoofSegmentProps {
-//   points: Vector3[];
-//   texture: Texture;
-// }
-
-// // window test code
-// const RoofSegment = ({ texture }: { texture: Texture }) => {
-//   const ref = useRef<Mesh>(null);
-//   useEffect(() => {
-//     if (ref.current) {
-//       const a = new Vector3(0, 0, 0);
-//       const b = new Vector3(10, 0, 0);
-//       const c = new Vector3(10, 10, 0);
-
-//       const d = new Vector3(0, 10, 5);
-//       const e = new Vector3(10, 10, 0);
-//       const f = new Vector3(0, 0, 0);
-
-//       const points = [a, b, c, d, e, f];
-
-//       const uvs = [
-//         a.x / 10,
-//         a.y / 10,
-//         b.x / 10,
-//         b.y / 10,
-//         c.x / 10,
-//         c.y / 10,
-//         d.x / 10,
-//         d.y / 10,
-//         e.x / 10,
-//         e.y / 10,
-//         f.x / 10,
-//         f.y / 10,
-//       ];
-
-//       const roofGeometry = new BufferGeometry();
-//       roofGeometry.setFromPoints(points);
-//       roofGeometry.computeVertexNormals();
-//       roofGeometry.setAttribute('uv', new Float32BufferAttribute(uvs, 2));
-
-//       const roofMesh = new Mesh(roofGeometry);
-
-//       const h: Vector3[] = [];
-//       h.push(new Vector3(4, 4, -1));
-//       h.push(new Vector3(6, 4, -1));
-//       h.push(new Vector3(4, 6, -1));
-//       h.push(new Vector3(6, 6, -1));
-//       h.push(new Vector3(4, 4, 5));
-//       h.push(new Vector3(6, 4, 5));
-//       h.push(new Vector3(4, 6, 5));
-//       h.push(new Vector3(6, 6, 5));
-
-//       const holeMesh = new Mesh(new ConvexGeometry(h));
-
-//       const res = CSG.union(roofMesh, holeMesh); // ???
-//       ref.current.geometry = res.geometry;
-//     }
-//   }, []);
-
-//   return (
-//     <mesh position={[0, 0, 8]} ref={ref}>
-//       <meshBasicMaterial side={DoubleSide} map={texture} />
-//     </mesh>
-//   );
-// };
 
 export default React.memo(GambrelRoof);

@@ -2,33 +2,31 @@
  * @Copyright 2022. Institute for Future Intelligence, Inc.
  */
 
-import { Extrude, Line, Plane, Sphere } from '@react-three/drei';
+import { Extrude, Line, Plane } from '@react-three/drei';
 import { useThree } from '@react-three/fiber';
 import React, { useEffect, useMemo, useRef, useState } from 'react';
-import { HALF_PI, HALF_PI_Z_EULER, ORIGIN_VECTOR3, TWO_PI } from 'src/constants';
+import { HALF_PI, HALF_PI_Z_EULER, TWO_PI } from 'src/constants';
 import { Point2 } from 'src/models/Point2';
 import { MansardRoofModel } from 'src/models/RoofModel';
 import { WallModel } from 'src/models/WallModel';
 import { useStore } from 'src/stores/common';
 import { useStoreRef } from 'src/stores/commonRef';
 import * as Selector from 'src/stores/selector';
-import { RoofTexture } from 'src/types';
+import { ObjectType, RoofTexture } from 'src/types';
 import { UnoableResizeGambrelAndMansardRoofRidge } from 'src/undo/UndoableResize';
 import { Util } from 'src/Util';
 import { DoubleSide, Euler, Mesh, Shape, Vector3 } from 'three';
-import { ObjectType } from '../../types';
 import { useMultiCurrWallArray, useRoofHeight, useRoofTexture, useSolarPanelUndoable, useTransparent } from './hooks';
 import {
-  ConvexGeoProps as ConvexGeometryProps,
-  handleContextMenu,
   addUndoableResizeRoofHeight,
-  updateRooftopSolarPanel,
-  handlePointerDown,
-  handlePointerUp,
-  handlePointerMove,
   ConvexGeoProps,
-  RoofWireframeProps,
+  handleContextMenu,
+  handlePointerDown,
+  handlePointerMove,
+  handlePointerUp,
   RoofHandle,
+  RoofWireframeProps,
+  updateRooftopSolarPanel,
 } from './roofRenderer';
 import { RoofUtil } from './RoofUtil';
 
@@ -221,7 +219,7 @@ const MansardRoof = ({
   const updateRidge = (elemId: string, val: number) => {
     setCommonStore((state) => {
       for (const e of state.elements) {
-        if (e.id === elemId) {
+        if (e.id === elemId && e.type === ObjectType.MansardRoof) {
           (e as MansardRoofModel).ridgeWidth = val;
           break;
         }
@@ -479,7 +477,7 @@ const MansardRoof = ({
           minHeight = Math.max(minHeight, Math.max(lh, rh));
           setCommonStore((state) => {
             for (const e of state.elements) {
-              if (e.id === currentWallArray[i].id) {
+              if (e.id === currentWallArray[i].id && e.type === ObjectType.Wall) {
                 const w = e as WallModel;
                 w.roofId = id;
                 w.leftRoofHeight = lh;
@@ -519,13 +517,17 @@ const MansardRoof = ({
     if (frontRidge !== undefined || backRidge !== undefined) {
       setCommonStore((state) => {
         for (const el of state.elements) {
-          if (el.type === ObjectType.Wall && (el as WallModel).roofId === id) {
-            (el as WallModel).centerLeftRoofHeight = undefined;
-            (el as WallModel).centerRightRoofHeight = undefined;
-          }
-          if (el.id === id) {
-            (el as MansardRoofModel).frontRidge = undefined;
-            (el as MansardRoofModel).backRidge = undefined;
+          if (el.type === ObjectType.Wall) {
+            const w = el as WallModel;
+            if (w.roofId === id) {
+              w.centerLeftRoofHeight = undefined;
+              w.centerRightRoofHeight = undefined;
+            }
+          } else if (el.type === ObjectType.MansardRoof) {
+            if (el.id === id) {
+              (el as MansardRoofModel).frontRidge = undefined;
+              (el as MansardRoofModel).backRidge = undefined;
+            }
           }
         }
       });

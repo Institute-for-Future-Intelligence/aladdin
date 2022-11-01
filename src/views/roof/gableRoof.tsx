@@ -154,7 +154,7 @@ const Rafter = ({
 
     const offset = width;
     const number = Math.floor((Math.min(ridgeLength, frontWallLength, backWallLength) - width) / spacing) + 2;
-    const res = new Array(number).fill(0).map((v, i) => {
+    return new Array(number).fill(0).map((v, i) => {
       let len;
       if (i === number - 1) {
         len = ridgeLength;
@@ -170,8 +170,6 @@ const Rafter = ({
       back.add(backOverhang);
       return { ridge, front, back };
     });
-
-    return res;
   }, [spacing, ridgeLeftPoint]);
 
   const showFront = ridgeLeftPoint.distanceTo(frontWallLeftPoint) > ridgeLeftPoint.distanceTo(backWallRightPoint);

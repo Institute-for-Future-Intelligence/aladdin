@@ -1,7 +1,7 @@
 /*
  * @Copyright 2022. Institute for Future Intelligence, Inc.
  */
-import { Line, Plane, Sphere } from '@react-three/drei';
+import { Line, Plane } from '@react-three/drei';
 import { useThree } from '@react-three/fiber';
 import React, { useEffect, useMemo, useRef, useState } from 'react';
 import { HALF_PI } from 'src/constants';
@@ -11,22 +11,21 @@ import { WallModel } from 'src/models/WallModel';
 import { useStore } from 'src/stores/common';
 import { useStoreRef } from 'src/stores/commonRef';
 import * as Selector from 'src/stores/selector';
-import { RoofTexture } from 'src/types';
+import { ObjectType, RoofTexture } from 'src/types';
 import { UndoableResizeHipRoofRidge } from 'src/undo/UndoableResize';
 import { Util } from 'src/Util';
 import { DoubleSide, Euler, Mesh, Raycaster, Vector2, Vector3 } from 'three';
-import { ObjectType } from '../../types';
 import { useCurrWallArray, useRoofHeight, useRoofTexture, useSolarPanelUndoable, useTransparent } from './hooks';
 import {
   addUndoableResizeRoofHeight,
   ConvexGeoProps,
   handleContextMenu,
-  RoofWireframeProps,
-  handlePointerMove,
-  updateRooftopSolarPanel,
-  handlePointerUp,
   handlePointerDown,
+  handlePointerMove,
+  handlePointerUp,
   RoofHandle,
+  RoofWireframeProps,
+  updateRooftopSolarPanel,
 } from './roofRenderer';
 import { RoofUtil } from './RoofUtil';
 
@@ -183,7 +182,7 @@ const HipRoof = ({
   const setHipRoofRidgeLength = (elemId: string, leftRidge: number, rightRidge: number) => {
     setCommonStore((state) => {
       for (const e of state.elements) {
-        if (e.id === elemId) {
+        if (e.id === elemId && e.type === ObjectType.HipRoof) {
           (e as HipRoofModel).leftRidgeLength = leftRidge;
           (e as HipRoofModel).rightRidgeLength = rightRidge;
           state.updateSolarPanelOnRoofFlag = !state.updateSolarPanelOnRoofFlag;
@@ -401,10 +400,11 @@ const HipRoof = ({
           minHeight = Math.max(minHeight, Math.max(lh, rh));
           setCommonStore((state) => {
             for (const e of state.elements) {
-              if (e.id === currentWallArray[i].id) {
-                (e as WallModel).roofId = id;
-                (e as WallModel).leftRoofHeight = lh;
-                (e as WallModel).rightRoofHeight = rh;
+              if (e.id === currentWallArray[i].id && e.type === ObjectType.Wall) {
+                const w = e as WallModel;
+                w.roofId = id;
+                w.leftRoofHeight = lh;
+                w.rightRoofHeight = rh;
                 break;
               }
             }
@@ -635,10 +635,11 @@ const HipRoof = ({
             useStoreRef.getState().setEnableOrbitController(true);
             setCommonStore((state) => {
               for (const e of state.elements) {
-                if (e.id === id) {
-                  (e as HipRoofModel).leftRidgeLength = leftRidgeLengthCurr;
-                  (e as HipRoofModel).rightRidgeLength = rightRidgeLengthCurr;
-                  (e as HipRoofModel).lz = h;
+                if (e.id === id && e.type === ObjectType.HipRoof) {
+                  const r = e as HipRoofModel;
+                  r.leftRidgeLength = leftRidgeLengthCurr;
+                  r.rightRidgeLength = rightRidgeLengthCurr;
+                  r.lz = h;
                   break;
                 }
               }

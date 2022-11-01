@@ -17,15 +17,15 @@ import { Point2 } from 'src/models/Point2';
 import { Util } from 'src/Util';
 import { ObjectType, RoofTexture } from 'src/types';
 import {
+  addUndoableResizeRoofHeight,
   ConvexGeoProps,
   handleContextMenu,
   handlePointerDown,
-  handlePointerUp,
   handlePointerMove,
-  addUndoableResizeRoofHeight,
+  handlePointerUp,
+  RoofHandle,
   RoofWireframeProps,
   updateRooftopSolarPanel,
-  RoofHandle,
 } from './roofRenderer';
 import { RoofUtil } from './RoofUtil';
 import { useMultiCurrWallArray, useRoofHeight, useRoofTexture, useSolarPanelUndoable, useTransparent } from './hooks';
@@ -461,13 +461,17 @@ const PyramidRoof = ({
         const newWallsIdSet = new Set(newWallsIdAray);
         setCommonStore((state) => {
           for (const e of state.elements) {
-            if (e.id === id) {
-              (e as RoofModel).wallsId = newWallsIdAray;
-            }
-            if (e.type === ObjectType.Wall && prevWallsIdSet.has(e.id) && !newWallsIdSet.has(e.id)) {
-              (e as WallModel).roofId = null;
-              (e as WallModel).leftRoofHeight = undefined;
-              (e as WallModel).rightRoofHeight = undefined;
+            if (e.type === ObjectType.Roof) {
+              if (e.id === id) {
+                (e as RoofModel).wallsId = newWallsIdAray;
+              }
+            } else if (e.type === ObjectType.Wall) {
+              if (prevWallsIdSet.has(e.id) && !newWallsIdSet.has(e.id)) {
+                const w = e as WallModel;
+                w.roofId = null;
+                w.leftRoofHeight = undefined;
+                w.rightRoofHeight = undefined;
+              }
             }
           }
         });
@@ -484,10 +488,11 @@ const PyramidRoof = ({
           minHeight = Math.max(minHeight, Math.max(lh, rh));
           setCommonStore((state) => {
             for (const e of state.elements) {
-              if (e.id === currentWallArray[i].id) {
-                (e as WallModel).roofId = id;
-                (e as WallModel).leftRoofHeight = lh;
-                (e as WallModel).rightRoofHeight = rh;
+              if (e.id === currentWallArray[i].id && e.type === ObjectType.Wall) {
+                const w = e as WallModel;
+                w.roofId = id;
+                w.leftRoofHeight = lh;
+                w.rightRoofHeight = rh;
                 break;
               }
             }
@@ -692,7 +697,7 @@ const RoofSegment = ({
 
       const geo = new ConvexGeometry(points, direction, length);
 
-      // todo: if has window
+      // TODO: if has window
       if (false) {
         // const h: Vector3[] = [];
         // h.push(new Vector3(0, 0, -3));
