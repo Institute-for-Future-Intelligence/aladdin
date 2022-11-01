@@ -16,7 +16,7 @@ import { ObjectType, RoofTexture } from 'src/types';
 import { UnoableResizeGambrelAndMansardRoofRidge } from 'src/undo/UndoableResize';
 import { Util } from 'src/Util';
 import { DoubleSide, Euler, Mesh, Shape, Vector3 } from 'three';
-import { useMultiCurrWallArray, useRoofHeight, useRoofTexture, useSolarPanelUndoable, useTransparent } from './hooks';
+import { useMultiCurrWallArray, useRoofHeight, useRoofTexture, useElementUndoable, useTransparent } from './hooks';
 import {
   addUndoableResizeRoofHeight,
   ConvexGeoProps,
@@ -26,7 +26,7 @@ import {
   handlePointerUp,
   RoofHandle,
   RoofWireframeProps,
-  updateRooftopSolarPanel,
+  updateRooftopElements,
 } from './roofRenderer';
 import { RoofUtil } from './RoofUtil';
 
@@ -492,7 +492,7 @@ const MansardRoof = ({
           setH(minHeight + relHeight.current);
           useStore.getState().updateRoofHeightById(id, minHeight + relHeight.current);
         }
-        updateRooftopSolarPanel(foundation, id, roofSegments, centroid, h, thickness);
+        updateRooftopElements(foundation, id, roofSegments, centroid, h, thickness);
       } else {
         removeElementById(id, false);
       }
@@ -502,13 +502,13 @@ const MansardRoof = ({
     }
   }, [currentWallArray, h]);
 
-  const updateSolarPanelOnRoofFlag = useStore(Selector.updateSolarPanelOnRoofFlag);
+  const updateElementOnRoofFlag = useStore(Selector.updateElementOnRoofFlag);
 
   useEffect(() => {
     if (!isFirstMountRef.current) {
-      updateRooftopSolarPanel(foundation, id, roofSegments, centroid, h, thickness);
+      updateRooftopElements(foundation, id, roofSegments, centroid, h, thickness);
     }
-  }, [updateSolarPanelOnRoofFlag, h, thickness]);
+  }, [updateElementOnRoofFlag, h, thickness]);
 
   useEffect(() => {
     isFirstMountRef.current = false;
@@ -534,7 +534,7 @@ const MansardRoof = ({
     }
   }, []);
 
-  const { grabRef, addUndoableMove, undoMove, setOldRefData } = useSolarPanelUndoable();
+  const { grabRef, addUndoableMove, undoMove, setOldRefData } = useElementUndoable();
   const { transparent, opacity } = useTransparent();
 
   return (
@@ -694,7 +694,7 @@ const MansardRoof = ({
                     break;
                   }
                 }
-                updateRooftopSolarPanel(foundation, id, roofSegments, centroid, h, thickness);
+                updateRooftopElements(foundation, id, roofSegments, centroid, h, thickness);
               }
             }
           }}
@@ -725,7 +725,7 @@ const MansardRoof = ({
                 }
               }
             });
-            updateRooftopSolarPanel(foundation, id, roofSegments, centroid, h, thickness);
+            updateRooftopElements(foundation, id, roofSegments, centroid, h, thickness);
             isPointerMovingRef.current = false;
             setEnableIntersectionPlane(false);
             setRoofHandleType(RoofHandleType.Null);

@@ -205,7 +205,7 @@ const BuildingResizer = ({
         }
       }
       state.groupActionUpdateFlag = !state.groupActionUpdateFlag;
-      state.updateSolarPanelOnRoofFlag = !state.updateSolarPanelOnRoofFlag;
+      state.updateElementOnRoofFlag = !state.updateElementOnRoofFlag;
     });
   };
 
@@ -217,7 +217,7 @@ const BuildingResizer = ({
         }
       }
       state.groupActionUpdateFlag = !state.groupActionUpdateFlag;
-      state.updateSolarPanelOnRoofFlag = !state.updateSolarPanelOnRoofFlag;
+      state.updateElementOnRoofFlag = !state.updateElementOnRoofFlag;
     });
   };
 
@@ -412,7 +412,7 @@ const BuildingResizer = ({
       });
     }
 
-    useStore.getState().updateSolarPanelOnRoofFn();
+    useStore.getState().updateElementOnRoofFn();
   };
 
   const resizeZ = (p: Vector3) => {
@@ -427,7 +427,7 @@ const BuildingResizer = ({
           elem.lz = height * elementHeightMapRef.current.get(elem.id)!;
         }
       }
-      state.updateSolarPanelOnRoofFlag = !state.updateSolarPanelOnRoofFlag;
+      state.updateElementOnRoofFlag = !state.updateElementOnRoofFlag;
     });
   };
 
@@ -621,7 +621,7 @@ const BuildingResizer = ({
     setCommonStore((state) => {
       state.groupActionUpdateFlag = !state.groupActionUpdateFlag;
       state.updateWallMapOnFoundationFlag = !state.updateWallMapOnFoundationFlag;
-      state.updateSolarPanelOnRoofFlag = !state.updateSolarPanelOnRoofFlag;
+      state.updateElementOnRoofFlag = !state.updateElementOnRoofFlag;
     });
   };
 

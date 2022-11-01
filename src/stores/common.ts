@@ -714,8 +714,8 @@ export interface CommonStoreState {
   updateWallMapOnFoundationFlag: boolean;
   updateWallMapOnFoundation: () => void;
 
-  updateSolarPanelOnRoofFlag: boolean;
-  updateSolarPanelOnRoofFn: () => void;
+  updateElementOnRoofFlag: boolean;
+  updateElementOnRoofFn: () => void;
 
   updateRoofFlag: boolean;
 
@@ -1801,7 +1801,7 @@ export const useStore = create<CommonStoreState>(
                 if (e.id === id && !e.locked) {
                   e.cx = cx;
                   if (e.type === ObjectType.SolarPanel && (e as SolarPanelModel).parentType === ObjectType.Roof) {
-                    state.updateSolarPanelOnRoofFlag = !state.updateSolarPanelOnRoofFlag;
+                    state.updateElementOnRoofFlag = !state.updateElementOnRoofFlag;
                   }
                   break;
                 }
@@ -1814,7 +1814,7 @@ export const useStore = create<CommonStoreState>(
                 if (e.id === id && !e.locked) {
                   e.cy = cy;
                   if (e.type === ObjectType.SolarPanel && (e as SolarPanelModel).parentType === ObjectType.Roof) {
-                    state.updateSolarPanelOnRoofFlag = !state.updateSolarPanelOnRoofFlag;
+                    state.updateElementOnRoofFlag = !state.updateElementOnRoofFlag;
                   }
                   break;
                 }
@@ -5221,7 +5221,7 @@ export const useStore = create<CommonStoreState>(
                               break;
                             }
                             approved = true;
-                            state.updateSolarPanelOnRoofFlag = !state.updateSolarPanelOnRoofFlag;
+                            state.updateElementOnRoofFlag = !state.updateElementOnRoofFlag;
                           }
                         }
                         break;
@@ -5506,7 +5506,7 @@ export const useStore = create<CommonStoreState>(
                                   const lang = { lng: state.language };
                                   showError(i18n.t('message.CannotPasteOutsideBoundary', lang));
                                 } else {
-                                  state.updateSolarPanelOnRoofFlag = !state.updateSolarPanelOnRoofFlag;
+                                  state.updateElementOnRoofFlag = !state.updateElementOnRoofFlag;
                                 }
                               }
                             }
@@ -6013,10 +6013,10 @@ export const useStore = create<CommonStoreState>(
             });
           },
 
-          updateSolarPanelOnRoofFlag: false,
-          updateSolarPanelOnRoofFn() {
+          updateElementOnRoofFlag: false,
+          updateElementOnRoofFn() {
             immerSet((state: CommonStoreState) => {
-              state.updateSolarPanelOnRoofFlag = !state.updateSolarPanelOnRoofFlag;
+              state.updateElementOnRoofFlag = !state.updateElementOnRoofFlag;
             });
           },
 

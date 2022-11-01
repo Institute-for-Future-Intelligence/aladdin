@@ -25,10 +25,10 @@ import {
   handlePointerUp,
   RoofHandle,
   RoofWireframeProps,
-  updateRooftopSolarPanel,
+  updateRooftopElements,
 } from './roofRenderer';
 import { RoofUtil } from './RoofUtil';
-import { useMultiCurrWallArray, useRoofHeight, useRoofTexture, useSolarPanelUndoable, useTransparent } from './hooks';
+import { useMultiCurrWallArray, useRoofHeight, useRoofTexture, useElementUndoable, useTransparent } from './hooks';
 
 const intersectionPlanePosition = new Vector3();
 const intersectionPlaneRotation = new Euler();
@@ -501,22 +501,22 @@ const PyramidRoof = ({
         setMinHeight(minHeight);
         setH(minHeight + relHeight.current);
         useStore.getState().updateRoofHeightById(id, minHeight + relHeight.current);
-        updateRooftopSolarPanel(foundation, id, roofSegments, centerPointV3, h, thickness);
+        updateRooftopElements(foundation, id, roofSegments, centerPointV3, h, thickness);
       } else {
         removeElementById(id, false);
       }
     }
   }, [currentWallArray, updateRoofFlag, h]);
 
-  const { grabRef, addUndoableMove, undoMove, setOldRefData } = useSolarPanelUndoable();
+  const { grabRef, addUndoableMove, undoMove, setOldRefData } = useElementUndoable();
 
-  const updateSolarPanelOnRoofFlag = useStore(Selector.updateSolarPanelOnRoofFlag);
+  const updateElementOnRoofFlag = useStore(Selector.updateElementOnRoofFlag);
 
   useEffect(() => {
     if (!isFirstMountRef.current) {
-      updateRooftopSolarPanel(foundation, id, roofSegments, centerPointV3, h, thickness);
+      updateRooftopElements(foundation, id, roofSegments, centerPointV3, h, thickness);
     }
-  }, [updateSolarPanelOnRoofFlag, h, thickness]);
+  }, [updateElementOnRoofFlag, h, thickness]);
 
   useEffect(() => {
     isFirstMountRef.current = false;
@@ -651,7 +651,7 @@ const PyramidRoof = ({
                 const h = Math.max(minHeight.current, point.z - (foundation?.lz ?? 0) - 0.3);
                 setH(h);
                 setRelHeight(h - minHeight.current);
-                updateRooftopSolarPanel(foundation, id, roofSegments, centerPointV3, h, thickness);
+                updateRooftopElements(foundation, id, roofSegments, centerPointV3, h, thickness);
               }
             }
           }}
@@ -667,7 +667,7 @@ const PyramidRoof = ({
             );
             setShowIntersectionPlane(false);
             useStoreRef.getState().setEnableOrbitController(true);
-            updateRooftopSolarPanel(foundation, id, roofSegments, centerPointV3, h, thickness);
+            updateRooftopElements(foundation, id, roofSegments, centerPointV3, h, thickness);
           }}
         />
       )}

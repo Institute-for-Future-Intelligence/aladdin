@@ -15,7 +15,7 @@ import { ObjectType, RoofTexture } from 'src/types';
 import { UndoableResizeHipRoofRidge } from 'src/undo/UndoableResize';
 import { Util } from 'src/Util';
 import { DoubleSide, Euler, Mesh, Raycaster, Vector2, Vector3 } from 'three';
-import { useCurrWallArray, useRoofHeight, useRoofTexture, useSolarPanelUndoable, useTransparent } from './hooks';
+import { useCurrWallArray, useRoofHeight, useRoofTexture, useElementUndoable, useTransparent } from './hooks';
 import {
   addUndoableResizeRoofHeight,
   ConvexGeoProps,
@@ -25,7 +25,7 @@ import {
   handlePointerUp,
   RoofHandle,
   RoofWireframeProps,
-  updateRooftopSolarPanel,
+  updateRooftopElements,
 } from './roofRenderer';
 import { RoofUtil } from './RoofUtil';
 
@@ -108,7 +108,7 @@ const HipRoof = ({
   const setCommonStore = useStore(Selector.set);
   const removeElementById = useStore(Selector.removeElementById);
   const shadowEnabled = useStore(Selector.viewState.shadowEnabled);
-  const updateSolarPanelOnRoofFlag = useStore(Selector.updateSolarPanelOnRoofFlag);
+  const updateElementOnRoofFlag = useStore(Selector.updateElementOnRoofFlag);
   const fileChanged = useStore(Selector.fileChanged);
 
   // set position and rotation
@@ -175,9 +175,9 @@ const HipRoof = ({
 
   useEffect(() => {
     if (!isFirstMountRef.current) {
-      updateRooftopSolarPanel(foundation, id, roofSegments, ridgeMidPoint, h, thickness);
+      updateRooftopElements(foundation, id, roofSegments, ridgeMidPoint, h, thickness);
     }
-  }, [updateSolarPanelOnRoofFlag, h, thickness]);
+  }, [updateElementOnRoofFlag, h, thickness]);
 
   const setHipRoofRidgeLength = (elemId: string, leftRidge: number, rightRidge: number) => {
     setCommonStore((state) => {
@@ -185,7 +185,7 @@ const HipRoof = ({
         if (e.id === elemId && e.type === ObjectType.HipRoof) {
           (e as HipRoofModel).leftRidgeLength = leftRidge;
           (e as HipRoofModel).rightRidgeLength = rightRidge;
-          state.updateSolarPanelOnRoofFlag = !state.updateSolarPanelOnRoofFlag;
+          state.updateElementOnRoofFlag = !state.updateElementOnRoofFlag;
           break;
         }
       }
@@ -423,7 +423,7 @@ const HipRoof = ({
     isFirstMountRef.current = false;
   }, []);
 
-  const { grabRef, addUndoableMove, undoMove, setOldRefData } = useSolarPanelUndoable();
+  const { grabRef, addUndoableMove, undoMove, setOldRefData } = useElementUndoable();
   const { transparent, opacity } = useTransparent();
 
   return (
@@ -601,7 +601,7 @@ const HipRoof = ({
                     break;
                   }
                 }
-                updateRooftopSolarPanel(foundation, id, roofSegments, ridgeMidPoint, h, thickness);
+                updateRooftopElements(foundation, id, roofSegments, ridgeMidPoint, h, thickness);
               }
             }
           }}
@@ -644,7 +644,7 @@ const HipRoof = ({
                 }
               }
             });
-            updateRooftopSolarPanel(foundation, id, roofSegments, ridgeMidPoint, h, thickness);
+            updateRooftopElements(foundation, id, roofSegments, ridgeMidPoint, h, thickness);
           }}
         >
           <meshBasicMaterial side={DoubleSide} transparent={true} opacity={0.5} />

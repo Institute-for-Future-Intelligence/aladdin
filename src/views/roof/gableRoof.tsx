@@ -23,14 +23,14 @@ import {
   handleRoofBodyPointerDown,
   RoofHandle,
   RoofWireframeProps,
-  updateRooftopSolarPanel,
+  updateRooftopElements,
 } from './roofRenderer';
 import { UnoableResizeGableRoofRidge } from 'src/undo/UndoableResize';
 import { ObjectType, RoofTexture } from 'src/types';
 import { Util } from 'src/Util';
 import { Point2 } from 'src/models/Point2';
 import { RoofUtil } from './RoofUtil';
-import { useCurrWallArray, useRoofHeight, useRoofTexture, useSolarPanelUndoable, useTransparent } from './hooks';
+import { useCurrWallArray, useRoofHeight, useRoofTexture, useElementUndoable, useTransparent } from './hooks';
 import { ConvexGeometry } from 'src/js/ConvexGeometry';
 import { CSG } from 'three-csg-ts';
 import WindowWireFrame from '../window/windowWireFrame';
@@ -298,7 +298,7 @@ const GableRoof = ({
   const setCommonStore = useStore(Selector.set);
   const getElementById = useStore(Selector.getElementById);
   const removeElementById = useStore(Selector.removeElementById);
-  const updateSolarPanelOnRoofFlag = useStore(Selector.updateSolarPanelOnRoofFlag);
+  const updateElementOnRoofFlag = useStore(Selector.updateElementOnRoofFlag);
   const fileChanged = useStore(Selector.fileChanged);
 
   const { gl, camera } = useThree();
@@ -326,9 +326,9 @@ const GableRoof = ({
 
   useEffect(() => {
     if (!isFirstMountRef.current) {
-      updateRooftopSolarPanel(foundation, id, roofSegments, centroid, h, thickness);
+      updateRooftopElements(foundation, id, roofSegments, centroid, h, thickness);
     }
-  }, [updateSolarPanelOnRoofFlag, h, thickness, ridgeLeftPoint, ridgeRightPoint]);
+  }, [updateElementOnRoofFlag, h, thickness, ridgeLeftPoint, ridgeRightPoint]);
 
   useEffect(() => {
     const minHeight = currentWallArray.length === 4 ? Math.max(currentWallArray[0].lz, currentWallArray[2].lz) : lz / 2;
@@ -824,7 +824,7 @@ const GableRoof = ({
     isFirstMountRef.current = false;
   }, []);
 
-  const { grabRef, addUndoableMove, undoMove, setOldRefData } = useSolarPanelUndoable();
+  const { grabRef, addUndoableMove, undoMove, setOldRefData } = useElementUndoable();
 
   return (
     <group position={[cx, cy, cz]} rotation={[0, 0, rotation]} name={`Gable Roof Group ${id}`}>
@@ -1051,7 +1051,7 @@ const GableRoof = ({
                     break;
                   }
                 }
-                updateRooftopSolarPanel(foundation, id, roofSegments, centroid, h, thickness);
+                updateRooftopElements(foundation, id, roofSegments, centroid, h, thickness);
               }
             }
           }}
@@ -1091,7 +1091,7 @@ const GableRoof = ({
                 }
               }
             });
-            updateRooftopSolarPanel(foundation, id, roofSegments, centroid, h, thickness);
+            updateRooftopElements(foundation, id, roofSegments, centroid, h, thickness);
           }}
         >
           <meshBasicMaterial side={DoubleSide} transparent={true} opacity={0.5} />

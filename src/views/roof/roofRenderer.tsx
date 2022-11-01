@@ -35,6 +35,7 @@ import { ElementModelFactory } from 'src/models/ElementModelFactory';
 import { UndoableAdd } from 'src/undo/UndoableAdd';
 import { Sphere } from '@react-three/drei';
 import { useHandleSize } from '../wall/wallResizeHandleWrapper';
+import { SensorModel } from '../../models/SensorModel';
 
 export interface ConvexGeoProps {
   points: Vector3[];
@@ -243,7 +244,7 @@ export const spCollisionCheck = (sp: SolarPanelModel, foundation: ElementModel, 
   }
 };
 
-export const updateRooftopSolarPanel = (
+export const updateRooftopElements = (
   foundation: ElementModel | null,
   roofId: string,
   roofSegments: ConvexGeoProps[],
@@ -308,8 +309,8 @@ export const handlePointerDown = (
     if (
       selectedElement &&
       selectedElement.id !== roofId &&
-      selectedElement.type === ObjectType.SolarPanel &&
-      selectedElement.parentId === roofId
+      selectedElement.parentId === roofId &&
+      (selectedElement.type === ObjectType.SolarPanel || selectedElement.type === ObjectType.Sensor)
     ) {
       setOldRefData(selectedElement);
     }
@@ -327,20 +328,30 @@ export const handlePointerUp = (
   roofId: string,
   overhang: number,
   undoMove: () => void,
-  addUndoableMove: (sp: SolarPanelModel) => void,
+  addUndoableMove: (movingElement: SolarPanelModel | SensorModel) => void,
 ) => {
   if (grabRef.current && useStore.getState().moveHandleType) {
-    const sp = useStore.getState().getElementById(grabRef.current.id) as SolarPanelModel;
-    if (sp && foundation) {
-      const boundaryVertices = RoofUtil.getBoundaryVertices(roofId, wall, overhang);
-      const solarPanelVertices = RoofUtil.getSolarPanelVerticesOnRoof(sp, foundation);
-      if (
-        !spBoundaryCheck(solarPanelVertices, boundaryVertices) ||
-        !spCollisionCheck(sp, foundation, solarPanelVertices)
-      ) {
-        undoMove();
-      } else {
-        addUndoableMove(sp);
+    const selectedElement = useStore.getState().getElementById(grabRef.current.id);
+    if (selectedElement) {
+      if (selectedElement.type === ObjectType.SolarPanel) {
+        const solarPanel = selectedElement as SolarPanelModel;
+        if (foundation) {
+          const boundaryVertices = RoofUtil.getBoundaryVertices(roofId, wall, overhang);
+          const solarPanelVertices = RoofUtil.getSolarPanelVerticesOnRoof(solarPanel, foundation);
+          if (
+            !spBoundaryCheck(solarPanelVertices, boundaryVertices) ||
+            !spCollisionCheck(solarPanel, foundation, solarPanelVertices)
+          ) {
+            undoMove();
+          } else {
+            addUndoableMove(solarPanel);
+          }
+        }
+      } else if (selectedElement.type === ObjectType.Sensor) {
+        const sensor = selectedElement as SensorModel;
+        if (foundation) {
+          addUndoableMove(sensor);
+        }
       }
     }
   }
@@ -370,7 +381,30 @@ export const handlePointerMove = (
             .subVectors(pointer, new Vector3(foundation.cx, foundation.cy))
             .applyEuler(new Euler(0, 0, -foundation.rotation[2]));
           const posRelToCentroid = posRelToFoundation.clone().sub(centroid);
-
+          const { normal, rotation } = RoofUtil.computeState(roofSegments, posRelToCentroid);
+          useStore.getState().set((state) => {
+            for (const e of state.elements) {
+              if (e.id === elem.id) {
+                e.cx = posRelToFoundation.x / foundation.lx;
+                e.cy = posRelToFoundation.y / foundation.ly;
+                e.cz = posRelToFoundation.z - foundation.lz;
+                e.rotation = [...rotation];
+                e.normal = normal.toArray();
+                break;
+              }
+            }
+          });
+        }
+      }
+      break;
+    case ObjectType.Sensor:
+      if (useStore.getState().moveHandleType) {
+        if (foundation) {
+          const pointer = getPointerOnRoof(event, roofType);
+          const posRelToFoundation = new Vector3()
+            .subVectors(pointer, new Vector3(foundation.cx, foundation.cy))
+            .applyEuler(new Euler(0, 0, -foundation.rotation[2]));
+          const posRelToCentroid = posRelToFoundation.clone().sub(centroid);
           const { normal, rotation } = RoofUtil.computeState(roofSegments, posRelToCentroid);
           useStore.getState().set((state) => {
             for (const e of state.elements) {

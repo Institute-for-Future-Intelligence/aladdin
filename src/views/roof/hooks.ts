@@ -3,7 +3,7 @@ import { ElementModel } from 'src/models/ElementModel';
 import { SolarPanelModel } from 'src/models/SolarPanelModel';
 import { useStore } from 'src/stores/common';
 import { ObjectType, RoofTexture } from 'src/types';
-import { UndoableMoveSolarPanelOnRoof } from 'src/undo/UndoableMove';
+import { UndoableMoveElementOnRoof } from 'src/undo/UndoableMove';
 
 import RoofTextureDefault from 'src/resources/roof_edge.png';
 import RoofTexture00 from 'src/resources/roof_00.png';
@@ -18,25 +18,26 @@ import { RepeatWrapping, TextureLoader } from 'three';
 import * as Selector from 'src/stores/selector';
 import { WallModel } from 'src/models/WallModel';
 import { useThree } from '@react-three/fiber';
+import { SensorModel } from '../../models/SensorModel';
 
-export const useSolarPanelUndoable = () => {
+export const useElementUndoable = () => {
   const grabRef = useRef<ElementModel | null>(null);
   const oldPostionRef = useRef<number[] | null>(null);
   const oldRotationRef = useRef<number[] | null>(null);
   const oldNormalRef = useRef<number[] | null>(null);
 
-  const addUndoableMove = (sp: SolarPanelModel) => {
+  const addUndoableMove = (elem: SolarPanelModel | SensorModel) => {
     if (oldPostionRef.current && oldRotationRef.current && oldNormalRef.current) {
       const undoabeMove = {
-        name: 'Move Solar Panel On Roof',
+        name: elem.type === ObjectType.SolarPanel ? 'Move Solar Panel on Roof' : 'Move Sensor on Roof',
         timestamp: Date.now(),
-        id: sp.id,
+        id: elem.id,
         oldPos: [...oldPostionRef.current],
-        newPos: [sp.cx, sp.cy, sp.cz],
+        newPos: [elem.cx, elem.cy, elem.cz],
         oldRot: [...oldRotationRef.current],
-        newRot: [...sp.rotation],
+        newRot: [...elem.rotation],
         oldNor: [...oldNormalRef.current],
-        newNor: [...sp.normal],
+        newNor: [...elem.normal],
         undo: () => {
           useStore.getState().set((state) => {
             for (const e of state.elements) {
@@ -61,7 +62,7 @@ export const useSolarPanelUndoable = () => {
             }
           });
         },
-      } as UndoableMoveSolarPanelOnRoof;
+      } as UndoableMoveElementOnRoof;
       useStore.getState().addUndoable(undoabeMove);
     }
   };

@@ -25,11 +25,11 @@ import {
   handlePointerUp,
   RoofHandle,
   RoofWireframeProps,
-  updateRooftopSolarPanel,
+  updateRooftopElements,
 } from './roofRenderer';
 import { ObjectType, RoofTexture } from 'src/types';
 import { RoofUtil } from './RoofUtil';
-import { useCurrWallArray, useRoofHeight, useRoofTexture, useSolarPanelUndoable, useTransparent } from './hooks';
+import { useCurrWallArray, useRoofHeight, useRoofTexture, useElementUndoable, useTransparent } from './hooks';
 
 enum RoofHandleType {
   TopMid = 'TopMid',
@@ -649,14 +649,14 @@ const GambrelRoof = ({
     backRidgeRightPoint,
   ]);
 
-  const updateSolarPanelOnRoofFlag = useStore(Selector.updateSolarPanelOnRoofFlag);
+  const updateElementOnRoofFlag = useStore(Selector.updateElementOnRoofFlag);
 
   useEffect(() => {
     if (!isFirstMountRef.current) {
-      updateRooftopSolarPanel(foundation, id, roofSegments, centroid, h, thickness);
+      updateRooftopElements(foundation, id, roofSegments, centroid, h, thickness);
     }
   }, [
-    updateSolarPanelOnRoofFlag,
+    updateElementOnRoofFlag,
     h,
     thickness,
     topRidgeLeftPoint,
@@ -671,7 +671,7 @@ const GambrelRoof = ({
     isFirstMountRef.current = false;
   }, []);
 
-  const { grabRef, addUndoableMove, undoMove, setOldRefData } = useSolarPanelUndoable();
+  const { grabRef, addUndoableMove, undoMove, setOldRefData } = useElementUndoable();
   const { transparent, opacity } = useTransparent();
 
   return (
@@ -1001,7 +1001,7 @@ const GambrelRoof = ({
                     break;
                   }
                 }
-                updateRooftopSolarPanel(foundation, id, roofSegments, centroid, h, thickness);
+                updateRooftopElements(foundation, id, roofSegments, centroid, h, thickness);
               }
             }
           }}
@@ -1056,7 +1056,7 @@ const GambrelRoof = ({
                 }
               }
             });
-            updateRooftopSolarPanel(foundation, id, roofSegments, centroid, h, thickness);
+            updateRooftopElements(foundation, id, roofSegments, centroid, h, thickness);
           }}
         >
           <meshBasicMaterial side={DoubleSide} transparent={true} opacity={0.5} />
