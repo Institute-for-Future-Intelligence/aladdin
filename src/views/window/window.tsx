@@ -31,6 +31,13 @@ export type FrameDataType = {
   color: string;
 };
 
+export type WireframeDataType = {
+  lineColor: string;
+  lineWidth: number;
+  selected: boolean;
+  locked: boolean;
+};
+
 interface ShutterProps {
   cx: number;
   lx: number;
@@ -67,6 +74,10 @@ const Shutter = ({ cx, lx, lz, color, showLeft, showRight, spacing }: ShutterPro
       )}
     </group>
   );
+};
+
+export const useWireframeData = (selected: boolean, locked: boolean, lineWidth: number, lineColor: string) => {
+  return { lineWidth, lineColor };
 };
 
 const useUpdataOldFiles = (windowModel: WindowModel) => {
@@ -242,7 +253,7 @@ const Window = (windowModel: WindowModel) => {
   };
 
   const shutterLength = useMemo(() => shutter?.width ?? 0.5 * wlx, [wlx, shutter]);
-  const shutterPosX = useMemo(() => ((shutterLength + wlx) / 2) * 1.05, [wlx, shutterLength]);
+  const shutterPosX = useMemo(() => ((shutterLength + wlx) / 2) * 1.025, [wlx, shutterLength]);
 
   const glassMaterial = useMemo(
     () => (
@@ -274,7 +285,15 @@ const Window = (windowModel: WindowModel) => {
     [showMullion, mullionWidth, mullionSpacing, mullionColor],
   );
 
-  const frameData = useMemo(() => ({ showFrame: frame, width: frameWidth, color } as FrameDataType), []);
+  const frameData = useMemo(
+    () => ({ showFrame: frame, width: frameWidth, color } as FrameDataType),
+    [frame, frameWidth, color],
+  );
+
+  const wireframeData = useMemo(
+    () => ({ lineColor, lineWidth, selected, locked } as WireframeDataType),
+    [lineColor, lineWidth, selected, locked],
+  );
 
   const renderWindow = () => {
     switch (style) {
@@ -285,6 +304,7 @@ const Window = (windowModel: WindowModel) => {
             position={positionData}
             mullionData={mullionData}
             frameData={frameData}
+            wireframeData={wireframeData}
             glassMaterial={glassMaterial}
           />
         );
@@ -330,8 +350,6 @@ const Window = (windowModel: WindowModel) => {
         <shapeBufferGeometry args={[shape]} />
         {windowMaterial}
       </mesh> */}
-
-      {/* todo: wireframe when locked */}
 
       {shutter && (
         <Shutter

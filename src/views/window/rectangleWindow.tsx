@@ -3,40 +3,46 @@
  */
 
 import React, { useMemo } from 'react';
-import { DoubleSide, MeshStandardMaterial } from 'three';
+import { FrontSide, MeshStandardMaterial } from 'three';
 import { Box, Cylinder, Plane } from '@react-three/drei';
 import { useStore } from 'src/stores/common';
 import * as Selector from 'src/stores/selector';
-import { HALF_PI } from 'src/constants';
-import { FrameDataType, MullionDataType } from './window';
+import { HALF_PI, LOCKED_ELEMENT_SELECTION_COLOR } from 'src/constants';
+import { FrameDataType, MullionDataType, WireframeDataType } from './window';
 
 interface RectangleWindowProps {
   dimension: number[];
   position: number[];
   mullionData: MullionDataType;
   frameData: FrameDataType;
+  wireframeData: WireframeDataType;
   glassMaterial: JSX.Element;
 }
 interface MullionProps {
-  lx: number;
-  lz: number;
+  dimension: number[];
   mullionData: MullionDataType;
   shadowEnabled: boolean;
 }
 
 interface FrameProps {
-  lx: number;
-  ly: number;
-  lz: number;
+  dimension: number[];
   frameData: FrameDataType;
   shadowEnabled: boolean;
 }
 
+interface WireframeProps {
+  cy: number;
+  dimension: number[];
+  wireframeData: WireframeDataType;
+}
+
 type ArgsType = [x: number, y: number, z: number];
 
-const sealPlanesMaterial = new MeshStandardMaterial({ color: 'white', side: DoubleSide });
+const sealPlanesMaterial = new MeshStandardMaterial({ color: 'white', side: FrontSide });
 
-const Mullion = React.memo(({ lx, lz, mullionData, shadowEnabled }: MullionProps) => {
+const Mullion = React.memo(({ dimension, mullionData, shadowEnabled }: MullionProps) => {
+  const [lx, ly, lz] = dimension;
+
   const {
     width: mullionWidth,
     spacingX: mullionSpacingX,
@@ -88,7 +94,7 @@ const Mullion = React.memo(({ lx, lz, mullionData, shadowEnabled }: MullionProps
   }, [lz, mullionWidth, mullionSpacingY]);
 
   return (
-    <group name={'Mullion Group'} position={[0, -0.001, 0]}>
+    <group name={'Window Mullion Group'} position={[0, -0.001, 0]}>
       {verticalMullions.map((x, index) => (
         <Cylinder
           key={index}
@@ -117,7 +123,8 @@ const Mullion = React.memo(({ lx, lz, mullionData, shadowEnabled }: MullionProps
   );
 });
 
-const Frame = React.memo(({ lx, ly, lz, frameData, shadowEnabled }: FrameProps) => {
+const Frame = React.memo(({ dimension, frameData, shadowEnabled }: FrameProps) => {
+  const [lx, ly, lz] = dimension;
   const { color, width } = frameData;
   const material = useMemo(() => <meshStandardMaterial color={color} />, [color]);
 
@@ -157,7 +164,7 @@ const Frame = React.memo(({ lx, ly, lz, frameData, shadowEnabled }: FrameProps) 
 
       {/* bottom */}
       <Box
-        position={[0, -sillDepth / 2, -lz / 2 - sillThickness / 2]}
+        position={[0, 0, -lz / 2 - sillThickness / 2]}
         args={[sillLength, sillDepth, sillThickness]}
         castShadow={shadowEnabled}
         receiveShadow={shadowEnabled}
@@ -168,7 +175,67 @@ const Frame = React.memo(({ lx, ly, lz, frameData, shadowEnabled }: FrameProps) 
   );
 });
 
-const RectangleWindow = ({ dimension, position, mullionData, frameData, glassMaterial }: RectangleWindowProps) => {
+const Wireframe = React.memo(({ cy, dimension, wireframeData }: WireframeProps) => {
+  const [lx, ly, lz] = dimension;
+  const { lineWidth, lineColor, selected, locked } = wireframeData;
+
+  const hx = lx / 2;
+  const hz = lz / 2;
+
+  const radialSegments = 3;
+  const heightSegments = 1;
+
+  const material = useMemo(() => new MeshStandardMaterial({ color: lineColor }), [lineColor]);
+  const highLightMaterial = useMemo(() => new MeshStandardMaterial({ color: LOCKED_ELEMENT_SELECTION_COLOR }), []);
+
+  const renderLines = (width: number, mat: MeshStandardMaterial) => {
+    const wireframeRadius = width / 2;
+    return (
+      <>
+        <Cylinder
+          args={[width, width, lx, radialSegments, heightSegments]}
+          rotation={[0, 0, HALF_PI]}
+          position={[0, 0, hz - wireframeRadius]}
+          material={mat}
+        />
+        <Cylinder
+          args={[width, width, lx, radialSegments, heightSegments]}
+          rotation={[0, 0, HALF_PI]}
+          position={[0, 0, -hz + wireframeRadius]}
+          material={mat}
+        />
+        <Cylinder
+          args={[width, width, lz, radialSegments, heightSegments]}
+          rotation={[HALF_PI, HALF_PI, 0]}
+          position={[hx - wireframeRadius, 0, 0]}
+          material={mat}
+        />
+        <Cylinder
+          args={[width, width, lz, radialSegments, heightSegments]}
+          rotation={[HALF_PI, HALF_PI, 0]}
+          position={[-hx + wireframeRadius, 0, 0]}
+          material={mat}
+        />
+      </>
+    );
+  };
+
+  return (
+    <group name={'Window Wireframe Group'}>
+      <group position={[0, cy, 0]}>{renderLines(lineWidth / 20, material)}</group>
+      {locked && selected && renderLines(lineWidth / 5, highLightMaterial)}
+    </group>
+  );
+});
+
+const RectangleWindow = ({
+  dimension,
+  position,
+  mullionData,
+  frameData,
+  wireframeData,
+  glassMaterial,
+}: RectangleWindowProps) => {
   const [lx, ly, lz] = dimension;
   const [cx, cy, cz] = position;
 
@@ -188,15 +255,19 @@ const RectangleWindow = ({ dimension, position, mullionData, frameData, glassMat
 
   return (
     <>
-      <group position={[0, cy, 0]}>
+      <group name={'Window Plane Group'} position={[0, cy, 0]}>
         <Plane name={'Window Glass Plane'} args={[lx, lz]} rotation={[HALF_PI, 0, 0]}>
           {glassMaterial}
         </Plane>
 
-        {mullionData.showMullion && <Mullion lx={lx} lz={lz} mullionData={mullionData} shadowEnabled={shadowEnabled} />}
+        {mullionData.showMullion && (
+          <Mullion dimension={dimension} mullionData={mullionData} shadowEnabled={shadowEnabled} />
+        )}
       </group>
 
-      {frameData.showFrame && <Frame lx={lx} ly={ly} lz={lz} frameData={frameData} shadowEnabled={shadowEnabled} />}
+      {frameData.showFrame && <Frame dimension={dimension} frameData={frameData} shadowEnabled={shadowEnabled} />}
+
+      <Wireframe cy={cy} dimension={dimension} wireframeData={wireframeData} />
 
       {renderSealPlane([ly, lz], [-lx / 2, ly / 2, 0], [HALF_PI, HALF_PI, 0])}
       {renderSealPlane([ly, lz], [lx / 2, ly / 2, 0], [HALF_PI, -HALF_PI, 0])}
