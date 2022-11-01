@@ -19,13 +19,13 @@ import { CanvasTexture, Color, Euler, Object3D, Scene, Vector2, Vector3 } from '
 import { ElementModel } from './models/ElementModel';
 import { SolarPanelModel } from './models/SolarPanelModel';
 import {
+  ElementState,
   MoveHandleType,
   ObjectType,
   Orientation,
   ResizeHandleType,
   RotateHandleType,
   TrackerType,
-  ElementState,
 } from './types';
 import { PvModel } from './models/PvModel';
 import { SensorModel } from './models/SensorModel';
@@ -38,6 +38,7 @@ import { Rectangle } from './models/Rectangle';
 import platform from 'platform';
 import { RoofModel } from './models/RoofModel';
 import { RoofUtil } from './views/roof/RoofUtil';
+import { FoundationModel } from './models/FoundationModel';
 
 export class Util {
   static WATER_TEXTURE = Util.fetchWaterTexture(100, 100);
@@ -843,7 +844,25 @@ export class Util {
   }
 
   // don't use this for humans or trees or flowers
-  static absoluteCoordinates(x: number, y: number, z: number, parent: ElementModel): Vector3 {
+  static absoluteCoordinates(
+    x: number,
+    y: number,
+    z: number,
+    parent: ElementModel,
+    foundation?: FoundationModel,
+  ): Vector3 {
+    if (parent.type === ObjectType.Wall && foundation) {
+      const wall = parent as WallModel;
+      const wallAbsAngle = foundation ? foundation.rotation[2] + wall.relativeAngle : wall.relativeAngle;
+      if (foundation && wallAbsAngle !== undefined) {
+        const wallAbsPos = Util.wallAbsolutePosition(new Vector3(wall.cx, wall.cy, wall.cz), foundation).setZ(
+          wall.lz / 2 + foundation.lz,
+        );
+        const v = new Vector3(x * wall.lx, y * wall.ly, z * wall.lz);
+        v.applyAxisAngle(UNIT_VECTOR_POS_Z, wallAbsAngle);
+        return new Vector3(wallAbsPos.x + v.x, wallAbsPos.y + v.y, wallAbsPos.z + v.z);
+      }
+    }
     const v = new Vector3(x * parent.lx, y * parent.ly, z * parent.lz);
     v.applyEuler(new Euler().fromArray(parent.rotation));
     v.x += parent.cx;

@@ -27,6 +27,7 @@ import * as Selector from '../stores/selector';
 import { showInfo } from '../helpers';
 import i18n from '../i18n/i18n';
 import { SunMinutes } from './SunMinutes';
+import { FoundationModel } from '../models/FoundationModel';
 
 export interface SensorSimulationProps {
   city: string | null;
@@ -39,6 +40,7 @@ const SensorSimulation = ({ city }: SensorSimulationProps) => {
   const world = useStore.getState().world;
   const elements = useStore.getState().elements;
   const getParent = useStore(Selector.getParent);
+  const getFoundation = useStore(Selector.getFoundation);
   const getWeather = useStore(Selector.getWeather);
   const getHorizontalSolarRadiation = useStore(Selector.getHorizontalSolarRadiation);
   const getVerticalSolarRadiation = useStore(Selector.getVerticalSolarRadiation);
@@ -512,7 +514,17 @@ const SensorSimulation = ({ city }: SensorSimulationProps) => {
     if (sunDirection.z < ZERO_TOLERANCE) return; // when the sun is not out
     const parent = getParent(sensor);
     if (!parent) throw new Error('parent of sensor does not exist');
-    const position = Util.absoluteCoordinates(sensor.cx, sensor.cy, sensor.cz, parent);
+    let foundation: FoundationModel | null = null;
+    if (parent.type === ObjectType.Wall) {
+      foundation = getFoundation(sensor);
+    }
+    const position = Util.absoluteCoordinates(
+      sensor.cx,
+      sensor.cy,
+      sensor.cz,
+      parent,
+      foundation ? (foundation as FoundationModel) : undefined,
+    );
     const normal = new Vector3().fromArray(sensor.normal);
     // TODO: right now we assume a parent rotation is always around the z-axis
     normal.applyAxisAngle(UNIT_VECTOR_POS_Z, parent.rotation[2]);
@@ -542,7 +554,17 @@ const SensorSimulation = ({ city }: SensorSimulationProps) => {
     if (!parent) throw new Error('parent of sensor does not exist');
     const result = dailyDataMapRef.current.get(sensor.id);
     if (!result) return;
-    const position = Util.absoluteCoordinates(sensor.cx, sensor.cy, sensor.cz, parent);
+    let foundation: FoundationModel | null = null;
+    if (parent.type === ObjectType.Wall) {
+      foundation = getFoundation(sensor);
+    }
+    const position = Util.absoluteCoordinates(
+      sensor.cx,
+      sensor.cy,
+      sensor.cz,
+      parent,
+      foundation ? (foundation as FoundationModel) : undefined,
+    );
     const normal = new Vector3().fromArray(sensor.normal);
     // TODO: right now we assume a parent rotation is always around the z-axis
     normal.applyAxisAngle(UNIT_VECTOR_POS_Z, parent.rotation[2]);

@@ -8,7 +8,7 @@ import { useStore } from 'src/stores/common';
 import { Euler, Mesh, Raycaster, Shape, Vector2, Vector3 } from 'three';
 import * as Selector from 'src/stores/selector';
 import { WallModel } from 'src/models/WallModel';
-import { Extrude, Line, Plane, Sphere } from '@react-three/drei';
+import { Extrude, Line, Plane } from '@react-three/drei';
 import { ConvexGeometry } from 'src/js/ConvexGeometry.js';
 import { HALF_PI, HALF_PI_Z_EULER, TWO_PI } from 'src/constants';
 import { useStoreRef } from 'src/stores/commonRef';
@@ -81,6 +81,7 @@ const FlatRoof = ({ roofSegments, thickness, lineColor, lineWidth, children }: F
   return (
     <>
       <Extrude
+        name={'Pyramid Roof Extrude'}
         args={[shape, { steps: 1, depth: thickness, bevelEnabled: false }]}
         castShadow={shadowEnabled && !transparent}
         receiveShadow={shadowEnabled}
@@ -713,6 +714,7 @@ const RoofSegment = ({
   return (
     <mesh
       ref={meshRef}
+      name={'Pyramid Roof Segment'}
       castShadow={shadowEnabled && !transparent}
       receiveShadow={shadowEnabled}
       userData={{ simulation: true }}
