@@ -1033,8 +1033,8 @@ const Wall = (wallModel: WallModel) => {
                 setCommonStore((state) => {
                   for (const e of state.elements) {
                     if (e.id === grabRef.current?.id) {
-                      e.cx = p.x / lx;
-                      e.cz = p.z / lz;
+                      e.cx = (p.x - 0.05) / lx;
+                      e.cz = (p.z + 0.05) / lz;
                       break;
                     }
                   }

@@ -210,24 +210,25 @@ const GambrelRoof = ({
     setCommonStore((state) => {
       for (const e of state.elements) {
         if (e.id === elemId) {
+          const gr = e as GambrelRoofModel;
           switch (type) {
             case RoofHandleType.FrontLeft:
-              (e as GambrelRoofModel).frontRidgeLeftPoint[0] = val;
+              gr.frontRidgeLeftPoint[0] = val;
               break;
             case RoofHandleType.FrontRight:
-              (e as GambrelRoofModel).frontRidgeRightPoint[0] = val;
+              gr.frontRidgeRightPoint[0] = val;
               break;
             case RoofHandleType.TopLeft:
-              (e as GambrelRoofModel).topRidgeLeftPoint[0] = val;
+              gr.topRidgeLeftPoint[0] = val;
               break;
             case RoofHandleType.TopRight:
-              (e as GambrelRoofModel).topRidgeRightPoint[0] = val;
+              gr.topRidgeRightPoint[0] = val;
               break;
             case RoofHandleType.BackLeft:
-              (e as GambrelRoofModel).backRidgeLeftPoint[0] = val;
+              gr.backRidgeLeftPoint[0] = val;
               break;
             case RoofHandleType.BackRight:
-              (e as GambrelRoofModel).backRidgeRightPoint[0] = val;
+              gr.backRidgeRightPoint[0] = val;
               break;
           }
           break;

@@ -1091,7 +1091,6 @@ const GableRoof = ({
                   break;
                 }
               }
-              //
             });
             updateRooftopSolarPanel(foundation, id, roofSegments, centroid, h, thickness);
           }}
