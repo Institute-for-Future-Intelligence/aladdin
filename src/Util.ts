@@ -854,7 +854,7 @@ export class Util {
     if (parent.type === ObjectType.Wall && foundation) {
       const wall = parent as WallModel;
       const wallAbsAngle = foundation ? foundation.rotation[2] + wall.relativeAngle : wall.relativeAngle;
-      if (foundation && wallAbsAngle !== undefined) {
+      if (wallAbsAngle !== undefined) {
         const wallAbsPos = Util.wallAbsolutePosition(new Vector3(wall.cx, wall.cy, wall.cz), foundation).setZ(
           wall.lz / 2 + foundation.lz,
         );

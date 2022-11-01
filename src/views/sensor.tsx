@@ -25,6 +25,7 @@ import { Util } from '../Util';
 import Wireframe from '../components/wireframe';
 import i18n from '../i18n/i18n';
 import { WallModel } from '../models/WallModel';
+import { FoundationModel } from '../models/FoundationModel';
 
 const Sensor = ({
   id,
@@ -110,17 +111,11 @@ const Sensor = ({
           }
           break;
         case ObjectType.Wall:
-          const wall = parent as WallModel;
-          const wallAbsAngle = foundation ? foundation.rotation[2] + wall.relativeAngle : wall.relativeAngle;
-          if (foundation && wallAbsAngle !== undefined) {
-            const wallAbsPos = Util.wallAbsolutePosition(new Vector3(wall.cx, wall.cy, wall.cz), foundation).setZ(
-              wall.lz / 2 + foundation.lz,
-            );
-            const v = new Vector3(cx * wall.lx, cy * wall.ly, cz * wall.lz);
-            v.applyAxisAngle(UNIT_VECTOR_POS_Z, wallAbsAngle);
-            cx = wallAbsPos.x + v.x;
-            cy = wallAbsPos.y + v.y;
-            cz = wallAbsPos.z + v.z;
+          if (foundation?.type === ObjectType.Foundation) {
+            const absoluteCoordinates = Util.absoluteCoordinates(cx, cy, cz, parent, foundation as FoundationModel);
+            cx = absoluteCoordinates.x;
+            cy = absoluteCoordinates.y;
+            cz = absoluteCoordinates.z;
           }
           break;
       }

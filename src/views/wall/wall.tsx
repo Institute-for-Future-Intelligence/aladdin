@@ -1182,14 +1182,13 @@ const Wall = (wallModel: WallModel) => {
         }
         case ObjectType.Sensor: {
           if (pointer) {
-            const wallAbsAngle = foundation ? foundation.rotation[2] + relativeAngle : relativeAngle;
             const p = getRelativePosOnWall(pointer, wallModel);
             newElement = ElementModelFactory.makeSensor(
               wallModel,
               (p.x - 0.05) / lx,
               0,
               (p.z - 0.05) / lz,
-              new Vector3(Math.cos(wallAbsAngle - HALF_PI), Math.sin(wallAbsAngle - HALF_PI), 0),
+              new Vector3(0, -1, 0),
               [0, 0, 0],
             );
           }
