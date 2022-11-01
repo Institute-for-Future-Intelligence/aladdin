@@ -257,6 +257,8 @@ const Wall = (wallModel: WallModel) => {
   const addUndoable = useStore(Selector.addUndoable);
   const setElementPosition = useStore(Selector.setElementPosition);
   const getElementById = useStore(Selector.getElementById);
+  const sunlightDirection = useStore(Selector.sunlightDirection);
+  const night = sunlightDirection.z <= 0;
 
   const intersectionPlaneRef = useRef<Mesh>(null);
   const outsideWallRef = useRef<Mesh>(null);
@@ -1493,7 +1495,7 @@ const Wall = (wallModel: WallModel) => {
                   color={transparent ? color : 'white'}
                   transparent={transparent}
                   opacity={opacity}
-                  side={BackSide}
+                  side={night ? BackSide : DoubleSide}
                 />
               </mesh>
 

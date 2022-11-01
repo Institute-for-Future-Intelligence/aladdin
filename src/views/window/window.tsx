@@ -15,7 +15,6 @@ import { DEFAULT_WINDOW_SHINESS, HALF_PI, LOCKED_ELEMENT_SELECTION_COLOR } from 
 import { ThreeEvent } from '@react-three/fiber';
 import WindowFrame from './windowFrame';
 
-const material = new MeshStandardMaterial({ color: 'white', side: FrontSide });
 export const defaultShutter = { showLeft: false, showRight: false, color: 'grey', width: 0.5 };
 
 interface ShutterProps {
@@ -148,6 +147,9 @@ const Window = (windowModel: WindowModel) => {
   const isAddingElement = useStore(Selector.isAddingElement);
   const shadowEnabled = useStore(Selector.viewState.shadowEnabled);
   const windowShiness = useStore(Selector.viewState.windowShiness);
+  const sunlightDirection = useStore(Selector.sunlightDirection);
+  const night = sunlightDirection.z <= 0;
+  const material = new MeshStandardMaterial({ color: 'white', side: night ? FrontSide : DoubleSide });
 
   const [wlx, setWlx] = useState(lx);
   const [wly, setWly] = useState(ly);
