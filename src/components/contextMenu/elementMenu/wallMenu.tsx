@@ -66,7 +66,6 @@ const getSelectedWall = (state: CommonStoreState) => {
 
 export const WallMenu = () => {
   const wall = useStore(getSelectedWall);
-
   const language = useStore(Selector.language);
   const setCommonStore = useStore(Selector.set);
   const elements = useStore(Selector.elements);
@@ -101,21 +100,21 @@ export const WallMenu = () => {
         .elements.filter((e) => !e.locked && e.type === objectType && e.parentId === wall.id);
       removeAllChildElementsByType(wall.id, objectType);
       const removedElements = JSON.parse(JSON.stringify(removed));
-      const undoableRemoveAllWindowChildren = {
+      const undoableRemoveAllChildren = {
         name: `Remove All ${objectType}s on Wall`,
         timestamp: Date.now(),
         parentId: wall.id,
         removedElements: removedElements,
         undo: () => {
           setCommonStore((state) => {
-            state.elements.push(...undoableRemoveAllWindowChildren.removedElements);
+            state.elements.push(...undoableRemoveAllChildren.removedElements);
           });
         },
         redo: () => {
-          removeAllChildElementsByType(undoableRemoveAllWindowChildren.parentId, objectType);
+          removeAllChildElementsByType(undoableRemoveAllChildren.parentId, objectType);
         },
       } as UndoableRemoveAllChildren;
-      addUndoable(undoableRemoveAllWindowChildren);
+      addUndoable(undoableRemoveAllChildren);
     }
   };
 
@@ -353,10 +352,13 @@ export const WallMenu = () => {
           {renderClearItem(ObjectType.Window, counterUnlocked.windowCount)}
           {renderClearItem(ObjectType.Door, counterUnlocked.doorCount)}
           {renderClearItem(ObjectType.SolarPanel, counterUnlocked.solarPanelCount)}
+          {renderClearItem(ObjectType.Sensor, counterUnlocked.sensorCount)}
           {renderLockItem(ObjectType.Window, counterUnlocked.windowCount)}
           {renderUnlockItem(ObjectType.Window, counterAll.windowCount)}
           {renderLockItem(ObjectType.SolarPanel, counterUnlocked.solarPanelCount)}
           {renderUnlockItem(ObjectType.SolarPanel, counterAll.solarPanelCount)}
+          {renderLockItem(ObjectType.Sensor, counterUnlocked.sensorCount)}
+          {renderUnlockItem(ObjectType.Sensor, counterAll.sensorCount)}
         </SubMenu>
       );
     }

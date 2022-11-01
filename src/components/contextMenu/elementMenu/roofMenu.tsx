@@ -3,7 +3,7 @@
  */
 
 import React, { useState } from 'react';
-import { Menu, Radio } from 'antd';
+import { Menu, Modal, Radio } from 'antd';
 import { useStore } from 'src/stores/common';
 import * as Selector from 'src/stores/selector';
 import { Lock, Paste } from '../menuItems';
@@ -21,11 +21,21 @@ import GlassTintSelection from './glassTintSelection';
 import { UndoableChange } from 'src/undo/UndoableChange';
 import RoofRafterColorSelection from './roofRafterColorSelection';
 import RoofRafterWidthInput from './roofRafterWidthInput';
+import { ElementCounter } from '../../../stores/ElementCounter';
+import { ExclamationCircleOutlined } from '@ant-design/icons';
+import { UndoableChangeGroup } from '../../../undo/UndoableChangeGroup';
+import { UndoableRemoveAllChildren } from '../../../undo/UndoableRemoveAllChildren';
 
 export const RoofMenu = () => {
+  const setCommonStore = useStore(Selector.set);
+  const elements = useStore(Selector.elements);
   const roof = useStore(Selector.selectedElement) as RoofModel;
   const language = useStore(Selector.language);
   const updateRoofStructureById = useStore(Selector.updateRoofStructureById);
+  const countAllOffspringsByType = useStore(Selector.countAllOffspringsByTypeAtOnce);
+  const removeAllChildElementsByType = useStore(Selector.removeAllChildElementsByType);
+  const updateElementLockById = useStore(Selector.updateElementLockById);
+  const updateElementUnlockByParentId = useStore(Selector.updateElementLockByParentId);
   const setApplyCount = useStore(Selector.setApplyCount);
   const addUndoable = useStore(Selector.addUndoable);
 
@@ -64,11 +74,163 @@ export const RoofMenu = () => {
   // so we have to get the updated version here
   const updatedRoof = roof?.id ? (useStore.getState().getElementById(roof.id) as RoofModel) : roof;
 
+  const handleClearOk = (objectType: ObjectType) => {
+    if (roof) {
+      const removed = useStore
+        .getState()
+        .elements.filter((e) => !e.locked && e.type === objectType && e.parentId === roof.id);
+      removeAllChildElementsByType(roof.id, objectType);
+      const removedElements = JSON.parse(JSON.stringify(removed));
+      const undoableRemoveAllChildren = {
+        name: `Remove All ${objectType}s on Roof`,
+        timestamp: Date.now(),
+        parentId: roof.id,
+        removedElements: removedElements,
+        undo: () => {
+          setCommonStore((state) => {
+            state.elements.push(...undoableRemoveAllChildren.removedElements);
+          });
+        },
+        redo: () => {
+          removeAllChildElementsByType(undoableRemoveAllChildren.parentId, objectType);
+        },
+      } as UndoableRemoveAllChildren;
+      addUndoable(undoableRemoveAllChildren);
+    }
+  };
+
+  const renderClearItem = (objectType: ObjectType, count: number) => {
+    if (count === 0) return null;
+    const titleText = (type: string, count: number) =>
+      `${i18n.t(`roofMenu.DoYouReallyWantToRemoveAll${type}sOnThisRoof`, lang)} (${count} ${i18n.t(
+        `roofMenu.${type}s`,
+        lang,
+      )})?`;
+    const objectTypeText = objectType.replaceAll(' ', '');
+    return (
+      <Menu.Item
+        key={`remove-all-${objectTypeText}s-on-roof`}
+        onClick={() => {
+          Modal.confirm({
+            title: titleText(objectTypeText, count),
+            icon: <ExclamationCircleOutlined />,
+            onOk: () => {
+              handleClearOk(objectType);
+            },
+          });
+        }}
+      >
+        {i18n.t(`roofMenu.RemoveAllUnlocked${objectTypeText}s`, lang)} ({count})
+      </Menu.Item>
+    );
+  };
+
+  const renderLockItem = (objectType: ObjectType, count: number) => {
+    if (count === 0) return null;
+    const objectTypeText = objectType.replaceAll(' ', '');
+    return (
+      <Menu.Item
+        key={`lock-all-${objectTypeText}s-on-roof`}
+        onClick={() => {
+          if (!roof) return;
+          const oldLocks = new Map<string, boolean>();
+          for (const elem of elements) {
+            if (elem.parentId === roof.id && elem.type === objectType) {
+              oldLocks.set(elem.id, !!elem.locked);
+            }
+          }
+          updateElementUnlockByParentId(roof.id, objectType, true);
+          const undoableLockAllElementsOfType = {
+            name: 'Lock All ' + objectTypeText + ' on Roof',
+            timestamp: Date.now(),
+            oldValues: oldLocks,
+            newValue: true,
+            undo: () => {
+              for (const [id, locked] of undoableLockAllElementsOfType.oldValues.entries()) {
+                updateElementLockById(id, locked as boolean);
+              }
+            },
+            redo: () => {
+              updateElementUnlockByParentId(roof.id, objectType, true);
+            },
+          } as UndoableChangeGroup;
+          addUndoable(undoableLockAllElementsOfType);
+        }}
+      >
+        {i18n.t(`roofMenu.LockAll${objectTypeText}s`, lang)} ({count})
+      </Menu.Item>
+    );
+  };
+
+  const renderUnlockItem = (objectType: ObjectType, count: number) => {
+    if (count === 0) return null;
+    const objectTypeText = objectType.replaceAll(' ', '');
+    return (
+      <Menu.Item
+        key={`unlock-all-${objectTypeText}s-on-roof`}
+        onClick={() => {
+          if (!roof) return;
+          const oldLocks = new Map<string, boolean>();
+          for (const elem of elements) {
+            if (elem.parentId === roof.id && elem.type === objectType) {
+              oldLocks.set(elem.id, !!elem.locked);
+            }
+          }
+          updateElementUnlockByParentId(roof.id, objectType, false);
+          const undoableUnlockAllElementsOfType = {
+            name: 'Unlock All ' + objectTypeText + ' on Roof',
+            timestamp: Date.now(),
+            oldValues: oldLocks,
+            newValue: true,
+            undo: () => {
+              for (const [id, locked] of undoableUnlockAllElementsOfType.oldValues.entries()) {
+                updateElementLockById(id, locked as boolean);
+              }
+            },
+            redo: () => {
+              updateElementUnlockByParentId(roof.id, objectType, false);
+            },
+          } as UndoableChangeGroup;
+          addUndoable(undoableUnlockAllElementsOfType);
+        }}
+      >
+        {i18n.t(`roofMenu.UnlockAll${objectTypeText}s`, lang)}
+      </Menu.Item>
+    );
+  };
+
+  const renderElementsSubMenu = () => {
+    const counterAll = roof ? countAllOffspringsByType(roof.id, true) : new ElementCounter();
+    if (counterAll.gotSome() && useStore.getState().contextMenuObjectType) {
+      const counterUnlocked = roof ? countAllOffspringsByType(roof.id, false) : new ElementCounter();
+      return (
+        <SubMenu
+          key={'lock-unlock-clear-on-roof'}
+          title={i18n.t('word.Elements', lang)}
+          style={{ paddingLeft: '24px' }}
+        >
+          {renderClearItem(ObjectType.Window, counterUnlocked.windowCount)}
+          {renderClearItem(ObjectType.SolarPanel, counterUnlocked.solarPanelCount)}
+          {renderClearItem(ObjectType.Sensor, counterUnlocked.sensorCount)}
+          {renderLockItem(ObjectType.Window, counterUnlocked.windowCount)}
+          {renderUnlockItem(ObjectType.Window, counterAll.windowCount)}
+          {renderLockItem(ObjectType.SolarPanel, counterUnlocked.solarPanelCount)}
+          {renderUnlockItem(ObjectType.SolarPanel, counterAll.solarPanelCount)}
+          {renderLockItem(ObjectType.Sensor, counterUnlocked.sensorCount)}
+          {renderUnlockItem(ObjectType.Sensor, counterAll.sensorCount)}
+        </SubMenu>
+      );
+    }
+    return null;
+  };
+
   return (
     roof && (
       <>
         {legalToPaste() && <Paste keyName={'roof-paste'} />}
         <Lock keyName={'roof-lock'} />
+
+        {renderElementsSubMenu()}
 
         {!roof.locked && roof.roofType === RoofType.Gable && updatedRoof && (
           <SubMenu

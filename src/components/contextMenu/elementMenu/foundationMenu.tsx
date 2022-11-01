@@ -255,7 +255,11 @@ export const FoundationMenu = () => {
                       if (foundation) {
                         const wallsIdSet = new Set();
                         elements.forEach((e) => {
-                          if (!e.locked && e.type === ObjectType.Wall && e.parentId === foundation.id) {
+                          if (
+                            !e.locked &&
+                            e.type === ObjectType.Wall &&
+                            (e.parentId === foundation.id || e.foundationId === foundation.id)
+                          ) {
                             wallsIdSet.add(e.id);
                           }
                         });
@@ -428,7 +432,10 @@ export const FoundationMenu = () => {
                             });
                           },
                           redo: () => {
-                            removeAllChildElementsByType(undoableRemoveAllSensorChildren.parentId, ObjectType.Sensor);
+                            removeAllElementsOnFoundationByType(
+                              undoableRemoveAllSensorChildren.parentId,
+                              ObjectType.Sensor,
+                            );
                           },
                         } as UndoableRemoveAllChildren;
                         addUndoable(undoableRemoveAllSensorChildren);
@@ -461,9 +468,9 @@ export const FoundationMenu = () => {
                     onOk: () => {
                       if (foundation) {
                         const removed = elements.filter(
-                          (e) => !e.locked && e.type === ObjectType.SolarPanel && e.parentId === foundation.id,
+                          (e) => !e.locked && e.type === ObjectType.SolarPanel && e.foundationId === foundation.id,
                         );
-                        removeAllChildElementsByType(foundation.id, ObjectType.SolarPanel);
+                        removeAllElementsOnFoundationByType(foundation.id, ObjectType.SolarPanel);
                         const removedElements = JSON.parse(JSON.stringify(removed));
                         const undoableRemoveAllSolarPanelChildren = {
                           name: 'Remove All Solar Panels on Foundation',
@@ -477,7 +484,7 @@ export const FoundationMenu = () => {
                             });
                           },
                           redo: () => {
-                            removeAllChildElementsByType(
+                            removeAllElementsOnFoundationByType(
                               undoableRemoveAllSolarPanelChildren.parentId,
                               ObjectType.SolarPanel,
                             );
@@ -511,7 +518,7 @@ export const FoundationMenu = () => {
                     onOk: () => {
                       if (foundation) {
                         const removed = elements.filter(
-                          (e) => !e.locked && e.type === ObjectType.ParabolicTrough && e.parentId === foundation.id,
+                          (e) => !e.locked && e.type === ObjectType.ParabolicTrough && e.foundationId === foundation.id,
                         );
                         removeAllChildElementsByType(foundation.id, ObjectType.ParabolicTrough);
                         const removedElements = JSON.parse(JSON.stringify(removed));
@@ -559,7 +566,7 @@ export const FoundationMenu = () => {
                     onOk: () => {
                       if (foundation) {
                         const removed = elements.filter(
-                          (e) => !e.locked && e.type === ObjectType.ParabolicDish && e.parentId === foundation.id,
+                          (e) => !e.locked && e.type === ObjectType.ParabolicDish && e.foundationId === foundation.id,
                         );
                         removeAllChildElementsByType(foundation.id, ObjectType.ParabolicDish);
                         const removedElements = JSON.parse(JSON.stringify(removed));
@@ -606,7 +613,8 @@ export const FoundationMenu = () => {
                     onOk: () => {
                       if (foundation) {
                         const removed = elements.filter(
-                          (e) => !e.locked && e.type === ObjectType.FresnelReflector && e.parentId === foundation.id,
+                          (e) =>
+                            !e.locked && e.type === ObjectType.FresnelReflector && e.foundationId === foundation.id,
                         );
                         removeAllChildElementsByType(foundation.id, ObjectType.FresnelReflector);
                         const removedElements = JSON.parse(JSON.stringify(removed));
@@ -654,7 +662,7 @@ export const FoundationMenu = () => {
                     onOk: () => {
                       if (foundation) {
                         const removed = elements.filter(
-                          (e) => !e.locked && e.type === ObjectType.Heliostat && e.parentId === foundation.id,
+                          (e) => !e.locked && e.type === ObjectType.Heliostat && e.foundationId === foundation.id,
                         );
                         removeAllChildElementsByType(foundation.id, ObjectType.Heliostat);
                         const removedElements = JSON.parse(JSON.stringify(removed));
@@ -701,7 +709,7 @@ export const FoundationMenu = () => {
                     onOk: () => {
                       if (foundation) {
                         const removed = elements.filter(
-                          (e) => !e.locked && e.type === ObjectType.Polygon && e.parentId === foundation.id,
+                          (e) => !e.locked && e.type === ObjectType.Polygon && e.foundationId === foundation.id,
                         );
                         removeAllChildElementsByType(foundation.id, ObjectType.Polygon);
                         const removedElements = JSON.parse(JSON.stringify(removed));

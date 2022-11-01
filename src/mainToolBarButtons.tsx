@@ -257,6 +257,7 @@ const MainToolBarButtons = () => {
       case ObjectType.Human:
       case ObjectType.Tree:
       case ObjectType.Flower:
+      case ObjectType.Sensor:
       case ObjectType.SolarPanel:
       case ObjectType.ParabolicDish:
       case ObjectType.ParabolicTrough:
