@@ -347,7 +347,7 @@ const GableRoof = ({
   const updateRoofTopRidge = (elemId: string, left: number, right: number) => {
     setCommonStore((state) => {
       for (const e of state.elements) {
-        if (e.id === elemId) {
+        if (e.id === elemId && e.type === ObjectType.GableRoof) {
           (e as GableRoofModel).ridgeLeftPoint[0] = left;
           (e as GableRoofModel).ridgeRightPoint[0] = right;
           break;
@@ -746,6 +746,7 @@ const GableRoof = ({
       if (currentWallArray.length === 4) {
         setCommonStore((state) => {
           for (const e of state.elements) {
+            if (e.type !== ObjectType.Wall) continue;
             const w = e as WallModel;
             switch (e.id) {
               case currentWallArray[0].id: {
@@ -1086,7 +1087,7 @@ const GableRoof = ({
             useStoreRef.getState().setEnableOrbitController(true);
             setCommonStore((state) => {
               for (const e of state.elements) {
-                if (e.id === id) {
+                if (e.id === id && e.type === ObjectType.GableRoof) {
                   (e as GableRoofModel).lz = h;
                   break;
                 }

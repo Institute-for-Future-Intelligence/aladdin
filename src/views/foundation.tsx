@@ -578,21 +578,19 @@ const Foundation = ({
       if (!flipWallCopy) {
         break;
       }
-      if (flipWallCopy) {
-        setCommonStore((state) => {
-          for (const e of state.elements) {
-            if (e.id === flipWallCopy.id) {
-              const wall = e as WallModel;
-              wall.relativeAngle = (flipWallCopy.relativeAngle + Math.PI) % TWO_PI;
-              wall.leftPoint = [...flipWallCopy.rightPoint];
-              wall.rightPoint = [...flipWallCopy.leftPoint];
-              wall.leftJoints = flipWallCopy.rightJoints.length > 0 ? [flipWallCopy.rightJoints[0]] : [];
-              wall.rightJoints = flipWallCopy.leftJoints.length > 0 ? [flipWallCopy.leftJoints[0]] : [];
-              break;
-            }
+      setCommonStore((state) => {
+        for (const e of state.elements) {
+          if (flipWallCopy && e.id === flipWallCopy.id) {
+            const wall = e as WallModel;
+            wall.relativeAngle = (flipWallCopy.relativeAngle + Math.PI) % TWO_PI;
+            wall.leftPoint = [...flipWallCopy.rightPoint];
+            wall.rightPoint = [...flipWallCopy.leftPoint];
+            wall.leftJoints = flipWallCopy.rightJoints.length > 0 ? [flipWallCopy.rightJoints[0]] : [];
+            wall.rightJoints = flipWallCopy.leftJoints.length > 0 ? [flipWallCopy.leftJoints[0]] : [];
+            break;
           }
-        });
-      }
+        }
+      });
       let nextWall: WallModel | undefined = undefined;
       if (flipWallCopy.leftJoints.length > 0) {
         nextWall = wallMapOnFoundation.current.get(flipWallCopy.leftJoints[0]);
@@ -639,21 +637,19 @@ const Foundation = ({
       if (!flipWallCopy) {
         break;
       }
-      if (flipWallCopy) {
-        setCommonStore((state) => {
-          for (const e of state.elements) {
-            if (e.id === flipWallCopy.id) {
-              const wall = e as WallModel;
-              wall.relativeAngle = (flipWallCopy.relativeAngle + Math.PI) % TWO_PI;
-              wall.leftPoint = [...flipWallCopy.rightPoint];
-              wall.rightPoint = [...flipWallCopy.leftPoint];
-              wall.leftJoints = flipWallCopy.rightJoints.length > 0 ? [flipWallCopy.rightJoints[0]] : [];
-              wall.rightJoints = flipWallCopy.leftJoints.length > 0 ? [flipWallCopy.leftJoints[0]] : [];
-              break;
-            }
+      setCommonStore((state) => {
+        for (const e of state.elements) {
+          if (flipWallCopy && e.id === flipWallCopy.id) {
+            const wall = e as WallModel;
+            wall.relativeAngle = (flipWallCopy.relativeAngle + Math.PI) % TWO_PI;
+            wall.leftPoint = [...flipWallCopy.rightPoint];
+            wall.rightPoint = [...flipWallCopy.leftPoint];
+            wall.leftJoints = flipWallCopy.rightJoints.length > 0 ? [flipWallCopy.rightJoints[0]] : [];
+            wall.rightJoints = flipWallCopy.leftJoints.length > 0 ? [flipWallCopy.leftJoints[0]] : [];
+            break;
           }
-        });
-      }
+        }
+      });
       let nextWall: WallModel | undefined = undefined;
       if (flipWallCopy.rightJoints.length > 0) {
         nextWall = wallMapOnFoundation.current.get(flipWallCopy.rightJoints[0]);
