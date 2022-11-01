@@ -118,6 +118,14 @@ const Sensor = ({
             cz = absoluteCoordinates.z;
           }
           break;
+        case ObjectType.Roof:
+          if (foundation?.type === ObjectType.Foundation) {
+            const absoluteCoordinates = Util.absoluteCoordinates(cx, cy, cz, parent, foundation as FoundationModel);
+            cx = absoluteCoordinates.x;
+            cy = absoluteCoordinates.y;
+            cz = absoluteCoordinates.z;
+          }
+          break;
       }
     }
   }
@@ -129,6 +137,9 @@ const Sensor = ({
       const wall = parent as WallModel;
       const wallAbsAngle = foundation ? foundation.rotation[2] + wall.relativeAngle : wall.relativeAngle;
       return new Euler(HALF_PI, 0, wallAbsAngle, 'ZXY');
+    }
+    if (parent?.type === ObjectType.Roof) {
+      return new Euler(rotation[0], rotation[1], rotation[2], 'ZXY');
     }
     // the normal below seems to be relative to its parent
     const n = new Vector3().fromArray(normal);

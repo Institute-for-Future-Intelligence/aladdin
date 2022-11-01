@@ -236,8 +236,7 @@ export class RoofUtil {
     const B = (v2.z - v1.z) * (v3.x - v1.x) - (v2.x - v1.x) * (v3.z - v1.z);
     const C = (v2.x - v1.x) * (v3.y - v1.y) - (v2.y - v1.y) * (v3.x - v1.x);
     const D = -(A * v1.x + B * v1.y + C * v1.z);
-    const z = -(D + A * pos.x + B * pos.y) / C + roofHeight;
-    return z;
+    return -(D + A * pos.x + B * pos.y) / C + roofHeight;
   }
 
   static computeState(roofSegments: ConvexGeoProps[], posRelToCentroid: Vector3) {

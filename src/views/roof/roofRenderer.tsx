@@ -1,8 +1,8 @@
 /*
- * @Copyright 2021-2022. Institute for Future Intelligence, Inc.
+ * @Copyright 2022. Institute for Future Intelligence, Inc.
  */
 
-import React, { useEffect, useMemo, useRef, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { useStore } from '../../stores/common';
 import {
   GableRoofModel,
@@ -55,9 +55,9 @@ interface RoofHandleProps {
   onPointerUp?: (event: ThreeEvent<PointerEvent>) => void;
 }
 
-const addUndoableAddSP = (elem: ElementModel) => {
+const addUndoableAddSolarPanel = (elem: ElementModel) => {
   const undoableAdd = {
-    name: 'Add Solar Panel On Roof',
+    name: 'Add Solar Panel on Roof',
     timestamp: Date.now(),
     addedElement: elem,
     undo: () => {
@@ -82,7 +82,7 @@ const getPointerOnRoof = (e: ThreeEvent<PointerEvent>, roofType: RoofType) => {
   return e.intersections[0].point;
 };
 
-const handlAddElementOnRoof = (
+const handleAddElementOnRoof = (
   e: ThreeEvent<PointerEvent>,
   roofId: string,
   foundation: ElementModel,
@@ -90,7 +90,7 @@ const handlAddElementOnRoof = (
   ridgeMidPoint: Vector3,
 ) => {
   switch (useStore.getState().objectTypeToAdd) {
-    case ObjectType.SolarPanel:
+    case ObjectType.SolarPanel: {
       const roof = useStore.getState().getElementById(roofId);
       if (roof && foundation && e.intersections[0]) {
         const pointer = e.intersections[0].point;
@@ -118,12 +118,41 @@ const handlAddElementOnRoof = (
           ObjectType.Roof,
         );
         useStore.getState().set((state) => {
-          state.elements.push(newElement as ElementModel);
-          state.objectTypeToAdd = ObjectType.None;
+          state.elements.push(newElement);
+          if (!state.actionModeLock) state.objectTypeToAdd = ObjectType.None;
         });
-        addUndoableAddSP(newElement);
+        addUndoableAddSolarPanel(newElement);
       }
       break;
+    }
+    case ObjectType.Sensor: {
+      const roof = useStore.getState().getElementById(roofId);
+      if (roof?.type === ObjectType.Roof) {
+        if (roof && foundation && e.intersections[0]) {
+          const pointer = e.intersections[0].point;
+          const posRelToFoundation = new Vector3()
+            .subVectors(pointer, new Vector3(foundation.cx, foundation.cy))
+            .applyEuler(new Euler(0, 0, -foundation.rotation[2]));
+          const posRelToCentroid = posRelToFoundation.clone().sub(ridgeMidPoint);
+
+          const { normal, rotation } = RoofUtil.computeState(roofSegments, posRelToCentroid);
+          const newElement = ElementModelFactory.makeSensor(
+            roof,
+            posRelToFoundation.x / foundation.lx,
+            posRelToFoundation.y / foundation.ly,
+            posRelToFoundation.z - foundation.lz + (roof as RoofModel).thickness,
+            normal,
+            rotation ?? [0, 0, 1],
+          );
+          useStore.getState().set((state) => {
+            state.elements.push(newElement);
+            if (!state.actionModeLock) state.objectTypeToAdd = ObjectType.None;
+          });
+          addUndoableAddSolarPanel(newElement);
+        }
+      }
+      break;
+    }
   }
 };
 
@@ -225,20 +254,37 @@ export const updateRooftopSolarPanel = (
   useStore.getState().set((state) => {
     if (foundation === null) return;
     for (const e of state.elements) {
-      if (e.type === ObjectType.SolarPanel && e.parentId === roofId && e.foundationId) {
-        const posRelToFoundation = new Vector3(e.cx * foundation.lx, e.cy * foundation.ly, e.cz + foundation.lz);
-        const posRelToCentroid = posRelToFoundation.clone().sub(centroid);
-        const { segmentVertices, normal, rotation } = RoofUtil.computeState(roofSegments, posRelToCentroid);
-        let z;
-        if (segmentVertices) {
-          z = RoofUtil.getSolarPanelZ(segmentVertices, posRelToCentroid, h + thickness);
-        } else {
-          z = h + thickness;
-        }
-        if (normal && rotation && z !== undefined) {
-          e.normal = normal.toArray();
-          e.rotation = [...rotation];
-          e.cz = z;
+      if (e.parentId === roofId && e.foundationId) {
+        if (e.type === ObjectType.SolarPanel) {
+          const posRelToFoundation = new Vector3(e.cx * foundation.lx, e.cy * foundation.ly, e.cz + foundation.lz);
+          const posRelToCentroid = posRelToFoundation.clone().sub(centroid);
+          const { segmentVertices, normal, rotation } = RoofUtil.computeState(roofSegments, posRelToCentroid);
+          let z;
+          if (segmentVertices) {
+            z = RoofUtil.getSolarPanelZ(segmentVertices, posRelToCentroid, h + thickness);
+          } else {
+            z = h + thickness;
+          }
+          if (normal && rotation && z !== undefined) {
+            e.normal = normal.toArray();
+            e.rotation = [...rotation];
+            e.cz = z;
+          }
+        } else if (e.type === ObjectType.Sensor) {
+          const posRelToFoundation = new Vector3(e.cx * foundation.lx, e.cy * foundation.ly, e.cz + foundation.lz);
+          const posRelToCentroid = posRelToFoundation.clone().sub(centroid);
+          const { segmentVertices, normal, rotation } = RoofUtil.computeState(roofSegments, posRelToCentroid);
+          let z;
+          if (segmentVertices) {
+            z = RoofUtil.getSolarPanelZ(segmentVertices, posRelToCentroid, h + thickness);
+          } else {
+            z = h + thickness;
+          }
+          if (normal && rotation && z !== undefined) {
+            e.normal = normal.toArray();
+            e.rotation = [...rotation];
+            e.cz = z + foundation.lz;
+          }
         }
       }
     }
@@ -255,7 +301,7 @@ export const handlePointerDown = (
   setOldRefData: (elem: ElementModel) => void,
 ) => {
   if (!foundation) return;
-  handlAddElementOnRoof(e, roofId, foundation, roofSegments, centroid);
+  handleAddElementOnRoof(e, roofId, foundation, roofSegments, centroid);
   // click on child
   if (e.intersections[0].eventObject.name !== e.eventObject.name) {
     const selectedElement = useStore.getState().getSelectedElement();
