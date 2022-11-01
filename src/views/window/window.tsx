@@ -149,7 +149,10 @@ const Window = (windowModel: WindowModel) => {
   const windowShiness = useStore(Selector.viewState.windowShiness);
   const sunlightDirection = useStore(Selector.sunlightDirection);
   const night = sunlightDirection.z <= 0;
-  const material = new MeshStandardMaterial({ color: 'white', side: night ? FrontSide : DoubleSide });
+  const material = useMemo(
+    () => new MeshStandardMaterial({ color: 'white', side: night ? FrontSide : DoubleSide }),
+    [night],
+  );
 
   const [wlx, setWlx] = useState(lx);
   const [wly, setWly] = useState(ly);
