@@ -26,6 +26,7 @@ import Wireframe from '../components/wireframe';
 import i18n from '../i18n/i18n';
 import { WallModel } from '../models/WallModel';
 import { FoundationModel } from '../models/FoundationModel';
+import { RoofModel } from '../models/RoofModel';
 
 const Sensor = ({
   id,

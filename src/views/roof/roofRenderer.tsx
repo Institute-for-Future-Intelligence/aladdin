@@ -140,7 +140,7 @@ const handleAddElementOnRoof = (
             roof,
             posRelToFoundation.x / foundation.lx,
             posRelToFoundation.y / foundation.ly,
-            posRelToFoundation.z - foundation.lz + (roof as RoofModel).thickness,
+            posRelToFoundation.z - foundation.lz,
             normal,
             rotation ?? [0, 0, 1],
           );
@@ -261,7 +261,7 @@ export const updateRooftopSolarPanel = (
           const { segmentVertices, normal, rotation } = RoofUtil.computeState(roofSegments, posRelToCentroid);
           let z;
           if (segmentVertices) {
-            z = RoofUtil.getSolarPanelZ(segmentVertices, posRelToCentroid, h + thickness);
+            z = RoofUtil.getRooftopZ(segmentVertices, posRelToCentroid, h + thickness);
           } else {
             z = h + thickness;
           }
@@ -276,14 +276,14 @@ export const updateRooftopSolarPanel = (
           const { segmentVertices, normal, rotation } = RoofUtil.computeState(roofSegments, posRelToCentroid);
           let z;
           if (segmentVertices) {
-            z = RoofUtil.getSolarPanelZ(segmentVertices, posRelToCentroid, h + thickness);
+            z = RoofUtil.getRooftopZ(segmentVertices, posRelToCentroid, h + thickness);
           } else {
             z = h + thickness;
           }
           if (normal && rotation && z !== undefined) {
             e.normal = normal.toArray();
             e.rotation = [...rotation];
-            e.cz = z + foundation.lz;
+            e.cz = z;
           }
         }
       }

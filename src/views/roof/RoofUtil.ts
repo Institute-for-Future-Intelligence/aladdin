@@ -230,7 +230,7 @@ export class RoofUtil {
         ];
   }
 
-  static getSolarPanelZ(vertices: Vector3[], pos: Vector3, roofHeight: number) {
+  static getRooftopZ(vertices: Vector3[], pos: Vector3, roofHeight: number) {
     const [v1, v2, v3] = vertices;
     const A = (v2.y - v1.y) * (v3.z - v1.z) - (v2.z - v1.z) * (v3.y - v1.y);
     const B = (v2.z - v1.z) * (v3.x - v1.x) - (v2.x - v1.x) * (v3.z - v1.z);

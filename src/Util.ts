@@ -864,7 +864,7 @@ export class Util {
       }
     }
     if (parent.type === ObjectType.Roof && foundation) {
-      const v = new Vector3(x * foundation.lx, y * foundation.ly, z);
+      const v = new Vector3(x * foundation.lx, y * foundation.ly, z + foundation.lz);
       v.applyEuler(new Euler().fromArray(foundation.rotation));
       v.x += foundation.cx;
       v.y += foundation.cy;
