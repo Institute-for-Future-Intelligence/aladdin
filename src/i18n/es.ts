@@ -126,6 +126,7 @@ export const i18n_es = {
       FresnelReflectorElement: 'Fresnel Reflector',
       HeliostatElement: 'Heliostat',
       WindTurbineElement: 'Wind Turbine',
+      LightElement: 'Light',
       ElementLocked: 'Bloqueado',
     },
 
@@ -1178,6 +1179,7 @@ export const i18n_es = {
       AddFresnelReflector: 'Add Fresnel reflector',
       AddHeliostat: 'Add heliostat',
       AddWindTurbine: 'Add wind turbine',
+      AddLight: 'Add light',
       AddTree: 'Añadir árbol',
       AddFlower: 'Add flower',
       AddPeople: 'Añadir gente',
@@ -1207,6 +1209,7 @@ export const i18n_es = {
       SwitchToAddingFresnelReflector: 'Switch to Adding Fresnel Reflector',
       SwitchToAddingHeliostat: 'Switch to Adding Heliostat',
       SwitchToAddingWindTurbine: 'Switch to Adding Wind Turbine',
+      SwitchToAddingLight: 'Switch to Adding Light',
       SwitchToAddingTree: 'Switch to Adding Tree',
       SwitchToAddingFlower: 'Switch to Adding Flower',
       SwitchToAddingPeople: 'Switch to Adding People',

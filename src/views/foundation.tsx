@@ -460,6 +460,7 @@ const Foundation = ({
       case ObjectType.Flower:
       case ObjectType.Polygon:
       case ObjectType.Sensor:
+      case ObjectType.Light:
       case ObjectType.SolarPanel:
       case ObjectType.ParabolicDish:
       case ObjectType.ParabolicTrough:
@@ -1737,7 +1738,7 @@ const Foundation = ({
             }
           }
         } else {
-          // for moving sensors and solar collectors
+          // for moving sensors, lights, and solar collectors
           newPositionRef.current.set(elem.cx, elem.cy, elem.cz);
           if (newPositionRef.current.distanceToSquared(oldPositionRef.current) > ZERO_TOLERANCE) {
             let accept = true;
@@ -1812,6 +1813,7 @@ const Foundation = ({
       if (grabRef.current && grabRef.current.type && !grabRef.current.locked && intersects.length > 0) {
         switch (grabRef.current.type) {
           case ObjectType.Sensor:
+          case ObjectType.Light:
             p = Util.relativeCoordinates(p.x, p.y, p.z, foundationModel);
             setElementPosition(grabRef.current.id, p.x, p.y);
             break;

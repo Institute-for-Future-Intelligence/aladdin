@@ -51,6 +51,7 @@ import { DoorModel } from './DoorModel';
 import { WindTurbineModel } from './WindTurbineModel';
 import { defaultShutter } from 'src/views/window/window';
 import { FlowerData } from '../FlowerData';
+import { LightModel } from './LightModel';
 
 export class ElementModelFactory {
   static makeHuman(name: HumanName, parentId: string, x: number, y: number, z?: number) {
@@ -498,6 +499,48 @@ export class ElementModelFactory {
       foundationId: foundationId,
       id: short.generate() as string,
     } as SensorModel;
+  }
+
+  static makeLight(
+    parent: ElementModel,
+    decay: number,
+    distance: number,
+    intensity: number,
+    x: number,
+    y: number,
+    z?: number,
+    normal?: Vector3,
+    rotation?: number[],
+  ) {
+    let foundationId;
+    switch (parent.type) {
+      case ObjectType.Foundation:
+      case ObjectType.Cuboid:
+        foundationId = parent.id;
+        break;
+      case ObjectType.Wall:
+      case ObjectType.Roof:
+        foundationId = parent.parentId;
+        break;
+    }
+    return {
+      type: ObjectType.Light,
+      decay: decay ?? 1,
+      distance: distance ?? 10,
+      intensity: intensity ?? 5,
+      cx: x,
+      cy: y,
+      cz: z,
+      lx: 0.1,
+      ly: 0.1,
+      lz: 0.08,
+      showLabel: false,
+      normal: normal ? normal.toArray() : [0, 0, 1],
+      rotation: rotation ? rotation : [0, 0, 0],
+      parentId: parent.id,
+      foundationId: foundationId,
+      id: short.generate() as string,
+    } as LightModel;
   }
 
   static makeWall(

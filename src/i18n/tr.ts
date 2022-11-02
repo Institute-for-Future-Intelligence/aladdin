@@ -126,6 +126,7 @@ export const i18n_tr = {
       FresnelReflectorElement: 'Fresnel Reflektör',
       HeliostatElement: 'Heliostat',
       WindTurbineElement: 'Wind Turbine',
+      LightElement: 'Light',
       ElementLocked: 'Kilitli',
     },
 
@@ -1179,6 +1180,7 @@ export const i18n_tr = {
       AddFresnelReflector: 'Fresnel Reflektörü Ekle',
       AddHeliostat: 'Heliostat Ekle',
       AddWindTurbine: 'Add wind turbine',
+      AddLight: 'Add light',
       AddTree: 'Ağaç Ekle',
       AddFlower: 'Add flower',
       AddPeople: 'İnsan Ekle',
@@ -1208,6 +1210,7 @@ export const i18n_tr = {
       SwitchToAddingFresnelReflector: 'Fresnel Reflektör Ekle',
       SwitchToAddingHeliostat: 'Heliostat Ekle',
       SwitchToAddingWindTurbine: 'Switch to Adding Wind Turbine',
+      SwitchToAddingLight: 'Switch to Adding Light',
       SwitchToAddingTree: 'Ağaç Ekle',
       SwitchToAddingFlower: 'Switch to Adding Flower',
       SwitchToAddingPeople: 'Kişi Ekle',

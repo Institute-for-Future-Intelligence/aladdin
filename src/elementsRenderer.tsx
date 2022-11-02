@@ -36,6 +36,8 @@ import { HeliostatModel } from './models/HeliostatModel';
 import SolarPanel from './views/solarPanel/solarPanel';
 import Flower from './views/flower';
 import { FlowerModel } from './models/FlowerModel';
+import Light from './views/light';
+import { LightModel } from './models/LightModel';
 
 const ElementsRenderer: React.FC = () => {
   const elements = useStore(Selector.elements);
@@ -62,6 +64,8 @@ const ElementsRenderer: React.FC = () => {
             return <Foundation key={e.id} {...(e as FoundationModel)} />;
           case ObjectType.Sensor:
             return <Sensor key={e.id} {...(e as SensorModel)} />;
+          case ObjectType.Light:
+            return <Light key={e.id} {...(e as LightModel)} />;
           case ObjectType.Cuboid:
             return <Cuboid key={e.id} {...(e as CuboidModel)} />;
           case ObjectType.Human:

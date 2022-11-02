@@ -1,5 +1,5 @@
 /*
- * @Copyright 2021-2022. Institute for Future Intelligence, Inc.
+ * @Copyright 2022. Institute for Future Intelligence, Inc.
  */
 
 import React, { useMemo, useRef, useState } from 'react';
@@ -7,13 +7,12 @@ import { Box, Cylinder, Sphere } from '@react-three/drei';
 import { Euler, Mesh, Vector3 } from 'three';
 import { useStore } from '../stores/common';
 import * as Selector from '../stores/selector';
-import { SensorModel } from '../models/SensorModel';
 import { useThree } from '@react-three/fiber';
 import {
   HALF_PI,
-  HIGHLIGHT_HANDLE_COLOR,
   LOCKED_ELEMENT_SELECTION_COLOR,
   MOVE_HANDLE_RADIUS,
+  TWO_PI,
   UNIT_VECTOR_NEG_X,
   UNIT_VECTOR_NEG_Y,
   UNIT_VECTOR_POS_X,
@@ -26,8 +25,9 @@ import Wireframe from '../components/wireframe';
 import i18n from '../i18n/i18n';
 import { WallModel } from '../models/WallModel';
 import { FoundationModel } from '../models/FoundationModel';
+import { LightModel } from '../models/LightModel';
 
-const Sensor = ({
+const Light = ({
   id,
   cx,
   cy,
@@ -37,7 +37,7 @@ const Sensor = ({
   lz = 0.1,
   rotation = [0, 0, 0],
   normal = [0, 0, 1],
-  color = 'white',
+  color = '#ffff99',
   lineColor = 'black',
   lineWidth = 0.1,
   selected = false,
@@ -45,14 +45,17 @@ const Sensor = ({
   showLabel = false,
   parentId,
   foundationId,
-  light = true,
-  heatFlux = false,
-}: SensorModel) => {
+  decay = 1,
+  distance = 10,
+  intensity = 5,
+}: LightModel) => {
   const setCommonStore = useStore(Selector.set);
   const language = useStore(Selector.language);
   const shadowEnabled = useStore(Selector.viewState.shadowEnabled);
   const getElementById = useStore(Selector.getElementById);
   const selectMe = useStore(Selector.selectMe);
+  const sunlightDirection = useStore(Selector.sunlightDirection);
+  const night = sunlightDirection.z <= 0;
 
   const {
     gl: { domElement },
@@ -130,7 +133,7 @@ const Sensor = ({
     }
   }
   const hz = lz / 2;
-  const sensorModel = getElementById(id) as SensorModel;
+  const lightModel = getElementById(id) as LightModel;
 
   const euler = useMemo(() => {
     if (parent?.type === ObjectType.Wall) {
@@ -165,8 +168,8 @@ const Sensor = ({
 
   const labelText = useMemo(() => {
     return (
-      (sensorModel?.label ? sensorModel.label : i18n.t('shared.SensorElement', lang)) +
-      (sensorModel.locked ? ' (' + i18n.t('shared.ElementLocked', lang) + ')' : '') +
+      (lightModel?.label ? lightModel.label : i18n.t('shared.LightElement', lang)) +
+      (lightModel.locked ? ' (' + i18n.t('shared.ElementLocked', lang) + ')' : '') +
       '\n' +
       i18n.t('word.Coordinates', lang) +
       ': (' +
@@ -178,16 +181,28 @@ const Sensor = ({
       ') ' +
       i18n.t('word.MeterAbbreviation', lang)
     );
-  }, [sensorModel?.label, locked, language, cx, cy, cz]);
+  }, [lightModel?.label, locked, language, cx, cy, cz]);
 
   return (
-    <group name={'Sensor Group ' + id} rotation={euler} position={[cx, cy, cz + hz]}>
-      {/* draw rectangle (too small to cast shadow) */}
-      <Box
+    <group name={'Light Group ' + id} rotation={euler} position={[cx, cy, cz + hz]}>
+      {night && (
+        <pointLight
+          color={color}
+          name={'Point Light ' + id}
+          position={[0, 0, hz]}
+          decay={decay}
+          distance={distance}
+          intensity={intensity}
+          castShadow={true}
+        />
+      )}
+      <Cylinder
         receiveShadow={shadowEnabled}
+        userData={{ unintersectable: true }}
         uuid={id}
         ref={baseRef}
-        args={[lx, ly, lz]}
+        rotation={[HALF_PI, 0, 0]}
+        args={[lx * 0.5, ly * 0.5, hz, 16, 1]}
         name={'Sensor'}
         onPointerDown={(e) => {
           if (e.button === 2) return; // ignore right-click
@@ -218,22 +233,23 @@ const Sensor = ({
           domElement.style.cursor = 'default';
         }}
       >
-        <meshStandardMaterial attach="material" color={sensorModel?.lit ? HIGHLIGHT_HANDLE_COLOR : color} />
-      </Box>
-      <Cylinder
+        <meshStandardMaterial attach="material" color={color} />
+      </Cylinder>
+      <Sphere
         userData={{ unintersectable: true }}
         name={'Meter'}
         castShadow={false}
-        receiveShadow={false}
-        args={[lx * 0.3, ly * 0.3, hz, 8, 1]}
+        receiveShadow={shadowEnabled}
+        args={[lx * 0.3, 8, 8, 0, TWO_PI, 0, Math.PI]}
         position={new Vector3(0, 0, hz)}
         rotation={[HALF_PI, 0, 0]}
       >
-        <meshBasicMaterial attach="material" color={'black'} />
-      </Cylinder>
-
-      {/* wireFrame */}
-      {!selected && <Wireframe hx={lx / 2} hy={ly / 2} hz={lz / 2} lineColor={lineColor} lineWidth={lineWidth} />}
+        {night ? (
+          <meshBasicMaterial attach="material" color={color} />
+        ) : (
+          <meshStandardMaterial attach="material" color={color} />
+        )}
+      </Sphere>
 
       {/* highlight with a thick wireframe when it is selected but locked */}
       {selected && locked && (
@@ -276,4 +292,4 @@ const Sensor = ({
   );
 };
 
-export default React.memo(Sensor);
+export default React.memo(Light);

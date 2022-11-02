@@ -4328,6 +4328,23 @@ export const useStore = create<CommonStoreState>(
                   model = sensor;
                   state.elements.push(sensor);
                   break;
+                case ObjectType.Light:
+                  const lightParentModel = parent as ElementModel;
+                  const lightRelativeCoordinates = Util.relativeCoordinates(p.x, p.y, p.z, lightParentModel);
+                  const light = ElementModelFactory.makeLight(
+                    lightParentModel,
+                    1,
+                    10,
+                    5,
+                    lightRelativeCoordinates.x,
+                    lightRelativeCoordinates.y,
+                    lightRelativeCoordinates.z,
+                    normal,
+                    'rotation' in parent ? parent.rotation : undefined,
+                  );
+                  model = light;
+                  state.elements.push(light);
+                  break;
                 case ObjectType.SolarPanel:
                   const solarPanelParentModel = parent as ElementModel;
                   const solarPanelRelativeCoordinates = Util.relativeCoordinates(p.x, p.y, p.z, solarPanelParentModel);

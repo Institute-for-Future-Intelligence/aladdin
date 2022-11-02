@@ -24,6 +24,7 @@ import ParabolicDishImage from './assets/parabolic_dish.png';
 import FresnelReflectorImage from './assets/fresnel_reflector.png';
 import HeliostatImage from './assets/heliostat.png';
 import WindTurbineImage from './assets/wind_turbine.png';
+import LightImage from './assets/led_light.png';
 import GroupImage from './assets/group.png';
 import ClearImage from './assets/clear.png';
 import HeliodonImage from './assets/heliodon.png';
@@ -264,6 +265,7 @@ const MainToolBarButtons = () => {
       case ObjectType.FresnelReflector:
       case ObjectType.Heliostat:
       case ObjectType.WindTurbine:
+      case ObjectType.Light:
       case ObjectType.Wall:
       case ObjectType.Window:
         return true;
@@ -374,6 +376,7 @@ const MainToolBarButtons = () => {
       {menuItem(ObjectType.Heliostat, HeliostatImage, setCategory3Flag)}
       {menuItem(ObjectType.Sensor, SensorImage, setCategory3Flag)}
       {menuItem(ObjectType.WindTurbine, WindTurbineImage, setCategory3Flag)}
+      {menuItem(ObjectType.Light, LightImage, setCategory3Flag)}
     </Menu>
   );
 
@@ -429,6 +432,8 @@ const MainToolBarButtons = () => {
         return buttonImg(objectType, SensorImage);
       case ObjectType.WindTurbine:
         return buttonImg(objectType, WindTurbineImage);
+      case ObjectType.Light:
+        return buttonImg(objectType, LightImage);
     }
   };
 

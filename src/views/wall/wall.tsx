@@ -1024,6 +1024,7 @@ const Wall = (wallModel: WallModel) => {
               }
               break;
             }
+            case ObjectType.Light:
             case ObjectType.Sensor: {
               let p = getRelativePosOnWall(pointer, wallModel);
               if (moveHandleType) {
@@ -1042,9 +1043,6 @@ const Wall = (wallModel: WallModel) => {
                   }
                 });
               }
-              break;
-            }
-            case ObjectType.Light: {
               break;
             }
           }
@@ -1224,7 +1222,20 @@ const Wall = (wallModel: WallModel) => {
           break;
         }
         case ObjectType.Light: {
-          // TODO
+          if (pointer) {
+            const p = getRelativePosOnWall(pointer, wallModel);
+            newElement = ElementModelFactory.makeLight(
+              wallModel,
+              1,
+              10,
+              5,
+              (p.x - 0.05) / lx,
+              0,
+              (p.z - 0.05) / lz,
+              new Vector3(0, -1, 0),
+              [0, 0, 0],
+            );
+          }
           break;
         }
       }

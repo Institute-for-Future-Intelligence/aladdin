@@ -126,6 +126,7 @@ export const i18n_zh_cn = {
       FresnelReflectorElement: '菲涅耳反射镜',
       HeliostatElement: '定日镜',
       WindTurbineElement: '风力涡轮机',
+      LightElement: '电灯',
       ElementLocked: '固定',
     },
 
@@ -1156,6 +1157,7 @@ export const i18n_zh_cn = {
       AddFresnelReflector: '添加菲涅耳反射镜',
       AddHeliostat: '添加定日镜',
       AddWindTurbine: '添加风力涡轮机',
+      AddLight: '添加电灯',
       AddTree: '添加树木',
       AddFlower: '添加花草',
       AddPeople: '添加人物',
@@ -1185,6 +1187,7 @@ export const i18n_zh_cn = {
       SwitchToAddingFresnelReflector: '切换到添加菲涅耳反射镜模式',
       SwitchToAddingHeliostat: '切换到添加定日镜模式',
       SwitchToAddingWindTurbine: '切换到添加风力涡轮机模式',
+      SwitchToAddingLight: '切换到添加电灯模式',
       SwitchToAddingTree: '切换到添加树木模式',
       SwitchToAddingFlower: '切换到添加花草模式',
       SwitchToAddingPeople: '切换到添加人物模式',
