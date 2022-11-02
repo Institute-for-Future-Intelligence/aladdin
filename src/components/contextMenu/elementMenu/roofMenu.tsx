@@ -212,6 +212,7 @@ export const RoofMenu = () => {
           {renderClearItem(ObjectType.Window, counterUnlocked.windowCount)}
           {renderClearItem(ObjectType.SolarPanel, counterUnlocked.solarPanelCount)}
           {renderClearItem(ObjectType.Sensor, counterUnlocked.sensorCount)}
+          {renderClearItem(ObjectType.Light, counterUnlocked.lightCount)}
           {renderLockItem(ObjectType.Window, counterUnlocked.windowCount)}
           {renderUnlockItem(ObjectType.Window, counterAll.windowCount)}
           {renderLockItem(ObjectType.SolarPanel, counterUnlocked.solarPanelCount)}
@@ -226,7 +227,7 @@ export const RoofMenu = () => {
 
   return (
     roof && (
-      <>
+      <Menu.ItemGroup>
         {legalToPaste() && <Paste keyName={'roof-paste'} />}
         <Lock keyName={'roof-lock'} />
 
@@ -418,7 +419,7 @@ export const RoofMenu = () => {
             )}
           </>
         )}
-      </>
+      </Menu.ItemGroup>
     )
   );
 };

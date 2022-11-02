@@ -1226,9 +1226,9 @@ const Wall = (wallModel: WallModel) => {
             const p = getRelativePosOnWall(pointer, wallModel);
             newElement = ElementModelFactory.makeLight(
               wallModel,
-              1,
-              10,
+              2,
               5,
+              3,
               (p.x - 0.05) / lx,
               0,
               (p.z - 0.05) / lz,

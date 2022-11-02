@@ -353,6 +353,7 @@ export const WallMenu = () => {
           {renderClearItem(ObjectType.Door, counterUnlocked.doorCount)}
           {renderClearItem(ObjectType.SolarPanel, counterUnlocked.solarPanelCount)}
           {renderClearItem(ObjectType.Sensor, counterUnlocked.sensorCount)}
+          {renderClearItem(ObjectType.Light, counterUnlocked.lightCount)}
           {renderLockItem(ObjectType.Window, counterUnlocked.windowCount)}
           {renderUnlockItem(ObjectType.Window, counterAll.windowCount)}
           {renderLockItem(ObjectType.SolarPanel, counterUnlocked.solarPanelCount)}

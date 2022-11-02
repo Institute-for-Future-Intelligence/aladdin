@@ -19,6 +19,7 @@ import * as Selector from 'src/stores/selector';
 import { WallModel } from 'src/models/WallModel';
 import { useThree } from '@react-three/fiber';
 import { SensorModel } from '../../models/SensorModel';
+import { LightModel } from '../../models/LightModel';
 
 export const useElementUndoable = () => {
   const grabRef = useRef<ElementModel | null>(null);
@@ -26,10 +27,10 @@ export const useElementUndoable = () => {
   const oldRotationRef = useRef<number[] | null>(null);
   const oldNormalRef = useRef<number[] | null>(null);
 
-  const addUndoableMove = (elem: SolarPanelModel | SensorModel) => {
+  const addUndoableMove = (elem: SolarPanelModel | SensorModel | LightModel) => {
     if (oldPostionRef.current && oldRotationRef.current && oldNormalRef.current) {
       const undoabeMove = {
-        name: elem.type === ObjectType.SolarPanel ? 'Move Solar Panel on Roof' : 'Move Sensor on Roof',
+        name: 'Move ' + elem.type + ' on Roof',
         timestamp: Date.now(),
         id: elem.id,
         oldPos: [...oldPostionRef.current],

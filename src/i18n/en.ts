@@ -497,6 +497,7 @@ export const i18n_en = {
       RemoveAllUnlockedFresnelReflectors: 'Remove All Unlocked Fresnel Reflectors',
       RemoveAllUnlockedHeliostats: 'Remove All Unlocked Heliostats',
       RemoveAllUnlockedSensors: 'Remove All Unlocked Sensors',
+      RemoveAllUnlockedLights: 'Remove All Unlocked Lights',
       RemoveAllUnlockedWalls: 'Remove All Unlocked Walls',
       RemoveAllUnlockedWindows: 'Remove All Unlocked Windows',
       RemoveAllUnlockedDoors: 'Remove All Unlocked Doors',
@@ -533,6 +534,9 @@ export const i18n_en = {
       Sensors: 'Sensors',
       DoYouReallyWantToRemoveAllSensorsOnFoundation:
         'Do you really want to remove all the sensors on this foundation that are not locked',
+      Lights: 'Lights',
+      DoYouReallyWantToRemoveAllLightsOnFoundation:
+        'Do you really want to remove all the lights on this foundation that are not locked',
       Walls: 'Walls',
       DoYouReallyWantToRemoveAllWallsOnFoundation:
         'Do you really want to remove all the walls on this foundation that are not locked',
@@ -887,6 +891,9 @@ export const i18n_en = {
       UnlockAllSensors: 'Unlock All Sensors',
       RemoveAllUnlockedSensors: 'Remove All Unlocked Sensors',
       DoYouReallyWantToRemoveAllSensorsOnThisWall: 'Do you really want to remove all the sensors on this wall',
+      Lights: 'Lights',
+      RemoveAllUnlockedLights: 'Remove All Unlocked Lights',
+      DoYouReallyWantToRemoveAllLightsOnThisWall: 'Do you really want to remove all the lights on this wall',
       WallStructure: 'Wall Structure',
       DefaultStructure: 'Default',
       StudStructure: 'Stud',
@@ -958,6 +965,9 @@ export const i18n_en = {
       UnlockAllSensors: 'Unlock All Sensors',
       RemoveAllUnlockedSensors: 'Remove All Unlocked Sensors',
       DoYouReallyWantToRemoveAllSensorsOnThisRoof: 'Do you really want to remove all the sensors on this roof',
+      Lights: 'Lights',
+      RemoveAllUnlockedLights: 'Remove All Unlocked Lights',
+      DoYouReallyWantToRemoveAllLightsOnThisRoof: 'Do you really want to remove all the lights on this roof',
     },
 
     doorMenu: {

@@ -4333,9 +4333,9 @@ export const useStore = create<CommonStoreState>(
                   const lightRelativeCoordinates = Util.relativeCoordinates(p.x, p.y, p.z, lightParentModel);
                   const light = ElementModelFactory.makeLight(
                     lightParentModel,
-                    1,
-                    10,
+                    2,
                     5,
+                    3,
                     lightRelativeCoordinates.x,
                     lightRelativeCoordinates.y,
                     lightRelativeCoordinates.z,
@@ -4819,6 +4819,9 @@ export const useStore = create<CommonStoreState>(
                     case ObjectType.Sensor:
                       counter.sensorCount++;
                       break;
+                    case ObjectType.Light:
+                      counter.lightCount++;
+                      break;
                     case ObjectType.SolarPanel:
                       counter.solarPanelCount++;
                       const sp = e as SolarPanelModel;
@@ -4838,6 +4841,9 @@ export const useStore = create<CommonStoreState>(
                       break;
                     case ObjectType.Heliostat:
                       counter.heliostatCount++;
+                      break;
+                    case ObjectType.WindTurbine:
+                      counter.windTurbineCount++;
                       break;
                   }
                 }

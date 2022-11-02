@@ -129,12 +129,14 @@ export const FoundationMenu = () => {
         e.type === ObjectType.Flower ||
         e.type === ObjectType.Polygon ||
         e.type === ObjectType.Sensor ||
+        e.type === ObjectType.Light ||
         e.type === ObjectType.SolarPanel ||
         e.type === ObjectType.WaterHeater ||
         e.type === ObjectType.ParabolicDish ||
         e.type === ObjectType.Heliostat ||
         e.type === ObjectType.FresnelReflector ||
         e.type === ObjectType.ParabolicTrough ||
+        e.type === ObjectType.WindTurbine ||
         e.type === ObjectType.Wall
       ) {
         return true;
@@ -445,6 +447,53 @@ export const FoundationMenu = () => {
                 }}
               >
                 {i18n.t('foundationMenu.RemoveAllUnlockedSensors', lang)} ({counterUnlocked.sensorCount})
+              </Menu.Item>
+            )}
+
+            {counterUnlocked.lightCount > 0 && (
+              <Menu.Item
+                key={'remove-all-lights-on-foundation'}
+                onClick={() => {
+                  Modal.confirm({
+                    title:
+                      i18n.t('foundationMenu.DoYouReallyWantToRemoveAllLightsOnFoundation', lang) +
+                      ' (' +
+                      counterUnlocked.lightCount +
+                      ' ' +
+                      i18n.t('foundationMenu.Lights', lang) +
+                      ')?',
+                    icon: <ExclamationCircleOutlined />,
+                    onOk: () => {
+                      if (foundation) {
+                        const removed = elements.filter(
+                          (e) => !e.locked && e.type === ObjectType.Light && e.foundationId === foundation.id,
+                        );
+                        removeAllElementsOnFoundationByType(foundation.id, ObjectType.Light);
+                        const removedElements = JSON.parse(JSON.stringify(removed));
+                        const undoableRemoveAllLightChildren = {
+                          name: 'Remove All Lights on Foundation',
+                          timestamp: Date.now(),
+                          parentId: foundation.id,
+                          removedElements: removedElements,
+                          undo: () => {
+                            setCommonStore((state) => {
+                              state.elements.push(...undoableRemoveAllLightChildren.removedElements);
+                            });
+                          },
+                          redo: () => {
+                            removeAllElementsOnFoundationByType(
+                              undoableRemoveAllLightChildren.parentId,
+                              ObjectType.Light,
+                            );
+                          },
+                        } as UndoableRemoveAllChildren;
+                        addUndoable(undoableRemoveAllLightChildren);
+                      }
+                    },
+                  });
+                }}
+              >
+                {i18n.t('foundationMenu.RemoveAllUnlockedLights', lang)} ({counterUnlocked.lightCount})
               </Menu.Item>
             )}
 

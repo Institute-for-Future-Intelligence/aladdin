@@ -139,7 +139,12 @@ const Sensor = ({
       return new Euler(HALF_PI, 0, wallAbsAngle, 'ZXY');
     }
     if (parent?.type === ObjectType.Roof) {
-      return new Euler(rotation[0], rotation[1], rotation[2], 'ZXY');
+      return new Euler(
+        rotation[0],
+        rotation[1],
+        foundation ? foundation.rotation[2] + rotation[2] : rotation[2],
+        'ZXY',
+      );
     }
     // the normal below seems to be relative to its parent
     const n = new Vector3().fromArray(normal);

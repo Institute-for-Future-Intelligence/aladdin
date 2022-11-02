@@ -3,7 +3,7 @@
  */
 
 import React, { useMemo, useRef, useState } from 'react';
-import { Box, Cylinder, Sphere } from '@react-three/drei';
+import { Cylinder, Sphere } from '@react-three/drei';
 import { Euler, Mesh, Vector3 } from 'three';
 import { useStore } from '../stores/common';
 import * as Selector from '../stores/selector';
@@ -45,9 +45,9 @@ const Light = ({
   showLabel = false,
   parentId,
   foundationId,
-  decay = 1,
-  distance = 10,
-  intensity = 5,
+  decay = 2,
+  distance = 5,
+  intensity = 3,
 }: LightModel) => {
   const setCommonStore = useStore(Selector.set);
   const language = useStore(Selector.language);
@@ -142,7 +142,12 @@ const Light = ({
       return new Euler(HALF_PI, 0, wallAbsAngle, 'ZXY');
     }
     if (parent?.type === ObjectType.Roof) {
-      return new Euler(rotation[0], rotation[1], rotation[2], 'ZXY');
+      return new Euler(
+        rotation[0],
+        rotation[1],
+        foundation ? foundation.rotation[2] + rotation[2] : rotation[2],
+        'ZXY',
+      );
     }
     // the normal below seems to be relative to its parent
     const n = new Vector3().fromArray(normal);
@@ -184,7 +189,7 @@ const Light = ({
   }, [lightModel?.label, locked, language, cx, cy, cz]);
 
   return (
-    <group name={'Light Group ' + id} rotation={euler} position={[cx, cy, cz + hz]}>
+    <group name={'Light Group ' + id} rotation={euler} position={[cx, cy, cz]}>
       {night && (
         <pointLight
           color={color}

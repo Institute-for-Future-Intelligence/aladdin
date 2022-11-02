@@ -497,6 +497,7 @@ export const i18n_tr = {
       RemoveAllUnlockedFresnelReflectors: 'Tüm Kilitlenmemiş Fresnel Reflektörleri Kaldır',
       RemoveAllUnlockedHeliostats: 'Tüm Kilitlenmemiş Heliostatları Kaldır',
       RemoveAllUnlockedSensors: 'Tüm Kilitlenmemiş Sensörleri Kaldır',
+      RemoveAllUnlockedLights: 'Remove All Unlocked Lights',
       RemoveAllUnlockedWalls: 'Tüm Kilitlenmemiş Duvarları Kaldır',
       RemoveAllUnlockedWindows: 'Remove All Unlocked Windows',
       RemoveAllUnlockedDoors: 'Remove All Unlocked Doors',
@@ -533,6 +534,9 @@ export const i18n_tr = {
       Sensors: 'Sensörler',
       DoYouReallyWantToRemoveAllSensorsOnFoundation:
         ' Seçili temel üzerinde kilitli olmayan tüm sensörleri kaldırmak istiyor musunuz?',
+      Lights: 'Lights',
+      DoYouReallyWantToRemoveAllLightsOnFoundation:
+        'Do you really want to remove all the lights on this foundation that are not locked',
       Walls: 'Duvarlar',
       DoYouReallyWantToRemoveAllWallsOnFoundation:
         ' Seçili temel üzerinde kilitli olmayan tüm duvarları kaldırmak istiyor musunuz? ',
@@ -888,6 +892,9 @@ export const i18n_tr = {
       UnlockAllSensors: 'Unlock All Sensors',
       RemoveAllUnlockedSensors: 'Remove All Unlocked Sensors',
       DoYouReallyWantToRemoveAllSensorsOnThisWall: 'Do you really want to remove all the sensors on this wall',
+      Lights: 'Lights',
+      RemoveAllUnlockedLights: 'Remove All Unlocked Lights',
+      DoYouReallyWantToRemoveAllLightsOnThisWall: 'Do you really want to remove all the lights on this wall',
       WallStructure: 'Duvar Yapısı',
       DefaultStructure: 'Varsayılan',
       StudStructure: 'Ahşap Dikme',
@@ -959,6 +966,9 @@ export const i18n_tr = {
       UnlockAllSensors: 'Unlock All Sensors',
       RemoveAllUnlockedSensors: 'Remove All Unlocked Sensors',
       DoYouReallyWantToRemoveAllSensorsOnThisRoof: 'Do you really want to remove all the sensors on this roof',
+      Lights: 'Lights',
+      RemoveAllUnlockedLights: 'Remove All Unlocked Lights',
+      DoYouReallyWantToRemoveAllLightsOnThisRoof: 'Do you really want to remove all the lights on this roof',
     },
 
     doorMenu: {

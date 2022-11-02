@@ -497,6 +497,7 @@ export const i18n_es = {
       RemoveAllUnlockedFresnelReflectors: 'Remove All Unlocked Fresnel Reflectors',
       RemoveAllUnlockedHeliostats: 'Remove All Unlocked Heliostats',
       RemoveAllUnlockedSensors: 'Eliminar todos los sensores',
+      RemoveAllUnlockedLights: 'Remove All Unlocked Lights',
       RemoveAllUnlockedWalls: 'Eliminar todas las paredes',
       RemoveAllUnlockedWindows: 'Remove All Unlocked Windows',
       RemoveAllUnlockedDoors: 'Remove All Unlocked Doors',
@@ -533,6 +534,9 @@ export const i18n_es = {
       Sensors: 'Sensores',
       DoYouReallyWantToRemoveAllSensorsOnFoundation:
         'Estás seguro que quieres eliminar todos los sensores de esta base',
+      Lights: 'Lights',
+      DoYouReallyWantToRemoveAllLightsOnFoundation:
+        'Do you really want to remove all the lights on this foundation that are not locked',
       Walls: 'Paredes',
       DoYouReallyWantToRemoveAllWallsOnFoundation:
         'Estás seguro que quieres eliminar todas las paredes de esta base that are not locked',
@@ -887,6 +891,9 @@ export const i18n_es = {
       UnlockAllSensors: 'Unlock All Sensors',
       RemoveAllUnlockedSensors: 'Remove All Unlocked Sensors',
       DoYouReallyWantToRemoveAllSensorsOnThisWall: 'Do you really want to remove all the sensors on this wall',
+      Lights: 'Lights',
+      RemoveAllUnlockedLights: 'Remove All Unlocked Lights',
+      DoYouReallyWantToRemoveAllLightsOnThisWall: 'Do you really want to remove all the lights on this wall',
       WallStructure: 'Wall Structure',
       DefaultStructure: 'Default',
       StudStructure: 'Stud',
@@ -958,6 +965,9 @@ export const i18n_es = {
       UnlockAllSensors: 'Unlock All Sensors',
       RemoveAllUnlockedSensors: 'Remove All Unlocked Sensors',
       DoYouReallyWantToRemoveAllSensorsOnThisRoof: 'Do you really want to remove all the sensors on this roof',
+      Lights: 'Lights',
+      RemoveAllUnlockedLights: 'Remove All Unlocked Lights',
+      DoYouReallyWantToRemoveAllLightsOnThisRoof: 'Do you really want to remove all the lights on this roof',
     },
 
     doorMenu: {

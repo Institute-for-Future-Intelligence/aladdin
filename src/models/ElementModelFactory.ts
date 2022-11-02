@@ -525,9 +525,9 @@ export class ElementModelFactory {
     }
     return {
       type: ObjectType.Light,
-      decay: decay ?? 1,
-      distance: distance ?? 10,
-      intensity: intensity ?? 5,
+      decay: decay ?? 2,
+      distance: distance ?? 5,
+      intensity: intensity ?? 3,
       cx: x,
       cy: y,
       cz: z,

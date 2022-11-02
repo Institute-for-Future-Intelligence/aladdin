@@ -36,6 +36,7 @@ import { UndoableAdd } from 'src/undo/UndoableAdd';
 import { Sphere } from '@react-three/drei';
 import { useHandleSize } from '../wall/wallResizeHandleWrapper';
 import { SensorModel } from '../../models/SensorModel';
+import { LightModel } from '../../models/LightModel';
 
 export interface ConvexGeoProps {
   points: Vector3[];
@@ -99,7 +100,6 @@ const handleAddElementOnRoof = (
           .subVectors(pointer, new Vector3(foundation.cx, foundation.cy))
           .applyEuler(new Euler(0, 0, -foundation.rotation[2]));
         const posRelToCentroid = posRelToFoundation.clone().sub(ridgeMidPoint);
-
         const { normal, rotation } = RoofUtil.computeState(roofSegments, posRelToCentroid);
         const newElement = ElementModelFactory.makeSolarPanel(
           roof,
@@ -135,10 +135,39 @@ const handleAddElementOnRoof = (
             .subVectors(pointer, new Vector3(foundation.cx, foundation.cy))
             .applyEuler(new Euler(0, 0, -foundation.rotation[2]));
           const posRelToCentroid = posRelToFoundation.clone().sub(ridgeMidPoint);
-
           const { normal, rotation } = RoofUtil.computeState(roofSegments, posRelToCentroid);
           const newElement = ElementModelFactory.makeSensor(
             roof,
+            posRelToFoundation.x / foundation.lx,
+            posRelToFoundation.y / foundation.ly,
+            posRelToFoundation.z - foundation.lz,
+            normal,
+            rotation ?? [0, 0, 1],
+          );
+          useStore.getState().set((state) => {
+            state.elements.push(newElement);
+            if (!state.actionModeLock) state.objectTypeToAdd = ObjectType.None;
+          });
+          addUndoableAddSolarPanel(newElement);
+        }
+      }
+      break;
+    }
+    case ObjectType.Light: {
+      const roof = useStore.getState().getElementById(roofId);
+      if (roof?.type === ObjectType.Roof) {
+        if (roof && foundation && e.intersections[0]) {
+          const pointer = e.intersections[0].point;
+          const posRelToFoundation = new Vector3()
+            .subVectors(pointer, new Vector3(foundation.cx, foundation.cy))
+            .applyEuler(new Euler(0, 0, -foundation.rotation[2]));
+          const posRelToCentroid = posRelToFoundation.clone().sub(ridgeMidPoint);
+          const { normal, rotation } = RoofUtil.computeState(roofSegments, posRelToCentroid);
+          const newElement = ElementModelFactory.makeLight(
+            roof,
+            2,
+            5,
+            3,
             posRelToFoundation.x / foundation.lx,
             posRelToFoundation.y / foundation.ly,
             posRelToFoundation.z - foundation.lz,
@@ -271,7 +300,7 @@ export const updateRooftopElements = (
             e.rotation = [...rotation];
             e.cz = z;
           }
-        } else if (e.type === ObjectType.Sensor) {
+        } else if (e.type === ObjectType.Sensor || e.type === ObjectType.Light) {
           const posRelToFoundation = new Vector3(e.cx * foundation.lx, e.cy * foundation.ly, e.cz + foundation.lz);
           const posRelToCentroid = posRelToFoundation.clone().sub(centroid);
           const { segmentVertices, normal, rotation } = RoofUtil.computeState(roofSegments, posRelToCentroid);
@@ -310,7 +339,9 @@ export const handlePointerDown = (
       selectedElement &&
       selectedElement.id !== roofId &&
       selectedElement.parentId === roofId &&
-      (selectedElement.type === ObjectType.SolarPanel || selectedElement.type === ObjectType.Sensor)
+      (selectedElement.type === ObjectType.SolarPanel ||
+        selectedElement.type === ObjectType.Sensor ||
+        selectedElement.type === ObjectType.Light)
     ) {
       setOldRefData(selectedElement);
     }
@@ -328,7 +359,7 @@ export const handlePointerUp = (
   roofId: string,
   overhang: number,
   undoMove: () => void,
-  addUndoableMove: (movingElement: SolarPanelModel | SensorModel) => void,
+  addUndoableMove: (movingElement: SolarPanelModel | SensorModel | LightModel) => void,
 ) => {
   if (grabRef.current && useStore.getState().moveHandleType) {
     const selectedElement = useStore.getState().getElementById(grabRef.current.id);
@@ -351,6 +382,11 @@ export const handlePointerUp = (
         const sensor = selectedElement as SensorModel;
         if (foundation) {
           addUndoableMove(sensor);
+        }
+      } else if (selectedElement.type === ObjectType.Light) {
+        const light = selectedElement as LightModel;
+        if (foundation) {
+          addUndoableMove(light);
         }
       }
     }
@@ -398,6 +434,7 @@ export const handlePointerMove = (
       }
       break;
     case ObjectType.Sensor:
+    case ObjectType.Light:
       if (useStore.getState().moveHandleType) {
         if (foundation) {
           const pointer = getPointerOnRoof(event, roofType);
