@@ -208,7 +208,7 @@ const Light = ({
         ref={baseRef}
         rotation={[HALF_PI, 0, 0]}
         args={[lx * 0.5, ly * 0.5, hz, 16, 1]}
-        name={'Sensor'}
+        name={'Light Base'}
         onPointerDown={(e) => {
           if (e.button === 2) return; // ignore right-click
           selectMe(id, e, ActionType.Move);
@@ -219,7 +219,7 @@ const Light = ({
             if (e.intersections.length > 0) {
               const intersected = e.intersections[0].object === baseRef.current;
               if (intersected) {
-                state.contextMenuObjectType = ObjectType.Sensor;
+                state.contextMenuObjectType = ObjectType.Light;
               }
             }
           });
@@ -242,7 +242,7 @@ const Light = ({
       </Cylinder>
       <Sphere
         userData={{ unintersectable: true }}
-        name={'Meter'}
+        name={'Light Bulb'}
         castShadow={false}
         receiveShadow={shadowEnabled}
         args={[lx * 0.3, 8, 8, 0, TWO_PI, 0, Math.PI]}

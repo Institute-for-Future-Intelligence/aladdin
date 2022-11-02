@@ -758,6 +758,13 @@ export const i18n_en = {
       ViewFromThisPerson: 'View from This Person',
     },
 
+    lightMenu: {
+      Color: 'Color',
+      Intensity: 'Intensity',
+      Decay: 'Decay',
+      MaximumDistance: 'Distance',
+    },
+
     solarCollectorMenu: {
       RelativeAzimuth: 'Relative Azimuth',
       PoleHeight: 'Pole Height',

@@ -735,6 +735,13 @@ export const i18n_zh_cn = {
       ViewFromThisPerson: '视角移到此人位置',
     },
 
+    lightMenu: {
+      Color: '颜色',
+      Intensity: '亮度',
+      Decay: '衰减',
+      MaximumDistance: '最大距离',
+    },
+
     solarCollectorMenu: {
       RelativeAzimuth: '相对方位角',
       PoleHeight: '支架高度',

@@ -758,6 +758,13 @@ export const i18n_tr = {
       ViewFromThisPerson: ' Seçili Kişiye Göre Perspektif',
     },
 
+    lightMenu: {
+      Color: 'Color',
+      Intensity: 'Intensity',
+      Decay: 'Decay',
+      MaximumDistance: 'Distance',
+    },
+
     solarCollectorMenu: {
       RelativeAzimuth: 'Göreceli Azimut Açısı',
       PoleHeight: 'Direk Yüksekliği',

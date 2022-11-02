@@ -690,6 +690,7 @@ export class Util {
       objectType === ObjectType.Heliostat ||
       objectType === ObjectType.WaterHeater ||
       objectType === ObjectType.Sensor ||
+      objectType === ObjectType.Light ||
       objectType === ObjectType.Polygon ||
       objectType === ObjectType.Window ||
       objectType === ObjectType.Door ||
@@ -890,6 +891,7 @@ export class Util {
 
   // no normalization
   static relativePoint(point: Vector3, parent: ElementModel): Vector3 {
+    console.log(parent);
     const v = new Vector3(point.x - parent.cx, point.y - parent.cy, point.z - parent.cz);
     v.applyEuler(new Euler().fromArray(parent.rotation.map((a) => -a)));
     return v;

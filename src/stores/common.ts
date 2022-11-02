@@ -4037,7 +4037,7 @@ export const useStore = create<CommonStoreState>(
           updateWallThicknessById(id, thickness) {
             immerSet((state: CommonStoreState) => {
               for (const e of state.elements) {
-                if (e.id === id && !e.locked) {
+                if (e.id === id && !e.locked && e.type === ObjectType.Wall) {
                   (e as WallModel).ly = thickness;
                   break;
                 }
@@ -4577,8 +4577,9 @@ export const useStore = create<CommonStoreState>(
                         } else if (e.id === rightWallId) {
                           (e as WallModel).leftJoints = [];
                         } else if (e.id === currentWall.roofId) {
-                          (e as RoofModel).wallsId = (e as RoofModel).wallsId.filter((v) => v !== currentWall.id);
-                          if ((e as RoofModel).wallsId.length === 0) {
+                          const rm = e as RoofModel;
+                          rm.wallsId = rm.wallsId.filter((v) => v !== currentWall.id);
+                          if (rm.wallsId.length === 0) {
                             state.deletedRoofId = e.id;
                           }
                         }
@@ -5026,17 +5027,18 @@ export const useStore = create<CommonStoreState>(
                   const oldWallId = elementsMapNewToOld.get(e.id);
                   if (oldWallId) {
                     for (const o of state.elementsToPaste) {
-                      if (o.id === oldWallId) {
-                        const left = elementsMapOldToNew.get((o as WallModel).leftJoints[0]);
+                      if (o.id === oldWallId && o.type === ObjectType.Wall) {
+                        const w = o as WallModel;
+                        const left = elementsMapOldToNew.get(w.leftJoints[0]);
                         if (left) {
                           (e as WallModel).leftJoints = [left];
                         }
-                        const right = elementsMapOldToNew.get((o as WallModel).rightJoints[0]);
+                        const right = elementsMapOldToNew.get(w.rightJoints[0]);
                         if (right) {
                           (e as WallModel).rightJoints = [right];
                         }
-                        if ((o as WallModel).roofId) {
-                          const roofId = elementsMapOldToNew.get((o as WallModel).roofId as string);
+                        if (w.roofId) {
+                          const roofId = elementsMapOldToNew.get(w.roofId as string);
                           if (roofId) {
                             (e as WallModel).roofId = roofId;
                           }
@@ -5172,17 +5174,18 @@ export const useStore = create<CommonStoreState>(
                           const oldWallId = elementsMapNewToOld.get(e.id);
                           if (oldWallId) {
                             for (const o of state.elements) {
-                              if (o.id === oldWallId) {
-                                const left = elementsMapOldToNew.get((o as WallModel).leftJoints[0]);
+                              if (o.id === oldWallId && o.type === ObjectType.Wall) {
+                                const w = o as WallModel;
+                                const left = elementsMapOldToNew.get(w.leftJoints[0]);
                                 if (left) {
                                   (e as WallModel).leftJoints = [left];
                                 }
-                                const right = elementsMapOldToNew.get((o as WallModel).rightJoints[0]);
+                                const right = elementsMapOldToNew.get(w.rightJoints[0]);
                                 if (right) {
                                   (e as WallModel).rightJoints = [right];
                                 }
-                                if ((o as WallModel).roofId) {
-                                  const roofId = elementsMapOldToNew.get((o as WallModel).roofId as string);
+                                if (w.roofId) {
+                                  const roofId = elementsMapOldToNew.get(w.roofId as string);
                                   if (roofId) {
                                     (e as WallModel).roofId = roofId;
                                   }
@@ -5277,9 +5280,10 @@ export const useStore = create<CommonStoreState>(
                       const center = new Vector3(e.cx, e.cy, 0);
                       const vrx = new Vector3(e.lx / 2, 0, 0);
                       const vlx = new Vector3(-e.lx / 2, 0, 0);
-                      const euler = new Euler(0, 0, (e as WallModel).relativeAngle);
-                      (e as WallModel).leftPoint = center.clone().add(vlx.applyEuler(euler)).toArray();
-                      (e as WallModel).rightPoint = center.clone().add(vrx.applyEuler(euler)).toArray();
+                      const w = e as WallModel;
+                      const euler = new Euler(0, 0, w.relativeAngle);
+                      w.leftPoint = center.clone().add(vlx.applyEuler(euler)).toArray();
+                      w.rightPoint = center.clone().add(vrx.applyEuler(euler)).toArray();
                       for (const child of state.elements) {
                         if (child.parentId === elem.id) {
                           const newChild = ElementModelCloner.clone(
@@ -5691,17 +5695,18 @@ export const useStore = create<CommonStoreState>(
                             const oldWallId = elementsMapNewToOld.get(e.id);
                             if (oldWallId) {
                               for (const o of state.elements) {
-                                if (o.id === oldWallId) {
-                                  const left = elementsMapOldToNew.get((o as WallModel).leftJoints[0]);
+                                if (o.id === oldWallId && o.type === ObjectType.Wall) {
+                                  const w = o as WallModel;
+                                  const left = elementsMapOldToNew.get(w.leftJoints[0]);
                                   if (left) {
                                     (e as WallModel).leftJoints = [left];
                                   }
-                                  const right = elementsMapOldToNew.get((o as WallModel).rightJoints[0]);
+                                  const right = elementsMapOldToNew.get(w.rightJoints[0]);
                                   if (right) {
                                     (e as WallModel).rightJoints = [right];
                                   }
-                                  if ((o as WallModel).roofId) {
-                                    const roofId = elementsMapOldToNew.get((o as WallModel).roofId as string);
+                                  if (w.roofId) {
+                                    const roofId = elementsMapOldToNew.get(w.roofId as string);
                                     if (roofId) {
                                       (e as WallModel).roofId = roofId;
                                     }
@@ -5726,16 +5731,17 @@ export const useStore = create<CommonStoreState>(
                       approved = true;
                       break;
                     case ObjectType.Wall:
-                      const step = new Vector3(1, -1, 0).applyEuler(new Euler(0, 0, (e as WallModel).relativeAngle));
+                      const w = e as WallModel;
+                      const step = new Vector3(1, -1, 0).applyEuler(new Euler(0, 0, w.relativeAngle));
                       e.cx += step.x;
                       e.cy += step.y;
                       if (state.elementsToPaste.length === 1) {
                         const center = new Vector3(e.cx, e.cy, 0);
                         const vrx = new Vector3(e.lx / 2, 0, 0);
                         const vlx = new Vector3(-e.lx / 2, 0, 0);
-                        const euler = new Euler(0, 0, (e as WallModel).relativeAngle);
-                        (e as WallModel).leftPoint = center.clone().add(vlx.applyEuler(euler)).toArray();
-                        (e as WallModel).rightPoint = center.clone().add(vrx.applyEuler(euler)).toArray();
+                        const euler = new Euler(0, 0, w.relativeAngle);
+                        w.leftPoint = center.clone().add(vlx.applyEuler(euler)).toArray();
+                        w.rightPoint = center.clone().add(vrx.applyEuler(euler)).toArray();
                         for (const child of state.elements) {
                           if (child.parentId === elem.id) {
                             const newChild = ElementModelCloner.clone(

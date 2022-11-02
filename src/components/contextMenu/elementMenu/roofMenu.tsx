@@ -209,12 +209,9 @@ export const RoofMenu = () => {
           title={i18n.t('word.Elements', lang)}
           style={{ paddingLeft: '24px' }}
         >
-          {renderClearItem(ObjectType.Window, counterUnlocked.windowCount)}
           {renderClearItem(ObjectType.SolarPanel, counterUnlocked.solarPanelCount)}
           {renderClearItem(ObjectType.Sensor, counterUnlocked.sensorCount)}
           {renderClearItem(ObjectType.Light, counterUnlocked.lightCount)}
-          {renderLockItem(ObjectType.Window, counterUnlocked.windowCount)}
-          {renderUnlockItem(ObjectType.Window, counterAll.windowCount)}
           {renderLockItem(ObjectType.SolarPanel, counterUnlocked.solarPanelCount)}
           {renderUnlockItem(ObjectType.SolarPanel, counterAll.solarPanelCount)}
           {renderLockItem(ObjectType.Sensor, counterUnlocked.sensorCount)}

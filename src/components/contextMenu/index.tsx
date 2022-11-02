@@ -12,9 +12,11 @@ import {
   FoundationMenu,
   GroundMenu,
   HumanMenu,
+  FlowerMenu,
   PolygonMenu,
   PolygonVertexMenu,
   SensorMenu,
+  LightMenu,
   SkyMenu,
   SolarPanelMenu,
   ParabolicTroughMenu,
@@ -22,12 +24,11 @@ import {
   TreeMenu,
   WallMenu,
   WindowMenu,
+  DoorMenu,
   FresnelReflectorMenu,
   HeliostatMenu,
   RoofMenu,
 } from './elementMenu';
-import { DoorMenu } from './elementMenu/doorMenu';
-import { FlowerMenu } from './elementMenu/flowerMenu';
 
 export interface ContextMenuProps {
   [key: string]: any;
@@ -108,6 +109,12 @@ const DropdownContextMenu: React.FC<ContextMenuProps> = ({ children }) => {
         return (
           <Menu triggerSubMenuAction={'click'}>
             <SensorMenu />
+          </Menu>
+        );
+      case ObjectType.Light:
+        return (
+          <Menu triggerSubMenuAction={'click'}>
+            <LightMenu />
           </Menu>
         );
       case ObjectType.Human:
