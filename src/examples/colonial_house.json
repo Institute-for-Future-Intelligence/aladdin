@@ -1,13 +1,13 @@
 {
-  "docid": "9HFyLEEw6DVhUBB7PikJxS",
-  "time": "10/28/2022 09:24 am",
-  "timestamp": 1666963456068,
+  "docid": "iA2UJuMinr3izgspnCFb6S",
+  "time": "11/03/2022 02:35 pm",
+  "timestamp": 1667500535875,
   "userid": "QWecNcxhyvP6j6sBN11hBsfZDau1",
   "owner": null,
   "email": null,
   "world": {
     "solarRadiationHeatmapGridCellSize": 0.5,
-    "date": "6/22/2022, 10:00:00 AM",
+    "date": "6/22/2022, 3:00:00 PM",
     "cspTimesPerHour": 4,
     "noAnimationForHeatmapSimulation": false,
     "cspGridCellSize": 0.5,
@@ -1925,8 +1925,8 @@
         0,
         3.674628280984958
       ],
-      "structureSpacing": 5,
-      "structureWidth": 0.1,
+      "structureSpacing": 1000,
+      "structureWidth": 0.2,
       "structureColor": "white"
     },
     {
@@ -1969,14 +1969,14 @@
       "id": "cRF4aFTgNdpMTdmopKNDYe",
       "parentId": "myXiyVt2NURPnPChDUSnvF",
       "foundationId": "myXiyVt2NURPnPChDUSnvF",
-      "wallStructure": "Stud",
+      "wallStructure": "Pillar",
       "opacity": 0,
       "roofId": "kL2csyDhpYU6Tdyq5APXiG",
       "selected": false,
       "leftRoofHeight": 3.2841875196772365,
       "rightRoofHeight": 3.2841875196772365,
-      "structureSpacing": 5,
-      "structureWidth": 0.1,
+      "structureSpacing": 1000,
+      "structureWidth": 0.2,
       "structureColor": "white"
     },
     {
@@ -2019,14 +2019,14 @@
       "id": "maCaKmF7W1UtJB4NhBQsX3",
       "parentId": "myXiyVt2NURPnPChDUSnvF",
       "foundationId": "myXiyVt2NURPnPChDUSnvF",
-      "wallStructure": "Stud",
+      "wallStructure": "Pillar",
       "opacity": 0,
       "roofId": "kL2csyDhpYU6Tdyq5APXiG",
       "selected": false,
       "leftRoofHeight": 3.2841875196772365,
       "rightRoofHeight": 3.2841875196772365,
-      "structureSpacing": 5,
-      "structureWidth": 0.1,
+      "structureSpacing": 1000,
+      "structureWidth": 0.2,
       "structureColor": "white"
     },
     {
@@ -2069,7 +2069,7 @@
       "id": "5ExmWkfAba5nuC3xfHo5vU",
       "parentId": "myXiyVt2NURPnPChDUSnvF",
       "foundationId": "myXiyVt2NURPnPChDUSnvF",
-      "wallStructure": "Stud",
+      "wallStructure": "Pillar",
       "opacity": 0,
       "roofId": "kL2csyDhpYU6Tdyq5APXiG",
       "selected": false,
@@ -2079,8 +2079,8 @@
         0,
         3.674628280984958
       ],
-      "structureSpacing": 5,
-      "structureWidth": 0.1,
+      "structureSpacing": 1000,
+      "structureWidth": 0.2,
       "structureColor": "white"
     },
     {
@@ -2293,7 +2293,7 @@
     {
       "type": "Foundation",
       "cx": -2.1373102684560767,
-      "cy": -3.965170940145714,
+      "cy": -4.085170940145713,
       "cz": 0.05,
       "lx": 19.693313015419633,
       "ly": 8.765160185704904,
@@ -2314,7 +2314,7 @@
       "solarPowerTower": {},
       "id": "eUQQcfUyWDHA7KoGuDBRyw",
       "selected": false,
-      "locked": true
+      "locked": false
     },
     {
       "type": "Wall",
@@ -2364,8 +2364,8 @@
     {
       "type": "Tree",
       "name": "Elm",
-      "cx": 11.697190607949404,
-      "cy": -5.967883015953504,
+      "cx": 11.81602605501348,
+      "cy": -2.381704209479164,
       "cz": 0,
       "lx": 8.182228289296598,
       "lz": 10.259018050875072,
@@ -2846,6 +2846,63 @@
       "parentId": "eUQQcfUyWDHA7KoGuDBRyw",
       "id": "aZdoik5bFQJGAW29Jo71RA",
       "selected": false
+    },
+    {
+      "type": "Light",
+      "decay": 2,
+      "distance": 10,
+      "intensity": 10,
+      "color": "#fe9200",
+      "cx": -0.15060725129335759,
+      "cy": -0.0069023347929206705,
+      "cz": 8.339264662368098,
+      "lx": 0.16,
+      "ly": 0.16,
+      "lz": 0.08,
+      "showLabel": false,
+      "normal": [
+        0,
+        0.4097333676171505,
+        0.9122053318530369
+      ],
+      "rotation": [
+        0.4221617487320859,
+        0,
+        3.141592653589793
+      ],
+      "parentId": "1iq4TPqH8xr1w2VxMAh8MU",
+      "foundationId": "fbqvzYqiEy79jeL8wsadib",
+      "id": "gsaoCVaDLKgne3oCcDZ5e9",
+      "selected": false,
+      "inside": true
+    },
+    {
+      "type": "Light",
+      "decay": 2,
+      "distance": 6,
+      "intensity": 8,
+      "color": "#fe9200",
+      "cx": -0.005465449608162843,
+      "cy": 0,
+      "cz": -0.0483879238122415,
+      "lx": 0.16,
+      "ly": 0.16,
+      "lz": 0.08,
+      "showLabel": false,
+      "normal": [
+        0,
+        -1,
+        0
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "parentId": "beHqET5NN8aNdsuBncMpY7",
+      "foundationId": "fbqvzYqiEy79jeL8wsadib",
+      "id": "eS9BNDuHjJf4dGFLVwhXwG",
+      "selected": false
     }
   ],
   "view": {
@@ -2877,9 +2934,9 @@
     "dailyHeliostatYieldPanelX": 0,
     "showDailyParabolicDishYieldPanel": false,
     "cameraPosition": [
-      -11.823170765107522,
-      -20.656238400005932,
-      3.985705707370145
+      -10.536250519600543,
+      -19.996444724532147,
+      3.9354778429579325
     ],
     "showYearlyHeliostatYieldPanel": false,
     "orthographic": false,
