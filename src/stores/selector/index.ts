@@ -99,6 +99,8 @@ export const aabb = (state: CommonStoreState) => state.aabb;
 
 export const animateSun = (state: CommonStoreState) => state.animateSun;
 
+export const animate24Hours = (state: CommonStoreState) => state.animate24Hours;
+
 export const runDynamicSimulation = (state: CommonStoreState) => state.runDynamicSimulation;
 
 export const runStaticSimulation = (state: CommonStoreState) => state.runStaticSimulation;

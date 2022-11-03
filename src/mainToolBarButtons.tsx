@@ -375,8 +375,9 @@ const MainToolBarButtons = () => {
       {menuItem(ObjectType.FresnelReflector, FresnelReflectorImage, setCategory3Flag)}
       {menuItem(ObjectType.Heliostat, HeliostatImage, setCategory3Flag)}
       {menuItem(ObjectType.Sensor, SensorImage, setCategory3Flag)}
-      {menuItem(ObjectType.WindTurbine, WindTurbineImage, setCategory3Flag)}
       {menuItem(ObjectType.Light, LightImage, setCategory3Flag)}
+      {/*{menuItem(ObjectType.WindTurbine, WaterHeaterImage, setCategory3Flag)}*/}
+      {/*{menuItem(ObjectType.WindTurbine, WindTurbineImage, setCategory3Flag)}*/}
     </Menu>
   );
 

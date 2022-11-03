@@ -1124,7 +1124,8 @@ export const i18n_tr = {
 
     heliodonPanel: {
       SunAndTimeSettings: 'Güneş & Saat Ayarları',
-      SunAngles: 'Güneş Açıları',
+      SunAngles: 'Açılar',
+      TwentyFourHours: '24 Hours',
     },
 
     cloudFilePanel: {

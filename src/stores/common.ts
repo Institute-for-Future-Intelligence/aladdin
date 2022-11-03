@@ -165,6 +165,7 @@ export interface CommonStoreState {
 
   aabb: Box3; // axis-aligned bounding box of elements
   animateSun: boolean;
+  animate24Hours: boolean;
   runDynamicSimulation: boolean;
   runStaticSimulation: boolean;
   pauseSimulation: boolean;
@@ -1357,6 +1358,7 @@ export const useStore = create<CommonStoreState>(
           // determine the scopes of the axes.
           aabb: new Box3(new Vector3(-10, -10, -10), new Vector3(10, 10, 10)),
           animateSun: false,
+          animate24Hours: false,
           runDynamicSimulation: false,
           runStaticSimulation: false,
           pauseSimulation: false,
@@ -6192,6 +6194,7 @@ export const useStore = create<CommonStoreState>(
         },
         whitelist: [
           'language',
+          'animate24Hours',
           'floatingWindowOpacity',
           'locale',
           'cloudFile',

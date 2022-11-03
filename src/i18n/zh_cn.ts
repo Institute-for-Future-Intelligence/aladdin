@@ -1101,6 +1101,7 @@ export const i18n_zh_cn = {
     heliodonPanel: {
       SunAndTimeSettings: '太阳和时间设置',
       SunAngles: '角度',
+      TwentyFourHours: '24小时',
     },
 
     cloudFilePanel: {

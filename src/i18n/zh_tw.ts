@@ -1102,6 +1102,7 @@ export const i18n_zh_tw = {
     heliodonPanel: {
       SunAndTimeSettings: '太陽和時間設置',
       SunAngles: '角度',
+      TwentyFourHours: '24小時',
     },
 
     cloudFilePanel: {
