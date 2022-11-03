@@ -763,6 +763,7 @@ export const i18n_es = {
       Intensity: 'Intensity',
       Decay: 'Decay',
       MaximumDistance: 'Distance',
+      Inside: 'Inside',
     },
 
     solarCollectorMenu: {
@@ -914,6 +915,8 @@ export const i18n_es = {
       Height: 'Height',
       Thickness: 'Thickness',
       Texture: 'Texture',
+      AllLightsOnWallInside: 'All Lights on Wall Inside',
+      AllLightsOnWallOutside: 'All Lights on Wall Outside',
     },
 
     windowMenu: {
@@ -975,6 +978,8 @@ export const i18n_es = {
       Lights: 'Lights',
       RemoveAllUnlockedLights: 'Remove All Unlocked Lights',
       DoYouReallyWantToRemoveAllLightsOnThisRoof: 'Do you really want to remove all the lights on this roof',
+      AllLightsOnRoofInside: 'All Lights on Roof Inside',
+      AllLightsOnRoofOutside: 'All Lights on Roof Outside',
     },
 
     doorMenu: {

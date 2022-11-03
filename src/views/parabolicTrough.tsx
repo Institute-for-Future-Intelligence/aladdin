@@ -432,7 +432,7 @@ const ParabolicTrough = ({
           receiveShadow={false}
           castShadow={true}
         >
-          <meshStandardMaterial color={'white'} />
+          <meshStandardMaterial attach="material" color={'white'} />
         </Cylinder>
 
         {/* simulation element */}
@@ -487,7 +487,7 @@ const ParabolicTrough = ({
                 selectMe(id, e, ActionType.Move);
               }}
             >
-              <meshStandardMaterial attach="material" color={'orange'} />
+              <meshBasicMaterial attach="material" color={'orange'} />
             </Sphere>
 
             {/* draw resize handles */}
@@ -513,7 +513,7 @@ const ParabolicTrough = ({
                   noHoverHandle();
                 }}
               >
-                <meshStandardMaterial
+                <meshBasicMaterial
                   attach="material"
                   color={
                     hoveredHandle === ResizeHandleType.Lower || resizeHandleType === ResizeHandleType.Lower
@@ -543,7 +543,7 @@ const ParabolicTrough = ({
                   noHoverHandle();
                 }}
               >
-                <meshStandardMaterial
+                <meshBasicMaterial
                   attach="material"
                   color={
                     hoveredHandle === ResizeHandleType.Upper || resizeHandleType === ResizeHandleType.Upper
@@ -573,7 +573,7 @@ const ParabolicTrough = ({
                   noHoverHandle();
                 }}
               >
-                <meshStandardMaterial
+                <meshBasicMaterial
                   attach="material"
                   color={
                     hoveredHandle === ResizeHandleType.Left || resizeHandleType === ResizeHandleType.Left
@@ -603,7 +603,7 @@ const ParabolicTrough = ({
                   noHoverHandle();
                 }}
               >
-                <meshStandardMaterial
+                <meshBasicMaterial
                   attach="material"
                   color={
                     hoveredHandle === ResizeHandleType.Right || resizeHandleType === ResizeHandleType.Right

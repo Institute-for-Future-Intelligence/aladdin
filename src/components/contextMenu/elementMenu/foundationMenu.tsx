@@ -450,7 +450,7 @@ export const FoundationMenu = () => {
               </Menu.Item>
             )}
 
-            {counterUnlocked.lightCount > 0 && (
+            {counterUnlocked.insideLightCount + counterUnlocked.outsideLightCount > 0 && (
               <Menu.Item
                 key={'remove-all-lights-on-foundation'}
                 onClick={() => {
@@ -458,7 +458,7 @@ export const FoundationMenu = () => {
                     title:
                       i18n.t('foundationMenu.DoYouReallyWantToRemoveAllLightsOnFoundation', lang) +
                       ' (' +
-                      counterUnlocked.lightCount +
+                      (counterUnlocked.insideLightCount + counterUnlocked.outsideLightCount) +
                       ' ' +
                       i18n.t('foundationMenu.Lights', lang) +
                       ')?',
@@ -493,7 +493,8 @@ export const FoundationMenu = () => {
                   });
                 }}
               >
-                {i18n.t('foundationMenu.RemoveAllUnlockedLights', lang)} ({counterUnlocked.lightCount})
+                {i18n.t('foundationMenu.RemoveAllUnlockedLights', lang)} (
+                {counterUnlocked.insideLightCount + counterUnlocked.outsideLightCount})
               </Menu.Item>
             )}
 

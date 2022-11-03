@@ -2,11 +2,10 @@
  * @Copyright 2021-2022. Institute for Future Intelligence, Inc.
  */
 
-import React, { useEffect, useState } from 'react';
+import React, { useState } from 'react';
 import { Sphere } from '@react-three/drei';
 import { useHandleSize } from './wallResizeHandleWrapper';
 import { HIGHLIGHT_HANDLE_COLOR, MOVE_HANDLE_COLOR_2 } from 'src/constants';
-import * as Selector from '../../stores/selector';
 import { useStore } from 'src/stores/common';
 import { MoveHandleType } from 'src/types';
 import { ThreeEvent } from '@react-three/fiber';
@@ -36,7 +35,7 @@ const MoveHandle = ({ cy, size, type }: HandleProps) => {
 
   return (
     <Sphere name={type} args={[size]} position={[0, cy, 0]} onPointerEnter={onPointerEnter} onPointerOut={onPointerOut}>
-      <meshStandardMaterial color={color} />
+      <meshBasicMaterial attach="material" color={color} />
     </Sphere>
   );
 };

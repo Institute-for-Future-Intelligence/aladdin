@@ -14,7 +14,7 @@ import PolygonTexture09 from '../resources/polygon_09.png';
 import PolygonTexture10 from '../resources/polygon_10.png';
 import PolygonTexture00 from '../resources/foundation_00.png';
 
-import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import React, { useCallback, useMemo, useRef, useState } from 'react';
 import { Box, Line, Sphere } from '@react-three/drei';
 import { Euler, Mesh, RepeatWrapping, Shape, TextureLoader, Vector3 } from 'three';
 import { useStore } from '../stores/common';
@@ -444,7 +444,7 @@ const Polygon = ({
           }}
           onPointerOut={noHoverHandle}
         >
-          <meshStandardMaterial attach="material" color={'orange'} />
+          <meshBasicMaterial attach="material" color={'orange'} />
         </Sphere>
       )}
       {selected &&
@@ -478,7 +478,7 @@ const Polygon = ({
                   });
                 }}
               >
-                <meshStandardMaterial
+                <meshBasicMaterial
                   attach="material"
                   color={
                     (hoveredHandle === ResizeHandleType.Default ||

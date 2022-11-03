@@ -11,7 +11,8 @@ export class ElementCounter {
   flowerCount: number = 0;
   polygonCount: number = 0;
   sensorCount: number = 0;
-  lightCount: number = 0;
+  insideLightCount: number = 0;
+  outsideLightCount: number = 0;
   solarPanelCount: number = 0;
   solarPanelModuleCount: number = 0;
   parabolicDishCount: number = 0;
@@ -30,7 +31,8 @@ export class ElementCounter {
       this.flowerCount > 0 ||
       this.polygonCount > 0 ||
       this.sensorCount > 0 ||
-      this.lightCount > 0 ||
+      this.insideLightCount > 0 ||
+      this.outsideLightCount > 0 ||
       this.solarPanelCount > 0 ||
       this.parabolicTroughCount > 0 ||
       this.parabolicDishCount > 0 ||

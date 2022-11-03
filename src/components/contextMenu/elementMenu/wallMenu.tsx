@@ -21,6 +21,7 @@ import { UndoableChange } from 'src/undo/UndoableChange';
 import WallStructureColorSelection from './wallStructureColorSelection';
 import WallNumberInput from './wallNumberInput';
 import { UndoableChangeGroup } from '../../../undo/UndoableChangeGroup';
+import { LightModel } from '../../../models/LightModel';
 
 enum DataType {
   Height = 'Height',
@@ -76,6 +77,8 @@ export const WallMenu = () => {
   const updateWallStructureById = useStore(Selector.updateWallStructureById);
   const updateElementLockById = useStore(Selector.updateElementLockById);
   const updateElementUnlockByParentId = useStore(Selector.updateElementLockByParentId);
+  const updateInsideLightsByParentId = useStore(Selector.updateInsideLightsByParentId);
+  const updateInsideLightById = useStore(Selector.updateInsideLightById);
 
   const [visibleType, setVisibleType] = useState<DataType | null>(null);
 
@@ -339,6 +342,42 @@ export const WallMenu = () => {
     );
   };
 
+  const renderInsideLightItem = (count: number, inside: boolean) => {
+    if (count === 0) return null;
+    return (
+      <Menu.Item
+        key={inside ? `inside-lights-on-wall` : 'outside-lights-on-wall'}
+        onClick={() => {
+          if (!wall) return;
+          const oldValues = new Map<string, boolean>();
+          for (const elem of elements) {
+            if (elem.parentId === wall.id && elem.type === ObjectType.Light) {
+              oldValues.set(elem.id, (elem as LightModel).inside);
+            }
+          }
+          updateInsideLightsByParentId(wall.id, inside);
+          const undoableInsideLightsOnWall = {
+            name: inside ? 'Set All Lights on Wall Inside' : 'Set All Lights on Wall Outside',
+            timestamp: Date.now(),
+            oldValues: oldValues,
+            newValue: true,
+            undo: () => {
+              for (const [id, inside] of undoableInsideLightsOnWall.oldValues.entries()) {
+                updateInsideLightById(id, inside as boolean);
+              }
+            },
+            redo: () => {
+              updateInsideLightsByParentId(wall.id, inside);
+            },
+          } as UndoableChangeGroup;
+          addUndoable(undoableInsideLightsOnWall);
+        }}
+      >
+        {i18n.t(inside ? `wallMenu.AllLightsOnWallInside` : `wallMenu.AllLightsOnWallOutside`, lang)} ({count})
+      </Menu.Item>
+    );
+  };
+
   const renderElementsSubMenu = () => {
     const counterAll = wall ? countAllOffspringsByType(wall.id, true) : new ElementCounter();
     if (counterAll.gotSome() && useStore.getState().contextMenuObjectType) {
@@ -353,13 +392,15 @@ export const WallMenu = () => {
           {renderClearItem(ObjectType.Door, counterUnlocked.doorCount)}
           {renderClearItem(ObjectType.SolarPanel, counterUnlocked.solarPanelCount)}
           {renderClearItem(ObjectType.Sensor, counterUnlocked.sensorCount)}
-          {renderClearItem(ObjectType.Light, counterUnlocked.lightCount)}
+          {renderClearItem(ObjectType.Light, counterUnlocked.insideLightCount + counterUnlocked.outsideLightCount)}
           {renderLockItem(ObjectType.Window, counterUnlocked.windowCount)}
           {renderUnlockItem(ObjectType.Window, counterAll.windowCount)}
           {renderLockItem(ObjectType.SolarPanel, counterUnlocked.solarPanelCount)}
           {renderUnlockItem(ObjectType.SolarPanel, counterAll.solarPanelCount)}
           {renderLockItem(ObjectType.Sensor, counterUnlocked.sensorCount)}
           {renderUnlockItem(ObjectType.Sensor, counterAll.sensorCount)}
+          {renderInsideLightItem(counterAll.outsideLightCount, true)}
+          {renderInsideLightItem(counterAll.insideLightCount, false)}
         </SubMenu>
       );
     }

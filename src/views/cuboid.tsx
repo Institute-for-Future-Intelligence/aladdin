@@ -1211,7 +1211,7 @@ const Cuboid = ({
               }}
               onPointerOut={noHoverHandle}
             >
-              <meshStandardMaterial
+              <meshBasicMaterial
                 attach="material"
                 color={
                   hoveredHandle === ResizeHandleType.LowerLeftTop || resizeHandleType === ResizeHandleType.LowerLeftTop
@@ -1235,7 +1235,7 @@ const Cuboid = ({
               }}
               onPointerOut={noHoverHandle}
             >
-              <meshStandardMaterial
+              <meshBasicMaterial
                 attach="material"
                 color={
                   hoveredHandle === ResizeHandleType.UpperLeftTop || resizeHandleType === ResizeHandleType.UpperLeftTop
@@ -1259,7 +1259,7 @@ const Cuboid = ({
               }}
               onPointerOut={noHoverHandle}
             >
-              <meshStandardMaterial
+              <meshBasicMaterial
                 attach="material"
                 color={
                   hoveredHandle === ResizeHandleType.LowerRightTop ||
@@ -1284,7 +1284,7 @@ const Cuboid = ({
               }}
               onPointerOut={noHoverHandle}
             >
-              <meshStandardMaterial
+              <meshBasicMaterial
                 attach="material"
                 color={
                   hoveredHandle === ResizeHandleType.UpperRightTop ||
@@ -1314,7 +1314,7 @@ const Cuboid = ({
             }}
             onPointerOut={noHoverHandle}
           >
-            <meshStandardMaterial
+            <meshBasicMaterial
               attach="material"
               color={
                 hoveredHandle === ResizeHandleType.LowerLeft || resizeHandleType === ResizeHandleType.LowerLeft
@@ -1342,7 +1342,7 @@ const Cuboid = ({
             }}
             onPointerOut={noHoverHandle}
           >
-            <meshStandardMaterial
+            <meshBasicMaterial
               attach="material"
               color={
                 hoveredHandle === ResizeHandleType.UpperLeft || resizeHandleType === ResizeHandleType.UpperLeft
@@ -1370,7 +1370,7 @@ const Cuboid = ({
             }}
             onPointerOut={noHoverHandle}
           >
-            <meshStandardMaterial
+            <meshBasicMaterial
               attach="material"
               color={
                 hoveredHandle === ResizeHandleType.LowerRight || resizeHandleType === ResizeHandleType.LowerRight
@@ -1398,7 +1398,7 @@ const Cuboid = ({
             }}
             onPointerOut={noHoverHandle}
           >
-            <meshStandardMaterial
+            <meshBasicMaterial
               attach="material"
               color={
                 hoveredHandle === ResizeHandleType.UpperRight || resizeHandleType === ResizeHandleType.UpperRight
@@ -1424,7 +1424,7 @@ const Cuboid = ({
                 }}
                 onPointerOut={noHoverHandle}
               >
-                <meshStandardMaterial
+                <meshBasicMaterial
                   attach="material"
                   color={
                     hoveredHandle === MoveHandleType.Lower || moveHandleType === MoveHandleType.Lower
@@ -1446,7 +1446,7 @@ const Cuboid = ({
                 }}
                 onPointerOut={noHoverHandle}
               >
-                <meshStandardMaterial
+                <meshBasicMaterial
                   attach="material"
                   color={
                     hoveredHandle === MoveHandleType.Upper || moveHandleType === MoveHandleType.Upper
@@ -1468,7 +1468,7 @@ const Cuboid = ({
                 }}
                 onPointerOut={noHoverHandle}
               >
-                <meshStandardMaterial
+                <meshBasicMaterial
                   attach="material"
                   color={
                     hoveredHandle === MoveHandleType.Left || moveHandleType === MoveHandleType.Left
@@ -1490,7 +1490,7 @@ const Cuboid = ({
                 }}
                 onPointerOut={noHoverHandle}
               >
-                <meshStandardMaterial
+                <meshBasicMaterial
                   attach="material"
                   color={
                     hoveredHandle === MoveHandleType.Right || moveHandleType === MoveHandleType.Right
@@ -1512,7 +1512,7 @@ const Cuboid = ({
                 }}
                 onPointerOut={noHoverHandle}
               >
-                <meshStandardMaterial
+                <meshBasicMaterial
                   attach="material"
                   color={
                     hoveredHandle === MoveHandleType.Top || moveHandleType === MoveHandleType.Top

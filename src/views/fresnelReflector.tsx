@@ -448,7 +448,7 @@ const FresnelReflector = ({
                 selectMe(id, e, ActionType.Move);
               }}
             >
-              <meshStandardMaterial attach="material" color={'orange'} />
+              <meshBasicMaterial attach="material" color={'orange'} />
             </Sphere>
 
             {/* draw resize handles */}
@@ -476,7 +476,7 @@ const FresnelReflector = ({
                   noHoverHandle();
                 }}
               >
-                <meshStandardMaterial
+                <meshBasicMaterial
                   attach="material"
                   color={
                     hoveredHandle === ResizeHandleType.Lower || resizeHandleType === ResizeHandleType.Lower
@@ -508,7 +508,7 @@ const FresnelReflector = ({
                   noHoverHandle();
                 }}
               >
-                <meshStandardMaterial
+                <meshBasicMaterial
                   attach="material"
                   color={
                     hoveredHandle === ResizeHandleType.Upper || resizeHandleType === ResizeHandleType.Upper
@@ -540,7 +540,7 @@ const FresnelReflector = ({
                   noHoverHandle();
                 }}
               >
-                <meshStandardMaterial
+                <meshBasicMaterial
                   attach="material"
                   color={
                     hoveredHandle === ResizeHandleType.Left || resizeHandleType === ResizeHandleType.Left
@@ -572,7 +572,7 @@ const FresnelReflector = ({
                   noHoverHandle();
                 }}
               >
-                <meshStandardMaterial
+                <meshBasicMaterial
                   attach="material"
                   color={
                     hoveredHandle === ResizeHandleType.Right || resizeHandleType === ResizeHandleType.Right

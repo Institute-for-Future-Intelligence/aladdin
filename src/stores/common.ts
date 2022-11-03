@@ -543,6 +543,8 @@ export interface CommonStoreState {
   updateLightColorById: (id: string, color: string) => void;
   updateLightIntensityById: (id: string, intensity: number) => void;
   updateLightDistanceById: (id: string, distance: number) => void;
+  updateInsideLightById: (id: string, inside: boolean) => void;
+  updateInsideLightsByParentId: (parentId: string, inside: boolean) => void;
 
   actionModeLock: boolean;
   objectTypeToAdd: ObjectType;
@@ -4227,6 +4229,25 @@ export const useStore = create<CommonStoreState>(
               }
             });
           },
+          updateInsideLightById(id, inside) {
+            immerSet((state: CommonStoreState) => {
+              for (const e of state.elements) {
+                if (e.type === ObjectType.Light && e.id === id) {
+                  (e as LightModel).inside = inside;
+                  break;
+                }
+              }
+            });
+          },
+          updateInsideLightsByParentId(parentId, inside) {
+            immerSet((state: CommonStoreState) => {
+              for (const e of state.elements) {
+                if (e.parentId === parentId && e.type === ObjectType.Light) {
+                  (e as LightModel).inside = inside;
+                }
+              }
+            });
+          },
 
           setElementPosition(id, x, y, z?) {
             immerSet((state: CommonStoreState) => {
@@ -4858,7 +4879,11 @@ export const useStore = create<CommonStoreState>(
                       counter.sensorCount++;
                       break;
                     case ObjectType.Light:
-                      counter.lightCount++;
+                      if ((e as LightModel).inside) {
+                        counter.insideLightCount++;
+                      } else {
+                        counter.outsideLightCount++;
+                      }
                       break;
                     case ObjectType.SolarPanel:
                       counter.solarPanelCount++;

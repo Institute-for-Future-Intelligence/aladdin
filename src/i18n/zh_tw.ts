@@ -741,6 +741,7 @@ export const i18n_zh_tw = {
       Intensity: '亮度',
       Decay: '衰减',
       MaximumDistance: '最大距離',
+      Inside: '内部',
     },
 
     solarCollectorMenu: {
@@ -892,6 +893,8 @@ export const i18n_zh_tw = {
       Height: '高度',
       Thickness: '厚度',
       Texture: '材質',
+      AllLightsOnWallInside: '所有電燈在牆內',
+      AllLightsOnWallOutside: '所有電燈在牆外',
     },
 
     windowMenu: {
@@ -953,6 +956,8 @@ export const i18n_zh_tw = {
       Lights: '電燈',
       RemoveAllUnlockedLights: '刪除這個屋顶上所有非固定的電燈',
       DoYouReallyWantToRemoveAllLightsOnThisRoof: '你確定刪除這個屋顶上所有非固定的電燈嗎',
+      AllLightsOnRoofInside: '所有電燈在屋頂內',
+      AllLightsOnRoofOutside: '所有電燈在屋頂外',
     },
 
     doorMenu: {

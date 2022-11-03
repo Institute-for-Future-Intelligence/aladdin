@@ -115,7 +115,7 @@ const MoveHandle = ({ id, handleSize }: MoveHandleProps) => {
         useStore.getState().selectMe(id, e, ActionType.Move);
       }}
     >
-      <meshStandardMaterial color={'orange'} />
+      <meshBasicMaterial attach="material" color={'orange'} />
     </Sphere>
   );
 };
@@ -164,7 +164,7 @@ const ResizeHandle = ({ pos, dms, handleType, initPointerDown }: ResizeHandlePro
         setColor(RESIZE_HANDLE_COLOR);
       }}
     >
-      <meshStandardMaterial color={color} />
+      <meshBasicMaterial attach="material" color={color} />
     </Box>
   );
 };
@@ -172,7 +172,7 @@ const ResizeHandle = ({ pos, dms, handleType, initPointerDown }: ResizeHandlePro
 const RotateHandle = ({ position, ratio, handleType, initPointerDown }: RotateHandleProps) => {
   const [color, setColor] = useState(RESIZE_HANDLE_COLOR);
   const domElement = useThree().gl.domElement;
-  const rotationHandleLMesh = useMemo(() => <meshStandardMaterial color={color} />, [color]);
+  const rotationHandleLMesh = useMemo(() => <meshBasicMaterial attach="material" color={color} />, [color]);
 
   const handlePointerDown = () => {
     initPointerDown();
@@ -253,7 +253,7 @@ const TiltHandle = ({
           });
         }}
       >
-        <meshStandardMaterial side={DoubleSide} color={color} />
+        <meshBasicMaterial attach="material" side={DoubleSide} color={color} />
       </Ring>
       {showTiltAngle && (
         <>
@@ -272,7 +272,7 @@ const TiltHandle = ({
               handlePointerUp();
             }}
           >
-            <meshStandardMaterial depthTest={false} transparent={true} opacity={0.5} side={DoubleSide} />
+            <meshBasicMaterial attach="material" depthTest={false} transparent={true} opacity={0.5} side={DoubleSide} />
           </Ring>
           {/* pointer */}
           <Line
@@ -390,7 +390,7 @@ const Sunbeam = React.memo(({ drawSunbeam, rotation, normal, relativeEuler, fRot
               name={'Normal Vector Arrow Head'}
               rotation={[0, 0, -relativeEuler.y]}
             >
-              <meshStandardMaterial color={'white'} />
+              <meshBasicMaterial attach="material" color={'white'} />
             </Cone>
           </group>
         </group>

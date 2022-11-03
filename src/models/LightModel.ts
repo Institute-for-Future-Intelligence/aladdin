@@ -8,4 +8,5 @@ export interface LightModel extends ElementModel {
   intensity: number;
   distance: number;
   decay: number;
+  inside: boolean;
 }

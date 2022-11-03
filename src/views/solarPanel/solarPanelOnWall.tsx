@@ -119,7 +119,7 @@ const Sunbeam = React.memo(({ drawSunbeam, absRotation, tiltAngle }: SumbeamProp
           />
           <group position={normalVector.clone().multiplyScalar(0.75)} rotation={[HALF_PI, 0, 0]}>
             <Cone userData={{ unintersectable: true }} args={[0.04, 0.2, 4, 2]} name={'Normal Vector Arrow Head'}>
-              <meshStandardMaterial color={'white'} />
+              <meshBasicMaterial attach="material" color={'white'} />
             </Cone>
           </group>
         </group>
@@ -224,7 +224,7 @@ const TiltHandle = ({
           });
         }}
       >
-        <meshStandardMaterial side={DoubleSide} color={color} />
+        <meshBasicMaterial attach="material" side={DoubleSide} color={color} />
       </Ring>
       {showTiltAngle && (
         <>
@@ -245,7 +245,7 @@ const TiltHandle = ({
                 setShowTiltAngle(false);
               }}
             >
-              <meshStandardMaterial side={DoubleSide} />
+              <meshBasicMaterial attach="material" side={DoubleSide} />
             </Plane>
           )}
 
@@ -255,7 +255,7 @@ const TiltHandle = ({
             args={[handleSize, 2 * handleSize, 18, 2, -0, HALF_PI]}
             rotation={[0, -HALF_PI, 0, 'ZXY']}
           >
-            <meshStandardMaterial depthTest={false} transparent={true} opacity={0.5} side={DoubleSide} />
+            <meshBasicMaterial attach="material" depthTest={false} transparent={true} opacity={0.5} side={DoubleSide} />
           </Ring>
           {/* pointer */}
           <Line
@@ -644,25 +644,20 @@ const SolarPanelOnWall = ({
             <meshStandardMaterial attachArray="material" color={color} />
             <meshStandardMaterial attachArray="material" color={color} />
             <meshStandardMaterial attachArray="material" color={color} />
-            {
-              showSolarRadiationHeatmap && heatmapTexture ? (
-                <meshBasicMaterial attachArray="material" map={heatmapTexture} />
-              ) : orthographic || solarPanelShiness === 0 ? (
-                <meshStandardMaterial attachArray="material" map={texture} color={color} />
-              ) : (
-                <meshPhongMaterial
-                  attachArray="material"
-                  specular={
-                    new Color(pvModel?.color === 'Blue' ? SOLAR_PANEL_BLUE_SPECULAR : SOLAR_PANEL_BLACK_SPECULAR)
-                  }
-                  shininess={solarPanelShiness ?? DEFAULT_SOLAR_PANEL_SHINESS}
-                  side={FrontSide}
-                  map={texture}
-                  color={color}
-                />
-              )
-              // <meshStandardMaterial attachArray="material" map={texture} color={color} />
-            }
+            {showSolarRadiationHeatmap && heatmapTexture ? (
+              <meshBasicMaterial attachArray="material" map={heatmapTexture} />
+            ) : orthographic || solarPanelShiness === 0 ? (
+              <meshStandardMaterial attachArray="material" map={texture} color={color} />
+            ) : (
+              <meshPhongMaterial
+                attachArray="material"
+                specular={new Color(pvModel?.color === 'Blue' ? SOLAR_PANEL_BLUE_SPECULAR : SOLAR_PANEL_BLACK_SPECULAR)}
+                shininess={solarPanelShiness ?? DEFAULT_SOLAR_PANEL_SHINESS}
+                side={FrontSide}
+                map={texture}
+                color={color}
+              />
+            )}
             <meshStandardMaterial attachArray="material" color={color} />
           </Box>
 
@@ -735,7 +730,7 @@ const SolarPanelOnWall = ({
                   selectMe(id, e, ActionType.Move);
                 }}
               >
-                <meshStandardMaterial attach="material" color={'orange'} />
+                <meshBasicMaterial attach="material" color={'orange'} />
               </Sphere>
 
               {/* draw resize handles */}
@@ -761,7 +756,7 @@ const SolarPanelOnWall = ({
                     noHoverHandle();
                   }}
                 >
-                  <meshStandardMaterial
+                  <meshBasicMaterial
                     attach="material"
                     color={
                       hoveredHandle === ResizeHandleType.Lower || resizeHandleType === ResizeHandleType.Lower
@@ -791,7 +786,7 @@ const SolarPanelOnWall = ({
                     noHoverHandle();
                   }}
                 >
-                  <meshStandardMaterial
+                  <meshBasicMaterial
                     attach="material"
                     color={
                       hoveredHandle === ResizeHandleType.Upper || resizeHandleType === ResizeHandleType.Upper
@@ -821,7 +816,7 @@ const SolarPanelOnWall = ({
                     noHoverHandle();
                   }}
                 >
-                  <meshStandardMaterial
+                  <meshBasicMaterial
                     attach="material"
                     color={
                       hoveredHandle === ResizeHandleType.Left || resizeHandleType === ResizeHandleType.Left
@@ -851,7 +846,7 @@ const SolarPanelOnWall = ({
                     noHoverHandle();
                   }}
                 >
-                  <meshStandardMaterial
+                  <meshBasicMaterial
                     attach="material"
                     color={
                       hoveredHandle === ResizeHandleType.Right || resizeHandleType === ResizeHandleType.Right

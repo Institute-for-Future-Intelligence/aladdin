@@ -537,7 +537,7 @@ const SolarPanel = ({
                 selectMe(id, e, ActionType.Move);
               }}
             >
-              <meshStandardMaterial attach="material" color={'orange'} />
+              <meshBasicMaterial attach="material" color={'orange'} />
             </Sphere>
 
             {/* draw resize handles */}
@@ -563,7 +563,7 @@ const SolarPanel = ({
                   noHoverHandle();
                 }}
               >
-                <meshStandardMaterial
+                <meshBasicMaterial
                   attach="material"
                   color={
                     hoveredHandle === ResizeHandleType.Lower || resizeHandleType === ResizeHandleType.Lower
@@ -593,7 +593,7 @@ const SolarPanel = ({
                   noHoverHandle();
                 }}
               >
-                <meshStandardMaterial
+                <meshBasicMaterial
                   attach="material"
                   color={
                     hoveredHandle === ResizeHandleType.Upper || resizeHandleType === ResizeHandleType.Upper
@@ -623,7 +623,7 @@ const SolarPanel = ({
                   noHoverHandle();
                 }}
               >
-                <meshStandardMaterial
+                <meshBasicMaterial
                   attach="material"
                   color={
                     hoveredHandle === ResizeHandleType.Left || resizeHandleType === ResizeHandleType.Left
@@ -653,7 +653,7 @@ const SolarPanel = ({
                   noHoverHandle();
                 }}
               >
-                <meshStandardMaterial
+                <meshBasicMaterial
                   attach="material"
                   color={
                     hoveredHandle === ResizeHandleType.Right || resizeHandleType === ResizeHandleType.Right
@@ -729,7 +729,8 @@ const SolarPanel = ({
               });
             }}
           >
-            <meshStandardMaterial
+            <meshBasicMaterial
+              attach="material"
               side={DoubleSide}
               color={
                 hoveredHandle === RotateHandleType.Tilt || showTiltAngle ? HIGHLIGHT_HANDLE_COLOR : RESIZE_HANDLE_COLOR
@@ -802,7 +803,13 @@ const SolarPanel = ({
                   }
                 }}
               >
-                <meshStandardMaterial depthTest={false} transparent={true} opacity={0.5} side={DoubleSide} />
+                <meshBasicMaterial
+                  attach="material"
+                  depthTest={false}
+                  transparent={true}
+                  opacity={0.5}
+                  side={DoubleSide}
+                />
               </Ring>
               {/* pointer */}
               <Line
@@ -917,7 +924,7 @@ const SolarPanel = ({
               name={'Normal Vector Arrow Head'}
               rotation={[0, 0, -relativeEuler.y]}
             >
-              <meshStandardMaterial attach="material" color={'white'} />
+              <meshBasicMaterial attach="material" color={'white'} />
             </Cone>
           </group>
         </group>

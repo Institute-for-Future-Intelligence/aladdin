@@ -313,7 +313,7 @@ const Human = ({
                   args={[width / 5, 4, 4, 0, TWO_PI, 0, TWO_PI]}
                   position={[0, 0, humanModel.lz / 2]}
                 >
-                  <meshStandardMaterial attach="material" side={DoubleSide} />
+                  <meshBasicMaterial attach="material" side={DoubleSide} />
                 </Sphere>
                 <Cylinder
                   name={'Observer hat 1'}
@@ -359,7 +359,7 @@ const Human = ({
                 }}
                 onPointerOut={noHoverHandle}
               >
-                <meshStandardMaterial
+                <meshBasicMaterial
                   attach="material"
                   color={
                     hoveredHandle === MoveHandleType.Default || moveHandleType === MoveHandleType.Default

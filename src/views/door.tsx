@@ -69,7 +69,7 @@ const DoorWireFrame = React.memo(({ lx, lz, lineColor, lineWidth = 0.2 }: DoorWi
 const DoorFrame = React.memo(({ lx, lz, color }: DoorFrameProps) => {
   const shadowEnabled = useStore(Selector.viewState.shadowEnabled);
 
-  const material = useMemo(() => <meshStandardMaterial color={color} />, [color]);
+  const material = useMemo(() => <meshStandardMaterial attach="material" color={color} />, [color]);
 
   const width = 0.1;
   const halfWidth = width / 2;

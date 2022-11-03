@@ -402,7 +402,7 @@ const Tree = ({
                   }}
                   onPointerOut={noHoverHandle}
                 >
-                  <meshStandardMaterial
+                  <meshBasicMaterial
                     attach="material"
                     color={
                       hoveredHandle === MoveHandleType.Default || moveHandleType === MoveHandleType.Default
@@ -427,7 +427,7 @@ const Tree = ({
                       }}
                       onPointerOut={noHoverHandle}
                     >
-                      <meshStandardMaterial
+                      <meshBasicMaterial
                         attach="material"
                         color={
                           hoveredHandle === ResizeHandleType.Top || resizeHandleType === ResizeHandleType.Top
@@ -450,7 +450,7 @@ const Tree = ({
                       }}
                       onPointerOut={noHoverHandle}
                     >
-                      <meshStandardMaterial
+                      <meshBasicMaterial
                         attach="material"
                         color={
                           hoveredHandle === ResizeHandleType.Left || resizeHandleType === ResizeHandleType.Left
@@ -473,7 +473,7 @@ const Tree = ({
                       }}
                       onPointerOut={noHoverHandle}
                     >
-                      <meshStandardMaterial
+                      <meshBasicMaterial
                         attach="material"
                         color={
                           hoveredHandle === ResizeHandleType.Right || resizeHandleType === ResizeHandleType.Right
@@ -496,7 +496,7 @@ const Tree = ({
                       }}
                       onPointerOut={noHoverHandle}
                     >
-                      <meshStandardMaterial
+                      <meshBasicMaterial
                         attach="material"
                         color={
                           hoveredHandle === ResizeHandleType.Lower || resizeHandleType === ResizeHandleType.Lower
@@ -519,7 +519,7 @@ const Tree = ({
                       }}
                       onPointerOut={noHoverHandle}
                     >
-                      <meshStandardMaterial
+                      <meshBasicMaterial
                         attach="material"
                         color={
                           hoveredHandle === ResizeHandleType.Upper || resizeHandleType === ResizeHandleType.Upper

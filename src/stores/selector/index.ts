@@ -606,6 +606,10 @@ export const updateLightIntensityById = (state: CommonStoreState) => state.updat
 
 export const updateLightDistanceById = (state: CommonStoreState) => state.updateLightDistanceById;
 
+export const updateInsideLightById = (state: CommonStoreState) => state.updateInsideLightById;
+
+export const updateInsideLightsByParentId = (state: CommonStoreState) => state.updateInsideLightsByParentId;
+
 export const copyElementById = (state: CommonStoreState) => state.copyElementById;
 
 export const removeElementById = (state: CommonStoreState) => state.removeElementById;

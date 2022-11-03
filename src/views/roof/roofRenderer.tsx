@@ -577,7 +577,7 @@ export const RoofHandle = ({ position, onPointerDown, onPointerUp }: RoofHandleP
         }
       }}
     >
-      <meshStandardMaterial color={color} />
+      <meshBasicMaterial attach="material" color={color} />
     </Sphere>
   );
 };

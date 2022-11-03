@@ -427,7 +427,7 @@ const ParabolicDish = ({
           receiveShadow={false}
           castShadow={true}
         >
-          <meshStandardMaterial color={color} />
+          <meshStandardMaterial attach="material" color={color} />
         </Cylinder>
         {/* simple glow effect to create a halo */}
         {sunDirection.z > 0 && (
@@ -454,7 +454,7 @@ const ParabolicDish = ({
             receiveShadow={false}
             castShadow={true}
           >
-            <meshStandardMaterial color={color} />
+            <meshStandardMaterial attach="material" color={color} />
           </Cylinder>
         )}
         {structureType === ParabolicDishStructureType.CentralPoleWithTripod &&
@@ -558,7 +558,7 @@ const ParabolicDish = ({
                 selectMe(id, e, ActionType.Move);
               }}
             >
-              <meshStandardMaterial attach="material" color={'orange'} />
+              <meshBasicMaterial attach="material" color={'orange'} />
             </Sphere>
 
             {/* draw resize handles */}
@@ -584,7 +584,7 @@ const ParabolicDish = ({
                   noHoverHandle();
                 }}
               >
-                <meshStandardMaterial
+                <meshBasicMaterial
                   attach="material"
                   color={
                     hoveredHandle === ResizeHandleType.Lower || resizeHandleType === ResizeHandleType.Lower
@@ -614,7 +614,7 @@ const ParabolicDish = ({
                   noHoverHandle();
                 }}
               >
-                <meshStandardMaterial
+                <meshBasicMaterial
                   attach="material"
                   color={
                     hoveredHandle === ResizeHandleType.Upper || resizeHandleType === ResizeHandleType.Upper
@@ -644,7 +644,7 @@ const ParabolicDish = ({
                   noHoverHandle();
                 }}
               >
-                <meshStandardMaterial
+                <meshBasicMaterial
                   attach="material"
                   color={
                     hoveredHandle === ResizeHandleType.Left || resizeHandleType === ResizeHandleType.Left
@@ -674,7 +674,7 @@ const ParabolicDish = ({
                   noHoverHandle();
                 }}
               >
-                <meshStandardMaterial
+                <meshBasicMaterial
                   attach="material"
                   color={
                     hoveredHandle === ResizeHandleType.Right || resizeHandleType === ResizeHandleType.Right

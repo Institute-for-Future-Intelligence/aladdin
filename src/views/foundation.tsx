@@ -2612,7 +2612,7 @@ const Foundation = ({
               }}
               onPointerOut={noHoverHandle}
             >
-              <meshStandardMaterial
+              <meshBasicMaterial
                 attach="material"
                 color={
                   hoveredHandle === ResizeHandleType.LowerLeft ||
@@ -2641,7 +2641,7 @@ const Foundation = ({
               }}
               onPointerOut={noHoverHandle}
             >
-              <meshStandardMaterial
+              <meshBasicMaterial
                 attach="material"
                 color={
                   hoveredHandle === ResizeHandleType.UpperLeft ||
@@ -2670,7 +2670,7 @@ const Foundation = ({
               }}
               onPointerOut={noHoverHandle}
             >
-              <meshStandardMaterial
+              <meshBasicMaterial
                 attach="material"
                 color={
                   hoveredHandle === ResizeHandleType.LowerRight ||
@@ -2699,7 +2699,7 @@ const Foundation = ({
               }}
               onPointerOut={noHoverHandle}
             >
-              <meshStandardMaterial
+              <meshBasicMaterial
                 attach="material"
                 color={
                   hoveredHandle === ResizeHandleType.UpperRight ||
@@ -2726,7 +2726,7 @@ const Foundation = ({
                   }}
                   onPointerOut={noHoverHandle}
                 >
-                  <meshStandardMaterial
+                  <meshBasicMaterial
                     attach="material"
                     color={
                       hoveredHandle === MoveHandleType.Lower ||
@@ -2749,7 +2749,7 @@ const Foundation = ({
                   }}
                   onPointerOut={noHoverHandle}
                 >
-                  <meshStandardMaterial
+                  <meshBasicMaterial
                     attach="material"
                     color={
                       hoveredHandle === MoveHandleType.Upper ||
@@ -2772,7 +2772,7 @@ const Foundation = ({
                   }}
                   onPointerOut={noHoverHandle}
                 >
-                  <meshStandardMaterial
+                  <meshBasicMaterial
                     attach="material"
                     color={
                       hoveredHandle === MoveHandleType.Left ||
@@ -2795,7 +2795,7 @@ const Foundation = ({
                   }}
                   onPointerOut={noHoverHandle}
                 >
-                  <meshStandardMaterial
+                  <meshBasicMaterial
                     attach="material"
                     color={
                       hoveredHandle === MoveHandleType.Right ||

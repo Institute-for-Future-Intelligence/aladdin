@@ -328,7 +328,7 @@ const Heliostat = ({
               selectMe(id, e, ActionType.Move);
             }}
           >
-            <meshStandardMaterial attach="material" color={'orange'} />
+            <meshBasicMaterial attach="material" color={'orange'} />
           </Sphere>
         )}
       </group>

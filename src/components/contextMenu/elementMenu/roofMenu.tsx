@@ -25,6 +25,7 @@ import { ElementCounter } from '../../../stores/ElementCounter';
 import { ExclamationCircleOutlined } from '@ant-design/icons';
 import { UndoableChangeGroup } from '../../../undo/UndoableChangeGroup';
 import { UndoableRemoveAllChildren } from '../../../undo/UndoableRemoveAllChildren';
+import { LightModel } from '../../../models/LightModel';
 
 export const RoofMenu = () => {
   const setCommonStore = useStore(Selector.set);
@@ -36,6 +37,8 @@ export const RoofMenu = () => {
   const removeAllChildElementsByType = useStore(Selector.removeAllChildElementsByType);
   const updateElementLockById = useStore(Selector.updateElementLockById);
   const updateElementUnlockByParentId = useStore(Selector.updateElementLockByParentId);
+  const updateInsideLightsByParentId = useStore(Selector.updateInsideLightsByParentId);
+  const updateInsideLightById = useStore(Selector.updateInsideLightById);
   const setApplyCount = useStore(Selector.setApplyCount);
   const addUndoable = useStore(Selector.addUndoable);
 
@@ -202,6 +205,42 @@ export const RoofMenu = () => {
     );
   };
 
+  const renderInsideLightItem = (count: number, inside: boolean) => {
+    if (count === 0) return null;
+    return (
+      <Menu.Item
+        key={inside ? `inside-lights-on-roof` : 'outside-lights-on-roof'}
+        onClick={() => {
+          if (!roof) return;
+          const oldValues = new Map<string, boolean>();
+          for (const elem of elements) {
+            if (elem.parentId === roof.id && elem.type === ObjectType.Light) {
+              oldValues.set(elem.id, (elem as LightModel).inside);
+            }
+          }
+          updateInsideLightsByParentId(roof.id, inside);
+          const undoableInsideLightsOnRoof = {
+            name: inside ? 'Set All Lights on Roof Inside' : 'Set All Lights on Roof Outside',
+            timestamp: Date.now(),
+            oldValues: oldValues,
+            newValue: true,
+            undo: () => {
+              for (const [id, inside] of undoableInsideLightsOnRoof.oldValues.entries()) {
+                updateInsideLightById(id, inside as boolean);
+              }
+            },
+            redo: () => {
+              updateInsideLightsByParentId(roof.id, inside);
+            },
+          } as UndoableChangeGroup;
+          addUndoable(undoableInsideLightsOnRoof);
+        }}
+      >
+        {i18n.t(inside ? `roofMenu.AllLightsOnRoofInside` : `roofMenu.AllLightsOnRoofOutside`, lang)} ({count})
+      </Menu.Item>
+    );
+  };
+
   const renderElementsSubMenu = () => {
     const counterAll = roof ? countAllOffspringsByType(roof.id, true) : new ElementCounter();
     if (counterAll.gotSome() && useStore.getState().contextMenuObjectType) {
@@ -214,11 +253,13 @@ export const RoofMenu = () => {
         >
           {renderClearItem(ObjectType.SolarPanel, counterUnlocked.solarPanelCount)}
           {renderClearItem(ObjectType.Sensor, counterUnlocked.sensorCount)}
-          {renderClearItem(ObjectType.Light, counterUnlocked.lightCount)}
+          {renderClearItem(ObjectType.Light, counterUnlocked.insideLightCount + counterUnlocked.outsideLightCount)}
           {renderLockItem(ObjectType.SolarPanel, counterUnlocked.solarPanelCount)}
           {renderUnlockItem(ObjectType.SolarPanel, counterAll.solarPanelCount)}
           {renderLockItem(ObjectType.Sensor, counterUnlocked.sensorCount)}
           {renderUnlockItem(ObjectType.Sensor, counterAll.sensorCount)}
+          {renderInsideLightItem(counterAll.outsideLightCount, true)}
+          {renderInsideLightItem(counterAll.insideLightCount, false)}
         </SubMenu>
       );
     }

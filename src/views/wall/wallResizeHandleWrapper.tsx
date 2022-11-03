@@ -88,7 +88,7 @@ const WallResizeHandle = React.memo(({ x, z, id, handleType, highLight, handleSi
         useStoreRef.getState().setEnableOrbitController(true);
       }}
     >
-      <meshStandardMaterial color={color} />
+      <meshBasicMaterial attach="material" color={color} />
     </Box>
   );
 });

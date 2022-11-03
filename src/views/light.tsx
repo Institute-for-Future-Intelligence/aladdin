@@ -26,6 +26,7 @@ import i18n from '../i18n/i18n';
 import { WallModel } from '../models/WallModel';
 import { FoundationModel } from '../models/FoundationModel';
 import { LightModel } from '../models/LightModel';
+import { RoofModel } from '../models/RoofModel';
 
 const Light = ({
   id,
@@ -48,6 +49,7 @@ const Light = ({
   decay = 2,
   distance = 5,
   intensity = 3,
+  inside = false,
 }: LightModel) => {
   const setCommonStore = useStore(Selector.set);
   const language = useStore(Selector.language);
@@ -82,6 +84,8 @@ const Light = ({
       }
     }
   });
+
+  let parentThickness = 0.1;
 
   if (parentId) {
     if (parent) {
@@ -120,6 +124,7 @@ const Light = ({
             cy = absoluteCoordinates.y;
             cz = absoluteCoordinates.z;
           }
+          parentThickness = (parent as WallModel).ly;
           break;
         case ObjectType.Roof:
           if (foundation?.type === ObjectType.Foundation) {
@@ -128,6 +133,7 @@ const Light = ({
             cy = absoluteCoordinates.y;
             cz = absoluteCoordinates.z;
           }
+          parentThickness = (parent as RoofModel).thickness;
           break;
       }
     }
@@ -194,7 +200,7 @@ const Light = ({
         <pointLight
           color={color}
           name={'Point Light ' + id}
-          position={[0, 0, hz]}
+          position={[0, 0, inside ? -parentThickness - hz : hz]}
           decay={decay}
           distance={distance}
           intensity={intensity}
@@ -206,6 +212,7 @@ const Light = ({
         userData={{ unintersectable: true }}
         uuid={id}
         ref={baseRef}
+        position={[0, 0, inside ? -parentThickness : 0]}
         rotation={[HALF_PI, 0, 0]}
         args={[lx * 0.5, ly * 0.5, hz, 16, 1]}
         name={'Light Base'}
@@ -238,7 +245,7 @@ const Light = ({
           domElement.style.cursor = 'default';
         }}
       >
-        <meshStandardMaterial attach="material" color={color} />
+        <meshStandardMaterial attach="material" color={'lightgray'} />
       </Cylinder>
       <Sphere
         userData={{ unintersectable: true }}
@@ -246,13 +253,13 @@ const Light = ({
         castShadow={false}
         receiveShadow={shadowEnabled}
         args={[lx * 0.3, 8, 8, 0, TWO_PI, 0, Math.PI]}
-        position={new Vector3(0, 0, hz)}
+        position={new Vector3(0, 0, inside ? -parentThickness - hz : hz)}
         rotation={[HALF_PI, 0, 0]}
       >
         {night ? (
-          <meshBasicMaterial attach="material" color={color} />
+          <meshBasicMaterial attach="material" color={'white'} />
         ) : (
-          <meshStandardMaterial attach="material" color={color} />
+          <meshStandardMaterial attach="material" color={'white'} />
         )}
       </Sphere>
 
@@ -271,14 +278,14 @@ const Light = ({
       {selected && !locked && (
         <Sphere
           ref={handleRef}
-          position={new Vector3(0, 0, 0)}
-          args={[MOVE_HANDLE_RADIUS, 6, 6, 0, Math.PI]}
+          position={new Vector3(0, 0, inside ? -parentThickness - hz : hz)}
+          args={[MOVE_HANDLE_RADIUS, 6, 6, inside ? Math.PI : 0, Math.PI]}
           name={MoveHandleType.Default}
           onPointerDown={(e) => {
             selectMe(id, e, ActionType.Move);
           }}
         >
-          <meshStandardMaterial attach="material" color={'orange'} />
+          <meshBasicMaterial attach="material" color={'orange'} />
         </Sphere>
       )}
 
@@ -290,7 +297,7 @@ const Light = ({
           fontSize={20}
           fontFace={'Times Roman'}
           textHeight={0.2}
-          position={[0, 0, lz + 0.2]}
+          position={[0, 0, (inside ? -parentThickness : 0) + lz + 0.2]}
         />
       )}
     </group>

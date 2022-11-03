@@ -22,7 +22,7 @@ export interface RotateHandleProps {
 
 const RotateHandle = ({ id, position, color, ratio, handleType, hoverHandle, noHoverHandle }: RotateHandleProps) => {
   const selectMe = useStore(Selector.selectMe);
-  const rotationHandleLMesh = <meshStandardMaterial color={color} />;
+  const rotationHandleLMesh = <meshBasicMaterial attach="material" color={color} />;
   return (
     <group position={position} rotation={[HALF_PI, 0, 0]} scale={ratio} name={handleType}>
       <group>

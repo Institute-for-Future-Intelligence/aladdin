@@ -340,7 +340,7 @@ const Flower = ({
                   }}
                   onPointerOut={noHoverHandle}
                 >
-                  <meshStandardMaterial
+                  <meshBasicMaterial
                     attach="material"
                     color={
                       hoveredHandle === MoveHandleType.Default || moveHandleType === MoveHandleType.Default
