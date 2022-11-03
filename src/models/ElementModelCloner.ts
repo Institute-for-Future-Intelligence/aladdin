@@ -31,6 +31,7 @@ import { HeliostatModel } from './HeliostatModel';
 import { DoorModel } from './DoorModel';
 import { WindTurbineModel } from './WindTurbineModel';
 import { FlowerModel } from './FlowerModel';
+import { LightModel } from './LightModel';
 
 export class ElementModelCloner {
   static clone(
@@ -54,6 +55,12 @@ export class ElementModelCloner {
         if (parent) {
           // must have a parent
           clone = ElementModelCloner.cloneSensor(parent, e as SensorModel, x, y, z);
+        }
+        break;
+      case ObjectType.Light:
+        if (parent) {
+          // must have a parent
+          clone = ElementModelCloner.cloneLight(parent, e as LightModel, x, y, z);
         }
         break;
       case ObjectType.SolarPanel:
@@ -246,9 +253,7 @@ export class ElementModelCloner {
         const dot = normal.dot(new Vector3().fromArray(polygon.normal));
         if (Math.abs(dot) < ZERO_TOLERANCE) {
           for (const v of pm.vertices) {
-            const a = v.x;
-            v.x = v.y;
-            v.y = a;
+            [v.x, v.y] = [v.y, v.x];
           }
         }
       }
@@ -284,6 +289,39 @@ export class ElementModelCloner {
       foundationId: foundationId,
       id: short.generate() as string,
     } as SensorModel;
+  }
+
+  private static cloneLight(parent: ElementModel, light: LightModel, x: number, y: number, z?: number) {
+    let foundationId;
+    switch (parent.type) {
+      case ObjectType.Foundation:
+      case ObjectType.Cuboid:
+        foundationId = parent.id;
+        break;
+      case ObjectType.Wall:
+      case ObjectType.Roof:
+        foundationId = parent.parentId;
+        break;
+    }
+    return {
+      type: ObjectType.Light,
+      cx: x,
+      cy: y,
+      cz: z,
+      lx: light.lx,
+      ly: light.ly,
+      lz: light.lz,
+      intensity: light.intensity,
+      distance: light.distance,
+      decay: light.decay,
+      color: light.color,
+      showLabel: light.showLabel,
+      normal: [...light.normal],
+      rotation: light.parentId ? [...parent.rotation] : [0, 0, 0],
+      parentId: parent.id,
+      foundationId: foundationId,
+      id: short.generate() as string,
+    } as LightModel;
   }
 
   private static cloneSolarPanel(parent: ElementModel, solarPanel: SolarPanelModel, x: number, y: number, z?: number) {

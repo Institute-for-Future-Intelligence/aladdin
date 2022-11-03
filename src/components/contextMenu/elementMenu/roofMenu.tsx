@@ -63,8 +63,11 @@ export const RoofMenu = () => {
     const elementsToPaste = useStore.getState().elementsToPaste;
     if (elementsToPaste && elementsToPaste.length > 0) {
       const e = elementsToPaste[0];
-      if (e.type === ObjectType.SolarPanel) {
-        return true;
+      switch (e.type) {
+        case ObjectType.SolarPanel:
+        case ObjectType.Sensor:
+        case ObjectType.Light:
+          return true;
       }
     }
     return false;

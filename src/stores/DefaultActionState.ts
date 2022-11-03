@@ -102,6 +102,10 @@ export class DefaultActionState implements ActionState {
   heliostatWidth: number;
   heliostatLength: number;
 
+  lightColor: string;
+  lightIntensity: number;
+  lightDistance: number;
+
   constructor() {
     this.humanName = HumanName.Jack;
 
@@ -190,5 +194,9 @@ export class DefaultActionState implements ActionState {
     this.heliostatPoleHeight = 0.2;
     this.heliostatWidth = 4;
     this.heliostatLength = 2;
+
+    this.lightColor = '#ffff99';
+    this.lightIntensity = 3;
+    this.lightDistance = 5;
   }
 }

@@ -103,6 +103,7 @@ import { TreeData } from '../TreeData';
 import { WindowModel } from '../models/WindowModel';
 import { ActionState } from './ActionState';
 import { DefaultActionState } from './DefaultActionState';
+import { LightModel } from '../models/LightModel';
 
 enableMapSet();
 
@@ -537,6 +538,11 @@ export interface CommonStoreState {
   updateHumanNameById: (id: string, name: HumanName) => void;
   updateHumanFlipById: (id: string, yes: boolean) => void;
   updateHumanObserverById: (id: string, yes: boolean) => void;
+
+  // for lights
+  updateLightColorById: (id: string, color: string) => void;
+  updateLightIntensityById: (id: string, intensity: number) => void;
+  updateLightDistanceById: (id: string, distance: number) => void;
 
   actionModeLock: boolean;
   objectTypeToAdd: ObjectType;
@@ -4184,8 +4190,38 @@ export const useStore = create<CommonStoreState>(
             immerSet((state: CommonStoreState) => {
               for (const e of state.elements) {
                 if (e.type === ObjectType.Human && e.id === id) {
-                  const human = e as HumanModel;
-                  human.observer = yes;
+                  (e as HumanModel).observer = yes;
+                  break;
+                }
+              }
+            });
+          },
+
+          updateLightColorById(id, color) {
+            immerSet((state: CommonStoreState) => {
+              for (const e of state.elements) {
+                if (e.type === ObjectType.Light && e.id === id) {
+                  (e as LightModel).color = color;
+                  break;
+                }
+              }
+            });
+          },
+          updateLightIntensityById(id, intensity) {
+            immerSet((state: CommonStoreState) => {
+              for (const e of state.elements) {
+                if (e.type === ObjectType.Light && e.id === id) {
+                  (e as LightModel).intensity = intensity;
+                  break;
+                }
+              }
+            });
+          },
+          updateLightDistanceById(id, distance) {
+            immerSet((state: CommonStoreState) => {
+              for (const e of state.elements) {
+                if (e.type === ObjectType.Light && e.id === id) {
+                  (e as LightModel).distance = distance;
                   break;
                 }
               }
@@ -4334,8 +4370,9 @@ export const useStore = create<CommonStoreState>(
                   const light = ElementModelFactory.makeLight(
                     lightParentModel,
                     2,
-                    5,
-                    3,
+                    state.actionState.lightDistance,
+                    state.actionState.lightIntensity,
+                    state.actionState.lightColor,
                     lightRelativeCoordinates.x,
                     lightRelativeCoordinates.y,
                     lightRelativeCoordinates.z,
@@ -5199,6 +5236,8 @@ export const useStore = create<CommonStoreState>(
                       break;
                     }
                     case ObjectType.SolarPanel:
+                    case ObjectType.Sensor:
+                    case ObjectType.Light:
                     case ObjectType.ParabolicDish:
                     case ObjectType.Heliostat:
                     case ObjectType.FresnelReflector:

@@ -163,11 +163,13 @@ const handleAddElementOnRoof = (
             .applyEuler(new Euler(0, 0, -foundation.rotation[2]));
           const posRelToCentroid = posRelToFoundation.clone().sub(ridgeMidPoint);
           const { normal, rotation } = RoofUtil.computeState(roofSegments, posRelToCentroid);
+          const actionState = useStore.getState().actionState;
           const newElement = ElementModelFactory.makeLight(
             roof,
             2,
-            5,
-            3,
+            actionState.lightDistance,
+            actionState.lightIntensity,
+            actionState.lightColor,
             posRelToFoundation.x / foundation.lx,
             posRelToFoundation.y / foundation.ly,
             posRelToFoundation.z - foundation.lz,

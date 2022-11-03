@@ -832,7 +832,7 @@ export class Util {
           .applyEuler(new Euler(0, 0, grandParent.rotation[2]))
           .add(grandParentPos)
           .setZ(grandParent.lz + parent.lz / 2); // world
-        v.sub(parentPos).applyEuler(new Euler(0, 0, -(parent as WallModel).relativeAngle));
+        v.sub(parentPos).applyEuler(new Euler(0, 0, -(parent as WallModel).relativeAngle - grandParent.rotation[2]));
       }
     } else {
       v.set(x - parent.cx, y - parent.cy, z - parent.cz);

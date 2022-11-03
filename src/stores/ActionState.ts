@@ -95,4 +95,8 @@ export interface ActionState {
   heliostatPoleHeight: number;
   heliostatWidth: number;
   heliostatLength: number;
+
+  lightColor: string;
+  lightIntensity: number;
+  lightDistance: number;
 }

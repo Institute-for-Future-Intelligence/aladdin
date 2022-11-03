@@ -600,6 +600,12 @@ export const updateHumanFlipById = (state: CommonStoreState) => state.updateHuma
 
 export const updateHumanObserverById = (state: CommonStoreState) => state.updateHumanObserverById;
 
+export const updateLightColorById = (state: CommonStoreState) => state.updateLightColorById;
+
+export const updateLightIntensityById = (state: CommonStoreState) => state.updateLightIntensityById;
+
+export const updateLightDistanceById = (state: CommonStoreState) => state.updateLightDistanceById;
+
 export const copyElementById = (state: CommonStoreState) => state.copyElementById;
 
 export const removeElementById = (state: CommonStoreState) => state.removeElementById;

@@ -1224,11 +1224,13 @@ const Wall = (wallModel: WallModel) => {
         case ObjectType.Light: {
           if (pointer) {
             const p = getRelativePosOnWall(pointer, wallModel);
+            const actionState = useStore.getState().actionState;
             newElement = ElementModelFactory.makeLight(
               wallModel,
               2,
-              5,
-              3,
+              actionState.lightDistance,
+              actionState.lightIntensity,
+              actionState.lightColor,
               (p.x - 0.05) / lx,
               0,
               (p.z - 0.05) / lz,
