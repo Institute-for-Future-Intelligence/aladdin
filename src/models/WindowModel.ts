@@ -19,7 +19,8 @@ export interface WindowModel extends ElementModel {
   frame: boolean;
   frameWidth: number;
 
-  style: WindowStyle;
+  windowType: WindowType;
+  archHeight: number;
 }
 
 export interface Shutter {
@@ -29,7 +30,7 @@ export interface Shutter {
   width: number;
 }
 
-export enum WindowStyle {
+export enum WindowType {
   Default = 'Default',
   Arch = 'Arch',
   Circle = 'Circle',

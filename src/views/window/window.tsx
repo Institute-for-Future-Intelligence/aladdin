@@ -5,7 +5,7 @@
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import { Color, DoubleSide, FrontSide, MeshStandardMaterial, Shape } from 'three';
 import { Box } from '@react-three/drei';
-import { WindowModel, WindowStyle } from 'src/models/WindowModel';
+import { WindowModel, WindowType } from 'src/models/WindowModel';
 import { CommonStoreState, useStore } from 'src/stores/common';
 import { ObjectType } from 'src/types';
 import * as Selector from 'src/stores/selector';
@@ -14,6 +14,7 @@ import { DEFAULT_WINDOW_SHINESS } from 'src/constants';
 import { ThreeEvent } from '@react-three/fiber';
 import RectangleWindow from './rectangleWindow';
 import { WallModel } from 'src/models/WallModel';
+import ArchWindow from './archWindow';
 
 export const defaultShutter = { showLeft: false, showRight: false, color: 'grey', width: 0.5 };
 
@@ -92,7 +93,9 @@ const useUpdataOldFiles = (windowModel: WindowModel) => {
       windowModel.mullionColor === undefined ||
       windowModel.frame === undefined ||
       windowModel.color === undefined ||
-      windowModel.frameWidth === undefined
+      windowModel.frameWidth === undefined ||
+      windowModel.windowType === undefined ||
+      windowModel.archHeight === undefined
     ) {
       useStore.getState().set((state) => {
         for (const e of state.elements) {
@@ -128,6 +131,12 @@ const useUpdataOldFiles = (windowModel: WindowModel) => {
             if (w.frameWidth === undefined) {
               w.frameWidth = 0.1;
             }
+            if (w.windowType === undefined) {
+              w.windowType = WindowType.Default;
+            }
+            if (w.archHeight === undefined) {
+              w.archHeight = 1;
+            }
             break;
           }
         }
@@ -160,7 +169,8 @@ const Window = (windowModel: WindowModel) => {
     frame = false,
     color = 'white',
     frameWidth = 0.1,
-    style = WindowStyle.Default,
+    windowType = WindowType.Default,
+    archHeight,
   } = windowModel;
 
   // legacy problem
@@ -269,7 +279,12 @@ const Window = (windowModel: WindowModel) => {
     [windowShiness, tint, opacity],
   );
 
-  const dimensionData = useMemo(() => [wlx, wly, wlz], [wlx, wly, wlz]);
+  const dimensionData = useMemo(() => {
+    if (archHeight !== undefined) {
+      return [wlx, wly, wlz, archHeight];
+    }
+    return [wlx, wly, wlz];
+  }, [wlx, wly, wlz, archHeight]);
 
   const positionData = useMemo(() => [wcx, wcy, wcz], [wcx, wcy, wcz]);
 
@@ -296,8 +311,8 @@ const Window = (windowModel: WindowModel) => {
   );
 
   const renderWindow = () => {
-    switch (style) {
-      case WindowStyle.Default:
+    switch (windowType) {
+      case WindowType.Default:
         return (
           <RectangleWindow
             dimension={dimensionData}
@@ -308,33 +323,19 @@ const Window = (windowModel: WindowModel) => {
             glassMaterial={glassMaterial}
           />
         );
-      case WindowStyle.Arch:
-        return null;
+      case WindowType.Arch:
+        return (
+          <ArchWindow
+            dimension={dimensionData}
+            position={positionData}
+            mullionData={mullionData}
+            frameData={frameData}
+            wireframeData={wireframeData}
+            glassMaterial={glassMaterial}
+          />
+        );
     }
   };
-
-  // const shape = useMemo(() => {
-  //   const s = new Shape();
-  //   const hx = wlx / 2;
-  //   const hy = wlz / 2;
-
-  //   s.moveTo(-hx, -hy);
-
-  //   s.lineTo(hx, -hy);
-
-  //   if (hx < hy) {
-  //     s.lineTo(hx, hy - hx);
-  //     s.quadraticCurveTo(hx, hy, 0, hy);
-  //     s.quadraticCurveTo(-hx, hy, -hx, hy - hx);
-  //   } else {
-  //     s.lineTo(hx, 0);
-  //     s.quadraticCurveTo(hx, hy, 0, hy);
-  //     s.quadraticCurveTo(-hx, hy, -hx, 0);
-  //   }
-  //   s.lineTo(-hx, -hy);
-
-  //   return s;
-  // }, [wlx, wlz]);
 
   return (
     <group
@@ -345,11 +346,6 @@ const Window = (windowModel: WindowModel) => {
       onContextMenu={onContextMenu}
     >
       {renderWindow()}
-
-      {/* <mesh rotation={[HALF_PI, 0, 0]}>
-        <shapeBufferGeometry args={[shape]} />
-        {windowMaterial}
-      </mesh> */}
 
       {shutter && (
         <Shutter
@@ -364,7 +360,7 @@ const Window = (windowModel: WindowModel) => {
       )}
 
       {/* handles */}
-      {selected && !locked && <WindowHandleWrapper lx={wlx} lz={wlz} />}
+      {selected && !locked && <WindowHandleWrapper lx={wlx} lz={wlz} windowType={windowType} />}
     </group>
   );
 };

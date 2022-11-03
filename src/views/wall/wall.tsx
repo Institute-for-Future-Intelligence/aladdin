@@ -20,6 +20,7 @@ import {
   BackSide,
   DoubleSide,
   Euler,
+  FrontSide,
   Mesh,
   MeshStandardMaterial,
   Raycaster,
@@ -36,7 +37,7 @@ import { Util } from 'src/Util';
 import { useStore } from 'src/stores/common';
 import { useStoreRef } from 'src/stores/commonRef';
 import { ElementModel } from 'src/models/ElementModel';
-import { Shutter, WindowModel } from 'src/models/WindowModel';
+import { Shutter, WindowModel, WindowType } from 'src/models/WindowModel';
 import { WallModel, WallStructure } from 'src/models/WallModel';
 import { ElementModelFactory } from 'src/models/ElementModelFactory';
 import { Point2 } from 'src/models/Point2';
@@ -278,6 +279,7 @@ const Wall = (wallModel: WallModel) => {
   const oldDimensionRef = useRef<number[]>([]);
   const oldTintRef = useRef<string>('#73D8FF');
   const oldDoorColorRef = useRef<string>('white');
+  const oldWindowArchHeight = useRef<number>();
 
   const [originElements, setOriginElements] = useState<ElementModel[] | null>(null);
   const [showGrid, setShowGrid] = useState(false);
@@ -361,7 +363,7 @@ const Wall = (wallModel: WallModel) => {
     shape.lineTo(cx - x + leftOffset, cy - y); // lower left
   };
 
-  const drawWindow = (shape: Shape, lx: number, ly: number, cx = 0, cy = 0) => {
+  const drawRectWindow = (shape: Shape, lx: number, ly: number, cx = 0, cy = 0) => {
     const x = lx / 2;
     const y = ly / 2;
     shape.moveTo(cx - x, cy - y);
@@ -371,15 +373,46 @@ const Wall = (wallModel: WallModel) => {
     shape.lineTo(cx - x, cy - y);
   };
 
+  const drawArchWindow = (shape: Shape, lx: number, ly: number, cx: number, cy: number, archHeight = 0) => {
+    const hx = lx / 2;
+    const hy = ly / 2;
+    const ah = Math.min(archHeight, ly, hx);
+
+    shape.moveTo(cx - hx, cy - hy);
+    shape.lineTo(cx + hx, cy - hy);
+    shape.lineTo(cx + hx, cy + hy - ah);
+
+    if (ah > 0) {
+      const r = ah / 2 + lx ** 2 / (8 * ah);
+      const [cX, cY] = [cx, cy + hy - r];
+      const startAngle = Math.acos(hx / r);
+      const endAngle = Math.PI - startAngle;
+      shape.absarc(cX, cY, r, startAngle, endAngle, false);
+    } else {
+      shape.lineTo(cx - hx, cy + hy);
+    }
+
+    shape.lineTo(cx - hx, cy - hy);
+  };
+
   const outsideWallShape = useMemo(() => {
     const wallShape = new Shape();
     drawRectangle(wallShape, lx, lz, 0, 0, 0, 0);
 
     elementsOnWall.forEach((w) => {
       if (w.type === ObjectType.Window && w.id !== invalidElementIdRef.current) {
-        const window = new Shape();
-        drawWindow(window, w.lx * lx, w.lz * lz, w.cx * lx, w.cz * lz);
-        wallShape.holes.push(window);
+        const window = w as WindowModel;
+        const windowShape = new Shape();
+        const [wlx, wly, wcx, wcy] = [w.lx * lx, w.lz * lz, w.cx * lx, w.cz * lz];
+        switch (window.windowType) {
+          case WindowType.Default:
+            drawRectWindow(windowShape, wlx, wly, wcx, wcy);
+            break;
+          case WindowType.Arch:
+            drawArchWindow(windowShape, wlx, wly, wcx, wcy, window.archHeight);
+            break;
+        }
+        wallShape.holes.push(windowShape);
       }
     });
 
@@ -401,9 +434,18 @@ const Wall = (wallModel: WallModel) => {
 
     elementsOnWall.forEach((w) => {
       if (w.type === ObjectType.Window && w.id !== invalidElementIdRef.current) {
-        const window = new Shape();
-        drawWindow(window, w.lx * lx, w.lz * lz, w.cx * lx, w.cz * lz);
-        wallShape.holes.push(window);
+        const window = w as WindowModel;
+        const windowShape = new Shape();
+        const [wlx, wly, wcx, wcy] = [w.lx * lx, w.lz * lz, w.cx * lx, w.cz * lz];
+        switch (window.windowType) {
+          case WindowType.Default:
+            drawRectWindow(windowShape, wlx, wly, wcx, wcy);
+            break;
+          case WindowType.Arch:
+            drawArchWindow(windowShape, wlx, wly, wcx, wcy, window.archHeight);
+            break;
+        }
+        wallShape.holes.push(windowShape);
       }
     });
     return wallShape;
@@ -645,14 +687,18 @@ const Wall = (wallModel: WallModel) => {
     invalidElementIdRef.current = null;
     isSettingDoorStartPointRef.current = false;
     isSettingDoorEndPointRef.current = false;
+    oldWindowArchHeight.current = undefined;
   };
 
-  const setElementPosDms = (id: string, pos: number[], dms: number[]) => {
+  const setElementPosDms = (id: string, pos: number[], dms: number[], archHeight?: number) => {
     setCommonStore((state) => {
       for (const e of state.elements) {
         if (e.id === id) {
           [e.cx, e.cy, e.cz] = pos;
           [e.lx, e.ly, e.lz] = dms;
+          if (e.type === ObjectType.Window && archHeight !== undefined) {
+            (e as WindowModel).archHeight = archHeight;
+          }
           break;
         }
       }
@@ -714,11 +760,13 @@ const Wall = (wallModel: WallModel) => {
           oldDimension: [...oldDimensionRef.current],
           newPosition: [elem.cx, elem.cy, elem.cz],
           newDimension: [elem.lx, elem.ly, elem.lz],
-          undo: () => {
-            setElementPosDms(undoableResize.resizedElementId, undoableResize.oldPosition, undoableResize.oldDimension);
+          oldArchHeight: oldWindowArchHeight.current,
+          newArchHeight: elem.type === ObjectType.Window ? (elem as WindowModel).archHeight : undefined,
+          undo() {
+            setElementPosDms(this.resizedElementId, this.oldPosition, this.oldDimension, this.oldArchHeight);
           },
-          redo: () => {
-            setElementPosDms(undoableResize.resizedElementId, undoableResize.newPosition, undoableResize.newDimension);
+          redo() {
+            setElementPosDms(this.resizedElementId, this.newPosition, this.newDimension, this.newArchHeight);
           },
         } as UndoableResizeElementOnWall;
         addUndoable(undoableResize);
@@ -779,6 +827,7 @@ const Wall = (wallModel: WallModel) => {
             oldDimensionRef.current = [selectedElement.lx, selectedElement.ly, selectedElement.lz];
             if (selectedElement.type === ObjectType.Window) {
               oldTintRef.current = (selectedElement as WindowModel).tint;
+              oldWindowArchHeight.current = (selectedElement as WindowModel).archHeight;
             }
             if (selectedElement.type === ObjectType.Door) {
               oldDoorColorRef.current = (selectedElement as DoorModel).color ?? 'white';
@@ -903,22 +952,51 @@ const Wall = (wallModel: WallModel) => {
                 if (isSettingWindowEndPointRef.current) {
                   resizeAnchor = getPositionOnGrid(resizeAnchor);
                 }
-                const v = new Vector3().subVectors(resizeAnchor, p); // window diagonal vector
-                let relativePos = new Vector3().addVectors(resizeAnchor, p).divideScalar(2);
-                checkCollision(grabRef.current.id, ObjectType.Window, relativePos, Math.abs(v.x), Math.abs(v.z));
-                setCommonStore((state) => {
-                  for (const e of state.elements) {
-                    if (e.id === grabRef.current?.id) {
-                      e.lx = Math.abs(v.x) / lx;
-                      e.lz = Math.abs(v.z) / lz;
-                      e.cx = relativePos.x / lx;
-                      e.cz = relativePos.z / lz;
-                      e.cy = e.id === invalidElementIdRef.current ? -0.01 : 0.1;
-                      (e as WindowModel).tint = e.id === invalidElementIdRef.current ? 'red' : oldTintRef.current;
-                      break;
+                const window = grabRef.current as WindowModel;
+                if (
+                  window.windowType === WindowType.Arch &&
+                  resizeHandleType === ResizeHandleType.WindowArch &&
+                  window.archHeight !== undefined
+                ) {
+                  const [wlx, wlz] = [window.lx * lx, window.lz * lz];
+                  const archHeightBottom = wlz / 2 - Math.min(window.archHeight, wlx / 2, wlz);
+                  const newArchHeight = Math.max(0, Math.min(p.z - resizeAnchor.z - archHeightBottom, wlx / 2));
+                  const newWindowHeight = archHeightBottom + newArchHeight + wlz / 2;
+                  const relativePos = new Vector3(
+                    window.cx * lx,
+                    window.cy,
+                    window.cz * lz + (newWindowHeight - wlz) / 2,
+                  );
+                  checkCollision(grabRef.current.id, ObjectType.Window, relativePos, wlx, newWindowHeight);
+                  setCommonStore((state) => {
+                    for (const e of state.elements) {
+                      if (e.id === grabRef.current?.id) {
+                        e.lz = newWindowHeight / lz;
+                        e.cz = relativePos.z / lz;
+                        e.cy = e.id === invalidElementIdRef.current ? -0.01 : 0.1;
+                        (e as WindowModel).tint = e.id === invalidElementIdRef.current ? 'red' : oldTintRef.current;
+                        (e as WindowModel).archHeight = newArchHeight;
+                      }
                     }
-                  }
-                });
+                  });
+                } else {
+                  const v = new Vector3().subVectors(resizeAnchor, p); // window diagonal vector
+                  const relativePos = new Vector3().addVectors(resizeAnchor, p).divideScalar(2);
+                  checkCollision(grabRef.current.id, ObjectType.Window, relativePos, Math.abs(v.x), Math.abs(v.z));
+                  setCommonStore((state) => {
+                    for (const e of state.elements) {
+                      if (e.id === grabRef.current?.id) {
+                        const window = e as WindowModel;
+                        window.lx = Math.abs(v.x) / lx;
+                        window.lz = Math.abs(v.z) / lz;
+                        window.cx = relativePos.x / lx;
+                        window.cz = relativePos.z / lz;
+                        window.cy = window.id === invalidElementIdRef.current ? -0.01 : 0.1;
+                        window.tint = window.id === invalidElementIdRef.current ? 'red' : oldTintRef.current;
+                      }
+                    }
+                  });
+                }
               }
               break;
             }
@@ -1072,7 +1150,8 @@ const Wall = (wallModel: WallModel) => {
               shutter,
               actionState.windowFrame,
               actionState.windowFrameWidth,
-              actionState.windowStyle,
+              actionState.windowType,
+              actionState.windowArchHeight,
               relativePos.x / lx,
               0,
               relativePos.z / lz,
@@ -1527,6 +1606,11 @@ const Wall = (wallModel: WallModel) => {
                   opacity={opacity}
                   side={night ? BackSide : DoubleSide}
                 />
+              </mesh>
+
+              <mesh rotation={[HALF_PI, 0, 0]} position={[0, ly - 0.01, 0]} receiveShadow={true}>
+                <shapeBufferGeometry args={[insideWallShape]} />
+                <meshStandardMaterial color={'white'} side={FrontSide} transparent={transparent} opacity={opacity} />
               </mesh>
 
               {/* top surface */}

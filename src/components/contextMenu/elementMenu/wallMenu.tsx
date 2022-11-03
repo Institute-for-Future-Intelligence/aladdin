@@ -49,7 +49,7 @@ const DialogSetting = {
   Thickness: { attributeKey: 'ly', range: [0.1, 1], step: 0.01, unit: 'word.MeterAbbreviation' },
 };
 
-const radioStyle = {
+export const radioStyle = {
   display: 'block',
   height: '30px',
   paddingLeft: '10px',

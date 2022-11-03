@@ -6,8 +6,8 @@ import React, { useState } from 'react';
 import { CommonStoreState, useStore } from '../../../stores/common';
 import * as Selector from '../../../stores/selector';
 import { Copy, Cut, Lock } from '../menuItems';
-import { WindowModel } from '../../../models/WindowModel';
-import { Checkbox, Divider, Menu } from 'antd';
+import { WindowModel, WindowType } from '../../../models/WindowModel';
+import { Checkbox, Divider, Menu, Radio } from 'antd';
 import i18n from 'src/i18n/i18n';
 import WindowShutterSubMenu from './windowShutterSubMenu';
 import SubMenu from 'antd/lib/menu/SubMenu';
@@ -15,6 +15,8 @@ import { UndoableCheck } from '../../../undo/UndoableCheck';
 import { ObjectType } from 'src/types';
 import WindowItemSelection from './windowItemSelection';
 import WindowNumberInput from './windowNumberInput';
+import { radioStyle } from './wallMenu';
+import { UndoableChange } from 'src/undo/UndoableChange';
 
 export enum WindowDataType {
   Color = 'Color',
@@ -67,6 +69,7 @@ export const WindowMenu = () => {
   const addUndoable = useStore(Selector.addUndoable);
   const setApplyCount = useStore(Selector.setApplyCount);
   const updateWindowMullionById = useStore(Selector.updateWindowMullionById);
+  const updateWindowTypeById = useStore(Selector.updateWindowTypeById);
 
   const [visibleType, setVisibleType] = useState<WindowDataType | null>(null);
 
@@ -191,6 +194,48 @@ export const WindowMenu = () => {
     );
   };
 
+  const renderTypeSubMenu = () => {
+    if (!window) {
+      return null;
+    }
+    return (
+      <SubMenu key={'window-type'} title={i18n.t('windowMenu.WindowType', lang)} style={{ paddingLeft: '24px' }}>
+        <Radio.Group
+          value={window.windowType ?? WindowType.Default}
+          style={{ height: '75px' }}
+          onChange={(e) => {
+            const undoableChange = {
+              name: 'Select Window Type',
+              timestamp: Date.now(),
+              oldValue: window.windowType,
+              newValue: e.target.value,
+              changedElementId: window.id,
+              changedElementType: window.type,
+              undo: () => {
+                updateWindowTypeById(undoableChange.changedElementId, undoableChange.oldValue as WindowType);
+              },
+              redo: () => {
+                updateWindowTypeById(undoableChange.changedElementId, undoableChange.newValue as WindowType);
+              },
+            } as UndoableChange;
+            addUndoable(undoableChange);
+            updateWindowTypeById(window.id, e.target.value);
+            setCommonStore((state) => {
+              state.actionState.windowType = e.target.value;
+            });
+          }}
+        >
+          <Radio style={radioStyle} value={WindowType.Default}>
+            {i18n.t('windowMenu.Default', lang)}
+          </Radio>
+          <Radio style={radioStyle} value={WindowType.Arch}>
+            {i18n.t('windowMenu.Arch', lang)}
+          </Radio>
+        </Radio.Group>
+      </SubMenu>
+    );
+  };
+
   const renderDialogs = () => {
     switch (visibleType) {
       case WindowDataType.Tint:
@@ -240,6 +285,8 @@ export const WindowMenu = () => {
           {renderMenuItem(WindowDataType.Opacity)}
 
           {renderMenuItem(WindowDataType.Tint)}
+
+          {renderTypeSubMenu()}
 
           {renderMullionSubMenu()}
 

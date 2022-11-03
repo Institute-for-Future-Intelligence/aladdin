@@ -100,7 +100,7 @@ import { RoofUtil } from 'src/views/roof/RoofUtil';
 import { FlowerModel } from '../models/FlowerModel';
 import { FlowerData } from '../FlowerData';
 import { TreeData } from '../TreeData';
-import { WindowModel } from '../models/WindowModel';
+import { WindowModel, WindowType } from '../models/WindowModel';
 import { ActionState } from './ActionState';
 import { DefaultActionState } from './DefaultActionState';
 import { LightModel } from '../models/LightModel';
@@ -495,6 +495,7 @@ export interface CommonStoreState {
   windowActionScope: Scope;
   setWindowActionScope: (scope: Scope) => void;
   updateWindowMullionById: (id: string, mullion: boolean) => void;
+  updateWindowTypeById: (id: string, type: WindowType) => void;
 
   // for doors
   doorActionScope: Scope;
@@ -3897,6 +3898,17 @@ export const useStore = create<CommonStoreState>(
               }
             });
           },
+          updateWindowTypeById(id, type) {
+            immerSet((state: CommonStoreState) => {
+              for (const e of state.elements) {
+                if (e.type === ObjectType.Window && e.id === id) {
+                  (e as WindowModel).windowType = type;
+                  state.selectedElement = e;
+                  break;
+                }
+              }
+            });
+          },
 
           // for doors
           doorActionScope: Scope.OnlyThisObject,
@@ -5160,6 +5172,7 @@ export const useStore = create<CommonStoreState>(
                       }
                       if (Util.isPositionRelative(elem.type)) {
                         m = Util.relativeCoordinates(m.x, m.y, m.z, newParent);
+                        console.log(m);
                       }
                     }
                   }

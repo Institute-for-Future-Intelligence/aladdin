@@ -916,6 +916,9 @@ export const i18n_zh_cn = {
       Frame: '边框',
       FrameWidth: '边框宽度',
       Color: '边框颜色',
+      WindowType: '窗户种类',
+      Default: '默认',
+      Arch: '拱形',
     },
 
     roofMenu: {
@@ -978,6 +981,8 @@ export const i18n_zh_cn = {
       AllDoorsAboveFoundation: '同一地基上所有的门',
       AllDoors: '所有的门',
     },
+
+
 
     siteInfoPanel: {
       High: '最高温度',

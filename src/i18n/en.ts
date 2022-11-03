@@ -939,6 +939,9 @@ export const i18n_en = {
       Frame: 'Frame',
       FrameWidth: 'FrameWidth',
       Color: 'Frame Color',
+      WindowType: 'Window Type',
+      Default: 'Default',
+      Arch: 'Arch',
     },
 
     roofMenu: {

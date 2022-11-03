@@ -940,6 +940,9 @@ export const i18n_tr = {
       Frame: 'Frame',
       FrameWidth: 'FrameWidth',
       Color: 'Frame Color',
+      WindowType: 'Window Type',
+      Default: 'Default',
+      Arch: 'Arch',
     },
 
     roofMenu: {

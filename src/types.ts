@@ -268,6 +268,7 @@ export enum ResizeHandleType {
   Right = 'Resize Handle Right',
   Top = 'Resize Handle Top',
   Default = 'Resize Handle', // used for resizing a polygon
+  WindowArch = 'Resize Handle Arch',
 }
 
 export enum RotateHandleType {

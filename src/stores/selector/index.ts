@@ -1014,6 +1014,8 @@ export const setWindowActionScope = (state: CommonStoreState) => state.setWindow
 
 export const updateWindowMullionById = (state: CommonStoreState) => state.updateWindowMullionById;
 
+export const updateWindowTypeById = (state: CommonStoreState) => state.updateWindowTypeById;
+
 export const updateWallRelativeAngleById = (state: CommonStoreState) => state.updateWallRelativeAngleById;
 
 export const updateWallLeftJointsById = (state: CommonStoreState) => state.updateWallLeftJointsById;
