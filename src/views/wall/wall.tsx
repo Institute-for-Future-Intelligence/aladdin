@@ -1187,6 +1187,7 @@ const Wall = (wallModel: WallModel) => {
         case ObjectType.SolarPanel: {
           if (pointer) {
             const p = getRelativePosOnWall(pointer, wallModel);
+            const angle = wallModel.relativeAngle - HALF_PI;
             newElement = ElementModelFactory.makeSolarPanel(
               wallModel,
               useStore.getState().getPvModule('SPR-X21-335-BLK'),
@@ -1198,7 +1199,7 @@ const Wall = (wallModel: WallModel) => {
               3,
               0,
               0,
-              new Vector3(0, -1, 0),
+              new Vector3(Math.cos(angle), Math.sin(angle), 0),
               [0, 0, 0],
               undefined,
               undefined,
@@ -1210,12 +1211,13 @@ const Wall = (wallModel: WallModel) => {
         case ObjectType.Sensor: {
           if (pointer) {
             const p = getRelativePosOnWall(pointer, wallModel);
+            const angle = wallModel.relativeAngle - HALF_PI;
             newElement = ElementModelFactory.makeSensor(
               wallModel,
               (p.x - 0.05) / lx,
               0,
               (p.z - 0.05) / lz,
-              new Vector3(0, -1, 0),
+              new Vector3(Math.cos(angle), Math.sin(angle), 0),
               [0, 0, 0],
             );
           }
@@ -1224,6 +1226,7 @@ const Wall = (wallModel: WallModel) => {
         case ObjectType.Light: {
           if (pointer) {
             const p = getRelativePosOnWall(pointer, wallModel);
+            const angle = wallModel.relativeAngle - HALF_PI;
             const actionState = useStore.getState().actionState;
             newElement = ElementModelFactory.makeLight(
               wallModel,
@@ -1234,7 +1237,7 @@ const Wall = (wallModel: WallModel) => {
               (p.x - 0.05) / lx,
               0,
               (p.z - 0.05) / lz,
-              new Vector3(0, -1, 0),
+              new Vector3(Math.cos(angle), Math.sin(angle), 0),
               [0, 0, 0],
             );
           }

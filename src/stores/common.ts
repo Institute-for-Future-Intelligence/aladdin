@@ -62,7 +62,7 @@ import { TreeModel } from '../models/TreeModel';
 import { HumanModel } from '../models/HumanModel';
 import { FoundationModel } from '../models/FoundationModel';
 import { CuboidModel } from '../models/CuboidModel';
-import { FLOATING_WINDOW_OPACITY, GROUND_ID, ORIGIN_VECTOR2, UNIT_VECTOR_POS_Z_ARRAY } from '../constants';
+import { FLOATING_WINDOW_OPACITY, GROUND_ID, HALF_PI, ORIGIN_VECTOR2, UNIT_VECTOR_POS_Z_ARRAY } from '../constants';
 import { PolygonModel } from '../models/PolygonModel';
 import { Point2 } from '../models/Point2';
 import { useStoreRef } from './commonRef';
@@ -5273,9 +5273,9 @@ export const useStore = create<CommonStoreState>(
                         if (newParent) {
                           switch (Util.checkElementOnWallState(e, newParent)) {
                             case ElementState.Valid:
-                              e.normal = [0, -1, 0];
+                              const angle = (newParent as WallModel).relativeAngle - HALF_PI;
+                              e.normal = [Math.cos(angle), Math.sin(angle), 0];
                               approved = true;
-
                               break;
                             case ElementState.OverLap:
                               showError(i18n.t('message.CannotPasteBecauseOfOverlap', lang));

@@ -850,7 +850,7 @@ export class Util {
     y: number,
     z: number,
     parent: ElementModel,
-    foundation?: FoundationModel,
+    foundation?: FoundationModel | null,
   ): Vector3 {
     if (parent.type === ObjectType.Wall && foundation) {
       const wall = parent as WallModel;

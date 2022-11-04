@@ -618,17 +618,19 @@ const SolarPanelSimulation = ({ city }: SolarPanelSimulationProps) => {
     let parent = getParent(panel);
     if (!parent) throw new Error('parent of solar panel does not exist');
     let rooftop = panel.parentType === ObjectType.Roof;
+    let walltop = panel.parentType === ObjectType.Wall;
     if (rooftop) {
       // x and y coordinates of a rooftop solar panel are relative to the foundation
       parent = getFoundation(parent);
       if (!parent) throw new Error('foundation of solar panel does not exist');
-      rooftop = true;
     }
     const pvModel = getPvModule(panel.pvModelName);
     if (!pvModel) throw new Error('PV model not found');
     const output = dailyOutputsMapRef.current.get(panel.id);
     if (!output) return;
-    const center = Util.absoluteCoordinates(panel.cx, panel.cy, panel.cz, parent);
+    const center = walltop
+      ? Util.absoluteCoordinates(panel.cx, panel.cy, panel.cz, parent, getFoundation(panel))
+      : Util.absoluteCoordinates(panel.cx, panel.cy, panel.cz, parent);
     const rot = parent.rotation[2];
     let zRot = rot + panel.relativeAzimuth;
     let angle = panel.tiltAngle;
@@ -648,8 +650,8 @@ const SolarPanelSimulation = ({ city }: SolarPanelSimulationProps) => {
     }
     const normal = new Vector3().fromArray(panel.normal);
     // TODO: right now we assume a parent rotation is always around the z-axis
-    // normal has been set if it is on top of a tilted roof, but has not if it is on top of a foundation or flat roof.
-    // so we only need to tilt the normal for a solar panel on a foundation or flat roof
+    // normal has been set if it is on top of a tilted roof, but has not if it is on top of a foundation or flat roof
+    // or wall. So we only need to tilt the normal for a solar panel on a foundation or flat roof or wall.
     const normalEuler = new Euler(rooftop && !flat ? 0 : angle, 0, zRot, 'ZYX');
     normal.applyEuler(normalEuler);
     const year = now.getFullYear();
@@ -688,7 +690,7 @@ const SolarPanelSimulation = ({ city }: SolarPanelSimulationProps) => {
     // shift half cell size to the center of each grid cell
     const x0 = center.x - (lx - dCell) / 2;
     const y0 = center.y - (ly - dCell) / 2;
-    const z0 = rooftop ? center.z : parent.lz + panel.poleHeight + panel.lz;
+    const z0 = rooftop || walltop ? center.z : parent.lz + panel.poleHeight + panel.lz;
     const center2d = new Vector2(center.x, center.y);
     const v = new Vector3();
     const cellOutputs = Array.from(Array<number>(nx), () => new Array<number>(ny));
@@ -698,6 +700,7 @@ const SolarPanelSimulation = ({ city }: SolarPanelSimulationProps) => {
       normalEuler.x = panel.rotation[0];
       normalEuler.z = panel.rotation[2] + rot;
     }
+    console.log(panel.label, x0, y0, z0, normal);
     for (let i = 0; i < 24; i++) {
       for (let j = 0; j < world.timesPerHour; j++) {
         // a shift of 30 minutes minute half of the interval ensures the symmetry of the result around noon

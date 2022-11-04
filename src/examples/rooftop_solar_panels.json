@@ -1,7 +1,7 @@
 {
-  "docid": "jY7rdQTo6MQEtjNczZ6sNr",
-  "time": "10/29/2022 12:01 pm",
-  "timestamp": 1667059292901,
+  "docid": "2MuhG69Ky8ZJBZZ2HgYd1d",
+  "time": "11/04/2022 12:52 pm",
+  "timestamp": 1667580725512,
   "userid": "QWecNcxhyvP6j6sBN11hBsfZDau1",
   "owner": null,
   "email": null,
@@ -34,7 +34,7 @@
     },
     "daysPerYear": 12,
     "latitude": 42.2844063,
-    "noAnimationForSensorDataCollection": false,
+    "noAnimationForSensorDataCollection": true,
     "timesPerHour": 4,
     "discretization": "Approximate",
     "airAttenuationCoefficient": 0.01,
@@ -657,7 +657,7 @@
       "cz": 0,
       "lx": 0,
       "ly": 0,
-      "lz": 5.135295435853515,
+      "lz": 4.5753802039556986,
       "overhang": 0.3,
       "thickness": 0.2,
       "roofType": "Hip",
@@ -724,18 +724,18 @@
       "poleSpacing": 3,
       "cx": 0.045101456155734465,
       "cy": -0.1728550176508481,
-      "cz": 4.113721415115395,
+      "cz": 3.912059639775531,
       "lx": 1.558,
       "ly": 1.046,
       "lz": 0.046,
       "showLabel": true,
       "normal": [
         0,
-        -0.3567195378468842,
-        0.9342115238629342
+        -0.26053732960492465,
+        0.9654637745054627
       ],
       "rotation": [
-        0.36475405203690126,
+        0.26357871191724236,
         0,
         0
       ],
@@ -745,7 +745,7 @@
       "foundationId": "1rAGH78b5nt7cXyGU9vNRV",
       "id": "hggpkWHD6D2DWRepcABzSN",
       "selected": false,
-      "dailyYield": 1.2094513734702572,
+      "dailyYield": 0.9707572887845864,
       "yearlyYield": 14.01350339573908,
       "label": "S"
     },
@@ -762,18 +762,18 @@
       "poleSpacing": 3,
       "cx": 0.04923325035798107,
       "cy": 0.23033266020936075,
-      "cz": 4.307131659444017,
+      "cz": 4.048748074874304,
       "lx": 1.558,
       "ly": 1.046,
       "lz": 0.046,
       "showLabel": true,
       "normal": [
-        2.5145285349286095e-17,
-        0.3567195378468843,
-        0.934211523862934
+        1.836536775249149e-17,
+        0.26053732960492476,
+        0.9654637745054627
       ],
       "rotation": [
-        0.36475405203690126,
+        0.2635787119172426,
         0,
         3.141592653589793
       ],
@@ -783,7 +783,7 @@
       "foundationId": "1rAGH78b5nt7cXyGU9vNRV",
       "id": "3AjZD5PGir6Pw6qNxAXT2v",
       "selected": false,
-      "dailyYield": 0.6741618666564109,
+      "dailyYield": 0.9731540369615995,
       "yearlyYield": 9.02911259075203,
       "label": "N"
     },
@@ -800,18 +800,18 @@
       "poleSpacing": 3,
       "cx": -0.23435630964973508,
       "cy": 0.03020266603782977,
-      "cz": 4.135862962691419,
+      "cz": 3.927707691404531,
       "lx": 1.558,
       "ly": 1.046,
       "lz": 0.046,
       "showLabel": true,
       "normal": [
-        -0.5227822237525849,
-        4.380414050376305e-17,
-        0.8524662729564746
+        -0.3976643293667701,
+        3.3320459964913965e-17,
+        0.9175309701308599
       ],
       "rotation": [
-        0.5501114314776419,
+        0.4089698333626983,
         0,
         4.71238898038469
       ],
@@ -821,7 +821,7 @@
       "foundationId": "1rAGH78b5nt7cXyGU9vNRV",
       "id": "dfe7nQ9k8jDK91KdkmUEv6",
       "selected": false,
-      "dailyYield": 0.9340743314933144,
+      "dailyYield": 0.6333852131837823,
       "yearlyYield": 11.32280863910204,
       "label": "W"
     },
@@ -838,18 +838,18 @@
       "poleSpacing": 3,
       "cx": 0.3049880725182647,
       "cy": 0.048385609165732826,
-      "cz": 4.207748960981324,
+      "cz": 3.978511539183477,
       "lx": 1.558,
       "ly": 1.046,
       "lz": 0.046,
       "showLabel": true,
       "normal": [
-        0.5227822237525853,
-        -1.7521656201505234e-16,
-        0.8524662729564743
+        0.39766432936677054,
+        -1.33281839859656e-16,
+        0.9175309701308599
       ],
       "rotation": [
-        0.5501114314776425,
+        0.40896983336269876,
         0,
         1.5707963267948961
       ],
@@ -859,7 +859,7 @@
       "foundationId": "1rAGH78b5nt7cXyGU9vNRV",
       "id": "1dU1iCu9PPq5BqZD1KErE7",
       "selected": false,
-      "dailyYield": 0.9382757585455223,
+      "dailyYield": 1.231269718416719,
       "yearlyYield": 11.37252332042091,
       "label": "E"
     },
@@ -885,6 +885,106 @@
       "parentId": "1rAGH78b5nt7cXyGU9vNRV",
       "id": "oRmXPWxcNMFxgsrsxonDon",
       "selected": false
+    },
+    {
+      "type": "Sensor",
+      "cx": 0.057157621054107106,
+      "cy": 0.14033655142046375,
+      "cz": 4.413643735424714,
+      "lx": 0.1,
+      "ly": 0.1,
+      "lz": 0.01,
+      "showLabel": false,
+      "normal": [
+        0,
+        0.2605373296049247,
+        0.9654637745054626
+      ],
+      "rotation": [
+        0.2635787119172426,
+        0,
+        3.141592653589793
+      ],
+      "parentId": "45NB7k7GYboywbxoXsYHLH",
+      "foundationId": "1rAGH78b5nt7cXyGU9vNRV",
+      "id": "mKDuzWBHjARCKjue8riAq8",
+      "selected": false,
+      "label": "N"
+    },
+    {
+      "type": "Sensor",
+      "cx": 0.05632462642172124,
+      "cy": -0.03881517090426316,
+      "cz": 4.450639823891692,
+      "lx": 0.1,
+      "ly": 0.1,
+      "lz": 0.01,
+      "showLabel": false,
+      "normal": [
+        0,
+        -0.26053732960492465,
+        0.9654637745054627
+      ],
+      "rotation": [
+        0.26357871191724236,
+        0,
+        0
+      ],
+      "parentId": "45NB7k7GYboywbxoXsYHLH",
+      "foundationId": "1rAGH78b5nt7cXyGU9vNRV",
+      "id": "qMhiLQRXRChHGtKoRd73LF",
+      "selected": false,
+      "label": "S"
+    },
+    {
+      "type": "Sensor",
+      "cx": 0.25193424207044157,
+      "cy": 0.045340891802389115,
+      "cz": 4.406078916293436,
+      "lx": 0.1,
+      "ly": 0.1,
+      "lz": 0.01,
+      "showLabel": false,
+      "normal": [
+        0.39766432936677054,
+        -1.33281839859656e-16,
+        0.9175309701308599
+      ],
+      "rotation": [
+        0.40896983336269876,
+        0,
+        1.5707963267948961
+      ],
+      "parentId": "45NB7k7GYboywbxoXsYHLH",
+      "foundationId": "1rAGH78b5nt7cXyGU9vNRV",
+      "id": "3DwwhpFKYxSqcDS4CihiGw",
+      "selected": false,
+      "label": "E"
+    },
+    {
+      "type": "Sensor",
+      "cx": -0.1790489651075926,
+      "cy": 0.040907220548995316,
+      "cz": 4.363011644147998,
+      "lx": 0.1,
+      "ly": 0.1,
+      "lz": 0.01,
+      "showLabel": false,
+      "normal": [
+        -0.3976643293667701,
+        3.3320459964913965e-17,
+        0.9175309701308599
+      ],
+      "rotation": [
+        0.4089698333626983,
+        0,
+        4.71238898038469
+      ],
+      "parentId": "45NB7k7GYboywbxoXsYHLH",
+      "foundationId": "1rAGH78b5nt7cXyGU9vNRV",
+      "id": "72Y7F2N3gynqymAnAg1DcZ",
+      "selected": false,
+      "label": "W"
     }
   ],
   "view": {
@@ -916,9 +1016,9 @@
     "dailyHeliostatYieldPanelX": 0,
     "showDailyParabolicDishYieldPanel": false,
     "cameraPosition": [
-      5.170942200287204,
-      -9.702003195798838,
-      17.374868811064633
+      7.496802598141665,
+      -5.456008865261863,
+      19.920737081855076
     ],
     "showYearlyHeliostatYieldPanel": false,
     "orthographic": false,
@@ -967,9 +1067,9 @@
     "shadowEnabled": true,
     "showInstructionPanel": true,
     "panCenter": [
-      1.571416743673085,
-      0.4370998660704738,
-      1.625678200794645
+      1.5949692122407761,
+      0.408443644397781,
+      1.6485310965583475
     ],
     "yearlyFresnelReflectorYieldPanelY": 0,
     "showHeliodonPanel": false,
@@ -981,8 +1081,8 @@
     "showYearlyParabolicDishYieldPanel": false,
     "showYearlyFresnelReflectorYieldPanel": false,
     "dailyPvYieldPanelRect": {
-      "x": -15,
-      "y": 6,
+      "x": -25,
+      "y": 27,
       "width": 600,
       "height": 400
     },
@@ -991,6 +1091,12 @@
       "y": 0,
       "width": 600,
       "height": 400
+    },
+    "dailyLightSensorPanelRect": {
+      "x": -1275,
+      "y": 17,
+      "width": 600,
+      "height": 360
     }
   },
   "evolutionMethod": 1,
