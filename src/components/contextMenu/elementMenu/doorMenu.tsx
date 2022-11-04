@@ -10,7 +10,6 @@ import { Copy, Cut, Lock } from '../menuItems';
 import i18n from 'src/i18n/i18n';
 import { DoorModel } from 'src/models/DoorModel';
 import DoorTextureSelection from './doorTextureSelection';
-import { DoorTexture } from 'src/types';
 import DoorColorSelection from './doorColorSelection';
 
 export const DoorMenu = () => {

@@ -9,10 +9,11 @@ import { HALF_PI, LOCKED_ELEMENT_SELECTION_COLOR } from 'src/constants';
 import { DoorModel } from 'src/models/DoorModel';
 import { CommonStoreState, useStore } from 'src/stores/common';
 import * as Selector from 'src/stores/selector';
-import { ActionType, DoorTexture, LineWidth, ObjectType, ResizeHandleType } from 'src/types';
+import { ActionType, DoorTexture, ObjectType, ResizeHandleType } from 'src/types';
 import WindowResizeHandle from './window/windowResizeHandle';
 
-import DoorTexture00 from 'src/resources/door_00.png';
+import DoorTextureDefault from 'src/resources/door_edge.png';
+import DoorTexture00 from 'src/resources/tiny_white_square.png';
 import DoorTexture01 from 'src/resources/door_01.png';
 import DoorTexture02 from 'src/resources/door_02.png';
 import DoorTexture03 from 'src/resources/door_03.png';
@@ -109,7 +110,7 @@ const Door = ({ id, parentId, cx, cz, lx, lz, selected, locked, textureType, col
     let textureImg;
     switch (textureType) {
       case DoorTexture.Default:
-        textureImg = DoorTexture01;
+        textureImg = DoorTextureDefault;
         break;
       case DoorTexture.NoTexture:
         textureImg = DoorTexture00;
@@ -225,7 +226,11 @@ const Door = ({ id, parentId, cx, cz, lx, lz, selected, locked, textureType, col
           }
         }}
       >
-        <meshStandardMaterial map={texture} side={DoubleSide} />
+        {textureType === DoorTexture.Default || textureType === DoorTexture.NoTexture ? (
+          <meshStandardMaterial map={texture} side={DoubleSide} color={color} />
+        ) : (
+          <meshStandardMaterial map={texture} side={DoubleSide} />
+        )}
       </Plane>
       {selected && !locked && <DoorHandleWapper lx={hx} lz={hz} />}
       <DoorWireFrame

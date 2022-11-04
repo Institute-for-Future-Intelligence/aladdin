@@ -2,19 +2,19 @@
  * @Copyright 2021-2022. Institute for Future Intelligence, Inc.
  */
 
-import DoorTextureDefaultIcon from 'src/resources/door_edge_menu.png';
-import DoorTexture01Icon from 'src/resources/door_01_menu.png';
-import DoorTexture02Icon from 'src/resources/door_02_menu.png';
-import DoorTexture03Icon from 'src/resources/door_03_menu.png';
-import DoorTexture04Icon from 'src/resources/door_04_menu.png';
-import DoorTexture05Icon from 'src/resources/door_05_menu.png';
-import DoorTexture06Icon from 'src/resources/door_06_menu.png';
-import DoorTexture07Icon from 'src/resources/door_07_menu.png';
-import DoorTexture08Icon from 'src/resources/door_08_menu.png';
-import DoorTexture09Icon from 'src/resources/door_09_menu.png';
-import DoorTexture10Icon from 'src/resources/door_10_menu.png';
-import DoorTexture11Icon from 'src/resources/door_11_menu.png';
-import DoorTexture12Icon from 'src/resources/door_12_menu.png';
+import DoorTextureDefaultIcon from 'src/resources/door_edge.png';
+import DoorTexture01Icon from 'src/resources/door_01.png';
+import DoorTexture02Icon from 'src/resources/door_02.png';
+import DoorTexture03Icon from 'src/resources/door_03.png';
+import DoorTexture04Icon from 'src/resources/door_04.png';
+import DoorTexture05Icon from 'src/resources/door_05.png';
+import DoorTexture06Icon from 'src/resources/door_06.png';
+import DoorTexture07Icon from 'src/resources/door_07.png';
+import DoorTexture08Icon from 'src/resources/door_08.png';
+import DoorTexture09Icon from 'src/resources/door_09.png';
+import DoorTexture10Icon from 'src/resources/door_10.png';
+import DoorTexture11Icon from 'src/resources/door_11.png';
+import DoorTexture12Icon from 'src/resources/door_12.png';
 
 import React, { useEffect, useRef, useState } from 'react';
 import { Button, Col, Modal, Radio, Row, Select, Space } from 'antd';

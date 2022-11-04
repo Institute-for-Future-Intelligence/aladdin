@@ -2,7 +2,7 @@
  * @Copyright 2021-2022. Institute for Future Intelligence, Inc.
  */
 
-import FoundationTexture00 from '../resources/foundation_00.png';
+import FoundationTexture00 from '../resources/tiny_white_square.png';
 import FoundationTexture01 from '../resources/foundation_01.png';
 import FoundationTexture02 from '../resources/foundation_02.png';
 import FoundationTexture03 from '../resources/foundation_03.png';

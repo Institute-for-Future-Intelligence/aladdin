@@ -12,7 +12,7 @@ import PolygonTexture07 from '../resources/foundation_07.png';
 import PolygonTexture08 from '../resources/polygon_08.png';
 import PolygonTexture09 from '../resources/polygon_09.png';
 import PolygonTexture10 from '../resources/polygon_10.png';
-import PolygonTexture00 from '../resources/foundation_00.png';
+import PolygonTexture00 from '../resources/tiny_white_square.png';
 
 import React, { useCallback, useMemo, useRef, useState } from 'react';
 import { Box, Line, Sphere } from '@react-three/drei';

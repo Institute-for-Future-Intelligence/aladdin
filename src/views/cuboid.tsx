@@ -2,7 +2,7 @@
  * @Copyright 2021-2022. Institute for Future Intelligence, Inc.
  */
 
-import Facade_Texture_00 from '../resources/building_facade_00.png';
+import Facade_Texture_00 from '../resources/tiny_white_square.png';
 import Facade_Texture_01 from '../resources/building_facade_01.png';
 import Facade_Texture_02 from '../resources/building_facade_02.png';
 import Facade_Texture_03 from '../resources/building_facade_03.png';
@@ -391,6 +391,7 @@ const Cuboid = ({
     switch (type) {
       case ObjectType.Polygon:
       case ObjectType.Sensor:
+      case ObjectType.Light:
       case ObjectType.SolarPanel:
         return true;
     }
@@ -401,6 +402,7 @@ const Cuboid = ({
     switch (type) {
       case ObjectType.Polygon:
       case ObjectType.Sensor:
+      case ObjectType.Light:
       case ObjectType.SolarPanel:
       case ObjectType.Human:
       case ObjectType.Tree:
@@ -950,7 +952,7 @@ const Cuboid = ({
           }
         }
       } else {
-        // for moving sensors and solar panels
+        // for moving sensors, lights, and solar panels
         newPositionRef.current.x = elem.cx;
         newPositionRef.current.y = elem.cy;
         newPositionRef.current.z = elem.cz;

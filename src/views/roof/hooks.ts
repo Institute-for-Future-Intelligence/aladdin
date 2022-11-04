@@ -6,7 +6,7 @@ import { ObjectType, RoofTexture } from 'src/types';
 import { UndoableMoveElementOnRoof } from 'src/undo/UndoableMove';
 
 import RoofTextureDefault from 'src/resources/roof_edge.png';
-import RoofTexture00 from 'src/resources/roof_00.png';
+import RoofTexture00 from 'src/resources/tiny_white_square.png';
 import RoofTexture01 from 'src/resources/roof_01.png';
 import RoofTexture02 from 'src/resources/roof_02.png';
 import RoofTexture03 from 'src/resources/roof_03.png';

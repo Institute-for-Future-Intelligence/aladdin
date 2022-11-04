@@ -3,7 +3,7 @@
  */
 
 import WallTextureDefault from 'src/resources/wall_edge.png';
-import WallTexture00 from 'src/resources/wall_00.png';
+import WallTexture00 from 'src/resources/tiny_white_square.png';
 import WallTexture01 from 'src/resources/wall_01.png';
 import WallTexture02 from 'src/resources/wall_02.png';
 import WallTexture03 from 'src/resources/wall_03.png';
