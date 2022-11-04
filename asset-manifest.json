@@ -1,8 +1,8 @@
 {
   "files": {
     "main.css": "/aladdin/static/css/main.c1ee157d.chunk.css",
-    "main.js": "/aladdin/static/js/main.3c9304c0.chunk.js",
-    "main.js.map": "/aladdin/static/js/main.3c9304c0.chunk.js.map",
+    "main.js": "/aladdin/static/js/main.4890b770.chunk.js",
+    "main.js.map": "/aladdin/static/js/main.4890b770.chunk.js.map",
     "runtime-main.js": "/aladdin/static/js/runtime-main.af0d8152.js",
     "runtime-main.js.map": "/aladdin/static/js/runtime-main.af0d8152.js.map",
     "static/css/2.447301e6.chunk.css": "/aladdin/static/css/2.447301e6.chunk.css",
@@ -50,29 +50,17 @@
     "static/media/dogwood_summer.8f3157af.png": "/aladdin/static/media/dogwood_summer.8f3157af.png",
     "static/media/dogwood_winter.745583bb.png": "/aladdin/static/media/dogwood_winter.745583bb.png",
     "static/media/door_01.370d5c48.png": "/aladdin/static/media/door_01.370d5c48.png",
-    "static/media/door_01_menu.370d5c48.png": "/aladdin/static/media/door_01_menu.370d5c48.png",
     "static/media/door_02.589dadc7.png": "/aladdin/static/media/door_02.589dadc7.png",
-    "static/media/door_02_menu.589dadc7.png": "/aladdin/static/media/door_02_menu.589dadc7.png",
     "static/media/door_03.25d0bf9d.png": "/aladdin/static/media/door_03.25d0bf9d.png",
-    "static/media/door_03_menu.25d0bf9d.png": "/aladdin/static/media/door_03_menu.25d0bf9d.png",
     "static/media/door_04.06a40fe3.png": "/aladdin/static/media/door_04.06a40fe3.png",
-    "static/media/door_04_menu.06a40fe3.png": "/aladdin/static/media/door_04_menu.06a40fe3.png",
     "static/media/door_05.4515bf2c.png": "/aladdin/static/media/door_05.4515bf2c.png",
-    "static/media/door_05_menu.4515bf2c.png": "/aladdin/static/media/door_05_menu.4515bf2c.png",
     "static/media/door_06.5a0271c1.png": "/aladdin/static/media/door_06.5a0271c1.png",
-    "static/media/door_06_menu.5a0271c1.png": "/aladdin/static/media/door_06_menu.5a0271c1.png",
     "static/media/door_07.b3fa7c12.png": "/aladdin/static/media/door_07.b3fa7c12.png",
-    "static/media/door_07_menu.b3fa7c12.png": "/aladdin/static/media/door_07_menu.b3fa7c12.png",
     "static/media/door_08.44d7e7a4.png": "/aladdin/static/media/door_08.44d7e7a4.png",
-    "static/media/door_08_menu.44d7e7a4.png": "/aladdin/static/media/door_08_menu.44d7e7a4.png",
     "static/media/door_09.cc418cf3.png": "/aladdin/static/media/door_09.cc418cf3.png",
-    "static/media/door_09_menu.cc418cf3.png": "/aladdin/static/media/door_09_menu.cc418cf3.png",
     "static/media/door_10.69a33f87.png": "/aladdin/static/media/door_10.69a33f87.png",
-    "static/media/door_10_menu.69a33f87.png": "/aladdin/static/media/door_10_menu.69a33f87.png",
     "static/media/door_11.885157c0.png": "/aladdin/static/media/door_11.885157c0.png",
-    "static/media/door_11_menu.885157c0.png": "/aladdin/static/media/door_11_menu.885157c0.png",
     "static/media/door_12.1978a1a1.png": "/aladdin/static/media/door_12.1978a1a1.png",
-    "static/media/door_12_menu.1978a1a1.png": "/aladdin/static/media/door_12_menu.1978a1a1.png",
     "static/media/dune.5b4e54f9.jpg": "/aladdin/static/media/dune.5b4e54f9.jpg",
     "static/media/elm_fall.720b87ef.png": "/aladdin/static/media/elm_fall.720b87ef.png",
     "static/media/elm_spring.a67f6f9c.png": "/aladdin/static/media/elm_spring.a67f6f9c.png",
@@ -205,6 +193,6 @@
     "static/css/2.447301e6.chunk.css",
     "static/js/2.f573da71.chunk.js",
     "static/css/main.c1ee157d.chunk.css",
-    "static/js/main.3c9304c0.chunk.js"
+    "static/js/main.4890b770.chunk.js"
   ]
 }
