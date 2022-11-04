@@ -684,6 +684,7 @@ const SolarPanelOnWall = ({
             name={'Solar Panel Simulation Plane'}
             uuid={id}
             args={[lx, ly]}
+            position={[0, 0, lz]}
             userData={{ simulation: true }}
             receiveShadow={false}
             castShadow={false}

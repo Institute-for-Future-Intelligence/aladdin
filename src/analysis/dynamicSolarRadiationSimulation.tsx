@@ -532,13 +532,16 @@ const DynamicSolarRadiationSimulation = ({ city }: DynamicSolarRadiationSimulati
     let parent = getParent(panel);
     if (!parent) throw new Error('parent of solar panel does not exist');
     let rooftop = panel.parentType === ObjectType.Roof;
+    const walltop = panel.parentType === ObjectType.Wall;
     if (rooftop) {
       // x and y coordinates of a rooftop solar panel are relative to the foundation
       parent = getFoundation(parent);
       if (!parent) throw new Error('foundation of solar panel does not exist');
     }
     const dayOfYear = Util.dayOfYear(now);
-    const center = Util.absoluteCoordinates(panel.cx, panel.cy, panel.cz, parent);
+    const center = walltop
+      ? Util.absoluteCoordinates(panel.cx, panel.cy, panel.cz, parent, getFoundation(panel), panel.lz)
+      : Util.absoluteCoordinates(panel.cx, panel.cy, panel.cz, parent);
     const rot = parent.rotation[2];
     let zRot = rot + panel.relativeAzimuth;
     let angle = panel.tiltAngle;
@@ -566,7 +569,7 @@ const DynamicSolarRadiationSimulation = ({ city }: DynamicSolarRadiationSimulati
     // shift half cell size to the center of each grid cell
     const x0 = center.x - (lx - cellSize) / 2;
     const y0 = center.y - (ly - cellSize) / 2;
-    const z0 = rooftop ? center.z : parent.lz + panel.poleHeight + panel.lz;
+    const z0 = rooftop || walltop ? center.z : parent.lz + panel.poleHeight + panel.lz;
     const center2d = new Vector2(center.x, center.y);
     const v = new Vector3();
     let cellOutputs = cellOutputsMapRef.current.get(panel.id);
@@ -614,6 +617,9 @@ const DynamicSolarRadiationSimulation = ({ city }: DynamicSolarRadiationSimulati
     if (rooftop && !flat) {
       normalEuler.x = panel.rotation[0];
       normalEuler.z = panel.rotation[2] + rot;
+    }
+    if (walltop) {
+      normalEuler.x = HALF_PI;
     }
     const peakRadiation = calculatePeakRadiation(sunDirection, dayOfYear, elevation, AirMass.SPHERE_MODEL);
     const indirectRadiation = calculateDiffuseAndReflectedRadiation(

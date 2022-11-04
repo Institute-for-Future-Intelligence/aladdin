@@ -12,6 +12,7 @@ import { ObjectType, SolarStructure, TrackerType } from '../types';
 import { Util } from '../Util';
 import { AirMass } from './analysisConstants';
 import {
+  HALF_PI,
   UNIT_VECTOR_NEG_X,
   UNIT_VECTOR_NEG_Y,
   UNIT_VECTOR_POS_X,
@@ -522,22 +523,15 @@ const StaticSolarRadiationSimulation = ({ city }: StaticSolarRadiationSimulation
     let parent = getParent(panel);
     if (!parent) throw new Error('parent of solar panel does not exist');
     // all coordinates of a wall solar panel are relative to the wall
-    const normalArray = [...panel.normal];
     const foundation = getFoundation(parent);
     if (!foundation) throw new Error('foundation of solar panel does not exist');
-    const wall = parent as WallModel;
-    const wallAngle = wall.relativeAngle + foundation.rotation[2];
-    const center = Util.wallAbsolutePosition(new Vector3(wall.cx, wall.cy), foundation)
-      .setZ(wall.lz / 2 + foundation.lz)
-      .add(new Vector3(panel.cx * wall.lx, 0, panel.cz * wall.lz).applyEuler(new Euler(0, 0, wallAngle)));
-    normalArray[0] = 0;
-    normalArray[1] = 0;
-    normalArray[2] = 1;
-    const normal = new Vector3().fromArray(normalArray);
+    const center = Util.absoluteCoordinates(panel.cx, panel.cy, panel.cz, parent, foundation, panel.lz);
+    const normal = new Vector3().fromArray(panel.normal);
     const rot = parent.rotation[2];
     const zRot = rot + panel.relativeAzimuth;
-    const normalEuler = new Euler(0, 0, 0, 'ZYX');
+    const normalEuler = new Euler(0, 0, zRot, 'ZYX');
     normal.applyEuler(normalEuler);
+    normalEuler.x = HALF_PI;
     const year = now.getFullYear();
     const month = now.getMonth();
     const date = now.getDate();
@@ -552,7 +546,7 @@ const StaticSolarRadiationSimulation = ({ city }: StaticSolarRadiationSimulation
     const x0 = center.x - (lx - cellSize) / 2;
     const y0 = center.y - (ly - cellSize) / 2;
     const z0 = center.z;
-    const center2d = new Vector2(center.x, center.z);
+    const center2d = new Vector2(center.x, center.y);
     const v = new Vector3();
     const cellOutputTotals = Array(nx)
       .fill(0)
@@ -574,8 +568,8 @@ const StaticSolarRadiationSimulation = ({ city }: StaticSolarRadiationSimulation
             for (let ky = 0; ky < ny; ky++) {
               cellOutputTotals[kx][ky] += indirectRadiation;
               if (dot > 0) {
-                v2d.set(x0 + kx * dx, z0 + ky * dy);
-                dv.set(v2d.x - center2d.x, 0, v2d.y - center2d.y);
+                v2d.set(x0 + kx * dx, y0 + ky * dy);
+                dv.set(v2d.x - center2d.x, v2d.y - center2d.y, 0);
                 dv.applyEuler(normalEuler);
                 v.set(center.x + dv.x, center.y + dv.y, z0 + dv.z);
                 if (!inShadow(panel.id, v, sunDirection)) {

@@ -16,7 +16,7 @@ import * as Selector from 'src/stores/selector';
 import { DatumEntry, Discretization, ObjectType, Orientation, ShadeTolerance, TrackerType } from '../types';
 import { Util } from '../Util';
 import { AirMass, MINUTES_OF_DAY } from './analysisConstants';
-import { MONTHS, UNIT_VECTOR_POS_Y, UNIT_VECTOR_POS_Z, ZERO_TOLERANCE } from '../constants';
+import { HALF_PI, MONTHS, UNIT_VECTOR_POS_Y, UNIT_VECTOR_POS_Z, ZERO_TOLERANCE } from '../constants';
 import { SolarPanelModel } from '../models/SolarPanelModel';
 import { computeOutsideTemperature, getOutsideTemperatureAtMinute } from './heatTools';
 import { PvModel } from '../models/PvModel';
@@ -618,7 +618,7 @@ const SolarPanelSimulation = ({ city }: SolarPanelSimulationProps) => {
     let parent = getParent(panel);
     if (!parent) throw new Error('parent of solar panel does not exist');
     let rooftop = panel.parentType === ObjectType.Roof;
-    let walltop = panel.parentType === ObjectType.Wall;
+    const walltop = panel.parentType === ObjectType.Wall;
     if (rooftop) {
       // x and y coordinates of a rooftop solar panel are relative to the foundation
       parent = getFoundation(parent);
@@ -629,7 +629,7 @@ const SolarPanelSimulation = ({ city }: SolarPanelSimulationProps) => {
     const output = dailyOutputsMapRef.current.get(panel.id);
     if (!output) return;
     const center = walltop
-      ? Util.absoluteCoordinates(panel.cx, panel.cy, panel.cz, parent, getFoundation(panel))
+      ? Util.absoluteCoordinates(panel.cx, panel.cy, panel.cz, parent, getFoundation(panel), panel.lz)
       : Util.absoluteCoordinates(panel.cx, panel.cy, panel.cz, parent);
     const rot = parent.rotation[2];
     let zRot = rot + panel.relativeAzimuth;
@@ -700,7 +700,10 @@ const SolarPanelSimulation = ({ city }: SolarPanelSimulationProps) => {
       normalEuler.x = panel.rotation[0];
       normalEuler.z = panel.rotation[2] + rot;
     }
-    console.log(panel.label, x0, y0, z0, normal);
+    if (walltop) {
+      normalEuler.x = HALF_PI;
+    }
+    // console.log(panel.label, x0, y0, z0, normal, normalEuler);
     for (let i = 0; i < 24; i++) {
       for (let j = 0; j < world.timesPerHour; j++) {
         // a shift of 30 minutes minute half of the interval ensures the symmetry of the result around noon
@@ -722,6 +725,7 @@ const SolarPanelSimulation = ({ city }: SolarPanelSimulationProps) => {
                 dv.applyEuler(normalEuler);
                 v.set(center.x + dv.x, center.y + dv.y, z0 + dv.z);
                 if (!inShadow(panel.id, v, sunDirection)) {
+                  // if(i===11 && j===0) console.log(panel.label, v)
                   // direct radiation
                   cellOutputs[kx][ky] += dot * peakRadiation;
                 }
@@ -812,6 +816,7 @@ const SolarPanelSimulation = ({ city }: SolarPanelSimulationProps) => {
     let parent = getParent(panel);
     if (!parent) throw new Error('parent of solar panel does not exist');
     let rooftop = panel.parentType === ObjectType.Roof;
+    const walltop = panel.parentType === ObjectType.Wall;
     if (rooftop) {
       // x and y coordinates of a rooftop solar panel are relative to the foundation
       parent = getFoundation(parent);
@@ -821,7 +826,9 @@ const SolarPanelSimulation = ({ city }: SolarPanelSimulationProps) => {
     if (!pvModel) throw new Error('PV model not found');
     const sunDirection = getSunDirection(now, world.latitude);
     if (sunDirection.z <= 0) return; // when the sun is not out
-    const center = Util.absoluteCoordinates(panel.cx, panel.cy, panel.cz, parent);
+    const center = walltop
+      ? Util.absoluteCoordinates(panel.cx, panel.cy, panel.cz, parent, getFoundation(panel), panel.lz)
+      : Util.absoluteCoordinates(panel.cx, panel.cy, panel.cz, parent);
     const rot = parent.rotation[2];
     let angle = panel.tiltAngle;
     let zRot = rot + panel.relativeAzimuth;
@@ -874,7 +881,7 @@ const SolarPanelSimulation = ({ city }: SolarPanelSimulationProps) => {
     // shift half cell size to the center of each grid cell
     const x0 = center.x - (lx - dCell) / 2;
     const y0 = center.y - (ly - dCell) / 2;
-    const z0 = rooftop ? center.z : parent.lz + panel.poleHeight + panel.lz;
+    const z0 = rooftop || walltop ? center.z : parent.lz + panel.poleHeight + panel.lz;
     const center2d = new Vector2(center.x, center.y);
     const v = new Vector3();
     const cellOutputs = Array.from(Array<number>(nx), () => new Array<number>(ny));
@@ -914,6 +921,9 @@ const SolarPanelSimulation = ({ city }: SolarPanelSimulationProps) => {
     if (rooftop && !flat) {
       normalEuler.x = panel.rotation[0];
       normalEuler.z = panel.rotation[2] + rot;
+    }
+    if (walltop) {
+      normalEuler.x = HALF_PI;
     }
     const peakRadiation = calculatePeakRadiation(sunDirection, dayOfYear, elevation, AirMass.SPHERE_MODEL);
     const indirectRadiation = calculateDiffuseAndReflectedRadiation(world.ground, month, normal, peakRadiation);

@@ -4,6 +4,7 @@
 
 import {
   FINE_GRID_SCALE,
+  HALF_PI,
   NORMAL_GRID_SCALE,
   ORIGIN_VECTOR2,
   SOLAR_HEATMAP_COLORS,
@@ -851,6 +852,7 @@ export class Util {
     z: number,
     parent: ElementModel,
     foundation?: FoundationModel | null,
+    shift?: number,
   ): Vector3 {
     if (parent.type === ObjectType.Wall && foundation) {
       const wall = parent as WallModel;
@@ -861,6 +863,11 @@ export class Util {
         );
         const v = new Vector3(x * wall.lx, y * wall.ly, z * wall.lz);
         v.applyAxisAngle(UNIT_VECTOR_POS_Z, wallAbsAngle);
+        if (shift) {
+          const dx = shift * Math.cos(wallAbsAngle - HALF_PI);
+          const dy = shift * Math.sin(wallAbsAngle - HALF_PI);
+          return new Vector3(wallAbsPos.x + v.x + dx, wallAbsPos.y + v.y + dy, wallAbsPos.z + v.z);
+        }
         return new Vector3(wallAbsPos.x + v.x, wallAbsPos.y + v.y, wallAbsPos.z + v.z);
       }
     }
