@@ -371,7 +371,7 @@ const Wall = (wallModel: WallModel) => {
     shape.lineTo(cx - x, cy - y);
   };
 
-  const outsiedWallShape = useMemo(() => {
+  const outsideWallShape = useMemo(() => {
     const wallShape = new Shape();
     drawRectangle(wallShape, lx, lz, 0, 0, 0, 0);
 
@@ -1465,11 +1465,22 @@ const Wall = (wallModel: WallModel) => {
         >
           {(opacity > 0 || wallStructure === WallStructure.Default) && (
             <>
+              {/* simulation mesh */}
+              <mesh
+                name={'Wall Simulation Mesh'}
+                uuid={id}
+                userData={{ simulation: true }}
+                rotation={[HALF_PI, 0, 0]}
+                castShadow={false}
+                receiveShadow={false}
+                visible={false}
+              >
+                <shapeBufferGeometry args={[outsideWallShape]} />
+                <meshBasicMaterial side={DoubleSide} />
+              </mesh>
               {/* outside wall */}
               <mesh
                 name={'Outside Wall'}
-                uuid={id}
-                userData={{ simulation: true }}
                 ref={outsideWallRef}
                 rotation={[HALF_PI, 0, 0]}
                 castShadow={castShadow}
@@ -1479,7 +1490,7 @@ const Wall = (wallModel: WallModel) => {
                 }}
                 onPointerDown={handleWallBodyPointerDown}
               >
-                <shapeBufferGeometry args={[outsiedWallShape]} />
+                <shapeBufferGeometry args={[outsideWallShape]} />
                 <meshStandardMaterial
                   color={textureType === WallTexture.Default || textureType === WallTexture.NoTexture ? color : 'white'}
                   map={texture}
@@ -1489,7 +1500,7 @@ const Wall = (wallModel: WallModel) => {
               </mesh>
 
               <mesh rotation={[HALF_PI, 0, 0]} position={[0, 0.05, 0]} castShadow={castShadow} scale={[0.95, 1, 1]}>
-                <shapeBufferGeometry args={[outsiedWallShape]} />
+                <shapeBufferGeometry args={[outsideWallShape]} />
                 <meshStandardMaterial color={'white'} side={BackSide} transparent={transparent} opacity={opacity} />
               </mesh>
 
@@ -1589,6 +1600,8 @@ const Wall = (wallModel: WallModel) => {
                         <SolarPanelOnWall {...(e as SolarPanelModel)} cx={e.cx * lx} cz={e.cz * lz} absRotation={r} />
                       </group>
                     );
+                  default:
+                    return null;
                 }
               })}
             </>
