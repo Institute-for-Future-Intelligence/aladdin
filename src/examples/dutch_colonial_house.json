@@ -1,7 +1,7 @@
 {
-  "docid": "txJQ5BxFbZMDjnQrcZmhJv",
-  "time": "10/28/2022 10:52 am",
-  "timestamp": 1666968745523,
+  "docid": "m2J5RUxVogPwnZ5FAUo3Jx",
+  "time": "11/04/2022 09:49 pm",
+  "timestamp": 1667612972566,
   "userid": "QWecNcxhyvP6j6sBN11hBsfZDau1",
   "owner": null,
   "email": null,
@@ -347,7 +347,9 @@
       "opacity": 0.5,
       "mullionColor": "white",
       "frame": true,
-      "frameWidth": 0.1
+      "frameWidth": 0.1,
+      "windowType": "Default",
+      "archHeight": 1
     },
     {
       "id": "5ncRWHnRQyocXJujBx5jNE",
@@ -386,7 +388,9 @@
       "opacity": 0.5,
       "mullionColor": "white",
       "frame": true,
-      "frameWidth": 0.1
+      "frameWidth": 0.1,
+      "windowType": "Default",
+      "archHeight": 1
     },
     {
       "cx": 0.25,
@@ -425,7 +429,9 @@
       "opacity": 0.5,
       "mullionColor": "white",
       "frame": true,
-      "frameWidth": 0.1
+      "frameWidth": 0.1,
+      "windowType": "Default",
+      "archHeight": 1
     },
     {
       "rotation": [
@@ -464,7 +470,9 @@
       "opacity": 0.5,
       "mullionColor": "white",
       "frame": true,
-      "frameWidth": 0.1
+      "frameWidth": 0.1,
+      "windowType": "Default",
+      "archHeight": 1
     },
     {
       "type": "Human",
@@ -552,7 +560,9 @@
       "opacity": 0.5,
       "mullionColor": "white",
       "frame": true,
-      "frameWidth": 0.1
+      "frameWidth": 0.1,
+      "windowType": "Default",
+      "archHeight": 1
     },
     {
       "type": "Window",
@@ -591,7 +601,9 @@
       "opacity": 0.5,
       "mullionColor": "white",
       "frame": true,
-      "frameWidth": 0.1
+      "frameWidth": 0.1,
+      "windowType": "Default",
+      "archHeight": 1
     },
     {
       "type": "Roof",
@@ -917,7 +929,7 @@
       "lx": 0,
       "ly": 0,
       "lz": 6.6432031615634175,
-      "overhang": 0,
+      "overhang": 0.2,
       "roofType": "Gambrel",
       "wallsId": [
         "pPpJHGJ2bGVqLdA1FpXi4V"
@@ -970,10 +982,10 @@
       "type": "Window",
       "cx": 0,
       "cy": 0.1,
-      "cz": 0.8940264304985381,
-      "lx": 0.2500000000000001,
+      "cz": 0.8730728022225684,
+      "lx": 0.4000000000000002,
       "ly": 0.3,
-      "lz": 0.4999999999999999,
+      "lz": 0.5419072565519394,
       "selected": false,
       "showLabel": false,
       "color": "#ffffff",
@@ -992,8 +1004,8 @@
       "id": "9sxNKgBrTJz5rbuB2EAigV",
       "mullionSpacing": 0.56,
       "shutter": {
-        "showLeft": true,
-        "showRight": true,
+        "showLeft": false,
+        "showRight": false,
         "color": "#4d4d4d",
         "width": 0.3
       },
@@ -1004,7 +1016,9 @@
       "opacity": 0.5,
       "mullionColor": "white",
       "frame": true,
-      "frameWidth": 0.1
+      "frameWidth": 0.1,
+      "windowType": "Arched",
+      "archHeight": 1
     },
     {
       "type": "Door",
@@ -1071,7 +1085,9 @@
       "opacity": 0.5,
       "mullionColor": "white",
       "frame": true,
-      "frameWidth": 0.1
+      "frameWidth": 0.1,
+      "windowType": "Default",
+      "archHeight": 1
     },
     {
       "type": "Window",
@@ -1111,7 +1127,9 @@
       "opacity": 0.5,
       "mullionColor": "white",
       "frame": true,
-      "frameWidth": 0.1
+      "frameWidth": 0.1,
+      "windowType": "Default",
+      "archHeight": 1
     },
     {
       "type": "Window",
@@ -1151,7 +1169,9 @@
       "opacity": 0.5,
       "mullionColor": "white",
       "frame": false,
-      "frameWidth": 0.1
+      "frameWidth": 0.1,
+      "windowType": "Default",
+      "archHeight": 1
     },
     {
       "type": "Window",
@@ -1191,7 +1211,9 @@
       "opacity": 0.5,
       "mullionColor": "white",
       "frame": true,
-      "frameWidth": 0.1
+      "frameWidth": 0.1,
+      "windowType": "Default",
+      "archHeight": 1
     },
     {
       "type": "Window",
@@ -1231,7 +1253,9 @@
       "opacity": 0.5,
       "mullionColor": "white",
       "frame": true,
-      "frameWidth": 0.1
+      "frameWidth": 0.1,
+      "windowType": "Default",
+      "archHeight": 1
     },
     {
       "type": "Window",
@@ -1270,7 +1294,9 @@
       "opacity": 0.5,
       "mullionColor": "white",
       "frame": true,
-      "frameWidth": 0.1
+      "frameWidth": 0.1,
+      "windowType": "Default",
+      "archHeight": 1
     },
     {
       "type": "Door",
@@ -1905,7 +1931,9 @@
       "opacity": 0.5,
       "mullionColor": "white",
       "frame": true,
-      "frameWidth": 0.1
+      "frameWidth": 0.1,
+      "windowType": "Default",
+      "archHeight": 1
     },
     {
       "type": "Window",
@@ -1945,7 +1973,9 @@
       "opacity": 0.5,
       "mullionColor": "white",
       "frame": true,
-      "frameWidth": 0.1
+      "frameWidth": 0.1,
+      "windowType": "Default",
+      "archHeight": 1
     },
     {
       "type": "Foundation",
@@ -2434,7 +2464,7 @@
       "cz": 0,
       "lx": 1.5028901734104034,
       "ly": 0.3,
-      "lz": 8,
+      "lz": 9,
       "relativeAngle": 3.141592653589793,
       "leftPoint": [
         -2.6696692384049984e-16,
@@ -2485,7 +2515,7 @@
       "cz": 0,
       "lx": 1.4099687434951584,
       "ly": 0.3,
-      "lz": 8,
+      "lz": 9,
       "relativeAngle": 1.5709637646913654,
       "leftPoint": [
         0.00023608219939409838,
@@ -2536,7 +2566,7 @@
       "cz": 0,
       "lx": 1.4093242537861483,
       "ly": 0.3,
-      "lz": 8,
+      "lz": 9,
       "relativeAngle": -1.5707963267948966,
       "leftPoint": [
         -1.5028901734104037,
@@ -2587,7 +2617,7 @@
       "cz": 0,
       "lx": 1.5031263937690138,
       "ly": 0.3,
-      "lz": 8,
+      "lz": 9,
       "relativeAngle": -0.0004287530089774864,
       "leftPoint": [
         -1.5028901734104037,
@@ -3202,7 +3232,9 @@
         "color": "#4d4d4d",
         "width": 0.3
       },
-      "selected": false
+      "selected": false,
+      "windowType": "Default",
+      "archHeight": 1
     }
   ],
   "view": {
@@ -3234,9 +3266,9 @@
     "dailyHeliostatYieldPanelX": 0,
     "showDailyParabolicDishYieldPanel": false,
     "cameraPosition": [
-      -19.544861366669693,
-      -18.14353777574723,
-      2.9038606293303393
+      -18.15465591635167,
+      -17.62561201145214,
+      2.3678312799030516
     ],
     "showYearlyHeliostatYieldPanel": false,
     "orthographic": false,
@@ -3285,9 +3317,9 @@
     "shadowEnabled": true,
     "showInstructionPanel": true,
     "panCenter": [
-      -4.553367166475551,
-      2.1825768881553214,
-      1.6644689160683375
+      -5.428878895798474,
+      2.743165968912131,
+      1.8630566950628298
     ],
     "yearlyFresnelReflectorYieldPanelY": 0,
     "showHeliodonPanel": false,

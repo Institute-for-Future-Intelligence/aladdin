@@ -532,6 +532,7 @@ const StaticSolarRadiationSimulation = ({ city }: StaticSolarRadiationSimulation
     const normalEuler = new Euler(0, 0, zRot, 'ZYX');
     normal.applyEuler(normalEuler);
     normalEuler.x = HALF_PI;
+    normalEuler.z = (parent as WallModel).relativeAngle + rot;
     const year = now.getFullYear();
     const month = now.getMonth();
     const date = now.getDate();

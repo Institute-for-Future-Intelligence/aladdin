@@ -34,6 +34,7 @@ import { ParabolicTroughModel } from '../models/ParabolicTroughModel';
 import { ParabolicDishModel } from '../models/ParabolicDishModel';
 import { FresnelReflectorModel } from '../models/FresnelReflectorModel';
 import { HeliostatModel } from '../models/HeliostatModel';
+import { WallModel } from '../models/WallModel';
 
 export interface DynamicSolarRadiationSimulationProps {
   city: string | null;
@@ -620,6 +621,7 @@ const DynamicSolarRadiationSimulation = ({ city }: DynamicSolarRadiationSimulati
     }
     if (walltop) {
       normalEuler.x = HALF_PI;
+      normalEuler.z = (parent as WallModel).relativeAngle + rot;
     }
     const peakRadiation = calculatePeakRadiation(sunDirection, dayOfYear, elevation, AirMass.SPHERE_MODEL);
     const indirectRadiation = calculateDiffuseAndReflectedRadiation(

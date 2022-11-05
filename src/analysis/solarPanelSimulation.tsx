@@ -23,6 +23,7 @@ import { PvModel } from '../models/PvModel';
 import { showInfo } from '../helpers';
 import i18n from '../i18n/i18n';
 import { SunMinutes } from './SunMinutes';
+import { WallModel } from '../models/WallModel';
 
 export interface SolarPanelSimulationProps {
   city: string | null;
@@ -702,8 +703,9 @@ const SolarPanelSimulation = ({ city }: SolarPanelSimulationProps) => {
     }
     if (walltop) {
       normalEuler.x = HALF_PI;
+      normalEuler.z = (parent as WallModel).relativeAngle + rot;
     }
-    // console.log(panel.label, x0, y0, z0, normal, normalEuler);
+    console.log(panel.label, x0, y0, z0, normal, normalEuler);
     for (let i = 0; i < 24; i++) {
       for (let j = 0; j < world.timesPerHour; j++) {
         // a shift of 30 minutes minute half of the interval ensures the symmetry of the result around noon
@@ -725,7 +727,7 @@ const SolarPanelSimulation = ({ city }: SolarPanelSimulationProps) => {
                 dv.applyEuler(normalEuler);
                 v.set(center.x + dv.x, center.y + dv.y, z0 + dv.z);
                 if (!inShadow(panel.id, v, sunDirection)) {
-                  // if(i===11 && j===0) console.log(panel.label, v)
+                  //if(i===11 && j===0) console.log(panel.label, kx, ky, v)
                   // direct radiation
                   cellOutputs[kx][ky] += dot * peakRadiation;
                 }
@@ -924,6 +926,7 @@ const SolarPanelSimulation = ({ city }: SolarPanelSimulationProps) => {
     }
     if (walltop) {
       normalEuler.x = HALF_PI;
+      normalEuler.z = (parent as WallModel).relativeAngle + rot;
     }
     const peakRadiation = calculatePeakRadiation(sunDirection, dayOfYear, elevation, AirMass.SPHERE_MODEL);
     const indirectRadiation = calculateDiffuseAndReflectedRadiation(world.ground, month, normal, peakRadiation);
