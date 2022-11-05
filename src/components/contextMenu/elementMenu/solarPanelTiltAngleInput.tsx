@@ -71,7 +71,7 @@ const SolarPanelTiltAngleInput = ({
     switch (solarPanelActionScope) {
       case Scope.AllObjectsOfThisType:
         for (const e of elements) {
-          if (e.type === ObjectType.SolarPanel && !e.locked && (e as SolarPanelModel).parentType !== ObjectType.Wall) {
+          if (e.type === ObjectType.SolarPanel && !e.locked) {
             const sp = e as SolarPanelModel;
             if (Math.abs(sp.tiltAngle - tiltAngle) > ZERO_TOLERANCE) {
               return true;
@@ -81,12 +81,7 @@ const SolarPanelTiltAngleInput = ({
         break;
       case Scope.AllObjectsOfThisTypeAboveFoundation:
         for (const e of elements) {
-          if (
-            e.type === ObjectType.SolarPanel &&
-            e.foundationId === solarPanel?.foundationId &&
-            !e.locked &&
-            (e as SolarPanelModel).parentType !== ObjectType.Wall
-          ) {
+          if (e.type === ObjectType.SolarPanel && e.foundationId === solarPanel?.foundationId && !e.locked) {
             const sp = e as SolarPanelModel;
             if (Math.abs(sp.tiltAngle - tiltAngle) > ZERO_TOLERANCE) {
               return true;
@@ -114,7 +109,6 @@ const SolarPanelTiltAngleInput = ({
               }
             }
           } else {
-            // tilt is only allowed on top of a foundation or a roof
             for (const e of elements) {
               if (e.type === ObjectType.SolarPanel && e.parentId === solarPanel.parentId && !e.locked) {
                 const sp = e as SolarPanelModel;
