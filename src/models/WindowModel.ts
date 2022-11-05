@@ -32,6 +32,6 @@ export interface Shutter {
 
 export enum WindowType {
   Default = 'Default',
-  Arch = 'Arch',
+  Arched = 'Arched',
   Circle = 'Circle',
 }

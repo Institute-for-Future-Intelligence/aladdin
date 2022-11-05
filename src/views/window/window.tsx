@@ -323,7 +323,7 @@ const Window = (windowModel: WindowModel) => {
             glassMaterial={glassMaterial}
           />
         );
-      case WindowType.Arch:
+      case WindowType.Arched:
         return (
           <ArchWindow
             dimension={dimensionData}

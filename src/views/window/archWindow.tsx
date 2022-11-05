@@ -364,7 +364,7 @@ const ArchWindow = ({ dimension, position, mullionData, frameData, wireframeData
 
   return (
     <>
-      <group name={'Arch Window Plane Group'} position={[0, cy, 0]}>
+      <group name={'Arched Window Plane Group'} position={[0, cy, 0]}>
         <mesh name={'Window Glass mesh'} rotation={[HALF_PI, 0, 0]}>
           <shapeBufferGeometry args={[shape]} />
           {glassMaterial}

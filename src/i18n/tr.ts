@@ -942,7 +942,7 @@ export const i18n_tr = {
       Color: 'Frame Color',
       WindowType: 'Window Type',
       Default: 'Default',
-      Arch: 'Arch',
+      Arched: 'Arched',
     },
 
     roofMenu: {

@@ -62,7 +62,7 @@ const WindowHandleWrapper = ({ lx, lz, windowType }: WindowHandleWrapperProps) =
           <WindowResizeHandle x={lx / 2} z={-lz / 2} handleType={ResizeHandleType.LowerRight} />
 
           {/* arch resize handle */}
-          {windowType === WindowType.Arch && <ArchResizeHandle z={lz / 2} />}
+          {windowType === WindowType.Arched && <ArchResizeHandle z={lz / 2} />}
         </>
       )}
       <WindowMoveHandle handleType={MoveHandleType.Mid} />

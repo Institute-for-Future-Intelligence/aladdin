@@ -410,7 +410,7 @@ const Wall = (wallModel: WallModel) => {
             case WindowType.Default:
               drawRectWindow(windowShape, wlx, wly, wcx, wcy);
               break;
-            case WindowType.Arch:
+            case WindowType.Arched:
               drawArchWindow(windowShape, wlx, wly, wcx, wcy, window.archHeight);
               break;
           }
@@ -448,7 +448,7 @@ const Wall = (wallModel: WallModel) => {
             case WindowType.Default:
               drawRectWindow(windowShape, wlx, wly, wcx, wcy);
               break;
-            case WindowType.Arch:
+            case WindowType.Arched:
               drawArchWindow(windowShape, wlx, wly, wcx, wcy, window.archHeight);
               break;
           }
@@ -964,7 +964,7 @@ const Wall = (wallModel: WallModel) => {
                 }
                 const window = grabRef.current as WindowModel;
                 if (
-                  window.windowType === WindowType.Arch &&
+                  window.windowType === WindowType.Arched &&
                   resizeHandleType === ResizeHandleType.WindowArch &&
                   window.archHeight !== undefined
                 ) {

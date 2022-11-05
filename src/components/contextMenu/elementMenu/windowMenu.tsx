@@ -228,8 +228,8 @@ export const WindowMenu = () => {
           <Radio style={radioStyle} value={WindowType.Default}>
             {i18n.t('windowMenu.Default', lang)}
           </Radio>
-          <Radio style={radioStyle} value={WindowType.Arch}>
-            {i18n.t('windowMenu.Arch', lang)}
+          <Radio style={radioStyle} value={WindowType.Arched}>
+            {i18n.t('windowMenu.Arched', lang)}
           </Radio>
         </Radio.Group>
       </SubMenu>
