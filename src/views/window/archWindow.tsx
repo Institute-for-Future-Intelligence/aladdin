@@ -3,8 +3,18 @@
  */
 
 import React, { useMemo, useRef } from 'react';
-import { DoubleSide, FrontSide, Mesh, MeshStandardMaterial, Shape, Vector3 } from 'three';
-import { Box, Cylinder, Extrude, Plane } from '@react-three/drei';
+import {
+  CatmullRomCurve3,
+  Curve,
+  DoubleSide,
+  EllipseCurve,
+  FrontSide,
+  Mesh,
+  MeshStandardMaterial,
+  Shape,
+  Vector3,
+} from 'three';
+import { Box, Cylinder, Extrude, Plane, Tube } from '@react-three/drei';
 import { useStore } from 'src/stores/common';
 import * as Selector from 'src/stores/selector';
 import { HALF_PI, LOCKED_ELEMENT_SELECTION_COLOR } from 'src/constants';
@@ -43,40 +53,44 @@ type ArgsType = [x: number, y: number, z: number];
 const sealPlanesMaterial = new MeshStandardMaterial({ color: 'white', side: FrontSide });
 
 const Mullion = React.memo(({ dimension, mullionData, shadowEnabled }: MullionProps) => {
-  const [lx, ly, lz] = dimension;
+  const [lx, ly, lz, archHeight] = dimension;
+  const ah = Math.min(archHeight, lz, lx / 2);
 
-  const {
-    width: mullionWidth,
-    spacingX: mullionSpacingX,
-    spacingY: mullionSpacingY,
-    color: mullionColor,
-  } = mullionData;
+  const { width, spacingX, spacingY, color } = mullionData;
 
   const radialSegments = 3;
   const heightSegments = 1;
+  const mullionRadius = width / 2;
+  const radialMullionLength = useMemo(() => Math.hypot(lx / 2, ah), [lx, ah]);
+  const radialMullionAngle = useMemo(() => Math.atan2(lx / 2, ah), [lx, ah]);
 
-  const mullionRadius = mullionWidth / 2;
+  const material = useMemo(() => <meshStandardMaterial color={color} />, [color]);
 
-  const archHeight = Math.min(lx, lz) / 2;
+  const drawArchMullionShape = (radius: number) => {
+    return new Shape()
+      .moveTo(0, radius)
+      .quadraticCurveTo(radius, radius, radius, 0)
+      .quadraticCurveTo(radius, -radius, 0, -radius)
+      .quadraticCurveTo(-radius, -radius, -radius, 0)
+      .quadraticCurveTo(-radius, radius, 0, radius);
+  };
 
-  const material = useMemo(() => <meshStandardMaterial color={mullionColor} />, [mullionColor]);
-
-  const drawArchMullionShape = (s: Shape, x: number, z: number, width: number) => {
-    const hw = (width / 2) * 0.75;
-    s.moveTo(x - hw, 0);
-    s.lineTo(x + hw, 0);
-    s.quadraticCurveTo(x + hw, z + hw, 0, z + hw);
-    s.quadraticCurveTo(-x - hw, z + hw, -x - hw, 0);
-    s.lineTo(-x + hw, 0);
-    s.quadraticCurveTo(-x + hw, z - hw, 0, z - hw);
-    s.quadraticCurveTo(x - hw, z - hw, x - hw, 0);
+  const drawArchMullionPath = (ah: number, x: number) => {
+    const h = (ah * x) / (lx / 2);
+    const r = h / 2 + (x * 2) ** 2 / (8 * h);
+    const startAngle = Math.acos(x / r);
+    const endAngle = Math.PI - startAngle;
+    const points = new EllipseCurve(0, h - r, r, r, startAngle, endAngle, false, 0)
+      .getPoints()
+      .map((v2) => new Vector3(v2.x, v2.y));
+    return new CatmullRomCurve3(points);
   };
 
   const verticalMullions = useMemo(() => {
     const arr: number[] = [];
-    const dividers = Math.round(lx / mullionSpacingX) - 1;
-    if (dividers <= 0 || mullionWidth === 0) {
-      return arr;
+    const dividers = Math.round(lx / spacingX) - 1;
+    if (dividers <= 0 || width === 0) {
+      return null;
     }
     const step = lx / (dividers + 1);
     let x = step / 2;
@@ -88,61 +102,77 @@ const Mullion = React.memo(({ dimension, mullionData, shadowEnabled }: MullionPr
       arr.push(x, -x);
     }
     return arr;
-  }, [lx, mullionWidth, mullionSpacingX]);
+  }, [lx, width, spacingX]);
 
   const horizontalMullions = useMemo(() => {
     const arr: number[] = [];
-    const dividers = Math.round((lz - archHeight) / mullionSpacingY) - 1;
-    if (dividers <= 0 || mullionWidth === 0) {
-      return [archHeight / 2];
+    if (width === 0) {
+      return arr;
     }
-    const step = (lz - archHeight) / (dividers + 1);
-    let z = step / 2;
-    if (dividers % 2 !== 0) {
-      arr.push(0);
-      z = step;
+    const top = lz / 2 - ah; // include
+    const totalDist = lz - ah;
+    const number = Math.ceil(totalDist / spacingY);
+    let curr = top;
+    for (let i = 0; i < number; i++) {
+      arr.push(curr);
+      curr -= spacingY;
     }
-    for (let num = 0; num < Math.floor(dividers / 2); num++, z += step) {
-      arr.push(z, -z);
-    }
-    arr.push(z);
     return arr;
-  }, [lx, lz, mullionWidth, mullionSpacingY]);
+  }, [lx, lz, ah, width, spacingY]);
 
   const archMullions = useMemo(() => {
-    const arr: Shape[] = [];
-    let dividers = Math.floor((Math.round(lx / mullionSpacingX) - 1) / 2);
-    let step = mullionSpacingX;
-    if ((Math.round(lx / mullionSpacingX) - 1) % 2 === 0) {
-      step -= mullionSpacingX / 2;
-    }
-    for (let i = 0; i < dividers; i++) {
-      const s = new Shape();
-      drawArchMullionShape(s, step, (step / (lx / 2)) * archHeight, mullionWidth);
-      arr.push(s);
-      step += mullionSpacingX;
-    }
-    return arr;
-  }, [lx, lz, mullionWidth, mullionSpacingX]);
+    const arr: number[] = [];
 
-  return (
-    <group name={'Window Mullion Group'} position={[0, -0.001, 0]}>
-      {verticalMullions.map((x, index) => (
+    const dividers = Math.round(lx / spacingX) - 1;
+    if (dividers <= 0 || width === 0) {
+      return null;
+    }
+    const step = lx / (dividers + 1);
+    let x = step / 2;
+    if (dividers % 2 !== 0) {
+      x = step;
+    }
+    for (let num = 0; num < Math.floor(dividers / 2); num++, x += step) {
+      if (x !== 0) {
+        arr.push(x);
+      }
+    }
+
+    const shape = drawArchMullionShape(mullionRadius);
+
+    return arr.map((x, idx) => {
+      if (ah < lx / 4 && idx % 2 === 1) {
+        return null;
+      }
+      if (ah < lx / 6 && idx % 3 !== 0) {
+        return null;
+      }
+      return { shape, path: drawArchMullionPath(ah, x) };
+    });
+  }, [lx, lz, ah, width, spacingX]);
+
+  const renderRadialMullion = (length: number, angle: number) => {
+    return (
+      <group position={[0, 0, lz / 2 - ah]} rotation={[0, angle, 0]}>
         <Cylinder
-          key={index}
-          position={[x, 0, -archHeight / 2]}
-          args={[mullionRadius, mullionRadius, lz - archHeight, radialSegments, heightSegments]}
+          position={[0, 0, length / 2]}
+          args={[mullionRadius, mullionRadius, length, radialSegments, heightSegments]}
           rotation={[HALF_PI, HALF_PI, 0]}
           receiveShadow={shadowEnabled}
           castShadow={shadowEnabled}
         >
           {material}
         </Cylinder>
-      ))}
+      </group>
+    );
+  };
+
+  return (
+    <group name={'Window Mullion Group'} position={[0, -0.001, 0]}>
       {horizontalMullions.map((z, index) => (
         <Cylinder
           key={index}
-          position={[0, 0, z - archHeight / 2]}
+          position={[0, 0, z]}
           args={[mullionRadius, mullionRadius, lx, radialSegments, heightSegments]}
           rotation={[0, 0, HALF_PI]}
           receiveShadow={shadowEnabled}
@@ -151,18 +181,39 @@ const Mullion = React.memo(({ dimension, mullionData, shadowEnabled }: MullionPr
           {material}
         </Cylinder>
       ))}
-      {archMullions.map((shape, index) => (
-        <Extrude
+      {verticalMullions?.map((x, index) => (
+        <Cylinder
           key={index}
-          position={[0, mullionRadius / 2, lz / 2 - archHeight]}
-          rotation={[HALF_PI, 0, 0]}
-          args={[shape, { steps: 1, depth: mullionRadius, bevelEnabled: false }]}
-          castShadow={shadowEnabled}
+          position={[x, 0, -ah / 2]}
+          args={[mullionRadius, mullionRadius, lz - ah, radialSegments, heightSegments]}
+          rotation={[HALF_PI, HALF_PI, 0]}
           receiveShadow={shadowEnabled}
+          castShadow={shadowEnabled}
         >
           {material}
-        </Extrude>
+        </Cylinder>
       ))}
+      {ah > 0 &&
+        archMullions?.map((item, index) => {
+          if (item === null) return null;
+          const { shape, path } = item;
+          return (
+            <Extrude
+              key={index}
+              position={[0, mullionRadius / 2, lz / 2 - ah]}
+              rotation={[HALF_PI, 0, 0]}
+              args={[shape, { extrudePath: path, steps: 12, bevelEnabled: false }]}
+              castShadow={shadowEnabled}
+              receiveShadow={shadowEnabled}
+            >
+              {material}
+            </Extrude>
+          );
+        })}
+
+      {renderRadialMullion(ah, 0)}
+      {renderRadialMullion(radialMullionLength, radialMullionAngle)}
+      {renderRadialMullion(radialMullionLength, -radialMullionAngle)}
     </group>
   );
 });
@@ -319,9 +370,9 @@ const ArchWindow = ({ dimension, position, mullionData, frameData, wireframeData
           {glassMaterial}
         </mesh>
 
-        {/* {mullionData.showMullion && (
+        {mullionData.showMullion && archHeight !== undefined && (
           <Mullion dimension={dimension} mullionData={mullionData} shadowEnabled={shadowEnabled} />
-        )} */}
+        )}
       </group>
 
       {/* {frameData.showFrame && <Frame dimension={dimension} frameData={frameData} shadowEnabled={shadowEnabled} />} */}
@@ -330,7 +381,7 @@ const ArchWindow = ({ dimension, position, mullionData, frameData, wireframeData
 
       {renderSealPlane([ly, lz], [-lx / 2, ly / 2, 0], [HALF_PI, HALF_PI, 0])}
       {renderSealPlane([ly, lz], [lx / 2, ly / 2, 0], [HALF_PI, -HALF_PI, 0])}
-      {renderSealPlane([lx, ly], [0, ly / 2, lz / 2], [Math.PI, 0, 0])}
+      {/* {renderSealPlane([lx, ly], [0, ly / 2, lz / 2], [Math.PI, 0, 0])} */}
       {renderSealPlane([lx, ly], [0, ly / 2, -lz / 2])}
     </>
   );

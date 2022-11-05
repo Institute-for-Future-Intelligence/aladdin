@@ -404,13 +404,18 @@ const Wall = (wallModel: WallModel) => {
         const window = w as WindowModel;
         const windowShape = new Shape();
         const [wlx, wly, wcx, wcy] = [w.lx * lx, w.lz * lz, w.cx * lx, w.cz * lz];
-        switch (window.windowType) {
-          case WindowType.Default:
-            drawRectWindow(windowShape, wlx, wly, wcx, wcy);
-            break;
-          case WindowType.Arch:
-            drawArchWindow(windowShape, wlx, wly, wcx, wcy, window.archHeight);
-            break;
+        // old files don't have windowType
+        if (window.windowType) {
+          switch (window.windowType) {
+            case WindowType.Default:
+              drawRectWindow(windowShape, wlx, wly, wcx, wcy);
+              break;
+            case WindowType.Arch:
+              drawArchWindow(windowShape, wlx, wly, wcx, wcy, window.archHeight);
+              break;
+          }
+        } else {
+          drawRectWindow(windowShape, wlx, wly, wcx, wcy);
         }
         wallShape.holes.push(windowShape);
       }
@@ -437,13 +442,18 @@ const Wall = (wallModel: WallModel) => {
         const window = w as WindowModel;
         const windowShape = new Shape();
         const [wlx, wly, wcx, wcy] = [w.lx * lx, w.lz * lz, w.cx * lx, w.cz * lz];
-        switch (window.windowType) {
-          case WindowType.Default:
-            drawRectWindow(windowShape, wlx, wly, wcx, wcy);
-            break;
-          case WindowType.Arch:
-            drawArchWindow(windowShape, wlx, wly, wcx, wcy, window.archHeight);
-            break;
+        // old files don't have windowType
+        if (window.windowType) {
+          switch (window.windowType) {
+            case WindowType.Default:
+              drawRectWindow(windowShape, wlx, wly, wcx, wcy);
+              break;
+            case WindowType.Arch:
+              drawArchWindow(windowShape, wlx, wly, wcx, wcy, window.archHeight);
+              break;
+          }
+        } else {
+          drawRectWindow(windowShape, wlx, wly, wcx, wcy);
         }
         wallShape.holes.push(windowShape);
       }
