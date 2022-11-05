@@ -5172,7 +5172,6 @@ export const useStore = create<CommonStoreState>(
                       }
                       if (Util.isPositionRelative(elem.type)) {
                         m = Util.relativeCoordinates(m.x, m.y, m.z, newParent);
-                        console.log(m);
                       }
                     }
                   }
