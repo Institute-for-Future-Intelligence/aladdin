@@ -418,23 +418,14 @@ const StaticSolarRadiationSimulation = ({ city }: StaticSolarRadiationSimulation
     if (!parent) throw new Error('parent of solar panel does not exist');
     let rooftop = panel.parentType === ObjectType.Roof;
     const walltop = panel.parentType === ObjectType.Wall;
-    const center = walltop
-      ? Util.absoluteCoordinates(panel.cx, panel.cy, panel.cz, parent, getFoundation(panel), panel.lz)
-      : Util.absoluteCoordinates(panel.cx, panel.cy, panel.cz, parent);
     if (rooftop) {
       // x and y coordinates of a rooftop solar panel are relative to the foundation
       parent = getFoundation(parent);
       if (!parent) throw new Error('foundation of solar panel does not exist');
     }
-    if (walltop && !Util.isZero(panel.tiltAngle)) {
-      const wall = parent as WallModel;
-      const foundation = getFoundation(parent);
-      const wallAbsAngle = foundation ? foundation.rotation[2] + wall.relativeAngle : wall.relativeAngle;
-      const an = wallAbsAngle - HALF_PI;
-      const dr = (panel.ly * Math.abs(Math.sin(panel.tiltAngle))) / 2;
-      center.x += dr * Math.cos(an); // panel.ly has been rotated based on the orientation
-      center.y += dr * Math.sin(an);
-    }
+    const center = walltop
+      ? Util.absoluteCoordinates(panel.cx, panel.cy, panel.cz, parent, getFoundation(panel), panel.lz)
+      : Util.absoluteCoordinates(panel.cx, panel.cy, panel.cz, parent);
     const normal = new Vector3().fromArray(panel.normal);
     const rot = parent.rotation[2];
     let zRot = rot + panel.relativeAzimuth;
@@ -452,6 +443,15 @@ const StaticSolarRadiationSimulation = ({ city }: StaticSolarRadiationSimulation
         zRot = rot;
         flat = false;
       }
+    }
+    if (walltop && !Util.isZero(panel.tiltAngle)) {
+      const wall = parent as WallModel;
+      const foundation = getFoundation(parent);
+      const wallAbsAngle = foundation ? foundation.rotation[2] + wall.relativeAngle : wall.relativeAngle;
+      const an = wallAbsAngle - HALF_PI;
+      const dr = (panel.ly * Math.abs(Math.sin(panel.tiltAngle))) / 2;
+      center.x += dr * Math.cos(an); // panel.ly has been rotated based on the orientation
+      center.y += dr * Math.sin(an);
     }
     // TODO: right now we assume a parent rotation is always around the z-axis
     // normal has been set if it is on top of a tilted roof, but has not if it is on top of a foundation or flat roof.
