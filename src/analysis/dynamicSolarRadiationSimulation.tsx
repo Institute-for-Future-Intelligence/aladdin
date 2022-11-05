@@ -560,6 +560,15 @@ const DynamicSolarRadiationSimulation = ({ city }: DynamicSolarRadiationSimulati
         flat = false;
       }
     }
+    if (walltop && !Util.isZero(panel.tiltAngle)) {
+      const wall = parent as WallModel;
+      const foundation = getFoundation(parent);
+      const wallAbsAngle = foundation ? foundation.rotation[2] + wall.relativeAngle : wall.relativeAngle;
+      const an = wallAbsAngle - HALF_PI;
+      const dr = (panel.ly * Math.abs(Math.sin(panel.tiltAngle))) / 2;
+      center.x += dr * Math.cos(an); // panel.ly has been rotated based on the orientation
+      center.y += dr * Math.sin(an);
+    }
     const normal = new Vector3().fromArray(panel.normal);
     const lx = panel.lx;
     const ly = panel.ly;
@@ -620,7 +629,8 @@ const DynamicSolarRadiationSimulation = ({ city }: DynamicSolarRadiationSimulati
       normalEuler.z = panel.rotation[2] + rot;
     }
     if (walltop) {
-      normalEuler.x = HALF_PI;
+      // wall panels use negative tilt angles, opposite to foundation panels, so we use + below.
+      normalEuler.x = HALF_PI + panel.tiltAngle;
       normalEuler.z = (parent as WallModel).relativeAngle + rot;
     }
     const peakRadiation = calculatePeakRadiation(sunDirection, dayOfYear, elevation, AirMass.SPHERE_MODEL);

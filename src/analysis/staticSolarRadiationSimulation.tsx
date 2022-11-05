@@ -108,12 +108,7 @@ const StaticSolarRadiationSimulation = ({ city }: StaticSolarRadiationSimulation
           generateHeatmapForCuboid(e as CuboidModel);
           break;
         case ObjectType.SolarPanel:
-          const sp = e as SolarPanelModel;
-          if (sp.parentType === ObjectType.Wall) {
-            generateHeatmapForWallSolarPanel(sp);
-          } else {
-            generateHeatmapForSolarPanel(sp);
-          }
+          generateHeatmapForSolarPanel(e as SolarPanelModel);
           break;
       }
     }
@@ -418,17 +413,28 @@ const StaticSolarRadiationSimulation = ({ city }: StaticSolarRadiationSimulation
   };
 
   const generateHeatmapForSolarPanel = (panel: SolarPanelModel) => {
-    if (panel.parentType === ObjectType.Wall) throw new Error('cannot accept a wall solar panel');
     if (panel.trackerType !== TrackerType.NO_TRACKER) throw new Error('trackers cannot use static simulation');
     let parent = getParent(panel);
     if (!parent) throw new Error('parent of solar panel does not exist');
     let rooftop = panel.parentType === ObjectType.Roof;
+    const walltop = panel.parentType === ObjectType.Wall;
+    const center = walltop
+      ? Util.absoluteCoordinates(panel.cx, panel.cy, panel.cz, parent, getFoundation(panel), panel.lz)
+      : Util.absoluteCoordinates(panel.cx, panel.cy, panel.cz, parent);
     if (rooftop) {
       // x and y coordinates of a rooftop solar panel are relative to the foundation
       parent = getFoundation(parent);
       if (!parent) throw new Error('foundation of solar panel does not exist');
     }
-    const center = Util.absoluteCoordinates(panel.cx, panel.cy, panel.cz, parent);
+    if (walltop && !Util.isZero(panel.tiltAngle)) {
+      const wall = parent as WallModel;
+      const foundation = getFoundation(parent);
+      const wallAbsAngle = foundation ? foundation.rotation[2] + wall.relativeAngle : wall.relativeAngle;
+      const an = wallAbsAngle - HALF_PI;
+      const dr = (panel.ly * Math.abs(Math.sin(panel.tiltAngle))) / 2;
+      center.x += dr * Math.cos(an); // panel.ly has been rotated based on the orientation
+      center.y += dr * Math.sin(an);
+    }
     const normal = new Vector3().fromArray(panel.normal);
     const rot = parent.rotation[2];
     let zRot = rot + panel.relativeAzimuth;
@@ -465,7 +471,7 @@ const StaticSolarRadiationSimulation = ({ city }: StaticSolarRadiationSimulation
     // shift half cell size to the center of each grid cell
     const x0 = center.x - (lx - cellSize) / 2;
     const y0 = center.y - (ly - cellSize) / 2;
-    const z0 = rooftop ? center.z : parent.lz + panel.poleHeight + panel.lz;
+    const z0 = rooftop || walltop ? center.z : parent.lz + panel.poleHeight + panel.lz;
     const center2d = new Vector2(center.x, center.y);
     const v = new Vector3();
     const cellOutputTotals = Array(nx)
@@ -478,81 +484,11 @@ const StaticSolarRadiationSimulation = ({ city }: StaticSolarRadiationSimulation
       normalEuler.x = panel.rotation[0];
       normalEuler.z = panel.rotation[2] + rot;
     }
-    for (let i = 0; i < 24; i++) {
-      for (let j = 0; j < world.timesPerHour; j++) {
-        const currentTime = new Date(year, month, date, i, j * interval);
-        const sunDirection = getSunDirection(currentTime, world.latitude);
-        if (sunDirection.z > 0) {
-          // when the sun is out
-          count++;
-          const peakRadiation = calculatePeakRadiation(sunDirection, dayOfYear, elevation, AirMass.SPHERE_MODEL);
-          const indirectRadiation = calculateDiffuseAndReflectedRadiation(world.ground, month, normal, peakRadiation);
-          const dot = normal.dot(sunDirection);
-          const v2d = new Vector2();
-          const dv = new Vector3();
-          for (let kx = 0; kx < nx; kx++) {
-            for (let ky = 0; ky < ny; ky++) {
-              cellOutputTotals[kx][ky] += indirectRadiation;
-              if (dot > 0) {
-                v2d.set(x0 + kx * dx, y0 + ky * dy);
-                dv.set(v2d.x - center2d.x, v2d.y - center2d.y, 0);
-                dv.applyEuler(normalEuler);
-                v.set(center.x + dv.x, center.y + dv.y, z0 + dv.z);
-                if (!inShadow(panel.id, v, sunDirection)) {
-                  // direct radiation
-                  cellOutputTotals[kx][ky] += dot * peakRadiation;
-                }
-              }
-            }
-          }
-        }
-      }
+    if (walltop) {
+      // wall panels use negative tilt angles, opposite to foundation panels, so we use + below.
+      normalEuler.x = HALF_PI + panel.tiltAngle;
+      normalEuler.z = (parent as WallModel).relativeAngle + rot;
     }
-    // apply clearness and convert the unit of time step from minute to hour so that we get kWh
-    const daylight = (count * interval) / 60;
-    const scaleFactor =
-      daylight > ZERO_TOLERANCE ? weather.sunshineHours[month] / (30 * daylight * world.timesPerHour) : 0;
-    applyScaleFactor(cellOutputTotals, scaleFactor);
-    // send heat map data to common store for visualization
-    setHeatmap(panel.id, cellOutputTotals);
-  };
-
-  const generateHeatmapForWallSolarPanel = (panel: SolarPanelModel) => {
-    if (panel.parentType !== ObjectType.Wall) throw new Error('must be a wall solar panel');
-    if (panel.trackerType !== TrackerType.NO_TRACKER) throw new Error('trackers cannot use static simulation');
-    let parent = getParent(panel);
-    if (!parent) throw new Error('parent of solar panel does not exist');
-    // all coordinates of a wall solar panel are relative to the wall
-    const foundation = getFoundation(parent);
-    if (!foundation) throw new Error('foundation of solar panel does not exist');
-    const center = Util.absoluteCoordinates(panel.cx, panel.cy, panel.cz, parent, foundation, panel.lz);
-    const normal = new Vector3().fromArray(panel.normal);
-    const rot = parent.rotation[2];
-    const zRot = rot + panel.relativeAzimuth;
-    const normalEuler = new Euler(0, 0, zRot, 'ZYX');
-    normal.applyEuler(normalEuler);
-    normalEuler.x = HALF_PI;
-    normalEuler.z = (parent as WallModel).relativeAngle + rot;
-    const year = now.getFullYear();
-    const month = now.getMonth();
-    const date = now.getDate();
-    const dayOfYear = Util.dayOfYear(now);
-    const lx = panel.lx;
-    const ly = panel.ly;
-    const nx = Math.max(2, Math.round(panel.lx / cellSize));
-    const ny = Math.max(2, Math.round(panel.ly / cellSize));
-    const dx = lx / nx;
-    const dy = ly / ny;
-    // shift half cell size to the center of each grid cell
-    const x0 = center.x - (lx - cellSize) / 2;
-    const y0 = center.y - (ly - cellSize) / 2;
-    const z0 = center.z;
-    const center2d = new Vector2(center.x, center.y);
-    const v = new Vector3();
-    const cellOutputTotals = Array(nx)
-      .fill(0)
-      .map(() => Array(ny).fill(0));
-    let count = 0;
     for (let i = 0; i < 24; i++) {
       for (let j = 0; j < world.timesPerHour; j++) {
         const currentTime = new Date(year, month, date, i, j * interval);
