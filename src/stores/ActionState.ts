@@ -35,13 +35,13 @@ export interface ActionState {
 
   wallHeight: number;
   wallThickness: number;
+  wallOpacity: number;
   wallColor: string;
   wallTexture: WallTexture;
   wallStructure: WallStructure;
-  wallStudSpacing: number;
-  wallStudWidth: number;
-  wallStudColor: string;
-  wallOpacity: number;
+  wallStructureSpacing: number;
+  wallStructureWidth: number;
+  wallStructureColor: string;
 
   doorColor: string;
   doorTexture: DoorTexture;

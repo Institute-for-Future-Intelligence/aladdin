@@ -44,9 +44,9 @@ export class DefaultActionState implements ActionState {
   wallColor: string;
   wallTexture: WallTexture;
   wallStructure: WallStructure;
-  wallStudSpacing: number;
-  wallStudWidth: number;
-  wallStudColor: string;
+  wallStructureSpacing: number;
+  wallStructureWidth: number;
+  wallStructureColor: string;
   wallOpacity: number;
 
   doorColor: string;
@@ -138,9 +138,9 @@ export class DefaultActionState implements ActionState {
     this.wallColor = 'white';
     this.wallTexture = WallTexture.Default;
     this.wallStructure = WallStructure.Default;
-    this.wallStudSpacing = 2;
-    this.wallStudWidth = 0.1;
-    this.wallStudColor = 'white';
+    this.wallStructureSpacing = 2;
+    this.wallStructureWidth = 0.1;
+    this.wallStructureColor = 'white';
     this.wallOpacity = 0.5;
 
     this.doorColor = 'white';

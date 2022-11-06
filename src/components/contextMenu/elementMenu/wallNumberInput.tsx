@@ -2,7 +2,7 @@
  * @Copyright 2021-2022. Institute for Future Intelligence, Inc.
  */
 
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useRef, useState } from 'react';
 import { Button, Col, InputNumber, Modal, Radio, RadioChangeEvent, Row, Space } from 'antd';
 import Draggable, { DraggableBounds, DraggableData, DraggableEvent } from 'react-draggable';
 import { useStore } from '../../../stores/common';
@@ -48,6 +48,28 @@ const WallNumberInput = ({
 
   const lang = { lng: language };
 
+  const updateActionState = (val: number) => {
+    setCommonStore((state) => {
+      switch (attributeKey) {
+        case 'ly':
+          state.actionState.wallThickness = val;
+          break;
+        case 'lz':
+          state.actionState.wallHeight = val;
+          break;
+        case 'opacity':
+          state.actionState.wallOpacity = val;
+          break;
+        case 'structureSpacing':
+          state.actionState.wallStructureSpacing = val;
+          break;
+        case 'structureWidth':
+          state.actionState.wallStructureWidth = val;
+          break;
+      }
+    });
+  };
+
   const updateById = (id: string, val: number) => {
     setCommonStore((state) => {
       for (const e of state.elements) {
@@ -57,6 +79,7 @@ const WallNumberInput = ({
         }
       }
     });
+    updateActionState(val);
   };
 
   const updateAboveFoundation = (fId: string, val: number) => {
@@ -67,6 +90,7 @@ const WallNumberInput = ({
         }
       }
     });
+    updateActionState(val);
   };
 
   const updateForAll = (val: number) => {
@@ -77,6 +101,7 @@ const WallNumberInput = ({
         }
       }
     });
+    updateActionState(val);
   };
 
   const onScopeChange = (e: RadioChangeEvent) => {

@@ -166,7 +166,7 @@ const WallStructureColorSelection = ({ setDialogVisible }: { setDialogVisible: (
         }
     }
     setCommonStore((state) => {
-      state.actionState.wallStudColor = value;
+      state.actionState.wallStructureColor = value;
     });
     setUpdateFlag(!updateFlag);
   };
