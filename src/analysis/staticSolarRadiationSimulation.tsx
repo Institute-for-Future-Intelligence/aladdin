@@ -110,6 +110,12 @@ const StaticSolarRadiationSimulation = ({ city }: StaticSolarRadiationSimulation
         case ObjectType.SolarPanel:
           generateHeatmapForSolarPanel(e as SolarPanelModel);
           break;
+        case ObjectType.Wall:
+          generateHeatmapForWall(e as WallModel);
+          break;
+        case ObjectType.Roof:
+          // TODO
+          break;
       }
     }
   };
@@ -526,6 +532,74 @@ const StaticSolarRadiationSimulation = ({ city }: StaticSolarRadiationSimulation
     applyScaleFactor(cellOutputTotals, scaleFactor);
     // send heat map data to common store for visualization
     setHeatmap(panel.id, cellOutputTotals);
+  };
+
+  const generateHeatmapForWall = (wall: WallModel) => {
+    const foundation = getFoundation(wall);
+    if (!foundation) throw new Error('foundation of wall not found');
+    const year = now.getFullYear();
+    const month = now.getMonth();
+    const date = now.getDate();
+    const dayOfYear = Util.dayOfYear(now);
+    const lx = wall.lx; // width
+    const lz = wall.lz; // height
+    const nx = Math.max(2, Math.round(lx / cellSize));
+    const nz = Math.max(2, Math.round(lz / cellSize));
+    const dx = lx / nx;
+    const dz = lz / nz;
+    const absAngle = foundation.rotation[2] + wall.relativeAngle;
+    const absPos = Util.wallAbsolutePosition(new Vector3(wall.cx, wall.cy, wall.cz), foundation).setZ(
+      wall.lz / 2 + foundation.lz,
+    );
+    const normal = new Vector3().fromArray([Math.cos(absAngle - HALF_PI), Math.sin(absAngle - HALF_PI), 0]);
+    const v = new Vector3();
+    const cellOutputTotals = Array(nx)
+      .fill(0)
+      .map(() => Array(nz).fill(0));
+    let count = 0;
+    const dxcos = dx * Math.cos(absAngle);
+    const dxsin = dx * Math.sin(absAngle);
+    for (let i = 0; i < 24; i++) {
+      for (let j = 0; j < world.timesPerHour; j++) {
+        const currentTime = new Date(year, month, date, i, j * interval);
+        const sunDirection = getSunDirection(currentTime, world.latitude);
+        if (sunDirection.z > 0) {
+          // when the sun is out
+          count++;
+          const peakRadiation = calculatePeakRadiation(sunDirection, dayOfYear, elevation, AirMass.SPHERE_MODEL);
+          const indirectRadiation = calculateDiffuseAndReflectedRadiation(
+            world.ground,
+            month,
+            UNIT_VECTOR_POS_Z,
+            peakRadiation,
+          );
+          const dot = normal.dot(sunDirection);
+          for (let kx = 0; kx < nx; kx++) {
+            for (let kz = 0; kz < nz; kz++) {
+              cellOutputTotals[kx][kz] += indirectRadiation;
+              if (dot > 0) {
+                v.set(
+                  absPos.x + (kx - nx / 2) * dxcos,
+                  absPos.y + (kx - nx / 2) * dxsin,
+                  absPos.z + (kz - nz / 2) * dz,
+                );
+                if (!inShadow(wall.id, v, sunDirection)) {
+                  // direct radiation
+                  cellOutputTotals[kx][kz] += dot * peakRadiation;
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+    // apply clearness and convert the unit of time step from minute to hour so that we get kWh
+    const daylight = (count * interval) / 60;
+    const scaleFactor =
+      daylight > ZERO_TOLERANCE ? weather.sunshineHours[month] / (30 * daylight * world.timesPerHour) : 0;
+    applyScaleFactor(cellOutputTotals, scaleFactor);
+    // send heat map data to common store for visualization
+    setHeatmap(wall.id, cellOutputTotals);
   };
 
   const applyScaleFactor = (output: number[][], scaleFactor: number) => {

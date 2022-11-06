@@ -18,6 +18,7 @@ import WallTexture10 from 'src/resources/wall_10.png';
 import React, { useEffect, useMemo, useRef, useState } from 'react';
 import {
   BackSide,
+  CanvasTexture,
   DoubleSide,
   Euler,
   FrontSide,
@@ -246,6 +247,20 @@ const Wall = (wallModel: WallModel) => {
       }
     }
   });
+
+  const showSolarRadiationHeatmap = useStore(Selector.showSolarRadiationHeatmap);
+  const solarRadiationHeatmapMaxValue = useStore(Selector.viewState.solarRadiationHeatmapMaxValue);
+  const getHeatmap = useStore(Selector.getHeatmap);
+  const [heatmapTexture, setHeatmapTexture] = useState<CanvasTexture | null>(null);
+
+  useEffect(() => {
+    if (wallModel && showSolarRadiationHeatmap) {
+      const heatmap = getHeatmap(wallModel.id);
+      if (heatmap) {
+        setHeatmapTexture(Util.fetchHeatmapTexture(heatmap, solarRadiationHeatmapMaxValue ?? 5));
+      }
+    }
+  }, [showSolarRadiationHeatmap, solarRadiationHeatmapMaxValue]);
 
   const deletedWindowAndParentId = useStore(Selector.deletedWindowAndParentId);
   const deletedRoofId = useStore(Selector.deletedRoofId);
@@ -1583,12 +1598,19 @@ const Wall = (wallModel: WallModel) => {
                 onPointerDown={handleWallBodyPointerDown}
               >
                 <shapeBufferGeometry args={[outsideWallShape]} />
-                <meshStandardMaterial
-                  color={textureType === WallTexture.Default || textureType === WallTexture.NoTexture ? color : 'white'}
-                  map={texture}
-                  transparent={transparent}
-                  opacity={opacity}
-                />
+                {showSolarRadiationHeatmap && heatmapTexture ? (
+                  <meshBasicMaterial attach="material" map={heatmapTexture} />
+                ) : (
+                  <meshStandardMaterial
+                    attach="material"
+                    color={
+                      textureType === WallTexture.Default || textureType === WallTexture.NoTexture ? color : 'white'
+                    }
+                    map={texture}
+                    transparent={transparent}
+                    opacity={opacity}
+                  />
+                )}
               </mesh>
 
               <mesh rotation={[HALF_PI, 0, 0]} position={[0, 0.05, 0]} castShadow={castShadow} scale={[0.95, 1, 1]}>
