@@ -425,6 +425,7 @@ export const i18n_tr = {
         OceanFront: 'Ocean Front',
         EgyptianPyramids: 'Egyptian Pyramids',
         MayanPyramid: 'Mayan Pyramid',
+        SiOSePol: 'Si-o-se-pol',
       },
 
       artificialIntelligenceSubMenu: 'Yapay Zeka',

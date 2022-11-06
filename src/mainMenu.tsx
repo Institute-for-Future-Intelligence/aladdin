@@ -51,6 +51,7 @@ import octagonal_pagoda from './examples/octagonal_pagoda.json';
 import ocean_front from './examples/ocean_front.json';
 import egyptian_pyramids from './examples/egyptian_pyramids.json';
 import mayan_pyramid from './examples/mayan_pyramid.json';
+import si_o_se_pol from './examples/si_o_se_pol.json';
 import vegetative_buffer_01 from './examples/vegetative_buffer_01.json';
 import effect_tilt_angle_solar_panel from './examples/effect_tilt_angle_solar_panel.json';
 import effect_azimuth_solar_panel from './examples/effect_azimuth_solar_panel.json';
@@ -509,6 +510,9 @@ const MainMenu = ({ viewOnly, set2DView, resetView, zoomView, canvas }: MainMenu
         break;
       case 'mayan_pyramid':
         input = mayan_pyramid;
+        break;
+      case 'si_o_se_pol':
+        input = si_o_se_pol;
         break;
       case 'barn_house':
         input = barn_house;
@@ -2260,6 +2264,9 @@ const MainMenu = ({ viewOnly, set2DView, resetView, zoomView, canvas }: MainMenu
             </Menu.Item>
             <Menu.Item key="mayan_pyramid" onClick={loadFile}>
               {i18n.t('menu.otherBuildingExamples.MayanPyramid', lang)}
+            </Menu.Item>
+            <Menu.Item key="si_o_se_pol" onClick={loadFile}>
+              {i18n.t('menu.otherBuildingExamples.SiOSePol', lang)}
             </Menu.Item>
           </SubMenu>
           <SubMenu key={'urban_planning'} title={i18n.t('menu.urbanPlanningSubMenu', lang)}>
