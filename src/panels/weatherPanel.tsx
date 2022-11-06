@@ -229,7 +229,11 @@ const WeatherPanel = ({ city, graphs }: WeatherPanelProps) => {
           }}
         >
           <Header className="handle">
-            <span>{i18n.t('word.Weather', lang) + ': ' + city}</span>
+            <span>
+              {i18n.t('word.Weather', lang) +
+                ': ' +
+                (city?.trim().endsWith(',') ? city?.trim().substring(0, city?.length - 2) : city)}
+            </span>
             <span
               style={{ cursor: 'pointer' }}
               onTouchStart={() => {
