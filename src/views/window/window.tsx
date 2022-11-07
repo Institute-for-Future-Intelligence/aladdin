@@ -3,7 +3,7 @@
  */
 
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
-import { Color, DoubleSide, FrontSide, MeshStandardMaterial, Shape } from 'three';
+import { Color, DoubleSide } from 'three';
 import { Box } from '@react-three/drei';
 import { WindowModel, WindowType } from 'src/models/WindowModel';
 import { CommonStoreState, useStore } from 'src/stores/common';
@@ -182,14 +182,8 @@ const Window = (windowModel: WindowModel) => {
 
   const setCommonStore = useStore(Selector.set);
   const isAddingElement = useStore(Selector.isAddingElement);
-  const shadowEnabled = useStore(Selector.viewState.shadowEnabled);
   const windowShiness = useStore(Selector.viewState.windowShiness);
-  const sunlightDirection = useStore(Selector.sunlightDirection);
-  const night = sunlightDirection.z <= 0;
-  const material = useMemo(
-    () => new MeshStandardMaterial({ color: 'white', side: night ? FrontSide : DoubleSide }),
-    [night],
-  );
+  const showSolarRadiationHeatmap = useStore(Selector.showSolarRadiationHeatmap);
 
   const [wlx, setWlx] = useState(lx);
   const [wly, setWly] = useState(ly);
@@ -348,7 +342,7 @@ const Window = (windowModel: WindowModel) => {
     >
       {renderWindow()}
 
-      {shutter && (
+      {shutter && !showSolarRadiationHeatmap && (
         <Shutter
           cx={shutterPosX}
           lx={shutterLength}

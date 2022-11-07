@@ -59,10 +59,7 @@ import SolarPanelOnWall from '../solarPanel/solarPanelOnWall';
 
 const useElements = (id: string, leftWallId?: string, rightWallId?: string, roofId?: string) => {
   const isElementTriggerWallChange = (elem: ElementModel) => {
-    if (elem.parentId === id || elem.id === roofId) {
-      return true;
-    }
-    return false;
+    return elem.parentId === id || elem.id === roofId;
   };
 
   const leftWall = useStore((state) => {
@@ -607,7 +604,7 @@ const Wall = (wallModel: WallModel) => {
     cMaxX -= 0.1;
     cMinZ += 0.1;
     cMaxZ -= 0.1;
-    if (
+    return (
       ((cMinX >= tMinX && cMinX <= tMaxX) ||
         (cMaxX >= tMinX && cMaxX <= tMaxX) ||
         (tMinX >= cMinX && tMinX <= cMaxX) ||
@@ -616,10 +613,7 @@ const Wall = (wallModel: WallModel) => {
         (cMaxZ >= tMinZ && cMaxZ <= tMaxZ) ||
         (tMinZ >= cMinZ && tMinZ <= cMaxZ) ||
         (tMaxZ >= cMinZ && tMaxZ <= cMaxZ))
-    ) {
-      return true;
-    }
-    return false;
+    );
   };
 
   const checkCollision = (id: string, type: ObjectType, p: Vector3, wlx: number, wlz: number) => {
@@ -690,7 +684,7 @@ const Wall = (wallModel: WallModel) => {
   };
 
   const checkIfCanSelectMe = (e: ThreeEvent<PointerEvent>) => {
-    if (
+    return !(
       e.button === 2 ||
       useStore.getState().addedWallId ||
       addedWindowIdRef.current ||
@@ -699,10 +693,7 @@ const Wall = (wallModel: WallModel) => {
       useStore.getState().objectTypeToAdd !== ObjectType.None ||
       selected ||
       isAddingElement()
-    ) {
-      return false;
-    }
-    return true;
+    );
   };
 
   const resetCurrentState = () => {
