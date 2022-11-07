@@ -41,6 +41,7 @@ export type WireframeDataType = {
 
 interface ShutterProps {
   cx: number;
+  cz?: number;
   lx: number;
   lz: number;
   color: string;
@@ -49,14 +50,14 @@ interface ShutterProps {
   spacing: number;
 }
 
-const Shutter = ({ cx, lx, lz, color, showLeft, showRight, spacing }: ShutterProps) => {
+export const Shutter = ({ cx, cz = 0, lx, lz, color, showLeft, showRight, spacing }: ShutterProps) => {
   const shadowEnabled = useStore(Selector.viewState.shadowEnabled);
   return (
     <group name={'Shutter Group'}>
       {showRight && (
         <Box
           args={[lx, 0.1, lz]}
-          position={[cx + spacing, 0, 0]}
+          position={[cx + spacing, 0, cz]}
           castShadow={shadowEnabled}
           receiveShadow={shadowEnabled}
         >
@@ -66,7 +67,7 @@ const Shutter = ({ cx, lx, lz, color, showLeft, showRight, spacing }: ShutterPro
       {showLeft && (
         <Box
           args={[lx, 0.1, lz]}
-          position={[-cx - spacing, 0, 0]}
+          position={[-cx - spacing, 0, cz]}
           castShadow={shadowEnabled}
           receiveShadow={shadowEnabled}
         >
@@ -75,10 +76,6 @@ const Shutter = ({ cx, lx, lz, color, showLeft, showRight, spacing }: ShutterPro
       )}
     </group>
   );
-};
-
-export const useWireframeData = (selected: boolean, locked: boolean, lineWidth: number, lineColor: string) => {
-  return { lineWidth, lineColor };
 };
 
 const useUpdataOldFiles = (windowModel: WindowModel) => {
@@ -315,6 +312,7 @@ const Window = (windowModel: WindowModel) => {
             mullionData={mullionData}
             frameData={frameData}
             wireframeData={wireframeData}
+            shutter={shutter}
             glassMaterial={glassMaterial}
           />
         );
@@ -326,6 +324,7 @@ const Window = (windowModel: WindowModel) => {
             mullionData={mullionData}
             frameData={frameData}
             wireframeData={wireframeData}
+            shutter={shutter}
             glassMaterial={glassMaterial}
           />
         );
@@ -342,7 +341,7 @@ const Window = (windowModel: WindowModel) => {
     >
       {renderWindow()}
 
-      {shutter && !showSolarRadiationHeatmap && (
+      {/* {shutter && (
         <Shutter
           cx={shutterPosX}
           lx={shutterLength}
@@ -352,7 +351,7 @@ const Window = (windowModel: WindowModel) => {
           showRight={shutter.showRight}
           spacing={frame ? frameWidth / 2 : 0}
         />
-      )}
+      )} */}
 
       {/* handles */}
       {selected && !locked && <WindowHandleWrapper lx={wlx} lz={wlz} windowType={windowType} />}

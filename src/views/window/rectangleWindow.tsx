@@ -8,7 +8,8 @@ import { Box, Cylinder, Plane } from '@react-three/drei';
 import { useStore } from 'src/stores/common';
 import * as Selector from 'src/stores/selector';
 import { HALF_PI, LOCKED_ELEMENT_SELECTION_COLOR } from 'src/constants';
-import { FrameDataType, MullionDataType, WireframeDataType } from './window';
+import { FrameDataType, MullionDataType, Shutter, WireframeDataType } from './window';
+import { ShutterProps } from 'src/models/WindowModel';
 
 interface RectangleWindowProps {
   dimension: number[];
@@ -16,6 +17,7 @@ interface RectangleWindowProps {
   mullionData: MullionDataType;
   frameData: FrameDataType;
   wireframeData: WireframeDataType;
+  shutter: ShutterProps;
   glassMaterial: JSX.Element;
 }
 interface MullionProps {
@@ -234,12 +236,16 @@ const RectangleWindow = ({
   mullionData,
   frameData,
   wireframeData,
+  shutter,
   glassMaterial,
 }: RectangleWindowProps) => {
   const [lx, ly, lz] = dimension;
   const [cx, cy, cz] = position;
 
   const shadowEnabled = useStore(Selector.viewState.shadowEnabled);
+
+  const shutterLength = useMemo(() => shutter.width * lx, [lx, shutter]);
+  const shutterPosX = useMemo(() => ((shutterLength + lx) / 2) * 1.025, [lx, shutterLength]);
 
   const renderSealPlane = (args: [width: number, height: number], position: ArgsType, rotation?: ArgsType) => (
     <Plane
@@ -266,6 +272,16 @@ const RectangleWindow = ({
       </group>
 
       {frameData.showFrame && <Frame dimension={dimension} frameData={frameData} shadowEnabled={shadowEnabled} />}
+
+      <Shutter
+        cx={shutterPosX}
+        lx={shutterLength}
+        lz={lz}
+        color={shutter.color}
+        showLeft={shutter.showLeft}
+        showRight={shutter.showRight}
+        spacing={frameData.showFrame ? frameData.width / 2 : 0}
+      />
 
       <Wireframe cy={cy} dimension={dimension} wireframeData={wireframeData} />
 
