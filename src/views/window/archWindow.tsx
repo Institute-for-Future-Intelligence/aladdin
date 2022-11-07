@@ -18,9 +18,10 @@ import { Box, Cylinder, Extrude, Plane, Tube } from '@react-three/drei';
 import { useStore } from 'src/stores/common';
 import * as Selector from 'src/stores/selector';
 import { HALF_PI, LOCKED_ELEMENT_SELECTION_COLOR } from 'src/constants';
-import { FrameDataType, MullionDataType, WireframeDataType } from './window';
+import { FrameDataType, MullionDataType, Shutter, WireframeDataType } from './window';
 import { ResizeHandleType } from 'src/types';
 import { useStoreRef } from 'src/stores/commonRef';
+import { ShutterProps } from 'src/models/WindowModel';
 
 interface ArchWindowProps {
   dimension: number[];
@@ -28,6 +29,7 @@ interface ArchWindowProps {
   mullionData: MullionDataType;
   frameData: FrameDataType;
   wireframeData: WireframeDataType;
+  shutter: ShutterProps;
   glassMaterial: JSX.Element;
 }
 interface MullionProps {
@@ -323,11 +325,24 @@ const Wireframe = React.memo(({ cy, dimension, wireframeData }: WireframeProps) 
   );
 });
 
-const ArchWindow = ({ dimension, position, mullionData, frameData, wireframeData, glassMaterial }: ArchWindowProps) => {
+const ArchWindow = ({
+  dimension,
+  position,
+  mullionData,
+  frameData,
+  wireframeData,
+  shutter,
+  glassMaterial,
+}: ArchWindowProps) => {
   const [lx, ly, lz, archHeight] = dimension;
   const [cx, cy, cz] = position;
 
   const shadowEnabled = useStore(Selector.viewState.shadowEnabled);
+
+  const shutterWidth = useMemo(() => shutter.width * lx, [lx, shutter.width]);
+  const shutterHeight = useMemo(() => lz - Math.min(archHeight, lz, lx / 2), [lx, lz, archHeight]);
+  const shutterPosX = useMemo(() => ((shutterWidth + lx) / 2) * 1.025, [lx, shutterWidth]);
+  const shutterPosZ = useMemo(() => -Math.min(archHeight, lz, lx / 2) / 2, [lz, shutterHeight]);
 
   const shape = useMemo(() => {
     const s = new Shape();
@@ -378,6 +393,17 @@ const ArchWindow = ({ dimension, position, mullionData, frameData, wireframeData
       {/* {frameData.showFrame && <Frame dimension={dimension} frameData={frameData} shadowEnabled={shadowEnabled} />} */}
 
       {/* <Wireframe cy={cy} dimension={dimension} wireframeData={wireframeData} /> */}
+
+      <Shutter
+        cx={shutterPosX}
+        cz={shutterPosZ}
+        lx={shutterWidth}
+        lz={shutterHeight}
+        color={shutter.color}
+        showLeft={shutter.showLeft}
+        showRight={shutter.showRight}
+        spacing={frameData.showFrame ? frameData.width / 2 : 0}
+      />
 
       {renderSealPlane([ly, lz], [-lx / 2, ly / 2, 0], [HALF_PI, HALF_PI, 0])}
       {renderSealPlane([ly, lz], [lx / 2, ly / 2, 0], [HALF_PI, -HALF_PI, 0])}

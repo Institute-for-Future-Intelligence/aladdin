@@ -8,7 +8,7 @@ export interface WindowModel extends ElementModel {
   opacity: number;
   tint: string;
 
-  shutter: Shutter;
+  shutter: ShutterProps;
 
   mullion: boolean;
   mullionWidth: number;
@@ -23,7 +23,7 @@ export interface WindowModel extends ElementModel {
   archHeight: number;
 }
 
-export interface Shutter {
+export interface ShutterProps {
   showLeft: boolean;
   showRight: boolean;
   color: string;
