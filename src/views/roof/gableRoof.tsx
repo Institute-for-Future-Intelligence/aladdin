@@ -83,7 +83,7 @@ const RafterUnit = React.memo(({ start, end, width, height, offset, color }: Raf
     s.lineTo(x, -y);
     s.lineTo(x, -y + height);
     s.lineTo(0, height);
-    s.lineTo(0, 0);
+    s.closePath();
 
     return s;
   }, [start, end, startV2, endV2, height]);

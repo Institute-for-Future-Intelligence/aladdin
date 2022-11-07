@@ -345,7 +345,7 @@ const Wall = (wallModel: WallModel) => {
     shape.lineTo(x, -y);
     shape.lineTo(x - rightOffset, y);
     shape.lineTo(-x + leftOffset, y);
-    shape.lineTo(-x, -y);
+    shape.closePath();
   };
 
   const drawRectangle = (shape: Shape, lx: number, ly: number, cx = 0, cy = 0, leftOffset = 0, rightOffset = 0) => {
@@ -373,7 +373,7 @@ const Wall = (wallModel: WallModel) => {
       shape.lineTo(cx - x + leftOffset, cy + y); // upper left
     }
 
-    shape.lineTo(cx - x + leftOffset, cy - y); // lower left
+    shape.closePath();
   };
 
   const drawRectWindow = (shape: Shape, lx: number, ly: number, cx = 0, cy = 0) => {
@@ -383,7 +383,7 @@ const Wall = (wallModel: WallModel) => {
     shape.lineTo(cx + x, cy - y);
     shape.lineTo(cx + x, cy + y);
     shape.lineTo(cx - x, cy + y);
-    shape.lineTo(cx - x, cy - y);
+    shape.closePath();
   };
 
   const drawArchWindow = (shape: Shape, lx: number, ly: number, cx: number, cy: number, archHeight = 0) => {
@@ -405,7 +405,7 @@ const Wall = (wallModel: WallModel) => {
       shape.lineTo(cx - hx, cy + hy);
     }
 
-    shape.lineTo(cx - hx, cy - hy);
+    shape.closePath();
   };
 
   const outsideWallShape = useMemo(() => {

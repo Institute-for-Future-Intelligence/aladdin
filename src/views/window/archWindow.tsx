@@ -346,7 +346,7 @@ const ArchWindow = ({ dimension, position, mullionData, frameData, wireframeData
     } else {
       s.lineTo(-hx, hz);
     }
-    s.lineTo(-hx, -hz);
+    s.closePath();
     return s;
   }, [lx, lz]);
 
