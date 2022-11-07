@@ -126,6 +126,7 @@ const DynamicSolarRadiationSimulation = ({ city }: DynamicSolarRadiationSimulati
     for (const e of elements) {
       switch (e.type) {
         case ObjectType.Cuboid:
+        case ObjectType.Wall:
         case ObjectType.SolarPanel:
         case ObjectType.ParabolicTrough:
         case ObjectType.ParabolicDish:
@@ -151,6 +152,7 @@ const DynamicSolarRadiationSimulation = ({ city }: DynamicSolarRadiationSimulati
     for (const e of elements) {
       switch (e.type) {
         case ObjectType.Foundation:
+        case ObjectType.Wall:
         case ObjectType.SolarPanel:
         case ObjectType.ParabolicTrough:
         case ObjectType.ParabolicDish:
@@ -280,6 +282,12 @@ const DynamicSolarRadiationSimulation = ({ city }: DynamicSolarRadiationSimulati
               break;
             case ObjectType.Heliostat:
               calculateHeliostat(e as HeliostatModel);
+              break;
+            case ObjectType.Wall:
+              calculateWall(e as WallModel);
+              break;
+            case ObjectType.Roof:
+              // TODO
               break;
           }
         }
@@ -521,6 +529,55 @@ const DynamicSolarRadiationSimulation = ({ city }: DynamicSolarRadiationSimulati
           if (!inShadow(foundation.id, v, sunDirection)) {
             // direct radiation
             cellOutputs[kx][ky] += dot * peakRadiation;
+          }
+        }
+      }
+    }
+  };
+
+  const calculateWall = (wall: WallModel) => {
+    const sunDirection = getSunDirection(now, world.latitude);
+    if (sunDirection.z <= 0) return; // when the sun is not out
+    const foundation = getFoundation(wall);
+    if (!foundation) throw new Error('foundation of wall not found');
+    const dayOfYear = Util.dayOfYear(now);
+    const lx = wall.lx;
+    const lz = wall.lz;
+    const nx = Math.max(2, Math.round(lx / cellSize));
+    const nz = Math.max(2, Math.round(lz / cellSize));
+    const dx = lx / nx;
+    const dz = lz / nz;
+    const absAngle = foundation.rotation[2] + wall.relativeAngle;
+    const absPos = Util.wallAbsolutePosition(new Vector3(wall.cx, wall.cy, wall.cz), foundation).setZ(
+      wall.lz / 2 + foundation.lz,
+    );
+    const normal = new Vector3().fromArray([Math.cos(absAngle - HALF_PI), Math.sin(absAngle - HALF_PI), 0]);
+    const dxcos = dx * Math.cos(absAngle);
+    const dxsin = dx * Math.sin(absAngle);
+    const v = new Vector3();
+    let cellOutputs = cellOutputsMapRef.current.get(wall.id);
+    if (!cellOutputs || cellOutputs.length !== nx || cellOutputs[0].length !== nz) {
+      cellOutputs = Array(nx)
+        .fill(0)
+        .map(() => Array(nz).fill(0));
+      cellOutputsMapRef.current.set(wall.id, cellOutputs);
+    }
+    const peakRadiation = calculatePeakRadiation(sunDirection, dayOfYear, elevation, AirMass.SPHERE_MODEL);
+    const indirectRadiation = calculateDiffuseAndReflectedRadiation(
+      world.ground,
+      now.getMonth(),
+      UNIT_VECTOR_POS_Z,
+      peakRadiation,
+    );
+    const dot = normal.dot(sunDirection);
+    for (let kx = 0; kx < nx; kx++) {
+      for (let kz = 0; kz < nz; kz++) {
+        cellOutputs[kx][kz] += indirectRadiation;
+        if (dot > 0) {
+          v.set(absPos.x + (kx - nx / 2) * dxcos, absPos.y + (kx - nx / 2) * dxsin, absPos.z + (kz - nz / 2) * dz);
+          if (!inShadow(wall.id, v, sunDirection)) {
+            // direct radiation
+            cellOutputs[kx][kz] += dot * peakRadiation;
           }
         }
       }

@@ -1586,21 +1586,30 @@ const Wall = (wallModel: WallModel) => {
                 <meshBasicMaterial side={DoubleSide} />
               </mesh>
               {/* outside wall */}
-              <mesh
-                name={'Outside Wall'}
-                ref={outsideWallRef}
-                rotation={[HALF_PI, 0, 0]}
-                castShadow={castShadow}
-                receiveShadow={shadowEnabled}
-                onContextMenu={(e) => {
-                  handleContextMenu(e, outsideWallRef.current, true);
-                }}
-                onPointerDown={handleWallBodyPointerDown}
-              >
-                <shapeBufferGeometry args={[outsideWallShape]} />
-                {showSolarRadiationHeatmap && heatmapTexture ? (
+              {showSolarRadiationHeatmap && heatmapTexture ? (
+                <Plane
+                  args={[lx, lz]}
+                  material={whiteMaterialDouble}
+                  position={[0, 0, 0]}
+                  rotation={[HALF_PI, 0, 0]}
+                  castShadow={false}
+                  receiveShadow={false}
+                >
                   <meshBasicMaterial attach="material" map={heatmapTexture} />
-                ) : (
+                </Plane>
+              ) : (
+                <mesh
+                  name={'Outside Wall'}
+                  ref={outsideWallRef}
+                  rotation={[HALF_PI, 0, 0]}
+                  castShadow={castShadow}
+                  receiveShadow={shadowEnabled}
+                  onContextMenu={(e) => {
+                    handleContextMenu(e, outsideWallRef.current, true);
+                  }}
+                  onPointerDown={handleWallBodyPointerDown}
+                >
+                  <shapeBufferGeometry args={[outsideWallShape]} />
                   <meshStandardMaterial
                     attach="material"
                     color={
@@ -1610,8 +1619,8 @@ const Wall = (wallModel: WallModel) => {
                     transparent={transparent}
                     opacity={opacity}
                   />
-                )}
-              </mesh>
+                </mesh>
+              )}
 
               <mesh rotation={[HALF_PI, 0, 0]} position={[0, 0.02, 0]} castShadow={castShadow}>
                 <shapeBufferGeometry args={[insideWallShape]} />
