@@ -98,6 +98,7 @@ const useElements = (id: string, leftWallId?: string, rightWallId?: string, roof
 };
 
 const useUpdataOldFiles = (wallModel: WallModel) => {
+  const fileChanged = useStore(Selector.fileChanged);
   useEffect(() => {
     if (
       wallModel.wallStructure === undefined ||
@@ -130,7 +131,7 @@ const useUpdataOldFiles = (wallModel: WallModel) => {
         }
       });
     }
-  }, []);
+  }, [fileChanged]);
 };
 
 const Wall = (wallModel: WallModel) => {

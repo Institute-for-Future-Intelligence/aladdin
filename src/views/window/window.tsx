@@ -82,6 +82,7 @@ export const useWireframeData = (selected: boolean, locked: boolean, lineWidth: 
 };
 
 const useUpdataOldFiles = (windowModel: WindowModel) => {
+  const fileChanged = useStore(Selector.fileChanged);
   useEffect(() => {
     if (
       windowModel.mullion === undefined ||
@@ -142,7 +143,7 @@ const useUpdataOldFiles = (windowModel: WindowModel) => {
         }
       });
     }
-  }, []);
+  }, [fileChanged]);
 };
 
 const Window = (windowModel: WindowModel) => {
