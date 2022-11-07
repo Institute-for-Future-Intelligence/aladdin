@@ -1613,8 +1613,8 @@ const Wall = (wallModel: WallModel) => {
                 )}
               </mesh>
 
-              <mesh rotation={[HALF_PI, 0, 0]} position={[0, 0.05, 0]} castShadow={castShadow} scale={[0.95, 1, 1]}>
-                <shapeBufferGeometry args={[outsideWallShape]} />
+              <mesh rotation={[HALF_PI, 0, 0]} position={[0, 0.02, 0]} castShadow={castShadow}>
+                <shapeBufferGeometry args={[insideWallShape]} />
                 <meshStandardMaterial color={'white'} side={BackSide} transparent={transparent} opacity={opacity} />
               </mesh>
 
