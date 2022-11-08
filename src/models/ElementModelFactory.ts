@@ -49,9 +49,9 @@ import { FresnelReflectorModel } from './FresnelReflectorModel';
 import { HeliostatModel } from './HeliostatModel';
 import { DoorModel } from './DoorModel';
 import { WindTurbineModel } from './WindTurbineModel';
-import { defaultShutter } from 'src/views/window/window';
 import { FlowerData } from '../FlowerData';
 import { LightModel } from './LightModel';
+import { TreeData } from '../TreeData';
 
 export class ElementModelFactory {
   static makeHuman(name: HumanName, parentId: string, x: number, y: number, z?: number) {
@@ -70,15 +70,16 @@ export class ElementModelFactory {
     } as HumanModel;
   }
 
-  static makeTree(name: TreeType, spread: number, height: number, parentId: string, x: number, y: number, z?: number) {
+  static makeTree(type: TreeType, spread: number, height: number, parentId: string, x: number, y: number, z?: number) {
     return {
       type: ObjectType.Tree,
-      name: name ?? TreeType.Dogwood,
+      name: type ?? TreeType.Dogwood,
       cx: x,
       cy: y,
       cz: z,
       lx: spread ?? 3,
       lz: height ?? 4,
+      evergreen: TreeData.isEvergreen(type ?? TreeType.Dogwood),
       normal: [0, 1, 0],
       rotation: [0, 0, 0],
       parentId: parentId,
