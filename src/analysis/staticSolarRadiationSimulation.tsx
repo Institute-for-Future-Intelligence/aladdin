@@ -579,9 +579,9 @@ const StaticSolarRadiationSimulation = ({ city }: StaticSolarRadiationSimulation
               cellOutputTotals[kx][kz] += indirectRadiation;
               if (dot > 0) {
                 v.set(
-                  absPos.x + (kx - nx / 2) * dxcos,
-                  absPos.y + (kx - nx / 2) * dxsin,
-                  absPos.z + (kz - nz / 2) * dz,
+                  absPos.x + (kx - nx / 2 + 0.5) * dxcos,
+                  absPos.y + (kx - nx / 2 + 0.5) * dxsin,
+                  absPos.z + (kz - nz / 2 + 0.5) * dz,
                 );
                 if (!inShadow(wall.id, v, sunDirection)) {
                   // direct radiation

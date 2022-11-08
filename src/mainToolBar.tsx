@@ -363,6 +363,9 @@ const MainToolBar = ({ viewOnly = false }: MainToolBarProps) => {
                   setCommonStore((state) => {
                     state.loadingFile = false;
                   });
+                } else {
+                  const newUrl = HOME_URL + '?client=web&userid=' + user.uid + '&title=' + encodeURIComponent(title);
+                  window.history.pushState({}, document.title, newUrl);
                 }
                 if (showCloudFilePanel) {
                   fetchMyCloudFiles().then(() => {

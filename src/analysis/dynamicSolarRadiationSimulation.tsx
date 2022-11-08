@@ -574,7 +574,11 @@ const DynamicSolarRadiationSimulation = ({ city }: DynamicSolarRadiationSimulati
       for (let kz = 0; kz < nz; kz++) {
         cellOutputs[kx][kz] += indirectRadiation;
         if (dot > 0) {
-          v.set(absPos.x + (kx - nx / 2) * dxcos, absPos.y + (kx - nx / 2) * dxsin, absPos.z + (kz - nz / 2) * dz);
+          v.set(
+            absPos.x + (kx - nx / 2 + 0.5) * dxcos,
+            absPos.y + (kx - nx / 2 + 0.5) * dxsin,
+            absPos.z + (kz - nz / 2 + 0.5) * dz,
+          );
           if (!inShadow(wall.id, v, sunDirection)) {
             // direct radiation
             cellOutputs[kx][kz] += dot * peakRadiation;
