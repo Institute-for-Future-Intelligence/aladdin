@@ -255,7 +255,15 @@ const Wall = (wallModel: WallModel) => {
     if (wallModel && showSolarRadiationHeatmap) {
       const heatmap = getHeatmap(wallModel.id);
       if (heatmap) {
-        setHeatmapTexture(Util.fetchHeatmapTexture(heatmap, solarRadiationHeatmapMaxValue ?? 5));
+        const t = Util.fetchHeatmapTexture(heatmap, solarRadiationHeatmapMaxValue ?? 5);
+        if (t) {
+          t.wrapS = RepeatWrapping;
+          t.wrapT = RepeatWrapping;
+          t.offset.set(-lx / 2, -lz / 2);
+          t.center.set(lx / 2, lz / 2);
+          t.repeat.set(1 / lx, 1 / lz);
+          setHeatmapTexture(t);
+        }
       }
     }
   }, [showSolarRadiationHeatmap, solarRadiationHeatmapMaxValue]);
@@ -1253,31 +1261,77 @@ const Wall = (wallModel: WallModel) => {
       switch (useStore.getState().objectTypeToAdd) {
         case ObjectType.PyramidRoof: {
           if (!roofId) {
-            newElement = ElementModelFactory.makePyramidRoof([wallModel.id], foundation, lz);
+            const actionState = useStore.getState().actionState;
+            newElement = ElementModelFactory.makePyramidRoof(
+              [wallModel.id],
+              foundation,
+              lz,
+              actionState.roofThickness,
+              actionState.roofOverhang,
+              actionState.roofColor,
+              actionState.roofTexture,
+            );
           }
           break;
         }
         case ObjectType.GableRoof: {
           if (!roofId) {
-            newElement = ElementModelFactory.makeGableRoof([wallModel.id], foundation, lz);
+            const actionState = useStore.getState().actionState;
+            newElement = ElementModelFactory.makeGableRoof(
+              [wallModel.id],
+              foundation,
+              lz,
+              actionState.roofThickness,
+              actionState.roofOverhang,
+              actionState.roofColor,
+              actionState.roofTexture,
+            );
           }
           break;
         }
         case ObjectType.HipRoof: {
           if (!roofId) {
-            newElement = ElementModelFactory.makeHipRoof([wallModel.id], foundation, lz, lx / 2);
+            const actionState = useStore.getState().actionState;
+            newElement = ElementModelFactory.makeHipRoof(
+              [wallModel.id],
+              foundation,
+              lz,
+              lx / 2,
+              actionState.roofThickness,
+              actionState.roofOverhang,
+              actionState.roofColor,
+              actionState.roofTexture,
+            );
           }
           break;
         }
         case ObjectType.GambrelRoof: {
           if (!roofId) {
-            newElement = ElementModelFactory.makeGambrelRoof([wallModel.id], foundation, lz);
+            const actionState = useStore.getState().actionState;
+            newElement = ElementModelFactory.makeGambrelRoof(
+              [wallModel.id],
+              foundation,
+              lz,
+              actionState.roofThickness,
+              actionState.roofOverhang,
+              actionState.roofColor,
+              actionState.roofTexture,
+            );
           }
           break;
         }
         case ObjectType.MansardRoof: {
           if (!roofId) {
-            newElement = ElementModelFactory.makeMansardRoof([wallModel.id], foundation, lz);
+            const actionState = useStore.getState().actionState;
+            newElement = ElementModelFactory.makeMansardRoof(
+              [wallModel.id],
+              foundation,
+              lz,
+              actionState.roofThickness,
+              actionState.roofOverhang,
+              actionState.roofColor,
+              actionState.roofTexture,
+            );
           }
           break;
         }
@@ -1578,30 +1632,21 @@ const Wall = (wallModel: WallModel) => {
                 <meshBasicMaterial side={DoubleSide} />
               </mesh>
               {/* outside wall */}
-              {showSolarRadiationHeatmap && heatmapTexture ? (
-                <Plane
-                  args={[lx, lz]}
-                  material={whiteMaterialDouble}
-                  position={[0, 0, 0]}
-                  rotation={[HALF_PI, 0, 0]}
-                  castShadow={false}
-                  receiveShadow={false}
-                >
+              <mesh
+                name={'Outside Wall'}
+                ref={outsideWallRef}
+                rotation={[HALF_PI, 0, 0]}
+                castShadow={castShadow}
+                receiveShadow={shadowEnabled}
+                onContextMenu={(e) => {
+                  handleContextMenu(e, outsideWallRef.current, true);
+                }}
+                onPointerDown={handleWallBodyPointerDown}
+              >
+                <shapeBufferGeometry args={[outsideWallShape]} />
+                {showSolarRadiationHeatmap && heatmapTexture ? (
                   <meshBasicMaterial attach="material" map={heatmapTexture} />
-                </Plane>
-              ) : (
-                <mesh
-                  name={'Outside Wall'}
-                  ref={outsideWallRef}
-                  rotation={[HALF_PI, 0, 0]}
-                  castShadow={castShadow}
-                  receiveShadow={shadowEnabled}
-                  onContextMenu={(e) => {
-                    handleContextMenu(e, outsideWallRef.current, true);
-                  }}
-                  onPointerDown={handleWallBodyPointerDown}
-                >
-                  <shapeBufferGeometry args={[outsideWallShape]} />
+                ) : (
                   <meshStandardMaterial
                     attach="material"
                     color={
@@ -1611,8 +1656,8 @@ const Wall = (wallModel: WallModel) => {
                     transparent={transparent}
                     opacity={opacity}
                   />
-                </mesh>
-              )}
+                )}
+              </mesh>
 
               <mesh rotation={[HALF_PI, 0, 0]} position={[0, 0.02, 0]} castShadow={castShadow}>
                 <shapeBufferGeometry args={[insideWallShape]} />

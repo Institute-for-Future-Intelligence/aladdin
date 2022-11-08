@@ -143,6 +143,9 @@ const RoofOverhangInput = ({ setDialogVisible }: { setDialogVisible: (b: boolean
           setApplyCount(applyCount + 1);
         }
     }
+    setCommonStore((state) => {
+      state.actionState.roofOverhang = value;
+    });
   };
 
   const onStart = (event: DraggableEvent, uiData: DraggableData) => {

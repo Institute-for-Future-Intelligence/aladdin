@@ -12,12 +12,14 @@ import {
   HumanName,
   Orientation,
   ParabolicDishStructureType,
+  RoofTexture,
   TreeType,
   WallTexture,
 } from '../types';
 import { WallStructure } from '../models/WallModel';
 import { defaultShutter } from '../views/window/window';
 import { WindowType } from 'src/models/WindowModel';
+import { RoofStructure } from '../models/RoofModel';
 
 export class DefaultActionState implements ActionState {
   // Needed for immer drafting to work properly: https://immerjs.github.io/immer/docs/complex-objects
@@ -48,6 +50,17 @@ export class DefaultActionState implements ActionState {
   wallStructureWidth: number;
   wallStructureColor: string;
   wallOpacity: number;
+
+  roofColor: string;
+  roofTexture: RoofTexture;
+  roofThickness: number;
+  roofOverhang: number;
+  roofStructure: RoofStructure;
+  roofGlassOpacity: number;
+  roofGlassTint: string;
+  roofRafterWidth: number;
+  roofRafterSpacing: number;
+  roofRafterColor: string;
 
   doorColor: string;
   doorTexture: DoorTexture;
@@ -142,6 +155,17 @@ export class DefaultActionState implements ActionState {
     this.wallStructureWidth = 0.1;
     this.wallStructureColor = 'white';
     this.wallOpacity = 0.5;
+
+    this.roofColor = '#454769';
+    this.roofTexture = RoofTexture.Default;
+    this.roofThickness = 0.2;
+    this.roofOverhang = 0.3;
+    this.roofStructure = RoofStructure.Default;
+    this.roofGlassOpacity = 0.5;
+    this.roofGlassTint = '#73D8FF';
+    this.roofRafterWidth = 0.1;
+    this.roofRafterSpacing = 1;
+    this.roofRafterColor = 'white';
 
     this.doorColor = 'white';
     this.doorTexture = DoorTexture.Default;

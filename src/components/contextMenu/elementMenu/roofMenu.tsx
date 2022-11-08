@@ -301,6 +301,9 @@ export const RoofMenu = () => {
                 addUndoable(undoableChange);
                 updateRoofStructureById(roof.id, e.target.value);
                 setUpdateFlag(!updateFlag);
+                setCommonStore((state) => {
+                  state.actionState.roofStructure = e.target.value;
+                });
               }}
             >
               <Radio style={radioStyle} value={RoofStructure.Default}>

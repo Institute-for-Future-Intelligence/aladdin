@@ -10,11 +10,13 @@ import {
   HumanName,
   Orientation,
   ParabolicDishStructureType,
+  RoofTexture,
   TreeType,
   WallTexture,
 } from '../types';
 import { WallStructure } from '../models/WallModel';
 import { WindowType } from 'src/models/WindowModel';
+import { RoofStructure } from '../models/RoofModel';
 
 export interface ActionState {
   humanName: HumanName;
@@ -42,6 +44,17 @@ export interface ActionState {
   wallStructureSpacing: number;
   wallStructureWidth: number;
   wallStructureColor: string;
+
+  roofColor: string;
+  roofTexture: RoofTexture;
+  roofThickness: number;
+  roofOverhang: number;
+  roofStructure: RoofStructure;
+  roofGlassOpacity: number;
+  roofGlassTint: string;
+  roofRafterWidth: number;
+  roofRafterSpacing: number;
+  roofRafterColor: string;
 
   doorColor: string;
   doorTexture: DoorTexture;

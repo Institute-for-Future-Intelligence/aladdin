@@ -61,7 +61,7 @@ const RoofThicknessInput = ({ setDialogVisible }: { setDialogVisible: (b: boolea
     }
   };
 
-  const setOverhangLength = (value: number) => {
+  const setThickness = (value: number) => {
     if (!roof) return;
     switch (roofActionScope) {
       case Scope.AllObjectsOfThisType:
@@ -69,8 +69,9 @@ const RoofThicknessInput = ({ setDialogVisible }: { setDialogVisible: (b: boolea
         setCommonStore((state) => {
           for (const e of state.elements) {
             if (e.type === ObjectType.Roof && !e.locked) {
-              oldThicknessAll.set(e.id, (e as RoofModel).thickness);
-              (e as RoofModel).thickness = value;
+              const roof = e as RoofModel;
+              oldThicknessAll.set(e.id, roof.thickness);
+              roof.thickness = value;
             }
           }
         });
@@ -95,8 +96,9 @@ const RoofThicknessInput = ({ setDialogVisible }: { setDialogVisible: (b: boolea
           setCommonStore((state) => {
             for (const elem of state.elements) {
               if (elem.type === ObjectType.Roof && elem.foundationId === roof.foundationId && !elem.locked) {
-                oldThicknessAboveFoundation.set(elem.id, (elem as RoofModel).thickness);
-                (elem as RoofModel).thickness = value;
+                const roof = elem as RoofModel;
+                oldThicknessAboveFoundation.set(elem.id, roof.thickness);
+                roof.thickness = value;
               }
             }
           });
@@ -143,6 +145,9 @@ const RoofThicknessInput = ({ setDialogVisible }: { setDialogVisible: (b: boolea
           setApplyCount(applyCount + 1);
         }
     }
+    setCommonStore((state) => {
+      state.actionState.roofThickness = value;
+    });
   };
 
   const onStart = (event: DraggableEvent, uiData: DraggableData) => {
@@ -169,13 +174,13 @@ const RoofThicknessInput = ({ setDialogVisible }: { setDialogVisible: (b: boolea
   };
 
   const handleOk = () => {
-    setOverhangLength(inputLength);
+    setThickness(inputLength);
     setDialogVisible(false);
     setApplyCount(0);
   };
 
   const handleApply = () => {
-    setOverhangLength(inputLength);
+    setThickness(inputLength);
   };
 
   return (

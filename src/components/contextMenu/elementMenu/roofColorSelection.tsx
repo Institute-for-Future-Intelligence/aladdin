@@ -149,6 +149,9 @@ const RoofColorSelection = ({ setDialogVisible }: { setDialogVisible: (b: boolea
           setApplyCount(applyCount + 1);
         }
     }
+    setCommonStore((state) => {
+      state.actionState.roofColor = value;
+    });
   };
 
   const onStart = (event: DraggableEvent, uiData: DraggableData) => {

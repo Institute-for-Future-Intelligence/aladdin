@@ -690,7 +690,15 @@ export class ElementModelFactory {
     } as DoorModel;
   }
 
-  static makePyramidRoof(wallsId: string[], parent: ElementModel, lz: number) {
+  static makePyramidRoof(
+    wallsId: string[],
+    parent: ElementModel,
+    lz: number,
+    thickness: number,
+    overhang: number,
+    color: string,
+    texture: RoofTexture,
+  ) {
     return {
       type: ObjectType.Roof,
       cx: 0,
@@ -699,13 +707,13 @@ export class ElementModelFactory {
       lx: 0,
       ly: 0,
       lz: lz * 1.5,
-      overhang: 0.3,
-      thickness: 0.2,
+      overhang: overhang ?? 0.3,
+      thickness: thickness ?? 0.2,
       roofType: RoofType.Pyramid,
       roofStructure: RoofStructure.Default,
       wallsId: [...wallsId],
-      textureType: RoofTexture.Default,
-      color: '#454769',
+      textureType: texture ?? RoofTexture.Default,
+      color: color ?? '#454769',
       selected: false,
       lineWidth: 0.2,
       lineColor: 'black',
@@ -718,7 +726,15 @@ export class ElementModelFactory {
     } as PyramidRoofModel;
   }
 
-  static makeGableRoof(wallsId: string[], parent: ElementModel, lz: number) {
+  static makeGableRoof(
+    wallsId: string[],
+    parent: ElementModel,
+    lz: number,
+    thickness: number,
+    overhang: number,
+    color: string,
+    texture: RoofTexture,
+  ) {
     return {
       type: ObjectType.Roof,
       cx: 0,
@@ -727,13 +743,13 @@ export class ElementModelFactory {
       lx: 0,
       ly: 0,
       lz: lz * 1.5,
-      overhang: 0.3,
-      thickness: 0.2,
+      overhang: overhang ?? 0.3,
+      thickness: thickness ?? 0.2,
       roofType: RoofType.Gable,
       roofStructure: RoofStructure.Default,
       wallsId: [...wallsId],
-      textureType: RoofTexture.Default,
-      color: '#454769',
+      textureType: texture ?? RoofTexture.Default,
+      color: color ?? '#454769',
       selected: false,
       lineWidth: 0.2,
       lineColor: 'black',
@@ -748,7 +764,16 @@ export class ElementModelFactory {
     } as GableRoofModel;
   }
 
-  static makeHipRoof(wallsId: string[], parent: ElementModel, lz: number, ridgeLength: number) {
+  static makeHipRoof(
+    wallsId: string[],
+    parent: ElementModel,
+    lz: number,
+    ridgeLength: number,
+    thickness: number,
+    overhang: number,
+    color: string,
+    texture: RoofTexture,
+  ) {
     return {
       type: ObjectType.Roof,
       cx: 0,
@@ -757,13 +782,13 @@ export class ElementModelFactory {
       lx: 0,
       ly: 0,
       lz: lz * 1.5,
-      overhang: 0.3,
-      thickness: 0.2,
+      overhang: overhang ?? 0.3,
+      thickness: thickness ?? 0.2,
       roofType: RoofType.Hip,
       roofStructure: RoofStructure.Default,
       wallsId: [...wallsId],
-      textureType: RoofTexture.Default,
-      color: '#454769',
+      textureType: texture ?? RoofTexture.Default,
+      color: color ?? '#454769',
       selected: false,
       lineWidth: 0.2,
       lineColor: 'black',
@@ -778,7 +803,15 @@ export class ElementModelFactory {
     } as HipRoofModel;
   }
 
-  static makeGambrelRoof(wallsId: string[], parent: ElementModel, lz: number) {
+  static makeGambrelRoof(
+    wallsId: string[],
+    parent: ElementModel,
+    lz: number,
+    thickness: number,
+    overhang: number,
+    color: string,
+    texture: RoofTexture,
+  ) {
     const xpercent = 0.35;
     return {
       type: ObjectType.Roof,
@@ -788,8 +821,8 @@ export class ElementModelFactory {
       lx: 0,
       ly: 0,
       lz: lz * 2,
-      overhang: 0.3,
-      thickness: 0.2,
+      overhang: overhang ?? 0.3,
+      thickness: thickness ?? 0.2,
       roofType: RoofType.Gambrel,
       roofStructure: RoofStructure.Default,
       wallsId: [...wallsId],
@@ -799,8 +832,8 @@ export class ElementModelFactory {
       frontRidgeRightPoint: [-xpercent, 0.5],
       backRidgeLeftPoint: [xpercent, 0.5],
       backRidgeRightPoint: [-xpercent, 0.5],
-      textureType: RoofTexture.Default,
-      color: '#454769',
+      textureType: texture ?? RoofTexture.Default,
+      color: color ?? '#454769',
       selected: false,
       lineWidth: 0.2,
       lineColor: 'black',
@@ -813,7 +846,15 @@ export class ElementModelFactory {
     } as GambrelRoofModel;
   }
 
-  static makeMansardRoof(wallsId: string[], parent: ElementModel, lz: number) {
+  static makeMansardRoof(
+    wallsId: string[],
+    parent: ElementModel,
+    lz: number,
+    thickness: number,
+    overhang: number,
+    color: string,
+    texture: RoofTexture,
+  ) {
     return {
       type: ObjectType.Roof,
       cx: 0,
@@ -822,14 +863,14 @@ export class ElementModelFactory {
       lx: 0,
       ly: 0,
       lz: lz * 1.5,
-      overhang: 0.3,
-      thickness: 0.2,
+      overhang: overhang ?? 0.3,
+      thickness: thickness ?? 0.2,
       roofType: RoofType.Mansard,
       roofStructure: RoofStructure.Default,
       wallsId: [...wallsId],
       ridgeWidth: 1,
-      textureType: RoofTexture.Default,
-      color: '#454769',
+      textureType: texture ?? RoofTexture.Default,
+      color: color ?? '#454769',
       selected: false,
       lineWidth: 0.2,
       lineColor: 'black',

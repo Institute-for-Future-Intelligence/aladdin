@@ -69,13 +69,14 @@ const RoofOpacityInput = ({ setDialogVisible }: { setDialogVisible: (b: boolean)
         setCommonStore((state) => {
           for (const e of state.elements) {
             if (e.type === ObjectType.Roof && !e.locked) {
-              oldValuesAll.set(e.id, (e as RoofModel).opacity);
-              (e as RoofModel).opacity = value;
+              const roof = e as RoofModel;
+              oldValuesAll.set(e.id, roof.opacity);
+              roof.opacity = value;
             }
           }
         });
         const undoableChangeAll = {
-          name: 'Set Sunroom Opacity for All Roofs',
+          name: 'Set Opacity for All Roofs',
           timestamp: Date.now(),
           oldValues: oldValuesAll,
           newValue: value,
@@ -95,13 +96,14 @@ const RoofOpacityInput = ({ setDialogVisible }: { setDialogVisible: (b: boolean)
           setCommonStore((state) => {
             for (const elem of state.elements) {
               if (elem.type === ObjectType.Roof && elem.foundationId === roof.foundationId && !elem.locked) {
-                oldValuesAboveFoundation.set(elem.id, (elem as RoofModel).opacity);
-                (elem as RoofModel).opacity = value;
+                const roof = elem as RoofModel;
+                oldValuesAboveFoundation.set(elem.id, roof.opacity);
+                roof.opacity = value;
               }
             }
           });
           const undoableChangeAboveFoundation = {
-            name: 'Set Sunroom Opacity for All Roofs Above Foundation',
+            name: 'Set Opacity for All Roofs Above Foundation',
             timestamp: Date.now(),
             oldValues: oldValuesAboveFoundation,
             newValue: value,
@@ -123,11 +125,11 @@ const RoofOpacityInput = ({ setDialogVisible }: { setDialogVisible: (b: boolean)
       default:
         if (roof) {
           const updatedRoof = getElementById(roof.id) as RoofModel;
-          const oldOverhangLength = updatedRoof.opacity ?? roof.opacity ?? 0.5;
+          const oldOpacity = updatedRoof.opacity ?? roof.opacity ?? 0.5;
           const undoableChange = {
-            name: 'Set Sunroom Opacity',
+            name: 'Set Roof Opacity',
             timestamp: Date.now(),
-            oldValue: oldOverhangLength,
+            oldValue: oldOpacity,
             newValue: value,
             changedElementId: roof.id,
             changedElementType: roof.type,
@@ -143,6 +145,9 @@ const RoofOpacityInput = ({ setDialogVisible }: { setDialogVisible: (b: boolean)
           setApplyCount(applyCount + 1);
         }
     }
+    setCommonStore((state) => {
+      state.actionState.roofGlassOpacity = value;
+    });
   };
 
   const onStart = (event: DraggableEvent, uiData: DraggableData) => {
