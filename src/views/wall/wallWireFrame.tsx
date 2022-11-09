@@ -10,8 +10,8 @@ import { useStore } from 'src/stores/common';
 interface WallWireFrameProps {
   lineColor: string;
   lineWidth: number;
-  x: number;
-  z: number;
+  hx: number;
+  hz: number;
   leftHeight?: number;
   rightHeight?: number;
   center?: number[];
@@ -23,22 +23,22 @@ const WallWireFrame = React.memo(
   ({
     lineColor = 'black',
     lineWidth = 0.2,
-    x,
-    z,
-    leftHeight = 2 * z,
-    rightHeight = 2 * z,
+    hx,
+    hz,
+    leftHeight = 2 * hz,
+    rightHeight = 2 * hz,
     center,
     centerLeft,
     centerRight,
   }: WallWireFrameProps) => {
     const orthographic = useStore((state) => state.viewState.orthographic);
 
-    const lowerLeft: [number, number, number] = [-x, -z + 0.001, 0.001];
-    const lowerRight: [number, number, number] = [x, -z + 0.001, 0.001];
-    const upperLeft: [number, number, number] = [-x, leftHeight - z - 0.001, 0.001];
-    const upperRight: [number, number, number] = [x, rightHeight - z - 0.001, 0.001];
+    const lowerLeft: [number, number, number] = [-hx, -hz + 0.001, 0.001];
+    const lowerRight: [number, number, number] = [hx, -hz + 0.001, 0.001];
+    const upperLeft: [number, number, number] = [-hx, leftHeight - hz - 0.001, 0.001];
+    const upperRight: [number, number, number] = [hx, rightHeight - hz - 0.001, 0.001];
 
-    const lx = x * 2;
+    const lx = hx * 2;
     const points = [];
 
     if (orthographic) {
@@ -47,17 +47,17 @@ const WallWireFrame = React.memo(
     } else {
       points.push(upperLeft, lowerLeft, lowerRight, upperRight);
       if (centerRight) {
-        const cr: [number, number, number] = [centerRight[0] * lx, centerRight[1] - z, 0.001];
+        const cr: [number, number, number] = [centerRight[0] * lx, centerRight[1] - hz, 0.001];
         points.push(cr);
       }
 
       if (center) {
-        const c: [number, number, number] = [center[0] * lx, center[1] - z, 0.001];
+        const c: [number, number, number] = [center[0] * lx, center[1] - hz, 0.001];
         points.push(c);
       }
 
       if (centerLeft) {
-        const cl: [number, number, number] = [centerLeft[0] * lx, centerLeft[1] - z, 0.001];
+        const cl: [number, number, number] = [centerLeft[0] * lx, centerLeft[1] - hz, 0.001];
         points.push(cl);
       }
     }

@@ -852,6 +852,7 @@ const GableRoof = ({
           return (
             <RoofSegment
               key={i}
+              id={id}
               points={points}
               direction={isFlat ? arr[0].direction : direction}
               length={isFlat ? 1 : length}
@@ -1102,6 +1103,7 @@ const GableRoof = ({
 };
 
 const RoofSegment = ({
+  id,
   points,
   direction,
   length,
@@ -1112,6 +1114,7 @@ const RoofSegment = ({
   glassTint,
   opacity = 0.5,
 }: {
+  id: string;
   points: Vector3[];
   direction: number;
   length: number;
@@ -1239,6 +1242,7 @@ const RoofSegment = ({
       {((_opacity > 0 && roofStructure === RoofStructure.Rafter) || roofStructure !== RoofStructure.Rafter) && (
         <mesh
           ref={meshRef}
+          uuid={id}
           name={'Gable Roof'}
           castShadow={shadowEnabled && !transparent}
           receiveShadow={shadowEnabled}

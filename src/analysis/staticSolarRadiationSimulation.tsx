@@ -542,16 +542,17 @@ const StaticSolarRadiationSimulation = ({ city }: StaticSolarRadiationSimulation
     const date = now.getDate();
     const dayOfYear = Util.dayOfYear(now);
     const lx = wall.lx; // width
-    const lz = wall.lz; // height
+    const lz = Util.getHighestPointOfWall(wall); // height
     const nx = Math.max(2, Math.round(lx / cellSize));
     const nz = Math.max(2, Math.round(lz / cellSize));
     const dx = lx / nx;
     const dz = lz / nz;
     const absAngle = foundation.rotation[2] + wall.relativeAngle;
-    const absPos = Util.wallAbsolutePosition(new Vector3(wall.cx, wall.cy, wall.cz), foundation).setZ(
-      wall.lz / 2 + foundation.lz,
+    const absPos = Util.wallAbsolutePosition(new Vector3(wall.cx, wall.cy, lz / 2), foundation).setZ(
+      lz / 2 + foundation.lz,
     );
     const normal = new Vector3().fromArray([Math.cos(absAngle - HALF_PI), Math.sin(absAngle - HALF_PI), 0]);
+    console.log(wall.lz, lz, nz, dz, absPos);
     const v = new Vector3();
     const cellOutputTotals = Array(nx)
       .fill(0)

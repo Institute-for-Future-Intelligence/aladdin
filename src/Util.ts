@@ -1077,6 +1077,50 @@ export class Util {
     return { x: v.x, y: v.y } as Point2;
   }
 
+  // get the relative 2D vertices of a wall (can be a quad, pentagon, or heptagon)
+  static getWallVertices(wall: WallModel): Vector2[] {
+    const hx = wall.lx / 2;
+    const hz = wall.lz / 2;
+    const lowerLeft = new Vector2(-hx, -hz);
+    const lowerRight = new Vector2(hx, -hz);
+    const upperLeft = new Vector2(-hx, (wall.leftRoofHeight ?? wall.lz) - hz);
+    const upperRight = new Vector2(hx, (wall.rightRoofHeight ?? wall.lz) - hz);
+    const vertices: Vector2[] = [];
+    vertices.push(upperLeft, lowerLeft, lowerRight, upperRight);
+    if (wall.centerRightRoofHeight) {
+      vertices.push(new Vector2(wall.centerRightRoofHeight[0] * wall.lx, wall.centerRightRoofHeight[1] - hz));
+    }
+    if (wall.centerRoofHeight) {
+      vertices.push(new Vector2(wall.centerRoofHeight[0] * wall.lx, wall.centerRoofHeight[1] - hz));
+    }
+    if (wall.centerLeftRoofHeight) {
+      vertices.push(new Vector2(wall.centerLeftRoofHeight[0] * wall.lx, wall.centerLeftRoofHeight[1] - hz));
+    }
+    return vertices;
+  }
+
+  // get the highest point of a wall (can be a quad, pentagon, or heptagon)
+  static getHighestPointOfWall(wall: WallModel): number {
+    let h = wall.lz;
+    if (wall.leftRoofHeight) {
+      h = Math.max(h, wall.leftRoofHeight);
+    }
+    if (wall.rightRoofHeight) {
+      h = Math.max(h, wall.rightRoofHeight);
+    }
+    if (wall.centerRightRoofHeight) {
+      h = Math.max(h, wall.centerRightRoofHeight[1]);
+    }
+    if (wall.centerRoofHeight) {
+      h = Math.max(h, wall.centerRoofHeight[1]);
+    }
+    if (wall.centerLeftRoofHeight) {
+      h = Math.max(h, wall.centerLeftRoofHeight[1]);
+    }
+    return h;
+  }
+
+  // get the points for all the walls under a roof
   static getWallPoints(roofId: string, wall: WallModel) {
     const array = [];
     const startWall = wall;

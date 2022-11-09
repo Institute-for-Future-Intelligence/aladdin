@@ -251,6 +251,17 @@ const Wall = (wallModel: WallModel) => {
   const getHeatmap = useStore(Selector.getHeatmap);
   const [heatmapTexture, setHeatmapTexture] = useState<CanvasTexture | null>(null);
 
+  const zmax = useMemo(() => {
+    return Util.getHighestPointOfWall(wallModel);
+  }, [
+    wallModel.lz,
+    wallModel.leftRoofHeight,
+    wallModel.rightRoofHeight,
+    wallModel.centerRoofHeight,
+    wallModel.centerLeftRoofHeight,
+    wallModel.centerRightRoofHeight,
+  ]);
+
   useEffect(() => {
     if (wallModel && showSolarRadiationHeatmap) {
       const heatmap = getHeatmap(wallModel.id);
@@ -259,9 +270,9 @@ const Wall = (wallModel: WallModel) => {
         if (t) {
           t.wrapS = RepeatWrapping;
           t.wrapT = RepeatWrapping;
-          t.offset.set(-lx / 2, -lz / 2);
-          t.center.set(lx / 2, lz / 2);
-          t.repeat.set(1 / lx, 1 / lz);
+          t.offset.set(-lx / 2, -zmax / 2);
+          t.center.set(lx / 2, zmax / 2);
+          t.repeat.set(1 / lx, 1 / zmax);
           setHeatmapTexture(t);
         }
       }
@@ -1780,8 +1791,8 @@ const Wall = (wallModel: WallModel) => {
             <WallWireFrame
               lineColor={selected && locked ? LOCKED_ELEMENT_SELECTION_COLOR : lineColor}
               lineWidth={selected && locked ? 2 : lineWidth}
-              x={hx}
-              z={hz}
+              hx={hx}
+              hz={hz}
               leftHeight={leftRoofHeight}
               rightHeight={rightRoofHeight}
               center={centerRoofHeight}
