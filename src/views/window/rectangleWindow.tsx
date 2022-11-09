@@ -131,18 +131,18 @@ const Frame = React.memo(({ dimension, frameData, shadowEnabled }: FrameProps) =
   const material = useMemo(() => <meshStandardMaterial color={color} />, [color]);
 
   const halfWidth = width / 2;
-  const depth = halfWidth;
+  const depth = halfWidth / 2;
 
   const sillLength = lx + width * 3;
   const sillThickness = width;
   const sillDepth = width;
 
   return (
-    <group name={'Window Frame Group'} position={[0, 0, 0]}>
+    <group name={'Window Frame Group'} position={[0, -depth / 2, 0]}>
       {/* top */}
       <Box
         position={[0, 0, lz / 2]}
-        args={[lx + width, depth, width]}
+        args={[lx + 2 * width, depth, width]}
         castShadow={shadowEnabled}
         receiveShadow={shadowEnabled}
       >
@@ -151,7 +151,7 @@ const Frame = React.memo(({ dimension, frameData, shadowEnabled }: FrameProps) =
 
       {/* left */}
       <Box
-        position={[-lx / 2, 0, 0]}
+        position={[-lx / 2 - halfWidth, 0, 0]}
         args={[width, depth, lz]}
         castShadow={shadowEnabled}
         receiveShadow={shadowEnabled}
@@ -160,7 +160,12 @@ const Frame = React.memo(({ dimension, frameData, shadowEnabled }: FrameProps) =
       </Box>
 
       {/* right */}
-      <Box position={[lx / 2, 0, 0]} args={[width, depth, lz]} castShadow={shadowEnabled} receiveShadow={shadowEnabled}>
+      <Box
+        position={[lx / 2 + halfWidth, 0, 0]}
+        args={[width, depth, lz]}
+        castShadow={shadowEnabled}
+        receiveShadow={shadowEnabled}
+      >
         {material}
       </Box>
 
@@ -245,7 +250,10 @@ const RectangleWindow = ({
   const shadowEnabled = useStore(Selector.viewState.shadowEnabled);
 
   const shutterLength = useMemo(() => shutter.width * lx, [lx, shutter]);
-  const shutterPosX = useMemo(() => ((shutterLength + lx) / 2) * 1.025, [lx, shutterLength]);
+  const shutterPosX = useMemo(
+    () => ((shutterLength + frameData.width + lx) / 2) * 1.025,
+    [lx, shutterLength, frameData.width],
+  );
 
   const renderSealPlane = (args: [width: number, height: number], position: ArgsType, rotation?: ArgsType) => (
     <Plane

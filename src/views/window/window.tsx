@@ -14,7 +14,7 @@ import { DEFAULT_WINDOW_SHINESS } from 'src/constants';
 import { ThreeEvent } from '@react-three/fiber';
 import RectangleWindow from './rectangleWindow';
 import { WallModel } from 'src/models/WallModel';
-import ArchWindow from './archWindow';
+import ArchedWindow from './archedWindow';
 
 export const defaultShutter = { showLeft: false, showRight: false, color: 'grey', width: 0.5 };
 
@@ -52,6 +52,11 @@ interface ShutterProps {
 
 export const Shutter = ({ cx, cz = 0, lx, lz, color, showLeft, showRight, spacing }: ShutterProps) => {
   const shadowEnabled = useStore(Selector.viewState.shadowEnabled);
+  const showSolarRadiationHeatmap = useStore(Selector.showSolarRadiationHeatmap);
+  if (showSolarRadiationHeatmap) {
+    return null;
+  }
+
   return (
     <group name={'Shutter Group'}>
       {showRight && (
@@ -254,9 +259,6 @@ const Window = (windowModel: WindowModel) => {
     }
   };
 
-  const shutterLength = useMemo(() => shutter?.width ?? 0.5 * wlx, [wlx, shutter]);
-  const shutterPosX = useMemo(() => ((shutterLength + wlx) / 2) * 1.025, [wlx, shutterLength]);
-
   const glassMaterial = useMemo(
     () => (
       <meshPhongMaterial
@@ -318,7 +320,7 @@ const Window = (windowModel: WindowModel) => {
         );
       case WindowType.Arched:
         return (
-          <ArchWindow
+          <ArchedWindow
             dimension={dimensionData}
             position={positionData}
             mullionData={mullionData}
@@ -340,18 +342,6 @@ const Window = (windowModel: WindowModel) => {
       onContextMenu={onContextMenu}
     >
       {renderWindow()}
-
-      {/* {shutter && (
-        <Shutter
-          cx={shutterPosX}
-          lx={shutterLength}
-          lz={wlz}
-          color={shutter.color}
-          showLeft={shutter.showLeft}
-          showRight={shutter.showRight}
-          spacing={frame ? frameWidth / 2 : 0}
-        />
-      )} */}
 
       {/* handles */}
       {selected && !locked && <WindowHandleWrapper lx={wlx} lz={wlz} windowType={windowType} />}
