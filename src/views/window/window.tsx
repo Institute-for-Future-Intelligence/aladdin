@@ -37,6 +37,7 @@ export type WireframeDataType = {
   lineWidth: number;
   selected: boolean;
   locked: boolean;
+  opacity: number;
 };
 
 interface ShutterProps {
@@ -148,16 +149,17 @@ const useUpdataOldFiles = (windowModel: WindowModel) => {
   }, [fileChanged]);
 };
 
-const Window = (windowModel: WindowModel) => {
-  let {
+export interface WindowProps extends WindowModel {
+  position: number[];
+  dimension: number[];
+}
+
+const Window = (windowModel: WindowProps) => {
+  const {
     id,
     parentId,
-    lx,
-    ly,
-    lz,
-    cx,
-    cy,
-    cz,
+    position,
+    dimension,
     selected,
     locked,
     lineWidth = 0.2,
@@ -176,49 +178,14 @@ const Window = (windowModel: WindowModel) => {
     archHeight,
   } = windowModel;
 
-  // legacy problem
-  if (Math.abs(cy) < 0.001) {
-    cy = 0.1;
-  }
+  const [cx, cy, cz] = position;
+  const [lx, ly, lz] = dimension;
+
   useUpdataOldFiles(windowModel);
 
   const setCommonStore = useStore(Selector.set);
   const isAddingElement = useStore(Selector.isAddingElement);
   const windowShiness = useStore(Selector.viewState.windowShiness);
-  const showSolarRadiationHeatmap = useStore(Selector.showSolarRadiationHeatmap);
-
-  const [wlx, setWlx] = useState(lx);
-  const [wly, setWly] = useState(ly);
-  const [wlz, setWlz] = useState(lz);
-  const [wcx, setWcx] = useState(cx);
-  const [wcy, setWcy] = useState(cy);
-  const [wcz, setWcz] = useState(cz);
-
-  const parentSelector = useCallback((state: CommonStoreState) => {
-    for (const e of state.elements) {
-      if (e.id === parentId) {
-        return e;
-      }
-    }
-    return null;
-  }, []);
-
-  const parent = useStore(parentSelector) as WallModel;
-
-  useEffect(() => {
-    if (parent) {
-      setWlx(lx * parent.lx);
-      setWly(parent.ly);
-      setWlz(lz * parent.lz);
-      setWcx(cx * parent.lx);
-      setWcz(cz * parent.lz);
-      if (cy > 0) {
-        setWcy(0.33 * parent.ly);
-      } else {
-        setWcy(cy);
-      }
-    }
-  }, [lx, ly, lz, cx, cy, cz, parent?.lx, parent?.ly, parent?.lz]);
 
   const selectMe = () => {
     setCommonStore((state) => {
@@ -275,12 +242,12 @@ const Window = (windowModel: WindowModel) => {
 
   const dimensionData = useMemo(() => {
     if (archHeight !== undefined) {
-      return [wlx, wly, wlz, archHeight];
+      return [lx, ly, lz, archHeight];
     }
-    return [wlx, wly, wlz];
-  }, [wlx, wly, wlz, archHeight]);
+    return dimension;
+  }, [lx, ly, lz, archHeight]);
 
-  const positionData = useMemo(() => [wcx, wcy, wcz], [wcx, wcy, wcz]);
+  const positionData = useMemo(() => position, [cx, cy, cz]);
 
   const mullionData = useMemo(
     () =>
@@ -300,8 +267,8 @@ const Window = (windowModel: WindowModel) => {
   );
 
   const wireframeData = useMemo(
-    () => ({ lineColor, lineWidth, selected, locked } as WireframeDataType),
-    [lineColor, lineWidth, selected, locked],
+    () => ({ lineColor, lineWidth, selected, locked, opacity } as WireframeDataType),
+    [lineColor, lineWidth, selected, locked, opacity],
   );
 
   const renderWindow = () => {
@@ -337,14 +304,14 @@ const Window = (windowModel: WindowModel) => {
     <group
       key={id}
       name={`Window group ${id}`}
-      position={[wcx, 0, wcz]}
+      position={[cx, 0, cz]}
       onPointerDown={onPointerDown}
       onContextMenu={onContextMenu}
     >
       {renderWindow()}
 
       {/* handles */}
-      {selected && !locked && <WindowHandleWrapper lx={wlx} lz={wlz} windowType={windowType} />}
+      {selected && !locked && <WindowHandleWrapper lx={lx} lz={lz} windowType={windowType} />}
     </group>
   );
 };

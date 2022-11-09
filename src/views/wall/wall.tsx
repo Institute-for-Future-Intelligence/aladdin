@@ -43,7 +43,7 @@ import { WallModel, WallStructure } from 'src/models/WallModel';
 import { ElementModelFactory } from 'src/models/ElementModelFactory';
 import { Point2 } from 'src/models/Point2';
 import { ElementGrid } from '../elementGrid';
-import Window from '../window/window';
+import Window, { WindowProps } from '../window/window';
 import WallWireFrame from './wallWireFrame';
 import WallResizeHandleWarpper from './wallResizeHandleWrapper';
 import WallMoveHandleWarpper from './wallMoveHandleWrapper';
@@ -1670,7 +1670,7 @@ const Wall = (wallModel: WallModel) => {
                 )}
               </mesh>
 
-              <mesh rotation={[HALF_PI, 0, 0]} position={[0, 0.02, 0]} castShadow={castShadow}>
+              <mesh rotation={[HALF_PI, 0, 0]} position={[0, 0.05, 0]} castShadow={castShadow}>
                 <shapeBufferGeometry args={[insideWallShape]} />
                 <meshStandardMaterial color={'white'} side={BackSide} transparent={transparent} opacity={opacity} />
               </mesh>
@@ -1762,8 +1762,11 @@ const Wall = (wallModel: WallModel) => {
 
               {elementsOnWall.map((e) => {
                 switch (e.type) {
-                  case ObjectType.Window:
-                    return <Window key={e.id} {...(e as WindowModel)} />;
+                  case ObjectType.Window: {
+                    const position = [e.cx * lx, 0.33 * ly, e.cz * lz];
+                    const dimension = [e.lx * lx, ly, e.lz * lz];
+                    return <Window key={e.id} {...(e as WindowProps)} position={position} dimension={dimension} />;
+                  }
                   case ObjectType.Door:
                     return <Door key={e.id} {...(e as DoorModel)} />;
                   case ObjectType.SolarPanel:
