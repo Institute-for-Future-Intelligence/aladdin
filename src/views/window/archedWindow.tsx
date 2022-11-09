@@ -2,25 +2,13 @@
  * @Copyright 2022. Institute for Future Intelligence, Inc.
  */
 
-import React, { useMemo, useRef } from 'react';
-import {
-  CatmullRomCurve3,
-  Curve,
-  DoubleSide,
-  EllipseCurve,
-  FrontSide,
-  Mesh,
-  MeshStandardMaterial,
-  Shape,
-  Vector3,
-} from 'three';
-import { Box, Cylinder, Extrude, Plane, Tube } from '@react-three/drei';
+import React, { useMemo } from 'react';
+import { CatmullRomCurve3, EllipseCurve, FrontSide, MeshStandardMaterial, Shape, Vector3 } from 'three';
+import { Box, Cylinder, Extrude, Plane } from '@react-three/drei';
 import { useStore } from 'src/stores/common';
 import * as Selector from 'src/stores/selector';
 import { HALF_PI, LOCKED_ELEMENT_SELECTION_COLOR } from 'src/constants';
 import { FrameDataType, MullionDataType, Shutter, WireframeDataType } from './window';
-import { ResizeHandleType } from 'src/types';
-import { useStoreRef } from 'src/stores/commonRef';
 import { ShutterProps } from 'src/models/WindowModel';
 
 interface ArchWindowProps {
@@ -83,7 +71,7 @@ const Mullion = React.memo(({ dimension, mullionData, shadowEnabled }: MullionPr
     const startAngle = Math.acos(x / r);
     const endAngle = Math.PI - startAngle;
     const points = new EllipseCurve(0, h - r, r, r, startAngle, endAngle, false, 0)
-      .getPoints()
+      .getPoints(24)
       .map((v2) => new Vector3(v2.x, v2.y));
     return new CatmullRomCurve3(points);
   };
@@ -221,33 +209,69 @@ const Mullion = React.memo(({ dimension, mullionData, shadowEnabled }: MullionPr
 });
 
 const Frame = React.memo(({ dimension, frameData, shadowEnabled }: FrameProps) => {
-  const [lx, ly, lz] = dimension;
+  const [lx, ly, lz, archHeight] = dimension;
+  const hx = lx / 2;
+  const ah = Math.min(archHeight, lz, hx);
+
   const { color, width } = frameData;
   const material = useMemo(() => <meshStandardMaterial color={color} />, [color]);
 
   const halfWidth = width / 2;
-  const depth = halfWidth;
+  const depth = halfWidth / 2;
 
   const sillLength = lx + width * 3;
   const sillThickness = width;
   const sillDepth = width;
 
+  const archedFrameShape = useMemo(() => {
+    const [x1, x2] = [hx + width, hx];
+
+    const h1 = ah + width;
+    const r1 = h1 / 2 + (x1 * 2) ** 2 / (8 * h1);
+    const startAngle1 = Math.acos(x1 / r1);
+    const endAngle1 = Math.PI - startAngle1;
+    const y1 = h1 - r1;
+
+    const h2 = ah;
+    const r2 = h2 / 2 + (x2 * 2) ** 2 / (8 * h2);
+    const startAngle2 = Math.acos(x2 / r2);
+    const endAngle2 = Math.PI - startAngle2;
+    const y2 = h2 - r2;
+
+    const points1 = new EllipseCurve(0, y1, r1, r1, startAngle1, endAngle1, false, 0).getPoints(36);
+    const points2 = new EllipseCurve(0, y2, r2, r2, endAngle2, startAngle2, true, 0).getPoints(36);
+
+    return new Shape([...points1, ...points2]);
+  }, [archHeight, lz, lx, width]);
+
   return (
-    <group name={'Window Frame Group'} position={[0, 0, 0]}>
+    <group name={'Window Frame Group'} position={[0, -depth / 2, 0]}>
       {/* top */}
-      <Box
-        position={[0, 0, lz / 2]}
-        args={[lx + width, depth, width]}
-        castShadow={shadowEnabled}
-        receiveShadow={shadowEnabled}
-      >
-        {material}
-      </Box>
+      {ah > 0.1 ? (
+        <Extrude
+          position={[0, depth / 2, lz / 2 - ah]}
+          rotation={[HALF_PI, 0, 0]}
+          args={[archedFrameShape, { depth, steps: 1, bevelEnabled: false }]}
+          castShadow={shadowEnabled}
+          receiveShadow={shadowEnabled}
+        >
+          {material}
+        </Extrude>
+      ) : (
+        <Box
+          position={[0, 0, lz / 2]}
+          args={[lx + 2 * width, depth, width]}
+          castShadow={shadowEnabled}
+          receiveShadow={shadowEnabled}
+        >
+          {material}
+        </Box>
+      )}
 
       {/* left */}
       <Box
-        position={[-lx / 2, 0, 0]}
-        args={[width, depth, lz]}
+        position={[-lx / 2 - halfWidth, 0, -ah / 2]}
+        args={[width, depth, lz - ah]}
         castShadow={shadowEnabled}
         receiveShadow={shadowEnabled}
       >
@@ -255,7 +279,12 @@ const Frame = React.memo(({ dimension, frameData, shadowEnabled }: FrameProps) =
       </Box>
 
       {/* right */}
-      <Box position={[lx / 2, 0, 0]} args={[width, depth, lz]} castShadow={shadowEnabled} receiveShadow={shadowEnabled}>
+      <Box
+        position={[lx / 2 + halfWidth, 0, -ah / 2]}
+        args={[width, depth, lz - ah]}
+        castShadow={shadowEnabled}
+        receiveShadow={shadowEnabled}
+      >
         {material}
       </Box>
 
@@ -273,44 +302,82 @@ const Frame = React.memo(({ dimension, frameData, shadowEnabled }: FrameProps) =
 });
 
 const Wireframe = React.memo(({ cy, dimension, wireframeData }: WireframeProps) => {
-  const [lx, ly, lz] = dimension;
+  const [lx, ly, lz, archHeight] = dimension;
   const { lineWidth, lineColor, selected, locked } = wireframeData;
+
+  const thinLine = lineWidth / 20;
+  const boldLine = lineWidth / 5;
 
   const hx = lx / 2;
   const hz = lz / 2;
+  const ah = Math.min(archHeight, lz, hx);
 
-  const radialSegments = 3;
+  const radialSegments = 6;
   const heightSegments = 1;
+
+  const drawArchedPath = (ah: number, x: number) => {
+    const r = ah / 2 + (x * 2) ** 2 / (8 * ah);
+    const startAngle = Math.acos(x / r);
+    const endAngle = Math.PI - startAngle;
+    const points = new EllipseCurve(0, ah - r, r, r, startAngle, endAngle, false, 0)
+      .getPoints(24)
+      .map((v2) => new Vector3(v2.x, v2.y));
+    return new CatmullRomCurve3(points);
+  };
+
+  const drawCircleShape = (radius: number) => {
+    return new Shape()
+      .moveTo(0, radius)
+      .quadraticCurveTo(radius, radius, radius, 0)
+      .quadraticCurveTo(radius, -radius, 0, -radius)
+      .quadraticCurveTo(-radius, -radius, -radius, 0)
+      .quadraticCurveTo(-radius, radius, 0, radius);
+  };
 
   const material = useMemo(() => new MeshStandardMaterial({ color: lineColor }), [lineColor]);
   const highLightMaterial = useMemo(() => new MeshStandardMaterial({ color: LOCKED_ELEMENT_SELECTION_COLOR }), []);
 
   const renderLines = (width: number, mat: MeshStandardMaterial) => {
-    const wireframeRadius = width / 2;
     return (
       <>
+        {/* top */}
+        {ah > 0.1 ? (
+          <Extrude
+            position={[0, 0, lz / 2 - ah]}
+            rotation={[HALF_PI, 0, 0]}
+            args={[drawCircleShape(width), { extrudePath: drawArchedPath(ah, hx), steps: 24, bevelEnabled: false }]}
+            material={mat}
+          />
+        ) : (
+          <Cylinder
+            args={[width, width, lx, radialSegments, heightSegments]}
+            rotation={[0, 0, HALF_PI]}
+            position={[0, 0, hz - width / 2]}
+            material={mat}
+          />
+        )}
+
+        {/* bottom */}
         <Cylinder
           args={[width, width, lx, radialSegments, heightSegments]}
           rotation={[0, 0, HALF_PI]}
-          position={[0, 0, hz - wireframeRadius]}
+          position={[0, 0, -hz]}
           material={mat}
         />
+
+        {/* right */}
         <Cylinder
-          args={[width, width, lx, radialSegments, heightSegments]}
-          rotation={[0, 0, HALF_PI]}
-          position={[0, 0, -hz + wireframeRadius]}
-          material={mat}
-        />
-        <Cylinder
-          args={[width, width, lz, radialSegments, heightSegments]}
+          args={[width, width, lz - ah, radialSegments, heightSegments]}
           rotation={[HALF_PI, HALF_PI, 0]}
-          position={[hx - wireframeRadius, 0, 0]}
+          position={[hx, 0, -ah / 2]}
           material={mat}
         />
+
+        {/* left */}
         <Cylinder
-          args={[width, width, lz, radialSegments, heightSegments]}
+          args={[width, width, lz - ah, radialSegments, heightSegments]}
           rotation={[HALF_PI, HALF_PI, 0]}
-          position={[-hx + wireframeRadius, 0, 0]}
+          position={[-hx, 0, -ah / 2]}
           material={mat}
         />
       </>
@@ -319,13 +386,13 @@ const Wireframe = React.memo(({ cy, dimension, wireframeData }: WireframeProps) 
 
   return (
     <group name={'Window Wireframe Group'}>
-      <group position={[0, cy, 0]}>{renderLines(lineWidth / 20, material)}</group>
-      {locked && selected && renderLines(lineWidth / 5, highLightMaterial)}
+      <group position={[0, cy, 0]}>{renderLines(thinLine, material)}</group>
+      {locked && selected && renderLines(boldLine, highLightMaterial)}
     </group>
   );
 });
 
-const ArchWindow = ({
+const ArchedWindow = ({
   dimension,
   position,
   mullionData,
@@ -341,10 +408,13 @@ const ArchWindow = ({
 
   const shutterWidth = useMemo(() => shutter.width * lx, [lx, shutter.width]);
   const shutterHeight = useMemo(() => lz - Math.min(archHeight, lz, lx / 2), [lx, lz, archHeight]);
-  const shutterPosX = useMemo(() => ((shutterWidth + lx) / 2) * 1.025, [lx, shutterWidth]);
+  const shutterPosX = useMemo(
+    () => ((shutterWidth + frameData.width + lx) / 2) * 1.025,
+    [lx, shutterWidth, frameData.width],
+  );
   const shutterPosZ = useMemo(() => -Math.min(archHeight, lz, lx / 2) / 2, [lz, shutterHeight]);
 
-  const shape = useMemo(() => {
+  const glassShape = useMemo(() => {
     const s = new Shape();
     const hx = lx / 2;
     const hz = lz / 2;
@@ -381,7 +451,7 @@ const ArchWindow = ({
     <>
       <group name={'Arched Window Plane Group'} position={[0, cy, 0]}>
         <mesh name={'Window Glass mesh'} rotation={[HALF_PI, 0, 0]}>
-          <shapeBufferGeometry args={[shape]} />
+          <shapeBufferGeometry args={[glassShape]} />
           {glassMaterial}
         </mesh>
 
@@ -390,9 +460,9 @@ const ArchWindow = ({
         )}
       </group>
 
-      {/* {frameData.showFrame && <Frame dimension={dimension} frameData={frameData} shadowEnabled={shadowEnabled} />} */}
+      {frameData.showFrame && <Frame dimension={dimension} frameData={frameData} shadowEnabled={shadowEnabled} />}
 
-      {/* <Wireframe cy={cy} dimension={dimension} wireframeData={wireframeData} /> */}
+      <Wireframe cy={cy} dimension={dimension} wireframeData={wireframeData} />
 
       <Shutter
         cx={shutterPosX}
@@ -413,4 +483,4 @@ const ArchWindow = ({
   );
 };
 
-export default React.memo(ArchWindow);
+export default React.memo(ArchedWindow);
