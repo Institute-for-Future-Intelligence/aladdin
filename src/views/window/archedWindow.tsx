@@ -303,7 +303,7 @@ const Frame = React.memo(({ dimension, frameData, shadowEnabled }: FrameProps) =
 
 const Wireframe = React.memo(({ cy, dimension, wireframeData }: WireframeProps) => {
   const [lx, ly, lz, archHeight] = dimension;
-  const { lineWidth, lineColor, selected, locked } = wireframeData;
+  const { lineWidth, lineColor, selected, locked, opacity } = wireframeData;
 
   const thinLine = lineWidth / 20;
   const boldLine = lineWidth / 5;
@@ -386,7 +386,7 @@ const Wireframe = React.memo(({ cy, dimension, wireframeData }: WireframeProps) 
 
   return (
     <group name={'Window Wireframe Group'}>
-      <group position={[0, cy, 0]}>{renderLines(thinLine, material)}</group>
+      {opacity > 0 && <group position={[0, cy, 0]}>{renderLines(thinLine, material)}</group>}
       {locked && selected && renderLines(boldLine, highLightMaterial)}
     </group>
   );

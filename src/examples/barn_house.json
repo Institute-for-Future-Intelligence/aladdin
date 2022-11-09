@@ -1,7 +1,7 @@
 {
-  "docid": "ii6EN76P2jW6SBY56spJhW",
-  "time": "11/06/2022 09:50 pm",
-  "timestamp": 1667789423523,
+  "docid": "oyqo9poyh6Z9FQ9f3wnFiw",
+  "time": "11/09/2022 12:08 pm",
+  "timestamp": 1668013698018,
   "userid": "QWecNcxhyvP6j6sBN11hBsfZDau1",
   "owner": null,
   "email": null,
@@ -1451,7 +1451,7 @@
       "archHeight": 1
     },
     {
-      "lz": 0.08333333333333333,
+      "lz": 0.09999999999999998,
       "rotation": [
         0,
         0,
@@ -1461,10 +1461,10 @@
       "color": "#ffffff",
       "ly": 0.3,
       "cy": 0.1,
-      "lx": 0.2857142857142857,
+      "lx": 0.3047619047619048,
       "type": "Window",
       "cx": 0,
-      "cz": -0.09999999999999999,
+      "cz": -0.09999999999999998,
       "selected": false,
       "showLabel": false,
       "parentId": "iF8yBnVR7zKfNKiVQ7M1op",
@@ -1489,7 +1489,7 @@
       "frame": true,
       "frameWidth": 0.1,
       "windowType": "Arched",
-      "archHeight": 1
+      "archHeight": 1.1999999999999997
     },
     {
       "type": "Tree",
@@ -1677,13 +1677,13 @@
     },
     {
       "type": "Door",
-      "cx": 0,
+      "cx": 1.057355261547768e-17,
       "cy": 0,
       "cz": -0.325,
-      "lx": 0.2857142857142857,
+      "lx": 0.32380952380952377,
       "ly": 0,
-      "lz": 0.35,
-      "textureType": "Door Texture #3",
+      "lz": 0.35000000000000003,
+      "textureType": "Door Texture #2",
       "selected": false,
       "showLabel": false,
       "normal": [
@@ -4418,9 +4418,9 @@
     "enableRotate": true,
     "weatherPanelY": 0,
     "cameraPosition": [
-      38.759844199543075,
-      -19.64771821675162,
-      11.389216396540267
+      42.27919447148249,
+      -23.53787245681578,
+      6.1368392135133325
     ],
     "showYearlyUpdraftTowerYieldPanel": false,
     "showSunAngles": false,
