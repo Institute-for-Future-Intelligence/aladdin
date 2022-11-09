@@ -183,7 +183,7 @@ const StaticSolarRadiationSimulation = ({ city }: StaticSolarRadiationSimulation
             for (let v = 0; v < ny; v++) {
               topCellOutputTotals[u][v] += indirectRadiation;
               if (dot > 0) {
-                v2.set(uc + u * dx, vc + v * dy);
+                v2.set(uc + (u + 0.5) * dx, vc + (v + 0.5) * dy);
                 v2.rotateAround(center2d, cuboid.rotation[2]);
                 vec.set(v2.x, v2.y, lz);
                 if (!inShadow(cuboid.id, vec, sunDirection)) {
@@ -203,9 +203,9 @@ const StaticSolarRadiationSimulation = ({ city }: StaticSolarRadiationSimulation
             for (let v = 0; v < nz; v++) {
               southCellOutputTotals[u][v] += indirectRadiation;
               if (dot > 0) {
-                v2.set(uc + u * dx, southY);
+                v2.set(uc + (u + 0.5) * dx, southY);
                 v2.rotateAround(center2d, cuboid.rotation[2]);
-                vec.set(v2.x, v2.y, vc + v * dz);
+                vec.set(v2.x, v2.y, vc + (v + 0.5) * dz);
                 if (!inShadow(cuboid.id, vec, sunDirection)) {
                   // direct radiation
                   southCellOutputTotals[u][v] += dot * peakRadiation;
@@ -221,9 +221,9 @@ const StaticSolarRadiationSimulation = ({ city }: StaticSolarRadiationSimulation
             for (let v = 0; v < nz; v++) {
               northCellOutputTotals[u][v] += indirectRadiation;
               if (dot > 0) {
-                v2.set(uc + u * dx, northY);
+                v2.set(uc + (u + 0.5) * dx, northY);
                 v2.rotateAround(center2d, cuboid.rotation[2]);
-                vec.set(v2.x, v2.y, vc + (nz - v) * dz);
+                vec.set(v2.x, v2.y, vc + (nz - (v + 0.5)) * dz);
                 if (!inShadow(cuboid.id, vec, sunDirection)) {
                   // direct radiation
                   northCellOutputTotals[u][v] += dot * peakRadiation;
@@ -241,9 +241,9 @@ const StaticSolarRadiationSimulation = ({ city }: StaticSolarRadiationSimulation
             for (let v = 0; v < nz; v++) {
               westCellOutputTotals[u][v] += indirectRadiation;
               if (dot > 0) {
-                v2.set(westX, uc + u * dy);
+                v2.set(westX, uc + (u + 0.5) * dy);
                 v2.rotateAround(center2d, cuboid.rotation[2]);
-                vec.set(v2.x, v2.y, vc + v * dz);
+                vec.set(v2.x, v2.y, vc + (v + 0.5) * dz);
                 if (!inShadow(cuboid.id, vec, sunDirection)) {
                   // direct radiation
                   westCellOutputTotals[u][v] += dot * peakRadiation;
@@ -259,9 +259,9 @@ const StaticSolarRadiationSimulation = ({ city }: StaticSolarRadiationSimulation
             for (let v = 0; v < nz; v++) {
               eastCellOutputTotals[u][v] += indirectRadiation;
               if (dot > 0) {
-                v2.set(eastX, uc + u * dy);
+                v2.set(eastX, uc + (u + 0.5) * dy);
                 v2.rotateAround(center2d, cuboid.rotation[2]);
-                vec.set(v2.x, v2.y, vc + v * dz);
+                vec.set(v2.x, v2.y, vc + (v + 0.5) * dz);
                 if (!inShadow(cuboid.id, vec, sunDirection)) {
                   // direct radiation
                   eastCellOutputTotals[u][v] += dot * peakRadiation;
@@ -334,7 +334,7 @@ const StaticSolarRadiationSimulation = ({ city }: StaticSolarRadiationSimulation
             for (let ky = 0; ky < ny; ky++) {
               cellOutputTotals[kx][ky] += indirectRadiation;
               if (dot > 0) {
-                v2.set(x0 + kx * dx, y0 + ky * dy);
+                v2.set(x0 + (kx + 0.5) * dx, y0 + (ky + 0.5) * dy);
                 v2.rotateAround(center2d, foundation.rotation[2]);
                 v.set(v2.x, v2.y, lz);
                 if (!inShadow(foundation.id, v, sunDirection)) {
@@ -392,10 +392,10 @@ const StaticSolarRadiationSimulation = ({ city }: StaticSolarRadiationSimulation
           );
           const dot = UNIT_VECTOR_POS_Z.dot(sunDirection);
           for (let kx = 0; kx < max; kx++) {
-            v.x = x0 + kx * cellSize;
+            v.x = x0 + (kx + 0.5) * cellSize;
             dx = v.x - foundation.cx;
             for (let ky = 0; ky < max; ky++) {
-              v.y = y0 + ky * cellSize;
+              v.y = y0 + (ky + 0.5) * cellSize;
               dy = v.y - foundation.cy;
               if (dx * dx + dy * dy > rsq) continue;
               cellOutputTotals[kx][ky] += indirectRadiation;
@@ -567,12 +567,7 @@ const StaticSolarRadiationSimulation = ({ city }: StaticSolarRadiationSimulation
           // when the sun is out
           count++;
           const peakRadiation = calculatePeakRadiation(sunDirection, dayOfYear, elevation, AirMass.SPHERE_MODEL);
-          const indirectRadiation = calculateDiffuseAndReflectedRadiation(
-            world.ground,
-            month,
-            UNIT_VECTOR_POS_Z,
-            peakRadiation,
-          );
+          const indirectRadiation = calculateDiffuseAndReflectedRadiation(world.ground, month, normal, peakRadiation);
           const dot = normal.dot(sunDirection);
           for (let kx = 0; kx < nx; kx++) {
             for (let kz = 0; kz < nz; kz++) {

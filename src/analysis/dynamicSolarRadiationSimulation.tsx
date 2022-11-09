@@ -400,7 +400,7 @@ const DynamicSolarRadiationSimulation = ({ city }: DynamicSolarRadiationSimulati
       for (let v = 0; v < ny; v++) {
         cellOutputsTop[u][v] += indirectRadiation;
         if (dot > 0) {
-          v2.set(uc + u * dx, vc + v * dy);
+          v2.set(uc + (u + 0.5) * dx, vc + (v + 0.5) * dy);
           v2.rotateAround(center2d, cuboid.rotation[2]);
           vec.set(v2.x, v2.y, lz);
           if (!inShadow(cuboid.id, vec, sunDirection)) {
@@ -420,9 +420,9 @@ const DynamicSolarRadiationSimulation = ({ city }: DynamicSolarRadiationSimulati
       for (let v = 0; v < nz; v++) {
         cellOutputsSouth[u][v] += indirectRadiation;
         if (dot > 0) {
-          v2.set(uc + u * dx, southY);
+          v2.set(uc + (u + 0.5) * dx, southY);
           v2.rotateAround(center2d, cuboid.rotation[2]);
-          vec.set(v2.x, v2.y, vc + v * dz);
+          vec.set(v2.x, v2.y, vc + (v + 0.5) * dz);
           if (!inShadow(cuboid.id, vec, sunDirection)) {
             // direct radiation
             cellOutputsSouth[u][v] += dot * peakRadiation;
@@ -438,9 +438,9 @@ const DynamicSolarRadiationSimulation = ({ city }: DynamicSolarRadiationSimulati
       for (let v = 0; v < nz; v++) {
         cellOutputsNorth[u][v] += indirectRadiation;
         if (dot > 0) {
-          v2.set(uc + u * dx, northY);
+          v2.set(uc + (u + 0.5) * dx, northY);
           v2.rotateAround(center2d, cuboid.rotation[2]);
-          vec.set(v2.x, v2.y, vc + (nz - v) * dz);
+          vec.set(v2.x, v2.y, vc + (nz - (v + 0.5)) * dz);
           if (!inShadow(cuboid.id, vec, sunDirection)) {
             // direct radiation
             cellOutputsNorth[u][v] += dot * peakRadiation;
@@ -458,9 +458,9 @@ const DynamicSolarRadiationSimulation = ({ city }: DynamicSolarRadiationSimulati
       for (let v = 0; v < nz; v++) {
         cellOutputsWest[u][v] += indirectRadiation;
         if (dot > 0) {
-          v2.set(westX, uc + u * dy);
+          v2.set(westX, uc + (u + 0.5) * dy);
           v2.rotateAround(center2d, cuboid.rotation[2]);
-          vec.set(v2.x, v2.y, vc + v * dz);
+          vec.set(v2.x, v2.y, vc + (v + 0.5) * dz);
           if (!inShadow(cuboid.id, vec, sunDirection)) {
             // direct radiation
             cellOutputsWest[u][v] += dot * peakRadiation;
@@ -476,9 +476,9 @@ const DynamicSolarRadiationSimulation = ({ city }: DynamicSolarRadiationSimulati
       for (let v = 0; v < nz; v++) {
         cellOutputsEast[u][v] += indirectRadiation;
         if (dot > 0) {
-          v2.set(eastX, uc + u * dy);
+          v2.set(eastX, uc + (u + 0.5) * dy);
           v2.rotateAround(center2d, cuboid.rotation[2]);
-          vec.set(v2.x, v2.y, vc + v * dz);
+          vec.set(v2.x, v2.y, vc + (v + 0.5) * dz);
           if (!inShadow(cuboid.id, vec, sunDirection)) {
             // direct radiation
             cellOutputsEast[u][v] += dot * peakRadiation;
@@ -523,7 +523,7 @@ const DynamicSolarRadiationSimulation = ({ city }: DynamicSolarRadiationSimulati
       for (let ky = 0; ky < ny; ky++) {
         cellOutputs[kx][ky] += indirectRadiation;
         if (dot > 0) {
-          v2.set(x0 + kx * dx, y0 + ky * dy);
+          v2.set(x0 + (kx + 0.5) * dx, y0 + (ky + 0.5) * dy);
           v2.rotateAround(center2d, foundation.rotation[2]);
           v.set(v2.x, v2.y, lz);
           if (!inShadow(foundation.id, v, sunDirection)) {
@@ -566,7 +566,7 @@ const DynamicSolarRadiationSimulation = ({ city }: DynamicSolarRadiationSimulati
     const indirectRadiation = calculateDiffuseAndReflectedRadiation(
       world.ground,
       now.getMonth(),
-      UNIT_VECTOR_POS_Z,
+      normal,
       peakRadiation,
     );
     const dot = normal.dot(sunDirection);
