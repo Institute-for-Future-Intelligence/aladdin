@@ -8,7 +8,8 @@ import { Box, Cylinder, Plane } from '@react-three/drei';
 import { useStore } from 'src/stores/common';
 import * as Selector from 'src/stores/selector';
 import { HALF_PI, LOCKED_ELEMENT_SELECTION_COLOR } from 'src/constants';
-import { FrameDataType, MullionDataType, WireframeDataType } from './window';
+import { FrameDataType, MullionDataType, Shutter, WireframeDataType } from './window';
+import { ShutterProps } from 'src/models/WindowModel';
 
 interface RectangleWindowProps {
   dimension: number[];
@@ -16,6 +17,7 @@ interface RectangleWindowProps {
   mullionData: MullionDataType;
   frameData: FrameDataType;
   wireframeData: WireframeDataType;
+  shutter: ShutterProps;
   glassMaterial: JSX.Element;
 }
 interface MullionProps {
@@ -129,18 +131,18 @@ const Frame = React.memo(({ dimension, frameData, shadowEnabled }: FrameProps) =
   const material = useMemo(() => <meshStandardMaterial color={color} />, [color]);
 
   const halfWidth = width / 2;
-  const depth = halfWidth;
+  const depth = halfWidth / 2;
 
   const sillLength = lx + width * 3;
   const sillThickness = width;
   const sillDepth = width;
 
   return (
-    <group name={'Window Frame Group'} position={[0, 0, 0]}>
+    <group name={'Window Frame Group'} position={[0, -depth / 2, 0]}>
       {/* top */}
       <Box
         position={[0, 0, lz / 2]}
-        args={[lx + width, depth, width]}
+        args={[lx + 2 * width, depth, width]}
         castShadow={shadowEnabled}
         receiveShadow={shadowEnabled}
       >
@@ -149,7 +151,7 @@ const Frame = React.memo(({ dimension, frameData, shadowEnabled }: FrameProps) =
 
       {/* left */}
       <Box
-        position={[-lx / 2, 0, 0]}
+        position={[-lx / 2 - halfWidth, 0, 0]}
         args={[width, depth, lz]}
         castShadow={shadowEnabled}
         receiveShadow={shadowEnabled}
@@ -158,7 +160,12 @@ const Frame = React.memo(({ dimension, frameData, shadowEnabled }: FrameProps) =
       </Box>
 
       {/* right */}
-      <Box position={[lx / 2, 0, 0]} args={[width, depth, lz]} castShadow={shadowEnabled} receiveShadow={shadowEnabled}>
+      <Box
+        position={[lx / 2 + halfWidth, 0, 0]}
+        args={[width, depth, lz]}
+        castShadow={shadowEnabled}
+        receiveShadow={shadowEnabled}
+      >
         {material}
       </Box>
 
@@ -234,12 +241,19 @@ const RectangleWindow = ({
   mullionData,
   frameData,
   wireframeData,
+  shutter,
   glassMaterial,
 }: RectangleWindowProps) => {
   const [lx, ly, lz] = dimension;
   const [cx, cy, cz] = position;
 
   const shadowEnabled = useStore(Selector.viewState.shadowEnabled);
+
+  const shutterLength = useMemo(() => shutter.width * lx, [lx, shutter]);
+  const shutterPosX = useMemo(
+    () => ((shutterLength + frameData.width + lx) / 2) * 1.025,
+    [lx, shutterLength, frameData.width],
+  );
 
   const renderSealPlane = (args: [width: number, height: number], position: ArgsType, rotation?: ArgsType) => (
     <Plane
@@ -266,6 +280,16 @@ const RectangleWindow = ({
       </group>
 
       {frameData.showFrame && <Frame dimension={dimension} frameData={frameData} shadowEnabled={shadowEnabled} />}
+
+      <Shutter
+        cx={shutterPosX}
+        lx={shutterLength}
+        lz={lz}
+        color={shutter.color}
+        showLeft={shutter.showLeft}
+        showRight={shutter.showRight}
+        spacing={frameData.showFrame ? frameData.width / 2 : 0}
+      />
 
       <Wireframe cy={cy} dimension={dimension} wireframeData={wireframeData} />
 

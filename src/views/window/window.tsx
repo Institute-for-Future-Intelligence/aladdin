@@ -14,7 +14,7 @@ import { DEFAULT_WINDOW_SHINESS } from 'src/constants';
 import { ThreeEvent } from '@react-three/fiber';
 import RectangleWindow from './rectangleWindow';
 import { WallModel } from 'src/models/WallModel';
-import ArchWindow from './archWindow';
+import ArchedWindow from './archedWindow';
 
 export const defaultShutter = { showLeft: false, showRight: false, color: 'grey', width: 0.5 };
 
@@ -41,6 +41,7 @@ export type WireframeDataType = {
 
 interface ShutterProps {
   cx: number;
+  cz?: number;
   lx: number;
   lz: number;
   color: string;
@@ -49,14 +50,19 @@ interface ShutterProps {
   spacing: number;
 }
 
-const Shutter = ({ cx, lx, lz, color, showLeft, showRight, spacing }: ShutterProps) => {
+export const Shutter = ({ cx, cz = 0, lx, lz, color, showLeft, showRight, spacing }: ShutterProps) => {
   const shadowEnabled = useStore(Selector.viewState.shadowEnabled);
+  const showSolarRadiationHeatmap = useStore(Selector.showSolarRadiationHeatmap);
+  if (showSolarRadiationHeatmap) {
+    return null;
+  }
+
   return (
     <group name={'Shutter Group'}>
       {showRight && (
         <Box
           args={[lx, 0.1, lz]}
-          position={[cx + spacing, 0, 0]}
+          position={[cx + spacing, 0, cz]}
           castShadow={shadowEnabled}
           receiveShadow={shadowEnabled}
         >
@@ -66,7 +72,7 @@ const Shutter = ({ cx, lx, lz, color, showLeft, showRight, spacing }: ShutterPro
       {showLeft && (
         <Box
           args={[lx, 0.1, lz]}
-          position={[-cx - spacing, 0, 0]}
+          position={[-cx - spacing, 0, cz]}
           castShadow={shadowEnabled}
           receiveShadow={shadowEnabled}
         >
@@ -75,10 +81,6 @@ const Shutter = ({ cx, lx, lz, color, showLeft, showRight, spacing }: ShutterPro
       )}
     </group>
   );
-};
-
-export const useWireframeData = (selected: boolean, locked: boolean, lineWidth: number, lineColor: string) => {
-  return { lineWidth, lineColor };
 };
 
 const useUpdataOldFiles = (windowModel: WindowModel) => {
@@ -257,9 +259,6 @@ const Window = (windowModel: WindowModel) => {
     }
   };
 
-  const shutterLength = useMemo(() => shutter?.width ?? 0.5 * wlx, [wlx, shutter]);
-  const shutterPosX = useMemo(() => ((shutterLength + wlx) / 2) * 1.025, [wlx, shutterLength]);
-
   const glassMaterial = useMemo(
     () => (
       <meshPhongMaterial
@@ -315,17 +314,19 @@ const Window = (windowModel: WindowModel) => {
             mullionData={mullionData}
             frameData={frameData}
             wireframeData={wireframeData}
+            shutter={shutter}
             glassMaterial={glassMaterial}
           />
         );
       case WindowType.Arched:
         return (
-          <ArchWindow
+          <ArchedWindow
             dimension={dimensionData}
             position={positionData}
             mullionData={mullionData}
             frameData={frameData}
             wireframeData={wireframeData}
+            shutter={shutter}
             glassMaterial={glassMaterial}
           />
         );
@@ -341,18 +342,6 @@ const Window = (windowModel: WindowModel) => {
       onContextMenu={onContextMenu}
     >
       {renderWindow()}
-
-      {shutter && !showSolarRadiationHeatmap && (
-        <Shutter
-          cx={shutterPosX}
-          lx={shutterLength}
-          lz={wlz}
-          color={shutter.color}
-          showLeft={shutter.showLeft}
-          showRight={shutter.showRight}
-          spacing={frame ? frameWidth / 2 : 0}
-        />
-      )}
 
       {/* handles */}
       {selected && !locked && <WindowHandleWrapper lx={wlx} lz={wlz} windowType={windowType} />}

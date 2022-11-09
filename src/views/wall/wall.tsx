@@ -38,7 +38,7 @@ import { Util } from 'src/Util';
 import { useStore } from 'src/stores/common';
 import { useStoreRef } from 'src/stores/commonRef';
 import { ElementModel } from 'src/models/ElementModel';
-import { Shutter, WindowModel, WindowType } from 'src/models/WindowModel';
+import { ShutterProps, WindowModel, WindowType } from 'src/models/WindowModel';
 import { WallModel, WallStructure } from 'src/models/WallModel';
 import { ElementModelFactory } from 'src/models/ElementModelFactory';
 import { Point2 } from 'src/models/Point2';
@@ -1173,7 +1173,7 @@ const Wall = (wallModel: WallModel) => {
               showRight: actionState.windowShutterRight,
               color: actionState.windowShutterColor,
               width: actionState.windowShutterWidth,
-            } as Shutter;
+            } as ShutterProps;
             const newWindow = ElementModelFactory.makeWindow(
               wallModel,
               actionState.windowColor,
