@@ -117,7 +117,6 @@ const AppCreator = ({ viewOnly = false }: AppCreatorProps) => {
   const showDiurnalTemperaturePanel = useStore(Selector.viewState.showDiurnalTemperaturePanel);
   const showEconomicsPanel = useStore(Selector.viewState.showEconomicsPanel);
   const showSolarRadiationHeatmap = useStore(Selector.showSolarRadiationHeatmap);
-  const noAnimationForHeatmapSimulation = useStore(Selector.world.noAnimationForHeatmapSimulation);
   const showDailyLightSensorPanel = useStore(Selector.viewState.showDailyLightSensorPanel);
   const showYearlyLightSensorPanel = useStore(Selector.viewState.showYearlyLightSensorPanel);
   const showDailyPvYieldPanel = useStore(Selector.viewState.showDailyPvYieldPanel);
@@ -138,6 +137,17 @@ const AppCreator = ({ viewOnly = false }: AppCreatorProps) => {
   const addedCuboidId = useStore(Selector.addedCuboidId);
   const evolutionMethod = useStore(Selector.evolutionMethod);
   const evolutionaryAlgorithmState = useStore(Selector.evolutionaryAlgorithmState);
+  const noAnimationForSensorDataCollection = useStore(Selector.world.noAnimationForSensorDataCollection);
+  const noAnimationForSolarPanelSimulation = useStore(Selector.world.noAnimationForSolarPanelSimulation);
+  const noAnimationForHeatmapSimulation = useStore(Selector.world.noAnimationForHeatmapSimulation);
+  const noAnimationForSolarUpdraftTowerSimulation = useStore(Selector.world.noAnimationForSolarUpdraftTowerSimulation);
+  const runDailySimulationForSolarPanels = useStore(Selector.runDailySimulationForSolarPanels);
+  const runYearlySimulationForSolarPanels = useStore(Selector.runYearlySimulationForSolarPanels);
+  const runDailyLightSensor = useStore(Selector.runDailyLightSensor);
+  const runYearlyLightSensor = useStore(Selector.runYearlyLightSensor);
+  const runDailySimulationForUpdraftTower = useStore(Selector.runDailySimulationForUpdraftTower);
+  const runYearlySimulationForUpdraftTower = useStore(Selector.runYearlySimulationForUpdraftTower);
+  const runDynamicSimulation = useStore(Selector.runDynamicSimulation);
 
   const [loading, setLoading] = useState(true);
   const [city, setCity] = useState<string>('Boston MA, USA');
@@ -271,9 +281,14 @@ const AppCreator = ({ viewOnly = false }: AppCreatorProps) => {
     <div className="App">
       {(loading || loadingFile || simulationInProgress || evolutionInProgress) && (
         <>
-          {simulationInProgress && (!noAnimationForHeatmapSimulation || Util.hasMovingParts(elements)) && (
-            <SimulationControlPanel />
-          )}
+          {simulationInProgress &&
+            ((!noAnimationForHeatmapSimulation && runDynamicSimulation) ||
+              (!noAnimationForSensorDataCollection && (runDailyLightSensor || runYearlyLightSensor)) ||
+              (!noAnimationForSolarUpdraftTowerSimulation &&
+                (runDailySimulationForUpdraftTower || runYearlySimulationForUpdraftTower)) ||
+              (!noAnimationForSolarPanelSimulation &&
+                (runDailySimulationForSolarPanels || runYearlySimulationForSolarPanels)) ||
+              Util.hasMovingParts(elements)) && <SimulationControlPanel />}
           {evolutionInProgress && <EvolutionControlPanel />}
           <Spinner spinning={!simulationPaused || !evolutionPaused} />
         </>
