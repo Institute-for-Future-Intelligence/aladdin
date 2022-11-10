@@ -8,7 +8,7 @@ import React, { useEffect, useMemo, useRef, useState } from 'react';
 import { HALF_PI } from 'src/constants';
 import { ElementModel } from 'src/models/ElementModel';
 import { Point2 } from 'src/models/Point2';
-import { GambrelRoofModel } from 'src/models/RoofModel';
+import { GambrelRoofModel, RoofModel, RoofType } from 'src/models/RoofModel';
 import { WallModel } from 'src/models/WallModel';
 import { useStore } from 'src/stores/common';
 import { useStoreRef } from 'src/stores/commonRef';
@@ -197,7 +197,7 @@ const GambrelRoof = ({
   const updateRidge = (elemId: string, type: string, val: number) => {
     setCommonStore((state) => {
       for (const e of state.elements) {
-        if (e.id === elemId && e.type === ObjectType.GambrelRoof) {
+        if (e.id === elemId && e.type === ObjectType.Roof && (e as RoofModel).roofType === RoofType.Gambrel) {
           const gr = e as GambrelRoofModel;
           switch (type) {
             case RoofHandleType.FrontLeft:
@@ -836,7 +836,11 @@ const GambrelRoof = ({
                   case RoofHandleType.FrontLeft: {
                     setCommonStore((state) => {
                       for (const e of state.elements) {
-                        if (e.id === id && e.type === ObjectType.GambrelRoof) {
+                        if (
+                          e.id === id &&
+                          e.type === ObjectType.Roof &&
+                          (e as RoofModel).roofType === RoofType.Gambrel
+                        ) {
                           if (foundation && currentWallArray[3]) {
                             const px = Util.clamp(
                               getRelPos(foundation, currentWallArray[3], point),
@@ -862,7 +866,11 @@ const GambrelRoof = ({
                   case RoofHandleType.TopLeft: {
                     setCommonStore((state) => {
                       for (const e of state.elements) {
-                        if (e.id === id && e.type === ObjectType.GambrelRoof) {
+                        if (
+                          e.id === id &&
+                          e.type === ObjectType.Roof &&
+                          (e as RoofModel).roofType === RoofType.Gambrel
+                        ) {
                           if (foundation && currentWallArray[3]) {
                             const px = Util.clamp(
                               getRelPos(foundation, currentWallArray[3], point),
@@ -891,7 +899,11 @@ const GambrelRoof = ({
                   case RoofHandleType.BackRight: {
                     setCommonStore((state) => {
                       for (const e of state.elements) {
-                        if (e.id === id && e.type === ObjectType.GambrelRoof) {
+                        if (
+                          e.id === id &&
+                          e.type === ObjectType.Roof &&
+                          (e as RoofModel).roofType === RoofType.Gambrel
+                        ) {
                           if (foundation && currentWallArray[3]) {
                             const px = Util.clamp(
                               getRelPos(foundation, currentWallArray[3], point),
@@ -920,7 +932,11 @@ const GambrelRoof = ({
                   case RoofHandleType.FrontRight: {
                     setCommonStore((state) => {
                       for (const e of state.elements) {
-                        if (e.id === id && e.type === ObjectType.GambrelRoof) {
+                        if (
+                          e.id === id &&
+                          e.type === ObjectType.Roof &&
+                          (e as RoofModel).roofType === RoofType.Gambrel
+                        ) {
                           if (foundation && currentWallArray[1]) {
                             const px = Util.clamp(
                               getRelPos(foundation, currentWallArray[1], point),
@@ -949,7 +965,11 @@ const GambrelRoof = ({
                   case RoofHandleType.TopRight: {
                     setCommonStore((state) => {
                       for (const e of state.elements) {
-                        if (e.id === id && e.type === ObjectType.GambrelRoof) {
+                        if (
+                          e.id === id &&
+                          e.type === ObjectType.Roof &&
+                          (e as RoofModel).roofType === RoofType.Gambrel
+                        ) {
                           if (foundation && currentWallArray[1]) {
                             const px = Util.clamp(
                               getRelPos(foundation, currentWallArray[1], point),
@@ -978,7 +998,11 @@ const GambrelRoof = ({
                   case RoofHandleType.BackLeft: {
                     setCommonStore((state) => {
                       for (const e of state.elements) {
-                        if (e.id === id && e.type === ObjectType.GambrelRoof) {
+                        if (
+                          e.id === id &&
+                          e.type === ObjectType.Roof &&
+                          (e as RoofModel).roofType === RoofType.Gambrel
+                        ) {
                           if (foundation && currentWallArray[1]) {
                             const px = Util.clamp(
                               getRelPos(foundation, currentWallArray[1], point),
@@ -1049,7 +1073,7 @@ const GambrelRoof = ({
             useStoreRef.getState().setEnableOrbitController(true);
             setCommonStore((state) => {
               for (const e of state.elements) {
-                if (e.id === id && e.type === ObjectType.GambrelRoof) {
+                if (e.id === id && e.type === ObjectType.Roof && (e as RoofModel).roofType === RoofType.Gambrel) {
                   const r = e as GambrelRoofModel;
                   r.lz = h;
                   break;

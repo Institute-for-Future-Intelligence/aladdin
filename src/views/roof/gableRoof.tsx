@@ -4,7 +4,7 @@
 
 import { Extrude, Line, Plane } from '@react-three/drei';
 import React, { useEffect, useMemo, useRef, useState } from 'react';
-import { GableRoofModel, RoofStructure } from 'src/models/RoofModel';
+import { GableRoofModel, RoofModel, RoofStructure, RoofType } from 'src/models/RoofModel';
 import { WallModel } from 'src/models/WallModel';
 import { useStore } from 'src/stores/common';
 import * as Selector from 'src/stores/selector';
@@ -345,7 +345,7 @@ const GableRoof = ({
   const updateRoofTopRidge = (elemId: string, left: number, right: number) => {
     setCommonStore((state) => {
       for (const e of state.elements) {
-        if (e.id === elemId && e.type === ObjectType.GableRoof) {
+        if (e.id === elemId && e.type === ObjectType.Roof && (e as RoofModel).roofType === RoofType.Gable) {
           (e as GableRoofModel).ridgeLeftPoint[0] = left;
           (e as GableRoofModel).ridgeRightPoint[0] = right;
           break;
@@ -1086,7 +1086,7 @@ const GableRoof = ({
             useStoreRef.getState().setEnableOrbitController(true);
             setCommonStore((state) => {
               for (const e of state.elements) {
-                if (e.id === id && e.type === ObjectType.GableRoof) {
+                if (e.id === id && e.type === ObjectType.Roof && (e as RoofModel).roofType === RoofType.Gable) {
                   (e as GableRoofModel).lz = h;
                   break;
                 }

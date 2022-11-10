@@ -7,7 +7,7 @@ import { useThree } from '@react-three/fiber';
 import React, { useEffect, useMemo, useRef, useState } from 'react';
 import { HALF_PI, HALF_PI_Z_EULER, TWO_PI } from 'src/constants';
 import { Point2 } from 'src/models/Point2';
-import { MansardRoofModel } from 'src/models/RoofModel';
+import { MansardRoofModel, RoofModel, RoofType } from 'src/models/RoofModel';
 import { WallModel } from 'src/models/WallModel';
 import { useStore } from 'src/stores/common';
 import { useStoreRef } from 'src/stores/commonRef';
@@ -219,7 +219,7 @@ const MansardRoof = ({
   const updateRidge = (elemId: string, val: number) => {
     setCommonStore((state) => {
       for (const e of state.elements) {
-        if (e.id === elemId && e.type === ObjectType.MansardRoof) {
+        if (e.id === elemId && e.type === ObjectType.Roof && (e as RoofModel).roofType === RoofType.Mansard) {
           (e as MansardRoofModel).ridgeWidth = val;
           break;
         }
@@ -523,7 +523,7 @@ const MansardRoof = ({
               w.centerLeftRoofHeight = undefined;
               w.centerRightRoofHeight = undefined;
             }
-          } else if (el.type === ObjectType.MansardRoof) {
+          } else if (el.type === ObjectType.Roof && (el as RoofModel).roofType === RoofType.Mansard) {
             if (el.id === id) {
               (el as MansardRoofModel).frontRidge = undefined;
               (el as MansardRoofModel).backRidge = undefined;

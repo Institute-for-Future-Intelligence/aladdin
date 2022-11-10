@@ -6,7 +6,7 @@ import { useThree } from '@react-three/fiber';
 import React, { useEffect, useMemo, useRef, useState } from 'react';
 import { HALF_PI } from 'src/constants';
 import { Point2 } from 'src/models/Point2';
-import { HipRoofModel } from 'src/models/RoofModel';
+import { HipRoofModel, RoofModel, RoofType } from 'src/models/RoofModel';
 import { WallModel } from 'src/models/WallModel';
 import { useStore } from 'src/stores/common';
 import { useStoreRef } from 'src/stores/commonRef';
@@ -182,7 +182,7 @@ const HipRoof = ({
   const setHipRoofRidgeLength = (elemId: string, leftRidge: number, rightRidge: number) => {
     setCommonStore((state) => {
       for (const e of state.elements) {
-        if (e.id === elemId && e.type === ObjectType.HipRoof) {
+        if (e.id === elemId && e.type === ObjectType.Roof && (e as RoofModel).roofType === RoofType.Hip) {
           (e as HipRoofModel).leftRidgeLength = leftRidge;
           (e as HipRoofModel).rightRidgeLength = rightRidge;
           state.updateElementOnRoofFlag = !state.updateElementOnRoofFlag;
@@ -635,7 +635,7 @@ const HipRoof = ({
             useStoreRef.getState().setEnableOrbitController(true);
             setCommonStore((state) => {
               for (const e of state.elements) {
-                if (e.id === id && e.type === ObjectType.HipRoof) {
+                if (e.id === id && e.type === ObjectType.Roof && (e as RoofModel).roofType === RoofType.Hip) {
                   const r = e as HipRoofModel;
                   r.leftRidgeLength = leftRidgeLengthCurr;
                   r.rightRidgeLength = rightRidgeLengthCurr;
