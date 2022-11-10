@@ -26,6 +26,7 @@ import { CuboidModel } from '../models/CuboidModel';
 import { showInfo } from '../helpers';
 import i18n from '../i18n/i18n';
 import { WallModel } from '../models/WallModel';
+import { Point2 } from '../models/Point2';
 
 export interface StaticSolarRadiationSimulationProps {
   city: string | null;
@@ -552,7 +553,6 @@ const StaticSolarRadiationSimulation = ({ city }: StaticSolarRadiationSimulation
       lz / 2 + foundation.lz,
     );
     const normal = new Vector3().fromArray([Math.cos(absAngle - HALF_PI), Math.sin(absAngle - HALF_PI), 0]);
-    console.log(wall.lz, lz, nz, dz, absPos);
     const v = new Vector3();
     const cellOutputTotals = Array(nx)
       .fill(0)
@@ -560,6 +560,8 @@ const StaticSolarRadiationSimulation = ({ city }: StaticSolarRadiationSimulation
     let count = 0;
     const dxcos = dx * Math.cos(absAngle);
     const dxsin = dx * Math.sin(absAngle);
+    const polygon = Util.getWallVertices(wall);
+    const halfDif = (lz - wall.lz) / 2;
     for (let i = 0; i < 24; i++) {
       for (let j = 0; j < world.timesPerHour; j++) {
         const currentTime = new Date(year, month, date, i, j * interval);
@@ -572,16 +574,17 @@ const StaticSolarRadiationSimulation = ({ city }: StaticSolarRadiationSimulation
           const dot = normal.dot(sunDirection);
           for (let kx = 0; kx < nx; kx++) {
             for (let kz = 0; kz < nz; kz++) {
-              cellOutputTotals[kx][kz] += indirectRadiation;
-              if (dot > 0) {
-                v.set(
-                  absPos.x + (kx - nx / 2 + 0.5) * dxcos,
-                  absPos.y + (kx - nx / 2 + 0.5) * dxsin,
-                  absPos.z + (kz - nz / 2 + 0.5) * dz,
-                );
-                if (!inShadow(wall.id, v, sunDirection)) {
-                  // direct radiation
-                  cellOutputTotals[kx][kz] += dot * peakRadiation;
+              const kx2 = kx - nx / 2 + 0.5;
+              const kz2 = kz - nz / 2 + 0.5;
+              const p = { x: kx2 * dx, y: kz2 * dz + halfDif } as Point2;
+              if (Util.pointInsidePolygon(p, polygon)) {
+                cellOutputTotals[kx][kz] += indirectRadiation;
+                if (dot > 0) {
+                  v.set(absPos.x + kx2 * dxcos, absPos.y + kx2 * dxsin, absPos.z + kz2 * dz);
+                  if (!inShadow(wall.id, v, sunDirection)) {
+                    // direct radiation
+                    cellOutputTotals[kx][kz] += dot * peakRadiation;
+                  }
                 }
               }
             }

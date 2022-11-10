@@ -270,7 +270,8 @@ const Wall = (wallModel: WallModel) => {
         if (t) {
           t.wrapS = RepeatWrapping;
           t.wrapT = RepeatWrapping;
-          t.offset.set(-lx / 2, -zmax / 2);
+          const shiftZ = lz === zmax ? 0 : (1 - lz / zmax) / 2;
+          t.offset.set(-lx / 2, -zmax / 2 - shiftZ);
           t.center.set(lx / 2, zmax / 2);
           t.repeat.set(1 / lx, 1 / zmax);
           setHeatmapTexture(t);

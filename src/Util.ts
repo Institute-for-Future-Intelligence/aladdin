@@ -1078,23 +1078,23 @@ export class Util {
   }
 
   // get the relative 2D vertices of a wall (can be a quad, pentagon, or heptagon)
-  static getWallVertices(wall: WallModel): Vector2[] {
+  static getWallVertices(wall: WallModel): Point2[] {
     const hx = wall.lx / 2;
     const hz = wall.lz / 2;
-    const lowerLeft = new Vector2(-hx, -hz);
-    const lowerRight = new Vector2(hx, -hz);
-    const upperLeft = new Vector2(-hx, (wall.leftRoofHeight ?? wall.lz) - hz);
-    const upperRight = new Vector2(hx, (wall.rightRoofHeight ?? wall.lz) - hz);
-    const vertices: Vector2[] = [];
+    const lowerLeft = { x: -hx, y: -hz } as Point2;
+    const lowerRight = { x: hx, y: -hz } as Point2;
+    const upperLeft = { x: -hx, y: (wall.leftRoofHeight ?? wall.lz) - hz } as Point2;
+    const upperRight = { x: hx, y: (wall.rightRoofHeight ?? wall.lz) - hz } as Point2;
+    const vertices: Point2[] = [];
     vertices.push(upperLeft, lowerLeft, lowerRight, upperRight);
     if (wall.centerRightRoofHeight) {
-      vertices.push(new Vector2(wall.centerRightRoofHeight[0] * wall.lx, wall.centerRightRoofHeight[1] - hz));
+      vertices.push({ x: wall.centerRightRoofHeight[0] * wall.lx, y: wall.centerRightRoofHeight[1] - hz } as Point2);
     }
     if (wall.centerRoofHeight) {
-      vertices.push(new Vector2(wall.centerRoofHeight[0] * wall.lx, wall.centerRoofHeight[1] - hz));
+      vertices.push({ x: wall.centerRoofHeight[0] * wall.lx, y: wall.centerRoofHeight[1] - hz } as Point2);
     }
     if (wall.centerLeftRoofHeight) {
-      vertices.push(new Vector2(wall.centerLeftRoofHeight[0] * wall.lx, wall.centerLeftRoofHeight[1] - hz));
+      vertices.push({ x: wall.centerLeftRoofHeight[0] * wall.lx, y: wall.centerLeftRoofHeight[1] - hz } as Point2);
     }
     return vertices;
   }

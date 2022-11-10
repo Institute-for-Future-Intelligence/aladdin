@@ -35,6 +35,7 @@ import { ParabolicDishModel } from '../models/ParabolicDishModel';
 import { FresnelReflectorModel } from '../models/FresnelReflectorModel';
 import { HeliostatModel } from '../models/HeliostatModel';
 import { WallModel } from '../models/WallModel';
+import { Point2 } from '../models/Point2';
 
 export interface DynamicSolarRadiationSimulationProps {
   city: string | null;
@@ -542,14 +543,14 @@ const DynamicSolarRadiationSimulation = ({ city }: DynamicSolarRadiationSimulati
     if (!foundation) throw new Error('foundation of wall not found');
     const dayOfYear = Util.dayOfYear(now);
     const lx = wall.lx;
-    const lz = wall.lz;
+    const lz = Util.getHighestPointOfWall(wall); // height
     const nx = Math.max(2, Math.round(lx / cellSize));
     const nz = Math.max(2, Math.round(lz / cellSize));
     const dx = lx / nx;
     const dz = lz / nz;
     const absAngle = foundation.rotation[2] + wall.relativeAngle;
     const absPos = Util.wallAbsolutePosition(new Vector3(wall.cx, wall.cy, wall.cz), foundation).setZ(
-      wall.lz / 2 + foundation.lz,
+      lz / 2 + foundation.lz,
     );
     const normal = new Vector3().fromArray([Math.cos(absAngle - HALF_PI), Math.sin(absAngle - HALF_PI), 0]);
     const dxcos = dx * Math.cos(absAngle);
@@ -562,6 +563,8 @@ const DynamicSolarRadiationSimulation = ({ city }: DynamicSolarRadiationSimulati
         .map(() => Array(nz).fill(0));
       cellOutputsMapRef.current.set(wall.id, cellOutputs);
     }
+    const polygon = Util.getWallVertices(wall);
+    const halfDif = (lz - wall.lz) / 2;
     const peakRadiation = calculatePeakRadiation(sunDirection, dayOfYear, elevation, AirMass.SPHERE_MODEL);
     const indirectRadiation = calculateDiffuseAndReflectedRadiation(
       world.ground,
@@ -572,16 +575,17 @@ const DynamicSolarRadiationSimulation = ({ city }: DynamicSolarRadiationSimulati
     const dot = normal.dot(sunDirection);
     for (let kx = 0; kx < nx; kx++) {
       for (let kz = 0; kz < nz; kz++) {
-        cellOutputs[kx][kz] += indirectRadiation;
-        if (dot > 0) {
-          v.set(
-            absPos.x + (kx - nx / 2 + 0.5) * dxcos,
-            absPos.y + (kx - nx / 2 + 0.5) * dxsin,
-            absPos.z + (kz - nz / 2 + 0.5) * dz,
-          );
-          if (!inShadow(wall.id, v, sunDirection)) {
-            // direct radiation
-            cellOutputs[kx][kz] += dot * peakRadiation;
+        const kx2 = kx - nx / 2 + 0.5;
+        const kz2 = kz - nz / 2 + 0.5;
+        const p = { x: kx2 * dx, y: kz2 * dz + halfDif } as Point2;
+        if (Util.pointInsidePolygon(p, polygon)) {
+          cellOutputs[kx][kz] += indirectRadiation;
+          if (dot > 0) {
+            v.set(absPos.x + kx2 * dxcos, absPos.y + kx2 * dxsin, absPos.z + kz2 * dz);
+            if (!inShadow(wall.id, v, sunDirection)) {
+              // direct radiation
+              cellOutputs[kx][kz] += dot * peakRadiation;
+            }
           }
         }
       }
