@@ -680,7 +680,7 @@ const GambrelRoof = ({
 
   const { grabRef, addUndoableMove, undoMove, setOldRefData } = useElementUndoable();
   const { transparent, opacity } = useTransparent();
-  useUpdateSegmentVerticesMap(id, roofSegments);
+  useUpdateSegmentVerticesMap(id, centroid, roofSegments);
 
   return (
     <group position={[cx, cy, cz + 0.01]} rotation={[0, 0, rotation]} name={`Gambrel Roof Group ${id}`}>

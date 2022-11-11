@@ -832,7 +832,7 @@ const GableRoof = ({
   }, []);
 
   const { grabRef, addUndoableMove, undoMove, setOldRefData } = useElementUndoable();
-  useUpdateSegmentVerticesMap(id, roofSegments);
+  useUpdateSegmentVerticesMap(id, centroid, roofSegments);
 
   return (
     <group position={[cx, cy, cz]} rotation={[0, 0, rotation]} name={`Gable Roof Group ${id}`}>

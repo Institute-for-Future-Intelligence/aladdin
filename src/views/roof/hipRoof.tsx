@@ -433,7 +433,7 @@ const HipRoof = ({
 
   const { grabRef, addUndoableMove, undoMove, setOldRefData } = useElementUndoable();
   const { transparent, opacity } = useTransparent();
-  useUpdateSegmentVerticesMap(id, roofSegments);
+  useUpdateSegmentVerticesMap(id, new Vector3(centroid2D.x, centroid2D.y, h), roofSegments);
 
   return (
     <group position={[cx, cy, cz + 0.01]} rotation={[0, 0, rotation]} name={`Hip Roof Group ${id}`}>

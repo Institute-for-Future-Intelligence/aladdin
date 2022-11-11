@@ -301,26 +301,28 @@ export const useRoofHeight = (lz: number, initalMinHeight: number) => {
 
 export const useUpdateSegmentVerticesMap = (
   roofId: string,
+  centroid: Vector3,
   roofSegments: RoofSegmentProps[],
   mansardTop?: Vector3[],
 ) => {
   const update = useCallback(
-    Util.debounce((roofSegments: RoofSegmentProps[], mansardTop?: Vector3[]) => {
+    Util.debounce((roofSegments: RoofSegmentProps[], centroid: Vector3, mansardTop?: Vector3[]) => {
+      const relToFoundation = (v: Vector3) => v.clone().add(centroid);
       const vertices = roofSegments.map((segment) => {
         const points = segment.points;
         // triangle segment
         if (points.length === 6) {
-          return points.slice(3);
+          return points.slice(3).map(relToFoundation);
         }
         // quad segment
         else if (points.length === 8) {
-          return points.slice(4);
+          return points.slice(4).map(relToFoundation);
         } else {
           throw new Error('Invalid Roof segment data');
         }
       });
       if (mansardTop) {
-        vertices.push(mansardTop);
+        vertices.push(mansardTop.map(relToFoundation));
       }
       useStore.getState().set((state) => {
         state.roofSegmentVerticesMap.set(roofId, vertices);
@@ -331,7 +333,7 @@ export const useUpdateSegmentVerticesMap = (
 
   useEffect(() => {
     if (roofSegments.length > 0) {
-      update(roofSegments, mansardTop);
+      update(roofSegments, centroid, mansardTop);
     }
-  }, [roofSegments]);
+  }, [roofSegments, centroid, mansardTop]);
 };

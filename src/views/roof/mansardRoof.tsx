@@ -547,6 +547,7 @@ const MansardRoof = ({
   const { transparent, opacity } = useTransparent();
   useUpdateSegmentVerticesMap(
     id,
+    centroid,
     roofSegments,
     ridgePoints.reduce((acc, curr) => acc.concat(curr.leftPoint), [] as Vector3[]),
   );
