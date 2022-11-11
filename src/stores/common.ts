@@ -126,6 +126,11 @@ export interface CommonStoreState {
   getHeatmap: (id: string) => number[][] | undefined;
   clearHeatmaps: () => void;
 
+  roofSegmentVerticesMap: Map<string, Vector3[][]>; // key: roofId, val[0]: segmentIndex, val[1]: vertices
+  getRoofSegmentVertices: (id: string) => Vector3[][] | undefined;
+  removeRoofSegmentVertices: (id: string) => void;
+  clearRoofSegmentVertices: () => void;
+
   ray: Raycaster;
   mouse: Vector2;
 
@@ -817,8 +822,6 @@ export const useStore = create<CommonStoreState>(
           floatingWindowOpacity: FLOATING_WINDOW_OPACITY,
           cloudFile: undefined,
           heatmaps: new Map<string, number[][]>(),
-          ray: new Raycaster(),
-          mouse: new Vector2(),
           setHeatmap(id, data) {
             immerSet((state: CommonStoreState) => {
               state.heatmaps.set(id, data);
@@ -833,6 +836,24 @@ export const useStore = create<CommonStoreState>(
               state.heatmaps.clear();
             });
           },
+
+          roofSegmentVerticesMap: new Map<string, Vector3[][]>(),
+          getRoofSegmentVertices(id) {
+            return get().roofSegmentVerticesMap.get(id);
+          },
+          removeRoofSegmentVertices(id) {
+            immerSet((state: CommonStoreState) => {
+              state.roofSegmentVerticesMap.delete(id);
+            });
+          },
+          clearRoofSegmentVertices() {
+            immerSet((state: CommonStoreState) => {
+              state.roofSegmentVerticesMap.clear();
+            });
+          },
+
+          ray: new Raycaster(),
+          mouse: new Vector2(),
 
           changed: false,
           setChanged(b) {
@@ -905,6 +926,7 @@ export const useStore = create<CommonStoreState>(
               state.dailyUpdraftTowerResults.length = 0;
               state.yearlyUpdraftTowerYield.length = 0;
               state.fittestIndividualResults.length = 0;
+              state.roofSegmentVerticesMap = new Map<string, Vector3[][]>();
             });
             // 1/6/2022: Humans previously did not have dimension data (which probably was a mistake).
             // We do this for backward compatibility. Otherwise, humans cannot be moved in old files.
@@ -945,6 +967,7 @@ export const useStore = create<CommonStoreState>(
           clearContent() {
             immerSet((state: CommonStoreState) => {
               state.elements = [];
+              state.clearRoofSegmentVertices();
             });
           },
           createEmptyFile() {
@@ -4631,6 +4654,7 @@ export const useStore = create<CommonStoreState>(
                   switch (elem.type) {
                     case ObjectType.Roof: {
                       state.deletedRoofId = elem.id;
+                      state.removeRoofSegmentVertices(id);
                       break;
                     }
                     case ObjectType.Wall: {
@@ -4706,7 +4730,14 @@ export const useStore = create<CommonStoreState>(
                 }
               }
               state.elements = state.elements.filter((e) => {
-                return !(e.id === id || e.parentId === id || e.foundationId === id);
+                if (e.id === id || e.parentId === id || e.foundationId === id) {
+                  if (e.type === ObjectType.Roof) {
+                    state.clearRoofSegmentVertices();
+                  }
+                  return false;
+                } else {
+                  return true;
+                }
               });
               state.selectedElement = null;
               state.updateDesignInfo();
@@ -4722,6 +4753,7 @@ export const useStore = create<CommonStoreState>(
                 state.elements = state.elements.filter((x) => x.locked || x.type !== type);
               }
               state.updateDesignInfo();
+              state.clearRoofSegmentVertices();
             });
           },
           countElementsByType(type, excludeLocked) {

@@ -15,7 +15,7 @@ import { HALF_PI } from 'src/constants';
 import { ElementModel } from 'src/models/ElementModel';
 import {
   addUndoableResizeRoofHeight,
-  ConvexGeoProps,
+  RoofSegmentProps,
   handleContextMenu,
   handlePointerDown,
   handlePointerMove,
@@ -30,7 +30,14 @@ import { ObjectType, RoofTexture } from 'src/types';
 import { Util } from 'src/Util';
 import { Point2 } from 'src/models/Point2';
 import { RoofUtil } from './RoofUtil';
-import { useCurrWallArray, useRoofHeight, useRoofTexture, useElementUndoable, useTransparent } from './hooks';
+import {
+  useCurrWallArray,
+  useRoofHeight,
+  useRoofTexture,
+  useElementUndoable,
+  useTransparent,
+  useUpdateSegmentVerticesMap,
+} from './hooks';
 import { ConvexGeometry } from 'src/js/ConvexGeometry';
 import { CSG } from 'three-csg-ts';
 import WindowWireFrame from '../window/windowWireFrame';
@@ -489,7 +496,7 @@ const GableRoof = ({
   }, [thickness]);
 
   const roofSegments = useMemo(() => {
-    const segments: ConvexGeoProps[] = [];
+    const segments: RoofSegmentProps[] = [];
 
     if (currentWallArray.length !== 4) {
       return segments;
@@ -825,6 +832,7 @@ const GableRoof = ({
   }, []);
 
   const { grabRef, addUndoableMove, undoMove, setOldRefData } = useElementUndoable();
+  useUpdateSegmentVerticesMap(id, roofSegments);
 
   return (
     <group position={[cx, cy, cz]} rotation={[0, 0, rotation]} name={`Gable Roof Group ${id}`}>

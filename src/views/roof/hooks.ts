@@ -1,4 +1,4 @@
-import { useMemo, useRef, useState } from 'react';
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { ElementModel } from 'src/models/ElementModel';
 import { SolarPanelModel } from 'src/models/SolarPanelModel';
 import { useStore } from 'src/stores/common';
@@ -14,12 +14,14 @@ import RoofTexture04 from 'src/resources/roof_04.png';
 import RoofTexture05 from 'src/resources/roof_05.png';
 import RoofTexture06 from 'src/resources/roof_06.png';
 import RoofTexture07 from 'src/resources/roof_07.png';
-import { RepeatWrapping, TextureLoader } from 'three';
+import { RepeatWrapping, TextureLoader, Vector3 } from 'three';
 import * as Selector from 'src/stores/selector';
 import { WallModel } from 'src/models/WallModel';
 import { useThree } from '@react-three/fiber';
 import { SensorModel } from '../../models/SensorModel';
 import { LightModel } from '../../models/LightModel';
+import { RoofSegmentProps } from './roofRenderer';
+import { Util } from 'src/Util';
 
 export const useElementUndoable = () => {
   const grabRef = useRef<ElementModel | null>(null);
@@ -295,4 +297,41 @@ export const useRoofHeight = (lz: number, initalMinHeight: number) => {
   };
 
   return { h, setH, minHeight, setMinHeight, relHeight, setRelHeight };
+};
+
+export const useUpdateSegmentVerticesMap = (
+  roofId: string,
+  roofSegments: RoofSegmentProps[],
+  mansardTop?: Vector3[],
+) => {
+  const update = useCallback(
+    Util.debounce((roofSegments: RoofSegmentProps[], mansardTop?: Vector3[]) => {
+      const vertices = roofSegments.map((segment) => {
+        const points = segment.points;
+        // triangle segment
+        if (points.length === 6) {
+          return points.slice(3);
+        }
+        // quad segment
+        else if (points.length === 8) {
+          return points.slice(4);
+        } else {
+          throw new Error('Invalid Roof segment data');
+        }
+      });
+      if (mansardTop) {
+        vertices.push(mansardTop);
+      }
+      useStore.getState().set((state) => {
+        state.roofSegmentVerticesMap.set(roofId, vertices);
+      });
+    }),
+    [],
+  );
+
+  useEffect(() => {
+    if (roofSegments.length > 0) {
+      update(roofSegments, mansardTop);
+    }
+  }, [roofSegments]);
 };

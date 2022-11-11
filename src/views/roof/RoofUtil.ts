@@ -1,7 +1,7 @@
 import { Euler, Vector3 } from 'three';
 import { ThreeEvent } from '@react-three/fiber';
 import { Util } from 'src/Util';
-import { ConvexGeoProps } from './roofRenderer';
+import { RoofSegmentProps } from './roofRenderer';
 import { HALF_PI_Z_EULER, UNIT_VECTOR_POS_Z } from 'src/constants';
 import { WallModel } from 'src/models/WallModel';
 import { SolarPanelModel } from 'src/models/SolarPanelModel';
@@ -157,7 +157,7 @@ export class RoofUtil {
   }
 
   // solar panel related
-  static getSegmentIdx(roofSegments: ConvexGeoProps[], posRelToCentroid: Vector3) {
+  static getSegmentIdx(roofSegments: RoofSegmentProps[], posRelToCentroid: Vector3) {
     for (let i = 0; i < roofSegments.length; i++) {
       const points = roofSegments[i].points.slice(0, 4);
       if (Util.isPointInside(posRelToCentroid.x, posRelToCentroid.y, points.map(Util.mapVector3ToPoint2))) {
@@ -176,7 +176,7 @@ export class RoofUtil {
     return Number.NaN;
   }
 
-  static getSegmentVertices(roofSegments: ConvexGeoProps[], segmentIdx: number, pointer: Vector3) {
+  static getSegmentVertices(roofSegments: RoofSegmentProps[], segmentIdx: number, pointer: Vector3) {
     // return orders matter: couter clockwise
     const [wallLeft, wallRight, ridgeRight, ridgeLeft] = roofSegments[segmentIdx].points;
     const leftDis = Util.distanceFromPointToLine2D(ridgeLeft, wallLeft, wallRight);
@@ -239,7 +239,7 @@ export class RoofUtil {
     return -(D + A * pos.x + B * pos.y) / C + roofHeight;
   }
 
-  static computeState(roofSegments: ConvexGeoProps[], posRelToCentroid: Vector3) {
+  static computeState(roofSegments: RoofSegmentProps[], posRelToCentroid: Vector3) {
     const segmentIdx = RoofUtil.getSegmentIdx(roofSegments, posRelToCentroid);
     if (segmentIdx !== -1) {
       const segmentVertices = RoofUtil.getSegmentVertices(roofSegments, segmentIdx, posRelToCentroid);

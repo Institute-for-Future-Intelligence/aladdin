@@ -15,10 +15,17 @@ import { ObjectType, RoofTexture } from 'src/types';
 import { UndoableResizeHipRoofRidge } from 'src/undo/UndoableResize';
 import { Util } from 'src/Util';
 import { DoubleSide, Euler, Mesh, Raycaster, Vector2, Vector3 } from 'three';
-import { useCurrWallArray, useRoofHeight, useRoofTexture, useElementUndoable, useTransparent } from './hooks';
+import {
+  useCurrWallArray,
+  useRoofHeight,
+  useRoofTexture,
+  useElementUndoable,
+  useTransparent,
+  useUpdateSegmentVerticesMap,
+} from './hooks';
 import {
   addUndoableResizeRoofHeight,
-  ConvexGeoProps,
+  RoofSegmentProps,
   handleContextMenu,
   handlePointerDown,
   handlePointerMove,
@@ -261,14 +268,15 @@ const HipRoof = ({
     return new Vector3(centroid2D.x, centroid2D.y, h);
   }, [centroid2D, h]);
 
-  const makeSement = (vector: Vector3[], p1: Vector3, p2: Vector3, p3: Vector3, p4: Vector3) => {
-    vector.push(p1, p2, p3, p4);
-    vector.push(
-      p1.clone().add(thicknessVector),
-      p2.clone().add(thicknessVector),
-      p3.clone().add(thicknessVector),
-      p4.clone().add(thicknessVector),
-    );
+  const makeSement = (vector: Vector3[], p1: Vector3, p2: Vector3, p3: Vector3, p4?: Vector3) => {
+    vector.push(p1, p2, p3);
+    if (p4) {
+      vector.push(p4);
+    }
+    vector.push(p1.clone().add(thicknessVector), p2.clone().add(thicknessVector), p3.clone().add(thicknessVector));
+    if (p4) {
+      vector.push(p4.clone().add(thicknessVector));
+    }
   };
 
   const getWallHeight = (arr: WallModel[], i: number) => {
@@ -328,7 +336,7 @@ const HipRoof = ({
   }, [overhangs]);
 
   const roofSegments = useMemo(() => {
-    const segments: ConvexGeoProps[] = [];
+    const segments: RoofSegmentProps[] = [];
     if (currentWallArray.length !== 4) {
       return segments;
     }
@@ -425,6 +433,7 @@ const HipRoof = ({
 
   const { grabRef, addUndoableMove, undoMove, setOldRefData } = useElementUndoable();
   const { transparent, opacity } = useTransparent();
+  useUpdateSegmentVerticesMap(id, roofSegments);
 
   return (
     <group position={[cx, cy, cz + 0.01]} rotation={[0, 0, rotation]} name={`Hip Roof Group ${id}`}>

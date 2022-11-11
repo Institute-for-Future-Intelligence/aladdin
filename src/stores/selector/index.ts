@@ -16,6 +16,8 @@ export const setHeatmap = (state: CommonStoreState) => state.setHeatmap;
 
 export const clearHeatmaps = (state: CommonStoreState) => state.clearHeatmaps;
 
+export const getRoofSegmentVertices = (state: CommonStoreState) => state.getRoofSegmentVertices;
+
 export const changed = (state: CommonStoreState) => state.changed;
 
 export const setChanged = (state: CommonStoreState) => state.setChanged;

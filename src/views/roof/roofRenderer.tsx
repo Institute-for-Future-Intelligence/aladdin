@@ -38,14 +38,14 @@ import { useHandleSize } from '../wall/wallResizeHandleWrapper';
 import { SensorModel } from '../../models/SensorModel';
 import { LightModel } from '../../models/LightModel';
 
-export interface ConvexGeoProps {
+export interface RoofSegmentProps {
   points: Vector3[];
   direction: number;
   length: number;
 }
 
 export interface RoofWireframeProps {
-  roofSegments: ConvexGeoProps[];
+  roofSegments: RoofSegmentProps[];
   thickness: number;
   lineWidth: number;
   lineColor: string;
@@ -88,7 +88,7 @@ const handleAddElementOnRoof = (
   e: ThreeEvent<PointerEvent>,
   roofId: string,
   foundation: ElementModel,
-  roofSegments: ConvexGeoProps[],
+  roofSegments: RoofSegmentProps[],
   ridgeMidPoint: Vector3,
 ) => {
   switch (useStore.getState().objectTypeToAdd) {
@@ -278,7 +278,7 @@ export const spCollisionCheck = (sp: SolarPanelModel, foundation: ElementModel, 
 export const updateRooftopElements = (
   foundation: ElementModel | null,
   roofId: string,
-  roofSegments: ConvexGeoProps[],
+  roofSegments: RoofSegmentProps[],
   centroid: Vector3,
   h: number,
   thickness: number,
@@ -328,7 +328,7 @@ export const handlePointerDown = (
   e: ThreeEvent<PointerEvent>,
   roofId: string,
   foundation: ElementModel | null,
-  roofSegments: ConvexGeoProps[],
+  roofSegments: RoofSegmentProps[],
   centroid: Vector3,
   setOldRefData: (elem: ElementModel) => void,
 ) => {
@@ -404,7 +404,7 @@ export const handlePointerMove = (
   elem: ElementModel | null,
   foundation: ElementModel | null,
   roofType: RoofType,
-  roofSegments: ConvexGeoProps[],
+  roofSegments: RoofSegmentProps[],
   centroid: Vector3,
 ) => {
   if (elem === null) {

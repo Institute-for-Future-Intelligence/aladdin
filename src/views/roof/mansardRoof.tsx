@@ -16,10 +16,17 @@ import { ObjectType, RoofTexture } from 'src/types';
 import { UnoableResizeGambrelAndMansardRoofRidge } from 'src/undo/UndoableResize';
 import { Util } from 'src/Util';
 import { DoubleSide, Euler, Mesh, Shape, Vector3 } from 'three';
-import { useMultiCurrWallArray, useRoofHeight, useRoofTexture, useElementUndoable, useTransparent } from './hooks';
+import {
+  useMultiCurrWallArray,
+  useRoofHeight,
+  useRoofTexture,
+  useElementUndoable,
+  useTransparent,
+  useUpdateSegmentVerticesMap,
+} from './hooks';
 import {
   addUndoableResizeRoofHeight,
-  ConvexGeoProps,
+  RoofSegmentProps,
   handleContextMenu,
   handlePointerDown,
   handlePointerMove,
@@ -335,7 +342,7 @@ const MansardRoof = ({
   }, [thickness]);
 
   const roofSegments = useMemo(() => {
-    const segments: ConvexGeoProps[] = [];
+    const segments: RoofSegmentProps[] = [];
     if (currentWallArray.length < 2) {
       return segments;
     }
@@ -442,12 +449,14 @@ const MansardRoof = ({
   const topRidgeShape = useMemo(() => {
     const s = new Shape();
 
-    const startPoint = ridgePoints[0].leftPoint.clone().sub(centroid);
-    s.moveTo(startPoint.x, startPoint.y);
+    if (ridgePoints.length > 0) {
+      const startPoint = ridgePoints[0].leftPoint.clone().sub(centroid);
+      s.moveTo(startPoint.x, startPoint.y);
 
-    for (const point of ridgePoints) {
-      const rightPoint = point.rightPoint.clone().sub(centroid);
-      s.lineTo(rightPoint.x, rightPoint.y);
+      for (const point of ridgePoints) {
+        const rightPoint = point.rightPoint.clone().sub(centroid);
+        s.lineTo(rightPoint.x, rightPoint.y);
+      }
     }
 
     return s;
@@ -536,6 +545,11 @@ const MansardRoof = ({
 
   const { grabRef, addUndoableMove, undoMove, setOldRefData } = useElementUndoable();
   const { transparent, opacity } = useTransparent();
+  useUpdateSegmentVerticesMap(
+    id,
+    roofSegments,
+    ridgePoints.reduce((acc, curr) => acc.concat(curr.leftPoint), [] as Vector3[]),
+  );
 
   return (
     <group position={[cx, cy, cz + 0.01]} rotation={[0, 0, rotationZ]} name={`Mansard Roof Group ${id}`}>
@@ -590,12 +604,14 @@ const MansardRoof = ({
             opacity={opacity}
           />
         </Extrude>
-        <MansardRoofWirefram
-          roofSegments={roofSegments}
-          thickness={thickness}
-          lineColor={lineColor}
-          lineWidth={lineWidth}
-        />
+        {roofSegments.length > 0 && (
+          <MansardRoofWirefram
+            roofSegments={roofSegments}
+            thickness={thickness}
+            lineColor={lineColor}
+            lineWidth={lineWidth}
+          />
+        )}
       </group>
 
       {/* handles */}

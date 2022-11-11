@@ -1153,4 +1153,16 @@ export class Util {
     }
     return array;
   }
+
+  static debounce(fn: Function, delay = 1500) {
+    let timerId: NodeJS.Timeout | null = null;
+    return (...args: any) => {
+      if (timerId) {
+        clearTimeout(timerId);
+      }
+      timerId = setTimeout(() => {
+        fn(...args);
+      }, delay);
+    };
+  }
 }

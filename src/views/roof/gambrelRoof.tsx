@@ -18,7 +18,7 @@ import { Util } from 'src/Util';
 import { DoubleSide, Euler, Mesh, Raycaster, Vector2, Vector3 } from 'three';
 import {
   addUndoableResizeRoofHeight,
-  ConvexGeoProps,
+  RoofSegmentProps,
   handleContextMenu,
   handlePointerDown,
   handlePointerMove,
@@ -29,7 +29,14 @@ import {
 } from './roofRenderer';
 import { ObjectType, RoofTexture } from 'src/types';
 import { RoofUtil } from './RoofUtil';
-import { useCurrWallArray, useRoofHeight, useRoofTexture, useElementUndoable, useTransparent } from './hooks';
+import {
+  useCurrWallArray,
+  useRoofHeight,
+  useRoofTexture,
+  useElementUndoable,
+  useTransparent,
+  useUpdateSegmentVerticesMap,
+} from './hooks';
 
 enum RoofHandleType {
   TopMid = 'TopMid',
@@ -374,7 +381,7 @@ const GambrelRoof = ({
   }, [thickness]);
 
   const roofSegments = useMemo(() => {
-    const segments: ConvexGeoProps[] = [];
+    const segments: RoofSegmentProps[] = [];
 
     if (currentWallArray.length != 4) {
       return segments;
@@ -673,6 +680,7 @@ const GambrelRoof = ({
 
   const { grabRef, addUndoableMove, undoMove, setOldRefData } = useElementUndoable();
   const { transparent, opacity } = useTransparent();
+  useUpdateSegmentVerticesMap(id, roofSegments);
 
   return (
     <group position={[cx, cy, cz + 0.01]} rotation={[0, 0, rotation]} name={`Gambrel Roof Group ${id}`}>

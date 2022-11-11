@@ -2,7 +2,7 @@
  * @Copyright 2022. Institute for Future Intelligence, Inc.
  */
 
-import React, { useEffect, useMemo, useRef, useState } from 'react';
+import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { PyramidRoofModel, RoofModel } from 'src/models/RoofModel';
 import { useStore } from 'src/stores/common';
 import { Euler, Mesh, Raycaster, Shape, Vector2, Vector3 } from 'three';
@@ -18,7 +18,7 @@ import { Util } from 'src/Util';
 import { ObjectType, RoofTexture } from 'src/types';
 import {
   addUndoableResizeRoofHeight,
-  ConvexGeoProps,
+  RoofSegmentProps,
   handleContextMenu,
   handlePointerDown,
   handlePointerMove,
@@ -28,7 +28,14 @@ import {
   updateRooftopElements,
 } from './roofRenderer';
 import { RoofUtil } from './RoofUtil';
-import { useMultiCurrWallArray, useRoofHeight, useRoofTexture, useElementUndoable, useTransparent } from './hooks';
+import {
+  useMultiCurrWallArray,
+  useRoofHeight,
+  useRoofTexture,
+  useElementUndoable,
+  useTransparent,
+  useUpdateSegmentVerticesMap,
+} from './hooks';
 
 const intersectionPlanePosition = new Vector3();
 const intersectionPlaneRotation = new Euler();
@@ -36,7 +43,7 @@ const zeroVector = new Vector3();
 const zVector3 = new Vector3(0, 0, 1);
 
 interface FlatRoofProps {
-  roofSegments: ConvexGeoProps[];
+  roofSegments: RoofSegmentProps[];
   thickness: number;
   children: React.ReactNode;
   lineWidth: number;
@@ -339,7 +346,7 @@ const PyramidRoof = ({
   }, [thickness]);
 
   const roofSegments = useMemo(() => {
-    const segments: ConvexGeoProps[] = [];
+    const segments: RoofSegmentProps[] = [];
     if (currentWallArray.length < 2) {
       return segments;
     }
@@ -384,11 +391,10 @@ const PyramidRoof = ({
 
         const direction = -w.relativeAngle;
         const length = new Vector3(w.cx, w.cy).sub(centerPointV3.clone().setZ(0)).length();
-        points.push(wallLeftPointAfterOverhang, wallRightPointAfterOverhang, zeroVector, zeroVector);
+        points.push(wallLeftPointAfterOverhang, wallRightPointAfterOverhang, zeroVector);
         points.push(
           wallLeftPointAfterOverhang.clone().add(thicknessVector),
           wallRightPointAfterOverhang.clone().add(thicknessVector),
-          zeroVector.clone().add(thicknessVector),
           zeroVector.clone().add(thicknessVector),
         );
         segments.push({ points, direction, length });
@@ -426,11 +432,10 @@ const PyramidRoof = ({
         .length();
 
       const points = [];
-      points.push(leftPointAfterOverhang, rightPointAfterOverhang, zeroVector, zeroVector);
+      points.push(leftPointAfterOverhang, rightPointAfterOverhang, zeroVector);
       points.push(
         leftPointAfterOverhang.clone().add(thicknessVector),
         rightPointAfterOverhang.clone().add(thicknessVector),
-        zeroVector.clone().add(thicknessVector),
         zeroVector.clone().add(thicknessVector),
       );
       segments.push({ points, direction: -angle, length });
@@ -561,6 +566,8 @@ const PyramidRoof = ({
     ),
     [texture, textureType, color, transparent, opacity],
   );
+
+  useUpdateSegmentVerticesMap(id, roofSegments);
 
   return (
     <group position={[cx, cy, cz]} rotation={[0, 0, rotation]} name={`Pyramid Roof Group ${id}`}>
@@ -693,7 +700,7 @@ const RoofSegment = ({
 
   useEffect(() => {
     if (meshRef.current) {
-      points.push(new Vector3(0, 0, -0.001));
+      // points.push(new Vector3(0, 0, -0.001));
 
       const geo = new ConvexGeometry(points, direction, length);
 
