@@ -301,10 +301,11 @@ const KeyboardListener = ({ canvas, set2DView, resetView, zoomView }: KeyboardLi
         }
       } else {
         // if no element is selected, move everything
+        const displacement = -moveStepAbsolute * scale;
         const undoableMoveAllLeft = {
           name: 'Move All Left',
           timestamp: Date.now(),
-          displacement: -moveStepAbsolute,
+          displacement: displacement,
           undo: () => {
             for (const e of elements) {
               if (Util.isFoundationOrCuboid(e) || (Util.isPlantOrHuman(e) && e.parentId === GROUND_ID)) {
@@ -323,7 +324,7 @@ const KeyboardListener = ({ canvas, set2DView, resetView, zoomView }: KeyboardLi
         addUndoable(undoableMoveAllLeft);
         for (const e of elements) {
           if (Util.isFoundationOrCuboid(e) || (Util.isPlantOrHuman(e) && e.parentId === GROUND_ID)) {
-            updateElementCxById(e.id, e.cx - moveStepAbsolute);
+            updateElementCxById(e.id, e.cx + displacement);
           }
         }
       }
@@ -398,10 +399,11 @@ const KeyboardListener = ({ canvas, set2DView, resetView, zoomView }: KeyboardLi
         }
       } else {
         // if no element is selected, move everything
+        const displacement = moveStepAbsolute * scale;
         const undoableMoveAllRight = {
           name: 'Move All Right',
           timestamp: Date.now(),
-          displacement: moveStepAbsolute,
+          displacement: displacement,
           undo: () => {
             for (const e of elements) {
               if (Util.isFoundationOrCuboid(e) || (Util.isPlantOrHuman(e) && e.parentId === GROUND_ID)) {
@@ -420,7 +422,7 @@ const KeyboardListener = ({ canvas, set2DView, resetView, zoomView }: KeyboardLi
         addUndoable(undoableMoveAllRight);
         for (const e of elements) {
           if (Util.isFoundationOrCuboid(e) || (Util.isPlantOrHuman(e) && e.parentId === GROUND_ID)) {
-            updateElementCxById(e.id, e.cx + moveStepAbsolute);
+            updateElementCxById(e.id, e.cx + displacement);
           }
         }
       }
@@ -489,10 +491,11 @@ const KeyboardListener = ({ canvas, set2DView, resetView, zoomView }: KeyboardLi
         }
       } else {
         // if no element is selected, move everything
+        const displacement = moveStepAbsolute * scale;
         const undoableMoveAllUp = {
           name: 'Move All Up',
           timestamp: Date.now(),
-          displacement: moveStepAbsolute,
+          displacement: displacement,
           undo: () => {
             for (const e of elements) {
               if (Util.isFoundationOrCuboid(e) || (Util.isPlantOrHuman(e) && e.parentId === GROUND_ID)) {
@@ -511,7 +514,7 @@ const KeyboardListener = ({ canvas, set2DView, resetView, zoomView }: KeyboardLi
         addUndoable(undoableMoveAllUp);
         for (const e of elements) {
           if (Util.isFoundationOrCuboid(e) || (Util.isPlantOrHuman(e) && e.parentId === GROUND_ID)) {
-            updateElementCyById(e.id, e.cy + moveStepAbsolute);
+            updateElementCyById(e.id, e.cy + displacement);
           }
         }
       }
@@ -586,10 +589,11 @@ const KeyboardListener = ({ canvas, set2DView, resetView, zoomView }: KeyboardLi
         }
       } else {
         // if no element is selected, move everything
+        const displacement = -moveStepAbsolute * scale;
         const undoableMoveAllDown = {
           name: 'Move All Down',
           timestamp: Date.now(),
-          displacement: -moveStepAbsolute,
+          displacement: displacement,
           undo: () => {
             for (const e of elements) {
               if (Util.isFoundationOrCuboid(e) || (Util.isPlantOrHuman(e) && e.parentId === GROUND_ID)) {
@@ -608,7 +612,7 @@ const KeyboardListener = ({ canvas, set2DView, resetView, zoomView }: KeyboardLi
         addUndoable(undoableMoveAllDown);
         for (const e of elements) {
           if (Util.isFoundationOrCuboid(e) || (Util.isPlantOrHuman(e) && e.parentId === GROUND_ID)) {
-            updateElementCyById(e.id, e.cy - moveStepAbsolute);
+            updateElementCyById(e.id, e.cy + displacement);
           }
         }
       }
