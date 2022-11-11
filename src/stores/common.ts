@@ -126,7 +126,7 @@ export interface CommonStoreState {
   getHeatmap: (id: string) => number[][] | undefined;
   clearHeatmaps: () => void;
 
-  roofSegmentVerticesMap: Map<string, Vector3[][]>; // key: roofId, val[0]: segmentIndex, val[1]: vertices
+  roofSegmentVerticesMap: Map<string, Vector3[][]>; // key: roofId, val: [segmentIndex][vertex]
   getRoofSegmentVertices: (id: string) => Vector3[][] | undefined;
   removeRoofSegmentVertices: (id: string) => void;
   clearRoofSegmentVertices: () => void;
