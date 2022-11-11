@@ -902,21 +902,34 @@ class MyOrbitControls extends EventDispatcher {
 
         case MOUSE.ROTATE:
 
-          if ( event.ctrlKey || event.metaKey) {
+          // XIE: Default to pan in 2D mode
+          if(scope.object.isOrthographicCamera) {
 
-            if ( scope.enablePan === false ) return;
+            if (scope.enablePan === false) return;
 
-            handleMouseDownPan( event );
+            handleMouseDownPan(event);
 
             state = STATE.PAN;
 
           } else {
 
-            if ( scope.enableRotate === false ) return;
+            if (event.ctrlKey || event.metaKey) {
 
-            handleMouseDownRotate( event );
+              if (scope.enablePan === false) return;
 
-            state = STATE.ROTATE;
+              handleMouseDownPan(event);
+
+              state = STATE.PAN;
+
+            } else {
+
+              if (scope.enableRotate === false) return;
+
+              handleMouseDownRotate(event);
+
+              state = STATE.ROTATE;
+
+            }
 
           }
 

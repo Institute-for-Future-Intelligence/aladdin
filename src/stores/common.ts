@@ -927,6 +927,7 @@ export const useStore = create<CommonStoreState>(
               state.yearlyUpdraftTowerYield.length = 0;
               state.fittestIndividualResults.length = 0;
               state.roofSegmentVerticesMap = new Map<string, Vector3[][]>();
+              state.clearHeatmaps();
             });
             // 1/6/2022: Humans previously did not have dimension data (which probably was a mistake).
             // We do this for backward compatibility. Otherwise, humans cannot be moved in old files.
@@ -968,6 +969,7 @@ export const useStore = create<CommonStoreState>(
             immerSet((state: CommonStoreState) => {
               state.elements = [];
               state.clearRoofSegmentVertices();
+              state.clearHeatmaps();
             });
           },
           createEmptyFile() {
@@ -986,6 +988,8 @@ export const useStore = create<CommonStoreState>(
               state.showSolarRadiationHeatmap = false;
               state.currentUndoable = undefined;
               state.actionInfo = undefined;
+              state.clearRoofSegmentVertices();
+              state.clearHeatmaps();
             });
           },
           undoManager: new UndoManager(),
