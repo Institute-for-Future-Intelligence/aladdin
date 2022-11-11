@@ -44,6 +44,7 @@ const StaticSolarRadiationSimulation = ({ city }: StaticSolarRadiationSimulation
   const getParent = useStore(Selector.getParent);
   const getFoundation = useStore(Selector.getFoundation);
   const setHeatmap = useStore(Selector.setHeatmap);
+  const clearHeatmaps = useStore(Selector.clearHeatmaps);
   const runSimulation = useStore(Selector.runStaticSimulation);
 
   const { scene } = useThree();
@@ -60,6 +61,7 @@ const StaticSolarRadiationSimulation = ({ city }: StaticSolarRadiationSimulation
   useEffect(() => {
     if (runSimulation) {
       if (elements && elements.length > 0) {
+        clearHeatmaps();
         generateHeatmaps();
         setCommonStore((state) => {
           state.showSolarRadiationHeatmap = true;

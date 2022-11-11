@@ -20,7 +20,7 @@ import { useStoreRef } from './stores/commonRef';
 import { SolarPanelModel } from './models/SolarPanelModel';
 import { Util } from './Util';
 import { ElementModel } from './models/ElementModel';
-import { FINE_GRID_RATIO } from './constants';
+import { FINE_GRID_RATIO, GROUND_ID } from './constants';
 import { RoofUtil } from './views/roof/RoofUtil';
 import { RoofModel } from './models/RoofModel';
 import { spBoundaryCheck, spCollisionCheck } from './views/roof/roofRenderer';
@@ -34,6 +34,7 @@ export interface KeyboardListenerProps {
 
 const KeyboardListener = ({ canvas, set2DView, resetView, zoomView }: KeyboardListenerProps) => {
   const setCommonStore = useStore(Selector.set);
+  const elements = useStore(Selector.elements);
   const loggable = useStore(Selector.loggable);
   const selectNone = useStore(Selector.selectNone);
   const language = useStore(Selector.language);
@@ -298,6 +299,33 @@ const KeyboardListener = ({ canvas, set2DView, resetView, zoomView }: KeyboardLi
             updateElementCxById(selectedElement.id, selectedElement.cx + displacement);
           }
         }
+      } else {
+        // if no element is selected, move everything
+        const undoableMoveAllLeft = {
+          name: 'Move All Left',
+          timestamp: Date.now(),
+          displacement: -moveStepAbsolute,
+          undo: () => {
+            for (const e of elements) {
+              if (Util.isFoundationOrCuboid(e) || (Util.isPlantOrHuman(e) && e.parentId === GROUND_ID)) {
+                updateElementCxById(e.id, e.cx - undoableMoveAllLeft.displacement);
+              }
+            }
+          },
+          redo: () => {
+            for (const e of elements) {
+              if (Util.isFoundationOrCuboid(e) || (Util.isPlantOrHuman(e) && e.parentId === GROUND_ID)) {
+                updateElementCxById(e.id, e.cx + undoableMoveAllLeft.displacement);
+              }
+            }
+          },
+        } as UndoableMoveInX;
+        addUndoable(undoableMoveAllLeft);
+        for (const e of elements) {
+          if (Util.isFoundationOrCuboid(e) || (Util.isPlantOrHuman(e) && e.parentId === GROUND_ID)) {
+            updateElementCxById(e.id, e.cx - moveStepAbsolute);
+          }
+        }
       }
     }
   };
@@ -368,6 +396,33 @@ const KeyboardListener = ({ canvas, set2DView, resetView, zoomView }: KeyboardLi
             updateElementCxById(selectedElement.id, selectedElement.cx + displacement);
           }
         }
+      } else {
+        // if no element is selected, move everything
+        const undoableMoveAllRight = {
+          name: 'Move All Right',
+          timestamp: Date.now(),
+          displacement: moveStepAbsolute,
+          undo: () => {
+            for (const e of elements) {
+              if (Util.isFoundationOrCuboid(e) || (Util.isPlantOrHuman(e) && e.parentId === GROUND_ID)) {
+                updateElementCxById(e.id, e.cx - undoableMoveAllRight.displacement);
+              }
+            }
+          },
+          redo: () => {
+            for (const e of elements) {
+              if (Util.isFoundationOrCuboid(e) || (Util.isPlantOrHuman(e) && e.parentId === GROUND_ID)) {
+                updateElementCxById(e.id, e.cx + undoableMoveAllRight.displacement);
+              }
+            }
+          },
+        } as UndoableMoveInX;
+        addUndoable(undoableMoveAllRight);
+        for (const e of elements) {
+          if (Util.isFoundationOrCuboid(e) || (Util.isPlantOrHuman(e) && e.parentId === GROUND_ID)) {
+            updateElementCxById(e.id, e.cx + moveStepAbsolute);
+          }
+        }
       }
     }
   };
@@ -430,6 +485,33 @@ const KeyboardListener = ({ canvas, set2DView, resetView, zoomView }: KeyboardLi
             } as UndoableMoveInY;
             addUndoable(undoableMoveUp);
             updateElementCyById(selectedElement.id, selectedElement.cy + displacement);
+          }
+        }
+      } else {
+        // if no element is selected, move everything
+        const undoableMoveAllUp = {
+          name: 'Move All Up',
+          timestamp: Date.now(),
+          displacement: moveStepAbsolute,
+          undo: () => {
+            for (const e of elements) {
+              if (Util.isFoundationOrCuboid(e) || (Util.isPlantOrHuman(e) && e.parentId === GROUND_ID)) {
+                updateElementCyById(e.id, e.cy - undoableMoveAllUp.displacement);
+              }
+            }
+          },
+          redo: () => {
+            for (const e of elements) {
+              if (Util.isFoundationOrCuboid(e) || (Util.isPlantOrHuman(e) && e.parentId === GROUND_ID)) {
+                updateElementCyById(e.id, e.cy + undoableMoveAllUp.displacement);
+              }
+            }
+          },
+        } as UndoableMoveInX;
+        addUndoable(undoableMoveAllUp);
+        for (const e of elements) {
+          if (Util.isFoundationOrCuboid(e) || (Util.isPlantOrHuman(e) && e.parentId === GROUND_ID)) {
+            updateElementCyById(e.id, e.cy + moveStepAbsolute);
           }
         }
       }
@@ -500,6 +582,33 @@ const KeyboardListener = ({ canvas, set2DView, resetView, zoomView }: KeyboardLi
             } as UndoableMoveInY;
             addUndoable(undoableMoveDown);
             updateElementCyById(selectedElement.id, selectedElement.cy + displacement);
+          }
+        }
+      } else {
+        // if no element is selected, move everything
+        const undoableMoveAllDown = {
+          name: 'Move All Down',
+          timestamp: Date.now(),
+          displacement: -moveStepAbsolute,
+          undo: () => {
+            for (const e of elements) {
+              if (Util.isFoundationOrCuboid(e) || (Util.isPlantOrHuman(e) && e.parentId === GROUND_ID)) {
+                updateElementCyById(e.id, e.cy - undoableMoveAllDown.displacement);
+              }
+            }
+          },
+          redo: () => {
+            for (const e of elements) {
+              if (Util.isFoundationOrCuboid(e) || (Util.isPlantOrHuman(e) && e.parentId === GROUND_ID)) {
+                updateElementCyById(e.id, e.cy + undoableMoveAllDown.displacement);
+              }
+            }
+          },
+        } as UndoableMoveInX;
+        addUndoable(undoableMoveAllDown);
+        for (const e of elements) {
+          if (Util.isFoundationOrCuboid(e) || (Util.isPlantOrHuman(e) && e.parentId === GROUND_ID)) {
+            updateElementCyById(e.id, e.cy - moveStepAbsolute);
           }
         }
       }
