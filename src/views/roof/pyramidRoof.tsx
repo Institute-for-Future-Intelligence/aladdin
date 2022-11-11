@@ -2,10 +2,10 @@
  * @Copyright 2022. Institute for Future Intelligence, Inc.
  */
 
-import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import React, { useEffect, useMemo, useRef, useState } from 'react';
 import { PyramidRoofModel, RoofModel } from 'src/models/RoofModel';
 import { useStore } from 'src/stores/common';
-import { Euler, Mesh, Raycaster, Shape, Vector2, Vector3 } from 'three';
+import { CanvasTexture, Euler, Mesh, Raycaster, Shape, Vector2, Vector3 } from 'three';
 import * as Selector from 'src/stores/selector';
 import { WallModel } from 'src/models/WallModel';
 import { Extrude, Line, Plane } from '@react-three/drei';
@@ -555,7 +555,31 @@ const PyramidRoof = ({
     setIsFlatRoof(checkIsFlatRoof());
   }, [currentWallArray, h]);
 
-  const material = useMemo(
+  const showSolarRadiationHeatmap = useStore(Selector.showSolarRadiationHeatmap);
+  const solarRadiationHeatmapMaxValue = useStore(Selector.viewState.solarRadiationHeatmapMaxValue);
+  const getHeatmap = useStore(Selector.getHeatmap);
+  const [heatmapTextures, setHeatmapTextures] = useState<CanvasTexture[]>([]);
+
+  useEffect(() => {
+    if (showSolarRadiationHeatmap) {
+      const n = roofSegments.length;
+      if (n > 0) {
+        const textures = [];
+        for (let i = 0; i < n; i++) {
+          const heatmap = getHeatmap(id + '-' + i);
+          if (heatmap) {
+            const t = Util.fetchHeatmapTexture(heatmap, solarRadiationHeatmapMaxValue ?? 5);
+            if (t) {
+              textures.push(t);
+            }
+          }
+        }
+        setHeatmapTextures(textures);
+      }
+    }
+  }, [showSolarRadiationHeatmap, solarRadiationHeatmapMaxValue]);
+
+  const normalMaterial = useMemo(
     () => (
       <meshStandardMaterial
         map={texture}
@@ -590,7 +614,11 @@ const PyramidRoof = ({
       >
         {isFlatRoof ? (
           <FlatRoof roofSegments={roofSegments} thickness={thickness} lineWidth={lineWidth} lineColor={lineColor}>
-            {material}
+            {showSolarRadiationHeatmap && heatmapTextures.length > 0 ? (
+              <meshBasicMaterial attach="material" map={heatmapTextures[0]} />
+            ) : (
+              normalMaterial
+            )}
           </FlatRoof>
         ) : (
           <>
@@ -603,12 +631,17 @@ const PyramidRoof = ({
                   return (
                     <group name={`Roof segment ${idx}`} key={idx}>
                       <RoofSegment points={points} direction={isFlat ? 0 : direction} length={isFlat ? 1 : length}>
-                        {material}
+                        {showSolarRadiationHeatmap && idx < heatmapTextures.length ? (
+                          <meshBasicMaterial attach="material" map={heatmapTextures[idx]} />
+                        ) : (
+                          normalMaterial
+                        )}
                       </RoofSegment>
                     </group>
                   );
                 }
               }
+              return null;
             })}
             <PyramidRoofWireframe
               roofSegments={roofSegments}

@@ -27,6 +27,7 @@ import { showInfo } from '../helpers';
 import i18n from '../i18n/i18n';
 import { WallModel } from '../models/WallModel';
 import { Point2 } from '../models/Point2';
+import { RoofModel } from '../models/RoofModel';
 
 export interface StaticSolarRadiationSimulationProps {
   city: string | null;
@@ -46,6 +47,7 @@ const StaticSolarRadiationSimulation = ({ city }: StaticSolarRadiationSimulation
   const setHeatmap = useStore(Selector.setHeatmap);
   const clearHeatmaps = useStore(Selector.clearHeatmaps);
   const runSimulation = useStore(Selector.runStaticSimulation);
+  const getRoofSegmentVertices = useStore(Selector.getRoofSegmentVertices);
 
   const { scene } = useThree();
   const lang = { lng: language };
@@ -117,7 +119,7 @@ const StaticSolarRadiationSimulation = ({ city }: StaticSolarRadiationSimulation
           generateHeatmapForWall(e as WallModel);
           break;
         case ObjectType.Roof:
-          // TODO
+          generateHeatmapForRoof(e as RoofModel);
           break;
       }
     }
@@ -601,6 +603,26 @@ const StaticSolarRadiationSimulation = ({ city }: StaticSolarRadiationSimulation
     applyScaleFactor(cellOutputTotals, scaleFactor);
     // send heat map data to common store for visualization
     setHeatmap(wall.id, cellOutputTotals);
+  };
+
+  const generateHeatmapForRoof = (roof: RoofModel) => {
+    const foundation = getFoundation(roof);
+    if (!foundation) throw new Error('foundation of wall not found');
+    const segments = getRoofSegmentVertices(roof.id);
+    if (!segments || segments.length === 0) throw new Error('roof segments not found');
+    const year = now.getFullYear();
+    const month = now.getMonth();
+    const date = now.getDate();
+    const dayOfYear = Util.dayOfYear(now);
+    const nx = 10;
+    const ny = 10;
+    const cellOutputTotals = Array(nx)
+      .fill(0)
+      .map(() => Array(ny).fill(0));
+    // send heat map data to common store for visualization
+    for (const [i, s] of segments.entries()) {
+      setHeatmap(roof.id + '-' + i, cellOutputTotals);
+    }
   };
 
   const applyScaleFactor = (output: number[][], scaleFactor: number) => {
