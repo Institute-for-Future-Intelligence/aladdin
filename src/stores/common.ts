@@ -876,6 +876,7 @@ export const useStore = create<CommonStoreState>(
           importContent(content, title) {
             immerSet((state: CommonStoreState) => {
               state.undoManager.clear();
+              state.heatmaps.clear();
               state.world = content.world;
               state.viewState = content.view;
               state.elements = content.elements;
@@ -915,7 +916,6 @@ export const useStore = create<CommonStoreState>(
               state.yearlyUpdraftTowerYield.length = 0;
               state.fittestIndividualResults.length = 0;
               state.roofSegmentVerticesMap = new Map<string, Vector3[][]>();
-              state.clearHeatmaps();
             });
             // 1/6/2022: Humans previously did not have dimension data (which probably was a mistake).
             // We do this for backward compatibility. Otherwise, humans cannot be moved in old files.
@@ -956,7 +956,7 @@ export const useStore = create<CommonStoreState>(
           clearContent() {
             immerSet((state: CommonStoreState) => {
               state.elements = [];
-              state.clearHeatmaps();
+              state.heatmaps.clear();
               state.roofSegmentVerticesMap.clear();
             });
           },
@@ -977,7 +977,7 @@ export const useStore = create<CommonStoreState>(
               state.currentUndoable = undefined;
               state.actionInfo = undefined;
               state.roofSegmentVerticesMap.clear();
-              state.clearHeatmaps();
+              state.heatmaps.clear();
             });
           },
           undoManager: new UndoManager(),
