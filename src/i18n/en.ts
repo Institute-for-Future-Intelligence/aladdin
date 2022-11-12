@@ -645,6 +645,8 @@ export const i18n_en = {
       AllSidesOfThisCuboid: 'All Sides of This Cuboid',
       AllSidesOfAllCuboids: 'All Sides of All Cuboids',
       AddPolygon: 'Add Polygon',
+      Label: 'Label',
+      KeepShowingLabel: 'Keep Showing Label',
     },
 
     polygonMenu: {

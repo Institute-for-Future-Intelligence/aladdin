@@ -623,6 +623,8 @@ export const i18n_zh_tw = {
       AllSidesOfThisCuboid: '這個長方體所有的側面',
       AllSidesOfAllCuboids: '所有的長方體所有的側面',
       AddPolygon: '添加多邊形',
+      Label: '標籤',
+      KeepShowingLabel: '顯示標籤',
     },
 
     polygonMenu: {

@@ -645,6 +645,8 @@ export const i18n_tr = {
       AllSidesOfThisCuboid: 'Seçili Kübik Tüm Yüzeyler',
       AllSidesOfAllCuboids: 'Bütün Kübik Yüzeyleri ',
       AddPolygon: 'Poligon Ekle',
+      Label: 'Label',
+      KeepShowingLabel: 'Keep Showing Label',
     },
 
     polygonMenu: {

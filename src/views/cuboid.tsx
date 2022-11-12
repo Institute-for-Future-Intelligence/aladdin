@@ -92,6 +92,7 @@ const Cuboid = ({
   lineWidth = 0.1,
   selected = false,
   locked = false,
+  showLabel = false,
   textureTypes = [
     CuboidTexture.NoTexture,
     CuboidTexture.NoTexture,
@@ -1097,6 +1098,25 @@ const Cuboid = ({
     null,
   ];
 
+  const labelText = useMemo(() => {
+    return (
+      (cuboidModel?.label ? cuboidModel.label : i18n.t('shared.CuboidElement', lang)) +
+      (cuboidModel.locked ? ' (' + i18n.t('shared.ElementLocked', lang) + ')' : '') +
+      (cuboidModel?.label
+        ? ''
+        : '\n' +
+          i18n.t('word.Coordinates', lang) +
+          ': (' +
+          cx.toFixed(1) +
+          ', ' +
+          cy.toFixed(1) +
+          ', ' +
+          (lz / 2).toFixed(1) +
+          ') ' +
+          i18n.t('word.MeterAbbreviation', lang))
+    );
+  }, [cuboidModel?.label, locked, language, cx, cy, lz]);
+
   return (
     <group
       ref={groupRef}
@@ -1556,13 +1576,11 @@ const Cuboid = ({
         </>
       )}
 
-      {hovered && !selected && (
+      {(hovered || showLabel) && !selected && (
         <textSprite
           userData={{ unintersectable: true }}
           name={'Label'}
-          text={
-            i18n.t('shared.CuboidElement', lang) + (locked ? ' (' + i18n.t('shared.ElementLocked', lang) + ')' : '')
-          }
+          text={labelText}
           fontSize={20}
           fontFace={'Times Roman'}
           textHeight={0.2}

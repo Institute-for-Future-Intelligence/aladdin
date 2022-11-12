@@ -2,8 +2,8 @@
  * @Copyright 2021-2022. Institute for Future Intelligence, Inc.
  */
 
-import React, { useState } from 'react';
-import { Menu, Modal } from 'antd';
+import React, { useEffect, useState } from 'react';
+import { Checkbox, Input, Menu, Modal } from 'antd';
 import { Copy, Cut, Lock, Paste } from '../menuItems';
 import SubMenu from 'antd/lib/menu/SubMenu';
 import { ExclamationCircleOutlined } from '@ant-design/icons';
@@ -29,6 +29,8 @@ import {
 } from '../../../constants';
 import { Vector3 } from 'three';
 import { ElementCounter } from '../../../stores/ElementCounter';
+import { UndoableCheck } from '../../../undo/UndoableCheck';
+import { UndoableChange } from '../../../undo/UndoableChange';
 
 export const CuboidMenu = () => {
   const setCommonStore = useStore(Selector.set);
@@ -38,6 +40,8 @@ export const CuboidMenu = () => {
   const addUndoable = useStore(Selector.addUndoable);
   const countAllOffspringsByType = useStore(Selector.countAllOffspringsByTypeAtOnce);
   const removeAllChildElementsByType = useStore(Selector.removeAllChildElementsByType);
+  const updateElementLabelById = useStore(Selector.updateElementLabelById);
+  const updateElementShowLabelById = useStore(Selector.updateElementShowLabelById);
   const contextMenuObjectType = useStore(Selector.contextMenuObjectType);
   const selectedSideIndex = useStore(Selector.selectedSideIndex);
   const elementsToPaste = useStore(Selector.elementsToPaste);
@@ -47,6 +51,7 @@ export const CuboidMenu = () => {
   const removeElementById = useStore(Selector.removeElementById);
   const setApplyCount = useStore(Selector.setApplyCount);
 
+  const [labelText, setLabelText] = useState<string>('');
   const [colorDialogVisible, setColorDialogVisible] = useState(false);
   const [textureDialogVisible, setTextureDialogVisible] = useState(false);
   const [widthDialogVisible, setWidthDialogVisible] = useState(false);
@@ -56,6 +61,12 @@ export const CuboidMenu = () => {
 
   const counterUnlocked = cuboid ? countAllOffspringsByType(cuboid.id, false) : new ElementCounter();
   const lang = { lng: language };
+
+  useEffect(() => {
+    if (cuboid) {
+      setLabelText(cuboid.label ?? '');
+    }
+  }, [cuboid.label]);
 
   const legalToPaste = () => {
     if (elementsToPaste && elementsToPaste.length > 0) {
@@ -75,6 +86,48 @@ export const CuboidMenu = () => {
   };
 
   const editable = !cuboid?.locked;
+
+  const showLabel = (checked: boolean) => {
+    if (cuboid) {
+      const undoableCheck = {
+        name: 'Show Cuboid Label',
+        timestamp: Date.now(),
+        checked: !cuboid.showLabel,
+        selectedElementId: cuboid.id,
+        selectedElementType: ObjectType.Cuboid,
+        undo: () => {
+          updateElementShowLabelById(cuboid.id, !undoableCheck.checked);
+        },
+        redo: () => {
+          updateElementShowLabelById(cuboid.id, undoableCheck.checked);
+        },
+      } as UndoableCheck;
+      addUndoable(undoableCheck);
+      updateElementShowLabelById(cuboid.id, checked);
+    }
+  };
+
+  const updateLabelText = () => {
+    if (cuboid) {
+      const oldLabel = cuboid.label;
+      const undoableChange = {
+        name: 'Set Cuboid Label',
+        timestamp: Date.now(),
+        oldValue: oldLabel,
+        newValue: labelText,
+        changedElementId: cuboid.id,
+        changedElementType: ObjectType.Cuboid,
+        undo: () => {
+          updateElementLabelById(undoableChange.changedElementId, undoableChange.oldValue as string);
+        },
+        redo: () => {
+          updateElementLabelById(undoableChange.changedElementId, undoableChange.newValue as string);
+        },
+      } as UndoableChange;
+      addUndoable(undoableChange);
+      updateElementLabelById(cuboid.id, labelText);
+    }
+  };
 
   return (
     cuboid && (
@@ -515,6 +568,27 @@ export const CuboidMenu = () => {
         >
           {i18n.t('cuboidMenu.AddPolygon', lang)}
         </Menu.Item>
+
+        {/* show label or not */}
+        <Menu.Item key={'cuboid-show-label'}>
+          <Checkbox checked={!!cuboid?.showLabel} onChange={(e) => showLabel(e.target.checked)}>
+            {i18n.t('cuboidMenu.KeepShowingLabel', lang)}
+          </Checkbox>
+        </Menu.Item>
+
+        {/*have to wrap the text field with a Menu so that it can stay open when the user types in it */}
+        <Menu>
+          {/* label text */}
+          <Menu.Item key={'cuboid-label-text'} style={{ paddingLeft: '36px' }}>
+            <Input
+              addonBefore={i18n.t('cuboidMenu.Label', lang) + ':'}
+              value={labelText}
+              onChange={(e: React.ChangeEvent<HTMLInputElement>) => setLabelText(e.target.value)}
+              onPressEnter={updateLabelText}
+              onBlur={updateLabelText}
+            />
+          </Menu.Item>
+        </Menu>
       </Menu.ItemGroup>
     )
   );

@@ -622,6 +622,8 @@ export const i18n_zh_cn = {
       AllSidesOfThisCuboid: '这个长方体所有的侧面',
       AllSidesOfAllCuboids: '所有的长方体所有的侧面',
       AddPolygon: '添加多边形',
+      Label: '标签',
+      KeepShowingLabel: '显示标签',
     },
 
     polygonMenu: {
