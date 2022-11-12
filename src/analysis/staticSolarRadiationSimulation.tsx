@@ -610,6 +610,17 @@ const StaticSolarRadiationSimulation = ({ city }: StaticSolarRadiationSimulation
     if (!foundation) throw new Error('foundation of wall not found');
     const segments = getRoofSegmentVertices(roof.id);
     if (!segments || segments.length === 0) throw new Error('roof segments not found');
+    // check if the roof is flat or not
+    let flat = true;
+    const h0 = segments[0][0].z;
+    for (const s of segments) {
+      for (const v of s) {
+        if (Math.abs(v.z - h0) > 0.01) {
+          flat = false;
+          break;
+        }
+      }
+    }
     const year = now.getFullYear();
     const month = now.getMonth();
     const date = now.getDate();
@@ -620,8 +631,13 @@ const StaticSolarRadiationSimulation = ({ city }: StaticSolarRadiationSimulation
       .fill(0)
       .map(() => Array(ny).fill(0));
     // send heat map data to common store for visualization
-    for (const [i, s] of segments.entries()) {
-      setHeatmap(roof.id + '-' + i, cellOutputTotals);
+    if (flat) {
+      console.log(segments);
+      setHeatmap(roof.id, cellOutputTotals);
+    } else {
+      for (const [i, s] of segments.entries()) {
+        setHeatmap(roof.id + '-' + i, cellOutputTotals);
+      }
     }
   };
 

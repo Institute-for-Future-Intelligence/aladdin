@@ -559,22 +559,33 @@ const PyramidRoof = ({
   const solarRadiationHeatmapMaxValue = useStore(Selector.viewState.solarRadiationHeatmapMaxValue);
   const getHeatmap = useStore(Selector.getHeatmap);
   const [heatmapTextures, setHeatmapTextures] = useState<CanvasTexture[]>([]);
+  const [flatHeatmapTexture, setFlatHeatmapTexture] = useState<CanvasTexture | null>(null);
 
   useEffect(() => {
     if (showSolarRadiationHeatmap) {
-      const n = roofSegments.length;
-      if (n > 0) {
-        const textures = [];
-        for (let i = 0; i < n; i++) {
-          const heatmap = getHeatmap(id + '-' + i);
-          if (heatmap) {
-            const t = Util.fetchHeatmapTexture(heatmap, solarRadiationHeatmapMaxValue ?? 5);
-            if (t) {
-              textures.push(t);
-            }
+      if (isFlatRoof) {
+        const heatmap = getHeatmap(id);
+        if (heatmap) {
+          const t = Util.fetchHeatmapTexture(heatmap, solarRadiationHeatmapMaxValue ?? 5);
+          if (t) {
+            setFlatHeatmapTexture(t);
           }
         }
-        setHeatmapTextures(textures);
+      } else {
+        const n = roofSegments.length;
+        if (n > 0) {
+          const textures = [];
+          for (let i = 0; i < n; i++) {
+            const heatmap = getHeatmap(id + '-' + i);
+            if (heatmap) {
+              const t = Util.fetchHeatmapTexture(heatmap, solarRadiationHeatmapMaxValue ?? 5);
+              if (t) {
+                textures.push(t);
+              }
+            }
+          }
+          setHeatmapTextures(textures);
+        }
       }
     }
   }, [showSolarRadiationHeatmap, solarRadiationHeatmapMaxValue]);
@@ -614,8 +625,8 @@ const PyramidRoof = ({
       >
         {isFlatRoof ? (
           <FlatRoof roofSegments={roofSegments} thickness={thickness} lineWidth={lineWidth} lineColor={lineColor}>
-            {showSolarRadiationHeatmap && heatmapTextures.length > 0 ? (
-              <meshBasicMaterial attach="material" map={heatmapTextures[0]} />
+            {showSolarRadiationHeatmap && flatHeatmapTexture ? (
+              <meshBasicMaterial attach="material" map={flatHeatmapTexture} />
             ) : (
               normalMaterial
             )}
