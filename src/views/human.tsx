@@ -229,7 +229,7 @@ const Human = ({
   }, []);
 
   const gender = observer ? HumanData.fetchGender(humanModel.name) : Gender.Male;
-  const hatOffset = observer ? HumanData.fetchHatOffset(humanModel.name) : 0;
+  const hatOffset = observer ? (humanModel.flip ? -1 : 1) * HumanData.fetchHatOffset(humanModel.name) : 0;
 
   return (
     <>

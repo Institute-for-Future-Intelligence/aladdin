@@ -7,28 +7,34 @@ import { Select } from 'antd';
 import { HumanName } from '../../../types';
 import JaahImage from '../../../resources/jaah.png';
 import JackImage from '../../../resources/jack.png';
+import JacobImage from '../../../resources/jacob.png';
+import JacquelineImage from '../../../resources/jacqueline.png';
 import JadeImage from '../../../resources/jade.png';
-import JaneImage from '../../../resources/jane.png';
+import JameliaImage from '../../../resources/jamelia.png';
+import JamesImage from '../../../resources/james.png';
+import JayaImage from '../../../resources/jaya.png';
 import JayeImage from '../../../resources/jaye.png';
-import JeanImage from '../../../resources/jean.png';
+import JeanetteImage from '../../../resources/jeanette.png';
 import JediImage from '../../../resources/jedi.png';
 import JeffImage from '../../../resources/jeff.png';
 import JenaImage from '../../../resources/jena.png';
-import JeniImage from '../../../resources/jeni.png';
+import JenniferImage from '../../../resources/jennifer.png';
 import JessImage from '../../../resources/jess.png';
 import JettImage from '../../../resources/jett.png';
-import JillImage from '../../../resources/jill.png';
+import JiyaImage from '../../../resources/jiya.png';
 import JoanImage from '../../../resources/joan.png';
+import JocelynImage from '../../../resources/jocelyn.png';
 import JoelImage from '../../../resources/joel.png';
 import JoeyImage from '../../../resources/joey.png';
-import JohnImage from '../../../resources/john.png';
 import JoseImage from '../../../resources/jose.png';
+import JosephImage from '../../../resources/joseph.png';
+import JohnImage from '../../../resources/john.png';
 import JuddImage from '../../../resources/judd.png';
-import JudyImage from '../../../resources/judy.png';
+import JuliaImage from '../../../resources/julia.png';
+import JulioImage from '../../../resources/julio.png';
+import JumapiliImage from '../../../resources/jumapili.png';
 import JuneImage from '../../../resources/june.png';
 import JuroImage from '../../../resources/juro.png';
-import XiaoliImage from '../../../resources/xiaoli.png';
-import XiaomingImage from '../../../resources/xiaoming.png';
 import { useStore } from '../../../stores/common';
 import * as Selector from '../../../stores/selector';
 import { HumanModel } from '../../../models/HumanModel';
@@ -49,7 +55,7 @@ const HumanSelection = () => {
 
   return (
     <Select
-      style={{ width: '120px' }}
+      style={{ width: '140px' }}
       value={human?.name ?? HumanName.Jack}
       onChange={(value) => {
         if (human) {
@@ -80,8 +86,16 @@ const HumanSelection = () => {
       }}
     >
       <Option key={HumanName.Jack} value={HumanName.Jack}>
-        <img alt={HumanName.Jack} src={JackImage} height={20} style={{ paddingRight: '22px' }} />{' '}
+        <img alt={HumanName.Jack} src={JackImage} height={20} style={{ paddingRight: '21px' }} />{' '}
         {i18n.t('people.Jack', lang)}
+      </Option>
+      <Option key={HumanName.Jacob} value={HumanName.Jacob}>
+        <img alt={HumanName.Jacob} src={JacobImage} height={20} style={{ paddingRight: '16px' }} />{' '}
+        {i18n.t('people.Jacob', lang)}
+      </Option>
+      <Option key={HumanName.Jacqueline} value={HumanName.Jacqueline}>
+        <img alt={HumanName.Jacqueline} src={JacquelineImage} height={20} style={{ paddingRight: '20px' }} />{' '}
+        {i18n.t('people.Jacqueline', lang)}
       </Option>
       <Option key={HumanName.Jaah} value={HumanName.Jaah}>
         <img alt={HumanName.Jaah} src={JaahImage} height={20} style={{ paddingRight: '19px' }} />{' '}
@@ -91,17 +105,25 @@ const HumanSelection = () => {
         <img alt={HumanName.Jade} src={JadeImage} height={20} style={{ paddingRight: '20px' }} />{' '}
         {i18n.t('people.Jade', lang)}
       </Option>
-      <Option key={HumanName.Jane} value={HumanName.Jane}>
-        <img alt={HumanName.Jane} src={JaneImage} height={20} style={{ paddingRight: '19px' }} />{' '}
-        {i18n.t('people.Jane', lang)}
+      <Option key={HumanName.Jamelia} value={HumanName.Jamelia}>
+        <img alt={HumanName.Jamelia} src={JameliaImage} height={20} style={{ paddingRight: '20px' }} />{' '}
+        {i18n.t('people.Jamelia', lang)}
+      </Option>
+      <Option key={HumanName.James} value={HumanName.James}>
+        <img alt={HumanName.James} src={JamesImage} height={20} style={{ paddingRight: '21px' }} />{' '}
+        {i18n.t('people.James', lang)}
+      </Option>
+      <Option key={HumanName.Jaya} value={HumanName.Jaya}>
+        <img alt={HumanName.Jaya} src={JayaImage} height={20} style={{ paddingRight: '19px' }} />{' '}
+        {i18n.t('people.Jaya', lang)}
       </Option>
       <Option key={HumanName.Jaye} value={HumanName.Jaye}>
         <img alt={HumanName.Jaye} src={JayeImage} height={20} style={{ paddingRight: '20px' }} />{' '}
         {i18n.t('people.Jaye', lang)}
       </Option>
-      <Option key={HumanName.Jean} value={HumanName.Jean}>
-        <img alt={HumanName.Jean} src={JeanImage} height={20} style={{ paddingRight: '20px' }} />{' '}
-        {i18n.t('people.Jean', lang)}
+      <Option key={HumanName.Jeanette} value={HumanName.Jeanette}>
+        <img alt={HumanName.Jeanette} src={JeanetteImage} height={20} style={{ paddingRight: '20px' }} />{' '}
+        {i18n.t('people.Jeanette', lang)}
       </Option>
       <Option key={HumanName.Jedi} value={HumanName.Jedi}>
         <img alt={HumanName.Jedi} src={JediImage} height={20} style={{ paddingRight: '20px' }} />{' '}
@@ -115,9 +137,9 @@ const HumanSelection = () => {
         <img alt={HumanName.Jena} src={JenaImage} height={20} style={{ paddingRight: '19px' }} />{' '}
         {i18n.t('people.Jena', lang)}
       </Option>
-      <Option key={HumanName.Jeni} value={HumanName.Jeni}>
-        <img alt={HumanName.Jeni} src={JeniImage} height={20} style={{ paddingRight: '21px' }} />{' '}
-        {i18n.t('people.Jeni', lang)}
+      <Option key={HumanName.Jennifer} value={HumanName.Jennifer}>
+        <img alt={HumanName.Jennifer} src={JenniferImage} height={20} style={{ paddingRight: '21px' }} />{' '}
+        {i18n.t('people.Jennifer', lang)}
       </Option>
       <Option key={HumanName.Jess} value={HumanName.Jess}>
         <img alt={HumanName.Jess} src={JessImage} height={20} style={{ paddingRight: '21px' }} />{' '}
@@ -127,13 +149,17 @@ const HumanSelection = () => {
         <img alt={HumanName.Jett} src={JettImage} height={20} style={{ paddingRight: '21px' }} />{' '}
         {i18n.t('people.Jett', lang)}
       </Option>
-      <Option key={HumanName.Jill} value={HumanName.Jill}>
-        <img alt={HumanName.Jill} src={JillImage} height={20} style={{ paddingRight: '20px' }} />{' '}
-        {i18n.t('people.Jill', lang)}
+      <Option key={HumanName.Jiya} value={HumanName.Jiya}>
+        <img alt={HumanName.Jiya} src={JiyaImage} height={20} style={{ paddingRight: '20px' }} />{' '}
+        {i18n.t('people.Jiya', lang)}
       </Option>
       <Option key={HumanName.Joan} value={HumanName.Joan}>
         <img alt={HumanName.Joan} src={JoanImage} height={20} style={{ paddingRight: '8px' }} />{' '}
         {i18n.t('people.Joan', lang)}
+      </Option>
+      <Option key={HumanName.Jocelyn} value={HumanName.Jocelyn}>
+        <img alt={HumanName.Jocelyn} src={JocelynImage} height={20} style={{ paddingRight: '23px' }} />{' '}
+        {i18n.t('people.Jocelyn', lang)}
       </Option>
       <Option key={HumanName.Joel} value={HumanName.Joel}>
         <img alt={HumanName.Joel} src={JoelImage} height={20} style={{ paddingRight: '7px' }} />{' '}
@@ -151,13 +177,25 @@ const HumanSelection = () => {
         <img alt={HumanName.Jose} src={JoseImage} height={20} style={{ paddingRight: '5px' }} />{' '}
         {i18n.t('people.Jose', lang)}
       </Option>
+      <Option key={HumanName.Joseph} value={HumanName.Joseph}>
+        <img alt={HumanName.Joseph} src={JosephImage} height={20} style={{ paddingRight: '22px' }} />{' '}
+        {i18n.t('people.Joseph', lang)}
+      </Option>
       <Option key={HumanName.Judd} value={HumanName.Judd}>
         <img alt={HumanName.Judd} src={JuddImage} height={20} style={{ paddingRight: '21px' }} />{' '}
         {i18n.t('people.Judd', lang)}
       </Option>
-      <Option key={HumanName.Judy} value={HumanName.Judy}>
-        <img alt={HumanName.Judy} src={JudyImage} height={20} style={{ paddingRight: '16px' }} />{' '}
-        {i18n.t('people.Judy', lang)}
+      <Option key={HumanName.Julia} value={HumanName.Julia}>
+        <img alt={HumanName.Julia} src={JuliaImage} height={20} style={{ paddingRight: '22px' }} />{' '}
+        {i18n.t('people.Julia', lang)}
+      </Option>
+      <Option key={HumanName.Julio} value={HumanName.Julio}>
+        <img alt={HumanName.Julio} src={JulioImage} height={20} style={{ paddingRight: '20px' }} />{' '}
+        {i18n.t('people.Julio', lang)}
+      </Option>
+      <Option key={HumanName.Jumapili} value={HumanName.Jumapili}>
+        <img alt={HumanName.Jumapili} src={JumapiliImage} height={20} style={{ paddingRight: '16px' }} />{' '}
+        {i18n.t('people.Jumapili', lang)}
       </Option>
       <Option key={HumanName.June} value={HumanName.June}>
         <img alt={HumanName.June} src={JuneImage} height={20} style={{ paddingRight: '20px' }} />{' '}
@@ -166,14 +204,6 @@ const HumanSelection = () => {
       <Option key={HumanName.Juro} value={HumanName.Juro}>
         <img alt={HumanName.Juro} src={JuroImage} height={20} style={{ paddingRight: '20px' }} />{' '}
         {i18n.t('people.Juro', lang)}
-      </Option>
-      <Option key={HumanName.Xiaoli} value={HumanName.Xiaoli}>
-        <img alt={HumanName.Xiaoli} src={XiaoliImage} height={20} style={{ paddingRight: '20px' }} />{' '}
-        {i18n.t('people.Xiaoli', lang)}
-      </Option>
-      <Option key={HumanName.Xiaoming} value={HumanName.Xiaoming}>
-        <img alt={HumanName.Xiaoming} src={XiaomingImage} height={20} style={{ paddingRight: '20px' }} />{' '}
-        {i18n.t('people.Xiaoming', lang)}
       </Option>
     </Select>
   );

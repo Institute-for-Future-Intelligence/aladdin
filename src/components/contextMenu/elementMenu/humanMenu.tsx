@@ -134,6 +134,18 @@ export const HumanMenu = () => {
             </Checkbox>
           </Menu.Item>
         )}
+        {!orthographic && (
+          <Menu.Item
+            key={'human-move-view'}
+            onClick={() => {
+              setAnimationFlag(!animationFlag);
+              animateMove.current = true;
+            }}
+            style={{ paddingLeft: '36px' }}
+          >
+            {i18n.t('peopleMenu.ViewFromThisPerson', { lng: language })}
+          </Menu.Item>
+        )}
         {editable && (
           <Menu.Item key={'human-flip'}>
             <Checkbox
@@ -159,18 +171,6 @@ export const HumanMenu = () => {
             >
               {i18n.t('peopleMenu.Flip', { lng: language })}
             </Checkbox>
-          </Menu.Item>
-        )}
-        {!orthographic && (
-          <Menu.Item
-            key={'human-move-view'}
-            onClick={() => {
-              setAnimationFlag(!animationFlag);
-              animateMove.current = true;
-            }}
-            style={{ paddingLeft: '36px' }}
-          >
-            {i18n.t('peopleMenu.ViewFromThisPerson', { lng: language })}
           </Menu.Item>
         )}
         {editable && (
