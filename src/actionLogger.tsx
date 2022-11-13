@@ -68,7 +68,7 @@ const ActionLogger = () => {
         });
       }
     }
-  }, [currentUndoable, user.uid]);
+  }, [currentUndoable, user.uid, classID, schoolID, cloudFile]);
 
   useEffect(() => {
     if (firstCallAction.current) {
@@ -83,7 +83,7 @@ const ActionLogger = () => {
         });
       }
     }
-  }, [actionInfo, user.uid]);
+  }, [actionInfo, user.uid, classID, schoolID, cloudFile]);
 
   return <></>;
 };

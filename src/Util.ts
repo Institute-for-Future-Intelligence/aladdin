@@ -213,7 +213,7 @@ export class Util {
       const yi = vertices[i].y;
       const xj = vertices[j].x;
       const yj = vertices[j].y;
-      if (yi > y != yj > y && x < ((xj - xi) * (y - yi)) / (yj - yi) + xi) {
+      if (yi > y !== yj > y && x < ((xj - xi) * (y - yi)) / (yj - yi) + xi) {
         inside = !inside;
       }
     }
@@ -1051,7 +1051,7 @@ export class Util {
     const dot = A * C + B * D;
     const len_sq = C * C + D * D;
     let param = -1;
-    if (len_sq != 0) {
+    if (len_sq !== 0) {
       param = dot / len_sq;
     }
 
