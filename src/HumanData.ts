@@ -9,6 +9,7 @@ import JacquelineImage from './resources/jacqueline.png';
 import JadeImage from './resources/jade.png';
 import JameliaImage from './resources/jamelia.png';
 import JamesImage from './resources/james.png';
+import JaneImage from './resources/jane.png';
 import JayaImage from './resources/jaya.png';
 import JayeImage from './resources/jaye.png';
 import JeanetteImage from './resources/jeanette.png';
@@ -18,20 +19,26 @@ import JenaImage from './resources/jena.png';
 import JenniferImage from './resources/jennifer.png';
 import JessImage from './resources/jess.png';
 import JettImage from './resources/jett.png';
+import JillImage from './resources/jill.png';
 import JiyaImage from './resources/jiya.png';
 import JoanImage from './resources/joan.png';
 import JocelynImage from './resources/jocelyn.png';
 import JoelImage from './resources/joel.png';
 import JoeyImage from './resources/joey.png';
 import JohnImage from './resources/john.png';
+import JonathonImage from './resources/jonathon.png';
 import JoseImage from './resources/jose.png';
 import JosephImage from './resources/joseph.png';
+import JoshuaImage from './resources/joshua.png';
 import JuddImage from './resources/judd.png';
+import JudyImage from './resources/judy.png';
 import JuliaImage from './resources/julia.png';
 import JulioImage from './resources/julio.png';
 import JumapiliImage from './resources/jumapili.png';
 import JuneImage from './resources/june.png';
 import JuroImage from './resources/juro.png';
+import JustinImage from './resources/justin.png';
+
 import { Gender, HumanName } from './types';
 import i18n from './i18n/i18n';
 
@@ -48,6 +55,8 @@ export class HumanData {
         return Gender.Female;
       case HumanName.James:
         return Gender.Male;
+      case HumanName.Jane:
+        return Gender.Female;
       case HumanName.Jaya:
         return Gender.Female;
       case HumanName.Jaye:
@@ -66,6 +75,8 @@ export class HumanData {
         return Gender.Female;
       case HumanName.Jett:
         return Gender.Male;
+      case HumanName.Jill:
+        return Gender.Female;
       case HumanName.Jiya:
         return Gender.Female;
       case HumanName.Joan:
@@ -78,12 +89,18 @@ export class HumanData {
         return Gender.Female;
       case HumanName.John:
         return Gender.Male;
+      case HumanName.Jonathon:
+        return Gender.Male;
       case HumanName.Jose:
         return Gender.Male;
       case HumanName.Joseph:
         return Gender.Male;
+      case HumanName.Joshua:
+        return Gender.Male;
       case HumanName.Judd:
         return Gender.Male;
+      case HumanName.Judy:
+        return Gender.Female;
       case HumanName.Julia:
         return Gender.Female;
       case HumanName.Julio:
@@ -93,6 +110,8 @@ export class HumanData {
       case HumanName.June:
         return Gender.Female;
       case HumanName.Juro:
+        return Gender.Male;
+      case HumanName.Justin:
         return Gender.Male;
       default:
         return Gender.Male;
@@ -113,6 +132,8 @@ export class HumanData {
         return i18n.t('people.Jamelia', lang);
       case HumanName.James:
         return i18n.t('people.James', lang);
+      case HumanName.Jane:
+        return i18n.t('people.Jane', lang);
       case HumanName.Jaya:
         return i18n.t('people.Jaya', lang);
       case HumanName.Jaye:
@@ -131,6 +152,8 @@ export class HumanData {
         return i18n.t('people.Jess', lang);
       case HumanName.Jett:
         return i18n.t('people.Jett', lang);
+      case HumanName.Jill:
+        return i18n.t('people.Jill', lang);
       case HumanName.Jiya:
         return i18n.t('people.Jiya', lang);
       case HumanName.Joan:
@@ -143,12 +166,18 @@ export class HumanData {
         return i18n.t('people.Joey', lang);
       case HumanName.John:
         return i18n.t('people.John', lang);
+      case HumanName.Jonathon:
+        return i18n.t('people.Jonathon', lang);
       case HumanName.Jose:
         return i18n.t('people.Jose', lang);
       case HumanName.Joseph:
         return i18n.t('people.Joseph', lang);
+      case HumanName.Joshua:
+        return i18n.t('people.Joshua', lang);
       case HumanName.Judd:
         return i18n.t('people.Judd', lang);
+      case HumanName.Judy:
+        return i18n.t('people.Judy', lang);
       case HumanName.Julia:
         return i18n.t('people.Julia', lang);
       case HumanName.Julio:
@@ -159,6 +188,8 @@ export class HumanData {
         return i18n.t('people.June', lang);
       case HumanName.Juro:
         return i18n.t('people.Juro', lang);
+      case HumanName.Justin:
+        return i18n.t('people.Justin', lang);
       default:
         return i18n.t('people.Jack', lang);
     }
@@ -366,17 +397,20 @@ export class HumanData {
       case HumanName.Jade:
         textureImg = JadeImage;
         break;
-      case HumanName.Jaya:
-        textureImg = JayaImage;
-        break;
-      case HumanName.Jaye:
-        textureImg = JayeImage;
-        break;
       case HumanName.Jamelia:
         textureImg = JameliaImage;
         break;
       case HumanName.James:
         textureImg = JamesImage;
+        break;
+      case HumanName.Jane:
+        textureImg = JaneImage;
+        break;
+      case HumanName.Jaya:
+        textureImg = JayaImage;
+        break;
+      case HumanName.Jaye:
+        textureImg = JayeImage;
         break;
       case HumanName.Jeanette:
         textureImg = JeanetteImage;
@@ -399,6 +433,9 @@ export class HumanData {
       case HumanName.Jett:
         textureImg = JettImage;
         break;
+      case HumanName.Jill:
+        textureImg = JillImage;
+        break;
       case HumanName.Jiya:
         textureImg = JiyaImage;
         break;
@@ -417,14 +454,23 @@ export class HumanData {
       case HumanName.John:
         textureImg = JohnImage;
         break;
+      case HumanName.Jonathon:
+        textureImg = JonathonImage;
+        break;
       case HumanName.Jose:
         textureImg = JoseImage;
         break;
       case HumanName.Joseph:
         textureImg = JosephImage;
         break;
+      case HumanName.Joshua:
+        textureImg = JoshuaImage;
+        break;
       case HumanName.Judd:
         textureImg = JuddImage;
+        break;
+      case HumanName.Judy:
+        textureImg = JudyImage;
         break;
       case HumanName.Julia:
         textureImg = JuliaImage;
@@ -440,6 +486,9 @@ export class HumanData {
         break;
       case HumanName.Juro:
         textureImg = JuroImage;
+        break;
+      case HumanName.Justin:
+        textureImg = JustinImage;
         break;
       default:
         textureImg = JackImage;

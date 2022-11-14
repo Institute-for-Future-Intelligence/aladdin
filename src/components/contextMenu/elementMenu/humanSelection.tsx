@@ -2,9 +2,6 @@
  * @Copyright 2021-2022. Institute for Future Intelligence, Inc.
  */
 
-import React, { useState } from 'react';
-import { Select } from 'antd';
-import { HumanName } from '../../../types';
 import JaahImage from '../../../resources/jaah.png';
 import JackImage from '../../../resources/jack.png';
 import JacobImage from '../../../resources/jacob.png';
@@ -12,6 +9,7 @@ import JacquelineImage from '../../../resources/jacqueline.png';
 import JadeImage from '../../../resources/jade.png';
 import JameliaImage from '../../../resources/jamelia.png';
 import JamesImage from '../../../resources/james.png';
+import JaneImage from '../../../resources/jane.png';
 import JayaImage from '../../../resources/jaya.png';
 import JayeImage from '../../../resources/jaye.png';
 import JeanetteImage from '../../../resources/jeanette.png';
@@ -21,20 +19,29 @@ import JenaImage from '../../../resources/jena.png';
 import JenniferImage from '../../../resources/jennifer.png';
 import JessImage from '../../../resources/jess.png';
 import JettImage from '../../../resources/jett.png';
+import JillImage from '../../../resources/jill.png';
 import JiyaImage from '../../../resources/jiya.png';
 import JoanImage from '../../../resources/joan.png';
 import JocelynImage from '../../../resources/jocelyn.png';
 import JoelImage from '../../../resources/joel.png';
 import JoeyImage from '../../../resources/joey.png';
+import JohnImage from '../../../resources/john.png';
+import JonathonImage from '../../../resources/jonathon.png';
 import JoseImage from '../../../resources/jose.png';
 import JosephImage from '../../../resources/joseph.png';
-import JohnImage from '../../../resources/john.png';
+import JoshuaImage from '../../../resources/joshua.png';
 import JuddImage from '../../../resources/judd.png';
+import JudyImage from '../../../resources/judy.png';
 import JuliaImage from '../../../resources/julia.png';
 import JulioImage from '../../../resources/julio.png';
 import JumapiliImage from '../../../resources/jumapili.png';
 import JuneImage from '../../../resources/june.png';
 import JuroImage from '../../../resources/juro.png';
+import JustinImage from '../../../resources/justin.png';
+
+import React, { useState } from 'react';
+import { Select } from 'antd';
+import { HumanName } from '../../../types';
 import { useStore } from '../../../stores/common';
 import * as Selector from '../../../stores/selector';
 import { HumanModel } from '../../../models/HumanModel';
@@ -113,6 +120,10 @@ const HumanSelection = () => {
         <img alt={HumanName.James} src={JamesImage} height={20} style={{ paddingRight: '21px' }} />{' '}
         {i18n.t('people.James', lang)}
       </Option>
+      <Option key={HumanName.Jane} value={HumanName.Jane}>
+        <img alt={HumanName.Jane} src={JaneImage} height={20} style={{ paddingRight: '21px' }} />{' '}
+        {i18n.t('people.Jane', lang)}
+      </Option>
       <Option key={HumanName.Jaya} value={HumanName.Jaya}>
         <img alt={HumanName.Jaya} src={JayaImage} height={20} style={{ paddingRight: '19px' }} />{' '}
         {i18n.t('people.Jaya', lang)}
@@ -149,6 +160,10 @@ const HumanSelection = () => {
         <img alt={HumanName.Jett} src={JettImage} height={20} style={{ paddingRight: '21px' }} />{' '}
         {i18n.t('people.Jett', lang)}
       </Option>
+      <Option key={HumanName.Jill} value={HumanName.Jill}>
+        <img alt={HumanName.Jill} src={JillImage} height={20} style={{ paddingRight: '20px' }} />{' '}
+        {i18n.t('people.Jill', lang)}
+      </Option>
       <Option key={HumanName.Jiya} value={HumanName.Jiya}>
         <img alt={HumanName.Jiya} src={JiyaImage} height={20} style={{ paddingRight: '20px' }} />{' '}
         {i18n.t('people.Jiya', lang)}
@@ -173,6 +188,10 @@ const HumanSelection = () => {
         <img alt={HumanName.John} src={JohnImage} height={20} style={{ paddingRight: '20px' }} />{' '}
         {i18n.t('people.John', lang)}
       </Option>
+      <Option key={HumanName.Jonathon} value={HumanName.Jonathon}>
+        <img alt={HumanName.Jonathon} src={JonathonImage} height={20} style={{ paddingRight: '20px' }} />{' '}
+        {i18n.t('people.Jonathon', lang)}
+      </Option>
       <Option key={HumanName.Jose} value={HumanName.Jose}>
         <img alt={HumanName.Jose} src={JoseImage} height={20} style={{ paddingRight: '5px' }} />{' '}
         {i18n.t('people.Jose', lang)}
@@ -181,9 +200,17 @@ const HumanSelection = () => {
         <img alt={HumanName.Joseph} src={JosephImage} height={20} style={{ paddingRight: '22px' }} />{' '}
         {i18n.t('people.Joseph', lang)}
       </Option>
+      <Option key={HumanName.Joshua} value={HumanName.Joshua}>
+        <img alt={HumanName.Joshua} src={JoshuaImage} height={20} style={{ paddingRight: '22px' }} />{' '}
+        {i18n.t('people.Joshua', lang)}
+      </Option>
       <Option key={HumanName.Judd} value={HumanName.Judd}>
         <img alt={HumanName.Judd} src={JuddImage} height={20} style={{ paddingRight: '21px' }} />{' '}
         {i18n.t('people.Judd', lang)}
+      </Option>
+      <Option key={HumanName.Judy} value={HumanName.Judy}>
+        <img alt={HumanName.Judy} src={JudyImage} height={20} style={{ paddingRight: '21px' }} />{' '}
+        {i18n.t('people.Judy', lang)}
       </Option>
       <Option key={HumanName.Julia} value={HumanName.Julia}>
         <img alt={HumanName.Julia} src={JuliaImage} height={20} style={{ paddingRight: '22px' }} />{' '}
@@ -204,6 +231,10 @@ const HumanSelection = () => {
       <Option key={HumanName.Juro} value={HumanName.Juro}>
         <img alt={HumanName.Juro} src={JuroImage} height={20} style={{ paddingRight: '20px' }} />{' '}
         {i18n.t('people.Juro', lang)}
+      </Option>
+      <Option key={HumanName.Justin} value={HumanName.Justin}>
+        <img alt={HumanName.Justin} src={JustinImage} height={20} style={{ paddingRight: '20px' }} />{' '}
+        {i18n.t('people.Justin', lang)}
       </Option>
     </Select>
   );
