@@ -235,7 +235,7 @@ const CloudFilePanel = ({ cloudFileArray, openCloudFile, deleteCloudFile, rename
               dataSource={cloudFileArray}
               scroll={{ y: 360 }}
               pagination={{
-                defaultPageSize: 5,
+                defaultPageSize: 10,
                 showSizeChanger: true,
                 position: ['bottomCenter'],
                 pageSizeOptions: ['10', '20', '50'],
