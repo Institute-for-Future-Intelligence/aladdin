@@ -179,6 +179,9 @@ export class RoofUtil {
   static getSegmentVertices(roofSegments: RoofSegmentProps[], segmentIdx: number, pointer: Vector3) {
     // return orders matter: couter clockwise
     const [wallLeft, wallRight, ridgeRight, ridgeLeft] = roofSegments[segmentIdx].points;
+    if (roofSegments[segmentIdx].points.length === 6) {
+      return [wallRight, ridgeRight, wallLeft];
+    }
     const leftDis = Util.distanceFromPointToLine2D(ridgeLeft, wallLeft, wallRight);
     const rightDis = Util.distanceFromPointToLine2D(ridgeRight, wallLeft, wallRight);
     if (Math.abs(leftDis - rightDis) < 0.01) {
