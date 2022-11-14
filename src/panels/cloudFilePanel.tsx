@@ -36,7 +36,7 @@ const ColumnWrapper = styled.div`
   position: absolute;
   right: 0;
   top: 0;
-  width: 600px;
+  width: 640px;
   height: 480px;
   min-width: 400px;
   max-width: 800px;
@@ -48,7 +48,7 @@ const ColumnWrapper = styled.div`
   display: flex;
   flex-direction: column;
   overflow-x: auto;
-  overflow-y: auto;
+  overflow-y: hidden;
   resize: both;
   direction: rtl;
 `;
@@ -233,10 +233,12 @@ const CloudFilePanel = ({ cloudFileArray, openCloudFile, deleteCloudFile, rename
               size={'small'}
               style={{ width: '100%', direction: 'ltr' }}
               dataSource={cloudFileArray}
+              scroll={{ y: 360 }}
               pagination={{
                 defaultPageSize: 5,
                 showSizeChanger: true,
-                pageSizeOptions: ['5', '10', '50'],
+                position: ['bottomCenter'],
+                pageSizeOptions: ['10', '20', '50'],
               }}
             >
               <Column title={i18n.t('word.Title', lang)} dataIndex="title" key="title" />
