@@ -1,6 +1,7 @@
 {
-  "docid": "2CoXxXoSETPXSCthkuxhds",
-  "timestamp": 1645572077208,
+  "docid": "fVo5DRaJ7VHqLHvdvQKDcL",
+  "time": "11/13/2022 05:27 pm",
+  "timestamp": 1668378444520,
   "userid": "QWecNcxhyvP6j6sBN11hBsfZDau1",
   "owner": null,
   "email": null,
@@ -63,7 +64,7 @@
     },
     {
       "type": "Human",
-      "name": "Jack",
+      "name": "Jamelia",
       "cx": -3.2033162315728436,
       "cy": -1.3034178512198427,
       "cz": 2,
@@ -80,8 +81,8 @@
       "parentId": "eskWrngRsrfsVxitmEFwUG",
       "id": "qnU7wNUFWabF7Yh9Ri8Vn5",
       "selected": false,
-      "lx": 0.6,
-      "ly": 0.6,
+      "lx": 0.65,
+      "ly": 0.42,
       "lz": 1.8
     },
     {
@@ -1706,12 +1707,12 @@
     },
     {
       "type": "Human",
-      "name": "Xiaoli",
-      "cx": -20.56030015730161,
-      "cy": -37.06837252722099,
-      "cz": 0.2500000000000018,
-      "lx": 0.38,
-      "lz": 1.65,
+      "name": "Jett",
+      "cx": -77.63892197350822,
+      "cy": -41.607852899711375,
+      "cz": 0.2499999999999991,
+      "lx": 0.6,
+      "lz": 1.85,
       "normal": [
         0,
         1,
@@ -1724,7 +1725,8 @@
       ],
       "parentId": "of4fAMi2p9MKmo6JDUYnfX",
       "id": "ipe6xTyA51gao39GpL4FGX",
-      "selected": false
+      "selected": false,
+      "ly": 0.6
     }
   ],
   "view": {
@@ -1764,9 +1766,9 @@
     "showYearlyLightSensorPanel": false,
     "mapType": "hybrid",
     "cameraPosition": [
-      -114.20211728357543,
-      -13.511893921234812,
-      7.261369217489994
+      -114.20211728357529,
+      -13.511893921234797,
+      7.261369217489993
     ],
     "panCenter": [
       -1.8505902264752938,
@@ -1793,6 +1795,63 @@
     "dailyHeliostatYieldPanelX": null,
     "dailyHeliostatYieldPanelY": null,
     "showYearlyHeliostatYieldPanel": false
+  },
+  "evolutionMethod": 1,
+  "solarPanelArrayLayoutParams": {
+    "pvModelName": "CS6X-355P-FG",
+    "rowAxis": "Zonal",
+    "orientation": "Landscape",
+    "tiltAngle": 0,
+    "rowsPerRack": 1,
+    "interRowSpacing": 2,
+    "poleHeight": 1,
+    "poleSpacing": 3
+  },
+  "solarPanelArrayLayoutConstraints": {
+    "minimumInterRowSpacing": 2,
+    "maximumInterRowSpacing": 10,
+    "minimumRowsPerRack": 1,
+    "maximumRowsPerRack": 6,
+    "minimumTiltAngle": -1.5707963267948966,
+    "maximumTiltAngle": 1.5707963267948966,
+    "poleHeight": 1,
+    "poleSpacing": 5,
+    "orientation": "Landscape",
+    "pvModelName": "CS6X-355P-FG",
+    "rowAxis": "Zonal"
+  },
+  "evolutionaryAlgorithmState": {
+    "geneticAlgorithmParams": {
+      "problem": "Solar Panel Tilt Angle",
+      "objectiveFunctionType": 1,
+      "selectionMethod": 1,
+      "searchMethod": 1,
+      "populationSize": 20,
+      "maximumGenerations": 5,
+      "selectionRate": 0.5,
+      "crossoverRate": 0.5,
+      "mutationRate": 0.1,
+      "convergenceThreshold": 0.01,
+      "localSearchRadius": 0.1
+    },
+    "particleSwarmOptimizationParams": {
+      "problem": "Solar Panel Tilt Angle",
+      "objectiveFunctionType": 1,
+      "searchMethod": 1,
+      "swarmSize": 20,
+      "maximumSteps": 5,
+      "vmax": 0.01,
+      "inertia": 0.8,
+      "cognitiveCoefficient": 0.1,
+      "socialCoefficient": 0.1,
+      "convergenceThreshold": 0.01,
+      "localSearchRadius": 0.1
+    }
+  },
+  "economicsParams": {
+    "projectLifeSpan": 25,
+    "electricitySellingPrice": 0.25,
+    "operationalCostPerUnit": 0.15
   },
   "notes": []
 }

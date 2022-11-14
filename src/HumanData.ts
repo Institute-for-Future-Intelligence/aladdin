@@ -215,7 +215,7 @@ export class HumanData {
       case HumanName.Jumapili:
         return -0.04;
       case HumanName.June:
-        return -0.04;
+        return -0.1;
       case HumanName.Juro:
         return -0.08;
       default:
@@ -231,8 +231,12 @@ export class HumanData {
         return 1.8;
       case HumanName.Jacob:
         return 1.82;
+      case HumanName.Jacqueline:
+        return 1.78;
       case HumanName.Jade:
         return 1.6;
+      case HumanName.James:
+        return 1.75;
       case HumanName.Jaya:
         return 1.55;
       case HumanName.Jaye:
@@ -281,10 +285,6 @@ export class HumanData {
         return 1.85;
       case HumanName.Juro:
         return 1.72;
-      case HumanName.James:
-        return 1.75;
-      case HumanName.Jacqueline:
-        return 1.78;
       default:
         return 1.8;
     }
@@ -296,10 +296,14 @@ export class HumanData {
         return 0.74;
       case HumanName.Jack:
         return 0.42;
+      case HumanName.Jacqueline:
+        return 0.43;
       case HumanName.Jacob:
         return 0.8;
       case HumanName.Jade:
         return 0.48;
+      case HumanName.James:
+        return 0.472;
       case HumanName.Jaya:
         return 0.6;
       case HumanName.Jaye:
@@ -342,10 +346,6 @@ export class HumanData {
         return 0.65;
       case HumanName.Juro:
         return 0.494;
-      case HumanName.Jacqueline:
-        return 0.43;
-      case HumanName.James:
-        return 0.472;
       default:
         return 0.6;
     }

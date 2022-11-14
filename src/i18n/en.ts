@@ -1300,7 +1300,7 @@ export const i18n_en = {
       Jedi: 'Jedi',
       Jeff: 'Jeff',
       Jena: 'Jena',
-      Jennifer: 'Jeni',
+      Jennifer: 'Jennifer',
       Jess: 'Jess',
       Jett: 'Jett',
       Jiya: 'Jiya',

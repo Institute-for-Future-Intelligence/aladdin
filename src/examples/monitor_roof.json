@@ -1,7 +1,7 @@
 {
-  "docid": "1Mrc5J5LPZNLnHH5Uww4FA",
-  "time": "11/05/2022 11:11 am",
-  "timestamp": 1667661079380,
+  "docid": "uMggt3oqd3m8x5PxjcSJjP",
+  "time": "11/13/2022 05:13 pm",
+  "timestamp": 1668377584732,
   "userid": "QWecNcxhyvP6j6sBN11hBsfZDau1",
   "owner": null,
   "email": null,
@@ -272,30 +272,6 @@
       "solarAbsorberPipe": {},
       "solarPowerTower": {},
       "id": "3vsEsZfsBjGXDRnpzcE3dE",
-      "selected": false,
-      "locked": false
-    },
-    {
-      "type": "Human",
-      "name": "Xiaoli",
-      "cx": 0.5860624200243691,
-      "cy": -4.320152158144639,
-      "cz": 0.05999999865889594,
-      "lx": 0.43,
-      "ly": 0.43,
-      "lz": 1.65,
-      "normal": [
-        0,
-        1,
-        0
-      ],
-      "rotation": [
-        0,
-        0,
-        0
-      ],
-      "parentId": "axj9GVUBNvhnWAa3G8T3wG",
-      "id": "qPhtowBuGGDfEAuEFNhxwt",
       "selected": false,
       "locked": false
     },
@@ -1499,6 +1475,28 @@
         "width": 0.5
       },
       "selected": false
+    },
+    {
+      "type": "Human",
+      "name": "Julia",
+      "cx": 0.5646159692882855,
+      "cy": -4.835959718984462,
+      "cz": 0.05999999865889549,
+      "lx": 0.43,
+      "lz": 1.71,
+      "normal": [
+        0,
+        1,
+        0
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "parentId": "axj9GVUBNvhnWAa3G8T3wG",
+      "id": "jiceWNCXNG4mowM8Y1pnuj",
+      "selected": false
     }
   ],
   "view": {
@@ -1530,9 +1528,9 @@
     "dailyHeliostatYieldPanelX": 0,
     "showDailyParabolicDishYieldPanel": false,
     "cameraPosition": [
-      -5.4356886672798765,
-      -18.43194566254408,
-      4.717845143899757
+      -2.3548642652795087,
+      -17.326362841955863,
+      5.00296926757732
     ],
     "showYearlyHeliostatYieldPanel": false,
     "orthographic": false,
@@ -1581,9 +1579,9 @@
     "shadowEnabled": true,
     "showInstructionPanel": true,
     "panCenter": [
-      1.359140950792918,
-      -0.28154502411421484,
-      2.811166664632822
+      1.3277453693129069,
+      -0.2039271051931454,
+      3.5347379885285575
     ],
     "yearlyFresnelReflectorYieldPanelY": 0,
     "showHeliodonPanel": false,

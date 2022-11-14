@@ -139,12 +139,12 @@
     },
     {
       "type": "Human",
-      "name": "Jane",
+      "name": "Jack",
       "cx": 10.603917360410481,
       "cy": -12.559388994116993,
       "cz": 0.05000000074505806,
-      "lx": 0.45,
-      "lz": 1.55,
+      "lx": 0.6,
+      "lz": 1.8,
       "normal": [
         0,
         1,
@@ -158,7 +158,7 @@
       "parentId": "of4fAMi2p9MKmo6JDUYnfX",
       "id": "rrK38LJKu6CVWVjf2zV1b2",
       "selected": false,
-      "ly": 0.45
+      "ly": 0.6
     }
   ],
   "view": {

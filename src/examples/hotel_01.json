@@ -1,7 +1,7 @@
 {
-  "docid": "dbctG1WThq9utE4SMmvtjG",
-  "time": "10/11/2022 10:44 pm",
-  "timestamp": 1665542689618,
+  "docid": "i1UYg29b6kEuhDLMCMNpP5",
+  "time": "11/13/2022 07:17 pm",
+  "timestamp": 1668385042826,
   "userid": "QWecNcxhyvP6j6sBN11hBsfZDau1",
   "owner": null,
   "email": null,
@@ -118,11 +118,11 @@
         0
       ],
       "id": "4Vzhap6VgrCQ5NTbMiLqko",
-      "name": "Xiaoli",
+      "name": "Jacqueline",
       "selected": false,
-      "lx": 0.38,
-      "ly": 0.38,
-      "lz": 1.65
+      "lx": 0.43,
+      "ly": 0.6,
+      "lz": 1.78
     },
     {
       "lz": 18,
@@ -262,8 +262,8 @@
         0,
         0
       ],
-      "lx": 0.4,
-      "ly": 0.4,
+      "lx": 0.65,
+      "ly": 0.65,
       "lz": 1.85
     },
     {
@@ -285,8 +285,8 @@
         0
       ],
       "selected": false,
-      "lx": 0.6,
-      "ly": 0.6,
+      "lx": 0.56,
+      "ly": 0.56,
       "lz": 1.75
     },
     {
@@ -423,12 +423,12 @@
         0
       ],
       "cy": -14.554057740143271,
-      "name": "Jill",
+      "name": "Jaya",
       "cz": 0.10000000074505806,
       "cx": 5.006550016327088,
       "lx": 0.6,
       "ly": 0.6,
-      "lz": 1.64
+      "lz": 1.55
     },
     {
       "rotation": [
@@ -449,8 +449,8 @@
       ],
       "selected": false,
       "id": "npocC3zf2QhLeKj6LeXJvL",
-      "lx": 0.6,
-      "ly": 0.6,
+      "lx": 0.544,
+      "ly": 0.544,
       "lz": 1.68
     },
     {
@@ -1338,9 +1338,9 @@
     "orthographic": false,
     "showWeatherPanel": false,
     "cameraPosition": [
-      28.25598794500171,
-      -28.317242329022985,
-      5.4011791450669415
+      31.71971744843037,
+      -16.83871990124489,
+      7.439938736584827
     ],
     "mapTilt": 0,
     "showMapPanel": false,
@@ -1350,9 +1350,9 @@
     "showGroundPanel": false,
     "groundColor": "forestgreen",
     "panCenter": [
-      -1.47122687022552,
-      0.7903326240819978,
-      3.651583135053916
+      -1.577685546422091,
+      0.586908253253759,
+      7.439938736584823
     ],
     "showInstructionPanel": true,
     "heliodonPanelX": -1235,

@@ -1,7 +1,7 @@
 {
-  "docid": "cFxmktqJnHm44H9MzNED6p",
-  "time": "10/28/2022 07:32 pm",
-  "timestamp": 1666999929675,
+  "docid": "ptev6AE4cmhUZYXGKEVaqF",
+  "time": "11/13/2022 07:35 pm",
+  "timestamp": 1668386152624,
   "userid": "QWecNcxhyvP6j6sBN11hBsfZDau1",
   "owner": null,
   "email": null,
@@ -131,7 +131,9 @@
       "opacity": 0.5,
       "mullionColor": "white",
       "frame": true,
-      "frameWidth": 0.08
+      "frameWidth": 0.08,
+      "windowType": "Default",
+      "archHeight": 1
     },
     {
       "type": "Window",
@@ -169,7 +171,9 @@
       "opacity": 0.5,
       "mullionColor": "white",
       "frame": true,
-      "frameWidth": 0.08
+      "frameWidth": 0.08,
+      "windowType": "Default",
+      "archHeight": 1
     },
     {
       "type": "Window",
@@ -207,7 +211,9 @@
       "opacity": 0.5,
       "mullionColor": "white",
       "frame": true,
-      "frameWidth": 0.08
+      "frameWidth": 0.08,
+      "windowType": "Default",
+      "archHeight": 1
     },
     {
       "type": "Wall",
@@ -295,7 +301,9 @@
       "opacity": 0.5,
       "mullionColor": "white",
       "frame": true,
-      "frameWidth": 0.08
+      "frameWidth": 0.08,
+      "windowType": "Default",
+      "archHeight": 1
     },
     {
       "type": "Window",
@@ -333,7 +341,9 @@
       "opacity": 0.5,
       "mullionColor": "white",
       "frame": true,
-      "frameWidth": 0.08
+      "frameWidth": 0.08,
+      "windowType": "Default",
+      "archHeight": 1
     },
     {
       "type": "Window",
@@ -371,7 +381,9 @@
       "opacity": 0.5,
       "mullionColor": "white",
       "frame": true,
-      "frameWidth": 0.08
+      "frameWidth": 0.08,
+      "windowType": "Default",
+      "archHeight": 1
     },
     {
       "type": "Wall",
@@ -459,7 +471,9 @@
       "opacity": 0.5,
       "mullionColor": "white",
       "frame": true,
-      "frameWidth": 0.08
+      "frameWidth": 0.08,
+      "windowType": "Default",
+      "archHeight": 1
     },
     {
       "type": "Window",
@@ -497,7 +511,9 @@
       "opacity": 0.5,
       "mullionColor": "white",
       "frame": true,
-      "frameWidth": 0.08
+      "frameWidth": 0.08,
+      "windowType": "Default",
+      "archHeight": 1
     },
     {
       "type": "Window",
@@ -535,7 +551,9 @@
       "opacity": 0.5,
       "mullionColor": "white",
       "frame": true,
-      "frameWidth": 0.08
+      "frameWidth": 0.08,
+      "windowType": "Default",
+      "archHeight": 1
     },
     {
       "type": "Wall",
@@ -623,7 +641,9 @@
       "opacity": 0.5,
       "mullionColor": "white",
       "frame": true,
-      "frameWidth": 0.08
+      "frameWidth": 0.08,
+      "windowType": "Default",
+      "archHeight": 1
     },
     {
       "type": "Window",
@@ -661,7 +681,9 @@
       "opacity": 0.5,
       "mullionColor": "white",
       "frame": true,
-      "frameWidth": 0.08
+      "frameWidth": 0.08,
+      "windowType": "Default",
+      "archHeight": 1
     },
     {
       "type": "Window",
@@ -699,7 +721,9 @@
       "opacity": 0.5,
       "mullionColor": "white",
       "frame": true,
-      "frameWidth": 0.08
+      "frameWidth": 0.08,
+      "windowType": "Default",
+      "archHeight": 1
     },
     {
       "type": "Window",
@@ -737,7 +761,9 @@
       "opacity": 0.5,
       "mullionColor": "white",
       "frame": true,
-      "frameWidth": 0.08
+      "frameWidth": 0.08,
+      "windowType": "Default",
+      "archHeight": 1
     },
     {
       "type": "Door",
@@ -793,13 +819,13 @@
     },
     {
       "type": "Human",
-      "name": "Jean",
+      "name": "Jeanette",
       "cx": 0.2639441516321366,
       "cy": -7.85970669756534,
       "cz": 0.550000011920929,
-      "lx": 0.65,
-      "ly": 0.65,
-      "lz": 1.8,
+      "lx": 0.4,
+      "ly": 0.6,
+      "lz": 1.62,
       "normal": [
         0,
         1,
@@ -2051,7 +2077,7 @@
     },
     {
       "type": "Human",
-      "name": "Jeni",
+      "name": "Jennifer",
       "cx": -0.9139072196764984,
       "cy": -7.9850515749398205,
       "cz": 0.550000011920929,
@@ -2070,7 +2096,7 @@
       "parentId": "dR4uPsfmhQVuGb7SK23oGM",
       "id": "9A499PNQRGp7jNr6cuTVMi",
       "selected": false,
-      "ly": 0.45
+      "ly": 0.6
     },
     {
       "type": "Human",
@@ -2125,9 +2151,9 @@
     "dailyHeliostatYieldPanelX": 0,
     "showDailyParabolicDishYieldPanel": false,
     "cameraPosition": [
-      6.890287808963629,
-      -23.423812664929734,
-      3.380047048212416
+      6.721561499780973,
+      -22.21098102363316,
+      3.630660669200981
     ],
     "showYearlyHeliostatYieldPanel": false,
     "orthographic": false,

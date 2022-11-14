@@ -66,7 +66,7 @@ export const CuboidMenu = () => {
     if (cuboid) {
       setLabelText(cuboid.label ?? '');
     }
-  }, [cuboid.label]);
+  }, [cuboid?.label]);
 
   const legalToPaste = () => {
     if (elementsToPaste && elementsToPaste.length > 0) {

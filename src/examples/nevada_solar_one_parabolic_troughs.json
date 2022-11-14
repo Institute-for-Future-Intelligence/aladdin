@@ -39,52 +39,6 @@
   },
   "elements": [
     {
-      "type": "Human",
-      "name": "Jess",
-      "cx": 1.6319195310451686,
-      "cy": -16.45128807612893,
-      "cz": 0,
-      "lx": 0.6,
-      "lz": 1.4,
-      "normal": [
-        0,
-        1,
-        0
-      ],
-      "rotation": [
-        0,
-        0,
-        0
-      ],
-      "parentId": "Ground",
-      "id": "mBHbx3X3c1GbXKCLvDVgzL",
-      "selected": false,
-      "ly": 0.6
-    },
-    {
-      "type": "Human",
-      "name": "Judd",
-      "cx": 3.796298271490718,
-      "cy": -15.228318565508843,
-      "cz": 0,
-      "lx": 0.6,
-      "lz": 1.68,
-      "normal": [
-        0,
-        1,
-        0
-      ],
-      "rotation": [
-        0,
-        0,
-        0
-      ],
-      "parentId": "Ground",
-      "id": "eN5ri3eDDgFLQmoz3oRMfF",
-      "selected": false,
-      "ly": 0.6
-    },
-    {
       "type": "Parabolic Trough",
       "cx": 0.03316589475856172,
       "cy": -0.010780769866564623,

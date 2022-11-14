@@ -103,29 +103,6 @@
       "selected": false
     },
     {
-      "type": "Human",
-      "name": "Jack",
-      "cx": -101.47750420174262,
-      "cy": 106.72814742414681,
-      "cz": 0.05000000074505806,
-      "lx": 0.6,
-      "lz": 1.8,
-      "normal": [
-        0,
-        1,
-        0
-      ],
-      "rotation": [
-        0,
-        0,
-        0
-      ],
-      "parentId": "of4fAMi2p9MKmo6JDUYnfX",
-      "id": "nRWqXrYCJwuMMKPznon3yj",
-      "selected": false,
-      "ly": 0.6
-    },
-    {
       "type": "Cuboid",
       "cx": 2.1177379727110406,
       "cy": 160.51534566937434,

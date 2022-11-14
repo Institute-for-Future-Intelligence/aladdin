@@ -1,7 +1,7 @@
 {
-  "docid": "hXcw9aA462yvrSsdvUMd9t",
-  "time": "10/28/2022 07:21 pm",
-  "timestamp": 1666999289883,
+  "docid": "dAQrnQVHErDB7s9tHW4Srr",
+  "time": "11/13/2022 07:34 pm",
+  "timestamp": 1668386074392,
   "userid": "QWecNcxhyvP6j6sBN11hBsfZDau1",
   "owner": null,
   "email": null,
@@ -2875,7 +2875,9 @@
       "opacity": 0.5,
       "mullionColor": "white",
       "frame": true,
-      "frameWidth": 0.05
+      "frameWidth": 0.05,
+      "windowType": "Default",
+      "archHeight": 1
     },
     {
       "type": "Window",
@@ -2913,7 +2915,9 @@
       "opacity": 0.5,
       "mullionColor": "white",
       "frame": true,
-      "frameWidth": 0.05
+      "frameWidth": 0.05,
+      "windowType": "Default",
+      "archHeight": 1
     },
     {
       "type": "Window",
@@ -2954,7 +2958,9 @@
       "opacity": 0.5,
       "mullionColor": "white",
       "frame": true,
-      "frameWidth": 0.05
+      "frameWidth": 0.05,
+      "windowType": "Default",
+      "archHeight": 1
     },
     {
       "type": "Window",
@@ -2995,7 +3001,9 @@
       "opacity": 0.5,
       "mullionColor": "white",
       "frame": true,
-      "frameWidth": 0.05
+      "frameWidth": 0.05,
+      "windowType": "Default",
+      "archHeight": 1
     },
     {
       "type": "Window",
@@ -3036,7 +3044,9 @@
       "opacity": 0.5,
       "mullionColor": "white",
       "frame": true,
-      "frameWidth": 0.05
+      "frameWidth": 0.05,
+      "windowType": "Default",
+      "archHeight": 1
     },
     {
       "type": "Window",
@@ -3077,7 +3087,9 @@
       "opacity": 0.5,
       "mullionColor": "white",
       "frame": true,
-      "frameWidth": 0.05
+      "frameWidth": 0.05,
+      "windowType": "Default",
+      "archHeight": 1
     },
     {
       "type": "Window",
@@ -3118,7 +3130,9 @@
       "opacity": 0.5,
       "mullionColor": "white",
       "frame": true,
-      "frameWidth": 0.05
+      "frameWidth": 0.05,
+      "windowType": "Default",
+      "archHeight": 1
     },
     {
       "type": "Window",
@@ -3159,7 +3173,9 @@
       "opacity": 0.5,
       "mullionColor": "white",
       "frame": true,
-      "frameWidth": 0.05
+      "frameWidth": 0.05,
+      "windowType": "Default",
+      "archHeight": 1
     },
     {
       "type": "Window",
@@ -3200,7 +3216,9 @@
       "opacity": 0.5,
       "mullionColor": "white",
       "frame": true,
-      "frameWidth": 0.05
+      "frameWidth": 0.05,
+      "windowType": "Default",
+      "archHeight": 1
     },
     {
       "type": "Human",
@@ -3264,7 +3282,9 @@
       "opacity": 0.5,
       "mullionColor": "white",
       "frame": true,
-      "frameWidth": 0.05
+      "frameWidth": 0.05,
+      "windowType": "Default",
+      "archHeight": 1
     },
     {
       "type": "Door",
@@ -3333,7 +3353,9 @@
       "opacity": 0.5,
       "mullionColor": "white",
       "frame": true,
-      "frameWidth": 0.05
+      "frameWidth": 0.05,
+      "windowType": "Default",
+      "archHeight": 1
     },
     {
       "type": "Window",
@@ -3374,7 +3396,9 @@
       "opacity": 0.5,
       "mullionColor": "white",
       "frame": true,
-      "frameWidth": 0.05
+      "frameWidth": 0.05,
+      "windowType": "Default",
+      "archHeight": 1
     },
     {
       "type": "Window",
@@ -3415,7 +3439,9 @@
       "opacity": 0.5,
       "mullionColor": "white",
       "frame": true,
-      "frameWidth": 0.05
+      "frameWidth": 0.05,
+      "windowType": "Default",
+      "archHeight": 1
     },
     {
       "type": "Window",
@@ -3456,7 +3482,9 @@
       "opacity": 0.5,
       "mullionColor": "white",
       "frame": true,
-      "frameWidth": 0.05
+      "frameWidth": 0.05,
+      "windowType": "Default",
+      "archHeight": 1
     },
     {
       "type": "Window",
@@ -3497,7 +3525,9 @@
       "opacity": 0.5,
       "mullionColor": "white",
       "frame": true,
-      "frameWidth": 0.05
+      "frameWidth": 0.05,
+      "windowType": "Default",
+      "archHeight": 1
     },
     {
       "type": "Window",
@@ -3538,7 +3568,9 @@
       "opacity": 0.5,
       "mullionColor": "white",
       "frame": true,
-      "frameWidth": 0.05
+      "frameWidth": 0.05,
+      "windowType": "Default",
+      "archHeight": 1
     },
     {
       "type": "Window",
@@ -3579,7 +3611,9 @@
       "opacity": 0.5,
       "mullionColor": "white",
       "frame": true,
-      "frameWidth": 0.05
+      "frameWidth": 0.05,
+      "windowType": "Default",
+      "archHeight": 1
     },
     {
       "type": "Door",
@@ -3648,7 +3682,9 @@
       "opacity": 0.5,
       "mullionColor": "white",
       "frame": true,
-      "frameWidth": 0.05
+      "frameWidth": 0.05,
+      "windowType": "Default",
+      "archHeight": 1
     },
     {
       "type": "Window",
@@ -3689,7 +3725,9 @@
       "opacity": 0.5,
       "mullionColor": "white",
       "frame": false,
-      "frameWidth": 0.05
+      "frameWidth": 0.05,
+      "windowType": "Default",
+      "archHeight": 1
     },
     {
       "type": "Window",
@@ -3730,7 +3768,9 @@
       "opacity": 0.5,
       "mullionColor": "white",
       "frame": true,
-      "frameWidth": 0.05
+      "frameWidth": 0.05,
+      "windowType": "Default",
+      "archHeight": 1
     },
     {
       "type": "Window",
@@ -3771,7 +3811,9 @@
       "opacity": 0.5,
       "mullionColor": "white",
       "frame": true,
-      "frameWidth": 0.05
+      "frameWidth": 0.05,
+      "windowType": "Default",
+      "archHeight": 1
     },
     {
       "type": "Window",
@@ -3812,7 +3854,9 @@
       "opacity": 0.5,
       "mullionColor": "white",
       "frame": true,
-      "frameWidth": 0.05
+      "frameWidth": 0.05,
+      "windowType": "Default",
+      "archHeight": 1
     },
     {
       "type": "Window",
@@ -3853,7 +3897,9 @@
       "opacity": 0.5,
       "mullionColor": "white",
       "frame": true,
-      "frameWidth": 0.05
+      "frameWidth": 0.05,
+      "windowType": "Default",
+      "archHeight": 1
     },
     {
       "type": "Window",
@@ -3894,7 +3940,9 @@
       "opacity": 0.5,
       "mullionColor": "white",
       "frame": true,
-      "frameWidth": 0.05
+      "frameWidth": 0.05,
+      "windowType": "Default",
+      "archHeight": 1
     },
     {
       "type": "Window",
@@ -3935,7 +3983,9 @@
       "opacity": 0.5,
       "mullionColor": "white",
       "frame": true,
-      "frameWidth": 0.05
+      "frameWidth": 0.05,
+      "windowType": "Default",
+      "archHeight": 1
     },
     {
       "type": "Window",
@@ -3976,7 +4026,9 @@
       "opacity": 0.5,
       "mullionColor": "white",
       "frame": true,
-      "frameWidth": 0.05
+      "frameWidth": 0.05,
+      "windowType": "Default",
+      "archHeight": 1
     },
     {
       "type": "Window",
@@ -4017,7 +4069,9 @@
       "opacity": 0.5,
       "mullionColor": "white",
       "frame": true,
-      "frameWidth": 0.05
+      "frameWidth": 0.05,
+      "windowType": "Default",
+      "archHeight": 1
     },
     {
       "type": "Window",
@@ -4058,7 +4112,9 @@
       "opacity": 0.5,
       "mullionColor": "white",
       "frame": true,
-      "frameWidth": 0.05
+      "frameWidth": 0.05,
+      "windowType": "Default",
+      "archHeight": 1
     },
     {
       "type": "Door",
@@ -4178,7 +4234,7 @@
     },
     {
       "type": "Human",
-      "name": "Jean",
+      "name": "Jamelia",
       "cx": -0.9137087061647211,
       "cy": 10.928006147996442,
       "cz": 0.041681792587041855,
@@ -4197,7 +4253,7 @@
       "parentId": "7ZHXRj1w61cveRC3gvedyo",
       "id": "5QNe3ntzVQvFEHnDW2YJBn",
       "selected": false,
-      "ly": 0.65
+      "ly": 0.6
     },
     {
       "type": "Human",
@@ -4327,11 +4383,13 @@
       "opacity": 0.5,
       "mullionColor": "white",
       "frame": false,
-      "frameWidth": 0.05
+      "frameWidth": 0.05,
+      "windowType": "Default",
+      "archHeight": 1
     },
     {
       "type": "Human",
-      "name": "Jill",
+      "name": "Jiya",
       "cx": 10.698394787136534,
       "cy": 11.589493889667297,
       "cz": 0.03336358582743005,
@@ -4414,7 +4472,9 @@
       "opacity": 0.5,
       "mullionColor": "white",
       "frame": false,
-      "frameWidth": 0.05
+      "frameWidth": 0.05,
+      "windowType": "Default",
+      "archHeight": 1
     },
     {
       "type": "Window",
@@ -4452,7 +4512,9 @@
       "opacity": 0.5,
       "mullionColor": "white",
       "frame": false,
-      "frameWidth": 0.05
+      "frameWidth": 0.05,
+      "windowType": "Default",
+      "archHeight": 1
     },
     {
       "type": "Window",
@@ -4490,7 +4552,9 @@
       "opacity": 0.5,
       "mullionColor": "white",
       "frame": false,
-      "frameWidth": 0.05
+      "frameWidth": 0.05,
+      "windowType": "Default",
+      "archHeight": 1
     },
     {
       "type": "Window",
@@ -4528,7 +4592,9 @@
       "opacity": 0.5,
       "mullionColor": "white",
       "frame": false,
-      "frameWidth": 0.05
+      "frameWidth": 0.05,
+      "windowType": "Default",
+      "archHeight": 1
     },
     {
       "type": "Window",
@@ -4566,7 +4632,9 @@
       "opacity": 0.5,
       "mullionColor": "white",
       "frame": false,
-      "frameWidth": 0.05
+      "frameWidth": 0.05,
+      "windowType": "Default",
+      "archHeight": 1
     },
     {
       "type": "Window",
@@ -4604,7 +4672,9 @@
       "opacity": 0.5,
       "mullionColor": "white",
       "frame": false,
-      "frameWidth": 0.05
+      "frameWidth": 0.05,
+      "windowType": "Default",
+      "archHeight": 1
     },
     {
       "type": "Window",
@@ -4642,7 +4712,9 @@
       "opacity": 0.5,
       "mullionColor": "white",
       "frame": false,
-      "frameWidth": 0.05
+      "frameWidth": 0.05,
+      "windowType": "Default",
+      "archHeight": 1
     },
     {
       "type": "Cuboid",
@@ -4780,9 +4852,9 @@
     "dailyHeliostatYieldPanelX": 0,
     "showDailyParabolicDishYieldPanel": false,
     "cameraPosition": [
-      -15.767592997651386,
-      -29.835901445420248,
-      2.1582704741169705
+      -12.293975942231699,
+      -31.380055104905296,
+      2.1582704741168657
     ],
     "showYearlyHeliostatYieldPanel": false,
     "orthographic": false,

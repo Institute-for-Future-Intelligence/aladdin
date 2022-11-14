@@ -1,7 +1,7 @@
 {
-  "docid": "dCWjn3TJoRNCEuiSSgiGzS",
-  "time": "09/13/2022 12:50 pm",
-  "timestamp": 1663087854453,
+  "docid": "eBfAsHuuktpG97Drc3U5ZB",
+  "time": "11/13/2022 05:33 pm",
+  "timestamp": 1668378831535,
   "userid": "QWecNcxhyvP6j6sBN11hBsfZDau1",
   "owner": null,
   "email": null,
@@ -117,10 +117,10 @@
     {
       "type": "Human",
       "name": "Jack",
-      "cx": 17.67723145811599,
-      "cy": -0.20440352705893639,
-      "cz": 1.7999999523162837,
-      "lx": 0.6,
+      "cx": 8.339907658116347,
+      "cy": -0.6016935110092154,
+      "cz": 0.619724807975928,
+      "lx": 0.42,
       "lz": 1.8,
       "normal": [
         0,
@@ -132,19 +132,20 @@
         0,
         0
       ],
-      "parentId": "mvQonCDuxqjgZkeWBbRQ73",
+      "parentId": "dUwnUoWvbFx2hdh7SmwvjQ",
       "id": "e5UykxeUAcAAsmgFcznP9J",
       "selected": false,
-      "locked": false
+      "locked": false,
+      "ly": 0.42
     },
     {
       "type": "Human",
-      "name": "Judy",
-      "cx": 20.01192531152404,
-      "cy": -7.5775477995610565,
-      "cz": 0.1,
-      "lx": 0.45,
-      "lz": 1.55,
+      "name": "Jacqueline",
+      "cx": 20.54897495598685,
+      "cy": -8.016956409003306,
+      "cz": 0.10000000149011612,
+      "lx": 0.43,
+      "lz": 1.78,
       "normal": [
         0,
         1,
@@ -158,7 +159,8 @@
       "parentId": "73zFNy4Kytq2jGeHP8hybB",
       "id": "9v3zq1A3MmHnKeqiCTkYcc",
       "selected": false,
-      "locked": false
+      "locked": false,
+      "ly": 0.6
     },
     {
       "type": "Cuboid",
@@ -627,9 +629,9 @@
     "showMapPanel": false,
     "dailyParabolicTroughYieldPanelY": 0,
     "cameraPosition": [
-      215.01427070252956,
-      112.59505828306587,
-      2.3328749647903324
+      206.67769816695932,
+      120.15082999798835,
+      5.121281605668084
     ],
     "showYearlyLightSensorPanel": false,
     "cameraZoom": 23.327015599941678,
@@ -699,9 +701,9 @@
     },
     "orthographic": false,
     "panCenter": [
-      183.4734277951513,
-      166.54260166068389,
-      1.4573563728510532
+      175.21189117230256,
+      159.9366389436321,
+      1.5458921274125108
     ],
     "dailyPvYieldPanelY": 0,
     "showDailyFresnelReflectorYieldPanel": false,

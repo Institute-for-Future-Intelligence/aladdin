@@ -1,7 +1,7 @@
 {
-  "docid": "2hhyeEpSX9CUpjQrqg5G8x",
-  "time": "10/28/2022 09:46 pm",
-  "timestamp": 1667007985064,
+  "docid": "7x6Cs84PXshATZeerLi2wS",
+  "time": "11/13/2022 07:01 pm",
+  "timestamp": 1668384092199,
   "userid": "QWecNcxhyvP6j6sBN11hBsfZDau1",
   "owner": null,
   "email": null,
@@ -2050,7 +2050,9 @@
       "mullion": true,
       "mullionColor": "white",
       "frame": false,
-      "frameWidth": 0.1
+      "frameWidth": 0.1,
+      "windowType": "Default",
+      "archHeight": 1
     },
     {
       "type": "Window",
@@ -2088,7 +2090,9 @@
       "mullion": true,
       "mullionColor": "white",
       "frame": false,
-      "frameWidth": 0.1
+      "frameWidth": 0.1,
+      "windowType": "Default",
+      "archHeight": 1
     },
     {
       "type": "Window",
@@ -2126,7 +2130,9 @@
       "mullion": true,
       "mullionColor": "white",
       "frame": false,
-      "frameWidth": 0.1
+      "frameWidth": 0.1,
+      "windowType": "Default",
+      "archHeight": 1
     },
     {
       "type": "Window",
@@ -2164,7 +2170,9 @@
       "mullion": true,
       "mullionColor": "white",
       "frame": false,
-      "frameWidth": 0.1
+      "frameWidth": 0.1,
+      "windowType": "Default",
+      "archHeight": 1
     },
     {
       "type": "Human",
@@ -2191,12 +2199,12 @@
     },
     {
       "type": "Human",
-      "name": "Jean",
+      "name": "Joseph",
       "cx": 9.25006190829934,
       "cy": 6.451678309086552,
       "cz": 12,
-      "lx": 0.65,
-      "lz": 1.8,
+      "lx": 0.6,
+      "lz": 1.88,
       "normal": [
         0,
         1,
@@ -2210,7 +2218,7 @@
       "parentId": "mnvyeK5fN3hX9sLjvEKUuf",
       "id": "7pCFcU7FA5XV2M6Yw2pNPJ",
       "selected": false,
-      "ly": 0.65
+      "ly": 0.6
     },
     {
       "type": "Human",
@@ -2396,11 +2404,11 @@
     {
       "type": "Tree",
       "name": "Linden",
-      "cx": -45.74554052522649,
-      "cy": -41.41298906676529,
+      "cx": -48.179839909275444,
+      "cy": -37.5855942419546,
       "cz": 0,
-      "lx": 8.3537701513573,
-      "lz": 6.40879068703625,
+      "lx": 10.259573331128838,
+      "lz": 9.449590282218756,
       "normal": [
         0,
         1,
@@ -2500,14 +2508,14 @@
     "showYearlyLightSensorPanel": false,
     "mapType": "hybrid",
     "cameraPosition": [
-      -65.88587532310771,
-      -51.711007363032806,
-      5.086237200471577
+      -68.97896099284804,
+      -24.812433381513358,
+      5.015110696456476
     ],
     "panCenter": [
-      -3.1660763580784064,
-      -11.97249058818863,
-      5.086237200471573
+      -3.606631918155994,
+      -10.089364840155975,
+      5.01511069645647
     ],
     "orthographic": false,
     "enableRotate": true,

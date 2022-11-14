@@ -1,6 +1,7 @@
 {
-  "docid": "rd18BxwD1stg8o4Xf9FtwU",
-  "timestamp": 1645223454874,
+  "docid": "3DwyXjJjUExjZ1f5APPdnu",
+  "time": "11/13/2022 04:59 pm",
+  "timestamp": 1668376781695,
   "userid": "QWecNcxhyvP6j6sBN11hBsfZDau1",
   "owner": null,
   "email": null,
@@ -54,14 +55,14 @@
         0
       ],
       "parentId": "Ground",
-      "lx": 0.6,
-      "ly": 0.6,
+      "lx": 0.42,
+      "ly": 0.42,
       "lz": 1.8
     },
     {
       "selected": false,
       "cy": 4.081504375344256,
-      "name": "Jean",
+      "name": "Jacqueline",
       "rotation": [
         0,
         0,
@@ -77,9 +78,9 @@
       "type": "Human",
       "cx": 2.399220108700476,
       "parentId": "Ground",
-      "lx": 0.4,
-      "ly": 0.4,
-      "lz": 1.85
+      "lx": 0.43,
+      "ly": 0.6,
+      "lz": 1.78
     },
     {
       "cx": 0.20566332108722207,
@@ -277,9 +278,9 @@
     "yearlyLightSensorPanelX": -905,
     "showHeliodonPanel": false,
     "cameraPosition": [
-      10.005268074983192,
-      19.586316833033372,
-      4.201666256241655
+      11.69562560736218,
+      15.284097405092108,
+      4.526997191755329
     ],
     "panCenter": [
       -2.432389491951708,
@@ -298,7 +299,76 @@
       0,
       0,
       0
-    ]
+    ],
+    "stickyNotePanelRect": {
+      "x": 0,
+      "y": 0,
+      "width": 400,
+      "height": 300
+    },
+    "dailyLightSensorPanelRect": {
+      "x": 0,
+      "y": 0,
+      "width": 600,
+      "height": 360
+    }
+  },
+  "evolutionMethod": 1,
+  "solarPanelArrayLayoutParams": {
+    "pvModelName": "CS6X-355P-FG",
+    "rowAxis": "Zonal",
+    "orientation": "Landscape",
+    "tiltAngle": 0,
+    "rowsPerRack": 1,
+    "interRowSpacing": 2,
+    "poleHeight": 1,
+    "poleSpacing": 3
+  },
+  "solarPanelArrayLayoutConstraints": {
+    "minimumInterRowSpacing": 2,
+    "maximumInterRowSpacing": 10,
+    "minimumRowsPerRack": 1,
+    "maximumRowsPerRack": 6,
+    "minimumTiltAngle": -1.5707963267948966,
+    "maximumTiltAngle": 1.5707963267948966,
+    "poleHeight": 1,
+    "poleSpacing": 5,
+    "orientation": "Landscape",
+    "pvModelName": "CS6X-355P-FG",
+    "rowAxis": "Zonal"
+  },
+  "evolutionaryAlgorithmState": {
+    "geneticAlgorithmParams": {
+      "problem": "Solar Panel Tilt Angle",
+      "objectiveFunctionType": 1,
+      "selectionMethod": 1,
+      "searchMethod": 1,
+      "populationSize": 20,
+      "maximumGenerations": 5,
+      "selectionRate": 0.5,
+      "crossoverRate": 0.5,
+      "mutationRate": 0.1,
+      "convergenceThreshold": 0.01,
+      "localSearchRadius": 0.1
+    },
+    "particleSwarmOptimizationParams": {
+      "problem": "Solar Panel Tilt Angle",
+      "objectiveFunctionType": 1,
+      "searchMethod": 1,
+      "swarmSize": 20,
+      "maximumSteps": 5,
+      "vmax": 0.01,
+      "inertia": 0.8,
+      "cognitiveCoefficient": 0.1,
+      "socialCoefficient": 0.1,
+      "convergenceThreshold": 0.01,
+      "localSearchRadius": 0.1
+    }
+  },
+  "economicsParams": {
+    "projectLifeSpan": 25,
+    "electricitySellingPrice": 0.25,
+    "operationalCostPerUnit": 0.15
   },
   "notes": [
     "Solar radiation to a box\n\nThis model shows the solar radiation the five sides (top, west, east, south, and north sides) of a box receives. There is a sensor on each side. Analyze the daily and annual sensor data to compare the solar radiation the five sides receive.\n\nYou can also change the day and the location to investigate the dependency of the results on these factors. "

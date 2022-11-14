@@ -1,7 +1,7 @@
 {
-  "docid": "2MuhG69Ky8ZJBZZ2HgYd1d",
-  "time": "11/04/2022 12:52 pm",
-  "timestamp": 1667580725512,
+  "docid": "7RWBvDyLGg7YDTcPuc4gtC",
+  "time": "11/13/2022 05:16 pm",
+  "timestamp": 1668377762676,
   "userid": "QWecNcxhyvP6j6sBN11hBsfZDau1",
   "owner": null,
   "email": null,
@@ -131,7 +131,9 @@
       },
       "mullionColor": "white",
       "frame": true,
-      "frameWidth": 0.1
+      "frameWidth": 0.1,
+      "windowType": "Default",
+      "archHeight": 1
     },
     {
       "type": "Window",
@@ -169,7 +171,9 @@
       },
       "mullionColor": "white",
       "frame": true,
-      "frameWidth": 0.1
+      "frameWidth": 0.1,
+      "windowType": "Default",
+      "archHeight": 1
     },
     {
       "type": "Wall",
@@ -307,7 +311,9 @@
       },
       "mullionColor": "white",
       "frame": true,
-      "frameWidth": 0.1
+      "frameWidth": 0.1,
+      "windowType": "Default",
+      "archHeight": 1
     },
     {
       "type": "Window",
@@ -345,7 +351,9 @@
       },
       "mullionColor": "white",
       "frame": true,
-      "frameWidth": 0.1
+      "frameWidth": 0.1,
+      "windowType": "Default",
+      "archHeight": 1
     },
     {
       "type": "Window",
@@ -383,7 +391,9 @@
       },
       "mullionColor": "white",
       "frame": true,
-      "frameWidth": 0.1
+      "frameWidth": 0.1,
+      "windowType": "Default",
+      "archHeight": 1
     },
     {
       "type": "Window",
@@ -421,7 +431,9 @@
       },
       "mullionColor": "white",
       "frame": true,
-      "frameWidth": 0.1
+      "frameWidth": 0.1,
+      "windowType": "Default",
+      "archHeight": 1
     },
     {
       "type": "Wall",
@@ -509,7 +521,9 @@
       },
       "mullionColor": "white",
       "frame": true,
-      "frameWidth": 0.1
+      "frameWidth": 0.1,
+      "windowType": "Default",
+      "archHeight": 1
     },
     {
       "type": "Window",
@@ -547,7 +561,9 @@
       },
       "mullionColor": "white",
       "frame": true,
-      "frameWidth": 0.1
+      "frameWidth": 0.1,
+      "windowType": "Default",
+      "archHeight": 1
     },
     {
       "type": "Window",
@@ -585,7 +601,9 @@
       },
       "mullionColor": "white",
       "frame": true,
-      "frameWidth": 0.1
+      "frameWidth": 0.1,
+      "windowType": "Default",
+      "archHeight": 1
     },
     {
       "type": "Window",
@@ -623,7 +641,9 @@
       },
       "mullionColor": "white",
       "frame": true,
-      "frameWidth": 0.1
+      "frameWidth": 0.1,
+      "windowType": "Default",
+      "archHeight": 1
     },
     {
       "type": "Foundation",
@@ -864,29 +884,6 @@
       "label": "E"
     },
     {
-      "type": "Human",
-      "name": "Xiaoming",
-      "cx": 1.1946662976163536,
-      "cy": -5.863613050665757,
-      "cz": 0.050000000745059836,
-      "lx": 0.472,
-      "ly": 0.472,
-      "lz": 1.75,
-      "normal": [
-        0,
-        1,
-        0
-      ],
-      "rotation": [
-        0,
-        0,
-        0
-      ],
-      "parentId": "1rAGH78b5nt7cXyGU9vNRV",
-      "id": "oRmXPWxcNMFxgsrsxonDon",
-      "selected": false
-    },
-    {
       "type": "Sensor",
       "cx": 0.057157621054107106,
       "cy": 0.14033655142046375,
@@ -1016,9 +1013,9 @@
     "dailyHeliostatYieldPanelX": 0,
     "showDailyParabolicDishYieldPanel": false,
     "cameraPosition": [
-      7.496802598141665,
-      -5.456008865261863,
-      19.920737081855076
+      2.72461138343458,
+      -3.575413655799689,
+      21.294134719221624
     ],
     "showYearlyHeliostatYieldPanel": false,
     "orthographic": false,

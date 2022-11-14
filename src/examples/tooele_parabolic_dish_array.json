@@ -1,7 +1,7 @@
 {
-  "docid": "t8waNjVVXtmxBeypnpYHcW",
-  "time": "05/18/2022 02:52 pm",
-  "timestamp": 1652899945938,
+  "docid": "7ug2PMzZs8KHaJfo9T19XG",
+  "time": "11/13/2022 05:52 pm",
+  "timestamp": 1668379966922,
   "userid": "QWecNcxhyvP6j6sBN11hBsfZDau1",
   "owner": null,
   "email": null,
@@ -38,29 +38,6 @@
     "cspTimesPerHour": 1
   },
   "elements": [
-    {
-      "type": "Human",
-      "name": "Juro",
-      "cx": 8.504063343941652,
-      "cy": 7.312264333766635,
-      "cz": 0.05000000074505806,
-      "lx": 0.6,
-      "lz": 1.9,
-      "normal": [
-        0,
-        1,
-        0
-      ],
-      "rotation": [
-        0,
-        0,
-        0
-      ],
-      "parentId": "cZGzTuNW8Aam7msowwUroB",
-      "id": "eN5ri3eDDgFLQmoz3oRMfF",
-      "selected": false,
-      "ly": 0.6
-    },
     {
       "type": "Foundation",
       "cx": -47.0206360597426,
@@ -1709,29 +1686,6 @@
       "dailyYield": 54.51727422762775
     },
     {
-      "type": "Human",
-      "name": "Juro",
-      "cx": 0.4564221540261393,
-      "cy": 7.685469979876942,
-      "cz": 0.05000000074505806,
-      "lx": 0.6,
-      "ly": 0.6,
-      "lz": 1.9,
-      "normal": [
-        0,
-        1,
-        0
-      ],
-      "rotation": [
-        0,
-        0,
-        0
-      ],
-      "parentId": "p7X7PWYKqawwVRyKWEqpsP",
-      "id": "d19xKsEyPEu54qU8Ry8ArQ",
-      "selected": false
-    },
-    {
       "type": "Parabolic Dish",
       "cx": -0.22100527317131652,
       "cy": 0.33100278061122,
@@ -2907,29 +2861,6 @@
       "solarAbsorberPipe": {},
       "solarPowerTower": {},
       "id": "p7X7PWYKqawwVRyKWEqpsP",
-      "selected": false
-    },
-    {
-      "type": "Human",
-      "name": "Juro",
-      "cx": 0.4564221540261393,
-      "cy": 7.685469979876942,
-      "cz": 0.05000000074505806,
-      "lx": 0.6,
-      "ly": 0.6,
-      "lz": 1.9,
-      "normal": [
-        0,
-        1,
-        0
-      ],
-      "rotation": [
-        0,
-        0,
-        0
-      ],
-      "parentId": "gEQRhWXA3HL6aJzGgTrAzv",
-      "id": "v3QhDL6uwrfesRXhgPrUr7",
       "selected": false
     },
     {
@@ -4111,29 +4042,6 @@
       "selected": false
     },
     {
-      "type": "Human",
-      "name": "Juro",
-      "cx": 0.4564221540261393,
-      "cy": 7.685469979876942,
-      "cz": 0.05000000074505806,
-      "lx": 0.6,
-      "ly": 0.6,
-      "lz": 1.9,
-      "normal": [
-        0,
-        1,
-        0
-      ],
-      "rotation": [
-        0,
-        0,
-        0
-      ],
-      "parentId": "4cePh2t5mTkfEKXcWmB48u",
-      "id": "n7Mo9BsWMNfSGwdUhSPPWY",
-      "selected": false
-    },
-    {
       "type": "Parabolic Dish",
       "cx": -0.22100527317131652,
       "cy": 0.33100278061122,
@@ -5309,29 +5217,6 @@
       "solarAbsorberPipe": {},
       "solarPowerTower": {},
       "id": "4cePh2t5mTkfEKXcWmB48u",
-      "selected": false
-    },
-    {
-      "type": "Human",
-      "name": "Juro",
-      "cx": 0.4564221540261393,
-      "cy": 7.685469979876942,
-      "cz": 0.05000000074505806,
-      "lx": 0.6,
-      "ly": 0.6,
-      "lz": 1.9,
-      "normal": [
-        0,
-        1,
-        0
-      ],
-      "rotation": [
-        0,
-        0,
-        0
-      ],
-      "parentId": "6ufo5pBdzXZ7dduj1GnnjN",
-      "id": "tkMUhSN8VxYTEDoa7KUccp",
       "selected": false
     },
     {
@@ -6513,29 +6398,6 @@
       "selected": false
     },
     {
-      "type": "Human",
-      "name": "Juro",
-      "cx": 0.4564221540261393,
-      "cy": 7.685469979876942,
-      "cz": 0.05000000074505806,
-      "lx": 0.6,
-      "ly": 0.6,
-      "lz": 1.9,
-      "normal": [
-        0,
-        1,
-        0
-      ],
-      "rotation": [
-        0,
-        0,
-        0
-      ],
-      "parentId": "dzMWxWAUm13nPZAnV26ojB",
-      "id": "fV1cuGMy3nZqFjeeqEhfLa",
-      "selected": false
-    },
-    {
       "type": "Parabolic Dish",
       "cx": -0.22100527317131652,
       "cy": 0.33100278061122,
@@ -7711,29 +7573,6 @@
       "solarAbsorberPipe": {},
       "solarPowerTower": {},
       "id": "dzMWxWAUm13nPZAnV26ojB",
-      "selected": false
-    },
-    {
-      "type": "Human",
-      "name": "Juro",
-      "cx": 0.4564221540261393,
-      "cy": 7.685469979876942,
-      "cz": 0.05000000074505806,
-      "lx": 0.6,
-      "ly": 0.6,
-      "lz": 1.9,
-      "normal": [
-        0,
-        1,
-        0
-      ],
-      "rotation": [
-        0,
-        0,
-        0
-      ],
-      "parentId": "bpYaYqzqY3rwTa3pPHPzsL",
-      "id": "n3tsdJPDpuLVhWxa2JUytQ",
       "selected": false
     },
     {
@@ -8915,29 +8754,6 @@
       "selected": false
     },
     {
-      "type": "Human",
-      "name": "Juro",
-      "cx": 0.4564221540261393,
-      "cy": 7.685469979876942,
-      "cz": 0.05000000074505806,
-      "lx": 0.6,
-      "ly": 0.6,
-      "lz": 1.9,
-      "normal": [
-        0,
-        1,
-        0
-      ],
-      "rotation": [
-        0,
-        0,
-        0
-      ],
-      "parentId": "6669FrAcRV3S1zPTB9p18F",
-      "id": "1ib91S9JwCstakLsFXtgtu",
-      "selected": false
-    },
-    {
       "type": "Parabolic Dish",
       "cx": -0.22100527317131652,
       "cy": 0.33100278061122,
@@ -10116,29 +9932,6 @@
       "selected": false
     },
     {
-      "type": "Human",
-      "name": "Juro",
-      "cx": 0.4564221540261393,
-      "cy": 7.685469979876942,
-      "cz": 0.05000000074505806,
-      "lx": 0.6,
-      "ly": 0.6,
-      "lz": 1.9,
-      "normal": [
-        0,
-        1,
-        0
-      ],
-      "rotation": [
-        0,
-        0,
-        0
-      ],
-      "parentId": "vDDupUZXQLcUBaqR8LHXzz",
-      "id": "1365rFQoxy6bPXaxyHQthD",
-      "selected": false
-    },
-    {
       "type": "Parabolic Dish",
       "cx": -0.22100527317131652,
       "cy": 0.33100278061122,
@@ -11314,29 +11107,6 @@
       "solarAbsorberPipe": {},
       "solarPowerTower": {},
       "id": "vDDupUZXQLcUBaqR8LHXzz",
-      "selected": false
-    },
-    {
-      "type": "Human",
-      "name": "Juro",
-      "cx": 0.4564221540261393,
-      "cy": 7.685469979876942,
-      "cz": 0.05000000074505806,
-      "lx": 0.6,
-      "ly": 0.6,
-      "lz": 1.9,
-      "normal": [
-        0,
-        1,
-        0
-      ],
-      "rotation": [
-        0,
-        0,
-        0
-      ],
-      "parentId": "mfej18wHzwCMqBLG9Vysw1",
-      "id": "k84meY9h3riZU3fSLtFNdy",
       "selected": false
     },
     {
@@ -12519,29 +12289,6 @@
       "selected": false
     },
     {
-      "type": "Human",
-      "name": "Juro",
-      "cx": 0.4564221540261393,
-      "cy": 7.685469979876942,
-      "cz": 0.05000000074505806,
-      "lx": 0.6,
-      "ly": 0.6,
-      "lz": 1.9,
-      "normal": [
-        0,
-        1,
-        0
-      ],
-      "rotation": [
-        0,
-        0,
-        0
-      ],
-      "parentId": "4r9eq18jPmAo6KNP48KE97",
-      "id": "dN3Xt1smT6aDLhkKE85sF6",
-      "selected": false
-    },
-    {
       "type": "Parabolic Dish",
       "cx": -0.22100527317131652,
       "cy": 0.33100278061122,
@@ -13720,29 +13467,6 @@
       "selected": false
     },
     {
-      "type": "Human",
-      "name": "Juro",
-      "cx": 0.4564221540261393,
-      "cy": 7.685469979876942,
-      "cz": 0.05000000074505806,
-      "lx": 0.6,
-      "ly": 0.6,
-      "lz": 1.9,
-      "normal": [
-        0,
-        1,
-        0
-      ],
-      "rotation": [
-        0,
-        0,
-        0
-      ],
-      "parentId": "kduQAydye3uLbFTr64JfDC",
-      "id": "mcMGY7tuG31LTNKX879wHG",
-      "selected": false
-    },
-    {
       "type": "Parabolic Dish",
       "cx": -0.22100527317131652,
       "cy": 0.33100278061122,
@@ -14918,29 +14642,6 @@
       "solarAbsorberPipe": {},
       "solarPowerTower": {},
       "id": "kduQAydye3uLbFTr64JfDC",
-      "selected": false
-    },
-    {
-      "type": "Human",
-      "name": "Juro",
-      "cx": 0.4564221540261393,
-      "cy": 7.685469979876942,
-      "cz": 0.05000000074505806,
-      "lx": 0.6,
-      "ly": 0.6,
-      "lz": 1.9,
-      "normal": [
-        0,
-        1,
-        0
-      ],
-      "rotation": [
-        0,
-        0,
-        0
-      ],
-      "parentId": "jQu4gCDNGHwChoQvBCFcvf",
-      "id": "g1exaettoi3NDpXcfk6ZfE",
       "selected": false
     },
     {
@@ -16156,9 +15857,9 @@
     "showDailyLightSensorPanel": false,
     "shadowEnabled": true,
     "cameraPosition": [
-      169.98163524020234,
-      -225.19055272845827,
-      79.13890608436603
+      169.9816352402022,
+      -225.19055272845807,
+      79.13890608436596
     ],
     "panCenter": [
       -50.39035725869241,

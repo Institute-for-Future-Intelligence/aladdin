@@ -1,7 +1,7 @@
 {
-  "docid": "bdfFK5kjiCMkdBWDL2XTSQ",
-  "time": "10/29/2022 11:20 am",
-  "timestamp": 1667056836278,
+  "docid": "j5xi4sdVWoPk3WPTke3HYR",
+  "time": "11/13/2022 05:07 pm",
+  "timestamp": 1668377275637,
   "userid": "QWecNcxhyvP6j6sBN11hBsfZDau1",
   "owner": null,
   "email": null,
@@ -339,7 +339,9 @@
       "tint": "#73D8FF",
       "opacity": 0.5,
       "mullionColor": "white",
-      "frameWidth": 0.1
+      "frameWidth": 0.1,
+      "windowType": "Default",
+      "archHeight": 1
     },
     {
       "id": "5ncRWHnRQyocXJujBx5jNE",
@@ -377,7 +379,9 @@
       "tint": "#73D8FF",
       "opacity": 0.5,
       "mullionColor": "white",
-      "frameWidth": 0.1
+      "frameWidth": 0.1,
+      "windowType": "Default",
+      "archHeight": 1
     },
     {
       "cx": 0.20833333333333337,
@@ -415,7 +419,9 @@
       "tint": "#73D8FF",
       "opacity": 0.5,
       "mullionColor": "white",
-      "frameWidth": 0.1
+      "frameWidth": 0.1,
+      "windowType": "Default",
+      "archHeight": 1
     },
     {
       "rotation": [
@@ -453,7 +459,9 @@
       "tint": "#73D8FF",
       "opacity": 0.5,
       "mullionColor": "white",
-      "frameWidth": 0.1
+      "frameWidth": 0.1,
+      "windowType": "Default",
+      "archHeight": 1
     },
     {
       "lz": 0.375,
@@ -492,7 +500,9 @@
       "tint": "#73D8FF",
       "opacity": 0.5,
       "mullionColor": "white",
-      "frameWidth": 0.1
+      "frameWidth": 0.1,
+      "windowType": "Default",
+      "archHeight": 1
     },
     {
       "ly": 0,
@@ -530,7 +540,9 @@
       "tint": "#73D8FF",
       "opacity": 0.5,
       "mullionColor": "white",
-      "frameWidth": 0.1
+      "frameWidth": 0.1,
+      "windowType": "Default",
+      "archHeight": 1
     },
     {
       "ly": 0,
@@ -568,7 +580,9 @@
       "tint": "#73D8FF",
       "opacity": 0.5,
       "mullionColor": "white",
-      "frameWidth": 0.1
+      "frameWidth": 0.1,
+      "windowType": "Default",
+      "archHeight": 1
     },
     {
       "type": "Window",
@@ -606,7 +620,9 @@
       "tint": "#73D8FF",
       "opacity": 0.5,
       "mullionColor": "white",
-      "frameWidth": 0.1
+      "frameWidth": 0.1,
+      "windowType": "Default",
+      "archHeight": 1
     },
     {
       "type": "Window",
@@ -644,7 +660,9 @@
       "tint": "#73D8FF",
       "opacity": 0.5,
       "mullionColor": "white",
-      "frameWidth": 0.1
+      "frameWidth": 0.1,
+      "windowType": "Default",
+      "archHeight": 1
     },
     {
       "type": "Door",
@@ -730,13 +748,13 @@
     },
     {
       "type": "Human",
-      "name": "Jean",
+      "name": "Jeanette",
       "cx": 0.21229430424866003,
       "cy": -5.637713455371184,
       "cz": 0.05000000074505806,
-      "lx": 0.65,
-      "ly": 1.8,
-      "lz": 1.8,
+      "lx": 0.4,
+      "ly": 0.6,
+      "lz": 1.62,
       "normal": [
         0,
         0,
@@ -787,7 +805,9 @@
         "color": "grey",
         "width": 0.5
       },
-      "selected": false
+      "selected": false,
+      "windowType": "Default",
+      "archHeight": 1
     },
     {
       "type": "Window",
@@ -825,7 +845,9 @@
         "color": "grey",
         "width": 0.5
       },
-      "selected": false
+      "selected": false,
+      "windowType": "Default",
+      "archHeight": 1
     },
     {
       "type": "Window",
@@ -863,7 +885,9 @@
         "color": "grey",
         "width": 0.5
       },
-      "selected": false
+      "selected": false,
+      "windowType": "Default",
+      "archHeight": 1
     },
     {
       "type": "Window",
@@ -901,7 +925,9 @@
         "color": "grey",
         "width": 0.5
       },
-      "selected": false
+      "selected": false,
+      "windowType": "Default",
+      "archHeight": 1
     },
     {
       "type": "Window",
@@ -939,7 +965,9 @@
         "color": "grey",
         "width": 0.5
       },
-      "selected": false
+      "selected": false,
+      "windowType": "Default",
+      "archHeight": 1
     },
     {
       "type": "Window",
@@ -977,7 +1005,9 @@
         "color": "grey",
         "width": 0.5
       },
-      "selected": false
+      "selected": false,
+      "windowType": "Default",
+      "archHeight": 1
     },
     {
       "type": "Wall",
@@ -1065,7 +1095,9 @@
         "color": "grey",
         "width": 0.5
       },
-      "selected": false
+      "selected": false,
+      "windowType": "Default",
+      "archHeight": 1
     },
     {
       "type": "Window",
@@ -1103,7 +1135,9 @@
         "color": "grey",
         "width": 0.5
       },
-      "selected": false
+      "selected": false,
+      "windowType": "Default",
+      "archHeight": 1
     },
     {
       "type": "Window",
@@ -1141,7 +1175,9 @@
         "color": "grey",
         "width": 0.5
       },
-      "selected": false
+      "selected": false,
+      "windowType": "Default",
+      "archHeight": 1
     },
     {
       "type": "Wall",
@@ -1229,7 +1265,9 @@
         "color": "grey",
         "width": 0.5
       },
-      "selected": false
+      "selected": false,
+      "windowType": "Default",
+      "archHeight": 1
     },
     {
       "type": "Window",
@@ -1267,7 +1305,9 @@
         "color": "grey",
         "width": 0.5
       },
-      "selected": false
+      "selected": false,
+      "windowType": "Default",
+      "archHeight": 1
     },
     {
       "type": "Window",
@@ -1305,7 +1345,9 @@
         "color": "grey",
         "width": 0.5
       },
-      "selected": false
+      "selected": false,
+      "windowType": "Default",
+      "archHeight": 1
     },
     {
       "type": "Wall",
@@ -1393,7 +1435,9 @@
         "color": "grey",
         "width": 0.5
       },
-      "selected": false
+      "selected": false,
+      "windowType": "Default",
+      "archHeight": 1
     },
     {
       "type": "Window",
@@ -1431,7 +1475,9 @@
         "color": "grey",
         "width": 0.5
       },
-      "selected": false
+      "selected": false,
+      "windowType": "Default",
+      "archHeight": 1
     },
     {
       "type": "Window",
@@ -1469,7 +1515,9 @@
         "color": "grey",
         "width": 0.5
       },
-      "selected": false
+      "selected": false,
+      "windowType": "Default",
+      "archHeight": 1
     },
     {
       "type": "Wall",
@@ -1557,7 +1605,9 @@
         "color": "grey",
         "width": 0.5
       },
-      "selected": false
+      "selected": false,
+      "windowType": "Default",
+      "archHeight": 1
     },
     {
       "type": "Window",
@@ -1595,7 +1645,9 @@
         "color": "grey",
         "width": 0.5
       },
-      "selected": false
+      "selected": false,
+      "windowType": "Default",
+      "archHeight": 1
     },
     {
       "type": "Window",
@@ -1633,7 +1685,9 @@
         "color": "grey",
         "width": 0.5
       },
-      "selected": false
+      "selected": false,
+      "windowType": "Default",
+      "archHeight": 1
     },
     {
       "type": "Window",
@@ -1671,7 +1725,9 @@
         "color": "grey",
         "width": 0.5
       },
-      "selected": false
+      "selected": false,
+      "windowType": "Default",
+      "archHeight": 1
     },
     {
       "type": "Door",
@@ -1705,7 +1761,7 @@
       "cy": -5.637713455371184,
       "cz": 0.05000000074505806,
       "lx": 0.6,
-      "ly": 1.8,
+      "ly": 0.6,
       "lz": 1.85,
       "normal": [
         0,
@@ -1812,9 +1868,9 @@
     "dailyHeliostatYieldPanelX": 0,
     "showDailyParabolicDishYieldPanel": false,
     "cameraPosition": [
-      -8.62396385616046,
-      -24.71334501077199,
-      3.5513660517079795
+      -13.182561357379265,
+      -20.190485925163042,
+      4.464503338107654
     ],
     "showYearlyHeliostatYieldPanel": false,
     "orthographic": false,
@@ -1851,7 +1907,7 @@
     "dailyFresnelReflectorYieldPanelY": 0,
     "weatherPanelY": 0,
     "dailyLightSensorPanelY": 0,
-    "groundColor": "forestgreen",
+    "groundColor": "#16a5a5",
     "mapTilt": 0,
     "showYearlyPvYieldPanel": false,
     "dailyParabolicDishYieldPanelY": 0,
@@ -1863,8 +1919,8 @@
     "shadowEnabled": true,
     "showInstructionPanel": true,
     "panCenter": [
-      0.07784804835070125,
-      0.4060576079900772,
+      -2.3641839097481436,
+      1.1392132330948421,
       2.207523543574904
     ],
     "yearlyFresnelReflectorYieldPanelY": 0,

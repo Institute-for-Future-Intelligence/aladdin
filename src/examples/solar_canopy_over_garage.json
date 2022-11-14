@@ -773,29 +773,6 @@
       "structureColor": "white"
     },
     {
-      "type": "Human",
-      "name": "Jack",
-      "cx": 85.45815478274749,
-      "cy": -38.95226768654278,
-      "cz": 0,
-      "lx": 0.42,
-      "lz": 1.8,
-      "normal": [
-        0,
-        1,
-        0
-      ],
-      "rotation": [
-        0,
-        0,
-        0
-      ],
-      "parentId": "Ground",
-      "id": "pECUiXL7ABsrXdS9rdWofJ",
-      "selected": false,
-      "ly": 0.42
-    },
-    {
       "type": "Foundation",
       "cx": 2.6802301363018337,
       "cy": -0.008091723250991834,

@@ -1,7 +1,7 @@
 {
-  "docid": "4JYuR7fLJ2anvbrjqgK5gg",
-  "time": "10/28/2022 09:45 pm",
-  "timestamp": 1667007956104,
+  "docid": "gQCo7fvzJ4cYNGcYUsDDxg",
+  "time": "11/13/2022 06:58 pm",
+  "timestamp": 1668383887543,
   "userid": "QWecNcxhyvP6j6sBN11hBsfZDau1",
   "owner": null,
   "email": null,
@@ -862,8 +862,8 @@
     {
       "type": "Human",
       "name": "Jaah",
-      "cx": 37.54437337895043,
-      "cy": -39.152028266802276,
+      "cx": 39.44168754364077,
+      "cy": -40.717132307246644,
       "cz": 0,
       "lx": 0.74,
       "lz": 1.78,
@@ -973,9 +973,9 @@
     },
     {
       "type": "Human",
-      "name": "Jill",
-      "cx": 35.47003572265067,
-      "cy": -43.100747314788805,
+      "name": "Jiya",
+      "cx": 38.48713465659762,
+      "cy": -41.18611455055127,
       "cz": 0,
       "lx": 0.6,
       "lz": 1.74,
@@ -1032,9 +1032,9 @@
     "showYearlyLightSensorPanel": false,
     "mapType": "hybrid",
     "cameraPosition": [
-      34.00082627532692,
-      -68.3317521962725,
-      4.317753348561539
+      25.455302143079752,
+      -69.42141514764286,
+      5.46692909446523
     ],
     "panCenter": [
       19.290753710727,

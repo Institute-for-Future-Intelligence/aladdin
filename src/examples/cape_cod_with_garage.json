@@ -1,7 +1,7 @@
 {
-  "docid": "h8nfHFLiqb8ok4GnotUjGq",
-  "time": "11/05/2022 10:57 am",
-  "timestamp": 1667660279518,
+  "docid": "q8Lt88eY9qJxqeFFVVqJF8",
+  "time": "11/13/2022 07:23 pm",
+  "timestamp": 1668385392314,
   "userid": "QWecNcxhyvP6j6sBN11hBsfZDau1",
   "owner": null,
   "email": null,
@@ -1334,12 +1334,12 @@
     },
     {
       "type": "Human",
-      "name": "Xiaoli",
+      "name": "Julia",
       "cx": -4.0546196737223905,
       "cy": -5.207889624542965,
       "cz": 0.75,
       "lx": 0.43,
-      "lz": 1.65,
+      "lz": 1.71,
       "normal": [
         0,
         1,
@@ -1353,17 +1353,17 @@
       "parentId": "m7AH7DcnoGzAq9kryBy4RS",
       "id": "havSSZEB6mAoQ1s57LQVxN",
       "selected": false,
-      "ly": 0.43,
+      "ly": 0.6,
       "locked": false
     },
     {
       "type": "Human",
-      "name": "Jack",
-      "cx": -0.27435952116767837,
-      "cy": -0.6581153273582458,
-      "cz": 0.10634221583826786,
-      "lx": 0.42,
-      "lz": 1.8,
+      "name": "Jeanette",
+      "cx": 0.2766717538290546,
+      "cy": -0.6581153273582476,
+      "cz": 0.21150016667646382,
+      "lx": 0.4,
+      "lz": 1.62,
       "normal": [
         0,
         1,
@@ -1374,7 +1374,7 @@
         0,
         0
       ],
-      "parentId": "cGSH1ASJyBhQtxEpSahrE8",
+      "parentId": "cv6ws4fhTJwK38XNPpn7tw",
       "id": "fPgwwBmXz2LWV9vPRMmqzu",
       "selected": false,
       "ly": 0.42,
@@ -3528,13 +3528,13 @@
     },
     {
       "type": "Human",
-      "name": "Jedi",
+      "name": "Jacob",
       "cx": 0.3503088352536956,
       "cy": -2.663378139781919,
       "cz": 0.75,
-      "lx": 0.56,
+      "lx": 0.8,
       "ly": 0.56,
-      "lz": 1.75,
+      "lz": 1.82,
       "normal": [
         0,
         0,
@@ -3576,12 +3576,12 @@
     },
     {
       "type": "Human",
-      "name": "Jeff",
+      "name": "James",
       "cx": 9.64461931687178,
       "cy": -5.072637355639831,
       "cz": 0,
-      "lx": 0.6,
-      "lz": 1.65,
+      "lx": 0.472,
+      "lz": 1.75,
       "normal": [
         0,
         1,
@@ -3628,9 +3628,9 @@
     "dailyHeliostatYieldPanelX": 0,
     "showDailyParabolicDishYieldPanel": false,
     "cameraPosition": [
-      12.5909868620559,
-      -21.320704021117557,
-      4.014455325952496
+      7.303523996226917,
+      -17.254930393473376,
+      4.3588091240340425
     ],
     "showYearlyHeliostatYieldPanel": false,
     "orthographic": false,
@@ -3679,9 +3679,9 @@
     "shadowEnabled": true,
     "showInstructionPanel": true,
     "panCenter": [
-      4.621036204596542,
-      4.960709068533792,
-      4.014455325952496
+      3.312012381208834,
+      4.750126968698847,
+      3.891126890914988
     ],
     "yearlyFresnelReflectorYieldPanelY": 0,
     "showHeliodonPanel": false,

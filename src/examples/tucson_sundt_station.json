@@ -67,29 +67,6 @@
       ]
     },
     {
-      "lz": 1.8,
-      "type": "Human",
-      "rotation": [
-        0,
-        0,
-        0
-      ],
-      "name": "Jack",
-      "id": "wt2ieHLPLyg2Q2E8VLix1e",
-      "lx": 0.6,
-      "normal": [
-        0,
-        1,
-        0
-      ],
-      "ly": 0.6,
-      "cy": -25.616774473884036,
-      "parentId": "Ground",
-      "cz": 0,
-      "cx": -4.020481691228474,
-      "selected": false
-    },
-    {
       "reflectance": 0.9,
       "label": "1",
       "absorptance": 0.95,
@@ -1122,29 +1099,6 @@
         "absorberHeight": 30,
         "apertureWidth": 2
       }
-    },
-    {
-      "ly": 0.6,
-      "id": "jCuN9vjBx5nMT6SBXqUK6C",
-      "cx": -1.561583809469294,
-      "cy": -247.72525247800274,
-      "cz": 8.881784197001252e-16,
-      "parentId": "Ground",
-      "lz": 1.8,
-      "type": "Human",
-      "lx": 0.6,
-      "selected": false,
-      "rotation": [
-        0,
-        0,
-        0
-      ],
-      "name": "Jack",
-      "normal": [
-        0,
-        1,
-        0
-      ]
     }
   ],
   "view": {

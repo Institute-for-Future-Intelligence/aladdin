@@ -1682,29 +1682,6 @@
       "towerId": "nHq7VyAiKvgNuPDrDMejYk"
     },
     {
-      "type": "Human",
-      "name": "Xiaoli",
-      "cx": -117.13147397430815,
-      "cy": -358.7526549547895,
-      "cz": 0.2500000000000018,
-      "lx": 0.38,
-      "lz": 1.65,
-      "normal": [
-        0,
-        1,
-        0
-      ],
-      "rotation": [
-        0,
-        0,
-        0
-      ],
-      "parentId": "of4fAMi2p9MKmo6JDUYnfX",
-      "id": "ipe6xTyA51gao39GpL4FGX",
-      "selected": false,
-      "ly": 0.38
-    },
-    {
       "type": "Heliostat",
       "cx": -0.13513006749827772,
       "cy": -0.4437294899555085,
