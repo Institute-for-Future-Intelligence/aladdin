@@ -249,10 +249,10 @@ const RectangleWindow = ({
 
   const shadowEnabled = useStore(Selector.viewState.shadowEnabled);
 
-  const shutterLength = useMemo(() => shutter?.width * lx, [lx, shutter]);
+  const shutterLength = useMemo(() => shutter.width * lx, [lx, shutter]);
   const shutterPosX = useMemo(
-    () => ((shutterLength + frameData?.width + lx) / 2) * 1.025,
-    [lx, shutterLength, frameData?.width],
+    () => ((shutterLength + frameData.width + lx) / 2) * 1.025,
+    [lx, shutterLength, frameData.width],
   );
 
   const renderSealPlane = (args: [width: number, height: number], position: ArgsType, rotation?: ArgsType) => (
@@ -285,10 +285,10 @@ const RectangleWindow = ({
         cx={shutterPosX}
         lx={shutterLength}
         lz={lz}
-        color={shutter ? shutter.color : 'gray'}
-        showLeft={shutter?.showLeft}
-        showRight={shutter?.showRight}
-        spacing={frameData?.showFrame ? frameData?.width / 2 : 0}
+        color={shutter.color}
+        showLeft={shutter.showLeft}
+        showRight={shutter.showRight}
+        spacing={frameData.showFrame ? frameData.width / 2 : 0}
       />
 
       <Wireframe cy={cy} dimension={dimension} wireframeData={wireframeData} />

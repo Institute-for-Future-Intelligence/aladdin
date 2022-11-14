@@ -169,7 +169,7 @@ const Window = (windowModel: WindowProps) => {
     mullionSpacing = 0.5,
     tint = '#73D8FF',
     opacity = 0.5,
-    shutter,
+    shutter = defaultShutter,
     mullionColor = 'white',
     frame = false,
     color = 'white',
