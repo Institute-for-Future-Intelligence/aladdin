@@ -229,7 +229,8 @@ const Human = ({
   }, []);
 
   const gender = observer ? HumanData.fetchGender(humanModel.name) : Gender.Male;
-  const hatOffset = observer ? (humanModel.flip ? -1 : 1) * HumanData.fetchHatOffset(humanModel.name) : 0;
+  const hatOffsetX = observer ? (humanModel.flip ? -1 : 1) * HumanData.fetchHatOffsetX(humanModel.name) : 0;
+  const hatOffsetY = observer ? HumanData.fetchHatOffsetY(humanModel.name) : 0;
 
   return (
     <>
@@ -321,7 +322,7 @@ const Human = ({
                   castShadow={false}
                   receiveShadow={false}
                   args={[0.1, 0.1, 0.1, 16, 2]}
-                  position={[hatOffset, 0, humanModel.lz / 2 - 0.05]}
+                  position={[hatOffsetX, 0, humanModel.lz / 2 - 0.05 + hatOffsetY]}
                   rotation={[HALF_PI, 0, 0]}
                 >
                   <meshStandardMaterial attach="material" color={gender === Gender.Male ? 'gray' : 'hotpink'} />
@@ -332,7 +333,7 @@ const Human = ({
                   castShadow={false}
                   receiveShadow={false}
                   args={[0.2, 0.2, 0.01, 16, 2]}
-                  position={[hatOffset, 0, humanModel.lz / 2 - 0.1]}
+                  position={[hatOffsetX, 0, humanModel.lz / 2 - 0.1 + hatOffsetY]}
                   rotation={[HALF_PI, 0, 0]}
                 >
                   <meshStandardMaterial attach="material" color={gender === Gender.Male ? 'gray' : 'hotpink'} />

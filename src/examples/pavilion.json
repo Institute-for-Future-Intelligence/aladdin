@@ -1,7 +1,7 @@
 {
-  "docid": "9PjZu9UddFXBmwhopw6VY5",
-  "time": "11/13/2022 06:50 pm",
-  "timestamp": 1668383457655,
+  "docid": "5Xr9fCZg98tgESEjHjGgDp",
+  "time": "11/14/2022 09:36 am",
+  "timestamp": 1668436588515,
   "userid": "QWecNcxhyvP6j6sBN11hBsfZDau1",
   "owner": null,
   "email": null,
@@ -1774,6 +1774,144 @@
       "foundationId": "fbqvzYqiEy79jeL8wsadib",
       "id": "7ZdVSQw5Udf8Sk6TxfRr7E",
       "selected": false
+    },
+    {
+      "type": "Human",
+      "name": "Jill",
+      "cx": 9.085367232279435,
+      "cy": 2.675249483795916,
+      "cz": 0.125,
+      "lx": 0.42,
+      "ly": 0.43,
+      "lz": 1.71,
+      "normal": [
+        0,
+        0,
+        1
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "parentId": "m7AH7DcnoGzAq9kryBy4RS",
+      "id": "tnutvhGAiQivDEaTbwWokd",
+      "selected": false
+    },
+    {
+      "type": "Human",
+      "name": "Jane",
+      "cx": 10.315104916263296,
+      "cy": -5.841074350867604,
+      "cz": 0,
+      "lx": 0.4,
+      "ly": 0.43,
+      "lz": 1.67,
+      "normal": [
+        0,
+        0,
+        1
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "parentId": "Ground",
+      "id": "2qCeCbYUD9ZAWR8LaSwSBc",
+      "selected": false
+    },
+    {
+      "type": "Human",
+      "name": "Judy",
+      "cx": 8.894992472252287,
+      "cy": -0.05735797632890183,
+      "cz": 0.125,
+      "lx": 0.41,
+      "ly": 0.544,
+      "lz": 1.75,
+      "normal": [
+        0,
+        1,
+        0
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "parentId": "m7AH7DcnoGzAq9kryBy4RS",
+      "id": "evvFN1Y5c55LCjm2Zs4RPR",
+      "selected": false
+    },
+    {
+      "type": "Human",
+      "name": "Jonathon",
+      "cx": 7.865481936696703,
+      "cy": -8.800651006432007,
+      "cz": -4.440892098500626e-16,
+      "lx": 0.7,
+      "ly": 0.544,
+      "lz": 1.9,
+      "normal": [
+        0,
+        1,
+        0
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "parentId": "Ground",
+      "id": "cPGv26A3o2hSuwc8DPUQ6y",
+      "selected": false
+    },
+    {
+      "type": "Human",
+      "name": "Joshua",
+      "cx": 9.361559767195017,
+      "cy": -2.653290992466755,
+      "cz": 0.12499999999999956,
+      "lx": 0.5,
+      "ly": 0.544,
+      "lz": 1.79,
+      "normal": [
+        0,
+        1,
+        0
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "parentId": "m7AH7DcnoGzAq9kryBy4RS",
+      "id": "rd5u6niG5wuUyGxwjj9FrQ",
+      "selected": false
+    },
+    {
+      "type": "Human",
+      "name": "Justin",
+      "cx": 8.841054844860178,
+      "cy": -3.9407835630247803,
+      "cz": 0.125,
+      "lx": 0.6,
+      "ly": 0.544,
+      "lz": 1.755,
+      "normal": [
+        0,
+        1,
+        0
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "parentId": "m7AH7DcnoGzAq9kryBy4RS",
+      "id": "nctqWUAWcyYHT4SGzerSs4",
+      "selected": false
     }
   ],
   "view": {
@@ -1805,8 +1943,8 @@
     "dailyHeliostatYieldPanelX": 0,
     "showDailyParabolicDishYieldPanel": false,
     "cameraPosition": [
-      15.921593843736721,
-      -8.143883781126716,
+      15.979852979533257,
+      -8.035431687300736,
       2.3292876283609303
     ],
     "showYearlyHeliostatYieldPanel": false,
