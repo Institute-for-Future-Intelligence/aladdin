@@ -305,35 +305,45 @@ export const useUpdateSegmentVerticesMap = (
   roofSegments: RoofSegmentProps[],
   mansardTop?: Vector3[],
 ) => {
-  const update = useCallback(
-    Util.debounce((roofSegments: RoofSegmentProps[], centroid: Vector3, mansardTop?: Vector3[]) => {
-      const relToFoundation = (v: Vector3) => v.clone().add(centroid);
-      const vertices = roofSegments.map((segment) => {
-        const points = segment.points;
-        // triangle segment
-        if (points.length === 6) {
-          return points.slice(3).map(relToFoundation);
-        }
-        // quad segment
-        else if (points.length === 8) {
-          return points.slice(4).map(relToFoundation);
-        } else {
-          throw new Error('Invalid Roof segment data');
-        }
-      });
-      if (mansardTop) {
-        vertices.push(mansardTop.map(relToFoundation));
+  const fileChanged = useStore(Selector.fileChanged);
+  const done = useRef(false);
+
+  const update = (roofSegments: RoofSegmentProps[], centroid: Vector3, mansardTop?: Vector3[]) => {
+    const relToFoundation = (v: Vector3) => v.clone().add(centroid);
+    const vertices = roofSegments.map((segment) => {
+      const points = segment.points;
+      // triangle segment
+      if (points.length === 6) {
+        return points.slice(3).map(relToFoundation);
       }
-      useStore.getState().set((state) => {
-        state.roofSegmentVerticesMap.set(roofId, vertices);
-      });
-    }),
-    [],
-  );
+      // quad segment
+      else if (points.length === 8) {
+        return points.slice(4).map(relToFoundation);
+      } else {
+        throw new Error('Invalid Roof segment data');
+      }
+    });
+    if (mansardTop) {
+      vertices.push(mansardTop.map(relToFoundation));
+    }
+    useStore.getState().set((state) => {
+      state.roofSegmentVerticesMap.set(roofId, vertices);
+    });
+  };
+
+  const debouncedUpdate = useCallback(Util.debounce(update), []);
 
   useEffect(() => {
     if (roofSegments.length > 0) {
       update(roofSegments, centroid, mansardTop);
+      done.current = true;
+    }
+  }, [fileChanged]);
+
+  useEffect(() => {
+    if (roofSegments.length > 0 && !done.current) {
+      debouncedUpdate(roofSegments, centroid, mansardTop);
+      done.current = false;
     }
   }, [roofSegments, centroid, mansardTop]);
 };
