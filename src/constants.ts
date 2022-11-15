@@ -47,6 +47,13 @@ export const FINE_GRID_RATIO = 5;
 export const FINE_GRID_SCALE = 0.1;
 export const NORMAL_GRID_SCALE = FINE_GRID_RATIO * FINE_GRID_SCALE;
 
+// solar panel texture
+export const RESOLUTION = 250;
+export const MARGIN_PERCENT = 0.01;
+export const GAP_PERCENT = 0.005;
+export const SOLAR_PANEL_CELL_COLOR_BLACK = '#000';
+export const SOLAR_PANEL_CELL_COLOR_BLUE = '#01345B';
+
 export const GROUND_ID = 'Ground';
 
 export const HALF_PI = Math.PI / 2;

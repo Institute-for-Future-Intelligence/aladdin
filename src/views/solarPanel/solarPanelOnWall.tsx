@@ -34,15 +34,7 @@ import {
   UNIT_VECTOR_POS_Z,
   ZERO_TOLERANCE,
 } from '../../constants';
-import {
-  ActionType,
-  MoveHandleType,
-  ObjectType,
-  Orientation,
-  ResizeHandleType,
-  RotateHandleType,
-  SolarPanelTextureType,
-} from '../../types';
+import { ActionType, MoveHandleType, ObjectType, Orientation, ResizeHandleType, RotateHandleType } from '../../types';
 import { Util } from '../../Util';
 import { SolarPanelModel, SolarPanelModelOnWall } from '../../models/SolarPanelModel';
 import { LineData } from '../LineData';
@@ -51,6 +43,7 @@ import i18n from 'src/i18n/i18n';
 import { WallModel } from 'src/models/WallModel';
 import { FoundationModel } from 'src/models/FoundationModel';
 import { UndoableChange } from 'src/undo/UndoableChange';
+import { useSolarPanelHeatmapTexture, useSolarPanelTexture } from './hooks';
 
 interface SumbeamProps {
   drawSunbeam: boolean;
@@ -356,7 +349,7 @@ const Mount = React.memo(
 
 const SolarPanelOnWall = ({
   id,
-  pvModelName,
+  pvModelName = 'SPR-X21-335-BLK',
   cx,
   cy,
   cz,
@@ -378,16 +371,12 @@ const SolarPanelOnWall = ({
 
   const setCommonStore = useStore(Selector.set);
   const showSolarRadiationHeatmap = useStore(Selector.showSolarRadiationHeatmap);
-  const solarRadiationHeatmapMaxValue = useStore(Selector.viewState.solarRadiationHeatmapMaxValue);
-  const getHeatmap = useStore(Selector.getHeatmap);
   const shadowEnabled = useStore(Selector.viewState.shadowEnabled);
   const solarPanelShiness = useStore(Selector.viewState.solarPanelShiness);
   const getElementById = useStore(Selector.getElementById);
   const selectMe = useStore(Selector.selectMe);
   const getPvModule = useStore(Selector.getPvModule);
   const resizeHandleType = useStore(Selector.resizeHandleType);
-  const solarPanelTextures = useStore(Selector.solarPanelTextures);
-  const getSolarPanelTexture = useStore(Selector.getSolarPanelTexture);
   const orthographic = useStore(Selector.viewState.orthographic) ?? false;
 
   const { camera, gl } = useThree();
@@ -395,8 +384,6 @@ const SolarPanelOnWall = ({
   const [hovered, setHovered] = useState(false);
   const [hoveredHandle, setHoveredHandle] = useState<MoveHandleType | ResizeHandleType | RotateHandleType | null>(null);
   const [nx, setNx] = useState(1);
-  const [ny, setNy] = useState(1);
-  const [heatmapTexture, setHeatmapTexture] = useState<CanvasTexture | null>(null);
   const baseRef = useRef<Mesh>();
   const moveHandleRef = useRef<Mesh>();
   const resizeHandleLowerRef = useRef<Mesh>();
@@ -410,7 +397,7 @@ const SolarPanelOnWall = ({
   const ray = useMemo(() => new Raycaster(), []);
   const mouse = useMemo(() => new Vector2(), []);
 
-  const pvModel = getPvModule(pvModelName) ?? getPvModule('SPR-X21-335-BLK');
+  const pvModel = getPvModule(pvModelName);
 
   if (pvModel) {
     lz = pvModel.thickness;
@@ -426,15 +413,6 @@ const SolarPanelOnWall = ({
   const solarPanel = getElementById(id) as SolarPanelModelOnWall;
 
   useEffect(() => {
-    if (solarPanel && showSolarRadiationHeatmap) {
-      const heatmap = getHeatmap(solarPanel.id);
-      if (heatmap) {
-        setHeatmapTexture(Util.fetchHeatmapTexture(heatmap, solarRadiationHeatmapMaxValue ?? 5));
-      }
-    }
-  }, [showSolarRadiationHeatmap, solarRadiationHeatmapMaxValue]);
-
-  useEffect(() => {
     if (pvModel) {
       let mx, my;
       if (orientation === Orientation.portrait) {
@@ -445,7 +423,6 @@ const SolarPanelOnWall = ({
         my = Math.max(1, Math.round(ly / pvModel.width));
       }
       setNx(mx);
-      setNy(my);
       solarPanelLinesRef.current = [];
       const dx = lx / mx;
       const dy = ly / my;
@@ -461,36 +438,6 @@ const SolarPanelOnWall = ({
       }
     }
   }, [orientation, pvModelName, lx, ly, lz]);
-
-  const cachedTexture = useMemo(() => {
-    let cachedTexture: Texture;
-    switch (orientation) {
-      case Orientation.portrait:
-        cachedTexture =
-          pvModel?.color === 'Blue'
-            ? getSolarPanelTexture(SolarPanelTextureType.BluePortrait)
-            : getSolarPanelTexture(SolarPanelTextureType.BlackPortrait);
-        break;
-      default:
-        cachedTexture =
-          pvModel?.color === 'Blue'
-            ? getSolarPanelTexture(SolarPanelTextureType.BlueLandscape)
-            : getSolarPanelTexture(SolarPanelTextureType.BlackLandscape);
-    }
-    return cachedTexture;
-  }, [solarPanelTextures, orientation, pvModel?.color]);
-
-  const texture = useMemo(() => {
-    let t: Texture = new Texture();
-    if (cachedTexture && cachedTexture.image) {
-      t.image = cachedTexture.image;
-      t.needsUpdate = true;
-      t.wrapS = t.wrapT = RepeatWrapping;
-      t.offset.set(0, 0);
-      t.repeat.set(nx, ny);
-    }
-    return t;
-  }, [cachedTexture, nx, ny]);
 
   const euler = useMemo(() => {
     return new Euler(HALF_PI, 0, 0);
@@ -599,6 +546,29 @@ const SolarPanelOnWall = ({
     pointerDownRef.current = false;
   };
 
+  const texture = useSolarPanelTexture(lx, ly, pvModel, orientation, color);
+  const heatmapTexture = useSolarPanelHeatmapTexture(id);
+
+  const renderTextureMaterial = () => {
+    if (showSolarRadiationHeatmap && heatmapTexture) {
+      return <meshBasicMaterial attachArray="material" map={heatmapTexture} />;
+    }
+    if (!texture) return null;
+    if (orthographic || solarPanelShiness === 0) {
+      return <meshStandardMaterial attachArray="material" map={texture} color={color} />;
+    }
+    return (
+      <meshPhongMaterial
+        attachArray="material"
+        specular={new Color(pvModel?.color === 'Blue' ? SOLAR_PANEL_BLUE_SPECULAR : SOLAR_PANEL_BLACK_SPECULAR)}
+        shininess={solarPanelShiness ?? DEFAULT_SOLAR_PANEL_SHINESS}
+        side={FrontSide}
+        map={texture}
+        color={color}
+      />
+    );
+  };
+
   return (
     <>
       <group name={'Solar Panel Group Grandpa ' + id} rotation={euler} position={[cx, cy, cz + hz]}>
@@ -644,20 +614,7 @@ const SolarPanelOnWall = ({
             <meshStandardMaterial attachArray="material" color={color} />
             <meshStandardMaterial attachArray="material" color={color} />
             <meshStandardMaterial attachArray="material" color={color} />
-            {showSolarRadiationHeatmap && heatmapTexture ? (
-              <meshBasicMaterial attachArray="material" map={heatmapTexture} />
-            ) : orthographic || solarPanelShiness === 0 ? (
-              <meshStandardMaterial attachArray="material" map={texture} color={color} />
-            ) : (
-              <meshPhongMaterial
-                attachArray="material"
-                specular={new Color(pvModel?.color === 'Blue' ? SOLAR_PANEL_BLUE_SPECULAR : SOLAR_PANEL_BLACK_SPECULAR)}
-                shininess={solarPanelShiness ?? DEFAULT_SOLAR_PANEL_SHINESS}
-                side={FrontSide}
-                map={texture}
-                color={color}
-              />
-            )}
+            {renderTextureMaterial()}
             <meshStandardMaterial attachArray="material" color={color} />
           </Box>
 
