@@ -88,39 +88,55 @@ const drawSolarPanelCanvasTexture = (
 
   const ctx = canvas.getContext('2d');
   if (ctx) {
+    // frame color
     ctx.fillStyle = frameColor;
     ctx.fillRect(0, 0, length, width);
 
     const margin = Math.max(length, width) * MARGIN_PERCENT;
-    const gap = Math.max(length, width) * GAP_PERCENT;
 
-    const cellSizeX = (length - margin * 2 - gap * (m - 1)) / m;
-    const cellSizeY = (width - margin * 2 - gap * (n - 1)) / n;
-
-    const offsetX = cellSizeX * 0.1;
-    const offsetY = cellSizeY * 0.1;
-
+    // cell color
     ctx.fillStyle = color === 'Black' ? SOLAR_PANEL_CELL_COLOR_BLACK : SOLAR_PANEL_CELL_COLOR_BLUE;
 
-    for (let i = 0; i < n; i++) {
-      for (let j = 0; j < m; j++) {
-        const x = margin + (cellSizeX + gap) * j;
-        const y = margin + (cellSizeY + gap) * i;
-        if (cellType === 'Monocrystalline') {
-          ctx.beginPath();
-          ctx.moveTo(x, y + offsetY);
-          ctx.lineTo(x, y + cellSizeY - offsetY);
-          ctx.lineTo(x + offsetX, y + cellSizeY);
-          ctx.lineTo(x + cellSizeX - offsetX, y + cellSizeY);
-          ctx.lineTo(x + cellSizeX, y + cellSizeY - offsetY);
-          ctx.lineTo(x + cellSizeX, y + offsetY);
-          ctx.lineTo(x + cellSizeX - offsetX, y);
-          ctx.lineTo(x + offsetX, y);
-          ctx.closePath();
-          ctx.fill();
-        } else {
-          // Polycrystalline & thin film
-          ctx.fillRect(x, y, cellSizeX, cellSizeY);
+    if (cellType === 'Thin Film') {
+      const tfMargin = margin * 0.6;
+      ctx.fillRect(tfMargin, tfMargin, length - tfMargin * 2, width - tfMargin * 2);
+
+      ctx.strokeStyle = 'rgb(255,255,255, 0.5)';
+      ctx.lineWidth = 0.5;
+      for (let x = tfMargin; x < length - tfMargin; x += 3) {
+        ctx.beginPath();
+        ctx.moveTo(x, tfMargin);
+        ctx.lineTo(x, width - tfMargin);
+        ctx.stroke();
+      }
+    } else {
+      const gap = Math.max(length, width) * GAP_PERCENT;
+
+      const cellSizeX = (length - margin * 2 - gap * (m - 1)) / m;
+      const cellSizeY = (width - margin * 2 - gap * (n - 1)) / n;
+
+      const offsetX = cellSizeX * 0.1;
+      const offsetY = cellSizeY * 0.1;
+
+      for (let i = 0; i < n; i++) {
+        for (let j = 0; j < m; j++) {
+          const x = margin + (cellSizeX + gap) * j;
+          const y = margin + (cellSizeY + gap) * i;
+          if (cellType === 'Monocrystalline') {
+            ctx.beginPath();
+            ctx.moveTo(x, y + offsetY);
+            ctx.lineTo(x, y + cellSizeY - offsetY);
+            ctx.lineTo(x + offsetX, y + cellSizeY);
+            ctx.lineTo(x + cellSizeX - offsetX, y + cellSizeY);
+            ctx.lineTo(x + cellSizeX, y + cellSizeY - offsetY);
+            ctx.lineTo(x + cellSizeX, y + offsetY);
+            ctx.lineTo(x + cellSizeX - offsetX, y);
+            ctx.lineTo(x + offsetX, y);
+            ctx.closePath();
+            ctx.fill();
+          } else if (cellType === 'Polycrystalline') {
+            ctx.fillRect(x, y, cellSizeX, cellSizeY);
+          }
         }
       }
     }
