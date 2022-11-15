@@ -106,10 +106,7 @@ const drawSolarPanelCanvasTexture = (
       for (let j = 0; j < m; j++) {
         const x = margin + (cellSizeX + gap) * j;
         const y = margin + (cellSizeY + gap) * i;
-        if (cellType === 'Polycrystalline') {
-          ctx.fillRect(x, y, cellSizeX, cellSizeY);
-        } else {
-          // Monocrystalline & thin film
+        if (cellType === 'Monocrystalline') {
           ctx.beginPath();
           ctx.moveTo(x, y + offsetY);
           ctx.lineTo(x, y + cellSizeY - offsetY);
@@ -121,6 +118,9 @@ const drawSolarPanelCanvasTexture = (
           ctx.lineTo(x + offsetX, y);
           ctx.closePath();
           ctx.fill();
+        } else {
+          // Polycrystalline & thin film
+          ctx.fillRect(x, y, cellSizeX, cellSizeY);
         }
       }
     }
