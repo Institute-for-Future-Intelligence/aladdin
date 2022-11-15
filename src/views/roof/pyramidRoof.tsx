@@ -5,7 +5,7 @@
 import React, { useEffect, useMemo, useRef, useState } from 'react';
 import { PyramidRoofModel, RoofModel } from 'src/models/RoofModel';
 import { useStore } from 'src/stores/common';
-import { CanvasTexture, Euler, Mesh, Raycaster, Shape, Vector2, Vector3 } from 'three';
+import { CanvasTexture, Euler, Mesh, Raycaster, RepeatWrapping, Shape, Vector2, Vector3 } from 'three';
 import * as Selector from 'src/stores/selector';
 import { WallModel } from 'src/models/WallModel';
 import { Extrude, Line, Plane } from '@react-three/drei';
@@ -560,6 +560,7 @@ const PyramidRoof = ({
   const getHeatmap = useStore(Selector.getHeatmap);
   const [heatmapTextures, setHeatmapTextures] = useState<CanvasTexture[]>([]);
   const [flatHeatmapTexture, setFlatHeatmapTexture] = useState<CanvasTexture | null>(null);
+  const getRoofSegmentVertices = useStore(Selector.getRoofSegmentVertices);
 
   useEffect(() => {
     if (showSolarRadiationHeatmap) {
@@ -580,7 +581,21 @@ const PyramidRoof = ({
             if (heatmap) {
               const t = Util.fetchHeatmapTexture(heatmap, solarRadiationHeatmapMaxValue ?? 5);
               if (t) {
-                textures.push(t);
+                const segmentVertices = getRoofSegmentVertices(id);
+                if (segmentVertices) {
+                  const v = segmentVertices[i];
+                  const v10 = new Vector3().subVectors(v[1], v[0]);
+                  const v20 = new Vector3().subVectors(v[2], v[0]);
+                  const v21 = new Vector3().subVectors(v[2], v[1]);
+                  const length10 = v10.length();
+                  const distance = new Vector3().crossVectors(v20, v21).length() / length10;
+                  t.wrapS = RepeatWrapping;
+                  t.wrapT = RepeatWrapping;
+                  t.offset.set(-length10 / 2, -distance);
+                  t.center.set(length10 / 2, distance);
+                  t.repeat.set(1 / length10, 1 / distance);
+                  textures.push(t);
+                }
               }
             }
           }
@@ -641,7 +656,12 @@ const PyramidRoof = ({
                 if (leftPoint.distanceTo(rightPoint) > 0.1) {
                   return (
                     <group name={`Roof segment ${idx}`} key={idx}>
-                      <RoofSegment points={points} direction={isFlat ? 0 : direction} length={isFlat ? 1 : length}>
+                      <RoofSegment
+                        uuid={id + '-' + idx}
+                        points={points}
+                        direction={isFlat ? 0 : direction}
+                        length={isFlat ? 1 : length}
+                      >
                         {showSolarRadiationHeatmap && idx < heatmapTextures.length ? (
                           <meshBasicMaterial attach="material" map={heatmapTextures[idx]} />
                         ) : (
@@ -727,11 +747,13 @@ const PyramidRoof = ({
 };
 
 const RoofSegment = ({
+  uuid,
   points,
   direction,
   length,
   children,
 }: {
+  uuid: string;
   points: Vector3[];
   direction: number;
   length: number;
@@ -770,6 +792,7 @@ const RoofSegment = ({
   return (
     <mesh
       ref={meshRef}
+      uuid={uuid}
       name={'Pyramid Roof Segment'}
       castShadow={shadowEnabled && !transparent}
       receiveShadow={shadowEnabled}

@@ -564,7 +564,7 @@ const StaticSolarRadiationSimulation = ({ city }: StaticSolarRadiationSimulation
     let count = 0;
     const dxcos = dx * Math.cos(absAngle);
     const dxsin = dx * Math.sin(absAngle);
-    const polygon = Util.getWallVertices(wall);
+    const polygon = Util.getWallVertices(wall, 2);
     const halfDif = (lz - wall.lz) / 2;
     for (let i = 0; i < 24; i++) {
       for (let j = 0; j < world.timesPerHour; j++) {
@@ -609,7 +609,7 @@ const StaticSolarRadiationSimulation = ({ city }: StaticSolarRadiationSimulation
     const foundation = getFoundation(roof);
     if (!foundation) throw new Error('foundation of wall not found');
     const segments = getRoofSegmentVertices(roof.id);
-    if (!segments || segments.length === 0) throw new Error('roof segments not found');
+    if (!segments || segments.length === 0) return;
     // check if the roof is flat or not
     let flat = true;
     const h0 = segments[0][0].z;
@@ -625,18 +625,96 @@ const StaticSolarRadiationSimulation = ({ city }: StaticSolarRadiationSimulation
     const month = now.getMonth();
     const date = now.getDate();
     const dayOfYear = Util.dayOfYear(now);
-    const nx = 10;
-    const ny = 10;
-    const cellOutputTotals = Array(nx)
-      .fill(0)
-      .map(() => Array(ny).fill(0));
     // send heat map data to common store for visualization
     if (flat) {
-      console.log(segments);
+      const nx = 10;
+      const ny = 10;
+      const cellOutputTotals = Array(nx)
+        .fill(0)
+        .map(() => Array(ny).fill(0));
       setHeatmap(roof.id, cellOutputTotals);
     } else {
-      for (const [i, s] of segments.entries()) {
-        setHeatmap(roof.id + '-' + i, cellOutputTotals);
+      for (const [index, s] of segments.entries()) {
+        const uuid = roof.id + '-' + index;
+        const v10 = new Vector3().subVectors(s[1], s[0]);
+        const v20 = new Vector3().subVectors(s[2], s[0]);
+        const v21 = new Vector3().subVectors(s[2], s[1]);
+        const length10 = v10.length();
+        // find the distance from top to the edge: https://mathworld.wolfram.com/Point-LineDistance3-Dimensional.html
+        const distance = new Vector3().crossVectors(v20, v21).length() / length10;
+        const m = Math.max(2, Math.round(length10 / cellSize));
+        const n = Math.max(2, Math.round(distance / cellSize));
+        const cellOutputTotals = Array(m)
+          .fill(0)
+          .map(() => Array(n).fill(0));
+        v10.normalize();
+        // find the position of the top point relative to the first edge point
+        const m2 = (v20.dot(v10) / length10) * m;
+        v20.normalize();
+        v21.normalize();
+        // find the normal vector of the plane
+        const normal = new Vector3().crossVectors(v20, v21);
+        // find the starting point of the grid
+        const v0 = new Vector3(
+          foundation.cx + s[0].x + (Math.sign(s[1].x - s[0].x) * cellSize) / 2,
+          foundation.cy + s[0].y + (Math.sign(s[1].y - s[0].y) * cellSize) / 2,
+          foundation.cz + s[0].z + (Math.sign(s[1].z - s[0].z) * cellSize) / 2,
+        );
+        // find the incremental vector going along the bottom edge
+        const dm = v10.multiplyScalar(length10 / m);
+        // find the incremental vector going from bottom to top
+        const dn = new Vector3()
+          .crossVectors(normal, v10)
+          .normalize()
+          .multiplyScalar(distance / n);
+        //console.log(index, m, n, m2, normal)
+        let count = 0;
+        const v = new Vector3();
+        const relativePolygon: Point2[] = [];
+        const margin = 5;
+        relativePolygon.push({ x: -margin, y: -margin } as Point2);
+        relativePolygon.push({ x: m + margin, y: -margin } as Point2);
+        relativePolygon.push({ x: m2, y: n + margin } as Point2);
+        for (let i = 0; i < 24; i++) {
+          for (let j = 0; j < world.timesPerHour; j++) {
+            const currentTime = new Date(year, month, date, i, j * interval);
+            const sunDirection = getSunDirection(currentTime, world.latitude);
+            if (sunDirection.z > 0) {
+              // when the sun is out
+              count++;
+              const peakRadiation = calculatePeakRadiation(sunDirection, dayOfYear, elevation, AirMass.SPHERE_MODEL);
+              const indirectRadiation = calculateDiffuseAndReflectedRadiation(
+                world.ground,
+                month,
+                normal,
+                peakRadiation,
+              );
+              const dot = normal.dot(sunDirection);
+              for (let p = 0; p < m; p++) {
+                const dmp = dm.clone().multiplyScalar(p);
+                for (let q = 0; q < n; q++) {
+                  if (Util.isPointInside(p, q, relativePolygon)) {
+                    cellOutputTotals[p][q] += indirectRadiation;
+                    if (dot > 0) {
+                      v.copy(v0).add(dmp).add(dn.clone().multiplyScalar(q));
+                      if (!inShadow(uuid, v, sunDirection)) {
+                        // direct radiation
+                        cellOutputTotals[p][q] += dot * peakRadiation;
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+        // apply clearness and convert the unit of time step from minute to hour so that we get kWh
+        const daylight = (count * interval) / 60;
+        const scaleFactor =
+          daylight > ZERO_TOLERANCE ? weather.sunshineHours[month] / (30 * daylight * world.timesPerHour) : 0;
+        applyScaleFactor(cellOutputTotals, scaleFactor);
+        // send heat map data to common store for visualization
+        setHeatmap(uuid, cellOutputTotals);
       }
     }
   };

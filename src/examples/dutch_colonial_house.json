@@ -1,7 +1,7 @@
 {
-  "docid": "m2J5RUxVogPwnZ5FAUo3Jx",
-  "time": "11/04/2022 09:49 pm",
-  "timestamp": 1667612972566,
+  "docid": "1wzztECAdJhRw2sbf29PNk",
+  "time": "11/15/2022 12:32 pm",
+  "timestamp": 1668533566440,
   "userid": "QWecNcxhyvP6j6sBN11hBsfZDau1",
   "owner": null,
   "email": null,
@@ -417,8 +417,8 @@
       "type": "Window",
       "mullionSpacing": 0.9,
       "shutter": {
-        "showLeft": false,
-        "showRight": false,
+        "showLeft": true,
+        "showRight": true,
         "color": "#4d4d4d",
         "width": 0.3
       },
@@ -477,9 +477,9 @@
     {
       "type": "Human",
       "name": "Joan",
-      "cx": -11.413918173747447,
-      "cy": -10.537181762934216,
-      "cz": -2.220446049250313e-16,
+      "cx": -10.561772496875118,
+      "cy": -11.662174480604602,
+      "cz": 0,
       "lx": 1.7,
       "lz": 1.68,
       "normal": [
@@ -669,7 +669,7 @@
       "cz": 2.2408122612280286,
       "lx": 4,
       "ly": 0.3,
-      "lz": 3.3216015807817088,
+      "lz": 3.45,
       "leftJoints": [
         "pPpJHGJ2bGVqLdA1FpXi4V"
       ],
@@ -704,21 +704,26 @@
       "foundationId": "fbqvzYqiEy79jeL8wsadib",
       "selected": false,
       "roofId": "vCyCenkovRJf29DEpF24H5",
-      "leftRoofHeight": 3.3216015807817088,
-      "rightRoofHeight": 3.3216015807817088,
+      "leftRoofHeight": 3.45,
+      "rightRoofHeight": 3.45,
       "centerRoofHeight": [
         0,
-        6.6432031615634175
+        6.771601580781709
       ],
       "centerLeftRoofHeight": [
         -0.35,
-        4.982402371172563
+        5.110800790390854
       ],
       "centerRightRoofHeight": [
         0.35,
-        4.982402371172563
+        5.110800790390854
       ],
-      "locked": false
+      "locked": false,
+      "wallStructure": "Default",
+      "structureSpacing": 2,
+      "structureWidth": 0.1,
+      "structureColor": "white",
+      "opacity": 0.5
     },
     {
       "type": "Wall",
@@ -727,7 +732,7 @@
       "cz": 2.2301039869226305,
       "lx": 6.500000000000001,
       "ly": 0.3,
-      "lz": 3.3216015807817088,
+      "lz": 3.45,
       "leftJoints": [
         "beHqET5NN8aNdsuBncMpY7"
       ],
@@ -762,9 +767,14 @@
       "foundationId": "fbqvzYqiEy79jeL8wsadib",
       "selected": false,
       "roofId": "vCyCenkovRJf29DEpF24H5",
-      "leftRoofHeight": 3.3216015807817088,
-      "rightRoofHeight": 3.3216015807817088,
-      "locked": false
+      "leftRoofHeight": 3.45,
+      "rightRoofHeight": 3.45,
+      "locked": false,
+      "wallStructure": "Default",
+      "structureSpacing": 2,
+      "structureWidth": 0.1,
+      "structureColor": "white",
+      "opacity": 0.5
     },
     {
       "type": "Wall",
@@ -773,7 +783,7 @@
       "cz": 2.228839888904333,
       "lx": 6.5,
       "ly": 0.3,
-      "lz": 3.3216015807817088,
+      "lz": 3.45,
       "leftJoints": [
         "giYTP9Qg6uJ3yfkS1RoDqG"
       ],
@@ -808,9 +818,14 @@
       "foundationId": "fbqvzYqiEy79jeL8wsadib",
       "selected": false,
       "roofId": "vCyCenkovRJf29DEpF24H5",
-      "leftRoofHeight": 3.3216015807817088,
-      "rightRoofHeight": 3.3216015807817088,
-      "locked": false
+      "leftRoofHeight": 3.45,
+      "rightRoofHeight": 3.45,
+      "locked": false,
+      "wallStructure": "Default",
+      "structureSpacing": 2,
+      "structureWidth": 0.1,
+      "structureColor": "white",
+      "opacity": 0.5
     },
     {
       "type": "Wall",
@@ -819,7 +834,7 @@
       "cz": 2.268765007024547,
       "lx": 3.9999999999999982,
       "ly": 0.3,
-      "lz": 3.3216015807817088,
+      "lz": 3.45,
       "leftJoints": [
         "2RETAxyRMzZBEQkBGms56R"
       ],
@@ -854,21 +869,26 @@
       "foundationId": "fbqvzYqiEy79jeL8wsadib",
       "selected": false,
       "roofId": "vCyCenkovRJf29DEpF24H5",
-      "leftRoofHeight": 3.3216015807817088,
-      "rightRoofHeight": 3.3216015807817088,
+      "leftRoofHeight": 3.45,
+      "rightRoofHeight": 3.45,
       "centerRoofHeight": [
         0,
-        6.6432031615634175
+        6.771601580781709
       ],
       "centerLeftRoofHeight": [
         -0.326769752502783,
-        4.982402371172563
+        5.110800790390854
       ],
       "centerRightRoofHeight": [
         0.35,
-        4.982402371172563
+        5.110800790390854
       ],
-      "locked": false
+      "locked": false,
+      "wallStructure": "Default",
+      "structureSpacing": 2,
+      "structureWidth": 0.1,
+      "structureColor": "white",
+      "opacity": 0.5
     },
     {
       "type": "Foundation",
@@ -900,9 +920,9 @@
     {
       "type": "Human",
       "name": "Joel",
-      "cx": -11.57290638861899,
-      "cy": -12.099997102195768,
-      "cz": 2.220446049250313e-16,
+      "cx": -11.267628760430101,
+      "cy": -10.980144717428487,
+      "cz": 0,
       "lx": 1.8,
       "ly": 1.8,
       "lz": 1.75,
@@ -928,8 +948,8 @@
       "cz": 0,
       "lx": 0,
       "ly": 0,
-      "lz": 6.6432031615634175,
-      "overhang": 0.2,
+      "lz": 6.771601580781709,
+      "overhang": 0.1,
       "roofType": "Gambrel",
       "wallsId": [
         "pPpJHGJ2bGVqLdA1FpXi4V"
@@ -1580,7 +1600,7 @@
       "lx": 0,
       "ly": 0,
       "lz": 6.575558743849475,
-      "overhang": 0.2,
+      "overhang": 0.1,
       "thickness": 0.1,
       "roofType": "Gable",
       "wallsId": [
@@ -1860,7 +1880,7 @@
       "lx": 0,
       "ly": 0,
       "lz": 6.521198374619754,
-      "overhang": 0.2,
+      "overhang": 0.1,
       "thickness": 0.1,
       "roofType": "Gable",
       "wallsId": [
@@ -3013,8 +3033,8 @@
       "type": "Flower",
       "name": "Hibiscus",
       "flip": true,
-      "cx": -6.538349078585441,
-      "cy": 1.892954182841837,
+      "cx": -6.316313250578144,
+      "cy": 4.054374239976713,
       "cz": 0.04152001813054085,
       "lx": 2,
       "lz": 1.7,
@@ -3078,14 +3098,15 @@
       "id": "mtu9ruoaP4m3bTDiUvwuGN",
       "selected": false,
       "ly": 0.48,
-      "locked": false
+      "locked": false,
+      "flip": true
     },
     {
       "type": "Human",
       "name": "Jose",
-      "cx": -17.084117449426238,
-      "cy": -10.963551097706135,
-      "cz": 4.440892098500626e-16,
+      "cx": -15.356009083187844,
+      "cy": -10.036730789979789,
+      "cz": 0,
       "lx": 2,
       "lz": 1.6,
       "normal": [
@@ -3102,13 +3123,14 @@
       "id": "96NHdfhp3jEHitMi3f3E5K",
       "selected": false,
       "ly": 2,
-      "locked": false
+      "locked": false,
+      "flip": true
     },
     {
       "type": "Flower",
       "name": "Hibiscus",
-      "cx": -6.643099672999504,
-      "cy": -0.5861432182922135,
+      "cx": -6.381012889392409,
+      "cy": -1.1849730119494009,
       "cz": 0.04152001813054085,
       "lx": 2,
       "lz": 1.7,
@@ -3130,9 +3152,9 @@
     {
       "type": "Tree",
       "name": "Magnolia",
-      "cx": 0.7722396694280711,
-      "cy": -7.227140256390566,
-      "cz": 0,
+      "cx": 0.42869129563720954,
+      "cy": -5.939078029786494,
+      "cz": 4.440892098500626e-16,
       "lx": 5.556994802603297,
       "lz": 7.996988894474121,
       "normal": [
@@ -3177,9 +3199,9 @@
     {
       "type": "Tree",
       "name": "Dogwood",
-      "cx": -8.035100055032231,
-      "cy": 4.587584489867993,
-      "cz": 0.04152001813054085,
+      "cx": -8.0356625543792,
+      "cy": 7.082070024197734,
+      "cz": 0.0415200181305444,
       "lx": 3,
       "lz": 4,
       "normal": [
@@ -3266,9 +3288,9 @@
     "dailyHeliostatYieldPanelX": 0,
     "showDailyParabolicDishYieldPanel": false,
     "cameraPosition": [
-      -18.15465591635167,
-      -17.62561201145214,
-      2.3678312799030516
+      -17.277234110923626,
+      -16.713284662583987,
+      3.1412438939704233
     ],
     "showYearlyHeliostatYieldPanel": false,
     "orthographic": false,
@@ -3317,8 +3339,8 @@
     "shadowEnabled": true,
     "showInstructionPanel": true,
     "panCenter": [
-      -5.428878895798474,
-      2.743165968912131,
+      -5.4077593441407465,
+      2.736730958110777,
       1.8630566950628298
     ],
     "yearlyFresnelReflectorYieldPanelY": 0,
