@@ -92,10 +92,6 @@ import { DefaultSolarPanelArrayLayoutConstraints } from './DefaultSolarPanelArra
 import { EconomicsParams } from './EconomicsParams';
 import { DefaultEconomicsParams } from './DefaultEconomicsParams';
 import dayjs from 'dayjs';
-import SolarPanelBluePortraitImage from '../resources/solar-panel-blue-portrait.png';
-import SolarPanelBlackPortraitImage from '../resources/solar-panel-black-portrait.png';
-import SolarPanelBlueLandscapeImage from '../resources/solar-panel-blue-landscape.png';
-import SolarPanelBlackLandscapeImage from '../resources/solar-panel-black-landscape.png';
 import { RoofUtil } from 'src/views/roof/RoofUtil';
 import { FlowerModel } from '../models/FlowerModel';
 import { FlowerData } from '../FlowerData';
@@ -162,9 +158,6 @@ export interface CommonStoreState {
   pvModules: { [key: string]: PvModel };
   getPvModule: (name: string) => PvModel;
   loadPvModules: () => void;
-  solarPanelTextures: { [key: string]: Texture };
-  getSolarPanelTexture: (name: string) => Texture;
-  loadSolarPanelTextures: () => void;
 
   aabb: Box3; // axis-aligned bounding box of elements
   animateSun: boolean;
@@ -5947,34 +5940,6 @@ export const useStore = create<CommonStoreState>(
           },
           getPvModule(name: string) {
             return get().pvModules[name];
-          },
-
-          solarPanelTextures: {},
-          loadSolarPanelTextures() {
-            const loader = new TextureLoader();
-            loader.loadAsync(SolarPanelBluePortraitImage).then((t) => {
-              immerSet((state: CommonStoreState) => {
-                state.solarPanelTextures[SolarPanelTextureType.BluePortrait] = t;
-              });
-            });
-            loader.loadAsync(SolarPanelBlueLandscapeImage).then((t) => {
-              immerSet((state: CommonStoreState) => {
-                state.solarPanelTextures[SolarPanelTextureType.BlueLandscape] = t;
-              });
-            });
-            loader.loadAsync(SolarPanelBlackPortraitImage).then((t) => {
-              immerSet((state: CommonStoreState) => {
-                state.solarPanelTextures[SolarPanelTextureType.BlackPortrait] = t;
-              });
-            });
-            loader.loadAsync(SolarPanelBlackLandscapeImage).then((t) => {
-              immerSet((state: CommonStoreState) => {
-                state.solarPanelTextures[SolarPanelTextureType.BlackLandscape] = t;
-              });
-            });
-          },
-          getSolarPanelTexture(name: string) {
-            return get().solarPanelTextures[name];
           },
 
           weatherData: {},

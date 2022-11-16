@@ -28,14 +28,12 @@ const App = () => {
   const loadHorizontalSolarRadiationData = useStore(Selector.loadHorizontalSolarRadiationData);
   const loadVerticalSolarRadiationData = useStore(Selector.loadVerticalSolarRadiationData);
   const loadPvModules = useStore(Selector.loadPvModules);
-  const loadSolarPanelTextures = useStore(Selector.loadSolarPanelTextures);
 
   useEffect(() => {
     loadWeatherData();
     loadHorizontalSolarRadiationData();
     loadVerticalSolarRadiationData();
     loadPvModules();
-    loadSolarPanelTextures();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
