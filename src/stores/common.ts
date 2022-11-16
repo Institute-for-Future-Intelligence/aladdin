@@ -34,7 +34,6 @@ import {
   ResizeHandleType,
   RotateHandleType,
   Scope,
-  SolarPanelTextureType,
   SolarStructure,
   TrackerType,
   TreeType,
@@ -42,7 +41,7 @@ import {
   WallTexture,
 } from '../types';
 import { DefaultWorldModel } from './DefaultWorldModel';
-import { Box3, Euler, Raycaster, Texture, TextureLoader, Vector2, Vector3 } from 'three';
+import { Box3, Euler, Raycaster, Vector2, Vector3 } from 'three';
 import { ElementModelCloner } from '../models/ElementModelCloner';
 import { DefaultViewState } from './DefaultViewState';
 import { ViewState } from './ViewState';

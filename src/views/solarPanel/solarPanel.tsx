@@ -4,19 +4,7 @@
 
 import React, { useEffect, useMemo, useRef, useState } from 'react';
 import { Box, Cone, Cylinder, Line, Plane, Ring, Sphere } from '@react-three/drei';
-import {
-  CanvasTexture,
-  Color,
-  DoubleSide,
-  Euler,
-  FrontSide,
-  Mesh,
-  Raycaster,
-  RepeatWrapping,
-  Texture,
-  Vector2,
-  Vector3,
-} from 'three';
+import { Color, DoubleSide, Euler, FrontSide, Mesh, Raycaster, Vector2, Vector3 } from 'three';
 import { useStore } from '../../stores/common';
 import { useStoreRef } from 'src/stores/commonRef';
 import * as Selector from '../../stores/selector';
@@ -45,7 +33,6 @@ import {
   Orientation,
   ResizeHandleType,
   RotateHandleType,
-  SolarPanelTextureType,
   TrackerType,
 } from '../../types';
 import { Util } from '../../Util';
@@ -360,7 +347,7 @@ const SolarPanel = ({
   const degree = new Array(13).fill(0);
   const [showTiltAngle, setShowTiltAngle] = useState(false);
 
-  const texture = useSolarPanelTexture(lx, ly, pvModel, orientation, color);
+  const texture = useSolarPanelTexture(lx, ly, pvModel, orientation, solarPanel?.frameColor);
   const heatmapTexture = useSolarPanelHeatmapTexture(id);
 
   const renderTextureMaterial = () => {

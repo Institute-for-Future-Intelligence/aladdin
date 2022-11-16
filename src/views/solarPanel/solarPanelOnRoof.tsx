@@ -4,19 +4,7 @@
 
 import React, { useEffect, useMemo, useRef, useState } from 'react';
 import { Box, Circle, Cone, Cylinder, Line, Plane, Ring, Sphere, Torus } from '@react-three/drei';
-import {
-  CanvasTexture,
-  Color,
-  DoubleSide,
-  Euler,
-  FrontSide,
-  Mesh,
-  Raycaster,
-  RepeatWrapping,
-  Texture,
-  Vector2,
-  Vector3,
-} from 'three';
+import { Color, DoubleSide, Euler, FrontSide, Mesh, Raycaster, Vector2, Vector3 } from 'three';
 import { useStore } from '../../stores/common';
 import { useStoreRef } from 'src/stores/commonRef';
 import * as Selector from '../../stores/selector';
@@ -36,15 +24,7 @@ import {
   UNIT_VECTOR_POS_Z,
   ZERO_TOLERANCE,
 } from '../../constants';
-import {
-  ActionType,
-  MoveHandleType,
-  ObjectType,
-  Orientation,
-  ResizeHandleType,
-  RotateHandleType,
-  SolarPanelTextureType,
-} from '../../types';
+import { ActionType, MoveHandleType, ObjectType, Orientation, ResizeHandleType, RotateHandleType } from '../../types';
 import { Util } from '../../Util';
 import { SolarPanelModel } from '../../models/SolarPanelModel';
 import { LineData } from '../LineData';
@@ -475,6 +455,7 @@ const SolarPanelOnRoof = ({
   rotation = [0, 0, 0],
   normal = [0, 0, 1],
   color = 'white',
+  frameColor,
   selected = false,
   showLabel = false,
   locked = false,
@@ -909,7 +890,7 @@ const SolarPanelOnRoof = ({
     }
   });
 
-  const texture = useSolarPanelTexture(lx, ly, pvModel, orientation, color);
+  const texture = useSolarPanelTexture(lx, ly, pvModel, orientation, frameColor);
   const heatmapTexture = useSolarPanelHeatmapTexture(id);
 
   const renderTextureMaterial = () => {

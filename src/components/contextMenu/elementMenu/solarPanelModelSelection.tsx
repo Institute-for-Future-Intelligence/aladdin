@@ -3,7 +3,7 @@
  */
 
 import React, { useEffect, useRef, useState } from 'react';
-import { Button, Col, Input, Modal, Radio, RadioChangeEvent, Row, Select, Space } from 'antd';
+import { Button, Col, Input, InputNumber, Modal, Radio, RadioChangeEvent, Row, Select, Space } from 'antd';
 import Draggable, { DraggableBounds, DraggableData, DraggableEvent } from 'react-draggable';
 import { useStore } from '../../../stores/common';
 import * as Selector from '../../../stores/selector';
@@ -446,9 +446,10 @@ const SolarPanelModelSelection = ({ setDialogVisible }: { setDialogVisible: (b: 
             {i18n.t('pvModelPanel.SolarCellEfficiency', lang) + ' (%):'}
           </Col>
           <Col className="gutter-row" span={10}>
-            <Input
+            <InputNumber
               disabled={true}
               style={{ width: '100%' }}
+              precision={1}
               value={100 * pvModel.efficiency}
               onChange={(value) => {
                 if (solarPanel) {
@@ -463,9 +464,10 @@ const SolarPanelModelSelection = ({ setDialogVisible }: { setDialogVisible: (b: 
             {i18n.t('pvModelPanel.NominalOperatingCellTemperature', lang) + ' (°C):'}
           </Col>
           <Col className="gutter-row" span={10}>
-            <Input
+            <InputNumber
               disabled={true}
               style={{ width: '100%' }}
+              precision={1}
               value={pvModel.noct}
               onChange={(value) => {
                 if (solarPanel) {

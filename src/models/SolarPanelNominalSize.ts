@@ -5,7 +5,7 @@
 export class SolarPanelNominalSize {
   static instance = new SolarPanelNominalSize();
 
-  private readonly n = 12;
+  private readonly n = 13;
   readonly nominalStrings = new Array<string>(this.n);
   readonly nominalWidths = new Array<number>(this.n);
   readonly nominalHeights = new Array<number>(this.n);
@@ -84,6 +84,12 @@ export class SolarPanelNominalSize {
     this.nominalHeights[11] = 1.5;
     this.cellNx[11] = 6;
     this.cellNy[11] = 9;
+
+    // SunPower Maxeon 3 Series
+    this.nominalWidths[12] = 1.05;
+    this.nominalHeights[12] = 1.81;
+    this.cellNx[12] = 8;
+    this.cellNy[12] = 14;
 
     for (let i = 0; i < this.n; i++) {
       this.nominalStrings[i] =
