@@ -1,8 +1,8 @@
 {
   "files": {
     "main.css": "/aladdin/static/css/main.c1ee157d.chunk.css",
-    "main.js": "/aladdin/static/js/main.91c909ba.chunk.js",
-    "main.js.map": "/aladdin/static/js/main.91c909ba.chunk.js.map",
+    "main.js": "/aladdin/static/js/main.ce1e1290.chunk.js",
+    "main.js.map": "/aladdin/static/js/main.ce1e1290.chunk.js.map",
     "runtime-main.js": "/aladdin/static/js/runtime-main.77a53a48.js",
     "runtime-main.js.map": "/aladdin/static/js/runtime-main.77a53a48.js.map",
     "static/css/2.447301e6.chunk.css": "/aladdin/static/css/2.447301e6.chunk.css",
@@ -171,10 +171,6 @@
     "static/media/roof_07.d0b809f8.png": "/aladdin/static/media/roof_07.d0b809f8.png",
     "static/media/roof_07_menu.d0b809f8.png": "/aladdin/static/media/roof_07_menu.d0b809f8.png",
     "static/media/rural.bc238e1c.jpg": "/aladdin/static/media/rural.bc238e1c.jpg",
-    "static/media/solar-panel-black-landscape.1d7c5c67.png": "/aladdin/static/media/solar-panel-black-landscape.1d7c5c67.png",
-    "static/media/solar-panel-black-portrait.cc0dd3a8.png": "/aladdin/static/media/solar-panel-black-portrait.cc0dd3a8.png",
-    "static/media/solar-panel-blue-landscape.2fdbed86.png": "/aladdin/static/media/solar-panel-blue-landscape.2fdbed86.png",
-    "static/media/solar-panel-blue-portrait.822f98fb.png": "/aladdin/static/media/solar-panel-blue-portrait.822f98fb.png",
     "static/media/solar_radiation_horizontal.38eaf9ed.csv": "/aladdin/static/media/solar_radiation_horizontal.38eaf9ed.csv",
     "static/media/solar_radiation_vertical.522681a8.csv": "/aladdin/static/media/solar_radiation_vertical.522681a8.csv",
     "static/media/spirea.f1823a2e.png": "/aladdin/static/media/spirea.f1823a2e.png",
@@ -205,6 +201,6 @@
     "static/css/2.447301e6.chunk.css",
     "static/js/2.e60107b1.chunk.js",
     "static/css/main.c1ee157d.chunk.css",
-    "static/js/main.91c909ba.chunk.js"
+    "static/js/main.ce1e1290.chunk.js"
   ]
 }
