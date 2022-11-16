@@ -331,6 +331,7 @@ export const i18n_zh_tw = {
       photovoltaicSolarPowerTutorials: {
         EffectOfTiltAngleOfSolarPanel: '光伏板傾斜角對發電量的影響',
         EffectOfAzimuthOfSolarPanel: '光伏板方位角對發電量的影響',
+        SolarPanelTypes: '光伏板類型',
         SolarTrackers: '自動追日器',
         CoveringGroundWithSolarPanels: '為什麼我們不簡單地用光伏板覆蓋地面',
         InterRowSpacingOfSolarPanelArray: '光伏板陣列行間距對發電量的影響',

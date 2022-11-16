@@ -6,6 +6,7 @@ import sun_angles from './examples/sun_angles.json';
 import insolation_and_climate from './examples/insolation_and_climate.json';
 import solar_radiation_to_box from './examples/solar_radiation_to_box.json';
 import sun_beam_at_center from './examples/sun_beam_at_center.json';
+import solar_panel_types from './examples/solar_panel_types.json';
 import rooftop_solar_panels from './examples/rooftop_solar_panels.json';
 import solar_farm_fixed_array from './examples/solar_farm_fixed_array.json';
 import solar_farm_hsat_array from './examples/solar_farm_hsat_array.json';
@@ -360,6 +361,9 @@ const MainMenu = ({ viewOnly, set2DView, resetView, zoomView, canvas }: MainMenu
         break;
       case 'effect_orientation_solar_panel':
         input = effect_orientation_solar_panel;
+        break;
+      case 'solar_panel_types':
+        input = solar_panel_types;
         break;
       case 'why_solar_array':
         input = why_solar_array;
@@ -2050,6 +2054,9 @@ const MainMenu = ({ viewOnly, set2DView, resetView, zoomView, canvas }: MainMenu
           </Menu.Item>
           <Menu.Item key="effect_azimuth_solar_panel" onClick={loadFile}>
             {i18n.t('menu.photovoltaicSolarPowerTutorials.EffectOfAzimuthOfSolarPanel', lang)}
+          </Menu.Item>
+          <Menu.Item key="solar_panel_types" onClick={loadFile}>
+            {i18n.t('menu.photovoltaicSolarPowerTutorials.SolarPanelTypes', lang)}
           </Menu.Item>
           <Menu.Item key="solar_trackers" onClick={loadFile}>
             {i18n.t('menu.photovoltaicSolarPowerTutorials.SolarTrackers', lang)}

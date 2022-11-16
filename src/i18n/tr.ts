@@ -332,6 +332,7 @@ export const i18n_tr = {
       photovoltaicSolarPowerTutorials: {
         EffectOfTiltAngleOfSolarPanel: 'Güneş Paneli Eğim Açısı Etkisi',
         EffectOfAzimuthOfSolarPanel: 'Güneş Paneli Azimut Açısı Etkisi',
+        SolarPanelTypes: 'Solar Panel Types',
         SolarTrackers: 'Güneş İzleyiciler',
         CoveringGroundWithSolarPanels:
           'Sadece güneş panellerini kullanarak yüzeyi kaplamak neden iyi bir fikir değildir?',

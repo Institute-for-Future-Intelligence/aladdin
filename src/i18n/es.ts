@@ -333,6 +333,7 @@ export const i18n_es = {
       photovoltaicSolarPowerTutorials: {
         EffectOfTiltAngleOfSolarPanel: 'Effect of Tilt Angle',
         EffectOfAzimuthOfSolarPanel: 'Effect of Azimuth',
+        SolarPanelTypes: 'Solar Panel Types',
         SolarTrackers: 'Seguidores solares',
         CoveringGroundWithSolarPanels: 'Why Just Covering the Ground with Solar Panels is not a Good Idea',
         InterRowSpacingOfSolarPanelArray: 'Effect of Inter-Row Spacing in a Solar Panel Array',
