@@ -569,20 +569,43 @@ const PyramidRoof = ({
         if (heatmap) {
           const t = Util.fetchHeatmapTexture(heatmap, solarRadiationHeatmapMaxValue ?? 5);
           if (t) {
-            setFlatHeatmapTexture(t);
+            t.wrapS = RepeatWrapping;
+            t.wrapT = RepeatWrapping;
+            // obtain the bounding rectangle
+            const segmentVertices = getRoofSegmentVertices(id);
+            if (segmentVertices) {
+              let minX = Number.MAX_VALUE;
+              let minY = Number.MAX_VALUE;
+              let maxX = -Number.MAX_VALUE;
+              let maxY = -Number.MAX_VALUE;
+              for (const s of segmentVertices) {
+                for (const v of s) {
+                  if (v.x > maxX) maxX = v.x;
+                  else if (v.x < minX) minX = v.x;
+                  if (v.y > maxY) maxY = v.y;
+                  else if (v.y < minY) minY = v.y;
+                }
+              }
+              const dx = maxX - minX;
+              const dy = maxY - minY;
+              t.offset.set(-dx / 2, -dy / 2);
+              t.center.set(dx / 2, dy / 2);
+              t.repeat.set(1 / dx, 1 / dy);
+              setFlatHeatmapTexture(t);
+            }
           }
         }
       } else {
         const n = roofSegments.length;
         if (n > 0) {
           const textures = [];
-          for (let i = 0; i < n; i++) {
-            const heatmap = getHeatmap(id + '-' + i);
-            if (heatmap) {
-              const t = Util.fetchHeatmapTexture(heatmap, solarRadiationHeatmapMaxValue ?? 5);
-              if (t) {
-                const segmentVertices = getRoofSegmentVertices(id);
-                if (segmentVertices) {
+          const segmentVertices = getRoofSegmentVertices(id);
+          if (segmentVertices) {
+            for (let i = 0; i < n; i++) {
+              const heatmap = getHeatmap(id + '-' + i);
+              if (heatmap) {
+                const t = Util.fetchHeatmapTexture(heatmap, solarRadiationHeatmapMaxValue ?? 5);
+                if (t) {
                   const v = segmentVertices[i];
                   const v10 = new Vector3().subVectors(v[1], v[0]);
                   const v20 = new Vector3().subVectors(v[2], v[0]);
@@ -598,8 +621,8 @@ const PyramidRoof = ({
                 }
               }
             }
+            setHeatmapTextures(textures);
           }
-          setHeatmapTextures(textures);
         }
       }
     }

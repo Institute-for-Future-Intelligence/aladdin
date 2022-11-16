@@ -27,7 +27,7 @@ import { showInfo } from '../helpers';
 import i18n from '../i18n/i18n';
 import { WallModel } from '../models/WallModel';
 import { Point2 } from '../models/Point2';
-import { RoofModel } from '../models/RoofModel';
+import { RoofModel, RoofType } from '../models/RoofModel';
 
 export interface StaticSolarRadiationSimulationProps {
   city: string | null;
@@ -95,6 +95,7 @@ const StaticSolarRadiationSimulation = ({ city }: StaticSolarRadiationSimulation
       for (const c of components) {
         Util.fetchSimulationElements(c, objectsRef.current);
       }
+      //console.log(objectsRef.current)
     }
   };
 
@@ -119,7 +120,15 @@ const StaticSolarRadiationSimulation = ({ city }: StaticSolarRadiationSimulation
           generateHeatmapForWall(e as WallModel);
           break;
         case ObjectType.Roof:
-          generateHeatmapForRoof(e as RoofModel);
+          const roof = e as RoofModel;
+          switch (roof.roofType) {
+            case RoofType.Pyramid:
+              generateHeatmapForPyramidRoof(roof);
+              break;
+            case RoofType.Gable:
+              //generateHeatmapForGableRoof(roof);
+              break;
+          }
           break;
       }
     }
@@ -605,7 +614,8 @@ const StaticSolarRadiationSimulation = ({ city }: StaticSolarRadiationSimulation
     setHeatmap(wall.id, cellOutputTotals);
   };
 
-  const generateHeatmapForRoof = (roof: RoofModel) => {
+  const generateHeatmapForPyramidRoof = (roof: RoofModel) => {
+    if (roof.roofType !== RoofType.Pyramid) throw new Error('roof is not pyramid');
     const foundation = getFoundation(roof);
     if (!foundation) throw new Error('foundation of wall not found');
     const segments = getRoofSegmentVertices(roof.id);
@@ -625,20 +635,84 @@ const StaticSolarRadiationSimulation = ({ city }: StaticSolarRadiationSimulation
     const month = now.getMonth();
     const date = now.getDate();
     const dayOfYear = Util.dayOfYear(now);
+    const euler = new Euler(0, 0, foundation.rotation[2], 'ZYX');
     // send heat map data to common store for visualization
     if (flat) {
-      const nx = 10;
-      const ny = 10;
+      // obtain the bounding rectangle
+      let minX = Number.MAX_VALUE;
+      let minY = Number.MAX_VALUE;
+      let maxX = -Number.MAX_VALUE;
+      let maxY = -Number.MAX_VALUE;
+      for (const s of segments) {
+        for (const v of s) {
+          const v2 = v.clone().applyEuler(euler);
+          if (v2.x > maxX) maxX = v2.x;
+          else if (v2.x < minX) minX = v2.x;
+          if (v2.y > maxY) maxY = v2.y;
+          else if (v2.y < minY) minY = v2.y;
+        }
+      }
+      minX += foundation.cx;
+      minY += foundation.cy;
+      maxX += foundation.cx;
+      maxY += foundation.cy;
+      const nx = Math.max(2, Math.round((maxX - minX) / cellSize));
+      const ny = Math.max(2, Math.round((maxY - minY) / cellSize));
+      const dx = (maxX - minX) / nx;
+      const dy = (maxY - minY) / ny;
       const cellOutputTotals = Array(nx)
         .fill(0)
         .map(() => Array(ny).fill(0));
+      const v0 = new Vector3(minX + cellSize / 2, minY + cellSize / 2, foundation.lz + h0);
+      let count = 0;
+      const v = new Vector3(0, 0, v0.z);
+      for (let i = 0; i < 24; i++) {
+        for (let j = 0; j < world.timesPerHour; j++) {
+          const currentTime = new Date(year, month, date, i, j * interval);
+          const sunDirection = getSunDirection(currentTime, world.latitude);
+          if (sunDirection.z > 0) {
+            // when the sun is out
+            count++;
+            const peakRadiation = calculatePeakRadiation(sunDirection, dayOfYear, elevation, AirMass.SPHERE_MODEL);
+            const indirectRadiation = calculateDiffuseAndReflectedRadiation(
+              world.ground,
+              month,
+              UNIT_VECTOR_POS_Z,
+              peakRadiation,
+            );
+            const dot = UNIT_VECTOR_POS_Z.dot(sunDirection);
+            for (let p = 0; p < nx; p++) {
+              v.x = v0.x + p * dx;
+              for (let q = 0; q < ny; q++) {
+                cellOutputTotals[p][q] += indirectRadiation;
+                if (dot > 0) {
+                  v.y = v0.y + q * dy;
+                  if (!inShadow(roof.id, v, sunDirection)) {
+                    // direct radiation
+                    cellOutputTotals[p][q] += dot * peakRadiation;
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+      // apply clearness and convert the unit of time step from minute to hour so that we get kWh
+      const daylight = (count * interval) / 60;
+      const scaleFactor =
+        daylight > ZERO_TOLERANCE ? weather.sunshineHours[month] / (30 * daylight * world.timesPerHour) : 0;
+      applyScaleFactor(cellOutputTotals, scaleFactor);
+      // send heat map data to common store for visualization
       setHeatmap(roof.id, cellOutputTotals);
     } else {
       for (const [index, s] of segments.entries()) {
         const uuid = roof.id + '-' + index;
-        const v10 = new Vector3().subVectors(s[1], s[0]);
-        const v20 = new Vector3().subVectors(s[2], s[0]);
-        const v21 = new Vector3().subVectors(s[2], s[1]);
+        const s0 = s[0].clone().applyEuler(euler);
+        const s1 = s[1].clone().applyEuler(euler);
+        const s2 = s[2].clone().applyEuler(euler);
+        const v10 = new Vector3().subVectors(s1, s0);
+        const v20 = new Vector3().subVectors(s2, s0);
+        const v21 = new Vector3().subVectors(s2, s1);
         const length10 = v10.length();
         // find the distance from top to the edge: https://mathworld.wolfram.com/Point-LineDistance3-Dimensional.html
         const distance = new Vector3().crossVectors(v20, v21).length() / length10;
@@ -649,16 +723,16 @@ const StaticSolarRadiationSimulation = ({ city }: StaticSolarRadiationSimulation
           .map(() => Array(n).fill(0));
         v10.normalize();
         // find the position of the top point relative to the first edge point
-        const m2 = (v20.dot(v10) / length10) * m;
+        const m2 = (m * v20.dot(v10)) / length10;
         v20.normalize();
         v21.normalize();
         // find the normal vector of the plane
         const normal = new Vector3().crossVectors(v20, v21);
         // find the starting point of the grid
         const v0 = new Vector3(
-          foundation.cx + s[0].x + (Math.sign(s[1].x - s[0].x) * cellSize) / 2,
-          foundation.cy + s[0].y + (Math.sign(s[1].y - s[0].y) * cellSize) / 2,
-          foundation.cz + s[0].z + (Math.sign(s[1].z - s[0].z) * cellSize) / 2,
+          foundation.cx + s0.x + (Math.sign(s1.x - s0.x) * cellSize) / 2,
+          foundation.cy + s0.y + (Math.sign(s1.y - s0.y) * cellSize) / 2,
+          foundation.lz + s0.z + (Math.sign(s1.z - s0.z) * cellSize) / 2,
         );
         // find the incremental vector going along the bottom edge
         const dm = v10.multiplyScalar(length10 / m);
@@ -667,7 +741,7 @@ const StaticSolarRadiationSimulation = ({ city }: StaticSolarRadiationSimulation
           .crossVectors(normal, v10)
           .normalize()
           .multiplyScalar(distance / n);
-        //console.log(index, m, n, m2, normal)
+        // console.log(index, m, n, m2, normal)
         let count = 0;
         const v = new Vector3();
         const relativePolygon: Point2[] = [];
