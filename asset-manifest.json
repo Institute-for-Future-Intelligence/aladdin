@@ -1,8 +1,8 @@
 {
   "files": {
     "main.css": "/aladdin/static/css/main.c1ee157d.chunk.css",
-    "main.js": "/aladdin/static/js/main.5ef2b547.chunk.js",
-    "main.js.map": "/aladdin/static/js/main.5ef2b547.chunk.js.map",
+    "main.js": "/aladdin/static/js/main.96e7ce6c.chunk.js",
+    "main.js.map": "/aladdin/static/js/main.96e7ce6c.chunk.js.map",
     "runtime-main.js": "/aladdin/static/js/runtime-main.38f3c45b.js",
     "runtime-main.js.map": "/aladdin/static/js/runtime-main.38f3c45b.js.map",
     "static/css/2.447301e6.chunk.css": "/aladdin/static/css/2.447301e6.chunk.css",
@@ -154,7 +154,7 @@
     "static/media/polygon_09.26eed538.png": "/aladdin/static/media/polygon_09.26eed538.png",
     "static/media/polygon_10.749fa717.png": "/aladdin/static/media/polygon_10.749fa717.png",
     "static/media/polygon_10_menu.e1254bdd.png": "/aladdin/static/media/polygon_10_menu.e1254bdd.png",
-    "static/media/pvmodules.60ad81b8.csv": "/aladdin/static/media/pvmodules.60ad81b8.csv",
+    "static/media/pvmodules.032c5ebc.csv": "/aladdin/static/media/pvmodules.032c5ebc.csv",
     "static/media/red_rose.6fbd03bc.png": "/aladdin/static/media/red_rose.6fbd03bc.png",
     "static/media/roof_01.1418beb1.png": "/aladdin/static/media/roof_01.1418beb1.png",
     "static/media/roof_01_menu.1418beb1.png": "/aladdin/static/media/roof_01_menu.1418beb1.png",
@@ -192,7 +192,7 @@
     "static/media/wall_09_menu.5124ae81.png": "/aladdin/static/media/wall_09_menu.5124ae81.png",
     "static/media/wall_10.ad1052ed.png": "/aladdin/static/media/wall_10.ad1052ed.png",
     "static/media/wall_10_menu.a934991d.png": "/aladdin/static/media/wall_10_menu.a934991d.png",
-    "static/media/weather.4b28c7d9.csv": "/aladdin/static/media/weather.4b28c7d9.csv",
+    "static/media/weather.b5ffba86.csv": "/aladdin/static/media/weather.b5ffba86.csv",
     "static/media/white_flower.7c33e894.png": "/aladdin/static/media/white_flower.7c33e894.png",
     "static/media/yellow_flower.3da8cdb9.png": "/aladdin/static/media/yellow_flower.3da8cdb9.png"
   },
@@ -201,6 +201,6 @@
     "static/css/2.447301e6.chunk.css",
     "static/js/2.894b5c09.chunk.js",
     "static/css/main.c1ee157d.chunk.css",
-    "static/js/main.5ef2b547.chunk.js"
+    "static/js/main.96e7ce6c.chunk.js"
   ]
 }
