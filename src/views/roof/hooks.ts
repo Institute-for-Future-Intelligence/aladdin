@@ -331,7 +331,7 @@ export const useUpdateSegmentVerticesMap = (
     });
   };
 
-  const debouncedUpdate = useCallback(Util.debounce(update), []);
+  const debouncedUpdate = useCallback(Util.debounce(update), [roofSegments, centroid, mansardTop]);
 
   useEffect(() => {
     if (roofSegments.length > 0) {
