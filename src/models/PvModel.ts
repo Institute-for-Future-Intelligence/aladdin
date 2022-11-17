@@ -24,5 +24,4 @@ export interface PvModel {
   weight: number;
   color: string;
   shadeTolerance: string;
-  price: number;
 }

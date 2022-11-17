@@ -5976,7 +5976,6 @@ export const useStore = create<CommonStoreState>(
                       weight: parseFloat(row[18].trim()),
                       color: row[19].trim(),
                       shadeTolerance: row[20].trim(),
-                      price: parseFloat(row[21].trim()),
                     } as PvModel;
                     pvModels.push(pv);
                   }

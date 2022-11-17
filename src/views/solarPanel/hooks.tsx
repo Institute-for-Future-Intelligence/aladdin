@@ -105,16 +105,8 @@ const drawSolarPanelCanvasTexture = (
     ctx.fillStyle = color === 'Black' ? SOLAR_PANEL_CELL_COLOR_BLACK : SOLAR_PANEL_CELL_COLOR_BLUE;
 
     if (cellType === 'Thin Film') {
-      const tfMargin = margin * 0.6;
-      ctx.fillRect(tfMargin, tfMargin, length - tfMargin * 2, width - tfMargin * 2);
-      ctx.strokeStyle = 'rgb(255,255,255, 0.5)';
-      ctx.lineWidth = 0.5;
-      for (let x = tfMargin; x < length - tfMargin; x += 3) {
-        ctx.beginPath();
-        ctx.moveTo(x, tfMargin);
-        ctx.lineTo(x, width - tfMargin);
-        ctx.stroke();
-      }
+      const padding = margin * 0.6;
+      ctx.fillRect(padding, padding, length - padding * 2, width - padding * 2);
     } else {
       const gap = Math.max(length, width) * GAP_PERCENT;
       const padding = margin + gap;

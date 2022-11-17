@@ -9,7 +9,7 @@ import { useStore } from '../../../stores/common';
 import * as Selector from '../../../stores/selector';
 import { SolarPanelModel } from '../../../models/SolarPanelModel';
 import { SolarPanelNominalSize } from '../../../models/SolarPanelNominalSize';
-import { ObjectType, Scope, ShadeTolerance } from '../../../types';
+import { ObjectType, Scope } from '../../../types';
 import i18n from '../../../i18n/i18n';
 import { UndoableChange } from '../../../undo/UndoableChange';
 import { UndoableChangeGroup } from '../../../undo/UndoableChangeGroup';
@@ -492,33 +492,6 @@ const SolarPanelModelSelection = ({ setDialogVisible }: { setDialogVisible: (b: 
                 }
               }}
             />
-          </Col>
-        </Row>
-        <Row gutter={6} style={{ paddingBottom: '4px' }}>
-          <Col className="gutter-row" span={14}>
-            {i18n.t('pvModelPanel.ShadeTolerance', lang) + ':'}
-          </Col>
-          <Col className="gutter-row" span={10}>
-            <Select
-              disabled={true}
-              style={{ width: '100%' }}
-              value={pvModel.shadeTolerance}
-              onChange={(value) => {
-                if (solarPanel) {
-                  // TODO for custom solar panel
-                }
-              }}
-            >
-              <Option key={ShadeTolerance.HIGH} value={ShadeTolerance.HIGH}>
-                {i18n.t('word.High', lang)}
-              </Option>
-              <Option key={ShadeTolerance.NONE} value={ShadeTolerance.NONE}>
-                {i18n.t('word.None', lang)}
-              </Option>
-              <Option key={ShadeTolerance.PARTIAL} value={ShadeTolerance.PARTIAL}>
-                {i18n.t('word.Partial', lang)}
-              </Option>
-            </Select>
           </Col>
         </Row>
         <Row
