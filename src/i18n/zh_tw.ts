@@ -770,6 +770,7 @@ export const i18n_zh_tw = {
       Orientation: '排列方向',
       Portrait: '縱向',
       Landscape: '橫向',
+      FrameColor: '框架顏色',
       Panels: '塊',
       PanelsWide: '塊光伏板寬',
       PanelsLong: '塊光伏板長',

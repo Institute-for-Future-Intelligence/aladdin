@@ -22,6 +22,7 @@ import SolarPanelRelativeAzimuthInput from './solarPanelRelativeAzimuthInput';
 import SolarPanelTrackerSelection from './solarPanelTrackerSelection';
 import SolarPanelPoleHeightInput from './solarPanelPoleHeightInput';
 import SolarPanelPoleSpacingInput from './solarPanelPoleSpacingInput';
+import SolarPanelFrameColorSelection from './solarPanelFrameColorSelection';
 import { UNIT_VECTOR_POS_Z } from '../../../constants';
 import { ObjectType } from '../../../types';
 
@@ -46,6 +47,7 @@ export const SolarPanelMenu = () => {
   const [trackerDialogVisible, setTrackerDialogVisible] = useState(false);
   const [poleHeightDialogVisible, setPoleHeightDialogVisible] = useState(false);
   const [poleSpacingDialogVisible, setPoleSpacingDialogVisible] = useState(false);
+  const [frameColorDialogVisible, setFrameColorDialogVisible] = useState(false);
 
   const lang = { lng: language };
 
@@ -276,6 +278,24 @@ export const SolarPanelMenu = () => {
                 }}
               >
                 {i18n.t('solarPanelMenu.PoleSpacing', lang)} ...
+              </Menu.Item>
+            </>
+          )}
+
+          {editable && (
+            <>
+              {frameColorDialogVisible && (
+                <SolarPanelFrameColorSelection setDialogVisible={setFrameColorDialogVisible} />
+              )}
+              <Menu.Item
+                key={'solar-panel-frame-color'}
+                style={{ paddingLeft: '36px' }}
+                onClick={() => {
+                  setApplyCount(0);
+                  setFrameColorDialogVisible(true);
+                }}
+              >
+                {i18n.t('solarPanelMenu.FrameColor', lang)} ...
               </Menu.Item>
             </>
           )}

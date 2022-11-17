@@ -412,6 +412,11 @@ export interface CommonStoreState {
   updateSolarPanelLyAboveFoundation: (foundationId: string, ly: number) => void;
   updateSolarPanelLyForAll: (ly: number) => void;
 
+  updateSolarPanelFrameColorById: (id: string, frameColor: string) => void;
+  updateSolarPanelFrameColorOnSurface: (parentId: string, normal: number[] | undefined, frameColor: string) => void;
+  updateSolarPanelFrameColorAboveFoundation: (foundationId: string, frameColor: string) => void;
+  updateSolarPanelFrameColorForAll: (frameColor: string) => void;
+
   updateSolarPanelTiltAngleById: (id: string, tiltAngle: number) => void;
   updateSolarPanelTiltAngleOnSurface: (parentId: string, normal: number[] | undefined, tiltAngle: number) => void;
   updateSolarPanelTiltAngleAboveFoundation: (foundationId: string, tiltAngle: number, isReverse?: boolean) => void;
@@ -3429,6 +3434,52 @@ export const useStore = create<CommonStoreState>(
             });
           },
 
+          updateSolarPanelFrameColorById(id, frameColor) {
+            immerSet((state: CommonStoreState) => {
+              for (const e of state.elements) {
+                if (e.type === ObjectType.SolarPanel && e.id === id && !e.locked) {
+                  (e as SolarPanelModel).frameColor = frameColor;
+                  break;
+                }
+              }
+            });
+          },
+          updateSolarPanelFrameColorAboveFoundation(foundationId, frameColor) {
+            immerSet((state: CommonStoreState) => {
+              for (const e of state.elements) {
+                if (e.type === ObjectType.SolarPanel && e.foundationId === foundationId && !e.locked) {
+                  (e as SolarPanelModel).frameColor = frameColor;
+                }
+              }
+            });
+          },
+          updateSolarPanelFrameColorOnSurface(parentId, normal, frameColor) {
+            immerSet((state: CommonStoreState) => {
+              for (const e of state.elements) {
+                if (e.type === ObjectType.SolarPanel && !e.locked) {
+                  let found;
+                  if (normal) {
+                    found = e.parentId === parentId && Util.isIdentical(e.normal, normal);
+                  } else {
+                    found = e.parentId === parentId;
+                  }
+                  if (found) {
+                    (e as SolarPanelModel).frameColor = frameColor;
+                  }
+                }
+              }
+            });
+          },
+          updateSolarPanelFrameColorForAll(frameColor) {
+            immerSet((state: CommonStoreState) => {
+              for (const e of state.elements) {
+                if (e.type === ObjectType.SolarPanel && !e.locked) {
+                  (e as SolarPanelModel).frameColor = frameColor;
+                }
+              }
+            });
+          },
+
           updateSolarPanelTiltAngleById(id, tiltAngle) {
             immerSet((state: CommonStoreState) => {
               for (const e of state.elements) {
@@ -4440,6 +4491,7 @@ export const useStore = create<CommonStoreState>(
                     state.actionState.solarPanelRelativeAzimuth ?? 0,
                     normal,
                     'rotation' in parent ? parent.rotation : undefined,
+                    state.actionState.solarPanelFrameColor ?? 'white',
                   );
                   model = solarPanel;
                   state.elements.push(solarPanel);

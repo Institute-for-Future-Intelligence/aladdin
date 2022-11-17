@@ -81,6 +81,7 @@ export interface ActionState {
   solarPanelPoleSpacing: number;
   solarPanelTiltAngle: number;
   solarPanelRelativeAzimuth: number;
+  solarPanelFrameColor: string;
 
   parabolicDishReflectance: number;
   parabolicDishAbsorptance: number;

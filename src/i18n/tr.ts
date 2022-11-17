@@ -792,6 +792,7 @@ export const i18n_tr = {
       Orientation: 'Oryantasyon',
       Portrait: 'Portre',
       Landscape: 'Peyzaj',
+      FrameColor: 'Frame Color',
       Panels: 'Paneller',
       PanelsWide: 'Panel Genişliği',
       PanelsLong: 'Panel Uzunluğu',

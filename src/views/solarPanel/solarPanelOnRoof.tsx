@@ -456,6 +456,7 @@ const SolarPanelOnRoof = ({
   normal = [0, 0, 1],
   color = 'white',
   frameColor,
+  backsheetColor,
   selected = false,
   showLabel = false,
   locked = false,
@@ -890,7 +891,7 @@ const SolarPanelOnRoof = ({
     }
   });
 
-  const texture = useSolarPanelTexture(lx, ly, pvModel, orientation, frameColor);
+  const texture = useSolarPanelTexture(lx, ly, pvModel, orientation, frameColor, backsheetColor);
   const heatmapTexture = useSolarPanelHeatmapTexture(id);
 
   const renderTextureMaterial = () => {

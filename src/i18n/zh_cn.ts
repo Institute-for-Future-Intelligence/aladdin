@@ -769,6 +769,7 @@ export const i18n_zh_cn = {
       Orientation: '排列方向',
       Portrait: '纵向',
       Landscape: '橫向',
+      FrameColor: '框架颜色',
       Panels: '块',
       PanelsWide: '块光伏板宽',
       PanelsLong: '块光伏板长',

@@ -87,6 +87,64 @@ export class ElementModelFactory {
     } as TreeModel;
   }
 
+  static makeSolarPanel(
+    parent: ElementModel,
+    pvModel: PvModel,
+    x: number,
+    y: number,
+    z?: number,
+    orientation?: Orientation,
+    poleHeight?: number,
+    poleSpacing?: number,
+    tiltAngle?: number,
+    relativeAzimuth?: number,
+    normal?: Vector3,
+    rotation?: number[],
+    frameColor?: string,
+    lx?: number,
+    ly?: number,
+    parentType?: ObjectType,
+  ) {
+    let foundationId;
+    switch (parent.type) {
+      case ObjectType.Foundation:
+      case ObjectType.Cuboid:
+        foundationId = parent.id;
+        break;
+      case ObjectType.Wall:
+      case ObjectType.Roof:
+        foundationId = parent.parentId;
+        break;
+    }
+    return {
+      type: ObjectType.SolarPanel,
+      pvModelName: pvModel.name,
+      trackerType: TrackerType.NO_TRACKER,
+      relativeAzimuth: relativeAzimuth ?? 0,
+      tiltAngle: tiltAngle ?? 0,
+      orientation: orientation ?? Orientation.landscape,
+      drawSunBeam: false,
+      poleHeight: poleHeight ?? 1,
+      poleRadius: 0.05,
+      poleSpacing: poleSpacing ?? 3,
+      cx: x,
+      cy: y,
+      cz: z,
+      lx: lx ?? orientation === Orientation.landscape ? pvModel.length : pvModel.width,
+      ly: ly ?? orientation === Orientation.landscape ? pvModel.width : pvModel.length,
+      lz: pvModel.thickness,
+      showLabel: false,
+      normal: normal ? normal.toArray() : [0, 0, 1],
+      rotation: rotation ? rotation : [0, 0, 0],
+      color: '#fff',
+      frameColor: frameColor ?? 'white',
+      parentType: parentType,
+      parentId: parent.id,
+      foundationId: foundationId,
+      id: short.generate() as string,
+    } as SolarPanelModel;
+  }
+
   static makeFlower(name: FlowerType, parentId: string, x: number, y: number, z?: number) {
     return {
       type: ObjectType.Flower,
@@ -150,62 +208,6 @@ export class ElementModelFactory {
       solarPowerTower: {},
       id: short.generate() as string,
     } as FoundationModel;
-  }
-
-  static makeSolarPanel(
-    parent: ElementModel,
-    pvModel: PvModel,
-    x: number,
-    y: number,
-    z?: number,
-    orientation?: Orientation,
-    poleHeight?: number,
-    poleSpacing?: number,
-    tiltAngle?: number,
-    relativeAzimuth?: number,
-    normal?: Vector3,
-    rotation?: number[],
-    lx?: number,
-    ly?: number,
-    parentType?: ObjectType,
-  ) {
-    let foundationId;
-    switch (parent.type) {
-      case ObjectType.Foundation:
-      case ObjectType.Cuboid:
-        foundationId = parent.id;
-        break;
-      case ObjectType.Wall:
-      case ObjectType.Roof:
-        foundationId = parent.parentId;
-        break;
-    }
-    return {
-      type: ObjectType.SolarPanel,
-      pvModelName: pvModel.name,
-      trackerType: TrackerType.NO_TRACKER,
-      relativeAzimuth: relativeAzimuth ?? 0,
-      tiltAngle: tiltAngle ?? 0,
-      orientation: orientation ?? Orientation.landscape,
-      drawSunBeam: false,
-      poleHeight: poleHeight ?? 1,
-      poleRadius: 0.05,
-      poleSpacing: poleSpacing ?? 3,
-      cx: x,
-      cy: y,
-      cz: z,
-      lx: lx ?? orientation === Orientation.landscape ? pvModel.length : pvModel.width,
-      ly: ly ?? orientation === Orientation.landscape ? pvModel.width : pvModel.length,
-      lz: pvModel.thickness,
-      showLabel: false,
-      normal: normal ? normal.toArray() : [0, 0, 1],
-      rotation: rotation ? rotation : [0, 0, 0],
-      color: '#fff',
-      parentType: parentType,
-      parentId: parent.id,
-      foundationId: foundationId,
-      id: short.generate() as string,
-    } as SolarPanelModel;
   }
 
   static makeParabolicTrough(

@@ -792,6 +792,7 @@ export const i18n_en = {
       Orientation: 'Orientation',
       Portrait: 'Portrait',
       Landscape: 'Landscape',
+      FrameColor: 'Frame Color',
       Panels: 'panels',
       PanelsWide: 'panels wide',
       PanelsLong: 'panels long',

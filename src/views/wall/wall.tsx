@@ -1351,19 +1351,21 @@ const Wall = (wallModel: WallModel) => {
           if (pointer) {
             const p = getRelativePosOnWall(pointer, wallModel);
             const angle = wallModel.relativeAngle - HALF_PI;
+            const actionState = useStore.getState().actionState;
             newElement = ElementModelFactory.makeSolarPanel(
               wallModel,
-              useStore.getState().getPvModule('SPR-X21-335-BLK'),
+              useStore.getState().getPvModule(actionState.solarPanelModelName ?? 'SPR-X21-335-BLK'),
               p.x / lx,
               0,
               p.z / lz,
-              Orientation.landscape,
-              1,
-              3,
+              actionState.solarPanelOrientation ?? Orientation.landscape,
+              actionState.solarPanelPoleHeight ?? 1,
+              actionState.solarPanelPoleSpacing ?? 3,
               0,
               0,
               new Vector3(Math.cos(angle), Math.sin(angle), 0),
               [0, 0, 0],
+              actionState.solarPanelFrameColor,
               undefined,
               undefined,
               ObjectType.Wall,

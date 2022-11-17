@@ -534,7 +534,14 @@ const SolarPanelOnWall = ({
     pointerDownRef.current = false;
   };
 
-  const texture = useSolarPanelTexture(lx, ly, pvModel, orientation, solarPanel?.frameColor);
+  const texture = useSolarPanelTexture(
+    lx,
+    ly,
+    pvModel,
+    orientation,
+    solarPanel?.frameColor,
+    solarPanel?.backsheetColor,
+  );
   const heatmapTexture = useSolarPanelHeatmapTexture(id);
 
   const renderTextureMaterial = () => {

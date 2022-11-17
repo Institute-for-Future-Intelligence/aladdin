@@ -41,20 +41,23 @@ export const useSolarPanelTexture = (
   pvModel: PvModel,
   orientation: Orientation,
   customizedFrameColor: string | undefined,
+  customizedBacksheetColor: string | undefined,
 ) => {
   const [texture, setTexture] = useState<CanvasTexture | null>(null);
   const { invalidate } = useThree();
 
   const frameColor =
-    customizedFrameColor ?? (pvModel?.color === 'Black' && pvModel?.cellType === 'Monocrystalline' ? 'black' : 'white');
+    customizedFrameColor ??
+    (pvModel?.color === 'Black' && pvModel?.cellType === 'Monocrystalline' ? 'silver' : 'white');
+  const backsheetColor = customizedBacksheetColor ?? 'gray';
 
   const canvasTexture = useMemo(() => {
     if (!pvModel) return null;
     const { cellType, length, width, m, n, color } = pvModel;
     if (orientation === Orientation.portrait) {
-      return drawSolarPanelCanvasTexture(cellType, width, length, n, m, color, frameColor);
+      return drawSolarPanelCanvasTexture(cellType, width, length, n, m, color, frameColor, backsheetColor);
     } else {
-      return drawSolarPanelCanvasTexture(cellType, length, width, m, n, color, frameColor);
+      return drawSolarPanelCanvasTexture(cellType, length, width, m, n, color, frameColor, backsheetColor);
     }
   }, [pvModel, orientation, frameColor]);
 
@@ -81,6 +84,7 @@ const drawSolarPanelCanvasTexture = (
   n: number,
   color: string,
   frameColor: string,
+  backsheetColor: string,
 ) => {
   length *= RESOLUTION;
   width *= RESOLUTION;
@@ -94,7 +98,7 @@ const drawSolarPanelCanvasTexture = (
     ctx.fillRect(0, 0, length, width);
 
     const margin = Math.max(length, width) * MARGIN_PERCENT;
-    ctx.fillStyle = 'gray';
+    ctx.fillStyle = backsheetColor;
     ctx.fillRect(margin, margin, length - 2 * margin, width - 2 * margin);
 
     // cell color

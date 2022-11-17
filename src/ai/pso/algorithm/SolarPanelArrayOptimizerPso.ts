@@ -239,6 +239,7 @@ export class SolarPanelArrayOptimizerPso extends OptimizerPso {
               HALF_PI,
               UNIT_VECTOR_POS_Z,
               rotation,
+              undefined,
               lx * this.foundation.ly,
               ly,
             );
@@ -283,6 +284,7 @@ export class SolarPanelArrayOptimizerPso extends OptimizerPso {
               0,
               UNIT_VECTOR_POS_Z,
               rotation,
+              undefined,
               lx * this.foundation.lx,
               ly,
             );

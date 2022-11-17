@@ -347,7 +347,14 @@ const SolarPanel = ({
   const degree = new Array(13).fill(0);
   const [showTiltAngle, setShowTiltAngle] = useState(false);
 
-  const texture = useSolarPanelTexture(lx, ly, pvModel, orientation, solarPanel?.frameColor);
+  const texture = useSolarPanelTexture(
+    lx,
+    ly,
+    pvModel,
+    orientation,
+    solarPanel?.frameColor,
+    solarPanel?.backsheetColor,
+  );
   const heatmapTexture = useSolarPanelHeatmapTexture(id);
 
   const renderTextureMaterial = () => {

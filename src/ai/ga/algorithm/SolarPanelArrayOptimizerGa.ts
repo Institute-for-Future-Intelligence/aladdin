@@ -254,6 +254,7 @@ export class SolarPanelArrayOptimizerGa extends OptimizerGa {
               HALF_PI,
               UNIT_VECTOR_POS_Z,
               rotation,
+              undefined,
               lx * this.foundation.ly,
               ly,
             );
@@ -298,6 +299,7 @@ export class SolarPanelArrayOptimizerGa extends OptimizerGa {
               0,
               UNIT_VECTOR_POS_Z,
               rotation,
+              undefined,
               lx * this.foundation.lx,
               ly,
             );

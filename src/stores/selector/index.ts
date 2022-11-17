@@ -433,6 +433,16 @@ export const updateSolarPanelLyAboveFoundation = (state: CommonStoreState) => st
 
 export const updateSolarPanelLyForAll = (state: CommonStoreState) => state.updateSolarPanelLyForAll;
 
+export const updateSolarPanelFrameColorById = (state: CommonStoreState) => state.updateSolarPanelFrameColorById;
+
+export const updateSolarPanelFrameColorOnSurface = (state: CommonStoreState) =>
+  state.updateSolarPanelFrameColorOnSurface;
+
+export const updateSolarPanelFrameColorAboveFoundation = (state: CommonStoreState) =>
+  state.updateSolarPanelFrameColorAboveFoundation;
+
+export const updateSolarPanelFrameColorForAll = (state: CommonStoreState) => state.updateSolarPanelFrameColorForAll;
+
 export const updateSolarPanelTiltAngleById = (state: CommonStoreState) => state.updateSolarPanelTiltAngleById;
 
 export const updateSolarPanelTiltAngleOnSurface = (state: CommonStoreState) => state.updateSolarPanelTiltAngleOnSurface;

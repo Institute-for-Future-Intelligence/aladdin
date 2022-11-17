@@ -168,6 +168,7 @@ const SolarPanelLayoutWizard = ({ setDialogVisible }: { setDialogVisible: (b: bo
                   HALF_PI,
                   UNIT_VECTOR_POS_Z,
                   rotation,
+                  undefined,
                   lx * foundation.ly,
                   ly,
                 );
@@ -214,6 +215,7 @@ const SolarPanelLayoutWizard = ({ setDialogVisible }: { setDialogVisible: (b: bo
                   0,
                   UNIT_VECTOR_POS_Z,
                   rotation,
+                  undefined,
                   lx * foundation.lx,
                   ly,
                 );
