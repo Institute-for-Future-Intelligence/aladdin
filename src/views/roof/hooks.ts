@@ -331,7 +331,7 @@ export const useUpdateSegmentVerticesMap = (
     });
   };
 
-  const debouncedUpdate = useCallback(Util.debounce(update), [roofSegments, centroid, mansardTop]);
+  const debouncedUpdate = useCallback(Util.debounce(update), []);
 
   useEffect(() => {
     if (roofSegments.length > 0) {
@@ -341,9 +341,10 @@ export const useUpdateSegmentVerticesMap = (
   }, [fileChanged]);
 
   useEffect(() => {
-    if (roofSegments.length > 0 && !done.current) {
-      debouncedUpdate(roofSegments, centroid, mansardTop);
+    if (done.current) {
       done.current = false;
+    } else if (roofSegments.length > 0) {
+      debouncedUpdate(roofSegments, centroid, mansardTop);
     }
   }, [roofSegments, centroid, mansardTop]);
 };

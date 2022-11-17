@@ -1160,7 +1160,7 @@ export class Util {
     return array;
   }
 
-  static debounce(fn: Function, delay = 1500) {
+  static debounce(fn: Function, delay = 750) {
     let timerId: NodeJS.Timeout | null = null;
     return (...args: any) => {
       if (timerId) {
