@@ -985,6 +985,9 @@ export const i18n_zh_cn = {
       AllDoorsOnWall: '同一面墙上所有的门',
       AllDoorsAboveFoundation: '同一地基上所有的门',
       AllDoors: '所有的门',
+      DoorType: '门种类',
+      Default: '默认',
+      Arched: '拱形',
     },
 
     siteInfoPanel: {

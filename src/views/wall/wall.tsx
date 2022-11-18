@@ -1077,9 +1077,9 @@ const Wall = (wallModel: WallModel) => {
                       if (e.id === grabRef.current?.id && e.type === ObjectType.Door) {
                         e.lz = newDoorHeight / lz;
                         e.cz = relativePos.z / lz;
-                        (e as WindowModel).color =
-                          e.id === invalidElementIdRef.current ? 'red' : oldDoorColorRef.current;
-                        (e as WindowModel).archHeight = newArchHeight;
+                        (e as DoorModel).color =
+                          e.id === invalidElementIdRef.current ? '#fe6f5e' : oldDoorColorRef.current;
+                        (e as DoorModel).archHeight = newArchHeight;
                       }
                     }
                   });

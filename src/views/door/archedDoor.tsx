@@ -59,10 +59,8 @@ const ArchedDoor = React.memo(({ dimension, color, selected, locked }: ArchedDoo
     <group name={'Arched door group'}>
       <mesh name={'Door plane mesh'} rotation={[HALF_PI, 0, 0]}>
         <shapeBufferGeometry args={[doorShape]} />
-        <meshStandardMaterial opacity={0.3} transparent color={'blue'} />
+        <meshStandardMaterial opacity={color === '#fe6f5e' ? 0.5 : 0.1} transparent color={color} />
       </mesh>
-
-      {/* <DoorFrame dimension={dimension} color={color} /> */}
     </group>
   );
 });

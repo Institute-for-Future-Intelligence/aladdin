@@ -1009,6 +1009,9 @@ export const i18n_tr = {
       AllDoorsOnWall: 'Aynı Duvardaki Tüm Kapılar',
       AllDoorsAboveFoundation: 'Aynı Temelin Üstündeki Tüm Kapılar',
       AllDoors: 'Tüm Kapılar',
+      DoorType: 'Door Type',
+      Default: 'Default',
+      Arched: 'Arched',
     },
 
     siteInfoPanel: {

@@ -1008,6 +1008,9 @@ export const i18n_es = {
       AllDoorsOnWall: 'All Doors on the Same Wall',
       AllDoorsAboveFoundation: 'All Doors Above the Same Foundation',
       AllDoors: 'All Doors',
+      DoorType: 'Door Type',
+      Default: 'Default',
+      Arched: 'Arched',
     },
 
     siteInfoPanel: {
