@@ -2,8 +2,8 @@
  * @Copyright 2022. Institute for Future Intelligence, Inc.
  */
 
-import React, { useMemo, useState } from 'react';
-import { DoorTexture } from 'src/types';
+import React, { useEffect, useMemo, useState } from 'react';
+import { DoorTexture, ObjectType } from 'src/types';
 import DoorTextureDefault from 'src/resources/door_edge.png';
 import DoorTexture00 from 'src/resources/tiny_white_square.png';
 import DoorTexture01 from 'src/resources/door_01.png';
@@ -20,6 +20,9 @@ import DoorTexture11 from 'src/resources/door_11.png';
 import DoorTexture12 from 'src/resources/door_12.png';
 import { TextureLoader } from 'three';
 import { useThree } from '@react-three/fiber';
+import { useStore } from 'src/stores/common';
+import { fileChanged } from 'src/stores/selector';
+import { DoorModel, DoorType } from 'src/models/DoorModel';
 
 export const useDoorTexture = (textureType: DoorTexture) => {
   const textureLoader = useMemo(() => {
@@ -81,4 +84,26 @@ export const useDoorTexture = (textureType: DoorTexture) => {
   const [texture, setTexture] = useState(textureLoader);
   const { invalidate } = useThree();
   return texture;
+};
+
+export const useUpdateOldDoors = (doorModel: DoorModel) => {
+  const isFileChangedFlag = useStore(fileChanged);
+  useEffect(() => {
+    if (doorModel.doorType === undefined || doorModel.archHeight === undefined) {
+      useStore.getState().set((state) => {
+        for (const e of state.elements) {
+          if (e.id === doorModel.id && e.type === ObjectType.Door) {
+            const door = e as DoorModel;
+            if (door.doorType === undefined) {
+              door.doorType = DoorType.Default;
+            }
+            if (door.archHeight === undefined) {
+              door.archHeight = 1;
+            }
+            break;
+          }
+        }
+      });
+    }
+  }, [isFileChangedFlag]);
 };

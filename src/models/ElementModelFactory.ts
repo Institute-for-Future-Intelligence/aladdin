@@ -47,7 +47,7 @@ import { ParabolicTroughModel } from './ParabolicTroughModel';
 import { ParabolicDishModel } from './ParabolicDishModel';
 import { FresnelReflectorModel } from './FresnelReflectorModel';
 import { HeliostatModel } from './HeliostatModel';
-import { DoorModel } from './DoorModel';
+import { DoorModel, DoorType } from './DoorModel';
 import { WindTurbineModel } from './WindTurbineModel';
 import { FlowerData } from '../FlowerData';
 import { LightModel } from './LightModel';
@@ -678,6 +678,8 @@ export class ElementModelFactory {
       lx: 0,
       ly: 0,
       lz: 0,
+      doorType: DoorType.Default,
+      archHeight: 1,
       textureType: texture ?? DoorTexture.Default,
       color: color ?? 'white',
       selected: true,

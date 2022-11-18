@@ -20,6 +20,7 @@ import { WallStructure } from '../models/WallModel';
 import { defaultShutter } from '../views/window/window';
 import { WindowType } from 'src/models/WindowModel';
 import { RoofStructure } from '../models/RoofModel';
+import { DoorType } from 'src/models/DoorModel';
 
 export class DefaultActionState implements ActionState {
   // Needed for immer drafting to work properly: https://immerjs.github.io/immer/docs/complex-objects
@@ -64,6 +65,8 @@ export class DefaultActionState implements ActionState {
 
   doorColor: string;
   doorTexture: DoorTexture;
+  doorType: DoorType;
+  doorArchHeight: number;
 
   windowColor: string;
   windowTint: string;
@@ -170,6 +173,8 @@ export class DefaultActionState implements ActionState {
 
     this.doorColor = 'white';
     this.doorTexture = DoorTexture.Default;
+    this.doorType = DoorType.Default;
+    this.doorArchHeight = 1;
 
     this.windowColor = 'white';
     this.windowTint = '#73D8FF';

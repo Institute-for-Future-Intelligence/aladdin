@@ -695,6 +695,8 @@ export class ElementModelCloner {
       lz: door.lz,
       color: door.color,
       textureType: door.textureType,
+      doorType: door.doorType,
+      archHeight: door.archHeight,
       normal: [...door.normal],
       rotation: [...door.rotation],
       id: short.generate() as string,

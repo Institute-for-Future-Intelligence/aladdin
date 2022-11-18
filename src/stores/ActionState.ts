@@ -17,6 +17,7 @@ import {
 import { WallStructure } from '../models/WallModel';
 import { WindowType } from 'src/models/WindowModel';
 import { RoofStructure } from '../models/RoofModel';
+import { DoorType } from 'src/models/DoorModel';
 
 export interface ActionState {
   humanName: HumanName;
@@ -58,6 +59,8 @@ export interface ActionState {
 
   doorColor: string;
   doorTexture: DoorTexture;
+  doorType: DoorType;
+  doorArchHeight: number;
 
   windowTint: string;
   windowOpacity: number;

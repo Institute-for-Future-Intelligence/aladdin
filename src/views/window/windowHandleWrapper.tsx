@@ -19,7 +19,7 @@ interface WindowHandleWrapperProps {
   windowType: WindowType;
 }
 
-const ArchResizeHandle = ({ z }: { z: number }) => {
+export const ArchResizeHandle = ({ z }: { z: number }) => {
   const ref = useRef<Mesh>();
 
   const [color, setColor] = useState('white');
@@ -31,7 +31,7 @@ const ArchResizeHandle = ({ z }: { z: number }) => {
       onPointerDown={() => {
         useStoreRef.getState().setEnableOrbitController(false);
         useStore.getState().set((state) => {
-          state.resizeHandleType = ResizeHandleType.WindowArch;
+          state.resizeHandleType = ResizeHandleType.Arch;
           if (ref.current) {
             state.resizeAnchor = ref.current.localToWorld(new Vector3(0, 0, -z)).clone();
           }

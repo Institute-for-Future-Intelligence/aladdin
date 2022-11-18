@@ -43,13 +43,13 @@ const DoorFrame = React.memo(({ dimension, color }: DoorFrameProps) => {
   const [lx, ly, lz] = dimension;
   const shadowEnabled = useStore(Selector.viewState.shadowEnabled);
 
-  const material = useMemo(() => <meshStandardMaterial attach="material" color={color} />, [color]);
+  const material = useMemo(() => <meshStandardMaterial color={color} />, [color]);
 
   const width = 0.1;
   const halfWidth = width / 2;
 
   return (
-    <group name={'Door Frame Group'}>
+    <group name={'Door frame group'}>
       {/* top */}
       <Box position={[0, 0, lz / 2]} args={[lx, width, width]} castShadow={shadowEnabled} receiveShadow={shadowEnabled}>
         {material}
@@ -83,8 +83,8 @@ const RectangleDoor = React.memo(({ dimension, textureType, color, selected, loc
   const [lx, ly, lz] = dimension;
 
   return (
-    <group name={'Rectangle Door Group'}>
-      <Plane name={`Door Plane`} args={[lx, lz]} rotation={[HALF_PI, 0, 0]}>
+    <group name={'Rectangle door group'}>
+      <Plane name={`Door plane`} args={[lx, lz]} rotation={[HALF_PI, 0, 0]}>
         {textureType === DoorTexture.Default || textureType === DoorTexture.NoTexture ? (
           <meshStandardMaterial map={texture} side={DoubleSide} color={color} />
         ) : (

@@ -2,7 +2,7 @@
  * @Copyright 2021-2022. Institute for Future Intelligence, Inc.
  */
 
-import React, { useCallback, useRef } from 'react';
+import React, { useCallback, useMemo, useRef } from 'react';
 import { DoorModel, DoorType } from 'src/models/DoorModel';
 import { useStore } from 'src/stores/common';
 import * as Selector from 'src/stores/selector';
@@ -10,6 +10,9 @@ import { ObjectType, ResizeHandleType } from 'src/types';
 import WindowResizeHandle from '../window/windowResizeHandle';
 import { ThreeEvent } from '@react-three/fiber';
 import RectangleDoor from './rectangleDoor';
+import ArchedDoor from './archedDoor';
+import { useUpdateOldDoors } from './hooks';
+import { ArchResizeHandle } from '../window/windowHandleWrapper';
 
 export interface DoorProps extends DoorModel {
   position: number[];
@@ -17,25 +20,30 @@ export interface DoorProps extends DoorModel {
 }
 
 interface DoorHandleWapperProps {
-  lx: number;
-  lz: number;
+  dimension: number[];
+  doorType: DoorType;
 }
 
-const DoorHandleWapper = ({ lx, lz }: DoorHandleWapperProps) => {
-  const isSettingNewWindow = lx === 0 && lz === 0;
+const DoorHandleWapper = React.memo(({ dimension, doorType }: DoorHandleWapperProps) => {
+  const [hx, hy, hz] = dimension.map((val) => val / 2);
+  const isAddingNewDoor = hx === 0 && hz === 0;
+
+  if (isAddingNewDoor) {
+    return null;
+  }
+
   return (
-    <group>
-      {!isSettingNewWindow && (
-        <>
-          <WindowResizeHandle x={-lx} z={lz} handleType={ResizeHandleType.UpperLeft} />
-          <WindowResizeHandle x={lx} z={lz} handleType={ResizeHandleType.UpperRight} />
-        </>
-      )}
+    <group name={'Door handle wrapper'}>
+      <WindowResizeHandle x={-hx} z={hz} handleType={ResizeHandleType.UpperLeft} />
+      <WindowResizeHandle x={hx} z={hz} handleType={ResizeHandleType.UpperRight} />
+      {doorType === DoorType.Arched && <ArchResizeHandle z={hz} />}
     </group>
   );
-};
+});
 
 const Door = (doorModel: DoorProps) => {
+  useUpdateOldDoors(doorModel);
+
   const {
     id,
     position,
@@ -45,15 +53,12 @@ const Door = (doorModel: DoorProps) => {
     locked = false,
     color = 'white',
     doorType = DoorType.Default,
+    archHeight = 1,
   } = doorModel;
 
   const [cx, cy, cz] = position;
   const [lx, ly, lz] = dimension;
 
-  const hx = lx / 2;
-  const hz = lz / 2;
-
-  const isAddingElement = useStore(Selector.isAddingElement);
   const setCommonStore = useStore(Selector.set);
 
   const addedWallIdRef = useRef(useStore.getState().addedWallId);
@@ -87,8 +92,8 @@ const Door = (doorModel: DoorProps) => {
         !useStore.getState().moveHandleType &&
         !useStore.getState().resizeHandleType &&
         useStore.getState().objectTypeToAdd === ObjectType.None &&
-        !selected &&
-        !isAddingElement()
+        !useStore.getState().isAddingElement() &&
+        !selected
       ) {
         selectMe();
       }
@@ -108,9 +113,11 @@ const Door = (doorModel: DoorProps) => {
           />
         );
       case DoorType.Arched:
-        return null;
+        return <ArchedDoor dimension={dimensionData} color={color} selected={selected} locked={locked} />;
     }
   };
+
+  const dimensionData = useMemo(() => [lx, ly, lz, archHeight], [lx, lz, archHeight]);
 
   return (
     <group
@@ -120,7 +127,7 @@ const Door = (doorModel: DoorProps) => {
       onContextMenu={handleContextMenu}
     >
       {renderDoor()}
-      {selected && !locked && <DoorHandleWapper lx={hx} lz={hz} />}
+      {selected && !locked && <DoorHandleWapper dimension={dimensionData} doorType={doorType} />}
     </group>
   );
 };

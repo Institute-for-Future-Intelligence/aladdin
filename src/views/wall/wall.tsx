@@ -52,7 +52,7 @@ import { FINE_GRID_SCALE, HALF_PI, LOCKED_ELEMENT_SELECTION_COLOR, NORMAL_GRID_S
 import { UndoableMove } from 'src/undo/UndoableMove';
 import { UndoableAdd } from 'src/undo/UndoableAdd';
 import { UndoableResizeElementOnWall } from 'src/undo/UndoableResize';
-import { DoorModel } from 'src/models/DoorModel';
+import { DoorModel, DoorType } from 'src/models/DoorModel';
 import Door, { DoorProps } from '../door/door';
 import { SolarPanelModel } from 'src/models/SolarPanelModel';
 import SolarPanelOnWall from '../solarPanel/solarPanelOnWall';
@@ -992,7 +992,7 @@ const Wall = (wallModel: WallModel) => {
                 const window = grabRef.current as WindowModel;
                 if (
                   window.windowType === WindowType.Arched &&
-                  resizeHandleType === ResizeHandleType.WindowArch &&
+                  resizeHandleType === ResizeHandleType.Arch &&
                   window.archHeight !== undefined
                 ) {
                   const [wlx, wlz] = [window.lx * lx, window.lz * lz];
@@ -1060,21 +1060,46 @@ const Wall = (wallModel: WallModel) => {
                 if (isSettingDoorEndPointRef.current) {
                   resizeAnchor = getPositionOnGrid(resizeAnchor);
                 }
-                const v = new Vector3().subVectors(resizeAnchor, p); // door diagonal vector
-                let relativePos = new Vector3().addVectors(resizeAnchor, p).divideScalar(2);
-                checkCollision(grabRef.current.id, ObjectType.Door, relativePos, Math.abs(v.x), Math.abs(v.z));
-                setCommonStore((state) => {
-                  for (const e of state.elements) {
-                    if (e.id === grabRef.current?.id) {
-                      e.cx = relativePos.x / lx;
-                      e.lx = Math.abs(v.x) / lx;
-                      e.cz = (p.z - lz / 2) / 2 / lz;
-                      e.lz = (p.z + lz / 2) / lz;
-                      e.color = e.id === invalidElementIdRef.current ? '#fe6f5e' : oldDoorColorRef.current;
-                      break;
+                const door = grabRef.current as DoorModel;
+                if (
+                  door.doorType === DoorType.Arched &&
+                  resizeHandleType === ResizeHandleType.Arch &&
+                  door.archHeight !== undefined
+                ) {
+                  const [dlx, dlz] = [door.lx * lx, door.lz * lz];
+                  const archHeightBottom = dlz / 2 - Math.min(door.archHeight, dlx / 2, dlz);
+                  const newArchHeight = Math.max(0, Math.min(p.z - resizeAnchor.z - archHeightBottom, dlx / 2));
+                  const newDoorHeight = archHeightBottom + newArchHeight + dlz / 2;
+                  const relativePos = new Vector3(door.cx * lx, door.cy, door.cz * lz + (newDoorHeight - dlz) / 2);
+                  checkCollision(grabRef.current.id, ObjectType.Door, relativePos, dlx, newDoorHeight);
+                  setCommonStore((state) => {
+                    for (const e of state.elements) {
+                      if (e.id === grabRef.current?.id && e.type === ObjectType.Door) {
+                        e.lz = newDoorHeight / lz;
+                        e.cz = relativePos.z / lz;
+                        (e as WindowModel).color =
+                          e.id === invalidElementIdRef.current ? 'red' : oldDoorColorRef.current;
+                        (e as WindowModel).archHeight = newArchHeight;
+                      }
                     }
-                  }
-                });
+                  });
+                } else {
+                  const v = new Vector3().subVectors(resizeAnchor, p); // door diagonal vector
+                  let relativePos = new Vector3().addVectors(resizeAnchor, p).divideScalar(2);
+                  checkCollision(grabRef.current.id, ObjectType.Door, relativePos, Math.abs(v.x), Math.abs(v.z));
+                  setCommonStore((state) => {
+                    for (const e of state.elements) {
+                      if (e.id === grabRef.current?.id) {
+                        e.cx = relativePos.x / lx;
+                        e.lx = Math.abs(v.x) / lx;
+                        e.cz = (p.z - lz / 2) / 2 / lz;
+                        e.lz = (p.z + lz / 2) / lz;
+                        e.color = e.id === invalidElementIdRef.current ? '#fe6f5e' : oldDoorColorRef.current;
+                        break;
+                      }
+                    }
+                  });
+                }
               }
               break;
             }
