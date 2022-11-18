@@ -53,7 +53,7 @@ import { UndoableMove } from 'src/undo/UndoableMove';
 import { UndoableAdd } from 'src/undo/UndoableAdd';
 import { UndoableResizeElementOnWall } from 'src/undo/UndoableResize';
 import { DoorModel } from 'src/models/DoorModel';
-import Door from '../door';
+import Door, { DoorProps } from '../door/door';
 import { SolarPanelModel } from 'src/models/SolarPanelModel';
 import SolarPanelOnWall from '../solarPanel/solarPanelOnWall';
 
@@ -1770,8 +1770,11 @@ const Wall = (wallModel: WallModel) => {
                     const dimension = [e.lx * lx, ly, e.lz * lz];
                     return <Window key={e.id} {...(e as WindowProps)} position={position} dimension={dimension} />;
                   }
-                  case ObjectType.Door:
-                    return <Door key={e.id} {...(e as DoorModel)} />;
+                  case ObjectType.Door: {
+                    const position = [e.cx * lx, 0.33 * ly, e.cz * lz];
+                    const dimension = [e.lx * lx, ly, e.lz * lz];
+                    return <Door key={e.id} {...(e as DoorProps)} position={position} dimension={dimension} />;
+                  }
                   case ObjectType.SolarPanel:
                     let r = 0;
                     if (foundation && wallModel) {

@@ -7,4 +7,10 @@ import { ElementModel } from './ElementModel';
 
 export interface DoorModel extends ElementModel {
   textureType: DoorTexture;
+  doorType: DoorType;
+}
+
+export enum DoorType {
+  Default = 'Default',
+  Arched = 'Arched',
 }
