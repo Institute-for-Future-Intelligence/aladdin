@@ -95,7 +95,7 @@ const StaticSolarRadiationSimulation = ({ city }: StaticSolarRadiationSimulation
       for (const c of components) {
         Util.fetchSimulationElements(c, objectsRef.current);
       }
-      //console.log(objectsRef.current)
+      // console.log(objectsRef.current)
     }
   };
 
@@ -745,7 +745,7 @@ const StaticSolarRadiationSimulation = ({ city }: StaticSolarRadiationSimulation
         let count = 0;
         const v = new Vector3();
         const relativePolygon: Point2[] = [];
-        const margin = 5;
+        const margin = 10;
         relativePolygon.push({ x: -margin, y: -margin } as Point2);
         relativePolygon.push({ x: m + margin, y: -margin } as Point2);
         relativePolygon.push({ x: m2, y: n + margin } as Point2);

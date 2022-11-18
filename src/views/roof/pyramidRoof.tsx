@@ -571,28 +571,10 @@ const PyramidRoof = ({
           if (t) {
             t.wrapS = RepeatWrapping;
             t.wrapT = RepeatWrapping;
-            // obtain the bounding rectangle
-            const segmentVertices = getRoofSegmentVertices(id);
-            if (segmentVertices) {
-              let minX = Number.MAX_VALUE;
-              let minY = Number.MAX_VALUE;
-              let maxX = -Number.MAX_VALUE;
-              let maxY = -Number.MAX_VALUE;
-              for (const s of segmentVertices) {
-                for (const v of s) {
-                  if (v.x > maxX) maxX = v.x;
-                  else if (v.x < minX) minX = v.x;
-                  if (v.y > maxY) maxY = v.y;
-                  else if (v.y < minY) minY = v.y;
-                }
-              }
-              const dx = maxX - minX;
-              const dy = maxY - minY;
-              t.offset.set(-dx / 2, -dy / 2);
-              t.center.set(dx / 2, dy / 2);
-              t.repeat.set(1 / dx, 1 / dy);
-              setFlatHeatmapTexture(t);
-            }
+            t.offset.set(-0.5, -0.5);
+            //t.center.set(0.5, 0.5);
+            t.repeat.set(1 / heatmap.length, 1 / heatmap[0].length);
+            setFlatHeatmapTexture(t);
           }
         }
       } else {
@@ -606,17 +588,19 @@ const PyramidRoof = ({
               if (heatmap) {
                 const t = Util.fetchHeatmapTexture(heatmap, solarRadiationHeatmapMaxValue ?? 5);
                 if (t) {
-                  const v = segmentVertices[i];
-                  const v10 = new Vector3().subVectors(v[1], v[0]);
-                  const v20 = new Vector3().subVectors(v[2], v[0]);
-                  const v21 = new Vector3().subVectors(v[2], v[1]);
-                  const length10 = v10.length();
-                  const distance = new Vector3().crossVectors(v20, v21).length() / length10;
                   t.wrapS = RepeatWrapping;
                   t.wrapT = RepeatWrapping;
-                  t.offset.set(-length10 / 2, -distance);
-                  t.center.set(length10 / 2, distance);
-                  t.repeat.set(1 / length10, 1 / distance);
+                  // const v = segmentVertices[i];
+                  // const v10 = new Vector3().subVectors(v[1], v[0]);
+                  // const v20 = new Vector3().subVectors(v[2], v[0]);
+                  // const v21 = new Vector3().subVectors(v[2], v[1]);
+                  // const length10 = v10.length();
+                  // const distance = new Vector3().crossVectors(v20, v21).length() / length10;
+                  // t.offset.set(-length10 / 2, -distance);
+                  // t.center.set(length10 / 2, distance);
+                  // t.repeat.set(1 / length10, 1 / distance);
+                  t.offset.set(-0.5, -0.5);
+                  t.repeat.set(1 / heatmap.length, 1 / heatmap[0].length);
                   textures.push(t);
                 }
               }
