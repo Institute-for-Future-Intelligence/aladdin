@@ -408,6 +408,7 @@ export const i18n_tr = {
       commercialBuildingsSubMenu: 'Ticari Binalar',
       commercialBuildingExamples: {
         WhiteHouse: 'White House',
+        SpanishStyleHotel: 'Spanish Style Hotel',
         ApartmentBuilding: 'Apartment Building',
         OfficeBuilding: 'Ofis Binası',
         Hotel: 'Hotel',

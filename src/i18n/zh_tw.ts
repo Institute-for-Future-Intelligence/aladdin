@@ -406,6 +406,7 @@ export const i18n_zh_tw = {
       commercialBuildingsSubMenu: '商用建築',
       commercialBuildingExamples: {
         WhiteHouse: '白宫',
+        SpanishStyleHotel: '西班牙風格旅館',
         ApartmentBuilding: '公寓樓',
         OfficeBuilding: '寫字樓',
         Hotel: '旅館',

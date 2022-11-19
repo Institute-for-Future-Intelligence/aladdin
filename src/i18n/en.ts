@@ -408,6 +408,7 @@ export const i18n_en = {
       commercialBuildingsSubMenu: 'Commercial Buildings',
       commercialBuildingExamples: {
         WhiteHouse: 'White House',
+        SpanishStyleHotel: 'Spanish Style Hotel',
         ApartmentBuilding: 'Apartment Building',
         OfficeBuilding: 'Office Building',
         Hotel: 'Hotel',

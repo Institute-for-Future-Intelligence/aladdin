@@ -42,6 +42,7 @@ import gambrel_roof_vs_mansard_roof from './examples/gambrel_roof_vs_mansard_roo
 import white_house from './examples/white_house.json';
 import office_building_01 from './examples/office_building_01.json';
 import hotel_01 from './examples/hotel_01.json';
+import spanish_style_hotel from './examples/spanish_style_hotel.json';
 import apartment_building_01 from './examples/apartment_building_01.json';
 import south_burlington_high_school from './examples/south_burlington_high_school.json';
 import mescalero_apache_school from './examples/mescalero_apache_school.json';
@@ -301,6 +302,9 @@ const MainMenu = ({ viewOnly, set2DView, resetView, zoomView, canvas }: MainMenu
         break;
       case 'hotel_01':
         input = hotel_01;
+        break;
+      case 'spanish_style_hotel':
+        input = spanish_style_hotel;
         break;
       case 'apartment_building_01':
         input = apartment_building_01;
@@ -2227,6 +2231,9 @@ const MainMenu = ({ viewOnly, set2DView, resetView, zoomView, canvas }: MainMenu
           <SubMenu key={'commercial_buildings'} title={i18n.t('menu.commercialBuildingsSubMenu', lang)}>
             <Menu.Item key="white_house" onClick={loadFile}>
               {i18n.t('menu.commercialBuildingExamples.WhiteHouse', lang)}
+            </Menu.Item>
+            <Menu.Item key="spanish_style_hotel" onClick={loadFile}>
+              {i18n.t('menu.commercialBuildingExamples.SpanishStyleHotel', lang)}
             </Menu.Item>
             <Menu.Item key="apartment_building_01" onClick={loadFile}>
               {i18n.t('menu.commercialBuildingExamples.ApartmentBuilding', lang)}
