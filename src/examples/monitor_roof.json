@@ -1,7 +1,7 @@
 {
-  "docid": "uMggt3oqd3m8x5PxjcSJjP",
-  "time": "11/13/2022 05:13 pm",
-  "timestamp": 1668377584732,
+  "docid": "9ihTgmcTMHJX7214qRb1Dw",
+  "time": "11/18/2022 08:15 pm",
+  "timestamp": 1668820512726,
   "userid": "QWecNcxhyvP6j6sBN11hBsfZDau1",
   "owner": null,
   "email": null,
@@ -1437,46 +1437,6 @@
       "archHeight": 1
     },
     {
-      "type": "Window",
-      "cx": 0,
-      "cy": 0.1,
-      "cz": -0.18750000000000006,
-      "lx": 0.17712598416645625,
-      "ly": 0.3,
-      "lz": 0.6249999999999999,
-      "mullion": false,
-      "mullionWidth": 0.06,
-      "mullionSpacing": 0.5,
-      "mullionColor": "white",
-      "frame": false,
-      "frameWidth": 0.1,
-      "windowType": "Arched",
-      "archHeight": 1,
-      "color": "#73d8ff",
-      "normal": [
-        0,
-        0,
-        1
-      ],
-      "rotation": [
-        0,
-        0,
-        0
-      ],
-      "id": "p4hVYyhycswsaWXhahyVdc",
-      "parentId": "roDDPncXBpNgmNum9aUaov",
-      "foundationId": "axj9GVUBNvhnWAa3G8T3wG",
-      "tint": "#73D8FF",
-      "opacity": 0,
-      "shutter": {
-        "showLeft": false,
-        "showRight": false,
-        "color": "grey",
-        "width": 0.5
-      },
-      "selected": false
-    },
-    {
       "type": "Human",
       "name": "Julia",
       "cx": 0.5646159692882855,
@@ -1496,7 +1456,38 @@
       ],
       "parentId": "axj9GVUBNvhnWAa3G8T3wG",
       "id": "jiceWNCXNG4mowM8Y1pnuj",
-      "selected": false
+      "selected": false,
+      "ly": 0.43
+    },
+    {
+      "type": "Door",
+      "cx": 0,
+      "cy": 0,
+      "cz": -0.1875,
+      "lx": 0.17712598416645625,
+      "ly": 0,
+      "lz": 0.625,
+      "doorType": "Arched",
+      "archHeight": 1,
+      "textureType": "Door Texture Default",
+      "color": "white",
+      "selected": false,
+      "lineWidth": 0.2,
+      "lineColor": "black",
+      "showLabel": false,
+      "normal": [
+        0,
+        1,
+        0
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "parentId": "roDDPncXBpNgmNum9aUaov",
+      "foundationId": "axj9GVUBNvhnWAa3G8T3wG",
+      "id": "fTMHecXmkxoFyi5nVgZruF"
     }
   ],
   "view": {
@@ -1528,9 +1519,9 @@
     "dailyHeliostatYieldPanelX": 0,
     "showDailyParabolicDishYieldPanel": false,
     "cameraPosition": [
-      -2.3548642652795087,
-      -17.326362841955863,
-      5.00296926757732
+      -2.715545597674973,
+      -17.30419668263911,
+      3.8920906211872124
     ],
     "showYearlyHeliostatYieldPanel": false,
     "orthographic": false,
