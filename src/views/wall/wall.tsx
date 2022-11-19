@@ -368,29 +368,69 @@ const Wall = (wallModel: WallModel) => {
     shape.closePath();
   };
 
-  const drawRectangle = (shape: Shape, lx: number, ly: number, cx = 0, cy = 0, leftOffset = 0, rightOffset = 0) => {
-    const x = lx / 2;
-    const y = ly / 2;
-    shape.moveTo(cx - x + leftOffset, cy - y); // lower left
-    shape.lineTo(cx + x - rightOffset, cy - y); // lower right
+  const drawWallShape = (
+    shape: Shape,
+    lx: number,
+    ly: number,
+    cx = 0,
+    cy = 0,
+    leftOffset = 0,
+    rightOffset = 0,
+    drawDoorShape = true,
+  ) => {
+    const hx = lx / 2;
+    const hy = ly / 2;
+    shape.moveTo(cx - hx + leftOffset, cy - hy); // lower left
+
+    if (drawDoorShape) {
+      const doors = elementsOnWall.filter((e) => e.type === ObjectType.Door).sort((a, b) => a.cx - b.cx) as DoorModel[];
+      for (const door of doors) {
+        if (door.id !== invalidElementIdRef.current) {
+          const [dcx, dcy, dlx, dly] = [door.cx * lx, door.cz * ly, door.lx * lx, door.lz * lz];
+          if (door.doorType === DoorType.Default) {
+            shape.lineTo(cx + dcx - dlx / 2, cy - hy);
+            shape.lineTo(cx + dcx - dlx / 2, cy - hy + dly);
+            shape.lineTo(cx + dcx + dlx / 2, cy - hy + dly);
+            shape.lineTo(cx + dcx + dlx / 2, cy - hy);
+          } else {
+            const ah = Math.min(door.archHeight, dly, dlx / 2);
+            shape.lineTo(cx + dcx - dlx / 2, cy - hy);
+            if (ah > 0.1) {
+              shape.lineTo(cx + dcx - dlx / 2, cy - hy + dly / 2 - ah);
+              const r = ah / 2 + dlx ** 2 / (8 * ah);
+              const [cX, cY] = [dcx, cy + dcy + dly / 2 - r];
+              const endAngle = Math.acos(dlx / 2 / r);
+              const startAngle = Math.PI - endAngle;
+              shape.absarc(cX, cY, r, startAngle, endAngle, true);
+            } else {
+              shape.lineTo(cx + dcx - dlx / 2, cy - hy + dly);
+              shape.lineTo(cx + dcx + dlx / 2, cy - hy + dly);
+            }
+            shape.lineTo(cx + dcx + dlx / 2, cy - hy);
+          }
+        }
+      }
+    }
+
+    shape.lineTo(cx + hx - rightOffset, cy - hy); // lower right
 
     if (roofId) {
       if (rightRoofHeight) {
-        shape.lineTo(cx + x - rightOffset, rightRoofHeight - y);
+        shape.lineTo(cx + hx - rightOffset, rightRoofHeight - hy);
       } else {
-        shape.lineTo(cx + x - rightOffset, cy + y); // upper right
+        shape.lineTo(cx + hx - rightOffset, cy + hy); // upper right
       }
-      centerRightRoofHeight && shape.lineTo(centerRightRoofHeight[0] * lx, centerRightRoofHeight[1] - y);
-      centerRoofHeight && shape.lineTo(centerRoofHeight[0] * lx, centerRoofHeight[1] - y);
-      centerLeftRoofHeight && shape.lineTo(centerLeftRoofHeight[0] * lx, centerLeftRoofHeight[1] - y);
+      centerRightRoofHeight && shape.lineTo(centerRightRoofHeight[0] * lx, centerRightRoofHeight[1] - hy);
+      centerRoofHeight && shape.lineTo(centerRoofHeight[0] * lx, centerRoofHeight[1] - hy);
+      centerLeftRoofHeight && shape.lineTo(centerLeftRoofHeight[0] * lx, centerLeftRoofHeight[1] - hy);
       if (leftRoofHeight) {
-        shape.lineTo(cx - x + leftOffset, leftRoofHeight - y);
+        shape.lineTo(cx - hx + leftOffset, leftRoofHeight - hy);
       } else {
-        shape.lineTo(cx - x + leftOffset, cy + y); // upper left
+        shape.lineTo(cx - hx + leftOffset, cy + hy); // upper left
       }
     } else {
-      shape.lineTo(cx + x - rightOffset, cy + y); // upper right
-      shape.lineTo(cx - x + leftOffset, cy + y); // upper left
+      shape.lineTo(cx + hx - rightOffset, cy + hy); // upper right
+      shape.lineTo(cx - hx + leftOffset, cy + hy); // upper left
     }
 
     shape.closePath();
@@ -430,13 +470,13 @@ const Wall = (wallModel: WallModel) => {
 
   const outsideWallShape = useMemo(() => {
     const wallShape = new Shape();
-    drawRectangle(wallShape, lx, lz, 0, 0, 0, 0);
+    drawWallShape(wallShape, lx, lz, 0, 0, 0, 0);
 
-    elementsOnWall.forEach((w) => {
-      if (w.type === ObjectType.Window && w.id !== invalidElementIdRef.current) {
-        const window = w as WindowModel;
+    elementsOnWall.forEach((e) => {
+      if (e.type === ObjectType.Window && e.id !== invalidElementIdRef.current) {
+        const window = e as WindowModel;
         const windowShape = new Shape();
-        const [wlx, wly, wcx, wcy] = [w.lx * lx, w.lz * lz, w.cx * lx, w.cz * lz];
+        const [wlx, wly, wcx, wcy] = [e.lx * lx, e.lz * lz, e.cx * lx, e.cz * lz];
         // old files don't have windowType
         if (window.windowType) {
           switch (window.windowType) {
@@ -468,7 +508,7 @@ const Wall = (wallModel: WallModel) => {
 
   const insideWallShape = useMemo(() => {
     const wallShape = new Shape();
-    drawRectangle(wallShape, lx, lz, 0, 0, leftOffset, rightOffset);
+    drawWallShape(wallShape, lx, lz, 0, 0, leftOffset, rightOffset);
 
     elementsOnWall.forEach((w) => {
       if (w.type === ObjectType.Window && w.id !== invalidElementIdRef.current) {
@@ -507,7 +547,7 @@ const Wall = (wallModel: WallModel) => {
 
   const intersectionPlaneShape = useMemo(() => {
     const wallShape = new Shape();
-    drawRectangle(wallShape, lx, lz, 0, 0, 0, 0);
+    drawWallShape(wallShape, lx, lz, 0, 0, 0, 0, false);
     return wallShape;
   }, [lx, lz, elementsOnWall]);
 
@@ -572,7 +612,32 @@ const Wall = (wallModel: WallModel) => {
     return new Vector3(x, v.y, z);
   };
 
-  const wallPoints2D = useMemo(() => {
+  const innerWallPoints2D = useMemo(() => {
+    const points: Point2[] = [];
+    const x = lx / 2;
+    const y = lz / 2;
+    points.push({ x: -x + leftOffset, y: -y });
+    points.push({ x: x - rightOffset, y: -y });
+    rightRoofHeight
+      ? points.push({ x: x - rightOffset, y: rightRoofHeight - y })
+      : points.push({ x: x - rightOffset, y: y });
+    if (centerRightRoofHeight) {
+      points.push({ x: centerRightRoofHeight[0] * lx, y: centerRightRoofHeight[1] - y });
+    }
+    if (centerRoofHeight) {
+      points.push({ x: centerRoofHeight[0] * lx, y: centerRoofHeight[1] - y });
+    }
+    if (centerLeftRoofHeight) {
+      points.push({ x: centerLeftRoofHeight[0] * lx, y: centerLeftRoofHeight[1] - y });
+    }
+    leftRoofHeight
+      ? points.push({ x: -x + leftOffset, y: leftRoofHeight - y })
+      : points.push({ x: -x + leftOffset, y: y });
+
+    return points;
+  }, [lx, lz, leftRoofHeight, rightRoofHeight, centerRoofHeight, centerLeftRoofHeight, centerRightRoofHeight]);
+
+  const outerWallPoints2D = useMemo(() => {
     const points: Point2[] = [];
     const x = lx / 2;
     const y = lz / 2;
@@ -593,13 +658,13 @@ const Wall = (wallModel: WallModel) => {
     return points;
   }, [lx, lz, leftRoofHeight, rightRoofHeight, centerRoofHeight, centerLeftRoofHeight, centerRightRoofHeight]);
 
-  const isPointInside = (x: number, y: number) => {
+  const isPointInside = (x: number, y: number, points: Point2[]) => {
     let inside = false;
-    for (let i = 0, j = wallPoints2D.length - 1; i < wallPoints2D.length; j = i++) {
-      const xi = wallPoints2D[i].x;
-      const yi = wallPoints2D[i].y;
-      const xj = wallPoints2D[j].x;
-      const yj = wallPoints2D[j].y;
+    for (let i = 0, j = points.length - 1; i < points.length; j = i++) {
+      const xi = points[i].x;
+      const yi = points[i].y;
+      const xj = points[j].x;
+      const yj = points[j].y;
       if (yi > y !== yj > y && x < ((xj - xi) * (y - yi)) / (yj - yi) + xi) {
         inside = !inside;
       }
@@ -607,10 +672,10 @@ const Wall = (wallModel: WallModel) => {
     return inside;
   };
 
-  const isMovingElementInsideWall = (p: Vector3, wlx: number, wlz: number) => {
+  const isMovingElementInsideWall = (p: Vector3, wlx: number, wlz: number, points: Point2[]) => {
     for (let i = -1; i <= 1; i += 2) {
       for (let j = -1; j <= 1; j += 2) {
-        if (!isPointInside(p.x + (wlx / 2) * i, p.z + (wlz / 2) * j)) {
+        if (!isPointInside(p.x + (wlx / 2) * i, p.z + (wlz / 2) * j, points)) {
           return false;
         }
       }
@@ -618,12 +683,12 @@ const Wall = (wallModel: WallModel) => {
     return true;
   };
 
-  const collisionHelper = (args: number[]) => {
+  const collisionHelper = (args: number[], tolerance = 0) => {
     let [tMinX, tMaxX, tMinZ, tMaxZ, cMinX, cMaxX, cMinZ, cMaxZ] = args;
-    cMinX += 0.1;
-    cMaxX -= 0.1;
-    cMinZ += 0.1;
-    cMaxZ -= 0.1;
+    cMinX += tolerance;
+    cMaxX -= tolerance;
+    cMinZ += tolerance;
+    cMaxZ -= tolerance;
     return (
       ((cMinX >= tMinX && cMinX <= tMaxX) ||
         (cMaxX >= tMinX && cMaxX <= tMaxX) ||
@@ -655,7 +720,7 @@ const Wall = (wallModel: WallModel) => {
             const tMaxX = e.cx * lx + (e.lx * lx) / 2; // target element right
             const tMinZ = e.cz * lz - (e.lz * lz) / 2; // target element bot
             const tMaxZ = e.cz * lz + (e.lz * lz) / 2; // target element up
-            if (collisionHelper([tMinX, tMaxX, tMinZ, tMaxZ, cMinX, cMaxX, cMinZ, cMaxZ])) {
+            if (collisionHelper([tMinX, tMaxX, tMinZ, tMaxZ, cMinX, cMaxX, cMinZ, cMaxZ], -0.05)) {
               invalidElementIdRef.current = id;
               return false;
             }
@@ -666,7 +731,7 @@ const Wall = (wallModel: WallModel) => {
             const tMaxX = e.cx * lx + e.lx / 2; // target element right
             const tMinZ = e.cz * lz - e.ly / 2; // target element bot
             const tMaxZ = e.cz * lz + e.ly / 2; // target element up
-            if (collisionHelper([tMinX, tMaxX, tMinZ, tMaxZ, cMinX, cMaxX, cMinZ, cMaxZ])) {
+            if (collisionHelper([tMinX, tMaxX, tMinZ, tMaxZ, cMinX, cMaxX, cMinZ, cMaxZ], 0.1)) {
               invalidElementIdRef.current = id;
               return false;
             }
@@ -733,8 +798,12 @@ const Wall = (wallModel: WallModel) => {
         if (e.id === id) {
           [e.cx, e.cy, e.cz] = pos;
           [e.lx, e.ly, e.lz] = dms;
-          if (e.type === ObjectType.Window && archHeight !== undefined) {
-            (e as WindowModel).archHeight = archHeight;
+          if (archHeight !== undefined) {
+            if (e.type === ObjectType.Window) {
+              (e as WindowModel).archHeight = archHeight;
+            } else if (e.type === ObjectType.Door) {
+              (e as DoorModel).archHeight = archHeight;
+            }
           }
           break;
         }
@@ -798,7 +867,10 @@ const Wall = (wallModel: WallModel) => {
           newPosition: [elem.cx, elem.cy, elem.cz],
           newDimension: [elem.lx, elem.ly, elem.lz],
           oldArchHeight: oldWindowArchHeight.current,
-          newArchHeight: elem.type === ObjectType.Window ? (elem as WindowModel).archHeight : undefined,
+          newArchHeight:
+            elem.type === ObjectType.Window || elem.type === ObjectType.Door
+              ? (elem as WindowModel).archHeight
+              : undefined,
           undo() {
             setElementPosDms(this.resizedElementId, this.oldPosition, this.oldDimension, this.oldArchHeight);
           },
@@ -868,6 +940,7 @@ const Wall = (wallModel: WallModel) => {
             }
             if (selectedElement.type === ObjectType.Door) {
               oldDoorColorRef.current = (selectedElement as DoorModel).color ?? 'white';
+              oldWindowArchHeight.current = (selectedElement as DoorModel).archHeight;
             }
           }
         }
@@ -959,7 +1032,9 @@ const Wall = (wallModel: WallModel) => {
               if (moveHandleType) {
                 const v = new Vector3((-grabRef.current.lx / 2) * lx, 0, (grabRef.current.lz / 2) * lz);
                 p = getPositionOnGrid(p.clone().add(v)).sub(v);
-                if (!isMovingElementInsideWall(p, grabRef.current.lx * lx, grabRef.current.lz * lz)) {
+                if (
+                  !isMovingElementInsideWall(p, grabRef.current.lx * lx, grabRef.current.lz * lz, innerWallPoints2D)
+                ) {
                   return;
                 }
                 checkCollision(
@@ -974,7 +1049,7 @@ const Wall = (wallModel: WallModel) => {
                     if (e.id === grabRef.current?.id) {
                       e.cx = p.x / lx;
                       e.cz = p.z / lz;
-                      e.cy = e.id === invalidElementIdRef.current ? -0.01 : 0.1;
+                      e.cy = e.id === invalidElementIdRef.current ? -0.01 : 0.3;
                       (e as WindowModel).tint = e.id === invalidElementIdRef.current ? 'red' : oldTintRef.current;
                       break;
                     }
@@ -982,7 +1057,7 @@ const Wall = (wallModel: WallModel) => {
                 });
               } else if (resizeHandleType) {
                 p = getPositionOnGrid(p);
-                if (!isPointInside(p.x, p.z)) {
+                if (!isPointInside(p.x, p.z, innerWallPoints2D)) {
                   return;
                 }
                 let resizeAnchor = getRelativePosOnWall(useStore.getState().resizeAnchor, wallModel);
@@ -1010,7 +1085,7 @@ const Wall = (wallModel: WallModel) => {
                       if (e.id === grabRef.current?.id) {
                         e.lz = newWindowHeight / lz;
                         e.cz = relativePos.z / lz;
-                        e.cy = e.id === invalidElementIdRef.current ? -0.01 : 0.1;
+                        e.cy = e.id === invalidElementIdRef.current ? -0.01 : 0.3;
                         (e as WindowModel).tint = e.id === invalidElementIdRef.current ? 'red' : oldTintRef.current;
                         (e as WindowModel).archHeight = newArchHeight;
                       }
@@ -1040,7 +1115,7 @@ const Wall = (wallModel: WallModel) => {
             case ObjectType.Door: {
               let p = getRelativePosOnWall(pointer, wallModel);
               p = getPositionOnGrid(p);
-              if (!isPointInside(p.x, p.z)) {
+              if (!isPointInside(p.x, p.z, innerWallPoints2D)) {
                 return;
               }
               // adding door
@@ -1114,7 +1189,7 @@ const Wall = (wallModel: WallModel) => {
               if (moveHandleType) {
                 const v = new Vector3(-grabRef.current.lx / 2, 0, grabRef.current.ly / 2);
                 p = getPositionOnGrid(p.clone().add(v)).sub(v);
-                if (!isMovingElementInsideWall(p, grabRef.current.lx, grabRef.current.ly)) {
+                if (!isMovingElementInsideWall(p, grabRef.current.lx, grabRef.current.ly, outerWallPoints2D)) {
                   return;
                 }
                 checkCollision(grabRef.current.id, ObjectType.SolarPanel, p, grabRef.current.lx, grabRef.current.ly);
@@ -1170,7 +1245,7 @@ const Wall = (wallModel: WallModel) => {
               if (moveHandleType) {
                 const v = new Vector3(-grabRef.current.lx / 2, 0, grabRef.current.ly / 2);
                 p = getPositionOnGrid(p.clone().add(v)).sub(v);
-                if (!isMovingElementInsideWall(p, grabRef.current.lx, grabRef.current.ly)) {
+                if (!isMovingElementInsideWall(p, grabRef.current.lx, grabRef.current.ly, outerWallPoints2D)) {
                   return;
                 }
                 setCommonStore((state) => {
@@ -1791,12 +1866,12 @@ const Wall = (wallModel: WallModel) => {
               {elementsOnWall.map((e) => {
                 switch (e.type) {
                   case ObjectType.Window: {
-                    const position = [e.cx * lx, 0.33 * ly, e.cz * lz];
+                    const position = [e.cx * lx, e.cy * ly, e.cz * lz];
                     const dimension = [e.lx * lx, ly, e.lz * lz];
                     return <Window key={e.id} {...(e as WindowProps)} position={position} dimension={dimension} />;
                   }
                   case ObjectType.Door: {
-                    const position = [e.cx * lx, 0.33 * ly, e.cz * lz];
+                    const position = [e.cx * lx, 0, e.cz * lz];
                     const dimension = [e.lx * lx, ly, e.lz * lz];
                     return <Door key={e.id} {...(e as DoorProps)} position={position} dimension={dimension} />;
                   }

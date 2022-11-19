@@ -32,8 +32,8 @@ interface DoorFrameProps {
 
 const DoorWireFrame = React.memo(({ dimension, lineColor, lineWidth }: DoorWireFrameProps) => {
   const [hx, hy, hz] = dimension.map((val) => val / 2);
-  const ul: [number, number, number] = [-hx, 0, hz];
-  const ur: [number, number, number] = [hx, 0, hz];
+  const ul: [number, number, number] = [-hx, 0, hz + 0.05];
+  const ur: [number, number, number] = [hx, 0, hz + 0.05];
   const ll: [number, number, number] = [-hx, 0, -hz];
   const lr: [number, number, number] = [hx, 0, -hz];
   return <Line points={[ul, ll, lr, ur, ul]} lineWidth={lineWidth} color={lineColor} />;
@@ -80,11 +80,19 @@ const DoorFrame = React.memo(({ dimension, color }: DoorFrameProps) => {
 
 const RectangleDoor = React.memo(({ dimension, textureType, color, selected, locked }: RectangleDoorProps) => {
   const texture = useDoorTexture(textureType);
+  const shadowEnabled = useStore(Selector.viewState.shadowEnabled);
+
   const [lx, ly, lz] = dimension;
 
   return (
-    <group name={'Rectangle door group'}>
-      <Plane name={`Door plane`} args={[lx, lz]} rotation={[HALF_PI, 0, 0]}>
+    <group name={'Rectangle door group'} position={[0, -0.01, 0]}>
+      <Plane
+        name={`Door plane`}
+        args={[lx, lz]}
+        rotation={[HALF_PI, 0, 0]}
+        castShadow={shadowEnabled}
+        receiveShadow={shadowEnabled}
+      >
         {textureType === DoorTexture.Default || textureType === DoorTexture.NoTexture ? (
           <meshStandardMaterial map={texture} side={DoubleSide} color={color} />
         ) : (
@@ -95,7 +103,7 @@ const RectangleDoor = React.memo(({ dimension, textureType, color, selected, loc
       <DoorWireFrame
         dimension={dimension}
         lineColor={selected && locked ? LOCKED_ELEMENT_SELECTION_COLOR : 'black'}
-        lineWidth={selected && locked ? 1 : 0.2}
+        lineWidth={selected && locked ? 2 : 0.2}
       />
 
       <DoorFrame dimension={dimension} color={color} />

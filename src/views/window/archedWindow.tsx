@@ -32,10 +32,11 @@ interface FrameProps {
   shadowEnabled: boolean;
 }
 
-interface WireframeProps {
+interface ArchedWireframeProps {
   cy: number;
   dimension: number[];
   wireframeData: WireframeDataType;
+  drawBottom?: boolean;
 }
 
 type ArgsType = [x: number, y: number, z: number];
@@ -301,7 +302,7 @@ const Frame = React.memo(({ dimension, frameData, shadowEnabled }: FrameProps) =
   );
 });
 
-const Wireframe = React.memo(({ cy, dimension, wireframeData }: WireframeProps) => {
+export const ArchedWireframe = React.memo(({ cy, dimension, wireframeData, drawBottom }: ArchedWireframeProps) => {
   const [lx, ly, lz, archHeight] = dimension;
   const { lineWidth, lineColor, selected, locked, opacity } = wireframeData;
 
@@ -358,12 +359,14 @@ const Wireframe = React.memo(({ cy, dimension, wireframeData }: WireframeProps) 
         )}
 
         {/* bottom */}
-        <Cylinder
-          args={[width, width, lx, radialSegments, heightSegments]}
-          rotation={[0, 0, HALF_PI]}
-          position={[0, 0, -hz]}
-          material={mat}
-        />
+        {drawBottom && (
+          <Cylinder
+            args={[width, width, lx, radialSegments, heightSegments]}
+            rotation={[0, 0, HALF_PI]}
+            position={[0, 0, -hz]}
+            material={mat}
+          />
+        )}
 
         {/* right */}
         <Cylinder
@@ -462,7 +465,7 @@ const ArchedWindow = ({
 
       {frameData.showFrame && <Frame dimension={dimension} frameData={frameData} shadowEnabled={shadowEnabled} />}
 
-      <Wireframe cy={cy} dimension={dimension} wireframeData={wireframeData} />
+      <ArchedWireframe cy={cy} dimension={dimension} wireframeData={wireframeData} drawBottom />
 
       <Shutter
         cx={shutterPosX}

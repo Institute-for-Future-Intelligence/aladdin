@@ -3,11 +3,10 @@
  */
 
 import React, { useMemo } from 'react';
-import { Box, Line, Plane } from '@react-three/drei';
-import { HALF_PI, LOCKED_ELEMENT_SELECTION_COLOR } from 'src/constants';
-import * as Selector from 'src/stores/selector';
-import { useStore } from 'src/stores/common';
+import { HALF_PI } from 'src/constants';
 import { Shape } from 'three';
+import { ArchedWireframe } from '../window/archedWindow';
+import { WireframeDataType } from '../window/window';
 
 interface ArchedDoorProps {
   dimension: number[];
@@ -15,21 +14,6 @@ interface ArchedDoorProps {
   selected: boolean;
   locked: boolean;
 }
-
-interface DoorWireFrameProps {
-  dimension: number[];
-  lineColor: string;
-  lineWidth: number;
-}
-
-const DoorWireFrame = React.memo(({ dimension, lineColor, lineWidth }: DoorWireFrameProps) => {
-  const [hx, hy, hz] = dimension.map((val) => val / 2);
-  const ul: [number, number, number] = [-hx, 0, hz];
-  const ur: [number, number, number] = [hx, 0, hz];
-  const ll: [number, number, number] = [-hx, 0, -hz];
-  const lr: [number, number, number] = [hx, 0, -hz];
-  return <Line points={[ul, ll, lr, ur, ul]} lineWidth={lineWidth} color={lineColor} />;
-});
 
 const ArchedDoor = React.memo(({ dimension, color, selected, locked }: ArchedDoorProps) => {
   const [lx, ly, lz, archHeight] = dimension;
@@ -39,10 +23,9 @@ const ArchedDoor = React.memo(({ dimension, color, selected, locked }: ArchedDoo
     const hx = lx / 2;
     const hz = lz / 2;
     const ah = Math.min(archHeight, lz, hx);
-    s.moveTo(-hx, -hz);
-    s.lineTo(hx, -hz);
+    s.moveTo(hx, -hz);
     s.lineTo(hx, hz - ah);
-    if (ah > 0) {
+    if (ah > 0.1) {
       const r = ah / 2 + lx ** 2 / (8 * ah);
       const [cX, cY] = [0, hz - r];
       const startAngle = Math.acos(hx / r);
@@ -51,16 +34,44 @@ const ArchedDoor = React.memo(({ dimension, color, selected, locked }: ArchedDoo
     } else {
       s.lineTo(-hx, hz);
     }
+    s.lineTo(-hx, -hz);
+
+    // save for pointer selection
+    // const ihx = lx * 0.4;
+    // const ihz = lz * 0.4;
+    // const iah = Math.min(archHeight * 0.8, lz * 0.8, hx * 0.8);
+    // s.lineTo(-ihx, -hz);
+    // if (iah > 0.1) {
+    //   s.lineTo(-ihx, hz - iah);
+    //   const r = iah / 2 + (lx * 0.8) ** 2 / (8 * iah);
+    //   const [cX, cY] = [0, ihz - r];
+    //   const startAngle = Math.acos(ihx / r);
+    //   const endAngle = Math.PI - startAngle;
+    //   s.absarc(cX, cY, r, endAngle, startAngle, true);
+    // } else {
+    //   s.lineTo(-ihx, ihz);
+    //   s.lineTo(ihx, ihz);
+    // }
+    // s.lineTo(ihx, -hz);
+
     s.closePath();
     return s;
   }, [lx, lz, archHeight]);
+
+  const wireframeData = useMemo(() => {
+    const lineWidth = locked && selected ? 0.2 : 0.1;
+    return { lineColor: 'black', lineWidth, opacity: 1, selected, locked } as WireframeDataType;
+  }, [selected, locked]);
 
   return (
     <group name={'Arched door group'}>
       <mesh name={'Door plane mesh'} rotation={[HALF_PI, 0, 0]}>
         <shapeBufferGeometry args={[doorShape]} />
-        <meshStandardMaterial opacity={color === '#fe6f5e' ? 0.5 : 0.1} transparent color={color} />
+        <meshStandardMaterial opacity={color === '#fe6f5e' ? 0.5 : 0} transparent color={color} />
       </mesh>
+
+      <ArchedWireframe cy={0} dimension={dimension} wireframeData={wireframeData} />
+      <ArchedWireframe cy={ly} dimension={dimension} wireframeData={wireframeData} />
     </group>
   );
 });

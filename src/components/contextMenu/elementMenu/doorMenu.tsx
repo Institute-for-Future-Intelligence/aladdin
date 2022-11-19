@@ -95,15 +95,12 @@ export const DoorMenu = () => {
   return (
     <>
       <Copy keyName={'door-copy'} />
-      <Cut keyName={'door-cut'} />
+      {!door.locked && <Cut keyName={'door-cut'} />}
       <Lock keyName={'door-lock'} />
 
-      {renderTypeSubMenu()}
+      {!door.locked && renderTypeSubMenu()}
 
-      {textureDialogVisible && <DoorTextureSelection setDialogVisible={setTextureDialogVisible} />}
-      {colorDialogVisible && <DoorColorSelection setDialogVisible={setColorDialogVisible} />}
-
-      {door.doorType === DoorType.Default && (
+      {door.doorType === DoorType.Default && !door.locked && (
         <>
           <Menu.Item
             key={'door-texture'}
@@ -127,6 +124,9 @@ export const DoorMenu = () => {
           </Menu.Item>
         </>
       )}
+
+      {textureDialogVisible && <DoorTextureSelection setDialogVisible={setTextureDialogVisible} />}
+      {colorDialogVisible && <DoorColorSelection setDialogVisible={setColorDialogVisible} />}
     </>
   );
 };

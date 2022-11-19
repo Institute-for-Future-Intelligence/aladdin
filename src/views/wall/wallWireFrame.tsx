@@ -43,26 +43,23 @@ const WallWireFrame = React.memo(
 
     if (orthographic) {
       lineWidth = 2;
-      points.push(upperRight);
+      points.push(upperLeft, upperRight);
     } else {
-      points.push(upperLeft, lowerLeft, lowerRight, upperRight);
-      if (centerRight) {
-        const cr: [number, number, number] = [centerRight[0] * lx, centerRight[1] - hz, 0.001];
-        points.push(cr);
-      }
-
-      if (center) {
-        const c: [number, number, number] = [center[0] * lx, center[1] - hz, 0.001];
-        points.push(c);
-      }
-
+      points.push(lowerLeft, upperLeft);
       if (centerLeft) {
         const cl: [number, number, number] = [centerLeft[0] * lx, centerLeft[1] - hz, 0.001];
         points.push(cl);
       }
+      if (center) {
+        const c: [number, number, number] = [center[0] * lx, center[1] - hz, 0.001];
+        points.push(c);
+      }
+      if (centerRight) {
+        const cr: [number, number, number] = [centerRight[0] * lx, centerRight[1] - hz, 0.001];
+        points.push(cr);
+      }
+      points.push(upperRight, lowerRight);
     }
-
-    points.push(upperLeft);
 
     return (
       <React.Fragment>
