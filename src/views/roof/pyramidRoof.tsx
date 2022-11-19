@@ -10,7 +10,7 @@ import * as Selector from 'src/stores/selector';
 import { WallModel } from 'src/models/WallModel';
 import { Extrude, Line, Plane } from '@react-three/drei';
 import { ConvexGeometry } from 'src/js/ConvexGeometry.js';
-import { HALF_PI, HALF_PI_Z_EULER, TWO_PI } from 'src/constants';
+import { HALF_PI, HALF_PI_Z_EULER, TWO_PI, UNIT_VECTOR_POS_Z } from 'src/constants';
 import { useStoreRef } from 'src/stores/commonRef';
 import { useThree } from '@react-three/fiber';
 import { Point2 } from 'src/models/Point2';
@@ -87,15 +87,19 @@ const FlatRoof = ({ roofSegments, thickness, lineColor, lineWidth, children }: F
 
   return (
     <>
-      <Extrude
+      <Extrude args={[shape, { steps: 1, depth: thickness, bevelEnabled: false }]}>
+        <meshStandardMaterial color={'white'} />
+      </Extrude>
+      <mesh
+        position={[0, 0, thickness + 0.01]}
         name={'Pyramid Roof Extrude'}
-        args={[shape, { steps: 1, depth: thickness, bevelEnabled: false }]}
         castShadow={shadowEnabled && !transparent}
         receiveShadow={shadowEnabled}
         userData={{ simulation: true }}
       >
+        <shapeBufferGeometry args={[shape]}></shapeBufferGeometry>
         {children}
-      </Extrude>
+      </mesh>
 
       {/* wireframe */}
       {periphery}
@@ -569,11 +573,30 @@ const PyramidRoof = ({
         if (heatmap) {
           const t = Util.fetchHeatmapTexture(heatmap, solarRadiationHeatmapMaxValue ?? 5);
           if (t) {
-            t.wrapS = RepeatWrapping;
-            t.wrapT = RepeatWrapping;
-            t.offset.set(-0.5, -0.5);
-            //t.center.set(0.5, 0.5);
-            t.repeat.set(1 / heatmap.length, 1 / heatmap[0].length);
+            // obtain the bounding rectangle
+            const segmentVertices = getRoofSegmentVertices(id);
+            if (segmentVertices && foundation) {
+              const euler = new Euler(0, 0, foundation.rotation[2], 'ZYX');
+              let minX = Number.MAX_VALUE;
+              let minY = Number.MAX_VALUE;
+              let maxX = -Number.MAX_VALUE;
+              let maxY = -Number.MAX_VALUE;
+              for (const s of segmentVertices) {
+                for (const v of s) {
+                  const v2 = v.clone().applyEuler(euler);
+                  if (v2.x > maxX) maxX = v2.x;
+                  else if (v2.x < minX) minX = v2.x;
+                  if (v2.y > maxY) maxY = v2.y;
+                  else if (v2.y < minY) minY = v2.y;
+                }
+              }
+              const dx = maxX - minX;
+              const dy = maxY - minY;
+              t.offset.set(-minX / dx, -minY / dy);
+              t.center.set((0.5 * (minX + maxX)) / dx, (0.5 * (minY + maxY)) / dy);
+              t.rotation = -foundation.rotation[2];
+              t.repeat.set(1 / dx, 1 / dy);
+            }
             setFlatHeatmapTexture(t);
           }
         }
