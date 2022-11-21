@@ -61,6 +61,7 @@ export interface ActionState {
   doorTexture: DoorTexture;
   doorType: DoorType;
   doorArchHeight: number;
+  doorFilled: boolean;
 
   windowTint: string;
   windowOpacity: number;

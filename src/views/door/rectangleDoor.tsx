@@ -7,16 +7,18 @@ import { Box, Line, Plane } from '@react-three/drei';
 import { HALF_PI, LOCKED_ELEMENT_SELECTION_COLOR } from 'src/constants';
 import { DoorTexture } from 'src/types';
 import { useDoorTexture } from './hooks';
-import { DoubleSide } from 'three';
+import { BackSide, DoubleSide, Material } from 'three';
 import * as Selector from 'src/stores/selector';
 import { useStore } from 'src/stores/common';
+import { DoorType } from 'src/models/DoorModel';
 
 interface RectangleDoorProps {
   dimension: number[];
-  textureType: DoorTexture;
   color: string;
   selected: boolean;
   locked: boolean;
+  material: Material;
+  filled: boolean;
 }
 
 interface DoorWireFrameProps {
@@ -36,7 +38,7 @@ const DoorWireFrame = React.memo(({ dimension, lineColor, lineWidth }: DoorWireF
   const ur: [number, number, number] = [hx, 0, hz + 0.05];
   const ll: [number, number, number] = [-hx, 0, -hz];
   const lr: [number, number, number] = [hx, 0, -hz];
-  return <Line points={[ul, ll, lr, ur, ul]} lineWidth={lineWidth} color={lineColor} />;
+  return <Line points={[ll, ul, ur, lr]} lineWidth={lineWidth} color={lineColor} />;
 });
 
 const DoorFrame = React.memo(({ dimension, color }: DoorFrameProps) => {
@@ -78,8 +80,7 @@ const DoorFrame = React.memo(({ dimension, color }: DoorFrameProps) => {
   );
 });
 
-const RectangleDoor = React.memo(({ dimension, textureType, color, selected, locked }: RectangleDoorProps) => {
-  const texture = useDoorTexture(textureType);
+const RectangleDoor = React.memo(({ dimension, color, selected, locked, material, filled }: RectangleDoorProps) => {
   const shadowEnabled = useStore(Selector.viewState.shadowEnabled);
 
   const [lx, ly, lz] = dimension;
@@ -90,15 +91,10 @@ const RectangleDoor = React.memo(({ dimension, textureType, color, selected, loc
         name={`Door plane`}
         args={[lx, lz]}
         rotation={[HALF_PI, 0, 0]}
-        castShadow={shadowEnabled}
-        receiveShadow={shadowEnabled}
-      >
-        {textureType === DoorTexture.Default || textureType === DoorTexture.NoTexture ? (
-          <meshStandardMaterial map={texture} side={DoubleSide} color={color} />
-        ) : (
-          <meshStandardMaterial map={texture} side={DoubleSide} />
-        )}
-      </Plane>
+        material={material}
+        castShadow={shadowEnabled && filled}
+        receiveShadow={shadowEnabled && filled}
+      />
 
       <DoorWireFrame
         dimension={dimension}

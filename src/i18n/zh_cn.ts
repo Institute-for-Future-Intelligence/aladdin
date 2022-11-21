@@ -989,6 +989,7 @@ export const i18n_zh_cn = {
       DoorType: '门种类',
       Default: '默认',
       Arched: '拱形',
+      Filled: '填充',
     },
 
     siteInfoPanel: {

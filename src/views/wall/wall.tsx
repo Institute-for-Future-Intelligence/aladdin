@@ -48,7 +48,14 @@ import WallWireFrame from './wallWireFrame';
 import WallResizeHandleWarpper from './wallResizeHandleWrapper';
 import WallMoveHandleWarpper from './wallMoveHandleWrapper';
 import * as Selector from 'src/stores/selector';
-import { FINE_GRID_SCALE, HALF_PI, LOCKED_ELEMENT_SELECTION_COLOR, NORMAL_GRID_SCALE, TWO_PI } from 'src/constants';
+import {
+  FINE_GRID_SCALE,
+  HALF_PI,
+  INVALID_ELEMENT_COLOR,
+  LOCKED_ELEMENT_SELECTION_COLOR,
+  NORMAL_GRID_SCALE,
+  TWO_PI,
+} from 'src/constants';
 import { UndoableMove } from 'src/undo/UndoableMove';
 import { UndoableAdd } from 'src/undo/UndoableAdd';
 import { UndoableResizeElementOnWall } from 'src/undo/UndoableResize';
@@ -1153,7 +1160,7 @@ const Wall = (wallModel: WallModel) => {
                         e.lz = newDoorHeight / lz;
                         e.cz = relativePos.z / lz;
                         (e as DoorModel).color =
-                          e.id === invalidElementIdRef.current ? '#fe6f5e' : oldDoorColorRef.current;
+                          e.id === invalidElementIdRef.current ? INVALID_ELEMENT_COLOR : oldDoorColorRef.current;
                         (e as DoorModel).archHeight = newArchHeight;
                       }
                     }
@@ -1169,7 +1176,8 @@ const Wall = (wallModel: WallModel) => {
                         e.lx = Math.abs(v.x) / lx;
                         e.cz = (p.z - lz / 2) / 2 / lz;
                         e.lz = (p.z + lz / 2) / lz;
-                        e.color = e.id === invalidElementIdRef.current ? '#fe6f5e' : oldDoorColorRef.current;
+                        e.color =
+                          e.id === invalidElementIdRef.current ? INVALID_ELEMENT_COLOR : oldDoorColorRef.current;
                         break;
                       }
                     }
@@ -1309,7 +1317,14 @@ const Wall = (wallModel: WallModel) => {
           }
           case ObjectType.Door: {
             const actionState = useStore.getState().actionState;
-            const newDoor = ElementModelFactory.makeDoor(wallModel, actionState.doorColor, actionState.doorTexture);
+            const newDoor = ElementModelFactory.makeDoor(
+              wallModel,
+              actionState.doorColor,
+              actionState.doorTexture,
+              actionState.doorArchHeight,
+              actionState.doorType,
+              actionState.doorFilled,
+            );
             useStoreRef.getState().setEnableOrbitController(false);
             setCommonStore((state) => {
               state.objectTypeToAdd = ObjectType.None;

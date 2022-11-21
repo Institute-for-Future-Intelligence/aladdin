@@ -54,6 +54,8 @@ export const GAP_PERCENT = 0.005;
 export const SOLAR_PANEL_CELL_COLOR_BLACK = '#000';
 export const SOLAR_PANEL_CELL_COLOR_BLUE = '#01345B';
 
+export const INVALID_ELEMENT_COLOR = '#fe6f5e';
+
 export const GROUND_ID = 'Ground';
 
 export const HALF_PI = Math.PI / 2;

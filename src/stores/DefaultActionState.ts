@@ -67,6 +67,7 @@ export class DefaultActionState implements ActionState {
   doorTexture: DoorTexture;
   doorType: DoorType;
   doorArchHeight: number;
+  doorFilled: boolean;
 
   windowColor: string;
   windowTint: string;
@@ -175,6 +176,7 @@ export class DefaultActionState implements ActionState {
     this.doorTexture = DoorTexture.Default;
     this.doorType = DoorType.Default;
     this.doorArchHeight = 1;
+    this.doorFilled = true;
 
     this.windowColor = 'white';
     this.windowTint = '#73D8FF';

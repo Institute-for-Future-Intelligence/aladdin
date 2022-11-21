@@ -660,7 +660,15 @@ export class ElementModelFactory {
     } as WindowModel;
   }
 
-  static makeDoor(parent: ElementModel, color: string, texture: DoorTexture, normal?: Vector3) {
+  static makeDoor(
+    parent: ElementModel,
+    color: string,
+    texture: DoorTexture,
+    archHeight: number,
+    doorType: DoorType,
+    filled: boolean,
+    normal?: Vector3,
+  ) {
     let foundationId;
     switch (parent.type) {
       case ObjectType.Cuboid:
@@ -678,7 +686,8 @@ export class ElementModelFactory {
       lx: 0,
       ly: 0,
       lz: 0,
-      doorType: DoorType.Default,
+      doorType: doorType,
+      filled: filled,
       archHeight: 1,
       textureType: texture ?? DoorTexture.Default,
       color: color ?? 'white',

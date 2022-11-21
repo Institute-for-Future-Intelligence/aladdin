@@ -24,7 +24,7 @@ import { useStore } from 'src/stores/common';
 import { fileChanged } from 'src/stores/selector';
 import { DoorModel, DoorType } from 'src/models/DoorModel';
 
-export const useDoorTexture = (textureType: DoorTexture) => {
+export const useDoorTexture = (textureType: DoorTexture, doorType: DoorType, lx?: number, lz?: number) => {
   const textureLoader = useMemo(() => {
     let textureImg;
     switch (textureType) {
@@ -75,11 +75,16 @@ export const useDoorTexture = (textureType: DoorTexture) => {
     }
 
     return new TextureLoader().load(textureImg, (texture) => {
-      texture.repeat.set(1, 1);
+      if (doorType === DoorType.Default) {
+        texture.repeat.set(1, 1);
+      } else if (lx !== undefined && lz !== undefined) {
+        texture.offset.set(0.5, 0.5);
+        texture.repeat.set(1 / lx, 1 / lz);
+      }
       setTexture(texture);
       invalidate();
     });
-  }, [textureType]);
+  }, [textureType, doorType, lx, lz]);
 
   const [texture, setTexture] = useState(textureLoader);
   const { invalidate } = useThree();
@@ -89,7 +94,7 @@ export const useDoorTexture = (textureType: DoorTexture) => {
 export const useUpdateOldDoors = (doorModel: DoorModel) => {
   const isFileChangedFlag = useStore(fileChanged);
   useEffect(() => {
-    if (doorModel.doorType === undefined || doorModel.archHeight === undefined) {
+    if (doorModel.doorType === undefined || doorModel.archHeight === undefined || doorModel.filled === undefined) {
       useStore.getState().set((state) => {
         for (const e of state.elements) {
           if (e.id === doorModel.id && e.type === ObjectType.Door) {
@@ -99,6 +104,9 @@ export const useUpdateOldDoors = (doorModel: DoorModel) => {
             }
             if (door.archHeight === undefined) {
               door.archHeight = 1;
+            }
+            if (door.filled === undefined) {
+              door.filled = true;
             }
             break;
           }

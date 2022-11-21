@@ -695,6 +695,7 @@ export class ElementModelCloner {
       lz: door.lz,
       color: door.color,
       textureType: door.textureType,
+      filled: door.filled,
       doorType: door.doorType,
       archHeight: door.archHeight,
       normal: [...door.normal],

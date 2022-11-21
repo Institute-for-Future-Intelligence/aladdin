@@ -3,7 +3,7 @@
  */
 
 import React, { useState } from 'react';
-import { Menu, Radio } from 'antd';
+import { Checkbox, Menu, Radio } from 'antd';
 import { CommonStoreState, useStore } from 'src/stores/common';
 import * as Selector from 'src/stores/selector';
 import { Copy, Cut, Lock } from '../menuItems';
@@ -15,6 +15,7 @@ import { ObjectType } from 'src/types';
 import SubMenu from 'antd/lib/menu/SubMenu';
 import { radioStyle } from './wallMenu';
 import { UndoableChange } from 'src/undo/UndoableChange';
+import { UndoableCheck } from 'src/undo/UndoableCheck';
 
 const getSelectedDoor = (state: CommonStoreState) => {
   for (const el of state.elements) {
@@ -43,6 +44,17 @@ export const DoorMenu = () => {
       for (const e of state.elements) {
         if (e.id === id && e.type === ObjectType.Door) {
           (e as DoorModel).doorType = type;
+          break;
+        }
+      }
+    });
+  };
+
+  const updateDoorFilledById = (id: string, checked: boolean) => {
+    setCommonStore((state) => {
+      for (const e of state.elements) {
+        if (e.id === id && e.type === ObjectType.Door) {
+          (e as DoorModel).filled = checked;
           break;
         }
       }
@@ -98,10 +110,37 @@ export const DoorMenu = () => {
       {!door.locked && <Cut keyName={'door-cut'} />}
       <Lock keyName={'door-lock'} />
 
-      {!door.locked && renderTypeSubMenu()}
-
-      {door.doorType === DoorType.Default && !door.locked && (
+      {!door.locked && (
         <>
+          <Menu.Item key={'door-filled'}>
+            <Checkbox
+              checked={door.filled}
+              onChange={(e) => {
+                const checked = e.target.checked;
+                const undoableCheck = {
+                  name: 'Door filled',
+                  timestamp: Date.now(),
+                  checked: checked,
+                  selectedElementId: door.id,
+                  selectedElementType: door.type,
+                  undo: () => {
+                    updateDoorFilledById(door.id, !undoableCheck.checked);
+                  },
+                  redo: () => {
+                    updateDoorFilledById(door.id, undoableCheck.checked);
+                  },
+                } as UndoableCheck;
+                addUndoable(undoableCheck);
+                updateDoorFilledById(door.id, checked);
+                setCommonStore((state) => {
+                  state.actionState.doorFilled = checked;
+                });
+              }}
+            >
+              {i18n.t('doorMenu.Filled', { lng: language })}
+            </Checkbox>
+          </Menu.Item>
+          {renderTypeSubMenu()}
           <Menu.Item
             key={'door-texture'}
             style={{ paddingLeft: paddingLeft }}

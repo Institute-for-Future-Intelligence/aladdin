@@ -6,16 +6,16 @@ import React, { useMemo, useRef } from 'react';
 import { DoorModel, DoorType } from 'src/models/DoorModel';
 import { useStore } from 'src/stores/common';
 import * as Selector from 'src/stores/selector';
-import { ObjectType, ResizeHandleType } from 'src/types';
+import { DoorTexture, ObjectType, ResizeHandleType } from 'src/types';
 import WindowResizeHandle from '../window/windowResizeHandle';
 import { ThreeEvent } from '@react-three/fiber';
 import RectangleDoor from './rectangleDoor';
 import ArchedDoor from './archedDoor';
-import { useUpdateOldDoors } from './hooks';
+import { useDoorTexture, useUpdateOldDoors } from './hooks';
 import { ArchResizeHandle } from '../window/windowHandleWrapper';
-import { FrontSide, MeshStandardMaterial } from 'three';
+import { DoubleSide, FrontSide, MeshStandardMaterial } from 'three';
 import { Plane } from '@react-three/drei';
-import { HALF_PI } from 'src/constants';
+import { HALF_PI, INVALID_ELEMENT_COLOR } from 'src/constants';
 
 export interface DoorProps extends DoorModel {
   position: number[];
@@ -89,6 +89,7 @@ const Door = (doorModel: DoorProps) => {
     color = 'white',
     doorType = DoorType.Default,
     archHeight = 1,
+    filled = true,
   } = doorModel;
 
   const [cx, cy, cz] = position;
@@ -141,18 +142,46 @@ const Door = (doorModel: DoorProps) => {
         return (
           <RectangleDoor
             dimension={dimension}
-            textureType={textureType}
             color={color}
             selected={selected}
             locked={locked}
+            material={doorMaterial}
+            filled={filled}
           />
         );
       case DoorType.Arched:
-        return <ArchedDoor dimension={dimensionData} color={color} selected={selected} locked={locked} />;
+        return (
+          <ArchedDoor
+            dimension={dimensionData}
+            color={color}
+            selected={selected}
+            locked={locked}
+            material={doorMaterial}
+            filled={filled}
+          />
+        );
     }
   };
 
+  const texture = useDoorTexture(textureType, doorType, lx, lz);
+
   const dimensionData = useMemo(() => [lx, ly, lz, archHeight], [lx, lz, archHeight]);
+
+  const doorMaterial = useMemo(() => {
+    if (!filled) {
+      return new MeshStandardMaterial({
+        opacity: color === INVALID_ELEMENT_COLOR ? 0.5 : 0,
+        color: color,
+        transparent: true,
+        side: DoubleSide,
+      });
+    }
+    let matColor;
+    if (textureType === DoorTexture.Default || textureType === DoorTexture.NoTexture) {
+      matColor = color;
+    }
+    return new MeshStandardMaterial({ map: texture, color: matColor, side: DoubleSide });
+  }, [color, textureType, texture, filled]);
 
   return (
     <group

@@ -1012,6 +1012,7 @@ export const i18n_es = {
       DoorType: 'Door Type',
       Default: 'Default',
       Arched: 'Arched',
+      Filled: 'Filled',
     },
 
     siteInfoPanel: {
