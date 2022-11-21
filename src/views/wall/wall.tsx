@@ -642,7 +642,17 @@ const Wall = (wallModel: WallModel) => {
       : points.push({ x: -x + leftOffset, y: y });
 
     return points;
-  }, [lx, lz, leftRoofHeight, rightRoofHeight, centerRoofHeight, centerLeftRoofHeight, centerRightRoofHeight]);
+  }, [
+    lx,
+    lz,
+    leftRoofHeight,
+    rightRoofHeight,
+    centerRoofHeight,
+    centerLeftRoofHeight,
+    centerRightRoofHeight,
+    leftOffset,
+    rightOffset,
+  ]);
 
   const outerWallPoints2D = useMemo(() => {
     const points: Point2[] = [];
