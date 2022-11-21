@@ -5,12 +5,9 @@
 import React, { useMemo } from 'react';
 import { Box, Line, Plane } from '@react-three/drei';
 import { HALF_PI, LOCKED_ELEMENT_SELECTION_COLOR } from 'src/constants';
-import { DoorTexture } from 'src/types';
-import { useDoorTexture } from './hooks';
-import { BackSide, DoubleSide, Material } from 'three';
+import { Material } from 'three';
 import * as Selector from 'src/stores/selector';
 import { useStore } from 'src/stores/common';
-import { DoorType } from 'src/models/DoorModel';
 
 interface RectangleDoorProps {
   dimension: number[];
@@ -95,6 +92,17 @@ const RectangleDoor = React.memo(({ dimension, color, selected, locked, material
         castShadow={shadowEnabled && filled}
         receiveShadow={shadowEnabled && filled}
       />
+      {filled && (
+        <Plane
+          name={`Door plane inside`}
+          args={[lx, lz]}
+          position={[0, 0.1, 0]}
+          rotation={[-HALF_PI, 0, Math.PI]}
+          material={material}
+          castShadow={shadowEnabled && filled}
+          receiveShadow={shadowEnabled && filled}
+        />
+      )}
 
       <DoorWireFrame
         dimension={dimension}

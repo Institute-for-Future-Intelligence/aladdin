@@ -64,7 +64,6 @@ const DoorSealPlanes = React.memo(({ dimension }: DoorSealPlanesProps) => {
       rotation={rotation}
       material={sealPlanesMaterial}
       receiveShadow={shadowEnabled}
-      castShadow={shadowEnabled}
     />
   );
   return (
@@ -180,7 +179,7 @@ const Door = (doorModel: DoorProps) => {
     if (textureType === DoorTexture.Default || textureType === DoorTexture.NoTexture) {
       matColor = color;
     }
-    return new MeshStandardMaterial({ map: texture, color: matColor, side: DoubleSide });
+    return new MeshStandardMaterial({ map: texture, color: matColor, side: FrontSide });
   }, [color, textureType, texture, filled]);
 
   return (

@@ -4,13 +4,10 @@
 
 import React, { useMemo } from 'react';
 import { HALF_PI } from 'src/constants';
-import { DoorType } from 'src/models/DoorModel';
 import { useStore } from 'src/stores/common';
-import { DoorTexture } from 'src/types';
-import { DoubleSide, Material, Shape } from 'three';
+import { Material, Shape } from 'three';
 import { ArchedWireframe } from '../window/archedWindow';
 import { WireframeDataType } from '../window/window';
-import { useDoorTexture } from './hooks';
 import * as Selector from 'src/stores/selector';
 
 interface ArchedDoorProps {
@@ -82,6 +79,19 @@ const ArchedDoor = React.memo(({ dimension, color, selected, locked, material, f
       >
         <shapeBufferGeometry args={[doorShape]} />
       </mesh>
+
+      {filled && (
+        <mesh
+          name={'Door plane mesh inside'}
+          position={[0, 0.1, 0]}
+          rotation={[-HALF_PI, 0, Math.PI]}
+          material={material}
+          castShadow={shadowEnabled && filled}
+          receiveShadow={shadowEnabled && filled}
+        >
+          <shapeBufferGeometry args={[doorShape]} />
+        </mesh>
+      )}
 
       <ArchedWireframe cy={0} dimension={dimension} wireframeData={wireframeData} />
       <ArchedWireframe cy={ly} dimension={dimension} wireframeData={wireframeData} />
