@@ -35,6 +35,7 @@ import {
   RoofWireframeProps,
   updateRooftopElements,
 } from './roofRenderer';
+import RoofSegment from './roofSegment';
 import { RoofUtil } from './RoofUtil';
 
 const intersectionPlanePosition = new Vector3();
@@ -106,7 +107,7 @@ const MansardRoof = ({
   lz,
   selected,
   textureType,
-  color,
+  color = 'white',
   overhang,
   thickness,
   locked,
@@ -570,25 +571,16 @@ const MansardRoof = ({
         }}
       >
         {roofSegments.map((segment, i, arr) => {
-          const { points, angle, length } = segment;
-          const [leftRoof, rightRoof, rightRidge, leftRidge] = points;
-          const isFlat = Math.abs(leftRoof.z) < 0.1;
           return (
-            <group key={i} name={`Roof segment ${i}`}>
-              <mesh
-                castShadow={shadowEnabled && !transparent}
-                receiveShadow={shadowEnabled}
-                userData={{ simulation: true }}
-              >
-                <convexGeometry args={[points, isFlat ? arr[0].angle : angle, isFlat ? 1 : length]} />
-                <meshStandardMaterial
-                  color={textureType === RoofTexture.Default || textureType === RoofTexture.NoTexture ? color : 'white'}
-                  map={texture}
-                  transparent={transparent}
-                  opacity={opacity}
-                />
-              </mesh>
-            </group>
+            <RoofSegment
+              key={i}
+              idx={i}
+              segment={segment}
+              defaultAngle={arr[0].angle}
+              thickness={thickness}
+              textureType={textureType}
+              color={color}
+            />
           );
         })}
         <Extrude

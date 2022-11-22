@@ -27,16 +27,10 @@ import {
   RoofWireframeProps,
   updateRooftopElements,
 } from './roofRenderer';
-import { ObjectType, RoofTexture } from 'src/types';
+import { ObjectType } from 'src/types';
 import { RoofUtil } from './RoofUtil';
-import {
-  useCurrWallArray,
-  useRoofHeight,
-  useRoofTexture,
-  useElementUndoable,
-  useTransparent,
-  useUpdateSegmentVerticesMap,
-} from './hooks';
+import { useCurrWallArray, useRoofHeight, useElementUndoable, useUpdateSegmentVerticesMap } from './hooks';
+import RoofSegment from './roofSegment';
 
 enum RoofHandleType {
   TopMid = 'TopMid',
@@ -138,7 +132,7 @@ const GambrelRoof = ({
   backRidgeRightPoint,
   selected,
   textureType,
-  color,
+  color = 'white',
   overhang,
   thickness,
   locked,
@@ -146,9 +140,6 @@ const GambrelRoof = ({
   lineWidth = 0.2,
   roofType,
 }: GambrelRoofModel) => {
-  const texture = useRoofTexture(textureType);
-
-  const shadowEnabled = useStore(Selector.viewState.shadowEnabled);
   const setCommonStore = useStore(Selector.set);
   const removeElementById = useStore(Selector.removeElementById);
   const fileChanged = useStore(Selector.fileChanged);
@@ -679,7 +670,6 @@ const GambrelRoof = ({
   }, []);
 
   const { grabRef, addUndoableMove, undoMove, setOldRefData } = useElementUndoable();
-  const { transparent, opacity } = useTransparent();
   useUpdateSegmentVerticesMap(id, centroid, roofSegments);
 
   return (
@@ -702,25 +692,16 @@ const GambrelRoof = ({
         }}
       >
         {roofSegments.map((segment, i, arr) => {
-          const { points, angle, length } = segment;
-          const [leftRoof, rightRoof, rightRidge, leftRidge] = points;
-          const isFlat = Math.abs(leftRoof.z) < 0.1;
           return (
-            <group key={i} name={`Roof segment ${i}`}>
-              <mesh
-                castShadow={shadowEnabled && !transparent}
-                receiveShadow={shadowEnabled}
-                userData={{ simulation: true }}
-              >
-                <convexGeometry args={[points, isFlat ? arr[0].angle : angle, isFlat ? 1 : length]} />
-                <meshStandardMaterial
-                  map={texture}
-                  color={textureType === RoofTexture.Default || textureType === RoofTexture.NoTexture ? color : 'white'}
-                  transparent={transparent}
-                  opacity={opacity}
-                />
-              </mesh>
-            </group>
+            <RoofSegment
+              key={i}
+              idx={i}
+              segment={segment}
+              defaultAngle={arr[0].angle}
+              thickness={thickness}
+              textureType={textureType}
+              color={color}
+            />
           );
         })}
         <GambrelRoofWirefram

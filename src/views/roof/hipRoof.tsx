@@ -11,14 +11,13 @@ import { WallModel } from 'src/models/WallModel';
 import { useStore } from 'src/stores/common';
 import { useStoreRef } from 'src/stores/commonRef';
 import * as Selector from 'src/stores/selector';
-import { ObjectType, RoofTexture } from 'src/types';
+import { ObjectType } from 'src/types';
 import { UndoableResizeHipRoofRidge } from 'src/undo/UndoableResize';
 import { Util } from 'src/Util';
 import { DoubleSide, Euler, Mesh, Raycaster, Vector2, Vector3 } from 'three';
 import {
   useCurrWallArray,
   useRoofHeight,
-  useRoofTexture,
   useElementUndoable,
   useTransparent,
   useUpdateSegmentVerticesMap,
@@ -34,6 +33,7 @@ import {
   RoofWireframeProps,
   updateRooftopElements,
 } from './roofRenderer';
+import RoofSegment from './roofSegment';
 import { RoofUtil } from './RoofUtil';
 
 enum RoofHandleType {
@@ -100,7 +100,7 @@ const HipRoof = ({
   rightRidgeLength,
   selected,
   textureType,
-  color,
+  color = 'white',
   overhang,
   thickness,
   locked,
@@ -109,12 +109,10 @@ const HipRoof = ({
   roofType,
 }: HipRoofModel) => {
   // color = '#fb9e00';
-  const texture = useRoofTexture(textureType);
 
   const getElementById = useStore(Selector.getElementById);
   const setCommonStore = useStore(Selector.set);
   const removeElementById = useStore(Selector.removeElementById);
-  const shadowEnabled = useStore(Selector.viewState.shadowEnabled);
   const updateElementOnRoofFlag = useStore(Selector.updateElementOnRoofFlag);
   const fileChanged = useStore(Selector.fileChanged);
 
@@ -431,7 +429,6 @@ const HipRoof = ({
   }, []);
 
   const { grabRef, addUndoableMove, undoMove, setOldRefData } = useElementUndoable();
-  const { transparent, opacity } = useTransparent();
   useUpdateSegmentVerticesMap(id, new Vector3(centroid2D.x, centroid2D.y, h), roofSegments);
 
   return (
@@ -454,26 +451,17 @@ const HipRoof = ({
         }}
       >
         {roofSegments.map((segment, i, arr) => {
-          const { points, angle, length } = segment;
-          const [leftRoof, rightRoof, rightRidge, leftRidge] = points;
-          const isFlat = Math.abs(leftRoof.z) < 0.1;
           return (
             // Roof segment idx is important for calculate normal
-            <mesh
+            <RoofSegment
               key={i}
-              name={`Roof segment ${i}`}
-              castShadow={shadowEnabled && !transparent}
-              receiveShadow={shadowEnabled}
-              userData={{ simulation: true }}
-            >
-              <convexGeometry args={[points, isFlat ? arr[0].angle : angle, isFlat ? 1 : length]} />
-              <meshStandardMaterial
-                map={texture}
-                color={textureType === RoofTexture.Default || textureType === RoofTexture.NoTexture ? color : 'white'}
-                transparent={transparent}
-                opacity={opacity}
-              />
-            </mesh>
+              idx={i}
+              segment={segment}
+              defaultAngle={arr[0].angle}
+              thickness={thickness}
+              textureType={textureType}
+              color={color}
+            />
           );
         })}
         <HipRoofWireframe
