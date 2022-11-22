@@ -40,7 +40,7 @@ import { LightModel } from '../../models/LightModel';
 
 export interface RoofSegmentProps {
   points: Vector3[];
-  direction: number;
+  angle: number;
   length: number;
 }
 

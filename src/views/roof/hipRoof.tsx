@@ -387,8 +387,7 @@ const HipRoof = ({
           makeSement(points, wallLeftPointAfterOverhang, wallRightPointAfterOverhang, ridgeLeft, ridgeLeft);
           break;
       }
-      const direction = -wall.relativeAngle;
-      segments.push({ points, direction, length });
+      segments.push({ points, angle: -wall.relativeAngle, length });
     }
     return segments;
   }, [currentWallArray, ridgeLeftPoint, ridgeRightPoint, h, overhang, thickness]);
@@ -455,7 +454,7 @@ const HipRoof = ({
         }}
       >
         {roofSegments.map((segment, i, arr) => {
-          const { points, direction, length } = segment;
+          const { points, angle, length } = segment;
           const [leftRoof, rightRoof, rightRidge, leftRidge] = points;
           const isFlat = Math.abs(leftRoof.z) < 0.1;
           return (
@@ -467,7 +466,7 @@ const HipRoof = ({
               receiveShadow={shadowEnabled}
               userData={{ simulation: true }}
             >
-              <convexGeometry args={[points, isFlat ? arr[0].direction : direction, isFlat ? 1 : length]} />
+              <convexGeometry args={[points, isFlat ? arr[0].angle : angle, isFlat ? 1 : length]} />
               <meshStandardMaterial
                 map={texture}
                 color={textureType === RoofTexture.Default || textureType === RoofTexture.NoTexture ? color : 'white'}

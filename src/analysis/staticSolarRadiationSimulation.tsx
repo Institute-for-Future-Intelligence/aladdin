@@ -126,7 +126,7 @@ const StaticSolarRadiationSimulation = ({ city }: StaticSolarRadiationSimulation
               generateHeatmapForPyramidRoof(roof);
               break;
             case RoofType.Gable:
-              //generateHeatmapForGableRoof(roof);
+              generateHeatmapForGableRoof(roof);
               break;
           }
           break;
@@ -792,6 +792,94 @@ const StaticSolarRadiationSimulation = ({ city }: StaticSolarRadiationSimulation
         // send heat map data to common store for visualization
         setHeatmap(uuid, cellOutputTotals);
       }
+    }
+  };
+
+  const generateHeatmapForGableRoof = (roof: RoofModel) => {
+    if (roof.roofType !== RoofType.Gable) throw new Error('roof is not gable');
+    const foundation = getFoundation(roof);
+    if (!foundation) throw new Error('foundation of wall not found');
+    const segments = getRoofSegmentVertices(roof.id);
+    if (!segments || segments.length === 0) return;
+    const year = now.getFullYear();
+    const month = now.getMonth();
+    const date = now.getDate();
+    const dayOfYear = Util.dayOfYear(now);
+    const euler = new Euler(0, 0, foundation.rotation[2], 'ZYX');
+    // send heat map data to common store for visualization
+    for (const [index, s] of segments.entries()) {
+      const uuid = roof.id + '-' + index;
+      const s0 = s[0].clone().applyEuler(euler);
+      const s1 = s[1].clone().applyEuler(euler);
+      const s2 = s[2].clone().applyEuler(euler);
+      const s3 = s[3].clone().applyEuler(euler);
+      const v10 = new Vector3().subVectors(s1, s0);
+      const v20 = new Vector3().subVectors(s2, s0);
+      const v21 = new Vector3().subVectors(s2, s1);
+      const length10 = v10.length();
+      // find the distance from top to the edge: https://mathworld.wolfram.com/Point-LineDistance3-Dimensional.html
+      const distance = new Vector3().crossVectors(v20, v21).length() / length10;
+      const m = Math.max(2, Math.round(length10 / cellSize));
+      const n = Math.max(2, Math.round(distance / cellSize));
+      const cellOutputTotals = Array(m)
+        .fill(0)
+        .map(() => Array(n).fill(0));
+      v10.normalize();
+      v20.normalize();
+      v21.normalize();
+      // find the normal vector of the quad
+      const normal = new Vector3().crossVectors(v20, v21);
+      // find the starting point of the grid
+      const xc = (s0.x + s1.x + s2.x + s3.x) / 4;
+      const yc = (s0.y + s1.y + s2.y + s3.y) / 4;
+      const zc = (s0.z + s1.z + s2.z + s3.z) / 4;
+      const v0 = new Vector3(
+        foundation.cx + s0.x + (Math.sign(xc - s0.x) * cellSize) / 2,
+        foundation.cy + s0.y + (Math.sign(yc - s0.y) * cellSize) / 2,
+        foundation.lz + s0.z + (Math.sign(zc - s0.z) * cellSize) / 2,
+      );
+      // find the incremental vector going along the bottom edge
+      const dm = v10.multiplyScalar(length10 / m);
+      // find the incremental vector going from bottom to top
+      const dn = new Vector3()
+        .crossVectors(normal, v10)
+        .normalize()
+        .multiplyScalar(distance / n);
+      let count = 0;
+      const v = new Vector3();
+      for (let i = 0; i < 24; i++) {
+        for (let j = 0; j < world.timesPerHour; j++) {
+          const currentTime = new Date(year, month, date, i, j * interval);
+          const sunDirection = getSunDirection(currentTime, world.latitude);
+          if (sunDirection.z > 0) {
+            // when the sun is out
+            count++;
+            const peakRadiation = calculatePeakRadiation(sunDirection, dayOfYear, elevation, AirMass.SPHERE_MODEL);
+            const indirectRadiation = calculateDiffuseAndReflectedRadiation(world.ground, month, normal, peakRadiation);
+            const dot = normal.dot(sunDirection);
+            for (let p = 0; p < m; p++) {
+              const dmp = dm.clone().multiplyScalar(p);
+              for (let q = 0; q < n; q++) {
+                cellOutputTotals[p][q] += indirectRadiation;
+                if (dot > 0) {
+                  v.copy(v0).add(dmp).add(dn.clone().multiplyScalar(q));
+                  if (!inShadow(uuid, v, sunDirection)) {
+                    // direct radiation
+                    cellOutputTotals[p][q] += dot * peakRadiation;
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+      // apply clearness and convert the unit of time step from minute to hour so that we get kWh
+      const daylight = (count * interval) / 60;
+      const scaleFactor =
+        daylight > ZERO_TOLERANCE ? weather.sunshineHours[month] / (30 * daylight * world.timesPerHour) : 0;
+      applyScaleFactor(cellOutputTotals, scaleFactor);
+      // send heat map data to common store for visualization
+      setHeatmap(uuid, cellOutputTotals);
     }
   };
 

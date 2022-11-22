@@ -133,7 +133,7 @@ export const useRoofTexture = (textureType: RoofTexture) => {
       switch (textureType) {
         case RoofTexture.NoTexture:
         case RoofTexture.Default:
-          texture.repeat.set(4, 4);
+          texture.repeat.set(5, 3);
           break;
         case RoofTexture.Texture01:
           texture.repeat.set(0.5, 0.5);

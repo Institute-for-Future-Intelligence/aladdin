@@ -465,9 +465,9 @@ const GambrelRoof = ({
       frontRidgeLeftPointAfterOverhang.clone().add(thicknessVector),
     );
 
-    const frontDirection = -frontWall.relativeAngle;
+    const frontAngle = -frontWall.relativeAngle;
     const frontSideLength = new Vector3(frontWall.cx, frontWall.cy).sub(topRidgeMidPointV3.clone().setZ(0)).length();
-    segments.push({ points: frontSidePoints, direction: frontDirection, length: frontSideLength });
+    segments.push({ points: frontSidePoints, angle: frontAngle, length: frontSideLength });
 
     // front top
     const frontTopPoints: Vector3[] = [];
@@ -498,10 +498,10 @@ const GambrelRoof = ({
       topRidgeLeftPointAfterOverhang.clone().add(thicknessVector),
     );
 
-    segments.push({ points: frontTopPoints, direction: frontDirection, length: frontSideLength });
+    segments.push({ points: frontTopPoints, angle: frontAngle, length: frontSideLength });
 
     // back top
-    const backDirection = -backWall.relativeAngle;
+    const backAngle = -backWall.relativeAngle;
     const { lh: backWallLh, rh: backWallRh } = getWallHeight(currentWallArray, 2);
 
     const d2 = RoofUtil.getDistance(wallPoint2, wallPoint3, backRidgeLeftPointV3.clone().add(centroid));
@@ -563,7 +563,7 @@ const GambrelRoof = ({
       topRidgeLeftPointAfterOverhang.clone().add(thicknessVector),
       topRidgeRightPointAfterOverhang.clone().add(thicknessVector),
     );
-    segments.push({ points: backTopPoints, direction: backDirection, length: backSideLenght });
+    segments.push({ points: backTopPoints, angle: backAngle, length: backSideLenght });
 
     // back side
     const backSidePoints: Vector3[] = [];
@@ -579,7 +579,7 @@ const GambrelRoof = ({
       backRidgeRightPointAfterOverhang.clone().add(thicknessVector),
       backRidgeLeftPointAfterOverhang.clone().add(thicknessVector),
     );
-    segments.push({ points: backSidePoints, direction: backDirection, length: backSideLenght });
+    segments.push({ points: backSidePoints, angle: backAngle, length: backSideLenght });
 
     return segments;
   }, [currentWallArray, h, minHeight, overhang, thickness]);
@@ -702,7 +702,7 @@ const GambrelRoof = ({
         }}
       >
         {roofSegments.map((segment, i, arr) => {
-          const { points, direction, length } = segment;
+          const { points, angle, length } = segment;
           const [leftRoof, rightRoof, rightRidge, leftRidge] = points;
           const isFlat = Math.abs(leftRoof.z) < 0.1;
           return (
@@ -712,7 +712,7 @@ const GambrelRoof = ({
                 receiveShadow={shadowEnabled}
                 userData={{ simulation: true }}
               >
-                <convexGeometry args={[points, isFlat ? arr[0].direction : direction, isFlat ? 1 : length]} />
+                <convexGeometry args={[points, isFlat ? arr[0].angle : angle, isFlat ? 1 : length]} />
                 <meshStandardMaterial
                   map={texture}
                   color={textureType === RoofTexture.Default || textureType === RoofTexture.NoTexture ? color : 'white'}

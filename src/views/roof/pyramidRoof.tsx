@@ -407,7 +407,6 @@ const PyramidRoof = ({
           .setZ(rh - overhangHeight)
           .sub(centerPointV3);
 
-        const direction = -w.relativeAngle;
         const length = new Vector3(w.cx, w.cy).sub(centerPointV3.clone().setZ(0)).length();
         points.push(wallLeftPointAfterOverhang, wallRightPointAfterOverhang, zeroVector);
         points.push(
@@ -415,7 +414,7 @@ const PyramidRoof = ({
           wallRightPointAfterOverhang.clone().add(thicknessVector),
           zeroVector.clone().add(thicknessVector),
         );
-        segments.push({ points, direction, length });
+        segments.push({ points, angle: -w.relativeAngle, length });
       }
     }
     if (!isLoopRef.current) {
@@ -456,7 +455,7 @@ const PyramidRoof = ({
         rightPointAfterOverhang.clone().add(thicknessVector),
         zeroVector.clone().add(thicknessVector),
       );
-      segments.push({ points, direction: -angle, length });
+      segments.push({ points, angle: -angle, length });
     }
 
     return segments;
@@ -680,7 +679,7 @@ const PyramidRoof = ({
         ) : (
           <>
             {roofSegments.map((segment, idx) => {
-              const { points, direction, length } = segment;
+              const { points, angle, length } = segment;
               if (points.length > 0) {
                 const [leftPoint, rightPoint] = points;
                 const isFlat = Math.abs(leftPoint.z) < 0.01;
@@ -690,7 +689,7 @@ const PyramidRoof = ({
                       <RoofSegment
                         uuid={id + '-' + idx}
                         points={points}
-                        angle={isFlat ? 0 : direction}
+                        angle={isFlat ? 0 : angle}
                         length={isFlat ? 1 : length}
                         thickness={thickness}
                       >
@@ -811,7 +810,7 @@ const RoofSegment = ({
       // find the position of the top point relative to the first edge point
       const mid = v20.dot(v10.normalize()) / length10;
       const geo = new BufferGeometry();
-      const positions = new Float32Array(18);
+      const positions = new Float32Array(9);
       positions[0] = points[0].x;
       positions[1] = points[0].y;
       positions[2] = points[0].z + thickness + 0.001; // a small number to ensure the surface mesh stay atop
@@ -825,16 +824,10 @@ const RoofSegment = ({
       geo.setAttribute('position', new Float32BufferAttribute(positions, 3));
       geo.computeVertexNormals();
       const uvs = [];
-      if (showSolarRadiationHeatmap) {
-        uvs.push(0, 0);
-        uvs.push(1, 0);
-        uvs.push(mid, 1);
-      } else {
-        const scale = 10;
-        uvs.push(0, 0);
-        uvs.push(scale, 0);
-        uvs.push(mid * scale, scale);
-      }
+      const scale = showSolarRadiationHeatmap ? 1 : 10;
+      uvs.push(0, 0);
+      uvs.push(scale, 0);
+      uvs.push(mid * scale, scale);
       geo.setAttribute('uv', new Float32BufferAttribute(uvs, 2));
       // TODO: if has window
       // const h: Vector3[] = [];

@@ -387,7 +387,6 @@ const MansardRoof = ({
         const ridgeLeftPoint = ridgePoints[i].leftPoint.clone().sub(centroid);
         const ridgeRightPoint = ridgePoints[i].rightPoint.clone().sub(centroid);
 
-        const direction = -w.relativeAngle;
         const length = new Vector3(w.cx, w.cy).sub(centroid.clone().setZ(0)).length();
         points.push(wallLeftPointAfterOverhang, wallRightPointAfterOverhang, ridgeRightPoint, ridgeLeftPoint);
         points.push(
@@ -396,7 +395,7 @@ const MansardRoof = ({
           ridgeRightPoint.clone().add(thicknessVector),
           ridgeLeftPoint.clone().add(thicknessVector),
         );
-        segments.push({ points, direction, length });
+        segments.push({ points, angle: -w.relativeAngle, length });
       }
     }
     if (!isLoopRef.current) {
@@ -441,7 +440,7 @@ const MansardRoof = ({
         ridgeRightPoint.clone().add(thicknessVector),
         ridgeLeftPoint.clone().add(thicknessVector),
       );
-      segments.push({ points, direction: -angle, length });
+      segments.push({ points, angle: -angle, length });
     }
     return segments;
   }, [currentWallArray, h, width, overhang, thickness]);
@@ -571,7 +570,7 @@ const MansardRoof = ({
         }}
       >
         {roofSegments.map((segment, i, arr) => {
-          const { points, direction, length } = segment;
+          const { points, angle, length } = segment;
           const [leftRoof, rightRoof, rightRidge, leftRidge] = points;
           const isFlat = Math.abs(leftRoof.z) < 0.1;
           return (
@@ -581,7 +580,7 @@ const MansardRoof = ({
                 receiveShadow={shadowEnabled}
                 userData={{ simulation: true }}
               >
-                <convexGeometry args={[points, isFlat ? arr[0].direction : direction, isFlat ? 1 : length]} />
+                <convexGeometry args={[points, isFlat ? arr[0].angle : angle, isFlat ? 1 : length]} />
                 <meshStandardMaterial
                   color={textureType === RoofTexture.Default || textureType === RoofTexture.NoTexture ? color : 'white'}
                   map={texture}

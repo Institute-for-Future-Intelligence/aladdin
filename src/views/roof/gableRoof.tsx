@@ -8,7 +8,18 @@ import { GableRoofModel, RoofModel, RoofStructure, RoofType } from 'src/models/R
 import { WallModel } from 'src/models/WallModel';
 import { useStore } from 'src/stores/common';
 import * as Selector from 'src/stores/selector';
-import { DoubleSide, Euler, Mesh, Raycaster, Shape, Vector2, Vector3 } from 'three';
+import {
+  BufferGeometry,
+  CanvasTexture,
+  DoubleSide,
+  Euler,
+  Float32BufferAttribute,
+  Mesh,
+  Raycaster,
+  Shape,
+  Vector2,
+  Vector3,
+} from 'three';
 import { useStoreRef } from 'src/stores/commonRef';
 import { useThree } from '@react-three/fiber';
 import { HALF_PI } from 'src/constants';
@@ -591,9 +602,8 @@ const GableRoof = ({
         backWallRightPointAfterOverhang.clone().add(thicknessVector),
       );
 
-      const direction = -frontWall.relativeAngle;
       const length = new Vector3(frontWall.cx, frontWall.cy).sub(ridgeMidPoint.clone().setZ(0)).length();
-      segments.push({ points, direction, length });
+      segments.push({ points, angle: -frontWall.relativeAngle, length });
 
       setIsShed(true);
     }
@@ -675,9 +685,8 @@ const GableRoof = ({
         ridgeLeftPointAfterOverhang.clone().add(thicknessVector),
       );
 
-      const frontDirection = -frontWall.relativeAngle;
       const frontLength = new Vector3(frontWall.cx, frontWall.cy).sub(centroid.clone().setZ(0)).length();
-      segments.push({ points: frontPoints, direction: frontDirection, length: frontLength });
+      segments.push({ points: frontPoints, angle: -frontWall.relativeAngle, length: frontLength });
 
       // back
       const backPoints: Vector3[] = [];
@@ -719,9 +728,8 @@ const GableRoof = ({
         ridgeRightPointAfterOverhang.clone().add(thicknessVector),
       );
 
-      const backDirection = -backWall.relativeAngle;
       const backLength = new Vector3(backWall.cx, backWall.cy).sub(centroid.clone().setZ(0)).length();
-      segments.push({ points: backPoints, direction: backDirection, length: backLength });
+      segments.push({ points: backPoints, angle: -backWall.relativeAngle, length: backLength });
 
       setIsShed(false);
     }
@@ -834,6 +842,34 @@ const GableRoof = ({
   const { grabRef, addUndoableMove, undoMove, setOldRefData } = useElementUndoable();
   useUpdateSegmentVerticesMap(id, centroid, roofSegments);
 
+  const showSolarRadiationHeatmap = useStore(Selector.showSolarRadiationHeatmap);
+  const solarRadiationHeatmapMaxValue = useStore(Selector.viewState.solarRadiationHeatmapMaxValue);
+  const getHeatmap = useStore(Selector.getHeatmap);
+  const [heatmapTextures, setHeatmapTextures] = useState<CanvasTexture[]>([]);
+  const getRoofSegmentVertices = useStore(Selector.getRoofSegmentVertices);
+
+  useEffect(() => {
+    if (showSolarRadiationHeatmap) {
+      const n = roofSegments.length;
+      if (n > 0) {
+        const textures = [];
+        const segmentVertices = getRoofSegmentVertices(id);
+        if (segmentVertices) {
+          for (let i = 0; i < n; i++) {
+            const heatmap = getHeatmap(id + '-' + i);
+            if (heatmap) {
+              const t = Util.fetchHeatmapTexture(heatmap, solarRadiationHeatmapMaxValue ?? 5);
+              if (t) {
+                textures.push(t);
+              }
+            }
+          }
+          setHeatmapTextures(textures);
+        }
+      }
+    }
+  }, [showSolarRadiationHeatmap, solarRadiationHeatmapMaxValue]);
+
   return (
     <group position={[cx, cy, cz]} rotation={[0, 0, rotation]} name={`Gable Roof Group ${id}`}>
       {/* roof segments group */}
@@ -854,17 +890,19 @@ const GableRoof = ({
         }}
       >
         {roofSegments.map((segment, i, arr) => {
-          const { points, direction, length } = segment;
+          const { points, angle, length } = segment;
           const [leftRoof, rightRoof, rightRidge, leftRidge] = points;
           const isFlat = Math.abs(leftRoof.z) < 0.1;
           return (
             <RoofSegment
               key={i}
+              index={i}
               id={id}
               points={points}
-              direction={isFlat ? arr[0].direction : direction}
+              angle={isFlat ? arr[0].angle : angle}
               length={isFlat ? 1 : length}
               textureType={textureType}
+              heatmaps={heatmapTextures}
               color={color}
               roofStructure={roofStructure}
               glassTint={glassTint}
@@ -1111,22 +1149,26 @@ const GableRoof = ({
 };
 
 const RoofSegment = ({
+  index,
   id,
   points,
-  direction,
+  angle,
   length,
   textureType,
+  heatmaps,
   color,
   currWall,
   roofStructure,
   glassTint,
   opacity = 0.5,
 }: {
+  index: number;
   id: string;
   points: Vector3[];
-  direction: number;
+  angle: number;
   length: number;
   textureType: RoofTexture;
+  heatmaps: CanvasTexture[];
   color: string | undefined;
   currWall: WallModel;
   roofStructure?: RoofStructure;
@@ -1134,11 +1176,13 @@ const RoofSegment = ({
   opacity?: number;
 }) => {
   const shadowEnabled = useStore(Selector.viewState.shadowEnabled);
+  const showSolarRadiationHeatmap = useStore(Selector.showSolarRadiationHeatmap);
   const texture = useRoofTexture(roofStructure === RoofStructure.Rafter ? RoofTexture.NoTexture : textureType);
   const { transparent, opacity: _opacity } = useTransparent(roofStructure === RoofStructure.Rafter, opacity);
   const { invalidate } = useThree();
 
-  const meshRef = useRef<Mesh>(null);
+  const surfaceMeshRef = useRef<Mesh>(null);
+  const bulkMeshRef = useRef<Mesh>(null);
   const planeRef = useRef<Mesh>(null);
   const mullionRef = useRef<Mesh>(null);
 
@@ -1159,110 +1203,157 @@ const RoofSegment = ({
   };
 
   useEffect(() => {
-    if (!meshRef.current) return;
-
-    meshRef.current.geometry = new ConvexGeometry(points, direction, length);
-
     const [wallLeft, wallRight, ridgeRight, ridgeLeft, wallLeftAfterOverhang] = points;
     const thickness = wallLeftAfterOverhang.z - wallLeft.z;
 
-    const isValid = checkValid(wallLeft, ridgeLeft) && checkValid(wallRight, ridgeRight);
-    setShow(isValid);
+    if (surfaceMeshRef.current) {
+      const geo = new BufferGeometry();
+      const positions = new Float32Array(18);
+      positions[0] = points[0].x;
+      positions[1] = points[0].y;
+      positions[2] = points[0].z + thickness + 0.001; // a small number to ensure the surface mesh stay atop
+      positions[3] = points[1].x;
+      positions[4] = points[1].y;
+      positions[5] = points[1].z + thickness + 0.001;
+      positions[6] = points[2].x;
+      positions[7] = points[2].y;
+      positions[8] = points[2].z + thickness + 0.001;
+      positions[9] = points[2].x;
+      positions[10] = points[2].y;
+      positions[11] = points[2].z + thickness + 0.001;
+      positions[12] = points[3].x;
+      positions[13] = points[3].y;
+      positions[14] = points[3].z + thickness + 0.001;
+      positions[15] = points[0].x;
+      positions[16] = points[0].y;
+      positions[17] = points[0].z + thickness + 0.001;
+      // don't call geo.setFromPoints. It doesn't seem to work correctly.
+      geo.setAttribute('position', new Float32BufferAttribute(positions, 3));
+      geo.computeVertexNormals();
+      const uvs = [];
+      const scale = showSolarRadiationHeatmap ? 1 : 5;
+      uvs.push(0, 0);
+      uvs.push(scale, 0);
+      uvs.push(scale, scale);
+      uvs.push(scale, scale);
+      uvs.push(0, scale);
+      uvs.push(0, 0);
+      geo.setAttribute('uv', new Float32BufferAttribute(uvs, 2));
+      surfaceMeshRef.current.geometry = geo;
+    }
 
-    if (roofStructure === RoofStructure.Glass && isValid) {
-      const center = Util.calculatePolygonCentroid(points.map(Util.mapVector3ToPoint2));
-      const centerV3 = new Vector3(center.x, center.y, 0);
+    if (bulkMeshRef.current) {
+      bulkMeshRef.current.geometry = new ConvexGeometry(points, angle, length);
+      const isValid = checkValid(wallLeft, ridgeLeft) && checkValid(wallRight, ridgeRight);
+      setShow(isValid);
 
-      const width = 0.25;
-      const wl = new Vector3().addVectors(
-        wallLeft,
-        centerV3.clone().sub(wallLeft).setZ(0).normalize().multiplyScalar(width),
-      );
-      const wr = new Vector3().addVectors(
-        wallRight,
-        centerV3.clone().sub(wallRight).setZ(0).normalize().multiplyScalar(width),
-      );
-      const rr = new Vector3().addVectors(
-        ridgeRight,
-        centerV3.clone().sub(ridgeRight).normalize().multiplyScalar(width),
-      );
-      const rl = new Vector3().addVectors(ridgeLeft, centerV3.clone().sub(ridgeLeft).normalize().multiplyScalar(width));
+      if (roofStructure === RoofStructure.Glass && isValid) {
+        const center = Util.calculatePolygonCentroid(points.map(Util.mapVector3ToPoint2));
+        const centerV3 = new Vector3(center.x, center.y, 0);
 
-      const h: Vector3[] = [];
-      h.push(wl);
-      h.push(wr);
-      h.push(rr.setZ(wr.z));
-      h.push(rl.setZ(wl.z));
-      h.push(wl.clone().setZ(1));
-      h.push(wr.clone().setZ(1));
-      h.push(rr.clone().setZ(1));
-      h.push(rl.clone().setZ(1));
+        const width = 0.25;
+        const wl = new Vector3().addVectors(
+          wallLeft,
+          centerV3.clone().sub(wallLeft).setZ(0).normalize().multiplyScalar(width),
+        );
+        const wr = new Vector3().addVectors(
+          wallRight,
+          centerV3.clone().sub(wallRight).setZ(0).normalize().multiplyScalar(width),
+        );
+        const rr = new Vector3().addVectors(
+          ridgeRight,
+          centerV3.clone().sub(ridgeRight).normalize().multiplyScalar(width),
+        );
+        const rl = new Vector3().addVectors(
+          ridgeLeft,
+          centerV3.clone().sub(ridgeLeft).normalize().multiplyScalar(width),
+        );
 
-      const holeMesh = new Mesh(new ConvexGeometry(h));
-      const resMesh = CSG.subtract(meshRef.current, holeMesh);
-      meshRef.current.geometry = resMesh.geometry;
+        const h: Vector3[] = [];
+        h.push(wl);
+        h.push(wr);
+        h.push(rr.setZ(wr.z));
+        h.push(rl.setZ(wl.z));
+        h.push(wl.clone().setZ(1));
+        h.push(wr.clone().setZ(1));
+        h.push(rr.clone().setZ(1));
+        h.push(rl.clone().setZ(1));
 
-      if (isNorthWest(currWall)) {
-        const lx = wl.distanceTo(wr);
-        const ly = wallLeft.distanceTo(ridgeLeft);
+        const holeMesh = new Mesh(new ConvexGeometry(h));
+        const resMesh = CSG.subtract(bulkMeshRef.current, holeMesh);
+        bulkMeshRef.current.geometry = resMesh.geometry;
 
-        setMullionLx(lx);
-        setMullionLz(ly);
+        if (isNorthWest(currWall)) {
+          const lx = wl.distanceTo(wr);
+          const ly = wallLeft.distanceTo(ridgeLeft);
 
-        const rotationX = new Vector3().subVectors(wallLeft, ridgeLeft).angleTo(new Vector3(0, -1, 0));
+          setMullionLx(lx);
+          setMullionLz(ly);
+
+          const rotationX = new Vector3().subVectors(wallLeft, ridgeLeft).angleTo(new Vector3(0, -1, 0));
+          if (planeRef.current) {
+            planeRef.current.scale.set(lx, ly, 1);
+            planeRef.current.rotation.set(rotationX, 0, 0);
+          }
+          if (mullionRef.current) {
+            mullionRef.current.rotation.set(rotationX - HALF_PI, 0, 0);
+          }
+        } else {
+          const lx = wallLeft.distanceTo(ridgeLeft);
+          const ly = wl.distanceTo(wr);
+
+          setMullionLx(lx);
+          setMullionLz(ly);
+
+          const rotationY = new Vector3().subVectors(wallLeft, ridgeLeft).angleTo(new Vector3(1, 0, 0));
+          if (planeRef.current) {
+            planeRef.current.scale.set(lx, ly, 1);
+            planeRef.current.rotation.set(0, rotationY, 0);
+          }
+          if (mullionRef.current) {
+            mullionRef.current.rotation.set(HALF_PI, rotationY, 0, 'YXZ');
+          }
+        }
+
+        const cz = (wallLeft.z + ridgeLeft.z) / 2 + thickness * 0.75;
         if (planeRef.current) {
-          planeRef.current.scale.set(lx, ly, 1);
-          planeRef.current.rotation.set(rotationX, 0, 0);
+          planeRef.current.position.set(center.x, center.y, cz);
         }
         if (mullionRef.current) {
-          mullionRef.current.rotation.set(rotationX - HALF_PI, 0, 0);
+          mullionRef.current.position.set(center.x, center.y, cz);
         }
-      } else {
-        const lx = wallLeft.distanceTo(ridgeLeft);
-        const ly = wl.distanceTo(wr);
-
-        setMullionLx(lx);
-        setMullionLz(ly);
-
-        const rotationY = new Vector3().subVectors(wallLeft, ridgeLeft).angleTo(new Vector3(1, 0, 0));
-        if (planeRef.current) {
-          planeRef.current.scale.set(lx, ly, 1);
-          planeRef.current.rotation.set(0, rotationY, 0);
-        }
-        if (mullionRef.current) {
-          mullionRef.current.rotation.set(HALF_PI, rotationY, 0, 'YXZ');
-        }
-      }
-
-      const cz = (wallLeft.z + ridgeLeft.z) / 2 + thickness * 0.75;
-      if (planeRef.current) {
-        planeRef.current.position.set(center.x, center.y, cz);
-      }
-      if (mullionRef.current) {
-        mullionRef.current.position.set(center.x, center.y, cz);
       }
     }
     invalidate();
-  }, [points, direction, length, currWall, show]);
+  }, [points, angle, length, currWall, show, showSolarRadiationHeatmap]);
 
   return (
     <>
       {((_opacity > 0 && roofStructure === RoofStructure.Rafter) || roofStructure !== RoofStructure.Rafter) && (
-        <mesh
-          ref={meshRef}
-          uuid={id}
-          name={'Gable Roof'}
-          castShadow={shadowEnabled && !transparent}
-          receiveShadow={shadowEnabled}
-          userData={{ simulation: true }}
-        >
-          <meshStandardMaterial
-            map={texture}
-            color={textureType === RoofTexture.Default || textureType === RoofTexture.NoTexture ? color : 'white'}
-            transparent={transparent}
-            opacity={_opacity}
-          />
-        </mesh>
+        <>
+          <mesh
+            ref={surfaceMeshRef}
+            uuid={id}
+            name={'Gable Roof Surface'}
+            castShadow={shadowEnabled && !transparent}
+            receiveShadow={shadowEnabled}
+            userData={{ simulation: true }}
+          >
+            {showSolarRadiationHeatmap && index < heatmaps.length ? (
+              <meshBasicMaterial map={heatmaps[index]} />
+            ) : (
+              <meshStandardMaterial
+                map={texture}
+                color={textureType === RoofTexture.Default || textureType === RoofTexture.NoTexture ? color : 'white'}
+                transparent={transparent}
+                opacity={_opacity}
+              />
+            )}
+          </mesh>
+          <mesh ref={bulkMeshRef} name={'Gable Roof Bulk'} castShadow={false} receiveShadow={false}>
+            <meshStandardMaterial color={'white'} transparent={transparent} opacity={_opacity} />
+          </mesh>
+        </>
       )}
       {roofStructure === RoofStructure.Glass && show && (
         <>
