@@ -729,10 +729,13 @@ const StaticSolarRadiationSimulation = ({ city }: StaticSolarRadiationSimulation
         // find the normal vector of the plane
         const normal = new Vector3().crossVectors(v20, v21);
         // find the starting point of the grid
+        const xc = (s0.x + s1.x + s2.x) / 3;
+        const yc = (s0.y + s1.y + s2.y) / 3;
+        const zc = (s0.z + s1.z + s2.z) / 3;
         const v0 = new Vector3(
-          foundation.cx + s0.x + (Math.sign(s1.x - s0.x) * cellSize) / 2,
-          foundation.cy + s0.y + (Math.sign(s1.y - s0.y) * cellSize) / 2,
-          foundation.lz + s0.z + (Math.sign(s1.z - s0.z) * cellSize) / 2,
+          foundation.cx + s0.x + (Math.sign(xc - s0.x) * cellSize) / 2,
+          foundation.cy + s0.y + (Math.sign(yc - s0.y) * cellSize) / 2,
+          foundation.lz + s0.z + (Math.sign(zc - s0.z) * cellSize) / 2,
         );
         // find the incremental vector going along the bottom edge
         const dm = v10.multiplyScalar(length10 / m);
@@ -741,7 +744,6 @@ const StaticSolarRadiationSimulation = ({ city }: StaticSolarRadiationSimulation
           .crossVectors(normal, v10)
           .normalize()
           .multiplyScalar(distance / n);
-        // console.log(index, m, n, m2, normal)
         let count = 0;
         const v = new Vector3();
         const relativePolygon: Point2[] = [];
