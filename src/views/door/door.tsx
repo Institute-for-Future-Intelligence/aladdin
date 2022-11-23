@@ -112,7 +112,10 @@ const Door = (doorModel: DoorProps) => {
   };
 
   const handleContextMenu = (e: ThreeEvent<MouseEvent>) => {
-    if (e.intersections.length > 0 && e.intersections[0].eventObject.name === `Door group ${id}`) {
+    const intersectableObjects = e.intersections.filter(
+      (obj) => !obj.eventObject.name.startsWith('Wall Intersection Plane'),
+    );
+    if (e.intersections.length > 0 && intersectableObjects[0].eventObject.name === `Door group ${id}`) {
       selectMe();
       setCommonStore((state) => {
         state.contextMenuObjectType = ObjectType.Door;
@@ -122,7 +125,10 @@ const Door = (doorModel: DoorProps) => {
 
   const handlePointerDown = (e: ThreeEvent<PointerEvent>) => {
     if (e.button === 2 || addedWallIdRef.current) return; // ignore right-click
-    if (e.intersections.length > 0 && e.intersections[0].eventObject.name === `Door group ${id}`) {
+    const intersectableObjects = e.intersections.filter(
+      (obj) => !obj.eventObject.name.startsWith('Wall Intersection Plane'),
+    );
+    if (e.intersections.length > 0 && intersectableObjects[0].eventObject.name === `Door group ${id}`) {
       if (
         !useStore.getState().moveHandleType &&
         !useStore.getState().resizeHandleType &&

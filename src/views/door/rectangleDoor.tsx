@@ -5,7 +5,7 @@
 import React, { useMemo } from 'react';
 import { Box, Line, Plane } from '@react-three/drei';
 import { HALF_PI, LOCKED_ELEMENT_SELECTION_COLOR } from 'src/constants';
-import { Material } from 'three';
+import { Material, Shape } from 'three';
 import * as Selector from 'src/stores/selector';
 import { useStore } from 'src/stores/common';
 
@@ -82,16 +82,36 @@ const RectangleDoor = React.memo(({ dimension, color, selected, locked, material
 
   const [lx, ly, lz] = dimension;
 
+  const doorShape = useMemo(() => {
+    const s = new Shape();
+    const [hx, hz] = [lx / 2, lz / 2];
+    const width = Math.max(hx, hz) * 0.2;
+    s.moveTo(-hx, -hz);
+    s.lineTo(-hx, hz);
+    s.lineTo(hx, hz);
+    s.lineTo(hx, -hz);
+    if (!filled) {
+      s.lineTo(hx - width, -hz);
+      s.lineTo(hx - width, hz - width);
+      s.lineTo(-hx + width, hz - width);
+      s.lineTo(-hx + width, -hz);
+    }
+    s.closePath();
+    return s;
+  }, [lx, lz, filled]);
+
   return (
     <group name={'Rectangle door group'} position={[0, -0.01, 0]}>
-      <Plane
-        name={`Door plane`}
-        args={[lx, lz]}
+      <mesh
+        name={'Door plane mesh'}
         rotation={[HALF_PI, 0, 0]}
         material={material}
         castShadow={shadowEnabled && filled}
         receiveShadow={shadowEnabled && filled}
-      />
+      >
+        <shapeBufferGeometry args={[doorShape]} />
+      </mesh>
+
       {filled && (
         <Plane
           name={`Door plane inside`}

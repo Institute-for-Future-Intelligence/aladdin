@@ -1387,11 +1387,18 @@ const Wall = (wallModel: WallModel) => {
         });
         selectMe(id, e, ActionType.Select);
       }
-      handleAddElement();
+      if (outsideWallRef.current) {
+        const intersects = ray.intersectObjects([outsideWallRef.current]);
+
+        if (intersects.length > 0) {
+          const pointer = intersects[0].point;
+          handleAddElement(pointer, true);
+        }
+      }
     }
   };
 
-  const handleAddElement = (pointer?: Vector3) => {
+  const handleAddElement = (pointer?: Vector3, body?: boolean) => {
     // add new elements
     if (foundation && useStore.getState().objectTypeToAdd) {
       let newElement: ElementModel | null = null;
@@ -1473,7 +1480,7 @@ const Wall = (wallModel: WallModel) => {
           break;
         }
         case ObjectType.SolarPanel: {
-          if (pointer) {
+          if (pointer && body) {
             const p = getRelativePosOnWall(pointer, wallModel);
             const angle = wallModel.relativeAngle - HALF_PI;
             const actionState = useStore.getState().actionState;
@@ -1499,7 +1506,7 @@ const Wall = (wallModel: WallModel) => {
           break;
         }
         case ObjectType.Sensor: {
-          if (pointer) {
+          if (pointer && body) {
             const p = getRelativePosOnWall(pointer, wallModel);
             const angle = wallModel.relativeAngle - HALF_PI;
             newElement = ElementModelFactory.makeSensor(
@@ -1514,7 +1521,7 @@ const Wall = (wallModel: WallModel) => {
           break;
         }
         case ObjectType.Light: {
-          if (pointer) {
+          if (pointer && body) {
             const p = getRelativePosOnWall(pointer, wallModel);
             const angle = wallModel.relativeAngle - HALF_PI;
             const actionState = useStore.getState().actionState;
@@ -1874,6 +1881,7 @@ const Wall = (wallModel: WallModel) => {
 
               {/* intersection plane */}
               <mesh
+                // Important: name related to selectMe function in common store
                 name={`Wall Intersection Plane ${id}`}
                 ref={intersectionPlaneRef}
                 position={[0, ly / 2 + 0.01, 0]}

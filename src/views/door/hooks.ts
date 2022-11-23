@@ -75,9 +75,7 @@ export const useDoorTexture = (textureType: DoorTexture, doorType: DoorType, lx?
     }
 
     return new TextureLoader().load(textureImg, (texture) => {
-      if (doorType === DoorType.Default) {
-        texture.repeat.set(1, 1);
-      } else if (lx !== undefined && lz !== undefined) {
+      if (lx !== undefined && lz !== undefined) {
         texture.offset.set(0.5, 0.5);
         texture.repeat.set(1 / lx, 1 / lz);
       }

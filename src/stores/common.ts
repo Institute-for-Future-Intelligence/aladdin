@@ -1586,7 +1586,10 @@ export const useStore = create<CommonStoreState>(
           selectMe(id, e, action) {
             const setEnableOrbitController = useStoreRef.getState().setEnableOrbitController;
             if (e.intersections.length > 0) {
-              if (e.intersections[0].object === e.eventObject) {
+              const intersectableObjects = e.intersections.filter(
+                (obj) => !obj.eventObject.name.startsWith('Wall Intersection Plane'),
+              );
+              if (intersectableObjects[0].object === e.eventObject) {
                 immerSet((state) => {
                   for (const elem of state.elements) {
                     if (elem.id === id) {

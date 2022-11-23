@@ -1312,7 +1312,9 @@ const Foundation = ({
       if (legalOnFoundation(useStore.getState().objectTypeToAdd)) {
         if (foundationModel) {
           setShowGrid(true);
-          const position = e.intersections[0].point;
+          const position = e.intersections.filter(
+            (obj) => !obj.eventObject.name.startsWith('Wall Intersection Plane'),
+          )[0].point;
           const addedElement = addElement(foundationModel, position);
           if (addedElement) {
             handleUndoableAdd(addedElement);

@@ -41,27 +41,27 @@ const ArchedDoor = React.memo(({ dimension, color, selected, locked, material, f
     }
     s.lineTo(-hx, -hz);
 
-    // save for pointer selection
-    // const ihx = lx * 0.4;
-    // const ihz = lz * 0.4;
-    // const iah = Math.min(archHeight * 0.8, lz * 0.8, hx * 0.8);
-    // s.lineTo(-ihx, -hz);
-    // if (iah > 0.1) {
-    //   s.lineTo(-ihx, hz - iah);
-    //   const r = iah / 2 + (lx * 0.8) ** 2 / (8 * iah);
-    //   const [cX, cY] = [0, ihz - r];
-    //   const startAngle = Math.acos(ihx / r);
-    //   const endAngle = Math.PI - startAngle;
-    //   s.absarc(cX, cY, r, endAngle, startAngle, true);
-    // } else {
-    //   s.lineTo(-ihx, ihz);
-    //   s.lineTo(ihx, ihz);
-    // }
-    // s.lineTo(ihx, -hz);
-
+    if (!filled) {
+      const ihx = lx * 0.4;
+      const ihz = lz * 0.4;
+      const iah = Math.min(archHeight * 0.8, lz * 0.8, hx * 0.8);
+      s.lineTo(-ihx, -hz);
+      if (iah > 0.1) {
+        s.lineTo(-ihx, hz - iah);
+        const r = iah / 2 + (lx * 0.8) ** 2 / (8 * iah);
+        const [cX, cY] = [0, ihz - r];
+        const startAngle = Math.acos(ihx / r);
+        const endAngle = Math.PI - startAngle;
+        s.absarc(cX, cY, r, endAngle, startAngle, true);
+      } else {
+        s.lineTo(-ihx, ihz);
+        s.lineTo(ihx, ihz);
+      }
+      s.lineTo(ihx, -hz);
+    }
     s.closePath();
     return s;
-  }, [lx, lz, archHeight]);
+  }, [lx, lz, archHeight, filled]);
 
   const wireframeData = useMemo(() => {
     const lineWidth = locked && selected ? 0.2 : 0.1;
