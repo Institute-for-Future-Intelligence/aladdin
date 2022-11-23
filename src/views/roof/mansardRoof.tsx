@@ -15,7 +15,7 @@ import * as Selector from 'src/stores/selector';
 import { ObjectType, RoofTexture } from 'src/types';
 import { UnoableResizeGambrelAndMansardRoofRidge } from 'src/undo/UndoableResize';
 import { Util } from 'src/Util';
-import { DoubleSide, Euler, Mesh, Shape, Vector3 } from 'three';
+import { CanvasTexture, DoubleSide, Euler, Mesh, Shape, Vector3 } from 'three';
 import {
   useMultiCurrWallArray,
   useRoofHeight,
@@ -552,6 +552,34 @@ const MansardRoof = ({
     ridgePoints.reduce((acc, curr) => acc.concat(curr.leftPoint), [] as Vector3[]),
   );
 
+  const showSolarRadiationHeatmap = useStore(Selector.showSolarRadiationHeatmap);
+  const solarRadiationHeatmapMaxValue = useStore(Selector.viewState.solarRadiationHeatmapMaxValue);
+  const getHeatmap = useStore(Selector.getHeatmap);
+  const [heatmapTextures, setHeatmapTextures] = useState<CanvasTexture[]>([]);
+  const getRoofSegmentVertices = useStore(Selector.getRoofSegmentVertices);
+
+  useEffect(() => {
+    if (showSolarRadiationHeatmap) {
+      const n = roofSegments.length;
+      if (n > 0) {
+        const textures = [];
+        const segmentVertices = getRoofSegmentVertices(id);
+        if (segmentVertices) {
+          for (let i = 0; i < n; i++) {
+            const heatmap = getHeatmap(id + '-' + i);
+            if (heatmap) {
+              const t = Util.fetchHeatmapTexture(heatmap, solarRadiationHeatmapMaxValue ?? 5);
+              if (t) {
+                textures.push(t);
+              }
+            }
+          }
+          setHeatmapTextures(textures);
+        }
+      }
+    }
+  }, [showSolarRadiationHeatmap, solarRadiationHeatmapMaxValue]);
+
   return (
     <group position={[cx, cy, cz + 0.01]} rotation={[0, 0, rotationZ]} name={`Mansard Roof Group ${id}`}>
       <group
@@ -573,12 +601,14 @@ const MansardRoof = ({
         {roofSegments.map((segment, i, arr) => {
           return (
             <RoofSegment
+              id={id}
               key={i}
-              idx={i}
+              index={i}
               segment={segment}
               defaultAngle={arr[0].angle}
               thickness={thickness}
               textureType={textureType}
+              heatmaps={heatmapTextures}
               color={color}
             />
           );

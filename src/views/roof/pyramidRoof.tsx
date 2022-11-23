@@ -811,15 +811,16 @@ const RoofSegment = ({
       const mid = v20.dot(v10.normalize()) / length10;
       const geo = new BufferGeometry();
       const positions = new Float32Array(9);
+      const zOffset = 0.01;
       positions[0] = points[0].x;
       positions[1] = points[0].y;
-      positions[2] = points[0].z + thickness + 0.001; // a small number to ensure the surface mesh stay atop
+      positions[2] = points[0].z + thickness + zOffset; // a small number to ensure the surface mesh stay atop
       positions[3] = points[1].x;
       positions[4] = points[1].y;
-      positions[5] = points[1].z + thickness + 0.001;
+      positions[5] = points[1].z + thickness + zOffset;
       positions[6] = points[2].x;
       positions[7] = points[2].y;
-      positions[8] = points[2].z + thickness + 0.001;
+      positions[8] = points[2].z + thickness + zOffset;
       // don't call geo.setFromPoints. It doesn't seem to work correctly.
       geo.setAttribute('position', new Float32BufferAttribute(positions, 3));
       geo.computeVertexNormals();

@@ -14,14 +14,8 @@ import * as Selector from 'src/stores/selector';
 import { ObjectType } from 'src/types';
 import { UndoableResizeHipRoofRidge } from 'src/undo/UndoableResize';
 import { Util } from 'src/Util';
-import { DoubleSide, Euler, Mesh, Raycaster, Vector2, Vector3 } from 'three';
-import {
-  useCurrWallArray,
-  useRoofHeight,
-  useElementUndoable,
-  useTransparent,
-  useUpdateSegmentVerticesMap,
-} from './hooks';
+import { CanvasTexture, DoubleSide, Euler, Mesh, Raycaster, Vector2, Vector3 } from 'three';
+import { useCurrWallArray, useRoofHeight, useElementUndoable, useUpdateSegmentVerticesMap } from './hooks';
 import {
   addUndoableResizeRoofHeight,
   RoofSegmentProps,
@@ -266,7 +260,7 @@ const HipRoof = ({
     return new Vector3(centroid2D.x, centroid2D.y, h);
   }, [centroid2D, h]);
 
-  const makeSement = (vector: Vector3[], p1: Vector3, p2: Vector3, p3: Vector3, p4?: Vector3) => {
+  const makeSegment = (vector: Vector3[], p1: Vector3, p2: Vector3, p3: Vector3, p4?: Vector3) => {
     vector.push(p1, p2, p3);
     if (p4) {
       vector.push(p4);
@@ -370,19 +364,19 @@ const HipRoof = ({
       switch (i) {
         case 0:
           length = new Vector3(wall.cx, wall.cy).sub(ridgeMidPoint.clone().setZ(0)).length();
-          makeSement(points, wallLeftPointAfterOverhang, wallRightPointAfterOverhang, ridgeRight, ridgeLeft);
+          makeSegment(points, wallLeftPointAfterOverhang, wallRightPointAfterOverhang, ridgeRight, ridgeLeft);
           break;
         case 1:
           length = new Vector3(wall.cx, wall.cy).sub(ridgeRightPoint.clone().setZ(0)).length();
-          makeSement(points, wallLeftPointAfterOverhang, wallRightPointAfterOverhang, ridgeRight, ridgeRight);
+          makeSegment(points, wallLeftPointAfterOverhang, wallRightPointAfterOverhang, ridgeRight);
           break;
         case 2:
           length = new Vector3(wall.cx, wall.cy).sub(ridgeMidPoint.clone().setZ(0)).length();
-          makeSement(points, wallLeftPointAfterOverhang, wallRightPointAfterOverhang, ridgeLeft, ridgeRight);
+          makeSegment(points, wallLeftPointAfterOverhang, wallRightPointAfterOverhang, ridgeLeft, ridgeRight);
           break;
         case 3:
           length = new Vector3(wall.cx, wall.cy).sub(ridgeLeftPoint.clone().setZ(0)).length();
-          makeSement(points, wallLeftPointAfterOverhang, wallRightPointAfterOverhang, ridgeLeft, ridgeLeft);
+          makeSegment(points, wallLeftPointAfterOverhang, wallRightPointAfterOverhang, ridgeLeft);
           break;
       }
       segments.push({ points, angle: -wall.relativeAngle, length });
@@ -431,6 +425,34 @@ const HipRoof = ({
   const { grabRef, addUndoableMove, undoMove, setOldRefData } = useElementUndoable();
   useUpdateSegmentVerticesMap(id, new Vector3(centroid2D.x, centroid2D.y, h), roofSegments);
 
+  const showSolarRadiationHeatmap = useStore(Selector.showSolarRadiationHeatmap);
+  const solarRadiationHeatmapMaxValue = useStore(Selector.viewState.solarRadiationHeatmapMaxValue);
+  const getHeatmap = useStore(Selector.getHeatmap);
+  const [heatmapTextures, setHeatmapTextures] = useState<CanvasTexture[]>([]);
+  const getRoofSegmentVertices = useStore(Selector.getRoofSegmentVertices);
+
+  useEffect(() => {
+    if (showSolarRadiationHeatmap) {
+      const n = roofSegments.length;
+      if (n > 0) {
+        const textures = [];
+        const segmentVertices = getRoofSegmentVertices(id);
+        if (segmentVertices) {
+          for (let i = 0; i < n; i++) {
+            const heatmap = getHeatmap(id + '-' + i);
+            if (heatmap) {
+              const t = Util.fetchHeatmapTexture(heatmap, solarRadiationHeatmapMaxValue ?? 5);
+              if (t) {
+                textures.push(t);
+              }
+            }
+          }
+          setHeatmapTextures(textures);
+        }
+      }
+    }
+  }, [showSolarRadiationHeatmap, solarRadiationHeatmapMaxValue]);
+
   return (
     <group position={[cx, cy, cz + 0.01]} rotation={[0, 0, rotation]} name={`Hip Roof Group ${id}`}>
       {/* roof segment group */}
@@ -454,12 +476,14 @@ const HipRoof = ({
           return (
             // Roof segment idx is important for calculate normal
             <RoofSegment
+              id={id}
               key={i}
-              idx={i}
+              index={i}
               segment={segment}
               defaultAngle={arr[0].angle}
               thickness={thickness}
               textureType={textureType}
+              heatmaps={heatmapTextures}
               color={color}
             />
           );
