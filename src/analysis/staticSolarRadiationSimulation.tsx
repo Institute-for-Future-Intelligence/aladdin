@@ -126,6 +126,8 @@ const StaticSolarRadiationSimulation = ({ city }: StaticSolarRadiationSimulation
               generateHeatmapForPyramidRoof(roof);
               break;
             case RoofType.Gable:
+            case RoofType.Gambrel:
+            case RoofType.Mansard:
               generateHeatmapForGableRoof(roof);
               break;
             case RoofType.Hip:
@@ -799,7 +801,8 @@ const StaticSolarRadiationSimulation = ({ city }: StaticSolarRadiationSimulation
   };
 
   const generateHeatmapForGableRoof = (roof: RoofModel) => {
-    if (roof.roofType !== RoofType.Gable) throw new Error('roof is not gable');
+    if (roof.roofType !== RoofType.Gable && roof.roofType !== RoofType.Gambrel && roof.roofType !== RoofType.Mansard)
+      throw new Error('roof is not gable or gambrel or mansard');
     const foundation = getFoundation(roof);
     if (!foundation) throw new Error('foundation of wall not found');
     const segments = getRoofSegmentVertices(roof.id);
@@ -931,7 +934,8 @@ const StaticSolarRadiationSimulation = ({ city }: StaticSolarRadiationSimulation
       let count = 0;
       const v = new Vector3();
       let xc, yc, zc;
-      if (index % 2 === 0) {
+      const quad = index % 2 === 0; // even number (0, 2) are quads, odd number (1, 3) are triangles
+      if (quad) {
         const s3 = s[3].clone().applyEuler(euler);
         // find the starting point of the grid
         xc = (s0.x + s1.x + s2.x + s3.x) / 4;
@@ -947,7 +951,7 @@ const StaticSolarRadiationSimulation = ({ city }: StaticSolarRadiationSimulation
         foundation.cy + s0.y + (Math.sign(yc - s0.y) * cellSize) / 2,
         foundation.lz + s0.z + (Math.sign(zc - s0.z) * cellSize) / 2,
       );
-      if (index % 2 === 0) {
+      if (quad) {
         for (let i = 0; i < 24; i++) {
           for (let j = 0; j < world.timesPerHour; j++) {
             const currentTime = new Date(year, month, date, i, j * interval);

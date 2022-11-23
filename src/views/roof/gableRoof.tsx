@@ -1209,25 +1209,25 @@ const RoofSegment = ({
     if (surfaceMeshRef.current) {
       const geo = new BufferGeometry();
       const positions = new Float32Array(18);
-      const zOffset = 0.01;
+      const zOffset = thickness + 0.01; // a small number to ensure the surface mesh stay atop;
       positions[0] = points[0].x;
       positions[1] = points[0].y;
-      positions[2] = points[0].z + thickness + zOffset; // a small number to ensure the surface mesh stay atop
+      positions[2] = points[0].z + zOffset;
       positions[3] = points[1].x;
       positions[4] = points[1].y;
-      positions[5] = points[1].z + thickness + zOffset;
+      positions[5] = points[1].z + zOffset;
       positions[6] = points[2].x;
       positions[7] = points[2].y;
-      positions[8] = points[2].z + thickness + zOffset;
+      positions[8] = points[2].z + zOffset;
       positions[9] = points[2].x;
       positions[10] = points[2].y;
-      positions[11] = points[2].z + thickness + zOffset;
+      positions[11] = points[2].z + zOffset;
       positions[12] = points[3].x;
       positions[13] = points[3].y;
-      positions[14] = points[3].z + thickness + zOffset;
+      positions[14] = points[3].z + zOffset;
       positions[15] = points[0].x;
       positions[16] = points[0].y;
-      positions[17] = points[0].z + thickness + zOffset;
+      positions[17] = points[0].z + zOffset;
       // don't call geo.setFromPoints. It doesn't seem to work correctly.
       geo.setAttribute('position', new Float32BufferAttribute(positions, 3));
       geo.computeVertexNormals();
@@ -1334,20 +1334,21 @@ const RoofSegment = ({
         <>
           <mesh
             ref={surfaceMeshRef}
-            uuid={id}
+            uuid={id + '-' + index}
             name={'Gable Roof Surface'}
             castShadow={shadowEnabled && !transparent}
             receiveShadow={shadowEnabled}
             userData={{ simulation: true }}
           >
             {showSolarRadiationHeatmap && index < heatmaps.length ? (
-              <meshBasicMaterial map={heatmaps[index]} />
+              <meshBasicMaterial map={heatmaps[index]} color={'white'} />
             ) : (
               <meshStandardMaterial
                 map={texture}
                 color={textureType === RoofTexture.Default || textureType === RoofTexture.NoTexture ? color : 'white'}
                 transparent={transparent}
                 opacity={_opacity}
+                side={DoubleSide}
               />
             )}
           </mesh>

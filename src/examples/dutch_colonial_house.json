@@ -1,7 +1,7 @@
 {
-  "docid": "1wzztECAdJhRw2sbf29PNk",
-  "time": "11/15/2022 12:32 pm",
-  "timestamp": 1668533566440,
+  "docid": "8KoMsX9VPbHDRwN3CtumqQ",
+  "time": "11/23/2022 03:57 pm",
+  "timestamp": 1669237053133,
   "userid": "QWecNcxhyvP6j6sBN11hBsfZDau1",
   "owner": null,
   "email": null,
@@ -703,20 +703,20 @@
       "parentId": "fbqvzYqiEy79jeL8wsadib",
       "foundationId": "fbqvzYqiEy79jeL8wsadib",
       "selected": false,
-      "roofId": "vCyCenkovRJf29DEpF24H5",
+      "roofId": "p1WWYMY9TmVyswdgfSEZfZ",
       "leftRoofHeight": 3.45,
       "rightRoofHeight": 3.45,
       "centerRoofHeight": [
         0,
-        6.771601580781709
+        6.716478772745814
       ],
       "centerLeftRoofHeight": [
         -0.35,
-        5.110800790390854
+        5.083239386372908
       ],
       "centerRightRoofHeight": [
         0.35,
-        5.110800790390854
+        5.083239386372908
       ],
       "locked": false,
       "wallStructure": "Default",
@@ -766,7 +766,7 @@
       "parentId": "fbqvzYqiEy79jeL8wsadib",
       "foundationId": "fbqvzYqiEy79jeL8wsadib",
       "selected": false,
-      "roofId": "vCyCenkovRJf29DEpF24H5",
+      "roofId": "p1WWYMY9TmVyswdgfSEZfZ",
       "leftRoofHeight": 3.45,
       "rightRoofHeight": 3.45,
       "locked": false,
@@ -817,7 +817,7 @@
       "parentId": "fbqvzYqiEy79jeL8wsadib",
       "foundationId": "fbqvzYqiEy79jeL8wsadib",
       "selected": false,
-      "roofId": "vCyCenkovRJf29DEpF24H5",
+      "roofId": "p1WWYMY9TmVyswdgfSEZfZ",
       "leftRoofHeight": 3.45,
       "rightRoofHeight": 3.45,
       "locked": false,
@@ -868,20 +868,20 @@
       "parentId": "fbqvzYqiEy79jeL8wsadib",
       "foundationId": "fbqvzYqiEy79jeL8wsadib",
       "selected": false,
-      "roofId": "vCyCenkovRJf29DEpF24H5",
+      "roofId": "p1WWYMY9TmVyswdgfSEZfZ",
       "leftRoofHeight": 3.45,
       "rightRoofHeight": 3.45,
       "centerRoofHeight": [
         0,
-        6.771601580781709
+        6.716478772745814
       ],
       "centerLeftRoofHeight": [
-        -0.326769752502783,
-        5.110800790390854
+        -0.35,
+        5.083239386372908
       ],
       "centerRightRoofHeight": [
         0.35,
-        5.110800790390854
+        5.083239386372908
       ],
       "locked": false,
       "wallStructure": "Default",
@@ -942,66 +942,9 @@
       "locked": false
     },
     {
-      "type": "Roof",
-      "cx": 0,
-      "cy": 0,
-      "cz": 0,
-      "lx": 0,
-      "ly": 0,
-      "lz": 6.771601580781709,
-      "overhang": 0.1,
-      "roofType": "Gambrel",
-      "wallsId": [
-        "pPpJHGJ2bGVqLdA1FpXi4V"
-      ],
-      "topRidgeLeftPoint": [
-        0,
-        1
-      ],
-      "topRidgeRightPoint": [
-        0,
-        1
-      ],
-      "frontRidgeLeftPoint": [
-        0.35,
-        0.5
-      ],
-      "frontRidgeRightPoint": [
-        -0.35,
-        0.5
-      ],
-      "backRidgeLeftPoint": [
-        0.35,
-        0.5
-      ],
-      "backRidgeRightPoint": [
-        -0.326769752502783,
-        0.5
-      ],
-      "textureType": "Roof Texture #1",
-      "color": "#454769",
-      "selected": false,
-      "showLabel": false,
-      "normal": [
-        0,
-        0,
-        1
-      ],
-      "rotation": [
-        0,
-        0,
-        0
-      ],
-      "parentId": "fbqvzYqiEy79jeL8wsadib",
-      "foundationId": "fbqvzYqiEy79jeL8wsadib",
-      "id": "vCyCenkovRJf29DEpF24H5",
-      "thickness": 0.1,
-      "locked": false
-    },
-    {
       "type": "Window",
       "cx": 0,
-      "cy": 0.1,
+      "cy": 0.3,
       "cz": 0.8730728022225684,
       "lx": 0.4000000000000002,
       "ly": 0.3,
@@ -1038,7 +981,7 @@
       "frame": true,
       "frameWidth": 0.1,
       "windowType": "Arched",
-      "archHeight": 1
+      "archHeight": 0.8
     },
     {
       "type": "Door",
@@ -1065,7 +1008,10 @@
       "parentId": "cV8MyCuhWAsvEyyFuVqVqg",
       "foundationId": "m7AH7DcnoGzAq9kryBy4RS",
       "id": "3ToGStSrcyguQUUqJUFhxz",
-      "locked": false
+      "locked": false,
+      "doorType": "Default",
+      "archHeight": 1,
+      "filled": true
     },
     {
       "type": "Window",
@@ -1343,7 +1289,10 @@
       "parentId": "beHqET5NN8aNdsuBncMpY7",
       "foundationId": "fbqvzYqiEy79jeL8wsadib",
       "id": "xfiB1ehYmvvHX7d6tsihDv",
-      "locked": false
+      "locked": false,
+      "doorType": "Default",
+      "archHeight": 1,
+      "filled": true
     },
     {
       "type": "Foundation",
@@ -1473,7 +1422,7 @@
       "rightRoofHeight": 5.812802766367991,
       "centerRoofHeight": [
         0,
-        6.575558743849475
+        6.662549619276321
       ],
       "locked": false,
       "wallStructure": "Default",
@@ -1583,7 +1532,7 @@
       "rightRoofHeight": 5.812802766367991,
       "centerRoofHeight": [
         0,
-        6.575558743849475
+        6.662549619276321
       ],
       "locked": false,
       "wallStructure": "Default",
@@ -1599,7 +1548,7 @@
       "cz": 0,
       "lx": 0,
       "ly": 0,
-      "lz": 6.575558743849475,
+      "lz": 6.662549619276321,
       "overhang": 0.1,
       "thickness": 0.1,
       "roofType": "Gable",
@@ -1730,7 +1679,7 @@
       "rightRoofHeight": 5.812802766367991,
       "centerRoofHeight": [
         0,
-        6.521198374619754
+        6.708095954440119
       ],
       "locked": false,
       "wallStructure": "Default",
@@ -1836,7 +1785,7 @@
       "rightRoofHeight": 5.812802766367991,
       "centerRoofHeight": [
         0,
-        6.521198374619754
+        6.708095954440119
       ],
       "locked": false,
       "wallStructure": "Default",
@@ -1879,7 +1828,7 @@
       "cz": 0,
       "lx": 0,
       "ly": 0,
-      "lz": 6.521198374619754,
+      "lz": 6.708095954440119,
       "overhang": 0.1,
       "thickness": 0.1,
       "roofType": "Gable",
@@ -1999,8 +1948,8 @@
     },
     {
       "type": "Foundation",
-      "cx": -9.041802357936682,
-      "cy": -3.0921393510305126,
+      "cx": -9.070583962523466,
+      "cy": -3.103266963133165,
       "cz": 0.06,
       "lx": 11.14615536602776,
       "ly": 12.338994669087592,
@@ -3257,6 +3206,65 @@
       "selected": false,
       "windowType": "Default",
       "archHeight": 1
+    },
+    {
+      "type": "Roof",
+      "cx": 0,
+      "cy": 0,
+      "cz": 0,
+      "lx": 0,
+      "ly": 0,
+      "lz": 6.716478772745814,
+      "overhang": 0.1,
+      "thickness": 0.1,
+      "roofType": "Gambrel",
+      "roofStructure": "Default",
+      "wallsId": [
+        "2RETAxyRMzZBEQkBGms56R"
+      ],
+      "topRidgeLeftPoint": [
+        0,
+        1
+      ],
+      "topRidgeRightPoint": [
+        0,
+        1
+      ],
+      "frontRidgeLeftPoint": [
+        0.35,
+        0.5
+      ],
+      "frontRidgeRightPoint": [
+        -0.35,
+        0.5
+      ],
+      "backRidgeLeftPoint": [
+        0.35,
+        0.5
+      ],
+      "backRidgeRightPoint": [
+        -0.35,
+        0.5
+      ],
+      "textureType": "Roof Texture #1",
+      "color": "#999999",
+      "selected": false,
+      "lineWidth": 0.2,
+      "lineColor": "black",
+      "showLabel": false,
+      "normal": [
+        0,
+        0,
+        1
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "parentId": "fbqvzYqiEy79jeL8wsadib",
+      "foundationId": "fbqvzYqiEy79jeL8wsadib",
+      "id": "p1WWYMY9TmVyswdgfSEZfZ"
     }
   ],
   "view": {
@@ -3264,16 +3272,16 @@
     "mapPanelY": 0,
     "dailyFresnelReflectorYieldPanelX": 0,
     "panCenter2D": [
-      -2.0229327265135257,
-      2.2298628578586905,
-      0.0000022299619732471204
+      -14.82900724213852,
+      -4.119320532763131,
+      -0.000004119503633568915
     ],
     "yearlyHeliostatYieldPanelY": 0,
     "mapPanelX": 0,
     "yearlyHeliostatYieldPanelX": 0,
     "cameraPosition2D": [
-      -2.0229327265135257,
-      2.2297128511853535,
+      -14.82900724213852,
+      -4.119470539428282,
       150
     ],
     "theme": "Rural",
@@ -3288,9 +3296,9 @@
     "dailyHeliostatYieldPanelX": 0,
     "showDailyParabolicDishYieldPanel": false,
     "cameraPosition": [
-      -17.277234110923626,
-      -16.713284662583987,
-      3.1412438939704233
+      -16.489763114681004,
+      -14.619133272753459,
+      2.281833906254426
     ],
     "showYearlyHeliostatYieldPanel": false,
     "orthographic": false,
@@ -3307,7 +3315,7 @@
     "dailyLightSensorPanelX": 0,
     "heliodon": false,
     "solarRadiationHeatMapReflectionOnly": false,
-    "cameraZoom": 28.63945562104858,
+    "cameraZoom": 35.161738318212514,
     "mapType": "roadmap",
     "showMapPanel": false,
     "yearlyParabolicDishYieldPanelY": 0,

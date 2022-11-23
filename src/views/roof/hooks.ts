@@ -136,7 +136,7 @@ export const useRoofTexture = (textureType: RoofTexture) => {
           texture.repeat.set(5, 3);
           break;
         case RoofTexture.Texture01:
-          texture.repeat.set(0.5, 0.5);
+          texture.repeat.set(0.5, 0.25);
           break;
         case RoofTexture.Texture03:
           texture.repeat.set(0.9, 0.9);
@@ -324,7 +324,8 @@ export const useUpdateSegmentVerticesMap = (
       }
     });
     if (mansardTop) {
-      vertices.push(mansardTop.map(relToFoundation));
+      // vertices.push(mansardTop.map(relToFoundation));
+      vertices.push([...mansardTop]);
     }
     useStore.getState().set((state) => {
       state.roofSegmentVerticesMap.set(roofId, vertices);

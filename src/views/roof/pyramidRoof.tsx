@@ -8,6 +8,7 @@ import { useStore } from 'src/stores/common';
 import {
   BufferGeometry,
   CanvasTexture,
+  DoubleSide,
   Euler,
   Float32BufferAttribute,
   Mesh,
@@ -642,6 +643,7 @@ const PyramidRoof = ({
         color={textureType === RoofTexture.Default || textureType === RoofTexture.NoTexture ? color : 'white'}
         transparent={transparent}
         opacity={opacity}
+        side={DoubleSide}
       />
     ),
     [texture, textureType, color, transparent, opacity],
@@ -671,7 +673,7 @@ const PyramidRoof = ({
         {isFlatRoof ? (
           <FlatRoof roofSegments={roofSegments} thickness={thickness} lineWidth={lineWidth} lineColor={lineColor}>
             {showSolarRadiationHeatmap && flatHeatmapTexture ? (
-              <meshBasicMaterial attach="material" map={flatHeatmapTexture} />
+              <meshBasicMaterial attach="material" map={flatHeatmapTexture} color={'white'} />
             ) : (
               normalMaterial
             )}
@@ -694,7 +696,7 @@ const PyramidRoof = ({
                         thickness={thickness}
                       >
                         {showSolarRadiationHeatmap && idx < heatmapTextures.length ? (
-                          <meshBasicMaterial attach="material" map={heatmapTextures[idx]} />
+                          <meshBasicMaterial attach="material" map={heatmapTextures[idx]} color={'white'} />
                         ) : (
                           normalMaterial
                         )}
@@ -811,16 +813,16 @@ const RoofSegment = ({
       const mid = v20.dot(v10.normalize()) / length10;
       const geo = new BufferGeometry();
       const positions = new Float32Array(9);
-      const zOffset = 0.01;
+      const zOffset = thickness + 0.01; // a small number to ensure the surface mesh stay atop
       positions[0] = points[0].x;
       positions[1] = points[0].y;
-      positions[2] = points[0].z + thickness + zOffset; // a small number to ensure the surface mesh stay atop
+      positions[2] = points[0].z + zOffset;
       positions[3] = points[1].x;
       positions[4] = points[1].y;
-      positions[5] = points[1].z + thickness + zOffset;
+      positions[5] = points[1].z + zOffset;
       positions[6] = points[2].x;
       positions[7] = points[2].y;
-      positions[8] = points[2].z + thickness + zOffset;
+      positions[8] = points[2].z + zOffset;
       // don't call geo.setFromPoints. It doesn't seem to work correctly.
       geo.setAttribute('position', new Float32BufferAttribute(positions, 3));
       geo.computeVertexNormals();

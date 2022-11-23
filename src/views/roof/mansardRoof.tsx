@@ -560,22 +560,20 @@ const MansardRoof = ({
 
   useEffect(() => {
     if (showSolarRadiationHeatmap) {
-      const n = roofSegments.length;
-      if (n > 0) {
-        const textures = [];
-        const segmentVertices = getRoofSegmentVertices(id);
-        if (segmentVertices) {
-          for (let i = 0; i < n; i++) {
-            const heatmap = getHeatmap(id + '-' + i);
-            if (heatmap) {
-              const t = Util.fetchHeatmapTexture(heatmap, solarRadiationHeatmapMaxValue ?? 5);
-              if (t) {
-                textures.push(t);
-              }
+      const n = roofSegments.length + 1; // roofSegments does not include the top surface, so we add 1 here.
+      const textures = [];
+      const segmentVertices = getRoofSegmentVertices(id);
+      if (segmentVertices) {
+        for (let i = 0; i < n; i++) {
+          const heatmap = getHeatmap(id + '-' + i);
+          if (heatmap) {
+            const t = Util.fetchHeatmapTexture(heatmap, solarRadiationHeatmapMaxValue ?? 5);
+            if (t) {
+              textures.push(t);
             }
           }
-          setHeatmapTextures(textures);
         }
+        setHeatmapTextures(textures);
       }
     }
   }, [showSolarRadiationHeatmap, solarRadiationHeatmapMaxValue]);
@@ -615,16 +613,22 @@ const MansardRoof = ({
         })}
         <Extrude
           args={[topRidgeShape, { steps: 1, depth: thickness, bevelEnabled: false }]}
+          uuid={id + '-4'}
+          name={'Mansard roof top surface'}
           castShadow={shadowEnabled && !transparent}
           receiveShadow={shadowEnabled}
           userData={{ simulation: true }}
         >
-          <meshStandardMaterial
-            color={textureType === RoofTexture.Default || textureType === RoofTexture.NoTexture ? color : 'white'}
-            map={texture}
-            transparent={transparent}
-            opacity={opacity}
-          />
+          {showSolarRadiationHeatmap && heatmapTextures.length === 5 ? (
+            <meshBasicMaterial map={heatmapTextures[4]} />
+          ) : (
+            <meshStandardMaterial
+              color={textureType === RoofTexture.Default || textureType === RoofTexture.NoTexture ? color : 'white'}
+              map={texture}
+              transparent={transparent}
+              opacity={opacity}
+            />
+          )}
         </Extrude>
         {roofSegments.length > 0 && (
           <MansardRoofWirefram

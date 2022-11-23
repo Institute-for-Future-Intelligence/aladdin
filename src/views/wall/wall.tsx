@@ -1791,7 +1791,7 @@ const Wall = (wallModel: WallModel) => {
               >
                 <shapeBufferGeometry args={[outsideWallShape]} />
                 {showSolarRadiationHeatmap && heatmapTexture ? (
-                  <meshBasicMaterial attach="material" map={heatmapTexture} />
+                  <meshBasicMaterial attach="material" map={heatmapTexture} color={'white'} />
                 ) : (
                   <meshStandardMaterial
                     attach="material"
