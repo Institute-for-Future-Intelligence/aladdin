@@ -1,3 +1,7 @@
+/*
+ * @Copyright 2022. Institute for Future Intelligence, Inc.
+ */
+
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { ElementModel } from 'src/models/ElementModel';
 import { SolarPanelModel } from 'src/models/SolarPanelModel';

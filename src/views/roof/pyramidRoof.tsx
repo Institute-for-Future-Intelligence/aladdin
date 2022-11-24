@@ -6,7 +6,6 @@ import React, { useEffect, useMemo, useRef, useState } from 'react';
 import { PyramidRoofModel, RoofModel } from 'src/models/RoofModel';
 import { useStore } from 'src/stores/common';
 import {
-  BufferGeometry,
   CanvasTexture,
   DoubleSide,
   Euler,
@@ -807,52 +806,51 @@ const RoofSegment = ({
   const surfaceMeshRef = useRef<Mesh>(null);
   const bulkMeshRef = useRef<Mesh>(null);
   const { transparent } = useTransparent();
-  const { invalidate } = useThree();
 
   useEffect(() => {
     if (bulkMeshRef.current) {
       bulkMeshRef.current.geometry = new ConvexGeometry(points, angle, length);
     }
     if (surfaceMeshRef.current) {
-      const v10 = new Vector3().subVectors(points[1], points[0]);
-      const v20 = new Vector3().subVectors(points[2], points[0]);
-      const length10 = v10.length();
-      // find the position of the top point relative to the first edge point
-      const mid = v20.dot(v10.normalize()) / length10;
-      const geo = new BufferGeometry();
-      const positions = new Float32Array(9);
-      const zOffset = thickness + 0.01; // a small number to ensure the surface mesh stay atop
-      positions[0] = points[0].x;
-      positions[1] = points[0].y;
-      positions[2] = points[0].z + zOffset;
-      positions[3] = points[1].x;
-      positions[4] = points[1].y;
-      positions[5] = points[1].z + zOffset;
-      positions[6] = points[2].x;
-      positions[7] = points[2].y;
-      positions[8] = points[2].z + zOffset;
-      // don't call geo.setFromPoints. It doesn't seem to work correctly.
-      geo.setAttribute('position', new Float32BufferAttribute(positions, 3));
-      geo.computeVertexNormals();
-      const uvs = [];
-      const scale = showSolarRadiationHeatmap ? 1 : 10;
-      uvs.push(0, 0);
-      uvs.push(scale, 0);
-      uvs.push(mid * scale, scale);
-      geo.setAttribute('uv', new Float32BufferAttribute(uvs, 2));
-      // TODO: if has window
-      // const h: Vector3[] = [];
-      // h.push(new Vector3(0, 0, -3));
-      // h.push(new Vector3(0, 0, 3));
-      // h.push(new Vector3(1, 1, -3));
-      // h.push(new Vector3(1, 1, 3));
-      // h.push(new Vector3(1, -1, -3));
-      // h.push(new Vector3(1, -1, 3));
-      // const holeMesh = new Mesh(new ConvexGeometry(h), mat);
-      // const res = CSG.subtract(roofMesh, holeMesh);
-      // meshRef.current.geometry = res.geometry;
-      surfaceMeshRef.current.geometry = geo;
-      invalidate();
+      const geo = surfaceMeshRef.current.geometry;
+      if (geo) {
+        const v10 = new Vector3().subVectors(points[1], points[0]);
+        const v20 = new Vector3().subVectors(points[2], points[0]);
+        const length10 = v10.length();
+        // find the position of the top point relative to the first edge point
+        const mid = v20.dot(v10.normalize()) / length10;
+        const positions = new Float32Array(9);
+        const zOffset = thickness + 0.01; // a small number to ensure the surface mesh stay atop
+        positions[0] = points[0].x;
+        positions[1] = points[0].y;
+        positions[2] = points[0].z + zOffset;
+        positions[3] = points[1].x;
+        positions[4] = points[1].y;
+        positions[5] = points[1].z + zOffset;
+        positions[6] = points[2].x;
+        positions[7] = points[2].y;
+        positions[8] = points[2].z + zOffset;
+        // don't call geo.setFromPoints. It doesn't seem to work correctly.
+        geo.setAttribute('position', new Float32BufferAttribute(positions, 3));
+        geo.computeVertexNormals();
+        const uvs = [];
+        const scale = showSolarRadiationHeatmap ? 1 : 10;
+        uvs.push(0, 0);
+        uvs.push(scale, 0);
+        uvs.push(mid * scale, scale);
+        geo.setAttribute('uv', new Float32BufferAttribute(uvs, 2));
+        // TODO: if has window
+        // const h: Vector3[] = [];
+        // h.push(new Vector3(0, 0, -3));
+        // h.push(new Vector3(0, 0, 3));
+        // h.push(new Vector3(1, 1, -3));
+        // h.push(new Vector3(1, 1, 3));
+        // h.push(new Vector3(1, -1, -3));
+        // h.push(new Vector3(1, -1, 3));
+        // const holeMesh = new Mesh(new ConvexGeometry(h), mat);
+        // const res = CSG.subtract(roofMesh, holeMesh);
+        // meshRef.current.geometry = res.geometry;
+      }
     }
   }, [points, angle, length, thickness, showSolarRadiationHeatmap]);
 

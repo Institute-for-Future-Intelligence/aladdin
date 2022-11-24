@@ -9,7 +9,6 @@ import { WallModel } from 'src/models/WallModel';
 import { useStore } from 'src/stores/common';
 import * as Selector from 'src/stores/selector';
 import {
-  BufferGeometry,
   CanvasTexture,
   DoubleSide,
   Euler,
@@ -1203,40 +1202,41 @@ const RoofSegment = ({
     const thickness = wallLeftAfterOverhang.z - wallLeft.z;
 
     if (surfaceMeshRef.current) {
-      const geo = new BufferGeometry();
-      const positions = new Float32Array(18);
-      const zOffset = thickness + 0.01; // a small number to ensure the surface mesh stay atop;
-      positions[0] = points[0].x;
-      positions[1] = points[0].y;
-      positions[2] = points[0].z + zOffset;
-      positions[3] = points[1].x;
-      positions[4] = points[1].y;
-      positions[5] = points[1].z + zOffset;
-      positions[6] = points[2].x;
-      positions[7] = points[2].y;
-      positions[8] = points[2].z + zOffset;
-      positions[9] = points[2].x;
-      positions[10] = points[2].y;
-      positions[11] = points[2].z + zOffset;
-      positions[12] = points[3].x;
-      positions[13] = points[3].y;
-      positions[14] = points[3].z + zOffset;
-      positions[15] = points[0].x;
-      positions[16] = points[0].y;
-      positions[17] = points[0].z + zOffset;
-      // don't call geo.setFromPoints. It doesn't seem to work correctly.
-      geo.setAttribute('position', new Float32BufferAttribute(positions, 3));
-      geo.computeVertexNormals();
-      const uvs = [];
-      const scale = showSolarRadiationHeatmap ? 1 : 5;
-      uvs.push(0, 0);
-      uvs.push(scale, 0);
-      uvs.push(scale, scale);
-      uvs.push(scale, scale);
-      uvs.push(0, scale);
-      uvs.push(0, 0);
-      geo.setAttribute('uv', new Float32BufferAttribute(uvs, 2));
-      surfaceMeshRef.current.geometry = geo;
+      const geo = surfaceMeshRef.current.geometry;
+      if (geo) {
+        const positions = new Float32Array(18);
+        const zOffset = thickness + 0.01; // a small number to ensure the surface mesh stay atop;
+        positions[0] = points[0].x;
+        positions[1] = points[0].y;
+        positions[2] = points[0].z + zOffset;
+        positions[3] = points[1].x;
+        positions[4] = points[1].y;
+        positions[5] = points[1].z + zOffset;
+        positions[6] = points[2].x;
+        positions[7] = points[2].y;
+        positions[8] = points[2].z + zOffset;
+        positions[9] = points[2].x;
+        positions[10] = points[2].y;
+        positions[11] = points[2].z + zOffset;
+        positions[12] = points[3].x;
+        positions[13] = points[3].y;
+        positions[14] = points[3].z + zOffset;
+        positions[15] = points[0].x;
+        positions[16] = points[0].y;
+        positions[17] = points[0].z + zOffset;
+        // don't call geo.setFromPoints. It doesn't seem to work correctly.
+        geo.setAttribute('position', new Float32BufferAttribute(positions, 3));
+        geo.computeVertexNormals();
+        const uvs = [];
+        const scale = showSolarRadiationHeatmap ? 1 : 5;
+        uvs.push(0, 0);
+        uvs.push(scale, 0);
+        uvs.push(scale, scale);
+        uvs.push(scale, scale);
+        uvs.push(0, scale);
+        uvs.push(0, 0);
+        geo.setAttribute('uv', new Float32BufferAttribute(uvs, 2));
+      }
     }
 
     if (bulkMeshRef.current) {
