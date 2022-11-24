@@ -546,7 +546,10 @@ const MansardRoof = ({
     id,
     centroid,
     roofSegments,
-    ridgePoints.reduce((acc, curr) => acc.concat(curr.leftPoint), [] as Vector3[]),
+    ridgePoints.reduce(
+      (acc, curr) => acc.concat(curr.leftPoint.clone().sub(centroid).add(thicknessVector)),
+      [] as Vector3[],
+    ),
   );
 
   const showSolarRadiationHeatmap = useStore(Selector.showSolarRadiationHeatmap);

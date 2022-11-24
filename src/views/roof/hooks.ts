@@ -324,8 +324,7 @@ export const useUpdateSegmentVerticesMap = (
       }
     });
     if (mansardTop) {
-      // vertices.push(mansardTop.map(relToFoundation));
-      vertices.push([...mansardTop]);
+      vertices.push(mansardTop.map(relToFoundation));
     }
     useStore.getState().set((state) => {
       state.roofSegmentVerticesMap.set(roofId, vertices);
@@ -347,5 +346,5 @@ export const useUpdateSegmentVerticesMap = (
     } else if (roofSegments.length > 0) {
       debouncedUpdate(roofSegments, centroid, mansardTop);
     }
-  }, [roofSegments, centroid, mansardTop]);
+  }, [roofSegments, centroid]);
 };
