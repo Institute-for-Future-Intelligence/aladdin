@@ -54,6 +54,7 @@ const zeroVector = new Vector3();
 const zVector3 = new Vector3(0, 0, 1);
 
 interface FlatRoofProps {
+  id: string;
   roofSegments: RoofSegmentProps[];
   thickness: number;
   children: React.ReactNode;
@@ -61,7 +62,7 @@ interface FlatRoofProps {
   lineColor: string;
 }
 
-const FlatRoof = ({ roofSegments, thickness, lineColor, lineWidth, children }: FlatRoofProps) => {
+const FlatRoof = ({ id, roofSegments, thickness, lineColor, lineWidth, children }: FlatRoofProps) => {
   const shadowEnabled = useStore(Selector.viewState.shadowEnabled);
   const { transparent } = useTransparent();
 
@@ -110,6 +111,7 @@ const FlatRoof = ({ roofSegments, thickness, lineColor, lineWidth, children }: F
         name={'Pyramid Roof Extrude'}
         castShadow={shadowEnabled && !transparent}
         receiveShadow={shadowEnabled}
+        uuid={id}
         userData={{ simulation: true }}
       >
         <shapeBufferGeometry args={[shape]}></shapeBufferGeometry>
@@ -643,7 +645,7 @@ const PyramidRoof = ({
         color={textureType === RoofTexture.Default || textureType === RoofTexture.NoTexture ? color : 'white'}
         transparent={transparent}
         opacity={opacity}
-        side={DoubleSide}
+        // side={DoubleSide}
       />
     ),
     [texture, textureType, color, transparent, opacity],
@@ -671,7 +673,13 @@ const PyramidRoof = ({
         }}
       >
         {isFlatRoof ? (
-          <FlatRoof roofSegments={roofSegments} thickness={thickness} lineWidth={lineWidth} lineColor={lineColor}>
+          <FlatRoof
+            id={id}
+            roofSegments={roofSegments}
+            thickness={thickness}
+            lineWidth={lineWidth}
+            lineColor={lineColor}
+          >
             {showSolarRadiationHeatmap && flatHeatmapTexture ? (
               <meshBasicMaterial attach="material" map={flatHeatmapTexture} color={'white'} />
             ) : (

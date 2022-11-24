@@ -15,7 +15,7 @@ import * as Selector from 'src/stores/selector';
 import { ObjectType, RoofTexture } from 'src/types';
 import { UnoableResizeGambrelAndMansardRoofRidge } from 'src/undo/UndoableResize';
 import { Util } from 'src/Util';
-import { CanvasTexture, DoubleSide, Euler, Mesh, Shape, Vector3 } from 'three';
+import { BufferGeometry, CanvasTexture, DoubleSide, Euler, Float32BufferAttribute, Mesh, Shape, Vector3 } from 'three';
 import {
   useMultiCurrWallArray,
   useRoofHeight,
@@ -451,7 +451,6 @@ const MansardRoof = ({
     if (ridgePoints.length > 0) {
       const startPoint = ridgePoints[0].leftPoint.clone().sub(centroid);
       s.moveTo(startPoint.x, startPoint.y);
-
       for (const point of ridgePoints) {
         const rightPoint = point.rightPoint.clone().sub(centroid);
         s.lineTo(rightPoint.x, rightPoint.y);
@@ -554,6 +553,8 @@ const MansardRoof = ({
   const solarRadiationHeatmapMaxValue = useStore(Selector.viewState.solarRadiationHeatmapMaxValue);
   const getHeatmap = useStore(Selector.getHeatmap);
   const [heatmapTextures, setHeatmapTextures] = useState<CanvasTexture[]>([]);
+  const topSurfaceMeshRef = useRef<Mesh>(null);
+  const { invalidate } = useThree();
 
   useEffect(() => {
     if (showSolarRadiationHeatmap) {
@@ -571,6 +572,54 @@ const MansardRoof = ({
       setHeatmapTextures(textures);
     }
   }, [showSolarRadiationHeatmap, solarRadiationHeatmapMaxValue]);
+
+  // useEffect(() => {
+  //   if (topSurfaceMeshRef.current) {
+  //     const v10 = new Vector3().subVectors(points[1], points[0]);
+  //     const v20 = new Vector3().subVectors(points[2], points[0]);
+  //     const v21 = new Vector3().subVectors(points[2], points[1]);
+  //     // find the distance from top to the edge: https://mathworld.wolfram.com/Point-LineDistance3-Dimensional.html
+  //     const length10 = v10.length();
+  //     const distance = new Vector3().crossVectors(v20, v21).length() / length10;
+  //     const normal = new Vector3().crossVectors(v20, v21);
+  //     const side = new Vector3().crossVectors(normal, v10).normalize().multiplyScalar(distance);
+  //     const p3 = points[0].clone().add(side);
+  //     const p4 = points[1].clone().add(side);
+  //     const geo = new BufferGeometry();
+  //     const positions = new Float32Array(18);
+  //     positions[0]=points[0].x;
+  //     positions[1]=points[0].y;
+  //     positions[2]=points[0].z;
+  //     positions[3]=points[1].x;
+  //     positions[4]=points[1].y;
+  //     positions[5]=points[1].z;
+  //     positions[6]=p3.x;
+  //     positions[7]=p3.y;
+  //     positions[8]=p3.z;
+  //     positions[9]=p3.x;
+  //     positions[10]=p3.y;
+  //     positions[11]=p3.z;
+  //     positions[12]=points[1].x;
+  //     positions[13]=points[1].y;
+  //     positions[14]=points[1].z;
+  //     positions[15]=p4.x;
+  //     positions[16]=p4.y;
+  //     positions[17]=p4.z;
+  //     geo.setAttribute( 'position', new Float32BufferAttribute( positions, 3 ));
+  //     geo.computeVertexNormals();
+  //     v10.normalize();
+  //     const uvs = [];
+  //     uvs.push(0, 0);
+  //     uvs.push(1, 0);
+  //     uvs.push(0, 1);
+  //     uvs.push(0, 1);
+  //     uvs.push(1, 0);
+  //     uvs.push(1, 1);
+  //     geo.setAttribute( 'uv', new Float32BufferAttribute( uvs, 2 ));
+  //     topSurfaceMeshRef.current.geometry = geo;
+  //     invalidate();
+  //   }
+  // }, [points, thickness, showSolarRadiationHeatmap]);
 
   return (
     <group position={[cx, cy, cz + 0.01]} rotation={[0, 0, rotationZ]} name={`Mansard Roof Group ${id}`}>
