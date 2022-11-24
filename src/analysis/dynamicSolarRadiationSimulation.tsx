@@ -36,6 +36,7 @@ import { FresnelReflectorModel } from '../models/FresnelReflectorModel';
 import { HeliostatModel } from '../models/HeliostatModel';
 import { WallModel } from '../models/WallModel';
 import { Point2 } from '../models/Point2';
+import { RoofModel, RoofType } from '../models/RoofModel';
 
 export interface DynamicSolarRadiationSimulationProps {
   city: string | null;
@@ -54,6 +55,7 @@ const DynamicSolarRadiationSimulation = ({ city }: DynamicSolarRadiationSimulati
   const runSimulation = useStore(Selector.runDynamicSimulation);
   const pauseSimulation = useStore(Selector.pauseSimulation);
   const solarRadiationHeatmapReflectionOnly = useStore(Selector.viewState.solarRadiationHeatmapReflectionOnly);
+  const getRoofSegmentVertices = useStore(Selector.getRoofSegmentVertices);
 
   const { scene } = useThree();
   const lang = { lng: language };
@@ -180,6 +182,29 @@ const DynamicSolarRadiationSimulation = ({ city }: DynamicSolarRadiationSimulati
           setCuboidHeatmap(e.id, 'west', scaleFactor);
           setCuboidHeatmap(e.id, 'east', scaleFactor);
           break;
+        case ObjectType.Roof:
+          const roof = e as RoofModel;
+          const segments = getRoofSegmentVertices(roof.id);
+          if (segments) {
+            const n = segments.length;
+            for (let i = 0; i < n; i++) {
+              const uuid = roof.id + '-' + i;
+              const data = cellOutputsMapRef.current.get(uuid);
+              if (data) {
+                for (let i = 0; i < data.length; i++) {
+                  for (let j = 0; j < data[i].length; j++) {
+                    data[i][j] *= scaleFactor;
+                  }
+                }
+                // send a copy of the heat map data to common store for visualization
+                setHeatmap(
+                  uuid,
+                  data.map((a) => [...a]),
+                );
+              }
+            }
+          }
+          break;
       }
       if (e.type === ObjectType.Foundation) {
         const foundation = e as FoundationModel;
@@ -288,7 +313,20 @@ const DynamicSolarRadiationSimulation = ({ city }: DynamicSolarRadiationSimulati
               calculateWall(e as WallModel);
               break;
             case ObjectType.Roof:
-              // TODO
+              const roof = e as RoofModel;
+              switch (roof.roofType) {
+                case RoofType.Pyramid:
+                  //calculatePyramidRoof(roof);
+                  break;
+                case RoofType.Gable:
+                case RoofType.Gambrel:
+                case RoofType.Mansard:
+                  calculateGableRoof(roof);
+                  break;
+                case RoofType.Hip:
+                  //calculateHipRoof(roof);
+                  break;
+              }
               break;
           }
         }
@@ -585,6 +623,81 @@ const DynamicSolarRadiationSimulation = ({ city }: DynamicSolarRadiationSimulati
             if (!inShadow(wall.id, v, sunDirection)) {
               // direct radiation
               cellOutputs[kx][kz] += dot * peakRadiation;
+            }
+          }
+        }
+      }
+    }
+  };
+
+  const calculateGableRoof = (roof: RoofModel) => {
+    if (roof.roofType !== RoofType.Gable && roof.roofType !== RoofType.Gambrel && roof.roofType !== RoofType.Mansard)
+      throw new Error('roof is not gable or gambrel or mansard');
+    const sunDirection = getSunDirection(now, world.latitude);
+    if (sunDirection.z <= 0) return; // when the sun is not out
+    const foundation = getFoundation(roof);
+    if (!foundation) throw new Error('foundation of wall not found');
+    const segments = getRoofSegmentVertices(roof.id);
+    if (!segments || segments.length === 0) return;
+    const dayOfYear = Util.dayOfYear(now);
+    const euler = new Euler(0, 0, foundation.rotation[2], 'ZYX');
+    // send heat map data to common store for visualization
+    for (const [index, s] of segments.entries()) {
+      const uuid = roof.id + '-' + index;
+      const s0 = s[0].clone().applyEuler(euler);
+      const s1 = s[1].clone().applyEuler(euler);
+      const s2 = s[2].clone().applyEuler(euler);
+      const v10 = new Vector3().subVectors(s1, s0);
+      const v20 = new Vector3().subVectors(s2, s0);
+      const v21 = new Vector3().subVectors(s2, s1);
+      const length10 = v10.length();
+      // find the distance from top to the edge: https://mathworld.wolfram.com/Point-LineDistance3-Dimensional.html
+      const distance = new Vector3().crossVectors(v20, v21).length() / length10;
+      const m = Math.max(2, Math.round(length10 / cellSize));
+      const n = Math.max(2, Math.round(distance / cellSize));
+      let cellOutputs = cellOutputsMapRef.current.get(uuid);
+      if (!cellOutputs || cellOutputs.length !== m || cellOutputs[0].length !== n) {
+        cellOutputs = Array(m)
+          .fill(0)
+          .map(() => Array(n).fill(0));
+        cellOutputsMapRef.current.set(uuid, cellOutputs);
+      }
+      v10.normalize();
+      v20.normalize();
+      v21.normalize();
+      // find the normal vector of the quad
+      const normal = new Vector3().crossVectors(v20, v21).normalize();
+      // find the incremental vector going along the bottom edge (half of length)
+      const dm = v10.multiplyScalar((0.5 * length10) / m);
+      // find the incremental vector going from bottom to top (half of length)
+      const dn = new Vector3()
+        .crossVectors(normal, v10)
+        .normalize()
+        .multiplyScalar((0.5 * distance) / n);
+      // find the starting point of the grid (shift half of length in both directions)
+      const v0 = new Vector3(foundation.cx + s0.x, foundation.cy + s0.y, foundation.lz + s0.z);
+      v0.add(dm).add(dn);
+      // double half-length to full-length for the increment vectors in both directions
+      dm.multiplyScalar(2);
+      dn.multiplyScalar(2);
+      const v = new Vector3();
+      const peakRadiation = calculatePeakRadiation(sunDirection, dayOfYear, elevation, AirMass.SPHERE_MODEL);
+      const indirectRadiation = calculateDiffuseAndReflectedRadiation(
+        world.ground,
+        now.getMonth(),
+        normal,
+        peakRadiation,
+      );
+      const dot = normal.dot(sunDirection);
+      for (let p = 0; p < m; p++) {
+        const dmp = dm.clone().multiplyScalar(p);
+        for (let q = 0; q < n; q++) {
+          cellOutputs[p][q] += indirectRadiation;
+          if (dot > 0) {
+            v.copy(v0).add(dmp).add(dn.clone().multiplyScalar(q));
+            if (!inShadow(uuid, v, sunDirection)) {
+              // direct radiation
+              cellOutputs[p][q] += dot * peakRadiation;
             }
           }
         }

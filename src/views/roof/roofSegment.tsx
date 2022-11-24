@@ -156,7 +156,7 @@ export const RoofSegment = ({
         position={[0, 0, 0.01]}
       >
         {showSolarRadiationHeatmap && index >= 0 && index < heatmaps.length ? (
-          <meshBasicMaterial map={heatmaps[index]} color={'white'} />
+          <meshBasicMaterial map={heatmaps[index]} color={'white'} needsUpdate={true} />
         ) : (
           <meshBasicMaterial color={'white'} />
         )}

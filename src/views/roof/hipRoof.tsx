@@ -55,7 +55,6 @@ const HipRoofWireframe = React.memo(({ roofSegments, thickness, lineWidth, lineC
   const isFlat = Math.abs(roofSegments[0].points[0].z) < 0.015;
   const leftRidge = roofSegments[0].points[3].clone().add(thicknessVector);
   const rightRidge = roofSegments[0].points[2].clone().add(thicknessVector);
-
   const periphery = <Line points={peripheryPoints} lineWidth={lineWidth} color={lineColor} />;
 
   return (
@@ -66,11 +65,7 @@ const HipRoofWireframe = React.memo(({ roofSegments, thickness, lineWidth, lineC
         {periphery}
         {roofSegments.map((segment, idx) => {
           const [leftRoof, rightRoof, rightRidge, leftRidge] = segment.points;
-          const isFlat = Math.abs(leftRoof.z) < 0.015;
           const points = [leftRoof.clone().sub(thicknessVector), leftRoof];
-          if (!isFlat) {
-            points.push(leftRidge);
-          }
           return <Line key={idx} points={points} lineWidth={lineWidth} color={lineColor} />;
         })}
       </group>

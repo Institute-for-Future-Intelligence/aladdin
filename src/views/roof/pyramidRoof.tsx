@@ -870,7 +870,7 @@ const RoofSegment = ({
         position={[0, 0, 0.01]}
       >
         {showSolarRadiationHeatmap ? (
-          <meshBasicMaterial map={heatmap} color={'white'} />
+          <meshBasicMaterial map={heatmap} color={'white'} needsUpdate={true} />
         ) : (
           <meshBasicMaterial color={'white'} />
         )}
