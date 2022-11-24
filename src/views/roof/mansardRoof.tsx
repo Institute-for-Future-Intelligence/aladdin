@@ -568,6 +568,11 @@ const MansardRoof = ({
         if (heatmap) {
           const t = Util.fetchHeatmapTexture(heatmap, solarRadiationHeatmapMaxValue ?? 5);
           if (t) {
+            if (i === 4) {
+              // FIXME: I have no idea why this texture needs to be rotated 90 degrees
+              t.center.set(0.5, 0.5);
+              t.rotation = HALF_PI;
+            }
             textures.push(t);
           }
         }
@@ -576,53 +581,46 @@ const MansardRoof = ({
     }
   }, [showSolarRadiationHeatmap, solarRadiationHeatmapMaxValue]);
 
-  // useEffect(() => {
-  //   if (topSurfaceMeshRef.current) {
-  //     const v10 = new Vector3().subVectors(points[1], points[0]);
-  //     const v20 = new Vector3().subVectors(points[2], points[0]);
-  //     const v21 = new Vector3().subVectors(points[2], points[1]);
-  //     // find the distance from top to the edge: https://mathworld.wolfram.com/Point-LineDistance3-Dimensional.html
-  //     const length10 = v10.length();
-  //     const distance = new Vector3().crossVectors(v20, v21).length() / length10;
-  //     const normal = new Vector3().crossVectors(v20, v21);
-  //     const side = new Vector3().crossVectors(normal, v10).normalize().multiplyScalar(distance);
-  //     const p3 = points[0].clone().add(side);
-  //     const p4 = points[1].clone().add(side);
-  //     const geo = new BufferGeometry();
-  //     const positions = new Float32Array(18);
-  //     positions[0]=points[0].x;
-  //     positions[1]=points[0].y;
-  //     positions[2]=points[0].z;
-  //     positions[3]=points[1].x;
-  //     positions[4]=points[1].y;
-  //     positions[5]=points[1].z;
-  //     positions[6]=p3.x;
-  //     positions[7]=p3.y;
-  //     positions[8]=p3.z;
-  //     positions[9]=p3.x;
-  //     positions[10]=p3.y;
-  //     positions[11]=p3.z;
-  //     positions[12]=points[1].x;
-  //     positions[13]=points[1].y;
-  //     positions[14]=points[1].z;
-  //     positions[15]=p4.x;
-  //     positions[16]=p4.y;
-  //     positions[17]=p4.z;
-  //     geo.setAttribute( 'position', new Float32BufferAttribute( positions, 3 ));
-  //     geo.computeVertexNormals();
-  //     v10.normalize();
-  //     const uvs = [];
-  //     uvs.push(0, 0);
-  //     uvs.push(1, 0);
-  //     uvs.push(0, 1);
-  //     uvs.push(0, 1);
-  //     uvs.push(1, 0);
-  //     uvs.push(1, 1);
-  //     geo.setAttribute( 'uv', new Float32BufferAttribute( uvs, 2 ));
-  //     topSurfaceMeshRef.current.geometry = geo;
-  //     invalidate();
-  //   }
-  // }, [points, thickness, showSolarRadiationHeatmap]);
+  useEffect(() => {
+    if (topSurfaceMeshRef.current) {
+      const points = topRidgeShape.extractPoints(1).shape;
+      const geo = new BufferGeometry();
+      const positions = new Float32Array(18);
+      const zOffset = 0.01; // a small number to ensure the surface mesh stay atop
+      positions[0] = points[3].x;
+      positions[1] = points[3].y;
+      positions[2] = zOffset;
+      positions[3] = points[0].x;
+      positions[4] = points[0].y;
+      positions[5] = zOffset;
+      positions[6] = points[2].x;
+      positions[7] = points[2].y;
+      positions[8] = zOffset;
+      positions[9] = points[2].x;
+      positions[10] = points[2].y;
+      positions[11] = zOffset;
+      positions[12] = points[0].x;
+      positions[13] = points[0].y;
+      positions[14] = zOffset;
+      positions[15] = points[1].x;
+      positions[16] = points[1].y;
+      positions[17] = zOffset;
+      // don't call geo.setFromPoints. It doesn't seem to work correctly.
+      geo.setAttribute('position', new Float32BufferAttribute(positions, 3));
+      geo.computeVertexNormals();
+      const scale = showSolarRadiationHeatmap ? 1 : 5;
+      const uvs = [];
+      uvs.push(0, 0);
+      uvs.push(scale, 0);
+      uvs.push(0, scale);
+      uvs.push(0, scale);
+      uvs.push(scale, 0);
+      uvs.push(scale, scale);
+      geo.setAttribute('uv', new Float32BufferAttribute(uvs, 2));
+      topSurfaceMeshRef.current.geometry = geo;
+      invalidate();
+    }
+  }, [topRidgeShape, showSolarRadiationHeatmap]);
 
   return (
     <group position={[cx, cy, cz + 0.01]} rotation={[0, 0, rotationZ]} name={`Mansard Roof Group ${id}`}>
@@ -666,13 +664,14 @@ const MansardRoof = ({
         </Extrude>
         <mesh
           uuid={id + '-4'}
+          ref={topSurfaceMeshRef}
           name={'Mansard Roof Top Surface'}
           position={[0, 0, thickness + 0.01]}
           castShadow={shadowEnabled && !transparent}
           receiveShadow={shadowEnabled}
           userData={{ simulation: true }}
         >
-          <shapeBufferGeometry args={[topRidgeShape]}></shapeBufferGeometry>
+          {/*<shapeBufferGeometry args={[topRidgeShape]}></shapeBufferGeometry>*/}
           {showSolarRadiationHeatmap && heatmapTextures.length === 5 ? (
             <meshBasicMaterial map={heatmapTextures[4]} color={'white'} />
           ) : (
