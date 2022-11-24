@@ -731,24 +731,21 @@ const StaticSolarRadiationSimulation = ({ city }: StaticSolarRadiationSimulation
         const m2 = (m * v20.dot(v10)) / length10;
         v20.normalize();
         v21.normalize();
-        // find the normal vector of the plane
-        const normal = new Vector3().crossVectors(v20, v21);
-        // find the starting point of the grid
-        const xc = (s0.x + s1.x + s2.x) / 3;
-        const yc = (s0.y + s1.y + s2.y) / 3;
-        const zc = (s0.z + s1.z + s2.z) / 3;
-        const v0 = new Vector3(
-          foundation.cx + s0.x + (Math.sign(xc - s0.x) * cellSize) / 2,
-          foundation.cy + s0.y + (Math.sign(yc - s0.y) * cellSize) / 2,
-          foundation.lz + s0.z + (Math.sign(zc - s0.z) * cellSize) / 2,
-        );
-        // find the incremental vector going along the bottom edge
-        const dm = v10.multiplyScalar(length10 / m);
-        // find the incremental vector going from bottom to top
+        // find the normal vector of the plane (must normalize the cross product as it is not normalized!)
+        const normal = new Vector3().crossVectors(v20, v21).normalize();
+        // find the incremental vector going along the bottom edge (half-length)
+        const dm = v10.multiplyScalar((0.5 * length10) / m);
+        // find the incremental vector going from bottom to top (half-length)
         const dn = new Vector3()
           .crossVectors(normal, v10)
           .normalize()
-          .multiplyScalar(distance / n);
+          .multiplyScalar((0.5 * distance) / n);
+        // find the starting point of the grid (shift half of length in both directions)
+        const v0 = new Vector3(foundation.cx + s0.x, foundation.cy + s0.y, foundation.lz + s0.z);
+        v0.add(dm).add(dn);
+        // double half-length to full-length for the increment vectors in both directions
+        dm.multiplyScalar(2);
+        dn.multiplyScalar(2);
         let count = 0;
         const v = new Vector3();
         const relativePolygon: Point2[] = [];
@@ -818,7 +815,6 @@ const StaticSolarRadiationSimulation = ({ city }: StaticSolarRadiationSimulation
       const s0 = s[0].clone().applyEuler(euler);
       const s1 = s[1].clone().applyEuler(euler);
       const s2 = s[2].clone().applyEuler(euler);
-      const s3 = s[3].clone().applyEuler(euler);
       const v10 = new Vector3().subVectors(s1, s0);
       const v20 = new Vector3().subVectors(s2, s0);
       const v21 = new Vector3().subVectors(s2, s1);
@@ -834,23 +830,20 @@ const StaticSolarRadiationSimulation = ({ city }: StaticSolarRadiationSimulation
       v20.normalize();
       v21.normalize();
       // find the normal vector of the quad
-      const normal = new Vector3().crossVectors(v20, v21);
-      // find the starting point of the grid
-      const xc = (s0.x + s1.x + s2.x + s3.x) / 4;
-      const yc = (s0.y + s1.y + s2.y + s3.y) / 4;
-      const zc = (s0.z + s1.z + s2.z + s3.z) / 4;
-      const v0 = new Vector3(
-        foundation.cx + s0.x + (Math.sign(xc - s0.x) * cellSize) / 2,
-        foundation.cy + s0.y + (Math.sign(yc - s0.y) * cellSize) / 2,
-        foundation.lz + s0.z + (Math.sign(zc - s0.z) * cellSize) / 2,
-      );
-      // find the incremental vector going along the bottom edge
-      const dm = v10.multiplyScalar(length10 / m);
-      // find the incremental vector going from bottom to top
+      const normal = new Vector3().crossVectors(v20, v21).normalize();
+      // find the incremental vector going along the bottom edge (half of length)
+      const dm = v10.multiplyScalar((0.5 * length10) / m);
+      // find the incremental vector going from bottom to top (half of length)
       const dn = new Vector3()
         .crossVectors(normal, v10)
         .normalize()
-        .multiplyScalar(distance / n);
+        .multiplyScalar((0.5 * distance) / n);
+      // find the starting point of the grid (shift half of length in both directions)
+      const v0 = new Vector3(foundation.cx + s0.x, foundation.cy + s0.y, foundation.lz + s0.z);
+      v0.add(dm).add(dn);
+      // double half-length to full-length for the increment vectors in both directions
+      dm.multiplyScalar(2);
+      dn.multiplyScalar(2);
       let count = 0;
       const v = new Vector3();
       for (let i = 0; i < 24; i++) {
@@ -923,35 +916,25 @@ const StaticSolarRadiationSimulation = ({ city }: StaticSolarRadiationSimulation
       v20.normalize();
       v21.normalize();
       // find the normal vector of the quad
-      const normal = new Vector3().crossVectors(v20, v21);
-      // find the incremental vector going along the bottom edge
-      const dm = v10.multiplyScalar(length10 / m);
-      // find the incremental vector going from bottom to top
+      // (must normalize the cross product of two normalized vectors as it is not automatically normalized)
+      const normal = new Vector3().crossVectors(v20, v21).normalize();
+      // find the incremental vector going along the bottom edge (half-length)
+      const dm = v10.multiplyScalar((0.5 * length10) / m);
+      // find the incremental vector going from bottom to top (half-length)
       const dn = new Vector3()
         .crossVectors(normal, v10)
         .normalize()
-        .multiplyScalar(distance / n);
+        .multiplyScalar((0.5 * distance) / n);
       let count = 0;
       const v = new Vector3();
-      let xc, yc, zc;
-      const quad = index % 2 === 0; // even number (0, 2) are quads, odd number (1, 3) are triangles
-      if (quad) {
-        const s3 = s[3].clone().applyEuler(euler);
-        // find the starting point of the grid
-        xc = (s0.x + s1.x + s2.x + s3.x) / 4;
-        yc = (s0.y + s1.y + s2.y + s3.y) / 4;
-        zc = (s0.z + s1.z + s2.z + s3.z) / 4;
-      } else {
-        xc = (s0.x + s1.x + s2.x) / 3;
-        yc = (s0.y + s1.y + s2.y) / 3;
-        zc = (s0.z + s1.z + s2.z) / 3;
-      }
-      const v0 = new Vector3(
-        foundation.cx + s0.x + (Math.sign(xc - s0.x) * cellSize) / 2,
-        foundation.cy + s0.y + (Math.sign(yc - s0.y) * cellSize) / 2,
-        foundation.lz + s0.z + (Math.sign(zc - s0.z) * cellSize) / 2,
-      );
-      if (quad) {
+      // find the starting point of the grid (shift half of length in both directions)
+      const v0 = new Vector3(foundation.cx + s0.x, foundation.cy + s0.y, foundation.lz + s0.z);
+      v0.add(dm).add(dn);
+      // double half-length to full-length for the increment vectors in both directions
+      dm.multiplyScalar(2);
+      dn.multiplyScalar(2);
+      if (index % 2 === 0) {
+        // even number (0, 2) are quads, odd number (1, 3) are triangles
         for (let i = 0; i < 24; i++) {
           for (let j = 0; j < world.timesPerHour; j++) {
             const currentTime = new Date(year, month, date, i, j * interval);

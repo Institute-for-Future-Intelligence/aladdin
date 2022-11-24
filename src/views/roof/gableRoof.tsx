@@ -1331,7 +1331,7 @@ const RoofSegment = ({
           <mesh
             ref={surfaceMeshRef}
             uuid={id + '-' + index}
-            name={'Gable Roof Surface'}
+            name={'Gable Roof Surface ' + index}
             castShadow={shadowEnabled && !transparent}
             receiveShadow={shadowEnabled}
             userData={{ simulation: true }}

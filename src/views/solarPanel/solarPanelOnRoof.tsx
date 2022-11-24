@@ -1004,6 +1004,7 @@ const SolarPanelOnRoof = ({
         <Plane
           name={'Solar Panel Simulation Plane'}
           uuid={id}
+          position={[0, 0, lz]}
           args={[lx, ly]}
           userData={{ simulation: true }}
           receiveShadow={false}
