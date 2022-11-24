@@ -645,7 +645,7 @@ const PyramidRoof = ({
         color={textureType === RoofTexture.Default || textureType === RoofTexture.NoTexture ? color : 'white'}
         transparent={transparent}
         opacity={opacity}
-        // side={DoubleSide}
+        side={DoubleSide}
       />
     ),
     [texture, textureType, color, transparent, opacity],

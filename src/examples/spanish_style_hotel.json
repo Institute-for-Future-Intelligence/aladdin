@@ -1,7 +1,7 @@
 {
-  "docid": "p922Ao39v3XMcRz6v15qj7",
-  "time": "11/18/2022 09:16 pm",
-  "timestamp": 1668824202002,
+  "docid": "417izEn1FMeFECHCs6SsPM",
+  "time": "11/23/2022 09:45 pm",
+  "timestamp": 1669257917628,
   "userid": "QWecNcxhyvP6j6sBN11hBsfZDau1",
   "owner": null,
   "email": null,
@@ -570,7 +570,8 @@
       ],
       "parentId": "roDDPncXBpNgmNum9aUaov",
       "foundationId": "axj9GVUBNvhnWAa3G8T3wG",
-      "id": "fTMHecXmkxoFyi5nVgZruF"
+      "id": "fTMHecXmkxoFyi5nVgZruF",
+      "filled": false
     },
     {
       "type": "Door",
@@ -597,7 +598,8 @@
       "id": "thTY63emBWLui9mLZFtB5x",
       "parentId": "roDDPncXBpNgmNum9aUaov",
       "foundationId": "axj9GVUBNvhnWAa3G8T3wG",
-      "selected": false
+      "selected": false,
+      "filled": false
     },
     {
       "type": "Door",
@@ -624,7 +626,8 @@
       "id": "r7aX4f3HRkVXuNQaRxbPi1",
       "parentId": "roDDPncXBpNgmNum9aUaov",
       "foundationId": "axj9GVUBNvhnWAa3G8T3wG",
-      "selected": false
+      "selected": false,
+      "filled": false
     },
     {
       "type": "Door",
@@ -651,7 +654,8 @@
       "id": "h7dwAP8dsZbfjhXMRt294q",
       "parentId": "roDDPncXBpNgmNum9aUaov",
       "foundationId": "axj9GVUBNvhnWAa3G8T3wG",
-      "selected": false
+      "selected": false,
+      "filled": false
     },
     {
       "type": "Window",
@@ -1033,7 +1037,7 @@
       "doorType": "Default",
       "archHeight": 1,
       "textureType": "Door Texture #1",
-      "color": "white",
+      "color": "#73d8ff",
       "selected": false,
       "lineWidth": 0.2,
       "lineColor": "black",
@@ -1050,7 +1054,8 @@
       ],
       "parentId": "hndwqtrrygFvfqvBJrvZYu",
       "foundationId": "3vsEsZfsBjGXDRnpzcE3dE",
-      "id": "ecLTLgAm2MxZyZRCJTtQKo"
+      "id": "ecLTLgAm2MxZyZRCJTtQKo",
+      "filled": true
     },
     {
       "type": "Door",
@@ -1060,7 +1065,7 @@
       "lx": 0.08326046913796013,
       "ly": 0,
       "lz": 0.2777777777777778,
-      "color": "white",
+      "color": "#73d8ff",
       "textureType": "Door Texture #1",
       "doorType": "Default",
       "archHeight": 1,
@@ -1077,7 +1082,8 @@
       "id": "bEeuNKM57K5x42NhRniwi6",
       "parentId": "hndwqtrrygFvfqvBJrvZYu",
       "foundationId": "3vsEsZfsBjGXDRnpzcE3dE",
-      "selected": false
+      "selected": false,
+      "filled": true
     },
     {
       "type": "Door",
@@ -1087,7 +1093,7 @@
       "lx": 0.08326046913796013,
       "ly": 0,
       "lz": 0.2777777777777778,
-      "color": "white",
+      "color": "#73d8ff",
       "textureType": "Door Texture #1",
       "doorType": "Default",
       "archHeight": 1,
@@ -1104,7 +1110,8 @@
       "id": "qEKCQ7EzsMMEDG8bv8fsum",
       "parentId": "hndwqtrrygFvfqvBJrvZYu",
       "foundationId": "3vsEsZfsBjGXDRnpzcE3dE",
-      "selected": false
+      "selected": false,
+      "filled": true
     },
     {
       "type": "Door",
@@ -1114,7 +1121,7 @@
       "lx": 0.08326046913796013,
       "ly": 0,
       "lz": 0.2777777777777778,
-      "color": "white",
+      "color": "#73d8ff",
       "textureType": "Door Texture #1",
       "doorType": "Default",
       "archHeight": 1,
@@ -1131,7 +1138,8 @@
       "id": "8wkxpiMCThpy9pWENNkhKk",
       "parentId": "hndwqtrrygFvfqvBJrvZYu",
       "foundationId": "3vsEsZfsBjGXDRnpzcE3dE",
-      "selected": false
+      "selected": false,
+      "filled": true
     },
     {
       "type": "Window",
@@ -1354,7 +1362,8 @@
       "parentId": "Ground",
       "id": "85Scr5g8mYtCpbKgKe9vrB",
       "selected": false,
-      "flip": true
+      "flip": true,
+      "ly": 0.4
     },
     {
       "type": "Human",
@@ -1376,7 +1385,8 @@
       ],
       "parentId": "Ground",
       "id": "3vrVERckAPTLoMt9TNeS2S",
-      "selected": false
+      "selected": false,
+      "ly": 0.8
     },
     {
       "type": "Window",
@@ -1948,9 +1958,9 @@
     "dailyHeliostatYieldPanelX": 0,
     "showDailyParabolicDishYieldPanel": false,
     "cameraPosition": [
-      -9.117995171312465,
-      -29.38069413301874,
-      5.213410832212032
+      -12.088777022183129,
+      -23.090274029132658,
+      4.016418591168008
     ],
     "showYearlyHeliostatYieldPanel": false,
     "orthographic": false,
@@ -1999,9 +2009,9 @@
     "shadowEnabled": true,
     "showInstructionPanel": true,
     "panCenter": [
-      1.1015946083902077,
-      1.4671945016207146,
-      3.846837073140321
+      1.1584989084764534,
+      1.4479628457435418,
+      3.821084992361519
     ],
     "yearlyFresnelReflectorYieldPanelY": 0,
     "showHeliodonPanel": false,

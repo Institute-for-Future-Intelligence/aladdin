@@ -680,6 +680,7 @@ const MansardRoof = ({
               map={texture}
               transparent={transparent}
               opacity={opacity}
+              side={DoubleSide}
             />
           )}
         </mesh>
