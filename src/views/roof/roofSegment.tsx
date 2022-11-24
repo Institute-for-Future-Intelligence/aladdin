@@ -33,29 +33,28 @@ export const RoofSegment = ({
   const { transparent, opacity } = useTransparent();
   const texture = useRoofTexture(textureType);
 
-  const surfaceMeshRef = useRef<Mesh>(null);
+  const heatmapMeshRef = useRef<Mesh>(null);
 
   const { points, angle, length } = segment;
   const [leftRoof, rightRoof, rightRidge, leftRidge] = points;
   const isFlat = Math.abs(leftRoof.z) < 0.1;
 
   useEffect(() => {
-    if (surfaceMeshRef.current) {
-      const geo = surfaceMeshRef.current.geometry;
+    if (heatmapMeshRef.current) {
+      const geo = heatmapMeshRef.current.geometry;
       if (geo) {
         const v10 = new Vector3().subVectors(points[1], points[0]);
         const length10 = v10.length();
         const triangle = points.length === 6;
         const uvs = [];
-        const scale = showSolarRadiationHeatmap ? 1 : length10;
         v10.normalize();
         const v20 = new Vector3().subVectors(points[2], points[0]);
         if (triangle) {
           // find the position of the top point relative to the first edge point
           const mid = v20.dot(v10) / length10;
           uvs.push(0, 0);
-          uvs.push(scale, 0);
-          uvs.push(mid * scale, scale);
+          uvs.push(1, 0);
+          uvs.push(mid, 1);
         } else {
           // find the position of the top-left and top-right points relative to the lower-left point
           // the points go anticlockwise
@@ -63,10 +62,10 @@ export const RoofSegment = ({
           const topLeft = v30.dot(v10) / length10;
           const topRight = v20.dot(v10) / length10;
           uvs.push(0, 0);
-          uvs.push(scale, 0);
-          uvs.push(scale * topRight, scale);
-          uvs.push(scale * topRight, scale);
-          uvs.push(scale * topLeft, scale);
+          uvs.push(1, 0);
+          uvs.push(topRight, 1);
+          uvs.push(topRight, 1);
+          uvs.push(topLeft, 1);
           uvs.push(0, 0);
         }
         geo.setAttribute('uv', new Float32BufferAttribute(uvs, 2));
@@ -142,27 +141,43 @@ export const RoofSegment = ({
     }
   }, [points, thickness, showSolarRadiationHeatmap]);
 
+  const pointsForSingleSide = points.slice(points.length / 2);
+  // TODO: There may be a better way to do this, but convex geometry needs at least four points.
+  // For triangles, we fool it by duplicating the last point
+  if (pointsForSingleSide.length === 3) pointsForSingleSide.push(pointsForSingleSide[2].clone());
+
   return (
     <>
       <mesh
-        ref={surfaceMeshRef}
+        ref={heatmapMeshRef}
+        castShadow={false}
+        receiveShadow={false}
+        visible={showSolarRadiationHeatmap}
+        position={[0, 0, 0.01]}
+      >
+        {showSolarRadiationHeatmap && index >= 0 && index < heatmaps.length ? (
+          <meshBasicMaterial map={heatmaps[index]} color={'white'} />
+        ) : (
+          <meshBasicMaterial color={'white'} />
+        )}
+      </mesh>
+      <mesh
+        name={`Roof Segment ${index} Surface`}
         uuid={id + '-' + index}
-        name={`Roof segment ${index} surface`}
         castShadow={shadowEnabled && !transparent}
         receiveShadow={shadowEnabled}
         userData={{ simulation: true }}
+        position={[0, 0, 0.009]}
+        visible={!showSolarRadiationHeatmap}
       >
-        {showSolarRadiationHeatmap && index < heatmaps.length ? (
-          <meshBasicMaterial map={heatmaps[index]} color={'white'} />
-        ) : (
-          <meshStandardMaterial
-            map={texture}
-            color={textureType === RoofTexture.Default || textureType === RoofTexture.NoTexture ? color : 'white'}
-            transparent={transparent}
-            opacity={opacity}
-            side={DoubleSide}
-          />
-        )}
+        <convexGeometry args={[pointsForSingleSide, isFlat ? defaultAngle : angle, isFlat ? 1 : length]} />
+        <meshStandardMaterial
+          map={texture}
+          color={textureType === RoofTexture.Default || textureType === RoofTexture.NoTexture ? color : 'white'}
+          transparent={transparent}
+          opacity={opacity}
+          side={DoubleSide}
+        />
       </mesh>
       <mesh name={`Roof segment ${index} bulk`} castShadow={false} receiveShadow={false}>
         <convexGeometry args={[points, isFlat ? defaultAngle : angle, isFlat ? 1 : length]} />

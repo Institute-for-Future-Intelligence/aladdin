@@ -1176,7 +1176,7 @@ const RoofSegment = ({
   const { transparent, opacity: _opacity } = useTransparent(roofStructure === RoofStructure.Rafter, opacity);
   const { invalidate } = useThree();
 
-  const surfaceMeshRef = useRef<Mesh>(null);
+  const heatmapMeshRef = useRef<Mesh>(null);
   const bulkMeshRef = useRef<Mesh>(null);
   const planeRef = useRef<Mesh>(null);
   const mullionRef = useRef<Mesh>(null);
@@ -1201,8 +1201,8 @@ const RoofSegment = ({
     const [wallLeft, wallRight, ridgeRight, ridgeLeft, wallLeftAfterOverhang] = points;
     const thickness = wallLeftAfterOverhang.z - wallLeft.z;
 
-    if (surfaceMeshRef.current) {
-      const geo = surfaceMeshRef.current.geometry;
+    if (heatmapMeshRef.current) {
+      const geo = heatmapMeshRef.current.geometry;
       if (geo) {
         const positions = new Float32Array(18);
         const zOffset = thickness + 0.01; // a small number to ensure the surface mesh stay atop;
@@ -1228,12 +1228,11 @@ const RoofSegment = ({
         geo.setAttribute('position', new Float32BufferAttribute(positions, 3));
         geo.computeVertexNormals();
         const uvs = [];
-        const scale = showSolarRadiationHeatmap ? 1 : 5;
         uvs.push(0, 0);
-        uvs.push(scale, 0);
-        uvs.push(scale, scale);
-        uvs.push(scale, scale);
-        uvs.push(0, scale);
+        uvs.push(1, 0);
+        uvs.push(1, 1);
+        uvs.push(1, 1);
+        uvs.push(0, 1);
         uvs.push(0, 0);
         geo.setAttribute('uv', new Float32BufferAttribute(uvs, 2));
       }
@@ -1329,24 +1328,35 @@ const RoofSegment = ({
       {((_opacity > 0 && roofStructure === RoofStructure.Rafter) || roofStructure !== RoofStructure.Rafter) && (
         <>
           <mesh
-            ref={surfaceMeshRef}
+            ref={heatmapMeshRef}
+            castShadow={false}
+            receiveShadow={false}
+            visible={showSolarRadiationHeatmap}
+            position={[0, 0, 0.01]}
+          >
+            {showSolarRadiationHeatmap && index >= 0 && index < heatmaps.length ? (
+              <meshBasicMaterial map={heatmaps[index]} color={'white'} />
+            ) : (
+              <meshBasicMaterial color={'white'} />
+            )}
+          </mesh>
+          <mesh
+            name={`Gable Roof Segment ${index} Surface`}
             uuid={id + '-' + index}
-            name={'Gable Roof Surface ' + index}
             castShadow={shadowEnabled && !transparent}
             receiveShadow={shadowEnabled}
             userData={{ simulation: true }}
+            position={[0, 0, 0.009]}
+            visible={!showSolarRadiationHeatmap}
           >
-            {showSolarRadiationHeatmap && index < heatmaps.length ? (
-              <meshBasicMaterial map={heatmaps[index]} color={'white'} />
-            ) : (
-              <meshStandardMaterial
-                map={texture}
-                color={textureType === RoofTexture.Default || textureType === RoofTexture.NoTexture ? color : 'white'}
-                transparent={transparent}
-                opacity={_opacity}
-                side={DoubleSide}
-              />
-            )}
+            <convexGeometry args={[points.slice(points.length / 2), angle, length]} />
+            <meshStandardMaterial
+              map={texture}
+              color={textureType === RoofTexture.Default || textureType === RoofTexture.NoTexture ? color : 'white'}
+              transparent={transparent}
+              opacity={_opacity}
+              side={DoubleSide}
+            />
           </mesh>
           <mesh ref={bulkMeshRef} name={'Gable Roof Bulk'} castShadow={false} receiveShadow={false}>
             <meshStandardMaterial color={'white'} transparent={transparent} opacity={_opacity} />

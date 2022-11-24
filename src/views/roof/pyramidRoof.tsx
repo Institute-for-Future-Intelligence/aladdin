@@ -701,13 +701,10 @@ const PyramidRoof = ({
                         angle={isFlat ? 0 : angle}
                         length={isFlat ? 1 : length}
                         thickness={thickness}
-                      >
-                        {showSolarRadiationHeatmap && idx < heatmapTextures.length ? (
-                          <meshBasicMaterial attach="material" map={heatmapTextures[idx]} color={'white'} />
-                        ) : (
-                          normalMaterial
-                        )}
-                      </RoofSegment>
+                        textureType={textureType}
+                        heatmap={heatmapTextures[idx]}
+                        color={color ?? 'white'}
+                      />
                     </group>
                   );
                 }
@@ -792,27 +789,32 @@ const RoofSegment = ({
   angle,
   length,
   thickness,
-  children,
+  textureType,
+  heatmap,
+  color,
 }: {
   uuid: string;
   points: Vector3[];
   angle: number;
   length: number;
   thickness: number;
-  children: React.ReactNode;
+  textureType: RoofTexture;
+  heatmap: CanvasTexture;
+  color: string;
 }) => {
   const shadowEnabled = useStore(Selector.viewState.shadowEnabled);
   const showSolarRadiationHeatmap = useStore(Selector.showSolarRadiationHeatmap);
-  const surfaceMeshRef = useRef<Mesh>(null);
+  const heatmapMeshRef = useRef<Mesh>(null);
   const bulkMeshRef = useRef<Mesh>(null);
+  const texture = useRoofTexture(textureType);
   const { transparent } = useTransparent();
 
   useEffect(() => {
     if (bulkMeshRef.current) {
       bulkMeshRef.current.geometry = new ConvexGeometry(points, angle, length);
     }
-    if (surfaceMeshRef.current) {
-      const geo = surfaceMeshRef.current.geometry;
+    if (heatmapMeshRef.current) {
+      const geo = heatmapMeshRef.current.geometry;
       if (geo) {
         const v10 = new Vector3().subVectors(points[1], points[0]);
         const v20 = new Vector3().subVectors(points[2], points[0]);
@@ -834,10 +836,9 @@ const RoofSegment = ({
         geo.setAttribute('position', new Float32BufferAttribute(positions, 3));
         geo.computeVertexNormals();
         const uvs = [];
-        const scale = showSolarRadiationHeatmap ? 1 : 10;
         uvs.push(0, 0);
-        uvs.push(scale, 0);
-        uvs.push(mid * scale, scale);
+        uvs.push(1, 0);
+        uvs.push(mid, 1);
         geo.setAttribute('uv', new Float32BufferAttribute(uvs, 2));
         // TODO: if has window
         // const h: Vector3[] = [];
@@ -854,17 +855,42 @@ const RoofSegment = ({
     }
   }, [points, angle, length, thickness, showSolarRadiationHeatmap]);
 
+  const pointsForSingleSide = points.slice(points.length / 2);
+  // TODO: There may be a better way to do this, but convex geometry needs at least four points.
+  // For triangles, we fool it by duplicating the last point
+  if (pointsForSingleSide.length === 3) pointsForSingleSide.push(pointsForSingleSide[2].clone());
+
   return (
     <>
       <mesh
-        ref={surfaceMeshRef}
+        ref={heatmapMeshRef}
+        castShadow={false}
+        receiveShadow={false}
+        visible={showSolarRadiationHeatmap}
+        position={[0, 0, 0.01]}
+      >
+        {showSolarRadiationHeatmap ? (
+          <meshBasicMaterial map={heatmap} color={'white'} />
+        ) : (
+          <meshBasicMaterial color={'white'} />
+        )}
+      </mesh>
+      <mesh
+        name={`Pyramid Roof Segment Surface`}
         uuid={uuid}
-        name={'Pyramid Roof Surface Segment'}
         castShadow={shadowEnabled && !transparent}
         receiveShadow={shadowEnabled}
         userData={{ simulation: true }}
+        position={[0, 0, 0.009]}
+        visible={!showSolarRadiationHeatmap}
       >
-        {children}
+        <convexGeometry args={[pointsForSingleSide, angle, length]} />
+        <meshStandardMaterial
+          map={texture}
+          color={textureType === RoofTexture.Default || textureType === RoofTexture.NoTexture ? color : 'white'}
+          transparent={transparent}
+          side={DoubleSide}
+        />
       </mesh>
       <mesh ref={bulkMeshRef} name={'Pyramid Roof Bulk Segment'} castShadow={false} receiveShadow={false}>
         <meshStandardMaterial color={'white'} />
