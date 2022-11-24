@@ -676,26 +676,22 @@ const GambrelRoof = ({
   const solarRadiationHeatmapMaxValue = useStore(Selector.viewState.solarRadiationHeatmapMaxValue);
   const getHeatmap = useStore(Selector.getHeatmap);
   const [heatmapTextures, setHeatmapTextures] = useState<CanvasTexture[]>([]);
-  const getRoofSegmentVertices = useStore(Selector.getRoofSegmentVertices);
 
   useEffect(() => {
     if (showSolarRadiationHeatmap) {
       const n = roofSegments.length;
       if (n > 0) {
         const textures = [];
-        const segmentVertices = getRoofSegmentVertices(id);
-        if (segmentVertices) {
-          for (let i = 0; i < n; i++) {
-            const heatmap = getHeatmap(id + '-' + i);
-            if (heatmap) {
-              const t = Util.fetchHeatmapTexture(heatmap, solarRadiationHeatmapMaxValue ?? 5);
-              if (t) {
-                textures.push(t);
-              }
+        for (let i = 0; i < n; i++) {
+          const heatmap = getHeatmap(id + '-' + i);
+          if (heatmap) {
+            const t = Util.fetchHeatmapTexture(heatmap, solarRadiationHeatmapMaxValue ?? 5);
+            if (t) {
+              textures.push(t);
             }
           }
-          setHeatmapTextures(textures);
         }
+        setHeatmapTextures(textures);
       }
     }
   }, [showSolarRadiationHeatmap, solarRadiationHeatmapMaxValue]);

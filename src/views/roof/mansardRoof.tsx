@@ -448,7 +448,6 @@ const MansardRoof = ({
 
   const topRidgeShape = useMemo(() => {
     const s = new Shape();
-
     if (ridgePoints.length > 0) {
       const startPoint = ridgePoints[0].leftPoint.clone().sub(centroid);
       s.moveTo(startPoint.x, startPoint.y);
@@ -458,7 +457,6 @@ const MansardRoof = ({
         s.lineTo(rightPoint.x, rightPoint.y);
       }
     }
-
     return s;
   }, [currentWallArray, ridgePoints]);
 
@@ -556,25 +554,21 @@ const MansardRoof = ({
   const solarRadiationHeatmapMaxValue = useStore(Selector.viewState.solarRadiationHeatmapMaxValue);
   const getHeatmap = useStore(Selector.getHeatmap);
   const [heatmapTextures, setHeatmapTextures] = useState<CanvasTexture[]>([]);
-  const getRoofSegmentVertices = useStore(Selector.getRoofSegmentVertices);
 
   useEffect(() => {
     if (showSolarRadiationHeatmap) {
       const n = roofSegments.length + 1; // roofSegments does not include the top surface, so we add 1 here.
       const textures = [];
-      const segmentVertices = getRoofSegmentVertices(id);
-      if (segmentVertices) {
-        for (let i = 0; i < n; i++) {
-          const heatmap = getHeatmap(id + '-' + i);
-          if (heatmap) {
-            const t = Util.fetchHeatmapTexture(heatmap, solarRadiationHeatmapMaxValue ?? 5);
-            if (t) {
-              textures.push(t);
-            }
+      for (let i = 0; i < n; i++) {
+        const heatmap = getHeatmap(id + '-' + i);
+        if (heatmap) {
+          const t = Util.fetchHeatmapTexture(heatmap, solarRadiationHeatmapMaxValue ?? 5);
+          if (t) {
+            textures.push(t);
           }
         }
-        setHeatmapTextures(textures);
       }
+      setHeatmapTextures(textures);
     }
   }, [showSolarRadiationHeatmap, solarRadiationHeatmapMaxValue]);
 
@@ -613,14 +607,22 @@ const MansardRoof = ({
         })}
         <Extrude
           args={[topRidgeShape, { steps: 1, depth: thickness, bevelEnabled: false }]}
+          castShadow={false}
+          receiveShadow={false}
+        >
+          <meshStandardMaterial color={'white'} transparent={transparent} opacity={opacity} />
+        </Extrude>
+        <mesh
           uuid={id + '-4'}
-          name={'Mansard roof top surface'}
+          name={'Mansard Roof Top Surface'}
+          position={[0, 0, thickness + 0.01]}
           castShadow={shadowEnabled && !transparent}
           receiveShadow={shadowEnabled}
           userData={{ simulation: true }}
         >
+          <shapeBufferGeometry args={[topRidgeShape]}></shapeBufferGeometry>
           {showSolarRadiationHeatmap && heatmapTextures.length === 5 ? (
-            <meshBasicMaterial map={heatmapTextures[4]} />
+            <meshBasicMaterial map={heatmapTextures[4]} color={'white'} />
           ) : (
             <meshStandardMaterial
               color={textureType === RoofTexture.Default || textureType === RoofTexture.NoTexture ? color : 'white'}
@@ -629,7 +631,7 @@ const MansardRoof = ({
               opacity={opacity}
             />
           )}
-        </Extrude>
+        </mesh>
         {roofSegments.length > 0 && (
           <MansardRoofWirefram
             roofSegments={roofSegments}
