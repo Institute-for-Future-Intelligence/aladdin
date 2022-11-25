@@ -52,8 +52,23 @@ const Mullion = React.memo(({ dimension, mullionData, shadowEnabled }: MullionPr
   const radialSegments = 3;
   const heightSegments = 1;
   const mullionRadius = width / 2;
-  const radialMullionLength = useMemo(() => Math.hypot(lx / 2, ah), [lx, ah]);
   const radialMullionAngle = useMemo(() => Math.atan2(lx / 2, ah), [lx, ah]);
+  const radialMullionLength = useMemo(() => {
+    const r = ah / 2 + lx ** 2 / (8 * ah);
+    const a = r - ah;
+    if (a === 0) {
+      return r;
+    }
+    const angle = Math.PI - radialMullionAngle;
+    const aSquare = a ** 2;
+    const bSquare = r ** 2;
+    const cSquare =
+      aSquare +
+      bSquare -
+      2 * aSquare * Math.sin(angle) ** 2 -
+      2 * a * Math.sqrt((bSquare - aSquare * Math.sin(angle) ** 2) * Math.cos(angle) ** 2);
+    return Math.sqrt(cSquare);
+  }, [lx, ah, radialMullionAngle]);
 
   const material = useMemo(() => <meshStandardMaterial color={color} />, [color]);
 
