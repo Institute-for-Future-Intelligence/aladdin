@@ -137,6 +137,17 @@ const DynamicSolarRadiationSimulation = ({ city }: DynamicSolarRadiationSimulati
         case ObjectType.Heliostat:
           cellOutputsMapRef.current.delete(e.id);
           break;
+        case ObjectType.Roof:
+          const roof = e as RoofModel;
+          const segments = getRoofSegmentVertices(roof.id);
+          if (segments) {
+            const n = segments.length;
+            for (let i = 0; i < n; i++) {
+              cellOutputsMapRef.current.delete(roof.id + '-' + i);
+            }
+          }
+          cellOutputsMapRef.current.delete(roof.id); // in case it is a flat roof
+          break;
         case ObjectType.Foundation:
           cellOutputsMapRef.current.delete(e.id);
           cellOutputsMapRef.current.delete(e.id + '-sut');
@@ -185,9 +196,37 @@ const DynamicSolarRadiationSimulation = ({ city }: DynamicSolarRadiationSimulati
         case ObjectType.Roof:
           const roof = e as RoofModel;
           const segments = getRoofSegmentVertices(roof.id);
-          if (segments) {
-            const n = segments.length;
-            for (let i = 0; i < n; i++) {
+          if (segments && segments.length > 0) {
+            if (roof.roofType === RoofType.Pyramid) {
+              // if this is a pyramid, check if the roof is flat or not
+              let flat = true;
+              const h0 = segments[0][0].z;
+              for (const s of segments) {
+                for (const v of s) {
+                  if (Math.abs(v.z - h0) > 0.01) {
+                    flat = false;
+                    break;
+                  }
+                }
+              }
+              if (flat) {
+                const data = cellOutputsMapRef.current.get(roof.id);
+                if (data) {
+                  for (let i = 0; i < data.length; i++) {
+                    for (let j = 0; j < data[i].length; j++) {
+                      data[i][j] *= scaleFactor;
+                    }
+                  }
+                  // send a copy of the heat map data to common store for visualization
+                  setHeatmap(
+                    roof.id,
+                    data.map((a) => [...a]),
+                  );
+                }
+                break;
+              }
+            }
+            for (let i = 0; i < segments.length; i++) {
               const uuid = roof.id + '-' + i;
               const data = cellOutputsMapRef.current.get(uuid);
               if (data) {
@@ -316,7 +355,7 @@ const DynamicSolarRadiationSimulation = ({ city }: DynamicSolarRadiationSimulati
               const roof = e as RoofModel;
               switch (roof.roofType) {
                 case RoofType.Pyramid:
-                  //calculatePyramidRoof(roof);
+                  calculatePyramidRoof(roof);
                   break;
                 case RoofType.Gable:
                 case RoofType.Gambrel:
@@ -324,7 +363,7 @@ const DynamicSolarRadiationSimulation = ({ city }: DynamicSolarRadiationSimulati
                   calculateGableRoof(roof);
                   break;
                 case RoofType.Hip:
-                  //calculateHipRoof(roof);
+                  calculateHipRoof(roof);
                   break;
               }
               break;
@@ -630,6 +669,155 @@ const DynamicSolarRadiationSimulation = ({ city }: DynamicSolarRadiationSimulati
     }
   };
 
+  const calculatePyramidRoof = (roof: RoofModel) => {
+    if (roof.roofType !== RoofType.Pyramid) throw new Error('roof is not pyramid');
+    const sunDirection = getSunDirection(now, world.latitude);
+    if (sunDirection.z <= 0) return; // when the sun is not out
+    const foundation = getFoundation(roof);
+    if (!foundation) throw new Error('foundation of wall not found');
+    const segments = getRoofSegmentVertices(roof.id);
+    if (!segments || segments.length === 0) return;
+    // check if the roof is flat or not
+    let flat = true;
+    const h0 = segments[0][0].z;
+    for (const s of segments) {
+      for (const v of s) {
+        if (Math.abs(v.z - h0) > 0.01) {
+          flat = false;
+          break;
+        }
+      }
+    }
+    const dayOfYear = Util.dayOfYear(now);
+    const euler = new Euler(0, 0, foundation.rotation[2], 'ZYX');
+    // send heat map data to common store for visualization
+    if (flat) {
+      // obtain the bounding rectangle
+      let minX = Number.MAX_VALUE;
+      let minY = Number.MAX_VALUE;
+      let maxX = -Number.MAX_VALUE;
+      let maxY = -Number.MAX_VALUE;
+      for (const s of segments) {
+        for (const v of s) {
+          const v2 = v.clone().applyEuler(euler);
+          if (v2.x > maxX) maxX = v2.x;
+          else if (v2.x < minX) minX = v2.x;
+          if (v2.y > maxY) maxY = v2.y;
+          else if (v2.y < minY) minY = v2.y;
+        }
+      }
+      minX += foundation.cx;
+      minY += foundation.cy;
+      maxX += foundation.cx;
+      maxY += foundation.cy;
+      const nx = Math.max(2, Math.round((maxX - minX) / cellSize));
+      const ny = Math.max(2, Math.round((maxY - minY) / cellSize));
+      const dx = (maxX - minX) / nx;
+      const dy = (maxY - minY) / ny;
+      let cellOutputs = cellOutputsMapRef.current.get(roof.id);
+      if (!cellOutputs || cellOutputs.length !== nx || cellOutputs[0].length !== ny) {
+        cellOutputs = Array(nx)
+          .fill(0)
+          .map(() => Array(ny).fill(0));
+        cellOutputsMapRef.current.set(roof.id, cellOutputs);
+      }
+      const v0 = new Vector3(minX + cellSize / 2, minY + cellSize / 2, foundation.lz + h0);
+      const v = new Vector3(0, 0, v0.z);
+      const peakRadiation = calculatePeakRadiation(sunDirection, dayOfYear, elevation, AirMass.SPHERE_MODEL);
+      const indirectRadiation = calculateDiffuseAndReflectedRadiation(
+        world.ground,
+        now.getMonth(),
+        UNIT_VECTOR_POS_Z,
+        peakRadiation,
+      );
+      const dot = UNIT_VECTOR_POS_Z.dot(sunDirection);
+      for (let p = 0; p < nx; p++) {
+        v.x = v0.x + p * dx;
+        for (let q = 0; q < ny; q++) {
+          cellOutputs[p][q] += indirectRadiation;
+          if (dot > 0) {
+            v.y = v0.y + q * dy;
+            if (!inShadow(roof.id, v, sunDirection)) {
+              // direct radiation
+              cellOutputs[p][q] += dot * peakRadiation;
+            }
+          }
+        }
+      }
+    } else {
+      for (const [index, s] of segments.entries()) {
+        const uuid = roof.id + '-' + index;
+        const s0 = s[0].clone().applyEuler(euler);
+        const s1 = s[1].clone().applyEuler(euler);
+        const s2 = s[2].clone().applyEuler(euler);
+        const v10 = new Vector3().subVectors(s1, s0);
+        const v20 = new Vector3().subVectors(s2, s0);
+        const v21 = new Vector3().subVectors(s2, s1);
+        const length10 = v10.length();
+        // find the distance from top to the edge: https://mathworld.wolfram.com/Point-LineDistance3-Dimensional.html
+        const distance = new Vector3().crossVectors(v20, v21).length() / length10;
+        const m = Math.max(2, Math.round(length10 / cellSize));
+        const n = Math.max(2, Math.round(distance / cellSize));
+        let cellOutputs = cellOutputsMapRef.current.get(uuid);
+        if (!cellOutputs || cellOutputs.length !== m || cellOutputs[0].length !== n) {
+          cellOutputs = Array(m)
+            .fill(0)
+            .map(() => Array(n).fill(0));
+          cellOutputsMapRef.current.set(uuid, cellOutputs);
+        }
+        v10.normalize();
+        // find the position of the top point relative to the first edge point
+        const m2 = (m * v20.dot(v10)) / length10;
+        v20.normalize();
+        v21.normalize();
+        // find the normal vector of the plane (must normalize the cross product as it is not normalized!)
+        const normal = new Vector3().crossVectors(v20, v21).normalize();
+        // find the incremental vector going along the bottom edge (half-length)
+        const dm = v10.multiplyScalar((0.5 * length10) / m);
+        // find the incremental vector going from bottom to top (half-length)
+        const dn = new Vector3()
+          .crossVectors(normal, v10)
+          .normalize()
+          .multiplyScalar((0.5 * distance) / n);
+        // find the starting point of the grid (shift half of length in both directions)
+        const v0 = new Vector3(foundation.cx + s0.x, foundation.cy + s0.y, foundation.lz + s0.z);
+        v0.add(dm).add(dn);
+        // double half-length to full-length for the increment vectors in both directions
+        dm.multiplyScalar(2);
+        dn.multiplyScalar(2);
+        const v = new Vector3();
+        const relativePolygon: Point2[] = [];
+        const margin = 10;
+        relativePolygon.push({ x: -margin, y: -margin } as Point2);
+        relativePolygon.push({ x: m + margin, y: -margin } as Point2);
+        relativePolygon.push({ x: m2, y: n + margin } as Point2);
+        const peakRadiation = calculatePeakRadiation(sunDirection, dayOfYear, elevation, AirMass.SPHERE_MODEL);
+        const indirectRadiation = calculateDiffuseAndReflectedRadiation(
+          world.ground,
+          now.getMonth(),
+          normal,
+          peakRadiation,
+        );
+        const dot = normal.dot(sunDirection);
+        for (let p = 0; p < m; p++) {
+          const dmp = dm.clone().multiplyScalar(p);
+          for (let q = 0; q < n; q++) {
+            if (Util.isPointInside(p, q, relativePolygon)) {
+              cellOutputs[p][q] += indirectRadiation;
+              if (dot > 0) {
+                v.copy(v0).add(dmp).add(dn.clone().multiplyScalar(q));
+                if (!inShadow(uuid, v, sunDirection)) {
+                  // direct radiation
+                  cellOutputs[p][q] += dot * peakRadiation;
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  };
+
   const calculateGableRoof = (roof: RoofModel) => {
     if (roof.roofType !== RoofType.Gable && roof.roofType !== RoofType.Gambrel && roof.roofType !== RoofType.Mansard)
       throw new Error('roof is not gable or gambrel or mansard');
@@ -698,6 +886,106 @@ const DynamicSolarRadiationSimulation = ({ city }: DynamicSolarRadiationSimulati
             if (!inShadow(uuid, v, sunDirection)) {
               // direct radiation
               cellOutputs[p][q] += dot * peakRadiation;
+            }
+          }
+        }
+      }
+    }
+  };
+
+  const calculateHipRoof = (roof: RoofModel) => {
+    if (roof.roofType !== RoofType.Hip) throw new Error('roof is not hip');
+    const sunDirection = getSunDirection(now, world.latitude);
+    if (sunDirection.z <= 0) return; // when the sun is not out
+    const foundation = getFoundation(roof);
+    if (!foundation) throw new Error('foundation of wall not found');
+    const segments = getRoofSegmentVertices(roof.id);
+    if (!segments || segments.length === 0) return;
+    const dayOfYear = Util.dayOfYear(now);
+    const euler = new Euler(0, 0, foundation.rotation[2], 'ZYX');
+    for (const [index, s] of segments.entries()) {
+      const uuid = roof.id + '-' + index;
+      const s0 = s[0].clone().applyEuler(euler);
+      const s1 = s[1].clone().applyEuler(euler);
+      const s2 = s[2].clone().applyEuler(euler);
+      const v10 = new Vector3().subVectors(s1, s0);
+      const v20 = new Vector3().subVectors(s2, s0);
+      const v21 = new Vector3().subVectors(s2, s1);
+      const length10 = v10.length();
+      // find the distance from top to the edge: https://mathworld.wolfram.com/Point-LineDistance3-Dimensional.html
+      const distance = new Vector3().crossVectors(v20, v21).length() / length10;
+      const m = Math.max(2, Math.round(length10 / cellSize));
+      const n = Math.max(2, Math.round(distance / cellSize));
+      let cellOutputs = cellOutputsMapRef.current.get(uuid);
+      if (!cellOutputs || cellOutputs.length !== m || cellOutputs[0].length !== n) {
+        cellOutputs = Array(m)
+          .fill(0)
+          .map(() => Array(n).fill(0));
+        cellOutputsMapRef.current.set(uuid, cellOutputs);
+      }
+      v10.normalize();
+      // find the position of the top point relative to the first edge point
+      const m2 = (m * v20.dot(v10)) / length10;
+      v20.normalize();
+      v21.normalize();
+      // find the normal vector of the quad
+      // (must normalize the cross product of two normalized vectors as it is not automatically normalized)
+      const normal = new Vector3().crossVectors(v20, v21).normalize();
+      // find the incremental vector going along the bottom edge (half-length)
+      const dm = v10.multiplyScalar((0.5 * length10) / m);
+      // find the incremental vector going from bottom to top (half-length)
+      const dn = new Vector3()
+        .crossVectors(normal, v10)
+        .normalize()
+        .multiplyScalar((0.5 * distance) / n);
+      const v = new Vector3();
+      // find the starting point of the grid (shift half of length in both directions)
+      const v0 = new Vector3(foundation.cx + s0.x, foundation.cy + s0.y, foundation.lz + s0.z);
+      v0.add(dm).add(dn);
+      // double half-length to full-length for the increment vectors in both directions
+      dm.multiplyScalar(2);
+      dn.multiplyScalar(2);
+      const peakRadiation = calculatePeakRadiation(sunDirection, dayOfYear, elevation, AirMass.SPHERE_MODEL);
+      const indirectRadiation = calculateDiffuseAndReflectedRadiation(
+        world.ground,
+        now.getMonth(),
+        normal,
+        peakRadiation,
+      );
+      const dot = normal.dot(sunDirection);
+      if (index % 2 === 0) {
+        // even number (0, 2) are quads, odd number (1, 3) are triangles
+        for (let p = 0; p < m; p++) {
+          const dmp = dm.clone().multiplyScalar(p);
+          for (let q = 0; q < n; q++) {
+            cellOutputs[p][q] += indirectRadiation;
+            if (dot > 0) {
+              v.copy(v0).add(dmp).add(dn.clone().multiplyScalar(q));
+              if (!inShadow(uuid, v, sunDirection)) {
+                // direct radiation
+                cellOutputs[p][q] += dot * peakRadiation;
+              }
+            }
+          }
+        }
+      } else {
+        const relativePolygon: Point2[] = [];
+        const margin = 10;
+        relativePolygon.push({ x: -margin, y: -margin } as Point2);
+        relativePolygon.push({ x: m + margin, y: -margin } as Point2);
+        relativePolygon.push({ x: m2, y: n + margin } as Point2);
+        for (let p = 0; p < m; p++) {
+          const dmp = dm.clone().multiplyScalar(p);
+          for (let q = 0; q < n; q++) {
+            if (Util.isPointInside(p, q, relativePolygon)) {
+              cellOutputs[p][q] += indirectRadiation;
+              if (dot > 0) {
+                v.copy(v0).add(dmp).add(dn.clone().multiplyScalar(q));
+                if (!inShadow(uuid, v, sunDirection)) {
+                  // direct radiation
+                  cellOutputs[p][q] += dot * peakRadiation;
+                }
+              }
             }
           }
         }

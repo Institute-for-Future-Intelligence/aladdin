@@ -641,7 +641,6 @@ const StaticSolarRadiationSimulation = ({ city }: StaticSolarRadiationSimulation
     const date = now.getDate();
     const dayOfYear = Util.dayOfYear(now);
     const euler = new Euler(0, 0, foundation.rotation[2], 'ZYX');
-    // send heat map data to common store for visualization
     if (flat) {
       // obtain the bounding rectangle
       let minX = Number.MAX_VALUE;
@@ -809,7 +808,6 @@ const StaticSolarRadiationSimulation = ({ city }: StaticSolarRadiationSimulation
     const date = now.getDate();
     const dayOfYear = Util.dayOfYear(now);
     const euler = new Euler(0, 0, foundation.rotation[2], 'ZYX');
-    // send heat map data to common store for visualization
     for (const [index, s] of segments.entries()) {
       const uuid = roof.id + '-' + index;
       const s0 = s[0].clone().applyEuler(euler);
@@ -893,7 +891,6 @@ const StaticSolarRadiationSimulation = ({ city }: StaticSolarRadiationSimulation
     const date = now.getDate();
     const dayOfYear = Util.dayOfYear(now);
     const euler = new Euler(0, 0, foundation.rotation[2], 'ZYX');
-    // send heat map data to common store for visualization
     for (const [index, s] of segments.entries()) {
       const uuid = roof.id + '-' + index;
       const s0 = s[0].clone().applyEuler(euler);
