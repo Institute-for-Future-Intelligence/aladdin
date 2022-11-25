@@ -224,6 +224,7 @@ const PyramidRoof = ({
   const oldHeight = useRef<number>(h);
   const oldRelativeHeightRef = useRef<number>(relHeight.current);
   const isFirstMountRef = useRef(true);
+  const isPointerDownRef = useRef(false);
 
   const prevWallsIdSet = new Set<string>(wallsId);
 
@@ -724,6 +725,7 @@ const PyramidRoof = ({
             oldRelativeHeightRef.current = relHeight.current;
             setShowIntersectionPlane(true);
             useStoreRef.getState().setEnableOrbitController(false);
+            isPointerDownRef.current = true;
           }}
           onPointerUp={() => {
             setShowIntersectionPlane(false);
@@ -742,7 +744,7 @@ const PyramidRoof = ({
           rotation={intersectionPlaneRotation}
           position={intersectionPlanePosition}
           onPointerMove={(e) => {
-            if (intersectionPlaneRef.current) {
+            if (intersectionPlaneRef.current && isPointerDownRef.current) {
               setRayCast(e);
               const intersects = ray.intersectObjects([intersectionPlaneRef.current]);
               if (intersects[0]) {
@@ -770,6 +772,7 @@ const PyramidRoof = ({
             setShowIntersectionPlane(false);
             useStoreRef.getState().setEnableOrbitController(true);
             updateRooftopElements(foundation, id, roofSegments, centerPointV3, h, thickness);
+            isPointerDownRef.current = false;
           }}
         />
       )}

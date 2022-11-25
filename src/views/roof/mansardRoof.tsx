@@ -170,7 +170,7 @@ const MansardRoof = ({
   const isFirstMountRef = useRef(true);
 
   const intersectionPlaneRef = useRef<Mesh>(null);
-  const isPointerMovingRef = useRef(false);
+  const isPointerDownRef = useRef(false);
   const { gl, camera } = useThree();
 
   const foundation = useStore((state) => {
@@ -697,7 +697,7 @@ const MansardRoof = ({
           <RoofHandle
             position={[0, 0, 0.3]}
             onPointerDown={() => {
-              isPointerMovingRef.current = true;
+              isPointerDownRef.current = true;
               setEnableIntersectionPlane(true);
               intersectionPlanePosition.set(centroid.x, centroid.y, h);
               if (foundation) {
@@ -717,7 +717,7 @@ const MansardRoof = ({
                 key={idx}
                 position={[point.x, point.y, 0]}
                 onPointerDown={() => {
-                  isPointerMovingRef.current = true;
+                  isPointerDownRef.current = true;
                   setEnableIntersectionPlane(true);
                   intersectionPlanePosition.set(point.x, point.y, h + 0.15);
                   intersectionPlaneRotation.set(0, 0, 0);
@@ -749,7 +749,7 @@ const MansardRoof = ({
           position={intersectionPlanePosition}
           rotation={intersectionPlaneRotation}
           onPointerMove={(e) => {
-            if (intersectionPlaneRef.current && isPointerMovingRef.current) {
+            if (intersectionPlaneRef.current && isPointerDownRef.current) {
               setRayCast(e);
               const intersects = ray.intersectObjects([intersectionPlaneRef.current]);
               if (intersects[0] && foundation) {
@@ -819,7 +819,7 @@ const MansardRoof = ({
               }
             });
             updateRooftopElements(foundation, id, roofSegments, centroid, h, thickness);
-            isPointerMovingRef.current = false;
+            isPointerDownRef.current = false;
             setEnableIntersectionPlane(false);
             setRoofHandleType(RoofHandleType.Null);
             setRidgeHandleIndex(null);

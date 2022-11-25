@@ -160,7 +160,7 @@ const GambrelRoof = ({
   const oldHeight = useRef<number>(h);
   const oldRelativeHeightRef = useRef<number>(relHeight.current);
   const oldRidgeVal = useRef<number>(0);
-  const isPointerMovingRef = useRef(false);
+  const isPointerDownRef = useRef(false);
   const isFirstMountRef = useRef(true);
 
   // set position and rotation
@@ -744,7 +744,7 @@ const GambrelRoof = ({
           <RoofHandle
             position={[topRidgeLeftPointV3.x, topRidgeLeftPointV3.y, topRidgeLeftPointV3.z]}
             onPointerDown={() => {
-              isPointerMovingRef.current = true;
+              isPointerDownRef.current = true;
               oldRidgeVal.current = topRidgeLeftPoint[0];
               setInterSectionPlane(topRidgeLeftPointV3, currentWallArray[3]);
               setRoofHandleType(RoofHandleType.TopLeft);
@@ -753,7 +753,7 @@ const GambrelRoof = ({
           <RoofHandle
             position={[topRidgeRightPointV3.x, topRidgeRightPointV3.y, topRidgeRightPointV3.z]}
             onPointerDown={() => {
-              isPointerMovingRef.current = true;
+              isPointerDownRef.current = true;
               oldRidgeVal.current = topRidgeRightPoint[0];
               setInterSectionPlane(topRidgeRightPointV3, currentWallArray[1]);
               setRoofHandleType(RoofHandleType.TopRight);
@@ -762,7 +762,7 @@ const GambrelRoof = ({
           <RoofHandle
             position={[topRidgeMidPointV3.x, topRidgeMidPointV3.y, topRidgeMidPointV3.z]}
             onPointerDown={() => {
-              isPointerMovingRef.current = true;
+              isPointerDownRef.current = true;
               setEnableIntersectionPlane(true);
               intersectionPlanePosition.set(topRidgeMidPointV3.x, topRidgeMidPointV3.y, h).add(centroid);
               if (foundation) {
@@ -779,7 +779,7 @@ const GambrelRoof = ({
           <RoofHandle
             position={[frontRidgeLeftPointV3.x, frontRidgeLeftPointV3.y, frontRidgeLeftPointV3.z]}
             onPointerDown={() => {
-              isPointerMovingRef.current = true;
+              isPointerDownRef.current = true;
               oldRidgeVal.current = frontRidgeLeftPoint[0];
               setInterSectionPlane(frontRidgeLeftPointV3, currentWallArray[3]);
               setRoofHandleType(RoofHandleType.FrontLeft);
@@ -788,7 +788,7 @@ const GambrelRoof = ({
           <RoofHandle
             position={[frontRidgeRightPointV3.x, frontRidgeRightPointV3.y, frontRidgeRightPointV3.z]}
             onPointerDown={() => {
-              isPointerMovingRef.current = true;
+              isPointerDownRef.current = true;
               oldRidgeVal.current = frontRidgeRightPoint[0];
               setInterSectionPlane(frontRidgeRightPointV3, currentWallArray[1]);
               setRoofHandleType(RoofHandleType.FrontRight);
@@ -798,7 +798,7 @@ const GambrelRoof = ({
           <RoofHandle
             position={[backRidgeLeftPointV3.x, backRidgeLeftPointV3.y, backRidgeLeftPointV3.z]}
             onPointerDown={() => {
-              isPointerMovingRef.current = true;
+              isPointerDownRef.current = true;
               oldRidgeVal.current = backRidgeLeftPoint[0];
               setInterSectionPlane(backRidgeLeftPointV3, currentWallArray[1]);
               setRoofHandleType(RoofHandleType.BackLeft);
@@ -807,7 +807,7 @@ const GambrelRoof = ({
           <RoofHandle
             position={[backRidgeRightPointV3.x, backRidgeRightPointV3.y, backRidgeRightPointV3.z]}
             onPointerDown={() => {
-              isPointerMovingRef.current = true;
+              isPointerDownRef.current = true;
               oldRidgeVal.current = backRidgeRightPoint[0];
               setInterSectionPlane(backRidgeRightPointV3, currentWallArray[3]);
               setRoofHandleType(RoofHandleType.BackRight);
@@ -826,7 +826,7 @@ const GambrelRoof = ({
           position={intersectionPlanePosition}
           rotation={intersectionPlaneRotation}
           onPointerMove={(e) => {
-            if (intersectionPlaneRef.current && isPointerMovingRef.current) {
+            if (intersectionPlaneRef.current && isPointerDownRef.current) {
               setRayCast(e);
               const intersects = ray.intersectObjects([intersectionPlaneRef.current]);
               if (intersects[0] && foundation) {
@@ -1082,7 +1082,7 @@ const GambrelRoof = ({
                 break;
               }
             }
-            isPointerMovingRef.current = false;
+            isPointerDownRef.current = false;
             setEnableIntersectionPlane(false);
             setRoofHandleType(RoofHandleType.Null);
             useStoreRef.getState().setEnableOrbitController(true);

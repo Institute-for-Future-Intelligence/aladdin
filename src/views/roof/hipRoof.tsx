@@ -140,7 +140,7 @@ const HipRoof = ({
   const mouse = useMemo(() => new Vector2(), []);
   const oldHeight = useRef<number>(h);
   const oldRelativeHeightRef = useRef<number>(relHeight.current);
-  const isPointerMovingRef = useRef(false);
+  const isPointerDownRef = useRef(false);
   const isFirstMountRef = useRef(true);
 
   useEffect(() => {
@@ -494,7 +494,7 @@ const HipRoof = ({
           <RoofHandle
             position={[ridgeLeftPoint.x, ridgeLeftPoint.y, ridgeLeftPoint.z]}
             onPointerDown={() => {
-              isPointerMovingRef.current = true;
+              isPointerDownRef.current = true;
               setEnableIntersectionPlane(true);
               intersectionPlanePosition.set(ridgeLeftPoint.x, ridgeLeftPoint.y, h);
               if (foundation && currentWallArray[0]) {
@@ -511,7 +511,7 @@ const HipRoof = ({
           <RoofHandle
             position={[ridgeMidPoint.x, ridgeMidPoint.y, ridgeMidPoint.z]}
             onPointerDown={() => {
-              isPointerMovingRef.current = true;
+              isPointerDownRef.current = true;
               setEnableIntersectionPlane(true);
               intersectionPlanePosition.set(ridgeMidPoint.x, ridgeMidPoint.y, h);
               if (foundation) {
@@ -528,7 +528,7 @@ const HipRoof = ({
           <RoofHandle
             position={[ridgeRightPoint.x, ridgeRightPoint.y, ridgeRightPoint.z]}
             onPointerDown={() => {
-              isPointerMovingRef.current = true;
+              isPointerDownRef.current = true;
               setEnableIntersectionPlane(true);
               intersectionPlanePosition.set(ridgeRightPoint.x, ridgeRightPoint.y, h);
               if (foundation && currentWallArray[0]) {
@@ -554,7 +554,7 @@ const HipRoof = ({
           position={intersectionPlanePosition}
           rotation={intersectionPlaneRotation}
           onPointerMove={(e) => {
-            if (intersectionPlaneRef.current && isPointerMovingRef.current) {
+            if (intersectionPlaneRef.current && isPointerDownRef.current) {
               setRayCast(e);
               const intersects = ray.intersectObjects([intersectionPlaneRef.current]);
               if (intersects[0] && foundation) {
@@ -640,7 +640,7 @@ const HipRoof = ({
                 );
               }
             }
-            isPointerMovingRef.current = false;
+            isPointerDownRef.current = false;
             setEnableIntersectionPlane(false);
             setRoofHandleType(RoofHandleType.Null);
             useStoreRef.getState().setEnableOrbitController(true);
