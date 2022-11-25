@@ -557,7 +557,6 @@ const MansardRoof = ({
   const getHeatmap = useStore(Selector.getHeatmap);
   const [heatmapTextures, setHeatmapTextures] = useState<CanvasTexture[]>([]);
   const topSurfaceMeshRef = useRef<Mesh>(null);
-  const { invalidate } = useThree();
 
   useEffect(() => {
     if (showSolarRadiationHeatmap) {
@@ -584,7 +583,7 @@ const MansardRoof = ({
   useEffect(() => {
     if (topSurfaceMeshRef.current) {
       const points = topRidgeShape.extractPoints(1).shape;
-      const geo = new BufferGeometry();
+      const geo = topSurfaceMeshRef.current.geometry;
       const positions = new Float32Array(18);
       const zOffset = 0.01; // a small number to ensure the surface mesh stay atop
       positions[0] = points[3].x;
@@ -617,8 +616,6 @@ const MansardRoof = ({
       uvs.push(scale, 0);
       uvs.push(scale, scale);
       geo.setAttribute('uv', new Float32BufferAttribute(uvs, 2));
-      topSurfaceMeshRef.current.geometry = geo;
-      invalidate();
     }
   }, [topRidgeShape, showSolarRadiationHeatmap]);
 

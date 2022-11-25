@@ -45,17 +45,16 @@ export const RoofSegment = ({
       if (geo) {
         const v10 = new Vector3().subVectors(points[1], points[0]);
         const length10 = v10.length();
-        const triangle = points.length === 6;
         const uvs = [];
         v10.normalize();
         const v20 = new Vector3().subVectors(points[2], points[0]);
-        if (triangle) {
+        if (points.length === 6) {
           // find the position of the top point relative to the first edge point
           const mid = v20.dot(v10) / length10;
           uvs.push(0, 0);
           uvs.push(1, 0);
           uvs.push(mid, 1);
-        } else {
+        } else if (points.length === 8) {
           // find the position of the top-left and top-right points relative to the lower-left point
           // the points go anticlockwise
           const v30 = new Vector3().subVectors(points[3], points[0]);
@@ -69,27 +68,36 @@ export const RoofSegment = ({
           uvs.push(0, 0);
         }
         geo.setAttribute('uv', new Float32BufferAttribute(uvs, 2));
-        const positions = new Float32Array(triangle ? 9 : 18);
-        const zOffset = thickness + 0.01; // a small number to ensure the surface mesh stay atop
-        positions[0] = points[0].x;
-        positions[1] = points[0].y;
-        positions[2] = points[0].z + zOffset;
-        positions[3] = points[1].x;
-        positions[4] = points[1].y;
-        positions[5] = points[1].z + zOffset;
-        positions[6] = points[2].x;
-        positions[7] = points[2].y;
-        positions[8] = points[2].z + zOffset;
-        if (!triangle) {
-          positions[9] = points[2].x;
-          positions[10] = points[2].y;
-          positions[11] = points[2].z + zOffset;
-          positions[12] = points[3].x;
-          positions[13] = points[3].y;
-          positions[14] = points[3].z + zOffset;
-          positions[15] = points[0].x;
-          positions[16] = points[0].y;
-          positions[17] = points[0].z + zOffset;
+        const positions = new Float32Array(points.length === 6 ? 9 : 18);
+        if (points.length === 6) {
+          positions[0] = points[3].x;
+          positions[1] = points[3].y;
+          positions[2] = points[3].z;
+          positions[3] = points[4].x;
+          positions[4] = points[4].y;
+          positions[5] = points[4].z;
+          positions[6] = points[5].x;
+          positions[7] = points[5].y;
+          positions[8] = points[5].z;
+        } else if (points.length === 8) {
+          positions[0] = points[4].x;
+          positions[1] = points[4].y;
+          positions[2] = points[4].z;
+          positions[3] = points[5].x;
+          positions[4] = points[5].y;
+          positions[5] = points[5].z;
+          positions[6] = points[6].x;
+          positions[7] = points[6].y;
+          positions[8] = points[6].z;
+          positions[9] = points[6].x;
+          positions[10] = points[6].y;
+          positions[11] = points[6].z;
+          positions[12] = points[7].x;
+          positions[13] = points[7].y;
+          positions[14] = points[7].z;
+          positions[15] = points[4].x;
+          positions[16] = points[4].y;
+          positions[17] = points[4].z;
         }
         // don't call geo.setFromPoints. It doesn't seem to work correctly.
         geo.setAttribute('position', new Float32BufferAttribute(positions, 3));
@@ -173,7 +181,7 @@ export const RoofSegment = ({
         castShadow={shadowEnabled && !transparent}
         receiveShadow={shadowEnabled}
         userData={{ simulation: true }}
-        position={[0, 0, 0.009]}
+        position={[0, 0, 0.01]}
         visible={!showSolarRadiationHeatmap}
       >
         <convexGeometry args={[pointsForSingleSide, isFlat ? defaultAngle : angle, isFlat ? 1 : length]} />
