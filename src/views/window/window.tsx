@@ -2,18 +2,17 @@
  * @Copyright 2021-2022. Institute for Future Intelligence, Inc.
  */
 
-import React, { useCallback, useEffect, useMemo, useState } from 'react';
+import React, { useEffect, useMemo } from 'react';
 import { Color, DoubleSide } from 'three';
 import { Box } from '@react-three/drei';
 import { WindowModel, WindowType } from 'src/models/WindowModel';
-import { CommonStoreState, useStore } from 'src/stores/common';
+import { useStore } from 'src/stores/common';
 import { ObjectType } from 'src/types';
 import * as Selector from 'src/stores/selector';
 import WindowHandleWrapper from './windowHandleWrapper';
 import { DEFAULT_WINDOW_SHINESS } from 'src/constants';
 import { ThreeEvent } from '@react-three/fiber';
 import RectangleWindow from './rectangleWindow';
-import { WallModel } from 'src/models/WallModel';
 import ArchedWindow from './archedWindow';
 
 export const defaultShutter = { showLeft: false, showRight: false, color: 'grey', width: 0.5 };

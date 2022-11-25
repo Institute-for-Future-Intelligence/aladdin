@@ -53,6 +53,7 @@ interface FlatRoofProps {
 
 const FlatRoof = ({ id, roofSegments, thickness, lineColor, lineWidth, children }: FlatRoofProps) => {
   const shadowEnabled = useStore(Selector.viewState.shadowEnabled);
+  const showSolarRadiationHeatmap = useStore(Selector.showSolarRadiationHeatmap);
   const { transparent } = useTransparent();
 
   const wireFramePoints = useMemo(() => {
@@ -88,13 +89,15 @@ const FlatRoof = ({ id, roofSegments, thickness, lineColor, lineWidth, children 
 
   return (
     <>
-      <Extrude
-        args={[shape, { steps: 1, depth: thickness, bevelEnabled: false }]}
-        castShadow={false}
-        receiveShadow={false}
-      >
-        <meshStandardMaterial color={'white'} />
-      </Extrude>
+      {!showSolarRadiationHeatmap && (
+        <Extrude
+          args={[shape, { steps: 1, depth: thickness, bevelEnabled: false }]}
+          castShadow={false}
+          receiveShadow={false}
+        >
+          <meshStandardMaterial color={'white'} />
+        </Extrude>
+      )}
       <mesh
         position={[0, 0, thickness + 0.01]}
         name={'Pyramid Roof Extrude'}

@@ -1,7 +1,7 @@
 {
-  "docid": "p6uY3e4YgwU34PM8FMqtWy",
-  "time": "11/25/2022 09:55 am",
-  "timestamp": 1669388105477,
+  "docid": "aNFzqTik1HozpmvFscZ9C6",
+  "time": "11/25/2022 02:54 pm",
+  "timestamp": 1669406054565,
   "userid": "QWecNcxhyvP6j6sBN11hBsfZDau1",
   "owner": null,
   "email": null,
@@ -46,7 +46,7 @@
     "pvGridCellSize": 0.5,
     "airAttenuationCoefficient": 0.01,
     "sutDaysPerYear": 4,
-    "date": "6/22/2022, 9:00:00 AM",
+    "date": "4/22/2022, 9:00:00 AM",
     "cspGridCellSize": 0.5,
     "dustLoss": 0.05,
     "daysPerYear": 12
@@ -850,7 +850,7 @@
       "parentId": "9VUxbWr6Hk1HaeGiLpEeqj",
       "id": "vFaP6sE5CTWHTpkpuqQusz",
       "selected": false,
-      "ly": 0.6
+      "ly": 0.4
     },
     {
       "type": "Window",
@@ -1013,78 +1013,10 @@
       "archHeight": 1
     },
     {
-      "type": "Solar Panel",
-      "pvModelName": "CS6X-355P-FG",
-      "cx": -0.0010000000000000009,
-      "cy": 4.7369515717340014e-14,
-      "cz": 0.0074666666666666735,
-      "lx": 3.968,
-      "ly": 27.552,
-      "lz": 0.046,
-      "trackerType": "None",
-      "tiltAngle": 0,
-      "relativeAzimuth": 0,
-      "orientation": "Portrait",
-      "poleRadius": 0.05,
-      "poleHeight": 1,
-      "poleSpacing": 3,
-      "showLabel": false,
-      "normal": [
-        0,
-        -1,
-        0
-      ],
-      "rotation": [
-        0,
-        0,
-        0
-      ],
-      "parentType": "Wall",
-      "parentId": "vdPkX7ZYSwK7VW7fzaG511",
-      "foundationId": "9VUxbWr6Hk1HaeGiLpEeqj",
-      "id": "vtELAp8zQ4QFQtpStwfL6C",
-      "selected": false,
-      "color": "#fff"
-    },
-    {
-      "type": "Solar Panel",
-      "pvModelName": "CS6X-355P-FG",
-      "cx": -0.0010000000000000007,
-      "cy": 3.7007434154171886e-16,
-      "cz": -0.009199999999999993,
-      "lx": 3.968,
-      "ly": 27.552,
-      "lz": 0.046,
-      "trackerType": "None",
-      "tiltAngle": 0,
-      "relativeAzimuth": 0,
-      "orientation": "Portrait",
-      "poleRadius": 0.05,
-      "poleHeight": 1,
-      "poleSpacing": 3,
-      "showLabel": false,
-      "normal": [
-        0,
-        -1,
-        0
-      ],
-      "rotation": [
-        0,
-        0,
-        0
-      ],
-      "parentType": "Wall",
-      "parentId": "1pJb5b6kS2mjvFyYw2rr5k",
-      "foundationId": "9VUxbWr6Hk1HaeGiLpEeqj",
-      "id": "o4zRpJeME5s3ts6Vu2Fnjd",
-      "selected": false,
-      "color": "#fff"
-    },
-    {
       "type": "Window",
-      "cx": -0.3121164823601472,
-      "cy": 0.1,
-      "cz": -0.0018752836475051994,
+      "cx": -0.33049242424242425,
+      "cy": 0.3,
+      "cz": 0.008333333333333333,
       "lx": 0.15151515151515152,
       "ly": 0.3,
       "lz": 0.9166666666666666,
@@ -1122,9 +1054,9 @@
     },
     {
       "type": "Window",
-      "cx": 0.3287041299353405,
-      "cy": 0.1,
-      "cz": 0.0037738148667191495,
+      "cx": 0.32575757575757575,
+      "cy": 0.3,
+      "cz": 0.008333333333333333,
       "lx": 0.15151515151515152,
       "ly": 0.3,
       "lz": 0.9166666666666666,
@@ -1974,6 +1906,76 @@
       "doorType": "Default",
       "archHeight": 1,
       "filled": true
+    },
+    {
+      "type": "Solar Panel",
+      "pvModelName": "CS6X-355P-FG",
+      "trackerType": "None",
+      "relativeAzimuth": 0,
+      "tiltAngle": 0,
+      "orientation": "Portrait",
+      "drawSunBeam": false,
+      "poleHeight": 1,
+      "poleRadius": 0.05,
+      "poleSpacing": 3,
+      "cx": -0.0010000000000000007,
+      "cy": 0,
+      "cz": -0.009199999999999993,
+      "lx": 3.968,
+      "ly": 27.552,
+      "lz": 0.046,
+      "showLabel": false,
+      "normal": [
+        -1,
+        1.2246467991473532e-16,
+        0
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "color": "#fff",
+      "frameColor": "white",
+      "parentType": "Wall",
+      "parentId": "1pJb5b6kS2mjvFyYw2rr5k",
+      "foundationId": "9VUxbWr6Hk1HaeGiLpEeqj",
+      "id": "uLAs5uL6WLuiZStL3dsozJ",
+      "selected": false
+    },
+    {
+      "type": "Solar Panel",
+      "pvModelName": "CS6X-355P-FG",
+      "cx": -0.0010000000000000009,
+      "cy": 2.373101715136272e-14,
+      "cz": 0.0074666666666666735,
+      "lx": 3.968,
+      "ly": 27.552,
+      "lz": 0.046,
+      "trackerType": "None",
+      "tiltAngle": 0,
+      "relativeAzimuth": 0,
+      "orientation": "Portrait",
+      "poleRadius": 0.05,
+      "poleHeight": 1,
+      "poleSpacing": 3,
+      "showLabel": false,
+      "normal": [
+        1,
+        0,
+        0
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "parentType": "Wall",
+      "parentId": "vdPkX7ZYSwK7VW7fzaG511",
+      "foundationId": "9VUxbWr6Hk1HaeGiLpEeqj",
+      "id": "oq1GewTgCJGR8EGbL6DMu7",
+      "selected": false,
+      "color": "#fff"
     }
   ],
   "view": {
@@ -1985,8 +1987,8 @@
     "enableRotate": true,
     "weatherPanelY": 0,
     "cameraPosition": [
-      -25.70003006694939,
-      -53.1067636829439,
+      -41.48638943484857,
+      -53.78503721816278,
       15.500675823090146
     ],
     "showYearlyUpdraftTowerYieldPanel": false,
@@ -2063,7 +2065,7 @@
     "mapWeatherStations": false,
     "showDailyParabolicDishYieldPanel": false,
     "yearlyParabolicDishYieldPanelY": 0,
-    "solarRadiationHeatMapMaxValue": 5,
+    "solarRadiationHeatMapMaxValue": 3.5,
     "showYearlyPvYieldPanel": false,
     "yearlyLightSensorPanelShowClearness": false,
     "showSolarPanelVisibilityResultsPanel": false,
