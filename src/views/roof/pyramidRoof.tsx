@@ -12,6 +12,7 @@ import {
   Float32BufferAttribute,
   Mesh,
   Raycaster,
+  RepeatWrapping,
   Shape,
   Vector2,
   Vector3,
@@ -607,6 +608,7 @@ const PyramidRoof = ({
               }
               const dx = maxX - minX;
               const dy = maxY - minY;
+              t.wrapT = t.wrapS = RepeatWrapping;
               t.offset.set(-minX / dx, -minY / dy);
               t.center.set((0.5 * (minX + maxX)) / dx, (0.5 * (minY + maxY)) / dy);
               t.rotation = -foundation.rotation[2];
@@ -898,9 +900,11 @@ const RoofSegment = ({
           side={DoubleSide}
         />
       </mesh>
-      <mesh ref={bulkMeshRef} name={'Pyramid Roof Bulk Segment'} castShadow={false} receiveShadow={false}>
-        <meshStandardMaterial color={'white'} />
-      </mesh>
+      {!showSolarRadiationHeatmap && (
+        <mesh ref={bulkMeshRef} name={'Pyramid Roof Bulk Segment'} castShadow={false} receiveShadow={false}>
+          <meshStandardMaterial color={'white'} />
+        </mesh>
+      )}
     </>
   );
 };

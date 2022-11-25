@@ -1364,9 +1364,11 @@ const RoofSegment = ({
               side={DoubleSide}
             />
           </mesh>
-          <mesh ref={bulkMeshRef} name={'Gable Roof Bulk'} castShadow={false} receiveShadow={false}>
-            <meshStandardMaterial color={'white'} transparent={transparent} opacity={_opacity} />
-          </mesh>
+          {!showSolarRadiationHeatmap && (
+            <mesh ref={bulkMeshRef} name={'Gable Roof Bulk'} castShadow={false} receiveShadow={false}>
+              <meshStandardMaterial color={'white'} transparent={transparent} opacity={_opacity} />
+            </mesh>
+          )}
         </>
       )}
       {roofStructure === RoofStructure.Glass && show && (

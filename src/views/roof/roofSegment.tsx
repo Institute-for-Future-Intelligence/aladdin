@@ -193,10 +193,12 @@ export const RoofSegment = ({
           side={DoubleSide}
         />
       </mesh>
-      <mesh name={`Roof segment ${index} bulk`} castShadow={false} receiveShadow={false}>
-        <convexGeometry args={[points, isFlat ? defaultAngle : angle, isFlat ? 1 : length]} />
-        <meshStandardMaterial color={'white'} transparent={transparent} opacity={opacity} />
-      </mesh>
+      {!showSolarRadiationHeatmap && (
+        <mesh name={`Roof segment ${index} bulk`} castShadow={false} receiveShadow={false}>
+          <convexGeometry args={[points, isFlat ? defaultAngle : angle, isFlat ? 1 : length]} />
+          <meshStandardMaterial color={'white'} transparent={transparent} opacity={opacity} />
+        </mesh>
+      )}
     </>
   );
 };
