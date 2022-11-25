@@ -181,11 +181,10 @@ const Door = (doorModel: DoorProps) => {
         side: DoubleSide,
       });
     }
-    let matColor;
     if (textureType === DoorTexture.Default || textureType === DoorTexture.NoTexture) {
-      matColor = color;
+      return new MeshStandardMaterial({ map: texture, color: color, side: FrontSide });
     }
-    return new MeshStandardMaterial({ map: texture, color: matColor, side: FrontSide });
+    return new MeshStandardMaterial({ map: texture, side: FrontSide });
   }, [color, textureType, texture, filled]);
 
   return (
