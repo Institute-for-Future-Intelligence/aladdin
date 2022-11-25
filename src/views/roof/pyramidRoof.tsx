@@ -591,12 +591,15 @@ const PyramidRoof = ({
           if (t) {
             // obtain the bounding rectangle
             const segmentVertices = getRoofSegmentVertices(id);
-            if (segmentVertices && foundation) {
+            if (segmentVertices && segmentVertices.length > 0 && foundation) {
               const euler = new Euler(0, 0, foundation.rotation[2], 'ZYX');
               let minX = Number.MAX_VALUE;
               let minY = Number.MAX_VALUE;
               let maxX = -Number.MAX_VALUE;
               let maxY = -Number.MAX_VALUE;
+              // the vertices are in fact already triangulated
+              // the third vertex of a segment is the center of the polygon
+              const vc = segmentVertices[0][2].clone().applyEuler(euler);
               for (const s of segmentVertices) {
                 for (const v of s) {
                   const v2 = v.clone().applyEuler(euler);
@@ -610,7 +613,7 @@ const PyramidRoof = ({
               const dy = maxY - minY;
               t.wrapT = t.wrapS = RepeatWrapping;
               t.offset.set(-minX / dx, -minY / dy);
-              t.center.set((0.5 * (minX + maxX)) / dx, (0.5 * (minY + maxY)) / dy);
+              t.center.set(vc.x / dx, vc.y / dy);
               t.rotation = -foundation.rotation[2];
               t.repeat.set(1 / dx, 1 / dy);
             }
