@@ -15,7 +15,7 @@ import * as Selector from 'src/stores/selector';
 import { ObjectType, RoofTexture } from 'src/types';
 import { UnoableResizeGambrelAndMansardRoofRidge } from 'src/undo/UndoableResize';
 import { Util } from 'src/Util';
-import { BufferGeometry, CanvasTexture, DoubleSide, Euler, Float32BufferAttribute, Mesh, Shape, Vector3 } from 'three';
+import { CanvasTexture, DoubleSide, Euler, Float32BufferAttribute, Mesh, Shape, Vector3 } from 'three';
 import {
   useMultiCurrWallArray,
   useRoofHeight,
@@ -647,7 +647,7 @@ const MansardRoof = ({
               defaultAngle={arr[0].angle}
               thickness={thickness}
               textureType={textureType}
-              heatmaps={heatmapTextures}
+              heatmap={heatmapTextures && i < heatmapTextures.length ? heatmapTextures[i] : undefined}
               color={color}
             />
           );

@@ -16,7 +16,7 @@ export const RoofSegment = ({
   defaultAngle,
   thickness,
   textureType,
-  heatmaps,
+  heatmap,
   color,
 }: {
   id: string;
@@ -25,7 +25,7 @@ export const RoofSegment = ({
   defaultAngle: number;
   thickness: number;
   textureType: RoofTexture;
-  heatmaps: CanvasTexture[];
+  heatmap?: CanvasTexture;
   color: string;
 }) => {
   const shadowEnabled = useStore(Selector.viewState.shadowEnabled);
@@ -163,9 +163,9 @@ export const RoofSegment = ({
         visible={showSolarRadiationHeatmap}
         position={[0, 0, 0.01]}
       >
-        {showSolarRadiationHeatmap && index >= 0 && index < heatmaps.length ? (
+        {showSolarRadiationHeatmap && heatmap ? (
           <meshBasicMaterial
-            map={heatmaps[index]}
+            map={heatmap}
             color={'white'}
             needsUpdate={true}
             opacity={opacity}

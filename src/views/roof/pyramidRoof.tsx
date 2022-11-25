@@ -5,22 +5,10 @@
 import React, { useEffect, useMemo, useRef, useState } from 'react';
 import { PyramidRoofModel, RoofModel } from 'src/models/RoofModel';
 import { useStore } from 'src/stores/common';
-import {
-  CanvasTexture,
-  DoubleSide,
-  Euler,
-  Float32BufferAttribute,
-  Mesh,
-  Raycaster,
-  RepeatWrapping,
-  Shape,
-  Vector2,
-  Vector3,
-} from 'three';
+import { CanvasTexture, DoubleSide, Euler, Mesh, Raycaster, RepeatWrapping, Shape, Vector2, Vector3 } from 'three';
 import * as Selector from 'src/stores/selector';
 import { WallModel } from 'src/models/WallModel';
 import { Extrude, Line, Plane } from '@react-three/drei';
-import { ConvexGeometry } from 'src/js/ConvexGeometry.js';
 import { HALF_PI, HALF_PI_Z_EULER, TWO_PI } from 'src/constants';
 import { useStoreRef } from 'src/stores/commonRef';
 import { useThree } from '@react-three/fiber';
@@ -47,6 +35,7 @@ import {
   useTransparent,
   useUpdateSegmentVerticesMap,
 } from './hooks';
+import { RoofSegment } from './roofSegment';
 
 const intersectionPlanePosition = new Vector3();
 const intersectionPlaneRotation = new Euler();
@@ -693,7 +682,7 @@ const PyramidRoof = ({
         ) : (
           <>
             {roofSegments.map((segment, idx) => {
-              const { points, angle, length } = segment;
+              const { points, angle } = segment;
               if (points.length > 0) {
                 const [leftPoint, rightPoint] = points;
                 const isFlat = Math.abs(leftPoint.z) < 0.01;
@@ -701,13 +690,13 @@ const PyramidRoof = ({
                   return (
                     <group name={`Roof segment ${idx}`} key={idx}>
                       <RoofSegment
-                        uuid={id + '-' + idx}
-                        points={points}
-                        angle={isFlat ? 0 : angle}
-                        length={isFlat ? 1 : length}
+                        id={id}
+                        index={idx}
+                        segment={segment}
+                        defaultAngle={isFlat ? 0 : angle}
                         thickness={thickness}
                         textureType={textureType}
-                        heatmap={heatmapTextures[idx]}
+                        heatmap={heatmapTextures && idx < heatmapTextures.length ? heatmapTextures[idx] : undefined}
                         color={color ?? 'white'}
                       />
                     </group>
@@ -785,130 +774,6 @@ const PyramidRoof = ({
         />
       )}
     </group>
-  );
-};
-
-const RoofSegment = ({
-  uuid,
-  points,
-  angle,
-  length,
-  thickness,
-  textureType,
-  heatmap,
-  color,
-}: {
-  uuid: string;
-  points: Vector3[];
-  angle: number;
-  length: number;
-  thickness: number;
-  textureType: RoofTexture;
-  heatmap: CanvasTexture;
-  color: string;
-}) => {
-  const shadowEnabled = useStore(Selector.viewState.shadowEnabled);
-  const showSolarRadiationHeatmap = useStore(Selector.showSolarRadiationHeatmap);
-  const heatmapMeshRef = useRef<Mesh>(null);
-  const bulkMeshRef = useRef<Mesh>(null);
-  const texture = useRoofTexture(textureType);
-  const { transparent, opacity } = useTransparent();
-
-  useEffect(() => {
-    if (bulkMeshRef.current) {
-      bulkMeshRef.current.geometry = new ConvexGeometry(points, angle, length);
-    }
-    if (heatmapMeshRef.current) {
-      const geo = heatmapMeshRef.current.geometry;
-      if (geo) {
-        const v10 = new Vector3().subVectors(points[1], points[0]);
-        const v20 = new Vector3().subVectors(points[2], points[0]);
-        const length10 = v10.length();
-        // find the position of the top point relative to the first edge point
-        const mid = v20.dot(v10.normalize()) / length10;
-        const positions = new Float32Array(9);
-        const zOffset = thickness + 0.01; // a small number to ensure the surface mesh stay atop
-        positions[0] = points[0].x;
-        positions[1] = points[0].y;
-        positions[2] = points[0].z + zOffset;
-        positions[3] = points[1].x;
-        positions[4] = points[1].y;
-        positions[5] = points[1].z + zOffset;
-        positions[6] = points[2].x;
-        positions[7] = points[2].y;
-        positions[8] = points[2].z + zOffset;
-        // don't call geo.setFromPoints. It doesn't seem to work correctly.
-        geo.setAttribute('position', new Float32BufferAttribute(positions, 3));
-        geo.computeVertexNormals();
-        const uvs = [];
-        uvs.push(0, 0);
-        uvs.push(1, 0);
-        uvs.push(mid, 1);
-        geo.setAttribute('uv', new Float32BufferAttribute(uvs, 2));
-        // TODO: if has window
-        // const h: Vector3[] = [];
-        // h.push(new Vector3(0, 0, -3));
-        // h.push(new Vector3(0, 0, 3));
-        // h.push(new Vector3(1, 1, -3));
-        // h.push(new Vector3(1, 1, 3));
-        // h.push(new Vector3(1, -1, -3));
-        // h.push(new Vector3(1, -1, 3));
-        // const holeMesh = new Mesh(new ConvexGeometry(h), mat);
-        // const res = CSG.subtract(roofMesh, holeMesh);
-        // meshRef.current.geometry = res.geometry;
-      }
-    }
-  }, [points, angle, length, thickness, showSolarRadiationHeatmap]);
-
-  const pointsForSingleSide = points.slice(points.length / 2);
-  // TODO: There may be a better way to do this, but convex geometry needs at least four points.
-  // For triangles, we fool it by duplicating the last point
-  if (pointsForSingleSide.length === 3) pointsForSingleSide.push(pointsForSingleSide[2].clone());
-
-  return (
-    <>
-      <mesh
-        ref={heatmapMeshRef}
-        castShadow={false}
-        receiveShadow={false}
-        visible={showSolarRadiationHeatmap}
-        position={[0, 0, 0.01]}
-      >
-        {showSolarRadiationHeatmap ? (
-          <meshBasicMaterial
-            map={heatmap}
-            color={'white'}
-            needsUpdate={true}
-            opacity={opacity}
-            transparent={transparent}
-          />
-        ) : (
-          <meshBasicMaterial color={'white'} />
-        )}
-      </mesh>
-      <mesh
-        name={`Pyramid Roof Segment Surface`}
-        uuid={uuid}
-        castShadow={shadowEnabled && !transparent}
-        receiveShadow={shadowEnabled}
-        userData={{ simulation: true }}
-        position={[0, 0, 0.009]}
-        visible={!showSolarRadiationHeatmap}
-      >
-        <convexGeometry args={[pointsForSingleSide, angle, length]} />
-        <meshStandardMaterial
-          map={texture}
-          color={textureType === RoofTexture.Default || textureType === RoofTexture.NoTexture ? color : 'white'}
-          transparent={transparent}
-          side={DoubleSide}
-        />
-      </mesh>
-      {!showSolarRadiationHeatmap && (
-        <mesh ref={bulkMeshRef} name={'Pyramid Roof Bulk Segment'} castShadow={false} receiveShadow={false}>
-          <meshStandardMaterial color={'white'} />
-        </mesh>
-      )}
-    </>
   );
 };
 

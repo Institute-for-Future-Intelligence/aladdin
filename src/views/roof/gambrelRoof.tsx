@@ -725,7 +725,7 @@ const GambrelRoof = ({
               defaultAngle={arr[0].angle}
               thickness={thickness}
               textureType={textureType}
-              heatmaps={heatmapTextures}
+              heatmap={heatmapTextures && i < heatmapTextures.length ? heatmapTextures[i] : undefined}
               color={color}
             />
           );
