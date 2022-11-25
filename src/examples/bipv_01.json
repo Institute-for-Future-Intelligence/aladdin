@@ -1,7 +1,7 @@
 {
-  "docid": "3L5zY4BY1fi2ZvttGASyic",
-  "time": "10/28/2022 09:40 pm",
-  "timestamp": 1667007617056,
+  "docid": "p6uY3e4YgwU34PM8FMqtWy",
+  "time": "11/25/2022 09:55 am",
+  "timestamp": 1669388105477,
   "userid": "QWecNcxhyvP6j6sBN11hBsfZDau1",
   "owner": null,
   "email": null,
@@ -683,7 +683,9 @@
       "opacity": 0.5,
       "mullionColor": "white",
       "frame": true,
-      "frameWidth": 0.1
+      "frameWidth": 0.1,
+      "windowType": "Default",
+      "archHeight": 1
     },
     {
       "type": "Window",
@@ -721,7 +723,9 @@
       "opacity": 0.5,
       "mullionColor": "white",
       "frame": true,
-      "frameWidth": 0.1
+      "frameWidth": 0.1,
+      "windowType": "Default",
+      "archHeight": 1
     },
     {
       "type": "Solar Panel",
@@ -827,12 +831,12 @@
     },
     {
       "type": "Human",
-      "name": "Jeni",
+      "name": "Jane",
       "cx": 1.0059834215863663,
       "cy": -11.909754621259744,
       "cz": 0.05000000074506161,
-      "lx": 0.45,
-      "lz": 1.7,
+      "lx": 0.4,
+      "lz": 1.67,
       "normal": [
         0,
         1,
@@ -846,7 +850,7 @@
       "parentId": "9VUxbWr6Hk1HaeGiLpEeqj",
       "id": "vFaP6sE5CTWHTpkpuqQusz",
       "selected": false,
-      "ly": 0.45
+      "ly": 0.6
     },
     {
       "type": "Window",
@@ -884,7 +888,9 @@
       "opacity": 0.5,
       "mullionColor": "white",
       "frame": true,
-      "frameWidth": 0.1
+      "frameWidth": 0.1,
+      "windowType": "Default",
+      "archHeight": 1
     },
     {
       "type": "Window",
@@ -922,7 +928,9 @@
       "opacity": 0.5,
       "mullionColor": "white",
       "frame": true,
-      "frameWidth": 0.1
+      "frameWidth": 0.1,
+      "windowType": "Default",
+      "archHeight": 1
     },
     {
       "type": "Window",
@@ -960,7 +968,9 @@
       "opacity": 0.5,
       "mullionColor": "white",
       "frame": true,
-      "frameWidth": 0.1
+      "frameWidth": 0.1,
+      "windowType": "Default",
+      "archHeight": 1
     },
     {
       "type": "Window",
@@ -998,7 +1008,9 @@
       "opacity": 0.5,
       "mullionColor": "white",
       "frame": true,
-      "frameWidth": 0.1
+      "frameWidth": 0.1,
+      "windowType": "Default",
+      "archHeight": 1
     },
     {
       "type": "Solar Panel",
@@ -1104,7 +1116,9 @@
       "opacity": 0.5,
       "mullionColor": "white",
       "frame": true,
-      "frameWidth": 0.1
+      "frameWidth": 0.1,
+      "windowType": "Default",
+      "archHeight": 1
     },
     {
       "type": "Window",
@@ -1142,7 +1156,9 @@
       "opacity": 0.5,
       "mullionColor": "white",
       "frame": true,
-      "frameWidth": 0.1
+      "frameWidth": 0.1,
+      "windowType": "Default",
+      "archHeight": 1
     },
     {
       "type": "Window",
@@ -1180,7 +1196,9 @@
       "opacity": 0.5,
       "mullionColor": "white",
       "frame": true,
-      "frameWidth": 0.1
+      "frameWidth": 0.1,
+      "windowType": "Default",
+      "archHeight": 1
     },
     {
       "type": "Window",
@@ -1218,7 +1236,9 @@
       "opacity": 0.5,
       "mullionColor": "white",
       "frame": true,
-      "frameWidth": 0.1
+      "frameWidth": 0.1,
+      "windowType": "Default",
+      "archHeight": 1
     },
     {
       "type": "Window",
@@ -1256,7 +1276,9 @@
       "opacity": 0.5,
       "mullionColor": "white",
       "frame": true,
-      "frameWidth": 0.1
+      "frameWidth": 0.1,
+      "windowType": "Default",
+      "archHeight": 1
     },
     {
       "type": "Window",
@@ -1294,7 +1316,9 @@
       "opacity": 0.5,
       "mullionColor": "white",
       "frame": true,
-      "frameWidth": 0.1
+      "frameWidth": 0.1,
+      "windowType": "Default",
+      "archHeight": 1
     },
     {
       "type": "Window",
@@ -1332,7 +1356,9 @@
       "opacity": 0.5,
       "mullionColor": "white",
       "frame": true,
-      "frameWidth": 0.1
+      "frameWidth": 0.1,
+      "windowType": "Default",
+      "archHeight": 1
     },
     {
       "type": "Window",
@@ -1370,7 +1396,9 @@
       "opacity": 0.5,
       "mullionColor": "white",
       "frame": true,
-      "frameWidth": 0.1
+      "frameWidth": 0.1,
+      "windowType": "Default",
+      "archHeight": 1
     },
     {
       "type": "Window",
@@ -1408,7 +1436,9 @@
       "opacity": 0.5,
       "mullionColor": "white",
       "frame": true,
-      "frameWidth": 0.1
+      "frameWidth": 0.1,
+      "windowType": "Default",
+      "archHeight": 1
     },
     {
       "type": "Window",
@@ -1446,7 +1476,9 @@
       "opacity": 0.5,
       "mullionColor": "white",
       "frame": true,
-      "frameWidth": 0.1
+      "frameWidth": 0.1,
+      "windowType": "Default",
+      "archHeight": 1
     },
     {
       "type": "Window",
@@ -1484,7 +1516,9 @@
       "opacity": 0.5,
       "mullionColor": "white",
       "frame": true,
-      "frameWidth": 0.1
+      "frameWidth": 0.1,
+      "windowType": "Default",
+      "archHeight": 1
     },
     {
       "type": "Window",
@@ -1522,7 +1556,9 @@
       "opacity": 0.5,
       "mullionColor": "white",
       "frame": true,
-      "frameWidth": 0.1
+      "frameWidth": 0.1,
+      "windowType": "Default",
+      "archHeight": 1
     },
     {
       "type": "Window",
@@ -1560,7 +1596,9 @@
       "opacity": 0.5,
       "mullionColor": "white",
       "frame": true,
-      "frameWidth": 0.1
+      "frameWidth": 0.1,
+      "windowType": "Default",
+      "archHeight": 1
     },
     {
       "type": "Solar Panel",
@@ -1932,7 +1970,10 @@
       ],
       "parentId": "4gHpGdkzTfd6pDbTqPc7xa",
       "foundationId": "9VUxbWr6Hk1HaeGiLpEeqj",
-      "id": "nJiiCKZsnQ4hdD69NEYwor"
+      "id": "nJiiCKZsnQ4hdD69NEYwor",
+      "doorType": "Default",
+      "archHeight": 1,
+      "filled": true
     }
   ],
   "view": {
@@ -1944,9 +1985,9 @@
     "enableRotate": true,
     "weatherPanelY": 0,
     "cameraPosition": [
-      -28.221858646909467,
-      -62.11415085678153,
-      16.13254519198956
+      -25.70003006694939,
+      -53.1067636829439,
+      15.500675823090146
     ],
     "showYearlyUpdraftTowerYieldPanel": false,
     "showSunAngles": false,
@@ -2000,9 +2041,9 @@
     "showYearlyHeliostatYieldPanel": false,
     "mapZoom": 18,
     "panCenter": [
-      0.24010792230891154,
-      -1.4474919468402512,
-      16.13254519198956
+      1.9046368072380662,
+      -2.718943908236788,
+      15.500675823090146
     ],
     "visibilityResultsPanelY": 0,
     "showZenithAngle": true,

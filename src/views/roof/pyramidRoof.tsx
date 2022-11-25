@@ -807,7 +807,7 @@ const RoofSegment = ({
   const heatmapMeshRef = useRef<Mesh>(null);
   const bulkMeshRef = useRef<Mesh>(null);
   const texture = useRoofTexture(textureType);
-  const { transparent } = useTransparent();
+  const { transparent, opacity } = useTransparent();
 
   useEffect(() => {
     if (bulkMeshRef.current) {
@@ -870,7 +870,13 @@ const RoofSegment = ({
         position={[0, 0, 0.01]}
       >
         {showSolarRadiationHeatmap ? (
-          <meshBasicMaterial map={heatmap} color={'white'} needsUpdate={true} />
+          <meshBasicMaterial
+            map={heatmap}
+            color={'white'}
+            needsUpdate={true}
+            opacity={opacity}
+            transparent={transparent}
+          />
         ) : (
           <meshBasicMaterial color={'white'} />
         )}

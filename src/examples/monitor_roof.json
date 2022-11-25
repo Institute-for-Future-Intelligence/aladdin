@@ -1,7 +1,7 @@
 {
-  "docid": "9ihTgmcTMHJX7214qRb1Dw",
-  "time": "11/18/2022 08:15 pm",
-  "timestamp": 1668820512726,
+  "docid": "51q82zxBYTkTadTa79GkDi",
+  "time": "11/24/2022 09:30 pm",
+  "timestamp": 1669343437436,
   "userid": "QWecNcxhyvP6j6sBN11hBsfZDau1",
   "owner": null,
   "email": null,
@@ -1469,8 +1469,8 @@
       "lz": 0.625,
       "doorType": "Arched",
       "archHeight": 1,
-      "textureType": "Door Texture Default",
-      "color": "white",
+      "textureType": "No Door Texture",
+      "color": "#73d8ff",
       "selected": false,
       "lineWidth": 0.2,
       "lineColor": "black",
@@ -1487,7 +1487,8 @@
       ],
       "parentId": "roDDPncXBpNgmNum9aUaov",
       "foundationId": "axj9GVUBNvhnWAa3G8T3wG",
-      "id": "fTMHecXmkxoFyi5nVgZruF"
+      "id": "fTMHecXmkxoFyi5nVgZruF",
+      "filled": false
     }
   ],
   "view": {
@@ -1519,9 +1520,9 @@
     "dailyHeliostatYieldPanelX": 0,
     "showDailyParabolicDishYieldPanel": false,
     "cameraPosition": [
-      -2.715545597674973,
-      -17.30419668263911,
-      3.8920906211872124
+      -4.297487968561391,
+      -16.845745793668158,
+      4.084049378760642
     ],
     "showYearlyHeliostatYieldPanel": false,
     "orthographic": false,

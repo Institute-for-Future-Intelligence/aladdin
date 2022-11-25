@@ -224,7 +224,7 @@ const RoofOpacityInput = ({ setDialogVisible }: { setDialogVisible: (b: boolean)
               min={0}
               max={1}
               style={{ width: 120 }}
-              step={0.1}
+              step={0.01}
               precision={2}
               value={input}
               formatter={(a) => Number(a).toFixed(2)}
