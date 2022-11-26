@@ -99,7 +99,7 @@ const FlatRoof = ({ id, roofSegments, thickness, lineColor, lineWidth, children 
         </Extrude>
       )}
       <mesh
-        position={[0, 0, thickness + 0.01]}
+        position={[0, 0, thickness]}
         name={'Pyramid Roof Extrude'}
         castShadow={shadowEnabled && !transparent}
         receiveShadow={shadowEnabled}
@@ -678,30 +678,30 @@ const PyramidRoof = ({
             lineColor={lineColor}
           >
             {showSolarRadiationHeatmap && flatHeatmapTexture ? (
-              <meshBasicMaterial attach="material" map={flatHeatmapTexture} color={'white'} />
+              <meshBasicMaterial attach="material" map={flatHeatmapTexture} color={'white'} side={DoubleSide} />
             ) : (
               normalMaterial
             )}
           </FlatRoof>
         ) : (
           <>
-            {roofSegments.map((segment, idx) => {
+            {roofSegments.map((segment, index) => {
               const { points, angle } = segment;
               if (points.length > 0) {
                 const [leftPoint, rightPoint] = points;
                 const isFlat = Math.abs(leftPoint.z) < 0.01;
                 if (leftPoint.distanceTo(rightPoint) > 0.1) {
                   return (
-                    <group name={`Roof segment ${idx}`} key={idx}>
+                    <group name={`Roof segment ${index}`} key={index}>
                       <RoofSegment
                         id={id}
-                        index={idx}
+                        index={index}
                         segment={segment}
                         defaultAngle={isFlat ? 0 : angle}
                         thickness={thickness}
-                        textureType={textureType}
-                        heatmap={heatmapTextures && idx < heatmapTextures.length ? heatmapTextures[idx] : undefined}
                         color={color ?? 'white'}
+                        textureType={textureType}
+                        heatmap={heatmapTextures && index < heatmapTextures.length ? heatmapTextures[index] : undefined}
                       />
                     </group>
                   );

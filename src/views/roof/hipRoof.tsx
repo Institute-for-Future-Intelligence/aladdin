@@ -463,19 +463,19 @@ const HipRoof = ({
           handleContextMenu(e, id);
         }}
       >
-        {roofSegments.map((segment, i, arr) => {
+        {roofSegments.map((segment, index, arr) => {
           return (
             // Roof segment idx is important for calculate normal
             <RoofSegment
               id={id}
-              key={i}
-              index={i}
+              key={index}
+              index={index}
               segment={segment}
               defaultAngle={arr[0].angle}
               thickness={thickness}
-              textureType={textureType}
-              heatmap={heatmapTextures && i < heatmapTextures.length ? heatmapTextures[i] : undefined}
               color={color}
+              textureType={textureType}
+              heatmap={heatmapTextures && index < heatmapTextures.length ? heatmapTextures[index] : undefined}
             />
           );
         })}

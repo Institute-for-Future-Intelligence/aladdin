@@ -715,18 +715,18 @@ const GambrelRoof = ({
           handleContextMenu(e, id);
         }}
       >
-        {roofSegments.map((segment, i, arr) => {
+        {roofSegments.map((segment, index, arr) => {
           return (
             <RoofSegment
               id={id}
-              key={i}
-              index={i}
+              key={index}
+              index={index}
               segment={segment}
               defaultAngle={arr[0].angle}
               thickness={thickness}
-              textureType={textureType}
-              heatmap={heatmapTextures && i < heatmapTextures.length ? heatmapTextures[i] : undefined}
               color={color}
+              textureType={textureType}
+              heatmap={heatmapTextures && index < heatmapTextures.length ? heatmapTextures[index] : undefined}
             />
           );
         })}

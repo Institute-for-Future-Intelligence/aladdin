@@ -1327,13 +1327,7 @@ const RoofSegment = ({
     <>
       {((_opacity > 0 && roofStructure === RoofStructure.Rafter) || roofStructure !== RoofStructure.Rafter) && (
         <>
-          <mesh
-            ref={heatmapMeshRef}
-            castShadow={false}
-            receiveShadow={false}
-            visible={showSolarRadiationHeatmap}
-            position={[0, 0, 0.01]}
-          >
+          <mesh ref={heatmapMeshRef} castShadow={false} receiveShadow={false} visible={showSolarRadiationHeatmap}>
             {showSolarRadiationHeatmap && index >= 0 && index < heatmaps.length ? (
               <meshBasicMaterial
                 map={heatmaps[index]}
@@ -1341,6 +1335,7 @@ const RoofSegment = ({
                 needsUpdate={true}
                 opacity={_opacity}
                 transparent={transparent}
+                side={DoubleSide}
               />
             ) : (
               <meshBasicMaterial color={'white'} />
@@ -1352,7 +1347,7 @@ const RoofSegment = ({
             castShadow={shadowEnabled && !transparent}
             receiveShadow={shadowEnabled}
             userData={{ simulation: true }}
-            position={[0, 0, 0.009]}
+            position={[0, 0, 0.01]}
             visible={!showSolarRadiationHeatmap}
           >
             <convexGeometry args={[points.slice(points.length / 2), angle, length]} />

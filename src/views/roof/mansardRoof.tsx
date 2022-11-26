@@ -637,28 +637,30 @@ const MansardRoof = ({
           handleContextMenu(e, id);
         }}
       >
-        {roofSegments.map((segment, i, arr) => {
+        {roofSegments.map((segment, index, arr) => {
           return (
             <RoofSegment
               id={id}
-              key={i}
-              index={i}
+              key={index}
+              index={index}
               segment={segment}
               defaultAngle={arr[0].angle}
               thickness={thickness}
-              textureType={textureType}
-              heatmap={heatmapTextures && i < heatmapTextures.length ? heatmapTextures[i] : undefined}
               color={color}
+              textureType={textureType}
+              heatmap={heatmapTextures && index < heatmapTextures.length ? heatmapTextures[index] : undefined}
             />
           );
         })}
-        <Extrude
-          args={[topRidgeShape, { steps: 1, depth: thickness, bevelEnabled: false }]}
-          castShadow={false}
-          receiveShadow={false}
-        >
-          <meshStandardMaterial color={'white'} transparent={transparent} opacity={opacity} />
-        </Extrude>
+        {!showSolarRadiationHeatmap && (
+          <Extrude
+            args={[topRidgeShape, { steps: 1, depth: thickness, bevelEnabled: false }]}
+            castShadow={false}
+            receiveShadow={false}
+          >
+            <meshStandardMaterial color={'white'} transparent={transparent} opacity={opacity} />
+          </Extrude>
+        )}
         <mesh
           uuid={id + '-4'}
           ref={topSurfaceMeshRef}
@@ -670,7 +672,7 @@ const MansardRoof = ({
         >
           {/*<shapeBufferGeometry args={[topRidgeShape]}></shapeBufferGeometry>*/}
           {showSolarRadiationHeatmap && heatmapTextures.length === 5 ? (
-            <meshBasicMaterial map={heatmapTextures[4]} color={'white'} />
+            <meshBasicMaterial map={heatmapTextures[4]} color={'white'} side={DoubleSide} />
           ) : (
             <meshStandardMaterial
               color={textureType === RoofTexture.Default || textureType === RoofTexture.NoTexture ? color : 'white'}

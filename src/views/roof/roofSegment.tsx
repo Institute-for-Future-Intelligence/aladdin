@@ -15,18 +15,18 @@ export const RoofSegment = ({
   segment,
   defaultAngle,
   thickness,
+  color,
   textureType,
   heatmap,
-  color,
 }: {
   id: string;
   index: number;
   segment: RoofSegmentProps;
   defaultAngle: number;
   thickness: number;
+  color: string;
   textureType: RoofTexture;
   heatmap?: CanvasTexture;
-  color: string;
 }) => {
   const shadowEnabled = useStore(Selector.viewState.shadowEnabled);
   const showSolarRadiationHeatmap = useStore(Selector.showSolarRadiationHeatmap);
@@ -36,8 +36,7 @@ export const RoofSegment = ({
   const heatmapMeshRef = useRef<Mesh>(null);
 
   const { points, angle, length } = segment;
-  const [leftRoof, rightRoof, rightRidge, leftRidge] = points;
-  const isFlat = Math.abs(leftRoof.z) < 0.1;
+  const isFlat = Math.abs(points[0].z) < 0.1;
 
   useEffect(() => {
     if (heatmapMeshRef.current) {
@@ -156,13 +155,7 @@ export const RoofSegment = ({
 
   return (
     <>
-      <mesh
-        ref={heatmapMeshRef}
-        castShadow={false}
-        receiveShadow={false}
-        visible={showSolarRadiationHeatmap}
-        position={[0, 0, 0.01]}
-      >
+      <mesh ref={heatmapMeshRef} castShadow={false} receiveShadow={false} visible={showSolarRadiationHeatmap}>
         {showSolarRadiationHeatmap && heatmap ? (
           <meshBasicMaterial
             map={heatmap}
@@ -170,6 +163,7 @@ export const RoofSegment = ({
             needsUpdate={true}
             opacity={opacity}
             transparent={transparent}
+            side={DoubleSide}
           />
         ) : (
           <meshBasicMaterial color={'white'} />
