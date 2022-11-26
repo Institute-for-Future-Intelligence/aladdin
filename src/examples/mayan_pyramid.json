@@ -1,7 +1,7 @@
 {
-  "docid": "7x6Cs84PXshATZeerLi2wS",
-  "time": "11/13/2022 07:01 pm",
-  "timestamp": 1668384092199,
+  "docid": "nd6ggCfi8Jyt19ej6Y63kD",
+  "time": "11/26/2022 01:26 pm",
+  "timestamp": 1669487169525,
   "userid": "QWecNcxhyvP6j6sBN11hBsfZDau1",
   "owner": null,
   "email": null,
@@ -639,7 +639,8 @@
       "ridgeRightPoint": [
         0.5,
         1
-      ]
+      ],
+      "sideColor": "#ffffff"
     },
     {
       "type": "Wall",
@@ -887,7 +888,8 @@
         0.5,
         1
       ],
-      "selected": false
+      "selected": false,
+      "sideColor": "#ffffff"
     },
     {
       "type": "Foundation",
@@ -1161,7 +1163,8 @@
         0.5,
         1
       ],
-      "selected": false
+      "selected": false,
+      "sideColor": "#ffffff"
     },
     {
       "type": "Foundation",
@@ -1709,7 +1712,8 @@
         0.5,
         1
       ],
-      "selected": false
+      "selected": false,
+      "sideColor": "#ffffff"
     },
     {
       "type": "Foundation",
@@ -1983,7 +1987,8 @@
         0.5,
         1
       ],
-      "selected": false
+      "selected": false,
+      "sideColor": "#ffffff"
     },
     {
       "type": "Foundation",
@@ -2506,14 +2511,14 @@
     "showYearlyLightSensorPanel": false,
     "mapType": "hybrid",
     "cameraPosition": [
-      -68.97896099284804,
-      -24.812433381513358,
-      5.015110696456476
+      -70.3561313724375,
+      -14.160983414894517,
+      7.658573388529187
     ],
     "panCenter": [
-      -3.606631918155994,
-      -10.089364840155975,
-      5.01511069645647
+      -3.3995965764272404,
+      -11.490289866158918,
+      7.658573388529183
     ],
     "orthographic": false,
     "enableRotate": true,

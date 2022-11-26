@@ -46,16 +46,28 @@ interface FlatRoofProps {
   id: string;
   roofSegments: RoofSegmentProps[];
   thickness: number;
-  children: React.ReactNode;
   lineWidth: number;
   lineColor: string;
   sideColor: string;
+  color: string;
+  textureType: RoofTexture;
+  heatmap: CanvasTexture | null;
 }
 
-const FlatRoof = ({ id, roofSegments, thickness, lineColor, lineWidth, sideColor, children }: FlatRoofProps) => {
+const FlatRoof = ({
+  id,
+  roofSegments,
+  thickness,
+  lineColor,
+  lineWidth,
+  sideColor,
+  color,
+  textureType,
+  heatmap,
+}: FlatRoofProps) => {
   const shadowEnabled = useStore(Selector.viewState.shadowEnabled);
   const showSolarRadiationHeatmap = useStore(Selector.showSolarRadiationHeatmap);
-  const { transparent } = useTransparent();
+  const { transparent, opacity } = useTransparent();
 
   const wireFramePoints = useMemo(() => {
     // this can still be triggered when the roof is deleted because all walls are removed
@@ -90,26 +102,50 @@ const FlatRoof = ({ id, roofSegments, thickness, lineColor, lineWidth, sideColor
 
   return (
     <>
-      {!showSolarRadiationHeatmap && (
+      {/*special case: the whole roof segment has no texture and only one color */}
+      {textureType === RoofTexture.NoTexture && color && color === sideColor ? (
         <Extrude
           args={[shape, { steps: 1, depth: thickness, bevelEnabled: false }]}
-          castShadow={false}
-          receiveShadow={false}
+          uuid={id}
+          name={'Pyramid Flat Roof Extrude'}
+          castShadow={shadowEnabled && !transparent}
+          receiveShadow={shadowEnabled}
+          userData={{ simulation: true }}
         >
-          <meshStandardMaterial color={sideColor ?? 'white'} />
+          {showSolarRadiationHeatmap && heatmap ? (
+            <meshBasicMaterial attach="material" map={heatmap} />
+          ) : (
+            <meshStandardMaterial color={color} transparent={transparent} opacity={opacity} />
+          )}
         </Extrude>
+      ) : (
+        <>
+          <mesh
+            uuid={id}
+            name={'Pyramid Flat Roof Surface'}
+            castShadow={shadowEnabled && !transparent}
+            receiveShadow={shadowEnabled}
+            userData={{ simulation: true }}
+            position={[0, 0, thickness + 0.01]}
+          >
+            <shapeBufferGeometry args={[shape]}></shapeBufferGeometry>
+            {showSolarRadiationHeatmap && heatmap ? (
+              <meshBasicMaterial attach="material" map={heatmap} color={'white'} side={DoubleSide} />
+            ) : (
+              <meshStandardMaterial color={color} transparent={transparent} opacity={opacity} side={DoubleSide} />
+            )}
+          </mesh>
+          {!showSolarRadiationHeatmap && (
+            <Extrude
+              args={[shape, { steps: 1, depth: thickness, bevelEnabled: false }]}
+              castShadow={false}
+              receiveShadow={false}
+            >
+              <meshStandardMaterial color={sideColor ?? 'white'} />
+            </Extrude>
+          )}
+        </>
       )}
-      <mesh
-        position={[0, 0, thickness + 0.01]}
-        name={'Pyramid Flat Roof Surface'}
-        castShadow={shadowEnabled && !transparent}
-        receiveShadow={shadowEnabled}
-        uuid={id}
-        userData={{ simulation: true }}
-      >
-        <shapeBufferGeometry args={[shape]}></shapeBufferGeometry>
-        {children}
-      </mesh>
 
       {/* wireframe */}
       {periphery}
@@ -637,19 +673,6 @@ const PyramidRoof = ({
     }
   }, [showSolarRadiationHeatmap, solarRadiationHeatmapMaxValue]);
 
-  const normalMaterial = useMemo(
-    () => (
-      <meshStandardMaterial
-        map={texture}
-        color={textureType === RoofTexture.Default || textureType === RoofTexture.NoTexture ? color : 'white'}
-        transparent={transparent}
-        opacity={opacity}
-        side={DoubleSide}
-      />
-    ),
-    [texture, textureType, color, transparent, opacity],
-  );
-
   useUpdateSegmentVerticesMap(id, centerPointV3, roofSegments);
 
   return (
@@ -679,13 +702,10 @@ const PyramidRoof = ({
             lineWidth={lineWidth}
             lineColor={lineColor}
             sideColor={sideColor}
-          >
-            {showSolarRadiationHeatmap && flatHeatmapTexture ? (
-              <meshBasicMaterial attach="material" map={flatHeatmapTexture} color={'white'} side={DoubleSide} />
-            ) : (
-              normalMaterial
-            )}
-          </FlatRoof>
+            color={color}
+            textureType={textureType}
+            heatmap={flatHeatmapTexture}
+          />
         ) : (
           <>
             {roofSegments.map((segment, index) => {
