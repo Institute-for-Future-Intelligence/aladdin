@@ -49,7 +49,6 @@ const Tree = ({
   selected = false,
   locked = false,
   showModel = false,
-  evergreen = false,
 }: TreeModel) => {
   let isRender = false;
   useStore((state) => {
@@ -99,11 +98,17 @@ const Tree = ({
   const resizeHandleLowerRef = useRef<Mesh>();
   const resizeHandleUpperRef = useRef<Mesh>();
 
+  const lang = { lng: language };
   const treeModel = getElementById(id) as TreeModel;
   const month = now.getMonth() + 1;
+
   // TODO: This needs to depend on location more accurately
-  const noLeaves = !evergreen && (latitude > 0 ? month < 4 || month > 10 : month >= 4 && month <= 10);
-  const lang = { lng: language };
+  const noLeaves = useMemo(() => {
+    return (
+      !TreeData.isEvergreen(treeModel ? treeModel.name : TreeType.Dogwood) &&
+      (latitude > 0 ? month < 4 || month > 10 : month >= 4 && month <= 10)
+    );
+  }, [month, latitude, treeModel?.name]);
 
   const fileChangedRef = useRef(false);
   const fileChangedState = useStore(Selector.fileChanged);

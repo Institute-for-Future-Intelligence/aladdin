@@ -986,7 +986,6 @@
       "parentId": "Ground",
       "id": "t5Aj8tjjpqVaLaB3uEqfR8",
       "selected": false,
-      "evergreen": true,
       "locked": false
     },
     {
@@ -1808,8 +1807,7 @@
       ],
       "parentId": "Ground",
       "id": "oGL2siNwwXoicUvtQoHfi3",
-      "selected": false,
-      "evergreen": false
+      "selected": false
     },
     {
       "type": "Human",
@@ -2230,7 +2228,6 @@
       "parentId": "Ground",
       "id": "iVXpvVvo7CVsBLdZiLcmV8",
       "selected": false,
-      "evergreen": true,
       "flip": true
     },
     {

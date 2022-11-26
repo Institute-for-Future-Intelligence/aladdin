@@ -1506,7 +1506,6 @@
       "parentId": "ihXBcGst6vfG6pMnKjKmcM",
       "id": "rK9Z4WmcdLBPe5DdK1mo3L",
       "selected": false,
-      "evergreen": false,
       "locked": false
     },
     {
@@ -1530,8 +1529,7 @@
       "parentId": "ihXBcGst6vfG6pMnKjKmcM",
       "id": "ko7TU1v7o4aKNwN5wszk6E",
       "selected": false,
-      "locked": false,
-      "evergreen": false
+      "locked": false
     },
     {
       "type": "Tree",
@@ -1554,8 +1552,7 @@
       "parentId": "ihXBcGst6vfG6pMnKjKmcM",
       "id": "1zDByoeV2v4opENdb8nE73",
       "selected": false,
-      "locked": false,
-      "evergreen": false
+      "locked": false
     },
     {
       "type": "Tree",
@@ -1578,8 +1575,7 @@
       "parentId": "ihXBcGst6vfG6pMnKjKmcM",
       "id": "5ynw27sYwALgCvbTKBPFuc",
       "selected": false,
-      "locked": false,
-      "evergreen": false
+      "locked": false
     },
     {
       "type": "Flower",
@@ -1671,7 +1667,6 @@
       "parentId": "ihXBcGst6vfG6pMnKjKmcM",
       "id": "9HVmsEYn5NmhERnCHtLeTG",
       "selected": false,
-      "evergreen": false,
       "locked": false
     },
     {
@@ -1784,8 +1779,7 @@
       ],
       "parentId": "ihXBcGst6vfG6pMnKjKmcM",
       "id": "pzKai5MWnLpM5xYggPryb1",
-      "selected": false,
-      "evergreen": false
+      "selected": false
     },
     {
       "type": "Human",

@@ -1465,7 +1465,6 @@
       "parentId": "m7AH7DcnoGzAq9kryBy4RS",
       "id": "r4PU1mJTsD7Dm4DCSTQbEk",
       "selected": false,
-      "evergreen": true,
       "locked": false
     },
     {
@@ -1538,7 +1537,6 @@
       "parentId": "m7AH7DcnoGzAq9kryBy4RS",
       "id": "hgWXQayK9bDxaZTKFMFyaj",
       "selected": false,
-      "evergreen": true,
       "locked": false
     },
     {
@@ -1888,8 +1886,7 @@
       ],
       "parentId": "m7AH7DcnoGzAq9kryBy4RS",
       "id": "72iSoNbD98zvpFJ2Q1mmkB",
-      "selected": false,
-      "evergreen": true
+      "selected": false
     },
     {
       "type": "Flower",

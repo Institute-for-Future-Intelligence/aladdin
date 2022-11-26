@@ -2381,8 +2381,7 @@
       ],
       "parentId": "Ground",
       "id": "nHGsDGLUFhyht1nKkbShZS",
-      "selected": false,
-      "evergreen": false
+      "selected": false
     },
     {
       "type": "Tree",
@@ -2404,8 +2403,7 @@
       ],
       "parentId": "Ground",
       "id": "pYVQihimDYo3cuWwFUxGRV",
-      "selected": false,
-      "evergreen": false
+      "selected": false
     },
     {
       "type": "Flower",

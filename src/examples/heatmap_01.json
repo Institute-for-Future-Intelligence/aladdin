@@ -79,8 +79,7 @@
       "parentId": "9zunWg9vgE2EXQf2GAGvHJ",
       "id": "e4UGoSP6vMmKtTpaK7Xx7e",
       "selected": false,
-      "showModel": false,
-      "evergreen": false
+      "showModel": false
     },
     {
       "type": "Human",
@@ -187,7 +186,6 @@
       "parentId": "9zunWg9vgE2EXQf2GAGvHJ",
       "id": "8nmhqhdJRjPhvXmqRWtXWS",
       "selected": false,
-      "evergreen": false,
       "showModel": false
     },
     {
@@ -444,8 +442,7 @@
       ],
       "parentId": "9zunWg9vgE2EXQf2GAGvHJ",
       "id": "hP32y2WeaoShZAgJcL2phB",
-      "selected": false,
-      "evergreen": false
+      "selected": false
     }
   ],
   "view": {

@@ -1800,8 +1800,7 @@
       ],
       "parentId": "Ground",
       "id": "mz5Bu6Fc74abemkCjnNzj8",
-      "selected": false,
-      "evergreen": false
+      "selected": false
     },
     {
       "type": "Tree",
@@ -1823,8 +1822,7 @@
       ],
       "parentId": "Ground",
       "id": "vRaDd6Us9GPPs1xWHr35Aq",
-      "selected": false,
-      "evergreen": false
+      "selected": false
     },
     {
       "type": "Flower",
@@ -1934,8 +1932,7 @@
       ],
       "parentId": "Ground",
       "id": "242hfQPKKVCMwkg6guH9SJ",
-      "selected": false,
-      "evergreen": false
+      "selected": false
     },
     {
       "type": "Tree",
@@ -1980,8 +1977,7 @@
       ],
       "parentId": "Ground",
       "id": "fy1FkFpbo7uvywjAGwxRuY",
-      "selected": false,
-      "evergreen": true
+      "selected": false
     },
     {
       "type": "Tree",

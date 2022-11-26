@@ -746,7 +746,6 @@
       "parentId": "Ground",
       "id": "fvxLBBmjibSLAyfoLcbVjh",
       "selected": false,
-      "evergreen": false,
       "locked": true
     },
     {
@@ -885,7 +884,6 @@
       "parentId": "Ground",
       "id": "qpT1N3VZfjdrNWS4GttCXC",
       "selected": false,
-      "evergreen": false,
       "locked": true
     },
     {
@@ -934,7 +932,6 @@
       "parentId": "Ground",
       "id": "rAcrYXcgzcVotvfd1MPBUS",
       "selected": false,
-      "evergreen": false,
       "locked": true,
       "flip": true
     },

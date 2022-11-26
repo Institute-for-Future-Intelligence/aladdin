@@ -3538,7 +3538,6 @@
       "parentId": "3Qmj2gXj2Lmc28MbpT7BdQ",
       "id": "iyZFP8cWUDsX2VGyUoGTxq",
       "selected": false,
-      "evergreen": false,
       "locked": false
     },
     {
@@ -3562,7 +3561,6 @@
       "parentId": "3Qmj2gXj2Lmc28MbpT7BdQ",
       "id": "q5tey4s1a5vXUiiDEyFkaC",
       "selected": false,
-      "evergreen": false,
       "flip": true,
       "locked": false
     },

@@ -103,8 +103,7 @@
       "cy": -7.809220875702906,
       "lz": 10,
       "name": "Birch",
-      "parentId": "Ground",
-      "evergreen": false
+      "parentId": "Ground"
     },
     {
       "selected": false,
@@ -165,7 +164,6 @@
     },
     {
       "cx": -23.340488252107782,
-      "evergreen": false,
       "cz": 0,
       "id": "tJeB5NfeXNiu4x7bJzUo9c",
       "selected": false,
@@ -321,8 +319,7 @@
       ],
       "parentId": "Ground",
       "id": "rWrzivW4afibFuZheu2ZqV",
-      "selected": false,
-      "evergreen": false
+      "selected": false
     },
     {
       "type": "Tree",
@@ -344,8 +341,7 @@
       ],
       "parentId": "Ground",
       "id": "rd1CFzdzbUa21QJwgHv8cP",
-      "selected": false,
-      "evergreen": false
+      "selected": false
     },
     {
       "type": "Cuboid",
@@ -626,8 +622,7 @@
       ],
       "parentId": "Ground",
       "id": "jDrfaAvoEqu7y5suMRTWYc",
-      "selected": false,
-      "evergreen": false
+      "selected": false
     }
   ],
   "view": {

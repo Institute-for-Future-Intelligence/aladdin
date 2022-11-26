@@ -143,7 +143,6 @@
       "lx": 20,
       "cz": 0.10000000074505806,
       "cx": 13.623011710923919,
-      "evergreen": false,
       "selected": false,
       "name": "Oak",
       "cy": 12.95292752972638
@@ -314,7 +313,6 @@
     },
     {
       "lx": 5,
-      "evergreen": true,
       "parentId": "Ground",
       "id": "at3dF6SQoavQM2mWXfaQoH",
       "cz": 0.10000000074505895,
@@ -362,7 +360,6 @@
     },
     {
       "cx": 7.643885747803793,
-      "evergreen": false,
       "selected": false,
       "locked": true,
       "id": "h8TwAvSyLwtPBvqze5mwzf",

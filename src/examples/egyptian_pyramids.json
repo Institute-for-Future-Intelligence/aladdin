@@ -905,8 +905,7 @@
       ],
       "parentId": "Ground",
       "id": "nN965AFg3yMtHobvcGg5R7",
-      "selected": false,
-      "evergreen": true
+      "selected": false
     },
     {
       "type": "Tree",
@@ -928,8 +927,7 @@
       ],
       "parentId": "Ground",
       "id": "2anvXQ4u2H4Gmk1Wk9rdgM",
-      "selected": false,
-      "evergreen": true
+      "selected": false
     },
     {
       "type": "Tree",
@@ -951,8 +949,7 @@
       ],
       "parentId": "Ground",
       "id": "kUerK8k3CG9QPyDqpE1w3s",
-      "selected": false,
-      "evergreen": true
+      "selected": false
     },
     {
       "type": "Tree",
@@ -974,8 +971,7 @@
       ],
       "parentId": "Ground",
       "id": "6e2aW2xXuEPds7gKc1zyEZ",
-      "selected": false,
-      "evergreen": true
+      "selected": false
     },
     {
       "type": "Human",

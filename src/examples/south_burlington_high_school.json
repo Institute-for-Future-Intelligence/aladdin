@@ -1487,8 +1487,7 @@
       "parentId": "Ground",
       "cx": 15.962764438139406,
       "normal": [0, 1, 0],
-      "lz": 10,
-      "evergreen": false
+      "lz": 10
     },
     {
       "cx": 4.786319195449075,
@@ -1503,8 +1502,7 @@
       "locked": false,
       "lx": 10,
       "normal": [0, 0, 1],
-      "cz": 0,
-      "evergreen": false
+      "cz": 0
     },
     {
       "cz": 0,
@@ -1519,8 +1517,7 @@
       "rotation": [0, 0, 0],
       "selected": false,
       "cy": 24.20884875644974,
-      "normal": [0, 0, 1],
-      "evergreen": false
+      "normal": [0, 0, 1]
     },
     {
       "rotation": [0, 0, 0],
@@ -1535,8 +1532,7 @@
       "cx": -56.12589485999845,
       "id": "sBLygdm7dv2Y53q9fnNST7",
       "selected": false,
-      "lz": 10,
-      "evergreen": false
+      "lz": 10
     },
     {
       "ly": 1,
@@ -2562,8 +2558,7 @@
       "rotation": [0, 0, 0],
       "parentId": "Ground",
       "id": "g1FsRLcUZdSt9Q2DU31zPA",
-      "selected": false,
-      "evergreen": false
+      "selected": false
     },
     {
       "type": "Tree",

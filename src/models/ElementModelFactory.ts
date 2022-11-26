@@ -79,7 +79,6 @@ export class ElementModelFactory {
       cz: z,
       lx: spread ?? 3,
       lz: height ?? 4,
-      evergreen: TreeData.isEvergreen(type ?? TreeType.Dogwood),
       normal: [0, 1, 0],
       rotation: [0, 0, 0],
       parentId: parentId,

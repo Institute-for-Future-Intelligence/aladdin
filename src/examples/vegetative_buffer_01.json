@@ -371,7 +371,6 @@
       "parentId": "Ground",
       "id": "vfBrsVoh8zPsZKEuooN1Mp",
       "selected": false,
-      "evergreen": false,
       "showModel": false
     },
     {
@@ -395,7 +394,6 @@
       "parentId": "Ground",
       "id": "99sYceKNBfrqJSsDa72tLX",
       "selected": false,
-      "evergreen": true,
       "showModel": false
     },
     {

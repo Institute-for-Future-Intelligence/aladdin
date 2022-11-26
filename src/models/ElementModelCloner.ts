@@ -164,7 +164,6 @@ export class ElementModelCloner {
       type: ObjectType.Tree,
       name: tree.name,
       flip: tree.flip,
-      evergreen: tree.evergreen,
       cx: x,
       cy: y,
       cz: z,

@@ -1511,8 +1511,7 @@
       ],
       "parentId": "Ground",
       "id": "b1PLNbuHYXMSFSk3EuJWpe",
-      "selected": false,
-      "evergreen": false
+      "selected": false
     },
     {
       "type": "Tree",
@@ -1534,8 +1533,7 @@
       ],
       "parentId": "Ground",
       "id": "7jf8KwAp3jRyyjP9pa5nD6",
-      "selected": false,
-      "evergreen": false
+      "selected": false
     },
     {
       "type": "Human",
@@ -2231,8 +2229,7 @@
       ],
       "parentId": "Ground",
       "id": "gkQDZPnaSVr9iatjDLPxBD",
-      "selected": false,
-      "evergreen": false
+      "selected": false
     },
     {
       "type": "Tree",

@@ -7,7 +7,6 @@ import { TreeType } from '../types';
 
 export interface TreeModel extends ElementModel {
   name: TreeType;
-  evergreen: boolean;
   showModel: boolean;
   flip?: boolean; // used to flip the billboard horizontally so a tree can face a different direction
 }
