@@ -1344,28 +1344,45 @@ const RoofSegment = ({
               <meshBasicMaterial color={'white'} />
             )}
           </mesh>
-          <mesh
-            name={`Gable Roof Segment ${index} Surface`}
-            uuid={id + '-' + index}
-            castShadow={shadowEnabled && !transparent}
-            receiveShadow={shadowEnabled}
-            userData={{ simulation: true }}
-            position={[0, 0, 0.01]}
-            visible={!showSolarRadiationHeatmap}
-          >
-            <convexGeometry args={[points.slice(points.length / 2), angle, length]} />
-            <meshStandardMaterial
-              map={texture}
-              color={textureType === RoofTexture.Default || textureType === RoofTexture.NoTexture ? color : 'white'}
-              transparent={transparent}
-              opacity={_opacity}
-              side={DoubleSide}
-            />
-          </mesh>
-          {!showSolarRadiationHeatmap && (
-            <mesh ref={bulkMeshRef} name={'Gable Roof Bulk'} castShadow={false} receiveShadow={false}>
-              <meshStandardMaterial color={sideColor ?? 'white'} transparent={transparent} opacity={_opacity} />
+          {/*special case: the whole roof segment has no texture and only one color */}
+          {textureType === RoofTexture.NoTexture && color && color === sideColor ? (
+            <mesh
+              name={`Gable Roof Segment ${index} Surface`}
+              uuid={id + '-' + index}
+              castShadow={shadowEnabled && !transparent}
+              receiveShadow={shadowEnabled}
+              userData={{ simulation: true }}
+              visible={!showSolarRadiationHeatmap}
+            >
+              <convexGeometry args={[points, angle, length]} />
+              <meshStandardMaterial color={color} transparent={transparent} opacity={_opacity} />
             </mesh>
+          ) : (
+            <>
+              <mesh
+                name={`Gable Roof Segment ${index} Surface`}
+                uuid={id + '-' + index}
+                castShadow={shadowEnabled && !transparent}
+                receiveShadow={shadowEnabled}
+                userData={{ simulation: true }}
+                position={[0, 0, 0.01]}
+                visible={!showSolarRadiationHeatmap}
+              >
+                <convexGeometry args={[points.slice(points.length / 2), angle, length]} />
+                <meshStandardMaterial
+                  map={texture}
+                  color={textureType === RoofTexture.Default || textureType === RoofTexture.NoTexture ? color : 'white'}
+                  transparent={transparent}
+                  opacity={_opacity}
+                  side={DoubleSide}
+                />
+              </mesh>
+              {!showSolarRadiationHeatmap && (
+                <mesh ref={bulkMeshRef} name={'Gable Roof Bulk'} castShadow={false} receiveShadow={false}>
+                  <meshStandardMaterial color={sideColor ?? 'white'} transparent={transparent} opacity={_opacity} />
+                </mesh>
+              )}
+            </>
           )}
         </>
       )}

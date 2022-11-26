@@ -6,7 +6,7 @@
   "owner": null,
   "email": null,
   "world": {
-    "solarRadiationHeatmapGridCellSize": 0.5,
+    "solarRadiationHeatmapGridCellSize": 1,
     "date": "12/22/2022, 8:15:00 AM",
     "cspTimesPerHour": 4,
     "noAnimationForHeatmapSimulation": false,

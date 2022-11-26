@@ -21,11 +21,11 @@
       "albedo": 0.3,
       "thermalDiffusivity": 0.05
     },
-    "noAnimationForSolarPanelSimulation": true,
+    "noAnimationForSolarPanelSimulation": false,
     "noAnimationForSolarUpdraftTowerSimulation": false,
     "name": "default",
     "highestTemperatureTimeInMinutes": 900,
-    "noAnimationForSensorDataCollection": true,
+    "noAnimationForSensorDataCollection": false,
     "cspGridCellSize": 0.5,
     "cspTimesPerHour": 4,
     "sutDaysPerYear": 4,
@@ -34,9 +34,9 @@
     "address": "249 White Mountain Dr, Mescalero, NM 88340, USA",
     "sutTimesPerHour": 4,
     "discretization": "Approximate",
-    "noAnimationForHeatmapSimulation": true,
+    "noAnimationForHeatmapSimulation": false,
     "date": "Wed Jun 22 2022 12:00:00 GMT-0400 (Eastern Daylight Time)",
-    "solarRadiationHeatmapGridCellSize": 20
+    "solarRadiationHeatmapGridCellSize": 10
   },
   "elements": [
     {
