@@ -33,8 +33,8 @@
     "name": "default",
     "orthographic": false,
     "cameraZoom": 35.16173831821251,
-    "noAnimationForSolarPanelSimulation": true,
-    "noAnimationForHeatmapSimulation": true
+    "noAnimationForSolarPanelSimulation": false,
+    "noAnimationForHeatmapSimulation": false
   },
   "elements": [
     {
@@ -906,7 +906,7 @@
       "parentId": "Ground",
       "id": "nN965AFg3yMtHobvcGg5R7",
       "selected": false,
-      "evergreen": false
+      "evergreen": true
     },
     {
       "type": "Tree",
@@ -928,7 +928,8 @@
       ],
       "parentId": "Ground",
       "id": "2anvXQ4u2H4Gmk1Wk9rdgM",
-      "selected": false
+      "selected": false,
+      "evergreen": true
     },
     {
       "type": "Tree",
@@ -950,7 +951,8 @@
       ],
       "parentId": "Ground",
       "id": "kUerK8k3CG9QPyDqpE1w3s",
-      "selected": false
+      "selected": false,
+      "evergreen": true
     },
     {
       "type": "Tree",
@@ -972,7 +974,8 @@
       ],
       "parentId": "Ground",
       "id": "6e2aW2xXuEPds7gKc1zyEZ",
-      "selected": false
+      "selected": false,
+      "evergreen": true
     },
     {
       "type": "Human",

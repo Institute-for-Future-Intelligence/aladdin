@@ -533,6 +533,7 @@ export interface CommonStoreState {
   updateTreeTypeById: (id: string, type: TreeType) => void;
   updateTreeShowModelById: (id: string, showModel: boolean) => void;
   updateTreeFlipById: (id: string, flip: boolean) => void;
+  updateTreeEvergreenById: (id: string) => void;
   updateFlowerTypeById: (id: string, type: FlowerType) => void;
   updateFlowerFlipById: (id: string, flip: boolean) => void;
 
@@ -916,6 +917,7 @@ export const useStore = create<CommonStoreState>(
             });
             // 1/6/2022: Humans previously did not have dimension data (which probably was a mistake).
             // We do this for backward compatibility. Otherwise, humans cannot be moved in old files.
+            // Also, trees need to make sure that their evergreen states are set.
             const state = get();
             for (const e of state.elements) {
               switch (e.type) {
@@ -923,6 +925,9 @@ export const useStore = create<CommonStoreState>(
                   const human = e as HumanModel;
                   const width = HumanData.fetchWidth(human.name);
                   state.setElementSize(human.id, width, width, HumanData.fetchHeight(human.name));
+                  break;
+                case ObjectType.Tree:
+                  state.updateTreeEvergreenById(e.id);
                   break;
               }
             }
@@ -4210,6 +4215,16 @@ export const useStore = create<CommonStoreState>(
               for (const e of state.elements) {
                 if (e.type === ObjectType.Tree && e.id === id) {
                   (e as TreeModel).flip = flip;
+                  break;
+                }
+              }
+            });
+          },
+          updateTreeEvergreenById(id) {
+            immerSet((state: CommonStoreState) => {
+              for (const e of state.elements) {
+                if (e.type === ObjectType.Tree && e.id === id) {
+                  (e as TreeModel).evergreen = TreeData.isEvergreen((e as TreeModel).name);
                   break;
                 }
               }
