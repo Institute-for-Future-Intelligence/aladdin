@@ -101,7 +101,7 @@ const FlatRoof = ({ id, roofSegments, thickness, lineColor, lineWidth, sideColor
       )}
       <mesh
         position={[0, 0, thickness + 0.01]}
-        name={'Pyramid Roof Extrude'}
+        name={'Pyramid Flat Roof Surface'}
         castShadow={shadowEnabled && !transparent}
         receiveShadow={shadowEnabled}
         uuid={id}

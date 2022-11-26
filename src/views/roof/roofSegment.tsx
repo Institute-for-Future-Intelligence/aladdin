@@ -171,29 +171,46 @@ export const RoofSegment = ({
           <meshBasicMaterial color={'white'} />
         )}
       </mesh>
-      <mesh
-        name={`Roof Segment ${index} Surface`}
-        uuid={id + '-' + index}
-        castShadow={shadowEnabled && !transparent}
-        receiveShadow={shadowEnabled}
-        userData={{ simulation: true }}
-        position={[0, 0, 0.01]}
-        visible={!showSolarRadiationHeatmap}
-      >
-        <convexGeometry args={[pointsForSingleSide, isFlat ? defaultAngle : angle, isFlat ? 1 : length]} />
-        <meshStandardMaterial
-          map={texture}
-          color={textureType === RoofTexture.Default || textureType === RoofTexture.NoTexture ? color : 'white'}
-          transparent={transparent}
-          opacity={opacity}
-          side={DoubleSide}
-        />
-      </mesh>
-      {!showSolarRadiationHeatmap && (
-        <mesh name={`Roof segment ${index} bulk`} castShadow={false} receiveShadow={false}>
+      {/*special case: the whole roof segment has no texture and only one color */}
+      {textureType === RoofTexture.NoTexture && color && color === sideColor ? (
+        <mesh
+          name={`Roof Segment ${index} Surface`}
+          uuid={id + '-' + index}
+          castShadow={shadowEnabled && !transparent}
+          receiveShadow={shadowEnabled}
+          userData={{ simulation: true }}
+          visible={!showSolarRadiationHeatmap}
+        >
           <convexGeometry args={[points, isFlat ? defaultAngle : angle, isFlat ? 1 : length]} />
-          <meshStandardMaterial color={sideColor} transparent={transparent} opacity={opacity} />
+          <meshStandardMaterial color={color} transparent={transparent} opacity={opacity} />
         </mesh>
+      ) : (
+        <>
+          <mesh
+            name={`Roof Segment ${index} Surface`}
+            uuid={id + '-' + index}
+            castShadow={shadowEnabled && !transparent}
+            receiveShadow={shadowEnabled}
+            userData={{ simulation: true }}
+            position={[0, 0, 0.01]}
+            visible={!showSolarRadiationHeatmap}
+          >
+            <convexGeometry args={[pointsForSingleSide, isFlat ? defaultAngle : angle, isFlat ? 1 : length]} />
+            <meshStandardMaterial
+              map={texture}
+              color={textureType === RoofTexture.Default || textureType === RoofTexture.NoTexture ? color : 'white'}
+              transparent={transparent}
+              opacity={opacity}
+              side={DoubleSide}
+            />
+          </mesh>
+          {!showSolarRadiationHeatmap && (
+            <mesh name={`Roof segment ${index} bulk`} castShadow={false} receiveShadow={false}>
+              <convexGeometry args={[points, isFlat ? defaultAngle : angle, isFlat ? 1 : length]} />
+              <meshStandardMaterial color={sideColor} transparent={transparent} opacity={opacity} />
+            </mesh>
+          )}
+        </>
       )}
     </>
   );
