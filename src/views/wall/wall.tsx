@@ -1413,6 +1413,7 @@ const Wall = (wallModel: WallModel) => {
               actionState.roofThickness,
               actionState.roofOverhang,
               actionState.roofColor,
+              actionState.roofSideColor,
               actionState.roofTexture,
             );
           }
@@ -1428,6 +1429,7 @@ const Wall = (wallModel: WallModel) => {
               actionState.roofThickness,
               actionState.roofOverhang,
               actionState.roofColor,
+              actionState.roofSideColor,
               actionState.roofTexture,
             );
           }
@@ -1444,6 +1446,7 @@ const Wall = (wallModel: WallModel) => {
               actionState.roofThickness,
               actionState.roofOverhang,
               actionState.roofColor,
+              actionState.roofSideColor,
               actionState.roofTexture,
             );
           }
@@ -1459,6 +1462,7 @@ const Wall = (wallModel: WallModel) => {
               actionState.roofThickness,
               actionState.roofOverhang,
               actionState.roofColor,
+              actionState.roofSideColor,
               actionState.roofTexture,
             );
           }
@@ -1474,6 +1478,7 @@ const Wall = (wallModel: WallModel) => {
               actionState.roofThickness,
               actionState.roofOverhang,
               actionState.roofColor,
+              actionState.roofSideColor,
               actionState.roofTexture,
             );
           }

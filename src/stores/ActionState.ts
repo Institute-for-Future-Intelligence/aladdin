@@ -47,6 +47,7 @@ export interface ActionState {
   wallStructureColor: string;
 
   roofColor: string;
+  roofSideColor: string;
   roofTexture: RoofTexture;
   roofThickness: number;
   roofOverhang: number;

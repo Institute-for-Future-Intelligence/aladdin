@@ -16,6 +16,7 @@ export const RoofSegment = ({
   defaultAngle,
   thickness,
   color,
+  sideColor,
   textureType,
   heatmap,
 }: {
@@ -25,6 +26,7 @@ export const RoofSegment = ({
   defaultAngle: number;
   thickness: number;
   color: string;
+  sideColor: string;
   textureType: RoofTexture;
   heatmap?: CanvasTexture;
 }) => {
@@ -190,7 +192,7 @@ export const RoofSegment = ({
       {!showSolarRadiationHeatmap && (
         <mesh name={`Roof segment ${index} bulk`} castShadow={false} receiveShadow={false}>
           <convexGeometry args={[points, isFlat ? defaultAngle : angle, isFlat ? 1 : length]} />
-          <meshStandardMaterial color={'white'} transparent={transparent} opacity={opacity} />
+          <meshStandardMaterial color={sideColor} transparent={transparent} opacity={opacity} />
         </mesh>
       )}
     </>

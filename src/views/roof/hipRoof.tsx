@@ -90,6 +90,7 @@ const HipRoof = ({
   selected,
   textureType,
   color = 'white',
+  sideColor = 'white',
   overhang,
   thickness,
   locked,
@@ -474,6 +475,7 @@ const HipRoof = ({
               defaultAngle={arr[0].angle}
               thickness={thickness}
               color={color}
+              sideColor={sideColor}
               textureType={textureType}
               heatmap={heatmapTextures && index < heatmapTextures.length ? heatmapTextures[index] : undefined}
             />

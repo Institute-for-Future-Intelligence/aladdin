@@ -108,6 +108,7 @@ const MansardRoof = ({
   selected,
   textureType,
   color = 'white',
+  sideColor = 'white',
   overhang,
   thickness,
   locked,
@@ -647,6 +648,7 @@ const MansardRoof = ({
               defaultAngle={arr[0].angle}
               thickness={thickness}
               color={color}
+              sideColor={sideColor}
               textureType={textureType}
               heatmap={heatmapTextures && index < heatmapTextures.length ? heatmapTextures[index] : undefined}
             />

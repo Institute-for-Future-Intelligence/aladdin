@@ -945,6 +945,7 @@ export const i18n_zh_cn = {
       RafterThickness: '屋椽厚度',
       RafterColor: '屋椽颜色',
       RoofColor: '屋顶颜色',
+      RoofSideColor: '屋顶侧面颜色',
       GlassTint: '玻璃颜色',
       Opacity: '遮光度',
       RoofStructure: '屋顶结构',

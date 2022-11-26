@@ -968,6 +968,7 @@ export const i18n_en = {
       RafterThickness: 'Rafter Thickness',
       RafterColor: 'Rafter Color',
       RoofColor: 'Roof Color',
+      RoofSideColor: 'Roof Side Color',
       GlassTint: 'Glass Tint',
       Opacity: 'Opacity',
       RoofStructure: 'Roof Structure',

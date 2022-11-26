@@ -710,6 +710,7 @@ export class ElementModelFactory {
     thickness: number,
     overhang: number,
     color: string,
+    sideColor: string,
     texture: RoofTexture,
   ) {
     return {
@@ -727,6 +728,7 @@ export class ElementModelFactory {
       wallsId: [...wallsId],
       textureType: texture ?? RoofTexture.Default,
       color: color ?? '#454769',
+      sideColor: sideColor ?? 'white',
       selected: false,
       lineWidth: 0.2,
       lineColor: 'black',
@@ -746,6 +748,7 @@ export class ElementModelFactory {
     thickness: number,
     overhang: number,
     color: string,
+    sideColor: string,
     texture: RoofTexture,
   ) {
     return {
@@ -763,6 +766,7 @@ export class ElementModelFactory {
       wallsId: [...wallsId],
       textureType: texture ?? RoofTexture.Default,
       color: color ?? '#454769',
+      sideColor: sideColor ?? 'white',
       selected: false,
       lineWidth: 0.2,
       lineColor: 'black',
@@ -785,6 +789,7 @@ export class ElementModelFactory {
     thickness: number,
     overhang: number,
     color: string,
+    sideColor: string,
     texture: RoofTexture,
   ) {
     return {
@@ -802,6 +807,7 @@ export class ElementModelFactory {
       wallsId: [...wallsId],
       textureType: texture ?? RoofTexture.Default,
       color: color ?? '#454769',
+      sideColor: sideColor ?? 'white',
       selected: false,
       lineWidth: 0.2,
       lineColor: 'black',
@@ -823,9 +829,10 @@ export class ElementModelFactory {
     thickness: number,
     overhang: number,
     color: string,
+    sideColor: string,
     texture: RoofTexture,
   ) {
-    const xpercent = 0.35;
+    const xPercent = 0.35;
     return {
       type: ObjectType.Roof,
       cx: 0,
@@ -841,12 +848,13 @@ export class ElementModelFactory {
       wallsId: [...wallsId],
       topRidgeLeftPoint: [0, 1],
       topRidgeRightPoint: [0, 1],
-      frontRidgeLeftPoint: [xpercent, 0.5],
-      frontRidgeRightPoint: [-xpercent, 0.5],
-      backRidgeLeftPoint: [xpercent, 0.5],
-      backRidgeRightPoint: [-xpercent, 0.5],
+      frontRidgeLeftPoint: [xPercent, 0.5],
+      frontRidgeRightPoint: [-xPercent, 0.5],
+      backRidgeLeftPoint: [xPercent, 0.5],
+      backRidgeRightPoint: [-xPercent, 0.5],
       textureType: texture ?? RoofTexture.Default,
       color: color ?? '#454769',
+      sideColor: sideColor ?? 'white',
       selected: false,
       lineWidth: 0.2,
       lineColor: 'black',
@@ -866,6 +874,7 @@ export class ElementModelFactory {
     thickness: number,
     overhang: number,
     color: string,
+    sideColor: string,
     texture: RoofTexture,
   ) {
     return {
@@ -884,6 +893,7 @@ export class ElementModelFactory {
       ridgeWidth: 1,
       textureType: texture ?? RoofTexture.Default,
       color: color ?? '#454769',
+      sideColor: sideColor ?? 'white',
       selected: false,
       lineWidth: 0.2,
       lineColor: 'black',

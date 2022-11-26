@@ -1,7 +1,7 @@
 {
-  "docid": "gw5quaZYVJZnXFgJVrarN7",
-  "time": "11/03/2022 01:37 pm",
-  "timestamp": 1667497044388,
+  "docid": "2mDqPC6pKqfkdHNLh9JERB",
+  "time": "11/25/2022 08:55 pm",
+  "timestamp": 1669427757222,
   "userid": "QWecNcxhyvP6j6sBN11hBsfZDau1",
   "owner": null,
   "email": null,
@@ -311,7 +311,7 @@
       "structureWidth": 0.1,
       "structureColor": "white",
       "opacity": 0.5,
-      "locked": true
+      "locked": false
     },
     {
       "type": "Roof",
@@ -355,7 +355,8 @@
         -0.19251847682880624,
         1
       ],
-      "locked": true
+      "locked": false,
+      "sideColor": "#999999"
     },
     {
       "type": "Wall",
@@ -885,7 +886,9 @@
       "mullionColor": "white",
       "frame": true,
       "frameWidth": 0.1,
-      "locked": true
+      "locked": true,
+      "windowType": "Default",
+      "archHeight": 1
     },
     {
       "type": "Window",
@@ -927,7 +930,9 @@
       "mullionColor": "white",
       "frame": true,
       "frameWidth": 0.1,
-      "locked": true
+      "locked": true,
+      "windowType": "Default",
+      "archHeight": 1
     },
     {
       "type": "Window",
@@ -969,7 +974,9 @@
       "mullionColor": "white",
       "frame": true,
       "frameWidth": 0.1,
-      "locked": true
+      "locked": true,
+      "windowType": "Default",
+      "archHeight": 1
     },
     {
       "type": "Window",
@@ -1011,7 +1018,9 @@
       "mullionColor": "white",
       "frame": true,
       "frameWidth": 0.1,
-      "locked": true
+      "locked": true,
+      "windowType": "Default",
+      "archHeight": 1
     },
     {
       "type": "Window",
@@ -1053,7 +1062,9 @@
       "mullionColor": "white",
       "frame": true,
       "frameWidth": 0.1,
-      "locked": true
+      "locked": true,
+      "windowType": "Default",
+      "archHeight": 1
     },
     {
       "type": "Window",
@@ -1095,7 +1106,9 @@
       "mullionColor": "white",
       "frame": true,
       "frameWidth": 0.1,
-      "locked": true
+      "locked": true,
+      "windowType": "Default",
+      "archHeight": 1
     },
     {
       "type": "Window",
@@ -1134,7 +1147,9 @@
       "mullionColor": "white",
       "frame": true,
       "frameWidth": 0.1,
-      "locked": true
+      "locked": true,
+      "windowType": "Default",
+      "archHeight": 1
     },
     {
       "type": "Window",
@@ -1173,7 +1188,9 @@
       "mullionColor": "white",
       "frame": true,
       "frameWidth": 0.1,
-      "locked": true
+      "locked": true,
+      "windowType": "Default",
+      "archHeight": 1
     },
     {
       "type": "Window",
@@ -1215,7 +1232,9 @@
       "mullionColor": "white",
       "frame": true,
       "frameWidth": 0.1,
-      "locked": true
+      "locked": true,
+      "windowType": "Default",
+      "archHeight": 1
     },
     {
       "type": "Window",
@@ -1257,7 +1276,9 @@
       "mullionColor": "white",
       "frame": true,
       "frameWidth": 0.1,
-      "locked": true
+      "locked": true,
+      "windowType": "Default",
+      "archHeight": 1
     },
     {
       "type": "Window",
@@ -1296,7 +1317,9 @@
       "mullionColor": "white",
       "frame": true,
       "frameWidth": 0.1,
-      "locked": true
+      "locked": true,
+      "windowType": "Default",
+      "archHeight": 1
     },
     {
       "type": "Window",
@@ -1335,7 +1358,9 @@
       "mullionColor": "white",
       "frame": true,
       "frameWidth": 0.1,
-      "locked": true
+      "locked": true,
+      "windowType": "Default",
+      "archHeight": 1
     },
     {
       "type": "Human",
@@ -1607,7 +1632,9 @@
         "width": 0.5
       },
       "selected": false,
-      "locked": true
+      "locked": true,
+      "windowType": "Default",
+      "archHeight": 1
     },
     {
       "type": "Solar Panel",
@@ -1789,9 +1816,9 @@
     "dailyHeliostatYieldPanelX": 0,
     "showDailyParabolicDishYieldPanel": false,
     "cameraPosition": [
-      16.87077778632297,
-      11.005354849196628,
-      6.314310689151581
+      18.45282079694867,
+      -0.16530986696952743,
+      5.925571220819373
     ],
     "showYearlyHeliostatYieldPanel": false,
     "orthographic": false,

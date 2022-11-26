@@ -12,6 +12,7 @@ export interface RoofModel extends ElementModel {
   textureType: RoofTexture;
   overhang: number;
   thickness: number;
+  sideColor?: string;
   rafterSpacing?: number;
   rafterWidth?: number;
   rafterColor?: string;

@@ -969,6 +969,7 @@ export const i18n_tr = {
       RafterThickness: 'Mertek Kalınlığı',
       RafterColor: 'Mertek Rengi',
       RoofColor: 'Çatı Rengi',
+      RoofSideColor: 'Roof Side Color',
       GlassTint: 'Cam Tonu',
       Opacity: 'Opaklık',
       RoofStructure: 'Çatı Yapısı',

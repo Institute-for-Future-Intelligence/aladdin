@@ -717,6 +717,7 @@ export class ElementModelCloner {
       ly: roof.ly,
       lz: roof.lz,
       color: roof.color,
+      sideColor: roof.sideColor,
       normal: [...roof.normal],
       rotation: [...roof.rotation],
       parentId: parent.id,
@@ -739,12 +740,14 @@ export class ElementModelCloner {
         (newRoof as GableRoofModel).ridgeRightPoint = [...(roof as GableRoofModel).ridgeRightPoint];
         break;
       case RoofType.Gambrel:
-        (newRoof as GambrelRoofModel).topRidgeLeftPoint = [...(roof as GambrelRoofModel).topRidgeLeftPoint];
-        (newRoof as GambrelRoofModel).topRidgeRightPoint = [...(roof as GambrelRoofModel).topRidgeRightPoint];
-        (newRoof as GambrelRoofModel).frontRidgeLeftPoint = [...(roof as GambrelRoofModel).frontRidgeLeftPoint];
-        (newRoof as GambrelRoofModel).frontRidgeRightPoint = [...(roof as GambrelRoofModel).frontRidgeRightPoint];
-        (newRoof as GambrelRoofModel).backRidgeLeftPoint = [...(roof as GambrelRoofModel).backRidgeLeftPoint];
-        (newRoof as GambrelRoofModel).backRidgeRightPoint = [...(roof as GambrelRoofModel).backRidgeRightPoint];
+        const newGambrelRoof = newRoof as GambrelRoofModel;
+        const oldGambrelRoof = roof as GambrelRoofModel;
+        newGambrelRoof.topRidgeLeftPoint = [...oldGambrelRoof.topRidgeLeftPoint];
+        newGambrelRoof.topRidgeRightPoint = [...oldGambrelRoof.topRidgeRightPoint];
+        newGambrelRoof.frontRidgeLeftPoint = [...oldGambrelRoof.frontRidgeLeftPoint];
+        newGambrelRoof.frontRidgeRightPoint = [...oldGambrelRoof.frontRidgeRightPoint];
+        newGambrelRoof.backRidgeLeftPoint = [...oldGambrelRoof.backRidgeLeftPoint];
+        newGambrelRoof.backRidgeRightPoint = [...oldGambrelRoof.backRidgeRightPoint];
         break;
       case RoofType.Hip:
         (newRoof as HipRoofModel).rightRidgeLength = (roof as HipRoofModel).rightRidgeLength;

@@ -35,7 +35,7 @@ import {
   useTransparent,
   useUpdateSegmentVerticesMap,
 } from './hooks';
-import { RoofSegment } from './roofSegment';
+import RoofSegment from './roofSegment';
 
 const intersectionPlanePosition = new Vector3();
 const intersectionPlaneRotation = new Euler();
@@ -49,9 +49,10 @@ interface FlatRoofProps {
   children: React.ReactNode;
   lineWidth: number;
   lineColor: string;
+  sideColor: string;
 }
 
-const FlatRoof = ({ id, roofSegments, thickness, lineColor, lineWidth, children }: FlatRoofProps) => {
+const FlatRoof = ({ id, roofSegments, thickness, lineColor, lineWidth, sideColor, children }: FlatRoofProps) => {
   const shadowEnabled = useStore(Selector.viewState.shadowEnabled);
   const showSolarRadiationHeatmap = useStore(Selector.showSolarRadiationHeatmap);
   const { transparent } = useTransparent();
@@ -95,11 +96,11 @@ const FlatRoof = ({ id, roofSegments, thickness, lineColor, lineWidth, children 
           castShadow={false}
           receiveShadow={false}
         >
-          <meshStandardMaterial color={'white'} />
+          <meshStandardMaterial color={sideColor ?? 'white'} />
         </Extrude>
       )}
       <mesh
-        position={[0, 0, thickness]}
+        position={[0, 0, thickness + 0.01]}
         name={'Pyramid Roof Extrude'}
         castShadow={shadowEnabled && !transparent}
         receiveShadow={shadowEnabled}
@@ -169,7 +170,8 @@ const PyramidRoof = ({
   wallsId,
   selected,
   textureType,
-  color,
+  color = 'white',
+  sideColor = 'white',
   overhang,
   thickness,
   locked,
@@ -676,6 +678,7 @@ const PyramidRoof = ({
             thickness={thickness}
             lineWidth={lineWidth}
             lineColor={lineColor}
+            sideColor={sideColor}
           >
             {showSolarRadiationHeatmap && flatHeatmapTexture ? (
               <meshBasicMaterial attach="material" map={flatHeatmapTexture} color={'white'} side={DoubleSide} />
@@ -699,7 +702,8 @@ const PyramidRoof = ({
                         segment={segment}
                         defaultAngle={isFlat ? 0 : angle}
                         thickness={thickness}
-                        color={color ?? 'white'}
+                        color={color}
+                        sideColor={sideColor}
                         textureType={textureType}
                         heatmap={heatmapTextures && index < heatmapTextures.length ? heatmapTextures[index] : undefined}
                       />

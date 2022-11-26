@@ -26,6 +26,7 @@ import { ExclamationCircleOutlined } from '@ant-design/icons';
 import { UndoableChangeGroup } from '../../../undo/UndoableChangeGroup';
 import { UndoableRemoveAllChildren } from '../../../undo/UndoableRemoveAllChildren';
 import { LightModel } from '../../../models/LightModel';
+import RoofSideColorSelection from './roofSideColorSelection';
 
 export const RoofMenu = () => {
   const setCommonStore = useStore(Selector.set);
@@ -50,6 +51,7 @@ export const RoofMenu = () => {
   const [thicknessDialogVisible, setThicknessDialogVisible] = useState(false);
   const [textureDialogVisible, setTextureDialogVisible] = useState(false);
   const [roofColorDialogVisible, setRoofColorDialogVisible] = useState(false);
+  const [roofSideColorDialogVisible, setRoofSideColorDialogVisible] = useState(false);
   const [glassTintDialogVisible, setGlassTintDialogVisible] = useState(false);
   const [opacityDialogVisible, setOpacityDialogVisible] = useState(false);
 
@@ -459,6 +461,19 @@ export const RoofMenu = () => {
                     {i18n.t('roofMenu.RoofColor', lang)} ...
                   </Menu.Item>
                 )}
+                {roofSideColorDialogVisible && (
+                  <RoofSideColorSelection setDialogVisible={setRoofSideColorDialogVisible} />
+                )}
+                <Menu.Item
+                  key={'roof-side-color'}
+                  style={{ paddingLeft: paddingLeft }}
+                  onClick={() => {
+                    setApplyCount(0);
+                    setRoofSideColorDialogVisible(true);
+                  }}
+                >
+                  {i18n.t('roofMenu.RoofSideColor', lang)} ...
+                </Menu.Item>
               </>
             )}
           </>

@@ -298,7 +298,8 @@ const GableRoof = ({
   ridgeLeftPoint,
   ridgeRightPoint,
   textureType,
-  color,
+  color = 'white',
+  sideColor = 'white',
   overhang,
   thickness,
   locked,
@@ -886,8 +887,7 @@ const GableRoof = ({
       >
         {roofSegments.map((segment, i, arr) => {
           const { points, angle, length } = segment;
-          const [leftRoof, rightRoof, rightRidge, leftRidge] = points;
-          const isFlat = Math.abs(leftRoof.z) < 0.1;
+          const isFlat = Math.abs(points[0].z) < 0.1;
           return (
             <RoofSegment
               key={i}
@@ -899,6 +899,7 @@ const GableRoof = ({
               textureType={textureType}
               heatmaps={heatmapTextures}
               color={color}
+              sideColor={sideColor}
               roofStructure={roofStructure}
               glassTint={glassTint}
               opacity={opacity}
@@ -1152,6 +1153,7 @@ const RoofSegment = ({
   textureType,
   heatmaps,
   color,
+  sideColor,
   currWall,
   roofStructure,
   glassTint,
@@ -1165,6 +1167,7 @@ const RoofSegment = ({
   textureType: RoofTexture;
   heatmaps: CanvasTexture[];
   color: string | undefined;
+  sideColor: string | undefined;
   currWall: WallModel;
   roofStructure?: RoofStructure;
   glassTint?: string;
@@ -1361,7 +1364,7 @@ const RoofSegment = ({
           </mesh>
           {!showSolarRadiationHeatmap && (
             <mesh ref={bulkMeshRef} name={'Gable Roof Bulk'} castShadow={false} receiveShadow={false}>
-              <meshStandardMaterial color={'white'} transparent={transparent} opacity={_opacity} />
+              <meshStandardMaterial color={sideColor ?? 'white'} transparent={transparent} opacity={_opacity} />
             </mesh>
           )}
         </>
