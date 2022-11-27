@@ -1,7 +1,7 @@
 {
-  "docid": "d4ueDLZRRrY8wVKGExx1EJ",
-  "time": "10/28/2022 09:44 pm",
-  "timestamp": 1667007885768,
+  "docid": "eZ1m6qw3kxfjneYY6XFgwU",
+  "time": "11/26/2022 07:42 pm",
+  "timestamp": 1669509768331,
   "userid": "QWecNcxhyvP6j6sBN11hBsfZDau1",
   "owner": null,
   "email": null,
@@ -416,7 +416,9 @@
       "opacity": 0,
       "mullionColor": "white",
       "frame": false,
-      "frameWidth": 0.1
+      "frameWidth": 0.1,
+      "windowType": "Default",
+      "archHeight": 1
     },
     {
       "type": "Window",
@@ -454,7 +456,9 @@
       "selected": false,
       "mullionColor": "white",
       "frame": false,
-      "frameWidth": 0.1
+      "frameWidth": 0.1,
+      "windowType": "Default",
+      "archHeight": 1
     },
     {
       "type": "Human",
@@ -515,7 +519,9 @@
       "selected": false,
       "mullionColor": "white",
       "frame": false,
-      "frameWidth": 0.1
+      "frameWidth": 0.1,
+      "windowType": "Default",
+      "archHeight": 1
     },
     {
       "type": "Wall",
@@ -886,7 +892,8 @@
       ],
       "parentId": "s7XmQ94X6RJALjEtkckmRw",
       "foundationId": "s7XmQ94X6RJALjEtkckmRw",
-      "id": "715hHLBU5uPxPmY3VTjteR"
+      "id": "715hHLBU5uPxPmY3VTjteR",
+      "sideColor": "#999999"
     },
     {
       "type": "Wall",
@@ -1214,7 +1221,8 @@
       "ridgeRightPoint": [
         -0.5,
         1
-      ]
+      ],
+      "sideColor": "#999999"
     },
     {
       "type": "Window",
@@ -1255,7 +1263,9 @@
       "opacity": 0,
       "mullionColor": "white",
       "frame": false,
-      "frameWidth": 0.1
+      "frameWidth": 0.1,
+      "windowType": "Default",
+      "archHeight": 1
     },
     {
       "type": "Window",
@@ -1293,7 +1303,9 @@
       "selected": false,
       "mullionColor": "white",
       "frame": false,
-      "frameWidth": 0.1
+      "frameWidth": 0.1,
+      "windowType": "Default",
+      "archHeight": 1
     },
     {
       "type": "Window",
@@ -1331,7 +1343,9 @@
       "selected": false,
       "mullionColor": "white",
       "frame": false,
-      "frameWidth": 0.1
+      "frameWidth": 0.1,
+      "windowType": "Default",
+      "archHeight": 1
     },
     {
       "type": "Window",
@@ -1372,7 +1386,9 @@
       "opacity": 0,
       "mullionColor": "white",
       "frame": false,
-      "frameWidth": 0.1
+      "frameWidth": 0.1,
+      "windowType": "Default",
+      "archHeight": 1
     },
     {
       "type": "Window",
@@ -1410,7 +1426,9 @@
       "selected": false,
       "mullionColor": "white",
       "frame": false,
-      "frameWidth": 0.1
+      "frameWidth": 0.1,
+      "windowType": "Default",
+      "archHeight": 1
     },
     {
       "type": "Window",
@@ -1448,7 +1466,9 @@
       "selected": false,
       "mullionColor": "white",
       "frame": false,
-      "frameWidth": 0.1
+      "frameWidth": 0.1,
+      "windowType": "Default",
+      "archHeight": 1
     },
     {
       "type": "Human",
@@ -1512,7 +1532,9 @@
       "opacity": 0,
       "mullionColor": "white",
       "frame": false,
-      "frameWidth": 0.1
+      "frameWidth": 0.1,
+      "windowType": "Default",
+      "archHeight": 1
     },
     {
       "type": "Solar Panel",
@@ -1843,9 +1865,9 @@
     "dailyHeliostatYieldPanelX": 0,
     "showDailyParabolicDishYieldPanel": false,
     "cameraPosition": [
-      -50.93610766110909,
-      -87.39500583958846,
-      101.06701884771215
+      -60.49927780338878,
+      -80.4695135122307,
+      101.06701884770689
     ],
     "showYearlyHeliostatYieldPanel": false,
     "orthographic": false,
@@ -1894,8 +1916,8 @@
     "shadowEnabled": true,
     "showInstructionPanel": true,
     "panCenter": [
-      -10.14025918192684,
-      -20.75471744721456,
+      -9.958026327854226,
+      -20.88083011142786,
       10.018296899347582
     ],
     "yearlyFresnelReflectorYieldPanelY": 0,

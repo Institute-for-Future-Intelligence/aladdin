@@ -30,7 +30,6 @@ import { RoofUtil } from './RoofUtil';
 import {
   useMultiCurrWallArray,
   useRoofHeight,
-  useRoofTexture,
   useElementUndoable,
   useTransparent,
   useUpdateSegmentVerticesMap,
@@ -216,8 +215,6 @@ const PyramidRoof = ({
   roofType,
   foundationId,
 }: PyramidRoofModel) => {
-  const texture = useRoofTexture(textureType);
-  const { transparent, opacity } = useTransparent();
   const { currentWallArray, isLoopRef } = useMultiCurrWallArray(foundationId, id, wallsId);
 
   const getWallHeight = (arr: WallModel[], i: number) => {

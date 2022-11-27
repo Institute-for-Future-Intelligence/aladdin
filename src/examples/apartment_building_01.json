@@ -1,7 +1,7 @@
 {
-  "docid": "6x9WrpxKhdLb2qGAK9Zsqx",
-  "time": "10/30/2022 12:31 pm",
-  "timestamp": 1667147488716,
+  "docid": "aSo6gkV8iTs81U9YWgTS6a",
+  "time": "11/26/2022 01:48 pm",
+  "timestamp": 1669488530305,
   "userid": "QWecNcxhyvP6j6sBN11hBsfZDau1",
   "owner": null,
   "email": null,
@@ -417,7 +417,9 @@
         "width": 0.5
       },
       "selected": false,
-      "locked": false
+      "locked": false,
+      "windowType": "Default",
+      "archHeight": 1
     },
     {
       "type": "Window",
@@ -456,7 +458,9 @@
         "width": 0.5
       },
       "selected": false,
-      "locked": false
+      "locked": false,
+      "windowType": "Default",
+      "archHeight": 1
     },
     {
       "type": "Window",
@@ -495,7 +499,9 @@
         "width": 0.5
       },
       "selected": false,
-      "locked": false
+      "locked": false,
+      "windowType": "Default",
+      "archHeight": 1
     },
     {
       "type": "Wall",
@@ -636,7 +642,9 @@
         "width": 0.5
       },
       "selected": false,
-      "locked": false
+      "locked": false,
+      "windowType": "Default",
+      "archHeight": 1
     },
     {
       "type": "Window",
@@ -675,7 +683,9 @@
         "width": 0.5
       },
       "selected": false,
-      "locked": false
+      "locked": false,
+      "windowType": "Default",
+      "archHeight": 1
     },
     {
       "type": "Window",
@@ -714,7 +724,9 @@
         "width": 0.5
       },
       "selected": false,
-      "locked": false
+      "locked": false,
+      "windowType": "Default",
+      "archHeight": 1
     },
     {
       "type": "Human",
@@ -803,7 +815,8 @@
       "parentId": "hM4gzHVfAcT1HDeDhXqfQE",
       "foundationId": "hM4gzHVfAcT1HDeDhXqfQE",
       "id": "gvRT2kUN1YoGCZrBAosc54",
-      "locked": false
+      "locked": false,
+      "sideColor": "#666666"
     },
     {
       "type": "Window",
@@ -845,7 +858,9 @@
       "parentId": "cV8MyCuhWAsvEyyFuVqVqg",
       "foundationId": "m7AH7DcnoGzAq9kryBy4RS",
       "id": "hXDYrzLkVvDyB5XjtNmnpF",
-      "locked": false
+      "locked": false,
+      "windowType": "Default",
+      "archHeight": 1
     },
     {
       "type": "Window",
@@ -884,7 +899,9 @@
         "width": 0.5
       },
       "selected": false,
-      "locked": false
+      "locked": false,
+      "windowType": "Default",
+      "archHeight": 1
     },
     {
       "type": "Window",
@@ -923,7 +940,9 @@
         "width": 0.5
       },
       "selected": false,
-      "locked": false
+      "locked": false,
+      "windowType": "Default",
+      "archHeight": 1
     },
     {
       "type": "Window",
@@ -962,7 +981,9 @@
         "width": 0.5
       },
       "selected": false,
-      "locked": false
+      "locked": false,
+      "windowType": "Default",
+      "archHeight": 1
     },
     {
       "type": "Window",
@@ -1000,7 +1021,9 @@
         "color": "grey",
         "width": 0.5
       },
-      "selected": false
+      "selected": false,
+      "windowType": "Default",
+      "archHeight": 1
     },
     {
       "type": "Window",
@@ -1038,7 +1061,9 @@
         "color": "grey",
         "width": 0.5
       },
-      "selected": false
+      "selected": false,
+      "windowType": "Default",
+      "archHeight": 1
     },
     {
       "type": "Window",
@@ -1076,7 +1101,9 @@
         "color": "grey",
         "width": 0.5
       },
-      "selected": false
+      "selected": false,
+      "windowType": "Default",
+      "archHeight": 1
     },
     {
       "type": "Window",
@@ -1114,7 +1141,9 @@
         "color": "grey",
         "width": 0.5
       },
-      "selected": false
+      "selected": false,
+      "windowType": "Default",
+      "archHeight": 1
     },
     {
       "type": "Window",
@@ -1152,7 +1181,9 @@
         "color": "grey",
         "width": 0.5
       },
-      "selected": false
+      "selected": false,
+      "windowType": "Default",
+      "archHeight": 1
     },
     {
       "type": "Window",
@@ -1190,7 +1221,9 @@
         "color": "grey",
         "width": 0.5
       },
-      "selected": false
+      "selected": false,
+      "windowType": "Default",
+      "archHeight": 1
     },
     {
       "type": "Roof",
@@ -1228,7 +1261,8 @@
       ],
       "parentId": "m7AH7DcnoGzAq9kryBy4RS",
       "foundationId": "m7AH7DcnoGzAq9kryBy4RS",
-      "id": "1rg4qXk51s2D35ph8XqwbD"
+      "id": "1rg4qXk51s2D35ph8XqwbD",
+      "sideColor": "#666666"
     },
     {
       "type": "Window",
@@ -1266,7 +1300,9 @@
         "color": "#aea1ff",
         "width": 0.3
       },
-      "selected": false
+      "selected": false,
+      "windowType": "Default",
+      "archHeight": 1
     },
     {
       "type": "Window",
@@ -1304,7 +1340,9 @@
         "color": "#aea1ff",
         "width": 0.3
       },
-      "selected": false
+      "selected": false,
+      "windowType": "Default",
+      "archHeight": 1
     },
     {
       "type": "Window",
@@ -1342,7 +1380,9 @@
         "color": "#aea1ff",
         "width": 0.3
       },
-      "selected": false
+      "selected": false,
+      "windowType": "Default",
+      "archHeight": 1
     },
     {
       "type": "Window",
@@ -1380,7 +1420,9 @@
         "color": "#aea1ff",
         "width": 0.3
       },
-      "selected": false
+      "selected": false,
+      "windowType": "Default",
+      "archHeight": 1
     },
     {
       "type": "Window",
@@ -1418,7 +1460,9 @@
         "color": "#aea1ff",
         "width": 0.3
       },
-      "selected": false
+      "selected": false,
+      "windowType": "Default",
+      "archHeight": 1
     },
     {
       "type": "Window",
@@ -1456,7 +1500,9 @@
         "color": "#aea1ff",
         "width": 0.3
       },
-      "selected": false
+      "selected": false,
+      "windowType": "Default",
+      "archHeight": 1
     },
     {
       "type": "Window",
@@ -1494,7 +1540,9 @@
         "color": "#aea1ff",
         "width": 0.3
       },
-      "selected": false
+      "selected": false,
+      "windowType": "Default",
+      "archHeight": 1
     },
     {
       "type": "Window",
@@ -1532,7 +1580,9 @@
         "color": "#aea1ff",
         "width": 0.3
       },
-      "selected": false
+      "selected": false,
+      "windowType": "Default",
+      "archHeight": 1
     },
     {
       "type": "Window",
@@ -1570,7 +1620,9 @@
         "color": "#aea1ff",
         "width": 0.3
       },
-      "selected": false
+      "selected": false,
+      "windowType": "Default",
+      "archHeight": 1
     },
     {
       "type": "Window",
@@ -1608,7 +1660,9 @@
         "color": "#aea1ff",
         "width": 0.3
       },
-      "selected": false
+      "selected": false,
+      "windowType": "Default",
+      "archHeight": 1
     },
     {
       "type": "Window",
@@ -1646,7 +1700,9 @@
         "color": "#aea1ff",
         "width": 0.3
       },
-      "selected": false
+      "selected": false,
+      "windowType": "Default",
+      "archHeight": 1
     },
     {
       "type": "Window",
@@ -1684,7 +1740,9 @@
         "color": "#aea1ff",
         "width": 0.3
       },
-      "selected": false
+      "selected": false,
+      "windowType": "Default",
+      "archHeight": 1
     },
     {
       "type": "Window",
@@ -1722,7 +1780,9 @@
         "color": "#aea1ff",
         "width": 0.3
       },
-      "selected": false
+      "selected": false,
+      "windowType": "Default",
+      "archHeight": 1
     },
     {
       "type": "Window",
@@ -1760,7 +1820,9 @@
         "color": "#aea1ff",
         "width": 0.3
       },
-      "selected": false
+      "selected": false,
+      "windowType": "Default",
+      "archHeight": 1
     },
     {
       "type": "Window",
@@ -1798,7 +1860,9 @@
         "color": "#aea1ff",
         "width": 0.3
       },
-      "selected": false
+      "selected": false,
+      "windowType": "Default",
+      "archHeight": 1
     },
     {
       "type": "Window",
@@ -1836,7 +1900,9 @@
         "color": "#aea1ff",
         "width": 0.3
       },
-      "selected": false
+      "selected": false,
+      "windowType": "Default",
+      "archHeight": 1
     },
     {
       "type": "Window",
@@ -1874,7 +1940,9 @@
         "color": "#aea1ff",
         "width": 0.3
       },
-      "selected": false
+      "selected": false,
+      "windowType": "Default",
+      "archHeight": 1
     },
     {
       "type": "Window",
@@ -1912,7 +1980,9 @@
         "color": "#aea1ff",
         "width": 0.3
       },
-      "selected": false
+      "selected": false,
+      "windowType": "Default",
+      "archHeight": 1
     },
     {
       "type": "Window",
@@ -1950,7 +2020,9 @@
         "color": "#aea1ff",
         "width": 0.3
       },
-      "selected": false
+      "selected": false,
+      "windowType": "Default",
+      "archHeight": 1
     },
     {
       "type": "Window",
@@ -1988,7 +2060,9 @@
         "color": "#aea1ff",
         "width": 0.3
       },
-      "selected": false
+      "selected": false,
+      "windowType": "Default",
+      "archHeight": 1
     },
     {
       "type": "Window",
@@ -2026,7 +2100,9 @@
         "color": "#aea1ff",
         "width": 0.3
       },
-      "selected": false
+      "selected": false,
+      "windowType": "Default",
+      "archHeight": 1
     },
     {
       "type": "Window",
@@ -2064,7 +2140,9 @@
         "color": "#aea1ff",
         "width": 0.3
       },
-      "selected": false
+      "selected": false,
+      "windowType": "Default",
+      "archHeight": 1
     },
     {
       "type": "Window",
@@ -2102,7 +2180,9 @@
         "color": "#aea1ff",
         "width": 0.3
       },
-      "selected": false
+      "selected": false,
+      "windowType": "Default",
+      "archHeight": 1
     },
     {
       "type": "Window",
@@ -2140,7 +2220,9 @@
         "color": "#aea1ff",
         "width": 0.3
       },
-      "selected": false
+      "selected": false,
+      "windowType": "Default",
+      "archHeight": 1
     },
     {
       "type": "Window",
@@ -2178,7 +2260,9 @@
         "color": "#aea1ff",
         "width": 0.3
       },
-      "selected": false
+      "selected": false,
+      "windowType": "Default",
+      "archHeight": 1
     },
     {
       "type": "Window",
@@ -2216,7 +2300,9 @@
         "color": "#aea1ff",
         "width": 0.3
       },
-      "selected": false
+      "selected": false,
+      "windowType": "Default",
+      "archHeight": 1
     },
     {
       "type": "Window",
@@ -2254,7 +2340,9 @@
         "color": "#aea1ff",
         "width": 0.3
       },
-      "selected": false
+      "selected": false,
+      "windowType": "Default",
+      "archHeight": 1
     },
     {
       "type": "Window",
@@ -2292,7 +2380,9 @@
         "color": "#aea1ff",
         "width": 0.3
       },
-      "selected": false
+      "selected": false,
+      "windowType": "Default",
+      "archHeight": 1
     },
     {
       "type": "Window",
@@ -2330,7 +2420,9 @@
         "color": "#aea1ff",
         "width": 0.3
       },
-      "selected": false
+      "selected": false,
+      "windowType": "Default",
+      "archHeight": 1
     },
     {
       "type": "Window",
@@ -2368,7 +2460,9 @@
         "color": "#aea1ff",
         "width": 0.3
       },
-      "selected": false
+      "selected": false,
+      "windowType": "Default",
+      "archHeight": 1
     },
     {
       "type": "Window",
@@ -2406,7 +2500,9 @@
         "color": "#aea1ff",
         "width": 0.3
       },
-      "selected": false
+      "selected": false,
+      "windowType": "Default",
+      "archHeight": 1
     },
     {
       "type": "Window",
@@ -2444,7 +2540,9 @@
         "color": "#aea1ff",
         "width": 0.3
       },
-      "selected": false
+      "selected": false,
+      "windowType": "Default",
+      "archHeight": 1
     },
     {
       "type": "Window",
@@ -2482,7 +2580,9 @@
         "color": "#aea1ff",
         "width": 0.3
       },
-      "selected": false
+      "selected": false,
+      "windowType": "Default",
+      "archHeight": 1
     },
     {
       "type": "Window",
@@ -2520,7 +2620,9 @@
         "color": "#aea1ff",
         "width": 0.3
       },
-      "selected": false
+      "selected": false,
+      "windowType": "Default",
+      "archHeight": 1
     },
     {
       "type": "Window",
@@ -2558,7 +2660,9 @@
         "color": "#aea1ff",
         "width": 0.3
       },
-      "selected": false
+      "selected": false,
+      "windowType": "Default",
+      "archHeight": 1
     },
     {
       "type": "Window",
@@ -2596,7 +2700,9 @@
         "color": "#aea1ff",
         "width": 0.3
       },
-      "selected": false
+      "selected": false,
+      "windowType": "Default",
+      "archHeight": 1
     },
     {
       "type": "Window",
@@ -2634,7 +2740,9 @@
         "color": "#aea1ff",
         "width": 0.3
       },
-      "selected": false
+      "selected": false,
+      "windowType": "Default",
+      "archHeight": 1
     },
     {
       "type": "Window",
@@ -2672,7 +2780,9 @@
         "color": "#aea1ff",
         "width": 0.3
       },
-      "selected": false
+      "selected": false,
+      "windowType": "Default",
+      "archHeight": 1
     },
     {
       "type": "Window",
@@ -2710,7 +2820,9 @@
         "color": "#aea1ff",
         "width": 0.3
       },
-      "selected": false
+      "selected": false,
+      "windowType": "Default",
+      "archHeight": 1
     },
     {
       "type": "Window",
@@ -2748,7 +2860,9 @@
         "color": "#aea1ff",
         "width": 0.3
       },
-      "selected": false
+      "selected": false,
+      "windowType": "Default",
+      "archHeight": 1
     },
     {
       "type": "Window",
@@ -2786,7 +2900,9 @@
         "color": "#aea1ff",
         "width": 0.3
       },
-      "selected": false
+      "selected": false,
+      "windowType": "Default",
+      "archHeight": 1
     },
     {
       "type": "Window",
@@ -2824,7 +2940,9 @@
         "color": "#aea1ff",
         "width": 0.3
       },
-      "selected": false
+      "selected": false,
+      "windowType": "Default",
+      "archHeight": 1
     },
     {
       "type": "Window",
@@ -2862,7 +2980,9 @@
         "color": "#aea1ff",
         "width": 0.3
       },
-      "selected": false
+      "selected": false,
+      "windowType": "Default",
+      "archHeight": 1
     },
     {
       "type": "Window",
@@ -2900,7 +3020,9 @@
         "color": "#aea1ff",
         "width": 0.3
       },
-      "selected": false
+      "selected": false,
+      "windowType": "Default",
+      "archHeight": 1
     },
     {
       "type": "Window",
@@ -2938,7 +3060,9 @@
         "color": "#aea1ff",
         "width": 0.3
       },
-      "selected": false
+      "selected": false,
+      "windowType": "Default",
+      "archHeight": 1
     },
     {
       "type": "Window",
@@ -2976,7 +3100,9 @@
         "color": "#aea1ff",
         "width": 0.3
       },
-      "selected": false
+      "selected": false,
+      "windowType": "Default",
+      "archHeight": 1
     },
     {
       "type": "Window",
@@ -3014,7 +3140,9 @@
         "color": "#aea1ff",
         "width": 0.3
       },
-      "selected": false
+      "selected": false,
+      "windowType": "Default",
+      "archHeight": 1
     },
     {
       "type": "Window",
@@ -3052,7 +3180,9 @@
         "color": "#aea1ff",
         "width": 0.3
       },
-      "selected": false
+      "selected": false,
+      "windowType": "Default",
+      "archHeight": 1
     },
     {
       "type": "Window",
@@ -3090,7 +3220,9 @@
         "color": "#aea1ff",
         "width": 0.3
       },
-      "selected": false
+      "selected": false,
+      "windowType": "Default",
+      "archHeight": 1
     },
     {
       "type": "Window",
@@ -3128,7 +3260,9 @@
         "color": "#aea1ff",
         "width": 0.3
       },
-      "selected": false
+      "selected": false,
+      "windowType": "Default",
+      "archHeight": 1
     },
     {
       "type": "Window",
@@ -3166,7 +3300,9 @@
         "color": "#aea1ff",
         "width": 0.3
       },
-      "selected": false
+      "selected": false,
+      "windowType": "Default",
+      "archHeight": 1
     },
     {
       "type": "Window",
@@ -3204,7 +3340,9 @@
         "color": "#aea1ff",
         "width": 0.3
       },
-      "selected": false
+      "selected": false,
+      "windowType": "Default",
+      "archHeight": 1
     },
     {
       "type": "Window",
@@ -3242,7 +3380,9 @@
         "color": "#aea1ff",
         "width": 0.3
       },
-      "selected": false
+      "selected": false,
+      "windowType": "Default",
+      "archHeight": 1
     },
     {
       "type": "Window",
@@ -3280,7 +3420,9 @@
         "color": "#aea1ff",
         "width": 0.3
       },
-      "selected": false
+      "selected": false,
+      "windowType": "Default",
+      "archHeight": 1
     },
     {
       "type": "Window",
@@ -3318,7 +3460,9 @@
         "color": "#aea1ff",
         "width": 0.3
       },
-      "selected": false
+      "selected": false,
+      "windowType": "Default",
+      "archHeight": 1
     },
     {
       "type": "Window",
@@ -3356,7 +3500,9 @@
         "color": "grey",
         "width": 0.5
       },
-      "selected": false
+      "selected": false,
+      "windowType": "Default",
+      "archHeight": 1
     },
     {
       "type": "Window",
@@ -3394,7 +3540,9 @@
         "color": "grey",
         "width": 0.5
       },
-      "selected": false
+      "selected": false,
+      "windowType": "Default",
+      "archHeight": 1
     },
     {
       "type": "Window",
@@ -3432,7 +3580,9 @@
         "color": "grey",
         "width": 0.5
       },
-      "selected": false
+      "selected": false,
+      "windowType": "Default",
+      "archHeight": 1
     },
     {
       "type": "Window",
@@ -3470,7 +3620,9 @@
         "color": "grey",
         "width": 0.5
       },
-      "selected": false
+      "selected": false,
+      "windowType": "Default",
+      "archHeight": 1
     },
     {
       "type": "Window",
@@ -3508,7 +3660,9 @@
         "color": "grey",
         "width": 0.5
       },
-      "selected": false
+      "selected": false,
+      "windowType": "Default",
+      "archHeight": 1
     },
     {
       "type": "Window",
@@ -3546,7 +3700,9 @@
         "color": "grey",
         "width": 0.5
       },
-      "selected": false
+      "selected": false,
+      "windowType": "Default",
+      "archHeight": 1
     },
     {
       "type": "Window",
@@ -3584,7 +3740,9 @@
         "color": "grey",
         "width": 0.5
       },
-      "selected": false
+      "selected": false,
+      "windowType": "Default",
+      "archHeight": 1
     },
     {
       "type": "Window",
@@ -3622,7 +3780,9 @@
         "color": "grey",
         "width": 0.5
       },
-      "selected": false
+      "selected": false,
+      "windowType": "Default",
+      "archHeight": 1
     },
     {
       "type": "Window",
@@ -3660,7 +3820,9 @@
         "color": "grey",
         "width": 0.5
       },
-      "selected": false
+      "selected": false,
+      "windowType": "Default",
+      "archHeight": 1
     },
     {
       "type": "Window",
@@ -3698,7 +3860,9 @@
         "color": "grey",
         "width": 0.5
       },
-      "selected": false
+      "selected": false,
+      "windowType": "Default",
+      "archHeight": 1
     },
     {
       "type": "Window",
@@ -3736,7 +3900,9 @@
         "color": "grey",
         "width": 0.5
       },
-      "selected": false
+      "selected": false,
+      "windowType": "Default",
+      "archHeight": 1
     },
     {
       "type": "Window",
@@ -3774,7 +3940,9 @@
         "color": "grey",
         "width": 0.5
       },
-      "selected": false
+      "selected": false,
+      "windowType": "Default",
+      "archHeight": 1
     },
     {
       "type": "Window",
@@ -3812,7 +3980,9 @@
         "color": "grey",
         "width": 0.5
       },
-      "selected": false
+      "selected": false,
+      "windowType": "Default",
+      "archHeight": 1
     },
     {
       "type": "Window",
@@ -3850,7 +4020,9 @@
         "color": "grey",
         "width": 0.5
       },
-      "selected": false
+      "selected": false,
+      "windowType": "Default",
+      "archHeight": 1
     },
     {
       "type": "Window",
@@ -3888,7 +4060,9 @@
         "color": "grey",
         "width": 0.5
       },
-      "selected": false
+      "selected": false,
+      "windowType": "Default",
+      "archHeight": 1
     },
     {
       "type": "Window",
@@ -3926,7 +4100,9 @@
         "color": "grey",
         "width": 0.5
       },
-      "selected": false
+      "selected": false,
+      "windowType": "Default",
+      "archHeight": 1
     },
     {
       "type": "Window",
@@ -3964,7 +4140,9 @@
         "color": "grey",
         "width": 0.5
       },
-      "selected": false
+      "selected": false,
+      "windowType": "Default",
+      "archHeight": 1
     },
     {
       "type": "Window",
@@ -4002,7 +4180,9 @@
         "color": "grey",
         "width": 0.5
       },
-      "selected": false
+      "selected": false,
+      "windowType": "Default",
+      "archHeight": 1
     },
     {
       "type": "Window",
@@ -4040,7 +4220,9 @@
         "color": "grey",
         "width": 0.5
       },
-      "selected": false
+      "selected": false,
+      "windowType": "Default",
+      "archHeight": 1
     },
     {
       "type": "Window",
@@ -4078,7 +4260,9 @@
         "color": "grey",
         "width": 0.5
       },
-      "selected": false
+      "selected": false,
+      "windowType": "Default",
+      "archHeight": 1
     },
     {
       "type": "Window",
@@ -4116,7 +4300,9 @@
         "color": "grey",
         "width": 0.5
       },
-      "selected": false
+      "selected": false,
+      "windowType": "Default",
+      "archHeight": 1
     },
     {
       "type": "Window",
@@ -4154,7 +4340,9 @@
         "color": "grey",
         "width": 0.5
       },
-      "selected": false
+      "selected": false,
+      "windowType": "Default",
+      "archHeight": 1
     },
     {
       "type": "Window",
@@ -4192,7 +4380,9 @@
         "color": "grey",
         "width": 0.5
       },
-      "selected": false
+      "selected": false,
+      "windowType": "Default",
+      "archHeight": 1
     },
     {
       "type": "Window",
@@ -4230,7 +4420,9 @@
         "color": "grey",
         "width": 0.5
       },
-      "selected": false
+      "selected": false,
+      "windowType": "Default",
+      "archHeight": 1
     },
     {
       "type": "Window",
@@ -4268,7 +4460,9 @@
         "color": "grey",
         "width": 0.5
       },
-      "selected": false
+      "selected": false,
+      "windowType": "Default",
+      "archHeight": 1
     },
     {
       "type": "Window",
@@ -4306,7 +4500,9 @@
         "color": "grey",
         "width": 0.5
       },
-      "selected": false
+      "selected": false,
+      "windowType": "Default",
+      "archHeight": 1
     },
     {
       "type": "Window",
@@ -4344,7 +4540,9 @@
         "color": "grey",
         "width": 0.5
       },
-      "selected": false
+      "selected": false,
+      "windowType": "Default",
+      "archHeight": 1
     },
     {
       "type": "Wall",
@@ -4579,7 +4777,8 @@
         "8SHv6CAA9xkRcfdve2aKJD",
         "cthH5Q4t9AqYehpe6ssXrf"
       ],
-      "selected": false
+      "selected": false,
+      "sideColor": "#666666"
     },
     {
       "type": "Foundation",
@@ -4645,7 +4844,9 @@
       ],
       "parentId": "cthH5Q4t9AqYehpe6ssXrf",
       "foundationId": "qxAJALKsgHR99QXiiey2Jy",
-      "id": "wvo4rWSpdYajq7orMpbxwv"
+      "id": "wvo4rWSpdYajq7orMpbxwv",
+      "windowType": "Default",
+      "archHeight": 1
     },
     {
       "type": "Window",
@@ -4686,7 +4887,9 @@
       ],
       "parentId": "cthH5Q4t9AqYehpe6ssXrf",
       "foundationId": "qxAJALKsgHR99QXiiey2Jy",
-      "id": "7yzuNTr1nHZ9M3xoVT6avS"
+      "id": "7yzuNTr1nHZ9M3xoVT6avS",
+      "windowType": "Default",
+      "archHeight": 1
     },
     {
       "type": "Window",
@@ -4724,7 +4927,9 @@
         "color": "#aea1ff",
         "width": 0.3
       },
-      "selected": false
+      "selected": false,
+      "windowType": "Default",
+      "archHeight": 1
     },
     {
       "type": "Window",
@@ -4762,7 +4967,9 @@
         "color": "#aea1ff",
         "width": 0.3
       },
-      "selected": false
+      "selected": false,
+      "windowType": "Default",
+      "archHeight": 1
     },
     {
       "type": "Window",
@@ -4800,7 +5007,9 @@
         "color": "#aea1ff",
         "width": 0.3
       },
-      "selected": false
+      "selected": false,
+      "windowType": "Default",
+      "archHeight": 1
     },
     {
       "type": "Window",
@@ -4838,7 +5047,9 @@
         "color": "#aea1ff",
         "width": 0.3
       },
-      "selected": false
+      "selected": false,
+      "windowType": "Default",
+      "archHeight": 1
     },
     {
       "type": "Window",
@@ -4876,7 +5087,9 @@
         "color": "#aea1ff",
         "width": 0.3
       },
-      "selected": false
+      "selected": false,
+      "windowType": "Default",
+      "archHeight": 1
     },
     {
       "type": "Window",
@@ -4914,7 +5127,9 @@
         "color": "#aea1ff",
         "width": 0.3
       },
-      "selected": false
+      "selected": false,
+      "windowType": "Default",
+      "archHeight": 1
     },
     {
       "type": "Wall",
@@ -5152,7 +5367,9 @@
         "color": "#aea1ff",
         "width": 0.3
       },
-      "selected": false
+      "selected": false,
+      "windowType": "Default",
+      "archHeight": 1
     },
     {
       "type": "Window",
@@ -5190,7 +5407,9 @@
         "color": "#aea1ff",
         "width": 0.3
       },
-      "selected": false
+      "selected": false,
+      "windowType": "Default",
+      "archHeight": 1
     },
     {
       "type": "Window",
@@ -5228,7 +5447,9 @@
         "color": "#aea1ff",
         "width": 0.3
       },
-      "selected": false
+      "selected": false,
+      "windowType": "Default",
+      "archHeight": 1
     },
     {
       "type": "Window",
@@ -5266,7 +5487,9 @@
         "color": "#aea1ff",
         "width": 0.3
       },
-      "selected": false
+      "selected": false,
+      "windowType": "Default",
+      "archHeight": 1
     },
     {
       "type": "Window",
@@ -5304,7 +5527,9 @@
         "color": "#aea1ff",
         "width": 0.3
       },
-      "selected": false
+      "selected": false,
+      "windowType": "Default",
+      "archHeight": 1
     },
     {
       "type": "Window",
@@ -5342,7 +5567,9 @@
         "color": "#aea1ff",
         "width": 0.3
       },
-      "selected": false
+      "selected": false,
+      "windowType": "Default",
+      "archHeight": 1
     },
     {
       "type": "Window",
@@ -5380,7 +5607,9 @@
         "color": "#aea1ff",
         "width": 0.3
       },
-      "selected": false
+      "selected": false,
+      "windowType": "Default",
+      "archHeight": 1
     },
     {
       "type": "Window",
@@ -5418,7 +5647,9 @@
         "color": "#aea1ff",
         "width": 0.3
       },
-      "selected": false
+      "selected": false,
+      "windowType": "Default",
+      "archHeight": 1
     },
     {
       "type": "Window",
@@ -5456,7 +5687,9 @@
         "color": "#aea1ff",
         "width": 0.3
       },
-      "selected": false
+      "selected": false,
+      "windowType": "Default",
+      "archHeight": 1
     },
     {
       "type": "Window",
@@ -5494,7 +5727,9 @@
         "color": "#aea1ff",
         "width": 0.3
       },
-      "selected": false
+      "selected": false,
+      "windowType": "Default",
+      "archHeight": 1
     },
     {
       "type": "Window",
@@ -5532,7 +5767,9 @@
         "color": "#aea1ff",
         "width": 0.3
       },
-      "selected": false
+      "selected": false,
+      "windowType": "Default",
+      "archHeight": 1
     },
     {
       "type": "Window",
@@ -5570,7 +5807,9 @@
         "color": "#aea1ff",
         "width": 0.3
       },
-      "selected": false
+      "selected": false,
+      "windowType": "Default",
+      "archHeight": 1
     },
     {
       "type": "Window",
@@ -5608,7 +5847,9 @@
         "color": "#aea1ff",
         "width": 0.3
       },
-      "selected": false
+      "selected": false,
+      "windowType": "Default",
+      "archHeight": 1
     },
     {
       "type": "Window",
@@ -5646,7 +5887,9 @@
         "color": "#aea1ff",
         "width": 0.3
       },
-      "selected": false
+      "selected": false,
+      "windowType": "Default",
+      "archHeight": 1
     },
     {
       "type": "Window",
@@ -5684,7 +5927,9 @@
         "color": "#aea1ff",
         "width": 0.3
       },
-      "selected": false
+      "selected": false,
+      "windowType": "Default",
+      "archHeight": 1
     },
     {
       "type": "Window",
@@ -5722,7 +5967,9 @@
         "color": "#aea1ff",
         "width": 0.3
       },
-      "selected": false
+      "selected": false,
+      "windowType": "Default",
+      "archHeight": 1
     },
     {
       "type": "Window",
@@ -5760,7 +6007,9 @@
         "color": "#aea1ff",
         "width": 0.3
       },
-      "selected": false
+      "selected": false,
+      "windowType": "Default",
+      "archHeight": 1
     },
     {
       "type": "Window",
@@ -5798,7 +6047,9 @@
         "color": "#aea1ff",
         "width": 0.3
       },
-      "selected": false
+      "selected": false,
+      "windowType": "Default",
+      "archHeight": 1
     },
     {
       "type": "Window",
@@ -5836,7 +6087,9 @@
         "color": "#aea1ff",
         "width": 0.3
       },
-      "selected": false
+      "selected": false,
+      "windowType": "Default",
+      "archHeight": 1
     },
     {
       "type": "Window",
@@ -5874,7 +6127,9 @@
         "color": "#aea1ff",
         "width": 0.3
       },
-      "selected": false
+      "selected": false,
+      "windowType": "Default",
+      "archHeight": 1
     },
     {
       "type": "Window",
@@ -5912,7 +6167,9 @@
         "color": "#aea1ff",
         "width": 0.3
       },
-      "selected": false
+      "selected": false,
+      "windowType": "Default",
+      "archHeight": 1
     },
     {
       "type": "Window",
@@ -5950,7 +6207,9 @@
         "color": "#aea1ff",
         "width": 0.3
       },
-      "selected": false
+      "selected": false,
+      "windowType": "Default",
+      "archHeight": 1
     },
     {
       "type": "Window",
@@ -5988,7 +6247,9 @@
         "color": "#aea1ff",
         "width": 0.3
       },
-      "selected": false
+      "selected": false,
+      "windowType": "Default",
+      "archHeight": 1
     },
     {
       "type": "Window",
@@ -6026,7 +6287,9 @@
         "color": "#aea1ff",
         "width": 0.3
       },
-      "selected": false
+      "selected": false,
+      "windowType": "Default",
+      "archHeight": 1
     },
     {
       "type": "Window",
@@ -6064,7 +6327,9 @@
         "color": "#aea1ff",
         "width": 0.3
       },
-      "selected": false
+      "selected": false,
+      "windowType": "Default",
+      "archHeight": 1
     },
     {
       "type": "Window",
@@ -6102,7 +6367,9 @@
         "color": "#aea1ff",
         "width": 0.3
       },
-      "selected": false
+      "selected": false,
+      "windowType": "Default",
+      "archHeight": 1
     },
     {
       "type": "Window",
@@ -6140,7 +6407,9 @@
         "color": "#aea1ff",
         "width": 0.3
       },
-      "selected": false
+      "selected": false,
+      "windowType": "Default",
+      "archHeight": 1
     },
     {
       "type": "Window",
@@ -6178,7 +6447,9 @@
         "color": "#aea1ff",
         "width": 0.3
       },
-      "selected": false
+      "selected": false,
+      "windowType": "Default",
+      "archHeight": 1
     },
     {
       "type": "Window",
@@ -6216,7 +6487,9 @@
         "color": "#aea1ff",
         "width": 0.3
       },
-      "selected": false
+      "selected": false,
+      "windowType": "Default",
+      "archHeight": 1
     },
     {
       "type": "Window",
@@ -6254,7 +6527,9 @@
         "color": "#aea1ff",
         "width": 0.3
       },
-      "selected": false
+      "selected": false,
+      "windowType": "Default",
+      "archHeight": 1
     },
     {
       "type": "Window",
@@ -6292,7 +6567,9 @@
         "color": "#aea1ff",
         "width": 0.3
       },
-      "selected": false
+      "selected": false,
+      "windowType": "Default",
+      "archHeight": 1
     },
     {
       "type": "Window",
@@ -6330,7 +6607,9 @@
         "color": "#aea1ff",
         "width": 0.3
       },
-      "selected": false
+      "selected": false,
+      "windowType": "Default",
+      "archHeight": 1
     },
     {
       "type": "Window",
@@ -6368,7 +6647,9 @@
         "color": "#aea1ff",
         "width": 0.3
       },
-      "selected": false
+      "selected": false,
+      "windowType": "Default",
+      "archHeight": 1
     },
     {
       "type": "Window",
@@ -6406,7 +6687,9 @@
         "color": "#aea1ff",
         "width": 0.3
       },
-      "selected": false
+      "selected": false,
+      "windowType": "Default",
+      "archHeight": 1
     },
     {
       "type": "Window",
@@ -6444,7 +6727,9 @@
         "color": "#aea1ff",
         "width": 0.3
       },
-      "selected": false
+      "selected": false,
+      "windowType": "Default",
+      "archHeight": 1
     },
     {
       "type": "Window",
@@ -6482,7 +6767,9 @@
         "color": "#aea1ff",
         "width": 0.3
       },
-      "selected": false
+      "selected": false,
+      "windowType": "Default",
+      "archHeight": 1
     },
     {
       "type": "Window",
@@ -6520,7 +6807,9 @@
         "color": "#aea1ff",
         "width": 0.3
       },
-      "selected": false
+      "selected": false,
+      "windowType": "Default",
+      "archHeight": 1
     },
     {
       "type": "Window",
@@ -6558,7 +6847,9 @@
         "color": "#aea1ff",
         "width": 0.3
       },
-      "selected": false
+      "selected": false,
+      "windowType": "Default",
+      "archHeight": 1
     },
     {
       "type": "Window",
@@ -6596,7 +6887,9 @@
         "color": "#aea1ff",
         "width": 0.3
       },
-      "selected": false
+      "selected": false,
+      "windowType": "Default",
+      "archHeight": 1
     },
     {
       "type": "Window",
@@ -6634,7 +6927,9 @@
         "color": "#aea1ff",
         "width": 0.3
       },
-      "selected": false
+      "selected": false,
+      "windowType": "Default",
+      "archHeight": 1
     },
     {
       "type": "Window",
@@ -6672,7 +6967,9 @@
         "color": "#aea1ff",
         "width": 0.3
       },
-      "selected": false
+      "selected": false,
+      "windowType": "Default",
+      "archHeight": 1
     },
     {
       "type": "Window",
@@ -6710,7 +7007,9 @@
         "color": "#aea1ff",
         "width": 0.3
       },
-      "selected": false
+      "selected": false,
+      "windowType": "Default",
+      "archHeight": 1
     },
     {
       "type": "Window",
@@ -6748,7 +7047,9 @@
         "color": "#aea1ff",
         "width": 0.3
       },
-      "selected": false
+      "selected": false,
+      "windowType": "Default",
+      "archHeight": 1
     },
     {
       "type": "Window",
@@ -6786,7 +7087,9 @@
         "color": "#aea1ff",
         "width": 0.3
       },
-      "selected": false
+      "selected": false,
+      "windowType": "Default",
+      "archHeight": 1
     },
     {
       "type": "Window",
@@ -6824,7 +7127,9 @@
         "color": "#aea1ff",
         "width": 0.3
       },
-      "selected": false
+      "selected": false,
+      "windowType": "Default",
+      "archHeight": 1
     },
     {
       "type": "Window",
@@ -6862,7 +7167,9 @@
         "color": "#aea1ff",
         "width": 0.3
       },
-      "selected": false
+      "selected": false,
+      "windowType": "Default",
+      "archHeight": 1
     },
     {
       "type": "Window",
@@ -6900,7 +7207,9 @@
         "color": "#aea1ff",
         "width": 0.3
       },
-      "selected": false
+      "selected": false,
+      "windowType": "Default",
+      "archHeight": 1
     },
     {
       "type": "Window",
@@ -6938,7 +7247,9 @@
         "color": "#aea1ff",
         "width": 0.3
       },
-      "selected": false
+      "selected": false,
+      "windowType": "Default",
+      "archHeight": 1
     },
     {
       "type": "Window",
@@ -6976,7 +7287,9 @@
         "color": "#aea1ff",
         "width": 0.3
       },
-      "selected": false
+      "selected": false,
+      "windowType": "Default",
+      "archHeight": 1
     },
     {
       "type": "Window",
@@ -7014,7 +7327,9 @@
         "color": "#aea1ff",
         "width": 0.3
       },
-      "selected": false
+      "selected": false,
+      "windowType": "Default",
+      "archHeight": 1
     },
     {
       "type": "Window",
@@ -7052,7 +7367,9 @@
         "color": "#aea1ff",
         "width": 0.3
       },
-      "selected": false
+      "selected": false,
+      "windowType": "Default",
+      "archHeight": 1
     },
     {
       "type": "Window",
@@ -7090,7 +7407,9 @@
         "color": "#aea1ff",
         "width": 0.3
       },
-      "selected": false
+      "selected": false,
+      "windowType": "Default",
+      "archHeight": 1
     },
     {
       "type": "Window",
@@ -7128,7 +7447,9 @@
         "color": "#aea1ff",
         "width": 0.3
       },
-      "selected": false
+      "selected": false,
+      "windowType": "Default",
+      "archHeight": 1
     },
     {
       "type": "Window",
@@ -7166,7 +7487,9 @@
         "color": "#aea1ff",
         "width": 0.3
       },
-      "selected": false
+      "selected": false,
+      "windowType": "Default",
+      "archHeight": 1
     },
     {
       "type": "Window",
@@ -7204,7 +7527,9 @@
         "color": "#aea1ff",
         "width": 0.3
       },
-      "selected": false
+      "selected": false,
+      "windowType": "Default",
+      "archHeight": 1
     },
     {
       "type": "Window",
@@ -7242,7 +7567,9 @@
         "color": "#aea1ff",
         "width": 0.3
       },
-      "selected": false
+      "selected": false,
+      "windowType": "Default",
+      "archHeight": 1
     },
     {
       "id": "njRXPjHAzFuEQzFQaKio93",
@@ -7277,7 +7604,8 @@
         "pHKTjESURrdXxEMpYFEvmj",
         "knjx4z8fKUVQF38Tr2D5YR"
       ],
-      "selected": false
+      "selected": false,
+      "sideColor": "#666666"
     },
     {
       "type": "Foundation",
@@ -7540,7 +7868,9 @@
         "color": "#aea1ff",
         "width": 0.3
       },
-      "selected": false
+      "selected": false,
+      "windowType": "Default",
+      "archHeight": 1
     },
     {
       "type": "Window",
@@ -7578,7 +7908,9 @@
         "color": "#aea1ff",
         "width": 0.3
       },
-      "selected": false
+      "selected": false,
+      "windowType": "Default",
+      "archHeight": 1
     },
     {
       "id": "pZTS1LtmxQ4iRLvvo2k6FG",
@@ -7613,7 +7945,8 @@
         "wRcqTTshgLb8rN6th4Gpqm",
         "3VZZxMzA1BHxrWmzs6HKLa"
       ],
-      "selected": false
+      "selected": false,
+      "sideColor": "#666666"
     },
     {
       "type": "Foundation",
@@ -7676,7 +8009,9 @@
         "color": "#aea1ff",
         "width": 0.3
       },
-      "selected": false
+      "selected": false,
+      "windowType": "Default",
+      "archHeight": 1
     },
     {
       "type": "Window",
@@ -7714,7 +8049,9 @@
         "color": "#aea1ff",
         "width": 0.3
       },
-      "selected": false
+      "selected": false,
+      "windowType": "Default",
+      "archHeight": 1
     },
     {
       "type": "Window",
@@ -7752,7 +8089,9 @@
         "color": "#aea1ff",
         "width": 0.3
       },
-      "selected": false
+      "selected": false,
+      "windowType": "Default",
+      "archHeight": 1
     },
     {
       "type": "Window",
@@ -7790,7 +8129,9 @@
         "color": "#aea1ff",
         "width": 0.3
       },
-      "selected": false
+      "selected": false,
+      "windowType": "Default",
+      "archHeight": 1
     },
     {
       "type": "Window",
@@ -7828,7 +8169,9 @@
         "color": "#aea1ff",
         "width": 0.3
       },
-      "selected": false
+      "selected": false,
+      "windowType": "Default",
+      "archHeight": 1
     },
     {
       "type": "Window",
@@ -7866,7 +8209,9 @@
         "color": "#aea1ff",
         "width": 0.3
       },
-      "selected": false
+      "selected": false,
+      "windowType": "Default",
+      "archHeight": 1
     },
     {
       "type": "Window",
@@ -7904,7 +8249,9 @@
         "color": "#aea1ff",
         "width": 0.3
       },
-      "selected": false
+      "selected": false,
+      "windowType": "Default",
+      "archHeight": 1
     },
     {
       "type": "Window",
@@ -7942,7 +8289,9 @@
         "color": "#aea1ff",
         "width": 0.3
       },
-      "selected": false
+      "selected": false,
+      "windowType": "Default",
+      "archHeight": 1
     },
     {
       "type": "Window",
@@ -7980,7 +8329,9 @@
         "color": "#aea1ff",
         "width": 0.3
       },
-      "selected": false
+      "selected": false,
+      "windowType": "Default",
+      "archHeight": 1
     },
     {
       "type": "Window",
@@ -8018,7 +8369,9 @@
         "color": "#aea1ff",
         "width": 0.3
       },
-      "selected": false
+      "selected": false,
+      "windowType": "Default",
+      "archHeight": 1
     },
     {
       "type": "Tree",
@@ -8199,7 +8552,8 @@
       ],
       "parentId": "hM4gzHVfAcT1HDeDhXqfQE",
       "id": "1k2jiRJ9Za2yVNkgRYdhKs",
-      "selected": false
+      "selected": false,
+      "ly": 0.43
     }
   ],
   "view": {
@@ -8231,9 +8585,9 @@
     "dailyHeliostatYieldPanelX": 0,
     "showDailyParabolicDishYieldPanel": false,
     "cameraPosition": [
-      42.718831675522694,
-      -59.863676405001144,
-      16.300400139989048
+      37.742953507305174,
+      -65.60953162087354,
+      16.30040013998904
     ],
     "showYearlyHeliostatYieldPanel": false,
     "orthographic": false,
