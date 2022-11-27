@@ -654,37 +654,52 @@ const MansardRoof = ({
             />
           );
         })}
-        {!showSolarRadiationHeatmap && (
+        {/*special case: the whole roof segment has no texture and only one color */}
+        {textureType === RoofTexture.NoTexture && color && color === sideColor && !showSolarRadiationHeatmap ? (
           <Extrude
+            uuid={id + '-4'}
+            name={'Mansard Roof Top Extrude'}
             args={[topRidgeShape, { steps: 1, depth: thickness, bevelEnabled: false }]}
-            castShadow={false}
-            receiveShadow={false}
+            castShadow={shadowEnabled && !transparent}
+            receiveShadow={shadowEnabled}
+            userData={{ simulation: true }}
           >
-            <meshStandardMaterial color={'white'} transparent={transparent} opacity={opacity} />
+            <meshStandardMaterial color={color} transparent={transparent} opacity={opacity} />
           </Extrude>
+        ) : (
+          <>
+            <mesh
+              uuid={id + '-4'}
+              ref={topSurfaceMeshRef}
+              name={'Mansard Roof Top Surface'}
+              position={[0, 0, thickness + 0.01]}
+              castShadow={shadowEnabled && !transparent}
+              receiveShadow={shadowEnabled}
+              userData={{ simulation: true }}
+            >
+              {showSolarRadiationHeatmap && heatmapTextures.length === 5 ? (
+                <meshBasicMaterial map={heatmapTextures[4]} color={'white'} side={DoubleSide} />
+              ) : (
+                <meshStandardMaterial
+                  color={textureType === RoofTexture.Default || textureType === RoofTexture.NoTexture ? color : 'white'}
+                  map={texture}
+                  transparent={transparent}
+                  opacity={opacity}
+                  side={DoubleSide}
+                />
+              )}
+            </mesh>
+            {!showSolarRadiationHeatmap && (
+              <Extrude
+                args={[topRidgeShape, { steps: 1, depth: thickness, bevelEnabled: false }]}
+                castShadow={false}
+                receiveShadow={false}
+              >
+                <meshStandardMaterial color={'white'} transparent={transparent} opacity={opacity} />
+              </Extrude>
+            )}
+          </>
         )}
-        <mesh
-          uuid={id + '-4'}
-          ref={topSurfaceMeshRef}
-          name={'Mansard Roof Top Surface'}
-          position={[0, 0, thickness + 0.01]}
-          castShadow={shadowEnabled && !transparent}
-          receiveShadow={shadowEnabled}
-          userData={{ simulation: true }}
-        >
-          {/*<shapeBufferGeometry args={[topRidgeShape]}></shapeBufferGeometry>*/}
-          {showSolarRadiationHeatmap && heatmapTextures.length === 5 ? (
-            <meshBasicMaterial map={heatmapTextures[4]} color={'white'} side={DoubleSide} />
-          ) : (
-            <meshStandardMaterial
-              color={textureType === RoofTexture.Default || textureType === RoofTexture.NoTexture ? color : 'white'}
-              map={texture}
-              transparent={transparent}
-              opacity={opacity}
-              side={DoubleSide}
-            />
-          )}
-        </mesh>
         {roofSegments.length > 0 && (
           <MansardRoofWirefram
             roofSegments={roofSegments}
