@@ -1,7 +1,7 @@
 {
-  "docid": "it8t1pgHZ7sDEQ4Fsidtps",
-  "time": "11/13/2022 06:24 pm",
-  "timestamp": 1668381875572,
+  "docid": "e8PDD2pN8KJgfwYPTxAbXj",
+  "time": "11/27/2022 05:57 pm",
+  "timestamp": 1669589878716,
   "userid": "QWecNcxhyvP6j6sBN11hBsfZDau1",
   "owner": null,
   "email": null,
@@ -560,7 +560,8 @@
       ],
       "parentId": "fbqvzYqiEy79jeL8wsadib",
       "foundationId": "fbqvzYqiEy79jeL8wsadib",
-      "id": "u1sPtasg3hWUinAjQbYwBP"
+      "id": "u1sPtasg3hWUinAjQbYwBP",
+      "sideColor": "#4d4d4d"
     },
     {
       "type": "Window",
@@ -835,7 +836,8 @@
         "9CKGzf7taYbb5TxpshE7KA",
         "2AP7zuBsHXSx9vjaaQ41Sa"
       ],
-      "selected": false
+      "selected": false,
+      "sideColor": "#4d4d4d"
     },
     {
       "type": "Foundation",
@@ -926,7 +928,8 @@
       "ridgeRightPoint": [
         0,
         1
-      ]
+      ],
+      "sideColor": "#4d4d4d"
     },
     {
       "type": "Door",
@@ -954,7 +957,10 @@
       ],
       "parentId": "pPpJHGJ2bGVqLdA1FpXi4V",
       "foundationId": "fbqvzYqiEy79jeL8wsadib",
-      "id": "ekcJVu2iDNfD8vCRPJWcfY"
+      "id": "ekcJVu2iDNfD8vCRPJWcfY",
+      "doorType": "Default",
+      "archHeight": 1,
+      "filled": true
     },
     {
       "type": "Window",
@@ -1348,7 +1354,10 @@
       ],
       "parentId": "skm8dNPSkFaVkoUwiPNfq1",
       "foundationId": "m7AH7DcnoGzAq9kryBy4RS",
-      "id": "3Zxx9R9RT39QbRUhwQji79"
+      "id": "3Zxx9R9RT39QbRUhwQji79",
+      "doorType": "Default",
+      "archHeight": 1,
+      "filled": true
     },
     {
       "type": "Cuboid",
@@ -1605,7 +1614,7 @@
       "parentId": "grVotAf51uhbEVGMStvWX3",
       "id": "aT4DrrYnjHCzoD1VbK7qaQ",
       "selected": false,
-      "ly": 0.6
+      "ly": 0.65
     },
     {
       "type": "Tree",
@@ -2132,7 +2141,7 @@
       "parentId": "m7AH7DcnoGzAq9kryBy4RS",
       "id": "pkNrn5a7PGHK1vUXoNbNtp",
       "selected": false,
-      "ly": 0.6
+      "ly": 0.45
     },
     {
       "type": "Window",
@@ -2724,9 +2733,9 @@
     "dailyHeliostatYieldPanelX": 0,
     "showDailyParabolicDishYieldPanel": false,
     "cameraPosition": [
-      23.185490670240668,
-      21.72067951459612,
-      7.708620369560713
+      22.977248222176478,
+      21.907448743442476,
+      8.268031438861314
     ],
     "showYearlyHeliostatYieldPanel": false,
     "orthographic": false,
