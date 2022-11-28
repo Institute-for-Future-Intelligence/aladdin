@@ -2,7 +2,7 @@
  * @Copyright 2022. Institute for Future Intelligence, Inc.
  */
 
-import React, { useRef, useState } from 'react';
+import React, { useMemo, useRef, useState } from 'react';
 import { Button, Col, InputNumber, Modal, Radio, Row, Space } from 'antd';
 import Draggable, { DraggableBounds, DraggableData, DraggableEvent } from 'react-draggable';
 import { useStore } from 'src/stores/common';
@@ -41,20 +41,40 @@ const WindowNumberInput = ({
   const setApplyCount = useStore(Selector.setApplyCount);
   const revertApply = useStore(Selector.revertApply);
   const setCommonStore = useStore(Selector.set);
+  const getParent = useStore(Selector.getParent);
 
-  const [inputValue, setInputValue] = useState<number>(windowElement[attributeKey] as number);
+  const parent = getParent(windowElement);
+  const currentValue = useMemo(() => {
+    const v = windowElement[attributeKey] as number;
+    if (parent) {
+      if (attributeKey === 'lx') return v * parent.lx;
+      if (attributeKey === 'lz') return v * parent.lz;
+    }
+    return v;
+  }, [attributeKey, windowElement, parent?.lx, parent?.lz]);
+
+  const [inputValue, setInputValue] = useState<number>(currentValue);
   const [dragEnabled, setDragEnabled] = useState<boolean>(false);
   const [bounds, setBounds] = useState<DraggableBounds>({ left: 0, top: 0, bottom: 0, right: 0 } as DraggableBounds);
   const dragRef = useRef<HTMLDivElement | null>(null);
 
   const lang = { lng: language };
 
+  const setAttribute = (window: WindowModel, attributeKey: keyof WindowModel, value: number) => {
+    if (parent && (attributeKey === 'lx' || attributeKey === 'lz')) {
+      // width and height are relative to the parent
+      (window[attributeKey] as number) = value / parent[attributeKey];
+    } else {
+      (window[attributeKey] as number) = value;
+    }
+  };
+
   const updateById = (id: string, value: number) => {
     setCommonStore((state) => {
       for (const e of state.elements) {
         if (e.id === id) {
           if (!e.locked && e.type === ObjectType.Window) {
-            ((e as WindowModel)[attributeKey] as number) = value;
+            setAttribute(e as WindowModel, attributeKey, value);
           }
           break;
         }
@@ -67,7 +87,7 @@ const WindowNumberInput = ({
     setCommonStore((state) => {
       for (const e of state.elements) {
         if (!e.locked && e.type === ObjectType.Window && e.parentId === wallId) {
-          ((e as WindowModel)[attributeKey] as number) = value;
+          setAttribute(e as WindowModel, attributeKey, value);
         }
       }
     });
@@ -78,7 +98,7 @@ const WindowNumberInput = ({
     setCommonStore((state) => {
       for (const e of state.elements) {
         if (!e.locked && e.type === ObjectType.Window && e.foundationId === foundationId) {
-          ((e as WindowModel)[attributeKey] as number) = value;
+          setAttribute(e as WindowModel, attributeKey, value);
         }
       }
     });
@@ -88,7 +108,7 @@ const WindowNumberInput = ({
     setCommonStore((state) => {
       for (const e of state.elements) {
         if (!e.locked && e.type === ObjectType.Window) {
-          ((e as WindowModel)[attributeKey] as number) = value;
+          setAttribute(e as WindowModel, attributeKey, value);
         }
       }
     });
@@ -108,8 +128,9 @@ const WindowNumberInput = ({
         setCommonStore((state) => {
           for (const e of state.elements) {
             if (e.type === ObjectType.Window && !e.locked) {
-              oldValuesAll.set(e.id, (e as WindowModel)[attributeKey] as number);
-              ((e as WindowModel)[attributeKey] as number) = value;
+              const window = e as WindowModel;
+              oldValuesAll.set(e.id, window[attributeKey] as number);
+              setAttribute(window, attributeKey, value);
             }
           }
         });
@@ -132,10 +153,10 @@ const WindowNumberInput = ({
         if (windowElement.parentId) {
           const oldValuesOnSameWall = new Map<string, number>();
           setCommonStore((state) => {
-            for (const elem of state.elements) {
-              if (elem.type === ObjectType.Window && elem.parentId === windowElement.parentId && !elem.locked) {
-                oldValuesOnSameWall.set(elem.id, (elem as WindowModel)[attributeKey] as number);
-                ((elem as WindowModel)[attributeKey] as number) = value;
+            for (const e of state.elements) {
+              if (e.type === ObjectType.Window && e.parentId === windowElement.parentId && !e.locked) {
+                oldValuesOnSameWall.set(e.id, (e as WindowModel)[attributeKey] as number);
+                setAttribute(e as WindowModel, attributeKey, value);
               }
             }
           });
@@ -160,10 +181,10 @@ const WindowNumberInput = ({
         if (windowElement.foundationId) {
           const oldValuesAboveFoundation = new Map<string, number>();
           setCommonStore((state) => {
-            for (const elem of state.elements) {
-              if (elem.type === ObjectType.Window && elem.foundationId === windowElement.foundationId && !elem.locked) {
-                oldValuesAboveFoundation.set(elem.id, (elem as WindowModel)[attributeKey] as number);
-                ((elem as WindowModel)[attributeKey] as number) = value;
+            for (const e of state.elements) {
+              if (e.type === ObjectType.Window && e.foundationId === windowElement.foundationId && !e.locked) {
+                oldValuesAboveFoundation.set(e.id, (e as WindowModel)[attributeKey] as number);
+                setAttribute(e as WindowModel, attributeKey, value);
               }
             }
           });
@@ -244,7 +265,7 @@ const WindowNumberInput = ({
   };
 
   const close = () => {
-    setInputValue(windowElement[attributeKey] as number);
+    setInputValue(currentValue);
     setDialogVisible();
   };
 
