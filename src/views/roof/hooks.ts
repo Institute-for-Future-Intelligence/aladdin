@@ -238,7 +238,7 @@ export const useMultiCurrWallArray = (fId: string | undefined, roofId: string, w
   const isLoopRef = useRef(false);
 
   const wallsOnFoundation = useStore((state) => {
-    return state.elements.filter((el) => el.type === ObjectType.Wall && el.foundationId === fId);
+    return JSON.stringify(state.elements.filter((el) => el.type === ObjectType.Wall && el.foundationId === fId));
   });
 
   const currentWallArray = useMemo(() => {
@@ -282,7 +282,7 @@ export const useMultiCurrWallArray = (fId: string | undefined, roofId: string, w
       }
     }
     return [];
-  }, [wallsId, JSON.stringify(wallsOnFoundation)]);
+  }, [wallsId, wallsOnFoundation]);
 
   return { currentWallArray, isLoopRef };
 };
