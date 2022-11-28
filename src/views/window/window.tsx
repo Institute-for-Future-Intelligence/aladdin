@@ -148,17 +148,15 @@ const useUpdataOldFiles = (windowModel: WindowModel) => {
   }, [fileChanged]);
 };
 
-export interface WindowProps extends WindowModel {
-  position: number[];
-  dimension: number[];
-}
-
-const Window = (windowModel: WindowProps) => {
+const Window = (windowModel: WindowModel) => {
   const {
     id,
-    parentId,
-    position,
-    dimension,
+    cx,
+    cy,
+    cz,
+    lx,
+    ly,
+    lz,
     selected,
     locked,
     lineWidth = 0.2,
@@ -176,9 +174,6 @@ const Window = (windowModel: WindowProps) => {
     windowType = WindowType.Default,
     archHeight,
   } = windowModel;
-
-  const [cx, cy, cz] = position;
-  const [lx, ly, lz] = dimension;
 
   useUpdataOldFiles(windowModel);
 
@@ -243,10 +238,10 @@ const Window = (windowModel: WindowProps) => {
     if (archHeight !== undefined) {
       return [lx, ly, lz, archHeight];
     }
-    return dimension;
+    return [lx, ly, lz];
   }, [lx, ly, lz, archHeight]);
 
-  const positionData = useMemo(() => position, [cx, cy, cz]);
+  const positionData = useMemo(() => [cx, cy, cz], [cx, cy, cz]);
 
   const mullionData = useMemo(
     () =>

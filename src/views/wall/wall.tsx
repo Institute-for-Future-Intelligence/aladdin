@@ -43,7 +43,7 @@ import { WallModel, WallStructure } from 'src/models/WallModel';
 import { ElementModelFactory } from 'src/models/ElementModelFactory';
 import { Point2 } from 'src/models/Point2';
 import { ElementGrid } from '../elementGrid';
-import Window, { WindowProps } from '../window/window';
+import Window from '../window/window';
 import WallWireFrame from './wallWireFrame';
 import WallResizeHandleWarpper from './wallResizeHandleWrapper';
 import WallMoveHandleWarpper from './wallMoveHandleWrapper';
@@ -60,7 +60,7 @@ import { UndoableMove } from 'src/undo/UndoableMove';
 import { UndoableAdd } from 'src/undo/UndoableAdd';
 import { UndoableResizeElementOnWall } from 'src/undo/UndoableResize';
 import { DoorModel, DoorType } from 'src/models/DoorModel';
-import Door, { DoorProps } from '../door/door';
+import Door from '../door/door';
 import { SolarPanelModel } from 'src/models/SolarPanelModel';
 import SolarPanelOnWall from '../solarPanel/solarPanelOnWall';
 
@@ -1910,14 +1910,32 @@ const Wall = (wallModel: WallModel) => {
               {elementsOnWall.map((e) => {
                 switch (e.type) {
                   case ObjectType.Window: {
-                    const position = [e.cx * lx, e.cy * ly, e.cz * lz];
-                    const dimension = [e.lx * lx, ly, e.lz * lz];
-                    return <Window key={e.id} {...(e as WindowProps)} position={position} dimension={dimension} />;
+                    return (
+                      <Window
+                        key={e.id}
+                        {...(e as WindowModel)}
+                        cx={e.cx * lx}
+                        cy={e.cy * ly}
+                        cz={e.cz * lz}
+                        lx={e.lx * lx}
+                        ly={ly}
+                        lz={e.lz * lz}
+                      />
+                    );
                   }
                   case ObjectType.Door: {
-                    const position = [e.cx * lx, 0, e.cz * lz];
-                    const dimension = [e.lx * lx, ly, e.lz * lz];
-                    return <Door key={e.id} {...(e as DoorProps)} position={position} dimension={dimension} />;
+                    return (
+                      <Door
+                        key={e.id}
+                        {...(e as DoorModel)}
+                        cx={e.cx * lx}
+                        cy={0}
+                        cz={e.cz * lz}
+                        lx={e.lx * lx}
+                        ly={ly}
+                        lz={e.lz * lz}
+                      />
+                    );
                   }
                   case ObjectType.SolarPanel:
                     let r = 0;

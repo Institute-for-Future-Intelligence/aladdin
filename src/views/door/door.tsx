@@ -17,11 +17,6 @@ import { DoubleSide, FrontSide, MeshStandardMaterial } from 'three';
 import { Plane } from '@react-three/drei';
 import { HALF_PI, INVALID_ELEMENT_COLOR } from 'src/constants';
 
-export interface DoorProps extends DoorModel {
-  position: number[];
-  dimension: number[];
-}
-
 interface DoorHandleWapperProps {
   dimension: number[];
   doorType: DoorType;
@@ -75,13 +70,17 @@ const DoorSealPlanes = React.memo(({ dimension }: DoorSealPlanesProps) => {
   );
 });
 
-const Door = (doorModel: DoorProps) => {
+const Door = (doorModel: DoorModel) => {
   useUpdateOldDoors(doorModel);
 
   const {
     id,
-    position,
-    dimension,
+    cx,
+    cy,
+    cz,
+    lx,
+    ly,
+    lz,
     textureType,
     selected = false,
     locked = false,
@@ -90,9 +89,6 @@ const Door = (doorModel: DoorProps) => {
     archHeight = 1,
     filled = true,
   } = doorModel;
-
-  const [cx, cy, cz] = position;
-  const [lx, ly, lz] = dimension;
 
   const setCommonStore = useStore(Selector.set);
 
@@ -146,7 +142,7 @@ const Door = (doorModel: DoorProps) => {
       case DoorType.Default:
         return (
           <RectangleDoor
-            dimension={dimension}
+            dimension={dimensionData}
             color={color}
             selected={selected}
             locked={locked}
@@ -170,7 +166,7 @@ const Door = (doorModel: DoorProps) => {
 
   const texture = useDoorTexture(textureType, doorType, lx, lz);
 
-  const dimensionData = useMemo(() => [lx, ly, lz, archHeight], [lx, lz, archHeight]);
+  const dimensionData = useMemo(() => [lx, ly, lz, archHeight], [lx, ly, lz, archHeight]);
 
   const doorMaterial = useMemo(() => {
     if (!filled) {
