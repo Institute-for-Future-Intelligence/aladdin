@@ -91,11 +91,11 @@ const useElements = (id: string, leftWallId?: string, rightWallId?: string, roof
     return null;
   });
 
-  const elementsTriggerChange = useStore((state) => state.elements.filter(isElementTriggerWallChange));
+  const elementsTriggerChange = useStore((state) => JSON.stringify(state.elements.filter(isElementTriggerWallChange)));
 
   const elementsOnWall = useMemo(
-    () => elementsTriggerChange.filter((el) => Util.isLegalOnWall(el.type)),
-    [JSON.stringify(elementsTriggerChange)],
+    () => useStore.getState().elements.filter((el) => isElementTriggerWallChange(el) && Util.isLegalOnWall(el.type)),
+    [elementsTriggerChange],
   );
 
   return { elementsOnWall, leftWall, rightWall };
