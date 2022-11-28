@@ -908,6 +908,8 @@ export const i18n_zh_cn = {
       AllWindowsOnWall: '同一面墙上所有的窗户',
       AllWindowsAboveFoundation: '同一地基上所有的窗户',
       AllWindows: '所有的窗户',
+      Width: '宽度',
+      Height: '高度',
       Mullion: '直棂',
       MullionWidth: '直棂宽度',
       MullionSpacing: '直棂间距',

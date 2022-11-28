@@ -932,6 +932,8 @@ export const i18n_tr = {
       AllWindowsOnWall: 'Aynı Duvardaki Tüm Pencereler',
       AllWindowsAboveFoundation: 'Aynı Temelin Üzerindeki Tüm Pencereler',
       AllWindows: 'Tüm Pencereler',
+      Width: 'Genişlik',
+      Height: 'Yükseklik',
       Mullion: 'Tiriz',
       MullionWidth: 'Tiriz Genişliği',
       MullionSpacing: 'Tiriz Aralığı',

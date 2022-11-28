@@ -931,6 +931,8 @@ export const i18n_en = {
       AllWindowsOnWall: 'All Windows on the Same Wall',
       AllWindowsAboveFoundation: 'All Windows Above the Same Foundation',
       AllWindows: 'All Windows',
+      Width: 'Width',
+      Height: 'Height',
       Mullion: 'Mullion',
       MullionWidth: 'Mullion Width',
       MullionSpacing: 'Mullion Spacing',

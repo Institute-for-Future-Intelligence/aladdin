@@ -2,7 +2,7 @@
  * @Copyright 2022. Institute for Future Intelligence, Inc.
  */
 
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useRef, useState } from 'react';
 import { Button, Col, InputNumber, Modal, Radio, Row, Space } from 'antd';
 import Draggable, { DraggableBounds, DraggableData, DraggableEvent } from 'react-draggable';
 import { useStore } from 'src/stores/common';
@@ -24,7 +24,7 @@ interface WindowNumberInputProps {
   unit?: string;
 }
 
-const MullionSpacingInput = ({
+const WindowNumberInput = ({
   windowElement,
   dataType,
   attributeKey,
@@ -42,19 +42,19 @@ const MullionSpacingInput = ({
   const revertApply = useStore(Selector.revertApply);
   const setCommonStore = useStore(Selector.set);
 
-  const [inputVal, setInputVal] = useState<number>(windowElement[attributeKey] as number);
+  const [inputValue, setInputValue] = useState<number>(windowElement[attributeKey] as number);
   const [dragEnabled, setDragEnabled] = useState<boolean>(false);
   const [bounds, setBounds] = useState<DraggableBounds>({ left: 0, top: 0, bottom: 0, right: 0 } as DraggableBounds);
   const dragRef = useRef<HTMLDivElement | null>(null);
 
   const lang = { lng: language };
 
-  const updateById = (id: string, val: number) => {
+  const updateById = (id: string, value: number) => {
     setCommonStore((state) => {
       for (const e of state.elements) {
         if (e.id === id) {
           if (!e.locked && e.type === ObjectType.Window) {
-            ((e as WindowModel)[attributeKey] as number) = val;
+            ((e as WindowModel)[attributeKey] as number) = value;
           }
           break;
         }
@@ -62,33 +62,33 @@ const MullionSpacingInput = ({
     });
   };
 
-  const updateOnSameWall = (wId: string | undefined, val: number) => {
-    if (!wId) return;
+  const updateOnSameWall = (wallId: string | undefined, value: number) => {
+    if (!wallId) return;
     setCommonStore((state) => {
       for (const e of state.elements) {
-        if (!e.locked && e.type === ObjectType.Window && e.parentId === wId) {
-          ((e as WindowModel)[attributeKey] as number) = val;
+        if (!e.locked && e.type === ObjectType.Window && e.parentId === wallId) {
+          ((e as WindowModel)[attributeKey] as number) = value;
         }
       }
     });
   };
 
-  const updateAboveFoundation = (fId: string | undefined, val: number) => {
-    if (!fId) return;
+  const updateAboveFoundation = (foundationId: string | undefined, value: number) => {
+    if (!foundationId) return;
     setCommonStore((state) => {
       for (const e of state.elements) {
-        if (!e.locked && e.type === ObjectType.Window && e.foundationId === fId) {
-          ((e as WindowModel)[attributeKey] as number) = val;
+        if (!e.locked && e.type === ObjectType.Window && e.foundationId === foundationId) {
+          ((e as WindowModel)[attributeKey] as number) = value;
         }
       }
     });
   };
 
-  const updateForAll = (val: number) => {
+  const updateForAll = (value: number) => {
     setCommonStore((state) => {
       for (const e of state.elements) {
         if (!e.locked && e.type === ObjectType.Window) {
-          ((e as WindowModel)[attributeKey] as number) = val;
+          ((e as WindowModel)[attributeKey] as number) = value;
         }
       }
     });
@@ -100,15 +100,15 @@ const MullionSpacingInput = ({
     }
   };
 
-  const setVal = (value: number) => {
+  const setValue = (value: number) => {
     if (!windowElement) return;
     switch (windowActionScope) {
       case Scope.AllObjectsOfThisType:
-        const oldValsAll = new Map<string, number>();
+        const oldValuesAll = new Map<string, number>();
         setCommonStore((state) => {
           for (const e of state.elements) {
             if (e.type === ObjectType.Window && !e.locked) {
-              oldValsAll.set(e.id, (e as WindowModel)[attributeKey] as number);
+              oldValuesAll.set(e.id, (e as WindowModel)[attributeKey] as number);
               ((e as WindowModel)[attributeKey] as number) = value;
             }
           }
@@ -116,7 +116,7 @@ const MullionSpacingInput = ({
         const undoableChangeAll = {
           name: `Set ${dataType} for All Windows`,
           timestamp: Date.now(),
-          oldValues: oldValsAll,
+          oldValues: oldValuesAll,
           newValue: value,
           undo: () => {
             undoInMap(undoableChangeAll.oldValues as Map<string, number>);
@@ -130,11 +130,11 @@ const MullionSpacingInput = ({
         break;
       case Scope.OnlyThisSide:
         if (windowElement.parentId) {
-          const oldValOnSameWall = new Map<string, number>();
+          const oldValuesOnSameWall = new Map<string, number>();
           setCommonStore((state) => {
             for (const elem of state.elements) {
               if (elem.type === ObjectType.Window && elem.parentId === windowElement.parentId && !elem.locked) {
-                oldValOnSameWall.set(elem.id, (elem as WindowModel)[attributeKey] as number);
+                oldValuesOnSameWall.set(elem.id, (elem as WindowModel)[attributeKey] as number);
                 ((elem as WindowModel)[attributeKey] as number) = value;
               }
             }
@@ -142,7 +142,7 @@ const MullionSpacingInput = ({
           const undoableChangeOnSameWall = {
             name: `Set ${dataType} for All Windows On the Same Wall`,
             timestamp: Date.now(),
-            oldValues: oldValOnSameWall,
+            oldValues: oldValuesOnSameWall,
             newValue: value,
             groupId: windowElement.parentId,
             undo: () => {
@@ -158,11 +158,11 @@ const MullionSpacingInput = ({
         break;
       case Scope.AllObjectsOfThisTypeAboveFoundation:
         if (windowElement.foundationId) {
-          const oldValAboveFoundation = new Map<string, number>();
+          const oldValuesAboveFoundation = new Map<string, number>();
           setCommonStore((state) => {
             for (const elem of state.elements) {
               if (elem.type === ObjectType.Window && elem.foundationId === windowElement.foundationId && !elem.locked) {
-                oldValAboveFoundation.set(elem.id, (elem as WindowModel)[attributeKey] as number);
+                oldValuesAboveFoundation.set(elem.id, (elem as WindowModel)[attributeKey] as number);
                 ((elem as WindowModel)[attributeKey] as number) = value;
               }
             }
@@ -170,7 +170,7 @@ const MullionSpacingInput = ({
           const undoableChangeAboveFoundation = {
             name: `Set ${dataType} for All Windows Above Foundation`,
             timestamp: Date.now(),
-            oldValues: oldValAboveFoundation,
+            oldValues: oldValuesAboveFoundation,
             newValue: value,
             groupId: windowElement.foundationId,
             undo: () => {
@@ -186,11 +186,11 @@ const MullionSpacingInput = ({
         break;
       default:
         if (windowElement) {
-          const oldVal = windowElement[attributeKey] as number;
+          const oldValue = windowElement[attributeKey] as number;
           const undoableChange = {
             name: `Set Window ${dataType}`,
             timestamp: Date.now(),
-            oldValue: oldVal,
+            oldValue: oldValue,
             newValue: value,
             changedElementId: windowElement.id,
             changedElementType: windowElement.type,
@@ -208,6 +208,12 @@ const MullionSpacingInput = ({
     }
     setCommonStore((state) => {
       switch (dataType) {
+        case WindowDataType.Width:
+          state.actionState.windowWidth = value;
+          break;
+        case WindowDataType.Height:
+          state.actionState.windowHeight = value;
+          break;
         case WindowDataType.Opacity:
           state.actionState.windowOpacity = value;
           break;
@@ -238,7 +244,7 @@ const MullionSpacingInput = ({
   };
 
   const close = () => {
-    setInputVal(windowElement.mullionSpacing ?? 0.4);
+    setInputValue(windowElement[attributeKey] as number);
     setDialogVisible();
   };
 
@@ -248,13 +254,13 @@ const MullionSpacingInput = ({
   };
 
   const handleOk = () => {
-    setVal(inputVal);
+    setValue(inputValue);
     setDialogVisible();
     setApplyCount(0);
   };
 
   const handleApply = () => {
-    setVal(inputVal);
+    setValue(inputValue);
   };
 
   return (
@@ -300,9 +306,9 @@ const MullionSpacingInput = ({
               style={{ width: 120 }}
               step={step}
               precision={2}
-              value={inputVal}
+              value={inputValue}
               formatter={(a) => Number(a).toFixed(2)}
-              onChange={(value) => setInputVal(value)}
+              onChange={(value) => setInputValue(value)}
               onPressEnter={handleOk}
             />
             <div style={{ paddingTop: '20px', textAlign: 'left', fontSize: '11px' }}>
@@ -334,4 +340,4 @@ const MullionSpacingInput = ({
   );
 };
 
-export default MullionSpacingInput;
+export default WindowNumberInput;

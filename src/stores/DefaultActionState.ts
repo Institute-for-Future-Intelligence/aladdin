@@ -70,6 +70,8 @@ export class DefaultActionState implements ActionState {
   doorArchHeight: number;
   doorFilled: boolean;
 
+  windowWidth: number;
+  windowHeight: number;
   windowColor: string;
   windowTint: string;
   windowOpacity: number;
@@ -180,6 +182,8 @@ export class DefaultActionState implements ActionState {
     this.doorArchHeight = 1;
     this.doorFilled = true;
 
+    this.windowWidth = 1;
+    this.windowHeight = 1;
     this.windowColor = 'white';
     this.windowTint = '#73D8FF';
     this.windowOpacity = 0.5;

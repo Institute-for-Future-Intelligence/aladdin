@@ -64,6 +64,8 @@ export interface ActionState {
   doorArchHeight: number;
   doorFilled: boolean;
 
+  windowWidth: number;
+  windowHeight: number;
   windowTint: string;
   windowOpacity: number;
   windowMullion: boolean;

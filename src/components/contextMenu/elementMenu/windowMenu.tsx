@@ -26,6 +26,9 @@ export enum WindowDataType {
   MullionSpacing = 'MullionSpacing',
   MullionColor = 'MullionColor',
   FrameWidth = 'FrameWidth',
+  Width = 'Width',
+  Height = 'Height',
+  Insulation = 'Insulation',
 }
 
 type ItemSelectionSettingType = {
@@ -48,6 +51,8 @@ const SelectionDialogSettings = {
 
 const NumberDialogSettings = {
   Opacity: { attributeKey: 'opacity', range: [0, 1], step: 0.1 },
+  Width: { attributeKey: 'lx', range: [0.1, 100], step: 0.1 },
+  Height: { attributeKey: 'lz', range: [0.1, 100], step: 0.1 },
   MullionWidth: { attributeKey: 'mullionWidth', range: [0, 0.2], step: 0.1, unit: 'word.MeterAbbreviation' },
   MullionSpacing: { attributeKey: 'mullionSpacing', range: [0.1, 5], step: 0.01, unit: 'word.MeterAbbreviation' },
   FrameWidth: { attributeKey: 'frameWidth', range: [0.05, 0.2], step: 0.01, unit: 'word.MeterAbbreviation' },
@@ -253,6 +258,8 @@ export const WindowMenu = () => {
         );
       }
       case WindowDataType.Opacity:
+      case WindowDataType.Width:
+      case WindowDataType.Height:
       case WindowDataType.MullionSpacing:
       case WindowDataType.MullionWidth:
       case WindowDataType.FrameWidth: {
@@ -282,18 +289,14 @@ export const WindowMenu = () => {
 
       {!window.locked && (
         <>
+          {renderMenuItem(WindowDataType.Width)}
+          {renderMenuItem(WindowDataType.Height)}
           {renderMenuItem(WindowDataType.Opacity)}
-
           {renderMenuItem(WindowDataType.Tint)}
-
           {renderTypeSubMenu()}
-
           {renderMullionSubMenu()}
-
           {renderFrameSubMenu()}
-
           <WindowShutterSubMenu windowId={window.id} />
-
           {renderDialogs()}
         </>
       )}
