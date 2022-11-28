@@ -1120,7 +1120,7 @@ const Wall = (wallModel: WallModel) => {
                         window.lz = Math.abs(v.z) / lz;
                         window.cx = relativePos.x / lx;
                         window.cz = relativePos.z / lz;
-                        window.cy = window.id === invalidElementIdRef.current ? -0.01 : 0.1;
+                        window.cy = window.id === invalidElementIdRef.current ? -0.01 : 0.3;
                         window.tint = window.id === invalidElementIdRef.current ? 'red' : oldTintRef.current;
                       }
                     }
