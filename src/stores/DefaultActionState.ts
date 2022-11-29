@@ -75,6 +75,7 @@ export class DefaultActionState implements ActionState {
   windowColor: string;
   windowTint: string;
   windowOpacity: number;
+  windowUValue: number;
   windowMullion: boolean;
   windowMullionWidth: number;
   windowMullionSpacing: number;
@@ -187,6 +188,7 @@ export class DefaultActionState implements ActionState {
     this.windowColor = 'white';
     this.windowTint = '#73D8FF';
     this.windowOpacity = 0.5;
+    this.windowUValue = 2;
     this.windowMullion = true;
     this.windowMullionWidth = 0.06;
     this.windowMullionSpacing = 0.5;

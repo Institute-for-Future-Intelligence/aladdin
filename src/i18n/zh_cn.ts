@@ -917,6 +917,7 @@ export const i18n_zh_cn = {
       Tint: '着色',
       Opacity: '不透明度',
       SolarHeatGainCoefficient: '太阳辐射热获取系数(SHGC) = 1 - 不透明度',
+      UValue: 'U值',
       Shutter: '百叶窗',
       LeftShutter: '左侧百叶窗',
       RightShutter: '右侧百叶窗',

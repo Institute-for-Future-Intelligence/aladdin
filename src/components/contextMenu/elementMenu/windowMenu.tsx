@@ -17,6 +17,7 @@ import WindowItemSelection from './windowItemSelection';
 import WindowNumberInput from './windowNumberInput';
 import { radioStyle } from './wallMenu';
 import { UndoableChange } from 'src/undo/UndoableChange';
+import WindowUValueInput from './windowUValueInput';
 
 export enum WindowDataType {
   Color = 'Color',
@@ -77,6 +78,7 @@ export const WindowMenu = () => {
   const updateWindowTypeById = useStore(Selector.updateWindowTypeById);
 
   const [visibleType, setVisibleType] = useState<WindowDataType | null>(null);
+  const [uValueDialogVisible, setUValueDialogVisible] = useState(false);
 
   const lang = { lng: language };
   const paddingLeft = '36px';
@@ -294,6 +296,18 @@ export const WindowMenu = () => {
           {renderMenuItem(WindowDataType.Height)}
           {renderMenuItem(WindowDataType.Opacity)}
           {renderMenuItem(WindowDataType.Tint)}
+          {/* u-value has its special UI */}
+          {uValueDialogVisible && <WindowUValueInput setDialogVisible={setUValueDialogVisible} />}
+          <Menu.Item
+            key={'window-u-value'}
+            style={{ paddingLeft: '36px' }}
+            onClick={() => {
+              setApplyCount(0);
+              setUValueDialogVisible(true);
+            }}
+          >
+            {i18n.t('windowMenu.UValue', lang)} ...
+          </Menu.Item>
           {renderTypeSubMenu()}
           {renderMullionSubMenu()}
           {renderFrameSubMenu()}

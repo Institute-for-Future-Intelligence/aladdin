@@ -45,7 +45,7 @@ const WindowShutterWidthInput = ({ setDialogVisible }: { setDialogVisible: (b: b
     if (windowModel) {
       setInput(windowModel?.shutter?.width ?? 0.5);
     }
-  }, [windowModel]);
+  }, [windowModel?.shutter?.width]);
 
   const updateById = (id: string, input: number) => {
     setCommonStore((state) => {
@@ -90,7 +90,7 @@ const WindowShutterWidthInput = ({ setDialogVisible }: { setDialogVisible: (b: b
           }
         });
         const undoableChangeAll = {
-          name: 'Set Window Shutter Width for All Windows',
+          name: 'Set Shutter Width for All Windows',
           timestamp: Date.now(),
           oldValues: oldValuesAll,
           newValue: value,
@@ -119,7 +119,7 @@ const WindowShutterWidthInput = ({ setDialogVisible }: { setDialogVisible: (b: b
             }
           });
           const undoableChangeOnSameWall = {
-            name: 'Set Window Shutter Width for All Windows On the Same Wall',
+            name: 'Set Shutter Width for All Windows On the Same Wall',
             timestamp: Date.now(),
             oldValues: oldValues,
             newValue: value,
@@ -153,7 +153,7 @@ const WindowShutterWidthInput = ({ setDialogVisible }: { setDialogVisible: (b: b
             }
           });
           const undoableChangeAboveFoundation = {
-            name: 'Set Window Shutter Width for All Windows Above Foundation',
+            name: 'Set Shutter Width for All Windows Above Foundation',
             timestamp: Date.now(),
             oldValues: oldValuesAboveFoundation,
             newValue: value,
@@ -175,11 +175,11 @@ const WindowShutterWidthInput = ({ setDialogVisible }: { setDialogVisible: (b: b
       default:
         if (windowModel) {
           const updatedWindow = getElementById(windowModel.id) as WindowModel;
-          const oldOverhangLength = updatedWindow.shutter?.width ?? windowModel.shutter?.width ?? 0.5;
+          const oldValue = updatedWindow.shutter?.width ?? windowModel.shutter?.width ?? 0.5;
           const undoableChange = {
             name: 'Set Window Shutter Width',
             timestamp: Date.now(),
-            oldValue: oldOverhangLength,
+            oldValue: oldValue,
             newValue: value,
             changedElementId: windowModel.id,
             changedElementType: windowModel.type,

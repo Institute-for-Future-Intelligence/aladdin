@@ -3,7 +3,7 @@
  */
 
 import React, { useEffect, useRef, useState } from 'react';
-import { Button, Col, Modal, Radio, Row, Space } from 'antd';
+import { Button, Col, InputNumber, Modal, Radio, Row, Space } from 'antd';
 import Draggable, { DraggableBounds, DraggableData, DraggableEvent } from 'react-draggable';
 import { useStore } from 'src/stores/common';
 import * as Selector from 'src/stores/selector';
@@ -11,11 +11,9 @@ import { ObjectType, Scope } from 'src/types';
 import i18n from 'src/i18n/i18n';
 import { UndoableChange } from 'src/undo/UndoableChange';
 import { UndoableChangeGroup } from 'src/undo/UndoableChangeGroup';
-import { CompactPicker } from 'react-color';
 import { WindowModel } from 'src/models/WindowModel';
 
-const WindowShutterColorSelection = ({ setDialogVisible }: { setDialogVisible: (b: boolean) => void }) => {
-  const setCommonStore = useStore(Selector.set);
+const WindowUValueInput = ({ setDialogVisible }: { setDialogVisible: (b: boolean) => void }) => {
   const language = useStore(Selector.language);
   const selectedElement = useStore(Selector.selectedElement) as WindowModel;
   const addUndoable = useStore(Selector.addUndoable);
@@ -25,8 +23,9 @@ const WindowShutterColorSelection = ({ setDialogVisible }: { setDialogVisible: (
   const setApplyCount = useStore(Selector.setApplyCount);
   const revertApply = useStore(Selector.revertApply);
   const getElementById = useStore(Selector.getElementById);
+  const setCommonStore = useStore(Selector.set);
 
-  const windowElement = useStore((state) => {
+  const windowModel = useStore((state) => {
     for (const e of state.elements) {
       if (e.id === selectedElement.id) {
         return e as WindowModel;
@@ -35,105 +34,96 @@ const WindowShutterColorSelection = ({ setDialogVisible }: { setDialogVisible: (
     return null;
   });
 
-  const [selectedColor, setSelectedColor] = useState<string>(windowElement?.shutter?.color ?? 'grey');
+  const [inputValue, setInputValue] = useState<number>(windowModel?.uValue ?? 2);
   const [dragEnabled, setDragEnabled] = useState<boolean>(false);
   const [bounds, setBounds] = useState<DraggableBounds>({ left: 0, top: 0, bottom: 0, right: 0 } as DraggableBounds);
   const dragRef = useRef<HTMLDivElement | null>(null);
-  const okButtonRef = useRef<HTMLElement | null>(null);
-
-  useEffect(() => {
-    okButtonRef.current?.focus();
-  });
 
   const lang = { lng: language };
 
   useEffect(() => {
-    if (windowElement) {
-      setSelectedColor(windowElement?.shutter?.color ?? 'grey');
+    if (windowModel) {
+      setInputValue(windowModel?.uValue ?? 2);
     }
-  }, [windowElement?.shutter?.color]);
+  }, [windowModel?.uValue]);
 
-  const updateById = (id: string, color: string) => {
+  const updateById = (id: string, value: number) => {
     setCommonStore((state) => {
       for (const e of state.elements) {
         if (e.id === id) {
-          if (!e.locked) {
-            const w = e as WindowModel;
-            if (w.shutter) {
-              w.shutter.color = color;
-            }
-          }
+          (e as WindowModel).uValue = value;
           break;
         }
       }
     });
   };
 
-  const updateInMap = (map: Map<string, string>, color: string) => {
+  const undoInMap = (map: Map<string, number>) => {
+    for (const [id, val] of map.entries()) {
+      updateById(id, val);
+    }
+  };
+
+  const updateInMap = (map: Map<string, number>, value: number) => {
     for (const id of map.keys()) {
-      updateById(id, color);
+      updateById(id, value);
     }
   };
 
-  const undoInMap = (map: Map<string, string>) => {
-    for (const [id, color] of map.entries()) {
-      updateById(id, color);
-    }
-  };
-
-  const setColor = (value: string) => {
-    if (!windowElement) return;
+  const setValue = (value: number) => {
+    if (!windowModel) return;
     switch (windowActionScope) {
       case Scope.AllObjectsOfThisType:
-        const oldValsAll = new Map<string, string>();
-        for (const elem of useStore.getState().elements) {
-          if (elem.type === ObjectType.Window && !elem.locked) {
-            oldValsAll.set(elem.id, (elem as WindowModel).shutter?.color ?? 'grey');
+        const oldValuesAll = new Map<string, number | undefined>();
+        setCommonStore((state) => {
+          for (const e of state.elements) {
+            if (e.type === ObjectType.Window && !e.locked) {
+              const w = e as WindowModel;
+              oldValuesAll.set(e.id, w.uValue ?? 2);
+              w.uValue = value;
+            }
           }
-        }
+        });
         const undoableChangeAll = {
-          name: 'Set Shutter Color for All Windows',
+          name: 'Set U-Value for All Windows',
           timestamp: Date.now(),
-          oldValues: oldValsAll,
+          oldValues: oldValuesAll,
           newValue: value,
           undo: () => {
-            undoInMap(undoableChangeAll.oldValues as Map<string, string>);
+            undoInMap(undoableChangeAll.oldValues as Map<string, number>);
           },
           redo: () => {
-            updateInMap(undoableChangeAll.oldValues as Map<string, string>, undoableChangeAll.newValue as string);
+            updateInMap(undoableChangeAll.oldValues as Map<string, number>, undoableChangeAll.newValue as number);
           },
         } as UndoableChangeGroup;
         addUndoable(undoableChangeAll);
-        updateInMap(oldValsAll, value);
         setApplyCount(applyCount + 1);
         break;
       case Scope.OnlyThisSide:
-        if (windowElement.parentId) {
-          const oldValues = new Map<string, string>();
+        if (windowModel.parentId) {
+          const oldValues = new Map<string, number>();
           setCommonStore((state) => {
-            for (const elem of state.elements) {
-              if (elem.type === ObjectType.Window && elem.parentId === windowElement.parentId && !elem.locked) {
-                const w = elem as WindowModel;
-                if (w.shutter) {
-                  oldValues.set(elem.id, w.shutter.color);
-                  w.shutter.color = value;
-                }
+            for (const e of state.elements) {
+              if (e.type === ObjectType.Window && e.parentId === windowModel.parentId && !e.locked) {
+                const window = e as WindowModel;
+                oldValues.set(e.id, window.uValue ?? 2);
+                window.uValue = value;
               }
             }
           });
           const undoableChangeOnSameWall = {
-            name: 'Set Shutter Color for All Windows On the Same Wall',
+            name: 'Set U-Value for All Windows On the Same Wall',
             timestamp: Date.now(),
             oldValues: oldValues,
             newValue: value,
-            groupId: windowElement.parentId,
+            groupId: windowModel.parentId,
             undo: () => {
-              undoInMap(undoableChangeOnSameWall.oldValues as Map<string, string>);
+              undoInMap(undoableChangeOnSameWall.oldValues as Map<string, number>);
             },
             redo: () => {
               updateInMap(
-                undoableChangeOnSameWall.oldValues as Map<string, string>,
-                undoableChangeOnSameWall.newValue as string,
+                undoableChangeOnSameWall.oldValues as Map<string, number>,
+                undoableChangeOnSameWall.newValue as number,
               );
             },
           } as UndoableChangeGroup;
@@ -142,65 +132,62 @@ const WindowShutterColorSelection = ({ setDialogVisible }: { setDialogVisible: (
         }
         break;
       case Scope.AllObjectsOfThisTypeAboveFoundation:
-        if (windowElement.foundationId) {
-          const oldValsAboveFoundation = new Map<string, string>();
-          for (const elem of useStore.getState().elements) {
-            if (
-              elem.type === ObjectType.Window &&
-              elem.foundationId === windowElement.foundationId &&
-              !windowElement.locked
-            ) {
-              oldValsAboveFoundation.set(elem.id, (elem as WindowModel).shutter?.color ?? 'grey');
+        if (windowModel.foundationId) {
+          const oldValuesAboveFoundation = new Map<string, number | undefined>();
+          setCommonStore((state) => {
+            for (const e of state.elements) {
+              if (e.type === ObjectType.Window && e.foundationId === windowModel.foundationId && !e.locked) {
+                const window = e as WindowModel;
+                oldValuesAboveFoundation.set(e.id, window.uValue ?? 2);
+                window.uValue = value;
+              }
             }
-          }
+          });
           const undoableChangeAboveFoundation = {
-            name: 'Set Shutter Color for All Windows Above Foundation',
+            name: 'Set U-Value for All Windows Above Foundation',
             timestamp: Date.now(),
-            oldValues: oldValsAboveFoundation,
+            oldValues: oldValuesAboveFoundation,
             newValue: value,
-            groupId: windowElement.foundationId,
+            groupId: windowModel.foundationId,
             undo: () => {
-              undoInMap(undoableChangeAboveFoundation.oldValues as Map<string, string>);
+              undoInMap(undoableChangeAboveFoundation.oldValues as Map<string, number>);
             },
             redo: () => {
-              if (undoableChangeAboveFoundation.groupId) {
-                updateInMap(
-                  undoableChangeAboveFoundation.oldValues as Map<string, string>,
-                  undoableChangeAboveFoundation.newValue as string,
-                );
-              }
+              updateInMap(
+                undoableChangeAboveFoundation.oldValues as Map<string, number>,
+                undoableChangeAboveFoundation.newValue as number,
+              );
             },
           } as UndoableChangeGroup;
           addUndoable(undoableChangeAboveFoundation);
-          updateInMap(oldValsAboveFoundation, value);
           setApplyCount(applyCount + 1);
         }
         break;
       default:
-        if (windowElement) {
-          const updatedWindow = getElementById(windowElement.id) as WindowModel;
-          const oldColor = (updatedWindow ? updatedWindow.tint : windowElement.tint) ?? 'grey';
+        if (windowModel) {
+          const updatedWindow = getElementById(windowModel.id) as WindowModel;
+          const oldValue = updatedWindow.uValue ?? windowModel.uValue ?? 0.5;
           const undoableChange = {
-            name: 'Set Shutter Color of Selected window',
+            name: 'Set Window U-Value',
             timestamp: Date.now(),
-            oldValue: oldColor,
+            oldValue: oldValue,
             newValue: value,
-            changedElementId: windowElement.id,
-            changedElementType: windowElement.type,
+            changedElementId: windowModel.id,
+            changedElementType: windowModel.type,
             undo: () => {
-              updateById(undoableChange.changedElementId, undoableChange.oldValue as string);
+              updateById(undoableChange.changedElementId, undoableChange.oldValue as number);
             },
             redo: () => {
-              updateById(undoableChange.changedElementId, undoableChange.newValue as string);
+              updateById(undoableChange.changedElementId, undoableChange.newValue as number);
             },
           } as UndoableChange;
           addUndoable(undoableChange);
-          updateById(windowElement.id, value);
+          updateById(windowModel.id, value);
           setApplyCount(applyCount + 1);
         }
     }
     setCommonStore((state) => {
-      state.actionState.windowShutterColor = value;
+      state.actionState.windowUValue = value;
     });
   };
 
@@ -218,9 +205,7 @@ const WindowShutterColorSelection = ({ setDialogVisible }: { setDialogVisible: (
   };
 
   const close = () => {
-    if (windowElement?.tint) {
-      setSelectedColor(windowElement.tint);
-    }
+    setInputValue(windowModel?.uValue ?? 2);
     setDialogVisible(false);
   };
 
@@ -230,23 +215,19 @@ const WindowShutterColorSelection = ({ setDialogVisible }: { setDialogVisible: (
   };
 
   const handleOk = () => {
-    if (!windowElement) return;
-    const updatedRoof = getElementById(windowElement.id) as WindowModel;
-    if (updatedRoof && updatedRoof.tint !== selectedColor) {
-      setColor(selectedColor);
-    }
+    setValue(inputValue);
     setDialogVisible(false);
     setApplyCount(0);
   };
 
   const handleApply = () => {
-    setColor(selectedColor);
+    setValue(inputValue);
   };
 
   return (
     <>
       <Modal
-        width={640}
+        width={550}
         visible={true}
         title={
           <div
@@ -254,7 +235,7 @@ const WindowShutterColorSelection = ({ setDialogVisible }: { setDialogVisible: (
             onMouseOver={() => setDragEnabled(true)}
             onMouseOut={() => setDragEnabled(false)}
           >
-            {i18n.t('windowMenu.ShutterColor', lang)}
+            {i18n.t('windowMenu.UValue', lang)}
           </div>
         }
         footer={[
@@ -264,7 +245,7 @@ const WindowShutterColorSelection = ({ setDialogVisible }: { setDialogVisible: (
           <Button key="Cancel" onClick={handleCancel}>
             {i18n.t('word.Cancel', lang)}
           </Button>,
-          <Button key="OK" type="primary" ref={okButtonRef} onClick={handleOk}>
+          <Button key="OK" type="primary" onClick={handleOk}>
             {i18n.t('word.OK', lang)}
           </Button>,
         ]}
@@ -279,18 +260,26 @@ const WindowShutterColorSelection = ({ setDialogVisible }: { setDialogVisible: (
         )}
       >
         <Row gutter={6}>
-          <Col className="gutter-row" span={11}>
-            <CompactPicker
-              color={selectedColor ?? windowElement?.tint ?? 'grey'}
-              onChangeComplete={(colorResult) => {
-                setSelectedColor(colorResult.hex);
-              }}
+          <Col className="gutter-row" span={7}>
+            <InputNumber
+              min={0}
+              max={0.5}
+              style={{ width: 120 }}
+              step={0.01}
+              precision={2}
+              value={inputValue}
+              formatter={(a) => Number(a).toFixed(2)}
+              onChange={(value) => setInputValue(value)}
+              onPressEnter={handleOk}
             />
+            <div style={{ paddingTop: '20px', textAlign: 'left', fontSize: '11px' }}>
+              {i18n.t('word.Range', lang)}: [0.01, 100] W/(m²·℃)
+            </div>
           </Col>
           <Col
             className="gutter-row"
             style={{ border: '2px dashed #ccc', paddingTop: '8px', paddingLeft: '12px', paddingBottom: '8px' }}
-            span={13}
+            span={17}
           >
             <Radio.Group onChange={(e) => setWindowActionScope(e.target.value)} value={windowActionScope}>
               <Space direction="vertical">
@@ -309,4 +298,4 @@ const WindowShutterColorSelection = ({ setDialogVisible }: { setDialogVisible: (
   );
 };
 
-export default WindowShutterColorSelection;
+export default WindowUValueInput;

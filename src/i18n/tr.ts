@@ -941,6 +941,7 @@ export const i18n_tr = {
       Tint: 'Ton',
       Opacity: 'Opaklık',
       SolarHeatGainCoefficient: 'Solar heat gain coefficient (SHGC) = 1 - opacity',
+      UValue: 'U-Value',
       Shutter: 'Kepenk',
       LeftShutter: 'Sol Kepenk',
       RightShutter: 'Sağ Kepenk',

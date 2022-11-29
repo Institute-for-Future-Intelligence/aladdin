@@ -940,6 +940,7 @@ export const i18n_en = {
       Tint: 'Tint',
       Opacity: 'Opacity',
       SolarHeatGainCoefficient: 'Solar heat gain coefficient (SHGC) = 1 - opacity',
+      UValue: 'U-Value',
       Shutter: 'Shutter',
       LeftShutter: 'Left Shutter',
       RightShutter: 'Right Shutter',
