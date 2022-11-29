@@ -63,7 +63,7 @@ const DoorHeightInput = ({ setDialogVisible }: { setDialogVisible: (b: boolean) 
         if (e.id === id) {
           const door = e as DoorModel;
           door.lz = parent ? value / parent.lz : value;
-          if (parent) door.cz = (parent.lz - value) / (2 * parent.lz);
+          if (parent) door.cz = -(parent.lz - value) / (2 * parent.lz);
           break;
         }
       }
