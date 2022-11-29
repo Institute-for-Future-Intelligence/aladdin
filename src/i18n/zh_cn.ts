@@ -50,6 +50,8 @@ export const i18n_zh_cn = {
       Class: '班级',
       Total: '总数',
       Range: '范围',
+      SIUnit: '国际单位制',
+      USUnit: '美国单位制',
       Press: '按',
       Open: '打开',
       Save: '保存',

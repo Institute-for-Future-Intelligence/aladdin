@@ -12,6 +12,7 @@ import i18n from 'src/i18n/i18n';
 import { UndoableChange } from 'src/undo/UndoableChange';
 import { UndoableChangeGroup } from 'src/undo/UndoableChangeGroup';
 import { WindowModel } from 'src/models/WindowModel';
+import { Util } from '../../../Util';
 
 const WindowUValueInput = ({ setDialogVisible }: { setDialogVisible: (b: boolean) => void }) => {
   const language = useStore(Selector.language);
@@ -26,15 +27,18 @@ const WindowUValueInput = ({ setDialogVisible }: { setDialogVisible: (b: boolean
   const setCommonStore = useStore(Selector.set);
 
   const windowModel = useStore((state) => {
-    for (const e of state.elements) {
-      if (e.id === selectedElement.id) {
-        return e as WindowModel;
+    if (selectedElement) {
+      for (const e of state.elements) {
+        if (e.id === selectedElement.id) {
+          return e as WindowModel;
+        }
       }
     }
     return null;
   });
 
   const [inputValue, setInputValue] = useState<number>(windowModel?.uValue ?? 2);
+  const [inputValueUS, setInputValueUS] = useState<number>(Util.toUValueInUS(inputValue));
   const [dragEnabled, setDragEnabled] = useState<boolean>(false);
   const [bounds, setBounds] = useState<DraggableBounds>({ left: 0, top: 0, bottom: 0, right: 0 } as DraggableBounds);
   const dragRef = useRef<HTMLDivElement | null>(null);
@@ -166,7 +170,7 @@ const WindowUValueInput = ({ setDialogVisible }: { setDialogVisible: (b: boolean
       default:
         if (windowModel) {
           const updatedWindow = getElementById(windowModel.id) as WindowModel;
-          const oldValue = updatedWindow.uValue ?? windowModel.uValue ?? 0.5;
+          const oldValue = updatedWindow.uValue ?? windowModel.uValue ?? 2;
           const undoableChange = {
             name: 'Set Window U-Value',
             timestamp: Date.now(),
@@ -262,18 +266,43 @@ const WindowUValueInput = ({ setDialogVisible }: { setDialogVisible: (b: boolean
         <Row gutter={6}>
           <Col className="gutter-row" span={7}>
             <InputNumber
-              min={0}
-              max={0.5}
+              min={0.01}
+              max={100}
               style={{ width: 120 }}
-              step={0.01}
+              step={0.05}
               precision={2}
               value={inputValue}
               formatter={(a) => Number(a).toFixed(2)}
-              onChange={(value) => setInputValue(value)}
+              onChange={(value) => {
+                setInputValue(value);
+                setInputValueUS(Util.toUValueInUS(value));
+              }}
               onPressEnter={handleOk}
             />
-            <div style={{ paddingTop: '20px', textAlign: 'left', fontSize: '11px' }}>
-              {i18n.t('word.Range', lang)}: [0.01, 100] W/(m²·℃)
+            <div style={{ paddingTop: '4px', textAlign: 'left', fontSize: '11px' }}>
+              {i18n.t('word.Range', lang)}: [0.01, 100]
+              <br />
+              {i18n.t('word.SIUnit', lang)}: W/(m²·℃)
+            </div>
+            <br />
+            <InputNumber
+              min={Util.toUValueInUS(0.01)}
+              max={Util.toUValueInUS(100)}
+              style={{ width: 120 }}
+              step={0.01}
+              precision={2}
+              value={inputValueUS}
+              formatter={(a) => Number(a).toFixed(2)}
+              onChange={(value) => {
+                setInputValueUS(value);
+                setInputValue(Util.toUValueInSI(value));
+              }}
+              onPressEnter={handleOk}
+            />
+            <div style={{ paddingTop: '4px', textAlign: 'left', fontSize: '11px' }}>
+              {i18n.t('word.Range', lang)}: [{Util.toUValueInUS(0.01).toFixed(3)}, {Util.toUValueInUS(100).toFixed(1)}]
+              <br />
+              {i18n.t('word.USUnit', lang)}: Btu/(h·ft²·F)
             </div>
           </Col>
           <Col

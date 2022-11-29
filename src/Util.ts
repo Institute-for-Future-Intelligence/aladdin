@@ -42,6 +42,14 @@ import { RoofUtil } from './views/roof/RoofUtil';
 import { FoundationModel } from './models/FoundationModel';
 
 export class Util {
+  static toUValueInUS(uValueInSI: number) {
+    return uValueInSI / 5.67826;
+  }
+
+  static toUValueInSI(uValueInUS: number) {
+    return uValueInUS * 5.67826;
+  }
+
   static WATER_TEXTURE = Util.fetchWaterTexture(100, 100);
   static WHITE_TEXTURE = Util.fetchWhiteTexture(2, 2);
 

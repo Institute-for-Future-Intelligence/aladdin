@@ -26,9 +26,11 @@ const WindowShutterWidthInput = ({ setDialogVisible }: { setDialogVisible: (b: b
   const setCommonStore = useStore(Selector.set);
 
   const windowModel = useStore((state) => {
-    for (const e of state.elements) {
-      if (e.id === selectedElement.id) {
-        return e as WindowModel;
+    if (selectedElement) {
+      for (const e of state.elements) {
+        if (e.id === selectedElement.id) {
+          return e as WindowModel;
+        }
       }
     }
     return null;

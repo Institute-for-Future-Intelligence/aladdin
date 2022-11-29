@@ -27,9 +27,11 @@ const WindowShutterColorSelection = ({ setDialogVisible }: { setDialogVisible: (
   const getElementById = useStore(Selector.getElementById);
 
   const windowElement = useStore((state) => {
-    for (const e of state.elements) {
-      if (e.id === selectedElement.id) {
-        return e as WindowModel;
+    if (selectedElement) {
+      for (const e of state.elements) {
+        if (e.id === selectedElement.id) {
+          return e as WindowModel;
+        }
       }
     }
     return null;

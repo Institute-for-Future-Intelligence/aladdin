@@ -50,6 +50,8 @@ export const i18n_tr = {
       Class: 'Sınıf',
       Total: 'Toplam',
       Range: 'Aralık',
+      SIUnit: 'SI Unit',
+      USUnit: 'US Unit',
       Press: 'Tıkla',
       Open: 'Aç',
       Save: 'Kaydet',

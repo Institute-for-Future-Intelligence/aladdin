@@ -50,6 +50,8 @@ export const i18n_es = {
       Class: 'Clase',
       Total: 'Total',
       Range: 'Rango',
+      SIUnit: 'SI Unit',
+      USUnit: 'US Unit',
       Press: 'Press',
       Open: 'Abrir',
       Save: 'Guardar',

@@ -50,6 +50,8 @@ export const i18n_en = {
       Class: 'Class',
       Total: 'Total',
       Range: 'Range',
+      SIUnit: 'SI Unit',
+      USUnit: 'US Unit',
       Press: 'Press',
       Open: 'Open',
       Save: 'Save',
