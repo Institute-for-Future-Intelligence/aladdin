@@ -939,6 +939,7 @@ export const i18n_es = {
       MullionColor: 'Mullion Color',
       Tint: 'Tint',
       Opacity: 'Opacity',
+      SolarHeatGainCoefficient: 'Solar heat gain coefficient (SHGC) = 1 - opacity',
       Shutter: 'Shutter',
       LeftShutter: 'Left Shutter',
       RightShutter: 'Right Shutter',

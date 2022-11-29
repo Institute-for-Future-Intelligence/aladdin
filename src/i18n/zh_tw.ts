@@ -917,6 +917,7 @@ export const i18n_zh_tw = {
       MullionColor: '直櫺颜色',
       Tint: '著色',
       Opacity: '不透明度',
+      SolarHeatGainCoefficient: '太陽輻射熱獲取係數(SHGC) = 1 - 不透明度',
       Shutter: '百葉窗',
       LeftShutter: '左側百葉窗',
       RightShutter: '右側百葉窗',

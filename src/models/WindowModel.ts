@@ -5,10 +5,10 @@
 import { ElementModel } from './ElementModel';
 
 export interface WindowModel extends ElementModel {
+  // solar heat gain coefficient (https://en.wikipedia.org/wiki/Solar_gain) = 1 - opacity
   opacity: number;
   tint: string;
-  insulation: number;
-  shgc: number; // solar heat gain coefficient: https://en.wikipedia.org/wiki/Solar_gain
+  uValue: number;
 
   shutter: ShutterProps;
 

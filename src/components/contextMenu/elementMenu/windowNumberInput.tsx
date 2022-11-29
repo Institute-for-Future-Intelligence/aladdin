@@ -22,6 +22,7 @@ interface WindowNumberInputProps {
   step: number;
   setDialogVisible: () => void;
   unit?: string;
+  note?: string;
 }
 
 const WindowNumberInput = ({
@@ -31,6 +32,7 @@ const WindowNumberInput = ({
   range,
   step,
   unit,
+  note,
   setDialogVisible,
 }: WindowNumberInputProps) => {
   const language = useStore(Selector.language);
@@ -333,7 +335,8 @@ const WindowNumberInput = ({
               onPressEnter={handleOk}
             />
             <div style={{ paddingTop: '20px', textAlign: 'left', fontSize: '11px' }}>
-              {i18n.t('word.Range', lang)}: [{range.toString()}] {unit}
+              {i18n.t('word.Range', lang)}: [{range.toString()}] {unit} <br />
+              <br /> {note}
             </div>
           </Col>
           <Col className="gutter-row" span={1} style={{ verticalAlign: 'middle', paddingTop: '6px' }}>

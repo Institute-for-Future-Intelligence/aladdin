@@ -940,6 +940,7 @@ export const i18n_tr = {
       MullionColor: 'Mullion Color',
       Tint: 'Ton',
       Opacity: 'Opaklık',
+      SolarHeatGainCoefficient: 'Solar heat gain coefficient (SHGC) = 1 - opacity',
       Shutter: 'Kepenk',
       LeftShutter: 'Sol Kepenk',
       RightShutter: 'Sağ Kepenk',

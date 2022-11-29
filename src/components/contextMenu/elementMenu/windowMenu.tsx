@@ -40,19 +40,19 @@ type NumberDialogSettingType = {
   range: [min: number, max: number];
   step: number;
   unit?: string;
+  note?: string;
 };
 
 const SelectionDialogSettings = {
   Tint: { attributeKey: 'tint' },
-  Opacity: { attributeKey: 'opaticy' },
   Color: { attributeKey: 'color' },
   MullionColor: { attributeKey: 'mullionColor' },
 };
 
 const NumberDialogSettings = {
-  Opacity: { attributeKey: 'opacity', range: [0, 1], step: 0.1 },
-  Width: { attributeKey: 'lx', range: [0.1, 100], step: 0.1 },
-  Height: { attributeKey: 'lz', range: [0.1, 100], step: 0.1 },
+  Opacity: { attributeKey: 'opacity', range: [0, 1], step: 0.1, note: 'windowMenu.SolarHeatGainCoefficient' },
+  Width: { attributeKey: 'lx', range: [0.1, 100], step: 0.1, unit: 'word.MeterAbbreviation' },
+  Height: { attributeKey: 'lz', range: [0.1, 100], step: 0.1, unit: 'word.MeterAbbreviation' },
   MullionWidth: { attributeKey: 'mullionWidth', range: [0, 0.2], step: 0.1, unit: 'word.MeterAbbreviation' },
   MullionSpacing: { attributeKey: 'mullionSpacing', range: [0.1, 5], step: 0.01, unit: 'word.MeterAbbreviation' },
   FrameWidth: { attributeKey: 'frameWidth', range: [0.05, 0.2], step: 0.01, unit: 'word.MeterAbbreviation' },
@@ -274,6 +274,7 @@ export const WindowMenu = () => {
             step={setting.step}
             setDialogVisible={() => setVisibleType(null)}
             unit={setting.unit ? i18n.t(setting.unit, lang) : undefined}
+            note={setting.note ? i18n.t(setting.note, lang) : undefined}
           />
         );
       }
