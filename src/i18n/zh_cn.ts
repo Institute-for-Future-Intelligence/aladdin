@@ -52,6 +52,7 @@ export const i18n_zh_cn = {
       Range: '范围',
       SIUnit: '国际单位制',
       USUnit: '美国单位制',
+      ThermalTransmittance: '热透过率',
       Press: '按',
       Open: '打开',
       Save: '保存',
@@ -998,6 +999,7 @@ export const i18n_zh_cn = {
       Default: '默认',
       Arched: '拱形',
       Filled: '填充',
+      UValue: 'U值',
     },
 
     siteInfoPanel: {

@@ -608,6 +608,7 @@ export class ElementModelCloner {
       lx: wall.lx,
       ly: wall.ly,
       lz: wall.lz,
+      rValue: wall.rValue,
       leftJoints: [],
       rightJoints: [],
       leftPoint: [...wall.leftPoint],

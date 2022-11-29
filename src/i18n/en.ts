@@ -52,6 +52,7 @@ export const i18n_en = {
       Range: 'Range',
       SIUnit: 'SI Unit',
       USUnit: 'US Unit',
+      ThermalTransmittance: 'Thermal Transmittance',
       Press: 'Press',
       Open: 'Open',
       Save: 'Save',
@@ -1021,6 +1022,7 @@ export const i18n_en = {
       Default: 'Default',
       Arched: 'Arched',
       Filled: 'Filled',
+      UValue: 'U-Value',
     },
 
     siteInfoPanel: {

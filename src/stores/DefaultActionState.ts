@@ -51,6 +51,7 @@ export class DefaultActionState implements ActionState {
   wallStructureWidth: number;
   wallStructureColor: string;
   wallOpacity: number;
+  wallRValue: number;
 
   roofColor: string;
   roofSideColor: string;
@@ -63,12 +64,14 @@ export class DefaultActionState implements ActionState {
   roofRafterWidth: number;
   roofRafterSpacing: number;
   roofRafterColor: string;
+  roofRValue: number;
 
   doorColor: string;
   doorTexture: DoorTexture;
   doorType: DoorType;
   doorArchHeight: number;
   doorFilled: boolean;
+  doorUValue: number;
 
   windowWidth: number;
   windowHeight: number;
@@ -164,6 +167,7 @@ export class DefaultActionState implements ActionState {
     this.wallStructureWidth = 0.1;
     this.wallStructureColor = 'white';
     this.wallOpacity = 0.5;
+    this.wallRValue = 2;
 
     this.roofColor = '#454769';
     this.roofSideColor = 'white';
@@ -176,12 +180,14 @@ export class DefaultActionState implements ActionState {
     this.roofRafterWidth = 0.1;
     this.roofRafterSpacing = 1;
     this.roofRafterColor = 'white';
+    this.roofRValue = 2;
 
     this.doorColor = 'white';
     this.doorTexture = DoorTexture.Default;
     this.doorType = DoorType.Default;
     this.doorArchHeight = 1;
     this.doorFilled = true;
+    this.doorUValue = 1;
 
     this.windowWidth = 1;
     this.windowHeight = 1;

@@ -6,6 +6,7 @@ import { DoorTexture } from 'src/types';
 import { ElementModel } from './ElementModel';
 
 export interface DoorModel extends ElementModel {
+  uValue: number;
   textureType: DoorTexture;
   doorType: DoorType;
 

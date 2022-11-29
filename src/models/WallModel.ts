@@ -27,6 +27,7 @@ export interface WallModel extends ElementModel {
   structureColor?: string;
 
   opacity?: number;
+  rValue: number;
 }
 
 export enum WallStructure {

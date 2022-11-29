@@ -52,6 +52,7 @@ export const i18n_tr = {
       Range: 'Aralık',
       SIUnit: 'SI Unit',
       USUnit: 'US Unit',
+      ThermalTransmittance: 'Thermal Transmittance',
       Press: 'Tıkla',
       Open: 'Aç',
       Save: 'Kaydet',
@@ -1022,6 +1023,7 @@ export const i18n_tr = {
       Default: 'Default',
       Arched: 'Arched',
       Filled: 'Filled',
+      UValue: 'U-Value',
     },
 
     siteInfoPanel: {

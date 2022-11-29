@@ -18,6 +18,7 @@ export interface RoofModel extends ElementModel {
   rafterColor?: string;
   glassTint?: string;
   opacity?: number;
+  rValue: number;
 }
 
 export interface PyramidRoofModel extends RoofModel {}

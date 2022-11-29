@@ -16,6 +16,9 @@ import SubMenu from 'antd/lib/menu/SubMenu';
 import { radioStyle } from './wallMenu';
 import { UndoableChange } from 'src/undo/UndoableChange';
 import { UndoableCheck } from 'src/undo/UndoableCheck';
+import DoorUValueInput from './doorUValueInput';
+import DoorWidthInput from './doorWidthInput';
+import DoorHeightInput from './doorHeightInput';
 
 const getSelectedDoor = (state: CommonStoreState) => {
   for (const el of state.elements) {
@@ -35,6 +38,9 @@ export const DoorMenu = () => {
 
   const [textureDialogVisible, setTextureDialogVisible] = useState(false);
   const [colorDialogVisible, setColorDialogVisible] = useState(false);
+  const [widthDialogVisible, setWidthDialogVisible] = useState(false);
+  const [heightDialogVisible, setHeightDialogVisible] = useState(false);
+  const [uValueDialogVisible, setUValueDialogVisible] = useState(false);
 
   const lang = { lng: language };
   const paddingLeft = '36px';
@@ -141,6 +147,39 @@ export const DoorMenu = () => {
             </Checkbox>
           </Menu.Item>
           {renderTypeSubMenu()}
+          {widthDialogVisible && <DoorWidthInput setDialogVisible={setWidthDialogVisible} />}
+          <Menu.Item
+            key={'door-width'}
+            style={{ paddingLeft: '36px' }}
+            onClick={() => {
+              setApplyCount(0);
+              setWidthDialogVisible(true);
+            }}
+          >
+            {i18n.t('word.Width', lang)} ...
+          </Menu.Item>
+          {heightDialogVisible && <DoorHeightInput setDialogVisible={setHeightDialogVisible} />}
+          <Menu.Item
+            key={'door-height'}
+            style={{ paddingLeft: '36px' }}
+            onClick={() => {
+              setApplyCount(0);
+              setHeightDialogVisible(true);
+            }}
+          >
+            {i18n.t('word.Height', lang)} ...
+          </Menu.Item>
+          {uValueDialogVisible && <DoorUValueInput setDialogVisible={setUValueDialogVisible} />}
+          <Menu.Item
+            key={'door-u-value'}
+            style={{ paddingLeft: '36px' }}
+            onClick={() => {
+              setApplyCount(0);
+              setUValueDialogVisible(true);
+            }}
+          >
+            {i18n.t('doorMenu.UValue', lang)} ...
+          </Menu.Item>
           <Menu.Item
             key={'door-texture'}
             style={{ paddingLeft: paddingLeft }}

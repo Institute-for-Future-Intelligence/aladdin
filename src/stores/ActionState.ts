@@ -45,6 +45,7 @@ export interface ActionState {
   wallStructureSpacing: number;
   wallStructureWidth: number;
   wallStructureColor: string;
+  wallRValue: number;
 
   roofColor: string;
   roofSideColor: string;
@@ -57,12 +58,14 @@ export interface ActionState {
   roofRafterWidth: number;
   roofRafterSpacing: number;
   roofRafterColor: string;
+  roofRValue: number;
 
   doorColor: string;
   doorTexture: DoorTexture;
   doorType: DoorType;
   doorArchHeight: number;
   doorFilled: boolean;
+  doorUValue: number;
 
   windowWidth: number;
   windowHeight: number;
