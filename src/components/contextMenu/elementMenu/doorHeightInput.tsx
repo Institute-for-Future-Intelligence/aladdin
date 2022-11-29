@@ -12,7 +12,6 @@ import i18n from 'src/i18n/i18n';
 import { UndoableChange } from 'src/undo/UndoableChange';
 import { UndoableChangeGroup } from 'src/undo/UndoableChangeGroup';
 import { DoorModel } from '../../../models/DoorModel';
-import { WindowModel } from '../../../models/WindowModel';
 
 const DoorHeightInput = ({ setDialogVisible }: { setDialogVisible: (b: boolean) => void }) => {
   const language = useStore(Selector.language);
@@ -93,7 +92,7 @@ const DoorHeightInput = ({ setDialogVisible }: { setDialogVisible: (b: boolean) 
               const door = e as DoorModel;
               oldValuesAll.set(e.id, door.lz * (parent ? parent.lz : 1));
               door.lz = parent ? value / parent.lz : value;
-              if (parent) door.cz = (parent.lz - value) / (2 * parent.lz);
+              if (parent) door.cz = -(parent.lz - value) / (2 * parent.lz);
             }
           }
         });
@@ -121,7 +120,7 @@ const DoorHeightInput = ({ setDialogVisible }: { setDialogVisible: (b: boolean) 
                 const door = e as DoorModel;
                 oldValues.set(e.id, door.lz * (parent ? parent.lz : 1));
                 door.lz = parent ? value / parent.lz : value;
-                if (parent) door.cz = (parent.lz - value) / (2 * parent.lz);
+                if (parent) door.cz = -(parent.lz - value) / (2 * parent.lz);
               }
             }
           });
@@ -154,7 +153,7 @@ const DoorHeightInput = ({ setDialogVisible }: { setDialogVisible: (b: boolean) 
                 const door = e as DoorModel;
                 oldValuesAboveFoundation.set(e.id, door.lz * (parent ? parent.lz : 1));
                 door.lz = parent ? value / parent.lz : value;
-                if (parent) door.cz = (parent.lz - value) / (2 * parent.lz);
+                if (parent) door.cz = -(parent.lz - value) / (2 * parent.lz);
               }
             }
           });

@@ -131,7 +131,15 @@ const WindowNumberInput = ({
           for (const e of state.elements) {
             if (e.type === ObjectType.Window && !e.locked) {
               const window = e as WindowModel;
-              oldValuesAll.set(e.id, window[attributeKey] as number);
+              let oldValue = window[attributeKey] as number;
+              if (parent) {
+                if (attributeKey === 'lx') {
+                  oldValue *= parent.lx;
+                } else if (attributeKey === 'lz') {
+                  oldValue *= parent.lz;
+                }
+              }
+              oldValuesAll.set(e.id, oldValue);
               setAttribute(window, attributeKey, value);
             }
           }
@@ -157,8 +165,17 @@ const WindowNumberInput = ({
           setCommonStore((state) => {
             for (const e of state.elements) {
               if (e.type === ObjectType.Window && e.parentId === windowElement.parentId && !e.locked) {
-                oldValuesOnSameWall.set(e.id, (e as WindowModel)[attributeKey] as number);
-                setAttribute(e as WindowModel, attributeKey, value);
+                const window = e as WindowModel;
+                let oldValue = window[attributeKey] as number;
+                if (parent) {
+                  if (attributeKey === 'lx') {
+                    oldValue *= parent.lx;
+                  } else if (attributeKey === 'lz') {
+                    oldValue *= parent.lz;
+                  }
+                }
+                oldValuesOnSameWall.set(e.id, oldValue);
+                setAttribute(window, attributeKey, value);
               }
             }
           });
@@ -185,8 +202,17 @@ const WindowNumberInput = ({
           setCommonStore((state) => {
             for (const e of state.elements) {
               if (e.type === ObjectType.Window && e.foundationId === windowElement.foundationId && !e.locked) {
-                oldValuesAboveFoundation.set(e.id, (e as WindowModel)[attributeKey] as number);
-                setAttribute(e as WindowModel, attributeKey, value);
+                const window = e as WindowModel;
+                let oldValue = window[attributeKey] as number;
+                if (parent) {
+                  if (attributeKey === 'lx') {
+                    oldValue *= parent.lx;
+                  } else if (attributeKey === 'lz') {
+                    oldValue *= parent.lz;
+                  }
+                }
+                oldValuesAboveFoundation.set(e.id, oldValue);
+                setAttribute(window, attributeKey, value);
               }
             }
           });
@@ -209,7 +235,14 @@ const WindowNumberInput = ({
         break;
       default:
         if (windowElement) {
-          const oldValue = windowElement[attributeKey] as number;
+          let oldValue = windowElement[attributeKey] as number;
+          if (parent) {
+            if (attributeKey === 'lx') {
+              oldValue *= parent.lx;
+            } else if (attributeKey === 'lz') {
+              oldValue *= parent.lz;
+            }
+          }
           const undoableChange = {
             name: `Set Window ${dataType}`,
             timestamp: Date.now(),
