@@ -63,7 +63,7 @@ const DoorHeightInput = ({ setDialogVisible }: { setDialogVisible: (b: boolean) 
         if (e.id === id) {
           const door = e as DoorModel;
           door.lz = parent ? value / parent.lz : value;
-          //door.cz = value/2;
+          if (parent) door.cz = (parent.lz - value) / (2 * parent.lz);
           break;
         }
       }
@@ -93,7 +93,7 @@ const DoorHeightInput = ({ setDialogVisible }: { setDialogVisible: (b: boolean) 
               const door = e as DoorModel;
               oldValuesAll.set(e.id, door.lz * (parent ? parent.lz : 1));
               door.lz = parent ? value / parent.lz : value;
-              //door.cz = value/2;
+              if (parent) door.cz = (parent.lz - value) / (2 * parent.lz);
             }
           }
         });
@@ -121,7 +121,7 @@ const DoorHeightInput = ({ setDialogVisible }: { setDialogVisible: (b: boolean) 
                 const door = e as DoorModel;
                 oldValues.set(e.id, door.lz * (parent ? parent.lz : 1));
                 door.lz = parent ? value / parent.lz : value;
-                //door.cz=value/2;
+                if (parent) door.cz = (parent.lz - value) / (2 * parent.lz);
               }
             }
           });
@@ -154,7 +154,7 @@ const DoorHeightInput = ({ setDialogVisible }: { setDialogVisible: (b: boolean) 
                 const door = e as DoorModel;
                 oldValuesAboveFoundation.set(e.id, door.lz * (parent ? parent.lz : 1));
                 door.lz = parent ? value / parent.lz : value;
-                //door.cz=value/2;
+                if (parent) door.cz = (parent.lz - value) / (2 * parent.lz);
               }
             }
           });
