@@ -178,7 +178,7 @@ export const DoorMenu = () => {
               setUValueDialogVisible(true);
             }}
           >
-            {i18n.t('doorMenu.UValue', lang)} ...
+            {i18n.t('word.UValue', lang)} ...
           </Menu.Item>
           <Menu.Item
             key={'door-texture'}

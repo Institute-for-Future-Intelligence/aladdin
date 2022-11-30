@@ -474,7 +474,7 @@ export const WallMenu = () => {
               setRValueDialogVisible(true);
             }}
           >
-            {i18n.t('wallMenu.RValue', lang)} ...
+            {i18n.t('word.RValue', lang)} ...
           </Menu.Item>
 
           {renderTexture()}

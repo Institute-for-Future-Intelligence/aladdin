@@ -11,34 +11,34 @@ import { ObjectType, Scope } from 'src/types';
 import i18n from 'src/i18n/i18n';
 import { UndoableChange } from 'src/undo/UndoableChange';
 import { UndoableChangeGroup } from 'src/undo/UndoableChangeGroup';
-import { DoorModel } from '../../../models/DoorModel';
+import { RoofModel } from '../../../models/RoofModel';
 import { Util } from '../../../Util';
 
-const DoorUValueInput = ({ setDialogVisible }: { setDialogVisible: (b: boolean) => void }) => {
+const RoofRValueInput = ({ setDialogVisible }: { setDialogVisible: (b: boolean) => void }) => {
   const language = useStore(Selector.language);
-  const selectedElement = useStore(Selector.selectedElement) as DoorModel;
+  const selectedElement = useStore(Selector.selectedElement) as RoofModel;
   const addUndoable = useStore(Selector.addUndoable);
-  const actionScope = useStore(Selector.doorActionScope);
-  const setActionScope = useStore(Selector.setDoorActionScope);
+  const actionScope = useStore(Selector.wallActionScope);
+  const setActionScope = useStore(Selector.setWallActionScope);
   const applyCount = useStore(Selector.applyCount);
   const setApplyCount = useStore(Selector.setApplyCount);
   const revertApply = useStore(Selector.revertApply);
   const getElementById = useStore(Selector.getElementById);
   const setCommonStore = useStore(Selector.set);
 
-  const doorModel = useStore((state) => {
+  const roofModel = useStore((state) => {
     if (selectedElement) {
       for (const e of state.elements) {
         if (e.id === selectedElement.id) {
-          return e as DoorModel;
+          return e as RoofModel;
         }
       }
     }
     return null;
   });
 
-  const [inputValue, setInputValue] = useState<number>(doorModel?.uValue ?? 1);
-  const [inputValueUS, setInputValueUS] = useState<number>(Util.toUValueInUS(inputValue));
+  const [inputValue, setInputValue] = useState<number>(roofModel?.rValue ?? 0.5);
+  const [inputValueUS, setInputValueUS] = useState<number>(Util.toRValueInUS(inputValue));
   const [dragEnabled, setDragEnabled] = useState<boolean>(false);
   const [bounds, setBounds] = useState<DraggableBounds>({ left: 0, top: 0, bottom: 0, right: 0 } as DraggableBounds);
   const dragRef = useRef<HTMLDivElement | null>(null);
@@ -46,16 +46,16 @@ const DoorUValueInput = ({ setDialogVisible }: { setDialogVisible: (b: boolean) 
   const lang = { lng: language };
 
   useEffect(() => {
-    if (doorModel) {
-      setInputValue(doorModel?.uValue ?? 1);
+    if (roofModel) {
+      setInputValue(roofModel?.rValue ?? 0.5);
     }
-  }, [doorModel?.uValue]);
+  }, [roofModel?.rValue]);
 
   const updateById = (id: string, value: number) => {
     setCommonStore((state) => {
       for (const e of state.elements) {
         if (e.id === id) {
-          (e as DoorModel).uValue = value;
+          (e as RoofModel).rValue = value;
           break;
         }
       }
@@ -75,21 +75,21 @@ const DoorUValueInput = ({ setDialogVisible }: { setDialogVisible: (b: boolean) 
   };
 
   const setValue = (value: number) => {
-    if (!doorModel) return;
+    if (!roofModel) return;
     switch (actionScope) {
       case Scope.AllObjectsOfThisType:
         const oldValuesAll = new Map<string, number | undefined>();
         setCommonStore((state) => {
           for (const e of state.elements) {
-            if (e.type === ObjectType.Door && !e.locked) {
-              const door = e as DoorModel;
-              oldValuesAll.set(e.id, door.uValue ?? 1);
-              door.uValue = value;
+            if (e.type === ObjectType.Roof && !e.locked) {
+              const roof = e as RoofModel;
+              oldValuesAll.set(e.id, roof.rValue ?? 0.5);
+              roof.rValue = value;
             }
           }
         });
         const undoableChangeAll = {
-          name: 'Set U-Value for All Doors',
+          name: 'Set R-Value for All Roofs',
           timestamp: Date.now(),
           oldValues: oldValuesAll,
           newValue: value,
@@ -103,56 +103,24 @@ const DoorUValueInput = ({ setDialogVisible }: { setDialogVisible: (b: boolean) 
         addUndoable(undoableChangeAll);
         setApplyCount(applyCount + 1);
         break;
-      case Scope.OnlyThisSide:
-        if (doorModel.parentId) {
-          const oldValues = new Map<string, number>();
-          setCommonStore((state) => {
-            for (const e of state.elements) {
-              if (e.type === ObjectType.Door && e.parentId === doorModel.parentId && !e.locked) {
-                const door = e as DoorModel;
-                oldValues.set(e.id, door.uValue ?? 1);
-                door.uValue = value;
-              }
-            }
-          });
-          const undoableChangeOnSameWall = {
-            name: 'Set U-Value for All Doors On the Same Wall',
-            timestamp: Date.now(),
-            oldValues: oldValues,
-            newValue: value,
-            groupId: doorModel.parentId,
-            undo: () => {
-              undoInMap(undoableChangeOnSameWall.oldValues as Map<string, number>);
-            },
-            redo: () => {
-              updateInMap(
-                undoableChangeOnSameWall.oldValues as Map<string, number>,
-                undoableChangeOnSameWall.newValue as number,
-              );
-            },
-          } as UndoableChangeGroup;
-          addUndoable(undoableChangeOnSameWall);
-          setApplyCount(applyCount + 1);
-        }
-        break;
       case Scope.AllObjectsOfThisTypeAboveFoundation:
-        if (doorModel.foundationId) {
+        if (roofModel.foundationId) {
           const oldValuesAboveFoundation = new Map<string, number | undefined>();
           setCommonStore((state) => {
             for (const e of state.elements) {
-              if (e.type === ObjectType.Door && e.foundationId === doorModel.foundationId && !e.locked) {
-                const door = e as DoorModel;
-                oldValuesAboveFoundation.set(e.id, door.uValue ?? 1);
-                door.uValue = value;
+              if (e.type === ObjectType.Roof && e.foundationId === roofModel.foundationId && !e.locked) {
+                const roof = e as RoofModel;
+                oldValuesAboveFoundation.set(e.id, roof.rValue ?? 0.5);
+                roof.rValue = value;
               }
             }
           });
           const undoableChangeAboveFoundation = {
-            name: 'Set U-Value for All Doors Above Foundation',
+            name: 'Set R-Value for All Roofs Above Foundation',
             timestamp: Date.now(),
             oldValues: oldValuesAboveFoundation,
             newValue: value,
-            groupId: doorModel.foundationId,
+            groupId: roofModel.foundationId,
             undo: () => {
               undoInMap(undoableChangeAboveFoundation.oldValues as Map<string, number>);
             },
@@ -168,16 +136,16 @@ const DoorUValueInput = ({ setDialogVisible }: { setDialogVisible: (b: boolean) 
         }
         break;
       default:
-        if (doorModel) {
-          const updatedDoor = getElementById(doorModel.id) as DoorModel;
-          const oldValue = updatedDoor.uValue ?? doorModel.uValue ?? 1;
+        if (roofModel) {
+          const updatedRoof = getElementById(roofModel.id) as RoofModel;
+          const oldValue = updatedRoof.rValue ?? roofModel.rValue ?? 0.5;
           const undoableChange = {
-            name: 'Set Door U-Value',
+            name: 'Set Roof R-Value',
             timestamp: Date.now(),
             oldValue: oldValue,
             newValue: value,
-            changedElementId: doorModel.id,
-            changedElementType: doorModel.type,
+            changedElementId: roofModel.id,
+            changedElementType: roofModel.type,
             undo: () => {
               updateById(undoableChange.changedElementId, undoableChange.oldValue as number);
             },
@@ -186,12 +154,12 @@ const DoorUValueInput = ({ setDialogVisible }: { setDialogVisible: (b: boolean) 
             },
           } as UndoableChange;
           addUndoable(undoableChange);
-          updateById(doorModel.id, value);
+          updateById(roofModel.id, value);
           setApplyCount(applyCount + 1);
         }
     }
     setCommonStore((state) => {
-      state.actionState.doorUValue = value;
+      state.actionState.roofRValue = value;
     });
   };
 
@@ -209,7 +177,7 @@ const DoorUValueInput = ({ setDialogVisible }: { setDialogVisible: (b: boolean) 
   };
 
   const close = () => {
-    setInputValue(doorModel?.uValue ?? 1);
+    setInputValue(roofModel?.rValue ?? 0.5);
     setDialogVisible(false);
   };
 
@@ -239,7 +207,7 @@ const DoorUValueInput = ({ setDialogVisible }: { setDialogVisible: (b: boolean) 
             onMouseOver={() => setDragEnabled(true)}
             onMouseOut={() => setDragEnabled(false)}
           >
-            {i18n.t('word.UValue', lang) + ' '}({i18n.t('word.ThermalTransmittance', lang)})
+            {i18n.t('word.RValue', lang) + ' '}({i18n.t('word.ThermalResistance', lang)})
           </div>
         }
         footer={[
@@ -275,19 +243,19 @@ const DoorUValueInput = ({ setDialogVisible }: { setDialogVisible: (b: boolean) 
               formatter={(a) => Number(a).toFixed(2)}
               onChange={(value) => {
                 setInputValue(value);
-                setInputValueUS(Util.toUValueInUS(value));
+                setInputValueUS(Util.toRValueInUS(value));
               }}
               onPressEnter={handleOk}
             />
             <div style={{ paddingTop: '4px', textAlign: 'left', fontSize: '11px' }}>
               {i18n.t('word.Range', lang)}: [0.01, 100]
               <br />
-              {i18n.t('word.SIUnit', lang)}: W/(m²·℃)
+              {i18n.t('word.SIUnit', lang)}: m²·℃/W
             </div>
             <br />
             <InputNumber
-              min={Util.toUValueInUS(0.01)}
-              max={Util.toUValueInUS(100)}
+              min={Util.toRValueInUS(0.01)}
+              max={Util.toRValueInUS(100)}
               style={{ width: 120 }}
               step={0.01}
               precision={2}
@@ -295,14 +263,14 @@ const DoorUValueInput = ({ setDialogVisible }: { setDialogVisible: (b: boolean) 
               formatter={(a) => Number(a).toFixed(2)}
               onChange={(value) => {
                 setInputValueUS(value);
-                setInputValue(Util.toUValueInSI(value));
+                setInputValue(Util.toRValueInSI(value));
               }}
               onPressEnter={handleOk}
             />
             <div style={{ paddingTop: '4px', textAlign: 'left', fontSize: '11px' }}>
-              {i18n.t('word.Range', lang)}: [{Util.toUValueInUS(0.01).toFixed(3)}, {Util.toUValueInUS(100).toFixed(1)}]
+              {i18n.t('word.Range', lang)}: [{Util.toRValueInUS(0.01).toFixed(3)}, {Util.toRValueInUS(100).toFixed(1)}]
               <br />
-              {i18n.t('word.USUnit', lang)}: Btu/(h·ft²·℉)
+              {i18n.t('word.USUnit', lang)}: h·ft²·℉/Btu
             </div>
           </Col>
           <Col
@@ -312,12 +280,11 @@ const DoorUValueInput = ({ setDialogVisible }: { setDialogVisible: (b: boolean) 
           >
             <Radio.Group onChange={(e) => setActionScope(e.target.value)} value={actionScope}>
               <Space direction="vertical">
-                <Radio value={Scope.OnlyThisObject}>{i18n.t('doorMenu.OnlyThisDoor', lang)}</Radio>
-                <Radio value={Scope.OnlyThisSide}>{i18n.t('doorMenu.AllDoorsOnWall', lang)}</Radio>
+                <Radio value={Scope.OnlyThisObject}>{i18n.t('roofMenu.OnlyThisRoof', lang)}</Radio>
                 <Radio value={Scope.AllObjectsOfThisTypeAboveFoundation}>
-                  {i18n.t('doorMenu.AllDoorsAboveFoundation', lang)}
+                  {i18n.t('roofMenu.AllRoofsAboveFoundation', lang)}
                 </Radio>
-                <Radio value={Scope.AllObjectsOfThisType}>{i18n.t('doorMenu.AllDoors', lang)}</Radio>
+                <Radio value={Scope.AllObjectsOfThisType}>{i18n.t('roofMenu.AllRoofs', lang)}</Radio>
               </Space>
             </Radio.Group>
           </Col>
@@ -327,4 +294,4 @@ const DoorUValueInput = ({ setDialogVisible }: { setDialogVisible: (b: boolean) 
   );
 };
 
-export default DoorUValueInput;
+export default RoofRValueInput;

@@ -239,7 +239,7 @@ const WindowUValueInput = ({ setDialogVisible }: { setDialogVisible: (b: boolean
             onMouseOver={() => setDragEnabled(true)}
             onMouseOut={() => setDragEnabled(false)}
           >
-            {i18n.t('windowMenu.UValue', lang) + ' '}({i18n.t('word.ThermalTransmittance', lang)})
+            {i18n.t('word.UValue', lang) + ' '}({i18n.t('word.ThermalTransmittance', lang)})
           </div>
         }
         footer={[

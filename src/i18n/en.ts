@@ -54,6 +54,8 @@ export const i18n_en = {
       USUnit: 'US Unit',
       ThermalTransmittance: 'Thermal Transmittance',
       ThermalResistance: 'Thermal Resistance',
+      UValue: 'U-Value',
+      RValue: 'R-Value',
       Press: 'Press',
       Open: 'Open',
       Save: 'Save',
@@ -928,7 +930,6 @@ export const i18n_en = {
       Texture: 'Texture',
       AllLightsOnWallInside: 'All Lights on Wall Inside',
       AllLightsOnWallOutside: 'All Lights on Wall Outside',
-      RValue: 'R-Value',
     },
 
     windowMenu: {
@@ -945,7 +946,6 @@ export const i18n_en = {
       Tint: 'Tint',
       Opacity: 'Opacity',
       SolarHeatGainCoefficient: 'Solar heat gain coefficient (SHGC) = 1 - opacity',
-      UValue: 'U-Value',
       Shutter: 'Shutter',
       LeftShutter: 'Left Shutter',
       RightShutter: 'Right Shutter',
@@ -1024,7 +1024,6 @@ export const i18n_en = {
       Default: 'Default',
       Arched: 'Arched',
       Filled: 'Filled',
-      UValue: 'U-Value',
     },
 
     siteInfoPanel: {

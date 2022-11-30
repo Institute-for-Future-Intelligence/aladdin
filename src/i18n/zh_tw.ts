@@ -54,6 +54,8 @@ export const i18n_zh_tw = {
       USUnit: '美國單位制',
       ThermalTransmittance: '熱透過率',
       ThermalResistance: '熱阻',
+      UValue: 'U值',
+      RValue: 'R值',
       Press: '按',
       Open: '打開',
       Save: '保存',
@@ -906,7 +908,6 @@ export const i18n_zh_tw = {
       Texture: '材質',
       AllLightsOnWallInside: '所有電燈在牆內',
       AllLightsOnWallOutside: '所有電燈在牆外',
-      RValue: 'R值',
     },
 
     windowMenu: {
@@ -923,7 +924,6 @@ export const i18n_zh_tw = {
       Tint: '著色',
       Opacity: '不透明度',
       SolarHeatGainCoefficient: '太陽輻射熱獲取係數(SHGC) = 1 - 不透明度',
-      UValue: 'U值',
       Shutter: '百葉窗',
       LeftShutter: '左側百葉窗',
       RightShutter: '右側百葉窗',
@@ -1002,7 +1002,6 @@ export const i18n_zh_tw = {
       Default: '默認',
       Arched: '拱形',
       Filled: '填充',
-      UValue: 'U值',
     },
 
     siteInfoPanel: {

@@ -207,7 +207,7 @@ const WallRValueInput = ({ setDialogVisible }: { setDialogVisible: (b: boolean) 
             onMouseOver={() => setDragEnabled(true)}
             onMouseOut={() => setDragEnabled(false)}
           >
-            {i18n.t('wallMenu.RValue', lang) + ' '}({i18n.t('word.ThermalResistance', lang)})
+            {i18n.t('word.RValue', lang) + ' '}({i18n.t('word.ThermalResistance', lang)})
           </div>
         }
         footer={[

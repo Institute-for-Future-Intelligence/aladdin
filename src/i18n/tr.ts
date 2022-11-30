@@ -54,6 +54,8 @@ export const i18n_tr = {
       USUnit: 'US Unit',
       ThermalTransmittance: 'Thermal Transmittance',
       ThermalResistance: 'Thermal Resistance',
+      UValue: 'U-Value',
+      RValue: 'R-Value',
       Press: 'Tıkla',
       Open: 'Aç',
       Save: 'Kaydet',
@@ -929,7 +931,6 @@ export const i18n_tr = {
       Texture: 'Texture',
       AllLightsOnWallInside: 'All Lights on Wall Inside',
       AllLightsOnWallOutside: 'All Lights on Wall Outside',
-      RValue: 'R-Value',
     },
 
     windowMenu: {
@@ -946,7 +947,6 @@ export const i18n_tr = {
       Tint: 'Ton',
       Opacity: 'Opaklık',
       SolarHeatGainCoefficient: 'Solar heat gain coefficient (SHGC) = 1 - opacity',
-      UValue: 'U-Value',
       Shutter: 'Kepenk',
       LeftShutter: 'Sol Kepenk',
       RightShutter: 'Sağ Kepenk',
@@ -1025,7 +1025,6 @@ export const i18n_tr = {
       Default: 'Default',
       Arched: 'Arched',
       Filled: 'Filled',
-      UValue: 'U-Value',
     },
 
     siteInfoPanel: {

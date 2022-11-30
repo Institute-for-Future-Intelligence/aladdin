@@ -318,7 +318,7 @@ export const WindowMenu = () => {
               setUValueDialogVisible(true);
             }}
           >
-            {i18n.t('windowMenu.UValue', lang)} ...
+            {i18n.t('word.UValue', lang)} ...
           </Menu.Item>
           {renderTypeSubMenu()}
           {renderMullionSubMenu()}

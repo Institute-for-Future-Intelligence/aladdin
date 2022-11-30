@@ -27,6 +27,7 @@ import { UndoableChangeGroup } from '../../../undo/UndoableChangeGroup';
 import { UndoableRemoveAllChildren } from '../../../undo/UndoableRemoveAllChildren';
 import { LightModel } from '../../../models/LightModel';
 import RoofSideColorSelection from './roofSideColorSelection';
+import RoofRValueInput from './roofRValueInput';
 
 export const RoofMenu = () => {
   const setCommonStore = useStore(Selector.set);
@@ -54,6 +55,7 @@ export const RoofMenu = () => {
   const [roofSideColorDialogVisible, setRoofSideColorDialogVisible] = useState(false);
   const [glassTintDialogVisible, setGlassTintDialogVisible] = useState(false);
   const [opacityDialogVisible, setOpacityDialogVisible] = useState(false);
+  const [rValueDialogVisible, setRValueDialogVisible] = useState(false);
 
   const lang = { lng: language };
   const paddingLeft = '36px';
@@ -399,6 +401,24 @@ export const RoofMenu = () => {
               )}{' '}
               ...
             </Menu.Item>
+
+            {(updatedRoof.roofStructure !== RoofStructure.Rafter ||
+              updatedRoof.opacity === undefined ||
+              updatedRoof.opacity > 0) && (
+              <>
+                {rValueDialogVisible && <RoofRValueInput setDialogVisible={setRValueDialogVisible} />}
+                <Menu.Item
+                  key={'roof-r-value'}
+                  style={{ paddingLeft: '36px' }}
+                  onClick={() => {
+                    setApplyCount(0);
+                    setRValueDialogVisible(true);
+                  }}
+                >
+                  {i18n.t('word.RValue', lang)} ...
+                </Menu.Item>
+              </>
+            )}
 
             {updatedRoof.roofStructure === RoofStructure.Glass && roof.roofType === RoofType.Gable && (
               <>
