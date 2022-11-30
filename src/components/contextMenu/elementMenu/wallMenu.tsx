@@ -22,6 +22,7 @@ import WallStructureColorSelection from './wallStructureColorSelection';
 import WallNumberInput from './wallNumberInput';
 import { UndoableChangeGroup } from '../../../undo/UndoableChangeGroup';
 import { LightModel } from '../../../models/LightModel';
+import WallRValueInput from './wallRValueInput';
 
 enum DataType {
   Height = 'Height',
@@ -80,7 +81,8 @@ export const WallMenu = () => {
   const updateInsideLightsByParentId = useStore(Selector.updateInsideLightsByParentId);
   const updateInsideLightById = useStore(Selector.updateInsideLightById);
 
-  const [visibleType, setVisibleType] = useState<DataType | null>(null);
+  const [dataType, setDataType] = useState<DataType | null>(null);
+  const [rValueDialogVisible, setRValueDialogVisible] = useState(false);
 
   const lang = { lng: language };
   const paddingLeft = '36px';
@@ -214,7 +216,7 @@ export const WallMenu = () => {
         style={{ paddingLeft: paddingLeft }}
         onClick={() => {
           setApplyCount(0);
-          setVisibleType(dataType);
+          setDataType(dataType);
         }}
       >
         {i18n.t(`wallMenu.${dataType}`, lang)} ...
@@ -408,31 +410,31 @@ export const WallMenu = () => {
   };
 
   const renderDialogs = () => {
-    switch (visibleType) {
+    switch (dataType) {
       case DataType.Height:
       case DataType.Opacity:
       case DataType.Thickness:
       case DataType.StructureSpacing:
       case DataType.StructureWidth:
-        const setting = DialogSetting[visibleType] as NumberDialogSettingType;
+        const setting = DialogSetting[dataType] as NumberDialogSettingType;
         if (!setting) return null;
         return (
           <WallNumberInput
             wall={wall!}
-            dataType={visibleType}
+            dataType={dataType}
             attributeKey={setting.attributeKey}
             range={setting.range}
             step={setting.step}
-            setDialogVisible={() => setVisibleType(null)}
+            setDialogVisible={() => setDataType(null)}
             unit={setting.unit ? i18n.t(setting.unit, lang) : undefined}
           />
         );
       case DataType.Color:
-        return <WallBodyColorSelection setDialogVisible={() => setVisibleType(null)} />;
+        return <WallBodyColorSelection setDialogVisible={() => setDataType(null)} />;
       case DataType.StructureColor:
-        return <WallStructureColorSelection setDialogVisible={() => setVisibleType(null)} />;
+        return <WallStructureColorSelection setDialogVisible={() => setDataType(null)} />;
       case DataType.Texture:
-        return <WallTextureSelection setDialogVisible={() => setVisibleType(null)} />;
+        return <WallTextureSelection setDialogVisible={() => setDataType(null)} />;
     }
   };
 
@@ -461,6 +463,19 @@ export const WallMenu = () => {
           {renderMenuItem(DataType.Thickness)}
 
           {renderMenuItem(DataType.Height)}
+
+          {/* r-value has its special UI */}
+          {rValueDialogVisible && <WallRValueInput setDialogVisible={setRValueDialogVisible} />}
+          <Menu.Item
+            key={'wall-r-value'}
+            style={{ paddingLeft: '36px' }}
+            onClick={() => {
+              setApplyCount(0);
+              setRValueDialogVisible(true);
+            }}
+          >
+            {i18n.t('wallMenu.RValue', lang)} ...
+          </Menu.Item>
 
           {renderTexture()}
 

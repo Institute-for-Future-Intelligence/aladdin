@@ -302,7 +302,7 @@ const DoorUValueInput = ({ setDialogVisible }: { setDialogVisible: (b: boolean) 
             <div style={{ paddingTop: '4px', textAlign: 'left', fontSize: '11px' }}>
               {i18n.t('word.Range', lang)}: [{Util.toUValueInUS(0.01).toFixed(3)}, {Util.toUValueInUS(100).toFixed(1)}]
               <br />
-              {i18n.t('word.USUnit', lang)}: Btu/(h·ft²·F)
+              {i18n.t('word.USUnit', lang)}: Btu/(h·ft²·℉)
             </div>
           </Col>
           <Col

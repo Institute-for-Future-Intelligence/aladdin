@@ -11,34 +11,34 @@ import { ObjectType, Scope } from 'src/types';
 import i18n from 'src/i18n/i18n';
 import { UndoableChange } from 'src/undo/UndoableChange';
 import { UndoableChangeGroup } from 'src/undo/UndoableChangeGroup';
-import { WindowModel } from 'src/models/WindowModel';
+import { WallModel } from '../../../models/WallModel';
 import { Util } from '../../../Util';
 
-const WindowUValueInput = ({ setDialogVisible }: { setDialogVisible: (b: boolean) => void }) => {
+const WallRValueInput = ({ setDialogVisible }: { setDialogVisible: (b: boolean) => void }) => {
   const language = useStore(Selector.language);
-  const selectedElement = useStore(Selector.selectedElement) as WindowModel;
+  const selectedElement = useStore(Selector.selectedElement) as WallModel;
   const addUndoable = useStore(Selector.addUndoable);
-  const windowActionScope = useStore(Selector.windowActionScope);
-  const setWindowActionScope = useStore(Selector.setWindowActionScope);
+  const actionScope = useStore(Selector.wallActionScope);
+  const setActionScope = useStore(Selector.setWallActionScope);
   const applyCount = useStore(Selector.applyCount);
   const setApplyCount = useStore(Selector.setApplyCount);
   const revertApply = useStore(Selector.revertApply);
   const getElementById = useStore(Selector.getElementById);
   const setCommonStore = useStore(Selector.set);
 
-  const windowModel = useStore((state) => {
+  const wallModel = useStore((state) => {
     if (selectedElement) {
       for (const e of state.elements) {
         if (e.id === selectedElement.id) {
-          return e as WindowModel;
+          return e as WallModel;
         }
       }
     }
     return null;
   });
 
-  const [inputValue, setInputValue] = useState<number>(windowModel?.uValue ?? 2);
-  const [inputValueUS, setInputValueUS] = useState<number>(Util.toUValueInUS(inputValue));
+  const [inputValue, setInputValue] = useState<number>(wallModel?.rValue ?? 0.5);
+  const [inputValueUS, setInputValueUS] = useState<number>(Util.toRValueInUS(inputValue));
   const [dragEnabled, setDragEnabled] = useState<boolean>(false);
   const [bounds, setBounds] = useState<DraggableBounds>({ left: 0, top: 0, bottom: 0, right: 0 } as DraggableBounds);
   const dragRef = useRef<HTMLDivElement | null>(null);
@@ -46,16 +46,16 @@ const WindowUValueInput = ({ setDialogVisible }: { setDialogVisible: (b: boolean
   const lang = { lng: language };
 
   useEffect(() => {
-    if (windowModel) {
-      setInputValue(windowModel?.uValue ?? 2);
+    if (wallModel) {
+      setInputValue(wallModel?.rValue ?? 0.5);
     }
-  }, [windowModel?.uValue]);
+  }, [wallModel?.rValue]);
 
   const updateById = (id: string, value: number) => {
     setCommonStore((state) => {
       for (const e of state.elements) {
         if (e.id === id) {
-          (e as WindowModel).uValue = value;
+          (e as WallModel).rValue = value;
           break;
         }
       }
@@ -75,21 +75,21 @@ const WindowUValueInput = ({ setDialogVisible }: { setDialogVisible: (b: boolean
   };
 
   const setValue = (value: number) => {
-    if (!windowModel) return;
-    switch (windowActionScope) {
+    if (!wallModel) return;
+    switch (actionScope) {
       case Scope.AllObjectsOfThisType:
         const oldValuesAll = new Map<string, number | undefined>();
         setCommonStore((state) => {
           for (const e of state.elements) {
-            if (e.type === ObjectType.Window && !e.locked) {
-              const window = e as WindowModel;
-              oldValuesAll.set(e.id, window.uValue ?? 2);
-              window.uValue = value;
+            if (e.type === ObjectType.Wall && !e.locked) {
+              const wall = e as WallModel;
+              oldValuesAll.set(e.id, wall.rValue ?? 0.5);
+              wall.rValue = value;
             }
           }
         });
         const undoableChangeAll = {
-          name: 'Set U-Value for All Windows',
+          name: 'Set R-Value for All Walls',
           timestamp: Date.now(),
           oldValues: oldValuesAll,
           newValue: value,
@@ -103,56 +103,24 @@ const WindowUValueInput = ({ setDialogVisible }: { setDialogVisible: (b: boolean
         addUndoable(undoableChangeAll);
         setApplyCount(applyCount + 1);
         break;
-      case Scope.OnlyThisSide:
-        if (windowModel.parentId) {
-          const oldValues = new Map<string, number>();
-          setCommonStore((state) => {
-            for (const e of state.elements) {
-              if (e.type === ObjectType.Window && e.parentId === windowModel.parentId && !e.locked) {
-                const window = e as WindowModel;
-                oldValues.set(e.id, window.uValue ?? 2);
-                window.uValue = value;
-              }
-            }
-          });
-          const undoableChangeOnSameWall = {
-            name: 'Set U-Value for All Windows On the Same Wall',
-            timestamp: Date.now(),
-            oldValues: oldValues,
-            newValue: value,
-            groupId: windowModel.parentId,
-            undo: () => {
-              undoInMap(undoableChangeOnSameWall.oldValues as Map<string, number>);
-            },
-            redo: () => {
-              updateInMap(
-                undoableChangeOnSameWall.oldValues as Map<string, number>,
-                undoableChangeOnSameWall.newValue as number,
-              );
-            },
-          } as UndoableChangeGroup;
-          addUndoable(undoableChangeOnSameWall);
-          setApplyCount(applyCount + 1);
-        }
-        break;
       case Scope.AllObjectsOfThisTypeAboveFoundation:
-        if (windowModel.foundationId) {
+        if (wallModel.foundationId) {
           const oldValuesAboveFoundation = new Map<string, number | undefined>();
           setCommonStore((state) => {
             for (const e of state.elements) {
-              if (e.type === ObjectType.Window && e.foundationId === windowModel.foundationId && !e.locked) {
-                const window = e as WindowModel;
-                oldValuesAboveFoundation.set(e.id, window.uValue ?? 2);
-                window.uValue = value;
+              if (e.type === ObjectType.Wall && e.foundationId === wallModel.foundationId && !e.locked) {
+                const wall = e as WallModel;
+                oldValuesAboveFoundation.set(e.id, wall.rValue ?? 0.5);
+                wall.rValue = value;
               }
             }
           });
           const undoableChangeAboveFoundation = {
-            name: 'Set U-Value for All Windows Above Foundation',
+            name: 'Set R-Value for All Walls Above Foundation',
             timestamp: Date.now(),
             oldValues: oldValuesAboveFoundation,
             newValue: value,
-            groupId: windowModel.foundationId,
+            groupId: wallModel.foundationId,
             undo: () => {
               undoInMap(undoableChangeAboveFoundation.oldValues as Map<string, number>);
             },
@@ -168,16 +136,16 @@ const WindowUValueInput = ({ setDialogVisible }: { setDialogVisible: (b: boolean
         }
         break;
       default:
-        if (windowModel) {
-          const updatedWindow = getElementById(windowModel.id) as WindowModel;
-          const oldValue = updatedWindow.uValue ?? windowModel.uValue ?? 2;
+        if (wallModel) {
+          const updatedWall = getElementById(wallModel.id) as WallModel;
+          const oldValue = updatedWall.rValue ?? wallModel.rValue ?? 0.5;
           const undoableChange = {
-            name: 'Set Window U-Value',
+            name: 'Set Wall R-Value',
             timestamp: Date.now(),
             oldValue: oldValue,
             newValue: value,
-            changedElementId: windowModel.id,
-            changedElementType: windowModel.type,
+            changedElementId: wallModel.id,
+            changedElementType: wallModel.type,
             undo: () => {
               updateById(undoableChange.changedElementId, undoableChange.oldValue as number);
             },
@@ -186,12 +154,12 @@ const WindowUValueInput = ({ setDialogVisible }: { setDialogVisible: (b: boolean
             },
           } as UndoableChange;
           addUndoable(undoableChange);
-          updateById(windowModel.id, value);
+          updateById(wallModel.id, value);
           setApplyCount(applyCount + 1);
         }
     }
     setCommonStore((state) => {
-      state.actionState.windowUValue = value;
+      state.actionState.wallRValue = value;
     });
   };
 
@@ -209,7 +177,7 @@ const WindowUValueInput = ({ setDialogVisible }: { setDialogVisible: (b: boolean
   };
 
   const close = () => {
-    setInputValue(windowModel?.uValue ?? 2);
+    setInputValue(wallModel?.rValue ?? 0.5);
     setDialogVisible(false);
   };
 
@@ -239,7 +207,7 @@ const WindowUValueInput = ({ setDialogVisible }: { setDialogVisible: (b: boolean
             onMouseOver={() => setDragEnabled(true)}
             onMouseOut={() => setDragEnabled(false)}
           >
-            {i18n.t('windowMenu.UValue', lang) + ' '}({i18n.t('word.ThermalTransmittance', lang)})
+            {i18n.t('wallMenu.RValue', lang) + ' '}({i18n.t('word.ThermalResistance', lang)})
           </div>
         }
         footer={[
@@ -275,19 +243,19 @@ const WindowUValueInput = ({ setDialogVisible }: { setDialogVisible: (b: boolean
               formatter={(a) => Number(a).toFixed(2)}
               onChange={(value) => {
                 setInputValue(value);
-                setInputValueUS(Util.toUValueInUS(value));
+                setInputValueUS(Util.toRValueInUS(value));
               }}
               onPressEnter={handleOk}
             />
             <div style={{ paddingTop: '4px', textAlign: 'left', fontSize: '11px' }}>
               {i18n.t('word.Range', lang)}: [0.01, 100]
               <br />
-              {i18n.t('word.SIUnit', lang)}: W/(m²·℃)
+              {i18n.t('word.SIUnit', lang)}: m²·℃/W
             </div>
             <br />
             <InputNumber
-              min={Util.toUValueInUS(0.01)}
-              max={Util.toUValueInUS(100)}
+              min={Util.toRValueInUS(0.01)}
+              max={Util.toRValueInUS(100)}
               style={{ width: 120 }}
               step={0.01}
               precision={2}
@@ -295,14 +263,14 @@ const WindowUValueInput = ({ setDialogVisible }: { setDialogVisible: (b: boolean
               formatter={(a) => Number(a).toFixed(2)}
               onChange={(value) => {
                 setInputValueUS(value);
-                setInputValue(Util.toUValueInSI(value));
+                setInputValue(Util.toRValueInSI(value));
               }}
               onPressEnter={handleOk}
             />
             <div style={{ paddingTop: '4px', textAlign: 'left', fontSize: '11px' }}>
-              {i18n.t('word.Range', lang)}: [{Util.toUValueInUS(0.01).toFixed(3)}, {Util.toUValueInUS(100).toFixed(1)}]
+              {i18n.t('word.Range', lang)}: [{Util.toRValueInUS(0.01).toFixed(3)}, {Util.toRValueInUS(100).toFixed(1)}]
               <br />
-              {i18n.t('word.USUnit', lang)}: Btu/(h·ft²·℉)
+              {i18n.t('word.USUnit', lang)}: h·ft²·℉/Btu
             </div>
           </Col>
           <Col
@@ -310,14 +278,13 @@ const WindowUValueInput = ({ setDialogVisible }: { setDialogVisible: (b: boolean
             style={{ border: '2px dashed #ccc', paddingTop: '8px', paddingLeft: '12px', paddingBottom: '8px' }}
             span={17}
           >
-            <Radio.Group onChange={(e) => setWindowActionScope(e.target.value)} value={windowActionScope}>
+            <Radio.Group onChange={(e) => setActionScope(e.target.value)} value={actionScope}>
               <Space direction="vertical">
-                <Radio value={Scope.OnlyThisObject}>{i18n.t('windowMenu.OnlyThisWindow', lang)}</Radio>
-                <Radio value={Scope.OnlyThisSide}>{i18n.t('windowMenu.AllWindowsOnWall', lang)}</Radio>
+                <Radio value={Scope.OnlyThisObject}>{i18n.t('wallMenu.OnlyThisWall', lang)}</Radio>
                 <Radio value={Scope.AllObjectsOfThisTypeAboveFoundation}>
-                  {i18n.t('windowMenu.AllWindowsAboveFoundation', lang)}
+                  {i18n.t('wallMenu.AllWallsAboveFoundation', lang)}
                 </Radio>
-                <Radio value={Scope.AllObjectsOfThisType}>{i18n.t('windowMenu.AllWindows', lang)}</Radio>
+                <Radio value={Scope.AllObjectsOfThisType}>{i18n.t('wallMenu.AllWalls', lang)}</Radio>
               </Space>
             </Radio.Group>
           </Col>
@@ -327,4 +294,4 @@ const WindowUValueInput = ({ setDialogVisible }: { setDialogVisible: (b: boolean
   );
 };
 
-export default WindowUValueInput;
+export default WallRValueInput;

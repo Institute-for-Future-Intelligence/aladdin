@@ -53,6 +53,7 @@ export const i18n_en = {
       SIUnit: 'SI Unit',
       USUnit: 'US Unit',
       ThermalTransmittance: 'Thermal Transmittance',
+      ThermalResistance: 'Thermal Resistance',
       Press: 'Press',
       Open: 'Open',
       Save: 'Save',
@@ -927,6 +928,7 @@ export const i18n_en = {
       Texture: 'Texture',
       AllLightsOnWallInside: 'All Lights on Wall Inside',
       AllLightsOnWallOutside: 'All Lights on Wall Outside',
+      RValue: 'R-Value',
     },
 
     windowMenu: {

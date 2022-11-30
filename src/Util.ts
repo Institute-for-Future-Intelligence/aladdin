@@ -50,6 +50,14 @@ export class Util {
     return uValueInUS * 5.67826;
   }
 
+  static toRValueInUS(rValueInSI: number) {
+    return rValueInSI * 5.67826;
+  }
+
+  static toRValueInSI(rValueInUS: number) {
+    return rValueInUS / 5.67826;
+  }
+
   static WATER_TEXTURE = Util.fetchWaterTexture(100, 100);
   static WHITE_TEXTURE = Util.fetchWhiteTexture(2, 2);
 

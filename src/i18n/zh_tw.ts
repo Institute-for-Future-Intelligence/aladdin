@@ -53,6 +53,7 @@ export const i18n_zh_tw = {
       SIUnit: '國際單位制',
       USUnit: '美國單位制',
       ThermalTransmittance: '熱透過率',
+      ThermalResistance: '熱阻',
       Press: '按',
       Open: '打開',
       Save: '保存',
@@ -905,6 +906,7 @@ export const i18n_zh_tw = {
       Texture: '材質',
       AllLightsOnWallInside: '所有電燈在牆內',
       AllLightsOnWallOutside: '所有電燈在牆外',
+      RValue: 'R值',
     },
 
     windowMenu: {

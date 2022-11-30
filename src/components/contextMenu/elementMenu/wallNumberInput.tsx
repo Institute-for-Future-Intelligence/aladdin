@@ -189,9 +189,6 @@ const WallNumberInput = ({
         updateById(wall.id, value);
         setApplyCount(applyCount + 1);
     }
-    setCommonStore((state) => {
-      state.actionState.wallOpacity = value;
-    });
   };
 
   const onStart = (event: DraggableEvent, uiData: DraggableData) => {
@@ -208,7 +205,7 @@ const WallNumberInput = ({
   };
 
   const close = () => {
-    inputRef.current = wall.opacity ?? 0.5;
+    inputRef.current = wall[attributeKey] as number;
     setDialogVisible();
   };
 
