@@ -17,7 +17,7 @@ import { Rectangle } from '../models/Rectangle';
 const Container = styled.div`
   position: fixed;
   top: 80px;
-  left: 10px;
+  left: 50px;
   display: flex;
   justify-content: center;
   align-items: center;

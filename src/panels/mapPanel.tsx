@@ -21,7 +21,7 @@ const libraries = ['places'] as Libraries;
 
 const Container = styled.div`
   position: fixed;
-  top: 10px;
+  top: 40px;
   left: 10px;
   display: flex;
   justify-content: center;
