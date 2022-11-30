@@ -1179,4 +1179,46 @@ export class Util {
       }, delay);
     };
   }
+
+  static getAllConnectedWalls = (wall: WallModel) => {
+    const getElementById = useStore.getState().getElementById;
+
+    const array = [];
+    const startWall = wall;
+    while (wall) {
+      array.push(wall);
+      if (wall.leftJoints[0]) {
+        if (wall.leftJoints[0] !== startWall.id) {
+          const w = getElementById(wall.leftJoints[0]);
+          if (w && w.type === ObjectType.Wall) {
+            wall = w as WallModel;
+          }
+        }
+        // is a loop
+        else {
+          return array;
+        }
+      } else {
+        break;
+      }
+    }
+
+    const w = getElementById(startWall.rightJoints[0]);
+    if (w && w.type === ObjectType.Wall) {
+      wall = w as WallModel;
+    }
+    while (wall) {
+      array.push(wall);
+      if (wall.rightJoints[0] && wall.rightJoints[0] !== startWall.id) {
+        const w = getElementById(wall.rightJoints[0]);
+        if (w) {
+          wall = w as WallModel;
+        }
+      } else {
+        break;
+      }
+    }
+
+    return array;
+  };
 }
