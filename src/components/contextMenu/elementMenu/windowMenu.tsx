@@ -29,7 +29,6 @@ export enum WindowDataType {
   FrameWidth = 'FrameWidth',
   Width = 'Width',
   Height = 'Height',
-  Insulation = 'Insulation',
 }
 
 type ItemSelectionSettingType = {
@@ -42,6 +41,7 @@ type NumberDialogSettingType = {
   step: number;
   unit?: string;
   note?: string;
+  digit?: number;
 };
 
 const SelectionDialogSettings = {
@@ -52,11 +52,17 @@ const SelectionDialogSettings = {
 
 const NumberDialogSettings = {
   Opacity: { attributeKey: 'opacity', range: [0, 1], step: 0.1, note: 'windowMenu.SolarHeatGainCoefficient' },
-  Width: { attributeKey: 'lx', range: [0.1, 100], step: 0.1, unit: 'word.MeterAbbreviation' },
-  Height: { attributeKey: 'lz', range: [0.1, 100], step: 0.1, unit: 'word.MeterAbbreviation' },
-  MullionWidth: { attributeKey: 'mullionWidth', range: [0, 0.2], step: 0.1, unit: 'word.MeterAbbreviation' },
-  MullionSpacing: { attributeKey: 'mullionSpacing', range: [0.1, 5], step: 0.01, unit: 'word.MeterAbbreviation' },
-  FrameWidth: { attributeKey: 'frameWidth', range: [0.05, 0.2], step: 0.01, unit: 'word.MeterAbbreviation' },
+  Width: { attributeKey: 'lx', range: [0.1, 100], step: 0.1, unit: 'word.MeterAbbreviation', digit: 1 },
+  Height: { attributeKey: 'lz', range: [0.1, 100], step: 0.1, unit: 'word.MeterAbbreviation', digit: 1 },
+  MullionWidth: { attributeKey: 'mullionWidth', range: [0, 0.2], step: 0.1, unit: 'word.MeterAbbreviation', digit: 1 },
+  MullionSpacing: {
+    attributeKey: 'mullionSpacing',
+    range: [0.1, 5],
+    step: 0.01,
+    unit: 'word.MeterAbbreviation',
+    digit: 1,
+  },
+  FrameWidth: { attributeKey: 'frameWidth', range: [0.05, 0.2], step: 0.01, unit: 'word.MeterAbbreviation', digit: 2 },
 };
 
 const getSelectedWindow = (state: CommonStoreState) => {
@@ -76,12 +82,13 @@ export const WindowMenu = () => {
   const setApplyCount = useStore(Selector.setApplyCount);
   const updateWindowMullionById = useStore(Selector.updateWindowMullionById);
   const updateWindowTypeById = useStore(Selector.updateWindowTypeById);
+  const getParent = useStore(Selector.getParent);
 
-  const [visibleType, setVisibleType] = useState<WindowDataType | null>(null);
+  const [dataType, setDataType] = useState<WindowDataType | null>(null);
   const [uValueDialogVisible, setUValueDialogVisible] = useState(false);
 
   const lang = { lng: language };
-  const paddingLeft = '36px';
+  const parent = window ? getParent(window) : null;
 
   const updateWindowFrameById = (id: string, checked: boolean) => {
     setCommonStore((state) => {
@@ -105,10 +112,10 @@ export const WindowMenu = () => {
     return (
       <Menu.Item
         key={`window-${dataType}`}
-        style={{ paddingLeft: paddingLeft }}
+        style={{ paddingLeft: '36px' }}
         onClick={() => {
           setApplyCount(0);
-          setVisibleType(dataType);
+          setDataType(dataType);
         }}
       >
         {i18n.t(`windowMenu.${dataType}`, lang)} ...
@@ -244,18 +251,18 @@ export const WindowMenu = () => {
   };
 
   const renderDialogs = () => {
-    switch (visibleType) {
+    switch (dataType) {
       case WindowDataType.Tint:
       case WindowDataType.MullionColor:
       case WindowDataType.Color: {
-        const setting = SelectionDialogSettings[visibleType] as ItemSelectionSettingType;
+        const setting = SelectionDialogSettings[dataType] as ItemSelectionSettingType;
         if (!setting) return null;
         return (
           <WindowItemSelection
             window={window!}
-            dataType={visibleType}
+            dataType={dataType}
             attributeKey={setting.attributeKey}
-            setDialogVisible={() => setVisibleType(null)}
+            setDialogVisible={() => setDataType(null)}
           />
         );
       }
@@ -265,18 +272,23 @@ export const WindowMenu = () => {
       case WindowDataType.MullionSpacing:
       case WindowDataType.MullionWidth:
       case WindowDataType.FrameWidth: {
-        const setting = NumberDialogSettings[visibleType] as NumberDialogSettingType;
+        const setting = NumberDialogSettings[dataType] as NumberDialogSettingType;
+        if (dataType === WindowDataType.Width) {
+          setting.range[1] =
+            parent && window ? 2 * parent.lx * Math.min(Math.abs(0.5 - window.cx), Math.abs(-0.5 - window.cx)) : 100;
+        }
         if (!setting) return null;
         return (
           <WindowNumberInput
             windowElement={window!}
-            dataType={visibleType}
+            dataType={dataType}
             attributeKey={setting.attributeKey}
             range={setting.range}
             step={setting.step}
-            setDialogVisible={() => setVisibleType(null)}
+            setDialogVisible={() => setDataType(null)}
             unit={setting.unit ? i18n.t(setting.unit, lang) : undefined}
             note={setting.note ? i18n.t(setting.note, lang) : undefined}
+            digit={setting.digit ?? 0}
           />
         );
       }
