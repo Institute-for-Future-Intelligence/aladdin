@@ -982,7 +982,7 @@ export const i18n_zh_tw = {
       DoYouReallyWantToRemoveAllLightsOnThisRoof: '你確定刪除這個屋顶上所有非固定的電燈嗎',
       AllLightsOnRoofInside: '所有電燈在屋頂內',
       AllLightsOnRoofOutside: '所有電燈在屋頂外',
-      Rise: '高度',
+      CurrentRise: '當前相對高度',
     },
 
     doorMenu: {

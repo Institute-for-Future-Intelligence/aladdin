@@ -13,7 +13,7 @@ import { UndoableChange } from 'src/undo/UndoableChange';
 import { UndoableChangeGroup } from 'src/undo/UndoableChangeGroup';
 import { RoofModel } from 'src/models/RoofModel';
 
-const RoofRiseInput = ({ setDialogVisible }: { setDialogVisible: (b: boolean) => void }) => {
+const RoofHeightInput = ({ setDialogVisible }: { setDialogVisible: (b: boolean) => void }) => {
   const language = useStore(Selector.language);
   const roof = useStore(Selector.selectedElement) as RoofModel;
   const addUndoable = useStore(Selector.addUndoable);
@@ -25,6 +25,42 @@ const RoofRiseInput = ({ setDialogVisible }: { setDialogVisible: (b: boolean) =>
   const getElementById = useStore(Selector.getElementById);
   const setCommonStore = useStore(Selector.set);
   const getRoofSegmentVertices = useStore(Selector.getRoofSegmentVertices);
+
+  const [inputValue, setInputValue] = useState<number>(roof?.lz ?? 0);
+  const [dragEnabled, setDragEnabled] = useState<boolean>(false);
+  const [bounds, setBounds] = useState<DraggableBounds>({ left: 0, top: 0, bottom: 0, right: 0 } as DraggableBounds);
+  const dragRef = useRef<HTMLDivElement | null>(null);
+
+  const lang = { lng: language };
+
+  useEffect(() => {
+    if (roof) {
+      setInputValue(roof.lz);
+    }
+  }, [roof]);
+
+  const updateRoofHeightById = (id: string, value: number) => {
+    setCommonStore((state) => {
+      for (const e of state.elements) {
+        if (e.id === id && e.type === ObjectType.Roof) {
+          (e as RoofModel).lz = value;
+          break;
+        }
+      }
+    });
+  };
+
+  const undoInMap = (map: Map<string, number>) => {
+    for (const [id, val] of map.entries()) {
+      updateRoofHeightById(id, val);
+    }
+  };
+
+  const updateInMap = (map: Map<string, number>, value: number) => {
+    for (const id of map.keys()) {
+      updateRoofHeightById(id, value);
+    }
+  };
 
   const getRoofRise = (roofId: string) => {
     const segments = getRoofSegmentVertices(roofId);
@@ -44,61 +80,23 @@ const RoofRiseInput = ({ setDialogVisible }: { setDialogVisible: (b: boolean) =>
     return rise;
   };
 
-  const setRoofRise = (roofId: string, value: number) => {};
-
-  const [inputValue, setInputValue] = useState<number>(getRoofRise(roof.id));
-  const [dragEnabled, setDragEnabled] = useState<boolean>(false);
-  const [bounds, setBounds] = useState<DraggableBounds>({ left: 0, top: 0, bottom: 0, right: 0 } as DraggableBounds);
-  const dragRef = useRef<HTMLDivElement | null>(null);
-
-  const lang = { lng: language };
-
-  useEffect(() => {
-    if (roof) {
-      setInputValue(getRoofRise(roof.id));
-    }
-  }, [roof]);
-
-  const updateRoofRiseById = (id: string, value: number) => {
-    setCommonStore((state) => {
-      for (const e of state.elements) {
-        if (e.id === id && e.type === ObjectType.Roof) {
-          setRoofRise(id, value);
-          break;
-        }
-      }
-    });
-  };
-
-  const undoInMap = (map: Map<string, number>) => {
-    for (const [id, val] of map.entries()) {
-      updateRoofRiseById(id, val);
-    }
-  };
-
-  const updateInMap = (map: Map<string, number>, value: number) => {
-    for (const id of map.keys()) {
-      updateRoofRiseById(id, value);
-    }
-  };
-
-  const setRise = (value: number) => {
+  const setHeight = (value: number) => {
     if (!roof) return;
     switch (actionScope) {
       case Scope.AllObjectsOfThisType:
-        const oldRisesAll = new Map<string, number>();
+        const oldHeightsAll = new Map<string, number>();
         setCommonStore((state) => {
           for (const e of state.elements) {
             if (e.type === ObjectType.Roof && !e.locked) {
-              oldRisesAll.set(e.id, getRoofRise(e.id));
-              setRoofRise(e.id, value);
+              oldHeightsAll.set(e.id, e.lz);
+              updateRoofHeightById(e.id, value);
             }
           }
         });
         const undoableChangeAll = {
-          name: 'Set Rise for All Roofs',
+          name: 'Set Height for All Roofs',
           timestamp: Date.now(),
-          oldValues: oldRisesAll,
+          oldValues: oldHeightsAll,
           newValue: value,
           undo: () => {
             undoInMap(undoableChangeAll.oldValues as Map<string, number>);
@@ -112,19 +110,19 @@ const RoofRiseInput = ({ setDialogVisible }: { setDialogVisible: (b: boolean) =>
         break;
       case Scope.AllObjectsOfThisTypeAboveFoundation:
         if (roof.foundationId) {
-          const oldRisesAboveFoundation = new Map<string, number>();
+          const oldHeightsAboveFoundation = new Map<string, number>();
           setCommonStore((state) => {
             for (const e of state.elements) {
               if (e.type === ObjectType.Roof && e.foundationId === roof.foundationId && !e.locked) {
-                oldRisesAboveFoundation.set(e.id, getRoofRise(e.id));
-                setRoofRise(e.id, value);
+                oldHeightsAboveFoundation.set(e.id, e.lz);
+                updateRoofHeightById(e.id, value);
               }
             }
           });
           const undoableChangeAboveFoundation = {
-            name: 'Set Rise for All Roofs Above Foundation',
+            name: 'Set Height for All Roofs Above Foundation',
             timestamp: Date.now(),
-            oldValues: oldRisesAboveFoundation,
+            oldValues: oldHeightsAboveFoundation,
             newValue: value,
             groupId: roof.foundationId,
             undo: () => {
@@ -144,23 +142,23 @@ const RoofRiseInput = ({ setDialogVisible }: { setDialogVisible: (b: boolean) =>
       default:
         if (roof) {
           const updatedRoof = getElementById(roof.id) as RoofModel;
-          const oldRise = getRoofRise(updatedRoof.id) ?? getRoofRise(roof.id);
+          const oldHeight = updatedRoof?.lz ?? roof?.lz ?? 0;
           const undoableChange = {
-            name: 'Set Roof Rise',
+            name: 'Set Roof Height',
             timestamp: Date.now(),
-            oldValue: oldRise,
+            oldValue: oldHeight,
             newValue: value,
             changedElementId: roof.id,
             changedElementType: roof.type,
             undo: () => {
-              updateRoofRiseById(undoableChange.changedElementId, undoableChange.oldValue as number);
+              updateRoofHeightById(undoableChange.changedElementId, undoableChange.oldValue as number);
             },
             redo: () => {
-              updateRoofRiseById(undoableChange.changedElementId, undoableChange.newValue as number);
+              updateRoofHeightById(undoableChange.changedElementId, undoableChange.newValue as number);
             },
           } as UndoableChange;
           addUndoable(undoableChange);
-          updateRoofRiseById(roof.id, value);
+          updateRoofHeightById(roof.id, value);
           setApplyCount(applyCount + 1);
         }
     }
@@ -180,7 +178,7 @@ const RoofRiseInput = ({ setDialogVisible }: { setDialogVisible: (b: boolean) =>
   };
 
   const close = () => {
-    setInputValue(getRoofRise(roof.id));
+    setInputValue(roof?.lz ?? 0);
     setDialogVisible(false);
   };
 
@@ -190,13 +188,13 @@ const RoofRiseInput = ({ setDialogVisible }: { setDialogVisible: (b: boolean) =>
   };
 
   const handleOk = () => {
-    setRise(inputValue);
+    setHeight(inputValue);
     setDialogVisible(false);
     setApplyCount(0);
   };
 
   const handleApply = () => {
-    setRise(inputValue);
+    setHeight(inputValue);
   };
 
   return (
@@ -210,7 +208,7 @@ const RoofRiseInput = ({ setDialogVisible }: { setDialogVisible: (b: boolean) =>
             onMouseOver={() => setDragEnabled(true)}
             onMouseOut={() => setDragEnabled(false)}
           >
-            {i18n.t('roofMenu.Rise', lang)}
+            {i18n.t('word.Height', lang)}
           </div>
         }
         footer={[
@@ -238,9 +236,9 @@ const RoofRiseInput = ({ setDialogVisible }: { setDialogVisible: (b: boolean) =>
           <Col className="gutter-row" span={6}>
             <InputNumber
               min={0}
-              max={5}
+              max={50}
               style={{ width: 120 }}
-              step={0.01}
+              step={0.1}
               precision={2}
               value={inputValue}
               formatter={(a) => Number(a).toFixed(2)}
@@ -248,7 +246,14 @@ const RoofRiseInput = ({ setDialogVisible }: { setDialogVisible: (b: boolean) =>
               onPressEnter={handleOk}
             />
             <div style={{ paddingTop: '20px', textAlign: 'left', fontSize: '11px' }}>
-              {i18n.t('word.Range', lang)}: [0, 5] {i18n.t('word.MeterAbbreviation', lang)}
+              {i18n.t('word.Range', lang)}: [0, 50] {i18n.t('word.MeterAbbreviation', lang)}
+              <br />
+              <br />
+              {i18n.t('roofMenu.CurrentRise', lang) +
+                ': ' +
+                getRoofRise(roof.id).toFixed(2) +
+                ' ' +
+                i18n.t('word.MeterAbbreviation', lang)}
             </div>
           </Col>
           <Col className="gutter-row" span={1} style={{ verticalAlign: 'middle', paddingTop: '6px' }}>
@@ -275,4 +280,4 @@ const RoofRiseInput = ({ setDialogVisible }: { setDialogVisible: (b: boolean) =>
   );
 };
 
-export default RoofRiseInput;
+export default RoofHeightInput;
