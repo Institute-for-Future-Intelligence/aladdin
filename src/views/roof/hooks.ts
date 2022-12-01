@@ -237,8 +237,12 @@ export const useMultiCurrWallArray = (fId: string | undefined, roofId: string, w
 
   const isLoopRef = useRef(false);
 
-  const wallsOnFoundation = useStore((state) => {
-    return JSON.stringify(state.elements.filter((el) => el.type === ObjectType.Wall && el.foundationId === fId));
+  const elementsTriggerChange = useStore((state) => {
+    return JSON.stringify(
+      state.elements
+        .filter((e) => (e.type === ObjectType.Wall && e.foundationId === fId) || e.id === fId)
+        .map((e) => [e.cx, e.cy, e.cz, e.lx, e.ly, e.lz]),
+    );
   });
 
   const currentWallArray = useMemo(() => {
@@ -282,7 +286,7 @@ export const useMultiCurrWallArray = (fId: string | undefined, roofId: string, w
       }
     }
     return [];
-  }, [wallsId, wallsOnFoundation]);
+  }, [wallsId, elementsTriggerChange]);
 
   return { currentWallArray, isLoopRef };
 };
