@@ -3,7 +3,7 @@
  */
 
 import React, { useState } from 'react';
-import { Checkbox, Menu, Modal, Radio } from 'antd';
+import { Menu, Modal, Radio } from 'antd';
 import SubMenu from 'antd/lib/menu/SubMenu';
 import { CommonStoreState, useStore } from '../../../stores/common';
 import * as Selector from '../../../stores/selector';
@@ -23,7 +23,7 @@ import WallNumberInput from './wallNumberInput';
 import { UndoableChangeGroup } from '../../../undo/UndoableChangeGroup';
 import { LightModel } from '../../../models/LightModel';
 import WallRValueInput from './wallRValueInput';
-import { UndoableCheck } from 'src/undo/UndoableCheck';
+import WallHeatCapacityInput from './wallHeatCapacityInput';
 
 enum DataType {
   Height = 'Height',
@@ -84,6 +84,7 @@ export const WallMenu = () => {
 
   const [dataType, setDataType] = useState<DataType | null>(null);
   const [rValueDialogVisible, setRValueDialogVisible] = useState(false);
+  const [heatCapacityDialogVisible, setHeatCapacityDialogVisible] = useState(false);
 
   const lang = { lng: language };
   const paddingLeft = '36px';
@@ -534,6 +535,17 @@ export const WallMenu = () => {
             }}
           >
             {i18n.t('word.RValue', lang)} ...
+          </Menu.Item>
+          {heatCapacityDialogVisible && <WallHeatCapacityInput setDialogVisible={setHeatCapacityDialogVisible} />}
+          <Menu.Item
+            key={'wall-heat-capacity'}
+            style={{ paddingLeft: '36px' }}
+            onClick={() => {
+              setApplyCount(0);
+              setHeatCapacityDialogVisible(true);
+            }}
+          >
+            {i18n.t('word.VolumetricHeatCapacity', lang)} ...
           </Menu.Item>
 
           {renderTexture()}
