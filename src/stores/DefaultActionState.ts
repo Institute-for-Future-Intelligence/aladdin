@@ -52,6 +52,7 @@ export class DefaultActionState implements ActionState {
   wallStructureColor: string;
   wallOpacity: number;
   wallRValue: number;
+  wallVolumetricHeatCapacity: number;
   wallDisplayMode: WallDisplayMode;
   wallBottomHeight: number;
 
@@ -67,6 +68,7 @@ export class DefaultActionState implements ActionState {
   roofRafterSpacing: number;
   roofRafterColor: string;
   roofRValue: number;
+  roofVolumetricHeatCapacity: number;
 
   doorColor: string;
   doorTexture: DoorTexture;
@@ -170,6 +172,7 @@ export class DefaultActionState implements ActionState {
     this.wallStructureColor = 'white';
     this.wallOpacity = 0.5;
     this.wallRValue = 2;
+    this.wallVolumetricHeatCapacity = 0.5;
     this.wallDisplayMode = WallDisplayMode.All;
     this.wallBottomHeight = 0.5;
 
@@ -185,6 +188,7 @@ export class DefaultActionState implements ActionState {
     this.roofRafterSpacing = 1;
     this.roofRafterColor = 'white';
     this.roofRValue = 2;
+    this.roofVolumetricHeatCapacity = 0.5;
 
     this.doorColor = 'white';
     this.doorTexture = DoorTexture.Default;

@@ -4626,6 +4626,7 @@ export const useStore = create<CommonStoreState>(
                     state.actionState.wallThickness,
                     state.actionState.wallColor,
                     state.actionState.wallRValue,
+                    state.actionState.wallVolumetricHeatCapacity,
                     state.actionState.wallTexture,
                     state.actionState.wallStructure,
                     state.actionState.wallStructureSpacing,

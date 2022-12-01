@@ -24,4 +24,8 @@ export interface FoundationModel extends ElementModel {
 
   // group master
   enableGroupMaster?: boolean;
+
+  // these apply only to the portion that are within a building
+  rValue: number;
+  volumetricHeatCapacity: number;
 }

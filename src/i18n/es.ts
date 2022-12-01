@@ -56,6 +56,7 @@ export const i18n_es = {
       ThermalResistance: 'Thermal Resistance',
       UValue: 'U-Value',
       RValue: 'R-Value',
+      VolumetricHeatCapacity: 'Volumetric Heat Capacity',
       Press: 'Press',
       Open: 'Abrir',
       Save: 'Guardar',

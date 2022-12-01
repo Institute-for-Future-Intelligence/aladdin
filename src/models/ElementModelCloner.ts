@@ -609,6 +609,7 @@ export class ElementModelCloner {
       ly: wall.ly,
       lz: wall.lz,
       rValue: wall.rValue,
+      volumetricHeatCapacity: wall.volumetricHeatCapacity,
       displayMode: wall.displayMode,
       bottomHeight: wall.bottomHeight,
       leftJoints: [],

@@ -28,6 +28,7 @@ export interface WallModel extends ElementModel {
 
   opacity?: number;
   rValue: number;
+  volumetricHeatCapacity: number;
 
   displayMode: WallDisplayMode;
   bottomHeight: number;

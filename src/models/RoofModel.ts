@@ -19,6 +19,7 @@ export interface RoofModel extends ElementModel {
   glassTint?: string;
   opacity?: number;
   rValue: number;
+  volumetricHeatCapacity: number;
 }
 
 export interface PyramidRoofModel extends RoofModel {}

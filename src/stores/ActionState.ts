@@ -46,6 +46,7 @@ export interface ActionState {
   wallStructureWidth: number;
   wallStructureColor: string;
   wallRValue: number;
+  wallVolumetricHeatCapacity: number;
   wallDisplayMode: WallDisplayMode;
   wallBottomHeight: number;
 
@@ -61,6 +62,7 @@ export interface ActionState {
   roofRafterSpacing: number;
   roofRafterColor: string;
   roofRValue: number;
+  roofVolumetricHeatCapacity: number;
 
   doorColor: string;
   doorTexture: DoorTexture;

@@ -56,6 +56,7 @@ export const i18n_zh_cn = {
       ThermalResistance: '热阻',
       UValue: 'U值',
       RValue: 'R值',
+      VolumetricHeatCapacity: '容积热容',
       Press: '按',
       Open: '打开',
       Save: '保存',
