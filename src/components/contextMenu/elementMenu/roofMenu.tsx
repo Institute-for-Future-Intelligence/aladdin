@@ -28,6 +28,7 @@ import { UndoableRemoveAllChildren } from '../../../undo/UndoableRemoveAllChildr
 import { LightModel } from '../../../models/LightModel';
 import RoofSideColorSelection from './roofSideColorSelection';
 import RoofRValueInput from './roofRValueInput';
+import RoofRiseInput from './roofRiseInput';
 
 export const RoofMenu = () => {
   const setCommonStore = useStore(Selector.set);
@@ -48,6 +49,7 @@ export const RoofMenu = () => {
   const [rafterSpacingDialogVisible, setRafterSpacingDialogVisible] = useState(false);
   const [rafterWidthDialogVisible, setRafterWidthDialogVisible] = useState(false);
   const [rafterColorDialogVisible, setRafterColorDialogVisible] = useState(false);
+  const [riseDialogVisible, setRiseDialogVisible] = useState(false);
   const [overhangDialogVisible, setOverhangDialogVisible] = useState(false);
   const [thicknessDialogVisible, setThicknessDialogVisible] = useState(false);
   const [textureDialogVisible, setTextureDialogVisible] = useState(false);
@@ -435,6 +437,18 @@ export const RoofMenu = () => {
                 </Menu.Item>
               </>
             )}
+
+            {riseDialogVisible && <RoofRiseInput setDialogVisible={setRiseDialogVisible} />}
+            <Menu.Item
+              key={'roof-rise'}
+              style={{ paddingLeft: paddingLeft }}
+              onClick={() => {
+                setApplyCount(0);
+                setRiseDialogVisible(true);
+              }}
+            >
+              {i18n.t('roofMenu.Rise', lang)} ...
+            </Menu.Item>
 
             {overhangDialogVisible && <RoofOverhangInput setDialogVisible={setOverhangDialogVisible} />}
             <Menu.Item

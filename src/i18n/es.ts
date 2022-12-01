@@ -1000,6 +1000,7 @@ export const i18n_es = {
       DoYouReallyWantToRemoveAllLightsOnThisRoof: 'Do you really want to remove all the lights on this roof',
       AllLightsOnRoofInside: 'All Lights on Roof Inside',
       AllLightsOnRoofOutside: 'All Lights on Roof Outside',
+      Rise: 'Rise',
     },
 
     doorMenu: {

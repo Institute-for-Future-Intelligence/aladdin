@@ -1,5 +1,5 @@
 /*
- * @Copyright 2021-2022. Institute for Future Intelligence, Inc.
+ * @Copyright 2022. Institute for Future Intelligence, Inc.
  */
 
 import React, { useEffect, useRef, useState } from 'react';
@@ -13,19 +13,40 @@ import { UndoableChange } from 'src/undo/UndoableChange';
 import { UndoableChangeGroup } from 'src/undo/UndoableChangeGroup';
 import { RoofModel } from 'src/models/RoofModel';
 
-const RoofOverhangInput = ({ setDialogVisible }: { setDialogVisible: (b: boolean) => void }) => {
+const RoofRiseInput = ({ setDialogVisible }: { setDialogVisible: (b: boolean) => void }) => {
   const language = useStore(Selector.language);
   const roof = useStore(Selector.selectedElement) as RoofModel;
   const addUndoable = useStore(Selector.addUndoable);
-  const roofActionScope = useStore(Selector.roofActionScope);
-  const setRoofActionScope = useStore(Selector.setRoofActionScope);
+  const actionScope = useStore(Selector.roofActionScope);
+  const setActionScope = useStore(Selector.setRoofActionScope);
   const applyCount = useStore(Selector.applyCount);
   const setApplyCount = useStore(Selector.setApplyCount);
   const revertApply = useStore(Selector.revertApply);
   const getElementById = useStore(Selector.getElementById);
   const setCommonStore = useStore(Selector.set);
+  const getRoofSegmentVertices = useStore(Selector.getRoofSegmentVertices);
 
-  const [inputLength, setInputLength] = useState<number>(roof?.overhang ?? 0.4);
+  const getRoofRise = (roofId: string) => {
+    const segments = getRoofSegmentVertices(roofId);
+    let rise = 0;
+    if (segments && segments.length > 0) {
+      let zmin = segments[0][0].z;
+      let zmax = zmin;
+      for (const s of segments) {
+        for (const v of s) {
+          if (v.z > zmax) zmax = v.z;
+          else if (v.z < zmin) zmin = v.z;
+        }
+      }
+      rise = zmax - zmin;
+    }
+    if (rise > 0) rise -= roof.thickness;
+    return rise;
+  };
+
+  const setRoofRise = (roofId: string, value: number) => {};
+
+  const [inputValue, setInputValue] = useState<number>(getRoofRise(roof.id));
   const [dragEnabled, setDragEnabled] = useState<boolean>(false);
   const [bounds, setBounds] = useState<DraggableBounds>({ left: 0, top: 0, bottom: 0, right: 0 } as DraggableBounds);
   const dragRef = useRef<HTMLDivElement | null>(null);
@@ -34,15 +55,15 @@ const RoofOverhangInput = ({ setDialogVisible }: { setDialogVisible: (b: boolean
 
   useEffect(() => {
     if (roof) {
-      setInputLength(roof?.overhang ?? 0.4);
+      setInputValue(getRoofRise(roof.id));
     }
   }, [roof]);
 
-  const updateRoofOverhangById = (id: string, length: number) => {
+  const updateRoofRiseById = (id: string, value: number) => {
     setCommonStore((state) => {
       for (const e of state.elements) {
         if (e.id === id && e.type === ObjectType.Roof) {
-          (e as RoofModel).overhang = length;
+          setRoofRise(id, value);
           break;
         }
       }
@@ -51,33 +72,33 @@ const RoofOverhangInput = ({ setDialogVisible }: { setDialogVisible: (b: boolean
 
   const undoInMap = (map: Map<string, number>) => {
     for (const [id, val] of map.entries()) {
-      updateRoofOverhangById(id, val);
+      updateRoofRiseById(id, val);
     }
   };
 
   const updateInMap = (map: Map<string, number>, value: number) => {
     for (const id of map.keys()) {
-      updateRoofOverhangById(id, value);
+      updateRoofRiseById(id, value);
     }
   };
 
-  const setOverhangLength = (value: number) => {
+  const setRise = (value: number) => {
     if (!roof) return;
-    switch (roofActionScope) {
+    switch (actionScope) {
       case Scope.AllObjectsOfThisType:
-        const oldOverhangsAll = new Map<string, number>();
+        const oldRisesAll = new Map<string, number>();
         setCommonStore((state) => {
           for (const e of state.elements) {
             if (e.type === ObjectType.Roof && !e.locked) {
-              oldOverhangsAll.set(e.id, (e as RoofModel).overhang);
-              (e as RoofModel).overhang = value;
+              oldRisesAll.set(e.id, getRoofRise(e.id));
+              setRoofRise(e.id, value);
             }
           }
         });
         const undoableChangeAll = {
-          name: 'Set Overhang Length for All Roofs',
+          name: 'Set Rise for All Roofs',
           timestamp: Date.now(),
-          oldValues: oldOverhangsAll,
+          oldValues: oldRisesAll,
           newValue: value,
           undo: () => {
             undoInMap(undoableChangeAll.oldValues as Map<string, number>);
@@ -91,19 +112,19 @@ const RoofOverhangInput = ({ setDialogVisible }: { setDialogVisible: (b: boolean
         break;
       case Scope.AllObjectsOfThisTypeAboveFoundation:
         if (roof.foundationId) {
-          const oldOverhangsAboveFoundation = new Map<string, number>();
+          const oldRisesAboveFoundation = new Map<string, number>();
           setCommonStore((state) => {
-            for (const elem of state.elements) {
-              if (elem.type === ObjectType.Roof && elem.foundationId === roof.foundationId && !elem.locked) {
-                oldOverhangsAboveFoundation.set(elem.id, (elem as RoofModel).overhang);
-                (elem as RoofModel).overhang = value;
+            for (const e of state.elements) {
+              if (e.type === ObjectType.Roof && e.foundationId === roof.foundationId && !e.locked) {
+                oldRisesAboveFoundation.set(e.id, getRoofRise(e.id));
+                setRoofRise(e.id, value);
               }
             }
           });
           const undoableChangeAboveFoundation = {
-            name: 'Set Overhang Length for All Roofs Above Foundation',
+            name: 'Set Rise for All Roofs Above Foundation',
             timestamp: Date.now(),
-            oldValues: oldOverhangsAboveFoundation,
+            oldValues: oldRisesAboveFoundation,
             newValue: value,
             groupId: roof.foundationId,
             undo: () => {
@@ -123,29 +144,26 @@ const RoofOverhangInput = ({ setDialogVisible }: { setDialogVisible: (b: boolean
       default:
         if (roof) {
           const updatedRoof = getElementById(roof.id) as RoofModel;
-          const oldOverhangLength = updatedRoof.overhang ?? roof.overhang ?? 0.4;
+          const oldRise = getRoofRise(updatedRoof.id) ?? getRoofRise(roof.id);
           const undoableChange = {
-            name: 'Set Roof Overhang Length',
+            name: 'Set Roof Rise',
             timestamp: Date.now(),
-            oldValue: oldOverhangLength,
+            oldValue: oldRise,
             newValue: value,
             changedElementId: roof.id,
             changedElementType: roof.type,
             undo: () => {
-              updateRoofOverhangById(undoableChange.changedElementId, undoableChange.oldValue as number);
+              updateRoofRiseById(undoableChange.changedElementId, undoableChange.oldValue as number);
             },
             redo: () => {
-              updateRoofOverhangById(undoableChange.changedElementId, undoableChange.newValue as number);
+              updateRoofRiseById(undoableChange.changedElementId, undoableChange.newValue as number);
             },
           } as UndoableChange;
           addUndoable(undoableChange);
-          updateRoofOverhangById(roof.id, value);
+          updateRoofRiseById(roof.id, value);
           setApplyCount(applyCount + 1);
         }
     }
-    setCommonStore((state) => {
-      state.actionState.roofOverhang = value;
-    });
   };
 
   const onStart = (event: DraggableEvent, uiData: DraggableData) => {
@@ -162,7 +180,7 @@ const RoofOverhangInput = ({ setDialogVisible }: { setDialogVisible: (b: boolean
   };
 
   const close = () => {
-    setInputLength(roof.overhang ?? 0.4);
+    setInputValue(getRoofRise(roof.id));
     setDialogVisible(false);
   };
 
@@ -172,13 +190,13 @@ const RoofOverhangInput = ({ setDialogVisible }: { setDialogVisible: (b: boolean
   };
 
   const handleOk = () => {
-    setOverhangLength(inputLength);
+    setRise(inputValue);
     setDialogVisible(false);
     setApplyCount(0);
   };
 
   const handleApply = () => {
-    setOverhangLength(inputLength);
+    setRise(inputValue);
   };
 
   return (
@@ -192,7 +210,7 @@ const RoofOverhangInput = ({ setDialogVisible }: { setDialogVisible: (b: boolean
             onMouseOver={() => setDragEnabled(true)}
             onMouseOut={() => setDragEnabled(false)}
           >
-            {i18n.t('roofMenu.OverhangLength', lang)}
+            {i18n.t('roofMenu.Rise', lang)}
           </div>
         }
         footer={[
@@ -224,9 +242,9 @@ const RoofOverhangInput = ({ setDialogVisible }: { setDialogVisible: (b: boolean
               style={{ width: 120 }}
               step={0.01}
               precision={2}
-              value={inputLength}
+              value={inputValue}
               formatter={(a) => Number(a).toFixed(2)}
-              onChange={(value) => setInputLength(value)}
+              onChange={(value) => setInputValue(value)}
               onPressEnter={handleOk}
             />
             <div style={{ paddingTop: '20px', textAlign: 'left', fontSize: '11px' }}>
@@ -241,7 +259,7 @@ const RoofOverhangInput = ({ setDialogVisible }: { setDialogVisible: (b: boolean
             style={{ border: '2px dashed #ccc', paddingTop: '8px', paddingLeft: '12px', paddingBottom: '8px' }}
             span={17}
           >
-            <Radio.Group onChange={(e) => setRoofActionScope(e.target.value)} value={roofActionScope}>
+            <Radio.Group onChange={(e) => setActionScope(e.target.value)} value={actionScope}>
               <Space direction="vertical">
                 <Radio value={Scope.OnlyThisObject}>{i18n.t('roofMenu.OnlyThisRoof', lang)}</Radio>
                 <Radio value={Scope.AllObjectsOfThisTypeAboveFoundation}>
@@ -257,4 +275,4 @@ const RoofOverhangInput = ({ setDialogVisible }: { setDialogVisible: (b: boolean
   );
 };
 
-export default RoofOverhangInput;
+export default RoofRiseInput;
