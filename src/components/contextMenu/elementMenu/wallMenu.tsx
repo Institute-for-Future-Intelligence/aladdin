@@ -3,7 +3,7 @@
  */
 
 import React, { useState } from 'react';
-import { Menu, Modal, Radio } from 'antd';
+import { Checkbox, Menu, Modal, Radio } from 'antd';
 import SubMenu from 'antd/lib/menu/SubMenu';
 import { CommonStoreState, useStore } from '../../../stores/common';
 import * as Selector from '../../../stores/selector';
@@ -11,7 +11,7 @@ import { Copy, Cut, Lock, Paste } from '../menuItems';
 import i18n from '../../../i18n/i18n';
 import WallTextureSelection from './wallTextureSelection';
 import WallBodyColorSelection from './wallColorSelection';
-import { WallModel, WallStructure } from 'src/models/WallModel';
+import { WallModel, WallDisplayMode, WallStructure } from 'src/models/WallModel';
 import { ObjectType, WallTexture } from 'src/types';
 import { ElementCounter } from '../../../stores/ElementCounter';
 import { ExclamationCircleOutlined } from '@ant-design/icons';
@@ -23,6 +23,7 @@ import WallNumberInput from './wallNumberInput';
 import { UndoableChangeGroup } from '../../../undo/UndoableChangeGroup';
 import { LightModel } from '../../../models/LightModel';
 import WallRValueInput from './wallRValueInput';
+import { UndoableCheck } from 'src/undo/UndoableCheck';
 
 enum DataType {
   Height = 'Height',
@@ -123,6 +124,17 @@ export const WallMenu = () => {
     }
   };
 
+  const updateWallDisplayModeById = (id: string, mode: WallDisplayMode) => {
+    setCommonStore((state) => {
+      for (const e of state.elements) {
+        if (e.id === id && e.type === ObjectType.Wall) {
+          (e as WallModel).displayMode = mode;
+          break;
+        }
+      }
+    });
+  };
+
   const renderCopy = () => <Copy keyName={'wall-copy'} />;
 
   const renderLock = () => <Lock keyName={'wall-lock'} />;
@@ -139,6 +151,51 @@ export const WallMenu = () => {
       return null;
     }
     return <Paste keyName={'wall-paste'} />;
+  };
+
+  const renderDisplayModeSubMenu = () => {
+    if (!wall) {
+      return null;
+    }
+    return (
+      <SubMenu key={'wall-shown-type'} title={i18n.t('wallMenu.DisplayMode', lang)} style={{ paddingLeft: '24px' }}>
+        <Radio.Group
+          value={wall.displayMode}
+          style={{ height: '75px' }}
+          onChange={(e) => {
+            const undoableChange = {
+              name: 'Select Wall Display Mode',
+              timestamp: Date.now(),
+              oldValue: wall.displayMode,
+              newValue: e.target.value,
+              changedElementId: wall.id,
+              changedElementType: wall.type,
+              undo: () => {
+                updateWallDisplayModeById(undoableChange.changedElementId, undoableChange.oldValue as WallDisplayMode);
+              },
+              redo: () => {
+                updateWallDisplayModeById(undoableChange.changedElementId, undoableChange.newValue as WallDisplayMode);
+              },
+            } as UndoableChange;
+            addUndoable(undoableChange);
+            updateWallDisplayModeById(wall.id, e.target.value);
+            setCommonStore((state) => {
+              state.actionState.wallDisplayMode = e.target.value;
+            });
+          }}
+        >
+          <Radio style={radioStyle} value={WallDisplayMode.All}>
+            {i18n.t('wallMenu.DisplayAll', lang)}
+          </Radio>
+          <Radio style={radioStyle} value={WallDisplayMode.Partial}>
+            {i18n.t('wallMenu.DisplayPartial', lang)}
+          </Radio>
+          <Radio style={radioStyle} value={WallDisplayMode.Empty}>
+            {i18n.t('wallMenu.DisplayEmpty', lang)}
+          </Radio>
+        </Radio.Group>
+      </SubMenu>
+    );
   };
 
   const renderSturctureSubMenu = () => {
@@ -455,6 +512,8 @@ export const WallMenu = () => {
           {renderDialogs()}
 
           {renderElementsSubMenu()}
+
+          {renderDisplayModeSubMenu()}
 
           {renderSturctureSubMenu()}
 

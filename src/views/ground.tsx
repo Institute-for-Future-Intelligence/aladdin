@@ -8,7 +8,14 @@ import { useStoreRef } from '../stores/commonRef';
 import * as Selector from '../stores/selector';
 import { Plane } from '@react-three/drei';
 import { DoubleSide, Euler, Group, Intersection, Mesh, Object3D, Raycaster, Vector2, Vector3 } from 'three';
-import { IntersectionPlaneType, MoveHandleType, ObjectType, ResizeHandleType, RotateHandleType } from '../types';
+import {
+  IntersectionPlaneType,
+  MoveHandleType,
+  ObjectType,
+  ResizeHandleType,
+  RotateHandleType,
+  WallAbsPos,
+} from '../types';
 import { ElementModel } from '../models/ElementModel';
 import { ThreeEvent, useThree } from '@react-three/fiber';
 import {
@@ -28,7 +35,6 @@ import { UndoableRotate } from '../undo/UndoableRotate';
 import { UndoableAdd } from '../undo/UndoableAdd';
 import { WallModel } from 'src/models/WallModel';
 import { PolygonModel } from '../models/PolygonModel';
-import { WallAbsPos } from './wall/WallAbsPos';
 import { Point2 } from '../models/Point2';
 import { TreeModel } from '../models/TreeModel';
 import { UndoableChange } from '../undo/UndoableChange';
@@ -1297,12 +1303,11 @@ const Ground = () => {
               }
               break;
           }
-        } else if (
-          selectedElement.type === ObjectType.Wall &&
-          (wallResizeHandle === ResizeHandleType.UpperLeft || wallResizeHandle === ResizeHandleType.UpperRight)
-        ) {
+        } else if (selectedElement.type === ObjectType.Wall) {
           grabRef.current = selectedElement;
-          oldDimensionRef.current.set(selectedElement.lx, selectedElement.ly, selectedElement.lz);
+          if (wallResizeHandle === ResizeHandleType.UpperLeft || wallResizeHandle === ResizeHandleType.UpperRight) {
+            oldDimensionRef.current.set(selectedElement.lx, selectedElement.ly, selectedElement.lz);
+          }
         }
       }
     }
@@ -1492,27 +1497,6 @@ const Ground = () => {
                 }
               }
               break;
-            case ObjectType.Wall:
-              if (resizeHandleType === ResizeHandleType.UpperLeft || resizeHandleType === ResizeHandleType.UpperRight) {
-                setCommonStore((state) => {
-                  for (const e of state.elements) {
-                    if (e.id === grabRef.current?.id) {
-                      e.cz = Math.max(0.5, p.z / 2);
-                      let parentLz = 0;
-                      for (const p of state.elements) {
-                        if (p.id === e.parentId) {
-                          parentLz = p.lz;
-                          break;
-                        }
-                      }
-                      e.lz = Math.max(1, p.z) - parentLz;
-                      break;
-                    }
-                  }
-                  state.selectedElementHeight = Math.max(1, p.z);
-                  state.updateRoofFlag = !state.updateRoofFlag;
-                });
-              }
           }
         }
       }

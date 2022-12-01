@@ -28,6 +28,15 @@ export interface WallModel extends ElementModel {
 
   opacity?: number;
   rValue: number;
+
+  displayMode: WallDisplayMode;
+  bottomHeight: number;
+}
+
+export enum WallDisplayMode {
+  All = 'All',
+  Partial = 'Partial',
+  Empty = 'Empty',
 }
 
 export enum WallStructure {

@@ -443,21 +443,6 @@ const Sky = ({ theme = 'Default' }: SkyProps) => {
                 }
               }
               break;
-            case ObjectType.Wall:
-              if (resizeHandleType === ResizeHandleType.UpperLeft || resizeHandleType === ResizeHandleType.UpperRight) {
-                setCommonStore((state) => {
-                  for (const e of state.elements) {
-                    if (e.id === grabRef.current?.id) {
-                      e.cz = Math.max(0.5, p.z / 2);
-                      e.lz = Math.max(1, p.z);
-                      break;
-                    }
-                  }
-                  state.selectedElementHeight = Math.max(1, p.z);
-                  state.updateRoofFlag = !state.updateRoofFlag;
-                });
-              }
-              break;
           }
         }
       }

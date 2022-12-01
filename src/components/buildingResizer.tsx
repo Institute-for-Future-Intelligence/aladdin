@@ -15,7 +15,7 @@ import { WallModel } from 'src/models/WallModel';
 import Wireframe from './wireframe';
 import { UndoableMoveFoundationGroup } from 'src/undo/UndoableMove';
 import { UndoableResizeBuildingXY, UndoableResizeBuildingZ } from 'src/undo/UndoableResizeBuilding';
-import { useHandleSize } from 'src/views/wall/wallResizeHandleWrapper';
+import { useHandleSize } from 'src/views/wall/hooks';
 
 interface BuildingResizerProps {
   foundationGroupSet: Set<string>;

@@ -4,12 +4,12 @@
 
 import React, { useState } from 'react';
 import { Sphere } from '@react-three/drei';
-import { useHandleSize } from './wallResizeHandleWrapper';
 import { HIGHLIGHT_HANDLE_COLOR, MOVE_HANDLE_COLOR_2 } from 'src/constants';
 import { useStore } from 'src/stores/common';
 import { MoveHandleType } from 'src/types';
 import { ThreeEvent } from '@react-three/fiber';
 import { useStoreRef } from 'src/stores/commonRef';
+import { useHandleSize } from './hooks';
 
 interface HandleProps {
   cy: number;

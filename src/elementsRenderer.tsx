@@ -38,6 +38,7 @@ import Flower from './views/flower';
 import { FlowerModel } from './models/FlowerModel';
 import Light from './views/light';
 import { LightModel } from './models/LightModel';
+import WallRenderer from './views/wall/wallRenderer';
 
 const ElementsRenderer: React.FC = () => {
   const elements = useStore(Selector.elements);
@@ -91,7 +92,7 @@ const ElementsRenderer: React.FC = () => {
           case ObjectType.Heliostat:
             return <Heliostat key={e.id} {...(e as HeliostatModel)} />;
           case ObjectType.Wall:
-            return <Wall key={e.id} {...(e as WallModel)} />;
+            return <WallRenderer key={e.id} {...(e as WallModel)} />;
           case ObjectType.Roof:
             return <RoofRenderer key={e.id} {...(e as RoofModel)} />;
           case ObjectType.Polygon:

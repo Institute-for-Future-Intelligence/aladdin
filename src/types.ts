@@ -8,6 +8,7 @@ import { MyOrbitControls } from './js/MyOrbitControls';
 import { ParabolicCylinderGeometry } from './js/ParabolicCylinderGeometry';
 import { ParaboloidGeometry } from './js/ParaboloidGeometry';
 import { ConvexGeometry } from './js/ConvexGeometry';
+import { Vector2 } from 'three';
 
 // Extend makes these JSX elements (with the first character lower-cased)
 extend({ TextSprite });
@@ -262,6 +263,8 @@ export enum ResizeHandleType {
   Top = 'Resize Handle Top',
   Default = 'Resize Handle', // used for resizing a polygon
   Arch = 'Resize Handle Arch',
+  WallPartialResizeLeft = 'Wall Partial Resize Handle Left',
+  WallPartialResizeRight = 'Wall Partial Resize Handle Right',
 }
 
 export enum RotateHandleType {
@@ -498,3 +501,9 @@ export enum ElementState {
   OutsideBoundary = 'OutsideBoundary',
   Invalid = 'Invalid',
 }
+
+export type WallAbsPos = {
+  leftPointAbsPos: Vector2;
+  rightPointAbsPos: Vector2;
+  centerPointAbsPos: Vector2;
+};

@@ -27,7 +27,7 @@ import { CuboidModel } from './CuboidModel';
 import { FoundationModel } from './FoundationModel';
 import { SolarPanelModel } from './SolarPanelModel';
 import { PvModel } from './PvModel';
-import { WallModel, WallStructure } from './WallModel';
+import { WallModel, WallDisplayMode, WallStructure } from './WallModel';
 import {
   GableRoofModel,
   GambrelRoofModel,
@@ -559,6 +559,8 @@ export class ElementModelFactory {
     studWidth: number,
     studColor: string,
     opacity: number,
+    displayMode: WallDisplayMode,
+    bottomHeight: number,
     x: number,
     y: number,
     z?: number,
@@ -573,6 +575,8 @@ export class ElementModelFactory {
       lx: 0,
       ly: thickness ?? 0.3,
       lz: height ?? 5,
+      displayMode: displayMode,
+      bottomHeight: bottomHeight,
       relativeAngle: 0,
       leftPoint: [],
       rightPoint: [],
@@ -689,7 +693,7 @@ export class ElementModelFactory {
       lz: 0,
       doorType: doorType,
       filled: filled,
-      archHeight: 1,
+      archHeight: archHeight,
       textureType: texture ?? DoorTexture.Default,
       color: color ?? 'white',
       selected: true,

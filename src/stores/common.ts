@@ -4632,6 +4632,8 @@ export const useStore = create<CommonStoreState>(
                     state.actionState.wallStructureWidth,
                     state.actionState.wallStructureColor,
                     state.actionState.wallOpacity,
+                    state.actionState.wallDisplayMode,
+                    state.actionState.wallBottomHeight,
                     relativePos.x,
                     relativePos.y,
                     relativePos.z,

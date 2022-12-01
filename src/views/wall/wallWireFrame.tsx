@@ -6,12 +6,15 @@ import React from 'react';
 import { Line } from '@react-three/drei';
 import { HALF_PI } from '../../constants';
 import { useStore } from 'src/stores/common';
+import { WallDisplayMode } from 'src/models/WallModel';
 
 interface WallWireFrameProps {
   lineColor: string;
   lineWidth: number;
   hx: number;
   hz: number;
+  shownType: WallDisplayMode;
+  bottomHeight: number;
   leftHeight?: number;
   rightHeight?: number;
   center?: number[];
@@ -25,6 +28,8 @@ const WallWireFrame = React.memo(
     lineWidth = 0.2,
     hx,
     hz,
+    shownType,
+    bottomHeight,
     leftHeight = 2 * hz,
     rightHeight = 2 * hz,
     center,
@@ -33,8 +38,16 @@ const WallWireFrame = React.memo(
   }: WallWireFrameProps) => {
     const orthographic = useStore((state) => state.viewState.orthographic);
 
-    const lowerLeft: [number, number, number] = [-hx, -hz + 0.001, 0.001];
-    const lowerRight: [number, number, number] = [hx, -hz + 0.001, 0.001];
+    const lowerLeft: [number, number, number] = [
+      -hx,
+      -hz + 0.001 + (shownType === WallDisplayMode.Partial ? bottomHeight : 0),
+      0.001,
+    ];
+    const lowerRight: [number, number, number] = [
+      hx,
+      -hz + 0.001 + (shownType === WallDisplayMode.Partial ? bottomHeight : 0),
+      0.001,
+    ];
     const upperLeft: [number, number, number] = [-hx, leftHeight - hz - 0.001, 0.001];
     const upperRight: [number, number, number] = [hx, rightHeight - hz - 0.001, 0.001];
 

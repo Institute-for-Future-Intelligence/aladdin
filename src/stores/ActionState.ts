@@ -14,7 +14,7 @@ import {
   TreeType,
   WallTexture,
 } from '../types';
-import { WallStructure } from '../models/WallModel';
+import { WallDisplayMode, WallStructure } from '../models/WallModel';
 import { WindowType } from 'src/models/WindowModel';
 import { RoofStructure } from '../models/RoofModel';
 import { DoorType } from 'src/models/DoorModel';
@@ -46,6 +46,8 @@ export interface ActionState {
   wallStructureWidth: number;
   wallStructureColor: string;
   wallRValue: number;
+  wallDisplayMode: WallDisplayMode;
+  wallBottomHeight: number;
 
   roofColor: string;
   roofSideColor: string;

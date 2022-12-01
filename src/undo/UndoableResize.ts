@@ -64,6 +64,13 @@ export interface UndoableResizeWall extends Undoable {
   flippedWallSide: FlippedWallSide;
 }
 
+export interface UndoableResizeWallHeight extends Undoable {
+  resizedElementId: string;
+  resizedElementType: ObjectType;
+  oldHeights: number[];
+  newHeights: number[];
+}
+
 export interface UndoableResizeRoofHeight extends Undoable {
   resizedElementId: string;
   resizedElementType: ObjectType;

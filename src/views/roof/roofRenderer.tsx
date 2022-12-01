@@ -34,9 +34,9 @@ import { RoofUtil } from './RoofUtil';
 import { ElementModelFactory } from 'src/models/ElementModelFactory';
 import { UndoableAdd } from 'src/undo/UndoableAdd';
 import { Sphere } from '@react-three/drei';
-import { useHandleSize } from '../wall/wallResizeHandleWrapper';
 import { SensorModel } from '../../models/SensorModel';
 import { LightModel } from '../../models/LightModel';
+import { useHandleSize } from '../wall/hooks';
 
 export interface RoofSegmentProps {
   points: Vector3[];

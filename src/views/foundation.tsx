@@ -71,7 +71,7 @@ import SolarReceiverPipe from './solarReceiverPipe';
 import { UndoablePaste } from '../undo/UndoablePaste';
 import BuildingResizer from 'src/components/buildingResizer';
 import SolarPanelOnRoof from './solarPanel/solarPanelOnRoof';
-import { useHandleSize } from './wall/wallResizeHandleWrapper';
+import { useHandleSize } from './wall/hooks';
 
 const Foundation = ({
   id,

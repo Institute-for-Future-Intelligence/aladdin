@@ -39,14 +39,12 @@ import { useStore } from 'src/stores/common';
 import { useStoreRef } from 'src/stores/commonRef';
 import { ElementModel } from 'src/models/ElementModel';
 import { ShutterProps, WindowModel, WindowType } from 'src/models/WindowModel';
-import { WallModel, WallStructure } from 'src/models/WallModel';
+import { WallModel, WallDisplayMode, WallStructure } from 'src/models/WallModel';
 import { ElementModelFactory } from 'src/models/ElementModelFactory';
 import { Point2 } from 'src/models/Point2';
 import { ElementGrid } from '../elementGrid';
 import Window from '../window/window';
 import WallWireFrame from './wallWireFrame';
-import WallResizeHandleWarpper from './wallResizeHandleWrapper';
-import WallMoveHandleWarpper from './wallMoveHandleWrapper';
 import * as Selector from 'src/stores/selector';
 import {
   FINE_GRID_SCALE,
@@ -63,82 +61,14 @@ import { DoorModel, DoorType } from 'src/models/DoorModel';
 import Door from '../door/door';
 import { SolarPanelModel } from 'src/models/SolarPanelModel';
 import SolarPanelOnWall from '../solarPanel/solarPanelOnWall';
+import { useElements } from './hooks';
+import { FoundationModel } from 'src/models/FoundationModel';
 
-const useElements = (id: string, leftWallId?: string, rightWallId?: string, roofId?: string) => {
-  const isElementTriggerWallChange = (elem: ElementModel) => {
-    return elem.parentId === id || elem.id === roofId;
-  };
-
-  const leftWall = useStore((state) => {
-    if (leftWallId) {
-      for (const e of state.elements) {
-        if (e.id === leftWallId) {
-          return e as WallModel;
-        }
-      }
-    }
-    return null;
-  });
-
-  const rightWall = useStore((state) => {
-    if (rightWallId) {
-      for (const e of state.elements) {
-        if (e.id === rightWallId) {
-          return e as WallModel;
-        }
-      }
-    }
-    return null;
-  });
-
-  const elementsTriggerChange = useStore((state) => JSON.stringify(state.elements.filter(isElementTriggerWallChange)));
-
-  const elementsOnWall = useMemo(
-    () => useStore.getState().elements.filter((el) => isElementTriggerWallChange(el) && Util.isLegalOnWall(el.type)),
-    [elementsTriggerChange],
-  );
-
-  return { elementsOnWall, leftWall, rightWall };
-};
-
-const useUpdataOldFiles = (wallModel: WallModel) => {
-  const fileChanged = useStore(Selector.fileChanged);
-  useEffect(() => {
-    if (
-      wallModel.wallStructure === undefined ||
-      wallModel.structureSpacing === undefined ||
-      wallModel.structureWidth === undefined ||
-      wallModel.structureColor === undefined ||
-      wallModel.opacity === undefined
-    ) {
-      useStore.getState().set((state) => {
-        for (const e of state.elements) {
-          if (e.id === wallModel.id) {
-            const wall = e as WallModel;
-            if (wall.wallStructure === undefined) {
-              wall.wallStructure = WallStructure.Default;
-            }
-            if (wall.structureSpacing === undefined) {
-              wall.structureSpacing = 2;
-            }
-            if (wall.structureWidth === undefined) {
-              wall.structureWidth = 0.1;
-            }
-            if (wall.structureColor === undefined) {
-              wall.structureColor = 'white';
-            }
-            if (wall.opacity === undefined) {
-              wall.opacity = 0.5;
-            }
-            break;
-          }
-        }
-      });
-    }
-  }, [fileChanged]);
-};
-
-const Wall = (wallModel: WallModel) => {
+export interface WallProps {
+  wallModel: WallModel;
+  foundationModel: FoundationModel;
+}
+const Wall = ({ wallModel, foundationModel }: WallProps) => {
   let {
     id,
     cx,
@@ -167,9 +97,9 @@ const Wall = (wallModel: WallModel) => {
     structureWidth = 0.1,
     structureColor = 'white',
     opacity = 0.5,
+    displayMode: shownType = WallDisplayMode.All,
+    bottomHeight = 0.5,
   } = wallModel;
-
-  useUpdataOldFiles(wallModel);
 
   const textureLoader = useMemo(() => {
     let textureImg;
@@ -245,14 +175,6 @@ const Wall = (wallModel: WallModel) => {
   const [texture, setTexture] = useState(textureLoader);
   const { invalidate } = useThree();
 
-  const foundation = useStore((state) => {
-    for (const e of state.elements) {
-      if (e.id === parentId) {
-        return e;
-      }
-    }
-  });
-
   const showSolarRadiationHeatmap = useStore(Selector.showSolarRadiationHeatmap);
   const solarRadiationHeatmapMaxValue = useStore(Selector.viewState.solarRadiationHeatmapMaxValue);
   const getHeatmap = useStore(Selector.getHeatmap);
@@ -288,7 +210,6 @@ const Wall = (wallModel: WallModel) => {
   }, [showSolarRadiationHeatmap, solarRadiationHeatmapMaxValue]);
 
   const deletedWindowAndParentId = useStore(Selector.deletedWindowAndParentId);
-  const deletedRoofId = useStore(Selector.deletedRoofId);
   const shadowEnabled = useStore(Selector.viewState.shadowEnabled);
   const setCommonStore = useStore(Selector.set);
   const getSelectedElement = useStore(Selector.getSelectedElement);
@@ -307,7 +228,6 @@ const Wall = (wallModel: WallModel) => {
   const insideWallRef = useRef<Mesh>(null);
   const topSurfaceRef = useRef<Mesh>(null);
   const grabRef = useRef<ElementModel | null>(null);
-  const isFirstMountRef = useRef(true);
 
   const addedWindowIdRef = useRef<string | null>(null);
   const isSettingWindowStartPointRef = useRef(false);
@@ -339,11 +259,7 @@ const Wall = (wallModel: WallModel) => {
   const hx = lx / 2;
   const hy = ly / 2;
   const hz = lz / 2;
-  const highLight = lx === 0;
-  const wallAbsPosition = foundation
-    ? Util.wallAbsolutePosition(new Vector3(cx, cy), foundation).setZ(hz + foundation.lz)
-    : new Vector3(cx, cy, hz);
-  const wallAbsAngle = foundation ? foundation.rotation[2] + relativeAngle : relativeAngle;
+  const wallAbsAngle = foundationModel ? foundationModel.rotation[2] + relativeAngle : relativeAngle;
 
   leftRoofHeight = leftJoints.length > 0 ? leftRoofHeight : lz;
   rightRoofHeight = rightJoints.length > 0 ? rightRoofHeight : lz;
@@ -351,14 +267,14 @@ const Wall = (wallModel: WallModel) => {
   let leftOffset = 0;
   let rightOffset = 0;
 
-  if (leftWall) {
+  if (leftWall && leftWall.displayMode !== WallDisplayMode.Empty) {
     const deltaAngle = (Math.PI * 3 - (relativeAngle - leftWall.relativeAngle)) % TWO_PI;
     if (deltaAngle <= HALF_PI + 0.01 && deltaAngle > 0) {
       leftOffset = Math.min(ly / Math.tan(deltaAngle) + leftWall.ly, lx);
     }
   }
 
-  if (rightWall) {
+  if (rightWall && rightWall.displayMode !== WallDisplayMode.Empty) {
     const deltaAngle = (Math.PI * 3 + relativeAngle - rightWall.relativeAngle) % TWO_PI;
     if (deltaAngle <= HALF_PI + 0.01 && deltaAngle > 0) {
       rightOffset = Math.min(ly / Math.tan(deltaAngle) + rightWall.ly, lx);
@@ -387,39 +303,45 @@ const Wall = (wallModel: WallModel) => {
   ) => {
     const hx = lx / 2;
     const hy = ly / 2;
-    shape.moveTo(cx - hx + leftOffset, cy - hy); // lower left
 
-    if (drawDoorShape) {
-      const doors = elementsOnWall.filter((e) => e.type === ObjectType.Door).sort((a, b) => a.cx - b.cx) as DoorModel[];
-      for (const door of doors) {
-        if (door.id !== invalidElementIdRef.current) {
-          const [dcx, dcy, dlx, dly] = [door.cx * lx, door.cz * ly, door.lx * lx, door.lz * lz];
-          if (door.doorType === DoorType.Default) {
-            shape.lineTo(cx + dcx - dlx / 2, cy - hy);
-            shape.lineTo(cx + dcx - dlx / 2, cy - hy + dly);
-            shape.lineTo(cx + dcx + dlx / 2, cy - hy + dly);
-            shape.lineTo(cx + dcx + dlx / 2, cy - hy);
-          } else {
-            const ah = Math.min(door.archHeight, dly, dlx / 2);
-            shape.lineTo(cx + dcx - dlx / 2, cy - hy);
-            if (ah > 0.1) {
-              shape.lineTo(cx + dcx - dlx / 2, cy - hy + dly / 2 - ah);
-              const r = ah / 2 + dlx ** 2 / (8 * ah);
-              const [cX, cY] = [dcx, cy + dcy + dly / 2 - r];
-              const endAngle = Math.acos(dlx / 2 / r);
-              const startAngle = Math.PI - endAngle;
-              shape.absarc(cX, cY, r, startAngle, endAngle, true);
-            } else {
+    if (shownType === WallDisplayMode.Partial) {
+      shape.moveTo(cx - hx + leftOffset, cy - hy + bottomHeight); // lower left
+      shape.lineTo(cx + hx - rightOffset, cy - hy + bottomHeight); // lower right
+    } else {
+      shape.moveTo(cx - hx + leftOffset, cy - hy); // lower left
+      if (drawDoorShape) {
+        const doors = elementsOnWall
+          .filter((e) => e.type === ObjectType.Door)
+          .sort((a, b) => a.cx - b.cx) as DoorModel[];
+        for (const door of doors) {
+          if (door.id !== invalidElementIdRef.current) {
+            const [dcx, dcy, dlx, dly] = [door.cx * lx, door.cz * ly, door.lx * lx, door.lz * lz];
+            if (door.doorType === DoorType.Default) {
+              shape.lineTo(cx + dcx - dlx / 2, cy - hy);
               shape.lineTo(cx + dcx - dlx / 2, cy - hy + dly);
               shape.lineTo(cx + dcx + dlx / 2, cy - hy + dly);
+              shape.lineTo(cx + dcx + dlx / 2, cy - hy);
+            } else {
+              const ah = Math.min(door.archHeight, dly, dlx / 2);
+              shape.lineTo(cx + dcx - dlx / 2, cy - hy);
+              if (ah > 0.1) {
+                shape.lineTo(cx + dcx - dlx / 2, cy - hy + dly / 2 - ah);
+                const r = ah / 2 + dlx ** 2 / (8 * ah);
+                const [cX, cY] = [dcx, cy + dcy + dly / 2 - r];
+                const endAngle = Math.acos(dlx / 2 / r);
+                const startAngle = Math.PI - endAngle;
+                shape.absarc(cX, cY, r, startAngle, endAngle, true);
+              } else {
+                shape.lineTo(cx + dcx - dlx / 2, cy - hy + dly);
+                shape.lineTo(cx + dcx + dlx / 2, cy - hy + dly);
+              }
+              shape.lineTo(cx + dcx + dlx / 2, cy - hy);
             }
-            shape.lineTo(cx + dcx + dlx / 2, cy - hy);
           }
         }
       }
+      shape.lineTo(cx + hx - rightOffset, cy - hy); // lower right
     }
-
-    shape.lineTo(cx + hx - rightOffset, cy - hy); // lower right
 
     if (roofId) {
       if (rightRoofHeight) {
@@ -505,6 +427,8 @@ const Wall = (wallModel: WallModel) => {
   }, [
     lx,
     lz,
+    shownType,
+    bottomHeight,
     elementsOnWall,
     leftRoofHeight,
     rightRoofHeight,
@@ -542,6 +466,8 @@ const Wall = (wallModel: WallModel) => {
   }, [
     lx,
     lz,
+    shownType,
+    bottomHeight,
     leftOffset,
     rightOffset,
     elementsOnWall,
@@ -556,7 +482,7 @@ const Wall = (wallModel: WallModel) => {
     const wallShape = new Shape();
     drawWallShape(wallShape, lx, lz, 0, 0, 0, 0, false);
     return wallShape;
-  }, [lx, lz, elementsOnWall]);
+  }, [lx, lz, shownType, bottomHeight, elementsOnWall]);
 
   const topWallShape = useMemo(() => {
     const shape = new Shape();
@@ -574,34 +500,12 @@ const Wall = (wallModel: WallModel) => {
     }
   }, [deletedWindowAndParentId]);
 
-  // roof
-  useEffect(() => {
-    if (deletedRoofId === roofId) {
-      setCommonStore((state) => {
-        for (const e of state.elements) {
-          if (e.id === id) {
-            const w = e as WallModel;
-            w.roofId = null;
-            w.leftRoofHeight = undefined;
-            w.rightRoofHeight = undefined;
-            w.centerRoofHeight = undefined;
-            w.centerLeftRoofHeight = undefined;
-            w.centerRightRoofHeight = undefined;
-            break;
-          }
-        }
-      });
-    }
-  }, [deletedRoofId]);
-
-  useEffect(() => {
-    isFirstMountRef.current = false;
-  }, []);
-
   const getRelativePosOnWall = (p: Vector3, wall: WallModel) => {
     const { cx, cy, cz } = wall;
-    if (foundation && wallAbsAngle !== undefined) {
-      const wallAbsPos = Util.wallAbsolutePosition(new Vector3(cx, cy, cz), foundation).setZ(lz / 2 + foundation.lz);
+    if (foundationModel && wallAbsAngle !== undefined) {
+      const wallAbsPos = Util.wallAbsolutePosition(new Vector3(cx, cy, cz), foundationModel).setZ(
+        lz / 2 + foundationModel.lz,
+      );
       return new Vector3().subVectors(p, wallAbsPos).applyEuler(new Euler(0, 0, -wallAbsAngle));
     }
     return new Vector3();
@@ -623,8 +527,13 @@ const Wall = (wallModel: WallModel) => {
     const points: Point2[] = [];
     const x = lx / 2;
     const y = lz / 2;
-    points.push({ x: -x + leftOffset, y: -y });
-    points.push({ x: x - rightOffset, y: -y });
+    if (shownType === WallDisplayMode.Partial) {
+      points.push({ x: -x + leftOffset, y: -y + bottomHeight });
+      points.push({ x: x - rightOffset, y: -y + bottomHeight });
+    } else {
+      points.push({ x: -x + leftOffset, y: -y });
+      points.push({ x: x - rightOffset, y: -y });
+    }
     rightRoofHeight
       ? points.push({ x: x - rightOffset, y: rightRoofHeight - y })
       : points.push({ x: x - rightOffset, y: y });
@@ -645,6 +554,8 @@ const Wall = (wallModel: WallModel) => {
   }, [
     lx,
     lz,
+    shownType,
+    bottomHeight,
     leftRoofHeight,
     rightRoofHeight,
     centerRoofHeight,
@@ -658,8 +569,13 @@ const Wall = (wallModel: WallModel) => {
     const points: Point2[] = [];
     const x = lx / 2;
     const y = lz / 2;
-    points.push({ x: -x, y: -y });
-    points.push({ x: x, y: -y });
+    if (shownType === WallDisplayMode.Partial) {
+      points.push({ x: -x + leftOffset, y: -y + bottomHeight });
+      points.push({ x: x - rightOffset, y: -y + bottomHeight });
+    } else {
+      points.push({ x: -x, y: -y });
+      points.push({ x: x, y: -y });
+    }
     rightRoofHeight ? points.push({ x: x, y: rightRoofHeight - y }) : points.push({ x: x, y: y });
     if (centerRightRoofHeight) {
       points.push({ x: centerRightRoofHeight[0] * lx, y: centerRightRoofHeight[1] - y });
@@ -673,7 +589,17 @@ const Wall = (wallModel: WallModel) => {
     leftRoofHeight ? points.push({ x: -x, y: leftRoofHeight - y }) : points.push({ x: -x, y: y });
 
     return points;
-  }, [lx, lz, leftRoofHeight, rightRoofHeight, centerRoofHeight, centerLeftRoofHeight, centerRightRoofHeight]);
+  }, [
+    lx,
+    lz,
+    shownType,
+    bottomHeight,
+    leftRoofHeight,
+    rightRoofHeight,
+    centerRoofHeight,
+    centerLeftRoofHeight,
+    centerRightRoofHeight,
+  ]);
 
   const isPointInside = (x: number, y: number, points: Point2[]) => {
     let inside = false;
@@ -1400,7 +1326,7 @@ const Wall = (wallModel: WallModel) => {
 
   const handleAddElement = (pointer?: Vector3, body?: boolean) => {
     // add new elements
-    if (foundation && useStore.getState().objectTypeToAdd) {
+    if (foundationModel && useStore.getState().objectTypeToAdd) {
       let newElement: ElementModel | null = null;
       switch (useStore.getState().objectTypeToAdd) {
         case ObjectType.PyramidRoof: {
@@ -1408,7 +1334,7 @@ const Wall = (wallModel: WallModel) => {
             const actionState = useStore.getState().actionState;
             newElement = ElementModelFactory.makePyramidRoof(
               [wallModel.id],
-              foundation,
+              foundationModel,
               lz,
               actionState.roofThickness,
               actionState.roofOverhang,
@@ -1424,7 +1350,7 @@ const Wall = (wallModel: WallModel) => {
             const actionState = useStore.getState().actionState;
             newElement = ElementModelFactory.makeGableRoof(
               [wallModel.id],
-              foundation,
+              foundationModel,
               lz,
               actionState.roofThickness,
               actionState.roofOverhang,
@@ -1440,7 +1366,7 @@ const Wall = (wallModel: WallModel) => {
             const actionState = useStore.getState().actionState;
             newElement = ElementModelFactory.makeHipRoof(
               [wallModel.id],
-              foundation,
+              foundationModel,
               lz,
               lx / 2,
               actionState.roofThickness,
@@ -1457,7 +1383,7 @@ const Wall = (wallModel: WallModel) => {
             const actionState = useStore.getState().actionState;
             newElement = ElementModelFactory.makeGambrelRoof(
               [wallModel.id],
-              foundation,
+              foundationModel,
               lz,
               actionState.roofThickness,
               actionState.roofOverhang,
@@ -1473,7 +1399,7 @@ const Wall = (wallModel: WallModel) => {
             const actionState = useStore.getState().actionState;
             newElement = ElementModelFactory.makeMansardRoof(
               [wallModel.id],
-              foundation,
+              foundationModel,
               lz,
               actionState.roofThickness,
               actionState.roofOverhang,
@@ -1629,8 +1555,6 @@ const Wall = (wallModel: WallModel) => {
   const castShadow = shadowEnabled && !transparent;
 
   const renderStuds = () => {
-    const wallLeftHeight = leftRoofHeight ?? lz;
-    const wallRightHeight = rightRoofHeight ?? lz;
     let [wallCenterPos, wallCenterHeight] = centerRoofHeight ?? [0, (wallLeftHeight + wallRightHeight) / 2];
     wallCenterPos = wallCenterPos * lx;
 
@@ -1647,16 +1571,22 @@ const Wall = (wallModel: WallModel) => {
         {structureUnitArray.map((pos, idx) => {
           let height;
           if (pos < wallCenterPos) {
-            height = ((pos + hx) * (wallCenterHeight - wallLeftHeight)) / (wallCenterPos + hx) + wallLeftHeight;
+            height =
+              ((pos + hx) * (wallCenterHeight - wallLeftHeight)) / (wallCenterPos + hx) +
+              wallLeftHeight -
+              realBottomHeight;
           } else {
-            height = ((pos - hx) * (wallCenterHeight - wallRightHeight)) / (wallCenterPos - hx) + wallRightHeight;
+            height =
+              ((pos - hx) * (wallCenterHeight - wallRightHeight)) / (wallCenterPos - hx) +
+              wallRightHeight -
+              realBottomHeight;
           }
 
           return (
             <Box
               key={idx}
               args={[structureWidth, ly, height]}
-              position={[pos, hy, (height - lz) / 2]}
+              position={[pos, hy, (height - lz) / 2 + realBottomHeight]}
               castShadow={shadowEnabled}
               receiveShadow={shadowEnabled}
               onContextMenu={handleStudContextMenu}
@@ -1693,8 +1623,6 @@ const Wall = (wallModel: WallModel) => {
   };
 
   const renderPillars = () => {
-    const wallLeftHeight = leftRoofHeight ?? lz;
-    const wallRightHeight = rightRoofHeight ?? lz;
     let [wallCenterPos, wallCenterHeight] = centerRoofHeight ?? [0, (wallLeftHeight + wallRightHeight) / 2];
     wallCenterPos = wallCenterPos * lx;
 
@@ -1713,15 +1641,21 @@ const Wall = (wallModel: WallModel) => {
         {structureUnitArray.map((pos, idx) => {
           let height;
           if (pos < wallCenterPos) {
-            height = ((pos + hx) * (wallCenterHeight - wallLeftHeight)) / (wallCenterPos + hx) + wallLeftHeight;
+            height =
+              ((pos + hx) * (wallCenterHeight - wallLeftHeight)) / (wallCenterPos + hx) +
+              wallLeftHeight -
+              realBottomHeight;
           } else {
-            height = ((pos - hx) * (wallCenterHeight - wallRightHeight)) / (wallCenterPos - hx) + wallRightHeight;
+            height =
+              ((pos - hx) * (wallCenterHeight - wallRightHeight)) / (wallCenterPos - hx) +
+              wallRightHeight -
+              realBottomHeight;
           }
           return (
             <Cylinder
               key={idx}
               args={[structureWidth / 2, structureWidth / 2, height]}
-              position={[pos, hy, (height - lz) / 2]}
+              position={[pos, hy, (height - lz) / 2 + realBottomHeight]}
               rotation={[-HALF_PI, 0, 0]}
               castShadow={shadowEnabled}
               receiveShadow={shadowEnabled}
@@ -1758,230 +1692,223 @@ const Wall = (wallModel: WallModel) => {
     );
   };
 
+  const wallLeftHeight = leftRoofHeight ?? lz;
+  const wallRightHeight = rightRoofHeight ?? lz;
+  const realBottomHeight = shownType === WallDisplayMode.Partial ? bottomHeight : 0;
+  const bottomZ = -hz + realBottomHeight;
+
   return (
     <>
-      {foundation && wallAbsPosition && wallAbsAngle !== undefined && (
-        <group
-          name={`Wall Group ${id}`}
-          position={wallAbsPosition}
-          rotation={[0, 0, wallAbsAngle]}
-          userData={{ aabb: true }}
-        >
-          {(opacity > 0 || wallStructure === WallStructure.Default) && (
-            <>
-              {/* simulation mesh */}
-              <mesh
-                name={'Wall Simulation Mesh'}
-                uuid={id}
-                userData={{ simulation: true }}
-                rotation={[HALF_PI, 0, 0]}
-                castShadow={false}
-                receiveShadow={false}
-                visible={false}
-              >
-                <shapeBufferGeometry args={[outsideWallShape]} />
-                <meshBasicMaterial side={DoubleSide} />
-              </mesh>
-              {/* outside wall */}
-              <mesh
-                name={'Outside Wall'}
-                ref={outsideWallRef}
-                rotation={[HALF_PI, 0, 0]}
-                castShadow={castShadow}
-                receiveShadow={shadowEnabled}
-                onContextMenu={(e) => {
-                  handleContextMenu(e, outsideWallRef.current, true);
-                }}
-                onPointerDown={handleWallBodyPointerDown}
-              >
-                <shapeBufferGeometry args={[outsideWallShape]} />
-                {showSolarRadiationHeatmap && heatmapTexture ? (
-                  <meshBasicMaterial
-                    attach="material"
-                    map={heatmapTexture}
-                    color={'white'}
-                    opacity={opacity}
-                    transparent={transparent}
-                  />
-                ) : (
-                  <meshStandardMaterial
-                    attach="material"
-                    color={
-                      textureType === WallTexture.Default || textureType === WallTexture.NoTexture ? color : 'white'
-                    }
-                    map={texture}
-                    transparent={transparent}
-                    opacity={opacity}
-                  />
-                )}
-              </mesh>
+      {(opacity > 0 || wallStructure === WallStructure.Default) && (
+        <>
+          {/* simulation mesh */}
+          <mesh
+            name={'Wall Simulation Mesh'}
+            uuid={id}
+            userData={{ simulation: true }}
+            rotation={[HALF_PI, 0, 0]}
+            castShadow={false}
+            receiveShadow={false}
+            visible={false}
+          >
+            <shapeBufferGeometry args={[outsideWallShape]} />
+            <meshBasicMaterial side={DoubleSide} />
+          </mesh>
+          {/* outside wall */}
+          <mesh
+            name={'Outside Wall'}
+            ref={outsideWallRef}
+            rotation={[HALF_PI, 0, 0]}
+            castShadow={castShadow}
+            receiveShadow={shadowEnabled}
+            onContextMenu={(e) => {
+              handleContextMenu(e, outsideWallRef.current, true);
+            }}
+            onPointerDown={handleWallBodyPointerDown}
+          >
+            <shapeBufferGeometry args={[outsideWallShape]} />
+            {showSolarRadiationHeatmap && heatmapTexture ? (
+              <meshBasicMaterial
+                attach="material"
+                map={heatmapTexture}
+                color={'white'}
+                opacity={opacity}
+                transparent={transparent}
+              />
+            ) : (
+              <meshStandardMaterial
+                attach="material"
+                color={textureType === WallTexture.Default || textureType === WallTexture.NoTexture ? color : 'white'}
+                map={texture}
+                transparent={transparent}
+                opacity={opacity}
+              />
+            )}
+          </mesh>
 
-              <mesh rotation={[HALF_PI, 0, 0]} position={[0, 0.05, 0]} castShadow={castShadow}>
-                <shapeBufferGeometry args={[insideWallShape]} />
-                <meshStandardMaterial color={'white'} side={BackSide} transparent={transparent} opacity={opacity} />
-              </mesh>
+          <mesh rotation={[HALF_PI, 0, 0]} position={[0, 0.05, 0]} castShadow={castShadow}>
+            <shapeBufferGeometry args={[insideWallShape]} />
+            <meshStandardMaterial color={'white'} side={BackSide} transparent={transparent} opacity={opacity} />
+          </mesh>
 
-              {/* inside wall */}
-              <mesh
-                name={'Inside Wall'}
-                ref={insideWallRef}
-                position={[0, ly, 0]}
-                rotation={[HALF_PI, 0, 0]}
-                castShadow={castShadow}
-                receiveShadow={shadowEnabled}
-                onPointerDown={handleWallBodyPointerDown}
-                onContextMenu={(e) => {
-                  handleContextMenu(e, insideWallRef.current);
-                }}
-              >
-                <shapeBufferGeometry args={[insideWallShape]} />
-                <meshStandardMaterial
-                  color={transparent ? color : 'white'}
-                  transparent={transparent}
-                  opacity={opacity}
-                  side={night ? BackSide : DoubleSide}
-                />
-              </mesh>
+          {/* inside wall */}
+          <mesh
+            name={'Inside Wall'}
+            ref={insideWallRef}
+            position={[0, ly, 0]}
+            rotation={[HALF_PI, 0, 0]}
+            castShadow={castShadow}
+            receiveShadow={shadowEnabled}
+            onPointerDown={handleWallBodyPointerDown}
+            onContextMenu={(e) => {
+              handleContextMenu(e, insideWallRef.current);
+            }}
+          >
+            <shapeBufferGeometry args={[insideWallShape]} />
+            <meshStandardMaterial
+              color={transparent ? color : 'white'}
+              transparent={transparent}
+              opacity={opacity}
+              side={night ? BackSide : DoubleSide}
+            />
+          </mesh>
 
-              <mesh rotation={[HALF_PI, 0, 0]} position={[0, ly - 0.01, 0]} receiveShadow={true}>
-                <shapeBufferGeometry args={[insideWallShape]} />
-                <meshStandardMaterial color={'white'} side={FrontSide} transparent={transparent} opacity={opacity} />
-              </mesh>
+          <mesh rotation={[HALF_PI, 0, 0]} position={[0, ly - 0.01, 0]} receiveShadow={true}>
+            <shapeBufferGeometry args={[insideWallShape]} />
+            <meshStandardMaterial color={'white'} side={FrontSide} transparent={transparent} opacity={opacity} />
+          </mesh>
 
-              {/* top surface */}
-              {!roofId && (
-                <mesh
-                  name={'Top Wall'}
-                  ref={topSurfaceRef}
-                  material={whiteMaterialDouble}
-                  position={[0, hy, hz]}
-                  castShadow={castShadow}
-                  receiveShadow={shadowEnabled}
-                  onPointerDown={handleWallBodyPointerDown}
-                  onContextMenu={(e) => {
-                    handleContextMenu(e, topSurfaceRef.current);
-                  }}
-                >
-                  <shapeBufferGeometry args={[topWallShape]} />
-                </mesh>
-              )}
-
-              {/* side surfaces */}
-              {leftOffset === 0 && (
-                <Plane
-                  args={[leftRoofHeight ?? lz, ly]}
-                  material={whiteMaterialDouble}
-                  position={[-hx + 0.01, hy, -(lz - (leftRoofHeight ?? lz)) / 2]}
-                  rotation={[0, HALF_PI, 0]}
-                  castShadow={castShadow}
-                  receiveShadow={shadowEnabled}
-                  onPointerDown={handleWallBodyPointerDown}
-                />
-              )}
-              {rightOffset === 0 && (
-                <Plane
-                  args={[rightRoofHeight ?? lz, ly]}
-                  material={whiteMaterialDouble}
-                  position={[hx - 0.01, hy, -(lz - (rightRoofHeight ?? lz)) / 2]}
-                  rotation={[0, HALF_PI, 0]}
-                  castShadow={castShadow}
-                  receiveShadow={shadowEnabled}
-                  onPointerDown={handleWallBodyPointerDown}
-                />
-              )}
-
-              {/* intersection plane */}
-              <mesh
-                // Important: name related to selectMe function in common store
-                name={`Wall Intersection Plane ${id}`}
-                ref={intersectionPlaneRef}
-                position={[0, ly / 2 + 0.01, 0]}
-                rotation={[HALF_PI, 0, 0]}
-                visible={false}
-                onPointerDown={handleIntersectionPointerDown}
-                onPointerUp={handleIntersectionPointerUp}
-                onPointerMove={handleIntersectionPointerMove}
-                onPointerOut={handleIntersectionPointerOut}
-              >
-                <shapeBufferGeometry args={[intersectionPlaneShape]} />
-                <meshBasicMaterial />
-              </mesh>
-
-              {elementsOnWall.map((e) => {
-                switch (e.type) {
-                  case ObjectType.Window: {
-                    return (
-                      <Window
-                        key={e.id}
-                        {...(e as WindowModel)}
-                        cx={e.cx * lx}
-                        cy={e.cy * ly}
-                        cz={e.cz * lz}
-                        lx={e.lx * lx}
-                        ly={ly}
-                        lz={e.lz * lz}
-                      />
-                    );
-                  }
-                  case ObjectType.Door: {
-                    return (
-                      <Door
-                        key={e.id}
-                        {...(e as DoorModel)}
-                        cx={e.cx * lx}
-                        cy={0}
-                        cz={e.cz * lz}
-                        lx={e.lx * lx}
-                        ly={ly}
-                        lz={e.lz * lz}
-                      />
-                    );
-                  }
-                  case ObjectType.SolarPanel:
-                    let r = 0;
-                    if (foundation && wallModel) {
-                      r = foundation.rotation[2] + wallModel.relativeAngle;
-                    }
-                    return (
-                      <group key={e.id} position={[0, -e.lz / 2, 0]}>
-                        <SolarPanelOnWall {...(e as SolarPanelModel)} cx={e.cx * lx} cz={e.cz * lz} absRotation={r} />
-                      </group>
-                    );
-                  default:
-                    return null;
-                }
-              })}
-            </>
+          {/* top surface */}
+          {!roofId && (
+            <mesh
+              name={'Top Wall'}
+              ref={topSurfaceRef}
+              material={whiteMaterialDouble}
+              position={[0, hy, hz]}
+              castShadow={castShadow}
+              receiveShadow={shadowEnabled}
+              onPointerDown={handleWallBodyPointerDown}
+              onContextMenu={(e) => {
+                handleContextMenu(e, topSurfaceRef.current);
+              }}
+            >
+              <shapeBufferGeometry args={[topWallShape]} />
+            </mesh>
           )}
 
-          {wallStructure === WallStructure.Stud && renderStuds()}
-          {wallStructure === WallStructure.Pillar && renderPillars()}
-
-          {/* wireFrame */}
-          {(wallStructure === WallStructure.Default || (locked && selected)) && (
-            <WallWireFrame
-              lineColor={selected && locked ? LOCKED_ELEMENT_SELECTION_COLOR : lineColor}
-              lineWidth={selected && locked ? 2 : lineWidth}
-              hx={hx}
-              hz={hz}
-              leftHeight={leftRoofHeight}
-              rightHeight={rightRoofHeight}
-              center={centerRoofHeight}
-              centerLeft={centerLeftRoofHeight}
-              centerRight={centerRightRoofHeight}
+          {/* side surfaces */}
+          {leftOffset === 0 && (
+            <Plane
+              args={[wallLeftHeight - realBottomHeight, ly]}
+              material={whiteMaterialDouble}
+              position={[-hx + 0.01, hy, bottomZ + (wallLeftHeight - realBottomHeight) / 2]}
+              rotation={[0, HALF_PI, 0]}
+              castShadow={castShadow}
+              receiveShadow={shadowEnabled}
+              onPointerDown={handleWallBodyPointerDown}
+            />
+          )}
+          {rightOffset === 0 && (
+            <Plane
+              args={[wallRightHeight - realBottomHeight, ly]}
+              material={whiteMaterialDouble}
+              position={[hx - 0.01, hy, bottomZ + (wallRightHeight - realBottomHeight) / 2]}
+              rotation={[0, HALF_PI, 0]}
+              castShadow={castShadow}
+              receiveShadow={shadowEnabled}
+              onPointerDown={handleWallBodyPointerDown}
             />
           )}
 
-          {/* handles */}
-          {selected && !locked && <WallResizeHandleWarpper x={hx} z={hz} id={id} highLight={highLight} />}
-          {selected && !locked && lx > 0.5 && <WallMoveHandleWarpper ply={ly} phz={hz} />}
+          {/* intersection plane for child */}
+          <mesh
+            // Important: name related to selectMe function in common store
+            name={`Wall Intersection Plane ${id}`}
+            ref={intersectionPlaneRef}
+            position={[0, ly / 2 + 0.01, 0]}
+            rotation={[HALF_PI, 0, 0]}
+            visible={false}
+            onPointerDown={handleIntersectionPointerDown}
+            onPointerUp={handleIntersectionPointerUp}
+            onPointerMove={handleIntersectionPointerMove}
+            onPointerOut={handleIntersectionPointerOut}
+          >
+            <shapeBufferGeometry args={[intersectionPlaneShape]} />
+            <meshBasicMaterial />
+          </mesh>
 
-          {/* grid */}
-          {showGrid && (useStore.getState().moveHandleType || useStore.getState().resizeHandleType) && (
-            <group position={[0, -0.001, 0]} rotation={[HALF_PI, 0, 0]}>
-              <ElementGrid hx={hx} hy={hz} hz={0} />
-            </group>
-          )}
+          {elementsOnWall.map((e) => {
+            switch (e.type) {
+              case ObjectType.Window: {
+                return (
+                  <Window
+                    key={e.id}
+                    {...(e as WindowModel)}
+                    cx={e.cx * lx}
+                    cy={e.cy * ly}
+                    cz={e.cz * lz}
+                    lx={e.lx * lx}
+                    ly={ly}
+                    lz={e.lz * lz}
+                  />
+                );
+              }
+              case ObjectType.Door: {
+                if (shownType !== WallDisplayMode.All) return null;
+                return (
+                  <Door
+                    key={e.id}
+                    {...(e as DoorModel)}
+                    cx={e.cx * lx}
+                    cy={0}
+                    cz={e.cz * lz}
+                    lx={e.lx * lx}
+                    ly={ly}
+                    lz={e.lz * lz}
+                  />
+                );
+              }
+              case ObjectType.SolarPanel:
+                let r = 0;
+                if (foundationModel && wallModel) {
+                  r = foundationModel.rotation[2] + wallModel.relativeAngle;
+                }
+                return (
+                  <group key={e.id} position={[0, -e.lz / 2, 0]}>
+                    <SolarPanelOnWall {...(e as SolarPanelModel)} cx={e.cx * lx} cz={e.cz * lz} absRotation={r} />
+                  </group>
+                );
+              default:
+                return null;
+            }
+          })}
+        </>
+      )}
+
+      {wallStructure === WallStructure.Stud && renderStuds()}
+      {wallStructure === WallStructure.Pillar && renderPillars()}
+
+      {/* wireFrame */}
+      {(wallStructure === WallStructure.Default || (locked && selected)) && (
+        <WallWireFrame
+          lineColor={selected && locked ? LOCKED_ELEMENT_SELECTION_COLOR : lineColor}
+          lineWidth={selected && locked ? 2 : lineWidth}
+          hx={hx}
+          hz={hz}
+          shownType={shownType}
+          bottomHeight={bottomHeight}
+          leftHeight={leftRoofHeight}
+          rightHeight={rightRoofHeight}
+          center={centerRoofHeight}
+          centerLeft={centerLeftRoofHeight}
+          centerRight={centerRightRoofHeight}
+        />
+      )}
+
+      {/* grid */}
+      {showGrid && (useStore.getState().moveHandleType || useStore.getState().resizeHandleType) && (
+        <group position={[0, -0.001, 0]} rotation={[HALF_PI, 0, 0]}>
+          <ElementGrid hx={hx} hy={hz} hz={0} />
         </group>
       )}
     </>
