@@ -14,6 +14,7 @@ import { DEFAULT_WINDOW_SHINESS } from 'src/constants';
 import { ThreeEvent } from '@react-three/fiber';
 import RectangleWindow from './rectangleWindow';
 import ArchedWindow from './archedWindow';
+import { RulerOnWall } from '../rulerOnWall';
 
 export const defaultShutter = { showLeft: false, showRight: false, color: 'grey', width: 0.5 };
 
@@ -303,6 +304,9 @@ const Window = (windowModel: WindowModel) => {
       onContextMenu={onContextMenu}
     >
       {renderWindow()}
+
+      {/* ruler */}
+      {selected && <RulerOnWall element={windowModel} />}
 
       {/* handles */}
       {selected && !locked && <WindowHandleWrapper lx={lx} lz={lz} windowType={windowType} />}

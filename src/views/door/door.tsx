@@ -16,6 +16,7 @@ import { ArchResizeHandle } from '../window/windowHandleWrapper';
 import { DoubleSide, FrontSide, MeshStandardMaterial } from 'three';
 import { Plane } from '@react-three/drei';
 import { HALF_PI, INVALID_ELEMENT_COLOR } from 'src/constants';
+import { RulerOnWall } from '../rulerOnWall';
 
 interface DoorHandleWapperProps {
   dimension: number[];
@@ -191,6 +192,8 @@ const Door = (doorModel: DoorModel) => {
       onContextMenu={handleContextMenu}
     >
       {renderDoor()}
+
+      {selected && <RulerOnWall element={doorModel} />}
 
       {selected && !locked && <DoorHandleWapper dimension={dimensionData} doorType={doorType} />}
 

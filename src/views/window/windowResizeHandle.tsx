@@ -50,11 +50,17 @@ const WindowResizeHandle = ({ x, z, handleType }: WindowResizeHandleProps) => {
       }}
       onPointerEnter={() => {
         setColor('red');
+        setCommonStore((state) => {
+          state.hoveredHandle = handleType;
+        });
       }}
       onPointerLeave={() => {
         if (resizeHandleType === null) {
           setColor('white');
         }
+        setCommonStore((state) => {
+          state.hoveredHandle = null;
+        });
       }}
     >
       <meshBasicMaterial attach="material" color={color} />
