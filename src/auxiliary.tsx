@@ -70,7 +70,10 @@ export const Auxiliary = () => {
         <gridHelper rotation={[HALF_PI, 0, 0]} name={'Grid'} args={[gridSize, gridDivisions, 'gray', '#444444']} />
       )}
       {(rotateHandleType || hoverRotationHandle) && element && legalOnGround() && <PolarGrid element={element} />}
-      {(showVerticalRuler || Util.isTopResizeHandle(hoveredHandle)) && element && <VerticalRuler element={element} />}
+      {(showVerticalRuler ||
+        Util.isTopResizeHandle(hoveredHandle) ||
+        (element?.type === ObjectType.Wall && Util.isTopResizeHandleOfWall(hoveredHandle))) &&
+        element && <VerticalRuler element={element} />}
     </>
   );
 };

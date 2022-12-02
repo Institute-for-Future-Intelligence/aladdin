@@ -674,6 +674,10 @@ export class Util {
     );
   }
 
+  static isTopResizeHandleOfWall(handle: MoveHandleType | ResizeHandleType | RotateHandleType | null) {
+    return handle === ResizeHandleType.UpperLeft || handle === ResizeHandleType.UpperRight;
+  }
+
   static isMoveHandle(handle: MoveHandleType | ResizeHandleType | RotateHandleType | null): boolean {
     // unfortunately, I cannot find a better way to tell the type of enum variable
     return (

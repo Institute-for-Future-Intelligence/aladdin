@@ -411,6 +411,20 @@ const Sky = ({ theme = 'Default' }: SkyProps) => {
             case ObjectType.Human:
               handleTreeOrHumanRefMove(useStoreRef.getState().humanRef, e);
               break;
+            case ObjectType.Wall:
+              if (Util.isTopResizeHandleOfWall(resizeHandleType)) {
+                setCommonStore((state) => {
+                  for (const e of state.elements) {
+                    if (e.id === grabRef.current?.id) {
+                      e.cz = Math.max(0.05, p.z / 2);
+                      e.lz = Math.max(0.1, p.z);
+                      break;
+                    }
+                  }
+                  state.selectedElementHeight = Math.max(0.1, p.z);
+                });
+              }
+              break;
             case ObjectType.Cuboid:
               if (Util.isTopResizeHandle(resizeHandleType)) {
                 setCommonStore((state) => {

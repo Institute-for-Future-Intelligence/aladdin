@@ -51,7 +51,8 @@ export const VerticalRuler = ({ element }: { element: ElementModel }) => {
 
   useEffect(() => {
     if (element.type === ObjectType.Wall) {
-      if (hoveredHandle === ResizeHandleType.UpperLeft || hoveredHandle === ResizeHandleType.UpperRight) {
+      if (Util.isTopResizeHandleOfWall(hoveredHandle)) {
+        // TODO: The ruler should be drawn outisde the wall so that it is visible all the time
         const handlePos = getResizeHandlePosition(element, hoveredHandle as ResizeHandleType);
         const cameraDir = getCameraDirection();
         const rotation = -Math.atan2(cameraDir.x, cameraDir.y) + Math.PI;
@@ -67,7 +68,7 @@ export const VerticalRuler = ({ element }: { element: ElementModel }) => {
         setRotation(new Euler(HALF_PI, 0, rotation, 'ZXY'));
       }
     }
-  }, [hoveredHandle, element]);
+  }, [hoveredHandle]);
 
   useEffect(() => {
     setHeight(Math.ceil(selectedElementHeight) + 1);
@@ -76,14 +77,9 @@ export const VerticalRuler = ({ element }: { element: ElementModel }) => {
 
   const tickLabels = new Array(height + 1).fill(0);
 
-  let show = position !== undefined && rotation !== undefined;
-  if (element.type === ObjectType.Wall) {
-    show = hoveredHandle === ResizeHandleType.UpperLeft || hoveredHandle === ResizeHandleType.UpperRight;
-  }
-
   return (
     <>
-      {show && (
+      {position && rotation && (
         <group position={position} rotation={rotation} name={'Vertical Ruler'}>
           <Line
             userData={{ unintersectable: true }}
