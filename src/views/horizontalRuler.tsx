@@ -302,68 +302,86 @@ export const HorizontalRuler = ({ element, verticalLift }: HorizontalRulerProps)
   }, [hx, hy, hz]);
 
   if (resizeHandleType) {
-    switch (resizeHandleType) {
-      case ResizeHandleType.LowerLeft:
-        return (
-          <>
-            {ll2ul}
-            {ll2lr}
-          </>
-        );
-      case ResizeHandleType.LowerRight:
-        return (
-          <>
-            {lr2ur}
-            {ll2lr}
-          </>
-        );
-      case ResizeHandleType.UpperLeft:
-        return (
-          <>
-            {ll2ul}
-            {ul2ur}
-          </>
-        );
-      case ResizeHandleType.UpperRight:
-        return (
-          <>
-            {lr2ur}
-            {ul2ur}
-          </>
-        );
+    if (element.type === ObjectType.Wall) {
+      switch (resizeHandleType) {
+        case ResizeHandleType.LowerLeft:
+          return ll2lr;
+        case ResizeHandleType.LowerRight:
+          return ll2lr;
+      }
+    } else {
+      switch (resizeHandleType) {
+        case ResizeHandleType.LowerLeft:
+          return (
+            <>
+              {ll2ul}
+              {ll2lr}
+            </>
+          );
+        case ResizeHandleType.LowerRight:
+          return (
+            <>
+              {lr2ur}
+              {ll2lr}
+            </>
+          );
+        case ResizeHandleType.UpperLeft:
+          return (
+            <>
+              {ll2ul}
+              {ul2ur}
+            </>
+          );
+        case ResizeHandleType.UpperRight:
+          return (
+            <>
+              {lr2ur}
+              {ul2ur}
+            </>
+          );
+      }
     }
   }
 
   if (hoveredHandle) {
-    switch (hoveredHandle) {
-      case ResizeHandleType.LowerLeft:
-        return (
-          <>
-            {ll2ul}
-            {ll2lr}
-          </>
-        );
-      case ResizeHandleType.LowerRight:
-        return (
-          <>
-            {lr2ur}
-            {ll2lr}
-          </>
-        );
-      case ResizeHandleType.UpperLeft:
-        return (
-          <>
-            {ll2ul}
-            {ul2ur}
-          </>
-        );
-      case ResizeHandleType.UpperRight:
-        return (
-          <>
-            {lr2ur}
-            {ul2ur}
-          </>
-        );
+    if (element.type === ObjectType.Wall) {
+      switch (hoveredHandle) {
+        case ResizeHandleType.LowerLeft:
+          return ll2lr;
+        case ResizeHandleType.LowerRight:
+          return ll2lr;
+      }
+    } else {
+      switch (hoveredHandle) {
+        case ResizeHandleType.LowerLeft:
+          return (
+            <>
+              {ll2ul}
+              {ll2lr}
+            </>
+          );
+        case ResizeHandleType.LowerRight:
+          return (
+            <>
+              {lr2ur}
+              {ll2lr}
+            </>
+          );
+        case ResizeHandleType.UpperLeft:
+          return (
+            <>
+              {ll2ul}
+              {ul2ur}
+            </>
+          );
+        case ResizeHandleType.UpperRight:
+          return (
+            <>
+              {lr2ur}
+              {ul2ur}
+            </>
+          );
+      }
     }
   }
 

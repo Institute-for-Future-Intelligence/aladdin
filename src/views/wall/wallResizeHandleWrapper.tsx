@@ -2,7 +2,7 @@
  * @Copyright 2021-2022. Institute for Future Intelligence, Inc.
  */
 
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useRef, useState } from 'react';
 import { Box, Plane } from '@react-three/drei';
 import { DoubleSide, Euler, Mesh, Vector3 } from 'three';
 import { useStore } from 'src/stores/common';
@@ -10,8 +10,8 @@ import { useStoreRef } from 'src/stores/commonRef';
 import { ObjectType, ResizeHandleType } from 'src/types';
 import { HALF_PI, HIGHLIGHT_HANDLE_COLOR, RESIZE_HANDLE_COLOR } from 'src/constants';
 import * as Selector from 'src/stores/selector';
-import { ThreeEvent, useThree } from '@react-three/fiber';
-import { WallModel, WallDisplayMode } from 'src/models/WallModel';
+import { ThreeEvent } from '@react-three/fiber';
+import { WallDisplayMode, WallModel } from 'src/models/WallModel';
 import { useHandleSize } from './hooks';
 import { Util } from 'src/Util';
 import { UndoableResizeWallHeight } from 'src/undo/UndoableResize';
@@ -35,6 +35,7 @@ interface WallResizeHandleWarpperProps {
 }
 
 const WallResizeHandle = React.memo(({ x, z, handleType, highLight, handleSize }: ResizeHandlesProps) => {
+  const setCommonStore = useStore(Selector.set);
   const resizeHandleType = useStore(Selector.resizeHandleType);
   const addedWallID = useStore(Selector.addedWallId);
 
@@ -62,11 +63,27 @@ const WallResizeHandle = React.memo(({ x, z, handleType, highLight, handleSize }
       name={handleType}
       args={[lx, ly, lz]}
       position={[x, 0, z]}
+      onPointerDown={() => {
+        setCommonStore((state) => {
+          state.resizeHandleType = handleType;
+        });
+      }}
+      onPointerUp={() => {
+        setCommonStore((state) => {
+          state.resizeHandleType = null;
+        });
+      }}
       onPointerOver={() => {
         setHovered(true);
+        setCommonStore((state) => {
+          state.hoveredHandle = handleType;
+        });
       }}
       onPointerOut={() => {
         setHovered(false);
+        setCommonStore((state) => {
+          state.hoveredHandle = null;
+        });
       }}
     >
       <meshBasicMaterial color={color} />

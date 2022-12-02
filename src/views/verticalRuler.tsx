@@ -11,7 +11,7 @@ import { useStore } from '../stores/common';
 import * as Selector from '../stores/selector';
 import { ElementModel } from '../models/ElementModel';
 import { HALF_PI } from '../constants';
-import { ResizeHandleType } from '../types';
+import { ObjectType, ResizeHandleType } from '../types';
 import { Util } from '../Util';
 
 export const VerticalRuler = ({ element }: { element: ElementModel }) => {
@@ -47,28 +47,43 @@ export const VerticalRuler = ({ element }: { element: ElementModel }) => {
       setPosition(new Vector3(handlePos.x, handlePos.y, 0));
       setRotation(new Euler(HALF_PI, 0, rotation, 'ZXY'));
     }
-  }, [resizeHandleType]);
+  }, [resizeHandleType, element]);
 
   useEffect(() => {
-    if (Util.isTopResizeHandle(hoveredHandle)) {
-      const handlePos = getResizeHandlePosition(element, hoveredHandle as ResizeHandleType);
-      const cameraDir = getCameraDirection();
-      const rotation = -Math.atan2(cameraDir.x, cameraDir.y) + Math.PI;
-      setPosition(new Vector3(handlePos.x, handlePos.y, 0));
-      setRotation(new Euler(HALF_PI, 0, rotation, 'ZXY'));
+    if (element.type === ObjectType.Wall) {
+      if (hoveredHandle === ResizeHandleType.UpperLeft || hoveredHandle === ResizeHandleType.UpperRight) {
+        const handlePos = getResizeHandlePosition(element, hoveredHandle as ResizeHandleType);
+        const cameraDir = getCameraDirection();
+        const rotation = -Math.atan2(cameraDir.x, cameraDir.y) + Math.PI;
+        setPosition(new Vector3(handlePos.x, handlePos.y, 0));
+        setRotation(new Euler(HALF_PI, 0, rotation, 'ZXY'));
+      }
+    } else {
+      if (Util.isTopResizeHandle(hoveredHandle)) {
+        const handlePos = getResizeHandlePosition(element, hoveredHandle as ResizeHandleType);
+        const cameraDir = getCameraDirection();
+        const rotation = -Math.atan2(cameraDir.x, cameraDir.y) + Math.PI;
+        setPosition(new Vector3(handlePos.x, handlePos.y, 0));
+        setRotation(new Euler(HALF_PI, 0, rotation, 'ZXY'));
+      }
     }
-  }, [hoveredHandle]);
+  }, [hoveredHandle, element]);
 
   useEffect(() => {
     setHeight(Math.ceil(selectedElementHeight) + 1);
-    setShownHeight(selectedElementHeight.toFixed(1));
+    setShownHeight(selectedElementHeight.toFixed(1) + ' m');
   }, [selectedElementHeight]);
 
   const tickLabels = new Array(height + 1).fill(0);
 
+  let show = position !== undefined && rotation !== undefined;
+  if (element.type === ObjectType.Wall) {
+    show = hoveredHandle === ResizeHandleType.UpperLeft || hoveredHandle === ResizeHandleType.UpperRight;
+  }
+
   return (
     <>
-      {position && rotation && (
+      {show && (
         <group position={position} rotation={rotation} name={'Vertical Ruler'}>
           <Line
             userData={{ unintersectable: true }}

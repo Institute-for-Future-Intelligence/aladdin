@@ -63,6 +63,7 @@ import { SolarPanelModel } from 'src/models/SolarPanelModel';
 import SolarPanelOnWall from '../solarPanel/solarPanelOnWall';
 import { useElements } from './hooks';
 import { FoundationModel } from 'src/models/FoundationModel';
+import { HorizontalRuler } from '../horizontalRuler';
 
 export interface WallProps {
   wallModel: WallModel;
@@ -1904,6 +1905,9 @@ const Wall = ({ wallModel, foundationModel }: WallProps) => {
           centerRight={centerRightRoofHeight}
         />
       )}
+
+      {/* ruler */}
+      {selected && <HorizontalRuler element={wallModel} verticalLift={0} />}
 
       {/* grid */}
       {showGrid && (useStore.getState().moveHandleType || useStore.getState().resizeHandleType) && (
