@@ -30,6 +30,7 @@ interface WallResizeHandleWarpperProps {
   parentLz: number;
   x: number;
   z: number;
+  relativeAngle: number;
   highLight: boolean;
   fill: WallFill;
   unfilledHeight: number;
@@ -96,7 +97,7 @@ const WallResizeHandle = React.memo(({ id, x, z, handleType, highLight, handleSi
 });
 
 const WallResizeHandleWrapper = React.memo(
-  ({ id, parentLz, x, z, unfilledHeight, fill, highLight }: WallResizeHandleWarpperProps) => {
+  ({ id, parentLz, x, z, relativeAngle, unfilledHeight, fill, highLight }: WallResizeHandleWarpperProps) => {
     const setCommonStore = useStore(Selector.set);
     const orthographic = useStore(Selector.viewState.orthographic);
 
@@ -118,7 +119,7 @@ const WallResizeHandleWrapper = React.memo(
       const dir = useStore.getState().cameraDirection;
       const r = Math.atan2(dir.x, dir.y);
       setIntersectionPlanePosition(new Vector3(x, 0, 0));
-      setIntersectionPlaneRotation(new Euler(HALF_PI, 0, -r, 'ZXY'));
+      setIntersectionPlaneRotation(new Euler(HALF_PI, 0, -r - relativeAngle, 'ZXY'));
       setShowIntersectionPlane(true);
     };
 
