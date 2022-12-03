@@ -17,7 +17,7 @@ import { UnoableResizeGambrelAndMansardRoofRidge } from 'src/undo/UndoableResize
 import { Util } from 'src/Util';
 import { CanvasTexture, DoubleSide, Euler, Mesh, Raycaster, Vector2, Vector3 } from 'three';
 import {
-  addUndoableResizeRoofHeight,
+  addUndoableResizeRoofRise,
   RoofSegmentProps,
   handleContextMenu,
   handlePointerDown,
@@ -29,7 +29,13 @@ import {
 } from './roofRenderer';
 import { ObjectType } from 'src/types';
 import { RoofUtil } from './RoofUtil';
-import { useCurrWallArray, useElementUndoable, useUpdateSegmentVerticesMap, useRoofHeight } from './hooks';
+import {
+  useCurrWallArray,
+  useElementUndoable,
+  useUpdateSegmentVerticesMap,
+  useRoofHeight,
+  useUpdateOldRoofFiles,
+} from './hooks';
 import RoofSegment from './roofSegment';
 
 enum RoofHandleType {
@@ -116,37 +122,40 @@ const intersectionPlaneRotation = new Euler();
 const zeroVector2 = new Vector2();
 const zVector3 = new Vector3(0, 0, 1);
 
-const GambrelRoof = ({
-  id,
-  cx,
-  cy,
-  cz,
-  lz,
-  wallsId,
-  parentId,
-  topRidgeLeftPoint,
-  topRidgeRightPoint,
-  frontRidgeLeftPoint,
-  frontRidgeRightPoint,
-  backRidgeLeftPoint,
-  backRidgeRightPoint,
-  selected,
-  textureType,
-  color = 'white',
-  sideColor = 'white',
-  overhang,
-  thickness,
-  locked,
-  lineColor = 'black',
-  lineWidth = 0.2,
-  roofType,
-}: GambrelRoofModel) => {
+const GambrelRoof = (roofModel: GambrelRoofModel) => {
+  let {
+    id,
+    cx,
+    cy,
+    cz,
+    lz,
+    wallsId,
+    parentId,
+    topRidgeLeftPoint,
+    topRidgeRightPoint,
+    frontRidgeLeftPoint,
+    frontRidgeRightPoint,
+    backRidgeLeftPoint,
+    backRidgeRightPoint,
+    selected,
+    textureType,
+    color = 'white',
+    sideColor = 'white',
+    overhang,
+    thickness,
+    locked,
+    lineColor = 'black',
+    lineWidth = 0.2,
+    roofType,
+    rise = lz,
+  } = roofModel;
   const setCommonStore = useStore(Selector.set);
   const removeElementById = useStore(Selector.removeElementById);
 
   const currentWallArray = useCurrWallArray(wallsId[0]);
 
-  const { highestWallHeight, topZ, lzInnerState, setLzInnerState } = useRoofHeight(currentWallArray, lz, true);
+  const { highestWallHeight, topZ, riseInnerState, setRiseInnerState } = useRoofHeight(currentWallArray, rise, true);
+  useUpdateOldRoofFiles(roofModel, highestWallHeight);
 
   const [roofHandleType, setRoofHandleType] = useState(RoofHandleType.Null);
   const [enableIntersectionPlane, setEnableIntersectionPlane] = useState(false);
@@ -822,7 +831,7 @@ const GambrelRoof = ({
                         newLz + highestWallHeight,
                       ])
                     ) {
-                      setLzInnerState(newLz);
+                      setRiseInnerState(newLz);
                     }
                     break;
                   }
@@ -843,7 +852,7 @@ const GambrelRoof = ({
                             if (
                               RoofUtil.isRoofValid(id, currentWallArray[3].id, undefined, undefined, undefined, [
                                 px,
-                                frontRidgeLeftPoint[1] * lz + highestWallHeight,
+                                frontRidgeLeftPoint[1] * rise + highestWallHeight,
                               ])
                             ) {
                               (e as GambrelRoofModel).frontRidgeLeftPoint[0] = px;
@@ -875,7 +884,7 @@ const GambrelRoof = ({
                                 id,
                                 currentWallArray[3].id,
                                 undefined,
-                                [px, topRidgeLeftPoint[1] * lz + highestWallHeight],
+                                [px, topRidgeLeftPoint[1] * rise + highestWallHeight],
                                 undefined,
                                 undefined,
                               )
@@ -909,7 +918,7 @@ const GambrelRoof = ({
                                 currentWallArray[3].id,
                                 undefined,
                                 undefined,
-                                [px, backRidgeRightPoint[1] * lz + highestWallHeight],
+                                [px, backRidgeRightPoint[1] * rise + highestWallHeight],
                                 undefined,
                               )
                             ) {
@@ -942,7 +951,7 @@ const GambrelRoof = ({
                                 currentWallArray[1].id,
                                 undefined,
                                 undefined,
-                                [px, frontRidgeRightPoint[1] * lz + highestWallHeight],
+                                [px, frontRidgeRightPoint[1] * rise + highestWallHeight],
                                 undefined,
                               )
                             ) {
@@ -974,7 +983,7 @@ const GambrelRoof = ({
                                 id,
                                 currentWallArray[1].id,
                                 undefined,
-                                [px, topRidgeRightPoint[1] * lz + highestWallHeight],
+                                [px, topRidgeRightPoint[1] * rise + highestWallHeight],
                                 undefined,
                                 undefined,
                               )
@@ -1005,7 +1014,7 @@ const GambrelRoof = ({
                             if (
                               RoofUtil.isRoofValid(id, currentWallArray[1].id, undefined, undefined, undefined, [
                                 px,
-                                backRidgeLeftPoint[1] * lz + highestWallHeight,
+                                backRidgeLeftPoint[1] * rise + highestWallHeight,
                               ])
                             ) {
                               (e as GambrelRoofModel).backRidgeLeftPoint[0] = px;
@@ -1025,7 +1034,7 @@ const GambrelRoof = ({
           onPointerUp={() => {
             switch (roofHandleType) {
               case RoofHandleType.TopMid: {
-                addUndoableResizeRoofHeight(id, lz, lzInnerState);
+                addUndoableResizeRoofRise(id, rise, riseInnerState);
                 break;
               }
               case RoofHandleType.TopLeft: {
@@ -1060,7 +1069,7 @@ const GambrelRoof = ({
             setCommonStore((state) => {
               for (const e of state.elements) {
                 if (e.id === id) {
-                  e.lz = lzInnerState;
+                  e.lz = riseInnerState;
                   break;
                 }
               }

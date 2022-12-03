@@ -15,9 +15,15 @@ import { ObjectType } from 'src/types';
 import { UndoableResizeHipRoofRidge } from 'src/undo/UndoableResize';
 import { Util } from 'src/Util';
 import { CanvasTexture, DoubleSide, Euler, Mesh, Raycaster, Vector2, Vector3 } from 'three';
-import { useCurrWallArray, useElementUndoable, useUpdateSegmentVerticesMap, useRoofHeight } from './hooks';
 import {
-  addUndoableResizeRoofHeight,
+  useCurrWallArray,
+  useElementUndoable,
+  useUpdateSegmentVerticesMap,
+  useRoofHeight,
+  useUpdateOldRoofFiles,
+} from './hooks';
+import {
+  addUndoableResizeRoofRise,
   RoofSegmentProps,
   handleContextMenu,
   handlePointerDown,
@@ -77,27 +83,29 @@ const intersectionPlanePosition = new Vector3();
 const intersectionPlaneRotation = new Euler();
 const zVector3 = new Vector3(0, 0, 1);
 
-const HipRoof = ({
-  id,
-  parentId,
-  cx,
-  cy,
-  cz,
-  lz,
-  wallsId,
-  leftRidgeLength,
-  rightRidgeLength,
-  selected,
-  textureType,
-  color = 'white',
-  sideColor = 'white',
-  overhang,
-  thickness,
-  locked,
-  lineColor = 'black',
-  lineWidth = 0.2,
-  roofType,
-}: HipRoofModel) => {
+const HipRoof = (roofModel: HipRoofModel) => {
+  let {
+    id,
+    parentId,
+    cx,
+    cy,
+    cz,
+    lz,
+    wallsId,
+    leftRidgeLength,
+    rightRidgeLength,
+    selected,
+    textureType,
+    color = 'white',
+    sideColor = 'white',
+    overhang,
+    thickness,
+    locked,
+    lineColor = 'black',
+    lineWidth = 0.2,
+    roofType,
+    rise = lz,
+  } = roofModel;
   // color = '#fb9e00';
 
   const getElementById = useStore(Selector.getElementById);
@@ -129,7 +137,8 @@ const HipRoof = ({
   const [leftRidgeLengthCurr, setLeftRidgeLengthCurr] = useState(leftRidgeLength);
   const [rightRidgeLengthCurr, setRightRidgeLengthCurr] = useState(rightRidgeLength);
 
-  const { highestWallHeight, topZ, lzInnerState, setLzInnerState } = useRoofHeight(currentWallArray, lz);
+  const { highestWallHeight, topZ, riseInnerState, setRiseInnerState } = useRoofHeight(currentWallArray, rise);
+  useUpdateOldRoofFiles(roofModel, highestWallHeight);
 
   const intersectionPlaneRef = useRef<Mesh>(null);
   const { gl, camera } = useThree();
@@ -568,7 +577,7 @@ const HipRoof = ({
                   }
                   case RoofHandleType.Mid: {
                     const newLz = Math.max(0, point.z - foundation.lz - 0.3 - highestWallHeight);
-                    setLzInnerState(newLz);
+                    setRiseInnerState(newLz);
                     break;
                   }
                 }
@@ -579,7 +588,7 @@ const HipRoof = ({
           onPointerUp={() => {
             switch (roofHandleType) {
               case RoofHandleType.Mid: {
-                addUndoableResizeRoofHeight(id, lz, lzInnerState);
+                addUndoableResizeRoofRise(id, rise, riseInnerState);
                 break;
               }
               case RoofHandleType.Left:
@@ -603,7 +612,7 @@ const HipRoof = ({
                   const r = e as HipRoofModel;
                   r.leftRidgeLength = leftRidgeLengthCurr;
                   r.rightRidgeLength = rightRidgeLengthCurr;
-                  r.lz = lzInnerState;
+                  r.lz = riseInnerState;
                   break;
                 }
               }

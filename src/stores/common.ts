@@ -526,7 +526,7 @@ export interface CommonStoreState {
   updateWallStructureById: (id: string, structure: WallStructure) => void;
 
   // for roofs
-  updateRoofHeightById: (id: string, height: number) => void;
+  updateRoofRiseById: (id: string, height: number) => void;
   updateRoofStructureById: (id: string, structure: RoofStructure) => void;
 
   // for plants
@@ -4161,7 +4161,7 @@ export const useStore = create<CommonStoreState>(
             });
           },
 
-          updateRoofHeightById(id, height) {
+          updateRoofRiseById(id, height) {
             immerSet((state: CommonStoreState) => {
               for (const e of state.elements) {
                 if (e.id === id) {

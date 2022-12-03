@@ -71,11 +71,11 @@ export interface UndoableResizeWallHeight extends Undoable {
   newHeights: number[];
 }
 
-export interface UndoableResizeRoofHeight extends Undoable {
+export interface UndoableResizeRoofRise extends Undoable {
   resizedElementId: string;
   resizedElementType: ObjectType;
-  oldHeight: number;
-  newHeight: number;
+  oldRise: number;
+  newRise: number;
 }
 
 export interface UndoableResizeHipRoofRidge extends Undoable {

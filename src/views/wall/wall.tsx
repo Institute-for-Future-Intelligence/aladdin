@@ -1336,7 +1336,7 @@ const Wall = ({ wallModel, foundationModel }: WallProps) => {
             newElement = ElementModelFactory.makePyramidRoof(
               [wallModel.id],
               foundationModel,
-              lz,
+              actionState.roofRise,
               actionState.roofThickness,
               actionState.roofOverhang,
               actionState.roofColor,
@@ -1352,7 +1352,7 @@ const Wall = ({ wallModel, foundationModel }: WallProps) => {
             newElement = ElementModelFactory.makeGableRoof(
               [wallModel.id],
               foundationModel,
-              lz,
+              actionState.roofRise,
               actionState.roofThickness,
               actionState.roofOverhang,
               actionState.roofColor,
@@ -1368,7 +1368,7 @@ const Wall = ({ wallModel, foundationModel }: WallProps) => {
             newElement = ElementModelFactory.makeHipRoof(
               [wallModel.id],
               foundationModel,
-              lz,
+              actionState.roofRise,
               lx / 2,
               actionState.roofThickness,
               actionState.roofOverhang,
@@ -1385,7 +1385,7 @@ const Wall = ({ wallModel, foundationModel }: WallProps) => {
             newElement = ElementModelFactory.makeGambrelRoof(
               [wallModel.id],
               foundationModel,
-              lz,
+              actionState.roofRise,
               actionState.roofThickness,
               actionState.roofOverhang,
               actionState.roofColor,
@@ -1401,7 +1401,7 @@ const Wall = ({ wallModel, foundationModel }: WallProps) => {
             newElement = ElementModelFactory.makeMansardRoof(
               [wallModel.id],
               foundationModel,
-              lz,
+              actionState.roofRise,
               actionState.roofThickness,
               actionState.roofOverhang,
               actionState.roofColor,

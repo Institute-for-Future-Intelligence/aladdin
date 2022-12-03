@@ -26,7 +26,7 @@ const RoofHeightInput = ({ setDialogVisible }: { setDialogVisible: (b: boolean) 
   const setCommonStore = useStore(Selector.set);
   const getRoofSegmentVertices = useStore(Selector.getRoofSegmentVertices);
 
-  const [inputValue, setInputValue] = useState<number>(roof?.lz ?? 0);
+  const [inputValue, setInputValue] = useState<number>(roof?.rise ?? 0);
   const [dragEnabled, setDragEnabled] = useState<boolean>(false);
   const [bounds, setBounds] = useState<DraggableBounds>({ left: 0, top: 0, bottom: 0, right: 0 } as DraggableBounds);
   const dragRef = useRef<HTMLDivElement | null>(null);
@@ -35,7 +35,7 @@ const RoofHeightInput = ({ setDialogVisible }: { setDialogVisible: (b: boolean) 
 
   useEffect(() => {
     if (roof) {
-      setInputValue(roof.lz);
+      setInputValue(roof.rise);
     }
   }, [roof]);
 
@@ -43,7 +43,7 @@ const RoofHeightInput = ({ setDialogVisible }: { setDialogVisible: (b: boolean) 
     setCommonStore((state) => {
       for (const e of state.elements) {
         if (e.id === id && e.type === ObjectType.Roof) {
-          (e as RoofModel).lz = value;
+          (e as RoofModel).rise = value;
           break;
         }
       }
@@ -88,7 +88,7 @@ const RoofHeightInput = ({ setDialogVisible }: { setDialogVisible: (b: boolean) 
         setCommonStore((state) => {
           for (const e of state.elements) {
             if (e.type === ObjectType.Roof && !e.locked) {
-              oldHeightsAll.set(e.id, e.lz);
+              oldHeightsAll.set(e.id, (e as RoofModel).rise);
               updateRoofHeightById(e.id, value);
             }
           }
@@ -114,7 +114,7 @@ const RoofHeightInput = ({ setDialogVisible }: { setDialogVisible: (b: boolean) 
           setCommonStore((state) => {
             for (const e of state.elements) {
               if (e.type === ObjectType.Roof && e.foundationId === roof.foundationId && !e.locked) {
-                oldHeightsAboveFoundation.set(e.id, e.lz);
+                oldHeightsAboveFoundation.set(e.id, (e as RoofModel).rise);
                 updateRoofHeightById(e.id, value);
               }
             }
@@ -142,7 +142,7 @@ const RoofHeightInput = ({ setDialogVisible }: { setDialogVisible: (b: boolean) 
       default:
         if (roof) {
           const updatedRoof = getElementById(roof.id) as RoofModel;
-          const oldHeight = updatedRoof?.lz ?? roof?.lz ?? 0;
+          const oldHeight = updatedRoof?.rise ?? roof?.rise ?? 0;
           const undoableChange = {
             name: 'Set Roof Height',
             timestamp: Date.now(),
@@ -178,7 +178,7 @@ const RoofHeightInput = ({ setDialogVisible }: { setDialogVisible: (b: boolean) 
   };
 
   const close = () => {
-    setInputValue(roof?.lz ?? 0);
+    setInputValue(roof?.rise ?? 0);
     setDialogVisible(false);
   };
 

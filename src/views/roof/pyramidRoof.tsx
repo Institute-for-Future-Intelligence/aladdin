@@ -16,7 +16,7 @@ import { Point2 } from 'src/models/Point2';
 import { Util } from 'src/Util';
 import { ObjectType, RoofTexture } from 'src/types';
 import {
-  addUndoableResizeRoofHeight,
+  addUndoableResizeRoofRise,
   RoofSegmentProps,
   handleContextMenu,
   handlePointerDown,
@@ -33,6 +33,7 @@ import {
   useTransparent,
   useUpdateSegmentVerticesMap,
   useRoofHeight,
+  useUpdateOldRoofFiles,
 } from './hooks';
 import RoofSegment from './roofSegment';
 
@@ -195,26 +196,29 @@ const PyramidRoofWireframe = React.memo(({ roofSegments, thickness, lineWidth, l
   );
 });
 
-const PyramidRoof = ({
-  cx,
-  cy,
-  cz,
-  lz,
-  id,
-  parentId,
-  wallsId,
-  selected,
-  textureType,
-  color = 'white',
-  sideColor = 'white',
-  overhang,
-  thickness,
-  locked,
-  lineWidth = 0.2,
-  lineColor = 'black',
-  roofType,
-  foundationId,
-}: PyramidRoofModel) => {
+const PyramidRoof = (roofModel: PyramidRoofModel) => {
+  let {
+    cx,
+    cy,
+    cz,
+    lz,
+    id,
+    parentId,
+    wallsId,
+    selected,
+    textureType,
+    color = 'white',
+    sideColor = 'white',
+    overhang,
+    thickness,
+    locked,
+    lineWidth = 0.2,
+    lineColor = 'black',
+    roofType,
+    foundationId,
+    rise = lz,
+  } = roofModel;
+
   const { currentWallArray, isLoopRef } = useMultiCurrWallArray(foundationId, id, wallsId);
 
   const setCommonStore = useStore(Selector.set);
@@ -226,7 +230,8 @@ const PyramidRoof = ({
   const ray = useMemo(() => new Raycaster(), []);
   const mouse = useMemo(() => new Vector2(), []);
 
-  const { highestWallHeight, topZ, lzInnerState, setLzInnerState } = useRoofHeight(currentWallArray, lz);
+  const { highestWallHeight, topZ, riseInnerState, setRiseInnerState } = useRoofHeight(currentWallArray, rise);
+  useUpdateOldRoofFiles(roofModel, highestWallHeight);
 
   const [showIntersectionPlane, setShowIntersectionPlane] = useState(false);
 
@@ -728,7 +733,7 @@ const PyramidRoof = ({
                   return;
                 }
                 const newLz = Math.max(0, point.z - foundation.lz - 0.3 - highestWallHeight);
-                setLzInnerState(newLz);
+                setRiseInnerState(newLz);
                 updateRooftopElements(
                   foundation,
                   id,
@@ -741,8 +746,8 @@ const PyramidRoof = ({
             }
           }}
           onPointerUp={(e) => {
-            useStore.getState().updateRoofHeightById(id, lzInnerState);
-            addUndoableResizeRoofHeight(id, lz, lzInnerState);
+            useStore.getState().updateRoofRiseById(id, riseInnerState);
+            addUndoableResizeRoofRise(id, rise, riseInnerState);
             setShowIntersectionPlane(false);
             useStoreRef.getState().setEnableOrbitController(true);
             updateRooftopElements(foundation, id, roofSegments, centerPointV3, topZ, thickness);

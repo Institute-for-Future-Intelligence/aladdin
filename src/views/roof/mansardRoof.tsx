@@ -23,9 +23,10 @@ import {
   useTransparent,
   useUpdateSegmentVerticesMap,
   useRoofHeight,
+  useUpdateOldRoofFiles,
 } from './hooks';
 import {
-  addUndoableResizeRoofHeight,
+  addUndoableResizeRoofRise,
   RoofSegmentProps,
   handleContextMenu,
   handlePointerDown,
@@ -97,30 +98,33 @@ const MansardRoofWirefram = React.memo(({ roofSegments, thickness, lineWidth, li
   );
 });
 
-const MansardRoof = ({
-  parentId,
-  id,
-  wallsId,
-  cx,
-  cy,
-  cz,
-  lz,
-  selected,
-  textureType,
-  color = 'white',
-  sideColor = 'white',
-  overhang,
-  thickness,
-  locked,
-  lineColor = 'black',
-  lineWidth = 0.2,
-  roofType,
-  foundationId,
-  ridgeWidth = 1,
-  // old files data
-  frontRidge,
-  backRidge,
-}: MansardRoofModel) => {
+const MansardRoof = (roofModel: MansardRoofModel) => {
+  let {
+    parentId,
+    id,
+    wallsId,
+    cx,
+    cy,
+    cz,
+    lz,
+    selected,
+    textureType,
+    color = 'white',
+    sideColor = 'white',
+    overhang,
+    thickness,
+    locked,
+    lineColor = 'black',
+    lineWidth = 0.2,
+    roofType,
+    foundationId,
+    ridgeWidth = 1,
+    rise = lz,
+    // old files data
+    frontRidge,
+    backRidge,
+  } = roofModel;
+
   const texture = useRoofTexture(textureType);
   const { currentWallArray, isLoopRef } = useMultiCurrWallArray(foundationId, id, wallsId);
 
@@ -130,7 +134,8 @@ const MansardRoof = ({
   const ray = useStore((state) => state.ray);
   const mouse = useStore((state) => state.mouse);
 
-  const { highestWallHeight, topZ, lzInnerState, setLzInnerState } = useRoofHeight(currentWallArray, lz);
+  const { highestWallHeight, topZ, riseInnerState, setRiseInnerState } = useRoofHeight(currentWallArray, rise);
+  useUpdateOldRoofFiles(roofModel, highestWallHeight);
 
   const [width, setWidth] = useState(ridgeWidth);
   const [maxWidth, setMaxWidth] = useState<number | null>(null);
@@ -734,7 +739,7 @@ const MansardRoof = ({
                   case RoofHandleType.Top: {
                     const newLz = Math.max(0, pointer.z - foundation.lz - 0.6 - highestWallHeight);
                     if (RoofUtil.isRoofValid(id, undefined, undefined, [0, newLz + highestWallHeight])) {
-                      setLzInnerState(newLz);
+                      setRiseInnerState(newLz);
                     }
                     break;
                   }
@@ -766,7 +771,7 @@ const MansardRoof = ({
           onPointerUp={() => {
             switch (roofHandleType) {
               case RoofHandleType.Top: {
-                addUndoableResizeRoofHeight(id, lz, lzInnerState);
+                addUndoableResizeRoofRise(id, rise, riseInnerState);
                 break;
               }
               case RoofHandleType.Ridge: {
@@ -777,7 +782,7 @@ const MansardRoof = ({
             setCommonStore((state) => {
               for (const e of state.elements) {
                 if (e.id === id) {
-                  e.lz = lzInnerState;
+                  e.lz = riseInnerState;
                   (e as MansardRoofModel).ridgeWidth = width;
                   break;
                 }

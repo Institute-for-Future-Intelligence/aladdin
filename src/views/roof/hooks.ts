@@ -27,6 +27,7 @@ import { LightModel } from '../../models/LightModel';
 import { RoofSegmentProps } from './roofRenderer';
 import { Util } from 'src/Util';
 import { RoofUtil } from './RoofUtil';
+import { RoofModel } from 'src/models/RoofModel';
 
 export const useElementUndoable = () => {
   const grabRef = useRef<ElementModel | null>(null);
@@ -292,20 +293,20 @@ export const useMultiCurrWallArray = (fId: string | undefined, roofId: string, w
   return { currentWallArray, isLoopRef };
 };
 
-export const useRoofHeight = (currentWallArray: WallModel[], lz: number, ignoreSide?: boolean) => {
+export const useRoofHeight = (currentWallArray: WallModel[], rise: number, ignoreSide?: boolean) => {
   const highestWallHeight = useMemo(
     () => RoofUtil.getHighestWallHeight(currentWallArray, ignoreSide),
     [currentWallArray],
   );
-  const [lzInnerState, setLzInnerState] = useState(lz); // height from top to maxWallHeight
-  const topZ = highestWallHeight + lzInnerState; // height from top to foundation
+  const [riseInnerState, setRiseInnerState] = useState(rise); // height from top to maxWallHeight
+  const topZ = highestWallHeight + riseInnerState; // height from top to foundation
   useEffect(() => {
-    if (lz !== lzInnerState) {
-      setLzInnerState(lz);
+    if (rise !== riseInnerState) {
+      setRiseInnerState(rise);
     }
-  }, [lz]);
+  }, [rise]);
 
-  return { highestWallHeight, topZ, lzInnerState, setLzInnerState };
+  return { highestWallHeight, topZ, riseInnerState, setRiseInnerState };
 };
 
 export const useUpdateSegmentVerticesMap = (
@@ -356,4 +357,24 @@ export const useUpdateSegmentVerticesMap = (
       debouncedUpdate(roofSegments, centroid, mansardTop);
     }
   }, [roofSegments, centroid]);
+};
+
+export const useUpdateOldRoofFiles = (roofModel: RoofModel, highestWallHeight: number) => {
+  const fileChanged = useStore(Selector.fileChanged);
+  useEffect(() => {
+    if (roofModel.rise === undefined) {
+      useStore.getState().set((state) => {
+        for (const e of state.elements) {
+          if (e.id === roofModel.id && e.type === ObjectType.Roof) {
+            const roof = e as RoofModel;
+            if (roof.rise === undefined) {
+              roof.rise = roof.lz - highestWallHeight;
+              roof.lz = 0;
+            }
+            break;
+          }
+        }
+      });
+    }
+  }, [fileChanged]);
 };

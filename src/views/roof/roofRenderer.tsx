@@ -18,7 +18,7 @@ import PyramidRoof from './pyramidRoof';
 import GableRoof from './gableRoof';
 import HipRoof from './hipRoof';
 import GambrelRoof from './gambrelRoof';
-import { UndoableResizeRoofHeight } from 'src/undo/UndoableResize';
+import { UndoableResizeRoofRise } from 'src/undo/UndoableResize';
 import MansardRoof from './mansardRoof';
 import { Euler, Mesh, Vector3 } from 'three';
 import { ObjectType, Orientation } from 'src/types';
@@ -216,21 +216,21 @@ export const handleRoofBodyPointerDown = (e: ThreeEvent<PointerEvent>, id: strin
   }
 };
 
-export const addUndoableResizeRoofHeight = (elemId: string, oldHeight: number, newHeight: number) => {
+export const addUndoableResizeRoofRise = (elemId: string, oldRise: number, newRise: number) => {
   const undoable = {
-    name: 'Resize Roof Height',
+    name: 'Resize Roof Rise',
     timestamp: Date.now(),
     resizedElementId: elemId,
     resizedElementType: ObjectType.Roof,
-    oldHeight: oldHeight,
-    newHeight: newHeight,
+    oldRise: oldRise,
+    newRise: newRise,
     undo: () => {
-      useStore.getState().updateRoofHeightById(undoable.resizedElementId, undoable.oldHeight);
+      useStore.getState().updateRoofRiseById(undoable.resizedElementId, undoable.oldRise);
     },
     redo: () => {
-      useStore.getState().updateRoofHeightById(undoable.resizedElementId, undoable.newHeight);
+      useStore.getState().updateRoofRiseById(undoable.resizedElementId, undoable.newRise);
     },
-  } as UndoableResizeRoofHeight;
+  } as UndoableResizeRoofRise;
   useStore.getState().addUndoable(undoable);
 };
 

@@ -719,6 +719,7 @@ export class ElementModelCloner {
       lx: roof.lx,
       ly: roof.ly,
       lz: roof.lz,
+      rise: roof.rise,
       color: roof.color,
       sideColor: roof.sideColor,
       normal: [...roof.normal],

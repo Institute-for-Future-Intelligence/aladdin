@@ -24,7 +24,7 @@ import { useThree } from '@react-three/fiber';
 import { HALF_PI } from 'src/constants';
 import { ElementModel } from 'src/models/ElementModel';
 import {
-  addUndoableResizeRoofHeight,
+  addUndoableResizeRoofRise,
   RoofSegmentProps,
   handleContextMenu,
   handlePointerDown,
@@ -47,6 +47,7 @@ import {
   useTransparent,
   useUpdateSegmentVerticesMap,
   useRoofHeight,
+  useUpdateOldRoofFiles,
 } from './hooks';
 import { ConvexGeometry } from 'src/js/ConvexGeometry';
 import { CSG } from 'three-csg-ts';
@@ -286,33 +287,35 @@ const GableRoofWireframe = React.memo(({ roofSegments, thickness, lineWidth, lin
   );
 });
 
-const GableRoof = ({
-  id,
-  parentId,
-  cx,
-  cy,
-  cz,
-  lz,
-  wallsId,
-  selected,
-  ridgeLeftPoint,
-  ridgeRightPoint,
-  textureType,
-  color = 'white',
-  sideColor = 'white',
-  overhang,
-  thickness,
-  locked,
-  lineColor = 'black',
-  lineWidth = 0.2,
-  roofType,
-  roofStructure,
-  rafterSpacing = 2,
-  rafterWidth = 0.1,
-  rafterColor = 'white',
-  glassTint = '#73D8FF',
-  opacity = 0.5,
-}: GableRoofModel) => {
+const GableRoof = (roofModel: GableRoofModel) => {
+  let {
+    id,
+    parentId,
+    cx,
+    cy,
+    cz,
+    lz,
+    wallsId,
+    selected,
+    ridgeLeftPoint,
+    ridgeRightPoint,
+    textureType,
+    color = 'white',
+    sideColor = 'white',
+    overhang,
+    thickness,
+    locked,
+    lineColor = 'black',
+    lineWidth = 0.2,
+    roofType,
+    roofStructure,
+    rafterSpacing = 2,
+    rafterWidth = 0.1,
+    rafterColor = 'white',
+    glassTint = '#73D8FF',
+    opacity = 0.5,
+    rise = lz,
+  } = roofModel;
   const setCommonStore = useStore(Selector.set);
   const removeElementById = useStore(Selector.removeElementById);
   const updateElementOnRoofFlag = useStore(Selector.updateElementOnRoofFlag);
@@ -323,7 +326,8 @@ const GableRoof = ({
 
   const currentWallArray = useCurrWallArray(wallsId[0]);
 
-  const { highestWallHeight, topZ, lzInnerState, setLzInnerState } = useRoofHeight(currentWallArray, lz, true);
+  const { highestWallHeight, topZ, riseInnerState, setRiseInnerState } = useRoofHeight(currentWallArray, rise, true);
+  useUpdateOldRoofFiles(roofModel, highestWallHeight);
 
   const [showIntersectionPlane, setShowIntersectionPlane] = useState(false);
   const [roofHandleType, setRoofHandleType] = useState<RoofHandleType>(RoofHandleType.Null);
@@ -403,7 +407,7 @@ const GableRoof = ({
     }
     const e = new Euler(0, 0, wall.relativeAngle);
     const v = new Vector3(px * wall.lx, 0, 0);
-    const height = ph * lzInnerState + highestWallHeight;
+    const height = ph * riseInnerState + highestWallHeight;
     return new Vector3(wall.cx, wall.cy, height).add(v.applyEuler(e));
   };
 
@@ -1026,7 +1030,7 @@ const GableRoof = ({
                             newLz + highestWallHeight,
                           ])
                         ) {
-                          setLzInnerState(newLz);
+                          setRiseInnerState(newLz);
                         }
                       }
                     } else {
@@ -1037,7 +1041,7 @@ const GableRoof = ({
                           newLz + highestWallHeight,
                         ])
                       ) {
-                        setLzInnerState(newLz);
+                        setRiseInnerState(newLz);
                       }
                     }
                     break;
@@ -1050,7 +1054,7 @@ const GableRoof = ({
           onPointerUp={() => {
             switch (roofHandleType) {
               case RoofHandleType.Mid: {
-                addUndoableResizeRoofHeight(id, lz, lzInnerState);
+                addUndoableResizeRoofRise(id, rise, riseInnerState);
                 break;
               }
               case RoofHandleType.Left:
@@ -1071,7 +1075,7 @@ const GableRoof = ({
             setCommonStore((state) => {
               for (const e of state.elements) {
                 if (e.id === id) {
-                  e.lz = lzInnerState;
+                  e.lz = riseInnerState;
                   break;
                 }
               }
