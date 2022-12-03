@@ -10,7 +10,7 @@ import { Vector3 } from 'three';
 import EmptyWall from './emptyWall';
 import Wall from './wall';
 import WallMoveHandleWarpper from './wallMoveHandleWrapper';
-import WallResizeHandleWarpper from './wallResizeHandleWrapper';
+import WallResizeHandleWrapper from './wallResizeHandleWrapper';
 import { useUpdataOldFiles } from './hooks';
 import { ObjectType } from 'src/types';
 import { FoundationModel } from 'src/models/FoundationModel';
@@ -79,7 +79,7 @@ const WallRenderer = (wallModel: WallModel) => {
       {selected && !locked && (
         <>
           {lx > 0.5 && <WallMoveHandleWarpper ply={ly} phz={hz} />}
-          <WallResizeHandleWarpper
+          <WallResizeHandleWrapper
             id={id}
             parentLz={foundation.lz}
             x={hx}

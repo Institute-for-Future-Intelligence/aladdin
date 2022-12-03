@@ -7,7 +7,7 @@ import { Box, Plane } from '@react-three/drei';
 import { DoubleSide, Euler, Mesh, Vector3 } from 'three';
 import { useStore } from 'src/stores/common';
 import { useStoreRef } from 'src/stores/commonRef';
-import { ObjectType, ResizeHandleType } from 'src/types';
+import { ActionType, ObjectType, ResizeHandleType } from 'src/types';
 import { HALF_PI, HIGHLIGHT_HANDLE_COLOR, RESIZE_HANDLE_COLOR } from 'src/constants';
 import * as Selector from 'src/stores/selector';
 import { ThreeEvent } from '@react-three/fiber';
@@ -17,6 +17,7 @@ import { Util } from 'src/Util';
 import { UndoableResizeWallHeight } from 'src/undo/UndoableResize';
 
 interface ResizeHandlesProps {
+  id: string;
   x: number;
   z: number;
   handleType: ResizeHandleType;
@@ -34,10 +35,11 @@ interface WallResizeHandleWarpperProps {
   bottomHeight: number;
 }
 
-const WallResizeHandle = React.memo(({ x, z, handleType, highLight, handleSize }: ResizeHandlesProps) => {
+const WallResizeHandle = React.memo(({ id, x, z, handleType, highLight, handleSize }: ResizeHandlesProps) => {
   const setCommonStore = useStore(Selector.set);
   const resizeHandleType = useStore(Selector.resizeHandleType);
   const addedWallID = useStore(Selector.addedWallId);
+  const selectMe = useStore(Selector.selectMe);
 
   const [hovered, setHovered] = useState(false);
 
@@ -63,7 +65,8 @@ const WallResizeHandle = React.memo(({ x, z, handleType, highLight, handleSize }
       name={handleType}
       args={[lx, ly, lz]}
       position={[x, 0, z]}
-      onPointerDown={() => {
+      onPointerDown={(e) => {
+        selectMe(id, e, ActionType.Resize);
         setCommonStore((state) => {
           state.resizeHandleType = handleType;
         });
@@ -73,8 +76,9 @@ const WallResizeHandle = React.memo(({ x, z, handleType, highLight, handleSize }
           state.resizeHandleType = null;
         });
       }}
-      onPointerOver={() => {
+      onPointerOver={(e) => {
         setHovered(true);
+        selectMe(id, e, ActionType.Resize);
         setCommonStore((state) => {
           state.hoveredHandle = handleType;
         });
@@ -91,7 +95,7 @@ const WallResizeHandle = React.memo(({ x, z, handleType, highLight, handleSize }
   );
 });
 
-const WallResizeHandleWarpper = React.memo(
+const WallResizeHandleWrapper = React.memo(
   ({ id, parentLz, x, z, bottomHeight, displayMode, highLight }: WallResizeHandleWarpperProps) => {
     const setCommonStore = useStore(Selector.set);
     const orthographic = useStore(Selector.viewState.orthographic);
@@ -240,6 +244,7 @@ const WallResizeHandleWarpper = React.memo(
       <>
         <group name={'Wall Resize Handle Group'} onPointerDown={handlePointerDown}>
           <WallResizeHandle
+            id={id}
             x={-x}
             z={-z}
             handleType={ResizeHandleType.LowerLeft}
@@ -247,6 +252,7 @@ const WallResizeHandleWarpper = React.memo(
             handleSize={handleSize}
           />
           <WallResizeHandle
+            id={id}
             x={x}
             z={-z}
             handleType={ResizeHandleType.LowerRight}
@@ -256,6 +262,7 @@ const WallResizeHandleWarpper = React.memo(
           {!orthographic && (
             <>
               <WallResizeHandle
+                id={id}
                 x={-x}
                 z={z}
                 handleType={ResizeHandleType.UpperLeft}
@@ -263,6 +270,7 @@ const WallResizeHandleWarpper = React.memo(
                 handleSize={handleSize}
               />
               <WallResizeHandle
+                id={id}
                 x={x}
                 z={z}
                 handleType={ResizeHandleType.UpperRight}
@@ -274,6 +282,7 @@ const WallResizeHandleWarpper = React.memo(
               {displayMode === WallDisplayMode.Partial && (
                 <>
                   <WallResizeHandle
+                    id={id}
                     x={-x}
                     z={-z + bottomHeight}
                     handleType={ResizeHandleType.WallPartialResizeLeft}
@@ -281,6 +290,7 @@ const WallResizeHandleWarpper = React.memo(
                     handleSize={handleSize}
                   />
                   <WallResizeHandle
+                    id={id}
                     x={x}
                     z={-z + bottomHeight}
                     handleType={ResizeHandleType.WallPartialResizeRight}
@@ -312,4 +322,4 @@ const WallResizeHandleWarpper = React.memo(
   },
 );
 
-export default WallResizeHandleWarpper;
+export default WallResizeHandleWrapper;

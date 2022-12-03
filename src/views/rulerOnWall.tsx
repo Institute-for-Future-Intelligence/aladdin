@@ -30,7 +30,7 @@ export const RulerOnWall = ({ element }: RulerOnWallProps) => {
   const ratio = Math.max(0.25, (hx + hz) / 32);
   const rulerOffset = 0.25;
   const fontSize = 30;
-  const yOffset = -0.5;
+  const yOffset = -0.1;
 
   // lower-left to upper-left
   const ll2ul = useMemo(() => {

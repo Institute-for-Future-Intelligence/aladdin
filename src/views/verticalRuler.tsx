@@ -31,7 +31,7 @@ export const VerticalRuler = ({ element }: { element: ElementModel }) => {
   const textGeometryParamsTickLabel = {
     font: font,
     height: 0,
-    size: 0.25,
+    size: 0.2,
   } as TextGeometryParameters;
   const textGeometryParams = {
     font: font,
@@ -91,7 +91,7 @@ export const VerticalRuler = ({ element }: { element: ElementModel }) => {
           />
           <mesh position={[-1.5, selectedElementHeight - 0.175, 0]} userData={{ unintersectable: true }}>
             <textGeometry args={[shownHeight, textGeometryParams]} />
-            <meshStandardMaterial attach="material" color={'white'} />
+            <meshBasicMaterial attach="material" color={'white'} />
           </mesh>
           {tickLabels.map((e, i) => {
             const len = 0.2 + (i % 5 === 0 ? 0.05 : 0);
@@ -109,7 +109,7 @@ export const VerticalRuler = ({ element }: { element: ElementModel }) => {
                 />
                 <mesh position={[0.4, i - 0.125, 0]} userData={{ unintersectable: true }}>
                   {textGeometry}
-                  <meshStandardMaterial attach="material" color={color} />
+                  <meshBasicMaterial attach="material" color={color} />
                 </mesh>
               </group>
             );
