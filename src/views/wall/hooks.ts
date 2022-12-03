@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useState } from 'react';
 import { ElementModel } from 'src/models/ElementModel';
-import { WallModel, WallDisplayMode, WallStructure } from 'src/models/WallModel';
+import { WallModel, WallFill, WallStructure } from 'src/models/WallModel';
 import { useStore } from 'src/stores/common';
 import { Util } from 'src/Util';
 import * as Selector from 'src/stores/selector';
@@ -52,8 +52,8 @@ export const useUpdataOldFiles = (wallModel: WallModel) => {
       wallModel.structureWidth === undefined ||
       wallModel.structureColor === undefined ||
       wallModel.opacity === undefined ||
-      wallModel.displayMode === undefined ||
-      wallModel.bottomHeight === undefined
+      wallModel.fill === undefined ||
+      wallModel.unfilledHeight === undefined
     ) {
       useStore.getState().set((state) => {
         for (const e of state.elements) {
@@ -74,11 +74,11 @@ export const useUpdataOldFiles = (wallModel: WallModel) => {
             if (wall.opacity === undefined) {
               wall.opacity = 0.5;
             }
-            if (wall.displayMode === undefined) {
-              wall.displayMode = WallDisplayMode.All;
+            if (wall.fill === undefined) {
+              wall.fill = WallFill.Full;
             }
-            if (wall.bottomHeight === undefined) {
-              wall.bottomHeight = 0.5;
+            if (wall.unfilledHeight === undefined) {
+              wall.unfilledHeight = 0.5;
             }
             break;
           }

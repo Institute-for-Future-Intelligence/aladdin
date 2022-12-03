@@ -908,10 +908,10 @@ export const i18n_zh_cn = {
       Texture: '材质',
       AllLightsOnWallInside: '所有电灯在牆内',
       AllLightsOnWallOutside: '所有电灯在牆外',
-      DisplayMode: '显示模式',
-      DisplayAll: '全部',
-      DisplayPartial: '部分',
-      DisplayEmpty: '不显示',
+      Fill: '填充',
+      Full: '全部',
+      Partial: '部分',
+      Empty: '空白',
     },
 
     windowMenu: {

@@ -27,7 +27,7 @@ import { CuboidModel } from './CuboidModel';
 import { FoundationModel } from './FoundationModel';
 import { SolarPanelModel } from './SolarPanelModel';
 import { PvModel } from './PvModel';
-import { WallModel, WallDisplayMode, WallStructure } from './WallModel';
+import { WallModel, WallFill, WallStructure } from './WallModel';
 import {
   GableRoofModel,
   GambrelRoofModel,
@@ -560,8 +560,8 @@ export class ElementModelFactory {
     studWidth: number,
     studColor: string,
     opacity: number,
-    displayMode: WallDisplayMode,
-    bottomHeight: number,
+    fill: WallFill,
+    unfilledHeight: number,
     x: number,
     y: number,
     z?: number,
@@ -576,8 +576,8 @@ export class ElementModelFactory {
       lx: 0,
       ly: thickness ?? 0.3,
       lz: height ?? 5,
-      displayMode: displayMode,
-      bottomHeight: bottomHeight,
+      fill: fill,
+      unfilledHeight: unfilledHeight,
       relativeAngle: 0,
       leftPoint: [],
       rightPoint: [],

@@ -11,7 +11,7 @@ import { ActionType, ObjectType, ResizeHandleType } from 'src/types';
 import { HALF_PI, HIGHLIGHT_HANDLE_COLOR, RESIZE_HANDLE_COLOR } from 'src/constants';
 import * as Selector from 'src/stores/selector';
 import { ThreeEvent } from '@react-three/fiber';
-import { WallDisplayMode, WallModel } from 'src/models/WallModel';
+import { WallFill, WallModel } from 'src/models/WallModel';
 import { useHandleSize } from './hooks';
 import { Util } from 'src/Util';
 import { UndoableResizeWallHeight } from 'src/undo/UndoableResize';
@@ -31,8 +31,8 @@ interface WallResizeHandleWarpperProps {
   x: number;
   z: number;
   highLight: boolean;
-  displayMode: WallDisplayMode;
-  bottomHeight: number;
+  fill: WallFill;
+  unfilledHeight: number;
 }
 
 const WallResizeHandle = React.memo(({ id, x, z, handleType, highLight, handleSize }: ResizeHandlesProps) => {
@@ -96,7 +96,7 @@ const WallResizeHandle = React.memo(({ id, x, z, handleType, highLight, handleSi
 });
 
 const WallResizeHandleWrapper = React.memo(
-  ({ id, parentLz, x, z, bottomHeight, displayMode, highLight }: WallResizeHandleWarpperProps) => {
+  ({ id, parentLz, x, z, unfilledHeight, fill, highLight }: WallResizeHandleWarpperProps) => {
     const setCommonStore = useStore(Selector.set);
     const orthographic = useStore(Selector.viewState.orthographic);
 
@@ -108,7 +108,7 @@ const WallResizeHandleWrapper = React.memo(
 
     const intersectionPlaneRef = useRef<Mesh>(null);
     const pointerDownRef = useRef(false);
-    const oldHeightsRef = useRef<number[]>([z * 2, bottomHeight]);
+    const oldHeightsRef = useRef<number[]>([z * 2, unfilledHeight]);
 
     if (orthographic) {
       z = -z;
@@ -123,12 +123,12 @@ const WallResizeHandleWrapper = React.memo(
     };
 
     const updateUndoChange = (id: string, vals: number[]) => {
-      const [lz, bottomHeight] = vals;
+      const [lz, unfilledHeight] = vals;
       setCommonStore((state) => {
         for (const e of state.elements) {
           if (e.id === id && e.type === ObjectType.Wall) {
             e.lz = lz;
-            (e as WallModel).bottomHeight = bottomHeight;
+            (e as WallModel).unfilledHeight = unfilledHeight;
             break;
           }
         }
@@ -179,7 +179,7 @@ const WallResizeHandleWrapper = React.memo(
       }
       useStoreRef.getState().setEnableOrbitController(false);
       pointerDownRef.current = true;
-      oldHeightsRef.current = [z * 2, bottomHeight];
+      oldHeightsRef.current = [z * 2, unfilledHeight];
     };
 
     const handlePointerMove = (e: ThreeEvent<PointerEvent>) => {
@@ -190,7 +190,7 @@ const WallResizeHandleWrapper = React.memo(
           for (const e of state.elements) {
             if (e.id === id && e.type === ObjectType.Wall) {
               const wall = e as WallModel;
-              const newLz = Math.max(wall.bottomHeight + handleSize, p.z - parentLz);
+              const newLz = Math.max(wall.unfilledHeight + handleSize, p.z - parentLz);
               wall.lz = newLz;
               wall.cz = newLz / 2;
               state.actionState.wallHeight = newLz;
@@ -203,9 +203,9 @@ const WallResizeHandleWrapper = React.memo(
         setCommonStore((state) => {
           for (const e of state.elements) {
             if (e.id === id && e.type === ObjectType.Wall) {
-              const newBottomHeight = Util.clamp(p.z - parentLz, handleSize, e.lz - handleSize);
-              (e as WallModel).bottomHeight = newBottomHeight;
-              state.actionState.wallBottomHeight = newBottomHeight;
+              const newUnfilledHeight = Util.clamp(p.z - parentLz, handleSize, e.lz - handleSize);
+              (e as WallModel).unfilledHeight = newUnfilledHeight;
+              state.actionState.wallUnfilledHeight = newUnfilledHeight;
               break;
             }
           }
@@ -225,7 +225,7 @@ const WallResizeHandleWrapper = React.memo(
         resizedElementId: id,
         resizedElementType: ObjectType.Wall,
         oldHeights: [...oldHeightsRef.current],
-        newHeights: [z * 2, bottomHeight],
+        newHeights: [z * 2, unfilledHeight],
         undo() {
           updateUndoChange(this.resizedElementId, this.oldHeights);
         },
@@ -236,7 +236,7 @@ const WallResizeHandleWrapper = React.memo(
       useStore.getState().addUndoable(undoableChangeHeight);
       setCommonStore((state) => {
         state.actionState.wallHeight = z * 2;
-        state.actionState.wallBottomHeight = bottomHeight;
+        state.actionState.wallUnfilledHeight = unfilledHeight;
       });
     };
 
@@ -279,12 +279,12 @@ const WallResizeHandleWrapper = React.memo(
               />
 
               {/* partial resize */}
-              {displayMode === WallDisplayMode.Partial && (
+              {fill === WallFill.Partial && (
                 <>
                   <WallResizeHandle
                     id={id}
                     x={-x}
-                    z={-z + bottomHeight}
+                    z={-z + unfilledHeight}
                     handleType={ResizeHandleType.WallPartialResizeLeft}
                     highLight={highLight}
                     handleSize={handleSize}
@@ -292,7 +292,7 @@ const WallResizeHandleWrapper = React.memo(
                   <WallResizeHandle
                     id={id}
                     x={x}
-                    z={-z + bottomHeight}
+                    z={-z + unfilledHeight}
                     handleType={ResizeHandleType.WallPartialResizeRight}
                     highLight={highLight}
                     handleSize={handleSize}

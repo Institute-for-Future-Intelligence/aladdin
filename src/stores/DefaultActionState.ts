@@ -16,7 +16,7 @@ import {
   TreeType,
   WallTexture,
 } from '../types';
-import { WallDisplayMode, WallStructure } from '../models/WallModel';
+import { WallFill, WallStructure } from '../models/WallModel';
 import { defaultShutter } from '../views/window/window';
 import { WindowType } from 'src/models/WindowModel';
 import { RoofStructure } from '../models/RoofModel';
@@ -53,8 +53,8 @@ export class DefaultActionState implements ActionState {
   wallOpacity: number;
   wallRValue: number;
   wallVolumetricHeatCapacity: number;
-  wallDisplayMode: WallDisplayMode;
-  wallBottomHeight: number;
+  wallFill: WallFill;
+  wallUnfilledHeight: number;
 
   roofColor: string;
   roofSideColor: string;
@@ -173,8 +173,8 @@ export class DefaultActionState implements ActionState {
     this.wallOpacity = 0.5;
     this.wallRValue = 2;
     this.wallVolumetricHeatCapacity = 0.5;
-    this.wallDisplayMode = WallDisplayMode.All;
-    this.wallBottomHeight = 0.5;
+    this.wallFill = WallFill.Full;
+    this.wallUnfilledHeight = 0.5;
 
     this.roofColor = '#454769';
     this.roofSideColor = 'white';

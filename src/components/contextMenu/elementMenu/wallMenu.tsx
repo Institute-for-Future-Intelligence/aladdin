@@ -11,7 +11,7 @@ import { Copy, Cut, Lock, Paste } from '../menuItems';
 import i18n from '../../../i18n/i18n';
 import WallTextureSelection from './wallTextureSelection';
 import WallBodyColorSelection from './wallColorSelection';
-import { WallModel, WallDisplayMode, WallStructure } from 'src/models/WallModel';
+import { WallModel, WallFill, WallStructure } from 'src/models/WallModel';
 import { ObjectType, WallTexture } from 'src/types';
 import { ElementCounter } from '../../../stores/ElementCounter';
 import { ExclamationCircleOutlined } from '@ant-design/icons';
@@ -125,11 +125,11 @@ export const WallMenu = () => {
     }
   };
 
-  const updateWallDisplayModeById = (id: string, mode: WallDisplayMode) => {
+  const updateWallFillById = (id: string, fill: WallFill) => {
     setCommonStore((state) => {
       for (const e of state.elements) {
         if (e.id === id && e.type === ObjectType.Wall) {
-          (e as WallModel).displayMode = mode;
+          (e as WallModel).fill = fill;
           break;
         }
       }
@@ -154,45 +154,45 @@ export const WallMenu = () => {
     return <Paste keyName={'wall-paste'} />;
   };
 
-  const renderDisplayModeSubMenu = () => {
+  const renderFillSubMenu = () => {
     if (!wall) {
       return null;
     }
     return (
-      <SubMenu key={'wall-shown-type'} title={i18n.t('wallMenu.DisplayMode', lang)} style={{ paddingLeft: '24px' }}>
+      <SubMenu key={'wall-fill-selection'} title={i18n.t('wallMenu.Fill', lang)} style={{ paddingLeft: '24px' }}>
         <Radio.Group
-          value={wall.displayMode}
+          value={wall.fill}
           style={{ height: '75px' }}
           onChange={(e) => {
             const undoableChange = {
-              name: 'Select Wall Display Mode',
+              name: 'Select Wall Fill',
               timestamp: Date.now(),
-              oldValue: wall.displayMode,
+              oldValue: wall.fill,
               newValue: e.target.value,
               changedElementId: wall.id,
               changedElementType: wall.type,
               undo: () => {
-                updateWallDisplayModeById(undoableChange.changedElementId, undoableChange.oldValue as WallDisplayMode);
+                updateWallFillById(undoableChange.changedElementId, undoableChange.oldValue as WallFill);
               },
               redo: () => {
-                updateWallDisplayModeById(undoableChange.changedElementId, undoableChange.newValue as WallDisplayMode);
+                updateWallFillById(undoableChange.changedElementId, undoableChange.newValue as WallFill);
               },
             } as UndoableChange;
             addUndoable(undoableChange);
-            updateWallDisplayModeById(wall.id, e.target.value);
+            updateWallFillById(wall.id, e.target.value);
             setCommonStore((state) => {
-              state.actionState.wallDisplayMode = e.target.value;
+              state.actionState.wallFill = e.target.value;
             });
           }}
         >
-          <Radio style={radioStyle} value={WallDisplayMode.All}>
-            {i18n.t('wallMenu.DisplayAll', lang)}
+          <Radio style={radioStyle} value={WallFill.Full}>
+            {i18n.t('wallMenu.Full', lang)}
           </Radio>
-          <Radio style={radioStyle} value={WallDisplayMode.Partial}>
-            {i18n.t('wallMenu.DisplayPartial', lang)}
+          <Radio style={radioStyle} value={WallFill.Partial}>
+            {i18n.t('wallMenu.Partial', lang)}
           </Radio>
-          <Radio style={radioStyle} value={WallDisplayMode.Empty}>
-            {i18n.t('wallMenu.DisplayEmpty', lang)}
+          <Radio style={radioStyle} value={WallFill.Empty}>
+            {i18n.t('wallMenu.Empty', lang)}
           </Radio>
         </Radio.Group>
       </SubMenu>
@@ -514,11 +514,11 @@ export const WallMenu = () => {
 
           {renderElementsSubMenu()}
 
-          {renderDisplayModeSubMenu()}
-
           {renderSturctureSubMenu()}
 
           {renderStructureItems()}
+
+          {renderFillSubMenu()}
 
           {renderMenuItem(DataType.Thickness)}
 

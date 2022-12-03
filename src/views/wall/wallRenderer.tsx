@@ -4,7 +4,7 @@
 
 import React, { useEffect } from 'react';
 import { useStore } from 'src/stores/common';
-import { WallModel, WallDisplayMode } from 'src/models/WallModel';
+import { WallModel, WallFill } from 'src/models/WallModel';
 import { Util } from 'src/Util';
 import { Vector3 } from 'three';
 import EmptyWall from './emptyWall';
@@ -19,8 +19,7 @@ import * as Selector from 'src/stores/selector';
 const WallRenderer = (wallModel: WallModel) => {
   useUpdataOldFiles(wallModel);
 
-  const { id, parentId, roofId, cx, cy, lx, ly, lz, relativeAngle, displayMode, selected, locked, bottomHeight } =
-    wallModel;
+  const { id, parentId, roofId, cx, cy, lx, ly, lz, relativeAngle, fill, selected, locked, unfilledHeight } = wallModel;
 
   const [hx, hz] = [lx / 2, lz / 2];
 
@@ -60,7 +59,7 @@ const WallRenderer = (wallModel: WallModel) => {
   const highLight = lx === 0;
 
   const renderWall = () => {
-    if (displayMode === WallDisplayMode.Empty) {
+    if (fill === WallFill.Empty) {
       return <EmptyWall {...wallModel} />;
     }
     return <Wall wallModel={wallModel} foundationModel={foundation} />;
@@ -84,8 +83,8 @@ const WallRenderer = (wallModel: WallModel) => {
             parentLz={foundation.lz}
             x={hx}
             z={hz}
-            bottomHeight={bottomHeight}
-            displayMode={displayMode}
+            unfilledHeight={unfilledHeight}
+            fill={fill}
             highLight={highLight}
           />
         </>

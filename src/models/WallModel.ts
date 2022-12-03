@@ -30,12 +30,12 @@ export interface WallModel extends ElementModel {
   rValue: number;
   volumetricHeatCapacity: number;
 
-  displayMode: WallDisplayMode;
-  bottomHeight: number;
+  fill: WallFill;
+  unfilledHeight: number;
 }
 
-export enum WallDisplayMode {
-  All = 'All',
+export enum WallFill {
+  Full = 'Full',
   Partial = 'Partial',
   Empty = 'Empty',
 }

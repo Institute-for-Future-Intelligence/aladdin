@@ -6,15 +6,15 @@ import React from 'react';
 import { Line } from '@react-three/drei';
 import { HALF_PI } from '../../constants';
 import { useStore } from 'src/stores/common';
-import { WallDisplayMode } from 'src/models/WallModel';
+import { WallFill } from 'src/models/WallModel';
 
 interface WallWireFrameProps {
   lineColor: string;
   lineWidth: number;
   hx: number;
   hz: number;
-  shownType: WallDisplayMode;
-  bottomHeight: number;
+  fill: WallFill;
+  unfilledHeight: number;
   leftHeight?: number;
   rightHeight?: number;
   center?: number[];
@@ -28,8 +28,8 @@ const WallWireFrame = React.memo(
     lineWidth = 0.2,
     hx,
     hz,
-    shownType,
-    bottomHeight,
+    fill,
+    unfilledHeight,
     leftHeight = 2 * hz,
     rightHeight = 2 * hz,
     center,
@@ -40,12 +40,12 @@ const WallWireFrame = React.memo(
 
     const lowerLeft: [number, number, number] = [
       -hx,
-      -hz + 0.001 + (shownType === WallDisplayMode.Partial ? bottomHeight : 0),
+      -hz + 0.001 + (fill === WallFill.Partial ? unfilledHeight : 0),
       0.001,
     ];
     const lowerRight: [number, number, number] = [
       hx,
-      -hz + 0.001 + (shownType === WallDisplayMode.Partial ? bottomHeight : 0),
+      -hz + 0.001 + (fill === WallFill.Partial ? unfilledHeight : 0),
       0.001,
     ];
     const upperLeft: [number, number, number] = [-hx, leftHeight - hz - 0.001, 0.001];

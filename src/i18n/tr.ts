@@ -932,10 +932,10 @@ export const i18n_tr = {
       Texture: 'Texture',
       AllLightsOnWallInside: 'All Lights on Wall Inside',
       AllLightsOnWallOutside: 'All Lights on Wall Outside',
-      DisplayMode: 'Display Mode',
-      DisplayAll: 'All',
-      DisplayPartial: 'Partial',
-      DisplayEmpty: 'Empty',
+      Fill: 'Fill',
+      Full: 'Full',
+      Partial: 'Partial',
+      Empty: 'Empty',
     },
 
     windowMenu: {
