@@ -737,9 +737,9 @@ const MansardRoof = (roofModel: MansardRoofModel) => {
                 }
                 switch (roofHandleType) {
                   case RoofHandleType.Top: {
-                    const newLz = Math.max(0, pointer.z - foundation.lz - 0.6 - highestWallHeight);
-                    if (RoofUtil.isRoofValid(id, undefined, undefined, [0, newLz + highestWallHeight])) {
-                      setRiseInnerState(newLz);
+                    const newRise = Math.max(0, pointer.z - foundation.lz - 0.6 - highestWallHeight);
+                    if (RoofUtil.isRoofValid(id, undefined, undefined, [0, newRise + highestWallHeight])) {
+                      setRiseInnerState(newRise);
                     }
                     break;
                   }
@@ -781,8 +781,8 @@ const MansardRoof = (roofModel: MansardRoofModel) => {
             }
             setCommonStore((state) => {
               for (const e of state.elements) {
-                if (e.id === id) {
-                  e.lz = riseInnerState;
+                if (e.id === id && e.type === ObjectType.Roof && (e as RoofModel).roofType === RoofType.Mansard) {
+                  (e as RoofModel).rise = riseInnerState;
                   (e as MansardRoofModel).ridgeWidth = width;
                   break;
                 }

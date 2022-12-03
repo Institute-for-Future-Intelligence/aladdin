@@ -1022,26 +1022,25 @@ const GableRoof = (roofModel: GableRoofModel) => {
                   case RoofHandleType.Mid: {
                     if (isShed) {
                       if (currentWallArray.length === 4 && currentWallArray[3].centerRoofHeight !== undefined) {
-                        const idx = currentWallArray[3].centerRoofHeight[0] < 0 ? 0 : 2;
-                        const newLz = Math.max(0, point.z - foundation.lz - 0.3 - highestWallHeight);
+                        const newRise = Math.max(0, point.z - foundation.lz - 0.3 - highestWallHeight);
                         if (
                           RoofUtil.isRoofValid(id, currentWallArray[3].id, currentWallArray[1].id, [
                             ridgeLeftPoint[0],
-                            newLz + highestWallHeight,
+                            newRise + highestWallHeight,
                           ])
                         ) {
-                          setRiseInnerState(newLz);
+                          setRiseInnerState(newRise);
                         }
                       }
                     } else {
-                      const newLz = point.z - foundation.lz - 0.3 - highestWallHeight;
+                      const newRise = point.z - foundation.lz - 0.3 - highestWallHeight;
                       if (
                         RoofUtil.isRoofValid(id, currentWallArray[3].id, currentWallArray[1].id, [
                           ridgeLeftPoint[0],
-                          newLz + highestWallHeight,
+                          newRise + highestWallHeight,
                         ])
                       ) {
-                        setRiseInnerState(newLz);
+                        setRiseInnerState(newRise);
                       }
                     }
                     break;
@@ -1072,14 +1071,7 @@ const GableRoof = (roofModel: GableRoofModel) => {
             setShowIntersectionPlane(false);
             setRoofHandleType(RoofHandleType.Null);
             useStoreRef.getState().setEnableOrbitController(true);
-            setCommonStore((state) => {
-              for (const e of state.elements) {
-                if (e.id === id) {
-                  e.lz = riseInnerState;
-                  break;
-                }
-              }
-            });
+            useStore.getState().updateRoofRiseById(id, riseInnerState);
             updateRooftopElements(foundation, id, roofSegments, centroid, topZ, thickness);
           }}
         >

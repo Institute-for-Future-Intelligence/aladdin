@@ -576,8 +576,8 @@ const HipRoof = (roofModel: HipRoofModel) => {
                     break;
                   }
                   case RoofHandleType.Mid: {
-                    const newLz = Math.max(0, point.z - foundation.lz - 0.3 - highestWallHeight);
-                    setRiseInnerState(newLz);
+                    const newRise = Math.max(0, point.z - foundation.lz - 0.3 - highestWallHeight);
+                    setRiseInnerState(newRise);
                     break;
                   }
                 }
@@ -612,7 +612,7 @@ const HipRoof = (roofModel: HipRoofModel) => {
                   const r = e as HipRoofModel;
                   r.leftRidgeLength = leftRidgeLengthCurr;
                   r.rightRidgeLength = rightRidgeLengthCurr;
-                  r.lz = riseInnerState;
+                  r.rise = riseInnerState;
                   break;
                 }
               }

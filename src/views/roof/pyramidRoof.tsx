@@ -732,14 +732,14 @@ const PyramidRoof = (roofModel: PyramidRoofModel) => {
                 if (point.z < 0.001) {
                   return;
                 }
-                const newLz = Math.max(0, point.z - foundation.lz - 0.3 - highestWallHeight);
-                setRiseInnerState(newLz);
+                const newRise = Math.max(0, point.z - foundation.lz - 0.3 - highestWallHeight);
+                setRiseInnerState(newRise);
                 updateRooftopElements(
                   foundation,
                   id,
                   roofSegments,
                   centerPointV3,
-                  newLz + highestWallHeight,
+                  newRise + highestWallHeight,
                   thickness,
                 );
               }

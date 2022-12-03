@@ -824,14 +824,14 @@ const GambrelRoof = (roofModel: GambrelRoofModel) => {
                 }
                 switch (roofHandleType) {
                   case RoofHandleType.TopMid: {
-                    const newLz = Math.max(0, point.z - foundation.lz - 0.3 - highestWallHeight);
+                    const newRise = Math.max(0, point.z - foundation.lz - 0.3 - highestWallHeight);
                     if (
                       RoofUtil.isRoofValid(id, currentWallArray[3].id, currentWallArray[1].id, [
                         topRidgeLeftPoint[0],
-                        newLz + highestWallHeight,
+                        newRise + highestWallHeight,
                       ])
                     ) {
-                      setRiseInnerState(newLz);
+                      setRiseInnerState(newRise);
                     }
                     break;
                   }
@@ -1066,14 +1066,7 @@ const GambrelRoof = (roofModel: GambrelRoofModel) => {
             setEnableIntersectionPlane(false);
             setRoofHandleType(RoofHandleType.Null);
             useStoreRef.getState().setEnableOrbitController(true);
-            setCommonStore((state) => {
-              for (const e of state.elements) {
-                if (e.id === id) {
-                  e.lz = riseInnerState;
-                  break;
-                }
-              }
-            });
+            useStore.getState().updateRoofRiseById(id, riseInnerState);
             updateRooftopElements(foundation, id, roofSegments, centroid, topZ, thickness);
           }}
         >
