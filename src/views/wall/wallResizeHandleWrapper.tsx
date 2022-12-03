@@ -17,7 +17,6 @@ import { Util } from 'src/Util';
 import { UndoableResizeWallHeight } from 'src/undo/UndoableResize';
 
 interface ResizeHandlesProps {
-  id: string;
   x: number;
   z: number;
   handleType: ResizeHandleType;
@@ -30,17 +29,16 @@ interface WallResizeHandleWarpperProps {
   parentLz: number;
   x: number;
   z: number;
-  relativeAngle: number;
+  absAngle: number;
   highLight: boolean;
   fill: WallFill;
   unfilledHeight: number;
 }
 
-const WallResizeHandle = React.memo(({ id, x, z, handleType, highLight, handleSize }: ResizeHandlesProps) => {
+const WallResizeHandle = React.memo(({ x, z, handleType, highLight, handleSize }: ResizeHandlesProps) => {
   const setCommonStore = useStore(Selector.set);
   const resizeHandleType = useStore(Selector.resizeHandleType);
   const addedWallID = useStore(Selector.addedWallId);
-  const selectMe = useStore(Selector.selectMe);
 
   const [hovered, setHovered] = useState(false);
 
@@ -66,12 +64,6 @@ const WallResizeHandle = React.memo(({ id, x, z, handleType, highLight, handleSi
       name={handleType}
       args={[lx, ly, lz]}
       position={[x, 0, z]}
-      onPointerDown={(e) => {
-        selectMe(id, e, ActionType.Resize);
-        setCommonStore((state) => {
-          state.resizeHandleType = handleType;
-        });
-      }}
       onPointerOver={(e) => {
         setHovered(true);
         setCommonStore((state) => {
@@ -91,7 +83,7 @@ const WallResizeHandle = React.memo(({ id, x, z, handleType, highLight, handleSi
 });
 
 const WallResizeHandleWrapper = React.memo(
-  ({ id, parentLz, x, z, relativeAngle, unfilledHeight, fill, highLight }: WallResizeHandleWarpperProps) => {
+  ({ id, parentLz, x, z, absAngle, unfilledHeight, fill, highLight }: WallResizeHandleWarpperProps) => {
     const setCommonStore = useStore(Selector.set);
     const orthographic = useStore(Selector.viewState.orthographic);
 
@@ -99,7 +91,6 @@ const WallResizeHandleWrapper = React.memo(
     const [showIntersectionPlane, setShowIntersectionPlane] = useState(false);
     const [intersectionPlanePosition, setIntersectionPlanePosition] = useState(new Vector3());
     const [intersectionPlaneRotation, setIntersectionPlaneRotation] = useState(new Euler());
-    const [handleType, setHandleType] = useState<'upper' | 'partial' | null>(null);
 
     const intersectionPlaneRef = useRef<Mesh>(null);
     const pointerDownRef = useRef(false);
@@ -113,7 +104,7 @@ const WallResizeHandleWrapper = React.memo(
       const dir = useStore.getState().cameraDirection;
       const r = Math.atan2(dir.x, dir.y);
       setIntersectionPlanePosition(new Vector3(x, 0, 0));
-      setIntersectionPlaneRotation(new Euler(HALF_PI, 0, -r - relativeAngle, 'ZXY'));
+      setIntersectionPlaneRotation(new Euler(HALF_PI, 0, -r - absAngle, 'ZXY'));
       setShowIntersectionPlane(true);
     };
 
@@ -138,40 +129,32 @@ const WallResizeHandleWrapper = React.memo(
         case ResizeHandleType.LowerLeft: {
           setCommonStore((state) => {
             state.resizeAnchor.copy(resizeHandleObject.localToWorld(new Vector3(x * 2, 0, 0)));
-            state.resizeHandleType = ResizeHandleType.LowerLeft;
           });
           break;
         }
         case ResizeHandleType.LowerRight: {
           setCommonStore((state) => {
             state.resizeAnchor.copy(resizeHandleObject.localToWorld(new Vector3(-x * 2, 0, 0)));
-            state.resizeHandleType = ResizeHandleType.LowerRight;
           });
           break;
         }
-        case ResizeHandleType.UpperLeft: {
-          setIntersectionPlane(-x);
-          setHandleType('upper');
-          break;
-        }
+        case ResizeHandleType.UpperLeft:
         case ResizeHandleType.WallPartialResizeLeft: {
           setIntersectionPlane(-x);
-          setHandleType('partial');
           break;
         }
-        case ResizeHandleType.UpperRight: {
-          setIntersectionPlane(x);
-          setHandleType('upper');
-          break;
-        }
+        case ResizeHandleType.UpperRight:
         case ResizeHandleType.WallPartialResizeRight: {
           setIntersectionPlane(x);
-          setHandleType('partial');
           break;
         }
         default:
           console.error('Wall resize handle unknown');
+          return;
       }
+      setCommonStore((state) => {
+        state.resizeHandleType = resizeHandleObject.name as ResizeHandleType;
+      });
       useStoreRef.getState().setEnableOrbitController(false);
       pointerDownRef.current = true;
       oldHeightsRef.current = [z * 2, unfilledHeight];
@@ -180,38 +163,45 @@ const WallResizeHandleWrapper = React.memo(
     const handlePointerMove = (e: ThreeEvent<PointerEvent>) => {
       if (e.intersections.length === 0 || !pointerDownRef.current) return;
       const p = e.intersections[0].point;
-      if (handleType === 'upper') {
-        setCommonStore((state) => {
-          for (const e of state.elements) {
-            if (e.id === id && e.type === ObjectType.Wall) {
-              const wall = e as WallModel;
-              const newLz = Math.max(wall.unfilledHeight + handleSize, p.z - parentLz);
-              wall.lz = newLz;
-              wall.cz = newLz / 2;
-              state.actionState.wallHeight = newLz;
-              break;
+      switch (useStore.getState().resizeHandleType) {
+        case ResizeHandleType.UpperLeft:
+        case ResizeHandleType.UpperRight: {
+          setCommonStore((state) => {
+            for (const e of state.elements) {
+              if (e.id === id && e.type === ObjectType.Wall) {
+                const wall = e as WallModel;
+                const newLz = Math.max(wall.unfilledHeight + handleSize, p.z - parentLz);
+                wall.lz = newLz;
+                wall.cz = newLz / 2;
+                state.selectedElementHeight = Math.max(0.1, p.z);
+                state.actionState.wallHeight = newLz;
+                break;
+              }
             }
-          }
-          state.updateRoofFlag = !state.updateRoofFlag;
-        });
-      } else if (handleType === 'partial') {
-        setCommonStore((state) => {
-          for (const e of state.elements) {
-            if (e.id === id && e.type === ObjectType.Wall) {
-              const newUnfilledHeight = Util.clamp(p.z - parentLz, handleSize, e.lz - handleSize);
-              (e as WallModel).unfilledHeight = newUnfilledHeight;
-              state.actionState.wallUnfilledHeight = newUnfilledHeight;
-              break;
+            state.updateRoofFlag = !state.updateRoofFlag;
+          });
+          break;
+        }
+        case ResizeHandleType.WallPartialResizeLeft:
+        case ResizeHandleType.WallPartialResizeRight: {
+          setCommonStore((state) => {
+            for (const e of state.elements) {
+              if (e.id === id && e.type === ObjectType.Wall) {
+                const newUnfilledHeight = Util.clamp(p.z - parentLz, handleSize, e.lz - handleSize);
+                (e as WallModel).unfilledHeight = newUnfilledHeight;
+                state.actionState.wallUnfilledHeight = newUnfilledHeight;
+                break;
+              }
             }
-          }
-        });
+          });
+          break;
+        }
       }
     };
 
     const handlePointerUp = () => {
       useStoreRef.getState().setEnableOrbitController(true);
       setShowIntersectionPlane(false);
-      setHandleType(null);
       pointerDownRef.current = false;
 
       const undoableChangeHeight = {
@@ -240,7 +230,6 @@ const WallResizeHandleWrapper = React.memo(
       <>
         <group name={'Wall Resize Handle Group'} onPointerDown={handlePointerDown}>
           <WallResizeHandle
-            id={id}
             x={-x}
             z={-z}
             handleType={ResizeHandleType.LowerLeft}
@@ -248,7 +237,6 @@ const WallResizeHandleWrapper = React.memo(
             handleSize={handleSize}
           />
           <WallResizeHandle
-            id={id}
             x={x}
             z={-z}
             handleType={ResizeHandleType.LowerRight}
@@ -258,7 +246,6 @@ const WallResizeHandleWrapper = React.memo(
           {!orthographic && (
             <>
               <WallResizeHandle
-                id={id}
                 x={-x}
                 z={z}
                 handleType={ResizeHandleType.UpperLeft}
@@ -266,7 +253,6 @@ const WallResizeHandleWrapper = React.memo(
                 handleSize={handleSize}
               />
               <WallResizeHandle
-                id={id}
                 x={x}
                 z={z}
                 handleType={ResizeHandleType.UpperRight}
@@ -278,7 +264,6 @@ const WallResizeHandleWrapper = React.memo(
               {fill === WallFill.Partial && (
                 <>
                   <WallResizeHandle
-                    id={id}
                     x={-x}
                     z={-z + unfilledHeight}
                     handleType={ResizeHandleType.WallPartialResizeLeft}
@@ -286,7 +271,6 @@ const WallResizeHandleWrapper = React.memo(
                     handleSize={handleSize}
                   />
                   <WallResizeHandle
-                    id={id}
                     x={x}
                     z={-z + unfilledHeight}
                     handleType={ResizeHandleType.WallPartialResizeRight}

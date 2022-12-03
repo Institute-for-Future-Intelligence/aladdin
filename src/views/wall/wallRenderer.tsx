@@ -81,7 +81,7 @@ const WallRenderer = (wallModel: WallModel) => {
           <WallResizeHandleWrapper
             id={id}
             parentLz={foundation.lz}
-            relativeAngle={relativeAngle}
+            absAngle={relativeAngle + foundation.rotation[2]}
             x={hx}
             z={hz}
             unfilledHeight={unfilledHeight}

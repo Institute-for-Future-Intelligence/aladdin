@@ -197,7 +197,6 @@ const Sky = ({ theme = 'Default' }: SkyProps) => {
         });
       } else {
         const selectedElement = getSelectedElement();
-        const wallResizeHandle = useStore.getState().resizeHandleType;
         if (selectedElement) {
           if (legalOnGround(selectedElement.type)) {
             grabRef.current = selectedElement;
@@ -208,11 +207,6 @@ const Sky = ({ theme = 'Default' }: SkyProps) => {
             if (selectedElement.type !== ObjectType.Foundation && selectedElement.type !== ObjectType.Cuboid) {
               useStoreRef.getState().setEnableOrbitController(false);
             }
-          } else if (
-            selectedElement.type === ObjectType.Wall &&
-            (wallResizeHandle === ResizeHandleType.UpperLeft || wallResizeHandle === ResizeHandleType.UpperRight)
-          ) {
-            grabRef.current = selectedElement;
           }
         }
       }
@@ -410,20 +404,6 @@ const Sky = ({ theme = 'Default' }: SkyProps) => {
               break;
             case ObjectType.Human:
               handleTreeOrHumanRefMove(useStoreRef.getState().humanRef, e);
-              break;
-            case ObjectType.Wall:
-              if (Util.isTopResizeHandleOfWall(resizeHandleType)) {
-                setCommonStore((state) => {
-                  for (const e of state.elements) {
-                    if (e.id === grabRef.current?.id) {
-                      e.cz = Math.max(0.05, p.z / 2);
-                      e.lz = Math.max(0.1, p.z);
-                      break;
-                    }
-                  }
-                  state.selectedElementHeight = Math.max(0.1, p.z);
-                });
-              }
               break;
             case ObjectType.Cuboid:
               if (Util.isTopResizeHandle(resizeHandleType)) {
@@ -703,26 +683,6 @@ const Sky = ({ theme = 'Default' }: SkyProps) => {
             break;
           case ObjectType.Human:
             elementRef = useStoreRef.getState().humanRef?.current;
-            break;
-          case ObjectType.Wall:
-            const undoableChangeHeight = {
-              name: 'Change Wall Height',
-              timestamp: Date.now(),
-              changedElementId: elem.id,
-              changedElementType: elem.type,
-              oldValue: oldHeightRef.current,
-              newValue: elem.lz,
-              undo: () => {
-                updateElementLzById(undoableChangeHeight.changedElementId, undoableChangeHeight.oldValue as number);
-              },
-              redo: () => {
-                updateElementLzById(undoableChangeHeight.changedElementId, undoableChangeHeight.newValue as number);
-              },
-            } as UndoableChange;
-            addUndoable(undoableChangeHeight);
-            setCommonStore((state) => {
-              state.actionState.wallHeight = elem.lz;
-            });
             break;
         }
         if (elementRef) {
