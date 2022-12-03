@@ -1,7 +1,7 @@
 {
-  "docid": "qmeP544iatUWxoYE1rYY8p",
-  "time": "11/26/2022 12:10 pm",
-  "timestamp": 1669482649198,
+  "docid": "41ukes5Py12GrqUeSqaHEA",
+  "time": "12/03/2022 06:39 pm",
+  "timestamp": 1670110794968,
   "userid": "QWecNcxhyvP6j6sBN11hBsfZDau1",
   "owner": null,
   "email": null,
@@ -151,7 +151,9 @@
       "structureSpacing": 2,
       "structureWidth": 0.1,
       "structureColor": "white",
-      "opacity": 0.5
+      "opacity": 0.5,
+      "fill": "Full",
+      "unfilledHeight": 0.5
     },
     {
       "type": "Wall",
@@ -204,7 +206,9 @@
       "structureSpacing": 2,
       "structureWidth": 0.1,
       "structureColor": "white",
-      "opacity": 0.5
+      "opacity": 0.5,
+      "fill": "Full",
+      "unfilledHeight": 0.5
     },
     {
       "type": "Wall",
@@ -255,7 +259,9 @@
       "structureSpacing": 2,
       "structureWidth": 0.1,
       "structureColor": "white",
-      "opacity": 0.5
+      "opacity": 0.5,
+      "fill": "Full",
+      "unfilledHeight": 0.5
     },
     {
       "type": "Wall",
@@ -306,7 +312,9 @@
       "structureSpacing": 2,
       "structureWidth": 0.1,
       "structureColor": "white",
-      "opacity": 0.5
+      "opacity": 0.5,
+      "fill": "Full",
+      "unfilledHeight": 0.5
     },
     {
       "type": "Wall",
@@ -357,7 +365,9 @@
       "structureSpacing": 2,
       "structureWidth": 0.1,
       "structureColor": "white",
-      "opacity": 0.5
+      "opacity": 0.5,
+      "fill": "Full",
+      "unfilledHeight": 0.5
     },
     {
       "type": "Wall",
@@ -408,7 +418,9 @@
       "structureSpacing": 2,
       "structureWidth": 0.1,
       "structureColor": "white",
-      "opacity": 0.5
+      "opacity": 0.5,
+      "fill": "Full",
+      "unfilledHeight": 0.5
     },
     {
       "type": "Wall",
@@ -459,7 +471,9 @@
       "structureSpacing": 2,
       "structureWidth": 0.1,
       "structureColor": "white",
-      "opacity": 0.5
+      "opacity": 0.5,
+      "fill": "Full",
+      "unfilledHeight": 0.5
     },
     {
       "type": "Wall",
@@ -510,7 +524,9 @@
       "structureSpacing": 2,
       "structureWidth": 0.1,
       "structureColor": "white",
-      "opacity": 0.5
+      "opacity": 0.5,
+      "fill": "Full",
+      "unfilledHeight": 0.5
     },
     {
       "type": "Wall",
@@ -561,7 +577,9 @@
       "structureSpacing": 2,
       "structureWidth": 0.1,
       "structureColor": "white",
-      "opacity": 0.5
+      "opacity": 0.5,
+      "fill": "Full",
+      "unfilledHeight": 0.5
     },
     {
       "type": "Wall",
@@ -610,7 +628,9 @@
       "structureSpacing": 2,
       "structureWidth": 0.1,
       "structureColor": "white",
-      "opacity": 0.5
+      "opacity": 0.5,
+      "fill": "Full",
+      "unfilledHeight": 0.5
     },
     {
       "type": "Wall",
@@ -661,7 +681,9 @@
       "structureSpacing": 2,
       "structureWidth": 0.1,
       "structureColor": "white",
-      "opacity": 0.5
+      "opacity": 0.5,
+      "fill": "Full",
+      "unfilledHeight": 0.5
     },
     {
       "type": "Wall",
@@ -712,7 +734,9 @@
       "structureSpacing": 2,
       "structureWidth": 0.1,
       "structureColor": "white",
-      "opacity": 0.5
+      "opacity": 0.5,
+      "fill": "Full",
+      "unfilledHeight": 0.5
     },
     {
       "type": "Wall",
@@ -763,7 +787,9 @@
       "structureSpacing": 2,
       "structureWidth": 0.1,
       "structureColor": "white",
-      "opacity": 0.5
+      "opacity": 0.5,
+      "fill": "Full",
+      "unfilledHeight": 0.5
     },
     {
       "type": "Wall",
@@ -814,7 +840,9 @@
       "structureSpacing": 2,
       "structureWidth": 0.1,
       "structureColor": "white",
-      "opacity": 0.5
+      "opacity": 0.5,
+      "fill": "Full",
+      "unfilledHeight": 0.5
     },
     {
       "type": "Wall",
@@ -865,7 +893,9 @@
       "structureSpacing": 2,
       "structureWidth": 0.1,
       "structureColor": "white",
-      "opacity": 0.5
+      "opacity": 0.5,
+      "fill": "Full",
+      "unfilledHeight": 0.5
     },
     {
       "type": "Wall",
@@ -916,7 +946,9 @@
       "structureSpacing": 2,
       "structureWidth": 0.1,
       "structureColor": "white",
-      "opacity": 0.5
+      "opacity": 0.5,
+      "fill": "Full",
+      "unfilledHeight": 0.5
     },
     {
       "type": "Wall",
@@ -967,7 +999,9 @@
       "locked": false,
       "structureSpacing": 2,
       "structureWidth": 0.1,
-      "structureColor": "white"
+      "structureColor": "white",
+      "fill": "Full",
+      "unfilledHeight": 0.5
     },
     {
       "type": "Wall",
@@ -1018,7 +1052,9 @@
       "locked": false,
       "structureSpacing": 2,
       "structureWidth": 0.1,
-      "structureColor": "white"
+      "structureColor": "white",
+      "fill": "Full",
+      "unfilledHeight": 0.5
     },
     {
       "type": "Wall",
@@ -1069,7 +1105,9 @@
       "locked": false,
       "structureSpacing": 2,
       "structureWidth": 0.1,
-      "structureColor": "white"
+      "structureColor": "white",
+      "fill": "Full",
+      "unfilledHeight": 0.5
     },
     {
       "type": "Wall",
@@ -1120,7 +1158,9 @@
       "locked": false,
       "structureSpacing": 2,
       "structureWidth": 0.1,
-      "structureColor": "white"
+      "structureColor": "white",
+      "fill": "Full",
+      "unfilledHeight": 0.5
     },
     {
       "type": "Foundation",
@@ -1201,7 +1241,9 @@
       "locked": false,
       "structureSpacing": 2,
       "structureWidth": 0.1,
-      "structureColor": "white"
+      "structureColor": "white",
+      "fill": "Full",
+      "unfilledHeight": 0.5
     },
     {
       "type": "Wall",
@@ -1254,7 +1296,9 @@
       "locked": false,
       "structureSpacing": 2,
       "structureWidth": 0.1,
-      "structureColor": "white"
+      "structureColor": "white",
+      "fill": "Full",
+      "unfilledHeight": 0.5
     },
     {
       "type": "Wall",
@@ -1307,7 +1351,9 @@
       "locked": false,
       "structureSpacing": 2,
       "structureWidth": 0.1,
-      "structureColor": "white"
+      "structureColor": "white",
+      "fill": "Full",
+      "unfilledHeight": 0.5
     },
     {
       "type": "Wall",
@@ -1360,7 +1406,9 @@
       "locked": false,
       "structureSpacing": 2,
       "structureWidth": 0.1,
-      "structureColor": "white"
+      "structureColor": "white",
+      "fill": "Full",
+      "unfilledHeight": 0.5
     },
     {
       "type": "Foundation",
@@ -1441,7 +1489,9 @@
       "locked": false,
       "structureSpacing": 2,
       "structureWidth": 0.1,
-      "structureColor": "white"
+      "structureColor": "white",
+      "fill": "Full",
+      "unfilledHeight": 0.5
     },
     {
       "type": "Wall",
@@ -1494,7 +1544,9 @@
       "locked": false,
       "structureSpacing": 2,
       "structureWidth": 0.1,
-      "structureColor": "white"
+      "structureColor": "white",
+      "fill": "Full",
+      "unfilledHeight": 0.5
     },
     {
       "type": "Wall",
@@ -1547,7 +1599,9 @@
       "locked": false,
       "structureSpacing": 2,
       "structureWidth": 0.1,
-      "structureColor": "white"
+      "structureColor": "white",
+      "fill": "Full",
+      "unfilledHeight": 0.5
     },
     {
       "type": "Wall",
@@ -1600,7 +1654,9 @@
       "locked": false,
       "structureSpacing": 2,
       "structureWidth": 0.1,
-      "structureColor": "white"
+      "structureColor": "white",
+      "fill": "Full",
+      "unfilledHeight": 0.5
     },
     {
       "type": "Foundation",
@@ -1637,7 +1693,7 @@
       "cz": 0,
       "lx": 0,
       "ly": 0,
-      "lz": 60,
+      "lz": 0,
       "overhang": 0,
       "thickness": 0.05,
       "roofType": "Pyramid",
@@ -1668,7 +1724,8 @@
       "foundationId": "d5JiHWyULwssBmiBFfBkPJ",
       "id": "j7icsPbRmrKngzuxfnJULB",
       "locked": false,
-      "sideColor": "#8f6767"
+      "sideColor": "#8f6767",
+      "rise": 0
     },
     {
       "type": "Roof",
@@ -1677,7 +1734,7 @@
       "cz": 0,
       "lx": 0,
       "ly": 0,
-      "lz": 40,
+      "lz": 0,
       "overhang": 0,
       "thickness": 0.05,
       "roofType": "Pyramid",
@@ -1708,7 +1765,8 @@
       "foundationId": "fD1unP99uJ2AUvKzSqaqv1",
       "id": "eiNiz47nydELtmQT3Y9tQx",
       "locked": false,
-      "sideColor": "#8f6767"
+      "sideColor": "#8f6767",
+      "rise": 0
     },
     {
       "type": "Roof",
@@ -1717,7 +1775,7 @@
       "cz": 0,
       "lx": 0,
       "ly": 0,
-      "lz": 101.65606181416068,
+      "lz": 0,
       "overhang": 0,
       "thickness": 0.05,
       "roofType": "Pyramid",
@@ -1760,7 +1818,8 @@
       "foundationId": "m7AH7DcnoGzAq9kryBy4RS",
       "id": "6muwd4sKetNydriFdTdYo3",
       "locked": false,
-      "sideColor": "#8f6767"
+      "sideColor": "#8f6767",
+      "rise": 40.65606181416068
     },
     {
       "type": "Roof",
@@ -1769,7 +1828,7 @@
       "cz": 0,
       "lx": 0,
       "ly": 0,
-      "lz": 68.27887095213258,
+      "lz": 0,
       "overhang": 0,
       "thickness": 0.05,
       "roofType": "Pyramid",
@@ -1800,7 +1859,8 @@
       "foundationId": "6Vzmg1uXrJSEjXjuXeqZxb",
       "id": "7wW1vUuiQtQZyEVQ52AYZr",
       "locked": false,
-      "sideColor": "#8f6767"
+      "sideColor": "#8f6767",
+      "rise": 7.2788709521325785
     },
     {
       "type": "Wall",
@@ -1853,7 +1913,9 @@
       "locked": false,
       "structureSpacing": 2,
       "structureWidth": 0.1,
-      "structureColor": "white"
+      "structureColor": "white",
+      "fill": "Full",
+      "unfilledHeight": 0.5
     },
     {
       "type": "Wall",
@@ -1906,7 +1968,9 @@
       "locked": false,
       "structureSpacing": 2,
       "structureWidth": 0.1,
-      "structureColor": "white"
+      "structureColor": "white",
+      "fill": "Full",
+      "unfilledHeight": 0.5
     },
     {
       "type": "Wall",
@@ -1959,7 +2023,9 @@
       "locked": false,
       "structureSpacing": 2,
       "structureWidth": 0.1,
-      "structureColor": "white"
+      "structureColor": "white",
+      "fill": "Full",
+      "unfilledHeight": 0.5
     },
     {
       "type": "Wall",
@@ -2012,7 +2078,9 @@
       "locked": false,
       "structureSpacing": 2,
       "structureWidth": 0.1,
-      "structureColor": "white"
+      "structureColor": "white",
+      "fill": "Full",
+      "unfilledHeight": 0.5
     },
     {
       "id": "qwYLFbE4ymUU5tBty522Jg",
@@ -2022,7 +2090,7 @@
       "cz": 0,
       "lx": 0,
       "ly": 0,
-      "lz": 68.27887095213258,
+      "lz": 0,
       "color": "#8f6767",
       "normal": [
         0,
@@ -2049,7 +2117,8 @@
       ],
       "selected": false,
       "locked": false,
-      "sideColor": "#8f6767"
+      "sideColor": "#8f6767",
+      "rise": 7.2788709521325785
     },
     {
       "type": "Foundation",
@@ -2130,7 +2199,9 @@
       "locked": false,
       "structureSpacing": 2,
       "structureWidth": 0.1,
-      "structureColor": "white"
+      "structureColor": "white",
+      "fill": "Full",
+      "unfilledHeight": 0.5
     },
     {
       "type": "Wall",
@@ -2183,7 +2254,9 @@
       "locked": false,
       "structureSpacing": 2,
       "structureWidth": 0.1,
-      "structureColor": "white"
+      "structureColor": "white",
+      "fill": "Full",
+      "unfilledHeight": 0.5
     },
     {
       "type": "Wall",
@@ -2236,7 +2309,9 @@
       "locked": false,
       "structureSpacing": 2,
       "structureWidth": 0.1,
-      "structureColor": "white"
+      "structureColor": "white",
+      "fill": "Full",
+      "unfilledHeight": 0.5
     },
     {
       "type": "Wall",
@@ -2289,7 +2364,9 @@
       "locked": false,
       "structureSpacing": 2,
       "structureWidth": 0.1,
-      "structureColor": "white"
+      "structureColor": "white",
+      "fill": "Full",
+      "unfilledHeight": 0.5
     },
     {
       "id": "unGGRxk8aAPx1RGgoMUHuG",
@@ -2299,7 +2376,7 @@
       "cz": 0,
       "lx": 0,
       "ly": 0,
-      "lz": 68.27887095213258,
+      "lz": 0,
       "color": "#8f6767",
       "normal": [
         0,
@@ -2326,7 +2403,8 @@
       ],
       "selected": false,
       "locked": false,
-      "sideColor": "#8f6767"
+      "sideColor": "#8f6767",
+      "rise": 7.2788709521325785
     },
     {
       "type": "Foundation",
@@ -2407,7 +2485,9 @@
       "locked": false,
       "structureSpacing": 2,
       "structureWidth": 0.1,
-      "structureColor": "white"
+      "structureColor": "white",
+      "fill": "Full",
+      "unfilledHeight": 0.5
     },
     {
       "type": "Wall",
@@ -2460,7 +2540,9 @@
       "locked": false,
       "structureSpacing": 2,
       "structureWidth": 0.1,
-      "structureColor": "white"
+      "structureColor": "white",
+      "fill": "Full",
+      "unfilledHeight": 0.5
     },
     {
       "type": "Wall",
@@ -2513,7 +2595,9 @@
       "locked": false,
       "structureSpacing": 2,
       "structureWidth": 0.1,
-      "structureColor": "white"
+      "structureColor": "white",
+      "fill": "Full",
+      "unfilledHeight": 0.5
     },
     {
       "type": "Wall",
@@ -2566,7 +2650,9 @@
       "locked": false,
       "structureSpacing": 2,
       "structureWidth": 0.1,
-      "structureColor": "white"
+      "structureColor": "white",
+      "fill": "Full",
+      "unfilledHeight": 0.5
     },
     {
       "id": "64chsWYaQ1WXbJzrruvsSA",
@@ -2576,7 +2662,7 @@
       "cz": 0,
       "lx": 0,
       "ly": 0,
-      "lz": 68.27887095213258,
+      "lz": 0,
       "color": "#8f6767",
       "normal": [
         0,
@@ -2603,7 +2689,8 @@
       ],
       "selected": false,
       "locked": false,
-      "sideColor": "#8f6767"
+      "sideColor": "#8f6767",
+      "rise": 7.2788709521325785
     },
     {
       "type": "Foundation",
@@ -2712,7 +2799,9 @@
       "locked": false,
       "structureSpacing": 2,
       "structureWidth": 0.1,
-      "structureColor": "white"
+      "structureColor": "white",
+      "fill": "Full",
+      "unfilledHeight": 0.5
     },
     {
       "type": "Wall",
@@ -2765,7 +2854,9 @@
       "locked": false,
       "structureSpacing": 2,
       "structureWidth": 0.1,
-      "structureColor": "white"
+      "structureColor": "white",
+      "fill": "Full",
+      "unfilledHeight": 0.5
     },
     {
       "type": "Wall",
@@ -2818,7 +2909,9 @@
       "locked": false,
       "structureSpacing": 2,
       "structureWidth": 0.1,
-      "structureColor": "white"
+      "structureColor": "white",
+      "fill": "Full",
+      "unfilledHeight": 0.5
     },
     {
       "type": "Wall",
@@ -2871,7 +2964,9 @@
       "locked": false,
       "structureSpacing": 2,
       "structureWidth": 0.1,
-      "structureColor": "white"
+      "structureColor": "white",
+      "fill": "Full",
+      "unfilledHeight": 0.5
     },
     {
       "type": "Roof",
@@ -2880,7 +2975,7 @@
       "cz": 0,
       "lx": 0,
       "ly": 0,
-      "lz": 50.911111547438225,
+      "lz": 0,
       "overhang": 0,
       "thickness": 0.05,
       "roofType": "Pyramid",
@@ -2911,7 +3006,8 @@
       "foundationId": "nBfQ1VbpB9H4ysCzMtCuPy",
       "id": "3cC18p4o27We9TRzUXcjvJ",
       "locked": false,
-      "sideColor": "#8f6767"
+      "sideColor": "#8f6767",
+      "rise": 9.911111547438225
     },
     {
       "type": "Wall",
@@ -2964,7 +3060,9 @@
       "locked": false,
       "structureSpacing": 2,
       "structureWidth": 0.1,
-      "structureColor": "white"
+      "structureColor": "white",
+      "fill": "Full",
+      "unfilledHeight": 0.5
     },
     {
       "type": "Wall",
@@ -3017,7 +3115,9 @@
       "locked": false,
       "structureSpacing": 2,
       "structureWidth": 0.1,
-      "structureColor": "white"
+      "structureColor": "white",
+      "fill": "Full",
+      "unfilledHeight": 0.5
     },
     {
       "type": "Wall",
@@ -3070,7 +3170,9 @@
       "locked": false,
       "structureSpacing": 2,
       "structureWidth": 0.1,
-      "structureColor": "white"
+      "structureColor": "white",
+      "fill": "Full",
+      "unfilledHeight": 0.5
     },
     {
       "type": "Wall",
@@ -3123,7 +3225,9 @@
       "locked": false,
       "structureSpacing": 2,
       "structureWidth": 0.1,
-      "structureColor": "white"
+      "structureColor": "white",
+      "fill": "Full",
+      "unfilledHeight": 0.5
     },
     {
       "id": "iaC7gjXpRF8sDNrzMuoLvf",
@@ -3133,7 +3237,7 @@
       "cz": 0,
       "lx": 0,
       "ly": 0,
-      "lz": 50.911111547438225,
+      "lz": 0,
       "color": "#8f6767",
       "normal": [
         0,
@@ -3160,7 +3264,8 @@
       ],
       "selected": false,
       "locked": false,
-      "sideColor": "#8f6767"
+      "sideColor": "#8f6767",
+      "rise": 9.911111547438225
     },
     {
       "type": "Foundation",
@@ -3241,7 +3346,9 @@
       "locked": false,
       "structureSpacing": 2,
       "structureWidth": 0.1,
-      "structureColor": "white"
+      "structureColor": "white",
+      "fill": "Full",
+      "unfilledHeight": 0.5
     },
     {
       "type": "Wall",
@@ -3294,7 +3401,9 @@
       "locked": false,
       "structureSpacing": 2,
       "structureWidth": 0.1,
-      "structureColor": "white"
+      "structureColor": "white",
+      "fill": "Full",
+      "unfilledHeight": 0.5
     },
     {
       "type": "Wall",
@@ -3347,7 +3456,9 @@
       "locked": false,
       "structureSpacing": 2,
       "structureWidth": 0.1,
-      "structureColor": "white"
+      "structureColor": "white",
+      "fill": "Full",
+      "unfilledHeight": 0.5
     },
     {
       "type": "Wall",
@@ -3400,7 +3511,9 @@
       "locked": false,
       "structureSpacing": 2,
       "structureWidth": 0.1,
-      "structureColor": "white"
+      "structureColor": "white",
+      "fill": "Full",
+      "unfilledHeight": 0.5
     },
     {
       "id": "49DYNSJM4mb3Amf9zEcSuy",
@@ -3410,7 +3523,7 @@
       "cz": 0,
       "lx": 0,
       "ly": 0,
-      "lz": 50.911111547438225,
+      "lz": 0,
       "color": "#8f6767",
       "normal": [
         0,
@@ -3437,7 +3550,8 @@
       ],
       "selected": false,
       "locked": false,
-      "sideColor": "#8f6767"
+      "sideColor": "#8f6767",
+      "rise": 9.911111547438225
     },
     {
       "type": "Foundation",
@@ -3518,7 +3632,9 @@
       "locked": false,
       "structureSpacing": 2,
       "structureWidth": 0.1,
-      "structureColor": "white"
+      "structureColor": "white",
+      "fill": "Full",
+      "unfilledHeight": 0.5
     },
     {
       "type": "Wall",
@@ -3571,7 +3687,9 @@
       "locked": false,
       "structureSpacing": 2,
       "structureWidth": 0.1,
-      "structureColor": "white"
+      "structureColor": "white",
+      "fill": "Full",
+      "unfilledHeight": 0.5
     },
     {
       "type": "Wall",
@@ -3624,7 +3742,9 @@
       "locked": false,
       "structureSpacing": 2,
       "structureWidth": 0.1,
-      "structureColor": "white"
+      "structureColor": "white",
+      "fill": "Full",
+      "unfilledHeight": 0.5
     },
     {
       "type": "Wall",
@@ -3677,7 +3797,9 @@
       "locked": false,
       "structureSpacing": 2,
       "structureWidth": 0.1,
-      "structureColor": "white"
+      "structureColor": "white",
+      "fill": "Full",
+      "unfilledHeight": 0.5
     },
     {
       "id": "dU22xraE7fkaQeudtQezPj",
@@ -3687,7 +3809,7 @@
       "cz": 0,
       "lx": 0,
       "ly": 0,
-      "lz": 50.911111547438225,
+      "lz": 0,
       "color": "#8f6767",
       "normal": [
         0,
@@ -3714,7 +3836,8 @@
       ],
       "selected": false,
       "locked": false,
-      "sideColor": "#8f6767"
+      "sideColor": "#8f6767",
+      "rise": 9.911111547438225
     },
     {
       "type": "Foundation",
@@ -3827,7 +3950,9 @@
       "locked": false,
       "structureSpacing": 2,
       "structureWidth": 0.1,
-      "structureColor": "white"
+      "structureColor": "white",
+      "fill": "Full",
+      "unfilledHeight": 0.5
     },
     {
       "type": "Wall",
@@ -3880,7 +4005,9 @@
       "locked": false,
       "structureSpacing": 2,
       "structureWidth": 0.1,
-      "structureColor": "white"
+      "structureColor": "white",
+      "fill": "Full",
+      "unfilledHeight": 0.5
     },
     {
       "type": "Wall",
@@ -3933,7 +4060,9 @@
       "locked": false,
       "structureSpacing": 2,
       "structureWidth": 0.1,
-      "structureColor": "white"
+      "structureColor": "white",
+      "fill": "Full",
+      "unfilledHeight": 0.5
     },
     {
       "type": "Wall",
@@ -3990,7 +4119,9 @@
       "locked": false,
       "structureSpacing": 2,
       "structureWidth": 0.1,
-      "structureColor": "white"
+      "structureColor": "white",
+      "fill": "Full",
+      "unfilledHeight": 0.5
     },
     {
       "type": "Roof",
@@ -3999,7 +4130,7 @@
       "cz": 0,
       "lx": 0,
       "ly": 0,
-      "lz": 34.46430883284354,
+      "lz": 0,
       "overhang": 0,
       "thickness": 0.05,
       "roofType": "Gable",
@@ -4035,7 +4166,8 @@
         1
       ],
       "locked": false,
-      "sideColor": "#8f6767"
+      "sideColor": "#8f6767",
+      "rise": 14.488772470428223
     },
     {
       "type": "Foundation",
@@ -4310,7 +4442,9 @@
       "structureSpacing": 2,
       "structureWidth": 0.1,
       "structureColor": "white",
-      "opacity": 0.5
+      "opacity": 0.5,
+      "fill": "Full",
+      "unfilledHeight": 0.5
     },
     {
       "type": "Wall",
@@ -4359,7 +4493,9 @@
       "structureSpacing": 2,
       "structureWidth": 0.1,
       "structureColor": "white",
-      "opacity": 0.5
+      "opacity": 0.5,
+      "fill": "Full",
+      "unfilledHeight": 0.5
     },
     {
       "type": "Wall",
@@ -4410,7 +4546,9 @@
       "structureSpacing": 2,
       "structureWidth": 0.1,
       "structureColor": "white",
-      "opacity": 0.5
+      "opacity": 0.5,
+      "fill": "Full",
+      "unfilledHeight": 0.5
     },
     {
       "type": "Wall",
@@ -4461,7 +4599,9 @@
       "structureSpacing": 2,
       "structureWidth": 0.1,
       "structureColor": "white",
-      "opacity": 0.5
+      "opacity": 0.5,
+      "fill": "Full",
+      "unfilledHeight": 0.5
     },
     {
       "type": "Wall",
@@ -4512,7 +4652,9 @@
       "structureSpacing": 2,
       "structureWidth": 0.1,
       "structureColor": "white",
-      "opacity": 0.5
+      "opacity": 0.5,
+      "fill": "Full",
+      "unfilledHeight": 0.5
     },
     {
       "type": "Wall",
@@ -4563,7 +4705,9 @@
       "structureSpacing": 2,
       "structureWidth": 0.1,
       "structureColor": "white",
-      "opacity": 0.5
+      "opacity": 0.5,
+      "fill": "Full",
+      "unfilledHeight": 0.5
     },
     {
       "type": "Wall",
@@ -4614,7 +4758,9 @@
       "structureSpacing": 2,
       "structureWidth": 0.1,
       "structureColor": "white",
-      "opacity": 0.5
+      "opacity": 0.5,
+      "fill": "Full",
+      "unfilledHeight": 0.5
     },
     {
       "type": "Wall",
@@ -4665,7 +4811,9 @@
       "structureSpacing": 2,
       "structureWidth": 0.1,
       "structureColor": "white",
-      "opacity": 0.5
+      "opacity": 0.5,
+      "fill": "Full",
+      "unfilledHeight": 0.5
     },
     {
       "type": "Wall",
@@ -4716,7 +4864,9 @@
       "structureSpacing": 2,
       "structureWidth": 0.1,
       "structureColor": "white",
-      "opacity": 0.5
+      "opacity": 0.5,
+      "fill": "Full",
+      "unfilledHeight": 0.5
     },
     {
       "type": "Wall",
@@ -4765,7 +4915,9 @@
       "structureSpacing": 2,
       "structureWidth": 0.1,
       "structureColor": "white",
-      "opacity": 0.5
+      "opacity": 0.5,
+      "fill": "Full",
+      "unfilledHeight": 0.5
     },
     {
       "type": "Wall",
@@ -4816,7 +4968,9 @@
       "structureSpacing": 2,
       "structureWidth": 0.1,
       "structureColor": "white",
-      "opacity": 0.5
+      "opacity": 0.5,
+      "fill": "Full",
+      "unfilledHeight": 0.5
     },
     {
       "type": "Wall",
@@ -4867,7 +5021,9 @@
       "structureSpacing": 2,
       "structureWidth": 0.1,
       "structureColor": "white",
-      "opacity": 0.5
+      "opacity": 0.5,
+      "fill": "Full",
+      "unfilledHeight": 0.5
     },
     {
       "type": "Wall",
@@ -4918,7 +5074,9 @@
       "structureSpacing": 2,
       "structureWidth": 0.1,
       "structureColor": "white",
-      "opacity": 0.5
+      "opacity": 0.5,
+      "fill": "Full",
+      "unfilledHeight": 0.5
     },
     {
       "type": "Wall",
@@ -4969,7 +5127,9 @@
       "structureSpacing": 2,
       "structureWidth": 0.1,
       "structureColor": "white",
-      "opacity": 0.5
+      "opacity": 0.5,
+      "fill": "Full",
+      "unfilledHeight": 0.5
     },
     {
       "type": "Wall",
@@ -5020,7 +5180,9 @@
       "structureSpacing": 2,
       "structureWidth": 0.1,
       "structureColor": "white",
-      "opacity": 0.5
+      "opacity": 0.5,
+      "fill": "Full",
+      "unfilledHeight": 0.5
     },
     {
       "type": "Wall",
@@ -5071,7 +5233,9 @@
       "structureSpacing": 2,
       "structureWidth": 0.1,
       "structureColor": "white",
-      "opacity": 0.5
+      "opacity": 0.5,
+      "fill": "Full",
+      "unfilledHeight": 0.5
     },
     {
       "id": "hYevMRVtvGbUbiRqk1nUc8",
@@ -5081,7 +5245,7 @@
       "cz": 0,
       "lx": 0,
       "ly": 0,
-      "lz": 50.86569486033483,
+      "lz": 0,
       "color": "#8f6767",
       "normal": [
         0,
@@ -5120,7 +5284,8 @@
       ],
       "selected": false,
       "locked": false,
-      "sideColor": "#8f6767"
+      "sideColor": "#8f6767",
+      "rise": 20.34309413089949
     },
     {
       "type": "Foundation",
@@ -5205,7 +5370,9 @@
       "locked": false,
       "structureSpacing": 2,
       "structureWidth": 0.1,
-      "structureColor": "white"
+      "structureColor": "white",
+      "fill": "Full",
+      "unfilledHeight": 0.5
     },
     {
       "type": "Wall",
@@ -5258,7 +5425,9 @@
       "locked": false,
       "structureSpacing": 2,
       "structureWidth": 0.1,
-      "structureColor": "white"
+      "structureColor": "white",
+      "fill": "Full",
+      "unfilledHeight": 0.5
     },
     {
       "type": "Wall",
@@ -5311,7 +5480,9 @@
       "locked": false,
       "structureSpacing": 2,
       "structureWidth": 0.1,
-      "structureColor": "white"
+      "structureColor": "white",
+      "fill": "Full",
+      "unfilledHeight": 0.5
     },
     {
       "type": "Wall",
@@ -5368,7 +5539,9 @@
       "locked": false,
       "structureSpacing": 2,
       "structureWidth": 0.1,
-      "structureColor": "white"
+      "structureColor": "white",
+      "fill": "Full",
+      "unfilledHeight": 0.5
     },
     {
       "id": "43U2Bn5NdVK18XM6yHM246",
@@ -5378,7 +5551,7 @@
       "cz": 0,
       "lx": 0,
       "ly": 0,
-      "lz": 17.846156119433356,
+      "lz": 0,
       "color": "#8f6767",
       "normal": [
         0,
@@ -5410,7 +5583,8 @@
       ],
       "selected": false,
       "locked": false,
-      "sideColor": "#8f6767"
+      "sideColor": "#8f6767",
+      "rise": 6.296380038661177
     },
     {
       "type": "Foundation",
@@ -5491,7 +5665,9 @@
       "locked": false,
       "structureSpacing": 2,
       "structureWidth": 0.1,
-      "structureColor": "white"
+      "structureColor": "white",
+      "fill": "Full",
+      "unfilledHeight": 0.5
     },
     {
       "type": "Wall",
@@ -5544,7 +5720,9 @@
       "locked": false,
       "structureSpacing": 2,
       "structureWidth": 0.1,
-      "structureColor": "white"
+      "structureColor": "white",
+      "fill": "Full",
+      "unfilledHeight": 0.5
     },
     {
       "type": "Wall",
@@ -5597,7 +5775,9 @@
       "locked": false,
       "structureSpacing": 2,
       "structureWidth": 0.1,
-      "structureColor": "white"
+      "structureColor": "white",
+      "fill": "Full",
+      "unfilledHeight": 0.5
     },
     {
       "type": "Wall",
@@ -5650,7 +5830,9 @@
       "locked": false,
       "structureSpacing": 2,
       "structureWidth": 0.1,
-      "structureColor": "white"
+      "structureColor": "white",
+      "fill": "Full",
+      "unfilledHeight": 0.5
     },
     {
       "id": "b6WgrEhvmm5vBfQ5hvUoV7",
@@ -5660,7 +5842,7 @@
       "cz": 0,
       "lx": 0,
       "ly": 0,
-      "lz": 17.755913370646716,
+      "lz": 0,
       "color": "#8f6767",
       "normal": [
         0,
@@ -5687,7 +5869,8 @@
       ],
       "selected": false,
       "locked": false,
-      "sideColor": "#8f6767"
+      "sideColor": "#8f6767",
+      "rise": 3.7559133706467165
     },
     {
       "type": "Foundation",
@@ -5768,7 +5951,9 @@
       "locked": false,
       "structureSpacing": 2,
       "structureWidth": 0.1,
-      "structureColor": "white"
+      "structureColor": "white",
+      "fill": "Full",
+      "unfilledHeight": 0.5
     },
     {
       "type": "Wall",
@@ -5821,7 +6006,9 @@
       "locked": false,
       "structureSpacing": 2,
       "structureWidth": 0.1,
-      "structureColor": "white"
+      "structureColor": "white",
+      "fill": "Full",
+      "unfilledHeight": 0.5
     },
     {
       "type": "Wall",
@@ -5874,7 +6061,9 @@
       "locked": false,
       "structureSpacing": 2,
       "structureWidth": 0.1,
-      "structureColor": "white"
+      "structureColor": "white",
+      "fill": "Full",
+      "unfilledHeight": 0.5
     },
     {
       "type": "Wall",
@@ -5927,7 +6116,9 @@
       "locked": false,
       "structureSpacing": 2,
       "structureWidth": 0.1,
-      "structureColor": "white"
+      "structureColor": "white",
+      "fill": "Full",
+      "unfilledHeight": 0.5
     },
     {
       "id": "w76LBs2JwDTGkqjmZCF8cs",
@@ -5937,7 +6128,7 @@
       "cz": 0,
       "lx": 0,
       "ly": 0,
-      "lz": 17.755913370646716,
+      "lz": 0,
       "color": "#8f6767",
       "normal": [
         0,
@@ -5964,7 +6155,8 @@
       ],
       "selected": false,
       "locked": false,
-      "sideColor": "#8f6767"
+      "sideColor": "#8f6767",
+      "rise": 3.7559133706467165
     },
     {
       "type": "Foundation",
@@ -6045,7 +6237,9 @@
       "locked": false,
       "structureSpacing": 2,
       "structureWidth": 0.1,
-      "structureColor": "white"
+      "structureColor": "white",
+      "fill": "Full",
+      "unfilledHeight": 0.5
     },
     {
       "type": "Wall",
@@ -6098,7 +6292,9 @@
       "locked": false,
       "structureSpacing": 2,
       "structureWidth": 0.1,
-      "structureColor": "white"
+      "structureColor": "white",
+      "fill": "Full",
+      "unfilledHeight": 0.5
     },
     {
       "type": "Wall",
@@ -6151,7 +6347,9 @@
       "locked": false,
       "structureSpacing": 2,
       "structureWidth": 0.1,
-      "structureColor": "white"
+      "structureColor": "white",
+      "fill": "Full",
+      "unfilledHeight": 0.5
     },
     {
       "type": "Wall",
@@ -6204,7 +6402,9 @@
       "locked": false,
       "structureSpacing": 2,
       "structureWidth": 0.1,
-      "structureColor": "white"
+      "structureColor": "white",
+      "fill": "Full",
+      "unfilledHeight": 0.5
     },
     {
       "id": "ccBdYpfsEntnyimCgAGbFH",
@@ -6214,7 +6414,7 @@
       "cz": 0,
       "lx": 0,
       "ly": 0,
-      "lz": 17.755913370646716,
+      "lz": 0,
       "color": "#8f6767",
       "normal": [
         0,
@@ -6241,7 +6441,8 @@
       ],
       "selected": false,
       "locked": false,
-      "sideColor": "#8f6767"
+      "sideColor": "#8f6767",
+      "rise": 3.7559133706467165
     },
     {
       "type": "Foundation",
@@ -6322,7 +6523,9 @@
       "locked": false,
       "structureSpacing": 2,
       "structureWidth": 0.1,
-      "structureColor": "white"
+      "structureColor": "white",
+      "fill": "Full",
+      "unfilledHeight": 0.5
     },
     {
       "type": "Wall",
@@ -6375,7 +6578,9 @@
       "locked": false,
       "structureSpacing": 2,
       "structureWidth": 0.1,
-      "structureColor": "white"
+      "structureColor": "white",
+      "fill": "Full",
+      "unfilledHeight": 0.5
     },
     {
       "type": "Wall",
@@ -6428,7 +6633,9 @@
       "locked": false,
       "structureSpacing": 2,
       "structureWidth": 0.1,
-      "structureColor": "white"
+      "structureColor": "white",
+      "fill": "Full",
+      "unfilledHeight": 0.5
     },
     {
       "type": "Wall",
@@ -6481,7 +6688,9 @@
       "locked": false,
       "structureSpacing": 2,
       "structureWidth": 0.1,
-      "structureColor": "white"
+      "structureColor": "white",
+      "fill": "Full",
+      "unfilledHeight": 0.5
     },
     {
       "id": "eQ7btevxK7r8DzoyTEdTxn",
@@ -6491,7 +6700,7 @@
       "cz": 0,
       "lx": 0,
       "ly": 0,
-      "lz": 17.755913370646716,
+      "lz": 0,
       "color": "#8f6767",
       "normal": [
         0,
@@ -6518,7 +6727,8 @@
       ],
       "selected": false,
       "locked": false,
-      "sideColor": "#8f6767"
+      "sideColor": "#8f6767",
+      "rise": 3.7559133706467165
     },
     {
       "type": "Foundation",
@@ -6599,7 +6809,9 @@
       "locked": false,
       "structureSpacing": 2,
       "structureWidth": 0.1,
-      "structureColor": "white"
+      "structureColor": "white",
+      "fill": "Full",
+      "unfilledHeight": 0.5
     },
     {
       "type": "Wall",
@@ -6652,7 +6864,9 @@
       "locked": false,
       "structureSpacing": 2,
       "structureWidth": 0.1,
-      "structureColor": "white"
+      "structureColor": "white",
+      "fill": "Full",
+      "unfilledHeight": 0.5
     },
     {
       "type": "Wall",
@@ -6705,7 +6919,9 @@
       "locked": false,
       "structureSpacing": 2,
       "structureWidth": 0.1,
-      "structureColor": "white"
+      "structureColor": "white",
+      "fill": "Full",
+      "unfilledHeight": 0.5
     },
     {
       "type": "Wall",
@@ -6758,7 +6974,9 @@
       "locked": false,
       "structureSpacing": 2,
       "structureWidth": 0.1,
-      "structureColor": "white"
+      "structureColor": "white",
+      "fill": "Full",
+      "unfilledHeight": 0.5
     },
     {
       "id": "tuJvTy5gsauq5Hd2q2TrvG",
@@ -6768,7 +6986,7 @@
       "cz": 0,
       "lx": 0,
       "ly": 0,
-      "lz": 17.755913370646716,
+      "lz": 0,
       "color": "#8f6767",
       "normal": [
         0,
@@ -6795,7 +7013,8 @@
       ],
       "selected": false,
       "locked": false,
-      "sideColor": "#8f6767"
+      "sideColor": "#8f6767",
+      "rise": 3.7559133706467165
     },
     {
       "type": "Foundation",
@@ -6876,7 +7095,9 @@
       "locked": false,
       "structureSpacing": 2,
       "structureWidth": 0.1,
-      "structureColor": "white"
+      "structureColor": "white",
+      "fill": "Full",
+      "unfilledHeight": 0.5
     },
     {
       "type": "Wall",
@@ -6929,7 +7150,9 @@
       "locked": false,
       "structureSpacing": 2,
       "structureWidth": 0.1,
-      "structureColor": "white"
+      "structureColor": "white",
+      "fill": "Full",
+      "unfilledHeight": 0.5
     },
     {
       "type": "Wall",
@@ -6982,7 +7205,9 @@
       "locked": false,
       "structureSpacing": 2,
       "structureWidth": 0.1,
-      "structureColor": "white"
+      "structureColor": "white",
+      "fill": "Full",
+      "unfilledHeight": 0.5
     },
     {
       "type": "Wall",
@@ -7035,7 +7260,9 @@
       "locked": false,
       "structureSpacing": 2,
       "structureWidth": 0.1,
-      "structureColor": "white"
+      "structureColor": "white",
+      "fill": "Full",
+      "unfilledHeight": 0.5
     },
     {
       "id": "vKsXGsPSDc5jtGNVG5pT4h",
@@ -7045,7 +7272,7 @@
       "cz": 0,
       "lx": 0,
       "ly": 0,
-      "lz": 17.755913370646716,
+      "lz": 0,
       "color": "#8f6767",
       "normal": [
         0,
@@ -7072,7 +7299,8 @@
       ],
       "selected": false,
       "locked": false,
-      "sideColor": "#8f6767"
+      "sideColor": "#8f6767",
+      "rise": 3.7559133706467165
     },
     {
       "type": "Foundation",
@@ -7153,7 +7381,9 @@
       "locked": false,
       "structureSpacing": 2,
       "structureWidth": 0.1,
-      "structureColor": "white"
+      "structureColor": "white",
+      "fill": "Full",
+      "unfilledHeight": 0.5
     },
     {
       "type": "Wall",
@@ -7206,7 +7436,9 @@
       "locked": false,
       "structureSpacing": 2,
       "structureWidth": 0.1,
-      "structureColor": "white"
+      "structureColor": "white",
+      "fill": "Full",
+      "unfilledHeight": 0.5
     },
     {
       "type": "Wall",
@@ -7259,7 +7491,9 @@
       "locked": false,
       "structureSpacing": 2,
       "structureWidth": 0.1,
-      "structureColor": "white"
+      "structureColor": "white",
+      "fill": "Full",
+      "unfilledHeight": 0.5
     },
     {
       "type": "Wall",
@@ -7312,7 +7546,9 @@
       "locked": false,
       "structureSpacing": 2,
       "structureWidth": 0.1,
-      "structureColor": "white"
+      "structureColor": "white",
+      "fill": "Full",
+      "unfilledHeight": 0.5
     },
     {
       "id": "585fnALdAC34mNZDfmGzpR",
@@ -7322,7 +7558,7 @@
       "cz": 0,
       "lx": 0,
       "ly": 0,
-      "lz": 17.755913370646716,
+      "lz": 0,
       "color": "#8f6767",
       "normal": [
         0,
@@ -7349,7 +7585,8 @@
       ],
       "selected": false,
       "locked": false,
-      "sideColor": "#8f6767"
+      "sideColor": "#8f6767",
+      "rise": 3.7559133706467165
     },
     {
       "type": "Foundation",
@@ -7430,7 +7667,9 @@
       "locked": false,
       "structureSpacing": 2,
       "structureWidth": 0.1,
-      "structureColor": "white"
+      "structureColor": "white",
+      "fill": "Full",
+      "unfilledHeight": 0.5
     },
     {
       "type": "Wall",
@@ -7483,7 +7722,9 @@
       "locked": false,
       "structureSpacing": 2,
       "structureWidth": 0.1,
-      "structureColor": "white"
+      "structureColor": "white",
+      "fill": "Full",
+      "unfilledHeight": 0.5
     },
     {
       "type": "Wall",
@@ -7536,7 +7777,9 @@
       "locked": false,
       "structureSpacing": 2,
       "structureWidth": 0.1,
-      "structureColor": "white"
+      "structureColor": "white",
+      "fill": "Full",
+      "unfilledHeight": 0.5
     },
     {
       "type": "Wall",
@@ -7589,7 +7832,9 @@
       "locked": false,
       "structureSpacing": 2,
       "structureWidth": 0.1,
-      "structureColor": "white"
+      "structureColor": "white",
+      "fill": "Full",
+      "unfilledHeight": 0.5
     },
     {
       "id": "5jHjwRti8g6gjQYwYNaqMu",
@@ -7599,7 +7844,7 @@
       "cz": 0,
       "lx": 0,
       "ly": 0,
-      "lz": 17.755913370646716,
+      "lz": 0,
       "color": "#8f6767",
       "normal": [
         0,
@@ -7626,7 +7871,8 @@
       ],
       "selected": false,
       "locked": false,
-      "sideColor": "#8f6767"
+      "sideColor": "#8f6767",
+      "rise": 3.7559133706467165
     },
     {
       "type": "Foundation",
@@ -7707,7 +7953,9 @@
       "locked": false,
       "structureSpacing": 2,
       "structureWidth": 0.1,
-      "structureColor": "white"
+      "structureColor": "white",
+      "fill": "Full",
+      "unfilledHeight": 0.5
     },
     {
       "type": "Wall",
@@ -7760,7 +8008,9 @@
       "locked": false,
       "structureSpacing": 2,
       "structureWidth": 0.1,
-      "structureColor": "white"
+      "structureColor": "white",
+      "fill": "Full",
+      "unfilledHeight": 0.5
     },
     {
       "type": "Wall",
@@ -7813,7 +8063,9 @@
       "locked": false,
       "structureSpacing": 2,
       "structureWidth": 0.1,
-      "structureColor": "white"
+      "structureColor": "white",
+      "fill": "Full",
+      "unfilledHeight": 0.5
     },
     {
       "type": "Wall",
@@ -7866,7 +8118,9 @@
       "locked": false,
       "structureSpacing": 2,
       "structureWidth": 0.1,
-      "structureColor": "white"
+      "structureColor": "white",
+      "fill": "Full",
+      "unfilledHeight": 0.5
     },
     {
       "id": "gdKEp1z3y4ryc7dvjnUqEa",
@@ -7876,7 +8130,7 @@
       "cz": 0,
       "lx": 0,
       "ly": 0,
-      "lz": 17.755913370646716,
+      "lz": 0,
       "color": "#8f6767",
       "normal": [
         0,
@@ -7903,7 +8157,8 @@
       ],
       "selected": false,
       "locked": false,
-      "sideColor": "#8f6767"
+      "sideColor": "#8f6767",
+      "rise": 3.7559133706467165
     },
     {
       "type": "Foundation",
@@ -7984,7 +8239,9 @@
       "locked": false,
       "structureSpacing": 2,
       "structureWidth": 0.1,
-      "structureColor": "white"
+      "structureColor": "white",
+      "fill": "Full",
+      "unfilledHeight": 0.5
     },
     {
       "type": "Wall",
@@ -8037,7 +8294,9 @@
       "locked": false,
       "structureSpacing": 2,
       "structureWidth": 0.1,
-      "structureColor": "white"
+      "structureColor": "white",
+      "fill": "Full",
+      "unfilledHeight": 0.5
     },
     {
       "type": "Wall",
@@ -8090,7 +8349,9 @@
       "locked": false,
       "structureSpacing": 2,
       "structureWidth": 0.1,
-      "structureColor": "white"
+      "structureColor": "white",
+      "fill": "Full",
+      "unfilledHeight": 0.5
     },
     {
       "type": "Wall",
@@ -8143,7 +8404,9 @@
       "locked": false,
       "structureSpacing": 2,
       "structureWidth": 0.1,
-      "structureColor": "white"
+      "structureColor": "white",
+      "fill": "Full",
+      "unfilledHeight": 0.5
     },
     {
       "id": "rTW8jYbcN9iKLUvtZVEcCq",
@@ -8153,7 +8416,7 @@
       "cz": 0,
       "lx": 0,
       "ly": 0,
-      "lz": 17.755913370646716,
+      "lz": 0,
       "color": "#8f6767",
       "normal": [
         0,
@@ -8180,7 +8443,8 @@
       ],
       "selected": false,
       "locked": false,
-      "sideColor": "#8f6767"
+      "sideColor": "#8f6767",
+      "rise": 3.7559133706467165
     },
     {
       "type": "Foundation",
@@ -8261,7 +8525,9 @@
       "locked": false,
       "structureSpacing": 2,
       "structureWidth": 0.1,
-      "structureColor": "white"
+      "structureColor": "white",
+      "fill": "Full",
+      "unfilledHeight": 0.5
     },
     {
       "type": "Wall",
@@ -8314,7 +8580,9 @@
       "locked": false,
       "structureSpacing": 2,
       "structureWidth": 0.1,
-      "structureColor": "white"
+      "structureColor": "white",
+      "fill": "Full",
+      "unfilledHeight": 0.5
     },
     {
       "type": "Wall",
@@ -8367,7 +8635,9 @@
       "locked": false,
       "structureSpacing": 2,
       "structureWidth": 0.1,
-      "structureColor": "white"
+      "structureColor": "white",
+      "fill": "Full",
+      "unfilledHeight": 0.5
     },
     {
       "type": "Wall",
@@ -8420,7 +8690,9 @@
       "locked": false,
       "structureSpacing": 2,
       "structureWidth": 0.1,
-      "structureColor": "white"
+      "structureColor": "white",
+      "fill": "Full",
+      "unfilledHeight": 0.5
     },
     {
       "id": "aSwgfRaBWT4x8pjZRpNseg",
@@ -8430,7 +8702,7 @@
       "cz": 0,
       "lx": 0,
       "ly": 0,
-      "lz": 17.755913370646716,
+      "lz": 0,
       "color": "#8f6767",
       "normal": [
         0,
@@ -8457,7 +8729,8 @@
       ],
       "selected": false,
       "locked": false,
-      "sideColor": "#8f6767"
+      "sideColor": "#8f6767",
+      "rise": 3.7559133706467165
     },
     {
       "type": "Foundation",
@@ -8538,7 +8811,9 @@
       "locked": false,
       "structureSpacing": 2,
       "structureWidth": 0.1,
-      "structureColor": "white"
+      "structureColor": "white",
+      "fill": "Full",
+      "unfilledHeight": 0.5
     },
     {
       "type": "Wall",
@@ -8591,7 +8866,9 @@
       "locked": false,
       "structureSpacing": 2,
       "structureWidth": 0.1,
-      "structureColor": "white"
+      "structureColor": "white",
+      "fill": "Full",
+      "unfilledHeight": 0.5
     },
     {
       "type": "Wall",
@@ -8644,7 +8921,9 @@
       "locked": false,
       "structureSpacing": 2,
       "structureWidth": 0.1,
-      "structureColor": "white"
+      "structureColor": "white",
+      "fill": "Full",
+      "unfilledHeight": 0.5
     },
     {
       "type": "Wall",
@@ -8697,7 +8976,9 @@
       "locked": false,
       "structureSpacing": 2,
       "structureWidth": 0.1,
-      "structureColor": "white"
+      "structureColor": "white",
+      "fill": "Full",
+      "unfilledHeight": 0.5
     },
     {
       "id": "wmVcJCTPwpivZkJBd9PRUz",
@@ -8707,7 +8988,7 @@
       "cz": 0,
       "lx": 0,
       "ly": 0,
-      "lz": 17.755913370646716,
+      "lz": 0,
       "color": "#8f6767",
       "normal": [
         0,
@@ -8734,7 +9015,8 @@
       ],
       "selected": false,
       "locked": false,
-      "sideColor": "#8f6767"
+      "sideColor": "#8f6767",
+      "rise": 3.7559133706467165
     },
     {
       "type": "Foundation",
@@ -8813,7 +9095,9 @@
       "structureSpacing": 2,
       "structureWidth": 0.1,
       "structureColor": "white",
-      "opacity": 0.5
+      "opacity": 0.5,
+      "fill": "Full",
+      "unfilledHeight": 0.5
     },
     {
       "type": "Wall",
@@ -8862,7 +9146,9 @@
       "structureSpacing": 2,
       "structureWidth": 0.1,
       "structureColor": "white",
-      "opacity": 0.5
+      "opacity": 0.5,
+      "fill": "Full",
+      "unfilledHeight": 0.5
     },
     {
       "type": "Wall",
@@ -8913,7 +9199,9 @@
       "structureSpacing": 2,
       "structureWidth": 0.1,
       "structureColor": "white",
-      "opacity": 0.5
+      "opacity": 0.5,
+      "fill": "Full",
+      "unfilledHeight": 0.5
     },
     {
       "type": "Wall",
@@ -8964,7 +9252,9 @@
       "structureSpacing": 2,
       "structureWidth": 0.1,
       "structureColor": "white",
-      "opacity": 0.5
+      "opacity": 0.5,
+      "fill": "Full",
+      "unfilledHeight": 0.5
     },
     {
       "type": "Wall",
@@ -9015,7 +9305,9 @@
       "structureSpacing": 2,
       "structureWidth": 0.1,
       "structureColor": "white",
-      "opacity": 0.5
+      "opacity": 0.5,
+      "fill": "Full",
+      "unfilledHeight": 0.5
     },
     {
       "type": "Wall",
@@ -9066,7 +9358,9 @@
       "structureSpacing": 2,
       "structureWidth": 0.1,
       "structureColor": "white",
-      "opacity": 0.5
+      "opacity": 0.5,
+      "fill": "Full",
+      "unfilledHeight": 0.5
     },
     {
       "type": "Wall",
@@ -9117,7 +9411,9 @@
       "structureSpacing": 2,
       "structureWidth": 0.1,
       "structureColor": "white",
-      "opacity": 0.5
+      "opacity": 0.5,
+      "fill": "Full",
+      "unfilledHeight": 0.5
     },
     {
       "type": "Wall",
@@ -9168,7 +9464,9 @@
       "structureSpacing": 2,
       "structureWidth": 0.1,
       "structureColor": "white",
-      "opacity": 0.5
+      "opacity": 0.5,
+      "fill": "Full",
+      "unfilledHeight": 0.5
     },
     {
       "type": "Wall",
@@ -9219,7 +9517,9 @@
       "structureSpacing": 2,
       "structureWidth": 0.1,
       "structureColor": "white",
-      "opacity": 0.5
+      "opacity": 0.5,
+      "fill": "Full",
+      "unfilledHeight": 0.5
     },
     {
       "type": "Wall",
@@ -9268,7 +9568,9 @@
       "structureSpacing": 2,
       "structureWidth": 0.1,
       "structureColor": "white",
-      "opacity": 0.5
+      "opacity": 0.5,
+      "fill": "Full",
+      "unfilledHeight": 0.5
     },
     {
       "type": "Wall",
@@ -9319,7 +9621,9 @@
       "structureSpacing": 2,
       "structureWidth": 0.1,
       "structureColor": "white",
-      "opacity": 0.5
+      "opacity": 0.5,
+      "fill": "Full",
+      "unfilledHeight": 0.5
     },
     {
       "type": "Wall",
@@ -9370,7 +9674,9 @@
       "structureSpacing": 2,
       "structureWidth": 0.1,
       "structureColor": "white",
-      "opacity": 0.5
+      "opacity": 0.5,
+      "fill": "Full",
+      "unfilledHeight": 0.5
     },
     {
       "type": "Wall",
@@ -9421,7 +9727,9 @@
       "structureSpacing": 2,
       "structureWidth": 0.1,
       "structureColor": "white",
-      "opacity": 0.5
+      "opacity": 0.5,
+      "fill": "Full",
+      "unfilledHeight": 0.5
     },
     {
       "type": "Wall",
@@ -9472,7 +9780,9 @@
       "structureSpacing": 2,
       "structureWidth": 0.1,
       "structureColor": "white",
-      "opacity": 0.5
+      "opacity": 0.5,
+      "fill": "Full",
+      "unfilledHeight": 0.5
     },
     {
       "type": "Wall",
@@ -9523,7 +9833,9 @@
       "structureSpacing": 2,
       "structureWidth": 0.1,
       "structureColor": "white",
-      "opacity": 0.5
+      "opacity": 0.5,
+      "fill": "Full",
+      "unfilledHeight": 0.5
     },
     {
       "type": "Wall",
@@ -9574,7 +9886,9 @@
       "structureSpacing": 2,
       "structureWidth": 0.1,
       "structureColor": "white",
-      "opacity": 0.5
+      "opacity": 0.5,
+      "fill": "Full",
+      "unfilledHeight": 0.5
     },
     {
       "id": "fvYFb2pAnenzxFGy1hd1nC",
@@ -9584,7 +9898,7 @@
       "cz": 0,
       "lx": 0,
       "ly": 0,
-      "lz": 50.86569486033483,
+      "lz": 0,
       "color": "#8f6767",
       "normal": [
         0,
@@ -9623,7 +9937,8 @@
       ],
       "selected": false,
       "locked": false,
-      "sideColor": "#8f6767"
+      "sideColor": "#8f6767",
+      "rise": 20.34309413089949
     },
     {
       "type": "Foundation",
@@ -12034,9 +12349,9 @@
     "dailyHeliostatYieldPanelX": 0,
     "showDailyParabolicDishYieldPanel": false,
     "cameraPosition": [
-      -85.3684675110827,
-      -76.37044170777985,
-      98.31866395924631
+      -85.36846751108261,
+      -76.3704417077798,
+      98.31866395924627
     ],
     "showYearlyHeliostatYieldPanel": false,
     "orthographic": false,

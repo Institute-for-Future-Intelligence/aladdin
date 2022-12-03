@@ -1,7 +1,7 @@
 {
-  "docid": "417izEn1FMeFECHCs6SsPM",
-  "time": "11/23/2022 09:45 pm",
-  "timestamp": 1669257917628,
+  "docid": "6wGeXeQASrp3vPDYL2UGUB",
+  "time": "12/03/2022 06:29 pm",
+  "timestamp": 1670110141510,
   "userid": "QWecNcxhyvP6j6sBN11hBsfZDau1",
   "owner": null,
   "email": null,
@@ -94,7 +94,9 @@
       "structureWidth": 0.1,
       "structureColor": "white",
       "opacity": 0.5,
-      "locked": false
+      "locked": false,
+      "fill": "Full",
+      "unfilledHeight": 0.5
     },
     {
       "type": "Wall",
@@ -145,7 +147,9 @@
       "structureWidth": 0.1,
       "structureColor": "white",
       "opacity": 0.5,
-      "locked": false
+      "locked": false,
+      "fill": "Full",
+      "unfilledHeight": 0.5
     },
     {
       "type": "Wall",
@@ -196,7 +200,9 @@
       "structureWidth": 0.1,
       "structureColor": "white",
       "opacity": 0.5,
-      "locked": false
+      "locked": false,
+      "fill": "Full",
+      "unfilledHeight": 0.5
     },
     {
       "type": "Wall",
@@ -247,7 +253,9 @@
       "structureWidth": 0.1,
       "structureColor": "white",
       "opacity": 0.5,
-      "locked": false
+      "locked": false,
+      "fill": "Full",
+      "unfilledHeight": 0.5
     },
     {
       "type": "Foundation",
@@ -324,7 +332,9 @@
       "structureWidth": 0.1,
       "structureColor": "white",
       "opacity": 0.5,
-      "locked": false
+      "locked": false,
+      "fill": "Full",
+      "unfilledHeight": 0.5
     },
     {
       "type": "Wall",
@@ -375,7 +385,9 @@
       "structureWidth": 0.1,
       "structureColor": "white",
       "opacity": 0.5,
-      "locked": false
+      "locked": false,
+      "fill": "Full",
+      "unfilledHeight": 0.5
     },
     {
       "type": "Wall",
@@ -426,7 +438,9 @@
       "structureWidth": 0.1,
       "structureColor": "white",
       "opacity": 0.5,
-      "locked": false
+      "locked": false,
+      "fill": "Full",
+      "unfilledHeight": 0.5
     },
     {
       "type": "Wall",
@@ -477,7 +491,9 @@
       "structureWidth": 0.1,
       "structureColor": "white",
       "opacity": 0,
-      "locked": false
+      "locked": false,
+      "fill": "Full",
+      "unfilledHeight": 0.5
     },
     {
       "type": "Foundation",
@@ -513,7 +529,7 @@
       "cz": 0,
       "lx": 0,
       "ly": 0,
-      "lz": 4.9158361158361314,
+      "lz": 0,
       "overhang": 0.2,
       "thickness": 0.1,
       "roofType": "Mansard",
@@ -540,7 +556,8 @@
       ],
       "parentId": "axj9GVUBNvhnWAa3G8T3wG",
       "foundationId": "axj9GVUBNvhnWAa3G8T3wG",
-      "id": "wCPmoV4VwkScF5K7cf32UD"
+      "id": "wCPmoV4VwkScF5K7cf32UD",
+      "rise": 0.3478700995805717
     },
     {
       "type": "Door",
@@ -1311,7 +1328,7 @@
       "cz": 0,
       "lx": 0,
       "ly": 0,
-      "lz": 11.58965298872863,
+      "lz": 0,
       "overhang": 0.4,
       "thickness": 0.1,
       "roofType": "Hip",
@@ -1339,7 +1356,8 @@
       "foundationId": "3vsEsZfsBjGXDRnpzcE3dE",
       "id": "cgHKR8ai6snf9XinDUWwjd",
       "leftRidgeLength": 4.503938109916677,
-      "rightRidgeLength": 4.503938109916677
+      "rightRidgeLength": 4.503938109916677,
+      "rise": 2.5896529887286306
     },
     {
       "type": "Human",
@@ -1954,8 +1972,8 @@
     "dailyHeliostatYieldPanelX": 0,
     "showDailyParabolicDishYieldPanel": false,
     "cameraPosition": [
-      -12.088777022183129,
-      -23.090274029132658,
+      -12.088777022183123,
+      -23.090274029132647,
       4.016418591168008
     ],
     "showYearlyHeliostatYieldPanel": false,

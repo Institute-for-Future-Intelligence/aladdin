@@ -417,6 +417,9 @@ export const i18n_zh_cn = {
         ApartmentBuilding: '公寓楼',
         OfficeBuilding: '办公楼',
         Hotel: '旅馆',
+      },
+      buildingComplexesSubMenu: '建筑群',
+      buildingComplexExamples: {
         SouthBurlingtonHighSchoolVermont: '佛蒙特州南伯灵顿高中',
         MescaleroApacheSchoolNewMexico: '新墨西哥州梅斯卡勒罗阿帕奇学校',
       },

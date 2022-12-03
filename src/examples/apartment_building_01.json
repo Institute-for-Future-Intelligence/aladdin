@@ -1,7 +1,7 @@
 {
-  "docid": "aSo6gkV8iTs81U9YWgTS6a",
-  "time": "11/26/2022 01:48 pm",
-  "timestamp": 1669488530305,
+  "docid": "byiXKZbm1KrujfxcJHVnVL",
+  "time": "12/03/2022 06:30 pm",
+  "timestamp": 1670110207492,
   "userid": "QWecNcxhyvP6j6sBN11hBsfZDau1",
   "owner": null,
   "email": null,
@@ -120,7 +120,9 @@
       "structureColor": "white",
       "opacity": 0.5,
       "leftRoofHeight": 30,
-      "rightRoofHeight": 30
+      "rightRoofHeight": 30,
+      "fill": "Full",
+      "unfilledHeight": 0.5
     },
     {
       "type": "Wall",
@@ -172,7 +174,9 @@
       "structureColor": "white",
       "opacity": 0.5,
       "leftRoofHeight": 30,
-      "rightRoofHeight": 30
+      "rightRoofHeight": 30,
+      "fill": "Full",
+      "unfilledHeight": 0.5
     },
     {
       "lx": 11.945444567633803,
@@ -224,7 +228,9 @@
       "structureColor": "white",
       "opacity": 0.5,
       "leftRoofHeight": 30,
-      "rightRoofHeight": 30
+      "rightRoofHeight": 30,
+      "fill": "Full",
+      "unfilledHeight": 0.5
     },
     {
       "showLabel": false,
@@ -276,7 +282,9 @@
       "structureColor": "white",
       "opacity": 0.5,
       "leftRoofHeight": 30,
-      "rightRoofHeight": 30
+      "rightRoofHeight": 30,
+      "fill": "Full",
+      "unfilledHeight": 0.5
     },
     {
       "type": "Wall",
@@ -327,7 +335,9 @@
       "selected": false,
       "leftRoofHeight": 40,
       "rightRoofHeight": 40,
-      "locked": false
+      "locked": false,
+      "fill": "Full",
+      "unfilledHeight": 0.5
     },
     {
       "type": "Wall",
@@ -378,7 +388,9 @@
       "selected": false,
       "leftRoofHeight": 40,
       "rightRoofHeight": 40,
-      "locked": false
+      "locked": false,
+      "fill": "Full",
+      "unfilledHeight": 0.5
     },
     {
       "type": "Window",
@@ -552,7 +564,9 @@
       "selected": false,
       "leftRoofHeight": 40,
       "rightRoofHeight": 40,
-      "locked": false
+      "locked": false,
+      "fill": "Full",
+      "unfilledHeight": 0.5
     },
     {
       "type": "Wall",
@@ -603,7 +617,9 @@
       "selected": false,
       "leftRoofHeight": 40,
       "rightRoofHeight": 40,
-      "locked": false
+      "locked": false,
+      "fill": "Full",
+      "unfilledHeight": 0.5
     },
     {
       "type": "Window",
@@ -785,7 +801,7 @@
       "cz": 0,
       "lx": 0,
       "ly": 0,
-      "lz": 40,
+      "lz": 0,
       "overhang": 0.1,
       "thickness": 1,
       "roofType": "Pyramid",
@@ -816,7 +832,8 @@
       "foundationId": "hM4gzHVfAcT1HDeDhXqfQE",
       "id": "gvRT2kUN1YoGCZrBAosc54",
       "locked": false,
-      "sideColor": "#666666"
+      "sideColor": "#666666",
+      "rise": 0
     },
     {
       "type": "Window",
@@ -1232,7 +1249,7 @@
       "cz": 0,
       "lx": 0,
       "ly": 0,
-      "lz": 30,
+      "lz": 0,
       "overhang": 0.1,
       "thickness": 1,
       "roofType": "Pyramid",
@@ -1262,7 +1279,8 @@
       "parentId": "m7AH7DcnoGzAq9kryBy4RS",
       "foundationId": "m7AH7DcnoGzAq9kryBy4RS",
       "id": "1rg4qXk51s2D35ph8XqwbD",
-      "sideColor": "#666666"
+      "sideColor": "#666666",
+      "rise": 0
     },
     {
       "type": "Window",
@@ -4592,7 +4610,9 @@
       "roofId": "pHTF23CfLXLueNE1tagt35",
       "selected": false,
       "leftRoofHeight": 8,
-      "rightRoofHeight": 8
+      "rightRoofHeight": 8,
+      "fill": "Full",
+      "unfilledHeight": 0.5
     },
     {
       "type": "Wall",
@@ -4642,7 +4662,9 @@
       "roofId": "pHTF23CfLXLueNE1tagt35",
       "selected": false,
       "leftRoofHeight": 8,
-      "rightRoofHeight": 8
+      "rightRoofHeight": 8,
+      "fill": "Full",
+      "unfilledHeight": 0.5
     },
     {
       "type": "Wall",
@@ -4692,7 +4714,9 @@
       "roofId": "pHTF23CfLXLueNE1tagt35",
       "selected": false,
       "leftRoofHeight": 8,
-      "rightRoofHeight": 8
+      "rightRoofHeight": 8,
+      "fill": "Full",
+      "unfilledHeight": 0.5
     },
     {
       "type": "Wall",
@@ -4742,7 +4766,9 @@
       "roofId": "pHTF23CfLXLueNE1tagt35",
       "selected": false,
       "leftRoofHeight": 8,
-      "rightRoofHeight": 8
+      "rightRoofHeight": 8,
+      "fill": "Full",
+      "unfilledHeight": 0.5
     },
     {
       "id": "pHTF23CfLXLueNE1tagt35",
@@ -4752,7 +4778,7 @@
       "cz": 0,
       "lx": 0,
       "ly": 0,
-      "lz": 8,
+      "lz": 0,
       "color": "#666666",
       "normal": [
         0,
@@ -4778,7 +4804,8 @@
         "cthH5Q4t9AqYehpe6ssXrf"
       ],
       "selected": false,
-      "sideColor": "#666666"
+      "sideColor": "#666666",
+      "rise": 0
     },
     {
       "type": "Foundation",
@@ -5179,7 +5206,9 @@
       "roofId": "njRXPjHAzFuEQzFQaKio93",
       "selected": false,
       "leftRoofHeight": 30,
-      "rightRoofHeight": 30
+      "rightRoofHeight": 30,
+      "fill": "Full",
+      "unfilledHeight": 0.5
     },
     {
       "type": "Wall",
@@ -5229,7 +5258,9 @@
       "roofId": "njRXPjHAzFuEQzFQaKio93",
       "selected": false,
       "leftRoofHeight": 30,
-      "rightRoofHeight": 30
+      "rightRoofHeight": 30,
+      "fill": "Full",
+      "unfilledHeight": 0.5
     },
     {
       "type": "Wall",
@@ -5279,7 +5310,9 @@
       "roofId": "njRXPjHAzFuEQzFQaKio93",
       "selected": false,
       "leftRoofHeight": 30,
-      "rightRoofHeight": 30
+      "rightRoofHeight": 30,
+      "fill": "Full",
+      "unfilledHeight": 0.5
     },
     {
       "type": "Wall",
@@ -5329,7 +5362,9 @@
       "roofId": "njRXPjHAzFuEQzFQaKio93",
       "selected": false,
       "leftRoofHeight": 30,
-      "rightRoofHeight": 30
+      "rightRoofHeight": 30,
+      "fill": "Full",
+      "unfilledHeight": 0.5
     },
     {
       "type": "Window",
@@ -7579,7 +7614,7 @@
       "cz": 0,
       "lx": 0,
       "ly": 0,
-      "lz": 30,
+      "lz": 0,
       "color": "#666666",
       "normal": [
         0,
@@ -7605,7 +7640,8 @@
         "knjx4z8fKUVQF38Tr2D5YR"
       ],
       "selected": false,
-      "sideColor": "#666666"
+      "sideColor": "#666666",
+      "rise": 0
     },
     {
       "type": "Foundation",
@@ -7680,7 +7716,9 @@
       "roofId": "pZTS1LtmxQ4iRLvvo2k6FG",
       "selected": false,
       "leftRoofHeight": 8,
-      "rightRoofHeight": 8
+      "rightRoofHeight": 8,
+      "fill": "Full",
+      "unfilledHeight": 0.5
     },
     {
       "type": "Wall",
@@ -7730,7 +7768,9 @@
       "roofId": "pZTS1LtmxQ4iRLvvo2k6FG",
       "selected": false,
       "leftRoofHeight": 8,
-      "rightRoofHeight": 8
+      "rightRoofHeight": 8,
+      "fill": "Full",
+      "unfilledHeight": 0.5
     },
     {
       "type": "Wall",
@@ -7780,7 +7820,9 @@
       "roofId": "pZTS1LtmxQ4iRLvvo2k6FG",
       "selected": false,
       "leftRoofHeight": 8,
-      "rightRoofHeight": 8
+      "rightRoofHeight": 8,
+      "fill": "Full",
+      "unfilledHeight": 0.5
     },
     {
       "type": "Wall",
@@ -7830,7 +7872,9 @@
       "roofId": "pZTS1LtmxQ4iRLvvo2k6FG",
       "selected": false,
       "leftRoofHeight": 8,
-      "rightRoofHeight": 8
+      "rightRoofHeight": 8,
+      "fill": "Full",
+      "unfilledHeight": 0.5
     },
     {
       "type": "Window",
@@ -7920,7 +7964,7 @@
       "cz": 0,
       "lx": 0,
       "ly": 0,
-      "lz": 8,
+      "lz": 0,
       "color": "#666666",
       "normal": [
         0,
@@ -7946,7 +7990,8 @@
         "3VZZxMzA1BHxrWmzs6HKLa"
       ],
       "selected": false,
-      "sideColor": "#666666"
+      "sideColor": "#666666",
+      "rise": 0
     },
     {
       "type": "Foundation",

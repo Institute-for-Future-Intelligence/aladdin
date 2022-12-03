@@ -1,7 +1,7 @@
 {
-  "docid": "8KoMsX9VPbHDRwN3CtumqQ",
-  "time": "11/23/2022 03:57 pm",
-  "timestamp": 1669237053133,
+  "docid": "gCz2DsF6gE1Vfii1B1upGw",
+  "time": "12/03/2022 06:13 pm",
+  "timestamp": 1670109216734,
   "userid": "QWecNcxhyvP6j6sBN11hBsfZDau1",
   "owner": null,
   "email": null,
@@ -124,7 +124,9 @@
       "structureSpacing": 2,
       "structureWidth": 0.1,
       "structureColor": "white",
-      "opacity": 0.5
+      "opacity": 0.5,
+      "fill": "Full",
+      "unfilledHeight": 0.5
     },
     {
       "type": "Wall",
@@ -189,7 +191,9 @@
       "structureSpacing": 2,
       "structureWidth": 0.1,
       "structureColor": "white",
-      "opacity": 0.5
+      "opacity": 0.5,
+      "fill": "Full",
+      "unfilledHeight": 0.5
     },
     {
       "lx": 10,
@@ -254,7 +258,9 @@
       "structureSpacing": 2,
       "structureWidth": 0.1,
       "structureColor": "white",
-      "opacity": 0.5
+      "opacity": 0.5,
+      "fill": "Full",
+      "unfilledHeight": 0.5
     },
     {
       "showLabel": false,
@@ -307,7 +313,9 @@
       "structureSpacing": 2,
       "structureWidth": 0.1,
       "structureColor": "white",
-      "opacity": 0.5
+      "opacity": 0.5,
+      "fill": "Full",
+      "unfilledHeight": 0.5
     },
     {
       "type": "Window",
@@ -612,7 +620,7 @@
       "cz": 0,
       "lx": 0,
       "ly": 0,
-      "lz": 6.6432031615634175,
+      "lz": 0,
       "roofType": "Gambrel",
       "wallsId": [
         "cV8MyCuhWAsvEyyFuVqVqg"
@@ -659,7 +667,8 @@
       "id": "sfGxVh6UQ5Rh5eXQutdage",
       "color": "#666666",
       "thickness": 0.2,
-      "locked": false
+      "locked": false,
+      "rise": 3.3216015807817088
     },
     {
       "type": "Wall",
@@ -722,7 +731,9 @@
       "structureSpacing": 2,
       "structureWidth": 0.1,
       "structureColor": "white",
-      "opacity": 0.5
+      "opacity": 0.5,
+      "fill": "Full",
+      "unfilledHeight": 0.5
     },
     {
       "type": "Wall",
@@ -773,7 +784,9 @@
       "structureSpacing": 2,
       "structureWidth": 0.1,
       "structureColor": "white",
-      "opacity": 0.5
+      "opacity": 0.5,
+      "fill": "Full",
+      "unfilledHeight": 0.5
     },
     {
       "type": "Wall",
@@ -824,7 +837,9 @@
       "structureSpacing": 2,
       "structureWidth": 0.1,
       "structureColor": "white",
-      "opacity": 0.5
+      "opacity": 0.5,
+      "fill": "Full",
+      "unfilledHeight": 0.5
     },
     {
       "type": "Wall",
@@ -887,7 +902,9 @@
       "structureSpacing": 2,
       "structureWidth": 0.1,
       "structureColor": "white",
-      "opacity": 0.5
+      "opacity": 0.5,
+      "fill": "Full",
+      "unfilledHeight": 0.5
     },
     {
       "type": "Foundation",
@@ -1371,7 +1388,9 @@
       "structureSpacing": 2,
       "structureWidth": 0.1,
       "structureColor": "white",
-      "opacity": 0.5
+      "opacity": 0.5,
+      "fill": "Full",
+      "unfilledHeight": 0.5
     },
     {
       "type": "Wall",
@@ -1428,7 +1447,9 @@
       "structureSpacing": 2,
       "structureWidth": 0.1,
       "structureColor": "white",
-      "opacity": 0.5
+      "opacity": 0.5,
+      "fill": "Full",
+      "unfilledHeight": 0.5
     },
     {
       "type": "Wall",
@@ -1481,7 +1502,9 @@
       "structureSpacing": 2,
       "structureWidth": 0.1,
       "structureColor": "white",
-      "opacity": 0.5
+      "opacity": 0.5,
+      "fill": "Full",
+      "unfilledHeight": 0.5
     },
     {
       "type": "Wall",
@@ -1538,7 +1561,9 @@
       "structureSpacing": 2,
       "structureWidth": 0.1,
       "structureColor": "white",
-      "opacity": 0.5
+      "opacity": 0.5,
+      "fill": "Full",
+      "unfilledHeight": 0.5
     },
     {
       "type": "Roof",
@@ -1547,7 +1572,7 @@
       "cz": 0,
       "lx": 0,
       "ly": 0,
-      "lz": 6.662549619276321,
+      "lz": 0,
       "overhang": 0.1,
       "thickness": 0.1,
       "roofType": "Gable",
@@ -1579,7 +1604,8 @@
         0,
         1
       ],
-      "locked": false
+      "locked": false,
+      "rise": 0.8497468529083303
     },
     {
       "type": "Wall",
@@ -1630,7 +1656,9 @@
       "structureSpacing": 2,
       "structureWidth": 0.1,
       "structureColor": "white",
-      "opacity": 0.5
+      "opacity": 0.5,
+      "fill": "Full",
+      "unfilledHeight": 0.5
     },
     {
       "type": "Wall",
@@ -1685,7 +1713,9 @@
       "structureSpacing": 2,
       "structureWidth": 0.1,
       "structureColor": "white",
-      "opacity": 0.5
+      "opacity": 0.5,
+      "fill": "Full",
+      "unfilledHeight": 0.5
     },
     {
       "type": "Wall",
@@ -1736,7 +1766,9 @@
       "structureSpacing": 2,
       "structureWidth": 0.1,
       "structureColor": "white",
-      "opacity": 0.5
+      "opacity": 0.5,
+      "fill": "Full",
+      "unfilledHeight": 0.5
     },
     {
       "type": "Wall",
@@ -1791,7 +1823,9 @@
       "structureSpacing": 2,
       "structureWidth": 0.1,
       "structureColor": "white",
-      "opacity": 0.5
+      "opacity": 0.5,
+      "fill": "Full",
+      "unfilledHeight": 0.5
     },
     {
       "type": "Foundation",
@@ -1827,7 +1861,7 @@
       "cz": 0,
       "lx": 0,
       "ly": 0,
-      "lz": 6.708095954440119,
+      "lz": 0,
       "overhang": 0.1,
       "thickness": 0.1,
       "roofType": "Gable",
@@ -1859,7 +1893,8 @@
         0,
         1
       ],
-      "locked": false
+      "locked": false,
+      "rise": 0.8952931880721282
     },
     {
       "type": "Window",
@@ -2024,7 +2059,9 @@
       "locked": false,
       "structureSpacing": 60,
       "structureWidth": 0.1,
-      "structureColor": "white"
+      "structureColor": "white",
+      "fill": "Full",
+      "unfilledHeight": 0.5
     },
     {
       "type": "Wall",
@@ -2078,7 +2115,9 @@
       "locked": false,
       "structureSpacing": 1.4,
       "structureWidth": 0.1,
-      "structureColor": "white"
+      "structureColor": "white",
+      "fill": "Full",
+      "unfilledHeight": 0.5
     },
     {
       "type": "Wall",
@@ -2132,7 +2171,9 @@
       "locked": false,
       "structureSpacing": 2,
       "structureWidth": 0.1,
-      "structureColor": "white"
+      "structureColor": "white",
+      "fill": "Full",
+      "unfilledHeight": 0.5
     },
     {
       "type": "Wall",
@@ -2186,7 +2227,9 @@
       "locked": false,
       "structureSpacing": 1.4,
       "structureWidth": 0.1,
-      "structureColor": "white"
+      "structureColor": "white",
+      "fill": "Full",
+      "unfilledHeight": 0.5
     },
     {
       "type": "Wall",
@@ -2229,7 +2272,9 @@
       "locked": false,
       "structureSpacing": 0.3,
       "structureWidth": 0.05,
-      "structureColor": "white"
+      "structureColor": "white",
+      "fill": "Full",
+      "unfilledHeight": 0.5
     },
     {
       "type": "Wall",
@@ -2272,7 +2317,9 @@
       "locked": false,
       "structureSpacing": 0.3,
       "structureWidth": 0.05,
-      "structureColor": "white"
+      "structureColor": "white",
+      "fill": "Full",
+      "unfilledHeight": 0.5
     },
     {
       "type": "Wall",
@@ -2315,7 +2362,9 @@
       "locked": false,
       "structureSpacing": 0.3,
       "structureWidth": 0.05,
-      "structureColor": "white"
+      "structureColor": "white",
+      "fill": "Full",
+      "unfilledHeight": 0.5
     },
     {
       "type": "Wall",
@@ -2358,7 +2407,9 @@
       "locked": false,
       "structureSpacing": 0.3,
       "structureWidth": 0.05,
-      "structureColor": "white"
+      "structureColor": "white",
+      "fill": "Full",
+      "unfilledHeight": 0.5
     },
     {
       "type": "Roof",
@@ -2367,7 +2418,7 @@
       "cz": 0,
       "lx": 0,
       "ly": 0,
-      "lz": 3.7790287555693105,
+      "lz": 0,
       "overhang": 0.3,
       "thickness": 0.1,
       "roofType": "Hip",
@@ -2396,7 +2447,8 @@
       "id": "3TsX5kkNNNgGMKaT52JSvH",
       "leftRidgeLength": 1.9494919319613808,
       "rightRidgeLength": 1.9494919319613808,
-      "locked": false
+      "locked": false,
+      "rise": 0.7790287555693105
     },
     {
       "type": "Foundation",
@@ -2474,7 +2526,9 @@
       "structureSpacing": 2,
       "structureWidth": 0.1,
       "structureColor": "white",
-      "opacity": 0.5
+      "opacity": 0.5,
+      "fill": "Full",
+      "unfilledHeight": 0.5
     },
     {
       "type": "Wall",
@@ -2525,7 +2579,9 @@
       "structureSpacing": 2,
       "structureWidth": 0.1,
       "structureColor": "white",
-      "opacity": 0.5
+      "opacity": 0.5,
+      "fill": "Full",
+      "unfilledHeight": 0.5
     },
     {
       "type": "Wall",
@@ -2576,7 +2632,9 @@
       "structureSpacing": 2,
       "structureWidth": 0.1,
       "structureColor": "white",
-      "opacity": 0.5
+      "opacity": 0.5,
+      "fill": "Full",
+      "unfilledHeight": 0.5
     },
     {
       "type": "Wall",
@@ -2627,7 +2685,9 @@
       "structureSpacing": 2,
       "structureWidth": 0.1,
       "structureColor": "white",
-      "opacity": 0.5
+      "opacity": 0.5,
+      "fill": "Full",
+      "unfilledHeight": 0.5
     },
     {
       "type": "Tree",
@@ -3212,7 +3272,7 @@
       "cz": 0,
       "lx": 0,
       "ly": 0,
-      "lz": 6.716478772745814,
+      "lz": 0,
       "overhang": 0.1,
       "thickness": 0.1,
       "roofType": "Gambrel",
@@ -3262,7 +3322,8 @@
       ],
       "parentId": "fbqvzYqiEy79jeL8wsadib",
       "foundationId": "fbqvzYqiEy79jeL8wsadib",
-      "id": "p1WWYMY9TmVyswdgfSEZfZ"
+      "id": "p1WWYMY9TmVyswdgfSEZfZ",
+      "rise": 3.266478772745814
     }
   ],
   "view": {

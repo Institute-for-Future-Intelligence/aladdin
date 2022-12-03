@@ -2248,12 +2248,6 @@ const MainMenu = ({ viewOnly, set2DView, resetView, zoomView, canvas }: MainMenu
             <Menu.Item key="hotel_01" onClick={loadFile}>
               {i18n.t('menu.commercialBuildingExamples.Hotel', lang)}
             </Menu.Item>
-            <Menu.Item key="south_burlington_high_school" onClick={loadFile}>
-              {i18n.t('menu.commercialBuildingExamples.SouthBurlingtonHighSchoolVermont', lang)}
-            </Menu.Item>
-            <Menu.Item key="mescalero_apache_school" onClick={loadFile}>
-              {i18n.t('menu.commercialBuildingExamples.MescaleroApacheSchoolNewMexico', lang)}
-            </Menu.Item>
           </SubMenu>
           <SubMenu key={'other_buildings'} title={i18n.t('menu.otherBuildingsSubMenu', lang)}>
             <Menu.Item key="greenhouse" onClick={loadFile}>
@@ -2288,6 +2282,14 @@ const MainMenu = ({ viewOnly, set2DView, resetView, zoomView, canvas }: MainMenu
             </Menu.Item>
             <Menu.Item key="si_o_se_pol" onClick={loadFile}>
               {i18n.t('menu.otherBuildingExamples.SiOSePol', lang)}
+            </Menu.Item>
+          </SubMenu>
+          <SubMenu key={'building_complexes'} title={i18n.t('menu.buildingComplexesSubMenu', lang)}>
+            <Menu.Item key="south_burlington_high_school" onClick={loadFile}>
+              {i18n.t('menu.buildingComplexExamples.SouthBurlingtonHighSchoolVermont', lang)}
+            </Menu.Item>
+            <Menu.Item key="mescalero_apache_school" onClick={loadFile}>
+              {i18n.t('menu.buildingComplexExamples.MescaleroApacheSchoolNewMexico', lang)}
             </Menu.Item>
           </SubMenu>
           <SubMenu key={'urban_planning'} title={i18n.t('menu.urbanPlanningSubMenu', lang)}>

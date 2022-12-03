@@ -1,7 +1,7 @@
 {
-  "docid": "6QypYvCZrTAiG9Y3T3tieJ",
-  "time": "10/20/2022 08:53 pm",
-  "timestamp": 1666313580660,
+  "docid": "ewaPDiyfxoCxRLMJnecBCG",
+  "time": "12/03/2022 06:08 pm",
+  "timestamp": 1670108906598,
   "userid": "QWecNcxhyvP6j6sBN11hBsfZDau1",
   "owner": null,
   "email": null,
@@ -121,7 +121,12 @@
       "wallStructure": "Stud",
       "studSpacing": 20,
       "studColor": "#ffffff",
-      "studWidth": 0.2
+      "studWidth": 0.2,
+      "structureSpacing": 2,
+      "structureWidth": 0.1,
+      "structureColor": "white",
+      "fill": "Full",
+      "unfilledHeight": 0.5
     },
     {
       "type": "Wall",
@@ -177,7 +182,12 @@
         0.5,
         2.707750558185909
       ],
-      "studWidth": 0.2
+      "studWidth": 0.2,
+      "structureSpacing": 2,
+      "structureWidth": 0.1,
+      "structureColor": "white",
+      "fill": "Full",
+      "unfilledHeight": 0.5
     },
     {
       "lx": 2.059449883655177,
@@ -233,7 +243,12 @@
         -0.5,
         2.707750558185909
       ],
-      "studWidth": 0.2
+      "studWidth": 0.2,
+      "structureSpacing": 2,
+      "structureWidth": 0.1,
+      "structureColor": "white",
+      "fill": "Full",
+      "unfilledHeight": 0.5
     },
     {
       "showLabel": false,
@@ -285,7 +300,12 @@
       "opacity": 0,
       "studSpacing": 100,
       "studColor": "#ffffff",
-      "studWidth": 0.2
+      "studWidth": 0.2,
+      "structureSpacing": 2,
+      "structureWidth": 0.1,
+      "structureColor": "white",
+      "fill": "Full",
+      "unfilledHeight": 0.5
     },
     {
       "type": "Human",
@@ -340,7 +360,7 @@
       "cz": 0,
       "lx": 0,
       "ly": 0,
-      "lz": 2.707750558185909,
+      "lz": 0,
       "overhang": 0.3,
       "thickness": 0.05,
       "roofType": "Gable",
@@ -374,7 +394,8 @@
       "ridgeRightPoint": [
         0.5,
         1
-      ]
+      ],
+      "rise": 0
     },
     {
       "type": "Solar Panel",
@@ -485,9 +506,9 @@
     "dailyHeliostatYieldPanelX": 0,
     "showDailyParabolicDishYieldPanel": false,
     "cameraPosition": [
-      -7.1118584802319385,
-      -12.177881926052862,
-      4.972837670439114
+      -7.111858480231937,
+      -12.177881926052857,
+      4.972837670439112
     ],
     "showYearlyHeliostatYieldPanel": false,
     "orthographic": false,

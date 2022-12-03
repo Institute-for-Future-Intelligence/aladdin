@@ -1,7 +1,7 @@
 {
-  "docid": "7RWBvDyLGg7YDTcPuc4gtC",
-  "time": "11/13/2022 05:16 pm",
-  "timestamp": 1668377762676,
+  "docid": "dGTEGuq4Ejtao32Hk4wqJK",
+  "time": "12/03/2022 03:23 pm",
+  "timestamp": 1670098995986,
   "userid": "QWecNcxhyvP6j6sBN11hBsfZDau1",
   "owner": null,
   "email": null,
@@ -93,7 +93,9 @@
       "structureSpacing": 2,
       "structureWidth": 0.1,
       "structureColor": "white",
-      "opacity": 0.5
+      "opacity": 0.5,
+      "fill": "Full",
+      "unfilledHeight": 0.5
     },
     {
       "type": "Window",
@@ -223,7 +225,9 @@
       "structureSpacing": 2,
       "structureWidth": 0.1,
       "structureColor": "white",
-      "opacity": 0.5
+      "opacity": 0.5,
+      "fill": "Full",
+      "unfilledHeight": 0.5
     },
     {
       "type": "Wall",
@@ -273,7 +277,9 @@
       "structureSpacing": 2,
       "structureWidth": 0.1,
       "structureColor": "white",
-      "opacity": 0.5
+      "opacity": 0.5,
+      "fill": "Full",
+      "unfilledHeight": 0.5
     },
     {
       "type": "Window",
@@ -483,7 +489,9 @@
       "structureSpacing": 2,
       "structureWidth": 0.1,
       "structureColor": "white",
-      "opacity": 0.5
+      "opacity": 0.5,
+      "fill": "Full",
+      "unfilledHeight": 0.5
     },
     {
       "type": "Window",
@@ -677,7 +685,7 @@
       "cz": 0,
       "lx": 0,
       "ly": 0,
-      "lz": 4.5753802039556986,
+      "lz": 0,
       "overhang": 0.3,
       "thickness": 0.2,
       "roofType": "Hip",
@@ -703,7 +711,8 @@
       "id": "45NB7k7GYboywbxoXsYHLH",
       "leftRidgeLength": 3,
       "rightRidgeLength": 3,
-      "label": ""
+      "label": "",
+      "rise": 1.3492858897703286
     },
     {
       "type": "Door",
@@ -729,7 +738,10 @@
       ],
       "parentId": "tKvexMf8zrvPgydcZb5VYA",
       "foundationId": "1rAGH78b5nt7cXyGU9vNRV",
-      "id": "bm1UTSxwjiN1iZGr4Z4Fm6"
+      "id": "bm1UTSxwjiN1iZGr4Z4Fm6",
+      "doorType": "Default",
+      "archHeight": 1,
+      "filled": true
     },
     {
       "type": "Solar Panel",
@@ -887,7 +899,7 @@
       "type": "Sensor",
       "cx": 0.057157621054107106,
       "cy": 0.14033655142046375,
-      "cz": 4.413643735424714,
+      "cz": 4.4036437311884296,
       "lx": 0.1,
       "ly": 0.1,
       "lz": 0.01,
@@ -912,7 +924,7 @@
       "type": "Sensor",
       "cx": 0.05632462642172124,
       "cy": -0.03881517090426316,
-      "cz": 4.450639823891692,
+      "cz": 4.440639819780413,
       "lx": 0.1,
       "ly": 0.1,
       "lz": 0.01,
@@ -937,7 +949,7 @@
       "type": "Sensor",
       "cx": 0.25193424207044157,
       "cy": 0.045340891802389115,
-      "cz": 4.406078916293436,
+      "cz": 4.396078903758752,
       "lx": 0.1,
       "ly": 0.1,
       "lz": 0.01,

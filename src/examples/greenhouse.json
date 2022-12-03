@@ -1,7 +1,7 @@
 {
-  "docid": "dGrcmXuvUtb7qfqqcTTRrX",
-  "time": "11/13/2022 06:22 pm",
-  "timestamp": 1668381766061,
+  "docid": "sGSvxM4HoAw4Ve3GSfN5x6",
+  "time": "12/03/2022 06:36 pm",
+  "timestamp": 1670110587674,
   "userid": "QWecNcxhyvP6j6sBN11hBsfZDau1",
   "owner": null,
   "email": null,
@@ -120,7 +120,9 @@
       "wallStructure": "Stud",
       "structureSpacing": 2,
       "structureWidth": 0.1,
-      "structureColor": "white"
+      "structureColor": "white",
+      "fill": "Full",
+      "unfilledHeight": 0.5
     },
     {
       "type": "Wall",
@@ -176,7 +178,9 @@
       ],
       "structureSpacing": 2,
       "structureWidth": 0.1,
-      "structureColor": "white"
+      "structureColor": "white",
+      "fill": "Full",
+      "unfilledHeight": 0.5
     },
     {
       "lx": 10,
@@ -232,7 +236,9 @@
       ],
       "structureSpacing": 2,
       "structureWidth": 0.1,
-      "structureColor": "white"
+      "structureColor": "white",
+      "fill": "Full",
+      "unfilledHeight": 0.5
     },
     {
       "showLabel": false,
@@ -284,7 +290,9 @@
       "opacity": 0.4,
       "structureSpacing": 2,
       "structureWidth": 0.1,
-      "structureColor": "white"
+      "structureColor": "white",
+      "fill": "Full",
+      "unfilledHeight": 0.5
     },
     {
       "type": "Human",
@@ -307,7 +315,7 @@
       "parentId": "m7AH7DcnoGzAq9kryBy4RS",
       "id": "3LYQCPYTZ6WYqLSGF4X7Lr",
       "selected": false,
-      "ly": 0.6
+      "ly": 0.472
     },
     {
       "type": "Human",
@@ -339,7 +347,7 @@
       "cz": 0,
       "lx": 0,
       "ly": 0,
-      "lz": 4.790804943100949,
+      "lz": 0,
       "overhang": 0,
       "thickness": 0.05,
       "roofType": "Gable",
@@ -373,7 +381,8 @@
       "ridgeRightPoint": [
         0,
         1
-      ]
+      ],
+      "rise": 1.790804943100949
     },
     {
       "type": "Flower",

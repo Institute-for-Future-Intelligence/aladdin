@@ -1,7 +1,7 @@
 {
-  "docid": "4e5rM4vtngZBnR5KB5mzsK",
-  "time": "11/03/2022 01:49 pm",
-  "timestamp": 1667497791378,
+  "docid": "2k7Lvvuq45FnPUwU1ip5HP",
+  "time": "12/03/2022 06:28 pm",
+  "timestamp": 1670110081799,
   "userid": "QWecNcxhyvP6j6sBN11hBsfZDau1",
   "owner": null,
   "email": null,
@@ -132,7 +132,9 @@
       "wallStructure": "Default",
       "structureColor": "white",
       "opacity": 0,
-      "locked": false
+      "locked": false,
+      "fill": "Full",
+      "unfilledHeight": 0.5
     },
     {
       "type": "Wall",
@@ -187,7 +189,9 @@
       "wallStructure": "Default",
       "structureColor": "white",
       "opacity": 0,
-      "locked": false
+      "locked": false,
+      "fill": "Full",
+      "unfilledHeight": 0.5
     },
     {
       "type": "Wall",
@@ -242,7 +246,9 @@
       "wallStructure": "Default",
       "structureColor": "white",
       "opacity": 0,
-      "locked": false
+      "locked": false,
+      "fill": "Full",
+      "unfilledHeight": 0.5
     },
     {
       "type": "Wall",
@@ -297,7 +303,9 @@
       "wallStructure": "Default",
       "structureColor": "white",
       "opacity": 0,
-      "locked": false
+      "locked": false,
+      "fill": "Full",
+      "unfilledHeight": 0.5
     },
     {
       "type": "Wall",
@@ -352,7 +360,9 @@
       "wallStructure": "Default",
       "structureColor": "white",
       "opacity": 0,
-      "locked": false
+      "locked": false,
+      "fill": "Full",
+      "unfilledHeight": 0.5
     },
     {
       "type": "Wall",
@@ -407,7 +417,9 @@
       "structureSpacing": 5,
       "structureWidth": 0.7,
       "structureColor": "white",
-      "locked": false
+      "locked": false,
+      "fill": "Full",
+      "unfilledHeight": 0.5
     },
     {
       "type": "Wall",
@@ -462,7 +474,9 @@
       "structureSpacing": 5,
       "structureWidth": 0.7,
       "structureColor": "white",
-      "locked": false
+      "locked": false,
+      "fill": "Full",
+      "unfilledHeight": 0.5
     },
     {
       "type": "Wall",
@@ -517,7 +531,9 @@
       "structureSpacing": 5,
       "structureWidth": 0.7,
       "structureColor": "white",
-      "locked": false
+      "locked": false,
+      "fill": "Full",
+      "unfilledHeight": 0.5
     },
     {
       "type": "Wall",
@@ -572,7 +588,9 @@
       "structureSpacing": 5,
       "structureWidth": 0.7,
       "structureColor": "white",
-      "locked": false
+      "locked": false,
+      "fill": "Full",
+      "unfilledHeight": 0.5
     },
     {
       "type": "Wall",
@@ -627,7 +645,9 @@
       "structureSpacing": 5,
       "structureWidth": 0.7,
       "structureColor": "white",
-      "locked": false
+      "locked": false,
+      "fill": "Full",
+      "unfilledHeight": 0.5
     },
     {
       "type": "Wall",
@@ -682,7 +702,9 @@
       "structureSpacing": 5,
       "structureWidth": 0.7,
       "structureColor": "white",
-      "locked": false
+      "locked": false,
+      "fill": "Full",
+      "unfilledHeight": 0.5
     },
     {
       "type": "Wall",
@@ -737,7 +759,9 @@
       "structureWidth": 0.7,
       "structureSpacing": 5,
       "structureColor": "white",
-      "locked": false
+      "locked": false,
+      "fill": "Full",
+      "unfilledHeight": 0.5
     },
     {
       "type": "Wall",
@@ -792,7 +816,9 @@
       "structureSpacing": 5,
       "structureWidth": 0.7,
       "structureColor": "white",
-      "locked": false
+      "locked": false,
+      "fill": "Full",
+      "unfilledHeight": 0.5
     },
     {
       "type": "Wall",
@@ -847,7 +873,9 @@
       "structureSpacing": 5,
       "structureWidth": 0.7,
       "structureColor": "white",
-      "locked": false
+      "locked": false,
+      "fill": "Full",
+      "unfilledHeight": 0.5
     },
     {
       "type": "Wall",
@@ -902,7 +930,9 @@
       "structureSpacing": 5,
       "structureWidth": 0.7,
       "structureColor": "white",
-      "locked": false
+      "locked": false,
+      "fill": "Full",
+      "unfilledHeight": 0.5
     },
     {
       "type": "Wall",
@@ -957,7 +987,9 @@
       "structureSpacing": 5,
       "structureWidth": 0.7,
       "structureColor": "white",
-      "locked": false
+      "locked": false,
+      "fill": "Full",
+      "unfilledHeight": 0.5
     },
     {
       "type": "Wall",
@@ -1012,7 +1044,9 @@
       "structureSpacing": 5,
       "structureWidth": 0.7,
       "structureColor": "white",
-      "locked": false
+      "locked": false,
+      "fill": "Full",
+      "unfilledHeight": 0.5
     },
     {
       "type": "Wall",
@@ -1067,7 +1101,9 @@
       "structureSpacing": 5,
       "structureWidth": 0.7,
       "structureColor": "white",
-      "locked": false
+      "locked": false,
+      "fill": "Full",
+      "unfilledHeight": 0.5
     },
     {
       "type": "Roof",
@@ -1076,7 +1112,7 @@
       "cz": 0,
       "lx": 0,
       "ly": 0,
-      "lz": 17,
+      "lz": 0,
       "overhang": 0.4,
       "thickness": 1,
       "roofType": "Pyramid",
@@ -1120,7 +1156,8 @@
       "parentId": "3Qmj2gXj2Lmc28MbpT7BdQ",
       "foundationId": "3Qmj2gXj2Lmc28MbpT7BdQ",
       "id": "kKLW3PicqjFWjN5PqUDTTj",
-      "locked": false
+      "locked": false,
+      "rise": 0
     },
     {
       "type": "Foundation",
@@ -1200,7 +1237,9 @@
       "structureWidth": 0.1,
       "structureColor": "white",
       "opacity": 0.5,
-      "locked": false
+      "locked": false,
+      "fill": "Full",
+      "unfilledHeight": 0.5
     },
     {
       "type": "Wall",
@@ -1254,7 +1293,9 @@
       "structureWidth": 0.1,
       "structureColor": "white",
       "opacity": 0.5,
-      "locked": false
+      "locked": false,
+      "fill": "Full",
+      "unfilledHeight": 0.5
     },
     {
       "type": "Wall",
@@ -1308,7 +1349,9 @@
       "structureWidth": 0.1,
       "structureColor": "white",
       "opacity": 0.5,
-      "locked": false
+      "locked": false,
+      "fill": "Full",
+      "unfilledHeight": 0.5
     },
     {
       "type": "Wall",
@@ -1362,7 +1405,9 @@
       "structureWidth": 0.1,
       "structureColor": "white",
       "opacity": 0.5,
-      "locked": false
+      "locked": false,
+      "fill": "Full",
+      "unfilledHeight": 0.5
     },
     {
       "type": "Roof",
@@ -1371,7 +1416,7 @@
       "cz": 0,
       "lx": 0,
       "ly": 0,
-      "lz": 20.192407282288627,
+      "lz": 0,
       "overhang": 0,
       "thickness": 0.2,
       "roofType": "Mansard",
@@ -1399,7 +1444,8 @@
       "parentId": "b7DVyKfyTBHZGANbVbGoYG",
       "foundationId": "b7DVyKfyTBHZGANbVbGoYG",
       "id": "dnGfHzSjH6Qt6pNJ8jFJUj",
-      "locked": false
+      "locked": false,
+      "rise": 1.1924072822886274
     },
     {
       "type": "Foundation",
@@ -1479,7 +1525,9 @@
       "structureColor": "white",
       "locked": false,
       "leftRoofHeight": 16,
-      "rightRoofHeight": 16
+      "rightRoofHeight": 16,
+      "fill": "Full",
+      "unfilledHeight": 0.5
     },
     {
       "type": "Wall",
@@ -1533,7 +1581,9 @@
       "structureColor": "white",
       "locked": false,
       "leftRoofHeight": 16,
-      "rightRoofHeight": 16
+      "rightRoofHeight": 16,
+      "fill": "Full",
+      "unfilledHeight": 0.5
     },
     {
       "type": "Wall",
@@ -1587,7 +1637,9 @@
       "structureColor": "white",
       "locked": false,
       "leftRoofHeight": 16,
-      "rightRoofHeight": 16
+      "rightRoofHeight": 16,
+      "fill": "Full",
+      "unfilledHeight": 0.5
     },
     {
       "type": "Wall",
@@ -1641,7 +1693,9 @@
       "opacity": 0.5,
       "locked": false,
       "leftRoofHeight": 16,
-      "rightRoofHeight": 16
+      "rightRoofHeight": 16,
+      "fill": "Full",
+      "unfilledHeight": 0.5
     },
     {
       "type": "Wall",
@@ -1691,7 +1745,9 @@
       "structureWidth": 0.1,
       "structureColor": "white",
       "opacity": 0.5,
-      "locked": false
+      "locked": false,
+      "fill": "Full",
+      "unfilledHeight": 0.5
     },
     {
       "type": "Wall",
@@ -1741,7 +1797,9 @@
       "structureWidth": 0.1,
       "structureColor": "white",
       "opacity": 0.5,
-      "locked": false
+      "locked": false,
+      "fill": "Full",
+      "unfilledHeight": 0.5
     },
     {
       "type": "Wall",
@@ -1791,7 +1849,9 @@
       "structureWidth": 0.1,
       "structureColor": "white",
       "opacity": 0.5,
-      "locked": false
+      "locked": false,
+      "fill": "Full",
+      "unfilledHeight": 0.5
     },
     {
       "type": "Wall",
@@ -1841,7 +1901,9 @@
       "structureWidth": 0.1,
       "structureColor": "white",
       "opacity": 0.5,
-      "locked": false
+      "locked": false,
+      "fill": "Full",
+      "unfilledHeight": 0.5
     },
     {
       "id": "3DT5vkx2wE8Avqo6NjE3qK",
@@ -1851,7 +1913,7 @@
       "cz": 0,
       "lx": 0,
       "ly": 0,
-      "lz": 20.192407282288627,
+      "lz": 0,
       "color": "#ffffff",
       "normal": [
         0,
@@ -1875,7 +1937,8 @@
       ],
       "ridgeWidth": 1.6897028772572007,
       "selected": false,
-      "locked": false
+      "locked": false,
+      "rise": 1.1924072822886274
     },
     {
       "type": "Foundation",
@@ -1943,7 +2006,9 @@
       "frame": true,
       "mullionColor": "white",
       "frameWidth": 0.1,
-      "locked": false
+      "locked": false,
+      "windowType": "Default",
+      "archHeight": 1
     },
     {
       "type": "Window",
@@ -1982,7 +2047,9 @@
       "frame": true,
       "mullionColor": "white",
       "frameWidth": 0.1,
-      "locked": false
+      "locked": false,
+      "windowType": "Default",
+      "archHeight": 1
     },
     {
       "type": "Window",
@@ -2021,7 +2088,9 @@
       "frame": true,
       "mullionColor": "white",
       "frameWidth": 0.1,
-      "locked": false
+      "locked": false,
+      "windowType": "Default",
+      "archHeight": 1
     },
     {
       "type": "Window",
@@ -2060,7 +2129,9 @@
       "frame": true,
       "mullionColor": "white",
       "frameWidth": 0.1,
-      "locked": false
+      "locked": false,
+      "windowType": "Default",
+      "archHeight": 1
     },
     {
       "type": "Window",
@@ -2099,7 +2170,9 @@
       "frame": true,
       "mullionColor": "white",
       "frameWidth": 0.1,
-      "locked": false
+      "locked": false,
+      "windowType": "Default",
+      "archHeight": 1
     },
     {
       "type": "Window",
@@ -2138,7 +2211,9 @@
       "frame": true,
       "mullionColor": "white",
       "frameWidth": 0.1,
-      "locked": false
+      "locked": false,
+      "windowType": "Default",
+      "archHeight": 1
     },
     {
       "type": "Window",
@@ -2177,7 +2252,9 @@
       "frame": true,
       "mullionColor": "white",
       "frameWidth": 0.1,
-      "locked": false
+      "locked": false,
+      "windowType": "Default",
+      "archHeight": 1
     },
     {
       "type": "Window",
@@ -2216,7 +2293,9 @@
       "frame": true,
       "mullionColor": "white",
       "frameWidth": 0.1,
-      "locked": false
+      "locked": false,
+      "windowType": "Default",
+      "archHeight": 1
     },
     {
       "type": "Window",
@@ -2255,7 +2334,9 @@
       "frame": true,
       "mullionColor": "white",
       "frameWidth": 0.1,
-      "locked": false
+      "locked": false,
+      "windowType": "Default",
+      "archHeight": 1
     },
     {
       "type": "Window",
@@ -2294,7 +2375,9 @@
       "frame": true,
       "mullionColor": "white",
       "frameWidth": 0.1,
-      "locked": false
+      "locked": false,
+      "windowType": "Default",
+      "archHeight": 1
     },
     {
       "type": "Window",
@@ -2333,7 +2416,9 @@
       "frame": true,
       "mullionColor": "white",
       "frameWidth": 0.1,
-      "locked": false
+      "locked": false,
+      "windowType": "Default",
+      "archHeight": 1
     },
     {
       "type": "Window",
@@ -2372,7 +2457,9 @@
       "frame": true,
       "mullionColor": "white",
       "frameWidth": 0.1,
-      "locked": false
+      "locked": false,
+      "windowType": "Default",
+      "archHeight": 1
     },
     {
       "type": "Human",
@@ -2435,7 +2522,9 @@
       "frame": true,
       "mullionColor": "white",
       "frameWidth": 0.1,
-      "locked": false
+      "locked": false,
+      "windowType": "Default",
+      "archHeight": 1
     },
     {
       "type": "Window",
@@ -2474,7 +2563,9 @@
       "frame": true,
       "mullionColor": "white",
       "frameWidth": 0.1,
-      "locked": false
+      "locked": false,
+      "windowType": "Default",
+      "archHeight": 1
     },
     {
       "type": "Window",
@@ -2513,7 +2604,9 @@
       "frame": true,
       "mullionColor": "white",
       "frameWidth": 0.1,
-      "locked": false
+      "locked": false,
+      "windowType": "Default",
+      "archHeight": 1
     },
     {
       "type": "Window",
@@ -2552,7 +2645,9 @@
       "frame": true,
       "mullionColor": "white",
       "frameWidth": 0.1,
-      "locked": false
+      "locked": false,
+      "windowType": "Default",
+      "archHeight": 1
     },
     {
       "type": "Window",
@@ -2591,7 +2686,9 @@
       "frame": true,
       "mullionColor": "white",
       "frameWidth": 0.1,
-      "locked": false
+      "locked": false,
+      "windowType": "Default",
+      "archHeight": 1
     },
     {
       "type": "Window",
@@ -2630,7 +2727,9 @@
       "frame": true,
       "mullionColor": "white",
       "frameWidth": 0.1,
-      "locked": false
+      "locked": false,
+      "windowType": "Default",
+      "archHeight": 1
     },
     {
       "type": "Window",
@@ -2669,7 +2768,9 @@
       "frame": true,
       "mullionColor": "white",
       "frameWidth": 0.1,
-      "locked": false
+      "locked": false,
+      "windowType": "Default",
+      "archHeight": 1
     },
     {
       "type": "Window",
@@ -2708,7 +2809,9 @@
       "frame": true,
       "mullionColor": "white",
       "frameWidth": 0.1,
-      "locked": false
+      "locked": false,
+      "windowType": "Default",
+      "archHeight": 1
     },
     {
       "type": "Window",
@@ -2747,7 +2850,9 @@
       "frame": true,
       "mullionColor": "white",
       "frameWidth": 0.1,
-      "locked": false
+      "locked": false,
+      "windowType": "Default",
+      "archHeight": 1
     },
     {
       "type": "Window",
@@ -2786,7 +2891,9 @@
       "frame": true,
       "mullionColor": "white",
       "frameWidth": 0.1,
-      "locked": false
+      "locked": false,
+      "windowType": "Default",
+      "archHeight": 1
     },
     {
       "type": "Window",
@@ -2825,7 +2932,9 @@
       "frame": true,
       "mullionColor": "white",
       "frameWidth": 0.1,
-      "locked": false
+      "locked": false,
+      "windowType": "Default",
+      "archHeight": 1
     },
     {
       "type": "Window",
@@ -2864,7 +2973,9 @@
       "frame": true,
       "mullionColor": "white",
       "frameWidth": 0.1,
-      "locked": false
+      "locked": false,
+      "windowType": "Default",
+      "archHeight": 1
     },
     {
       "type": "Window",
@@ -2903,7 +3014,9 @@
       "frame": true,
       "mullionColor": "white",
       "frameWidth": 0.1,
-      "locked": false
+      "locked": false,
+      "windowType": "Default",
+      "archHeight": 1
     },
     {
       "type": "Window",
@@ -2942,7 +3055,9 @@
       "frame": true,
       "mullionColor": "white",
       "frameWidth": 0.1,
-      "locked": false
+      "locked": false,
+      "windowType": "Default",
+      "archHeight": 1
     },
     {
       "type": "Window",
@@ -2981,7 +3096,9 @@
       "frame": true,
       "mullionColor": "white",
       "frameWidth": 0.1,
-      "locked": false
+      "locked": false,
+      "windowType": "Default",
+      "archHeight": 1
     },
     {
       "type": "Window",
@@ -3020,7 +3137,9 @@
       "frame": true,
       "mullionColor": "white",
       "frameWidth": 0.1,
-      "locked": false
+      "locked": false,
+      "windowType": "Default",
+      "archHeight": 1
     },
     {
       "type": "Window",
@@ -3059,7 +3178,9 @@
       "frame": true,
       "mullionColor": "white",
       "frameWidth": 0.1,
-      "locked": false
+      "locked": false,
+      "windowType": "Default",
+      "archHeight": 1
     },
     {
       "type": "Window",
@@ -3098,7 +3219,9 @@
       "frame": true,
       "mullionColor": "white",
       "frameWidth": 0.1,
-      "locked": false
+      "locked": false,
+      "windowType": "Default",
+      "archHeight": 1
     },
     {
       "type": "Window",
@@ -3137,7 +3260,9 @@
       "frame": true,
       "mullionColor": "white",
       "frameWidth": 0.1,
-      "locked": false
+      "locked": false,
+      "windowType": "Default",
+      "archHeight": 1
     },
     {
       "type": "Window",
@@ -3176,7 +3301,9 @@
       "frame": true,
       "mullionColor": "white",
       "frameWidth": 0.1,
-      "locked": false
+      "locked": false,
+      "windowType": "Default",
+      "archHeight": 1
     },
     {
       "type": "Window",
@@ -3335,7 +3462,9 @@
       "frame": true,
       "mullionColor": "white",
       "frameWidth": 0.1,
-      "locked": false
+      "locked": false,
+      "windowType": "Default",
+      "archHeight": 1
     },
     {
       "type": "Window",
@@ -3374,7 +3503,9 @@
       "frame": true,
       "mullionColor": "white",
       "frameWidth": 0.1,
-      "locked": false
+      "locked": false,
+      "windowType": "Default",
+      "archHeight": 1
     },
     {
       "type": "Window",
@@ -3413,7 +3544,9 @@
       "frame": true,
       "mullionColor": "white",
       "frameWidth": 0.1,
-      "locked": false
+      "locked": false,
+      "windowType": "Default",
+      "archHeight": 1
     },
     {
       "type": "Window",
@@ -3452,7 +3585,9 @@
       "frame": true,
       "mullionColor": "white",
       "frameWidth": 0.1,
-      "locked": false
+      "locked": false,
+      "windowType": "Default",
+      "archHeight": 1
     },
     {
       "type": "Window",
@@ -3491,7 +3626,9 @@
       "frame": true,
       "mullionColor": "white",
       "frameWidth": 0.1,
-      "locked": false
+      "locked": false,
+      "windowType": "Default",
+      "archHeight": 1
     },
     {
       "type": "Human",
@@ -3848,7 +3985,7 @@
       "cz": 0,
       "lx": 0,
       "ly": 0,
-      "lz": 20.25805826321287,
+      "lz": 0,
       "overhang": 0,
       "thickness": 0.05,
       "roofType": "Hip",
@@ -3876,7 +4013,8 @@
       "foundationId": "sQbhet5xpiSK5NzTWtub4a",
       "id": "89u35YTLctNXWRDNsxwcpj",
       "leftRidgeLength": 8.635242091739931,
-      "rightRidgeLength": 10.319579264913394
+      "rightRidgeLength": 10.319579264913394,
+      "rise": 4.25805826321287
     },
     {
       "type": "Foundation",

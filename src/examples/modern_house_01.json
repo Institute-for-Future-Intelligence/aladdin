@@ -1,7 +1,7 @@
 {
-  "docid": "c7rjmgbKgCAghRfWfmebPr",
-  "time": "11/03/2022 02:53 pm",
-  "timestamp": 1667501582305,
+  "docid": "3pz77pxTaECK5AyQkahVJH",
+  "time": "12/03/2022 02:46 pm",
+  "timestamp": 1670096780206,
   "userid": "QWecNcxhyvP6j6sBN11hBsfZDau1",
   "owner": null,
   "email": null,
@@ -175,7 +175,9 @@
       "structureSpacing": 2,
       "structureWidth": 0.1,
       "structureColor": "white",
-      "opacity": 0.5
+      "opacity": 0.5,
+      "fill": "Full",
+      "unfilledHeight": 0.5
     },
     {
       "type": "Wall",
@@ -230,7 +232,9 @@
       "structureSpacing": 2,
       "structureWidth": 0.1,
       "structureColor": "white",
-      "opacity": 0.5
+      "opacity": 0.5,
+      "fill": "Full",
+      "unfilledHeight": 0.5
     },
     {
       "type": "Wall",
@@ -285,7 +289,9 @@
       "structureSpacing": 2,
       "structureWidth": 0.1,
       "structureColor": "white",
-      "opacity": 0.5
+      "opacity": 0.5,
+      "fill": "Full",
+      "unfilledHeight": 0.5
     },
     {
       "type": "Wall",
@@ -340,7 +346,9 @@
       "structureSpacing": 2,
       "structureWidth": 0.1,
       "structureColor": "white",
-      "opacity": 0.5
+      "opacity": 0.5,
+      "fill": "Full",
+      "unfilledHeight": 0.5
     },
     {
       "type": "Wall",
@@ -395,7 +403,9 @@
       "structureSpacing": 2,
       "structureWidth": 0.1,
       "structureColor": "white",
-      "opacity": 0.5
+      "opacity": 0.5,
+      "fill": "Full",
+      "unfilledHeight": 0.5
     },
     {
       "type": "Wall",
@@ -450,7 +460,9 @@
       "structureSpacing": 2,
       "structureWidth": 0.1,
       "structureColor": "white",
-      "opacity": 0.5
+      "opacity": 0.5,
+      "fill": "Full",
+      "unfilledHeight": 0.5
     },
     {
       "type": "Foundation",
@@ -654,7 +666,9 @@
       "frameWidth": 0.05,
       "mullion": true,
       "opacity": 0.5,
-      "mullionColor": "white"
+      "mullionColor": "white",
+      "windowType": "Default",
+      "archHeight": 1
     },
     {
       "type": "Window",
@@ -696,7 +710,9 @@
       "frameWidth": 0.1,
       "mullion": true,
       "opacity": 0.5,
-      "mullionColor": "white"
+      "mullionColor": "white",
+      "windowType": "Default",
+      "archHeight": 1
     },
     {
       "type": "Window",
@@ -738,7 +754,9 @@
       "frameWidth": 0.05,
       "mullion": true,
       "opacity": 0.5,
-      "mullionColor": "white"
+      "mullionColor": "white",
+      "windowType": "Default",
+      "archHeight": 1
     },
     {
       "type": "Window",
@@ -777,7 +795,9 @@
       "frameWidth": 0.05,
       "mullion": true,
       "opacity": 0.5,
-      "mullionColor": "white"
+      "mullionColor": "white",
+      "windowType": "Default",
+      "archHeight": 1
     },
     {
       "type": "Window",
@@ -816,7 +836,9 @@
       "frameWidth": 0.05,
       "mullion": true,
       "opacity": 0.5,
-      "mullionColor": "white"
+      "mullionColor": "white",
+      "windowType": "Default",
+      "archHeight": 1
     },
     {
       "type": "Window",
@@ -855,7 +877,9 @@
       "frameWidth": 0.05,
       "mullion": true,
       "opacity": 0.5,
-      "mullionColor": "white"
+      "mullionColor": "white",
+      "windowType": "Default",
+      "archHeight": 1
     },
     {
       "type": "Window",
@@ -894,7 +918,9 @@
       "frame": true,
       "mullion": true,
       "opacity": 0.5,
-      "mullionColor": "white"
+      "mullionColor": "white",
+      "windowType": "Default",
+      "archHeight": 1
     },
     {
       "type": "Window",
@@ -933,7 +959,9 @@
       "frame": true,
       "mullion": true,
       "opacity": 0.5,
-      "mullionColor": "white"
+      "mullionColor": "white",
+      "windowType": "Default",
+      "archHeight": 1
     },
     {
       "type": "Window",
@@ -972,7 +1000,9 @@
       "frame": true,
       "mullion": true,
       "opacity": 0.5,
-      "mullionColor": "white"
+      "mullionColor": "white",
+      "windowType": "Default",
+      "archHeight": 1
     },
     {
       "type": "Window",
@@ -1011,7 +1041,9 @@
       "frame": true,
       "mullion": true,
       "opacity": 0.5,
-      "mullionColor": "white"
+      "mullionColor": "white",
+      "windowType": "Default",
+      "archHeight": 1
     },
     {
       "type": "Window",
@@ -1050,7 +1082,9 @@
       "frame": true,
       "mullion": true,
       "opacity": 0.5,
-      "mullionColor": "white"
+      "mullionColor": "white",
+      "windowType": "Default",
+      "archHeight": 1
     },
     {
       "type": "Window",
@@ -1089,7 +1123,9 @@
       "frame": true,
       "mullion": true,
       "opacity": 0.5,
-      "mullionColor": "white"
+      "mullionColor": "white",
+      "windowType": "Default",
+      "archHeight": 1
     },
     {
       "type": "Window",
@@ -1128,7 +1164,9 @@
       "frame": true,
       "mullion": true,
       "opacity": 0.5,
-      "mullionColor": "white"
+      "mullionColor": "white",
+      "windowType": "Default",
+      "archHeight": 1
     },
     {
       "type": "Roof",
@@ -1137,7 +1175,7 @@
       "cz": 0,
       "lx": 0,
       "ly": 0,
-      "lz": 6,
+      "lz": 0,
       "overhang": 1,
       "thickness": 0.2,
       "roofType": "Pyramid",
@@ -1169,7 +1207,8 @@
       "parentId": "m7AH7DcnoGzAq9kryBy4RS",
       "foundationId": "m7AH7DcnoGzAq9kryBy4RS",
       "id": "5PVMZuTRFmTCfk2YbWKwPq",
-      "locked": false
+      "locked": false,
+      "rise": 0
     },
     {
       "type": "Window",
@@ -1208,7 +1247,9 @@
       "frame": true,
       "mullion": true,
       "opacity": 0.5,
-      "mullionColor": "white"
+      "mullionColor": "white",
+      "windowType": "Default",
+      "archHeight": 1
     },
     {
       "type": "Window",
@@ -1247,7 +1288,9 @@
       "frame": true,
       "mullion": true,
       "opacity": 0.5,
-      "mullionColor": "white"
+      "mullionColor": "white",
+      "windowType": "Default",
+      "archHeight": 1
     },
     {
       "type": "Window",
@@ -1286,7 +1329,9 @@
       "frame": true,
       "mullion": true,
       "opacity": 0.5,
-      "mullionColor": "white"
+      "mullionColor": "white",
+      "windowType": "Default",
+      "archHeight": 1
     },
     {
       "type": "Window",
@@ -1325,7 +1370,9 @@
       "frameWidth": 0.05,
       "mullion": true,
       "opacity": 0.5,
-      "mullionColor": "white"
+      "mullionColor": "white",
+      "windowType": "Default",
+      "archHeight": 1
     },
     {
       "type": "Window",
@@ -1364,7 +1411,9 @@
       "frameWidth": 0.05,
       "mullion": true,
       "opacity": 0.5,
-      "mullionColor": "white"
+      "mullionColor": "white",
+      "windowType": "Default",
+      "archHeight": 1
     },
     {
       "type": "Window",
@@ -1403,7 +1452,9 @@
       "frameWidth": 0.05,
       "mullion": true,
       "opacity": 0.5,
-      "mullionColor": "white"
+      "mullionColor": "white",
+      "windowType": "Default",
+      "archHeight": 1
     },
     {
       "type": "Window",
@@ -1442,7 +1493,9 @@
       "frameWidth": 0.05,
       "mullion": true,
       "opacity": 0.5,
-      "mullionColor": "white"
+      "mullionColor": "white",
+      "windowType": "Default",
+      "archHeight": 1
     },
     {
       "type": "Tree",
@@ -2144,9 +2197,9 @@
     "dailyHeliostatYieldPanelX": 0,
     "showDailyParabolicDishYieldPanel": false,
     "cameraPosition": [
-      14.574812763576826,
-      -7.056426416933812,
-      2.4571051399935797
+      11.745277768968359,
+      -10.932517839018058,
+      2.457105139993578
     ],
     "showYearlyHeliostatYieldPanel": false,
     "orthographic": false,

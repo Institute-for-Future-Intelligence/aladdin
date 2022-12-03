@@ -420,6 +420,9 @@ export const i18n_en = {
         ApartmentBuilding: 'Apartment Building',
         OfficeBuilding: 'Office Building',
         Hotel: 'Hotel',
+      },
+      buildingComplexesSubMenu: 'Building Complexes',
+      buildingComplexExamples: {
         SouthBurlingtonHighSchoolVermont: 'South Burlington High School, VT',
         MescaleroApacheSchoolNewMexico: 'Mescalero Apache School, NM',
       },

@@ -1,7 +1,7 @@
 {
-  "docid": "aNFzqTik1HozpmvFscZ9C6",
-  "time": "11/25/2022 02:54 pm",
-  "timestamp": 1669406054565,
+  "docid": "jdYtEbjKGtVtUmwhoGv9kf",
+  "time": "12/03/2022 02:31 pm",
+  "timestamp": 1670095872864,
   "userid": "QWecNcxhyvP6j6sBN11hBsfZDau1",
   "owner": null,
   "email": null,
@@ -130,7 +130,9 @@
       "structureSpacing": 2,
       "structureWidth": 0.1,
       "structureColor": "white",
-      "opacity": 0.5
+      "opacity": 0.5,
+      "fill": "Full",
+      "unfilledHeight": 0.5
     },
     {
       "type": "Wall",
@@ -184,7 +186,9 @@
       "structureSpacing": 2,
       "structureWidth": 0.1,
       "structureColor": "white",
-      "opacity": 0.5
+      "opacity": 0.5,
+      "fill": "Full",
+      "unfilledHeight": 0.5
     },
     {
       "type": "Wall",
@@ -238,7 +242,9 @@
       "structureSpacing": 2,
       "structureWidth": 0.1,
       "structureColor": "white",
-      "opacity": 0.5
+      "opacity": 0.5,
+      "fill": "Full",
+      "unfilledHeight": 0.5
     },
     {
       "type": "Wall",
@@ -292,7 +298,9 @@
       "structureSpacing": 2,
       "structureWidth": 0.1,
       "structureColor": "white",
-      "opacity": 0.5
+      "opacity": 0.5,
+      "fill": "Full",
+      "unfilledHeight": 0.5
     },
     {
       "type": "Wall",
@@ -346,7 +354,9 @@
       "structureSpacing": 2,
       "structureWidth": 0.1,
       "structureColor": "white",
-      "opacity": 0.5
+      "opacity": 0.5,
+      "fill": "Full",
+      "unfilledHeight": 0.5
     },
     {
       "type": "Wall",
@@ -400,7 +410,9 @@
       "structureSpacing": 2,
       "structureWidth": 0.1,
       "structureColor": "white",
-      "opacity": 0.5
+      "opacity": 0.5,
+      "fill": "Full",
+      "unfilledHeight": 0.5
     },
     {
       "type": "Wall",
@@ -454,7 +466,9 @@
       "structureSpacing": 2,
       "structureWidth": 0.1,
       "structureColor": "white",
-      "opacity": 0.5
+      "opacity": 0.5,
+      "fill": "Full",
+      "unfilledHeight": 0.5
     },
     {
       "type": "Wall",
@@ -508,7 +522,9 @@
       "structureSpacing": 2,
       "structureWidth": 0.1,
       "structureColor": "white",
-      "opacity": 0.5
+      "opacity": 0.5,
+      "fill": "Full",
+      "unfilledHeight": 0.5
     },
     {
       "type": "Human",
@@ -540,7 +556,7 @@
       "cz": 0,
       "lx": 0,
       "ly": 0,
-      "lz": 30,
+      "lz": 0,
       "overhang": 0.3,
       "thickness": 0.2,
       "roofType": "Pyramid",
@@ -573,7 +589,8 @@
       ],
       "parentId": "9VUxbWr6Hk1HaeGiLpEeqj",
       "foundationId": "9VUxbWr6Hk1HaeGiLpEeqj",
-      "id": "a69gMcUNAL6smrEEJWVg5m"
+      "id": "a69gMcUNAL6smrEEJWVg5m",
+      "rise": 0
     },
     {
       "type": "Solar Panel",

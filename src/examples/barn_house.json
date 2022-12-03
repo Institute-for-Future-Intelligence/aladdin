@@ -1,7 +1,7 @@
 {
-  "docid": "oyqo9poyh6Z9FQ9f3wnFiw",
-  "time": "11/09/2022 12:08 pm",
-  "timestamp": 1668013698018,
+  "docid": "r4EMPKLV77Q1pZxhiW5Tw2",
+  "time": "12/03/2022 06:26 pm",
+  "timestamp": 1670109989630,
   "userid": "QWecNcxhyvP6j6sBN11hBsfZDau1",
   "owner": null,
   "email": null,
@@ -127,7 +127,9 @@
       "structureSpacing": 2,
       "structureWidth": 0.1,
       "structureColor": "white",
-      "opacity": 0.5
+      "opacity": 0.5,
+      "fill": "Full",
+      "unfilledHeight": 0.5
     },
     {
       "lz": 12,
@@ -183,7 +185,9 @@
       "structureSpacing": 2,
       "structureWidth": 0.1,
       "structureColor": "white",
-      "opacity": 0.5
+      "opacity": 0.5,
+      "fill": "Full",
+      "unfilledHeight": 0.5
     },
     {
       "cy": 2.3140035386488824,
@@ -239,7 +243,9 @@
       "structureSpacing": 2,
       "structureWidth": 0.1,
       "structureColor": "white",
-      "opacity": 0.5
+      "opacity": 0.5,
+      "fill": "Full",
+      "unfilledHeight": 0.5
     },
     {
       "showLabel": false,
@@ -291,7 +297,9 @@
       "structureSpacing": 2,
       "structureWidth": 0.1,
       "structureColor": "white",
-      "opacity": 0.5
+      "opacity": 0.5,
+      "fill": "Full",
+      "unfilledHeight": 0.5
     },
     {
       "solarPowerTower": {},
@@ -368,7 +376,9 @@
       "structureSpacing": 2,
       "structureWidth": 0.1,
       "structureColor": "white",
-      "opacity": 0.5
+      "opacity": 0.5,
+      "fill": "Full",
+      "unfilledHeight": 0.5
     },
     {
       "type": "Wall",
@@ -420,7 +430,9 @@
       "structureSpacing": 2,
       "structureWidth": 0.1,
       "structureColor": "white",
-      "opacity": 0.5
+      "opacity": 0.5,
+      "fill": "Full",
+      "unfilledHeight": 0.5
     },
     {
       "leftJoints": [
@@ -476,7 +488,9 @@
       "structureSpacing": 2,
       "structureWidth": 0.1,
       "structureColor": "white",
-      "opacity": 0.5
+      "opacity": 0.5,
+      "fill": "Full",
+      "unfilledHeight": 0.5
     },
     {
       "foundationId": "46TKaVq8pvU97fq25w6FtQ",
@@ -532,7 +546,9 @@
       "structureSpacing": 2,
       "structureWidth": 0.1,
       "structureColor": "white",
-      "opacity": 0.5
+      "opacity": 0.5,
+      "fill": "Full",
+      "unfilledHeight": 0.5
     },
     {
       "cy": 0,
@@ -550,7 +566,7 @@
       "type": "Roof",
       "overhang": 0.2,
       "thickness": 0.1,
-      "lz": 6.986961603131722,
+      "lz": 0,
       "lx": 0,
       "roofType": "Gable",
       "foundationId": "46TKaVq8pvU97fq25w6FtQ",
@@ -573,7 +589,8 @@
       "ly": 0,
       "showLabel": false,
       "color": "#4d4d4d",
-      "roofStructure": "Default"
+      "roofStructure": "Default",
+      "rise": 0
     },
     {
       "cy": 0.1,
@@ -811,7 +828,9 @@
       "structureSpacing": 2,
       "structureWidth": 0.1,
       "structureColor": "white",
-      "opacity": 0.5
+      "opacity": 0.5,
+      "fill": "Full",
+      "unfilledHeight": 0.5
     },
     {
       "leftPoint": [
@@ -863,7 +882,9 @@
       "structureSpacing": 2,
       "structureWidth": 0.1,
       "structureColor": "white",
-      "opacity": 0.5
+      "opacity": 0.5,
+      "fill": "Full",
+      "unfilledHeight": 0.5
     },
     {
       "foundationId": "rzzzSn5cSsCh41KW1dZ8o9",
@@ -915,7 +936,9 @@
       "structureSpacing": 2,
       "structureWidth": 0.1,
       "structureColor": "white",
-      "opacity": 0.5
+      "opacity": 0.5,
+      "fill": "Full",
+      "unfilledHeight": 0.5
     },
     {
       "ly": 0.3,
@@ -967,7 +990,9 @@
       "structureSpacing": 2,
       "structureWidth": 0.1,
       "structureColor": "white",
-      "opacity": 0.5
+      "opacity": 0.5,
+      "fill": "Full",
+      "unfilledHeight": 0.5
     },
     {
       "normal": [
@@ -981,7 +1006,7 @@
       "cy": 0,
       "roofType": "Pyramid",
       "ly": 0,
-      "lz": 22.421401741193424,
+      "lz": 0,
       "showLabel": false,
       "parentId": "rzzzSn5cSsCh41KW1dZ8o9",
       "rotation": [
@@ -1002,7 +1027,8 @@
       "id": "bXyFJNv4LJba2AUhe3ZtVT",
       "foundationId": "rzzzSn5cSsCh41KW1dZ8o9",
       "selected": false,
-      "color": "#4d4d4d"
+      "color": "#4d4d4d",
+      "rise": 2.4214017411934243
     },
     {
       "cy": 0.1,
@@ -1697,7 +1723,10 @@
       "parentId": "iF8yBnVR7zKfNKiVQ7M1op",
       "foundationId": "x9h6vgTSQ3QLh48G3oYMPN",
       "id": "1cqNEbnbmdgjFsj2KffdDW",
-      "color": "white"
+      "color": "white",
+      "doorType": "Default",
+      "archHeight": 1,
+      "filled": true
     },
     {
       "type": "Flower",
@@ -2410,7 +2439,9 @@
       "roofId": "2edgYQtearj95L9ExcxpR8",
       "selected": false,
       "leftRoofHeight": 6.986961603131722,
-      "rightRoofHeight": 6.986961603131722
+      "rightRoofHeight": 6.986961603131722,
+      "fill": "Full",
+      "unfilledHeight": 0.5
     },
     {
       "type": "Wall",
@@ -2460,7 +2491,9 @@
       "roofId": "2edgYQtearj95L9ExcxpR8",
       "selected": false,
       "leftRoofHeight": 5,
-      "rightRoofHeight": 5
+      "rightRoofHeight": 5,
+      "fill": "Full",
+      "unfilledHeight": 0.5
     },
     {
       "type": "Window",
@@ -2754,7 +2787,9 @@
       "centerRoofHeight": [
         0.5,
         6.986961603131722
-      ]
+      ],
+      "fill": "Full",
+      "unfilledHeight": 0.5
     },
     {
       "type": "Wall",
@@ -2808,7 +2843,9 @@
       "centerRoofHeight": [
         -0.5,
         6.986961603131722
-      ]
+      ],
+      "fill": "Full",
+      "unfilledHeight": 0.5
     },
     {
       "id": "2edgYQtearj95L9ExcxpR8",
@@ -2818,7 +2855,7 @@
       "cz": 0,
       "lx": 0,
       "ly": 0,
-      "lz": 6.986961603131722,
+      "lz": 0,
       "color": "#4d4d4d",
       "normal": [
         0,
@@ -2848,7 +2885,8 @@
         0.5,
         1
       ],
-      "selected": false
+      "selected": false,
+      "rise": 0
     },
     {
       "type": "Flower",
@@ -4192,7 +4230,7 @@
       "cz": 0,
       "lx": 0,
       "ly": 0,
-      "lz": 15.934734349134846,
+      "lz": 0,
       "overhang": 0.3,
       "thickness": 0.2,
       "roofType": "Gable",
@@ -4226,7 +4264,8 @@
       "ridgeRightPoint": [
         0,
         1
-      ]
+      ],
+      "rise": 3.934734349134846
     },
     {
       "type": "Window",
@@ -4356,7 +4395,7 @@
       "color": "#fe9200",
       "cx": 0.32491117851716567,
       "cy": -0.02051365319438737,
-      "cz": 22.470914933789643,
+      "cz": 22.47091493193306,
       "lx": 0.16,
       "ly": 0.16,
       "lz": 0.08,
