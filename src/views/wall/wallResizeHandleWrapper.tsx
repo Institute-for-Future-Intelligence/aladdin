@@ -72,14 +72,8 @@ const WallResizeHandle = React.memo(({ id, x, z, handleType, highLight, handleSi
           state.resizeHandleType = handleType;
         });
       }}
-      onPointerUp={() => {
-        setCommonStore((state) => {
-          state.resizeHandleType = null;
-        });
-      }}
       onPointerOver={(e) => {
         setHovered(true);
-        selectMe(id, e, ActionType.Resize);
         setCommonStore((state) => {
           state.hoveredHandle = handleType;
         });
@@ -238,6 +232,7 @@ const WallResizeHandleWrapper = React.memo(
       setCommonStore((state) => {
         state.actionState.wallHeight = z * 2;
         state.actionState.wallUnfilledHeight = unfilledHeight;
+        state.resizeHandleType = null;
       });
     };
 
