@@ -18,11 +18,11 @@ import { Util } from 'src/Util';
 import { CanvasTexture, DoubleSide, Euler, Float32BufferAttribute, Mesh, Shape, Vector3 } from 'three';
 import {
   useMultiCurrWallArray,
-  useRoofHeight,
   useRoofTexture,
   useElementUndoable,
   useTransparent,
   useUpdateSegmentVerticesMap,
+  useRoofHeight,
 } from './hooks';
 import {
   addUndoableResizeRoofHeight,
@@ -124,40 +124,13 @@ const MansardRoof = ({
   const texture = useRoofTexture(textureType);
   const { currentWallArray, isLoopRef } = useMultiCurrWallArray(foundationId, id, wallsId);
 
-  const getWallHeight = (arr: WallModel[], i: number) => {
-    const w = arr[i];
-    let lh = 0;
-    let rh = 0;
-    if (i === 0) {
-      lh = Math.max(w.lz, arr[arr.length - 1].lz);
-      rh = Math.max(w.lz, arr[i + 1].lz);
-    } else if (i === arr.length - 1) {
-      lh = Math.max(w.lz, arr[i - 1].lz);
-      rh = Math.max(w.lz, arr[0].lz);
-    } else {
-      lh = Math.max(w.lz, arr[i - 1].lz);
-      rh = Math.max(w.lz, arr[i + 1].lz);
-    }
-    return { lh, rh };
-  };
-
-  const getMinHeight = () => {
-    let minHeight = 0;
-    for (let i = 0; i < currentWallArray.length; i++) {
-      const { lh, rh } = getWallHeight(currentWallArray, i);
-      minHeight = Math.max(minHeight, Math.max(lh, rh));
-    }
-    return minHeight;
-  };
-
   const setCommonStore = useStore(Selector.set);
   const removeElementById = useStore(Selector.removeElementById);
   const shadowEnabled = useStore(Selector.viewState.shadowEnabled);
   const ray = useStore((state) => state.ray);
   const mouse = useStore((state) => state.mouse);
-  const fileChanged = useStore(Selector.fileChanged);
 
-  const { h, setH, minHeight, setMinHeight, relHeight, setRelHeight } = useRoofHeight(lz, getMinHeight());
+  const { highestWallHeight, topZ, lzInnerState, setLzInnerState } = useRoofHeight(currentWallArray, lz);
 
   const [width, setWidth] = useState(ridgeWidth);
   const [maxWidth, setMaxWidth] = useState<number | null>(null);
@@ -165,8 +138,6 @@ const MansardRoof = ({
   const [roofHandleType, setRoofHandleType] = useState(RoofHandleType.Null);
   const [ridgeHandleIndex, setRidgeHandleIndex] = useState<number | null>(null);
 
-  const oldHeight = useRef(h);
-  const oldRelativeHeightRef = useRef<number>(relHeight.current);
   const oldWidth = useRef(width);
   const isFirstMountRef = useRef(true);
 
@@ -243,7 +214,7 @@ const MansardRoof = ({
       const w = currentWallArray[i];
       const leftPoint = new Vector3(w.leftPoint[0], w.leftPoint[1]);
       const rightPoint = new Vector3(w.rightPoint[0], w.rightPoint[1]);
-      const { lh, rh } = getWallHeight(currentWallArray, i);
+      const { lh, rh } = RoofUtil.getWallHeight(currentWallArray, i);
       const dLeft = RoofUtil.getDistance(leftPoint, rightPoint, ridgePoints[i].leftPoint);
       const overhangHeightLeft = Math.min((overhang / dLeft) * (ridgePoints[i].leftPoint.z - lh), lh);
       const dRight = RoofUtil.getDistance(leftPoint, rightPoint, ridgePoints[i].rightPoint);
@@ -282,8 +253,8 @@ const MansardRoof = ({
     if (Number.isNaN(p.x) || Number.isNaN(p.y)) {
       return new Vector3();
     }
-    return new Vector3(p.x, p.y, h);
-  }, [currentWallArray, h]);
+    return new Vector3(p.x, p.y, topZ);
+  }, [currentWallArray, topZ]);
 
   const overhangs = useMemo(() => {
     const res = currentWallArray.map((wall) => RoofUtil.getWallNormal(wall).multiplyScalar(overhang));
@@ -329,8 +300,8 @@ const MansardRoof = ({
       const rightPoint = new Vector3(wall.rightPoint[0], wall.rightPoint[1]);
       const leftDiff = new Vector3().subVectors(centroid, leftPoint).setZ(0).normalize().multiplyScalar(width);
       const rightDiff = new Vector3().subVectors(centroid, rightPoint).setZ(0).normalize().multiplyScalar(width);
-      leftPoint.add(leftDiff).setZ(h);
-      rightPoint.add(rightDiff).setZ(h);
+      leftPoint.add(leftDiff).setZ(topZ);
+      rightPoint.add(rightDiff).setZ(topZ);
       return { leftPoint, rightPoint };
     });
     if (!isLoopRef.current && res.length !== 0) {
@@ -358,7 +329,7 @@ const MansardRoof = ({
         (w.leftPoint[0] !== w.rightPoint[0] || w.leftPoint[1] !== w.rightPoint[1])
       ) {
         const points = [];
-        let { lh, rh } = getWallHeight(currentWallArray, i);
+        let { lh, rh } = RoofUtil.getWallHeight(currentWallArray, i);
         if (!isLoopRef.current) {
           if (i === 0) {
             lh = currentWallArray[0].lz;
@@ -445,7 +416,7 @@ const MansardRoof = ({
       segments.push({ points, angle: -angle, length });
     }
     return segments;
-  }, [currentWallArray, h, width, overhang, thickness]);
+  }, [currentWallArray, topZ, width, overhang, thickness]);
 
   const topRidgeShape = useMemo(() => {
     const s = new Shape();
@@ -461,26 +432,17 @@ const MansardRoof = ({
   }, [currentWallArray, ridgePoints]);
 
   useEffect(() => {
-    const minHeight = getMinHeight();
-    setMinHeight(minHeight);
-    setRelHeight(lz - minHeight);
-  }, [fileChanged]);
-
-  useEffect(() => {
-    if (lz !== h) {
-      setH(lz);
-    }
     if (ridgeWidth !== width) {
       setWidth(ridgeWidth);
     }
-  }, [lz, ridgeWidth]);
+  }, [ridgeWidth]);
 
   useEffect(() => {
     if (!isFirstMountRef.current || useStore.getState().addedRoofId === id) {
       if (currentWallArray.length > 1) {
         let minHeight = 0;
         for (let i = 0; i < currentWallArray.length; i++) {
-          const { lh, rh } = getWallHeight(currentWallArray, i);
+          const { lh, rh } = RoofUtil.getWallHeight(currentWallArray, i);
           minHeight = Math.max(minHeight, Math.max(lh, rh));
           setCommonStore((state) => {
             for (const e of state.elements) {
@@ -494,12 +456,6 @@ const MansardRoof = ({
             }
           });
         }
-        setMinHeight(minHeight);
-        if (relHeight !== null) {
-          setH(minHeight + relHeight.current);
-          useStore.getState().updateRoofHeightById(id, minHeight + relHeight.current);
-        }
-        updateRooftopElements(foundation, id, roofSegments, centroid, h, thickness);
       } else {
         removeElementById(id, false);
       }
@@ -507,15 +463,15 @@ const MansardRoof = ({
         useStore.getState().setAddedRoofId(null);
       }
     }
-  }, [currentWallArray, h]);
+  }, [currentWallArray, topZ]);
 
   const updateElementOnRoofFlag = useStore(Selector.updateElementOnRoofFlag);
 
   useEffect(() => {
     if (!isFirstMountRef.current) {
-      updateRooftopElements(foundation, id, roofSegments, centroid, h, thickness);
+      updateRooftopElements(foundation, id, roofSegments, centroid, topZ, thickness);
     }
-  }, [updateElementOnRoofFlag, h, thickness]);
+  }, [updateElementOnRoofFlag, topZ, thickness, currentWallArray]);
 
   useEffect(() => {
     isFirstMountRef.current = false;
@@ -718,15 +674,13 @@ const MansardRoof = ({
             onPointerDown={() => {
               isPointerDownRef.current = true;
               setEnableIntersectionPlane(true);
-              intersectionPlanePosition.set(centroid.x, centroid.y, h);
+              intersectionPlanePosition.set(centroid.x, centroid.y, topZ);
               if (foundation) {
                 const r = -Math.atan2(camera.position.x - cx, camera.position.y - cy) - foundation.rotation[2];
                 intersectionPlaneRotation.set(-HALF_PI, 0, r, 'ZXY');
               }
               setRoofHandleType(RoofHandleType.Top);
               useStoreRef.getState().setEnableOrbitController(false);
-              oldHeight.current = h;
-              oldRelativeHeightRef.current = relHeight.current;
             }}
           />
           {ridgePoints.map((ridge, idx) => {
@@ -738,14 +692,14 @@ const MansardRoof = ({
                 onPointerDown={() => {
                   isPointerDownRef.current = true;
                   setEnableIntersectionPlane(true);
-                  intersectionPlanePosition.set(point.x, point.y, h + 0.15);
+                  intersectionPlanePosition.set(point.x, point.y, topZ + 0.15);
                   intersectionPlaneRotation.set(0, 0, 0);
                   setRoofHandleType(RoofHandleType.Ridge);
                   setRidgeHandleIndex(idx);
                   setMaxWidth(
                     currentWallArray.reduce(
                       (max, wall) =>
-                        Math.min(max, new Vector3(wall.leftPoint[0], wall.leftPoint[1], h).distanceTo(centroid) - 1),
+                        Math.min(max, new Vector3(wall.leftPoint[0], wall.leftPoint[1], topZ).distanceTo(centroid) - 1),
                       Infinity,
                     ),
                   );
@@ -778,10 +732,9 @@ const MansardRoof = ({
                 }
                 switch (roofHandleType) {
                   case RoofHandleType.Top: {
-                    const height = Math.max(minHeight.current, pointer.z - (foundation?.lz ?? 0) - 0.6);
-                    if (RoofUtil.isRoofValid(id, undefined, undefined, [0, height])) {
-                      setH(height);
-                      setRelHeight(height - minHeight.current);
+                    const newLz = Math.max(0, pointer.z - foundation.lz - 0.6 - highestWallHeight);
+                    if (RoofUtil.isRoofValid(id, undefined, undefined, [0, newLz + highestWallHeight])) {
+                      setLzInnerState(newLz);
                     }
                     break;
                   }
@@ -806,21 +759,14 @@ const MansardRoof = ({
                     break;
                   }
                 }
-                updateRooftopElements(foundation, id, roofSegments, centroid, h, thickness);
+                updateRooftopElements(foundation, id, roofSegments, centroid, topZ, thickness);
               }
             }
           }}
           onPointerUp={() => {
             switch (roofHandleType) {
               case RoofHandleType.Top: {
-                addUndoableResizeRoofHeight(
-                  id,
-                  oldHeight.current,
-                  h,
-                  oldRelativeHeightRef.current,
-                  relHeight.current,
-                  setRelHeight,
-                );
+                addUndoableResizeRoofHeight(id, lz, lzInnerState);
                 break;
               }
               case RoofHandleType.Ridge: {
@@ -831,13 +777,13 @@ const MansardRoof = ({
             setCommonStore((state) => {
               for (const e of state.elements) {
                 if (e.id === id) {
-                  e.lz = h;
+                  e.lz = lzInnerState;
                   (e as MansardRoofModel).ridgeWidth = width;
                   break;
                 }
               }
             });
-            updateRooftopElements(foundation, id, roofSegments, centroid, h, thickness);
+            updateRooftopElements(foundation, id, roofSegments, centroid, topZ, thickness);
             isPointerDownRef.current = false;
             setEnableIntersectionPlane(false);
             setRoofHandleType(RoofHandleType.Null);

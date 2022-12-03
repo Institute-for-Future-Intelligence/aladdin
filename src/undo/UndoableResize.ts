@@ -76,8 +76,6 @@ export interface UndoableResizeRoofHeight extends Undoable {
   resizedElementType: ObjectType;
   oldHeight: number;
   newHeight: number;
-  oldRelativeHeight: number;
-  newRelativeHeight: number;
 }
 
 export interface UndoableResizeHipRoofRidge extends Undoable {

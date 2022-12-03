@@ -216,14 +216,7 @@ export const handleRoofBodyPointerDown = (e: ThreeEvent<PointerEvent>, id: strin
   }
 };
 
-export const addUndoableResizeRoofHeight = (
-  elemId: string,
-  oldHeight: number,
-  newHeight: number,
-  oldRelativeHeight: number,
-  newRelativeHeight: number,
-  updateRelativeHeight: (h: number) => void,
-) => {
+export const addUndoableResizeRoofHeight = (elemId: string, oldHeight: number, newHeight: number) => {
   const undoable = {
     name: 'Resize Roof Height',
     timestamp: Date.now(),
@@ -231,15 +224,11 @@ export const addUndoableResizeRoofHeight = (
     resizedElementType: ObjectType.Roof,
     oldHeight: oldHeight,
     newHeight: newHeight,
-    oldRelativeHeight: oldRelativeHeight,
-    newRelativeHeight: newRelativeHeight,
     undo: () => {
       useStore.getState().updateRoofHeightById(undoable.resizedElementId, undoable.oldHeight);
-      updateRelativeHeight(oldRelativeHeight);
     },
     redo: () => {
       useStore.getState().updateRoofHeightById(undoable.resizedElementId, undoable.newHeight);
-      updateRelativeHeight(newRelativeHeight);
     },
   } as UndoableResizeRoofHeight;
   useStore.getState().addUndoable(undoable);

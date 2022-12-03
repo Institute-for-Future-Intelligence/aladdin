@@ -29,10 +29,10 @@ import {
 import { RoofUtil } from './RoofUtil';
 import {
   useMultiCurrWallArray,
-  useRoofHeight,
   useElementUndoable,
   useTransparent,
   useUpdateSegmentVerticesMap,
+  useRoofHeight,
 } from './hooks';
 import RoofSegment from './roofSegment';
 
@@ -217,66 +217,24 @@ const PyramidRoof = ({
 }: PyramidRoofModel) => {
   const { currentWallArray, isLoopRef } = useMultiCurrWallArray(foundationId, id, wallsId);
 
-  const getWallHeight = (arr: WallModel[], i: number) => {
-    const w = arr[i];
-    let lh = 0;
-    let rh = 0;
-    if (i === 0) {
-      lh = Math.max(w.lz, arr[arr.length - 1].lz);
-      rh = Math.max(w.lz, arr[i + 1].lz);
-    } else if (i === arr.length - 1) {
-      lh = Math.max(w.lz, arr[i - 1].lz);
-      rh = Math.max(w.lz, arr[0].lz);
-    } else {
-      lh = Math.max(w.lz, arr[i - 1].lz);
-      rh = Math.max(w.lz, arr[i + 1].lz);
-    }
-    return { lh, rh };
-  };
-
-  const getMinHeight = () => {
-    let minHeight = 0;
-    for (let i = 0; i < currentWallArray.length; i++) {
-      const { lh, rh } = getWallHeight(currentWallArray, i);
-      minHeight = Math.max(minHeight, Math.max(lh, rh));
-    }
-    return minHeight;
-  };
-
   const setCommonStore = useStore(Selector.set);
   const getElementById = useStore(Selector.getElementById);
   const removeElementById = useStore(Selector.removeElementById);
-  const updateRoofHeight = useStore(Selector.updateRoofHeightById);
   const updateRoofFlag = useStore(Selector.updateRoofFlag);
-  const fileChanged = useStore(Selector.fileChanged);
 
   const { camera, gl } = useThree();
   const ray = useMemo(() => new Raycaster(), []);
   const mouse = useMemo(() => new Vector2(), []);
 
-  const { h, setH, minHeight, setMinHeight, relHeight, setRelHeight } = useRoofHeight(lz, getMinHeight());
+  const { highestWallHeight, topZ, lzInnerState, setLzInnerState } = useRoofHeight(currentWallArray, lz);
 
   const [showIntersectionPlane, setShowIntersectionPlane] = useState(false);
 
   const intersectionPlaneRef = useRef<Mesh>(null);
-  const oldHeight = useRef<number>(h);
-  const oldRelativeHeightRef = useRef<number>(relHeight.current);
   const isFirstMountRef = useRef(true);
   const isPointerDownRef = useRef(false);
 
   const prevWallsIdSet = new Set<string>(wallsId);
-
-  useEffect(() => {
-    const minHeight = getMinHeight();
-    setMinHeight(minHeight);
-    setRelHeight(lz - minHeight);
-  }, [fileChanged]);
-
-  useEffect(() => {
-    if (lz !== h) {
-      setH(lz);
-    }
-  }, [lz]);
 
   const setRayCast = (e: PointerEvent) => {
     mouse.x = (e.offsetX / gl.domElement.clientWidth) * 2 - 1;
@@ -322,7 +280,7 @@ const PyramidRoof = ({
       const w = currentWallArray[i];
       const leftPoint = new Vector3(w.leftPoint[0], w.leftPoint[1]);
       const rightPoint = new Vector3(w.rightPoint[0], w.rightPoint[1]);
-      const { lh, rh } = getWallHeight(currentWallArray, i);
+      const { lh, rh } = RoofUtil.getWallHeight(currentWallArray, i);
       const dLeft = RoofUtil.getDistance(leftPoint, rightPoint, centerPointV3);
       const overhangHeightLeft = Math.min((overhang / dLeft) * (centerPointV3.z - lh), lh);
       const dRight = RoofUtil.getDistance(leftPoint, rightPoint, centerPointV3);
@@ -346,11 +304,11 @@ const PyramidRoof = ({
       return { x: 0, y: 0 };
     }
     return p;
-  }, [currentWallArray, h]);
+  }, [currentWallArray, topZ]);
 
   const centerPointV3 = useMemo(() => {
-    return new Vector3(centerPoint.x, centerPoint.y, h);
-  }, [centerPoint, h]);
+    return new Vector3(centerPoint.x, centerPoint.y, topZ);
+  }, [centerPoint, topZ]);
 
   const overhangs = useMemo(() => {
     const res = currentWallArray.map((wall) => RoofUtil.getWallNormal(wall).multiplyScalar(overhang));
@@ -410,7 +368,7 @@ const PyramidRoof = ({
         (w.leftPoint[0] !== w.rightPoint[0] || w.leftPoint[1] !== w.rightPoint[1])
       ) {
         const points = [];
-        let { lh, rh } = getWallHeight(currentWallArray, i);
+        let { lh, rh } = RoofUtil.getWallHeight(currentWallArray, i);
         if (!isLoopRef.current) {
           if (i === 0) {
             lh = currentWallArray[0].lz;
@@ -502,7 +460,7 @@ const PyramidRoof = ({
     rotation = foundation.rotation[2];
 
     const r = -Math.atan2(camera.position.x - cx, camera.position.y - cy) - rotation;
-    intersectionPlanePosition.set(centerPoint.x, centerPoint.y, h);
+    intersectionPlanePosition.set(centerPoint.x, centerPoint.y, topZ);
     intersectionPlaneRotation.set(-HALF_PI, 0, r, 'ZXY');
   }
 
@@ -535,10 +493,8 @@ const PyramidRoof = ({
   useEffect(() => {
     if (!isFirstMountRef.current || useStore.getState().addedRoofId === id) {
       if (currentWallArray.length > 1) {
-        let minHeight = 0;
         for (let i = 0; i < currentWallArray.length; i++) {
-          const { lh, rh } = getWallHeight(currentWallArray, i);
-          minHeight = Math.max(minHeight, Math.max(lh, rh));
+          const { lh, rh } = RoofUtil.getWallHeight(currentWallArray, i);
           setCommonStore((state) => {
             for (const e of state.elements) {
               if (e.id === currentWallArray[i].id && e.type === ObjectType.Wall) {
@@ -551,15 +507,12 @@ const PyramidRoof = ({
             }
           });
         }
-        setMinHeight(minHeight);
-        setH(minHeight + relHeight.current);
-        useStore.getState().updateRoofHeightById(id, minHeight + relHeight.current);
-        updateRooftopElements(foundation, id, roofSegments, centerPointV3, h, thickness);
+        updateRooftopElements(foundation, id, roofSegments, centerPointV3, topZ, thickness);
       } else {
         removeElementById(id, false);
       }
     }
-  }, [currentWallArray, updateRoofFlag, h]);
+  }, [currentWallArray, updateRoofFlag]);
 
   const { grabRef, addUndoableMove, undoMove, setOldRefData } = useElementUndoable();
 
@@ -567,9 +520,9 @@ const PyramidRoof = ({
 
   useEffect(() => {
     if (!isFirstMountRef.current) {
-      updateRooftopElements(foundation, id, roofSegments, centerPointV3, h, thickness);
+      updateRooftopElements(foundation, id, roofSegments, centerPointV3, topZ, thickness);
     }
-  }, [updateElementOnRoofFlag, h, thickness]);
+  }, [updateElementOnRoofFlag, topZ, thickness]);
 
   useEffect(() => {
     isFirstMountRef.current = false;
@@ -601,7 +554,7 @@ const PyramidRoof = ({
 
   useEffect(() => {
     setIsFlatRoof(checkIsFlatRoof());
-  }, [currentWallArray, h]);
+  }, [currentWallArray, topZ]);
 
   const showSolarRadiationHeatmap = useStore(Selector.showSolarRadiationHeatmap);
   const solarRadiationHeatmapMaxValue = useStore(Selector.viewState.solarRadiationHeatmapMaxValue);
@@ -677,7 +630,7 @@ const PyramidRoof = ({
       {/* roof segments group */}
       <group
         name={`Pyramid Roof Segments Group`}
-        position={[centerPoint.x, centerPoint.y, h]}
+        position={[centerPoint.x, centerPoint.y, topZ]}
         onPointerDown={(e) => {
           handlePointerDown(e, id, foundation, roofSegments, centerPointV3, setOldRefData);
         }}
@@ -743,10 +696,8 @@ const PyramidRoof = ({
       {/* handle */}
       {selected && !locked && (
         <RoofHandle
-          position={[centerPoint.x, centerPoint.y, h + thickness + 0.15]}
+          position={[centerPoint.x, centerPoint.y, topZ + thickness + 0.15]}
           onPointerDown={() => {
-            oldHeight.current = h;
-            oldRelativeHeightRef.current = relHeight.current;
             setShowIntersectionPlane(true);
             useStoreRef.getState().setEnableOrbitController(false);
             isPointerDownRef.current = true;
@@ -768,7 +719,7 @@ const PyramidRoof = ({
           rotation={intersectionPlaneRotation}
           position={intersectionPlanePosition}
           onPointerMove={(e) => {
-            if (intersectionPlaneRef.current && isPointerDownRef.current) {
+            if (intersectionPlaneRef.current && isPointerDownRef.current && foundation) {
               setRayCast(e);
               const intersects = ray.intersectObjects([intersectionPlaneRef.current]);
               if (intersects[0]) {
@@ -776,26 +727,25 @@ const PyramidRoof = ({
                 if (point.z < 0.001) {
                   return;
                 }
-                const h = Math.max(minHeight.current, point.z - (foundation?.lz ?? 0) - 0.3);
-                setH(h);
-                setRelHeight(h - minHeight.current);
-                updateRooftopElements(foundation, id, roofSegments, centerPointV3, h, thickness);
+                const newLz = Math.max(0, point.z - foundation.lz - 0.3 - highestWallHeight);
+                setLzInnerState(newLz);
+                updateRooftopElements(
+                  foundation,
+                  id,
+                  roofSegments,
+                  centerPointV3,
+                  newLz + highestWallHeight,
+                  thickness,
+                );
               }
             }
           }}
           onPointerUp={(e) => {
-            updateRoofHeight(id, h);
-            addUndoableResizeRoofHeight(
-              id,
-              oldHeight.current,
-              h,
-              oldRelativeHeightRef.current,
-              relHeight.current,
-              setRelHeight,
-            );
+            useStore.getState().updateRoofHeightById(id, lzInnerState);
+            addUndoableResizeRoofHeight(id, lz, lzInnerState);
             setShowIntersectionPlane(false);
             useStoreRef.getState().setEnableOrbitController(true);
-            updateRooftopElements(foundation, id, roofSegments, centerPointV3, h, thickness);
+            updateRooftopElements(foundation, id, roofSegments, centerPointV3, topZ, thickness);
             isPointerDownRef.current = false;
           }}
         />

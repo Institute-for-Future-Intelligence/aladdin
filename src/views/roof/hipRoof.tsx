@@ -15,7 +15,7 @@ import { ObjectType } from 'src/types';
 import { UndoableResizeHipRoofRidge } from 'src/undo/UndoableResize';
 import { Util } from 'src/Util';
 import { CanvasTexture, DoubleSide, Euler, Mesh, Raycaster, Vector2, Vector3 } from 'three';
-import { useCurrWallArray, useRoofHeight, useElementUndoable, useUpdateSegmentVerticesMap } from './hooks';
+import { useCurrWallArray, useElementUndoable, useUpdateSegmentVerticesMap, useRoofHeight } from './hooks';
 import {
   addUndoableResizeRoofHeight,
   RoofSegmentProps,
@@ -104,7 +104,6 @@ const HipRoof = ({
   const setCommonStore = useStore(Selector.set);
   const removeElementById = useStore(Selector.removeElementById);
   const updateElementOnRoofFlag = useStore(Selector.updateElementOnRoofFlag);
-  const fileChanged = useStore(Selector.fileChanged);
 
   // set position and rotation
   const foundation = useStore((state) => {
@@ -130,31 +129,14 @@ const HipRoof = ({
   const [leftRidgeLengthCurr, setLeftRidgeLengthCurr] = useState(leftRidgeLength);
   const [rightRidgeLengthCurr, setRightRidgeLengthCurr] = useState(rightRidgeLength);
 
-  const initMinHeight = () =>
-    currentWallArray.length === 4 ? Math.max(currentWallArray[0].lz, currentWallArray[2].lz) : lz / 2;
-
-  const { h, setH, minHeight, setMinHeight, relHeight, setRelHeight } = useRoofHeight(lz, initMinHeight());
+  const { highestWallHeight, topZ, lzInnerState, setLzInnerState } = useRoofHeight(currentWallArray, lz);
 
   const intersectionPlaneRef = useRef<Mesh>(null);
   const { gl, camera } = useThree();
   const ray = useMemo(() => new Raycaster(), []);
   const mouse = useMemo(() => new Vector2(), []);
-  const oldHeight = useRef<number>(h);
-  const oldRelativeHeightRef = useRef<number>(relHeight.current);
   const isPointerDownRef = useRef(false);
   const isFirstMountRef = useRef(true);
-
-  useEffect(() => {
-    const minHeight = currentWallArray.length === 4 ? Math.max(currentWallArray[0].lz, currentWallArray[2].lz) : lz / 2;
-    setMinHeight(minHeight);
-    setRelHeight(lz - minHeight);
-  }, [fileChanged]);
-
-  useEffect(() => {
-    if (lz !== h) {
-      setH(lz);
-    }
-  }, [lz]);
 
   useEffect(() => {
     if (!isFirstMountRef.current) {
@@ -170,9 +152,9 @@ const HipRoof = ({
 
   useEffect(() => {
     if (!isFirstMountRef.current) {
-      updateRooftopElements(foundation, id, roofSegments, ridgeMidPoint, h, thickness);
+      updateRooftopElements(foundation, id, roofSegments, ridgeMidPoint, topZ, thickness);
     }
-  }, [updateElementOnRoofFlag, h, thickness]);
+  }, [updateElementOnRoofFlag, topZ, thickness]);
 
   const setHipRoofRidgeLength = (elemId: string, leftRidge: number, rightRidge: number) => {
     setCommonStore((state) => {
@@ -234,27 +216,27 @@ const HipRoof = ({
 
   const ridgeLeftPoint = useMemo(() => {
     const vector = new Vector3();
-    const center = new Vector3(centroid2D.x, centroid2D.y, h);
+    const center = new Vector3(centroid2D.x, centroid2D.y, topZ);
     const wall = getElementById(wallsId[0]) as WallModel;
     if (wall) {
       vector.setX(-leftRidgeLengthCurr).applyEuler(new Euler(0, 0, wall.relativeAngle)).add(center);
     }
     return vector;
-  }, [centroid2D, h, leftRidgeLengthCurr]);
+  }, [centroid2D, topZ, leftRidgeLengthCurr]);
 
   const ridgeRightPoint = useMemo(() => {
     const vector = new Vector3();
-    const center = new Vector3(centroid2D.x, centroid2D.y, h);
+    const center = new Vector3(centroid2D.x, centroid2D.y, topZ);
     const wall = getElementById(wallsId[0]) as WallModel;
     if (wall) {
       vector.setX(rightRidgeLengthCurr).applyEuler(new Euler(0, 0, wall.relativeAngle)).add(center);
     }
     return vector;
-  }, [centroid2D, h, rightRidgeLengthCurr]);
+  }, [centroid2D, topZ, rightRidgeLengthCurr]);
 
   const ridgeMidPoint = useMemo(() => {
-    return new Vector3(centroid2D.x, centroid2D.y, h);
-  }, [centroid2D, h]);
+    return new Vector3(centroid2D.x, centroid2D.y, topZ);
+  }, [centroid2D, topZ]);
 
   const makeSegment = (vector: Vector3[], p1: Vector3, p2: Vector3, p3: Vector3, p4?: Vector3) => {
     vector.push(p1, p2, p3);
@@ -265,23 +247,6 @@ const HipRoof = ({
     if (p4) {
       vector.push(p4.clone().add(thicknessVector));
     }
-  };
-
-  const getWallHeight = (arr: WallModel[], i: number) => {
-    const w = arr[i];
-    let lh = 0;
-    let rh = 0;
-    if (i === 0) {
-      lh = Math.max(w.lz, arr[arr.length - 1].lz);
-      rh = Math.max(w.lz, arr[i + 1].lz);
-    } else if (i === arr.length - 1) {
-      lh = Math.max(w.lz, arr[i - 1].lz);
-      rh = Math.max(w.lz, arr[0].lz);
-    } else {
-      lh = Math.max(w.lz, arr[i - 1].lz);
-      rh = Math.max(w.lz, arr[i + 1].lz);
-    }
-    return { lh, rh };
   };
 
   const getOverhangHeight = () => {
@@ -297,7 +262,7 @@ const HipRoof = ({
     let height = Infinity;
 
     for (let i = 0; i < 4; i++) {
-      const { lh, rh } = getWallHeight(currentWallArray, i);
+      const { lh, rh } = RoofUtil.getWallHeight(currentWallArray, i);
       const dLeft = RoofUtil.getDistance(wallPoints[i], wallPoints[(i + 1) % 4], ridges[i]);
       const overhangHeightLeft = Math.min((overhang / dLeft) * (ridges[i].z - lh), lh);
       const dRight = RoofUtil.getDistance(wallPoints[i], wallPoints[(i + 1) % 4], ridges[(i + 1) % 4]);
@@ -334,7 +299,7 @@ const HipRoof = ({
     for (let i = 0; i < 4; i++) {
       const points: Vector3[] = [];
       const wall = currentWallArray[i];
-      const { lh, rh } = getWallHeight(currentWallArray, i);
+      const { lh, rh } = RoofUtil.getWallHeight(currentWallArray, i);
 
       const wallLeftPointAfterOverhang = RoofUtil.getIntersectionPoint(
         wallPointsAfterOffset[(i + 3) % 4].leftPoint,
@@ -378,7 +343,7 @@ const HipRoof = ({
       segments.push({ points, angle: -wall.relativeAngle, length });
     }
     return segments;
-  }, [currentWallArray, ridgeLeftPoint, ridgeRightPoint, h, overhang, thickness]);
+  }, [currentWallArray, ridgeLeftPoint, ridgeRightPoint, topZ, overhang, thickness]);
 
   const setRayCast = (e: PointerEvent) => {
     mouse.x = (e.offsetX / gl.domElement.clientWidth) * 2 - 1;
@@ -389,10 +354,8 @@ const HipRoof = ({
   useEffect(() => {
     if (!isFirstMountRef.current) {
       if (currentWallArray.length === 4) {
-        let minHeight = 0;
         for (let i = 0; i < currentWallArray.length; i++) {
-          const { lh, rh } = getWallHeight(currentWallArray, i);
-          minHeight = Math.max(minHeight, Math.max(lh, rh));
+          const { lh, rh } = RoofUtil.getWallHeight(currentWallArray, i);
           setCommonStore((state) => {
             for (const e of state.elements) {
               if (e.id === currentWallArray[i].id && e.type === ObjectType.Wall) {
@@ -405,9 +368,7 @@ const HipRoof = ({
             }
           });
         }
-        setMinHeight(minHeight);
-        setH(minHeight + relHeight.current);
-        useStore.getState().updateRoofHeightById(id, minHeight + relHeight.current);
+        updateRooftopElements(foundation, id, roofSegments, ridgeMidPoint, topZ, thickness);
       } else {
         removeElementById(id, false);
       }
@@ -419,7 +380,7 @@ const HipRoof = ({
   }, []);
 
   const { grabRef, addUndoableMove, undoMove, setOldRefData } = useElementUndoable();
-  useUpdateSegmentVerticesMap(id, new Vector3(centroid2D.x, centroid2D.y, h), roofSegments);
+  useUpdateSegmentVerticesMap(id, new Vector3(centroid2D.x, centroid2D.y, topZ), roofSegments);
 
   const showSolarRadiationHeatmap = useStore(Selector.showSolarRadiationHeatmap);
   const solarRadiationHeatmapMaxValue = useStore(Selector.viewState.solarRadiationHeatmapMaxValue);
@@ -450,7 +411,7 @@ const HipRoof = ({
       {/* roof segment group */}
       <group
         name={`Hip Roof Segments Group`}
-        position={[centroid2D.x, centroid2D.y, h]}
+        position={[centroid2D.x, centroid2D.y, topZ]}
         onPointerDown={(e) => {
           handlePointerDown(e, id, foundation, roofSegments, ridgeMidPoint, setOldRefData);
         }}
@@ -498,7 +459,7 @@ const HipRoof = ({
             onPointerDown={() => {
               isPointerDownRef.current = true;
               setEnableIntersectionPlane(true);
-              intersectionPlanePosition.set(ridgeLeftPoint.x, ridgeLeftPoint.y, h);
+              intersectionPlanePosition.set(ridgeLeftPoint.x, ridgeLeftPoint.y, topZ);
               if (foundation && currentWallArray[0]) {
                 const dir = new Vector3().subVectors(ridgeLeftPoint, camera.position).normalize();
                 const rX = Math.atan2(dir.z, dir.y);
@@ -515,15 +476,13 @@ const HipRoof = ({
             onPointerDown={() => {
               isPointerDownRef.current = true;
               setEnableIntersectionPlane(true);
-              intersectionPlanePosition.set(ridgeMidPoint.x, ridgeMidPoint.y, h);
+              intersectionPlanePosition.set(ridgeMidPoint.x, ridgeMidPoint.y, topZ);
               if (foundation) {
                 const r = -Math.atan2(camera.position.x - cx, camera.position.y - cy) - foundation.rotation[2];
                 intersectionPlaneRotation.set(-HALF_PI, 0, r, 'ZXY');
               }
               setRoofHandleType(RoofHandleType.Mid);
               useStoreRef.getState().setEnableOrbitController(false);
-              oldHeight.current = h;
-              oldRelativeHeightRef.current = relHeight.current;
             }}
           />
           {/* right handle */}
@@ -532,7 +491,7 @@ const HipRoof = ({
             onPointerDown={() => {
               isPointerDownRef.current = true;
               setEnableIntersectionPlane(true);
-              intersectionPlanePosition.set(ridgeRightPoint.x, ridgeRightPoint.y, h);
+              intersectionPlanePosition.set(ridgeRightPoint.x, ridgeRightPoint.y, topZ);
               if (foundation && currentWallArray[0]) {
                 const dir = new Vector3().subVectors(ridgeRightPoint, camera.position).normalize();
                 const rX = Math.atan2(dir.z, Math.hypot(dir.x, dir.y));
@@ -608,27 +567,19 @@ const HipRoof = ({
                     break;
                   }
                   case RoofHandleType.Mid: {
-                    const h = Math.max(minHeight.current, point.z - (foundation?.lz ?? 0) - 0.3);
-                    setH(h);
-                    setRelHeight(h - minHeight.current);
+                    const newLz = Math.max(0, point.z - foundation.lz - 0.3 - highestWallHeight);
+                    setLzInnerState(newLz);
                     break;
                   }
                 }
-                updateRooftopElements(foundation, id, roofSegments, ridgeMidPoint, h, thickness);
+                updateRooftopElements(foundation, id, roofSegments, ridgeMidPoint, topZ, thickness);
               }
             }
           }}
           onPointerUp={() => {
             switch (roofHandleType) {
               case RoofHandleType.Mid: {
-                addUndoableResizeRoofHeight(
-                  id,
-                  oldHeight.current,
-                  h,
-                  oldRelativeHeightRef.current,
-                  relHeight.current,
-                  setRelHeight,
-                );
+                addUndoableResizeRoofHeight(id, lz, lzInnerState);
                 break;
               }
               case RoofHandleType.Left:
@@ -652,12 +603,12 @@ const HipRoof = ({
                   const r = e as HipRoofModel;
                   r.leftRidgeLength = leftRidgeLengthCurr;
                   r.rightRidgeLength = rightRidgeLengthCurr;
-                  r.lz = h;
+                  r.lz = lzInnerState;
                   break;
                 }
               }
             });
-            updateRooftopElements(foundation, id, roofSegments, ridgeMidPoint, h, thickness);
+            updateRooftopElements(foundation, id, roofSegments, ridgeMidPoint, topZ, thickness);
           }}
         >
           <meshBasicMaterial side={DoubleSide} transparent={true} opacity={0.5} />

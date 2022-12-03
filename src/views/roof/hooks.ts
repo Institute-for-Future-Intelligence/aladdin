@@ -26,6 +26,7 @@ import { SensorModel } from '../../models/SensorModel';
 import { LightModel } from '../../models/LightModel';
 import { RoofSegmentProps } from './roofRenderer';
 import { Util } from 'src/Util';
+import { RoofUtil } from './RoofUtil';
 
 export const useElementUndoable = () => {
   const grabRef = useRef<ElementModel | null>(null);
@@ -291,20 +292,20 @@ export const useMultiCurrWallArray = (fId: string | undefined, roofId: string, w
   return { currentWallArray, isLoopRef };
 };
 
-export const useRoofHeight = (lz: number, initalMinHeight: number) => {
-  const [h, setH] = useState(lz);
+export const useRoofHeight = (currentWallArray: WallModel[], lz: number, ignoreSide?: boolean) => {
+  const highestWallHeight = useMemo(
+    () => RoofUtil.getHighestWallHeight(currentWallArray, ignoreSide),
+    [currentWallArray],
+  );
+  const [lzInnerState, setLzInnerState] = useState(lz); // height from top to maxWallHeight
+  const topZ = highestWallHeight + lzInnerState; // height from top to foundation
+  useEffect(() => {
+    if (lz !== lzInnerState) {
+      setLzInnerState(lz);
+    }
+  }, [lz]);
 
-  const minHeight = useRef(initalMinHeight);
-  const setMinHeight = (val: number) => {
-    minHeight.current = val;
-  };
-
-  const relHeight = useRef(lz - minHeight.current);
-  const setRelHeight = (val: number) => {
-    relHeight.current = val;
-  };
-
-  return { h, setH, minHeight, setMinHeight, relHeight, setRelHeight };
+  return { highestWallHeight, topZ, lzInnerState, setLzInnerState };
 };
 
 export const useUpdateSegmentVerticesMap = (

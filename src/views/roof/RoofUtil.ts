@@ -329,4 +329,33 @@ export class RoofUtil {
     }
     return true;
   }
+
+  static getWallHeight(arr: WallModel[], i: number) {
+    const w = arr[i];
+    let lh = 0;
+    let rh = 0;
+    if (i === 0) {
+      lh = Math.max(w.lz, arr[arr.length - 1].lz);
+      rh = Math.max(w.lz, arr[i + 1].lz);
+    } else if (i === arr.length - 1) {
+      lh = Math.max(w.lz, arr[i - 1].lz);
+      rh = Math.max(w.lz, arr[0].lz);
+    } else {
+      lh = Math.max(w.lz, arr[i - 1].lz);
+      rh = Math.max(w.lz, arr[i + 1].lz);
+    }
+    return { lh, rh };
+  }
+
+  static getHighestWallHeight(currentWallArray: WallModel[], ignoreSide?: boolean) {
+    let maxWallHeight = 0;
+    if (ignoreSide && currentWallArray.length === 4) {
+      return Math.max(currentWallArray[0].lz, currentWallArray[2].lz);
+    }
+    for (let i = 0; i < currentWallArray.length; i++) {
+      const { lh, rh } = RoofUtil.getWallHeight(currentWallArray, i);
+      maxWallHeight = Math.max(maxWallHeight, Math.max(lh, rh));
+    }
+    return maxWallHeight;
+  }
 }
