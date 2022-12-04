@@ -529,10 +529,10 @@ const MansardRoof = (roofModel: MansardRoofModel) => {
         if (heatmap) {
           const t = Util.fetchHeatmapTexture(heatmap, solarRadiationHeatmapMaxValue ?? 5);
           if (t) {
-            if (i === 4) {
-              // FIXME: I have no idea why this texture needs to be rotated 90 degrees
+            if (i === n - 1 && foundation) {
+              // FIXME: I have no idea why the top heatmap needs to be rotated as follows
               t.center.set(0.5, 0.5);
-              t.rotation = HALF_PI;
+              t.rotation = -foundation.rotation[2];
             }
             textures.push(t);
           }
@@ -572,7 +572,7 @@ const MansardRoof = (roofModel: MansardRoofModel) => {
         // don't call geo.setFromPoints. It doesn't seem to work correctly.
         geo.setAttribute('position', new Float32BufferAttribute(positions, 3));
         geo.computeVertexNormals();
-        const scale = showSolarRadiationHeatmap ? 1 : 5;
+        const scale = showSolarRadiationHeatmap ? 1 : 6;
         const uvs = [];
         uvs.push(0, 0);
         uvs.push(scale, 0);
@@ -584,7 +584,7 @@ const MansardRoof = (roofModel: MansardRoofModel) => {
       } else {
         const geo = topSurfaceMeshRef.current.geometry;
         const positions = new Float32Array(n * 9);
-        const scale = 6;
+        const scale = showSolarRadiationHeatmap ? 1 : 6;
         const uvs = [];
         let minX = Number.MAX_VALUE;
         let minY = Number.MAX_VALUE;
@@ -609,8 +609,14 @@ const MansardRoof = (roofModel: MansardRoofModel) => {
           positions[j + 6] = 0;
           positions[j + 7] = 0;
           positions[j + 8] = zOffset;
-          uvs.push((points[i].x / dx) * scale, (points[i].y / dy) * scale);
-          uvs.push((points[i + 1].x / dx) * scale, (points[i + 1].y / dy) * scale);
+          if (showSolarRadiationHeatmap) {
+            uvs.push(((points[i].x - minX) / dx) * scale, ((points[i].y - minY) / dy) * scale);
+            uvs.push(((points[i + 1].x - minX) / dx) * scale, ((points[i + 1].y - minY) / dy) * scale);
+          } else {
+            // I have no idea why the regular texture coordinates should not subtract minX and minY
+            uvs.push((points[i].x / dx) * scale, (points[i].y / dy) * scale);
+            uvs.push((points[i + 1].x / dx) * scale, (points[i + 1].y / dy) * scale);
+          }
           uvs.push(0, 0);
         }
         // don't call geo.setFromPoints. It doesn't seem to work correctly.
@@ -658,7 +664,7 @@ const MansardRoof = (roofModel: MansardRoofModel) => {
         {/*special case: the whole roof segment has no texture and only one color */}
         {textureType === RoofTexture.NoTexture && color && color === sideColor && !showSolarRadiationHeatmap ? (
           <Extrude
-            uuid={id + '-4'}
+            uuid={id + '-' + roofSegments.length}
             name={'Mansard Roof Top Extrude'}
             args={[topRidgeShape, { steps: 1, depth: thickness, bevelEnabled: false }]}
             castShadow={shadowEnabled && !transparent}
@@ -670,16 +676,16 @@ const MansardRoof = (roofModel: MansardRoofModel) => {
         ) : (
           <>
             <mesh
-              uuid={id + '-4'}
+              uuid={id + '-' + roofSegments.length}
               ref={topSurfaceMeshRef}
               name={'Mansard Roof Top Surface'}
-              position={[0, 0, thickness + 0.01]}
+              position={[0, 0, thickness]}
               castShadow={shadowEnabled && !transparent}
               receiveShadow={shadowEnabled}
               userData={{ simulation: true }}
             >
-              {showSolarRadiationHeatmap && heatmapTextures.length === 5 ? (
-                <meshBasicMaterial map={heatmapTextures[4]} color={'white'} side={DoubleSide} />
+              {showSolarRadiationHeatmap && heatmapTextures.length === roofSegments.length + 1 ? (
+                <meshBasicMaterial map={heatmapTextures[roofSegments.length]} color={'white'} side={DoubleSide} />
               ) : (
                 <meshStandardMaterial
                   color={textureType === RoofTexture.Default || textureType === RoofTexture.NoTexture ? color : 'white'}

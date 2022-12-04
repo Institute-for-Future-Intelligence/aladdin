@@ -1,7 +1,7 @@
 {
-  "docid": "b47MCQVodTkgGBdLSDWDvC",
-  "time": "12/03/2022 08:44 pm",
-  "timestamp": 1670118285883,
+  "docid": "bfcskQQXvzigmJ4swtYDka",
+  "time": "12/04/2022 03:50 pm",
+  "timestamp": 1670187012230,
   "userid": "QWecNcxhyvP6j6sBN11hBsfZDau1",
   "owner": null,
   "email": null,
@@ -1266,9 +1266,9 @@
     {
       "type": "Human",
       "name": "Jess",
-      "cx": 17.90365457686929,
-      "cy": 2.2169257546553,
-      "cz": 0.15,
+      "cx": 17.33662712955384,
+      "cy": 1.475715952229109,
+      "cz": 0.1500000059604645,
       "lx": 0.43,
       "lz": 1.5,
       "normal": [
@@ -1290,9 +1290,9 @@
     {
       "type": "Human",
       "name": "Jennifer",
-      "cx": 19.238997768660937,
-      "cy": -1.9390019470914979,
-      "cz": 0.15,
+      "cx": 18.10291752042776,
+      "cy": -1.7717803444007103,
+      "cz": 0.1500000059604645,
       "lx": 0.45,
       "lz": 1.7,
       "normal": [
@@ -1524,9 +1524,9 @@
     {
       "type": "Tree",
       "name": "Coconut",
-      "cx": 18.06796993883407,
-      "cy": -3.9653122406216994,
-      "cz": 0.15,
+      "cx": 16.744228490634097,
+      "cy": -4.496771610813894,
+      "cz": 0.1500000059604645,
       "lx": 5.516658633108942,
       "lz": 6.813471569919312,
       "normal": [
@@ -1662,9 +1662,9 @@
     {
       "type": "Human",
       "name": "Jacob",
-      "cx": 17.270563983237388,
-      "cy": -13.162272191448224,
-      "cz": 0.15,
+      "cx": 16.698553189544626,
+      "cy": -13.302196684361064,
+      "cz": 0.1500000059604645,
       "lx": 0.8,
       "ly": 0.8,
       "lz": 1.82,
@@ -1685,9 +1685,9 @@
     {
       "type": "Human",
       "name": "Jacqueline",
-      "cx": 17.201577213827417,
-      "cy": -10.194822093285609,
-      "cz": 0.15,
+      "cx": 16.92629922811857,
+      "cy": -10.360458138569996,
+      "cz": 0.1500000059604645,
       "lx": 0.43,
       "ly": 0.43,
       "lz": 1.78,
@@ -1730,9 +1730,9 @@
     {
       "type": "Flower",
       "name": "Hibiscus",
-      "cx": 2.009943171481609,
-      "cy": 0.7810275177109105,
-      "cz": 0.15,
+      "cx": 2.3987692101921008,
+      "cy": 0.2735471847110773,
+      "cz": 0.1500000059604645,
       "lx": 2,
       "lz": 1.7,
       "normal": [
@@ -1829,7 +1829,7 @@
       "cz": 0,
       "lx": 6,
       "ly": 0.3,
-      "lz": 7,
+      "lz": 3,
       "fill": "Full",
       "unfilledHeight": 0.5,
       "relativeAngle": 3.141592653589793,
@@ -1880,8 +1880,8 @@
       "structureWidth": 0.2,
       "structureColor": "white",
       "roofId": "11NehXdVvEJW3XyYbWtXPQ",
-      "leftRoofHeight": 7,
-      "rightRoofHeight": 7
+      "leftRoofHeight": 3,
+      "rightRoofHeight": 3
     },
     {
       "type": "Wall",
@@ -1890,7 +1890,7 @@
       "cz": 0,
       "lx": 4.6097722286464435,
       "ly": 0.3,
-      "lz": 7,
+      "lz": 3,
       "fill": "Full",
       "unfilledHeight": 0.5,
       "relativeAngle": 4.003762708257019,
@@ -1941,8 +1941,8 @@
       "structureWidth": 0.2,
       "structureColor": "white",
       "roofId": "11NehXdVvEJW3XyYbWtXPQ",
-      "leftRoofHeight": 7,
-      "rightRoofHeight": 7
+      "leftRoofHeight": 3,
+      "rightRoofHeight": 3
     },
     {
       "type": "Wall",
@@ -1951,7 +1951,7 @@
       "cz": 0,
       "lx": 4.6097722286464435,
       "ly": 0.3,
-      "lz": 7,
+      "lz": 3,
       "fill": "Full",
       "unfilledHeight": 0.5,
       "relativeAngle": 2.279422598922567,
@@ -2002,8 +2002,8 @@
       "structureWidth": 0.2,
       "structureColor": "white",
       "roofId": "11NehXdVvEJW3XyYbWtXPQ",
-      "leftRoofHeight": 7,
-      "rightRoofHeight": 7
+      "leftRoofHeight": 3,
+      "rightRoofHeight": 3
     },
     {
       "type": "Wall",
@@ -2012,7 +2012,7 @@
       "cz": 0,
       "lx": 5,
       "ly": 0.3,
-      "lz": 7,
+      "lz": 3,
       "fill": "Full",
       "unfilledHeight": 0.5,
       "relativeAngle": 4.712388980384691,
@@ -2063,8 +2063,8 @@
       "structureWidth": 0.2,
       "structureColor": "white",
       "roofId": "11NehXdVvEJW3XyYbWtXPQ",
-      "leftRoofHeight": 7,
-      "rightRoofHeight": 7
+      "leftRoofHeight": 3,
+      "rightRoofHeight": 3
     },
     {
       "type": "Wall",
@@ -2073,7 +2073,7 @@
       "cz": 0,
       "lx": 4.6097722286464435,
       "ly": 0.3,
-      "lz": 7,
+      "lz": 3,
       "fill": "Full",
       "unfilledHeight": 0.5,
       "relativeAngle": 5.42101525251236,
@@ -2124,8 +2124,8 @@
       "structureWidth": 0.2,
       "structureColor": "white",
       "roofId": "11NehXdVvEJW3XyYbWtXPQ",
-      "leftRoofHeight": 7,
-      "rightRoofHeight": 7
+      "leftRoofHeight": 3,
+      "rightRoofHeight": 3
     },
     {
       "type": "Wall",
@@ -2134,7 +2134,7 @@
       "cz": 0,
       "lx": 6,
       "ly": 0.3,
-      "lz": 7,
+      "lz": 3,
       "fill": "Full",
       "unfilledHeight": 0.5,
       "relativeAngle": 0,
@@ -2185,8 +2185,8 @@
       "structureWidth": 0.2,
       "structureColor": "white",
       "roofId": "11NehXdVvEJW3XyYbWtXPQ",
-      "leftRoofHeight": 7,
-      "rightRoofHeight": 7
+      "leftRoofHeight": 3,
+      "rightRoofHeight": 3
     },
     {
       "type": "Wall",
@@ -2195,7 +2195,7 @@
       "cz": 0,
       "lx": 5,
       "ly": 0.3,
-      "lz": 7,
+      "lz": 3,
       "fill": "Full",
       "unfilledHeight": 0.5,
       "relativeAngle": 1.5707963267948966,
@@ -2246,8 +2246,8 @@
       "structureWidth": 0.2,
       "structureColor": "white",
       "roofId": "11NehXdVvEJW3XyYbWtXPQ",
-      "leftRoofHeight": 7,
-      "rightRoofHeight": 7
+      "leftRoofHeight": 3,
+      "rightRoofHeight": 3
     },
     {
       "type": "Wall",
@@ -2256,7 +2256,7 @@
       "cz": 0,
       "lx": 4.6097722286464435,
       "ly": 0.3,
-      "lz": 7,
+      "lz": 3,
       "fill": "Full",
       "unfilledHeight": 0.5,
       "relativeAngle": 0.8621700546672264,
@@ -2307,8 +2307,8 @@
       "structureWidth": 0.2,
       "structureColor": "white",
       "roofId": "11NehXdVvEJW3XyYbWtXPQ",
-      "leftRoofHeight": 7,
-      "rightRoofHeight": 7
+      "leftRoofHeight": 3,
+      "rightRoofHeight": 3
     },
     {
       "type": "Wall",
@@ -2795,11 +2795,11 @@
       "cz": 0,
       "lx": 3.320044158350688,
       "ly": 0.1,
-      "lz": 10,
+      "lz": 6,
       "rValue": 2.2894337349821954,
       "volumetricHeatCapacity": 0.5,
       "fill": "Partial",
-      "unfilledHeight": 7.873558511931784,
+      "unfilledHeight": 4.110255927874554,
       "leftJoints": [
         "rar8H4qGrUVwxrAVMoviFk"
       ],
@@ -2838,8 +2838,8 @@
       "structureWidth": 0.1,
       "opacity": 0,
       "roofId": "smwrqG518CZJrsaW49WWUA",
-      "leftRoofHeight": 10,
-      "rightRoofHeight": 10,
+      "leftRoofHeight": 6,
+      "rightRoofHeight": 6,
       "selected": false
     },
     {
@@ -2849,11 +2849,11 @@
       "cz": 0,
       "lx": 2.470871769976342,
       "ly": 0.1,
-      "lz": 10,
+      "lz": 6,
       "rValue": 2.2894337349821954,
       "volumetricHeatCapacity": 0.5,
       "fill": "Partial",
-      "unfilledHeight": 7.821804391866059,
+      "unfilledHeight": 4.057580145705773,
       "leftJoints": [
         "rp3dXSxQpb7ynasZ6iB6eD"
       ],
@@ -2892,8 +2892,8 @@
       "structureWidth": 0.1,
       "opacity": 0,
       "roofId": "smwrqG518CZJrsaW49WWUA",
-      "leftRoofHeight": 10,
-      "rightRoofHeight": 10,
+      "leftRoofHeight": 6,
+      "rightRoofHeight": 6,
       "selected": false
     },
     {
@@ -2903,11 +2903,11 @@
       "cz": 0,
       "lx": 2.470871769976342,
       "ly": 0.1,
-      "lz": 10,
+      "lz": 6,
       "rValue": 2.2894337349821954,
       "volumetricHeatCapacity": 0.5,
       "fill": "Partial",
-      "unfilledHeight": 7.844146159759464,
+      "unfilledHeight": 4.100659354320178,
       "leftJoints": [
         "8QpMcXYdcYd52x57cuvRwd"
       ],
@@ -2946,8 +2946,8 @@
       "structureWidth": 0.1,
       "opacity": 0,
       "roofId": "smwrqG518CZJrsaW49WWUA",
-      "leftRoofHeight": 10,
-      "rightRoofHeight": 10,
+      "leftRoofHeight": 6,
+      "rightRoofHeight": 6,
       "selected": false
     },
     {
@@ -2957,11 +2957,11 @@
       "cz": 0,
       "lx": 2.6145331656177326,
       "ly": 0.1,
-      "lz": 10,
+      "lz": 6,
       "rValue": 2.2894337349821954,
       "volumetricHeatCapacity": 0.5,
       "fill": "Partial",
-      "unfilledHeight": 7.7898070892666444,
+      "unfilledHeight": 4.079570215122429,
       "leftJoints": [
         "oNJ9yc8yVRwjREwej61c5A"
       ],
@@ -3000,8 +3000,8 @@
       "structureWidth": 0.1,
       "opacity": 0,
       "roofId": "smwrqG518CZJrsaW49WWUA",
-      "leftRoofHeight": 10,
-      "rightRoofHeight": 10,
+      "leftRoofHeight": 6,
+      "rightRoofHeight": 6,
       "selected": false
     },
     {
@@ -3011,11 +3011,11 @@
       "cz": 0,
       "lx": 2.470871769976342,
       "ly": 0.1,
-      "lz": 10,
+      "lz": 6,
       "rValue": 2.2894337349821954,
       "volumetricHeatCapacity": 0.5,
       "fill": "Partial",
-      "unfilledHeight": 7.8380397073524914,
+      "unfilledHeight": 4.134242304497143,
       "leftJoints": [
         "qFqkwR72frMwniMPRhnRWu"
       ],
@@ -3054,8 +3054,8 @@
       "structureWidth": 0.1,
       "opacity": 0,
       "roofId": "smwrqG518CZJrsaW49WWUA",
-      "leftRoofHeight": 10,
-      "rightRoofHeight": 10,
+      "leftRoofHeight": 6,
+      "rightRoofHeight": 6,
       "selected": false
     },
     {
@@ -3065,11 +3065,11 @@
       "cz": 0,
       "lx": 2.6145331656177326,
       "ly": 0.1,
-      "lz": 10,
+      "lz": 6,
       "rValue": 2.2894337349821954,
       "volumetricHeatCapacity": 0.5,
       "fill": "Partial",
-      "unfilledHeight": 7.849405053422403,
+      "unfilledHeight": 4.039195103204583,
       "leftJoints": [
         "nFBw1TRtTNF6p1WGqWPgfw"
       ],
@@ -3108,8 +3108,8 @@
       "structureWidth": 0.1,
       "opacity": 0,
       "roofId": "smwrqG518CZJrsaW49WWUA",
-      "leftRoofHeight": 10,
-      "rightRoofHeight": 10,
+      "leftRoofHeight": 6,
+      "rightRoofHeight": 6,
       "selected": false
     },
     {
@@ -3119,11 +3119,11 @@
       "cz": 0,
       "lx": 2.470871769976342,
       "ly": 0.1,
-      "lz": 10,
+      "lz": 6,
       "rValue": 2.2894337349821954,
       "volumetricHeatCapacity": 0.5,
       "fill": "Partial",
-      "unfilledHeight": 7.851580043948519,
+      "unfilledHeight": 4.108930812815814,
       "leftJoints": [
         "jVTcP5pBaEuvpEqr3A1SVZ"
       ],
@@ -3162,8 +3162,8 @@
       "structureWidth": 0.1,
       "opacity": 0,
       "roofId": "smwrqG518CZJrsaW49WWUA",
-      "leftRoofHeight": 10,
-      "rightRoofHeight": 10,
+      "leftRoofHeight": 6,
+      "rightRoofHeight": 6,
       "selected": false
     },
     {
@@ -3200,9 +3200,9 @@
       "cz": 0,
       "lx": 3.320044158350688,
       "ly": 0.1,
-      "lz": 10,
+      "lz": 6,
       "fill": "Partial",
-      "unfilledHeight": 7.8476433245145705,
+      "unfilledHeight": 4.015344082405362,
       "relativeAngle": 0,
       "leftPoint": [
         -1.660022079175344,
@@ -3251,8 +3251,8 @@
       "structureWidth": 0.1,
       "structureColor": "white",
       "roofId": "smwrqG518CZJrsaW49WWUA",
-      "leftRoofHeight": 10,
-      "rightRoofHeight": 10
+      "leftRoofHeight": 6,
+      "rightRoofHeight": 6
     },
     {
       "type": "Roof",
@@ -3262,7 +3262,7 @@
       "lx": 0,
       "ly": 0,
       "lz": 0,
-      "rise": 2.2635370031712263,
+      "rise": 1.5743098600216179,
       "overhang": 1,
       "thickness": 0.1,
       "roofType": "Pyramid",
@@ -3302,10 +3302,10 @@
       "type": "Window",
       "cx": 0,
       "cy": 0.3,
-      "cz": 0.375,
+      "cz": 0.3499999999999999,
       "lx": 0.7649549167327019,
       "ly": 0.1,
-      "lz": 0.15,
+      "lz": 0.19999999999999982,
       "shutter": {
         "showLeft": false,
         "showRight": false,
@@ -3343,12 +3343,12 @@
     },
     {
       "type": "Window",
-      "cx": 0,
+      "cx": -6.739866298094781e-16,
       "cy": 0.3,
-      "cz": 0.375,
-      "lx": 0.8094309159633766,
+      "cz": 0.34999999999999987,
+      "lx": 0.809430915963378,
       "ly": 0.1,
-      "lz": 0.15,
+      "lz": 0.19999999999999973,
       "shutter": {
         "showLeft": false,
         "showRight": false,
@@ -3388,10 +3388,10 @@
       "type": "Window",
       "cx": 0,
       "cy": 0.3,
-      "cz": 0.375,
+      "cz": 0.3499999999999999,
       "lx": 0.9036024392790976,
       "ly": 0.1,
-      "lz": 0.15,
+      "lz": 0.19999999999999982,
       "shutter": {
         "showLeft": false,
         "showRight": false,
@@ -3429,12 +3429,12 @@
     },
     {
       "type": "Window",
-      "cx": 0,
+      "cx": -6.290541878221795e-16,
       "cy": 0.3,
-      "cz": 0.375,
-      "lx": 0.8094309159633766,
+      "cz": 0.3499999999999999,
+      "lx": 0.8094309159633778,
       "ly": 0.1,
-      "lz": 0.15,
+      "lz": 0.19999999999999987,
       "shutter": {
         "showLeft": false,
         "showRight": false,
@@ -3474,10 +3474,10 @@
       "type": "Window",
       "cx": 0,
       "cy": 0.3,
-      "cz": 0.375,
+      "cz": 0.3499999999999999,
       "lx": 0.9036024392790976,
       "ly": 0.1,
-      "lz": 0.15,
+      "lz": 0.19999999999999982,
       "shutter": {
         "showLeft": false,
         "showRight": false,
@@ -3515,12 +3515,12 @@
     },
     {
       "type": "Window",
-      "cx": 0,
+      "cx": -6.290541878221795e-16,
       "cy": 0.3,
-      "cz": 0.375,
-      "lx": 0.8094309159633766,
+      "cz": 0.3499999999999999,
+      "lx": 0.8094309159633778,
       "ly": 0.1,
-      "lz": 0.15,
+      "lz": 0.19999999999999987,
       "shutter": {
         "showLeft": false,
         "showRight": false,
@@ -3560,10 +3560,10 @@
       "type": "Window",
       "cx": 0,
       "cy": 0.3,
-      "cz": 0.375,
+      "cz": 0.3499999999999999,
       "lx": 0.7649549167327019,
       "ly": 0.1,
-      "lz": 0.15,
+      "lz": 0.19999999999999982,
       "shutter": {
         "showLeft": false,
         "showRight": false,
@@ -3601,12 +3601,12 @@
     },
     {
       "type": "Window",
-      "cx": 0,
+      "cx": -5.841217458348811e-16,
       "cy": 0.3,
-      "cz": 0.375,
-      "lx": 0.8094309159633766,
+      "cz": 0.34999999999999987,
+      "lx": 0.8094309159633776,
       "ly": 0.1,
-      "lz": 0.15,
+      "lz": 0.19999999999999973,
       "shutter": {
         "showLeft": false,
         "showRight": false,
@@ -3645,8 +3645,8 @@
     {
       "type": "Human",
       "name": "Jane",
-      "cx": 3.4997701695689987,
-      "cy": 1.4003130058530502,
+      "cx": 3.736227180070431,
+      "cy": -0.07270961061114178,
       "cz": 0.1500000059604645,
       "lx": 0.4,
       "ly": 0.4,
@@ -3717,9 +3717,9 @@
       "width": 600
     },
     "cameraPosition": [
-      3.6236629524604282,
-      -84.25089679902881,
-      3.676841973052128
+      2.0567122000034255,
+      -82.20963270587691,
+      2.469053520866666
     ],
     "showYearlyHeliostatYieldPanel": false,
     "mapTilt": 0,
@@ -3853,9 +3853,9 @@
     "showDailyFresnelReflectorYieldPanel": false,
     "showZenithAngle": true,
     "panCenter": [
-      1.8746491313830487,
-      -38.73325538658554,
-      3.221083403957785
+      0,
+      0,
+      0
     ],
     "showYearlyParabolicTroughYieldPanel": false,
     "showDailyUpdraftTowerYieldPanel": false,

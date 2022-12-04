@@ -51,7 +51,6 @@ import { DoorModel, DoorType } from './DoorModel';
 import { WindTurbineModel } from './WindTurbineModel';
 import { FlowerData } from '../FlowerData';
 import { LightModel } from './LightModel';
-import { TreeData } from '../TreeData';
 
 export class ElementModelFactory {
   static makeHuman(name: HumanName, parentId: string, x: number, y: number, z?: number) {
