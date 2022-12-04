@@ -1,7 +1,7 @@
 {
-  "docid": "nn92BmWBTBsLPrnA4Louik",
-  "time": "12/03/2022 08:22 pm",
-  "timestamp": 1670116974246,
+  "docid": "b47MCQVodTkgGBdLSDWDvC",
+  "time": "12/03/2022 08:44 pm",
+  "timestamp": 1670118285883,
   "userid": "QWecNcxhyvP6j6sBN11hBsfZDau1",
   "owner": null,
   "email": null,
@@ -1879,7 +1879,7 @@
       "structureSpacing": 50,
       "structureWidth": 0.2,
       "structureColor": "white",
-      "roofId": "oGBTHDf3qYzukBXH4SSQ7p",
+      "roofId": "11NehXdVvEJW3XyYbWtXPQ",
       "leftRoofHeight": 7,
       "rightRoofHeight": 7
     },
@@ -1940,7 +1940,7 @@
       "structureSpacing": 50,
       "structureWidth": 0.2,
       "structureColor": "white",
-      "roofId": "oGBTHDf3qYzukBXH4SSQ7p",
+      "roofId": "11NehXdVvEJW3XyYbWtXPQ",
       "leftRoofHeight": 7,
       "rightRoofHeight": 7
     },
@@ -2001,7 +2001,7 @@
       "structureSpacing": 50,
       "structureWidth": 0.2,
       "structureColor": "white",
-      "roofId": "oGBTHDf3qYzukBXH4SSQ7p",
+      "roofId": "11NehXdVvEJW3XyYbWtXPQ",
       "leftRoofHeight": 7,
       "rightRoofHeight": 7
     },
@@ -2062,7 +2062,7 @@
       "structureSpacing": 50,
       "structureWidth": 0.2,
       "structureColor": "white",
-      "roofId": "oGBTHDf3qYzukBXH4SSQ7p",
+      "roofId": "11NehXdVvEJW3XyYbWtXPQ",
       "leftRoofHeight": 7,
       "rightRoofHeight": 7
     },
@@ -2123,7 +2123,7 @@
       "structureSpacing": 50,
       "structureWidth": 0.2,
       "structureColor": "white",
-      "roofId": "oGBTHDf3qYzukBXH4SSQ7p",
+      "roofId": "11NehXdVvEJW3XyYbWtXPQ",
       "leftRoofHeight": 7,
       "rightRoofHeight": 7
     },
@@ -2184,7 +2184,7 @@
       "structureSpacing": 50,
       "structureWidth": 0.2,
       "structureColor": "white",
-      "roofId": "oGBTHDf3qYzukBXH4SSQ7p",
+      "roofId": "11NehXdVvEJW3XyYbWtXPQ",
       "leftRoofHeight": 7,
       "rightRoofHeight": 7
     },
@@ -2245,7 +2245,7 @@
       "structureSpacing": 50,
       "structureWidth": 0.2,
       "structureColor": "white",
-      "roofId": "oGBTHDf3qYzukBXH4SSQ7p",
+      "roofId": "11NehXdVvEJW3XyYbWtXPQ",
       "leftRoofHeight": 7,
       "rightRoofHeight": 7
     },
@@ -2306,53 +2306,9 @@
       "structureSpacing": 50,
       "structureWidth": 0.2,
       "structureColor": "white",
-      "roofId": "oGBTHDf3qYzukBXH4SSQ7p",
+      "roofId": "11NehXdVvEJW3XyYbWtXPQ",
       "leftRoofHeight": 7,
       "rightRoofHeight": 7
-    },
-    {
-      "type": "Roof",
-      "cx": 0,
-      "cy": 0,
-      "cz": 0,
-      "lx": 0,
-      "ly": 0,
-      "lz": 0,
-      "rise": 1.5,
-      "overhang": 2,
-      "thickness": 0.1,
-      "roofType": "Pyramid",
-      "roofStructure": "Default",
-      "wallsId": [
-        "23GGGVXLMLhDsJPuc4tWdJ",
-        "xwZdPNzp8AKwovnxoLD3nU",
-        "hqsA2Cy29sRNBoj4v9Cr5r",
-        "7T7V4fAArnXnf77GARr48T",
-        "gQNkn8fsCop5ur3PiXUxVi",
-        "j6xhxcV6gu7NJTE1m7PHjp",
-        "5HfZoyda9UcsGyCP24zQ6f",
-        "mDLvATpuRq21i8iZBYi4ta"
-      ],
-      "textureType": "Roof Texture Default",
-      "color": "#808080",
-      "sideColor": "white",
-      "selected": false,
-      "lineWidth": 0.2,
-      "lineColor": "black",
-      "showLabel": false,
-      "normal": [
-        0,
-        0,
-        1
-      ],
-      "rotation": [
-        0,
-        0,
-        0
-      ],
-      "parentId": "xjGay2mVopjsp4Ndv4B8Eh",
-      "foundationId": "xjGay2mVopjsp4Ndv4B8Eh",
-      "id": "oGBTHDf3qYzukBXH4SSQ7p"
     },
     {
       "type": "Wall",
@@ -3322,7 +3278,7 @@
         "oNJ9yc8yVRwjREwej61c5A"
       ],
       "textureType": "Roof Texture Default",
-      "color": "#808080",
+      "color": "#666666",
       "sideColor": "white",
       "selected": false,
       "lineWidth": 0.2,
@@ -3689,11 +3645,11 @@
     {
       "type": "Human",
       "name": "Jane",
-      "cx": 0.9728778679720183,
-      "cy": 0.3914785906752627,
-      "cz": 0.15000000596046362,
+      "cx": 3.4997701695689987,
+      "cy": 1.4003130058530502,
+      "cz": 0.1500000059604645,
       "lx": 0.4,
-      "ly": 0.48,
+      "ly": 0.4,
       "lz": 1.67,
       "normal": [
         0,
@@ -3708,6 +3664,44 @@
       "parentId": "ihXBcGst6vfG6pMnKjKmcM",
       "id": "mXtLTeWPeXbh8ZPv5wFnjK",
       "selected": false
+    },
+    {
+      "type": "Roof",
+      "cx": 0,
+      "cy": 0,
+      "cz": 0,
+      "lx": 0,
+      "ly": 0,
+      "lz": 0,
+      "rise": 1,
+      "overhang": 1,
+      "thickness": 0.1,
+      "roofType": "Mansard",
+      "roofStructure": "Default",
+      "wallsId": [
+        "mDLvATpuRq21i8iZBYi4ta"
+      ],
+      "ridgeWidth": 2.994634976387277,
+      "textureType": "Roof Texture Default",
+      "color": "#666666",
+      "sideColor": "#ffffff",
+      "selected": false,
+      "lineWidth": 0.2,
+      "lineColor": "black",
+      "showLabel": false,
+      "normal": [
+        0,
+        0,
+        1
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "parentId": "xjGay2mVopjsp4Ndv4B8Eh",
+      "foundationId": "xjGay2mVopjsp4Ndv4B8Eh",
+      "id": "11NehXdVvEJW3XyYbWtXPQ"
     }
   ],
   "view": {
@@ -3723,9 +3717,9 @@
       "width": 600
     },
     "cameraPosition": [
-      4.769808019293058,
-      -89.18466187102604,
-      3.1694380861199702
+      3.6236629524604282,
+      -84.25089679902881,
+      3.676841973052128
     ],
     "showYearlyHeliostatYieldPanel": false,
     "mapTilt": 0,
@@ -3859,9 +3853,9 @@
     "showDailyFresnelReflectorYieldPanel": false,
     "showZenithAngle": true,
     "panCenter": [
-      1.974137206720575,
-      -38.78733846929129,
-      3.1694380861199702
+      1.8746491313830487,
+      -38.73325538658554,
+      3.221083403957785
     ],
     "showYearlyParabolicTroughYieldPanel": false,
     "showDailyUpdraftTowerYieldPanel": false,

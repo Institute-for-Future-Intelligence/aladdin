@@ -545,39 +545,79 @@ const MansardRoof = (roofModel: MansardRoofModel) => {
   useEffect(() => {
     if (topSurfaceMeshRef.current) {
       const points = topRidgeShape.extractPoints(1).shape;
-      const geo = topSurfaceMeshRef.current.geometry;
-      const positions = new Float32Array(18);
       const zOffset = 0.01; // a small number to ensure the surface mesh stay atop
-      positions[0] = points[3].x;
-      positions[1] = points[3].y;
-      positions[2] = zOffset;
-      positions[3] = points[0].x;
-      positions[4] = points[0].y;
-      positions[5] = zOffset;
-      positions[6] = points[2].x;
-      positions[7] = points[2].y;
-      positions[8] = zOffset;
-      positions[9] = points[2].x;
-      positions[10] = points[2].y;
-      positions[11] = zOffset;
-      positions[12] = points[0].x;
-      positions[13] = points[0].y;
-      positions[14] = zOffset;
-      positions[15] = points[1].x;
-      positions[16] = points[1].y;
-      positions[17] = zOffset;
-      // don't call geo.setFromPoints. It doesn't seem to work correctly.
-      geo.setAttribute('position', new Float32BufferAttribute(positions, 3));
-      geo.computeVertexNormals();
-      const scale = showSolarRadiationHeatmap ? 1 : 5;
-      const uvs = [];
-      uvs.push(0, 0);
-      uvs.push(scale, 0);
-      uvs.push(0, scale);
-      uvs.push(0, scale);
-      uvs.push(scale, 0);
-      uvs.push(scale, scale);
-      geo.setAttribute('uv', new Float32BufferAttribute(uvs, 2));
+      const geo = topSurfaceMeshRef.current.geometry;
+      const n = points.length - 1;
+      if (n === 4) {
+        // special case: a quad can be more efficiently represented using only two triangles
+        const positions = new Float32Array(18);
+        positions[0] = points[3].x;
+        positions[1] = points[3].y;
+        positions[2] = zOffset;
+        positions[3] = points[0].x;
+        positions[4] = points[0].y;
+        positions[5] = zOffset;
+        positions[6] = points[2].x;
+        positions[7] = points[2].y;
+        positions[8] = zOffset;
+        positions[9] = points[2].x;
+        positions[10] = points[2].y;
+        positions[11] = zOffset;
+        positions[12] = points[0].x;
+        positions[13] = points[0].y;
+        positions[14] = zOffset;
+        positions[15] = points[1].x;
+        positions[16] = points[1].y;
+        positions[17] = zOffset;
+        // don't call geo.setFromPoints. It doesn't seem to work correctly.
+        geo.setAttribute('position', new Float32BufferAttribute(positions, 3));
+        geo.computeVertexNormals();
+        const scale = showSolarRadiationHeatmap ? 1 : 5;
+        const uvs = [];
+        uvs.push(0, 0);
+        uvs.push(scale, 0);
+        uvs.push(0, scale);
+        uvs.push(0, scale);
+        uvs.push(scale, 0);
+        uvs.push(scale, scale);
+        geo.setAttribute('uv', new Float32BufferAttribute(uvs, 2));
+      } else {
+        const geo = topSurfaceMeshRef.current.geometry;
+        const positions = new Float32Array(n * 9);
+        const scale = 6;
+        const uvs = [];
+        let minX = Number.MAX_VALUE;
+        let minY = Number.MAX_VALUE;
+        let maxX = -Number.MAX_VALUE;
+        let maxY = -Number.MAX_VALUE;
+        for (const p of points) {
+          if (p.x > maxX) maxX = p.x;
+          else if (p.x < minX) minX = p.x;
+          if (p.y > maxY) maxY = p.y;
+          else if (p.y < minY) minY = p.y;
+        }
+        const dx = maxX - minX;
+        const dy = maxY - minY;
+        for (let i = 0; i < n; i++) {
+          const j = i * 9;
+          positions[j] = points[i].x;
+          positions[j + 1] = points[i].y;
+          positions[j + 2] = zOffset;
+          positions[j + 3] = points[i + 1].x;
+          positions[j + 4] = points[i + 1].y;
+          positions[j + 5] = zOffset;
+          positions[j + 6] = 0;
+          positions[j + 7] = 0;
+          positions[j + 8] = zOffset;
+          uvs.push((points[i].x / dx) * scale, (points[i].y / dy) * scale);
+          uvs.push((points[i + 1].x / dx) * scale, (points[i + 1].y / dy) * scale);
+          uvs.push(0, 0);
+        }
+        // don't call geo.setFromPoints. It doesn't seem to work correctly.
+        geo.setAttribute('position', new Float32BufferAttribute(positions, 3));
+        geo.computeVertexNormals();
+        geo.setAttribute('uv', new Float32BufferAttribute(uvs, 2));
+      }
     }
   }, [topRidgeShape, showSolarRadiationHeatmap]);
 
