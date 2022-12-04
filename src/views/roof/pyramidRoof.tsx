@@ -34,6 +34,7 @@ import {
   useUpdateSegmentVerticesMap,
   useRoofHeight,
   useUpdateOldRoofFiles,
+  useRoofTexture,
 } from './hooks';
 import RoofSegment from './roofSegment';
 
@@ -99,6 +100,7 @@ const FlatRoof = ({
   }, [thickness]);
 
   const periphery = <Line points={wireFramePoints} lineWidth={lineWidth} color={lineColor} />;
+  const texture = useRoofTexture(textureType);
 
   return (
     <>
@@ -132,7 +134,13 @@ const FlatRoof = ({
             {showSolarRadiationHeatmap && heatmap ? (
               <meshBasicMaterial attach="material" map={heatmap} color={'white'} side={DoubleSide} />
             ) : (
-              <meshStandardMaterial color={color} transparent={transparent} opacity={opacity} side={DoubleSide} />
+              <meshStandardMaterial
+                map={texture}
+                color={color}
+                transparent={transparent}
+                opacity={opacity}
+                side={DoubleSide}
+              />
             )}
           </mesh>
           {!showSolarRadiationHeatmap && (
