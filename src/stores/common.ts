@@ -752,8 +752,6 @@ export interface CommonStoreState {
   evolutionInProgress: boolean;
   evolutionPaused: boolean;
   showSolarRadiationHeatmap: boolean;
-  updateDesignInfo: () => void;
-  updateDesignInfoFlag: boolean;
   locale: Locale;
   localFileName: string;
   createNewFileFlag: boolean;
@@ -1584,7 +1582,6 @@ export const useStore = create<CommonStoreState>(
                 e.selected = false;
               }
               state.selectedElement = null;
-              state.updateDesignInfo();
             });
             useStoreRef.getState().selectNone();
           },
@@ -1606,7 +1603,6 @@ export const useStore = create<CommonStoreState>(
                       elem.selected = false;
                     }
                   }
-                  state.updateDesignInfo();
                   state.moveHandleType = null;
                   state.resizeHandleType = null;
                   state.rotateHandleType = null;
@@ -4652,7 +4648,6 @@ export const useStore = create<CommonStoreState>(
                   model = wall;
                   break;
               }
-              state.updateDesignInfo();
             });
             return model;
           },
@@ -4788,7 +4783,6 @@ export const useStore = create<CommonStoreState>(
                 }
               });
               state.selectedElement = null;
-              state.updateDesignInfo();
             });
           },
           removeElementsByType(type) {
@@ -4816,7 +4810,6 @@ export const useStore = create<CommonStoreState>(
                   }
                 });
               }
-              state.updateDesignInfo();
             });
           },
           countElementsByType(type, excludeLocked) {
@@ -4883,7 +4876,6 @@ export const useStore = create<CommonStoreState>(
               state.elements = state.elements.filter((e) => {
                 return e.referenceId !== id;
               });
-              state.updateDesignInfo();
             });
           },
           countElementsByReferenceId(id) {
@@ -4922,7 +4914,6 @@ export const useStore = create<CommonStoreState>(
               if (type === ObjectType.Wall) {
                 state.updateWallMapOnFoundationFlag = !state.updateWallMapOnFoundationFlag;
               }
-              state.updateDesignInfo();
             });
           },
           removeAllElementsOnFoundationByType(foundationId, type) {
@@ -4933,7 +4924,6 @@ export const useStore = create<CommonStoreState>(
               if (type === ObjectType.Wall) {
                 state.updateWallMapOnFoundationFlag = !state.updateWallMapOnFoundationFlag;
               }
-              state.updateDesignInfo();
             });
           },
           countAllElements(excludeLocked) {
@@ -5451,7 +5441,6 @@ export const useStore = create<CommonStoreState>(
                   pastedElements.push(...cutElements);
                 }
               }
-              state.updateDesignInfo();
             });
             return pastedElements;
           },
@@ -5866,7 +5855,6 @@ export const useStore = create<CommonStoreState>(
                   if (state.elementsToPaste.length === 1 && approved) pastedElements.push(e);
                 }
               }
-              state.updateDesignInfo();
             });
             return pastedElements;
           },
@@ -6116,12 +6104,6 @@ export const useStore = create<CommonStoreState>(
           addedDoorId: null,
           deletedDoorAndParentId: null,
 
-          updateDesignInfoFlag: false,
-          updateDesignInfo() {
-            immerSet((state: CommonStoreState) => {
-              state.updateDesignInfoFlag = !state.updateDesignInfoFlag;
-            });
-          },
           addedRoofId: null,
           deletedRoofId: null,
           setAddedRoofId(id: string | null) {

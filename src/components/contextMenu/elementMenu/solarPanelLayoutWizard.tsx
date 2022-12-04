@@ -39,7 +39,6 @@ const SolarPanelLayoutWizard = ({ setDialogVisible }: { setDialogVisible: (b: bo
   const applyCount = useStore(Selector.applyCount);
   const setApplyCount = useStore(Selector.setApplyCount);
   const revertApply = useStore(Selector.revertApply);
-  const updateDesignInfo = useStore(Selector.updateDesignInfo);
 
   const [updateFlag, setUpdateFlag] = useState<boolean>(false);
   const [warningDialogVisible, setWarningDialogVisible] = useState(false);
@@ -286,7 +285,6 @@ const SolarPanelLayoutWizard = ({ setDialogVisible }: { setDialogVisible: (b: bo
     }
     changedRef.current = false;
     updateStoreParams();
-    updateDesignInfo();
   };
 
   const setParams = (params: SolarPanelArrayLayoutParams) => {

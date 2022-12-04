@@ -95,7 +95,6 @@ const Foundation = ({
   const getElementById = useStore(Selector.getElementById);
   const getSelectedElement = useStore(Selector.getSelectedElement);
   const setCommonStore = useStore(Selector.set);
-  const updateDesignInfo = useStore(Selector.updateDesignInfo);
   const setElementPosition = useStore(Selector.setElementPosition);
   const setElementSize = useStore(Selector.setElementSize);
   const updateElementLxById = useStore(Selector.updateElementLxById);
@@ -745,7 +744,6 @@ const Foundation = ({
         setCommonStore((state) => {
           state.elements.push(undoableAdd.addedElement);
           state.selectedElement = undoableAdd.addedElement;
-          state.updateDesignInfo();
         });
       },
     } as UndoableAdd;
@@ -2333,7 +2331,6 @@ const Foundation = ({
                   if (isSolarCollectorNewSizeOk(collector, newCx, newCy, collector.lx, dyl)) {
                     updateElementLyById(collector.id, dyl);
                     setElementPosition(collector.id, newCx, newCy);
-                    updateDesignInfo();
                   }
                 }
                 break;
@@ -2359,7 +2356,6 @@ const Foundation = ({
                   if (isSolarCollectorNewSizeOk(collector, newCx, newCy, dxl, collector.ly)) {
                     updateElementLxById(collector.id, dxl);
                     setElementPosition(collector.id, newCx, newCy);
-                    updateDesignInfo();
                   }
                 }
                 break;
@@ -2388,7 +2384,6 @@ const Foundation = ({
                   if (isSolarCollectorNewSizeOk(collector, newCx, newCy, collector.lx, dyl)) {
                     updateElementLyById(collector.id, dyl);
                     setElementPosition(collector.id, newCx, newCy);
-                    updateDesignInfo();
                   }
                 }
                 break;
@@ -2408,7 +2403,6 @@ const Foundation = ({
                   if (isSolarCollectorNewSizeOk(collector, newCx, newCy, dxl, collector.ly)) {
                     updateElementLxById(collector.id, dxl);
                     setElementPosition(collector.id, newCx, newCy);
-                    updateDesignInfo();
                     setCommonStore((state) => {
                       state.actionState.parabolicTroughWidth = dxl;
                     });
@@ -2440,7 +2434,6 @@ const Foundation = ({
                   if (isSolarCollectorNewSizeOk(collector, newCx, newCy, collector.lx, dyl)) {
                     updateElementLyById(collector.id, dyl);
                     setElementPosition(collector.id, newCx, newCy);
-                    updateDesignInfo();
                   }
                 }
                 break;
@@ -2460,7 +2453,6 @@ const Foundation = ({
                   if (isSolarCollectorNewSizeOk(collector, newCx, newCy, dxl, collector.ly)) {
                     updateElementLxById(collector.id, dxl);
                     setElementPosition(collector.id, newCx, newCy);
-                    updateDesignInfo();
                     setCommonStore((state) => {
                       state.actionState.fresnelReflectorWidth = dxl;
                     });
@@ -2479,7 +2471,6 @@ const Foundation = ({
                 if (isSolarCollectorNewSizeOk(collector, parabolicDish.cx, parabolicDish.cy, collector.lx, diameter)) {
                   updateElementLxById(collector.id, diameter);
                   updateElementLyById(collector.id, diameter);
-                  updateDesignInfo();
                   setCommonStore((state) => {
                     state.actionState.parabolicDishRimDiameter = diameter;
                   });

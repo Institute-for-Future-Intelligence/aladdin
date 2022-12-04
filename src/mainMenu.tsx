@@ -991,7 +991,6 @@ const MainMenu = ({ viewOnly, set2DView, resetView, zoomView, canvas }: MainMenu
             setCommonStore((state) => {
               state.elements.push(...undoablePaste.pastedElements);
               state.selectedElement = undoablePaste.pastedElements[0];
-              state.updateDesignInfo();
             });
           },
         } as UndoablePaste;

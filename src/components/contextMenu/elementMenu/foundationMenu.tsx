@@ -530,7 +530,6 @@ export const FoundationMenu = () => {
                           undo: () => {
                             setCommonStore((state) => {
                               state.elements.push(...undoableRemoveAllSolarPanelChildren.removedElements);
-                              state.updateDesignInfo();
                             });
                           },
                           redo: () => {

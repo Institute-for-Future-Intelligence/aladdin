@@ -1105,7 +1105,6 @@ const Ground = () => {
               state.elements.push(undoableAdd.addedElement);
               state.selectedElement = undoableAdd.addedElement;
               state.updateSceneRadius();
-              state.updateDesignInfo();
             });
           },
         } as UndoableAdd;
@@ -1113,7 +1112,6 @@ const Ground = () => {
         setCommonStore((state) => {
           if (!state.actionModeLock) state.objectTypeToAdd = ObjectType.None;
           state.updateSceneRadius();
-          state.updateDesignInfo();
         });
       }
     } else {

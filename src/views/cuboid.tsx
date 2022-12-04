@@ -482,7 +482,6 @@ const Cuboid = ({
             setCommonStore((state) => {
               state.elements.push(undoableAdd.addedElement);
               state.selectedElement = undoableAdd.addedElement;
-              state.updateDesignInfo();
             });
           },
         } as UndoableAdd;

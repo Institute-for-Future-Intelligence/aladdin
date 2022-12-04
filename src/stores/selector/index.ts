@@ -693,10 +693,6 @@ export const evolutionInProgress = (state: CommonStoreState) => state.evolutionI
 
 export const evolutionPaused = (state: CommonStoreState) => state.evolutionPaused;
 
-export const updateDesignInfo = (state: CommonStoreState) => state.updateDesignInfo;
-
-export const updateDesignInfoFlag = (state: CommonStoreState) => state.updateDesignInfoFlag;
-
 export const contextMenuObjectType = (state: CommonStoreState) => state.contextMenuObjectType;
 
 export const localFileDialogRequested = (state: CommonStoreState) => state.localFileDialogRequested;

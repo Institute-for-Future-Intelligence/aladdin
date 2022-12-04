@@ -289,7 +289,6 @@ const SolarPanelArrayPso = () => {
         state.evolutionInProgress = false;
         state.objectiveEvaluationIndex = 0;
       }
-      state.updateDesignInfo();
     });
   };
 
