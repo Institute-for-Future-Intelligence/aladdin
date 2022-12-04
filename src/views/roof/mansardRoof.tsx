@@ -784,6 +784,7 @@ const MansardRoof = (roofModel: MansardRoofModel) => {
                 if (e.id === id && e.type === ObjectType.Roof && (e as RoofModel).roofType === RoofType.Mansard) {
                   (e as RoofModel).rise = riseInnerState;
                   (e as MansardRoofModel).ridgeWidth = width;
+                  state.actionState.roofRise = riseInnerState;
                   break;
                 }
               }

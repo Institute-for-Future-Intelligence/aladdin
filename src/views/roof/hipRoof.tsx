@@ -613,6 +613,7 @@ const HipRoof = (roofModel: HipRoofModel) => {
                   r.leftRidgeLength = leftRidgeLengthCurr;
                   r.rightRidgeLength = rightRidgeLengthCurr;
                   r.rise = riseInnerState;
+                  state.actionState.roofRise = riseInnerState;
                   break;
                 }
               }
