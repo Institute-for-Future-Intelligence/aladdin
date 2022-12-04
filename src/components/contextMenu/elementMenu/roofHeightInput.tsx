@@ -25,6 +25,7 @@ const RoofHeightInput = ({ setDialogVisible }: { setDialogVisible: (b: boolean) 
   const getElementById = useStore(Selector.getElementById);
   const setCommonStore = useStore(Selector.set);
   const getRoofSegmentVertices = useStore(Selector.getRoofSegmentVertices);
+  const updateRoofRiseById = useStore(Selector.updateRoofRiseById);
 
   const [inputValue, setInputValue] = useState<number>(roof?.rise ?? 0);
   const [dragEnabled, setDragEnabled] = useState<boolean>(false);
@@ -39,26 +40,15 @@ const RoofHeightInput = ({ setDialogVisible }: { setDialogVisible: (b: boolean) 
     }
   }, [roof]);
 
-  const updateRoofHeightById = (id: string, value: number) => {
-    setCommonStore((state) => {
-      for (const e of state.elements) {
-        if (e.id === id && e.type === ObjectType.Roof) {
-          (e as RoofModel).rise = value;
-          break;
-        }
-      }
-    });
-  };
-
   const undoInMap = (map: Map<string, number>) => {
     for (const [id, val] of map.entries()) {
-      updateRoofHeightById(id, val);
+      updateRoofRiseById(id, val);
     }
   };
 
   const updateInMap = (map: Map<string, number>, value: number) => {
     for (const id of map.keys()) {
-      updateRoofHeightById(id, value);
+      updateRoofRiseById(id, value);
     }
   };
 
@@ -89,7 +79,7 @@ const RoofHeightInput = ({ setDialogVisible }: { setDialogVisible: (b: boolean) 
           for (const e of state.elements) {
             if (e.type === ObjectType.Roof && !e.locked) {
               oldHeightsAll.set(e.id, (e as RoofModel).rise);
-              updateRoofHeightById(e.id, value);
+              updateRoofRiseById(e.id, value);
             }
           }
         });
@@ -115,7 +105,7 @@ const RoofHeightInput = ({ setDialogVisible }: { setDialogVisible: (b: boolean) 
             for (const e of state.elements) {
               if (e.type === ObjectType.Roof && e.foundationId === roof.foundationId && !e.locked) {
                 oldHeightsAboveFoundation.set(e.id, (e as RoofModel).rise);
-                updateRoofHeightById(e.id, value);
+                updateRoofRiseById(e.id, value);
               }
             }
           });
@@ -151,14 +141,14 @@ const RoofHeightInput = ({ setDialogVisible }: { setDialogVisible: (b: boolean) 
             changedElementId: roof.id,
             changedElementType: roof.type,
             undo: () => {
-              updateRoofHeightById(undoableChange.changedElementId, undoableChange.oldValue as number);
+              updateRoofRiseById(undoableChange.changedElementId, undoableChange.oldValue as number);
             },
             redo: () => {
-              updateRoofHeightById(undoableChange.changedElementId, undoableChange.newValue as number);
+              updateRoofRiseById(undoableChange.changedElementId, undoableChange.newValue as number);
             },
           } as UndoableChange;
           addUndoable(undoableChange);
-          updateRoofHeightById(roof.id, value);
+          updateRoofRiseById(roof.id, value);
           setApplyCount(applyCount + 1);
         }
     }

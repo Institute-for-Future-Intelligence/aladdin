@@ -4166,6 +4166,7 @@ export const useStore = create<CommonStoreState>(
               for (const e of state.elements) {
                 if (e.id === id && e.type === ObjectType.Roof) {
                   (e as RoofModel).rise = rise;
+                  state.actionState.roofRise = rise;
                   break;
                 }
               }
