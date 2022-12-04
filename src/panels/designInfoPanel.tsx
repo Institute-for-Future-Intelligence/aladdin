@@ -5,7 +5,7 @@
 import SolarPanelImage from '../assets/solar-panel.png';
 import HeliostatImage from '../assets/heliostat.png';
 
-import React, { useEffect, useState } from 'react';
+import React from 'react';
 import { useStore } from '../stores/common';
 import * as Selector from '../stores/selector';
 import styled from 'styled-components';
@@ -15,6 +15,7 @@ import { ObjectType } from '../types';
 import { SolarPanelModel } from '../models/SolarPanelModel';
 import LightBulbImage from '../assets/light_bulb.png';
 import DiameterImage from '../assets/diameter.png';
+import { Util } from 'src/Util';
 
 const Container = styled.div`
   position: absolute;
@@ -53,51 +54,45 @@ const ColumnWrapper = styled.div`
 export interface DesignInfoPanelProps {}
 
 const DesignInfoPanel = ({}: DesignInfoPanelProps) => {
+  const countElementsByType = useStore(Selector.countElementsByType);
+  const countSolarPanelsOnRack = useStore(Selector.countSolarPanelsOnRack);
+  const getParent = useStore(Selector.getParent);
   const language = useStore(Selector.language);
   const sunlightDirection = useStore(Selector.sunlightDirection);
-  const countElementsByType = useStore(Selector.countElementsByType);
-  const countAllChildElementsByType = useStore(Selector.countAllChildElementsByType);
-  const countAllSolarPanels = useStore(Selector.countAllSolarPanels);
-  const countAllSolarPanelDailyYields = useStore(Selector.countAllSolarPanelDailyYields);
-  const countAllChildSolarPanels = useStore(Selector.countAllChildSolarPanels);
-  const countAllChildSolarPanelDailyYields = useStore(Selector.countAllChildSolarPanelDailyYields);
-  const countSolarPanelsOnRack = useStore(Selector.countSolarPanelsOnRack);
   const sceneRadius = useStore(Selector.sceneRadius);
-  const updateDesignInfoFlag = useStore(Selector.updateDesignInfoFlag);
-  const selectedElement = useStore(Selector.selectedElement);
-  const getParent = useStore(Selector.getParent);
 
-  const [updateFlag, setUpdateFlag] = useState<boolean>(false);
-  const [solarPanelCount, setSolarPanelCount] = useState<number>(0);
-  const [heliostatCount, setHeliostatCount] = useState<number>(0);
-  const [solarPanelDailyYield, setSolarPanelDailyYield] = useState<number>(0);
-  const daytime = sunlightDirection.y > 0;
-  const lang = { lng: language };
+  const selectedElement = useStore((state) => {
+    if (state.selectedElement === null) return null;
+    return state.elements.find((e) => e.id === state.selectedElement?.id);
+  });
 
-  useEffect(() => {
-    if (selectedElement) {
-      if (selectedElement.type === ObjectType.SolarPanel) {
-        setSolarPanelCount(countSolarPanelsOnRack(selectedElement.id));
-        setSolarPanelDailyYield((selectedElement as SolarPanelModel).dailyYield ?? 0);
-      } else if (selectedElement.type === ObjectType.Polygon) {
-        const parent = getParent(selectedElement);
-        if (parent) {
-          setSolarPanelCount(countAllChildSolarPanels(parent.id));
-          setSolarPanelDailyYield(countAllChildSolarPanelDailyYields(parent.id));
-        }
-      } else {
-        setSolarPanelCount(countAllChildSolarPanels(selectedElement.id));
-        setSolarPanelDailyYield(countAllChildSolarPanelDailyYields(selectedElement.id));
-        setHeliostatCount(countAllChildElementsByType(selectedElement.id, ObjectType.Heliostat));
+  let solarPanelCount = 0;
+  let solarPanelDailyYield = 0;
+  let heliostatCount = 0;
+
+  if (selectedElement) {
+    if (selectedElement.type === ObjectType.SolarPanel) {
+      solarPanelCount = countSolarPanelsOnRack(selectedElement.id);
+      solarPanelDailyYield = (selectedElement as SolarPanelModel).dailyYield ?? 0;
+    } else if (selectedElement.type === ObjectType.Polygon) {
+      const parent = getParent(selectedElement);
+      if (parent) {
+        solarPanelCount = Util.countAllChildSolarPanels(parent.id);
+        solarPanelDailyYield = Util.countAllChildSolarPanelDailyYields(parent.id);
       }
     } else {
-      setSolarPanelCount(countAllSolarPanels());
-      setSolarPanelDailyYield(countAllSolarPanelDailyYields());
-      setHeliostatCount(countElementsByType(ObjectType.Heliostat));
+      solarPanelCount = Util.countAllChildSolarPanels(selectedElement.id);
+      solarPanelDailyYield = Util.countAllChildSolarPanelDailyYields(selectedElement.id);
+      heliostatCount = Util.countAllChildElementsByType(selectedElement.id, ObjectType.Heliostat);
     }
-    setUpdateFlag(!updateFlag);
-  }, [sceneRadius, updateDesignInfoFlag, selectedElement]);
+  } else {
+    solarPanelCount = Util.countAllSolarPanels();
+    solarPanelDailyYield = Util.countAllSolarPanelDailyYields();
+    heliostatCount = countElementsByType(ObjectType.Heliostat);
+  }
 
+  const lang = { lng: language };
+  const daytime = sunlightDirection.y > 0;
   const color = daytime ? 'navajowhite' : 'antiquewhite';
   const filter = daytime
     ? 'invert(85%) sepia(45%) saturate(335%) hue-rotate(329deg) brightness(100%) contrast(101%)'
@@ -114,9 +109,6 @@ const DesignInfoPanel = ({}: DesignInfoPanelProps) => {
                 src={SolarPanelImage}
                 height={24}
                 width={36}
-                onClick={() => {
-                  setUpdateFlag(!updateFlag);
-                }}
                 style={{ paddingLeft: '10px', cursor: 'pointer', filter: 'invert(100%) ' }}
               />
               <label>{solarPanelCount}</label>
@@ -129,9 +121,6 @@ const DesignInfoPanel = ({}: DesignInfoPanelProps) => {
                 src={HeliostatImage}
                 height={24}
                 width={36}
-                onClick={() => {
-                  setUpdateFlag(!updateFlag);
-                }}
                 style={{
                   paddingLeft: '10px',
                   marginTop: '4px',
@@ -169,9 +158,6 @@ const DesignInfoPanel = ({}: DesignInfoPanelProps) => {
                 title={i18n.t('designInfoPanel.SceneDiameter', lang)}
                 alt={'Diameter'}
                 src={DiameterImage}
-                onClick={() => {
-                  setUpdateFlag(!updateFlag);
-                }}
                 height={20}
                 width={20}
                 style={{

@@ -577,12 +577,7 @@ export interface CommonStoreState {
   // the following goes faster than counting individual types of children through multiple loops
   countAllElements: (excludeLocked?: boolean) => number;
   countAllOffspringsByTypeAtOnce: (ancestorId: string, includingLocked: boolean) => ElementCounter;
-  countAllChildElementsByType: (parentId: string, type: ObjectType, excludeLocked?: boolean) => number;
-  countAllChildSolarPanels: (parentId: string, excludeLocked?: boolean) => number; // special case as a rack may have many solar panels
-  countAllSolarPanels: () => number;
   countSolarPanelsOnRack: (id: string) => number;
-  countAllSolarPanelDailyYields: () => number;
-  countAllChildSolarPanelDailyYields: (parentId: string) => number;
   clearAllSolarPanelYields: () => void;
   removeAllChildElementsByType: (parentId: string, type: ObjectType) => void;
   removeAllElementsOnFoundationByType: (foundationId: string, type: ObjectType) => void;
@@ -1051,7 +1046,7 @@ export const useStore = create<CommonStoreState>(
           },
           getDailyPvProfit() {
             const dailyYield = this.sumDailyPvYield();
-            const solarPanelNumber = this.countAllSolarPanels();
+            const solarPanelNumber = Util.countAllSolarPanels();
             return (
               dailyYield * this.economicsParams.electricitySellingPrice -
               solarPanelNumber * this.economicsParams.operationalCostPerUnit
@@ -1084,7 +1079,7 @@ export const useStore = create<CommonStoreState>(
             return sum * yearScaleFactor;
           },
           getYearlyPvProfit() {
-            const solarPanelNumber = this.countAllSolarPanels();
+            const solarPanelNumber = Util.countAllSolarPanels();
             const yearlyYield = this.sumYearlyPvYield();
             return (
               yearlyYield * this.economicsParams.electricitySellingPrice -
@@ -4826,21 +4821,19 @@ export const useStore = create<CommonStoreState>(
           },
           countElementsByType(type, excludeLocked) {
             let count = 0;
-            immerSet((state: CommonStoreState) => {
-              if (excludeLocked) {
-                for (const e of state.elements) {
-                  if (e.type === type && !e.locked) {
-                    count++;
-                  }
-                }
-              } else {
-                for (const e of state.elements) {
-                  if (e.type === type) {
-                    count++;
-                  }
+            if (excludeLocked) {
+              for (const e of get().elements) {
+                if (e.type === type && !e.locked) {
+                  count++;
                 }
               }
-            });
+            } else {
+              for (const e of get().elements) {
+                if (e.type === type) {
+                  count++;
+                }
+              }
+            }
             return count;
           },
           countSolarStructuresByType(type, excludeLocked) {
@@ -5028,104 +5021,19 @@ export const useStore = create<CommonStoreState>(
             });
             return counter;
           },
-          countAllChildElementsByType(parentId, type, excludeLocked) {
-            let count = 0;
-            immerSet((state: CommonStoreState) => {
-              if (excludeLocked) {
-                for (const e of state.elements) {
-                  if (!e.locked && e.type === type && e.parentId === parentId) {
-                    count++;
-                  }
-                }
-              } else {
-                for (const e of state.elements) {
-                  if (e.type === type && e.parentId === parentId) {
-                    count++;
-                  }
-                }
-              }
-            });
-            return count;
-          },
-          countAllChildSolarPanels(parentId, excludeLocked) {
-            let count = 0;
-            immerSet((state: CommonStoreState) => {
-              if (excludeLocked) {
-                for (const e of state.elements) {
-                  if (!e.locked && e.type === ObjectType.SolarPanel && e.parentId === parentId) {
-                    const sp = e as SolarPanelModel;
-                    const pvModel = state.getPvModule(sp.pvModelName);
-                    if (pvModel) {
-                      count += Util.countSolarPanelsOnRack(sp, pvModel);
-                    }
-                  }
-                }
-              } else {
-                for (const e of state.elements) {
-                  if (e.type === ObjectType.SolarPanel && e.parentId === parentId) {
-                    const sp = e as SolarPanelModel;
-                    const pvModel = state.getPvModule(sp.pvModelName);
-                    if (pvModel) {
-                      count += Util.countSolarPanelsOnRack(sp, pvModel);
-                    }
-                  }
-                }
-              }
-            });
-            return count;
-          },
           countSolarPanelsOnRack(id) {
             let count = 0;
-            immerSet((state: CommonStoreState) => {
-              for (const e of state.elements) {
-                if (e.id === id && e.type === ObjectType.SolarPanel) {
-                  const sp = e as SolarPanelModel;
-                  const pvModel = state.getPvModule(sp.pvModelName);
-                  if (pvModel) {
-                    count = Util.countSolarPanelsOnRack(sp, pvModel);
-                    break;
-                  }
+            for (const e of get().elements) {
+              if (e.id === id && e.type === ObjectType.SolarPanel) {
+                const sp = e as SolarPanelModel;
+                const pvModel = get().getPvModule(sp.pvModelName);
+                if (pvModel) {
+                  count = Util.countSolarPanelsOnRack(sp, pvModel);
+                  break;
                 }
               }
-            });
+            }
             return count;
-          },
-          countAllSolarPanels() {
-            let count = 0;
-            immerSet((state: CommonStoreState) => {
-              for (const e of state.elements) {
-                if (e.type === ObjectType.SolarPanel) {
-                  const sp = e as SolarPanelModel;
-                  const pvModel = state.getPvModule(sp.pvModelName);
-                  if (pvModel) {
-                    count += Util.countSolarPanelsOnRack(sp, pvModel);
-                  }
-                }
-              }
-            });
-            return count;
-          },
-          countAllChildSolarPanelDailyYields(parentId) {
-            let total = 0;
-            immerSet((state: CommonStoreState) => {
-              for (const e of state.elements) {
-                if (e.type === ObjectType.SolarPanel && e.parentId === parentId) {
-                  total += (e as SolarPanelModel).dailyYield ?? 0;
-                }
-              }
-            });
-            return total;
-          },
-          countAllSolarPanelDailyYields() {
-            let total = 0;
-            immerSet((state: CommonStoreState) => {
-              for (const e of state.elements) {
-                if (e.type === ObjectType.SolarPanel) {
-                  total += (e as SolarPanelModel).dailyYield ?? 0;
-                }
-              }
-            });
-            return total;
           },
           // this should be called if any of the solar panels changes
           clearAllSolarPanelYields() {

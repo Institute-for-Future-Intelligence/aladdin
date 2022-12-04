@@ -669,21 +669,11 @@ export const countObservers = (state: CommonStoreState) => state.countObservers;
 
 export const countAllElements = (state: CommonStoreState) => state.countAllElements;
 
-export const countAllChildElementsByType = (state: CommonStoreState) => state.countAllChildElementsByType;
-
 export const countAllOffspringsByTypeAtOnce = (state: CommonStoreState) => state.countAllOffspringsByTypeAtOnce;
-
-export const countAllChildSolarPanels = (state: CommonStoreState) => state.countAllChildSolarPanels;
-
-export const countAllChildSolarPanelDailyYields = (state: CommonStoreState) => state.countAllChildSolarPanelDailyYields;
 
 export const countSolarPanelsOnRack = (state: CommonStoreState) => state.countSolarPanelsOnRack;
 
-export const countAllSolarPanels = (state: CommonStoreState) => state.countAllSolarPanels;
-
 export const clearAllSolarPanelYields = (state: CommonStoreState) => state.clearAllSolarPanelYields;
-
-export const countAllSolarPanelDailyYields = (state: CommonStoreState) => state.countAllSolarPanelDailyYields;
 
 export const selectedElementAngle = (state: CommonStoreState) => state.selectedElementAngle;
 

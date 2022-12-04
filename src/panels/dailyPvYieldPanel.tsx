@@ -16,6 +16,7 @@ import { ReloadOutlined, SaveOutlined, UnorderedListOutlined } from '@ant-design
 import i18n from '../i18n/i18n';
 import { Rectangle } from '../models/Rectangle';
 import { FLOATING_WINDOW_OPACITY } from '../constants';
+import { Util } from 'src/Util';
 
 const Container = styled.div`
   position: fixed;
@@ -85,7 +86,6 @@ const DailyPvYieldPanel = ({ city }: DailyPvYieldPanelProps) => {
   const solarPanelLabels = useStore(Selector.solarPanelLabels);
   const runEvolution = useStore(Selector.runEvolution);
   const economics = useStore.getState().economicsParams;
-  const countAllSolarPanels = useStore(Selector.countAllSolarPanels);
 
   // nodeRef is to suppress ReactDOM.findDOMNode() deprecation warning. See:
   // https://github.com/react-grid-layout/react-draggable/blob/v4.4.2/lib/DraggableCore.js#L159-L171
@@ -206,7 +206,7 @@ const DailyPvYieldPanel = ({ city }: DailyPvYieldPanelProps) => {
     totalTooltip += i18n.t('word.Total', lang) + ': ' + sum.toFixed(3) + ' ' + i18n.t('word.kWh', lang);
   }
 
-  const solarPanelNumber = countAllSolarPanels();
+  const solarPanelNumber = Util.countAllSolarPanels();
   const totalProfit = sum * economics.electricitySellingPrice - solarPanelNumber * economics.operationalCostPerUnit;
 
   return (

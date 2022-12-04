@@ -239,6 +239,86 @@ export class Util {
     }
     return count;
   }
+  static countAllSolarPanelDailyYields() {
+    let total = 0;
+    for (const e of useStore.getState().elements) {
+      if (e.type === ObjectType.SolarPanel) {
+        total += (e as SolarPanelModel).dailyYield ?? 0;
+      }
+    }
+    return total;
+  }
+
+  static countAllSolarPanels() {
+    let count = 0;
+    for (const e of useStore.getState().elements) {
+      if (e.type === ObjectType.SolarPanel) {
+        const sp = e as SolarPanelModel;
+        const pvModel = useStore.getState().getPvModule(sp.pvModelName);
+        if (pvModel) {
+          count += Util.countSolarPanelsOnRack(sp, pvModel);
+        }
+      }
+    }
+    return count;
+  }
+
+  // special case as a rack may have many solar panels
+  static countAllChildSolarPanels(parentId: string, excludeLocked?: boolean) {
+    let count = 0;
+    const elements = useStore.getState().elements;
+    if (excludeLocked) {
+      for (const e of elements) {
+        if (!e.locked && e.type === ObjectType.SolarPanel && e.parentId === parentId) {
+          const sp = e as SolarPanelModel;
+          const pvModel = useStore.getState().getPvModule(sp.pvModelName);
+          if (pvModel) {
+            count += Util.countSolarPanelsOnRack(sp, pvModel);
+          }
+        }
+      }
+    } else {
+      for (const e of elements) {
+        if (e.type === ObjectType.SolarPanel && e.parentId === parentId) {
+          const sp = e as SolarPanelModel;
+          const pvModel = useStore.getState().getPvModule(sp.pvModelName);
+          if (pvModel) {
+            count += Util.countSolarPanelsOnRack(sp, pvModel);
+          }
+        }
+      }
+    }
+    return count;
+  }
+
+  static countAllChildSolarPanelDailyYields(parentId: string) {
+    let total = 0;
+    for (const e of useStore.getState().elements) {
+      if (e.type === ObjectType.SolarPanel && e.parentId === parentId) {
+        total += (e as SolarPanelModel).dailyYield ?? 0;
+      }
+    }
+    return total;
+  }
+
+  static countAllChildElementsByType(parentId: string, type: ObjectType, excludeLocked?: boolean) {
+    let count = 0;
+    const elements = useStore.getState().elements;
+    if (excludeLocked) {
+      for (const e of elements) {
+        if (!e.locked && e.type === type && e.parentId === parentId) {
+          count++;
+        }
+      }
+    } else {
+      for (const e of elements) {
+        if (e.type === type && e.parentId === parentId) {
+          count++;
+        }
+      }
+    }
+    return count;
+  }
 
   static isPointInside = (x: number, y: number, vertices: Point2[]) => {
     let inside = false;
