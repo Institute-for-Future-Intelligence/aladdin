@@ -14,7 +14,7 @@ import { useStoreRef } from 'src/stores/commonRef';
 import { useThree } from '@react-three/fiber';
 import { Point2 } from 'src/models/Point2';
 import { Util } from 'src/Util';
-import { ActionType, ObjectType, ResizeHandleType, RoofTexture } from 'src/types';
+import { ActionType, ObjectType, RoofHandleType, RoofTexture } from 'src/types';
 import {
   addUndoableResizeRoofRise,
   handleContextMenu,
@@ -723,7 +723,7 @@ const PyramidRoof = (roofModel: PyramidRoofModel) => {
           }}
           onPointerOver={() => {
             setCommonStore((state) => {
-              state.hoveredHandle = ResizeHandleType.Top;
+              state.hoveredHandle = RoofHandleType.Top;
               state.selectedElementHeight = topZ + roofModel.thickness;
               state.selectedElementX = cx;
               state.selectedElementY = cy;

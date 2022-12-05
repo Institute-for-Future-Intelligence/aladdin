@@ -75,7 +75,7 @@ export const VerticalRuler = ({ element }: { element: ElementModel }) => {
       }
     } else if (element.type === ObjectType.Roof) {
       // TODO: The ruler should be drawn outside the roof so that it is visible all the time
-      if (Util.isTopResizeHandleOfRoof(hoveredHandle)) {
+      if (Util.isRiseHandleOfRoof(hoveredHandle)) {
         const cameraDir = getCameraDirection();
         const rotation = -Math.atan2(cameraDir.x, cameraDir.y) + Math.PI;
         setPosition(new Vector3(selectedElementX, selectedElementY, 0));

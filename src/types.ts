@@ -507,3 +507,19 @@ export type WallAbsPos = {
   rightPointAbsPos: Vector2;
   centerPointAbsPos: Vector2;
 };
+
+export enum RoofHandleType {
+  Mid = 'Mid',
+  Left = 'Left',
+  Right = 'Right',
+  TopMid = 'TopMid',
+  TopLeft = 'TopLeft',
+  TopRight = 'TopRight',
+  FrontLeft = 'FrontLeft',
+  FrontRight = 'FrontRight',
+  BackLeft = 'BackLeft',
+  BackRight = 'BackRight',
+  Top = 'Top',
+  Ridge = 'Ridge',
+  Null = 'Null',
+}

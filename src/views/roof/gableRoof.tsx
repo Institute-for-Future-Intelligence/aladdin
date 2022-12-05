@@ -36,7 +36,7 @@ import {
   updateRooftopElements,
 } from './roofRenderer';
 import { UnoableResizeGableRoofRidge } from 'src/undo/UndoableResize';
-import { ObjectType, RoofTexture } from 'src/types';
+import { ObjectType, RoofHandleType, RoofTexture } from 'src/types';
 import { Util } from 'src/Util';
 import { Point2 } from 'src/models/Point2';
 import { RoofUtil } from './RoofUtil';
@@ -57,13 +57,6 @@ const intersectionPlanePosition = new Vector3();
 const intersectionPlaneRotation = new Euler();
 const zeroVector2 = new Vector2();
 const zVector3 = new Vector3(0, 0, 1);
-
-enum RoofHandleType {
-  Mid = 'Mid',
-  Left = 'Left',
-  Right = 'Right',
-  Null = 'Null',
-}
 
 interface RafterUnitProps {
   start: Vector3;

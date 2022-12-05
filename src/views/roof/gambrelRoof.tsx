@@ -27,7 +27,7 @@ import {
   RoofWireframeProps,
   updateRooftopElements,
 } from './roofRenderer';
-import { ObjectType } from 'src/types';
+import { ObjectType, RoofHandleType } from 'src/types';
 import { RoofUtil } from './RoofUtil';
 import {
   useCurrWallArray,
@@ -37,17 +37,6 @@ import {
   useUpdateOldRoofFiles,
 } from './hooks';
 import RoofSegment from './roofSegment';
-
-enum RoofHandleType {
-  TopMid = 'TopMid',
-  TopLeft = 'TopLeft',
-  TopRight = 'TopRight',
-  FrontLeft = 'FrontLeft',
-  FrontRight = 'FrontRight',
-  BackLeft = 'BackLeft',
-  BackRight = 'BackRight',
-  Null = 'Null',
-}
 
 const GambrelRoofWirefram = React.memo(({ roofSegments, thickness, lineWidth, lineColor }: RoofWireframeProps) => {
   if (roofSegments.length === 0) {

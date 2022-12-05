@@ -12,7 +12,7 @@ import { WallModel } from 'src/models/WallModel';
 import { useStore } from 'src/stores/common';
 import { useStoreRef } from 'src/stores/commonRef';
 import * as Selector from 'src/stores/selector';
-import { ObjectType, RoofTexture } from 'src/types';
+import { ObjectType, RoofHandleType, RoofTexture } from 'src/types';
 import { UnoableResizeGambrelAndMansardRoofRidge } from 'src/undo/UndoableResize';
 import { Util } from 'src/Util';
 import { CanvasTexture, DoubleSide, Euler, Float32BufferAttribute, Mesh, Shape, Vector3 } from 'three';
@@ -42,12 +42,6 @@ import { RoofUtil } from './RoofUtil';
 const intersectionPlanePosition = new Vector3();
 const intersectionPlaneRotation = new Euler();
 const zVector3 = new Vector3(0, 0, 1);
-
-enum RoofHandleType {
-  Top = 'Top',
-  Ridge = 'Ridge',
-  Null = 'Null',
-}
 
 const MansardRoofWirefram = React.memo(({ roofSegments, thickness, lineWidth, lineColor }: RoofWireframeProps) => {
   const wallPoints = useMemo(

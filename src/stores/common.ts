@@ -32,6 +32,7 @@ import {
   ParabolicDishStructureType,
   PolygonTexture,
   ResizeHandleType,
+  RoofHandleType,
   RotateHandleType,
   Scope,
   SolarStructure,
@@ -171,7 +172,7 @@ export interface CommonStoreState {
   clickObjectType: ObjectType | null;
   contextMenuObjectType: ObjectType | null;
   duringCameraInteraction: boolean;
-  hoveredHandle: MoveHandleType | ResizeHandleType | RotateHandleType | null;
+  hoveredHandle: MoveHandleType | ResizeHandleType | RotateHandleType | RoofHandleType | null;
   moveHandleType: MoveHandleType | null;
   resizeHandleType: ResizeHandleType | null;
   rotateHandleType: RotateHandleType | null;

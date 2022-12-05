@@ -73,7 +73,7 @@ export const Auxiliary = () => {
       {(showVerticalRuler ||
         Util.isTopResizeHandle(hoveredHandle) ||
         (element?.type === ObjectType.Wall && Util.isTopResizeHandleOfWall(hoveredHandle)) ||
-        (element?.type === ObjectType.Roof && Util.isTopResizeHandleOfRoof(hoveredHandle))) &&
+        (element?.type === ObjectType.Roof && Util.isRiseHandleOfRoof(hoveredHandle))) &&
         element && <VerticalRuler element={element} />}
     </>
   );

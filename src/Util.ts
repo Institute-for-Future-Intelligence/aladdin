@@ -25,6 +25,7 @@ import {
   ObjectType,
   Orientation,
   ResizeHandleType,
+  RoofHandleType,
   RotateHandleType,
   TrackerType,
 } from './types';
@@ -663,7 +664,9 @@ export class Util {
     }
   }
 
-  static isTopResizeHandle(handle: MoveHandleType | ResizeHandleType | RotateHandleType | null): boolean {
+  static isTopResizeHandle(
+    handle: MoveHandleType | ResizeHandleType | RotateHandleType | RoofHandleType | null,
+  ): boolean {
     // unfortunately, I cannot find a better way to tell the type of enum variable
     return (
       handle === ResizeHandleType.LowerLeftTop ||
@@ -674,15 +677,15 @@ export class Util {
     );
   }
 
-  static isTopResizeHandleOfWall(handle: MoveHandleType | ResizeHandleType | RotateHandleType | null) {
+  static isTopResizeHandleOfWall(handle: MoveHandleType | ResizeHandleType | RotateHandleType | RoofHandleType | null) {
     return handle === ResizeHandleType.UpperLeft || handle === ResizeHandleType.UpperRight;
   }
 
-  static isTopResizeHandleOfRoof(handle: MoveHandleType | ResizeHandleType | RotateHandleType | null) {
-    return handle === ResizeHandleType.Top;
+  static isRiseHandleOfRoof(handle: MoveHandleType | ResizeHandleType | RotateHandleType | RoofHandleType | null) {
+    return handle === RoofHandleType.Top;
   }
 
-  static isMoveHandle(handle: MoveHandleType | ResizeHandleType | RotateHandleType | null): boolean {
+  static isMoveHandle(handle: MoveHandleType | ResizeHandleType | RotateHandleType | RoofHandleType | null): boolean {
     // unfortunately, I cannot find a better way to tell the type of enum variable
     return (
       handle === MoveHandleType.Default ||
