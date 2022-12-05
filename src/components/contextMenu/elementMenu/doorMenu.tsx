@@ -169,37 +169,41 @@ export const DoorMenu = () => {
           >
             {i18n.t('word.Height', lang)} ...
           </Menu.Item>
-          {uValueDialogVisible && <DoorUValueInput setDialogVisible={setUValueDialogVisible} />}
-          <Menu.Item
-            key={'door-u-value'}
-            style={{ paddingLeft: '36px' }}
-            onClick={() => {
-              setApplyCount(0);
-              setUValueDialogVisible(true);
-            }}
-          >
-            {i18n.t('word.UValue', lang)} ...
-          </Menu.Item>
-          <Menu.Item
-            key={'door-texture'}
-            style={{ paddingLeft: paddingLeft }}
-            onClick={() => {
-              setApplyCount(0);
-              setTextureDialogVisible(true);
-            }}
-          >
-            {i18n.t('word.Texture', lang)} ...
-          </Menu.Item>
-          <Menu.Item
-            key={'door-color'}
-            style={{ paddingLeft: paddingLeft }}
-            onClick={() => {
-              setApplyCount(0);
-              setColorDialogVisible(true);
-            }}
-          >
-            {i18n.t('word.Color', lang)} ...
-          </Menu.Item>
+          {door.filled && (
+            <>
+              {uValueDialogVisible && <DoorUValueInput setDialogVisible={setUValueDialogVisible} />}
+              <Menu.Item
+                key={'door-u-value'}
+                style={{ paddingLeft: '36px' }}
+                onClick={() => {
+                  setApplyCount(0);
+                  setUValueDialogVisible(true);
+                }}
+              >
+                {i18n.t('word.UValue', lang)} ...
+              </Menu.Item>
+              <Menu.Item
+                key={'door-texture'}
+                style={{ paddingLeft: paddingLeft }}
+                onClick={() => {
+                  setApplyCount(0);
+                  setTextureDialogVisible(true);
+                }}
+              >
+                {i18n.t('word.Texture', lang)} ...
+              </Menu.Item>
+              <Menu.Item
+                key={'door-color'}
+                style={{ paddingLeft: paddingLeft }}
+                onClick={() => {
+                  setApplyCount(0);
+                  setColorDialogVisible(true);
+                }}
+              >
+                {i18n.t('word.Color', lang)} ...
+              </Menu.Item>
+            </>
+          )}
         </>
       )}
 

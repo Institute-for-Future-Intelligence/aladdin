@@ -402,10 +402,10 @@ const Tree = ({
                       });
                     }
                   }}
-                  onPointerOver={(e) => {
+                  onPointerEnter={(e) => {
                     hoverHandle(e, MoveHandleType.Default);
                   }}
-                  onPointerOut={noHoverHandle}
+                  onPointerLeave={noHoverHandle}
                 >
                   <meshBasicMaterial
                     attach="material"
@@ -427,10 +427,10 @@ const Tree = ({
                       onPointerDown={(e) => {
                         selectMe(id, e, ActionType.Resize);
                       }}
-                      onPointerOver={(e) => {
+                      onPointerEnter={(e) => {
                         hoverHandle(e, ResizeHandleType.Top);
                       }}
-                      onPointerOut={noHoverHandle}
+                      onPointerLeave={noHoverHandle}
                     >
                       <meshBasicMaterial
                         attach="material"
@@ -450,10 +450,10 @@ const Tree = ({
                       onPointerDown={(e) => {
                         selectMe(id, e, ActionType.Resize);
                       }}
-                      onPointerOver={(e) => {
+                      onPointerEnter={(e) => {
                         hoverHandle(e, ResizeHandleType.Left);
                       }}
-                      onPointerOut={noHoverHandle}
+                      onPointerLeave={noHoverHandle}
                     >
                       <meshBasicMaterial
                         attach="material"
@@ -473,10 +473,10 @@ const Tree = ({
                       onPointerDown={(e) => {
                         selectMe(id, e, ActionType.Resize);
                       }}
-                      onPointerOver={(e) => {
+                      onPointerEnter={(e) => {
                         hoverHandle(e, ResizeHandleType.Right);
                       }}
-                      onPointerOut={noHoverHandle}
+                      onPointerLeave={noHoverHandle}
                     >
                       <meshBasicMaterial
                         attach="material"
@@ -496,10 +496,10 @@ const Tree = ({
                       onPointerDown={(e) => {
                         selectMe(id, e, ActionType.Resize);
                       }}
-                      onPointerOver={(e) => {
+                      onPointerEnter={(e) => {
                         hoverHandle(e, ResizeHandleType.Lower);
                       }}
-                      onPointerOut={noHoverHandle}
+                      onPointerLeave={noHoverHandle}
                     >
                       <meshBasicMaterial
                         attach="material"
@@ -519,10 +519,10 @@ const Tree = ({
                       onPointerDown={(e) => {
                         selectMe(id, e, ActionType.Resize);
                       }}
-                      onPointerOver={(e) => {
+                      onPointerEnter={(e) => {
                         hoverHandle(e, ResizeHandleType.Upper);
                       }}
-                      onPointerOut={noHoverHandle}
+                      onPointerLeave={noHoverHandle}
                     >
                       <meshBasicMaterial
                         attach="material"

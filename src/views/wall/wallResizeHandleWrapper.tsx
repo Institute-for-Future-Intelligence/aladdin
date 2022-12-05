@@ -64,13 +64,13 @@ const WallResizeHandle = React.memo(({ x, z, handleType, highLight, handleSize }
       name={handleType}
       args={[lx, ly, lz]}
       position={[x, 0, z]}
-      onPointerOver={(e) => {
+      onPointerOver={() => {
         setHovered(true);
         setCommonStore((state) => {
           state.hoveredHandle = handleType;
         });
       }}
-      onPointerOut={() => {
+      onPointerLeave={() => {
         setHovered(false);
         setCommonStore((state) => {
           state.hoveredHandle = null;

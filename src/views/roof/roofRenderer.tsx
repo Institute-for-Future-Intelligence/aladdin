@@ -55,6 +55,7 @@ interface RoofHandleProps {
   position: [x: number, y: number, z: number];
   onPointerDown?: (event: ThreeEvent<PointerEvent>) => void;
   onPointerUp?: (event: ThreeEvent<PointerEvent>) => void;
+  onPointerOver?: (event: ThreeEvent<PointerEvent>) => void;
 }
 
 const addUndoableAddSolarPanel = (elem: ElementModel) => {
@@ -472,7 +473,8 @@ export const handleContextMenu = (e: ThreeEvent<MouseEvent>, id: string) => {
   }
 };
 
-export const RoofHandle = ({ position, onPointerDown, onPointerUp }: RoofHandleProps) => {
+export const RoofHandle = ({ position, onPointerDown, onPointerUp, onPointerOver }: RoofHandleProps) => {
+  const setCommonStore = useStore(Selector.set);
   const roofHandleSize = useHandleSize();
   const { gl } = useThree();
 
@@ -565,6 +567,20 @@ export const RoofHandle = ({ position, onPointerDown, onPointerUp }: RoofHandleP
           if (onPointerUp) {
             onPointerUp(e);
           }
+        }
+      }}
+      onPointerOver={(e) => {
+        if (isFirstHandle(e)) {
+          if (onPointerOver) {
+            onPointerOver(e);
+          }
+        }
+      }}
+      onPointerLeave={(e) => {
+        if (isFirstHandle(e)) {
+          setCommonStore((state) => {
+            state.hoveredHandle = null;
+          });
         }
       }}
     >

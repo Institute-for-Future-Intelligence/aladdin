@@ -13,6 +13,7 @@ import { ElementModel } from '../models/ElementModel';
 import { HALF_PI } from '../constants';
 import { ObjectType, ResizeHandleType } from '../types';
 import { Util } from '../Util';
+import { RoofModel } from '../models/RoofModel';
 
 export const VerticalRuler = ({ element }: { element: ElementModel }) => {
   const getResizeHandlePosition = useStore(Selector.getResizeHandlePosition);
@@ -20,6 +21,8 @@ export const VerticalRuler = ({ element }: { element: ElementModel }) => {
   const resizeHandleType = useStore(Selector.resizeHandleType);
   const hoveredHandle = useStore(Selector.hoveredHandle);
   const selectedElementHeight = useStore(Selector.selectedElementHeight);
+  const selectedElementX = useStore(Selector.selectedElementX);
+  const selectedElementY = useStore(Selector.selectedElementY);
 
   const [height, setHeight] = useState<number>(Math.ceil(selectedElementHeight) + 1);
   const [shownHeight, setShownHeight] = useState<string>(selectedElementHeight.toFixed(1));
@@ -39,6 +42,17 @@ export const VerticalRuler = ({ element }: { element: ElementModel }) => {
     size: 0.35,
   } as TextGeometryParameters;
 
+  const updatedElement = useStore((state) => {
+    if (element) {
+      for (const e of state.elements) {
+        if (e.id === element.id) {
+          return e;
+        }
+      }
+    }
+    return null;
+  });
+
   useEffect(() => {
     if (resizeHandleType) {
       const handlePos = getResizeHandlePosition(element, resizeHandleType);
@@ -52,16 +66,24 @@ export const VerticalRuler = ({ element }: { element: ElementModel }) => {
   useEffect(() => {
     if (element.type === ObjectType.Wall) {
       if (Util.isTopResizeHandleOfWall(hoveredHandle)) {
-        // TODO: The ruler should be drawn outisde the wall so that it is visible all the time
+        // TODO: The ruler should be drawn outside the wall so that it is visible all the time
         const handlePos = getResizeHandlePosition(element, hoveredHandle as ResizeHandleType);
         const cameraDir = getCameraDirection();
         const rotation = -Math.atan2(cameraDir.x, cameraDir.y) + Math.PI;
         setPosition(new Vector3(handlePos.x, handlePos.y, 0));
         setRotation(new Euler(HALF_PI, 0, rotation, 'ZXY'));
       }
+    } else if (element.type === ObjectType.Roof) {
+      // TODO: The ruler should be drawn outside the roof so that it is visible all the time
+      if (Util.isTopResizeHandleOfRoof(hoveredHandle)) {
+        const cameraDir = getCameraDirection();
+        const rotation = -Math.atan2(cameraDir.x, cameraDir.y) + Math.PI;
+        setPosition(new Vector3(selectedElementX, selectedElementY, 0));
+        setRotation(new Euler(HALF_PI, 0, rotation, 'ZXY'));
+      }
     } else {
       if (Util.isTopResizeHandle(hoveredHandle)) {
-        const handlePos = getResizeHandlePosition(element, hoveredHandle as ResizeHandleType);
+        const handlePos = getResizeHandlePosition(updatedElement ?? element, hoveredHandle as ResizeHandleType);
         const cameraDir = getCameraDirection();
         const rotation = -Math.atan2(cameraDir.x, cameraDir.y) + Math.PI;
         setPosition(new Vector3(handlePos.x, handlePos.y, 0));
@@ -70,10 +92,23 @@ export const VerticalRuler = ({ element }: { element: ElementModel }) => {
     }
   }, [hoveredHandle]);
 
+  const updatedRoofRise = useStore((state) => {
+    if (element) {
+      for (const e of state.elements) {
+        if (e.id === element.id && e.type === ObjectType.Roof) {
+          return (e as RoofModel).rise;
+        }
+      }
+    }
+    return selectedElementHeight;
+  });
+
+  const isRoof = element.type === ObjectType.Roof;
+
   useEffect(() => {
     setHeight(Math.ceil(selectedElementHeight) + 1);
-    setShownHeight(selectedElementHeight.toFixed(1) + ' m');
-  }, [selectedElementHeight]);
+    setShownHeight((isRoof ? updatedRoofRise : selectedElementHeight).toFixed(1) + ' m');
+  }, [selectedElementHeight, updatedRoofRise]);
 
   const tickLabels = new Array(height + 1).fill(0);
 
@@ -89,7 +124,10 @@ export const VerticalRuler = ({ element }: { element: ElementModel }) => {
             ]}
             color={color}
           />
-          <mesh position={[-1.5, selectedElementHeight - 0.175, 0]} userData={{ unintersectable: true }}>
+          <mesh
+            position={[-1.5, selectedElementHeight - 0.175 + (isRoof ? 1 : 0), 0]}
+            userData={{ unintersectable: true }}
+          >
             <textGeometry args={[shownHeight, textGeometryParams]} />
             <meshBasicMaterial attach="material" color={'white'} />
           </mesh>
@@ -107,10 +145,12 @@ export const VerticalRuler = ({ element }: { element: ElementModel }) => {
                   lineWidth={0.5}
                   color={color}
                 />
-                <mesh position={[0.4, i - 0.125, 0]} userData={{ unintersectable: true }}>
-                  {textGeometry}
-                  <meshBasicMaterial attach="material" color={color} />
-                </mesh>
+                {!isRoof && (
+                  <mesh position={[0.4, i - 0.125, 0]} userData={{ unintersectable: true }}>
+                    {textGeometry}
+                    <meshBasicMaterial attach="material" color={color} />
+                  </mesh>
+                )}
               </group>
             );
           })}

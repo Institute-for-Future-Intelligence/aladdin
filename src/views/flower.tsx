@@ -335,10 +335,10 @@ const Flower = ({
                       });
                     }
                   }}
-                  onPointerOver={(e) => {
+                  onPointerEnter={(e) => {
                     hoverHandle(e, MoveHandleType.Default);
                   }}
-                  onPointerOut={noHoverHandle}
+                  onPointerLeave={noHoverHandle}
                 >
                   <meshBasicMaterial
                     attach="material"

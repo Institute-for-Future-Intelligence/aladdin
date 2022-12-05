@@ -72,7 +72,8 @@ export const Auxiliary = () => {
       {(rotateHandleType || hoverRotationHandle) && element && legalOnGround() && <PolarGrid element={element} />}
       {(showVerticalRuler ||
         Util.isTopResizeHandle(hoveredHandle) ||
-        (element?.type === ObjectType.Wall && Util.isTopResizeHandleOfWall(hoveredHandle))) &&
+        (element?.type === ObjectType.Wall && Util.isTopResizeHandleOfWall(hoveredHandle)) ||
+        (element?.type === ObjectType.Roof && Util.isTopResizeHandleOfRoof(hoveredHandle))) &&
         element && <VerticalRuler element={element} />}
     </>
   );

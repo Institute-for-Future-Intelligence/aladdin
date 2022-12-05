@@ -14,27 +14,27 @@ import { useStoreRef } from 'src/stores/commonRef';
 import { useThree } from '@react-three/fiber';
 import { Point2 } from 'src/models/Point2';
 import { Util } from 'src/Util';
-import { ObjectType, RoofTexture } from 'src/types';
+import { ActionType, ObjectType, ResizeHandleType, RoofTexture } from 'src/types';
 import {
   addUndoableResizeRoofRise,
-  RoofSegmentProps,
   handleContextMenu,
   handlePointerDown,
   handlePointerMove,
   handlePointerUp,
   RoofHandle,
+  RoofSegmentProps,
   RoofWireframeProps,
   updateRooftopElements,
 } from './roofRenderer';
 import { RoofUtil } from './RoofUtil';
 import {
-  useMultiCurrWallArray,
   useElementUndoable,
-  useTransparent,
-  useUpdateSegmentVerticesMap,
+  useMultiCurrWallArray,
   useRoofHeight,
-  useUpdateOldRoofFiles,
   useRoofTexture,
+  useTransparent,
+  useUpdateOldRoofFiles,
+  useUpdateSegmentVerticesMap,
 } from './hooks';
 import RoofSegment from './roofSegment';
 
@@ -575,6 +575,7 @@ const PyramidRoof = (roofModel: PyramidRoofModel) => {
   const [heatmapTextures, setHeatmapTextures] = useState<CanvasTexture[]>([]);
   const [flatHeatmapTexture, setFlatHeatmapTexture] = useState<CanvasTexture | null>(null);
   const getRoofSegmentVertices = useStore(Selector.getRoofSegmentVertices);
+  const selectMe = useStore(Selector.selectMe);
 
   useEffect(() => {
     if (showSolarRadiationHeatmap) {
@@ -710,7 +711,8 @@ const PyramidRoof = (roofModel: PyramidRoofModel) => {
       {selected && !locked && (
         <RoofHandle
           position={[centerPoint.x, centerPoint.y, topZ + thickness + 0.15]}
-          onPointerDown={() => {
+          onPointerDown={(e) => {
+            selectMe(roofModel.id, e, ActionType.Select);
             setShowIntersectionPlane(true);
             useStoreRef.getState().setEnableOrbitController(false);
             isPointerDownRef.current = true;
@@ -718,6 +720,14 @@ const PyramidRoof = (roofModel: PyramidRoofModel) => {
           onPointerUp={() => {
             setShowIntersectionPlane(false);
             useStoreRef.getState().setEnableOrbitController(true);
+          }}
+          onPointerOver={() => {
+            setCommonStore((state) => {
+              state.hoveredHandle = ResizeHandleType.Top;
+              state.selectedElementHeight = topZ + roofModel.thickness;
+              state.selectedElementX = cx;
+              state.selectedElementY = cy;
+            });
           }}
         />
       )}
@@ -750,6 +760,8 @@ const PyramidRoof = (roofModel: PyramidRoofModel) => {
                   newRise + highestWallHeight,
                   thickness,
                 );
+                // the vertical ruler needs to display the latest rise when the handle is being dragged
+                useStore.getState().updateRoofRiseById(id, riseInnerState);
               }
             }
           }}

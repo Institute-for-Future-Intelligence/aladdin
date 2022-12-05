@@ -711,6 +711,8 @@ export interface CommonStoreState {
 
   selectedElementAngle: number;
   selectedElementHeight: number;
+  selectedElementX: number;
+  selectedElementY: number;
 
   isAddingElement: () => boolean;
   addedFoundationId: string | null;
@@ -1595,6 +1597,7 @@ export const useStore = create<CommonStoreState>(
                     if (elem.id === id) {
                       elem.selected = true;
                       state.selectedElement = elem;
+                      // TODO: lz is now zero for roof. So this may need to be set from elsewhere for roofs.
                       state.selectedElementHeight = elem.lz;
                     } else {
                       elem.selected = false;
@@ -6151,6 +6154,8 @@ export const useStore = create<CommonStoreState>(
 
           selectedElementAngle: 0,
           selectedElementHeight: 0,
+          selectedElementX: 0,
+          selectedElementY: 0,
 
           isAddingElement() {
             if (

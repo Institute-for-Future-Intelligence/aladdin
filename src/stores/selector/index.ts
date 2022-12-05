@@ -681,6 +681,10 @@ export const selectedElementAngle = (state: CommonStoreState) => state.selectedE
 
 export const selectedElementHeight = (state: CommonStoreState) => state.selectedElementHeight;
 
+export const selectedElementX = (state: CommonStoreState) => state.selectedElementX;
+
+export const selectedElementY = (state: CommonStoreState) => state.selectedElementY;
+
 export const loadingFile = (state: CommonStoreState) => state.loadingFile;
 
 export const simulationInProgress = (state: CommonStoreState) => state.simulationInProgress;
