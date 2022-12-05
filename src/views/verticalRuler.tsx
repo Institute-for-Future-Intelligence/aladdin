@@ -90,7 +90,7 @@ export const VerticalRuler = ({ element }: { element: ElementModel }) => {
         setRotation(new Euler(HALF_PI, 0, rotation, 'ZXY'));
       }
     }
-  }, [hoveredHandle]);
+  }, [hoveredHandle, selectedElementX, selectedElementY]);
 
   const updatedRoofRise = useStore((state) => {
     if (element) {
@@ -127,7 +127,7 @@ export const VerticalRuler = ({ element }: { element: ElementModel }) => {
             color={color}
           />
           <mesh
-            position={[-1.5, selectedElementHeight - 0.175 + (isRoof ? 1 : 0), 0]}
+            position={[-1.5, selectedElementHeight + (isRoof ? 1 : -0.175), 0]}
             userData={{ unintersectable: true }}
           >
             <textGeometry args={[shownHeight, textGeometryParams]} />
