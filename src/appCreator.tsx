@@ -80,6 +80,7 @@ import SolarPanelTiltAnglePso from './ai/pso/solarPanelTiltAnglePso';
 import SolarPanelOptimizationResult from './panels/solarPanelOptimizationResult';
 import EconomicsPanel from './panels/economicsPanel';
 import SolarPanelArrayPso from './ai/pso/solarPanelArrayPso';
+import PointerStyleController from './pointerStyleController';
 
 export interface AppCreatorProps {
   viewOnly: boolean;
@@ -102,7 +103,6 @@ const AppCreator = ({ viewOnly = false }: AppCreatorProps) => {
   const simulationPaused = useStore(Selector.simulationPaused);
   const evolutionInProgress = useStore(Selector.evolutionInProgress);
   const evolutionPaused = useStore(Selector.evolutionPaused);
-  const objectTypeToAdd = useStore(Selector.objectTypeToAdd);
   const sceneRadius = useStore(Selector.sceneRadius);
   const cloudFile = useStore(Selector.cloudFile);
   const axes = useStore(Selector.viewState.axes);
@@ -134,8 +134,6 @@ const AppCreator = ({ viewOnly = false }: AppCreatorProps) => {
   const showDailyUpdraftTowerYieldPanel = useStore(Selector.viewState.showDailyUpdraftTowerYieldPanel);
   const showYearlyUpdraftTowerYieldPanel = useStore(Selector.viewState.showYearlyUpdraftTowerYieldPanel);
   const showEvolutionPanel = useStore(Selector.viewState.showEvolutionPanel);
-  const addedFoundationId = useStore(Selector.addedFoundationId);
-  const addedCuboidId = useStore(Selector.addedCuboidId);
   const evolutionMethod = useStore(Selector.evolutionMethod);
   const evolutionaryAlgorithmState = useStore(Selector.evolutionaryAlgorithmState);
   const noAnimationForSensorDataCollection = useStore(Selector.world.noAnimationForSensorDataCollection);
@@ -166,13 +164,6 @@ const AppCreator = ({ viewOnly = false }: AppCreatorProps) => {
     setCity(getClosestCity(worldLatitude, worldLongitude) ?? 'Boston MA, USA');
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [worldLatitude, worldLongitude]);
-
-  useEffect(() => {
-    if (canvasRef.current) {
-      canvasRef.current.style.cursor =
-        objectTypeToAdd !== ObjectType.None || addedCuboidId || addedFoundationId ? 'crosshair' : 'default';
-    }
-  }, [objectTypeToAdd, addedCuboidId, addedFoundationId]);
 
   useEffect(() => {
     setCommonStore((state) => {
@@ -454,6 +445,7 @@ const AppCreator = ({ viewOnly = false }: AppCreatorProps) => {
             frameloop={'demand'}
             style={{ height: 'calc(100vh - 72px)', backgroundColor: 'black' }}
           >
+            <PointerStyleController />
             <CameraController />
             <Lights />
             <Ground />
