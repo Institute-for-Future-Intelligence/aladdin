@@ -682,7 +682,7 @@ export class Util {
   }
 
   static isRiseHandleOfRoof(handle: MoveHandleType | ResizeHandleType | RotateHandleType | RoofHandleType | null) {
-    return handle === RoofHandleType.Top;
+    return handle === RoofHandleType.Top || handle === RoofHandleType.Mid || handle === RoofHandleType.TopMid;
   }
 
   static isMoveHandle(handle: MoveHandleType | ResizeHandleType | RotateHandleType | RoofHandleType | null): boolean {

@@ -36,7 +36,7 @@ import {
   updateRooftopElements,
 } from './roofRenderer';
 import { UnoableResizeGableRoofRidge } from 'src/undo/UndoableResize';
-import { ObjectType, RoofHandleType, RoofTexture } from 'src/types';
+import { ActionType, ObjectType, RoofHandleType, RoofTexture } from 'src/types';
 import { Util } from 'src/Util';
 import { Point2 } from 'src/models/Point2';
 import { RoofUtil } from './RoofUtil';
@@ -808,6 +808,7 @@ const GableRoof = (roofModel: GableRoofModel) => {
   const { grabRef, addUndoableMove, undoMove, setOldRefData } = useElementUndoable();
   useUpdateSegmentVerticesMap(id, centroid, roofSegments);
 
+  const selectMe = useStore(Selector.selectMe);
   const showSolarRadiationHeatmap = useStore(Selector.showSolarRadiationHeatmap);
   const solarRadiationHeatmapMaxValue = useStore(Selector.viewState.solarRadiationHeatmapMaxValue);
   const getHeatmap = useStore(Selector.getHeatmap);
@@ -915,7 +916,8 @@ const GableRoof = (roofModel: GableRoofModel) => {
           {/* mid handle */}
           <RoofHandle
             position={[ridgeMidPoint.x, ridgeMidPoint.y, ridgeMidPoint.z + 0.15]}
-            onPointerDown={() => {
+            onPointerDown={(e) => {
+              selectMe(roofModel.id, e, ActionType.Select);
               isPointerDownRef.current = true;
               setShowIntersectionPlane(true);
               intersectionPlanePosition.set(ridgeMidPoint.x, ridgeMidPoint.y, topZ);
@@ -925,6 +927,14 @@ const GableRoof = (roofModel: GableRoofModel) => {
               }
               setRoofHandleType(RoofHandleType.Mid);
               useStoreRef.getState().setEnableOrbitController(false);
+            }}
+            onPointerOver={() => {
+              setCommonStore((state) => {
+                state.hoveredHandle = RoofHandleType.Mid;
+                state.selectedElementHeight = topZ + roofModel.thickness;
+                state.selectedElementX = cx + ridgeMidPoint.x;
+                state.selectedElementY = cy + ridgeMidPoint.y;
+              });
             }}
           />
           {/* side handles */}
@@ -1036,6 +1046,8 @@ const GableRoof = (roofModel: GableRoofModel) => {
                         setRiseInnerState(newRise);
                       }
                     }
+                    // the vertical ruler needs to display the latest rise when the handle is being dragged
+                    useStore.getState().updateRoofRiseById(id, riseInnerState);
                     break;
                   }
                 }

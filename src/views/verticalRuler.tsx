@@ -107,7 +107,9 @@ export const VerticalRuler = ({ element }: { element: ElementModel }) => {
 
   useEffect(() => {
     setHeight(Math.ceil(selectedElementHeight) + 1);
-    setShownHeight((isRoof ? updatedRoofRise : selectedElementHeight).toFixed(1) + ' m');
+    setShownHeight(
+      (isRoof && updatedRoofRise !== undefined ? updatedRoofRise : selectedElementHeight).toFixed(1) + ' m',
+    );
   }, [selectedElementHeight, updatedRoofRise]);
 
   const tickLabels = new Array(height + 1).fill(0);

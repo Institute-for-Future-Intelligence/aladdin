@@ -27,7 +27,7 @@ import {
   RoofWireframeProps,
   updateRooftopElements,
 } from './roofRenderer';
-import { ObjectType, RoofHandleType } from 'src/types';
+import { ActionType, ObjectType, RoofHandleType } from 'src/types';
 import { RoofUtil } from './RoofUtil';
 import {
   useCurrWallArray,
@@ -650,6 +650,7 @@ const GambrelRoof = (roofModel: GambrelRoofModel) => {
   const { grabRef, addUndoableMove, undoMove, setOldRefData } = useElementUndoable();
   useUpdateSegmentVerticesMap(id, centroid, roofSegments);
 
+  const selectMe = useStore(Selector.selectMe);
   const showSolarRadiationHeatmap = useStore(Selector.showSolarRadiationHeatmap);
   const solarRadiationHeatmapMaxValue = useStore(Selector.viewState.solarRadiationHeatmapMaxValue);
   const getHeatmap = useStore(Selector.getHeatmap);
@@ -740,7 +741,8 @@ const GambrelRoof = (roofModel: GambrelRoofModel) => {
           />
           <RoofHandle
             position={[topRidgeMidPointV3.x, topRidgeMidPointV3.y, topRidgeMidPointV3.z]}
-            onPointerDown={() => {
+            onPointerDown={(e) => {
+              selectMe(roofModel.id, e, ActionType.Select);
               isPointerDownRef.current = true;
               setEnableIntersectionPlane(true);
               intersectionPlanePosition.set(topRidgeMidPointV3.x, topRidgeMidPointV3.y, topZ).add(centroid);
@@ -750,6 +752,14 @@ const GambrelRoof = (roofModel: GambrelRoofModel) => {
               }
               setRoofHandleType(RoofHandleType.TopMid);
               useStoreRef.getState().setEnableOrbitController(false);
+            }}
+            onPointerOver={() => {
+              setCommonStore((state) => {
+                state.hoveredHandle = RoofHandleType.TopMid;
+                state.selectedElementHeight = topZ + roofModel.thickness;
+                state.selectedElementX = cx + topRidgeMidPointV3.x;
+                state.selectedElementY = cy + topRidgeMidPointV3.y;
+              });
             }}
           />
 
@@ -822,6 +832,8 @@ const GambrelRoof = (roofModel: GambrelRoofModel) => {
                     ) {
                       setRiseInnerState(newRise);
                     }
+                    // the vertical ruler needs to display the latest rise when the handle is being dragged
+                    useStore.getState().updateRoofRiseById(id, riseInnerState);
                     break;
                   }
                   case RoofHandleType.FrontLeft: {

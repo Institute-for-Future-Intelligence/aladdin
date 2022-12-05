@@ -12,7 +12,7 @@ import { WallModel } from 'src/models/WallModel';
 import { useStore } from 'src/stores/common';
 import { useStoreRef } from 'src/stores/commonRef';
 import * as Selector from 'src/stores/selector';
-import { ObjectType, RoofHandleType, RoofTexture } from 'src/types';
+import { ActionType, ObjectType, RoofHandleType, RoofTexture } from 'src/types';
 import { UnoableResizeGambrelAndMansardRoofRidge } from 'src/undo/UndoableResize';
 import { Util } from 'src/Util';
 import { CanvasTexture, DoubleSide, Euler, Float32BufferAttribute, Mesh, Shape, Vector3 } from 'three';
@@ -508,6 +508,7 @@ const MansardRoof = (roofModel: MansardRoofModel) => {
     ),
   );
 
+  const selectMe = useStore(Selector.selectMe);
   const showSolarRadiationHeatmap = useStore(Selector.showSolarRadiationHeatmap);
   const solarRadiationHeatmapMaxValue = useStore(Selector.viewState.solarRadiationHeatmapMaxValue);
   const getHeatmap = useStore(Selector.getHeatmap);
@@ -716,7 +717,8 @@ const MansardRoof = (roofModel: MansardRoofModel) => {
         <group position={[centroid.x, centroid.y, centroid.z + thickness]}>
           <RoofHandle
             position={[0, 0, 0.3]}
-            onPointerDown={() => {
+            onPointerDown={(e) => {
+              selectMe(roofModel.id, e, ActionType.Select);
               isPointerDownRef.current = true;
               setEnableIntersectionPlane(true);
               intersectionPlanePosition.set(centroid.x, centroid.y, topZ);
@@ -726,6 +728,14 @@ const MansardRoof = (roofModel: MansardRoofModel) => {
               }
               setRoofHandleType(RoofHandleType.Top);
               useStoreRef.getState().setEnableOrbitController(false);
+            }}
+            onPointerOver={() => {
+              setCommonStore((state) => {
+                state.hoveredHandle = RoofHandleType.Top;
+                state.selectedElementHeight = topZ + roofModel.thickness;
+                state.selectedElementX = cx;
+                state.selectedElementY = cy;
+              });
             }}
           />
           {ridgePoints.map((ridge, idx) => {
@@ -780,6 +790,8 @@ const MansardRoof = (roofModel: MansardRoofModel) => {
                     const newRise = Math.max(0, pointer.z - foundation.lz - 0.6 - highestWallHeight);
                     if (RoofUtil.isRoofValid(id, undefined, undefined, [0, newRise + highestWallHeight])) {
                       setRiseInnerState(newRise);
+                      // the vertical ruler needs to display the latest rise when the handle is being dragged
+                      useStore.getState().updateRoofRiseById(id, riseInnerState);
                     }
                     break;
                   }

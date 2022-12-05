@@ -11,7 +11,7 @@ import { WallModel } from 'src/models/WallModel';
 import { useStore } from 'src/stores/common';
 import { useStoreRef } from 'src/stores/commonRef';
 import * as Selector from 'src/stores/selector';
-import { ObjectType, RoofHandleType } from 'src/types';
+import { ActionType, ObjectType, RoofHandleType } from 'src/types';
 import { UndoableResizeHipRoofRidge } from 'src/undo/UndoableResize';
 import { Util } from 'src/Util';
 import { CanvasTexture, DoubleSide, Euler, Mesh, Raycaster, Vector2, Vector3 } from 'three';
@@ -384,6 +384,7 @@ const HipRoof = (roofModel: HipRoofModel) => {
   const { grabRef, addUndoableMove, undoMove, setOldRefData } = useElementUndoable();
   useUpdateSegmentVerticesMap(id, new Vector3(centroid2D.x, centroid2D.y, topZ), roofSegments);
 
+  const selectMe = useStore(Selector.selectMe);
   const showSolarRadiationHeatmap = useStore(Selector.showSolarRadiationHeatmap);
   const solarRadiationHeatmapMaxValue = useStore(Selector.viewState.solarRadiationHeatmapMaxValue);
   const getHeatmap = useStore(Selector.getHeatmap);
@@ -475,7 +476,8 @@ const HipRoof = (roofModel: HipRoofModel) => {
           {/* mid handle */}
           <RoofHandle
             position={[ridgeMidPoint.x, ridgeMidPoint.y, ridgeMidPoint.z]}
-            onPointerDown={() => {
+            onPointerDown={(e) => {
+              selectMe(roofModel.id, e, ActionType.Select);
               isPointerDownRef.current = true;
               setEnableIntersectionPlane(true);
               intersectionPlanePosition.set(ridgeMidPoint.x, ridgeMidPoint.y, topZ);
@@ -485,6 +487,14 @@ const HipRoof = (roofModel: HipRoofModel) => {
               }
               setRoofHandleType(RoofHandleType.Mid);
               useStoreRef.getState().setEnableOrbitController(false);
+            }}
+            onPointerOver={() => {
+              setCommonStore((state) => {
+                state.hoveredHandle = RoofHandleType.Mid;
+                state.selectedElementHeight = topZ + roofModel.thickness;
+                state.selectedElementX = cx;
+                state.selectedElementY = cy;
+              });
             }}
           />
           {/* right handle */}
@@ -571,6 +581,8 @@ const HipRoof = (roofModel: HipRoofModel) => {
                   case RoofHandleType.Mid: {
                     const newRise = Math.max(0, point.z - foundation.lz - 0.3 - highestWallHeight);
                     setRiseInnerState(newRise);
+                    // the vertical ruler needs to display the latest rise when the handle is being dragged
+                    useStore.getState().updateRoofRiseById(id, riseInnerState);
                     break;
                   }
                 }
