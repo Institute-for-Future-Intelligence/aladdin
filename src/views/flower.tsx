@@ -22,6 +22,7 @@ import { useStoreRef } from 'src/stores/commonRef';
 import { Util } from '../Util';
 import { FlowerModel } from '../models/FlowerModel';
 import { FlowerData } from '../FlowerData';
+import { usePrimitiveStore } from 'src/stores/commonPrimitive';
 
 const Flower = ({
   parentId,
@@ -128,7 +129,7 @@ const Flower = ({
 
   const hoverHandle = useCallback(
     (e: ThreeEvent<MouseEvent>, handle: MoveHandleType | ResizeHandleType | RotateHandleType) => {
-      if (useStore.getState().duringCameraInteraction) return;
+      if (usePrimitiveStore.getState().duringCameraInteraction) return;
       if (e.intersections.length > 0) {
         // QUICK FIX: For some reason, the top one can sometimes be the ground, so we also go to the second one
         const intersected =

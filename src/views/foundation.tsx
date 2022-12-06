@@ -72,6 +72,7 @@ import { UndoablePaste } from '../undo/UndoablePaste';
 import BuildingResizer from 'src/components/buildingResizer';
 import SolarPanelOnRoof from './solarPanel/solarPanelOnRoof';
 import { useHandleSize } from './wall/hooks';
+import { usePrimitiveStore } from 'src/stores/commonPrimitive';
 
 const Foundation = ({
   id,
@@ -419,7 +420,7 @@ const Foundation = ({
 
   const hoverHandle = useCallback(
     (e: ThreeEvent<MouseEvent>, handle: MoveHandleType | ResizeHandleType | RotateHandleType) => {
-      if (useStore.getState().duringCameraInteraction) return;
+      if (usePrimitiveStore.getState().duringCameraInteraction) return;
       if (e.intersections.length > 0) {
         // QUICK FIX: For some reason, the top one can sometimes be the ground, so we also go to the second one
         const intersected =

@@ -33,9 +33,17 @@ import {
 } from 'three';
 import { ThreeEvent, useThree } from '@react-three/fiber';
 import { Box, Cylinder, Plane } from '@react-three/drei';
-import { ActionType, MoveHandleType, ObjectType, Orientation, ResizeHandleType, WallTexture } from 'src/types';
+import {
+  ActionType,
+  MoveHandleType,
+  ObjectType,
+  Orientation,
+  ResizeHandleType,
+  RotateHandleType,
+  WallTexture,
+} from 'src/types';
 import { Util } from 'src/Util';
-import { useStore } from 'src/stores/common';
+import { CommonStoreState, useStore } from 'src/stores/common';
 import { useStoreRef } from 'src/stores/commonRef';
 import { ElementModel } from 'src/models/ElementModel';
 import { ShutterProps, WindowModel, WindowType } from 'src/models/WindowModel';
@@ -713,15 +721,19 @@ const Wall = ({ wallModel, foundationModel }: WallProps) => {
   };
 
   const checkIfCanSelectMe = (e: ThreeEvent<PointerEvent>) => {
-    return !(
-      e.button === 2 ||
-      useStore.getState().addedWallId ||
-      addedWindowIdRef.current ||
-      useStore.getState().moveHandleType ||
-      useStore.getState().resizeHandleType ||
-      useStore.getState().objectTypeToAdd !== ObjectType.None ||
-      selected ||
-      isAddingElement()
+    return (
+      !(
+        e.button === 2 ||
+        useStore.getState().addedWallId ||
+        addedWindowIdRef.current ||
+        useStore.getState().moveHandleType ||
+        useStore.getState().resizeHandleType ||
+        useStore.getState().objectTypeToAdd !== ObjectType.None ||
+        selected ||
+        isAddingElement()
+      ) &&
+      e.intersections.length > 0 &&
+      e.eventObject === e.intersections[0].eventObject
     );
   };
 
@@ -1316,7 +1328,6 @@ const Wall = ({ wallModel, foundationModel }: WallProps) => {
       }
       if (outsideWallRef.current) {
         const intersects = ray.intersectObjects([outsideWallRef.current]);
-
         if (intersects.length > 0) {
           const pointer = intersects[0].point;
           handleAddElement(pointer, true);

@@ -174,7 +174,6 @@ export interface CommonStoreState {
   objectiveEvaluationIndex: number; // index for evaluating objective function in genetic algorithms
   clickObjectType: ObjectType | null;
   contextMenuObjectType: ObjectType | null;
-  duringCameraInteraction: boolean;
   hoveredHandle: MoveHandleType | ResizeHandleType | RotateHandleType | RoofHandleType | null;
   moveHandleType: MoveHandleType | null;
   resizeHandleType: ResizeHandleType | null;
@@ -1384,7 +1383,6 @@ export const useStore = create<CommonStoreState>(
           objectiveEvaluationIndex: 0,
           clickObjectType: null,
           contextMenuObjectType: null,
-          duringCameraInteraction: false,
           hoveredHandle: null,
           moveHandleType: null,
           resizeHandleType: null,

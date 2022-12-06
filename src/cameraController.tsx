@@ -9,6 +9,7 @@ import { Vector3 } from 'three';
 import { DEFAULT_FAR, DEFAULT_FOV, HALF_PI } from './constants';
 import { MyOrbitControls } from './js/MyOrbitControls';
 import { useStore } from './stores/common';
+import { usePrimitiveStore } from './stores/commonPrimitive';
 import { useStoreRef } from './stores/commonRef';
 import * as Selector from './stores/selector';
 
@@ -158,14 +159,16 @@ const CameraController = () => {
     }
   };
   const onInteractionStart = () => {
-    setCommonStore((state) => {
+    usePrimitiveStore.setState((state) => {
       state.duringCameraInteraction = true;
     });
   };
 
   const onInteractionEnd = () => {
-    setCommonStore((state) => {
+    usePrimitiveStore.setState((state) => {
       state.duringCameraInteraction = false;
+    });
+    setCommonStore((state) => {
       if (orbitControlRef.current) {
         const v = state.viewState;
         const cam = get().camera;
