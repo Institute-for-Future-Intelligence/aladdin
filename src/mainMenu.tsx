@@ -134,6 +134,10 @@ const radioStyle = {
   lineHeight: '30px',
 };
 
+const MainMenuContainer = styled.div`
+  width: 100px;
+`;
+
 const StyledImage = styled.img`
   position: absolute;
   top: 10px;
@@ -171,51 +175,52 @@ export interface MainMenuProps {
 
 const MainMenu = ({ viewOnly, set2DView, resetView, zoomView, canvas }: MainMenuProps) => {
   const setCommonStore = useStore(Selector.set);
-  const loggable = useStore(Selector.loggable);
-  const language = useStore(Selector.language);
-  const floatingWindowOpacity = useStore(Selector.floatingWindowOpacity);
-  const elements = useStore.getState().elements;
-  const selectNone = useStore(Selector.selectNone);
-  const undoManager = useStore(Selector.undoManager);
-  const addUndoable = useStore(Selector.addUndoable);
-  const timesPerHour = useStore(Selector.world.timesPerHour);
-  const solarPanelVisibilityGridCellSize = useStore(Selector.world.solarPanelVisibilityGridCellSize);
-  const solarRadiationHeatmapGridCellSize = useStore(Selector.world.solarRadiationHeatmapGridCellSize);
-  const solarRadiationHeatmapMaxValue = useStore(Selector.viewState.solarRadiationHeatmapMaxValue);
-  const orthographic = useStore(Selector.viewState.orthographic);
-  const autoRotate = useStore(Selector.viewState.autoRotate);
-  const showSiteInfoPanel = useStore(Selector.viewState.showSiteInfoPanel);
-  const showDesignInfoPanel = useStore(Selector.viewState.showDesignInfoPanel);
-  const showInstructionPanel = useStore(Selector.viewState.showInstructionPanel);
-  const showMapPanel = useStore(Selector.viewState.showMapPanel);
-  const showWeatherPanel = useStore(Selector.viewState.showWeatherPanel);
-  const showDiurnalTemperaturePanel = useStore(Selector.viewState.showDiurnalTemperaturePanel);
-  const showEconomicsPanel = useStore(Selector.viewState.showEconomicsPanel);
-  const showStickyNotePanel = useStore(Selector.viewState.showStickyNotePanel);
-  const showHeliodonPanel = useStore(Selector.viewState.showHeliodonPanel);
-  const shadowEnabled = useStore(Selector.viewState.shadowEnabled);
-  const cameraPosition = useStore(Selector.viewState.cameraPosition);
-  const panCenter = useStore(Selector.viewState.panCenter);
-  const importContent = useStore(Selector.importContent);
-  const changed = useStore(Selector.changed);
-  const cloudFile = useStore(Selector.cloudFile);
-  const user = useStore(Selector.user);
-  const axes = useStore(Selector.viewState.axes);
-  const countObservers = useStore(Selector.countObservers);
-  const countElementsByType = useStore(Selector.countElementsByType);
-  const countSolarStructuresByType = useStore(Selector.countSolarStructuresByType);
-  const selectedElement = useStore.getState().selectedElement;
-  const elementsToPaste = useStore(Selector.elementsToPaste);
   const pasteElements = useStore(Selector.pasteElementsByKey);
   const copyElementById = useStore(Selector.copyElementById);
   const removeElementById = useStore(Selector.removeElementById);
   const copyCutElements = useStore(Selector.copyCutElements);
   const getElementById = useStore(Selector.getElementById);
-  const runDynamicSimulation = useStore(Selector.runDynamicSimulation);
-  const runStaticSimulation = useStore(Selector.runStaticSimulation);
-  const noAnimationForHeatmapSimulation = useStore(Selector.world.noAnimationForHeatmapSimulation);
-  const noAnimationForSensorDataCollection = useStore(Selector.world.noAnimationForSensorDataCollection);
-  const solarRadiationHeatmapReflectionOnly = useStore(Selector.viewState.solarRadiationHeatmapReflectionOnly);
+  const importContent = useStore(Selector.importContent);
+  const countObservers = useStore(Selector.countObservers);
+  const countElementsByType = useStore(Selector.countElementsByType);
+  const countSolarStructuresByType = useStore(Selector.countSolarStructuresByType);
+  const selectNone = useStore(Selector.selectNone);
+  const addUndoable = useStore(Selector.addUndoable);
+
+  const loggable = useStore.getState().loggable;
+  const language = useStore.getState().language;
+  const floatingWindowOpacity = useStore.getState().floatingWindowOpacity;
+  const undoManager = useStore.getState().undoManager;
+  const timesPerHour = useStore.getState().world.timesPerHour;
+  const solarPanelVisibilityGridCellSize = useStore.getState().world.solarPanelVisibilityGridCellSize;
+  const solarRadiationHeatmapGridCellSize = useStore.getState().world.solarRadiationHeatmapGridCellSize;
+  const solarRadiationHeatmapMaxValue = useStore.getState().viewState.solarRadiationHeatMapMaxValue;
+  const orthographic = useStore.getState().viewState.orthographic;
+  const autoRotate = useStore.getState().viewState.autoRotate;
+  const showSiteInfoPanel = useStore.getState().viewState.showSiteInfoPanel;
+  const showDesignInfoPanel = useStore.getState().viewState.showDesignInfoPanel;
+  const showInstructionPanel = useStore.getState().viewState.showInstructionPanel;
+  const showMapPanel = useStore.getState().viewState.showMapPanel;
+  const showWeatherPanel = useStore.getState().viewState.showWeatherPanel;
+  const showDiurnalTemperaturePanel = useStore.getState().viewState.showDiurnalTemperaturePanel;
+  const showEconomicsPanel = useStore.getState().viewState.showEconomicsPanel;
+  const showStickyNotePanel = useStore.getState().viewState.showStickyNotePanel;
+  const showHeliodonPanel = useStore.getState().viewState.showHeliodonPanel;
+  const shadowEnabled = useStore.getState().viewState.shadowEnabled;
+  const changed = useStore.getState().changed;
+  const cloudFile = useStore.getState().cloudFile;
+  const user = useStore.getState().user;
+  const axes = useStore.getState().viewState.axes;
+  const elementsToPaste = useStore.getState().elementsToPaste;
+  const runDynamicSimulation = useStore.getState().runDynamicSimulation;
+  const runStaticSimulation = useStore.getState().runStaticSimulation;
+  const noAnimationForHeatmapSimulation = useStore.getState().world.noAnimationForHeatmapSimulation;
+  const noAnimationForSensorDataCollection = useStore.getState().world.noAnimationForSensorDataCollection;
+  const solarRadiationHeatmapReflectionOnly = useStore.getState().viewState.solarRadiationHeatMapReflectionOnly;
+  const elements = useStore.getState().elements;
+  const cameraPosition = useStore.getState().viewState.cameraPosition;
+  const panCenter = useStore.getState().viewState.panCenter;
+  const selectedElement = useStore.getState().selectedElement;
 
   const [aboutUs, setAboutUs] = useState(false);
 
@@ -2412,17 +2417,26 @@ const MainMenu = ({ viewOnly, set2DView, resetView, zoomView, canvas }: MainMenu
     </Menu>
   );
 
+  // Manually update menu when visible to avoid listen to common store change.
+  const [updateMenuFlag, setUpdateMenuFlag] = useState(false);
+
+  const handleVisibleChange = (visible: boolean) => {
+    if (visible) {
+      setUpdateMenuFlag(!updateMenuFlag);
+    }
+  };
+
   return (
     <>
-      <Dropdown overlay={menu} trigger={['click']}>
-        <StyledImage src={logo} title={i18n.t('tooltip.clickToOpenMenu', lang)} />
-      </Dropdown>
-      <Dropdown overlay={menu} trigger={['click']}>
-        <LabelContainer>
-          <label style={{ fontSize: '10px', alignContent: 'center', cursor: 'pointer' }}>
-            {i18n.t('menu.mainMenu', lang)}
-          </label>
-        </LabelContainer>
+      <Dropdown overlay={menu} trigger={['click']} onVisibleChange={handleVisibleChange}>
+        <MainMenuContainer>
+          <StyledImage src={logo} title={i18n.t('tooltip.clickToOpenMenu', lang)} />
+          <LabelContainer>
+            <label style={{ fontSize: '10px', alignContent: 'center', cursor: 'pointer' }}>
+              {i18n.t('menu.mainMenu', lang)}
+            </label>
+          </LabelContainer>
+        </MainMenuContainer>
       </Dropdown>
       {aboutUs && <About openAboutUs={openAboutUs} />}
     </>
