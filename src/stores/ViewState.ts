@@ -56,6 +56,8 @@ export interface ViewState {
   showYearlyHeliostatYieldPanel: boolean;
   showDailyUpdraftTowerYieldPanel: boolean;
   showYearlyUpdraftTowerYieldPanel: boolean;
+  showDailyBuildingEnergyPanel: boolean;
+  showYearlyBuildingEnergyPanel: boolean;
   showEvolutionPanel: boolean;
 
   heliodonPanelX: number;

@@ -47,6 +47,7 @@ export interface WorldModel {
   sutGridCellSize: number;
 
   noAnimationForHeatmapSimulation: boolean;
+  noAnimationForThermalSimulation: boolean;
   noAnimationForSensorDataCollection: boolean;
   noAnimationForSolarPanelSimulation: boolean;
   noAnimationForSolarUpdraftTowerSimulation: boolean;

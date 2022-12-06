@@ -48,6 +48,7 @@ export class DefaultWorldModel implements WorldModel {
   sutGridCellSize: number;
 
   noAnimationForHeatmapSimulation: boolean;
+  noAnimationForThermalSimulation: boolean;
   noAnimationForSensorDataCollection: boolean;
   noAnimationForSolarPanelSimulation: boolean;
   noAnimationForSolarUpdraftTowerSimulation: boolean;
@@ -88,6 +89,7 @@ export class DefaultWorldModel implements WorldModel {
     this.sutGridCellSize = 1;
 
     this.noAnimationForHeatmapSimulation = false;
+    this.noAnimationForThermalSimulation = false;
     this.noAnimationForSensorDataCollection = false;
     this.noAnimationForSolarPanelSimulation = false;
     this.noAnimationForSolarUpdraftTowerSimulation = false;
@@ -127,6 +129,7 @@ export class DefaultWorldModel implements WorldModel {
     worldModel.sutGridCellSize = 1;
 
     worldModel.noAnimationForHeatmapSimulation = false;
+    worldModel.noAnimationForThermalSimulation = false;
     worldModel.noAnimationForSensorDataCollection = false;
     worldModel.noAnimationForSolarPanelSimulation = false;
     worldModel.noAnimationForSolarUpdraftTowerSimulation = false;

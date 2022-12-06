@@ -50,6 +50,8 @@ export const sutGridCellSize = (state: CommonStoreState) => state.world.sutGridC
 
 export const noAnimationForHeatmapSimulation = (state: CommonStoreState) => state.world.noAnimationForHeatmapSimulation;
 
+export const noAnimationForThermalSimulation = (state: CommonStoreState) => state.world.noAnimationForThermalSimulation;
+
 export const noAnimationForSensorDataCollection = (state: CommonStoreState) =>
   state.world.noAnimationForSensorDataCollection;
 

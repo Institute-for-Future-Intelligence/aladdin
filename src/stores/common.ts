@@ -95,7 +95,6 @@ import dayjs from 'dayjs';
 import { RoofUtil } from 'src/views/roof/RoofUtil';
 import { FlowerModel } from '../models/FlowerModel';
 import { FlowerData } from '../FlowerData';
-import { TreeData } from '../TreeData';
 import { WindowModel, WindowType } from '../models/WindowModel';
 import { ActionState } from './ActionState';
 import { DefaultActionState } from './DefaultActionState';

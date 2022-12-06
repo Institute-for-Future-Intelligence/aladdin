@@ -61,6 +61,8 @@ export class DefaultViewState implements ViewState {
   showYearlyHeliostatYieldPanel: boolean;
   showDailyUpdraftTowerYieldPanel: boolean;
   showYearlyUpdraftTowerYieldPanel: boolean;
+  showDailyBuildingEnergyPanel: boolean;
+  showYearlyBuildingEnergyPanel: boolean;
   showEvolutionPanel: boolean;
   autoRotate: boolean;
 
@@ -146,6 +148,8 @@ export class DefaultViewState implements ViewState {
     this.showYearlyHeliostatYieldPanel = false;
     this.showDailyUpdraftTowerYieldPanel = false;
     this.showYearlyUpdraftTowerYieldPanel = false;
+    this.showDailyBuildingEnergyPanel = false;
+    this.showYearlyBuildingEnergyPanel = false;
     this.showEvolutionPanel = false;
     this.autoRotate = false;
 
