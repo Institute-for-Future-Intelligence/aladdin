@@ -270,6 +270,11 @@ export const i18n_es = {
         CollectYearlyData: 'Recoger datos anuales',
         SensorSimulationNoAnimation: 'No Animation for Collecting Sensor Data',
       },
+      buildingSubMenu: 'Building',
+      building: {
+        AnalyzeDailyBuildingEnergy: 'Analyze Daily Building Energy',
+        AnalyzeYearlyBuildingEnergy: 'Analyze Yearly Building Energy',
+      },
       solarPanelSubMenu: 'Paneles solares',
       solarPanel: {
         AnalyzeDailyYield: 'Analizar el rendimiento diario',

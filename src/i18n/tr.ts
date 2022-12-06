@@ -269,6 +269,11 @@ export const i18n_tr = {
         CollectYearlyData: 'Yıllık Veri Topla',
         SensorSimulationNoAnimation: 'Animasyon Yok',
       },
+      buildingSubMenu: 'Building',
+      building: {
+        AnalyzeDailyBuildingEnergy: 'Analyze Daily Building Energy',
+        AnalyzeYearlyBuildingEnergy: 'Analyze Yearly Building Energy',
+      },
       solarPanelSubMenu: 'Güneş Panelleri',
       solarPanel: {
         AnalyzeDailyYield: 'Günlük Üretim Analizi',

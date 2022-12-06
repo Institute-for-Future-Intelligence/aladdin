@@ -1595,6 +1595,49 @@ const MainMenu = ({ viewOnly, set2DView, resetView, zoomView, canvas }: MainMenu
           </SubMenu>
         </SubMenu>
 
+        {/* buildings */}
+        <SubMenu key={'buildings'} title={i18n.t('menu.buildingSubMenu', lang)}>
+          <Menu.Item
+            key={'building-energy-daily-data'}
+            onClick={() => {
+              showInfo(i18n.t('message.SimulationStarted', lang));
+              // give it 0.1 second for the info to show up
+              setTimeout(() => {
+                setCommonStore((state) => {
+                  state.simulationInProgress = true;
+                  state.runDailyThermalSimulation = true;
+                  if (loggable) {
+                    state.actionInfo = { name: 'Analyze Daily Building Energy', timestamp: new Date().getTime() };
+                  }
+                });
+              }, 100);
+            }}
+          >
+            {i18n.t('menu.building.AnalyzeDailyBuildingEnergy', lang)}
+          </Menu.Item>
+          <Menu.Item
+            key={'building-energy-yearly-data'}
+            onClick={() => {
+              showInfo(i18n.t('message.SimulationStarted', lang));
+              // give it 0.1 second for the info to show up
+              setTimeout(() => {
+                setCommonStore((state) => {
+                  state.simulationInProgress = true;
+                  state.runYearlyThermalSimulation = true;
+                  if (loggable) {
+                    state.actionInfo = { name: 'Analyze Yearly Building Energy', timestamp: new Date().getTime() };
+                  }
+                });
+              }, 100);
+            }}
+          >
+            {i18n.t('menu.building.AnalyzeYearlyBuildingEnergy', lang)}
+          </Menu.Item>
+          <SubMenu key={'building-energy-simulation-options'} title={i18n.t('word.Options', lang)}>
+            <Menu></Menu>
+          </SubMenu>
+        </SubMenu>
+
         {/* solar panels */}
         <SubMenu key={'solar-panels'} title={i18n.t('menu.solarPanelSubMenu', lang)}>
           <Menu.Item

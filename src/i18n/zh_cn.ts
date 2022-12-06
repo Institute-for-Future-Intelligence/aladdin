@@ -268,6 +268,11 @@ export const i18n_zh_cn = {
         CollectYearlyData: '收集全年数据',
         SensorSimulationNoAnimation: '若无移动部件则省略动画',
       },
+      buildingSubMenu: '建筑物',
+      building: {
+        AnalyzeDailyBuildingEnergy: '建筑物当天能耗分析',
+        AnalyzeYearlyBuildingEnergy: '建筑物全年能耗分析',
+      },
       solarPanelSubMenu: '太阳能光伏板',
       solarPanel: {
         AnalyzeDailyYield: '分析当天产出',

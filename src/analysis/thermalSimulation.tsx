@@ -20,25 +20,26 @@ const ThermalSimulation = ({ city }: ThermalSimulationProps) => {
   const world = useStore.getState().world;
   const elements = useStore.getState().elements;
   const getWeather = useStore(Selector.getWeather);
-  const runSimulation = useStore(Selector.runStaticSimulation);
+  const runDailySimulation = useStore(Selector.runDailyThermalSimulation);
+  const pauseDailySimulation = useStore(Selector.pauseDailyThermalSimulation);
   const getRoofSegmentVertices = useStore(Selector.getRoofSegmentVertices);
 
   const lang = { lng: language };
   const weather = getWeather(city ?? 'Boston MA, USA');
 
   useEffect(() => {
-    if (runSimulation) {
+    if (runDailySimulation) {
       if (elements && elements.length > 0) {
         calculateHeatTransfer();
         setCommonStore((state) => {
           state.simulationInProgress = false;
-          state.runThermalSimulation = false;
+          state.runDailyThermalSimulation = false;
         });
         showInfo(i18n.t('message.SimulationCompleted', lang));
       }
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [runSimulation]);
+  }, [runDailySimulation]);
 
   const calculateHeatTransfer = () => {
     for (const e of elements) {
