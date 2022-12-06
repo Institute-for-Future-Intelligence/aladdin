@@ -92,19 +92,18 @@ export const useHandleSize = (size = 0.3) => {
   const orthographic = useStore((state) => state.viewState.orthographic);
   const cameraPosition = useStore((state) => state.viewState.cameraPosition);
   const cameraZoom = useStore((state) => state.viewState.cameraZoom);
-  const [handleSize, setHandleSize] = useState(size);
 
-  useEffect(() => {
-    if (orthographic) {
-      setHandleSize(Math.max(0.3, 15 / cameraZoom));
-    } else {
-      const panCenter = useStore.getState().viewState.panCenter;
-      const p = new Vector3(...panCenter);
-      const c = new Vector3(...cameraPosition);
-      const distance = c.distanceTo(p);
-      setHandleSize(Math.max(0.3, distance / 100));
-    }
-  }, [cameraPosition, cameraZoom]);
+  let handleSize = size;
+
+  if (orthographic) {
+    handleSize = Math.max(0.3, 15 / cameraZoom);
+  } else {
+    const panCenter = useStore.getState().viewState.panCenter;
+    const p = new Vector3(...panCenter);
+    const c = new Vector3(...cameraPosition);
+    const distance = c.distanceTo(p);
+    handleSize = Math.max(0.3, distance / 100);
+  }
 
   return handleSize;
 };
