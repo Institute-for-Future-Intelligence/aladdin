@@ -53,6 +53,7 @@ import ShareLink from './shareLinks';
 import HeatmapControlPanel from './panels/heatmapControlPanel';
 import SimulationControlPanel from './panels/simulationControlPanel';
 import VisibilityResultsPanel from './panels/visibilityResultsPanel';
+import ThermalSimulation from './analysis/thermalSimulation';
 import StaticSolarRadiationSimulation from './analysis/staticSolarRadiationSimulation';
 import DynamicSolarRadiationSimulation from './analysis/dynamicSolarRadiationSimulation';
 import YearlyParabolicTroughYieldPanel from './panels/yearlyParabolicTroughYieldPanel';
@@ -466,6 +467,7 @@ const AppCreator = ({ viewOnly = false }: AppCreatorProps) => {
               {/* <Obj/> */}
             </Suspense>
             <SceneRadiusCalculator />
+            <ThermalSimulation city={city} />
             <StaticSolarRadiationSimulation city={city} />
             <DynamicSolarRadiationSimulation city={city} />
             <SensorSimulation city={city} />

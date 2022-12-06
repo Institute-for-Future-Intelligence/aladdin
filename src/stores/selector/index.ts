@@ -97,6 +97,8 @@ export const animateSun = (state: CommonStoreState) => state.animateSun;
 
 export const animate24Hours = (state: CommonStoreState) => state.animate24Hours;
 
+export const runThermalSimulation = (state: CommonStoreState) => state.runThermalSimulation;
+
 export const runDynamicSimulation = (state: CommonStoreState) => state.runDynamicSimulation;
 
 export const runStaticSimulation = (state: CommonStoreState) => state.runStaticSimulation;

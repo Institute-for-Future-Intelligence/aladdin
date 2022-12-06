@@ -16,7 +16,7 @@ import {
   UNIT_VECTOR_POS_Z_ARRAY,
   ZERO_TOLERANCE,
 } from './constants';
-import { CanvasTexture, Color, Euler, Object3D, Scene, Vector2, Vector3 } from 'three';
+import { CanvasTexture, Color, Euler, Object3D, Scene, Triangle, Vector2, Vector3 } from 'three';
 import { ElementModel } from './models/ElementModel';
 import { SolarPanelModel } from './models/SolarPanelModel';
 import {
@@ -43,6 +43,10 @@ import { RoofUtil } from './views/roof/RoofUtil';
 import { FoundationModel } from './models/FoundationModel';
 
 export class Util {
+  static getArea(a: Vector3, b: Vector3, c: Vector3) {
+    return new Triangle(a, b, c).getArea();
+  }
+
   static toUValueInUS(uValueInSI: number) {
     return uValueInSI / 5.67826;
   }
