@@ -58,7 +58,6 @@ export const FoundationMenu = () => {
   const removeAllElementsOnFoundationByType = useStore(Selector.removeAllElementsOnFoundationByType);
   const updateElementLockById = useStore(Selector.updateElementLockById);
   const updateElementLockByFoundationId = useStore(Selector.updateElementLockByFoundationId);
-  const contextMenuObjectType = useStore(Selector.contextMenuObjectType);
   const elementsToPaste = useStore(Selector.elementsToPaste);
   const addElement = useStore(Selector.addElement);
   const removeElementById = useStore(Selector.removeElementById);
@@ -174,7 +173,7 @@ export const FoundationMenu = () => {
           </Checkbox>
         </Menu.Item>
 
-        {counterAll.gotSome() && contextMenuObjectType && (
+        {counterAll.gotSome() && (
           <SubMenu
             key={'lock-unlock-clear-on-foundation'}
             title={i18n.t('word.Elements', lang)}

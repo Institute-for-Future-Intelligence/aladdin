@@ -42,7 +42,6 @@ export const CuboidMenu = () => {
   const removeAllChildElementsByType = useStore(Selector.removeAllChildElementsByType);
   const updateElementLabelById = useStore(Selector.updateElementLabelById);
   const updateElementShowLabelById = useStore(Selector.updateElementShowLabelById);
-  const contextMenuObjectType = useStore(Selector.contextMenuObjectType);
   const selectedSideIndex = useStore(Selector.selectedSideIndex);
   const elementsToPaste = useStore(Selector.elementsToPaste);
   const cuboidActionScope = useStore(Selector.cuboidActionScope);
@@ -137,7 +136,7 @@ export const CuboidMenu = () => {
         {editable && <Cut keyName={'cuboid-cut'} />}
         <Lock keyName={'cuboid-lock'} />
 
-        {counterUnlocked.gotSome() && contextMenuObjectType && (
+        {counterUnlocked.gotSome() && (
           <SubMenu key={'clear'} title={i18n.t('word.Clear', lang)} style={{ paddingLeft: '24px' }}>
             {counterUnlocked.sensorCount > 0 && (
               <Menu.Item
