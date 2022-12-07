@@ -5,12 +5,13 @@
 import React, { useEffect, useRef } from 'react';
 import { useStore } from '../stores/common';
 import * as Selector from '../stores/selector';
-import { RoofModel } from '../models/RoofModel';
+import { RoofModel, RoofType } from '../models/RoofModel';
 import { showInfo } from '../helpers';
 import i18n from '../i18n/i18n';
 import { ObjectType } from '../types';
 import { Util } from '../Util';
 import { MINUTES_OF_DAY } from './analysisConstants';
+import { WallModel } from '../models/WallModel';
 
 export interface ThermalSimulationProps {
   city: string | null;
@@ -113,7 +114,7 @@ const ThermalSimulation = ({ city }: ThermalSimulationProps) => {
       originalDateRef.current = new Date(world.date);
       dayRef.current = now.getDay();
       // beginning some minutes before the sunrise hour just in case and to provide a cue
-      now.setHours(0, minuteInterval / 2);
+      now.setHours(0, -minuteInterval / 2);
     }
     simulationCompletedRef.current = false;
   };
@@ -146,8 +147,13 @@ const ThermalSimulation = ({ city }: ThermalSimulationProps) => {
       });
       // will the calculation immediately use the latest geometry after re-rendering?
       for (const e of elements) {
-        if (e.type === ObjectType.Roof) {
-          calculateRoof(e as RoofModel);
+        switch (e.type) {
+          case ObjectType.Wall:
+            calculateWall(e as WallModel);
+            break;
+          case ObjectType.Roof:
+            calculateRoof(e as RoofModel);
+            break;
         }
       }
       // recursive call to the next step of the simulation
@@ -155,9 +161,66 @@ const ThermalSimulation = ({ city }: ThermalSimulationProps) => {
     }
   };
 
+  const calculateWall = (wall: WallModel) => {
+    const polygon = Util.getWallVertices(wall, 0);
+    const area = Util.getPolygonArea(polygon);
+    console.log(area);
+  };
+
   const calculateRoof = (roof: RoofModel) => {
     const segments = getRoofSegmentVertices(roof.id);
-    console.log(segments);
+    if (!segments) return;
+    switch (roof.roofType) {
+      case RoofType.Pyramid: {
+        let totalArea = 0;
+        for (const v of segments) {
+          const area = Util.getTriangleArea(v[0], v[1], v[2]);
+          totalArea += area;
+        }
+        console.log(now, totalArea);
+        break;
+      }
+      case RoofType.Hip: {
+        let totalArea = 0;
+        for (const v of segments) {
+          if (v.length === 3) {
+            totalArea += Util.getTriangleArea(v[0], v[1], v[2]);
+          } else if (v.length === 4) {
+            totalArea += Util.getTriangleArea(v[0], v[1], v[2]);
+            totalArea += Util.getTriangleArea(v[2], v[3], v[0]);
+          }
+        }
+        console.log(now, totalArea);
+        break;
+      }
+      case RoofType.Gable: {
+        let totalArea = 0;
+        for (const v of segments) {
+          totalArea += Util.getTriangleArea(v[0], v[1], v[2]);
+          totalArea += Util.getTriangleArea(v[2], v[3], v[0]);
+        }
+        console.log(now, totalArea);
+        break;
+      }
+      case RoofType.Gambrel: {
+        let totalArea = 0;
+        for (const v of segments) {
+          totalArea += Util.getTriangleArea(v[0], v[1], v[2]);
+          totalArea += Util.getTriangleArea(v[2], v[3], v[0]);
+        }
+        console.log(now, totalArea);
+        break;
+      }
+      case RoofType.Mansard: {
+        let totalArea = 0;
+        for (const v of segments) {
+          totalArea += Util.getTriangleArea(v[0], v[1], v[2]);
+          totalArea += Util.getTriangleArea(v[2], v[3], v[0]);
+        }
+        console.log(now, totalArea);
+        break;
+      }
+    }
   };
 
   // yearly simulation

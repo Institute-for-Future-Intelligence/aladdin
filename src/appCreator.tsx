@@ -141,6 +141,7 @@ const AppCreator = ({ viewOnly = false }: AppCreatorProps) => {
   const noAnimationForSensorDataCollection = useStore(Selector.world.noAnimationForSensorDataCollection);
   const noAnimationForSolarPanelSimulation = useStore(Selector.world.noAnimationForSolarPanelSimulation);
   const noAnimationForHeatmapSimulation = useStore(Selector.world.noAnimationForHeatmapSimulation);
+  const noAnimationForThermalSimulation = useStore(Selector.world.noAnimationForThermalSimulation);
   const noAnimationForSolarUpdraftTowerSimulation = useStore(Selector.world.noAnimationForSolarUpdraftTowerSimulation);
   const runDailySimulationForSolarPanels = useStore(Selector.runDailySimulationForSolarPanels);
   const runYearlySimulationForSolarPanels = useStore(Selector.runYearlySimulationForSolarPanels);
@@ -149,6 +150,7 @@ const AppCreator = ({ viewOnly = false }: AppCreatorProps) => {
   const runDailySimulationForUpdraftTower = useStore(Selector.runDailySimulationForUpdraftTower);
   const runYearlySimulationForUpdraftTower = useStore(Selector.runYearlySimulationForUpdraftTower);
   const runDynamicSimulation = useStore(Selector.runDynamicSimulation);
+  const runDailyThermalSimulation = useStore(Selector.runDailyThermalSimulation);
 
   const [loading, setLoading] = useState(true);
   const [city, setCity] = useState<string>('Boston MA, USA');
@@ -284,6 +286,7 @@ const AppCreator = ({ viewOnly = false }: AppCreatorProps) => {
         <>
           {simulationInProgress &&
             ((!noAnimationForHeatmapSimulation && runDynamicSimulation) ||
+              (!noAnimationForThermalSimulation && runDailyThermalSimulation) ||
               (!noAnimationForSensorDataCollection && (runDailyLightSensor || runYearlyLightSensor)) ||
               (!noAnimationForSolarUpdraftTowerSimulation &&
                 (runDailySimulationForUpdraftTower || runYearlySimulationForUpdraftTower)) ||

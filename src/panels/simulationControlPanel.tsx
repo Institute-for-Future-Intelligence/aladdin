@@ -42,6 +42,11 @@ const SimulationControlPanel = () => {
       state.runDynamicSimulation = false;
       state.pauseSimulation = false;
 
+      state.runDailyThermalSimulation = false;
+      state.runYearlyThermalSimulation = false;
+      state.pauseDailyThermalSimulation = false;
+      state.pauseYearlyThermalSimulation = false;
+
       state.runDailyLightSensor = false;
       state.runYearlyLightSensor = false;
       state.pauseDailyLightSensor = false;
@@ -85,6 +90,13 @@ const SimulationControlPanel = () => {
     setCommonStore((state) => {
       if (state.runDynamicSimulation) {
         state.pauseSimulation = true;
+      }
+
+      if (state.runDailyThermalSimulation) {
+        state.pauseDailyThermalSimulation = true;
+      }
+      if (state.runYearlyThermalSimulation) {
+        state.pauseYearlyThermalSimulation = true;
       }
 
       if (state.runDailyLightSensor) {
@@ -142,6 +154,13 @@ const SimulationControlPanel = () => {
     setCommonStore((state) => {
       if (state.runDynamicSimulation) {
         state.pauseSimulation = false;
+      }
+
+      if (state.runDailyThermalSimulation) {
+        state.pauseDailyThermalSimulation = false;
+      }
+      if (state.runYearlyThermalSimulation) {
+        state.pauseYearlyThermalSimulation = false;
       }
 
       if (state.runDailyLightSensor) {

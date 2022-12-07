@@ -43,8 +43,21 @@ import { RoofUtil } from './views/roof/RoofUtil';
 import { FoundationModel } from './models/FoundationModel';
 
 export class Util {
-  static getArea(a: Vector3, b: Vector3, c: Vector3) {
+  static getTriangleArea(a: Vector3, b: Vector3, c: Vector3) {
     return new Triangle(a, b, c).getArea();
+  }
+
+  static getPolygonArea(vertices: Point2[]) {
+    let total = 0;
+    for (let i = 0, l = vertices.length; i < l; i++) {
+      const addX = vertices[i].x;
+      const addY = vertices[i === vertices.length - 1 ? 0 : i + 1].y;
+      const subX = vertices[i === vertices.length - 1 ? 0 : i + 1].x;
+      const subY = vertices[i].y;
+      total += addX * addY;
+      total -= subX * subY;
+    }
+    return Math.abs(total) * 0.5;
   }
 
   static toUValueInUS(uValueInSI: number) {
