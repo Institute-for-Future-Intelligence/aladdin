@@ -53,6 +53,14 @@ const ElementsRenderer: React.FC = () => {
     }
   }, []);
 
+  useEffect(() => {
+    if (useStore.getState().loadingFile) {
+      useStore.getState().set((state) => {
+        state.loadingFile = false;
+      });
+    }
+  });
+
   // console.log(groupRef)
   // console.log(elements);
   console.debug(elements);

@@ -360,9 +360,6 @@ const MainToolBar = ({ viewOnly = false }: MainToolBarProps) => {
                   } else {
                     importContent(localContentToImportAfterCloudFileUpdate);
                   }
-                  setCommonStore((state) => {
-                    state.loadingFile = false;
-                  });
                 } else {
                   const newUrl = HOME_URL + '?client=web&userid=' + user.uid + '&title=' + encodeURIComponent(title);
                   window.history.pushState({}, document.title, newUrl);
@@ -439,9 +436,6 @@ const MainToolBar = ({ viewOnly = false }: MainToolBarProps) => {
             });
           }
           setLoading(false);
-          setCommonStore((state) => {
-            state.loadingFile = false;
-          });
           if (!popState && !viewOnly) {
             const newUrl = HOME_URL + '?client=web&userid=' + userid + '&title=' + encodeURIComponent(title);
             window.history.pushState({}, document.title, newUrl);

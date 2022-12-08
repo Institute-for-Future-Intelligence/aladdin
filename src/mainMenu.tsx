@@ -572,13 +572,10 @@ const MainMenu = ({ viewOnly, set2DView, resetView, zoomView, canvas }: MainMenu
             setCommonStore((state) => {
               state.loadingFile = true;
             });
-            // give it 0.1 second for this modal to close
+            // give it 0 second for this modal to close
             setTimeout(() => {
               importContent(input);
-              setCommonStore((state) => {
-                state.loadingFile = false;
-              });
-            }, 100);
+            }, 0);
           },
           okText: i18n.t('word.Yes', lang),
           cancelText: i18n.t('word.No', lang),
@@ -587,13 +584,10 @@ const MainMenu = ({ viewOnly, set2DView, resetView, zoomView, canvas }: MainMenu
         setCommonStore((state) => {
           state.loadingFile = true;
         });
-        // give it 0.05 second for the loading spinner to show
+        // give it 0 second for the loading spinner to show
         setTimeout(() => {
           importContent(input);
-          setCommonStore((state) => {
-            state.loadingFile = false;
-          });
-        }, 50);
+        }, 0);
       }
       setCommonStore((state) => {
         if (loggable) {

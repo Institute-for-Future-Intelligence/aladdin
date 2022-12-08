@@ -159,9 +159,6 @@ const LocalFileManager = ({ viewOnly = false }: LocalFileManagerProps) => {
             }
           }
           fileDialog.value = '';
-          setCommonStore((state) => {
-            state.loadingFile = false;
-          });
         };
       }
     };
