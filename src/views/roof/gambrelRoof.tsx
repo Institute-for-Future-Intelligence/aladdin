@@ -648,7 +648,7 @@ const GambrelRoof = (roofModel: GambrelRoofModel) => {
   }, []);
 
   const { grabRef, addUndoableMove, undoMove, setOldRefData } = useElementUndoable();
-  useUpdateSegmentVerticesMap(id, centroid, roofSegments);
+  // useUpdateSegmentVerticesMap(id, centroid, roofSegments);
 
   const selectMe = useStore(Selector.selectMe);
   const showSolarRadiationHeatmap = useStore(Selector.showSolarRadiationHeatmap);

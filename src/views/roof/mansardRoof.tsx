@@ -498,15 +498,15 @@ const MansardRoof = (roofModel: MansardRoofModel) => {
 
   const { grabRef, addUndoableMove, undoMove, setOldRefData } = useElementUndoable();
   const { transparent, opacity } = useTransparent();
-  useUpdateSegmentVerticesMap(
-    id,
-    centroid,
-    roofSegments,
-    ridgePoints.reduce(
-      (acc, curr) => acc.concat(curr.leftPoint.clone().sub(centroid).add(thicknessVector)),
-      [] as Vector3[],
-    ),
-  );
+  // useUpdateSegmentVerticesMap(
+  //   id,
+  //   centroid,
+  //   roofSegments,
+  //   ridgePoints.reduce(
+  //     (acc, curr) => acc.concat(curr.leftPoint.clone().sub(centroid).add(thicknessVector)),
+  //     [] as Vector3[],
+  //   ),
+  // );
 
   const selectMe = useStore(Selector.selectMe);
   const showSolarRadiationHeatmap = useStore(Selector.showSolarRadiationHeatmap);

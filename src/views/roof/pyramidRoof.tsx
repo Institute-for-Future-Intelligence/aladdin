@@ -637,7 +637,7 @@ const PyramidRoof = (roofModel: PyramidRoofModel) => {
     }
   }, [showSolarRadiationHeatmap, solarRadiationHeatmapMaxValue]);
 
-  useUpdateSegmentVerticesMap(id, centerPointV3, roofSegments);
+  // useUpdateSegmentVerticesMap(id, centerPointV3, roofSegments);
 
   return (
     <group position={[cx, cy, cz]} rotation={[0, 0, rotation]} name={`Pyramid Roof Group ${id}`}>

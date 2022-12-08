@@ -23,14 +23,13 @@ import AcceptCookie from './acceptCookie';
 import GroundImage from './views/groundImage';
 import DropdownContextMenu from './components/contextMenu';
 import WeatherPanel from './panels/weatherPanel';
-import { DesignProblem, EvolutionMethod, GraphDataType, ObjectType } from './types';
+import { DesignProblem, EvolutionMethod, GraphDataType } from './types';
 import SensorSimulation from './analysis/sensorSimulation';
 import SolarPanelSimulation from './analysis/solarPanelSimulation';
 import YearlyLightSensorPanel from './panels/yearlyLightSensorPanel';
 import DailyLightSensorPanel from './panels/dailyLightSensorPanel';
 import MainToolBar from './mainToolBar';
 import ActionLogger from './actionLogger';
-import Spinner from './components/spinner';
 import StickyNotePanel from './panels/stickyNotePanel';
 import InstructionPanel from './panels/instructionPanel';
 import YearlyPvYieldPanel from './panels/yearlyPvYieldPanel';
@@ -51,7 +50,6 @@ import { UndoableCameraChange } from './undo/UndoableCameraChange';
 import SolarPanelVisibility from './analysis/solarPanelVisibility';
 import ShareLink from './shareLinks';
 import HeatmapControlPanel from './panels/heatmapControlPanel';
-import SimulationControlPanel from './panels/simulationControlPanel';
 import VisibilityResultsPanel from './panels/visibilityResultsPanel';
 import ThermalSimulation from './analysis/thermalSimulation';
 import StaticSolarRadiationSimulation from './analysis/staticSolarRadiationSimulation';
@@ -65,7 +63,6 @@ import ParabolicDishSimulation from './analysis/parabolicDishSimulation';
 import FresnelReflectorSimulation from './analysis/fresnelReflectorSimulation';
 import DailyFresnelReflectorYieldPanel from './panels/dailyFresnelReflectorYieldPanel';
 import YearlyFresnelReflectorYieldPanel from './panels/yearlyFresnelReflectorYieldPanel';
-import { Util } from './Util';
 import DailyHeliostatYieldPanel from './panels/dailyHeliostatYieldPanel';
 import YearlyHeliostatYieldPanel from './panels/yearlyHeliostatYieldPanel';
 import HeliostatSimulation from './analysis/heliostatSimulation';
@@ -73,7 +70,6 @@ import SolarUpdraftTowerSimulation from './analysis/solarUpdraftTowerSimulation'
 import DailySolarUpdraftTowerYieldPanel from './panels/dailySolarUpdraftTowerYieldPanel';
 import DiurnalTemperaturePanel from './panels/diurnalTemperaturePanel';
 import YearlySolarUpdraftTowerYieldPanel from './panels/yearlySolarUpdraftTowerYieldPanel';
-import EvolutionControlPanel from './panels/evolutionControlPanel';
 import SolarPanelTiltAngleGa from './ai/ga/solarPanelTiltAngleGa';
 import SolarPanelArrayGa from './ai/ga/solarPanelArrayGa';
 import SolarPanelTiltAnglePso from './ai/pso/solarPanelTiltAnglePso';
@@ -81,6 +77,7 @@ import SolarPanelOptimizationResult from './panels/solarPanelOptimizationResult'
 import EconomicsPanel from './panels/economicsPanel';
 import SolarPanelArrayPso from './ai/pso/solarPanelArrayPso';
 import PointerStyleController from './pointerStyleController';
+import Loading from './loading';
 
 export interface AppCreatorProps {
   viewOnly: boolean;
@@ -90,7 +87,6 @@ const AppCreator = ({ viewOnly = false }: AppCreatorProps) => {
   const user = useStore(Selector.user);
   const loggable = useStore(Selector.loggable);
   const setCommonStore = useStore(Selector.set);
-  const elements = useStore.getState().elements;
   const language = useStore(Selector.language);
   const changed = useStore(Selector.changed);
   const addUndoable = useStore(Selector.addUndoable);
@@ -98,11 +94,6 @@ const AppCreator = ({ viewOnly = false }: AppCreatorProps) => {
   const worldLatitude = useStore(Selector.world.latitude);
   const worldLongitude = useStore(Selector.world.longitude);
   const orthographic = useStore(Selector.viewState.orthographic) ?? false;
-  const loadingFile = useStore(Selector.loadingFile);
-  const simulationInProgress = useStore(Selector.simulationInProgress);
-  const simulationPaused = useStore(Selector.simulationPaused);
-  const evolutionInProgress = useStore(Selector.evolutionInProgress);
-  const evolutionPaused = useStore(Selector.evolutionPaused);
   const sceneRadius = useStore(Selector.sceneRadius);
   const cloudFile = useStore(Selector.cloudFile);
   const axes = useStore(Selector.viewState.axes);
@@ -136,19 +127,6 @@ const AppCreator = ({ viewOnly = false }: AppCreatorProps) => {
   const showEvolutionPanel = useStore(Selector.viewState.showEvolutionPanel);
   const evolutionMethod = useStore(Selector.evolutionMethod);
   const evolutionaryAlgorithmState = useStore(Selector.evolutionaryAlgorithmState);
-  const noAnimationForSensorDataCollection = useStore(Selector.world.noAnimationForSensorDataCollection);
-  const noAnimationForSolarPanelSimulation = useStore(Selector.world.noAnimationForSolarPanelSimulation);
-  const noAnimationForHeatmapSimulation = useStore(Selector.world.noAnimationForHeatmapSimulation);
-  const noAnimationForThermalSimulation = useStore(Selector.world.noAnimationForThermalSimulation);
-  const noAnimationForSolarUpdraftTowerSimulation = useStore(Selector.world.noAnimationForSolarUpdraftTowerSimulation);
-  const runDailySimulationForSolarPanels = useStore(Selector.runDailySimulationForSolarPanels);
-  const runYearlySimulationForSolarPanels = useStore(Selector.runYearlySimulationForSolarPanels);
-  const runDailyLightSensor = useStore(Selector.runDailyLightSensor);
-  const runYearlyLightSensor = useStore(Selector.runYearlyLightSensor);
-  const runDailySimulationForUpdraftTower = useStore(Selector.runDailySimulationForUpdraftTower);
-  const runYearlySimulationForUpdraftTower = useStore(Selector.runYearlySimulationForUpdraftTower);
-  const runDynamicSimulation = useStore(Selector.runDynamicSimulation);
-  const runDailyThermalSimulation = useStore(Selector.runDailyThermalSimulation);
 
   const [loading, setLoading] = useState(true);
   const [city, setCity] = useState<string>('Boston MA, USA');
@@ -273,21 +251,9 @@ const AppCreator = ({ viewOnly = false }: AppCreatorProps) => {
 
   return (
     <div className="App">
-      {(loading || loadingFile || simulationInProgress || evolutionInProgress) && (
-        <>
-          {simulationInProgress &&
-            ((!noAnimationForHeatmapSimulation && runDynamicSimulation) ||
-              (!noAnimationForThermalSimulation && runDailyThermalSimulation) ||
-              (!noAnimationForSensorDataCollection && (runDailyLightSensor || runYearlyLightSensor)) ||
-              (!noAnimationForSolarUpdraftTowerSimulation &&
-                (runDailySimulationForUpdraftTower || runYearlySimulationForUpdraftTower)) ||
-              (!noAnimationForSolarPanelSimulation &&
-                (runDailySimulationForSolarPanels || runYearlySimulationForSolarPanels)) ||
-              Util.hasMovingParts(elements)) && <SimulationControlPanel />}
-          {evolutionInProgress && <EvolutionControlPanel />}
-          <Spinner spinning={!simulationPaused || !evolutionPaused} />
-        </>
-      )}
+      {/* Spinner, Simulation and Evolution control panels */}
+      <Loading loading={loading} />
+
       <div
         style={{
           backgroundColor: 'lightblue',
