@@ -4926,87 +4926,83 @@ export const useStore = create<CommonStoreState>(
           },
           countAllElements(excludeLocked) {
             let count = 0;
-            immerSet((state: CommonStoreState) => {
-              if (excludeLocked) {
-                for (const e of state.elements) {
-                  if (!e.locked) {
-                    count++;
-                  }
-                }
-              } else {
-                for (const e of state.elements) {
+            if (excludeLocked) {
+              for (const e of get().elements) {
+                if (!e.locked) {
                   count++;
                 }
               }
-            });
+            } else {
+              for (const e of get().elements) {
+                count++;
+              }
+            }
             return count;
           },
           countAllOffspringsByTypeAtOnce(ancestorId, includingLocked) {
             const counter = new ElementCounter();
-            immerSet((state: CommonStoreState) => {
-              for (const e of state.elements) {
-                // foundationId applies to both foundations and cuboids, should have been named ancestorId
-                const idOk = e.parentId === ancestorId || e.foundationId === ancestorId;
-                if (includingLocked ? idOk : !e.locked && idOk) {
-                  switch (e.type) {
-                    case ObjectType.Wall:
-                      counter.wallCount++;
-                      break;
-                    case ObjectType.Window:
-                      counter.windowCount++;
-                      break;
-                    case ObjectType.Door:
-                      counter.doorCount++;
-                      break;
-                    case ObjectType.Human:
-                      counter.humanCount++;
-                      break;
-                    case ObjectType.Tree:
-                      counter.treeCount++;
-                      break;
-                    case ObjectType.Flower:
-                      counter.flowerCount++;
-                      break;
-                    case ObjectType.Polygon:
-                      counter.polygonCount++;
-                      break;
-                    case ObjectType.Sensor:
-                      counter.sensorCount++;
-                      break;
-                    case ObjectType.Light:
-                      if ((e as LightModel).inside) {
-                        counter.insideLightCount++;
-                      } else {
-                        counter.outsideLightCount++;
-                      }
-                      break;
-                    case ObjectType.SolarPanel:
-                      counter.solarPanelCount++;
-                      const sp = e as SolarPanelModel;
-                      const pvModel = state.getPvModule(sp.pvModelName);
-                      if (pvModel) {
-                        counter.solarPanelModuleCount += Util.countSolarPanelsOnRack(sp, pvModel);
-                      }
-                      break;
-                    case ObjectType.ParabolicDish:
-                      counter.parabolicDishCount++;
-                      break;
-                    case ObjectType.ParabolicTrough:
-                      counter.parabolicTroughCount++;
-                      break;
-                    case ObjectType.FresnelReflector:
-                      counter.fresnelReflectorCount++;
-                      break;
-                    case ObjectType.Heliostat:
-                      counter.heliostatCount++;
-                      break;
-                    case ObjectType.WindTurbine:
-                      counter.windTurbineCount++;
-                      break;
-                  }
+            for (const e of get().elements) {
+              // foundationId applies to both foundations and cuboids, should have been named ancestorId
+              const idOk = e.parentId === ancestorId || e.foundationId === ancestorId;
+              if (includingLocked ? idOk : !e.locked && idOk) {
+                switch (e.type) {
+                  case ObjectType.Wall:
+                    counter.wallCount++;
+                    break;
+                  case ObjectType.Window:
+                    counter.windowCount++;
+                    break;
+                  case ObjectType.Door:
+                    counter.doorCount++;
+                    break;
+                  case ObjectType.Human:
+                    counter.humanCount++;
+                    break;
+                  case ObjectType.Tree:
+                    counter.treeCount++;
+                    break;
+                  case ObjectType.Flower:
+                    counter.flowerCount++;
+                    break;
+                  case ObjectType.Polygon:
+                    counter.polygonCount++;
+                    break;
+                  case ObjectType.Sensor:
+                    counter.sensorCount++;
+                    break;
+                  case ObjectType.Light:
+                    if ((e as LightModel).inside) {
+                      counter.insideLightCount++;
+                    } else {
+                      counter.outsideLightCount++;
+                    }
+                    break;
+                  case ObjectType.SolarPanel:
+                    counter.solarPanelCount++;
+                    const sp = e as SolarPanelModel;
+                    const pvModel = get().getPvModule(sp.pvModelName);
+                    if (pvModel) {
+                      counter.solarPanelModuleCount += Util.countSolarPanelsOnRack(sp, pvModel);
+                    }
+                    break;
+                  case ObjectType.ParabolicDish:
+                    counter.parabolicDishCount++;
+                    break;
+                  case ObjectType.ParabolicTrough:
+                    counter.parabolicTroughCount++;
+                    break;
+                  case ObjectType.FresnelReflector:
+                    counter.fresnelReflectorCount++;
+                    break;
+                  case ObjectType.Heliostat:
+                    counter.heliostatCount++;
+                    break;
+                  case ObjectType.WindTurbine:
+                    counter.windTurbineCount++;
+                    break;
                 }
               }
-            });
+            }
             return counter;
           },
           countSolarPanelsOnRack(id) {

@@ -21,17 +21,18 @@ import ParabolicDishThermalEfficiencyInput from './parabolicDishThermalEfficienc
 import ParabolicDishStructureTypeInput from './parabolicDishStructureTypeInput';
 import { ObjectType } from '../../../types';
 
-export const ParabolicDishMenu = () => {
+export const ParabolicDishMenu = React.memo(() => {
   const language = useStore(Selector.language);
-  const parabolicDish = useStore(Selector.selectedElement) as ParabolicDishModel;
+  const parabolicDish = useStore((state) =>
+    state.elements.find((e) => e.selected && e.type === ObjectType.ParabolicDish),
+  ) as ParabolicDishModel;
   const updateElementLabelById = useStore(Selector.updateElementLabelById);
   const updateElementShowLabelById = useStore(Selector.updateElementShowLabelById);
   const updateSolarCollectorDrawSunBeamById = useStore(Selector.updateSolarCollectorDrawSunBeamById);
   const addUndoable = useStore(Selector.addUndoable);
   const setApplyCount = useStore(Selector.setApplyCount);
 
-  const [labelText, setLabelText] = useState<string>('');
-  const [updateFlag, setUpdateFlag] = useState<boolean>(false);
+  const [labelText, setLabelText] = useState<string>(parabolicDish.label ?? '');
   const [structureTypeDialogVisible, setStructureTypeDialogVisible] = useState(false);
   const [latusRectumDialogVisible, setLatusRectumDialogVisible] = useState(false);
   const [diameterDialogVisible, setDiameterDialogVisible] = useState(false);
@@ -41,13 +42,10 @@ export const ParabolicDishMenu = () => {
   const [opticalEfficiencyDialogVisible, setOpticalEfficiencyDialogVisible] = useState(false);
   const [thermalEfficiencyDialogVisible, setThermalEfficiencyDialogVisible] = useState(false);
 
-  const lang = { lng: language };
+  if (!parabolicDish) return null;
 
-  useEffect(() => {
-    if (parabolicDish) {
-      setLabelText(parabolicDish.label ?? '');
-    }
-  }, [parabolicDish]);
+  const lang = { lng: language };
+  const editable = !parabolicDish?.locked;
 
   const showLabel = (checked: boolean) => {
     if (parabolicDish) {
@@ -66,7 +64,6 @@ export const ParabolicDishMenu = () => {
       } as UndoableCheck;
       addUndoable(undoableCheck);
       updateElementShowLabelById(parabolicDish.id, checked);
-      setUpdateFlag(!updateFlag);
     }
   };
 
@@ -89,7 +86,6 @@ export const ParabolicDishMenu = () => {
       } as UndoableChange;
       addUndoable(undoableChange);
       updateElementLabelById(parabolicDish.id, labelText);
-      setUpdateFlag(!updateFlag);
     }
   };
 
@@ -110,11 +106,8 @@ export const ParabolicDishMenu = () => {
       } as UndoableCheck;
       addUndoable(undoableCheck);
       updateSolarCollectorDrawSunBeamById(parabolicDish.id, checked);
-      setUpdateFlag(!updateFlag);
     }
   };
-
-  const editable = !parabolicDish?.locked;
 
   return (
     <>
@@ -264,4 +257,4 @@ export const ParabolicDishMenu = () => {
       )}
     </>
   );
-};
+});

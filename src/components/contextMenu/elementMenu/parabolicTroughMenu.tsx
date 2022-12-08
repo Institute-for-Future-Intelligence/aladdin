@@ -22,17 +22,18 @@ import ParabolicTroughOpticalEfficiencyInput from './parabolicTroughOpticalEffic
 import ParabolicTroughThermalEfficiencyInput from './parabolicTroughThermalEfficiencyInput';
 import { ObjectType } from '../../../types';
 
-export const ParabolicTroughMenu = () => {
+export const ParabolicTroughMenu = React.memo(() => {
   const language = useStore(Selector.language);
-  const parabolicTrough = useStore(Selector.selectedElement) as ParabolicTroughModel;
+  const parabolicTrough = useStore((state) =>
+    state.elements.find((e) => e.selected && e.type === ObjectType.ParabolicTrough),
+  ) as ParabolicTroughModel;
   const updateElementLabelById = useStore(Selector.updateElementLabelById);
   const updateElementShowLabelById = useStore(Selector.updateElementShowLabelById);
   const updateSolarCollectorDrawSunBeamById = useStore(Selector.updateSolarCollectorDrawSunBeamById);
   const addUndoable = useStore(Selector.addUndoable);
   const setApplyCount = useStore(Selector.setApplyCount);
 
-  const [labelText, setLabelText] = useState<string>('');
-  const [updateFlag, setUpdateFlag] = useState<boolean>(false);
+  const [labelText, setLabelText] = useState<string>(parabolicTrough.label ?? '');
   const [moduleLengthDialogVisible, setModuleLengthDialogVisible] = useState(false);
   const [latusRectumDialogVisible, setLatusRectumDialogVisible] = useState(false);
   const [widthDialogVisible, setWidthDialogVisible] = useState(false);
@@ -43,13 +44,10 @@ export const ParabolicTroughMenu = () => {
   const [opticalEfficiencyDialogVisible, setOpticalEfficiencyDialogVisible] = useState(false);
   const [thermalEfficiencyDialogVisible, setThermalEfficiencyDialogVisible] = useState(false);
 
-  const lang = { lng: language };
+  if (!parabolicTrough) return null;
 
-  useEffect(() => {
-    if (parabolicTrough) {
-      setLabelText(parabolicTrough.label ?? '');
-    }
-  }, [parabolicTrough]);
+  const lang = { lng: language };
+  const editable = !parabolicTrough?.locked;
 
   const showLabel = (checked: boolean) => {
     if (parabolicTrough) {
@@ -68,7 +66,6 @@ export const ParabolicTroughMenu = () => {
       } as UndoableCheck;
       addUndoable(undoableCheck);
       updateElementShowLabelById(parabolicTrough.id, checked);
-      setUpdateFlag(!updateFlag);
     }
   };
 
@@ -91,7 +88,6 @@ export const ParabolicTroughMenu = () => {
       } as UndoableChange;
       addUndoable(undoableChange);
       updateElementLabelById(parabolicTrough.id, labelText);
-      setUpdateFlag(!updateFlag);
     }
   };
 
@@ -112,11 +108,8 @@ export const ParabolicTroughMenu = () => {
       } as UndoableCheck;
       addUndoable(undoableCheck);
       updateSolarCollectorDrawSunBeamById(parabolicTrough.id, checked);
-      setUpdateFlag(!updateFlag);
     }
   };
-
-  const editable = !parabolicTrough?.locked;
 
   return (
     <>
@@ -285,4 +278,4 @@ export const ParabolicTroughMenu = () => {
       )}
     </>
   );
-};
+});

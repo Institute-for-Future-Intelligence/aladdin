@@ -20,16 +20,17 @@ import FresnelReflectorAbsorberSelection from './fresnelReflectorAbsorberSelecti
 import FresnelReflectorDrawSunBeamSelection from './fresnelReflectorDrawSunBeamSelection';
 import { ObjectType } from '../../../types';
 
-export const FresnelReflectorMenu = () => {
+export const FresnelReflectorMenu = React.memo(() => {
   const language = useStore(Selector.language);
-  const fresnelReflector = useStore(Selector.selectedElement) as FresnelReflectorModel;
+  const fresnelReflector = useStore((state) =>
+    state.elements.find((e) => e.selected && e.type === ObjectType.FresnelReflector),
+  ) as FresnelReflectorModel;
   const updateElementLabelById = useStore(Selector.updateElementLabelById);
   const updateElementShowLabelById = useStore(Selector.updateElementShowLabelById);
   const addUndoable = useStore(Selector.addUndoable);
   const setApplyCount = useStore(Selector.setApplyCount);
 
-  const [labelText, setLabelText] = useState<string>('');
-  const [updateFlag, setUpdateFlag] = useState<boolean>(false);
+  const [labelText, setLabelText] = useState<string>(fresnelReflector.label ?? '');
   const [moduleLengthDialogVisible, setModuleLengthDialogVisible] = useState(false);
   const [widthDialogVisible, setWidthDialogVisible] = useState(false);
   const [lengthDialogVisible, setLengthDialogVisible] = useState(false);
@@ -38,13 +39,10 @@ export const FresnelReflectorMenu = () => {
   const [receiverDialogVisible, setReceiverDialogVisible] = useState(false);
   const [sunBeamDialogVisible, setSunBeamDialogVisible] = useState(false);
 
-  const lang = { lng: language };
+  if (!fresnelReflector) return null;
 
-  useEffect(() => {
-    if (fresnelReflector) {
-      setLabelText(fresnelReflector.label ?? '');
-    }
-  }, [fresnelReflector]);
+  const lang = { lng: language };
+  const editable = !fresnelReflector?.locked;
 
   const showLabel = (checked: boolean) => {
     if (fresnelReflector) {
@@ -63,7 +61,6 @@ export const FresnelReflectorMenu = () => {
       } as UndoableCheck;
       addUndoable(undoableCheck);
       updateElementShowLabelById(fresnelReflector.id, checked);
-      setUpdateFlag(!updateFlag);
     }
   };
 
@@ -86,11 +83,8 @@ export const FresnelReflectorMenu = () => {
       } as UndoableChange;
       addUndoable(undoableChange);
       updateElementLabelById(fresnelReflector.id, labelText);
-      setUpdateFlag(!updateFlag);
     }
   };
-
-  const editable = !fresnelReflector?.locked;
 
   return (
     <>
@@ -218,4 +212,4 @@ export const FresnelReflectorMenu = () => {
       )}
     </>
   );
-};
+});

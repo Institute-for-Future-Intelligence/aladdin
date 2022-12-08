@@ -10,16 +10,20 @@ import i18n from '../../../i18n/i18n';
 import { PolygonModel } from '../../../models/PolygonModel';
 import { UndoableChange } from '../../../undo/UndoableChange';
 import { Point2 } from '../../../models/Point2';
-import { PolygonVertexAction } from '../../../types';
+import { ObjectType, PolygonVertexAction } from '../../../types';
 
-export const PolygonVertexMenu = () => {
+export const PolygonVertexMenu = React.memo(() => {
   const language = useStore(Selector.language);
-  const polygon = useStore(Selector.selectedElement) as PolygonModel;
+  const polygon = useStore((state) =>
+    state.elements.find((e) => e.selected && e.type === ObjectType.PolygonVertex),
+  ) as PolygonModel;
   const deletePolygonVertexByIndex = useStore(Selector.deletePolygonVertexByIndex);
   const insertPolygonVertexBeforeIndex = useStore(Selector.insertPolygonVertexBeforeIndex);
   const insertPolygonVertexAfterIndex = useStore(Selector.insertPolygonVertexAfterIndex);
   const updatePolygonVerticesById = useStore(Selector.updatePolygonVerticesById);
   const addUndoable = useStore(Selector.addUndoable);
+
+  if (!polygon || polygon.selectedIndex < 0) return null;
 
   const lang = { lng: language };
 
@@ -70,7 +74,7 @@ export const PolygonVertexMenu = () => {
     }
   };
 
-  return polygon && polygon.selectedIndex >= 0 ? (
+  return (
     <>
       <Menu.Item key={'polygon-vertex-insert-before-index'} onClick={insertVertexBeforeIndex}>
         {i18n.t('polygonMenu.InsertVertexBeforeIndex', lang)}
@@ -84,7 +88,5 @@ export const PolygonVertexMenu = () => {
         </Menu.Item>
       )}
     </>
-  ) : (
-    <></>
   );
-};
+});

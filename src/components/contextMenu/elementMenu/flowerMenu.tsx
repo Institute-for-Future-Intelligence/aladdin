@@ -15,58 +15,60 @@ import { UndoableCheck } from '../../../undo/UndoableCheck';
 
 export const FlowerMenu = () => {
   const language = useStore(Selector.language);
-  const flower = useStore(Selector.selectedElement) as FlowerModel;
+  const flower = useStore((state) =>
+    state.elements.find((e) => e.selected && e.type === ObjectType.Flower),
+  ) as FlowerModel;
   const updateFlowerFlipById = useStore(Selector.updateFlowerFlipById);
   const addUndoable = useStore(Selector.addUndoable);
+
+  if (!flower) return null;
 
   const lang = { lng: language };
   const editable = !flower?.locked;
 
   return (
-    flower && (
-      <>
-        <Copy keyName={'flower-copy'} />
-        {editable && <Cut keyName={'flower-cut'} />}
-        <Lock keyName={'flower-lock'} />
+    <>
+      <Copy keyName={'flower-copy'} />
+      {editable && <Cut keyName={'flower-cut'} />}
+      <Lock keyName={'flower-lock'} />
 
-        {editable && (
-          <Menu.Item key={'flower-flip'}>
-            <Checkbox
-              checked={flower.flip}
-              onChange={(e) => {
-                const checked = e.target.checked;
-                const undoableCheck = {
-                  name: 'Flip Flower',
-                  timestamp: Date.now(),
-                  checked: checked,
-                  selectedElementId: flower.id,
-                  selectedElementType: ObjectType.Flower,
-                  undo: () => {
-                    updateFlowerFlipById(flower.id, !undoableCheck.checked);
-                  },
-                  redo: () => {
-                    updateFlowerFlipById(flower.id, undoableCheck.checked);
-                  },
-                } as UndoableCheck;
-                addUndoable(undoableCheck);
-                updateFlowerFlipById(flower.id, checked);
-              }}
-            >
-              {i18n.t('flowerMenu.Flip', { lng: language })}
-            </Checkbox>
+      {editable && (
+        <Menu.Item key={'flower-flip'}>
+          <Checkbox
+            checked={flower.flip}
+            onChange={(e) => {
+              const checked = e.target.checked;
+              const undoableCheck = {
+                name: 'Flip Flower',
+                timestamp: Date.now(),
+                checked: checked,
+                selectedElementId: flower.id,
+                selectedElementType: ObjectType.Flower,
+                undo: () => {
+                  updateFlowerFlipById(flower.id, !undoableCheck.checked);
+                },
+                redo: () => {
+                  updateFlowerFlipById(flower.id, undoableCheck.checked);
+                },
+              } as UndoableCheck;
+              addUndoable(undoableCheck);
+              updateFlowerFlipById(flower.id, checked);
+            }}
+          >
+            {i18n.t('flowerMenu.Flip', { lng: language })}
+          </Checkbox>
+        </Menu.Item>
+      )}
+
+      {/* have to wrap the text field with a Menu so that it can stay open when the user types in it */}
+      {editable && (
+        <Menu>
+          <Menu.Item key={'flower-change-type'} style={{ height: '36px', paddingLeft: '36px', marginTop: 0 }}>
+            <Space style={{ width: '100px' }}>{i18n.t('flowerMenu.Type', lang)}: </Space>
+            <FlowerSelection key={'flowers'} />
           </Menu.Item>
-        )}
-
-        {/* have to wrap the text field with a Menu so that it can stay open when the user types in it */}
-        {editable && (
-          <Menu>
-            <Menu.Item key={'flower-change-type'} style={{ height: '36px', paddingLeft: '36px', marginTop: 0 }}>
-              <Space style={{ width: '100px' }}>{i18n.t('flowerMenu.Type', lang)}: </Space>
-              <FlowerSelection key={'flowers'} />
-            </Menu.Item>
-          </Menu>
-        )}
-      </>
-    )
+        </Menu>
+      )}
+    </>
   );
 };

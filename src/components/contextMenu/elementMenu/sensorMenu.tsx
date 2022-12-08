@@ -14,21 +14,20 @@ import { UndoableChange } from '../../../undo/UndoableChange';
 import { SensorModel } from '../../../models/SensorModel';
 import { ObjectType } from '../../../types';
 
-export const SensorMenu = () => {
+export const SensorMenu = React.memo(() => {
   const language = useStore(Selector.language);
   const updateElementLabelById = useStore(Selector.updateElementLabelById);
   const updateElementShowLabelById = useStore(Selector.updateElementShowLabelById);
   const addUndoable = useStore(Selector.addUndoable);
-  const sensor = useStore(Selector.selectedElement) as SensorModel;
+  const sensor = useStore((state) =>
+    state.elements.find((e) => e.selected && e.type === ObjectType.Sensor),
+  ) as SensorModel;
 
   const [labelText, setLabelText] = useState<string>(sensor?.label ?? '');
-  const lang = { lng: language };
 
-  useEffect(() => {
-    if (sensor) {
-      setLabelText(sensor.label ?? '');
-    }
-  }, [sensor?.label]);
+  if (!sensor) return null;
+
+  const lang = { lng: language };
 
   const updateElementLabelText = () => {
     if (sensor) {
@@ -73,28 +72,26 @@ export const SensorMenu = () => {
   };
 
   return (
-    sensor && (
-      <>
-        <Copy keyName={'sensor-copy'} />
-        <Cut keyName={'sensor-cut'} />
-        <Lock keyName={'sensor-lock'} />
-        <Menu.Item key={'sensor-show-label'}>
-          <Checkbox checked={!!sensor?.showLabel} onChange={showElementLabel}>
-            {i18n.t('solarCollectorMenu.KeepShowingLabel', lang)}
-          </Checkbox>
+    <>
+      <Copy keyName={'sensor-copy'} />
+      <Cut keyName={'sensor-cut'} />
+      <Lock keyName={'sensor-lock'} />
+      <Menu.Item key={'sensor-show-label'}>
+        <Checkbox checked={!!sensor?.showLabel} onChange={showElementLabel}>
+          {i18n.t('solarCollectorMenu.KeepShowingLabel', lang)}
+        </Checkbox>
+      </Menu.Item>
+      <Menu>
+        <Menu.Item key={'sensor-label-text'} style={{ paddingLeft: '36px' }}>
+          <Input
+            addonBefore={i18n.t('solarCollectorMenu.Label', lang) + ':'}
+            value={labelText}
+            onChange={(e: React.ChangeEvent<HTMLInputElement>) => setLabelText(e.target.value)}
+            onPressEnter={updateElementLabelText}
+            onBlur={updateElementLabelText}
+          />
         </Menu.Item>
-        <Menu>
-          <Menu.Item key={'sensor-label-text'} style={{ paddingLeft: '36px' }}>
-            <Input
-              addonBefore={i18n.t('solarCollectorMenu.Label', lang) + ':'}
-              value={labelText}
-              onChange={(e: React.ChangeEvent<HTMLInputElement>) => setLabelText(e.target.value)}
-              onPressEnter={updateElementLabelText}
-              onBlur={updateElementLabelText}
-            />
-          </Menu.Item>
-        </Menu>
-      </>
-    )
+      </Menu>
+    </>
   );
-};
+});

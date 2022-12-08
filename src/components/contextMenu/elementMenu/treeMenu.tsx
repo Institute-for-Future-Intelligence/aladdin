@@ -14,20 +14,23 @@ import { UndoableCheck } from '../../../undo/UndoableCheck';
 import { UndoableChange } from '../../../undo/UndoableChange';
 import { TreeModel } from '../../../models/TreeModel';
 
-export const TreeMenu = () => {
+export const TreeMenu = React.memo(() => {
   const setCommonStore = useStore(Selector.set);
   const language = useStore(Selector.language);
   const updateElementLxById = useStore(Selector.updateElementLxById);
   const updateElementLzById = useStore(Selector.updateElementLzById);
   const updateTreeShowModelById = useStore(Selector.updateTreeShowModelById);
   const updateTreeFlipById = useStore(Selector.updateTreeFlipById);
-  const tree = useStore(Selector.selectedElement) as TreeModel;
+  const tree = useStore((state) => state.elements.find((e) => e.selected && e.type === ObjectType.Tree)) as TreeModel;
   const addUndoable = useStore(Selector.addUndoable);
 
   const [inputSpread, setInputSpread] = useState<number>(tree?.lx ?? 1);
   const [inputHeight, setInputHeight] = useState<number>(tree?.lz ?? 1);
 
+  if (!tree) return null;
+
   const lang = { lng: language };
+  const editable = !tree?.locked;
 
   const showTreeModel = (on: boolean) => {
     if (!tree) return;
@@ -98,97 +101,90 @@ export const TreeMenu = () => {
     });
   };
 
-  const editable = !tree?.locked;
-
   return (
-    tree && (
-      <>
-        <Copy keyName={'tree-copy'} />
-        {editable && <Cut keyName={'tree-cut'} />}
-        <Lock keyName={'tree-lock'} />
-        <Menu.Item key={'tree-show-model'}>
+    <>
+      <Copy keyName={'tree-copy'} />
+      {editable && <Cut keyName={'tree-cut'} />}
+      <Lock keyName={'tree-lock'} />
+      <Menu.Item key={'tree-show-model'}>
+        <Checkbox
+          checked={tree?.showModel && tree?.type === ObjectType.Tree}
+          onChange={(e) => showTreeModel(e.target.checked)}
+        >
+          {i18n.t('treeMenu.ShowModel', lang)}
+        </Checkbox>
+      </Menu.Item>
+
+      {editable && (
+        <Menu.Item key={'tree-flip'}>
           <Checkbox
-            checked={tree?.showModel && tree?.type === ObjectType.Tree}
-            onChange={(e) => showTreeModel(e.target.checked)}
+            checked={tree.flip}
+            onChange={(e) => {
+              const checked = e.target.checked;
+              const undoableCheck = {
+                name: 'Flip Tree',
+                timestamp: Date.now(),
+                checked: checked,
+                selectedElementId: tree.id,
+                selectedElementType: ObjectType.Tree,
+                undo: () => {
+                  updateTreeFlipById(tree.id, !undoableCheck.checked);
+                },
+                redo: () => {
+                  updateTreeFlipById(tree.id, undoableCheck.checked);
+                },
+              } as UndoableCheck;
+              addUndoable(undoableCheck);
+              updateTreeFlipById(tree.id, checked);
+            }}
           >
-            {i18n.t('treeMenu.ShowModel', lang)}
+            {i18n.t('treeMenu.Flip', { lng: language })}
           </Checkbox>
         </Menu.Item>
+      )}
 
-        {editable && (
-          <Menu.Item key={'tree-flip'}>
-            <Checkbox
-              checked={tree.flip}
-              onChange={(e) => {
-                const checked = e.target.checked;
-                const undoableCheck = {
-                  name: 'Flip Tree',
-                  timestamp: Date.now(),
-                  checked: checked,
-                  selectedElementId: tree.id,
-                  selectedElementType: ObjectType.Tree,
-                  undo: () => {
-                    updateTreeFlipById(tree.id, !undoableCheck.checked);
-                  },
-                  redo: () => {
-                    updateTreeFlipById(tree.id, undoableCheck.checked);
-                  },
-                } as UndoableCheck;
-                addUndoable(undoableCheck);
-                updateTreeFlipById(tree.id, checked);
-              }}
-            >
-              {i18n.t('treeMenu.Flip', { lng: language })}
-            </Checkbox>
+      {/* have to wrap the text field with a Menu so that it can stay open when the user types in it */}
+      {editable && (
+        <Menu>
+          <Menu.Item
+            key={'tree-change-type'}
+            style={{ height: '36px', paddingLeft: '36px', marginBottom: 0, marginTop: 0 }}
+          >
+            <Space style={{ width: '100px' }}>{i18n.t('treeMenu.Type', lang)}: </Space>
+            <TreeSelection key={'trees'} />
           </Menu.Item>
-        )}
 
-        {/* have to wrap the text field with a Menu so that it can stay open when the user types in it */}
-        {editable && (
-          <Menu>
-            <Menu.Item
-              key={'tree-change-type'}
-              style={{ height: '36px', paddingLeft: '36px', marginBottom: 0, marginTop: 0 }}
-            >
-              <Space style={{ width: '100px' }}>{i18n.t('treeMenu.Type', lang)}: </Space>
-              <TreeSelection key={'trees'} />
-            </Menu.Item>
+          <Menu.Item key={'tree-spread'} style={{ height: '36px', paddingLeft: '36px', marginBottom: 0, marginTop: 0 }}>
+            <Space style={{ width: '100px' }}>
+              {i18n.t('treeMenu.Spread', lang) + ' (' + i18n.t('word.MeterAbbreviation', lang) + ')'}:
+            </Space>
+            <InputNumber
+              style={{ width: '160px' }}
+              min={1}
+              max={50}
+              step={1}
+              precision={1}
+              value={inputSpread}
+              onChange={(value) => setSpread(value)}
+            />
+          </Menu.Item>
 
-            <Menu.Item
-              key={'tree-spread'}
-              style={{ height: '36px', paddingLeft: '36px', marginBottom: 0, marginTop: 0 }}
-            >
-              <Space style={{ width: '100px' }}>
-                {i18n.t('treeMenu.Spread', lang) + ' (' + i18n.t('word.MeterAbbreviation', lang) + ')'}:
-              </Space>
-              <InputNumber
-                style={{ width: '160px' }}
-                min={1}
-                max={50}
-                step={1}
-                precision={1}
-                value={inputSpread}
-                onChange={(value) => setSpread(value)}
-              />
-            </Menu.Item>
-
-            <Menu.Item key={'tree-height'} style={{ height: '36px', paddingLeft: '36px', marginTop: 0 }}>
-              <Space style={{ width: '100px' }}>
-                {i18n.t('word.Height', lang) + ' (' + i18n.t('word.MeterAbbreviation', lang) + ')'}:
-              </Space>
-              <InputNumber
-                style={{ width: '160px' }}
-                min={1}
-                max={30}
-                step={1}
-                precision={1}
-                value={inputHeight}
-                onChange={(value) => setHeight(value)}
-              />
-            </Menu.Item>
-          </Menu>
-        )}
-      </>
-    )
+          <Menu.Item key={'tree-height'} style={{ height: '36px', paddingLeft: '36px', marginTop: 0 }}>
+            <Space style={{ width: '100px' }}>
+              {i18n.t('word.Height', lang) + ' (' + i18n.t('word.MeterAbbreviation', lang) + ')'}:
+            </Space>
+            <InputNumber
+              style={{ width: '160px' }}
+              min={1}
+              max={30}
+              step={1}
+              precision={1}
+              value={inputHeight}
+              onChange={(value) => setHeight(value)}
+            />
+          </Menu.Item>
+        </Menu>
+      )}
+    </>
   );
-};
+});

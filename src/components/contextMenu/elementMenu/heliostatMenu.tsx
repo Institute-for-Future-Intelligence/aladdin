@@ -19,16 +19,17 @@ import HeliostatDrawSunBeamSelection from './heliostatDrawSunBeamSelection';
 import HeliostatTowerSelection from './heliostatTowerSelection';
 import { ObjectType } from '../../../types';
 
-export const HeliostatMenu = () => {
+export const HeliostatMenu = React.memo(() => {
   const language = useStore(Selector.language);
-  const heliostat = useStore(Selector.selectedElement) as HeliostatModel;
+  const heliostat = useStore((state) =>
+    state.elements.find((e) => e.selected && e.type === ObjectType.Heliostat),
+  ) as HeliostatModel;
   const updateElementLabelById = useStore(Selector.updateElementLabelById);
   const updateElementShowLabelById = useStore(Selector.updateElementShowLabelById);
   const addUndoable = useStore(Selector.addUndoable);
   const setApplyCount = useStore(Selector.setApplyCount);
 
-  const [labelText, setLabelText] = useState<string>('');
-  const [updateFlag, setUpdateFlag] = useState<boolean>(false);
+  const [labelText, setLabelText] = useState<string>(heliostat.label ?? '');
   const [widthDialogVisible, setWidthDialogVisible] = useState(false);
   const [lengthDialogVisible, setLengthDialogVisible] = useState(false);
   const [poleHeightDialogVisible, setPoleHeightDialogVisible] = useState(false);
@@ -36,13 +37,10 @@ export const HeliostatMenu = () => {
   const [sunBeamDialogVisible, setSunBeamDialogVisible] = useState(false);
   const [towerDialogVisible, setTowerDialogVisible] = useState(false);
 
-  const lang = { lng: language };
+  if (!heliostat) return null;
 
-  useEffect(() => {
-    if (heliostat) {
-      setLabelText(heliostat.label ?? '');
-    }
-  }, [heliostat]);
+  const lang = { lng: language };
+  const editable = !heliostat?.locked;
 
   const showLabel = (checked: boolean) => {
     if (heliostat) {
@@ -61,7 +59,6 @@ export const HeliostatMenu = () => {
       } as UndoableCheck;
       addUndoable(undoableCheck);
       updateElementShowLabelById(heliostat.id, checked);
-      setUpdateFlag(!updateFlag);
     }
   };
 
@@ -84,11 +81,8 @@ export const HeliostatMenu = () => {
       } as UndoableChange;
       addUndoable(undoableChange);
       updateElementLabelById(heliostat.id, labelText);
-      setUpdateFlag(!updateFlag);
     }
   };
-
-  const editable = !heliostat?.locked;
 
   return (
     <>
@@ -199,4 +193,4 @@ export const HeliostatMenu = () => {
       )}
     </>
   );
-};
+});

@@ -26,18 +26,18 @@ import SolarPanelFrameColorSelection from './solarPanelFrameColorSelection';
 import { UNIT_VECTOR_POS_Z } from '../../../constants';
 import { ObjectType } from '../../../types';
 
-export const SolarPanelMenu = () => {
-  const language = useStore(Selector.language);
-  const solarPanel = useStore(Selector.selectedElement) as SolarPanelModel;
+export const SolarPanelMenu = React.memo(() => {
   const updateElementLabelById = useStore(Selector.updateElementLabelById);
   const updateElementShowLabelById = useStore(Selector.updateElementShowLabelById);
   const updateSolarCollectorDrawSunBeamById = useStore(Selector.updateSolarCollectorDrawSunBeamById);
   const addUndoable = useStore(Selector.addUndoable);
   const setApplyCount = useStore(Selector.setApplyCount);
+  const language = useStore(Selector.language);
+  const solarPanel = useStore((state) =>
+    state.elements.find((e) => e.selected && e.type === ObjectType.SolarPanel),
+  ) as SolarPanelModel;
 
-  const [panelNormal, setPanelNormal] = useState<Vector3>();
-  const [labelText, setLabelText] = useState<string>('');
-  const [updateFlag, setUpdateFlag] = useState<boolean>(false);
+  const [labelText, setLabelText] = useState<string>(solarPanel.label ?? '');
   const [pvModelDialogVisible, setPvModelDialogVisible] = useState(false);
   const [orientationDialogVisible, setOrientationDialogVisible] = useState(false);
   const [widthDialogVisible, setWidthDialogVisible] = useState(false);
@@ -49,14 +49,11 @@ export const SolarPanelMenu = () => {
   const [poleSpacingDialogVisible, setPoleSpacingDialogVisible] = useState(false);
   const [frameColorDialogVisible, setFrameColorDialogVisible] = useState(false);
 
-  const lang = { lng: language };
+  if (!solarPanel) return null;
 
-  useEffect(() => {
-    if (solarPanel) {
-      setPanelNormal(new Vector3().fromArray(solarPanel.normal));
-      setLabelText(solarPanel.label ?? '');
-    }
-  }, [solarPanel]);
+  const lang = { lng: language };
+  const panelNormal = new Vector3().fromArray(solarPanel.normal);
+  const editable = !solarPanel?.locked;
 
   const showLabel = (checked: boolean) => {
     if (solarPanel) {
@@ -75,7 +72,6 @@ export const SolarPanelMenu = () => {
       } as UndoableCheck;
       addUndoable(undoableCheck);
       updateElementShowLabelById(solarPanel.id, checked);
-      setUpdateFlag(!updateFlag);
     }
   };
 
@@ -98,7 +94,6 @@ export const SolarPanelMenu = () => {
       } as UndoableChange;
       addUndoable(undoableChange);
       updateElementLabelById(solarPanel.id, labelText);
-      setUpdateFlag(!updateFlag);
     }
   };
 
@@ -119,11 +114,8 @@ export const SolarPanelMenu = () => {
       } as UndoableCheck;
       addUndoable(undoableCheck);
       updateSolarCollectorDrawSunBeamById(solarPanel.id, checked);
-      setUpdateFlag(!updateFlag);
     }
   };
-
-  const editable = !solarPanel?.locked;
 
   return (
     <>
@@ -323,7 +315,6 @@ export const SolarPanelMenu = () => {
                 value={labelText}
                 onChange={(e: React.ChangeEvent<HTMLInputElement>) => setLabelText(e.target.value)}
                 onPressEnter={updateLabelText}
-                onBlur={updateLabelText}
               />
             </Menu.Item>
           </Menu>
@@ -331,4 +322,4 @@ export const SolarPanelMenu = () => {
       )}
     </>
   );
-};
+});

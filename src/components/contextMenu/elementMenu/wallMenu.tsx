@@ -67,11 +67,9 @@ const getSelectedWall = (state: CommonStoreState) => {
   return null;
 };
 
-export const WallMenu = () => {
-  const wall = useStore(getSelectedWall);
+export const WallMenu = React.memo(() => {
   const language = useStore(Selector.language);
   const setCommonStore = useStore(Selector.set);
-  const elements = useStore(Selector.elements);
   const setApplyCount = useStore(Selector.setApplyCount);
   const countAllOffspringsByType = useStore(Selector.countAllOffspringsByTypeAtOnce);
   const removeAllChildElementsByType = useStore(Selector.removeAllChildElementsByType);
@@ -81,10 +79,13 @@ export const WallMenu = () => {
   const updateElementUnlockByParentId = useStore(Selector.updateElementLockByParentId);
   const updateInsideLightsByParentId = useStore(Selector.updateInsideLightsByParentId);
   const updateInsideLightById = useStore(Selector.updateInsideLightById);
+  const wall = useStore(getSelectedWall);
 
   const [dataType, setDataType] = useState<DataType | null>(null);
   const [rValueDialogVisible, setRValueDialogVisible] = useState(false);
   const [heatCapacityDialogVisible, setHeatCapacityDialogVisible] = useState(false);
+
+  if (!wall) return null;
 
   const lang = { lng: language };
   const paddingLeft = '36px';
@@ -337,7 +338,7 @@ export const WallMenu = () => {
         onClick={() => {
           if (!wall) return;
           const oldLocks = new Map<string, boolean>();
-          for (const elem of elements) {
+          for (const elem of useStore.getState().elements) {
             if (elem.parentId === wall.id && elem.type === objectType) {
               oldLocks.set(elem.id, !!elem.locked);
             }
@@ -374,7 +375,7 @@ export const WallMenu = () => {
         onClick={() => {
           if (!wall) return;
           const oldLocks = new Map<string, boolean>();
-          for (const elem of elements) {
+          for (const elem of useStore.getState().elements) {
             if (elem.parentId === wall.id && elem.type === objectType) {
               oldLocks.set(elem.id, !!elem.locked);
             }
@@ -410,7 +411,7 @@ export const WallMenu = () => {
         onClick={() => {
           if (!wall) return;
           const oldValues = new Map<string, boolean>();
-          for (const elem of elements) {
+          for (const elem of useStore.getState().elements) {
             if (elem.parentId === wall.id && elem.type === ObjectType.Light) {
               oldValues.set(elem.id, (elem as LightModel).inside);
             }
@@ -496,8 +497,6 @@ export const WallMenu = () => {
     }
   };
 
-  if (!wall) return null;
-
   return (
     <Menu.ItemGroup>
       {renderPaste()}
@@ -555,4 +554,4 @@ export const WallMenu = () => {
       )}
     </Menu.ItemGroup>
   );
-};
+});

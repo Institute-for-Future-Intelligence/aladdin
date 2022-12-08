@@ -16,18 +16,18 @@ import { Easing, Tween, update } from '@tweenjs/tween.js';
 import { Util } from '../../../Util';
 import { ObjectType } from '../../../types';
 
-export const HumanMenu = () => {
+export const HumanMenu = React.memo(() => {
   const setCommonStore = useStore(Selector.set);
-  const language = useStore(Selector.language);
-  const orthographic = useStore(Selector.viewState.orthographic) ?? false;
   const addUndoable = useStore(Selector.addUndoable);
-  const cameraDirection = useStore(Selector.cameraDirection);
-  const cameraPosition = useStore(Selector.viewState.cameraPosition);
-  const human = useStore(Selector.selectedElement) as HumanModel;
   const getParent = useStore(Selector.getParent);
   const updateHumanObserverById = useStore(Selector.updateHumanObserverById);
   const updateHumanFlipById = useStore(Selector.updateHumanFlipById);
   const selectNone = useStore(Selector.selectNone);
+  const language = useStore(Selector.language);
+  const orthographic = useStore(Selector.viewState.orthographic) ?? false;
+  const human = useStore((state) =>
+    state.elements.find((e) => e.selected && e.type === ObjectType.Human),
+  ) as HumanModel;
 
   const [animationFlag, setAnimationFlag] = useState(false);
 
@@ -85,10 +85,10 @@ export const HumanMenu = () => {
       y = v.y;
       z = v.z;
     }
-    const cam = cameraDirection.clone().normalize().multiplyScalar(0.5);
+    const cam = useStore.getState().cameraDirection.clone().normalize().multiplyScalar(0.5);
     x += cam.x;
     y += cam.y;
-    const originalPosition = [...cameraPosition];
+    const originalPosition = [...useStore.getState().viewState.cameraPosition];
     new Tween(originalPosition)
       .to([x, y, z], 1000)
       .easing(Easing.Quadratic.In)
@@ -101,87 +101,87 @@ export const HumanMenu = () => {
       .start();
   };
 
+  if (!human) return null;
+
   return (
-    human && (
-      <>
-        <Copy keyName={'human-copy'} />
-        {editable && <Cut keyName={'human-cut'} />}
-        <Lock keyName={'human-lock'} />
-        {editable && (
-          <Menu.Item key={'human-observer'}>
-            <Checkbox
-              checked={human.observer}
-              onChange={(e) => {
-                const checked = e.target.checked;
-                const undoableCheck = {
-                  name: 'Set Observer',
-                  timestamp: Date.now(),
-                  checked: checked,
-                  selectedElementId: human.id,
-                  selectedElementType: ObjectType.Human,
-                  undo: () => {
-                    updateHumanObserverById(human.id, !undoableCheck.checked);
-                  },
-                  redo: () => {
-                    updateHumanObserverById(human.id, undoableCheck.checked);
-                  },
-                } as UndoableCheck;
-                addUndoable(undoableCheck);
-                updateHumanObserverById(human.id, checked);
-              }}
-            >
-              {i18n.t('peopleMenu.Observer', { lng: language })}
-            </Checkbox>
-          </Menu.Item>
-        )}
-        {!orthographic && (
-          <Menu.Item
-            key={'human-move-view'}
-            onClick={() => {
-              setAnimationFlag(!animationFlag);
-              animateMove.current = true;
+    <>
+      <Copy keyName={'human-copy'} />
+      {editable && <Cut keyName={'human-cut'} />}
+      <Lock keyName={'human-lock'} />
+      {editable && (
+        <Menu.Item key={'human-observer'}>
+          <Checkbox
+            checked={human.observer}
+            onChange={(e) => {
+              const checked = e.target.checked;
+              const undoableCheck = {
+                name: 'Set Observer',
+                timestamp: Date.now(),
+                checked: checked,
+                selectedElementId: human.id,
+                selectedElementType: ObjectType.Human,
+                undo: () => {
+                  updateHumanObserverById(human.id, !undoableCheck.checked);
+                },
+                redo: () => {
+                  updateHumanObserverById(human.id, undoableCheck.checked);
+                },
+              } as UndoableCheck;
+              addUndoable(undoableCheck);
+              updateHumanObserverById(human.id, checked);
             }}
-            style={{ paddingLeft: '36px' }}
           >
-            {i18n.t('peopleMenu.ViewFromThisPerson', { lng: language })}
+            {i18n.t('peopleMenu.Observer', { lng: language })}
+          </Checkbox>
+        </Menu.Item>
+      )}
+      {!orthographic && (
+        <Menu.Item
+          key={'human-move-view'}
+          onClick={() => {
+            setAnimationFlag(!animationFlag);
+            animateMove.current = true;
+          }}
+          style={{ paddingLeft: '36px' }}
+        >
+          {i18n.t('peopleMenu.ViewFromThisPerson', { lng: language })}
+        </Menu.Item>
+      )}
+      {editable && (
+        <Menu.Item key={'human-flip'}>
+          <Checkbox
+            checked={human.flip}
+            onChange={(e) => {
+              const checked = e.target.checked;
+              const undoableCheck = {
+                name: 'Flip Human',
+                timestamp: Date.now(),
+                checked: checked,
+                selectedElementId: human.id,
+                selectedElementType: ObjectType.Human,
+                undo: () => {
+                  updateHumanFlipById(human.id, !undoableCheck.checked);
+                },
+                redo: () => {
+                  updateHumanFlipById(human.id, undoableCheck.checked);
+                },
+              } as UndoableCheck;
+              addUndoable(undoableCheck);
+              updateHumanFlipById(human.id, checked);
+            }}
+          >
+            {i18n.t('peopleMenu.Flip', { lng: language })}
+          </Checkbox>
+        </Menu.Item>
+      )}
+      {editable && (
+        <Menu>
+          <Menu.Item key={'human-change-person'} style={{ height: '36px', paddingLeft: '36px', marginTop: 0 }}>
+            <Space style={{ width: '120px' }}>{i18n.t('peopleMenu.ChangePerson', { lng: language })}: </Space>
+            <HumanSelection key={'humans'} />
           </Menu.Item>
-        )}
-        {editable && (
-          <Menu.Item key={'human-flip'}>
-            <Checkbox
-              checked={human.flip}
-              onChange={(e) => {
-                const checked = e.target.checked;
-                const undoableCheck = {
-                  name: 'Flip Human',
-                  timestamp: Date.now(),
-                  checked: checked,
-                  selectedElementId: human.id,
-                  selectedElementType: ObjectType.Human,
-                  undo: () => {
-                    updateHumanFlipById(human.id, !undoableCheck.checked);
-                  },
-                  redo: () => {
-                    updateHumanFlipById(human.id, undoableCheck.checked);
-                  },
-                } as UndoableCheck;
-                addUndoable(undoableCheck);
-                updateHumanFlipById(human.id, checked);
-              }}
-            >
-              {i18n.t('peopleMenu.Flip', { lng: language })}
-            </Checkbox>
-          </Menu.Item>
-        )}
-        {editable && (
-          <Menu>
-            <Menu.Item key={'human-change-person'} style={{ height: '36px', paddingLeft: '36px', marginTop: 0 }}>
-              <Space style={{ width: '120px' }}>{i18n.t('peopleMenu.ChangePerson', { lng: language })}: </Space>
-              <HumanSelection key={'humans'} />
-            </Menu.Item>
-          </Menu>
-        )}
-      </>
-    )
+        </Menu>
+      )}
+    </>
   );
-};
+});

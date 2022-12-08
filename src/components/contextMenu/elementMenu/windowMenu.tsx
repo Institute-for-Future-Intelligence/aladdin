@@ -74,7 +74,7 @@ const getSelectedWindow = (state: CommonStoreState) => {
   return null;
 };
 
-export const WindowMenu = () => {
+export const WindowMenu = React.memo(() => {
   const window = useStore(getSelectedWindow);
   const setCommonStore = useStore(Selector.set);
   const language = useStore(Selector.language);
@@ -86,6 +86,8 @@ export const WindowMenu = () => {
 
   const [dataType, setDataType] = useState<WindowDataType | null>(null);
   const [uValueDialogVisible, setUValueDialogVisible] = useState(false);
+
+  if (!window) return null;
 
   const lang = { lng: language };
   const parent = window ? getParent(window) : null;
@@ -295,7 +297,6 @@ export const WindowMenu = () => {
     }
   };
 
-  if (!window) return null;
   return (
     <Menu.ItemGroup>
       <Copy keyName={'window-copy'} />
@@ -329,4 +330,4 @@ export const WindowMenu = () => {
       )}
     </Menu.ItemGroup>
   );
-};
+});

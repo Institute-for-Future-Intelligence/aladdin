@@ -15,7 +15,7 @@ import { CompactPicker } from 'react-color';
 import { UndoableCheck } from '../../../undo/UndoableCheck';
 import { ObjectType } from '../../../types';
 
-export const LightMenu = () => {
+export const LightMenu = React.memo(() => {
   const setCommonStore = useStore(Selector.set);
   const language = useStore(Selector.language);
   const addUndoable = useStore(Selector.addUndoable);
@@ -24,14 +24,19 @@ export const LightMenu = () => {
   const updateLightIntensityById = useStore(Selector.updateLightIntensityById);
   const updateLightDistanceById = useStore(Selector.updateLightDistanceById);
   const updateLightInsideById = useStore(Selector.updateInsideLightById);
-  const light = useStore(Selector.selectedElement) as LightModel;
+  const light = useStore((state) =>
+    state.elements.find((e) => e.selected && e.type === ObjectType.Light),
+  ) as LightModel;
 
   const [inputIntensity, setInputIntensity] = useState<number>(light?.intensity ?? 3);
   const [inputDistance, setInputDistance] = useState<number>(light?.distance ?? 5);
   const [inputColor, setInputColor] = useState<string>(light?.color ?? '#ffff99');
   const [inputInside, setInputInside] = useState<boolean>(light?.inside);
 
+  if (!light) return null;
+
   const lang = { lng: language };
+  const parent = light.parentId ? getParent(light) : undefined;
 
   const setIntensity = (value: number) => {
     if (!light) return;
@@ -81,100 +86,96 @@ export const LightMenu = () => {
     });
   };
 
-  const parent = light?.parentId ? getParent(light) : undefined;
-
   return (
-    light && (
-      <>
-        <Copy keyName={'light-copy'} />
-        <Cut keyName={'light-cut'} />
-        <Lock keyName={'light-lock'} />
+    <>
+      <Copy keyName={'light-copy'} />
+      <Cut keyName={'light-cut'} />
+      <Lock keyName={'light-lock'} />
 
-        {parent && (parent.type === ObjectType.Roof || parent.type === ObjectType.Wall) && (
-          <Menu.Item key={'light-inside'}>
-            <Checkbox
-              checked={inputInside}
-              onChange={(e) => {
-                if (!light) return;
-                const checked = e.target.checked;
-                const undoableCheck = {
-                  name: 'Inside Light',
-                  timestamp: Date.now(),
-                  checked: checked,
-                  undo: () => {
-                    updateLightInsideById(light.id, !undoableCheck.checked);
-                  },
-                  redo: () => {
-                    updateLightInsideById(light.id, undoableCheck.checked);
-                  },
-                } as UndoableCheck;
-                addUndoable(undoableCheck);
-                updateLightInsideById(light.id, checked);
-                setInputInside(checked);
-              }}
-            >
-              {i18n.t('lightMenu.Inside', lang)}
-            </Checkbox>
-          </Menu.Item>
-        )}
-
-        <Menu>
-          <Menu.Item
-            style={{ height: '36px', paddingLeft: '36px', marginBottom: 0, marginTop: 0 }}
-            key={'light-intensity'}
-          >
-            <Space style={{ width: '80px' }}>{i18n.t('lightMenu.Intensity', lang)}:</Space>
-            <InputNumber
-              min={0.1}
-              max={10}
-              step={0.1}
-              precision={1}
-              value={inputIntensity}
-              onChange={(value) => setIntensity(value)}
-            />
-          </Menu.Item>
-          <Menu.Item style={{ height: '36px', paddingLeft: '36px', marginTop: 0 }} key={'light-distance'}>
-            <Space style={{ width: '80px' }}>{i18n.t('lightMenu.MaximumDistance', lang)}:</Space>
-            <InputNumber
-              min={1}
-              max={10}
-              step={1}
-              precision={1}
-              value={inputDistance}
-              onChange={(value) => setDistance(value)}
-            />
-          </Menu.Item>
-        </Menu>
-
-        <SubMenu key={'light-color'} title={i18n.t('word.Color', { lng: language })} style={{ paddingLeft: '24px' }}>
-          <CompactPicker
-            color={inputColor}
-            onChangeComplete={(colorResult) => {
+      {parent && (parent.type === ObjectType.Roof || parent.type === ObjectType.Wall) && (
+        <Menu.Item key={'light-inside'}>
+          <Checkbox
+            checked={inputInside}
+            onChange={(e) => {
               if (!light) return;
-              const oldColor = light.color;
-              const newColor = colorResult.hex;
-              const undoableChange = {
-                name: 'Set Light Color',
+              const checked = e.target.checked;
+              const undoableCheck = {
+                name: 'Inside Light',
                 timestamp: Date.now(),
-                oldValue: oldColor,
-                newValue: newColor,
+                checked: checked,
                 undo: () => {
-                  updateLightColorById(light.id, undoableChange.oldValue as string);
+                  updateLightInsideById(light.id, !undoableCheck.checked);
                 },
                 redo: () => {
-                  updateLightColorById(light.id, undoableChange.newValue as string);
+                  updateLightInsideById(light.id, undoableCheck.checked);
                 },
-              } as UndoableChange;
-              addUndoable(undoableChange);
-              updateLightColorById(light.id, newColor);
-              setInputColor(newColor);
-              setCommonStore((state) => {
-                state.actionState.lightColor = newColor;
-              });
+              } as UndoableCheck;
+              addUndoable(undoableCheck);
+              updateLightInsideById(light.id, checked);
+              setInputInside(checked);
             }}
+          >
+            {i18n.t('lightMenu.Inside', lang)}
+          </Checkbox>
+        </Menu.Item>
+      )}
+
+      <Menu>
+        <Menu.Item
+          style={{ height: '36px', paddingLeft: '36px', marginBottom: 0, marginTop: 0 }}
+          key={'light-intensity'}
+        >
+          <Space style={{ width: '80px' }}>{i18n.t('lightMenu.Intensity', lang)}:</Space>
+          <InputNumber
+            min={0.1}
+            max={10}
+            step={0.1}
+            precision={1}
+            value={inputIntensity}
+            onChange={(value) => setIntensity(value)}
           />
-        </SubMenu>
-      </>
-    )
+        </Menu.Item>
+        <Menu.Item style={{ height: '36px', paddingLeft: '36px', marginTop: 0 }} key={'light-distance'}>
+          <Space style={{ width: '80px' }}>{i18n.t('lightMenu.MaximumDistance', lang)}:</Space>
+          <InputNumber
+            min={1}
+            max={10}
+            step={1}
+            precision={1}
+            value={inputDistance}
+            onChange={(value) => setDistance(value)}
+          />
+        </Menu.Item>
+      </Menu>
+
+      <SubMenu key={'light-color'} title={i18n.t('word.Color', { lng: language })} style={{ paddingLeft: '24px' }}>
+        <CompactPicker
+          color={inputColor}
+          onChangeComplete={(colorResult) => {
+            if (!light) return;
+            const oldColor = light.color;
+            const newColor = colorResult.hex;
+            const undoableChange = {
+              name: 'Set Light Color',
+              timestamp: Date.now(),
+              oldValue: oldColor,
+              newValue: newColor,
+              undo: () => {
+                updateLightColorById(light.id, undoableChange.oldValue as string);
+              },
+              redo: () => {
+                updateLightColorById(light.id, undoableChange.newValue as string);
+              },
+            } as UndoableChange;
+            addUndoable(undoableChange);
+            updateLightColorById(light.id, newColor);
+            setInputColor(newColor);
+            setCommonStore((state) => {
+              state.actionState.lightColor = newColor;
+            });
+          }}
+        />
+      </SubMenu>
+    </>
   );
-};
+});

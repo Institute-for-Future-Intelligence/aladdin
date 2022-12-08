@@ -17,10 +17,7 @@ import { UndoableCheck } from '../../../undo/UndoableCheck';
 import { UndoableChange } from '../../../undo/UndoableChange';
 import { UndoableChangeGroup } from '../../../undo/UndoableChangeGroup';
 
-export const GroundMenu = () => {
-  const language = useStore(Selector.language);
-  const albedo = useStore((state) => state.world.ground.albedo);
-  const groundColor = useStore(Selector.viewState.groundColor);
+export const GroundMenu = React.memo(() => {
   const setCommonStore = useStore(Selector.set);
   const countAllElements = useStore(Selector.countAllElements);
   const countElementsByType = useStore(Selector.countElementsByType);
@@ -28,12 +25,13 @@ export const GroundMenu = () => {
   const updateElementLockById = useStore(Selector.updateElementLockById);
   const updateAllElementLocks = useStore(Selector.updateAllElementLocks);
   const addUndoable = useStore(Selector.addUndoable);
-  const elements = useStore(Selector.elements);
+
+  const albedo = useStore((state) => state.world.ground.albedo);
+  const groundColor = useStore(Selector.viewState.groundColor);
   const groundImage = useStore(Selector.viewState.groundImage);
   const waterSurface = useStore(Selector.viewState.waterSurface);
+  const language = useStore(Selector.language);
   const elementsToPaste = useStore(Selector.elementsToPaste);
-
-  const [updateFlag, setUpdateFlag] = useState<boolean>(false);
 
   const elementCount = countAllElements();
   const treeCount = countElementsByType(ObjectType.Tree, true);
@@ -96,7 +94,7 @@ export const GroundMenu = () => {
               title: i18n.t('groundMenu.DoYouReallyWantToRemoveAllPeople', lang) + ' (' + humanCount + ')?',
               icon: <ExclamationCircleOutlined />,
               onOk: () => {
-                const removed = elements.filter((e) => !e.locked && e.type === ObjectType.Human);
+                const removed = useStore.getState().elements.filter((e) => !e.locked && e.type === ObjectType.Human);
                 removeElementsByType(ObjectType.Human);
                 const removedElements = JSON.parse(JSON.stringify(removed));
                 const undoableRemoveAll = {
@@ -130,7 +128,7 @@ export const GroundMenu = () => {
               title: i18n.t('groundMenu.DoYouReallyWantToRemoveAllTrees', lang) + ' (' + treeCount + ')?',
               icon: <ExclamationCircleOutlined />,
               onOk: () => {
-                const removed = elements.filter((e) => !e.locked && e.type === ObjectType.Tree);
+                const removed = useStore.getState().elements.filter((e) => !e.locked && e.type === ObjectType.Tree);
                 removeElementsByType(ObjectType.Tree);
                 const removedElements = JSON.parse(JSON.stringify(removed));
                 const undoableRemoveAll = {
@@ -164,7 +162,7 @@ export const GroundMenu = () => {
               title: i18n.t('groundMenu.DoYouReallyWantToRemoveAllFlowers', lang) + ' (' + flowerCount + ')?',
               icon: <ExclamationCircleOutlined />,
               onOk: () => {
-                const removed = elements.filter((e) => !e.locked && e.type === ObjectType.Flower);
+                const removed = useStore.getState().elements.filter((e) => !e.locked && e.type === ObjectType.Flower);
                 removeElementsByType(ObjectType.Flower);
                 const removedElements = JSON.parse(JSON.stringify(removed));
                 const undoableRemoveAll = {
@@ -198,7 +196,9 @@ export const GroundMenu = () => {
               title: i18n.t('groundMenu.DoYouReallyWantToRemoveAllFoundations', lang) + ' (' + foundationCount + ')?',
               icon: <ExclamationCircleOutlined />,
               onOk: () => {
-                const removed = elements.filter((e) => !e.locked && e.type === ObjectType.Foundation);
+                const removed = useStore
+                  .getState()
+                  .elements.filter((e) => !e.locked && e.type === ObjectType.Foundation);
                 removeElementsByType(ObjectType.Foundation);
                 const removedElements = JSON.parse(JSON.stringify(removed));
                 const undoableRemoveAll = {
@@ -232,7 +232,7 @@ export const GroundMenu = () => {
               title: i18n.t('groundMenu.DoYouReallyWantToRemoveAllCuboids', lang) + ' (' + cuboidCount + ')?',
               icon: <ExclamationCircleOutlined />,
               onOk: () => {
-                const removed = elements.filter((e) => !e.locked && e.type === ObjectType.Cuboid);
+                const removed = useStore.getState().elements.filter((e) => !e.locked && e.type === ObjectType.Cuboid);
                 removeElementsByType(ObjectType.Cuboid);
                 const removedElements = JSON.parse(JSON.stringify(removed));
                 const undoableRemoveAll = {
@@ -264,7 +264,7 @@ export const GroundMenu = () => {
             key={'lock-all-elements'}
             onClick={() => {
               const oldLocks = new Map<string, boolean>();
-              for (const elem of elements) {
+              for (const elem of useStore.getState().elements) {
                 oldLocks.set(elem.id, !!elem.locked);
               }
               updateAllElementLocks(true);
@@ -292,7 +292,7 @@ export const GroundMenu = () => {
             key={'unlock-all-elements'}
             onClick={() => {
               const oldLocks = new Map<string, boolean>();
-              for (const elem of elements) {
+              for (const elem of useStore.getState().elements) {
                 oldLocks.set(elem.id, !!elem.locked);
               }
               updateAllElementLocks(false);
@@ -387,7 +387,6 @@ export const GroundMenu = () => {
               } as UndoableChange;
               addUndoable(undoableChange);
               setGroundColor(newColor);
-              setUpdateFlag(!updateFlag);
             }}
           />
         </SubMenu>
@@ -427,4 +426,4 @@ export const GroundMenu = () => {
       </Menu>
     </>
   );
-};
+});

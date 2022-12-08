@@ -22,13 +22,15 @@ import PolygonLineWidthSelection from './polygonLineWidthSelection';
 import SolarPanelArrayGaWizard from './solarPanelArrayGaWizard';
 import SolarPanelArrayPsoWizard from './solarPanelArrayPsoWizard';
 
-export const PolygonMenu = () => {
+export const PolygonMenu = React.memo(() => {
   const language = useStore(Selector.language);
-  const polygon = useStore(Selector.selectedElement) as PolygonModel;
   const updatePolygonFilledById = useStore(Selector.updatePolygonFilledById);
   const addUndoable = useStore(Selector.addUndoable);
   const elementsToPaste = useStore(Selector.elementsToPaste);
   const setApplyCount = useStore(Selector.setApplyCount);
+  const polygon = useStore((state) =>
+    state.elements.find((e) => e.selected && e.type === ObjectType.Polygon),
+  ) as PolygonModel;
 
   const [lineColorDialogVisible, setLineColorDialogVisible] = useState(false);
   const [lineStyleDialogVisible, setLineStyleDialogVisible] = useState(false);
@@ -39,6 +41,10 @@ export const PolygonMenu = () => {
   const [solarPanelLayoutGaWizardVisible, setSolarPanelLayoutGaWizardVisible] = useState(false);
   const [solarPanelLayoutPsoWizardVisible, setSolarPanelLayoutPsoWizardVisible] = useState(false);
   const lang = { lng: language };
+
+  if (!polygon) return null;
+
+  const editable = !polygon?.locked;
 
   const togglePolygonFilled = (e: CheckboxChangeEvent) => {
     if (polygon) {
@@ -76,137 +82,133 @@ export const PolygonMenu = () => {
     return false;
   };
 
-  const editable = !polygon?.locked;
-
   return (
-    polygon && (
-      <>
-        {legalToPaste() && <Paste keyName={'polygon-paste'} />}
-        <Copy keyName={'polygon-copy'} />
-        {editable && <Cut keyName={'polygon-cut'} />}
-        <SubMenu key={'layout'} title={i18n.t('polygonMenu.Layout', lang)} style={{ paddingLeft: '24px' }}>
-          {solarPanelLayoutWizardVisible && (
-            <SolarPanelLayoutWizard setDialogVisible={setSolarPanelLayoutWizardVisible} />
+    <>
+      {legalToPaste() && <Paste keyName={'polygon-paste'} />}
+      <Copy keyName={'polygon-copy'} />
+      {editable && <Cut keyName={'polygon-cut'} />}
+      <SubMenu key={'layout'} title={i18n.t('polygonMenu.Layout', lang)} style={{ paddingLeft: '24px' }}>
+        {solarPanelLayoutWizardVisible && (
+          <SolarPanelLayoutWizard setDialogVisible={setSolarPanelLayoutWizardVisible} />
+        )}
+        <Menu.Item
+          key={'solar-panel-layout'}
+          onClick={() => {
+            setApplyCount(0);
+            setSolarPanelLayoutWizardVisible(true);
+          }}
+          style={{ paddingLeft: '36px' }}
+        >
+          {i18n.t('polygonMenu.SolarPanelArrayLayoutParametricDesign', lang)} ...
+        </Menu.Item>
+        <SubMenu
+          key={'solar-panel-layout-ai'}
+          title={i18n.t('polygonMenu.SolarPanelArrayLayoutGenerativeDesign', lang)}
+          style={{ paddingLeft: '24px' }}
+        >
+          {solarPanelLayoutGaWizardVisible && (
+            <SolarPanelArrayGaWizard setDialogVisible={setSolarPanelLayoutGaWizardVisible} />
           )}
           <Menu.Item
-            key={'solar-panel-layout'}
+            key={'solar-panel-layout-ga'}
             onClick={() => {
               setApplyCount(0);
-              setSolarPanelLayoutWizardVisible(true);
+              setSolarPanelLayoutGaWizardVisible(true);
             }}
             style={{ paddingLeft: '36px' }}
           >
-            {i18n.t('polygonMenu.SolarPanelArrayLayoutParametricDesign', lang)} ...
+            {i18n.t('optimizationMenu.GeneticAlgorithm', lang)} ...
           </Menu.Item>
-          <SubMenu
-            key={'solar-panel-layout-ai'}
-            title={i18n.t('polygonMenu.SolarPanelArrayLayoutGenerativeDesign', lang)}
-            style={{ paddingLeft: '24px' }}
+          {solarPanelLayoutPsoWizardVisible && (
+            <SolarPanelArrayPsoWizard setDialogVisible={setSolarPanelLayoutPsoWizardVisible} />
+          )}
+          <Menu.Item
+            key={'solar-panel-layout-pso'}
+            onClick={() => {
+              setApplyCount(0);
+              setSolarPanelLayoutPsoWizardVisible(true);
+            }}
+            style={{ paddingLeft: '36px' }}
           >
-            {solarPanelLayoutGaWizardVisible && (
-              <SolarPanelArrayGaWizard setDialogVisible={setSolarPanelLayoutGaWizardVisible} />
-            )}
-            <Menu.Item
-              key={'solar-panel-layout-ga'}
-              onClick={() => {
-                setApplyCount(0);
-                setSolarPanelLayoutGaWizardVisible(true);
-              }}
-              style={{ paddingLeft: '36px' }}
-            >
-              {i18n.t('optimizationMenu.GeneticAlgorithm', lang)} ...
-            </Menu.Item>
-            {solarPanelLayoutPsoWizardVisible && (
-              <SolarPanelArrayPsoWizard setDialogVisible={setSolarPanelLayoutPsoWizardVisible} />
-            )}
-            <Menu.Item
-              key={'solar-panel-layout-pso'}
-              onClick={() => {
-                setApplyCount(0);
-                setSolarPanelLayoutPsoWizardVisible(true);
-              }}
-              style={{ paddingLeft: '36px' }}
-            >
-              {i18n.t('optimizationMenu.ParticleSwarmOptimization', lang)} ...
-            </Menu.Item>
-          </SubMenu>
-        </SubMenu>
-        <Lock keyName={'polygon-lock'} />
-        {editable && (
-          <Menu.Item key={'polygon-filled'}>
-            <Checkbox checked={!!polygon?.filled} onChange={togglePolygonFilled}>
-              {i18n.t('polygonMenu.Filled', lang)}
-            </Checkbox>
+            {i18n.t('optimizationMenu.ParticleSwarmOptimization', lang)} ...
           </Menu.Item>
-        )}
-        {editable && (
-          <>
-            {lineColorDialogVisible && <PolygonLineColorSelection setDialogVisible={setLineColorDialogVisible} />}
-            <Menu.Item
-              key={'polygon-line-color'}
-              style={{ paddingLeft: '36px' }}
-              onClick={() => {
-                setApplyCount(0);
-                setLineColorDialogVisible(true);
-              }}
-            >
-              {i18n.t('polygonMenu.LineColor', lang)} ...
-            </Menu.Item>
-            {lineStyleDialogVisible && <PolygonLineStyleSelection setDialogVisible={setLineStyleDialogVisible} />}
-            <Menu.Item
-              key={'polygon-line-style'}
-              style={{ paddingLeft: '36px' }}
-              onClick={() => {
-                setApplyCount(0);
-                setLineStyleDialogVisible(true);
-              }}
-            >
-              {i18n.t('polygonMenu.LineStyle', lang)} ...
-            </Menu.Item>
-            {lineWidthDialogVisible && <PolygonLineWidthSelection setDialogVisible={setLineWidthDialogVisible} />}
-            <Menu.Item
-              key={'polygon-line-width'}
-              style={{ paddingLeft: '36px' }}
-              onClick={() => {
-                setApplyCount(0);
-                setLineWidthDialogVisible(true);
-              }}
-            >
-              {i18n.t('polygonMenu.LineWidth', lang)} ...
-            </Menu.Item>
-          </>
-        )}
-        {editable && (!polygon.textureType || polygon.textureType === PolygonTexture.NoTexture) && (
-          <>
-            {fillColorDialogVisible && <PolygonFillColorSelection setDialogVisible={setFillColorDialogVisible} />}
-            <Menu.Item
-              key={'polygon-fill-color'}
-              style={{ paddingLeft: '36px' }}
-              onClick={() => {
-                setApplyCount(0);
-                setFillColorDialogVisible(true);
-              }}
-            >
-              {i18n.t('polygonMenu.FillColor', lang)} ...
-            </Menu.Item>
-          </>
-        )}
-        {editable && (
-          <>
-            {textureDialogVisible && <PolygonTextureSelection setDialogVisible={setTextureDialogVisible} />}
-            <Menu.Item
-              key={'polygon-texture'}
-              style={{ paddingLeft: '36px' }}
-              onClick={() => {
-                setApplyCount(0);
-                setTextureDialogVisible(true);
-              }}
-            >
-              {i18n.t('polygonMenu.FillTexture', lang)} ...
-            </Menu.Item>
-          </>
-        )}
-      </>
-    )
+        </SubMenu>
+      </SubMenu>
+      <Lock keyName={'polygon-lock'} />
+      {editable && (
+        <Menu.Item key={'polygon-filled'}>
+          <Checkbox checked={!!polygon?.filled} onChange={togglePolygonFilled}>
+            {i18n.t('polygonMenu.Filled', lang)}
+          </Checkbox>
+        </Menu.Item>
+      )}
+      {editable && (
+        <>
+          {lineColorDialogVisible && <PolygonLineColorSelection setDialogVisible={setLineColorDialogVisible} />}
+          <Menu.Item
+            key={'polygon-line-color'}
+            style={{ paddingLeft: '36px' }}
+            onClick={() => {
+              setApplyCount(0);
+              setLineColorDialogVisible(true);
+            }}
+          >
+            {i18n.t('polygonMenu.LineColor', lang)} ...
+          </Menu.Item>
+          {lineStyleDialogVisible && <PolygonLineStyleSelection setDialogVisible={setLineStyleDialogVisible} />}
+          <Menu.Item
+            key={'polygon-line-style'}
+            style={{ paddingLeft: '36px' }}
+            onClick={() => {
+              setApplyCount(0);
+              setLineStyleDialogVisible(true);
+            }}
+          >
+            {i18n.t('polygonMenu.LineStyle', lang)} ...
+          </Menu.Item>
+          {lineWidthDialogVisible && <PolygonLineWidthSelection setDialogVisible={setLineWidthDialogVisible} />}
+          <Menu.Item
+            key={'polygon-line-width'}
+            style={{ paddingLeft: '36px' }}
+            onClick={() => {
+              setApplyCount(0);
+              setLineWidthDialogVisible(true);
+            }}
+          >
+            {i18n.t('polygonMenu.LineWidth', lang)} ...
+          </Menu.Item>
+        </>
+      )}
+      {editable && (!polygon.textureType || polygon.textureType === PolygonTexture.NoTexture) && (
+        <>
+          {fillColorDialogVisible && <PolygonFillColorSelection setDialogVisible={setFillColorDialogVisible} />}
+          <Menu.Item
+            key={'polygon-fill-color'}
+            style={{ paddingLeft: '36px' }}
+            onClick={() => {
+              setApplyCount(0);
+              setFillColorDialogVisible(true);
+            }}
+          >
+            {i18n.t('polygonMenu.FillColor', lang)} ...
+          </Menu.Item>
+        </>
+      )}
+      {editable && (
+        <>
+          {textureDialogVisible && <PolygonTextureSelection setDialogVisible={setTextureDialogVisible} />}
+          <Menu.Item
+            key={'polygon-texture'}
+            style={{ paddingLeft: '36px' }}
+            onClick={() => {
+              setApplyCount(0);
+              setTextureDialogVisible(true);
+            }}
+          >
+            {i18n.t('polygonMenu.FillTexture', lang)} ...
+          </Menu.Item>
+        </>
+      )}
+    </>
   );
-};
+});

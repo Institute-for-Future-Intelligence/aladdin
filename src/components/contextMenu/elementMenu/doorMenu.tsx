@@ -29,7 +29,7 @@ const getSelectedDoor = (state: CommonStoreState) => {
   return null;
 };
 
-export const DoorMenu = () => {
+export const DoorMenu = React.memo(() => {
   const door = useStore(getSelectedDoor);
   const language = useStore(Selector.language);
   const setApplyCount = useStore(Selector.setApplyCount);
@@ -41,6 +41,8 @@ export const DoorMenu = () => {
   const [widthDialogVisible, setWidthDialogVisible] = useState(false);
   const [heightDialogVisible, setHeightDialogVisible] = useState(false);
   const [uValueDialogVisible, setUValueDialogVisible] = useState(false);
+
+  if (!door) return null;
 
   const lang = { lng: language };
   const paddingLeft = '36px';
@@ -109,7 +111,6 @@ export const DoorMenu = () => {
     );
   };
 
-  if (!door) return null;
   return (
     <>
       <Copy keyName={'door-copy'} />
@@ -211,4 +212,4 @@ export const DoorMenu = () => {
       {colorDialogVisible && <DoorColorSelection setDialogVisible={setColorDialogVisible} />}
     </>
   );
-};
+});
