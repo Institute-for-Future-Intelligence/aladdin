@@ -382,7 +382,11 @@ const HipRoof = (roofModel: HipRoofModel) => {
   }, []);
 
   const { grabRef, addUndoableMove, undoMove, setOldRefData } = useElementUndoable();
-  // useUpdateSegmentVerticesMap(id, new Vector3(centroid2D.x, centroid2D.y, topZ), roofSegments);
+  const updateSegmentVerticesMap = useUpdateSegmentVerticesMap(
+    id,
+    new Vector3(centroid2D.x, centroid2D.y, topZ),
+    roofSegments,
+  );
 
   const selectMe = useStore(Selector.selectMe);
   const showSolarRadiationHeatmap = useStore(Selector.showSolarRadiationHeatmap);
@@ -624,6 +628,7 @@ const HipRoof = (roofModel: HipRoofModel) => {
               }
             });
             updateRooftopElements(foundation, id, roofSegments, ridgeMidPoint, topZ, thickness);
+            updateSegmentVerticesMap();
           }}
         >
           <meshBasicMaterial side={DoubleSide} transparent={true} opacity={0.5} />

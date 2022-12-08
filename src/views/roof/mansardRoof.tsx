@@ -498,15 +498,15 @@ const MansardRoof = (roofModel: MansardRoofModel) => {
 
   const { grabRef, addUndoableMove, undoMove, setOldRefData } = useElementUndoable();
   const { transparent, opacity } = useTransparent();
-  // useUpdateSegmentVerticesMap(
-  //   id,
-  //   centroid,
-  //   roofSegments,
-  //   ridgePoints.reduce(
-  //     (acc, curr) => acc.concat(curr.leftPoint.clone().sub(centroid).add(thicknessVector)),
-  //     [] as Vector3[],
-  //   ),
-  // );
+  const updateSegmentVerticesMap = useUpdateSegmentVerticesMap(
+    id,
+    centroid,
+    roofSegments,
+    ridgePoints.reduce(
+      (acc, curr) => acc.concat(curr.leftPoint.clone().sub(centroid).add(thicknessVector)),
+      [] as Vector3[],
+    ),
+  );
 
   const selectMe = useStore(Selector.selectMe);
   const showSolarRadiationHeatmap = useStore(Selector.showSolarRadiationHeatmap);
@@ -847,6 +847,7 @@ const MansardRoof = (roofModel: MansardRoofModel) => {
             setRoofHandleType(RoofHandleType.Null);
             setRidgeHandleIndex(null);
             useStoreRef.getState().setEnableOrbitController(true);
+            updateSegmentVerticesMap();
           }}
         >
           <meshBasicMaterial side={DoubleSide} transparent={true} opacity={0.5} />

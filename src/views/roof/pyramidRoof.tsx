@@ -637,7 +637,7 @@ const PyramidRoof = (roofModel: PyramidRoofModel) => {
     }
   }, [showSolarRadiationHeatmap, solarRadiationHeatmapMaxValue]);
 
-  // useUpdateSegmentVerticesMap(id, centerPointV3, roofSegments);
+  const updateSegmentVerticesMap = useUpdateSegmentVerticesMap(id, centerPointV3, roofSegments);
 
   return (
     <group position={[cx, cy, cz]} rotation={[0, 0, rotation]} name={`Pyramid Roof Group ${id}`}>
@@ -772,6 +772,7 @@ const PyramidRoof = (roofModel: PyramidRoofModel) => {
             useStoreRef.getState().setEnableOrbitController(true);
             updateRooftopElements(foundation, id, roofSegments, centerPointV3, topZ, thickness);
             isPointerDownRef.current = false;
+            updateSegmentVerticesMap();
           }}
         />
       )}

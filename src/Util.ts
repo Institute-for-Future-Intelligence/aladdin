@@ -1284,18 +1284,6 @@ export class Util {
     return array;
   }
 
-  static debounce(fn: Function, delay = 750) {
-    let timerId: NodeJS.Timeout | null = null;
-    return (...args: any) => {
-      if (timerId) {
-        clearTimeout(timerId);
-      }
-      timerId = setTimeout(() => {
-        fn(...args);
-      }, delay);
-    };
-  }
-
   static getAllConnectedWalls = (wall: WallModel) => {
     const getElementById = useStore.getState().getElementById;
 
