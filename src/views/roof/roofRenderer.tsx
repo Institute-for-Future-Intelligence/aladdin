@@ -638,4 +638,4 @@ const RoofRenderer = (props: RoofModel) => {
   return renderRoof();
 };
 
-export default RoofRenderer;
+export default React.memo(RoofRenderer);

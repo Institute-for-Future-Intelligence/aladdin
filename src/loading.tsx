@@ -11,7 +11,7 @@ import SimulationControlPanel from './panels/simulationControlPanel';
 import EvolutionControlPanel from './panels/evolutionControlPanel';
 import Spinner from './components/spinner';
 
-export default function Loading({ loading }: { loading: boolean }) {
+export default React.memo(function Loading({ loading }: { loading: boolean }) {
   const loadingFile = useStore(Selector.loadingFile);
   const simulationInProgress = useStore(Selector.simulationInProgress);
   const evolutionInProgress = useStore(Selector.evolutionInProgress);
@@ -52,4 +52,4 @@ export default function Loading({ loading }: { loading: boolean }) {
       )}
     </>
   );
-}
+});
