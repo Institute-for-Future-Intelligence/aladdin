@@ -498,7 +498,7 @@ const MansardRoof = (roofModel: MansardRoofModel) => {
 
   const { grabRef, addUndoableMove, undoMove, setOldRefData } = useElementUndoable();
   const { transparent, opacity } = useTransparent();
-  const updateSegmentVerticesMap = useUpdateSegmentVerticesMap(
+  useUpdateSegmentVerticesMap(
     id,
     centroid,
     roofSegments,
@@ -847,7 +847,6 @@ const MansardRoof = (roofModel: MansardRoofModel) => {
             setRoofHandleType(RoofHandleType.Null);
             setRidgeHandleIndex(null);
             useStoreRef.getState().setEnableOrbitController(true);
-            updateSegmentVerticesMap();
           }}
         >
           <meshBasicMaterial side={DoubleSide} transparent={true} opacity={0.5} />

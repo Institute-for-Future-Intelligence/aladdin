@@ -574,8 +574,9 @@ const PyramidRoof = (roofModel: PyramidRoofModel) => {
   const getHeatmap = useStore(Selector.getHeatmap);
   const [heatmapTextures, setHeatmapTextures] = useState<CanvasTexture[]>([]);
   const [flatHeatmapTexture, setFlatHeatmapTexture] = useState<CanvasTexture | null>(null);
-  const getRoofSegmentVertices = useStore(Selector.getRoofSegmentVertices);
   const selectMe = useStore(Selector.selectMe);
+
+  const updateSegmentVertices = useUpdateSegmentVerticesMap(id, centerPointV3, roofSegments);
 
   useEffect(() => {
     if (showSolarRadiationHeatmap) {
@@ -585,7 +586,7 @@ const PyramidRoof = (roofModel: PyramidRoofModel) => {
           const t = Util.fetchHeatmapTexture(heatmap, solarRadiationHeatmapMaxValue ?? 5);
           if (t) {
             // obtain the bounding rectangle
-            const segmentVertices = getRoofSegmentVertices(id);
+            const segmentVertices = updateSegmentVertices();
             if (segmentVertices && segmentVertices.length > 0 && foundation) {
               const euler = new Euler(0, 0, foundation.rotation[2], 'ZYX');
               let minX = Number.MAX_VALUE;
@@ -619,7 +620,7 @@ const PyramidRoof = (roofModel: PyramidRoofModel) => {
         const n = roofSegments.length;
         if (n > 0) {
           const textures = [];
-          const segmentVertices = getRoofSegmentVertices(id);
+          const segmentVertices = updateSegmentVertices();
           if (segmentVertices) {
             for (let i = 0; i < n; i++) {
               const heatmap = getHeatmap(id + '-' + i);
@@ -636,8 +637,6 @@ const PyramidRoof = (roofModel: PyramidRoofModel) => {
       }
     }
   }, [showSolarRadiationHeatmap, solarRadiationHeatmapMaxValue]);
-
-  const updateSegmentVerticesMap = useUpdateSegmentVerticesMap(id, centerPointV3, roofSegments);
 
   return (
     <group position={[cx, cy, cz]} rotation={[0, 0, rotation]} name={`Pyramid Roof Group ${id}`}>
@@ -772,7 +771,6 @@ const PyramidRoof = (roofModel: PyramidRoofModel) => {
             useStoreRef.getState().setEnableOrbitController(true);
             updateRooftopElements(foundation, id, roofSegments, centerPointV3, topZ, thickness);
             isPointerDownRef.current = false;
-            updateSegmentVerticesMap();
           }}
         />
       )}

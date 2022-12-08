@@ -24,7 +24,6 @@ const RoofHeightInput = ({ setDialogVisible }: { setDialogVisible: (b: boolean) 
   const revertApply = useStore(Selector.revertApply);
   const getElementById = useStore(Selector.getElementById);
   const setCommonStore = useStore(Selector.set);
-  const getRoofSegmentVertices = useStore(Selector.getRoofSegmentVertices);
   const updateRoofRiseById = useStore(Selector.updateRoofRiseById);
 
   const [inputValue, setInputValue] = useState<number>(roof?.rise ?? 0);
@@ -50,24 +49,6 @@ const RoofHeightInput = ({ setDialogVisible }: { setDialogVisible: (b: boolean) 
     for (const id of map.keys()) {
       updateRoofRiseById(id, value);
     }
-  };
-
-  const getRoofRise = (roofId: string) => {
-    const segments = getRoofSegmentVertices(roofId);
-    let rise = 0;
-    if (segments && segments.length > 0) {
-      let zmin = segments[0][0].z;
-      let zmax = zmin;
-      for (const s of segments) {
-        for (const v of s) {
-          if (v.z > zmax) zmax = v.z;
-          else if (v.z < zmin) zmin = v.z;
-        }
-      }
-      rise = zmax - zmin;
-    }
-    if (rise > 0) rise -= roof.thickness;
-    return rise;
   };
 
   const setHeight = (value: number) => {
@@ -237,13 +218,6 @@ const RoofHeightInput = ({ setDialogVisible }: { setDialogVisible: (b: boolean) 
             />
             <div style={{ paddingTop: '20px', textAlign: 'left', fontSize: '11px' }}>
               {i18n.t('word.Range', lang)}: [0, 50] {i18n.t('word.MeterAbbreviation', lang)}
-              <br />
-              <br />
-              {i18n.t('roofMenu.CurrentRise', lang) +
-                ': ' +
-                getRoofRise(roof.id).toFixed(2) +
-                ' ' +
-                i18n.t('word.MeterAbbreviation', lang)}
             </div>
           </Col>
           <Col className="gutter-row" span={1} style={{ verticalAlign: 'middle', paddingTop: '6px' }}>

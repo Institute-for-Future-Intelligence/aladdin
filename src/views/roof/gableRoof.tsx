@@ -806,7 +806,7 @@ const GableRoof = (roofModel: GableRoofModel) => {
   }, []);
 
   const { grabRef, addUndoableMove, undoMove, setOldRefData } = useElementUndoable();
-  const updateSegmentVerticesMap = useUpdateSegmentVerticesMap(id, centroid, roofSegments);
+  useUpdateSegmentVerticesMap(id, centroid, roofSegments);
 
   const selectMe = useStore(Selector.selectMe);
   const showSolarRadiationHeatmap = useStore(Selector.showSolarRadiationHeatmap);
@@ -1078,7 +1078,6 @@ const GableRoof = (roofModel: GableRoofModel) => {
             useStoreRef.getState().setEnableOrbitController(true);
             useStore.getState().updateRoofRiseById(id, riseInnerState);
             updateRooftopElements(foundation, id, roofSegments, centroid, topZ, thickness);
-            updateSegmentVerticesMap();
           }}
         >
           <meshBasicMaterial side={DoubleSide} transparent={true} opacity={0.5} />

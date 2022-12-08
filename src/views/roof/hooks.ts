@@ -315,9 +315,10 @@ export const useUpdateSegmentVerticesMap = (
   roofSegments: RoofSegmentProps[],
   mansardTop?: Vector3[],
 ) => {
-  const fileChanged = useStore(Selector.fileChanged);
+  const runDynamicSimulation = useStore(Selector.runDynamicSimulation);
+  const runStaticSimulation = useStore(Selector.runStaticSimulation);
 
-  const update = () => {
+  const updateSegmentVertices = () => {
     const relToFoundation = (v: Vector3) => v.clone().add(centroid);
     const vertices = roofSegments.map((segment) => {
       const points = segment.points;
@@ -338,13 +339,17 @@ export const useUpdateSegmentVerticesMap = (
     useStore.getState().set((state) => {
       state.roofSegmentVerticesMap.set(roofId, vertices);
     });
+
+    return vertices;
   };
 
   useEffect(() => {
-    update();
-  }, [fileChanged]);
+    if (runDynamicSimulation || runStaticSimulation) {
+      updateSegmentVertices();
+    }
+  }, [runDynamicSimulation, runStaticSimulation]);
 
-  return update;
+  return updateSegmentVertices;
 };
 
 export const useUpdateOldRoofFiles = (roofModel: RoofModel, highestWallHeight: number) => {
