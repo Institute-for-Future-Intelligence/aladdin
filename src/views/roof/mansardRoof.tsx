@@ -675,7 +675,6 @@ const MansardRoof = (roofModel: MansardRoofModel) => {
               ref={topSurfaceMeshRef}
               name={'Mansard Roof Top Surface'}
               position={[0, 0, thickness]}
-              castShadow={shadowEnabled && !transparent}
               receiveShadow={shadowEnabled}
               userData={{ simulation: true }}
             >
@@ -694,8 +693,8 @@ const MansardRoof = (roofModel: MansardRoofModel) => {
             {!showSolarRadiationHeatmap && (
               <Extrude
                 args={[topRidgeShape, { steps: 1, depth: thickness, bevelEnabled: false }]}
-                castShadow={false}
-                receiveShadow={false}
+                castShadow={shadowEnabled && !transparent}
+                receiveShadow={shadowEnabled}
               >
                 <meshStandardMaterial color={'white'} transparent={transparent} opacity={opacity} />
               </Extrude>

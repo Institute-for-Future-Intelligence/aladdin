@@ -189,7 +189,6 @@ export const RoofSegment = ({
           <mesh
             name={`Roof Segment ${index} Surface`}
             uuid={id + '-' + index}
-            castShadow={shadowEnabled && !transparent}
             receiveShadow={shadowEnabled}
             userData={{ simulation: true }}
             position={[0, 0, 0.01]}
@@ -205,7 +204,11 @@ export const RoofSegment = ({
             />
           </mesh>
           {!showSolarRadiationHeatmap && (
-            <mesh name={`Roof segment ${index} bulk`} castShadow={false} receiveShadow={false}>
+            <mesh
+              name={`Roof segment ${index} bulk`}
+              castShadow={shadowEnabled && !transparent}
+              receiveShadow={shadowEnabled}
+            >
               <convexGeometry args={[points, isFlat ? defaultAngle : angle, isFlat ? 1 : length]} />
               <meshStandardMaterial color={sideColor} transparent={transparent} opacity={opacity} />
             </mesh>

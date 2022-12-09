@@ -1305,7 +1305,6 @@ const RoofSegment = ({
               <mesh
                 name={`Gable Roof Segment ${index} Surface`}
                 uuid={id + '-' + index}
-                castShadow={shadowEnabled && !transparent}
                 receiveShadow={shadowEnabled}
                 userData={{ simulation: true }}
                 position={[0, 0, 0.01]}
@@ -1321,7 +1320,12 @@ const RoofSegment = ({
                 />
               </mesh>
               {!showSolarRadiationHeatmap && (
-                <mesh ref={bulkMeshRef} name={'Gable Roof Bulk'} castShadow={false} receiveShadow={false}>
+                <mesh
+                  ref={bulkMeshRef}
+                  name={'Gable Roof Bulk'}
+                  castShadow={shadowEnabled && !transparent}
+                  receiveShadow={shadowEnabled}
+                >
                   <meshStandardMaterial color={sideColor ?? 'white'} transparent={transparent} opacity={_opacity} />
                 </mesh>
               )}
