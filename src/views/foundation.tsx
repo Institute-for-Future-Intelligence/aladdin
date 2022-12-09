@@ -73,6 +73,7 @@ import BuildingResizer from 'src/components/buildingResizer';
 import SolarPanelOnRoof from './solarPanel/solarPanelOnRoof';
 import { useHandleSize } from './wall/hooks';
 import { usePrimitiveStore } from 'src/stores/commonPrimitive';
+import { InnerCommonState } from 'src/stores/InnerCommonState';
 
 const Foundation = ({
   id,
@@ -2167,10 +2168,11 @@ const Foundation = ({
   };
 
   const handleContextMenu = (e: ThreeEvent<MouseEvent>) => {
-    selectMe(id, e, ActionType.Select);
     setCommonStore((state) => {
+      InnerCommonState.selectMe(state, id, e, ActionType.Select);
       state.pastePoint.copy(e.intersections[0].point);
       state.clickObjectType = ObjectType.Foundation;
+      state.pasteNormal = UNIT_VECTOR_POS_Z;
       if (e.altKey) {
         // when alt key is pressed, don't invoke context menu as it is reserved for fast click-paste
         state.contextMenuObjectType = null;

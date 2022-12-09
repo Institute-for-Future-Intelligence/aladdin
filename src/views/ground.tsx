@@ -42,6 +42,7 @@ import { showError } from '../helpers';
 import i18n from '../i18n/i18n';
 import { FoundationModel } from 'src/models/FoundationModel';
 import { SolarPanelModel } from 'src/models/SolarPanelModel';
+import { InnerCommonState } from 'src/stores/InnerCommonState';
 
 const Ground = () => {
   const setCommonStore = useStore(Selector.set);
@@ -479,10 +480,11 @@ const Ground = () => {
     if (e.intersections.length > 0) {
       const groundClicked = e.intersections[0].object === groundPlaneRef.current;
       if (groundClicked) {
-        selectNone();
         setCommonStore((state) => {
+          InnerCommonState.selectNone(state);
           state.pastePoint.copy(e.intersections[0].point);
           state.clickObjectType = ObjectType.Ground;
+          state.pasteNormal = UNIT_VECTOR_POS_Z;
           state.contextMenuObjectType = ObjectType.Ground;
           state.pasteNormal = UNIT_VECTOR_POS_Z;
         });
@@ -1050,9 +1052,6 @@ const Ground = () => {
   const handlePointerDown = (e: ThreeEvent<PointerEvent>) => {
     if (e.button === 2) return; // ignore right-click
     if (e.intersections.length === 0 || !groundPlaneRef.current) return;
-    setCommonStore((state) => {
-      state.contextMenuObjectType = null;
-    });
     // adding foundation start point
     if (isSettingFoundationStartPointRef.current) {
       setRayCast(e);
@@ -1087,8 +1086,9 @@ const Ground = () => {
       setCommonStore((state) => {
         state.clickObjectType = ObjectType.Ground;
         state.selectedElement = null;
+        InnerCommonState.selectNone(state);
+        state.contextMenuObjectType = null;
       });
-      selectNone();
       if (legalOnGround(objectTypeToAdd)) {
         const position = e.intersections[0].point;
         const addedElement = addElement(groundModel, position);
