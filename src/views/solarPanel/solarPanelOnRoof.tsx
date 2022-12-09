@@ -509,7 +509,7 @@ const SolarPanelOnRoof = ({
     if (drawPole) {
       return new Vector3(cx, cy, cz + hz + poleHeight);
     }
-    return new Vector3(cx, cy, cz + hz);
+    return new Vector3(cx, cy, cz + lz + 0.02); // raise it by 2 cm to show
   }, [cx, cy, cz, hz, drawPole, poleHeight]);
 
   const euler = useMemo(() => {
