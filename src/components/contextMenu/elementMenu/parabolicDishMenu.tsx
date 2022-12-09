@@ -32,7 +32,7 @@ export const ParabolicDishMenu = React.memo(() => {
   const addUndoable = useStore(Selector.addUndoable);
   const setApplyCount = useStore(Selector.setApplyCount);
 
-  const [labelText, setLabelText] = useState<string>(parabolicDish.label ?? '');
+  const [labelText, setLabelText] = useState<string>(parabolicDish?.label ?? '');
   const [structureTypeDialogVisible, setStructureTypeDialogVisible] = useState(false);
   const [latusRectumDialogVisible, setLatusRectumDialogVisible] = useState(false);
   const [diameterDialogVisible, setDiameterDialogVisible] = useState(false);

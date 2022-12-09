@@ -37,7 +37,7 @@ export const SolarPanelMenu = React.memo(() => {
     state.elements.find((e) => e.selected && e.type === ObjectType.SolarPanel),
   ) as SolarPanelModel;
 
-  const [labelText, setLabelText] = useState<string>(solarPanel.label ?? '');
+  const [labelText, setLabelText] = useState<string>(solarPanel?.label ?? '');
   const [pvModelDialogVisible, setPvModelDialogVisible] = useState(false);
   const [orientationDialogVisible, setOrientationDialogVisible] = useState(false);
   const [widthDialogVisible, setWidthDialogVisible] = useState(false);

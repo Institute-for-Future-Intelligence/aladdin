@@ -29,7 +29,7 @@ export const HeliostatMenu = React.memo(() => {
   const addUndoable = useStore(Selector.addUndoable);
   const setApplyCount = useStore(Selector.setApplyCount);
 
-  const [labelText, setLabelText] = useState<string>(heliostat.label ?? '');
+  const [labelText, setLabelText] = useState<string>(heliostat?.label ?? '');
   const [widthDialogVisible, setWidthDialogVisible] = useState(false);
   const [lengthDialogVisible, setLengthDialogVisible] = useState(false);
   const [poleHeightDialogVisible, setPoleHeightDialogVisible] = useState(false);

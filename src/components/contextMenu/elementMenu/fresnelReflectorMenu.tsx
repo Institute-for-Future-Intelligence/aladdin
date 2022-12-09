@@ -30,7 +30,7 @@ export const FresnelReflectorMenu = React.memo(() => {
   const addUndoable = useStore(Selector.addUndoable);
   const setApplyCount = useStore(Selector.setApplyCount);
 
-  const [labelText, setLabelText] = useState<string>(fresnelReflector.label ?? '');
+  const [labelText, setLabelText] = useState<string>(fresnelReflector?.label ?? '');
   const [moduleLengthDialogVisible, setModuleLengthDialogVisible] = useState(false);
   const [widthDialogVisible, setWidthDialogVisible] = useState(false);
   const [lengthDialogVisible, setLengthDialogVisible] = useState(false);

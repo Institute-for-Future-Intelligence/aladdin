@@ -33,7 +33,7 @@ export const ParabolicTroughMenu = React.memo(() => {
   const addUndoable = useStore(Selector.addUndoable);
   const setApplyCount = useStore(Selector.setApplyCount);
 
-  const [labelText, setLabelText] = useState<string>(parabolicTrough.label ?? '');
+  const [labelText, setLabelText] = useState<string>(parabolicTrough?.label ?? '');
   const [moduleLengthDialogVisible, setModuleLengthDialogVisible] = useState(false);
   const [latusRectumDialogVisible, setLatusRectumDialogVisible] = useState(false);
   const [widthDialogVisible, setWidthDialogVisible] = useState(false);
