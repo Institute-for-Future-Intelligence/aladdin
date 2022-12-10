@@ -764,6 +764,8 @@ export const i18n_tr = {
       Flip: 'Flip',
       Type: 'Tür',
       Spread: 'Yayılım',
+      Label: 'Etiket',
+      KeepShowingLabel: 'Etiketi Göstermeye Devam Et',
     },
 
     flowerMenu: {

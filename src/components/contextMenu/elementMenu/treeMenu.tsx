@@ -3,7 +3,7 @@
  */
 
 import React, { useState } from 'react';
-import { Checkbox, InputNumber, Menu, Space } from 'antd';
+import { Checkbox, Input, InputNumber, Menu, Space } from 'antd';
 import { useStore } from '../../../stores/common';
 import * as Selector from '../../../stores/selector';
 import { ObjectType } from '../../../types';
@@ -19,6 +19,8 @@ export const TreeMenu = React.memo(() => {
   const language = useStore(Selector.language);
   const updateElementLxById = useStore(Selector.updateElementLxById);
   const updateElementLzById = useStore(Selector.updateElementLzById);
+  const updateElementLabelById = useStore(Selector.updateElementLabelById);
+  const updateElementShowLabelById = useStore(Selector.updateElementShowLabelById);
   const updateTreeShowModelById = useStore(Selector.updateTreeShowModelById);
   const updateTreeFlipById = useStore(Selector.updateTreeFlipById);
   const tree = useStore((state) => state.elements.find((e) => e.selected && e.type === ObjectType.Tree)) as TreeModel;
@@ -26,6 +28,7 @@ export const TreeMenu = React.memo(() => {
 
   const [inputSpread, setInputSpread] = useState<number>(tree?.lx ?? 1);
   const [inputHeight, setInputHeight] = useState<number>(tree?.lz ?? 1);
+  const [labelText, setLabelText] = useState<string>(tree?.label ?? '');
 
   if (!tree) return null;
 
@@ -99,6 +102,48 @@ export const TreeMenu = React.memo(() => {
     setCommonStore((state) => {
       state.actionState.treeHeight = value;
     });
+  };
+
+  const showLabel = (checked: boolean) => {
+    if (tree) {
+      const undoableCheck = {
+        name: 'Show Tree Label',
+        timestamp: Date.now(),
+        checked: !tree.showLabel,
+        selectedElementId: tree.id,
+        selectedElementType: ObjectType.Tree,
+        undo: () => {
+          updateElementShowLabelById(tree.id, !undoableCheck.checked);
+        },
+        redo: () => {
+          updateElementShowLabelById(tree.id, undoableCheck.checked);
+        },
+      } as UndoableCheck;
+      addUndoable(undoableCheck);
+      updateElementShowLabelById(tree.id, checked);
+    }
+  };
+
+  const updateLabelText = () => {
+    if (tree) {
+      const oldLabel = tree.label;
+      const undoableChange = {
+        name: 'Set Tree Label',
+        timestamp: Date.now(),
+        oldValue: oldLabel,
+        newValue: labelText,
+        changedElementId: tree.id,
+        changedElementType: ObjectType.Tree,
+        undo: () => {
+          updateElementLabelById(undoableChange.changedElementId, undoableChange.oldValue as string);
+        },
+        redo: () => {
+          updateElementLabelById(undoableChange.changedElementId, undoableChange.newValue as string);
+        },
+      } as UndoableChange;
+      addUndoable(undoableChange);
+      updateElementLabelById(tree.id, labelText);
+    }
   };
 
   return (
@@ -181,6 +226,31 @@ export const TreeMenu = React.memo(() => {
               precision={1}
               value={inputHeight}
               onChange={(value) => setHeight(value)}
+            />
+          </Menu.Item>
+        </Menu>
+      )}
+
+      {/* show label or not */}
+      {editable && (
+        <Menu.Item key={'tree-show-label'}>
+          <Checkbox checked={!!tree?.showLabel} onChange={(e) => showLabel(e.target.checked)}>
+            {i18n.t('treeMenu.KeepShowingLabel', lang)}
+          </Checkbox>
+        </Menu.Item>
+      )}
+
+      {/*have to wrap the text field with a Menu so that it can stay open when the user types in it */}
+      {editable && (
+        <Menu>
+          {/* label text */}
+          <Menu.Item key={'tree-label-text'} style={{ paddingLeft: '36px' }}>
+            <Input
+              addonBefore={i18n.t('treeMenu.Label', lang) + ':'}
+              value={labelText}
+              onChange={(e: React.ChangeEvent<HTMLInputElement>) => setLabelText(e.target.value)}
+              onPressEnter={updateLabelText}
+              onBlur={updateLabelText}
             />
           </Menu.Item>
         </Menu>

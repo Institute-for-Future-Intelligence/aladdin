@@ -764,6 +764,8 @@ export const i18n_es = {
       Flip: 'Flip',
       Type: 'Tipo',
       Spread: 'Extender',
+      Label: 'Etiqueta',
+      KeepShowingLabel: 'Seguir mostrando etiqueta',
     },
 
     flowerMenu: {

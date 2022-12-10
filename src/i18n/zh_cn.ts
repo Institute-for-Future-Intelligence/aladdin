@@ -741,6 +741,8 @@ export const i18n_zh_cn = {
       Flip: '翻转',
       Type: '树种',
       Spread: '树冠直径',
+      Label: '标签',
+      KeepShowingLabel: '显示标签',
     },
 
     flowerMenu: {

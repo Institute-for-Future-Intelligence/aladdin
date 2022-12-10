@@ -50,6 +50,7 @@ const Tree = ({
   selected = false,
   locked = false,
   showModel = false,
+  showLabel = false,
 }: TreeModel) => {
   let isRender = false;
   useStore((state) => {
@@ -144,18 +145,20 @@ const Tree = ({
 
   const labelText = useMemo(() => {
     return (
-      TreeData.fetchLabel(name, lang) +
+      (treeModel?.label ? treeModel.label : TreeData.fetchLabel(name, lang)) +
       (locked ? ' (' + i18n.t('shared.ElementLocked', lang) + ')' : '') +
-      '\n' +
-      i18n.t('word.Coordinates', lang) +
-      ': (' +
-      cx.toFixed(1) +
-      ', ' +
-      cy.toFixed(1) +
-      ') ' +
-      i18n.t('word.MeterAbbreviation', lang)
+      (treeModel?.label
+        ? ''
+        : '\n' +
+          i18n.t('word.Coordinates', lang) +
+          ': (' +
+          cx.toFixed(1) +
+          ', ' +
+          cy.toFixed(1) +
+          ') ' +
+          i18n.t('word.MeterAbbreviation', lang))
     );
-  }, [name, cx, cy, locked, language]);
+  }, [treeModel?.label, name, cx, cy, locked, language]);
 
   const theta = useMemo(() => {
     return TreeData.fetchTheta(name);
@@ -538,7 +541,7 @@ const Tree = ({
                 )}
               </>
             )}
-            {hovered && !selected && (
+            {(hovered || showLabel) && !selected && (
               <textSprite
                 userData={{ unintersectable: true }}
                 name={'Label'}
