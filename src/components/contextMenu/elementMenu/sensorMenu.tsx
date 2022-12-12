@@ -2,7 +2,7 @@
  * @Copyright 2021-2022. Institute for Future Intelligence, Inc.
  */
 
-import React, { useEffect, useState } from 'react';
+import React, { useState } from 'react';
 import { Checkbox, Input, Menu } from 'antd';
 import { CheckboxChangeEvent } from 'antd/lib/checkbox';
 import { useStore } from '../../../stores/common';

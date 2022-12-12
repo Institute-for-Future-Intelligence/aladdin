@@ -32,7 +32,7 @@ import { ElementCounter } from '../../../stores/ElementCounter';
 import { UndoableCheck } from '../../../undo/UndoableCheck';
 import { UndoableChange } from '../../../undo/UndoableChange';
 
-export const CuboidMenu = () => {
+export const CuboidMenu = React.memo(() => {
   const setCommonStore = useStore(Selector.set);
   const language = useStore(Selector.language);
   const addUndoable = useStore(Selector.addUndoable);
@@ -587,4 +587,4 @@ export const CuboidMenu = () => {
       </Menu>
     </Menu.ItemGroup>
   );
-};
+});

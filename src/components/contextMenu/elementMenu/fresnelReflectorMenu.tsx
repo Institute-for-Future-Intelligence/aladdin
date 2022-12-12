@@ -2,7 +2,7 @@
  * @Copyright 2022. Institute for Future Intelligence, Inc.
  */
 
-import React, { useEffect, useState } from 'react';
+import React, { useState } from 'react';
 import { Checkbox, Input, Menu } from 'antd';
 import { FresnelReflectorModel } from '../../../models/FresnelReflectorModel';
 import { useStore } from '../../../stores/common';
