@@ -1405,70 +1405,66 @@ export const useStore = create<CommonStoreState>(
           // a sibling is defined as an element of the same type of the same parent
           findNearestSibling(id) {
             let foundId: string | null = null;
-            immerSet((state: CommonStoreState) => {
-              const me = state.getElementById(id);
-              if (me) {
-                let distanceSquare = Number.MAX_VALUE;
-                for (const e of state.elements) {
-                  if (e.type === me.type && e.parentId === me.parentId && e.id !== id) {
-                    const dx = me.cx - e.cx;
-                    const dy = me.cy - e.cy;
-                    const dz = me.cz - e.cz;
-                    const sq = dx * dx + dy * dy + dz * dz;
-                    if (distanceSquare > sq) {
-                      distanceSquare = sq;
-                      foundId = e.id;
-                    }
+            const me = get().getElementById(id);
+            if (me) {
+              let distanceSquare = Number.MAX_VALUE;
+              for (const e of get().elements) {
+                if (e.type === me.type && e.parentId === me.parentId && e.id !== id) {
+                  const dx = me.cx - e.cx;
+                  const dy = me.cy - e.cy;
+                  const dz = me.cz - e.cz;
+                  const sq = dx * dx + dy * dy + dz * dz;
+                  if (distanceSquare > sq) {
+                    distanceSquare = sq;
+                    foundId = e.id;
                   }
                 }
               }
-            });
+            }
             return foundId;
           },
           overlapWithSibling(me, threshold) {
             let overlap = false;
-            immerSet((state: CommonStoreState) => {
-              if (threshold === undefined) {
-                // when threshold is not set, check overlap of bounding boxes
-                const parent = state.getParent(me);
-                if (parent) {
-                  for (const e of state.elements) {
-                    if (e.type === me.type && e.parentId === me.parentId && e.id !== me.id) {
-                      if (me.type === ObjectType.SolarPanel) {
-                        if (Util.doSolarPanelsOverlap(me as SolarPanelModel, e as SolarPanelModel, parent)) {
-                          overlap = true;
-                          break;
-                        }
-                      } else {
-                        if (
-                          Math.abs(me.cx - e.cx) * parent.lx < 0.5 * (me.lx + e.lx) &&
-                          Math.abs(me.cy - e.cy) * parent.ly < 0.5 * (me.ly + e.ly) &&
-                          Math.abs(me.cz - e.cz) * parent.lz < 0.5 * (me.lz + e.lz)
-                        ) {
-                          overlap = true;
-                          break;
-                        }
+            if (threshold === undefined) {
+              // when threshold is not set, check overlap of bounding boxes
+              const parent = get().getParent(me);
+              if (parent) {
+                for (const e of get().elements) {
+                  if (e.type === me.type && e.parentId === me.parentId && e.id !== me.id) {
+                    if (me.type === ObjectType.SolarPanel) {
+                      if (Util.doSolarPanelsOverlap(me as SolarPanelModel, e as SolarPanelModel, parent)) {
+                        overlap = true;
+                        break;
+                      }
+                    } else {
+                      if (
+                        Math.abs(me.cx - e.cx) * parent.lx < 0.5 * (me.lx + e.lx) &&
+                        Math.abs(me.cy - e.cy) * parent.ly < 0.5 * (me.ly + e.ly) &&
+                        Math.abs(me.cz - e.cz) * parent.lz < 0.5 * (me.lz + e.lz)
+                      ) {
+                        overlap = true;
+                        break;
                       }
                     }
                   }
                 }
-              } else {
-                // when threshold is set, use the distance between centers to detect overlap using it
-                const thresholdSquared = threshold * threshold;
-                for (const e of state.elements) {
-                  if (e.type === me.type && e.parentId === me.parentId && e.id !== me.id) {
-                    const dx = me.cx - e.cx;
-                    const dy = me.cy - e.cy;
-                    const dz = me.cz - e.cz;
-                    const sq = dx * dx + dy * dy + dz * dz;
-                    if (sq < thresholdSquared) {
-                      overlap = true;
-                      break;
-                    }
+              }
+            } else {
+              // when threshold is set, use the distance between centers to detect overlap using it
+              const thresholdSquared = threshold * threshold;
+              for (const e of get().elements) {
+                if (e.type === me.type && e.parentId === me.parentId && e.id !== me.id) {
+                  const dx = me.cx - e.cx;
+                  const dy = me.cy - e.cy;
+                  const dz = me.cz - e.cz;
+                  const sq = dx * dx + dy * dy + dz * dz;
+                  if (sq < thresholdSquared) {
+                    overlap = true;
+                    break;
                   }
                 }
               }
-            });
+            }
             return overlap;
           },
 
@@ -4829,36 +4825,32 @@ export const useStore = create<CommonStoreState>(
           },
           countSolarStructuresByType(type, excludeLocked) {
             let count = 0;
-            immerSet((state: CommonStoreState) => {
-              if (excludeLocked) {
-                for (const e of state.elements) {
-                  if (e.type === ObjectType.Foundation && !e.locked) {
-                    if ((e as FoundationModel).solarStructure === type) {
-                      count++;
-                    }
-                  }
-                }
-              } else {
-                for (const e of state.elements) {
-                  if (e.type === ObjectType.Foundation) {
-                    if ((e as FoundationModel).solarStructure === type) {
-                      count++;
-                    }
+            if (excludeLocked) {
+              for (const e of get().elements) {
+                if (e.type === ObjectType.Foundation && !e.locked) {
+                  if ((e as FoundationModel).solarStructure === type) {
+                    count++;
                   }
                 }
               }
-            });
+            } else {
+              for (const e of get().elements) {
+                if (e.type === ObjectType.Foundation) {
+                  if ((e as FoundationModel).solarStructure === type) {
+                    count++;
+                  }
+                }
+              }
+            }
             return count;
           },
           countObservers() {
             let count = 0;
-            immerSet((state: CommonStoreState) => {
-              for (const e of state.elements) {
-                if (e.type === ObjectType.Human && (e as HumanModel).observer) {
-                  count++;
-                }
+            for (const e of get().elements) {
+              if (e.type === ObjectType.Human && (e as HumanModel).observer) {
+                count++;
               }
-            });
+            }
             return count;
           },
           removeElementsByReferenceId(id, cache) {
@@ -4878,13 +4870,11 @@ export const useStore = create<CommonStoreState>(
           },
           countElementsByReferenceId(id) {
             let count = 0;
-            immerSet((state: CommonStoreState) => {
-              for (const e of state.elements) {
-                if (e.referenceId === id) {
-                  count++;
-                }
+            for (const e of get().elements) {
+              if (e.referenceId === id) {
+                count++;
               }
-            });
+            }
             return count;
           },
 
@@ -4933,9 +4923,7 @@ export const useStore = create<CommonStoreState>(
                 }
               }
             } else {
-              for (const e of get().elements) {
-                count++;
-              }
+              count = get().elements.length;
             }
             return count;
           },

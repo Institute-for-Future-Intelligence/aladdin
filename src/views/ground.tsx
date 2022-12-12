@@ -49,7 +49,6 @@ const Ground = () => {
   const language = useStore(Selector.language);
   const getSelectedElement = useStore(Selector.getSelectedElement);
   const getChildren = useStore(Selector.getChildren);
-  const selectNone = useStore(Selector.selectNone);
   const objectTypeToAdd = useStore(Selector.objectTypeToAdd);
   const moveHandleType = useStore(Selector.moveHandleType);
   const resizeHandleType = useStore(Selector.resizeHandleType);
@@ -484,7 +483,6 @@ const Ground = () => {
           InnerCommonState.selectNone(state);
           state.pastePoint.copy(e.intersections[0].point);
           state.clickObjectType = ObjectType.Ground;
-          state.pasteNormal = UNIT_VECTOR_POS_Z;
           state.contextMenuObjectType = ObjectType.Ground;
           state.pasteNormal = UNIT_VECTOR_POS_Z;
         });

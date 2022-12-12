@@ -2,7 +2,7 @@
  * @Copyright 2021-2022. Institute for Future Intelligence, Inc.
  */
 
-import React, { useState } from 'react';
+import React from 'react';
 import { Checkbox, InputNumber, Menu, Modal, Space } from 'antd';
 import SubMenu from 'antd/lib/menu/SubMenu';
 import { ExclamationCircleOutlined } from '@ant-design/icons';
