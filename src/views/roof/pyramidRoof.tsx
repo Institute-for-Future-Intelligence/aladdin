@@ -650,7 +650,8 @@ const PyramidRoof = (roofModel: PyramidRoofModel) => {
         onPointerMove={(e) => {
           handlePointerMove(e, grabRef.current, foundation, roofType, roofSegments, centerPointV3);
         }}
-        onPointerUp={() => {
+        onPointerUp={(e) => {
+          e.stopPropagation();
           handlePointerUp(grabRef, foundation, currentWallArray[0], id, overhang, undoMove, addUndoableMove);
         }}
         onContextMenu={(e) => {

@@ -687,7 +687,8 @@ const GambrelRoof = (roofModel: GambrelRoofModel) => {
         onPointerMove={(e) => {
           handlePointerMove(e, grabRef.current, foundation, roofType, roofSegments, centroid);
         }}
-        onPointerUp={() => {
+        onPointerUp={(e) => {
+          e.stopPropagation();
           handlePointerUp(grabRef, foundation, currentWallArray[0], id, overhang, undoMove, addUndoableMove);
         }}
         onContextMenu={(e) => {

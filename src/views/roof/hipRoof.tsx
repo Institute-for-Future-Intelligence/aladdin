@@ -421,7 +421,8 @@ const HipRoof = (roofModel: HipRoofModel) => {
         onPointerMove={(e) => {
           handlePointerMove(e, grabRef.current, foundation, roofType, roofSegments, ridgeMidPoint);
         }}
-        onPointerUp={() => {
+        onPointerUp={(e) => {
+          e.stopPropagation();
           handlePointerUp(grabRef, foundation, currentWallArray[0], id, overhang, undoMove, addUndoableMove);
         }}
         onContextMenu={(e) => {
