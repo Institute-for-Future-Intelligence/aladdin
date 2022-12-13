@@ -8,6 +8,7 @@ import {
   NORMAL_GRID_SCALE,
   ORIGIN_VECTOR2,
   SOLAR_HEATMAP_COLORS,
+  TWO_PI,
   UNIT_VECTOR_NEG_X,
   UNIT_VECTOR_NEG_Y,
   UNIT_VECTOR_POS_X,
@@ -31,7 +32,7 @@ import {
 } from './types';
 import { PvModel } from './models/PvModel';
 import { SensorModel } from './models/SensorModel';
-import { WallModel } from './models/WallModel';
+import { WallFill, WallModel } from './models/WallModel';
 import { PolygonModel } from './models/PolygonModel';
 import { Point2 } from './models/Point2';
 import { useStore } from './stores/common';
@@ -881,6 +882,18 @@ export class Util {
     return false;
   }
 
+  // p is relative position on wall
+  static isElementInsideWall(p: Vector3, wlx: number, wlz: number, points: Point2[]) {
+    for (let i = -1; i <= 1; i += 2) {
+      for (let j = -1; j <= 1; j += 2) {
+        if (!Util.isPointInside(p.x + (wlx / 2) * i, p.z + (wlz / 2) * j, points)) {
+          return false;
+        }
+      }
+    }
+    return true;
+  }
+
   static checkElementOnWallState(elem: ElementModel, parent?: ElementModel): ElementState {
     let hx = elem.lx / 2;
     let hz = elem.lz / 2;
@@ -893,7 +906,16 @@ export class Util {
     const eMinZ = elem.cz - hz;
     const eMaxZ = elem.cz + hz;
 
-    if (eMinX < -0.5 || eMaxX > 0.5 || eMinZ < -0.5 || eMaxZ > 0.5) {
+    if (
+      parent &&
+      parent.type === ObjectType.Wall &&
+      !Util.isElementInsideWall(
+        new Vector3(elem.cx * parent.lx, elem.cy, elem.cz * parent.lz),
+        parent.lx * hx * 2,
+        parent.lz * hz * 2,
+        Util.getWallInnerSideShapePoints(parent as WallModel),
+      )
+    ) {
       return ElementState.OutsideBoundary;
     }
     for (const e of useStore.getState().elements) {
@@ -1022,7 +1044,6 @@ export class Util {
 
   // no normalization
   static relativePoint(point: Vector3, parent: ElementModel): Vector3 {
-    console.log(parent);
     const v = new Vector3(point.x - parent.cx, point.y - parent.cy, point.z - parent.cz);
     v.applyEuler(new Euler().fromArray(parent.rotation.map((a) => -a)));
     return v;
@@ -1282,6 +1303,82 @@ export class Util {
       }
     }
     return array;
+  }
+
+  static getWallInnerSideShapePoints(wallModel: WallModel) {
+    const {
+      lx,
+      ly,
+      lz,
+      relativeAngle,
+      fill,
+      unfilledHeight,
+      leftRoofHeight,
+      centerLeftRoofHeight,
+      centerRoofHeight,
+      centerRightRoofHeight,
+      rightRoofHeight,
+      leftJoints,
+      rightJoints,
+    } = wallModel;
+
+    const leftWall = leftJoints.length > 0 ? useStore.getState().getElementById(leftJoints[0]) : null;
+    const rightWall = rightJoints.length > 0 ? useStore.getState().getElementById(rightJoints[0]) : null;
+
+    const leftOffset =
+      leftWall && leftWall.type === ObjectType.Wall
+        ? Util.getInnerWallOffset(leftWall as WallModel, lx, ly, relativeAngle, 'left')
+        : 0;
+    const rightOffset =
+      rightWall && rightWall.type === ObjectType.Wall
+        ? Util.getInnerWallOffset(rightWall as WallModel, lx, ly, relativeAngle, 'right')
+        : 0;
+
+    const points: Point2[] = [];
+    const x = lx / 2;
+    const y = lz / 2;
+    if (fill === WallFill.Partial) {
+      points.push({ x: -x + leftOffset, y: -y + unfilledHeight });
+      points.push({ x: x - rightOffset, y: -y + unfilledHeight });
+    } else {
+      points.push({ x: -x + leftOffset, y: -y });
+      points.push({ x: x - rightOffset, y: -y });
+    }
+    rightRoofHeight
+      ? points.push({ x: x - rightOffset, y: rightRoofHeight - y })
+      : points.push({ x: x - rightOffset, y: y });
+    if (centerRightRoofHeight) {
+      points.push({ x: centerRightRoofHeight[0] * lx, y: centerRightRoofHeight[1] - y });
+    }
+    if (centerRoofHeight) {
+      points.push({ x: centerRoofHeight[0] * lx, y: centerRoofHeight[1] - y });
+    }
+    if (centerLeftRoofHeight) {
+      points.push({ x: centerLeftRoofHeight[0] * lx, y: centerLeftRoofHeight[1] - y });
+    }
+    leftRoofHeight
+      ? points.push({ x: -x + leftOffset, y: leftRoofHeight - y })
+      : points.push({ x: -x + leftOffset, y: y });
+
+    return points;
+  }
+
+  static getInnerWallOffset(
+    sideWall: WallModel | null,
+    lx: number,
+    ly: number,
+    relativeAngle: number,
+    side: 'left' | 'right',
+  ) {
+    let offset = 0;
+    if (sideWall && sideWall.fill !== WallFill.Empty) {
+      const sign = side === 'left' ? -1 : 1;
+      const deltaAngle = (Math.PI * 3 + sign * (relativeAngle - sideWall.relativeAngle)) % TWO_PI;
+      if (deltaAngle <= HALF_PI + 0.01 && deltaAngle > 0) {
+        offset = Math.min(ly / Math.tan(deltaAngle) + sideWall.ly, lx);
+      }
+    }
+    return offset;
   }
 
   static getAllConnectedWalls = (wall: WallModel) => {

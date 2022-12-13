@@ -273,22 +273,8 @@ const Wall = ({ wallModel, foundationModel }: WallProps) => {
   leftRoofHeight = leftJoints.length > 0 ? leftRoofHeight : lz;
   rightRoofHeight = rightJoints.length > 0 ? rightRoofHeight : lz;
 
-  let leftOffset = 0;
-  let rightOffset = 0;
-
-  if (leftWall && leftWall.fill !== WallFill.Empty) {
-    const deltaAngle = (Math.PI * 3 - (relativeAngle - leftWall.relativeAngle)) % TWO_PI;
-    if (deltaAngle <= HALF_PI + 0.01 && deltaAngle > 0) {
-      leftOffset = Math.min(ly / Math.tan(deltaAngle) + leftWall.ly, lx);
-    }
-  }
-
-  if (rightWall && rightWall.fill !== WallFill.Empty) {
-    const deltaAngle = (Math.PI * 3 + relativeAngle - rightWall.relativeAngle) % TWO_PI;
-    if (deltaAngle <= HALF_PI + 0.01 && deltaAngle > 0) {
-      rightOffset = Math.min(ly / Math.tan(deltaAngle) + rightWall.ly, lx);
-    }
-  }
+  const leftOffset = Util.getInnerWallOffset(leftWall, lx, ly, relativeAngle, 'left');
+  const rightOffset = Util.getInnerWallOffset(rightWall, lx, ly, relativeAngle, 'right');
 
   const drawTopSurface = (shape: Shape, lx: number, ly: number, leftOffset: number, rightOffset: number) => {
     const x = lx / 2;
@@ -609,31 +595,6 @@ const Wall = ({ wallModel, foundationModel }: WallProps) => {
     centerLeftRoofHeight,
     centerRightRoofHeight,
   ]);
-
-  const isPointInside = (x: number, y: number, points: Point2[]) => {
-    let inside = false;
-    for (let i = 0, j = points.length - 1; i < points.length; j = i++) {
-      const xi = points[i].x;
-      const yi = points[i].y;
-      const xj = points[j].x;
-      const yj = points[j].y;
-      if (yi > y !== yj > y && x < ((xj - xi) * (y - yi)) / (yj - yi) + xi) {
-        inside = !inside;
-      }
-    }
-    return inside;
-  };
-
-  const isMovingElementInsideWall = (p: Vector3, wlx: number, wlz: number, points: Point2[]) => {
-    for (let i = -1; i <= 1; i += 2) {
-      for (let j = -1; j <= 1; j += 2) {
-        if (!isPointInside(p.x + (wlx / 2) * i, p.z + (wlz / 2) * j, points)) {
-          return false;
-        }
-      }
-    }
-    return true;
-  };
 
   const collisionHelper = (args: number[], tolerance = 0) => {
     let [tMinX, tMaxX, tMinZ, tMaxZ, cMinX, cMaxX, cMinZ, cMaxZ] = args;
@@ -988,9 +949,7 @@ const Wall = ({ wallModel, foundationModel }: WallProps) => {
               if (moveHandleType) {
                 const v = new Vector3((-grabRef.current.lx / 2) * lx, 0, (grabRef.current.lz / 2) * lz);
                 p = getPositionOnGrid(p.clone().add(v)).sub(v);
-                if (
-                  !isMovingElementInsideWall(p, grabRef.current.lx * lx, grabRef.current.lz * lz, innerWallPoints2D)
-                ) {
+                if (!Util.isElementInsideWall(p, grabRef.current.lx * lx, grabRef.current.lz * lz, innerWallPoints2D)) {
                   return;
                 }
                 checkCollision(
@@ -1013,7 +972,7 @@ const Wall = ({ wallModel, foundationModel }: WallProps) => {
                 });
               } else if (resizeHandleType) {
                 p = getPositionOnGrid(p);
-                if (!isPointInside(p.x, p.z, innerWallPoints2D)) {
+                if (!Util.isPointInside(p.x, p.z, innerWallPoints2D)) {
                   return;
                 }
                 let resizeAnchor = getRelativePosOnWall(useStore.getState().resizeAnchor, wallModel);
@@ -1071,7 +1030,7 @@ const Wall = ({ wallModel, foundationModel }: WallProps) => {
             case ObjectType.Door: {
               let p = getRelativePosOnWall(pointer, wallModel);
               p = getPositionOnGrid(p);
-              if (!isPointInside(p.x, p.z, innerWallPoints2D)) {
+              if (!Util.isPointInside(p.x, p.z, innerWallPoints2D)) {
                 return;
               }
               // adding door
@@ -1146,7 +1105,7 @@ const Wall = ({ wallModel, foundationModel }: WallProps) => {
               if (moveHandleType) {
                 const v = new Vector3(-grabRef.current.lx / 2, 0, grabRef.current.ly / 2);
                 p = getPositionOnGrid(p.clone().add(v)).sub(v);
-                if (!isMovingElementInsideWall(p, grabRef.current.lx, grabRef.current.ly, outerWallPoints2D)) {
+                if (!Util.isElementInsideWall(p, grabRef.current.lx, grabRef.current.ly, outerWallPoints2D)) {
                   return;
                 }
                 checkCollision(grabRef.current.id, ObjectType.SolarPanel, p, grabRef.current.lx, grabRef.current.ly);
@@ -1202,7 +1161,7 @@ const Wall = ({ wallModel, foundationModel }: WallProps) => {
               if (moveHandleType) {
                 const v = new Vector3(-grabRef.current.lx / 2, 0, grabRef.current.ly / 2);
                 p = getPositionOnGrid(p.clone().add(v)).sub(v);
-                if (!isMovingElementInsideWall(p, grabRef.current.lx, grabRef.current.ly, outerWallPoints2D)) {
+                if (!Util.isElementInsideWall(p, grabRef.current.lx, grabRef.current.ly, outerWallPoints2D)) {
                   return;
                 }
                 setCommonStore((state) => {

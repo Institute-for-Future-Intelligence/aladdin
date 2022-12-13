@@ -5412,7 +5412,6 @@ export const useStore = create<CommonStoreState>(
                         switch (Util.checkElementOnWallState(e, newParent)) {
                           case ElementState.Valid:
                             approved = true;
-
                             break;
                           case ElementState.OverLap:
                             showError(i18n.t('message.CannotPasteBecauseOfOverlap', lang));
