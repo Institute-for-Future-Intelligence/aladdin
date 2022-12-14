@@ -7,6 +7,7 @@ import { FoundationTexture, SolarStructure } from '../types';
 import { SolarUpdraftTowerModel } from './SolarUpdraftTowerModel';
 import { SolarPowerTowerModel } from './SolarPowerTowerModel';
 import { SolarAbsorberPipeModel } from './SolarAbsorberPipeModel';
+import { HvacSystem } from './HvacSystem';
 
 export interface FoundationModel extends ElementModel {
   textureType: FoundationTexture;
@@ -28,4 +29,5 @@ export interface FoundationModel extends ElementModel {
   // these apply only to the portion that are within a building
   rValue: number;
   volumetricHeatCapacity: number;
+  hvacSystem: HvacSystem;
 }

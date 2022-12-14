@@ -567,6 +567,7 @@ export class ElementModelCloner {
       solarUpdraftTower: { ...foundation.solarUpdraftTower },
       solarAbsorberPipe: { ...foundation.solarAbsorberPipe },
       solarPowerTower: { ...foundation.solarPowerTower },
+      hvacSystem: { ...foundation.hvacSystem },
       id: short.generate() as string,
     } as FoundationModel;
   }

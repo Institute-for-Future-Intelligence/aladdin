@@ -99,6 +99,7 @@ import { WindowModel, WindowType } from '../models/WindowModel';
 import { ActionState } from './ActionState';
 import { DefaultActionState } from './DefaultActionState';
 import { LightModel } from '../models/LightModel';
+import { HvacSystem } from '../models/HvacSystem';
 
 enableMapSet();
 
@@ -321,6 +322,7 @@ export interface CommonStoreState {
   updateFoundationTextureById: (id: string, texture: FoundationTexture) => void;
   updateFoundationTextureForAll: (texture: FoundationTexture) => void;
   updateFoundationSolarStructureById: (id: string, receiver: SolarStructure | undefined) => void;
+  updateFoundationThermostatSetpointById: (id: string, value: number) => void;
 
   // for solar absorber pipes
   updateSolarAbsorberPipeRelativeLengthById: (id: string, relativeLength: number) => void;
@@ -2359,6 +2361,21 @@ export const useStore = create<CommonStoreState>(
               for (const e of state.elements) {
                 if (e.type === ObjectType.Foundation && e.id === id && !e.locked) {
                   (e as FoundationModel).solarStructure = structure;
+                  break;
+                }
+              }
+            });
+          },
+          updateFoundationThermostatSetpointById(id, value) {
+            immerSet((state: CommonStoreState) => {
+              for (const e of state.elements) {
+                if (e.type === ObjectType.Foundation && e.id === id && !e.locked) {
+                  const foundation = e as FoundationModel;
+                  if (foundation.hvacSystem) {
+                    foundation.hvacSystem.thermostatSetpoint = value;
+                  } else {
+                    foundation.hvacSystem = { thermostatSetpoint: value } as HvacSystem;
+                  }
                   break;
                 }
               }

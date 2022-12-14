@@ -239,6 +239,9 @@ export const setFoundationActionScope = (state: CommonStoreState) => state.setFo
 
 export const updateFoundationSolarStructureById = (state: CommonStoreState) => state.updateFoundationSolarStructureById;
 
+export const updateFoundationThermostatSetpointById = (state: CommonStoreState) =>
+  state.updateFoundationThermostatSetpointById;
+
 export const updateSolarAbsorberPipeApertureWidthById = (state: CommonStoreState) =>
   state.updateSolarAbsorberPipeApertureWidthById;
 

@@ -3,7 +3,7 @@
  */
 
 import React, { useState } from 'react';
-import { Checkbox, Menu, Modal, Radio, Space } from 'antd';
+import { Checkbox, InputNumber, Menu, Modal, Radio, Space } from 'antd';
 import { Copy, Cut, Lock, Paste } from '../menuItems';
 import SubMenu from 'antd/lib/menu/SubMenu';
 import { ExclamationCircleOutlined } from '@ant-design/icons';
@@ -55,6 +55,7 @@ export const FoundationMenu = React.memo(() => {
   const removeAllElementsOnFoundationByType = useStore(Selector.removeAllElementsOnFoundationByType);
   const updateElementLockById = useStore(Selector.updateElementLockById);
   const updateElementLockByFoundationId = useStore(Selector.updateElementLockByFoundationId);
+  const updateFoundationThermostatSetpointById = useStore(Selector.updateFoundationThermostatSetpointById);
   const addElement = useStore(Selector.addElement);
   const removeElementById = useStore(Selector.removeElementById);
   const setApplyCount = useStore(Selector.setApplyCount);
@@ -1059,6 +1060,47 @@ export const FoundationMenu = React.memo(() => {
       >
         {i18n.t('foundationMenu.AddPolygon', lang)}
       </Menu.Item>
+
+      {editable && (
+        <SubMenu
+          key={'building-hvac-system'}
+          title={i18n.t('word.BuildingHVACSystem', lang)}
+          style={{ paddingLeft: '24px' }}
+        >
+          <Menu>
+            <Menu.Item key={'thermostat-temperature'}>
+              <Space style={{ width: '150px' }}>{i18n.t('word.ThermostatSetpoint', lang) + ':'}</Space>
+              <InputNumber
+                min={0}
+                max={30}
+                step={1}
+                style={{ width: 60 }}
+                precision={1}
+                value={foundation.hvacSystem?.thermostatSetpoint ?? 20}
+                onChange={(value) => {
+                  const oldValue = foundation.hvacSystem?.thermostatSetpoint ?? 20;
+                  const newValue = value;
+                  const undoableChange = {
+                    name: 'Change Thermostat Setpoint',
+                    timestamp: Date.now(),
+                    oldValue: oldValue,
+                    newValue: newValue,
+                    undo: () => {
+                      updateFoundationThermostatSetpointById(foundation.id, undoableChange.oldValue as number);
+                    },
+                    redo: () => {
+                      updateFoundationThermostatSetpointById(foundation.id, undoableChange.newValue as number);
+                    },
+                  } as UndoableChange;
+                  addUndoable(undoableChange);
+                  updateFoundationThermostatSetpointById(foundation.id, newValue);
+                }}
+              />
+              <Space style={{ paddingLeft: '10px' }}>°C</Space>
+            </Menu.Item>
+          </Menu>
+        </SubMenu>
+      )}
 
       {editable && (
         <SubMenu

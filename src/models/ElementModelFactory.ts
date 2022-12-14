@@ -51,6 +51,7 @@ import { DoorModel, DoorType } from './DoorModel';
 import { WindTurbineModel } from './WindTurbineModel';
 import { FlowerData } from '../FlowerData';
 import { LightModel } from './LightModel';
+import { HvacSystem } from './HvacSystem';
 
 export class ElementModelFactory {
   static makeHuman(name: HumanName, parentId: string, x: number, y: number, z?: number) {
@@ -204,6 +205,7 @@ export class ElementModelFactory {
       solarUpdraftTower: {},
       solarAbsorberPipe: {},
       solarPowerTower: {},
+      hvacSystem: { thermostatSetpoint: 20 } as HvacSystem,
       id: short.generate() as string,
     } as FoundationModel;
   }

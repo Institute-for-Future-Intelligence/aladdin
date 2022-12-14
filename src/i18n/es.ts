@@ -582,6 +582,8 @@ export const i18n_es = {
       AllFoundations: 'Todas las bases',
       AddPolygon: 'Añadir polígono',
       SelectSolarStructure: 'Select Solar Structure',
+      BuildingHVACSystem: 'Building HVAC System',
+      ThermostatSetpoint: 'Thermostat Setpoint',
       GroupMaster: 'Group Master',
       LockAllElementsOnThisFoundation: 'Lock All Elements on This Foundation',
       UnlockAllElementsOnThisFoundation: 'Unlock All Elements on This Foundation',

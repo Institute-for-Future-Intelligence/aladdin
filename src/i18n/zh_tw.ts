@@ -57,6 +57,8 @@ export const i18n_zh_tw = {
       UValue: 'U值',
       RValue: 'R值',
       VolumetricHeatCapacity: '容積熱容',
+      BuildingHVACSystem: '建築物暖通空調系統',
+      ThermostatSetpoint: '恆溫器設定值',
       Press: '按',
       Open: '打開',
       Save: '保存',

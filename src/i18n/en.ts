@@ -57,6 +57,8 @@ export const i18n_en = {
       UValue: 'U-Value',
       RValue: 'R-Value',
       VolumetricHeatCapacity: 'Volumetric Heat Capacity',
+      BuildingHVACSystem: 'Building HVAC System',
+      ThermostatSetpoint: 'Thermostat Setpoint',
       Press: 'Press',
       Open: 'Open',
       Save: 'Save',

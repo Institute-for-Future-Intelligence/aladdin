@@ -57,6 +57,8 @@ export const i18n_tr = {
       UValue: 'U-Value',
       RValue: 'R-Value',
       VolumetricHeatCapacity: 'Volumetric Heat Capacity',
+      BuildingHVACSystem: 'Building HVAC System',
+      ThermostatSetpoint: 'Thermostat Setpoint',
       Press: 'Tıkla',
       Open: 'Aç',
       Save: 'Kaydet',
