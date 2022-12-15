@@ -38,6 +38,8 @@ const ThermalSimulation = ({ city }: ThermalSimulationProps) => {
   const noAnimation = !!useStore(Selector.world.noAnimationForThermalSimulation);
   const getRoofSegmentVertices = useStore(Selector.getRoofSegmentVertices);
   const highestTemperatureTimeInMinutes = useStore(Selector.world.highestTemperatureTimeInMinutes) ?? 900;
+  const setHourlyHeatExchangeArray = usePrimitiveStore(Selector.setHourlyHeatExchangeArray);
+  const getHourlyHeatExchangeArray = usePrimitiveStore(Selector.getHourlyHeatExchangeArray);
 
   const requestRef = useRef<number>(0);
   const simulationCompletedRef = useRef<boolean>(false);
@@ -47,6 +49,7 @@ const ThermalSimulation = ({ city }: ThermalSimulationProps) => {
   const pausedDateRef = useRef<Date>(new Date(world.date));
   const dayRef = useRef<number>(0);
   const currentOutsideTemperatureRef = useRef<number>(20);
+  const hourlyHeatFluxArrayMapRef = useRef<Map<string, number[]>>(new Map<string, number[]>());
 
   const lang = { lng: language };
   const weather = getWeather(city ?? 'Boston MA, USA');
@@ -147,15 +150,20 @@ const ThermalSimulation = ({ city }: ThermalSimulationProps) => {
 
   const finishDaily = () => {
     for (const e of elements) {
-      if (Util.isThermal(e))
-        console.log(e.type, e.cx, e.cy, usePrimitiveStore.getState().getHourlyHeatExchangeArray(e.id));
+      if (Util.isThermal(e)) {
+        const arr = hourlyHeatFluxArrayMapRef.current.get(e.id);
+        if (arr) {
+          setHourlyHeatExchangeArray(e.id, [...arr]);
+          console.log(e.type, e.cx, e.cy, getHourlyHeatExchangeArray(e.id));
+        }
+      }
     }
   };
 
   const resetHourlyHeatFluxMap = () => {
     for (const e of elements) {
       if (Util.isThermal(e)) {
-        usePrimitiveStore.getState().resetHourlyHeatExchangeArray(e.id);
+        hourlyHeatFluxArrayMapRef.current.get(e.id)?.fill(0);
       }
     }
   };
@@ -207,6 +215,15 @@ const ThermalSimulation = ({ city }: ThermalSimulationProps) => {
     }
   };
 
+  const updateCurrentHeatFlux = (id: string, heat: number) => {
+    let a = hourlyHeatFluxArrayMapRef.current.get(id);
+    if (!a) {
+      a = new Array(24).fill(0);
+      hourlyHeatFluxArrayMapRef.current.set(id, a);
+    }
+    a[now.getHours()] = heat;
+  };
+
   const calculateWindow = (window: WindowModel) => {
     const foundation = getFoundation(window);
     if (foundation) {
@@ -215,7 +232,7 @@ const ThermalSimulation = ({ city }: ThermalSimulationProps) => {
         let area = Util.getWindowArea(window, parent);
         const deltaT = (foundation.hvacSystem?.thermostatSetpoint ?? 20) - currentOutsideTemperatureRef.current;
         const heat = (deltaT * area * (window.uValue ?? 2) * 0.001) / timesPerHour; // convert to kWh
-        usePrimitiveStore.getState().setHeatExchangeAtHour(window.id, now.getHours(), heat);
+        updateCurrentHeatFlux(window.id, heat);
       }
     }
   };
@@ -228,7 +245,7 @@ const ThermalSimulation = ({ city }: ThermalSimulationProps) => {
         let area = door.lx * door.lz * parent.lx * parent.lz;
         const deltaT = (foundation.hvacSystem?.thermostatSetpoint ?? 20) - currentOutsideTemperatureRef.current;
         const heat = (deltaT * area * (door.uValue ?? 2) * 0.001) / timesPerHour; // convert to kWh
-        usePrimitiveStore.getState().setHeatExchangeAtHour(door.id, now.getHours(), heat);
+        updateCurrentHeatFlux(door.id, heat);
       }
     }
   };
@@ -253,7 +270,7 @@ const ThermalSimulation = ({ city }: ThermalSimulationProps) => {
       const deltaT = (foundation.hvacSystem?.thermostatSetpoint ?? 20) - currentOutsideTemperatureRef.current;
       // U is the inverse of R with SI units of W/(m2⋅K)
       const heat = (((deltaT * area) / (wall.rValue ?? 0.5)) * 0.001) / timesPerHour; // convert to kWh
-      usePrimitiveStore.getState().setHeatExchangeAtHour(wall.id, now.getHours(), heat);
+      updateCurrentHeatFlux(wall.id, heat);
     }
   };
 
@@ -301,7 +318,7 @@ const ThermalSimulation = ({ city }: ThermalSimulationProps) => {
         break;
     }
     const heat = (((deltaT * totalArea) / (roof.rValue ?? 0.5)) * 0.001) / timesPerHour; // convert to kWh
-    usePrimitiveStore.getState().setHeatExchangeAtHour(roof.id, now.getHours(), heat);
+    updateCurrentHeatFlux(roof.id, heat);
   };
 
   // yearly simulation

@@ -3,6 +3,7 @@
  */
 
 import { CommonStoreState } from '../common';
+import { PrimitiveStoreState } from '../commonPrimitive';
 
 export const set = (state: CommonStoreState) => state.set;
 
@@ -15,6 +16,12 @@ export const getHeatmap = (state: CommonStoreState) => state.getHeatmap;
 export const setHeatmap = (state: CommonStoreState) => state.setHeatmap;
 
 export const clearHeatmaps = (state: CommonStoreState) => state.clearHeatmaps;
+
+export const setHourlyHeatExchangeArray = (state: PrimitiveStoreState) => state.setHourlyHeatExchangeArray;
+
+export const getHourlyHeatExchangeArray = (state: PrimitiveStoreState) => state.getHourlyHeatExchangeArray;
+
+export const clearHourlyHeatExchangeArrayMap = (state: PrimitiveStoreState) => state.clearHourlyHeatExchangeArrayMap;
 
 export const getRoofSegmentVertices = (state: CommonStoreState) => state.getRoofSegmentVertices;
 
