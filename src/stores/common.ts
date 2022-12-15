@@ -124,12 +124,6 @@ export interface CommonStoreState {
   getHeatmap: (id: string) => number[][] | undefined;
   clearHeatmaps: () => void;
 
-  // store the calculated heat exchange result between inside and outside through an element of a building
-  heatExchangeMap: Map<string, number>;
-  setHeatExchange: (id: string, data: number) => void;
-  getHeatExchange: (id: string) => number | undefined;
-  clearHeatExchangeMap: () => void;
-
   roofSegmentVerticesMap: Map<string, Vector3[][]>; // key: roofId, val: [segmentIndex][vertex]
   getRoofSegmentVertices: (id: string) => Vector3[][] | undefined;
 
@@ -838,21 +832,6 @@ export const useStore = create<CommonStoreState>(
           clearHeatmaps() {
             immerSet((state: CommonStoreState) => {
               state.heatmaps.clear();
-            });
-          },
-
-          heatExchangeMap: new Map<string, number>(),
-          setHeatExchange(id, data) {
-            immerSet((state: CommonStoreState) => {
-              state.heatExchangeMap.set(id, data);
-            });
-          },
-          getHeatExchange(id) {
-            return get().heatExchangeMap.get(id);
-          },
-          clearHeatExchangeMap() {
-            immerSet((state: CommonStoreState) => {
-              state.heatExchangeMap.clear();
             });
           },
 
