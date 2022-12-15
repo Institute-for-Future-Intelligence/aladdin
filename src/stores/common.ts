@@ -4780,6 +4780,10 @@ export const useStore = create<CommonStoreState>(
                       state.deletedCuboidId = elem.id;
                       break;
                     }
+                    case ObjectType.Door: {
+                      state.deletedDoorAndParentId = [elem.id, elem.parentId];
+                      break;
+                    }
                   }
                   break;
                 }

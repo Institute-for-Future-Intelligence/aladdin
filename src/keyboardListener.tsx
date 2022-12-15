@@ -57,10 +57,6 @@ const KeyboardListener = ({ canvas, set2DView, resetView, zoomView }: KeyboardLi
   const cameraPosition = useStore(Selector.viewState.cameraPosition);
   const panCenter = useStore(Selector.viewState.panCenter);
   const copyCutElements = useStore(Selector.copyCutElements);
-  const addedFoundationId = useStore(Selector.addedFoundationId);
-  const addedCuboidId = useStore(Selector.addedCuboidId);
-  const addedWallId = useStore(Selector.addedWallId);
-  const addedWindowId = useStore(Selector.addedWindowId);
   const overlapWithSibling = useStore(Selector.overlapWithSibling);
 
   const [keyPressed, setKeyPressed] = useState(false);
@@ -907,18 +903,26 @@ const KeyboardListener = ({ canvas, set2DView, resetView, zoomView }: KeyboardLi
       case 'shift':
         setEnableFineGrid(true);
         break;
-      case 'esc':
-        if (addedFoundationId) {
-          removeElementById(addedFoundationId, false);
+      case 'esc': {
+        const addedFoundationID = useStore.getState().addedFoundationId;
+        const addedCuboidId = useStore.getState().addedCuboidId;
+        const addedWallId = useStore.getState().addedWallId;
+        const addedWindowId = useStore.getState().addedWindowId;
+        const addedDoorId = useStore.getState().addedDoorId;
+        if (addedFoundationID) {
+          removeElementById(addedFoundationID, false);
         } else if (addedCuboidId) {
           removeElementById(addedCuboidId, false);
         } else if (addedWallId) {
           removeElementById(addedWallId, false);
         } else if (addedWindowId) {
           removeElementById(addedWindowId, false);
+        } else if (addedDoorId) {
+          removeElementById(addedDoorId, false);
         }
         setCommonStore((state) => {
           state.objectTypeToAdd = ObjectType.None;
+          state.actionModeLock = false;
           state.moveHandleType = null;
           state.resizeHandleType = null;
           state.elementGroupId = null;
@@ -927,6 +931,7 @@ const KeyboardListener = ({ canvas, set2DView, resetView, zoomView }: KeyboardLi
         useStoreRef.getState().setEnableOrbitController(true);
         selectNone();
         break;
+      }
     }
   };
 

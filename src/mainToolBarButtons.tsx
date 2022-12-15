@@ -75,6 +75,7 @@ const MainToolBarButtons = () => {
   const addedCuboidId = useStore(Selector.addedCuboidId);
   const addedWallId = useStore(Selector.addedWallId);
   const addedWindowId = useStore(Selector.addedWindowId);
+  const addedDoorId = useStore(Selector.addedDoorId);
   const addUndoable = useStore(Selector.addUndoable);
   const runDynamicSimulation = useStore(Selector.runDynamicSimulation);
   const runStaticSimulation = useStore(Selector.runStaticSimulation);
@@ -308,7 +309,7 @@ const MainToolBarButtons = () => {
             }
           }}
         />
-        {objectTypeToAdd === objectType && needLock && actionModeLock && (
+        {(objectTypeToAdd === objectType || addedElemId) && needLock && actionModeLock && (
           <img
             src={TinyLockImage}
             style={{
@@ -403,7 +404,7 @@ const MainToolBarButtons = () => {
       case ObjectType.Window:
         return buttonImg(objectType, WindowImage, useStore.getState().addedWindowId);
       case ObjectType.Door:
-        return buttonImg(objectType, DoorImage);
+        return buttonImg(objectType, DoorImage, useStore.getState().addedDoorId);
       case ObjectType.PyramidRoof:
         return buttonImg(ObjectType.PyramidRoof, PyramidRoofImage);
       case ObjectType.HipRoof:
@@ -445,6 +446,7 @@ const MainToolBarButtons = () => {
       !addedCuboidId &&
       !addedWallId &&
       !addedWindowId &&
+      !addedDoorId &&
       !groupAction
     );
   };

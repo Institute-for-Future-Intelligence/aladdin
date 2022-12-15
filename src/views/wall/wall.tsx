@@ -72,6 +72,7 @@ import SolarPanelOnWall from '../solarPanel/solarPanelOnWall';
 import { useElements } from './hooks';
 import { FoundationModel } from 'src/models/FoundationModel';
 import { HorizontalRuler } from '../horizontalRuler';
+import { InnerCommonState } from 'src/stores/InnerCommonState';
 
 export interface WallProps {
   wallModel: WallModel;
@@ -219,6 +220,7 @@ const Wall = ({ wallModel, foundationModel }: WallProps) => {
   }, [showSolarRadiationHeatmap, solarRadiationHeatmapMaxValue]);
 
   const deletedWindowAndParentId = useStore(Selector.deletedWindowAndParentId);
+  const deletedDoorAndParentId = useStore(Selector.deletedDoorAndParentId);
   const shadowEnabled = useStore(Selector.viewState.shadowEnabled);
   const setCommonStore = useStore(Selector.set);
   const getSelectedElement = useStore(Selector.getSelectedElement);
@@ -491,9 +493,21 @@ const Wall = ({ wallModel, foundationModel }: WallProps) => {
       setShowGrid(false);
       setCommonStore((state) => {
         state.deletedWindowAndParentId = null;
+        state.addedWindowId = null;
       });
     }
   }, [deletedWindowAndParentId]);
+
+  useEffect(() => {
+    if (deletedDoorAndParentId && deletedDoorAndParentId[1] === id) {
+      resetCurrentState();
+      setShowGrid(false);
+      setCommonStore((state) => {
+        state.deletedDoorAndParentId = null;
+        state.addedDoorId = null;
+      });
+    }
+  }, [deletedDoorAndParentId]);
 
   const getRelativePosOnWall = (p: Vector3, wall: WallModel) => {
     const { cx, cy, cz } = wall;
@@ -682,19 +696,15 @@ const Wall = ({ wallModel, foundationModel }: WallProps) => {
   };
 
   const checkIfCanSelectMe = (e: ThreeEvent<PointerEvent>) => {
-    return (
-      !(
-        e.button === 2 ||
-        useStore.getState().addedWallId ||
-        addedWindowIdRef.current ||
-        useStore.getState().moveHandleType ||
-        useStore.getState().resizeHandleType ||
-        useStore.getState().objectTypeToAdd !== ObjectType.None ||
-        selected ||
-        isAddingElement()
-      ) &&
-      e.intersections.length > 0 &&
-      e.eventObject === e.intersections[0].eventObject
+    return !(
+      e.button === 2 ||
+      useStore.getState().addedWallId ||
+      addedWindowIdRef.current ||
+      useStore.getState().moveHandleType ||
+      useStore.getState().resizeHandleType ||
+      useStore.getState().objectTypeToAdd !== ObjectType.None ||
+      selected ||
+      isAddingElement()
     );
   };
 
@@ -870,7 +880,7 @@ const Wall = ({ wallModel, foundationModel }: WallProps) => {
       return;
     }
     if (invalidElementIdRef.current) {
-      if (isSettingWindowEndPointRef.current) {
+      if (isSettingWindowEndPointRef.current || isSettingDoorEndPointRef.current) {
         setCommonStore((state) => {
           state.elements.pop();
         });
@@ -905,6 +915,14 @@ const Wall = ({ wallModel, foundationModel }: WallProps) => {
       state.resizeHandleType = null;
       state.addedWindowId = null;
       state.addedDoorId = null;
+      if (state.actionModeLock) {
+        if (isSettingDoorEndPointRef.current) {
+          state.objectTypeToAdd = ObjectType.Door;
+        } else if (isSettingWindowEndPointRef.current) {
+          state.objectTypeToAdd = ObjectType.Window;
+        }
+        InnerCommonState.selectNone(state);
+      }
     });
     useStoreRef.getState().setEnableOrbitController(true);
     setShowGrid(false);
@@ -1035,6 +1053,13 @@ const Wall = ({ wallModel, foundationModel }: WallProps) => {
               }
               // adding door
               if (moveHandleType) {
+                checkCollision(
+                  grabRef.current.id,
+                  ObjectType.Door,
+                  p,
+                  grabRef.current.lx * lx,
+                  grabRef.current.lz * lz,
+                );
                 setCommonStore((state) => {
                   for (const e of state.elements) {
                     if (e.id === grabRef.current?.id) {
@@ -1270,6 +1295,12 @@ const Wall = ({ wallModel, foundationModel }: WallProps) => {
   };
 
   const handleWallBodyPointerDown = (e: ThreeEvent<PointerEvent>) => {
+    if (e.intersections.length > 0) {
+      const intersectableObjects = e.intersections.filter(
+        (obj) => !obj.eventObject.name.startsWith('Wall Intersection Plane'),
+      );
+      if (intersectableObjects[0].eventObject !== e.eventObject) return;
+    }
     if (useStore.getState().groupActionMode) {
       setCommonStore((state) => {
         for (const e of state.elements) {
@@ -1282,8 +1313,8 @@ const Wall = ({ wallModel, foundationModel }: WallProps) => {
       if (checkIfCanSelectMe(e)) {
         setCommonStore((state) => {
           state.contextMenuObjectType = null;
+          InnerCommonState.selectMe(state, id, e, ActionType.Select);
         });
-        selectMe(id, e, ActionType.Select);
       }
       if (outsideWallRef.current) {
         const intersects = ray.intersectObjects([outsideWallRef.current]);
@@ -1450,7 +1481,9 @@ const Wall = ({ wallModel, foundationModel }: WallProps) => {
           if (newElement && newElement.type === ObjectType.Roof) {
             state.addedRoofId = newElement.id;
           }
-          state.objectTypeToAdd = ObjectType.None;
+          if (!state.actionModeLock) {
+            state.objectTypeToAdd = ObjectType.None;
+          }
         });
       }
     }
