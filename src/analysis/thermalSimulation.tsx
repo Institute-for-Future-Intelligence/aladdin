@@ -12,6 +12,8 @@ import { ObjectType } from '../types';
 import { Util } from '../Util';
 import { MINUTES_OF_DAY } from './analysisConstants';
 import { WallModel } from '../models/WallModel';
+import { computeOutsideTemperature, getOutsideTemperatureAtMinute } from './heatTools';
+import { computeSunriseAndSunsetInMinutes } from './sunTools';
 
 export interface ThermalSimulationProps {
   city: string | null;
@@ -23,12 +25,16 @@ const ThermalSimulation = ({ city }: ThermalSimulationProps) => {
   const world = useStore.getState().world;
   const elements = useStore.getState().elements;
   const getWeather = useStore(Selector.getWeather);
+  const getFoundation = useStore(Selector.getFoundation);
   const runDailySimulation = useStore(Selector.runDailyThermalSimulation);
   const pauseDailySimulation = useStore(Selector.pauseDailyThermalSimulation);
   const runYearlySimulation = useStore(Selector.runYearlyThermalSimulation);
   const pauseYearlySimulation = useStore(Selector.pauseYearlyThermalSimulation);
   const noAnimation = !!useStore(Selector.world.noAnimationForThermalSimulation);
   const getRoofSegmentVertices = useStore(Selector.getRoofSegmentVertices);
+  const highestTemperatureTimeInMinutes = useStore(Selector.world.highestTemperatureTimeInMinutes) ?? 900;
+  const setHeatExchange = useStore(Selector.setHeatExchange);
+  const getHeatExchange = useStore(Selector.getHeatExchange);
 
   const requestRef = useRef<number>(0);
   const simulationCompletedRef = useRef<boolean>(false);
@@ -37,12 +43,27 @@ const ThermalSimulation = ({ city }: ThermalSimulationProps) => {
   const pauseRef = useRef<boolean>(false);
   const pausedDateRef = useRef<Date>(new Date(world.date));
   const dayRef = useRef<number>(0);
+  const currentOutsideTemperatureRef = useRef<number>(20);
 
   const lang = { lng: language };
   const weather = getWeather(city ?? 'Boston MA, USA');
   const now = new Date(world.date);
   const timesPerHour = world.timesPerHour ?? 4;
   const minuteInterval = 60 / timesPerHour;
+
+  const updateTemperature = (currentTime: Date) => {
+    if (weather) {
+      const t = computeOutsideTemperature(currentTime, weather.lowestTemperatures, weather.highestTemperatures);
+      currentOutsideTemperatureRef.current = getOutsideTemperatureAtMinute(
+        t.high,
+        t.low,
+        world.diurnalTemperatureModel,
+        highestTemperatureTimeInMinutes,
+        computeSunriseAndSunsetInMinutes(currentTime, world.latitude),
+        Util.minutesIntoDay(currentTime),
+      );
+    }
+  };
 
   /* do the daily simulation to generate daily sensor data */
 
@@ -90,6 +111,7 @@ const ThermalSimulation = ({ city }: ThermalSimulationProps) => {
   }, [pauseDailySimulation]);
 
   const staticCalculateHeatTransfer = () => {
+    updateTemperature(now);
     for (const e of elements) {
       switch (e.type) {
         case ObjectType.Foundation:
@@ -119,7 +141,16 @@ const ThermalSimulation = ({ city }: ThermalSimulationProps) => {
     simulationCompletedRef.current = false;
   };
 
-  const finishDaily = () => {};
+  const finishDaily = () => {
+    for (const e of elements) {
+      switch (e.type) {
+        case ObjectType.Wall:
+        case ObjectType.Roof:
+          console.log(e.type, getHeatExchange(e.id));
+          break;
+      }
+    }
+  };
 
   const calculateDaily = () => {
     if (runDailySimulation && !pauseRef.current) {
@@ -146,6 +177,7 @@ const ThermalSimulation = ({ city }: ThermalSimulationProps) => {
         state.world.date = now.toLocaleString('en-US');
       });
       // will the calculation immediately use the latest geometry after re-rendering?
+      updateTemperature(now);
       for (const e of elements) {
         switch (e.type) {
           case ObjectType.Wall:
@@ -162,26 +194,33 @@ const ThermalSimulation = ({ city }: ThermalSimulationProps) => {
   };
 
   const calculateWall = (wall: WallModel) => {
-    const polygon = Util.getWallVertices(wall, 0);
-    const area = Util.getPolygonArea(polygon);
-    console.log(area);
+    const foundation = getFoundation(wall);
+    if (foundation) {
+      const polygon = Util.getWallVertices(wall, 0);
+      const area = Util.getPolygonArea(polygon);
+      const deltaT = (foundation.hvacSystem?.thermostatSetpoint ?? 20) - currentOutsideTemperatureRef.current;
+      // U is the inverse of R with SI units of W/(m2⋅K)
+      const heat = (((deltaT * area) / wall.rValue) * 0.001) / timesPerHour; // convert to kWh
+      setHeatExchange(wall.id, heat);
+    }
   };
 
   const calculateRoof = (roof: RoofModel) => {
+    const foundation = getFoundation(roof);
+    if (!foundation) return;
     const segments = getRoofSegmentVertices(roof.id);
+    console.log(roof, segments);
     if (!segments) return;
+    const deltaT = (foundation.hvacSystem?.thermostatSetpoint ?? 20) - currentOutsideTemperatureRef.current;
+    let totalArea = 0;
     switch (roof.roofType) {
-      case RoofType.Pyramid: {
-        let totalArea = 0;
+      case RoofType.Pyramid:
         for (const v of segments) {
           const area = Util.getTriangleArea(v[0], v[1], v[2]);
           totalArea += area;
         }
-        console.log(now, totalArea);
         break;
-      }
-      case RoofType.Hip: {
-        let totalArea = 0;
+      case RoofType.Hip:
         for (const v of segments) {
           if (v.length === 3) {
             totalArea += Util.getTriangleArea(v[0], v[1], v[2]);
@@ -190,37 +229,28 @@ const ThermalSimulation = ({ city }: ThermalSimulationProps) => {
             totalArea += Util.getTriangleArea(v[2], v[3], v[0]);
           }
         }
-        console.log(now, totalArea);
         break;
-      }
-      case RoofType.Gable: {
-        let totalArea = 0;
+      case RoofType.Gable:
         for (const v of segments) {
           totalArea += Util.getTriangleArea(v[0], v[1], v[2]);
           totalArea += Util.getTriangleArea(v[2], v[3], v[0]);
         }
-        console.log(now, totalArea);
         break;
-      }
-      case RoofType.Gambrel: {
-        let totalArea = 0;
+      case RoofType.Gambrel:
         for (const v of segments) {
           totalArea += Util.getTriangleArea(v[0], v[1], v[2]);
           totalArea += Util.getTriangleArea(v[2], v[3], v[0]);
         }
-        console.log(now, totalArea);
         break;
-      }
-      case RoofType.Mansard: {
-        let totalArea = 0;
+      case RoofType.Mansard:
         for (const v of segments) {
           totalArea += Util.getTriangleArea(v[0], v[1], v[2]);
           totalArea += Util.getTriangleArea(v[2], v[3], v[0]);
         }
-        console.log(now, totalArea);
         break;
-      }
     }
+    const heat = (((deltaT * totalArea) / roof.rValue) * 0.001) / timesPerHour; // convert to kWh
+    setHeatExchange(roof.id, heat);
   };
 
   // yearly simulation
