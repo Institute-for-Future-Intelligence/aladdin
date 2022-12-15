@@ -14,6 +14,8 @@ import { MINUTES_OF_DAY } from './analysisConstants';
 import { WallModel } from '../models/WallModel';
 import { computeOutsideTemperature, getOutsideTemperatureAtMinute } from './heatTools';
 import { computeSunriseAndSunsetInMinutes } from './sunTools';
+import { WindowModel } from '../models/WindowModel';
+import { DoorModel } from '../models/DoorModel';
 
 export interface ThermalSimulationProps {
   city: string | null;
@@ -26,6 +28,8 @@ const ThermalSimulation = ({ city }: ThermalSimulationProps) => {
   const elements = useStore.getState().elements;
   const getWeather = useStore(Selector.getWeather);
   const getFoundation = useStore(Selector.getFoundation);
+  const getParent = useStore(Selector.getParent);
+  const getChildrenOfType = useStore(Selector.getChildrenOfType);
   const runDailySimulation = useStore(Selector.runDailyThermalSimulation);
   const pauseDailySimulation = useStore(Selector.pauseDailyThermalSimulation);
   const runYearlySimulation = useStore(Selector.runYearlyThermalSimulation);
@@ -143,12 +147,7 @@ const ThermalSimulation = ({ city }: ThermalSimulationProps) => {
 
   const finishDaily = () => {
     for (const e of elements) {
-      switch (e.type) {
-        case ObjectType.Wall:
-        case ObjectType.Roof:
-          console.log(e.type, getHeatExchange(e.id));
-          break;
-      }
+      if (Util.isThermal(e)) console.log(e.type, e.cx, e.cy, getHeatExchange(e.id));
     }
   };
 
@@ -186,6 +185,12 @@ const ThermalSimulation = ({ city }: ThermalSimulationProps) => {
           case ObjectType.Roof:
             calculateRoof(e as RoofModel);
             break;
+          case ObjectType.Window:
+            calculateWindow(e as WindowModel);
+            break;
+          case ObjectType.Door:
+            calculateDoor(e as DoorModel);
+            break;
         }
       }
       // recursive call to the next step of the simulation
@@ -193,14 +198,52 @@ const ThermalSimulation = ({ city }: ThermalSimulationProps) => {
     }
   };
 
+  const calculateWindow = (window: WindowModel) => {
+    const foundation = getFoundation(window);
+    if (foundation) {
+      const parent = getParent(window);
+      if (parent) {
+        let area = Util.getWindowArea(window, parent);
+        const deltaT = (foundation.hvacSystem?.thermostatSetpoint ?? 20) - currentOutsideTemperatureRef.current;
+        const heat = (deltaT * area * (window.uValue ?? 2) * 0.001) / timesPerHour; // convert to kWh
+        setHeatExchange(window.id, heat);
+      }
+    }
+  };
+
+  const calculateDoor = (door: DoorModel) => {
+    const foundation = getFoundation(door);
+    if (foundation) {
+      const parent = getParent(door);
+      if (parent) {
+        let area = door.lx * door.lz * parent.lx * parent.lz;
+        const deltaT = (foundation.hvacSystem?.thermostatSetpoint ?? 20) - currentOutsideTemperatureRef.current;
+        const heat = (deltaT * area * (door.uValue ?? 2) * 0.001) / timesPerHour; // convert to kWh
+        setHeatExchange(door.id, heat);
+      }
+    }
+  };
+
   const calculateWall = (wall: WallModel) => {
     const foundation = getFoundation(wall);
     if (foundation) {
       const polygon = Util.getWallVertices(wall, 0);
-      const area = Util.getPolygonArea(polygon);
+      let area = Util.getPolygonArea(polygon);
+      const windows = getChildrenOfType(ObjectType.Window, wall.id);
+      if (windows && windows.length > 0) {
+        for (const w of windows) {
+          area -= Util.getWindowArea(w as WindowModel, wall);
+        }
+      }
+      const doors = getChildrenOfType(ObjectType.Door, wall.id);
+      if (doors && doors.length > 0) {
+        for (const d of doors) {
+          area -= d.lx * d.lz * wall.lx * wall.lz;
+        }
+      }
       const deltaT = (foundation.hvacSystem?.thermostatSetpoint ?? 20) - currentOutsideTemperatureRef.current;
       // U is the inverse of R with SI units of W/(m2⋅K)
-      const heat = (((deltaT * area) / wall.rValue) * 0.001) / timesPerHour; // convert to kWh
+      const heat = (((deltaT * area) / (wall.rValue ?? 0.5)) * 0.001) / timesPerHour; // convert to kWh
       setHeatExchange(wall.id, heat);
     }
   };
@@ -209,7 +252,6 @@ const ThermalSimulation = ({ city }: ThermalSimulationProps) => {
     const foundation = getFoundation(roof);
     if (!foundation) return;
     const segments = getRoofSegmentVertices(roof.id);
-    console.log(roof, segments);
     if (!segments) return;
     const deltaT = (foundation.hvacSystem?.thermostatSetpoint ?? 20) - currentOutsideTemperatureRef.current;
     let totalArea = 0;
@@ -249,7 +291,7 @@ const ThermalSimulation = ({ city }: ThermalSimulationProps) => {
         }
         break;
     }
-    const heat = (((deltaT * totalArea) / roof.rValue) * 0.001) / timesPerHour; // convert to kWh
+    const heat = (((deltaT * totalArea) / (roof.rValue ?? 0.5)) * 0.001) / timesPerHour; // convert to kWh
     setHeatExchange(roof.id, heat);
   };
 

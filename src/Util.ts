@@ -42,6 +42,7 @@ import platform from 'platform';
 import { RoofModel } from './models/RoofModel';
 import { RoofUtil } from './views/roof/RoofUtil';
 import { FoundationModel } from './models/FoundationModel';
+import { WindowModel, WindowType } from './models/WindowModel';
 
 export class Util {
   static getTriangleArea(a: Vector3, b: Vector3, c: Vector3) {
@@ -153,6 +154,28 @@ export class Util {
       }
     }
     return false;
+  }
+
+  static isThermal(e: ElementModel): boolean {
+    return (
+      e.type === ObjectType.Window ||
+      e.type === ObjectType.Door ||
+      e.type === ObjectType.Wall ||
+      e.type === ObjectType.Roof
+    );
+  }
+
+  static getWindowArea(window: WindowModel, parent: ElementModel): number {
+    if (window.windowType === WindowType.Arched && window.archHeight > 0) {
+      const hx = 0.5 * window.lx * parent.lx;
+      const lz = window.lz * parent.lz;
+      const ah = Math.min(window.archHeight, lz, hx); // actual arc height
+      const r = 0.5 * (ah + (hx * hx) / ah); // arc radius
+      const startAngle = Math.acos(hx / r);
+      const extent = Math.PI - startAngle * 2;
+      return 0.5 * extent * r * r - hx * (r - ah) + (lz - ah) * hx * 2;
+    }
+    return window.lx * window.lz * parent.lx * parent.lz;
   }
 
   static hasHeliostatOrFresnelReflectors(elements: ElementModel[]): boolean {
