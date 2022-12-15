@@ -136,11 +136,11 @@ const Foundation = ({
   const [hovered, setHovered] = useState(false);
   const [heatmapTexture, setHeatmapTexture] = useState<CanvasTexture | null>(null);
   const [showGrid, setShowGrid] = useState<boolean>(false);
-  const [addedWallID, setAddedWallID] = useState<string | null>(null);
   const [buildingResizerPosition, setBuildingResizerPosition] = useState<number[]>([cx, cy, lz / 2]);
   const [buildingResizerRotation, setBuildingResizerRotation] = useState<number>(0);
   const [buildingResizerDimension, setBuildingResizerDimension] = useState<number[] | null>(null);
 
+  const addedWallIdRef = useRef<string | null>(null);
   const isSettingWallStartPointRef = useRef(false);
   const isSettingWallEndPointRef = useRef(false);
   const elementsStateBeforeResizingRef = useRef<ElementModel[] | null>(null);
@@ -272,7 +272,8 @@ const Foundation = ({
       wallMapOnFoundation.current.delete(deletedWallID);
       isSettingWallStartPointRef.current = false;
       isSettingWallEndPointRef.current = false;
-      setAddedWallID(null);
+      // setAddedWallID(null);
+      addedWallIdRef.current = null;
       setCommonStore((state) => {
         state.addedWallId = null;
         state.deletedWallId = null;
@@ -482,7 +483,7 @@ const Foundation = ({
     let targetSide: WallSide | null = null;
     let jointId: string | undefined = undefined;
     for (const [id, wall] of wallMapOnFoundation.current) {
-      if (id === addedWallID || (grabRef.current && id === grabRef.current.id)) continue;
+      if (id === addedWallIdRef.current || (grabRef.current && id === grabRef.current.id)) continue;
       const leftPoint = new Vector3(wall.leftPoint[0], wall.leftPoint[1], wall.leftPoint[2]);
       const rightPoint = new Vector3(wall.rightPoint[0], wall.rightPoint[1], wall.rightPoint[2]);
       const distStart = leftPoint?.distanceTo(pointer) ?? Number.MAX_VALUE;
@@ -1366,7 +1367,7 @@ const Foundation = ({
       }
     }
 
-    if (isSettingWallStartPointRef.current && addedWallID && baseRef.current) {
+    if (isSettingWallStartPointRef.current && addedWallIdRef.current && baseRef.current) {
       const intersects = ray.intersectObjects([baseRef.current]);
       let p = Util.wallRelativePosition(intersects[0].point, foundationModel);
       let targetID: string | null = null;
@@ -1392,7 +1393,7 @@ const Foundation = ({
           setCommonStore((state) => {
             for (const e of state.elements) {
               if (e.type === ObjectType.Wall) {
-                if (e.id === addedWallID) {
+                if (e.id === addedWallIdRef.current) {
                   const wall = e as WallModel;
                   wall.cx = p.x;
                   wall.cy = p.y;
@@ -1401,7 +1402,7 @@ const Foundation = ({
                   }
                 }
                 if (e.id === targetID && targetWall.rightJoints.length === 0) {
-                  (e as WallModel).rightJoints = [addedWallID];
+                  (e as WallModel).rightJoints = addedWallIdRef.current ? [addedWallIdRef.current] : [];
                 }
               }
             }
@@ -1412,7 +1413,7 @@ const Foundation = ({
           setCommonStore((state) => {
             for (const e of state.elements) {
               if (e.type === ObjectType.Wall) {
-                if (e.id === addedWallID) {
+                if (e.id === addedWallIdRef.current) {
                   const wall = e as WallModel;
                   wall.cx = p.x;
                   wall.cy = p.y;
@@ -1421,7 +1422,7 @@ const Foundation = ({
                   }
                 }
                 if (e.id === targetID && targetWall.leftJoints.length === 0) {
-                  (e as WallModel).leftJoints = [addedWallID];
+                  (e as WallModel).leftJoints = addedWallIdRef.current ? [addedWallIdRef.current] : [];
                 }
               }
             }
@@ -1431,12 +1432,11 @@ const Foundation = ({
       }
       // no attach to wall
       else {
-        setElementPosition(addedWallID, p.x, p.y);
+        setElementPosition(addedWallIdRef.current, p.x, p.y);
       }
-
       isSettingWallStartPointRef.current = false;
       isSettingWallEndPointRef.current = true;
-      updateWallLeftPointById(addedWallID, [p.x, p.y, p.z]);
+      updateWallLeftPointById(addedWallIdRef.current, [p.x, p.y, p.z]);
       setCommonStore((state) => {
         state.resizeHandleType = resizeHandleType;
         state.resizeAnchor = Util.wallAbsolutePosition(p, foundationModel);
@@ -1490,20 +1490,25 @@ const Foundation = ({
     switch (elem.type) {
       case ObjectType.Wall: {
         const wall = elem as WallModel;
-        if (isSettingWallEndPointRef.current && addedWallID && baseRef.current) {
+        if (isSettingWallEndPointRef.current && addedWallIdRef.current && baseRef.current) {
           useStoreRef.getState().setEnableOrbitController(true);
           setCommonStore((state) => {
-            state.objectTypeToAdd = ObjectType.None;
+            if (state.actionModeLock) {
+              state.objectTypeToAdd = ObjectType.Wall;
+              InnerCommonState.selectNone(state);
+            }
             state.addedWallId = null;
             if (wall.lx === 0 && elementsStateBeforeResizingRef.current) {
               state.elements = [...elementsStateBeforeResizingRef.current];
-              wallMapOnFoundation.current.delete(addedWallID);
+              if (addedWallIdRef.current) {
+                wallMapOnFoundation.current.delete(addedWallIdRef.current);
+              }
             } else {
               handleUndoableAddWall(wall as WallModel);
               wallMapOnFoundation.current.set(wall.id, wall);
             }
           });
-          setAddedWallID(null);
+          addedWallIdRef.current = null;
           isSettingWallEndPointRef.current = false;
         } else {
           if (useStore.getState().resizeHandleType) {
@@ -1802,7 +1807,7 @@ const Foundation = ({
     if (!foundationModel) return;
     if (grabRef.current && Util.isSolarCollector(grabRef.current)) return;
     const objectTypeToAdd = useStore.getState().objectTypeToAdd;
-    if (!grabRef.current && !addedWallID && objectTypeToAdd !== ObjectType.Wall) return;
+    if (!grabRef.current && !addedWallIdRef.current && objectTypeToAdd !== ObjectType.Wall) return;
     if (grabRef.current?.parentId !== id && objectTypeToAdd === ObjectType.None) return;
     const moveHandleType = useStore.getState().moveHandleType;
     const resizeHandleType = useStore.getState().resizeHandleType;
@@ -2138,7 +2143,7 @@ const Foundation = ({
         elementsStateBeforeResizingRef.current = [...useStore.getState().elements];
         const addedWall = addElement(foundationModel, p) as WallModel;
         grabRef.current = addedWall;
-        setAddedWallID(addedWall.id);
+        addedWallIdRef.current = addedWall.id;
         isSettingWallStartPointRef.current = true;
         setShowGrid(true);
         useStoreRef.getState().setEnableOrbitController(false);
@@ -2147,12 +2152,12 @@ const Foundation = ({
           state.objectTypeToAdd = ObjectType.None;
         });
       }
-      if (addedWallID && isSettingWallStartPointRef.current) {
+      if (addedWallIdRef.current && isSettingWallStartPointRef.current) {
         p = Util.wallRelativePosition(intersects[0].point, foundationModel);
         const { point } = findMagnetPoint(p, 1.5);
         p = updatePointer(p, point);
         if (isSettingWallStartPointRef.current) {
-          setElementPosition(addedWallID, p.x, p.y);
+          setElementPosition(addedWallIdRef.current, p.x, p.y);
         }
       }
     }
@@ -2568,7 +2573,7 @@ const Foundation = ({
             {useStore.getState().rotateHandleType && grabRef.current && Util.isSolarCollector(grabRef.current) && (
               <PolarGrid element={grabRef.current} height={(grabRef.current as SolarCollector).poleHeight + hz} />
             )}
-            {(useStore.getState().moveHandleType || useStore.getState().resizeHandleType || addedWallID) && (
+            {(useStore.getState().moveHandleType || useStore.getState().resizeHandleType || addedWallIdRef.current) && (
               <ElementGrid hx={hx} hy={hy} hz={hz} />
             )}
           </>
