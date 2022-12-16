@@ -75,7 +75,7 @@ export class DefaultWorldModel implements WorldModel {
     this.pvGridCellSize = 0.5;
     this.discretization = Discretization.APPROXIMATE;
     this.diurnalTemperatureModel = DiurnalTemperatureModel.Sinusoidal;
-    this.highestTemperatureTimeInMinutes = 900;
+    this.highestTemperatureTimeInMinutes = 900; // assume it is 3pm (at 15*60 minutes)
 
     this.solarPanelVisibilityGridCellSize = 0.2;
     this.solarRadiationHeatmapGridCellSize = 0.5;
