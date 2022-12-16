@@ -2,7 +2,7 @@
  * @Copyright 2022. Institute for Future Intelligence, Inc.
  */
 
-import React, { useEffect, useMemo, useRef, useState } from 'react';
+import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { PyramidRoofModel, RoofModel } from 'src/models/RoofModel';
 import { useStore } from 'src/stores/common';
 import { CanvasTexture, DoubleSide, Euler, Mesh, Raycaster, RepeatWrapping, Shape, Vector2, Vector3 } from 'three';
@@ -35,8 +35,10 @@ import {
   useTransparent,
   useUpdateOldRoofFiles,
   useUpdateSegmentVerticesMap,
+  useUpdateSegmentVerticesWithoutOverhangMap,
 } from './hooks';
 import RoofSegment from './roofSegment';
+import { usePrimitiveStore } from 'src/stores/commonPrimitive';
 
 const intersectionPlanePosition = new Vector3();
 const intersectionPlaneRotation = new Euler();
@@ -637,6 +639,43 @@ const PyramidRoof = (roofModel: PyramidRoofModel) => {
       }
     }
   }, [showSolarRadiationHeatmap, solarRadiationHeatmapMaxValue]);
+
+  const updateSegmentVerticesWithoutOverhangeMap = () => {
+    const segmentVertives: Vector3[][] = [];
+    for (let i = 0; i < currentWallArray.length; i++) {
+      const w = currentWallArray[i];
+      if (
+        w.leftPoint.length > 0 &&
+        w.rightPoint.length > 0 &&
+        (w.leftPoint[0] !== w.rightPoint[0] || w.leftPoint[1] !== w.rightPoint[1])
+      ) {
+        let { lh, rh } = RoofUtil.getWallHeight(currentWallArray, i);
+        if (!isLoopRef.current) {
+          if (i === 0) {
+            lh = currentWallArray[0].lz;
+          }
+          if (i === currentWallArray.length - 1) {
+            rh = currentWallArray[currentWallArray.length - 1].lz;
+          }
+        }
+
+        const wallLeftPoint = new Vector3(w.leftPoint[0], w.leftPoint[1], lh);
+        const wallRightPoint = new Vector3(w.rightPoint[0], w.rightPoint[1], rh);
+        segmentVertives.push([wallLeftPoint, wallRightPoint, centerPointV3]);
+      }
+    }
+    if (!isLoopRef.current) {
+      const firstWall = currentWallArray[0];
+      const lastWall = currentWallArray[currentWallArray.length - 1];
+      const leftPoint = new Vector3(lastWall.rightPoint[0], lastWall.rightPoint[1], lastWall.lz);
+      const rightPoint = new Vector3(firstWall.leftPoint[0], firstWall.leftPoint[1], firstWall.lz);
+      segmentVertives.push([leftPoint, rightPoint, centerPointV3]);
+    }
+
+    useStore.getState().setRoofSegmentVerticesWithoutOverhangMap(id, segmentVertives);
+  };
+
+  useUpdateSegmentVerticesWithoutOverhangMap(updateSegmentVerticesWithoutOverhangeMap);
 
   return (
     <group position={[cx, cy, cz]} rotation={[0, 0, rotation]} name={`Pyramid Roof Group ${id}`}>

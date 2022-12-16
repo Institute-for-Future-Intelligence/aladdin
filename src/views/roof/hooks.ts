@@ -345,13 +345,18 @@ export const useUpdateSegmentVerticesMap = (
     return vertices;
   };
 
-  useEffect(() => {
-    if (runDynamicSimulation || runStaticSimulation || runDailyThermalSimulation || runYearlyThermalSimulation) {
-      updateSegmentVertices();
-    }
-  }, [runDynamicSimulation, runStaticSimulation, runDailyThermalSimulation, runYearlyThermalSimulation]);
+  if (runDynamicSimulation || runStaticSimulation || runDailyThermalSimulation || runYearlyThermalSimulation) {
+    updateSegmentVertices();
+  }
 
   return updateSegmentVertices;
+};
+
+export const useUpdateSegmentVerticesWithoutOverhangMap = (update: () => void): void => {
+  const flag = false;
+  if (flag) {
+    update();
+  }
 };
 
 export const useUpdateOldRoofFiles = (roofModel: RoofModel, highestWallHeight: number) => {

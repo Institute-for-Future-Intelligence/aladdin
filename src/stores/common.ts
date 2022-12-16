@@ -126,6 +126,9 @@ export interface CommonStoreState {
 
   roofSegmentVerticesMap: Map<string, Vector3[][]>; // key: roofId, val: [segmentIndex][vertex]
   getRoofSegmentVertices: (id: string) => Vector3[][] | undefined;
+  roofSegmentVerticesWithoutOverhangMap: Map<string, Vector3[][]>;
+  setRoofSegmentVerticesWithoutOverhangMap: (id: string, data: Vector3[][]) => void;
+  getRoofSegmentVerticesWithoutOverhang: (id: string) => Vector3[][] | undefined;
 
   ray: Raycaster;
   mouse: Vector2;
@@ -839,6 +842,15 @@ export const useStore = create<CommonStoreState>(
           getRoofSegmentVertices(id) {
             return get().roofSegmentVerticesMap.get(id);
           },
+          roofSegmentVerticesWithoutOverhangMap: new Map<string, Vector3[][]>(),
+          setRoofSegmentVerticesWithoutOverhangMap(id, data) {
+            immerSet((state: CommonStoreState) => {
+              state.roofSegmentVerticesWithoutOverhangMap.set(id, data);
+            });
+          },
+          getRoofSegmentVerticesWithoutOverhang(id) {
+            return get().roofSegmentVerticesWithoutOverhangMap.get(id);
+          },
 
           ray: new Raycaster(),
           mouse: new Vector2(),
@@ -916,6 +928,7 @@ export const useStore = create<CommonStoreState>(
               state.yearlyUpdraftTowerYield.length = 0;
               state.fittestIndividualResults.length = 0;
               state.roofSegmentVerticesMap = new Map<string, Vector3[][]>();
+              state.roofSegmentVerticesWithoutOverhangMap = new Map<string, Vector3[][]>();
             });
             // 1/6/2022: Humans previously did not have dimension data (which probably was a mistake).
             // We do this for backward compatibility. Otherwise, humans cannot be moved in old files.
@@ -958,6 +971,7 @@ export const useStore = create<CommonStoreState>(
               state.elements = [];
               state.heatmaps.clear();
               state.roofSegmentVerticesMap.clear();
+              state.roofSegmentVerticesWithoutOverhangMap.clear();
             });
           },
           createEmptyFile() {
@@ -977,6 +991,7 @@ export const useStore = create<CommonStoreState>(
               state.currentUndoable = undefined;
               state.actionInfo = undefined;
               state.roofSegmentVerticesMap.clear();
+              state.roofSegmentVerticesWithoutOverhangMap.clear();
               state.heatmaps.clear();
             });
           },
@@ -4712,6 +4727,7 @@ export const useStore = create<CommonStoreState>(
                     case ObjectType.Roof: {
                       state.deletedRoofId = elem.id;
                       state.roofSegmentVerticesMap.delete(id);
+                      state.roofSegmentVerticesWithoutOverhangMap.delete(id);
                       break;
                     }
                     case ObjectType.Wall: {
@@ -4794,6 +4810,7 @@ export const useStore = create<CommonStoreState>(
                 if (e.id === id || e.parentId === id || e.foundationId === id) {
                   if (e.type === ObjectType.Roof) {
                     state.roofSegmentVerticesMap.delete(e.id);
+                    state.roofSegmentVerticesWithoutOverhangMap.delete(e.id);
                   }
                   return false;
                 } else {
@@ -4812,6 +4829,7 @@ export const useStore = create<CommonStoreState>(
                   } else {
                     if (x.type === ObjectType.Roof) {
                       state.roofSegmentVerticesMap.delete(x.id);
+                      state.roofSegmentVerticesWithoutOverhangMap.delete(x.id);
                     }
                     return false;
                   }
@@ -4823,6 +4841,7 @@ export const useStore = create<CommonStoreState>(
                   } else {
                     if (x.type === ObjectType.Roof) {
                       state.roofSegmentVerticesMap.delete(x.id);
+                      state.roofSegmentVerticesWithoutOverhangMap.delete(x.id);
                     }
                     return false;
                   }
