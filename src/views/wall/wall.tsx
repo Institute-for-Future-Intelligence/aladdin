@@ -233,6 +233,41 @@ const Wall = ({ wallModel, foundationModel }: WallProps) => {
   const sunlightDirection = useStore(Selector.sunlightDirection);
   const night = sunlightDirection.z <= 0;
 
+  const deletedRoofId = useStore(Selector.deletedRoofId);
+
+  useEffect(() => {
+    if (deletedRoofId === roofId) {
+      useStore.getState().set((state) => {
+        const invalidateIdSet = new Set<string>();
+
+        for (const e of state.elements) {
+          if (e.id === id && e.type === ObjectType.Wall) {
+            const wall = e as WallModel;
+            wall.roofId = null;
+            wall.leftRoofHeight = undefined;
+            wall.rightRoofHeight = undefined;
+            wall.centerRoofHeight = undefined;
+            wall.centerLeftRoofHeight = undefined;
+            wall.centerRightRoofHeight = undefined;
+
+            if (elementsOnWall.length > 0) {
+              const wallPoints = Util.getWallInnerSideShapePoints(wall);
+              elementsOnWall.forEach((e) => {
+                if (!Util.isElementInsideWall(new Vector3(e.cx * lx, 0, e.cz * lz), e.lx * lx, e.lz * lz, wallPoints)) {
+                  invalidateIdSet.add(e.id);
+                }
+              });
+            }
+            break;
+          }
+        }
+        if (invalidateIdSet.size > 0) {
+          state.elements = state.elements.filter((e) => !invalidateIdSet.has(e.id));
+        }
+      });
+    }
+  }, [deletedRoofId]);
+
   const intersectionPlaneRef = useRef<Mesh>(null);
   const outsideWallRef = useRef<Mesh>(null);
   // const outsideWallInnerFaceRef = useRef<Mesh>(null);
