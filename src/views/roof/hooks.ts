@@ -316,8 +316,6 @@ export const useUpdateSegmentVerticesMap = (
 ) => {
   const runDynamicSimulation = useStore(Selector.runDynamicSimulation);
   const runStaticSimulation = useStore(Selector.runStaticSimulation);
-  const runDailyThermalSimulation = useStore(Selector.runDailyThermalSimulation);
-  const runYearlyThermalSimulation = useStore(Selector.runYearlyThermalSimulation);
 
   const updateSegmentVertices = () => {
     const relToFoundation = (v: Vector3) => v.clone().add(centroid);
@@ -344,7 +342,7 @@ export const useUpdateSegmentVerticesMap = (
     return vertices;
   };
 
-  if (runDynamicSimulation || runStaticSimulation || runDailyThermalSimulation || runYearlyThermalSimulation) {
+  if (runDynamicSimulation || runStaticSimulation) {
     updateSegmentVertices();
   }
 
