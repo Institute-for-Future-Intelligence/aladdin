@@ -159,7 +159,7 @@ const LineGraph = ({
           break;
         case GraphDataType.DailyBuildingEnergy:
         case GraphDataType.YearlyBuildingEnergy:
-          name = 'Energy';
+          name = labels && labels[i] ? labels[i] : 'Energy' + (i + 1);
           break;
       }
       const opacity = legendDataKey === null ? 1 : legendDataKey === name ? 1 : 0.25;

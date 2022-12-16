@@ -101,23 +101,31 @@ const DailyBuildingEnergyPanel = ({ city }: DailyBuildingEnergyPanelProps) => {
   const [data, setData] = useState<DatumEntry[]>([]);
 
   const lang = { lng: language };
+  const labels = ['Heater', 'AC', 'Net'];
 
   useEffect(() => {
     const sum: DatumEntry[] = [];
     for (let i = 0; i < 24; i++) {
       const datum: DatumEntry = {};
-      let s = 0;
+      let heater = 0;
+      let ac = 0;
       for (const e of elements) {
         if (Util.isThermal(e)) {
           // const f = getFoundation(e);
           const h = hourlyHeatExchangeArrayMap.get(e.id);
           if (h) {
-            s += h[i];
+            if (h[i] < 0) {
+              heater -= h[i]; // negative goes to heater
+            } else {
+              ac += h[i]; // positive goes to cooler
+            }
           }
         }
       }
       datum['Hour'] = i;
-      datum['Energy'] = s;
+      datum['Heater'] = heater;
+      datum['AC'] = ac;
+      datum['Net'] = heater + ac;
       sum.push(datum);
     }
     setData(sum);
@@ -236,7 +244,7 @@ const DailyBuildingEnergyPanel = ({ city }: DailyBuildingEnergyPanelProps) => {
             type={GraphDataType.DailyBuildingEnergy}
             chartType={ChartType.Line}
             dataSource={data}
-            labels={['energy']}
+            labels={labels}
             height={100}
             dataKeyAxisX={'Hour'}
             labelX={labelX}

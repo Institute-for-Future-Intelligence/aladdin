@@ -50,7 +50,7 @@ const ThermalSimulation = ({ city }: ThermalSimulationProps) => {
   const dayRef = useRef<number>(0);
   const outsideTemperatureRangeRef = useRef<{ high: number; low: number }>({ high: 20, low: 0 });
   const currentOutsideTemperatureRef = useRef<number>(20);
-  const hourlyHeatFluxArrayMapRef = useRef<Map<string, number[]>>(new Map<string, number[]>());
+  const hourlyHeatExchangeArrayMapRef = useRef<Map<string, number[]>>(new Map<string, number[]>());
 
   const lang = { lng: language };
   const weather = getWeather(city ?? 'Boston MA, USA');
@@ -58,6 +58,18 @@ const ThermalSimulation = ({ city }: ThermalSimulationProps) => {
   const timesPerHour = world.timesPerHour ?? 4;
   const minuteInterval = 60 / timesPerHour;
 
+  // get the highest and lowest temperatures of the day from the weather data
+  useEffect(() => {
+    if (weather) {
+      outsideTemperatureRangeRef.current = computeOutsideTemperature(
+        new Date(world.date),
+        weather.lowestTemperatures,
+        weather.highestTemperatures,
+      );
+    }
+  }, [world.date, weather?.lowestTemperatures, weather?.highestTemperatures]);
+
+  // get the air temperature at the current time
   const updateTemperature = (currentTime: Date) => {
     currentOutsideTemperatureRef.current = getOutsideTemperatureAtMinute(
       outsideTemperatureRangeRef.current.high,
@@ -69,28 +81,35 @@ const ThermalSimulation = ({ city }: ThermalSimulationProps) => {
     );
   };
 
-  useEffect(() => {
-    if (weather) {
-      outsideTemperatureRangeRef.current = computeOutsideTemperature(
-        new Date(world.date),
-        weather.lowestTemperatures,
-        weather.highestTemperatures,
-      );
-    }
-  }, [world.date, weather?.lowestTemperatures, weather?.highestTemperatures]);
-
   /*
    If the lowest outside temperature is higher than the threshold, don't turn on the heater.
    If the highest outside temperature is lower than the threshold, don't turn on the air conditioner.
   */
-  const computeEnergyUsage = (heatGain: number, setpoint: number) => {
+  const computeEnergyUsage = (heatExchange: number, setpoint: number) => {
     if (
-      (heatGain < 0 && outsideTemperatureRangeRef.current.low >= setpoint - TEMPERATURE_THRESHOLD) ||
-      (heatGain > 0 && outsideTemperatureRangeRef.current.high <= setpoint + TEMPERATURE_THRESHOLD)
+      (heatExchange < 0 && outsideTemperatureRangeRef.current.low >= setpoint - TEMPERATURE_THRESHOLD) ||
+      (heatExchange > 0 && outsideTemperatureRangeRef.current.high <= setpoint + TEMPERATURE_THRESHOLD)
     )
       return 0;
-    // energy usage is absolute because it is a net expense
-    return Math.abs(heatGain);
+    // negative heat exchange goes to heater, positive heat exchange goes to air conditioner
+    return heatExchange;
+  };
+
+  const updateHeatExchangeNow = (id: string, heatExchange: number) => {
+    let a = hourlyHeatExchangeArrayMapRef.current.get(id);
+    if (!a) {
+      a = new Array(24).fill(0);
+      hourlyHeatExchangeArrayMapRef.current.set(id, a);
+    }
+    a[now.getHours()] = heatExchange;
+  };
+
+  const resetHourlyHeatExchangeMap = () => {
+    for (const e of elements) {
+      if (Util.isThermal(e)) {
+        hourlyHeatExchangeArrayMapRef.current.get(e.id)?.fill(0);
+      }
+    }
   };
 
   /* do the daily simulation to generate hourly data and daily total */
@@ -98,7 +117,7 @@ const ThermalSimulation = ({ city }: ThermalSimulationProps) => {
   useEffect(() => {
     if (runDailySimulation) {
       if (noAnimation && !Util.hasMovingParts(elements)) {
-        staticCalculateHeatTransfer();
+        staticCalculateDaily();
       } else {
         initDaily();
         requestRef.current = requestAnimationFrame(calculateDaily);
@@ -138,15 +157,19 @@ const ThermalSimulation = ({ city }: ThermalSimulationProps) => {
     }
   }, [pauseDailySimulation]);
 
-  const staticCalculateHeatTransfer = () => {
+  // TODO
+  const staticCalculateDaily = () => {
     updateTemperature(now);
     for (const e of elements) {
       switch (e.type) {
-        case ObjectType.Foundation:
+        case ObjectType.Window:
+          calculateWindow(e as WindowModel);
           break;
-        case ObjectType.Cuboid:
+        case ObjectType.Door:
+          calculateDoor(e as DoorModel);
           break;
         case ObjectType.Wall:
+          calculateWall(e as WallModel);
           break;
         case ObjectType.Roof:
           calculateRoof(e as RoofModel);
@@ -167,24 +190,16 @@ const ThermalSimulation = ({ city }: ThermalSimulationProps) => {
       now.setHours(0, minuteInterval / 2);
     }
     simulationCompletedRef.current = false;
-    resetHourlyHeatFluxMap();
+    resetHourlyHeatExchangeMap();
   };
 
   const finishDaily = () => {
     for (const e of elements) {
       if (Util.isThermal(e)) {
-        const arr = hourlyHeatFluxArrayMapRef.current.get(e.id);
+        const arr = hourlyHeatExchangeArrayMapRef.current.get(e.id);
         if (arr) {
           setHourlyHeatExchangeArray(e.id, [...arr]);
         }
-      }
-    }
-  };
-
-  const resetHourlyHeatFluxMap = () => {
-    for (const e of elements) {
-      if (Util.isThermal(e)) {
-        hourlyHeatFluxArrayMapRef.current.get(e.id)?.fill(0);
       }
     }
   };
@@ -213,7 +228,6 @@ const ThermalSimulation = ({ city }: ThermalSimulationProps) => {
       setCommonStore((state) => {
         state.world.date = now.toLocaleString('en-US');
       });
-      // will the calculation immediately use the latest geometry after re-rendering?
       updateTemperature(now);
       for (const e of elements) {
         switch (e.type) {
@@ -236,15 +250,6 @@ const ThermalSimulation = ({ city }: ThermalSimulationProps) => {
     }
   };
 
-  const updateCurrentHeatFlux = (id: string, heat: number) => {
-    let a = hourlyHeatFluxArrayMapRef.current.get(id);
-    if (!a) {
-      a = new Array(24).fill(0);
-      hourlyHeatFluxArrayMapRef.current.set(id, a);
-    }
-    a[now.getHours()] = heat;
-  };
-
   const calculateWindow = (window: WindowModel) => {
     const foundation = getFoundation(window);
     if (foundation) {
@@ -253,9 +258,12 @@ const ThermalSimulation = ({ city }: ThermalSimulationProps) => {
         const setpoint = foundation.hvacSystem?.thermostatSetpoint ?? 20;
         const area = Util.getWindowArea(window, parent);
         const deltaT = currentOutsideTemperatureRef.current - setpoint;
-        // convert heat gain to kWh
-        const heatGain = computeEnergyUsage((deltaT * area * (window.uValue ?? 2) * 0.001) / timesPerHour, setpoint);
-        updateCurrentHeatFlux(window.id, heatGain);
+        // convert heat exchange to kWh
+        const heatExchange = computeEnergyUsage(
+          (deltaT * area * (window.uValue ?? 2) * 0.001) / timesPerHour,
+          setpoint,
+        );
+        updateHeatExchangeNow(window.id, heatExchange);
       }
     }
   };
@@ -268,9 +276,9 @@ const ThermalSimulation = ({ city }: ThermalSimulationProps) => {
         const setpoint = foundation.hvacSystem?.thermostatSetpoint ?? 20;
         const area = door.lx * door.lz * parent.lx * parent.lz;
         const deltaT = currentOutsideTemperatureRef.current - setpoint;
-        // convert heat gain to kWh
-        const heatGain = computeEnergyUsage((deltaT * area * (door.uValue ?? 2) * 0.001) / timesPerHour, setpoint);
-        updateCurrentHeatFlux(door.id, heatGain);
+        // convert heat exchange to kWh
+        const heatExchange = computeEnergyUsage((deltaT * area * (door.uValue ?? 2) * 0.001) / timesPerHour, setpoint);
+        updateHeatExchangeNow(door.id, heatExchange);
       }
     }
   };
@@ -295,8 +303,11 @@ const ThermalSimulation = ({ city }: ThermalSimulationProps) => {
       const setpoint = foundation.hvacSystem?.thermostatSetpoint ?? 20;
       const deltaT = currentOutsideTemperatureRef.current - setpoint;
       // U is the inverse of R with SI units of W/(m2⋅K)
-      const heatGain = computeEnergyUsage((((deltaT * area) / (wall.rValue ?? 0.5)) * 0.001) / timesPerHour, setpoint);
-      updateCurrentHeatFlux(wall.id, heatGain);
+      const heatExchange = computeEnergyUsage(
+        (((deltaT * area) / (wall.rValue ?? 0.5)) * 0.001) / timesPerHour,
+        setpoint,
+      );
+      updateHeatExchangeNow(wall.id, heatExchange);
     }
   };
 
@@ -344,12 +355,12 @@ const ThermalSimulation = ({ city }: ThermalSimulationProps) => {
         }
         break;
     }
-    // convert heat gain to kWh
-    const heatGain = computeEnergyUsage(
+    // convert heat exchange to kWh
+    const heatExchange = computeEnergyUsage(
       (((deltaT * totalArea) / (roof.rValue ?? 0.5)) * 0.001) / timesPerHour,
       setpoint,
     );
-    updateCurrentHeatFlux(roof.id, heatGain);
+    updateHeatExchangeNow(roof.id, heatExchange);
   };
 
   // yearly simulation
@@ -417,12 +428,12 @@ const ThermalSimulation = ({ city }: ThermalSimulationProps) => {
         state.world.date = now.toLocaleString('en-US');
       });
     }
-    resetHourlyHeatFluxMap();
+    resetHourlyHeatExchangeMap();
     simulationCompletedRef.current = false;
   };
 
   const simulateYearly = () => {
-    resetHourlyHeatFluxMap();
+    resetHourlyHeatExchangeMap();
   };
 
   return <></>;
