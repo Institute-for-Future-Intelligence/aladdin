@@ -127,7 +127,7 @@ export interface CommonStoreState {
   roofSegmentVerticesMap: Map<string, Vector3[][]>; // key: roofId, val: [segmentIndex][vertex]
   getRoofSegmentVertices: (id: string) => Vector3[][] | undefined;
   roofSegmentVerticesWithoutOverhangMap: Map<string, Vector3[][]>;
-  setRoofSegmentVerticesWithoutOverhangMap: (id: string, data: Vector3[][]) => void;
+  setRoofSegmentVerticesWithoutOverhang: (id: string, data: Vector3[][]) => void;
   getRoofSegmentVerticesWithoutOverhang: (id: string) => Vector3[][] | undefined;
 
   ray: Raycaster;
@@ -844,7 +844,7 @@ export const useStore = create<CommonStoreState>(
             return get().roofSegmentVerticesMap.get(id);
           },
           roofSegmentVerticesWithoutOverhangMap: new Map<string, Vector3[][]>(),
-          setRoofSegmentVerticesWithoutOverhangMap(id, data) {
+          setRoofSegmentVerticesWithoutOverhang(id, data) {
             immerSet((state: CommonStoreState) => {
               state.roofSegmentVerticesWithoutOverhangMap.set(id, data);
             });

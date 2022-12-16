@@ -333,7 +333,7 @@ export const useUpdateSegmentVerticesMap = (
       }
     });
     if (mansardTop) {
-      vertices.push(mansardTop.map(relToFoundation));
+      vertices.push(mansardTop);
     }
     useStore.getState().set((state) => {
       state.roofSegmentVerticesMap.set(roofId, vertices);

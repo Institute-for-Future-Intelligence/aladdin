@@ -24,6 +24,7 @@ import {
   useUpdateSegmentVerticesMap,
   useRoofHeight,
   useUpdateOldRoofFiles,
+  useUpdateSegmentVerticesWithoutOverhangMap,
 } from './hooks';
 import {
   addUndoableResizeRoofRise,
@@ -496,17 +497,58 @@ const MansardRoof = (roofModel: MansardRoofModel) => {
     }
   }, []);
 
+  const updateSegmentVerticesWithoutOverhangeMap = () => {
+    const segmentVertices: Vector3[][] = [];
+
+    for (let i = 0; i < currentWallArray.length; i++) {
+      const w = currentWallArray[i];
+      if (
+        w.leftPoint.length > 0 &&
+        w.rightPoint.length > 0 &&
+        (w.leftPoint[0] !== w.rightPoint[0] || w.leftPoint[1] !== w.rightPoint[1])
+      ) {
+        let { lh, rh } = RoofUtil.getWallHeight(currentWallArray, i);
+        if (!isLoopRef.current) {
+          if (i === 0) {
+            lh = currentWallArray[0].lz;
+          }
+          if (i === currentWallArray.length - 1) {
+            rh = currentWallArray[currentWallArray.length - 1].lz;
+          }
+        }
+
+        const wallLeftPoint = new Vector3(w.leftPoint[0], w.leftPoint[1], lh);
+        const wallRightPoint = new Vector3(w.rightPoint[0], w.rightPoint[1], rh);
+        const ridgeLeftPoint = ridgePoints[i].leftPoint.clone();
+        const ridgeRightPoint = ridgePoints[i].rightPoint.clone();
+
+        segmentVertices.push([wallLeftPoint, wallRightPoint, ridgeRightPoint, ridgeLeftPoint]);
+      }
+    }
+    if (!isLoopRef.current) {
+      const lastIdx = currentWallArray.length - 1;
+      const firstWall = currentWallArray[0];
+      const lastWall = currentWallArray[lastIdx];
+      const leftPoint = new Vector3(lastWall.rightPoint[0], lastWall.rightPoint[1], lastWall.lz);
+      const rightPoint = new Vector3(firstWall.leftPoint[0], firstWall.leftPoint[1], firstWall.lz);
+      const ridgeLeftPoint = ridgePoints[lastIdx].leftPoint.clone();
+      const ridgeRightPoint = ridgePoints[lastIdx].rightPoint.clone();
+      segmentVertices.push([leftPoint, rightPoint, ridgeRightPoint, ridgeLeftPoint]);
+    }
+    const ridgeVertices = ridgePoints.map((ridge) => ridge.leftPoint.clone());
+    segmentVertices.push(ridgeVertices);
+    useStore.getState().setRoofSegmentVerticesWithoutOverhang(id, segmentVertices);
+  };
+
   const { grabRef, addUndoableMove, undoMove, setOldRefData } = useElementUndoable();
   const { transparent, opacity } = useTransparent();
   useUpdateSegmentVerticesMap(
     id,
     centroid,
     roofSegments,
-    ridgePoints.reduce(
-      (acc, curr) => acc.concat(curr.leftPoint.clone().sub(centroid).add(thicknessVector)),
-      [] as Vector3[],
-    ),
+    ridgePoints.map((ridge) => ridge.leftPoint.clone().add(thicknessVector)),
   );
+  useUpdateSegmentVerticesWithoutOverhangMap(updateSegmentVerticesWithoutOverhangeMap);
 
   const selectMe = useStore(Selector.selectMe);
   const showSolarRadiationHeatmap = useStore(Selector.showSolarRadiationHeatmap);
