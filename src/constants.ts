@@ -96,4 +96,4 @@ export const HALF_PI_Z_EULER = new Euler(0, 0, HALF_PI);
  such that the inside temperature of a house will never fall below the setpoint.
  The same logic can be applied to the case of cooling as well.
  */
-export const TEMPERATURE_THRESHOLD = 5;
+export const TEMPERATURE_THRESHOLD = 3;

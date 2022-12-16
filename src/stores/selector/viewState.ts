@@ -97,7 +97,11 @@ export const stickyNotePanelRect = (state: CommonStoreState) => state.viewState.
 
 export const showDailyBuildingEnergyPanel = (state: CommonStoreState) => state.viewState.showDailyBuildingEnergyPanel;
 
+export const dailyBuildingEnergyPanelRect = (state: CommonStoreState) => state.viewState.dailyBuildingEnergyPanelRect;
+
 export const showYearlyBuildingEnergyPanel = (state: CommonStoreState) => state.viewState.showYearlyBuildingEnergyPanel;
+
+export const yearlyBuildingEnergyPanelRect = (state: CommonStoreState) => state.viewState.yearlyBuildingEnergyPanelRect;
 
 export const showDailyLightSensorPanel = (state: CommonStoreState) => state.viewState.showDailyLightSensorPanel;
 

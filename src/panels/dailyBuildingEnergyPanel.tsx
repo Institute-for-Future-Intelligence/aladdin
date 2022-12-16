@@ -83,7 +83,7 @@ const DailyBuildingEnergyPanel = ({ city }: DailyBuildingEnergyPanelProps) => {
   const elements = useStore.getState().elements;
   const now = new Date(useStore(Selector.world.date));
   const hourlyHeatExchangeArrayMap = usePrimitiveStore(Selector.hourlyHeatExchangeArrayMap);
-  const panelRect = useStore(Selector.viewState.dailyLightSensorPanelRect);
+  const panelRect = useStore(Selector.viewState.dailyBuildingEnergyPanelRect);
   const countElementsByType = useStore(Selector.countElementsByType);
 
   // nodeRef is to suppress ReactDOM.findDOMNode() deprecation warning. See:

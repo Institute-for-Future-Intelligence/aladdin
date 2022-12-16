@@ -240,6 +240,8 @@ export class DefaultViewState implements ViewState {
     viewState.showYearlyHeliostatYieldPanel = false;
     viewState.showDailyUpdraftTowerYieldPanel = false;
     viewState.showYearlyUpdraftTowerYieldPanel = false;
+    viewState.showDailyBuildingEnergyPanel = false;
+    viewState.showYearlyBuildingEnergyPanel = false;
     viewState.showEvolutionPanel = false;
     viewState.autoRotate = false;
 
@@ -267,6 +269,8 @@ export class DefaultViewState implements ViewState {
     viewState.yearlyHeliostatYieldPanelRect = new Rectangle(0, 0, 600, 400);
     viewState.dailyUpdraftTowerYieldPanelRect = new Rectangle(0, 0, 640, 550);
     viewState.yearlyUpdraftTowerYieldPanelRect = new Rectangle(0, 0, 600, 400);
+    viewState.dailyBuildingEnergyPanelRect = new Rectangle(0, 0, 600, 400);
+    viewState.yearlyBuildingEnergyPanelRect = new Rectangle(0, 0, 600, 400);
     viewState.evolutionPanelRect = new Rectangle(0, 0, 640, 400);
 
     viewState.mapZoom = 18;
