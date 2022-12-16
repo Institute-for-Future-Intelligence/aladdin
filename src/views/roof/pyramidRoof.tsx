@@ -640,7 +640,7 @@ const PyramidRoof = (roofModel: PyramidRoofModel) => {
   }, [showSolarRadiationHeatmap, solarRadiationHeatmapMaxValue]);
 
   const updateSegmentVerticesWithoutOverhangeMap = () => {
-    const segmentVertives: Vector3[][] = [];
+    const segmentVertices: Vector3[][] = [];
     for (let i = 0; i < currentWallArray.length; i++) {
       const w = currentWallArray[i];
       if (
@@ -660,7 +660,7 @@ const PyramidRoof = (roofModel: PyramidRoofModel) => {
 
         const wallLeftPoint = new Vector3(w.leftPoint[0], w.leftPoint[1], lh);
         const wallRightPoint = new Vector3(w.rightPoint[0], w.rightPoint[1], rh);
-        segmentVertives.push([wallLeftPoint, wallRightPoint, centerPointV3]);
+        segmentVertices.push([wallLeftPoint, wallRightPoint, centerPointV3.clone()]);
       }
     }
     if (!isLoopRef.current) {
@@ -668,10 +668,10 @@ const PyramidRoof = (roofModel: PyramidRoofModel) => {
       const lastWall = currentWallArray[currentWallArray.length - 1];
       const leftPoint = new Vector3(lastWall.rightPoint[0], lastWall.rightPoint[1], lastWall.lz);
       const rightPoint = new Vector3(firstWall.leftPoint[0], firstWall.leftPoint[1], firstWall.lz);
-      segmentVertives.push([leftPoint, rightPoint, centerPointV3]);
+      segmentVertices.push([leftPoint, rightPoint, centerPointV3.clone()]);
     }
 
-    useStore.getState().setRoofSegmentVerticesWithoutOverhangMap(id, segmentVertives);
+    useStore.getState().setRoofSegmentVerticesWithoutOverhang(id, segmentVertices);
   };
 
   useUpdateSegmentVerticesWithoutOverhangMap(updateSegmentVerticesWithoutOverhangeMap);

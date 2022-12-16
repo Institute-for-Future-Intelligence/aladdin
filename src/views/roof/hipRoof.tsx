@@ -21,6 +21,7 @@ import {
   useUpdateSegmentVerticesMap,
   useRoofHeight,
   useUpdateOldRoofFiles,
+  useUpdateSegmentVerticesWithoutOverhangMap,
 } from './hooks';
 import {
   addUndoableResizeRoofRise,
@@ -381,8 +382,38 @@ const HipRoof = (roofModel: HipRoofModel) => {
     isFirstMountRef.current = false;
   }, []);
 
+  const updateSegmentVerticesWithoutOverhangeMap = () => {
+    const segmentVertices: Vector3[][] = [];
+    for (let i = 0; i < 4; i++) {
+      const wall = currentWallArray[i];
+      const { lh, rh } = RoofUtil.getWallHeight(currentWallArray, i);
+
+      const wallLeftPoint = new Vector3(wall.leftPoint[0], wall.leftPoint[1]).setZ(lh);
+      const wallRightPoint = new Vector3(wall.rightPoint[0], wall.rightPoint[1]).setZ(rh);
+      const ridgeLPoint = ridgeLeftPoint.clone();
+      const ridgeRPoint = ridgeRightPoint.clone();
+
+      switch (i) {
+        case 0:
+          segmentVertices.push([wallLeftPoint, wallRightPoint, ridgeRPoint, ridgeLPoint]);
+          break;
+        case 1:
+          segmentVertices.push([wallLeftPoint, wallRightPoint, ridgeRPoint]);
+          break;
+        case 2:
+          segmentVertices.push([wallLeftPoint, wallRightPoint, ridgeLPoint, ridgeRPoint]);
+          break;
+        case 3:
+          segmentVertices.push([wallLeftPoint, wallRightPoint, ridgeLPoint]);
+          break;
+      }
+    }
+    useStore.getState().setRoofSegmentVerticesWithoutOverhang(id, segmentVertices);
+  };
+
   const { grabRef, addUndoableMove, undoMove, setOldRefData } = useElementUndoable();
   useUpdateSegmentVerticesMap(id, new Vector3(centroid2D.x, centroid2D.y, topZ), roofSegments);
+  useUpdateSegmentVerticesWithoutOverhangMap(updateSegmentVerticesWithoutOverhangeMap);
 
   const selectMe = useStore(Selector.selectMe);
   const showSolarRadiationHeatmap = useStore(Selector.showSolarRadiationHeatmap);

@@ -48,6 +48,7 @@ import {
   useUpdateSegmentVerticesMap,
   useRoofHeight,
   useUpdateOldRoofFiles,
+  useUpdateSegmentVerticesWithoutOverhangMap,
 } from './hooks';
 import { ConvexGeometry } from 'src/js/ConvexGeometry';
 import { CSG } from 'three-csg-ts';
@@ -805,8 +806,33 @@ const GableRoof = (roofModel: GableRoofModel) => {
     isFirstMountRef.current = false;
   }, []);
 
+  const updateSegmentVerticesWithoutOverhangeMap = () => {
+    const segmentVertices: Vector3[][] = [];
+    // shed roof
+    if (isShed) {
+      const idx = currentWallArray[3].centerRoofHeight && currentWallArray[3].centerRoofHeight[0] < 0 ? 0 : 2;
+
+      const shiftedWallArray = getShiftedArr(currentWallArray, idx);
+
+      const wallPoints = shiftedWallArray.map(
+        (w, i, arr) => new Vector3(w.leftPoint[0], w.leftPoint[1], getWallHeight(arr, i).lh),
+      );
+      segmentVertices.push(wallPoints);
+    }
+    // gable roof
+    else {
+      const wallPoints = currentWallArray.map(
+        (w, i, arr) => new Vector3(w.leftPoint[0], w.leftPoint[1], getWallHeight(arr, i).lh),
+      );
+      segmentVertices.push([wallPoints[0], wallPoints[1], ridgeRightPointV3.clone(), ridgeLeftPointV3.clone()]);
+      segmentVertices.push([wallPoints[2], wallPoints[3], ridgeLeftPointV3.clone(), ridgeRightPointV3.clone()]);
+    }
+    useStore.getState().setRoofSegmentVerticesWithoutOverhang(id, segmentVertices);
+  };
+
   const { grabRef, addUndoableMove, undoMove, setOldRefData } = useElementUndoable();
   useUpdateSegmentVerticesMap(id, centroid, roofSegments);
+  useUpdateSegmentVerticesWithoutOverhangMap(updateSegmentVerticesWithoutOverhangeMap);
 
   const selectMe = useStore(Selector.selectMe);
   const showSolarRadiationHeatmap = useStore(Selector.showSolarRadiationHeatmap);
