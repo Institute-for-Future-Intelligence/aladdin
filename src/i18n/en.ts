@@ -59,6 +59,7 @@ export const i18n_en = {
       VolumetricHeatCapacity: 'Volumetric Heat Capacity',
       BuildingHVACSystem: 'Building HVAC System',
       ThermostatSetpoint: 'Thermostat Setpoint',
+      TemperatureThreshold: 'Temperature Threshold',
       Press: 'Press',
       Open: 'Open',
       Save: 'Save',

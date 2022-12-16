@@ -17,7 +17,6 @@ import { computeOutsideTemperature, getOutsideTemperatureAtMinute } from './heat
 import { computeSunriseAndSunsetInMinutes } from './sunTools';
 import { WindowModel } from '../models/WindowModel';
 import { DoorModel } from '../models/DoorModel';
-import { TEMPERATURE_THRESHOLD } from '../constants';
 
 export interface ThermalSimulationProps {
   city: string | null;
@@ -85,10 +84,10 @@ const ThermalSimulation = ({ city }: ThermalSimulationProps) => {
    If the lowest outside temperature is higher than the threshold, don't turn on the heater.
    If the highest outside temperature is lower than the threshold, don't turn on the air conditioner.
   */
-  const computeEnergyUsage = (heatExchange: number, setpoint: number) => {
+  const computeEnergyUsage = (heatExchange: number, setpoint: number, threshold: number) => {
     if (
-      (heatExchange < 0 && outsideTemperatureRangeRef.current.low >= setpoint - TEMPERATURE_THRESHOLD) ||
-      (heatExchange > 0 && outsideTemperatureRangeRef.current.high <= setpoint + TEMPERATURE_THRESHOLD)
+      (heatExchange < 0 && outsideTemperatureRangeRef.current.low >= setpoint - threshold) ||
+      (heatExchange > 0 && outsideTemperatureRangeRef.current.high <= setpoint + threshold)
     )
       return 0;
     // negative heat exchange goes to heater, positive heat exchange goes to air conditioner
@@ -256,12 +255,14 @@ const ThermalSimulation = ({ city }: ThermalSimulationProps) => {
       const parent = getParent(window);
       if (parent) {
         const setpoint = foundation.hvacSystem?.thermostatSetpoint ?? 20;
+        const threshold = foundation.hvacSystem?.temperatureThreshold ?? 3;
         const area = Util.getWindowArea(window, parent);
         const deltaT = currentOutsideTemperatureRef.current - setpoint;
         // convert heat exchange to kWh
         const heatExchange = computeEnergyUsage(
           (deltaT * area * (window.uValue ?? 2) * 0.001) / timesPerHour,
           setpoint,
+          threshold,
         );
         updateHeatExchangeNow(window.id, heatExchange);
       }
@@ -274,10 +275,15 @@ const ThermalSimulation = ({ city }: ThermalSimulationProps) => {
       const parent = getParent(door);
       if (parent) {
         const setpoint = foundation.hvacSystem?.thermostatSetpoint ?? 20;
+        const threshold = foundation.hvacSystem?.temperatureThreshold ?? 3;
         const area = door.lx * door.lz * parent.lx * parent.lz;
         const deltaT = currentOutsideTemperatureRef.current - setpoint;
         // convert heat exchange to kWh
-        const heatExchange = computeEnergyUsage((deltaT * area * (door.uValue ?? 2) * 0.001) / timesPerHour, setpoint);
+        const heatExchange = computeEnergyUsage(
+          (deltaT * area * (door.uValue ?? 2) * 0.001) / timesPerHour,
+          setpoint,
+          threshold,
+        );
         updateHeatExchangeNow(door.id, heatExchange);
       }
     }
@@ -301,11 +307,13 @@ const ThermalSimulation = ({ city }: ThermalSimulationProps) => {
         }
       }
       const setpoint = foundation.hvacSystem?.thermostatSetpoint ?? 20;
+      const threshold = foundation.hvacSystem?.temperatureThreshold ?? 3;
       const deltaT = currentOutsideTemperatureRef.current - setpoint;
       // U is the inverse of R with SI units of W/(m2⋅K)
       const heatExchange = computeEnergyUsage(
         (((deltaT * area) / (wall.rValue ?? 0.5)) * 0.001) / timesPerHour,
         setpoint,
+        threshold,
       );
       updateHeatExchangeNow(wall.id, heatExchange);
     }
@@ -317,6 +325,7 @@ const ThermalSimulation = ({ city }: ThermalSimulationProps) => {
     const segments = getRoofSegmentVerticesWithoutOverhang(roof.id);
     if (!segments) return;
     const setpoint = foundation.hvacSystem?.thermostatSetpoint ?? 20;
+    const threshold = foundation.hvacSystem?.temperatureThreshold ?? 3;
     const deltaT = currentOutsideTemperatureRef.current - setpoint;
     let totalArea = 0;
     switch (roof.roofType) {
@@ -359,6 +368,7 @@ const ThermalSimulation = ({ city }: ThermalSimulationProps) => {
     const heatExchange = computeEnergyUsage(
       (((deltaT * totalArea) / (roof.rValue ?? 0.5)) * 0.001) / timesPerHour,
       setpoint,
+      threshold,
     );
     updateHeatExchangeNow(roof.id, heatExchange);
   };

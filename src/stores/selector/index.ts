@@ -254,6 +254,9 @@ export const updateFoundationSolarStructureById = (state: CommonStoreState) => s
 export const updateFoundationThermostatSetpointById = (state: CommonStoreState) =>
   state.updateFoundationThermostatSetpointById;
 
+export const updateFoundationTemperatureThresholdById = (state: CommonStoreState) =>
+  state.updateFoundationTemperatureThresholdById;
+
 export const updateSolarAbsorberPipeApertureWidthById = (state: CommonStoreState) =>
   state.updateSolarAbsorberPipeApertureWidthById;
 

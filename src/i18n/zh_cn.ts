@@ -59,6 +59,7 @@ export const i18n_zh_cn = {
       VolumetricHeatCapacity: '容积热容',
       BuildingHVACSystem: '建筑物暖通空调系统',
       ThermostatSetpoint: '恒温器设定值',
+      TemperatureThreshold: '温度阈值',
       Press: '按',
       Open: '打开',
       Save: '保存',

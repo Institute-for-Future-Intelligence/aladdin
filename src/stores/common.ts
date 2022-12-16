@@ -328,6 +328,7 @@ export interface CommonStoreState {
   updateFoundationTextureForAll: (texture: FoundationTexture) => void;
   updateFoundationSolarStructureById: (id: string, receiver: SolarStructure | undefined) => void;
   updateFoundationThermostatSetpointById: (id: string, value: number) => void;
+  updateFoundationTemperatureThresholdById: (id: string, value: number) => void;
 
   // for solar absorber pipes
   updateSolarAbsorberPipeRelativeLengthById: (id: string, relativeLength: number) => void;
@@ -2387,12 +2388,27 @@ export const useStore = create<CommonStoreState>(
           updateFoundationThermostatSetpointById(id, value) {
             immerSet((state: CommonStoreState) => {
               for (const e of state.elements) {
-                if (e.type === ObjectType.Foundation && e.id === id && !e.locked) {
+                if (e.type === ObjectType.Foundation && e.id === id) {
                   const foundation = e as FoundationModel;
                   if (foundation.hvacSystem) {
                     foundation.hvacSystem.thermostatSetpoint = value;
                   } else {
-                    foundation.hvacSystem = { thermostatSetpoint: value } as HvacSystem;
+                    foundation.hvacSystem = { thermostatSetpoint: value, temperatureThreshold: 3 } as HvacSystem;
+                  }
+                  break;
+                }
+              }
+            });
+          },
+          updateFoundationTemperatureThresholdById(id, value) {
+            immerSet((state: CommonStoreState) => {
+              for (const e of state.elements) {
+                if (e.type === ObjectType.Foundation && e.id === id) {
+                  const foundation = e as FoundationModel;
+                  if (foundation.hvacSystem) {
+                    foundation.hvacSystem.temperatureThreshold = value;
+                  } else {
+                    foundation.hvacSystem = { thermostatSetpoint: 20, temperatureThreshold: value } as HvacSystem;
                   }
                   break;
                 }

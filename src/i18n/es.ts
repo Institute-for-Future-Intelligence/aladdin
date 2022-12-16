@@ -585,6 +585,7 @@ export const i18n_es = {
       SelectSolarStructure: 'Select Solar Structure',
       BuildingHVACSystem: 'Building HVAC System',
       ThermostatSetpoint: 'Thermostat Setpoint',
+      TemperatureThreshold: 'Temperature Threshold',
       GroupMaster: 'Group Master',
       LockAllElementsOnThisFoundation: 'Lock All Elements on This Foundation',
       UnlockAllElementsOnThisFoundation: 'Unlock All Elements on This Foundation',

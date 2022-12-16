@@ -56,6 +56,7 @@ export const FoundationMenu = React.memo(() => {
   const updateElementLockById = useStore(Selector.updateElementLockById);
   const updateElementLockByFoundationId = useStore(Selector.updateElementLockByFoundationId);
   const updateFoundationThermostatSetpointById = useStore(Selector.updateFoundationThermostatSetpointById);
+  const updateFoundationTemperatureThresholdById = useStore(Selector.updateFoundationTemperatureThresholdById);
   const addElement = useStore(Selector.addElement);
   const removeElementById = useStore(Selector.removeElementById);
   const setApplyCount = useStore(Selector.setApplyCount);
@@ -1069,7 +1070,7 @@ export const FoundationMenu = React.memo(() => {
         >
           <Menu>
             <Menu.Item key={'thermostat-temperature'}>
-              <Space style={{ width: '150px' }}>{i18n.t('word.ThermostatSetpoint', lang) + ':'}</Space>
+              <Space style={{ width: '160px' }}>{i18n.t('word.ThermostatSetpoint', lang) + ':'}</Space>
               <InputNumber
                 min={0}
                 max={30}
@@ -1094,6 +1095,37 @@ export const FoundationMenu = React.memo(() => {
                   } as UndoableChange;
                   addUndoable(undoableChange);
                   updateFoundationThermostatSetpointById(foundation.id, newValue);
+                }}
+              />
+              <Space style={{ paddingLeft: '10px' }}>°C</Space>
+            </Menu.Item>
+
+            <Menu.Item key={'temperature-threshold'}>
+              <Space style={{ width: '160px' }}>{i18n.t('word.TemperatureThreshold', lang) + ':'}</Space>
+              <InputNumber
+                min={0}
+                max={30}
+                step={1}
+                style={{ width: 60 }}
+                precision={1}
+                value={foundation.hvacSystem?.temperatureThreshold ?? 3}
+                onChange={(value) => {
+                  const oldValue = foundation.hvacSystem?.temperatureThreshold ?? 3;
+                  const newValue = value;
+                  const undoableChange = {
+                    name: 'Change Temperature Threshold',
+                    timestamp: Date.now(),
+                    oldValue: oldValue,
+                    newValue: newValue,
+                    undo: () => {
+                      updateFoundationTemperatureThresholdById(foundation.id, undoableChange.oldValue as number);
+                    },
+                    redo: () => {
+                      updateFoundationTemperatureThresholdById(foundation.id, undoableChange.newValue as number);
+                    },
+                  } as UndoableChange;
+                  addUndoable(undoableChange);
+                  updateFoundationTemperatureThresholdById(foundation.id, newValue);
                 }}
               />
               <Space style={{ paddingLeft: '10px' }}>°C</Space>
