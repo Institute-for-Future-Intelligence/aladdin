@@ -514,7 +514,21 @@ const Wall = ({ wallModel, foundationModel }: WallProps) => {
     const wallShape = new Shape();
     drawWallShape(wallShape, lx, lz, 0, 0, 0, 0, false);
     return wallShape;
-  }, [lx, lz, fill, unfilledHeight, elementsOnWall]);
+  }, [
+    lx,
+    lz,
+    fill,
+    unfilledHeight,
+    leftOffset,
+    rightOffset,
+    elementsOnWall,
+    leftRoofHeight,
+    rightRoofHeight,
+    centerRoofHeight,
+    centerLeftRoofHeight,
+    centerRightRoofHeight,
+    elementsOnWall,
+  ]);
 
   const topWallShape = useMemo(() => {
     const shape = new Shape();
