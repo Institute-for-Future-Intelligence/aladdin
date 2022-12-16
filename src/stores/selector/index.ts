@@ -27,6 +27,9 @@ export const clearHourlyHeatExchangeArrayMap = (state: PrimitiveStoreState) => s
 
 export const getRoofSegmentVertices = (state: CommonStoreState) => state.getRoofSegmentVertices;
 
+export const getRoofSegmentVerticesWithoutOverhang = (state: CommonStoreState) =>
+  state.getRoofSegmentVerticesWithoutOverhang;
+
 export const changed = (state: CommonStoreState) => state.changed;
 
 export const setChanged = (state: CommonStoreState) => state.setChanged;

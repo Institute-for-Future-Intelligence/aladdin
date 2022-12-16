@@ -38,7 +38,6 @@ import {
   useUpdateSegmentVerticesWithoutOverhangMap,
 } from './hooks';
 import RoofSegment from './roofSegment';
-import { usePrimitiveStore } from 'src/stores/commonPrimitive';
 
 const intersectionPlanePosition = new Vector3();
 const intersectionPlaneRotation = new Euler();

@@ -37,7 +37,7 @@ const ThermalSimulation = ({ city }: ThermalSimulationProps) => {
   const runYearlySimulation = useStore(Selector.runYearlyThermalSimulation);
   const pauseYearlySimulation = useStore(Selector.pauseYearlyThermalSimulation);
   const noAnimation = !!useStore(Selector.world.noAnimationForThermalSimulation);
-  const getRoofSegmentVertices = useStore(Selector.getRoofSegmentVertices);
+  const getRoofSegmentVerticesWithoutOverhang = useStore(Selector.getRoofSegmentVerticesWithoutOverhang);
   const highestTemperatureTimeInMinutes = useStore(Selector.world.highestTemperatureTimeInMinutes) ?? 900;
   const setHourlyHeatExchangeArray = usePrimitiveStore(Selector.setHourlyHeatExchangeArray);
 
@@ -303,7 +303,7 @@ const ThermalSimulation = ({ city }: ThermalSimulationProps) => {
   const calculateRoof = (roof: RoofModel) => {
     const foundation = getFoundation(roof);
     if (!foundation) return;
-    const segments = getRoofSegmentVertices(roof.id);
+    const segments = getRoofSegmentVerticesWithoutOverhang(roof.id);
     if (!segments) return;
     const setpoint = foundation.hvacSystem?.thermostatSetpoint ?? 20;
     const deltaT = currentOutsideTemperatureRef.current - setpoint;

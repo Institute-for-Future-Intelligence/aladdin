@@ -2,7 +2,7 @@
  * @Copyright 2022. Institute for Future Intelligence, Inc.
  */
 
-import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import { ElementModel } from 'src/models/ElementModel';
 import { SolarPanelModel } from 'src/models/SolarPanelModel';
 import { useStore } from 'src/stores/common';
@@ -25,7 +25,6 @@ import { useThree } from '@react-three/fiber';
 import { SensorModel } from '../../models/SensorModel';
 import { LightModel } from '../../models/LightModel';
 import { RoofSegmentProps } from './roofRenderer';
-import { Util } from 'src/Util';
 import { RoofUtil } from './RoofUtil';
 import { RoofModel } from 'src/models/RoofModel';
 
@@ -353,8 +352,9 @@ export const useUpdateSegmentVerticesMap = (
 };
 
 export const useUpdateSegmentVerticesWithoutOverhangMap = (update: () => void): void => {
-  const flag = false;
-  if (flag) {
+  const runDailyThermalSimulation = useStore(Selector.runDailyThermalSimulation);
+  const runYearlyThermalSimulation = useStore(Selector.runYearlyThermalSimulation);
+  if (runDailyThermalSimulation || runYearlyThermalSimulation) {
     update();
   }
 };
