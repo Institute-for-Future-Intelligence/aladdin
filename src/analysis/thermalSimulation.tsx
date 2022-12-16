@@ -154,7 +154,6 @@ const ThermalSimulation = ({ city }: ThermalSimulationProps) => {
         const arr = hourlyHeatFluxArrayMapRef.current.get(e.id);
         if (arr) {
           setHourlyHeatExchangeArray(e.id, [...arr]);
-          console.log(e.type, e.cx, e.cy, getHourlyHeatExchangeArray(e.id));
         }
       }
     }

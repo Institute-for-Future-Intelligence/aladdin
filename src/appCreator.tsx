@@ -78,6 +78,7 @@ import EconomicsPanel from './panels/economicsPanel';
 import SolarPanelArrayPso from './ai/pso/solarPanelArrayPso';
 import PointerStyleController from './pointerStyleController';
 import Loading from './loading';
+import DailyBuildingEnergyPanel from './panels/dailyBuildingEnergyPanel';
 
 export interface AppCreatorProps {
   viewOnly: boolean;
@@ -124,6 +125,8 @@ const AppCreator = ({ viewOnly = false }: AppCreatorProps) => {
   const showYearlyHeliostatYieldPanel = useStore(Selector.viewState.showYearlyHeliostatYieldPanel);
   const showDailyUpdraftTowerYieldPanel = useStore(Selector.viewState.showDailyUpdraftTowerYieldPanel);
   const showYearlyUpdraftTowerYieldPanel = useStore(Selector.viewState.showYearlyUpdraftTowerYieldPanel);
+  const showDailyBuildingEnergyPanel = useStore(Selector.viewState.showDailyBuildingEnergyPanel);
+  const showYearlyBuildingEnergyPanel = useStore(Selector.viewState.showYearlyBuildingEnergyPanel);
   const showEvolutionPanel = useStore(Selector.viewState.showEvolutionPanel);
   const evolutionMethod = useStore(Selector.evolutionMethod);
   const evolutionaryAlgorithmState = useStore(Selector.evolutionaryAlgorithmState);
@@ -400,6 +403,7 @@ const AppCreator = ({ viewOnly = false }: AppCreatorProps) => {
       {showYearlyHeliostatYieldPanel && <YearlyHeliostatYieldPanel city={city} />}
       {showDailyUpdraftTowerYieldPanel && <DailySolarUpdraftTowerYieldPanel city={city} />}
       {showYearlyUpdraftTowerYieldPanel && <YearlySolarUpdraftTowerYieldPanel city={city} />}
+      {showDailyBuildingEnergyPanel && <DailyBuildingEnergyPanel city={city} />}
       {showSolarRadiationHeatmap && <HeatmapControlPanel />}
       {showEvolutionPanel && <SolarPanelOptimizationResult />}
       <DropdownContextMenu>

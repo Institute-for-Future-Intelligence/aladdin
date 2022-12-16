@@ -84,6 +84,8 @@ export interface ViewState {
   yearlyHeliostatYieldPanelRect: Rectangle;
   dailyUpdraftTowerYieldPanelRect: Rectangle;
   yearlyUpdraftTowerYieldPanelRect: Rectangle;
+  dailyBuildingEnergyPanelRect: Rectangle;
+  yearlyBuildingEnergyPanelRect: Rectangle;
   evolutionPanelRect: Rectangle;
 
   mapZoom: number;

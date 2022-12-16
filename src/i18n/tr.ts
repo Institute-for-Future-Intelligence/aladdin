@@ -120,6 +120,7 @@ export const i18n_tr = {
       WestInitial: 'W',
       Fixed: 'Sabit',
       Elements: 'Öğeler',
+      Energy: 'Energy',
     },
 
     shared: {
@@ -1095,6 +1096,10 @@ export const i18n_tr = {
       WeatherDataFrom: 'Hava Durumu',
     },
 
+    buildingEnergyPanel: {
+      BuildingEnergy: 'Building Energy',
+    },
+
     solarPanelYieldPanel: {
       SolarPanelDailyYield: 'Güneş Paneli Günlük Üretim',
       SolarPanelYearlyYield: 'Güneş Paneli Yıllık Üretim',
@@ -1222,6 +1227,7 @@ export const i18n_tr = {
       NoFresnelReflectorForAnalysis: 'Analiz için Fresnel reflektörü yok.',
       NoHeliostatForAnalysis: 'Analiz için heliostat yok.',
       NoSolarUpdraftTowerForAnalysis: 'Analiz için Solar Updraft Kulesi yok.',
+      NoBuildingForAnalysis: 'There is no building for analysis.',
     },
 
     toolbar: {

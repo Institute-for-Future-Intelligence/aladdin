@@ -17,6 +17,8 @@ export const setHeatmap = (state: CommonStoreState) => state.setHeatmap;
 
 export const clearHeatmaps = (state: CommonStoreState) => state.clearHeatmaps;
 
+export const hourlyHeatExchangeArrayMap = (state: PrimitiveStoreState) => state.hourlyHeatExchangeArrayMap;
+
 export const setHourlyHeatExchangeArray = (state: PrimitiveStoreState) => state.setHourlyHeatExchangeArray;
 
 export const getHourlyHeatExchangeArray = (state: PrimitiveStoreState) => state.getHourlyHeatExchangeArray;

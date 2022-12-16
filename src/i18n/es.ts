@@ -118,6 +118,7 @@ export const i18n_es = {
       WestInitial: 'O',
       Fixed: 'Fixed',
       Elements: 'Elements',
+      Energy: 'Energy',
     },
 
     shared: {
@@ -1094,6 +1095,10 @@ export const i18n_es = {
       WeatherDataFrom: 'Datos metereológicos de',
     },
 
+    buildingEnergyPanel: {
+      BuildingEnergy: 'Building Energy',
+    },
+
     solarPanelYieldPanel: {
       SolarPanelDailyYield: 'Rendimiento diario del panel solar',
       SolarPanelYearlyYield: 'Rendimiento anual del panel solar',
@@ -1221,6 +1226,7 @@ export const i18n_es = {
       NoFresnelReflectorForAnalysis: 'There is no Fresnel reflector for analysis.',
       NoHeliostatForAnalysis: 'There is no heliostat for analysis.',
       NoSolarUpdraftTowerForAnalysis: 'There is no solar updraft tower for analysis.',
+      NoBuildingForAnalysis: 'There is no building for analysis.',
     },
 
     toolbar: {

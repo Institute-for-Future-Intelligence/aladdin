@@ -120,6 +120,7 @@ export const i18n_zh_tw = {
       WestInitial: '西',
       Fixed: '固定',
       Elements: '部件',
+      Energy: '能量',
     },
 
     shared: {
@@ -1072,6 +1073,10 @@ export const i18n_zh_tw = {
       WeatherDataFrom: '氣象數據來自',
     },
 
+    buildingEnergyPanel: {
+      BuildingEnergy: '建築物能耗',
+    },
+
     solarPanelYieldPanel: {
       SolarPanelDailyYield: '光伏日發電量',
       SolarPanelYearlyYield: '光伏年發電量',
@@ -1199,6 +1204,7 @@ export const i18n_zh_tw = {
       NoFresnelReflectorForAnalysis: '沒有菲涅耳反射鏡可以分析。',
       NoHeliostatForAnalysis: '沒有定日鏡可以分析。',
       NoSolarUpdraftTowerForAnalysis: '沒有太陽能上升氣流塔可以分析。',
+      NoBuildingForAnalysis: '沒有建築物可以分析。',
     },
 
     toolbar: {

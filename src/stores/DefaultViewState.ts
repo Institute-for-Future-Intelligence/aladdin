@@ -90,6 +90,8 @@ export class DefaultViewState implements ViewState {
   yearlyHeliostatYieldPanelRect: Rectangle;
   dailyUpdraftTowerYieldPanelRect: Rectangle;
   yearlyUpdraftTowerYieldPanelRect: Rectangle;
+  dailyBuildingEnergyPanelRect: Rectangle;
+  yearlyBuildingEnergyPanelRect: Rectangle;
   evolutionPanelRect: Rectangle;
 
   mapZoom: number;
@@ -177,6 +179,8 @@ export class DefaultViewState implements ViewState {
     this.yearlyHeliostatYieldPanelRect = new Rectangle(0, 0, 600, 400);
     this.dailyUpdraftTowerYieldPanelRect = new Rectangle(0, 0, 640, 550);
     this.yearlyUpdraftTowerYieldPanelRect = new Rectangle(0, 0, 600, 400);
+    this.dailyBuildingEnergyPanelRect = new Rectangle(0, 0, 600, 400);
+    this.yearlyBuildingEnergyPanelRect = new Rectangle(0, 0, 600, 400);
     this.evolutionPanelRect = new Rectangle(0, 0, 640, 400);
 
     this.mapZoom = 18;
