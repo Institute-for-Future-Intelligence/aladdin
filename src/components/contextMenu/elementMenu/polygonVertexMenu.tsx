@@ -15,7 +15,7 @@ import { ObjectType, PolygonVertexAction } from '../../../types';
 export const PolygonVertexMenu = React.memo(() => {
   const language = useStore(Selector.language);
   const polygon = useStore((state) =>
-    state.elements.find((e) => e.selected && e.type === ObjectType.PolygonVertex),
+    state.elements.find((e) => e.selected && e.type === ObjectType.Polygon),
   ) as PolygonModel;
   const deletePolygonVertexByIndex = useStore(Selector.deletePolygonVertexByIndex);
   const insertPolygonVertexBeforeIndex = useStore(Selector.insertPolygonVertexBeforeIndex);
