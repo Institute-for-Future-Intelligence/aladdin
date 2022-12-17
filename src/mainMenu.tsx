@@ -1632,7 +1632,26 @@ const MainMenu = ({ viewOnly, set2DView, resetView, zoomView, canvas }: MainMenu
             {i18n.t('menu.building.AnalyzeYearlyBuildingEnergy', lang)}
           </Menu.Item>
           <SubMenu key={'building-energy-simulation-options'} title={i18n.t('word.Options', lang)}>
-            <Menu></Menu>
+            <Menu>
+              <Menu.Item key={'building-energy-simulation-sampling-frequency'}>
+                <Space style={{ width: '150px' }}>{i18n.t('menu.option.SamplingFrequency', lang) + ':'}</Space>
+                <InputNumber
+                  min={1}
+                  max={60}
+                  step={1}
+                  style={{ width: 60 }}
+                  precision={0}
+                  value={timesPerHour}
+                  formatter={(a) => Number(a).toFixed(0)}
+                  onChange={(value) => {
+                    setCommonStore((state) => {
+                      state.world.timesPerHour = value;
+                    });
+                  }}
+                />
+                <Space style={{ paddingLeft: '10px' }}>{i18n.t('menu.option.TimesPerHour', lang)}</Space>
+              </Menu.Item>
+            </Menu>
           </SubMenu>
         </SubMenu>
 

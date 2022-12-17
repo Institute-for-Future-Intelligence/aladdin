@@ -40,6 +40,7 @@ const ThermalSimulation = ({ city }: ThermalSimulationProps) => {
   const getRoofSegmentVerticesWithoutOverhang = useStore(Selector.getRoofSegmentVerticesWithoutOverhang);
   const highestTemperatureTimeInMinutes = useStore(Selector.world.highestTemperatureTimeInMinutes) ?? 900;
   const setHourlyHeatExchangeArray = usePrimitiveStore(Selector.setHourlyHeatExchangeArray);
+  const showDailyBuildingEnergyPanel = useStore(Selector.viewState.showDailyBuildingEnergyPanel);
 
   const requestRef = useRef<number>(0);
   const simulationCompletedRef = useRef<boolean>(false);
@@ -57,6 +58,8 @@ const ThermalSimulation = ({ city }: ThermalSimulationProps) => {
   const now = new Date(world.date);
   const timesPerHour = world.timesPerHour ?? 4;
   const minuteInterval = 60 / timesPerHour;
+  const daysPerYear = world.daysPerYear ?? 6;
+  const monthInterval = 12 / daysPerYear;
 
   // get the highest and lowest temperatures of the day from the weather data
   useEffect(() => {
@@ -453,7 +456,61 @@ const ThermalSimulation = ({ city }: ThermalSimulationProps) => {
   };
 
   const simulateYearly = () => {
-    resetHourlyHeatExchangeMap();
+    if (runYearlySimulation && !pauseRef.current) {
+      const totalMinutes = now.getMinutes() + now.getHours() * 60;
+      if (totalMinutes < MINUTES_OF_DAY - minuteInterval) {
+        // this is where time advances (by incrementing the minutes with the given interval)
+        now.setHours(now.getHours(), now.getMinutes() + minuteInterval);
+        setCommonStore((state) => {
+          state.world.date = now.toLocaleString('en-US');
+        });
+        for (const e of elements) {
+          switch (e.type) {
+            case ObjectType.Door:
+              calculateDoor(e as DoorModel);
+              break;
+            case ObjectType.Window:
+              calculateWindow(e as WindowModel);
+              break;
+            case ObjectType.Wall:
+              calculateWall(e as WallModel);
+              break;
+            case ObjectType.Roof:
+              calculateRoof(e as RoofModel);
+              break;
+          }
+        }
+        // recursive call to the next step of the simulation within the current day
+        requestRef.current = requestAnimationFrame(simulateYearly);
+      } else {
+        finishMonthly();
+        sampledDayRef.current++;
+        if (sampledDayRef.current === daysPerYear) {
+          cancelAnimationFrame(requestRef.current);
+          setCommonStore((state) => {
+            state.runYearlyThermalSimulation = false;
+            state.simulationInProgress = false;
+            state.simulationPaused = false;
+            state.world.date = originalDateRef.current.toLocaleString('en-US');
+            state.viewState.showYearlyBuildingEnergyPanel = true;
+          });
+          showInfo(i18n.t('message.SimulationCompleted', lang));
+          simulationCompletedRef.current = true;
+          //generateYearlyData();
+          return;
+        }
+        // go to the next month
+        now.setMonth(sampledDayRef.current * monthInterval, 22);
+        now.setHours(0, minuteInterval / 2);
+        resetHourlyHeatExchangeMap();
+        // recursive call to the next step of the simulation
+        requestRef.current = requestAnimationFrame(simulateYearly);
+      }
+    }
+  };
+
+  const finishMonthly = () => {
+    if (showDailyBuildingEnergyPanel) finishDaily();
   };
 
   return <></>;

@@ -30,6 +30,7 @@ export default React.memo(function Loading({ loading }: { loading: boolean }) {
   const runYearlySimulationForUpdraftTower = useStore(Selector.runYearlySimulationForUpdraftTower);
   const runDynamicSimulation = useStore(Selector.runDynamicSimulation);
   const runDailyThermalSimulation = useStore(Selector.runDailyThermalSimulation);
+  const runYearlyThermalSimulation = useStore(Selector.runYearlyThermalSimulation);
 
   const elements = useStore.getState().elements;
 
@@ -39,7 +40,7 @@ export default React.memo(function Loading({ loading }: { loading: boolean }) {
         <>
           {simulationInProgress &&
             ((!noAnimationForHeatmapSimulation && runDynamicSimulation) ||
-              (!noAnimationForThermalSimulation && runDailyThermalSimulation) ||
+              (!noAnimationForThermalSimulation && (runDailyThermalSimulation || runYearlyThermalSimulation)) ||
               (!noAnimationForSensorDataCollection && (runDailyLightSensor || runYearlyLightSensor)) ||
               (!noAnimationForSolarUpdraftTowerSimulation &&
                 (runDailySimulationForUpdraftTower || runYearlySimulationForUpdraftTower)) ||
