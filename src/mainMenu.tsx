@@ -124,6 +124,7 @@ import PvSimulationSettings from './components/contextMenu/elementMenu/pvSimulat
 import SutSimulationSettings from './components/contextMenu/elementMenu/sutSimulationSettings';
 import { UndoableChange } from './undo/UndoableChange';
 import { FLOATING_WINDOW_OPACITY, HOME_URL } from './constants';
+import BuildingEnergySimulationSettings from './components/contextMenu/elementMenu/buildingEnergySimulationSettings';
 
 const { SubMenu } = Menu;
 
@@ -1631,28 +1632,7 @@ const MainMenu = ({ viewOnly, set2DView, resetView, zoomView, canvas }: MainMenu
           >
             {i18n.t('menu.building.AnalyzeYearlyBuildingEnergy', lang)}
           </Menu.Item>
-          <SubMenu key={'building-energy-simulation-options'} title={i18n.t('word.Options', lang)}>
-            <Menu>
-              <Menu.Item key={'building-energy-simulation-sampling-frequency'}>
-                <Space style={{ width: '150px' }}>{i18n.t('menu.option.SamplingFrequency', lang) + ':'}</Space>
-                <InputNumber
-                  min={1}
-                  max={60}
-                  step={1}
-                  style={{ width: 60 }}
-                  precision={0}
-                  value={timesPerHour}
-                  formatter={(a) => Number(a).toFixed(0)}
-                  onChange={(value) => {
-                    setCommonStore((state) => {
-                      state.world.timesPerHour = value;
-                    });
-                  }}
-                />
-                <Space style={{ paddingLeft: '10px' }}>{i18n.t('menu.option.TimesPerHour', lang)}</Space>
-              </Menu.Item>
-            </Menu>
-          </SubMenu>
+          <BuildingEnergySimulationSettings />
         </SubMenu>
 
         {/* solar panels */}

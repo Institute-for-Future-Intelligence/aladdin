@@ -278,6 +278,9 @@ export const i18n_en = {
       building: {
         AnalyzeDailyBuildingEnergy: 'Analyze Daily Building Energy',
         AnalyzeYearlyBuildingEnergy: 'Analyze Yearly Building Energy',
+        EnergyAnalysisOptions: 'Energy Analysis Options',
+        EnergyGridCellSize: 'Energy Grid Cell Size',
+        BuildingEnergySimulationNoAnimation: 'No Animation for Building Energy Simulation',
       },
       solarPanelSubMenu: 'Solar Panel',
       solarPanel: {

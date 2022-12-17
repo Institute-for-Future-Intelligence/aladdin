@@ -276,6 +276,9 @@ export const i18n_zh_cn = {
       building: {
         AnalyzeDailyBuildingEnergy: '建筑物当天能耗分析',
         AnalyzeYearlyBuildingEnergy: '建筑物全年能耗分析',
+        EnergyAnalysisOptions: '能耗分析选项',
+        EnergyGridCellSize: '计算网格的尺寸',
+        BuildingEnergySimulationNoAnimation: '若无移动部件则省略动画',
       },
       solarPanelSubMenu: '太阳能光伏板',
       solarPanel: {

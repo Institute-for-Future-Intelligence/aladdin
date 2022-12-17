@@ -276,6 +276,9 @@ export const i18n_zh_tw = {
       building: {
         AnalyzeDailyBuildingEnergy: '建築物當天能耗分析',
         AnalyzeYearlyBuildingEnergy: '建築物全年能耗分析',
+        EnergyAnalysisOptions: '能耗分析選項',
+        EnergyGridCellSize: '計算網格的尺寸',
+        BuildingEnergySimulationNoAnimation: '若無移動部件則省略動畫',
       },
       solarPanelSubMenu: '太陽能光伏板',
       solarPanel: {
