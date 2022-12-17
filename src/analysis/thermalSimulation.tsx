@@ -17,6 +17,7 @@ import { computeOutsideTemperature, getOutsideTemperatureAtMinute } from './heat
 import { computeSunriseAndSunsetInMinutes } from './sunTools';
 import { WindowModel } from '../models/WindowModel';
 import { DoorModel } from '../models/DoorModel';
+import { Point2 } from '../models/Point2';
 
 export interface ThermalSimulationProps {
   city: string | null;
@@ -330,38 +331,47 @@ const ThermalSimulation = ({ city }: ThermalSimulationProps) => {
     let totalArea = 0;
     switch (roof.roofType) {
       case RoofType.Pyramid:
-        for (const v of segments) {
-          const area = Util.getTriangleArea(v[0], v[1], v[2]);
+        for (const s of segments) {
+          const area = Util.getTriangleArea(s[0], s[1], s[2]);
           totalArea += area;
         }
         break;
       case RoofType.Hip:
-        for (const v of segments) {
-          if (v.length === 3) {
-            totalArea += Util.getTriangleArea(v[0], v[1], v[2]);
-          } else if (v.length === 4) {
-            totalArea += Util.getTriangleArea(v[0], v[1], v[2]);
-            totalArea += Util.getTriangleArea(v[2], v[3], v[0]);
+        for (const s of segments) {
+          if (s.length === 3) {
+            totalArea += Util.getTriangleArea(s[0], s[1], s[2]);
+          } else if (s.length === 4) {
+            totalArea += Util.getTriangleArea(s[0], s[1], s[2]);
+            totalArea += Util.getTriangleArea(s[2], s[3], s[0]);
           }
         }
         break;
       case RoofType.Gable:
-        for (const v of segments) {
-          totalArea += Util.getTriangleArea(v[0], v[1], v[2]);
-          totalArea += Util.getTriangleArea(v[2], v[3], v[0]);
+        for (const s of segments) {
+          totalArea += Util.getTriangleArea(s[0], s[1], s[2]);
+          totalArea += Util.getTriangleArea(s[2], s[3], s[0]);
         }
         break;
       case RoofType.Gambrel:
-        for (const v of segments) {
-          totalArea += Util.getTriangleArea(v[0], v[1], v[2]);
-          totalArea += Util.getTriangleArea(v[2], v[3], v[0]);
+        for (const s of segments) {
+          totalArea += Util.getTriangleArea(s[0], s[1], s[2]);
+          totalArea += Util.getTriangleArea(s[2], s[3], s[0]);
         }
         break;
       case RoofType.Mansard:
-        for (const v of segments) {
-          totalArea += Util.getTriangleArea(v[0], v[1], v[2]);
-          totalArea += Util.getTriangleArea(v[2], v[3], v[0]);
+        const n = segments.length;
+        for (let i = 0; i < n - 1; i++) {
+          const s = segments[i];
+          totalArea += Util.getTriangleArea(s[0], s[1], s[2]);
+          totalArea += Util.getTriangleArea(s[2], s[3], s[0]);
         }
+        // the last segment may not be a quad
+        const s = segments[n - 1];
+        const points = new Array<Point2>();
+        for (const p of s) {
+          points.push({ x: p.x, y: p.y } as Point2);
+        }
+        totalArea += Util.getPolygonArea(points);
         break;
     }
     // convert heat exchange to kWh
