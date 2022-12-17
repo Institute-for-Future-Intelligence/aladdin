@@ -104,7 +104,7 @@ const ThermalSimulation = ({ city }: ThermalSimulationProps) => {
       a = new Array(24).fill(0);
       hourlyHeatExchangeArrayMapRef.current.set(id, a);
     }
-    a[now.getHours()] = heatExchange;
+    a[now.getHours()] += heatExchange;
   };
 
   const resetHourlyHeatExchangeMap = () => {
@@ -445,7 +445,7 @@ const ThermalSimulation = ({ city }: ThermalSimulationProps) => {
       sampledDayRef.current = 0;
       now.setMonth(0, 22); // begin from January, 22
       dayRef.current = now.getDay();
-      now.setHours(0, -minuteInterval / 2);
+      now.setHours(0, minuteInterval / 2);
       // set the initial date so that the scene gets a chance to render before the simulation starts
       setCommonStore((state) => {
         state.world.date = now.toLocaleString('en-US');

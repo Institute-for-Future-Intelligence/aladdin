@@ -79,6 +79,7 @@ import SolarPanelArrayPso from './ai/pso/solarPanelArrayPso';
 import PointerStyleController from './pointerStyleController';
 import Loading from './loading';
 import DailyBuildingEnergyPanel from './panels/dailyBuildingEnergyPanel';
+import YearlyBuildingEnergyPanel from './panels/yearlyBuildingEnergyPanel';
 
 export interface AppCreatorProps {
   viewOnly: boolean;
@@ -404,6 +405,7 @@ const AppCreator = ({ viewOnly = false }: AppCreatorProps) => {
       {showDailyUpdraftTowerYieldPanel && <DailySolarUpdraftTowerYieldPanel city={city} />}
       {showYearlyUpdraftTowerYieldPanel && <YearlySolarUpdraftTowerYieldPanel city={city} />}
       {showDailyBuildingEnergyPanel && <DailyBuildingEnergyPanel city={city} />}
+      {showYearlyBuildingEnergyPanel && <YearlyBuildingEnergyPanel city={city} />}
       {showSolarRadiationHeatmap && <HeatmapControlPanel />}
       {showEvolutionPanel && <SolarPanelOptimizationResult />}
       <DropdownContextMenu>

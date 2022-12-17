@@ -8,16 +8,13 @@ import styled from 'styled-components';
 import { useStore } from '../stores/common';
 import * as Selector from '../stores/selector';
 import { ChartType, DatumEntry, GraphDataType, ObjectType } from '../types';
-import moment from 'moment';
+import { FLOATING_WINDOW_OPACITY, MONTHS } from '../constants';
 import ReactDraggable, { DraggableEventHandler } from 'react-draggable';
 import { Button, Space } from 'antd';
 import { ReloadOutlined, SaveOutlined } from '@ant-design/icons';
 import { screenshot, showInfo } from '../helpers';
 import i18n from '../i18n/i18n';
 import { Rectangle } from '../models/Rectangle';
-import { FLOATING_WINDOW_OPACITY } from '../constants';
-import { usePrimitiveStore } from '../stores/commonPrimitive';
-import { Util } from '../Util';
 
 const Container = styled.div`
   position: fixed;
@@ -70,66 +67,36 @@ const Header = styled.div`
   }
 `;
 
-export interface DailyBuildingEnergyPanelProps {
+export interface YearlyBuildingEnergyPanelProps {
   city: string | null;
 }
 
-const DailyBuildingEnergyPanel = ({ city }: DailyBuildingEnergyPanelProps) => {
+const YearlyBuildingEnergyPanel = ({ city }: YearlyBuildingEnergyPanelProps) => {
   const language = useStore(Selector.language);
   const loggable = useStore(Selector.loggable);
   const opacity = useStore(Selector.floatingWindowOpacity) ?? FLOATING_WINDOW_OPACITY;
   const setCommonStore = useStore(Selector.set);
-  const getFoundation = useStore(Selector.getFoundation);
-  const elements = useStore.getState().elements;
   const now = new Date(useStore(Selector.world.date));
-  const hourlyHeatExchangeArrayMap = usePrimitiveStore(Selector.hourlyHeatExchangeArrayMap);
-  const panelRect = useStore(Selector.viewState.dailyBuildingEnergyPanelRect);
+  const panelRect = useStore(Selector.viewState.yearlyBuildingEnergyPanelRect);
   const countElementsByType = useStore(Selector.countElementsByType);
-
-  // nodeRef is to suppress ReactDOM.findDOMNode() deprecation warning. See:
-  // https://github.com/react-grid-layout/react-draggable/blob/v4.4.2/lib/DraggableCore.js#L159-L171
-  const nodeRef = React.useRef(null);
 
   const wrapperRef = useRef<HTMLDivElement | null>(null);
   const resizeObserverRef = useRef<ResizeObserver>();
   const wOffset = wrapperRef.current ? wrapperRef.current.clientWidth + 40 : panelRect ? panelRect.width + 40 : 640;
-  const hOffset = wrapperRef.current ? wrapperRef.current.clientHeight + 100 : panelRect ? panelRect.height + 100 : 460;
+  const hOffset = wrapperRef.current ? wrapperRef.current.clientHeight + 100 : panelRect ? panelRect.height + 100 : 600;
   const [curPosition, setCurPosition] = useState({
     x: panelRect ? Math.max(panelRect.x, wOffset - window.innerWidth) : 0,
     y: panelRect ? Math.min(panelRect.y, window.innerHeight - hOffset) : 0,
   });
   const [data, setData] = useState<DatumEntry[]>([]);
 
+  // nodeRef is to suppress ReactDOM.findDOMNode() deprecation warning. See:
+  // https://github.com/react-grid-layout/react-draggable/blob/v4.4.2/lib/DraggableCore.js#L159-L171
+  const nodeRef = React.useRef(null);
+
   const lang = { lng: language };
   const labels = ['Heater', 'AC', 'Net'];
-
-  useEffect(() => {
-    const sum: DatumEntry[] = [];
-    for (let i = 0; i < 24; i++) {
-      const datum: DatumEntry = {};
-      let heater = 0;
-      let ac = 0;
-      for (const e of elements) {
-        if (Util.isThermal(e)) {
-          // const f = getFoundation(e);
-          const h = hourlyHeatExchangeArrayMap.get(e.id);
-          if (h) {
-            if (h[i] < 0) {
-              heater -= h[i]; // negative goes to heater
-            } else {
-              ac += h[i]; // positive goes to cooler
-            }
-          }
-        }
-      }
-      datum['Hour'] = i;
-      datum['Heater'] = heater;
-      datum['AC'] = ac;
-      datum['Net'] = heater + ac;
-      sum.push(datum);
-    }
-    setData(sum);
-  }, [hourlyHeatExchangeArrayMap]);
+  const referenceX = MONTHS[now.getMonth()];
 
   useEffect(() => {
     setCurPosition({
@@ -152,11 +119,11 @@ const DailyBuildingEnergyPanel = ({ city }: DailyBuildingEnergyPanelProps) => {
         resizeObserverRef.current = new ResizeObserver(() => {
           setCommonStore((state) => {
             if (wrapperRef.current) {
-              if (!state.viewState.dailyBuildingEnergyPanelRect) {
-                state.viewState.dailyBuildingEnergyPanelRect = new Rectangle(0, 0, 600, 360);
+              if (!state.viewState.yearlyBuildingEnergyPanelRect) {
+                state.viewState.yearlyBuildingEnergyPanelRect = new Rectangle(0, 0, 600, 500);
               }
-              state.viewState.dailyBuildingEnergyPanelRect.width = wrapperRef.current.offsetWidth;
-              state.viewState.dailyBuildingEnergyPanelRect.height = wrapperRef.current.offsetHeight;
+              state.viewState.yearlyBuildingEnergyPanelRect.width = wrapperRef.current.offsetWidth;
+              state.viewState.yearlyBuildingEnergyPanelRect.height = wrapperRef.current.offsetHeight;
             }
           });
         });
@@ -179,27 +146,27 @@ const DailyBuildingEnergyPanel = ({ city }: DailyBuildingEnergyPanelProps) => {
 
   const onDragEnd: DraggableEventHandler = (e, ui) => {
     setCommonStore((state) => {
-      if (!state.viewState.dailyBuildingEnergyPanelRect) {
-        state.viewState.dailyBuildingEnergyPanelRect = new Rectangle(0, 0, 600, 360);
+      if (!state.viewState.yearlyBuildingEnergyPanelRect) {
+        state.viewState.yearlyBuildingEnergyPanelRect = new Rectangle(0, 0, 600, 360);
       }
-      state.viewState.dailyBuildingEnergyPanelRect.x = Math.max(ui.x, wOffset - window.innerWidth);
-      state.viewState.dailyBuildingEnergyPanelRect.y = Math.min(ui.y, window.innerHeight - hOffset);
+      state.viewState.yearlyBuildingEnergyPanelRect.x = Math.max(ui.x, wOffset - window.innerWidth);
+      state.viewState.yearlyBuildingEnergyPanelRect.y = Math.min(ui.y, window.innerHeight - hOffset);
     });
   };
 
   const closePanel = () => {
     setCommonStore((state) => {
-      state.viewState.showDailyBuildingEnergyPanel = false;
+      state.viewState.showYearlyBuildingEnergyPanel = false;
       if (loggable) {
         state.actionInfo = {
-          name: 'Close Daily Building Energy Graph',
+          name: 'Close Yearly Building Energy Graph',
           timestamp: new Date().getTime(),
         };
       }
     });
   };
 
-  const labelX = i18n.t('word.Hour', lang);
+  const labelX = i18n.t('word.Month', lang);
   const labelY = i18n.t('word.Energy', lang);
 
   return (
@@ -218,14 +185,14 @@ const DailyBuildingEnergyPanel = ({ city }: DailyBuildingEnergyPanelProps) => {
           style={{
             opacity: opacity,
             width: (panelRect ? panelRect.width : 600) + 'px',
-            height: (panelRect ? panelRect.height : 360) + 'px',
+            height: (panelRect ? panelRect.height : 400) + 'px',
           }}
         >
           <Header className="handle" style={{ direction: 'ltr' }}>
             <span>
-              {i18n.t('buildingEnergyPanel.DailyBuildingEnergy', lang) + ': '}
+              {i18n.t('buildingEnergyPanel.YearlyBuildingEnergy', lang) + ': '}
               <label style={{ fontSize: '10px' }}>
-                {i18n.t('sensorPanel.WeatherDataFrom', lang) + ' ' + city + ' | ' + moment(now).format('MM/DD')}
+                {i18n.t('sensorPanel.WeatherDataFrom', lang) + ' ' + city + ' | ' + now.getFullYear()}
               </label>
             </span>
             <span
@@ -241,20 +208,19 @@ const DailyBuildingEnergyPanel = ({ city }: DailyBuildingEnergyPanelProps) => {
             </span>
           </Header>
           <LineGraph
-            type={GraphDataType.DailyBuildingEnergy}
+            type={GraphDataType.YearlyRadiationSensorData}
             chartType={ChartType.Line}
             dataSource={data}
             labels={labels}
             height={100}
-            dataKeyAxisX={'Hour'}
+            dataKeyAxisX={'Month'}
             labelX={labelX}
             labelY={labelY}
-            unitY={'kWh'}
+            unitY={'kWh/m²/' + i18n.t('word.Day', lang)}
             yMin={0}
             curveType={'linear'}
             fractionDigits={2}
-            symbolCount={24}
-            referenceX={now.getHours()}
+            referenceX={referenceX}
           />
           <Space style={{ alignSelf: 'center', direction: 'ltr' }}>
             <Button
@@ -271,11 +237,11 @@ const DailyBuildingEnergyPanel = ({ city }: DailyBuildingEnergyPanelProps) => {
                 // give it 0.1 second for the info to show up
                 setTimeout(() => {
                   setCommonStore((state) => {
-                    state.runDailyThermalSimulation = true;
-                    state.pauseDailyThermalSimulation = false;
+                    state.runYearlyThermalSimulation = true;
+                    state.pauseYearlyThermalSimulation = false;
                     state.simulationInProgress = true;
                     if (loggable) {
-                      state.actionInfo = { name: 'Run Daily Thermal Simulation', timestamp: new Date().getTime() };
+                      state.actionInfo = { name: 'Run Yearly Thermal Simulation', timestamp: new Date().getTime() };
                     }
                   });
                 }, 100);
@@ -286,12 +252,12 @@ const DailyBuildingEnergyPanel = ({ city }: DailyBuildingEnergyPanelProps) => {
               icon={<SaveOutlined />}
               title={i18n.t('word.SaveAsImage', lang)}
               onClick={() => {
-                screenshot('line-graph-' + labelX + '-' + labelY, 'daily-building-energy', {}).then(() => {
+                screenshot('line-graph-' + labelX + '-' + labelY, 'yearly-building-energy', {}).then(() => {
                   showInfo(i18n.t('message.ScreenshotSaved', lang));
                   if (loggable) {
                     setCommonStore((state) => {
                       state.actionInfo = {
-                        name: 'Take Screenshot of Daily Building Energy Graph',
+                        name: 'Take Screenshot of Yearly Building Energy Graph',
                         timestamp: new Date().getTime(),
                       };
                     });
@@ -306,4 +272,4 @@ const DailyBuildingEnergyPanel = ({ city }: DailyBuildingEnergyPanelProps) => {
   );
 };
 
-export default React.memo(DailyBuildingEnergyPanel);
+export default React.memo(YearlyBuildingEnergyPanel);

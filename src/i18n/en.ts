@@ -1100,7 +1100,8 @@ export const i18n_en = {
     },
 
     buildingEnergyPanel: {
-      BuildingEnergy: 'Building Energy',
+      DailyBuildingEnergy: 'Daily Building Energy',
+      YearlyBuildingEnergy: 'Yearly Building Energy',
     },
 
     solarPanelYieldPanel: {
