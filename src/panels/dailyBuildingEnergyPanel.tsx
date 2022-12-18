@@ -99,12 +99,17 @@ const DailyBuildingEnergyPanel = ({ city }: DailyBuildingEnergyPanelProps) => {
     y: panelRect ? Math.min(panelRect.y, window.innerHeight - hOffset) : 0,
   });
   const [data, setData] = useState<DatumEntry[]>([]);
+  const [heaterSum, setHeaterSum] = useState(0);
+  const [acSum, setAcSum] = useState(0);
+  const [netSum, setNetSum] = useState(0);
 
   const lang = { lng: language };
   const labels = ['Heater', 'AC', 'Net'];
 
   useEffect(() => {
     const sum: DatumEntry[] = [];
+    let sumHeater = 0;
+    let sumAc = 0;
     for (let i = 0; i < 24; i++) {
       const datum: DatumEntry = {};
       let heater = 0;
@@ -127,8 +132,13 @@ const DailyBuildingEnergyPanel = ({ city }: DailyBuildingEnergyPanelProps) => {
       datum['AC'] = ac;
       datum['Net'] = heater + ac;
       sum.push(datum);
+      sumHeater += heater;
+      sumAc += ac;
     }
     setData(sum);
+    setHeaterSum(sumHeater);
+    setAcSum(sumAc);
+    setNetSum(sumHeater + sumAc);
   }, [hourlyHeatExchangeArrayMap]);
 
   useEffect(() => {
@@ -249,7 +259,7 @@ const DailyBuildingEnergyPanel = ({ city }: DailyBuildingEnergyPanelProps) => {
             dataKeyAxisX={'Hour'}
             labelX={labelX}
             labelY={labelY}
-            unitY={'kWh'}
+            unitY={i18n.t('word.kWh', lang)}
             yMin={0}
             curveType={'linear'}
             fractionDigits={2}
@@ -257,6 +267,15 @@ const DailyBuildingEnergyPanel = ({ city }: DailyBuildingEnergyPanelProps) => {
             referenceX={now.getHours()}
           />
           <Space style={{ alignSelf: 'center', direction: 'ltr' }}>
+            <Space style={{ cursor: 'default' }}>
+              {i18n.t('buildingEnergyPanel.Heater', lang) + ': ' + heaterSum.toFixed(1)}
+            </Space>
+            <Space style={{ cursor: 'default' }}>
+              {i18n.t('buildingEnergyPanel.AC', lang) + ': ' + acSum.toFixed(1)}
+            </Space>
+            <Space style={{ cursor: 'default' }}>
+              {i18n.t('buildingEnergyPanel.Net', lang) + ': ' + netSum.toFixed(1)}
+            </Space>
             <Button
               type="default"
               icon={<ReloadOutlined />}

@@ -15,6 +15,7 @@ import { ReloadOutlined, SaveOutlined } from '@ant-design/icons';
 import { screenshot, showInfo } from '../helpers';
 import i18n from '../i18n/i18n';
 import { Rectangle } from '../models/Rectangle';
+import { usePrimitiveStore } from '../stores/commonPrimitive';
 
 const Container = styled.div`
   position: fixed;
@@ -76,9 +77,11 @@ const YearlyBuildingEnergyPanel = ({ city }: YearlyBuildingEnergyPanelProps) => 
   const loggable = useStore(Selector.loggable);
   const opacity = useStore(Selector.floatingWindowOpacity) ?? FLOATING_WINDOW_OPACITY;
   const setCommonStore = useStore(Selector.set);
+  const elements = useStore.getState().elements;
   const now = new Date(useStore(Selector.world.date));
   const panelRect = useStore(Selector.viewState.yearlyBuildingEnergyPanelRect);
   const countElementsByType = useStore(Selector.countElementsByType);
+  const monthlyHeatExchangeArrayMap = usePrimitiveStore(Selector.monthlyHeatExchangeArrayMap);
 
   const wrapperRef = useRef<HTMLDivElement | null>(null);
   const resizeObserverRef = useRef<ResizeObserver>();
@@ -97,6 +100,10 @@ const YearlyBuildingEnergyPanel = ({ city }: YearlyBuildingEnergyPanelProps) => 
   const lang = { lng: language };
   const labels = ['Heater', 'AC', 'Net'];
   const referenceX = MONTHS[now.getMonth()];
+
+  useEffect(() => {
+    console.log(monthlyHeatExchangeArrayMap);
+  }, [monthlyHeatExchangeArrayMap]);
 
   useEffect(() => {
     setCurPosition({
@@ -216,7 +223,7 @@ const YearlyBuildingEnergyPanel = ({ city }: YearlyBuildingEnergyPanelProps) => 
             dataKeyAxisX={'Month'}
             labelX={labelX}
             labelY={labelY}
-            unitY={'kWh/m²/' + i18n.t('word.Day', lang)}
+            unitY={i18n.t('word.kWh', lang)}
             yMin={0}
             curveType={'linear'}
             fractionDigits={2}

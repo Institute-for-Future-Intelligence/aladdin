@@ -1079,6 +1079,9 @@ export const i18n_zh_cn = {
     buildingEnergyPanel: {
       DailyBuildingEnergy: '建筑物日能耗',
       YearlyBuildingEnergy: '建筑物年能耗',
+      Heater: '供暖',
+      AC: '空调',
+      Net: '净能耗',
     },
 
     solarPanelYieldPanel: {

@@ -52,6 +52,7 @@ const ThermalSimulation = ({ city }: ThermalSimulationProps) => {
   const outsideTemperatureRangeRef = useRef<{ high: number; low: number }>({ high: 20, low: 0 });
   const currentOutsideTemperatureRef = useRef<number>(20);
   const hourlyHeatExchangeArrayMapRef = useRef<Map<string, number[]>>(new Map<string, number[]>());
+  const monthlyHeatExchangeArrayMapRef = useRef<Map<string, number[]>>(new Map<string, number[]>());
 
   const lang = { lng: language };
   const weather = getWeather(city ?? 'Boston MA, USA');
@@ -61,27 +62,24 @@ const ThermalSimulation = ({ city }: ThermalSimulationProps) => {
   const daysPerYear = world.daysPerYear ?? 6;
   const monthInterval = 12 / daysPerYear;
 
-  // get the highest and lowest temperatures of the day from the weather data
-  useEffect(() => {
+  const updateTemperature = (currentTime: Date) => {
     if (weather) {
+      // get the highest and lowest temperatures of the day from the weather data
       outsideTemperatureRangeRef.current = computeOutsideTemperature(
-        new Date(world.date),
+        now,
         weather.lowestTemperatures,
         weather.highestTemperatures,
       );
+      // get the air temperature at the current time
+      currentOutsideTemperatureRef.current = getOutsideTemperatureAtMinute(
+        outsideTemperatureRangeRef.current.high,
+        outsideTemperatureRangeRef.current.low,
+        world.diurnalTemperatureModel ?? DiurnalTemperatureModel.Sinusoidal,
+        highestTemperatureTimeInMinutes,
+        computeSunriseAndSunsetInMinutes(currentTime, world.latitude),
+        Util.minutesIntoDay(currentTime),
+      );
     }
-  }, [world.date, weather?.lowestTemperatures, weather?.highestTemperatures]);
-
-  // get the air temperature at the current time
-  const updateTemperature = (currentTime: Date) => {
-    currentOutsideTemperatureRef.current = getOutsideTemperatureAtMinute(
-      outsideTemperatureRangeRef.current.high,
-      outsideTemperatureRangeRef.current.low,
-      world.diurnalTemperatureModel ?? DiurnalTemperatureModel.Sinusoidal,
-      highestTemperatureTimeInMinutes,
-      computeSunriseAndSunsetInMinutes(currentTime, world.latitude),
-      Util.minutesIntoDay(currentTime),
-    );
   };
 
   /*
@@ -111,6 +109,19 @@ const ThermalSimulation = ({ city }: ThermalSimulationProps) => {
     for (const e of elements) {
       if (Util.isThermal(e)) {
         hourlyHeatExchangeArrayMapRef.current.get(e.id)?.fill(0);
+      }
+    }
+  };
+
+  const resetMonthlyHeatExchangeMap = () => {
+    for (const e of elements) {
+      if (Util.isThermal(e)) {
+        const monthlyResult = monthlyHeatExchangeArrayMapRef.current.get(e.id);
+        if (monthlyResult) {
+          monthlyResult.fill(0);
+        } else {
+          monthlyHeatExchangeArrayMapRef.current.set(e.id, new Array(12).fill(0));
+        }
       }
     }
   };
@@ -162,23 +173,7 @@ const ThermalSimulation = ({ city }: ThermalSimulationProps) => {
 
   // TODO
   const staticCalculateDaily = () => {
-    updateTemperature(now);
-    for (const e of elements) {
-      switch (e.type) {
-        case ObjectType.Window:
-          calculateWindow(e as WindowModel);
-          break;
-        case ObjectType.Door:
-          calculateDoor(e as DoorModel);
-          break;
-        case ObjectType.Wall:
-          calculateWall(e as WallModel);
-          break;
-        case ObjectType.Roof:
-          calculateRoof(e as RoofModel);
-          break;
-      }
-    }
+    computeNow();
   };
 
   const initDaily = () => {
@@ -188,7 +183,7 @@ const ThermalSimulation = ({ city }: ThermalSimulationProps) => {
       pauseRef.current = false;
     } else {
       originalDateRef.current = new Date(world.date);
-      dayRef.current = now.getDay();
+      dayRef.current = Util.dayOfYear(now);
       // start from minuteInterval/2 so that the sampling points are evenly distributed within an hour
       now.setHours(0, minuteInterval / 2);
     }
@@ -209,8 +204,10 @@ const ThermalSimulation = ({ city }: ThermalSimulationProps) => {
 
   const calculateDaily = () => {
     if (runDailySimulation && !pauseRef.current) {
-      const totalMinutes = now.getMinutes() + now.getHours() * 60 + (now.getDay() - dayRef.current) * MINUTES_OF_DAY;
-      if (totalMinutes + minuteInterval >= MINUTES_OF_DAY) {
+      const totalMinutes =
+        now.getMinutes() + now.getHours() * 60 + (Util.dayOfYear(now) - dayRef.current) * MINUTES_OF_DAY;
+      if (totalMinutes + minuteInterval > MINUTES_OF_DAY) {
+        computeNow();
         cancelAnimationFrame(requestRef.current);
         setCommonStore((state) => {
           state.runDailyThermalSimulation = false;
@@ -224,32 +221,167 @@ const ThermalSimulation = ({ city }: ThermalSimulationProps) => {
         finishDaily();
         return;
       }
-      // this is where time advances (by incrementing the minutes with the given interval)
-      // minutes more than 60 results in the increase of the hour accordingly
-      now.setHours(now.getHours(), now.getMinutes() + minuteInterval);
       // this forces the scene to be re-rendered
       setCommonStore((state) => {
         state.world.date = now.toLocaleString('en-US');
       });
-      updateTemperature(now);
-      for (const e of elements) {
-        switch (e.type) {
-          case ObjectType.Wall:
-            calculateWall(e as WallModel);
-            break;
-          case ObjectType.Roof:
-            calculateRoof(e as RoofModel);
-            break;
-          case ObjectType.Window:
-            calculateWindow(e as WindowModel);
-            break;
-          case ObjectType.Door:
-            calculateDoor(e as DoorModel);
-            break;
-        }
-      }
+      computeNow();
       // recursive call to the next step of the simulation
       requestRef.current = requestAnimationFrame(calculateDaily);
+      // this is where time advances (by incrementing the minutes with the given interval)
+      // minutes more than 60 results in the increase of the hour accordingly
+      now.setHours(now.getHours(), now.getMinutes() + minuteInterval);
+    }
+  };
+
+  // yearly simulation
+
+  useEffect(() => {
+    if (runYearlySimulation) {
+      if (noAnimation && !Util.hasMovingParts(elements)) {
+        // this causes the simulation code to run at the beginning of the next event cycle
+        // that hopefully has the updated scene graph
+        setTimeout(() => {
+          //staticSimulateYearly(false);
+        }, 50);
+      } else {
+        initYearly();
+        requestRef.current = requestAnimationFrame(simulateYearly);
+        return () => {
+          // this is called when the recursive call of requestAnimationFrame exits
+          cancelAnimationFrame(requestRef.current);
+          if (!simulationCompletedRef.current) {
+            showInfo(i18n.t('message.SimulationAborted', lang));
+            setCommonStore((state) => {
+              state.world.date = originalDateRef.current.toLocaleString('en-US');
+              state.simulationInProgress = false;
+              state.simulationPaused = false;
+            });
+          }
+          pauseRef.current = false;
+        };
+      }
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [runYearlySimulation]);
+
+  useEffect(() => {
+    pauseRef.current = pauseYearlySimulation;
+    if (pauseYearlySimulation) {
+      pausedDateRef.current = new Date(now.getTime());
+      cancelAnimationFrame(requestRef.current);
+      setCommonStore((state) => {
+        state.simulationPaused = true;
+      });
+      showInfo(i18n.t('message.SimulationPaused', lang));
+    } else {
+      setCommonStore((state) => {
+        state.simulationPaused = false;
+      });
+      // continue the simulation
+      simulateYearly();
+    }
+  }, [pauseYearlySimulation]);
+
+  const initYearly = () => {
+    if (pauseRef.current) {
+      // if the simulation has been paused, continue from the paused date
+      now.setTime(pausedDateRef.current.getTime());
+      pauseRef.current = false;
+    } else {
+      originalDateRef.current = new Date(world.date);
+      sampledDayRef.current = 0;
+      now.setMonth(0, 22); // begin from January, 22
+      dayRef.current = Util.dayOfYear(now);
+      now.setHours(0, minuteInterval / 2);
+      // set the initial date so that the scene gets a chance to render before the simulation starts
+      setCommonStore((state) => {
+        state.world.date = now.toLocaleString('en-US');
+      });
+    }
+    resetHourlyHeatExchangeMap();
+    resetMonthlyHeatExchangeMap();
+    simulationCompletedRef.current = false;
+  };
+
+  const simulateYearly = () => {
+    if (runYearlySimulation && !pauseRef.current) {
+      const totalMinutes =
+        now.getMinutes() + now.getHours() * 60 + (Util.dayOfYear(now) - dayRef.current) * MINUTES_OF_DAY;
+      if (totalMinutes < MINUTES_OF_DAY + minuteInterval / 2) {
+        // this is where time advances (by incrementing the minutes with the given interval)
+        setCommonStore((state) => {
+          state.world.date = now.toLocaleString('en-US');
+        });
+        computeNow();
+        now.setHours(now.getHours(), now.getMinutes() + minuteInterval);
+        // recursive call to the next step of the simulation within the current day
+        requestRef.current = requestAnimationFrame(simulateYearly);
+      } else {
+        finishMonthly();
+        sampledDayRef.current++;
+        if (sampledDayRef.current === daysPerYear) {
+          cancelAnimationFrame(requestRef.current);
+          setCommonStore((state) => {
+            state.runYearlyThermalSimulation = false;
+            state.simulationInProgress = false;
+            state.simulationPaused = false;
+            state.world.date = originalDateRef.current.toLocaleString('en-US');
+            state.viewState.showYearlyBuildingEnergyPanel = true;
+          });
+          showInfo(i18n.t('message.SimulationCompleted', lang));
+          simulationCompletedRef.current = true;
+          //generateYearlyData();
+          return;
+        }
+        // go to the next month
+        now.setMonth(sampledDayRef.current * monthInterval, 22);
+        now.setHours(0, minuteInterval / 2);
+        dayRef.current = Util.dayOfYear(now);
+        resetHourlyHeatExchangeMap();
+        // recursive call to the next step of the simulation
+        requestRef.current = requestAnimationFrame(simulateYearly);
+      }
+    }
+  };
+
+  const finishMonthly = () => {
+    for (const e of elements) {
+      if (Util.isThermal(e)) {
+        const result = hourlyHeatExchangeArrayMapRef.current.get(e.id);
+        if (result) {
+          const total = monthlyHeatExchangeArrayMapRef.current.get(e.id);
+          if (total) {
+            const sumDaily = result.reduce((a, b) => a + b, 0);
+            total[sampledDayRef.current] += sumDaily;
+          }
+        }
+      }
+    }
+    if (showDailyBuildingEnergyPanel) {
+      finishDaily();
+    }
+  };
+
+  // functions shared by daily and yearly simulations
+
+  const computeNow = () => {
+    updateTemperature(now);
+    for (const e of elements) {
+      switch (e.type) {
+        case ObjectType.Door:
+          calculateDoor(e as DoorModel);
+          break;
+        case ObjectType.Window:
+          calculateWindow(e as WindowModel);
+          break;
+        case ObjectType.Wall:
+          calculateWall(e as WallModel);
+          break;
+        case ObjectType.Roof:
+          calculateRoof(e as RoofModel);
+          break;
+      }
     }
   };
 
@@ -384,133 +516,6 @@ const ThermalSimulation = ({ city }: ThermalSimulationProps) => {
       threshold,
     );
     updateHeatExchangeNow(roof.id, heatExchange);
-  };
-
-  // yearly simulation
-
-  useEffect(() => {
-    if (runYearlySimulation) {
-      if (noAnimation && !Util.hasMovingParts(elements)) {
-        // this causes the simulation code to run at the beginning of the next event cycle
-        // that hopefully has the updated scene graph
-        setTimeout(() => {
-          //staticSimulateYearly(false);
-        }, 50);
-      } else {
-        initYearly();
-        requestRef.current = requestAnimationFrame(simulateYearly);
-        return () => {
-          // this is called when the recursive call of requestAnimationFrame exits
-          cancelAnimationFrame(requestRef.current);
-          if (!simulationCompletedRef.current) {
-            showInfo(i18n.t('message.SimulationAborted', lang));
-            setCommonStore((state) => {
-              state.world.date = originalDateRef.current.toLocaleString('en-US');
-              state.simulationInProgress = false;
-              state.simulationPaused = false;
-            });
-          }
-          pauseRef.current = false;
-        };
-      }
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [runYearlySimulation]);
-
-  useEffect(() => {
-    pauseRef.current = pauseYearlySimulation;
-    if (pauseYearlySimulation) {
-      pausedDateRef.current = new Date(now.getTime());
-      cancelAnimationFrame(requestRef.current);
-      setCommonStore((state) => {
-        state.simulationPaused = true;
-      });
-      showInfo(i18n.t('message.SimulationPaused', lang));
-    } else {
-      setCommonStore((state) => {
-        state.simulationPaused = false;
-      });
-      // continue the simulation
-      simulateYearly();
-    }
-  }, [pauseYearlySimulation]);
-
-  const initYearly = () => {
-    if (pauseRef.current) {
-      // if the simulation has been paused, continue from the paused date
-      now.setTime(pausedDateRef.current.getTime());
-      pauseRef.current = false;
-    } else {
-      originalDateRef.current = new Date(world.date);
-      sampledDayRef.current = 0;
-      now.setMonth(0, 22); // begin from January, 22
-      dayRef.current = now.getDay();
-      now.setHours(0, minuteInterval / 2);
-      // set the initial date so that the scene gets a chance to render before the simulation starts
-      setCommonStore((state) => {
-        state.world.date = now.toLocaleString('en-US');
-      });
-    }
-    resetHourlyHeatExchangeMap();
-    simulationCompletedRef.current = false;
-  };
-
-  const simulateYearly = () => {
-    if (runYearlySimulation && !pauseRef.current) {
-      const totalMinutes = now.getMinutes() + now.getHours() * 60;
-      if (totalMinutes < MINUTES_OF_DAY - minuteInterval) {
-        // this is where time advances (by incrementing the minutes with the given interval)
-        now.setHours(now.getHours(), now.getMinutes() + minuteInterval);
-        setCommonStore((state) => {
-          state.world.date = now.toLocaleString('en-US');
-        });
-        for (const e of elements) {
-          switch (e.type) {
-            case ObjectType.Door:
-              calculateDoor(e as DoorModel);
-              break;
-            case ObjectType.Window:
-              calculateWindow(e as WindowModel);
-              break;
-            case ObjectType.Wall:
-              calculateWall(e as WallModel);
-              break;
-            case ObjectType.Roof:
-              calculateRoof(e as RoofModel);
-              break;
-          }
-        }
-        // recursive call to the next step of the simulation within the current day
-        requestRef.current = requestAnimationFrame(simulateYearly);
-      } else {
-        finishMonthly();
-        sampledDayRef.current++;
-        if (sampledDayRef.current === daysPerYear) {
-          cancelAnimationFrame(requestRef.current);
-          setCommonStore((state) => {
-            state.runYearlyThermalSimulation = false;
-            state.simulationInProgress = false;
-            state.simulationPaused = false;
-            state.world.date = originalDateRef.current.toLocaleString('en-US');
-            state.viewState.showYearlyBuildingEnergyPanel = true;
-          });
-          showInfo(i18n.t('message.SimulationCompleted', lang));
-          simulationCompletedRef.current = true;
-          //generateYearlyData();
-          return;
-        }
-        // go to the next month
-        now.setMonth(sampledDayRef.current * monthInterval, 22);
-        now.setHours(0, minuteInterval / 2);
-        resetHourlyHeatExchangeMap();
-        // recursive call to the next step of the simulation
-        requestRef.current = requestAnimationFrame(simulateYearly);
-      }
-    }
-  };
-
-  const finishMonthly = () => {
-    if (showDailyBuildingEnergyPanel) finishDaily();
   };
 
   return <></>;
