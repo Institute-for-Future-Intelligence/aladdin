@@ -16,6 +16,7 @@ import { screenshot, showInfo } from '../helpers';
 import i18n from '../i18n/i18n';
 import { Rectangle } from '../models/Rectangle';
 import { usePrimitiveStore } from '../stores/commonPrimitive';
+import { Util } from '../Util';
 
 const Container = styled.div`
   position: fixed;
@@ -73,6 +74,7 @@ export interface YearlyBuildingEnergyPanelProps {
 }
 
 const YearlyBuildingEnergyPanel = ({ city }: YearlyBuildingEnergyPanelProps) => {
+  const world = useStore.getState().world;
   const language = useStore(Selector.language);
   const loggable = useStore(Selector.loggable);
   const opacity = useStore(Selector.floatingWindowOpacity) ?? FLOATING_WINDOW_OPACITY;
@@ -81,7 +83,8 @@ const YearlyBuildingEnergyPanel = ({ city }: YearlyBuildingEnergyPanelProps) => 
   const now = new Date(useStore(Selector.world.date));
   const panelRect = useStore(Selector.viewState.yearlyBuildingEnergyPanelRect);
   const countElementsByType = useStore(Selector.countElementsByType);
-  const monthlyHeatExchangeArrayMap = usePrimitiveStore(Selector.monthlyHeatExchangeArrayMap);
+  const monthlyHeatingArrayMap = usePrimitiveStore(Selector.monthlyHeatingArrayMap);
+  const monthlyCoolingArrayMap = usePrimitiveStore(Selector.monthlyCoolingArrayMap);
 
   const wrapperRef = useRef<HTMLDivElement | null>(null);
   const resizeObserverRef = useRef<ResizeObserver>();
@@ -92,6 +95,9 @@ const YearlyBuildingEnergyPanel = ({ city }: YearlyBuildingEnergyPanelProps) => 
     y: panelRect ? Math.min(panelRect.y, window.innerHeight - hOffset) : 0,
   });
   const [data, setData] = useState<DatumEntry[]>([]);
+  const [heaterSum, setHeaterSum] = useState(0);
+  const [acSum, setAcSum] = useState(0);
+  const [netSum, setNetSum] = useState(0);
 
   // nodeRef is to suppress ReactDOM.findDOMNode() deprecation warning. See:
   // https://github.com/react-grid-layout/react-draggable/blob/v4.4.2/lib/DraggableCore.js#L159-L171
@@ -100,10 +106,38 @@ const YearlyBuildingEnergyPanel = ({ city }: YearlyBuildingEnergyPanelProps) => 
   const lang = { lng: language };
   const labels = ['Heater', 'AC', 'Net'];
   const referenceX = MONTHS[now.getMonth()];
+  const daysPerYear = world.daysPerYear ?? 6;
+  const monthInterval = 12 / daysPerYear;
 
   useEffect(() => {
-    console.log(monthlyHeatExchangeArrayMap);
-  }, [monthlyHeatExchangeArrayMap]);
+    const sum: DatumEntry[] = [];
+    let sumHeater = 0;
+    let sumAc = 0;
+    for (let i = 0; i < daysPerYear; i++) {
+      const datum: DatumEntry = {};
+      let heater = 0;
+      let ac = 0;
+      for (const e of elements) {
+        if (Util.isThermal(e)) {
+          const heat = monthlyHeatingArrayMap.get(e.id);
+          if (heat) heater -= heat[i];
+          const cool = monthlyCoolingArrayMap.get(e.id);
+          if (cool) ac += cool[i];
+        }
+      }
+      datum['Month'] = MONTHS[i * monthInterval];
+      datum['Heater'] = heater;
+      datum['AC'] = ac;
+      datum['Net'] = heater + ac;
+      sum.push(datum);
+      sumHeater += heater;
+      sumAc += ac;
+    }
+    setData(sum);
+    setHeaterSum(sumHeater);
+    setAcSum(sumAc);
+    setNetSum(sumHeater + sumAc);
+  }, [monthlyHeatingArrayMap, daysPerYear]);
 
   useEffect(() => {
     setCurPosition({
@@ -215,7 +249,7 @@ const YearlyBuildingEnergyPanel = ({ city }: YearlyBuildingEnergyPanelProps) => 
             </span>
           </Header>
           <LineGraph
-            type={GraphDataType.YearlyRadiationSensorData}
+            type={GraphDataType.YearlyBuildingEnergy}
             chartType={ChartType.Line}
             dataSource={data}
             labels={labels}
@@ -230,6 +264,15 @@ const YearlyBuildingEnergyPanel = ({ city }: YearlyBuildingEnergyPanelProps) => 
             referenceX={referenceX}
           />
           <Space style={{ alignSelf: 'center', direction: 'ltr' }}>
+            <Space style={{ cursor: 'default' }}>
+              {i18n.t('buildingEnergyPanel.Heater', lang) + ': ' + heaterSum.toFixed(1)}
+            </Space>
+            <Space style={{ cursor: 'default' }}>
+              {i18n.t('buildingEnergyPanel.AC', lang) + ': ' + acSum.toFixed(1)}
+            </Space>
+            <Space style={{ cursor: 'default' }}>
+              {i18n.t('buildingEnergyPanel.Net', lang) + ': ' + netSum.toFixed(1)}
+            </Space>
             <Button
               type="default"
               icon={<ReloadOutlined />}

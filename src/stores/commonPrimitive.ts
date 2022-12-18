@@ -12,12 +12,17 @@ export interface PrimitiveStoreState {
   getHourlyHeatExchangeArray: (id: string) => number[] | undefined;
   clearHourlyHeatExchangeArrayMap: () => void;
 
-  // store the calculated daily heat exchange result between inside and outside through an element of a building
-  // for selected months
-  monthlyHeatExchangeArrayMap: Map<string, number[]>;
-  setMonthlyHeatExchangeArray: (id: string, data: number[]) => void;
-  getMonthlyHeatExchangeArray: (id: string) => number[] | undefined;
-  clearMonthlyHeatExchangeArrayMap: () => void;
+  // store the calculated daily heating results of a building for sampled months
+  monthlyHeatingArrayMap: Map<string, number[]>;
+  setMonthlyHeatingArray: (id: string, data: number[]) => void;
+  getMonthlyHeatingArray: (id: string) => number[] | undefined;
+
+  // store the calculated daily cooling results of a building for sampled months
+  monthlyCoolingArrayMap: Map<string, number[]>;
+  setMonthlyCoolingArray: (id: string, data: number[]) => void;
+  getMonthlyCoolingArray: (id: string) => number[] | undefined;
+
+  clearMonthlyEnergyArrayMap: () => void;
 }
 
 export const usePrimitiveStore = create<PrimitiveStoreState>((set, get) => {
@@ -41,20 +46,34 @@ export const usePrimitiveStore = create<PrimitiveStoreState>((set, get) => {
       });
     },
 
-    monthlyHeatExchangeArrayMap: new Map<string, number[]>(),
-    setMonthlyHeatExchangeArray(id, data) {
-      const map = get().monthlyHeatExchangeArrayMap;
+    monthlyHeatingArrayMap: new Map<string, number[]>(),
+    setMonthlyHeatingArray(id, data) {
+      const map = get().monthlyHeatingArrayMap;
       map.set(id, data);
       set((state) => {
-        state.monthlyHeatExchangeArrayMap = new Map(map);
+        state.monthlyHeatingArrayMap = new Map(map);
       });
     },
-    getMonthlyHeatExchangeArray(id) {
-      return get().monthlyHeatExchangeArrayMap.get(id);
+    getMonthlyHeatingArray(id) {
+      return get().monthlyHeatingArrayMap.get(id);
     },
-    clearMonthlyHeatExchangeArrayMap() {
+
+    monthlyCoolingArrayMap: new Map<string, number[]>(),
+    setMonthlyCoolingArray(id, data) {
+      const map = get().monthlyCoolingArrayMap;
+      map.set(id, data);
       set((state) => {
-        state.monthlyHeatExchangeArrayMap = new Map();
+        state.monthlyCoolingArrayMap = new Map(map);
+      });
+    },
+    getMonthlyCoolingArray(id) {
+      return get().monthlyCoolingArrayMap.get(id);
+    },
+
+    clearMonthlyEnergyArrayMap() {
+      set((state) => {
+        state.monthlyHeatingArrayMap = new Map();
+        state.monthlyCoolingArrayMap = new Map();
       });
     },
   };

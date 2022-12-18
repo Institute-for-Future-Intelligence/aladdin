@@ -40,6 +40,8 @@ const ThermalSimulation = ({ city }: ThermalSimulationProps) => {
   const getRoofSegmentVerticesWithoutOverhang = useStore(Selector.getRoofSegmentVerticesWithoutOverhang);
   const highestTemperatureTimeInMinutes = useStore(Selector.world.highestTemperatureTimeInMinutes) ?? 900;
   const setHourlyHeatExchangeArray = usePrimitiveStore(Selector.setHourlyHeatExchangeArray);
+  const setMonthlyHeatingArray = usePrimitiveStore(Selector.setMonthlyHeatingArray);
+  const setMonthlyCoolingArray = usePrimitiveStore(Selector.setMonthlyCoolingArray);
   const showDailyBuildingEnergyPanel = useStore(Selector.viewState.showDailyBuildingEnergyPanel);
 
   const requestRef = useRef<number>(0);
@@ -52,7 +54,8 @@ const ThermalSimulation = ({ city }: ThermalSimulationProps) => {
   const outsideTemperatureRangeRef = useRef<{ high: number; low: number }>({ high: 20, low: 0 });
   const currentOutsideTemperatureRef = useRef<number>(20);
   const hourlyHeatExchangeArrayMapRef = useRef<Map<string, number[]>>(new Map<string, number[]>());
-  const monthlyHeatExchangeArrayMapRef = useRef<Map<string, number[]>>(new Map<string, number[]>());
+  const monthlyHeatingArrayMapRef = useRef<Map<string, number[]>>(new Map<string, number[]>());
+  const monthlyCoolingArrayMapRef = useRef<Map<string, number[]>>(new Map<string, number[]>());
 
   const lang = { lng: language };
   const weather = getWeather(city ?? 'Boston MA, USA');
@@ -113,14 +116,20 @@ const ThermalSimulation = ({ city }: ThermalSimulationProps) => {
     }
   };
 
-  const resetMonthlyHeatExchangeMap = () => {
+  const resetMonthlyEnergyMap = () => {
     for (const e of elements) {
       if (Util.isThermal(e)) {
-        const monthlyResult = monthlyHeatExchangeArrayMapRef.current.get(e.id);
-        if (monthlyResult) {
-          monthlyResult.fill(0);
+        const monthlyHeating = monthlyHeatingArrayMapRef.current.get(e.id);
+        if (monthlyHeating && monthlyHeating.length === daysPerYear) {
+          monthlyHeating.fill(0);
         } else {
-          monthlyHeatExchangeArrayMapRef.current.set(e.id, new Array(12).fill(0));
+          monthlyHeatingArrayMapRef.current.set(e.id, new Array(daysPerYear).fill(0));
+        }
+        const monthlyCooling = monthlyCoolingArrayMapRef.current.get(e.id);
+        if (monthlyCooling && monthlyCooling.length === daysPerYear) {
+          monthlyCooling.fill(0);
+        } else {
+          monthlyCoolingArrayMapRef.current.set(e.id, new Array(daysPerYear).fill(0));
         }
       }
     }
@@ -300,7 +309,7 @@ const ThermalSimulation = ({ city }: ThermalSimulationProps) => {
       });
     }
     resetHourlyHeatExchangeMap();
-    resetMonthlyHeatExchangeMap();
+    resetMonthlyEnergyMap();
     simulationCompletedRef.current = false;
   };
 
@@ -348,12 +357,20 @@ const ThermalSimulation = ({ city }: ThermalSimulationProps) => {
   const finishMonthly = () => {
     for (const e of elements) {
       if (Util.isThermal(e)) {
-        const result = hourlyHeatExchangeArrayMapRef.current.get(e.id);
-        if (result) {
-          const total = monthlyHeatExchangeArrayMapRef.current.get(e.id);
-          if (total) {
-            const sumDaily = result.reduce((a, b) => a + b, 0);
-            total[sampledDayRef.current] += sumDaily;
+        const exchange = hourlyHeatExchangeArrayMapRef.current.get(e.id);
+        if (exchange) {
+          const heating = monthlyHeatingArrayMapRef.current.get(e.id);
+          const cooling = monthlyCoolingArrayMapRef.current.get(e.id);
+          if (heating && cooling) {
+            for (const e of exchange) {
+              if (e < 0) {
+                heating[sampledDayRef.current] += e;
+              } else {
+                cooling[sampledDayRef.current] += e;
+              }
+            }
+            setMonthlyHeatingArray(e.id, [...heating]);
+            setMonthlyCoolingArray(e.id, [...cooling]);
           }
         }
       }

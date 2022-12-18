@@ -25,13 +25,19 @@ export const getHourlyHeatExchangeArray = (state: PrimitiveStoreState) => state.
 
 export const clearHourlyHeatExchangeArrayMap = (state: PrimitiveStoreState) => state.clearHourlyHeatExchangeArrayMap;
 
-export const monthlyHeatExchangeArrayMap = (state: PrimitiveStoreState) => state.monthlyHeatExchangeArrayMap;
+export const monthlyHeatingArrayMap = (state: PrimitiveStoreState) => state.monthlyHeatingArrayMap;
 
-export const setMonthlyHeatExchangeArray = (state: PrimitiveStoreState) => state.setMonthlyHeatExchangeArray;
+export const setMonthlyHeatingArray = (state: PrimitiveStoreState) => state.setMonthlyHeatingArray;
 
-export const getMonthlyHeatExchangeArray = (state: PrimitiveStoreState) => state.getMonthlyHeatExchangeArray;
+export const getMonthlyHeatingArray = (state: PrimitiveStoreState) => state.getMonthlyHeatingArray;
 
-export const clearMonthlyHeatExchangeArrayMap = (state: PrimitiveStoreState) => state.clearMonthlyHeatExchangeArrayMap;
+export const monthlyCoolingArrayMap = (state: PrimitiveStoreState) => state.monthlyCoolingArrayMap;
+
+export const setMonthlyCoolingArray = (state: PrimitiveStoreState) => state.setMonthlyCoolingArray;
+
+export const getMonthlyCoolingArray = (state: PrimitiveStoreState) => state.getMonthlyCoolingArray;
+
+export const clearMonthlyEnergyArrayMap = (state: PrimitiveStoreState) => state.clearMonthlyEnergyArrayMap;
 
 export const getRoofSegmentVertices = (state: CommonStoreState) => state.getRoofSegmentVertices;
 
