@@ -747,12 +747,9 @@ export class ElementModelCloner {
       case RoofType.Gambrel:
         const newGambrelRoof = newRoof as GambrelRoofModel;
         const oldGambrelRoof = roof as GambrelRoofModel;
-        newGambrelRoof.topRidgeLeftPoint = [...oldGambrelRoof.topRidgeLeftPoint];
-        newGambrelRoof.topRidgeRightPoint = [...oldGambrelRoof.topRidgeRightPoint];
-        newGambrelRoof.frontRidgeLeftPoint = [...oldGambrelRoof.frontRidgeLeftPoint];
-        newGambrelRoof.frontRidgeRightPoint = [...oldGambrelRoof.frontRidgeRightPoint];
-        newGambrelRoof.backRidgeLeftPoint = [...oldGambrelRoof.backRidgeLeftPoint];
-        newGambrelRoof.backRidgeRightPoint = [...oldGambrelRoof.backRidgeRightPoint];
+        newGambrelRoof.topRidgePoint = [...oldGambrelRoof.topRidgePoint];
+        newGambrelRoof.frontRidgePoint = [...oldGambrelRoof.frontRidgePoint];
+        newGambrelRoof.backRidgePoint = [...oldGambrelRoof.backRidgePoint];
         break;
       case RoofType.Hip:
         (newRoof as HipRoofModel).rightRidgeLength = (roof as HipRoofModel).rightRidgeLength;

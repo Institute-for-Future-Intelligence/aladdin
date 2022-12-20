@@ -34,12 +34,17 @@ export interface HipRoofModel extends RoofModel {
 }
 
 export interface GambrelRoofModel extends RoofModel {
-  topRidgeLeftPoint: number[];
-  topRidgeRightPoint: number[];
-  frontRidgeLeftPoint: number[];
-  frontRidgeRightPoint: number[];
-  backRidgeLeftPoint: number[];
-  backRidgeRightPoint: number[];
+  // [x, h] from left side view
+  topRidgePoint: number[];
+  frontRidgePoint: number[]; // x >= 0
+  backRidgePoint: number[]; // x <= 0
+  // old files
+  topRidgeLeftPoint?: number[];
+  topRidgeRightPoint?: number[];
+  frontRidgeLeftPoint?: number[];
+  frontRidgeRightPoint?: number[];
+  backRidgeLeftPoint?: number[];
+  backRidgeRightPoint?: number[];
 }
 
 export interface MansardRoofModel extends RoofModel {

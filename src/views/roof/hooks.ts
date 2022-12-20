@@ -26,7 +26,7 @@ import { SensorModel } from '../../models/SensorModel';
 import { LightModel } from '../../models/LightModel';
 import { RoofSegmentProps } from './roofRenderer';
 import { RoofUtil } from './RoofUtil';
-import { RoofModel } from 'src/models/RoofModel';
+import { GambrelRoofModel, RoofModel, RoofType } from 'src/models/RoofModel';
 
 export const useElementUndoable = () => {
   const grabRef = useRef<ElementModel | null>(null);
@@ -360,7 +360,13 @@ export const useUpdateSegmentVerticesWithoutOverhangMap = (update: () => void): 
 export const useUpdateOldRoofFiles = (roofModel: RoofModel, highestWallHeight: number) => {
   const fileChanged = useStore(Selector.fileChanged);
   useEffect(() => {
-    if (roofModel.rise === undefined) {
+    if (
+      roofModel.rise === undefined ||
+      (roofModel.roofType === RoofType.Gambrel &&
+        ((roofModel as GambrelRoofModel).frontRidgePoint === undefined ||
+          (roofModel as GambrelRoofModel).backRidgePoint === undefined ||
+          (roofModel as GambrelRoofModel).topRidgePoint === undefined))
+    ) {
       useStore.getState().set((state) => {
         for (const e of state.elements) {
           if (e.id === roofModel.id && e.type === ObjectType.Roof) {
@@ -368,6 +374,29 @@ export const useUpdateOldRoofFiles = (roofModel: RoofModel, highestWallHeight: n
             if (roof.rise === undefined) {
               roof.rise = roof.lz - highestWallHeight;
               roof.lz = 0;
+            }
+
+            if (roof.roofType === RoofType.Gambrel) {
+              const gambrelRoof = roof as GambrelRoofModel;
+              if (gambrelRoof.frontRidgePoint === undefined) {
+                gambrelRoof.frontRidgePoint = gambrelRoof.frontRidgeLeftPoint
+                  ? [...gambrelRoof.frontRidgeLeftPoint]
+                  : [0.35, 0.5];
+                gambrelRoof.frontRidgeLeftPoint = undefined;
+                gambrelRoof.frontRidgeRightPoint = undefined;
+              }
+              if (gambrelRoof.backRidgePoint === undefined) {
+                gambrelRoof.backRidgePoint = gambrelRoof.backRidgeLeftPoint
+                  ? [...gambrelRoof.backRidgeLeftPoint]
+                  : [-0.35, 0.5];
+                gambrelRoof.backRidgeLeftPoint = undefined;
+                gambrelRoof.backRidgeRightPoint = undefined;
+              }
+              if (gambrelRoof.topRidgePoint === undefined) {
+                gambrelRoof.topRidgePoint = gambrelRoof.topRidgeLeftPoint ? [...gambrelRoof.topRidgeLeftPoint] : [0, 1];
+                gambrelRoof.topRidgeLeftPoint = undefined;
+                gambrelRoof.topRidgeRightPoint = undefined;
+              }
             }
             break;
           }

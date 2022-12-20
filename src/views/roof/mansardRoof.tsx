@@ -830,11 +830,9 @@ const MansardRoof = (roofModel: MansardRoofModel) => {
                 switch (roofHandleType) {
                   case RoofHandleType.Top: {
                     const newRise = Math.max(0, pointer.z - foundation.lz - 0.6 - highestWallHeight);
-                    if (RoofUtil.isRoofValid(id, undefined, undefined, [0, newRise + highestWallHeight])) {
-                      setRiseInnerState(newRise);
-                      // the vertical ruler needs to display the latest rise when the handle is being dragged
-                      useStore.getState().updateRoofRiseById(id, riseInnerState);
-                    }
+                    setRiseInnerState(newRise);
+                    // the vertical ruler needs to display the latest rise when the handle is being dragged
+                    useStore.getState().updateRoofRiseById(id, riseInnerState);
                     break;
                   }
                   case RoofHandleType.Ridge: {

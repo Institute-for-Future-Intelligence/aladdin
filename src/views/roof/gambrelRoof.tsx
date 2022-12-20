@@ -126,6 +126,9 @@ const GambrelRoof = (roofModel: GambrelRoofModel) => {
     frontRidgeRightPoint,
     backRidgeLeftPoint,
     backRidgeRightPoint,
+    topRidgePoint,
+    frontRidgePoint,
+    backRidgePoint,
     selected,
     textureType,
     color = 'white',
@@ -138,6 +141,17 @@ const GambrelRoof = (roofModel: GambrelRoofModel) => {
     roofType,
     rise = lz,
   } = roofModel;
+
+  if (topRidgePoint === undefined) {
+    topRidgePoint = topRidgeLeftPoint ? [...topRidgeLeftPoint] : [0, 1];
+  }
+  if (frontRidgePoint === undefined) {
+    frontRidgePoint = frontRidgeLeftPoint ? [...frontRidgeLeftPoint] : [0.35, 0.5];
+  }
+  if (backRidgePoint === undefined) {
+    backRidgePoint = backRidgeLeftPoint ? [...backRidgeLeftPoint] : [-0.35, 0.5];
+  }
+
   const setCommonStore = useStore(Selector.set);
   const removeElementById = useStore(Selector.removeElementById);
 
@@ -180,22 +194,16 @@ const GambrelRoof = (roofModel: GambrelRoofModel) => {
           const gr = e as GambrelRoofModel;
           switch (type) {
             case RoofHandleType.FrontLeft:
-              gr.frontRidgeLeftPoint[0] = val;
-              break;
             case RoofHandleType.FrontRight:
-              gr.frontRidgeRightPoint[0] = val;
+              gr.frontRidgePoint[0] = val;
               break;
             case RoofHandleType.TopLeft:
-              gr.topRidgeLeftPoint[0] = val;
-              break;
             case RoofHandleType.TopRight:
-              gr.topRidgeRightPoint[0] = val;
+              gr.topRidgePoint[0] = val;
               break;
             case RoofHandleType.BackLeft:
-              gr.backRidgeLeftPoint[0] = val;
-              break;
             case RoofHandleType.BackRight:
-              gr.backRidgeRightPoint[0] = val;
+              gr.backRidgePoint[0] = val;
               break;
           }
           break;
@@ -304,15 +312,15 @@ const GambrelRoof = (roofModel: GambrelRoofModel) => {
   // top ridge
   const topRidgeLeftPointV3 = useMemo(() => {
     const wall = currentWallArray[3];
-    const [x, h] = topRidgeLeftPoint; // percent
+    const [x, h] = topRidgePoint; // percent
     return getRidgePoint(wall, x, h).sub(centroid);
-  }, [currentWallArray, centroid, topRidgeLeftPoint]);
+  }, [currentWallArray, centroid, topRidgePoint]);
 
   const topRidgeRightPointV3 = useMemo(() => {
     const wall = currentWallArray[1];
-    const [x, h] = topRidgeRightPoint;
-    return getRidgePoint(wall, x, h).sub(centroid);
-  }, [currentWallArray, centroid, topRidgeRightPoint]);
+    const [x, h] = topRidgePoint;
+    return getRidgePoint(wall, -x, h).sub(centroid);
+  }, [currentWallArray, centroid, topRidgePoint]);
 
   const topRidgeMidPointV3 = useMemo(() => {
     return new Vector3().addVectors(topRidgeLeftPointV3, topRidgeRightPointV3).divideScalar(2);
@@ -321,28 +329,28 @@ const GambrelRoof = (roofModel: GambrelRoofModel) => {
   // front ridge
   const frontRidgeLeftPointV3 = useMemo(() => {
     const wall = currentWallArray[3];
-    const [x, h] = frontRidgeLeftPoint;
+    const [x, h] = frontRidgePoint;
     return getRidgePoint(wall, x, h, currentWallArray[0]).sub(centroid);
-  }, [currentWallArray, centroid, frontRidgeLeftPoint]);
+  }, [currentWallArray, centroid, frontRidgePoint]);
 
   const frontRidgeRightPointV3 = useMemo(() => {
     const wall = currentWallArray[1];
-    const [x, h] = frontRidgeRightPoint;
-    return getRidgePoint(wall, x, h, currentWallArray[0]).sub(centroid);
-  }, [currentWallArray, centroid, frontRidgeRightPoint]);
+    const [x, h] = frontRidgePoint;
+    return getRidgePoint(wall, -x, h, currentWallArray[0]).sub(centroid);
+  }, [currentWallArray, centroid, frontRidgePoint]);
 
   // back ridge
   const backRidgeLeftPointV3 = useMemo(() => {
     const wall = currentWallArray[1];
-    const [x, h] = backRidgeLeftPoint;
+    const [x, h] = backRidgePoint;
     return getRidgePoint(wall, x, h, currentWallArray[2]).sub(centroid);
-  }, [currentWallArray, centroid, backRidgeLeftPoint]);
+  }, [currentWallArray, centroid, backRidgePoint]);
 
   const backRidgeRightPointV3 = useMemo(() => {
     const wall = currentWallArray[3];
-    const [x, h] = backRidgeRightPoint;
-    return getRidgePoint(wall, x, h, currentWallArray[2]).sub(centroid);
-  }, [currentWallArray, centroid, backRidgeRightPoint]);
+    const [x, h] = backRidgePoint;
+    return getRidgePoint(wall, -x, h, currentWallArray[2]).sub(centroid);
+  }, [currentWallArray, centroid, backRidgePoint]);
 
   const overhangs = useMemo(() => {
     return currentWallArray.map((wall) => RoofUtil.getWallNormal(wall).multiplyScalar(overhang));
@@ -570,34 +578,34 @@ const GambrelRoof = (roofModel: GambrelRoofModel) => {
                 w.rightRoofHeight = rh;
                 if (i === 1) {
                   if (w.centerRoofHeight && w.centerLeftRoofHeight && w.centerRightRoofHeight) {
-                    w.centerRoofHeight[0] = topRidgeRightPoint[0];
+                    w.centerRoofHeight[0] = -topRidgePoint[0];
                     w.centerRoofHeight[1] = topZ;
-                    w.centerLeftRoofHeight[0] = frontRidgeRightPoint[0];
+                    w.centerLeftRoofHeight[0] = -frontRidgePoint[0];
                     w.centerLeftRoofHeight[1] =
-                      frontRidgeRightPoint[1] * (topZ - currentWallArray[0].lz) + currentWallArray[0].lz;
-                    w.centerRightRoofHeight[0] = backRidgeLeftPoint[0];
+                      frontRidgePoint[1] * (topZ - currentWallArray[0].lz) + currentWallArray[0].lz;
+                    w.centerRightRoofHeight[0] = backRidgePoint[0];
                     w.centerRightRoofHeight[1] =
-                      backRidgeLeftPoint[1] * (topZ - currentWallArray[2].lz) + currentWallArray[2].lz;
+                      backRidgePoint[1] * (topZ - currentWallArray[2].lz) + currentWallArray[2].lz;
                   } else {
-                    w.centerRoofHeight = [...topRidgeRightPoint];
-                    w.centerLeftRoofHeight = [...frontRidgeRightPoint];
-                    w.centerRightRoofHeight = [...backRidgeLeftPoint];
+                    w.centerRoofHeight = [-topRidgePoint[0], topRidgePoint[1]];
+                    w.centerLeftRoofHeight = [-frontRidgePoint[0], frontRidgePoint[1]];
+                    w.centerRightRoofHeight = [...backRidgePoint];
                   }
                 }
                 if (i === 3) {
                   if (w.centerRoofHeight && w.centerLeftRoofHeight && w.centerRightRoofHeight) {
-                    w.centerRoofHeight[0] = topRidgeLeftPoint[0];
+                    w.centerRoofHeight[0] = topRidgePoint[0];
                     w.centerRoofHeight[1] = topZ;
-                    w.centerLeftRoofHeight[0] = backRidgeRightPoint[0];
+                    w.centerLeftRoofHeight[0] = -backRidgePoint[0];
                     w.centerLeftRoofHeight[1] =
-                      backRidgeRightPoint[1] * (topZ - currentWallArray[2].lz) + currentWallArray[2].lz;
-                    w.centerRightRoofHeight[0] = frontRidgeLeftPoint[0];
+                      backRidgePoint[1] * (topZ - currentWallArray[2].lz) + currentWallArray[2].lz;
+                    w.centerRightRoofHeight[0] = frontRidgePoint[0];
                     w.centerRightRoofHeight[1] =
-                      frontRidgeLeftPoint[1] * (topZ - currentWallArray[0].lz) + currentWallArray[0].lz;
+                      frontRidgePoint[1] * (topZ - currentWallArray[0].lz) + currentWallArray[0].lz;
                   } else {
-                    w.centerRoofHeight = [...topRidgeLeftPoint];
-                    w.centerLeftRoofHeight = [...backRidgeRightPoint];
-                    w.centerRightRoofHeight = [...frontRidgeLeftPoint];
+                    w.centerRoofHeight = [...topRidgePoint];
+                    w.centerLeftRoofHeight = [-backRidgePoint[0], backRidgePoint[1]];
+                    w.centerRightRoofHeight = [...frontRidgePoint];
                   }
                 }
                 break;
@@ -612,17 +620,7 @@ const GambrelRoof = (roofModel: GambrelRoofModel) => {
         useStore.getState().setAddedRoofId(null);
       }
     }
-  }, [
-    currentWallArray,
-    topZ,
-    thickness,
-    topRidgeLeftPoint,
-    topRidgeRightPoint,
-    frontRidgeLeftPoint,
-    frontRidgeRightPoint,
-    backRidgeLeftPoint,
-    backRidgeRightPoint,
-  ]);
+  }, [currentWallArray, topZ, thickness, topRidgePoint, frontRidgePoint, backRidgePoint]);
 
   const updateElementOnRoofFlag = useStore(Selector.updateElementOnRoofFlag);
 
@@ -630,18 +628,7 @@ const GambrelRoof = (roofModel: GambrelRoofModel) => {
     if (!isFirstMountRef.current) {
       updateRooftopElements(foundation, id, roofSegments, centroid, topZ, thickness);
     }
-  }, [
-    currentWallArray,
-    updateElementOnRoofFlag,
-    topZ,
-    thickness,
-    topRidgeLeftPoint,
-    topRidgeRightPoint,
-    frontRidgeLeftPoint,
-    frontRidgeRightPoint,
-    backRidgeLeftPoint,
-    backRidgeRightPoint,
-  ]);
+  }, [currentWallArray, updateElementOnRoofFlag, topZ, thickness, topRidgePoint, frontRidgePoint, backRidgePoint]);
 
   useEffect(() => {
     isFirstMountRef.current = false;
@@ -688,7 +675,6 @@ const GambrelRoof = (roofModel: GambrelRoofModel) => {
           handlePointerMove(e, grabRef.current, foundation, roofType, roofSegments, centroid);
         }}
         onPointerUp={(e) => {
-          e.stopPropagation();
           handlePointerUp(grabRef, foundation, currentWallArray[0], id, overhang, undoMove, addUndoableMove);
         }}
         onContextMenu={(e) => {
@@ -726,7 +712,7 @@ const GambrelRoof = (roofModel: GambrelRoofModel) => {
             position={[topRidgeLeftPointV3.x, topRidgeLeftPointV3.y, topRidgeLeftPointV3.z]}
             onPointerDown={() => {
               isPointerDownRef.current = true;
-              oldRidgeVal.current = topRidgeLeftPoint[0];
+              oldRidgeVal.current = topRidgePoint[0];
               setInterSectionPlane(topRidgeLeftPointV3, currentWallArray[3]);
               setRoofHandleType(RoofHandleType.TopLeft);
             }}
@@ -735,7 +721,7 @@ const GambrelRoof = (roofModel: GambrelRoofModel) => {
             position={[topRidgeRightPointV3.x, topRidgeRightPointV3.y, topRidgeRightPointV3.z]}
             onPointerDown={() => {
               isPointerDownRef.current = true;
-              oldRidgeVal.current = topRidgeRightPoint[0];
+              oldRidgeVal.current = topRidgePoint[0];
               setInterSectionPlane(topRidgeRightPointV3, currentWallArray[1]);
               setRoofHandleType(RoofHandleType.TopRight);
             }}
@@ -768,7 +754,7 @@ const GambrelRoof = (roofModel: GambrelRoofModel) => {
             position={[frontRidgeLeftPointV3.x, frontRidgeLeftPointV3.y, frontRidgeLeftPointV3.z]}
             onPointerDown={() => {
               isPointerDownRef.current = true;
-              oldRidgeVal.current = frontRidgeLeftPoint[0];
+              oldRidgeVal.current = frontRidgePoint[0];
               setInterSectionPlane(frontRidgeLeftPointV3, currentWallArray[3]);
               setRoofHandleType(RoofHandleType.FrontLeft);
             }}
@@ -777,7 +763,7 @@ const GambrelRoof = (roofModel: GambrelRoofModel) => {
             position={[frontRidgeRightPointV3.x, frontRidgeRightPointV3.y, frontRidgeRightPointV3.z]}
             onPointerDown={() => {
               isPointerDownRef.current = true;
-              oldRidgeVal.current = frontRidgeRightPoint[0];
+              oldRidgeVal.current = frontRidgePoint[0];
               setInterSectionPlane(frontRidgeRightPointV3, currentWallArray[1]);
               setRoofHandleType(RoofHandleType.FrontRight);
             }}
@@ -787,7 +773,7 @@ const GambrelRoof = (roofModel: GambrelRoofModel) => {
             position={[backRidgeLeftPointV3.x, backRidgeLeftPointV3.y, backRidgeLeftPointV3.z]}
             onPointerDown={() => {
               isPointerDownRef.current = true;
-              oldRidgeVal.current = backRidgeLeftPoint[0];
+              oldRidgeVal.current = backRidgePoint[0];
               setInterSectionPlane(backRidgeLeftPointV3, currentWallArray[1]);
               setRoofHandleType(RoofHandleType.BackLeft);
             }}
@@ -796,7 +782,7 @@ const GambrelRoof = (roofModel: GambrelRoofModel) => {
             position={[backRidgeRightPointV3.x, backRidgeRightPointV3.y, backRidgeRightPointV3.z]}
             onPointerDown={() => {
               isPointerDownRef.current = true;
-              oldRidgeVal.current = backRidgeRightPoint[0];
+              oldRidgeVal.current = backRidgePoint[0];
               setInterSectionPlane(backRidgeRightPointV3, currentWallArray[3]);
               setRoofHandleType(RoofHandleType.BackRight);
             }}
@@ -827,7 +813,7 @@ const GambrelRoof = (roofModel: GambrelRoofModel) => {
                     const newRise = Math.max(0, point.z - foundation.lz - 0.3 - highestWallHeight);
                     if (
                       RoofUtil.isRoofValid(id, currentWallArray[3].id, currentWallArray[1].id, [
-                        topRidgeLeftPoint[0],
+                        topRidgePoint[0],
                         newRise + highestWallHeight,
                       ])
                     ) {
@@ -848,16 +834,20 @@ const GambrelRoof = (roofModel: GambrelRoofModel) => {
                           if (foundation && currentWallArray[3]) {
                             const px = Util.clamp(
                               getRelPos(foundation, currentWallArray[3], point),
-                              topRidgeLeftPoint[0],
+                              topRidgePoint[0],
                               0.45,
                             );
                             if (
-                              RoofUtil.isRoofValid(id, currentWallArray[3].id, undefined, undefined, undefined, [
-                                px,
-                                frontRidgeLeftPoint[1] * rise + highestWallHeight,
-                              ])
+                              RoofUtil.isRoofValid(
+                                id,
+                                currentWallArray[3].id,
+                                currentWallArray[1].id,
+                                undefined,
+                                undefined,
+                                [px, frontRidgePoint[1] * rise + highestWallHeight],
+                              )
                             ) {
-                              (e as GambrelRoofModel).frontRidgeLeftPoint[0] = px;
+                              (e as GambrelRoofModel).frontRidgePoint[0] = px;
                             }
                           }
                           break;
@@ -865,6 +855,39 @@ const GambrelRoof = (roofModel: GambrelRoofModel) => {
                       }
                     });
 
+                    break;
+                  }
+                  case RoofHandleType.FrontRight: {
+                    setCommonStore((state) => {
+                      for (const e of state.elements) {
+                        if (
+                          e.id === id &&
+                          e.type === ObjectType.Roof &&
+                          (e as RoofModel).roofType === RoofType.Gambrel
+                        ) {
+                          if (foundation && currentWallArray[1]) {
+                            const px = Util.clamp(
+                              getRelPos(foundation, currentWallArray[1], point),
+                              -0.45,
+                              -topRidgePoint[0],
+                            );
+                            if (
+                              RoofUtil.isRoofValid(
+                                id,
+                                currentWallArray[1].id,
+                                currentWallArray[3].id,
+                                undefined,
+                                [px, -frontRidgePoint[1] * rise + highestWallHeight],
+                                undefined,
+                              )
+                            ) {
+                              (e as GambrelRoofModel).frontRidgePoint[0] = -px;
+                            }
+                          }
+                          break;
+                        }
+                      }
+                    });
                     break;
                   }
                   case RoofHandleType.TopLeft: {
@@ -878,20 +901,86 @@ const GambrelRoof = (roofModel: GambrelRoofModel) => {
                           if (foundation && currentWallArray[3]) {
                             const px = Util.clamp(
                               getRelPos(foundation, currentWallArray[3], point),
-                              backRidgeRightPoint[0],
-                              frontRidgeLeftPoint[0],
+                              -backRidgePoint[0],
+                              frontRidgePoint[0],
                             );
                             if (
                               RoofUtil.isRoofValid(
                                 id,
                                 currentWallArray[3].id,
-                                undefined,
-                                [px, topRidgeLeftPoint[1] * rise + highestWallHeight],
+                                currentWallArray[1].id,
+                                [px, topRidgePoint[1] * rise + highestWallHeight],
                                 undefined,
                                 undefined,
                               )
                             ) {
-                              (e as GambrelRoofModel).topRidgeLeftPoint[0] = px;
+                              (e as GambrelRoofModel).topRidgePoint[0] = px;
+                            }
+                          }
+                          break;
+                        }
+                      }
+                    });
+                    break;
+                  }
+                  case RoofHandleType.TopRight: {
+                    setCommonStore((state) => {
+                      for (const e of state.elements) {
+                        if (
+                          e.id === id &&
+                          e.type === ObjectType.Roof &&
+                          (e as RoofModel).roofType === RoofType.Gambrel
+                        ) {
+                          if (foundation && currentWallArray[1]) {
+                            const px = Util.clamp(
+                              getRelPos(foundation, currentWallArray[1], point),
+                              -frontRidgePoint[0],
+                              backRidgePoint[0],
+                            );
+                            if (
+                              RoofUtil.isRoofValid(
+                                id,
+                                currentWallArray[1].id,
+                                currentWallArray[3].id,
+                                [px, topRidgePoint[1] * rise + highestWallHeight],
+                                undefined,
+                                undefined,
+                              )
+                            ) {
+                              (e as GambrelRoofModel).topRidgePoint[0] = -px;
+                            }
+                          }
+                          break;
+                        }
+                      }
+                    });
+                    break;
+                  }
+                  case RoofHandleType.BackLeft: {
+                    setCommonStore((state) => {
+                      for (const e of state.elements) {
+                        if (
+                          e.id === id &&
+                          e.type === ObjectType.Roof &&
+                          (e as RoofModel).roofType === RoofType.Gambrel
+                        ) {
+                          if (foundation && currentWallArray[1]) {
+                            const px = Util.clamp(
+                              getRelPos(foundation, currentWallArray[1], point),
+                              -topRidgePoint[0],
+                              0.45,
+                            );
+                            if (
+                              RoofUtil.isRoofValid(
+                                id,
+                                currentWallArray[1].id,
+                                currentWallArray[3].id,
+                                undefined,
+                                undefined,
+                                [px, backRidgePoint[1] * rise + highestWallHeight],
+                              )
+                            ) {
+                              (e as GambrelRoofModel).backRidgePoint[0] = px;
                             }
                           }
                           break;
@@ -912,114 +1001,19 @@ const GambrelRoof = (roofModel: GambrelRoofModel) => {
                             const px = Util.clamp(
                               getRelPos(foundation, currentWallArray[3], point),
                               -0.45,
-                              topRidgeLeftPoint[0],
+                              topRidgePoint[0],
                             );
                             if (
                               RoofUtil.isRoofValid(
                                 id,
                                 currentWallArray[3].id,
-                                undefined,
-                                undefined,
-                                [px, backRidgeRightPoint[1] * rise + highestWallHeight],
-                                undefined,
-                              )
-                            ) {
-                              (e as GambrelRoofModel).backRidgeRightPoint[0] = px;
-                            }
-                          }
-                          break;
-                        }
-                      }
-                    });
-                    break;
-                  }
-                  case RoofHandleType.FrontRight: {
-                    setCommonStore((state) => {
-                      for (const e of state.elements) {
-                        if (
-                          e.id === id &&
-                          e.type === ObjectType.Roof &&
-                          (e as RoofModel).roofType === RoofType.Gambrel
-                        ) {
-                          if (foundation && currentWallArray[1]) {
-                            const px = Util.clamp(
-                              getRelPos(foundation, currentWallArray[1], point),
-                              -0.45,
-                              topRidgeRightPoint[0],
-                            );
-                            if (
-                              RoofUtil.isRoofValid(
-                                id,
                                 currentWallArray[1].id,
                                 undefined,
-                                undefined,
-                                [px, frontRidgeRightPoint[1] * rise + highestWallHeight],
-                                undefined,
-                              )
-                            ) {
-                              (e as GambrelRoofModel).frontRidgeRightPoint[0] = px;
-                            }
-                          }
-                          break;
-                        }
-                      }
-                    });
-                    break;
-                  }
-                  case RoofHandleType.TopRight: {
-                    setCommonStore((state) => {
-                      for (const e of state.elements) {
-                        if (
-                          e.id === id &&
-                          e.type === ObjectType.Roof &&
-                          (e as RoofModel).roofType === RoofType.Gambrel
-                        ) {
-                          if (foundation && currentWallArray[1]) {
-                            const px = Util.clamp(
-                              getRelPos(foundation, currentWallArray[1], point),
-                              frontRidgeRightPoint[0],
-                              backRidgeLeftPoint[0],
-                            );
-                            if (
-                              RoofUtil.isRoofValid(
-                                id,
-                                currentWallArray[1].id,
-                                undefined,
-                                [px, topRidgeRightPoint[1] * rise + highestWallHeight],
-                                undefined,
+                                [px, -backRidgePoint[1] * rise + highestWallHeight],
                                 undefined,
                               )
                             ) {
-                              (e as GambrelRoofModel).topRidgeRightPoint[0] = px;
-                            }
-                          }
-                          break;
-                        }
-                      }
-                    });
-                    break;
-                  }
-                  case RoofHandleType.BackLeft: {
-                    setCommonStore((state) => {
-                      for (const e of state.elements) {
-                        if (
-                          e.id === id &&
-                          e.type === ObjectType.Roof &&
-                          (e as RoofModel).roofType === RoofType.Gambrel
-                        ) {
-                          if (foundation && currentWallArray[1]) {
-                            const px = Util.clamp(
-                              getRelPos(foundation, currentWallArray[1], point),
-                              topRidgeRightPoint[0],
-                              0.45,
-                            );
-                            if (
-                              RoofUtil.isRoofValid(id, currentWallArray[1].id, undefined, undefined, undefined, [
-                                px,
-                                backRidgeLeftPoint[1] * rise + highestWallHeight,
-                              ])
-                            ) {
-                              (e as GambrelRoofModel).backRidgeLeftPoint[0] = px;
+                              (e as GambrelRoofModel).backRidgePoint[0] = -px;
                             }
                           }
                           break;
@@ -1040,27 +1034,27 @@ const GambrelRoof = (roofModel: GambrelRoofModel) => {
                 break;
               }
               case RoofHandleType.TopLeft: {
-                handleUnoableResizeRidge(id, roofHandleType, oldRidgeVal.current, topRidgeLeftPoint[0]);
+                handleUnoableResizeRidge(id, roofHandleType, oldRidgeVal.current, topRidgePoint[0]);
                 break;
               }
               case RoofHandleType.TopRight: {
-                handleUnoableResizeRidge(id, roofHandleType, oldRidgeVal.current, topRidgeRightPoint[0]);
+                handleUnoableResizeRidge(id, roofHandleType, oldRidgeVal.current, -topRidgePoint[0]);
                 break;
               }
               case RoofHandleType.FrontLeft: {
-                handleUnoableResizeRidge(id, roofHandleType, oldRidgeVal.current, frontRidgeLeftPoint[0]);
+                handleUnoableResizeRidge(id, roofHandleType, oldRidgeVal.current, frontRidgePoint[0]);
                 break;
               }
               case RoofHandleType.FrontRight: {
-                handleUnoableResizeRidge(id, roofHandleType, oldRidgeVal.current, frontRidgeRightPoint[0]);
+                handleUnoableResizeRidge(id, roofHandleType, oldRidgeVal.current, -frontRidgePoint[0]);
                 break;
               }
               case RoofHandleType.BackLeft: {
-                handleUnoableResizeRidge(id, roofHandleType, oldRidgeVal.current, backRidgeLeftPoint[0]);
+                handleUnoableResizeRidge(id, roofHandleType, oldRidgeVal.current, backRidgePoint[0]);
                 break;
               }
               case RoofHandleType.BackRight: {
-                handleUnoableResizeRidge(id, roofHandleType, oldRidgeVal.current, backRidgeRightPoint[0]);
+                handleUnoableResizeRidge(id, roofHandleType, oldRidgeVal.current, -backRidgePoint[0]);
                 break;
               }
             }
