@@ -35,6 +35,7 @@ import {
   useUpdateSegmentVerticesMap,
   useRoofHeight,
   useUpdateOldRoofFiles,
+  useUpdateSegmentVerticesWithoutOverhangMap,
 } from './hooks';
 import RoofSegment from './roofSegment';
 
@@ -635,8 +636,31 @@ const GambrelRoof = (roofModel: GambrelRoofModel) => {
     isFirstMountRef.current = false;
   }, []);
 
+  const updateSegmentVerticesWithoutOverhangeMap = () => {
+    const segmentVertices: Vector3[][] = [];
+
+    const wallPoints = currentWallArray.map(
+      (w, i, arr) => new Vector3(w.leftPoint[0], w.leftPoint[1], getWallHeight(arr, i).lh),
+    );
+
+    const ridgeFLPoint = frontRidgeLeftPointV3.clone().add(centroid);
+    const ridgeFRPoint = frontRidgeRightPointV3.clone().add(centroid);
+    const ridgeBLPoint = backRidgeLeftPointV3.clone().add(centroid);
+    const ridgeBRPoint = backRidgeRightPointV3.clone().add(centroid);
+    const ridgeTLPoint = topRidgeLeftPointV3.clone().add(centroid);
+    const ridgeTRPoint = topRidgeRightPointV3.clone().add(centroid);
+
+    segmentVertices.push([wallPoints[0], wallPoints[1], ridgeFRPoint, ridgeFLPoint]);
+    segmentVertices.push([ridgeFLPoint, ridgeFRPoint, ridgeTRPoint, ridgeTLPoint]);
+    segmentVertices.push([ridgeTLPoint, ridgeTRPoint, ridgeBRPoint, ridgeBLPoint]);
+    segmentVertices.push([ridgeBLPoint, ridgeBRPoint, wallPoints[3], wallPoints[2]]);
+
+    useStore.getState().setRoofSegmentVerticesWithoutOverhang(id, segmentVertices);
+  };
+
   const { grabRef, addUndoableMove, undoMove, setOldRefData } = useElementUndoable();
   useUpdateSegmentVerticesMap(id, centroid, roofSegments);
+  useUpdateSegmentVerticesWithoutOverhangMap(updateSegmentVerticesWithoutOverhangeMap);
 
   const selectMe = useStore(Selector.selectMe);
   const showSolarRadiationHeatmap = useStore(Selector.showSolarRadiationHeatmap);
