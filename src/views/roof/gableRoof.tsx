@@ -331,6 +331,7 @@ const GableRoof = (roofModel: GableRoofModel) => {
   const intersectionPlaneRef = useRef<Mesh>(null);
   const oldRidgeLeft = useRef<number>(ridgeLeftPoint[0]);
   const oldRidgeRight = useRef<number>(ridgeRightPoint[0]);
+  const oldRiseRef = useRef(rise);
   const isPointerDownRef = useRef(false);
   const isFirstMountRef = useRef(true);
 
@@ -872,7 +873,6 @@ const GableRoof = (roofModel: GableRoofModel) => {
           handlePointerMove(e, grabRef.current, foundation, roofType, roofSegments, centroid);
         }}
         onPointerUp={(e) => {
-          e.stopPropagation();
           handlePointerUp(grabRef, foundation, currentWallArray[0], id, overhang, undoMove, addUndoableMove);
         }}
         onContextMenu={(e) => {
@@ -946,6 +946,7 @@ const GableRoof = (roofModel: GableRoofModel) => {
             onPointerDown={(e) => {
               selectMe(roofModel.id, e, ActionType.Select);
               isPointerDownRef.current = true;
+              oldRiseRef.current = rise;
               setShowIntersectionPlane(true);
               intersectionPlanePosition.set(ridgeMidPoint.x, ridgeMidPoint.y, topZ);
               if (foundation) {
@@ -1085,7 +1086,7 @@ const GableRoof = (roofModel: GableRoofModel) => {
           onPointerUp={() => {
             switch (roofHandleType) {
               case RoofHandleType.Mid: {
-                addUndoableResizeRoofRise(id, rise, riseInnerState);
+                addUndoableResizeRoofRise(id, oldRiseRef.current, riseInnerState);
                 break;
               }
               case RoofHandleType.Left:

@@ -140,6 +140,7 @@ const HipRoof = (roofModel: HipRoofModel) => {
   const mouse = useMemo(() => new Vector2(), []);
   const isPointerDownRef = useRef(false);
   const isFirstMountRef = useRef(true);
+  const oldRiseRef = useRef(rise);
 
   useEffect(() => {
     if (!isFirstMountRef.current) {
@@ -453,7 +454,6 @@ const HipRoof = (roofModel: HipRoofModel) => {
           handlePointerMove(e, grabRef.current, foundation, roofType, roofSegments, ridgeMidPoint);
         }}
         onPointerUp={(e) => {
-          e.stopPropagation();
           handlePointerUp(grabRef, foundation, currentWallArray[0], id, overhang, undoMove, addUndoableMove);
         }}
         onContextMenu={(e) => {
@@ -511,6 +511,7 @@ const HipRoof = (roofModel: HipRoofModel) => {
             onPointerDown={(e) => {
               selectMe(roofModel.id, e, ActionType.Select);
               isPointerDownRef.current = true;
+              oldRiseRef.current = rise;
               setEnableIntersectionPlane(true);
               intersectionPlanePosition.set(ridgeMidPoint.x, ridgeMidPoint.y, topZ);
               if (foundation) {
@@ -625,7 +626,7 @@ const HipRoof = (roofModel: HipRoofModel) => {
           onPointerUp={() => {
             switch (roofHandleType) {
               case RoofHandleType.Mid: {
-                addUndoableResizeRoofRise(id, rise, riseInnerState);
+                addUndoableResizeRoofRise(id, oldRiseRef.current, riseInnerState);
                 break;
               }
               case RoofHandleType.Left:

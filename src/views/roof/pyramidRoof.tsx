@@ -247,6 +247,7 @@ const PyramidRoof = (roofModel: PyramidRoofModel) => {
   const intersectionPlaneRef = useRef<Mesh>(null);
   const isFirstMountRef = useRef(true);
   const isPointerDownRef = useRef(false);
+  const oldRiseRef = useRef(rise);
 
   const prevWallsIdSet = new Set<string>(wallsId);
 
@@ -689,7 +690,6 @@ const PyramidRoof = (roofModel: PyramidRoofModel) => {
           handlePointerMove(e, grabRef.current, foundation, roofType, roofSegments, centerPointV3);
         }}
         onPointerUp={(e) => {
-          e.stopPropagation();
           handlePointerUp(grabRef, foundation, currentWallArray[0], id, overhang, undoMove, addUndoableMove);
         }}
         onContextMenu={(e) => {
@@ -754,6 +754,7 @@ const PyramidRoof = (roofModel: PyramidRoofModel) => {
             setShowIntersectionPlane(true);
             useStoreRef.getState().setEnableOrbitController(false);
             isPointerDownRef.current = true;
+            oldRiseRef.current = rise;
           }}
           onPointerUp={() => {
             setShowIntersectionPlane(false);
@@ -805,7 +806,7 @@ const PyramidRoof = (roofModel: PyramidRoofModel) => {
           }}
           onPointerUp={(e) => {
             useStore.getState().updateRoofRiseById(id, riseInnerState);
-            addUndoableResizeRoofRise(id, rise, riseInnerState);
+            addUndoableResizeRoofRise(id, oldRiseRef.current, riseInnerState);
             setShowIntersectionPlane(false);
             useStoreRef.getState().setEnableOrbitController(true);
             updateRooftopElements(foundation, id, roofSegments, centerPointV3, topZ, thickness);

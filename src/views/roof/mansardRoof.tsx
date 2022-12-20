@@ -139,6 +139,7 @@ const MansardRoof = (roofModel: MansardRoofModel) => {
   const [ridgeHandleIndex, setRidgeHandleIndex] = useState<number | null>(null);
 
   const oldWidth = useRef(width);
+  const oldRiseRef = useRef(rise);
   const isFirstMountRef = useRef(true);
 
   const intersectionPlaneRef = useRef<Mesh>(null);
@@ -762,6 +763,7 @@ const MansardRoof = (roofModel: MansardRoofModel) => {
             onPointerDown={(e) => {
               selectMe(roofModel.id, e, ActionType.Select);
               isPointerDownRef.current = true;
+              oldRiseRef.current = rise;
               setEnableIntersectionPlane(true);
               intersectionPlanePosition.set(centroid.x, centroid.y, topZ);
               if (foundation) {
@@ -863,7 +865,7 @@ const MansardRoof = (roofModel: MansardRoofModel) => {
           onPointerUp={() => {
             switch (roofHandleType) {
               case RoofHandleType.Top: {
-                addUndoableResizeRoofRise(id, rise, riseInnerState);
+                addUndoableResizeRoofRise(id, oldRiseRef.current, riseInnerState);
                 break;
               }
               case RoofHandleType.Ridge: {

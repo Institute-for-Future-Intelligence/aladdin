@@ -167,6 +167,7 @@ const GambrelRoof = (roofModel: GambrelRoofModel) => {
   const ray = useMemo(() => new Raycaster(), []);
   const mouse = useMemo(() => new Vector2(), []);
   const oldRidgeVal = useRef<number>(0);
+  const oldRiseRef = useRef<number>(rise);
   const isPointerDownRef = useRef(false);
   const isFirstMountRef = useRef(true);
 
@@ -731,6 +732,7 @@ const GambrelRoof = (roofModel: GambrelRoofModel) => {
             onPointerDown={(e) => {
               selectMe(roofModel.id, e, ActionType.Select);
               isPointerDownRef.current = true;
+              oldRiseRef.current = rise;
               setEnableIntersectionPlane(true);
               intersectionPlanePosition.set(topRidgeMidPointV3.x, topRidgeMidPointV3.y, topZ).add(centroid);
               if (foundation) {
@@ -1030,7 +1032,7 @@ const GambrelRoof = (roofModel: GambrelRoofModel) => {
           onPointerUp={() => {
             switch (roofHandleType) {
               case RoofHandleType.TopMid: {
-                addUndoableResizeRoofRise(id, rise, riseInnerState);
+                addUndoableResizeRoofRise(id, oldRiseRef.current, riseInnerState);
                 break;
               }
               case RoofHandleType.TopLeft: {
