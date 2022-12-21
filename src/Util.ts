@@ -156,6 +156,20 @@ export class Util {
     return false;
   }
 
+  // use the lightness of color to approximate albedo
+  static getAlbedoFromColor(element: ElementModel) {
+    if (!element.color) return 0.5;
+    const bigint = parseInt(element.color.substring(1), 16);
+    const r = (bigint >> 16) & 255;
+    const g = (bigint >> 8) & 255;
+    const b = bigint & 255;
+    let min = Math.min(r, g);
+    min = Math.min(min, b);
+    let max = Math.max(r, g);
+    max = Math.max(max, b);
+    return (min + max) / 510;
+  }
+
   static isThermal(e: ElementModel): boolean {
     return (
       e.type === ObjectType.Window ||

@@ -66,7 +66,7 @@ export const computeSunLocation = (radius: number, hourAngle: number, declinatio
   return coords;
 };
 
-// Solar radiation incident outside the earth's atmosphere is called extraterrestrial radiation, in kW.
+// Solar radiation incident outside the earth's atmosphere is called extraterrestrial radiation, in kW/m^2.
 // https://pvpmc.sandia.gov/modeling-steps/1-weather-design-inputs/irradiance-and-insolation-2/extraterrestrial-radiation/
 const getExtraterrestrialRadiation = (dayOfYear: number) => {
   const b = (TWO_PI * dayOfYear) / 365;
@@ -94,7 +94,7 @@ const computeAirMass = (airMassType: AirMass, sunDirection: Vector3, altitude: n
 };
 
 // Reused peak solar radiation value. Must be called once and only once before
-// calling calculateDirectRadiation and calculateDiffusionAndReflection, the unit is in kW
+// calling calculateDirectRadiation and calculateDiffusionAndReflection, the unit is in kW/m^2
 export const calculatePeakRadiation = (
   sunDirection: Vector3,
   dayOfYear: number,

@@ -21,6 +21,7 @@ import { Point2 } from '../models/Point2';
 import { useThree } from '@react-three/fiber';
 import { Intersection, Object3D, Raycaster, Vector3 } from 'three';
 import { SolarRadiation } from './SolarRadiation';
+import { ZERO_TOLERANCE } from '../constants';
 
 export interface ThermalSimulationProps {
   city: string | null;
@@ -72,6 +73,9 @@ const ThermalSimulation = ({ city }: ThermalSimulationProps) => {
   const monthInterval = 12 / daysPerYear;
   const { scene } = useThree();
   const ray = useMemo(() => new Raycaster(), []);
+  const sunMinutes = useMemo(() => {
+    return computeSunriseAndSunsetInMinutes(now, world.latitude);
+  }, [world.date, world.latitude]);
 
   const inShadow = (elementId: string, position: Vector3, sunDirection: Vector3) => {
     if (objectsRef.current.length > 1) {
@@ -480,7 +484,7 @@ const ThermalSimulation = ({ city }: ThermalSimulationProps) => {
       const windows = getChildrenOfType(ObjectType.Window, wall.id);
       const doors = getChildrenOfType(ObjectType.Door, wall.id);
       const solarPanels = getChildrenOfType(ObjectType.SolarPanel, wall.id);
-      const solarHeating = SolarRadiation.computeWallSolarRadiation(
+      const solarRadiationEnergy = SolarRadiation.computeWallSolarRadiationEnergy(
         now,
         world,
         wall,
@@ -491,6 +495,19 @@ const ThermalSimulation = ({ city }: ThermalSimulationProps) => {
         elevation,
         inShadow,
       );
+      let totalSolarHeat = 0;
+      if (solarRadiationEnergy) {
+        // apply clearness and convert the unit of time step from minute to hour so that we get kWh
+        const daylight = sunMinutes.daylight() / 60;
+        // divide by times per hour as the radiation is added up that many times
+        const scaleFactor =
+          daylight > ZERO_TOLERANCE ? weather.sunshineHours[now.getMonth()] / (30 * daylight * world.timesPerHour) : 0;
+        for (let i = 0; i < solarRadiationEnergy.length; i++) {
+          for (let j = 0; j < solarRadiationEnergy[i].length; j++) {
+            totalSolarHeat += solarRadiationEnergy[i][j] * scaleFactor;
+          }
+        }
+      }
       const polygon = Util.getWallVertices(wall, 0);
       let area = Util.getPolygonArea(polygon);
       if (windows && windows.length > 0) {
@@ -505,8 +522,11 @@ const ThermalSimulation = ({ city }: ThermalSimulationProps) => {
       }
       const setpoint = foundation.hvacSystem?.thermostatSetpoint ?? 20;
       const threshold = foundation.hvacSystem?.temperatureThreshold ?? 3;
-      const deltaT = currentOutsideTemperatureRef.current - setpoint;
-      // U is the inverse of R with SI units of W/(m2⋅K)
+      const extraT =
+        (totalSolarHeat * (1 - Util.getAlbedoFromColor(wall))) /
+        ((wall.volumetricHeatCapacity ?? 0.5) * area * wall.ly);
+      const deltaT = currentOutsideTemperatureRef.current + extraT - setpoint;
+      // U is the inverse of R with SI units of W/(m^2⋅K), we convert the energy unit to kWh here
       const heatExchange = computeEnergyUsage(
         (((deltaT * area) / (wall.rValue ?? 0.5)) * 0.001) / timesPerHour,
         setpoint,

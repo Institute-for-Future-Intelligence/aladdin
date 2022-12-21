@@ -29,7 +29,8 @@ export class SolarRadiation {
     ).normalize();
   }
 
-  static computeWallSolarRadiation(
+  // return an array that represents solar energy radiated onto the discretized cells
+  static computeWallSolarRadiationEnergy(
     now: Date,
     world: WorldModel,
     wall: WallModel,
@@ -51,6 +52,7 @@ export class SolarRadiation {
     const nz = Math.max(2, Math.round(lz / cellSize));
     const dx = lx / nx;
     const dz = lz / nz;
+    const da = dx * dz;
     const absAngle = foundation.rotation[2] + wall.relativeAngle;
     const absPos = Util.wallAbsolutePosition(new Vector3(wall.cx, wall.cy, wall.cz), foundation).setZ(
       lz / 2 + foundation.lz,
@@ -69,7 +71,7 @@ export class SolarRadiation {
       peakRadiation,
     );
     const dot = normal.dot(sunDirection);
-    const cellOutputs = Array(nx)
+    const energy = Array(nx)
       .fill(0)
       .map(() => Array(nz).fill(0));
     for (let kx = 0; kx < nx; kx++) {
@@ -116,12 +118,12 @@ export class SolarRadiation {
             }
           }
           if (isWall) {
-            cellOutputs[kx][kz] += indirectRadiation;
+            energy[kx][kz] += indirectRadiation * da;
             if (dot > 0) {
               v.set(absPos.x + kx2 * dxcos, absPos.y + kx2 * dxsin, absPos.z + kz2 * dz);
               if (!inShadow(wall.id, v, sunDirection)) {
                 // direct radiation
-                cellOutputs[kx][kz] += dot * peakRadiation;
+                energy[kx][kz] += dot * peakRadiation * da;
               }
             }
           }
@@ -129,6 +131,6 @@ export class SolarRadiation {
       }
     }
 
-    return cellOutputs;
+    return energy;
   }
 }
