@@ -2,7 +2,7 @@
  * @Copyright 2022. Institute for Future Intelligence, Inc.
  */
 
-import React, { useEffect, useRef } from 'react';
+import React, { useEffect, useMemo, useRef } from 'react';
 import { useStore } from '../stores/common';
 import { usePrimitiveStore } from 'src/stores/commonPrimitive';
 import * as Selector from '../stores/selector';
@@ -18,6 +18,9 @@ import { computeSunriseAndSunsetInMinutes } from './sunTools';
 import { WindowModel } from '../models/WindowModel';
 import { DoorModel } from '../models/DoorModel';
 import { Point2 } from '../models/Point2';
+import { useThree } from '@react-three/fiber';
+import { Intersection, Object3D, Raycaster, Vector3 } from 'three';
+import { SolarRadiation } from './SolarRadiation';
 
 export interface ThermalSimulationProps {
   city: string | null;
@@ -56,14 +59,41 @@ const ThermalSimulation = ({ city }: ThermalSimulationProps) => {
   const hourlyHeatExchangeArrayMapRef = useRef<Map<string, number[]>>(new Map<string, number[]>());
   const monthlyHeatingArrayMapRef = useRef<Map<string, number[]>>(new Map<string, number[]>());
   const monthlyCoolingArrayMapRef = useRef<Map<string, number[]>>(new Map<string, number[]>());
+  const objectsRef = useRef<Object3D[]>([]); // reuse array in intersection detection
+  const intersectionsRef = useRef<Intersection[]>([]); // reuse array in intersection detection
 
   const lang = { lng: language };
   const weather = getWeather(city ?? 'Boston MA, USA');
+  const elevation = city ? weather?.elevation : 0;
   const now = new Date(world.date);
   const timesPerHour = world.timesPerHour ?? 4;
   const minuteInterval = 60 / timesPerHour;
   const daysPerYear = world.daysPerYear ?? 6;
   const monthInterval = 12 / daysPerYear;
+  const { scene } = useThree();
+  const ray = useMemo(() => new Raycaster(), []);
+
+  const inShadow = (elementId: string, position: Vector3, sunDirection: Vector3) => {
+    if (objectsRef.current.length > 1) {
+      intersectionsRef.current.length = 0;
+      ray.set(position, sunDirection);
+      const objects = objectsRef.current.filter((obj) => obj.uuid !== elementId);
+      ray.intersectObjects(objects, false, intersectionsRef.current);
+      return intersectionsRef.current.length > 0;
+    }
+    return false;
+  };
+
+  const fetchObjects = () => {
+    const content = scene.children.filter((c) => c.name === 'Content');
+    if (content.length > 0) {
+      const components = content[0].children;
+      objectsRef.current.length = 0;
+      for (const c of components) {
+        Util.fetchSimulationElements(c, objectsRef.current);
+      }
+    }
+  };
 
   const updateTemperature = (currentTime: Date) => {
     if (weather) {
@@ -142,6 +172,7 @@ const ThermalSimulation = ({ city }: ThermalSimulationProps) => {
       if (noAnimation && !Util.hasMovingParts(elements)) {
         staticCalculateDaily();
       } else {
+        fetchObjects();
         initDaily();
         requestRef.current = requestAnimationFrame(calculateDaily);
         return () => {
@@ -254,6 +285,7 @@ const ThermalSimulation = ({ city }: ThermalSimulationProps) => {
           //staticSimulateYearly(false);
         }, 50);
       } else {
+        fetchObjects();
         initYearly();
         requestRef.current = requestAnimationFrame(simulateYearly);
         return () => {
@@ -445,15 +477,27 @@ const ThermalSimulation = ({ city }: ThermalSimulationProps) => {
   const calculateWall = (wall: WallModel) => {
     const foundation = getFoundation(wall);
     if (foundation) {
+      const windows = getChildrenOfType(ObjectType.Window, wall.id);
+      const doors = getChildrenOfType(ObjectType.Door, wall.id);
+      const solarPanels = getChildrenOfType(ObjectType.SolarPanel, wall.id);
+      const solarHeating = SolarRadiation.computeWallSolarRadiation(
+        now,
+        world,
+        wall,
+        foundation,
+        windows,
+        doors,
+        solarPanels,
+        elevation,
+        inShadow,
+      );
       const polygon = Util.getWallVertices(wall, 0);
       let area = Util.getPolygonArea(polygon);
-      const windows = getChildrenOfType(ObjectType.Window, wall.id);
       if (windows && windows.length > 0) {
         for (const w of windows) {
           area -= Util.getWindowArea(w as WindowModel, wall);
         }
       }
-      const doors = getChildrenOfType(ObjectType.Door, wall.id);
       if (doors && doors.length > 0) {
         for (const d of doors) {
           area -= d.lx * d.lz * wall.lx * wall.lz;
