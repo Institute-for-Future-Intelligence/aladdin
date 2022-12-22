@@ -14,7 +14,12 @@ import { Util } from '../Util';
 import { MINUTES_OF_DAY } from './analysisConstants';
 import { WallModel } from '../models/WallModel';
 import { computeOutsideTemperature, getOutsideTemperatureAtMinute } from './heatTools';
-import { computeSunriseAndSunsetInMinutes } from './sunTools';
+import {
+  computeDeclinationAngle,
+  computeHourAngle,
+  computeSunLocation,
+  computeSunriseAndSunsetInMinutes,
+} from './sunTools';
 import { WindowModel } from '../models/WindowModel';
 import { DoorModel } from '../models/DoorModel';
 import { Point2 } from '../models/Point2';
@@ -62,6 +67,7 @@ const ThermalSimulation = ({ city }: ThermalSimulationProps) => {
   const monthlyCoolingArrayMapRef = useRef<Map<string, number[]>>(new Map<string, number[]>());
   const objectsRef = useRef<Object3D[]>([]); // reuse array in intersection detection
   const intersectionsRef = useRef<Intersection[]>([]); // reuse array in intersection detection
+  const sunDirectionRef = useRef<Vector3>();
 
   const lang = { lng: language };
   const weather = getWeather(city ?? 'Boston MA, USA');
@@ -76,6 +82,15 @@ const ThermalSimulation = ({ city }: ThermalSimulationProps) => {
   const sunMinutes = useMemo(() => {
     return computeSunriseAndSunsetInMinutes(now, world.latitude);
   }, [world.date, world.latitude]);
+
+  const calculateSunDirection = () => {
+    return computeSunLocation(
+      1,
+      computeHourAngle(now),
+      computeDeclinationAngle(now),
+      Util.toRadians(world.latitude),
+    ).normalize();
+  };
 
   const inShadow = (elementId: string, position: Vector3, sunDirection: Vector3) => {
     if (objectsRef.current.length > 1) {
@@ -420,6 +435,7 @@ const ThermalSimulation = ({ city }: ThermalSimulationProps) => {
 
   const computeNow = () => {
     updateTemperature(now);
+    sunDirectionRef.current = calculateSunDirection();
     for (const e of elements) {
       switch (e.type) {
         case ObjectType.Door:
@@ -463,10 +479,43 @@ const ThermalSimulation = ({ city }: ThermalSimulationProps) => {
     if (foundation) {
       const parent = getParent(door);
       if (parent) {
+        const absorption = Util.getLightAbsorption(door);
+        let totalSolarHeat = 0;
+        // when the sun is out
+        if (!Util.isZero(absorption) && sunDirectionRef.current && sunDirectionRef.current.z > 0) {
+          const solarRadiationEnergy = SolarRadiation.computeDoorSolarRadiationEnergy(
+            now,
+            world,
+            sunDirectionRef.current,
+            door,
+            parent as WallModel,
+            foundation,
+            elevation,
+            inShadow,
+          );
+          if (solarRadiationEnergy) {
+            // apply clearness and convert the unit of time step from minute to hour so that we get kWh
+            const daylight = sunMinutes.daylight() / 60;
+            // divide by times per hour as the radiation is added up that many times
+            const scaleFactor =
+              daylight > ZERO_TOLERANCE
+                ? weather.sunshineHours[now.getMonth()] / (30 * daylight * world.timesPerHour)
+                : 0;
+            for (let i = 0; i < solarRadiationEnergy.length; i++) {
+              for (let j = 0; j < solarRadiationEnergy[i].length; j++) {
+                totalSolarHeat += solarRadiationEnergy[i][j] * scaleFactor;
+              }
+            }
+          }
+        }
         const setpoint = foundation.hvacSystem?.thermostatSetpoint ?? 20;
         const threshold = foundation.hvacSystem?.temperatureThreshold ?? 3;
         const area = door.lx * door.lz * parent.lx * parent.lz;
-        const deltaT = currentOutsideTemperatureRef.current - setpoint;
+        const extraT =
+          totalSolarHeat === 0
+            ? 0
+            : (totalSolarHeat * absorption) / ((door.volumetricHeatCapacity ?? 0.5) * area * Math.max(door.ly, 0.1));
+        const deltaT = currentOutsideTemperatureRef.current + extraT - setpoint;
         // convert heat exchange to kWh
         const heatExchange = computeEnergyUsage(
           (deltaT * area * (door.uValue ?? 2) * 0.001) / timesPerHour,
@@ -483,28 +532,35 @@ const ThermalSimulation = ({ city }: ThermalSimulationProps) => {
     if (foundation) {
       const windows = getChildrenOfType(ObjectType.Window, wall.id);
       const doors = getChildrenOfType(ObjectType.Door, wall.id);
-      const solarPanels = getChildrenOfType(ObjectType.SolarPanel, wall.id);
-      const solarRadiationEnergy = SolarRadiation.computeWallSolarRadiationEnergy(
-        now,
-        world,
-        wall,
-        foundation,
-        windows,
-        doors,
-        solarPanels,
-        elevation,
-        inShadow,
-      );
+      const absorption = Util.getLightAbsorption(wall);
       let totalSolarHeat = 0;
-      if (solarRadiationEnergy) {
-        // apply clearness and convert the unit of time step from minute to hour so that we get kWh
-        const daylight = sunMinutes.daylight() / 60;
-        // divide by times per hour as the radiation is added up that many times
-        const scaleFactor =
-          daylight > ZERO_TOLERANCE ? weather.sunshineHours[now.getMonth()] / (30 * daylight * world.timesPerHour) : 0;
-        for (let i = 0; i < solarRadiationEnergy.length; i++) {
-          for (let j = 0; j < solarRadiationEnergy[i].length; j++) {
-            totalSolarHeat += solarRadiationEnergy[i][j] * scaleFactor;
+      // when the sun is out
+      if (!Util.isZero(absorption) && sunDirectionRef.current && sunDirectionRef.current.z > 0) {
+        const solarPanels = getChildrenOfType(ObjectType.SolarPanel, wall.id);
+        const solarRadiationEnergy = SolarRadiation.computeWallSolarRadiationEnergy(
+          now,
+          world,
+          sunDirectionRef.current,
+          wall,
+          foundation,
+          windows,
+          doors,
+          solarPanels,
+          elevation,
+          inShadow,
+        );
+        if (solarRadiationEnergy) {
+          // apply clearness and convert the unit of time step from minute to hour so that we get kWh
+          const daylight = sunMinutes.daylight() / 60;
+          // divide by times per hour as the radiation is added up that many times
+          const scaleFactor =
+            daylight > ZERO_TOLERANCE
+              ? weather.sunshineHours[now.getMonth()] / (30 * daylight * world.timesPerHour)
+              : 0;
+          for (let i = 0; i < solarRadiationEnergy.length; i++) {
+            for (let j = 0; j < solarRadiationEnergy[i].length; j++) {
+              totalSolarHeat += solarRadiationEnergy[i][j] * scaleFactor;
+            }
           }
         }
       }
@@ -523,8 +579,9 @@ const ThermalSimulation = ({ city }: ThermalSimulationProps) => {
       const setpoint = foundation.hvacSystem?.thermostatSetpoint ?? 20;
       const threshold = foundation.hvacSystem?.temperatureThreshold ?? 3;
       const extraT =
-        (totalSolarHeat * (1 - Util.getAlbedoFromColor(wall))) /
-        ((wall.volumetricHeatCapacity ?? 0.5) * area * wall.ly);
+        totalSolarHeat === 0
+          ? 0
+          : (totalSolarHeat * absorption) / ((wall.volumetricHeatCapacity ?? 0.5) * area * wall.ly);
       const deltaT = currentOutsideTemperatureRef.current + extraT - setpoint;
       // U is the inverse of R with SI units of W/(m^2⋅K), we convert the energy unit to kWh here
       const heatExchange = computeEnergyUsage(

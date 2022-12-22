@@ -4,13 +4,7 @@
 
 import { WallModel } from '../models/WallModel';
 import { Util } from '../Util';
-import {
-  calculateDiffuseAndReflectedRadiation,
-  calculatePeakRadiation,
-  computeDeclinationAngle,
-  computeHourAngle,
-  computeSunLocation,
-} from './sunTools';
+import { calculateDiffuseAndReflectedRadiation, calculatePeakRadiation } from './sunTools';
 import { Vector3 } from 'three';
 import { HALF_PI } from '../constants';
 import { AirMass } from './analysisConstants';
@@ -18,21 +12,14 @@ import { Point2 } from '../models/Point2';
 import { FoundationModel } from '../models/FoundationModel';
 import { WorldModel } from '../models/WorldModel';
 import { ElementModel } from '../models/ElementModel';
+import { DoorModel } from '../models/DoorModel';
 
 export class SolarRadiation {
-  static getSunDirection(date: Date, latitude: number) {
-    return computeSunLocation(
-      1,
-      computeHourAngle(date),
-      computeDeclinationAngle(date),
-      Util.toRadians(latitude),
-    ).normalize();
-  }
-
   // return an array that represents solar energy radiated onto the discretized cells
   static computeWallSolarRadiationEnergy(
     now: Date,
     world: WorldModel,
+    sunDirection: Vector3,
     wall: WallModel,
     foundation: FoundationModel,
     windows: ElementModel[],
@@ -41,9 +28,6 @@ export class SolarRadiation {
     elevation: number,
     inShadow: Function,
   ) {
-    const sunDirection = SolarRadiation.getSunDirection(now, world.latitude);
-    if (sunDirection.z <= 0) return; // when the sun is not out
-
     const dayOfYear = Util.dayOfYear(now);
     const cellSize = world.solarRadiationHeatmapGridCellSize ?? 0.5;
     const lx = wall.lx;
@@ -126,6 +110,62 @@ export class SolarRadiation {
                 energy[kx][kz] += dot * peakRadiation * da;
               }
             }
+          }
+        }
+      }
+    }
+
+    return energy;
+  }
+
+  static computeDoorSolarRadiationEnergy(
+    now: Date,
+    world: WorldModel,
+    sunDirection: Vector3,
+    door: DoorModel,
+    wall: WallModel,
+    foundation: FoundationModel,
+    elevation: number,
+    inShadow: Function,
+  ) {
+    const dayOfYear = Util.dayOfYear(now);
+    const cellSize = world.solarRadiationHeatmapGridCellSize ?? 0.5;
+    const lx = door.lx;
+    const lz = door.lz;
+    const nx = Math.max(2, Math.round(lx / cellSize));
+    const nz = Math.max(2, Math.round(lz / cellSize));
+    const dx = lx / nx;
+    const dz = lz / nz;
+    const da = dx * dz;
+    const absAngle = foundation.rotation[2] + wall.relativeAngle;
+    const absPos = Util.wallAbsolutePosition(new Vector3(wall.cx, wall.cy, wall.cz), foundation).setZ(
+      wall.lz / 2 + foundation.lz,
+    );
+    const normal = new Vector3().fromArray([Math.cos(absAngle - HALF_PI), Math.sin(absAngle - HALF_PI), 0]);
+    const dxcos = dx * Math.cos(absAngle);
+    const dxsin = dx * Math.sin(absAngle);
+    const v = new Vector3();
+    const peakRadiation = calculatePeakRadiation(sunDirection, dayOfYear, elevation, AirMass.SPHERE_MODEL);
+    const indirectRadiation = calculateDiffuseAndReflectedRadiation(
+      world.ground,
+      now.getMonth(),
+      normal,
+      peakRadiation,
+    );
+    const dot = normal.dot(sunDirection);
+    const energy = Array(nx)
+      .fill(0)
+      .map(() => Array(nz).fill(0));
+    for (let kx = 0; kx < nx; kx++) {
+      for (let kz = 0; kz < nz; kz++) {
+        const kx2 = kx - nx / 2 + 0.5;
+        const kz2 = kz - nz / 2 + 0.5;
+        energy[kx][kz] += indirectRadiation * da;
+        if (dot > 0) {
+          v.set(absPos.x + kx2 * dxcos, absPos.y + kx2 * dxsin, absPos.z + kz2 * dz);
+          if (!inShadow(door.id, v, sunDirection)) {
+            // direct radiation
+            energy[kx][kz] += dot * peakRadiation * da;
           }
         }
       }

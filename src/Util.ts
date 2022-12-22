@@ -156,8 +156,8 @@ export class Util {
     return false;
   }
 
-  // use the lightness of color to approximate albedo
-  static getAlbedoFromColor(element: ElementModel) {
+  // use the darkness of color to approximate light absorption
+  static getLightAbsorption(element: ElementModel) {
     if (!element.color) return 0.5;
     const bigint = parseInt(element.color.substring(1), 16);
     const r = (bigint >> 16) & 255;
@@ -167,7 +167,7 @@ export class Util {
     min = Math.min(min, b);
     let max = Math.max(r, g);
     max = Math.max(max, b);
-    return (min + max) / 510;
+    return 1 - (min + max) / 510;
   }
 
   static isThermal(e: ElementModel): boolean {
