@@ -692,6 +692,7 @@ const DynamicSolarRadiationSimulation = ({ city }: DynamicSolarRadiationSimulati
     }
     const dayOfYear = Util.dayOfYear(now);
     const euler = new Euler(0, 0, foundation.rotation[2], 'ZYX');
+    const peakRadiation = calculatePeakRadiation(sunDirection, dayOfYear, elevation, AirMass.SPHERE_MODEL);
     // send heat map data to common store for visualization
     if (flat) {
       // obtain the bounding rectangle
@@ -725,7 +726,6 @@ const DynamicSolarRadiationSimulation = ({ city }: DynamicSolarRadiationSimulati
       }
       const v0 = new Vector3(minX + cellSize / 2, minY + cellSize / 2, foundation.lz + h0);
       const v = new Vector3(0, 0, v0.z);
-      const peakRadiation = calculatePeakRadiation(sunDirection, dayOfYear, elevation, AirMass.SPHERE_MODEL);
       const indirectRadiation = calculateDiffuseAndReflectedRadiation(
         world.ground,
         now.getMonth(),
@@ -793,7 +793,6 @@ const DynamicSolarRadiationSimulation = ({ city }: DynamicSolarRadiationSimulati
         relativePolygon.push({ x: -margin, y: -margin } as Point2);
         relativePolygon.push({ x: m + margin, y: -margin } as Point2);
         relativePolygon.push({ x: m2, y: n + margin } as Point2);
-        const peakRadiation = calculatePeakRadiation(sunDirection, dayOfYear, elevation, AirMass.SPHERE_MODEL);
         const indirectRadiation = calculateDiffuseAndReflectedRadiation(
           world.ground,
           now.getMonth(),
@@ -830,6 +829,7 @@ const DynamicSolarRadiationSimulation = ({ city }: DynamicSolarRadiationSimulati
     if (!segments || segments.length === 0) return;
     const dayOfYear = Util.dayOfYear(now);
     const euler = new Euler(0, 0, foundation.rotation[2], 'ZYX');
+    const peakRadiation = calculatePeakRadiation(sunDirection, dayOfYear, elevation, AirMass.SPHERE_MODEL);
     // send heat map data to common store for visualization
     for (const [index, s] of segments.entries()) {
       const uuid = roof.id + '-' + index;
@@ -865,7 +865,6 @@ const DynamicSolarRadiationSimulation = ({ city }: DynamicSolarRadiationSimulati
         }
         const v0 = new Vector3(minX + cellSize / 2, minY + cellSize / 2, foundation.lz + h0);
         const v = new Vector3(0, 0, v0.z);
-        const peakRadiation = calculatePeakRadiation(sunDirection, dayOfYear, elevation, AirMass.SPHERE_MODEL);
         const indirectRadiation = calculateDiffuseAndReflectedRadiation(
           world.ground,
           now.getMonth(),
@@ -924,7 +923,6 @@ const DynamicSolarRadiationSimulation = ({ city }: DynamicSolarRadiationSimulati
         dm.multiplyScalar(2);
         dn.multiplyScalar(2);
         const v = new Vector3();
-        const peakRadiation = calculatePeakRadiation(sunDirection, dayOfYear, elevation, AirMass.SPHERE_MODEL);
         const indirectRadiation = calculateDiffuseAndReflectedRadiation(
           world.ground,
           now.getMonth(),
@@ -960,6 +958,7 @@ const DynamicSolarRadiationSimulation = ({ city }: DynamicSolarRadiationSimulati
     if (!segments || segments.length === 0) return;
     const dayOfYear = Util.dayOfYear(now);
     const euler = new Euler(0, 0, foundation.rotation[2], 'ZYX');
+    const peakRadiation = calculatePeakRadiation(sunDirection, dayOfYear, elevation, AirMass.SPHERE_MODEL);
     // send heat map data to common store for visualization
     for (const [index, s] of segments.entries()) {
       const uuid = roof.id + '-' + index;
@@ -1000,7 +999,6 @@ const DynamicSolarRadiationSimulation = ({ city }: DynamicSolarRadiationSimulati
       dm.multiplyScalar(2);
       dn.multiplyScalar(2);
       const v = new Vector3();
-      const peakRadiation = calculatePeakRadiation(sunDirection, dayOfYear, elevation, AirMass.SPHERE_MODEL);
       const indirectRadiation = calculateDiffuseAndReflectedRadiation(
         world.ground,
         now.getMonth(),
@@ -1034,6 +1032,7 @@ const DynamicSolarRadiationSimulation = ({ city }: DynamicSolarRadiationSimulati
     if (!segments || segments.length === 0) return;
     const dayOfYear = Util.dayOfYear(now);
     const euler = new Euler(0, 0, foundation.rotation[2], 'ZYX');
+    const peakRadiation = calculatePeakRadiation(sunDirection, dayOfYear, elevation, AirMass.SPHERE_MODEL);
     for (const [index, s] of segments.entries()) {
       const uuid = roof.id + '-' + index;
       const s0 = s[0].clone().applyEuler(euler);
@@ -1076,7 +1075,6 @@ const DynamicSolarRadiationSimulation = ({ city }: DynamicSolarRadiationSimulati
       // double half-length to full-length for the increment vectors in both directions
       dm.multiplyScalar(2);
       dn.multiplyScalar(2);
-      const peakRadiation = calculatePeakRadiation(sunDirection, dayOfYear, elevation, AirMass.SPHERE_MODEL);
       const indirectRadiation = calculateDiffuseAndReflectedRadiation(
         world.ground,
         now.getMonth(),

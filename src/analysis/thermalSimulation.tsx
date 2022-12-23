@@ -27,9 +27,15 @@ import { useThree } from '@react-three/fiber';
 import { Intersection, Object3D, Raycaster, Vector3 } from 'three';
 import { SolarRadiation } from './SolarRadiation';
 import { ZERO_TOLERANCE } from '../constants';
+import { FoundationModel } from '../models/FoundationModel';
 
-export interface ThermalSimulationProps {
+interface ThermalSimulationProps {
   city: string | null;
+}
+
+interface RoofSegmentResult {
+  surfaceTemperature: number;
+  totalArea: number;
 }
 
 const ThermalSimulation = ({ city }: ThermalSimulationProps) => {
@@ -598,62 +604,161 @@ const ThermalSimulation = ({ city }: ThermalSimulationProps) => {
     if (!foundation) return;
     const segments = getRoofSegmentVerticesWithoutOverhang(roof.id);
     if (!segments) return;
-    const setpoint = foundation.hvacSystem?.thermostatSetpoint ?? 20;
-    const threshold = foundation.hvacSystem?.temperatureThreshold ?? 3;
-    const deltaT = currentOutsideTemperatureRef.current - setpoint;
-    let totalArea = 0;
+    let roofSegmentResults = undefined;
     switch (roof.roofType) {
       case RoofType.Pyramid:
-        for (const s of segments) {
-          const area = Util.getTriangleArea(s[0], s[1], s[2]);
-          totalArea += area;
-        }
+        roofSegmentResults = calculatePyramidRoof(roof, segments);
         break;
       case RoofType.Hip:
-        for (const s of segments) {
-          if (s.length === 3) {
-            totalArea += Util.getTriangleArea(s[0], s[1], s[2]);
-          } else if (s.length === 4) {
-            totalArea += Util.getTriangleArea(s[0], s[1], s[2]);
-            totalArea += Util.getTriangleArea(s[2], s[3], s[0]);
-          }
-        }
+        roofSegmentResults = calculateHipRoof(roof, segments);
         break;
       case RoofType.Gable:
-        for (const s of segments) {
-          totalArea += Util.getTriangleArea(s[0], s[1], s[2]);
-          totalArea += Util.getTriangleArea(s[2], s[3], s[0]);
-        }
+        roofSegmentResults = calculateGableRoof(roof, segments, foundation);
         break;
       case RoofType.Gambrel:
-        for (const s of segments) {
-          totalArea += Util.getTriangleArea(s[0], s[1], s[2]);
-          totalArea += Util.getTriangleArea(s[2], s[3], s[0]);
-        }
+        roofSegmentResults = calculateGambrelRoof(roof, segments);
         break;
       case RoofType.Mansard:
-        const n = segments.length;
-        for (let i = 0; i < n - 1; i++) {
-          const s = segments[i];
-          totalArea += Util.getTriangleArea(s[0], s[1], s[2]);
-          totalArea += Util.getTriangleArea(s[2], s[3], s[0]);
-        }
-        // the last segment may not be a quad
-        const s = segments[n - 1];
-        const points = new Array<Point2>();
-        for (const p of s) {
-          points.push({ x: p.x, y: p.y } as Point2);
-        }
-        totalArea += Util.getPolygonArea(points);
+        roofSegmentResults = calculateMansardRoof(roof, segments);
         break;
     }
-    // convert heat exchange to kWh
-    const heatExchange = computeEnergyUsage(
-      (((deltaT * totalArea) / (roof.rValue ?? 0.5)) * 0.001) / timesPerHour,
-      setpoint,
-      threshold,
-    );
-    updateHeatExchangeNow(roof.id, heatExchange);
+    if (roofSegmentResults) {
+      console.log(now, roofSegmentResults);
+      const setpoint = foundation.hvacSystem?.thermostatSetpoint ?? 20;
+      const threshold = foundation.hvacSystem?.temperatureThreshold ?? 3;
+      let heatExchange = 0;
+      for (const segmentResult of roofSegmentResults) {
+        const deltaT = segmentResult.surfaceTemperature - setpoint;
+        // convert heat exchange to kWh
+        heatExchange += computeEnergyUsage(
+          (((deltaT * segmentResult.totalArea) / (roof.rValue ?? 0.5)) * 0.001) / timesPerHour,
+          setpoint,
+          threshold,
+        );
+      }
+      updateHeatExchangeNow(roof.id, heatExchange);
+    }
+  };
+
+  const calculatePyramidRoof = (roof: RoofModel, segments: Vector3[][]) => {
+    if (roof.roofType !== RoofType.Pyramid) throw new Error('roof is not pyramid');
+    let totalArea = 0;
+    for (const s of segments) {
+      const area = Util.getTriangleArea(s[0], s[1], s[2]);
+      totalArea += area;
+    }
+    const surfaceTemperature = currentOutsideTemperatureRef.current;
+    return [{ surfaceTemperature: surfaceTemperature, totalArea: totalArea } as RoofSegmentResult];
+  };
+
+  const calculateHipRoof = (roof: RoofModel, segments: Vector3[][]) => {
+    if (roof.roofType !== RoofType.Hip) throw new Error('roof is not hip');
+    let totalArea = 0;
+    for (const s of segments) {
+      if (s.length === 3) {
+        totalArea += Util.getTriangleArea(s[0], s[1], s[2]);
+      } else if (s.length === 4) {
+        totalArea += Util.getTriangleArea(s[0], s[1], s[2]);
+        totalArea += Util.getTriangleArea(s[2], s[3], s[0]);
+      }
+    }
+    const surfaceTemperature = currentOutsideTemperatureRef.current;
+    return [{ surfaceTemperature: surfaceTemperature, totalArea: totalArea } as RoofSegmentResult];
+  };
+
+  const calculateGableRoof = (roof: RoofModel, segments: Vector3[][], foundation: FoundationModel) => {
+    if (roof.roofType !== RoofType.Gable) throw new Error('roof is not gable');
+    if (segments.length !== 2) return;
+    let s = segments[0];
+    const totalArea1 = Util.getTriangleArea(s[0], s[1], s[2]) + Util.getTriangleArea(s[2], s[3], s[0]);
+    s = segments[1];
+    const totalArea2 = Util.getTriangleArea(s[0], s[1], s[2]) + Util.getTriangleArea(s[2], s[3], s[0]);
+    const absorption = Util.getLightAbsorption(roof);
+    let totalSolarHeat1 = 0;
+    let totalSolarHeat2 = 0;
+    // when the sun is out
+    if (!Util.isZero(absorption) && sunDirectionRef.current && sunDirectionRef.current.z > 0) {
+      const solarPanels = getChildrenOfType(ObjectType.SolarPanel, roof.id);
+      const solarRadiationEnergySegments = SolarRadiation.computeGableRoofSolarRadiationEnergy(
+        now,
+        world,
+        sunDirectionRef.current,
+        roof,
+        segments,
+        foundation,
+        solarPanels,
+        elevation,
+        inShadow,
+      );
+      if (solarRadiationEnergySegments) {
+        // apply clearness and convert the unit of time step from minute to hour so that we get kWh
+        const daylight = sunMinutes.daylight() / 60;
+        // divide by times per hour as the radiation is added up that many times
+        const scaleFactor =
+          daylight > ZERO_TOLERANCE ? weather.sunshineHours[now.getMonth()] / (30 * daylight * world.timesPerHour) : 0;
+        const seg1 = solarRadiationEnergySegments[0];
+        for (let i = 0; i < seg1.length; i++) {
+          for (let j = 0; j < seg1[i].length; j++) {
+            totalSolarHeat1 += seg1[i][j] * scaleFactor;
+          }
+        }
+        const seg2 = solarRadiationEnergySegments[1];
+        for (let i = 0; i < seg2.length; i++) {
+          for (let j = 0; j < seg2[i].length; j++) {
+            totalSolarHeat2 += seg2[i][j] * scaleFactor;
+          }
+        }
+      }
+    }
+    const extraT1 =
+      totalSolarHeat1 === 0
+        ? 0
+        : (totalSolarHeat1 * absorption) / ((roof.volumetricHeatCapacity ?? 0.5) * totalArea1 * roof.thickness);
+    const extraT2 =
+      totalSolarHeat2 === 0
+        ? 0
+        : (totalSolarHeat2 * absorption) / ((roof.volumetricHeatCapacity ?? 0.5) * totalArea2 * roof.thickness);
+    return [
+      {
+        surfaceTemperature: currentOutsideTemperatureRef.current + extraT1,
+        totalArea: totalArea1,
+      } as RoofSegmentResult,
+      {
+        surfaceTemperature: currentOutsideTemperatureRef.current + extraT2,
+        totalArea: totalArea2,
+      } as RoofSegmentResult,
+    ];
+  };
+
+  const calculateGambrelRoof = (roof: RoofModel, segments: Vector3[][]) => {
+    if (roof.roofType !== RoofType.Gambrel) throw new Error('roof is not gambrel');
+    let totalArea = 0;
+    for (const s of segments) {
+      totalArea += Util.getTriangleArea(s[0], s[1], s[2]);
+      totalArea += Util.getTriangleArea(s[2], s[3], s[0]);
+    }
+    const surfaceTemperature = currentOutsideTemperatureRef.current;
+    return [{ surfaceTemperature: surfaceTemperature, totalArea: totalArea } as RoofSegmentResult];
+  };
+
+  const calculateMansardRoof = (roof: RoofModel, segments: Vector3[][]) => {
+    if (roof.roofType !== RoofType.Mansard) throw new Error('roof is not mansard');
+    let totalArea = 0;
+    const n = segments.length;
+    for (let i = 0; i < n - 1; i++) {
+      const s = segments[i];
+      totalArea += Util.getTriangleArea(s[0], s[1], s[2]);
+      totalArea += Util.getTriangleArea(s[2], s[3], s[0]);
+    }
+    // the last segment may not be a quad
+    const s = segments[n - 1];
+    const points = new Array<Point2>();
+    for (const p of s) {
+      points.push({ x: p.x, y: p.y } as Point2);
+    }
+    totalArea += Util.getPolygonArea(points);
+    const surfaceTemperature = currentOutsideTemperatureRef.current;
+    return [{ surfaceTemperature: surfaceTemperature, totalArea: totalArea } as RoofSegmentResult];
   };
 
   return <></>;
