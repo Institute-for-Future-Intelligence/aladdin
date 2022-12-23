@@ -647,7 +647,7 @@ const GambrelRoof = (roofModel: GambrelRoofModel) => {
     segmentVertices.push([wallPoints[0], wallPoints[1], ridgeFRPoint, ridgeFLPoint]);
     segmentVertices.push([ridgeFLPoint, ridgeFRPoint, ridgeTRPoint, ridgeTLPoint]);
     segmentVertices.push([ridgeTLPoint, ridgeTRPoint, ridgeBRPoint, ridgeBLPoint]);
-    segmentVertices.push([ridgeBLPoint, ridgeBRPoint, wallPoints[3], wallPoints[2]]);
+    segmentVertices.push([wallPoints[2], wallPoints[3], ridgeBRPoint, ridgeBLPoint]);
 
     useStore.getState().setRoofSegmentVerticesWithoutOverhang(id, segmentVertices);
   };
