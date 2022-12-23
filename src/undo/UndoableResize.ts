@@ -96,12 +96,21 @@ export interface UnoableResizeGableRoofRidge extends Undoable {
   newRight: number;
 }
 
-export interface UnoableResizeGambrelAndMansardRoofRidge extends Undoable {
+export interface UnoableResizeGambrelRoofRidge extends Undoable {
+  resizedElementId: string;
+  resizedElementType: ObjectType;
+  type: string;
+  oldVal: number[];
+  newVal: number[];
+}
+
+export interface UnoableResizeMansardRoofRidge extends Undoable {
   resizedElementId: string;
   resizedElementType: ObjectType;
   type: string;
   oldVal: number;
   newVal: number;
+  test?: number;
 }
 
 export interface UnoableResizeSolarPanelOnRoof extends Undoable {

@@ -13,7 +13,7 @@ import { useStore } from 'src/stores/common';
 import { useStoreRef } from 'src/stores/commonRef';
 import * as Selector from 'src/stores/selector';
 import { ActionType, ObjectType, RoofHandleType, RoofTexture } from 'src/types';
-import { UnoableResizeGambrelAndMansardRoofRidge } from 'src/undo/UndoableResize';
+import { UnoableResizeMansardRoofRidge } from 'src/undo/UndoableResize';
 import { Util } from 'src/Util';
 import { CanvasTexture, DoubleSide, Euler, Float32BufferAttribute, Mesh, Shape, Vector3 } from 'three';
 import {
@@ -241,7 +241,7 @@ const MansardRoof = (roofModel: MansardRoofModel) => {
       redo: () => {
         updateRidge(undoable.resizedElementId, undoable.newVal);
       },
-    } as UnoableResizeGambrelAndMansardRoofRidge;
+    } as UnoableResizeMansardRoofRidge;
     useStore.getState().addUndoable(undoable);
   };
 
