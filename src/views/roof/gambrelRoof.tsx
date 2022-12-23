@@ -1060,37 +1060,19 @@ const GambrelRoof = (roofModel: GambrelRoofModel) => {
                 addUndoableResizeRoofRise(id, oldRiseRef.current, riseInnerState);
                 break;
               }
-              case RoofHandleType.TopLeft: {
+              case RoofHandleType.TopLeft:
+              case RoofHandleType.TopRight: {
                 handleUnoableResizeRidge(id, roofHandleType, oldRidgeVal.current, topRidgePoint);
                 break;
               }
-              case RoofHandleType.TopRight: {
-                handleUnoableResizeRidge(id, roofHandleType, oldRidgeVal.current, [
-                  -topRidgePoint[0],
-                  topRidgePoint[1],
-                ]);
-                break;
-              }
-              case RoofHandleType.FrontLeft: {
+              case RoofHandleType.FrontLeft:
+              case RoofHandleType.FrontRight: {
                 handleUnoableResizeRidge(id, roofHandleType, oldRidgeVal.current, frontRidgePoint);
                 break;
               }
-              case RoofHandleType.FrontRight: {
-                handleUnoableResizeRidge(id, roofHandleType, oldRidgeVal.current, [
-                  -frontRidgePoint[0],
-                  frontRidgePoint[1],
-                ]);
-                break;
-              }
-              case RoofHandleType.BackLeft: {
-                handleUnoableResizeRidge(id, roofHandleType, oldRidgeVal.current, backRidgePoint);
-                break;
-              }
+              case RoofHandleType.BackLeft:
               case RoofHandleType.BackRight: {
-                handleUnoableResizeRidge(id, roofHandleType, oldRidgeVal.current, [
-                  -backRidgePoint[0],
-                  backRidgePoint[1],
-                ]);
+                handleUnoableResizeRidge(id, roofHandleType, oldRidgeVal.current, backRidgePoint);
                 break;
               }
             }

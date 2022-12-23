@@ -110,7 +110,6 @@ export interface UnoableResizeMansardRoofRidge extends Undoable {
   type: string;
   oldVal: number;
   newVal: number;
-  test?: number;
 }
 
 export interface UnoableResizeSolarPanelOnRoof extends Undoable {
