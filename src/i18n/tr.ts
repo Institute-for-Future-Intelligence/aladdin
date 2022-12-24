@@ -592,6 +592,10 @@ export const i18n_tr = {
       GroupMaster: 'Grup Yöneticisi',
       LockAllElementsOnThisFoundation: ' Seçili temel üzerindeki tüm öğeleri kilitle',
       UnlockAllElementsOnThisFoundation: ' Seçili temel üzerindeki tüm öğelerin kilidini aç',
+      Label: 'Label',
+      LabelHeight: 'Label Height',
+      LabelSize: 'Label Size',
+      KeepShowingLabel: 'Keep Showing Label',
     },
 
     solarPowerTowerMenu: {

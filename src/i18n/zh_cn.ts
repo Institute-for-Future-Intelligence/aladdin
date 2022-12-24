@@ -575,6 +575,10 @@ export const i18n_zh_cn = {
       GroupMaster: '主地基',
       LockAllElementsOnThisFoundation: '固定此地基上所有的部件',
       UnlockAllElementsOnThisFoundation: '解除此地基上所有的固定',
+      Label: '标签',
+      LabelHeight: '标签的高度',
+      LabelSize: '标签的大小',
+      KeepShowingLabel: '显示标签',
     },
 
     solarPowerTowerMenu: {

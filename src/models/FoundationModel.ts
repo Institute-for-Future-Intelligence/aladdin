@@ -10,6 +10,10 @@ import { SolarAbsorberPipeModel } from './SolarAbsorberPipeModel';
 import { HvacSystem } from './HvacSystem';
 
 export interface FoundationModel extends ElementModel {
+  labelHeight?: number;
+
+  labelSize?: number;
+
   textureType: FoundationTexture;
 
   solarStructure?: SolarStructure;

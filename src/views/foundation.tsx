@@ -88,6 +88,7 @@ const Foundation = ({
   lineWidth = 0.2,
   locked = false,
   selected = false,
+  showLabel = false,
   textureType = FoundationTexture.NoTexture,
   solarStructure,
   enableGroupMaster,
@@ -2844,18 +2845,18 @@ const Foundation = ({
         {/* text */}
         {!addedFoundationID && (
           <>
-            {hovered && !selected && (
+            {(hovered || showLabel) && !selected && (
               <textSprite
                 userData={{ unintersectable: true }}
                 name={'Label'}
                 text={
-                  i18n.t('shared.FoundationElement', lang) +
+                  (foundationModel?.label ? foundationModel.label : i18n.t('shared.FoundationElement', lang)) +
                   (locked ? ' (' + i18n.t('shared.ElementLocked', lang) + ')' : '')
                 }
                 fontSize={20}
                 fontFace={'Times Roman'}
-                textHeight={0.2}
-                position={[0, 0, hz + 0.2]}
+                textHeight={foundationModel.labelSize ?? 0.2}
+                position={[0, 0, foundationModel.labelHeight ?? hz + 0.2]}
               />
             )}
             {!locked && hoveredHandle === ResizeHandleType.LowerLeft && (

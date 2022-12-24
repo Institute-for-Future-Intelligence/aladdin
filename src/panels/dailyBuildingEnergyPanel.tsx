@@ -74,6 +74,12 @@ export interface DailyBuildingEnergyPanelProps {
   city: string | null;
 }
 
+interface EnergyUsage {
+  heater: number;
+  ac: number;
+  label?: string;
+}
+
 const DailyBuildingEnergyPanel = ({ city }: DailyBuildingEnergyPanelProps) => {
   const language = useStore(Selector.language);
   const loggable = useStore(Selector.loggable);
@@ -102,43 +108,84 @@ const DailyBuildingEnergyPanel = ({ city }: DailyBuildingEnergyPanelProps) => {
   const [heaterSum, setHeaterSum] = useState(0);
   const [acSum, setAcSum] = useState(0);
   const [netSum, setNetSum] = useState(0);
+  const [labels, setLabels] = useState(['Heater', 'AC', 'Net']);
 
   const lang = { lng: language };
-  const labels = ['Heater', 'AC', 'Net'];
 
   useEffect(() => {
     const sum: DatumEntry[] = [];
     let sumHeater = 0;
     let sumAc = 0;
+    const dataLabels = [];
     for (let i = 0; i < 24; i++) {
       const datum: DatumEntry = {};
-      let heater = 0;
-      let ac = 0;
+      const energy = new Map<string, EnergyUsage>();
       for (const e of elements) {
         if (Util.isThermal(e)) {
-          // const f = getFoundation(e);
           const h = hourlyHeatExchangeArrayMap.get(e.id);
           if (h) {
-            if (h[i] < 0) {
-              heater -= h[i]; // negative goes to heater
-            } else {
-              ac += h[i]; // positive goes to cooler
+            const f = getFoundation(e);
+            if (f) {
+              let energyUsage = energy.get(f.id);
+              if (energyUsage === undefined) {
+                energyUsage = { heater: 0, ac: 0, label: f.label } as EnergyUsage;
+                energy.set(f.id, energyUsage);
+                dataLabels.push(f.label);
+              }
+              if (h[i] < 0) {
+                energyUsage.heater -= h[i]; // negative goes to heater
+              } else {
+                energyUsage.ac += h[i]; // positive goes to cooler
+              }
             }
           }
         }
       }
-      datum['Hour'] = i;
-      datum['Heater'] = heater;
-      datum['AC'] = ac;
-      datum['Net'] = heater + ac;
+      if (energy.size > 1) {
+        let index = 1;
+        for (const key of energy.keys()) {
+          datum['Hour'] = i;
+          const value = energy.get(key);
+          if (value) {
+            const id = value.label ?? index;
+            datum['Heater ' + id] = value.heater;
+            datum['AC ' + id] = value.ac;
+            datum['Net ' + id] = value.heater + value.ac;
+            sumHeater += value.heater;
+            sumAc += value.ac;
+          }
+          index++;
+        }
+      } else {
+        for (const key of energy.keys()) {
+          datum['Hour'] = i;
+          const value = energy.get(key);
+          if (value) {
+            datum['Heater'] = value.heater;
+            datum['AC'] = value.ac;
+            datum['Net'] = value.heater + value.ac;
+            sumHeater += value.heater;
+            sumAc += value.ac;
+          }
+        }
+      }
       sum.push(datum);
-      sumHeater += heater;
-      sumAc += ac;
     }
     setData(sum);
     setHeaterSum(sumHeater);
     setAcSum(sumAc);
     setNetSum(sumHeater + sumAc);
+    const count = countElementsByType(ObjectType.Foundation);
+    if (count > 1) {
+      const l = [];
+      for (let index = 0; index < count; index++) {
+        const id = dataLabels[index] ?? index + 1;
+        l.push('Heater ' + id, 'AC ' + id, 'Net ' + id);
+      }
+      setLabels(l);
+    } else {
+      setLabels(['Heater', 'AC', 'Net']);
+    }
   }, [hourlyHeatExchangeArrayMap]);
 
   useEffect(() => {

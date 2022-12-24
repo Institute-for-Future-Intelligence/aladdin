@@ -621,7 +621,7 @@ const ThermalSimulation = ({ city }: ThermalSimulationProps) => {
         break;
     }
     if (roofSegmentResults) {
-      console.log(now, roofSegmentResults);
+      console.log(now, foundation.id, roofSegmentResults);
       const setpoint = foundation.hvacSystem?.thermostatSetpoint ?? 20;
       const threshold = foundation.hvacSystem?.temperatureThreshold ?? 3;
       let heatExchange = 0;

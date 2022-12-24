@@ -592,6 +592,10 @@ export const i18n_es = {
       GroupMaster: 'Group Master',
       LockAllElementsOnThisFoundation: 'Lock All Elements on This Foundation',
       UnlockAllElementsOnThisFoundation: 'Unlock All Elements on This Foundation',
+      Label: 'Label',
+      LabelHeight: 'Label Height',
+      LabelSize: 'Label Size',
+      KeepShowingLabel: 'Keep Showing Label',
     },
 
     solarPowerTowerMenu: {

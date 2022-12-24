@@ -3,7 +3,7 @@
  */
 
 import React, { useState } from 'react';
-import { Checkbox, InputNumber, Menu, Modal, Radio, Space } from 'antd';
+import { Checkbox, Input, InputNumber, Menu, Modal, Radio, Space } from 'antd';
 import { Copy, Cut, Lock, Paste } from '../menuItems';
 import SubMenu from 'antd/lib/menu/SubMenu';
 import { ExclamationCircleOutlined } from '@ant-design/icons';
@@ -46,6 +46,7 @@ import SolarUpdraftTowerCollectorEmissivityInput from './solarUpdraftTowerCollec
 import SolarPanelTiltAngleGaWizard from './solarPanelTiltAngleGaWizard';
 import SolarPanelTiltAnglePsoWizard from './solarPanelTiltAnglePsoWizard';
 import { UndoableChangeGroup } from '../../../undo/UndoableChangeGroup';
+import { UndoableCheck } from '../../../undo/UndoableCheck';
 
 export const FoundationMenu = React.memo(() => {
   const setCommonStore = useStore(Selector.set);
@@ -63,6 +64,8 @@ export const FoundationMenu = React.memo(() => {
   const updateFoundationSolarStructureById = useStore(Selector.updateFoundationSolarStructureById);
   const language = useStore(Selector.language);
   const elementsToPaste = useStore(Selector.elementsToPaste);
+  const updateElementShowLabelById = useStore(Selector.updateElementShowLabelById);
+  const updateElementLabelById = useStore(Selector.updateElementLabelById);
 
   const foundation = useStore((state) =>
     state.elements.find((e) => e.selected && e.type === ObjectType.Foundation),
@@ -107,6 +110,7 @@ export const FoundationMenu = React.memo(() => {
   const [turbineEfficiencyDialogVisible, setTurbineEfficiencyDialogVisible] = useState(false);
   const [solarPanelTiltAngleGaWizardVisible, setSolarPanelTiltAngleGaWizardVisible] = useState(false);
   const [solarPanelTiltAnglePsoWizardVisible, setSolarPanelTiltAnglePsoWizardVisible] = useState(false);
+  const [labelText, setLabelText] = useState<string>(foundation?.label ?? '');
 
   if (!foundation) return null;
 
@@ -141,6 +145,108 @@ export const FoundationMenu = React.memo(() => {
       }
     }
     return false;
+  };
+
+  const showLabel = (checked: boolean) => {
+    if (foundation) {
+      const undoableCheck = {
+        name: 'Show Foundation Label',
+        timestamp: Date.now(),
+        checked: !foundation.showLabel,
+        selectedElementId: foundation.id,
+        selectedElementType: ObjectType.Foundation,
+        undo: () => {
+          updateElementShowLabelById(foundation.id, !undoableCheck.checked);
+        },
+        redo: () => {
+          updateElementShowLabelById(foundation.id, undoableCheck.checked);
+        },
+      } as UndoableCheck;
+      addUndoable(undoableCheck);
+      updateElementShowLabelById(foundation.id, checked);
+    }
+  };
+
+  const setLabelHeight = (value: number) => {
+    const oldHeight = foundation.labelHeight ?? foundation.lz / 2 + 0.2;
+    const newHeight = value;
+    const undoableChange = {
+      name: 'Set Label Height',
+      timestamp: Date.now(),
+      oldValue: oldHeight,
+      newValue: newHeight,
+      undo: () => {
+        updateLabelHeight(undoableChange.oldValue as number);
+      },
+      redo: () => {
+        updateLabelHeight(undoableChange.newValue as number);
+      },
+    } as UndoableChange;
+    addUndoable(undoableChange);
+    updateLabelHeight(newHeight);
+  };
+
+  const updateLabelHeight = (value: number) => {
+    setCommonStore((state) => {
+      for (const e of state.elements) {
+        if (e.id === foundation.id) {
+          (e as FoundationModel).labelHeight = value;
+          break;
+        }
+      }
+    });
+  };
+
+  const setLabelSize = (value: number) => {
+    const oldSize = foundation.labelSize ?? 0.2;
+    const newSize = value;
+    const undoableChange = {
+      name: 'Set Label Size',
+      timestamp: Date.now(),
+      oldValue: oldSize,
+      newValue: newSize,
+      undo: () => {
+        updateLabelSize(undoableChange.oldValue as number);
+      },
+      redo: () => {
+        updateLabelSize(undoableChange.newValue as number);
+      },
+    } as UndoableChange;
+    addUndoable(undoableChange);
+    updateLabelSize(newSize);
+  };
+
+  const updateLabelSize = (value: number) => {
+    setCommonStore((state) => {
+      for (const e of state.elements) {
+        if (e.id === foundation.id) {
+          (e as FoundationModel).labelSize = value;
+          break;
+        }
+      }
+    });
+  };
+
+  const updateLabelText = () => {
+    if (foundation) {
+      const oldLabel = foundation.label;
+      const undoableChange = {
+        name: 'Set Foundation Label',
+        timestamp: Date.now(),
+        oldValue: oldLabel,
+        newValue: labelText,
+        changedElementId: foundation.id,
+        changedElementType: ObjectType.Foundation,
+        undo: () => {
+          updateElementLabelById(undoableChange.changedElementId, undoableChange.oldValue as string);
+        },
+        redo: () => {
+          updateElementLabelById(undoableChange.changedElementId, undoableChange.newValue as string);
+        },
+      } as UndoableChange;
+      addUndoable(undoableChange);
+      updateElementLabelById(foundation.id, labelText);
+    }
   };
 
   return (
@@ -1529,6 +1635,55 @@ export const FoundationMenu = React.memo(() => {
           )}
         </SubMenu>
       </SubMenu>
+
+      {editable && (
+        <SubMenu key={'foundation-label'} title={i18n.t('foundationMenu.Label', lang)} style={{ paddingLeft: '24px' }}>
+          {/* show label or not */}
+          <Menu.Item key={'foundation-show-label'}>
+            <Checkbox checked={!!foundation?.showLabel} onChange={(e) => showLabel(e.target.checked)}>
+              {i18n.t('foundationMenu.KeepShowingLabel', lang)}
+            </Checkbox>
+          </Menu.Item>
+
+          {/*have to wrap the text field with a Menu so that it can stay open when the user types in it */}
+          <Menu>
+            {/* label text */}
+            <Menu.Item key={'foundation-label-text'} style={{ paddingLeft: '36px', marginTop: 10 }}>
+              <Input
+                addonBefore={i18n.t('foundationMenu.Label', lang) + ':'}
+                value={labelText}
+                onChange={(e: React.ChangeEvent<HTMLInputElement>) => setLabelText(e.target.value)}
+                onPressEnter={updateLabelText}
+                onBlur={updateLabelText}
+              />
+            </Menu.Item>
+            {/* the label's height relative to the foundation's top surface */}
+            <Menu.Item style={{ height: '36px', paddingLeft: '36px', marginTop: 0 }} key={'foundation-label-height'}>
+              <InputNumber
+                addonBefore={i18n.t('foundationMenu.LabelHeight', lang) + ':'}
+                min={foundation.lz / 2 + 0.2}
+                max={100}
+                step={1}
+                precision={1}
+                value={foundation.labelHeight ?? foundation.lz / 2 + 0.2}
+                onChange={(value) => setLabelHeight(value)}
+              />
+            </Menu.Item>
+            {/* the label's size */}
+            <Menu.Item style={{ height: '36px', paddingLeft: '36px', marginTop: 0 }} key={'foundation-label-size'}>
+              <InputNumber
+                addonBefore={i18n.t('foundationMenu.LabelSize', lang) + ':'}
+                min={0.2}
+                max={2}
+                step={0.1}
+                precision={1}
+                value={foundation.labelSize ?? 0.2}
+                onChange={(value) => setLabelSize(value)}
+              />
+            </Menu.Item>
+          </Menu>
+        </SubMenu>
+      )}
     </Menu.ItemGroup>
   );
 });
