@@ -92,6 +92,7 @@ import ai_tilt_angles_multiple_rows from './examples/ai_tilt_angles_multiple_row
 import ai_solar_farm_design from './examples/ai_solar_farm_design.json';
 import ai_solar_farm_design_block from './examples/ai_solar_farm_design_block.json';
 import ai_fitchburg_solar_farm from './examples/ai_fitchburg_solar_farm.json';
+import effect_roof_color from './examples/effect_roof_color.json';
 
 import zhCN from 'antd/lib/locale/zh_CN';
 import zhTW from 'antd/lib/locale/zh_TW';
@@ -303,6 +304,9 @@ const MainMenu = ({ viewOnly, set2DView, resetView, zoomView, canvas }: MainMenu
         break;
       case 'sun_beam_at_center':
         input = sun_beam_at_center;
+        break;
+      case 'effect_roof_color':
+        input = effect_roof_color;
         break;
       case 'office_building_01':
         input = office_building_01;
@@ -2054,6 +2058,12 @@ const MainMenu = ({ viewOnly, set2DView, resetView, zoomView, canvas }: MainMenu
           </Menu.Item>
           <Menu.Item key="sun_beam_at_center" onClick={loadFile}>
             {i18n.t('menu.solarEnergyExamples.SunBeamAndHeliodon', lang)}
+          </Menu.Item>
+        </SubMenu>
+        {/* building science */}
+        <SubMenu key={'building-science'} title={i18n.t('menu.buildingScienceSubMenu', lang)}>
+          <Menu.Item key="effect_roof_color" onClick={loadFile}>
+            {i18n.t('menu.buildingScienceTutorials.EffectOfRoofColorOnBuildingEnergy', lang)}
           </Menu.Item>
         </SubMenu>
         {/* building design */}

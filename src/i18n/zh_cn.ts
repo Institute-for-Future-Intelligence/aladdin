@@ -330,6 +330,11 @@ export const i18n_zh_cn = {
         SolarRadiationToBox: '一个长方体受到的太阳能辐射分析',
       },
 
+      buildingScienceSubMenu: '建筑科学',
+      buildingScienceTutorials: {
+        EffectOfRoofColorOnBuildingEnergy: '屋顶颜色对建筑物能耗的影响',
+      },
+
       buildingDesignSubMenu: '建筑设计',
       buildingDesignTutorials: {
         CapeCodStyleHouseWithShedDormer: '有棚顶窗的科德角风格的住宅',

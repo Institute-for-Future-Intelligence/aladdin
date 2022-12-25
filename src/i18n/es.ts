@@ -329,6 +329,11 @@ export const i18n_es = {
         SolarRadiationToBox: 'Radiación solar a una caja',
       },
 
+      buildingScienceSubMenu: 'Building Science',
+      buildingScienceTutorials: {
+        EffectOfRoofColorOnBuildingEnergy: 'Effect of Roof Color on Building Energy',
+      },
+
       buildingDesignSubMenu: 'Building Design',
       buildingDesignTutorials: {
         CapeCodStyleHouseWithShedDormer: 'Cape Cod Style House with Shed Dormer',

@@ -331,6 +331,11 @@ export const i18n_tr = {
         SolarRadiationToBox: 'Kutu Güneş Işınımı',
       },
 
+      buildingScienceSubMenu: 'Building Science',
+      buildingScienceTutorials: {
+        EffectOfRoofColorOnBuildingEnergy: 'Effect of Roof Color on Building Energy',
+      },
+
       buildingDesignSubMenu: 'Bina Tasarımı',
       buildingDesignTutorials: {
         CapeCodStyleHouseWithShedDormer: 'Çatı Pencereli Cape Cod Evi',
