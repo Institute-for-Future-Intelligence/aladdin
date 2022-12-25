@@ -465,6 +465,36 @@ const ThermalSimulation = ({ city }: ThermalSimulationProps) => {
     if (foundation) {
       const parent = getParent(window);
       if (parent) {
+        let totalSolarHeat = 0;
+        // when the sun is out
+        if (sunDirectionRef.current && sunDirectionRef.current.z > 0) {
+          const solarRadiationEnergy = SolarRadiation.computeWindowSolarRadiationEnergy(
+            now,
+            world,
+            sunDirectionRef.current,
+            window,
+            parent as WallModel,
+            foundation,
+            elevation,
+            inShadow,
+          );
+          if (solarRadiationEnergy) {
+            // apply clearness and convert the unit of time step from minute to hour so that we get kWh
+            const daylight = sunMinutes.daylight() / 60;
+            // divide by times per hour as the radiation is added up that many times
+            const scaleFactor =
+              daylight > ZERO_TOLERANCE
+                ? weather.sunshineHours[now.getMonth()] / (30 * daylight * world.timesPerHour)
+                : 0;
+            for (let i = 0; i < solarRadiationEnergy.length; i++) {
+              for (let j = 0; j < solarRadiationEnergy[i].length; j++) {
+                totalSolarHeat += solarRadiationEnergy[i][j] * scaleFactor;
+              }
+            }
+            // how much solar energy can go through the window (SHGC)
+            totalSolarHeat *= 1 - window.opacity;
+          }
+        }
         const setpoint = foundation.hvacSystem?.thermostatSetpoint ?? 20;
         const threshold = foundation.hvacSystem?.temperatureThreshold ?? 3;
         const area = Util.getWindowArea(window, parent);
@@ -475,7 +505,7 @@ const ThermalSimulation = ({ city }: ThermalSimulationProps) => {
           setpoint,
           threshold,
         );
-        updateHeatExchangeNow(window.id, heatExchange);
+        updateHeatExchangeNow(window.id, heatExchange + totalSolarHeat);
       }
     }
   };
@@ -621,7 +651,6 @@ const ThermalSimulation = ({ city }: ThermalSimulationProps) => {
         break;
     }
     if (roofSegmentResults) {
-      console.log(now, foundation.id, roofSegmentResults);
       const setpoint = foundation.hvacSystem?.thermostatSetpoint ?? 20;
       const threshold = foundation.hvacSystem?.temperatureThreshold ?? 3;
       let heatExchange = 0;

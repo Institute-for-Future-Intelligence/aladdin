@@ -333,6 +333,7 @@ export const i18n_zh_tw = {
       buildingScienceSubMenu: '建築科學',
       buildingScienceTutorials: {
         EffectOfRoofColorOnBuildingEnergy: '屋頂顏色對建築物能耗的影響',
+        PassiveCoolingWithTrees: '樹蔭節能',
       },
 
       buildingDesignSubMenu: '建築設計',

@@ -332,6 +332,7 @@ export const i18n_es = {
       buildingScienceSubMenu: 'Building Science',
       buildingScienceTutorials: {
         EffectOfRoofColorOnBuildingEnergy: 'Effect of Roof Color on Building Energy',
+        PassiveCoolingWithTrees: 'Passive Cooling with Trees',
       },
 
       buildingDesignSubMenu: 'Building Design',

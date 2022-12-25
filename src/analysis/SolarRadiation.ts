@@ -14,6 +14,7 @@ import { WorldModel } from '../models/WorldModel';
 import { ElementModel } from '../models/ElementModel';
 import { DoorModel } from '../models/DoorModel';
 import { RoofModel } from '../models/RoofModel';
+import { WindowModel } from '../models/WindowModel';
 
 export class SolarRadiation {
   // return an array that represents solar energy radiated onto the discretized cells of a wall
@@ -115,7 +116,6 @@ export class SolarRadiation {
         }
       }
     }
-
     return energy;
   }
 
@@ -140,9 +140,10 @@ export class SolarRadiation {
     const dz = lz / nz;
     const da = dx * dz;
     const absAngle = foundation.rotation[2] + wall.relativeAngle;
-    const absPos = Util.wallAbsolutePosition(new Vector3(wall.cx, wall.cy, wall.cz), foundation).setZ(
+    const absWallPos = Util.wallAbsolutePosition(new Vector3(wall.cx, wall.cy, wall.cz), foundation).setZ(
       wall.lz / 2 + foundation.lz,
     );
+    const absDoorPos = absWallPos.clone().add(new Vector3(door.cx * wall.lx, 0, door.cz * wall.lz));
     const normal = new Vector3().fromArray([Math.cos(absAngle - HALF_PI), Math.sin(absAngle - HALF_PI), 0]);
     const dxcos = dx * Math.cos(absAngle);
     const dxsin = dx * Math.sin(absAngle);
@@ -164,7 +165,7 @@ export class SolarRadiation {
         const kz2 = kz - nz / 2 + 0.5;
         energy[kx][kz] += indirectRadiation * da;
         if (dot > 0) {
-          v.set(absPos.x + kx2 * dxcos, absPos.y + kx2 * dxsin, absPos.z + kz2 * dz);
+          v.set(absDoorPos.x + kx2 * dxcos, absDoorPos.y + kx2 * dxsin, absDoorPos.z + kz2 * dz);
           if (!inShadow(door.id, v, sunDirection)) {
             // direct radiation
             energy[kx][kz] += dot * peakRadiation * da;
@@ -172,7 +173,63 @@ export class SolarRadiation {
         }
       }
     }
+    return energy;
+  }
 
+  // return an array that represents solar energy radiated onto the discretized cells of a window
+  static computeWindowSolarRadiationEnergy(
+    now: Date,
+    world: WorldModel,
+    sunDirection: Vector3,
+    window: WindowModel,
+    wall: WallModel,
+    foundation: FoundationModel,
+    elevation: number,
+    inShadow: Function,
+  ): number[][] {
+    const dayOfYear = Util.dayOfYear(now);
+    const cellSize = world.solarRadiationHeatmapGridCellSize ?? 0.5;
+    const lx = window.lx * wall.lx;
+    const lz = window.lz * wall.lz;
+    const nx = Math.max(2, Math.round(lx / cellSize));
+    const nz = Math.max(2, Math.round(lz / cellSize));
+    const dx = lx / nx;
+    const dz = lz / nz;
+    const da = dx * dz;
+    const absWallAngle = foundation.rotation[2] + wall.relativeAngle;
+    const absWallPos = Util.wallAbsolutePosition(new Vector3(wall.cx, wall.cy, wall.cz), foundation).setZ(
+      wall.lz / 2 + foundation.lz,
+    );
+    const absWindowPos = absWallPos.clone().add(new Vector3(window.cx * wall.lx, 0, window.cz * wall.lz));
+    const normal = new Vector3().fromArray([Math.cos(absWallAngle - HALF_PI), Math.sin(absWallAngle - HALF_PI), 0]);
+    const dxcos = dx * Math.cos(absWallAngle);
+    const dxsin = dx * Math.sin(absWallAngle);
+    const v = new Vector3();
+    const peakRadiation = calculatePeakRadiation(sunDirection, dayOfYear, elevation, AirMass.SPHERE_MODEL);
+    const indirectRadiation = calculateDiffuseAndReflectedRadiation(
+      world.ground,
+      now.getMonth(),
+      normal,
+      peakRadiation,
+    );
+    const dot = normal.dot(sunDirection);
+    const energy: number[][] = Array(nx)
+      .fill(0)
+      .map(() => Array(nz).fill(0));
+    for (let kx = 0; kx < nx; kx++) {
+      for (let kz = 0; kz < nz; kz++) {
+        const kx2 = kx - nx / 2 + 0.5;
+        const kz2 = kz - nz / 2 + 0.5;
+        energy[kx][kz] += indirectRadiation * da;
+        if (dot > 0) {
+          v.set(absWindowPos.x + kx2 * dxcos, absWindowPos.y + kx2 * dxsin, absWindowPos.z + kz2 * dz);
+          if (!inShadow(window.id, v, sunDirection)) {
+            // direct radiation
+            energy[kx][kz] += dot * peakRadiation * da;
+          }
+        }
+      }
+    }
     return energy;
   }
 

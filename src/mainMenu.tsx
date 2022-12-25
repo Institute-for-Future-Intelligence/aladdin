@@ -93,6 +93,7 @@ import ai_solar_farm_design from './examples/ai_solar_farm_design.json';
 import ai_solar_farm_design_block from './examples/ai_solar_farm_design_block.json';
 import ai_fitchburg_solar_farm from './examples/ai_fitchburg_solar_farm.json';
 import effect_roof_color from './examples/effect_roof_color.json';
+import passive_cooling_trees from './examples/passive_cooling_trees.json';
 
 import zhCN from 'antd/lib/locale/zh_CN';
 import zhTW from 'antd/lib/locale/zh_TW';
@@ -307,6 +308,9 @@ const MainMenu = ({ viewOnly, set2DView, resetView, zoomView, canvas }: MainMenu
         break;
       case 'effect_roof_color':
         input = effect_roof_color;
+        break;
+      case 'passive_cooling_trees':
+        input = passive_cooling_trees;
         break;
       case 'office_building_01':
         input = office_building_01;
@@ -2064,6 +2068,9 @@ const MainMenu = ({ viewOnly, set2DView, resetView, zoomView, canvas }: MainMenu
         <SubMenu key={'building-science'} title={i18n.t('menu.buildingScienceSubMenu', lang)}>
           <Menu.Item key="effect_roof_color" onClick={loadFile}>
             {i18n.t('menu.buildingScienceTutorials.EffectOfRoofColorOnBuildingEnergy', lang)}
+          </Menu.Item>
+          <Menu.Item key="passive_cooling_trees" onClick={loadFile}>
+            {i18n.t('menu.buildingScienceTutorials.PassiveCoolingWithTrees', lang)}
           </Menu.Item>
         </SubMenu>
         {/* building design */}
