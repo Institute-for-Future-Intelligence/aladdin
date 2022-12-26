@@ -332,7 +332,11 @@ export const i18n_zh_tw = {
 
       buildingScienceSubMenu: '建築科學',
       buildingScienceTutorials: {
+        EffectOfSizeOnBuildingEnergy: '房屋大小對能耗的影響',
+        EffectOfOrientationOnBuildingEnergy: '房屋方位對能耗的影響',
+        EffectOfInsulationOnBuildingEnergy: '房屋隔熱對能耗的影響',
         EffectOfRoofColorOnBuildingEnergy: '屋頂顏色對建築物能耗的影響',
+        EffectOfWindowSHGCOnBuildingEnergy: '窗戶太陽能輸入對房屋能耗的影響',
         PassiveCoolingWithTrees: '樹蔭節能',
       },
 

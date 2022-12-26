@@ -12,16 +12,19 @@ export interface PrimitiveStoreState {
   getHourlyHeatExchangeArray: (id: string) => number[] | undefined;
   clearHourlyHeatExchangeArrayMap: () => void;
 
-  // store the calculated daily heating results of a building for sampled months
+  // store the calculated results for hourly solar heat gains of a building through windows
+  hourlySolarHeatGainArrayMap: Map<string, number[]>;
+  setHourlySolarHeatGainArray: (id: string, data: number[]) => void;
+  getHourlySolarHeatGainArray: (id: string) => number[] | undefined;
+  clearHourlySolarHeatGainArrayMap: () => void;
+
+  // store the calculated daily heating/cooling results of a building for sampled months
   monthlyHeatingArrayMap: Map<string, number[]>;
   setMonthlyHeatingArray: (id: string, data: number[]) => void;
   getMonthlyHeatingArray: (id: string) => number[] | undefined;
-
-  // store the calculated daily cooling results of a building for sampled months
   monthlyCoolingArrayMap: Map<string, number[]>;
   setMonthlyCoolingArray: (id: string, data: number[]) => void;
   getMonthlyCoolingArray: (id: string) => number[] | undefined;
-
   clearMonthlyEnergyArrayMap: () => void;
 }
 
@@ -42,7 +45,24 @@ export const usePrimitiveStore = create<PrimitiveStoreState>((set, get) => {
     },
     clearHourlyHeatExchangeArrayMap() {
       set((state) => {
-        state.hourlyHeatExchangeArrayMap = new Map();
+        state.hourlyHeatExchangeArrayMap.clear();
+      });
+    },
+
+    hourlySolarHeatGainArrayMap: new Map<string, number[]>(),
+    setHourlySolarHeatGainArray(id, data) {
+      const map = get().hourlySolarHeatGainArrayMap;
+      map.set(id, data);
+      set((state) => {
+        state.hourlySolarHeatGainArrayMap = new Map(map);
+      });
+    },
+    getHourlySolarHeatGainArray(id) {
+      return get().hourlySolarHeatGainArrayMap.get(id);
+    },
+    clearHourlySolarHeatGainArrayMap() {
+      set((state) => {
+        state.hourlySolarHeatGainArrayMap.clear();
       });
     },
 
@@ -72,8 +92,8 @@ export const usePrimitiveStore = create<PrimitiveStoreState>((set, get) => {
 
     clearMonthlyEnergyArrayMap() {
       set((state) => {
-        state.monthlyHeatingArrayMap = new Map();
-        state.monthlyCoolingArrayMap = new Map();
+        state.monthlyHeatingArrayMap.clear();
+        state.monthlyCoolingArrayMap.clear();
       });
     },
   };

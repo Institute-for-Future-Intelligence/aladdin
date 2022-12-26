@@ -170,7 +170,8 @@ export class Util {
     return 1 - (min + max) / 510;
   }
 
-  static isThermal(e: ElementModel): boolean {
+  static onBuildingEnvelope(e: ElementModel): boolean {
+    // TODO: Add foundation later once we have a thermal model for the ground
     return (
       e.type === ObjectType.Window ||
       e.type === ObjectType.Door ||

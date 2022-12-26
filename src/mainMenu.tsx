@@ -92,7 +92,11 @@ import ai_tilt_angles_multiple_rows from './examples/ai_tilt_angles_multiple_row
 import ai_solar_farm_design from './examples/ai_solar_farm_design.json';
 import ai_solar_farm_design_block from './examples/ai_solar_farm_design_block.json';
 import ai_fitchburg_solar_farm from './examples/ai_fitchburg_solar_farm.json';
+import effect_house_size from './examples/effect_house_size.json';
+import effect_house_orientation from './examples/effect_house_orientation.json';
+import effect_wall_roof_insulation from './examples/effect_wall_roof_insulation.json';
 import effect_roof_color from './examples/effect_roof_color.json';
+import effect_window_shgc from './examples/effect_window_shgc.json';
 import passive_cooling_trees from './examples/passive_cooling_trees.json';
 
 import zhCN from 'antd/lib/locale/zh_CN';
@@ -306,8 +310,20 @@ const MainMenu = ({ viewOnly, set2DView, resetView, zoomView, canvas }: MainMenu
       case 'sun_beam_at_center':
         input = sun_beam_at_center;
         break;
+      case 'effect_house_size':
+        input = effect_house_size;
+        break;
+      case 'effect_house_orientation':
+        input = effect_house_orientation;
+        break;
+      case 'effect_wall_roof_insulation':
+        input = effect_wall_roof_insulation;
+        break;
       case 'effect_roof_color':
         input = effect_roof_color;
+        break;
+      case 'effect_window_shgc':
+        input = effect_window_shgc;
         break;
       case 'passive_cooling_trees':
         input = passive_cooling_trees;
@@ -2066,8 +2082,20 @@ const MainMenu = ({ viewOnly, set2DView, resetView, zoomView, canvas }: MainMenu
         </SubMenu>
         {/* building science */}
         <SubMenu key={'building-science'} title={i18n.t('menu.buildingScienceSubMenu', lang)}>
+          <Menu.Item key="effect_house_size" onClick={loadFile}>
+            {i18n.t('menu.buildingScienceTutorials.EffectOfSizeOnBuildingEnergy', lang)}
+          </Menu.Item>
+          <Menu.Item key="effect_house_orientation" onClick={loadFile}>
+            {i18n.t('menu.buildingScienceTutorials.EffectOfOrientationOnBuildingEnergy', lang)}
+          </Menu.Item>
+          <Menu.Item key="effect_wall_roof_insulation" onClick={loadFile}>
+            {i18n.t('menu.buildingScienceTutorials.EffectOfInsulationOnBuildingEnergy', lang)}
+          </Menu.Item>
           <Menu.Item key="effect_roof_color" onClick={loadFile}>
             {i18n.t('menu.buildingScienceTutorials.EffectOfRoofColorOnBuildingEnergy', lang)}
+          </Menu.Item>
+          <Menu.Item key="effect_window_shgc" onClick={loadFile}>
+            {i18n.t('menu.buildingScienceTutorials.EffectOfWindowSHGCOnBuildingEnergy', lang)}
           </Menu.Item>
           <Menu.Item key="passive_cooling_trees" onClick={loadFile}>
             {i18n.t('menu.buildingScienceTutorials.PassiveCoolingWithTrees', lang)}

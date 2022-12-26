@@ -118,7 +118,7 @@ const YearlyBuildingEnergyPanel = ({ city }: YearlyBuildingEnergyPanelProps) => 
       let heater = 0;
       let ac = 0;
       for (const e of elements) {
-        if (Util.isThermal(e)) {
+        if (Util.onBuildingEnvelope(e)) {
           const heat = monthlyHeatingArrayMap.get(e.id);
           if (heat) heater -= heat[i];
           const cool = monthlyCoolingArrayMap.get(e.id);
