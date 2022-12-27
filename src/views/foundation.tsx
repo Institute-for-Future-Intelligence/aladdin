@@ -74,6 +74,7 @@ import SolarPanelOnRoof from './solarPanel/solarPanelOnRoof';
 import { useHandleSize } from './wall/hooks';
 import { usePrimitiveStore } from 'src/stores/commonPrimitive';
 import { InnerCommonState } from 'src/stores/InnerCommonState';
+import { RoofModel } from 'src/models/RoofModel';
 
 const Foundation = ({
   id,
@@ -334,12 +335,22 @@ const Foundation = ({
 
   const setSingleFoundationBuildingResizer = () => {
     let maxHeight = 3;
+    const map = new Map<string, number>(); // roofId -> maxWallHeight
+    // we can use one loop to get maxWallHeight, because roof is always after wall
     for (const elem of useStore.getState().elements) {
-      if (
-        (elem.type === ObjectType.Wall || elem.type === ObjectType.Roof) &&
-        elem.foundationId === foundationModel.id
-      ) {
-        maxHeight = Math.max(maxHeight, elem.lz);
+      if (elem.foundationId === foundationModel.id) {
+        if (elem.type === ObjectType.Wall) {
+          const wall = elem as WallModel;
+          maxHeight = Math.max(maxHeight, wall.lz);
+          if (wall.roofId) {
+            const maxWallHeight = map.get(wall.roofId) ?? 0;
+            if (maxWallHeight < wall.lz) {
+              map.set(wall.roofId, wall.lz);
+            }
+          }
+        } else if (elem.type === ObjectType.Roof) {
+          maxHeight = Math.max(maxHeight, (elem as RoofModel).rise + (map.get(elem.id) ?? 0));
+        }
       }
     }
     setBuildingResizerPosition([cx, cy, 0]);
@@ -350,13 +361,21 @@ const Foundation = ({
   const setGroupedFoundationBuildingResizer = () => {
     const bound = Util.calculatePolygonBounds(foundationVerticesRef.current);
     let maxHeight = 1;
+    const map = new Map<string, number>(); // roofId -> maxWallHeight
     for (const elem of useStore.getState().elements) {
-      if (
-        (elem.type === ObjectType.Wall || elem.type === ObjectType.Roof) &&
-        elem.foundationId &&
-        foundationGroupSetRef.current.has(elem.foundationId)
-      ) {
-        maxHeight = Math.max(maxHeight, elem.lz);
+      if (elem.foundationId && foundationGroupSetRef.current.has(elem.foundationId)) {
+        if (elem.type === ObjectType.Wall) {
+          const wall = elem as WallModel;
+          maxHeight = Math.max(maxHeight, wall.lz);
+          if (wall.roofId) {
+            const maxWallHeight = map.get(wall.roofId) ?? 0;
+            if (maxWallHeight < wall.lz) {
+              map.set(wall.roofId, wall.lz);
+            }
+          }
+        } else if (elem.type === ObjectType.Roof) {
+          maxHeight = Math.max(maxHeight, (elem as RoofModel).rise + (map.get(elem.id) ?? 0));
+        }
       }
     }
     setBuildingResizerPosition([bound.x + bound.width / 2, bound.y + bound.height / 2, 0]);

@@ -16,6 +16,7 @@ import Wireframe from './wireframe';
 import { UndoableMoveFoundationGroup } from 'src/undo/UndoableMove';
 import { UndoableResizeBuildingXY, UndoableResizeBuildingZ } from 'src/undo/UndoableResizeBuilding';
 import { useHandleSize } from 'src/views/wall/hooks';
+import { RoofModel } from 'src/models/RoofModel';
 
 interface BuildingResizerProps {
   foundationGroupSet: Set<string>;
@@ -424,7 +425,11 @@ const BuildingResizer = ({
     setCommonStore((state) => {
       for (const elem of state.elements) {
         if (elementHeightMapRef.current.has(elem.id)) {
-          elem.lz = height * elementHeightMapRef.current.get(elem.id)!;
+          if (elem.type === ObjectType.Wall) {
+            elem.lz = height * elementHeightMapRef.current.get(elem.id)!;
+          } else if (elem.type === ObjectType.Roof) {
+            (elem as RoofModel).rise = height * elementHeightMapRef.current.get(elem.id)!;
+          }
         }
       }
       state.updateElementOnRoofFlag = !state.updateElementOnRoofFlag;
@@ -503,15 +508,13 @@ const BuildingResizer = ({
     elementHeightMapRef.current.clear();
     elementOldHeightMapRef.current.clear();
     for (const elem of useStore.getState().elements) {
-      if (
-        (elem.type === ObjectType.Wall || elem.type === ObjectType.Roof) &&
-        elem.foundationId &&
-        foundationGroupSet.has(elem.foundationId)
-      ) {
-        const f = getElementById(elem.foundationId);
-        if (f) {
+      if (elem.foundationId && foundationGroupSet.has(elem.foundationId)) {
+        if (elem.type === ObjectType.Wall) {
           elementHeightMapRef.current.set(elem.id, elem.lz / height);
           elementOldHeightMapRef.current.set(elem.id, elem.lz);
+        } else if (elem.type === ObjectType.Roof) {
+          elementHeightMapRef.current.set(elem.id, (elem as RoofModel).rise / height);
+          elementOldHeightMapRef.current.set(elem.id, (elem as RoofModel).rise);
         }
       } else if (foundationGroupSet.has(elem.id)) {
         elementHeightMapRef.current.set(elem.id, elem.lz / height);
