@@ -7,7 +7,7 @@ import LineGraph from '../components/lineGraph';
 import styled from 'styled-components';
 import { useStore } from '../stores/common';
 import * as Selector from '../stores/selector';
-import { ChartType, DatumEntry, EnergyUsage, GraphDataType, ObjectType } from '../types';
+import { ChartType, DatumEntry, GraphDataType, ObjectType } from '../types';
 import moment from 'moment';
 import ReactDraggable, { DraggableEventHandler } from 'react-draggable';
 import { Button, Space } from 'antd';
@@ -17,9 +17,7 @@ import i18n from '../i18n/i18n';
 import { Rectangle } from '../models/Rectangle';
 import { FLOATING_WINDOW_OPACITY } from '../constants';
 import { usePrimitiveStore } from '../stores/commonPrimitive';
-import { Util } from '../Util';
-import { computeOutsideTemperature } from '../analysis/heatTools';
-import { FoundationModel } from '../models/FoundationModel';
+import { useDailyEnergy } from '../analysis/energyHooks';
 
 const Container = styled.div`
   position: fixed;
@@ -82,9 +80,6 @@ const DailyBuildingEnergyPanel = ({ city }: DailyBuildingEnergyPanelProps) => {
   const opacity = useStore(Selector.floatingWindowOpacity) ?? FLOATING_WINDOW_OPACITY;
   const setCommonStore = useStore(Selector.set);
   const getWeather = useStore(Selector.getWeather);
-  const getFoundation = useStore(Selector.getFoundation);
-  const getElementById = useStore(Selector.getElementById);
-  const elements = useStore.getState().elements;
   const now = new Date(useStore(Selector.world.date));
   const hourlyHeatExchangeArrayMap = usePrimitiveStore(Selector.hourlyHeatExchangeArrayMap);
   const hourlySolarHeatGainArrayMap = usePrimitiveStore(Selector.hourlySolarHeatGainArrayMap);
@@ -112,127 +107,14 @@ const DailyBuildingEnergyPanel = ({ city }: DailyBuildingEnergyPanelProps) => {
   const lang = { lng: language };
   const weather = getWeather(city ?? 'Boston MA, USA');
 
-  /*
-   If the lowest outside temperature is higher than the threshold, don't turn on the heater.
-   If the highest outside temperature is lower than the threshold, don't turn on the air conditioner.
-  */
-  const adjustEnergyUsage = (
-    outsideTemperatureRange: { high: number; low: number },
-    heatExchange: number,
-    setpoint: number,
-    threshold: number,
-  ) => {
-    if (
-      (heatExchange < 0 && outsideTemperatureRange.low >= setpoint - threshold) ||
-      (heatExchange > 0 && outsideTemperatureRange.high <= setpoint + threshold)
-    ) {
-      return 0;
-    }
-    // negative heat exchange goes to heater, positive heat exchange goes to air conditioner
-    return heatExchange;
-  };
+  const { sum, sumHeater, sumAc, dataLabels } = useDailyEnergy(
+    now,
+    weather,
+    hourlyHeatExchangeArrayMap,
+    hourlySolarHeatGainArrayMap,
+  );
 
   useEffect(() => {
-    // get the highest and lowest temperatures of the day from the weather data
-    const outsideTemperatureRange = computeOutsideTemperature(
-      now,
-      weather.lowestTemperatures,
-      weather.highestTemperatures,
-    );
-    const sum: DatumEntry[] = [];
-    let sumHeater = 0;
-    let sumAc = 0;
-    const dataLabels = [];
-    for (let i = 0; i < 24; i++) {
-      const datum: DatumEntry = {};
-      const energy = new Map<string, EnergyUsage>();
-      for (const e of elements) {
-        if (Util.onBuildingEnvelope(e)) {
-          const h = hourlyHeatExchangeArrayMap.get(e.id);
-          if (h) {
-            const f = getFoundation(e);
-            if (f) {
-              let energyUsage = energy.get(f.id);
-              if (energyUsage === undefined) {
-                energyUsage = { heater: 0, ac: 0, label: f.label } as EnergyUsage;
-                energy.set(f.id, energyUsage);
-                dataLabels.push(f.label);
-              }
-              if (h[i] < 0) {
-                energyUsage.heater += h[i];
-              } else {
-                energyUsage.ac += h[i];
-              }
-            }
-          }
-        }
-      }
-      // deal with the solar heat gain
-      for (const e of elements) {
-        if (e.type === ObjectType.Foundation) {
-          const h = hourlySolarHeatGainArrayMap.get(e.id);
-          const energyUsage = energy.get(e.id);
-          if (energyUsage && h) {
-            if (energyUsage.heater < 0) {
-              // It must be cold outside. Solar heat gain decreases heating burden in this case.
-              energyUsage.heater += h[i];
-            } else if (energyUsage.ac > 0) {
-              // It must be hot outside. Solar heat gain increases cooling burden in this case.
-              energyUsage.ac += h[i];
-            }
-          }
-        }
-      }
-      if (energy.size > 1) {
-        let index = 1;
-        for (const key of energy.keys()) {
-          datum['Hour'] = i;
-          const value = energy.get(key);
-          if (value) {
-            const elem = getElementById(key);
-            if (elem && elem.type === ObjectType.Foundation) {
-              const f = elem as FoundationModel;
-              const setpoint = f.hvacSystem?.thermostatSetpoint ?? 20;
-              const threshold = f.hvacSystem?.temperatureThreshold ?? 3;
-              const id = value.label ?? index;
-              const adjustedHeat = Math.abs(
-                adjustEnergyUsage(outsideTemperatureRange, value.heater, setpoint, threshold),
-              );
-              const adjustedAc = adjustEnergyUsage(outsideTemperatureRange, value.ac, setpoint, threshold);
-              datum['Heater ' + id] = adjustedHeat;
-              datum['AC ' + id] = adjustedAc;
-              datum['Net ' + id] = adjustedHeat + adjustedAc;
-              sumHeater += adjustedHeat;
-              sumAc += adjustedAc;
-            }
-          }
-          index++;
-        }
-      } else {
-        for (const key of energy.keys()) {
-          datum['Hour'] = i;
-          const value = energy.get(key);
-          if (value) {
-            const elem = getElementById(key);
-            if (elem && elem.type === ObjectType.Foundation) {
-              const f = elem as FoundationModel;
-              const setpoint = f.hvacSystem?.thermostatSetpoint ?? 20;
-              const threshold = f.hvacSystem?.temperatureThreshold ?? 3;
-              const adjustedHeat = Math.abs(
-                adjustEnergyUsage(outsideTemperatureRange, value.heater, setpoint, threshold),
-              );
-              const adjustedAc = adjustEnergyUsage(outsideTemperatureRange, value.ac, setpoint, threshold);
-              datum['Heater'] = adjustedHeat;
-              datum['AC'] = adjustedAc;
-              datum['Net'] = adjustedHeat + adjustedAc;
-              sumHeater += adjustedHeat;
-              sumAc += adjustedAc;
-            }
-          }
-        }
-      }
-      sum.push(datum);
-    }
     setData(sum);
     setHeaterSum(sumHeater);
     setAcSum(sumAc);
@@ -377,13 +259,13 @@ const DailyBuildingEnergyPanel = ({ city }: DailyBuildingEnergyPanelProps) => {
           />
           <Space style={{ alignSelf: 'center', direction: 'ltr' }}>
             <Space style={{ cursor: 'default' }}>
-              {i18n.t('buildingEnergyPanel.Heater', lang) + ': ' + heaterSum.toFixed(1)}
+              {i18n.t('buildingEnergyPanel.Heater', lang) + ': ' + heaterSum.toFixed(2)}
             </Space>
             <Space style={{ cursor: 'default' }}>
-              {i18n.t('buildingEnergyPanel.AC', lang) + ': ' + acSum.toFixed(1)}
+              {i18n.t('buildingEnergyPanel.AC', lang) + ': ' + acSum.toFixed(2)}
             </Space>
             <Space style={{ cursor: 'default' }}>
-              {i18n.t('buildingEnergyPanel.Net', lang) + ': ' + netSum.toFixed(1)}
+              {i18n.t('buildingEnergyPanel.Net', lang) + ': ' + netSum.toFixed(2)}
             </Space>
             <Button
               type="default"

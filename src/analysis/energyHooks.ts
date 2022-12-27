@@ -1,0 +1,131 @@
+/*
+ * @Copyright 2022. Institute for Future Intelligence, Inc.
+ */
+
+import { adjustEnergyUsage, computeOutsideTemperature } from './heatTools';
+import { DatumEntry, EnergyUsage, ObjectType } from '../types';
+import { Util } from '../Util';
+import { FoundationModel } from '../models/FoundationModel';
+import { useStore } from '../stores/common';
+import * as Selector from '../stores/selector';
+import { WeatherModel } from '../models/WeatherModel';
+import { useEffect, useRef } from 'react';
+
+export const useDailyEnergy = (
+  now: Date,
+  weather: WeatherModel,
+  hourlyHeatExchangeArrayMap: Map<string, number[]>,
+  hourlySolarHeatGainArrayMap: Map<string, number[]>,
+) => {
+  const elements = useStore.getState().elements;
+  const getFoundation = useStore(Selector.getFoundation);
+  const getElementById = useStore(Selector.getElementById);
+
+  const sum: DatumEntry[] = [];
+  const dataLabels: string[] = [];
+  const sumHeaterRef = useRef<number>(0);
+  const sumAcRef = useRef<number>(0);
+
+  useEffect(() => {
+    // get the highest and lowest temperatures of the day from the weather data
+    const outsideTemperatureRange = computeOutsideTemperature(
+      now,
+      weather.lowestTemperatures,
+      weather.highestTemperatures,
+    );
+    sumHeaterRef.current = 0;
+    sumAcRef.current = 0;
+    for (let i = 0; i < 24; i++) {
+      const datum: DatumEntry = {};
+      const energy = new Map<string, EnergyUsage>();
+      for (const e of elements) {
+        if (Util.onBuildingEnvelope(e)) {
+          const exchange = hourlyHeatExchangeArrayMap.get(e.id);
+          if (exchange) {
+            const f = getFoundation(e);
+            if (f) {
+              let energyUsage = energy.get(f.id);
+              if (!energyUsage) {
+                energyUsage = { heater: 0, ac: 0, label: f.label } as EnergyUsage;
+                energy.set(f.id, energyUsage);
+                dataLabels.push(f.label ?? '');
+              }
+              if (exchange[i] < 0) {
+                energyUsage.heater += exchange[i];
+              } else {
+                energyUsage.ac += exchange[i];
+              }
+            }
+          }
+        }
+      }
+      // deal with the solar heat gain
+      for (const e of elements) {
+        if (e.type === ObjectType.Foundation) {
+          const h = hourlySolarHeatGainArrayMap.get(e.id);
+          const energyUsage = energy.get(e.id);
+          if (energyUsage && h) {
+            if (energyUsage.heater < 0) {
+              // It must be cold outside. Solar heat gain decreases heating burden in this case.
+              energyUsage.heater += h[i];
+            } else if (energyUsage.ac > 0) {
+              // It must be hot outside. Solar heat gain increases cooling burden in this case.
+              energyUsage.ac += h[i];
+            }
+          }
+        }
+      }
+      if (energy.size > 1) {
+        let index = 1;
+        for (const key of energy.keys()) {
+          datum['Hour'] = i;
+          const value = energy.get(key);
+          if (value) {
+            const elem = getElementById(key);
+            if (elem && elem.type === ObjectType.Foundation) {
+              const f = elem as FoundationModel;
+              const setpoint = f.hvacSystem?.thermostatSetpoint ?? 20;
+              const threshold = f.hvacSystem?.temperatureThreshold ?? 3;
+              const id = value.label ?? index;
+              const adjustedHeat = Math.abs(
+                adjustEnergyUsage(outsideTemperatureRange, value.heater, setpoint, threshold),
+              );
+              const adjustedAc = adjustEnergyUsage(outsideTemperatureRange, value.ac, setpoint, threshold);
+              datum['Heater ' + id] = adjustedHeat;
+              datum['AC ' + id] = adjustedAc;
+              datum['Net ' + id] = adjustedHeat + adjustedAc;
+              sumHeaterRef.current += adjustedHeat;
+              sumAcRef.current += adjustedAc;
+            }
+          }
+          index++;
+        }
+      } else {
+        for (const key of energy.keys()) {
+          datum['Hour'] = i;
+          const value = energy.get(key);
+          if (value) {
+            const elem = getElementById(key);
+            if (elem && elem.type === ObjectType.Foundation) {
+              const f = elem as FoundationModel;
+              const setpoint = f.hvacSystem?.thermostatSetpoint ?? 20;
+              const threshold = f.hvacSystem?.temperatureThreshold ?? 3;
+              const adjustedHeat = Math.abs(
+                adjustEnergyUsage(outsideTemperatureRange, value.heater, setpoint, threshold),
+              );
+              const adjustedAc = adjustEnergyUsage(outsideTemperatureRange, value.ac, setpoint, threshold);
+              datum['Heater'] = adjustedHeat;
+              datum['AC'] = adjustedAc;
+              datum['Net'] = adjustedHeat + adjustedAc;
+              sumHeaterRef.current += adjustedHeat;
+              sumAcRef.current += adjustedAc;
+            }
+          }
+        }
+      }
+      sum.push(datum);
+    }
+  }, [hourlyHeatExchangeArrayMap, hourlySolarHeatGainArrayMap]);
+
+  return { sum, sumHeater: sumHeaterRef.current, sumAc: sumAcRef.current, dataLabels };
+};

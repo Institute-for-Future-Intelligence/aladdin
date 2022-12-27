@@ -7,6 +7,26 @@ import { Util } from '../Util';
 import { SunMinutes } from './SunMinutes';
 import { DiurnalTemperatureModel } from '../types';
 
+/*
+ If the lowest outside temperature is higher than the threshold, don't turn on the heater.
+ If the highest outside temperature is lower than the threshold, don't turn on the air conditioner.
+*/
+export const adjustEnergyUsage = (
+  outsideTemperatureRange: { high: number; low: number },
+  heatExchange: number,
+  setpoint: number,
+  threshold: number,
+) => {
+  if (
+    (heatExchange < 0 && outsideTemperatureRange.low >= setpoint - threshold) ||
+    (heatExchange > 0 && outsideTemperatureRange.high <= setpoint + threshold)
+  ) {
+    return 0;
+  }
+  // negative heat exchange goes to heater, positive heat exchange goes to air conditioner
+  return heatExchange;
+};
+
 // interpolate between the lowest and highest temperatures of the day
 // to get the temperature of a given minute in the day
 export const getOutsideTemperatureAtMinute = (

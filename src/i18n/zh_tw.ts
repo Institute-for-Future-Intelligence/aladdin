@@ -337,7 +337,7 @@ export const i18n_zh_tw = {
         EffectOfInsulationOnBuildingEnergy: '房屋隔熱對能耗的影響',
         EffectOfRoofColorOnBuildingEnergy: '屋頂顏色對建築物能耗的影響',
         EffectOfWindowSHGCOnBuildingEnergy: '窗戶太陽能輸入對房屋能耗的影響',
-        PassiveCoolingWithTrees: '樹蔭節能',
+        EffectOfTreesOnBuildingEnergy: '樹蔭對房屋能耗的影響',
       },
 
       buildingDesignSubMenu: '建築設計',

@@ -198,6 +198,20 @@ const ThermalSimulation = ({ city }: ThermalSimulationProps) => {
           monthlyHeatExchangeArrayMapRef.current.set(e.id, a);
         }
       }
+      if (e.type === ObjectType.Foundation) {
+        const monthlySolarHeatGain = monthlySolarHeatGainArrayMapRef.current.get(e.id);
+        if (monthlySolarHeatGain && monthlySolarHeatGain.length === daysPerYear) {
+          for (let i = 0; i < monthlySolarHeatGain.length; i++) {
+            monthlySolarHeatGain[i].fill(0);
+          }
+        } else {
+          const a: number[][] = [];
+          for (let i = 0; i < daysPerYear; i++) {
+            a.push(new Array(24).fill(0));
+          }
+          monthlySolarHeatGainArrayMapRef.current.set(e.id, a);
+        }
+      }
     }
   };
 
@@ -453,7 +467,7 @@ const ThermalSimulation = ({ city }: ThermalSimulationProps) => {
           const monthlyGain = monthlySolarHeatGainArrayMapRef.current.get(e.id);
           if (monthlyGain) {
             monthlyGain[sampledDayRef.current] = [...hourlyGain];
-            setMonthlySolarHeatGainArray(e.id, monthlyGain);
+            setMonthlySolarHeatGainArray(e.id, [...monthlyGain]);
           }
         }
       }

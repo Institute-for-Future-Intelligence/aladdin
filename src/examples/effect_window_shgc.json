@@ -1,7 +1,7 @@
 {
-  "docid": "eogpjSA4vMsyqipXvoWDxD",
-  "time": "12/25/2022 06:00 pm",
-  "timestamp": 1672009225054,
+  "docid": "orUyEHDNDPkHBmdr4LxkJn",
+  "time": "12/27/2022 06:38 pm",
+  "timestamp": 1672184287535,
   "userid": "QWecNcxhyvP6j6sBN11hBsfZDau1",
   "owner": null,
   "email": null,
@@ -109,7 +109,7 @@
       "lx": 12,
       "ly": 0.2,
       "lz": 4,
-      "rValue": 0.35,
+      "rValue": 1.7611028730632272,
       "volumetricHeatCapacity": 0.1,
       "fill": "Full",
       "unfilledHeight": 0.5,
@@ -163,7 +163,7 @@
       "lx": 10,
       "ly": 0.2,
       "lz": 4,
-      "rValue": 0.35,
+      "rValue": 1.7611028730632272,
       "volumetricHeatCapacity": 0.1,
       "fill": "Full",
       "unfilledHeight": 0.5,
@@ -221,7 +221,7 @@
       "lx": 10,
       "ly": 0.2,
       "lz": 4,
-      "rValue": 0.35,
+      "rValue": 1.7611028730632272,
       "volumetricHeatCapacity": 0.1,
       "fill": "Full",
       "unfilledHeight": 0.5,
@@ -279,7 +279,7 @@
       "lx": 12,
       "ly": 0.2,
       "lz": 4,
-      "rValue": 0.35,
+      "rValue": 1.7611028730632272,
       "volumetricHeatCapacity": 0.1,
       "fill": "Full",
       "unfilledHeight": 0.5,
@@ -365,7 +365,8 @@
         0,
         1
       ],
-      "selected": false
+      "selected": false,
+      "rValue": 2.8177645969011635
     },
     {
       "type": "Window",
@@ -458,7 +459,7 @@
       "lx": 12,
       "ly": 0.2,
       "lz": 4,
-      "rValue": 0.35,
+      "rValue": 1.7611028730632272,
       "volumetricHeatCapacity": 0.1,
       "fill": "Full",
       "unfilledHeight": 0.5,
@@ -512,7 +513,7 @@
       "lx": 10,
       "ly": 0.2,
       "lz": 4,
-      "rValue": 0.35,
+      "rValue": 1.7611028730632272,
       "volumetricHeatCapacity": 0.1,
       "fill": "Full",
       "unfilledHeight": 0.5,
@@ -570,7 +571,7 @@
       "lx": 10,
       "ly": 0.2,
       "lz": 4,
-      "rValue": 0.35,
+      "rValue": 1.7611028730632272,
       "volumetricHeatCapacity": 0.1,
       "fill": "Full",
       "unfilledHeight": 0.5,
@@ -628,7 +629,7 @@
       "lx": 12,
       "ly": 0.2,
       "lz": 4,
-      "rValue": 0.35,
+      "rValue": 1.7611028730632272,
       "volumetricHeatCapacity": 0.1,
       "fill": "Full",
       "unfilledHeight": 0.5,
@@ -794,7 +795,8 @@
         0,
         1
       ],
-      "selected": false
+      "selected": false,
+      "rValue": 2.8177645969011635
     },
     {
       "type": "Foundation",
@@ -858,8 +860,8 @@
     "dailyHeliostatYieldPanelX": 0,
     "showDailyParabolicDishYieldPanel": false,
     "cameraPosition": [
-      -22.88251535105606,
-      -27.653892211286205,
+      -22.88251535105605,
+      -27.653892211286195,
       3.715389359808943
     ],
     "showYearlyHeliostatYieldPanel": false,

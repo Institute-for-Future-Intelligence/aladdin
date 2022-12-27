@@ -339,7 +339,7 @@ export const i18n_en = {
         EffectOfInsulationOnBuildingEnergy: 'Effect of Insulation on Building Energy',
         EffectOfRoofColorOnBuildingEnergy: 'Effect of Roof Color on Building Energy',
         EffectOfWindowSHGCOnBuildingEnergy: 'Effect of Window Solar Heat Gain on Building Energy',
-        PassiveCoolingWithTrees: 'Passive Cooling with Trees',
+        EffectOfTreesOnBuildingEnergy: 'Effect of Trees on Building Energy',
       },
 
       buildingDesignSubMenu: 'Building Design',

@@ -97,7 +97,7 @@ import effect_house_orientation from './examples/effect_house_orientation.json';
 import effect_wall_roof_insulation from './examples/effect_wall_roof_insulation.json';
 import effect_roof_color from './examples/effect_roof_color.json';
 import effect_window_shgc from './examples/effect_window_shgc.json';
-import passive_cooling_trees from './examples/passive_cooling_trees.json';
+import effect_trees from './examples/effect_trees.json';
 
 import zhCN from 'antd/lib/locale/zh_CN';
 import zhTW from 'antd/lib/locale/zh_TW';
@@ -325,8 +325,8 @@ const MainMenu = ({ viewOnly, set2DView, resetView, zoomView, canvas }: MainMenu
       case 'effect_window_shgc':
         input = effect_window_shgc;
         break;
-      case 'passive_cooling_trees':
-        input = passive_cooling_trees;
+      case 'effect_trees':
+        input = effect_trees;
         break;
       case 'office_building_01':
         input = office_building_01;
@@ -2097,8 +2097,8 @@ const MainMenu = ({ viewOnly, set2DView, resetView, zoomView, canvas }: MainMenu
           <Menu.Item key="effect_window_shgc" onClick={loadFile}>
             {i18n.t('menu.buildingScienceTutorials.EffectOfWindowSHGCOnBuildingEnergy', lang)}
           </Menu.Item>
-          <Menu.Item key="passive_cooling_trees" onClick={loadFile}>
-            {i18n.t('menu.buildingScienceTutorials.PassiveCoolingWithTrees', lang)}
+          <Menu.Item key="effect_trees" onClick={loadFile}>
+            {i18n.t('menu.buildingScienceTutorials.EffectOfTreesOnBuildingEnergy', lang)}
           </Menu.Item>
         </SubMenu>
         {/* building design */}

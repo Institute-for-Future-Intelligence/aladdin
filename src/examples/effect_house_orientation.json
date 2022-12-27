@@ -1,7 +1,7 @@
 {
-  "docid": "7CGBbe7EEZCWoEEBMPcwbE",
-  "time": "12/25/2022 06:13 pm",
-  "timestamp": 1672010037900,
+  "docid": "wbggEtghC7qTJm5C151XYH",
+  "time": "12/27/2022 06:29 pm",
+  "timestamp": 1672183765712,
   "userid": "QWecNcxhyvP6j6sBN11hBsfZDau1",
   "owner": null,
   "email": null,
@@ -92,7 +92,8 @@
       "solarAbsorberPipe": {},
       "solarPowerTower": {},
       "hvacSystem": {
-        "thermostatSetpoint": 20
+        "thermostatSetpoint": 20,
+        "temperatureThreshold": 3
       },
       "id": "iFATUUjMA7c8wHKwioiCvi",
       "selected": false,
@@ -109,7 +110,7 @@
       "lx": 12,
       "ly": 0.2,
       "lz": 4,
-      "rValue": 0.35,
+      "rValue": 1.7611028730632272,
       "volumetricHeatCapacity": 0.1,
       "fill": "Full",
       "unfilledHeight": 0.5,
@@ -163,7 +164,7 @@
       "lx": 10,
       "ly": 0.2,
       "lz": 4,
-      "rValue": 0.35,
+      "rValue": 1.7611028730632272,
       "volumetricHeatCapacity": 0.1,
       "fill": "Full",
       "unfilledHeight": 0.5,
@@ -221,7 +222,7 @@
       "lx": 10,
       "ly": 0.2,
       "lz": 4,
-      "rValue": 0.35,
+      "rValue": 1.7611028730632272,
       "volumetricHeatCapacity": 0.1,
       "fill": "Full",
       "unfilledHeight": 0.5,
@@ -279,7 +280,7 @@
       "lx": 12,
       "ly": 0.2,
       "lz": 4,
-      "rValue": 0.35,
+      "rValue": 1.7611028730632272,
       "volumetricHeatCapacity": 0.1,
       "fill": "Full",
       "unfilledHeight": 0.5,
@@ -365,7 +366,8 @@
         0,
         1
       ],
-      "selected": false
+      "selected": false,
+      "rValue": 2.1133234476758727
     },
     {
       "type": "Window",
@@ -458,7 +460,7 @@
       "lx": 12,
       "ly": 0.2,
       "lz": 4,
-      "rValue": 0.35,
+      "rValue": 1.7611028730632272,
       "volumetricHeatCapacity": 0.1,
       "fill": "Full",
       "unfilledHeight": 0.5,
@@ -512,7 +514,7 @@
       "lx": 10,
       "ly": 0.2,
       "lz": 4,
-      "rValue": 0.35,
+      "rValue": 1.7611028730632272,
       "volumetricHeatCapacity": 0.1,
       "fill": "Full",
       "unfilledHeight": 0.5,
@@ -570,7 +572,7 @@
       "lx": 10,
       "ly": 0.2,
       "lz": 4,
-      "rValue": 0.35,
+      "rValue": 1.7611028730632272,
       "volumetricHeatCapacity": 0.1,
       "fill": "Full",
       "unfilledHeight": 0.5,
@@ -628,7 +630,7 @@
       "lx": 12,
       "ly": 0.2,
       "lz": 4,
-      "rValue": 0.35,
+      "rValue": 1.7611028730632272,
       "volumetricHeatCapacity": 0.1,
       "fill": "Full",
       "unfilledHeight": 0.5,
@@ -794,7 +796,8 @@
         0,
         1
       ],
-      "selected": false
+      "selected": false,
+      "rValue": 2.1133234476758727
     },
     {
       "type": "Foundation",
@@ -819,7 +822,8 @@
       "solarAbsorberPipe": {},
       "solarPowerTower": {},
       "hvacSystem": {
-        "thermostatSetpoint": 20
+        "thermostatSetpoint": 20,
+        "temperatureThreshold": 3
       },
       "labelHeight": 8.5,
       "labelSize": 0.8,
@@ -858,9 +862,9 @@
     "dailyHeliostatYieldPanelX": 0,
     "showDailyParabolicDishYieldPanel": false,
     "cameraPosition": [
-      4.90851621250845,
-      -34.090138313324196,
-      5.427606986670456
+      3.840296491466275,
+      -33.8951563967745,
+      5.42760698667046
     ],
     "showYearlyHeliostatYieldPanel": false,
     "orthographic": false,
@@ -943,6 +947,12 @@
       "y": 0,
       "width": 600,
       "height": 400
+    },
+    "weatherPanelRect": {
+      "x": 0,
+      "y": 0,
+      "width": 500,
+      "height": 500
     }
   },
   "evolutionMethod": 1,
