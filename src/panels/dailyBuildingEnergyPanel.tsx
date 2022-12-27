@@ -7,7 +7,7 @@ import LineGraph from '../components/lineGraph';
 import styled from 'styled-components';
 import { useStore } from '../stores/common';
 import * as Selector from '../stores/selector';
-import { ChartType, DatumEntry, GraphDataType, ObjectType } from '../types';
+import { ChartType, DatumEntry, EnergyUsage, GraphDataType, ObjectType } from '../types';
 import moment from 'moment';
 import ReactDraggable, { DraggableEventHandler } from 'react-draggable';
 import { Button, Space } from 'antd';
@@ -74,12 +74,6 @@ const Header = styled.div`
 
 export interface DailyBuildingEnergyPanelProps {
   city: string | null;
-}
-
-interface EnergyUsage {
-  heater: number;
-  ac: number;
-  label?: string;
 }
 
 const DailyBuildingEnergyPanel = ({ city }: DailyBuildingEnergyPanelProps) => {

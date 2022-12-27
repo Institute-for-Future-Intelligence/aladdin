@@ -9,22 +9,19 @@ export interface PrimitiveStoreState {
   // store the calculated hourly heat exchange result between inside and outside through an element of a building
   hourlyHeatExchangeArrayMap: Map<string, number[]>;
   setHourlyHeatExchangeArray: (id: string, data: number[]) => void;
-  getHourlyHeatExchangeArray: (id: string) => number[] | undefined;
   clearHourlyHeatExchangeArrayMap: () => void;
 
   // store the calculated results for hourly solar heat gains of a building through windows
   hourlySolarHeatGainArrayMap: Map<string, number[]>;
   setHourlySolarHeatGainArray: (id: string, data: number[]) => void;
-  getHourlySolarHeatGainArray: (id: string) => number[] | undefined;
   clearHourlySolarHeatGainArrayMap: () => void;
 
-  // store the calculated daily heating/cooling results of a building for sampled months
-  monthlyHeatingArrayMap: Map<string, number[]>;
-  setMonthlyHeatingArray: (id: string, data: number[]) => void;
-  getMonthlyHeatingArray: (id: string) => number[] | undefined;
-  monthlyCoolingArrayMap: Map<string, number[]>;
-  setMonthlyCoolingArray: (id: string, data: number[]) => void;
-  getMonthlyCoolingArray: (id: string) => number[] | undefined;
+  // store the calculated hourly heat exchange results of a building for sampled days throughout a year
+  // 2D array: first is the month of the year, second is the hour of the day
+  monthlyHeatExchangeArrayMap: Map<string, number[][]>;
+  setMonthlyHeatExchangeArray: (id: string, data: number[][]) => void;
+  monthlySolarHeatGainArrayMap: Map<string, number[][]>;
+  setMonthlySolarHeatGainArray: (id: string, data: number[][]) => void;
   clearMonthlyEnergyArrayMap: () => void;
 }
 
@@ -40,9 +37,6 @@ export const usePrimitiveStore = create<PrimitiveStoreState>((set, get) => {
         state.hourlyHeatExchangeArrayMap = new Map(map);
       });
     },
-    getHourlyHeatExchangeArray(id) {
-      return get().hourlyHeatExchangeArrayMap.get(id);
-    },
     clearHourlyHeatExchangeArrayMap() {
       set((state) => {
         state.hourlyHeatExchangeArrayMap.clear();
@@ -57,43 +51,34 @@ export const usePrimitiveStore = create<PrimitiveStoreState>((set, get) => {
         state.hourlySolarHeatGainArrayMap = new Map(map);
       });
     },
-    getHourlySolarHeatGainArray(id) {
-      return get().hourlySolarHeatGainArrayMap.get(id);
-    },
     clearHourlySolarHeatGainArrayMap() {
       set((state) => {
         state.hourlySolarHeatGainArrayMap.clear();
       });
     },
 
-    monthlyHeatingArrayMap: new Map<string, number[]>(),
-    setMonthlyHeatingArray(id, data) {
-      const map = get().monthlyHeatingArrayMap;
+    monthlyHeatExchangeArrayMap: new Map<string, number[][]>(),
+    setMonthlyHeatExchangeArray(id, data) {
+      const map = get().monthlyHeatExchangeArrayMap;
       map.set(id, data);
       set((state) => {
-        state.monthlyHeatingArrayMap = new Map(map);
+        state.monthlyHeatExchangeArrayMap = new Map(map);
       });
-    },
-    getMonthlyHeatingArray(id) {
-      return get().monthlyHeatingArrayMap.get(id);
     },
 
-    monthlyCoolingArrayMap: new Map<string, number[]>(),
-    setMonthlyCoolingArray(id, data) {
-      const map = get().monthlyCoolingArrayMap;
+    monthlySolarHeatGainArrayMap: new Map<string, number[][]>(),
+    setMonthlySolarHeatGainArray(id, data) {
+      const map = get().monthlySolarHeatGainArrayMap;
       map.set(id, data);
       set((state) => {
-        state.monthlyCoolingArrayMap = new Map(map);
+        state.monthlySolarHeatGainArrayMap = new Map(map);
       });
-    },
-    getMonthlyCoolingArray(id) {
-      return get().monthlyCoolingArrayMap.get(id);
     },
 
     clearMonthlyEnergyArrayMap() {
       set((state) => {
-        state.monthlyHeatingArrayMap.clear();
-        state.monthlyCoolingArrayMap.clear();
+        state.monthlyHeatExchangeArrayMap.clear();
+        state.monthlySolarHeatGainArrayMap.clear();
       });
     },
   };

@@ -7,7 +7,7 @@ import LineGraph from '../components/lineGraph';
 import styled from 'styled-components';
 import { useStore } from '../stores/common';
 import * as Selector from '../stores/selector';
-import { ChartType, DatumEntry, GraphDataType, ObjectType } from '../types';
+import { ChartType, DatumEntry, EnergyUsage, GraphDataType, ObjectType } from '../types';
 import { FLOATING_WINDOW_OPACITY, MONTHS } from '../constants';
 import ReactDraggable, { DraggableEventHandler } from 'react-draggable';
 import { Button, Space } from 'antd';
@@ -80,11 +80,11 @@ const YearlyBuildingEnergyPanel = ({ city }: YearlyBuildingEnergyPanelProps) => 
   const opacity = useStore(Selector.floatingWindowOpacity) ?? FLOATING_WINDOW_OPACITY;
   const setCommonStore = useStore(Selector.set);
   const elements = useStore.getState().elements;
+  const getFoundation = useStore(Selector.getFoundation);
   const now = new Date(useStore(Selector.world.date));
   const panelRect = useStore(Selector.viewState.yearlyBuildingEnergyPanelRect);
   const countElementsByType = useStore(Selector.countElementsByType);
-  const monthlyHeatingArrayMap = usePrimitiveStore(Selector.monthlyHeatingArrayMap);
-  const monthlyCoolingArrayMap = usePrimitiveStore(Selector.monthlyCoolingArrayMap);
+  const monthlyHeatExchangeArrayMap = usePrimitiveStore(Selector.monthlyHeatExchangeArrayMap);
 
   const wrapperRef = useRef<HTMLDivElement | null>(null);
   const resizeObserverRef = useRef<ResizeObserver>();
@@ -113,18 +113,36 @@ const YearlyBuildingEnergyPanel = ({ city }: YearlyBuildingEnergyPanelProps) => 
     const sum: DatumEntry[] = [];
     let sumHeater = 0;
     let sumAc = 0;
+    const dataLabels = [];
     for (let i = 0; i < daysPerYear; i++) {
       const datum: DatumEntry = {};
+      const energy = new Map<string, EnergyUsage>();
       let heater = 0;
       let ac = 0;
       for (const e of elements) {
         if (Util.onBuildingEnvelope(e)) {
-          const heat = monthlyHeatingArrayMap.get(e.id);
-          if (heat) heater -= heat[i];
-          const cool = monthlyCoolingArrayMap.get(e.id);
-          if (cool) ac += cool[i];
+          const exchange = monthlyHeatExchangeArrayMap.get(e.id);
+          if (exchange) {
+            const f = getFoundation(e);
+            if (f) {
+              let energyUsage = energy.get(f.id);
+              if (energyUsage === undefined) {
+                energyUsage = { heater: 0, ac: 0, label: f.label } as EnergyUsage;
+                energy.set(f.id, energyUsage);
+                dataLabels.push(f.label);
+              }
+              for (let j = 0; j < exchange[i].length; j++) {
+                if (exchange[i][j] < 0) {
+                  energyUsage.heater += exchange[i][j];
+                } else {
+                  energyUsage.ac += exchange[i][j];
+                }
+              }
+            }
+          }
         }
       }
+      console.log(i, energy);
       datum['Month'] = MONTHS[i * monthInterval];
       datum['Heater'] = heater;
       datum['AC'] = ac;
@@ -137,7 +155,7 @@ const YearlyBuildingEnergyPanel = ({ city }: YearlyBuildingEnergyPanelProps) => 
     setHeaterSum(sumHeater);
     setAcSum(sumAc);
     setNetSum(sumHeater + sumAc);
-  }, [monthlyHeatingArrayMap, daysPerYear]);
+  }, [monthlyHeatExchangeArrayMap, daysPerYear]);
 
   useEffect(() => {
     setCurPosition({

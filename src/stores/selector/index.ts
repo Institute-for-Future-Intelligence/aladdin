@@ -21,29 +21,21 @@ export const hourlyHeatExchangeArrayMap = (state: PrimitiveStoreState) => state.
 
 export const setHourlyHeatExchangeArray = (state: PrimitiveStoreState) => state.setHourlyHeatExchangeArray;
 
-export const getHourlyHeatExchangeArray = (state: PrimitiveStoreState) => state.getHourlyHeatExchangeArray;
-
 export const clearHourlyHeatExchangeArrayMap = (state: PrimitiveStoreState) => state.clearHourlyHeatExchangeArrayMap;
 
 export const hourlySolarHeatGainArrayMap = (state: PrimitiveStoreState) => state.hourlySolarHeatGainArrayMap;
 
 export const setHourlySolarHeatGainArray = (state: PrimitiveStoreState) => state.setHourlySolarHeatGainArray;
 
-export const getHourlySolarHeatGainArray = (state: PrimitiveStoreState) => state.getHourlySolarHeatGainArray;
-
 export const clearHourlySolarHeatGainArrayMap = (state: PrimitiveStoreState) => state.clearHourlySolarHeatGainArrayMap;
 
-export const monthlyHeatingArrayMap = (state: PrimitiveStoreState) => state.monthlyHeatingArrayMap;
+export const monthlyHeatExchangeArrayMap = (state: PrimitiveStoreState) => state.monthlyHeatExchangeArrayMap;
 
-export const setMonthlyHeatingArray = (state: PrimitiveStoreState) => state.setMonthlyHeatingArray;
+export const setMonthlyHeatExchangeArray = (state: PrimitiveStoreState) => state.setMonthlyHeatExchangeArray;
 
-export const getMonthlyHeatingArray = (state: PrimitiveStoreState) => state.getMonthlyHeatingArray;
+export const monthlySolarHeatGainArrayMap = (state: PrimitiveStoreState) => state.monthlySolarHeatGainArrayMap;
 
-export const monthlyCoolingArrayMap = (state: PrimitiveStoreState) => state.monthlyCoolingArrayMap;
-
-export const setMonthlyCoolingArray = (state: PrimitiveStoreState) => state.setMonthlyCoolingArray;
-
-export const getMonthlyCoolingArray = (state: PrimitiveStoreState) => state.getMonthlyCoolingArray;
+export const setMonthlySolarHeatGainArray = (state: PrimitiveStoreState) => state.setMonthlySolarHeatGainArray;
 
 export const clearMonthlyEnergyArrayMap = (state: PrimitiveStoreState) => state.clearMonthlyEnergyArrayMap;
 

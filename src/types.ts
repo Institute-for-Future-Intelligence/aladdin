@@ -134,6 +134,12 @@ export interface DatumEntry {
   [key: string]: number | undefined | string;
 }
 
+export interface EnergyUsage {
+  heater: number;
+  ac: number;
+  label?: string;
+}
+
 export enum ChartType {
   Line = 1,
   Area = 2,

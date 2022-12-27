@@ -56,8 +56,8 @@ const ThermalSimulation = ({ city }: ThermalSimulationProps) => {
   const highestTemperatureTimeInMinutes = useStore(Selector.world.highestTemperatureTimeInMinutes) ?? 900;
   const setHourlyHeatExchangeArray = usePrimitiveStore(Selector.setHourlyHeatExchangeArray);
   const setHourlySolarHeatGainArray = usePrimitiveStore(Selector.setHourlySolarHeatGainArray);
-  const setMonthlyHeatingArray = usePrimitiveStore(Selector.setMonthlyHeatingArray);
-  const setMonthlyCoolingArray = usePrimitiveStore(Selector.setMonthlyCoolingArray);
+  const setMonthlyHeatExchangeArray = usePrimitiveStore(Selector.setMonthlyHeatExchangeArray);
+  const setMonthlySolarHeatGainArray = usePrimitiveStore(Selector.setMonthlySolarHeatGainArray);
   const showDailyBuildingEnergyPanel = useStore(Selector.viewState.showDailyBuildingEnergyPanel);
 
   const requestRef = useRef<number>(0);
@@ -71,8 +71,8 @@ const ThermalSimulation = ({ city }: ThermalSimulationProps) => {
   const currentOutsideTemperatureRef = useRef<number>(20);
   const hourlyHeatExchangeArrayMapRef = useRef<Map<string, number[]>>(new Map<string, number[]>());
   const hourlySolarHeatGainArrayMapRef = useRef<Map<string, number[]>>(new Map<string, number[]>());
-  const monthlyHeatingArrayMapRef = useRef<Map<string, number[]>>(new Map<string, number[]>());
-  const monthlyCoolingArrayMapRef = useRef<Map<string, number[]>>(new Map<string, number[]>());
+  const monthlyHeatExchangeArrayMapRef = useRef<Map<string, number[][]>>(new Map<string, number[][]>());
+  const monthlySolarHeatGainArrayMapRef = useRef<Map<string, number[][]>>(new Map<string, number[][]>());
   const objectsRef = useRef<Object3D[]>([]); // reuse array in intersection detection
   const intersectionsRef = useRef<Intersection[]>([]); // reuse array in intersection detection
   const sunDirectionRef = useRef<Vector3>();
@@ -185,17 +185,17 @@ const ThermalSimulation = ({ city }: ThermalSimulationProps) => {
   const resetMonthlyEnergyMap = () => {
     for (const e of elements) {
       if (Util.onBuildingEnvelope(e)) {
-        const monthlyHeating = monthlyHeatingArrayMapRef.current.get(e.id);
+        const monthlyHeating = monthlyHeatExchangeArrayMapRef.current.get(e.id);
         if (monthlyHeating && monthlyHeating.length === daysPerYear) {
-          monthlyHeating.fill(0);
+          for (let i = 0; i < monthlyHeating.length; i++) {
+            monthlyHeating[i].fill(0);
+          }
         } else {
-          monthlyHeatingArrayMapRef.current.set(e.id, new Array(daysPerYear).fill(0));
-        }
-        const monthlyCooling = monthlyCoolingArrayMapRef.current.get(e.id);
-        if (monthlyCooling && monthlyCooling.length === daysPerYear) {
-          monthlyCooling.fill(0);
-        } else {
-          monthlyCoolingArrayMapRef.current.set(e.id, new Array(daysPerYear).fill(0));
+          const a: number[][] = [];
+          for (let i = 0; i < daysPerYear; i++) {
+            a.push(new Array(24).fill(0));
+          }
+          monthlyHeatExchangeArrayMapRef.current.set(e.id, a);
         }
       }
     }
@@ -437,27 +437,24 @@ const ThermalSimulation = ({ city }: ThermalSimulationProps) => {
   const finishMonthly = () => {
     for (const e of elements) {
       if (Util.onBuildingEnvelope(e)) {
-        const exchange = hourlyHeatExchangeArrayMapRef.current.get(e.id);
-        if (exchange) {
-          const heating = monthlyHeatingArrayMapRef.current.get(e.id);
-          const cooling = monthlyCoolingArrayMapRef.current.get(e.id);
-          if (heating && cooling) {
-            for (const e of exchange) {
-              if (e < 0) {
-                heating[sampledDayRef.current] += e;
-              } else {
-                cooling[sampledDayRef.current] += e;
-              }
-            }
-            setMonthlyHeatingArray(e.id, [...heating]);
-            setMonthlyCoolingArray(e.id, [...cooling]);
+        const hourlyExchange = hourlyHeatExchangeArrayMapRef.current.get(e.id);
+        if (hourlyExchange) {
+          const monthlyExchange = monthlyHeatExchangeArrayMapRef.current.get(e.id);
+          if (monthlyExchange) {
+            monthlyExchange[sampledDayRef.current] = [...hourlyExchange];
+            setMonthlyHeatExchangeArray(e.id, monthlyExchange);
           }
         }
       }
       // summed from the solar heat gains through all windows on a foundation
       if (e.type === ObjectType.Foundation) {
-        const gain = hourlySolarHeatGainArrayMapRef.current.get(e.id);
-        if (gain) {
+        const hourlyGain = hourlySolarHeatGainArrayMapRef.current.get(e.id);
+        if (hourlyGain) {
+          const monthlyGain = monthlySolarHeatGainArrayMapRef.current.get(e.id);
+          if (monthlyGain) {
+            monthlyGain[sampledDayRef.current] = [...hourlyGain];
+            setMonthlySolarHeatGainArray(e.id, monthlyGain);
+          }
         }
       }
     }
