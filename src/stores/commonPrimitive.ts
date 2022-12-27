@@ -34,12 +34,14 @@ export const usePrimitiveStore = create<PrimitiveStoreState>((set, get) => {
       const map = get().hourlyHeatExchangeArrayMap;
       map.set(id, data);
       set((state) => {
+        // must create a new map in order to trigger re-rendering
         state.hourlyHeatExchangeArrayMap = new Map(map);
       });
     },
     clearHourlyHeatExchangeArrayMap() {
       set((state) => {
-        state.hourlyHeatExchangeArrayMap.clear();
+        // must create a new empty map in order to trigger re-rendering
+        state.hourlyHeatExchangeArrayMap = new Map();
       });
     },
 
@@ -48,12 +50,14 @@ export const usePrimitiveStore = create<PrimitiveStoreState>((set, get) => {
       const map = get().hourlySolarHeatGainArrayMap;
       map.set(id, data);
       set((state) => {
+        // must create a new map in order to trigger re-rendering
         state.hourlySolarHeatGainArrayMap = new Map(map);
       });
     },
     clearHourlySolarHeatGainArrayMap() {
       set((state) => {
-        state.hourlySolarHeatGainArrayMap.clear();
+        // must create a new empty map in order to trigger re-rendering
+        state.hourlySolarHeatGainArrayMap = new Map();
       });
     },
 
@@ -62,6 +66,7 @@ export const usePrimitiveStore = create<PrimitiveStoreState>((set, get) => {
       const map = get().monthlyHeatExchangeArrayMap;
       map.set(id, data);
       set((state) => {
+        // must create a new map in order to trigger re-rendering
         state.monthlyHeatExchangeArrayMap = new Map(map);
       });
     },
@@ -71,14 +76,16 @@ export const usePrimitiveStore = create<PrimitiveStoreState>((set, get) => {
       const map = get().monthlySolarHeatGainArrayMap;
       map.set(id, data);
       set((state) => {
+        // must create a new map in order to trigger re-rendering
         state.monthlySolarHeatGainArrayMap = new Map(map);
       });
     },
 
     clearMonthlyEnergyArrayMap() {
       set((state) => {
-        state.monthlyHeatExchangeArrayMap.clear();
-        state.monthlySolarHeatGainArrayMap.clear();
+        // must create a new empty map in order to trigger re-rendering
+        state.monthlyHeatExchangeArrayMap = new Map();
+        state.monthlySolarHeatGainArrayMap = new Map();
       });
     },
   };
