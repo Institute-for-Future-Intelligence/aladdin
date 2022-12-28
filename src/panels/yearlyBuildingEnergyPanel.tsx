@@ -19,6 +19,7 @@ import { usePrimitiveStore } from '../stores/commonPrimitive';
 import { Util } from '../Util';
 import { FoundationModel } from '../models/FoundationModel';
 import { adjustEnergyUsage, computeOutsideTemperature } from '../analysis/heatTools';
+import { useDailyEnergy } from '../analysis/energyHooks';
 
 const Container = styled.div`
   position: fixed;
@@ -82,14 +83,11 @@ const YearlyBuildingEnergyPanel = ({ city }: YearlyBuildingEnergyPanelProps) => 
   const loggable = useStore(Selector.loggable);
   const opacity = useStore(Selector.floatingWindowOpacity) ?? FLOATING_WINDOW_OPACITY;
   const setCommonStore = useStore(Selector.set);
-  const elements = useStore.getState().elements;
-  const getElementById = useStore(Selector.getElementById);
-  const getFoundation = useStore(Selector.getFoundation);
   const now = new Date(useStore(Selector.world.date));
   const panelRect = useStore(Selector.viewState.yearlyBuildingEnergyPanelRect);
   const countElementsByType = useStore(Selector.countElementsByType);
-  const monthlyHeatExchangeArrayMap = usePrimitiveStore(Selector.monthlyHeatExchangeArrayMap);
-  const monthlySolarHeatGainArrayMap = usePrimitiveStore(Selector.monthlySolarHeatGainArrayMap);
+  const hourlyHeatExchangeArrayMap = usePrimitiveStore(Selector.hourlyHeatExchangeArrayMap);
+  const hourlySolarHeatGainArrayMap = usePrimitiveStore(Selector.hourlySolarHeatGainArrayMap);
 
   const wrapperRef = useRef<HTMLDivElement | null>(null);
   const resizeObserverRef = useRef<ResizeObserver>();
@@ -99,10 +97,6 @@ const YearlyBuildingEnergyPanel = ({ city }: YearlyBuildingEnergyPanelProps) => 
     x: panelRect ? Math.max(panelRect.x, wOffset - window.innerWidth) : 0,
     y: panelRect ? Math.min(panelRect.y, window.innerHeight - hOffset) : 0,
   });
-  const [data, setData] = useState<DatumEntry[]>([]);
-  const [heaterSum, setHeaterSum] = useState(0);
-  const [acSum, setAcSum] = useState(0);
-  const [netSum, setNetSum] = useState(0);
 
   // nodeRef is to suppress ReactDOM.findDOMNode() deprecation warning. See:
   // https://github.com/react-grid-layout/react-draggable/blob/v4.4.2/lib/DraggableCore.js#L159-L171
@@ -110,136 +104,89 @@ const YearlyBuildingEnergyPanel = ({ city }: YearlyBuildingEnergyPanelProps) => 
 
   const lang = { lng: language };
   const weather = getWeather(city ?? 'Boston MA, USA');
-  const labels = ['Heater', 'AC', 'Net'];
   const referenceX = MONTHS[now.getMonth()];
   const daysPerYear = world.daysPerYear ?? 6;
   const monthInterval = 12 / daysPerYear;
 
+  const [heaterSum, setHeaterSum] = useState(0);
+  const [acSum, setAcSum] = useState(0);
+  const [netSum, setNetSum] = useState(0);
+  const [labels, setLabels] = useState(['Heater', 'AC', 'Net']);
+  const [data, setData] = useState<DatumEntry[]>([]);
+
+  const { sum, sumHeater, sumAc, dataLabels } = useDailyEnergy(
+    now,
+    weather,
+    hourlyHeatExchangeArrayMap,
+    hourlySolarHeatGainArrayMap,
+  );
+
+  const resultRef = useRef<DatumEntry[]>(new Array(daysPerYear).fill({}));
+  const heaterSumRef = useRef<number[]>(new Array(daysPerYear).fill(0));
+  const acSumRef = useRef<number[]>(new Array(daysPerYear).fill(0));
+  const netSumRef = useRef<number[]>(new Array(daysPerYear).fill(0));
+
   useEffect(() => {
-    const sum: DatumEntry[] = [];
-    let sumHeater = 0;
-    let sumAc = 0;
-    const dataLabels = [];
-    const hourlyHeat = new Array(24);
-    const hourlyAc = new Array(24);
-    for (let i = 0; i < daysPerYear; i++) {
-      const date = new Date(now);
-      date.setMonth(i * monthInterval, 22);
-      // get the highest and lowest temperatures of the day from the weather data
-      const outsideTemperatureRange = computeOutsideTemperature(
-        date,
-        weather.lowestTemperatures,
-        weather.highestTemperatures,
-      );
-      hourlyHeat.fill(0);
-      hourlyAc.fill(0);
+    const count = countElementsByType(ObjectType.Foundation);
+    const indexOfMonth = now.getMonth() / monthInterval;
+    if (count > 1) {
+      const heaterMap = new Map<string, number>();
+      const acMap = new Map<string, number>();
+      const netMap = new Map<string, number>();
+      for (const h of sum) {
+        for (let j = 0; j < count; j++) {
+          const id = dataLabels[j] ?? j + 1;
+          let heater = heaterMap.get(id);
+          if (heater === undefined) heater = 0;
+          heater += h['Heater ' + id] as number;
+          heaterMap.set(id, heater);
+          let ac = acMap.get(id);
+          if (ac === undefined) ac = 0;
+          ac += h['AC ' + id] as number;
+          acMap.set(id, ac);
+          let net = netMap.get(id);
+          if (net === undefined) net = 0;
+          net += h['Net ' + id] as number;
+          netMap.set(id, net);
+        }
+      }
       const datum: DatumEntry = {};
-      const energy = new Map<string, EnergyUsage>();
-      for (const e of elements) {
-        if (Util.onBuildingEnvelope(e)) {
-          const exchange = monthlyHeatExchangeArrayMap.get(e.id);
-          if (exchange && exchange.length === daysPerYear) {
-            for (let j = 0; j < 24; j++) {
-              if (exchange[i][j] < 0) {
-                hourlyHeat[j] += exchange[i][j];
-              } else {
-                hourlyAc[j] += exchange[i][j];
-              }
-            }
-            const f = getFoundation(e);
-            if (f) {
-              let energyUsage = energy.get(f.id);
-              if (!energyUsage) {
-                energyUsage = { heater: 0, ac: 0, label: f.label } as EnergyUsage;
-                energy.set(f.id, energyUsage);
-                dataLabels.push(f.label);
-              }
-              for (let j = 0; j < 24; j++) {
-                if (exchange[i][j] < 0) {
-                  energyUsage.heater += exchange[i][j];
-                } else {
-                  energyUsage.ac += exchange[i][j];
-                }
-              }
-            }
-          }
-        }
+      datum['Month'] = MONTHS[now.getMonth()];
+      const l = [];
+      for (let index = 0; index < count; index++) {
+        const id = dataLabels[index] ?? index + 1;
+        l.push('Heater ' + id, 'AC ' + id, 'Net ' + id);
+        datum['Heater ' + id] = (heaterMap.get(id) ?? 0) * 30;
+        datum['AC ' + id] = (acMap.get(id) ?? 0) * 30;
+        datum['Net ' + id] = (netMap.get(id) ?? 0) * 30;
       }
-      // deal with the solar heat gain
-      for (const e of elements) {
-        if (e.type === ObjectType.Foundation) {
-          const gain = monthlySolarHeatGainArrayMap.get(e.id);
-          if (gain && gain.length === daysPerYear) {
-            const energyUsage = energy.get(e.id);
-            if (energyUsage) {
-              for (let j = 0; j < 24; j++) {
-                if (hourlyHeat[j] < 0) {
-                  // It must be cold outside. Solar heat gain decreases heating burden in this case.
-                  energyUsage.heater += gain[i][j];
-                } else if (hourlyAc[j] > 0) {
-                  // It must be hot outside. Solar heat gain increases cooling burden in this case.
-                  energyUsage.ac += gain[i][j];
-                }
-              }
-            }
-          }
-        }
+      setLabels(l);
+      resultRef.current[indexOfMonth] = datum;
+    } else {
+      let heater = 0;
+      let ac = 0;
+      let net = 0;
+      for (const h of sum) {
+        heater += h['Heater'] as number;
+        ac += h['AC'] as number;
+        net += h['Net'] as number;
       }
-      //console.log(i, energy)
-      if (energy.size > 1) {
-        let index = 1;
-        for (const key of energy.keys()) {
-          datum['Month'] = MONTHS[i * monthInterval];
-          const value = energy.get(key);
-          if (value) {
-            const elem = getElementById(key);
-            if (elem && elem.type === ObjectType.Foundation) {
-              const f = elem as FoundationModel;
-              const setpoint = f.hvacSystem?.thermostatSetpoint ?? 20;
-              const threshold = f.hvacSystem?.temperatureThreshold ?? 3;
-              const id = value.label ?? index;
-              const adjustedHeat =
-                30 * Math.abs(adjustEnergyUsage(outsideTemperatureRange, value.heater, setpoint, threshold));
-              const adjustedAc = 30 * adjustEnergyUsage(outsideTemperatureRange, value.ac, setpoint, threshold);
-              datum['Heater ' + id] = adjustedHeat;
-              datum['AC ' + id] = adjustedAc;
-              datum['Net ' + id] = adjustedHeat + adjustedAc;
-              sumHeater += adjustedHeat;
-              sumAc += adjustedAc;
-            }
-          }
-          index++;
-        }
-      } else {
-        for (const key of energy.keys()) {
-          datum['Month'] = MONTHS[i * monthInterval];
-          const value = energy.get(key);
-          if (value) {
-            const elem = getElementById(key);
-            if (elem && elem.type === ObjectType.Foundation) {
-              const f = elem as FoundationModel;
-              const setpoint = f.hvacSystem?.thermostatSetpoint ?? 20;
-              const threshold = f.hvacSystem?.temperatureThreshold ?? 3;
-              const adjustedHeat =
-                30 * Math.abs(adjustEnergyUsage(outsideTemperatureRange, value.heater, setpoint, threshold));
-              if (i === 3) console.log(outsideTemperatureRange, value.heater, adjustedHeat / 30);
-              const adjustedAc = 30 * adjustEnergyUsage(outsideTemperatureRange, value.ac, setpoint, threshold);
-              datum['Heater'] = adjustedHeat;
-              datum['AC'] = adjustedAc;
-              datum['Net'] = adjustedHeat + adjustedAc;
-              sumHeater += adjustedHeat;
-              sumAc += adjustedAc;
-            }
-          }
-        }
-      }
-      sum.push(datum);
+      setLabels(['Heater', 'AC', 'Net']);
+      resultRef.current[indexOfMonth] = {
+        Month: MONTHS[now.getMonth()],
+        Heater: 30 * heater,
+        AC: 30 * ac,
+        Net: 30 * net,
+      } as DatumEntry;
     }
-    setData(sum);
-    setHeaterSum(sumHeater * monthInterval);
-    setAcSum(sumAc * monthInterval);
-    setNetSum((sumHeater + sumAc) * monthInterval);
-  }, [monthlyHeatExchangeArrayMap, daysPerYear]);
+    setData([...resultRef.current]);
+    heaterSumRef.current[indexOfMonth] = sumHeater * monthInterval * 30;
+    acSumRef.current[indexOfMonth] = sumAc * monthInterval * 30;
+    netSumRef.current[indexOfMonth] = heaterSumRef.current[indexOfMonth] + acSumRef.current[indexOfMonth];
+    setHeaterSum(heaterSumRef.current.reduce((pv, cv) => pv + cv, 0));
+    setAcSum(acSumRef.current.reduce((pv, cv) => pv + cv, 0));
+    setNetSum(netSumRef.current.reduce((pv, cv) => pv + cv, 0));
+  }, [hourlyHeatExchangeArrayMap, hourlySolarHeatGainArrayMap]);
 
   useEffect(() => {
     setCurPosition({

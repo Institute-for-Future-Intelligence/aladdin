@@ -29,16 +29,6 @@ export const setHourlySolarHeatGainArray = (state: PrimitiveStoreState) => state
 
 export const clearHourlySolarHeatGainArrayMap = (state: PrimitiveStoreState) => state.clearHourlySolarHeatGainArrayMap;
 
-export const monthlyHeatExchangeArrayMap = (state: PrimitiveStoreState) => state.monthlyHeatExchangeArrayMap;
-
-export const setMonthlyHeatExchangeArray = (state: PrimitiveStoreState) => state.setMonthlyHeatExchangeArray;
-
-export const monthlySolarHeatGainArrayMap = (state: PrimitiveStoreState) => state.monthlySolarHeatGainArrayMap;
-
-export const setMonthlySolarHeatGainArray = (state: PrimitiveStoreState) => state.setMonthlySolarHeatGainArray;
-
-export const clearMonthlyEnergyArrayMap = (state: PrimitiveStoreState) => state.clearMonthlyEnergyArrayMap;
-
 export const getRoofSegmentVertices = (state: CommonStoreState) => state.getRoofSegmentVertices;
 
 export const getRoofSegmentVerticesWithoutOverhang = (state: CommonStoreState) =>

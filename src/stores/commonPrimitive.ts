@@ -15,14 +15,6 @@ export interface PrimitiveStoreState {
   hourlySolarHeatGainArrayMap: Map<string, number[]>;
   setHourlySolarHeatGainArray: (id: string, data: number[]) => void;
   clearHourlySolarHeatGainArrayMap: () => void;
-
-  // store the calculated hourly heat exchange results of a building for sampled days throughout a year
-  // 2D array: first is the month of the year, second is the hour of the day
-  monthlyHeatExchangeArrayMap: Map<string, number[][]>;
-  setMonthlyHeatExchangeArray: (id: string, data: number[][]) => void;
-  monthlySolarHeatGainArrayMap: Map<string, number[][]>;
-  setMonthlySolarHeatGainArray: (id: string, data: number[][]) => void;
-  clearMonthlyEnergyArrayMap: () => void;
 }
 
 export const usePrimitiveStore = create<PrimitiveStoreState>((set, get) => {
@@ -58,34 +50,6 @@ export const usePrimitiveStore = create<PrimitiveStoreState>((set, get) => {
       set((state) => {
         // must create a new empty map in order to trigger re-rendering
         state.hourlySolarHeatGainArrayMap = new Map();
-      });
-    },
-
-    monthlyHeatExchangeArrayMap: new Map<string, number[][]>(),
-    setMonthlyHeatExchangeArray(id, data) {
-      const map = get().monthlyHeatExchangeArrayMap;
-      map.set(id, data);
-      set((state) => {
-        // must create a new map in order to trigger re-rendering
-        state.monthlyHeatExchangeArrayMap = new Map(map);
-      });
-    },
-
-    monthlySolarHeatGainArrayMap: new Map<string, number[][]>(),
-    setMonthlySolarHeatGainArray(id, data) {
-      const map = get().monthlySolarHeatGainArrayMap;
-      map.set(id, data);
-      set((state) => {
-        // must create a new map in order to trigger re-rendering
-        state.monthlySolarHeatGainArrayMap = new Map(map);
-      });
-    },
-
-    clearMonthlyEnergyArrayMap() {
-      set((state) => {
-        // must create a new empty map in order to trigger re-rendering
-        state.monthlyHeatExchangeArrayMap = new Map();
-        state.monthlySolarHeatGainArrayMap = new Map();
       });
     },
   };

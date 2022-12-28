@@ -56,9 +56,6 @@ const ThermalSimulation = ({ city }: ThermalSimulationProps) => {
   const highestTemperatureTimeInMinutes = useStore(Selector.world.highestTemperatureTimeInMinutes) ?? 900;
   const setHourlyHeatExchangeArray = usePrimitiveStore(Selector.setHourlyHeatExchangeArray);
   const setHourlySolarHeatGainArray = usePrimitiveStore(Selector.setHourlySolarHeatGainArray);
-  const setMonthlyHeatExchangeArray = usePrimitiveStore(Selector.setMonthlyHeatExchangeArray);
-  const setMonthlySolarHeatGainArray = usePrimitiveStore(Selector.setMonthlySolarHeatGainArray);
-  const showDailyBuildingEnergyPanel = useStore(Selector.viewState.showDailyBuildingEnergyPanel);
 
   const requestRef = useRef<number>(0);
   const simulationCompletedRef = useRef<boolean>(false);
@@ -71,8 +68,6 @@ const ThermalSimulation = ({ city }: ThermalSimulationProps) => {
   const currentOutsideTemperatureRef = useRef<number>(20);
   const hourlyHeatExchangeArrayMapRef = useRef<Map<string, number[]>>(new Map<string, number[]>());
   const hourlySolarHeatGainArrayMapRef = useRef<Map<string, number[]>>(new Map<string, number[]>());
-  const monthlyHeatExchangeArrayMapRef = useRef<Map<string, number[][]>>(new Map<string, number[][]>());
-  const monthlySolarHeatGainArrayMapRef = useRef<Map<string, number[][]>>(new Map<string, number[][]>());
   const objectsRef = useRef<Object3D[]>([]); // reuse array in intersection detection
   const intersectionsRef = useRef<Intersection[]>([]); // reuse array in intersection detection
   const sunDirectionRef = useRef<Vector3>();
@@ -178,39 +173,6 @@ const ThermalSimulation = ({ city }: ThermalSimulationProps) => {
     for (const e of elements) {
       if (e.type === ObjectType.Foundation) {
         hourlySolarHeatGainArrayMapRef.current.get(e.id)?.fill(0);
-      }
-    }
-  };
-
-  const resetMonthlyEnergyMap = () => {
-    for (const e of elements) {
-      if (Util.onBuildingEnvelope(e)) {
-        const monthlyHeating = monthlyHeatExchangeArrayMapRef.current.get(e.id);
-        if (monthlyHeating && monthlyHeating.length === daysPerYear) {
-          for (let i = 0; i < monthlyHeating.length; i++) {
-            monthlyHeating[i].fill(0);
-          }
-        } else {
-          const a: number[][] = [];
-          for (let i = 0; i < daysPerYear; i++) {
-            a.push(new Array(24).fill(0));
-          }
-          monthlyHeatExchangeArrayMapRef.current.set(e.id, a);
-        }
-      }
-      if (e.type === ObjectType.Foundation) {
-        const monthlySolarHeatGain = monthlySolarHeatGainArrayMapRef.current.get(e.id);
-        if (monthlySolarHeatGain && monthlySolarHeatGain.length === daysPerYear) {
-          for (let i = 0; i < monthlySolarHeatGain.length; i++) {
-            monthlySolarHeatGain[i].fill(0);
-          }
-        } else {
-          const a: number[][] = [];
-          for (let i = 0; i < daysPerYear; i++) {
-            a.push(new Array(24).fill(0));
-          }
-          monthlySolarHeatGainArrayMapRef.current.set(e.id, a);
-        }
       }
     }
   };
@@ -397,12 +359,12 @@ const ThermalSimulation = ({ city }: ThermalSimulationProps) => {
       now.setHours(0, minuteInterval / 2);
       // set the initial date so that the scene gets a chance to render before the simulation starts
       setCommonStore((state) => {
+        state.viewState.showYearlyBuildingEnergyPanel = true;
         state.world.date = now.toLocaleString('en-US');
       });
     }
     resetHourlyHeatExchangeMap();
     resetHourlySolarHeatGainMap();
-    resetMonthlyEnergyMap();
     simulationCompletedRef.current = false;
   };
 
@@ -420,7 +382,7 @@ const ThermalSimulation = ({ city }: ThermalSimulationProps) => {
         // recursive call to the next step of the simulation within the current day
         requestRef.current = requestAnimationFrame(simulateYearly);
       } else {
-        finishMonthly();
+        finishDaily();
         sampledDayRef.current++;
         if (sampledDayRef.current === daysPerYear) {
           cancelAnimationFrame(requestRef.current);
@@ -429,7 +391,6 @@ const ThermalSimulation = ({ city }: ThermalSimulationProps) => {
             state.simulationInProgress = false;
             state.simulationPaused = false;
             state.world.date = originalDateRef.current.toLocaleString('en-US');
-            state.viewState.showYearlyBuildingEnergyPanel = true;
           });
           showInfo(i18n.t('message.SimulationCompleted', lang));
           simulationCompletedRef.current = true;
@@ -445,35 +406,6 @@ const ThermalSimulation = ({ city }: ThermalSimulationProps) => {
         // recursive call to the next step of the simulation
         requestRef.current = requestAnimationFrame(simulateYearly);
       }
-    }
-  };
-
-  const finishMonthly = () => {
-    for (const e of elements) {
-      if (Util.onBuildingEnvelope(e)) {
-        const hourlyExchange = hourlyHeatExchangeArrayMapRef.current.get(e.id);
-        if (hourlyExchange) {
-          const monthlyExchange = monthlyHeatExchangeArrayMapRef.current.get(e.id);
-          if (monthlyExchange) {
-            monthlyExchange[sampledDayRef.current] = [...hourlyExchange];
-            setMonthlyHeatExchangeArray(e.id, monthlyExchange);
-          }
-        }
-      }
-      // summed from the solar heat gains through all windows on a foundation
-      if (e.type === ObjectType.Foundation) {
-        const hourlyGain = hourlySolarHeatGainArrayMapRef.current.get(e.id);
-        if (hourlyGain) {
-          const monthlyGain = monthlySolarHeatGainArrayMapRef.current.get(e.id);
-          if (monthlyGain) {
-            monthlyGain[sampledDayRef.current] = [...hourlyGain];
-            setMonthlySolarHeatGainArray(e.id, [...monthlyGain]);
-          }
-        }
-      }
-    }
-    if (showDailyBuildingEnergyPanel) {
-      finishDaily();
     }
   };
 

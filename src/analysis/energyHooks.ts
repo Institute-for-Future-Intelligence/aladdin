@@ -46,9 +46,11 @@ export const useDailyEnergy = (
             if (f) {
               let energyUsage = energy.get(f.id);
               if (!energyUsage) {
-                energyUsage = { heater: 0, ac: 0, label: f.label } as EnergyUsage;
+                energyUsage = { heater: 0, ac: 0, label: f.label?.trim() } as EnergyUsage;
                 energy.set(f.id, energyUsage);
-                dataLabels.push(f.label ?? '');
+                if (f.label && f.label.length > 0 && !dataLabels.includes(f.label)) {
+                  dataLabels.push(f.label);
+                }
               }
               if (exchange[i] < 0) {
                 energyUsage.heater += exchange[i];
@@ -86,7 +88,7 @@ export const useDailyEnergy = (
               const f = elem as FoundationModel;
               const setpoint = f.hvacSystem?.thermostatSetpoint ?? 20;
               const threshold = f.hvacSystem?.temperatureThreshold ?? 3;
-              const id = value.label ?? index;
+              const id = value.label && value.label !== '' ? value.label : index;
               const adjustedHeat = Math.abs(
                 adjustEnergyUsage(outsideTemperatureRange, value.heater, setpoint, threshold),
               );
