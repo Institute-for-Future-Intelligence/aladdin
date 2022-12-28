@@ -97,6 +97,7 @@ import effect_house_orientation from './examples/effect_house_orientation.json';
 import effect_wall_roof_insulation from './examples/effect_wall_roof_insulation.json';
 import effect_roof_color from './examples/effect_roof_color.json';
 import effect_window_shgc from './examples/effect_window_shgc.json';
+import effect_thermostat_setpoint from './examples/effect_thermostat_setpoint.json';
 import effect_trees from './examples/effect_trees.json';
 
 import zhCN from 'antd/lib/locale/zh_CN';
@@ -324,6 +325,9 @@ const MainMenu = ({ viewOnly, set2DView, resetView, zoomView, canvas }: MainMenu
         break;
       case 'effect_window_shgc':
         input = effect_window_shgc;
+        break;
+      case 'effect_thermostat_setpoint':
+        input = effect_thermostat_setpoint;
         break;
       case 'effect_trees':
         input = effect_trees;
@@ -2096,6 +2100,9 @@ const MainMenu = ({ viewOnly, set2DView, resetView, zoomView, canvas }: MainMenu
           </Menu.Item>
           <Menu.Item key="effect_window_shgc" onClick={loadFile}>
             {i18n.t('menu.buildingScienceTutorials.EffectOfWindowSHGCOnBuildingEnergy', lang)}
+          </Menu.Item>
+          <Menu.Item key="effect_thermostat_setpoint" onClick={loadFile}>
+            {i18n.t('menu.buildingScienceTutorials.EffectOfThermostatSetpointOnBuildingEnergy', lang)}
           </Menu.Item>
           <Menu.Item key="effect_trees" onClick={loadFile}>
             {i18n.t('menu.buildingScienceTutorials.EffectOfTreesOnBuildingEnergy', lang)}

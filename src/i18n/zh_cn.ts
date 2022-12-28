@@ -337,6 +337,7 @@ export const i18n_zh_cn = {
         EffectOfInsulationOnBuildingEnergy: '房屋隔热对能耗的影响',
         EffectOfRoofColorOnBuildingEnergy: '屋顶颜色对建筑物能耗的影响',
         EffectOfWindowSHGCOnBuildingEnergy: '窗户太阳能输入对房屋能耗的影响',
+        EffectOfThermostatSetpointOnBuildingEnergy: '恒温器设定值对房屋能耗的影响',
         EffectOfTreesOnBuildingEnergy: '树荫对房屋能耗的影响',
       },
 
