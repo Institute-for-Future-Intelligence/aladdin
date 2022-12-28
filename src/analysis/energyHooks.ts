@@ -11,7 +11,7 @@ import * as Selector from '../stores/selector';
 import { WeatherModel } from '../models/WeatherModel';
 import { useEffect, useRef } from 'react';
 
-export const useDailyEnergy = (
+export const useDailyEnergySorter = (
   now: Date,
   weather: WeatherModel,
   hourlyHeatExchangeArrayMap: Map<string, number[]>,

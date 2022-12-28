@@ -82,21 +82,21 @@ const BuildingEnergySimulationSettings = () => {
           />
           <Space style={{ paddingLeft: '10px' }}>{i18n.t('word.MeterAbbreviation', lang)}</Space>
         </Menu.Item>
-        {!Util.hasMovingParts(elements) && (
-          <Menu.Item key={'building-energy-simulation-no-animation'}>
-            <Space style={{ width: '300px' }}>
-              {i18n.t('menu.building.BuildingEnergySimulationNoAnimation', lang) + ':'}
-            </Space>
-            <Switch
-              checked={noAnimationForThermalSimulation}
-              onChange={(checked) => {
-                setCommonStore((state) => {
-                  state.world.noAnimationForThermalSimulation = checked;
-                });
-              }}
-            />
-          </Menu.Item>
-        )}
+        {/*{!Util.hasMovingParts(elements) && (*/}
+        {/*  <Menu.Item key={'building-energy-simulation-no-animation'}>*/}
+        {/*    <Space style={{ width: '300px' }}>*/}
+        {/*      {i18n.t('menu.building.BuildingEnergySimulationNoAnimation', lang) + ':'}*/}
+        {/*    </Space>*/}
+        {/*    <Switch*/}
+        {/*      checked={noAnimationForThermalSimulation}*/}
+        {/*      onChange={(checked) => {*/}
+        {/*        setCommonStore((state) => {*/}
+        {/*          state.world.noAnimationForThermalSimulation = checked;*/}
+        {/*        });*/}
+        {/*      }}*/}
+        {/*    />*/}
+        {/*  </Menu.Item>*/}
+        {/*)}*/}
       </Menu>
     </SubMenu>
   );

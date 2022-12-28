@@ -7,7 +7,7 @@ import LineGraph from '../components/lineGraph';
 import styled from 'styled-components';
 import { useStore } from '../stores/common';
 import * as Selector from '../stores/selector';
-import { ChartType, DatumEntry, EnergyUsage, GraphDataType, ObjectType } from '../types';
+import { ChartType, DatumEntry, GraphDataType, ObjectType } from '../types';
 import { FLOATING_WINDOW_OPACITY, MONTHS } from '../constants';
 import ReactDraggable, { DraggableEventHandler } from 'react-draggable';
 import { Button, Space } from 'antd';
@@ -16,10 +16,7 @@ import { screenshot, showInfo } from '../helpers';
 import i18n from '../i18n/i18n';
 import { Rectangle } from '../models/Rectangle';
 import { usePrimitiveStore } from '../stores/commonPrimitive';
-import { Util } from '../Util';
-import { FoundationModel } from '../models/FoundationModel';
-import { adjustEnergyUsage, computeOutsideTemperature } from '../analysis/heatTools';
-import { useDailyEnergy } from '../analysis/energyHooks';
+import { useDailyEnergySorter } from '../analysis/energyHooks';
 
 const Container = styled.div`
   position: fixed;
@@ -114,7 +111,7 @@ const YearlyBuildingEnergyPanel = ({ city }: YearlyBuildingEnergyPanelProps) => 
   const [labels, setLabels] = useState(['Heater', 'AC', 'Net']);
   const [data, setData] = useState<DatumEntry[]>([]);
 
-  const { sum, sumHeater, sumAc, dataLabels } = useDailyEnergy(
+  const { sum, sumHeater, sumAc, dataLabels } = useDailyEnergySorter(
     now,
     weather,
     hourlyHeatExchangeArrayMap,

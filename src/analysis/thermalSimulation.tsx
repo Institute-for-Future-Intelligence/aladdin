@@ -2,7 +2,7 @@
  * @Copyright 2022. Institute for Future Intelligence, Inc.
  */
 
-import React, { useEffect, useMemo, useRef } from 'react';
+import React, { useEffect, useMemo, useRef, useState } from 'react';
 import { useStore } from '../stores/common';
 import { usePrimitiveStore } from 'src/stores/commonPrimitive';
 import * as Selector from '../stores/selector';
@@ -298,6 +298,15 @@ const ThermalSimulation = ({ city }: ThermalSimulationProps) => {
 
   // yearly simulation
 
+  const [monthIndex, setMonthIndex] = useState<number>(now.getMonth());
+
+  useEffect(() => {
+    // give it some time for the scene to update as a result of month change
+    setTimeout(() => {
+      fetchObjects();
+    }, 200);
+  }, [monthIndex]);
+
   useEffect(() => {
     if (runYearlySimulation) {
       if (noAnimation && !Util.hasMovingParts(elements)) {
@@ -307,8 +316,9 @@ const ThermalSimulation = ({ city }: ThermalSimulationProps) => {
           //staticSimulateYearly(false);
         }, 50);
       } else {
-        fetchObjects();
         initYearly();
+        setMonthIndex(now.getMonth());
+        fetchObjects(); // ensure that the objects are fetched if the initial date happens to be in January
         requestRef.current = requestAnimationFrame(simulateYearly);
         return () => {
           // this is called when the recursive call of requestAnimationFrame exits
@@ -400,6 +410,7 @@ const ThermalSimulation = ({ city }: ThermalSimulationProps) => {
         // go to the next month
         now.setMonth(sampledDayRef.current * monthInterval, 22);
         now.setHours(0, minuteInterval / 2);
+        setMonthIndex(now.getMonth());
         dayRef.current = Util.dayOfYear(now);
         resetHourlyHeatExchangeMap();
         resetHourlySolarHeatGainMap();
