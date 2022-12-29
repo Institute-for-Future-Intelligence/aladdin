@@ -83,6 +83,7 @@ const DailyBuildingEnergyPanel = ({ city }: DailyBuildingEnergyPanelProps) => {
   const now = new Date(useStore(Selector.world.date));
   const hourlyHeatExchangeArrayMap = usePrimitiveStore(Selector.hourlyHeatExchangeArrayMap);
   const hourlySolarHeatGainArrayMap = usePrimitiveStore(Selector.hourlySolarHeatGainArrayMap);
+  const hourlySolarPanelOutputArrayMap = usePrimitiveStore(Selector.hourlySolarPanelOutputArrayMap);
   const panelRect = useStore(Selector.viewState.dailyBuildingEnergyPanelRect);
   const countElementsByType = useStore(Selector.countElementsByType);
 
@@ -101,6 +102,7 @@ const DailyBuildingEnergyPanel = ({ city }: DailyBuildingEnergyPanelProps) => {
   const [data, setData] = useState<DatumEntry[]>([]);
   const [heaterSum, setHeaterSum] = useState(0);
   const [acSum, setAcSum] = useState(0);
+  const [solarPanelSum, setSolarPanelSum] = useState(0);
   const [netSum, setNetSum] = useState(0);
   const [labels, setLabels] = useState(['Heater', 'AC', 'Net']);
 
@@ -108,19 +110,22 @@ const DailyBuildingEnergyPanel = ({ city }: DailyBuildingEnergyPanelProps) => {
   const weather = getWeather(city ?? 'Boston MA, USA');
   const tooltipHeaterBreakdown = useRef<string>('');
   const tooltipAcBreakdown = useRef<string>('');
+  const tooltipSolarPanelBreakdown = useRef<string>('');
   const tooltipNetBreakdown = useRef<string>('');
 
-  const { sum, sumHeaterMap, sumAcMap, dataLabels } = useDailyEnergySorter(
+  const { sum, sumHeaterMap, sumAcMap, sumSolarPanelMap, dataLabels } = useDailyEnergySorter(
     now,
     weather,
     hourlyHeatExchangeArrayMap,
     hourlySolarHeatGainArrayMap,
+    hourlySolarPanelOutputArrayMap,
   );
 
   useEffect(() => {
     setData(sum);
     let sumHeater = 0;
     let sumAc = 0;
+    let sumSolarPanel = 0;
     const multiple = sumHeaterMap.size > 1;
     if (sumHeaterMap) {
       tooltipHeaterBreakdown.current = '';
@@ -134,7 +139,6 @@ const DailyBuildingEnergyPanel = ({ city }: DailyBuildingEnergyPanelProps) => {
         }
       }
     }
-    setHeaterSum(sumHeater);
     if (sumAcMap) {
       tooltipAcBreakdown.current = '';
       for (const key of sumAcMap.keys()) {
@@ -147,33 +151,49 @@ const DailyBuildingEnergyPanel = ({ city }: DailyBuildingEnergyPanelProps) => {
         }
       }
     }
-    if (sumHeaterMap && sumAcMap) {
+    if (sumSolarPanelMap) {
+      tooltipSolarPanelBreakdown.current = '';
+      for (const key of sumSolarPanelMap.keys()) {
+        const val = sumSolarPanelMap.get(key);
+        if (val) {
+          sumSolarPanel += val;
+          if (multiple) {
+            tooltipSolarPanelBreakdown.current += key + ': ' + val.toFixed(2) + ' ' + i18n.t('word.kWh', lang) + '\n';
+          }
+        }
+      }
+    }
+    if (sumHeaterMap && sumAcMap && sumSolarPanel) {
       tooltipNetBreakdown.current = '';
       for (const key of sumHeaterMap.keys()) {
         let net = 0;
         const heater = sumHeaterMap.get(key);
         const ac = sumAcMap.get(key);
+        const solarPanel = sumSolarPanelMap.get(key);
         if (heater) net += heater;
         if (ac) net += ac;
+        if (solarPanel) net -= solarPanel;
         if (multiple) {
           tooltipNetBreakdown.current += key + ': ' + net.toFixed(2) + ' ' + i18n.t('word.kWh', lang) + '\n';
         }
       }
     }
+    setHeaterSum(sumHeater);
     setAcSum(sumAc);
-    setNetSum(sumHeater + sumAc);
+    setSolarPanelSum(sumSolarPanel);
+    setNetSum(sumHeater + sumAc - sumSolarPanel);
     const count = countElementsByType(ObjectType.Foundation);
     if (count > 1) {
       const l = [];
       for (let index = 0; index < count; index++) {
         const id = dataLabels[index] ?? index + 1;
-        l.push('Heater ' + id, 'AC ' + id, 'Net ' + id);
+        l.push('Heater ' + id, 'AC ' + id, 'Solar ' + id, 'Net ' + id);
       }
       setLabels(l);
     } else {
-      setLabels(['Heater', 'AC', 'Net']);
+      setLabels(['Heater', 'AC', 'Solar', 'Net']);
     }
-  }, [hourlyHeatExchangeArrayMap, hourlySolarHeatGainArrayMap]);
+  }, [hourlyHeatExchangeArrayMap, hourlySolarHeatGainArrayMap, hourlySolarPanelOutputArrayMap]);
 
   useEffect(() => {
     setCurPosition({
@@ -312,6 +332,12 @@ const DailyBuildingEnergyPanel = ({ city }: DailyBuildingEnergyPanelProps) => {
               style={{ cursor: tooltipAcBreakdown.current === '' ? 'default' : 'help' }}
             >
               {i18n.t('buildingEnergyPanel.AC', lang) + ': ' + acSum.toFixed(1)}
+            </Space>
+            <Space
+              title={tooltipSolarPanelBreakdown.current}
+              style={{ cursor: tooltipSolarPanelBreakdown.current === '' ? 'default' : 'help' }}
+            >
+              {i18n.t('buildingEnergyPanel.SolarPanel', lang) + ': ' + acSum.toFixed(1)}
             </Space>
             <Space
               title={tooltipNetBreakdown.current}

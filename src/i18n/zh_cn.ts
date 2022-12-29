@@ -1096,6 +1096,7 @@ export const i18n_zh_cn = {
       YearlyBuildingEnergy: '建筑物年能耗',
       Heater: '暖气',
       AC: '空调',
+      SolarPanel: '光伏',
       Net: '净能耗',
     },
 

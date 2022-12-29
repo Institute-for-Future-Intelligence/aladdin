@@ -1119,6 +1119,7 @@ export const i18n_en = {
       YearlyBuildingEnergy: 'Yearly Building Energy',
       Heater: 'Heater',
       AC: 'AC',
+      SolarPanel: 'Solar Panel',
       Net: 'Net',
     },
 

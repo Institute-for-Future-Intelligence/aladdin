@@ -16,6 +16,7 @@ export const useDailyEnergySorter = (
   weather: WeatherModel,
   hourlyHeatExchangeArrayMap: Map<string, number[]>,
   hourlySolarHeatGainArrayMap: Map<string, number[]>,
+  hourlySolarPanelOutputArrayMap: Map<string, number[]>,
 ) => {
   const elements = useStore.getState().elements;
   const getFoundation = useStore(Selector.getFoundation);
@@ -25,6 +26,7 @@ export const useDailyEnergySorter = (
   const dataLabels: string[] = [];
   const sumHeaterMapRef = useRef<Map<string, number>>(new Map<string, number>());
   const sumAcMapRef = useRef<Map<string, number>>(new Map<string, number>());
+  const sumSolarPanelMapRef = useRef<Map<string, number>>(new Map<string, number>());
 
   useEffect(() => {
     // get the highest and lowest temperatures of the day from the weather data
@@ -35,6 +37,7 @@ export const useDailyEnergySorter = (
     );
     sumHeaterMapRef.current.clear();
     sumAcMapRef.current.clear();
+    sumSolarPanelMapRef.current.clear();
     for (let i = 0; i < 24; i++) {
       const datum: DatumEntry = {};
       const energy = new Map<string, EnergyUsage>();
@@ -46,7 +49,7 @@ export const useDailyEnergySorter = (
             if (f) {
               let energyUsage = energy.get(f.id);
               if (!energyUsage) {
-                energyUsage = { heater: 0, ac: 0, label: f.label?.trim() } as EnergyUsage;
+                energyUsage = { heater: 0, ac: 0, solarPanel: 0, label: f.label?.trim() } as EnergyUsage;
                 energy.set(f.id, energyUsage);
                 if (f.label && f.label.length > 0 && !dataLabels.includes(f.label)) {
                   dataLabels.push(f.label);
@@ -61,18 +64,24 @@ export const useDailyEnergySorter = (
           }
         }
       }
-      // deal with the solar heat gain
+      // deal with the solar heat gain through windows and electricity generation through solar panels
       for (const e of elements) {
         if (e.type === ObjectType.Foundation) {
-          const h = hourlySolarHeatGainArrayMap.get(e.id);
           const energyUsage = energy.get(e.id);
-          if (energyUsage && h) {
-            if (energyUsage.heater < 0) {
-              // It must be cold outside. Solar heat gain decreases heating burden in this case.
-              energyUsage.heater += h[i];
-            } else if (energyUsage.ac > 0) {
-              // It must be hot outside. Solar heat gain increases cooling burden in this case.
-              energyUsage.ac += h[i];
+          if (energyUsage) {
+            const h = hourlySolarHeatGainArrayMap.get(e.id);
+            if (h) {
+              if (energyUsage.heater < 0) {
+                // It must be cold outside. Solar heat gain decreases heating burden in this case.
+                energyUsage.heater += h[i];
+              } else if (energyUsage.ac > 0) {
+                // It must be hot outside. Solar heat gain increases cooling burden in this case.
+                energyUsage.ac += h[i];
+              }
+            }
+            const s = hourlySolarPanelOutputArrayMap.get(e.id);
+            if (s) {
+              energyUsage.solarPanel += s[i];
             }
           }
         }
@@ -95,7 +104,8 @@ export const useDailyEnergySorter = (
               const adjustedAc = adjustEnergyUsage(outsideTemperatureRange, value.ac, setpoint, threshold);
               datum['Heater ' + id] = adjustedHeat;
               datum['AC ' + id] = adjustedAc;
-              datum['Net ' + id] = adjustedHeat + adjustedAc;
+              datum['Solar ' + id] = value.solarPanel;
+              datum['Net ' + id] = adjustedHeat + adjustedAc - value.solarPanel;
               let x = sumHeaterMapRef.current.get(id);
               if (x === undefined) x = 0;
               x += adjustedHeat;
@@ -104,6 +114,10 @@ export const useDailyEnergySorter = (
               if (x === undefined) x = 0;
               x += adjustedAc;
               sumAcMapRef.current.set(id, x);
+              x = sumSolarPanelMapRef.current.get(id);
+              if (x === undefined) x = 0;
+              x += value.solarPanel;
+              sumSolarPanelMapRef.current.set(id, x);
             }
           }
           index++;
@@ -124,7 +138,8 @@ export const useDailyEnergySorter = (
               const adjustedAc = adjustEnergyUsage(outsideTemperatureRange, value.ac, setpoint, threshold);
               datum['Heater'] = adjustedHeat;
               datum['AC'] = adjustedAc;
-              datum['Net'] = adjustedHeat + adjustedAc;
+              datum['Solar'] = value.solarPanel;
+              datum['Net'] = adjustedHeat + adjustedAc - value.solarPanel;
               const id = 'default';
               let x = sumHeaterMapRef.current.get(id);
               if (x === undefined) x = 0;
@@ -134,6 +149,10 @@ export const useDailyEnergySorter = (
               if (x === undefined) x = 0;
               x += adjustedAc;
               sumAcMapRef.current.set(id, x);
+              x = sumSolarPanelMapRef.current.get(id);
+              if (x === undefined) x = 0;
+              x += value.solarPanel;
+              sumSolarPanelMapRef.current.set(id, x);
             }
           }
         }
@@ -142,5 +161,11 @@ export const useDailyEnergySorter = (
     }
   }, [hourlyHeatExchangeArrayMap, hourlySolarHeatGainArrayMap]);
 
-  return { sum, sumHeaterMap: sumHeaterMapRef.current, sumAcMap: sumAcMapRef.current, dataLabels };
+  return {
+    sum,
+    sumHeaterMap: sumHeaterMapRef.current,
+    sumAcMap: sumAcMapRef.current,
+    sumSolarPanelMap: sumSolarPanelMapRef.current,
+    dataLabels,
+  };
 };

@@ -9,12 +9,14 @@ export interface PrimitiveStoreState {
   // store the calculated hourly heat exchange result between inside and outside through an element of a building
   hourlyHeatExchangeArrayMap: Map<string, number[]>;
   setHourlyHeatExchangeArray: (id: string, data: number[]) => void;
-  clearHourlyHeatExchangeArrayMap: () => void;
 
   // store the calculated results for hourly solar heat gains of a building through windows
   hourlySolarHeatGainArrayMap: Map<string, number[]>;
   setHourlySolarHeatGainArray: (id: string, data: number[]) => void;
-  clearHourlySolarHeatGainArrayMap: () => void;
+
+  // store the calculated results for hourly solar panel outputs of a building through windows
+  hourlySolarPanelOutputArrayMap: Map<string, number[]>;
+  setHourlySolarPanelOutputArray: (id: string, data: number[]) => void;
 }
 
 export const usePrimitiveStore = create<PrimitiveStoreState>((set, get) => {
@@ -30,12 +32,6 @@ export const usePrimitiveStore = create<PrimitiveStoreState>((set, get) => {
         state.hourlyHeatExchangeArrayMap = new Map(map);
       });
     },
-    clearHourlyHeatExchangeArrayMap() {
-      set((state) => {
-        // must create a new empty map in order to trigger re-rendering
-        state.hourlyHeatExchangeArrayMap = new Map();
-      });
-    },
 
     hourlySolarHeatGainArrayMap: new Map<string, number[]>(),
     setHourlySolarHeatGainArray(id, data) {
@@ -46,10 +42,14 @@ export const usePrimitiveStore = create<PrimitiveStoreState>((set, get) => {
         state.hourlySolarHeatGainArrayMap = new Map(map);
       });
     },
-    clearHourlySolarHeatGainArrayMap() {
+
+    hourlySolarPanelOutputArrayMap: new Map<string, number[]>(),
+    setHourlySolarPanelOutputArray(id, data) {
+      const map = get().hourlySolarPanelOutputArrayMap;
+      map.set(id, data);
       set((state) => {
-        // must create a new empty map in order to trigger re-rendering
-        state.hourlySolarHeatGainArrayMap = new Map();
+        // must create a new map in order to trigger re-rendering
+        state.hourlySolarPanelOutputArrayMap = new Map(map);
       });
     },
   };

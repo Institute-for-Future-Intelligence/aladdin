@@ -137,6 +137,7 @@ export interface DatumEntry {
 export interface EnergyUsage {
   heater: number;
   ac: number;
+  solarPanel: number;
   label?: string;
 }
 

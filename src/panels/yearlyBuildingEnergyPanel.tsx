@@ -85,6 +85,7 @@ const YearlyBuildingEnergyPanel = ({ city }: YearlyBuildingEnergyPanelProps) => 
   const countElementsByType = useStore(Selector.countElementsByType);
   const hourlyHeatExchangeArrayMap = usePrimitiveStore(Selector.hourlyHeatExchangeArrayMap);
   const hourlySolarHeatGainArrayMap = usePrimitiveStore(Selector.hourlySolarHeatGainArrayMap);
+  const hourlySolarPanelOutputArrayMap = usePrimitiveStore(Selector.hourlySolarPanelOutputArrayMap);
 
   const wrapperRef = useRef<HTMLDivElement | null>(null);
   const resizeObserverRef = useRef<ResizeObserver>();
@@ -111,11 +112,12 @@ const YearlyBuildingEnergyPanel = ({ city }: YearlyBuildingEnergyPanelProps) => 
   const [labels, setLabels] = useState(['Heater', 'AC', 'Net']);
   const [data, setData] = useState<DatumEntry[]>([]);
 
-  const { sum, sumHeaterMap, sumAcMap, dataLabels } = useDailyEnergySorter(
+  const { sum, sumHeaterMap, sumAcMap, sumSolarPanelMap, dataLabels } = useDailyEnergySorter(
     now,
     weather,
     hourlyHeatExchangeArrayMap,
     hourlySolarHeatGainArrayMap,
+    hourlySolarPanelOutputArrayMap,
   );
 
   const resultRef = useRef<DatumEntry[]>(new Array(daysPerYear).fill({}));

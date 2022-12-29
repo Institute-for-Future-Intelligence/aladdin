@@ -5,8 +5,8 @@
 import { WallModel } from '../models/WallModel';
 import { Util } from '../Util';
 import { calculateDiffuseAndReflectedRadiation, calculatePeakRadiation } from './sunTools';
-import { Euler, Vector3 } from 'three';
-import { HALF_PI, UNIT_VECTOR_POS_Z } from '../constants';
+import { Euler, Quaternion, Vector2, Vector3 } from 'three';
+import { HALF_PI, UNIT_VECTOR_POS_Y, UNIT_VECTOR_POS_Z } from '../constants';
 import { AirMass } from './analysisConstants';
 import { Point2 } from '../models/Point2';
 import { FoundationModel } from '../models/FoundationModel';
@@ -15,8 +15,228 @@ import { ElementModel } from '../models/ElementModel';
 import { DoorModel } from '../models/DoorModel';
 import { RoofModel } from '../models/RoofModel';
 import { WindowModel } from '../models/WindowModel';
+import { SolarPanelModel } from '../models/SolarPanelModel';
+import { Discretization, ObjectType, Orientation, ShadeTolerance, TrackerType } from '../types';
+import { PvModel } from '../models/PvModel';
 
 export class SolarRadiation {
+  // return the output energy density of a solar panel (need to be multiplied by area, weather factor, etc.)
+  static computeSolarPanelOutput(
+    now: Date,
+    world: WorldModel,
+    sunDirection: Vector3,
+    pvModel: PvModel,
+    panel: SolarPanelModel,
+    parent: ElementModel,
+    foundation: FoundationModel,
+    elevation: number,
+    inShadow: Function,
+  ): number {
+    let rooftop = panel.parentType === ObjectType.Roof;
+    const walltop = panel.parentType === ObjectType.Wall;
+    if (rooftop) {
+      // x and y coordinates of a rooftop solar panel are relative to the foundation
+      parent = foundation;
+    }
+    const center = walltop
+      ? Util.absoluteCoordinates(panel.cx, panel.cy, panel.cz, parent, foundation, panel.lz)
+      : Util.absoluteCoordinates(panel.cx, panel.cy, panel.cz, parent);
+    const rot = parent.rotation[2];
+    let angle = panel.tiltAngle;
+    let zRot = rot + panel.relativeAzimuth;
+    let flat = true;
+    if (rooftop) {
+      // z coordinate of a rooftop solar panel is absolute
+      center.z = panel.cz + panel.lz / 2 + parent.cz + parent.lz / 2;
+      if (Util.isZero(panel.rotation[0])) {
+        // on a flat roof, add pole height
+        center.z += panel.poleHeight;
+      } else {
+        // on a no-flat roof, ignore tilt angle
+        angle = panel.rotation[0];
+        zRot = rot;
+        flat = false;
+      }
+    }
+    if (walltop && !Util.isZero(panel.tiltAngle)) {
+      const wall = parent as WallModel;
+      const wallAbsAngle = foundation ? foundation.rotation[2] + wall.relativeAngle : wall.relativeAngle;
+      const an = wallAbsAngle - HALF_PI;
+      const dr = (panel.ly * Math.abs(Math.sin(panel.tiltAngle))) / 2;
+      center.x += dr * Math.cos(an); // panel.ly has been rotated based on the orientation
+      center.y += dr * Math.sin(an);
+    }
+    const normal = new Vector3().fromArray(panel.normal);
+    const month = now.getMonth();
+    const dayOfYear = Util.dayOfYear(now);
+    const cellSize = world.solarRadiationHeatmapGridCellSize ?? 0.5;
+    let lx: number, ly: number, nx: number, ny: number;
+    let dCell: number;
+    if (world.discretization === Discretization.EXACT) {
+      lx = panel.lx;
+      ly = panel.ly;
+      if (panel.orientation === Orientation.portrait) {
+        nx = Math.max(1, Math.round(panel.lx / pvModel.width));
+        ny = Math.max(1, Math.round(panel.ly / pvModel.length));
+        nx *= pvModel.n;
+        ny *= pvModel.m;
+      } else {
+        nx = Math.max(1, Math.round(panel.lx / pvModel.length));
+        ny = Math.max(1, Math.round(panel.ly / pvModel.width));
+        nx *= pvModel.m;
+        ny *= pvModel.n;
+      }
+      dCell = panel.lx / nx;
+    } else {
+      lx = panel.lx;
+      ly = panel.ly;
+      nx = Math.max(2, Math.round(panel.lx / cellSize));
+      ny = Math.max(2, Math.round(panel.ly / cellSize));
+      // nx and ny must be even (for circuit simulation)
+      if (nx % 2 !== 0) nx += 1;
+      if (ny % 2 !== 0) ny += 1;
+      dCell = cellSize;
+    }
+    const dx = lx / nx;
+    const dy = ly / ny;
+    // shift half cell size to the center of each grid cell
+    const x0 = center.x - (lx - dCell) / 2;
+    const y0 = center.y - (ly - dCell) / 2;
+    const z0 = rooftop || walltop ? center.z : parent.lz + panel.poleHeight + panel.lz;
+    const center2d = new Vector2(center.x, center.y);
+    const v = new Vector3();
+    const cellOutputs = Array.from(Array<number>(nx), () => new Array<number>(ny));
+    // normal has been set if it is on top of a tilted roof, but has not if it is on top of a foundation or flat roof.
+    // so we only need to tilt the normal for a solar panel on a foundation or flat roof
+    let normalEuler = new Euler(rooftop && !flat ? 0 : angle, 0, zRot, 'ZYX');
+    if (panel.trackerType !== TrackerType.NO_TRACKER) {
+      // dynamic angles
+      const rotatedSunDirection = rot
+        ? sunDirection.clone().applyAxisAngle(UNIT_VECTOR_POS_Z, -rot)
+        : sunDirection.clone();
+      switch (panel.trackerType) {
+        case TrackerType.ALTAZIMUTH_DUAL_AXIS_TRACKER:
+          const qRotAADAT = new Quaternion().setFromUnitVectors(UNIT_VECTOR_POS_Z, rotatedSunDirection);
+          normalEuler = new Euler().setFromQuaternion(qRotAADAT);
+          break;
+        case TrackerType.HORIZONTAL_SINGLE_AXIS_TRACKER:
+          const qRotHSAT = new Quaternion().setFromUnitVectors(
+            UNIT_VECTOR_POS_Z,
+            new Vector3(rotatedSunDirection.x, 0, rotatedSunDirection.z).normalize(),
+          );
+          normalEuler = new Euler().setFromQuaternion(qRotHSAT);
+          break;
+        case TrackerType.VERTICAL_SINGLE_AXIS_TRACKER:
+          const v2 = new Vector3(rotatedSunDirection.x, -rotatedSunDirection.y, 0).normalize();
+          const az = Math.acos(UNIT_VECTOR_POS_Y.dot(v2)) * Math.sign(v2.x);
+          normalEuler = new Euler(panel.tiltAngle, 0, az + rot, 'ZYX');
+          break;
+        case TrackerType.TILTED_SINGLE_AXIS_TRACKER:
+          // TODO
+          break;
+      }
+    }
+    normal.applyEuler(normalEuler);
+    // the dot array on a solar panel above a tilted roof has not been tilted or rotated
+    // we need to set the normal Euler below for this case
+    if (rooftop && !flat) {
+      normalEuler.x = panel.rotation[0];
+      normalEuler.z = panel.rotation[2] + rot;
+    }
+    if (walltop) {
+      // wall panels use negative tilt angles, opposite to foundation panels, so we use + below.
+      normalEuler.x = HALF_PI + panel.tiltAngle;
+      normalEuler.z = (parent as WallModel).relativeAngle + rot;
+    }
+    const peakRadiation = calculatePeakRadiation(sunDirection, dayOfYear, elevation, AirMass.SPHERE_MODEL);
+    const indirectRadiation = calculateDiffuseAndReflectedRadiation(world.ground, month, normal, peakRadiation);
+    const dot = normal.dot(sunDirection);
+    const v2d = new Vector2();
+    const dv = new Vector3();
+    for (let kx = 0; kx < nx; kx++) {
+      for (let ky = 0; ky < ny; ky++) {
+        cellOutputs[kx][ky] = indirectRadiation;
+        if (dot > 0) {
+          v2d.set(x0 + kx * dx, y0 + ky * dy);
+          dv.set(v2d.x - center2d.x, v2d.y - center2d.y, 0);
+          dv.applyEuler(normalEuler);
+          v.set(center.x + dv.x, center.y + dv.y, z0 + dv.z);
+          if (!inShadow(panel.id, v, sunDirection)) {
+            // direct radiation
+            cellOutputs[kx][ky] += dot * peakRadiation;
+          }
+        }
+      }
+    }
+    // we must consider cell wiring and distributed efficiency
+    // Nice demo at: https://www.youtube.com/watch?v=UNPJapaZlCU
+    let sum = 0;
+    switch (pvModel.shadeTolerance) {
+      case ShadeTolerance.NONE:
+        // all the cells are connected in a single series,
+        // so the total output is determined by the minimum
+        let min1 = Number.MAX_VALUE;
+        for (let kx = 0; kx < nx; kx++) {
+          for (let ky = 0; ky < ny; ky++) {
+            const c = cellOutputs[kx][ky];
+            if (c < min1) {
+              min1 = c;
+            }
+          }
+        }
+        sum = min1 * nx * ny;
+        break;
+      case ShadeTolerance.PARTIAL:
+        // assuming each panel uses a diode bypass to connect two columns of cells
+        let min2 = Number.MAX_VALUE;
+        if (panel.orientation === Orientation.portrait) {
+          // e.g., nx = 6, ny = 10
+          for (let kx = 0; kx < nx; kx++) {
+            if (kx % 2 === 0) {
+              // reset min every two columns of cells
+              min2 = Number.MAX_VALUE;
+            }
+            for (let ky = 0; ky < ny; ky++) {
+              const c = cellOutputs[kx][ky];
+              if (c < min2) {
+                min2 = c;
+              }
+            }
+            if (kx % 2 === 1) {
+              sum += min2 * ny * 2;
+            }
+          }
+        } else {
+          // landscape, e.g., nx = 10, ny = 6
+          for (let ky = 0; ky < ny; ky++) {
+            if (ky % 2 === 0) {
+              // reset min every two columns of cells
+              min2 = Number.MAX_VALUE;
+            }
+            for (let kx = 0; kx < nx; kx++) {
+              const c = cellOutputs[kx][ky];
+              if (c < min2) {
+                min2 = c;
+              }
+            }
+            if (ky % 2 === 1) {
+              sum += min2 * nx * 2;
+            }
+          }
+        }
+        break;
+      default:
+        // this probably is too idealized
+        for (let kx = 0; kx < nx; kx++) {
+          for (let ky = 0; ky < ny; ky++) {
+            sum += cellOutputs[kx][ky];
+          }
+        }
+        break;
+    }
+    return sum / (nx * ny);
+  }
+
   // return an array that represents solar energy radiated onto the discretized cells of a wall
   static computeWallSolarRadiationEnergy(
     now: Date,

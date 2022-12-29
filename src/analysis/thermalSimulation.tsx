@@ -28,6 +28,8 @@ import { Intersection, Object3D, Raycaster, Vector3 } from 'three';
 import { SolarRadiation } from './SolarRadiation';
 import { ZERO_TOLERANCE } from '../constants';
 import { FoundationModel } from '../models/FoundationModel';
+import { SolarPanelModel } from '../models/SolarPanelModel';
+import { PvModel } from '../models/PvModel';
 
 interface ThermalSimulationProps {
   city: string | null;
@@ -46,6 +48,7 @@ const ThermalSimulation = ({ city }: ThermalSimulationProps) => {
   const getWeather = useStore(Selector.getWeather);
   const getFoundation = useStore(Selector.getFoundation);
   const getParent = useStore(Selector.getParent);
+  const getPvModule = useStore(Selector.getPvModule);
   const getChildrenOfType = useStore(Selector.getChildrenOfType);
   const runDailySimulation = useStore(Selector.runDailyThermalSimulation);
   const pauseDailySimulation = useStore(Selector.pauseDailyThermalSimulation);
@@ -56,6 +59,7 @@ const ThermalSimulation = ({ city }: ThermalSimulationProps) => {
   const highestTemperatureTimeInMinutes = useStore(Selector.world.highestTemperatureTimeInMinutes) ?? 900;
   const setHourlyHeatExchangeArray = usePrimitiveStore(Selector.setHourlyHeatExchangeArray);
   const setHourlySolarHeatGainArray = usePrimitiveStore(Selector.setHourlySolarHeatGainArray);
+  const setHourlySolarPanelOutputArray = usePrimitiveStore(Selector.setHourlySolarPanelOutputArray);
 
   const requestRef = useRef<number>(0);
   const simulationCompletedRef = useRef<boolean>(false);
@@ -68,6 +72,7 @@ const ThermalSimulation = ({ city }: ThermalSimulationProps) => {
   const currentOutsideTemperatureRef = useRef<number>(20);
   const hourlyHeatExchangeArrayMapRef = useRef<Map<string, number[]>>(new Map<string, number[]>());
   const hourlySolarHeatGainArrayMapRef = useRef<Map<string, number[]>>(new Map<string, number[]>());
+  const hourlySolarPanelOutputArrayMapRef = useRef<Map<string, number[]>>(new Map<string, number[]>());
   const objectsRef = useRef<Object3D[]>([]); // reuse array in intersection detection
   const intersectionsRef = useRef<Intersection[]>([]); // reuse array in intersection detection
   const sunDirectionRef = useRef<Vector3>();
@@ -75,6 +80,7 @@ const ThermalSimulation = ({ city }: ThermalSimulationProps) => {
   const lang = { lng: language };
   const weather = getWeather(city ?? 'Boston MA, USA');
   const elevation = city ? weather?.elevation : 0;
+  const dustLoss = world.dustLoss ?? 0.05;
   const now = new Date(world.date);
   const timesPerHour = world.timesPerHour ?? 4;
   const minuteInterval = 60 / timesPerHour;
@@ -149,14 +155,6 @@ const ThermalSimulation = ({ city }: ThermalSimulationProps) => {
     a[now.getHours()] += heatExchange;
   };
 
-  const resetHourlyHeatExchangeMap = () => {
-    for (const e of elements) {
-      if (Util.onBuildingEnvelope(e)) {
-        hourlyHeatExchangeArrayMapRef.current.get(e.id)?.fill(0);
-      }
-    }
-  };
-
   // update solar heat gain for a building represented by the foundation's ID
   const updateSolarHeatGainNow = (id: string, gain: number) => {
     let a = hourlySolarHeatGainArrayMapRef.current.get(id);
@@ -169,10 +167,26 @@ const ThermalSimulation = ({ city }: ThermalSimulationProps) => {
     a[now.getHours()] += gain;
   };
 
-  const resetHourlySolarHeatGainMap = () => {
+  // update solar panel output for a building represented by the foundation's ID
+  const updateSolarPanelOutputNow = (id: string, output: number) => {
+    let a = hourlySolarPanelOutputArrayMapRef.current.get(id);
+    if (!a) {
+      // initialize (polar areas may have 24 sunlight in the summer)
+      a = new Array(24).fill(0);
+      hourlySolarPanelOutputArrayMapRef.current.set(id, a);
+    }
+    // sum the results sampled over an hour
+    a[now.getHours()] += output;
+  };
+
+  const resetHourlyMaps = () => {
     for (const e of elements) {
+      if (Util.onBuildingEnvelope(e)) {
+        hourlyHeatExchangeArrayMapRef.current.get(e.id)?.fill(0);
+      }
       if (e.type === ObjectType.Foundation) {
         hourlySolarHeatGainArrayMapRef.current.get(e.id)?.fill(0);
+        hourlySolarPanelOutputArrayMapRef.current.get(e.id)?.fill(0);
       }
     }
   };
@@ -240,8 +254,7 @@ const ThermalSimulation = ({ city }: ThermalSimulationProps) => {
       now.setHours(0, minuteInterval / 2);
     }
     simulationCompletedRef.current = false;
-    resetHourlyHeatExchangeMap();
-    resetHourlySolarHeatGainMap();
+    resetHourlyMaps();
   };
 
   const finishDaily = () => {
@@ -254,11 +267,18 @@ const ThermalSimulation = ({ city }: ThermalSimulationProps) => {
           setHourlyHeatExchangeArray(e.id, [...arr]);
         }
       }
-      // the total solar heat gains through all the windows on a foundation
+      // the total solar heat gain through all the windows on a foundation
       if (e.type === ObjectType.Foundation) {
         const arr = hourlySolarHeatGainArrayMapRef.current.get(e.id);
         if (arr) {
           setHourlySolarHeatGainArray(e.id, [...arr]);
+        }
+      }
+      // the total solar panel output through all the solar panels on a foundation
+      if (e.type === ObjectType.Foundation) {
+        const arr = hourlySolarPanelOutputArrayMapRef.current.get(e.id);
+        if (arr) {
+          setHourlySolarPanelOutputArray(e.id, [...arr]);
         }
       }
     }
@@ -373,8 +393,7 @@ const ThermalSimulation = ({ city }: ThermalSimulationProps) => {
         state.world.date = now.toLocaleString('en-US');
       });
     }
-    resetHourlyHeatExchangeMap();
-    resetHourlySolarHeatGainMap();
+    resetHourlyMaps();
     simulationCompletedRef.current = false;
   };
 
@@ -412,8 +431,7 @@ const ThermalSimulation = ({ city }: ThermalSimulationProps) => {
         now.setHours(0, minuteInterval / 2);
         setMonthIndex(now.getMonth());
         dayRef.current = Util.dayOfYear(now);
-        resetHourlyHeatExchangeMap();
-        resetHourlySolarHeatGainMap();
+        resetHourlyMaps();
         // recursive call to the next step of the simulation
         requestRef.current = requestAnimationFrame(simulateYearly);
       }
@@ -440,6 +458,9 @@ const ThermalSimulation = ({ city }: ThermalSimulationProps) => {
         case ObjectType.Roof:
           calculateRoof(e as RoofModel);
           break;
+        case ObjectType.SolarPanel:
+          calculateSolarPanelOutput(e as SolarPanelModel);
+          break;
       }
     }
   };
@@ -449,6 +470,57 @@ const ThermalSimulation = ({ city }: ThermalSimulationProps) => {
     const daylight = sunMinutes.daylight() / 60;
     // divide by times per hour as the radiation is added up that many times
     return daylight > ZERO_TOLERANCE ? weather.sunshineHours[now.getMonth()] / (30 * daylight * world.timesPerHour) : 0;
+  };
+
+  const getPanelEfficiency = (temperature: number, panel: SolarPanelModel, pvModel: PvModel) => {
+    let e = pvModel.efficiency;
+    if (pvModel.cellType === 'Monocrystalline') {
+      e *= 0.95; // assuming that the packing density factor of semi-round cells is 0.95
+    }
+    return e * (1 + pvModel.pmaxTC * (temperature - 25));
+  };
+
+  // apply clearness and convert the unit of time step from minute to hour so that we get kWh
+  // (divided by times per hour as the radiation is added up that many times in an hour)
+  const getTimeFactor = () => {
+    const daylight = sunMinutes.daylight() / 60;
+    return daylight > ZERO_TOLERANCE ? weather.sunshineHours[now.getMonth()] / (30 * daylight * timesPerHour) : 0;
+  };
+
+  const inverterEfficiency = 0.95;
+  const getElementFactor = (panel: SolarPanelModel) => {
+    const pvModel = getPvModule(panel.pvModelName);
+    if (!pvModel) throw new Error('PV model not found');
+    return panel.lx * panel.ly * inverterEfficiency * (1 - dustLoss);
+  };
+
+  const calculateSolarPanelOutput = (panel: SolarPanelModel) => {
+    const foundation = getFoundation(panel);
+    if (foundation) {
+      const parent = getParent(panel);
+      if (parent) {
+        const pvModel = getPvModule(panel.pvModelName);
+        // when the sun is out
+        if (sunDirectionRef.current && sunDirectionRef.current.z > 0) {
+          const solarPanelOutput = SolarRadiation.computeSolarPanelOutput(
+            now,
+            world,
+            sunDirectionRef.current,
+            pvModel,
+            panel,
+            parent,
+            foundation,
+            elevation,
+            inShadow,
+          );
+          const eff =
+            getPanelEfficiency(currentOutsideTemperatureRef.current, panel, pvModel) *
+            getTimeFactor() *
+            getElementFactor(panel);
+          updateSolarPanelOutputNow(foundation.id, solarPanelOutput * eff);
+        }
+      }
+    }
   };
 
   const calculateWindow = (window: WindowModel) => {
@@ -823,7 +895,7 @@ const ThermalSimulation = ({ city }: ThermalSimulationProps) => {
     const totalSolarHeats: number[] = Array(n).fill(0);
     // when the sun is out
     if (!Util.isZero(absorption) && sunDirectionRef.current && sunDirectionRef.current.z > 0) {
-      const solarRadiationEnergySegments = SolarRadiation.computeGableRoofSolarRadiationEnergy(
+      const solarRadiationEnergySegments = SolarRadiation.computeMansardRoofSolarRadiationEnergy(
         now,
         world,
         sunDirectionRef.current,
