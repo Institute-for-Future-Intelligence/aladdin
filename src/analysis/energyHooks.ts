@@ -23,8 +23,8 @@ export const useDailyEnergySorter = (
 
   const sum: DatumEntry[] = [];
   const dataLabels: string[] = [];
-  const sumHeaterRef = useRef<number>(0);
-  const sumAcRef = useRef<number>(0);
+  const sumHeaterMapRef = useRef<Map<string, number>>(new Map<string, number>());
+  const sumAcMapRef = useRef<Map<string, number>>(new Map<string, number>());
 
   useEffect(() => {
     // get the highest and lowest temperatures of the day from the weather data
@@ -33,8 +33,8 @@ export const useDailyEnergySorter = (
       weather.lowestTemperatures,
       weather.highestTemperatures,
     );
-    sumHeaterRef.current = 0;
-    sumAcRef.current = 0;
+    sumHeaterMapRef.current.clear();
+    sumAcMapRef.current.clear();
     for (let i = 0; i < 24; i++) {
       const datum: DatumEntry = {};
       const energy = new Map<string, EnergyUsage>();
@@ -88,7 +88,7 @@ export const useDailyEnergySorter = (
               const f = elem as FoundationModel;
               const setpoint = f.hvacSystem?.thermostatSetpoint ?? 20;
               const threshold = f.hvacSystem?.temperatureThreshold ?? 3;
-              const id = value.label && value.label !== '' ? value.label : index;
+              const id = value.label && value.label !== '' ? value.label : index.toString();
               const adjustedHeat = Math.abs(
                 adjustEnergyUsage(outsideTemperatureRange, value.heater, setpoint, threshold),
               );
@@ -96,8 +96,14 @@ export const useDailyEnergySorter = (
               datum['Heater ' + id] = adjustedHeat;
               datum['AC ' + id] = adjustedAc;
               datum['Net ' + id] = adjustedHeat + adjustedAc;
-              sumHeaterRef.current += adjustedHeat;
-              sumAcRef.current += adjustedAc;
+              let x = sumHeaterMapRef.current.get(id);
+              if (x === undefined) x = 0;
+              x += adjustedHeat;
+              sumHeaterMapRef.current.set(id, x);
+              x = sumAcMapRef.current.get(id);
+              if (x === undefined) x = 0;
+              x += adjustedAc;
+              sumAcMapRef.current.set(id, x);
             }
           }
           index++;
@@ -119,8 +125,15 @@ export const useDailyEnergySorter = (
               datum['Heater'] = adjustedHeat;
               datum['AC'] = adjustedAc;
               datum['Net'] = adjustedHeat + adjustedAc;
-              sumHeaterRef.current += adjustedHeat;
-              sumAcRef.current += adjustedAc;
+              const id = 'default';
+              let x = sumHeaterMapRef.current.get(id);
+              if (x === undefined) x = 0;
+              x += adjustedHeat;
+              sumHeaterMapRef.current.set(id, x);
+              x = sumAcMapRef.current.get(id);
+              if (x === undefined) x = 0;
+              x += adjustedAc;
+              sumAcMapRef.current.set(id, x);
             }
           }
         }
@@ -129,5 +142,5 @@ export const useDailyEnergySorter = (
     }
   }, [hourlyHeatExchangeArrayMap, hourlySolarHeatGainArrayMap]);
 
-  return { sum, sumHeater: sumHeaterRef.current, sumAc: sumAcRef.current, dataLabels };
+  return { sum, sumHeaterMap: sumHeaterMapRef.current, sumAcMap: sumAcMapRef.current, dataLabels };
 };

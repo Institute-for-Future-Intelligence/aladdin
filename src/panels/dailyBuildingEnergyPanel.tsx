@@ -106,8 +106,11 @@ const DailyBuildingEnergyPanel = ({ city }: DailyBuildingEnergyPanelProps) => {
 
   const lang = { lng: language };
   const weather = getWeather(city ?? 'Boston MA, USA');
+  const tooltipHeaterBreakdown = useRef<string>('');
+  const tooltipAcBreakdown = useRef<string>('');
+  const tooltipNetBreakdown = useRef<string>('');
 
-  const { sum, sumHeater, sumAc, dataLabels } = useDailyEnergySorter(
+  const { sum, sumHeaterMap, sumAcMap, dataLabels } = useDailyEnergySorter(
     now,
     weather,
     hourlyHeatExchangeArrayMap,
@@ -116,7 +119,47 @@ const DailyBuildingEnergyPanel = ({ city }: DailyBuildingEnergyPanelProps) => {
 
   useEffect(() => {
     setData(sum);
+    let sumHeater = 0;
+    let sumAc = 0;
+    const multiple = sumHeaterMap.size > 1;
+    if (sumHeaterMap) {
+      tooltipHeaterBreakdown.current = '';
+      for (const key of sumHeaterMap.keys()) {
+        const val = sumHeaterMap.get(key);
+        if (val) {
+          sumHeater += val;
+          if (multiple) {
+            tooltipHeaterBreakdown.current += key + ': ' + val.toFixed(2) + ' ' + i18n.t('word.kWh', lang) + '\n';
+          }
+        }
+      }
+    }
     setHeaterSum(sumHeater);
+    if (sumAcMap) {
+      tooltipAcBreakdown.current = '';
+      for (const key of sumAcMap.keys()) {
+        const val = sumAcMap.get(key);
+        if (val) {
+          sumAc += val;
+          if (multiple) {
+            tooltipAcBreakdown.current += key + ': ' + val.toFixed(2) + ' ' + i18n.t('word.kWh', lang) + '\n';
+          }
+        }
+      }
+    }
+    if (sumHeaterMap && sumAcMap) {
+      tooltipNetBreakdown.current = '';
+      for (const key of sumHeaterMap.keys()) {
+        let net = 0;
+        const heater = sumHeaterMap.get(key);
+        const ac = sumAcMap.get(key);
+        if (heater) net += heater;
+        if (ac) net += ac;
+        if (multiple) {
+          tooltipNetBreakdown.current += key + ': ' + net.toFixed(2) + ' ' + i18n.t('word.kWh', lang) + '\n';
+        }
+      }
+    }
     setAcSum(sumAc);
     setNetSum(sumHeater + sumAc);
     const count = countElementsByType(ObjectType.Foundation);
@@ -258,14 +301,23 @@ const DailyBuildingEnergyPanel = ({ city }: DailyBuildingEnergyPanelProps) => {
             referenceX={now.getHours()}
           />
           <Space style={{ alignSelf: 'center', direction: 'ltr' }}>
-            <Space style={{ cursor: 'default' }}>
-              {i18n.t('buildingEnergyPanel.Heater', lang) + ': ' + heaterSum.toFixed(2)}
+            <Space
+              title={tooltipHeaterBreakdown.current}
+              style={{ cursor: tooltipHeaterBreakdown.current === '' ? 'default' : 'help' }}
+            >
+              {i18n.t('buildingEnergyPanel.Heater', lang) + ': ' + heaterSum.toFixed(1)}
             </Space>
-            <Space style={{ cursor: 'default' }}>
-              {i18n.t('buildingEnergyPanel.AC', lang) + ': ' + acSum.toFixed(2)}
+            <Space
+              title={tooltipAcBreakdown.current}
+              style={{ cursor: tooltipAcBreakdown.current === '' ? 'default' : 'help' }}
+            >
+              {i18n.t('buildingEnergyPanel.AC', lang) + ': ' + acSum.toFixed(1)}
             </Space>
-            <Space style={{ cursor: 'default' }}>
-              {i18n.t('buildingEnergyPanel.Net', lang) + ': ' + netSum.toFixed(2)}
+            <Space
+              title={tooltipNetBreakdown.current}
+              style={{ cursor: tooltipNetBreakdown.current === '' ? 'default' : 'help' }}
+            >
+              {i18n.t('buildingEnergyPanel.Net', lang) + ': ' + netSum.toFixed(1)}
             </Space>
             <Button
               type="default"

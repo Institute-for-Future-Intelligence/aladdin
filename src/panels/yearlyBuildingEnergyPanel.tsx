@@ -111,7 +111,7 @@ const YearlyBuildingEnergyPanel = ({ city }: YearlyBuildingEnergyPanelProps) => 
   const [labels, setLabels] = useState(['Heater', 'AC', 'Net']);
   const [data, setData] = useState<DatumEntry[]>([]);
 
-  const { sum, sumHeater, sumAc, dataLabels } = useDailyEnergySorter(
+  const { sum, sumHeaterMap, sumAcMap, dataLabels } = useDailyEnergySorter(
     now,
     weather,
     hourlyHeatExchangeArrayMap,
@@ -122,6 +122,9 @@ const YearlyBuildingEnergyPanel = ({ city }: YearlyBuildingEnergyPanelProps) => 
   const heaterSumRef = useRef<number[]>(new Array(daysPerYear).fill(0));
   const acSumRef = useRef<number[]>(new Array(daysPerYear).fill(0));
   const netSumRef = useRef<number[]>(new Array(daysPerYear).fill(0));
+  const tooltipHeaterBreakdown = useRef<string>('');
+  const tooltipAcBreakdown = useRef<string>('');
+  const tooltipNetBreakdown = useRef<string>('');
 
   useEffect(() => {
     const count = countElementsByType(ObjectType.Foundation);
@@ -159,6 +162,26 @@ const YearlyBuildingEnergyPanel = ({ city }: YearlyBuildingEnergyPanelProps) => 
       }
       setLabels(l);
       resultRef.current[indexOfMonth] = datum;
+      tooltipHeaterBreakdown.current = '';
+      tooltipAcBreakdown.current = '';
+      tooltipNetBreakdown.current = '';
+      for (let index = 0; index < count; index++) {
+        let totalHeater = 0;
+        let totalAc = 0;
+        let totalNet = 0;
+        const id = dataLabels[index] ?? index + 1;
+        for (const res of resultRef.current) {
+          totalHeater += res['Heater ' + id] as number;
+          totalAc += res['AC ' + id] as number;
+          totalNet += res['Net ' + id] as number;
+        }
+        totalHeater *= monthInterval;
+        totalAc *= monthInterval;
+        totalNet *= monthInterval;
+        tooltipHeaterBreakdown.current += id + ': ' + totalHeater.toFixed(1) + ' ' + i18n.t('word.kWh', lang) + '\n';
+        tooltipAcBreakdown.current += id + ': ' + totalAc.toFixed(1) + ' ' + i18n.t('word.kWh', lang) + '\n';
+        tooltipNetBreakdown.current += id + ': ' + totalNet.toFixed(1) + ' ' + i18n.t('word.kWh', lang) + '\n';
+      }
     } else {
       let heater = 0;
       let ac = 0;
@@ -177,6 +200,18 @@ const YearlyBuildingEnergyPanel = ({ city }: YearlyBuildingEnergyPanelProps) => 
       } as DatumEntry;
     }
     setData([...resultRef.current]);
+    let sumHeater = 0;
+    if (sumHeaterMap) {
+      for (const key of sumHeaterMap.keys()) {
+        sumHeater += sumHeaterMap.get(key) ?? 0;
+      }
+    }
+    let sumAc = 0;
+    if (sumAcMap) {
+      for (const key of sumAcMap.keys()) {
+        sumAc += sumAcMap.get(key) ?? 0;
+      }
+    }
     heaterSumRef.current[indexOfMonth] = sumHeater * monthInterval * 30;
     acSumRef.current[indexOfMonth] = sumAc * monthInterval * 30;
     netSumRef.current[indexOfMonth] = heaterSumRef.current[indexOfMonth] + acSumRef.current[indexOfMonth];
@@ -310,14 +345,23 @@ const YearlyBuildingEnergyPanel = ({ city }: YearlyBuildingEnergyPanelProps) => 
             referenceX={referenceX}
           />
           <Space style={{ alignSelf: 'center', direction: 'ltr' }}>
-            <Space style={{ cursor: 'default' }}>
-              {i18n.t('buildingEnergyPanel.Heater', lang) + ': ' + heaterSum.toFixed(1)}
+            <Space
+              title={tooltipHeaterBreakdown.current}
+              style={{ cursor: tooltipHeaterBreakdown.current === '' ? 'default' : 'help' }}
+            >
+              {i18n.t('buildingEnergyPanel.Heater', lang) + ': ' + heaterSum.toFixed(0)}
             </Space>
-            <Space style={{ cursor: 'default' }}>
-              {i18n.t('buildingEnergyPanel.AC', lang) + ': ' + acSum.toFixed(1)}
+            <Space
+              title={tooltipAcBreakdown.current}
+              style={{ cursor: tooltipAcBreakdown.current === '' ? 'default' : 'help' }}
+            >
+              {i18n.t('buildingEnergyPanel.AC', lang) + ': ' + acSum.toFixed(0)}
             </Space>
-            <Space style={{ cursor: 'default' }}>
-              {i18n.t('buildingEnergyPanel.Net', lang) + ': ' + netSum.toFixed(1)}
+            <Space
+              title={tooltipNetBreakdown.current}
+              style={{ cursor: tooltipNetBreakdown.current === '' ? 'default' : 'help' }}
+            >
+              {i18n.t('buildingEnergyPanel.Net', lang) + ': ' + netSum.toFixed(0)}
             </Space>
             <Button
               type="default"
