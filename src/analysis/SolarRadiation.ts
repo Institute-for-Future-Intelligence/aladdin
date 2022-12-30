@@ -500,7 +500,7 @@ export class SolarRadiation {
         .map(() => Array(ny).fill(0));
       energyOfSegments.push(energy);
       const h0 = segments[0][0].z;
-      const v0 = new Vector3(minX + cellSize / 2, minY + cellSize / 2, foundation.lz + h0);
+      const v0 = new Vector3(minX + cellSize / 2, minY + cellSize / 2, foundation.lz + roof.thickness + h0);
       const v = new Vector3(0, 0, v0.z);
       const indirectRadiation = calculateDiffuseAndReflectedRadiation(
         world.ground,
@@ -555,7 +555,7 @@ export class SolarRadiation {
           .normalize()
           .multiplyScalar((0.5 * distance) / n);
         // find the starting point of the grid (shift half of length in both directions)
-        const v0 = new Vector3(foundation.cx + s0.x, foundation.cy + s0.y, foundation.lz + s0.z);
+        const v0 = new Vector3(foundation.cx + s0.x, foundation.cy + s0.y, foundation.lz + roof.thickness + s0.z);
         v0.add(dm).add(dn);
         // double half-length to full-length for the increment vectors in both directions
         dm.multiplyScalar(2);
@@ -645,7 +645,7 @@ export class SolarRadiation {
         .multiplyScalar((0.5 * distance) / n);
       const v = new Vector3();
       // find the starting point of the grid (shift half of length in both directions)
-      const v0 = new Vector3(foundation.cx + s0.x, foundation.cy + s0.y, foundation.lz + s0.z);
+      const v0 = new Vector3(foundation.cx + s0.x, foundation.cy + s0.y, foundation.lz + roof.thickness + s0.z);
       v0.add(dm).add(dn);
       // double half-length to full-length for the increment vectors in both directions
       dm.multiplyScalar(2);
@@ -746,7 +746,7 @@ export class SolarRadiation {
         .normalize()
         .multiplyScalar((0.5 * distance) / n);
       // find the starting point of the grid (shift half of length in both directions)
-      const v0 = new Vector3(foundation.cx + s0.x, foundation.cy + s0.y, foundation.lz + s0.z);
+      const v0 = new Vector3(foundation.cx + s0.x, foundation.cy + s0.y, foundation.lz + roof.thickness + s0.z);
       v0.add(dm).add(dn);
       // double half-length to full-length for the increment vectors in both directions
       dm.multiplyScalar(2);
@@ -824,7 +824,7 @@ export class SolarRadiation {
           .fill(0)
           .map(() => Array(ny).fill(0));
         energyOfSegments.push(energy);
-        const v0 = new Vector3(minX + cellSize / 2, minY + cellSize / 2, foundation.lz + h0);
+        const v0 = new Vector3(minX + cellSize / 2, minY + cellSize / 2, foundation.lz + roof.thickness + h0);
         const v = new Vector3(0, 0, v0.z);
         const indirectRadiation = calculateDiffuseAndReflectedRadiation(
           world.ground,
@@ -875,7 +875,7 @@ export class SolarRadiation {
           .normalize()
           .multiplyScalar((0.5 * distance) / n);
         // find the starting point of the grid (shift half of length in both directions)
-        const v0 = new Vector3(foundation.cx + s0.x, foundation.cy + s0.y, foundation.lz + s0.z);
+        const v0 = new Vector3(foundation.cx + s0.x, foundation.cy + s0.y, foundation.lz + roof.thickness + s0.z);
         v0.add(dm).add(dn);
         // double half-length to full-length for the increment vectors in both directions
         dm.multiplyScalar(2);

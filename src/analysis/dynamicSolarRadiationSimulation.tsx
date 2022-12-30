@@ -724,7 +724,7 @@ const DynamicSolarRadiationSimulation = ({ city }: DynamicSolarRadiationSimulati
           .map(() => Array(ny).fill(0));
         cellOutputsMapRef.current.set(roof.id, cellOutputs);
       }
-      const v0 = new Vector3(minX + cellSize / 2, minY + cellSize / 2, foundation.lz + h0);
+      const v0 = new Vector3(minX + cellSize / 2, minY + cellSize / 2, foundation.lz + roof.thickness + h0);
       const v = new Vector3(0, 0, v0.z);
       const indirectRadiation = calculateDiffuseAndReflectedRadiation(
         world.ground,
@@ -782,7 +782,7 @@ const DynamicSolarRadiationSimulation = ({ city }: DynamicSolarRadiationSimulati
           .normalize()
           .multiplyScalar((0.5 * distance) / n);
         // find the starting point of the grid (shift half of length in both directions)
-        const v0 = new Vector3(foundation.cx + s0.x, foundation.cy + s0.y, foundation.lz + s0.z);
+        const v0 = new Vector3(foundation.cx + s0.x, foundation.cy + s0.y, foundation.lz + roof.thickness + s0.z);
         v0.add(dm).add(dn);
         // double half-length to full-length for the increment vectors in both directions
         dm.multiplyScalar(2);
@@ -863,7 +863,7 @@ const DynamicSolarRadiationSimulation = ({ city }: DynamicSolarRadiationSimulati
             .map(() => Array(ny).fill(0));
           cellOutputsMapRef.current.set(uuid, cellOutputs);
         }
-        const v0 = new Vector3(minX + cellSize / 2, minY + cellSize / 2, foundation.lz + h0);
+        const v0 = new Vector3(minX + cellSize / 2, minY + cellSize / 2, foundation.lz + roof.thickness + h0);
         const v = new Vector3(0, 0, v0.z);
         const indirectRadiation = calculateDiffuseAndReflectedRadiation(
           world.ground,
@@ -917,7 +917,7 @@ const DynamicSolarRadiationSimulation = ({ city }: DynamicSolarRadiationSimulati
           .normalize()
           .multiplyScalar((0.5 * distance) / n);
         // find the starting point of the grid (shift half of length in both directions)
-        const v0 = new Vector3(foundation.cx + s0.x, foundation.cy + s0.y, foundation.lz + s0.z);
+        const v0 = new Vector3(foundation.cx + s0.x, foundation.cy + s0.y, foundation.lz + roof.thickness + s0.z);
         v0.add(dm).add(dn);
         // double half-length to full-length for the increment vectors in both directions
         dm.multiplyScalar(2);
@@ -993,7 +993,7 @@ const DynamicSolarRadiationSimulation = ({ city }: DynamicSolarRadiationSimulati
         .normalize()
         .multiplyScalar((0.5 * distance) / n);
       // find the starting point of the grid (shift half of length in both directions)
-      const v0 = new Vector3(foundation.cx + s0.x, foundation.cy + s0.y, foundation.lz + s0.z);
+      const v0 = new Vector3(foundation.cx + s0.x, foundation.cy + s0.y, foundation.lz + roof.thickness + s0.z);
       v0.add(dm).add(dn);
       // double half-length to full-length for the increment vectors in both directions
       dm.multiplyScalar(2);
@@ -1070,7 +1070,7 @@ const DynamicSolarRadiationSimulation = ({ city }: DynamicSolarRadiationSimulati
         .multiplyScalar((0.5 * distance) / n);
       const v = new Vector3();
       // find the starting point of the grid (shift half of length in both directions)
-      const v0 = new Vector3(foundation.cx + s0.x, foundation.cy + s0.y, foundation.lz + s0.z);
+      const v0 = new Vector3(foundation.cx + s0.x, foundation.cy + s0.y, foundation.lz + roof.thickness + s0.z);
       v0.add(dm).add(dn);
       // double half-length to full-length for the increment vectors in both directions
       dm.multiplyScalar(2);
