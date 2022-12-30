@@ -30,6 +30,7 @@ import { ZERO_TOLERANCE } from '../constants';
 import { FoundationModel } from '../models/FoundationModel';
 import { SolarPanelModel } from '../models/SolarPanelModel';
 import { PvModel } from '../models/PvModel';
+import { SunMinutes } from './SunMinutes';
 
 interface ThermalSimulationProps {
   city: string | null;
@@ -76,6 +77,7 @@ const ThermalSimulation = ({ city }: ThermalSimulationProps) => {
   const objectsRef = useRef<Object3D[]>([]); // reuse array in intersection detection
   const intersectionsRef = useRef<Intersection[]>([]); // reuse array in intersection detection
   const sunDirectionRef = useRef<Vector3>();
+  const sunMinutesRef = useRef<SunMinutes>();
 
   const lang = { lng: language };
   const weather = getWeather(city ?? 'Boston MA, USA');
@@ -88,9 +90,6 @@ const ThermalSimulation = ({ city }: ThermalSimulationProps) => {
   const monthInterval = 12 / daysPerYear;
   const { scene } = useThree();
   const ray = useMemo(() => new Raycaster(), []);
-  const sunMinutes = useMemo(() => {
-    return computeSunriseAndSunsetInMinutes(now, world.latitude);
-  }, [world.date, world.latitude]);
 
   const calculateSunDirection = () => {
     return computeSunLocation(
@@ -444,6 +443,7 @@ const ThermalSimulation = ({ city }: ThermalSimulationProps) => {
 
   const computeNow = () => {
     updateTemperature(now);
+    sunMinutesRef.current = computeSunriseAndSunsetInMinutes(now, world.latitude);
     sunDirectionRef.current = calculateSunDirection();
     for (const e of elements) {
       switch (e.type) {
@@ -468,8 +468,9 @@ const ThermalSimulation = ({ city }: ThermalSimulationProps) => {
   };
 
   const getScaleFactor = () => {
+    if (!sunMinutesRef.current) throw new Error('sun minutes not set');
     // apply clearness and convert the unit of time step from minute to hour so that we get kWh
-    const daylight = sunMinutes.daylight() / 60;
+    const daylight = sunMinutesRef.current.daylight() / 60;
     // divide by times per hour as the radiation is added up that many times
     return daylight > ZERO_TOLERANCE ? weather.sunshineHours[now.getMonth()] / (30 * daylight * world.timesPerHour) : 0;
   };
@@ -485,7 +486,8 @@ const ThermalSimulation = ({ city }: ThermalSimulationProps) => {
   // apply clearness and convert the unit of time step from minute to hour so that we get kWh
   // (divided by times per hour as the radiation is added up that many times in an hour)
   const getTimeFactor = () => {
-    const daylight = sunMinutes.daylight() / 60;
+    if (!sunMinutesRef.current) throw new Error('sun minutes not set');
+    const daylight = sunMinutesRef.current.daylight() / 60;
     return daylight > ZERO_TOLERANCE ? weather.sunshineHours[now.getMonth()] / (30 * daylight * timesPerHour) : 0;
   };
 
