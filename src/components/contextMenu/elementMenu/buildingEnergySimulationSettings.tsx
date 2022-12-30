@@ -3,20 +3,17 @@
  */
 
 import React from 'react';
-import { InputNumber, Menu, Select, Space, Switch } from 'antd';
+import { InputNumber, Menu, Select, Space } from 'antd';
 import { useStore } from '../../../stores/common';
 import * as Selector from '../../../stores/selector';
 import i18n from '../../../i18n/i18n';
-import { Util } from '../../../Util';
 
 const BuildingEnergySimulationSettings = () => {
   const setCommonStore = useStore(Selector.set);
-  const elements = useStore.getState().elements;
   const language = useStore(Selector.language);
   const timesPerHour = useStore(Selector.world.timesPerHour);
   const daysPerYear = useStore(Selector.world.daysPerYear);
   const gridCellSize = useStore(Selector.world.solarRadiationHeatmapGridCellSize);
-  const noAnimationForThermalSimulation = useStore(Selector.world.noAnimationForThermalSimulation);
 
   const lang = { lng: language };
   const { SubMenu } = Menu;
