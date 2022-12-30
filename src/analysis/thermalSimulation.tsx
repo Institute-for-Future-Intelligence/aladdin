@@ -282,6 +282,9 @@ const ThermalSimulation = ({ city }: ThermalSimulationProps) => {
         }
       }
     }
+    usePrimitiveStore.setState((state) => {
+      state.flagOfDailySimulation = !state.flagOfDailySimulation;
+    });
   };
 
   const calculateDaily = () => {
@@ -423,7 +426,6 @@ const ThermalSimulation = ({ city }: ThermalSimulationProps) => {
           });
           showInfo(i18n.t('message.SimulationCompleted', lang));
           simulationCompletedRef.current = true;
-          //generateYearlyData();
           return;
         }
         // go to the next month

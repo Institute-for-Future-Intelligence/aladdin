@@ -86,6 +86,7 @@ const DailyBuildingEnergyPanel = ({ city }: DailyBuildingEnergyPanelProps) => {
   const hourlySolarPanelOutputArrayMap = usePrimitiveStore(Selector.hourlySolarPanelOutputArrayMap);
   const panelRect = useStore(Selector.viewState.dailyBuildingEnergyPanelRect);
   const countElementsByType = useStore(Selector.countElementsByType);
+  const flagOfDailySimulation = usePrimitiveStore(Selector.flagOfDailySimulation);
 
   // nodeRef is to suppress ReactDOM.findDOMNode() deprecation warning. See:
   // https://github.com/react-grid-layout/react-draggable/blob/v4.4.2/lib/DraggableCore.js#L159-L171
@@ -193,7 +194,7 @@ const DailyBuildingEnergyPanel = ({ city }: DailyBuildingEnergyPanelProps) => {
     } else {
       setLabels(['Heater', 'AC', 'Solar', 'Net']);
     }
-  }, [hourlyHeatExchangeArrayMap, hourlySolarHeatGainArrayMap, hourlySolarPanelOutputArrayMap]);
+  }, [flagOfDailySimulation]);
 
   useEffect(() => {
     setCurPosition({
@@ -337,7 +338,7 @@ const DailyBuildingEnergyPanel = ({ city }: DailyBuildingEnergyPanelProps) => {
               title={tooltipSolarPanelBreakdown.current}
               style={{ cursor: tooltipSolarPanelBreakdown.current === '' ? 'default' : 'help' }}
             >
-              {i18n.t('buildingEnergyPanel.SolarPanel', lang) + ': ' + acSum.toFixed(1)}
+              {i18n.t('buildingEnergyPanel.SolarPanel', lang) + ': ' + solarPanelSum.toFixed(1)}
             </Space>
             <Space
               title={tooltipNetBreakdown.current}

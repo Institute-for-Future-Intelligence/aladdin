@@ -86,6 +86,7 @@ const YearlyBuildingEnergyPanel = ({ city }: YearlyBuildingEnergyPanelProps) => 
   const hourlyHeatExchangeArrayMap = usePrimitiveStore(Selector.hourlyHeatExchangeArrayMap);
   const hourlySolarHeatGainArrayMap = usePrimitiveStore(Selector.hourlySolarHeatGainArrayMap);
   const hourlySolarPanelOutputArrayMap = usePrimitiveStore(Selector.hourlySolarPanelOutputArrayMap);
+  const flagOfDailySimulation = usePrimitiveStore(Selector.flagOfDailySimulation);
 
   const wrapperRef = useRef<HTMLDivElement | null>(null);
   const resizeObserverRef = useRef<ResizeObserver>();
@@ -108,8 +109,9 @@ const YearlyBuildingEnergyPanel = ({ city }: YearlyBuildingEnergyPanelProps) => 
 
   const [heaterSum, setHeaterSum] = useState(0);
   const [acSum, setAcSum] = useState(0);
+  const [solarPanelSum, setsolarPanelSum] = useState(0);
   const [netSum, setNetSum] = useState(0);
-  const [labels, setLabels] = useState(['Heater', 'AC', 'Net']);
+  const [labels, setLabels] = useState(['Heater', 'AC', 'Solar', 'Net']);
   const [data, setData] = useState<DatumEntry[]>([]);
 
   const { sum, sumHeaterMap, sumAcMap, sumSolarPanelMap, dataLabels } = useDailyEnergySorter(
@@ -123,9 +125,11 @@ const YearlyBuildingEnergyPanel = ({ city }: YearlyBuildingEnergyPanelProps) => 
   const resultRef = useRef<DatumEntry[]>(new Array(daysPerYear).fill({}));
   const heaterSumRef = useRef<number[]>(new Array(daysPerYear).fill(0));
   const acSumRef = useRef<number[]>(new Array(daysPerYear).fill(0));
+  const solarPanelSumRef = useRef<number[]>(new Array(daysPerYear).fill(0));
   const netSumRef = useRef<number[]>(new Array(daysPerYear).fill(0));
   const tooltipHeaterBreakdown = useRef<string>('');
   const tooltipAcBreakdown = useRef<string>('');
+  const tooltipSolarPanelBreakdown = useRef<string>('');
   const tooltipNetBreakdown = useRef<string>('');
 
   useEffect(() => {
@@ -134,6 +138,7 @@ const YearlyBuildingEnergyPanel = ({ city }: YearlyBuildingEnergyPanelProps) => 
     if (count > 1) {
       const heaterMap = new Map<string, number>();
       const acMap = new Map<string, number>();
+      const solarPanelMap = new Map<string, number>();
       const netMap = new Map<string, number>();
       for (const h of sum) {
         for (let j = 0; j < count; j++) {
@@ -146,6 +151,10 @@ const YearlyBuildingEnergyPanel = ({ city }: YearlyBuildingEnergyPanelProps) => 
           if (ac === undefined) ac = 0;
           ac += h['AC ' + id] as number;
           acMap.set(id, ac);
+          let solarPanel = solarPanelMap.get(id);
+          if (solarPanel === undefined) solarPanel = 0;
+          solarPanel += h['Solar ' + id] as number;
+          solarPanelMap.set(id, solarPanel);
           let net = netMap.get(id);
           if (net === undefined) net = 0;
           net += h['Net ' + id] as number;
@@ -157,47 +166,58 @@ const YearlyBuildingEnergyPanel = ({ city }: YearlyBuildingEnergyPanelProps) => 
       const l = [];
       for (let index = 0; index < count; index++) {
         const id = dataLabels[index] ?? index + 1;
-        l.push('Heater ' + id, 'AC ' + id, 'Net ' + id);
+        l.push('Heater ' + id, 'AC ' + id, 'Solar ' + id, 'Net ' + id);
         datum['Heater ' + id] = (heaterMap.get(id) ?? 0) * 30;
         datum['AC ' + id] = (acMap.get(id) ?? 0) * 30;
+        datum['Solar ' + id] = (solarPanelMap.get(id) ?? 0) * 30;
         datum['Net ' + id] = (netMap.get(id) ?? 0) * 30;
       }
       setLabels(l);
       resultRef.current[indexOfMonth] = datum;
       tooltipHeaterBreakdown.current = '';
       tooltipAcBreakdown.current = '';
+      tooltipSolarPanelBreakdown.current = '';
       tooltipNetBreakdown.current = '';
       for (let index = 0; index < count; index++) {
         let totalHeater = 0;
         let totalAc = 0;
+        let totalSolarPanel = 0;
         let totalNet = 0;
         const id = dataLabels[index] ?? index + 1;
         for (const res of resultRef.current) {
           totalHeater += res['Heater ' + id] as number;
           totalAc += res['AC ' + id] as number;
+          totalSolarPanel += res['Solar ' + id] as number;
           totalNet += res['Net ' + id] as number;
         }
         totalHeater *= monthInterval;
         totalAc *= monthInterval;
+        totalSolarPanel *= monthInterval;
         totalNet *= monthInterval;
         tooltipHeaterBreakdown.current += id + ': ' + totalHeater.toFixed(1) + ' ' + i18n.t('word.kWh', lang) + '\n';
         tooltipAcBreakdown.current += id + ': ' + totalAc.toFixed(1) + ' ' + i18n.t('word.kWh', lang) + '\n';
+        tooltipSolarPanelBreakdown.current +=
+          id + ': ' + totalSolarPanel.toFixed(1) + ' ' + i18n.t('word.kWh', lang) + '\n';
         tooltipNetBreakdown.current += id + ': ' + totalNet.toFixed(1) + ' ' + i18n.t('word.kWh', lang) + '\n';
       }
     } else {
+      // only one building
       let heater = 0;
       let ac = 0;
+      let solarPanel = 0;
       let net = 0;
       for (const h of sum) {
         heater += h['Heater'] as number;
         ac += h['AC'] as number;
+        solarPanel += h['Solar'] as number;
         net += h['Net'] as number;
       }
-      setLabels(['Heater', 'AC', 'Net']);
+      setLabels(['Heater', 'AC', 'Solar', 'Net']);
       resultRef.current[indexOfMonth] = {
         Month: MONTHS[now.getMonth()],
         Heater: 30 * heater,
         AC: 30 * ac,
+        Solar: 30 * solarPanel,
         Net: 30 * net,
       } as DatumEntry;
     }
@@ -214,13 +234,22 @@ const YearlyBuildingEnergyPanel = ({ city }: YearlyBuildingEnergyPanelProps) => 
         sumAc += sumAcMap.get(key) ?? 0;
       }
     }
+    let sumSolarPanel = 0;
+    if (sumSolarPanelMap) {
+      for (const key of sumSolarPanelMap.keys()) {
+        sumSolarPanel += sumSolarPanelMap.get(key) ?? 0;
+      }
+    }
     heaterSumRef.current[indexOfMonth] = sumHeater * monthInterval * 30;
     acSumRef.current[indexOfMonth] = sumAc * monthInterval * 30;
-    netSumRef.current[indexOfMonth] = heaterSumRef.current[indexOfMonth] + acSumRef.current[indexOfMonth];
+    solarPanelSumRef.current[indexOfMonth] = sumSolarPanel * monthInterval * 30;
+    netSumRef.current[indexOfMonth] =
+      heaterSumRef.current[indexOfMonth] + acSumRef.current[indexOfMonth] - solarPanelSumRef.current[indexOfMonth];
     setHeaterSum(heaterSumRef.current.reduce((pv, cv) => pv + cv, 0));
     setAcSum(acSumRef.current.reduce((pv, cv) => pv + cv, 0));
+    setsolarPanelSum(solarPanelSumRef.current.reduce((pv, cv) => pv + cv, 0));
     setNetSum(netSumRef.current.reduce((pv, cv) => pv + cv, 0));
-  }, [hourlyHeatExchangeArrayMap, hourlySolarHeatGainArrayMap]);
+  }, [flagOfDailySimulation]);
 
   useEffect(() => {
     setCurPosition({
@@ -358,6 +387,12 @@ const YearlyBuildingEnergyPanel = ({ city }: YearlyBuildingEnergyPanelProps) => 
               style={{ cursor: tooltipAcBreakdown.current === '' ? 'default' : 'help' }}
             >
               {i18n.t('buildingEnergyPanel.AC', lang) + ': ' + acSum.toFixed(0)}
+            </Space>
+            <Space
+              title={tooltipSolarPanelBreakdown.current}
+              style={{ cursor: tooltipSolarPanelBreakdown.current === '' ? 'default' : 'help' }}
+            >
+              {i18n.t('buildingEnergyPanel.SolarPanel', lang) + ': ' + solarPanelSum.toFixed(0)}
             </Space>
             <Space
               title={tooltipNetBreakdown.current}

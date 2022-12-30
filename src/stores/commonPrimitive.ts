@@ -6,6 +6,8 @@ import create from 'zustand';
 export interface PrimitiveStoreState {
   duringCameraInteraction: boolean;
 
+  flagOfDailySimulation: boolean; // used as a flag to notify that daily results are ready
+
   // store the calculated hourly heat exchange result between inside and outside through an element of a building
   hourlyHeatExchangeArrayMap: Map<string, number[]>;
   setHourlyHeatExchangeArray: (id: string, data: number[]) => void;
@@ -22,6 +24,8 @@ export interface PrimitiveStoreState {
 export const usePrimitiveStore = create<PrimitiveStoreState>((set, get) => {
   return {
     duringCameraInteraction: false,
+
+    flagOfDailySimulation: false,
 
     hourlyHeatExchangeArrayMap: new Map<string, number[]>(),
     setHourlyHeatExchangeArray(id, data) {

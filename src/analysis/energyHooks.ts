@@ -10,6 +10,7 @@ import { useStore } from '../stores/common';
 import * as Selector from '../stores/selector';
 import { WeatherModel } from '../models/WeatherModel';
 import { useEffect, useRef } from 'react';
+import { usePrimitiveStore } from '../stores/commonPrimitive';
 
 export const useDailyEnergySorter = (
   now: Date,
@@ -21,6 +22,7 @@ export const useDailyEnergySorter = (
   const elements = useStore.getState().elements;
   const getFoundation = useStore(Selector.getFoundation);
   const getElementById = useStore(Selector.getElementById);
+  const flagOfDailySimulation = usePrimitiveStore(Selector.flagOfDailySimulation);
 
   const sum: DatumEntry[] = [];
   const dataLabels: string[] = [];
@@ -159,7 +161,7 @@ export const useDailyEnergySorter = (
       }
       sum.push(datum);
     }
-  }, [hourlyHeatExchangeArrayMap, hourlySolarHeatGainArrayMap]);
+  }, [flagOfDailySimulation]);
 
   return {
     sum,
