@@ -164,7 +164,7 @@ const DailyBuildingEnergyPanel = ({ city }: DailyBuildingEnergyPanelProps) => {
         }
       }
     }
-    if (sumHeaterMap && sumAcMap && sumSolarPanel) {
+    if (sumHeaterMap && sumAcMap && sumSolarPanelMap) {
       tooltipNetBreakdown.current = '';
       for (const key of sumHeaterMap.keys()) {
         let net = 0;

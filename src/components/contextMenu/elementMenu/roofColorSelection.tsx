@@ -26,7 +26,7 @@ const RoofColorSelection = ({ setDialogVisible }: { setDialogVisible: (b: boolea
   const revertApply = useStore(Selector.revertApply);
   const getElementById = useStore(Selector.getElementById);
 
-  const [selectedColor, setSelectedColor] = useState<string>(roof?.color ?? 'white');
+  const [selectedColor, setSelectedColor] = useState<string>(roof?.color ?? '#ffffff');
   const [dragEnabled, setDragEnabled] = useState<boolean>(false);
   const [bounds, setBounds] = useState<DraggableBounds>({ left: 0, top: 0, bottom: 0, right: 0 } as DraggableBounds);
   const dragRef = useRef<HTMLDivElement | null>(null);
@@ -40,7 +40,7 @@ const RoofColorSelection = ({ setDialogVisible }: { setDialogVisible: (b: boolea
 
   useEffect(() => {
     if (roof) {
-      setSelectedColor(roof?.color ?? 'white');
+      setSelectedColor(roof?.color ?? '#ffffff');
     }
   }, [roof]);
 
@@ -76,7 +76,7 @@ const RoofColorSelection = ({ setDialogVisible }: { setDialogVisible: (b: boolea
         const oldColorsAll = new Map<string, string>();
         for (const elem of useStore.getState().elements) {
           if (elem.type === ObjectType.Roof && !elem.locked) {
-            oldColorsAll.set(elem.id, elem.color ?? 'white');
+            oldColorsAll.set(elem.id, elem.color ?? '#ffffff');
           }
         }
         const undoableChangeAll = {
@@ -100,7 +100,7 @@ const RoofColorSelection = ({ setDialogVisible }: { setDialogVisible: (b: boolea
           const oldColorsAboveFoundation = new Map<string, string>();
           for (const elem of useStore.getState().elements) {
             if (elem.type === ObjectType.Roof && elem.foundationId === roof.foundationId && !roof.locked) {
-              oldColorsAboveFoundation.set(elem.id, elem.color ?? 'white');
+              oldColorsAboveFoundation.set(elem.id, elem.color ?? '#ffffff');
             }
           }
           const undoableChangeAboveFoundation = {
@@ -129,7 +129,7 @@ const RoofColorSelection = ({ setDialogVisible }: { setDialogVisible: (b: boolea
       default:
         if (roof) {
           const updatedRoof = getElementById(roof.id) as RoofModel;
-          const oldColor = (updatedRoof ? updatedRoof.color : roof.color) ?? 'white';
+          const oldColor = (updatedRoof ? updatedRoof.color : roof.color) ?? '#ffffff';
           const undoableChange = {
             name: 'Set Color of Selected Roof',
             timestamp: Date.now(),
@@ -230,7 +230,7 @@ const RoofColorSelection = ({ setDialogVisible }: { setDialogVisible: (b: boolea
         <Row gutter={6}>
           <Col className="gutter-row" span={11}>
             <CompactPicker
-              color={selectedColor ?? roof?.color ?? 'white'}
+              color={selectedColor ?? roof?.color ?? '#ffffff'}
               onChangeComplete={(colorResult) => {
                 setSelectedColor(colorResult.hex);
               }}

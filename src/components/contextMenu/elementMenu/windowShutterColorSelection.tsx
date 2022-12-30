@@ -37,7 +37,7 @@ const WindowShutterColorSelection = ({ setDialogVisible }: { setDialogVisible: (
     return null;
   });
 
-  const [selectedColor, setSelectedColor] = useState<string>(windowElement?.shutter?.color ?? 'grey');
+  const [selectedColor, setSelectedColor] = useState<string>(windowElement?.shutter?.color ?? '#808080');
   const [dragEnabled, setDragEnabled] = useState<boolean>(false);
   const [bounds, setBounds] = useState<DraggableBounds>({ left: 0, top: 0, bottom: 0, right: 0 } as DraggableBounds);
   const dragRef = useRef<HTMLDivElement | null>(null);
@@ -51,7 +51,7 @@ const WindowShutterColorSelection = ({ setDialogVisible }: { setDialogVisible: (
 
   useEffect(() => {
     if (windowElement) {
-      setSelectedColor(windowElement?.shutter?.color ?? 'grey');
+      setSelectedColor(windowElement?.shutter?.color ?? '#808080');
     }
   }, [windowElement?.shutter?.color]);
 
@@ -90,7 +90,7 @@ const WindowShutterColorSelection = ({ setDialogVisible }: { setDialogVisible: (
         const oldValsAll = new Map<string, string>();
         for (const elem of useStore.getState().elements) {
           if (elem.type === ObjectType.Window && !elem.locked) {
-            oldValsAll.set(elem.id, (elem as WindowModel).shutter?.color ?? 'grey');
+            oldValsAll.set(elem.id, (elem as WindowModel).shutter?.color ?? '#808080');
           }
         }
         const undoableChangeAll = {
@@ -152,7 +152,7 @@ const WindowShutterColorSelection = ({ setDialogVisible }: { setDialogVisible: (
               elem.foundationId === windowElement.foundationId &&
               !windowElement.locked
             ) {
-              oldValsAboveFoundation.set(elem.id, (elem as WindowModel).shutter?.color ?? 'grey');
+              oldValsAboveFoundation.set(elem.id, (elem as WindowModel).shutter?.color ?? '#808080');
             }
           }
           const undoableChangeAboveFoundation = {
@@ -181,7 +181,7 @@ const WindowShutterColorSelection = ({ setDialogVisible }: { setDialogVisible: (
       default:
         if (windowElement) {
           const updatedWindow = getElementById(windowElement.id) as WindowModel;
-          const oldColor = (updatedWindow ? updatedWindow.tint : windowElement.tint) ?? 'grey';
+          const oldColor = (updatedWindow ? updatedWindow.tint : windowElement.tint) ?? '#808080';
           const undoableChange = {
             name: 'Set Shutter Color of Selected window',
             timestamp: Date.now(),
@@ -283,7 +283,7 @@ const WindowShutterColorSelection = ({ setDialogVisible }: { setDialogVisible: (
         <Row gutter={6}>
           <Col className="gutter-row" span={11}>
             <CompactPicker
-              color={selectedColor ?? windowElement?.tint ?? 'grey'}
+              color={selectedColor ?? windowElement?.tint ?? '#808080'}
               onChangeComplete={(colorResult) => {
                 setSelectedColor(colorResult.hex);
               }}

@@ -1,7 +1,7 @@
 {
-  "docid": "wbggEtghC7qTJm5C151XYH",
-  "time": "12/27/2022 06:29 pm",
-  "timestamp": 1672183765712,
+  "docid": "oDHau8Vkkjhp3CKmPsmWgY",
+  "time": "12/30/2022 03:59 pm",
+  "timestamp": 1672433952966,
   "userid": "QWecNcxhyvP6j6sBN11hBsfZDau1",
   "owner": null,
   "email": null,
@@ -100,7 +100,8 @@
       "label": "A",
       "showLabel": true,
       "labelHeight": 8.5,
-      "labelSize": 0.8
+      "labelSize": 0.8,
+      "color": "#808080"
     },
     {
       "type": "Wall",
@@ -386,7 +387,7 @@
       "mullion": true,
       "mullionWidth": 0.06,
       "mullionSpacing": 1,
-      "mullionColor": "white",
+      "mullionColor": "#ffffff",
       "frame": true,
       "frameWidth": 0.1,
       "windowType": "Default",
@@ -395,7 +396,7 @@
       "lineWidth": 0.2,
       "lineColor": "black",
       "showLabel": false,
-      "color": "white",
+      "color": "#cccccc",
       "tint": "#009ce0",
       "opacity": 0.5,
       "normal": [
@@ -423,12 +424,12 @@
       "mullion": true,
       "mullionWidth": 0.06,
       "mullionSpacing": 1,
-      "mullionColor": "white",
+      "mullionColor": "#ffffff",
       "frame": true,
       "frameWidth": 0.1,
       "windowType": "Default",
       "archHeight": 1,
-      "color": "white",
+      "color": "#cccccc",
       "normal": [
         0,
         0,
@@ -687,12 +688,12 @@
       "mullion": true,
       "mullionWidth": 0.06,
       "mullionSpacing": 1,
-      "mullionColor": "white",
+      "mullionColor": "#ffffff",
       "frame": true,
       "frameWidth": 0.1,
       "windowType": "Default",
       "archHeight": 1,
-      "color": "white",
+      "color": "#cccccc",
       "normal": [
         0,
         0,
@@ -727,12 +728,12 @@
       "mullion": true,
       "mullionWidth": 0.06,
       "mullionSpacing": 1,
-      "mullionColor": "white",
+      "mullionColor": "#ffffff",
       "frame": true,
       "frameWidth": 0.1,
       "windowType": "Default",
       "archHeight": 1,
-      "color": "white",
+      "color": "#cccccc",
       "normal": [
         0,
         0,
@@ -830,7 +831,8 @@
       "id": "4TcV7zx5NzstoQTaTqoAzt",
       "selected": false,
       "label": "B",
-      "showLabel": true
+      "showLabel": true,
+      "color": "#808080"
     }
   ],
   "view": {
@@ -862,9 +864,9 @@
     "dailyHeliostatYieldPanelX": 0,
     "showDailyParabolicDishYieldPanel": false,
     "cameraPosition": [
-      3.840296491466275,
-      -33.8951563967745,
-      5.42760698667046
+      3.840296491466285,
+      -33.895156396774475,
+      5.427606986670456
     ],
     "showYearlyHeliostatYieldPanel": false,
     "orthographic": false,

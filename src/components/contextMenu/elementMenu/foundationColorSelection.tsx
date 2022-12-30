@@ -29,7 +29,7 @@ const FoundationColorSelection = ({ setDialogVisible }: { setDialogVisible: (b: 
   const setApplyCount = useStore(Selector.setApplyCount);
   const revertApply = useStore(Selector.revertApply);
 
-  const [selectedColor, setSelectedColor] = useState<string>(foundation?.color ?? 'gray');
+  const [selectedColor, setSelectedColor] = useState<string>(foundation?.color ?? '#808080');
   const [updateFlag, setUpdateFlag] = useState<boolean>(false);
   const [dragEnabled, setDragEnabled] = useState<boolean>(false);
   const [bounds, setBounds] = useState<DraggableBounds>({ left: 0, top: 0, bottom: 0, right: 0 } as DraggableBounds);
@@ -44,7 +44,7 @@ const FoundationColorSelection = ({ setDialogVisible }: { setDialogVisible: (b: 
 
   useEffect(() => {
     if (foundation) {
-      setSelectedColor(foundation?.color ?? 'gray');
+      setSelectedColor(foundation?.color ?? '#808080');
     }
   }, [foundation]);
 
@@ -81,7 +81,7 @@ const FoundationColorSelection = ({ setDialogVisible }: { setDialogVisible: (b: 
         const oldColorsAll = new Map<string, string>();
         for (const elem of elements) {
           if (elem.type === ObjectType.Foundation) {
-            oldColorsAll.set(elem.id, elem.color ?? 'gray');
+            oldColorsAll.set(elem.id, elem.color ?? '#808080');
           }
         }
         const undoableChangeAll = {
@@ -204,7 +204,7 @@ const FoundationColorSelection = ({ setDialogVisible }: { setDialogVisible: (b: 
         <Row gutter={6}>
           <Col className="gutter-row" span={12}>
             <CompactPicker
-              color={selectedColor ?? foundation?.color ?? 'gray'}
+              color={selectedColor ?? foundation?.color ?? '#808080'}
               onChangeComplete={(colorResult) => {
                 setSelectedColor(colorResult.hex);
                 setUpdateFlag(!updateFlag);

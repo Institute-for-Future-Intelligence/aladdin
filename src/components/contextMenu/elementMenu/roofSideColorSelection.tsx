@@ -26,7 +26,7 @@ const RoofSideColorSelection = ({ setDialogVisible }: { setDialogVisible: (b: bo
   const revertApply = useStore(Selector.revertApply);
   const getElementById = useStore(Selector.getElementById);
 
-  const [selectedSideColor, setSelectedSideColor] = useState<string>(roof?.sideColor ?? 'white');
+  const [selectedSideColor, setSelectedSideColor] = useState<string>(roof?.sideColor ?? '#ffffff');
   const [dragEnabled, setDragEnabled] = useState<boolean>(false);
   const [bounds, setBounds] = useState<DraggableBounds>({ left: 0, top: 0, bottom: 0, right: 0 } as DraggableBounds);
   const dragRef = useRef<HTMLDivElement | null>(null);
@@ -40,7 +40,7 @@ const RoofSideColorSelection = ({ setDialogVisible }: { setDialogVisible: (b: bo
 
   useEffect(() => {
     if (roof) {
-      setSelectedSideColor(roof?.sideColor ?? 'white');
+      setSelectedSideColor(roof?.sideColor ?? '#ffffff');
     }
   }, [roof]);
 
@@ -76,7 +76,7 @@ const RoofSideColorSelection = ({ setDialogVisible }: { setDialogVisible: (b: bo
         const oldColorsAll = new Map<string, string>();
         for (const elem of useStore.getState().elements) {
           if (elem.type === ObjectType.Roof && !elem.locked) {
-            oldColorsAll.set(elem.id, (elem as RoofModel).sideColor ?? 'white');
+            oldColorsAll.set(elem.id, (elem as RoofModel).sideColor ?? '#ffffff');
           }
         }
         const undoableChangeAll = {
@@ -103,7 +103,7 @@ const RoofSideColorSelection = ({ setDialogVisible }: { setDialogVisible: (b: bo
           const oldColorsAboveFoundation = new Map<string, string>();
           for (const elem of useStore.getState().elements) {
             if (elem.type === ObjectType.Roof && elem.foundationId === roof.foundationId && !roof.locked) {
-              oldColorsAboveFoundation.set(elem.id, (elem as RoofModel).sideColor ?? 'white');
+              oldColorsAboveFoundation.set(elem.id, (elem as RoofModel).sideColor ?? '#ffffff');
             }
           }
           const undoableChangeAboveFoundation = {
@@ -132,7 +132,7 @@ const RoofSideColorSelection = ({ setDialogVisible }: { setDialogVisible: (b: bo
       default:
         if (roof) {
           const updatedRoof = getElementById(roof.id) as RoofModel;
-          const oldColor = (updatedRoof ? updatedRoof.sideColor : roof.sideColor) ?? 'white';
+          const oldColor = (updatedRoof ? updatedRoof.sideColor : roof.sideColor) ?? '#ffffff';
           const undoableChange = {
             name: 'Set Side Color of Selected Roof',
             timestamp: Date.now(),
@@ -233,7 +233,7 @@ const RoofSideColorSelection = ({ setDialogVisible }: { setDialogVisible: (b: bo
         <Row gutter={6}>
           <Col className="gutter-row" span={11}>
             <CompactPicker
-              color={selectedSideColor ?? roof?.sideColor ?? 'white'}
+              color={selectedSideColor ?? roof?.sideColor ?? '#ffffff'}
               onChangeComplete={(colorResult) => {
                 setSelectedSideColor(colorResult.hex);
               }}

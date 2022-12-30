@@ -340,6 +340,7 @@ export const i18n_en = {
         EffectOfRoofColorOnBuildingEnergy: 'Effect of Roof Color on Building Energy',
         EffectOfWindowSHGCOnBuildingEnergy: 'Effect of Window Solar Heat Gain on Building Energy',
         EffectOfThermostatSetpointOnBuildingEnergy: 'Effect of Thermostat Setpoint on Building Energy',
+        EffectOfSolarPanelsOnBuildingEnergy: 'Effect of Solar Panels on Building Energy',
         EffectOfTreesOnBuildingEnergy: 'Effect of Trees on Building Energy',
       },
 

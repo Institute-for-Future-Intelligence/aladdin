@@ -1,7 +1,7 @@
 {
-  "docid": "2SnYUP9igsLJzfShriKBDY",
-  "time": "12/27/2022 06:32 pm",
-  "timestamp": 1672183948233,
+  "docid": "cFK634eMuUxhK3j3WFNgGs",
+  "time": "12/30/2022 04:02 pm",
+  "timestamp": 1672434125044,
   "userid": "QWecNcxhyvP6j6sBN11hBsfZDau1",
   "owner": null,
   "email": null,
@@ -99,7 +99,8 @@
       "label": "👎",
       "showLabel": true,
       "labelHeight": 8.5,
-      "labelSize": 0.8
+      "labelSize": 0.8,
+      "color": "#808080"
     },
     {
       "type": "Wall",
@@ -269,7 +270,7 @@
         0,
         7.4648066919643785
       ],
-      "selected": false
+      "selected": true
     },
     {
       "type": "Wall",
@@ -379,13 +380,13 @@
       "shutter": {
         "showLeft": false,
         "showRight": false,
-        "color": "grey",
+        "color": "#009ce0",
         "width": 0.5
       },
       "mullion": true,
       "mullionWidth": 0.06,
       "mullionSpacing": 1,
-      "mullionColor": "white",
+      "mullionColor": "#cccccc",
       "frame": true,
       "frameWidth": 0.1,
       "windowType": "Default",
@@ -394,7 +395,7 @@
       "lineWidth": 0.2,
       "lineColor": "black",
       "showLabel": false,
-      "color": "white",
+      "color": "#cccccc",
       "tint": "#73D8FF",
       "opacity": 0.5,
       "normal": [
@@ -422,12 +423,12 @@
       "mullion": true,
       "mullionWidth": 0.06,
       "mullionSpacing": 1,
-      "mullionColor": "white",
+      "mullionColor": "#cccccc",
       "frame": true,
       "frameWidth": 0.1,
       "windowType": "Default",
       "archHeight": 1,
-      "color": "white",
+      "color": "#cccccc",
       "normal": [
         0,
         0,
@@ -446,7 +447,7 @@
       "shutter": {
         "showLeft": false,
         "showRight": false,
-        "color": "grey",
+        "color": "#009ce0",
         "width": 0.5
       },
       "selected": false
@@ -686,12 +687,12 @@
       "mullion": true,
       "mullionWidth": 0.06,
       "mullionSpacing": 1,
-      "mullionColor": "white",
+      "mullionColor": "#cccccc",
       "frame": true,
       "frameWidth": 0.1,
       "windowType": "Default",
       "archHeight": 1,
-      "color": "white",
+      "color": "#cccccc",
       "normal": [
         0,
         0,
@@ -710,7 +711,7 @@
       "shutter": {
         "showLeft": false,
         "showRight": false,
-        "color": "grey",
+        "color": "#009ce0",
         "width": 0.5
       },
       "selected": false
@@ -726,12 +727,12 @@
       "mullion": true,
       "mullionWidth": 0.06,
       "mullionSpacing": 1,
-      "mullionColor": "white",
+      "mullionColor": "#cccccc",
       "frame": true,
       "frameWidth": 0.1,
       "windowType": "Default",
       "archHeight": 1,
-      "color": "white",
+      "color": "#cccccc",
       "normal": [
         0,
         0,
@@ -750,7 +751,7 @@
       "shutter": {
         "showLeft": false,
         "showRight": false,
-        "color": "grey",
+        "color": "#009ce0",
         "width": 0.5
       },
       "selected": false
@@ -828,7 +829,8 @@
       "id": "4TcV7zx5NzstoQTaTqoAzt",
       "selected": false,
       "label": "👍",
-      "showLabel": true
+      "showLabel": true,
+      "color": "#808080"
     }
   ],
   "view": {
@@ -860,9 +862,9 @@
     "dailyHeliostatYieldPanelX": 0,
     "showDailyParabolicDishYieldPanel": false,
     "cameraPosition": [
-      -25.899593911733433,
-      -24.253839627937555,
-      9.107322054854821
+      -25.89959391173341,
+      -24.253839627937534,
+      9.107322054854817
     ],
     "showYearlyHeliostatYieldPanel": false,
     "orthographic": false,

@@ -26,7 +26,7 @@ const DoorColorSelection = ({ setDialogVisible }: { setDialogVisible: (b: boolea
   const revertApply = useStore(Selector.revertApply);
   const getElementById = useStore(Selector.getElementById);
 
-  const [selectedColor, setSelectedColor] = useState<string>(door?.color ?? 'white');
+  const [selectedColor, setSelectedColor] = useState<string>(door?.color ?? '#ffffff');
   const [dragEnabled, setDragEnabled] = useState<boolean>(false);
   const [bounds, setBounds] = useState<DraggableBounds>({ left: 0, top: 0, bottom: 0, right: 0 } as DraggableBounds);
   const dragRef = useRef<HTMLDivElement | null>(null);
@@ -40,7 +40,7 @@ const DoorColorSelection = ({ setDialogVisible }: { setDialogVisible: (b: boolea
 
   useEffect(() => {
     if (door) {
-      setSelectedColor(door?.color ?? 'white');
+      setSelectedColor(door?.color ?? '#ffffff');
     }
   }, [door]);
 
@@ -76,7 +76,7 @@ const DoorColorSelection = ({ setDialogVisible }: { setDialogVisible: (b: boolea
         const oldColorsAll = new Map<string, string>();
         for (const elem of useStore.getState().elements) {
           if (elem.type === ObjectType.Door && !elem.locked) {
-            oldColorsAll.set(elem.id, elem.color ?? 'white');
+            oldColorsAll.set(elem.id, elem.color ?? '#ffffff');
           }
         }
         const undoableChangeAll = {
@@ -100,7 +100,7 @@ const DoorColorSelection = ({ setDialogVisible }: { setDialogVisible: (b: boolea
           const oldColorsOnSameWall = new Map<string, string>();
           for (const elem of useStore.getState().elements) {
             if (elem.type === ObjectType.Door && elem.parentId === door.parentId && !door.locked) {
-              oldColorsOnSameWall.set(elem.id, elem.color ?? 'white');
+              oldColorsOnSameWall.set(elem.id, elem.color ?? '#ffffff');
             }
           }
           const undoableChangeOnSameWall = {
@@ -131,7 +131,7 @@ const DoorColorSelection = ({ setDialogVisible }: { setDialogVisible: (b: boolea
           const oldColorsAboveFoundation = new Map<string, string>();
           for (const elem of useStore.getState().elements) {
             if (elem.type === ObjectType.Door && elem.foundationId === door.foundationId && !door.locked) {
-              oldColorsAboveFoundation.set(elem.id, elem.color ?? 'white');
+              oldColorsAboveFoundation.set(elem.id, elem.color ?? '#ffffff');
             }
           }
           const undoableChangeAboveFoundation = {
@@ -160,7 +160,7 @@ const DoorColorSelection = ({ setDialogVisible }: { setDialogVisible: (b: boolea
       default:
         if (door) {
           const updatedDoor = getElementById(door.id) as DoorModel;
-          const oldColor = (updatedDoor ? updatedDoor.color : door.color) ?? 'white';
+          const oldColor = (updatedDoor ? updatedDoor.color : door.color) ?? '#ffffff';
           const undoableChange = {
             name: 'Set Color of Selected Door',
             timestamp: Date.now(),
@@ -261,7 +261,7 @@ const DoorColorSelection = ({ setDialogVisible }: { setDialogVisible: (b: boolea
         <Row gutter={6}>
           <Col className="gutter-row" span={11}>
             <CompactPicker
-              color={selectedColor ?? door?.color ?? 'white'}
+              color={selectedColor ?? door?.color ?? '#ffffff'}
               onChangeComplete={(colorResult) => {
                 setSelectedColor(colorResult.hex);
               }}

@@ -149,11 +149,11 @@ export class DefaultActionState implements ActionState {
     this.treeHeight = 4;
 
     this.foundationHeight = 0.1;
-    this.foundationColor = 'gray';
+    this.foundationColor = '#808080';
     this.foundationTexture = FoundationTexture.NoTexture;
 
     this.cuboidHeight = 4;
-    this.cuboidFaceColors = ['gray', 'gray', 'gray', 'gray', 'gray', 'gray'];
+    this.cuboidFaceColors = ['#808080', '#808080', '#808080', '#808080', '#808080', '#808080'];
     this.cuboidFaceTextures = [
       CuboidTexture.NoTexture,
       CuboidTexture.NoTexture,
@@ -165,12 +165,12 @@ export class DefaultActionState implements ActionState {
 
     this.wallHeight = 5;
     this.wallThickness = 0.3;
-    this.wallColor = 'white';
+    this.wallColor = '#ffffff';
     this.wallTexture = WallTexture.Default;
     this.wallStructure = WallStructure.Default;
     this.wallStructureSpacing = 2;
     this.wallStructureWidth = 0.1;
-    this.wallStructureColor = 'white';
+    this.wallStructureColor = '#ffffff';
     this.wallOpacity = 0.5;
     this.wallRValue = 2;
     this.wallVolumetricHeatCapacity = 0.5;
@@ -178,7 +178,7 @@ export class DefaultActionState implements ActionState {
     this.wallUnfilledHeight = 0.5;
 
     this.roofColor = '#454769';
-    this.roofSideColor = 'white';
+    this.roofSideColor = '#ffffff';
     this.roofTexture = RoofTexture.Default;
     this.roofThickness = 0.2;
     this.roofOverhang = 0.3;
@@ -187,12 +187,12 @@ export class DefaultActionState implements ActionState {
     this.roofGlassTint = '#73D8FF';
     this.roofRafterWidth = 0.1;
     this.roofRafterSpacing = 1;
-    this.roofRafterColor = 'white';
+    this.roofRafterColor = '#ffffff';
     this.roofRValue = 2;
     this.roofVolumetricHeatCapacity = 0.5;
     this.roofRise = 2;
 
-    this.doorColor = 'white';
+    this.doorColor = '#ffffff';
     this.doorTexture = DoorTexture.Default;
     this.doorType = DoorType.Default;
     this.doorArchHeight = 1;
@@ -201,14 +201,14 @@ export class DefaultActionState implements ActionState {
 
     this.windowWidth = 1;
     this.windowHeight = 1;
-    this.windowColor = 'white';
+    this.windowColor = '#ffffff';
     this.windowTint = '#73D8FF';
     this.windowOpacity = 0.5;
     this.windowUValue = 2;
     this.windowMullion = true;
     this.windowMullionWidth = 0.06;
     this.windowMullionSpacing = 0.5;
-    this.windowMullionColor = 'white';
+    this.windowMullionColor = '#ffffff';
     this.windowFrame = false;
     this.windowFrameWidth = 0.1;
     this.windowType = WindowType.Default;
@@ -225,7 +225,7 @@ export class DefaultActionState implements ActionState {
     this.solarPanelPoleSpacing = 3;
     this.solarPanelTiltAngle = 0;
     this.solarPanelRelativeAzimuth = 0;
-    this.solarPanelFrameColor = 'white';
+    this.solarPanelFrameColor = '#ffffff';
 
     this.parabolicDishReflectance = 0.9;
     this.parabolicDishAbsorptance = 0.95;

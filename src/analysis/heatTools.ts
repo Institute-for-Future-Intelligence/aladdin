@@ -6,6 +6,21 @@ import { MINUTES_OF_DAY, OMEGA_DAY } from './analysisConstants';
 import { Util } from '../Util';
 import { SunMinutes } from './SunMinutes';
 import { DiurnalTemperatureModel } from '../types';
+import { ElementModel } from '../models/ElementModel';
+
+// use the darkness of color to approximate light absorption
+export const getLightAbsorption = (element: ElementModel) => {
+  if (!element.color) return 0.5;
+  const bigint = parseInt(element.color.substring(1), 16);
+  const r = (bigint >> 16) & 255;
+  const g = (bigint >> 8) & 255;
+  const b = bigint & 255;
+  let min = Math.min(r, g);
+  min = Math.min(min, b);
+  let max = Math.max(r, g);
+  max = Math.max(max, b);
+  return 1 - (min + max) / 510;
+};
 
 /*
  If the lowest outside temperature is higher than the threshold, don't turn on the heater.

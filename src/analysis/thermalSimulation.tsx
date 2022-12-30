@@ -13,7 +13,7 @@ import { DiurnalTemperatureModel, ObjectType } from '../types';
 import { Util } from '../Util';
 import { MINUTES_OF_DAY } from './analysisConstants';
 import { WallModel } from '../models/WallModel';
-import { computeOutsideTemperature, getOutsideTemperatureAtMinute } from './heatTools';
+import { computeOutsideTemperature, getLightAbsorption, getOutsideTemperatureAtMinute } from './heatTools';
 import {
   computeDeclinationAngle,
   computeHourAngle,
@@ -580,7 +580,7 @@ const ThermalSimulation = ({ city }: ThermalSimulationProps) => {
     if (foundation) {
       const parent = getParent(door);
       if (parent) {
-        const absorption = Util.getLightAbsorption(door);
+        const absorption = getLightAbsorption(door);
         let totalSolarHeat = 0;
         // when the sun is out
         if (!Util.isZero(absorption) && sunDirectionRef.current && sunDirectionRef.current.z > 0) {
@@ -621,7 +621,7 @@ const ThermalSimulation = ({ city }: ThermalSimulationProps) => {
     if (foundation) {
       const windows = getChildrenOfType(ObjectType.Window, wall.id);
       const doors = getChildrenOfType(ObjectType.Door, wall.id);
-      const absorption = Util.getLightAbsorption(wall);
+      const absorption = getLightAbsorption(wall);
       let totalSolarHeat = 0;
       // when the sun is out
       if (!Util.isZero(absorption) && sunDirectionRef.current && sunDirectionRef.current.z > 0) {
@@ -730,7 +730,7 @@ const ThermalSimulation = ({ city }: ThermalSimulationProps) => {
         totalAreas.push(Util.getTriangleArea(s[0], s[1], s[2]));
       }
     }
-    const absorption = Util.getLightAbsorption(roof);
+    const absorption = getLightAbsorption(roof);
     const m = flat ? 1 : n;
     const totalSolarHeats: number[] = Array(m).fill(0);
     // when the sun is out
@@ -786,7 +786,7 @@ const ThermalSimulation = ({ city }: ThermalSimulationProps) => {
         totalAreas.push(Util.getTriangleArea(s[0], s[1], s[2]) + Util.getTriangleArea(s[2], s[3], s[0]));
       }
     }
-    const absorption = Util.getLightAbsorption(roof);
+    const absorption = getLightAbsorption(roof);
     const totalSolarHeats: number[] = Array(n).fill(0);
     // when the sun is out
     if (!Util.isZero(absorption) && sunDirectionRef.current && sunDirectionRef.current.z > 0) {
@@ -837,7 +837,7 @@ const ThermalSimulation = ({ city }: ThermalSimulationProps) => {
     for (const s of segments) {
       totalAreas.push(Util.getTriangleArea(s[0], s[1], s[2]) + Util.getTriangleArea(s[2], s[3], s[0]));
     }
-    const absorption = Util.getLightAbsorption(roof);
+    const absorption = getLightAbsorption(roof);
     const totalSolarHeats: number[] = Array(n).fill(0);
     // when the sun is out
     if (!Util.isZero(absorption) && sunDirectionRef.current && sunDirectionRef.current.z > 0) {
@@ -895,7 +895,7 @@ const ThermalSimulation = ({ city }: ThermalSimulationProps) => {
       points.push({ x: p.x, y: p.y } as Point2);
     }
     totalAreas.push(Util.getPolygonArea(points));
-    const absorption = Util.getLightAbsorption(roof);
+    const absorption = getLightAbsorption(roof);
     const totalSolarHeats: number[] = Array(n).fill(0);
     // when the sun is out
     if (!Util.isZero(absorption) && sunDirectionRef.current && sunDirectionRef.current.z > 0) {

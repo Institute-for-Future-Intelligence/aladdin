@@ -1,7 +1,7 @@
 {
-  "docid": "cH4HtvcPqvG7aczNCjwkuX",
-  "time": "12/28/2022 04:33 pm",
-  "timestamp": 1672263196103,
+  "docid": "rrXvZvjmFXDKLjgc8E1g2W",
+  "time": "12/30/2022 04:46 pm",
+  "timestamp": 1672436803895,
   "userid": "QWecNcxhyvP6j6sBN11hBsfZDau1",
   "owner": null,
   "email": null,
@@ -99,7 +99,8 @@
       "label": "20℃",
       "showLabel": true,
       "labelHeight": 8.5,
-      "labelSize": 0.8
+      "labelSize": 0.8,
+      "color": "#999999"
     },
     {
       "type": "Wall",
@@ -335,7 +336,7 @@
       "ly": 0,
       "lz": 0,
       "rise": 3.4648066919643785,
-      "color": "#333333",
+      "color": "#4d4d4d",
       "sideColor": "#ffffff",
       "normal": [
         0,
@@ -765,7 +766,7 @@
       "ly": 0,
       "lz": 0,
       "rise": 3.4648066919643785,
-      "color": "#333333",
+      "color": "#4d4d4d",
       "sideColor": "#ffffff",
       "normal": [
         0,
@@ -828,7 +829,8 @@
       "id": "4TcV7zx5NzstoQTaTqoAzt",
       "selected": false,
       "label": "25℃",
-      "showLabel": true
+      "showLabel": true,
+      "color": "#999999"
     }
   ],
   "view": {
@@ -860,9 +862,9 @@
     "dailyHeliostatYieldPanelX": 0,
     "showDailyParabolicDishYieldPanel": false,
     "cameraPosition": [
-      -25.681996262064757,
-      -24.47882331084952,
-      9.132470250026
+      -25.681996262064736,
+      -24.478823310849506,
+      9.132470250025996
     ],
     "showYearlyHeliostatYieldPanel": false,
     "orthographic": false,

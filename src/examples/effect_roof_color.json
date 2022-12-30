@@ -1,7 +1,7 @@
 {
-  "docid": "diUqqZ64HQZMRcBp9SgPME",
-  "time": "12/27/2022 06:36 pm",
-  "timestamp": 1672184184943,
+  "docid": "sNwi6P14wPyHExTbJdcnh9",
+  "time": "12/30/2022 04:43 pm",
+  "timestamp": 1672436608376,
   "userid": "QWecNcxhyvP6j6sBN11hBsfZDau1",
   "owner": null,
   "email": null,
@@ -99,7 +99,8 @@
       "label": "B",
       "showLabel": true,
       "labelHeight": 6.5,
-      "labelSize": 0.8
+      "labelSize": 0.8,
+      "color": "#808080"
     },
     {
       "type": "Wall",
@@ -398,7 +399,8 @@
       "label": "A",
       "labelHeight": 6.5,
       "showLabel": true,
-      "labelSize": 0.8
+      "labelSize": 0.8,
+      "color": "#808080"
     },
     {
       "type": "Wall",
@@ -868,9 +870,9 @@
     "dailyHeliostatYieldPanelX": 0,
     "showDailyParabolicDishYieldPanel": false,
     "cameraPosition": [
-      -14.919572284186607,
-      -21.728133115034193,
-      3.7153893598089467
+      -19.198465772820157,
+      -18.031417499502023,
+      3.715389359808945
     ],
     "showYearlyHeliostatYieldPanel": false,
     "orthographic": false,

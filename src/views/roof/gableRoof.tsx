@@ -1297,6 +1297,8 @@ const RoofSegment = ({
     invalidate();
   }, [points, angle, length, currWall, show, showSolarRadiationHeatmap]);
 
+  // FIXME: Bulk mesh can be null if it is not initialized. Refreshing the page fixes the problem.
+
   return (
     <>
       {((_opacity > 0 && roofStructure === RoofStructure.Rafter) || roofStructure !== RoofStructure.Rafter) && (

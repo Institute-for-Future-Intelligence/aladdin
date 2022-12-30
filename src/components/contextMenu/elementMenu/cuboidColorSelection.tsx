@@ -30,7 +30,7 @@ const CuboidColorSelection = ({ setDialogVisible }: { setDialogVisible: (b: bool
   const setApplyCount = useStore(Selector.setApplyCount);
   const revertApply = useStore(Selector.revertApply);
 
-  const [selectedColor, setSelectedColor] = useState<string>(cuboid?.color ?? 'gray');
+  const [selectedColor, setSelectedColor] = useState<string>(cuboid?.color ?? '#808080');
   const [updateFlag, setUpdateFlag] = useState<boolean>(false);
   const [dragEnabled, setDragEnabled] = useState<boolean>(false);
   const [bounds, setBounds] = useState<DraggableBounds>({ left: 0, top: 0, bottom: 0, right: 0 } as DraggableBounds);
@@ -56,7 +56,7 @@ const CuboidColorSelection = ({ setDialogVisible }: { setDialogVisible: (b: bool
       if (selectedSideIndex >= 0 && cuboid.faceColors) {
         setSelectedColor(cuboid.faceColors[selectedSideIndex]);
       } else {
-        setSelectedColor(cuboid.color ?? 'gray');
+        setSelectedColor(cuboid.color ?? '#808080');
       }
     }
   };
@@ -123,7 +123,7 @@ const CuboidColorSelection = ({ setDialogVisible }: { setDialogVisible: (b: bool
             if (cm.faceColors) {
               oldColorsAll.set(elem.id, [...cm.faceColors]);
             } else {
-              const c = cm.color ?? 'gray';
+              const c = cm.color ?? '#808080';
               oldColorsAll.set(elem.id, [c, c, c, c, c, c]);
             }
           }
@@ -151,7 +151,7 @@ const CuboidColorSelection = ({ setDialogVisible }: { setDialogVisible: (b: bool
         setApplyCount(applyCount + 1);
         setCommonStore((state) => {
           if (!state.actionState.cuboidFaceColors)
-            state.actionState.cuboidFaceColors = ['gray', 'gray', 'gray', 'gray', 'gray', 'gray'];
+            state.actionState.cuboidFaceColors = ['#808080', '#808080', '#808080', '#808080', '#808080', '#808080'];
           for (let i = 0; i < 4; i++) {
             state.actionState.cuboidFaceColors[i] = value;
           }
@@ -162,7 +162,7 @@ const CuboidColorSelection = ({ setDialogVisible }: { setDialogVisible: (b: bool
         if (cuboid.faceColors) {
           oldColors = [...cuboid.faceColors];
         } else {
-          const c = cuboid.color ?? 'gray';
+          const c = cuboid.color ?? '#808080';
           oldColors = [c, c, c, c, c, c];
         }
         const undoableChange = {
@@ -188,7 +188,7 @@ const CuboidColorSelection = ({ setDialogVisible }: { setDialogVisible: (b: bool
         setApplyCount(applyCount + 1);
         setCommonStore((state) => {
           if (!state.actionState.cuboidFaceColors)
-            state.actionState.cuboidFaceColors = ['gray', 'gray', 'gray', 'gray', 'gray', 'gray'];
+            state.actionState.cuboidFaceColors = ['#808080', '#808080', '#808080', '#808080', '#808080', '#808080'];
           for (let i = 0; i < 4; i++) {
             state.actionState.cuboidFaceColors[i] = value;
           }
@@ -229,7 +229,7 @@ const CuboidColorSelection = ({ setDialogVisible }: { setDialogVisible: (b: bool
           setApplyCount(applyCount + 1);
           setCommonStore((state) => {
             if (!state.actionState.cuboidFaceColors)
-              state.actionState.cuboidFaceColors = ['gray', 'gray', 'gray', 'gray', 'gray', 'gray'];
+              state.actionState.cuboidFaceColors = ['#808080', '#808080', '#808080', '#808080', '#808080', '#808080'];
             state.actionState.cuboidFaceColors[selectedSideIndex] = value;
           });
         }
@@ -267,7 +267,7 @@ const CuboidColorSelection = ({ setDialogVisible }: { setDialogVisible: (b: bool
   };
 
   const currentColor =
-    selectedSideIndex >= 0 && cuboid?.faceColors ? cuboid.faceColors[selectedSideIndex] : cuboid?.color ?? 'gray';
+    selectedSideIndex >= 0 && cuboid?.faceColors ? cuboid.faceColors[selectedSideIndex] : cuboid?.color ?? '#808080';
 
   return (
     <>
