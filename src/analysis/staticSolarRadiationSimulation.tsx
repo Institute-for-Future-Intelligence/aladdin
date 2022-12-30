@@ -460,7 +460,7 @@ const StaticSolarRadiationSimulation = ({ city }: StaticSolarRadiationSimulation
     let flat = true;
     if (rooftop) {
       // z coordinate of a rooftop solar panel is absolute
-      center.z = panel.cz + panel.lz / 2 + parent.cz + parent.lz / 2;
+      center.z = panel.cz + panel.lz + 0.02 + parent.cz + parent.lz / 2;
       if (Util.isZero(panel.rotation[0])) {
         // on a flat roof, add pole height
         center.z += panel.poleHeight;
