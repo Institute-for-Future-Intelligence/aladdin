@@ -19,6 +19,7 @@ import { UndoableCheck } from 'src/undo/UndoableCheck';
 import DoorUValueInput from './doorUValueInput';
 import DoorWidthInput from './doorWidthInput';
 import DoorHeightInput from './doorHeightInput';
+import DoorHeatCapacityInput from './doorHeatCapacityInput';
 
 const getSelectedDoor = (state: CommonStoreState) => {
   for (const el of state.elements) {
@@ -41,6 +42,7 @@ export const DoorMenu = React.memo(() => {
   const [widthDialogVisible, setWidthDialogVisible] = useState(false);
   const [heightDialogVisible, setHeightDialogVisible] = useState(false);
   const [uValueDialogVisible, setUValueDialogVisible] = useState(false);
+  const [heatCapacityDialogVisible, setHeatCapacityDialogVisible] = useState(false);
 
   if (!door) return null;
 
@@ -182,6 +184,17 @@ export const DoorMenu = React.memo(() => {
                 }}
               >
                 {i18n.t('word.UValue', lang)} ...
+              </Menu.Item>
+              {heatCapacityDialogVisible && <DoorHeatCapacityInput setDialogVisible={setHeatCapacityDialogVisible} />}
+              <Menu.Item
+                key={'door-heat-capacity'}
+                style={{ paddingLeft: '36px' }}
+                onClick={() => {
+                  setApplyCount(0);
+                  setHeatCapacityDialogVisible(true);
+                }}
+              >
+                {i18n.t('word.VolumetricHeatCapacity', lang)} ...
               </Menu.Item>
               <Menu.Item
                 key={'door-texture'}

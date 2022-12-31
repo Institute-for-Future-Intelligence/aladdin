@@ -9,6 +9,7 @@ import { GroundModel } from '../models/GroundModel';
 import { TWO_PI, UNIT_VECTOR_POS_Z } from '../constants';
 import { SunMinutes } from './SunMinutes';
 
+export const AMBIENT_LIGHT_THRESHOLD = 0.5;
 export const TILT_ANGLE = (23.45 / 180.0) * Math.PI;
 
 const DAY_MILLISECONDS = 1000 * 60 * 60 * 24;

@@ -100,15 +100,18 @@ const ThermalSimulation = ({ city }: ThermalSimulationProps) => {
     ).normalize();
   };
 
-  const inShadow = (elementId: string, position: Vector3, sunDirection: Vector3) => {
+  // return -1 if exposed to sunlight, otherwise return the distance of the closest object
+  const distanceToClosestObject = (elementId: string, position: Vector3, sunDirection: Vector3) => {
     if (objectsRef.current.length > 1) {
       intersectionsRef.current.length = 0;
       ray.set(position, sunDirection);
       const objects = objectsRef.current.filter((obj) => obj.uuid !== elementId);
       ray.intersectObjects(objects, false, intersectionsRef.current);
-      return intersectionsRef.current.length > 0;
+      if (intersectionsRef.current.length > 0) {
+        return intersectionsRef.current[0].distance;
+      }
     }
-    return false;
+    return -1;
   };
 
   const fetchObjects = () => {
@@ -515,7 +518,7 @@ const ThermalSimulation = ({ city }: ThermalSimulationProps) => {
             parent,
             foundation,
             elevation,
-            inShadow,
+            distanceToClosestObject,
           );
           const eff =
             getPanelEfficiency(currentOutsideTemperatureRef.current, panel, pvModel) *
@@ -557,7 +560,7 @@ const ThermalSimulation = ({ city }: ThermalSimulationProps) => {
             parent as WallModel,
             foundation,
             elevation,
-            inShadow,
+            distanceToClosestObject,
           );
           if (solarRadiationEnergy) {
             const scaleFactor = getScaleFactor();
@@ -592,7 +595,7 @@ const ThermalSimulation = ({ city }: ThermalSimulationProps) => {
             parent as WallModel,
             foundation,
             elevation,
-            inShadow,
+            distanceToClosestObject,
           );
           if (solarRadiationEnergy) {
             const scaleFactor = getScaleFactor();
@@ -636,7 +639,7 @@ const ThermalSimulation = ({ city }: ThermalSimulationProps) => {
           doors,
           solarPanels,
           elevation,
-          inShadow,
+          distanceToClosestObject,
         );
         if (solarRadiationEnergy) {
           const scaleFactor = getScaleFactor();
@@ -745,7 +748,7 @@ const ThermalSimulation = ({ city }: ThermalSimulationProps) => {
         foundation,
         getChildrenOfType(ObjectType.SolarPanel, roof.id),
         elevation,
-        inShadow,
+        distanceToClosestObject,
       );
       if (solarRadiationEnergySegments) {
         const scaleFactor = getScaleFactor();
@@ -799,7 +802,7 @@ const ThermalSimulation = ({ city }: ThermalSimulationProps) => {
         foundation,
         getChildrenOfType(ObjectType.SolarPanel, roof.id),
         elevation,
-        inShadow,
+        distanceToClosestObject,
       );
       if (solarRadiationEnergySegments) {
         const scaleFactor = getScaleFactor();
@@ -850,7 +853,7 @@ const ThermalSimulation = ({ city }: ThermalSimulationProps) => {
         foundation,
         getChildrenOfType(ObjectType.SolarPanel, roof.id),
         elevation,
-        inShadow,
+        distanceToClosestObject,
       );
       if (solarRadiationEnergySegments) {
         const scaleFactor = getScaleFactor();
@@ -908,7 +911,7 @@ const ThermalSimulation = ({ city }: ThermalSimulationProps) => {
         foundation,
         getChildrenOfType(ObjectType.SolarPanel, roof.id),
         elevation,
-        inShadow,
+        distanceToClosestObject,
       );
       if (solarRadiationEnergySegments) {
         const scaleFactor = getScaleFactor();

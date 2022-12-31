@@ -4,7 +4,7 @@
 
 import { WallModel } from '../models/WallModel';
 import { Util } from '../Util';
-import { calculateDiffuseAndReflectedRadiation, calculatePeakRadiation } from './sunTools';
+import { calculateDiffuseAndReflectedRadiation, calculatePeakRadiation, AMBIENT_LIGHT_THRESHOLD } from './sunTools';
 import { Euler, Quaternion, Vector2, Vector3 } from 'three';
 import { HALF_PI, UNIT_VECTOR_POS_Y, UNIT_VECTOR_POS_Z } from '../constants';
 import { AirMass } from './analysisConstants';
@@ -30,7 +30,7 @@ export class SolarRadiation {
     parent: ElementModel,
     foundation: FoundationModel,
     elevation: number,
-    inShadow: Function,
+    distanceToClosestObject: Function,
   ): number {
     let rooftop = panel.parentType === ObjectType.Roof;
     const walltop = panel.parentType === ObjectType.Wall;
@@ -161,7 +161,7 @@ export class SolarRadiation {
           dv.set(v2d.x - center2d.x, v2d.y - center2d.y, 0);
           dv.applyEuler(normalEuler);
           v.set(center.x + dv.x, center.y + dv.y, z0 + dv.z);
-          if (!inShadow(panel.id, v, sunDirection)) {
+          if (distanceToClosestObject(panel.id, v, sunDirection) < 0) {
             // direct radiation
             cellOutputs[kx][ky] += dot * peakRadiation;
           }
@@ -248,7 +248,7 @@ export class SolarRadiation {
     doors: ElementModel[],
     solarPanels: ElementModel[],
     elevation: number,
-    inShadow: Function,
+    distanceToClosestObject: Function,
   ): number[][] {
     const dayOfYear = Util.dayOfYear(now);
     const cellSize = world.solarRadiationHeatmapGridCellSize ?? 0.5;
@@ -324,13 +324,15 @@ export class SolarRadiation {
             }
           }
           if (isWall) {
-            energy[kx][kz] += indirectRadiation * da;
-            if (dot > 0) {
-              v.set(absPos.x + kx2 * dxcos, absPos.y + kx2 * dxsin, absPos.z + kz2 * dz);
-              if (!inShadow(wall.id, v, sunDirection)) {
-                // direct radiation
-                energy[kx][kz] += dot * peakRadiation * da;
-              }
+            v.set(absPos.x + kx2 * dxcos, absPos.y + kx2 * dxsin, absPos.z + kz2 * dz);
+            const distance = distanceToClosestObject(wall.id, v, sunDirection);
+            if (distance > AMBIENT_LIGHT_THRESHOLD || distance < 0) {
+              // wall may be covered by solar panels
+              energy[kx][kz] += indirectRadiation * da;
+            }
+            if (dot > 0 && distance < 0) {
+              // direct radiation
+              energy[kx][kz] += dot * peakRadiation * da;
             }
           }
         }
@@ -348,7 +350,7 @@ export class SolarRadiation {
     wall: WallModel,
     foundation: FoundationModel,
     elevation: number,
-    inShadow: Function,
+    distanceToClosestObject: Function,
   ): number[][] {
     const dayOfYear = Util.dayOfYear(now);
     const cellSize = world.solarRadiationHeatmapGridCellSize ?? 0.5;
@@ -381,12 +383,12 @@ export class SolarRadiation {
       .map(() => Array(nz).fill(0));
     for (let kx = 0; kx < nx; kx++) {
       for (let kz = 0; kz < nz; kz++) {
-        const kx2 = kx - nx / 2 + 0.5;
-        const kz2 = kz - nz / 2 + 0.5;
         energy[kx][kz] += indirectRadiation * da;
         if (dot > 0) {
+          const kx2 = kx - nx / 2 + 0.5;
+          const kz2 = kz - nz / 2 + 0.5;
           v.set(absDoorPos.x + kx2 * dxcos, absDoorPos.y + kx2 * dxsin, absDoorPos.z + kz2 * dz);
-          if (!inShadow(door.id, v, sunDirection)) {
+          if (distanceToClosestObject(door.id, v, sunDirection) < 0) {
             // direct radiation
             energy[kx][kz] += dot * peakRadiation * da;
           }
@@ -405,7 +407,7 @@ export class SolarRadiation {
     wall: WallModel,
     foundation: FoundationModel,
     elevation: number,
-    inShadow: Function,
+    distanceToClosestObject: Function,
   ): number[][] {
     const dayOfYear = Util.dayOfYear(now);
     const cellSize = world.solarRadiationHeatmapGridCellSize ?? 0.5;
@@ -438,12 +440,12 @@ export class SolarRadiation {
       .map(() => Array(nz).fill(0));
     for (let kx = 0; kx < nx; kx++) {
       for (let kz = 0; kz < nz; kz++) {
-        const kx2 = kx - nx / 2 + 0.5;
-        const kz2 = kz - nz / 2 + 0.5;
         energy[kx][kz] += indirectRadiation * da;
         if (dot > 0) {
+          const kx2 = kx - nx / 2 + 0.5;
+          const kz2 = kz - nz / 2 + 0.5;
           v.set(absWindowPos.x + kx2 * dxcos, absWindowPos.y + kx2 * dxsin, absWindowPos.z + kz2 * dz);
-          if (!inShadow(window.id, v, sunDirection)) {
+          if (distanceToClosestObject(window.id, v, sunDirection) < 0) {
             // direct radiation
             energy[kx][kz] += dot * peakRadiation * da;
           }
@@ -464,7 +466,7 @@ export class SolarRadiation {
     foundation: FoundationModel,
     solarPanels: ElementModel[], //TODO: Skip areas covered by solar panels on the roof
     elevation: number,
-    inShadow: Function,
+    distanceToClosestObject: Function,
   ): number[][][] {
     const cellSize = world.solarRadiationHeatmapGridCellSize ?? 0.5;
     const dayOfYear = Util.dayOfYear(now);
@@ -512,13 +514,15 @@ export class SolarRadiation {
       for (let p = 0; p < nx; p++) {
         v.x = v0.x + p * dx;
         for (let q = 0; q < ny; q++) {
-          energy[p][q] += indirectRadiation * da;
-          if (dot > 0) {
-            v.y = v0.y + q * dy;
-            if (!inShadow(roof.id, v, sunDirection)) {
-              // direct radiation
-              energy[p][q] += dot * peakRadiation * da;
-            }
+          v.y = v0.y + q * dy;
+          const distance = distanceToClosestObject(roof.id, v, sunDirection);
+          if (distance > AMBIENT_LIGHT_THRESHOLD || distance < 0) {
+            // roof may be covered by solar panels
+            energy[p][q] += indirectRadiation * da;
+          }
+          if (dot > 0 && distance < 0) {
+            // direct radiation
+            energy[p][q] += dot * peakRadiation * da;
           }
         }
       }
@@ -578,13 +582,15 @@ export class SolarRadiation {
           const dmp = dm.clone().multiplyScalar(p);
           for (let q = 0; q < n; q++) {
             if (Util.isPointInside(p, q, relativePolygon)) {
-              energy[p][q] += indirectRadiation * da;
-              if (dot > 0) {
-                v.copy(v0).add(dmp).add(dn.clone().multiplyScalar(q));
-                if (!inShadow(uuid, v, sunDirection)) {
-                  // direct radiation
-                  energy[p][q] += dot * peakRadiation * da;
-                }
+              v.copy(v0).add(dmp).add(dn.clone().multiplyScalar(q));
+              const distance = distanceToClosestObject(uuid, v, sunDirection);
+              if (distance > AMBIENT_LIGHT_THRESHOLD || distance < 0) {
+                // roof may be covered by solar panels
+                energy[p][q] += indirectRadiation * da;
+              }
+              if (dot > 0 && distance < 0) {
+                // direct radiation
+                energy[p][q] += dot * peakRadiation * da;
               }
             }
           }
@@ -604,7 +610,7 @@ export class SolarRadiation {
     foundation: FoundationModel,
     solarPanels: ElementModel[], //TODO: Skip areas covered by solar panels on the roof
     elevation: number,
-    inShadow: Function,
+    distanceToClosestObject: Function,
   ): number[][][] {
     const dayOfYear = Util.dayOfYear(now);
     const cellSize = world.solarRadiationHeatmapGridCellSize ?? 0.5;
@@ -663,13 +669,15 @@ export class SolarRadiation {
         for (let p = 0; p < m; p++) {
           const dmp = dm.clone().multiplyScalar(p);
           for (let q = 0; q < n; q++) {
-            energy[p][q] += indirectRadiation * da;
-            if (dot > 0) {
-              v.copy(v0).add(dmp).add(dn.clone().multiplyScalar(q));
-              if (!inShadow(uuid, v, sunDirection)) {
-                // direct radiation
-                energy[p][q] += dot * peakRadiation * da;
-              }
+            v.copy(v0).add(dmp).add(dn.clone().multiplyScalar(q));
+            const distance = distanceToClosestObject(uuid, v, sunDirection);
+            if (distance > AMBIENT_LIGHT_THRESHOLD || distance < 0) {
+              // roof may be covered by solar panels
+              energy[p][q] += indirectRadiation * da;
+            }
+            if (dot > 0 && distance < 0) {
+              // direct radiation
+              energy[p][q] += dot * peakRadiation * da;
             }
           }
         }
@@ -683,13 +691,15 @@ export class SolarRadiation {
           const dmp = dm.clone().multiplyScalar(p);
           for (let q = 0; q < n; q++) {
             if (Util.isPointInside(p, q, relativePolygon)) {
-              energy[p][q] += indirectRadiation * da;
-              if (dot > 0) {
-                v.copy(v0).add(dmp).add(dn.clone().multiplyScalar(q));
-                if (!inShadow(uuid, v, sunDirection)) {
-                  // direct radiation
-                  energy[p][q] += dot * peakRadiation * da;
-                }
+              v.copy(v0).add(dmp).add(dn.clone().multiplyScalar(q));
+              const distance = distanceToClosestObject(uuid, v, sunDirection);
+              if (distance > AMBIENT_LIGHT_THRESHOLD || distance < 0) {
+                // roof may be covered by solar panels
+                energy[p][q] += indirectRadiation * da;
+              }
+              if (dot > 0 && distance < 0) {
+                // direct radiation
+                energy[p][q] += dot * peakRadiation * da;
               }
             }
           }
@@ -709,7 +719,7 @@ export class SolarRadiation {
     foundation: FoundationModel,
     solarPanels: ElementModel[], //TODO: Skip areas covered by solar panels on the roof
     elevation: number,
-    inShadow: Function,
+    distanceToClosestObject: Function,
   ): number[][][] {
     const dayOfYear = Util.dayOfYear(now);
     const cellSize = world.solarRadiationHeatmapGridCellSize ?? 0.5;
@@ -763,13 +773,15 @@ export class SolarRadiation {
       for (let p = 0; p < m; p++) {
         const dmp = dm.clone().multiplyScalar(p);
         for (let q = 0; q < n; q++) {
-          energy[p][q] += indirectRadiation * da;
-          if (dot > 0) {
-            v.copy(v0).add(dmp).add(dn.clone().multiplyScalar(q));
-            if (!inShadow(uuid, v, sunDirection)) {
-              // direct radiation
-              energy[p][q] += dot * peakRadiation * da;
-            }
+          v.copy(v0).add(dmp).add(dn.clone().multiplyScalar(q));
+          const distance = distanceToClosestObject(uuid, v, sunDirection);
+          if (distance > AMBIENT_LIGHT_THRESHOLD || distance < 0) {
+            // roof may be covered by solar panels
+            energy[p][q] += indirectRadiation * da;
+          }
+          if (dot > 0 && distance < 0) {
+            // direct radiation
+            energy[p][q] += dot * peakRadiation * da;
           }
         }
       }
@@ -787,7 +799,7 @@ export class SolarRadiation {
     foundation: FoundationModel,
     solarPanels: ElementModel[], //TODO: Skip areas covered by solar panels on the roof
     elevation: number,
-    inShadow: Function,
+    distanceToClosestObject: Function,
   ): number[][][] {
     const dayOfYear = Util.dayOfYear(now);
     const cellSize = world.solarRadiationHeatmapGridCellSize ?? 0.5;
@@ -836,13 +848,15 @@ export class SolarRadiation {
         for (let p = 0; p < nx; p++) {
           v.x = v0.x + p * dx;
           for (let q = 0; q < ny; q++) {
-            energy[p][q] += indirectRadiation * da;
-            if (dot > 0) {
-              v.y = v0.y + q * dy;
-              if (!inShadow(uuid, v, sunDirection)) {
-                // direct radiation
-                energy[p][q] += dot * peakRadiation * da;
-              }
+            v.y = v0.y + q * dy;
+            const distance = distanceToClosestObject(uuid, v, sunDirection);
+            if (distance > AMBIENT_LIGHT_THRESHOLD || distance < 0) {
+              // roof may be covered by solar panels
+              energy[p][q] += indirectRadiation * da;
+            }
+            if (dot > 0 && distance < 0) {
+              // direct radiation
+              energy[p][q] += dot * peakRadiation * da;
             }
           }
         }
@@ -892,13 +906,15 @@ export class SolarRadiation {
         for (let p = 0; p < m; p++) {
           const dmp = dm.clone().multiplyScalar(p);
           for (let q = 0; q < n; q++) {
-            energy[p][q] += indirectRadiation * da;
-            if (dot > 0) {
-              v.copy(v0).add(dmp).add(dn.clone().multiplyScalar(q));
-              if (!inShadow(uuid, v, sunDirection)) {
-                // direct radiation
-                energy[p][q] += dot * peakRadiation * da;
-              }
+            v.copy(v0).add(dmp).add(dn.clone().multiplyScalar(q));
+            const distance = distanceToClosestObject(uuid, v, sunDirection);
+            if (distance > AMBIENT_LIGHT_THRESHOLD || distance < 0) {
+              // roof may be covered by solar panels
+              energy[p][q] += indirectRadiation * da;
+            }
+            if (dot > 0 && distance < 0) {
+              // direct radiation
+              energy[p][q] += dot * peakRadiation * da;
             }
           }
         }
