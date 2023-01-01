@@ -6,7 +6,7 @@ import React, { useEffect, useRef, useState } from 'react';
 import styled from 'styled-components';
 import { useStore } from '../stores/common';
 import * as Selector from '../stores/selector';
-import { ChartType, DatumEntry, GraphDataType, ObjectType } from '../types';
+import { DatumEntry, GraphDataType, ObjectType } from '../types';
 import moment from 'moment';
 import ReactDraggable, { DraggableEventHandler } from 'react-draggable';
 import { Button, Space } from 'antd';
@@ -87,6 +87,7 @@ const DailyBuildingEnergyPanel = ({ city }: DailyBuildingEnergyPanelProps) => {
   const panelRect = useStore(Selector.viewState.dailyBuildingEnergyPanelRect);
   const countElementsByType = useStore(Selector.countElementsByType);
   const flagOfDailySimulation = usePrimitiveStore(Selector.flagOfDailySimulation);
+  const runDailySimulation = useStore(Selector.runDailyThermalSimulation);
 
   // nodeRef is to suppress ReactDOM.findDOMNode() deprecation warning. See:
   // https://github.com/react-grid-layout/react-draggable/blob/v4.4.2/lib/DraggableCore.js#L159-L171
@@ -113,6 +114,16 @@ const DailyBuildingEnergyPanel = ({ city }: DailyBuildingEnergyPanelProps) => {
   const tooltipAcBreakdown = useRef<string>('');
   const tooltipSolarPanelBreakdown = useRef<string>('');
   const tooltipNetBreakdown = useRef<string>('');
+
+  useEffect(() => {
+    if (runDailySimulation) {
+      setData([]);
+      setHeaterSum(0);
+      setAcSum(0);
+      setSolarPanelSum(0);
+      setNetSum(0);
+    }
+  }, [runDailySimulation]);
 
   const { sum, sumHeaterMap, sumAcMap, sumSolarPanelMap, dataLabels } = useDailyEnergySorter(
     now,
@@ -307,7 +318,6 @@ const DailyBuildingEnergyPanel = ({ city }: DailyBuildingEnergyPanelProps) => {
           </Header>
           <BuildinEnergyGraph
             type={GraphDataType.DailyBuildingEnergy}
-            chartType={ChartType.Line}
             dataSource={data}
             labels={labels}
             height={100}

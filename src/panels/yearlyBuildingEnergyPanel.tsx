@@ -6,7 +6,7 @@ import React, { useEffect, useRef, useState } from 'react';
 import styled from 'styled-components';
 import { useStore } from '../stores/common';
 import * as Selector from '../stores/selector';
-import { ChartType, DatumEntry, GraphDataType, ObjectType } from '../types';
+import { DatumEntry, GraphDataType, ObjectType } from '../types';
 import { FLOATING_WINDOW_OPACITY, MONTHS } from '../constants';
 import ReactDraggable, { DraggableEventHandler } from 'react-draggable';
 import { Button, Space } from 'antd';
@@ -381,7 +381,6 @@ const YearlyBuildingEnergyPanel = ({ city }: YearlyBuildingEnergyPanelProps) => 
           </Header>
           <BuildinEnergyGraph
             type={GraphDataType.YearlyBuildingEnergy}
-            chartType={ChartType.Line}
             dataSource={data}
             labels={labels}
             height={100}

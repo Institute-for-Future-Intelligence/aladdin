@@ -4,8 +4,6 @@
 
 import React, { useEffect, useMemo, useState } from 'react';
 import {
-  Area,
-  AreaChart,
   CartesianGrid,
   Label,
   Legend,
@@ -25,7 +23,6 @@ import LineGraphMenu from './lineGraphMenu';
 
 export interface BuildinEnergyGraphProps {
   type: GraphDataType;
-  chartType: ChartType;
   selectedIndex?: number;
   dataSource: DatumEntry[];
   labels?: string[];
@@ -45,7 +42,6 @@ export interface BuildinEnergyGraphProps {
 
 const BuildinEnergyGraph = ({
   type,
-  chartType = ChartType.Line,
   selectedIndex,
   dataSource,
   labels,
@@ -96,38 +92,24 @@ const BuildinEnergyGraph = ({
       if (i === 0) defaultSymbol = symbol;
       const isMeasured = name.startsWith('Measured');
       representations.push(
-        chartType === ChartType.Area ? (
-          <Area
-            key={i}
-            type={curveType}
-            name={name}
-            dataKey={name}
-            stroke={PRESET_COLORS[i]}
-            opacity={opacity}
-            strokeWidth={lineWidth}
-            dot={false}
-            isAnimationActive={false}
-          />
-        ) : (
-          <Line
-            key={i}
-            type={curveType}
-            name={name}
-            dataKey={name}
-            stroke={PRESET_COLORS[i]}
-            strokeDasharray={isMeasured ? '5 5' : ''}
-            opacity={
-              isMeasured ? opacity / 2 : selectedIndex !== undefined && selectedIndex !== i ? opacity / 4 : opacity
-            }
-            strokeWidth={lineWidth}
-            dot={!isMeasured && symbolCount > 0 ? (symbol ? symbol : defaultSymbol) : false}
-            isAnimationActive={false}
-          />
-        ),
+        <Line
+          key={i}
+          type={curveType}
+          name={name}
+          dataKey={name}
+          stroke={PRESET_COLORS[i]}
+          strokeDasharray={isMeasured ? '5 5' : ''}
+          opacity={
+            isMeasured ? opacity / 2 : selectedIndex !== undefined && selectedIndex !== i ? opacity / 4 : opacity
+          }
+          strokeWidth={lineWidth}
+          dot={!isMeasured && symbolCount > 0 ? (symbol ? symbol : defaultSymbol) : false}
+          isAnimationActive={false}
+        />,
       );
     }
     return representations;
-  }, [type, chartType, selectedIndex, curveType, labels, lineCount, lineWidth, symbolCount, symbolSize, legendDataKey]);
+  }, [type, selectedIndex, curveType, labels, lineCount, lineWidth, symbolCount, symbolSize, legendDataKey]);
 
   // @ts-ignore
   const onMouseDown = (e) => {};
@@ -161,90 +143,47 @@ const BuildinEnergyGraph = ({
             }}
           >
             <ResponsiveContainer width="100%" height={`100%`}>
-              {chartType === ChartType.Area ? (
-                <AreaChart
-                  data={dataSource}
-                  onMouseDown={onMouseDown}
-                  margin={{
-                    top: 5,
-                    right: 30,
-                    left: 20,
-                    bottom: 30,
-                  }}
-                >
-                  <Tooltip formatter={(value: number) => value.toFixed(fractionDigits) + ' ' + unitY} />
-                  <CartesianGrid
-                    vertical={verticalGridLines}
-                    horizontal={horizontalGridLines}
-                    stroke={'rgba(128, 128, 128, 0.3)'}
+              <LineChart
+                data={dataSource}
+                onMouseDown={onMouseDown}
+                margin={{
+                  top: 5,
+                  right: 30,
+                  left: 20,
+                  bottom: 30,
+                }}
+              >
+                <Tooltip formatter={(value: number) => value.toFixed(fractionDigits) + ' ' + unitY} />
+                <CartesianGrid
+                  vertical={verticalGridLines}
+                  horizontal={horizontalGridLines}
+                  stroke={'rgba(128, 128, 128, 0.3)'}
+                />
+                <ReferenceLine x={referenceX} stroke="orange" strokeWidth={2} />
+                <XAxis dataKey={dataKeyAxisX ?? labelX} fontSize={'10px'}>
+                  <Label value={labelX + (unitX ? ' (' + unitX + ')' : '')} offset={0} position="bottom" />
+                </XAxis>
+                <YAxis domain={[yMin, yMax]} fontSize={'10px'}>
+                  <Label
+                    dx={-15}
+                    value={labelY + (unitY ? ' (' + unitY + ')' : '')}
+                    offset={0}
+                    angle={-90}
+                    position="center"
                   />
-                  <ReferenceLine x={referenceX} stroke="orange" strokeWidth={2} />
-                  <XAxis dataKey={dataKeyAxisX ?? labelX} fontSize={'10px'}>
-                    <Label value={labelX + (unitX ? ' (' + unitX + ')' : '')} offset={0} position="bottom" />
-                  </XAxis>
-                  <YAxis domain={[yMin, yMax]} fontSize={'10px'}>
-                    <Label
-                      dx={-15}
-                      value={labelY + (unitY ? ' (' + unitY + ')' : '')}
-                      offset={0}
-                      angle={-90}
-                      position="center"
-                    />
-                  </YAxis>
-                  {getRepresentations}
-                  {lineCount > 1 && (
-                    <Legend
-                      iconType="plainline"
-                      verticalAlign="top"
-                      height={36}
-                      onMouseLeave={onMouseLeaveLegend}
-                      onMouseEnter={onMouseEnterLegend}
-                    />
-                  )}
-                </AreaChart>
-              ) : (
-                <LineChart
-                  data={dataSource}
-                  onMouseDown={onMouseDown}
-                  margin={{
-                    top: 5,
-                    right: 30,
-                    left: 20,
-                    bottom: 30,
-                  }}
-                >
-                  <Tooltip formatter={(value: number) => value.toFixed(fractionDigits) + ' ' + unitY} />
-                  <CartesianGrid
-                    vertical={verticalGridLines}
-                    horizontal={horizontalGridLines}
-                    stroke={'rgba(128, 128, 128, 0.3)'}
+                </YAxis>
+                {getRepresentations}
+                {lineCount > 1 && (
+                  <Legend
+                    wrapperStyle={{ fontSize: '11px' }}
+                    iconType="plainline"
+                    verticalAlign="top"
+                    height={36}
+                    onMouseLeave={onMouseLeaveLegend}
+                    onMouseEnter={onMouseEnterLegend}
                   />
-                  <ReferenceLine x={referenceX} stroke="orange" strokeWidth={2} />
-                  <XAxis dataKey={dataKeyAxisX ?? labelX} fontSize={'10px'}>
-                    <Label value={labelX + (unitX ? ' (' + unitX + ')' : '')} offset={0} position="bottom" />
-                  </XAxis>
-                  <YAxis domain={[yMin, yMax]} fontSize={'10px'}>
-                    <Label
-                      dx={-15}
-                      value={labelY + (unitY ? ' (' + unitY + ')' : '')}
-                      offset={0}
-                      angle={-90}
-                      position="center"
-                    />
-                  </YAxis>
-                  {getRepresentations}
-                  {lineCount > 1 && (
-                    <Legend
-                      wrapperStyle={{ fontSize: '11px' }}
-                      iconType="plainline"
-                      verticalAlign="top"
-                      height={36}
-                      onMouseLeave={onMouseLeaveLegend}
-                      onMouseEnter={onMouseEnterLegend}
-                    />
-                  )}
-                </LineChart>
-              )}
+                )}
+              </LineChart>
             </ResponsiveContainer>
             <LineGraphMenu
               lineCount={lineCount}
