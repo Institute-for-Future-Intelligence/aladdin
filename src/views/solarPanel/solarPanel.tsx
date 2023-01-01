@@ -187,12 +187,12 @@ const SolarPanel = ({
       solarPanelLinesRef.current = [];
       const dx = lx / mx;
       const dy = ly / my;
-      for (let i = 1; i < mx; i++) {
+      for (let i = 0; i <= mx; i++) {
         solarPanelLinesRef.current.push({
           points: [new Vector3(-hx + i * dx, -hy, lz), new Vector3(-hx + i * dx, hy, lz)],
         } as LineData);
       }
-      for (let i = 1; i < my; i++) {
+      for (let i = 0; i <= my; i++) {
         solarPanelLinesRef.current.push({
           points: [new Vector3(-hx, -hy + i * dy, lz), new Vector3(hx, -hy + i * dy, lz)],
         } as LineData);
