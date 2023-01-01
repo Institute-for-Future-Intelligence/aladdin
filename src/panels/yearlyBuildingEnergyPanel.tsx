@@ -1,9 +1,8 @@
 /*
- * @Copyright 2022. Institute for Future Intelligence, Inc.
+ * @Copyright 2022-2023. Institute for Future Intelligence, Inc.
  */
 
 import React, { useEffect, useRef, useState } from 'react';
-import LineGraph from '../components/lineGraph';
 import styled from 'styled-components';
 import { useStore } from '../stores/common';
 import * as Selector from '../stores/selector';
@@ -17,6 +16,7 @@ import i18n from '../i18n/i18n';
 import { Rectangle } from '../models/Rectangle';
 import { usePrimitiveStore } from '../stores/commonPrimitive';
 import { useDailyEnergySorter } from '../analysis/energyHooks';
+import BuildinEnergyGraph from '../components/buildingEnergyGraph';
 
 const Container = styled.div`
   position: fixed;
@@ -87,6 +87,7 @@ const YearlyBuildingEnergyPanel = ({ city }: YearlyBuildingEnergyPanelProps) => 
   const hourlySolarHeatGainArrayMap = usePrimitiveStore(Selector.hourlySolarHeatGainArrayMap);
   const hourlySolarPanelOutputArrayMap = usePrimitiveStore(Selector.hourlySolarPanelOutputArrayMap);
   const flagOfDailySimulation = usePrimitiveStore(Selector.flagOfDailySimulation);
+  const runYearlySimulation = useStore(Selector.runYearlyThermalSimulation);
 
   const wrapperRef = useRef<HTMLDivElement | null>(null);
   const resizeObserverRef = useRef<ResizeObserver>();
@@ -131,6 +132,24 @@ const YearlyBuildingEnergyPanel = ({ city }: YearlyBuildingEnergyPanelProps) => 
   const tooltipAcBreakdown = useRef<string>('');
   const tooltipSolarPanelBreakdown = useRef<string>('');
   const tooltipNetBreakdown = useRef<string>('');
+
+  useEffect(() => {
+    resetRef();
+  }, [daysPerYear]);
+
+  useEffect(() => {
+    if (runYearlySimulation) {
+      resetRef();
+    }
+  }, [runYearlySimulation]);
+
+  const resetRef = () => {
+    resultRef.current = new Array(daysPerYear).fill({});
+    heaterSumRef.current = new Array(daysPerYear).fill(0);
+    acSumRef.current = new Array(daysPerYear).fill(0);
+    solarPanelSumRef.current = new Array(daysPerYear).fill(0);
+    netSumRef.current = new Array(daysPerYear).fill(0);
+  };
 
   useEffect(() => {
     const count = countElementsByType(ObjectType.Foundation);
@@ -245,10 +264,10 @@ const YearlyBuildingEnergyPanel = ({ city }: YearlyBuildingEnergyPanelProps) => 
     solarPanelSumRef.current[indexOfMonth] = sumSolarPanel * monthInterval * 30;
     netSumRef.current[indexOfMonth] =
       heaterSumRef.current[indexOfMonth] + acSumRef.current[indexOfMonth] - solarPanelSumRef.current[indexOfMonth];
-    setHeaterSum(heaterSumRef.current.reduce((pv, cv) => pv + cv, 0));
-    setAcSum(acSumRef.current.reduce((pv, cv) => pv + cv, 0));
-    setsolarPanelSum(solarPanelSumRef.current.reduce((pv, cv) => pv + cv, 0));
-    setNetSum(netSumRef.current.reduce((pv, cv) => pv + cv, 0));
+    setHeaterSum(heaterSumRef.current.slice(0, indexOfMonth + 1).reduce((pv, cv) => pv + cv, 0));
+    setAcSum(acSumRef.current.slice(0, indexOfMonth + 1).reduce((pv, cv) => pv + cv, 0));
+    setsolarPanelSum(solarPanelSumRef.current.slice(0, indexOfMonth + 1).reduce((pv, cv) => pv + cv, 0));
+    setNetSum(netSumRef.current.slice(0, indexOfMonth + 1).reduce((pv, cv) => pv + cv, 0));
   }, [flagOfDailySimulation]);
 
   useEffect(() => {
@@ -360,7 +379,7 @@ const YearlyBuildingEnergyPanel = ({ city }: YearlyBuildingEnergyPanelProps) => 
               {i18n.t('word.Close', lang)}
             </span>
           </Header>
-          <LineGraph
+          <BuildinEnergyGraph
             type={GraphDataType.YearlyBuildingEnergy}
             chartType={ChartType.Line}
             dataSource={data}

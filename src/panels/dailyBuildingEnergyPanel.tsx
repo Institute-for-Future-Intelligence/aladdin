@@ -1,9 +1,8 @@
 /*
- * @Copyright 2022. Institute for Future Intelligence, Inc.
+ * @Copyright 2022-2023. Institute for Future Intelligence, Inc.
  */
 
 import React, { useEffect, useRef, useState } from 'react';
-import LineGraph from '../components/lineGraph';
 import styled from 'styled-components';
 import { useStore } from '../stores/common';
 import * as Selector from '../stores/selector';
@@ -18,6 +17,7 @@ import { Rectangle } from '../models/Rectangle';
 import { FLOATING_WINDOW_OPACITY } from '../constants';
 import { usePrimitiveStore } from '../stores/commonPrimitive';
 import { useDailyEnergySorter } from '../analysis/energyHooks';
+import BuildinEnergyGraph from '../components/buildingEnergyGraph';
 
 const Container = styled.div`
   position: fixed;
@@ -305,7 +305,7 @@ const DailyBuildingEnergyPanel = ({ city }: DailyBuildingEnergyPanelProps) => {
               {i18n.t('word.Close', lang)}
             </span>
           </Header>
-          <LineGraph
+          <BuildinEnergyGraph
             type={GraphDataType.DailyBuildingEnergy}
             chartType={ChartType.Line}
             dataSource={data}
