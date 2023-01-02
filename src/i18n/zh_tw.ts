@@ -253,6 +253,7 @@ export const i18n_zh_tw = {
       graph: {
         LineWidth: '線條寬度',
         SymbolSize: '符號大小',
+        BarCategoryGap: '直條間隙',
         ShowHorizontalGridLines: '顯示格子的水平線條',
         ShowVerticalGridLines: '顯示格子的豎直線條',
       },

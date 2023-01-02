@@ -255,6 +255,7 @@ export const i18n_en = {
       graph: {
         LineWidth: 'Line Width',
         SymbolSize: 'Symbol Size',
+        BarCategoryGap: 'Bar Category Gap',
         ShowHorizontalGridLines: 'Show Horizontal Grid Lines',
         ShowVerticalGridLines: 'Show Vertical Grid Lines',
       },

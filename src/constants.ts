@@ -12,7 +12,7 @@ export const HOME_URL: string = isProd
   ? 'https://institute-for-future-intelligence.github.io/aladdin/'
   : 'http://localhost:3000/aladdin';
 
-export const PRESET_COLORS = ['#8884d8', '#f97356', '#1bc32c', '#c6502d', '#82ca9d', '#3eaec0', '#627682', '#445111'];
+export const PRESET_COLORS = ['#627682', '#8884d8', '#f97356', '#1bc32c', '#c6502d', '#82ca9d', '#3eaec0', '#445111'];
 
 export const FLOATING_WINDOW_OPACITY = 0.8;
 export const BLUE = new Color(0, 0, 1);

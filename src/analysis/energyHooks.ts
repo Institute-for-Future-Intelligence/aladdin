@@ -106,7 +106,7 @@ export const useDailyEnergySorter = (
               const adjustedAc = adjustEnergyUsage(outsideTemperatureRange, value.ac, setpoint, threshold);
               datum['Heater ' + id] = adjustedHeat;
               datum['AC ' + id] = adjustedAc;
-              datum['Solar ' + id] = value.solarPanel;
+              datum['Solar ' + id] = -value.solarPanel;
               datum['Net ' + id] = adjustedHeat + adjustedAc - value.solarPanel;
               let x = sumHeaterMapRef.current.get(id);
               if (x === undefined) x = 0;
@@ -140,7 +140,7 @@ export const useDailyEnergySorter = (
               const adjustedAc = adjustEnergyUsage(outsideTemperatureRange, value.ac, setpoint, threshold);
               datum['Heater'] = adjustedHeat;
               datum['AC'] = adjustedAc;
-              datum['Solar'] = value.solarPanel;
+              datum['Solar'] = -value.solarPanel;
               datum['Net'] = adjustedHeat + adjustedAc - value.solarPanel;
               const id = 'default';
               let x = sumHeaterMapRef.current.get(id);

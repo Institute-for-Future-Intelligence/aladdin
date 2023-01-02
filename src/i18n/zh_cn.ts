@@ -253,6 +253,7 @@ export const i18n_zh_cn = {
       graph: {
         LineWidth: '线条宽度',
         SymbolSize: '符号大小',
+        BarCategoryGap: '直条间隙',
         ShowHorizontalGridLines: '显示格子的水平线条',
         ShowVerticalGridLines: '显示格子的竖直线条',
       },

@@ -254,6 +254,7 @@ export const i18n_tr = {
       graph: {
         LineWidth: 'Çizgi Kalınlığı',
         SymbolSize: 'Sembol Boyutu',
+        BarCategoryGap: 'Bar Category Gap',
         ShowHorizontalGridLines: 'Yatay Izgara Çizgilerini Göster',
         ShowVerticalGridLines: 'Dikey Izgara Çizgilerini Göster',
       },
