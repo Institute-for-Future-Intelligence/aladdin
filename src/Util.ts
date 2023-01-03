@@ -43,6 +43,7 @@ import { RoofModel } from './models/RoofModel';
 import { RoofUtil } from './views/roof/RoofUtil';
 import { FoundationModel } from './models/FoundationModel';
 import { WindowModel, WindowType } from './models/WindowModel';
+import { DoorModel, DoorType } from './models/DoorModel';
 
 export class Util {
   static getTriangleArea(a: Vector3, b: Vector3, c: Vector3) {
@@ -179,6 +180,19 @@ export class Util {
     return window.lx * window.lz * parent.lx * parent.lz;
   }
 
+  static getDoorArea(door: DoorModel, parent: ElementModel): number {
+    if (door.doorType === DoorType.Arched && door.archHeight > 0) {
+      const hx = 0.5 * door.lx * parent.lx;
+      const lz = door.lz * parent.lz;
+      const ah = Math.min(door.archHeight, lz, hx); // actual arc height
+      const r = 0.5 * (ah + (hx * hx) / ah); // arc radius
+      const startAngle = Math.acos(hx / r);
+      const extent = Math.PI - startAngle * 2;
+      return 0.5 * extent * r * r - hx * (r - ah) + (lz - ah) * hx * 2;
+    }
+    return door.lx * door.lz * parent.lx * parent.lz;
+  }
+
   static hasHeliostatOrFresnelReflectors(elements: ElementModel[]): boolean {
     for (const e of elements) {
       if (e.type === ObjectType.FresnelReflector || e.type === ObjectType.Heliostat) return true;
@@ -286,6 +300,13 @@ export class Util {
       }
     }
     return count;
+  }
+
+  static hasSolarPanels(elements: ElementModel[]): boolean {
+    for (const e of elements) {
+      if (e.type === ObjectType.SolarPanel) return true;
+    }
+    return false;
   }
 
   // special case as a rack may have many solar panels

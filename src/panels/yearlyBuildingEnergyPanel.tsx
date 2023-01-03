@@ -17,6 +17,7 @@ import { Rectangle } from '../models/Rectangle';
 import { usePrimitiveStore } from '../stores/commonPrimitive';
 import { useDailyEnergySorter } from '../analysis/energyHooks';
 import BuildinEnergyGraph from '../components/buildingEnergyGraph';
+import { Util } from '../Util';
 
 const Container = styled.div`
   position: fixed;
@@ -88,6 +89,7 @@ const YearlyBuildingEnergyPanel = ({ city }: YearlyBuildingEnergyPanelProps) => 
   const hourlySolarPanelOutputArrayMap = usePrimitiveStore(Selector.hourlySolarPanelOutputArrayMap);
   const flagOfDailySimulation = usePrimitiveStore(Selector.flagOfDailySimulation);
   const runYearlySimulation = useStore(Selector.runYearlyThermalSimulation);
+  const hasSolarPanels = Util.hasSolarPanels(useStore.getState().elements);
 
   const wrapperRef = useRef<HTMLDivElement | null>(null);
   const resizeObserverRef = useRef<ResizeObserver>();
@@ -104,7 +106,6 @@ const YearlyBuildingEnergyPanel = ({ city }: YearlyBuildingEnergyPanelProps) => 
 
   const lang = { lng: language };
   const weather = getWeather(city ?? 'Boston MA, USA');
-  const countSolarPanels = countElementsByType(ObjectType.SolarPanel);
   const referenceX = MONTHS[now.getMonth()];
   const daysPerYear = world.daysPerYear ?? 6;
   const monthInterval = 12 / daysPerYear;
@@ -119,7 +120,7 @@ const YearlyBuildingEnergyPanel = ({ city }: YearlyBuildingEnergyPanelProps) => 
   const { sum, sumHeaterMap, sumAcMap, sumSolarPanelMap, dataLabels } = useDailyEnergySorter(
     now,
     weather,
-    countSolarPanels > 0,
+    hasSolarPanels,
     hourlyHeatExchangeArrayMap,
     hourlySolarHeatGainArrayMap,
     hourlySolarPanelOutputArrayMap,
@@ -176,7 +177,7 @@ const YearlyBuildingEnergyPanel = ({ city }: YearlyBuildingEnergyPanelProps) => 
           if (net === undefined) net = 0;
           net += h['Net ' + id] as number;
           netMap.set(id, net);
-          if (countSolarPanels > 0) {
+          if (hasSolarPanels) {
             let solarPanel = solarPanelMap.get(id);
             if (solarPanel === undefined) solarPanel = 0;
             solarPanel += h['Solar ' + id] as number;
@@ -189,7 +190,7 @@ const YearlyBuildingEnergyPanel = ({ city }: YearlyBuildingEnergyPanelProps) => 
       const l = [];
       for (let index = 0; index < count; index++) {
         const id = dataLabels[index] ?? index + 1;
-        if (countSolarPanels > 0) {
+        if (hasSolarPanels) {
           l.push('Heater ' + id, 'AC ' + id, 'Solar ' + id, 'Net ' + id);
           datum['Solar ' + id] = (solarPanelMap.get(id) ?? 0) * 30;
         } else {
@@ -215,7 +216,7 @@ const YearlyBuildingEnergyPanel = ({ city }: YearlyBuildingEnergyPanelProps) => 
           totalHeater += res['Heater ' + id] as number;
           totalAc += res['AC ' + id] as number;
           totalNet += res['Net ' + id] as number;
-          if (countSolarPanels > 0) totalSolarPanel += res['Solar ' + id] as number;
+          if (hasSolarPanels) totalSolarPanel += res['Solar ' + id] as number;
         }
         totalHeater *= monthInterval;
         totalAc *= monthInterval;
@@ -234,7 +235,7 @@ const YearlyBuildingEnergyPanel = ({ city }: YearlyBuildingEnergyPanelProps) => 
       let heater = 0;
       let ac = 0;
       let net = 0;
-      if (countSolarPanels > 0) {
+      if (hasSolarPanels) {
         let solarPanel = 0;
         setLabels(['Heater', 'AC', 'Solar', 'Net']);
         for (const h of sum) {
@@ -279,7 +280,7 @@ const YearlyBuildingEnergyPanel = ({ city }: YearlyBuildingEnergyPanelProps) => 
       }
     }
     let sumSolarPanel = 0;
-    if (sumSolarPanelMap && countSolarPanels > 0) {
+    if (sumSolarPanelMap && hasSolarPanels) {
       for (const key of sumSolarPanelMap.keys()) {
         sumSolarPanel += sumSolarPanelMap.get(key) ?? 0;
       }
@@ -407,7 +408,7 @@ const YearlyBuildingEnergyPanel = ({ city }: YearlyBuildingEnergyPanelProps) => 
           <BuildinEnergyGraph
             type={GraphDataType.YearlyBuildingEnergy}
             dataSource={data}
-            hasSolarPanels={countSolarPanels > 0}
+            hasSolarPanels={hasSolarPanels}
             labels={labels}
             height={100}
             dataKeyAxisX={'Month'}

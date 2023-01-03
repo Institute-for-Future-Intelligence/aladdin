@@ -607,7 +607,7 @@ const ThermalSimulation = ({ city }: ThermalSimulationProps) => {
           }
         }
         const setpoint = foundation.hvacSystem?.thermostatSetpoint ?? 20;
-        const area = door.lx * door.lz * parent.lx * parent.lz;
+        const area = Util.getDoorArea(door, parent);
         const extraT =
           totalSolarHeat === 0
             ? 0

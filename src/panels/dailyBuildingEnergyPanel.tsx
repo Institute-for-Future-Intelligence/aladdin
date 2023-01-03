@@ -18,6 +18,7 @@ import { FLOATING_WINDOW_OPACITY } from '../constants';
 import { usePrimitiveStore } from '../stores/commonPrimitive';
 import { useDailyEnergySorter } from '../analysis/energyHooks';
 import BuildinEnergyGraph from '../components/buildingEnergyGraph';
+import { Util } from '../Util';
 
 const Container = styled.div`
   position: fixed;
@@ -88,6 +89,7 @@ const DailyBuildingEnergyPanel = ({ city }: DailyBuildingEnergyPanelProps) => {
   const countElementsByType = useStore(Selector.countElementsByType);
   const flagOfDailySimulation = usePrimitiveStore(Selector.flagOfDailySimulation);
   const runDailySimulation = useStore(Selector.runDailyThermalSimulation);
+  const hasSolarPanels = Util.hasSolarPanels(useStore.getState().elements);
 
   // nodeRef is to suppress ReactDOM.findDOMNode() deprecation warning. See:
   // https://github.com/react-grid-layout/react-draggable/blob/v4.4.2/lib/DraggableCore.js#L159-L171
@@ -109,7 +111,6 @@ const DailyBuildingEnergyPanel = ({ city }: DailyBuildingEnergyPanelProps) => {
   const [labels, setLabels] = useState(['Heater', 'AC', 'Net']);
 
   const lang = { lng: language };
-  const countSolarPanels = countElementsByType(ObjectType.SolarPanel);
   const weather = getWeather(city ?? 'Boston MA, USA');
   const tooltipHeaterBreakdown = useRef<string>('');
   const tooltipAcBreakdown = useRef<string>('');
@@ -129,7 +130,7 @@ const DailyBuildingEnergyPanel = ({ city }: DailyBuildingEnergyPanelProps) => {
   const { sum, sumHeaterMap, sumAcMap, sumSolarPanelMap, dataLabels } = useDailyEnergySorter(
     now,
     weather,
-    countSolarPanels > 0,
+    hasSolarPanels,
     hourlyHeatExchangeArrayMap,
     hourlySolarHeatGainArrayMap,
     hourlySolarPanelOutputArrayMap,
@@ -201,7 +202,7 @@ const DailyBuildingEnergyPanel = ({ city }: DailyBuildingEnergyPanelProps) => {
       const l = [];
       for (let index = 0; index < countBuildings; index++) {
         const id = dataLabels[index] ?? index + 1;
-        if (countSolarPanels > 0) {
+        if (hasSolarPanels) {
           l.push('Heater ' + id, 'AC ' + id, 'Solar ' + id, 'Net ' + id);
         } else {
           l.push('Heater ' + id, 'AC ' + id, 'Net ' + id);
@@ -209,7 +210,7 @@ const DailyBuildingEnergyPanel = ({ city }: DailyBuildingEnergyPanelProps) => {
       }
       setLabels(l);
     } else {
-      if (countSolarPanels > 0) {
+      if (hasSolarPanels) {
         setLabels(['Heater', 'AC', 'Solar', 'Net']);
       } else {
         setLabels(['Heater', 'AC', 'Net']);
@@ -329,7 +330,7 @@ const DailyBuildingEnergyPanel = ({ city }: DailyBuildingEnergyPanelProps) => {
           <BuildinEnergyGraph
             type={GraphDataType.DailyBuildingEnergy}
             dataSource={data}
-            hasSolarPanels={countSolarPanels > 0}
+            hasSolarPanels={hasSolarPanels}
             labels={labels}
             height={100}
             dataKeyAxisX={'Hour'}
