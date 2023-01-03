@@ -143,6 +143,7 @@ const Door = (doorModel: DoorModel) => {
       case DoorType.Default:
         return (
           <RectangleDoor
+            id={id}
             dimension={dimensionData}
             color={color}
             selected={selected}
@@ -154,6 +155,7 @@ const Door = (doorModel: DoorModel) => {
       case DoorType.Arched:
         return (
           <ArchedDoor
+            id={id}
             dimension={dimensionData}
             color={color}
             selected={selected}

@@ -5,12 +5,13 @@
 import React, { useMemo } from 'react';
 import { HALF_PI } from 'src/constants';
 import { useStore } from 'src/stores/common';
-import { Material, Shape } from 'three';
+import { DoubleSide, Material, Shape } from 'three';
 import { ArchedWireframe } from '../window/archedWindow';
 import { WireframeDataType } from '../window/window';
 import * as Selector from 'src/stores/selector';
 
 interface ArchedDoorProps {
+  id: string;
   dimension: number[];
   color: string;
   selected: boolean;
@@ -19,7 +20,7 @@ interface ArchedDoorProps {
   filled: boolean;
 }
 
-const ArchedDoor = React.memo(({ dimension, color, selected, locked, material, filled }: ArchedDoorProps) => {
+const ArchedDoor = React.memo(({ id, dimension, color, selected, locked, material, filled }: ArchedDoorProps) => {
   const [lx, ly, lz, archHeight] = dimension;
   const shadowEnabled = useStore(Selector.viewState.shadowEnabled);
 
@@ -71,7 +72,7 @@ const ArchedDoor = React.memo(({ dimension, color, selected, locked, material, f
   return (
     <group name={'Arched door group'}>
       <mesh
-        name={'Door plane mesh'}
+        name={'Arched Door Mesh'}
         rotation={[HALF_PI, 0, 0]}
         material={material}
         castShadow={shadowEnabled && filled}
@@ -79,6 +80,22 @@ const ArchedDoor = React.memo(({ dimension, color, selected, locked, material, f
       >
         <shapeBufferGeometry args={[doorShape]} />
       </mesh>
+
+      {filled && (
+        <mesh
+          name={'Arched Door Simulation Mesh'}
+          rotation={[HALF_PI, 0, 0]}
+          material={material}
+          uuid={id}
+          userData={{ simulation: true }}
+          castShadow={false}
+          receiveShadow={false}
+          visible={false}
+        >
+          <shapeBufferGeometry args={[doorShape]} />
+          <meshBasicMaterial side={DoubleSide} />
+        </mesh>
+      )}
 
       {filled && (
         <mesh

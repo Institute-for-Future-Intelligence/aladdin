@@ -5,11 +5,12 @@
 import React, { useMemo } from 'react';
 import { Box, Line, Plane } from '@react-three/drei';
 import { HALF_PI, LOCKED_ELEMENT_SELECTION_COLOR } from 'src/constants';
-import { Material, Shape } from 'three';
+import { DoubleSide, Material, Shape } from 'three';
 import * as Selector from 'src/stores/selector';
 import { useStore } from 'src/stores/common';
 
 interface RectangleDoorProps {
+  id: string;
   dimension: number[];
   color: string;
   selected: boolean;
@@ -77,7 +78,7 @@ const DoorFrame = React.memo(({ dimension, color }: DoorFrameProps) => {
   );
 });
 
-const RectangleDoor = React.memo(({ dimension, color, selected, locked, material, filled }: RectangleDoorProps) => {
+const RectangleDoor = React.memo(({ id, dimension, color, selected, locked, material, filled }: RectangleDoorProps) => {
   const shadowEnabled = useStore(Selector.viewState.shadowEnabled);
 
   const [lx, ly, lz] = dimension;
@@ -103,7 +104,7 @@ const RectangleDoor = React.memo(({ dimension, color, selected, locked, material
   return (
     <group name={'Rectangle door group'} position={[0, -0.01, 0]}>
       <mesh
-        name={'Door plane mesh'}
+        name={'Rectangular Door Mesh'}
         rotation={[HALF_PI, 0, 0]}
         material={material}
         castShadow={shadowEnabled && filled}
@@ -111,6 +112,21 @@ const RectangleDoor = React.memo(({ dimension, color, selected, locked, material
       >
         <shapeBufferGeometry args={[doorShape]} />
       </mesh>
+
+      {filled && (
+        <mesh
+          name={'Rectangular Door Simulation Mesh'}
+          rotation={[HALF_PI, 0, 0]}
+          uuid={id}
+          userData={{ simulation: true }}
+          castShadow={false}
+          receiveShadow={false}
+          visible={false}
+        >
+          <shapeBufferGeometry args={[doorShape]} />
+          <meshBasicMaterial side={DoubleSide} />
+        </mesh>
+      )}
 
       {filled && (
         <Plane
