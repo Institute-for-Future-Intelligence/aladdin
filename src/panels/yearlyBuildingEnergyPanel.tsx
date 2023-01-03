@@ -104,6 +104,7 @@ const YearlyBuildingEnergyPanel = ({ city }: YearlyBuildingEnergyPanelProps) => 
 
   const lang = { lng: language };
   const weather = getWeather(city ?? 'Boston MA, USA');
+  const countSolarPanels = countElementsByType(ObjectType.SolarPanel);
   const referenceX = MONTHS[now.getMonth()];
   const daysPerYear = world.daysPerYear ?? 6;
   const monthInterval = 12 / daysPerYear;
@@ -118,6 +119,7 @@ const YearlyBuildingEnergyPanel = ({ city }: YearlyBuildingEnergyPanelProps) => 
   const { sum, sumHeaterMap, sumAcMap, sumSolarPanelMap, dataLabels } = useDailyEnergySorter(
     now,
     weather,
+    countSolarPanels > 0,
     hourlyHeatExchangeArrayMap,
     hourlySolarHeatGainArrayMap,
     hourlySolarPanelOutputArrayMap,
@@ -170,14 +172,16 @@ const YearlyBuildingEnergyPanel = ({ city }: YearlyBuildingEnergyPanelProps) => 
           if (ac === undefined) ac = 0;
           ac += h['AC ' + id] as number;
           acMap.set(id, ac);
-          let solarPanel = solarPanelMap.get(id);
-          if (solarPanel === undefined) solarPanel = 0;
-          solarPanel += h['Solar ' + id] as number;
-          solarPanelMap.set(id, solarPanel);
           let net = netMap.get(id);
           if (net === undefined) net = 0;
           net += h['Net ' + id] as number;
           netMap.set(id, net);
+          if (countSolarPanels > 0) {
+            let solarPanel = solarPanelMap.get(id);
+            if (solarPanel === undefined) solarPanel = 0;
+            solarPanel += h['Solar ' + id] as number;
+            solarPanelMap.set(id, solarPanel);
+          }
         }
       }
       const datum: DatumEntry = {};
@@ -185,10 +189,14 @@ const YearlyBuildingEnergyPanel = ({ city }: YearlyBuildingEnergyPanelProps) => 
       const l = [];
       for (let index = 0; index < count; index++) {
         const id = dataLabels[index] ?? index + 1;
-        l.push('Heater ' + id, 'AC ' + id, 'Solar ' + id, 'Net ' + id);
+        if (countSolarPanels > 0) {
+          l.push('Heater ' + id, 'AC ' + id, 'Solar ' + id, 'Net ' + id);
+          datum['Solar ' + id] = (solarPanelMap.get(id) ?? 0) * 30;
+        } else {
+          l.push('Heater ' + id, 'AC ' + id, 'Net ' + id);
+        }
         datum['Heater ' + id] = (heaterMap.get(id) ?? 0) * 30;
         datum['AC ' + id] = (acMap.get(id) ?? 0) * 30;
-        datum['Solar ' + id] = (solarPanelMap.get(id) ?? 0) * 30;
         datum['Net ' + id] = (netMap.get(id) ?? 0) * 30;
       }
       setLabels(l);
@@ -206,39 +214,56 @@ const YearlyBuildingEnergyPanel = ({ city }: YearlyBuildingEnergyPanelProps) => 
         for (const res of resultRef.current) {
           totalHeater += res['Heater ' + id] as number;
           totalAc += res['AC ' + id] as number;
-          totalSolarPanel += res['Solar ' + id] as number;
           totalNet += res['Net ' + id] as number;
+          if (countSolarPanels > 0) totalSolarPanel += res['Solar ' + id] as number;
         }
         totalHeater *= monthInterval;
         totalAc *= monthInterval;
-        totalSolarPanel *= monthInterval;
         totalNet *= monthInterval;
         tooltipHeaterBreakdown.current += id + ': ' + totalHeater.toFixed(1) + ' ' + i18n.t('word.kWh', lang) + '\n';
         tooltipAcBreakdown.current += id + ': ' + totalAc.toFixed(1) + ' ' + i18n.t('word.kWh', lang) + '\n';
-        tooltipSolarPanelBreakdown.current +=
-          id + ': ' + totalSolarPanel.toFixed(1) + ' ' + i18n.t('word.kWh', lang) + '\n';
         tooltipNetBreakdown.current += id + ': ' + totalNet.toFixed(1) + ' ' + i18n.t('word.kWh', lang) + '\n';
+        if (totalSolarPanel > 0) {
+          totalSolarPanel *= monthInterval;
+          tooltipSolarPanelBreakdown.current +=
+            id + ': ' + totalSolarPanel.toFixed(1) + ' ' + i18n.t('word.kWh', lang) + '\n';
+        }
       }
     } else {
       // only one building
       let heater = 0;
       let ac = 0;
-      let solarPanel = 0;
       let net = 0;
-      for (const h of sum) {
-        heater += h['Heater'] as number;
-        ac += h['AC'] as number;
-        solarPanel += h['Solar'] as number;
-        net += h['Net'] as number;
+      if (countSolarPanels > 0) {
+        let solarPanel = 0;
+        setLabels(['Heater', 'AC', 'Solar', 'Net']);
+        for (const h of sum) {
+          heater += h['Heater'] as number;
+          ac += h['AC'] as number;
+          solarPanel += h['Solar'] as number;
+          net += h['Net'] as number;
+        }
+        resultRef.current[indexOfMonth] = {
+          Month: MONTHS[now.getMonth()],
+          Heater: 30 * heater,
+          AC: 30 * ac,
+          Solar: 30 * solarPanel,
+          Net: 30 * net,
+        } as DatumEntry;
+      } else {
+        setLabels(['Heater', 'AC', 'Net']);
+        for (const h of sum) {
+          heater += h['Heater'] as number;
+          ac += h['AC'] as number;
+          net += h['Net'] as number;
+        }
+        resultRef.current[indexOfMonth] = {
+          Month: MONTHS[now.getMonth()],
+          Heater: 30 * heater,
+          AC: 30 * ac,
+          Net: 30 * net,
+        } as DatumEntry;
       }
-      setLabels(['Heater', 'AC', 'Solar', 'Net']);
-      resultRef.current[indexOfMonth] = {
-        Month: MONTHS[now.getMonth()],
-        Heater: 30 * heater,
-        AC: 30 * ac,
-        Solar: 30 * solarPanel,
-        Net: 30 * net,
-      } as DatumEntry;
     }
     setData([...resultRef.current]);
     let sumHeater = 0;
@@ -254,7 +279,7 @@ const YearlyBuildingEnergyPanel = ({ city }: YearlyBuildingEnergyPanelProps) => 
       }
     }
     let sumSolarPanel = 0;
-    if (sumSolarPanelMap) {
+    if (sumSolarPanelMap && countSolarPanels > 0) {
       for (const key of sumSolarPanelMap.keys()) {
         sumSolarPanel += sumSolarPanelMap.get(key) ?? 0;
       }
@@ -382,6 +407,7 @@ const YearlyBuildingEnergyPanel = ({ city }: YearlyBuildingEnergyPanelProps) => 
           <BuildinEnergyGraph
             type={GraphDataType.YearlyBuildingEnergy}
             dataSource={data}
+            hasSolarPanels={countSolarPanels > 0}
             labels={labels}
             height={100}
             dataKeyAxisX={'Month'}
@@ -406,12 +432,14 @@ const YearlyBuildingEnergyPanel = ({ city }: YearlyBuildingEnergyPanelProps) => 
             >
               {i18n.t('buildingEnergyPanel.AC', lang) + ': ' + acSum.toFixed(0)}
             </Space>
-            <Space
-              title={tooltipSolarPanelBreakdown.current}
-              style={{ cursor: tooltipSolarPanelBreakdown.current === '' ? 'default' : 'help' }}
-            >
-              {i18n.t('buildingEnergyPanel.SolarPanel', lang) + ': ' + solarPanelSum.toFixed(0)}
-            </Space>
+            {solarPanelSum !== 0 && (
+              <Space
+                title={tooltipSolarPanelBreakdown.current}
+                style={{ cursor: tooltipSolarPanelBreakdown.current === '' ? 'default' : 'help' }}
+              >
+                {i18n.t('buildingEnergyPanel.SolarPanel', lang) + ': ' + solarPanelSum.toFixed(0)}
+              </Space>
+            )}
             <Space
               title={tooltipNetBreakdown.current}
               style={{ cursor: tooltipNetBreakdown.current === '' ? 'default' : 'help' }}

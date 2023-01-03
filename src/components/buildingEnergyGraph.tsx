@@ -24,7 +24,7 @@ import { PRESET_COLORS } from '../constants';
 
 export interface BuildinEnergyGraphProps {
   type: GraphDataType;
-  selectedIndex?: number;
+  hasSolarPanels: boolean;
   dataSource: DatumEntry[];
   labels: string[];
   height: number;
@@ -43,8 +43,8 @@ export interface BuildinEnergyGraphProps {
 
 const BuildinEnergyGraph = ({
   type,
-  selectedIndex,
   dataSource,
+  hasSolarPanels,
   labels,
   height,
   dataKeyAxisX,
@@ -59,7 +59,7 @@ const BuildinEnergyGraph = ({
   fractionDigits = 2,
   symbolCount = 12,
 }: BuildinEnergyGraphProps) => {
-  const [setCount, setSetCount] = useState<number>(0);
+  const [buildingCount, setBuildingCount] = useState<number>(0);
   const [horizontalGridLines, setHorizontalGridLines] = useState<boolean>(true);
   const [verticalGridLines, setVerticalGridLines] = useState<boolean>(true);
   const [legendDataKey, setLegendDataKey] = useState<string | null>(null);
@@ -72,77 +72,81 @@ const BuildinEnergyGraph = ({
     if (!dataSource || dataSource.length === 0) {
       return;
     }
-    // there are four lines for each dataset [Heater, AC, Solar, Net]
+    // there are four lines for each dataset [Heater, AC, Solar, Net] when there are solar panels
+    const n = hasSolarPanels ? 4 : 3;
     const len =
-      (Array.isArray(dataSource) ? Object.keys(dataSource[0]).length - 1 : Object.keys(dataSource).length - 1) / 4;
-    if (setCount !== len) {
-      setSetCount(len);
+      (Array.isArray(dataSource) ? Object.keys(dataSource[0]).length - 1 : Object.keys(dataSource).length - 1) / n;
+    if (buildingCount !== len) {
+      setBuildingCount(len);
     }
-  }, [setCount, dataSource]);
+  }, [buildingCount, dataSource]);
 
   const getRepresentations = useMemo(() => {
     const representations = [];
+    const n = hasSolarPanels ? 4 : 3;
     let defaultSymbol;
     const barStrokeColor = 'gray';
     const barStrokeWidth = 1;
-    for (let i = 0; i < setCount; i++) {
-      let name = setCount > 1 ? labels[i * 4] : 'Heater';
-      const opacity = legendDataKey === null ? 1 : legendDataKey === name ? 1 : 0.25;
+    for (let i = 0; i < buildingCount; i++) {
+      let name = buildingCount > 1 ? labels[i * n] : 'Heater';
       representations.push(
         <Bar
-          key={i * 4}
+          key={i * n}
           name={name}
           dataKey={name}
           stroke={barStrokeColor}
           fill={'#FA8072'}
-          opacity={selectedIndex !== undefined && selectedIndex !== i ? opacity / 4 : opacity}
+          opacity={legendDataKey === null ? 1 : legendDataKey === name ? 1 : 0.25}
           strokeWidth={barStrokeWidth}
           isAnimationActive={false}
           stackId={'stack' + i}
         />,
       );
-      name = setCount > 1 ? labels[i * 4 + 1] : 'AC';
+      name = buildingCount > 1 ? labels[i * n + 1] : 'AC';
       representations.push(
         <Bar
-          key={i * 4 + 1}
+          key={i * n + 1}
           name={name}
           dataKey={name}
           stroke={barStrokeColor}
           fill={'#00BFFF'}
-          opacity={selectedIndex !== undefined && selectedIndex !== i ? opacity / 4 : opacity}
+          opacity={legendDataKey === null ? 1 : legendDataKey === name ? 1 : 0.25}
           strokeWidth={barStrokeWidth}
           isAnimationActive={false}
           stackId={'stack' + i}
         />,
       );
-      name = setCount > 1 ? labels[i * 4 + 2] : 'Solar';
-      representations.push(
-        <Bar
-          key={i * 4 + 2}
-          name={name}
-          dataKey={name}
-          stroke={barStrokeColor}
-          fill={'#3CB371'}
-          opacity={selectedIndex !== undefined && selectedIndex !== i ? opacity / 4 : opacity}
-          strokeWidth={barStrokeWidth}
-          isAnimationActive={false}
-          stackId={'stack' + i}
-        />,
-      );
+      if (hasSolarPanels) {
+        name = buildingCount > 1 ? labels[i * n + 2] : 'Solar';
+        representations.push(
+          <Bar
+            key={i * n + 2}
+            name={name}
+            dataKey={name}
+            stroke={barStrokeColor}
+            fill={'#3CB371'}
+            opacity={legendDataKey === null ? 1 : legendDataKey === name ? 1 : 0.25}
+            strokeWidth={barStrokeWidth}
+            isAnimationActive={false}
+            stackId={'stack' + i}
+          />,
+        );
+      }
     }
-    for (let i = 0; i < setCount; i++) {
-      let name = setCount > 1 ? labels[i * 4 + 3] : 'Net';
+    const m = n - 1;
+    for (let i = 0; i < buildingCount; i++) {
+      let name = buildingCount > 1 ? labels[i * n + m] : 'Net';
       const opacity = legendDataKey === null ? 1 : legendDataKey === name ? 1 : 0.25;
       const symbol = createSymbol(SYMBOLS[i], symbolSize, symbolCount, opacity);
       if (i === 0) defaultSymbol = symbol;
       representations.push(
         <Line
-          key={i * 4 + 3}
+          key={i * n + m}
           type={curveType}
           name={name}
           dataKey={name}
           stroke={PRESET_COLORS[i]}
-          opacity={selectedIndex !== undefined && selectedIndex !== i ? opacity / 4 : opacity}
+          opacity={legendDataKey === null ? 1 : legendDataKey === name ? 1 : 0.25}
           strokeWidth={lineWidth}
           dot={symbolCount > 0 ? (symbol ? symbol : defaultSymbol) : false}
           isAnimationActive={false}
@@ -150,7 +154,7 @@ const BuildinEnergyGraph = ({
       );
     }
     return representations;
-  }, [type, selectedIndex, curveType, labels, setCount, lineWidth, symbolCount, symbolSize, legendDataKey]);
+  }, [type, curveType, labels, buildingCount, lineWidth, symbolCount, symbolSize, legendDataKey]);
 
   // @ts-ignore
   const onMouseDown = (e) => {};
@@ -218,7 +222,7 @@ const BuildinEnergyGraph = ({
                 </YAxis>
                 {getRepresentations}
                 <ReferenceLine y={0} stroke="#888" />
-                {setCount > 1 && (
+                {buildingCount > 0 && (
                   <Legend
                     wrapperStyle={{ fontSize: '11px' }}
                     iconType="plainline"
@@ -231,7 +235,6 @@ const BuildinEnergyGraph = ({
               </ComposedChart>
             </ResponsiveContainer>
             <BuildingEnergyGraphMenu
-              lineCount={setCount}
               symbolSize={symbolSize}
               lineWidth={lineWidth}
               barCategoryGap={barCategoryGap}

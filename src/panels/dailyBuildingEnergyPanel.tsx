@@ -109,6 +109,7 @@ const DailyBuildingEnergyPanel = ({ city }: DailyBuildingEnergyPanelProps) => {
   const [labels, setLabels] = useState(['Heater', 'AC', 'Net']);
 
   const lang = { lng: language };
+  const countSolarPanels = countElementsByType(ObjectType.SolarPanel);
   const weather = getWeather(city ?? 'Boston MA, USA');
   const tooltipHeaterBreakdown = useRef<string>('');
   const tooltipAcBreakdown = useRef<string>('');
@@ -128,6 +129,7 @@ const DailyBuildingEnergyPanel = ({ city }: DailyBuildingEnergyPanelProps) => {
   const { sum, sumHeaterMap, sumAcMap, sumSolarPanelMap, dataLabels } = useDailyEnergySorter(
     now,
     weather,
+    countSolarPanels > 0,
     hourlyHeatExchangeArrayMap,
     hourlySolarHeatGainArrayMap,
     hourlySolarPanelOutputArrayMap,
@@ -163,7 +165,7 @@ const DailyBuildingEnergyPanel = ({ city }: DailyBuildingEnergyPanelProps) => {
         }
       }
     }
-    if (sumSolarPanelMap) {
+    if (sumSolarPanelMap && sumSolarPanelMap.size > 0) {
       tooltipSolarPanelBreakdown.current = '';
       for (const key of sumSolarPanelMap.keys()) {
         const val = sumSolarPanelMap.get(key);
@@ -194,16 +196,24 @@ const DailyBuildingEnergyPanel = ({ city }: DailyBuildingEnergyPanelProps) => {
     setAcSum(sumAc);
     setSolarPanelSum(sumSolarPanel);
     setNetSum(sumHeater + sumAc - sumSolarPanel);
-    const count = countElementsByType(ObjectType.Foundation);
-    if (count > 1) {
+    const countBuildings = countElementsByType(ObjectType.Foundation);
+    if (countBuildings > 1) {
       const l = [];
-      for (let index = 0; index < count; index++) {
+      for (let index = 0; index < countBuildings; index++) {
         const id = dataLabels[index] ?? index + 1;
-        l.push('Heater ' + id, 'AC ' + id, 'Solar ' + id, 'Net ' + id);
+        if (countSolarPanels > 0) {
+          l.push('Heater ' + id, 'AC ' + id, 'Solar ' + id, 'Net ' + id);
+        } else {
+          l.push('Heater ' + id, 'AC ' + id, 'Net ' + id);
+        }
       }
       setLabels(l);
     } else {
-      setLabels(['Heater', 'AC', 'Solar', 'Net']);
+      if (countSolarPanels > 0) {
+        setLabels(['Heater', 'AC', 'Solar', 'Net']);
+      } else {
+        setLabels(['Heater', 'AC', 'Net']);
+      }
     }
   }, [flagOfDailySimulation]);
 
@@ -319,6 +329,7 @@ const DailyBuildingEnergyPanel = ({ city }: DailyBuildingEnergyPanelProps) => {
           <BuildinEnergyGraph
             type={GraphDataType.DailyBuildingEnergy}
             dataSource={data}
+            hasSolarPanels={countSolarPanels > 0}
             labels={labels}
             height={100}
             dataKeyAxisX={'Hour'}
@@ -344,12 +355,14 @@ const DailyBuildingEnergyPanel = ({ city }: DailyBuildingEnergyPanelProps) => {
             >
               {i18n.t('buildingEnergyPanel.AC', lang) + ': ' + acSum.toFixed(1)}
             </Space>
-            <Space
-              title={tooltipSolarPanelBreakdown.current}
-              style={{ cursor: tooltipSolarPanelBreakdown.current === '' ? 'default' : 'help' }}
-            >
-              {i18n.t('buildingEnergyPanel.SolarPanel', lang) + ': ' + solarPanelSum.toFixed(1)}
-            </Space>
+            {solarPanelSum !== 0 && (
+              <Space
+                title={tooltipSolarPanelBreakdown.current}
+                style={{ cursor: tooltipSolarPanelBreakdown.current === '' ? 'default' : 'help' }}
+              >
+                {i18n.t('buildingEnergyPanel.SolarPanel', lang) + ': ' + solarPanelSum.toFixed(1)}
+              </Space>
+            )}
             <Space
               title={tooltipNetBreakdown.current}
               style={{ cursor: tooltipNetBreakdown.current === '' ? 'default' : 'help' }}

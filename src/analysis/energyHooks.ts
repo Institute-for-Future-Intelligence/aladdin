@@ -15,6 +15,7 @@ import { usePrimitiveStore } from '../stores/commonPrimitive';
 export const useDailyEnergySorter = (
   now: Date,
   weather: WeatherModel,
+  hasSolarPanels: boolean,
   hourlyHeatExchangeArrayMap: Map<string, number[]>,
   hourlySolarHeatGainArrayMap: Map<string, number[]>,
   hourlySolarPanelOutputArrayMap: Map<string, number[]>,
@@ -51,7 +52,9 @@ export const useDailyEnergySorter = (
             if (f) {
               let energyUsage = energy.get(f.id);
               if (!energyUsage) {
-                energyUsage = { heater: 0, ac: 0, solarPanel: 0, label: f.label?.trim() } as EnergyUsage;
+                energyUsage = hasSolarPanels
+                  ? ({ heater: 0, ac: 0, solarPanel: 0, label: f.label?.trim() } as EnergyUsage)
+                  : ({ heater: 0, ac: 0, label: f.label?.trim() } as EnergyUsage);
                 energy.set(f.id, energyUsage);
                 if (f.label && f.label.length > 0 && !dataLabels.includes(f.label)) {
                   dataLabels.push(f.label);
@@ -81,9 +84,11 @@ export const useDailyEnergySorter = (
                 energyUsage.ac += h[i];
               }
             }
-            const s = hourlySolarPanelOutputArrayMap.get(e.id);
-            if (s) {
-              energyUsage.solarPanel += s[i];
+            if (energyUsage.solarPanel !== undefined) {
+              const s = hourlySolarPanelOutputArrayMap.get(e.id);
+              if (s) {
+                energyUsage.solarPanel += s[i];
+              }
             }
           }
         }
@@ -106,8 +111,10 @@ export const useDailyEnergySorter = (
               const adjustedAc = adjustEnergyUsage(outsideTemperatureRange, value.ac, setpoint, threshold);
               datum['Heater ' + id] = adjustedHeat;
               datum['AC ' + id] = adjustedAc;
-              datum['Solar ' + id] = -value.solarPanel;
-              datum['Net ' + id] = adjustedHeat + adjustedAc - value.solarPanel;
+              if (value.solarPanel !== undefined) {
+                datum['Solar ' + id] = -value.solarPanel;
+              }
+              datum['Net ' + id] = adjustedHeat + adjustedAc - (value.solarPanel ?? 0);
               let x = sumHeaterMapRef.current.get(id);
               if (x === undefined) x = 0;
               x += adjustedHeat;
@@ -116,10 +123,12 @@ export const useDailyEnergySorter = (
               if (x === undefined) x = 0;
               x += adjustedAc;
               sumAcMapRef.current.set(id, x);
-              x = sumSolarPanelMapRef.current.get(id);
-              if (x === undefined) x = 0;
-              x += value.solarPanel;
-              sumSolarPanelMapRef.current.set(id, x);
+              if (hasSolarPanels) {
+                x = sumSolarPanelMapRef.current.get(id);
+                if (x === undefined) x = 0;
+                x += value.solarPanel;
+                sumSolarPanelMapRef.current.set(id, x);
+              }
             }
           }
           index++;
@@ -140,8 +149,10 @@ export const useDailyEnergySorter = (
               const adjustedAc = adjustEnergyUsage(outsideTemperatureRange, value.ac, setpoint, threshold);
               datum['Heater'] = adjustedHeat;
               datum['AC'] = adjustedAc;
-              datum['Solar'] = -value.solarPanel;
-              datum['Net'] = adjustedHeat + adjustedAc - value.solarPanel;
+              if (value.solarPanel !== undefined) {
+                datum['Solar'] = -value.solarPanel;
+              }
+              datum['Net'] = adjustedHeat + adjustedAc - (value.solarPanel ?? 0);
               const id = 'default';
               let x = sumHeaterMapRef.current.get(id);
               if (x === undefined) x = 0;
@@ -151,10 +162,12 @@ export const useDailyEnergySorter = (
               if (x === undefined) x = 0;
               x += adjustedAc;
               sumAcMapRef.current.set(id, x);
-              x = sumSolarPanelMapRef.current.get(id);
-              if (x === undefined) x = 0;
-              x += value.solarPanel;
-              sumSolarPanelMapRef.current.set(id, x);
+              if (hasSolarPanels) {
+                x = sumSolarPanelMapRef.current.get(id);
+                if (x === undefined) x = 0;
+                x += value.solarPanel;
+                sumSolarPanelMapRef.current.set(id, x);
+              }
             }
           }
         }

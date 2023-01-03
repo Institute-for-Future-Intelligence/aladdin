@@ -27,7 +27,6 @@ const StyledMenuSVG = styled(MenuSVG)`
 export interface BuildingEnergyGraphMenuProps {
   horizontalGrid: boolean;
   verticalGrid: boolean;
-  lineCount: number;
   lineWidth: number;
   symbolSize: number;
   barCategoryGap: number;
@@ -41,7 +40,6 @@ export interface BuildingEnergyGraphMenuProps {
 const BuildingEnergyGraphMenu = ({
   horizontalGrid,
   verticalGrid,
-  lineCount,
   lineWidth,
   symbolSize,
   barCategoryGap,
@@ -117,7 +115,7 @@ const BuildingEnergyGraphMenu = ({
     <>
       <Dropdown overlay={menu} placement="bottomRight" visible={visible} onVisibleChange={handleVisibleChange}>
         <StyledMenuSVG
-          style={{ right: lineCount > 1 ? '25px' : '32px' }}
+          style={{ right: '25px' }}
           onClick={(e) => {
             e.stopPropagation();
           }}
