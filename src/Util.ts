@@ -167,6 +167,7 @@ export class Util {
     );
   }
 
+  // Area of an arch given height and radius: https://keisan.casio.com/exec/system/14407397055469
   static getWindowArea(window: WindowModel, parent: ElementModel): number {
     if (window.windowType === WindowType.Arched && window.archHeight > 0) {
       const hx = 0.5 * window.lx * parent.lx;
@@ -180,11 +181,12 @@ export class Util {
     return window.lx * window.lz * parent.lx * parent.lz;
   }
 
+  // Area of an arch given height and radius: https://keisan.casio.com/exec/system/14407397055469
   static getDoorArea(door: DoorModel, parent: ElementModel): number {
     if (door.doorType === DoorType.Arched && door.archHeight > 0) {
       const hx = 0.5 * door.lx * parent.lx;
       const lz = door.lz * parent.lz;
-      const ah = Math.min(door.archHeight, lz, hx); // actual arc height
+      const ah = Math.min(door.archHeight, lz, hx); // actual arch height
       const r = 0.5 * (ah + (hx * hx) / ah); // arc radius
       const startAngle = Math.acos(hx / r);
       const extent = Math.PI - startAngle * 2;

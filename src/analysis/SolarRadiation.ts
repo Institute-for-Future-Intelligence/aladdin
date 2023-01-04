@@ -4,7 +4,7 @@
 
 import { WallModel } from '../models/WallModel';
 import { Util } from '../Util';
-import { calculateDiffuseAndReflectedRadiation, calculatePeakRadiation, AMBIENT_LIGHT_THRESHOLD } from './sunTools';
+import { AMBIENT_LIGHT_THRESHOLD, calculateDiffuseAndReflectedRadiation, calculatePeakRadiation } from './sunTools';
 import { Euler, Quaternion, Vector2, Vector3 } from 'three';
 import { HALF_PI, UNIT_VECTOR_POS_Y, UNIT_VECTOR_POS_Z } from '../constants';
 import { AirMass } from './analysisConstants';
@@ -12,7 +12,7 @@ import { Point2 } from '../models/Point2';
 import { FoundationModel } from '../models/FoundationModel';
 import { WorldModel } from '../models/WorldModel';
 import { ElementModel } from '../models/ElementModel';
-import { DoorModel } from '../models/DoorModel';
+import { DoorModel, DoorType } from '../models/DoorModel';
 import { RoofModel } from '../models/RoofModel';
 import { WindowModel } from '../models/WindowModel';
 import { SolarPanelModel } from '../models/SolarPanelModel';
@@ -354,8 +354,8 @@ export class SolarRadiation {
   ): number[][] {
     const dayOfYear = Util.dayOfYear(now);
     const cellSize = world.solarRadiationHeatmapGridCellSize ?? 0.5;
-    const lx = door.lx;
-    const lz = door.lz;
+    const lx = door.lx * wall.lx;
+    const lz = door.lz * wall.lz;
     const nx = Math.max(2, Math.round(lx / cellSize));
     const nz = Math.max(2, Math.round(lz / cellSize));
     const dx = lx / nx;
@@ -381,21 +381,60 @@ export class SolarRadiation {
     const energy: number[][] = Array(nx)
       .fill(0)
       .map(() => Array(nz).fill(0));
-    for (let kx = 0; kx < nx; kx++) {
-      for (let kz = 0; kz < nz; kz++) {
-        energy[kx][kz] += indirectRadiation * da;
-        if (dot > 0) {
+    if (door.doorType === DoorType.Arched) {
+      for (let kx = 0; kx < nx; kx++) {
+        for (let kz = 0; kz < nz; kz++) {
           const kx2 = kx - nx / 2 + 0.5;
           const kz2 = kz - nz / 2 + 0.5;
           v.set(absDoorPos.x + kx2 * dxcos, absDoorPos.y + kx2 * dxsin, absDoorPos.z + kz2 * dz);
-          if (distanceToClosestObject(door.id, v, sunDirection) < 0) {
-            // direct radiation
-            energy[kx][kz] += dot * peakRadiation * da;
+          if (SolarRadiation.pointWithinArchedDoor(v, lx, lz, door.archHeight, absDoorPos)) {
+            energy[kx][kz] += indirectRadiation * da;
+            if (dot > 0) {
+              if (distanceToClosestObject(door.id, v, sunDirection) < 0) {
+                // direct radiation
+                energy[kx][kz] += dot * peakRadiation * da;
+              }
+            }
+          }
+        }
+      }
+    } else {
+      for (let kx = 0; kx < nx; kx++) {
+        for (let kz = 0; kz < nz; kz++) {
+          energy[kx][kz] += indirectRadiation * da;
+          if (dot > 0) {
+            const kx2 = kx - nx / 2 + 0.5;
+            const kz2 = kz - nz / 2 + 0.5;
+            v.set(absDoorPos.x + kx2 * dxcos, absDoorPos.y + kx2 * dxsin, absDoorPos.z + kz2 * dz);
+            if (distanceToClosestObject(door.id, v, sunDirection) < 0) {
+              // direct radiation
+              energy[kx][kz] += dot * peakRadiation * da;
+            }
           }
         }
       }
     }
     return energy;
+  }
+
+  static pointWithinArchedDoor(point: Vector3, lx: number, lz: number, archHeight: number, center: Vector3): boolean {
+    if (archHeight > 0) {
+      const hx = 0.5 * lx;
+      const ah = Math.min(archHeight, lz, hx); // actual arch height
+      const r = 0.5 * (ah + (hx * hx) / ah); // arc radius
+      // check if the point is within the rectangular part
+      const dx = point.x - center.x;
+      const dy = point.y - center.y;
+      const dr = dx * dx + dy * dy;
+      let dz = point.z - center.z;
+      if (dr < hx * hx && dz < lz / 2 - ah && dz > -lz / 2) {
+        return true;
+      }
+      // check if the point is within the arch part
+      dz = point.z - (lz - r);
+      return dr + dz * dz < r * r;
+    }
+    return true;
   }
 
   // return an array that represents solar energy radiated onto the discretized cells of a window
