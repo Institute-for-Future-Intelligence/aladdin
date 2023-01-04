@@ -59,7 +59,9 @@ export const i18n_zh_tw = {
       VolumetricHeatCapacity: '容積熱容',
       BuildingHVACSystem: '建築物暖通空調系統',
       ThermostatSetpoint: '恆溫器設定值',
-      TemperatureThreshold: '溫度閾值',
+      TemperatureToleranceThreshold: '溫度忍耐閾值',
+      TemperatureToleranceThresholdExplanation:
+        '當日最低外面溫度高於恆溫器設定值減去此閾值，暖氣不開。\n當日最高外面溫度低於恆溫器設定值加上此閾值，空調不開。',
       Press: '按',
       Open: '打開',
       Save: '保存',

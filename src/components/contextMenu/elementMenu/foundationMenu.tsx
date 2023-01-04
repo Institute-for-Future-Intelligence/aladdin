@@ -1206,8 +1206,10 @@ export const FoundationMenu = React.memo(() => {
               <Space style={{ paddingLeft: '10px' }}>°C</Space>
             </Menu.Item>
 
-            <Menu.Item key={'temperature-threshold'}>
-              <Space style={{ width: '160px' }}>{i18n.t('word.TemperatureThreshold', lang) + ':'}</Space>
+            <Menu.Item key={'tolerance-threshold'}>
+              <Space title={i18n.t('word.TemperatureToleranceThresholdExplanation', lang)} style={{ width: '160px' }}>
+                {i18n.t('word.TemperatureToleranceThreshold', lang) + ':'}
+              </Space>
               <InputNumber
                 min={0}
                 max={30}
@@ -1219,7 +1221,7 @@ export const FoundationMenu = React.memo(() => {
                   const oldValue = foundation.hvacSystem?.temperatureThreshold ?? 3;
                   const newValue = value;
                   const undoableChange = {
-                    name: 'Change Temperature Threshold',
+                    name: 'Change Temperature Tolerance Threshold',
                     timestamp: Date.now(),
                     oldValue: oldValue,
                     newValue: newValue,

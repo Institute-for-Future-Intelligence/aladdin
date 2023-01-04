@@ -59,7 +59,9 @@ export const i18n_en = {
       VolumetricHeatCapacity: 'Volumetric Heat Capacity',
       BuildingHVACSystem: 'Building HVAC System',
       ThermostatSetpoint: 'Thermostat Setpoint',
-      TemperatureThreshold: 'Temperature Threshold',
+      TemperatureToleranceThreshold: 'Tolerance Threshold',
+      TemperatureToleranceThresholdExplanation:
+        'Heater will not run if the lowest outside temperature of the day is higher than the setpoint minus this threshold.\nAC will not run if the highest outside temperature of the day is lower than the setpoint plus this threshold.',
       Press: 'Press',
       Open: 'Open',
       Save: 'Save',
