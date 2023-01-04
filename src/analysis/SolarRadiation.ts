@@ -14,7 +14,7 @@ import { WorldModel } from '../models/WorldModel';
 import { ElementModel } from '../models/ElementModel';
 import { DoorModel, DoorType } from '../models/DoorModel';
 import { RoofModel } from '../models/RoofModel';
-import { WindowModel } from '../models/WindowModel';
+import { WindowModel, WindowType } from '../models/WindowModel';
 import { SolarPanelModel } from '../models/SolarPanelModel';
 import { Discretization, ObjectType, Orientation, ShadeTolerance, TrackerType } from '../types';
 import { PvModel } from '../models/PvModel';
@@ -387,7 +387,7 @@ export class SolarRadiation {
           const kx2 = kx - nx / 2 + 0.5;
           const kz2 = kz - nz / 2 + 0.5;
           v.set(absDoorPos.x + kx2 * dxcos, absDoorPos.y + kx2 * dxsin, absDoorPos.z + kz2 * dz);
-          if (SolarRadiation.pointWithinArchedDoor(v, lx, lz, door.archHeight, absDoorPos)) {
+          if (SolarRadiation.pointWithinArch(v, lx, lz, door.archHeight, absDoorPos)) {
             energy[kx][kz] += indirectRadiation * da;
             if (dot > 0) {
               if (distanceToClosestObject(door.id, v, sunDirection) < 0) {
@@ -417,7 +417,7 @@ export class SolarRadiation {
     return energy;
   }
 
-  static pointWithinArchedDoor(point: Vector3, lx: number, lz: number, archHeight: number, center: Vector3): boolean {
+  static pointWithinArch(point: Vector3, lx: number, lz: number, archHeight: number, center: Vector3): boolean {
     if (archHeight > 0) {
       const hx = 0.5 * lx;
       const ah = Math.min(archHeight, lz, hx); // actual arch height
@@ -477,16 +477,35 @@ export class SolarRadiation {
     const energy: number[][] = Array(nx)
       .fill(0)
       .map(() => Array(nz).fill(0));
-    for (let kx = 0; kx < nx; kx++) {
-      for (let kz = 0; kz < nz; kz++) {
-        energy[kx][kz] += indirectRadiation * da;
-        if (dot > 0) {
+    if (window.windowType === WindowType.Arched) {
+      for (let kx = 0; kx < nx; kx++) {
+        for (let kz = 0; kz < nz; kz++) {
           const kx2 = kx - nx / 2 + 0.5;
           const kz2 = kz - nz / 2 + 0.5;
           v.set(absWindowPos.x + kx2 * dxcos, absWindowPos.y + kx2 * dxsin, absWindowPos.z + kz2 * dz);
-          if (distanceToClosestObject(window.id, v, sunDirection) < 0) {
-            // direct radiation
-            energy[kx][kz] += dot * peakRadiation * da;
+          if (SolarRadiation.pointWithinArch(v, lx, lz, window.archHeight, absWindowPos)) {
+            energy[kx][kz] += indirectRadiation * da;
+            if (dot > 0) {
+              if (distanceToClosestObject(window.id, v, sunDirection) < 0) {
+                // direct radiation
+                energy[kx][kz] += dot * peakRadiation * da;
+              }
+            }
+          }
+        }
+      }
+    } else {
+      for (let kx = 0; kx < nx; kx++) {
+        for (let kz = 0; kz < nz; kz++) {
+          energy[kx][kz] += indirectRadiation * da;
+          if (dot > 0) {
+            const kx2 = kx - nx / 2 + 0.5;
+            const kz2 = kz - nz / 2 + 0.5;
+            v.set(absWindowPos.x + kx2 * dxcos, absWindowPos.y + kx2 * dxsin, absWindowPos.z + kz2 * dz);
+            if (distanceToClosestObject(window.id, v, sunDirection) < 0) {
+              // direct radiation
+              energy[kx][kz] += dot * peakRadiation * da;
+            }
           }
         }
       }
