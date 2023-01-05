@@ -1,5 +1,5 @@
 /*
- * @Copyright 2021-2022. Institute for Future Intelligence, Inc.
+ * @Copyright 2021-2023. Institute for Future Intelligence, Inc.
  */
 
 import Facade_Texture_00 from '../resources/tiny_white_square.png';
@@ -134,6 +134,7 @@ const Cuboid = ({
   const showSolarRadiationHeatmap = useStore(Selector.showSolarRadiationHeatmap);
   const solarRadiationHeatmapMaxValue = useStore(Selector.viewState.solarRadiationHeatmapMaxValue);
   const getHeatmap = useStore(Selector.getHeatmap);
+  const groundImage = useStore(Selector.viewState.groundImage);
 
   const {
     camera,
@@ -1117,6 +1118,8 @@ const Cuboid = ({
     );
   }, [cuboidModel?.label, locked, language, cx, cy, lz]);
 
+  const opacity = groundImage ? (orthographic ? 0.25 : 0.75) : 1;
+
   return (
     <group
       ref={groupRef}
@@ -1146,7 +1149,15 @@ const Cuboid = ({
           faces.map((i) => {
             if (textureTypes && textureTypes[i] !== CuboidTexture.NoTexture) {
               return showSolarRadiationHeatmap ? (
-                <meshBasicMaterial key={i} side={FrontSide} attachArray="material" color={'white'} map={textures[i]} />
+                <meshBasicMaterial
+                  key={i}
+                  side={FrontSide}
+                  attachArray="material"
+                  color={'white'}
+                  map={textures[i]}
+                  transparent={groundImage}
+                  opacity={opacity}
+                />
               ) : (
                 <meshStandardMaterial
                   key={i}
@@ -1154,11 +1165,21 @@ const Cuboid = ({
                   attachArray="material"
                   color={'white'}
                   map={textures[i]}
+                  transparent={groundImage}
+                  opacity={opacity}
                 />
               );
             } else {
               return showSolarRadiationHeatmap ? (
-                <meshBasicMaterial key={i} side={FrontSide} attachArray="material" color={'white'} map={textures[i]} />
+                <meshBasicMaterial
+                  key={i}
+                  side={FrontSide}
+                  attachArray="material"
+                  color={'white'}
+                  map={textures[i]}
+                  transparent={groundImage}
+                  opacity={opacity}
+                />
               ) : (
                 <meshStandardMaterial
                   key={i}
@@ -1166,12 +1187,20 @@ const Cuboid = ({
                   attachArray="material"
                   color={cuboidModel.faceColors ? cuboidModel.faceColors[i] : color}
                   map={textures[i]}
+                  transparent={groundImage}
+                  opacity={opacity}
                 />
               );
             }
           })
         ) : (
-          <meshStandardMaterial side={FrontSide} attach="material" color={color} />
+          <meshStandardMaterial
+            side={FrontSide}
+            attach="material"
+            color={color}
+            transparent={groundImage}
+            opacity={opacity}
+          />
         )}
       </Box>
 

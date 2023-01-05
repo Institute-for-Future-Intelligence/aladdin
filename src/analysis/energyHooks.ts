@@ -49,7 +49,7 @@ export const useDailyEnergySorter = (
           const exchange = hourlyHeatExchangeArrayMap.get(e.id);
           if (exchange) {
             const f = getFoundation(e);
-            if (f) {
+            if (f && Util.isBuilding(f, elements)) {
               let energyUsage = energy.get(f.id);
               if (!energyUsage) {
                 energyUsage = hasSolarPanels
@@ -72,6 +72,7 @@ export const useDailyEnergySorter = (
       // deal with the solar heat gain through windows and electricity generation through solar panels
       for (const e of elements) {
         if (e.type === ObjectType.Foundation) {
+          if (!Util.isBuilding(e as FoundationModel, elements)) continue;
           const energyUsage = energy.get(e.id);
           if (energyUsage) {
             const h = hourlySolarHeatGainArrayMap.get(e.id);
@@ -102,32 +103,34 @@ export const useDailyEnergySorter = (
             const elem = getElementById(key);
             if (elem && elem.type === ObjectType.Foundation) {
               const f = elem as FoundationModel;
-              const setpoint = f.hvacSystem?.thermostatSetpoint ?? 20;
-              const threshold = f.hvacSystem?.temperatureThreshold ?? 3;
-              const id = value.label && value.label !== '' ? value.label : index.toString();
-              const adjustedHeat = Math.abs(
-                adjustEnergyUsage(outsideTemperatureRange, value.heater, setpoint, threshold),
-              );
-              const adjustedAc = adjustEnergyUsage(outsideTemperatureRange, value.ac, setpoint, threshold);
-              datum['Heater ' + id] = adjustedHeat;
-              datum['AC ' + id] = adjustedAc;
-              if (value.solarPanel !== undefined) {
-                datum['Solar ' + id] = -value.solarPanel;
-              }
-              datum['Net ' + id] = adjustedHeat + adjustedAc - (value.solarPanel ?? 0);
-              let x = sumHeaterMapRef.current.get(id);
-              if (x === undefined) x = 0;
-              x += adjustedHeat;
-              sumHeaterMapRef.current.set(id, x);
-              x = sumAcMapRef.current.get(id);
-              if (x === undefined) x = 0;
-              x += adjustedAc;
-              sumAcMapRef.current.set(id, x);
-              if (hasSolarPanels) {
-                x = sumSolarPanelMapRef.current.get(id);
+              if (Util.isBuilding(f, elements)) {
+                const setpoint = f.hvacSystem?.thermostatSetpoint ?? 20;
+                const threshold = f.hvacSystem?.temperatureThreshold ?? 3;
+                const id = value.label && value.label !== '' ? value.label : index.toString();
+                const adjustedHeat = Math.abs(
+                  adjustEnergyUsage(outsideTemperatureRange, value.heater, setpoint, threshold),
+                );
+                const adjustedAc = adjustEnergyUsage(outsideTemperatureRange, value.ac, setpoint, threshold);
+                datum['Heater ' + id] = adjustedHeat;
+                datum['AC ' + id] = adjustedAc;
+                if (value.solarPanel !== undefined) {
+                  datum['Solar ' + id] = -value.solarPanel;
+                }
+                datum['Net ' + id] = adjustedHeat + adjustedAc - (value.solarPanel ?? 0);
+                let x = sumHeaterMapRef.current.get(id);
                 if (x === undefined) x = 0;
-                x += value.solarPanel;
-                sumSolarPanelMapRef.current.set(id, x);
+                x += adjustedHeat;
+                sumHeaterMapRef.current.set(id, x);
+                x = sumAcMapRef.current.get(id);
+                if (x === undefined) x = 0;
+                x += adjustedAc;
+                sumAcMapRef.current.set(id, x);
+                if (hasSolarPanels) {
+                  x = sumSolarPanelMapRef.current.get(id);
+                  if (x === undefined) x = 0;
+                  x += value.solarPanel;
+                  sumSolarPanelMapRef.current.set(id, x);
+                }
               }
             }
           }
@@ -141,32 +144,34 @@ export const useDailyEnergySorter = (
             const elem = getElementById(key);
             if (elem && elem.type === ObjectType.Foundation) {
               const f = elem as FoundationModel;
-              const setpoint = f.hvacSystem?.thermostatSetpoint ?? 20;
-              const threshold = f.hvacSystem?.temperatureThreshold ?? 3;
-              const adjustedHeat = Math.abs(
-                adjustEnergyUsage(outsideTemperatureRange, value.heater, setpoint, threshold),
-              );
-              const adjustedAc = adjustEnergyUsage(outsideTemperatureRange, value.ac, setpoint, threshold);
-              datum['Heater'] = adjustedHeat;
-              datum['AC'] = adjustedAc;
-              if (value.solarPanel !== undefined) {
-                datum['Solar'] = -value.solarPanel;
-              }
-              datum['Net'] = adjustedHeat + adjustedAc - (value.solarPanel ?? 0);
-              const id = 'default';
-              let x = sumHeaterMapRef.current.get(id);
-              if (x === undefined) x = 0;
-              x += adjustedHeat;
-              sumHeaterMapRef.current.set(id, x);
-              x = sumAcMapRef.current.get(id);
-              if (x === undefined) x = 0;
-              x += adjustedAc;
-              sumAcMapRef.current.set(id, x);
-              if (hasSolarPanels) {
-                x = sumSolarPanelMapRef.current.get(id);
+              if (Util.isBuilding(f, elements)) {
+                const setpoint = f.hvacSystem?.thermostatSetpoint ?? 20;
+                const threshold = f.hvacSystem?.temperatureThreshold ?? 3;
+                const adjustedHeat = Math.abs(
+                  adjustEnergyUsage(outsideTemperatureRange, value.heater, setpoint, threshold),
+                );
+                const adjustedAc = adjustEnergyUsage(outsideTemperatureRange, value.ac, setpoint, threshold);
+                datum['Heater'] = adjustedHeat;
+                datum['AC'] = adjustedAc;
+                if (value.solarPanel !== undefined) {
+                  datum['Solar'] = -value.solarPanel;
+                }
+                datum['Net'] = adjustedHeat + adjustedAc - (value.solarPanel ?? 0);
+                const id = 'default';
+                let x = sumHeaterMapRef.current.get(id);
                 if (x === undefined) x = 0;
-                x += value.solarPanel;
-                sumSolarPanelMapRef.current.set(id, x);
+                x += adjustedHeat;
+                sumHeaterMapRef.current.set(id, x);
+                x = sumAcMapRef.current.get(id);
+                if (x === undefined) x = 0;
+                x += adjustedAc;
+                sumAcMapRef.current.set(id, x);
+                if (hasSolarPanels) {
+                  x = sumSolarPanelMapRef.current.get(id);
+                  if (x === undefined) x = 0;
+                  x += value.solarPanel;
+                  sumSolarPanelMapRef.current.set(id, x);
+                }
               }
             }
           }

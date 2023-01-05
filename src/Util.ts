@@ -63,6 +63,19 @@ export class Util {
     return Math.abs(total) * 0.5;
   }
 
+  static isBuilding(foundation: FoundationModel, elements: ElementModel[]) {
+    let hasRoof = false;
+    for (const e of elements) {
+      if (e.type === ObjectType.Roof) {
+        if (e.foundationId === foundation.id) {
+          hasRoof = true;
+          break;
+        }
+      }
+    }
+    return hasRoof;
+  }
+
   static toUValueInUS(uValueInSI: number) {
     return uValueInSI / 5.67826;
   }

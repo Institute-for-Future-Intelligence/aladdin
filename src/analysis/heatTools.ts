@@ -1,5 +1,5 @@
 /*
- * @Copyright 2021-2022. Institute for Future Intelligence, Inc.
+ * @Copyright 2021-2023. Institute for Future Intelligence, Inc.
  */
 
 import { MINUTES_OF_DAY, OMEGA_DAY } from './analysisConstants';
@@ -7,6 +7,8 @@ import { Util } from '../Util';
 import { SunMinutes } from './SunMinutes';
 import { DiurnalTemperatureModel } from '../types';
 import { ElementModel } from '../models/ElementModel';
+
+export const U_VALUE_OPENNING = 10;
 
 // use the darkness of color to approximate light absorption
 export const getLightAbsorption = (element: ElementModel) => {
