@@ -251,6 +251,10 @@ export const i18n_zh_cn = {
       benchmarksSubMenu: '基准例子',
       benchmarks: {
         SolarRadiationPredictionVsMeasurement: '太阳能辐射模型预测和实际测量的对比',
+        BESTESTCase600: '建筑物能耗模拟测试：BESTEST案例600',
+        BESTESTCase610: '建筑物能耗模拟测试：BESTEST案例610',
+        BESTESTCase620: '建筑物能耗模拟测试：BESTEST案例620',
+        BESTESTCase630: '建筑物能耗模拟测试：BESTEST案例630',
       },
       graph: {
         LineWidth: '线条宽度',

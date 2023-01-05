@@ -84,6 +84,10 @@ import shadowing_blocking_heliostats from './examples/shadowing_blocking_heliost
 import effect_solar_power_tower_height from './examples/effect_solar_power_tower_height.json';
 import solar_power_tower from './examples/solar_power_tower.json';
 import solar_radiation_predicted_vs_measured from './examples/solar_radiation_predicted_vs_measured.json';
+import bestest_case_600 from './examples/bestest_case_600.json';
+import bestest_case_610 from './examples/bestest_case_610.json';
+import bestest_case_620 from './examples/bestest_case_620.json';
+import bestest_case_630 from './examples/bestest_case_630.json';
 import solar_updraft_tower from './examples/solar_updraft_tower.json';
 import solar_updraft_tower_city from './examples/solar_updraft_tower_city.json';
 import tucson_sundt_station from './examples/tucson_sundt_station.json';
@@ -575,6 +579,18 @@ const MainMenu = ({ viewOnly, set2DView, resetView, zoomView, canvas }: MainMenu
         break;
       case 'solar_radiation_predicted_vs_measured':
         input = solar_radiation_predicted_vs_measured;
+        break;
+      case 'bestest_case_600':
+        input = bestest_case_600;
+        break;
+      case 'bestest_case_610':
+        input = bestest_case_610;
+        break;
+      case 'bestest_case_620':
+        input = bestest_case_620;
+        break;
+      case 'bestest_case_630':
+        input = bestest_case_630;
         break;
       case 'tucson_sundt_station':
         input = tucson_sundt_station;
@@ -1444,11 +1460,6 @@ const MainMenu = ({ viewOnly, set2DView, resetView, zoomView, canvas }: MainMenu
             {i18n.t('economicsPanel.EconomicsParameters', lang)}...
           </Menu.Item>
         )}
-        <SubMenu key={'benchmarks'} title={i18n.t('menu.benchmarksSubMenu', lang)}>
-          <Menu.Item key="solar_radiation_predicted_vs_measured" onClick={loadFile}>
-            {i18n.t('menu.benchmarks.SolarRadiationPredictionVsMeasurement', lang)}
-          </Menu.Item>
-        </SubMenu>
       </SubMenu>
 
       {/* analysis menu */}
@@ -2069,6 +2080,25 @@ const MainMenu = ({ viewOnly, set2DView, resetView, zoomView, canvas }: MainMenu
           </Menu.Item>
           <SutSimulationSettings />
         </SubMenu>
+      </SubMenu>
+
+      {/* benchmarks menu */}
+      <SubMenu key={'benchmarks'} title={i18n.t('menu.benchmarksSubMenu', lang)}>
+        <Menu.Item key="solar_radiation_predicted_vs_measured" onClick={loadFile}>
+          {i18n.t('menu.benchmarks.SolarRadiationPredictionVsMeasurement', lang)}
+        </Menu.Item>
+        <Menu.Item key="bestest_case_600" onClick={loadFile}>
+          {i18n.t('menu.benchmarks.BESTESTCase600', lang)}
+        </Menu.Item>
+        <Menu.Item key="bestest_case_610" onClick={loadFile}>
+          {i18n.t('menu.benchmarks.BESTESTCase610', lang)}
+        </Menu.Item>
+        <Menu.Item key="bestest_case_620" onClick={loadFile}>
+          {i18n.t('menu.benchmarks.BESTESTCase620', lang)}
+        </Menu.Item>
+        <Menu.Item key="bestest_case_630" onClick={loadFile}>
+          {i18n.t('menu.benchmarks.BESTESTCase630', lang)}
+        </Menu.Item>
       </SubMenu>
 
       {/* tutorials menu */}

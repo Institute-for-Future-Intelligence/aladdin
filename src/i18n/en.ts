@@ -253,6 +253,10 @@ export const i18n_en = {
       benchmarksSubMenu: 'Benchmarks',
       benchmarks: {
         SolarRadiationPredictionVsMeasurement: 'Solar Radiation Prediction vs. Measurement',
+        BESTESTCase600: 'Building Energy Simulation Test: BESTEST Case 600',
+        BESTESTCase610: 'Building Energy Simulation Test: BESTEST Case 610',
+        BESTESTCase620: 'Building Energy Simulation Test: BESTEST Case 620',
+        BESTESTCase630: 'Building Energy Simulation Test: BESTEST Case 630',
       },
       graph: {
         LineWidth: 'Line Width',

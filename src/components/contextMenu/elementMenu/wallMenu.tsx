@@ -1,5 +1,5 @@
 /*
- * @Copyright 2021-2022. Institute for Future Intelligence, Inc.
+ * @Copyright 2021-2023. Institute for Future Intelligence, Inc.
  */
 
 import React, { useState } from 'react';
@@ -181,9 +181,6 @@ export const WallMenu = React.memo(() => {
             } as UndoableChange;
             addUndoable(undoableChange);
             updateWallFillById(wall.id, e.target.value);
-            setCommonStore((state) => {
-              state.actionState.wallFill = e.target.value;
-            });
           }}
         >
           <Radio style={radioStyle} value={WallFill.Full}>

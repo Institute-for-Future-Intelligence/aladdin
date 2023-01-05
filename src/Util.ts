@@ -64,6 +64,7 @@ export class Util {
   }
 
   static isBuilding(foundation: FoundationModel, elements: ElementModel[]) {
+    // check roof first
     let hasRoof = false;
     for (const e of elements) {
       if (e.type === ObjectType.Roof) {
@@ -73,7 +74,22 @@ export class Util {
         }
       }
     }
-    return hasRoof;
+    // check walls now
+    let emptyWall = false;
+    if (hasRoof) {
+      for (const e of elements) {
+        if (e.type === ObjectType.Wall) {
+          if (e.foundationId === foundation.id) {
+            const wall = e as WallModel;
+            if (wall.fill === WallFill.Empty) {
+              emptyWall = true;
+              break;
+            }
+          }
+        }
+      }
+    }
+    return hasRoof && !emptyWall;
   }
 
   static toUValueInUS(uValueInSI: number) {

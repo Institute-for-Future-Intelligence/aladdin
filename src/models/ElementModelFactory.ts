@@ -27,7 +27,7 @@ import { CuboidModel } from './CuboidModel';
 import { FoundationModel } from './FoundationModel';
 import { SolarPanelModel } from './SolarPanelModel';
 import { PvModel } from './PvModel';
-import { WallModel, WallFill, WallStructure } from './WallModel';
+import { WallFill, WallModel, WallStructure } from './WallModel';
 import {
   GableRoofModel,
   GambrelRoofModel,
@@ -488,7 +488,6 @@ export class ElementModelFactory {
     studWidth: number,
     studColor: string,
     opacity: number,
-    fill: WallFill,
     unfilledHeight: number,
     x: number,
     y: number,
@@ -505,7 +504,7 @@ export class ElementModelFactory {
       ly: thickness ?? 0.3,
       lz: height ?? 5,
       rValue: rValue ?? 3,
-      fill: fill,
+      fill: WallFill.Full,
       unfilledHeight: unfilledHeight,
       relativeAngle: 0,
       leftPoint: [],

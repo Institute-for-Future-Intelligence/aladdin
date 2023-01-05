@@ -155,15 +155,15 @@ const YearlyBuildingEnergyPanel = ({ city }: YearlyBuildingEnergyPanelProps) => 
   };
 
   useEffect(() => {
-    const count = countElementsByType(ObjectType.Foundation);
     const indexOfMonth = now.getMonth() / monthInterval;
-    if (count > 1) {
+    const countBuildings = (Object.keys(sum[0]).length - 1) / (hasSolarPanels ? 4 : 3);
+    if (countBuildings > 1) {
       const heaterMap = new Map<string, number>();
       const acMap = new Map<string, number>();
       const solarPanelMap = new Map<string, number>();
       const netMap = new Map<string, number>();
       for (const h of sum) {
-        for (let j = 0; j < count; j++) {
+        for (let j = 0; j < countBuildings; j++) {
           const id = dataLabels[j] ?? j + 1;
           let heater = heaterMap.get(id);
           if (heater === undefined) heater = 0;
@@ -188,7 +188,7 @@ const YearlyBuildingEnergyPanel = ({ city }: YearlyBuildingEnergyPanelProps) => 
       const datum: DatumEntry = {};
       datum['Month'] = MONTHS[now.getMonth()];
       const l = [];
-      for (let index = 0; index < count; index++) {
+      for (let index = 0; index < countBuildings; index++) {
         const id = dataLabels[index] ?? index + 1;
         if (hasSolarPanels) {
           l.push('Heater ' + id, 'AC ' + id, 'Solar ' + id, 'Net ' + id);
@@ -206,7 +206,7 @@ const YearlyBuildingEnergyPanel = ({ city }: YearlyBuildingEnergyPanelProps) => 
       tooltipAcBreakdown.current = '';
       tooltipSolarPanelBreakdown.current = '';
       tooltipNetBreakdown.current = '';
-      for (let index = 0; index < count; index++) {
+      for (let index = 0; index < countBuildings; index++) {
         let totalHeater = 0;
         let totalAc = 0;
         let totalSolarPanel = 0;

@@ -252,6 +252,10 @@ export const i18n_tr = {
       benchmarksSubMenu: 'Deneysel',
       benchmarks: {
         SolarRadiationPredictionVsMeasurement: 'Güneş Işınım Tahmini Vs. Ölçümü ',
+        BESTESTCase600: 'Building Energy Simulation Test: BESTEST Case 600',
+        BESTESTCase610: 'Building Energy Simulation Test: BESTEST Case 610',
+        BESTESTCase620: 'Building Energy Simulation Test: BESTEST Case 620',
+        BESTESTCase630: 'Building Energy Simulation Test: BESTEST Case 630',
       },
       graph: {
         LineWidth: 'Çizgi Kalınlığı',

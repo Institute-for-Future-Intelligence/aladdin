@@ -251,6 +251,10 @@ export const i18n_zh_tw = {
       benchmarksSubMenu: '基準例子',
       benchmarks: {
         SolarRadiationPredictionVsMeasurement: '太陽能輻射模型預測和實際測量的對比',
+        BESTESTCase600: '建築物能耗模擬測試：BESTEST案例600',
+        BESTESTCase610: '建築物能耗模擬測試：BESTEST案例610',
+        BESTESTCase620: '建築物能耗模擬測試：BESTEST案例620',
+        BESTESTCase630: '建築物能耗模擬測試：BESTEST案例630',
       },
       graph: {
         LineWidth: '線條寬度',

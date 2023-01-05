@@ -197,7 +197,7 @@ const DailyBuildingEnergyPanel = ({ city }: DailyBuildingEnergyPanelProps) => {
     setAcSum(sumAc);
     setSolarPanelSum(sumSolarPanel);
     setNetSum(sumHeater + sumAc - sumSolarPanel);
-    const countBuildings = countElementsByType(ObjectType.Foundation);
+    const countBuildings = (Object.keys(sum[0]).length - 1) / (hasSolarPanels ? 4 : 3);
     if (countBuildings > 1) {
       const l = [];
       for (let index = 0; index < countBuildings; index++) {
