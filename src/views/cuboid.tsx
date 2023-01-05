@@ -1155,7 +1155,7 @@ const Cuboid = ({
                   attachArray="material"
                   color={'white'}
                   map={textures[i]}
-                  transparent={groundImage}
+                  transparent={orthographic && groundImage}
                   opacity={opacity}
                 />
               ) : (
@@ -1165,7 +1165,7 @@ const Cuboid = ({
                   attachArray="material"
                   color={'white'}
                   map={textures[i]}
-                  transparent={groundImage}
+                  transparent={orthographic && groundImage}
                   opacity={opacity}
                 />
               );
@@ -1177,7 +1177,7 @@ const Cuboid = ({
                   attachArray="material"
                   color={'white'}
                   map={textures[i]}
-                  transparent={groundImage}
+                  transparent={orthographic && groundImage}
                   opacity={opacity}
                 />
               ) : (
@@ -1187,7 +1187,7 @@ const Cuboid = ({
                   attachArray="material"
                   color={cuboidModel.faceColors ? cuboidModel.faceColors[i] : color}
                   map={textures[i]}
-                  transparent={groundImage}
+                  transparent={orthographic && groundImage}
                   opacity={opacity}
                 />
               );
@@ -1198,7 +1198,7 @@ const Cuboid = ({
             side={FrontSide}
             attach="material"
             color={color}
-            transparent={groundImage}
+            transparent={orthographic && groundImage}
             opacity={opacity}
           />
         )}
