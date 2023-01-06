@@ -118,7 +118,7 @@ import { Checkbox, Dropdown, InputNumber, Menu, Modal, Radio, Space, Switch } fr
 import logo from './assets/magic-lamp.png';
 import 'antd/dist/antd.css';
 import About from './about';
-import { saveImage, showInfo } from './helpers';
+import { saveImage, showError, showInfo, showWarning } from './helpers';
 import { ActionInfo, Language, ObjectType, SolarStructure } from './types';
 import * as Selector from './stores/selector';
 import i18n from './i18n/i18n';
@@ -137,6 +137,7 @@ import SutSimulationSettings from './components/contextMenu/elementMenu/sutSimul
 import { UndoableChange } from './undo/UndoableChange';
 import { FLOATING_WINDOW_OPACITY, HOME_URL } from './constants';
 import BuildingEnergySimulationSettings from './components/contextMenu/elementMenu/buildingEnergySimulationSettings';
+import { CheckStatus, useBuildingCheck } from './analysis/buildingHooks';
 
 const { SubMenu } = Menu;
 
@@ -1094,6 +1095,8 @@ const MainMenu = ({ viewOnly, set2DView, resetView, zoomView, canvas }: MainMenu
 
   const readyToPaste = elementsToPaste && elementsToPaste.length > 0;
 
+  const checkBuildings = useBuildingCheck();
+
   const menu = (
     <Menu triggerSubMenuAction={'click'}>
       {/* file menu */}
@@ -1642,6 +1645,17 @@ const MainMenu = ({ viewOnly, set2DView, resetView, zoomView, canvas }: MainMenu
           <Menu.Item
             key={'building-energy-daily-data'}
             onClick={() => {
+              if (checkBuildings === CheckStatus.NO_BUILDING) {
+                showInfo(i18n.t('analysisManager.NoBuildingForAnalysis', lang));
+                return;
+              }
+              if (checkBuildings === CheckStatus.AT_LEAST_ONE_BAD_NO_GOOD) {
+                showError(i18n.t('message.SimulationWillNotStartDueToErrors', lang));
+                return;
+              }
+              if (checkBuildings === CheckStatus.AT_LEAST_ONE_BAD_AT_LEAST_ONE_GOOD) {
+                showWarning(i18n.t('message.SimulationWillStartDespiteErrors', lang));
+              }
               showInfo(i18n.t('message.SimulationStarted', lang));
               // give it 0.1 second for the info to show up
               setTimeout(() => {
@@ -1660,6 +1674,17 @@ const MainMenu = ({ viewOnly, set2DView, resetView, zoomView, canvas }: MainMenu
           <Menu.Item
             key={'building-energy-yearly-data'}
             onClick={() => {
+              if (checkBuildings === CheckStatus.NO_BUILDING) {
+                showInfo(i18n.t('analysisManager.NoBuildingForAnalysis', lang));
+                return;
+              }
+              if (checkBuildings === CheckStatus.AT_LEAST_ONE_BAD_NO_GOOD) {
+                showError(i18n.t('message.SimulationWillNotStartDueToErrors', lang));
+                return;
+              }
+              if (checkBuildings === CheckStatus.AT_LEAST_ONE_BAD_AT_LEAST_ONE_GOOD) {
+                showWarning(i18n.t('message.SimulationWillStartDespiteErrors', lang));
+              }
               showInfo(i18n.t('message.SimulationStarted', lang));
               // give it 0.1 second for the info to show up
               setTimeout(() => {

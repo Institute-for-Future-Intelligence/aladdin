@@ -184,6 +184,8 @@ export const i18n_es = {
       CancelSimulation: 'Cancel simulation',
       PauseSimulation: 'Pause simulation',
       ResumeSimulation: 'Resume simulation',
+      SimulationWillNotStartDueToErrors: 'Simulation will not start due to errors.',
+      SimulationWillStartDespiteErrors: 'Simulation will start despite errors.',
       EvolutionStarted: 'Evolution started.',
       EvolutionCompleted: 'Evolution completed.',
       EvolutionAborted: 'Evolution aborted.',

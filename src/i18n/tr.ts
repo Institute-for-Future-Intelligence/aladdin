@@ -184,6 +184,8 @@ export const i18n_tr = {
       CancelSimulation: 'Simülasyonu iptal et',
       PauseSimulation: 'Simülasyonu duraklat',
       ResumeSimulation: 'Simülasyonu devam ettir',
+      SimulationWillNotStartDueToErrors: 'Simulation will not start due to errors.',
+      SimulationWillStartDespiteErrors: 'Simulation will start despite errors.',
       EvolutionStarted: 'Evrim başladı.',
       EvolutionCompleted: 'Evrim tamamlandı.',
       EvolutionAborted: 'Evrim iptal edildi.',

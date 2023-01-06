@@ -8,7 +8,7 @@ import { SunMinutes } from './SunMinutes';
 import { DiurnalTemperatureModel } from '../types';
 import { ElementModel } from '../models/ElementModel';
 
-export const U_VALUE_OPENNING = 10;
+export const U_VALUE_OPENNING = 50;
 
 // use the darkness of color to approximate light absorption
 export const getLightAbsorption = (element: ElementModel) => {

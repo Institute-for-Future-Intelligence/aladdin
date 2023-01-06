@@ -183,6 +183,8 @@ export const i18n_zh_tw = {
       CancelSimulation: '取消模擬',
       PauseSimulation: '暫停模擬',
       ResumeSimulation: '繼續模擬',
+      SimulationWillNotStartDueToErrors: '由於錯誤模擬無法運行。',
+      SimulationWillStartDespiteErrors: '發現錯誤，但模擬仍然將運行。',
       EvolutionStarted: '演化開始。',
       EvolutionCompleted: '演化結束。',
       EvolutionAborted: '演化取消。',

@@ -6,18 +6,19 @@ import React, { useEffect, useRef, useState } from 'react';
 import styled from 'styled-components';
 import { useStore } from '../stores/common';
 import * as Selector from '../stores/selector';
-import { DatumEntry, GraphDataType, ObjectType } from '../types';
+import { DatumEntry, GraphDataType } from '../types';
 import { FLOATING_WINDOW_OPACITY, MONTHS } from '../constants';
 import ReactDraggable, { DraggableEventHandler } from 'react-draggable';
 import { Button, Space } from 'antd';
 import { ReloadOutlined, SaveOutlined } from '@ant-design/icons';
-import { screenshot, showInfo } from '../helpers';
+import { screenshot, showError, showInfo, showWarning } from '../helpers';
 import i18n from '../i18n/i18n';
 import { Rectangle } from '../models/Rectangle';
 import { usePrimitiveStore } from '../stores/commonPrimitive';
 import { useDailyEnergySorter } from '../analysis/energyHooks';
 import BuildinEnergyGraph from '../components/buildingEnergyGraph';
 import { Util } from '../Util';
+import { CheckStatus, useBuildingCheck } from '../analysis/buildingHooks';
 
 const Container = styled.div`
   position: fixed;
@@ -83,7 +84,6 @@ const YearlyBuildingEnergyPanel = ({ city }: YearlyBuildingEnergyPanelProps) => 
   const setCommonStore = useStore(Selector.set);
   const now = new Date(useStore(Selector.world.date));
   const panelRect = useStore(Selector.viewState.yearlyBuildingEnergyPanelRect);
-  const countElementsByType = useStore(Selector.countElementsByType);
   const hourlyHeatExchangeArrayMap = usePrimitiveStore(Selector.hourlyHeatExchangeArrayMap);
   const hourlySolarHeatGainArrayMap = usePrimitiveStore(Selector.hourlySolarHeatGainArrayMap);
   const hourlySolarPanelOutputArrayMap = usePrimitiveStore(Selector.hourlySolarPanelOutputArrayMap);
@@ -366,6 +366,7 @@ const YearlyBuildingEnergyPanel = ({ city }: YearlyBuildingEnergyPanelProps) => 
 
   const labelX = i18n.t('word.Month', lang);
   const labelY = i18n.t('word.Energy', lang);
+  const checkBuildings = useBuildingCheck();
 
   return (
     <ReactDraggable
@@ -452,10 +453,16 @@ const YearlyBuildingEnergyPanel = ({ city }: YearlyBuildingEnergyPanelProps) => 
               icon={<ReloadOutlined />}
               title={i18n.t('word.Update', lang)}
               onClick={() => {
-                const foundationCount = countElementsByType(ObjectType.Foundation);
-                if (foundationCount === 0) {
+                if (checkBuildings === CheckStatus.NO_BUILDING) {
                   showInfo(i18n.t('analysisManager.NoBuildingForAnalysis', lang));
                   return;
+                }
+                if (checkBuildings === CheckStatus.AT_LEAST_ONE_BAD_NO_GOOD) {
+                  showError(i18n.t('message.SimulationWillNotStartDueToErrors', lang));
+                  return;
+                }
+                if (checkBuildings === CheckStatus.AT_LEAST_ONE_BAD_AT_LEAST_ONE_GOOD) {
+                  showWarning(i18n.t('message.SimulationWillStartDespiteErrors', lang));
                 }
                 showInfo(i18n.t('message.SimulationStarted', lang));
                 // give it 0.1 second for the info to show up

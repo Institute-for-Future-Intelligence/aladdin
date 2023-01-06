@@ -54,8 +54,8 @@ const ThermalSimulation = ({ city }: ThermalSimulationProps) => {
   const getWeather = useStore(Selector.getWeather);
   const getFoundation = useStore(Selector.getFoundation);
   const getParent = useStore(Selector.getParent);
-  const getPvModule = useStore(Selector.getPvModule);
   const getChildrenOfType = useStore(Selector.getChildrenOfType);
+  const getPvModule = useStore(Selector.getPvModule);
   const runDailySimulation = useStore(Selector.runDailyThermalSimulation);
   const pauseDailySimulation = useStore(Selector.pauseDailyThermalSimulation);
   const runYearlySimulation = useStore(Selector.runYearlyThermalSimulation);
