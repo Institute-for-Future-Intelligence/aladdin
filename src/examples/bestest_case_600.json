@@ -93,7 +93,7 @@
       "solarPowerTower": {},
       "hvacSystem": {
         "thermostatSetpoint": 20,
-        "temperatureThreshold": 3
+        "temperatureThreshold": 4
       },
       "id": "iFATUUjMA7c8wHKwioiCvi",
       "selected": false,

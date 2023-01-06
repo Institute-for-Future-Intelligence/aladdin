@@ -1,7 +1,7 @@
 {
-  "docid": "vAwowwBY7YihPUA7ARSgxc",
-  "time": "01/05/2023 01:44 pm",
-  "timestamp": 1672944296226,
+  "docid": "hRGsssWL8jpgnsk1GHw53D",
+  "time": "01/05/2023 06:05 pm",
+  "timestamp": 1672959948681,
   "userid": "QWecNcxhyvP6j6sBN11hBsfZDau1",
   "owner": null,
   "email": null,
@@ -75,7 +75,7 @@
       "cy": 0.6271804028246559,
       "cz": 0.05,
       "lx": 10,
-      "ly": 10,
+      "ly": 8,
       "lz": 0.1,
       "normal": [
         0,
@@ -93,7 +93,7 @@
       "solarPowerTower": {},
       "hvacSystem": {
         "thermostatSetpoint": 20,
-        "temperatureThreshold": 3
+        "temperatureThreshold": 4
       },
       "id": "iFATUUjMA7c8wHKwioiCvi",
       "selected": false,
@@ -705,15 +705,15 @@
     "dailyHeliostatYieldPanelX": 0,
     "showDailyParabolicDishYieldPanel": false,
     "cameraPosition": [
-      11.802868325649886,
-      -11.373039776804454,
-      2.804311741953678
+      12.053881864271037,
+      -16.829643719368526,
+      3.2082261132410355
     ],
     "showYearlyHeliostatYieldPanel": false,
     "orthographic": false,
     "dailyHeliostatYieldPanelY": 0,
     "dailyParabolicTroughYieldPanelY": 0,
-    "heliodonPanelY": 453,
+    "heliodonPanelY": 713,
     "yearlyParabolicTroughYieldPanelY": 0,
     "showWeatherPanel": false,
     "groundImage": false,
@@ -733,7 +733,7 @@
     "showDailyFresnelReflectorYieldPanel": false,
     "showYearlyLightSensorPanel": false,
     "autoRotate": false,
-    "heliodonPanelX": -1194,
+    "heliodonPanelX": -1192,
     "showStickyNotePanel": false,
     "showDailyLightSensorPanel": false,
     "visibilityResultsPanelX": 0,
@@ -756,9 +756,9 @@
     "shadowEnabled": true,
     "showInstructionPanel": true,
     "panCenter": [
-      3.4445432726460945,
-      9.85911328534933,
-      0.05697317783818462
+      3.447654823068404,
+      9.854417213021707,
+      0.03152947137006695
     ],
     "yearlyFresnelReflectorYieldPanelY": 0,
     "showHeliodonPanel": false,
@@ -772,8 +772,8 @@
     "showDailyBuildingEnergyPanel": false,
     "directLightIntensity": 1,
     "dailyBuildingEnergyPanelRect": {
-      "x": -1262,
-      "y": 232,
+      "x": -168,
+      "y": 465,
       "width": 600,
       "height": 360
     },

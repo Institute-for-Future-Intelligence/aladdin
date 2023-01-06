@@ -63,7 +63,7 @@ export class Util {
     return Math.abs(total) * 0.5;
   }
 
-  static isBuilding(foundation: FoundationModel, elements: ElementModel[]) {
+  static isCompleteBuilding(foundation: FoundationModel, elements: ElementModel[]) {
     // check roof first
     let hasRoof = false;
     for (const e of elements) {
@@ -74,22 +74,35 @@ export class Util {
         }
       }
     }
+    if (!hasRoof) return false;
     // check walls now
     let emptyWall = false;
-    if (hasRoof) {
-      for (const e of elements) {
-        if (e.type === ObjectType.Wall) {
-          if (e.foundationId === foundation.id) {
-            const wall = e as WallModel;
-            if (wall.fill === WallFill.Empty) {
-              emptyWall = true;
-              break;
-            }
+    for (const e of elements) {
+      if (e.type === ObjectType.Wall) {
+        if (e.foundationId === foundation.id) {
+          const wall = e as WallModel;
+          if (wall.fill === WallFill.Empty) {
+            emptyWall = true;
+            break;
           }
         }
       }
     }
-    return hasRoof && !emptyWall;
+    if (emptyWall) return false;
+    // check if the walls are joined
+    const walls: WallModel[] = [];
+    for (const e of elements) {
+      if (e.type === ObjectType.Wall && e.foundationId === foundation.id) {
+        walls.push(e as WallModel);
+      }
+    }
+    if (walls.length > 0) {
+      for (const w of walls) {
+        if (!w.leftJoints || w.leftJoints.length === 0) return false;
+        if (!w.rightJoints || w.rightJoints.length === 0) return false;
+      }
+    }
+    return true;
   }
 
   static toUValueInUS(uValueInSI: number) {

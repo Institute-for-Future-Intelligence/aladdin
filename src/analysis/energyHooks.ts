@@ -49,7 +49,7 @@ export const useDailyEnergySorter = (
           const exchange = hourlyHeatExchangeArrayMap.get(e.id);
           if (exchange) {
             const f = getFoundation(e);
-            if (f && Util.isBuilding(f, elements)) {
+            if (f && Util.isCompleteBuilding(f, elements)) {
               let energyUsage = energy.get(f.id);
               if (!energyUsage) {
                 energyUsage = hasSolarPanels
@@ -72,7 +72,7 @@ export const useDailyEnergySorter = (
       // deal with the solar heat gain through windows and electricity generation through solar panels
       for (const e of elements) {
         if (e.type === ObjectType.Foundation) {
-          if (!Util.isBuilding(e as FoundationModel, elements)) continue;
+          if (!Util.isCompleteBuilding(e as FoundationModel, elements)) continue;
           const energyUsage = energy.get(e.id);
           if (energyUsage) {
             const h = hourlySolarHeatGainArrayMap.get(e.id);
@@ -103,7 +103,7 @@ export const useDailyEnergySorter = (
             const elem = getElementById(key);
             if (elem && elem.type === ObjectType.Foundation) {
               const f = elem as FoundationModel;
-              if (Util.isBuilding(f, elements)) {
+              if (Util.isCompleteBuilding(f, elements)) {
                 const setpoint = f.hvacSystem?.thermostatSetpoint ?? 20;
                 const threshold = f.hvacSystem?.temperatureThreshold ?? 3;
                 const id = value.label && value.label !== '' ? value.label : index.toString();
@@ -144,7 +144,7 @@ export const useDailyEnergySorter = (
             const elem = getElementById(key);
             if (elem && elem.type === ObjectType.Foundation) {
               const f = elem as FoundationModel;
-              if (Util.isBuilding(f, elements)) {
+              if (Util.isCompleteBuilding(f, elements)) {
                 const setpoint = f.hvacSystem?.thermostatSetpoint ?? 20;
                 const threshold = f.hvacSystem?.temperatureThreshold ?? 3;
                 const adjustedHeat = Math.abs(
