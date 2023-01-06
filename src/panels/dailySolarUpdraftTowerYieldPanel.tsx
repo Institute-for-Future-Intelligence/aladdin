@@ -1,5 +1,5 @@
 /*
- * @Copyright 2022. Institute for Future Intelligence, Inc.
+ * @Copyright 2022-2023. Institute for Future Intelligence, Inc.
  */
 
 import React, { useEffect, useRef, useState } from 'react';
@@ -12,7 +12,7 @@ import moment from 'moment';
 import ReactDraggable, { DraggableEventHandler } from 'react-draggable';
 import { Button, Space } from 'antd';
 import { screenshot, showInfo } from '../helpers';
-import { ReloadOutlined, SaveOutlined } from '@ant-design/icons';
+import { CaretRightOutlined, ReloadOutlined, SaveOutlined } from '@ant-design/icons';
 import i18n from '../i18n/i18n';
 import SutBiaxialLineGraph from '../components/sutBiaxialLineGraph';
 import { Rectangle } from '../models/Rectangle';
@@ -85,6 +85,7 @@ const DailySolarUpdraftTowerYieldPanel = ({ city }: DailySolarUpdraftTowerYieldP
   const individualOutputs = useStore(Selector.dailyUpdraftTowerIndividualOutputs);
   const panelRect = useStore(Selector.viewState.dailyUpdraftTowerYieldPanelRect);
   const updraftTowerLabels = useStore(Selector.updraftTowerLabels);
+  const simulationInProgress = useStore(Selector.simulationInProgress);
 
   // nodeRef is to suppress ReactDOM.findDOMNode() deprecation warning. See:
   // https://github.com/react-grid-layout/react-draggable/blob/v4.4.2/lib/DraggableCore.js#L159-L171
@@ -208,6 +209,7 @@ const DailySolarUpdraftTowerYieldPanel = ({ city }: DailySolarUpdraftTowerYieldP
     totalTooltip += '——————————\n';
     totalTooltip += i18n.t('word.Total', lang) + ': ' + sum.toFixed(2) + ' ' + i18n.t('word.kWh', lang);
   }
+  const emptyGraph = dailyYield && dailyYield[0] ? Object.keys(dailyYield[0]).length === 0 : true;
 
   return (
     <ReactDraggable
@@ -279,53 +281,55 @@ const DailySolarUpdraftTowerYieldPanel = ({ city }: DailySolarUpdraftTowerYieldP
             symbolCount={24}
             referenceX={now.getHours()}
           />
-          <Space style={{ alignSelf: 'center', direction: 'ltr' }}>
-            {towerCount > 1 ? (
-              <Space title={totalTooltip} style={{ cursor: 'pointer', border: '2px solid #ccc', padding: '4px' }}>
-                {i18n.t('updraftTowerYieldPanel.HoverForBreakdown', lang)}
-              </Space>
-            ) : (
-              <Space style={{ cursor: 'default' }}>
-                {i18n.t('updraftTowerYieldPanel.DailyTotal', lang)}:{sum.toFixed(2)} {i18n.t('word.kWh', lang)}
-              </Space>
-            )}
-            <Button
-              type="default"
-              icon={<ReloadOutlined />}
-              title={i18n.t('word.Update', lang)}
-              onClick={() => {
-                if (towerCount === 0) {
-                  showInfo(i18n.t('analysisManager.NoSolarUpdraftTowerForAnalysis', lang));
-                  return;
-                }
-                showInfo(i18n.t('message.SimulationStarted', lang));
-                // give it 0.1 second for the info to show up
-                setTimeout(() => {
-                  setCommonStore((state) => {
-                    state.runDailySimulationForUpdraftTower = true;
-                    state.pauseDailySimulationForUpdraftTower = false;
-                    state.simulationInProgress = true;
-                    if (loggable) {
-                      state.actionInfo = {
-                        name: 'Run Daily Simulation For Solar Updraft Tower',
-                        timestamp: new Date().getTime(),
-                      };
-                    }
+          {!simulationInProgress && (
+            <Space style={{ alignSelf: 'center', direction: 'ltr' }}>
+              {towerCount > 1 ? (
+                <Space title={totalTooltip} style={{ cursor: 'pointer', border: '2px solid #ccc', padding: '4px' }}>
+                  {i18n.t('updraftTowerYieldPanel.HoverForBreakdown', lang)}
+                </Space>
+              ) : (
+                <Space style={{ cursor: 'default' }}>
+                  {i18n.t('updraftTowerYieldPanel.DailyTotal', lang)}:{sum.toFixed(2)} {i18n.t('word.kWh', lang)}
+                </Space>
+              )}
+              <Button
+                type="default"
+                icon={emptyGraph ? <CaretRightOutlined /> : <ReloadOutlined />}
+                title={i18n.t(emptyGraph ? 'word.Run' : 'word.Update', lang)}
+                onClick={() => {
+                  if (towerCount === 0) {
+                    showInfo(i18n.t('analysisManager.NoSolarUpdraftTowerForAnalysis', lang));
+                    return;
+                  }
+                  showInfo(i18n.t('message.SimulationStarted', lang));
+                  // give it 0.1 second for the info to show up
+                  setTimeout(() => {
+                    setCommonStore((state) => {
+                      state.runDailySimulationForUpdraftTower = true;
+                      state.pauseDailySimulationForUpdraftTower = false;
+                      state.simulationInProgress = true;
+                      if (loggable) {
+                        state.actionInfo = {
+                          name: 'Run Daily Simulation For Solar Updraft Tower',
+                          timestamp: new Date().getTime(),
+                        };
+                      }
+                    });
+                  }, 100);
+                }}
+              />
+              <Button
+                type="default"
+                icon={<SaveOutlined />}
+                title={i18n.t('word.SaveAsImage', lang)}
+                onClick={() => {
+                  screenshot('line-graph-' + labelHour + '-' + labelYield, 'daily-updraft-tower-yield', {}).then(() => {
+                    showInfo(i18n.t('message.ScreenshotSaved', lang));
                   });
-                }, 100);
-              }}
-            />
-            <Button
-              type="default"
-              icon={<SaveOutlined />}
-              title={i18n.t('word.SaveAsImage', lang)}
-              onClick={() => {
-                screenshot('line-graph-' + labelHour + '-' + labelYield, 'daily-updraft-tower-yield', {}).then(() => {
-                  showInfo(i18n.t('message.ScreenshotSaved', lang));
-                });
-              }}
-            />
-          </Space>
+                }}
+              />
+            </Space>
+          )}
         </ColumnWrapper>
       </Container>
     </ReactDraggable>

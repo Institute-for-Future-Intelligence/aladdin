@@ -1,5 +1,5 @@
 /*
- * @Copyright 2022. Institute for Future Intelligence, Inc.
+ * @Copyright 2022-2023. Institute for Future Intelligence, Inc.
  */
 
 import React, { useEffect, useMemo, useRef, useState } from 'react';
@@ -78,6 +78,8 @@ const SolarPanelOptimizationResult = () => {
   const selectedElement = useStore(Selector.selectedElement);
   const evolutionMethod = useStore(Selector.evolutionMethod);
   const evolutionaryAlgorithmState = useStore.getState().evolutionaryAlgorithmState;
+  const simulationInProgress = useStore(Selector.simulationInProgress);
+  const evolutionInProgress = useStore(Selector.evolutionInProgress);
 
   // nodeRef is to suppress ReactDOM.findDOMNode() deprecation warning. See:
   // https://github.com/react-grid-layout/react-draggable/blob/v4.4.2/lib/DraggableCore.js#L159-L171
@@ -287,60 +289,62 @@ const SolarPanelOptimizationResult = () => {
             curveType={'linear'}
             fractionDigits={2}
           />
-          <Space style={{ alignSelf: 'center', direction: 'ltr' }}>
-            {buttonEnabled && (
+          {!simulationInProgress && !evolutionInProgress && (
+            <Space style={{ alignSelf: 'center', direction: 'ltr' }}>
+              {buttonEnabled && (
+                <Button
+                  type="default"
+                  icon={<RightCircleOutlined />}
+                  title={i18n.t('word.Run', lang)}
+                  onClick={() => {
+                    showInfo(i18n.t('message.EvolutionStarted', lang));
+                    // give it 0.1 second for the info to show up
+                    setTimeout(() => {
+                      setCommonStore((state) => {
+                        state.runEvolution = true;
+                        state.pauseEvolution = false;
+                        state.evolutionInProgress = true;
+                        if (loggable) {
+                          let representationName;
+                          if (params.problem === DesignProblem.SOLAR_PANEL_ARRAY) {
+                            if (evolutionMethod === EvolutionMethod.GENETIC_ALGORITHM) {
+                              representationName = 'Run Genetic Algorithm for Solar Panel Array Layout';
+                            } else if (evolutionMethod === EvolutionMethod.PARTICLE_SWARM_OPTIMIZATION) {
+                              representationName = 'Run Particle Swarm Optimization for Solar Panel Array Layout';
+                            }
+                          } else if (params.problem === DesignProblem.SOLAR_PANEL_TILT_ANGLE) {
+                            if (evolutionMethod === EvolutionMethod.GENETIC_ALGORITHM) {
+                              representationName = 'Run Genetic Algorithm for Solar Panel Tilt Angle';
+                            } else if (evolutionMethod === EvolutionMethod.PARTICLE_SWARM_OPTIMIZATION) {
+                              representationName = 'Run Particle Swarm Optimization for Solar Panel Tilt Angle';
+                            }
+                          }
+                          if (representationName) {
+                            state.actionInfo = { name: representationName, timestamp: new Date().getTime() };
+                          }
+                        }
+                      });
+                    }, 100);
+                  }}
+                />
+              )}
+              {!buttonEnabled && <label>{hint}</label>}
               <Button
                 type="default"
-                icon={<RightCircleOutlined />}
-                title={i18n.t('word.Run', lang)}
+                icon={<SaveOutlined />}
+                title={i18n.t('word.SaveAsImage', lang)}
                 onClick={() => {
-                  showInfo(i18n.t('message.EvolutionStarted', lang));
-                  // give it 0.1 second for the info to show up
-                  setTimeout(() => {
-                    setCommonStore((state) => {
-                      state.runEvolution = true;
-                      state.pauseEvolution = false;
-                      state.evolutionInProgress = true;
-                      if (loggable) {
-                        let representationName;
-                        if (params.problem === DesignProblem.SOLAR_PANEL_ARRAY) {
-                          if (evolutionMethod === EvolutionMethod.GENETIC_ALGORITHM) {
-                            representationName = 'Run Genetic Algorithm for Solar Panel Array Layout';
-                          } else if (evolutionMethod === EvolutionMethod.PARTICLE_SWARM_OPTIMIZATION) {
-                            representationName = 'Run Particle Swarm Optimization for Solar Panel Array Layout';
-                          }
-                        } else if (params.problem === DesignProblem.SOLAR_PANEL_TILT_ANGLE) {
-                          if (evolutionMethod === EvolutionMethod.GENETIC_ALGORITHM) {
-                            representationName = 'Run Genetic Algorithm for Solar Panel Tilt Angle';
-                          } else if (evolutionMethod === EvolutionMethod.PARTICLE_SWARM_OPTIMIZATION) {
-                            representationName = 'Run Particle Swarm Optimization for Solar Panel Tilt Angle';
-                          }
-                        }
-                        if (representationName) {
-                          state.actionInfo = { name: representationName, timestamp: new Date().getTime() };
-                        }
-                      }
-                    });
-                  }, 100);
+                  screenshot(
+                    'biaxial-line-graph-' + labelAxisX + '-' + labelVariable + '-' + labelObjective,
+                    'solar-panel-tilt-angle-evolution',
+                    {},
+                  ).then(() => {
+                    showInfo(i18n.t('message.ScreenshotSaved', lang));
+                  });
                 }}
               />
-            )}
-            {!buttonEnabled && <label>{hint}</label>}
-            <Button
-              type="default"
-              icon={<SaveOutlined />}
-              title={i18n.t('word.SaveAsImage', lang)}
-              onClick={() => {
-                screenshot(
-                  'biaxial-line-graph-' + labelAxisX + '-' + labelVariable + '-' + labelObjective,
-                  'solar-panel-tilt-angle-evolution',
-                  {},
-                ).then(() => {
-                  showInfo(i18n.t('message.ScreenshotSaved', lang));
-                });
-              }}
-            />
-          </Space>
+            </Space>
+          )}
         </ColumnWrapper>
       </Container>
     </ReactDraggable>

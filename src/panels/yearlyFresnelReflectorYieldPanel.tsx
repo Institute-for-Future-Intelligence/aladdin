@@ -1,5 +1,5 @@
 /*
- * @Copyright 2022. Institute for Future Intelligence, Inc.
+ * @Copyright 2022-2023. Institute for Future Intelligence, Inc.
  */
 
 import React, { useEffect, useRef, useState } from 'react';
@@ -12,7 +12,7 @@ import { FLOATING_WINDOW_OPACITY, MONTHS } from '../constants';
 import ReactDraggable, { DraggableEventHandler } from 'react-draggable';
 import { Button, Space, Switch } from 'antd';
 import { screenshot, showInfo } from '../helpers';
-import { ReloadOutlined, SaveOutlined, UnorderedListOutlined } from '@ant-design/icons';
+import { CaretRightOutlined, ReloadOutlined, SaveOutlined, UnorderedListOutlined } from '@ant-design/icons';
 import i18n from '../i18n/i18n';
 import { Rectangle } from '../models/Rectangle';
 
@@ -83,6 +83,7 @@ const YearlyFresnelReflectorYieldPanel = ({ city }: YearlyFresnelReflectorYieldP
   const fresnelReflectorLabels = useStore(Selector.fresnelReflectorLabels);
   const countElementsByType = useStore(Selector.countElementsByType);
   const panelRect = useStore(Selector.viewState.yearlyFresnelReflectorYieldPanelRect);
+  const simulationInProgress = useStore(Selector.simulationInProgress);
 
   // nodeRef is to suppress ReactDOM.findDOMNode() deprecation warning. See:
   // https://github.com/react-grid-layout/react-draggable/blob/v4.4.2/lib/DraggableCore.js#L159-L171
@@ -208,6 +209,7 @@ const YearlyFresnelReflectorYieldPanel = ({ city }: YearlyFresnelReflectorYieldP
     totalTooltip +=
       i18n.t('word.Total', lang) + ': ' + (sum * yearScaleFactor).toFixed(2) + ' ' + i18n.t('word.kWh', lang);
   }
+  const emptyGraph = yearlyYield && yearlyYield[0] ? Object.keys(yearlyYield[0]).length === 0 : true;
 
   return (
     <ReactDraggable
@@ -262,24 +264,53 @@ const YearlyFresnelReflectorYieldPanel = ({ city }: YearlyFresnelReflectorYieldP
             fractionDigits={2}
             referenceX={referenceX}
           />
-          <Space style={{ alignSelf: 'center', direction: 'ltr' }}>
-            {individualOutputs && fresnelReflectorCount > 1 ? (
-              <Space title={totalTooltip} style={{ cursor: 'pointer', border: '2px solid #ccc', padding: '4px' }}>
-                {i18n.t('fresnelReflectorYieldPanel.HoverForBreakdown', lang)}
-              </Space>
-            ) : (
-              <Space>
-                {i18n.t('fresnelReflectorYieldPanel.YearlyTotal', lang)}:{(sum * yearScaleFactor).toFixed(2)}{' '}
-                {i18n.t('word.kWh', lang)}
-              </Space>
-            )}
-            {fresnelReflectorCount > 1 && (
-              <Switch
-                title={i18n.t('fresnelReflectorYieldPanel.ShowOutputsOfIndividualFresnelReflectors', lang)}
-                checkedChildren={<UnorderedListOutlined />}
-                unCheckedChildren={<UnorderedListOutlined />}
-                checked={individualOutputs}
-                onChange={(checked) => {
+          {!simulationInProgress && (
+            <Space style={{ alignSelf: 'center', direction: 'ltr' }}>
+              {individualOutputs && fresnelReflectorCount > 1 ? (
+                <Space title={totalTooltip} style={{ cursor: 'pointer', border: '2px solid #ccc', padding: '4px' }}>
+                  {i18n.t('fresnelReflectorYieldPanel.HoverForBreakdown', lang)}
+                </Space>
+              ) : (
+                <Space>
+                  {i18n.t('fresnelReflectorYieldPanel.YearlyTotal', lang)}:{(sum * yearScaleFactor).toFixed(2)}{' '}
+                  {i18n.t('word.kWh', lang)}
+                </Space>
+              )}
+              {fresnelReflectorCount > 1 && (
+                <Switch
+                  title={i18n.t('fresnelReflectorYieldPanel.ShowOutputsOfIndividualFresnelReflectors', lang)}
+                  checkedChildren={<UnorderedListOutlined />}
+                  unCheckedChildren={<UnorderedListOutlined />}
+                  checked={individualOutputs}
+                  onChange={(checked) => {
+                    if (fresnelReflectorCount === 0) {
+                      showInfo(i18n.t('analysisManager.NoFresnelReflectorForAnalysis', lang));
+                      return;
+                    }
+                    showInfo(i18n.t('message.SimulationStarted', lang));
+                    // give it 0.1 second for the info to show up
+                    setTimeout(() => {
+                      setCommonStore((state) => {
+                        state.runYearlySimulationForFresnelReflectors = true;
+                        state.pauseYearlySimulationForFresnelReflectors = false;
+                        state.simulationInProgress = true;
+                        state.yearlyFresnelReflectorIndividualOutputs = checked;
+                        if (loggable) {
+                          state.actionInfo = {
+                            name: 'Run Yearly Simulation For Fresnel Reflectors: ' + (checked ? 'Individual' : 'Total'),
+                            timestamp: new Date().getTime(),
+                          };
+                        }
+                      });
+                    }, 100);
+                  }}
+                />
+              )}
+              <Button
+                type="default"
+                icon={emptyGraph ? <CaretRightOutlined /> : <ReloadOutlined />}
+                title={i18n.t(emptyGraph ? 'word.Run' : 'word.Update', lang)}
+                onClick={() => {
                   if (fresnelReflectorCount === 0) {
                     showInfo(i18n.t('analysisManager.NoFresnelReflectorForAnalysis', lang));
                     return;
@@ -291,10 +322,9 @@ const YearlyFresnelReflectorYieldPanel = ({ city }: YearlyFresnelReflectorYieldP
                       state.runYearlySimulationForFresnelReflectors = true;
                       state.pauseYearlySimulationForFresnelReflectors = false;
                       state.simulationInProgress = true;
-                      state.yearlyFresnelReflectorIndividualOutputs = checked;
                       if (loggable) {
                         state.actionInfo = {
-                          name: 'Run Yearly Simulation For Fresnel Reflectors: ' + (checked ? 'Individual' : 'Total'),
+                          name: 'Run Yearly Simulation For Fresnel Reflectors',
                           timestamp: new Date().getTime(),
                         };
                       }
@@ -302,44 +332,18 @@ const YearlyFresnelReflectorYieldPanel = ({ city }: YearlyFresnelReflectorYieldP
                   }, 100);
                 }}
               />
-            )}
-            <Button
-              type="default"
-              icon={<ReloadOutlined />}
-              title={i18n.t('word.Update', lang)}
-              onClick={() => {
-                if (fresnelReflectorCount === 0) {
-                  showInfo(i18n.t('analysisManager.NoFresnelReflectorForAnalysis', lang));
-                  return;
-                }
-                showInfo(i18n.t('message.SimulationStarted', lang));
-                // give it 0.1 second for the info to show up
-                setTimeout(() => {
-                  setCommonStore((state) => {
-                    state.runYearlySimulationForFresnelReflectors = true;
-                    state.pauseYearlySimulationForFresnelReflectors = false;
-                    state.simulationInProgress = true;
-                    if (loggable) {
-                      state.actionInfo = {
-                        name: 'Run Yearly Simulation For Fresnel Reflectors',
-                        timestamp: new Date().getTime(),
-                      };
-                    }
+              <Button
+                type="default"
+                icon={<SaveOutlined />}
+                title={i18n.t('word.SaveAsImage', lang)}
+                onClick={() => {
+                  screenshot('line-graph-' + labelX + '-' + labelY, 'yearly-fresnel-reflector-yield', {}).then(() => {
+                    showInfo(i18n.t('message.ScreenshotSaved', lang));
                   });
-                }, 100);
-              }}
-            />
-            <Button
-              type="default"
-              icon={<SaveOutlined />}
-              title={i18n.t('word.SaveAsImage', lang)}
-              onClick={() => {
-                screenshot('line-graph-' + labelX + '-' + labelY, 'yearly-fresnel-reflector-yield', {}).then(() => {
-                  showInfo(i18n.t('message.ScreenshotSaved', lang));
-                });
-              }}
-            />
-          </Space>
+                }}
+              />
+            </Space>
+          )}
         </ColumnWrapper>
       </Container>
     </ReactDraggable>

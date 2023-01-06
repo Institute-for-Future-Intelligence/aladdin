@@ -1,5 +1,5 @@
 /*
- * @Copyright 2022. Institute for Future Intelligence, Inc.
+ * @Copyright 2022-2023. Institute for Future Intelligence, Inc.
  */
 
 import React, { useEffect, useRef, useState } from 'react';
@@ -12,7 +12,7 @@ import { FLOATING_WINDOW_OPACITY, MONTHS } from '../constants';
 import ReactDraggable, { DraggableEventHandler } from 'react-draggable';
 import { Button, Space, Switch } from 'antd';
 import { screenshot, showInfo } from '../helpers';
-import { ReloadOutlined, SaveOutlined, UnorderedListOutlined } from '@ant-design/icons';
+import { CaretRightOutlined, ReloadOutlined, SaveOutlined, UnorderedListOutlined } from '@ant-design/icons';
 import i18n from '../i18n/i18n';
 import { Rectangle } from '../models/Rectangle';
 
@@ -83,6 +83,7 @@ const YearlyHeliostatYieldPanel = ({ city }: YearlyHeliostatYieldPanelProps) => 
   const heliostatLabels = useStore(Selector.heliostatLabels);
   const countElementsByType = useStore(Selector.countElementsByType);
   const panelRect = useStore(Selector.viewState.yearlyHeliostatYieldPanelRect);
+  const simulationInProgress = useStore(Selector.simulationInProgress);
 
   // nodeRef is to suppress ReactDOM.findDOMNode() deprecation warning. See:
   // https://github.com/react-grid-layout/react-draggable/blob/v4.4.2/lib/DraggableCore.js#L159-L171
@@ -208,6 +209,7 @@ const YearlyHeliostatYieldPanel = ({ city }: YearlyHeliostatYieldPanelProps) => 
     totalTooltip +=
       i18n.t('word.Total', lang) + ': ' + (sum * yearScaleFactor).toFixed(2) + ' ' + i18n.t('word.kWh', lang);
   }
+  const emptyGraph = yearlyYield && yearlyYield[0] ? Object.keys(yearlyYield[0]).length === 0 : true;
 
   return (
     <ReactDraggable
@@ -262,24 +264,53 @@ const YearlyHeliostatYieldPanel = ({ city }: YearlyHeliostatYieldPanelProps) => 
             fractionDigits={2}
             referenceX={referenceX}
           />
-          <Space style={{ alignSelf: 'center', direction: 'ltr' }}>
-            {individualOutputs && heliostatCount > 1 ? (
-              <Space title={totalTooltip} style={{ cursor: 'pointer', border: '2px solid #ccc', padding: '4px' }}>
-                {i18n.t('heliostatYieldPanel.HoverForBreakdown', lang)}
-              </Space>
-            ) : (
-              <Space>
-                {i18n.t('heliostatYieldPanel.YearlyTotal', lang)}:{(sum * yearScaleFactor).toFixed(2)}{' '}
-                {i18n.t('word.kWh', lang)}
-              </Space>
-            )}
-            {heliostatCount > 1 && (
-              <Switch
-                title={i18n.t('heliostatYieldPanel.ShowOutputsOfIndividualHeliostats', lang)}
-                checkedChildren={<UnorderedListOutlined />}
-                unCheckedChildren={<UnorderedListOutlined />}
-                checked={individualOutputs}
-                onChange={(checked) => {
+          {!simulationInProgress && (
+            <Space style={{ alignSelf: 'center', direction: 'ltr' }}>
+              {individualOutputs && heliostatCount > 1 ? (
+                <Space title={totalTooltip} style={{ cursor: 'pointer', border: '2px solid #ccc', padding: '4px' }}>
+                  {i18n.t('heliostatYieldPanel.HoverForBreakdown', lang)}
+                </Space>
+              ) : (
+                <Space>
+                  {i18n.t('heliostatYieldPanel.YearlyTotal', lang)}:{(sum * yearScaleFactor).toFixed(2)}{' '}
+                  {i18n.t('word.kWh', lang)}
+                </Space>
+              )}
+              {heliostatCount > 1 && (
+                <Switch
+                  title={i18n.t('heliostatYieldPanel.ShowOutputsOfIndividualHeliostats', lang)}
+                  checkedChildren={<UnorderedListOutlined />}
+                  unCheckedChildren={<UnorderedListOutlined />}
+                  checked={individualOutputs}
+                  onChange={(checked) => {
+                    if (heliostatCount === 0) {
+                      showInfo(i18n.t('analysisManager.NoHeliostatForAnalysis', lang));
+                      return;
+                    }
+                    showInfo(i18n.t('message.SimulationStarted', lang));
+                    // give it 0.1 second for the info to show up
+                    setTimeout(() => {
+                      setCommonStore((state) => {
+                        state.runYearlySimulationForHeliostats = true;
+                        state.pauseYearlySimulationForHeliostats = false;
+                        state.simulationInProgress = true;
+                        state.yearlyHeliostatIndividualOutputs = checked;
+                        if (loggable) {
+                          state.actionInfo = {
+                            name: 'Run Yearly Simulation For Heliostats: ' + (checked ? 'Individual' : 'Total'),
+                            timestamp: new Date().getTime(),
+                          };
+                        }
+                      });
+                    }, 100);
+                  }}
+                />
+              )}
+              <Button
+                type="default"
+                icon={emptyGraph ? <CaretRightOutlined /> : <ReloadOutlined />}
+                title={i18n.t(emptyGraph ? 'word.Run' : 'word.Update', lang)}
+                onClick={() => {
                   if (heliostatCount === 0) {
                     showInfo(i18n.t('analysisManager.NoHeliostatForAnalysis', lang));
                     return;
@@ -291,10 +322,9 @@ const YearlyHeliostatYieldPanel = ({ city }: YearlyHeliostatYieldPanelProps) => 
                       state.runYearlySimulationForHeliostats = true;
                       state.pauseYearlySimulationForHeliostats = false;
                       state.simulationInProgress = true;
-                      state.yearlyHeliostatIndividualOutputs = checked;
                       if (loggable) {
                         state.actionInfo = {
-                          name: 'Run Yearly Simulation For Heliostats: ' + (checked ? 'Individual' : 'Total'),
+                          name: 'Run Yearly Simulation For Heliostats',
                           timestamp: new Date().getTime(),
                         };
                       }
@@ -302,44 +332,18 @@ const YearlyHeliostatYieldPanel = ({ city }: YearlyHeliostatYieldPanelProps) => 
                   }, 100);
                 }}
               />
-            )}
-            <Button
-              type="default"
-              icon={<ReloadOutlined />}
-              title={i18n.t('word.Update', lang)}
-              onClick={() => {
-                if (heliostatCount === 0) {
-                  showInfo(i18n.t('analysisManager.NoHeliostatForAnalysis', lang));
-                  return;
-                }
-                showInfo(i18n.t('message.SimulationStarted', lang));
-                // give it 0.1 second for the info to show up
-                setTimeout(() => {
-                  setCommonStore((state) => {
-                    state.runYearlySimulationForHeliostats = true;
-                    state.pauseYearlySimulationForHeliostats = false;
-                    state.simulationInProgress = true;
-                    if (loggable) {
-                      state.actionInfo = {
-                        name: 'Run Yearly Simulation For Heliostats',
-                        timestamp: new Date().getTime(),
-                      };
-                    }
+              <Button
+                type="default"
+                icon={<SaveOutlined />}
+                title={i18n.t('word.SaveAsImage', lang)}
+                onClick={() => {
+                  screenshot('line-graph-' + labelX + '-' + labelY, 'yearly-heliostat-yield', {}).then(() => {
+                    showInfo(i18n.t('message.ScreenshotSaved', lang));
                   });
-                }, 100);
-              }}
-            />
-            <Button
-              type="default"
-              icon={<SaveOutlined />}
-              title={i18n.t('word.SaveAsImage', lang)}
-              onClick={() => {
-                screenshot('line-graph-' + labelX + '-' + labelY, 'yearly-heliostat-yield', {}).then(() => {
-                  showInfo(i18n.t('message.ScreenshotSaved', lang));
-                });
-              }}
-            />
-          </Space>
+                }}
+              />
+            </Space>
+          )}
         </ColumnWrapper>
       </Container>
     </ReactDraggable>

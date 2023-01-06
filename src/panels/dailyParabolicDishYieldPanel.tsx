@@ -1,5 +1,5 @@
 /*
- * @Copyright 2022. Institute for Future Intelligence, Inc.
+ * @Copyright 2022-2023. Institute for Future Intelligence, Inc.
  */
 
 import React, { useEffect, useRef, useState } from 'react';
@@ -12,7 +12,7 @@ import moment from 'moment';
 import ReactDraggable, { DraggableEventHandler } from 'react-draggable';
 import { Button, Space, Switch } from 'antd';
 import { screenshot, showInfo } from '../helpers';
-import { ReloadOutlined, SaveOutlined, UnorderedListOutlined } from '@ant-design/icons';
+import { CaretRightOutlined, ReloadOutlined, SaveOutlined, UnorderedListOutlined } from '@ant-design/icons';
 import i18n from '../i18n/i18n';
 import { Rectangle } from '../models/Rectangle';
 import { FLOATING_WINDOW_OPACITY } from '../constants';
@@ -83,6 +83,7 @@ const DailyParabolicDishYieldPanel = ({ city }: DailyParabolicDishYieldPanelProp
   const individualOutputs = useStore(Selector.dailyParabolicDishIndividualOutputs);
   const panelRect = useStore(Selector.viewState.dailyParabolicDishYieldPanelRect);
   const parabolicDishLabels = useStore(Selector.parabolicDishLabels);
+  const simulationInProgress = useStore(Selector.simulationInProgress);
 
   // nodeRef is to suppress ReactDOM.findDOMNode() deprecation warning. See:
   // https://github.com/react-grid-layout/react-draggable/blob/v4.4.2/lib/DraggableCore.js#L159-L171
@@ -204,6 +205,7 @@ const DailyParabolicDishYieldPanel = ({ city }: DailyParabolicDishYieldPanelProp
     totalTooltip += '——————————\n';
     totalTooltip += i18n.t('word.Total', lang) + ': ' + sum.toFixed(2) + ' ' + i18n.t('word.kWh', lang);
   }
+  const emptyGraph = dailyYield && dailyYield[0] ? Object.keys(dailyYield[0]).length === 0 : true;
 
   return (
     <ReactDraggable
@@ -259,23 +261,52 @@ const DailyParabolicDishYieldPanel = ({ city }: DailyParabolicDishYieldPanelProp
             symbolCount={24}
             referenceX={now.getHours()}
           />
-          <Space style={{ alignSelf: 'center', direction: 'ltr' }}>
-            {individualOutputs && parabolicDishCount > 1 ? (
-              <Space title={totalTooltip} style={{ cursor: 'pointer', border: '2px solid #ccc', padding: '4px' }}>
-                {i18n.t('parabolicDishYieldPanel.HoverForBreakdown', lang)}
-              </Space>
-            ) : (
-              <Space style={{ cursor: 'default' }}>
-                {i18n.t('parabolicDishYieldPanel.DailyTotal', lang)}:{sum.toFixed(2)} {i18n.t('word.kWh', lang)}
-              </Space>
-            )}
-            {parabolicDishCount > 1 && (
-              <Switch
-                title={i18n.t('parabolicDishYieldPanel.ShowOutputsOfIndividualParabolicDishes', lang)}
-                checkedChildren={<UnorderedListOutlined />}
-                unCheckedChildren={<UnorderedListOutlined />}
-                checked={individualOutputs}
-                onChange={(checked) => {
+          {!simulationInProgress && (
+            <Space style={{ alignSelf: 'center', direction: 'ltr' }}>
+              {individualOutputs && parabolicDishCount > 1 ? (
+                <Space title={totalTooltip} style={{ cursor: 'pointer', border: '2px solid #ccc', padding: '4px' }}>
+                  {i18n.t('parabolicDishYieldPanel.HoverForBreakdown', lang)}
+                </Space>
+              ) : (
+                <Space style={{ cursor: 'default' }}>
+                  {i18n.t('parabolicDishYieldPanel.DailyTotal', lang)}:{sum.toFixed(2)} {i18n.t('word.kWh', lang)}
+                </Space>
+              )}
+              {parabolicDishCount > 1 && (
+                <Switch
+                  title={i18n.t('parabolicDishYieldPanel.ShowOutputsOfIndividualParabolicDishes', lang)}
+                  checkedChildren={<UnorderedListOutlined />}
+                  unCheckedChildren={<UnorderedListOutlined />}
+                  checked={individualOutputs}
+                  onChange={(checked) => {
+                    if (parabolicDishCount === 0) {
+                      showInfo(i18n.t('analysisManager.NoParabolicDishForAnalysis', lang));
+                      return;
+                    }
+                    showInfo(i18n.t('message.SimulationStarted', lang));
+                    // give it 0.1 second for the info to show up
+                    setTimeout(() => {
+                      setCommonStore((state) => {
+                        state.runDailySimulationForParabolicDishes = true;
+                        state.pauseDailySimulationForParabolicDishes = false;
+                        state.simulationInProgress = true;
+                        state.dailyParabolicDishIndividualOutputs = checked;
+                        if (loggable) {
+                          state.actionInfo = {
+                            name: 'Run Daily Simulation For Parabolic Dishes: ' + (checked ? 'Individual' : 'Total'),
+                            timestamp: new Date().getTime(),
+                          };
+                        }
+                      });
+                    }, 100);
+                  }}
+                />
+              )}
+              <Button
+                type="default"
+                icon={emptyGraph ? <CaretRightOutlined /> : <ReloadOutlined />}
+                title={i18n.t(emptyGraph ? 'word.Run' : 'word.Update', lang)}
+                onClick={() => {
                   if (parabolicDishCount === 0) {
                     showInfo(i18n.t('analysisManager.NoParabolicDishForAnalysis', lang));
                     return;
@@ -287,10 +318,9 @@ const DailyParabolicDishYieldPanel = ({ city }: DailyParabolicDishYieldPanelProp
                       state.runDailySimulationForParabolicDishes = true;
                       state.pauseDailySimulationForParabolicDishes = false;
                       state.simulationInProgress = true;
-                      state.dailyParabolicDishIndividualOutputs = checked;
                       if (loggable) {
                         state.actionInfo = {
-                          name: 'Run Daily Simulation For Parabolic Dishes: ' + (checked ? 'Individual' : 'Total'),
+                          name: 'Run Daily Simulation For Parabolic Dishes',
                           timestamp: new Date().getTime(),
                         };
                       }
@@ -298,44 +328,18 @@ const DailyParabolicDishYieldPanel = ({ city }: DailyParabolicDishYieldPanelProp
                   }, 100);
                 }}
               />
-            )}
-            <Button
-              type="default"
-              icon={<ReloadOutlined />}
-              title={i18n.t('word.Update', lang)}
-              onClick={() => {
-                if (parabolicDishCount === 0) {
-                  showInfo(i18n.t('analysisManager.NoParabolicDishForAnalysis', lang));
-                  return;
-                }
-                showInfo(i18n.t('message.SimulationStarted', lang));
-                // give it 0.1 second for the info to show up
-                setTimeout(() => {
-                  setCommonStore((state) => {
-                    state.runDailySimulationForParabolicDishes = true;
-                    state.pauseDailySimulationForParabolicDishes = false;
-                    state.simulationInProgress = true;
-                    if (loggable) {
-                      state.actionInfo = {
-                        name: 'Run Daily Simulation For Parabolic Dishes',
-                        timestamp: new Date().getTime(),
-                      };
-                    }
+              <Button
+                type="default"
+                icon={<SaveOutlined />}
+                title={i18n.t('word.SaveAsImage', lang)}
+                onClick={() => {
+                  screenshot('line-graph-' + labelX + '-' + labelY, 'daily-parabolic-dish-yield', {}).then(() => {
+                    showInfo(i18n.t('message.ScreenshotSaved', lang));
                   });
-                }, 100);
-              }}
-            />
-            <Button
-              type="default"
-              icon={<SaveOutlined />}
-              title={i18n.t('word.SaveAsImage', lang)}
-              onClick={() => {
-                screenshot('line-graph-' + labelX + '-' + labelY, 'daily-parabolic-dish-yield', {}).then(() => {
-                  showInfo(i18n.t('message.ScreenshotSaved', lang));
-                });
-              }}
-            />
-          </Space>
+                }}
+              />
+            </Space>
+          )}
         </ColumnWrapper>
       </Container>
     </ReactDraggable>

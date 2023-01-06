@@ -1,5 +1,5 @@
 /*
- * @Copyright 2021-2022. Institute for Future Intelligence, Inc.
+ * @Copyright 2021-2023. Institute for Future Intelligence, Inc.
  */
 
 import React, { useEffect, useRef, useState } from 'react';
@@ -12,7 +12,7 @@ import { FLOATING_WINDOW_OPACITY, MONTHS } from '../constants';
 import ReactDraggable, { DraggableEventHandler } from 'react-draggable';
 import { Button, Space, Switch } from 'antd';
 import { screenshot, showInfo } from '../helpers';
-import { ReloadOutlined, SaveOutlined, UnorderedListOutlined } from '@ant-design/icons';
+import { CaretRightOutlined, ReloadOutlined, SaveOutlined, UnorderedListOutlined } from '@ant-design/icons';
 import i18n from '../i18n/i18n';
 import { Rectangle } from '../models/Rectangle';
 import { Util } from 'src/Util';
@@ -86,6 +86,7 @@ const YearlyPvYieldPanel = ({ city }: YearlyPvYieldPanelProps) => {
   const panelRect = useStore(Selector.viewState.yearlyPvYieldPanelRect);
   const runEvolution = useStore(Selector.runEvolution);
   const economics = useStore.getState().economicsParams;
+  const simulationInProgress = useStore(Selector.simulationInProgress);
 
   // nodeRef is to suppress ReactDOM.findDOMNode() deprecation warning. See:
   // https://github.com/react-grid-layout/react-draggable/blob/v4.4.2/lib/DraggableCore.js#L159-L171
@@ -215,6 +216,7 @@ const YearlyPvYieldPanel = ({ city }: YearlyPvYieldPanelProps) => {
   const totalYield = sum * yearScaleFactor;
   const totalProfit =
     totalYield * economics.electricitySellingPrice - solarPanelNumber * economics.operationalCostPerUnit * 365;
+  const emptyGraph = yearlyYield && yearlyYield[0] ? Object.keys(yearlyYield[0]).length === 0 : true;
 
   return (
     <ReactDraggable
@@ -269,34 +271,63 @@ const YearlyPvYieldPanel = ({ city }: YearlyPvYieldPanelProps) => {
             fractionDigits={2}
             referenceX={referenceX}
           />
-          <Space style={{ alignSelf: 'center', direction: 'ltr' }}>
-            {individualOutputs && solarPanelCount > 1 ? (
-              <Space title={totalTooltip} style={{ cursor: 'pointer', border: '2px solid #ccc', padding: '4px' }}>
-                {i18n.t('solarPanelYieldPanel.HoverForBreakdown', lang)}
-              </Space>
-            ) : (
-              <>
-                <Space>
-                  {i18n.t('solarPanelYieldPanel.YearlyTotal', lang) +
-                    ': ' +
-                    totalYield.toFixed(2) +
-                    ' ' +
-                    i18n.t('word.kWh', lang)}
+          {!simulationInProgress && (
+            <Space style={{ alignSelf: 'center', direction: 'ltr' }}>
+              {individualOutputs && solarPanelCount > 1 ? (
+                <Space title={totalTooltip} style={{ cursor: 'pointer', border: '2px solid #ccc', padding: '4px' }}>
+                  {i18n.t('solarPanelYieldPanel.HoverForBreakdown', lang)}
                 </Space>
-                {totalYield > 0 && (
-                  <Space>{'| ' + i18n.t('solarPanelYieldPanel.Profit', lang) + ': $' + totalProfit.toFixed(2)}</Space>
-                )}
-              </>
-            )}
-            {!runEvolution && (
-              <>
-                {solarPanelCount > 1 && (
-                  <Switch
-                    title={i18n.t('solarPanelYieldPanel.ShowOutputsOfIndividualSolarPanels', lang)}
-                    checkedChildren={<UnorderedListOutlined />}
-                    unCheckedChildren={<UnorderedListOutlined />}
-                    checked={individualOutputs}
-                    onChange={(checked) => {
+              ) : (
+                <>
+                  <Space>
+                    {i18n.t('solarPanelYieldPanel.YearlyTotal', lang) +
+                      ': ' +
+                      totalYield.toFixed(2) +
+                      ' ' +
+                      i18n.t('word.kWh', lang)}
+                  </Space>
+                  {totalYield > 0 && (
+                    <Space>{'| ' + i18n.t('solarPanelYieldPanel.Profit', lang) + ': $' + totalProfit.toFixed(2)}</Space>
+                  )}
+                </>
+              )}
+              {!runEvolution && (
+                <>
+                  {solarPanelCount > 1 && (
+                    <Switch
+                      title={i18n.t('solarPanelYieldPanel.ShowOutputsOfIndividualSolarPanels', lang)}
+                      checkedChildren={<UnorderedListOutlined />}
+                      unCheckedChildren={<UnorderedListOutlined />}
+                      checked={individualOutputs}
+                      onChange={(checked) => {
+                        if (solarPanelCount === 0) {
+                          showInfo(i18n.t('analysisManager.NoSolarPanelForAnalysis', lang));
+                          return;
+                        }
+                        showInfo(i18n.t('message.SimulationStarted', lang));
+                        // give it 0.1 second for the info to show up
+                        setTimeout(() => {
+                          setCommonStore((state) => {
+                            state.simulationInProgress = true;
+                            state.yearlyPvIndividualOutputs = checked;
+                            state.runYearlySimulationForSolarPanels = true;
+                            state.pauseYearlySimulationForSolarPanels = false;
+                            if (loggable) {
+                              state.actionInfo = {
+                                name: 'Run Yearly Simulation For Solar Panels: ' + (checked ? 'Individual' : 'Total'),
+                                timestamp: new Date().getTime(),
+                              };
+                            }
+                          });
+                        }, 100);
+                      }}
+                    />
+                  )}
+                  <Button
+                    type="default"
+                    icon={emptyGraph ? <CaretRightOutlined /> : <ReloadOutlined />}
+                    title={i18n.t(emptyGraph ? 'word.Run' : 'word.Update', lang)}
+                    onClick={() => {
                       if (solarPanelCount === 0) {
                         showInfo(i18n.t('analysisManager.NoSolarPanelForAnalysis', lang));
                         return;
@@ -306,12 +337,11 @@ const YearlyPvYieldPanel = ({ city }: YearlyPvYieldPanelProps) => {
                       setTimeout(() => {
                         setCommonStore((state) => {
                           state.simulationInProgress = true;
-                          state.yearlyPvIndividualOutputs = checked;
                           state.runYearlySimulationForSolarPanels = true;
                           state.pauseYearlySimulationForSolarPanels = false;
                           if (loggable) {
                             state.actionInfo = {
-                              name: 'Run Yearly Simulation For Solar Panels: ' + (checked ? 'Individual' : 'Total'),
+                              name: 'Run Yearly Simulation For Solar Panels',
                               timestamp: new Date().getTime(),
                             };
                           }
@@ -319,54 +349,28 @@ const YearlyPvYieldPanel = ({ city }: YearlyPvYieldPanelProps) => {
                       }, 100);
                     }}
                   />
-                )}
-                <Button
-                  type="default"
-                  icon={<ReloadOutlined />}
-                  title={i18n.t('word.Update', lang)}
-                  onClick={() => {
-                    if (solarPanelCount === 0) {
-                      showInfo(i18n.t('analysisManager.NoSolarPanelForAnalysis', lang));
-                      return;
-                    }
-                    showInfo(i18n.t('message.SimulationStarted', lang));
-                    // give it 0.1 second for the info to show up
-                    setTimeout(() => {
-                      setCommonStore((state) => {
-                        state.simulationInProgress = true;
-                        state.runYearlySimulationForSolarPanels = true;
-                        state.pauseYearlySimulationForSolarPanels = false;
+                  <Button
+                    type="default"
+                    icon={<SaveOutlined />}
+                    title={i18n.t('word.SaveAsImage', lang)}
+                    onClick={() => {
+                      screenshot('line-graph-' + labelX + '-' + labelY, 'yearly-pv-yield', {}).then(() => {
+                        showInfo(i18n.t('message.ScreenshotSaved', lang));
                         if (loggable) {
-                          state.actionInfo = {
-                            name: 'Run Yearly Simulation For Solar Panels',
-                            timestamp: new Date().getTime(),
-                          };
+                          setCommonStore((state) => {
+                            state.actionInfo = {
+                              name: 'Take Screenshot of Solar Panel Yearly Yield Graph',
+                              timestamp: new Date().getTime(),
+                            };
+                          });
                         }
                       });
-                    }, 100);
-                  }}
-                />
-                <Button
-                  type="default"
-                  icon={<SaveOutlined />}
-                  title={i18n.t('word.SaveAsImage', lang)}
-                  onClick={() => {
-                    screenshot('line-graph-' + labelX + '-' + labelY, 'yearly-pv-yield', {}).then(() => {
-                      showInfo(i18n.t('message.ScreenshotSaved', lang));
-                      if (loggable) {
-                        setCommonStore((state) => {
-                          state.actionInfo = {
-                            name: 'Take Screenshot of Solar Panel Yearly Yield Graph',
-                            timestamp: new Date().getTime(),
-                          };
-                        });
-                      }
-                    });
-                  }}
-                />
-              </>
-            )}
-          </Space>
+                    }}
+                  />
+                </>
+              )}
+            </Space>
+          )}
         </ColumnWrapper>
       </Container>
     </ReactDraggable>

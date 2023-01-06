@@ -10,7 +10,7 @@ import { DatumEntry, GraphDataType } from '../types';
 import { FLOATING_WINDOW_OPACITY, MONTHS } from '../constants';
 import ReactDraggable, { DraggableEventHandler } from 'react-draggable';
 import { Button, Space } from 'antd';
-import { ReloadOutlined, SaveOutlined } from '@ant-design/icons';
+import { CaretRightOutlined, ReloadOutlined, SaveOutlined } from '@ant-design/icons';
 import { screenshot, showError, showInfo, showWarning } from '../helpers';
 import i18n from '../i18n/i18n';
 import { Rectangle } from '../models/Rectangle';
@@ -89,6 +89,7 @@ const YearlyBuildingEnergyPanel = ({ city }: YearlyBuildingEnergyPanelProps) => 
   const hourlySolarPanelOutputArrayMap = usePrimitiveStore(Selector.hourlySolarPanelOutputArrayMap);
   const flagOfDailySimulation = usePrimitiveStore(Selector.flagOfDailySimulation);
   const runYearlySimulation = useStore(Selector.runYearlyThermalSimulation);
+  const simulationInProgress = useStore(Selector.simulationInProgress);
   const hasSolarPanels = Util.hasSolarPanels(useStore.getState().elements);
 
   const wrapperRef = useRef<HTMLDivElement | null>(null);
@@ -367,6 +368,7 @@ const YearlyBuildingEnergyPanel = ({ city }: YearlyBuildingEnergyPanelProps) => 
   const labelX = i18n.t('word.Month', lang);
   const labelY = i18n.t('word.Energy', lang);
   const checkBuildings = useBuildingCheck();
+  const emptyGraph = data && data[0] ? Object.keys(data[0]).length === 0 : true;
 
   return (
     <ReactDraggable
@@ -421,82 +423,84 @@ const YearlyBuildingEnergyPanel = ({ city }: YearlyBuildingEnergyPanelProps) => 
             fractionDigits={2}
             referenceX={referenceX}
           />
-          <Space style={{ alignSelf: 'center', direction: 'ltr' }}>
-            <Space
-              title={tooltipHeaterBreakdown.current}
-              style={{ cursor: tooltipHeaterBreakdown.current === '' ? 'default' : 'help' }}
-            >
-              {i18n.t('buildingEnergyPanel.Heater', lang) + ': ' + heaterSum.toFixed(0)}
-            </Space>
-            <Space
-              title={tooltipAcBreakdown.current}
-              style={{ cursor: tooltipAcBreakdown.current === '' ? 'default' : 'help' }}
-            >
-              {i18n.t('buildingEnergyPanel.AC', lang) + ': ' + acSum.toFixed(0)}
-            </Space>
-            {solarPanelSum !== 0 && (
+          {!simulationInProgress && (
+            <Space style={{ alignSelf: 'center', direction: 'ltr' }}>
               <Space
-                title={tooltipSolarPanelBreakdown.current}
-                style={{ cursor: tooltipSolarPanelBreakdown.current === '' ? 'default' : 'help' }}
+                title={tooltipHeaterBreakdown.current}
+                style={{ cursor: tooltipHeaterBreakdown.current === '' ? 'default' : 'help' }}
               >
-                {i18n.t('buildingEnergyPanel.SolarPanel', lang) + ': ' + solarPanelSum.toFixed(0)}
+                {i18n.t('buildingEnergyPanel.Heater', lang) + ': ' + heaterSum.toFixed(0)}
               </Space>
-            )}
-            <Space
-              title={tooltipNetBreakdown.current}
-              style={{ cursor: tooltipNetBreakdown.current === '' ? 'default' : 'help' }}
-            >
-              {i18n.t('buildingEnergyPanel.Net', lang) + ': ' + netSum.toFixed(0)}
-            </Space>
-            <Button
-              type="default"
-              icon={<ReloadOutlined />}
-              title={i18n.t('word.Update', lang)}
-              onClick={() => {
-                if (checkBuildings === CheckStatus.NO_BUILDING) {
-                  showInfo(i18n.t('analysisManager.NoBuildingForAnalysis', lang));
-                  return;
-                }
-                if (checkBuildings === CheckStatus.AT_LEAST_ONE_BAD_NO_GOOD) {
-                  showError(i18n.t('message.SimulationWillNotStartDueToErrors', lang));
-                  return;
-                }
-                if (checkBuildings === CheckStatus.AT_LEAST_ONE_BAD_AT_LEAST_ONE_GOOD) {
-                  showWarning(i18n.t('message.SimulationWillStartDespiteErrors', lang));
-                }
-                showInfo(i18n.t('message.SimulationStarted', lang));
-                // give it 0.1 second for the info to show up
-                setTimeout(() => {
-                  setCommonStore((state) => {
-                    state.runYearlyThermalSimulation = true;
-                    state.pauseYearlyThermalSimulation = false;
-                    state.simulationInProgress = true;
+              <Space
+                title={tooltipAcBreakdown.current}
+                style={{ cursor: tooltipAcBreakdown.current === '' ? 'default' : 'help' }}
+              >
+                {i18n.t('buildingEnergyPanel.AC', lang) + ': ' + acSum.toFixed(0)}
+              </Space>
+              {solarPanelSum !== 0 && (
+                <Space
+                  title={tooltipSolarPanelBreakdown.current}
+                  style={{ cursor: tooltipSolarPanelBreakdown.current === '' ? 'default' : 'help' }}
+                >
+                  {i18n.t('buildingEnergyPanel.SolarPanel', lang) + ': ' + solarPanelSum.toFixed(0)}
+                </Space>
+              )}
+              <Space
+                title={tooltipNetBreakdown.current}
+                style={{ cursor: tooltipNetBreakdown.current === '' ? 'default' : 'help' }}
+              >
+                {i18n.t('buildingEnergyPanel.Net', lang) + ': ' + netSum.toFixed(0)}
+              </Space>
+              <Button
+                type="default"
+                icon={emptyGraph ? <CaretRightOutlined /> : <ReloadOutlined />}
+                title={i18n.t(emptyGraph ? 'word.Run' : 'word.Update', lang)}
+                onClick={() => {
+                  if (checkBuildings === CheckStatus.NO_BUILDING) {
+                    showInfo(i18n.t('analysisManager.NoBuildingForAnalysis', lang));
+                    return;
+                  }
+                  if (checkBuildings === CheckStatus.AT_LEAST_ONE_BAD_NO_GOOD) {
+                    showError(i18n.t('message.SimulationWillNotStartDueToErrors', lang));
+                    return;
+                  }
+                  if (checkBuildings === CheckStatus.AT_LEAST_ONE_BAD_AT_LEAST_ONE_GOOD) {
+                    showWarning(i18n.t('message.SimulationWillStartDespiteErrors', lang));
+                  }
+                  showInfo(i18n.t('message.SimulationStarted', lang));
+                  // give it 0.1 second for the info to show up
+                  setTimeout(() => {
+                    setCommonStore((state) => {
+                      state.runYearlyThermalSimulation = true;
+                      state.pauseYearlyThermalSimulation = false;
+                      state.simulationInProgress = true;
+                      if (loggable) {
+                        state.actionInfo = { name: 'Run Yearly Thermal Simulation', timestamp: new Date().getTime() };
+                      }
+                    });
+                  }, 100);
+                }}
+              />
+              <Button
+                type="default"
+                icon={<SaveOutlined />}
+                title={i18n.t('word.SaveAsImage', lang)}
+                onClick={() => {
+                  screenshot('line-graph-' + labelX + '-' + labelY, 'yearly-building-energy', {}).then(() => {
+                    showInfo(i18n.t('message.ScreenshotSaved', lang));
                     if (loggable) {
-                      state.actionInfo = { name: 'Run Yearly Thermal Simulation', timestamp: new Date().getTime() };
+                      setCommonStore((state) => {
+                        state.actionInfo = {
+                          name: 'Take Screenshot of Yearly Building Energy Graph',
+                          timestamp: new Date().getTime(),
+                        };
+                      });
                     }
                   });
-                }, 100);
-              }}
-            />
-            <Button
-              type="default"
-              icon={<SaveOutlined />}
-              title={i18n.t('word.SaveAsImage', lang)}
-              onClick={() => {
-                screenshot('line-graph-' + labelX + '-' + labelY, 'yearly-building-energy', {}).then(() => {
-                  showInfo(i18n.t('message.ScreenshotSaved', lang));
-                  if (loggable) {
-                    setCommonStore((state) => {
-                      state.actionInfo = {
-                        name: 'Take Screenshot of Yearly Building Energy Graph',
-                        timestamp: new Date().getTime(),
-                      };
-                    });
-                  }
-                });
-              }}
-            />
-          </Space>
+                }}
+              />
+            </Space>
+          )}
         </ColumnWrapper>
       </Container>
     </ReactDraggable>

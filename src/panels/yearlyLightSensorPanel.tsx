@@ -1,5 +1,5 @@
 /*
- * @Copyright 2021-2022. Institute for Future Intelligence, Inc.
+ * @Copyright 2021-2023. Institute for Future Intelligence, Inc.
  */
 
 import React, { useEffect, useRef, useState } from 'react';
@@ -12,7 +12,7 @@ import { FLOATING_WINDOW_OPACITY, MONTHS } from '../constants';
 import BarGraph from '../components/barGraph';
 import ReactDraggable, { DraggableEventHandler } from 'react-draggable';
 import { Button, Space, Switch } from 'antd';
-import { ReloadOutlined, SaveOutlined } from '@ant-design/icons';
+import { CaretRightOutlined, ReloadOutlined, SaveOutlined } from '@ant-design/icons';
 import { screenshot, showInfo } from '../helpers';
 import i18n from '../i18n/i18n';
 import { Rectangle } from '../models/Rectangle';
@@ -172,6 +172,7 @@ const YearlyLightSensorPanel = ({ city }: YearlyLightSensorPanelProps) => {
 
   const labelX = i18n.t('word.Month', lang);
   const labelY = i18n.t('word.Radiation', lang);
+  const emptyGraph = sensorData && sensorData[0] ? Object.keys(sensorData[0]).length === 0 : true;
 
   return (
     <ReactDraggable
@@ -298,8 +299,8 @@ const YearlyLightSensorPanel = ({ city }: YearlyLightSensorPanelProps) => {
             <Space>
               <Button
                 type="default"
-                icon={<ReloadOutlined />}
-                title={i18n.t('word.Update', lang)}
+                icon={emptyGraph ? <CaretRightOutlined /> : <ReloadOutlined />}
+                title={i18n.t(emptyGraph ? 'word.Run' : 'word.Update', lang)}
                 onClick={() => {
                   const sensorCount = countElementsByType(ObjectType.Sensor);
                   if (sensorCount === 0) {

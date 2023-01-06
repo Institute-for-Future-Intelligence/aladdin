@@ -1,5 +1,5 @@
 /*
- * @Copyright 2021-2022. Institute for Future Intelligence, Inc.
+ * @Copyright 2021-2023. Institute for Future Intelligence, Inc.
  */
 
 import React, { useEffect, useRef, useState } from 'react';
@@ -11,7 +11,7 @@ import { ChartType, GraphDataType, ObjectType } from '../types';
 import moment from 'moment';
 import ReactDraggable, { DraggableEventHandler } from 'react-draggable';
 import { Button, Space } from 'antd';
-import { ReloadOutlined, SaveOutlined } from '@ant-design/icons';
+import { CaretRightOutlined, ReloadOutlined, SaveOutlined } from '@ant-design/icons';
 import { screenshot, showInfo } from '../helpers';
 import i18n from '../i18n/i18n';
 import { Rectangle } from '../models/Rectangle';
@@ -168,6 +168,7 @@ const DailyLightSensorPanel = ({ city }: DailyLightSensorPanelProps) => {
 
   const labelX = i18n.t('word.Hour', lang);
   const labelY = i18n.t('word.Radiation', lang);
+  const emptyGraph = sensorData && sensorData[0] ? Object.keys(sensorData[0]).length === 0 : true;
 
   return (
     <ReactDraggable
@@ -226,8 +227,8 @@ const DailyLightSensorPanel = ({ city }: DailyLightSensorPanelProps) => {
           <Space style={{ alignSelf: 'center', direction: 'ltr' }}>
             <Button
               type="default"
-              icon={<ReloadOutlined />}
-              title={i18n.t('word.Update', lang)}
+              icon={emptyGraph ? <CaretRightOutlined /> : <ReloadOutlined />}
+              title={i18n.t(emptyGraph ? 'word.Run' : 'word.Update', lang)}
               onClick={() => {
                 const sensorCount = countElementsByType(ObjectType.Sensor);
                 if (sensorCount === 0) {
