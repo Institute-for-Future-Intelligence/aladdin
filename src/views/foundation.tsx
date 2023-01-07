@@ -154,12 +154,12 @@ const Foundation = ({
   const [buildingResizerPosition, setBuildingResizerPosition] = useState<number[]>([cx, cy, lz / 2]);
   const [buildingResizerRotation, setBuildingResizerRotation] = useState<number>(0);
   const [buildingResizerDimension, setBuildingResizerDimension] = useState<number[] | null>(null);
-  const [wallAuxiliaryXY, setWallAuxiliaryXY] = useState<WallAuxiliaryType>({
+  const [wallAuxToAxis, setWallAuxToAxis] = useState<WallAuxiliaryType>({
     show: false,
     direction: null,
     position: null,
   });
-  const [wallAuxiliaryToOthers, setWallAuxiliaryToOthers] = useState<WallAuxiliaryType>({
+  const [wallAuxToWall, setWallAuxToWall] = useState<WallAuxiliaryType>({
     show: false,
     direction: null,
     position: null,
@@ -304,8 +304,8 @@ const Foundation = ({
         state.deletedWallId = null;
       });
       useStoreRef.getState().setEnableOrbitController(true);
-      setWallAuxiliaryXY({ show: false, direction: null, position: null });
-      setWallAuxiliaryToOthers({ show: false, direction: null, position: null });
+      setWallAuxToAxis({ show: false, direction: null, position: null });
+      setWallAuxToWall({ show: false, direction: null, position: null });
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [deletedWallID]);
@@ -1418,14 +1418,13 @@ const Foundation = ({
       const intersects = ray.intersectObjects([baseRef.current]);
       let p = Util.wallRelativePosition(intersects[0].point, foundationModel);
 
+      if (wallAuxToWall.position) {
+        p.setX(wallAuxToWall.position[0]);
+        p.setY(wallAuxToWall.position[1]);
+      }
+
       const { id: targetID, point: targetPoint, side: targetSide, jointId: targetJointId } = findMagnetPoint(p, 1.5);
       p = updatePointer(p, targetPoint);
-
-      if (!targetPoint && wallAuxiliaryToOthers.position) {
-        const [x, y] = wallAuxiliaryToOthers.position;
-        p.setX(x);
-        p.setY(y);
-      }
 
       let resizeHandleType = ResizeHandleType.LowerRight;
 
@@ -1675,8 +1674,8 @@ const Foundation = ({
         setCommonStore((state) => {
           state.updateWallMapOnFoundationFlag = !state.updateWallMapOnFoundationFlag;
         });
-        setWallAuxiliaryXY({ show: false, direction: null, position: null });
-        setWallAuxiliaryToOthers({ show: false, direction: null, position: null });
+        setWallAuxToAxis({ show: false, direction: null, position: null });
+        setWallAuxToWall({ show: false, direction: null, position: null });
         break;
       }
       case ObjectType.Polygon: {
@@ -1858,28 +1857,12 @@ const Foundation = ({
     return angle;
   };
 
-  const checkIfAlignedToWall = (p: Vector3, targetId?: string | null) => {
-    let alignedX: number | null = null;
-    let alignedY: number | null = null;
-    for (const wall of Array.from(wallMapOnFoundation.current.values())) {
-      if (grabRef.current !== null && wall.id !== grabRef.current.id && wall.id !== targetId) {
-        if (Math.abs(p.x - wall.leftPoint[0]) < 0.01 || Math.abs(p.x - wall.rightPoint[0]) < 0.01) {
-          alignedX = p.x;
-        }
-        if (Math.abs(p.y - wall.leftPoint[1]) < 0.01 || Math.abs(p.y - wall.rightPoint[1]) < 0.01) {
-          alignedY = p.y;
-        }
-      }
-    }
-    return [alignedX, alignedY];
-  };
-
   const alignToWall = (p: Vector3, targetId?: string | null) => {
     let alignedX: number | null = null;
     let alignedY: number | null = null;
     let minX = Infinity;
     let minY = Infinity;
-    for (const wall of Array.from(wallMapOnFoundation.current.values())) {
+    for (const [id, wall] of wallMapOnFoundation.current) {
       if (grabRef.current !== null && wall.id !== grabRef.current.id && wall.id !== targetId) {
         const leftXDiff = Math.abs(p.x - wall.leftPoint[0]);
         const rightXDiff = Math.abs(p.x - wall.rightPoint[0]);
@@ -1907,15 +1890,122 @@ const Foundation = ({
     return [alignedX, alignedY];
   };
 
-  const handleShowAuxiliaryToWall = (p: Vector3, alignedX: number | null, alignedY: number | null) => {
-    if (alignedX !== null && alignedY !== null) {
-      setWallAuxiliaryToOthers({ show: true, direction: 'xy', position: [alignedX, alignedY] });
-    } else if (alignedX !== null) {
-      setWallAuxiliaryToOthers({ show: true, direction: 'y', position: [alignedX, p.y] });
-    } else if (alignedY !== null) {
-      setWallAuxiliaryToOthers({ show: true, direction: 'x', position: [p.x, alignedY] });
+  const alignToAxis = (anchor: Vector3, p: Vector3, handle: ResizeHandleType) => {
+    const ALIGN_ANGLE_THRESHOLD = 0.05;
+    const angle = getWallAngle(anchor, p, handle);
+    let alignedX: number | null = null;
+    let alignedY: number | null = null;
+    if (
+      angle < ALIGN_ANGLE_THRESHOLD ||
+      angle > TWO_PI - ALIGN_ANGLE_THRESHOLD ||
+      Math.abs(angle - Math.PI) < ALIGN_ANGLE_THRESHOLD ||
+      Math.abs(p.y - anchor.y) < 1
+    ) {
+      alignedY = anchor.y;
+    } else if (
+      Math.abs(angle - Math.PI / 2) < ALIGN_ANGLE_THRESHOLD ||
+      Math.abs(angle - (3 * Math.PI) / 2) < ALIGN_ANGLE_THRESHOLD ||
+      Math.abs(p.x - anchor.x) < 1
+    ) {
+      alignedX = anchor.x;
+    }
+    return [alignedX, alignedY];
+  };
+
+  const alignPointer = (anchor: Vector3, p: Vector3, handle: ResizeHandleType, targetId?: string | null) => {
+    const [alignedToWallX, alignedToWallY] = alignToWall(p);
+    const [alignedToAxisX, alignedToAxisY] = alignToAxis(anchor, p, handle); // cooridnate after align to axis
+
+    const alignedX = getClosestAlignedPoint(p.x, alignedToWallX, alignedToAxisX);
+    const alignedY = getClosestAlignedPoint(p.y, alignedToWallY, alignedToAxisY);
+
+    return new Vector3(alignedX, alignedY, p.z);
+  };
+
+  const getClosestAlignedPoint = (p: number, val1: number | null, val2: number | null) => {
+    if (val1 !== null && val2 !== null) {
+      return Math.abs(val1 - p) < Math.abs(val2 - p) ? val1 : val2;
+    } else if (val1 !== null) {
+      return val1;
+    } else if (val2 !== null) {
+      return val2;
+    }
+    return p;
+  };
+
+  const checkAndSetPosAlignToWall = (p: Vector3, targetId?: string | null) => {
+    let [minX, minY] = [Infinity, Infinity];
+    let alignedX: number | null = null;
+    let alignedY: number | null = null;
+    for (const [id, wall] of wallMapOnFoundation.current) {
+      if (grabRef.current !== null && wall.id !== grabRef.current.id && wall.id !== targetId) {
+        const leftXDiff = Math.abs(p.x - wall.leftPoint[0]);
+        const rightXDiff = Math.abs(p.x - wall.rightPoint[0]);
+        if (leftXDiff < 0.01 && leftXDiff < minX) {
+          minX = leftXDiff;
+          alignedX = wall.leftPoint[0];
+        }
+        if (rightXDiff < 0.01 && rightXDiff < minX) {
+          minX = rightXDiff;
+          alignedX = wall.rightPoint[0];
+        }
+
+        const leftYDiff = Math.abs(p.y - wall.leftPoint[1]);
+        const rightYDiff = Math.abs(p.y - wall.rightPoint[1]);
+        if (leftYDiff < 0.01 && leftYDiff < minY) {
+          minY = leftYDiff;
+          alignedY = wall.leftPoint[1];
+        }
+        if (rightYDiff < 0.01 && rightYDiff < minY) {
+          minY = rightYDiff;
+          alignedY = wall.rightPoint[1];
+        }
+      }
+    }
+    setWallAuxToWall((prev) => {
+      if (alignedX !== null && alignedY !== null) {
+        return { ...prev, direction: 'xy', position: [alignedX, alignedY] };
+      } else if (alignedX !== null) {
+        return { ...prev, direction: 'y', position: [alignedX, p.y] };
+      } else if (alignedY !== null) {
+        return { ...prev, direction: 'x', position: [p.x, alignedY] };
+      } else {
+        return { ...prev, direction: null, position: null };
+      }
+    });
+    return [alignedX !== null, alignedY !== null];
+  };
+
+  const checkAndSetPosAlignToAxis = (p: Vector3, angle: number) => {
+    if (Math.abs(angle) < 0.01 || Math.abs(angle - Math.PI) < 0.01) {
+      setWallAuxToAxis((prev) => ({ ...prev, direction: 'x', position: [p.x, p.y] }));
+      return [true, false];
+    } else if (Math.abs(angle - Math.PI / 2) < 0.01 || Math.abs(angle - (3 * Math.PI) / 2) < 0.01) {
+      setWallAuxToAxis((prev) => ({ ...prev, direction: 'y', position: [p.x, p.y] }));
+      return [false, true];
     } else {
-      setWallAuxiliaryToOthers({ show: false, direction: null, position: null });
+      setWallAuxToAxis((prev) => ({ ...prev, direction: null, position: null }));
+      return [false, false];
+    }
+  };
+
+  const setShowWallAux = (toWall: boolean, toAxis: boolean) => {
+    setWallAuxToWall((prev) => ({ ...prev, show: toWall }));
+    setWallAuxToAxis((prev) => ({ ...prev, show: toAxis }));
+  };
+
+  const handleShowAuxiliary = (p: Vector3, angle: number) => {
+    const [isAlignedToWallX, isAlignedToWallY] = checkAndSetPosAlignToWall(p);
+    const [isAlignedToAxisX, isAlignedToAxisY] = checkAndSetPosAlignToAxis(p, angle);
+
+    if (isAlignedToWallX && isAlignedToWallY) {
+      setShowWallAux(true, false);
+    } else if (isAlignedToWallX) {
+      setShowWallAux(true, !isAlignedToAxisY && isAlignedToAxisX);
+    } else if (isAlignedToWallY) {
+      setShowWallAux(true, !isAlignedToAxisX && isAlignedToAxisY);
+    } else {
+      setShowWallAux(false, isAlignedToAxisX || isAlignedToAxisY);
     }
   };
 
@@ -1977,104 +2067,31 @@ const Foundation = ({
               p = Util.wallRelativePosition(p, foundationModel);
 
               let target: SnapTargetType | null = null;
-              let [alignedToWallX, alignedToWallY]: (number | null)[] = [null, null];
 
               if (useStore.getState().enableFineGrid) {
                 p = Util.snapToFineGrid(p);
               } else {
                 target = findMagnetPoint(p, 1.5);
-                if (target && target.point) {
+                if (target?.point) {
                   p = target.point;
-                  [alignedToWallX, alignedToWallY] = checkIfAlignedToWall(p);
                 } else {
                   p = Util.snapToNormalGrid(p);
+                  p = alignPointer(anchor, p, resizeHandleType);
 
-                  // check if aligned to other wall
-                  [alignedToWallX, alignedToWallY] = alignToWall(p);
-                  if (alignedToWallX !== null) p.setX(alignedToWallX);
-                  if (alignedToWallY !== null) p.setY(alignedToWallY);
-
-                  // check snap to other walls again
                   target = findMagnetPoint(p, 1.5);
-                  if (target && target.point) {
+                  if (target?.point) {
                     p = target.point;
-                    [alignedToWallX, alignedToWallY] = checkIfAlignedToWall(p, target.id);
                   }
                 }
               }
 
-              if (target?.point === null) {
-                const ALIGN_ANGLE_THRESHOLD = 0.05;
-                const angle = getWallAngle(anchor, p, resizeHandleType);
-                let alignedAngle: number | null = null;
-
-                if (angle > Math.PI / 2 - ALIGN_ANGLE_THRESHOLD && angle < Math.PI / 2 + ALIGN_ANGLE_THRESHOLD) {
-                  if (alignedToWallX === null) {
-                    p.setX(anchor.x);
-                    alignedAngle = Math.PI / 2;
-                    setWallAuxiliaryXY((prev) => ({ ...prev, direction: 'y', position: [anchor.x, anchor.y] }));
-                  }
-                } else if (
-                  angle > (3 * Math.PI) / 2 - ALIGN_ANGLE_THRESHOLD &&
-                  angle < (3 * Math.PI) / 2 + ALIGN_ANGLE_THRESHOLD
-                ) {
-                  if (alignedToWallX === null) {
-                    p.setX(anchor.x);
-                    alignedAngle = (3 * Math.PI) / 2;
-                    setWallAuxiliaryXY((prev) => ({ ...prev, direction: 'y', position: [anchor.x, anchor.y] }));
-                  }
-                } else if (angle < ALIGN_ANGLE_THRESHOLD || angle > TWO_PI - ALIGN_ANGLE_THRESHOLD) {
-                  if (alignedToWallY === null) {
-                    p.setY(anchor.y);
-                    alignedAngle = 0;
-                    setWallAuxiliaryXY((prev) => ({ ...prev, direction: 'x', position: [anchor.x, anchor.y] }));
-                  }
-                } else if (angle > Math.PI - ALIGN_ANGLE_THRESHOLD && angle < Math.PI + ALIGN_ANGLE_THRESHOLD) {
-                  if (alignedToWallY === null) {
-                    p.setY(anchor.y);
-                    alignedAngle = Math.PI;
-                    setWallAuxiliaryXY((prev) => ({ ...prev, direction: 'x', position: [anchor.x, anchor.y] }));
-                  }
-                } else {
-                  setWallAuxiliaryXY({ show: false, direction: null, position: null });
-                }
-
-                if (alignedAngle !== null) {
-                  target = findMagnetPoint(p, 1.5);
-                  if (target && target.point) {
-                    p = target.point;
-                    [alignedToWallX, alignedToWallY] = checkIfAlignedToWall(p, target.id);
-                    alignedAngle = null;
-                  } else {
-                    [alignedToWallX, alignedToWallY] = checkIfAlignedToWall(p, target.id);
-                    if (
-                      alignedToWallX !== null &&
-                      (alignedAngle === Math.PI / 2 || alignedAngle === (3 * Math.PI) / 2)
-                    ) {
-                      alignedAngle = null;
-                    } else if (alignedToWallY !== null && (alignedAngle === 0 || alignedAngle === Math.PI)) {
-                      alignedAngle = null;
-                    }
-                  }
-                }
-
-                if (alignedAngle !== null) {
-                  setWallAuxiliaryXY((prev) => ({
-                    ...prev,
-                    show: true,
-                  }));
-                } else {
-                  setWallAuxiliaryXY({ show: false, direction: null, position: null });
-                }
-              }
-
-              handleShowAuxiliaryToWall(p, alignedToWallX, alignedToWallY);
+              const angle = getWallAngle(anchor, p, resizeHandleType);
+              handleShowAuxiliary(p, angle);
 
               const lx = p.distanceTo(anchor);
               const relativeCenter = new Vector3().addVectors(p, anchor).divideScalar(2);
               const leftPoint = resizeHandleType === ResizeHandleType.LowerLeft ? p : anchor;
               const rightPoint = resizeHandleType === ResizeHandleType.LowerLeft ? anchor : p;
-              const angle = getWallAngle(anchor, p, resizeHandleType);
 
               setCommonStore((state) => {
                 for (const e of state.elements) {
@@ -2352,36 +2369,29 @@ const Foundation = ({
         p = Util.wallRelativePosition(intersects[0].point, foundationModel);
 
         let target: SnapTargetType | null = null;
-        let [alignedX, alignedY]: (number | null)[] = [null, null];
 
         if (useStore.getState().enableFineGrid) {
           p = Util.snapToFineGrid(p);
         } else {
           target = findMagnetPoint(p, 1.5);
-          // find wall to snap at first check
-          if (target && target.point) {
+          if (target?.point) {
             p = target.point;
-            [alignedX, alignedY] = checkIfAlignedToWall(p);
-          }
-          // no wall to snap at first check
-          else {
+          } else {
             p = Util.snapToNormalGrid(p);
-            // check if aligned to other wall
-            [alignedX, alignedY] = alignToWall(p);
-            // update pointer
+
+            const [alignedX, alignedY] = alignToWall(p);
             if (alignedX !== null) p.setX(alignedX);
             if (alignedY !== null) p.setY(alignedY);
 
-            // check snap to other walls again
             target = findMagnetPoint(p, 1.5);
-            if (target && target.point) {
+            if (target?.point) {
               p = target.point;
-              [alignedX, alignedY] = checkIfAlignedToWall(p);
             }
           }
         }
 
-        handleShowAuxiliaryToWall(p, alignedX, alignedY);
+        const [isAlignedToWallX, isAlignedToWallY] = checkAndSetPosAlignToWall(p);
+        setWallAuxToWall((prev) => ({ ...prev, show: isAlignedToWallX || isAlignedToWallY }));
 
         setElementPosition(addedWallIdRef.current, p.x, p.y);
       }
@@ -2431,8 +2441,8 @@ const Foundation = ({
         });
       }
     }
-    setWallAuxiliaryXY({ show: false, direction: null, position: null });
-    setWallAuxiliaryToOthers({ show: false, direction: null, position: null });
+    setWallAuxToAxis({ show: false, direction: null, position: null });
+    setWallAuxToWall({ show: false, direction: null, position: null });
   };
 
   const handlePointerEnter = (e: ThreeEvent<PointerEvent>) => {
@@ -2818,24 +2828,24 @@ const Foundation = ({
         )}
 
         {/* wall axis auxiliary line */}
-        {wallAuxiliaryXY.show && (
+        {wallAuxToAxis.show && (
           <group position={[0, 0, hz + 0.01]}>
             <WallAuxiliaryLine
               hx={hx}
               hy={hy}
-              position={wallAuxiliaryXY.position}
-              direction={wallAuxiliaryXY.direction}
+              position={wallAuxToAxis.position}
+              direction={wallAuxToAxis.direction}
               color={'black'}
             />
           </group>
         )}
-        {wallAuxiliaryToOthers.show && (
+        {wallAuxToWall.show && (
           <group position={[0, 0, hz + 0.01]}>
             <WallAuxiliaryLine
               hx={hx}
               hy={hy}
-              position={wallAuxiliaryToOthers.position}
-              direction={wallAuxiliaryToOthers.direction}
+              position={wallAuxToWall.position}
+              direction={wallAuxToWall.direction}
               color={'yellow'}
             />
           </group>
