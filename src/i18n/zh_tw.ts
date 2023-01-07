@@ -250,7 +250,7 @@ export const i18n_zh_tw = {
         Heliodon: '日影儀',
         SunAndTime: '太陽和時間',
       },
-      benchmarksSubMenu: '基準例子',
+      benchmarksSubMenu: '基準',
       benchmarks: {
         SolarRadiationPredictionVsMeasurement: '太陽能輻射模型預測和實際測量的對比',
         BESTESTCase600: '建築物能耗模擬測試：BESTEST案例600',
@@ -1271,7 +1271,7 @@ export const i18n_zh_tw = {
       ManipulateGroup: '整體操作一個組',
       ClearScene: '清空場景',
       ShowSunAndTimeSettings: '顯示太陽和時間設置',
-      ShowHeatmap: '顯示熱圖',
+      SpatialAnalysisOfEnergy: '能量的空間分析',
       DoYouReallyWantToClearContent: '您確定清空場景嗎',
       ClickForMoreButtons: '點擊此處切換到更多的按鈕模式',
       SwitchToAddingFoundation: '切換到添加地基模式',

@@ -1,5 +1,5 @@
 /*
- * @Copyright 2021-2022. Institute for Future Intelligence, Inc.
+ * @Copyright 2021-2023. Institute for Future Intelligence, Inc.
  */
 
 import TinyLockImage from './assets/tiny_lock.png';
@@ -28,7 +28,7 @@ import LightImage from './assets/led_light.png';
 import GroupImage from './assets/group.png';
 import ClearImage from './assets/clear.png';
 import HeliodonImage from './assets/heliodon.png';
-import PaletteImage from './assets/palette.png';
+import AnalyzeImage from './assets/analyze.png';
 
 import React, { useState } from 'react';
 import { useStore } from './stores/common';
@@ -519,9 +519,9 @@ const MainToolBarButtons = () => {
 
       <ToolBarButton>
         <img
-          title={i18n.t('toolbar.ShowHeatmap', lang)}
-          alt={'Heatmap'}
-          src={PaletteImage}
+          title={i18n.t('toolbar.SpatialAnalysisOfEnergy', lang)}
+          alt={'Spatial analysis'}
+          src={AnalyzeImage}
           height={36}
           width={36}
           color={'#666666'}
@@ -530,11 +530,19 @@ const MainToolBarButtons = () => {
             cursor: 'pointer',
             verticalAlign: 'middle',
           }}
-          onClick={
-            !noAnimationForHeatmapSimulation || Util.hasMovingParts(elements)
-              ? toggleDynamicSolarRadiationHeatmap
-              : toggleStaticSolarRadiationHeatmap
-          }
+          onClick={() => {
+            if (showSolarRadiationHeatmap) {
+              setCommonStore((state) => {
+                state.showSolarRadiationHeatmap = false;
+              });
+            } else {
+              if (!noAnimationForHeatmapSimulation || Util.hasMovingParts(elements)) {
+                toggleDynamicSolarRadiationHeatmap();
+              } else {
+                toggleStaticSolarRadiationHeatmap();
+              }
+            }
+          }}
         />
       </ToolBarButton>
 

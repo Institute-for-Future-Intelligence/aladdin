@@ -1294,7 +1294,7 @@ export const i18n_tr = {
       ManipulateGroup: 'Ölçeklendirme',
       ClearScene: 'Herşeyi Sil',
       ShowSunAndTimeSettings: 'Güneş & Zaman Ayarlarını Göster',
-      ShowHeatmap: 'Isı Haritası Göster',
+      SpatialAnalysisOfEnergy: 'Spatial analysis of energy',
       DoYouReallyWantToClearContent: 'İçeriği silmek istiyor musunuz',
       ClickForMoreButtons: 'Daha fazla buton için tıklayın',
       SwitchToAddingFoundation: 'Temel Ekle ',

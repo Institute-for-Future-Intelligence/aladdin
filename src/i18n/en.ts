@@ -1293,7 +1293,7 @@ export const i18n_en = {
       ManipulateGroup: 'Manipulate a group',
       ClearScene: 'Clear scene',
       ShowSunAndTimeSettings: 'Show sun and time settings',
-      ShowHeatmap: 'Show heatmap',
+      SpatialAnalysisOfEnergy: 'Spatial analysis of energy',
       DoYouReallyWantToClearContent: 'Do you really want to clear the content',
       ClickForMoreButtons: 'Click for more buttons',
       SwitchToAddingFoundation: 'Switch to Adding Foundation',
