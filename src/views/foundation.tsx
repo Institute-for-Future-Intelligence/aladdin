@@ -12,7 +12,7 @@ import FoundationTexture06 from '../resources/foundation_06.png';
 import FoundationTexture07 from '../resources/foundation_07.png';
 
 import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
-import { Box, Plane, Sphere } from '@react-three/drei';
+import { Box, Line, Plane, Sphere } from '@react-three/drei';
 import { CanvasTexture, Euler, Group, Mesh, Raycaster, RepeatWrapping, TextureLoader, Vector2, Vector3 } from 'three';
 import { useStore } from '../stores/common';
 import { useStoreRef } from '../stores/commonRef';
@@ -75,6 +75,19 @@ import { useHandleSize } from './wall/hooks';
 import { usePrimitiveStore } from 'src/stores/commonPrimitive';
 import { InnerCommonState } from 'src/stores/InnerCommonState';
 import { RoofModel } from 'src/models/RoofModel';
+
+interface WallAuxiliaryType {
+  show: boolean;
+  direction: 'x' | 'y' | 'xy' | null;
+  position: number[] | null;
+}
+
+interface SnapTargetType {
+  id: string | null;
+  point: Vector3 | null;
+  side: WallSide | null;
+  jointId: string | undefined;
+}
 
 const Foundation = ({
   id,
@@ -141,6 +154,16 @@ const Foundation = ({
   const [buildingResizerPosition, setBuildingResizerPosition] = useState<number[]>([cx, cy, lz / 2]);
   const [buildingResizerRotation, setBuildingResizerRotation] = useState<number>(0);
   const [buildingResizerDimension, setBuildingResizerDimension] = useState<number[] | null>(null);
+  const [wallAuxiliaryXY, setWallAuxiliaryXY] = useState<WallAuxiliaryType>({
+    show: false,
+    direction: null,
+    position: null,
+  });
+  const [wallAuxiliaryToOthers, setWallAuxiliaryToOthers] = useState<WallAuxiliaryType>({
+    show: false,
+    direction: null,
+    position: null,
+  });
 
   const addedWallIdRef = useRef<string | null>(null);
   const isSettingWallStartPointRef = useRef(false);
@@ -281,6 +304,8 @@ const Foundation = ({
         state.deletedWallId = null;
       });
       useStoreRef.getState().setEnableOrbitController(true);
+      setWallAuxiliaryXY({ show: false, direction: null, position: null });
+      setWallAuxiliaryToOthers({ show: false, direction: null, position: null });
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [deletedWallID]);
@@ -502,27 +527,29 @@ const Foundation = ({
     let targetID: string | null = null;
     let targetSide: WallSide | null = null;
     let jointId: string | undefined = undefined;
-    for (const [id, wall] of wallMapOnFoundation.current) {
-      if (id === addedWallIdRef.current || (grabRef.current && id === grabRef.current.id)) continue;
-      const leftPoint = new Vector3(wall.leftPoint[0], wall.leftPoint[1], wall.leftPoint[2]);
-      const rightPoint = new Vector3(wall.rightPoint[0], wall.rightPoint[1], wall.rightPoint[2]);
-      const distStart = leftPoint?.distanceTo(pointer) ?? Number.MAX_VALUE;
-      const distEnd = rightPoint?.distanceTo(pointer) ?? Number.MAX_VALUE;
-      const flag = distStart <= distEnd;
-      const dist = flag ? distStart : distEnd;
-      const point = flag ? leftPoint : rightPoint;
-      if (dist <= min + 0.01) {
-        min = dist;
-        targetPoint = point;
-        jointId = flag ? wall.leftJoints[0] : wall.rightJoints[0];
-        targetID = id;
-        targetSide = flag ? WallSide.Left : WallSide.Right;
-        if (targetID && !jointId) {
-          return { id: targetID, point: targetPoint, side: targetSide, jointId };
+    if (!useStore.getState().enableFineGrid) {
+      for (const [id, wall] of wallMapOnFoundation.current) {
+        if (id === addedWallIdRef.current || (grabRef.current && id === grabRef.current.id)) continue;
+        const leftPoint = new Vector3(wall.leftPoint[0], wall.leftPoint[1], 0);
+        const rightPoint = new Vector3(wall.rightPoint[0], wall.rightPoint[1], 0);
+        const distStart = leftPoint?.distanceTo(pointer) ?? Number.MAX_VALUE;
+        const distEnd = rightPoint?.distanceTo(pointer) ?? Number.MAX_VALUE;
+        const flag = distStart <= distEnd;
+        const dist = flag ? distStart : distEnd;
+        const point = flag ? leftPoint : rightPoint;
+        if (dist <= min + 0.01) {
+          min = dist;
+          targetPoint = point;
+          jointId = flag ? wall.leftJoints[0] : wall.rightJoints[0];
+          targetID = id;
+          targetSide = flag ? WallSide.Left : WallSide.Right;
+          // if (targetID && !jointId) {
+          //   return { id: targetID, point: targetPoint, side: targetSide, jointId };
+          // }
         }
       }
     }
-    return { id: targetID, point: targetPoint, side: targetSide, jointId };
+    return { id: targetID, point: targetPoint, side: targetSide, jointId } as SnapTargetType;
   };
 
   const updatePointer = (p: Vector3, targetPoint?: Vector3 | null) => {
@@ -1390,18 +1417,16 @@ const Foundation = ({
     if (isSettingWallStartPointRef.current && addedWallIdRef.current && baseRef.current) {
       const intersects = ray.intersectObjects([baseRef.current]);
       let p = Util.wallRelativePosition(intersects[0].point, foundationModel);
-      let targetID: string | null = null;
-      let targetPoint: Vector3 | null = null;
-      let targetSide: WallSide | null = null;
-      let jointId: string | undefined = undefined;
-      if (!useStore.getState().enableFineGrid) {
-        let target = findMagnetPoint(p, 1.5);
-        targetID = target.id;
-        targetPoint = target.point;
-        targetSide = target.side;
-        jointId = target.jointId;
-      }
+
+      const { id: targetID, point: targetPoint, side: targetSide, jointId: targetJointId } = findMagnetPoint(p, 1.5);
       p = updatePointer(p, targetPoint);
+
+      if (!targetPoint && wallAuxiliaryToOthers.position) {
+        const [x, y] = wallAuxiliaryToOthers.position;
+        p.setX(x);
+        p.setY(y);
+      }
+
       let resizeHandleType = ResizeHandleType.LowerRight;
 
       // attach to other wall
@@ -1429,7 +1454,7 @@ const Foundation = ({
           });
         }
         // left to left
-        else if (targetSide === WallSide.Left && !jointId) {
+        else if (targetSide === WallSide.Left && !targetJointId) {
           setCommonStore((state) => {
             for (const e of state.elements) {
               if (e.type === ObjectType.Wall) {
@@ -1650,6 +1675,8 @@ const Foundation = ({
         setCommonStore((state) => {
           state.updateWallMapOnFoundationFlag = !state.updateWallMapOnFoundationFlag;
         });
+        setWallAuxiliaryXY({ show: false, direction: null, position: null });
+        setWallAuxiliaryToOthers({ show: false, direction: null, position: null });
         break;
       }
       case ObjectType.Polygon: {
@@ -1823,6 +1850,76 @@ const Foundation = ({
   const flipRightHandSideWallRef = useRef(false);
   const flipLeftHandSideWallRef = useRef(false);
 
+  const getWallAngle = (anchor: Vector3, pointer: Vector3, handleType: ResizeHandleType) => {
+    let angle =
+      Math.atan2(pointer.y - anchor.y, pointer.x - anchor.x) -
+      (handleType === ResizeHandleType.LowerLeft ? Math.PI : 0);
+    angle = angle >= 0 ? angle : (TWO_PI + angle) % TWO_PI;
+    return angle;
+  };
+
+  const checkIfAlignedToWall = (p: Vector3, targetId?: string | null) => {
+    let alignedX: number | null = null;
+    let alignedY: number | null = null;
+    for (const wall of Array.from(wallMapOnFoundation.current.values())) {
+      if (grabRef.current !== null && wall.id !== grabRef.current.id && wall.id !== targetId) {
+        if (Math.abs(p.x - wall.leftPoint[0]) < 0.01 || Math.abs(p.x - wall.rightPoint[0]) < 0.01) {
+          alignedX = p.x;
+        }
+        if (Math.abs(p.y - wall.leftPoint[1]) < 0.01 || Math.abs(p.y - wall.rightPoint[1]) < 0.01) {
+          alignedY = p.y;
+        }
+      }
+    }
+    return [alignedX, alignedY];
+  };
+
+  const alignToWall = (p: Vector3, targetId?: string | null) => {
+    let alignedX: number | null = null;
+    let alignedY: number | null = null;
+    let minX = Infinity;
+    let minY = Infinity;
+    for (const wall of Array.from(wallMapOnFoundation.current.values())) {
+      if (grabRef.current !== null && wall.id !== grabRef.current.id && wall.id !== targetId) {
+        const leftXDiff = Math.abs(p.x - wall.leftPoint[0]);
+        const rightXDiff = Math.abs(p.x - wall.rightPoint[0]);
+        const leftYDiff = Math.abs(p.y - wall.leftPoint[1]);
+        const rightYDiff = Math.abs(p.y - wall.rightPoint[1]);
+        if (leftXDiff < 1 && leftXDiff < minX) {
+          minX = leftXDiff;
+          alignedX = wall.leftPoint[0];
+        }
+        if (rightXDiff < 1 && rightXDiff < minX) {
+          minX = rightXDiff;
+          alignedX = wall.rightPoint[0];
+        }
+        if (leftYDiff < 1 && leftYDiff < minY) {
+          minY = leftYDiff;
+          alignedY = wall.leftPoint[1];
+        }
+        if (rightYDiff < 1 && rightYDiff < minY) {
+          minY = rightYDiff;
+          alignedY = wall.rightPoint[1];
+        }
+      }
+    }
+
+    return [alignedX, alignedY];
+  };
+
+  const handleShowAuxiliaryToWall = (p: Vector3, alignedX: number | null, alignedY: number | null) => {
+    if (alignedX !== null && alignedY !== null) {
+      setWallAuxiliaryToOthers({ show: true, direction: 'xy', position: [alignedX, alignedY] });
+    } else if (alignedX !== null) {
+      setWallAuxiliaryToOthers({ show: true, direction: 'y', position: [alignedX, p.y] });
+    } else if (alignedY !== null) {
+      setWallAuxiliaryToOthers({ show: true, direction: 'x', position: [p.x, alignedY] });
+    } else {
+      setWallAuxiliaryToOthers({ show: false, direction: null, position: null });
+    }
+  };
+
+  // handle pointer move
   const handlePointerMove = (e: ThreeEvent<PointerEvent>) => {
     if (!foundationModel) return;
     if (grabRef.current && Util.isSolarCollector(grabRef.current)) return;
@@ -1876,30 +1973,109 @@ const Foundation = ({
               resizeHandleType &&
               (resizeHandleType === ResizeHandleType.LowerLeft || resizeHandleType === ResizeHandleType.LowerRight)
             ) {
+              const anchor = Util.wallRelativePosition(resizeAnchor, foundationModel);
               p = Util.wallRelativePosition(p, foundationModel);
-              let targetID: string | null = null;
-              let targetPoint: Vector3 | null = null;
-              let targetSide: WallSide | null = null;
-              let targetJointId: string | undefined = undefined;
-              if (!useStore.getState().enableFineGrid) {
-                let target = findMagnetPoint(p, 1.5);
-                targetID = target.id;
-                targetPoint = target.point;
-                targetSide = target.side;
-                targetJointId = target.jointId;
-              }
-              p = updatePointer(p, targetPoint);
 
-              // update length
-              const relativeResizeAnchor = Util.wallRelativePosition(resizeAnchor, foundationModel);
-              const lx = p.distanceTo(relativeResizeAnchor);
-              const relativeCenter = new Vector3().addVectors(p, relativeResizeAnchor).divideScalar(2);
-              let angle =
-                Math.atan2(p.y - relativeResizeAnchor.y, p.x - relativeResizeAnchor.x) -
-                (resizeHandleType === ResizeHandleType.LowerLeft ? Math.PI : 0);
-              angle = angle >= 0 ? angle : (TWO_PI + angle) % TWO_PI;
-              const leftPoint = resizeHandleType === ResizeHandleType.LowerLeft ? p : relativeResizeAnchor;
-              const rightPoint = resizeHandleType === ResizeHandleType.LowerLeft ? relativeResizeAnchor : p;
+              let target: SnapTargetType | null = null;
+              let [alignedToWallX, alignedToWallY]: (number | null)[] = [null, null];
+
+              if (useStore.getState().enableFineGrid) {
+                p = Util.snapToFineGrid(p);
+              } else {
+                target = findMagnetPoint(p, 1.5);
+                if (target && target.point) {
+                  p = target.point;
+                  [alignedToWallX, alignedToWallY] = checkIfAlignedToWall(p);
+                } else {
+                  p = Util.snapToNormalGrid(p);
+
+                  // check if aligned to other wall
+                  [alignedToWallX, alignedToWallY] = alignToWall(p);
+                  if (alignedToWallX !== null) p.setX(alignedToWallX);
+                  if (alignedToWallY !== null) p.setY(alignedToWallY);
+
+                  // check snap to other walls again
+                  target = findMagnetPoint(p, 1.5);
+                  if (target && target.point) {
+                    p = target.point;
+                    [alignedToWallX, alignedToWallY] = checkIfAlignedToWall(p, target.id);
+                  }
+                }
+              }
+
+              if (target?.point === null) {
+                const ALIGN_ANGLE_THRESHOLD = 0.05;
+                const angle = getWallAngle(anchor, p, resizeHandleType);
+                let alignedAngle: number | null = null;
+
+                if (angle > Math.PI / 2 - ALIGN_ANGLE_THRESHOLD && angle < Math.PI / 2 + ALIGN_ANGLE_THRESHOLD) {
+                  if (alignedToWallX === null) {
+                    p.setX(anchor.x);
+                    alignedAngle = Math.PI / 2;
+                    setWallAuxiliaryXY((prev) => ({ ...prev, direction: 'y', position: [anchor.x, anchor.y] }));
+                  }
+                } else if (
+                  angle > (3 * Math.PI) / 2 - ALIGN_ANGLE_THRESHOLD &&
+                  angle < (3 * Math.PI) / 2 + ALIGN_ANGLE_THRESHOLD
+                ) {
+                  if (alignedToWallX === null) {
+                    p.setX(anchor.x);
+                    alignedAngle = (3 * Math.PI) / 2;
+                    setWallAuxiliaryXY((prev) => ({ ...prev, direction: 'y', position: [anchor.x, anchor.y] }));
+                  }
+                } else if (angle < ALIGN_ANGLE_THRESHOLD || angle > TWO_PI - ALIGN_ANGLE_THRESHOLD) {
+                  if (alignedToWallY === null) {
+                    p.setY(anchor.y);
+                    alignedAngle = 0;
+                    setWallAuxiliaryXY((prev) => ({ ...prev, direction: 'x', position: [anchor.x, anchor.y] }));
+                  }
+                } else if (angle > Math.PI - ALIGN_ANGLE_THRESHOLD && angle < Math.PI + ALIGN_ANGLE_THRESHOLD) {
+                  if (alignedToWallY === null) {
+                    p.setY(anchor.y);
+                    alignedAngle = Math.PI;
+                    setWallAuxiliaryXY((prev) => ({ ...prev, direction: 'x', position: [anchor.x, anchor.y] }));
+                  }
+                } else {
+                  setWallAuxiliaryXY({ show: false, direction: null, position: null });
+                }
+
+                if (alignedAngle !== null) {
+                  target = findMagnetPoint(p, 1.5);
+                  if (target && target.point) {
+                    p = target.point;
+                    [alignedToWallX, alignedToWallY] = checkIfAlignedToWall(p, target.id);
+                    alignedAngle = null;
+                  } else {
+                    [alignedToWallX, alignedToWallY] = checkIfAlignedToWall(p, target.id);
+                    if (
+                      alignedToWallX !== null &&
+                      (alignedAngle === Math.PI / 2 || alignedAngle === (3 * Math.PI) / 2)
+                    ) {
+                      alignedAngle = null;
+                    } else if (alignedToWallY !== null && (alignedAngle === 0 || alignedAngle === Math.PI)) {
+                      alignedAngle = null;
+                    }
+                  }
+                }
+
+                if (alignedAngle !== null) {
+                  setWallAuxiliaryXY((prev) => ({
+                    ...prev,
+                    show: true,
+                  }));
+                } else {
+                  setWallAuxiliaryXY({ show: false, direction: null, position: null });
+                }
+              }
+
+              handleShowAuxiliaryToWall(p, alignedToWallX, alignedToWallY);
+
+              const lx = p.distanceTo(anchor);
+              const relativeCenter = new Vector3().addVectors(p, anchor).divideScalar(2);
+              const leftPoint = resizeHandleType === ResizeHandleType.LowerLeft ? p : anchor;
+              const rightPoint = resizeHandleType === ResizeHandleType.LowerLeft ? anchor : p;
+              const angle = getWallAngle(anchor, p, resizeHandleType);
+
               setCommonStore((state) => {
                 for (const e of state.elements) {
                   if (e.id === grabRef.current!.id && e.type === ObjectType.Wall) {
@@ -1918,17 +2094,17 @@ const Foundation = ({
               const currWall = getElementById(grabRef.current.id) as WallModel;
               if (currWall) {
                 // attach to other wall
-                if (targetPoint) {
-                  if (targetID && targetSide && !targetJointId) {
-                    const targetWall = getElementById(targetID) as WallModel;
+                if (target && target.point) {
+                  if (target.id && target.side && !target.jointId) {
+                    const targetWall = getElementById(target.id) as WallModel;
                     if (targetWall) {
                       // left to left
                       if (
                         resizeHandleType === ResizeHandleType.LowerLeft &&
                         targetWall.leftJoints.length === 0 &&
-                        targetSide === WallSide.Left
+                        target.side === WallSide.Left
                       ) {
-                        if (currWall.leftJoints.length > 0 && currWall.leftJoints[0] !== targetID) {
+                        if (currWall.leftJoints.length > 0 && currWall.leftJoints[0] !== target.id) {
                           const detachId = currWall.leftJoints[0];
                           setCommonStore((state) => {
                             for (const e of state.elements) {
@@ -1945,9 +2121,9 @@ const Foundation = ({
                       else if (
                         resizeHandleType === ResizeHandleType.LowerRight &&
                         targetWall.rightJoints.length === 0 &&
-                        targetSide === WallSide.Right
+                        target.side === WallSide.Right
                       ) {
-                        if (currWall.rightJoints.length > 0 && currWall.rightJoints[0] !== targetID) {
+                        if (currWall.rightJoints.length > 0 && currWall.rightJoints[0] !== target.id) {
                           const detachId = currWall.rightJoints[0];
                           setCommonStore((state) => {
                             for (const e of state.elements) {
@@ -1963,13 +2139,13 @@ const Foundation = ({
                       // right to left side
                       else if (
                         resizeHandleType === ResizeHandleType.LowerRight &&
-                        targetSide === WallSide.Left &&
+                        target.side === WallSide.Left &&
                         targetWall.leftJoints.length === 0 &&
                         targetWall.rightJoints[0] !== currWall.id
                       ) {
                         setCommonStore((state) => {
                           let detachId: string | null = null;
-                          if (currWall.rightJoints.length > 0 && currWall.rightJoints[0] !== targetID) {
+                          if (currWall.rightJoints.length > 0 && currWall.rightJoints[0] !== target?.id) {
                             detachId = currWall.rightJoints[0];
                           }
                           for (const e of state.elements) {
@@ -1990,13 +2166,13 @@ const Foundation = ({
                       // left to right side
                       else if (
                         resizeHandleType === ResizeHandleType.LowerLeft &&
-                        targetSide === WallSide.Right &&
+                        target.side === WallSide.Right &&
                         targetWall.rightJoints.length === 0 &&
                         targetWall.leftJoints[0] !== currWall.id
                       ) {
                         setCommonStore((state) => {
                           let detachId: string | null = null;
-                          if (currWall.leftJoints.length > 0 && currWall.leftJoints[0] !== targetID) {
+                          if (currWall.leftJoints.length > 0 && currWall.leftJoints[0] !== target?.id) {
                             detachId = currWall.leftJoints[0];
                           }
                           for (const e of state.elements) {
@@ -2174,11 +2350,40 @@ const Foundation = ({
       }
       if (addedWallIdRef.current && isSettingWallStartPointRef.current) {
         p = Util.wallRelativePosition(intersects[0].point, foundationModel);
-        const { point } = findMagnetPoint(p, 1.5);
-        p = updatePointer(p, point);
-        if (isSettingWallStartPointRef.current) {
-          setElementPosition(addedWallIdRef.current, p.x, p.y);
+
+        let target: SnapTargetType | null = null;
+        let [alignedX, alignedY]: (number | null)[] = [null, null];
+
+        if (useStore.getState().enableFineGrid) {
+          p = Util.snapToFineGrid(p);
+        } else {
+          target = findMagnetPoint(p, 1.5);
+          // find wall to snap at first check
+          if (target && target.point) {
+            p = target.point;
+            [alignedX, alignedY] = checkIfAlignedToWall(p);
+          }
+          // no wall to snap at first check
+          else {
+            p = Util.snapToNormalGrid(p);
+            // check if aligned to other wall
+            [alignedX, alignedY] = alignToWall(p);
+            // update pointer
+            if (alignedX !== null) p.setX(alignedX);
+            if (alignedY !== null) p.setY(alignedY);
+
+            // check snap to other walls again
+            target = findMagnetPoint(p, 1.5);
+            if (target && target.point) {
+              p = target.point;
+              [alignedX, alignedY] = checkIfAlignedToWall(p);
+            }
+          }
         }
+
+        handleShowAuxiliaryToWall(p, alignedX, alignedY);
+
+        setElementPosition(addedWallIdRef.current, p.x, p.y);
       }
     }
   };
@@ -2226,6 +2431,8 @@ const Foundation = ({
         });
       }
     }
+    setWallAuxiliaryXY({ show: false, direction: null, position: null });
+    setWallAuxiliaryToOthers({ show: false, direction: null, position: null });
   };
 
   const handlePointerEnter = (e: ThreeEvent<PointerEvent>) => {
@@ -2610,6 +2817,30 @@ const Foundation = ({
           <Wireframe hx={hx} hy={hy} hz={hz} lineColor={LOCKED_ELEMENT_SELECTION_COLOR} lineWidth={lineWidth * 5} />
         )}
 
+        {/* wall axis auxiliary line */}
+        {wallAuxiliaryXY.show && (
+          <group position={[0, 0, hz + 0.01]}>
+            <WallAuxiliaryLine
+              hx={hx}
+              hy={hy}
+              position={wallAuxiliaryXY.position}
+              direction={wallAuxiliaryXY.direction}
+              color={'black'}
+            />
+          </group>
+        )}
+        {wallAuxiliaryToOthers.show && (
+          <group position={[0, 0, hz + 0.01]}>
+            <WallAuxiliaryLine
+              hx={hx}
+              hy={hy}
+              position={wallAuxiliaryToOthers.position}
+              direction={wallAuxiliaryToOthers.direction}
+              color={'yellow'}
+            />
+          </group>
+        )}
+
         {/* draw handles */}
         {selected && !locked && !elementGroupId && (
           <>
@@ -2954,6 +3185,56 @@ const Foundation = ({
       )}
     </>
   );
+};
+
+const WallAuxiliaryLine = ({
+  hx,
+  hy,
+  position,
+  direction,
+  color,
+}: {
+  hx: number;
+  hy: number;
+  position: number[] | null;
+  direction: 'x' | 'y' | 'xy' | null;
+  color: string;
+}) => {
+  if (position === null) return null;
+
+  const [x, y] = position;
+  const points: [number, number, number][] = [];
+
+  if (direction === 'x') {
+    points.push([-hx, y, 0]);
+    points.push([hx, y, 0]);
+  } else if (direction === 'y') {
+    points.push([x, -hy, 0]);
+    points.push([x, hy, 0]);
+  } else if (direction === 'xy') {
+    return (
+      <>
+        <Line
+          points={[
+            [-hx, y, 0],
+            [hx, y, 0],
+          ]}
+          color={color}
+        />
+        <Line
+          points={[
+            [x, -hy, 0],
+            [x, hy, 0],
+          ]}
+          color={color}
+        />
+      </>
+    );
+  } else {
+    return null;
+  }
+
+  return <Line points={points} color={color} />;
 };
 
 export default React.memo(Foundation);
