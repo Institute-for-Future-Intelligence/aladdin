@@ -872,7 +872,7 @@ const GableRoof = (roofModel: GableRoofModel) => {
     <group position={[cx, cy, cz]} rotation={[0, 0, rotation]} name={`Gable Roof Group ${id}`}>
       {/* roof segments group */}
       <group
-        name={'Gable Roof Segments Group'}
+        name={`Gable Roof Segments Group ${id}`}
         position={[centroid.x, centroid.y, centroid.z]}
         onPointerDown={(e) => {
           handlePointerDown(e, id, foundation, roofSegments, centroid, setOldRefData);

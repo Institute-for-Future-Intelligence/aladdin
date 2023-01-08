@@ -685,7 +685,7 @@ const GambrelRoof = (roofModel: GambrelRoofModel) => {
     <group position={[cx, cy, cz + 0.01]} rotation={[0, 0, rotation]} name={`Gambrel Roof Group ${id}`}>
       {/* roof segments */}
       <group
-        name={'Gambrel Roof Segments Group'}
+        name={`Gambrel Roof Segments Group ${id}`}
         position={[centroid.x, centroid.y, centroid.z]}
         onPointerDown={(e) => {
           handlePointerDown(e, id, foundation, roofSegments, centroid, setOldRefData);

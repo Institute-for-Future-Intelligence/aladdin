@@ -76,8 +76,8 @@ const addUndoableAddSolarPanel = (elem: ElementModel) => {
   useStore.getState().addUndoable(undoableAdd);
 };
 
-const getPointerOnRoof = (e: ThreeEvent<PointerEvent>, roofType?: RoofType) => {
-  const match = roofType ? `${roofType} Roof Segments Group` : 'Roof Segments Group';
+const getPointerOnRoof = (e: ThreeEvent<PointerEvent>, id?: string, roofType?: RoofType) => {
+  const match = roofType && id ? `${roofType} Roof Segments Group ${id}` : 'Roof Segments Group';
   for (const intersection of e.intersections) {
     if (intersection.eventObject.name.includes(match)) {
       return intersection.point;
@@ -407,7 +407,7 @@ export const handlePointerMove = (
     case ObjectType.SolarPanel:
       if (useStore.getState().moveHandleType) {
         if (foundation) {
-          const pointer = getPointerOnRoof(event, roofType);
+          const pointer = getPointerOnRoof(event, elem.parentId, roofType);
           const posRelToFoundation = new Vector3()
             .subVectors(pointer, new Vector3(foundation.cx, foundation.cy))
             .applyEuler(new Euler(0, 0, -foundation.rotation[2]));
@@ -432,7 +432,7 @@ export const handlePointerMove = (
     case ObjectType.Light:
       if (useStore.getState().moveHandleType) {
         if (foundation) {
-          const pointer = getPointerOnRoof(event, roofType);
+          const pointer = getPointerOnRoof(event, elem.parentId, roofType);
           const posRelToFoundation = new Vector3()
             .subVectors(pointer, new Vector3(foundation.cx, foundation.cy))
             .applyEuler(new Euler(0, 0, -foundation.rotation[2]));

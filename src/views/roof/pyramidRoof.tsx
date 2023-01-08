@@ -681,7 +681,7 @@ const PyramidRoof = (roofModel: PyramidRoofModel) => {
     <group position={[cx, cy, cz]} rotation={[0, 0, rotation]} name={`Pyramid Roof Group ${id}`}>
       {/* roof segments group */}
       <group
-        name={`Pyramid Roof Segments Group`}
+        name={`Pyramid Roof Segments Group ${id}`}
         position={[centerPoint.x, centerPoint.y, topZ]}
         onPointerDown={(e) => {
           handlePointerDown(e, id, foundation, roofSegments, centerPointV3, setOldRefData);

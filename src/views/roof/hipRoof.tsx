@@ -445,7 +445,7 @@ const HipRoof = (roofModel: HipRoofModel) => {
     <group position={[cx, cy, cz + 0.01]} rotation={[0, 0, rotation]} name={`Hip Roof Group ${id}`}>
       {/* roof segment group */}
       <group
-        name={`Hip Roof Segments Group`}
+        name={`Hip Roof Segments Group ${id}`}
         position={[centroid2D.x, centroid2D.y, topZ]}
         onPointerDown={(e) => {
           handlePointerDown(e, id, foundation, roofSegments, ridgeMidPoint, setOldRefData);
