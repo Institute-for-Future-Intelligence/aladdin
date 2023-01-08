@@ -1,5 +1,5 @@
 /*
- * @Copyright 2022. Institute for Future Intelligence, Inc.
+ * @Copyright 2022-2023. Institute for Future Intelligence, Inc.
  */
 
 import React, { useEffect, useMemo, useRef } from 'react';
@@ -37,6 +37,8 @@ import { HeliostatModel } from '../models/HeliostatModel';
 import { WallModel } from '../models/WallModel';
 import { Point2 } from '../models/Point2';
 import { RoofModel, RoofType } from '../models/RoofModel';
+import { DoorModel, DoorType } from '../models/DoorModel';
+import { SolarRadiation } from './SolarRadiation';
 
 export interface DynamicSolarRadiationSimulationProps {
   city: string | null;
@@ -130,6 +132,7 @@ const DynamicSolarRadiationSimulation = ({ city }: DynamicSolarRadiationSimulati
       switch (e.type) {
         case ObjectType.Cuboid:
         case ObjectType.Wall:
+        case ObjectType.Door:
         case ObjectType.SolarPanel:
         case ObjectType.ParabolicTrough:
         case ObjectType.ParabolicDish:
@@ -167,6 +170,7 @@ const DynamicSolarRadiationSimulation = ({ city }: DynamicSolarRadiationSimulati
       switch (e.type) {
         case ObjectType.Foundation:
         case ObjectType.Wall:
+        case ObjectType.Door:
         case ObjectType.SolarPanel:
         case ObjectType.ParabolicTrough:
         case ObjectType.ParabolicDish:
@@ -350,6 +354,9 @@ const DynamicSolarRadiationSimulation = ({ city }: DynamicSolarRadiationSimulati
               break;
             case ObjectType.Wall:
               calculateWall(e as WallModel);
+              break;
+            case ObjectType.Door:
+              calculateDoor(e as DoorModel);
               break;
             case ObjectType.Roof:
               const roof = e as RoofModel;
@@ -662,6 +669,80 @@ const DynamicSolarRadiationSimulation = ({ city }: DynamicSolarRadiationSimulati
           if (dot > 0) {
             v.set(absPos.x + kx2 * dxcos, absPos.y + kx2 * dxsin, absPos.z + kz2 * dz);
             if (!inShadow(wall.id, v, sunDirection)) {
+              // direct radiation
+              cellOutputs[kx][kz] += dot * peakRadiation;
+            }
+          }
+        }
+      }
+    }
+  };
+
+  const calculateDoor = (door: DoorModel) => {
+    const sunDirection = getSunDirection(now, world.latitude);
+    if (sunDirection.z <= 0) return; // when the sun is not out
+    const foundation = getFoundation(door);
+    if (!foundation) throw new Error('foundation of door not found');
+    const parent = getParent(door);
+    if (!parent) throw new Error('parent of door not found');
+    const dayOfYear = Util.dayOfYear(now);
+    const wall = parent as WallModel;
+    const lx = door.lx * wall.lx;
+    const lz = door.lz * wall.lz;
+    const nx = Math.max(2, Math.round(lx / cellSize));
+    const nz = Math.max(2, Math.round(lz / cellSize));
+    const dx = lx / nx;
+    const dz = lz / nz;
+    const absAngle = foundation.rotation[2] + wall.relativeAngle;
+    const absWallPos = Util.wallAbsolutePosition(new Vector3(wall.cx, wall.cy, wall.cz), foundation).setZ(
+      wall.lz / 2 + foundation.lz,
+    );
+    const absPos = absWallPos.clone().add(new Vector3(door.cx * wall.lx, 0, door.cz * wall.lz));
+    const normal = new Vector3().fromArray([Math.cos(absAngle - HALF_PI), Math.sin(absAngle - HALF_PI), 0]);
+    const dxcos = dx * Math.cos(absAngle);
+    const dxsin = dx * Math.sin(absAngle);
+    const v = new Vector3();
+    let cellOutputs = cellOutputsMapRef.current.get(door.id);
+    if (!cellOutputs || cellOutputs.length !== nx || cellOutputs[0].length !== nz) {
+      cellOutputs = Array(nx)
+        .fill(0)
+        .map(() => Array(nz).fill(0));
+      cellOutputsMapRef.current.set(door.id, cellOutputs);
+    }
+    const peakRadiation = calculatePeakRadiation(sunDirection, dayOfYear, elevation, AirMass.SPHERE_MODEL);
+    const indirectRadiation = calculateDiffuseAndReflectedRadiation(
+      world.ground,
+      now.getMonth(),
+      normal,
+      peakRadiation,
+    );
+    const dot = normal.dot(sunDirection);
+    if (door.doorType === DoorType.Arched) {
+      for (let kx = 0; kx < nx; kx++) {
+        for (let kz = 0; kz < nz; kz++) {
+          const kx2 = kx - nx / 2 + 0.5;
+          const kz2 = kz - nz / 2 + 0.5;
+          v.set(absPos.x + kx2 * dxcos, absPos.y + kx2 * dxsin, absPos.z + kz2 * dz);
+          if (SolarRadiation.pointWithinArch(v, lx, lz, door.archHeight, absPos)) {
+            cellOutputs[kx][kz] += indirectRadiation;
+            if (dot > 0) {
+              if (!inShadow(door.id, v, sunDirection)) {
+                // direct radiation
+                cellOutputs[kx][kz] += dot * peakRadiation;
+              }
+            }
+          }
+        }
+      }
+    } else {
+      for (let kx = 0; kx < nx; kx++) {
+        for (let kz = 0; kz < nz; kz++) {
+          cellOutputs[kx][kz] += indirectRadiation;
+          if (dot > 0) {
+            const kx2 = kx - nx / 2 + 0.5;
+            const kz2 = kz - nz / 2 + 0.5;
+            v.set(absPos.x + kx2 * dxcos, absPos.y + kx2 * dxsin, absPos.z + kz2 * dz);
+            if (!inShadow(door.id, v, sunDirection)) {
               // direct radiation
               cellOutputs[kx][kz] += dot * peakRadiation;
             }

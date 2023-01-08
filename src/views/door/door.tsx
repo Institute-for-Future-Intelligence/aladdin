@@ -1,8 +1,8 @@
 /*
- * @Copyright 2022. Institute for Future Intelligence, Inc.
+ * @Copyright 2022-2023. Institute for Future Intelligence, Inc.
  */
 
-import React, { useMemo, useRef } from 'react';
+import React, { useEffect, useMemo, useRef, useState } from 'react';
 import { DoorModel, DoorType } from 'src/models/DoorModel';
 import { useStore } from 'src/stores/common';
 import * as Selector from 'src/stores/selector';
@@ -13,10 +13,11 @@ import RectangleDoor from './rectangleDoor';
 import ArchedDoor from './archedDoor';
 import { useDoorTexture, useUpdateOldDoors } from './hooks';
 import { ArchResizeHandle } from '../window/windowHandleWrapper';
-import { DoubleSide, FrontSide, MeshStandardMaterial } from 'three';
+import { CanvasTexture, DoubleSide, FrontSide, MeshBasicMaterial, MeshStandardMaterial, RepeatWrapping } from 'three';
 import { Plane } from '@react-three/drei';
 import { HALF_PI, INVALID_ELEMENT_COLOR } from 'src/constants';
 import { RulerOnWall } from '../rulerOnWall';
+import { Util } from '../../Util';
 
 interface DoorHandleWapperProps {
   dimension: number[];
@@ -167,11 +168,40 @@ const Door = (doorModel: DoorModel) => {
     }
   };
 
+  const showSolarRadiationHeatmap = useStore(Selector.showSolarRadiationHeatmap);
+  const solarRadiationHeatmapMaxValue = useStore(Selector.viewState.solarRadiationHeatmapMaxValue);
+  const getHeatmap = useStore(Selector.getHeatmap);
+  const [heatmapTexture, setHeatmapTexture] = useState<CanvasTexture | null>(null);
+
+  useEffect(() => {
+    if (doorModel && showSolarRadiationHeatmap) {
+      const heatmap = getHeatmap(doorModel.id);
+      if (heatmap) {
+        const t = Util.fetchHeatmapTexture(heatmap, solarRadiationHeatmapMaxValue ?? 5);
+        if (t) {
+          t.wrapS = RepeatWrapping;
+          t.wrapT = RepeatWrapping;
+          t.offset.set(-lx / 2, -lz / 2);
+          t.center.set(lx / 2, lz / 2);
+          t.repeat.set(1 / lx, 1 / lz);
+          setHeatmapTexture(t);
+        }
+      }
+    }
+  }, [showSolarRadiationHeatmap, solarRadiationHeatmapMaxValue]);
+
   const texture = useDoorTexture(textureType, doorType, lx, lz);
 
   const dimensionData = useMemo(() => [lx, ly, lz, archHeight], [lx, ly, lz, archHeight]);
 
   const doorMaterial = useMemo(() => {
+    if (showSolarRadiationHeatmap && heatmapTexture) {
+      return new MeshBasicMaterial({
+        color: color,
+        map: heatmapTexture,
+        side: FrontSide,
+      });
+    }
     if (!filled) {
       return new MeshStandardMaterial({
         opacity: color === INVALID_ELEMENT_COLOR ? 0.5 : 0,
@@ -184,7 +214,7 @@ const Door = (doorModel: DoorModel) => {
       return new MeshStandardMaterial({ map: texture, color: color, side: FrontSide });
     }
     return new MeshStandardMaterial({ map: texture, side: FrontSide });
-  }, [color, textureType, texture, filled]);
+  }, [showSolarRadiationHeatmap, heatmapTexture, color, textureType, texture, filled]);
 
   return (
     <group
