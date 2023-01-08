@@ -135,7 +135,7 @@ import CspSimulationSettings from './components/contextMenu/elementMenu/cspSimul
 import PvSimulationSettings from './components/contextMenu/elementMenu/pvSimulationSettings';
 import SutSimulationSettings from './components/contextMenu/elementMenu/sutSimulationSettings';
 import { UndoableChange } from './undo/UndoableChange';
-import { FLOATING_WINDOW_OPACITY, HOME_URL } from './constants';
+import { DEFAULT_SOLAR_PANEL_SHININESS, FLOATING_WINDOW_OPACITY, HOME_URL } from './constants';
 import BuildingEnergySimulationSettings from './components/contextMenu/elementMenu/buildingEnergySimulationSettings';
 import { CheckStatus, useBuildingCheck } from './analysis/buildingHooks';
 
@@ -221,6 +221,7 @@ const MainMenu = ({ viewOnly, set2DView, resetView, zoomView, canvas }: MainMenu
   const showStickyNotePanel = useStore.getState().viewState.showStickyNotePanel;
   const showHeliodonPanel = useStore.getState().viewState.showHeliodonPanel;
   const shadowEnabled = useStore.getState().viewState.shadowEnabled;
+  const solarPanelShininess = useStore.getState().viewState.solarPanelShininess;
   const changed = useStore.getState().changed;
   const cloudFile = useStore.getState().cloudFile;
   const user = useStore.getState().user;
@@ -726,6 +727,29 @@ const MainMenu = ({ viewOnly, set2DView, resetView, zoomView, canvas }: MainMenu
       if (state.viewState.shadowEnabled) {
         state.updateSceneRadius();
       }
+    });
+  };
+
+  const setSurfaceShininess = (value: number) => {
+    const undoableChange = {
+      name: 'Set Surface Shininess',
+      timestamp: Date.now(),
+      oldValue: solarPanelShininess ?? DEFAULT_SOLAR_PANEL_SHININESS,
+      newValue: value,
+      undo: () => {
+        setCommonStore((state) => {
+          state.viewState.solarPanelShininess = undoableChange.oldValue as number;
+        });
+      },
+      redo: () => {
+        setCommonStore((state) => {
+          state.viewState.solarPanelShininess = undoableChange.newValue as number;
+        });
+      },
+    } as UndoableChange;
+    addUndoable(undoableChange);
+    setCommonStore((state) => {
+      state.viewState.solarPanelShininess = value;
     });
   };
 
@@ -1399,6 +1423,16 @@ const MainMenu = ({ viewOnly, set2DView, resetView, zoomView, canvas }: MainMenu
         <Menu.Item key={'shadow-check-box'}>
           <Checkbox checked={shadowEnabled} onChange={toggleShadow}>
             {i18n.t('menu.view.ShowShadow', lang)}
+          </Checkbox>
+        </Menu.Item>
+        <Menu.Item key={'shininess-check-box'}>
+          <Checkbox
+            checked={solarPanelShininess === undefined || solarPanelShininess > 0}
+            onChange={(e) => {
+              setSurfaceShininess(e.target.checked ? DEFAULT_SOLAR_PANEL_SHININESS : 0);
+            }}
+          >
+            {i18n.t('menu.view.ShowSurfaceShininess', lang)}
           </Checkbox>
         </Menu.Item>
         <Menu.Item key={'site-info-panel-check-box'}>

@@ -21,8 +21,8 @@ export const YELLOW = new Color(1, 1, 0);
 export const RED = new Color(1, 0, 0);
 export const SOLAR_HEATMAP_COLORS = [BLUE, GREEN, YELLOW, RED];
 
-export const DEFAULT_SOLAR_PANEL_SHINESS = 100;
-export const DEFAULT_WINDOW_SHINESS = 200;
+export const DEFAULT_SOLAR_PANEL_SHININESS = 100;
+export const DEFAULT_WINDOW_SHININESS = 200;
 export const SOLAR_PANEL_BLUE_SPECULAR = '#3BB9FF';
 export const SOLAR_PANEL_BLACK_SPECULAR = '#36454F';
 

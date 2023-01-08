@@ -10,7 +10,7 @@ import { useStoreRef } from 'src/stores/commonRef';
 import * as Selector from '../../stores/selector';
 import { ThreeEvent, useThree } from '@react-three/fiber';
 import {
-  DEFAULT_SOLAR_PANEL_SHINESS,
+  DEFAULT_SOLAR_PANEL_SHININESS,
   HALF_PI,
   HIGHLIGHT_HANDLE_COLOR,
   LOCKED_ELEMENT_SELECTION_COLOR,
@@ -78,7 +78,7 @@ const SolarPanel = ({
   const elements = useStore(Selector.elements);
   const showSolarRadiationHeatmap = useStore(Selector.showSolarRadiationHeatmap);
   const shadowEnabled = useStore(Selector.viewState.shadowEnabled);
-  const solarPanelShiness = useStore(Selector.viewState.solarPanelShiness);
+  const solarPanelShininess = useStore(Selector.viewState.solarPanelShininess);
   const getElementById = useStore(Selector.getElementById);
   const selectMe = useStore(Selector.selectMe);
   const updateSolarPanelTiltAngleById = useStore(Selector.updateSolarPanelTiltAngleById);
@@ -362,14 +362,14 @@ const SolarPanel = ({
       return <meshBasicMaterial attachArray="material" map={heatmapTexture} />;
     }
     if (!texture) return null;
-    if (orthographic || solarPanelShiness === 0) {
+    if (orthographic || solarPanelShininess === 0) {
       return <meshStandardMaterial attachArray="material" map={texture} color={color} />;
     }
     return (
       <meshPhongMaterial
         attachArray="material"
         specular={new Color(pvModel?.color === 'Blue' ? SOLAR_PANEL_BLUE_SPECULAR : SOLAR_PANEL_BLACK_SPECULAR)}
-        shininess={solarPanelShiness ?? DEFAULT_SOLAR_PANEL_SHINESS}
+        shininess={solarPanelShininess ?? DEFAULT_SOLAR_PANEL_SHININESS}
         side={FrontSide}
         map={texture}
         color={color}

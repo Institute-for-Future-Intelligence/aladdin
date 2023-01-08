@@ -240,6 +240,7 @@ export const i18n_zh_tw = {
         Instruction: '操作說明',
         StickyNote: '便簽',
         ShowShadow: '顯示陰影',
+        ShowSurfaceShininess: '顯示表面光澤',
         TranslucentFloatingWindows: '透明浮動窗口',
       },
       toolSubMenu: '工具',

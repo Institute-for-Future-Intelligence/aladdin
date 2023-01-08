@@ -1,14 +1,14 @@
 /*
- * @Copyright 2021-2022. Institute for Future Intelligence, Inc.
+ * @Copyright 2021-2023. Institute for Future Intelligence, Inc.
  */
 
 import { CommonStoreState } from '../common';
 
 export const shadowEnabled = (state: CommonStoreState) => state.viewState.shadowEnabled;
 
-export const solarPanelShiness = (state: CommonStoreState) => state.viewState.solarPanelShiness;
+export const solarPanelShininess = (state: CommonStoreState) => state.viewState.solarPanelShininess;
 
-export const windowShiness = (state: CommonStoreState) => state.viewState.windowShiness;
+export const windowShininess = (state: CommonStoreState) => state.viewState.windowShininess;
 
 export const solarRadiationHeatmapMaxValue = (state: CommonStoreState) => state.viewState.solarRadiationHeatMapMaxValue;
 

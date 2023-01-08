@@ -1,5 +1,5 @@
 /*
- * @Copyright 2021-2022. Institute for Future Intelligence, Inc.
+ * @Copyright 2021-2023. Institute for Future Intelligence, Inc.
  */
 
 import React, { useEffect, useMemo } from 'react';
@@ -10,7 +10,7 @@ import { useStore } from 'src/stores/common';
 import { ObjectType } from 'src/types';
 import * as Selector from 'src/stores/selector';
 import WindowHandleWrapper from './windowHandleWrapper';
-import { DEFAULT_WINDOW_SHINESS } from 'src/constants';
+import { DEFAULT_WINDOW_SHININESS } from 'src/constants';
 import { ThreeEvent } from '@react-three/fiber';
 import RectangleWindow from './rectangleWindow';
 import ArchedWindow from './archedWindow';
@@ -180,7 +180,7 @@ const Window = (windowModel: WindowModel) => {
 
   const setCommonStore = useStore(Selector.set);
   const isAddingElement = useStore(Selector.isAddingElement);
-  const windowShiness = useStore(Selector.viewState.windowShiness);
+  const windowShininess = useStore(Selector.viewState.windowShininess);
 
   const selectMe = () => {
     setCommonStore((state) => {
@@ -225,14 +225,14 @@ const Window = (windowModel: WindowModel) => {
     () => (
       <meshPhongMaterial
         specular={new Color('white')}
-        shininess={windowShiness ?? DEFAULT_WINDOW_SHINESS}
+        shininess={windowShininess ?? DEFAULT_WINDOW_SHININESS}
         color={tint}
         side={DoubleSide}
         opacity={opacity}
         transparent={true}
       />
     ),
-    [windowShiness, tint, opacity],
+    [windowShininess, tint, opacity],
   );
 
   const dimensionData = useMemo(() => {

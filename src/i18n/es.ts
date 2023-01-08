@@ -242,6 +242,7 @@ export const i18n_es = {
         Instruction: 'Instrucción',
         StickyNote: 'Nota adhesiva',
         ShowShadow: 'Mostrar sombra',
+        ShowSurfaceShininess: 'Show Surface Shininess',
         TranslucentFloatingWindows: 'Translucent Floating Windows',
       },
       toolSubMenu: 'Herramienta',

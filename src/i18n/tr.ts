@@ -241,6 +241,7 @@ export const i18n_tr = {
         Instruction: 'Yardım',
         StickyNote: 'Notlar',
         ShowShadow: 'Gölge',
+        ShowSurfaceShininess: 'Show Surface Shininess',
         TranslucentFloatingWindows: 'Yüzer Pencere',
       },
       toolSubMenu: 'Araçlar',

@@ -1,5 +1,5 @@
 /*
- * @Copyright 2021-2022. Institute for Future Intelligence, Inc.
+ * @Copyright 2021-2023. Institute for Future Intelligence, Inc.
  */
 
 import { Rectangle } from '../models/Rectangle';
@@ -29,8 +29,8 @@ export interface ViewState {
   groundImage: boolean;
   groundColor: string;
   waterSurface: boolean;
-  solarPanelShiness?: number;
-  windowShiness?: number;
+  solarPanelShininess?: number;
+  windowShininess?: number;
 
   showMapPanel: boolean;
   showHeliodonPanel: boolean;
