@@ -1,5 +1,5 @@
 /*
- * @Copyright 2021-2022. Institute for Future Intelligence, Inc.
+ * @Copyright 2021-2023. Institute for Future Intelligence, Inc.
  */
 
 import create from 'zustand';
@@ -19,7 +19,6 @@ import {
   ActionType,
   CuboidTexture,
   DatumEntry,
-  DiurnalTemperatureModel,
   ElementState,
   EvolutionMethod,
   FlowerType,
@@ -56,8 +55,7 @@ import { WallModel, WallStructure } from '../models/WallModel';
 import { Locale } from 'antd/lib/locale-provider';
 import enUS from 'antd/lib/locale/en_US';
 import { Undoable } from '../undo/Undoable';
-// @ts-ignore
-import UndoManager from 'undo-manager';
+import UndoManager from '../js/UndoManager';
 import { TreeModel } from '../models/TreeModel';
 import { HumanModel } from '../models/HumanModel';
 import { FoundationModel } from '../models/FoundationModel';

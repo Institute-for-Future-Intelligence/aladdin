@@ -1285,7 +1285,8 @@ const MainMenu = ({ viewOnly, set2DView, resetView, zoomView, canvas }: MainMenu
               key="undo"
               onClick={() => {
                 if (undoManager.hasUndo()) {
-                  undoManager.undo();
+                  const commandName = undoManager.undo();
+                  if (commandName) showInfo(i18n.t('menu.edit.Undo', lang) + commandName, 0.2);
                   if (loggable) {
                     setCommonStore((state) => {
                       state.actionInfo = {
@@ -1297,7 +1298,7 @@ const MainMenu = ({ viewOnly, set2DView, resetView, zoomView, canvas }: MainMenu
                 }
               }}
             >
-              {i18n.t('menu.edit.Undo', lang)}
+              {i18n.t('menu.edit.Undo', lang) + ': ' + undoManager.getLastUndoName()}
               <label style={{ paddingLeft: '2px', fontSize: 9 }}>({isMac ? '⌘' : 'Ctrl'}+Z)</label>
             </Menu.Item>
           )}
@@ -1306,7 +1307,8 @@ const MainMenu = ({ viewOnly, set2DView, resetView, zoomView, canvas }: MainMenu
               key="redo"
               onClick={() => {
                 if (undoManager.hasRedo()) {
-                  undoManager.redo();
+                  const commandName = undoManager.redo();
+                  if (commandName) showInfo(i18n.t('menu.edit.Redo', lang) + commandName, 0.2);
                   if (loggable) {
                     setCommonStore((state) => {
                       state.actionInfo = {
@@ -1318,7 +1320,7 @@ const MainMenu = ({ viewOnly, set2DView, resetView, zoomView, canvas }: MainMenu
                 }
               }}
             >
-              {i18n.t('menu.edit.Redo', lang)}
+              {i18n.t('menu.edit.Redo', lang) + ': ' + undoManager.getLastRedoName()}
               <label style={{ paddingLeft: '2px', fontSize: 9 }}>({isMac ? '⌘' : 'Ctrl'}+Y)</label>
             </Menu.Item>
           )}

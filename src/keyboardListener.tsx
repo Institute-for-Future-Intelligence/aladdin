@@ -875,7 +875,8 @@ const KeyboardListener = ({ canvas, set2DView, resetView, zoomView }: KeyboardLi
       case 'ctrl+z':
       case 'meta+z': // for Mac
         if (undoManager.hasUndo()) {
-          undoManager.undo();
+          const commandName = undoManager.undo();
+          if (commandName) showInfo(i18n.t('menu.edit.Undo', lang) + commandName, 0.2);
           if (loggable) {
             setCommonStore((state) => {
               state.actionInfo = {
@@ -889,7 +890,8 @@ const KeyboardListener = ({ canvas, set2DView, resetView, zoomView }: KeyboardLi
       case 'ctrl+y':
       case 'meta+y': // for Mac
         if (undoManager.hasRedo()) {
-          undoManager.redo();
+          const commandName = undoManager.redo();
+          if (commandName) showInfo(i18n.t('menu.edit.Redo', lang) + commandName, 0.2);
           if (loggable) {
             setCommonStore((state) => {
               state.actionInfo = {

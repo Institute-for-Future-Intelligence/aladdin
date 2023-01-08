@@ -47,9 +47,9 @@ export const getRoadMap = (size: number, lat: number, lng: number, zoom: number)
   );
 };
 
-export const showSuccess = (msg: string) => {
+export const showSuccess = (msg: string, duration?: number) => {
   message.success({
-    duration: 2,
+    duration: duration ?? 2,
     content: msg,
     className: 'custom-class',
     style: {
@@ -61,9 +61,9 @@ export const showSuccess = (msg: string) => {
   });
 };
 
-export const showInfo = (msg: string) => {
+export const showInfo = (msg: string, duration?: number) => {
   message.info({
-    duration: 2,
+    duration: duration ?? 2,
     content: msg,
     className: 'custom-class',
     style: {
@@ -75,9 +75,9 @@ export const showInfo = (msg: string) => {
   });
 };
 
-export const showWarning = (msg: string) => {
+export const showWarning = (msg: string, duration?: number) => {
   message.warning({
-    duration: 2,
+    duration: duration ?? 2,
     content: msg,
     className: 'custom-class',
     style: {
