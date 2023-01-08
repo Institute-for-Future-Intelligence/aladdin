@@ -358,4 +358,18 @@ export class RoofUtil {
     }
     return maxWallHeight;
   }
+
+  static isValidOnRoof(elem: ElementModel | null) {
+    if (!elem) return false;
+    switch (elem.type) {
+      case ObjectType.SolarPanel:
+        return (elem as SolarPanelModel).parentType === ObjectType.Roof;
+      case ObjectType.Light:
+      case ObjectType.Sensor:
+        return true;
+    }
+    return false;
+  }
+
+  static isFirstIntersectRoof(event: ThreeEvent<PointerEvent>, id: string) {}
 }

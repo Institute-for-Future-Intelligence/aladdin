@@ -33,6 +33,7 @@ import {
   RoofHandle,
   RoofWireframeProps,
   updateRooftopElements,
+  RoofSegmentGroupUserData,
 } from './roofRenderer';
 import RoofSegment from './roofSegment';
 import { RoofUtil } from './RoofUtil';
@@ -441,17 +442,26 @@ const HipRoof = (roofModel: HipRoofModel) => {
     }
   }, [showSolarRadiationHeatmap, solarRadiationHeatmapMaxValue]);
 
+  // used for move rooftop elements between different roofs, passed to handlePointerMove in roofRenderer
+  const userData: RoofSegmentGroupUserData = {
+    roofId: id,
+    foundation: foundation,
+    centroid: ridgeMidPoint,
+    roofSegments: roofSegments,
+  };
+
   return (
     <group position={[cx, cy, cz + 0.01]} rotation={[0, 0, rotation]} name={`Hip Roof Group ${id}`}>
       {/* roof segment group */}
       <group
         name={`Hip Roof Segments Group ${id}`}
         position={[centroid2D.x, centroid2D.y, topZ]}
+        userData={userData}
         onPointerDown={(e) => {
           handlePointerDown(e, id, foundation, roofSegments, ridgeMidPoint, setOldRefData);
         }}
         onPointerMove={(e) => {
-          handlePointerMove(e, grabRef.current, foundation, roofType, roofSegments, ridgeMidPoint);
+          handlePointerMove(e, id);
         }}
         onPointerUp={(e) => {
           handlePointerUp(grabRef, foundation, currentWallArray[0], id, overhang, undoMove, addUndoableMove);
@@ -496,10 +506,10 @@ const HipRoof = (roofModel: HipRoofModel) => {
               setEnableIntersectionPlane(true);
               intersectionPlanePosition.set(ridgeLeftPoint.x, ridgeLeftPoint.y, topZ);
               if (foundation && currentWallArray[0]) {
-                const dir = new Vector3().subVectors(ridgeLeftPoint, camera.position).normalize();
+                const dir = useStore.getState().cameraDirection;
                 const rX = Math.atan2(dir.z, dir.y);
                 const rZ = currentWallArray[0].relativeAngle;
-                intersectionPlaneRotation.set(-HALF_PI + rX, 0, rZ, 'ZXY');
+                intersectionPlaneRotation.set(-HALF_PI - rX, 0, rZ, 'ZXY');
               }
               setRoofHandleType(RoofHandleType.Left);
               useStoreRef.getState().setEnableOrbitController(false);
@@ -538,10 +548,10 @@ const HipRoof = (roofModel: HipRoofModel) => {
               setEnableIntersectionPlane(true);
               intersectionPlanePosition.set(ridgeRightPoint.x, ridgeRightPoint.y, topZ);
               if (foundation && currentWallArray[0]) {
-                const dir = new Vector3().subVectors(ridgeRightPoint, camera.position).normalize();
-                const rX = Math.atan2(dir.z, Math.hypot(dir.x, dir.y));
+                const dir = useStore.getState().cameraDirection;
+                const rX = Math.atan2(dir.z, dir.y);
                 const rZ = currentWallArray[0].relativeAngle;
-                intersectionPlaneRotation.set(-HALF_PI + rX, 0, rZ, 'ZXY');
+                intersectionPlaneRotation.set(-HALF_PI - rX, 0, rZ, 'ZXY');
               }
               setRoofHandleType(RoofHandleType.Right);
               useStoreRef.getState().setEnableOrbitController(false);

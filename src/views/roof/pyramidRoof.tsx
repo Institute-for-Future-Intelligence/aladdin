@@ -22,6 +22,7 @@ import {
   handlePointerMove,
   handlePointerUp,
   RoofHandle,
+  RoofSegmentGroupUserData,
   RoofSegmentProps,
   RoofWireframeProps,
   updateRooftopElements,
@@ -38,6 +39,7 @@ import {
   useUpdateSegmentVerticesWithoutOverhangMap,
 } from './hooks';
 import RoofSegment from './roofSegment';
+import { ElementModel } from 'src/models/ElementModel';
 
 const intersectionPlanePosition = new Vector3();
 const intersectionPlaneRotation = new Euler();
@@ -677,17 +679,26 @@ const PyramidRoof = (roofModel: PyramidRoofModel) => {
 
   useUpdateSegmentVerticesWithoutOverhangMap(updateSegmentVerticesWithoutOverhangeMap);
 
+  // used for move rooftop elements between different roofs, passed to handlePointerMove in roofRenderer
+  const userData: RoofSegmentGroupUserData = {
+    roofId: id,
+    foundation: foundation,
+    centroid: centerPointV3,
+    roofSegments: roofSegments,
+  };
+
   return (
     <group position={[cx, cy, cz]} rotation={[0, 0, rotation]} name={`Pyramid Roof Group ${id}`}>
       {/* roof segments group */}
       <group
         name={`Pyramid Roof Segments Group ${id}`}
+        userData={userData}
         position={[centerPoint.x, centerPoint.y, topZ]}
         onPointerDown={(e) => {
           handlePointerDown(e, id, foundation, roofSegments, centerPointV3, setOldRefData);
         }}
         onPointerMove={(e) => {
-          handlePointerMove(e, grabRef.current, foundation, roofType, roofSegments, centerPointV3);
+          handlePointerMove(e, id);
         }}
         onPointerUp={(e) => {
           handlePointerUp(grabRef, foundation, currentWallArray[0], id, overhang, undoMove, addUndoableMove);

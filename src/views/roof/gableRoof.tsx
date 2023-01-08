@@ -40,6 +40,7 @@ import {
   RoofSegmentProps,
   RoofWireframeProps,
   updateRooftopElements,
+  RoofSegmentGroupUserData,
 } from './roofRenderer';
 import { UnoableResizeGableRoofRidge } from 'src/undo/UndoableResize';
 import { ActionType, ObjectType, RoofHandleType, RoofTexture } from 'src/types';
@@ -868,17 +869,26 @@ const GableRoof = (roofModel: GableRoofModel) => {
     }
   }, [showSolarRadiationHeatmap, solarRadiationHeatmapMaxValue]);
 
+  // used for move rooftop elements between different roofs, passed to handlePointerMove in roofRenderer
+  const userData: RoofSegmentGroupUserData = {
+    roofId: id,
+    foundation: foundation,
+    centroid: centroid,
+    roofSegments: roofSegments,
+  };
+
   return (
     <group position={[cx, cy, cz]} rotation={[0, 0, rotation]} name={`Gable Roof Group ${id}`}>
       {/* roof segments group */}
       <group
         name={`Gable Roof Segments Group ${id}`}
         position={[centroid.x, centroid.y, centroid.z]}
+        userData={userData}
         onPointerDown={(e) => {
           handlePointerDown(e, id, foundation, roofSegments, centroid, setOldRefData);
         }}
         onPointerMove={(e) => {
-          handlePointerMove(e, grabRef.current, foundation, roofType, roofSegments, centroid);
+          handlePointerMove(e, id);
         }}
         onPointerUp={(e) => {
           handlePointerUp(grabRef, foundation, currentWallArray[0], id, overhang, undoMove, addUndoableMove);
@@ -1020,7 +1030,6 @@ const GableRoof = (roofModel: GableRoofModel) => {
           name={'Roof Intersection Plane'}
           ref={intersectionPlaneRef}
           args={[1000, 100]}
-          visible={false}
           position={intersectionPlanePosition}
           rotation={intersectionPlaneRotation}
           onPointerMove={(e) => {

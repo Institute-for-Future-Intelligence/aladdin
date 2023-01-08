@@ -26,6 +26,7 @@ import {
   RoofHandle,
   RoofWireframeProps,
   updateRooftopElements,
+  RoofSegmentGroupUserData,
 } from './roofRenderer';
 import { ActionType, ObjectType, RoofHandleType } from 'src/types';
 import { RoofUtil } from './RoofUtil';
@@ -681,17 +682,26 @@ const GambrelRoof = (roofModel: GambrelRoofModel) => {
     }
   }, [showSolarRadiationHeatmap, solarRadiationHeatmapMaxValue]);
 
+  // used for move rooftop elements between different roofs, passed to handlePointerMove in roofRenderer
+  const userData: RoofSegmentGroupUserData = {
+    roofId: id,
+    foundation: foundation,
+    centroid: centroid,
+    roofSegments: roofSegments,
+  };
+
   return (
     <group position={[cx, cy, cz + 0.01]} rotation={[0, 0, rotation]} name={`Gambrel Roof Group ${id}`}>
       {/* roof segments */}
       <group
         name={`Gambrel Roof Segments Group ${id}`}
         position={[centroid.x, centroid.y, centroid.z]}
+        userData={userData}
         onPointerDown={(e) => {
           handlePointerDown(e, id, foundation, roofSegments, centroid, setOldRefData);
         }}
         onPointerMove={(e) => {
-          handlePointerMove(e, grabRef.current, foundation, roofType, roofSegments, centroid);
+          handlePointerMove(e, id);
         }}
         onPointerUp={(e) => {
           handlePointerUp(grabRef, foundation, currentWallArray[0], id, overhang, undoMove, addUndoableMove);

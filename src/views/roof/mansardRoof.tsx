@@ -36,6 +36,7 @@ import {
   RoofHandle,
   RoofWireframeProps,
   updateRooftopElements,
+  RoofSegmentGroupUserData,
 } from './roofRenderer';
 import RoofSegment from './roofSegment';
 import { RoofUtil } from './RoofUtil';
@@ -665,16 +666,25 @@ const MansardRoof = (roofModel: MansardRoofModel) => {
     }
   }, [topRidgeShape, showSolarRadiationHeatmap]);
 
+  // used for move rooftop elements between different roofs, passed to handlePointerMove in roofRenderer
+  const userData: RoofSegmentGroupUserData = {
+    roofId: id,
+    foundation: foundation,
+    centroid: centroid,
+    roofSegments: roofSegments,
+  };
+
   return (
     <group position={[cx, cy, cz + 0.01]} rotation={[0, 0, rotationZ]} name={`Mansard Roof Group ${id}`}>
       <group
         name={`Mansard Roof Segments Group ${id}`}
         position={[centroid.x, centroid.y, centroid.z]}
+        userData={userData}
         onPointerDown={(e) => {
           handlePointerDown(e, id, foundation, roofSegments, centroid, setOldRefData);
         }}
         onPointerMove={(e) => {
-          handlePointerMove(e, grabRef.current, foundation, roofType, roofSegments, centroid);
+          handlePointerMove(e, id);
         }}
         onPointerUp={(e) => {
           e.stopPropagation();

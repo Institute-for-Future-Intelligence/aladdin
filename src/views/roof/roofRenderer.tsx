@@ -38,6 +38,12 @@ import { SensorModel } from '../../models/SensorModel';
 import { LightModel } from '../../models/LightModel';
 import { useHandleSize } from '../wall/hooks';
 
+export interface RoofSegmentGroupUserData {
+  roofId: string;
+  foundation: ElementModel | null;
+  centroid: Vector3;
+  roofSegments: RoofSegmentProps[];
+}
 export interface RoofSegmentProps {
   points: Vector3[];
   angle: number;
@@ -76,10 +82,9 @@ const addUndoableAddSolarPanel = (elem: ElementModel) => {
   useStore.getState().addUndoable(undoableAdd);
 };
 
-const getPointerOnRoof = (e: ThreeEvent<PointerEvent>, id?: string, roofType?: RoofType) => {
-  const match = roofType && id ? `${roofType} Roof Segments Group ${id}` : 'Roof Segments Group';
+const getPointerOnRoof = (e: ThreeEvent<PointerEvent>) => {
   for (const intersection of e.intersections) {
-    if (intersection.eventObject.name.includes(match)) {
+    if (intersection.eventObject.name.includes('Roof Segments Group')) {
       return intersection.point;
     }
   }
@@ -392,67 +397,48 @@ export const handlePointerUp = (
   });
 };
 
-export const handlePointerMove = (
-  event: ThreeEvent<PointerEvent>,
-  elem: ElementModel | null,
-  foundation: ElementModel | null,
-  roofType: RoofType,
-  roofSegments: RoofSegmentProps[],
-  centroid: Vector3,
-) => {
-  if (elem === null) {
-    return;
-  }
-  switch (elem.type) {
-    case ObjectType.SolarPanel:
-      if (useStore.getState().moveHandleType) {
-        if (foundation) {
-          const pointer = getPointerOnRoof(event, elem.parentId, roofType);
-          const posRelToFoundation = new Vector3()
-            .subVectors(pointer, new Vector3(foundation.cx, foundation.cy))
-            .applyEuler(new Euler(0, 0, -foundation.rotation[2]));
-          const posRelToCentroid = posRelToFoundation.clone().sub(centroid);
-          const { normal, rotation } = RoofUtil.computeState(roofSegments, posRelToCentroid);
-          useStore.getState().set((state) => {
-            for (const e of state.elements) {
-              if (e.id === elem.id) {
-                e.cx = posRelToFoundation.x / foundation.lx;
-                e.cy = posRelToFoundation.y / foundation.ly;
-                e.cz = posRelToFoundation.z - foundation.lz;
-                e.rotation = [...rotation];
-                e.normal = normal.toArray();
-                break;
-              }
-            }
-          });
-        }
-      }
-      break;
+export const handlePointerMove = (event: ThreeEvent<PointerEvent>, id: string) => {
+  const selectedElement = useStore.getState().getSelectedElement();
+  if (!selectedElement || !RoofUtil.isValidOnRoof(selectedElement)) return;
+
+  switch (selectedElement.type) {
     case ObjectType.Sensor:
     case ObjectType.Light:
+    case ObjectType.SolarPanel: {
       if (useStore.getState().moveHandleType) {
-        if (foundation) {
-          const pointer = getPointerOnRoof(event, elem.parentId, roofType);
-          const posRelToFoundation = new Vector3()
-            .subVectors(pointer, new Vector3(foundation.cx, foundation.cy))
-            .applyEuler(new Euler(0, 0, -foundation.rotation[2]));
-          const posRelToCentroid = posRelToFoundation.clone().sub(centroid);
-          const { normal, rotation } = RoofUtil.computeState(roofSegments, posRelToCentroid);
+        const intersectionRoofs = event.intersections.filter((i) => i.eventObject.name.includes('Roof'));
+        const isFirstIntersectedRoof = intersectionRoofs[0].eventObject.userData.roofId === id;
+
+        if (isFirstIntersectedRoof) {
           useStore.getState().set((state) => {
             for (const e of state.elements) {
-              if (e.id === elem.id) {
-                e.cx = posRelToFoundation.x / foundation.lx;
-                e.cy = posRelToFoundation.y / foundation.ly;
-                e.cz = posRelToFoundation.z - foundation.lz;
-                e.rotation = [...rotation];
-                e.normal = normal.toArray();
+              if (e.id === selectedElement.id) {
+                const { roofId, foundation, centroid, roofSegments } = intersectionRoofs[0].eventObject
+                  .userData as RoofSegmentGroupUserData;
+
+                if (foundation && centroid && roofSegments && roofId) {
+                  const pointer = intersectionRoofs[0].point;
+                  const posRelToFoundation = new Vector3()
+                    .subVectors(pointer, new Vector3(foundation.cx, foundation.cy))
+                    .applyEuler(new Euler(0, 0, -foundation.rotation[2]));
+                  const posRelToCentroid = posRelToFoundation.clone().sub(centroid);
+                  const { normal, rotation } = RoofUtil.computeState(roofSegments, posRelToCentroid);
+                  e.cx = posRelToFoundation.x / foundation.lx;
+                  e.cy = posRelToFoundation.y / foundation.ly;
+                  e.cz = posRelToFoundation.z - foundation.lz;
+                  e.rotation = [...rotation];
+                  e.normal = normal.toArray();
+                  e.parentId = roofId;
+                  e.foundationId = foundation.id;
+                  state.selectedElement = e;
+                }
                 break;
               }
             }
           });
         }
       }
-      break;
+    }
   }
 };
 
