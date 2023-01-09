@@ -1,17 +1,19 @@
 /*
- * @Copyright 2022. Institute for Future Intelligence, Inc.
+ * @Copyright 2022-2023. Institute for Future Intelligence, Inc.
  */
 
 import React, { useMemo } from 'react';
 import { CatmullRomCurve3, EllipseCurve, FrontSide, MeshStandardMaterial, Shape, Vector3 } from 'three';
-import { Box, Cylinder, Extrude, Plane } from '@react-three/drei';
+import { Box, Cylinder, Extrude, Line, Plane } from '@react-three/drei';
 import { useStore } from 'src/stores/common';
 import * as Selector from 'src/stores/selector';
 import { HALF_PI, LOCKED_ELEMENT_SELECTION_COLOR } from 'src/constants';
 import { FrameDataType, MullionDataType, Shutter, WireframeDataType } from './window';
 import { ShutterProps } from 'src/models/WindowModel';
+import { usePrimitiveStore } from '../../stores/commonPrimitive';
 
-interface ArchWindowProps {
+interface ArchedWindowProps {
+  id: string;
   dimension: number[];
   position: number[];
   mullionData: MullionDataType;
@@ -19,6 +21,8 @@ interface ArchWindowProps {
   wireframeData: WireframeDataType;
   shutter: ShutterProps;
   glassMaterial: JSX.Element;
+  showHeatFluxes: boolean;
+  area: number;
 }
 interface MullionProps {
   dimension: number[];
@@ -411,6 +415,7 @@ export const ArchedWireframe = React.memo(({ cy, dimension, wireframeData, drawB
 });
 
 const ArchedWindow = ({
+  id,
   dimension,
   position,
   mullionData,
@@ -418,11 +423,84 @@ const ArchedWindow = ({
   wireframeData,
   shutter,
   glassMaterial,
-}: ArchWindowProps) => {
+  showHeatFluxes,
+  area,
+}: ArchedWindowProps) => {
+  const world = useStore.getState().world;
+  const heatFluxScaleFactor = useStore(Selector.viewState.heatFluxScaleFactor);
+  const shadowEnabled = useStore(Selector.viewState.shadowEnabled);
+  const hourlyHeatExchangeArrayMap = usePrimitiveStore(Selector.hourlyHeatExchangeArrayMap);
+
   const [lx, ly, lz, archHeight] = dimension;
   const [cx, cy, cz] = position;
 
-  const shadowEnabled = useStore(Selector.viewState.shadowEnabled);
+  const pointWithinArch = (x: number, z: number) => {
+    if (archHeight > 0) {
+      const hx = 0.5 * lx;
+      const hz = 0.5 * lz;
+      const ah = Math.min(archHeight, lz, hx); // actual arch height
+      const r = 0.5 * (ah + (hx * hx) / ah); // arc radius
+      // check if the point is within the rectangular part
+      if (Math.abs(x) < hx && z < hz - ah && z > -hz) {
+        return true;
+      }
+      // check if the point is within the arch part
+      const dz = z - (lz - r - hz);
+      return x * x + dz * dz < r * r;
+    }
+    return true;
+  };
+
+  const heatFluxes: Vector3[][] | undefined = useMemo(() => {
+    if (!showHeatFluxes) return undefined;
+    const heat = hourlyHeatExchangeArrayMap.get(id);
+    if (!heat) return undefined;
+    const sum = heat.reduce((a, b) => a + b, 0);
+    if (area === 0) return undefined;
+    const cellSize = world.solarRadiationHeatmapGridCellSize ?? 0.5;
+    const nx = Math.max(2, Math.round(lx / cellSize));
+    const nz = Math.max(2, Math.round(lz / cellSize));
+    const dx = lx / nx;
+    const dz = lz / nz;
+    const intensity = (sum / area) * (heatFluxScaleFactor ?? 100);
+    const arrowLength = 0.1;
+    const arrowLengthHalf = arrowLength / 2;
+    const vectors: Vector3[][] = [];
+    if (intensity < 0) {
+      for (let kx = 0; kx < nx; kx++) {
+        for (let kz = 0; kz < nz; kz++) {
+          const v: Vector3[] = [];
+          const rx = (kx - nx / 2 + 0.5) * dx;
+          const rz = (kz - nz / 2 + 0.5) * dz;
+          if (pointWithinArch(rx, rz)) {
+            v.push(new Vector3(rx, 0, rz));
+            v.push(new Vector3(rx, intensity, rz));
+            v.push(new Vector3(rx, intensity + arrowLength, rz - arrowLengthHalf));
+            v.push(new Vector3(rx, intensity, rz));
+            v.push(new Vector3(rx, intensity + arrowLength, rz + arrowLengthHalf));
+            vectors.push(v);
+          }
+        }
+      }
+    } else {
+      for (let kx = 0; kx < nx; kx++) {
+        for (let kz = 0; kz < nz; kz++) {
+          const v: Vector3[] = [];
+          const rx = (kx - nx / 2 + 0.5) * dx;
+          const rz = (kz - nz / 2 + 0.5) * dz;
+          if (pointWithinArch(rx, rz)) {
+            v.push(new Vector3(rx, -arrowLength, rz - arrowLengthHalf));
+            v.push(new Vector3(rx, 0, rz));
+            v.push(new Vector3(rx, -arrowLength, rz + arrowLengthHalf));
+            v.push(new Vector3(rx, 0, rz));
+            v.push(new Vector3(rx, -intensity, rz));
+            vectors.push(v);
+          }
+        }
+      }
+    }
+    return vectors;
+  }, [id, dimension, showHeatFluxes]);
 
   const shutterWidth = useMemo(() => shutter.width * lx, [lx, shutter.width]);
   const shutterHeight = useMemo(() => lz - Math.min(archHeight, lz, lx / 2), [lx, lz, archHeight]);
@@ -497,6 +575,11 @@ const ArchedWindow = ({
       {renderSealPlane([ly, lz], [lx / 2, ly / 2, 0], [HALF_PI, -HALF_PI, 0])}
       {/* {renderSealPlane([lx, ly], [0, ly / 2, lz / 2], [Math.PI, 0, 0])} */}
       {renderSealPlane([lx, ly], [0, ly / 2, -lz / 2])}
+
+      {heatFluxes &&
+        heatFluxes.map((v, index) => {
+          return <Line key={index} points={v} name={'Heat Flux ' + index} lineWidth={1} color={'gray'} />;
+        })}
     </>
   );
 };

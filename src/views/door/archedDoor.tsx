@@ -87,12 +87,14 @@ const ArchedDoor = React.memo(
             const v: Vector3[] = [];
             const rx = (kx - nx / 2 + 0.5) * dx;
             const rz = (kz - nz / 2 + 0.5) * dz;
-            v.push(new Vector3(rx, -arrowLength, rz - arrowLengthHalf));
-            v.push(new Vector3(rx, 0, rz));
-            v.push(new Vector3(rx, -arrowLength, rz + arrowLengthHalf));
-            v.push(new Vector3(rx, 0, rz));
-            v.push(new Vector3(rx, -intensity, rz));
-            vectors.push(v);
+            if (pointWithinArch(rx, rz)) {
+              v.push(new Vector3(rx, -arrowLength, rz - arrowLengthHalf));
+              v.push(new Vector3(rx, 0, rz));
+              v.push(new Vector3(rx, -arrowLength, rz + arrowLengthHalf));
+              v.push(new Vector3(rx, 0, rz));
+              v.push(new Vector3(rx, -intensity, rz));
+              vectors.push(v);
+            }
           }
         }
       }

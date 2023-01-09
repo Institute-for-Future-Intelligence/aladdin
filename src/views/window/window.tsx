@@ -15,6 +15,7 @@ import { ThreeEvent } from '@react-three/fiber';
 import RectangleWindow from './rectangleWindow';
 import ArchedWindow from './archedWindow';
 import { RulerOnWall } from '../rulerOnWall';
+import { Util } from '../../Util';
 
 export const defaultShutter = { showLeft: false, showRight: false, color: 'grey', width: 0.5 };
 
@@ -266,11 +267,16 @@ const Window = (windowModel: WindowModel) => {
     [lineColor, lineWidth, selected, locked, opacity],
   );
 
+  const showSolarRadiationHeatmap = useStore(Selector.showSolarRadiationHeatmap);
+  const getParent = useStore(Selector.getParent);
+  const parent = getParent(windowModel);
+
   const renderWindow = () => {
     switch (windowType) {
       case WindowType.Default:
         return (
           <RectangleWindow
+            id={windowModel.id}
             dimension={dimensionData}
             position={positionData}
             mullionData={mullionData}
@@ -278,11 +284,14 @@ const Window = (windowModel: WindowModel) => {
             wireframeData={wireframeData}
             shutter={shutter}
             glassMaterial={glassMaterial}
+            showHeatFluxes={showSolarRadiationHeatmap}
+            area={parent ? Util.getWindowArea(windowModel, parent) : 0}
           />
         );
       case WindowType.Arched:
         return (
           <ArchedWindow
+            id={windowModel.id}
             dimension={dimensionData}
             position={positionData}
             mullionData={mullionData}
@@ -290,6 +299,8 @@ const Window = (windowModel: WindowModel) => {
             wireframeData={wireframeData}
             shutter={shutter}
             glassMaterial={glassMaterial}
+            showHeatFluxes={showSolarRadiationHeatmap}
+            area={parent ? Util.getWindowArea(windowModel, parent) : 0}
           />
         );
     }

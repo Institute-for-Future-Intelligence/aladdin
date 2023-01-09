@@ -1,17 +1,19 @@
 /*
- * @Copyright 2022. Institute for Future Intelligence, Inc.
+ * @Copyright 2022-2023. Institute for Future Intelligence, Inc.
  */
 
 import React, { useMemo } from 'react';
-import { FrontSide, MeshStandardMaterial } from 'three';
-import { Box, Cylinder, Plane } from '@react-three/drei';
+import { FrontSide, MeshStandardMaterial, Vector3 } from 'three';
+import { Box, Cylinder, Line, Plane } from '@react-three/drei';
 import { useStore } from 'src/stores/common';
 import * as Selector from 'src/stores/selector';
 import { HALF_PI, LOCKED_ELEMENT_SELECTION_COLOR } from 'src/constants';
 import { FrameDataType, MullionDataType, Shutter, WireframeDataType } from './window';
 import { ShutterProps } from 'src/models/WindowModel';
+import { usePrimitiveStore } from '../../stores/commonPrimitive';
 
 interface RectangleWindowProps {
+  id: string;
   dimension: number[];
   position: number[];
   mullionData: MullionDataType;
@@ -19,6 +21,8 @@ interface RectangleWindowProps {
   wireframeData: WireframeDataType;
   shutter: ShutterProps;
   glassMaterial: JSX.Element;
+  showHeatFluxes: boolean;
+  area: number;
 }
 interface MullionProps {
   dimension: number[];
@@ -236,6 +240,7 @@ const Wireframe = React.memo(({ cy, dimension, wireframeData }: WireframeProps) 
 });
 
 const RectangleWindow = ({
+  id,
   dimension,
   position,
   mullionData,
@@ -243,11 +248,63 @@ const RectangleWindow = ({
   wireframeData,
   shutter,
   glassMaterial,
+  showHeatFluxes,
+  area,
 }: RectangleWindowProps) => {
+  const world = useStore.getState().world;
+  const heatFluxScaleFactor = useStore(Selector.viewState.heatFluxScaleFactor);
+  const shadowEnabled = useStore(Selector.viewState.shadowEnabled);
+  const hourlyHeatExchangeArrayMap = usePrimitiveStore(Selector.hourlyHeatExchangeArrayMap);
+
   const [lx, ly, lz] = dimension;
   const [cx, cy, cz] = position;
 
-  const shadowEnabled = useStore(Selector.viewState.shadowEnabled);
+  const heatFluxes: Vector3[][] | undefined = useMemo(() => {
+    if (!showHeatFluxes) return undefined;
+    const heat = hourlyHeatExchangeArrayMap.get(id);
+    if (!heat) return undefined;
+    const sum = heat.reduce((a, b) => a + b, 0);
+    if (area === 0) return undefined;
+    const cellSize = world.solarRadiationHeatmapGridCellSize ?? 0.5;
+    const nx = Math.max(2, Math.round(lx / cellSize));
+    const nz = Math.max(2, Math.round(lz / cellSize));
+    const dx = lx / nx;
+    const dz = lz / nz;
+    const intensity = (sum / area) * (heatFluxScaleFactor ?? 100);
+    const arrowLength = 0.1;
+    const arrowLengthHalf = arrowLength / 2;
+    const vectors: Vector3[][] = [];
+    if (intensity < 0) {
+      for (let kx = 0; kx < nx; kx++) {
+        for (let kz = 0; kz < nz; kz++) {
+          const v: Vector3[] = [];
+          const rx = (kx - nx / 2 + 0.5) * dx;
+          const rz = (kz - nz / 2 + 0.5) * dz;
+          v.push(new Vector3(rx, 0, rz));
+          v.push(new Vector3(rx, intensity, rz));
+          v.push(new Vector3(rx, intensity + arrowLength, rz - arrowLengthHalf));
+          v.push(new Vector3(rx, intensity, rz));
+          v.push(new Vector3(rx, intensity + arrowLength, rz + arrowLengthHalf));
+          vectors.push(v);
+        }
+      }
+    } else {
+      for (let kx = 0; kx < nx; kx++) {
+        for (let kz = 0; kz < nz; kz++) {
+          const v: Vector3[] = [];
+          const rx = (kx - nx / 2 + 0.5) * dx;
+          const rz = (kz - nz / 2 + 0.5) * dz;
+          v.push(new Vector3(rx, -arrowLength, rz - arrowLengthHalf));
+          v.push(new Vector3(rx, 0, rz));
+          v.push(new Vector3(rx, -arrowLength, rz + arrowLengthHalf));
+          v.push(new Vector3(rx, 0, rz));
+          v.push(new Vector3(rx, -intensity, rz));
+          vectors.push(v);
+        }
+      }
+    }
+    return vectors;
+  }, [id, dimension, showHeatFluxes]);
 
   const shutterLength = useMemo(() => shutter.width * lx, [lx, shutter]);
   const shutterPosX = useMemo(
@@ -297,6 +354,11 @@ const RectangleWindow = ({
       {renderSealPlane([ly, lz], [lx / 2, ly / 2, 0], [HALF_PI, -HALF_PI, 0])}
       {renderSealPlane([lx, ly], [0, ly / 2, lz / 2], [Math.PI, 0, 0])}
       {renderSealPlane([lx, ly], [0, ly / 2, -lz / 2])}
+
+      {heatFluxes &&
+        heatFluxes.map((v, index) => {
+          return <Line key={index} points={v} name={'Heat Flux ' + index} lineWidth={1} color={'gray'} />;
+        })}
     </>
   );
 };
