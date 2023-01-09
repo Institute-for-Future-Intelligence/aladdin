@@ -93,6 +93,7 @@ const Door = (doorModel: DoorModel) => {
   } = doorModel;
 
   const setCommonStore = useStore(Selector.set);
+  const getParent = useStore(Selector.getParent);
 
   const addedWallIdRef = useRef(useStore.getState().addedWallId);
 
@@ -139,6 +140,8 @@ const Door = (doorModel: DoorModel) => {
     }
   };
 
+  const parent = getParent(doorModel);
+
   const renderDoor = () => {
     switch (doorType) {
       case DoorType.Default:
@@ -151,6 +154,8 @@ const Door = (doorModel: DoorModel) => {
             locked={locked}
             material={doorMaterial}
             filled={filled}
+            showHeatFluxes={showSolarRadiationHeatmap}
+            area={parent ? Util.getDoorArea(doorModel, parent) : 0}
           />
         );
       case DoorType.Arched:

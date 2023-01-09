@@ -5,9 +5,10 @@
 import React, { useMemo } from 'react';
 import { Box, Line, Plane } from '@react-three/drei';
 import { HALF_PI, LOCKED_ELEMENT_SELECTION_COLOR } from 'src/constants';
-import { DoubleSide, Material, Shape } from 'three';
+import { DoubleSide, Material, Shape, Vector3 } from 'three';
 import * as Selector from 'src/stores/selector';
 import { useStore } from 'src/stores/common';
+import { usePrimitiveStore } from '../../stores/commonPrimitive';
 
 interface RectangleDoorProps {
   id: string;
@@ -17,6 +18,8 @@ interface RectangleDoorProps {
   locked: boolean;
   material: Material;
   filled: boolean;
+  showHeatFluxes: boolean;
+  area: number;
 }
 
 interface DoorWireFrameProps {
@@ -78,77 +81,108 @@ const DoorFrame = React.memo(({ dimension, color }: DoorFrameProps) => {
   );
 });
 
-const RectangleDoor = React.memo(({ id, dimension, color, selected, locked, material, filled }: RectangleDoorProps) => {
-  const shadowEnabled = useStore(Selector.viewState.shadowEnabled);
+const RectangleDoor = React.memo(
+  ({ id, dimension, color, selected, locked, material, filled, area, showHeatFluxes }: RectangleDoorProps) => {
+    const shadowEnabled = useStore(Selector.viewState.shadowEnabled);
+    const hourlyHeatExchangeArrayMap = usePrimitiveStore(Selector.hourlyHeatExchangeArrayMap);
 
-  const [lx, ly, lz] = dimension;
+    const [lx, ly, lz] = dimension;
 
-  const doorShape = useMemo(() => {
-    const s = new Shape();
-    const [hx, hz] = [lx / 2, lz / 2];
-    const width = Math.max(hx, hz) * 0.2;
-    s.moveTo(-hx, -hz);
-    s.lineTo(-hx, hz);
-    s.lineTo(hx, hz);
-    s.lineTo(hx, -hz);
-    if (!filled) {
-      s.lineTo(hx - width, -hz);
-      s.lineTo(hx - width, hz - width);
-      s.lineTo(-hx + width, hz - width);
-      s.lineTo(-hx + width, -hz);
-    }
-    s.closePath();
-    return s;
-  }, [lx, lz, filled]);
+    const heatFluxes: Vector3[] | undefined = useMemo(() => {
+      if (!showHeatFluxes) return undefined;
+      const heat = hourlyHeatExchangeArrayMap.get(id);
+      if (!heat) return undefined;
+      const sum = heat.reduce((a, b) => a + b, 0);
+      if (area === 0) return undefined;
+      const intensity = (sum / area) * 1000;
+      const arrowSize = 0.2;
+      const arrowSizeHalf = arrowSize / 2;
+      const vectors: Vector3[] = [];
+      if (intensity < 0) {
+        vectors.push(new Vector3(0, 0, 0));
+        vectors.push(new Vector3(0, intensity, 0));
+        vectors.push(new Vector3(-arrowSizeHalf, intensity + arrowSize, 0));
+        vectors.push(new Vector3(0, intensity, 0));
+        vectors.push(new Vector3(arrowSizeHalf, intensity + arrowSize, 0));
+      } else {
+        vectors.push(new Vector3(-arrowSizeHalf, -arrowSize, 0));
+        vectors.push(new Vector3(0, 0, 0));
+        vectors.push(new Vector3(arrowSizeHalf, -arrowSize, 0));
+        vectors.push(new Vector3(0, 0, 0));
+        vectors.push(new Vector3(0, -intensity, 0));
+      }
+      return vectors;
+    }, [id, dimension, showHeatFluxes]);
 
-  return (
-    <group name={'Rectangle door group'} position={[0, -0.01, 0]}>
-      <mesh
-        name={'Rectangular Door Mesh'}
-        rotation={[HALF_PI, 0, 0]}
-        material={material}
-        castShadow={shadowEnabled && filled}
-        receiveShadow={shadowEnabled && filled}
-      >
-        <shapeBufferGeometry args={[doorShape]} />
-      </mesh>
+    const doorShape = useMemo(() => {
+      const s = new Shape();
+      const [hx, hz] = [lx / 2, lz / 2];
+      const width = Math.max(hx, hz) * 0.2;
+      s.moveTo(-hx, -hz);
+      s.lineTo(-hx, hz);
+      s.lineTo(hx, hz);
+      s.lineTo(hx, -hz);
+      if (!filled) {
+        s.lineTo(hx - width, -hz);
+        s.lineTo(hx - width, hz - width);
+        s.lineTo(-hx + width, hz - width);
+        s.lineTo(-hx + width, -hz);
+      }
+      s.closePath();
+      return s;
+    }, [lx, lz, filled]);
 
-      {filled && (
+    return (
+      <group name={'Rectangle door group'} position={[0, -0.01, 0]}>
         <mesh
-          name={'Rectangular Door Simulation Mesh'}
+          name={'Rectangular Door Mesh'}
           rotation={[HALF_PI, 0, 0]}
-          uuid={id}
-          userData={{ simulation: true }}
-          castShadow={false}
-          receiveShadow={false}
-          visible={false}
-        >
-          <shapeBufferGeometry args={[doorShape]} />
-          <meshBasicMaterial side={DoubleSide} />
-        </mesh>
-      )}
-
-      {filled && (
-        <Plane
-          name={`Door plane inside`}
-          args={[lx, lz]}
-          position={[0, 0.1, 0]}
-          rotation={[-HALF_PI, 0, Math.PI]}
           material={material}
           castShadow={shadowEnabled && filled}
           receiveShadow={shadowEnabled && filled}
+        >
+          <shapeBufferGeometry args={[doorShape]} />
+        </mesh>
+
+        {filled && (
+          <mesh
+            name={'Rectangular Door Simulation Mesh'}
+            rotation={[HALF_PI, 0, 0]}
+            uuid={id}
+            userData={{ simulation: true }}
+            castShadow={false}
+            receiveShadow={false}
+            visible={false}
+          >
+            <shapeBufferGeometry args={[doorShape]} />
+            <meshBasicMaterial side={DoubleSide} />
+          </mesh>
+        )}
+
+        {filled && (
+          <Plane
+            name={`Door plane inside`}
+            args={[lx, lz]}
+            position={[0, 0.1, 0]}
+            rotation={[-HALF_PI, 0, Math.PI]}
+            material={material}
+            castShadow={shadowEnabled && filled}
+            receiveShadow={shadowEnabled && filled}
+          />
+        )}
+
+        <DoorWireFrame
+          dimension={dimension}
+          lineColor={selected && locked ? LOCKED_ELEMENT_SELECTION_COLOR : 'black'}
+          lineWidth={selected && locked ? 2 : 0.2}
         />
-      )}
 
-      <DoorWireFrame
-        dimension={dimension}
-        lineColor={selected && locked ? LOCKED_ELEMENT_SELECTION_COLOR : 'black'}
-        lineWidth={selected && locked ? 2 : 0.2}
-      />
+        <DoorFrame dimension={dimension} color={color} />
 
-      <DoorFrame dimension={dimension} color={color} />
-    </group>
-  );
-});
+        {heatFluxes && <Line points={heatFluxes} name={'Heat Fluxes'} lineWidth={1} color={'gray'} />}
+      </group>
+    );
+  },
+);
 
 export default RectangleDoor;

@@ -16,7 +16,7 @@ import {
   TreeType,
   WallTexture,
 } from '../types';
-import { WallFill, WallStructure } from '../models/WallModel';
+import { WallStructure } from '../models/WallModel';
 import { defaultShutter } from '../views/window/window';
 import { WindowType } from 'src/models/WindowModel';
 import { RoofStructure } from '../models/RoofModel';

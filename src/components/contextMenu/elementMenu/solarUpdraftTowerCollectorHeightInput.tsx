@@ -1,5 +1,5 @@
 /*
- * @Copyright 2022. Institute for Future Intelligence, Inc.
+ * @Copyright 2022-2023. Institute for Future Intelligence, Inc.
  */
 
 import React, { useEffect, useRef, useState } from 'react';
@@ -214,11 +214,11 @@ const SolarUpdraftTowerCollectorHeightInput = ({ setDialogVisible }: { setDialog
         <Row gutter={6}>
           <Col className="gutter-row" span={6}>
             <InputNumber
-              min={2}
+              min={0.1}
               max={20}
               style={{ width: 120 }}
               step={1}
-              precision={2}
+              precision={1}
               value={inputCollectorHeightRef.current}
               onChange={(value) => {
                 inputCollectorHeightRef.current = value;
@@ -227,7 +227,7 @@ const SolarUpdraftTowerCollectorHeightInput = ({ setDialogVisible }: { setDialog
               onPressEnter={ok}
             />
             <div style={{ paddingTop: '20px', textAlign: 'left', fontSize: '11px' }}>
-              {i18n.t('word.Range', lang)}: [2, 20] {i18n.t('word.MeterAbbreviation', lang)}
+              {i18n.t('word.Range', lang)}: [0.1, 20] {i18n.t('word.MeterAbbreviation', lang)}
             </div>
           </Col>
           <Col className="gutter-row" span={1} style={{ verticalAlign: 'middle', paddingTop: '6px' }}>

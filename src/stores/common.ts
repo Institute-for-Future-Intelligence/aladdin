@@ -55,7 +55,7 @@ import { WallModel, WallStructure } from '../models/WallModel';
 import { Locale } from 'antd/lib/locale-provider';
 import enUS from 'antd/lib/locale/en_US';
 import { Undoable } from '../undo/Undoable';
-import UndoManager from '../js/UndoManager';
+import { UndoManager } from '../undo/UndoManager';
 import { TreeModel } from '../models/TreeModel';
 import { HumanModel } from '../models/HumanModel';
 import { FoundationModel } from '../models/FoundationModel';
