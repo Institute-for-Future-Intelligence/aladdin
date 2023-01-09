@@ -1,5 +1,5 @@
 /*
- * @Copyright 2021-2022. Institute for Future Intelligence, Inc.
+ * @Copyright 2021-2023. Institute for Future Intelligence, Inc.
  */
 
 import WallTextureDefault from 'src/resources/wall_edge.png';
@@ -32,18 +32,10 @@ import {
   Vector3,
 } from 'three';
 import { ThreeEvent, useThree } from '@react-three/fiber';
-import { Box, Cylinder, Plane } from '@react-three/drei';
-import {
-  ActionType,
-  MoveHandleType,
-  ObjectType,
-  Orientation,
-  ResizeHandleType,
-  RotateHandleType,
-  WallTexture,
-} from 'src/types';
+import { Box, Cylinder, Line, Plane } from '@react-three/drei';
+import { ActionType, MoveHandleType, ObjectType, Orientation, ResizeHandleType, WallTexture } from 'src/types';
 import { Util } from 'src/Util';
-import { CommonStoreState, useStore } from 'src/stores/common';
+import { useStore } from 'src/stores/common';
 import { useStoreRef } from 'src/stores/commonRef';
 import { ElementModel } from 'src/models/ElementModel';
 import { ShutterProps, WindowModel, WindowType } from 'src/models/WindowModel';
@@ -60,7 +52,6 @@ import {
   INVALID_ELEMENT_COLOR,
   LOCKED_ELEMENT_SELECTION_COLOR,
   NORMAL_GRID_SCALE,
-  TWO_PI,
 } from 'src/constants';
 import { UndoableMove } from 'src/undo/UndoableMove';
 import { UndoableAdd } from 'src/undo/UndoableAdd';
@@ -73,11 +64,13 @@ import { useElements } from './hooks';
 import { FoundationModel } from 'src/models/FoundationModel';
 import { HorizontalRuler } from '../horizontalRuler';
 import { InnerCommonState } from 'src/stores/InnerCommonState';
+import { usePrimitiveStore } from '../../stores/commonPrimitive';
 
 export interface WallProps {
   wallModel: WallModel;
   foundationModel: FoundationModel;
 }
+
 const Wall = ({ wallModel, foundationModel }: WallProps) => {
   let {
     id,
@@ -185,10 +178,14 @@ const Wall = ({ wallModel, foundationModel }: WallProps) => {
   const [texture, setTexture] = useState(textureLoader);
   const { invalidate } = useThree();
 
+  const world = useStore.getState().world;
   const showSolarRadiationHeatmap = useStore(Selector.showSolarRadiationHeatmap);
   const solarRadiationHeatmapMaxValue = useStore(Selector.viewState.solarRadiationHeatmapMaxValue);
   const getHeatmap = useStore(Selector.getHeatmap);
   const [heatmapTexture, setHeatmapTexture] = useState<CanvasTexture | null>(null);
+  const heatFluxScaleFactor = useStore(Selector.viewState.heatFluxScaleFactor);
+  const hourlyHeatExchangeArrayMap = usePrimitiveStore(Selector.hourlyHeatExchangeArrayMap);
+  const getChildrenOfType = useStore(Selector.getChildrenOfType);
 
   const zmax = useMemo(() => {
     return Util.getHighestPointOfWall(wallModel);
@@ -218,6 +215,80 @@ const Wall = ({ wallModel, foundationModel }: WallProps) => {
       }
     }
   }, [showSolarRadiationHeatmap, solarRadiationHeatmapMaxValue]);
+
+  const heatFluxes: Vector3[][] | undefined = useMemo(() => {
+    if (!showSolarRadiationHeatmap) return undefined;
+    const heat = hourlyHeatExchangeArrayMap.get(id);
+    if (!heat) return undefined;
+    const sum = heat.reduce((a, b) => a + b, 0);
+    const area = Util.getPolygonArea(Util.getWallVertices(wallModel, 0));
+    if (area === 0) return undefined;
+    const cellSize = world.solarRadiationHeatmapGridCellSize ?? 0.5;
+    const lz = Util.getHighestPointOfWall(wallModel); // height
+    const nx = Math.max(2, Math.round(lx / cellSize));
+    const nz = Math.max(2, Math.round(lz / cellSize));
+    const dx = lx / nx;
+    const dz = lz / nz;
+    const halfDif = (lz - wallModel.lz) / 2;
+    const intensity = (sum / area) * (heatFluxScaleFactor ?? 100);
+    const arrowLength = 0.1;
+    const arrowLengthHalf = arrowLength / 2;
+    const vectors: Vector3[][] = [];
+    const polygon = Util.getWallVertices(wallModel, 0);
+    const windows = getChildrenOfType(ObjectType.Window, id);
+    const doors = getChildrenOfType(ObjectType.Door, id);
+    for (let kx = 0; kx < nx; kx++) {
+      for (let kz = 0; kz < nz; kz++) {
+        const v: Vector3[] = [];
+        const rx = (kx - nx / 2 + 0.5) * dx;
+        const rz = (kz - nz / 2 + 0.5) * dz + halfDif;
+        if (Util.pointInsidePolygon({ x: rx, y: rz } as Point2, polygon)) {
+          let isWall = true;
+          if (windows && windows.length > 0) {
+            for (const w of windows) {
+              const cx = w.cx * lx;
+              const cz = w.cz * wallModel.lz;
+              const hx = (w.lx * lx) / 2;
+              const hz = (w.lz * wallModel.lz) / 2;
+              if (rx >= cx - hx && rx < cx + hx && rz >= cz - hz && rz < cz + hz) {
+                isWall = false;
+                break;
+              }
+            }
+          }
+          if (doors && doors.length > 0) {
+            for (const d of doors) {
+              const cx = d.cx * lx;
+              const cz = d.cz * lz;
+              const hx = (d.lx * lx) / 2;
+              const hz = (d.lz * lz) / 2;
+              if (rx >= cx - hx && rx < cx + hx && rz >= cz - hz && rz < cz + hz) {
+                isWall = false;
+                break;
+              }
+            }
+          }
+          if (isWall) {
+            if (intensity < 0) {
+              v.push(new Vector3(rx, 0, rz));
+              v.push(new Vector3(rx, intensity, rz));
+              v.push(new Vector3(rx, intensity + arrowLength, rz - arrowLengthHalf));
+              v.push(new Vector3(rx, intensity, rz));
+              v.push(new Vector3(rx, intensity + arrowLength, rz + arrowLengthHalf));
+            } else {
+              v.push(new Vector3(rx, -arrowLength, rz - arrowLengthHalf));
+              v.push(new Vector3(rx, 0, rz));
+              v.push(new Vector3(rx, -arrowLength, rz + arrowLengthHalf));
+              v.push(new Vector3(rx, 0, rz));
+              v.push(new Vector3(rx, -intensity, rz));
+            }
+            vectors.push(v);
+          }
+        }
+      }
+    }
+    return vectors;
+  }, [lx, lz, showSolarRadiationHeatmap]);
 
   const deletedWindowAndParentId = useStore(Selector.deletedWindowAndParentId);
   const deletedDoorAndParentId = useStore(Selector.deletedDoorAndParentId);
@@ -1974,6 +2045,11 @@ const Wall = ({ wallModel, foundationModel }: WallProps) => {
           <ElementGrid hx={hx} hy={hz} hz={0} />
         </group>
       )}
+
+      {heatFluxes &&
+        heatFluxes.map((v, index) => {
+          return <Line key={index} points={v} name={'Heat Flux ' + index} lineWidth={1} color={'gray'} />;
+        })}
     </>
   );
 };
