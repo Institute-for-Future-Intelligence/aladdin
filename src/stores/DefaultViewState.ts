@@ -22,6 +22,7 @@ export class DefaultViewState implements ViewState {
   cameraZoom: number;
 
   axes: boolean;
+  heatFluxScaleFactor: number;
   solarRadiationHeatMapMaxValue: number;
   solarRadiationHeatMapReflectionOnly: boolean; // for heliostats and Fresnel reflectors
   shadowEnabled: boolean;
@@ -111,6 +112,7 @@ export class DefaultViewState implements ViewState {
     this.cameraZoom = 20;
 
     this.axes = true;
+    this.heatFluxScaleFactor = 100;
     this.solarRadiationHeatMapMaxValue = 5;
     this.solarRadiationHeatMapReflectionOnly = false;
     this.shadowEnabled = true;
@@ -201,6 +203,7 @@ export class DefaultViewState implements ViewState {
     viewState.ambientLightIntensity = 0.1;
 
     viewState.axes = true;
+    viewState.heatFluxScaleFactor = 100;
     viewState.solarRadiationHeatMapMaxValue = 5;
     viewState.solarRadiationHeatMapReflectionOnly = false;
     viewState.shadowEnabled = true;

@@ -10,6 +10,8 @@ export const solarPanelShininess = (state: CommonStoreState) => state.viewState.
 
 export const windowShininess = (state: CommonStoreState) => state.viewState.windowShininess;
 
+export const heatFluxScaleFactor = (state: CommonStoreState) => state.viewState.heatFluxScaleFactor;
+
 export const solarRadiationHeatmapMaxValue = (state: CommonStoreState) => state.viewState.solarRadiationHeatMapMaxValue;
 
 export const solarRadiationHeatmapReflectionOnly = (state: CommonStoreState) =>

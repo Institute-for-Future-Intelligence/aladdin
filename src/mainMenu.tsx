@@ -135,7 +135,7 @@ import CspSimulationSettings from './components/contextMenu/elementMenu/cspSimul
 import PvSimulationSettings from './components/contextMenu/elementMenu/pvSimulationSettings';
 import SutSimulationSettings from './components/contextMenu/elementMenu/sutSimulationSettings';
 import { UndoableChange } from './undo/UndoableChange';
-import { DEFAULT_SOLAR_PANEL_SHININESS, FLOATING_WINDOW_OPACITY, HOME_URL } from './constants';
+import { DEFAULT_SOLAR_PANEL_SHININESS, FLOATING_WINDOW_OPACITY, HOME_URL, UNDO_SHOW_INFO_DURATION } from './constants';
 import BuildingEnergySimulationSettings from './components/contextMenu/elementMenu/buildingEnergySimulationSettings';
 import { CheckStatus, useBuildingCheck } from './analysis/buildingHooks';
 
@@ -1286,7 +1286,7 @@ const MainMenu = ({ viewOnly, set2DView, resetView, zoomView, canvas }: MainMenu
               onClick={() => {
                 if (undoManager.hasUndo()) {
                   const commandName = undoManager.undo();
-                  if (commandName) showInfo(i18n.t('menu.edit.Undo', lang) + commandName, 0.2);
+                  if (commandName) showInfo(i18n.t('menu.edit.Undo', lang) + commandName, UNDO_SHOW_INFO_DURATION);
                   if (loggable) {
                     setCommonStore((state) => {
                       state.actionInfo = {
@@ -1308,7 +1308,7 @@ const MainMenu = ({ viewOnly, set2DView, resetView, zoomView, canvas }: MainMenu
               onClick={() => {
                 if (undoManager.hasRedo()) {
                   const commandName = undoManager.redo();
-                  if (commandName) showInfo(i18n.t('menu.edit.Redo', lang) + commandName, 0.2);
+                  if (commandName) showInfo(i18n.t('menu.edit.Redo', lang) + commandName, UNDO_SHOW_INFO_DURATION);
                   if (loggable) {
                     setCommonStore((state) => {
                       state.actionInfo = {

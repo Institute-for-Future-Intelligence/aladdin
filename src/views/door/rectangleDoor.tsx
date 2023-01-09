@@ -83,33 +83,56 @@ const DoorFrame = React.memo(({ dimension, color }: DoorFrameProps) => {
 
 const RectangleDoor = React.memo(
   ({ id, dimension, color, selected, locked, material, filled, area, showHeatFluxes }: RectangleDoorProps) => {
+    const world = useStore.getState().world;
+    const heatFluxScaleFactor = useStore(Selector.viewState.heatFluxScaleFactor);
     const shadowEnabled = useStore(Selector.viewState.shadowEnabled);
     const hourlyHeatExchangeArrayMap = usePrimitiveStore(Selector.hourlyHeatExchangeArrayMap);
 
     const [lx, ly, lz] = dimension;
 
-    const heatFluxes: Vector3[] | undefined = useMemo(() => {
+    const heatFluxes: Vector3[][] | undefined = useMemo(() => {
       if (!showHeatFluxes) return undefined;
       const heat = hourlyHeatExchangeArrayMap.get(id);
       if (!heat) return undefined;
       const sum = heat.reduce((a, b) => a + b, 0);
       if (area === 0) return undefined;
-      const intensity = (sum / area) * 1000;
-      const arrowSize = 0.2;
-      const arrowSizeHalf = arrowSize / 2;
-      const vectors: Vector3[] = [];
+      const cellSize = world.solarRadiationHeatmapGridCellSize ?? 0.5;
+      const nx = Math.max(2, Math.round(lx / cellSize));
+      const nz = Math.max(2, Math.round(lz / cellSize));
+      const dx = lx / nx;
+      const dz = lz / nz;
+      const intensity = (sum / area) * (heatFluxScaleFactor ?? 100);
+      const arrowLength = 0.1;
+      const arrowLengthHalf = arrowLength / 2;
+      const vectors: Vector3[][] = [];
       if (intensity < 0) {
-        vectors.push(new Vector3(0, 0, 0));
-        vectors.push(new Vector3(0, intensity, 0));
-        vectors.push(new Vector3(-arrowSizeHalf, intensity + arrowSize, 0));
-        vectors.push(new Vector3(0, intensity, 0));
-        vectors.push(new Vector3(arrowSizeHalf, intensity + arrowSize, 0));
+        for (let kx = 0; kx < nx; kx++) {
+          for (let kz = 0; kz < nz; kz++) {
+            const v: Vector3[] = [];
+            const rx = (kx - nx / 2 + 0.5) * dx;
+            const rz = (kz - nz / 2 + 0.5) * dz;
+            v.push(new Vector3(rx, 0, rz));
+            v.push(new Vector3(rx, intensity, rz));
+            v.push(new Vector3(rx, intensity + arrowLength, rz - arrowLengthHalf));
+            v.push(new Vector3(rx, intensity, rz));
+            v.push(new Vector3(rx, intensity + arrowLength, rz + arrowLengthHalf));
+            vectors.push(v);
+          }
+        }
       } else {
-        vectors.push(new Vector3(-arrowSizeHalf, -arrowSize, 0));
-        vectors.push(new Vector3(0, 0, 0));
-        vectors.push(new Vector3(arrowSizeHalf, -arrowSize, 0));
-        vectors.push(new Vector3(0, 0, 0));
-        vectors.push(new Vector3(0, -intensity, 0));
+        for (let kx = 0; kx < nx; kx++) {
+          for (let kz = 0; kz < nz; kz++) {
+            const v: Vector3[] = [];
+            const rx = (kx - nx / 2 + 0.5) * dx;
+            const rz = (kz - nz / 2 + 0.5) * dz;
+            v.push(new Vector3(rx, -arrowLength, rz - arrowLengthHalf));
+            v.push(new Vector3(rx, 0, rz));
+            v.push(new Vector3(rx, -arrowLength, rz + arrowLengthHalf));
+            v.push(new Vector3(rx, 0, rz));
+            v.push(new Vector3(rx, -intensity, rz));
+            vectors.push(v);
+          }
+        }
       }
       return vectors;
     }, [id, dimension, showHeatFluxes]);
@@ -179,7 +202,10 @@ const RectangleDoor = React.memo(
 
         <DoorFrame dimension={dimension} color={color} />
 
-        {heatFluxes && <Line points={heatFluxes} name={'Heat Fluxes'} lineWidth={1} color={'gray'} />}
+        {heatFluxes &&
+          heatFluxes.map((v, index) => {
+            return <Line key={index} points={v} name={'Heat Flux ' + index} lineWidth={1} color={'gray'} />;
+          })}
       </group>
     );
   },

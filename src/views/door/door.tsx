@@ -168,6 +168,8 @@ const Door = (doorModel: DoorModel) => {
             locked={locked}
             material={doorMaterial}
             filled={filled}
+            showHeatFluxes={showSolarRadiationHeatmap}
+            area={parent ? Util.getDoorArea(doorModel, parent) : 0}
           />
         );
     }

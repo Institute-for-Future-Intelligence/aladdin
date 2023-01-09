@@ -16,6 +16,7 @@ export interface ViewState {
   cameraZoom: number; // for orthographic camera in 2D mode
 
   axes: boolean;
+  heatFluxScaleFactor: number;
   solarRadiationHeatMapMaxValue: number;
   solarRadiationHeatMapReflectionOnly: boolean; // for heliostats and Fresnel reflectors
   autoRotate: boolean;

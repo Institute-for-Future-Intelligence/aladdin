@@ -20,7 +20,7 @@ import { useStoreRef } from './stores/commonRef';
 import { SolarPanelModel } from './models/SolarPanelModel';
 import { Util } from './Util';
 import { ElementModel } from './models/ElementModel';
-import { FINE_GRID_RATIO, GROUND_ID } from './constants';
+import { FINE_GRID_RATIO, GROUND_ID, UNDO_SHOW_INFO_DURATION } from './constants';
 import { RoofUtil } from './views/roof/RoofUtil';
 import { RoofModel } from './models/RoofModel';
 import { spBoundaryCheck, spCollisionCheck } from './views/roof/roofRenderer';
@@ -876,7 +876,7 @@ const KeyboardListener = ({ canvas, set2DView, resetView, zoomView }: KeyboardLi
       case 'meta+z': // for Mac
         if (undoManager.hasUndo()) {
           const commandName = undoManager.undo();
-          if (commandName) showInfo(i18n.t('menu.edit.Undo', lang) + commandName, 0.2);
+          if (commandName) showInfo(i18n.t('menu.edit.Undo', lang) + commandName, UNDO_SHOW_INFO_DURATION);
           if (loggable) {
             setCommonStore((state) => {
               state.actionInfo = {
@@ -891,7 +891,7 @@ const KeyboardListener = ({ canvas, set2DView, resetView, zoomView }: KeyboardLi
       case 'meta+y': // for Mac
         if (undoManager.hasRedo()) {
           const commandName = undoManager.redo();
-          if (commandName) showInfo(i18n.t('menu.edit.Redo', lang) + commandName, 0.2);
+          if (commandName) showInfo(i18n.t('menu.edit.Redo', lang) + commandName, UNDO_SHOW_INFO_DURATION);
           if (loggable) {
             setCommonStore((state) => {
               state.actionInfo = {
