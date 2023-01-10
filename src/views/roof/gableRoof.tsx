@@ -890,6 +890,7 @@ const GableRoof = (roofModel: GableRoofModel) => {
               index={i}
               id={id}
               points={points}
+              centroid={centroid}
               angle={isFlat ? arr[0].angle : angle}
               length={isFlat ? 1 : length}
               textureType={textureType}
@@ -1121,6 +1122,7 @@ const RoofSegment = ({
   index,
   id,
   points,
+  centroid,
   angle,
   length,
   textureType,
@@ -1135,6 +1137,7 @@ const RoofSegment = ({
   index: number;
   id: string;
   points: Vector3[];
+  centroid: Vector3;
   angle: number;
   length: number;
   textureType: RoofTexture;
@@ -1185,7 +1188,9 @@ const RoofSegment = ({
     const sum = heat.reduce((a, b) => a + b, 0);
     const segments = getRoofSegmentVerticesWithoutOverhang(id);
     if (!segments) return undefined;
-    const s = segments[index];
+    const [wallLeft, wallRight, ridgeRight, ridgeLeft, wallLeftAfterOverhang] = points;
+    const thickness = wallLeftAfterOverhang.z - wallLeft.z;
+    const s = segments[index].map((v) => v.clone().sub(centroid).add(new Vector3(0, 0, thickness)));
     if (!s) return undefined;
     let area = Util.getTriangleArea(s[0], s[1], s[2]) + Util.getTriangleArea(s[2], s[3], s[0]);
     if (area === 0) return undefined;
@@ -1214,10 +1219,10 @@ const RoofSegment = ({
       .normalize()
       .multiplyScalar((0.5 * distance) / n);
     // find the starting point of the grid (shift half of length in both directions)
-    const [wallLeft, wallRight, ridgeRight, ridgeLeft, wallLeftAfterOverhang] = points;
-    const thickness = wallLeftAfterOverhang.z - wallLeft.z;
+    // const [wallLeft, wallRight, ridgeRight, ridgeLeft, wallLeftAfterOverhang] = points;
+    // const thickness = wallLeftAfterOverhang.z - wallLeft.z;
     const rise = s2.z - s0.z;
-    const v0 = new Vector3(s0.x, s0.y, 0).sub(dm.clone().negate()).sub(dn);
+    const v0 = s0.clone().add(dm).add(dn);
     // double half-length to full-length for the increment vectors in both directions
     dm.multiplyScalar(2);
     dn.multiplyScalar(2);
@@ -1233,7 +1238,7 @@ const RoofSegment = ({
         const v: Vector3[] = [];
         if (intensity < 0) {
           v.push(origin.clone());
-          v.push(origin.clone().add(normal.clone().multiplyScalar(intensity)));
+          v.push(origin.clone().add(normal.clone().multiplyScalar(-intensity)));
           // v.push(new Vector3(rx, intensity + arrowLength, rz - arrowLengthHalf));
           // v.push(new Vector3(rx, intensity, rz));
           // v.push(new Vector3(rx, intensity + arrowLength, rz + arrowLengthHalf));
@@ -1242,7 +1247,7 @@ const RoofSegment = ({
           // v.push(new Vector3(rx, 0, rz));
           // v.push(new Vector3(rx, -arrowLength, rz + arrowLengthHalf));
           v.push(origin.clone());
-          v.push(origin.clone().add(normal.clone().multiplyScalar(-intensity)));
+          v.push(origin.clone().add(normal.clone().multiplyScalar(intensity)));
         }
         vectors.push(v);
       }
