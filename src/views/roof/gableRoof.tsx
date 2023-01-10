@@ -1,5 +1,5 @@
 /*
- * @Copyright 2022. Institute for Future Intelligence, Inc.
+ * @Copyright 2022-2023. Institute for Future Intelligence, Inc.
  */
 
 import { Extrude, Line, Plane } from '@react-three/drei';
@@ -21,17 +21,17 @@ import {
 } from 'three';
 import { useStoreRef } from 'src/stores/commonRef';
 import { useThree } from '@react-three/fiber';
-import { HALF_PI } from 'src/constants';
+import { DEFAULT_HEAT_FLUX_SCALE_FACTOR, HALF_PI } from 'src/constants';
 import { ElementModel } from 'src/models/ElementModel';
 import {
   addUndoableResizeRoofRise,
-  RoofSegmentProps,
   handleContextMenu,
   handlePointerDown,
   handlePointerMove,
   handlePointerUp,
   handleRoofBodyPointerDown,
   RoofHandle,
+  RoofSegmentProps,
   RoofWireframeProps,
   updateRooftopElements,
 } from './roofRenderer';
@@ -42,17 +42,19 @@ import { Point2 } from 'src/models/Point2';
 import { RoofUtil } from './RoofUtil';
 import {
   useCurrWallArray,
-  useRoofTexture,
   useElementUndoable,
-  useTransparent,
-  useUpdateSegmentVerticesMap,
   useRoofHeight,
+  useRoofTexture,
+  useTransparent,
   useUpdateOldRoofFiles,
+  useUpdateSegmentVerticesMap,
   useUpdateSegmentVerticesWithoutOverhangMap,
 } from './hooks';
 import { ConvexGeometry } from 'src/js/ConvexGeometry';
 import { CSG } from 'three-csg-ts';
 import WindowWireFrame from '../window/windowWireFrame';
+import { usePrimitiveStore } from '../../stores/commonPrimitive';
+import { FoundationModel } from '../../models/FoundationModel';
 
 const intersectionPlanePosition = new Vector3();
 const intersectionPlaneRotation = new Euler();
@@ -716,8 +718,8 @@ const GableRoof = (roofModel: GableRoofModel) => {
   // set position and rotation
   const foundation = useStore((state) => {
     for (const e of state.elements) {
-      if (e.id === parentId) {
-        return e;
+      if (e.id === parentId || e.type == ObjectType.Foundation) {
+        return e as FoundationModel;
       }
     }
     return null;
@@ -1144,8 +1146,13 @@ const RoofSegment = ({
   glassTint?: string;
   opacity?: number;
 }) => {
+  const world = useStore.getState().world;
   const shadowEnabled = useStore(Selector.viewState.shadowEnabled);
   const showSolarRadiationHeatmap = useStore(Selector.showSolarRadiationHeatmap);
+  const heatFluxScaleFactor = useStore(Selector.viewState.heatFluxScaleFactor);
+  const getRoofSegmentVerticesWithoutOverhang = useStore(Selector.getRoofSegmentVerticesWithoutOverhang);
+  const hourlyHeatExchangeArrayMap = usePrimitiveStore.getState().hourlyHeatExchangeArrayMap;
+
   const texture = useRoofTexture(roofStructure === RoofStructure.Rafter ? RoofTexture.NoTexture : textureType);
   const { transparent, opacity: _opacity } = useTransparent(roofStructure === RoofStructure.Rafter, opacity);
   const { invalidate } = useThree();
@@ -1170,6 +1177,78 @@ const RoofSegment = ({
       Math.abs(wall.relativeAngle - Math.PI) < Math.PI / 4
     );
   };
+
+  const heatFluxes: Vector3[][] | undefined = useMemo(() => {
+    if (!showSolarRadiationHeatmap) return undefined;
+    const heat = hourlyHeatExchangeArrayMap.get(id + '-' + index);
+    if (!heat) return undefined;
+    const sum = heat.reduce((a, b) => a + b, 0);
+    const segments = getRoofSegmentVerticesWithoutOverhang(id);
+    if (!segments) return undefined;
+    const s = segments[index];
+    if (!s) return undefined;
+    let area = Util.getTriangleArea(s[0], s[1], s[2]) + Util.getTriangleArea(s[2], s[3], s[0]);
+    if (area === 0) return undefined;
+    const cellSize = world.solarRadiationHeatmapGridCellSize ?? 0.5;
+    const s0 = s[0].clone();
+    const s1 = s[1].clone();
+    const s2 = s[2].clone();
+    const v10 = new Vector3().subVectors(s1, s0);
+    const v20 = new Vector3().subVectors(s2, s0);
+    const v21 = new Vector3().subVectors(s2, s1);
+    const length10 = v10.length();
+    // find the distance from top to the edge: https://mathworld.wolfram.com/Point-LineDistance3-Dimensional.html
+    const distance = new Vector3().crossVectors(v20, v21).length() / length10;
+    const m = Math.max(2, Math.round(length10 / cellSize));
+    const n = Math.max(2, Math.round(distance / cellSize));
+    v10.normalize();
+    v20.normalize();
+    v21.normalize();
+    // find the normal vector of the quad
+    const normal = new Vector3().crossVectors(v20, v21).normalize();
+    // find the incremental vector going along the bottom edge (half of length)
+    const dm = v10.multiplyScalar((0.5 * length10) / m);
+    // find the incremental vector going from bottom to top (half of length)
+    const dn = new Vector3()
+      .crossVectors(normal, v10)
+      .normalize()
+      .multiplyScalar((0.5 * distance) / n);
+    // find the starting point of the grid (shift half of length in both directions)
+    const [wallLeft, wallRight, ridgeRight, ridgeLeft, wallLeftAfterOverhang] = points;
+    const thickness = wallLeftAfterOverhang.z - wallLeft.z;
+    const rise = s2.z - s0.z;
+    const v0 = new Vector3(s0.x, s0.y, 0).sub(dm.clone().negate()).sub(dn);
+    // double half-length to full-length for the increment vectors in both directions
+    dm.multiplyScalar(2);
+    dn.multiplyScalar(2);
+    const intensity = (sum / area) * (heatFluxScaleFactor ?? DEFAULT_HEAT_FLUX_SCALE_FACTOR);
+    const arrowLength = 0.1;
+    const arrowLengthHalf = arrowLength / 2;
+    const vectors: Vector3[][] = [];
+    const origin = new Vector3();
+    for (let p = 0; p < m; p++) {
+      const dmp = dm.clone().multiplyScalar(p);
+      for (let q = 0; q < n; q++) {
+        origin.copy(v0).add(dmp).add(dn.clone().multiplyScalar(q));
+        const v: Vector3[] = [];
+        if (intensity < 0) {
+          v.push(origin.clone());
+          v.push(origin.clone().add(normal.clone().multiplyScalar(intensity)));
+          // v.push(new Vector3(rx, intensity + arrowLength, rz - arrowLengthHalf));
+          // v.push(new Vector3(rx, intensity, rz));
+          // v.push(new Vector3(rx, intensity + arrowLength, rz + arrowLengthHalf));
+        } else {
+          // v.push(new Vector3(rx, -arrowLength, rz - arrowLengthHalf));
+          // v.push(new Vector3(rx, 0, rz));
+          // v.push(new Vector3(rx, -arrowLength, rz + arrowLengthHalf));
+          v.push(origin.clone());
+          v.push(origin.clone().add(normal.clone().multiplyScalar(-intensity)));
+        }
+        vectors.push(v);
+      }
+    }
+    return vectors;
+  }, [showSolarRadiationHeatmap]);
 
   useEffect(() => {
     const [wallLeft, wallRight, ridgeRight, ridgeLeft, wallLeftAfterOverhang] = points;
@@ -1381,6 +1460,10 @@ const RoofSegment = ({
           </group>
         </>
       )}
+      {heatFluxes &&
+        heatFluxes.map((v, index) => {
+          return <Line key={index} points={v} name={'Heat Flux ' + index} lineWidth={1} color={'gray'} />;
+        })}
     </>
   );
 };

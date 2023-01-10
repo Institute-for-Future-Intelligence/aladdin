@@ -55,6 +55,7 @@ const ThermalSimulation = ({ city }: ThermalSimulationProps) => {
   const getFoundation = useStore(Selector.getFoundation);
   const getParent = useStore(Selector.getParent);
   const getChildrenOfType = useStore(Selector.getChildrenOfType);
+  const getRoofSegmentVertices = useStore(Selector.getRoofSegmentVertices);
   const getPvModule = useStore(Selector.getPvModule);
   const runDailySimulation = useStore(Selector.runDailyThermalSimulation);
   const pauseDailySimulation = useStore(Selector.pauseDailyThermalSimulation);
@@ -191,6 +192,14 @@ const ThermalSimulation = ({ city }: ThermalSimulationProps) => {
       if (Util.onBuildingEnvelope(e)) {
         hourlyHeatExchangeArrayMapRef.current.get(e.id)?.fill(0);
       }
+      if (e.type === ObjectType.Roof) {
+        const segments = getRoofSegmentVertices(e.id);
+        if (segments) {
+          for (let i = 0; i < segments.length; i++) {
+            hourlyHeatExchangeArrayMapRef.current.get(e.id + '-' + i)?.fill(0);
+          }
+        }
+      }
       if (e.type === ObjectType.Foundation) {
         hourlySolarHeatGainArrayMapRef.current.get(e.id)?.fill(0);
         hourlySolarPanelOutputArrayMapRef.current.get(e.id)?.fill(0);
@@ -272,6 +281,19 @@ const ThermalSimulation = ({ city }: ThermalSimulationProps) => {
         const arr = hourlyHeatExchangeArrayMapRef.current.get(e.id);
         if (arr) {
           setHourlyHeatExchangeArray(e.id, [...arr]);
+        }
+      }
+      // heat exchange for each roof segment
+      if (e.type === ObjectType.Roof) {
+        const segments = getRoofSegmentVertices(e.id);
+        if (segments) {
+          for (let i = 0; i < segments.length; i++) {
+            const uuid = e.id + '-' + i;
+            const arr = hourlyHeatExchangeArrayMapRef.current.get(uuid);
+            if (arr) {
+              setHourlyHeatExchangeArray(uuid, [...arr]);
+            }
+          }
         }
       }
       // the total solar heat gain through all the windows on a foundation
@@ -714,10 +736,13 @@ const ThermalSimulation = ({ city }: ThermalSimulationProps) => {
     if (roofSegmentResults) {
       const setpoint = foundation.hvacSystem?.thermostatSetpoint ?? 20;
       let heatExchange = 0;
-      for (const segmentResult of roofSegmentResults) {
+      for (const [i, segmentResult] of roofSegmentResults.entries()) {
         const deltaT = segmentResult.surfaceTemperature - setpoint;
         // convert heat exchange to kWh
-        heatExchange += (((deltaT * segmentResult.totalArea) / (roof.rValue ?? 0.5)) * 0.001) / timesPerHour;
+        const segmentHeatExchange =
+          (((deltaT * segmentResult.totalArea) / (roof.rValue ?? 0.5)) * 0.001) / timesPerHour;
+        updateHeatExchangeNow(roof.id + '-' + i, segmentHeatExchange);
+        heatExchange += segmentHeatExchange;
       }
       updateHeatExchangeNow(roof.id, heatExchange);
     }
