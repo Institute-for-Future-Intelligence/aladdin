@@ -210,31 +210,61 @@ export class Util {
   }
 
   // Area of an arch given height and radius: https://keisan.casio.com/exec/system/14407397055469
-  static getWindowArea(window: WindowModel, parent: ElementModel): number {
-    if (window.windowType === WindowType.Arched && window.archHeight > 0) {
-      const hx = 0.5 * window.lx * parent.lx;
-      const lz = window.lz * parent.lz;
-      const ah = Math.min(window.archHeight, lz, hx); // actual arc height
-      const r = 0.5 * (ah + (hx * hx) / ah); // arc radius
-      const startAngle = Math.acos(Math.min(hx / r, 1));
-      const extent = Math.PI - startAngle * 2;
-      return 0.5 * extent * r * r - hx * (r - ah) + (lz - ah) * hx * 2;
+  static getWindowArea(window: WindowModel, parent?: ElementModel): number {
+    if (parent) {
+      // if parent is set, window dimension is relative to it
+      if (window.windowType === WindowType.Arched && window.archHeight > 0) {
+        const hx = 0.5 * window.lx * parent.lx;
+        const lz = window.lz * parent.lz;
+        const ah = Math.min(window.archHeight, lz, hx); // actual arc height
+        const r = 0.5 * (ah + (hx * hx) / ah); // arc radius
+        const startAngle = Math.acos(Math.min(hx / r, 1));
+        const extent = Math.PI - startAngle * 2;
+        return 0.5 * extent * r * r - hx * (r - ah) + (lz - ah) * hx * 2;
+      }
+      return window.lx * window.lz * parent.lx * parent.lz;
+    } else {
+      // if parent is not set, window dimension is absolute
+      if (window.windowType === WindowType.Arched && window.archHeight > 0) {
+        const hx = 0.5 * window.lx;
+        const lz = window.lz;
+        const ah = Math.min(window.archHeight, lz, hx); // actual arc height
+        const r = 0.5 * (ah + (hx * hx) / ah); // arc radius
+        const startAngle = Math.acos(Math.min(hx / r, 1));
+        const extent = Math.PI - startAngle * 2;
+        return 0.5 * extent * r * r - hx * (r - ah) + (lz - ah) * hx * 2;
+      }
+      return window.lx * window.lz;
     }
-    return window.lx * window.lz * parent.lx * parent.lz;
   }
 
   // Area of an arch given height and radius: https://keisan.casio.com/exec/system/14407397055469
-  static getDoorArea(door: DoorModel, parent: ElementModel): number {
-    if (door.doorType === DoorType.Arched && door.archHeight > 0) {
-      const hx = 0.5 * door.lx * parent.lx;
-      const lz = door.lz * parent.lz;
-      const ah = Math.min(door.archHeight, lz, hx); // actual arch height
-      const r = 0.5 * (ah + (hx * hx) / ah); // arc radius
-      const startAngle = Math.acos(Math.min(hx / r, 1));
-      const extent = Math.PI - startAngle * 2;
-      return 0.5 * extent * r * r - hx * (r - ah) + (lz - ah) * hx * 2;
+  static getDoorArea(door: DoorModel, parent?: ElementModel): number {
+    if (parent) {
+      // if parent is set, door dimension is relative to it
+      if (door.doorType === DoorType.Arched && door.archHeight > 0) {
+        const hx = 0.5 * door.lx * parent.lx;
+        const lz = door.lz * parent.lz;
+        const ah = Math.min(door.archHeight, lz, hx); // actual arch height
+        const r = 0.5 * (ah + (hx * hx) / ah); // arc radius
+        const startAngle = Math.acos(Math.min(hx / r, 1));
+        const extent = Math.PI - startAngle * 2;
+        return 0.5 * extent * r * r - hx * (r - ah) + (lz - ah) * hx * 2;
+      }
+      return door.lx * door.lz * parent.lx * parent.lz;
+    } else {
+      // if parent is not set, door dimension is absolute
+      if (door.doorType === DoorType.Arched && door.archHeight > 0) {
+        const hx = 0.5 * door.lx;
+        const lz = door.lz;
+        const ah = Math.min(door.archHeight, lz, hx); // actual arch height
+        const r = 0.5 * (ah + (hx * hx) / ah); // arc radius
+        const startAngle = Math.acos(Math.min(hx / r, 1));
+        const extent = Math.PI - startAngle * 2;
+        return 0.5 * extent * r * r - hx * (r - ah) + (lz - ah) * hx * 2;
+      }
+      return door.lx * door.lz;
     }
-    return door.lx * door.lz * parent.lx * parent.lz;
   }
 
   static hasHeliostatOrFresnelReflectors(elements: ElementModel[]): boolean {

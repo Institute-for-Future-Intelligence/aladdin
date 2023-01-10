@@ -2,12 +2,12 @@
  * @Copyright 2022-2023. Institute for Future Intelligence, Inc.
  */
 
-import React, { useMemo, useRef } from 'react';
-import { CatmullRomCurve3, EllipseCurve, FrontSide, Mesh, MeshStandardMaterial, Shape, Vector3 } from 'three';
+import React, { useMemo } from 'react';
+import { CatmullRomCurve3, EllipseCurve, FrontSide, MeshStandardMaterial, Shape, Vector3 } from 'three';
 import { Box, Cylinder, Extrude, Line, Plane } from '@react-three/drei';
 import { useStore } from 'src/stores/common';
 import * as Selector from 'src/stores/selector';
-import { HALF_PI, LOCKED_ELEMENT_SELECTION_COLOR } from 'src/constants';
+import { DEFAULT_HEAT_FLUX_SCALE_FACTOR, HALF_PI, LOCKED_ELEMENT_SELECTION_COLOR } from 'src/constants';
 import { FrameDataType, MullionDataType, Shutter, WireframeDataType } from './window';
 import { ShutterProps } from 'src/models/WindowModel';
 import { usePrimitiveStore } from '../../stores/commonPrimitive';
@@ -465,7 +465,7 @@ const ArchedWindow = ({
     const nz = Math.max(2, Math.round(lz / cellSize));
     const dx = lx / nx;
     const dz = lz / nz;
-    const intensity = (sum / area) * (heatFluxScaleFactor ?? 100);
+    const intensity = (sum / area) * (heatFluxScaleFactor ?? DEFAULT_HEAT_FLUX_SCALE_FACTOR);
     const arrowLength = 0.1;
     const arrowLengthHalf = arrowLength / 2;
     const vectors: Vector3[][] = [];

@@ -4,7 +4,7 @@
 
 import { Color, Euler, Vector2, Vector3 } from 'three';
 
-export const VERSION = '0.6.6';
+export const VERSION = '0.6.7';
 
 export const isProd = process.env.NODE_ENV === 'production';
 
@@ -21,6 +21,7 @@ export const GREEN = new Color(0, 1, 0);
 export const YELLOW = new Color(1, 1, 0);
 export const RED = new Color(1, 0, 0);
 export const SOLAR_HEATMAP_COLORS = [BLUE, GREEN, YELLOW, RED];
+export const DEFAULT_HEAT_FLUX_SCALE_FACTOR = 20;
 
 export const DEFAULT_SOLAR_PANEL_SHININESS = 100;
 export const DEFAULT_WINDOW_SHININESS = 200;

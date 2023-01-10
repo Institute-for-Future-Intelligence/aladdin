@@ -47,6 +47,7 @@ import Window from '../window/window';
 import WallWireFrame from './wallWireFrame';
 import * as Selector from 'src/stores/selector';
 import {
+  DEFAULT_HEAT_FLUX_SCALE_FACTOR,
   FINE_GRID_SCALE,
   HALF_PI,
   INVALID_ELEMENT_COLOR,
@@ -221,8 +222,22 @@ const Wall = ({ wallModel, foundationModel }: WallProps) => {
     const heat = hourlyHeatExchangeArrayMap.get(id);
     if (!heat) return undefined;
     const sum = heat.reduce((a, b) => a + b, 0);
-    const area = Util.getPolygonArea(Util.getWallVertices(wallModel, 0));
+    let area = Util.getPolygonArea(Util.getWallVertices(wallModel, 0));
     if (area === 0) return undefined;
+    const windows = getChildrenOfType(ObjectType.Window, id);
+    const doors = getChildrenOfType(ObjectType.Door, id);
+    if (windows && windows.length > 0) {
+      for (const w of windows) {
+        // window dimension is relative to the wall
+        area -= Util.getWindowArea(w as WindowModel, wallModel);
+      }
+    }
+    if (doors && doors.length > 0) {
+      for (const d of doors) {
+        // door dimension is relative to the wall
+        area -= d.lx * d.lz * wallModel.lx * wallModel.lz;
+      }
+    }
     const cellSize = world.solarRadiationHeatmapGridCellSize ?? 0.5;
     const lz = Util.getHighestPointOfWall(wallModel); // height
     const nx = Math.max(2, Math.round(lx / cellSize));
@@ -230,13 +245,11 @@ const Wall = ({ wallModel, foundationModel }: WallProps) => {
     const dx = lx / nx;
     const dz = lz / nz;
     const halfDif = (lz - wallModel.lz) / 2;
-    const intensity = (sum / area) * (heatFluxScaleFactor ?? 100);
+    const intensity = (sum / area) * (heatFluxScaleFactor ?? DEFAULT_HEAT_FLUX_SCALE_FACTOR);
     const arrowLength = 0.1;
     const arrowLengthHalf = arrowLength / 2;
     const vectors: Vector3[][] = [];
     const polygon = Util.getWallVertices(wallModel, 0);
-    const windows = getChildrenOfType(ObjectType.Window, id);
-    const doors = getChildrenOfType(ObjectType.Door, id);
     for (let kx = 0; kx < nx; kx++) {
       for (let kz = 0; kz < nz; kz++) {
         const v: Vector3[] = [];

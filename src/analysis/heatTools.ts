@@ -13,6 +13,10 @@ export const U_VALUE_OPENNING = 50;
 // use the darkness of color to approximate light absorption
 export const getLightAbsorption = (element: ElementModel) => {
   if (!element.color) return 0.5;
+  // catch some common cases
+  const lc = element.color.toLowerCase();
+  if (lc === 'white') return 0;
+  if (lc === 'black') return 1;
   const bigint = parseInt(element.color.substring(1), 16);
   const r = (bigint >> 16) & 255;
   const g = (bigint >> 8) & 255;

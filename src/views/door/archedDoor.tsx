@@ -1,9 +1,9 @@
 /*
- * @Copyright 2022. Institute for Future Intelligence, Inc.
+ * @Copyright 2022-2023. Institute for Future Intelligence, Inc.
  */
 
 import React, { useMemo } from 'react';
-import { HALF_PI } from 'src/constants';
+import { DEFAULT_HEAT_FLUX_SCALE_FACTOR, HALF_PI } from 'src/constants';
 import { useStore } from 'src/stores/common';
 import { DoubleSide, Material, Shape, Vector3 } from 'three';
 import { ArchedWireframe } from '../window/archedWindow';
@@ -61,7 +61,7 @@ const ArchedDoor = React.memo(
       const nz = Math.max(2, Math.round(lz / cellSize));
       const dx = lx / nx;
       const dz = lz / nz;
-      const intensity = (sum / area) * (heatFluxScaleFactor ?? 100);
+      const intensity = (sum / area) * (heatFluxScaleFactor ?? DEFAULT_HEAT_FLUX_SCALE_FACTOR);
       const arrowLength = 0.1;
       const arrowLengthHalf = arrowLength / 2;
       const vectors: Vector3[][] = [];

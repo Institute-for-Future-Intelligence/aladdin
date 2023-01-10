@@ -268,8 +268,6 @@ const Window = (windowModel: WindowModel) => {
   );
 
   const showSolarRadiationHeatmap = useStore(Selector.showSolarRadiationHeatmap);
-  const getParent = useStore(Selector.getParent);
-  const parent = getParent(windowModel);
 
   const renderWindow = () => {
     switch (windowType) {
@@ -285,7 +283,7 @@ const Window = (windowModel: WindowModel) => {
             shutter={shutter}
             glassMaterial={glassMaterial}
             showHeatFluxes={showSolarRadiationHeatmap}
-            area={parent ? Util.getWindowArea(windowModel, parent) : 0}
+            area={Util.getWindowArea(windowModel)}
           />
         );
       case WindowType.Arched:
@@ -300,7 +298,7 @@ const Window = (windowModel: WindowModel) => {
             shutter={shutter}
             glassMaterial={glassMaterial}
             showHeatFluxes={showSolarRadiationHeatmap}
-            area={parent ? Util.getWindowArea(windowModel, parent) : 0}
+            area={Util.getWindowArea(windowModel)}
           />
         );
     }
