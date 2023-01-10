@@ -2,8 +2,8 @@
  * @Copyright 2022-2023. Institute for Future Intelligence, Inc.
  */
 
-import React, { useMemo } from 'react';
-import { CatmullRomCurve3, EllipseCurve, FrontSide, MeshStandardMaterial, Shape, Vector3 } from 'three';
+import React, { useMemo, useRef } from 'react';
+import { CatmullRomCurve3, EllipseCurve, FrontSide, Mesh, MeshStandardMaterial, Shape, Vector3 } from 'three';
 import { Box, Cylinder, Extrude, Line, Plane } from '@react-three/drei';
 import { useStore } from 'src/stores/common';
 import * as Selector from 'src/stores/selector';
@@ -58,11 +58,11 @@ const Mullion = React.memo(({ dimension, mullionData, shadowEnabled }: MullionPr
   const mullionRadius = width / 2;
   const radialMullionAngle = useMemo(() => Math.atan2(lx / 2, ah), [lx, ah]);
   const radialMullionLength = useMemo(() => {
+    if (ah === 0 || lx === 0) {
+      return 0;
+    }
     const r = ah / 2 + lx ** 2 / (8 * ah);
     const a = r - ah;
-    if (a === 0) {
-      return r;
-    }
     const angle = Math.PI - radialMullionAngle;
     const aSquare = a ** 2;
     const bSquare = r ** 2;
@@ -88,7 +88,7 @@ const Mullion = React.memo(({ dimension, mullionData, shadowEnabled }: MullionPr
   const drawArchMullionPath = (ah: number, x: number) => {
     const h = (ah * x) / (lx / 2);
     const r = h / 2 + (x * 2) ** 2 / (8 * h);
-    const startAngle = Math.acos(x / r);
+    const startAngle = Math.acos(Math.min(1, x / r));
     const endAngle = Math.PI - startAngle;
     const points = new EllipseCurve(0, h - r, r, r, startAngle, endAngle, false, 0)
       .getPoints(24)
@@ -220,10 +220,13 @@ const Mullion = React.memo(({ dimension, mullionData, shadowEnabled }: MullionPr
             </Extrude>
           );
         })}
-
-      {renderRadialMullion(ah, 0)}
-      {renderRadialMullion(radialMullionLength, radialMullionAngle)}
-      {renderRadialMullion(radialMullionLength, -radialMullionAngle)}
+      {radialMullionLength > 0 && (
+        <>
+          {renderRadialMullion(ah, 0)}
+          {renderRadialMullion(radialMullionLength, radialMullionAngle)}
+          {renderRadialMullion(radialMullionLength, -radialMullionAngle)}
+        </>
+      )}
     </group>
   );
 });
@@ -248,13 +251,13 @@ const Frame = React.memo(({ dimension, frameData, shadowEnabled }: FrameProps) =
 
     const h1 = ah + width;
     const r1 = h1 / 2 + (x1 * 2) ** 2 / (8 * h1);
-    const startAngle1 = Math.acos(x1 / r1);
+    const startAngle1 = Math.acos(Math.min(1, x1 / r1));
     const endAngle1 = Math.PI - startAngle1;
     const y1 = h1 - r1;
 
     const h2 = ah;
     const r2 = h2 / 2 + (x2 * 2) ** 2 / (8 * h2);
-    const startAngle2 = Math.acos(x2 / r2);
+    const startAngle2 = Math.acos(Math.min(1, x2 / r2));
     const endAngle2 = Math.PI - startAngle2;
     const y2 = h2 - r2;
 
@@ -337,7 +340,7 @@ export const ArchedWireframe = React.memo(({ cy, dimension, wireframeData, drawB
 
   const drawArchedPath = (ah: number, x: number) => {
     const r = ah / 2 + (x * 2) ** 2 / (8 * ah);
-    const startAngle = Math.acos(x / r);
+    const startAngle = Math.acos(Math.min(1, x / r));
     const endAngle = Math.PI - startAngle;
     const points = new EllipseCurve(0, ah - r, r, r, startAngle, endAngle, false, 0)
       .getPoints(24)
@@ -521,7 +524,7 @@ const ArchedWindow = ({
     if (ah > 0) {
       const r = ah / 2 + lx ** 2 / (8 * ah);
       const [cX, cY] = [0, hz - r];
-      const startAngle = Math.acos(hx / r);
+      const startAngle = Math.acos(Math.min(1, hx / r));
       const endAngle = Math.PI - startAngle;
       s.absarc(cX, cY, r, startAngle, endAngle, false);
     } else {

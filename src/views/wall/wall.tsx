@@ -431,7 +431,7 @@ const Wall = ({ wallModel, foundationModel }: WallProps) => {
                 shape.lineTo(cx + dcx - dlx / 2, cy - hy + dly / 2 - ah);
                 const r = ah / 2 + dlx ** 2 / (8 * ah);
                 const [cX, cY] = [dcx, cy + dcy + dly / 2 - r];
-                const endAngle = Math.acos(dlx / 2 / r);
+                const endAngle = Math.acos(Math.min(dlx / 2 / r, 1));
                 const startAngle = Math.PI - endAngle;
                 shape.absarc(cX, cY, r, startAngle, endAngle, true);
               } else {
@@ -490,7 +490,7 @@ const Wall = ({ wallModel, foundationModel }: WallProps) => {
     if (ah > 0) {
       const r = ah / 2 + lx ** 2 / (8 * ah);
       const [cX, cY] = [cx, cy + hy - r];
-      const startAngle = Math.acos(hx / r);
+      const startAngle = Math.acos(Math.min(1, hx / r));
       const endAngle = Math.PI - startAngle;
       shape.absarc(cX, cY, r, startAngle, endAngle, false);
     } else {

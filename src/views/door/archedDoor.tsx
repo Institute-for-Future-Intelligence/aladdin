@@ -111,7 +111,7 @@ const ArchedDoor = React.memo(
       if (ah > 0.1) {
         const r = ah / 2 + lx ** 2 / (8 * ah);
         const [cX, cY] = [0, hz - r];
-        const startAngle = Math.acos(hx / r);
+        const startAngle = Math.acos(Math.min(hx / r, 1));
         const endAngle = Math.PI - startAngle;
         s.absarc(cX, cY, r, startAngle, endAngle, false);
       } else {
@@ -128,7 +128,7 @@ const ArchedDoor = React.memo(
           s.lineTo(-ihx, hz - iah);
           const r = iah / 2 + (lx * 0.8) ** 2 / (8 * iah);
           const [cX, cY] = [0, ihz - r];
-          const startAngle = Math.acos(ihx / r);
+          const startAngle = Math.acos(Math.min(ihx / r, 1));
           const endAngle = Math.PI - startAngle;
           s.absarc(cX, cY, r, endAngle, startAngle, true);
         } else {

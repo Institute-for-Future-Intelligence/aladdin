@@ -216,7 +216,7 @@ export class Util {
       const lz = window.lz * parent.lz;
       const ah = Math.min(window.archHeight, lz, hx); // actual arc height
       const r = 0.5 * (ah + (hx * hx) / ah); // arc radius
-      const startAngle = Math.acos(hx / r);
+      const startAngle = Math.acos(Math.min(hx / r, 1));
       const extent = Math.PI - startAngle * 2;
       return 0.5 * extent * r * r - hx * (r - ah) + (lz - ah) * hx * 2;
     }
@@ -230,7 +230,7 @@ export class Util {
       const lz = door.lz * parent.lz;
       const ah = Math.min(door.archHeight, lz, hx); // actual arch height
       const r = 0.5 * (ah + (hx * hx) / ah); // arc radius
-      const startAngle = Math.acos(hx / r);
+      const startAngle = Math.acos(Math.min(hx / r, 1));
       const extent = Math.PI - startAngle * 2;
       return 0.5 * extent * r * r - hx * (r - ah) + (lz - ah) * hx * 2;
     }
