@@ -1164,7 +1164,8 @@ const RoofSegment = ({
   const bulkMeshRef = useRef<Mesh>(null);
   const planeRef = useRef<Mesh>(null);
   const mullionRef = useRef<Mesh>(null);
-  const heatFluxArrow = useRef<Vector3>();
+  const heatFluxArrowHead = useRef<number>(0);
+  const heatFluxArrowLength = useRef<Vector3>();
   const heatFluxEuler = useRef<Euler>();
 
   const [mullionLx, setMullionLx] = useState(0);
@@ -1213,8 +1214,6 @@ const RoofSegment = ({
     v21.normalize();
     // find the normal vector of the quad
     const normal = new Vector3().crossVectors(v20, v21).normalize();
-    heatFluxArrow.current = normal.clone().multiplyScalar(0.1);
-    heatFluxEuler.current = Util.getEuler(UNIT_VECTOR_POS_Z, normal, -HALF_PI);
     // find the incremental vector going along the bottom edge (half of length)
     const dm = v10.multiplyScalar((0.5 * length10) / m);
     // find the incremental vector going from bottom to top (half of length)
@@ -1228,6 +1227,9 @@ const RoofSegment = ({
     dm.multiplyScalar(2);
     dn.multiplyScalar(2);
     const intensity = (sum / area) * (heatFluxScaleFactor ?? DEFAULT_HEAT_FLUX_SCALE_FACTOR);
+    heatFluxArrowHead.current = intensity < 0 ? 1 : 0;
+    heatFluxArrowLength.current = normal.clone().multiplyScalar(0.1);
+    heatFluxEuler.current = Util.getEuler(UNIT_VECTOR_POS_Z, normal, -Math.sign(intensity) * HALF_PI);
     const vectors: Vector3[][] = [];
     const origin = new Vector3();
     for (let p = 0; p < m; p++) {
@@ -1465,8 +1467,12 @@ const RoofSegment = ({
               <Line points={v} name={'Heat Flux ' + index} lineWidth={1} color={'gray'} />;
               <Cone
                 userData={{ unintersectable: true }}
-                position={heatFluxArrow.current ? v[0].clone().add(heatFluxArrow.current) : v[0]}
-                args={[0.04, 0.2, 4, 1]}
+                position={
+                  heatFluxArrowLength.current
+                    ? v[heatFluxArrowHead.current].clone().add(heatFluxArrowLength.current)
+                    : v[0]
+                }
+                args={[0.06, 0.2, 4, 1]}
                 name={'Normal Vector Arrow Head'}
                 rotation={heatFluxEuler.current ?? [0, 0, 0]}
               >
