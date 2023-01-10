@@ -2,7 +2,7 @@
  * @Copyright 2022-2023. Institute for Future Intelligence, Inc.
  */
 
-import { Extrude, Line, Plane } from '@react-three/drei';
+import { Cone, Extrude, Line, Plane } from '@react-three/drei';
 import React, { useEffect, useMemo, useRef, useState } from 'react';
 import { GableRoofModel, RoofModel, RoofStructure, RoofType } from 'src/models/RoofModel';
 import { WallModel } from 'src/models/WallModel';
@@ -21,7 +21,7 @@ import {
 } from 'three';
 import { useStoreRef } from 'src/stores/commonRef';
 import { useThree } from '@react-three/fiber';
-import { DEFAULT_HEAT_FLUX_SCALE_FACTOR, HALF_PI } from 'src/constants';
+import { DEFAULT_HEAT_FLUX_SCALE_FACTOR, HALF_PI, UNIT_VECTOR_POS_Z } from 'src/constants';
 import { ElementModel } from 'src/models/ElementModel';
 import {
   addUndoableResizeRoofRise,
@@ -1164,6 +1164,8 @@ const RoofSegment = ({
   const bulkMeshRef = useRef<Mesh>(null);
   const planeRef = useRef<Mesh>(null);
   const mullionRef = useRef<Mesh>(null);
+  const heatFluxArrow = useRef<Vector3>();
+  const heatFluxEuler = useRef<Euler>();
 
   const [mullionLx, setMullionLx] = useState(0);
   const [mullionLz, setMullionLz] = useState(0);
@@ -1211,6 +1213,8 @@ const RoofSegment = ({
     v21.normalize();
     // find the normal vector of the quad
     const normal = new Vector3().crossVectors(v20, v21).normalize();
+    heatFluxArrow.current = normal.clone().multiplyScalar(0.1);
+    heatFluxEuler.current = Util.getEuler(UNIT_VECTOR_POS_Z, normal, -HALF_PI);
     // find the incremental vector going along the bottom edge (half of length)
     const dm = v10.multiplyScalar((0.5 * length10) / m);
     // find the incremental vector going from bottom to top (half of length)
@@ -1219,16 +1223,11 @@ const RoofSegment = ({
       .normalize()
       .multiplyScalar((0.5 * distance) / n);
     // find the starting point of the grid (shift half of length in both directions)
-    // const [wallLeft, wallRight, ridgeRight, ridgeLeft, wallLeftAfterOverhang] = points;
-    // const thickness = wallLeftAfterOverhang.z - wallLeft.z;
-    const rise = s2.z - s0.z;
     const v0 = s0.clone().add(dm).add(dn);
     // double half-length to full-length for the increment vectors in both directions
     dm.multiplyScalar(2);
     dn.multiplyScalar(2);
     const intensity = (sum / area) * (heatFluxScaleFactor ?? DEFAULT_HEAT_FLUX_SCALE_FACTOR);
-    const arrowLength = 0.1;
-    const arrowLengthHalf = arrowLength / 2;
     const vectors: Vector3[][] = [];
     const origin = new Vector3();
     for (let p = 0; p < m; p++) {
@@ -1239,13 +1238,7 @@ const RoofSegment = ({
         if (intensity < 0) {
           v.push(origin.clone());
           v.push(origin.clone().add(normal.clone().multiplyScalar(-intensity)));
-          // v.push(new Vector3(rx, intensity + arrowLength, rz - arrowLengthHalf));
-          // v.push(new Vector3(rx, intensity, rz));
-          // v.push(new Vector3(rx, intensity + arrowLength, rz + arrowLengthHalf));
         } else {
-          // v.push(new Vector3(rx, -arrowLength, rz - arrowLengthHalf));
-          // v.push(new Vector3(rx, 0, rz));
-          // v.push(new Vector3(rx, -arrowLength, rz + arrowLengthHalf));
           v.push(origin.clone());
           v.push(origin.clone().add(normal.clone().multiplyScalar(intensity)));
         }
@@ -1467,7 +1460,20 @@ const RoofSegment = ({
       )}
       {heatFluxes &&
         heatFluxes.map((v, index) => {
-          return <Line key={index} points={v} name={'Heat Flux ' + index} lineWidth={1} color={'gray'} />;
+          return (
+            <React.Fragment key={index}>
+              <Line points={v} name={'Heat Flux ' + index} lineWidth={1} color={'gray'} />;
+              <Cone
+                userData={{ unintersectable: true }}
+                position={heatFluxArrow.current ? v[0].clone().add(heatFluxArrow.current) : v[0]}
+                args={[0.04, 0.2, 4, 1]}
+                name={'Normal Vector Arrow Head'}
+                rotation={heatFluxEuler.current ?? [0, 0, 0]}
+              >
+                <meshBasicMaterial attach="material" color={'gray'} />
+              </Cone>
+            </React.Fragment>
+          );
         })}
     </>
   );

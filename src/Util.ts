@@ -1,5 +1,5 @@
 /*
- * @Copyright 2021-2022. Institute for Future Intelligence, Inc.
+ * @Copyright 2021-2023. Institute for Future Intelligence, Inc.
  */
 
 import {
@@ -17,7 +17,7 @@ import {
   UNIT_VECTOR_POS_Z_ARRAY,
   ZERO_TOLERANCE,
 } from './constants';
-import { CanvasTexture, Color, Euler, Object3D, Scene, Triangle, Vector2, Vector3 } from 'three';
+import { CanvasTexture, Color, Euler, Object3D, Quaternion, Scene, Triangle, Vector2, Vector3 } from 'three';
 import { ElementModel } from './models/ElementModel';
 import { SolarPanelModel } from './models/SolarPanelModel';
 import {
@@ -46,6 +46,16 @@ import { WindowModel, WindowType } from './models/WindowModel';
 import { DoorModel, DoorType } from './models/DoorModel';
 
 export class Util {
+  static getEuler(from: Vector3, to: Vector3, rotateX?: number, rotateY?: number): Euler {
+    const quaternion = new Quaternion();
+    quaternion.setFromUnitVectors(from, to);
+    const euler = new Euler();
+    euler.setFromQuaternion(quaternion);
+    if (rotateX) euler.x += rotateX;
+    if (rotateY) euler.y += rotateY;
+    return euler;
+  }
+
   static getTriangleArea(a: Vector3, b: Vector3, c: Vector3) {
     return new Triangle(a, b, c).getArea();
   }
