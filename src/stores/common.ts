@@ -27,6 +27,7 @@ import {
   LineStyle,
   MoveHandleType,
   ObjectType,
+  OldRooftopElementData,
   Orientation,
   ParabolicDishStructureType,
   PolygonTexture,
@@ -745,6 +746,10 @@ export interface CommonStoreState {
   addedRoofId: string | null;
   deletedRoofId: string | null;
   setAddedRoofId: (id: string | null) => void;
+
+  // used for undo/redo for elements on roof
+  OldRooftopElementData: OldRooftopElementData | null;
+  setOldRooftopElementData: (data: OldRooftopElementData | null) => void;
 
   groupActionMode: boolean;
   setGroupActionMode: (b: boolean) => void;
@@ -6148,6 +6153,13 @@ export const useStore = create<CommonStoreState>(
           setAddedRoofId(id: string | null) {
             immerSet((state) => {
               state.addedRoofId = id;
+            });
+          },
+
+          OldRooftopElementData: null,
+          setOldRooftopElementData(data: OldRooftopElementData | null) {
+            immerSet((state) => {
+              state.OldRooftopElementData = data;
             });
           },
 

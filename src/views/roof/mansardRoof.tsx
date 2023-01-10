@@ -542,7 +542,7 @@ const MansardRoof = (roofModel: MansardRoofModel) => {
     useStore.getState().setRoofSegmentVerticesWithoutOverhang(id, segmentVertices);
   };
 
-  const { grabRef, addUndoableMove, undoMove, setOldRefData } = useElementUndoable();
+  const { addUndoableMove, undoMove, setOldRefData } = useElementUndoable();
   const { transparent, opacity } = useTransparent();
   useUpdateSegmentVerticesMap(
     id,
@@ -687,8 +687,7 @@ const MansardRoof = (roofModel: MansardRoofModel) => {
           handlePointerMove(e, id);
         }}
         onPointerUp={(e) => {
-          e.stopPropagation();
-          handlePointerUp(grabRef, foundation, currentWallArray[0], id, overhang, undoMove, addUndoableMove);
+          handlePointerUp(e, id, currentWallArray[0], overhang, undoMove, addUndoableMove);
         }}
         onContextMenu={(e) => {
           handleContextMenu(e, id);

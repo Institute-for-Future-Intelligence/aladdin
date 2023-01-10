@@ -413,7 +413,7 @@ const HipRoof = (roofModel: HipRoofModel) => {
     useStore.getState().setRoofSegmentVerticesWithoutOverhang(id, segmentVertices);
   };
 
-  const { grabRef, addUndoableMove, undoMove, setOldRefData } = useElementUndoable();
+  const { addUndoableMove, undoMove, setOldRefData } = useElementUndoable();
   useUpdateSegmentVerticesMap(id, new Vector3(centroid2D.x, centroid2D.y, topZ), roofSegments);
   useUpdateSegmentVerticesWithoutOverhangMap(updateSegmentVerticesWithoutOverhangeMap);
 
@@ -464,7 +464,7 @@ const HipRoof = (roofModel: HipRoofModel) => {
           handlePointerMove(e, id);
         }}
         onPointerUp={(e) => {
-          handlePointerUp(grabRef, foundation, currentWallArray[0], id, overhang, undoMove, addUndoableMove);
+          handlePointerUp(e, id, currentWallArray[0], overhang, undoMove, addUndoableMove);
         }}
         onContextMenu={(e) => {
           handleContextMenu(e, id);

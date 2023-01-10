@@ -6,7 +6,7 @@ import { useEffect, useMemo, useRef, useState } from 'react';
 import { ElementModel } from 'src/models/ElementModel';
 import { SolarPanelModel } from 'src/models/SolarPanelModel';
 import { useStore } from 'src/stores/common';
-import { ObjectType, RoofTexture } from 'src/types';
+import { ObjectType, OldRooftopElementData, RoofTexture } from 'src/types';
 import { UndoableMoveElementOnRoof } from 'src/undo/UndoableMove';
 
 import RoofTextureDefault from 'src/resources/roof_edge.png';
@@ -29,77 +29,87 @@ import { RoofUtil } from './RoofUtil';
 import { GambrelRoofModel, RoofModel, RoofType } from 'src/models/RoofModel';
 
 export const useElementUndoable = () => {
-  const grabRef = useRef<ElementModel | null>(null);
-  const oldPostionRef = useRef<number[] | null>(null);
-  const oldRotationRef = useRef<number[] | null>(null);
-  const oldNormalRef = useRef<number[] | null>(null);
-
   const addUndoableMove = (elem: SolarPanelModel | SensorModel | LightModel) => {
-    if (oldPostionRef.current && oldRotationRef.current && oldNormalRef.current) {
-      const undoabeMove = {
-        name: 'Move ' + elem.type + ' on Roof',
-        timestamp: Date.now(),
-        id: elem.id,
-        oldPos: [...oldPostionRef.current],
-        newPos: [elem.cx, elem.cy, elem.cz],
-        oldRot: [...oldRotationRef.current],
-        newRot: [...elem.rotation],
-        oldNor: [...oldNormalRef.current],
-        newNor: [...elem.normal],
-        undo: () => {
-          useStore.getState().set((state) => {
-            for (const e of state.elements) {
-              if (e.id === undoabeMove.id) {
-                [e.cx, e.cy, e.cz] = [...undoabeMove.oldPos];
-                e.rotation = [...undoabeMove.oldRot];
-                e.normal = [...undoabeMove.oldNor];
-                break;
-              }
+    const OldRooftopElementData = useStore.getState().OldRooftopElementData;
+    if (!OldRooftopElementData) return;
+    const undoabeMove = {
+      name: 'Move ' + elem.type + ' on Roof',
+      timestamp: Date.now(),
+      id: elem.id,
+      oldParentId: OldRooftopElementData.parentId,
+      newParentId: elem.parentId,
+      oldFoundationId: OldRooftopElementData.foundationId,
+      newFoundationId: elem.foundationId,
+      oldPos: [...OldRooftopElementData.position],
+      newPos: [elem.cx, elem.cy, elem.cz],
+      oldRot: [...OldRooftopElementData.rotation],
+      newRot: [...elem.rotation],
+      oldNor: [...OldRooftopElementData.normal],
+      newNor: [...elem.normal],
+      undo() {
+        useStore.getState().set((state) => {
+          for (const e of state.elements) {
+            if (e.id === this.id) {
+              e.parentId = this.oldParentId;
+              e.foundationId = this.oldFoundationId;
+              [e.cx, e.cy, e.cz] = [...this.oldPos];
+              e.rotation = [...this.oldRot];
+              e.normal = [...this.oldNor];
+              break;
             }
-          });
-        },
-        redo: () => {
-          useStore.getState().set((state) => {
-            for (const e of state.elements) {
-              if (e.id === undoabeMove.id) {
-                [e.cx, e.cy, e.cz] = [...undoabeMove.newPos];
-                e.rotation = [...undoabeMove.newRot];
-                e.normal = [...undoabeMove.newNor];
-                break;
-              }
+          }
+        });
+      },
+      redo() {
+        useStore.getState().set((state) => {
+          for (const e of state.elements) {
+            if (e.id === this.id) {
+              e.parentId = this.newParentId;
+              e.foundationId = this.newFoundationId;
+              [e.cx, e.cy, e.cz] = [...this.newPos];
+              e.rotation = [...this.newRot];
+              e.normal = [...this.newNor];
+              break;
             }
-          });
-        },
-      } as UndoableMoveElementOnRoof;
-      useStore.getState().addUndoable(undoabeMove);
-    }
+          }
+        });
+      },
+    } as UndoableMoveElementOnRoof;
+    useStore.getState().addUndoable(undoabeMove);
   };
 
   const undoMove = () => {
     useStore.getState().set((state) => {
-      if (oldPostionRef.current && oldRotationRef.current && oldNormalRef.current) {
-        for (const e of state.elements) {
-          if (e.id === grabRef.current?.id) {
-            e.cx = oldPostionRef.current[0];
-            e.cy = oldPostionRef.current[1];
-            e.cz = oldPostionRef.current[2];
-            e.rotation = [...oldRotationRef.current];
-            e.normal = [...oldNormalRef.current];
-            break;
+      if (!state.selectedElement) return;
+      for (const e of state.elements) {
+        if (e.id === state.selectedElement.id) {
+          const oldData = state.OldRooftopElementData;
+          if (oldData) {
+            e.parentId = oldData.parentId;
+            e.foundationId = oldData.foundationId;
+            e.cx = oldData.position[0];
+            e.cy = oldData.position[1];
+            e.cz = oldData.position[2];
+            e.rotation = [...oldData.rotation];
+            e.normal = [...oldData.normal];
           }
+          break;
         }
       }
     });
   };
 
   const setOldRefData = (elem: ElementModel) => {
-    grabRef.current = elem;
-    oldPostionRef.current = [elem.cx, elem.cy, elem.cz];
-    oldRotationRef.current = [...elem.rotation];
-    oldNormalRef.current = [...elem.normal];
+    useStore.getState().setOldRooftopElementData({
+      position: [elem.cx, elem.cy, elem.cz],
+      rotation: [...elem.rotation],
+      normal: [...elem.normal],
+      parentId: elem.parentId,
+      foundationId: elem.foundationId,
+    } as OldRooftopElementData);
   };
 
-  return { grabRef, addUndoableMove, undoMove, setOldRefData };
+  return { addUndoableMove, undoMove, setOldRefData };
 };
 
 export const useRoofTexture = (textureType: RoofTexture) => {

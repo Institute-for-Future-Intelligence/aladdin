@@ -653,7 +653,7 @@ const GambrelRoof = (roofModel: GambrelRoofModel) => {
     useStore.getState().setRoofSegmentVerticesWithoutOverhang(id, segmentVertices);
   };
 
-  const { grabRef, addUndoableMove, undoMove, setOldRefData } = useElementUndoable();
+  const { addUndoableMove, undoMove, setOldRefData } = useElementUndoable();
   useUpdateSegmentVerticesMap(id, centroid, roofSegments);
   useUpdateSegmentVerticesWithoutOverhangMap(updateSegmentVerticesWithoutOverhangeMap);
 
@@ -704,7 +704,7 @@ const GambrelRoof = (roofModel: GambrelRoofModel) => {
           handlePointerMove(e, id);
         }}
         onPointerUp={(e) => {
-          handlePointerUp(grabRef, foundation, currentWallArray[0], id, overhang, undoMove, addUndoableMove);
+          handlePointerUp(e, id, currentWallArray[0], overhang, undoMove, addUndoableMove);
         }}
         onContextMenu={(e) => {
           handleContextMenu(e, id);

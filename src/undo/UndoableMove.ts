@@ -29,6 +29,10 @@ export interface UndoableMoveFoundationGroup extends Undoable {
 
 export interface UndoableMoveElementOnRoof extends Undoable {
   id: string;
+  oldParentId: string;
+  newParentId: string;
+  oldFoundationId: string | undefined;
+  newFoundationId: string | undefined;
   oldPos: number[];
   newPos: number[];
   oldRot: number[];

@@ -532,3 +532,11 @@ export enum RoofHandleType {
   Ridge = 'Ridge',
   Null = 'Null',
 }
+
+export interface OldRooftopElementData {
+  parentId: string;
+  foundationId?: string;
+  position: number[];
+  rotation: number[];
+  normal: number[];
+}

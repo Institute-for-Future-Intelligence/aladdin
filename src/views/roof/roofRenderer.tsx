@@ -353,47 +353,50 @@ export const handlePointerDown = (
 };
 
 export const handlePointerUp = (
-  grabRef: React.MutableRefObject<ElementModel | null>,
-  foundation: ElementModel | null,
-  wall: WallModel,
-  roofId: string,
+  event: ThreeEvent<PointerEvent>,
+  id: string,
+  wall0: WallModel,
   overhang: number,
   undoMove: () => void,
   addUndoableMove: (movingElement: SolarPanelModel | SensorModel | LightModel) => void,
 ) => {
-  if (grabRef.current && useStore.getState().moveHandleType) {
-    const selectedElement = useStore.getState().getElementById(grabRef.current.id);
-    if (selectedElement) {
-      if (selectedElement.type === ObjectType.SolarPanel) {
-        const solarPanel = selectedElement as SolarPanelModel;
-        if (foundation) {
-          const boundaryVertices = RoofUtil.getBoundaryVertices(roofId, wall, overhang);
-          const solarPanelVertices = RoofUtil.getSolarPanelVerticesOnRoof(solarPanel, foundation);
-          if (
-            !spBoundaryCheck(solarPanelVertices, boundaryVertices) ||
-            !spCollisionCheck(solarPanel, foundation, solarPanelVertices)
-          ) {
-            undoMove();
-          } else {
-            addUndoableMove(solarPanel);
+  const selectedElement = useStore.getState().getSelectedElement();
+  if (!selectedElement || !RoofUtil.isValidOnRoof(selectedElement)) return;
+
+  if (useStore.getState().moveHandleType) {
+    const intersectionRoofs = event.intersections.filter((i) => i.eventObject.name.includes('Roof'));
+    const isFirstIntersectedRoof = intersectionRoofs[0].eventObject.userData.roofId === id;
+    if (isFirstIntersectedRoof && selectedElement.foundationId) {
+      const foundation = useStore.getState().getElementById(selectedElement.foundationId);
+      if (foundation) {
+        switch (selectedElement.type) {
+          case ObjectType.SolarPanel: {
+            const solarPanel = selectedElement as SolarPanelModel;
+            const boundaryVertices = RoofUtil.getBoundaryVertices(id, wall0, overhang);
+            const solarPanelVertices = RoofUtil.getSolarPanelVerticesOnRoof(solarPanel, foundation);
+            if (
+              !spBoundaryCheck(solarPanelVertices, boundaryVertices) ||
+              !spCollisionCheck(solarPanel, foundation, solarPanelVertices)
+            ) {
+              undoMove();
+            } else {
+              addUndoableMove(solarPanel);
+            }
+            break;
           }
-        }
-      } else if (selectedElement.type === ObjectType.Sensor) {
-        const sensor = selectedElement as SensorModel;
-        if (foundation) {
-          addUndoableMove(sensor);
-        }
-      } else if (selectedElement.type === ObjectType.Light) {
-        const light = selectedElement as LightModel;
-        if (foundation) {
-          addUndoableMove(light);
+          case ObjectType.Sensor:
+            addUndoableMove(selectedElement as SensorModel);
+            break;
+          case ObjectType.Light:
+            addUndoableMove(selectedElement as LightModel);
+            break;
         }
       }
     }
   }
-  grabRef.current = null;
   useStore.getState().set((state) => {
     state.moveHandleType = null;
+    state.OldRooftopElementData = null;
   });
 };
 

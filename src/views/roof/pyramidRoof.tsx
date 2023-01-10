@@ -531,7 +531,7 @@ const PyramidRoof = (roofModel: PyramidRoofModel) => {
     }
   }, [currentWallArray, updateRoofFlag]);
 
-  const { grabRef, addUndoableMove, undoMove, setOldRefData } = useElementUndoable();
+  const { addUndoableMove, undoMove, setOldRefData } = useElementUndoable();
 
   const updateElementOnRoofFlag = useStore(Selector.updateElementOnRoofFlag);
 
@@ -701,7 +701,7 @@ const PyramidRoof = (roofModel: PyramidRoofModel) => {
           handlePointerMove(e, id);
         }}
         onPointerUp={(e) => {
-          handlePointerUp(grabRef, foundation, currentWallArray[0], id, overhang, undoMove, addUndoableMove);
+          handlePointerUp(e, id, currentWallArray[0], overhang, undoMove, addUndoableMove);
         }}
         onContextMenu={(e) => {
           handleContextMenu(e, id);
