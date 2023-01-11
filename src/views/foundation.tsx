@@ -293,14 +293,15 @@ const Foundation = ({
   }, [updateWallMapOnFoundationFlag]);
 
   useEffect(() => {
-    if (deletedWallID) {
+    if (deletedWallID && deletedWallID === addedWallIdRef.current) {
       wallMapOnFoundation.current.delete(deletedWallID);
       isSettingWallStartPointRef.current = false;
       isSettingWallEndPointRef.current = false;
-      // setAddedWallID(null);
       addedWallIdRef.current = null;
       setCommonStore((state) => {
-        state.addedWallId = null;
+        if (state.addedWallId === state.deletedWallId) {
+          state.addedWallId = null;
+        }
         state.deletedWallId = null;
       });
       useStoreRef.getState().setEnableOrbitController(true);
