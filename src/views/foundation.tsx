@@ -2926,10 +2926,11 @@ const Foundation = ({
           </group>
         )}
         <group position={[0, 0, hz + 0.01]}>
-          {wallAuxToWallArray.map((wallAuxToWall) => {
+          {wallAuxToWallArray.map((wallAuxToWall, idx) => {
             if (!wallAuxToWall.show) return null;
             return (
               <WallAuxiliaryLine
+                key={idx}
                 hx={hx}
                 hy={hy}
                 position={wallAuxToWall.position}

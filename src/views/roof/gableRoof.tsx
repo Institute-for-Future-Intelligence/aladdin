@@ -724,7 +724,7 @@ const GableRoof = (roofModel: GableRoofModel) => {
   // set position and rotation
   const foundation = useStore((state) => {
     for (const e of state.elements) {
-      if (e.id === parentId || e.type == ObjectType.Foundation) {
+      if (e.id === parentId && e.type == ObjectType.Foundation) {
         return e as FoundationModel;
       }
     }
