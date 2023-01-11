@@ -12,6 +12,10 @@ export const windowShininess = (state: CommonStoreState) => state.viewState.wind
 
 export const heatFluxScaleFactor = (state: CommonStoreState) => state.viewState.heatFluxScaleFactor;
 
+export const heatFluxColor = (state: CommonStoreState) => state.viewState.heatFluxColor;
+
+export const heatFluxWidth = (state: CommonStoreState) => state.viewState.heatFluxWidth;
+
 export const solarRadiationHeatmapMaxValue = (state: CommonStoreState) => state.viewState.solarRadiationHeatMapMaxValue;
 
 export const solarRadiationHeatmapReflectionOnly = (state: CommonStoreState) =>

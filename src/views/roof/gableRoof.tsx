@@ -21,7 +21,13 @@ import {
 } from 'three';
 import { useStoreRef } from 'src/stores/commonRef';
 import { useThree } from '@react-three/fiber';
-import { DEFAULT_HEAT_FLUX_SCALE_FACTOR, HALF_PI, UNIT_VECTOR_POS_Z } from 'src/constants';
+import {
+  DEFAULT_HEAT_FLUX_COLOR,
+  DEFAULT_HEAT_FLUX_SCALE_FACTOR,
+  DEFAULT_HEAT_FLUX_WIDTH,
+  HALF_PI,
+  UNIT_VECTOR_POS_Z,
+} from 'src/constants';
 import { ElementModel } from 'src/models/ElementModel';
 import {
   addUndoableResizeRoofRise,
@@ -1153,6 +1159,8 @@ const RoofSegment = ({
   const shadowEnabled = useStore(Selector.viewState.shadowEnabled);
   const showSolarRadiationHeatmap = useStore(Selector.showSolarRadiationHeatmap);
   const heatFluxScaleFactor = useStore(Selector.viewState.heatFluxScaleFactor);
+  const heatFluxColor = useStore(Selector.viewState.heatFluxColor);
+  const heatFluxWidth = useStore(Selector.viewState.heatFluxWidth);
   const getRoofSegmentVerticesWithoutOverhang = useStore(Selector.getRoofSegmentVerticesWithoutOverhang);
   const hourlyHeatExchangeArrayMap = usePrimitiveStore.getState().hourlyHeatExchangeArrayMap;
 
@@ -1464,7 +1472,13 @@ const RoofSegment = ({
         heatFluxes.map((v, index) => {
           return (
             <React.Fragment key={index}>
-              <Line points={v} name={'Heat Flux ' + index} lineWidth={1} color={'gray'} />;
+              <Line
+                points={v}
+                name={'Heat Flux ' + index}
+                lineWidth={heatFluxWidth ?? DEFAULT_HEAT_FLUX_WIDTH}
+                color={heatFluxColor ?? DEFAULT_HEAT_FLUX_COLOR}
+              />
+              ;
               <Cone
                 userData={{ unintersectable: true }}
                 position={
@@ -1476,7 +1490,7 @@ const RoofSegment = ({
                 name={'Normal Vector Arrow Head'}
                 rotation={heatFluxEuler.current ?? [0, 0, 0]}
               >
-                <meshBasicMaterial attach="material" color={'gray'} />
+                <meshBasicMaterial attach="material" color={heatFluxColor ?? DEFAULT_HEAT_FLUX_COLOR} />
               </Cone>
             </React.Fragment>
           );

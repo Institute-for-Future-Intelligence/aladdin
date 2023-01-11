@@ -32,7 +32,7 @@ import {
   Vector3,
 } from 'three';
 import { ThreeEvent, useThree } from '@react-three/fiber';
-import { Box, Cylinder, Line, Plane } from '@react-three/drei';
+import { Box, Cone, Cylinder, Line, Plane } from '@react-three/drei';
 import { ActionType, MoveHandleType, ObjectType, Orientation, ResizeHandleType, WallTexture } from 'src/types';
 import { Util } from 'src/Util';
 import { useStore } from 'src/stores/common';
@@ -47,12 +47,16 @@ import Window from '../window/window';
 import WallWireFrame from './wallWireFrame';
 import * as Selector from 'src/stores/selector';
 import {
+  DEFAULT_HEAT_FLUX_COLOR,
   DEFAULT_HEAT_FLUX_SCALE_FACTOR,
+  DEFAULT_HEAT_FLUX_WIDTH,
   FINE_GRID_SCALE,
   HALF_PI,
   INVALID_ELEMENT_COLOR,
   LOCKED_ELEMENT_SELECTION_COLOR,
   NORMAL_GRID_SCALE,
+  UNIT_VECTOR_POS_Y,
+  UNIT_VECTOR_POS_Z,
 } from 'src/constants';
 import { UndoableMove } from 'src/undo/UndoableMove';
 import { UndoableAdd } from 'src/undo/UndoableAdd';
@@ -185,6 +189,8 @@ const Wall = ({ wallModel, foundationModel }: WallProps) => {
   const getHeatmap = useStore(Selector.getHeatmap);
   const [heatmapTexture, setHeatmapTexture] = useState<CanvasTexture | null>(null);
   const heatFluxScaleFactor = useStore(Selector.viewState.heatFluxScaleFactor);
+  const heatFluxColor = useStore(Selector.viewState.heatFluxColor);
+  const heatFluxWidth = useStore(Selector.viewState.heatFluxWidth);
   const hourlyHeatExchangeArrayMap = usePrimitiveStore(Selector.hourlyHeatExchangeArrayMap);
   const getChildrenOfType = useStore(Selector.getChildrenOfType);
 
@@ -217,6 +223,9 @@ const Wall = ({ wallModel, foundationModel }: WallProps) => {
     }
   }, [showSolarRadiationHeatmap, solarRadiationHeatmapMaxValue]);
 
+  const heatFluxArrowHead = useRef<number>(0);
+  const heatFluxEuler = useRef<Euler>();
+
   const heatFluxes: Vector3[][] | undefined = useMemo(() => {
     if (!showSolarRadiationHeatmap) return undefined;
     const heat = hourlyHeatExchangeArrayMap.get(id);
@@ -246,8 +255,8 @@ const Wall = ({ wallModel, foundationModel }: WallProps) => {
     const dz = lz / nz;
     const halfDif = (lz - wallModel.lz) / 2;
     const intensity = (sum / area) * (heatFluxScaleFactor ?? DEFAULT_HEAT_FLUX_SCALE_FACTOR);
-    const arrowLength = 0.1;
-    const arrowLengthHalf = arrowLength / 2;
+    heatFluxArrowHead.current = intensity < 0 ? 1 : 0;
+    heatFluxEuler.current = Util.getEuler(UNIT_VECTOR_POS_Z, UNIT_VECTOR_POS_Y, Math.sign(intensity) * HALF_PI);
     const vectors: Vector3[][] = [];
     const polygon = Util.getWallVertices(wallModel, 0);
     for (let kx = 0; kx < nx; kx++) {
@@ -285,13 +294,7 @@ const Wall = ({ wallModel, foundationModel }: WallProps) => {
             if (intensity < 0) {
               v.push(new Vector3(rx, 0, rz));
               v.push(new Vector3(rx, intensity, rz));
-              v.push(new Vector3(rx, intensity + arrowLength, rz - arrowLengthHalf));
-              v.push(new Vector3(rx, intensity, rz));
-              v.push(new Vector3(rx, intensity + arrowLength, rz + arrowLengthHalf));
             } else {
-              v.push(new Vector3(rx, -arrowLength, rz - arrowLengthHalf));
-              v.push(new Vector3(rx, 0, rz));
-              v.push(new Vector3(rx, -arrowLength, rz + arrowLengthHalf));
               v.push(new Vector3(rx, 0, rz));
               v.push(new Vector3(rx, -intensity, rz));
             }
@@ -2061,7 +2064,28 @@ const Wall = ({ wallModel, foundationModel }: WallProps) => {
 
       {heatFluxes &&
         heatFluxes.map((v, index) => {
-          return <Line key={index} points={v} name={'Heat Flux ' + index} lineWidth={1} color={'gray'} />;
+          return (
+            <React.Fragment key={index}>
+              <Line
+                points={v}
+                name={'Heat Flux ' + index}
+                lineWidth={heatFluxWidth ?? DEFAULT_HEAT_FLUX_WIDTH}
+                color={heatFluxColor ?? DEFAULT_HEAT_FLUX_COLOR}
+              />
+              ;
+              <Cone
+                userData={{ unintersectable: true }}
+                position={v[heatFluxArrowHead.current]
+                  .clone()
+                  .add(new Vector3(0, heatFluxArrowHead.current === 0 ? -0.1 : 0.1, 0))}
+                args={[0.06, 0.2, 4, 1]}
+                name={'Normal Vector Arrow Head'}
+                rotation={heatFluxEuler.current ?? [0, 0, 0]}
+              >
+                <meshBasicMaterial attach="material" color={heatFluxColor ?? DEFAULT_HEAT_FLUX_COLOR} />
+              </Cone>
+            </React.Fragment>
+          );
         })}
     </>
   );

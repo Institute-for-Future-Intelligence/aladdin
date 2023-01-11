@@ -17,6 +17,8 @@ export interface ViewState {
 
   axes: boolean;
   heatFluxScaleFactor: number;
+  heatFluxColor: string;
+  heatFluxWidth: number;
   solarRadiationHeatMapMaxValue: number;
   solarRadiationHeatMapReflectionOnly: boolean; // for heliostats and Fresnel reflectors
   autoRotate: boolean;

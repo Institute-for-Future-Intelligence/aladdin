@@ -285,13 +285,11 @@ const ThermalSimulation = ({ city }: ThermalSimulationProps) => {
       }
       // heat exchange for each roof segment
       if (e.type === ObjectType.Roof) {
-        const segments = getRoofSegmentVertices(e.id);
-        if (segments) {
-          for (let i = 0; i < segments.length; i++) {
-            const uuid = e.id + '-' + i;
-            const arr = hourlyHeatExchangeArrayMapRef.current.get(uuid);
+        for (const key of hourlyHeatExchangeArrayMapRef.current.keys()) {
+          if (key !== e.id && key.startsWith(e.id)) {
+            const arr = hourlyHeatExchangeArrayMapRef.current.get(key);
             if (arr) {
-              setHourlyHeatExchangeArray(uuid, [...arr]);
+              setHourlyHeatExchangeArray(key, [...arr]);
             }
           }
         }

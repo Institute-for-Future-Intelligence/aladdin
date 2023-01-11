@@ -2,13 +2,22 @@
  * @Copyright 2022-2023. Institute for Future Intelligence, Inc.
  */
 
-import React, { useMemo } from 'react';
-import { Box, Line, Plane } from '@react-three/drei';
-import { DEFAULT_HEAT_FLUX_SCALE_FACTOR, HALF_PI, LOCKED_ELEMENT_SELECTION_COLOR } from 'src/constants';
-import { DoubleSide, Material, Shape, Vector3 } from 'three';
+import React, { useMemo, useRef } from 'react';
+import { Box, Cone, Line, Plane } from '@react-three/drei';
+import {
+  DEFAULT_HEAT_FLUX_COLOR,
+  DEFAULT_HEAT_FLUX_SCALE_FACTOR,
+  DEFAULT_HEAT_FLUX_WIDTH,
+  HALF_PI,
+  LOCKED_ELEMENT_SELECTION_COLOR,
+  UNIT_VECTOR_POS_Y,
+  UNIT_VECTOR_POS_Z,
+} from 'src/constants';
+import { DoubleSide, Euler, Material, Shape, Vector3 } from 'three';
 import * as Selector from 'src/stores/selector';
 import { useStore } from 'src/stores/common';
 import { usePrimitiveStore } from '../../stores/commonPrimitive';
+import { Util } from '../../Util';
 
 interface RectangleDoorProps {
   id: string;
@@ -85,8 +94,13 @@ const RectangleDoor = React.memo(
   ({ id, dimension, color, selected, locked, material, filled, area, showHeatFluxes }: RectangleDoorProps) => {
     const world = useStore.getState().world;
     const heatFluxScaleFactor = useStore(Selector.viewState.heatFluxScaleFactor);
+    const heatFluxColor = useStore(Selector.viewState.heatFluxColor);
+    const heatFluxWidth = useStore(Selector.viewState.heatFluxWidth);
     const shadowEnabled = useStore(Selector.viewState.shadowEnabled);
     const hourlyHeatExchangeArrayMap = usePrimitiveStore(Selector.hourlyHeatExchangeArrayMap);
+
+    const heatFluxArrowHead = useRef<number>(0);
+    const heatFluxEuler = useRef<Euler>();
 
     const [lx, ly, lz] = dimension;
 
@@ -102,8 +116,8 @@ const RectangleDoor = React.memo(
       const dx = lx / nx;
       const dz = lz / nz;
       const intensity = (sum / area) * (heatFluxScaleFactor ?? DEFAULT_HEAT_FLUX_SCALE_FACTOR);
-      const arrowLength = 0.1;
-      const arrowLengthHalf = arrowLength / 2;
+      heatFluxArrowHead.current = intensity < 0 ? 1 : 0;
+      heatFluxEuler.current = Util.getEuler(UNIT_VECTOR_POS_Z, UNIT_VECTOR_POS_Y, Math.sign(intensity) * HALF_PI);
       const vectors: Vector3[][] = [];
       if (intensity < 0) {
         for (let kx = 0; kx < nx; kx++) {
@@ -113,9 +127,6 @@ const RectangleDoor = React.memo(
             const rz = (kz - nz / 2 + 0.5) * dz;
             v.push(new Vector3(rx, 0, rz));
             v.push(new Vector3(rx, intensity, rz));
-            v.push(new Vector3(rx, intensity + arrowLength, rz - arrowLengthHalf));
-            v.push(new Vector3(rx, intensity, rz));
-            v.push(new Vector3(rx, intensity + arrowLength, rz + arrowLengthHalf));
             vectors.push(v);
           }
         }
@@ -125,9 +136,6 @@ const RectangleDoor = React.memo(
             const v: Vector3[] = [];
             const rx = (kx - nx / 2 + 0.5) * dx;
             const rz = (kz - nz / 2 + 0.5) * dz;
-            v.push(new Vector3(rx, -arrowLength, rz - arrowLengthHalf));
-            v.push(new Vector3(rx, 0, rz));
-            v.push(new Vector3(rx, -arrowLength, rz + arrowLengthHalf));
             v.push(new Vector3(rx, 0, rz));
             v.push(new Vector3(rx, -intensity, rz));
             vectors.push(v);
@@ -204,7 +212,28 @@ const RectangleDoor = React.memo(
 
         {heatFluxes &&
           heatFluxes.map((v, index) => {
-            return <Line key={index} points={v} name={'Heat Flux ' + index} lineWidth={1} color={'gray'} />;
+            return (
+              <React.Fragment key={index}>
+                <Line
+                  points={v}
+                  name={'Heat Flux ' + index}
+                  lineWidth={heatFluxWidth ?? DEFAULT_HEAT_FLUX_WIDTH}
+                  color={heatFluxColor ?? DEFAULT_HEAT_FLUX_COLOR}
+                />
+                ;
+                <Cone
+                  userData={{ unintersectable: true }}
+                  position={v[heatFluxArrowHead.current]
+                    .clone()
+                    .add(new Vector3(0, heatFluxArrowHead.current === 0 ? -0.1 : 0.1, 0))}
+                  args={[0.06, 0.2, 4, 1]}
+                  name={'Normal Vector Arrow Head'}
+                  rotation={heatFluxEuler.current ?? [0, 0, 0]}
+                >
+                  <meshBasicMaterial attach="material" color={heatFluxColor ?? DEFAULT_HEAT_FLUX_COLOR} />
+                </Cone>
+              </React.Fragment>
+            );
           })}
       </group>
     );

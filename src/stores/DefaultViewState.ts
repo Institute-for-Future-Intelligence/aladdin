@@ -1,11 +1,17 @@
 /*
- * @Copyright 2021-2022. Institute for Future Intelligence, Inc.
+ * @Copyright 2021-2023. Institute for Future Intelligence, Inc.
  */
 
 import { ViewState } from './ViewState';
 import { immerable } from 'immer';
 import { Rectangle } from '../models/Rectangle';
-import { DEFAULT_SOLAR_PANEL_SHININESS, DEFAULT_WINDOW_SHININESS } from '../constants';
+import {
+  DEFAULT_HEAT_FLUX_COLOR,
+  DEFAULT_HEAT_FLUX_SCALE_FACTOR,
+  DEFAULT_HEAT_FLUX_WIDTH,
+  DEFAULT_SOLAR_PANEL_SHININESS,
+  DEFAULT_WINDOW_SHININESS,
+} from '../constants';
 
 export class DefaultViewState implements ViewState {
   // Needed for immer drafting to work properly: https://immerjs.github.io/immer/docs/complex-objects
@@ -23,6 +29,8 @@ export class DefaultViewState implements ViewState {
 
   axes: boolean;
   heatFluxScaleFactor: number;
+  heatFluxColor: string;
+  heatFluxWidth: number;
   solarRadiationHeatMapMaxValue: number;
   solarRadiationHeatMapReflectionOnly: boolean; // for heliostats and Fresnel reflectors
   shadowEnabled: boolean;
@@ -112,7 +120,9 @@ export class DefaultViewState implements ViewState {
     this.cameraZoom = 20;
 
     this.axes = true;
-    this.heatFluxScaleFactor = 100;
+    this.heatFluxScaleFactor = DEFAULT_HEAT_FLUX_SCALE_FACTOR;
+    this.heatFluxColor = DEFAULT_HEAT_FLUX_COLOR;
+    this.heatFluxWidth = DEFAULT_HEAT_FLUX_WIDTH;
     this.solarRadiationHeatMapMaxValue = 5;
     this.solarRadiationHeatMapReflectionOnly = false;
     this.shadowEnabled = true;
@@ -203,7 +213,9 @@ export class DefaultViewState implements ViewState {
     viewState.ambientLightIntensity = 0.1;
 
     viewState.axes = true;
-    viewState.heatFluxScaleFactor = 100;
+    viewState.heatFluxScaleFactor = DEFAULT_HEAT_FLUX_SCALE_FACTOR;
+    viewState.heatFluxColor = DEFAULT_HEAT_FLUX_COLOR;
+    viewState.heatFluxWidth = DEFAULT_HEAT_FLUX_WIDTH;
     viewState.solarRadiationHeatMapMaxValue = 5;
     viewState.solarRadiationHeatMapReflectionOnly = false;
     viewState.shadowEnabled = true;
