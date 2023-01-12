@@ -1,10 +1,10 @@
 /*
- * @Copyright 2021-2022. Institute for Future Intelligence, Inc.
+ * @Copyright 2021-2023. Institute for Future Intelligence, Inc.
  */
 
 import { Color, Euler, Vector2, Vector3 } from 'three';
 
-export const VERSION = '0.6.7';
+export const VERSION = '0.6.8';
 
 export const isProd = process.env.NODE_ENV === 'production';
 

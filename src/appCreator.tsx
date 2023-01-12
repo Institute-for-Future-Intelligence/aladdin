@@ -1,5 +1,5 @@
 /*
- * @Copyright 2021-2022. Institute for Future Intelligence, Inc.
+ * @Copyright 2021-2023. Institute for Future Intelligence, Inc.
  *
  * @author Charles Xie, Xiaotong Ding
  */
@@ -149,11 +149,18 @@ const AppCreator = ({ viewOnly = false }: AppCreatorProps) => {
 
   useEffect(() => {
     setCommonStore((state) => {
-      state.loggable = false; // temporarily disabled
-      // state.loggable = user && user.uid ? !user.email?.endsWith('@intofuture.org') : false;
-      // if (user && user.noLogging) {
-      //   state.loggable = false;
-      // }
+      // state.loggable = false; // temporarily disabled
+      state.loggable = user && user.uid ? !user.email?.endsWith('@intofuture.org') : false;
+      if (
+        user &&
+        (user.noLogging ||
+          !user.schoolID ||
+          user.schoolID === 'UNKNOWN SCHOOL' ||
+          !user.classID ||
+          user.classID === 'UNKNOWN CLASS')
+      ) {
+        state.loggable = false;
+      }
     });
   }, [user]);
 

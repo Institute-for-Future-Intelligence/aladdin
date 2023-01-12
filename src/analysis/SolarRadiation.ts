@@ -1,5 +1,5 @@
 /*
- * @Copyright 2022. Institute for Future Intelligence, Inc.
+ * @Copyright 2022-2023. Institute for Future Intelligence, Inc.
  */
 
 import { WallModel } from '../models/WallModel';
@@ -237,7 +237,8 @@ export class SolarRadiation {
     return sum / (nx * ny);
   }
 
-  // return an array that represents solar energy radiated onto the discretized cells of a wall
+  // return an array that represents solar energy intensity radiated onto the discretized cells of a wall,
+  // along with the unit area
   static computeWallSolarRadiationEnergy(
     now: Date,
     world: WorldModel,
@@ -249,7 +250,7 @@ export class SolarRadiation {
     solarPanels: ElementModel[],
     elevation: number,
     distanceToClosestObject: Function,
-  ): number[][] {
+  ): { intensity: number[][]; unitArea: number } {
     const dayOfYear = Util.dayOfYear(now);
     const cellSize = world.solarRadiationHeatmapGridCellSize ?? 0.5;
     const lx = wall.lx;
@@ -258,7 +259,6 @@ export class SolarRadiation {
     const nz = Math.max(2, Math.round(lz / cellSize));
     const dx = lx / nx;
     const dz = lz / nz;
-    const da = dx * dz;
     const absAngle = foundation.rotation[2] + wall.relativeAngle;
     const absPos = Util.wallAbsolutePosition(new Vector3(wall.cx, wall.cy, wall.cz), foundation).setZ(
       lz / 2 + foundation.lz,
@@ -277,7 +277,7 @@ export class SolarRadiation {
       peakRadiation,
     );
     const dot = normal.dot(sunDirection);
-    const energy: number[][] = Array(nx)
+    const intensity: number[][] = Array(nx)
       .fill(0)
       .map(() => Array(nz).fill(0));
     for (let kx = 0; kx < nx; kx++) {
@@ -328,20 +328,21 @@ export class SolarRadiation {
             const distance = distanceToClosestObject(wall.id, v, sunDirection);
             if (distance > AMBIENT_LIGHT_THRESHOLD || distance < 0) {
               // wall may be covered by solar panels
-              energy[kx][kz] += indirectRadiation * da;
+              intensity[kx][kz] += indirectRadiation;
             }
             if (dot > 0 && distance < 0) {
               // direct radiation
-              energy[kx][kz] += dot * peakRadiation * da;
+              intensity[kx][kz] += dot * peakRadiation;
             }
           }
         }
       }
     }
-    return energy;
+    return { intensity: intensity, unitArea: dx * dz };
   }
 
-  // return an array that represents solar energy radiated onto the discretized cells of a door
+  // return an array that represents solar energy radiated onto the discretized cells of a door,
+  // along with the unit area
   static computeDoorSolarRadiationEnergy(
     now: Date,
     world: WorldModel,
@@ -351,7 +352,7 @@ export class SolarRadiation {
     foundation: FoundationModel,
     elevation: number,
     distanceToClosestObject: Function,
-  ): number[][] {
+  ): { intensity: number[][]; unitArea: number } {
     const dayOfYear = Util.dayOfYear(now);
     const cellSize = world.solarRadiationHeatmapGridCellSize ?? 0.5;
     const lx = door.lx * wall.lx;
@@ -360,7 +361,6 @@ export class SolarRadiation {
     const nz = Math.max(2, Math.round(lz / cellSize));
     const dx = lx / nx;
     const dz = lz / nz;
-    const da = dx * dz;
     const absAngle = foundation.rotation[2] + wall.relativeAngle;
     const absWallPos = Util.wallAbsolutePosition(new Vector3(wall.cx, wall.cy, wall.cz), foundation).setZ(
       wall.lz / 2 + foundation.lz,
@@ -378,7 +378,7 @@ export class SolarRadiation {
       peakRadiation,
     );
     const dot = normal.dot(sunDirection);
-    const energy: number[][] = Array(nx)
+    const intensity: number[][] = Array(nx)
       .fill(0)
       .map(() => Array(nz).fill(0));
     if (door.doorType === DoorType.Arched) {
@@ -388,11 +388,11 @@ export class SolarRadiation {
           const kz2 = kz - nz / 2 + 0.5;
           v.set(absDoorPos.x + kx2 * dxcos, absDoorPos.y + kx2 * dxsin, absDoorPos.z + kz2 * dz);
           if (SolarRadiation.pointWithinArch(v, lx, lz, door.archHeight, absDoorPos)) {
-            energy[kx][kz] += indirectRadiation * da;
+            intensity[kx][kz] += indirectRadiation;
             if (dot > 0) {
               if (distanceToClosestObject(door.id, v, sunDirection) < 0) {
                 // direct radiation
-                energy[kx][kz] += dot * peakRadiation * da;
+                intensity[kx][kz] += dot * peakRadiation;
               }
             }
           }
@@ -401,20 +401,20 @@ export class SolarRadiation {
     } else {
       for (let kx = 0; kx < nx; kx++) {
         for (let kz = 0; kz < nz; kz++) {
-          energy[kx][kz] += indirectRadiation * da;
+          intensity[kx][kz] += indirectRadiation;
           if (dot > 0) {
             const kx2 = kx - nx / 2 + 0.5;
             const kz2 = kz - nz / 2 + 0.5;
             v.set(absDoorPos.x + kx2 * dxcos, absDoorPos.y + kx2 * dxsin, absDoorPos.z + kz2 * dz);
             if (distanceToClosestObject(door.id, v, sunDirection) < 0) {
               // direct radiation
-              energy[kx][kz] += dot * peakRadiation * da;
+              intensity[kx][kz] += dot * peakRadiation;
             }
           }
         }
       }
     }
-    return energy;
+    return { intensity: intensity, unitArea: dx * dz };
   }
 
   static pointWithinArch(point: Vector3, lx: number, lz: number, archHeight: number, center: Vector3): boolean {
@@ -437,7 +437,8 @@ export class SolarRadiation {
     return true;
   }
 
-  // return an array that represents solar energy radiated onto the discretized cells of a window
+  // return an array that represents solar energy radiated onto the discretized cells of a window,
+  // along with the unit area
   static computeWindowSolarRadiationEnergy(
     now: Date,
     world: WorldModel,
@@ -447,7 +448,7 @@ export class SolarRadiation {
     foundation: FoundationModel,
     elevation: number,
     distanceToClosestObject: Function,
-  ): number[][] {
+  ): { intensity: number[][]; unitArea: number } {
     const dayOfYear = Util.dayOfYear(now);
     const cellSize = world.solarRadiationHeatmapGridCellSize ?? 0.5;
     const lx = window.lx * wall.lx;
@@ -456,7 +457,6 @@ export class SolarRadiation {
     const nz = Math.max(2, Math.round(lz / cellSize));
     const dx = lx / nx;
     const dz = lz / nz;
-    const da = dx * dz;
     const absWallAngle = foundation.rotation[2] + wall.relativeAngle;
     const absWallPos = Util.wallAbsolutePosition(new Vector3(wall.cx, wall.cy, wall.cz), foundation).setZ(
       wall.lz / 2 + foundation.lz,
@@ -474,7 +474,7 @@ export class SolarRadiation {
       peakRadiation,
     );
     const dot = normal.dot(sunDirection);
-    const energy: number[][] = Array(nx)
+    const intensity: number[][] = Array(nx)
       .fill(0)
       .map(() => Array(nz).fill(0));
     if (window.windowType === WindowType.Arched) {
@@ -484,11 +484,11 @@ export class SolarRadiation {
           const kz2 = kz - nz / 2 + 0.5;
           v.set(absWindowPos.x + kx2 * dxcos, absWindowPos.y + kx2 * dxsin, absWindowPos.z + kz2 * dz);
           if (SolarRadiation.pointWithinArch(v, lx, lz, window.archHeight, absWindowPos)) {
-            energy[kx][kz] += indirectRadiation * da;
+            intensity[kx][kz] += indirectRadiation;
             if (dot > 0) {
               if (distanceToClosestObject(window.id, v, sunDirection) < 0) {
                 // direct radiation
-                energy[kx][kz] += dot * peakRadiation * da;
+                intensity[kx][kz] += dot * peakRadiation;
               }
             }
           }
@@ -497,23 +497,24 @@ export class SolarRadiation {
     } else {
       for (let kx = 0; kx < nx; kx++) {
         for (let kz = 0; kz < nz; kz++) {
-          energy[kx][kz] += indirectRadiation * da;
+          intensity[kx][kz] += indirectRadiation;
           if (dot > 0) {
             const kx2 = kx - nx / 2 + 0.5;
             const kz2 = kz - nz / 2 + 0.5;
             v.set(absWindowPos.x + kx2 * dxcos, absWindowPos.y + kx2 * dxsin, absWindowPos.z + kz2 * dz);
             if (distanceToClosestObject(window.id, v, sunDirection) < 0) {
               // direct radiation
-              energy[kx][kz] += dot * peakRadiation * da;
+              intensity[kx][kz] += dot * peakRadiation;
             }
           }
         }
       }
     }
-    return energy;
+    return { intensity: intensity, unitArea: dx * dz };
   }
 
-  // return arrays of solar energy radiated onto the discretized cells of the segments of a pyramid roof
+  // return arrays of solar energy radiated onto the discretized cells of the segments of a pyramid roof,
+  // along with the unit areas on the segments (which may differ)
   static computePyramidRoofSolarRadiationEnergy(
     now: Date,
     world: WorldModel,
@@ -525,12 +526,13 @@ export class SolarRadiation {
     solarPanels: ElementModel[], //TODO: Skip areas covered by solar panels on the roof
     elevation: number,
     distanceToClosestObject: Function,
-  ): number[][][] {
+  ): { segmentIntensities: number[][][]; segmentUnitArea: number[] } {
     const cellSize = world.solarRadiationHeatmapGridCellSize ?? 0.5;
     const dayOfYear = Util.dayOfYear(now);
     const euler = new Euler(0, 0, foundation.rotation[2], 'ZYX');
     const peakRadiation = calculatePeakRadiation(sunDirection, dayOfYear, elevation, AirMass.SPHERE_MODEL);
-    const energyOfSegments: number[][][] = [];
+    const segmentIntensities: number[][][] = [];
+    const segmentUnitAreas: number[] = [];
     if (flat) {
       // obtain the bounding rectangle
       let minX = Number.MAX_VALUE;
@@ -554,11 +556,11 @@ export class SolarRadiation {
       const ny = Math.max(2, Math.round((maxY - minY) / cellSize));
       const dx = (maxX - minX) / nx;
       const dy = (maxY - minY) / ny;
-      const da = dx * dy;
-      const energy: number[][] = Array(nx)
+      const intensity: number[][] = Array(nx)
         .fill(0)
         .map(() => Array(ny).fill(0));
-      energyOfSegments.push(energy);
+      segmentIntensities.push(intensity);
+      segmentUnitAreas.push(dx * dy);
       const h0 = segments[0][0].z;
       const v0 = new Vector3(minX + cellSize / 2, minY + cellSize / 2, foundation.lz + roof.thickness + h0);
       const v = new Vector3(0, 0, v0.z);
@@ -576,11 +578,11 @@ export class SolarRadiation {
           const distance = distanceToClosestObject(roof.id, v, sunDirection);
           if (distance > AMBIENT_LIGHT_THRESHOLD || distance < 0) {
             // roof may be covered by solar panels
-            energy[p][q] += indirectRadiation * da;
+            intensity[p][q] += indirectRadiation;
           }
           if (dot > 0 && distance < 0) {
             // direct radiation
-            energy[p][q] += dot * peakRadiation * da;
+            intensity[p][q] += dot * peakRadiation;
           }
         }
       }
@@ -598,10 +600,10 @@ export class SolarRadiation {
         const distance = new Vector3().crossVectors(v20, v21).length() / length10;
         const m = Math.max(2, Math.round(length10 / cellSize));
         const n = Math.max(2, Math.round(distance / cellSize));
-        const energy: number[][] = Array(m)
+        const intensity: number[][] = Array(m)
           .fill(0)
           .map(() => Array(n).fill(0));
-        energyOfSegments.push(energy);
+        segmentIntensities.push(intensity);
         v10.normalize();
         // find the position of the top point relative to the first edge point
         const m2 = (m * v20.dot(v10)) / length10;
@@ -622,7 +624,7 @@ export class SolarRadiation {
         // double half-length to full-length for the increment vectors in both directions
         dm.multiplyScalar(2);
         dn.multiplyScalar(2);
-        const da = dm.length() * dn.length();
+        segmentUnitAreas.push(dm.length() * dn.length());
         const v = new Vector3();
         const relativePolygon: Point2[] = [];
         const margin = 0.01;
@@ -644,21 +646,22 @@ export class SolarRadiation {
               const distance = distanceToClosestObject(uuid, v, sunDirection);
               if (distance > AMBIENT_LIGHT_THRESHOLD || distance < 0) {
                 // roof may be covered by solar panels
-                energy[p][q] += indirectRadiation * da;
+                intensity[p][q] += indirectRadiation;
               }
               if (dot > 0 && distance < 0) {
                 // direct radiation
-                energy[p][q] += dot * peakRadiation * da;
+                intensity[p][q] += dot * peakRadiation;
               }
             }
           }
         }
       }
     }
-    return energyOfSegments;
+    return { segmentIntensities: segmentIntensities, segmentUnitArea: segmentUnitAreas };
   }
 
-  // return arrays of solar energy radiated onto the discretized cells of the segments of a hip roof
+  // return arrays of solar energy radiated onto the discretized cells of the segments of a hip roof,
+  // along with the unit areas on the segments (which may differ)
   static computeHipRoofSolarRadiationEnergy(
     now: Date,
     world: WorldModel,
@@ -669,12 +672,13 @@ export class SolarRadiation {
     solarPanels: ElementModel[], //TODO: Skip areas covered by solar panels on the roof
     elevation: number,
     distanceToClosestObject: Function,
-  ): number[][][] {
+  ): { segmentIntensities: number[][][]; segmentUnitArea: number[] } {
     const dayOfYear = Util.dayOfYear(now);
     const cellSize = world.solarRadiationHeatmapGridCellSize ?? 0.5;
     const euler = new Euler(0, 0, foundation.rotation[2], 'ZYX');
     const peakRadiation = calculatePeakRadiation(sunDirection, dayOfYear, elevation, AirMass.SPHERE_MODEL);
-    const energyOfSegments: number[][][] = [];
+    const segmentIntensities: number[][][] = [];
+    const segmentUnitAreas: number[] = [];
     for (const [index, s] of segments.entries()) {
       const uuid = roof.id + '-' + index;
       const s0 = s[0].clone().applyEuler(euler);
@@ -688,10 +692,10 @@ export class SolarRadiation {
       const distance = new Vector3().crossVectors(v20, v21).length() / length10;
       const m = Math.max(2, Math.round(length10 / cellSize));
       const n = Math.max(2, Math.round(distance / cellSize));
-      const energy: number[][] = Array(m)
+      const intensity: number[][] = Array(m)
         .fill(0)
         .map(() => Array(n).fill(0));
-      energyOfSegments.push(energy);
+      segmentIntensities.push(intensity);
       v10.normalize();
       // find the position of the top point relative to the first edge point
       const m2 = (m * v20.dot(v10)) / length10;
@@ -714,7 +718,7 @@ export class SolarRadiation {
       // double half-length to full-length for the increment vectors in both directions
       dm.multiplyScalar(2);
       dn.multiplyScalar(2);
-      const da = dm.length() * dn.length();
+      segmentUnitAreas.push(dm.length() * dn.length());
       const indirectRadiation = calculateDiffuseAndReflectedRadiation(
         world.ground,
         now.getMonth(),
@@ -731,11 +735,11 @@ export class SolarRadiation {
             const distance = distanceToClosestObject(uuid, v, sunDirection);
             if (distance > AMBIENT_LIGHT_THRESHOLD || distance < 0) {
               // roof may be covered by solar panels
-              energy[p][q] += indirectRadiation * da;
+              intensity[p][q] += indirectRadiation;
             }
             if (dot > 0 && distance < 0) {
               // direct radiation
-              energy[p][q] += dot * peakRadiation * da;
+              intensity[p][q] += dot * peakRadiation;
             }
           }
         }
@@ -753,21 +757,22 @@ export class SolarRadiation {
               const distance = distanceToClosestObject(uuid, v, sunDirection);
               if (distance > AMBIENT_LIGHT_THRESHOLD || distance < 0) {
                 // roof may be covered by solar panels
-                energy[p][q] += indirectRadiation * da;
+                intensity[p][q] += indirectRadiation;
               }
               if (dot > 0 && distance < 0) {
                 // direct radiation
-                energy[p][q] += dot * peakRadiation * da;
+                intensity[p][q] += dot * peakRadiation;
               }
             }
           }
         }
       }
     }
-    return energyOfSegments;
+    return { segmentIntensities: segmentIntensities, segmentUnitArea: segmentUnitAreas };
   }
 
-  // return arrays of solar energy radiated onto the discretized cells of the segments of a gable or gambrel roof
+  // return arrays of solar energy radiated onto the discretized cells of the segments of a gable or gambrel roof,
+  // along with the unit areas on the segments (which may differ)
   static computeGableRoofSolarRadiationEnergy(
     now: Date,
     world: WorldModel,
@@ -778,12 +783,13 @@ export class SolarRadiation {
     solarPanels: ElementModel[], //TODO: Skip areas covered by solar panels on the roof
     elevation: number,
     distanceToClosestObject: Function,
-  ): number[][][] {
+  ): { segmentIntensities: number[][][]; segmentUnitArea: number[] } {
     const dayOfYear = Util.dayOfYear(now);
     const cellSize = world.solarRadiationHeatmapGridCellSize ?? 0.5;
     const euler = new Euler(0, 0, foundation.rotation[2], 'ZYX');
     const peakRadiation = calculatePeakRadiation(sunDirection, dayOfYear, elevation, AirMass.SPHERE_MODEL);
-    const energyOfSegments: number[][][] = [];
+    const segmentIntensities: number[][][] = [];
+    const segmentUnitAreas: number[] = [];
     for (const [index, s] of segments.entries()) {
       const uuid = roof.id + '-' + index;
       const s0 = s[0].clone().applyEuler(euler);
@@ -797,10 +803,10 @@ export class SolarRadiation {
       const distance = new Vector3().crossVectors(v20, v21).length() / length10;
       const m = Math.max(2, Math.round(length10 / cellSize));
       const n = Math.max(2, Math.round(distance / cellSize));
-      const energy: number[][] = Array(m)
+      const intensity: number[][] = Array(m)
         .fill(0)
         .map(() => Array(n).fill(0));
-      energyOfSegments.push(energy);
+      segmentIntensities.push(intensity);
       v10.normalize();
       v20.normalize();
       v21.normalize();
@@ -819,7 +825,7 @@ export class SolarRadiation {
       // double half-length to full-length for the increment vectors in both directions
       dm.multiplyScalar(2);
       dn.multiplyScalar(2);
-      const da = dm.length() * dn.length();
+      segmentUnitAreas.push(dm.length() * dn.length());
       const v = new Vector3();
       const indirectRadiation = calculateDiffuseAndReflectedRadiation(
         world.ground,
@@ -835,19 +841,20 @@ export class SolarRadiation {
           const distance = distanceToClosestObject(uuid, v, sunDirection);
           if (distance > AMBIENT_LIGHT_THRESHOLD || distance < 0) {
             // roof may be covered by solar panels
-            energy[p][q] += indirectRadiation * da;
+            intensity[p][q] += indirectRadiation;
           }
           if (dot > 0 && distance < 0) {
             // direct radiation
-            energy[p][q] += dot * peakRadiation * da;
+            intensity[p][q] += dot * peakRadiation;
           }
         }
       }
     }
-    return energyOfSegments;
+    return { segmentIntensities: segmentIntensities, segmentUnitArea: segmentUnitAreas };
   }
 
-  // return arrays of solar energy radiated onto the discretized cells of the segments of a mansard roof
+  // return arrays of solar energy radiated onto the discretized cells of the segments of a mansard roof,
+  // along with the unit areas on the segments (which may differ)
   static computeMansardRoofSolarRadiationEnergy(
     now: Date,
     world: WorldModel,
@@ -858,12 +865,13 @@ export class SolarRadiation {
     solarPanels: ElementModel[], //TODO: Skip areas covered by solar panels on the roof
     elevation: number,
     distanceToClosestObject: Function,
-  ): number[][][] {
+  ): { segmentIntensities: number[][][]; segmentUnitArea: number[] } {
     const dayOfYear = Util.dayOfYear(now);
     const cellSize = world.solarRadiationHeatmapGridCellSize ?? 0.5;
     const euler = new Euler(0, 0, foundation.rotation[2], 'ZYX');
     const peakRadiation = calculatePeakRadiation(sunDirection, dayOfYear, elevation, AirMass.SPHERE_MODEL);
-    const energyOfSegments: number[][][] = [];
+    const segmentIntensities: number[][][] = [];
+    const segmentUnitAreas: number[] = [];
     for (const [index, s] of segments.entries()) {
       const uuid = roof.id + '-' + index;
       if (index === segments.length - 1) {
@@ -889,11 +897,11 @@ export class SolarRadiation {
         const ny = Math.max(2, Math.round((maxY - minY) / cellSize));
         const dx = (maxX - minX) / nx;
         const dy = (maxY - minY) / ny;
-        const da = dx * dy;
-        const energy: number[][] = Array(nx)
+        segmentUnitAreas.push(dx * dy);
+        const intensity: number[][] = Array(nx)
           .fill(0)
           .map(() => Array(ny).fill(0));
-        energyOfSegments.push(energy);
+        segmentIntensities.push(intensity);
         const v0 = new Vector3(minX + cellSize / 2, minY + cellSize / 2, foundation.lz + roof.thickness + h0);
         const v = new Vector3(0, 0, v0.z);
         const indirectRadiation = calculateDiffuseAndReflectedRadiation(
@@ -910,11 +918,11 @@ export class SolarRadiation {
             const distance = distanceToClosestObject(uuid, v, sunDirection);
             if (distance > AMBIENT_LIGHT_THRESHOLD || distance < 0) {
               // roof may be covered by solar panels
-              energy[p][q] += indirectRadiation * da;
+              intensity[p][q] += indirectRadiation;
             }
             if (dot > 0 && distance < 0) {
               // direct radiation
-              energy[p][q] += dot * peakRadiation * da;
+              intensity[p][q] += dot * peakRadiation;
             }
           }
         }
@@ -930,10 +938,10 @@ export class SolarRadiation {
         const distance = new Vector3().crossVectors(v20, v21).length() / length10;
         const m = Math.max(2, Math.round(length10 / cellSize));
         const n = Math.max(2, Math.round(distance / cellSize));
-        const energy: number[][] = Array(m)
+        const intensity: number[][] = Array(m)
           .fill(0)
           .map(() => Array(n).fill(0));
-        energyOfSegments.push(energy);
+        segmentIntensities.push(intensity);
         v10.normalize();
         v20.normalize();
         v21.normalize();
@@ -952,7 +960,7 @@ export class SolarRadiation {
         // double half-length to full-length for the increment vectors in both directions
         dm.multiplyScalar(2);
         dn.multiplyScalar(2);
-        const da = dm.length() * dn.length();
+        segmentUnitAreas.push(dm.length() * dn.length());
         const v = new Vector3();
         const indirectRadiation = calculateDiffuseAndReflectedRadiation(
           world.ground,
@@ -968,16 +976,16 @@ export class SolarRadiation {
             const distance = distanceToClosestObject(uuid, v, sunDirection);
             if (distance > AMBIENT_LIGHT_THRESHOLD || distance < 0) {
               // roof may be covered by solar panels
-              energy[p][q] += indirectRadiation * da;
+              intensity[p][q] += indirectRadiation;
             }
             if (dot > 0 && distance < 0) {
               // direct radiation
-              energy[p][q] += dot * peakRadiation * da;
+              intensity[p][q] += dot * peakRadiation;
             }
           }
         }
       }
     }
-    return energyOfSegments;
+    return { segmentIntensities: segmentIntensities, segmentUnitArea: segmentUnitAreas };
   }
 }

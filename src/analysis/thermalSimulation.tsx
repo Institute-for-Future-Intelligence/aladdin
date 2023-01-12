@@ -57,6 +57,8 @@ const ThermalSimulation = ({ city }: ThermalSimulationProps) => {
   const getChildrenOfType = useStore(Selector.getChildrenOfType);
   const getRoofSegmentVertices = useStore(Selector.getRoofSegmentVertices);
   const getPvModule = useStore(Selector.getPvModule);
+  const setHeatmap = useStore(Selector.setHeatmap);
+  const clearHeatmaps = useStore(Selector.clearHeatmaps);
   const runDailySimulation = useStore(Selector.runDailyThermalSimulation);
   const pauseDailySimulation = useStore(Selector.pauseDailyThermalSimulation);
   const runYearlySimulation = useStore(Selector.runYearlyThermalSimulation);
@@ -577,7 +579,7 @@ const ThermalSimulation = ({ city }: ThermalSimulationProps) => {
         let totalSolarHeat = 0;
         // when the sun is out
         if (sunDirectionRef.current && sunDirectionRef.current.z > 0) {
-          const solarRadiationEnergy = SolarRadiation.computeWindowSolarRadiationEnergy(
+          const results = SolarRadiation.computeWindowSolarRadiationEnergy(
             now,
             world,
             sunDirectionRef.current,
@@ -587,11 +589,11 @@ const ThermalSimulation = ({ city }: ThermalSimulationProps) => {
             elevation,
             distanceToClosestObject,
           );
-          if (solarRadiationEnergy) {
-            const scaleFactor = getScaleFactor();
-            for (let i = 0; i < solarRadiationEnergy.length; i++) {
-              for (let j = 0; j < solarRadiationEnergy[i].length; j++) {
-                totalSolarHeat += solarRadiationEnergy[i][j] * scaleFactor;
+          if (results) {
+            const scaleFactor = getScaleFactor() * results.unitArea;
+            for (let i = 0; i < results.intensity.length; i++) {
+              for (let j = 0; j < results.intensity[i].length; j++) {
+                totalSolarHeat += results.intensity[i][j] * scaleFactor;
               }
             }
             // how much solar energy can go through the window (SHGC)
@@ -615,7 +617,7 @@ const ThermalSimulation = ({ city }: ThermalSimulationProps) => {
           let totalSolarHeat = 0;
           // when the sun is out
           if (!Util.isZero(absorption) && sunDirectionRef.current && sunDirectionRef.current.z > 0) {
-            const solarRadiationEnergy = SolarRadiation.computeDoorSolarRadiationEnergy(
+            const results = SolarRadiation.computeDoorSolarRadiationEnergy(
               now,
               world,
               sunDirectionRef.current,
@@ -625,11 +627,11 @@ const ThermalSimulation = ({ city }: ThermalSimulationProps) => {
               elevation,
               distanceToClosestObject,
             );
-            if (solarRadiationEnergy) {
-              const scaleFactor = getScaleFactor();
-              for (let i = 0; i < solarRadiationEnergy.length; i++) {
-                for (let j = 0; j < solarRadiationEnergy[i].length; j++) {
-                  totalSolarHeat += solarRadiationEnergy[i][j] * scaleFactor;
+            if (results) {
+              const scaleFactor = getScaleFactor() * results.unitArea;
+              for (let i = 0; i < results.intensity.length; i++) {
+                for (let j = 0; j < results.intensity[i].length; j++) {
+                  totalSolarHeat += results.intensity[i][j] * scaleFactor;
                 }
               }
             }
@@ -664,7 +666,7 @@ const ThermalSimulation = ({ city }: ThermalSimulationProps) => {
         // when the sun is out
         if (!Util.isZero(absorption) && sunDirectionRef.current && sunDirectionRef.current.z > 0) {
           const solarPanels = getChildrenOfType(ObjectType.SolarPanel, wall.id);
-          const solarRadiationEnergy = SolarRadiation.computeWallSolarRadiationEnergy(
+          const results = SolarRadiation.computeWallSolarRadiationEnergy(
             now,
             world,
             sunDirectionRef.current,
@@ -676,11 +678,11 @@ const ThermalSimulation = ({ city }: ThermalSimulationProps) => {
             elevation,
             distanceToClosestObject,
           );
-          if (solarRadiationEnergy) {
-            const scaleFactor = getScaleFactor();
-            for (let i = 0; i < solarRadiationEnergy.length; i++) {
-              for (let j = 0; j < solarRadiationEnergy[i].length; j++) {
-                totalSolarHeat += solarRadiationEnergy[i][j] * scaleFactor;
+          if (results) {
+            const scaleFactor = getScaleFactor() * results.unitArea;
+            for (let i = 0; i < results.intensity.length; i++) {
+              for (let j = 0; j < results.intensity[i].length; j++) {
+                totalSolarHeat += results.intensity[i][j] * scaleFactor;
               }
             }
           }
@@ -778,7 +780,7 @@ const ThermalSimulation = ({ city }: ThermalSimulationProps) => {
     const totalSolarHeats: number[] = Array(m).fill(0);
     // when the sun is out
     if (!Util.isZero(absorption) && sunDirectionRef.current && sunDirectionRef.current.z > 0) {
-      const solarRadiationEnergySegments = SolarRadiation.computePyramidRoofSolarRadiationEnergy(
+      const segmentResults = SolarRadiation.computePyramidRoofSolarRadiationEnergy(
         now,
         world,
         sunDirectionRef.current,
@@ -790,13 +792,14 @@ const ThermalSimulation = ({ city }: ThermalSimulationProps) => {
         elevation,
         distanceToClosestObject,
       );
-      if (solarRadiationEnergySegments) {
+      if (segmentResults) {
         const scaleFactor = getScaleFactor();
         for (let k = 0; k < m; k++) {
-          const seg = solarRadiationEnergySegments[k];
+          const seg = segmentResults.segmentIntensities[k];
+          const sfa = scaleFactor * segmentResults.segmentUnitArea[k];
           for (let i = 0; i < seg.length; i++) {
             for (let j = 0; j < seg[i].length; j++) {
-              totalSolarHeats[k] += seg[i][j] * scaleFactor;
+              totalSolarHeats[k] += seg[i][j] * sfa;
             }
           }
         }
@@ -833,7 +836,7 @@ const ThermalSimulation = ({ city }: ThermalSimulationProps) => {
     const totalSolarHeats: number[] = Array(n).fill(0);
     // when the sun is out
     if (!Util.isZero(absorption) && sunDirectionRef.current && sunDirectionRef.current.z > 0) {
-      const solarRadiationEnergySegments = SolarRadiation.computeHipRoofSolarRadiationEnergy(
+      const results = SolarRadiation.computeHipRoofSolarRadiationEnergy(
         now,
         world,
         sunDirectionRef.current,
@@ -844,13 +847,14 @@ const ThermalSimulation = ({ city }: ThermalSimulationProps) => {
         elevation,
         distanceToClosestObject,
       );
-      if (solarRadiationEnergySegments) {
+      if (results) {
         const scaleFactor = getScaleFactor();
         for (let k = 0; k < n; k++) {
-          const seg = solarRadiationEnergySegments[k];
+          const seg = results.segmentIntensities[k];
+          const sfa = scaleFactor * results.segmentUnitArea[k];
           for (let i = 0; i < seg.length; i++) {
             for (let j = 0; j < seg[i].length; j++) {
-              totalSolarHeats[k] += seg[i][j] * scaleFactor;
+              totalSolarHeats[k] += seg[i][j] * sfa;
             }
           }
         }
@@ -884,7 +888,7 @@ const ThermalSimulation = ({ city }: ThermalSimulationProps) => {
     const totalSolarHeats: number[] = Array(n).fill(0);
     // when the sun is out
     if (!Util.isZero(absorption) && sunDirectionRef.current && sunDirectionRef.current.z > 0) {
-      const solarRadiationEnergySegments = SolarRadiation.computeGableRoofSolarRadiationEnergy(
+      const results = SolarRadiation.computeGableRoofSolarRadiationEnergy(
         now,
         world,
         sunDirectionRef.current,
@@ -895,13 +899,14 @@ const ThermalSimulation = ({ city }: ThermalSimulationProps) => {
         elevation,
         distanceToClosestObject,
       );
-      if (solarRadiationEnergySegments) {
+      if (results) {
         const scaleFactor = getScaleFactor();
         for (let k = 0; k < n; k++) {
-          const seg = solarRadiationEnergySegments[k];
+          const seg = results.segmentIntensities[k];
+          const sfa = scaleFactor * results.segmentUnitArea[k];
           for (let i = 0; i < seg.length; i++) {
             for (let j = 0; j < seg[i].length; j++) {
-              totalSolarHeats[k] += seg[i][j] * scaleFactor;
+              totalSolarHeats[k] += seg[i][j] * sfa;
             }
           }
         }
@@ -942,7 +947,7 @@ const ThermalSimulation = ({ city }: ThermalSimulationProps) => {
     const totalSolarHeats: number[] = Array(n).fill(0);
     // when the sun is out
     if (!Util.isZero(absorption) && sunDirectionRef.current && sunDirectionRef.current.z > 0) {
-      const solarRadiationEnergySegments = SolarRadiation.computeMansardRoofSolarRadiationEnergy(
+      const results = SolarRadiation.computeMansardRoofSolarRadiationEnergy(
         now,
         world,
         sunDirectionRef.current,
@@ -953,13 +958,14 @@ const ThermalSimulation = ({ city }: ThermalSimulationProps) => {
         elevation,
         distanceToClosestObject,
       );
-      if (solarRadiationEnergySegments) {
+      if (results) {
         const scaleFactor = getScaleFactor();
         for (let k = 0; k < n; k++) {
-          const seg = solarRadiationEnergySegments[k];
+          const seg = results.segmentIntensities[k];
+          const sfa = scaleFactor * results.segmentUnitArea[k];
           for (let i = 0; i < seg.length; i++) {
             for (let j = 0; j < seg[i].length; j++) {
-              totalSolarHeats[k] += seg[i][j] * scaleFactor;
+              totalSolarHeats[k] += seg[i][j] * sfa;
             }
           }
         }
