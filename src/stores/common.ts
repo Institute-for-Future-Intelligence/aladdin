@@ -100,6 +100,7 @@ import { DefaultActionState } from './DefaultActionState';
 import { LightModel } from '../models/LightModel';
 import { HvacSystem } from '../models/HvacSystem';
 import { usePrimitiveStore } from './commonPrimitive';
+import { useDataStore } from './commonData';
 
 enableMapSet();
 
@@ -167,13 +168,6 @@ export interface CommonStoreState {
   aabb: Box3; // axis-aligned bounding box of elements
   animateSun: boolean;
   animate24Hours: boolean;
-  runDailyThermalSimulation: boolean;
-  pauseDailyThermalSimulation: boolean;
-  runYearlyThermalSimulation: boolean;
-  pauseYearlyThermalSimulation: boolean;
-  runDynamicSimulation: boolean;
-  runStaticSimulation: boolean;
-  pauseSimulation: boolean;
   runEvolution: boolean;
   pauseEvolution: boolean;
   evolutionMethod: EvolutionMethod;
@@ -762,7 +756,6 @@ export interface CommonStoreState {
   simulationPaused: boolean;
   evolutionInProgress: boolean;
   evolutionPaused: boolean;
-  showSolarRadiationHeatmap: boolean;
   locale: Locale;
   localFileName: string;
   createNewFileFlag: boolean;
@@ -895,6 +888,9 @@ export const useStore = create<CommonStoreState>(
               state.undoManager.clear();
               state.heatmaps.clear();
               usePrimitiveStore.setState((state) => {
+                state.showSolarRadiationHeatmap = false;
+              });
+              useDataStore.setState((state) => {
                 state.hourlyHeatExchangeArrayMap = new Map<string, number[]>();
                 state.hourlySolarHeatGainArrayMap = new Map<string, number[]>();
                 state.hourlySolarPanelOutputArrayMap = new Map<string, number[]>();
@@ -911,7 +907,6 @@ export const useStore = create<CommonStoreState>(
               state.skipChange = true;
               state.localContentToImportAfterCloudFileUpdate = undefined;
               state.fileChanged = !state.fileChanged;
-              state.showSolarRadiationHeatmap = false;
               state.evolutionMethod = content.evolutionMethod ?? EvolutionMethod.GENETIC_ALGORITHM;
               state.solarPanelArrayLayoutParams =
                 content.solarPanelArrayLayoutParams ?? new DefaultSolarPanelArrayLayoutParams();
@@ -997,12 +992,20 @@ export const useStore = create<CommonStoreState>(
               state.localContentToImportAfterCloudFileUpdate = undefined;
               state.notes = [];
               state.fileChanged = !state.fileChanged;
-              state.showSolarRadiationHeatmap = false;
               state.currentUndoable = undefined;
               state.actionInfo = undefined;
               state.roofSegmentVerticesMap.clear();
               state.roofSegmentVerticesWithoutOverhangMap.clear();
               state.heatmaps.clear();
+              state.undoManager.clear();
+              usePrimitiveStore.setState((state) => {
+                state.showSolarRadiationHeatmap = false;
+              });
+              useDataStore.setState((state) => {
+                state.hourlyHeatExchangeArrayMap = new Map<string, number[]>();
+                state.hourlySolarHeatGainArrayMap = new Map<string, number[]>();
+                state.hourlySolarPanelOutputArrayMap = new Map<string, number[]>();
+              });
             });
           },
           undoManager: new UndoManager(),
@@ -1400,13 +1403,6 @@ export const useStore = create<CommonStoreState>(
           aabb: new Box3(new Vector3(-10, -10, -10), new Vector3(10, 10, 10)),
           animateSun: false,
           animate24Hours: false,
-          runDailyThermalSimulation: false,
-          pauseDailyThermalSimulation: false,
-          runYearlyThermalSimulation: false,
-          pauseYearlyThermalSimulation: false,
-          runDynamicSimulation: false,
-          runStaticSimulation: false,
-          pauseSimulation: false,
           runEvolution: false,
           pauseEvolution: false,
           evolutionMethod: EvolutionMethod.GENETIC_ALGORITHM,
@@ -6187,7 +6183,6 @@ export const useStore = create<CommonStoreState>(
           simulationPaused: false,
           evolutionInProgress: false,
           evolutionPaused: false,
-          showSolarRadiationHeatmap: false,
           locale: enUS,
           localFileName: 'aladdin.ala',
           createNewFileFlag: false,

@@ -27,6 +27,7 @@ import { LightModel } from '../../models/LightModel';
 import { RoofSegmentProps } from './roofRenderer';
 import { RoofUtil } from './RoofUtil';
 import { GambrelRoofModel, RoofModel, RoofType } from 'src/models/RoofModel';
+import { usePrimitiveStore } from '../../stores/commonPrimitive';
 
 export const useElementUndoable = () => {
   const addUndoableMove = (elem: SolarPanelModel | SensorModel | LightModel) => {
@@ -324,8 +325,8 @@ export const useUpdateSegmentVerticesMap = (
   roofSegments: RoofSegmentProps[],
   mansardTop?: Vector3[],
 ) => {
-  const runDynamicSimulation = useStore(Selector.runDynamicSimulation);
-  const runStaticSimulation = useStore(Selector.runStaticSimulation);
+  const runDynamicSimulation = usePrimitiveStore(Selector.runDynamicSimulation);
+  const runStaticSimulation = usePrimitiveStore(Selector.runStaticSimulation);
 
   const updateSegmentVertices = () => {
     const relToFoundation = (v: Vector3) => v.clone().add(centroid);
@@ -360,8 +361,8 @@ export const useUpdateSegmentVerticesMap = (
 };
 
 export const useUpdateSegmentVerticesWithoutOverhangMap = (update: () => void): void => {
-  const runDailyThermalSimulation = useStore(Selector.runDailyThermalSimulation);
-  const runYearlyThermalSimulation = useStore(Selector.runYearlyThermalSimulation);
+  const runDailyThermalSimulation = usePrimitiveStore(Selector.runDailyThermalSimulation);
+  const runYearlyThermalSimulation = usePrimitiveStore(Selector.runYearlyThermalSimulation);
   if (runDailyThermalSimulation || runYearlyThermalSimulation) {
     update();
   }

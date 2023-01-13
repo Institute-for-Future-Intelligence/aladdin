@@ -16,6 +16,7 @@ import { getSunDirection } from '../analysis/sunTools';
 import i18n from '../i18n/i18n';
 import { FoundationModel } from '../models/FoundationModel';
 import { HeliostatModel } from '../models/HeliostatModel';
+import { usePrimitiveStore } from '../stores/commonPrimitive';
 
 const Heliostat = ({
   id,
@@ -46,7 +47,7 @@ const Heliostat = ({
   const date = useStore(Selector.world.date);
   const latitude = useStore(Selector.world.latitude);
   const elements = useStore(Selector.elements);
-  const showSolarRadiationHeatmap = useStore(Selector.showSolarRadiationHeatmap);
+  const showSolarRadiationHeatmap = usePrimitiveStore(Selector.showSolarRadiationHeatmap);
   const solarRadiationHeatmapMaxValue = useStore(Selector.viewState.solarRadiationHeatmapMaxValue);
   const getHeatmap = useStore(Selector.getHeatmap);
   const shadowEnabled = useStore(Selector.viewState.shadowEnabled);

@@ -1,5 +1,5 @@
 /*
- * @Copyright 2022. Institute for Future Intelligence, Inc.
+ * @Copyright 2022-2023. Institute for Future Intelligence, Inc.
  */
 
 import React, { useEffect, useMemo, useRef, useState } from 'react';
@@ -34,6 +34,7 @@ import i18n from '../i18n/i18n';
 import { LineData } from './LineData';
 import { Paraboloid } from './shapes';
 import GlowImage from '../resources/glow.png';
+import { usePrimitiveStore } from '../stores/commonPrimitive';
 
 const ParabolicDish = ({
   id,
@@ -67,7 +68,7 @@ const ParabolicDish = ({
   const date = useStore(Selector.world.date);
   const latitude = useStore(Selector.world.latitude);
   const elements = useStore(Selector.elements);
-  const showSolarRadiationHeatmap = useStore(Selector.showSolarRadiationHeatmap);
+  const showSolarRadiationHeatmap = usePrimitiveStore(Selector.showSolarRadiationHeatmap);
   const solarRadiationHeatmapMaxValue = useStore(Selector.viewState.solarRadiationHeatmapMaxValue);
   const getHeatmap = useStore(Selector.getHeatmap);
   const shadowEnabled = useStore(Selector.viewState.shadowEnabled);

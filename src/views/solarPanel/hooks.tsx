@@ -1,5 +1,5 @@
 /*
- * @Copyright 2022. Institute for Future Intelligence, Inc.
+ * @Copyright 2022-2023. Institute for Future Intelligence, Inc.
  */
 
 import { useThree } from '@react-three/fiber';
@@ -17,9 +17,10 @@ import { Orientation } from 'src/types';
 import { Util } from 'src/Util';
 import { CanvasTexture, RepeatWrapping } from 'three';
 import * as Selector from '../../stores/selector';
+import { usePrimitiveStore } from '../../stores/commonPrimitive';
 
 export const useSolarPanelHeatmapTexture = (id: string) => {
-  const showSolarRadiationHeatmap = useStore(Selector.showSolarRadiationHeatmap);
+  const showSolarRadiationHeatmap = usePrimitiveStore(Selector.showSolarRadiationHeatmap);
   const solarRadiationHeatmapMaxValue = useStore(Selector.viewState.solarRadiationHeatmapMaxValue);
   const [heatmapTexture, setHeatmapTexture] = useState<CanvasTexture | null>(null);
 

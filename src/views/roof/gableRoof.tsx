@@ -62,6 +62,7 @@ import { CSG } from 'three-csg-ts';
 import WindowWireFrame from '../window/windowWireFrame';
 import { usePrimitiveStore } from '../../stores/commonPrimitive';
 import { FoundationModel } from '../../models/FoundationModel';
+import { useDataStore } from '../../stores/commonData';
 
 const intersectionPlanePosition = new Vector3();
 const intersectionPlaneRotation = new Euler();
@@ -845,7 +846,7 @@ const GableRoof = (roofModel: GableRoofModel) => {
   useUpdateSegmentVerticesWithoutOverhangMap(updateSegmentVerticesWithoutOverhangeMap);
 
   const selectMe = useStore(Selector.selectMe);
-  const showSolarRadiationHeatmap = useStore(Selector.showSolarRadiationHeatmap);
+  const showSolarRadiationHeatmap = usePrimitiveStore(Selector.showSolarRadiationHeatmap);
   const solarRadiationHeatmapMaxValue = useStore(Selector.viewState.solarRadiationHeatmapMaxValue);
   const getHeatmap = useStore(Selector.getHeatmap);
   const [heatmapTextures, setHeatmapTextures] = useState<CanvasTexture[]>([]);
@@ -1167,12 +1168,12 @@ const RoofSegment = ({
 }) => {
   const world = useStore.getState().world;
   const shadowEnabled = useStore(Selector.viewState.shadowEnabled);
-  const showSolarRadiationHeatmap = useStore(Selector.showSolarRadiationHeatmap);
+  const showSolarRadiationHeatmap = usePrimitiveStore(Selector.showSolarRadiationHeatmap);
   const heatFluxScaleFactor = useStore(Selector.viewState.heatFluxScaleFactor);
   const heatFluxColor = useStore(Selector.viewState.heatFluxColor);
   const heatFluxWidth = useStore(Selector.viewState.heatFluxWidth);
   const getRoofSegmentVerticesWithoutOverhang = useStore(Selector.getRoofSegmentVerticesWithoutOverhang);
-  const hourlyHeatExchangeArrayMap = usePrimitiveStore.getState().hourlyHeatExchangeArrayMap;
+  const hourlyHeatExchangeArrayMap = useDataStore.getState().hourlyHeatExchangeArrayMap;
 
   const texture = useRoofTexture(roofStructure === RoofStructure.Rafter ? RoofTexture.NoTexture : textureType);
   const { transparent, opacity: _opacity } = useTransparent(roofStructure === RoofStructure.Rafter, opacity);

@@ -20,6 +20,7 @@ import { FrameDataType, MullionDataType, Shutter, WireframeDataType } from './wi
 import { ShutterProps } from 'src/models/WindowModel';
 import { usePrimitiveStore } from '../../stores/commonPrimitive';
 import { Util } from '../../Util';
+import { useDataStore } from '../../stores/commonData';
 
 interface RectangleWindowProps {
   id: string;
@@ -265,7 +266,7 @@ const RectangleWindow = ({
   const heatFluxColor = useStore(Selector.viewState.heatFluxColor);
   const heatFluxWidth = useStore(Selector.viewState.heatFluxWidth);
   const shadowEnabled = useStore(Selector.viewState.shadowEnabled);
-  const hourlyHeatExchangeArrayMap = usePrimitiveStore(Selector.hourlyHeatExchangeArrayMap);
+  const hourlyHeatExchangeArrayMap = useDataStore(Selector.hourlyHeatExchangeArrayMap);
 
   const heatFluxArrowHead = useRef<number>(0);
   const heatFluxEuler = useRef<Euler>();

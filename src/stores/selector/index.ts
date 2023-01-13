@@ -1,9 +1,10 @@
 /*
- * @Copyright 2021-2022. Institute for Future Intelligence, Inc.
+ * @Copyright 2021-2023. Institute for Future Intelligence, Inc.
  */
 
 import { CommonStoreState } from '../common';
 import { PrimitiveStoreState } from '../commonPrimitive';
+import { DataStoreState } from '../commonData';
 
 export const set = (state: CommonStoreState) => state.set;
 
@@ -19,17 +20,17 @@ export const clearHeatmaps = (state: CommonStoreState) => state.clearHeatmaps;
 
 export const flagOfDailySimulation = (state: PrimitiveStoreState) => state.flagOfDailySimulation;
 
-export const hourlyHeatExchangeArrayMap = (state: PrimitiveStoreState) => state.hourlyHeatExchangeArrayMap;
+export const hourlyHeatExchangeArrayMap = (state: DataStoreState) => state.hourlyHeatExchangeArrayMap;
 
-export const setHourlyHeatExchangeArray = (state: PrimitiveStoreState) => state.setHourlyHeatExchangeArray;
+export const setHourlyHeatExchangeArray = (state: DataStoreState) => state.setHourlyHeatExchangeArray;
 
-export const hourlySolarHeatGainArrayMap = (state: PrimitiveStoreState) => state.hourlySolarHeatGainArrayMap;
+export const hourlySolarHeatGainArrayMap = (state: DataStoreState) => state.hourlySolarHeatGainArrayMap;
 
-export const setHourlySolarHeatGainArray = (state: PrimitiveStoreState) => state.setHourlySolarHeatGainArray;
+export const setHourlySolarHeatGainArray = (state: DataStoreState) => state.setHourlySolarHeatGainArray;
 
-export const hourlySolarPanelOutputArrayMap = (state: PrimitiveStoreState) => state.hourlySolarPanelOutputArrayMap;
+export const hourlySolarPanelOutputArrayMap = (state: DataStoreState) => state.hourlySolarPanelOutputArrayMap;
 
-export const setHourlySolarPanelOutputArray = (state: PrimitiveStoreState) => state.setHourlySolarPanelOutputArray;
+export const setHourlySolarPanelOutputArray = (state: DataStoreState) => state.setHourlySolarPanelOutputArray;
 
 export const getRoofSegmentVertices = (state: CommonStoreState) => state.getRoofSegmentVertices;
 
@@ -115,19 +116,19 @@ export const animateSun = (state: CommonStoreState) => state.animateSun;
 
 export const animate24Hours = (state: CommonStoreState) => state.animate24Hours;
 
-export const runDailyThermalSimulation = (state: CommonStoreState) => state.runDailyThermalSimulation;
+export const runDailyThermalSimulation = (state: PrimitiveStoreState) => state.runDailyThermalSimulation;
 
-export const pauseDailyThermalSimulation = (state: CommonStoreState) => state.pauseDailyThermalSimulation;
+export const pauseDailyThermalSimulation = (state: PrimitiveStoreState) => state.pauseDailyThermalSimulation;
 
-export const runYearlyThermalSimulation = (state: CommonStoreState) => state.runYearlyThermalSimulation;
+export const runYearlyThermalSimulation = (state: PrimitiveStoreState) => state.runYearlyThermalSimulation;
 
-export const pauseYearlyThermalSimulation = (state: CommonStoreState) => state.pauseYearlyThermalSimulation;
+export const pauseYearlyThermalSimulation = (state: PrimitiveStoreState) => state.pauseYearlyThermalSimulation;
 
-export const runDynamicSimulation = (state: CommonStoreState) => state.runDynamicSimulation;
+export const runDynamicSimulation = (state: PrimitiveStoreState) => state.runDynamicSimulation;
 
-export const runStaticSimulation = (state: CommonStoreState) => state.runStaticSimulation;
+export const runStaticSimulation = (state: PrimitiveStoreState) => state.runStaticSimulation;
 
-export const pauseSimulation = (state: CommonStoreState) => state.pauseSimulation;
+export const pauseSimulation = (state: PrimitiveStoreState) => state.pauseSimulation;
 
 export const runEvolution = (state: CommonStoreState) => state.runEvolution;
 
@@ -754,7 +755,7 @@ export const sunlightDirection = (state: CommonStoreState) => state.sunlightDire
 
 export const setSunlightDirection = (state: CommonStoreState) => state.setSunlightDirection;
 
-export const showSolarRadiationHeatmap = (state: CommonStoreState) => state.showSolarRadiationHeatmap;
+export const showSolarRadiationHeatmap = (state: PrimitiveStoreState) => state.showSolarRadiationHeatmap;
 
 // solar panels (PV)
 

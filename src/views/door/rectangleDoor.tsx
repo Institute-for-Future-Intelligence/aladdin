@@ -18,6 +18,7 @@ import * as Selector from 'src/stores/selector';
 import { useStore } from 'src/stores/common';
 import { usePrimitiveStore } from '../../stores/commonPrimitive';
 import { Util } from '../../Util';
+import { useDataStore } from '../../stores/commonData';
 
 interface RectangleDoorProps {
   id: string;
@@ -97,7 +98,7 @@ const RectangleDoor = React.memo(
     const heatFluxColor = useStore(Selector.viewState.heatFluxColor);
     const heatFluxWidth = useStore(Selector.viewState.heatFluxWidth);
     const shadowEnabled = useStore(Selector.viewState.shadowEnabled);
-    const hourlyHeatExchangeArrayMap = usePrimitiveStore(Selector.hourlyHeatExchangeArrayMap);
+    const hourlyHeatExchangeArrayMap = useDataStore(Selector.hourlyHeatExchangeArrayMap);
 
     const heatFluxArrowHead = useRef<number>(0);
     const heatFluxEuler = useRef<Euler>();

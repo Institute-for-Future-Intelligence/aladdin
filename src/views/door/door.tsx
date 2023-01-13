@@ -18,6 +18,7 @@ import { Plane } from '@react-three/drei';
 import { HALF_PI, INVALID_ELEMENT_COLOR } from 'src/constants';
 import { RulerOnWall } from '../rulerOnWall';
 import { Util } from '../../Util';
+import { usePrimitiveStore } from '../../stores/commonPrimitive';
 
 interface DoorHandleWapperProps {
   dimension: number[];
@@ -172,7 +173,7 @@ const Door = (doorModel: DoorModel) => {
     }
   };
 
-  const showSolarRadiationHeatmap = useStore(Selector.showSolarRadiationHeatmap);
+  const showSolarRadiationHeatmap = usePrimitiveStore(Selector.showSolarRadiationHeatmap);
   const solarRadiationHeatmapMaxValue = useStore(Selector.viewState.solarRadiationHeatmapMaxValue);
   const getHeatmap = useStore(Selector.getHeatmap);
   const [heatmapTexture, setHeatmapTexture] = useState<CanvasTexture | null>(null);

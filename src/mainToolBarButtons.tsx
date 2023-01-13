@@ -43,6 +43,7 @@ import { UndoableCheck } from './undo/UndoableCheck';
 import { useStoreRef } from './stores/commonRef';
 import { showInfo } from './helpers';
 import { Util } from './Util';
+import { usePrimitiveStore } from './stores/commonPrimitive';
 
 const ToolBarButton = ({ ...props }) => {
   return (
@@ -68,7 +69,7 @@ const MainToolBarButtons = () => {
   const actionModeLock = useStore(Selector.actionModeLock);
   const showHeliodonPanel = useStore(Selector.viewState.showHeliodonPanel);
   const noAnimationForHeatmapSimulation = useStore(Selector.world.noAnimationForHeatmapSimulation);
-  const showSolarRadiationHeatmap = useStore(Selector.showSolarRadiationHeatmap);
+  const showSolarRadiationHeatmap = usePrimitiveStore(Selector.showSolarRadiationHeatmap);
   const clearContent = useStore(Selector.clearContent);
   const objectTypeToAdd = useStore(Selector.objectTypeToAdd);
   const addedFoundationId = useStore(Selector.addedFoundationId);
@@ -77,8 +78,8 @@ const MainToolBarButtons = () => {
   const addedWindowId = useStore(Selector.addedWindowId);
   const addedDoorId = useStore(Selector.addedDoorId);
   const addUndoable = useStore(Selector.addUndoable);
-  const runDynamicSimulation = useStore(Selector.runDynamicSimulation);
-  const runStaticSimulation = useStore(Selector.runStaticSimulation);
+  const runDynamicSimulation = usePrimitiveStore(Selector.runDynamicSimulation);
+  const runStaticSimulation = usePrimitiveStore(Selector.runStaticSimulation);
   const groupAction = useStore(Selector.groupActionMode);
 
   const [category1Flag, setCategory1Flag] = useState<ObjectType>(ObjectType.Foundation);
@@ -179,8 +180,10 @@ const MainToolBarButtons = () => {
     // give it 0.1 second for the info to show up
     setTimeout(() => {
       selectNone();
-      setCommonStore((state) => {
+      usePrimitiveStore.setState((state) => {
         state.runStaticSimulation = !state.runStaticSimulation;
+      });
+      setCommonStore((state) => {
         if (loggable) {
           state.actionInfo = {
             name: 'Generate Daily Solar Radiation Heatmap (Static)',
@@ -198,8 +201,10 @@ const MainToolBarButtons = () => {
     // give it 0.1 second for the info to show up
     setTimeout(() => {
       selectNone();
-      setCommonStore((state) => {
+      usePrimitiveStore.setState((state) => {
         state.runDynamicSimulation = !state.runDynamicSimulation;
+      });
+      setCommonStore((state) => {
         if (loggable) {
           state.actionInfo = {
             name: 'Generate Daily Solar Radiation Heatmap (Dynamic)',
@@ -532,7 +537,7 @@ const MainToolBarButtons = () => {
           }}
           onClick={() => {
             if (showSolarRadiationHeatmap) {
-              setCommonStore((state) => {
+              usePrimitiveStore.setState((state) => {
                 state.showSolarRadiationHeatmap = false;
               });
             } else {

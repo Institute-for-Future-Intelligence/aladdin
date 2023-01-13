@@ -1,5 +1,5 @@
 /*
- * @Copyright 2022. Institute for Future Intelligence, Inc.
+ * @Copyright 2022-2023. Institute for Future Intelligence, Inc.
  */
 import React, { useEffect, useRef } from 'react';
 import { RoofTexture } from 'src/types';
@@ -8,6 +8,7 @@ import { RoofSegmentProps } from './roofRenderer';
 import * as Selector from 'src/stores/selector';
 import { useStore } from 'src/stores/common';
 import { CanvasTexture, DoubleSide, Float32BufferAttribute, Mesh, Vector3 } from 'three';
+import { usePrimitiveStore } from '../../stores/commonPrimitive';
 
 export const RoofSegment = ({
   id,
@@ -31,7 +32,7 @@ export const RoofSegment = ({
   heatmap?: CanvasTexture;
 }) => {
   const shadowEnabled = useStore(Selector.viewState.shadowEnabled);
-  const showSolarRadiationHeatmap = useStore(Selector.showSolarRadiationHeatmap);
+  const showSolarRadiationHeatmap = usePrimitiveStore(Selector.showSolarRadiationHeatmap);
   const { transparent, opacity } = useTransparent();
   const texture = useRoofTexture(textureType);
 

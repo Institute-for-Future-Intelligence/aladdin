@@ -8,6 +8,7 @@ import * as Selector from '../stores/selector';
 import styled from 'styled-components';
 import { Button, Space } from 'antd';
 import i18n from '../i18n/i18n';
+import { usePrimitiveStore } from '../stores/commonPrimitive';
 
 const Container = styled.div`
   position: absolute;
@@ -37,16 +38,18 @@ const SimulationControlPanel = () => {
   const lang = { lng: language };
 
   const cancel = () => {
-    setCommonStore((state) => {
-      state.runStaticSimulation = false;
-      state.runDynamicSimulation = false;
-      state.pauseSimulation = false;
-
+    usePrimitiveStore.setState((state) => {
       state.runDailyThermalSimulation = false;
       state.runYearlyThermalSimulation = false;
       state.pauseDailyThermalSimulation = false;
       state.pauseYearlyThermalSimulation = false;
 
+      state.runStaticSimulation = false;
+      state.runDynamicSimulation = false;
+      state.pauseSimulation = false;
+    });
+
+    setCommonStore((state) => {
       state.runDailyLightSensor = false;
       state.runYearlyLightSensor = false;
       state.pauseDailyLightSensor = false;
@@ -87,11 +90,7 @@ const SimulationControlPanel = () => {
   };
 
   const pause = () => {
-    setCommonStore((state) => {
-      if (state.runDynamicSimulation) {
-        state.pauseSimulation = true;
-      }
-
+    usePrimitiveStore.setState((state) => {
       if (state.runDailyThermalSimulation) {
         state.pauseDailyThermalSimulation = true;
       }
@@ -99,6 +98,12 @@ const SimulationControlPanel = () => {
         state.pauseYearlyThermalSimulation = true;
       }
 
+      if (state.runDynamicSimulation) {
+        state.pauseSimulation = true;
+      }
+    });
+
+    setCommonStore((state) => {
       if (state.runDailyLightSensor) {
         state.pauseDailyLightSensor = true;
       }
@@ -151,11 +156,7 @@ const SimulationControlPanel = () => {
   };
 
   const resume = () => {
-    setCommonStore((state) => {
-      if (state.runDynamicSimulation) {
-        state.pauseSimulation = false;
-      }
-
+    usePrimitiveStore.setState((state) => {
       if (state.runDailyThermalSimulation) {
         state.pauseDailyThermalSimulation = false;
       }
@@ -163,6 +164,12 @@ const SimulationControlPanel = () => {
         state.pauseYearlyThermalSimulation = false;
       }
 
+      if (state.runDynamicSimulation) {
+        state.pauseSimulation = false;
+      }
+    });
+
+    setCommonStore((state) => {
       if (state.runDailyLightSensor) {
         state.pauseDailyLightSensor = false;
       }

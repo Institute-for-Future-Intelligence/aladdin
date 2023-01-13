@@ -13,6 +13,7 @@ import { Beforeunload } from 'react-beforeunload';
 import { ConfigProvider } from 'antd';
 import AppCreator from './appCreator';
 import LocalFileManager from './localFileManager';
+import { usePrimitiveStore } from './stores/commonPrimitive';
 
 const App = () => {
   const setCommonStore = useStore(Selector.set);
@@ -21,7 +22,7 @@ const App = () => {
   const elements = useStore((state: CommonStoreState) => state.elements);
   const viewState = useStore((state: CommonStoreState) => state.viewState);
   const notes = useStore((state: CommonStoreState) => state.notes);
-  const showSolarRadiationHeatmap = useStore(Selector.showSolarRadiationHeatmap);
+  const showSolarRadiationHeatmap = usePrimitiveStore(Selector.showSolarRadiationHeatmap);
   const setChanged = useStore(Selector.setChanged);
   const setSkipChange = useStore(Selector.setSkipChange);
   const loadWeatherData = useStore(Selector.loadWeatherData);
@@ -48,7 +49,7 @@ const App = () => {
 
   useEffect(() => {
     if (showSolarRadiationHeatmap) {
-      setCommonStore((state) => {
+      usePrimitiveStore.setState((state) => {
         state.showSolarRadiationHeatmap = false;
       });
     }

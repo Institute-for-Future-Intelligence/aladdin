@@ -1,5 +1,5 @@
 /*
- * @Copyright 2022. Institute for Future Intelligence, Inc.
+ * @Copyright 2022-2023. Institute for Future Intelligence, Inc.
  */
 
 import React, { useEffect, useMemo, useRef, useState } from 'react';
@@ -14,6 +14,7 @@ import * as Selector from '../stores/selector';
 import { useFrame } from '@react-three/fiber';
 import { Line2 } from 'three/examples/jsm/lines/Line2';
 import { Util } from '../Util';
+import { usePrimitiveStore } from '../stores/commonPrimitive';
 
 const SolarUpdraftTower = ({ foundation }: { foundation: FoundationModel }) => {
   const date = useStore(Selector.world.date);
@@ -21,7 +22,7 @@ const SolarUpdraftTower = ({ foundation }: { foundation: FoundationModel }) => {
   const animate = useStore(Selector.animateSun);
   const simulationInProgress = useStore(Selector.simulationInProgress);
   const simulationPaused = useStore(Selector.simulationPaused);
-  const showSolarRadiationHeatmap = useStore(Selector.showSolarRadiationHeatmap);
+  const showSolarRadiationHeatmap = usePrimitiveStore(Selector.showSolarRadiationHeatmap);
   const solarRadiationHeatmapMaxValue = useStore(Selector.viewState.solarRadiationHeatmapMaxValue);
   const getHeatmap = useStore(Selector.getHeatmap);
 

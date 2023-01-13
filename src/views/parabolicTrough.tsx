@@ -1,5 +1,5 @@
 /*
- * @Copyright 2022. Institute for Future Intelligence, Inc.
+ * @Copyright 2022-2023. Institute for Future Intelligence, Inc.
  */
 
 import React, { useEffect, useMemo, useRef, useState } from 'react';
@@ -25,6 +25,7 @@ import { getSunDirection } from '../analysis/sunTools';
 import i18n from '../i18n/i18n';
 import { LineData } from './LineData';
 import { ParabolicCylinder } from './shapes';
+import { usePrimitiveStore } from '../stores/commonPrimitive';
 
 const ParabolicTrough = ({
   id,
@@ -57,7 +58,7 @@ const ParabolicTrough = ({
   const date = useStore(Selector.world.date);
   const latitude = useStore(Selector.world.latitude);
   const elements = useStore(Selector.elements);
-  const showSolarRadiationHeatmap = useStore(Selector.showSolarRadiationHeatmap);
+  const showSolarRadiationHeatmap = usePrimitiveStore(Selector.showSolarRadiationHeatmap);
   const solarRadiationHeatmapMaxValue = useStore(Selector.viewState.solarRadiationHeatmapMaxValue);
   const getHeatmap = useStore(Selector.getHeatmap);
   const shadowEnabled = useStore(Selector.viewState.shadowEnabled);

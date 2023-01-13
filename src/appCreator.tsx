@@ -80,6 +80,7 @@ import PointerStyleController from './pointerStyleController';
 import Loading from './loading';
 import DailyBuildingEnergyPanel from './panels/dailyBuildingEnergyPanel';
 import YearlyBuildingEnergyPanel from './panels/yearlyBuildingEnergyPanel';
+import { usePrimitiveStore } from './stores/commonPrimitive';
 
 export interface AppCreatorProps {
   viewOnly: boolean;
@@ -110,7 +111,7 @@ const AppCreator = ({ viewOnly = false }: AppCreatorProps) => {
   const showWeatherPanel = useStore(Selector.viewState.showWeatherPanel);
   const showDiurnalTemperaturePanel = useStore(Selector.viewState.showDiurnalTemperaturePanel);
   const showEconomicsPanel = useStore(Selector.viewState.showEconomicsPanel);
-  const showSolarRadiationHeatmap = useStore(Selector.showSolarRadiationHeatmap);
+  const showSolarRadiationHeatmap = usePrimitiveStore(Selector.showSolarRadiationHeatmap);
   const showDailyLightSensorPanel = useStore(Selector.viewState.showDailyLightSensorPanel);
   const showYearlyLightSensorPanel = useStore(Selector.viewState.showYearlyLightSensorPanel);
   const showDailyPvYieldPanel = useStore(Selector.viewState.showDailyPvYieldPanel);

@@ -1,5 +1,5 @@
 /*
- * @Copyright 2021-2022. Institute for Future Intelligence, Inc.
+ * @Copyright 2021-2023. Institute for Future Intelligence, Inc.
  */
 
 import React, { useEffect, useMemo, useRef, useState } from 'react';
@@ -43,6 +43,7 @@ import { UndoableChange } from '../../undo/UndoableChange';
 import i18n from '../../i18n/i18n';
 import { LineData } from '../LineData';
 import { useSolarPanelHeatmapTexture, useSolarPanelTexture } from './hooks';
+import { usePrimitiveStore } from '../../stores/commonPrimitive';
 
 const SolarPanel = ({
   id,
@@ -76,7 +77,7 @@ const SolarPanel = ({
   const date = useStore(Selector.world.date);
   const latitude = useStore(Selector.world.latitude);
   const elements = useStore(Selector.elements);
-  const showSolarRadiationHeatmap = useStore(Selector.showSolarRadiationHeatmap);
+  const showSolarRadiationHeatmap = usePrimitiveStore(Selector.showSolarRadiationHeatmap);
   const shadowEnabled = useStore(Selector.viewState.shadowEnabled);
   const solarPanelShininess = useStore(Selector.viewState.solarPanelShininess);
   const getElementById = useStore(Selector.getElementById);

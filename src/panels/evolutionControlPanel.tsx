@@ -8,6 +8,7 @@ import * as Selector from '../stores/selector';
 import styled from 'styled-components';
 import { Button, Space } from 'antd';
 import i18n from '../i18n/i18n';
+import { usePrimitiveStore } from '../stores/commonPrimitive';
 
 const Container = styled.div`
   position: absolute;
@@ -37,9 +38,11 @@ const EvolutionControlPanel = () => {
   const lang = { lng: language };
 
   const cancel = () => {
-    setCommonStore((state) => {
+    usePrimitiveStore.setState((state) => {
       state.runStaticSimulation = false;
       state.pauseSimulation = false;
+    });
+    setCommonStore((state) => {
       state.runEvolution = false;
       state.pauseEvolution = false;
       if (loggable) {
@@ -52,8 +55,10 @@ const EvolutionControlPanel = () => {
   };
 
   const pause = () => {
-    setCommonStore((state) => {
+    usePrimitiveStore.setState((state) => {
       state.pauseSimulation = true;
+    });
+    setCommonStore((state) => {
       if (state.runEvolution) {
         state.pauseEvolution = true;
       }
@@ -67,8 +72,10 @@ const EvolutionControlPanel = () => {
   };
 
   const resume = () => {
-    setCommonStore((state) => {
+    usePrimitiveStore.setState((state) => {
       state.pauseSimulation = false;
+    });
+    setCommonStore((state) => {
       if (state.runEvolution) {
         state.pauseEvolution = false;
       }

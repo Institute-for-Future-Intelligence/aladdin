@@ -1,5 +1,5 @@
 /*
- * @Copyright 2021-2022. Institute for Future Intelligence, Inc.
+ * @Copyright 2021-2023. Institute for Future Intelligence, Inc.
  */
 
 import React, { RefObject, useEffect, useMemo, useRef } from 'react';
@@ -43,6 +43,7 @@ import i18n from '../i18n/i18n';
 import { FoundationModel } from 'src/models/FoundationModel';
 import { SolarPanelModel } from 'src/models/SolarPanelModel';
 import { InnerCommonState } from 'src/stores/InnerCommonState';
+import { usePrimitiveStore } from '../stores/commonPrimitive';
 
 const Ground = () => {
   const setCommonStore = useStore(Selector.set);
@@ -72,7 +73,7 @@ const Ground = () => {
   const deletedCuboidId = useStore(Selector.deletedCuboidId);
   const updatePolygonVerticesById = useStore(Selector.updatePolygonVerticesById);
   const updateSceneRadius = useStore(Selector.updateSceneRadius);
-  const showSolarRadiationHeatmap = useStore(Selector.showSolarRadiationHeatmap);
+  const showSolarRadiationHeatmap = usePrimitiveStore(Selector.showSolarRadiationHeatmap);
   const elementGroupId = useStore(Selector.elementGroupId);
 
   const { get: getThree, scene, invalidate } = useThree();

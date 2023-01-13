@@ -16,6 +16,7 @@ import RectangleWindow from './rectangleWindow';
 import ArchedWindow from './archedWindow';
 import { RulerOnWall } from '../rulerOnWall';
 import { Util } from '../../Util';
+import { usePrimitiveStore } from '../../stores/commonPrimitive';
 
 export const defaultShutter = { showLeft: false, showRight: false, color: 'grey', width: 0.5 };
 
@@ -54,7 +55,7 @@ interface ShutterProps {
 
 export const Shutter = ({ cx, cz = 0, lx, lz, color, showLeft, showRight, spacing }: ShutterProps) => {
   const shadowEnabled = useStore(Selector.viewState.shadowEnabled);
-  const showSolarRadiationHeatmap = useStore(Selector.showSolarRadiationHeatmap);
+  const showSolarRadiationHeatmap = usePrimitiveStore(Selector.showSolarRadiationHeatmap);
   if (showSolarRadiationHeatmap) {
     return null;
   }
@@ -267,7 +268,7 @@ const Window = (windowModel: WindowModel) => {
     [lineColor, lineWidth, selected, locked, opacity],
   );
 
-  const showSolarRadiationHeatmap = useStore(Selector.showSolarRadiationHeatmap);
+  const showSolarRadiationHeatmap = usePrimitiveStore(Selector.showSolarRadiationHeatmap);
 
   const renderWindow = () => {
     switch (windowType) {

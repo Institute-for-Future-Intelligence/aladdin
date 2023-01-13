@@ -36,6 +36,7 @@ import { FoundationModel } from '../models/FoundationModel';
 import { SolarPanelModel } from '../models/SolarPanelModel';
 import { PvModel } from '../models/PvModel';
 import { SunMinutes } from './SunMinutes';
+import { useDataStore } from '../stores/commonData';
 
 interface ThermalSimulationProps {
   city: string | null;
@@ -58,16 +59,16 @@ const ThermalSimulation = ({ city }: ThermalSimulationProps) => {
   const getPvModule = useStore(Selector.getPvModule);
   const setHeatmap = useStore(Selector.setHeatmap);
   const clearHeatmaps = useStore(Selector.clearHeatmaps);
-  const runDailySimulation = useStore(Selector.runDailyThermalSimulation);
-  const pauseDailySimulation = useStore(Selector.pauseDailyThermalSimulation);
-  const runYearlySimulation = useStore(Selector.runYearlyThermalSimulation);
-  const pauseYearlySimulation = useStore(Selector.pauseYearlyThermalSimulation);
+  const runDailySimulation = usePrimitiveStore(Selector.runDailyThermalSimulation);
+  const pauseDailySimulation = usePrimitiveStore(Selector.pauseDailyThermalSimulation);
+  const runYearlySimulation = usePrimitiveStore(Selector.runYearlyThermalSimulation);
+  const pauseYearlySimulation = usePrimitiveStore(Selector.pauseYearlyThermalSimulation);
   const noAnimation = !!useStore(Selector.world.noAnimationForThermalSimulation);
   const getRoofSegmentVerticesWithoutOverhang = useStore(Selector.getRoofSegmentVerticesWithoutOverhang);
   const highestTemperatureTimeInMinutes = useStore(Selector.world.highestTemperatureTimeInMinutes) ?? 900;
-  const setHourlyHeatExchangeArray = usePrimitiveStore(Selector.setHourlyHeatExchangeArray);
-  const setHourlySolarHeatGainArray = usePrimitiveStore(Selector.setHourlySolarHeatGainArray);
-  const setHourlySolarPanelOutputArray = usePrimitiveStore(Selector.setHourlySolarPanelOutputArray);
+  const setHourlyHeatExchangeArray = useDataStore(Selector.setHourlyHeatExchangeArray);
+  const setHourlySolarHeatGainArray = useDataStore(Selector.setHourlySolarHeatGainArray);
+  const setHourlySolarPanelOutputArray = useDataStore(Selector.setHourlySolarPanelOutputArray);
 
   const requestRef = useRef<number>(0);
   const simulationCompletedRef = useRef<boolean>(false);
@@ -339,7 +340,7 @@ const ThermalSimulation = ({ city }: ThermalSimulationProps) => {
     });
     // the following must be set with a different common store callback so that the useEffect hook of app.ts
     // is not triggered to cancel the solar radiation heat map
-    setCommonStore((state) => {
+    usePrimitiveStore.setState((state) => {
       state.showSolarRadiationHeatmap = true;
     });
   };
@@ -351,8 +352,10 @@ const ThermalSimulation = ({ city }: ThermalSimulationProps) => {
       if (totalMinutes + minuteInterval > MINUTES_OF_DAY) {
         computeNow();
         cancelAnimationFrame(requestRef.current);
-        setCommonStore((state) => {
+        usePrimitiveStore.setState((state) => {
           state.runDailyThermalSimulation = false;
+        });
+        setCommonStore((state) => {
           state.simulationPaused = false;
           state.simulationInProgress = false;
           state.world.date = originalDateRef.current.toLocaleString('en-US');
@@ -476,8 +479,10 @@ const ThermalSimulation = ({ city }: ThermalSimulationProps) => {
         sampledDayRef.current++;
         if (sampledDayRef.current === daysPerYear) {
           cancelAnimationFrame(requestRef.current);
-          setCommonStore((state) => {
+          usePrimitiveStore.setState((state) => {
             state.runYearlyThermalSimulation = false;
+          });
+          setCommonStore((state) => {
             state.simulationInProgress = false;
             state.simulationPaused = false;
             state.world.date = originalDateRef.current.toLocaleString('en-US');

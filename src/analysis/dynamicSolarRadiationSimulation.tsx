@@ -39,6 +39,7 @@ import { Point2 } from '../models/Point2';
 import { RoofModel, RoofType } from '../models/RoofModel';
 import { DoorModel, DoorType } from '../models/DoorModel';
 import { SolarRadiation } from './SolarRadiation';
+import { usePrimitiveStore } from '../stores/commonPrimitive';
 
 export interface DynamicSolarRadiationSimulationProps {
   city: string | null;
@@ -54,8 +55,8 @@ const DynamicSolarRadiationSimulation = ({ city }: DynamicSolarRadiationSimulati
   const getFoundation = useStore(Selector.getFoundation);
   const setHeatmap = useStore(Selector.setHeatmap);
   const clearHeatmaps = useStore(Selector.clearHeatmaps);
-  const runSimulation = useStore(Selector.runDynamicSimulation);
-  const pauseSimulation = useStore(Selector.pauseSimulation);
+  const runSimulation = usePrimitiveStore(Selector.runDynamicSimulation);
+  const pauseSimulation = usePrimitiveStore(Selector.pauseSimulation);
   const solarRadiationHeatmapReflectionOnly = useStore(Selector.viewState.solarRadiationHeatmapReflectionOnly);
   const getRoofSegmentVertices = useStore(Selector.getRoofSegmentVertices);
 
@@ -293,8 +294,10 @@ const DynamicSolarRadiationSimulation = ({ city }: DynamicSolarRadiationSimulati
       const totalMinutes = now.getMinutes() + now.getHours() * 60;
       if (totalMinutes >= sunMinutes.sunset) {
         cancelAnimationFrame(requestRef.current);
-        setCommonStore((state) => {
+        usePrimitiveStore.setState((state) => {
           state.runDynamicSimulation = false;
+        });
+        setCommonStore((state) => {
           state.world.date = originalDateRef.current.toLocaleString('en-US');
         });
         showInfo(i18n.t('message.SimulationCompleted', lang));
@@ -303,8 +306,10 @@ const DynamicSolarRadiationSimulation = ({ city }: DynamicSolarRadiationSimulati
         // the following must be set with a different common store callback so that the useEffect hook of app.ts
         // is not triggered to cancel the solar radiation heat map
         setCommonStore((state) => {
-          state.showSolarRadiationHeatmap = true;
           state.simulationInProgress = false;
+        });
+        usePrimitiveStore.setState((state) => {
+          state.showSolarRadiationHeatmap = true;
         });
         return;
       }

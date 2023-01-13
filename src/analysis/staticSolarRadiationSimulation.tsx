@@ -30,6 +30,7 @@ import { Point2 } from '../models/Point2';
 import { RoofModel, RoofType } from '../models/RoofModel';
 import { DoorModel, DoorType } from '../models/DoorModel';
 import { SolarRadiation } from './SolarRadiation';
+import { usePrimitiveStore } from '../stores/commonPrimitive';
 
 export interface StaticSolarRadiationSimulationProps {
   city: string | null;
@@ -48,7 +49,7 @@ const StaticSolarRadiationSimulation = ({ city }: StaticSolarRadiationSimulation
   const getFoundation = useStore(Selector.getFoundation);
   const setHeatmap = useStore(Selector.setHeatmap);
   const clearHeatmaps = useStore(Selector.clearHeatmaps);
-  const runSimulation = useStore(Selector.runStaticSimulation);
+  const runSimulation = usePrimitiveStore(Selector.runStaticSimulation);
   const getRoofSegmentVertices = useStore(Selector.getRoofSegmentVertices);
 
   const { scene } = useThree();
@@ -67,10 +68,14 @@ const StaticSolarRadiationSimulation = ({ city }: StaticSolarRadiationSimulation
       if (elements && elements.length > 0) {
         clearHeatmaps();
         generateHeatmaps();
-        setCommonStore((state) => {
-          state.showSolarRadiationHeatmap = true;
-          state.simulationInProgress = false;
+        usePrimitiveStore.setState((state) => {
           state.runStaticSimulation = false;
+        });
+        setCommonStore((state) => {
+          state.simulationInProgress = false;
+        });
+        usePrimitiveStore.setState((state) => {
+          state.showSolarRadiationHeatmap = true;
         });
         showInfo(i18n.t('message.SimulationCompleted', lang));
       }

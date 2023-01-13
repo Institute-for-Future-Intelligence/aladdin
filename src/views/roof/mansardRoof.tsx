@@ -1,5 +1,5 @@
 /*
- * @Copyright 2022. Institute for Future Intelligence, Inc.
+ * @Copyright 2022-2023. Institute for Future Intelligence, Inc.
  */
 
 import { Extrude, Line, Plane } from '@react-three/drei';
@@ -40,6 +40,7 @@ import {
 } from './roofRenderer';
 import RoofSegment from './roofSegment';
 import { RoofUtil } from './RoofUtil';
+import { usePrimitiveStore } from '../../stores/commonPrimitive';
 
 const intersectionPlanePosition = new Vector3();
 const intersectionPlaneRotation = new Euler();
@@ -553,7 +554,7 @@ const MansardRoof = (roofModel: MansardRoofModel) => {
   useUpdateSegmentVerticesWithoutOverhangMap(updateSegmentVerticesWithoutOverhangeMap);
 
   const selectMe = useStore(Selector.selectMe);
-  const showSolarRadiationHeatmap = useStore(Selector.showSolarRadiationHeatmap);
+  const showSolarRadiationHeatmap = usePrimitiveStore(Selector.showSolarRadiationHeatmap);
   const solarRadiationHeatmapMaxValue = useStore(Selector.viewState.solarRadiationHeatmapMaxValue);
   const getHeatmap = useStore(Selector.getHeatmap);
   const [heatmapTextures, setHeatmapTextures] = useState<CanvasTexture[]>([]);

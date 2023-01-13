@@ -1,8 +1,8 @@
 /*
- * @Copyright 2022. Institute for Future Intelligence, Inc.
+ * @Copyright 2022-2023. Institute for Future Intelligence, Inc.
  */
 
-import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import React, { useEffect, useMemo, useRef, useState } from 'react';
 import { PyramidRoofModel, RoofModel } from 'src/models/RoofModel';
 import { useStore } from 'src/stores/common';
 import { CanvasTexture, DoubleSide, Euler, Mesh, Raycaster, RepeatWrapping, Shape, Vector2, Vector3 } from 'three';
@@ -39,7 +39,7 @@ import {
   useUpdateSegmentVerticesWithoutOverhangMap,
 } from './hooks';
 import RoofSegment from './roofSegment';
-import { ElementModel } from 'src/models/ElementModel';
+import { usePrimitiveStore } from '../../stores/commonPrimitive';
 
 const intersectionPlanePosition = new Vector3();
 const intersectionPlaneRotation = new Euler();
@@ -70,7 +70,7 @@ const FlatRoof = ({
   heatmap,
 }: FlatRoofProps) => {
   const shadowEnabled = useStore(Selector.viewState.shadowEnabled);
-  const showSolarRadiationHeatmap = useStore(Selector.showSolarRadiationHeatmap);
+  const showSolarRadiationHeatmap = usePrimitiveStore(Selector.showSolarRadiationHeatmap);
   const { transparent, opacity } = useTransparent();
 
   const wireFramePoints = useMemo(() => {
@@ -573,7 +573,7 @@ const PyramidRoof = (roofModel: PyramidRoofModel) => {
     setIsFlatRoof(checkIsFlatRoof());
   }, [currentWallArray, topZ]);
 
-  const showSolarRadiationHeatmap = useStore(Selector.showSolarRadiationHeatmap);
+  const showSolarRadiationHeatmap = usePrimitiveStore(Selector.showSolarRadiationHeatmap);
   const solarRadiationHeatmapMaxValue = useStore(Selector.viewState.solarRadiationHeatmapMaxValue);
   const getHeatmap = useStore(Selector.getHeatmap);
   const [heatmapTextures, setHeatmapTextures] = useState<CanvasTexture[]>([]);

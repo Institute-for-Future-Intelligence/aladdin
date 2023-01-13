@@ -138,6 +138,7 @@ import { UndoableChange } from './undo/UndoableChange';
 import { DEFAULT_SOLAR_PANEL_SHININESS, FLOATING_WINDOW_OPACITY, HOME_URL, UNDO_SHOW_INFO_DURATION } from './constants';
 import BuildingEnergySimulationSettings from './components/contextMenu/elementMenu/buildingEnergySimulationSettings';
 import { CheckStatus, useBuildingCheck } from './analysis/buildingHooks';
+import { usePrimitiveStore } from './stores/commonPrimitive';
 
 const { SubMenu } = Menu;
 
@@ -227,8 +228,8 @@ const MainMenu = ({ viewOnly, set2DView, resetView, zoomView, canvas }: MainMenu
   const user = useStore.getState().user;
   const axes = useStore.getState().viewState.axes;
   const elementsToPaste = useStore.getState().elementsToPaste;
-  const runDynamicSimulation = useStore.getState().runDynamicSimulation;
-  const runStaticSimulation = useStore.getState().runStaticSimulation;
+  const runDynamicSimulation = usePrimitiveStore.getState().runDynamicSimulation;
+  const runStaticSimulation = usePrimitiveStore.getState().runStaticSimulation;
   const noAnimationForHeatmapSimulation = useStore(Selector.world.noAnimationForHeatmapSimulation);
   const noAnimationForSensorDataCollection = useStore(Selector.world.noAnimationForSensorDataCollection);
   const solarRadiationHeatmapReflectionOnly = useStore(Selector.viewState.solarRadiationHeatmapReflectionOnly);
@@ -1086,8 +1087,10 @@ const MainMenu = ({ viewOnly, set2DView, resetView, zoomView, canvas }: MainMenu
     // give it 0.1 second for the info to show up
     setTimeout(() => {
       selectNone();
-      setCommonStore((state) => {
+      usePrimitiveStore.setState((state) => {
         state.runStaticSimulation = !state.runStaticSimulation;
+      });
+      setCommonStore((state) => {
         if (loggable) {
           state.actionInfo = {
             name: 'Generate Daily Solar Radiation Heatmap (Static)',
@@ -1105,8 +1108,10 @@ const MainMenu = ({ viewOnly, set2DView, resetView, zoomView, canvas }: MainMenu
     // give it 0.1 second for the info to show up
     setTimeout(() => {
       selectNone();
-      setCommonStore((state) => {
+      usePrimitiveStore.setState((state) => {
         state.runDynamicSimulation = !state.runDynamicSimulation;
+      });
+      setCommonStore((state) => {
         if (loggable) {
           state.actionInfo = {
             name: 'Generate Daily Solar Radiation Heatmap (Dynamic)',
@@ -1695,9 +1700,11 @@ const MainMenu = ({ viewOnly, set2DView, resetView, zoomView, canvas }: MainMenu
               showInfo(i18n.t('message.SimulationStarted', lang));
               // give it 0.1 second for the info to show up
               setTimeout(() => {
+                usePrimitiveStore.setState((state) => {
+                  state.runDailyThermalSimulation = true;
+                });
                 setCommonStore((state) => {
                   state.simulationInProgress = true;
-                  state.runDailyThermalSimulation = true;
                   if (loggable) {
                     state.actionInfo = { name: 'Analyze Daily Building Energy', timestamp: new Date().getTime() };
                   }
@@ -1724,9 +1731,11 @@ const MainMenu = ({ viewOnly, set2DView, resetView, zoomView, canvas }: MainMenu
               showInfo(i18n.t('message.SimulationStarted', lang));
               // give it 0.1 second for the info to show up
               setTimeout(() => {
+                usePrimitiveStore.setState((state) => {
+                  state.runYearlyThermalSimulation = true;
+                });
                 setCommonStore((state) => {
                   state.simulationInProgress = true;
-                  state.runYearlyThermalSimulation = true;
                   if (loggable) {
                     state.actionInfo = { name: 'Analyze Yearly Building Energy', timestamp: new Date().getTime() };
                   }

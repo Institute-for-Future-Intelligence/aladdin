@@ -70,6 +70,7 @@ import { FoundationModel } from 'src/models/FoundationModel';
 import { HorizontalRuler } from '../horizontalRuler';
 import { InnerCommonState } from 'src/stores/InnerCommonState';
 import { usePrimitiveStore } from '../../stores/commonPrimitive';
+import { useDataStore } from '../../stores/commonData';
 
 export interface WallProps {
   wallModel: WallModel;
@@ -184,14 +185,14 @@ const Wall = ({ wallModel, foundationModel }: WallProps) => {
   const { invalidate } = useThree();
 
   const world = useStore.getState().world;
-  const showSolarRadiationHeatmap = useStore(Selector.showSolarRadiationHeatmap);
+  const showSolarRadiationHeatmap = usePrimitiveStore(Selector.showSolarRadiationHeatmap);
   const solarRadiationHeatmapMaxValue = useStore(Selector.viewState.solarRadiationHeatmapMaxValue);
   const getHeatmap = useStore(Selector.getHeatmap);
   const [heatmapTexture, setHeatmapTexture] = useState<CanvasTexture | null>(null);
   const heatFluxScaleFactor = useStore(Selector.viewState.heatFluxScaleFactor);
   const heatFluxColor = useStore(Selector.viewState.heatFluxColor);
   const heatFluxWidth = useStore(Selector.viewState.heatFluxWidth);
-  const hourlyHeatExchangeArrayMap = usePrimitiveStore(Selector.hourlyHeatExchangeArrayMap);
+  const hourlyHeatExchangeArrayMap = useDataStore(Selector.hourlyHeatExchangeArrayMap);
   const getChildrenOfType = useStore(Selector.getChildrenOfType);
 
   const zmax = useMemo(() => {

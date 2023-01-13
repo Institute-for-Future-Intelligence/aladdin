@@ -1,5 +1,5 @@
 /*
- * @Copyright 2022. Institute for Future Intelligence, Inc.
+ * @Copyright 2022-2023. Institute for Future Intelligence, Inc.
  */
 
 import React, { useEffect, useMemo, useRef, useState } from 'react';
@@ -38,6 +38,7 @@ import { getSunDirection } from 'src/analysis/sunTools';
 import i18n from 'src/i18n/i18n';
 import { RoofUtil } from '../roof/RoofUtil';
 import { useSolarPanelHeatmapTexture, useSolarPanelTexture } from './hooks';
+import { usePrimitiveStore } from '../../stores/commonPrimitive';
 
 interface MoveHandleProps {
   id: string;
@@ -469,7 +470,7 @@ const SolarPanelOnRoof = ({
   const selectMe = useStore(Selector.selectMe);
   const getPvModule = useStore(Selector.getPvModule);
   const getElementById = useStore(Selector.getElementById);
-  const showSolarRadiationHeatmap = useStore(Selector.showSolarRadiationHeatmap);
+  const showSolarRadiationHeatmap = usePrimitiveStore(Selector.showSolarRadiationHeatmap);
   const shadowEnabled = useStore(Selector.viewState.shadowEnabled);
   const solarPanelShininess = useStore(Selector.viewState.solarPanelShininess);
   const orthographic = useStore(Selector.viewState.orthographic) ?? false;

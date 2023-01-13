@@ -1,5 +1,5 @@
 /*
- * @Copyright 2022. Institute for Future Intelligence, Inc.
+ * @Copyright 2022-2023. Institute for Future Intelligence, Inc.
  */
 
 import React, { useEffect, useMemo, useRef, useState } from 'react';
@@ -32,6 +32,7 @@ import { WallModel } from 'src/models/WallModel';
 import { FoundationModel } from 'src/models/FoundationModel';
 import { UndoableChange } from 'src/undo/UndoableChange';
 import { useSolarPanelHeatmapTexture, useSolarPanelTexture } from './hooks';
+import { usePrimitiveStore } from '../../stores/commonPrimitive';
 
 interface SumbeamProps {
   drawSunbeam: boolean;
@@ -358,7 +359,7 @@ const SolarPanelOnWall = ({
   tiltAngle = Math.min(0, tiltAngle);
 
   const setCommonStore = useStore(Selector.set);
-  const showSolarRadiationHeatmap = useStore(Selector.showSolarRadiationHeatmap);
+  const showSolarRadiationHeatmap = usePrimitiveStore(Selector.showSolarRadiationHeatmap);
   const shadowEnabled = useStore(Selector.viewState.shadowEnabled);
   const solarPanelShininess = useStore(Selector.viewState.solarPanelShininess);
   const getElementById = useStore(Selector.getElementById);

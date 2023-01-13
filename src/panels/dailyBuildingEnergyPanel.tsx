@@ -20,6 +20,7 @@ import { useDailyEnergySorter } from '../analysis/energyHooks';
 import BuildinEnergyGraph from '../components/buildingEnergyGraph';
 import { Util } from '../Util';
 import { CheckStatus, useBuildingCheck } from '../analysis/buildingHooks';
+import { useDataStore } from '../stores/commonData';
 
 const Container = styled.div`
   position: fixed;
@@ -83,12 +84,12 @@ const DailyBuildingEnergyPanel = ({ city }: DailyBuildingEnergyPanelProps) => {
   const setCommonStore = useStore(Selector.set);
   const getWeather = useStore(Selector.getWeather);
   const now = new Date(useStore(Selector.world.date));
-  const hourlyHeatExchangeArrayMap = usePrimitiveStore(Selector.hourlyHeatExchangeArrayMap);
-  const hourlySolarHeatGainArrayMap = usePrimitiveStore(Selector.hourlySolarHeatGainArrayMap);
-  const hourlySolarPanelOutputArrayMap = usePrimitiveStore(Selector.hourlySolarPanelOutputArrayMap);
+  const hourlyHeatExchangeArrayMap = useDataStore(Selector.hourlyHeatExchangeArrayMap);
+  const hourlySolarHeatGainArrayMap = useDataStore(Selector.hourlySolarHeatGainArrayMap);
+  const hourlySolarPanelOutputArrayMap = useDataStore(Selector.hourlySolarPanelOutputArrayMap);
   const panelRect = useStore(Selector.viewState.dailyBuildingEnergyPanelRect);
   const flagOfDailySimulation = usePrimitiveStore(Selector.flagOfDailySimulation);
-  const runDailySimulation = useStore(Selector.runDailyThermalSimulation);
+  const runDailySimulation = usePrimitiveStore(Selector.runDailyThermalSimulation);
   const simulationInProgress = useStore(Selector.simulationInProgress);
   const hasSolarPanels = Util.hasSolarPanels(useStore.getState().elements);
 
@@ -393,9 +394,11 @@ const DailyBuildingEnergyPanel = ({ city }: DailyBuildingEnergyPanelProps) => {
                   showInfo(i18n.t('message.SimulationStarted', lang));
                   // give it 0.1 second for the info to show up
                   setTimeout(() => {
-                    setCommonStore((state) => {
+                    usePrimitiveStore.setState((state) => {
                       state.runDailyThermalSimulation = true;
                       state.pauseDailyThermalSimulation = false;
+                    });
+                    setCommonStore((state) => {
                       state.simulationInProgress = true;
                       if (loggable) {
                         state.actionInfo = { name: 'Run Daily Thermal Simulation', timestamp: new Date().getTime() };

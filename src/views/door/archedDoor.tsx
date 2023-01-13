@@ -19,6 +19,7 @@ import * as Selector from 'src/stores/selector';
 import { usePrimitiveStore } from '../../stores/commonPrimitive';
 import { Cone, Line } from '@react-three/drei';
 import { Util } from '../../Util';
+import { useDataStore } from '../../stores/commonData';
 
 interface ArchedDoorProps {
   id: string;
@@ -39,7 +40,7 @@ const ArchedDoor = React.memo(
     const heatFluxScaleFactor = useStore(Selector.viewState.heatFluxScaleFactor);
     const heatFluxColor = useStore(Selector.viewState.heatFluxColor);
     const heatFluxWidth = useStore(Selector.viewState.heatFluxWidth);
-    const hourlyHeatExchangeArrayMap = usePrimitiveStore(Selector.hourlyHeatExchangeArrayMap);
+    const hourlyHeatExchangeArrayMap = useDataStore(Selector.hourlyHeatExchangeArrayMap);
 
     const heatFluxArrowHead = useRef<number>(0);
     const heatFluxEuler = useRef<Euler>();

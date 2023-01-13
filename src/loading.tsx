@@ -10,6 +10,7 @@ import { Util } from './Util';
 import SimulationControlPanel from './panels/simulationControlPanel';
 import EvolutionControlPanel from './panels/evolutionControlPanel';
 import Spinner from './components/spinner';
+import { usePrimitiveStore } from './stores/commonPrimitive';
 
 export default React.memo(function Loading({ loading }: { loading: boolean }) {
   const loadingFile = useStore(Selector.loadingFile);
@@ -28,9 +29,9 @@ export default React.memo(function Loading({ loading }: { loading: boolean }) {
   const runYearlyLightSensor = useStore(Selector.runYearlyLightSensor);
   const runDailySimulationForUpdraftTower = useStore(Selector.runDailySimulationForUpdraftTower);
   const runYearlySimulationForUpdraftTower = useStore(Selector.runYearlySimulationForUpdraftTower);
-  const runDynamicSimulation = useStore(Selector.runDynamicSimulation);
-  const runDailyThermalSimulation = useStore(Selector.runDailyThermalSimulation);
-  const runYearlyThermalSimulation = useStore(Selector.runYearlyThermalSimulation);
+  const runDynamicSimulation = usePrimitiveStore(Selector.runDynamicSimulation);
+  const runDailyThermalSimulation = usePrimitiveStore(Selector.runDailyThermalSimulation);
+  const runYearlyThermalSimulation = usePrimitiveStore(Selector.runYearlyThermalSimulation);
 
   const elements = useStore.getState().elements;
 

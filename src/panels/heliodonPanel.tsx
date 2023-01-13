@@ -16,6 +16,7 @@ import { UndoableChange } from '../undo/UndoableChange';
 import { UndoableChangeLocation } from '../undo/UndoableChangeLocation';
 import { computeSunriseAndSunsetInMinutes } from '../analysis/sunTools';
 import { throttle } from 'lodash';
+import { usePrimitiveStore } from '../stores/commonPrimitive';
 
 const Container = styled.div`
   position: absolute;
@@ -71,7 +72,7 @@ const HeliodonPanel = () => {
   const address = useStore(Selector.world.address);
   const animateSun = useStore(Selector.animateSun);
   const animate24Hours = useStore(Selector.animate24Hours);
-  const runSimulation = useStore(Selector.runDynamicSimulation);
+  const runSimulation = usePrimitiveStore(Selector.runDynamicSimulation);
   const showSunAngles = useStore(Selector.viewState.showSunAngles);
   const heliodon = useStore(Selector.viewState.heliodon);
   const heliodonPanelX = useStore(Selector.viewState.heliodonPanelX);
