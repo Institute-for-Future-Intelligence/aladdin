@@ -894,9 +894,11 @@ export const useStore = create<CommonStoreState>(
             immerSet((state: CommonStoreState) => {
               state.undoManager.clear();
               state.heatmaps.clear();
-              usePrimitiveStore.getState().hourlyHeatExchangeArrayMap = new Map<string, number[]>();
-              usePrimitiveStore.getState().hourlySolarHeatGainArrayMap = new Map<string, number[]>();
-              usePrimitiveStore.getState().hourlySolarPanelOutputArrayMap = new Map<string, number[]>();
+              usePrimitiveStore.setState((state) => {
+                state.hourlyHeatExchangeArrayMap = new Map<string, number[]>();
+                state.hourlySolarHeatGainArrayMap = new Map<string, number[]>();
+                state.hourlySolarPanelOutputArrayMap = new Map<string, number[]>();
+              });
               state.world = content.world;
               state.viewState = content.view;
               state.elements = content.elements;
