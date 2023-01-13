@@ -256,6 +256,7 @@ const ThermalSimulation = ({ city }: ThermalSimulationProps) => {
       showInfo(i18n.t('message.SimulationPaused', lang));
     } else {
       setPrimitiveStore('simulationPaused', false);
+      now.setHours(now.getHours(), now.getMinutes() + minuteInterval);
       // continue the simulation
       calculateDaily();
     }
@@ -430,6 +431,7 @@ const ThermalSimulation = ({ city }: ThermalSimulationProps) => {
       showInfo(i18n.t('message.SimulationPaused', lang));
     } else {
       setPrimitiveStore('simulationPaused', false);
+      now.setHours(now.getHours(), now.getMinutes() + minuteInterval);
       // continue the simulation
       simulateYearly();
     }
