@@ -5,6 +5,8 @@ import create from 'zustand';
 
 // avoid using undefined value in the store for now.
 export interface PrimitiveStoreState {
+  setPrimitiveStore: <K extends keyof PrimitiveStoreState, V extends PrimitiveStoreState[K]>(key: K, val: V) => void;
+
   runDailyThermalSimulation: boolean;
   pauseDailyThermalSimulation: boolean;
   runYearlyThermalSimulation: boolean;
@@ -17,18 +19,12 @@ export interface PrimitiveStoreState {
   flagOfDailySimulation: boolean; // used as a flag to notify that daily results are ready
 
   showSolarRadiationHeatmap: boolean;
+
+  duringCameraInteraction: boolean;
 }
 
 export const usePrimitiveStore = create<PrimitiveStoreState>((set, get) => {
   return {
-    runDailyThermalSimulation: false,
-    pauseDailyThermalSimulation: false,
-    runYearlyThermalSimulation: false,
-    pauseYearlyThermalSimulation: false,
-
-    runDynamicSimulation: false,
-    runStaticSimulation: false,
-    pauseSimulation: false,
     setPrimitiveStore(key, val) {
       set((state) => {
         if (state[key] !== undefined) {
@@ -39,7 +35,14 @@ export const usePrimitiveStore = create<PrimitiveStoreState>((set, get) => {
       });
     },
 
-    duringCameraInteraction: false,
+    runDailyThermalSimulation: false,
+    pauseDailyThermalSimulation: false,
+    runYearlyThermalSimulation: false,
+    pauseYearlyThermalSimulation: false,
+
+    runDynamicSimulation: false,
+    runStaticSimulation: false,
+    pauseSimulation: false,
 
     flagOfDailySimulation: false,
 
