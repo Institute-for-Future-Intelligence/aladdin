@@ -210,18 +210,8 @@ const ThermalSimulation = ({ city }: ThermalSimulationProps) => {
   };
 
   const resetSolarHeatMaps = () => {
-    for (const e of elements) {
-      const a = solarHeatmapRef.current.get(e.id);
-      if (a) Util.zero2DArray(a);
-      if (e.type === ObjectType.Roof) {
-        for (const key of solarHeatmapRef.current.keys()) {
-          if (key !== e.id && key.startsWith(e.id)) {
-            const b = solarHeatmapRef.current.get(key);
-            if (b) Util.zero2DArray(b);
-          }
-        }
-      }
-    }
+    // must clear the map to allow the array to be recreated in case the dimensions will change
+    solarHeatmapRef.current.clear();
     clearHeatmaps();
   };
 

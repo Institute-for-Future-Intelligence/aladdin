@@ -98,6 +98,7 @@ import { ActionState } from './ActionState';
 import { DefaultActionState } from './DefaultActionState';
 import { LightModel } from '../models/LightModel';
 import { HvacSystem } from '../models/HvacSystem';
+import { usePrimitiveStore } from './commonPrimitive';
 
 enableMapSet();
 
@@ -888,6 +889,9 @@ export const useStore = create<CommonStoreState>(
             immerSet((state: CommonStoreState) => {
               state.undoManager.clear();
               state.heatmaps.clear();
+              usePrimitiveStore.getState().hourlyHeatExchangeArrayMap = new Map<string, number[]>();
+              usePrimitiveStore.getState().hourlySolarHeatGainArrayMap = new Map<string, number[]>();
+              usePrimitiveStore.getState().hourlySolarPanelOutputArrayMap = new Map<string, number[]>();
               state.world = content.world;
               state.viewState = content.view;
               state.elements = content.elements;
