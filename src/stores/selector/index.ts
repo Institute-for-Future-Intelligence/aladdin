@@ -710,9 +710,9 @@ export const selectedElementY = (state: CommonStoreState) => state.selectedEleme
 
 export const loadingFile = (state: CommonStoreState) => state.loadingFile;
 
-export const simulationInProgress = (state: CommonStoreState) => state.simulationInProgress;
+export const simulationInProgress = (state: PrimitiveStoreState) => state.simulationInProgress;
 
-export const simulationPaused = (state: CommonStoreState) => state.simulationPaused;
+export const simulationPaused = (state: PrimitiveStoreState) => state.simulationPaused;
 
 export const evolutionInProgress = (state: CommonStoreState) => state.evolutionInProgress;
 
@@ -763,30 +763,32 @@ export const runSolarPanelVisibilityAnalysis = (state: CommonStoreState) => stat
 
 export const solarPanelVisibilityResults = (state: CommonStoreState) => state.solarPanelVisibilityResults;
 
-export const runDailySimulationForSolarPanels = (state: CommonStoreState) => state.runDailySimulationForSolarPanels;
+export const runDailySimulationForSolarPanels = (state: PrimitiveStoreState) => state.runDailySimulationForSolarPanels;
 
-export const runDailySimulationForSolarPanelsLastStep = (state: CommonStoreState) =>
+export const runDailySimulationForSolarPanelsLastStep = (state: PrimitiveStoreState) =>
   state.runDailySimulationForSolarPanelsLastStep;
 
-export const runYearlySimulationForSolarPanels = (state: CommonStoreState) => state.runYearlySimulationForSolarPanels;
+export const runYearlySimulationForSolarPanels = (state: PrimitiveStoreState) =>
+  state.runYearlySimulationForSolarPanels;
 
-export const runYearlySimulationForSolarPanelsLastStep = (state: CommonStoreState) =>
+export const runYearlySimulationForSolarPanelsLastStep = (state: PrimitiveStoreState) =>
   state.runYearlySimulationForSolarPanelsLastStep;
 
-export const pauseDailySimulationForSolarPanels = (state: CommonStoreState) => state.pauseDailySimulationForSolarPanels;
+export const pauseDailySimulationForSolarPanels = (state: PrimitiveStoreState) =>
+  state.pauseDailySimulationForSolarPanels;
 
-export const pauseYearlySimulationForSolarPanels = (state: CommonStoreState) =>
+export const pauseYearlySimulationForSolarPanels = (state: PrimitiveStoreState) =>
   state.pauseYearlySimulationForSolarPanels;
 
 export const dailyPvYield = (state: CommonStoreState) => state.dailyPvYield;
 
-export const dailyPvIndividualOutputs = (state: CommonStoreState) => state.dailyPvIndividualOutputs;
+export const dailyPvIndividualOutputs = (state: PrimitiveStoreState) => state.dailyPvIndividualOutputs;
 
 export const setDailyPvYield = (state: CommonStoreState) => state.setDailyPvYield;
 
 export const yearlyPvYield = (state: CommonStoreState) => state.yearlyPvYield;
 
-export const yearlyPvIndividualOutputs = (state: CommonStoreState) => state.yearlyPvIndividualOutputs;
+export const yearlyPvIndividualOutputs = (state: PrimitiveStoreState) => state.yearlyPvIndividualOutputs;
 
 export const setYearlyPvYield = (state: CommonStoreState) => state.setYearlyPvYield;
 
@@ -800,28 +802,28 @@ export const updateElementOnRoofFlag = (state: CommonStoreState) => state.update
 
 // parabolic troughs (CSP)
 
-export const runDailySimulationForParabolicTroughs = (state: CommonStoreState) =>
+export const runDailySimulationForParabolicTroughs = (state: PrimitiveStoreState) =>
   state.runDailySimulationForParabolicTroughs;
 
-export const runYearlySimulationForParabolicTroughs = (state: CommonStoreState) =>
+export const runYearlySimulationForParabolicTroughs = (state: PrimitiveStoreState) =>
   state.runYearlySimulationForParabolicTroughs;
 
-export const pauseDailySimulationForParabolicTroughs = (state: CommonStoreState) =>
+export const pauseDailySimulationForParabolicTroughs = (state: PrimitiveStoreState) =>
   state.pauseDailySimulationForParabolicTroughs;
 
-export const pauseYearlySimulationForParabolicTroughs = (state: CommonStoreState) =>
+export const pauseYearlySimulationForParabolicTroughs = (state: PrimitiveStoreState) =>
   state.pauseYearlySimulationForParabolicTroughs;
 
 export const dailyParabolicTroughYield = (state: CommonStoreState) => state.dailyParabolicTroughYield;
 
-export const dailyParabolicTroughIndividualOutputs = (state: CommonStoreState) =>
+export const dailyParabolicTroughIndividualOutputs = (state: PrimitiveStoreState) =>
   state.dailyParabolicTroughIndividualOutputs;
 
 export const setDailyParabolicTroughYield = (state: CommonStoreState) => state.setDailyParabolicTroughYield;
 
 export const yearlyParabolicTroughYield = (state: CommonStoreState) => state.yearlyParabolicTroughYield;
 
-export const yearlyParabolicTroughIndividualOutputs = (state: CommonStoreState) =>
+export const yearlyParabolicTroughIndividualOutputs = (state: PrimitiveStoreState) =>
   state.yearlyParabolicTroughIndividualOutputs;
 
 export const setYearlyParabolicTroughYield = (state: CommonStoreState) => state.setYearlyParabolicTroughYield;
@@ -832,28 +834,28 @@ export const setParabolicTroughLabels = (state: CommonStoreState) => state.setPa
 
 // Fresnel reflectors (CSP)
 
-export const runDailySimulationForFresnelReflectors = (state: CommonStoreState) =>
+export const runDailySimulationForFresnelReflectors = (state: PrimitiveStoreState) =>
   state.runDailySimulationForFresnelReflectors;
 
-export const runYearlySimulationForFresnelReflectors = (state: CommonStoreState) =>
+export const runYearlySimulationForFresnelReflectors = (state: PrimitiveStoreState) =>
   state.runYearlySimulationForFresnelReflectors;
 
-export const pauseDailySimulationForFresnelReflectors = (state: CommonStoreState) =>
+export const pauseDailySimulationForFresnelReflectors = (state: PrimitiveStoreState) =>
   state.pauseDailySimulationForFresnelReflectors;
 
-export const pauseYearlySimulationForFresnelReflectors = (state: CommonStoreState) =>
+export const pauseYearlySimulationForFresnelReflectors = (state: PrimitiveStoreState) =>
   state.pauseYearlySimulationForFresnelReflectors;
 
 export const dailyFresnelReflectorYield = (state: CommonStoreState) => state.dailyFresnelReflectorYield;
 
-export const dailyFresnelReflectorIndividualOutputs = (state: CommonStoreState) =>
+export const dailyFresnelReflectorIndividualOutputs = (state: PrimitiveStoreState) =>
   state.dailyFresnelReflectorIndividualOutputs;
 
 export const setDailyFresnelReflectorYield = (state: CommonStoreState) => state.setDailyFresnelReflectorYield;
 
 export const yearlyFresnelReflectorYield = (state: CommonStoreState) => state.yearlyFresnelReflectorYield;
 
-export const yearlyFresnelReflectorIndividualOutputs = (state: CommonStoreState) =>
+export const yearlyFresnelReflectorIndividualOutputs = (state: PrimitiveStoreState) =>
   state.yearlyFresnelReflectorIndividualOutputs;
 
 export const setYearlyFresnelReflectorYield = (state: CommonStoreState) => state.setYearlyFresnelReflectorYield;
@@ -864,23 +866,25 @@ export const setFresnelReflectorLabels = (state: CommonStoreState) => state.setF
 
 // heliostats (CSP)
 
-export const runDailySimulationForHeliostats = (state: CommonStoreState) => state.runDailySimulationForHeliostats;
+export const runDailySimulationForHeliostats = (state: PrimitiveStoreState) => state.runDailySimulationForHeliostats;
 
-export const runYearlySimulationForHeliostats = (state: CommonStoreState) => state.runYearlySimulationForHeliostats;
+export const runYearlySimulationForHeliostats = (state: PrimitiveStoreState) => state.runYearlySimulationForHeliostats;
 
-export const pauseDailySimulationForHeliostats = (state: CommonStoreState) => state.pauseDailySimulationForHeliostats;
+export const pauseDailySimulationForHeliostats = (state: PrimitiveStoreState) =>
+  state.pauseDailySimulationForHeliostats;
 
-export const pauseYearlySimulationForHeliostats = (state: CommonStoreState) => state.pauseYearlySimulationForHeliostats;
+export const pauseYearlySimulationForHeliostats = (state: PrimitiveStoreState) =>
+  state.pauseYearlySimulationForHeliostats;
 
 export const dailyHeliostatYield = (state: CommonStoreState) => state.dailyHeliostatYield;
 
-export const dailyHeliostatIndividualOutputs = (state: CommonStoreState) => state.dailyHeliostatIndividualOutputs;
+export const dailyHeliostatIndividualOutputs = (state: PrimitiveStoreState) => state.dailyHeliostatIndividualOutputs;
 
 export const setDailyHeliostatYield = (state: CommonStoreState) => state.setDailyHeliostatYield;
 
 export const yearlyHeliostatYield = (state: CommonStoreState) => state.yearlyHeliostatYield;
 
-export const yearlyHeliostatIndividualOutputs = (state: CommonStoreState) => state.yearlyHeliostatIndividualOutputs;
+export const yearlyHeliostatIndividualOutputs = (state: PrimitiveStoreState) => state.yearlyHeliostatIndividualOutputs;
 
 export const setYearlyHeliostatYield = (state: CommonStoreState) => state.setYearlyHeliostatYield;
 
@@ -890,21 +894,24 @@ export const setHeliostatLabels = (state: CommonStoreState) => state.setHeliosta
 
 // solar updraft towers
 
-export const runDailySimulationForUpdraftTower = (state: CommonStoreState) => state.runDailySimulationForUpdraftTower;
+export const runDailySimulationForUpdraftTower = (state: PrimitiveStoreState) =>
+  state.runDailySimulationForUpdraftTower;
 
-export const runYearlySimulationForUpdraftTower = (state: CommonStoreState) => state.runYearlySimulationForUpdraftTower;
+export const runYearlySimulationForUpdraftTower = (state: PrimitiveStoreState) =>
+  state.runYearlySimulationForUpdraftTower;
 
-export const pauseDailySimulationForUpdraftTower = (state: CommonStoreState) =>
+export const pauseDailySimulationForUpdraftTower = (state: PrimitiveStoreState) =>
   state.pauseDailySimulationForUpdraftTower;
 
-export const pauseYearlySimulationForUpdraftTower = (state: CommonStoreState) =>
+export const pauseYearlySimulationForUpdraftTower = (state: PrimitiveStoreState) =>
   state.pauseYearlySimulationForUpdraftTower;
 
 export const dailyUpdraftTowerResults = (state: CommonStoreState) => state.dailyUpdraftTowerResults;
 
 export const dailyUpdraftTowerYield = (state: CommonStoreState) => state.dailyUpdraftTowerYield;
 
-export const dailyUpdraftTowerIndividualOutputs = (state: CommonStoreState) => state.dailyUpdraftTowerIndividualOutputs;
+export const dailyUpdraftTowerIndividualOutputs = (state: PrimitiveStoreState) =>
+  state.dailyUpdraftTowerIndividualOutputs;
 
 export const setDailyUpdraftTowerResults = (state: CommonStoreState) => state.setDailyUpdraftTowerResults;
 
@@ -912,7 +919,7 @@ export const setDailyUpdraftTowerYield = (state: CommonStoreState) => state.setD
 
 export const yearlyUpdraftTowerYield = (state: CommonStoreState) => state.yearlyUpdraftTowerYield;
 
-export const yearlyUpdraftTowerIndividualOutputs = (state: CommonStoreState) =>
+export const yearlyUpdraftTowerIndividualOutputs = (state: PrimitiveStoreState) =>
   state.yearlyUpdraftTowerIndividualOutputs;
 
 export const setYearlyUpdraftTowerYield = (state: CommonStoreState) => state.setYearlyUpdraftTowerYield;
@@ -923,28 +930,28 @@ export const setUpdraftTowerLabels = (state: CommonStoreState) => state.setUpdra
 
 // parabolic dishes (CSP)
 
-export const runDailySimulationForParabolicDishes = (state: CommonStoreState) =>
+export const runDailySimulationForParabolicDishes = (state: PrimitiveStoreState) =>
   state.runDailySimulationForParabolicDishes;
 
-export const runYearlySimulationForParabolicDishes = (state: CommonStoreState) =>
+export const runYearlySimulationForParabolicDishes = (state: PrimitiveStoreState) =>
   state.runYearlySimulationForParabolicDishes;
 
-export const pauseDailySimulationForParabolicDishes = (state: CommonStoreState) =>
+export const pauseDailySimulationForParabolicDishes = (state: PrimitiveStoreState) =>
   state.pauseDailySimulationForParabolicDishes;
 
-export const pauseYearlySimulationForParabolicDishes = (state: CommonStoreState) =>
+export const pauseYearlySimulationForParabolicDishes = (state: PrimitiveStoreState) =>
   state.pauseYearlySimulationForParabolicDishes;
 
 export const dailyParabolicDishYield = (state: CommonStoreState) => state.dailyParabolicDishYield;
 
-export const dailyParabolicDishIndividualOutputs = (state: CommonStoreState) =>
+export const dailyParabolicDishIndividualOutputs = (state: PrimitiveStoreState) =>
   state.dailyParabolicDishIndividualOutputs;
 
 export const setDailyParabolicDishYield = (state: CommonStoreState) => state.setDailyParabolicDishYield;
 
 export const yearlyParabolicDishYield = (state: CommonStoreState) => state.yearlyParabolicDishYield;
 
-export const yearlyParabolicDishIndividualOutputs = (state: CommonStoreState) =>
+export const yearlyParabolicDishIndividualOutputs = (state: PrimitiveStoreState) =>
   state.yearlyParabolicDishIndividualOutputs;
 
 export const setYearlyParabolicDishYield = (state: CommonStoreState) => state.setYearlyParabolicDishYield;
@@ -955,13 +962,13 @@ export const setParabolicDishLabels = (state: CommonStoreState) => state.setPara
 
 // sensors
 
-export const runDailyLightSensor = (state: CommonStoreState) => state.runDailyLightSensor;
+export const runDailyLightSensor = (state: PrimitiveStoreState) => state.runDailyLightSensor;
 
-export const pauseDailyLightSensor = (state: CommonStoreState) => state.pauseDailyLightSensor;
+export const pauseDailyLightSensor = (state: PrimitiveStoreState) => state.pauseDailyLightSensor;
 
-export const runYearlyLightSensor = (state: CommonStoreState) => state.runYearlyLightSensor;
+export const runYearlyLightSensor = (state: PrimitiveStoreState) => state.runYearlyLightSensor;
 
-export const pauseYearlyLightSensor = (state: CommonStoreState) => state.pauseYearlyLightSensor;
+export const pauseYearlyLightSensor = (state: PrimitiveStoreState) => state.pauseYearlyLightSensor;
 
 export const dailyLightSensorData = (state: CommonStoreState) => state.dailyLightSensorData;
 

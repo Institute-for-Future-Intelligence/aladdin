@@ -20,8 +20,8 @@ const SolarUpdraftTower = ({ foundation }: { foundation: FoundationModel }) => {
   const date = useStore(Selector.world.date);
   const latitude = useStore(Selector.world.latitude);
   const animate = useStore(Selector.animateSun);
-  const simulationInProgress = useStore(Selector.simulationInProgress);
-  const simulationPaused = useStore(Selector.simulationPaused);
+  const simulationInProgress = usePrimitiveStore(Selector.simulationInProgress);
+  const simulationPaused = usePrimitiveStore(Selector.simulationPaused);
   const showSolarRadiationHeatmap = usePrimitiveStore(Selector.showSolarRadiationHeatmap);
   const solarRadiationHeatmapMaxValue = useStore(Selector.viewState.solarRadiationHeatmapMaxValue);
   const getHeatmap = useStore(Selector.getHeatmap);

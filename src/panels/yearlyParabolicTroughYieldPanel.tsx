@@ -15,6 +15,7 @@ import { screenshot, showInfo } from '../helpers';
 import { CaretRightOutlined, ReloadOutlined, SaveOutlined, UnorderedListOutlined } from '@ant-design/icons';
 import i18n from '../i18n/i18n';
 import { Rectangle } from '../models/Rectangle';
+import { usePrimitiveStore } from '../stores/commonPrimitive';
 
 const Container = styled.div`
   position: fixed;
@@ -79,11 +80,11 @@ const YearlyParabolicTroughYieldPanel = ({ city }: YearlyParabolicTroughYieldPan
   const daysPerYear = useStore(Selector.world.cspDaysPerYear) ?? 6;
   const now = new Date(useStore(Selector.world.date));
   const yearlyYield = useStore(Selector.yearlyParabolicTroughYield);
-  const individualOutputs = useStore(Selector.yearlyParabolicTroughIndividualOutputs);
+  const individualOutputs = usePrimitiveStore(Selector.yearlyParabolicTroughIndividualOutputs);
   const parabolicTroughLabels = useStore(Selector.parabolicTroughLabels);
   const countElementsByType = useStore(Selector.countElementsByType);
   const panelRect = useStore(Selector.viewState.yearlyParabolicTroughYieldPanelRect);
-  const simulationInProgress = useStore(Selector.simulationInProgress);
+  const simulationInProgress = usePrimitiveStore(Selector.simulationInProgress);
 
   // nodeRef is to suppress ReactDOM.findDOMNode() deprecation warning. See:
   // https://github.com/react-grid-layout/react-draggable/blob/v4.4.2/lib/DraggableCore.js#L159-L171
@@ -190,7 +191,7 @@ const YearlyParabolicTroughYieldPanel = ({ city }: YearlyParabolicTroughYieldPan
   const parabolicTroughCount = countElementsByType(ObjectType.ParabolicTrough);
   useEffect(() => {
     if (parabolicTroughCount < 2 && individualOutputs) {
-      setCommonStore((state) => {
+      usePrimitiveStore.setState((state) => {
         state.yearlyParabolicTroughIndividualOutputs = false;
       });
     }
@@ -291,16 +292,18 @@ const YearlyParabolicTroughYieldPanel = ({ city }: YearlyParabolicTroughYieldPan
                     // give it 0.1 second for the info to show up
                     setTimeout(() => {
                       setCommonStore((state) => {
-                        state.runYearlySimulationForParabolicTroughs = true;
-                        state.pauseYearlySimulationForParabolicTroughs = false;
-                        state.simulationInProgress = true;
-                        state.yearlyParabolicTroughIndividualOutputs = checked;
                         if (loggable) {
                           state.actionInfo = {
                             name: 'Run Yearly Simulation For Parabolic Troughs: ' + (checked ? 'Individual' : 'Total'),
                             timestamp: new Date().getTime(),
                           };
                         }
+                      });
+                      usePrimitiveStore.setState((state) => {
+                        state.runYearlySimulationForParabolicTroughs = true;
+                        state.pauseYearlySimulationForParabolicTroughs = false;
+                        state.simulationInProgress = true;
+                        state.yearlyParabolicTroughIndividualOutputs = checked;
                       });
                     }, 100);
                   }}
@@ -319,15 +322,17 @@ const YearlyParabolicTroughYieldPanel = ({ city }: YearlyParabolicTroughYieldPan
                   // give it 0.1 second for the info to show up
                   setTimeout(() => {
                     setCommonStore((state) => {
-                      state.runYearlySimulationForParabolicTroughs = true;
-                      state.pauseYearlySimulationForParabolicTroughs = false;
-                      state.simulationInProgress = true;
                       if (loggable) {
                         state.actionInfo = {
                           name: 'Run Yearly Simulation For Parabolic Troughs',
                           timestamp: new Date().getTime(),
                         };
                       }
+                    });
+                    usePrimitiveStore.setState((state) => {
+                      state.runYearlySimulationForParabolicTroughs = true;
+                      state.pauseYearlySimulationForParabolicTroughs = false;
+                      state.simulationInProgress = true;
                     });
                   }, 100);
                 }}

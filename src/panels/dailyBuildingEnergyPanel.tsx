@@ -90,7 +90,7 @@ const DailyBuildingEnergyPanel = ({ city }: DailyBuildingEnergyPanelProps) => {
   const panelRect = useStore(Selector.viewState.dailyBuildingEnergyPanelRect);
   const flagOfDailySimulation = usePrimitiveStore(Selector.flagOfDailySimulation);
   const runDailySimulation = usePrimitiveStore(Selector.runDailyThermalSimulation);
-  const simulationInProgress = useStore(Selector.simulationInProgress);
+  const simulationInProgress = usePrimitiveStore(Selector.simulationInProgress);
   const hasSolarPanels = Util.hasSolarPanels(useStore.getState().elements);
 
   // nodeRef is to suppress ReactDOM.findDOMNode() deprecation warning. See:
@@ -397,9 +397,9 @@ const DailyBuildingEnergyPanel = ({ city }: DailyBuildingEnergyPanelProps) => {
                     usePrimitiveStore.setState((state) => {
                       state.runDailyThermalSimulation = true;
                       state.pauseDailyThermalSimulation = false;
+                      state.simulationInProgress = true;
                     });
                     setCommonStore((state) => {
-                      state.simulationInProgress = true;
                       if (loggable) {
                         state.actionInfo = { name: 'Run Daily Thermal Simulation', timestamp: new Date().getTime() };
                       }

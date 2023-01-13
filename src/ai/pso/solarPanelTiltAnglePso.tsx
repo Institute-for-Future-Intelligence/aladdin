@@ -13,6 +13,7 @@ import { FoundationModel } from '../../models/FoundationModel';
 import { HALF_PI } from '../../constants';
 import { Util } from '../../Util';
 import { SolarPanelTiltAngleOptimizerPso } from './algorithm/SolarPanelTiltAngleOptimizerPso';
+import { usePrimitiveStore } from '../../stores/commonPrimitive';
 
 const SolarPanelTiltAnglePso = () => {
   const setCommonStore = useStore(Selector.set);
@@ -215,19 +216,8 @@ const SolarPanelTiltAnglePso = () => {
   };
 
   const runCallback = (lastStep: boolean) => {
-    setCommonStore((state) => {
+    usePrimitiveStore.setState((state) => {
       if (solarPanelsRef.current) {
-        for (const e of state.elements) {
-          if (e.type === ObjectType.SolarPanel) {
-            const panel = e as SolarPanelModel;
-            for (const sp of solarPanelsRef.current) {
-              if (panel.id === sp.id) {
-                panel.tiltAngle = sp.tiltAngle;
-                break;
-              }
-            }
-          }
-        }
         switch (params.objectiveFunctionType) {
           case ObjectiveFunctionType.DAILY_TOTAL_OUTPUT:
             state.dailyPvIndividualOutputs = false;
@@ -245,6 +235,21 @@ const SolarPanelTiltAnglePso = () => {
               state.runYearlySimulationForSolarPanels = true;
             }
             break;
+        }
+      }
+    });
+    setCommonStore((state) => {
+      if (solarPanelsRef.current) {
+        for (const e of state.elements) {
+          if (e.type === ObjectType.SolarPanel) {
+            const panel = e as SolarPanelModel;
+            for (const sp of solarPanelsRef.current) {
+              if (panel.id === sp.id) {
+                panel.tiltAngle = sp.tiltAngle;
+                break;
+              }
+            }
+          }
         }
       }
       if (lastStep) {

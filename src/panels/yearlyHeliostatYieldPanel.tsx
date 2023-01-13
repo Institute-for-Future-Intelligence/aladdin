@@ -15,6 +15,7 @@ import { screenshot, showInfo } from '../helpers';
 import { CaretRightOutlined, ReloadOutlined, SaveOutlined, UnorderedListOutlined } from '@ant-design/icons';
 import i18n from '../i18n/i18n';
 import { Rectangle } from '../models/Rectangle';
+import { usePrimitiveStore } from '../stores/commonPrimitive';
 
 const Container = styled.div`
   position: fixed;
@@ -79,11 +80,11 @@ const YearlyHeliostatYieldPanel = ({ city }: YearlyHeliostatYieldPanelProps) => 
   const daysPerYear = useStore(Selector.world.cspDaysPerYear) ?? 6;
   const now = new Date(useStore(Selector.world.date));
   const yearlyYield = useStore(Selector.yearlyHeliostatYield);
-  const individualOutputs = useStore(Selector.yearlyHeliostatIndividualOutputs);
+  const individualOutputs = usePrimitiveStore(Selector.yearlyHeliostatIndividualOutputs);
   const heliostatLabels = useStore(Selector.heliostatLabels);
   const countElementsByType = useStore(Selector.countElementsByType);
   const panelRect = useStore(Selector.viewState.yearlyHeliostatYieldPanelRect);
-  const simulationInProgress = useStore(Selector.simulationInProgress);
+  const simulationInProgress = usePrimitiveStore(Selector.simulationInProgress);
 
   // nodeRef is to suppress ReactDOM.findDOMNode() deprecation warning. See:
   // https://github.com/react-grid-layout/react-draggable/blob/v4.4.2/lib/DraggableCore.js#L159-L171
@@ -190,7 +191,7 @@ const YearlyHeliostatYieldPanel = ({ city }: YearlyHeliostatYieldPanelProps) => 
   const heliostatCount = countElementsByType(ObjectType.Heliostat);
   useEffect(() => {
     if (heliostatCount < 2 && individualOutputs) {
-      setCommonStore((state) => {
+      usePrimitiveStore.setState((state) => {
         state.yearlyHeliostatIndividualOutputs = false;
       });
     }
@@ -291,16 +292,18 @@ const YearlyHeliostatYieldPanel = ({ city }: YearlyHeliostatYieldPanelProps) => 
                     // give it 0.1 second for the info to show up
                     setTimeout(() => {
                       setCommonStore((state) => {
-                        state.runYearlySimulationForHeliostats = true;
-                        state.pauseYearlySimulationForHeliostats = false;
-                        state.simulationInProgress = true;
-                        state.yearlyHeliostatIndividualOutputs = checked;
                         if (loggable) {
                           state.actionInfo = {
                             name: 'Run Yearly Simulation For Heliostats: ' + (checked ? 'Individual' : 'Total'),
                             timestamp: new Date().getTime(),
                           };
                         }
+                      });
+                      usePrimitiveStore.setState((state) => {
+                        state.runYearlySimulationForHeliostats = true;
+                        state.pauseYearlySimulationForHeliostats = false;
+                        state.simulationInProgress = true;
+                        state.yearlyHeliostatIndividualOutputs = checked;
                       });
                     }, 100);
                   }}
@@ -319,15 +322,17 @@ const YearlyHeliostatYieldPanel = ({ city }: YearlyHeliostatYieldPanelProps) => 
                   // give it 0.1 second for the info to show up
                   setTimeout(() => {
                     setCommonStore((state) => {
-                      state.runYearlySimulationForHeliostats = true;
-                      state.pauseYearlySimulationForHeliostats = false;
-                      state.simulationInProgress = true;
                       if (loggable) {
                         state.actionInfo = {
                           name: 'Run Yearly Simulation For Heliostats',
                           timestamp: new Date().getTime(),
                         };
                       }
+                    });
+                    usePrimitiveStore.setState((state) => {
+                      state.runYearlySimulationForHeliostats = true;
+                      state.pauseYearlySimulationForHeliostats = false;
+                      state.simulationInProgress = true;
                     });
                   }, 100);
                 }}

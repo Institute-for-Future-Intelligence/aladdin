@@ -1,5 +1,5 @@
 /*
- * @Copyright 2022. Institute for Future Intelligence, Inc.
+ * @Copyright 2022-2023. Institute for Future Intelligence, Inc.
  */
 
 import React, { useEffect, useMemo, useRef } from 'react';
@@ -17,6 +17,7 @@ import i18n from '../i18n/i18n';
 import { FresnelReflectorModel } from '../models/FresnelReflectorModel';
 import { FoundationModel } from '../models/FoundationModel';
 import { SunMinutes } from './SunMinutes';
+import { usePrimitiveStore } from '../stores/commonPrimitive';
 
 export interface FresnelReflectorSimulationProps {
   city: string | null;
@@ -24,6 +25,7 @@ export interface FresnelReflectorSimulationProps {
 
 const FresnelReflectorSimulation = ({ city }: FresnelReflectorSimulationProps) => {
   const setCommonStore = useStore(Selector.set);
+  const setPrimitiveStore = usePrimitiveStore(Selector.setPrimitiveStore);
   const loggable = useStore(Selector.loggable);
   const language = useStore(Selector.language);
   const world = useStore.getState().world;
@@ -32,15 +34,15 @@ const FresnelReflectorSimulation = ({ city }: FresnelReflectorSimulationProps) =
   const getParent = useStore(Selector.getParent);
   const setDailyYield = useStore(Selector.setDailyFresnelReflectorYield);
   const updateDailyYield = useStore(Selector.updateSolarCollectorDailyYieldById);
-  const dailyIndividualOutputs = useStore(Selector.dailyFresnelReflectorIndividualOutputs);
+  const dailyIndividualOutputs = usePrimitiveStore(Selector.dailyFresnelReflectorIndividualOutputs);
   const setYearlyYield = useStore(Selector.setYearlyFresnelReflectorYield);
   const updateYearlyYield = useStore(Selector.updateSolarCollectorYearlyYieldById);
-  const yearlyIndividualOutputs = useStore(Selector.yearlyFresnelReflectorIndividualOutputs);
+  const yearlyIndividualOutputs = usePrimitiveStore(Selector.yearlyFresnelReflectorIndividualOutputs);
   const setFresnelReflectorLabels = useStore(Selector.setFresnelReflectorLabels);
-  const runDailySimulation = useStore(Selector.runDailySimulationForFresnelReflectors);
-  const runYearlySimulation = useStore(Selector.runYearlySimulationForFresnelReflectors);
-  const pauseDailySimulation = useStore(Selector.pauseDailySimulationForFresnelReflectors);
-  const pauseYearlySimulation = useStore(Selector.pauseYearlySimulationForFresnelReflectors);
+  const runDailySimulation = usePrimitiveStore(Selector.runDailySimulationForFresnelReflectors);
+  const runYearlySimulation = usePrimitiveStore(Selector.runYearlySimulationForFresnelReflectors);
+  const pauseDailySimulation = usePrimitiveStore(Selector.pauseDailySimulationForFresnelReflectors);
+  const pauseYearlySimulation = usePrimitiveStore(Selector.pauseYearlySimulationForFresnelReflectors);
   const showDailyFresnelReflectorYieldPanel = useStore(Selector.viewState.showDailyFresnelReflectorYieldPanel);
 
   const { scene } = useThree();
@@ -89,6 +91,8 @@ const FresnelReflectorSimulation = ({ city }: FresnelReflectorSimulationProps) =
           showInfo(i18n.t('message.SimulationAborted', lang));
           setCommonStore((state) => {
             state.world.date = originalDateRef.current.toLocaleString('en-US');
+          });
+          usePrimitiveStore.setState((state) => {
             state.simulationInProgress = false;
             state.simulationPaused = false;
           });
@@ -104,14 +108,10 @@ const FresnelReflectorSimulation = ({ city }: FresnelReflectorSimulationProps) =
     if (pauseDailySimulation) {
       pausedDateRef.current = new Date(now.getTime());
       cancelAnimationFrame(requestRef.current);
-      setCommonStore((state) => {
-        state.simulationPaused = true;
-      });
+      setPrimitiveStore('simulationPaused', true);
       showInfo(i18n.t('message.SimulationPaused', lang));
     } else {
-      setCommonStore((state) => {
-        state.simulationPaused = false;
-      });
+      setPrimitiveStore('simulationPaused', false);
       // continue the simulation
       simulateDaily();
     }
@@ -138,11 +138,13 @@ const FresnelReflectorSimulation = ({ city }: FresnelReflectorSimulationProps) =
       if (totalMinutes >= sunMinutes.sunset) {
         cancelAnimationFrame(requestRef.current);
         setCommonStore((state) => {
+          state.world.date = originalDateRef.current.toLocaleString('en-US');
+          state.viewState.showDailyFresnelReflectorYieldPanel = true;
+        });
+        usePrimitiveStore.setState((state) => {
           state.runDailySimulationForFresnelReflectors = false;
           state.simulationInProgress = false;
           state.simulationPaused = false;
-          state.world.date = originalDateRef.current.toLocaleString('en-US');
-          state.viewState.showDailyFresnelReflectorYieldPanel = true;
         });
         showInfo(i18n.t('message.SimulationCompleted', lang));
         simulationCompletedRef.current = true;
@@ -270,6 +272,8 @@ const FresnelReflectorSimulation = ({ city }: FresnelReflectorSimulationProps) =
           showInfo(i18n.t('message.SimulationAborted', lang));
           setCommonStore((state) => {
             state.world.date = originalDateRef.current.toLocaleString('en-US');
+          });
+          usePrimitiveStore.setState((state) => {
             state.simulationInProgress = false;
             state.simulationPaused = false;
           });
@@ -285,14 +289,10 @@ const FresnelReflectorSimulation = ({ city }: FresnelReflectorSimulationProps) =
     if (pauseYearlySimulation) {
       pausedDateRef.current = new Date(now.getTime());
       cancelAnimationFrame(requestRef.current);
-      setCommonStore((state) => {
-        state.simulationPaused = true;
-      });
+      setPrimitiveStore('simulationPaused', true);
       showInfo(i18n.t('message.SimulationPaused', lang));
     } else {
-      setCommonStore((state) => {
-        state.simulationPaused = false;
-      });
+      setPrimitiveStore('simulationPaused', false);
       // continue the simulation
       simulateYearly();
     }
@@ -342,11 +342,13 @@ const FresnelReflectorSimulation = ({ city }: FresnelReflectorSimulationProps) =
         if (sampledDayRef.current === daysPerYear) {
           cancelAnimationFrame(requestRef.current);
           setCommonStore((state) => {
+            state.world.date = originalDateRef.current.toLocaleString('en-US');
+            state.viewState.showYearlyFresnelReflectorYieldPanel = true;
+          });
+          usePrimitiveStore.setState((state) => {
             state.runYearlySimulationForFresnelReflectors = false;
             state.simulationInProgress = false;
             state.simulationPaused = false;
-            state.world.date = originalDateRef.current.toLocaleString('en-US');
-            state.viewState.showYearlyFresnelReflectorYieldPanel = true;
           });
           showInfo(i18n.t('message.SimulationCompleted', lang));
           simulationCompletedRef.current = true;

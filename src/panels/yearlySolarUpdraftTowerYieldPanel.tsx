@@ -15,6 +15,7 @@ import { screenshot, showInfo } from '../helpers';
 import { CaretRightOutlined, ReloadOutlined, SaveOutlined } from '@ant-design/icons';
 import i18n from '../i18n/i18n';
 import { Rectangle } from '../models/Rectangle';
+import { usePrimitiveStore } from '../stores/commonPrimitive';
 
 const Container = styled.div`
   position: fixed;
@@ -79,11 +80,11 @@ const YearlySolarUpdraftTowerYieldPanel = ({ city }: YearlySolarUpdraftTowerYiel
   const daysPerYear = useStore(Selector.world.sutDaysPerYear) ?? 6;
   const now = new Date(useStore(Selector.world.date));
   const yearlyYield = useStore(Selector.yearlyUpdraftTowerYield);
-  const individualOutputs = useStore(Selector.yearlyUpdraftTowerIndividualOutputs);
+  const individualOutputs = usePrimitiveStore(Selector.yearlyUpdraftTowerIndividualOutputs);
   const labels = useStore(Selector.updraftTowerLabels);
   const countSolarStructuresByType = useStore(Selector.countSolarStructuresByType);
   const panelRect = useStore(Selector.viewState.yearlyUpdraftTowerYieldPanelRect);
-  const simulationInProgress = useStore(Selector.simulationInProgress);
+  const simulationInProgress = usePrimitiveStore(Selector.simulationInProgress);
 
   // nodeRef is to suppress ReactDOM.findDOMNode() deprecation warning. See:
   // https://github.com/react-grid-layout/react-draggable/blob/v4.4.2/lib/DraggableCore.js#L159-L171
@@ -190,7 +191,7 @@ const YearlySolarUpdraftTowerYieldPanel = ({ city }: YearlySolarUpdraftTowerYiel
   const towerCount = countSolarStructuresByType(SolarStructure.UpdraftTower);
   useEffect(() => {
     if (towerCount < 2 && individualOutputs) {
-      setCommonStore((state) => {
+      usePrimitiveStore.setState((state) => {
         state.yearlyUpdraftTowerIndividualOutputs = false;
       });
     }
@@ -287,15 +288,17 @@ const YearlySolarUpdraftTowerYieldPanel = ({ city }: YearlySolarUpdraftTowerYiel
                   // give it 0.1 second for the info to show up
                   setTimeout(() => {
                     setCommonStore((state) => {
-                      state.simulationInProgress = true;
-                      state.runYearlySimulationForUpdraftTower = true;
-                      state.pauseYearlySimulationForUpdraftTower = false;
                       if (loggable) {
                         state.actionInfo = {
                           name: 'Run Yearly Simulation For Solar Updraft Tower',
                           timestamp: new Date().getTime(),
                         };
                       }
+                    });
+                    usePrimitiveStore.setState((state) => {
+                      state.simulationInProgress = true;
+                      state.runYearlySimulationForUpdraftTower = true;
+                      state.pauseYearlySimulationForUpdraftTower = false;
                     });
                   }, 100);
                 }}

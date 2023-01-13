@@ -62,6 +62,7 @@ const ToolBarButton = ({ ...props }) => {
 
 const MainToolBarButtons = () => {
   const setCommonStore = useStore(Selector.set);
+  const setPrimitiveStore = usePrimitiveStore(Selector.setPrimitiveStore);
   const loggable = useStore(Selector.loggable);
   const elements = useStore.getState().elements;
   const language = useStore(Selector.language);
@@ -180,9 +181,7 @@ const MainToolBarButtons = () => {
     // give it 0.1 second for the info to show up
     setTimeout(() => {
       selectNone();
-      usePrimitiveStore.setState((state) => {
-        state.runStaticSimulation = !state.runStaticSimulation;
-      });
+      setPrimitiveStore('runStaticSimulation', !runStaticSimulation);
       setCommonStore((state) => {
         if (loggable) {
           state.actionInfo = {
@@ -201,9 +200,7 @@ const MainToolBarButtons = () => {
     // give it 0.1 second for the info to show up
     setTimeout(() => {
       selectNone();
-      usePrimitiveStore.setState((state) => {
-        state.runDynamicSimulation = !state.runDynamicSimulation;
-      });
+      setPrimitiveStore('runDynamicSimulation', !runDynamicSimulation);
       setCommonStore((state) => {
         if (loggable) {
           state.actionInfo = {
@@ -537,9 +534,7 @@ const MainToolBarButtons = () => {
           }}
           onClick={() => {
             if (showSolarRadiationHeatmap) {
-              usePrimitiveStore.setState((state) => {
-                state.showSolarRadiationHeatmap = false;
-              });
+              setPrimitiveStore('showSolarRadiationHeatmap', false);
             } else {
               if (!noAnimationForHeatmapSimulation || Util.hasMovingParts(elements)) {
                 toggleDynamicSolarRadiationHeatmap();

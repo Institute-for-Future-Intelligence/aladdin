@@ -49,6 +49,7 @@ interface RoofSegmentResult {
 
 const ThermalSimulation = ({ city }: ThermalSimulationProps) => {
   const setCommonStore = useStore(Selector.set);
+  const setPrimitiveStore = usePrimitiveStore(Selector.setPrimitiveStore);
   const language = useStore(Selector.language);
   const world = useStore.getState().world;
   const elements = useStore.getState().elements;
@@ -233,6 +234,8 @@ const ThermalSimulation = ({ city }: ThermalSimulationProps) => {
             showInfo(i18n.t('message.SimulationAborted', lang));
             setCommonStore((state) => {
               state.world.date = originalDateRef.current.toLocaleString('en-US');
+            });
+            usePrimitiveStore.setState((state) => {
               state.simulationInProgress = false;
               state.simulationPaused = false;
             });
@@ -249,14 +252,10 @@ const ThermalSimulation = ({ city }: ThermalSimulationProps) => {
     if (pauseDailySimulation) {
       pausedDateRef.current = new Date(now.getTime());
       cancelAnimationFrame(requestRef.current);
-      setCommonStore((state) => {
-        state.simulationPaused = true;
-      });
+      setPrimitiveStore('simulationPaused', true);
       showInfo(i18n.t('message.SimulationPaused', lang));
     } else {
-      setCommonStore((state) => {
-        state.simulationPaused = false;
-      });
+      setPrimitiveStore('simulationPaused', false);
       // continue the simulation
       calculateDaily();
     }
@@ -335,14 +334,8 @@ const ThermalSimulation = ({ city }: ThermalSimulationProps) => {
         }
       }
     }
-    usePrimitiveStore.setState((state) => {
-      state.flagOfDailySimulation = !state.flagOfDailySimulation;
-    });
-    // the following must be set with a different common store callback so that the useEffect hook of app.ts
-    // is not triggered to cancel the solar radiation heat map
-    usePrimitiveStore.setState((state) => {
-      state.showSolarRadiationHeatmap = true;
-    });
+    setPrimitiveStore('flagOfDailySimulation', !usePrimitiveStore.getState().flagOfDailySimulation);
+    setPrimitiveStore('showSolarRadiationHeatmap', true);
   };
 
   const calculateDaily = () => {
@@ -352,14 +345,14 @@ const ThermalSimulation = ({ city }: ThermalSimulationProps) => {
       if (totalMinutes + minuteInterval > MINUTES_OF_DAY) {
         computeNow();
         cancelAnimationFrame(requestRef.current);
-        usePrimitiveStore.setState((state) => {
-          state.runDailyThermalSimulation = false;
-        });
         setCommonStore((state) => {
-          state.simulationPaused = false;
-          state.simulationInProgress = false;
           state.world.date = originalDateRef.current.toLocaleString('en-US');
           state.viewState.showDailyBuildingEnergyPanel = true;
+        });
+        usePrimitiveStore.setState((state) => {
+          state.runDailyThermalSimulation = false;
+          state.simulationPaused = false;
+          state.simulationInProgress = false;
         });
         showInfo(i18n.t('message.SimulationCompleted', lang));
         simulationCompletedRef.current = true;
@@ -410,6 +403,8 @@ const ThermalSimulation = ({ city }: ThermalSimulationProps) => {
             showInfo(i18n.t('message.SimulationAborted', lang));
             setCommonStore((state) => {
               state.world.date = originalDateRef.current.toLocaleString('en-US');
+            });
+            usePrimitiveStore.setState((state) => {
               state.simulationInProgress = false;
               state.simulationPaused = false;
             });
@@ -426,14 +421,10 @@ const ThermalSimulation = ({ city }: ThermalSimulationProps) => {
     if (pauseYearlySimulation) {
       pausedDateRef.current = new Date(now.getTime());
       cancelAnimationFrame(requestRef.current);
-      setCommonStore((state) => {
-        state.simulationPaused = true;
-      });
+      setPrimitiveStore('simulationPaused', true);
       showInfo(i18n.t('message.SimulationPaused', lang));
     } else {
-      setCommonStore((state) => {
-        state.simulationPaused = false;
-      });
+      setPrimitiveStore('simulationPaused', false);
       // continue the simulation
       simulateYearly();
     }
@@ -479,13 +470,13 @@ const ThermalSimulation = ({ city }: ThermalSimulationProps) => {
         sampledDayRef.current++;
         if (sampledDayRef.current === daysPerYear) {
           cancelAnimationFrame(requestRef.current);
+          setCommonStore((state) => {
+            state.world.date = originalDateRef.current.toLocaleString('en-US');
+          });
           usePrimitiveStore.setState((state) => {
             state.runYearlyThermalSimulation = false;
-          });
-          setCommonStore((state) => {
             state.simulationInProgress = false;
             state.simulationPaused = false;
-            state.world.date = originalDateRef.current.toLocaleString('en-US');
           });
           showInfo(i18n.t('message.SimulationCompleted', lang));
           simulationCompletedRef.current = true;

@@ -1,5 +1,5 @@
 /*
- * @Copyright 2022. Institute for Future Intelligence, Inc.
+ * @Copyright 2022-2023. Institute for Future Intelligence, Inc.
  */
 
 import React from 'react';
@@ -32,7 +32,7 @@ const SimulationControlPanel = () => {
   const setCommonStore = useStore(Selector.set);
   const loggable = useStore(Selector.loggable);
   const language = useStore(Selector.language);
-  const simulationPaused = useStore(Selector.simulationPaused);
+  const simulationPaused = usePrimitiveStore(Selector.simulationPaused);
   const showDesignInfoPanel = useStore(Selector.viewState.showDesignInfoPanel);
 
   const lang = { lng: language };
@@ -47,9 +47,7 @@ const SimulationControlPanel = () => {
       state.runStaticSimulation = false;
       state.runDynamicSimulation = false;
       state.pauseSimulation = false;
-    });
 
-    setCommonStore((state) => {
       state.runDailyLightSensor = false;
       state.runYearlyLightSensor = false;
       state.pauseDailyLightSensor = false;
@@ -79,7 +77,9 @@ const SimulationControlPanel = () => {
       state.runYearlySimulationForHeliostats = false;
       state.pauseDailySimulationForHeliostats = false;
       state.pauseYearlySimulationForHeliostats = false;
+    });
 
+    setCommonStore((state) => {
       if (loggable) {
         state.actionInfo = {
           name: 'Cancel Simulation',
@@ -101,9 +101,7 @@ const SimulationControlPanel = () => {
       if (state.runDynamicSimulation) {
         state.pauseSimulation = true;
       }
-    });
 
-    setCommonStore((state) => {
       if (state.runDailyLightSensor) {
         state.pauseDailyLightSensor = true;
       }
@@ -145,7 +143,9 @@ const SimulationControlPanel = () => {
       if (state.runYearlySimulationForHeliostats) {
         state.pauseYearlySimulationForHeliostats = true;
       }
+    });
 
+    setCommonStore((state) => {
       if (loggable) {
         state.actionInfo = {
           name: 'Pause Simulation',
@@ -167,9 +167,7 @@ const SimulationControlPanel = () => {
       if (state.runDynamicSimulation) {
         state.pauseSimulation = false;
       }
-    });
 
-    setCommonStore((state) => {
       if (state.runDailyLightSensor) {
         state.pauseDailyLightSensor = false;
       }
@@ -211,7 +209,9 @@ const SimulationControlPanel = () => {
       if (state.runYearlySimulationForHeliostats) {
         state.pauseYearlySimulationForHeliostats = false;
       }
+    });
 
+    setCommonStore((state) => {
       if (loggable) {
         state.actionInfo = {
           name: 'Resume Simulation',

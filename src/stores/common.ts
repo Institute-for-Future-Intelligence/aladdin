@@ -583,10 +583,6 @@ export interface CommonStoreState {
   removeAllChildElementsByType: (parentId: string, type: ObjectType) => void;
   removeAllElementsOnFoundationByType: (foundationId: string, type: ObjectType) => void;
 
-  runDailyLightSensor: boolean;
-  pauseDailyLightSensor: boolean;
-  runYearlyLightSensor: boolean;
-  pauseYearlyLightSensor: boolean;
   dailyLightSensorData: DatumEntry[];
   setDailyLightSensorData: (data: DatumEntry[]) => void;
   yearlyLightSensorData: DatumEntry[];
@@ -596,97 +592,59 @@ export interface CommonStoreState {
 
   runSolarPanelVisibilityAnalysis: boolean;
   solarPanelVisibilityResults: Map<Vantage, Map<string, number>>;
-  runDailySimulationForSolarPanels: boolean;
-  runDailySimulationForSolarPanelsLastStep: boolean;
-  pauseDailySimulationForSolarPanels: boolean;
-  runYearlySimulationForSolarPanels: boolean;
-  runYearlySimulationForSolarPanelsLastStep: boolean;
-  pauseYearlySimulationForSolarPanels: boolean;
   dailyPvYield: DatumEntry[];
-  dailyPvIndividualOutputs: boolean;
   setDailyPvYield: (data: DatumEntry[]) => void;
   sumDailyPvYield: () => number;
   getDailyPvProfit: () => number;
   yearlyPvYield: DatumEntry[];
-  yearlyPvIndividualOutputs: boolean;
   setYearlyPvYield: (data: DatumEntry[]) => void;
   sumYearlyPvYield: () => number;
   getYearlyPvProfit: () => number;
   solarPanelLabels: string[];
   setSolarPanelLabels: (labels: string[]) => void;
 
-  runDailySimulationForParabolicTroughs: boolean;
-  runYearlySimulationForParabolicTroughs: boolean;
-  pauseDailySimulationForParabolicTroughs: boolean;
-  pauseYearlySimulationForParabolicTroughs: boolean;
   dailyParabolicTroughYield: DatumEntry[];
-  dailyParabolicTroughIndividualOutputs: boolean;
   setDailyParabolicTroughYield: (data: DatumEntry[]) => void;
   sumDailyParabolicTroughYield: () => number;
   yearlyParabolicTroughYield: DatumEntry[];
-  yearlyParabolicTroughIndividualOutputs: boolean;
   setYearlyParabolicTroughYield: (data: DatumEntry[]) => void;
   sumYearlyParabolicTroughYield: () => number;
   parabolicTroughLabels: string[];
   setParabolicTroughLabels: (labels: string[]) => void;
 
-  runDailySimulationForParabolicDishes: boolean;
-  runYearlySimulationForParabolicDishes: boolean;
-  pauseDailySimulationForParabolicDishes: boolean;
-  pauseYearlySimulationForParabolicDishes: boolean;
   dailyParabolicDishYield: DatumEntry[];
-  dailyParabolicDishIndividualOutputs: boolean;
   setDailyParabolicDishYield: (data: DatumEntry[]) => void;
   sumDailyParabolicDishYield: () => number;
   yearlyParabolicDishYield: DatumEntry[];
-  yearlyParabolicDishIndividualOutputs: boolean;
   setYearlyParabolicDishYield: (data: DatumEntry[]) => void;
   sumYearlyParabolicDishYield: () => number;
   parabolicDishLabels: string[];
   setParabolicDishLabels: (labels: string[]) => void;
 
-  runDailySimulationForFresnelReflectors: boolean;
-  runYearlySimulationForFresnelReflectors: boolean;
-  pauseDailySimulationForFresnelReflectors: boolean;
-  pauseYearlySimulationForFresnelReflectors: boolean;
   dailyFresnelReflectorYield: DatumEntry[];
-  dailyFresnelReflectorIndividualOutputs: boolean;
   setDailyFresnelReflectorYield: (data: DatumEntry[]) => void;
   sumDailyFresnelReflectorYield: () => number;
   yearlyFresnelReflectorYield: DatumEntry[];
-  yearlyFresnelReflectorIndividualOutputs: boolean;
   setYearlyFresnelReflectorYield: (data: DatumEntry[]) => void;
   sumYearlyFresnelReflectorYield: () => number;
   fresnelReflectorLabels: string[];
   setFresnelReflectorLabels: (labels: string[]) => void;
 
-  runDailySimulationForHeliostats: boolean;
-  runYearlySimulationForHeliostats: boolean;
-  pauseDailySimulationForHeliostats: boolean;
-  pauseYearlySimulationForHeliostats: boolean;
   dailyHeliostatYield: DatumEntry[];
-  dailyHeliostatIndividualOutputs: boolean;
   setDailyHeliostatYield: (data: DatumEntry[]) => void;
   sumDailyHeliostatYield: () => number;
   yearlyHeliostatYield: DatumEntry[];
-  yearlyHeliostatIndividualOutputs: boolean;
   setYearlyHeliostatYield: (data: DatumEntry[]) => void;
   sumYearlyHeliostatYield: () => number;
   heliostatLabels: string[];
   setHeliostatLabels: (labels: string[]) => void;
 
-  runDailySimulationForUpdraftTower: boolean;
-  runYearlySimulationForUpdraftTower: boolean;
-  pauseDailySimulationForUpdraftTower: boolean;
-  pauseYearlySimulationForUpdraftTower: boolean;
-  dailyUpdraftTowerIndividualOutputs: boolean;
   dailyUpdraftTowerResults: DatumEntry[];
   dailyUpdraftTowerYield: DatumEntry[];
   setDailyUpdraftTowerResults: (data: DatumEntry[]) => void;
   setDailyUpdraftTowerYield: (data: DatumEntry[]) => void;
   sumDailyUpdraftTowerYield: () => number;
   yearlyUpdraftTowerYield: DatumEntry[];
-  yearlyUpdraftTowerIndividualOutputs: boolean;
   setYearlyUpdraftTowerYield: (data: DatumEntry[]) => void;
   sumYearlyUpdraftTowerYield: () => number;
   updraftTowerLabels: string[];
@@ -752,8 +710,6 @@ export interface CommonStoreState {
   groupActionUpdateFlag: boolean;
 
   loadingFile: boolean;
-  simulationInProgress: boolean;
-  simulationPaused: boolean;
   evolutionInProgress: boolean;
   evolutionPaused: boolean;
   locale: Locale;
@@ -1018,10 +974,6 @@ export const useStore = create<CommonStoreState>(
             });
           },
 
-          runDailyLightSensor: false,
-          pauseDailyLightSensor: false,
-          runYearlyLightSensor: false,
-          pauseYearlyLightSensor: false,
           dailyLightSensorData: [],
           setDailyLightSensorData(data) {
             immerSet((state: CommonStoreState) => {
@@ -1043,14 +995,7 @@ export const useStore = create<CommonStoreState>(
 
           runSolarPanelVisibilityAnalysis: false,
           solarPanelVisibilityResults: new Map<Vantage, Map<string, number>>(),
-          runDailySimulationForSolarPanels: false,
-          runDailySimulationForSolarPanelsLastStep: false,
-          pauseDailySimulationForSolarPanels: false,
-          runYearlySimulationForSolarPanels: false,
-          runYearlySimulationForSolarPanelsLastStep: false,
-          pauseYearlySimulationForSolarPanels: false,
           dailyPvYield: [],
-          dailyPvIndividualOutputs: false,
           setDailyPvYield(data) {
             immerSet((state: CommonStoreState) => {
               state.dailyPvYield = [...data];
@@ -1083,7 +1028,6 @@ export const useStore = create<CommonStoreState>(
             );
           },
           yearlyPvYield: [],
-          yearlyPvIndividualOutputs: false,
           setYearlyPvYield(data) {
             immerSet((state: CommonStoreState) => {
               state.yearlyPvYield = [...data];
@@ -1123,12 +1067,7 @@ export const useStore = create<CommonStoreState>(
             });
           },
 
-          runDailySimulationForParabolicTroughs: false,
-          runYearlySimulationForParabolicTroughs: false,
-          pauseDailySimulationForParabolicTroughs: false,
-          pauseYearlySimulationForParabolicTroughs: false,
           dailyParabolicTroughYield: [],
-          dailyParabolicTroughIndividualOutputs: false,
           setDailyParabolicTroughYield(data) {
             immerSet((state: CommonStoreState) => {
               state.dailyParabolicTroughYield = [...data];
@@ -1148,7 +1087,6 @@ export const useStore = create<CommonStoreState>(
             return sum;
           },
           yearlyParabolicTroughYield: [],
-          yearlyParabolicTroughIndividualOutputs: false,
           setYearlyParabolicTroughYield(data) {
             immerSet((state: CommonStoreState) => {
               state.yearlyParabolicTroughYield = [...data];
@@ -1174,12 +1112,7 @@ export const useStore = create<CommonStoreState>(
             });
           },
 
-          runDailySimulationForParabolicDishes: false,
-          runYearlySimulationForParabolicDishes: false,
-          pauseDailySimulationForParabolicDishes: false,
-          pauseYearlySimulationForParabolicDishes: false,
           dailyParabolicDishYield: [],
-          dailyParabolicDishIndividualOutputs: false,
           setDailyParabolicDishYield(data) {
             immerSet((state: CommonStoreState) => {
               state.dailyParabolicDishYield = [...data];
@@ -1199,7 +1132,6 @@ export const useStore = create<CommonStoreState>(
             return sum;
           },
           yearlyParabolicDishYield: [],
-          yearlyParabolicDishIndividualOutputs: false,
           setYearlyParabolicDishYield(data) {
             immerSet((state: CommonStoreState) => {
               state.yearlyParabolicDishYield = [...data];
@@ -1225,12 +1157,7 @@ export const useStore = create<CommonStoreState>(
             });
           },
 
-          runDailySimulationForFresnelReflectors: false,
-          runYearlySimulationForFresnelReflectors: false,
-          pauseDailySimulationForFresnelReflectors: false,
-          pauseYearlySimulationForFresnelReflectors: false,
           dailyFresnelReflectorYield: [],
-          dailyFresnelReflectorIndividualOutputs: false,
           setDailyFresnelReflectorYield(data) {
             immerSet((state: CommonStoreState) => {
               state.dailyFresnelReflectorYield = [...data];
@@ -1250,7 +1177,6 @@ export const useStore = create<CommonStoreState>(
             return sum;
           },
           yearlyFresnelReflectorYield: [],
-          yearlyFresnelReflectorIndividualOutputs: false,
           setYearlyFresnelReflectorYield(data) {
             immerSet((state: CommonStoreState) => {
               state.yearlyFresnelReflectorYield = [...data];
@@ -1276,12 +1202,7 @@ export const useStore = create<CommonStoreState>(
             });
           },
 
-          runDailySimulationForHeliostats: false,
-          runYearlySimulationForHeliostats: false,
-          pauseDailySimulationForHeliostats: false,
-          pauseYearlySimulationForHeliostats: false,
           dailyHeliostatYield: [],
-          dailyHeliostatIndividualOutputs: false,
           setDailyHeliostatYield(data) {
             immerSet((state: CommonStoreState) => {
               state.dailyHeliostatYield = [...data];
@@ -1301,7 +1222,6 @@ export const useStore = create<CommonStoreState>(
             return sum;
           },
           yearlyHeliostatYield: [],
-          yearlyHeliostatIndividualOutputs: false,
           setYearlyHeliostatYield(data) {
             immerSet((state: CommonStoreState) => {
               state.yearlyHeliostatYield = [...data];
@@ -1327,11 +1247,6 @@ export const useStore = create<CommonStoreState>(
             });
           },
 
-          runDailySimulationForUpdraftTower: false,
-          runYearlySimulationForUpdraftTower: false,
-          pauseDailySimulationForUpdraftTower: false,
-          pauseYearlySimulationForUpdraftTower: false,
-          dailyUpdraftTowerIndividualOutputs: false,
           dailyUpdraftTowerResults: [],
           dailyUpdraftTowerYield: [],
           setDailyUpdraftTowerResults(data) {
@@ -1358,7 +1273,6 @@ export const useStore = create<CommonStoreState>(
             return sum;
           },
           yearlyUpdraftTowerYield: [],
-          yearlyUpdraftTowerIndividualOutputs: false,
           setYearlyUpdraftTowerYield(data) {
             immerSet((state: CommonStoreState) => {
               state.yearlyUpdraftTowerYield = [...data];
@@ -6179,8 +6093,6 @@ export const useStore = create<CommonStoreState>(
           groupActionUpdateFlag: false,
 
           loadingFile: false,
-          simulationInProgress: false,
-          simulationPaused: false,
           evolutionInProgress: false,
           evolutionPaused: false,
           locale: enUS,

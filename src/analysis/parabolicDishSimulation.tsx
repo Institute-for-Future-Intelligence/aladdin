@@ -1,5 +1,5 @@
 /*
- * @Copyright 2022. Institute for Future Intelligence, Inc.
+ * @Copyright 2022-2023. Institute for Future Intelligence, Inc.
  */
 
 import React, { useEffect, useMemo, useRef } from 'react';
@@ -16,6 +16,7 @@ import { showInfo } from '../helpers';
 import i18n from '../i18n/i18n';
 import { ParabolicDishModel } from '../models/ParabolicDishModel';
 import { SunMinutes } from './SunMinutes';
+import { usePrimitiveStore } from '../stores/commonPrimitive';
 
 export interface ParabolicDishSimulationProps {
   city: string | null;
@@ -23,6 +24,7 @@ export interface ParabolicDishSimulationProps {
 
 const ParabolicDishSimulation = ({ city }: ParabolicDishSimulationProps) => {
   const setCommonStore = useStore(Selector.set);
+  const setPrimitiveStore = usePrimitiveStore(Selector.setPrimitiveStore);
   const loggable = useStore(Selector.loggable);
   const language = useStore(Selector.language);
   const world = useStore.getState().world;
@@ -33,13 +35,13 @@ const ParabolicDishSimulation = ({ city }: ParabolicDishSimulationProps) => {
   const updateDailyYield = useStore(Selector.updateSolarCollectorDailyYieldById);
   const setYearlyYield = useStore(Selector.setYearlyParabolicDishYield);
   const updateYearlyYield = useStore(Selector.updateSolarCollectorYearlyYieldById);
-  const dailyIndividualOutputs = useStore(Selector.dailyParabolicDishIndividualOutputs);
-  const yearlyIndividualOutputs = useStore(Selector.yearlyParabolicDishIndividualOutputs);
+  const dailyIndividualOutputs = usePrimitiveStore(Selector.dailyParabolicDishIndividualOutputs);
+  const yearlyIndividualOutputs = usePrimitiveStore(Selector.yearlyParabolicDishIndividualOutputs);
   const setParabolicDishLabels = useStore(Selector.setParabolicDishLabels);
-  const runDailySimulation = useStore(Selector.runDailySimulationForParabolicDishes);
-  const runYearlySimulation = useStore(Selector.runYearlySimulationForParabolicDishes);
-  const pauseDailySimulation = useStore(Selector.pauseDailySimulationForParabolicDishes);
-  const pauseYearlySimulation = useStore(Selector.pauseYearlySimulationForParabolicDishes);
+  const runDailySimulation = usePrimitiveStore(Selector.runDailySimulationForParabolicDishes);
+  const runYearlySimulation = usePrimitiveStore(Selector.runYearlySimulationForParabolicDishes);
+  const pauseDailySimulation = usePrimitiveStore(Selector.pauseDailySimulationForParabolicDishes);
+  const pauseYearlySimulation = usePrimitiveStore(Selector.pauseYearlySimulationForParabolicDishes);
   const showDailyParabolicDishYieldPanel = useStore(Selector.viewState.showDailyParabolicDishYieldPanel);
 
   const { scene } = useThree();
@@ -88,6 +90,8 @@ const ParabolicDishSimulation = ({ city }: ParabolicDishSimulationProps) => {
           showInfo(i18n.t('message.SimulationAborted', lang));
           setCommonStore((state) => {
             state.world.date = originalDateRef.current.toLocaleString('en-US');
+          });
+          usePrimitiveStore.setState((state) => {
             state.simulationInProgress = false;
             state.simulationPaused = false;
           });
@@ -103,14 +107,10 @@ const ParabolicDishSimulation = ({ city }: ParabolicDishSimulationProps) => {
     if (pauseDailySimulation) {
       pausedDateRef.current = new Date(now.getTime());
       cancelAnimationFrame(requestRef.current);
-      setCommonStore((state) => {
-        state.simulationPaused = true;
-      });
+      setPrimitiveStore('simulationPaused', true);
       showInfo(i18n.t('message.SimulationPaused', lang));
     } else {
-      setCommonStore((state) => {
-        state.simulationPaused = false;
-      });
+      setPrimitiveStore('simulationPaused', false);
       // continue the simulation
       simulateDaily();
     }
@@ -137,11 +137,13 @@ const ParabolicDishSimulation = ({ city }: ParabolicDishSimulationProps) => {
       if (totalMinutes >= sunMinutes.sunset) {
         cancelAnimationFrame(requestRef.current);
         setCommonStore((state) => {
+          state.world.date = originalDateRef.current.toLocaleString('en-US');
+          state.viewState.showDailyParabolicDishYieldPanel = true;
+        });
+        usePrimitiveStore.setState((state) => {
           state.runDailySimulationForParabolicDishes = false;
           state.simulationInProgress = false;
           state.simulationPaused = false;
-          state.world.date = originalDateRef.current.toLocaleString('en-US');
-          state.viewState.showDailyParabolicDishYieldPanel = true;
         });
         showInfo(i18n.t('message.SimulationCompleted', lang));
         simulationCompletedRef.current = true;
@@ -269,6 +271,8 @@ const ParabolicDishSimulation = ({ city }: ParabolicDishSimulationProps) => {
           showInfo(i18n.t('message.SimulationAborted', lang));
           setCommonStore((state) => {
             state.world.date = originalDateRef.current.toLocaleString('en-US');
+          });
+          usePrimitiveStore.setState((state) => {
             state.simulationInProgress = false;
             state.simulationPaused = false;
           });
@@ -284,14 +288,10 @@ const ParabolicDishSimulation = ({ city }: ParabolicDishSimulationProps) => {
     if (pauseYearlySimulation) {
       pausedDateRef.current = new Date(now.getTime());
       cancelAnimationFrame(requestRef.current);
-      setCommonStore((state) => {
-        state.simulationPaused = true;
-      });
+      setPrimitiveStore('simulationPaused', true);
       showInfo(i18n.t('message.SimulationPaused', lang));
     } else {
-      setCommonStore((state) => {
-        state.simulationPaused = false;
-      });
+      setPrimitiveStore('simulationPaused', false);
       // continue the simulation
       simulateYearly();
     }
@@ -341,11 +341,13 @@ const ParabolicDishSimulation = ({ city }: ParabolicDishSimulationProps) => {
         if (sampledDayRef.current === daysPerYear) {
           cancelAnimationFrame(requestRef.current);
           setCommonStore((state) => {
+            state.world.date = originalDateRef.current.toLocaleString('en-US');
+            state.viewState.showYearlyParabolicDishYieldPanel = true;
+          });
+          usePrimitiveStore.setState((state) => {
             state.runYearlySimulationForParabolicDishes = false;
             state.simulationInProgress = false;
             state.simulationPaused = false;
-            state.world.date = originalDateRef.current.toLocaleString('en-US');
-            state.viewState.showYearlyParabolicDishYieldPanel = true;
           });
           showInfo(i18n.t('message.SimulationCompleted', lang));
           simulationCompletedRef.current = true;

@@ -16,6 +16,7 @@ import { CaretRightOutlined, ReloadOutlined, SaveOutlined, UnorderedListOutlined
 import i18n from '../i18n/i18n';
 import { Rectangle } from '../models/Rectangle';
 import { Util } from 'src/Util';
+import { usePrimitiveStore } from '../stores/commonPrimitive';
 
 const Container = styled.div`
   position: fixed;
@@ -80,13 +81,13 @@ const YearlyPvYieldPanel = ({ city }: YearlyPvYieldPanelProps) => {
   const daysPerYear = useStore(Selector.world.daysPerYear) ?? 6;
   const now = new Date(useStore(Selector.world.date));
   const yearlyYield = useStore(Selector.yearlyPvYield);
-  const individualOutputs = useStore(Selector.yearlyPvIndividualOutputs);
+  const individualOutputs = usePrimitiveStore(Selector.yearlyPvIndividualOutputs);
   const solarPanelLabels = useStore(Selector.solarPanelLabels);
   const countElementsByType = useStore(Selector.countElementsByType);
   const panelRect = useStore(Selector.viewState.yearlyPvYieldPanelRect);
   const runEvolution = useStore(Selector.runEvolution);
   const economics = useStore.getState().economicsParams;
-  const simulationInProgress = useStore(Selector.simulationInProgress);
+  const simulationInProgress = usePrimitiveStore(Selector.simulationInProgress);
 
   // nodeRef is to suppress ReactDOM.findDOMNode() deprecation warning. See:
   // https://github.com/react-grid-layout/react-draggable/blob/v4.4.2/lib/DraggableCore.js#L159-L171
@@ -192,7 +193,7 @@ const YearlyPvYieldPanel = ({ city }: YearlyPvYieldPanelProps) => {
 
   useEffect(() => {
     if (solarPanelCount < 2 && individualOutputs) {
-      setCommonStore((state) => {
+      usePrimitiveStore.setState((state) => {
         state.yearlyPvIndividualOutputs = false;
       });
     }
@@ -308,16 +309,18 @@ const YearlyPvYieldPanel = ({ city }: YearlyPvYieldPanelProps) => {
                         // give it 0.1 second for the info to show up
                         setTimeout(() => {
                           setCommonStore((state) => {
-                            state.simulationInProgress = true;
-                            state.yearlyPvIndividualOutputs = checked;
-                            state.runYearlySimulationForSolarPanels = true;
-                            state.pauseYearlySimulationForSolarPanels = false;
                             if (loggable) {
                               state.actionInfo = {
                                 name: 'Run Yearly Simulation For Solar Panels: ' + (checked ? 'Individual' : 'Total'),
                                 timestamp: new Date().getTime(),
                               };
                             }
+                          });
+                          usePrimitiveStore.setState((state) => {
+                            state.simulationInProgress = true;
+                            state.yearlyPvIndividualOutputs = checked;
+                            state.runYearlySimulationForSolarPanels = true;
+                            state.pauseYearlySimulationForSolarPanels = false;
                           });
                         }, 100);
                       }}
@@ -336,15 +339,17 @@ const YearlyPvYieldPanel = ({ city }: YearlyPvYieldPanelProps) => {
                       // give it 0.1 second for the info to show up
                       setTimeout(() => {
                         setCommonStore((state) => {
-                          state.simulationInProgress = true;
-                          state.runYearlySimulationForSolarPanels = true;
-                          state.pauseYearlySimulationForSolarPanels = false;
                           if (loggable) {
                             state.actionInfo = {
                               name: 'Run Yearly Simulation For Solar Panels',
                               timestamp: new Date().getTime(),
                             };
                           }
+                        });
+                        usePrimitiveStore.setState((state) => {
+                          state.simulationInProgress = true;
+                          state.runYearlySimulationForSolarPanels = true;
+                          state.pauseYearlySimulationForSolarPanels = false;
                         });
                       }, 100);
                     }}

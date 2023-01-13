@@ -1,5 +1,5 @@
 /*
- * @Copyright 2021-2022. Institute for Future Intelligence, Inc.
+ * @Copyright 2021-2023. Institute for Future Intelligence, Inc.
  */
 
 import React, { useEffect, useMemo, useRef } from 'react';
@@ -28,6 +28,7 @@ import { showInfo } from '../helpers';
 import i18n from '../i18n/i18n';
 import { SunMinutes } from './SunMinutes';
 import { FoundationModel } from '../models/FoundationModel';
+import { usePrimitiveStore } from '../stores/commonPrimitive';
 
 export interface SensorSimulationProps {
   city: string | null;
@@ -35,6 +36,7 @@ export interface SensorSimulationProps {
 
 const SensorSimulation = ({ city }: SensorSimulationProps) => {
   const setCommonStore = useStore(Selector.set);
+  const setPrimitiveStore = usePrimitiveStore(Selector.setPrimitiveStore);
   const loggable = useStore(Selector.loggable);
   const language = useStore(Selector.language);
   const world = useStore.getState().world;
@@ -47,10 +49,10 @@ const SensorSimulation = ({ city }: SensorSimulationProps) => {
   const setSensorLabels = useStore(Selector.setSensorLabels);
   const setDailyLightSensorData = useStore(Selector.setDailyLightSensorData);
   const setYearlyLightSensorData = useStore(Selector.setYearlyLightSensorData);
-  const runDailyLightSensor = useStore(Selector.runDailyLightSensor);
-  const pauseDailyLightSensor = useStore(Selector.pauseDailyLightSensor);
-  const runYearlyLightSensor = useStore(Selector.runYearlyLightSensor);
-  const pauseYearlyLightSensor = useStore(Selector.pauseYearlyLightSensor);
+  const runDailyLightSensor = usePrimitiveStore(Selector.runDailyLightSensor);
+  const pauseDailyLightSensor = usePrimitiveStore(Selector.pauseDailyLightSensor);
+  const runYearlyLightSensor = usePrimitiveStore(Selector.runYearlyLightSensor);
+  const pauseYearlyLightSensor = usePrimitiveStore(Selector.pauseYearlyLightSensor);
   const showDailyLightSensorPanel = useStore(Selector.viewState.showDailyLightSensorPanel);
   const noAnimation = useStore(Selector.world.noAnimationForSensorDataCollection);
 
@@ -102,6 +104,8 @@ const SensorSimulation = ({ city }: SensorSimulationProps) => {
             showInfo(i18n.t('message.SimulationAborted', lang));
             setCommonStore((state) => {
               state.world.date = originalDateRef.current.toLocaleString('en-US');
+            });
+            usePrimitiveStore.setState((state) => {
               state.simulationInProgress = false;
               state.simulationPaused = false;
             });
@@ -118,14 +122,10 @@ const SensorSimulation = ({ city }: SensorSimulationProps) => {
     if (pauseDailyLightSensor) {
       pausedDateRef.current = new Date(now.getTime());
       cancelAnimationFrame(requestRef.current);
-      setCommonStore((state) => {
-        state.simulationPaused = true;
-      });
+      setPrimitiveStore('simulationPaused', true);
       showInfo(i18n.t('message.SimulationPaused', lang));
     } else {
-      setCommonStore((state) => {
-        state.simulationPaused = false;
-      });
+      setPrimitiveStore('simulationPaused', false);
       // continue the simulation
       simulateDaily();
     }
@@ -140,10 +140,12 @@ const SensorSimulation = ({ city }: SensorSimulationProps) => {
       }
     }
     setCommonStore((state) => {
+      state.viewState.showDailyLightSensorPanel = true;
+    });
+    usePrimitiveStore.setState((state) => {
       state.runDailyLightSensor = false;
       state.simulationInProgress = false;
       state.simulationPaused = false;
-      state.viewState.showDailyLightSensorPanel = true;
     });
     showInfo(i18n.t('message.SimulationCompleted', lang));
     simulationCompletedRef.current = true;
@@ -181,11 +183,13 @@ const SensorSimulation = ({ city }: SensorSimulationProps) => {
       if (totalMinutes + minuteInterval >= sunMinutes.sunset) {
         cancelAnimationFrame(requestRef.current);
         setCommonStore((state) => {
+          state.world.date = originalDateRef.current.toLocaleString('en-US');
+          state.viewState.showDailyLightSensorPanel = true;
+        });
+        usePrimitiveStore.setState((state) => {
           state.runDailyLightSensor = false;
           state.simulationInProgress = false;
           state.simulationPaused = false;
-          state.world.date = originalDateRef.current.toLocaleString('en-US');
-          state.viewState.showDailyLightSensorPanel = true;
         });
         showInfo(i18n.t('message.SimulationCompleted', lang));
         simulationCompletedRef.current = true;
@@ -277,6 +281,8 @@ const SensorSimulation = ({ city }: SensorSimulationProps) => {
             showInfo(i18n.t('message.SimulationAborted', lang));
             setCommonStore((state) => {
               state.world.date = originalDateRef.current.toLocaleString('en-US');
+            });
+            usePrimitiveStore.setState((state) => {
               state.simulationInProgress = false;
               state.simulationPaused = false;
             });
@@ -293,14 +299,10 @@ const SensorSimulation = ({ city }: SensorSimulationProps) => {
     if (pauseYearlyLightSensor) {
       pausedDateRef.current = new Date(now.getTime());
       cancelAnimationFrame(requestRef.current);
-      setCommonStore((state) => {
-        state.simulationPaused = true;
-      });
+      setPrimitiveStore('simulationPaused', true);
       showInfo(i18n.t('message.SimulationPaused', lang));
     } else {
-      setCommonStore((state) => {
-        state.simulationPaused = false;
-      });
+      setPrimitiveStore('simulationPaused', false);
       // continue the simulation
       simulateYearly();
     }
@@ -348,11 +350,13 @@ const SensorSimulation = ({ city }: SensorSimulationProps) => {
       sampledDayRef.current++;
     }
     setCommonStore((state) => {
+      state.world.date = originalDateRef.current.toLocaleString('en-US');
+      state.viewState.showYearlyLightSensorPanel = true;
+    });
+    usePrimitiveStore.setState((state) => {
       state.runYearlyLightSensor = false;
       state.simulationInProgress = false;
       state.simulationPaused = false;
-      state.world.date = originalDateRef.current.toLocaleString('en-US');
-      state.viewState.showYearlyLightSensorPanel = true;
     });
     showInfo(i18n.t('message.SimulationCompleted', lang));
     simulationCompletedRef.current = true;
@@ -390,11 +394,13 @@ const SensorSimulation = ({ city }: SensorSimulationProps) => {
         if (sampledDayRef.current === 12) {
           cancelAnimationFrame(requestRef.current);
           setCommonStore((state) => {
+            state.world.date = originalDateRef.current.toLocaleString('en-US');
+            state.viewState.showYearlyLightSensorPanel = true;
+          });
+          usePrimitiveStore.setState((state) => {
             state.runYearlyLightSensor = false;
             state.simulationInProgress = false;
             state.simulationPaused = false;
-            state.world.date = originalDateRef.current.toLocaleString('en-US');
-            state.viewState.showYearlyLightSensorPanel = true;
           });
           showInfo(i18n.t('message.SimulationCompleted', lang));
           simulationCompletedRef.current = true;

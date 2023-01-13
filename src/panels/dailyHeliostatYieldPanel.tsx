@@ -16,6 +16,7 @@ import { CaretRightOutlined, ReloadOutlined, SaveOutlined, UnorderedListOutlined
 import i18n from '../i18n/i18n';
 import { Rectangle } from '../models/Rectangle';
 import { FLOATING_WINDOW_OPACITY } from '../constants';
+import { usePrimitiveStore } from '../stores/commonPrimitive';
 
 const Container = styled.div`
   position: fixed;
@@ -80,10 +81,10 @@ const DailyHeliostatYieldPanel = ({ city }: DailyHeliostatYieldPanelProps) => {
   const now = new Date(useStore(Selector.world.date));
   const countElementsByType = useStore(Selector.countElementsByType);
   const dailyYield = useStore(Selector.dailyHeliostatYield);
-  const individualOutputs = useStore(Selector.dailyHeliostatIndividualOutputs);
+  const individualOutputs = usePrimitiveStore(Selector.dailyHeliostatIndividualOutputs);
   const panelRect = useStore(Selector.viewState.dailyHeliostatYieldPanelRect);
   const heliostatLabels = useStore(Selector.heliostatLabels);
-  const simulationInProgress = useStore(Selector.simulationInProgress);
+  const simulationInProgress = usePrimitiveStore(Selector.simulationInProgress);
 
   // nodeRef is to suppress ReactDOM.findDOMNode() deprecation warning. See:
   // https://github.com/react-grid-layout/react-draggable/blob/v4.4.2/lib/DraggableCore.js#L159-L171
@@ -190,7 +191,7 @@ const DailyHeliostatYieldPanel = ({ city }: DailyHeliostatYieldPanelProps) => {
   const heliostatCount = countElementsByType(ObjectType.Heliostat);
   useEffect(() => {
     if (heliostatCount < 2 && individualOutputs) {
-      setCommonStore((state) => {
+      usePrimitiveStore.setState((state) => {
         state.dailyHeliostatIndividualOutputs = false;
       });
     }
@@ -287,16 +288,18 @@ const DailyHeliostatYieldPanel = ({ city }: DailyHeliostatYieldPanelProps) => {
                     // give it 0.1 second for the info to show up
                     setTimeout(() => {
                       setCommonStore((state) => {
-                        state.runDailySimulationForHeliostats = true;
-                        state.pauseDailySimulationForHeliostats = false;
-                        state.simulationInProgress = true;
-                        state.dailyHeliostatIndividualOutputs = checked;
                         if (loggable) {
                           state.actionInfo = {
                             name: 'Run Daily Simulation For Heliostats: ' + (checked ? 'Individual' : 'Total'),
                             timestamp: new Date().getTime(),
                           };
                         }
+                      });
+                      usePrimitiveStore.setState((state) => {
+                        state.runDailySimulationForHeliostats = true;
+                        state.pauseDailySimulationForHeliostats = false;
+                        state.simulationInProgress = true;
+                        state.dailyHeliostatIndividualOutputs = checked;
                       });
                     }, 100);
                   }}
@@ -315,15 +318,17 @@ const DailyHeliostatYieldPanel = ({ city }: DailyHeliostatYieldPanelProps) => {
                   // give it 0.1 second for the info to show up
                   setTimeout(() => {
                     setCommonStore((state) => {
-                      state.runDailySimulationForHeliostats = true;
-                      state.pauseDailySimulationForHeliostats = false;
-                      state.simulationInProgress = true;
                       if (loggable) {
                         state.actionInfo = {
                           name: 'Run Daily Simulation For Heliostats',
                           timestamp: new Date().getTime(),
                         };
                       }
+                    });
+                    usePrimitiveStore.setState((state) => {
+                      state.runDailySimulationForHeliostats = true;
+                      state.pauseDailySimulationForHeliostats = false;
+                      state.simulationInProgress = true;
                     });
                   }, 100);
                 }}

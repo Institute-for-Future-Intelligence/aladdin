@@ -47,6 +47,7 @@ export interface DynamicSolarRadiationSimulationProps {
 
 const DynamicSolarRadiationSimulation = ({ city }: DynamicSolarRadiationSimulationProps) => {
   const setCommonStore = useStore(Selector.set);
+  const setPrimitiveStore = usePrimitiveStore(Selector.setPrimitiveStore);
   const language = useStore(Selector.language);
   const world = useStore.getState().world;
   const elements = useStore.getState().elements;
@@ -92,8 +93,8 @@ const DynamicSolarRadiationSimulation = ({ city }: DynamicSolarRadiationSimulati
           showInfo(i18n.t('message.SimulationAborted', lang));
           setCommonStore((state) => {
             state.world.date = originalDateRef.current.toLocaleString('en-US');
-            state.simulationInProgress = false;
           });
+          setPrimitiveStore('simulationInProgress', false);
         }
       };
     }
@@ -105,14 +106,10 @@ const DynamicSolarRadiationSimulation = ({ city }: DynamicSolarRadiationSimulati
     if (pauseSimulation) {
       pausedDateRef.current = new Date(now.getTime());
       cancelAnimationFrame(requestRef.current);
-      setCommonStore((state) => {
-        state.simulationPaused = true;
-      });
+      setPrimitiveStore('simulationPaused', true);
       showInfo(i18n.t('message.SimulationPaused', lang));
     } else {
-      setCommonStore((state) => {
-        state.simulationPaused = false;
-      });
+      setPrimitiveStore('simulationPaused', false);
       // continue the simulation
       simulate();
     }
@@ -120,9 +117,7 @@ const DynamicSolarRadiationSimulation = ({ city }: DynamicSolarRadiationSimulati
 
   // getting ready for the simulation
   const init = () => {
-    setCommonStore((state) => {
-      state.simulationInProgress = true;
-    });
+    setPrimitiveStore('simulationInProgress', true);
     // beginning from sunrise
     now.setHours(Math.floor(sunMinutes.sunrise / 60), sunMinutes.sunrise % 60);
     originalDateRef.current = new Date(world.date);
@@ -303,14 +298,10 @@ const DynamicSolarRadiationSimulation = ({ city }: DynamicSolarRadiationSimulati
         showInfo(i18n.t('message.SimulationCompleted', lang));
         simulationCompletedRef.current = true;
         updateHeatmaps();
-        // the following must be set with a different common store callback so that the useEffect hook of app.ts
+        // the following must be set with a different store callback so that the useEffect hook of app.ts
         // is not triggered to cancel the solar radiation heat map
-        setCommonStore((state) => {
-          state.simulationInProgress = false;
-        });
-        usePrimitiveStore.setState((state) => {
-          state.showSolarRadiationHeatmap = true;
-        });
+        setPrimitiveStore('simulationInProgress', false);
+        setPrimitiveStore('showSolarRadiationHeatmap', true);
         return;
       }
       // this is where time advances (by incrementing the minutes with the given interval)

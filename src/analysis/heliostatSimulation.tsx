@@ -1,5 +1,5 @@
 /*
- * @Copyright 2022. Institute for Future Intelligence, Inc.
+ * @Copyright 2022-2023. Institute for Future Intelligence, Inc.
  */
 
 import React, { useEffect, useMemo, useRef } from 'react';
@@ -17,6 +17,7 @@ import i18n from '../i18n/i18n';
 import { HeliostatModel } from '../models/HeliostatModel';
 import { FoundationModel } from '../models/FoundationModel';
 import { SunMinutes } from './SunMinutes';
+import { usePrimitiveStore } from '../stores/commonPrimitive';
 
 export interface HeliostatSimulationProps {
   city: string | null;
@@ -24,6 +25,7 @@ export interface HeliostatSimulationProps {
 
 const HeliostatSimulation = ({ city }: HeliostatSimulationProps) => {
   const setCommonStore = useStore(Selector.set);
+  const setPrimitiveStore = usePrimitiveStore(Selector.setPrimitiveStore);
   const loggable = useStore(Selector.loggable);
   const language = useStore(Selector.language);
   const world = useStore.getState().world;
@@ -32,15 +34,15 @@ const HeliostatSimulation = ({ city }: HeliostatSimulationProps) => {
   const getParent = useStore(Selector.getParent);
   const setDailyYield = useStore(Selector.setDailyHeliostatYield);
   const updateDailyYield = useStore(Selector.updateSolarCollectorDailyYieldById);
-  const dailyIndividualOutputs = useStore(Selector.dailyHeliostatIndividualOutputs);
+  const dailyIndividualOutputs = usePrimitiveStore(Selector.dailyHeliostatIndividualOutputs);
   const setYearlyYield = useStore(Selector.setYearlyHeliostatYield);
   const updateYearlyYield = useStore(Selector.updateSolarCollectorYearlyYieldById);
-  const yearlyIndividualOutputs = useStore(Selector.yearlyHeliostatIndividualOutputs);
+  const yearlyIndividualOutputs = usePrimitiveStore(Selector.yearlyHeliostatIndividualOutputs);
   const setHeliostatLabels = useStore(Selector.setHeliostatLabels);
-  const runDailySimulation = useStore(Selector.runDailySimulationForHeliostats);
-  const runYearlySimulation = useStore(Selector.runYearlySimulationForHeliostats);
-  const pauseDailySimulation = useStore(Selector.pauseDailySimulationForHeliostats);
-  const pauseYearlySimulation = useStore(Selector.pauseYearlySimulationForHeliostats);
+  const runDailySimulation = usePrimitiveStore(Selector.runDailySimulationForHeliostats);
+  const runYearlySimulation = usePrimitiveStore(Selector.runYearlySimulationForHeliostats);
+  const pauseDailySimulation = usePrimitiveStore(Selector.pauseDailySimulationForHeliostats);
+  const pauseYearlySimulation = usePrimitiveStore(Selector.pauseYearlySimulationForHeliostats);
   const showDailyHeliostatYieldPanel = useStore(Selector.viewState.showDailyHeliostatYieldPanel);
 
   const { scene } = useThree();
@@ -89,6 +91,8 @@ const HeliostatSimulation = ({ city }: HeliostatSimulationProps) => {
           showInfo(i18n.t('message.SimulationAborted', lang));
           setCommonStore((state) => {
             state.world.date = originalDateRef.current.toLocaleString('en-US');
+          });
+          usePrimitiveStore.setState((state) => {
             state.simulationInProgress = false;
             state.simulationPaused = false;
           });
@@ -104,14 +108,10 @@ const HeliostatSimulation = ({ city }: HeliostatSimulationProps) => {
     if (pauseDailySimulation) {
       pausedDateRef.current = new Date(now.getTime());
       cancelAnimationFrame(requestRef.current);
-      setCommonStore((state) => {
-        state.simulationPaused = true;
-      });
+      setPrimitiveStore('simulationPaused', true);
       showInfo(i18n.t('message.SimulationPaused', lang));
     } else {
-      setCommonStore((state) => {
-        state.simulationPaused = false;
-      });
+      setPrimitiveStore('simulationPaused', false);
       // continue the simulation
       simulateDaily();
     }
@@ -138,11 +138,13 @@ const HeliostatSimulation = ({ city }: HeliostatSimulationProps) => {
       if (totalMinutes >= sunMinutes.sunset) {
         cancelAnimationFrame(requestRef.current);
         setCommonStore((state) => {
+          state.world.date = originalDateRef.current.toLocaleString('en-US');
+          state.viewState.showDailyHeliostatYieldPanel = true;
+        });
+        usePrimitiveStore.setState((state) => {
           state.runDailySimulationForHeliostats = false;
           state.simulationInProgress = false;
           state.simulationPaused = false;
-          state.world.date = originalDateRef.current.toLocaleString('en-US');
-          state.viewState.showDailyHeliostatYieldPanel = true;
         });
         showInfo(i18n.t('message.SimulationCompleted', lang));
         simulationCompletedRef.current = true;
@@ -270,6 +272,8 @@ const HeliostatSimulation = ({ city }: HeliostatSimulationProps) => {
           showInfo(i18n.t('message.SimulationAborted', lang));
           setCommonStore((state) => {
             state.world.date = originalDateRef.current.toLocaleString('en-US');
+          });
+          usePrimitiveStore.setState((state) => {
             state.simulationInProgress = false;
             state.simulationPaused = false;
           });
@@ -285,14 +289,10 @@ const HeliostatSimulation = ({ city }: HeliostatSimulationProps) => {
     if (pauseYearlySimulation) {
       pausedDateRef.current = new Date(now.getTime());
       cancelAnimationFrame(requestRef.current);
-      setCommonStore((state) => {
-        state.simulationPaused = true;
-      });
+      setPrimitiveStore('simulationPaused', true);
       showInfo(i18n.t('message.SimulationPaused', lang));
     } else {
-      setCommonStore((state) => {
-        state.simulationPaused = false;
-      });
+      setPrimitiveStore('simulationPaused', false);
       // continue the simulation
       simulateYearly();
     }
@@ -342,11 +342,13 @@ const HeliostatSimulation = ({ city }: HeliostatSimulationProps) => {
         if (sampledDayRef.current === daysPerYear) {
           cancelAnimationFrame(requestRef.current);
           setCommonStore((state) => {
+            state.world.date = originalDateRef.current.toLocaleString('en-US');
+            state.viewState.showYearlyHeliostatYieldPanel = true;
+          });
+          usePrimitiveStore.setState((state) => {
             state.runYearlySimulationForHeliostats = false;
             state.simulationInProgress = false;
             state.simulationPaused = false;
-            state.world.date = originalDateRef.current.toLocaleString('en-US');
-            state.viewState.showYearlyHeliostatYieldPanel = true;
           });
           showInfo(i18n.t('message.SimulationCompleted', lang));
           simulationCompletedRef.current = true;

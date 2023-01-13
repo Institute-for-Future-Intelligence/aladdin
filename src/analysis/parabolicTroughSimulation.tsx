@@ -1,5 +1,5 @@
 /*
- * @Copyright 2022. Institute for Future Intelligence, Inc.
+ * @Copyright 2022-2023. Institute for Future Intelligence, Inc.
  */
 
 import React, { useEffect, useMemo, useRef } from 'react';
@@ -16,6 +16,7 @@ import { showInfo } from '../helpers';
 import i18n from '../i18n/i18n';
 import { ParabolicTroughModel } from '../models/ParabolicTroughModel';
 import { SunMinutes } from './SunMinutes';
+import { usePrimitiveStore } from '../stores/commonPrimitive';
 
 export interface ParabolicTroughSimulationProps {
   city: string | null;
@@ -23,6 +24,7 @@ export interface ParabolicTroughSimulationProps {
 
 const ParabolicTroughSimulation = ({ city }: ParabolicTroughSimulationProps) => {
   const setCommonStore = useStore(Selector.set);
+  const setPrimitiveStore = usePrimitiveStore(Selector.setPrimitiveStore);
   const loggable = useStore(Selector.loggable);
   const language = useStore(Selector.language);
   const world = useStore.getState().world;
@@ -33,13 +35,13 @@ const ParabolicTroughSimulation = ({ city }: ParabolicTroughSimulationProps) => 
   const updateDailyYield = useStore(Selector.updateSolarCollectorDailyYieldById);
   const setYearlyYield = useStore(Selector.setYearlyParabolicTroughYield);
   const updateYearlyYield = useStore(Selector.updateSolarCollectorYearlyYieldById);
-  const dailyIndividualOutputs = useStore(Selector.dailyParabolicTroughIndividualOutputs);
-  const yearlyIndividualOutputs = useStore(Selector.yearlyParabolicTroughIndividualOutputs);
+  const dailyIndividualOutputs = usePrimitiveStore(Selector.dailyParabolicTroughIndividualOutputs);
+  const yearlyIndividualOutputs = usePrimitiveStore(Selector.yearlyParabolicTroughIndividualOutputs);
   const setParabolicTroughLabels = useStore(Selector.setParabolicTroughLabels);
-  const runDailySimulation = useStore(Selector.runDailySimulationForParabolicTroughs);
-  const runYearlySimulation = useStore(Selector.runYearlySimulationForParabolicTroughs);
-  const pauseDailySimulation = useStore(Selector.pauseDailySimulationForParabolicTroughs);
-  const pauseYearlySimulation = useStore(Selector.pauseYearlySimulationForParabolicTroughs);
+  const runDailySimulation = usePrimitiveStore(Selector.runDailySimulationForParabolicTroughs);
+  const runYearlySimulation = usePrimitiveStore(Selector.runYearlySimulationForParabolicTroughs);
+  const pauseDailySimulation = usePrimitiveStore(Selector.pauseDailySimulationForParabolicTroughs);
+  const pauseYearlySimulation = usePrimitiveStore(Selector.pauseYearlySimulationForParabolicTroughs);
   const showDailyParabolicTroughYieldPanel = useStore(Selector.viewState.showDailyParabolicTroughYieldPanel);
 
   const { scene } = useThree();
@@ -88,6 +90,8 @@ const ParabolicTroughSimulation = ({ city }: ParabolicTroughSimulationProps) => 
           showInfo(i18n.t('message.SimulationAborted', lang));
           setCommonStore((state) => {
             state.world.date = originalDateRef.current.toLocaleString('en-US');
+          });
+          usePrimitiveStore.setState((state) => {
             state.simulationInProgress = false;
             state.simulationPaused = false;
           });
@@ -103,14 +107,10 @@ const ParabolicTroughSimulation = ({ city }: ParabolicTroughSimulationProps) => 
     if (pauseDailySimulation) {
       pausedDateRef.current = new Date(now.getTime());
       cancelAnimationFrame(requestRef.current);
-      setCommonStore((state) => {
-        state.simulationPaused = true;
-      });
+      setPrimitiveStore('simulationPaused', true);
       showInfo(i18n.t('message.SimulationPaused', lang));
     } else {
-      setCommonStore((state) => {
-        state.simulationPaused = false;
-      });
+      setPrimitiveStore('simulationPaused', false);
       // continue the simulation
       simulateDaily();
     }
@@ -137,11 +137,13 @@ const ParabolicTroughSimulation = ({ city }: ParabolicTroughSimulationProps) => 
       if (totalMinutes >= sunMinutes.sunset) {
         cancelAnimationFrame(requestRef.current);
         setCommonStore((state) => {
+          state.world.date = originalDateRef.current.toLocaleString('en-US');
+          state.viewState.showDailyParabolicTroughYieldPanel = true;
+        });
+        usePrimitiveStore.setState((state) => {
           state.runDailySimulationForParabolicTroughs = false;
           state.simulationInProgress = false;
           state.simulationPaused = false;
-          state.world.date = originalDateRef.current.toLocaleString('en-US');
-          state.viewState.showDailyParabolicTroughYieldPanel = true;
         });
         showInfo(i18n.t('message.SimulationCompleted', lang));
         simulationCompletedRef.current = true;
@@ -269,6 +271,8 @@ const ParabolicTroughSimulation = ({ city }: ParabolicTroughSimulationProps) => 
           showInfo(i18n.t('message.SimulationAborted', lang));
           setCommonStore((state) => {
             state.world.date = originalDateRef.current.toLocaleString('en-US');
+          });
+          usePrimitiveStore.setState((state) => {
             state.simulationInProgress = false;
             state.simulationPaused = false;
           });
@@ -284,14 +288,10 @@ const ParabolicTroughSimulation = ({ city }: ParabolicTroughSimulationProps) => 
     if (pauseYearlySimulation) {
       pausedDateRef.current = new Date(now.getTime());
       cancelAnimationFrame(requestRef.current);
-      setCommonStore((state) => {
-        state.simulationPaused = true;
-      });
+      setPrimitiveStore('simulationPaused', true);
       showInfo(i18n.t('message.SimulationPaused', lang));
     } else {
-      setCommonStore((state) => {
-        state.simulationPaused = false;
-      });
+      setPrimitiveStore('simulationPaused', false);
       // continue the simulation
       simulateYearly();
     }
@@ -341,11 +341,13 @@ const ParabolicTroughSimulation = ({ city }: ParabolicTroughSimulationProps) => 
         if (sampledDayRef.current === daysPerYear) {
           cancelAnimationFrame(requestRef.current);
           setCommonStore((state) => {
+            state.world.date = originalDateRef.current.toLocaleString('en-US');
+            state.viewState.showYearlyParabolicTroughYieldPanel = true;
+          });
+          usePrimitiveStore.setState((state) => {
             state.runYearlySimulationForParabolicTroughs = false;
             state.simulationInProgress = false;
             state.simulationPaused = false;
-            state.world.date = originalDateRef.current.toLocaleString('en-US');
-            state.viewState.showYearlyParabolicTroughYieldPanel = true;
           });
           showInfo(i18n.t('message.SimulationCompleted', lang));
           simulationCompletedRef.current = true;

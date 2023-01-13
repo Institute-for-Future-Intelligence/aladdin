@@ -17,6 +17,7 @@ import i18n from '../i18n/i18n';
 import { Rectangle } from '../models/Rectangle';
 import { FLOATING_WINDOW_OPACITY } from '../constants';
 import { Util } from 'src/Util';
+import { usePrimitiveStore } from '../stores/commonPrimitive';
 
 const Container = styled.div`
   position: fixed;
@@ -81,12 +82,12 @@ const DailyPvYieldPanel = ({ city }: DailyPvYieldPanelProps) => {
   const now = new Date(useStore(Selector.world.date));
   const countElementsByType = useStore(Selector.countElementsByType);
   const dailyYield = useStore(Selector.dailyPvYield);
-  const individualOutputs = useStore(Selector.dailyPvIndividualOutputs);
+  const individualOutputs = usePrimitiveStore(Selector.dailyPvIndividualOutputs);
   const panelRect = useStore(Selector.viewState.dailyPvYieldPanelRect);
   const solarPanelLabels = useStore(Selector.solarPanelLabels);
   const runEvolution = useStore(Selector.runEvolution);
   const economics = useStore.getState().economicsParams;
-  const simulationInProgress = useStore(Selector.simulationInProgress);
+  const simulationInProgress = usePrimitiveStore(Selector.simulationInProgress);
 
   // nodeRef is to suppress ReactDOM.findDOMNode() deprecation warning. See:
   // https://github.com/react-grid-layout/react-draggable/blob/v4.4.2/lib/DraggableCore.js#L159-L171
@@ -192,7 +193,7 @@ const DailyPvYieldPanel = ({ city }: DailyPvYieldPanelProps) => {
   const solarPanelCount = countElementsByType(ObjectType.SolarPanel);
   useEffect(() => {
     if (solarPanelCount < 2 && individualOutputs) {
-      setCommonStore((state) => {
+      usePrimitiveStore.setState((state) => {
         state.dailyPvIndividualOutputs = false;
       });
     }
@@ -302,16 +303,18 @@ const DailyPvYieldPanel = ({ city }: DailyPvYieldPanelProps) => {
                         // give it 0.1 second for the info to show up
                         setTimeout(() => {
                           setCommonStore((state) => {
-                            state.simulationInProgress = true;
-                            state.dailyPvIndividualOutputs = checked;
-                            state.runDailySimulationForSolarPanels = true;
-                            state.pauseDailySimulationForSolarPanels = false;
                             if (loggable) {
                               state.actionInfo = {
                                 name: 'Run Daily Simulation For Solar Panels: ' + (checked ? 'Individual' : 'Total'),
                                 timestamp: new Date().getTime(),
                               };
                             }
+                          });
+                          usePrimitiveStore.setState((state) => {
+                            state.simulationInProgress = true;
+                            state.dailyPvIndividualOutputs = checked;
+                            state.runDailySimulationForSolarPanels = true;
+                            state.pauseDailySimulationForSolarPanels = false;
                           });
                         }, 100);
                       }}
@@ -330,15 +333,17 @@ const DailyPvYieldPanel = ({ city }: DailyPvYieldPanelProps) => {
                       // give it 0.1 second for the info to show up
                       setTimeout(() => {
                         setCommonStore((state) => {
-                          state.simulationInProgress = true;
-                          state.runDailySimulationForSolarPanels = true;
-                          state.pauseDailySimulationForSolarPanels = false;
                           if (loggable) {
                             state.actionInfo = {
                               name: 'Run Daily Simulation For Solar Panels',
                               timestamp: new Date().getTime(),
                             };
                           }
+                        });
+                        usePrimitiveStore.setState((state) => {
+                          state.simulationInProgress = true;
+                          state.runDailySimulationForSolarPanels = true;
+                          state.pauseDailySimulationForSolarPanels = false;
                         });
                       }, 100);
                     }}

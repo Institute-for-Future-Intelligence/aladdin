@@ -20,6 +20,7 @@ import { SolarPanelModel } from '../../models/SolarPanelModel';
 import { FoundationModel } from '../../models/FoundationModel';
 import { PolygonModel } from '../../models/PolygonModel';
 import { SolarPanelArrayOptimizerGa } from './algorithm/SolarPanelArrayOptimizerGa';
+import { usePrimitiveStore } from '../../stores/commonPrimitive';
 
 const SolarPanelArrayGa = () => {
   const setCommonStore = useStore(Selector.set);
@@ -262,8 +263,7 @@ const SolarPanelArrayGa = () => {
   };
 
   const runCallback = (lastStep: boolean) => {
-    setCommonStore((state) => {
-      state.elements.push(...solarPanelArrayRef.current);
+    usePrimitiveStore.setState((state) => {
       switch (params.objectiveFunctionType) {
         case ObjectiveFunctionType.DAILY_TOTAL_OUTPUT:
         case ObjectiveFunctionType.DAILY_AVERAGE_OUTPUT:
@@ -286,6 +286,9 @@ const SolarPanelArrayGa = () => {
           }
           break;
       }
+    });
+    setCommonStore((state) => {
+      state.elements.push(...solarPanelArrayRef.current);
       if (lastStep) {
         state.runEvolution = false;
         state.evolutionInProgress = false;

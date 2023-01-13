@@ -15,6 +15,7 @@ import { screenshot, showInfo } from '../helpers';
 import { CaretRightOutlined, ReloadOutlined, SaveOutlined, UnorderedListOutlined } from '@ant-design/icons';
 import i18n from '../i18n/i18n';
 import { Rectangle } from '../models/Rectangle';
+import { usePrimitiveStore } from '../stores/commonPrimitive';
 
 const Container = styled.div`
   position: fixed;
@@ -79,11 +80,11 @@ const YearlyFresnelReflectorYieldPanel = ({ city }: YearlyFresnelReflectorYieldP
   const daysPerYear = useStore(Selector.world.cspDaysPerYear) ?? 6;
   const now = new Date(useStore(Selector.world.date));
   const yearlyYield = useStore(Selector.yearlyFresnelReflectorYield);
-  const individualOutputs = useStore(Selector.yearlyFresnelReflectorIndividualOutputs);
+  const individualOutputs = usePrimitiveStore(Selector.yearlyFresnelReflectorIndividualOutputs);
   const fresnelReflectorLabels = useStore(Selector.fresnelReflectorLabels);
   const countElementsByType = useStore(Selector.countElementsByType);
   const panelRect = useStore(Selector.viewState.yearlyFresnelReflectorYieldPanelRect);
-  const simulationInProgress = useStore(Selector.simulationInProgress);
+  const simulationInProgress = usePrimitiveStore(Selector.simulationInProgress);
 
   // nodeRef is to suppress ReactDOM.findDOMNode() deprecation warning. See:
   // https://github.com/react-grid-layout/react-draggable/blob/v4.4.2/lib/DraggableCore.js#L159-L171
@@ -190,7 +191,7 @@ const YearlyFresnelReflectorYieldPanel = ({ city }: YearlyFresnelReflectorYieldP
   const fresnelReflectorCount = countElementsByType(ObjectType.FresnelReflector);
   useEffect(() => {
     if (fresnelReflectorCount < 2 && individualOutputs) {
-      setCommonStore((state) => {
+      usePrimitiveStore.setState((state) => {
         state.yearlyFresnelReflectorIndividualOutputs = false;
       });
     }
@@ -291,16 +292,18 @@ const YearlyFresnelReflectorYieldPanel = ({ city }: YearlyFresnelReflectorYieldP
                     // give it 0.1 second for the info to show up
                     setTimeout(() => {
                       setCommonStore((state) => {
-                        state.runYearlySimulationForFresnelReflectors = true;
-                        state.pauseYearlySimulationForFresnelReflectors = false;
-                        state.simulationInProgress = true;
-                        state.yearlyFresnelReflectorIndividualOutputs = checked;
                         if (loggable) {
                           state.actionInfo = {
                             name: 'Run Yearly Simulation For Fresnel Reflectors: ' + (checked ? 'Individual' : 'Total'),
                             timestamp: new Date().getTime(),
                           };
                         }
+                      });
+                      usePrimitiveStore.setState((state) => {
+                        state.runYearlySimulationForFresnelReflectors = true;
+                        state.pauseYearlySimulationForFresnelReflectors = false;
+                        state.simulationInProgress = true;
+                        state.yearlyFresnelReflectorIndividualOutputs = checked;
                       });
                     }, 100);
                   }}
@@ -319,15 +322,17 @@ const YearlyFresnelReflectorYieldPanel = ({ city }: YearlyFresnelReflectorYieldP
                   // give it 0.1 second for the info to show up
                   setTimeout(() => {
                     setCommonStore((state) => {
-                      state.runYearlySimulationForFresnelReflectors = true;
-                      state.pauseYearlySimulationForFresnelReflectors = false;
-                      state.simulationInProgress = true;
                       if (loggable) {
                         state.actionInfo = {
                           name: 'Run Yearly Simulation For Fresnel Reflectors',
                           timestamp: new Date().getTime(),
                         };
                       }
+                    });
+                    usePrimitiveStore.setState((state) => {
+                      state.runYearlySimulationForFresnelReflectors = true;
+                      state.pauseYearlySimulationForFresnelReflectors = false;
+                      state.simulationInProgress = true;
                     });
                   }, 100);
                 }}

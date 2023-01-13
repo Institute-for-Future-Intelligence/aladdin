@@ -16,6 +16,7 @@ import { CaretRightOutlined, ReloadOutlined, SaveOutlined, UnorderedListOutlined
 import i18n from '../i18n/i18n';
 import { Rectangle } from '../models/Rectangle';
 import { FLOATING_WINDOW_OPACITY } from '../constants';
+import { usePrimitiveStore } from '../stores/commonPrimitive';
 
 const Container = styled.div`
   position: fixed;
@@ -80,10 +81,10 @@ const DailyParabolicTroughYieldPanel = ({ city }: DailyParabolicTroughYieldPanel
   const now = new Date(useStore(Selector.world.date));
   const countElementsByType = useStore(Selector.countElementsByType);
   const dailyYield = useStore(Selector.dailyParabolicTroughYield);
-  const individualOutputs = useStore(Selector.dailyParabolicTroughIndividualOutputs);
+  const individualOutputs = usePrimitiveStore(Selector.dailyParabolicTroughIndividualOutputs);
   const panelRect = useStore(Selector.viewState.dailyParabolicTroughYieldPanelRect);
   const parabolicTroughLabels = useStore(Selector.parabolicTroughLabels);
-  const simulationInProgress = useStore(Selector.simulationInProgress);
+  const simulationInProgress = usePrimitiveStore(Selector.simulationInProgress);
 
   // nodeRef is to suppress ReactDOM.findDOMNode() deprecation warning. See:
   // https://github.com/react-grid-layout/react-draggable/blob/v4.4.2/lib/DraggableCore.js#L159-L171
@@ -190,7 +191,7 @@ const DailyParabolicTroughYieldPanel = ({ city }: DailyParabolicTroughYieldPanel
   const parabolicTroughCount = countElementsByType(ObjectType.ParabolicTrough);
   useEffect(() => {
     if (parabolicTroughCount < 2 && individualOutputs) {
-      setCommonStore((state) => {
+      usePrimitiveStore.setState((state) => {
         state.dailyParabolicTroughIndividualOutputs = false;
       });
     }
@@ -287,16 +288,18 @@ const DailyParabolicTroughYieldPanel = ({ city }: DailyParabolicTroughYieldPanel
                     // give it 0.1 second for the info to show up
                     setTimeout(() => {
                       setCommonStore((state) => {
-                        state.runDailySimulationForParabolicTroughs = true;
-                        state.pauseDailySimulationForParabolicTroughs = false;
-                        state.simulationInProgress = true;
-                        state.dailyParabolicTroughIndividualOutputs = checked;
                         if (loggable) {
                           state.actionInfo = {
                             name: 'Run Daily Simulation For Parabolic Troughs: ' + (checked ? 'Individual' : 'Total'),
                             timestamp: new Date().getTime(),
                           };
                         }
+                      });
+                      usePrimitiveStore.setState((state) => {
+                        state.runDailySimulationForParabolicTroughs = true;
+                        state.pauseDailySimulationForParabolicTroughs = false;
+                        state.simulationInProgress = true;
+                        state.dailyParabolicTroughIndividualOutputs = checked;
                       });
                     }, 100);
                   }}
@@ -315,15 +318,17 @@ const DailyParabolicTroughYieldPanel = ({ city }: DailyParabolicTroughYieldPanel
                   // give it 0.1 second for the info to show up
                   setTimeout(() => {
                     setCommonStore((state) => {
-                      state.runDailySimulationForParabolicTroughs = true;
-                      state.pauseDailySimulationForParabolicTroughs = false;
-                      state.simulationInProgress = true;
                       if (loggable) {
                         state.actionInfo = {
                           name: 'Run Daily Simulation For Parabolic Troughs',
                           timestamp: new Date().getTime(),
                         };
                       }
+                    });
+                    usePrimitiveStore.setState((state) => {
+                      state.runDailySimulationForParabolicTroughs = true;
+                      state.pauseDailySimulationForParabolicTroughs = false;
+                      state.simulationInProgress = true;
                     });
                   }, 100);
                 }}

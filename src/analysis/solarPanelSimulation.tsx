@@ -1,5 +1,5 @@
 /*
- * @Copyright 2021-2022. Institute for Future Intelligence, Inc.
+ * @Copyright 2021-2023. Institute for Future Intelligence, Inc.
  */
 
 import React, { useEffect, useMemo, useRef } from 'react';
@@ -24,6 +24,7 @@ import { showInfo } from '../helpers';
 import i18n from '../i18n/i18n';
 import { SunMinutes } from './SunMinutes';
 import { WallModel } from '../models/WallModel';
+import { usePrimitiveStore } from '../stores/commonPrimitive';
 
 export interface SolarPanelSimulationProps {
   city: string | null;
@@ -39,6 +40,7 @@ const getPanelEfficiency = (temperature: number, panel: SolarPanelModel, pvModel
 
 const SolarPanelSimulation = ({ city }: SolarPanelSimulationProps) => {
   const setCommonStore = useStore(Selector.set);
+  const setPrimitiveStore = usePrimitiveStore(Selector.setPrimitiveStore);
   const loggable = useStore(Selector.loggable);
   const language = useStore(Selector.language);
   const world = useStore.getState().world;
@@ -51,15 +53,15 @@ const SolarPanelSimulation = ({ city }: SolarPanelSimulationProps) => {
   const updateDailyYield = useStore(Selector.updateSolarCollectorDailyYieldById);
   const setYearlyYield = useStore(Selector.setYearlyPvYield);
   const updateYearlyYield = useStore(Selector.updateSolarCollectorYearlyYieldById);
-  const dailyIndividualOutputs = useStore(Selector.dailyPvIndividualOutputs);
-  const yearlyIndividualOutputs = useStore(Selector.yearlyPvIndividualOutputs);
+  const dailyIndividualOutputs = usePrimitiveStore(Selector.dailyPvIndividualOutputs);
+  const yearlyIndividualOutputs = usePrimitiveStore(Selector.yearlyPvIndividualOutputs);
   const setSolarPanelLabels = useStore(Selector.setSolarPanelLabels);
-  const runDailySimulation = useStore(Selector.runDailySimulationForSolarPanels);
-  const runDailySimulationLastStep = useStore(Selector.runDailySimulationForSolarPanelsLastStep);
-  const pauseDailySimulation = useStore(Selector.pauseDailySimulationForSolarPanels);
-  const runYearlySimulation = useStore(Selector.runYearlySimulationForSolarPanels);
-  const runYearlySimulationLastStep = useStore(Selector.runYearlySimulationForSolarPanelsLastStep);
-  const pauseYearlySimulation = useStore(Selector.pauseYearlySimulationForSolarPanels);
+  const runDailySimulation = usePrimitiveStore(Selector.runDailySimulationForSolarPanels);
+  const runDailySimulationLastStep = usePrimitiveStore(Selector.runDailySimulationForSolarPanelsLastStep);
+  const pauseDailySimulation = usePrimitiveStore(Selector.pauseDailySimulationForSolarPanels);
+  const runYearlySimulation = usePrimitiveStore(Selector.runYearlySimulationForSolarPanels);
+  const runYearlySimulationLastStep = usePrimitiveStore(Selector.runYearlySimulationForSolarPanelsLastStep);
+  const pauseYearlySimulation = usePrimitiveStore(Selector.pauseYearlySimulationForSolarPanels);
   const showDailyPvYieldPanel = useStore(Selector.viewState.showDailyPvYieldPanel);
   const noAnimation = useStore(Selector.world.noAnimationForSolarPanelSimulation);
   const highestTemperatureTimeInMinutes = useStore(Selector.world.highestTemperatureTimeInMinutes) ?? 900;
@@ -121,6 +123,8 @@ const SolarPanelSimulation = ({ city }: SolarPanelSimulationProps) => {
             showInfo(i18n.t('message.SimulationAborted', lang));
             setCommonStore((state) => {
               state.world.date = originalDateRef.current.toLocaleString('en-US');
+            });
+            usePrimitiveStore.setState((state) => {
               state.simulationInProgress = false;
               state.simulationPaused = false;
             });
@@ -151,14 +155,10 @@ const SolarPanelSimulation = ({ city }: SolarPanelSimulationProps) => {
     if (pauseDailySimulation) {
       pausedDateRef.current = new Date(now.getTime());
       cancelAnimationFrame(requestRef.current);
-      setCommonStore((state) => {
-        state.simulationPaused = true;
-      });
+      setPrimitiveStore('simulationPaused', true);
       showInfo(i18n.t('message.SimulationPaused', lang));
     } else {
-      setCommonStore((state) => {
-        state.simulationPaused = false;
-      });
+      setPrimitiveStore('simulationPaused', false);
       // continue the simulation
       simulateDaily();
     }
@@ -173,6 +173,9 @@ const SolarPanelSimulation = ({ city }: SolarPanelSimulationProps) => {
       }
     }
     setCommonStore((state) => {
+      if (!runEvolution && !lastStep) state.viewState.showDailyPvYieldPanel = true;
+    });
+    usePrimitiveStore.setState((state) => {
       if (lastStep) {
         state.runDailySimulationForSolarPanelsLastStep = false;
       } else {
@@ -180,7 +183,6 @@ const SolarPanelSimulation = ({ city }: SolarPanelSimulationProps) => {
       }
       state.simulationInProgress = false;
       state.simulationPaused = false;
-      if (!runEvolution && !lastStep) state.viewState.showDailyPvYieldPanel = true;
     });
     simulationCompletedRef.current = true;
     finishDaily();
@@ -224,11 +226,13 @@ const SolarPanelSimulation = ({ city }: SolarPanelSimulationProps) => {
       if (totalMinutes + minuteInterval >= sunMinutes.sunset) {
         cancelAnimationFrame(requestRef.current);
         setCommonStore((state) => {
+          state.world.date = originalDateRef.current.toLocaleString('en-US');
+          if (!runEvolution) state.viewState.showDailyPvYieldPanel = true;
+        });
+        usePrimitiveStore.setState((state) => {
           state.runDailySimulationForSolarPanels = false;
           state.simulationInProgress = false;
           state.simulationPaused = false;
-          state.world.date = originalDateRef.current.toLocaleString('en-US');
-          if (!runEvolution) state.viewState.showDailyPvYieldPanel = true;
         });
         simulationCompletedRef.current = true;
         finishDaily();
@@ -364,6 +368,8 @@ const SolarPanelSimulation = ({ city }: SolarPanelSimulationProps) => {
             showInfo(i18n.t('message.SimulationAborted', lang));
             setCommonStore((state) => {
               state.world.date = originalDateRef.current.toLocaleString('en-US');
+            });
+            usePrimitiveStore.setState((state) => {
               state.simulationInProgress = false;
               state.simulationPaused = false;
             });
@@ -394,14 +400,10 @@ const SolarPanelSimulation = ({ city }: SolarPanelSimulationProps) => {
     if (pauseYearlySimulation) {
       pausedDateRef.current = new Date(now.getTime());
       cancelAnimationFrame(requestRef.current);
-      setCommonStore((state) => {
-        state.simulationPaused = true;
-      });
+      setPrimitiveStore('simulationPaused', true);
       showInfo(i18n.t('message.SimulationPaused', lang));
     } else {
-      setCommonStore((state) => {
-        state.simulationPaused = false;
-      });
+      setPrimitiveStore('simulationPaused', false);
       // continue the simulation
       simulateYearly();
     }
@@ -449,6 +451,10 @@ const SolarPanelSimulation = ({ city }: SolarPanelSimulationProps) => {
       sampledDayRef.current++;
     }
     setCommonStore((state) => {
+      state.world.date = originalDateRef.current.toLocaleString('en-US');
+      if (!runEvolution && !lastStep) state.viewState.showYearlyPvYieldPanel = true;
+    });
+    usePrimitiveStore.setState((state) => {
       if (lastStep) {
         state.runYearlySimulationForSolarPanelsLastStep = false;
       } else {
@@ -456,8 +462,6 @@ const SolarPanelSimulation = ({ city }: SolarPanelSimulationProps) => {
       }
       state.simulationInProgress = false;
       state.simulationPaused = false;
-      state.world.date = originalDateRef.current.toLocaleString('en-US');
-      if (!runEvolution && !lastStep) state.viewState.showYearlyPvYieldPanel = true;
     });
     simulationCompletedRef.current = true;
     generateYearlyData();
@@ -501,11 +505,13 @@ const SolarPanelSimulation = ({ city }: SolarPanelSimulationProps) => {
         if (sampledDayRef.current === daysPerYear) {
           cancelAnimationFrame(requestRef.current);
           setCommonStore((state) => {
+            state.world.date = originalDateRef.current.toLocaleString('en-US');
+            if (!runEvolution) state.viewState.showYearlyPvYieldPanel = true;
+          });
+          usePrimitiveStore.setState((state) => {
             state.runYearlySimulationForSolarPanels = false;
             state.simulationInProgress = false;
             state.simulationPaused = false;
-            state.world.date = originalDateRef.current.toLocaleString('en-US');
-            if (!runEvolution) state.viewState.showYearlyPvYieldPanel = true;
           });
           simulationCompletedRef.current = true;
           generateYearlyData();

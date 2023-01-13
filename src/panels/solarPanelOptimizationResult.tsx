@@ -15,6 +15,7 @@ import EvolutionBiaxialLineGraph from '../components/evolutionBiaxialLineGraph';
 import { DesignProblem, EvolutionMethod, ObjectiveFunctionType, ObjectType } from '../types';
 import { Rectangle } from '../models/Rectangle';
 import { FLOATING_WINDOW_OPACITY } from '../constants';
+import { usePrimitiveStore } from '../stores/commonPrimitive';
 
 const Container = styled.div`
   position: fixed;
@@ -78,7 +79,7 @@ const SolarPanelOptimizationResult = () => {
   const selectedElement = useStore(Selector.selectedElement);
   const evolutionMethod = useStore(Selector.evolutionMethod);
   const evolutionaryAlgorithmState = useStore.getState().evolutionaryAlgorithmState;
-  const simulationInProgress = useStore(Selector.simulationInProgress);
+  const simulationInProgress = usePrimitiveStore(Selector.simulationInProgress);
   const evolutionInProgress = useStore(Selector.evolutionInProgress);
 
   // nodeRef is to suppress ReactDOM.findDOMNode() deprecation warning. See:

@@ -1,5 +1,5 @@
 /*
- * @Copyright 2021-2022. Institute for Future Intelligence, Inc.
+ * @Copyright 2021-2023. Institute for Future Intelligence, Inc.
  */
 
 import React, { useEffect, useMemo, useRef } from 'react';
@@ -14,12 +14,14 @@ import { HumanModel } from '../models/HumanModel';
 import { Vantage } from './Vantage';
 import { showInfo } from '../helpers';
 import i18n from '../i18n/i18n';
+import { usePrimitiveStore } from '../stores/commonPrimitive';
 
 const SolarPanelVisibility = () => {
   const language = useStore(Selector.language);
   const world = useStore.getState().world;
   const elements = useStore.getState().elements;
   const setCommonStore = useStore(Selector.set);
+  const setPrimitiveStore = usePrimitiveStore(Selector.setPrimitiveStore);
   const getParent = useStore(Selector.getParent);
   const getFoundation = useStore(Selector.getFoundation);
   const runAnalysis = useStore(Selector.runSolarPanelVisibilityAnalysis);
@@ -43,9 +45,7 @@ const SolarPanelVisibility = () => {
         showInfo(i18n.t('message.SimulationCompleted', lang));
       }
     }
-    setCommonStore((state) => {
-      state.simulationInProgress = false;
-    });
+    setPrimitiveStore('simulationInProgress', false);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [runAnalysis]);
 

@@ -16,6 +16,7 @@ import { CaretRightOutlined, ReloadOutlined, SaveOutlined } from '@ant-design/ic
 import { screenshot, showInfo } from '../helpers';
 import i18n from '../i18n/i18n';
 import { Rectangle } from '../models/Rectangle';
+import { usePrimitiveStore } from '../stores/commonPrimitive';
 
 const Container = styled.div`
   position: fixed;
@@ -311,12 +312,14 @@ const YearlyLightSensorPanel = ({ city }: YearlyLightSensorPanelProps) => {
                   // give it 0.1 second for the info to show up
                   setTimeout(() => {
                     setCommonStore((state) => {
-                      state.runYearlyLightSensor = true;
-                      state.pauseYearlyLightSensor = false;
-                      state.simulationInProgress = true;
                       if (loggable) {
                         state.actionInfo = { name: 'Collect Yearly Data for Sensors', timestamp: new Date().getTime() };
                       }
+                    });
+                    usePrimitiveStore.setState((state) => {
+                      state.runYearlyLightSensor = true;
+                      state.pauseYearlyLightSensor = false;
+                      state.simulationInProgress = true;
                     });
                   }, 100);
                 }}

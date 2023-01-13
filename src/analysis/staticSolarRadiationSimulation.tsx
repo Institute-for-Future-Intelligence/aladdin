@@ -40,7 +40,6 @@ export interface StaticSolarRadiationSimulationProps {
 // for the same reason, this cannot be used for PV with trackers.
 
 const StaticSolarRadiationSimulation = ({ city }: StaticSolarRadiationSimulationProps) => {
-  const setCommonStore = useStore(Selector.set);
   const language = useStore(Selector.language);
   const world = useStore.getState().world;
   const elements = useStore.getState().elements;
@@ -70,11 +69,7 @@ const StaticSolarRadiationSimulation = ({ city }: StaticSolarRadiationSimulation
         generateHeatmaps();
         usePrimitiveStore.setState((state) => {
           state.runStaticSimulation = false;
-        });
-        setCommonStore((state) => {
           state.simulationInProgress = false;
-        });
-        usePrimitiveStore.setState((state) => {
           state.showSolarRadiationHeatmap = true;
         });
         showInfo(i18n.t('message.SimulationCompleted', lang));

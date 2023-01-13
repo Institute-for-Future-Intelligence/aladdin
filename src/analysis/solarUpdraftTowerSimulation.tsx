@@ -1,5 +1,5 @@
 /*
- * @Copyright 2022. Institute for Future Intelligence, Inc.
+ * @Copyright 2022-2023. Institute for Future Intelligence, Inc.
  */
 
 import React, { useEffect, useMemo, useRef } from 'react';
@@ -30,6 +30,7 @@ import i18n from '../i18n/i18n';
 import { SunMinutes } from './SunMinutes';
 import { FoundationModel } from '../models/FoundationModel';
 import { computeOutsideTemperature, getOutsideTemperatureAtMinute } from './heatTools';
+import { usePrimitiveStore } from '../stores/commonPrimitive';
 
 export interface SolarUpdraftTowerSimulationProps {
   city: string | null;
@@ -37,6 +38,7 @@ export interface SolarUpdraftTowerSimulationProps {
 
 const SolarUpdraftTowerSimulation = ({ city }: SolarUpdraftTowerSimulationProps) => {
   const setCommonStore = useStore(Selector.set);
+  const setPrimitiveStore = usePrimitiveStore(Selector.setPrimitiveStore);
   const loggable = useStore(Selector.loggable);
   const language = useStore(Selector.language);
   const world = useStore.getState().world;
@@ -46,10 +48,10 @@ const SolarUpdraftTowerSimulation = ({ city }: SolarUpdraftTowerSimulationProps)
   const setDailyResults = useStore(Selector.setDailyUpdraftTowerResults);
   const setDailyYield = useStore(Selector.setDailyUpdraftTowerYield);
   const setYearlyYield = useStore(Selector.setYearlyUpdraftTowerYield);
-  const runDailySimulation = useStore(Selector.runDailySimulationForUpdraftTower);
-  const pauseDailySimulation = useStore(Selector.pauseDailySimulationForUpdraftTower);
-  const runYearlySimulation = useStore(Selector.runYearlySimulationForUpdraftTower);
-  const pauseYearlySimulation = useStore(Selector.pauseYearlySimulationForUpdraftTower);
+  const runDailySimulation = usePrimitiveStore(Selector.runDailySimulationForUpdraftTower);
+  const pauseDailySimulation = usePrimitiveStore(Selector.pauseDailySimulationForUpdraftTower);
+  const runYearlySimulation = usePrimitiveStore(Selector.runYearlySimulationForUpdraftTower);
+  const pauseYearlySimulation = usePrimitiveStore(Selector.pauseYearlySimulationForUpdraftTower);
   const showDailyUpdraftTowerPanel = useStore(Selector.viewState.showDailyUpdraftTowerYieldPanel);
   const noAnimation = useStore(Selector.world.noAnimationForSolarUpdraftTowerSimulation);
   const highestTemperatureTimeInMinutes = useStore(Selector.world.highestTemperatureTimeInMinutes) ?? 900;
@@ -106,6 +108,8 @@ const SolarUpdraftTowerSimulation = ({ city }: SolarUpdraftTowerSimulationProps)
             showInfo(i18n.t('message.SimulationAborted', lang));
             setCommonStore((state) => {
               state.world.date = originalDateRef.current.toLocaleString('en-US');
+            });
+            usePrimitiveStore.setState((state) => {
               state.simulationInProgress = false;
               state.simulationPaused = false;
             });
@@ -122,14 +126,10 @@ const SolarUpdraftTowerSimulation = ({ city }: SolarUpdraftTowerSimulationProps)
     if (pauseDailySimulation) {
       pausedDateRef.current = new Date(now.getTime());
       cancelAnimationFrame(requestRef.current);
-      setCommonStore((state) => {
-        state.simulationPaused = true;
-      });
+      setPrimitiveStore('simulationPaused', true);
       showInfo(i18n.t('message.SimulationPaused', lang));
     } else {
-      setCommonStore((state) => {
-        state.simulationPaused = false;
-      });
+      setPrimitiveStore('simulationPaused', false);
       // continue the simulation
       simulateDaily();
     }
@@ -147,10 +147,12 @@ const SolarUpdraftTowerSimulation = ({ city }: SolarUpdraftTowerSimulationProps)
       }
     }
     setCommonStore((state) => {
+      state.viewState.showDailyUpdraftTowerYieldPanel = true;
+    });
+    usePrimitiveStore.setState((state) => {
       state.runDailySimulationForUpdraftTower = false;
       state.simulationInProgress = false;
       state.simulationPaused = false;
-      state.viewState.showDailyUpdraftTowerYieldPanel = true;
     });
     showInfo(i18n.t('message.SimulationCompleted', lang));
     simulationCompletedRef.current = true;
@@ -190,11 +192,13 @@ const SolarUpdraftTowerSimulation = ({ city }: SolarUpdraftTowerSimulationProps)
       if (totalMinutes + minuteInterval >= sunMinutes.sunset) {
         cancelAnimationFrame(requestRef.current);
         setCommonStore((state) => {
+          state.world.date = originalDateRef.current.toLocaleString('en-US');
+          state.viewState.showDailyUpdraftTowerYieldPanel = true;
+        });
+        usePrimitiveStore.setState((state) => {
           state.runDailySimulationForUpdraftTower = false;
           state.simulationInProgress = false;
           state.simulationPaused = false;
-          state.world.date = originalDateRef.current.toLocaleString('en-US');
-          state.viewState.showDailyUpdraftTowerYieldPanel = true;
         });
         showInfo(i18n.t('message.SimulationCompleted', lang));
         simulationCompletedRef.current = true;
@@ -375,6 +379,8 @@ const SolarUpdraftTowerSimulation = ({ city }: SolarUpdraftTowerSimulationProps)
             showInfo(i18n.t('message.SimulationAborted', lang));
             setCommonStore((state) => {
               state.world.date = originalDateRef.current.toLocaleString('en-US');
+            });
+            usePrimitiveStore.setState((state) => {
               state.simulationInProgress = false;
               state.simulationPaused = false;
             });
@@ -391,14 +397,10 @@ const SolarUpdraftTowerSimulation = ({ city }: SolarUpdraftTowerSimulationProps)
     if (pauseYearlySimulation) {
       pausedDateRef.current = new Date(now.getTime());
       cancelAnimationFrame(requestRef.current);
-      setCommonStore((state) => {
-        state.simulationPaused = true;
-      });
+      setPrimitiveStore('simulationPaused', true);
       showInfo(i18n.t('message.SimulationPaused', lang));
     } else {
-      setCommonStore((state) => {
-        state.simulationPaused = false;
-      });
+      setPrimitiveStore('simulationPaused', false);
       // continue the simulation
       simulateYearly();
     }
@@ -449,11 +451,13 @@ const SolarUpdraftTowerSimulation = ({ city }: SolarUpdraftTowerSimulationProps)
       sampledDayRef.current++;
     }
     setCommonStore((state) => {
+      state.world.date = originalDateRef.current.toLocaleString('en-US');
+      state.viewState.showYearlyUpdraftTowerYieldPanel = true;
+    });
+    usePrimitiveStore.setState((state) => {
       state.runYearlySimulationForUpdraftTower = false;
       state.simulationInProgress = false;
       state.simulationPaused = false;
-      state.world.date = originalDateRef.current.toLocaleString('en-US');
-      state.viewState.showYearlyUpdraftTowerYieldPanel = true;
     });
     showInfo(i18n.t('message.SimulationCompleted', lang));
     simulationCompletedRef.current = true;
@@ -496,11 +500,13 @@ const SolarUpdraftTowerSimulation = ({ city }: SolarUpdraftTowerSimulationProps)
         if (sampledDayRef.current === daysPerYear) {
           cancelAnimationFrame(requestRef.current);
           setCommonStore((state) => {
+            state.world.date = originalDateRef.current.toLocaleString('en-US');
+            state.viewState.showYearlyUpdraftTowerYieldPanel = true;
+          });
+          usePrimitiveStore.setState((state) => {
             state.runYearlySimulationForUpdraftTower = false;
             state.simulationInProgress = false;
             state.simulationPaused = false;
-            state.world.date = originalDateRef.current.toLocaleString('en-US');
-            state.viewState.showYearlyUpdraftTowerYieldPanel = true;
           });
           showInfo(i18n.t('message.SimulationCompleted', lang));
           simulationCompletedRef.current = true;

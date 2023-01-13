@@ -14,6 +14,7 @@ import { screenshot, showInfo } from '../helpers';
 import i18n from '../i18n/i18n';
 import { HumanData } from '../HumanData';
 import { Rectangle } from '../models/Rectangle';
+import { usePrimitiveStore } from '../stores/commonPrimitive';
 
 const { Column } = Table;
 
@@ -261,8 +262,10 @@ const VisibilityResultsPanel = () => {
                 showInfo(i18n.t('message.SimulationStarted', lang));
                 // give it 0.1 second for the info to show up
                 setTimeout(() => {
-                  setCommonStore((state) => {
+                  usePrimitiveStore.setState((state) => {
                     state.simulationInProgress = true;
+                  });
+                  setCommonStore((state) => {
                     state.runSolarPanelVisibilityAnalysis = true;
                     if (loggable) {
                       state.actionInfo = {

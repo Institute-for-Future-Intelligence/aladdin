@@ -16,6 +16,7 @@ import { screenshot, showInfo } from '../helpers';
 import i18n from '../i18n/i18n';
 import { Rectangle } from '../models/Rectangle';
 import { FLOATING_WINDOW_OPACITY } from '../constants';
+import { usePrimitiveStore } from '../stores/commonPrimitive';
 
 const Container = styled.div`
   position: fixed;
@@ -239,12 +240,14 @@ const DailyLightSensorPanel = ({ city }: DailyLightSensorPanelProps) => {
                 // give it 0.1 second for the info to show up
                 setTimeout(() => {
                   setCommonStore((state) => {
-                    state.runDailyLightSensor = true;
-                    state.pauseDailyLightSensor = false;
-                    state.simulationInProgress = true;
                     if (loggable) {
                       state.actionInfo = { name: 'Collect Daily Data for Sensors', timestamp: new Date().getTime() };
                     }
+                  });
+                  usePrimitiveStore.setState((state) => {
+                    state.runDailyLightSensor = true;
+                    state.pauseDailyLightSensor = false;
+                    state.simulationInProgress = true;
                   });
                 }, 100);
               }}

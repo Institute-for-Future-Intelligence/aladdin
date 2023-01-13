@@ -90,7 +90,7 @@ const YearlyBuildingEnergyPanel = ({ city }: YearlyBuildingEnergyPanelProps) => 
   const hourlySolarPanelOutputArrayMap = useDataStore(Selector.hourlySolarPanelOutputArrayMap);
   const flagOfDailySimulation = usePrimitiveStore(Selector.flagOfDailySimulation);
   const runYearlySimulation = usePrimitiveStore(Selector.runYearlyThermalSimulation);
-  const simulationInProgress = useStore(Selector.simulationInProgress);
+  const simulationInProgress = usePrimitiveStore(Selector.simulationInProgress);
   const hasSolarPanels = Util.hasSolarPanels(useStore.getState().elements);
 
   const wrapperRef = useRef<HTMLDivElement | null>(null);
@@ -474,9 +474,9 @@ const YearlyBuildingEnergyPanel = ({ city }: YearlyBuildingEnergyPanelProps) => 
                     usePrimitiveStore.setState((state) => {
                       state.runYearlyThermalSimulation = true;
                       state.pauseYearlyThermalSimulation = false;
+                      state.simulationInProgress = true;
                     });
                     setCommonStore((state) => {
-                      state.simulationInProgress = true;
                       if (loggable) {
                         state.actionInfo = { name: 'Run Yearly Thermal Simulation', timestamp: new Date().getTime() };
                       }

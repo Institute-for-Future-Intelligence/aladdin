@@ -17,6 +17,7 @@ import i18n from '../i18n/i18n';
 import SutBiaxialLineGraph from '../components/sutBiaxialLineGraph';
 import { Rectangle } from '../models/Rectangle';
 import { FLOATING_WINDOW_OPACITY } from '../constants';
+import { usePrimitiveStore } from '../stores/commonPrimitive';
 
 const Container = styled.div`
   position: fixed;
@@ -82,10 +83,10 @@ const DailySolarUpdraftTowerYieldPanel = ({ city }: DailySolarUpdraftTowerYieldP
   const countSolarStructuresByType = useStore(Selector.countSolarStructuresByType);
   const dailyYield = useStore(Selector.dailyUpdraftTowerYield);
   const dailyResults = useStore(Selector.dailyUpdraftTowerResults);
-  const individualOutputs = useStore(Selector.dailyUpdraftTowerIndividualOutputs);
+  const individualOutputs = usePrimitiveStore(Selector.dailyUpdraftTowerIndividualOutputs);
   const panelRect = useStore(Selector.viewState.dailyUpdraftTowerYieldPanelRect);
   const updraftTowerLabels = useStore(Selector.updraftTowerLabels);
-  const simulationInProgress = useStore(Selector.simulationInProgress);
+  const simulationInProgress = usePrimitiveStore(Selector.simulationInProgress);
 
   // nodeRef is to suppress ReactDOM.findDOMNode() deprecation warning. See:
   // https://github.com/react-grid-layout/react-draggable/blob/v4.4.2/lib/DraggableCore.js#L159-L171
@@ -192,7 +193,7 @@ const DailySolarUpdraftTowerYieldPanel = ({ city }: DailySolarUpdraftTowerYieldP
   const towerCount = countSolarStructuresByType(SolarStructure.UpdraftTower);
   useEffect(() => {
     if (towerCount < 2 && individualOutputs) {
-      setCommonStore((state) => {
+      usePrimitiveStore.setState((state) => {
         state.dailyUpdraftTowerIndividualOutputs = false;
       });
     }
@@ -305,15 +306,17 @@ const DailySolarUpdraftTowerYieldPanel = ({ city }: DailySolarUpdraftTowerYieldP
                   // give it 0.1 second for the info to show up
                   setTimeout(() => {
                     setCommonStore((state) => {
-                      state.runDailySimulationForUpdraftTower = true;
-                      state.pauseDailySimulationForUpdraftTower = false;
-                      state.simulationInProgress = true;
                       if (loggable) {
                         state.actionInfo = {
                           name: 'Run Daily Simulation For Solar Updraft Tower',
                           timestamp: new Date().getTime(),
                         };
                       }
+                    });
+                    usePrimitiveStore.setState((state) => {
+                      state.runDailySimulationForUpdraftTower = true;
+                      state.pauseDailySimulationForUpdraftTower = false;
+                      state.simulationInProgress = true;
                     });
                   }, 100);
                 }}
