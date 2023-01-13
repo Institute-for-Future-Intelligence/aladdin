@@ -1030,6 +1030,7 @@ const GableRoof = (roofModel: GableRoofModel) => {
           name={'Roof Intersection Plane'}
           ref={intersectionPlaneRef}
           args={[1000, 100]}
+          visible={false}
           position={intersectionPlanePosition}
           rotation={intersectionPlaneRotation}
           onPointerMove={(e) => {
