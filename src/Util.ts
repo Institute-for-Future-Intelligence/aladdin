@@ -56,6 +56,14 @@ export class Util {
     return euler;
   }
 
+  static zero2DArray(array: number[][]): void {
+    for (let i = 0; i < array.length; i++) {
+      for (let j = 0; j < array[i].length; j++) {
+        array[i][j] = 0;
+      }
+    }
+  }
+
   static getTriangleArea(a: Vector3, b: Vector3, c: Vector3) {
     return new Triangle(a, b, c).getArea();
   }

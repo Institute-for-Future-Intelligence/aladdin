@@ -286,35 +286,54 @@ export class SolarRadiation {
         const kz2 = kz - nz / 2 + 0.5;
         const p = { x: kx2 * dx, y: kz2 * dz + halfDif } as Point2;
         if (Util.pointInsidePolygon(p, polygon)) {
+          v.set(absPos.x + kx2 * dxcos, absPos.y + kx2 * dxsin, absPos.z + kz2 * dz);
           let isWall = true;
           if (windows && windows.length > 0) {
             for (const w of windows) {
-              const cx = w.cx * lx;
-              const cz = w.cz * lz;
-              const hx = (w.lx * lx) / 2;
-              const hz = (w.lz * lz) / 2;
-              if (p.x >= cx - hx && p.x < cx + hx && p.y >= cz - hz && p.y < cz + hz) {
-                isWall = false;
-                break;
+              if (w.type !== ObjectType.Window) continue;
+              const cx = w.cx * wall.lx;
+              const cz = w.cz * wall.lz;
+              const hx = (w.lx * wall.lx) / 2;
+              const hz = (w.lz * wall.lz) / 2;
+              const window = w as WindowModel;
+              if (window.windowType === WindowType.Arched) {
+                const absWindowPos = absPos.clone().add(new Vector3(window.cx * wall.lx, 0, window.cz * wall.lz));
+                if (SolarRadiation.pointWithinArch(v, window.lx, window.lz, window.archHeight, absWindowPos)) {
+                  isWall = false;
+                }
+              } else {
+                if (p.x >= cx - hx && p.x < cx + hx && p.y >= cz - hz && p.y < cz + hz) {
+                  isWall = false;
+                  break;
+                }
               }
             }
           }
           if (doors && doors.length > 0) {
             for (const d of doors) {
-              const cx = d.cx * lx;
-              const cz = d.cz * lz;
-              const hx = (d.lx * lx) / 2;
-              const hz = (d.lz * lz) / 2;
-              if (p.x >= cx - hx && p.x < cx + hx && p.y >= cz - hz && p.y < cz + hz) {
-                isWall = false;
-                break;
+              if (d.type !== ObjectType.Door) continue;
+              const cx = d.cx * wall.lx;
+              const cz = d.cz * wall.lz;
+              const hx = (d.lx * wall.lx) / 2;
+              const hz = (d.lz * wall.lz) / 2;
+              const door = d as DoorModel;
+              if (door.doorType === DoorType.Arched) {
+                const absDoorPos = absPos.clone().add(new Vector3(door.cx * wall.lx, 0, door.cz * wall.lz));
+                if (SolarRadiation.pointWithinArch(v, door.lx, door.lz, door.archHeight, absDoorPos)) {
+                  isWall = false;
+                }
+              } else {
+                if (p.x >= cx - hx && p.x < cx + hx && p.y >= cz - hz && p.y < cz + hz) {
+                  isWall = false;
+                  break;
+                }
               }
             }
           }
           if (solarPanels && solarPanels.length > 0) {
             for (const s of solarPanels) {
-              const cx = s.cx * lx;
-              const cz = s.cz * lz;
+              const cx = s.cx * wall.lx;
+              const cz = s.cz * wall.lz;
               const hx = s.lx / 2;
               const hz = s.ly / 2;
               if (p.x >= cx - hx && p.x < cx + hx && p.y >= cz - hz && p.y < cz + hz) {
@@ -324,7 +343,6 @@ export class SolarRadiation {
             }
           }
           if (isWall) {
-            v.set(absPos.x + kx2 * dxcos, absPos.y + kx2 * dxsin, absPos.z + kz2 * dz);
             const distance = distanceToClosestObject(wall.id, v, sunDirection);
             if (distance > AMBIENT_LIGHT_THRESHOLD || distance < 0) {
               // wall may be covered by solar panels

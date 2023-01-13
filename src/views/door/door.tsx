@@ -199,7 +199,7 @@ const Door = (doorModel: DoorModel) => {
   const dimensionData = useMemo(() => [lx, ly, lz, archHeight], [lx, ly, lz, archHeight]);
 
   const doorMaterial = useMemo(() => {
-    if (showSolarRadiationHeatmap && heatmapTexture) {
+    if (showSolarRadiationHeatmap && heatmapTexture && doorModel.filled) {
       return new MeshBasicMaterial({
         color: color,
         map: heatmapTexture,

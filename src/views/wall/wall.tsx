@@ -39,7 +39,7 @@ import { useStore } from 'src/stores/common';
 import { useStoreRef } from 'src/stores/commonRef';
 import { ElementModel } from 'src/models/ElementModel';
 import { ShutterProps, WindowModel, WindowType } from 'src/models/WindowModel';
-import { WallModel, WallFill, WallStructure } from 'src/models/WallModel';
+import { WallFill, WallModel, WallStructure } from 'src/models/WallModel';
 import { ElementModelFactory } from 'src/models/ElementModelFactory';
 import { Point2 } from 'src/models/Point2';
 import { ElementGrid } from '../elementGrid';
@@ -268,13 +268,23 @@ const Wall = ({ wallModel, foundationModel }: WallProps) => {
           let isWall = true;
           if (windows && windows.length > 0) {
             for (const w of windows) {
-              const cx = w.cx * lx;
+              if (w.type !== ObjectType.Window) continue;
+              const cx = w.cx * wallModel.lx;
               const cz = w.cz * wallModel.lz;
-              const hx = (w.lx * lx) / 2;
+              const hx = (w.lx * wallModel.lx) / 2;
               const hz = (w.lz * wallModel.lz) / 2;
-              if (rx >= cx - hx && rx < cx + hx && rz >= cz - hz && rz < cz + hz) {
-                isWall = false;
-                break;
+              const win = w as WindowModel;
+              if (win.windowType === WindowType.Arched) {
+                // TODO: Deal with arched window
+                if (rx >= cx - hx && rx < cx + hx && rz >= cz - hz && rz < cz + hz) {
+                  isWall = false;
+                  break;
+                }
+              } else {
+                if (rx >= cx - hx && rx < cx + hx && rz >= cz - hz && rz < cz + hz) {
+                  isWall = false;
+                  break;
+                }
               }
             }
           }
@@ -284,6 +294,7 @@ const Wall = ({ wallModel, foundationModel }: WallProps) => {
               const cz = d.cz * lz;
               const hx = (d.lx * lx) / 2;
               const hz = (d.lz * lz) / 2;
+              // TODO: Deal with arched door
               if (rx >= cx - hx && rx < cx + hx && rz >= cz - hz && rz < cz + hz) {
                 isWall = false;
                 break;

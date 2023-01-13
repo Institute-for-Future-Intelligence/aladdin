@@ -161,9 +161,9 @@ const DynamicSolarRadiationSimulation = ({ city }: DynamicSolarRadiationSimulati
 
   const updateHeatmaps = () => {
     clearHeatmaps();
-    // apply clearness and convert the unit of time step from minute to hour so that we get kWh
     const daylight = sunMinutes.daylight() / 60;
-    // divide by times per hour as the radiation is added up that many times
+    // apply clearness and convert the unit of time step from minute to hour so that we get kWh
+    // (divide by times per hour as the radiation is added up that many times)
     const scaleFactor =
       daylight > ZERO_TOLERANCE ? weather.sunshineHours[now.getMonth()] / (30 * daylight * world.timesPerHour) : 0;
     for (const e of elements) {
@@ -221,7 +221,7 @@ const DynamicSolarRadiationSimulation = ({ city }: DynamicSolarRadiationSimulati
                       data[i][j] *= scaleFactor;
                     }
                   }
-                  // send a copy of the heat map data to common store for visualization
+                  // send a copy of the heatmap data to common store for visualization
                   setHeatmap(
                     roof.id,
                     data.map((a) => [...a]),
