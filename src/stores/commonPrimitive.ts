@@ -3,7 +3,10 @@
  */
 import create from 'zustand';
 
+// avoid using undefined value in the store for now.
 export interface PrimitiveStoreState {
+  setPrimitiveStore: <K extends keyof PrimitiveStoreState, V extends PrimitiveStoreState[K]>(key: K, val: V) => void;
+
   duringCameraInteraction: boolean;
 
   flagOfDailySimulation: boolean; // used as a flag to notify that daily results are ready
@@ -23,6 +26,16 @@ export interface PrimitiveStoreState {
 
 export const usePrimitiveStore = create<PrimitiveStoreState>((set, get) => {
   return {
+    setPrimitiveStore(key, val) {
+      set((state) => {
+        if (state[key] !== undefined) {
+          state[key] = val;
+        } else {
+          console.error(`key ${key} is not defined in PrimitiveStoreState`);
+        }
+      });
+    },
+
     duringCameraInteraction: false,
 
     flagOfDailySimulation: false,

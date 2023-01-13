@@ -1111,6 +1111,8 @@ export const geneticAlgorithmWizardSelectedTab = (state: CommonStoreState) => st
 export const particleSwarmOptimizationWizardSelectedTab = (state: CommonStoreState) =>
   state.particleSwarmOptimizationWizardSelectedTab;
 
+export const setPrimitiveStore = (state: PrimitiveStoreState) => state.setPrimitiveStore;
+
 export * as viewState from './viewState';
 
 export * as world from './world';
