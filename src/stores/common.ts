@@ -845,6 +845,7 @@ export const useStore = create<CommonStoreState>(
               state.heatmaps.clear();
               usePrimitiveStore.setState((state) => {
                 state.showSolarRadiationHeatmap = false;
+                state.showHeatFluxes = false;
               });
               useDataStore.setState((state) => {
                 state.hourlyHeatExchangeArrayMap = new Map<string, number[]>();
@@ -956,6 +957,7 @@ export const useStore = create<CommonStoreState>(
               state.undoManager.clear();
               usePrimitiveStore.setState((state) => {
                 state.showSolarRadiationHeatmap = false;
+                state.showHeatFluxes = false;
               });
               useDataStore.setState((state) => {
                 state.hourlyHeatExchangeArrayMap = new Map<string, number[]>();

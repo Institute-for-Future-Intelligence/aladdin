@@ -140,6 +140,12 @@ const Door = (doorModel: DoorModel) => {
     }
   };
 
+  const showSolarRadiationHeatmap = usePrimitiveStore(Selector.showSolarRadiationHeatmap);
+  const showHeatFluxes = usePrimitiveStore(Selector.showHeatFluxes);
+  const solarRadiationHeatmapMaxValue = useStore(Selector.viewState.solarRadiationHeatmapMaxValue);
+  const getHeatmap = useStore(Selector.getHeatmap);
+  const [heatmapTexture, setHeatmapTexture] = useState<CanvasTexture | null>(null);
+
   const renderDoor = () => {
     switch (doorType) {
       case DoorType.Default:
@@ -152,7 +158,7 @@ const Door = (doorModel: DoorModel) => {
             locked={locked}
             material={doorMaterial}
             filled={filled}
-            showHeatFluxes={showSolarRadiationHeatmap}
+            showHeatFluxes={showHeatFluxes}
             area={Util.getDoorArea(doorModel)}
           />
         );
@@ -166,17 +172,12 @@ const Door = (doorModel: DoorModel) => {
             locked={locked}
             material={doorMaterial}
             filled={filled}
-            showHeatFluxes={showSolarRadiationHeatmap}
+            showHeatFluxes={showHeatFluxes}
             area={Util.getDoorArea(doorModel)}
           />
         );
     }
   };
-
-  const showSolarRadiationHeatmap = usePrimitiveStore(Selector.showSolarRadiationHeatmap);
-  const solarRadiationHeatmapMaxValue = useStore(Selector.viewState.solarRadiationHeatmapMaxValue);
-  const getHeatmap = useStore(Selector.getHeatmap);
-  const [heatmapTexture, setHeatmapTexture] = useState<CanvasTexture | null>(null);
 
   useEffect(() => {
     if (doorModel && showSolarRadiationHeatmap) {

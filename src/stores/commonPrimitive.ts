@@ -71,6 +71,7 @@ export interface PrimitiveStoreState {
   flagOfDailySimulation: boolean; // used as a flag to notify that daily results are ready
 
   showSolarRadiationHeatmap: boolean;
+  showHeatFluxes: boolean;
 
   duringCameraInteraction: boolean;
 }
@@ -151,6 +152,7 @@ export const usePrimitiveStore = create<PrimitiveStoreState>((set, get) => {
     flagOfDailySimulation: false,
 
     showSolarRadiationHeatmap: false,
+    showHeatFluxes: false,
 
     duringCameraInteraction: false,
   };

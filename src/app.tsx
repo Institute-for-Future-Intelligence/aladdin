@@ -23,6 +23,7 @@ const App = () => {
   const viewState = useStore((state: CommonStoreState) => state.viewState);
   const notes = useStore((state: CommonStoreState) => state.notes);
   const showSolarRadiationHeatmap = usePrimitiveStore(Selector.showSolarRadiationHeatmap);
+  const showHeatFluxes = usePrimitiveStore(Selector.showHeatFluxes);
   const setChanged = useStore(Selector.setChanged);
   const setSkipChange = useStore(Selector.setSkipChange);
   const loadWeatherData = useStore(Selector.loadWeatherData);
@@ -51,6 +52,11 @@ const App = () => {
     if (showSolarRadiationHeatmap) {
       usePrimitiveStore.setState((state) => {
         state.showSolarRadiationHeatmap = false;
+      });
+    }
+    if (showHeatFluxes) {
+      usePrimitiveStore.setState((state) => {
+        state.showHeatFluxes = false;
       });
     }
   }, [world, elements]);

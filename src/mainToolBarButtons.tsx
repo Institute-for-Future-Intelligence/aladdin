@@ -534,7 +534,10 @@ const MainToolBarButtons = () => {
           }}
           onClick={() => {
             if (showSolarRadiationHeatmap) {
-              setPrimitiveStore('showSolarRadiationHeatmap', false);
+              usePrimitiveStore.setState((state) => {
+                state.showSolarRadiationHeatmap = false;
+                state.showHeatFluxes = false;
+              });
             } else {
               if (!noAnimationForHeatmapSimulation || Util.hasMovingParts(elements)) {
                 toggleDynamicSolarRadiationHeatmap();

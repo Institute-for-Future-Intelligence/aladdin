@@ -334,8 +334,13 @@ const ThermalSimulation = ({ city }: ThermalSimulationProps) => {
         }
       }
     }
-    setPrimitiveStore('flagOfDailySimulation', !usePrimitiveStore.getState().flagOfDailySimulation);
-    setPrimitiveStore('showSolarRadiationHeatmap', true);
+    usePrimitiveStore.setState((state) => {
+      state.flagOfDailySimulation = !state.flagOfDailySimulation;
+      if (!state.runYearlyThermalSimulation) {
+        state.showSolarRadiationHeatmap = true;
+        state.showHeatFluxes = true;
+      }
+    });
   };
 
   const calculateDaily = () => {

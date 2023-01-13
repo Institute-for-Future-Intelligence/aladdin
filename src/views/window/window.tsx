@@ -55,8 +55,8 @@ interface ShutterProps {
 
 export const Shutter = ({ cx, cz = 0, lx, lz, color, showLeft, showRight, spacing }: ShutterProps) => {
   const shadowEnabled = useStore(Selector.viewState.shadowEnabled);
-  const showSolarRadiationHeatmap = usePrimitiveStore(Selector.showSolarRadiationHeatmap);
-  if (showSolarRadiationHeatmap) {
+  const showHeatFluxes = usePrimitiveStore(Selector.showHeatFluxes);
+  if (showHeatFluxes) {
     return null;
   }
 
@@ -268,7 +268,7 @@ const Window = (windowModel: WindowModel) => {
     [lineColor, lineWidth, selected, locked, opacity],
   );
 
-  const showSolarRadiationHeatmap = usePrimitiveStore(Selector.showSolarRadiationHeatmap);
+  const showHeatFluxes = usePrimitiveStore(Selector.showHeatFluxes);
 
   const renderWindow = () => {
     switch (windowType) {
@@ -283,7 +283,7 @@ const Window = (windowModel: WindowModel) => {
             wireframeData={wireframeData}
             shutter={shutter}
             glassMaterial={glassMaterial}
-            showHeatFluxes={showSolarRadiationHeatmap}
+            showHeatFluxes={showHeatFluxes}
             area={Util.getWindowArea(windowModel)}
           />
         );
@@ -298,7 +298,7 @@ const Window = (windowModel: WindowModel) => {
             wireframeData={wireframeData}
             shutter={shutter}
             glassMaterial={glassMaterial}
-            showHeatFluxes={showSolarRadiationHeatmap}
+            showHeatFluxes={showHeatFluxes}
             area={Util.getWindowArea(windowModel)}
           />
         );

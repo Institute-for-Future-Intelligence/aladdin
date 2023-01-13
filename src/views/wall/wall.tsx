@@ -186,6 +186,7 @@ const Wall = ({ wallModel, foundationModel }: WallProps) => {
 
   const world = useStore.getState().world;
   const showSolarRadiationHeatmap = usePrimitiveStore(Selector.showSolarRadiationHeatmap);
+  const showHeatFluxes = usePrimitiveStore(Selector.showHeatFluxes);
   const solarRadiationHeatmapMaxValue = useStore(Selector.viewState.solarRadiationHeatmapMaxValue);
   const getHeatmap = useStore(Selector.getHeatmap);
   const [heatmapTexture, setHeatmapTexture] = useState<CanvasTexture | null>(null);
@@ -228,7 +229,7 @@ const Wall = ({ wallModel, foundationModel }: WallProps) => {
   const heatFluxEuler = useRef<Euler>();
 
   const heatFluxes: Vector3[][] | undefined = useMemo(() => {
-    if (!showSolarRadiationHeatmap) return undefined;
+    if (!showHeatFluxes) return undefined;
     const heat = hourlyHeatExchangeArrayMap.get(id);
     if (!heat) return undefined;
     const sum = heat.reduce((a, b) => a + b, 0);
@@ -316,7 +317,7 @@ const Wall = ({ wallModel, foundationModel }: WallProps) => {
       }
     }
     return vectors;
-  }, [lx, lz, showSolarRadiationHeatmap]);
+  }, [lx, lz, showHeatFluxes]);
 
   const deletedWindowAndParentId = useStore(Selector.deletedWindowAndParentId);
   const deletedDoorAndParentId = useStore(Selector.deletedDoorAndParentId);

@@ -1169,6 +1169,7 @@ const RoofSegment = ({
   const world = useStore.getState().world;
   const shadowEnabled = useStore(Selector.viewState.shadowEnabled);
   const showSolarRadiationHeatmap = usePrimitiveStore(Selector.showSolarRadiationHeatmap);
+  const showHeatFluxes = usePrimitiveStore(Selector.showHeatFluxes);
   const heatFluxScaleFactor = useStore(Selector.viewState.heatFluxScaleFactor);
   const heatFluxColor = useStore(Selector.viewState.heatFluxColor);
   const heatFluxWidth = useStore(Selector.viewState.heatFluxWidth);
@@ -1204,7 +1205,7 @@ const RoofSegment = ({
   };
 
   const heatFluxes: Vector3[][] | undefined = useMemo(() => {
-    if (!showSolarRadiationHeatmap) return undefined;
+    if (!showHeatFluxes) return undefined;
     const heat = hourlyHeatExchangeArrayMap.get(id + '-' + index);
     if (!heat) return undefined;
     const sum = heat.reduce((a, b) => a + b, 0);
@@ -1267,7 +1268,7 @@ const RoofSegment = ({
       }
     }
     return vectors;
-  }, [showSolarRadiationHeatmap]);
+  }, [showHeatFluxes]);
 
   useEffect(() => {
     const [wallLeft, wallRight, ridgeRight, ridgeLeft, wallLeftAfterOverhang] = points;
