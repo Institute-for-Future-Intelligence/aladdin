@@ -255,7 +255,7 @@ const Foundation = ({
         break;
     }
     if (poleHeight >= 0) {
-      intersectionPlanePosition.set(0, 0, foundationModel.lz / 2 + poleHeight);
+      intersectionPlanePosition.set(0, 0, foundationModel?.lz / 2 + poleHeight);
     }
   }
 
@@ -264,7 +264,7 @@ const Foundation = ({
       foundationGroupSetRef.current.clear();
       foundationVerticesRef.current = [];
 
-      if (foundationModel.enableGroupMaster) {
+      if (foundationModel?.enableGroupMaster) {
         setFoundationVertices(foundationModel);
         checkOverlapWithAllFoundations(foundationModel);
         if (foundationGroupSetRef.current.size > 1) {
@@ -367,7 +367,7 @@ const Foundation = ({
     const map = new Map<string, number>(); // roofId -> maxWallHeight
     // we can use one loop to get maxWallHeight, because roof is always after wall
     for (const elem of useStore.getState().elements) {
-      if (elem.foundationId === foundationModel.id) {
+      if (elem.foundationId === foundationModel?.id) {
         if (elem.type === ObjectType.Wall) {
           const wall = elem as WallModel;
           maxHeight = Math.max(maxHeight, wall.lz);
@@ -383,7 +383,7 @@ const Foundation = ({
       }
     }
     setBuildingResizerPosition([cx, cy, 0]);
-    setBuildingResizerRotation(foundationModel.rotation[2]);
+    setBuildingResizerRotation(foundationModel?.rotation[2]);
     setBuildingResizerDimension([lx, ly, maxHeight + lz]);
   };
 
@@ -2601,6 +2601,7 @@ const Foundation = ({
 
   const handleSolarCollectorPointerMove = (e: ThreeEvent<PointerEvent>) => {
     if (!intersectPlaneRef.current) return;
+    if (!foundationModel) return;
     if (grabRef.current && foundationModel) {
       if (!Util.isSolarCollector(grabRef.current)) return;
       const collector = grabRef.current as SolarCollector;
@@ -3206,8 +3207,8 @@ const Foundation = ({
                 }
                 fontSize={20}
                 fontFace={'Times Roman'}
-                textHeight={foundationModel.labelSize ?? 0.2}
-                position={[0, 0, foundationModel.labelHeight ?? hz + 0.2]}
+                textHeight={foundationModel?.labelSize ?? 0.2}
+                position={[0, 0, foundationModel?.labelHeight ?? hz + 0.2]}
               />
             )}
             {!locked && hoveredHandle === ResizeHandleType.LowerLeft && (
