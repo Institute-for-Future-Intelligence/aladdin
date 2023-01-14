@@ -820,13 +820,6 @@ export const useStore = create<CommonStoreState>(
           importContent(content, title) {
             immerSet((state: CommonStoreState) => {
               state.undoManager.clear();
-              usePrimitiveStore.setState((state) => {
-                state.showSolarRadiationHeatmap = false;
-                state.showHeatFluxes = false;
-              });
-              useDataStore.setState((state) => {
-                state.clearDataStore();
-              });
               state.world = content.world;
               state.viewState = content.view;
               state.elements = content.elements;
@@ -867,18 +860,13 @@ export const useStore = create<CommonStoreState>(
               state.roofSegmentVerticesMap = new Map<string, Vector3[][]>();
               state.roofSegmentVerticesWithoutOverhangMap = new Map<string, Vector3[][]>();
             });
-            // 1/6/2022: Humans previously did not have dimension data (which probably was a mistake).
-            // We do this for backward compatibility. Otherwise, humans cannot be moved in old files.
-            const state = get();
-            for (const e of state.elements) {
-              switch (e.type) {
-                case ObjectType.Human:
-                  const human = e as HumanModel;
-                  const width = HumanData.fetchWidth(human.name);
-                  state.setElementSize(human.id, width, width, HumanData.fetchHeight(human.name));
-                  break;
-              }
-            }
+            usePrimitiveStore.setState((state) => {
+              state.showSolarRadiationHeatmap = false;
+              state.showHeatFluxes = false;
+            });
+            useDataStore.setState((state) => {
+              state.clearDataStore();
+            });
           },
           exportContent() {
             const state = get();
@@ -931,13 +919,13 @@ export const useStore = create<CommonStoreState>(
               state.roofSegmentVerticesMap.clear();
               state.roofSegmentVerticesWithoutOverhangMap.clear();
               state.undoManager.clear();
-              usePrimitiveStore.setState((state) => {
-                state.showSolarRadiationHeatmap = false;
-                state.showHeatFluxes = false;
-              });
-              useDataStore.setState((state) => {
-                state.clearDataStore();
-              });
+            });
+            usePrimitiveStore.setState((state) => {
+              state.showSolarRadiationHeatmap = false;
+              state.showHeatFluxes = false;
+            });
+            useDataStore.setState((state) => {
+              state.clearDataStore();
             });
           },
           undoManager: new UndoManager(),
