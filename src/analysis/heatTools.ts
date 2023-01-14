@@ -15,8 +15,8 @@ export const getLightAbsorption = (element: ElementModel) => {
   if (!element.color) return 0.5;
   // catch some common cases
   const lc = element.color.toLowerCase();
-  if (lc === 'white') return 0;
-  if (lc === 'black') return 1;
+  if (lc === 'white') return 0.05;
+  if (lc === 'black') return 0.95;
   const bigint = parseInt(element.color.substring(1), 16);
   const r = (bigint >> 16) & 255;
   const g = (bigint >> 8) & 255;
@@ -25,7 +25,7 @@ export const getLightAbsorption = (element: ElementModel) => {
   min = Math.min(min, b);
   let max = Math.max(r, g);
   max = Math.max(max, b);
-  return 1 - (min + max) / 510;
+  return Math.min(0.95, Math.max(0.05, 1 - (min + max) / 510));
 };
 
 /*

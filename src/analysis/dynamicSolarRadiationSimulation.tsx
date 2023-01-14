@@ -647,7 +647,7 @@ const DynamicSolarRadiationSimulation = ({ city }: DynamicSolarRadiationSimulati
         .map(() => Array(nz).fill(0));
       cellOutputsMapRef.current.set(wall.id, cellOutputs);
     }
-    const polygon = Util.getWallVertices(wall, 2);
+    const polygon = Util.getWallVertices(wall, 1);
     const halfDif = (lz - wall.lz) / 2;
     const peakRadiation = calculatePeakRadiation(sunDirection, dayOfYear, elevation, AirMass.SPHERE_MODEL);
     const indirectRadiation = calculateDiffuseAndReflectedRadiation(

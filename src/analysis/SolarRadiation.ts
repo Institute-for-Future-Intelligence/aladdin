@@ -242,8 +242,8 @@ export class SolarRadiation {
     return sum / (nx * ny);
   }
 
-  // return an array that represents solar energy intensity radiated onto the discretized cells of a wall,
-  // along with the unit area
+  // Return an array that represents solar energy intensity radiated onto the discretized cells of a wall,
+  // along with the unit area. Also return an array with the specific margin for generating a better looking heatmap.
   static computeWallSolarRadiationEnergy(
     now: Date,
     world: WorldModel,
@@ -253,9 +253,10 @@ export class SolarRadiation {
     windows: ElementModel[],
     doors: ElementModel[],
     solarPanels: ElementModel[],
+    margin: number,
     elevation: number,
     distanceToClosestObject: Function,
-  ): { intensity: number[][]; unitArea: number } {
+  ): { intensity: number[][]; unitArea: number; heatmap: number[][] } {
     const dayOfYear = Util.dayOfYear(now);
     const cellSize = world.solarRadiationHeatmapGridCellSize ?? 0.5;
     const lx = wall.lx;
@@ -272,7 +273,9 @@ export class SolarRadiation {
     const dxcos = dx * Math.cos(absAngle);
     const dxsin = dx * Math.sin(absAngle);
     const v = new Vector3();
-    const polygon = Util.getWallVertices(wall, 0);
+    const polygonWithMargin = Util.getWallVertices(wall, margin);
+    // if margin is zero, skip the calculation to save time
+    const polygon = margin === 0 ? null : Util.getWallVertices(wall, 0);
     const halfDif = (lz - wall.lz) / 2;
     const peakRadiation = calculatePeakRadiation(sunDirection, dayOfYear, elevation, AirMass.SPHERE_MODEL);
     const indirectRadiation = calculateDiffuseAndReflectedRadiation(
@@ -285,12 +288,16 @@ export class SolarRadiation {
     const intensity: number[][] = Array(nx)
       .fill(0)
       .map(() => Array(nz).fill(0));
+    const heatmap: number[][] = Array(nx)
+      .fill(0)
+      .map(() => Array(nz).fill(0));
     for (let kx = 0; kx < nx; kx++) {
       for (let kz = 0; kz < nz; kz++) {
         const kx2 = kx - nx / 2 + 0.5;
         const kz2 = kz - nz / 2 + 0.5;
         const p = { x: kx2 * dx, y: kz2 * dz + halfDif } as Point2;
-        if (Util.pointInsidePolygon(p, polygon)) {
+        const insidePolygonWithMargin = Util.pointInsidePolygon(p, polygonWithMargin);
+        if (insidePolygonWithMargin) {
           v.set(absPos.x + kx2 * dxcos, absPos.y + kx2 * dxsin, absPos.z + kz2 * dz);
           let isWall = true;
           if (windows && windows.length > 0) {
@@ -348,20 +355,27 @@ export class SolarRadiation {
             }
           }
           if (isWall) {
+            const insidePolygon = polygon === null ? true : Util.pointInsidePolygon(p, polygon);
             const distance = distanceToClosestObject(wall.id, v, sunDirection);
             if (distance > AMBIENT_LIGHT_THRESHOLD || distance < 0) {
               // wall may be covered by solar panels
-              intensity[kx][kz] += indirectRadiation;
+              heatmap[kx][kz] += indirectRadiation;
+              if (insidePolygon) {
+                intensity[kx][kz] += indirectRadiation;
+              }
             }
             if (dot > 0 && distance < 0) {
               // direct radiation
-              intensity[kx][kz] += dot * peakRadiation;
+              heatmap[kx][kz] += dot * peakRadiation;
+              if (insidePolygon) {
+                intensity[kx][kz] += dot * peakRadiation;
+              }
             }
           }
         }
       }
     }
-    return { intensity: intensity, unitArea: dx * dz };
+    return { intensity: intensity, unitArea: dx * dz, heatmap: heatmap };
   }
 
   // return an array that represents solar energy radiated onto the discretized cells of a door,
@@ -544,7 +558,9 @@ export class SolarRadiation {
     sunDirection: Vector3,
     roof: RoofModel,
     flat: boolean,
+    withoutOverhang: boolean,
     segments: Vector3[][],
+    margin: number,
     foundation: FoundationModel,
     solarPanels: ElementModel[], //TODO: Skip areas covered by solar panels on the roof
     elevation: number,
@@ -585,11 +601,11 @@ export class SolarRadiation {
       segmentIntensities.push(intensity);
       segmentUnitAreas.push(dx * dy);
       const h0 = segments[0][0].z;
-      // we have to add roof thickness since the segment vertices are from the inside surface
+      // we have to add roof thickness since the segment vertices without overhang are from the inside surface
       const v0 = new Vector3(
         minX + cellSize / 2,
         minY + cellSize / 2,
-        foundation.lz + h0 + roof.thickness + ROOFTOP_SOLAR_PANEL_OFFSET,
+        foundation.lz + h0 + ROOFTOP_SOLAR_PANEL_OFFSET + (withoutOverhang ? roof.thickness : 0),
       );
       const v = new Vector3(0, 0, v0.z);
       const indirectRadiation = calculateDiffuseAndReflectedRadiation(
@@ -647,11 +663,11 @@ export class SolarRadiation {
           .normalize()
           .multiplyScalar((0.5 * distance) / n);
         // find the starting point of the grid (shift half of length in both directions)
-        // we have to add roof thickness since the segment vertices are from the inside surface
+        // we have to add roof thickness since the segment vertices without overhang are from the inside surface
         const v0 = new Vector3(
           foundation.cx + s0.x,
           foundation.cy + s0.y,
-          foundation.lz + s0.z + roof.thickness + ROOFTOP_SOLAR_PANEL_OFFSET,
+          foundation.lz + s0.z + ROOFTOP_SOLAR_PANEL_OFFSET + (withoutOverhang ? roof.thickness : 0),
         );
         v0.add(dm).add(dn);
         // double half-length to full-length for the increment vectors in both directions
@@ -660,7 +676,6 @@ export class SolarRadiation {
         segmentUnitAreas.push(dm.length() * dn.length());
         const v = new Vector3();
         const relativePolygon: Point2[] = [];
-        const margin = 0.01;
         relativePolygon.push({ x: -margin, y: -margin } as Point2);
         relativePolygon.push({ x: m + margin, y: -margin } as Point2);
         relativePolygon.push({ x: m2, y: n + margin } as Point2);
@@ -700,7 +715,9 @@ export class SolarRadiation {
     world: WorldModel,
     sunDirection: Vector3,
     roof: RoofModel,
+    withoutOverhang: boolean,
     segments: Vector3[][],
+    margin: number,
     foundation: FoundationModel,
     solarPanels: ElementModel[], //TODO: Skip areas covered by solar panels on the roof
     elevation: number,
@@ -746,11 +763,11 @@ export class SolarRadiation {
         .multiplyScalar((0.5 * distance) / n);
       const v = new Vector3();
       // find the starting point of the grid (shift half of length in both directions)
-      // we have to add roof thickness since the segment vertices are from the inside surface
+      // we have to add roof thickness since the segment vertices without overhang are from the inside surface
       const v0 = new Vector3(
         foundation.cx + s0.x,
         foundation.cy + s0.y,
-        foundation.lz + s0.z + roof.thickness + ROOFTOP_SOLAR_PANEL_OFFSET,
+        foundation.lz + s0.z + ROOFTOP_SOLAR_PANEL_OFFSET + (withoutOverhang ? roof.thickness : 0),
       );
       v0.add(dm).add(dn);
       // double half-length to full-length for the increment vectors in both directions
@@ -783,7 +800,6 @@ export class SolarRadiation {
         }
       } else {
         const relativePolygon: Point2[] = [];
-        const margin = 0.01;
         relativePolygon.push({ x: -margin, y: -margin } as Point2);
         relativePolygon.push({ x: m + margin, y: -margin } as Point2);
         relativePolygon.push({ x: m2, y: n + margin } as Point2);
@@ -816,6 +832,7 @@ export class SolarRadiation {
     world: WorldModel,
     sunDirection: Vector3,
     roof: RoofModel,
+    withoutOverhang: boolean,
     segments: Vector3[][],
     foundation: FoundationModel,
     solarPanels: ElementModel[], //TODO: Skip areas covered by solar panels on the roof
@@ -858,11 +875,11 @@ export class SolarRadiation {
         .normalize()
         .multiplyScalar((0.5 * distance) / n);
       // find the starting point of the grid (shift half of length in both directions)
-      // we have to add roof thickness since the segment vertices are from the inside surface
+      // we have to add roof thickness since the segment vertices without overhang are from the inside surface
       const v0 = new Vector3(
         foundation.cx + s0.x,
         foundation.cy + s0.y,
-        foundation.lz + s0.z + roof.thickness + ROOFTOP_SOLAR_PANEL_OFFSET,
+        foundation.lz + s0.z + ROOFTOP_SOLAR_PANEL_OFFSET + (withoutOverhang ? roof.thickness : 0),
       );
       v0.add(dm).add(dn);
       // double half-length to full-length for the increment vectors in both directions
@@ -903,6 +920,7 @@ export class SolarRadiation {
     world: WorldModel,
     sunDirection: Vector3,
     roof: RoofModel,
+    withoutOverhang: boolean,
     segments: Vector3[][],
     foundation: FoundationModel,
     solarPanels: ElementModel[], //TODO: Skip areas covered by solar panels on the roof
@@ -945,11 +963,11 @@ export class SolarRadiation {
           .fill(0)
           .map(() => Array(ny).fill(0));
         segmentIntensities.push(intensity);
-        // we have to add roof thickness since the segment vertices are from the inside surface
+        // we have to add roof thickness since the segment vertices without overhang are from the inside surface
         const v0 = new Vector3(
           minX + cellSize / 2,
           minY + cellSize / 2,
-          foundation.lz + h0 + roof.thickness + ROOFTOP_SOLAR_PANEL_OFFSET,
+          foundation.lz + h0 + ROOFTOP_SOLAR_PANEL_OFFSET + (withoutOverhang ? roof.thickness : 0),
         );
         const v = new Vector3(0, 0, v0.z);
         const indirectRadiation = calculateDiffuseAndReflectedRadiation(
@@ -1003,11 +1021,11 @@ export class SolarRadiation {
           .normalize()
           .multiplyScalar((0.5 * distance) / n);
         // find the starting point of the grid (shift half of length in both directions)
-        // we have to add roof thickness since the segment vertices are from the inside surface
+        // we have to add roof thickness since the segment vertices without overhang are from the inside surface
         const v0 = new Vector3(
           foundation.cx + s0.x,
           foundation.cy + s0.y,
-          foundation.lz + s0.z + roof.thickness + ROOFTOP_SOLAR_PANEL_OFFSET,
+          foundation.lz + s0.z + ROOFTOP_SOLAR_PANEL_OFFSET + (withoutOverhang ? roof.thickness : 0),
         );
         v0.add(dm).add(dn);
         // double half-length to full-length for the increment vectors in both directions
