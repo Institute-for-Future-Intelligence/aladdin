@@ -317,7 +317,7 @@ const Wall = ({ wallModel, foundationModel }: WallProps) => {
       }
     }
     return vectors;
-  }, [lx, lz, showHeatFluxes]);
+  }, [lx, lz, showHeatFluxes, heatFluxScaleFactor]);
 
   const deletedWindowAndParentId = useStore(Selector.deletedWindowAndParentId);
   const deletedDoorAndParentId = useStore(Selector.deletedDoorAndParentId);

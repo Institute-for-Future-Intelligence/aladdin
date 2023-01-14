@@ -18,7 +18,6 @@ import {
 } from 'src/constants';
 import { FrameDataType, MullionDataType, Shutter, WireframeDataType } from './window';
 import { ShutterProps } from 'src/models/WindowModel';
-import { usePrimitiveStore } from '../../stores/commonPrimitive';
 import { Util } from '../../Util';
 import { useDataStore } from '../../stores/commonData';
 
@@ -313,7 +312,7 @@ const RectangleWindow = ({
       }
     }
     return vectors;
-  }, [id, dimension, showHeatFluxes]);
+  }, [id, dimension, showHeatFluxes, heatFluxScaleFactor]);
 
   const shutterLength = useMemo(() => shutter.width * lx, [lx, shutter]);
   const shutterPosX = useMemo(

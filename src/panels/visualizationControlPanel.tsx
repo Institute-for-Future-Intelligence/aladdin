@@ -1,5 +1,5 @@
 /*
- * @Copyright 2022. Institute for Future Intelligence, Inc.
+ * @Copyright 2022-2023. Institute for Future Intelligence, Inc.
  */
 
 import React from 'react';
@@ -8,6 +8,7 @@ import * as Selector from '../stores/selector';
 import styled from 'styled-components';
 import { InputNumber, Space } from 'antd';
 import i18n from '../i18n/i18n';
+import { usePrimitiveStore } from '../stores/commonPrimitive';
 
 const Container = styled.div`
   position: absolute;
@@ -42,25 +43,32 @@ const ColumnWrapper = styled.div`
   opacity: 100%;
 `;
 
-const HeatmapControlPanel = () => {
+const VisualizationControlPanel = () => {
   const setCommonStore = useStore(Selector.set);
   const language = useStore(Selector.language);
   const solarRadiationHeatmapMaxValue = useStore(Selector.viewState.solarRadiationHeatmapMaxValue);
   const showSiteInfoPanel = useStore(Selector.viewState.showSiteInfoPanel);
+  const heatFluxScaleFactor = useStore(Selector.viewState.heatFluxScaleFactor);
+  const showHeatFluxes = usePrimitiveStore(Selector.showHeatFluxes);
 
   const lang = { lng: language };
 
   return (
     <Container style={{ top: showSiteInfoPanel ? '110px' : '80px' }}>
-      <ColumnWrapper>
+      <ColumnWrapper
+        style={{
+          width: showHeatFluxes ? '300px' : '160px',
+          left: showHeatFluxes ? 'calc(100vw / 2 - 150px)' : 'calc(100vw / 2 - 80px)',
+        }}
+      >
         <Space direction={'horizontal'} style={{ color: 'antiquewhite', fontSize: '10px' }}>
-          {i18n.t('heatmapControlPanel.ColorContrast', lang) + ':'}
+          {i18n.t('visualizationControlPanel.ColorContrast', lang) + ':'}
           <InputNumber
-            title={i18n.t('heatmapControlPanel.ClickUpOrDownArrowButtonsToChange', lang)}
+            title={i18n.t('visualizationControlPanel.ClickUpOrDownArrowButtonsToChange', lang)}
             min={0.5}
             max={50}
             step={0.5}
-            style={{ width: 72 }}
+            style={{ width: 70 }}
             precision={1}
             value={solarRadiationHeatmapMaxValue ?? 5}
             onChange={(value) => {
@@ -69,10 +77,29 @@ const HeatmapControlPanel = () => {
               });
             }}
           />
+          {showHeatFluxes && (
+            <>
+              {i18n.t('visualizationControlPanel.FluxScale', lang) + ':'}
+              <InputNumber
+                title={i18n.t('visualizationControlPanel.ClickUpOrDownArrowButtonsToChange', lang)}
+                min={1}
+                max={50}
+                step={1}
+                style={{ width: 70 }}
+                precision={1}
+                value={heatFluxScaleFactor ?? 20}
+                onChange={(value) => {
+                  setCommonStore((state) => {
+                    state.viewState.heatFluxScaleFactor = value;
+                  });
+                }}
+              />
+            </>
+          )}
         </Space>
       </ColumnWrapper>
     </Container>
   );
 };
 
-export default React.memo(HeatmapControlPanel);
+export default React.memo(VisualizationControlPanel);

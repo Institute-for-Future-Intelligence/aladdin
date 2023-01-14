@@ -1268,7 +1268,7 @@ const RoofSegment = ({
       }
     }
     return vectors;
-  }, [showHeatFluxes]);
+  }, [showHeatFluxes, heatFluxScaleFactor]);
 
   useEffect(() => {
     const [wallLeft, wallRight, ridgeRight, ridgeLeft, wallLeftAfterOverhang] = points;

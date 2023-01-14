@@ -1065,8 +1065,9 @@ export const i18n_zh_tw = {
       SceneDiameter: '場景直徑',
     },
 
-    heatmapControlPanel: {
+    visualizationControlPanel: {
       ColorContrast: '熱圖顏色對比度',
+      FluxScale: '熱通量長度',
       ClickUpOrDownArrowButtonsToChange: '點擊上下箭頭改變參數',
     },
 

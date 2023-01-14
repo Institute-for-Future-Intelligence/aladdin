@@ -16,7 +16,6 @@ import {
 import { DoubleSide, Euler, Material, Shape, Vector3 } from 'three';
 import * as Selector from 'src/stores/selector';
 import { useStore } from 'src/stores/common';
-import { usePrimitiveStore } from '../../stores/commonPrimitive';
 import { Util } from '../../Util';
 import { useDataStore } from '../../stores/commonData';
 
@@ -144,7 +143,7 @@ const RectangleDoor = React.memo(
         }
       }
       return vectors;
-    }, [id, dimension, showHeatFluxes]);
+    }, [id, dimension, showHeatFluxes, heatFluxScaleFactor]);
 
     const doorShape = useMemo(() => {
       const s = new Shape();

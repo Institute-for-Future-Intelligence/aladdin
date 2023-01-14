@@ -1088,8 +1088,9 @@ export const i18n_tr = {
       SceneDiameter: 'Scene diameter',
     },
 
-    heatmapControlPanel: {
+    visualizationControlPanel: {
       ColorContrast: 'Renk Kontrastı',
+      FluxScale: 'Flux Scale',
       ClickUpOrDownArrowButtonsToChange: 'Değiştirmek için yukarı veya aşağı ok butonlarına tıklayınız',
     },
 

@@ -1087,8 +1087,9 @@ export const i18n_es = {
       SceneDiameter: 'Scene diameter',
     },
 
-    heatmapControlPanel: {
+    visualizationControlPanel: {
       ColorContrast: 'Color Contrast',
+      FluxScale: 'Flux Scale',
       ClickUpOrDownArrowButtonsToChange: 'Click up or down arrow buttons to change',
     },
 

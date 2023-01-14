@@ -18,7 +18,6 @@ import {
 } from 'src/constants';
 import { FrameDataType, MullionDataType, Shutter, WireframeDataType } from './window';
 import { ShutterProps } from 'src/models/WindowModel';
-import { usePrimitiveStore } from '../../stores/commonPrimitive';
 import { Util } from '../../Util';
 import { useDataStore } from '../../stores/commonData';
 
@@ -512,7 +511,7 @@ const ArchedWindow = ({
       }
     }
     return vectors;
-  }, [id, dimension, showHeatFluxes]);
+  }, [id, dimension, showHeatFluxes, heatFluxScaleFactor]);
 
   const shutterWidth = useMemo(() => shutter.width * lx, [lx, shutter.width]);
   const shutterHeight = useMemo(() => lz - Math.min(archHeight, lz, lx / 2), [lx, lz, archHeight]);

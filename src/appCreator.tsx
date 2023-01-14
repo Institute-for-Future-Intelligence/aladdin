@@ -49,7 +49,7 @@ import { useStoreRef } from './stores/commonRef';
 import { UndoableCameraChange } from './undo/UndoableCameraChange';
 import SolarPanelVisibility from './analysis/solarPanelVisibility';
 import ShareLink from './shareLinks';
-import HeatmapControlPanel from './panels/heatmapControlPanel';
+import VisualizationControlPanel from './panels/visualizationControlPanel';
 import VisibilityResultsPanel from './panels/visibilityResultsPanel';
 import ThermalSimulation from './analysis/thermalSimulation';
 import StaticSolarRadiationSimulation from './analysis/staticSolarRadiationSimulation';
@@ -414,7 +414,7 @@ const AppCreator = ({ viewOnly = false }: AppCreatorProps) => {
       {showYearlyUpdraftTowerYieldPanel && <YearlySolarUpdraftTowerYieldPanel city={city} />}
       {showDailyBuildingEnergyPanel && <DailyBuildingEnergyPanel city={city} />}
       {showYearlyBuildingEnergyPanel && <YearlyBuildingEnergyPanel city={city} />}
-      {showSolarRadiationHeatmap && <HeatmapControlPanel />}
+      {showSolarRadiationHeatmap && <VisualizationControlPanel />}
       {showEvolutionPanel && <SolarPanelOptimizationResult />}
       <DropdownContextMenu>
         <div>
