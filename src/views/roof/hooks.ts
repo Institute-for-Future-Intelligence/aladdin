@@ -1,5 +1,5 @@
 /*
- * @Copyright 2022. Institute for Future Intelligence, Inc.
+ * @Copyright 2022-2023. Institute for Future Intelligence, Inc.
  */
 
 import { useEffect, useMemo, useRef, useState } from 'react';
@@ -327,6 +327,7 @@ export const useUpdateSegmentVerticesMap = (
 ) => {
   const runDynamicSimulation = usePrimitiveStore(Selector.runDynamicSimulation);
   const runStaticSimulation = usePrimitiveStore(Selector.runStaticSimulation);
+  const runDailyThermalSimulation = usePrimitiveStore(Selector.runDailyThermalSimulation);
 
   const updateSegmentVertices = () => {
     const relToFoundation = (v: Vector3) => v.clone().add(centroid);
@@ -353,7 +354,8 @@ export const useUpdateSegmentVerticesMap = (
     return vertices;
   };
 
-  if (runDynamicSimulation || runStaticSimulation) {
+  // we don't render heatmaps in yearly thermal simulations
+  if (runDynamicSimulation || runStaticSimulation || runDailyThermalSimulation) {
     updateSegmentVertices();
   }
 

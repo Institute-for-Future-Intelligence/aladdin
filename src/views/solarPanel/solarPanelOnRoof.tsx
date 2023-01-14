@@ -510,7 +510,7 @@ const SolarPanelOnRoof = ({
     if (drawPole) {
       return new Vector3(cx, cy, cz + hz + poleHeight);
     }
-    return new Vector3(cx, cy, cz + lz + 0.02); // raise it by 2 cm to show
+    return new Vector3(cx, cy, cz + lz / 2 + 0.02); // raise it by 2 cm to show
   }, [cx, cy, cz, hz, drawPole, poleHeight]);
 
   const euler = useMemo(() => {
@@ -1005,7 +1005,7 @@ const SolarPanelOnRoof = ({
         <Plane
           name={'Solar Panel Simulation Plane'}
           uuid={id}
-          position={[0, 0, lz]}
+          // position={[0, 0, lz]} // already top surface
           args={[lx, ly]}
           userData={{ simulation: true }}
           receiveShadow={false}

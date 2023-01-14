@@ -819,7 +819,6 @@ export const useStore = create<CommonStoreState>(
 
           importContent(content, title) {
             immerSet((state: CommonStoreState) => {
-              state.undoManager.clear();
               state.world = content.world;
               state.viewState = content.view;
               state.elements = content.elements;
@@ -859,6 +858,7 @@ export const useStore = create<CommonStoreState>(
               state.fittestIndividualResults.length = 0;
               state.roofSegmentVerticesMap = new Map<string, Vector3[][]>();
               state.roofSegmentVerticesWithoutOverhangMap = new Map<string, Vector3[][]>();
+              state.undoManager.clear();
             });
             usePrimitiveStore.setState((state) => {
               state.showSolarRadiationHeatmap = false;

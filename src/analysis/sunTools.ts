@@ -1,5 +1,5 @@
 /*
- * @Copyright 2021-2022. Institute for Future Intelligence, Inc.
+ * @Copyright 2021-2023. Institute for Future Intelligence, Inc.
  */
 
 import { Vector3 } from 'three';
@@ -9,7 +9,13 @@ import { GroundModel } from '../models/GroundModel';
 import { TWO_PI, UNIT_VECTOR_POS_Z } from '../constants';
 import { SunMinutes } from './SunMinutes';
 
-export const AMBIENT_LIGHT_THRESHOLD = 0.5;
+// If a surface is covered by a thin structure such as a solar panel,
+// it receives no indirect light if the distance is shorter than this threshold.
+export const AMBIENT_LIGHT_THRESHOLD = 0.2;
+
+// This is used to offset a roof by default in solar radiation calculation
+export const ROOFTOP_SOLAR_PANEL_OFFSET = 0.1;
+
 export const TILT_ANGLE = (23.45 / 180.0) * Math.PI;
 
 const DAY_MILLISECONDS = 1000 * 60 * 60 * 24;
