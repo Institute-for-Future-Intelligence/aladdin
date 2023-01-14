@@ -79,6 +79,7 @@ import { ElementGrid } from './elementGrid';
 import { HorizontalRuler } from './horizontalRuler';
 import { showError } from '../helpers';
 import { usePrimitiveStore } from 'src/stores/commonPrimitive';
+import { useDataStore } from '../stores/commonData';
 
 const Cuboid = ({
   id,
@@ -133,7 +134,7 @@ const Cuboid = ({
   const hoveredHandle = useStore(Selector.hoveredHandle);
   const showSolarRadiationHeatmap = usePrimitiveStore(Selector.showSolarRadiationHeatmap);
   const solarRadiationHeatmapMaxValue = useStore(Selector.viewState.solarRadiationHeatmapMaxValue);
-  const getHeatmap = useStore(Selector.getHeatmap);
+  const getHeatmap = useDataStore(Selector.getHeatmap);
   const groundImage = useStore(Selector.viewState.groundImage);
 
   const {

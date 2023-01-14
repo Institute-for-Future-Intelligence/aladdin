@@ -76,6 +76,7 @@ import { usePrimitiveStore } from 'src/stores/commonPrimitive';
 import { InnerCommonState } from 'src/stores/InnerCommonState';
 import { RoofModel } from 'src/models/RoofModel';
 import produce from 'immer';
+import { useDataStore } from '../stores/commonData';
 
 interface WallAuxiliaryType {
   show: boolean;
@@ -141,7 +142,7 @@ const Foundation = ({
   const showSolarRadiationHeatmap = usePrimitiveStore(Selector.showSolarRadiationHeatmap);
   const solarRadiationHeatmapMaxValue = useStore(Selector.viewState.solarRadiationHeatmapMaxValue);
   const solarRadiationHeatmapReflectionOnly = useStore(Selector.viewState.solarRadiationHeatmapReflectionOnly);
-  const getHeatmap = useStore(Selector.getHeatmap);
+  const getHeatmap = useDataStore(Selector.getHeatmap);
   const elementGroupId = useStore(Selector.elementGroupId);
   const buildingResizerUpdateFlag = useStore(Selector.groupActionUpdateFlag);
 

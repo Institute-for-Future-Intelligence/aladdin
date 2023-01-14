@@ -12,11 +12,13 @@ export const user = (state: CommonStoreState) => state.user;
 
 export const userCount = (state: CommonStoreState) => state.userCount;
 
-export const getHeatmap = (state: CommonStoreState) => state.getHeatmap;
+export const getHeatmap = (state: DataStoreState) => state.getHeatmap;
 
-export const setHeatmap = (state: CommonStoreState) => state.setHeatmap;
+export const setHeatmap = (state: DataStoreState) => state.setHeatmap;
 
-export const clearHeatmaps = (state: CommonStoreState) => state.clearHeatmaps;
+export const clearHeatmaps = (state: DataStoreState) => state.clearHeatmaps;
+
+export const clearDataStore = (state: DataStoreState) => state.clearDataStore;
 
 export const flagOfDailySimulation = (state: PrimitiveStoreState) => state.flagOfDailySimulation;
 

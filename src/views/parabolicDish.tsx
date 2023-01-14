@@ -35,6 +35,7 @@ import { LineData } from './LineData';
 import { Paraboloid } from './shapes';
 import GlowImage from '../resources/glow.png';
 import { usePrimitiveStore } from '../stores/commonPrimitive';
+import { useDataStore } from '../stores/commonData';
 
 const ParabolicDish = ({
   id,
@@ -70,7 +71,7 @@ const ParabolicDish = ({
   const elements = useStore(Selector.elements);
   const showSolarRadiationHeatmap = usePrimitiveStore(Selector.showSolarRadiationHeatmap);
   const solarRadiationHeatmapMaxValue = useStore(Selector.viewState.solarRadiationHeatmapMaxValue);
-  const getHeatmap = useStore(Selector.getHeatmap);
+  const getHeatmap = useDataStore(Selector.getHeatmap);
   const shadowEnabled = useStore(Selector.viewState.shadowEnabled);
   const getElementById = useStore(Selector.getElementById);
   const selectMe = useStore(Selector.selectMe);

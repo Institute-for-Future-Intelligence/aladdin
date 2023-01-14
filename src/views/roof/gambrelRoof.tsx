@@ -40,6 +40,7 @@ import {
 } from './hooks';
 import RoofSegment from './roofSegment';
 import { usePrimitiveStore } from '../../stores/commonPrimitive';
+import { useDataStore } from '../../stores/commonData';
 
 const GambrelRoofWirefram = React.memo(({ roofSegments, thickness, lineWidth, lineColor }: RoofWireframeProps) => {
   if (roofSegments.length === 0) {
@@ -661,7 +662,7 @@ const GambrelRoof = (roofModel: GambrelRoofModel) => {
   const selectMe = useStore(Selector.selectMe);
   const showSolarRadiationHeatmap = usePrimitiveStore(Selector.showSolarRadiationHeatmap);
   const solarRadiationHeatmapMaxValue = useStore(Selector.viewState.solarRadiationHeatmapMaxValue);
-  const getHeatmap = useStore(Selector.getHeatmap);
+  const getHeatmap = useDataStore(Selector.getHeatmap);
   const [heatmapTextures, setHeatmapTextures] = useState<CanvasTexture[]>([]);
 
   useEffect(() => {

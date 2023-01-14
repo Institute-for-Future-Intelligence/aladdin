@@ -26,6 +26,7 @@ import i18n from '../i18n/i18n';
 import { LineData } from './LineData';
 import { ParabolicCylinder } from './shapes';
 import { usePrimitiveStore } from '../stores/commonPrimitive';
+import { useDataStore } from '../stores/commonData';
 
 const ParabolicTrough = ({
   id,
@@ -60,7 +61,7 @@ const ParabolicTrough = ({
   const elements = useStore(Selector.elements);
   const showSolarRadiationHeatmap = usePrimitiveStore(Selector.showSolarRadiationHeatmap);
   const solarRadiationHeatmapMaxValue = useStore(Selector.viewState.solarRadiationHeatmapMaxValue);
-  const getHeatmap = useStore(Selector.getHeatmap);
+  const getHeatmap = useDataStore(Selector.getHeatmap);
   const shadowEnabled = useStore(Selector.viewState.shadowEnabled);
   const getElementById = useStore(Selector.getElementById);
   const selectMe = useStore(Selector.selectMe);

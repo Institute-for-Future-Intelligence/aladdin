@@ -41,6 +41,7 @@ import {
 import RoofSegment from './roofSegment';
 import { RoofUtil } from './RoofUtil';
 import { usePrimitiveStore } from '../../stores/commonPrimitive';
+import { useDataStore } from '../../stores/commonData';
 
 const intersectionPlanePosition = new Vector3();
 const intersectionPlaneRotation = new Euler();
@@ -556,7 +557,7 @@ const MansardRoof = (roofModel: MansardRoofModel) => {
   const selectMe = useStore(Selector.selectMe);
   const showSolarRadiationHeatmap = usePrimitiveStore(Selector.showSolarRadiationHeatmap);
   const solarRadiationHeatmapMaxValue = useStore(Selector.viewState.solarRadiationHeatmapMaxValue);
-  const getHeatmap = useStore(Selector.getHeatmap);
+  const getHeatmap = useDataStore(Selector.getHeatmap);
   const [heatmapTextures, setHeatmapTextures] = useState<CanvasTexture[]>([]);
   const topSurfaceMeshRef = useRef<Mesh>(null);
 

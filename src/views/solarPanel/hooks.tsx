@@ -18,6 +18,7 @@ import { Util } from 'src/Util';
 import { CanvasTexture, RepeatWrapping } from 'three';
 import * as Selector from '../../stores/selector';
 import { usePrimitiveStore } from '../../stores/commonPrimitive';
+import { useDataStore } from '../../stores/commonData';
 
 export const useSolarPanelHeatmapTexture = (id: string) => {
   const showSolarRadiationHeatmap = usePrimitiveStore(Selector.showSolarRadiationHeatmap);
@@ -26,7 +27,7 @@ export const useSolarPanelHeatmapTexture = (id: string) => {
 
   useEffect(() => {
     if (showSolarRadiationHeatmap) {
-      const heatmap = useStore.getState().getHeatmap(id);
+      const heatmap = useDataStore.getState().getHeatmap(id);
       if (heatmap) {
         setHeatmapTexture(Util.fetchHeatmapTexture(heatmap, solarRadiationHeatmapMaxValue ?? 5));
       }

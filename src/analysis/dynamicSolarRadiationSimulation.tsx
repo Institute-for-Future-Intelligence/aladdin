@@ -40,6 +40,7 @@ import { RoofModel, RoofType } from '../models/RoofModel';
 import { DoorModel, DoorType } from '../models/DoorModel';
 import { SolarRadiation } from './SolarRadiation';
 import { usePrimitiveStore } from '../stores/commonPrimitive';
+import { useDataStore } from '../stores/commonData';
 
 export interface DynamicSolarRadiationSimulationProps {
   city: string | null;
@@ -54,8 +55,8 @@ const DynamicSolarRadiationSimulation = ({ city }: DynamicSolarRadiationSimulati
   const getWeather = useStore(Selector.getWeather);
   const getParent = useStore(Selector.getParent);
   const getFoundation = useStore(Selector.getFoundation);
-  const setHeatmap = useStore(Selector.setHeatmap);
-  const clearHeatmaps = useStore(Selector.clearHeatmaps);
+  const setHeatmap = useDataStore(Selector.setHeatmap);
+  const clearHeatmaps = useDataStore(Selector.clearHeatmaps);
   const runSimulation = usePrimitiveStore(Selector.runDynamicSimulation);
   const pauseSimulation = usePrimitiveStore(Selector.pauseSimulation);
   const solarRadiationHeatmapReflectionOnly = useStore(Selector.viewState.solarRadiationHeatmapReflectionOnly);

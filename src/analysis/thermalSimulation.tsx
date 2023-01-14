@@ -58,8 +58,8 @@ const ThermalSimulation = ({ city }: ThermalSimulationProps) => {
   const getParent = useStore(Selector.getParent);
   const getChildrenOfType = useStore(Selector.getChildrenOfType);
   const getPvModule = useStore(Selector.getPvModule);
-  const setHeatmap = useStore(Selector.setHeatmap);
-  const clearHeatmaps = useStore(Selector.clearHeatmaps);
+  const setHeatmap = useDataStore(Selector.setHeatmap);
+  const clearDataStore = useDataStore(Selector.clearDataStore);
   const runDailySimulation = usePrimitiveStore(Selector.runDailyThermalSimulation);
   const pauseDailySimulation = usePrimitiveStore(Selector.pauseDailyThermalSimulation);
   const runYearlySimulation = usePrimitiveStore(Selector.runYearlyThermalSimulation);
@@ -214,7 +214,7 @@ const ThermalSimulation = ({ city }: ThermalSimulationProps) => {
   const resetSolarHeatMaps = () => {
     // must clear the map to allow the array to be recreated in case the dimensions will change
     solarHeatmapRef.current.clear();
-    clearHeatmaps();
+    clearDataStore();
   };
 
   /* do the daily simulation to generate hourly data and daily total */

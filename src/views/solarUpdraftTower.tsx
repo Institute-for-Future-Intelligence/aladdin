@@ -15,6 +15,7 @@ import { useFrame } from '@react-three/fiber';
 import { Line2 } from 'three/examples/jsm/lines/Line2';
 import { Util } from '../Util';
 import { usePrimitiveStore } from '../stores/commonPrimitive';
+import { useDataStore } from '../stores/commonData';
 
 const SolarUpdraftTower = ({ foundation }: { foundation: FoundationModel }) => {
   const date = useStore(Selector.world.date);
@@ -24,7 +25,7 @@ const SolarUpdraftTower = ({ foundation }: { foundation: FoundationModel }) => {
   const simulationPaused = usePrimitiveStore(Selector.simulationPaused);
   const showSolarRadiationHeatmap = usePrimitiveStore(Selector.showSolarRadiationHeatmap);
   const solarRadiationHeatmapMaxValue = useStore(Selector.viewState.solarRadiationHeatmapMaxValue);
-  const getHeatmap = useStore(Selector.getHeatmap);
+  const getHeatmap = useDataStore(Selector.getHeatmap);
 
   const [heatmapTexture, setHeatmapTexture] = useState<CanvasTexture | null>(null);
   const streamlinesRef = useRef<Group>();

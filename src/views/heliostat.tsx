@@ -17,6 +17,7 @@ import i18n from '../i18n/i18n';
 import { FoundationModel } from '../models/FoundationModel';
 import { HeliostatModel } from '../models/HeliostatModel';
 import { usePrimitiveStore } from '../stores/commonPrimitive';
+import { useDataStore } from '../stores/commonData';
 
 const Heliostat = ({
   id,
@@ -49,7 +50,7 @@ const Heliostat = ({
   const elements = useStore(Selector.elements);
   const showSolarRadiationHeatmap = usePrimitiveStore(Selector.showSolarRadiationHeatmap);
   const solarRadiationHeatmapMaxValue = useStore(Selector.viewState.solarRadiationHeatmapMaxValue);
-  const getHeatmap = useStore(Selector.getHeatmap);
+  const getHeatmap = useDataStore(Selector.getHeatmap);
   const shadowEnabled = useStore(Selector.viewState.shadowEnabled);
   const getElementById = useStore(Selector.getElementById);
   const selectMe = useStore(Selector.selectMe);

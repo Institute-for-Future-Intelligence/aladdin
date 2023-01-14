@@ -188,7 +188,7 @@ const Wall = ({ wallModel, foundationModel }: WallProps) => {
   const showSolarRadiationHeatmap = usePrimitiveStore(Selector.showSolarRadiationHeatmap);
   const showHeatFluxes = usePrimitiveStore(Selector.showHeatFluxes);
   const solarRadiationHeatmapMaxValue = useStore(Selector.viewState.solarRadiationHeatmapMaxValue);
-  const getHeatmap = useStore(Selector.getHeatmap);
+  const getHeatmap = useDataStore(Selector.getHeatmap);
   const [heatmapTexture, setHeatmapTexture] = useState<CanvasTexture | null>(null);
   const heatFluxScaleFactor = useStore(Selector.viewState.heatFluxScaleFactor);
   const heatFluxColor = useStore(Selector.viewState.heatFluxColor);

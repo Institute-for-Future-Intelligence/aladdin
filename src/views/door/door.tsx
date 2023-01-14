@@ -19,6 +19,7 @@ import { HALF_PI, INVALID_ELEMENT_COLOR } from 'src/constants';
 import { RulerOnWall } from '../rulerOnWall';
 import { Util } from '../../Util';
 import { usePrimitiveStore } from '../../stores/commonPrimitive';
+import { useDataStore } from '../../stores/commonData';
 
 interface DoorHandleWapperProps {
   dimension: number[];
@@ -143,7 +144,7 @@ const Door = (doorModel: DoorModel) => {
   const showSolarRadiationHeatmap = usePrimitiveStore(Selector.showSolarRadiationHeatmap);
   const showHeatFluxes = usePrimitiveStore(Selector.showHeatFluxes);
   const solarRadiationHeatmapMaxValue = useStore(Selector.viewState.solarRadiationHeatmapMaxValue);
-  const getHeatmap = useStore(Selector.getHeatmap);
+  const getHeatmap = useDataStore(Selector.getHeatmap);
   const [heatmapTexture, setHeatmapTexture] = useState<CanvasTexture | null>(null);
 
   const renderDoor = () => {

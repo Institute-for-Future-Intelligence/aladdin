@@ -119,12 +119,6 @@ export interface CommonStoreState {
   floatingWindowOpacity: number;
   cloudFile: string | undefined;
 
-  // store the calculated heat map on the surface of an element
-  heatmaps: Map<string, number[][]>;
-  setHeatmap: (id: string, data: number[][]) => void;
-  getHeatmap: (id: string) => number[][] | undefined;
-  clearHeatmaps: () => void;
-
   roofSegmentVerticesMap: Map<string, Vector3[][]>; // key: roofId, val: [segmentIndex][vertex]
   getRoofSegmentVertices: (id: string) => Vector3[][] | undefined;
   roofSegmentVerticesWithoutOverhangMap: Map<string, Vector3[][]>;
@@ -776,22 +770,6 @@ export const useStore = create<CommonStoreState>(
           floatingWindowOpacity: FLOATING_WINDOW_OPACITY,
           cloudFile: undefined,
 
-          heatmaps: new Map<string, number[][]>(),
-          setHeatmap(id, data) {
-            immerSet((state: CommonStoreState) => {
-              state.heatmaps.set(id, data);
-            });
-          },
-          getHeatmap(id) {
-            // not sure why this cannot be handled with immer
-            return get().heatmaps.get(id);
-          },
-          clearHeatmaps() {
-            immerSet((state: CommonStoreState) => {
-              state.heatmaps.clear();
-            });
-          },
-
           roofSegmentVerticesMap: new Map<string, Vector3[][]>(),
           getRoofSegmentVertices(id) {
             return get().roofSegmentVerticesMap.get(id);
@@ -842,15 +820,12 @@ export const useStore = create<CommonStoreState>(
           importContent(content, title) {
             immerSet((state: CommonStoreState) => {
               state.undoManager.clear();
-              state.heatmaps.clear();
               usePrimitiveStore.setState((state) => {
                 state.showSolarRadiationHeatmap = false;
                 state.showHeatFluxes = false;
               });
               useDataStore.setState((state) => {
-                state.hourlyHeatExchangeArrayMap = new Map<string, number[]>();
-                state.hourlySolarHeatGainArrayMap = new Map<string, number[]>();
-                state.hourlySolarPanelOutputArrayMap = new Map<string, number[]>();
+                state.clearDataStore();
               });
               state.world = content.world;
               state.viewState = content.view;
@@ -931,9 +906,11 @@ export const useStore = create<CommonStoreState>(
           clearContent() {
             immerSet((state: CommonStoreState) => {
               state.elements = [];
-              state.heatmaps.clear();
               state.roofSegmentVerticesMap.clear();
               state.roofSegmentVerticesWithoutOverhangMap.clear();
+            });
+            useDataStore.setState((state) => {
+              state.clearDataStore();
             });
           },
           createEmptyFile() {
@@ -953,16 +930,13 @@ export const useStore = create<CommonStoreState>(
               state.actionInfo = undefined;
               state.roofSegmentVerticesMap.clear();
               state.roofSegmentVerticesWithoutOverhangMap.clear();
-              state.heatmaps.clear();
               state.undoManager.clear();
               usePrimitiveStore.setState((state) => {
                 state.showSolarRadiationHeatmap = false;
                 state.showHeatFluxes = false;
               });
               useDataStore.setState((state) => {
-                state.hourlyHeatExchangeArrayMap = new Map<string, number[]>();
-                state.hourlySolarHeatGainArrayMap = new Map<string, number[]>();
-                state.hourlySolarPanelOutputArrayMap = new Map<string, number[]>();
+                state.clearDataStore();
               });
             });
           },
