@@ -15,7 +15,7 @@ import { FoundationModel } from 'src/models/FoundationModel';
 import { GROUND_ID, ORIGIN_VECTOR2, ZERO_TOLERANCE } from 'src/constants';
 import { Object3D, Vector2, Vector3 } from 'three';
 import { ElementModel } from 'src/models/ElementModel';
-import { useStoreRef } from 'src/stores/commonRef';
+import { useRefStore } from 'src/stores/commonRef';
 import { invalidate } from '@react-three/fiber';
 import { Util } from '../../../Util';
 
@@ -100,7 +100,7 @@ const FoundationHeightInput = ({ setDialogVisible }: { setDialogVisible: (b: boo
     if (parentObject) {
       for (const obj of parentObject.children) {
         if (obj.name.includes(`${curr.id}`)) {
-          useStoreRef.getState().contentRef?.current?.add(obj);
+          useRefStore.getState().contentRef?.current?.add(obj);
           break;
         }
       }
@@ -133,7 +133,7 @@ const FoundationHeightInput = ({ setDialogVisible }: { setDialogVisible: (b: boo
               // check fall off
               const newRelZ = e.cz + parent.cz - value / 2;
               if (Math.abs(newRelZ) > value / 2) {
-                const contentRef = useStoreRef.getState().contentRef;
+                const contentRef = useRefStore.getState().contentRef;
                 const parentObject = getObjectChildById(contentRef?.current, parent.id);
                 handleDetachParent(parentObject, parent, e);
               } else {
@@ -153,7 +153,7 @@ const FoundationHeightInput = ({ setDialogVisible }: { setDialogVisible: (b: boo
     currId: string,
   ) => {
     if (!attachParentId || !currParentId) return;
-    const contentRef = useStoreRef.getState().contentRef;
+    const contentRef = useRefStore.getState().contentRef;
     const currParentObj = getObjectChildById(contentRef?.current, currParentId);
     const currObj = getObjectChildById(currParentId === GROUND_ID ? contentRef?.current : currParentObj, currId);
     if (currObj && contentRef?.current) {

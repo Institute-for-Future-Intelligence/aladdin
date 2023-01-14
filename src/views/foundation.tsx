@@ -15,7 +15,7 @@ import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { Box, Line, Plane, Sphere } from '@react-three/drei';
 import { CanvasTexture, Euler, Group, Mesh, Raycaster, RepeatWrapping, TextureLoader, Vector2, Vector3 } from 'three';
 import { useStore } from '../stores/common';
-import { useStoreRef } from '../stores/commonRef';
+import { useRefStore } from '../stores/commonRef';
 import { FoundationModel } from '../models/FoundationModel';
 import { ThreeEvent, useThree } from '@react-three/fiber';
 import {
@@ -305,7 +305,7 @@ const Foundation = ({
         }
         state.deletedWallId = null;
       });
-      useStoreRef.getState().setEnableOrbitController(true);
+      useRefStore.getState().setEnableOrbitController(true);
       setWallAuxToAxis({ show: false, direction: null, position: null });
       setWallAuxToWallArray([
         { show: false, direction: null, position: null },
@@ -1377,8 +1377,8 @@ const Foundation = ({
           });
         }
       } else {
-        useStoreRef.getState().selectNone();
-        useStoreRef.setState((state) => {
+        useRefStore.getState().selectNone();
+        useRefStore.setState((state) => {
           state.foundationRef = groupRef;
         });
       }
@@ -1490,7 +1490,7 @@ const Foundation = ({
         state.resizeHandleType = resizeHandleType;
         state.resizeAnchor = Util.wallAbsolutePosition(p, foundationModel);
       });
-      useStoreRef.getState().setEnableOrbitController(false);
+      useRefStore.getState().setEnableOrbitController(false);
       grabRef.current = selectedElement;
     }
   };
@@ -1540,7 +1540,7 @@ const Foundation = ({
       case ObjectType.Wall: {
         const wall = elem as WallModel;
         if (isSettingWallEndPointRef.current && addedWallIdRef.current && baseRef.current) {
-          useStoreRef.getState().setEnableOrbitController(true);
+          useRefStore.getState().setEnableOrbitController(true);
           setCommonStore((state) => {
             if (state.actionModeLock) {
               state.objectTypeToAdd = ObjectType.Wall;
@@ -2440,7 +2440,7 @@ const Foundation = ({
         addedWallIdRef.current = addedWall.id;
         isSettingWallStartPointRef.current = true;
         setShowGrid(true);
-        useStoreRef.getState().setEnableOrbitController(false);
+        useRefStore.getState().setEnableOrbitController(false);
         setCommonStore((state) => {
           state.addedWallId = addedWall.id;
           state.objectTypeToAdd = ObjectType.None;

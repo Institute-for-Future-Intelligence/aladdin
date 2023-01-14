@@ -25,7 +25,7 @@ import { CheckboxChangeEvent } from 'antd/lib/checkbox';
 import { UndoableResetView } from './undo/UndoableResetView';
 import { ExclamationCircleOutlined } from '@ant-design/icons';
 import { Undoable } from './undo/Undoable';
-import { useStoreRef } from './stores/commonRef';
+import { useRefStore } from './stores/commonRef';
 import { UndoableDelete } from './undo/UndoableDelete';
 import { UndoablePaste } from './undo/UndoablePaste';
 import CspSimulationSettings from './components/contextMenu/elementMenu/cspSimulationSettings';
@@ -930,7 +930,7 @@ const MainMenu = ({ viewOnly, set2DView, resetView, zoomView, canvas }: MainMenu
                 oldCameraPosition: [...cameraPosition],
                 oldPanCenter: [...panCenter],
                 undo: () => {
-                  const orbitControlsRef = useStoreRef.getState().orbitControlsRef;
+                  const orbitControlsRef = useRefStore.getState().orbitControlsRef;
                   if (orbitControlsRef?.current) {
                     orbitControlsRef.current.object.position.set(
                       undoableResetView.oldCameraPosition[0],

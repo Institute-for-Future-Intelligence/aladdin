@@ -19,7 +19,7 @@ import { Point2 } from 'src/models/Point2';
 import { MansardRoofModel, RoofModel, RoofType } from 'src/models/RoofModel';
 import { WallModel } from 'src/models/WallModel';
 import { useStore } from 'src/stores/common';
-import { useStoreRef } from 'src/stores/commonRef';
+import { useRefStore } from 'src/stores/commonRef';
 import * as Selector from 'src/stores/selector';
 import { ActionType, ObjectType, RoofHandleType, RoofTexture } from 'src/types';
 import { UnoableResizeMansardRoofRidge } from 'src/undo/UndoableResize';
@@ -880,7 +880,7 @@ const MansardRoof = (roofModel: MansardRoofModel) => {
                 intersectionPlaneRotation.set(-HALF_PI, 0, r, 'ZXY');
               }
               setRoofHandleType(RoofHandleType.Top);
-              useStoreRef.getState().setEnableOrbitController(false);
+              useRefStore.getState().setEnableOrbitController(false);
             }}
             onPointerOver={() => {
               setCommonStore((state) => {
@@ -911,7 +911,7 @@ const MansardRoof = (roofModel: MansardRoofModel) => {
                       Infinity,
                     ),
                   );
-                  useStoreRef.getState().setEnableOrbitController(false);
+                  useRefStore.getState().setEnableOrbitController(false);
                   oldWidth.current = width;
                 }}
               />
@@ -997,7 +997,7 @@ const MansardRoof = (roofModel: MansardRoofModel) => {
             setEnableIntersectionPlane(false);
             setRoofHandleType(RoofHandleType.Null);
             setRidgeHandleIndex(null);
-            useStoreRef.getState().setEnableOrbitController(true);
+            useRefStore.getState().setEnableOrbitController(true);
           }}
         >
           <meshBasicMaterial side={DoubleSide} transparent={true} opacity={0.5} />

@@ -6,7 +6,7 @@ import React, { useEffect, useMemo, useRef, useState } from 'react';
 import { Cylinder, Sphere } from '@react-three/drei';
 import { Euler, Mesh, Vector3 } from 'three';
 import { useStore } from '../stores/common';
-import { useStoreRef } from 'src/stores/commonRef';
+import { useRefStore } from 'src/stores/commonRef';
 import * as Selector from '../stores/selector';
 import { ThreeEvent, useThree } from '@react-three/fiber';
 import { HALF_PI, MOVE_HANDLE_RADIUS, UNIT_VECTOR_POS_Z } from '../constants';
@@ -80,7 +80,7 @@ const WindTurbine = ({
 
   useEffect(() => {
     const handlePointerUp = () => {
-      useStoreRef.getState().setEnableOrbitController(true);
+      useRefStore.getState().setEnableOrbitController(true);
       pointerDown.current = false;
     };
     window.addEventListener('pointerup', handlePointerUp);

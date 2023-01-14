@@ -28,7 +28,7 @@ import {
   RotateHandleType,
 } from '../types';
 import i18n from '../i18n/i18n';
-import { useStoreRef } from 'src/stores/commonRef';
+import { useRefStore } from 'src/stores/commonRef';
 import { HumanData } from '../HumanData';
 import { Util } from '../Util';
 import { usePrimitiveStore } from 'src/stores/commonPrimitive';
@@ -75,7 +75,7 @@ const Human = ({
   const [hovered, setHovered] = useState(false);
   const [updateFlag, setUpdateFlag] = useState(false);
 
-  const contentRef = useStoreRef((state) => state.contentRef);
+  const contentRef = useRefStore((state) => state.contentRef);
   const parentRef = useRef<Object3D | null>(null);
   const groupRef = useRef<Group>(null);
   const planeRef = useRef<Mesh>(null);
@@ -260,7 +260,7 @@ const Human = ({
                   if (e.button === 2) return; // ignore right-click
                   if (e.eventObject === e.intersections[0].eventObject) {
                     selectMe(id, e, ActionType.Move);
-                    useStoreRef.setState((state) => {
+                    useRefStore.setState((state) => {
                       state.humanRef = groupRef;
                     });
                   }
@@ -351,7 +351,7 @@ const Human = ({
                 onPointerDown={(e) => {
                   if (e.eventObject === e.intersections[0].eventObject) {
                     selectMe(id, e, ActionType.Move);
-                    useStoreRef.setState((state) => {
+                    useRefStore.setState((state) => {
                       state.humanRef = groupRef;
                     });
                   }

@@ -6,7 +6,7 @@ import React, { useEffect, useMemo, useRef, useState } from 'react';
 import { Box, Cone, Line, Plane, Ring, Sphere } from '@react-three/drei';
 import { Color, DoubleSide, Euler, FrontSide, Mesh, Raycaster, Vector2, Vector3 } from 'three';
 import { useStore } from '../../stores/common';
-import { useStoreRef } from 'src/stores/commonRef';
+import { useRefStore } from 'src/stores/commonRef';
 import * as Selector from '../../stores/selector';
 import { ThreeEvent, useThree } from '@react-three/fiber';
 import {
@@ -477,7 +477,7 @@ const SolarPanelOnWall = ({
   const initPointerDown = () => {
     oldTiltRef.current = tiltAngle;
     pointerDownRef.current = true;
-    useStoreRef.getState().setEnableOrbitController(false);
+    useRefStore.getState().setEnableOrbitController(false);
   };
 
   const tiltHandlePointerMove = (
@@ -531,7 +531,7 @@ const SolarPanelOnWall = ({
       } as UndoableChange;
       useStore.getState().addUndoable(undoableChange);
     }
-    useStoreRef.getState().setEnableOrbitController(true);
+    useRefStore.getState().setEnableOrbitController(true);
     pointerDownRef.current = false;
   };
 

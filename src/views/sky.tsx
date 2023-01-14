@@ -21,7 +21,7 @@ import MountainImage from '../resources/mountain.jpg';
 import RuralImage from '../resources/rural.jpg';
 
 import { useStore } from '../stores/common';
-import { useStoreRef } from 'src/stores/commonRef';
+import { useRefStore } from 'src/stores/commonRef';
 import * as Selector from '../stores/selector';
 import { IntersectionPlaneType, ObjectType, ResizeHandleType, Theme } from '../types';
 import { ElementModel } from '../models/ElementModel';
@@ -205,7 +205,7 @@ const Sky = ({ theme = 'Default' }: SkyProps) => {
               intersectionPlaneAngle.set(-HALF_PI, 0, 0, 'ZXY');
             }
             if (selectedElement.type !== ObjectType.Foundation && selectedElement.type !== ObjectType.Cuboid) {
-              useStoreRef.getState().setEnableOrbitController(false);
+              useRefStore.getState().setEnableOrbitController(false);
             }
           }
         }
@@ -235,12 +235,12 @@ const Sky = ({ theme = 'Default' }: SkyProps) => {
   };
 
   const handleDetachParent = (elem: ElementModel, e: ElementModel) => {
-    const contentRef = useStoreRef.getState().contentRef;
+    const contentRef = useRefStore.getState().contentRef;
     const parentObject = getObjectChildById(contentRef?.current, elem.id);
     if (parentObject) {
       for (const obj of parentObject.children) {
         if (obj.name.includes(`${e.id}`)) {
-          useStoreRef.getState().contentRef?.current?.add(obj);
+          useRefStore.getState().contentRef?.current?.add(obj);
           break;
         }
       }
@@ -262,7 +262,7 @@ const Sky = ({ theme = 'Default' }: SkyProps) => {
     currId: string,
   ) => {
     if (!attachParentId || !currParentId) return;
-    const contentRef = useStoreRef.getState().contentRef;
+    const contentRef = useRefStore.getState().contentRef;
     if (contentRef?.current) {
       const currParentObj = Util.getObjectChildById(contentRef.current, currParentId);
       const currObj = Util.getObjectChildById(currParentId === GROUND_ID ? contentRef.current : currParentObj, currId);
@@ -311,7 +311,7 @@ const Sky = ({ theme = 'Default' }: SkyProps) => {
         if (intersectionObj.name === 'Ground') {
           // change parent: attach dom, set parentId?
           if (elementParentRef && elementParentRef.name !== 'Content') {
-            const contentRef = useStoreRef.getState().contentRef;
+            const contentRef = useRefStore.getState().contentRef;
             if (contentRef && contentRef.current) {
               contentRef.current.add(elementRef.current);
               setParentIdById(GROUND_ID, getObjectId(elementRef.current));
@@ -400,10 +400,10 @@ const Sky = ({ theme = 'Default' }: SkyProps) => {
                   updateElementLxById(tree.id, 2 * Math.hypot(p.x - tree.cx, p.y - tree.cy));
                   break;
               }
-              handleTreeOrHumanRefMove(useStoreRef.getState().treeRef, e);
+              handleTreeOrHumanRefMove(useRefStore.getState().treeRef, e);
               break;
             case ObjectType.Human:
-              handleTreeOrHumanRefMove(useStoreRef.getState().humanRef, e);
+              handleTreeOrHumanRefMove(useRefStore.getState().humanRef, e);
               break;
             case ObjectType.Cuboid:
               if (Util.isTopResizeHandle(resizeHandleType)) {
@@ -417,7 +417,7 @@ const Sky = ({ theme = 'Default' }: SkyProps) => {
                   }
                   state.selectedElementHeight = Math.max(1, p.z);
                 });
-                const cuboidRef = useStoreRef.getState().cuboidRef;
+                const cuboidRef = useRefStore.getState().cuboidRef;
                 if (cuboidRef?.current) {
                   for (const obj of cuboidRef.current.children) {
                     if (obj.name.includes('Human') || obj.name.includes('Tree')) {
@@ -679,10 +679,10 @@ const Sky = ({ theme = 'Default' }: SkyProps) => {
                 });
                 break;
             }
-            elementRef = useStoreRef.getState().treeRef?.current;
+            elementRef = useRefStore.getState().treeRef?.current;
             break;
           case ObjectType.Human:
-            elementRef = useStoreRef.getState().humanRef?.current;
+            elementRef = useRefStore.getState().humanRef?.current;
             break;
         }
         if (elementRef) {
@@ -754,7 +754,7 @@ const Sky = ({ theme = 'Default' }: SkyProps) => {
             if (Util.isPlantOrHuman(elem)) {
               setParentIdById(oldHumanOrTreeParentIdRef.current, elem.id);
             }
-            const contentRef = useStoreRef.getState().contentRef;
+            const contentRef = useRefStore.getState().contentRef;
             if (contentRef?.current && oldHumanOrTreeParentIdRef.current && elementRef) {
               if (oldHumanOrTreeParentIdRef.current === GROUND_ID) {
                 contentRef.current.add(elementRef);
@@ -812,7 +812,7 @@ const Sky = ({ theme = 'Default' }: SkyProps) => {
         state.resizeHandleType = null;
         state.rotateHandleType = null;
       });
-      useStoreRef.setState((state) => {
+      useRefStore.setState((state) => {
         state.humanRef = null;
         state.treeRef = null;
         state.setEnableOrbitController(true);

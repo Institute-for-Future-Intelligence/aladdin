@@ -13,7 +13,7 @@ import { UndoableChange } from 'src/undo/UndoableChange';
 import { UndoableChangeGroup } from 'src/undo/UndoableChangeGroup';
 import { CuboidModel } from 'src/models/CuboidModel';
 import { GROUND_ID, ORIGIN_VECTOR2, ZERO_TOLERANCE } from 'src/constants';
-import { useStoreRef } from 'src/stores/commonRef';
+import { useRefStore } from 'src/stores/commonRef';
 import { Object3D, Vector2, Vector3 } from 'three';
 import { ElementModel } from 'src/models/ElementModel';
 import { invalidate } from '@react-three/fiber';
@@ -100,7 +100,7 @@ const CuboidHeightInput = ({ setDialogVisible }: { setDialogVisible: (b: boolean
     if (parentObject) {
       for (const obj of parentObject.children) {
         if (obj.name.includes(`${curr.id}`)) {
-          useStoreRef.getState().contentRef?.current?.add(obj);
+          useRefStore.getState().contentRef?.current?.add(obj);
           break;
         }
       }
@@ -133,7 +133,7 @@ const CuboidHeightInput = ({ setDialogVisible }: { setDialogVisible: (b: boolean
               // check fall off
               const newRelZ = e.cz + parent.cz - value / 2;
               if (Math.abs(newRelZ) > value / 2) {
-                const contentRef = useStoreRef.getState().contentRef;
+                const contentRef = useRefStore.getState().contentRef;
                 const parentObject = getObjectChildById(contentRef?.current, parent.id);
                 handleDetachParent(parentObject, parent, e);
               } else {
@@ -153,7 +153,7 @@ const CuboidHeightInput = ({ setDialogVisible }: { setDialogVisible: (b: boolean
     currId: string,
   ) => {
     if (!attachParentId || !currParentId) return;
-    const contentRef = useStoreRef.getState().contentRef;
+    const contentRef = useRefStore.getState().contentRef;
     const currParentObj = getObjectChildById(contentRef?.current, currParentId);
     const currObj = getObjectChildById(currParentId === GROUND_ID ? contentRef?.current : currParentObj, currId);
     if (currObj && contentRef?.current) {

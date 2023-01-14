@@ -11,7 +11,7 @@ import { Point2 } from 'src/models/Point2';
 import { GambrelRoofModel, RoofModel, RoofType } from 'src/models/RoofModel';
 import { WallModel } from 'src/models/WallModel';
 import { useStore } from 'src/stores/common';
-import { useStoreRef } from 'src/stores/commonRef';
+import { useRefStore } from 'src/stores/commonRef';
 import * as Selector from 'src/stores/selector';
 import { UnoableResizeGambrelRoofRidge } from 'src/undo/UndoableResize';
 import { Util } from 'src/Util';
@@ -241,7 +241,7 @@ const GambrelRoof = (roofModel: GambrelRoofModel) => {
 
   const setInterSectionPlane = (handlePointV3: Vector3, wall: WallModel) => {
     setEnableIntersectionPlane(true);
-    useStoreRef.getState().setEnableOrbitController(false);
+    useRefStore.getState().setEnableOrbitController(false);
     intersectionPlanePosition.set(handlePointV3.x, handlePointV3.y, handlePointV3.z).add(centroid);
     if (foundation && wall) {
       intersectionPlaneRotation.set(HALF_PI, 0, wall.relativeAngle, 'ZXY');
@@ -772,7 +772,7 @@ const GambrelRoof = (roofModel: GambrelRoofModel) => {
                 intersectionPlaneRotation.set(-HALF_PI, 0, r, 'ZXY');
               }
               setRoofHandleType(RoofHandleType.TopMid);
-              useStoreRef.getState().setEnableOrbitController(false);
+              useRefStore.getState().setEnableOrbitController(false);
             }}
             onPointerOver={() => {
               setCommonStore((state) => {
@@ -1093,7 +1093,7 @@ const GambrelRoof = (roofModel: GambrelRoofModel) => {
             isPointerDownRef.current = false;
             setEnableIntersectionPlane(false);
             setRoofHandleType(RoofHandleType.Null);
-            useStoreRef.getState().setEnableOrbitController(true);
+            useRefStore.getState().setEnableOrbitController(true);
             useStore.getState().updateRoofRiseById(id, riseInnerState);
             updateRooftopElements(foundation, id, roofSegments, centroid, topZ, thickness);
           }}

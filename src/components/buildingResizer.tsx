@@ -7,7 +7,7 @@ import { Euler, Mesh, Raycaster, Vector2, Vector3 } from 'three';
 import { ThreeEvent, useThree } from '@react-three/fiber';
 import { Box, Circle, Cone, Plane, Sphere, Torus } from '@react-three/drei';
 import { MoveHandleType, ObjectType, ResizeHandleType, RotateHandleType } from 'src/types';
-import { useStoreRef } from 'src/stores/commonRef';
+import { useRefStore } from 'src/stores/commonRef';
 import { useStore } from 'src/stores/common';
 import * as Selector from '../stores/selector';
 import { HALF_PI, HIGHLIGHT_HANDLE_COLOR, RESIZE_HANDLE_COLOR, RESIZE_HANDLE_SIZE, TWO_PI } from 'src/constants';
@@ -179,7 +179,7 @@ const BuildingResizer = ({
 
   const initPointerDown = (event: ThreeEvent<PointerEvent>) => {
     setShowIntersectionPlane(true);
-    useStoreRef.getState().setEnableOrbitController(false);
+    useRefStore.getState().setEnableOrbitController(false);
     pointerDownRef.current = true;
     intersectionPlanePositionRef.current.set(0, 0, 0);
     intersectionPlaneRotationRef.current.set(0, 0, 0);
@@ -617,7 +617,7 @@ const BuildingResizer = ({
         break;
     }
     setShowIntersectionPlane(false);
-    useStoreRef.getState().setEnableOrbitController(true);
+    useRefStore.getState().setEnableOrbitController(true);
     pointerDownRef.current = false;
     setOperation(Operation.Null);
     setCommonStoreHandleType(null);

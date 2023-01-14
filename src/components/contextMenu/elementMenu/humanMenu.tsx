@@ -11,7 +11,7 @@ import { useStore } from '../../../stores/common';
 import * as Selector from '../../../stores/selector';
 import { HumanModel } from '../../../models/HumanModel';
 import { UndoableCheck } from '../../../undo/UndoableCheck';
-import { useStoreRef } from '../../../stores/commonRef';
+import { useRefStore } from '../../../stores/commonRef';
 import { Easing, Tween, update } from '@tweenjs/tween.js';
 import { Util } from '../../../Util';
 import { ObjectType } from '../../../types';
@@ -53,7 +53,7 @@ export const HumanMenu = React.memo(() => {
   }, [animationFlag]);
 
   const moveCamera = (x: number, y: number, z: number) => {
-    const orbitControlsRef = useStoreRef.getState().orbitControlsRef;
+    const orbitControlsRef = useRefStore.getState().orbitControlsRef;
     if (orbitControlsRef?.current) {
       orbitControlsRef.current.object.position.set(x, y, z);
       orbitControlsRef.current.update();

@@ -4,7 +4,7 @@
 
 import React, { RefObject, useEffect, useMemo, useRef } from 'react';
 import { useStore } from '../stores/common';
-import { useStoreRef } from '../stores/commonRef';
+import { useRefStore } from '../stores/commonRef';
 import * as Selector from '../stores/selector';
 import { Plane } from '@react-three/drei';
 import { DoubleSide, Euler, Group, Intersection, Mesh, Object3D, Raycaster, Vector2, Vector3 } from 'three';
@@ -231,7 +231,7 @@ const Ground = () => {
     currId: string,
   ) => {
     if (!attachParentId || !currParentId) return;
-    const contentRef = useStoreRef.getState().contentRef;
+    const contentRef = useRefStore.getState().contentRef;
     if (contentRef?.current) {
       const currParentObj = Util.getObjectChildById(contentRef.current, currParentId);
       const currObj = Util.getObjectChildById(currParentId === GROUND_ID ? contentRef.current : currParentObj, currId);
@@ -258,7 +258,7 @@ const Ground = () => {
         if (intersectionObj.name === 'Ground') {
           // change parent: attach dom, set parentId?
           if (elementParentRef && elementParentRef.name !== 'Content') {
-            const contentRef = useStoreRef.getState().contentRef;
+            const contentRef = useRefStore.getState().contentRef;
             if (contentRef && contentRef.current) {
               contentRef.current.add(elementRef.current);
               setParentIdById(GROUND_ID, getObjectId(elementRef.current));
@@ -455,12 +455,12 @@ const Ground = () => {
   };
 
   const handleDetachParent = (elem: ElementModel, e: ElementModel) => {
-    const contentRef = useStoreRef.getState().contentRef;
+    const contentRef = useRefStore.getState().contentRef;
     const parentObject = Util.getObjectChildById(contentRef?.current, elem.id);
     if (parentObject) {
       for (const obj of parentObject.children) {
         if (obj.name.includes(`${e.id}`)) {
-          useStoreRef.getState().contentRef?.current?.add(obj);
+          useRefStore.getState().contentRef?.current?.add(obj);
           break;
         }
       }
@@ -726,13 +726,13 @@ const Ground = () => {
     setRayCast(e);
     switch (elem.type) {
       case ObjectType.Tree:
-        elementRef = useStoreRef.getState().treeRef?.current;
+        elementRef = useRefStore.getState().treeRef?.current;
         break;
       case ObjectType.Flower:
-        elementRef = useStoreRef.getState().flowerRef?.current;
+        elementRef = useRefStore.getState().flowerRef?.current;
         break;
       case ObjectType.Human:
-        elementRef = useStoreRef.getState().humanRef?.current;
+        elementRef = useRefStore.getState().humanRef?.current;
         break;
     }
     if (elementRef && isHumanOrPlantMovedRef.current) {
@@ -800,7 +800,7 @@ const Ground = () => {
         if (Util.isPlantOrHuman(elem)) {
           setParentIdById(oldHumanOrPlantParentIdRef.current, elem.id);
         }
-        const contentRef = useStoreRef.getState().contentRef;
+        const contentRef = useRefStore.getState().contentRef;
         if (contentRef?.current && oldHumanOrPlantParentIdRef.current && elementRef) {
           if (oldHumanOrPlantParentIdRef.current === GROUND_ID) {
             contentRef.current.add(elementRef);
@@ -909,7 +909,7 @@ const Ground = () => {
 
   const handlePointerUp = (e: PointerEvent) => {
     if (e.button === 2) return;
-    useStoreRef.setState((state) => {
+    useRefStore.setState((state) => {
       state.setEnableOrbitController(true);
     });
     if (!grabRef.current) return;
@@ -993,7 +993,7 @@ const Ground = () => {
       state.resizeHandleType = null;
       state.rotateHandleType = null;
     });
-    useStoreRef.setState((state) => {
+    useRefStore.setState((state) => {
       state.humanRef = null;
       state.treeRef = null;
       state.flowerRef = null;
@@ -1055,7 +1055,7 @@ const Ground = () => {
     if (isSettingFoundationStartPointRef.current) {
       setRayCast(e);
       const intersects = ray.intersectObjects([groundPlaneRef.current]);
-      useStoreRef.getState().setEnableOrbitController(false);
+      useRefStore.getState().setEnableOrbitController(false);
       setCommonStore((state) => {
         state.moveHandleType = null;
         state.resizeHandleType = ResizeHandleType.LowerRight;
@@ -1069,7 +1069,7 @@ const Ground = () => {
     else if (isSettingCuboidStartPointRef.current) {
       setRayCast(e);
       const intersects = ray.intersectObjects([groundPlaneRef.current]);
-      useStoreRef.getState().setEnableOrbitController(false);
+      useRefStore.getState().setEnableOrbitController(false);
       setCommonStore((state) => {
         state.moveHandleType = null;
         state.resizeHandleType = ResizeHandleType.LowerRight;
@@ -1402,7 +1402,7 @@ const Ground = () => {
         state.objectTypeToAdd = ObjectType.Foundation;
         state.addedFoundationId = null;
       });
-      useStoreRef.getState().setEnableOrbitController(true);
+      useRefStore.getState().setEnableOrbitController(true);
       grabRef.current = null;
       isSettingFoundationStartPointRef.current = false;
       isSettingFoundationEndPointRef.current = false;
@@ -1413,7 +1413,7 @@ const Ground = () => {
         state.objectTypeToAdd = ObjectType.Cuboid;
         state.addedCuboidId = null;
       });
-      useStoreRef.getState().setEnableOrbitController(true);
+      useRefStore.getState().setEnableOrbitController(true);
       grabRef.current = null;
       isSettingCuboidStartPointRef.current = false;
       isSettingCuboidEndPointRef.current = false;
@@ -1446,14 +1446,14 @@ const Ground = () => {
                   updateElementLxById(tree.id, 2 * Math.hypot(p.x - tree.cx, p.y - tree.cy));
                   break;
               }
-              handlePlantOrHumanRefMove(useStoreRef.getState().treeRef, e);
+              handlePlantOrHumanRefMove(useRefStore.getState().treeRef, e);
               break;
             case ObjectType.Flower: {
-              handlePlantOrHumanRefMove(useStoreRef.getState().flowerRef, e);
+              handlePlantOrHumanRefMove(useRefStore.getState().flowerRef, e);
               break;
             }
             case ObjectType.Human: {
-              handlePlantOrHumanRefMove(useStoreRef.getState().humanRef, e);
+              handlePlantOrHumanRefMove(useRefStore.getState().humanRef, e);
               break;
             }
             case ObjectType.Cuboid:
@@ -1468,7 +1468,7 @@ const Ground = () => {
                   }
                   state.selectedElementHeight = Math.max(1, p.z);
                 });
-                const cuboidRef = useStoreRef.getState().cuboidRef;
+                const cuboidRef = useRefStore.getState().cuboidRef;
                 if (cuboidRef?.current) {
                   for (const obj of cuboidRef.current.children) {
                     if (obj.name.includes('Human') || obj.name.includes('Tree') || obj.name.includes('Flower')) {
@@ -1731,11 +1731,11 @@ const Ground = () => {
 
     switch (grabRef.current.type) {
       case ObjectType.Foundation:
-        const foundationRef = useStoreRef.getState().foundationRef;
+        const foundationRef = useRefStore.getState().foundationRef;
         handleHumanAndPlantPositionFixedOnParent(foundationRef?.current, lx, ly);
         break;
       case ObjectType.Cuboid:
-        const cuboidRef = useStoreRef.getState().cuboidRef;
+        const cuboidRef = useRefStore.getState().cuboidRef;
         handleHumanAndPlantPositionFixedOnParent(cuboidRef?.current, lx, ly);
         break;
     }

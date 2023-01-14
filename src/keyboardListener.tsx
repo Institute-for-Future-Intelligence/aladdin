@@ -16,7 +16,7 @@ import { UndoableMoveInX } from './undo/UndoableMoveInX';
 import { UndoableMoveInY } from './undo/UndoableMoveInY';
 import KeyboardEventHandler from 'react-keyboard-event-handler';
 import { WallModel } from './models/WallModel';
-import { useStoreRef } from './stores/commonRef';
+import { useRefStore } from './stores/commonRef';
 import { SolarPanelModel } from './models/SolarPanelModel';
 import { Util } from './Util';
 import { ElementModel } from './models/ElementModel';
@@ -735,7 +735,7 @@ const KeyboardListener = ({ canvas, set2DView, resetView, zoomView }: KeyboardLi
               oldCameraPosition: [...cameraPosition],
               oldPanCenter: [...panCenter],
               undo: () => {
-                const orbitControlsRef = useStoreRef.getState().orbitControlsRef;
+                const orbitControlsRef = useRefStore.getState().orbitControlsRef;
                 if (orbitControlsRef?.current) {
                   orbitControlsRef.current.object.position.set(
                     undoableResetView.oldCameraPosition[0],
@@ -930,7 +930,7 @@ const KeyboardListener = ({ canvas, set2DView, resetView, zoomView }: KeyboardLi
           state.elementGroupId = null;
           state.groupActionMode = false;
         });
-        useStoreRef.getState().setEnableOrbitController(true);
+        useRefStore.getState().setEnableOrbitController(true);
         selectNone();
         break;
       }

@@ -24,7 +24,7 @@ import { RoofModel } from './models/RoofModel';
 import Polygon from './views/polygon';
 import { PolygonModel } from './models/PolygonModel';
 import { Group } from 'three';
-import { useStoreRef } from './stores/commonRef';
+import { useRefStore } from './stores/commonRef';
 import ParabolicTrough from './views/parabolicTrough';
 import { ParabolicTroughModel } from './models/ParabolicTroughModel';
 import ParabolicDish from './views/parabolicDish';
@@ -47,7 +47,7 @@ const ElementsRenderer: React.FC = () => {
 
   useEffect(() => {
     if (groupRef) {
-      useStoreRef.setState((state) => {
+      useRefStore.setState((state) => {
         state.contentRef = groupRef;
       });
     }

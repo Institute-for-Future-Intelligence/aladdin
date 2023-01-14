@@ -36,7 +36,7 @@ import { Box, Cone, Cylinder, Line, Plane } from '@react-three/drei';
 import { ActionType, MoveHandleType, ObjectType, Orientation, ResizeHandleType, WallTexture } from 'src/types';
 import { Util } from 'src/Util';
 import { useStore } from 'src/stores/common';
-import { useStoreRef } from 'src/stores/commonRef';
+import { useRefStore } from 'src/stores/commonRef';
 import { ElementModel } from 'src/models/ElementModel';
 import { ShutterProps, WindowModel, WindowType } from 'src/models/WindowModel';
 import { WallFill, WallModel, WallStructure } from 'src/models/WallModel';
@@ -981,7 +981,7 @@ const Wall = ({ wallModel, foundationModel }: WallProps) => {
 
         // set window start point
         if (isSettingWindowStartPointRef.current) {
-          useStoreRef.getState().setEnableOrbitController(false);
+          useRefStore.getState().setEnableOrbitController(false);
           setCommonStore((state) => {
             state.moveHandleType = null;
             state.resizeHandleType = ResizeHandleType.LowerRight;
@@ -994,7 +994,7 @@ const Wall = ({ wallModel, foundationModel }: WallProps) => {
 
         // set door start point
         if (isSettingDoorStartPointRef.current) {
-          useStoreRef.getState().setEnableOrbitController(false);
+          useRefStore.getState().setEnableOrbitController(false);
           setCommonStore((state) => {
             state.moveHandleType = null;
             state.resizeHandleType = ResizeHandleType.UpperRight;
@@ -1079,7 +1079,7 @@ const Wall = ({ wallModel, foundationModel }: WallProps) => {
         InnerCommonState.selectNone(state);
       }
     });
-    useStoreRef.getState().setEnableOrbitController(true);
+    useRefStore.getState().setEnableOrbitController(true);
     setShowGrid(false);
     resetCurrentState();
   };
@@ -1390,7 +1390,7 @@ const Wall = ({ wallModel, foundationModel }: WallProps) => {
               0,
               relativePos.z / lz,
             );
-            useStoreRef.getState().setEnableOrbitController(false);
+            useRefStore.getState().setEnableOrbitController(false);
             setCommonStore((state) => {
               state.objectTypeToAdd = ObjectType.None;
               state.elements.push(newWindow);
@@ -1415,7 +1415,7 @@ const Wall = ({ wallModel, foundationModel }: WallProps) => {
               actionState.doorType,
               actionState.doorFilled,
             );
-            useStoreRef.getState().setEnableOrbitController(false);
+            useRefStore.getState().setEnableOrbitController(false);
             setCommonStore((state) => {
               state.objectTypeToAdd = ObjectType.None;
               state.elements.push(newDoor);

@@ -18,7 +18,7 @@ import {
 } from '../constants';
 import { ActionType, FlowerType, MoveHandleType, ObjectType, ResizeHandleType, RotateHandleType } from '../types';
 import i18n from '../i18n/i18n';
-import { useStoreRef } from 'src/stores/commonRef';
+import { useRefStore } from 'src/stores/commonRef';
 import { Util } from '../Util';
 import { FlowerModel } from '../models/FlowerModel';
 import { FlowerData } from '../FlowerData';
@@ -68,7 +68,7 @@ const Flower = ({
   const [updateFlag, setUpdateFlag] = useState(false);
   const { gl } = useThree();
 
-  const contentRef = useStoreRef((state) => state.contentRef);
+  const contentRef = useRefStore((state) => state.contentRef);
   const parentRef = useRef<Object3D | null>(null);
   const groupRef = useRef<Group>(null);
   const flowerRef = useRef<Mesh>(null);
@@ -277,7 +277,7 @@ const Flower = ({
                   if (e.button === 2) return; // ignore right-click
                   if (e.eventObject === e.intersections[0].eventObject) {
                     selectMe(id, e, ActionType.Move);
-                    useStoreRef.setState((state) => {
+                    useRefStore.setState((state) => {
                       state.flowerRef = groupRef;
                     });
                   }
@@ -331,7 +331,7 @@ const Flower = ({
                   onPointerDown={(e) => {
                     if (e.eventObject === e.intersections[0].eventObject) {
                       selectMe(id, e, ActionType.Move);
-                      useStoreRef.setState((state) => {
+                      useRefStore.setState((state) => {
                         state.flowerRef = groupRef;
                       });
                     }

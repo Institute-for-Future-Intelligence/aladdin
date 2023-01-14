@@ -45,7 +45,7 @@ import { UndoableChange } from './undo/UndoableChange';
 import DesignInfoPanel from './panels/designInfoPanel';
 import SiteInfoPanel from './panels/siteInfoPanel';
 import CameraController from './cameraController';
-import { useStoreRef } from './stores/commonRef';
+import { useRefStore } from './stores/commonRef';
 import { UndoableCameraChange } from './undo/UndoableCameraChange';
 import SolarPanelVisibility from './analysis/solarPanelVisibility';
 import ShareLink from './shareLinks';
@@ -193,7 +193,7 @@ const AppCreator = ({ viewOnly = false }: AppCreatorProps) => {
         state.viewState.cameraZoom = newZoom;
       });
     } else {
-      const orbitControlsRef = useStoreRef.getState().orbitControlsRef;
+      const orbitControlsRef = useRefStore.getState().orbitControlsRef;
       if (orbitControlsRef?.current) {
         const p = orbitControlsRef.current.object.position;
         const x = p.x * scale;
@@ -236,7 +236,7 @@ const AppCreator = ({ viewOnly = false }: AppCreatorProps) => {
   };
 
   const resetView = () => {
-    const orbitControlsRef = useStoreRef.getState().orbitControlsRef;
+    const orbitControlsRef = useRefStore.getState().orbitControlsRef;
     if (orbitControlsRef?.current) {
       // I don't know why the reset method results in a black screen.
       // So we are resetting it here to a predictable position.

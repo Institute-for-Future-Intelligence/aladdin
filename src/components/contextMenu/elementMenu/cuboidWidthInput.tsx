@@ -17,7 +17,7 @@ import { UndoableSizeChange } from 'src/undo/UndoableSizeChange';
 import { Object3D, Vector2, Vector3 } from 'three';
 import { PolygonModel } from 'src/models/PolygonModel';
 import { Point2 } from 'src/models/Point2';
-import { useStoreRef } from 'src/stores/commonRef';
+import { useRefStore } from 'src/stores/commonRef';
 import { ElementModel } from 'src/models/ElementModel';
 import { invalidate } from '@react-three/fiber';
 
@@ -137,7 +137,7 @@ const CuboidWidthInput = ({ setDialogVisible }: { setDialogVisible: (b: boolean)
     if (parentObject) {
       for (const obj of parentObject.children) {
         if (obj.name.includes(`${curr.id}`)) {
-          useStoreRef.getState().contentRef?.current?.add(obj);
+          useRefStore.getState().contentRef?.current?.add(obj);
           break;
         }
       }
@@ -243,7 +243,7 @@ const CuboidWidthInput = ({ setDialogVisible }: { setDialogVisible: (b: boolean)
           ) {
             // check fall off
             if (Math.abs(c.cy) - value / 2 > 0) {
-              const contentRef = useStoreRef.getState().contentRef;
+              const contentRef = useRefStore.getState().contentRef;
               const parentObject = getObjectChildById(contentRef?.current, parent.id);
               handleDetachParent(parentObject, parent, c);
             }
@@ -265,7 +265,7 @@ const CuboidWidthInput = ({ setDialogVisible }: { setDialogVisible: (b: boolean)
     currId: string,
   ) => {
     if (!attachParentId || !currParentId) return;
-    const contentRef = useStoreRef.getState().contentRef;
+    const contentRef = useRefStore.getState().contentRef;
     const currParentObj = getObjectChildById(contentRef?.current, currParentId);
     const currObj = getObjectChildById(currParentId === GROUND_ID ? contentRef?.current : currParentObj, currId);
     if (currObj && contentRef?.current) {

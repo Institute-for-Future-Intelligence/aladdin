@@ -5,7 +5,7 @@
 import React, { useRef, useState } from 'react';
 import { Mesh, Vector3 } from 'three';
 import { Box } from '@react-three/drei';
-import { useStoreRef } from 'src/stores/commonRef';
+import { useRefStore } from 'src/stores/commonRef';
 import { useStore } from 'src/stores/common';
 import { MoveHandleType, ResizeHandleType } from 'src/types';
 import { WindowType } from 'src/models/WindowModel';
@@ -28,7 +28,7 @@ export const ArchResizeHandle = ({ z }: { z: number }) => {
       args={[0.2, 0.2, 0.2]}
       position={[0, 0, z]}
       onPointerDown={() => {
-        useStoreRef.getState().setEnableOrbitController(false);
+        useRefStore.getState().setEnableOrbitController(false);
         useStore.getState().set((state) => {
           state.resizeHandleType = ResizeHandleType.Arch;
           if (ref.current) {

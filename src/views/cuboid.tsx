@@ -29,7 +29,7 @@ import {
   Vector3,
 } from 'three';
 import { useStore } from '../stores/common';
-import { useStoreRef } from '../stores/commonRef';
+import { useRefStore } from '../stores/commonRef';
 import * as Selector from '../stores/selector';
 import { CuboidModel } from '../models/CuboidModel';
 import { ThreeEvent, useThree } from '@react-three/fiber';
@@ -209,7 +209,7 @@ const Cuboid = ({
       grabRef.current = null;
       setShowGrid(false);
     };
-    useStoreRef.getState().setEnableOrbitController(true);
+    useRefStore.getState().setEnableOrbitController(true);
     window.addEventListener('pointerup', handlePointerUp);
     return () => {
       window.removeEventListener('pointerup', handlePointerUp);
@@ -493,8 +493,8 @@ const Cuboid = ({
           state.objectTypeToAdd = ObjectType.None;
         });
       } else {
-        useStoreRef.getState().selectNone();
-        useStoreRef.setState((state) => {
+        useRefStore.getState().selectNone();
+        useRefStore.setState((state) => {
           state.cuboidRef = groupRef;
         });
       }
@@ -517,7 +517,7 @@ const Cuboid = ({
               setNormal(face.normal);
             }
           }
-          useStoreRef.getState().setEnableOrbitController(false);
+          useRefStore.getState().setEnableOrbitController(false);
           oldPositionRef.current.x = selectedElement.cx;
           oldPositionRef.current.y = selectedElement.cy;
           oldPositionRef.current.z = selectedElement.cz;

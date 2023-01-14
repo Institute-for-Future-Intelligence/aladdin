@@ -7,7 +7,7 @@ import { MyOrbitControls } from 'src/js/MyOrbitControls';
 import { Group } from 'three';
 import create from 'zustand';
 
-export interface CommonStoreRef {
+export interface RefStoreState {
   setEnableOrbitController: (b: boolean) => void;
   selectNone: () => void;
   contentRef: RefObject<Group> | null;
@@ -20,7 +20,7 @@ export interface CommonStoreRef {
   cuboidRef: RefObject<Group> | null;
 }
 
-export const useStoreRef = create<CommonStoreRef>((set, get) => {
+export const useRefStore = create<RefStoreState>((set, get) => {
   return {
     setEnableOrbitController: (b: boolean) => {
       set((state) => {

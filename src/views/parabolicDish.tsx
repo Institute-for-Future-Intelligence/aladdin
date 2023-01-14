@@ -6,7 +6,7 @@ import React, { useEffect, useMemo, useRef, useState } from 'react';
 import { Box, Circle, Cylinder, Line, Sphere, useTexture } from '@react-three/drei';
 import { AdditiveBlending, BackSide, CanvasTexture, Color, DoubleSide, Euler, FrontSide, Mesh, Vector3 } from 'three';
 import { useStore } from '../stores/common';
-import { useStoreRef } from 'src/stores/commonRef';
+import { useRefStore } from 'src/stores/commonRef';
 import * as Selector from '../stores/selector';
 import { ThreeEvent, useThree } from '@react-three/fiber';
 import {
@@ -156,7 +156,7 @@ const ParabolicDish = ({
 
   useEffect(() => {
     const handlePointerUp = () => {
-      useStoreRef.getState().setEnableOrbitController(true);
+      useRefStore.getState().setEnableOrbitController(true);
       pointerDown.current = false;
     };
     window.addEventListener('pointerup', handlePointerUp);

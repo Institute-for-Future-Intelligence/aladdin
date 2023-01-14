@@ -19,7 +19,7 @@ import {
   Vector2,
   Vector3,
 } from 'three';
-import { useStoreRef } from 'src/stores/commonRef';
+import { useRefStore } from 'src/stores/commonRef';
 import { useThree } from '@react-three/fiber';
 import {
   DEFAULT_HEAT_FLUX_COLOR,
@@ -975,7 +975,7 @@ const GableRoof = (roofModel: GableRoofModel) => {
                 intersectionPlaneRotation.set(-HALF_PI, 0, r, 'ZXY');
               }
               setRoofHandleType(RoofHandleType.Mid);
-              useStoreRef.getState().setEnableOrbitController(false);
+              useRefStore.getState().setEnableOrbitController(false);
             }}
             onPointerOver={() => {
               setCommonStore((state) => {
@@ -1002,7 +1002,7 @@ const GableRoof = (roofModel: GableRoofModel) => {
                 intersectionPlaneRotation.set(-HALF_PI + rX, 0, rZ, 'ZXY');
               }
               setRoofHandleType(RoofHandleType.Left);
-              useStoreRef.getState().setEnableOrbitController(false);
+              useRefStore.getState().setEnableOrbitController(false);
             }}
           />
           <RoofHandle
@@ -1020,7 +1020,7 @@ const GableRoof = (roofModel: GableRoofModel) => {
                 intersectionPlaneRotation.set(-HALF_PI + rX, 0, rZ, 'ZXY');
               }
               setRoofHandleType(RoofHandleType.Right);
-              useStoreRef.getState().setEnableOrbitController(false);
+              useRefStore.getState().setEnableOrbitController(false);
             }}
           />
         </group>
@@ -1124,7 +1124,7 @@ const GableRoof = (roofModel: GableRoofModel) => {
             isPointerDownRef.current = false;
             setShowIntersectionPlane(false);
             setRoofHandleType(RoofHandleType.Null);
-            useStoreRef.getState().setEnableOrbitController(true);
+            useRefStore.getState().setEnableOrbitController(true);
             useStore.getState().updateRoofRiseById(id, riseInnerState);
             updateRooftopElements(foundation, id, roofSegments, centroid, topZ, thickness);
           }}

@@ -8,7 +8,7 @@ import { OBJLoader } from 'three/examples/jsm/loaders/OBJLoader';
 import { FontLoader, Group, MeshBasicMaterial, TextGeometryParameters } from 'three';
 import compassObj from '../assets/compass.obj';
 import helvetikerFont from '../fonts/helvetiker_regular.typeface.fnt';
-import { useStoreRef } from 'src/stores/commonRef';
+import { useRefStore } from 'src/stores/commonRef';
 import { HALF_PI } from '../constants';
 
 const Compass = () => {
@@ -25,7 +25,7 @@ const Compass = () => {
   const compassRef = useRef<Group>(null);
   useEffect(() => {
     if (compassRef && compassRef.current) {
-      useStoreRef.setState((state) => {
+      useRefStore.setState((state) => {
         state.compassRef = compassRef;
       });
     }

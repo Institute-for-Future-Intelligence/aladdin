@@ -40,7 +40,7 @@ import { ExclamationCircleOutlined } from '@ant-design/icons';
 import i18n from './i18n/i18n';
 import { UndoableRemoveAll } from './undo/UndoableRemoveAll';
 import { UndoableCheck } from './undo/UndoableCheck';
-import { useStoreRef } from './stores/commonRef';
+import { useRefStore } from './stores/commonRef';
 import { showInfo } from './helpers';
 import { Util } from './Util';
 import { usePrimitiveStore } from './stores/commonPrimitive';
@@ -219,7 +219,7 @@ const MainToolBarButtons = () => {
       state.elementGroupId = null;
       state.actionModeLock = false;
     });
-    useStoreRef.getState().setEnableOrbitController(false);
+    useRefStore.getState().setEnableOrbitController(false);
     selectNone();
   };
 

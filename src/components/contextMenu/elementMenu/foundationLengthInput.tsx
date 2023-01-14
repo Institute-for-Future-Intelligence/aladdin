@@ -18,7 +18,7 @@ import { GROUND_ID, ORIGIN_VECTOR2, ZERO_TOLERANCE } from 'src/constants';
 import { Point2 } from 'src/models/Point2';
 import { PolygonModel } from 'src/models/PolygonModel';
 import { ElementModel } from 'src/models/ElementModel';
-import { useStoreRef } from 'src/stores/commonRef';
+import { useRefStore } from 'src/stores/commonRef';
 import { invalidate } from '@react-three/fiber';
 
 const FoundationLengthInput = ({ setDialogVisible }: { setDialogVisible: (b: boolean) => void }) => {
@@ -137,7 +137,7 @@ const FoundationLengthInput = ({ setDialogVisible }: { setDialogVisible: (b: boo
     if (parentObject) {
       for (const obj of parentObject.children) {
         if (obj.name.includes(`${curr.id}`)) {
-          useStoreRef.getState().contentRef?.current?.add(obj);
+          useRefStore.getState().contentRef?.current?.add(obj);
           break;
         }
       }
@@ -251,7 +251,7 @@ const FoundationLengthInput = ({ setDialogVisible }: { setDialogVisible: (b: boo
             ) {
               // check fall off
               if (Math.abs(c.cx) - value / 2 > 0) {
-                const contentRef = useStoreRef.getState().contentRef;
+                const contentRef = useRefStore.getState().contentRef;
                 const parentObject = getObjectChildById(contentRef?.current, parent.id);
                 handleDetachParent(parentObject, parent, c);
               }
@@ -274,7 +274,7 @@ const FoundationLengthInput = ({ setDialogVisible }: { setDialogVisible: (b: boo
     currId: string,
   ) => {
     if (!attachParentId || !currParentId) return;
-    const contentRef = useStoreRef.getState().contentRef;
+    const contentRef = useRefStore.getState().contentRef;
     const currParentObj = getObjectChildById(contentRef?.current, currParentId);
     const currObj = getObjectChildById(currParentId === GROUND_ID ? contentRef?.current : currParentObj, currId);
     if (currObj && contentRef?.current) {

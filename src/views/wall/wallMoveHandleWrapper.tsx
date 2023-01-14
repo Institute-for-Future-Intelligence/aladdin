@@ -8,7 +8,7 @@ import { HIGHLIGHT_HANDLE_COLOR, MOVE_HANDLE_COLOR_2 } from 'src/constants';
 import { useStore } from 'src/stores/common';
 import { MoveHandleType } from 'src/types';
 import { ThreeEvent } from '@react-three/fiber';
-import { useStoreRef } from 'src/stores/commonRef';
+import { useRefStore } from 'src/stores/commonRef';
 import { useHandleSize } from './hooks';
 
 interface HandleProps {
@@ -48,7 +48,7 @@ const WallMoveHandleWrapper = ({ ply, phz }: WrapperProps) => {
       useStore.getState().set((state) => {
         state.moveHandleType = e.object.name as MoveHandleType;
       });
-      useStoreRef.getState().setEnableOrbitController(false);
+      useRefStore.getState().setEnableOrbitController(false);
     }
   };
 

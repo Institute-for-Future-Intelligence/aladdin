@@ -6,7 +6,7 @@ import React, { useEffect, useMemo, useRef, useState } from 'react';
 import { Box, Circle, Cone, Cylinder, Line, Plane, Ring, Sphere, Torus } from '@react-three/drei';
 import { Color, DoubleSide, Euler, FrontSide, Mesh, Raycaster, Vector2, Vector3 } from 'three';
 import { useStore } from '../../stores/common';
-import { useStoreRef } from 'src/stores/commonRef';
+import { useRefStore } from 'src/stores/commonRef';
 import * as Selector from '../../stores/selector';
 import { ThreeEvent, useThree } from '@react-three/fiber';
 import {
@@ -617,7 +617,7 @@ const SolarPanelOnRoof = ({
             }
           }
         }
-        useStoreRef.getState().setEnableOrbitController(true);
+        useRefStore.getState().setEnableOrbitController(true);
         pointerDownRef.current = false;
         setShowIntersectionPlane(false);
         setCommonStore((state) => {
@@ -650,7 +650,7 @@ const SolarPanelOnRoof = ({
     }
     setShowIntersectionPlane(true);
     pointerDownRef.current = true;
-    useStoreRef.getState().setEnableOrbitController(false);
+    useRefStore.getState().setEnableOrbitController(false);
   };
 
   const setRayCast = (e: PointerEvent) => {

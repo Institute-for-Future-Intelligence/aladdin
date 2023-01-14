@@ -64,7 +64,7 @@ import { CuboidModel } from '../models/CuboidModel';
 import { FLOATING_WINDOW_OPACITY, GROUND_ID, HALF_PI, ORIGIN_VECTOR2, UNIT_VECTOR_POS_Z_ARRAY } from '../constants';
 import { PolygonModel } from '../models/PolygonModel';
 import { Point2 } from '../models/Point2';
-import { useStoreRef } from './commonRef';
+import { useRefStore } from './commonRef';
 import { showError } from '../helpers';
 import i18n from '../i18n/i18n';
 import { HumanData } from '../HumanData';
@@ -1481,10 +1481,10 @@ export const useStore = create<CommonStoreState>(
               }
               state.selectedElement = null;
             });
-            useStoreRef.getState().selectNone();
+            useRefStore.getState().selectNone();
           },
           selectMe(id, e, action) {
-            const setEnableOrbitController = useStoreRef.getState().setEnableOrbitController;
+            const setEnableOrbitController = useRefStore.getState().setEnableOrbitController;
             if (e.intersections.length > 0) {
               const intersectableObjects = e.intersections.filter(
                 (obj) => !obj.eventObject.name.startsWith('Wall Intersection Plane'),

@@ -18,7 +18,7 @@ import {
   HALF_PI_Z_EULER,
   TWO_PI,
 } from 'src/constants';
-import { useStoreRef } from 'src/stores/commonRef';
+import { useRefStore } from 'src/stores/commonRef';
 import { useThree } from '@react-three/fiber';
 import { Point2 } from 'src/models/Point2';
 import { Util } from 'src/Util';
@@ -886,13 +886,13 @@ const PyramidRoof = (roofModel: PyramidRoofModel) => {
           onPointerDown={(e) => {
             selectMe(roofModel.id, e, ActionType.Select);
             setShowIntersectionPlane(true);
-            useStoreRef.getState().setEnableOrbitController(false);
+            useRefStore.getState().setEnableOrbitController(false);
             isPointerDownRef.current = true;
             oldRiseRef.current = rise;
           }}
           onPointerUp={() => {
             setShowIntersectionPlane(false);
-            useStoreRef.getState().setEnableOrbitController(true);
+            useRefStore.getState().setEnableOrbitController(true);
           }}
           onPointerOver={() => {
             setCommonStore((state) => {
@@ -942,7 +942,7 @@ const PyramidRoof = (roofModel: PyramidRoofModel) => {
             useStore.getState().updateRoofRiseById(id, riseInnerState);
             addUndoableResizeRoofRise(id, oldRiseRef.current, riseInnerState);
             setShowIntersectionPlane(false);
-            useStoreRef.getState().setEnableOrbitController(true);
+            useRefStore.getState().setEnableOrbitController(true);
             updateRooftopElements(foundation, id, roofSegments, centerPointV3, topZ, thickness);
             isPointerDownRef.current = false;
           }}

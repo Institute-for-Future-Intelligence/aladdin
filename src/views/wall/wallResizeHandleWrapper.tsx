@@ -6,7 +6,7 @@ import React, { useRef, useState } from 'react';
 import { Box, Plane } from '@react-three/drei';
 import { DoubleSide, Euler, Mesh, Vector3 } from 'three';
 import { useStore } from 'src/stores/common';
-import { useStoreRef } from 'src/stores/commonRef';
+import { useRefStore } from 'src/stores/commonRef';
 import { ActionType, ObjectType, ResizeHandleType } from 'src/types';
 import { HALF_PI, HIGHLIGHT_HANDLE_COLOR, RESIZE_HANDLE_COLOR } from 'src/constants';
 import * as Selector from 'src/stores/selector';
@@ -155,7 +155,7 @@ const WallResizeHandleWrapper = React.memo(
       setCommonStore((state) => {
         state.resizeHandleType = resizeHandleObject.name as ResizeHandleType;
       });
-      useStoreRef.getState().setEnableOrbitController(false);
+      useRefStore.getState().setEnableOrbitController(false);
       pointerDownRef.current = true;
       oldHeightsRef.current = [z * 2, unfilledHeight];
     };
@@ -200,7 +200,7 @@ const WallResizeHandleWrapper = React.memo(
     };
 
     const handlePointerUp = () => {
-      useStoreRef.getState().setEnableOrbitController(true);
+      useRefStore.getState().setEnableOrbitController(true);
       setShowIntersectionPlane(false);
       pointerDownRef.current = false;
 

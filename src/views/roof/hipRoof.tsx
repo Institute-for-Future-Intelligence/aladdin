@@ -9,7 +9,7 @@ import { Point2 } from 'src/models/Point2';
 import { HipRoofModel, RoofModel, RoofType } from 'src/models/RoofModel';
 import { WallModel } from 'src/models/WallModel';
 import { useStore } from 'src/stores/common';
-import { useStoreRef } from 'src/stores/commonRef';
+import { useRefStore } from 'src/stores/commonRef';
 import * as Selector from 'src/stores/selector';
 import { ActionType, ObjectType, RoofHandleType } from 'src/types';
 import { UndoableResizeHipRoofRidge } from 'src/undo/UndoableResize';
@@ -516,7 +516,7 @@ const HipRoof = (roofModel: HipRoofModel) => {
                 intersectionPlaneRotation.set(-HALF_PI - rX, 0, rZ, 'ZXY');
               }
               setRoofHandleType(RoofHandleType.Left);
-              useStoreRef.getState().setEnableOrbitController(false);
+              useRefStore.getState().setEnableOrbitController(false);
             }}
           />
           {/* mid handle */}
@@ -533,7 +533,7 @@ const HipRoof = (roofModel: HipRoofModel) => {
                 intersectionPlaneRotation.set(-HALF_PI, 0, r, 'ZXY');
               }
               setRoofHandleType(RoofHandleType.Mid);
-              useStoreRef.getState().setEnableOrbitController(false);
+              useRefStore.getState().setEnableOrbitController(false);
             }}
             onPointerOver={() => {
               setCommonStore((state) => {
@@ -558,7 +558,7 @@ const HipRoof = (roofModel: HipRoofModel) => {
                 intersectionPlaneRotation.set(-HALF_PI - rX, 0, rZ, 'ZXY');
               }
               setRoofHandleType(RoofHandleType.Right);
-              useStoreRef.getState().setEnableOrbitController(false);
+              useRefStore.getState().setEnableOrbitController(false);
             }}
           />
         </group>
@@ -657,7 +657,7 @@ const HipRoof = (roofModel: HipRoofModel) => {
             isPointerDownRef.current = false;
             setEnableIntersectionPlane(false);
             setRoofHandleType(RoofHandleType.Null);
-            useStoreRef.getState().setEnableOrbitController(true);
+            useRefStore.getState().setEnableOrbitController(true);
             setCommonStore((state) => {
               for (const e of state.elements) {
                 if (e.id === id && e.type === ObjectType.Roof && (e as RoofModel).roofType === RoofType.Hip) {
