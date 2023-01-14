@@ -16,7 +16,6 @@ import LocalFileManager from './localFileManager';
 import { usePrimitiveStore } from './stores/commonPrimitive';
 
 const App = () => {
-  const setCommonStore = useStore(Selector.set);
   const locale = useStore(Selector.locale);
   const world = useStore((state: CommonStoreState) => state.world);
   const elements = useStore((state: CommonStoreState) => state.elements);

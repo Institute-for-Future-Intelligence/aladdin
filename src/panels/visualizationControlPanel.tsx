@@ -84,9 +84,9 @@ const VisualizationControlPanel = () => {
                 title={i18n.t('visualizationControlPanel.ClickUpOrDownArrowButtonsToChange', lang)}
                 min={1}
                 max={50}
-                step={1}
-                style={{ width: 70 }}
-                precision={1}
+                step={5}
+                style={{ width: 65 }}
+                precision={0}
                 value={heatFluxScaleFactor ?? 20}
                 onChange={(value) => {
                   setCommonStore((state) => {

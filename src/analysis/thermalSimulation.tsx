@@ -321,15 +321,13 @@ const ThermalSimulation = ({ city }: ThermalSimulationProps) => {
         }
       }
       // the total solar heat gain through all the windows on a foundation
+      // the total solar panel output through all the solar panels on a foundation
       if (e.type === ObjectType.Foundation) {
-        const arr = hourlySolarHeatGainArrayMapRef.current.get(e.id);
+        let arr = hourlySolarHeatGainArrayMapRef.current.get(e.id);
         if (arr) {
           setHourlySolarHeatGainArray(e.id, [...arr]);
         }
-      }
-      // the total solar panel output through all the solar panels on a foundation
-      if (e.type === ObjectType.Foundation) {
-        const arr = hourlySolarPanelOutputArrayMapRef.current.get(e.id);
+        arr = hourlySolarPanelOutputArrayMapRef.current.get(e.id);
         if (arr) {
           setHourlySolarPanelOutputArray(e.id, [...arr]);
         }
