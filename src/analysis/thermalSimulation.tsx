@@ -288,7 +288,7 @@ const ThermalSimulation = ({ city }: ThermalSimulationProps) => {
     // store the results in the common store for other components to use
     for (const e of elements) {
       // heat exchanges through individual elements on a building envelope
-      if (Util.onBuildingEnvelope(e)) {
+      if (Util.onBuildingEnvelope(e) || e.type === ObjectType.SolarPanel) {
         const arr = hourlyHeatExchangeArrayMapRef.current.get(e.id);
         if (arr) {
           setHourlyHeatExchangeArray(e.id, [...arr]);
@@ -528,7 +528,7 @@ const ThermalSimulation = ({ city }: ThermalSimulationProps) => {
           calculateRoof(e as RoofModel);
           break;
         case ObjectType.SolarPanel:
-          calculateSolarPanelOutput(e as SolarPanelModel);
+          calculateSolarPanel(e as SolarPanelModel);
           break;
       }
     }
@@ -557,7 +557,7 @@ const ThermalSimulation = ({ city }: ThermalSimulationProps) => {
     return panel.lx * panel.ly * inverterEfficiency * (1 - dustLoss);
   };
 
-  const calculateSolarPanelOutput = (panel: SolarPanelModel) => {
+  const calculateSolarPanel = (panel: SolarPanelModel) => {
     const foundation = getFoundation(panel);
     if (foundation) {
       const parent = getParent(panel);
@@ -565,7 +565,7 @@ const ThermalSimulation = ({ city }: ThermalSimulationProps) => {
         const pvModel = getPvModule(panel.pvModelName);
         // when the sun is out
         if (sunDirectionRef.current && sunDirectionRef.current.z > 0) {
-          const solarPanelOutput = SolarRadiation.computeSolarPanelOutput(
+          const results = SolarRadiation.computeSolarPanelOutput(
             now,
             world,
             sunDirectionRef.current,
@@ -576,11 +576,29 @@ const ThermalSimulation = ({ city }: ThermalSimulationProps) => {
             elevation,
             distanceToClosestObject,
           );
-          const eff =
+          const factor =
             getPanelEfficiency(currentOutsideTemperatureRef.current, panel, pvModel) *
             getTimeFactor() *
             getElementFactor(panel);
-          updateSolarPanelOutputNow(foundation.id, solarPanelOutput * eff);
+          updateSolarPanelOutputNow(foundation.id, results.average * factor);
+          // sum up the solar radiation intensity for generating the solar heatmap
+          if (runDailySimulation) {
+            for (let i = 0; i < results.heatmap.length; i++) {
+              for (let j = 0; j < results.heatmap[i].length; j++) {
+                results.heatmap[i][j] *= scaleFactorRef.current;
+              }
+            }
+            const solarHeatmap = solarHeatmapRef.current.get(panel.id);
+            if (!solarHeatmap) {
+              solarHeatmapRef.current.set(panel.id, [...results.heatmap]);
+            } else {
+              for (let i = 0; i < solarHeatmap.length; i++) {
+                for (let j = 0; j < solarHeatmap[i].length; j++) {
+                  solarHeatmap[i][j] += results.heatmap[i][j];
+                }
+              }
+            }
+          }
         }
       }
     }

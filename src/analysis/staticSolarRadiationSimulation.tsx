@@ -583,7 +583,7 @@ const StaticSolarRadiationSimulation = ({ city }: StaticSolarRadiationSimulation
     const absPos = Util.wallAbsolutePosition(new Vector3(wall.cx, wall.cy, lz / 2), foundation).setZ(
       lz / 2 + foundation.lz,
     );
-    const normal = new Vector3().fromArray([Math.cos(absAngle - HALF_PI), Math.sin(absAngle - HALF_PI), 0]);
+    const normal = new Vector3(Math.cos(absAngle - HALF_PI), Math.sin(absAngle - HALF_PI), 0);
     const v = new Vector3();
     const cellOutputTotals = Array(nx)
       .fill(0)
@@ -653,7 +653,7 @@ const StaticSolarRadiationSimulation = ({ city }: StaticSolarRadiationSimulation
       wall.lz / 2 + foundation.lz,
     );
     const absPos = absWallPos.clone().add(new Vector3(door.cx * wall.lx, 0, door.cz * wall.lz));
-    const normal = new Vector3().fromArray([Math.cos(absAngle - HALF_PI), Math.sin(absAngle - HALF_PI), 0]);
+    const normal = new Vector3(Math.cos(absAngle - HALF_PI), Math.sin(absAngle - HALF_PI), 0);
     const v = new Vector3();
     const cellOutputTotals = Array(nx)
       .fill(0)

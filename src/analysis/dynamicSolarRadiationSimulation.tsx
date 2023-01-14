@@ -636,7 +636,7 @@ const DynamicSolarRadiationSimulation = ({ city }: DynamicSolarRadiationSimulati
     const absPos = Util.wallAbsolutePosition(new Vector3(wall.cx, wall.cy, wall.cz), foundation).setZ(
       lz / 2 + foundation.lz,
     );
-    const normal = new Vector3().fromArray([Math.cos(absAngle - HALF_PI), Math.sin(absAngle - HALF_PI), 0]);
+    const normal = new Vector3(Math.cos(absAngle - HALF_PI), Math.sin(absAngle - HALF_PI), 0);
     const dxcos = dx * Math.cos(absAngle);
     const dxsin = dx * Math.sin(absAngle);
     const v = new Vector3();
@@ -696,7 +696,7 @@ const DynamicSolarRadiationSimulation = ({ city }: DynamicSolarRadiationSimulati
       wall.lz / 2 + foundation.lz,
     );
     const absPos = absWallPos.clone().add(new Vector3(door.cx * wall.lx, 0, door.cz * wall.lz));
-    const normal = new Vector3().fromArray([Math.cos(absAngle - HALF_PI), Math.sin(absAngle - HALF_PI), 0]);
+    const normal = new Vector3(Math.cos(absAngle - HALF_PI), Math.sin(absAngle - HALF_PI), 0);
     const dxcos = dx * Math.cos(absAngle);
     const dxsin = dx * Math.sin(absAngle);
     const v = new Vector3();
