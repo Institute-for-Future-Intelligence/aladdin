@@ -2,8 +2,11 @@
  * @Copyright 2022-2023. Institute for Future Intelligence, Inc.
  */
 import create from 'zustand';
+import { produce } from 'immer';
 
 export interface DataStoreState {
+  set: (fn: (state: DataStoreState) => void) => void;
+
   // store the calculated heat map on the surface of an element
   heatmaps: Map<string, number[][]>;
   setHeatmap: (id: string, data: number[][]) => void;
@@ -26,14 +29,20 @@ export interface DataStoreState {
 }
 
 export const useDataStore = create<DataStoreState>((set, get) => {
+  const immerSet: DataStoreState['set'] = (fn) => set(produce(fn));
   return {
+    set: (fn) => {
+      try {
+        immerSet(fn);
+      } catch (e) {
+        console.log(e);
+      }
+    },
+
     heatmaps: new Map<string, number[][]>(),
     setHeatmap(id, data) {
-      const map = get().heatmaps;
-      map.set(id, data);
-      set((state) => {
-        // must create a new map in order to trigger re-rendering
-        state.heatmaps = new Map(map);
+      immerSet((state) => {
+        state.heatmaps.set(id, data);
       });
     },
     getHeatmap(id) {
@@ -42,46 +51,37 @@ export const useDataStore = create<DataStoreState>((set, get) => {
 
     hourlyHeatExchangeArrayMap: new Map<string, number[]>(),
     setHourlyHeatExchangeArray(id, data) {
-      const map = get().hourlyHeatExchangeArrayMap;
-      map.set(id, data);
-      set((state) => {
-        // must create a new map in order to trigger re-rendering
-        state.hourlyHeatExchangeArrayMap = new Map(map);
+      immerSet((state) => {
+        state.hourlyHeatExchangeArrayMap.set(id, data);
       });
     },
 
     hourlySolarHeatGainArrayMap: new Map<string, number[]>(),
     setHourlySolarHeatGainArray(id, data) {
-      const map = get().hourlySolarHeatGainArrayMap;
-      map.set(id, data);
-      set((state) => {
-        // must create a new map in order to trigger re-rendering
-        state.hourlySolarHeatGainArrayMap = new Map(map);
+      immerSet((state) => {
+        state.hourlySolarHeatGainArrayMap.set(id, data);
       });
     },
 
     hourlySolarPanelOutputArrayMap: new Map<string, number[]>(),
     setHourlySolarPanelOutputArray(id, data) {
-      const map = get().hourlySolarPanelOutputArrayMap;
-      map.set(id, data);
-      set((state) => {
-        // must create a new map in order to trigger re-rendering
-        state.hourlySolarPanelOutputArrayMap = new Map(map);
+      immerSet((state) => {
+        state.hourlySolarPanelOutputArrayMap.set(id, data);
       });
     },
 
     clearHeatmaps() {
-      set((state) => {
-        state.heatmaps = new Map<string, number[][]>();
+      immerSet((state) => {
+        state.heatmaps.clear();
       });
     },
 
     clearDataStore() {
-      set((state) => {
-        state.heatmaps = new Map<string, number[][]>();
-        state.hourlyHeatExchangeArrayMap = new Map<string, number[]>();
-        state.hourlySolarHeatGainArrayMap = new Map<string, number[]>();
-        state.hourlySolarPanelOutputArrayMap = new Map<string, number[]>();
+      immerSet((state) => {
+        state.heatmaps.clear();
+        state.hourlyHeatExchangeArrayMap.clear();
+        state.hourlySolarHeatGainArrayMap.clear();
+        state.hourlySolarPanelOutputArrayMap.clear();
       });
     },
   };
