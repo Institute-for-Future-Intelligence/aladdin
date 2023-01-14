@@ -5,6 +5,7 @@
 import React, { useMemo, useRef } from 'react';
 import {
   DEFAULT_HEAT_FLUX_COLOR,
+  DEFAULT_HEAT_FLUX_DENSITY_FACTOR,
   DEFAULT_HEAT_FLUX_SCALE_FACTOR,
   DEFAULT_HEAT_FLUX_WIDTH,
   HALF_PI,
@@ -69,7 +70,7 @@ const ArchedDoor = React.memo(
       if (!heat) return undefined;
       const sum = heat.reduce((a, b) => a + b, 0);
       if (area === 0) return undefined;
-      const cellSize = world.solarRadiationHeatmapGridCellSize ?? 0.5;
+      const cellSize = DEFAULT_HEAT_FLUX_DENSITY_FACTOR * (world.solarRadiationHeatmapGridCellSize ?? 0.5);
       const nx = Math.max(2, Math.round(lx / cellSize));
       const nz = Math.max(2, Math.round(lz / cellSize));
       const dx = lx / nx;

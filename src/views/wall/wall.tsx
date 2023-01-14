@@ -48,6 +48,7 @@ import WallWireFrame from './wallWireFrame';
 import * as Selector from 'src/stores/selector';
 import {
   DEFAULT_HEAT_FLUX_COLOR,
+  DEFAULT_HEAT_FLUX_DENSITY_FACTOR,
   DEFAULT_HEAT_FLUX_SCALE_FACTOR,
   DEFAULT_HEAT_FLUX_WIDTH,
   FINE_GRID_SCALE,
@@ -249,7 +250,7 @@ const Wall = ({ wallModel, foundationModel }: WallProps) => {
         area -= d.lx * d.lz * wallModel.lx * wallModel.lz;
       }
     }
-    const cellSize = world.solarRadiationHeatmapGridCellSize ?? 0.5;
+    const cellSize = DEFAULT_HEAT_FLUX_DENSITY_FACTOR * (world.solarRadiationHeatmapGridCellSize ?? 0.5);
     const lz = Util.getHighestPointOfWall(wallModel); // height
     const nx = Math.max(2, Math.round(lx / cellSize));
     const nz = Math.max(2, Math.round(lz / cellSize));

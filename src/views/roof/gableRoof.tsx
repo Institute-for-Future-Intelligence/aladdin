@@ -23,6 +23,7 @@ import { useStoreRef } from 'src/stores/commonRef';
 import { useThree } from '@react-three/fiber';
 import {
   DEFAULT_HEAT_FLUX_COLOR,
+  DEFAULT_HEAT_FLUX_DENSITY_FACTOR,
   DEFAULT_HEAT_FLUX_SCALE_FACTOR,
   DEFAULT_HEAT_FLUX_WIDTH,
   HALF_PI,
@@ -1217,7 +1218,7 @@ const RoofSegment = ({
     if (!s) return undefined;
     let area = Util.getTriangleArea(s[0], s[1], s[2]) + Util.getTriangleArea(s[2], s[3], s[0]);
     if (area === 0) return undefined;
-    const cellSize = world.solarRadiationHeatmapGridCellSize ?? 0.5;
+    const cellSize = DEFAULT_HEAT_FLUX_DENSITY_FACTOR * (world.solarRadiationHeatmapGridCellSize ?? 0.5);
     const s0 = s[0].clone();
     const s1 = s[1].clone();
     const s2 = s[2].clone();
