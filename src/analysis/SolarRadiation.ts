@@ -562,7 +562,6 @@ export class SolarRadiation {
     segments: Vector3[][],
     margin: number,
     foundation: FoundationModel,
-    solarPanels: ElementModel[], //TODO: Skip areas covered by solar panels on the roof
     elevation: number,
     distanceToClosestObject: Function,
   ): { segmentIntensities: number[][][]; segmentUnitArea: number[] } {
@@ -719,7 +718,6 @@ export class SolarRadiation {
     segments: Vector3[][],
     margin: number,
     foundation: FoundationModel,
-    solarPanels: ElementModel[], //TODO: Skip areas covered by solar panels on the roof
     elevation: number,
     distanceToClosestObject: Function,
   ): { segmentIntensities: number[][][]; segmentUnitArea: number[] } {
@@ -835,7 +833,6 @@ export class SolarRadiation {
     withoutOverhang: boolean,
     segments: Vector3[][],
     foundation: FoundationModel,
-    solarPanels: ElementModel[], //TODO: Skip areas covered by solar panels on the roof
     elevation: number,
     distanceToClosestObject: Function,
   ): { segmentIntensities: number[][][]; segmentUnitArea: number[] } {
@@ -923,7 +920,6 @@ export class SolarRadiation {
     withoutOverhang: boolean,
     segments: Vector3[][],
     foundation: FoundationModel,
-    solarPanels: ElementModel[], //TODO: Skip areas covered by solar panels on the roof
     elevation: number,
     distanceToClosestObject: Function,
   ): { segmentIntensities: number[][][]; segmentUnitArea: number[] } {

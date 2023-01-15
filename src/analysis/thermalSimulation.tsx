@@ -865,7 +865,6 @@ const ThermalSimulation = ({ city }: ThermalSimulationProps) => {
         segmentsWithoutOverhang,
         0.01,
         foundation,
-        getChildrenOfType(ObjectType.SolarPanel, roof.id),
         elevation,
         distanceToClosestObject,
       );
@@ -878,16 +877,40 @@ const ThermalSimulation = ({ city }: ThermalSimulationProps) => {
             totalSolarHeats[k] += seg[i][j] * unitArea; // for energy calculation
           }
         }
-        // sum up the solar radiation intensity for generating the solar heatmap
-        if (runDailySimulation) {
-          const uid = m === 1 ? roof.id : roof.id + '-' + k;
-          const solarHeatmap = solarHeatmapRef.current.get(uid);
-          if (!solarHeatmap) {
-            solarHeatmapRef.current.set(uid, [...seg]);
-          } else {
-            for (let i = 0; i < solarHeatmap.length; i++) {
-              for (let j = 0; j < solarHeatmap[i].length; j++) {
-                solarHeatmap[i][j] += seg[i][j];
+      }
+      // sum up the solar radiation intensity for generating the solar heatmap for the entire roof (with overhang)
+      if (runDailySimulation) {
+        const segments = getRoofSegmentVertices(roof.id);
+        if (segments) {
+          const heatmapResults = SolarRadiation.computePyramidRoofSolarRadiationEnergy(
+            now,
+            world,
+            sunDirectionRef.current,
+            roof,
+            flat,
+            false,
+            segments,
+            10,
+            foundation,
+            elevation,
+            distanceToClosestObject,
+          );
+          for (let k = 0; k < m; k++) {
+            const seg = heatmapResults.segmentIntensities[k];
+            for (let i = 0; i < seg.length; i++) {
+              for (let j = 0; j < seg[i].length; j++) {
+                seg[i][j] *= scaleFactorRef.current;
+              }
+            }
+            const uid = m === 1 ? roof.id : roof.id + '-' + k;
+            const solarHeatmap = solarHeatmapRef.current.get(uid);
+            if (!solarHeatmap) {
+              solarHeatmapRef.current.set(uid, [...seg]);
+            } else {
+              for (let i = 0; i < solarHeatmap.length; i++) {
+                for (let j = 0; j < solarHeatmap[i].length; j++) {
+                  solarHeatmap[i][j] += seg[i][j];
+                }
               }
             }
           }
@@ -934,7 +957,6 @@ const ThermalSimulation = ({ city }: ThermalSimulationProps) => {
         segmentsWithoutOverhang,
         0.01,
         foundation,
-        getChildrenOfType(ObjectType.SolarPanel, roof.id),
         elevation,
         distanceToClosestObject,
       );
@@ -943,20 +965,43 @@ const ThermalSimulation = ({ city }: ThermalSimulationProps) => {
         const unitArea = results.segmentUnitArea[k];
         for (let i = 0; i < seg.length; i++) {
           for (let j = 0; j < seg[i].length; j++) {
-            seg[i][j] *= scaleFactorRef.current; // for solar heatmap generation
+            seg[i][j] *= scaleFactorRef.current;
             totalSolarHeats[k] += seg[i][j] * unitArea; // for energy calculation
           }
         }
-        // sum up the solar radiation intensity for generating the solar heatmap
-        if (runDailySimulation) {
-          const uid = roof.id + '-' + k;
-          const solarHeatmap = solarHeatmapRef.current.get(uid);
-          if (!solarHeatmap) {
-            solarHeatmapRef.current.set(uid, [...seg]);
-          } else {
-            for (let i = 0; i < solarHeatmap.length; i++) {
-              for (let j = 0; j < solarHeatmap[i].length; j++) {
-                solarHeatmap[i][j] += seg[i][j];
+      }
+      // sum up the solar radiation intensity for generating the solar heatmap for the entire roof (with overhang)
+      if (runDailySimulation) {
+        const segments = getRoofSegmentVertices(roof.id);
+        if (segments) {
+          const heatmapResults = SolarRadiation.computeHipRoofSolarRadiationEnergy(
+            now,
+            world,
+            sunDirectionRef.current,
+            roof,
+            false,
+            segments,
+            10,
+            foundation,
+            elevation,
+            distanceToClosestObject,
+          );
+          for (let k = 0; k < n; k++) {
+            const seg = heatmapResults.segmentIntensities[k];
+            for (let i = 0; i < seg.length; i++) {
+              for (let j = 0; j < seg[i].length; j++) {
+                seg[i][j] *= scaleFactorRef.current;
+              }
+            }
+            const uid = roof.id + '-' + k;
+            const solarHeatmap = solarHeatmapRef.current.get(uid);
+            if (!solarHeatmap) {
+              solarHeatmapRef.current.set(uid, [...seg]);
+            } else {
+              for (let i = 0; i < solarHeatmap.length; i++) {
+                for (let j = 0; j < solarHeatmap[i].length; j++) {
+                  solarHeatmap[i][j] += seg[i][j];
+                }
               }
             }
           }
@@ -991,7 +1036,6 @@ const ThermalSimulation = ({ city }: ThermalSimulationProps) => {
     const totalSolarHeats: number[] = Array(n).fill(0);
     // when the sun is out
     if (sunDirectionRef.current && sunDirectionRef.current.z > 0) {
-      const solarPanels = getChildrenOfType(ObjectType.SolarPanel, roof.id);
       const results = SolarRadiation.computeGableRoofSolarRadiationEnergy(
         now,
         world,
@@ -1000,7 +1044,6 @@ const ThermalSimulation = ({ city }: ThermalSimulationProps) => {
         true,
         segmentsWithoutOverhang,
         foundation,
-        solarPanels,
         elevation,
         distanceToClosestObject,
       );
@@ -1026,7 +1069,6 @@ const ThermalSimulation = ({ city }: ThermalSimulationProps) => {
             false,
             segments,
             foundation,
-            solarPanels,
             elevation,
             distanceToClosestObject,
           );
@@ -1095,7 +1137,6 @@ const ThermalSimulation = ({ city }: ThermalSimulationProps) => {
         true,
         segmentsWithoutOverhang,
         foundation,
-        getChildrenOfType(ObjectType.SolarPanel, roof.id),
         elevation,
         distanceToClosestObject,
       );
@@ -1108,16 +1149,38 @@ const ThermalSimulation = ({ city }: ThermalSimulationProps) => {
             totalSolarHeats[k] += seg[i][j] * unitArea; // for energy calculation
           }
         }
-        // sum up the solar radiation intensity for generating the solar heatmap
-        if (runDailySimulation) {
-          const uid = roof.id + '-' + k;
-          const solarHeatmap = solarHeatmapRef.current.get(uid);
-          if (!solarHeatmap) {
-            solarHeatmapRef.current.set(uid, [...seg]);
-          } else {
-            for (let i = 0; i < solarHeatmap.length; i++) {
-              for (let j = 0; j < solarHeatmap[i].length; j++) {
-                solarHeatmap[i][j] += seg[i][j];
+      }
+      // sum up the solar radiation intensity for generating the solar heatmap for the entire roof (with overhang)
+      if (runDailySimulation) {
+        const segments = getRoofSegmentVertices(roof.id);
+        if (segments) {
+          const heatmapResults = SolarRadiation.computeMansardRoofSolarRadiationEnergy(
+            now,
+            world,
+            sunDirectionRef.current,
+            roof,
+            false,
+            segments,
+            foundation,
+            elevation,
+            distanceToClosestObject,
+          );
+          for (let k = 0; k < n; k++) {
+            const seg = heatmapResults.segmentIntensities[k];
+            for (let i = 0; i < seg.length; i++) {
+              for (let j = 0; j < seg[i].length; j++) {
+                seg[i][j] *= scaleFactorRef.current;
+              }
+            }
+            const uid = roof.id + '-' + k;
+            const solarHeatmap = solarHeatmapRef.current.get(uid);
+            if (!solarHeatmap) {
+              solarHeatmapRef.current.set(uid, [...seg]);
+            } else {
+              for (let i = 0; i < solarHeatmap.length; i++) {
+                for (let j = 0; j < solarHeatmap[i].length; j++) {
+                  solarHeatmap[i][j] += seg[i][j];
+                }
               }
             }
           }
