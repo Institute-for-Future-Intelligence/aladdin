@@ -259,7 +259,7 @@ const Wall = ({ wallModel, foundationModel }: WallProps) => {
     const halfDif = (lz - wallModel.lz) / 2;
     const intensity = (sum / area) * (heatFluxScaleFactor ?? DEFAULT_HEAT_FLUX_SCALE_FACTOR);
     heatFluxArrowHead.current = intensity < 0 ? 1 : 0;
-    heatFluxEuler.current = Util.getEuler(UNIT_VECTOR_POS_Z, UNIT_VECTOR_POS_Y, Math.sign(intensity) * HALF_PI);
+    heatFluxEuler.current = Util.getEuler(UNIT_VECTOR_POS_Z, UNIT_VECTOR_POS_Y, 'XYZ', Math.sign(intensity) * HALF_PI);
     const vectors: Vector3[][] = [];
     const polygon = Util.getWallVertices(wallModel, 0);
     for (let kx = 0; kx < nx; kx++) {
@@ -267,7 +267,7 @@ const Wall = ({ wallModel, foundationModel }: WallProps) => {
         const v: Vector3[] = [];
         const rx = (kx - nx / 2 + 0.5) * dx;
         const rz = (kz - nz / 2 + 0.5) * dz + halfDif;
-        if (Util.pointInsidePolygon({ x: rx, y: rz } as Point2, polygon)) {
+        if (Util.isPointInside(rx, rz, polygon)) {
           let isWall = true;
           if (windows && windows.length > 0) {
             for (const w of windows) {

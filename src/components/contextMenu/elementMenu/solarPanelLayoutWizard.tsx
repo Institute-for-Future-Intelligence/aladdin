@@ -111,7 +111,7 @@ const SolarPanelLayoutWizard = ({ setDialogVisible }: { setDialogVisible: (b: bo
     if (existingSolarPanels.length > 0) {
       for (const sp of existingSolarPanels) {
         if (sp.referenceId !== area.id) {
-          if (Util.pointInsidePolygon({ x: sp.cx, y: sp.cy } as Point2, area.vertices)) {
+          if (Util.isPointInside(sp.cx, sp.cy, area.vertices)) {
             updateElementReferenceById(sp.id, area.id);
           }
         }

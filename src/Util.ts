@@ -46,13 +46,22 @@ import { WindowModel, WindowType } from './models/WindowModel';
 import { DoorModel, DoorType } from './models/DoorModel';
 
 export class Util {
-  static getEuler(from: Vector3, to: Vector3, rotateX?: number, rotateY?: number): Euler {
+  static getEuler(
+    from: Vector3,
+    to: Vector3,
+    order?: string,
+    rotateX?: number,
+    rotateY?: number,
+    rotateZ?: number,
+  ): Euler {
     const quaternion = new Quaternion();
     quaternion.setFromUnitVectors(from, to);
     const euler = new Euler();
     euler.setFromQuaternion(quaternion);
+    if (order) euler.order = order;
     if (rotateX) euler.x += rotateX;
     if (rotateY) euler.y += rotateY;
+    if (rotateZ) euler.z += rotateZ;
     return euler;
   }
 
@@ -458,20 +467,6 @@ export class Util {
     return count;
   }
 
-  static isPointInside = (x: number, y: number, vertices: Point2[]) => {
-    let inside = false;
-    for (let i = 0, j = vertices.length - 1; i < vertices.length; j = i++) {
-      const xi = vertices[i].x;
-      const yi = vertices[i].y;
-      const xj = vertices[j].x;
-      const yj = vertices[j].y;
-      if (yi > y !== yj > y && x < ((xj - xi) * (y - yi)) / (yj - yi) + xi) {
-        inside = !inside;
-      }
-    }
-    return inside;
-  };
-
   static doFoundationsOverlap(f1: ElementModel, f2: ElementModel): boolean {
     const v1 = Util.fetchFoundationVertexCoordinates(f1);
     const v2 = Util.fetchFoundationVertexCoordinates(f2);
@@ -622,15 +617,13 @@ export class Util {
 
   // ray-casting algorithm based on
   // https://wrf.ecse.rpi.edu/Research/Short_Notes/pnpoly.html/pnpoly.html
-  static pointInsidePolygon(point: Point2, vertices: Point2[]) {
-    const x = point.x;
-    const y = point.y;
+  static isPointInside(x: number, y: number, vertices: Point2[]) {
     let inside = false;
     for (let i = 0, j = vertices.length - 1; i < vertices.length; j = i++) {
-      const xi = vertices[i].x,
-        yi = vertices[i].y;
-      const xj = vertices[j].x,
-        yj = vertices[j].y;
+      const xi = vertices[i].x;
+      const yi = vertices[i].y;
+      const xj = vertices[j].x;
+      const yj = vertices[j].y;
       if (yi > y !== yj > y && x < ((xj - xi) * (y - yi)) / (yj - yi) + xi) {
         inside = !inside;
       }

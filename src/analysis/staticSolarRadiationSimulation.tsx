@@ -607,8 +607,7 @@ const StaticSolarRadiationSimulation = ({ city }: StaticSolarRadiationSimulation
             for (let kz = 0; kz < nz; kz++) {
               const kx2 = kx - nx / 2 + 0.5;
               const kz2 = kz - nz / 2 + 0.5;
-              const p = { x: kx2 * dx, y: kz2 * dz + halfDif } as Point2;
-              if (Util.pointInsidePolygon(p, polygon)) {
+              if (Util.isPointInside(kx2 * dx, kz2 * dz + halfDif, polygon)) {
                 cellOutputTotals[kx][kz] += indirectRadiation;
                 if (dot > 0) {
                   v.set(absPos.x + kx2 * dxcos, absPos.y + kx2 * dxsin, absPos.z + kz2 * dz);

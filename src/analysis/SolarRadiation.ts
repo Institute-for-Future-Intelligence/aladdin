@@ -296,7 +296,7 @@ export class SolarRadiation {
         const kx2 = kx - nx / 2 + 0.5;
         const kz2 = kz - nz / 2 + 0.5;
         const p = { x: kx2 * dx, y: kz2 * dz + halfDif } as Point2;
-        const insidePolygonWithMargin = Util.pointInsidePolygon(p, polygonWithMargin);
+        const insidePolygonWithMargin = Util.isPointInside(p.x, p.y, polygonWithMargin);
         if (insidePolygonWithMargin) {
           v.set(absPos.x + kx2 * dxcos, absPos.y + kx2 * dxsin, absPos.z + kz2 * dz);
           let isWall = true;
@@ -355,7 +355,7 @@ export class SolarRadiation {
             }
           }
           if (isWall) {
-            const insidePolygon = polygon === null ? true : Util.pointInsidePolygon(p, polygon);
+            const insidePolygon = polygon === null ? true : Util.isPointInside(p.x, p.y, polygon);
             const distance = distanceToClosestObject(wall.id, v, sunDirection);
             heatmap[kx][kz] += indirectRadiation;
             if (distance > AMBIENT_LIGHT_THRESHOLD || distance < 0) {
@@ -779,20 +779,30 @@ export class SolarRadiation {
         peakRadiation,
       );
       const dot = normal.dot(sunDirection);
+      const projectedVertices: Point2[] = [];
+      for (const t of s) {
+        projectedVertices.push({ x: t.x, y: t.y } as Point2);
+      }
       if (index % 2 === 0) {
         // even number (0, 2) are quads, odd number (1, 3) are triangles
         for (let p = 0; p < m; p++) {
           const dmp = dm.clone().multiplyScalar(p);
           for (let q = 0; q < n; q++) {
             v.copy(v0).add(dmp).add(dn.clone().multiplyScalar(q));
-            const distance = distanceToClosestObject(uuid, v, sunDirection);
-            if (distance > AMBIENT_LIGHT_THRESHOLD || distance < 0) {
-              // roof may be covered by solar panels
-              intensity[p][q] += indirectRadiation;
+            let within = true;
+            if (withoutOverhang) {
+              within = Util.isPointInside(v.x, v.y, projectedVertices);
             }
-            if (dot > 0 && distance < 0) {
-              // direct radiation
-              intensity[p][q] += dot * peakRadiation;
+            if (within) {
+              const distance = distanceToClosestObject(uuid, v, sunDirection);
+              if (distance > AMBIENT_LIGHT_THRESHOLD || distance < 0) {
+                // roof may be covered by solar panels
+                intensity[p][q] += indirectRadiation;
+              }
+              if (dot > 0 && distance < 0) {
+                // direct radiation
+                intensity[p][q] += dot * peakRadiation;
+              }
             }
           }
         }
