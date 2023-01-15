@@ -719,6 +719,7 @@ const GambrelRoof = (roofModel: GambrelRoofModel) => {
               key={index}
               index={index}
               segment={segment}
+              centroid={centroid}
               defaultAngle={arr[0].angle}
               thickness={thickness}
               color={color}

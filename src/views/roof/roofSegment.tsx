@@ -1,19 +1,31 @@
 /*
  * @Copyright 2022-2023. Institute for Future Intelligence, Inc.
  */
-import React, { useEffect, useRef } from 'react';
+import React, { useEffect, useMemo, useRef } from 'react';
 import { RoofTexture } from 'src/types';
 import { useRoofTexture, useTransparent } from './hooks';
 import { RoofSegmentProps } from './roofRenderer';
 import * as Selector from 'src/stores/selector';
 import { useStore } from 'src/stores/common';
-import { CanvasTexture, DoubleSide, Float32BufferAttribute, Mesh, Vector3 } from 'three';
+import { CanvasTexture, DoubleSide, Euler, Float32BufferAttribute, Mesh, Vector3 } from 'three';
 import { usePrimitiveStore } from '../../stores/commonPrimitive';
+import { Util } from '../../Util';
+import {
+  DEFAULT_HEAT_FLUX_COLOR,
+  DEFAULT_HEAT_FLUX_DENSITY_FACTOR,
+  DEFAULT_HEAT_FLUX_SCALE_FACTOR,
+  DEFAULT_HEAT_FLUX_WIDTH,
+  HALF_PI,
+  UNIT_VECTOR_POS_Z,
+} from '../../constants';
+import { useDataStore } from '../../stores/commonData';
+import { Cone, Line } from '@react-three/drei';
 
 export const RoofSegment = ({
   id,
   index,
   segment,
+  centroid,
   defaultAngle,
   thickness,
   color,
@@ -24,6 +36,7 @@ export const RoofSegment = ({
   id: string;
   index: number;
   segment: RoofSegmentProps;
+  centroid: Vector3;
   defaultAngle: number;
   thickness: number;
   color: string;
@@ -31,12 +44,23 @@ export const RoofSegment = ({
   textureType: RoofTexture;
   heatmap?: CanvasTexture;
 }) => {
+  const world = useStore.getState().world;
   const shadowEnabled = useStore(Selector.viewState.shadowEnabled);
   const showSolarRadiationHeatmap = usePrimitiveStore(Selector.showSolarRadiationHeatmap);
+  const showHeatFluxes = usePrimitiveStore(Selector.showHeatFluxes);
+  const heatFluxScaleFactor = useStore(Selector.viewState.heatFluxScaleFactor);
+  const heatFluxColor = useStore(Selector.viewState.heatFluxColor);
+  const heatFluxWidth = useStore(Selector.viewState.heatFluxWidth);
+  const getRoofSegmentVerticesWithoutOverhang = useStore(Selector.getRoofSegmentVerticesWithoutOverhang);
+  const hourlyHeatExchangeArrayMap = useDataStore.getState().hourlyHeatExchangeArrayMap;
+
   const { transparent, opacity } = useTransparent();
   const texture = useRoofTexture(textureType);
 
   const heatmapMeshRef = useRef<Mesh>(null);
+  const heatFluxArrowHead = useRef<number>(0);
+  const heatFluxArrowLength = useRef<Vector3>();
+  const heatFluxEuler = useRef<Euler>();
 
   const { points, angle, length } = segment;
   const isFlat = Math.abs(points[0].z) < 0.1;
@@ -151,6 +175,77 @@ export const RoofSegment = ({
     }
   }, [points, thickness, showSolarRadiationHeatmap]);
 
+  const heatFluxes: Vector3[][] | undefined = useMemo(() => {
+    if (!showHeatFluxes) return undefined;
+    const heat = hourlyHeatExchangeArrayMap.get(id + '-' + index);
+    if (!heat) return undefined;
+    const sum = heat.reduce((a, b) => a + b, 0);
+    const segments = getRoofSegmentVerticesWithoutOverhang(id);
+    if (!segments) return undefined;
+    const [wallLeft, wallRight, ridgeRight, ridgeLeft, wallLeftAfterOverhang] = points;
+    const thickness = wallLeftAfterOverhang.z - wallLeft.z;
+    const s = segments[index].map((v) => v.clone().sub(centroid).add(new Vector3(0, 0, thickness)));
+    if (!s) return undefined;
+    const vectors: Vector3[][] = [];
+    if (s.length === 4) {
+      // quad
+      let area = Util.getTriangleArea(s[0], s[1], s[2]) + Util.getTriangleArea(s[2], s[3], s[0]);
+      if (area === 0) return undefined;
+      const cellSize = DEFAULT_HEAT_FLUX_DENSITY_FACTOR * (world.solarRadiationHeatmapGridCellSize ?? 0.5);
+      const s0 = s[0].clone();
+      const s1 = s[1].clone();
+      const s2 = s[2].clone();
+      const v10 = new Vector3().subVectors(s1, s0);
+      const v20 = new Vector3().subVectors(s2, s0);
+      const v21 = new Vector3().subVectors(s2, s1);
+      const length10 = v10.length();
+      // find the distance from top to the edge: https://mathworld.wolfram.com/Point-LineDistance3-Dimensional.html
+      const distance = new Vector3().crossVectors(v20, v21).length() / length10;
+      const m = Math.max(2, Math.round(length10 / cellSize));
+      const n = Math.max(2, Math.round(distance / cellSize));
+      v10.normalize();
+      v20.normalize();
+      v21.normalize();
+      // find the normal vector of the quad
+      const normal = new Vector3().crossVectors(v20, v21).normalize();
+      // find the incremental vector going along the bottom edge (half of length)
+      const dm = v10.multiplyScalar((0.5 * length10) / m);
+      // find the incremental vector going from bottom to top (half of length)
+      const dn = new Vector3()
+        .crossVectors(normal, v10)
+        .normalize()
+        .multiplyScalar((0.5 * distance) / n);
+      // find the starting point of the grid (shift half of length in both directions)
+      const v0 = s0.clone().add(dm).add(dn);
+      // double half-length to full-length for the increment vectors in both directions
+      dm.multiplyScalar(2);
+      dn.multiplyScalar(2);
+      const intensity = (sum / area) * (heatFluxScaleFactor ?? DEFAULT_HEAT_FLUX_SCALE_FACTOR);
+      heatFluxArrowHead.current = intensity < 0 ? 1 : 0;
+      heatFluxArrowLength.current = normal.clone().multiplyScalar(0.1);
+      heatFluxEuler.current = Util.getEuler(UNIT_VECTOR_POS_Z, normal, -Math.sign(intensity) * HALF_PI);
+      const origin = new Vector3();
+      for (let p = 0; p < m; p++) {
+        const dmp = dm.clone().multiplyScalar(p);
+        for (let q = 0; q < n; q++) {
+          origin.copy(v0).add(dmp).add(dn.clone().multiplyScalar(q));
+          const v: Vector3[] = [];
+          if (intensity < 0) {
+            v.push(origin.clone());
+            v.push(origin.clone().add(normal.clone().multiplyScalar(-intensity)));
+          } else {
+            v.push(origin.clone());
+            v.push(origin.clone().add(normal.clone().multiplyScalar(intensity)));
+          }
+          vectors.push(v);
+        }
+      }
+    } else if (s.length === 3) {
+      // triangle
+    }
+    return vectors;
+  }, [showHeatFluxes, heatFluxScaleFactor]);
+
   const pointsForSingleSide = points.slice(points.length / 2);
   // TODO: There may be a better way to do this, but convex geometry needs at least four points.
   // For triangles, we fool it by duplicating the last point
@@ -216,6 +311,34 @@ export const RoofSegment = ({
           )}
         </>
       )}
+
+      {heatFluxes &&
+        heatFluxes.map((v, index) => {
+          return (
+            <React.Fragment key={index}>
+              <Line
+                points={v}
+                name={'Heat Flux ' + index}
+                lineWidth={heatFluxWidth ?? DEFAULT_HEAT_FLUX_WIDTH}
+                color={heatFluxColor ?? DEFAULT_HEAT_FLUX_COLOR}
+              />
+              ;
+              <Cone
+                userData={{ unintersectable: true }}
+                position={
+                  heatFluxArrowLength.current
+                    ? v[heatFluxArrowHead.current].clone().add(heatFluxArrowLength.current)
+                    : v[0]
+                }
+                args={[0.06, 0.2, 4, 1]}
+                name={'Normal Vector Arrow Head'}
+                rotation={heatFluxEuler.current ?? [0, 0, 0]}
+              >
+                <meshBasicMaterial attach="material" color={heatFluxColor ?? DEFAULT_HEAT_FLUX_COLOR} />
+              </Cone>
+            </React.Fragment>
+          );
+        })}
     </>
   );
 };
