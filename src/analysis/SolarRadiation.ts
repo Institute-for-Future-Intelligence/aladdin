@@ -357,9 +357,9 @@ export class SolarRadiation {
           if (isWall) {
             const insidePolygon = polygon === null ? true : Util.pointInsidePolygon(p, polygon);
             const distance = distanceToClosestObject(wall.id, v, sunDirection);
+            heatmap[kx][kz] += indirectRadiation;
             if (distance > AMBIENT_LIGHT_THRESHOLD || distance < 0) {
               // wall may be covered by solar panels
-              heatmap[kx][kz] += indirectRadiation;
               if (insidePolygon) {
                 intensity[kx][kz] += indirectRadiation;
               }
