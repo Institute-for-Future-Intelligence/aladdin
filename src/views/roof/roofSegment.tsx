@@ -61,7 +61,7 @@ export const RoofSegment = ({
   const heatmapMeshRef = useRef<Mesh>(null);
   const heatFluxArrowHead = useRef<number>(0);
   const heatFluxArrowLength = useRef<Vector3>();
-  const heatFluxEuler = useRef<Euler>();
+  const heatFluxArrowEuler = useRef<Euler>();
 
   const { points, angle, length } = segment;
   const isFlat = Math.abs(points[0].z) < 0.1;
@@ -223,52 +223,28 @@ export const RoofSegment = ({
     heatFluxArrowLength.current = normal.clone().multiplyScalar(0.1);
     const vectors: Vector3[][] = [];
     const origin = new Vector3();
-    if (s.length === 4) {
-      // quad
-      let area = Util.getTriangleArea(s[0], s[1], s[2]) + Util.getTriangleArea(s[2], s[3], s[0]);
-      if (area === 0) return undefined;
-      const intensity = (sum / area) * (heatFluxScaleFactor ?? DEFAULT_HEAT_FLUX_SCALE_FACTOR);
-      heatFluxArrowHead.current = intensity < 0 ? 1 : 0;
-      heatFluxEuler.current = Util.getEuler(UNIT_VECTOR_POS_Z, normal, 'XYZ', -Math.sign(intensity) * HALF_PI);
-      for (let p = 0; p < m; p++) {
-        const dmp = dm.clone().multiplyScalar(p);
-        for (let q = 0; q < n; q++) {
-          origin.copy(v0).add(dmp).add(dn.clone().multiplyScalar(q));
-          if (Util.isPointInside(origin.x, origin.y, projectedVertices)) {
-            const v: Vector3[] = [];
-            if (intensity < 0) {
-              v.push(origin.clone());
-              v.push(origin.clone().add(normal.clone().multiplyScalar(-intensity)));
-            } else {
-              v.push(origin.clone());
-              v.push(origin.clone().add(normal.clone().multiplyScalar(intensity)));
-            }
-            vectors.push(v);
+    const area =
+      s.length === 4
+        ? Util.getTriangleArea(s[0], s[1], s[2]) + Util.getTriangleArea(s[2], s[3], s[0])
+        : Util.getTriangleArea(s[0], s[1], s[2]);
+    if (area === 0) return undefined;
+    const intensity = (sum / area) * (heatFluxScaleFactor ?? DEFAULT_HEAT_FLUX_SCALE_FACTOR);
+    heatFluxArrowHead.current = intensity < 0 ? 1 : 0;
+    heatFluxArrowEuler.current = Util.getEuler(UNIT_VECTOR_POS_Z, normal, 'YXZ', -Math.sign(intensity) * HALF_PI);
+    for (let p = 0; p < m; p++) {
+      const dmp = dm.clone().multiplyScalar(p);
+      for (let q = 0; q < n; q++) {
+        origin.copy(v0).add(dmp).add(dn.clone().multiplyScalar(q));
+        if (Util.isPointInside(origin.x, origin.y, projectedVertices)) {
+          const v: Vector3[] = [];
+          if (intensity < 0) {
+            v.push(origin.clone());
+            v.push(origin.clone().add(normal.clone().multiplyScalar(-intensity)));
+          } else {
+            v.push(origin.clone());
+            v.push(origin.clone().add(normal.clone().multiplyScalar(intensity)));
           }
-        }
-      }
-    } else if (s.length === 3) {
-      // triangle
-      let area = Util.getTriangleArea(s[0], s[1], s[2]);
-      if (area === 0) return undefined;
-      const intensity = (sum / area) * (heatFluxScaleFactor ?? DEFAULT_HEAT_FLUX_SCALE_FACTOR);
-      heatFluxArrowHead.current = intensity < 0 ? 1 : 0;
-      heatFluxEuler.current = Util.getEuler(UNIT_VECTOR_POS_Z, normal, 'YXZ', -Math.sign(intensity) * HALF_PI);
-      for (let p = 0; p < m; p++) {
-        const dmp = dm.clone().multiplyScalar(p);
-        for (let q = 0; q < n; q++) {
-          origin.copy(v0).add(dmp).add(dn.clone().multiplyScalar(q));
-          if (Util.isPointInside(origin.x, origin.y, projectedVertices)) {
-            const v: Vector3[] = [];
-            if (intensity < 0) {
-              v.push(origin.clone());
-              v.push(origin.clone().add(normal.clone().multiplyScalar(-intensity)));
-            } else {
-              v.push(origin.clone());
-              v.push(origin.clone().add(normal.clone().multiplyScalar(intensity)));
-            }
-            vectors.push(v);
-          }
+          vectors.push(v);
         }
       }
     }
@@ -361,7 +337,7 @@ export const RoofSegment = ({
                 }
                 args={[0.06, 0.2, 4, 1]}
                 name={'Normal Vector Arrow Head'}
-                rotation={heatFluxEuler.current ?? [0, 0, 0]}
+                rotation={heatFluxArrowEuler.current ?? [0, 0, 0]}
               >
                 <meshBasicMaterial attach="material" color={heatFluxColor ?? DEFAULT_HEAT_FLUX_COLOR} />
               </Cone>

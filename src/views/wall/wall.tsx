@@ -227,7 +227,7 @@ const Wall = ({ wallModel, foundationModel }: WallProps) => {
   }, [showSolarRadiationHeatmap, solarRadiationHeatmapMaxValue]);
 
   const heatFluxArrowHead = useRef<number>(0);
-  const heatFluxEuler = useRef<Euler>();
+  const heatFluxArrowEuler = useRef<Euler>();
 
   const heatFluxes: Vector3[][] | undefined = useMemo(() => {
     if (!showHeatFluxes) return undefined;
@@ -259,7 +259,12 @@ const Wall = ({ wallModel, foundationModel }: WallProps) => {
     const halfDif = (lz - wallModel.lz) / 2;
     const intensity = (sum / area) * (heatFluxScaleFactor ?? DEFAULT_HEAT_FLUX_SCALE_FACTOR);
     heatFluxArrowHead.current = intensity < 0 ? 1 : 0;
-    heatFluxEuler.current = Util.getEuler(UNIT_VECTOR_POS_Z, UNIT_VECTOR_POS_Y, 'XYZ', Math.sign(intensity) * HALF_PI);
+    heatFluxArrowEuler.current = Util.getEuler(
+      UNIT_VECTOR_POS_Z,
+      UNIT_VECTOR_POS_Y,
+      'YXZ',
+      Math.sign(intensity) * HALF_PI,
+    );
     const vectors: Vector3[][] = [];
     const polygon = Util.getWallVertices(wallModel, 0);
     for (let kx = 0; kx < nx; kx++) {
@@ -2094,7 +2099,7 @@ const Wall = ({ wallModel, foundationModel }: WallProps) => {
                   .add(new Vector3(0, heatFluxArrowHead.current === 0 ? -0.1 : 0.1, 0))}
                 args={[0.06, 0.2, 4, 1]}
                 name={'Normal Vector Arrow Head'}
-                rotation={heatFluxEuler.current ?? [0, 0, 0]}
+                rotation={heatFluxArrowEuler.current ?? [0, 0, 0]}
               >
                 <meshBasicMaterial attach="material" color={heatFluxColor ?? DEFAULT_HEAT_FLUX_COLOR} />
               </Cone>

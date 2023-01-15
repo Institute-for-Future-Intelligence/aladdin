@@ -43,7 +43,7 @@ const ArchedDoor = React.memo(
     const hourlyHeatExchangeArrayMap = useDataStore(Selector.hourlyHeatExchangeArrayMap);
 
     const heatFluxArrowHead = useRef<number>(0);
-    const heatFluxEuler = useRef<Euler>();
+    const heatFluxArrowEuler = useRef<Euler>();
 
     const [lx, ly, lz, archHeight] = dimension;
 
@@ -77,10 +77,10 @@ const ArchedDoor = React.memo(
       const dz = lz / nz;
       const intensity = (sum / area) * (heatFluxScaleFactor ?? DEFAULT_HEAT_FLUX_SCALE_FACTOR);
       heatFluxArrowHead.current = intensity < 0 ? 1 : 0;
-      heatFluxEuler.current = Util.getEuler(
+      heatFluxArrowEuler.current = Util.getEuler(
         UNIT_VECTOR_POS_Z,
         UNIT_VECTOR_POS_Y,
-        'XYZ',
+        'YXZ',
         Math.sign(intensity) * HALF_PI,
       );
       const vectors: Vector3[][] = [];
@@ -221,7 +221,7 @@ const ArchedDoor = React.memo(
                     .add(new Vector3(0, heatFluxArrowHead.current === 0 ? -0.1 : 0.1, 0))}
                   args={[0.06, 0.2, 4, 1]}
                   name={'Normal Vector Arrow Head'}
-                  rotation={heatFluxEuler.current ?? [0, 0, 0]}
+                  rotation={heatFluxArrowEuler.current ?? [0, 0, 0]}
                 >
                   <meshBasicMaterial attach="material" color={heatFluxColor ?? DEFAULT_HEAT_FLUX_COLOR} />
                 </Cone>

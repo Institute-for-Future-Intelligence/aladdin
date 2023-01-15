@@ -1187,7 +1187,7 @@ const RoofSegment = ({
   const mullionRef = useRef<Mesh>(null);
   const heatFluxArrowHead = useRef<number>(0);
   const heatFluxArrowLength = useRef<Vector3>();
-  const heatFluxEuler = useRef<Euler>();
+  const heatFluxArrowEuler = useRef<Euler>();
 
   const [mullionLx, setMullionLx] = useState(0);
   const [mullionLz, setMullionLz] = useState(0);
@@ -1250,7 +1250,7 @@ const RoofSegment = ({
     const intensity = (sum / area) * (heatFluxScaleFactor ?? DEFAULT_HEAT_FLUX_SCALE_FACTOR);
     heatFluxArrowHead.current = intensity < 0 ? 1 : 0;
     heatFluxArrowLength.current = normal.clone().multiplyScalar(0.1);
-    heatFluxEuler.current = Util.getEuler(UNIT_VECTOR_POS_Z, normal, 'XYZ', -Math.sign(intensity) * HALF_PI);
+    heatFluxArrowEuler.current = Util.getEuler(UNIT_VECTOR_POS_Z, normal, 'YXZ', -Math.sign(intensity) * HALF_PI);
     const vectors: Vector3[][] = [];
     const origin = new Vector3();
     for (let p = 0; p < m; p++) {
@@ -1501,7 +1501,7 @@ const RoofSegment = ({
                 }
                 args={[0.06, 0.2, 4, 1]}
                 name={'Normal Vector Arrow Head'}
-                rotation={heatFluxEuler.current ?? [0, 0, 0]}
+                rotation={heatFluxArrowEuler.current ?? [0, 0, 0]}
               >
                 <meshBasicMaterial attach="material" color={heatFluxColor ?? DEFAULT_HEAT_FLUX_COLOR} />
               </Cone>
