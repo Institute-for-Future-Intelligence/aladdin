@@ -853,6 +853,7 @@ const PyramidRoof = (roofModel: PyramidRoofModel) => {
                       <RoofSegment
                         id={id}
                         index={index}
+                        roofType={roofType}
                         segment={segment}
                         centroid={new Vector3(centerPoint.x, centerPoint.y, topZ)}
                         defaultAngle={isFlat ? 0 : angle}

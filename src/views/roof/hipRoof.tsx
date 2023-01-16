@@ -479,6 +479,7 @@ const HipRoof = (roofModel: HipRoofModel) => {
               id={id}
               key={index}
               index={index}
+              roofType={roofType}
               segment={segment}
               centroid={new Vector3(centroid2D.x, centroid2D.y, topZ)}
               defaultAngle={arr[0].angle}

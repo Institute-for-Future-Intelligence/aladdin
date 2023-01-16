@@ -11,7 +11,7 @@ import { SunMinutes } from './SunMinutes';
 
 // If a surface is covered by a thin structure such as a solar panel,
 // it receives no indirect light if the distance is shorter than this threshold.
-export const AMBIENT_LIGHT_THRESHOLD = 0.2;
+export const AMBIENT_LIGHT_THRESHOLD = 0.1;
 
 // This is used to offset a roof by default in solar radiation calculation
 export const ROOFTOP_SOLAR_PANEL_OFFSET = 0.1;

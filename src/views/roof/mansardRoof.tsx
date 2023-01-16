@@ -797,6 +797,7 @@ const MansardRoof = (roofModel: MansardRoofModel) => {
               id={id}
               key={index}
               index={index}
+              roofType={roofType}
               segment={segment}
               centroid={centroid}
               defaultAngle={arr[0].angle}

@@ -1,6 +1,7 @@
 /*
  * @Copyright 2022-2023. Institute for Future Intelligence, Inc.
  */
+
 import React, { useEffect, useMemo, useRef } from 'react';
 import { RoofTexture } from 'src/types';
 import { useRoofTexture, useTransparent } from './hooks';
@@ -21,10 +22,12 @@ import {
 import { useDataStore } from '../../stores/commonData';
 import { Cone, Line } from '@react-three/drei';
 import { Point2 } from '../../models/Point2';
+import { RoofType } from '../../models/RoofModel';
 
 export const RoofSegment = ({
   id,
   index,
+  roofType,
   segment,
   centroid,
   defaultAngle,
@@ -36,6 +39,7 @@ export const RoofSegment = ({
 }: {
   id: string;
   index: number;
+  roofType: RoofType;
   segment: RoofSegmentProps;
   centroid: Vector3;
   defaultAngle: number;
@@ -129,52 +133,56 @@ export const RoofSegment = ({
         // don't call geo.setFromPoints. It doesn't seem to work correctly.
         geo.setAttribute('position', new Float32BufferAttribute(positions, 3));
         geo.computeVertexNormals();
-
-        /* bounding rectangle for debugging */
-        // const v10 = new Vector3().subVectors(points[1], points[0]);
-        // const v20 = new Vector3().subVectors(points[2], points[0]);
-        // const v21 = new Vector3().subVectors(points[2], points[1]);
-        // // find the distance from top to the edge: https://mathworld.wolfram.com/Point-LineDistance3-Dimensional.html
-        // const length10 = v10.length();
-        // const distance = new Vector3().crossVectors(v20, v21).length() / length10;
-        // const normal = new Vector3().crossVectors(v20, v21);
-        // const side = new Vector3().crossVectors(normal, v10).normalize().multiplyScalar(distance);
-        // const p3 = points[0].clone().add(side);
-        // const p4 = points[1].clone().add(side);
-        // const geo = new BufferGeometry();
-        // const positions = new Float32Array(18);
-        // positions[0]=points[0].x;
-        // positions[1]=points[0].y;
-        // positions[2]=points[0].z;
-        // positions[3]=points[1].x;
-        // positions[4]=points[1].y;
-        // positions[5]=points[1].z;
-        // positions[6]=p3.x;
-        // positions[7]=p3.y;
-        // positions[8]=p3.z;
-        // positions[9]=p3.x;
-        // positions[10]=p3.y;
-        // positions[11]=p3.z;
-        // positions[12]=points[1].x;
-        // positions[13]=points[1].y;
-        // positions[14]=points[1].z;
-        // positions[15]=p4.x;
-        // positions[16]=p4.y;
-        // positions[17]=p4.z;
-        // geo.setAttribute( 'position', new Float32BufferAttribute( positions, 3 ));
-        // geo.computeVertexNormals();
-        // v10.normalize();
-        // const uvs = [];
-        // uvs.push(0, 0);
-        // uvs.push(1, 0);
-        // uvs.push(0, 1);
-        // uvs.push(0, 1);
-        // uvs.push(1, 0);
-        // uvs.push(1, 1);
-        // geo.setAttribute( 'uv', new Float32BufferAttribute( uvs, 2 ));
       }
     }
   }, [points, thickness, showSolarRadiationHeatmap]);
+
+  const overhangLines: Vector3[][] | undefined = useMemo(() => {
+    if (!showHeatFluxes) return undefined;
+    const segments = getRoofSegmentVerticesWithoutOverhang(id);
+    if (!segments) return undefined;
+    const lines: Vector3[][] = [];
+    const thicknessVector = new Vector3(0, 0, thickness + 0.1);
+    switch (roofType) {
+      case RoofType.Hip:
+      case RoofType.Pyramid:
+        for (const seg of segments) {
+          const p: Vector3[] = [];
+          p.push(seg[0].clone().sub(centroid).add(thicknessVector));
+          p.push(seg[1].clone().sub(centroid).add(thicknessVector));
+          lines.push(p);
+        }
+        break;
+      case RoofType.Mansard:
+        for (const [i, seg] of segments.entries()) {
+          if (i === segments.length - 1) continue;
+          const p: Vector3[] = [];
+          p.push(seg[0].clone().sub(centroid).add(thicknessVector));
+          p.push(seg[1].clone().sub(centroid).add(thicknessVector));
+          lines.push(p);
+        }
+        break;
+      case RoofType.Gambrel:
+        for (const [i, seg] of segments.entries()) {
+          if (i === 0 || i === 3) {
+            const p: Vector3[] = [];
+            p.push(seg[0].clone().sub(centroid).add(thicknessVector));
+            p.push(seg[1].clone().sub(centroid).add(thicknessVector));
+            lines.push(p);
+          }
+          let p: Vector3[] = [];
+          p.push(seg[0].clone().sub(centroid).add(thicknessVector));
+          p.push(seg[3].clone().sub(centroid).add(thicknessVector));
+          lines.push(p);
+          p = [];
+          p.push(seg[1].clone().sub(centroid).add(thicknessVector));
+          p.push(seg[2].clone().sub(centroid).add(thicknessVector));
+          lines.push(p);
+        }
+        break;
+    }
+    return lines;
+  }, [showHeatFluxes]);
 
   const heatFluxes: Vector3[][] | undefined = useMemo(() => {
     if (!showHeatFluxes) return undefined;
@@ -317,6 +325,24 @@ export const RoofSegment = ({
         </>
       )}
 
+      {overhangLines &&
+        overhangLines.map((v, index) => {
+          return (
+            <Line
+              key={index}
+              points={v}
+              color={'gray'}
+              lineWidth={0.5}
+              dashed={true}
+              dashSize={0.2}
+              gapSize={0.1}
+              receiveShadow={false}
+              castShadow={false}
+              name={'Overhang Boundary ' + index}
+            />
+          );
+        })}
+
       {heatFluxes &&
         heatFluxes.map((v, index) => {
           return (
@@ -336,7 +362,7 @@ export const RoofSegment = ({
                     : v[0]
                 }
                 args={[0.06, 0.2, 4, 1]}
-                name={'Normal Vector Arrow Head'}
+                name={'Normal Vector Arrow Head ' + index}
                 rotation={heatFluxArrowEuler.current ?? [0, 0, 0]}
               >
                 <meshBasicMaterial attach="material" color={heatFluxColor ?? DEFAULT_HEAT_FLUX_COLOR} />

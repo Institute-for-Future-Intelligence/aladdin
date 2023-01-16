@@ -1205,6 +1205,31 @@ const RoofSegment = ({
     );
   };
 
+  const overhangLines: Vector3[][] | undefined = useMemo(() => {
+    if (!showHeatFluxes) return undefined;
+    const segments = getRoofSegmentVerticesWithoutOverhang(id);
+    if (!segments) return undefined;
+    const lines: Vector3[][] = [];
+    const [wallLeft, wallRight, ridgeRight, ridgeLeft, wallLeftAfterOverhang] = points;
+    const thickness = wallLeftAfterOverhang.z - wallLeft.z;
+    const thicknessVector = new Vector3(0, 0, thickness + 0.1);
+    for (const [i, seg] of segments.entries()) {
+      let p: Vector3[] = [];
+      p.push(seg[0].clone().sub(centroid).add(thicknessVector));
+      p.push(seg[1].clone().sub(centroid).add(thicknessVector));
+      lines.push(p);
+      p = [];
+      p.push(seg[0].clone().sub(centroid).add(thicknessVector));
+      p.push(seg[3].clone().sub(centroid).add(thicknessVector));
+      lines.push(p);
+      p = [];
+      p.push(seg[1].clone().sub(centroid).add(thicknessVector));
+      p.push(seg[2].clone().sub(centroid).add(thicknessVector));
+      lines.push(p);
+    }
+    return lines;
+  }, [showHeatFluxes]);
+
   const heatFluxes: Vector3[][] | undefined = useMemo(() => {
     if (!showHeatFluxes) return undefined;
     const heat = hourlyHeatExchangeArrayMap.get(id + '-' + index);
@@ -1481,6 +1506,25 @@ const RoofSegment = ({
           </group>
         </>
       )}
+
+      {overhangLines &&
+        overhangLines.map((v, index) => {
+          return (
+            <Line
+              key={index}
+              points={v}
+              color={'gray'}
+              lineWidth={0.5}
+              dashed={true}
+              dashSize={0.2}
+              gapSize={0.1}
+              receiveShadow={false}
+              castShadow={false}
+              name={'Overhang Boundary ' + index}
+            />
+          );
+        })}
+
       {heatFluxes &&
         heatFluxes.map((v, index) => {
           return (
