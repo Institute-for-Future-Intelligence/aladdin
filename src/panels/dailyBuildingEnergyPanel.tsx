@@ -19,8 +19,8 @@ import { usePrimitiveStore } from '../stores/commonPrimitive';
 import { useDailyEnergySorter } from '../analysis/energyHooks';
 import BuildinEnergyGraph from '../components/buildingEnergyGraph';
 import { Util } from '../Util';
-import { CheckStatus, useBuildingCheck } from '../analysis/buildingHooks';
 import { useDataStore } from '../stores/commonData';
+import { checkBuilding, CheckStatus } from '../analysis/heatTools';
 
 const Container = styled.div`
   position: fixed;
@@ -290,7 +290,6 @@ const DailyBuildingEnergyPanel = ({ city }: DailyBuildingEnergyPanelProps) => {
 
   const labelX = i18n.t('word.Hour', lang);
   const labelY = i18n.t('word.Energy', lang);
-  const checkBuildings = useBuildingCheck();
   const emptyGraph = data && data[0] ? Object.keys(data[0]).length === 0 : true;
 
   return (
@@ -380,15 +379,19 @@ const DailyBuildingEnergyPanel = ({ city }: DailyBuildingEnergyPanelProps) => {
                 icon={emptyGraph ? <CaretRightOutlined /> : <ReloadOutlined />}
                 title={i18n.t(emptyGraph ? 'word.Run' : 'word.Update', lang)}
                 onClick={() => {
-                  if (checkBuildings === CheckStatus.NO_BUILDING) {
+                  const elements = useStore.getState().elements;
+                  const countElementsByType = useStore.getState().countElementsByType;
+                  const getChildrenOfType = useStore.getState().getChildrenOfType;
+                  const status = checkBuilding(elements, countElementsByType, getChildrenOfType);
+                  if (status === CheckStatus.NO_BUILDING) {
                     showInfo(i18n.t('analysisManager.NoBuildingForAnalysis', lang));
                     return;
                   }
-                  if (checkBuildings === CheckStatus.AT_LEAST_ONE_BAD_NO_GOOD) {
+                  if (status === CheckStatus.AT_LEAST_ONE_BAD_NO_GOOD) {
                     showError(i18n.t('message.SimulationWillNotStartDueToErrors', lang));
                     return;
                   }
-                  if (checkBuildings === CheckStatus.AT_LEAST_ONE_BAD_AT_LEAST_ONE_GOOD) {
+                  if (status === CheckStatus.AT_LEAST_ONE_BAD_AT_LEAST_ONE_GOOD) {
                     showWarning(i18n.t('message.SimulationWillStartDespiteErrors', lang));
                   }
                   showInfo(i18n.t('message.SimulationStarted', lang));

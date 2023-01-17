@@ -34,9 +34,9 @@ import SutSimulationSettings from './components/contextMenu/elementMenu/sutSimul
 import { UndoableChange } from './undo/UndoableChange';
 import { DEFAULT_SOLAR_PANEL_SHININESS, FLOATING_WINDOW_OPACITY, HOME_URL, UNDO_SHOW_INFO_DURATION } from './constants';
 import BuildingEnergySimulationSettings from './components/contextMenu/elementMenu/buildingEnergySimulationSettings';
-import { CheckStatus, useBuildingCheck } from './analysis/buildingHooks';
 import { usePrimitiveStore } from './stores/commonPrimitive';
 import { getExample } from './examples';
+import { checkBuilding, CheckStatus } from './analysis/heatTools';
 
 const { SubMenu } = Menu;
 
@@ -97,6 +97,7 @@ const MainMenu = ({ viewOnly, set2DView, resetView, zoomView, canvas }: MainMenu
   const importContent = useStore(Selector.importContent);
   const countObservers = useStore(Selector.countObservers);
   const countElementsByType = useStore(Selector.countElementsByType);
+  const getChildrenOfType = useStore(Selector.getChildrenOfType);
   const countSolarStructuresByType = useStore(Selector.countSolarStructuresByType);
   const selectNone = useStore(Selector.selectNone);
   const addUndoable = useStore(Selector.addUndoable);
@@ -711,8 +712,6 @@ const MainMenu = ({ viewOnly, set2DView, resetView, zoomView, canvas }: MainMenu
 
   const readyToPaste = elementsToPaste && elementsToPaste.length > 0;
 
-  const checkBuildings = useBuildingCheck();
-
   const menu = (
     <Menu triggerSubMenuAction={'click'}>
       {/* file menu */}
@@ -1277,15 +1276,16 @@ const MainMenu = ({ viewOnly, set2DView, resetView, zoomView, canvas }: MainMenu
           <Menu.Item
             key={'building-energy-daily-data'}
             onClick={() => {
-              if (checkBuildings === CheckStatus.NO_BUILDING) {
+              const status = checkBuilding(elements, countElementsByType, getChildrenOfType);
+              if (status === CheckStatus.NO_BUILDING) {
                 showInfo(i18n.t('analysisManager.NoBuildingForAnalysis', lang));
                 return;
               }
-              if (checkBuildings === CheckStatus.AT_LEAST_ONE_BAD_NO_GOOD) {
+              if (status === CheckStatus.AT_LEAST_ONE_BAD_NO_GOOD) {
                 showError(i18n.t('message.SimulationWillNotStartDueToErrors', lang));
                 return;
               }
-              if (checkBuildings === CheckStatus.AT_LEAST_ONE_BAD_AT_LEAST_ONE_GOOD) {
+              if (status === CheckStatus.AT_LEAST_ONE_BAD_AT_LEAST_ONE_GOOD) {
                 showWarning(i18n.t('message.SimulationWillStartDespiteErrors', lang));
               }
               showInfo(i18n.t('message.SimulationStarted', lang));
@@ -1308,15 +1308,16 @@ const MainMenu = ({ viewOnly, set2DView, resetView, zoomView, canvas }: MainMenu
           <Menu.Item
             key={'building-energy-yearly-data'}
             onClick={() => {
-              if (checkBuildings === CheckStatus.NO_BUILDING) {
+              const status = checkBuilding(elements, countElementsByType, getChildrenOfType);
+              if (status === CheckStatus.NO_BUILDING) {
                 showInfo(i18n.t('analysisManager.NoBuildingForAnalysis', lang));
                 return;
               }
-              if (checkBuildings === CheckStatus.AT_LEAST_ONE_BAD_NO_GOOD) {
+              if (status === CheckStatus.AT_LEAST_ONE_BAD_NO_GOOD) {
                 showError(i18n.t('message.SimulationWillNotStartDueToErrors', lang));
                 return;
               }
-              if (checkBuildings === CheckStatus.AT_LEAST_ONE_BAD_AT_LEAST_ONE_GOOD) {
+              if (status === CheckStatus.AT_LEAST_ONE_BAD_AT_LEAST_ONE_GOOD) {
                 showWarning(i18n.t('message.SimulationWillStartDespiteErrors', lang));
               }
               showInfo(i18n.t('message.SimulationStarted', lang));
