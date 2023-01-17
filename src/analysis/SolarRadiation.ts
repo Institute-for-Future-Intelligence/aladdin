@@ -560,7 +560,6 @@ export class SolarRadiation {
     flat: boolean,
     withoutOverhang: boolean,
     segments: Vector3[][],
-    margin: number,
     foundation: FoundationModel,
     elevation: number,
     distanceToClosestObject: Function,
@@ -675,6 +674,7 @@ export class SolarRadiation {
         segmentUnitAreas.push(dm.length() * dn.length());
         const v = new Vector3();
         const relativePolygon: Point2[] = [];
+        const margin = 0.01;
         relativePolygon.push({ x: -margin, y: -margin } as Point2);
         relativePolygon.push({ x: m + margin, y: -margin } as Point2);
         relativePolygon.push({ x: m2, y: n + margin } as Point2);
@@ -688,7 +688,11 @@ export class SolarRadiation {
         for (let p = 0; p < m; p++) {
           const dmp = dm.clone().multiplyScalar(p);
           for (let q = 0; q < n; q++) {
-            if (Util.isPointInside(p, q, relativePolygon)) {
+            let within = true;
+            if (withoutOverhang) {
+              within = Util.isPointInside(p, q, relativePolygon);
+            }
+            if (within) {
               v.copy(v0).add(dmp).add(dn.clone().multiplyScalar(q));
               const distance = distanceToClosestObject(uuid, v, sunDirection);
               if (distance > AMBIENT_LIGHT_THRESHOLD || distance < 0) {
@@ -716,7 +720,6 @@ export class SolarRadiation {
     roof: RoofModel,
     withoutOverhang: boolean,
     segments: Vector3[][],
-    margin: number,
     foundation: FoundationModel,
     elevation: number,
     distanceToClosestObject: Function,
@@ -808,13 +811,18 @@ export class SolarRadiation {
         }
       } else {
         const relativePolygon: Point2[] = [];
+        const margin = 0.01;
         relativePolygon.push({ x: -margin, y: -margin } as Point2);
         relativePolygon.push({ x: m + margin, y: -margin } as Point2);
         relativePolygon.push({ x: m2, y: n + margin } as Point2);
         for (let p = 0; p < m; p++) {
           const dmp = dm.clone().multiplyScalar(p);
           for (let q = 0; q < n; q++) {
-            if (Util.isPointInside(p, q, relativePolygon)) {
+            let within = true;
+            if (withoutOverhang) {
+              within = Util.isPointInside(p, q, relativePolygon);
+            }
+            if (within) {
               v.copy(v0).add(dmp).add(dn.clone().multiplyScalar(q));
               const distance = distanceToClosestObject(uuid, v, sunDirection);
               if (distance > AMBIENT_LIGHT_THRESHOLD || distance < 0) {

@@ -34,7 +34,7 @@ import { WallModel } from 'src/models/WallModel';
 import { spBoundaryCheck, spCollisionCheck } from '../roof/roofRenderer';
 import { UndoableChange } from 'src/undo/UndoableChange';
 import { UnoableResizeSolarPanelOnRoof } from 'src/undo/UndoableResize';
-import { getSunDirection } from 'src/analysis/sunTools';
+import { getSunDirection, ROOFTOP_SOLAR_PANEL_OFFSET } from 'src/analysis/sunTools';
 import i18n from 'src/i18n/i18n';
 import { RoofUtil } from '../roof/RoofUtil';
 import { useSolarPanelHeatmapTexture, useSolarPanelTexture } from './hooks';
@@ -1005,7 +1005,7 @@ const SolarPanelOnRoof = ({
         <Plane
           name={'Solar Panel Simulation Plane'}
           uuid={id}
-          // position={[0, 0, lz]} // already top surface
+          position={[0, 0, ROOFTOP_SOLAR_PANEL_OFFSET]}
           args={[lx, ly]}
           userData={{ simulation: true }}
           receiveShadow={false}

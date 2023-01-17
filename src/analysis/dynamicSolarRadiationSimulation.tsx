@@ -846,8 +846,6 @@ const DynamicSolarRadiationSimulation = ({ city }: DynamicSolarRadiationSimulati
           cellOutputsMapRef.current.set(uuid, cellOutputs);
         }
         v10.normalize();
-        // find the position of the top point relative to the first edge point
-        const m2 = (m * v20.dot(v10)) / length10;
         v20.normalize();
         v21.normalize();
         // find the normal vector of the plane (must normalize the cross product as it is not normalized!)
@@ -870,11 +868,6 @@ const DynamicSolarRadiationSimulation = ({ city }: DynamicSolarRadiationSimulati
         dm.multiplyScalar(2);
         dn.multiplyScalar(2);
         const v = new Vector3();
-        const relativePolygon: Point2[] = [];
-        const margin = 10;
-        relativePolygon.push({ x: -margin, y: -margin } as Point2);
-        relativePolygon.push({ x: m + margin, y: -margin } as Point2);
-        relativePolygon.push({ x: m2, y: n + margin } as Point2);
         const indirectRadiation = calculateDiffuseAndReflectedRadiation(
           world.ground,
           now.getMonth(),
@@ -885,14 +878,12 @@ const DynamicSolarRadiationSimulation = ({ city }: DynamicSolarRadiationSimulati
         for (let p = 0; p < m; p++) {
           const dmp = dm.clone().multiplyScalar(p);
           for (let q = 0; q < n; q++) {
-            if (Util.isPointInside(p, q, relativePolygon)) {
-              cellOutputs[p][q] += indirectRadiation;
-              if (dot > 0) {
-                v.copy(v0).add(dmp).add(dn.clone().multiplyScalar(q));
-                if (!inShadow(uuid, v, sunDirection)) {
-                  // direct radiation
-                  cellOutputs[p][q] += dot * peakRadiation;
-                }
+            cellOutputs[p][q] += indirectRadiation;
+            if (dot > 0) {
+              v.copy(v0).add(dmp).add(dn.clone().multiplyScalar(q));
+              if (!inShadow(uuid, v, sunDirection)) {
+                // direct radiation
+                cellOutputs[p][q] += dot * peakRadiation;
               }
             }
           }
@@ -1128,6 +1119,7 @@ const DynamicSolarRadiationSimulation = ({ city }: DynamicSolarRadiationSimulati
     const euler = new Euler(0, 0, foundation.rotation[2], 'ZYX');
     const peakRadiation = calculatePeakRadiation(sunDirection, dayOfYear, elevation, AirMass.SPHERE_MODEL);
     for (const [index, s] of segments.entries()) {
+      // even number (0, 2) are quads, odd number (1, 3) are triangles
       const uuid = roof.id + '-' + index;
       const s0 = s[0].clone().applyEuler(euler);
       const s1 = s[1].clone().applyEuler(euler);
@@ -1140,6 +1132,8 @@ const DynamicSolarRadiationSimulation = ({ city }: DynamicSolarRadiationSimulati
       const distance = new Vector3().crossVectors(v20, v21).length() / length10;
       const m = Math.max(2, Math.round(length10 / cellSize));
       const n = Math.max(2, Math.round(distance / cellSize));
+      // in case we need it: the position of the top point relative to the first edge point is
+      // (m * v20.dot(v10.normalize())) / length10;
       let cellOutputs = cellOutputsMapRef.current.get(uuid);
       if (!cellOutputs || cellOutputs.length !== m || cellOutputs[0].length !== n) {
         cellOutputs = Array(m)
@@ -1148,8 +1142,6 @@ const DynamicSolarRadiationSimulation = ({ city }: DynamicSolarRadiationSimulati
         cellOutputsMapRef.current.set(uuid, cellOutputs);
       }
       v10.normalize();
-      // find the position of the top point relative to the first edge point
-      const m2 = (m * v20.dot(v10)) / length10;
       v20.normalize();
       v21.normalize();
       // find the normal vector of the quad
@@ -1180,39 +1172,15 @@ const DynamicSolarRadiationSimulation = ({ city }: DynamicSolarRadiationSimulati
         peakRadiation,
       );
       const dot = normal.dot(sunDirection);
-      if (index % 2 === 0) {
-        // even number (0, 2) are quads, odd number (1, 3) are triangles
-        for (let p = 0; p < m; p++) {
-          const dmp = dm.clone().multiplyScalar(p);
-          for (let q = 0; q < n; q++) {
-            cellOutputs[p][q] += indirectRadiation;
-            if (dot > 0) {
-              v.copy(v0).add(dmp).add(dn.clone().multiplyScalar(q));
-              if (!inShadow(uuid, v, sunDirection)) {
-                // direct radiation
-                cellOutputs[p][q] += dot * peakRadiation;
-              }
-            }
-          }
-        }
-      } else {
-        const relativePolygon: Point2[] = [];
-        const margin = 10;
-        relativePolygon.push({ x: -margin, y: -margin } as Point2);
-        relativePolygon.push({ x: m + margin, y: -margin } as Point2);
-        relativePolygon.push({ x: m2, y: n + margin } as Point2);
-        for (let p = 0; p < m; p++) {
-          const dmp = dm.clone().multiplyScalar(p);
-          for (let q = 0; q < n; q++) {
-            if (Util.isPointInside(p, q, relativePolygon)) {
-              cellOutputs[p][q] += indirectRadiation;
-              if (dot > 0) {
-                v.copy(v0).add(dmp).add(dn.clone().multiplyScalar(q));
-                if (!inShadow(uuid, v, sunDirection)) {
-                  // direct radiation
-                  cellOutputs[p][q] += dot * peakRadiation;
-                }
-              }
+      for (let p = 0; p < m; p++) {
+        const dmp = dm.clone().multiplyScalar(p);
+        for (let q = 0; q < n; q++) {
+          cellOutputs[p][q] += indirectRadiation;
+          if (dot > 0) {
+            v.copy(v0).add(dmp).add(dn.clone().multiplyScalar(q));
+            if (!inShadow(uuid, v, sunDirection)) {
+              // direct radiation
+              cellOutputs[p][q] += dot * peakRadiation;
             }
           }
         }
