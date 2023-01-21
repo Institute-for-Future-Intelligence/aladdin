@@ -579,7 +579,7 @@ const SensorSimulation = ({ city }: SensorSimulationProps) => {
     const date = now.getDate();
     const dayOfYear = Util.dayOfYear(now);
     for (let i = 0; i < 24; i++) {
-      for (let j = 0; j < world.timesPerHour; j++) {
+      for (let j = 0; j < timesPerHour; j++) {
         // a shift of 30 minutes minute half of the interval ensures the symmetry of the result around noon
         const cur = new Date(year, month, date, i, (j + 0.5) * minuteInterval - 30);
         const sunDirection = getSunDirection(cur, world.latitude);

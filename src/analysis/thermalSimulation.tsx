@@ -510,7 +510,7 @@ const ThermalSimulation = ({ city }: ThermalSimulationProps) => {
     // apply clearness and convert the unit of time step from minute to hour so that we get kWh
     // (divide by times per hour as the radiation is added up that many times)
     scaleFactorRef.current =
-      daylight > ZERO_TOLERANCE ? weather.sunshineHours[now.getMonth()] / (30 * daylight * world.timesPerHour) : 0;
+      daylight > ZERO_TOLERANCE ? weather.sunshineHours[now.getMonth()] / (30 * daylight * timesPerHour) : 0;
     sunDirectionRef.current = calculateSunDirection();
     for (const e of elements) {
       switch (e.type) {

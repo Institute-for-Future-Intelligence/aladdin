@@ -766,7 +766,7 @@ const SolarUpdraftTowerSimulation = ({ city }: SolarUpdraftTowerSimulationProps)
     let dx, dy;
     const area = Math.PI * solarUpdraftTower.collectorRadius * solarUpdraftTower.collectorRadius;
     for (let i = 0; i < 24; i++) {
-      for (let j = 0; j < world.timesPerHour; j++) {
+      for (let j = 0; j < timesPerHour; j++) {
         // a shift of 30 minutes minute half of the interval ensures the symmetry of the result around noon
         const cur = new Date(year, month, date, i, (j + 0.5) * minuteInterval - 30);
         const sunDirection = getSunDirection(cur, world.latitude);
