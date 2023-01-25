@@ -1808,6 +1808,9 @@ const MainMenu = ({ viewOnly, set2DView, resetView, zoomView, canvas }: MainMenu
         </SubMenu>
         {/* building science */}
         <SubMenu key={'building-science'} title={i18n.t('menu.buildingScienceSubMenu', lang)}>
+          <Menu.Item key="thermal_vs_building_envelope" onClick={loadFile}>
+            {i18n.t('menu.buildingScienceTutorials.ThermalEnvelopeVsBuildingEnvelope', lang)}
+          </Menu.Item>
           <Menu.Item key="effect_house_size" onClick={loadFile}>
             {i18n.t('menu.buildingScienceTutorials.EffectOfSizeOnBuildingEnergy', lang)}
           </Menu.Item>

@@ -344,6 +344,7 @@ export const i18n_es = {
 
       buildingScienceSubMenu: 'Building Science',
       buildingScienceTutorials: {
+        ThermalEnvelopeVsBuildingEnvelope: 'Thermal Envelope vs. Building Envelope',
         EffectOfSizeOnBuildingEnergy: 'Effect of Size on Building Energy',
         EffectOfOrientationOnBuildingEnergy: 'Effect of Orientation on Building Energy',
         EffectOfInsulationOnBuildingEnergy: 'Effect of Insulation on Building Energy',

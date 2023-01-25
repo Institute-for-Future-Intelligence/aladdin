@@ -342,6 +342,7 @@ export const i18n_zh_tw = {
 
       buildingScienceSubMenu: '建築科學',
       buildingScienceTutorials: {
+        ThermalEnvelopeVsBuildingEnvelope: '房屋的熱學封套和圍護封套',
         EffectOfSizeOnBuildingEnergy: '房屋大小對能耗的影響',
         EffectOfOrientationOnBuildingEnergy: '房屋方位對能耗的影響',
         EffectOfInsulationOnBuildingEnergy: '房屋隔熱對能耗的影響',
