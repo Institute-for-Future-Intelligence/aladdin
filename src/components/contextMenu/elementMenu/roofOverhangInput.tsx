@@ -1,5 +1,5 @@
 /*
- * @Copyright 2021-2022. Institute for Future Intelligence, Inc.
+ * @Copyright 2021-2023. Institute for Future Intelligence, Inc.
  */
 
 import React, { useEffect, useRef, useState } from 'react';
@@ -75,7 +75,7 @@ const RoofOverhangInput = ({ setDialogVisible }: { setDialogVisible: (b: boolean
           }
         });
         const undoableChangeAll = {
-          name: 'Set Overhang Length for All Roofs',
+          name: 'Set Eaves Length for All Roofs',
           timestamp: Date.now(),
           oldValues: oldOverhangsAll,
           newValue: value,
@@ -101,7 +101,7 @@ const RoofOverhangInput = ({ setDialogVisible }: { setDialogVisible: (b: boolean
             }
           });
           const undoableChangeAboveFoundation = {
-            name: 'Set Overhang Length for All Roofs Above Foundation',
+            name: 'Set Eaves Length for All Roofs Above Foundation',
             timestamp: Date.now(),
             oldValues: oldOverhangsAboveFoundation,
             newValue: value,
@@ -125,7 +125,7 @@ const RoofOverhangInput = ({ setDialogVisible }: { setDialogVisible: (b: boolean
           const updatedRoof = getElementById(roof.id) as RoofModel;
           const oldOverhangLength = updatedRoof.overhang ?? roof.overhang ?? 0.4;
           const undoableChange = {
-            name: 'Set Roof Overhang Length',
+            name: 'Set Eaves Length',
             timestamp: Date.now(),
             oldValue: oldOverhangLength,
             newValue: value,
@@ -192,7 +192,7 @@ const RoofOverhangInput = ({ setDialogVisible }: { setDialogVisible: (b: boolean
             onMouseOver={() => setDragEnabled(true)}
             onMouseOut={() => setDragEnabled(false)}
           >
-            {i18n.t('roofMenu.OverhangLength', lang)}
+            {i18n.t('roofMenu.EavesOverhangLength', lang)}
           </div>
         }
         footer={[

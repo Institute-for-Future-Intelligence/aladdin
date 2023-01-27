@@ -100,6 +100,7 @@ import effect_house_size from './examples/effect_house_size.json';
 import effect_house_orientation from './examples/effect_house_orientation.json';
 import effect_wall_roof_insulation from './examples/effect_wall_roof_insulation.json';
 import effect_roof_color from './examples/effect_roof_color.json';
+import effect_eaves_overhang_length from './examples/effect_eaves_overhang_length.json';
 import effect_window_shgc from './examples/effect_window_shgc.json';
 import effect_thermostat_setpoint from './examples/effect_thermostat_setpoint.json';
 import effect_solar_panels from './examples/effect_solar_panels.json';
@@ -135,6 +136,9 @@ export const getExample = (name: string) => {
       break;
     case 'effect_roof_color':
       input = effect_roof_color;
+      break;
+    case 'effect_eaves_overhang_length':
+      input = effect_eaves_overhang_length;
       break;
     case 'effect_window_shgc':
       input = effect_window_shgc;

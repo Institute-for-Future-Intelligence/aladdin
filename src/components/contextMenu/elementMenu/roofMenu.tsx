@@ -427,7 +427,7 @@ export const RoofMenu = React.memo(() => {
               setOverhangDialogVisible(true);
             }}
           >
-            {i18n.t('roofMenu.OverhangLength', lang)} ...
+            {i18n.t('roofMenu.EavesOverhangLength', lang)} ...
           </Menu.Item>
 
           {(roof.roofStructure !== RoofStructure.Rafter || roof.opacity === undefined || roof.opacity > 0) && (

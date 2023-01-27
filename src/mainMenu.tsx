@@ -1823,6 +1823,9 @@ const MainMenu = ({ viewOnly, set2DView, resetView, zoomView, canvas }: MainMenu
           <Menu.Item key="effect_roof_color" onClick={loadFile}>
             {i18n.t('menu.buildingScienceTutorials.EffectOfRoofColorOnBuildingEnergy', lang)}
           </Menu.Item>
+          <Menu.Item key="effect_eaves_overhang_length" onClick={loadFile}>
+            {i18n.t('menu.buildingScienceTutorials.EffectOfEavesOverhangLengthOnBuildingEnergy', lang)}
+          </Menu.Item>
           <Menu.Item key="effect_window_shgc" onClick={loadFile}>
             {i18n.t('menu.buildingScienceTutorials.EffectOfWindowSHGCOnBuildingEnergy', lang)}
           </Menu.Item>
