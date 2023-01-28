@@ -1,5 +1,5 @@
 /*
- * @Copyright 2021-2022. Institute for Future Intelligence, Inc.
+ * @Copyright 2021-2023. Institute for Future Intelligence, Inc.
  */
 
 import PolygonTexture01 from '../resources/foundation_01.png';
@@ -492,10 +492,10 @@ const Polygon = ({
               <textSprite
                 name={'Label ' + i}
                 text={'' + i}
-                fontSize={20}
+                fontSize={20 * ratio}
                 fontFace={'Times Roman'}
-                textHeight={0.2}
-                position={[p.x, p.y, 0.3]}
+                textHeight={0.2 * ratio}
+                position={[p.x, p.y, 0.2 * ratio]}
               />
             </React.Fragment>
           );
@@ -509,9 +509,9 @@ const Polygon = ({
             (polygonModel?.label ? polygonModel.label : i18n.t('shared.PolygonElement', lang)) +
             (polygonModel.locked ? ' (' + i18n.t('shared.ElementLocked', lang) + ')' : '')
           }
-          fontSize={20}
+          fontSize={20 * ratio}
           fontFace={'Times Roman'}
-          textHeight={0.2}
+          textHeight={0.2 * ratio}
           position={[0, 0, lz + 0.2]}
         />
       )}
