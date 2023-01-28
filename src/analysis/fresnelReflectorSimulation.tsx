@@ -18,6 +18,7 @@ import { FresnelReflectorModel } from '../models/FresnelReflectorModel';
 import { FoundationModel } from '../models/FoundationModel';
 import { SunMinutes } from './SunMinutes';
 import { usePrimitiveStore } from '../stores/commonPrimitive';
+import { useDataStore } from '../stores/commonData';
 
 export interface FresnelReflectorSimulationProps {
   city: string | null;
@@ -32,13 +33,13 @@ const FresnelReflectorSimulation = ({ city }: FresnelReflectorSimulationProps) =
   const elements = useStore.getState().elements;
   const getWeather = useStore(Selector.getWeather);
   const getParent = useStore(Selector.getParent);
-  const setDailyYield = useStore(Selector.setDailyFresnelReflectorYield);
+  const setDailyYield = useDataStore(Selector.setDailyFresnelReflectorYield);
   const updateDailyYield = useStore(Selector.updateSolarCollectorDailyYieldById);
   const dailyIndividualOutputs = usePrimitiveStore(Selector.dailyFresnelReflectorIndividualOutputs);
-  const setYearlyYield = useStore(Selector.setYearlyFresnelReflectorYield);
+  const setYearlyYield = useDataStore(Selector.setYearlyFresnelReflectorYield);
   const updateYearlyYield = useStore(Selector.updateSolarCollectorYearlyYieldById);
   const yearlyIndividualOutputs = usePrimitiveStore(Selector.yearlyFresnelReflectorIndividualOutputs);
-  const setFresnelReflectorLabels = useStore(Selector.setFresnelReflectorLabels);
+  const setFresnelReflectorLabels = useDataStore(Selector.setFresnelReflectorLabels);
   const runDailySimulation = usePrimitiveStore(Selector.runDailySimulationForFresnelReflectors);
   const runYearlySimulation = usePrimitiveStore(Selector.runYearlySimulationForFresnelReflectors);
   const pauseDailySimulation = usePrimitiveStore(Selector.pauseDailySimulationForFresnelReflectors);
@@ -151,11 +152,11 @@ const FresnelReflectorSimulation = ({ city }: FresnelReflectorSimulationProps) =
         finishDaily();
         if (loggable) {
           setCommonStore((state) => {
-            const totalYield = state.sumDailyFresnelReflectorYield;
+            const totalYield = useDataStore.getState().sumDailyFresnelReflectorYield();
             state.actionInfo = {
               name: 'Daily Simulation for Fresnel Reflectors Completed',
               result: { totalYield: totalYield },
-              details: state.dailyFresnelReflectorYield,
+              details: useDataStore.getState().dailyFresnelReflectorYield,
               timestamp: new Date().getTime(),
             };
           });
@@ -355,11 +356,11 @@ const FresnelReflectorSimulation = ({ city }: FresnelReflectorSimulationProps) =
           generateYearlyYieldData();
           if (loggable) {
             setCommonStore((state) => {
-              const totalYield = state.sumYearlyFresnelReflectorYield;
+              const totalYield = useDataStore.getState().sumYearlyFresnelReflectorYield();
               state.actionInfo = {
                 name: 'Yearly Simulation for Fresnel Reflectors Completed',
                 result: { totalYield: totalYield },
-                details: state.yearlyFresnelReflectorYield,
+                details: useDataStore.getState().yearlyFresnelReflectorYield,
                 timestamp: new Date().getTime(),
               };
             });

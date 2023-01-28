@@ -18,6 +18,7 @@ import SutBiaxialLineGraph from '../components/sutBiaxialLineGraph';
 import { Rectangle } from '../models/Rectangle';
 import { FLOATING_WINDOW_OPACITY } from '../constants';
 import { usePrimitiveStore } from '../stores/commonPrimitive';
+import { useDataStore } from '../stores/commonData';
 
 const Container = styled.div`
   position: fixed;
@@ -81,11 +82,11 @@ const DailySolarUpdraftTowerYieldPanel = ({ city }: DailySolarUpdraftTowerYieldP
   const setCommonStore = useStore(Selector.set);
   const now = new Date(useStore(Selector.world.date));
   const countSolarStructuresByType = useStore(Selector.countSolarStructuresByType);
-  const dailyYield = useStore(Selector.dailyUpdraftTowerYield);
-  const dailyResults = useStore(Selector.dailyUpdraftTowerResults);
+  const dailyYield = useDataStore(Selector.dailyUpdraftTowerYield);
+  const dailyResults = useDataStore(Selector.dailyUpdraftTowerResults);
   const individualOutputs = usePrimitiveStore(Selector.dailyUpdraftTowerIndividualOutputs);
   const panelRect = useStore(Selector.viewState.dailyUpdraftTowerYieldPanelRect);
-  const updraftTowerLabels = useStore(Selector.updraftTowerLabels);
+  const updraftTowerLabels = useDataStore(Selector.updraftTowerLabels);
   const simulationInProgress = usePrimitiveStore(Selector.simulationInProgress);
 
   // nodeRef is to suppress ReactDOM.findDOMNode() deprecation warning. See:

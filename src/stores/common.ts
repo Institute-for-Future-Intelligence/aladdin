@@ -577,13 +577,6 @@ export interface CommonStoreState {
   removeAllChildElementsByType: (parentId: string, type: ObjectType) => void;
   removeAllElementsOnFoundationByType: (foundationId: string, type: ObjectType) => void;
 
-  dailyLightSensorData: DatumEntry[];
-  setDailyLightSensorData: (data: DatumEntry[]) => void;
-  yearlyLightSensorData: DatumEntry[];
-  setYearlyLightSensorData: (data: DatumEntry[]) => void;
-  sensorLabels: string[];
-  setSensorLabels: (labels: string[]) => void;
-
   runSolarPanelVisibilityAnalysis: boolean;
   solarPanelVisibilityResults: Map<Vantage, Map<string, number>>;
   dailyPvYield: DatumEntry[];
@@ -596,44 +589,6 @@ export interface CommonStoreState {
   getYearlyPvProfit: () => number;
   solarPanelLabels: string[];
   setSolarPanelLabels: (labels: string[]) => void;
-
-  dailyParabolicDishYield: DatumEntry[];
-  setDailyParabolicDishYield: (data: DatumEntry[]) => void;
-  sumDailyParabolicDishYield: () => number;
-  yearlyParabolicDishYield: DatumEntry[];
-  setYearlyParabolicDishYield: (data: DatumEntry[]) => void;
-  sumYearlyParabolicDishYield: () => number;
-  parabolicDishLabels: string[];
-  setParabolicDishLabels: (labels: string[]) => void;
-
-  dailyFresnelReflectorYield: DatumEntry[];
-  setDailyFresnelReflectorYield: (data: DatumEntry[]) => void;
-  sumDailyFresnelReflectorYield: () => number;
-  yearlyFresnelReflectorYield: DatumEntry[];
-  setYearlyFresnelReflectorYield: (data: DatumEntry[]) => void;
-  sumYearlyFresnelReflectorYield: () => number;
-  fresnelReflectorLabels: string[];
-  setFresnelReflectorLabels: (labels: string[]) => void;
-
-  dailyHeliostatYield: DatumEntry[];
-  setDailyHeliostatYield: (data: DatumEntry[]) => void;
-  sumDailyHeliostatYield: () => number;
-  yearlyHeliostatYield: DatumEntry[];
-  setYearlyHeliostatYield: (data: DatumEntry[]) => void;
-  sumYearlyHeliostatYield: () => number;
-  heliostatLabels: string[];
-  setHeliostatLabels: (labels: string[]) => void;
-
-  dailyUpdraftTowerResults: DatumEntry[];
-  dailyUpdraftTowerYield: DatumEntry[];
-  setDailyUpdraftTowerResults: (data: DatumEntry[]) => void;
-  setDailyUpdraftTowerYield: (data: DatumEntry[]) => void;
-  sumDailyUpdraftTowerYield: () => number;
-  yearlyUpdraftTowerYield: DatumEntry[];
-  setYearlyUpdraftTowerYield: (data: DatumEntry[]) => void;
-  sumYearlyUpdraftTowerYield: () => number;
-  updraftTowerLabels: string[];
-  setUpdraftTowerLabels: (labels: string[]) => void;
 
   // genetic algorithms and particle swarm optimization
   fittestIndividualResults: DatumEntry[];
@@ -831,19 +786,8 @@ export const useStore = create<CommonStoreState>(
                 content.evolutionaryAlgorithmState ?? new DefaultEvolutionaryAlgorithmState();
               state.economicsParams = content.economicsParams ?? new DefaultEconomicsParams();
               // clear existing data, if any
-              state.dailyLightSensorData.length = 0;
-              state.yearlyLightSensorData.length = 0;
               state.dailyPvYield.length = 0;
               state.yearlyPvYield.length = 0;
-              state.dailyParabolicDishYield.length = 0;
-              state.yearlyParabolicDishYield.length = 0;
-              state.dailyFresnelReflectorYield.length = 0;
-              state.yearlyFresnelReflectorYield.length = 0;
-              state.dailyHeliostatYield.length = 0;
-              state.yearlyHeliostatYield.length = 0;
-              state.dailyUpdraftTowerYield.length = 0;
-              state.dailyUpdraftTowerResults.length = 0;
-              state.yearlyUpdraftTowerYield.length = 0;
               state.fittestIndividualResults.length = 0;
               state.roofSegmentVerticesMap = new Map<string, Vector3[][]>();
               state.roofSegmentVerticesWithoutOverhangMap = new Map<string, Vector3[][]>();
@@ -927,25 +871,6 @@ export const useStore = create<CommonStoreState>(
             });
           },
 
-          dailyLightSensorData: [],
-          setDailyLightSensorData(data) {
-            immerSet((state: CommonStoreState) => {
-              state.dailyLightSensorData = [...data];
-            });
-          },
-          yearlyLightSensorData: [],
-          setYearlyLightSensorData(data) {
-            immerSet((state: CommonStoreState) => {
-              state.yearlyLightSensorData = [...data];
-            });
-          },
-          sensorLabels: [],
-          setSensorLabels(labels) {
-            immerSet((state: CommonStoreState) => {
-              state.sensorLabels = [...labels];
-            });
-          },
-
           runSolarPanelVisibilityAnalysis: false,
           solarPanelVisibilityResults: new Map<Vantage, Map<string, number>>(),
           dailyPvYield: [],
@@ -1017,192 +942,6 @@ export const useStore = create<CommonStoreState>(
           setSolarPanelLabels(labels) {
             immerSet((state: CommonStoreState) => {
               state.solarPanelLabels = [...labels];
-            });
-          },
-
-          dailyParabolicDishYield: [],
-          setDailyParabolicDishYield(data) {
-            immerSet((state: CommonStoreState) => {
-              state.dailyParabolicDishYield = [...data];
-            });
-          },
-          sumDailyParabolicDishYield() {
-            let sum = 0;
-            for (const datum of this.dailyParabolicDishYield) {
-              for (const prop in datum) {
-                if (datum.hasOwnProperty(prop)) {
-                  if (prop !== 'Hour') {
-                    sum += datum[prop] as number;
-                  }
-                }
-              }
-            }
-            return sum;
-          },
-          yearlyParabolicDishYield: [],
-          setYearlyParabolicDishYield(data) {
-            immerSet((state: CommonStoreState) => {
-              state.yearlyParabolicDishYield = [...data];
-            });
-          },
-          sumYearlyParabolicDishYield() {
-            let sum = 0;
-            for (const datum of this.yearlyParabolicDishYield) {
-              for (const prop in datum) {
-                if (datum.hasOwnProperty(prop)) {
-                  if (prop !== 'Month') {
-                    sum += datum[prop] as number;
-                  }
-                }
-              }
-            }
-            return sum;
-          },
-          parabolicDishLabels: [],
-          setParabolicDishLabels(labels) {
-            immerSet((state: CommonStoreState) => {
-              state.parabolicDishLabels = [...labels];
-            });
-          },
-
-          dailyFresnelReflectorYield: [],
-          setDailyFresnelReflectorYield(data) {
-            immerSet((state: CommonStoreState) => {
-              state.dailyFresnelReflectorYield = [...data];
-            });
-          },
-          sumDailyFresnelReflectorYield() {
-            let sum = 0;
-            for (const datum of this.dailyFresnelReflectorYield) {
-              for (const prop in datum) {
-                if (datum.hasOwnProperty(prop)) {
-                  if (prop !== 'Hour') {
-                    sum += datum[prop] as number;
-                  }
-                }
-              }
-            }
-            return sum;
-          },
-          yearlyFresnelReflectorYield: [],
-          setYearlyFresnelReflectorYield(data) {
-            immerSet((state: CommonStoreState) => {
-              state.yearlyFresnelReflectorYield = [...data];
-            });
-          },
-          sumYearlyFresnelReflectorYield() {
-            let sum = 0;
-            for (const datum of this.yearlyFresnelReflectorYield) {
-              for (const prop in datum) {
-                if (datum.hasOwnProperty(prop)) {
-                  if (prop !== 'Month') {
-                    sum += datum[prop] as number;
-                  }
-                }
-              }
-            }
-            return sum;
-          },
-          fresnelReflectorLabels: [],
-          setFresnelReflectorLabels(labels) {
-            immerSet((state: CommonStoreState) => {
-              state.fresnelReflectorLabels = [...labels];
-            });
-          },
-
-          dailyHeliostatYield: [],
-          setDailyHeliostatYield(data) {
-            immerSet((state: CommonStoreState) => {
-              state.dailyHeliostatYield = [...data];
-            });
-          },
-          sumDailyHeliostatYield() {
-            let sum = 0;
-            for (const datum of this.dailyHeliostatYield) {
-              for (const prop in datum) {
-                if (datum.hasOwnProperty(prop)) {
-                  if (prop !== 'Hour') {
-                    sum += datum[prop] as number;
-                  }
-                }
-              }
-            }
-            return sum;
-          },
-          yearlyHeliostatYield: [],
-          setYearlyHeliostatYield(data) {
-            immerSet((state: CommonStoreState) => {
-              state.yearlyHeliostatYield = [...data];
-            });
-          },
-          sumYearlyHeliostatYield() {
-            let sum = 0;
-            for (const datum of this.yearlyHeliostatYield) {
-              for (const prop in datum) {
-                if (datum.hasOwnProperty(prop)) {
-                  if (prop !== 'Month') {
-                    sum += datum[prop] as number;
-                  }
-                }
-              }
-            }
-            return sum;
-          },
-          heliostatLabels: [],
-          setHeliostatLabels(labels) {
-            immerSet((state: CommonStoreState) => {
-              state.heliostatLabels = [...labels];
-            });
-          },
-
-          dailyUpdraftTowerResults: [],
-          dailyUpdraftTowerYield: [],
-          setDailyUpdraftTowerResults(data) {
-            immerSet((state: CommonStoreState) => {
-              state.dailyUpdraftTowerResults = [...data];
-            });
-          },
-          setDailyUpdraftTowerYield(data) {
-            immerSet((state: CommonStoreState) => {
-              state.dailyUpdraftTowerYield = [...data];
-            });
-          },
-          sumDailyUpdraftTowerYield() {
-            let sum = 0;
-            for (const datum of this.dailyUpdraftTowerYield) {
-              for (const prop in datum) {
-                if (datum.hasOwnProperty(prop)) {
-                  if (prop !== 'Hour') {
-                    sum += datum[prop] as number;
-                  }
-                }
-              }
-            }
-            return sum;
-          },
-          yearlyUpdraftTowerYield: [],
-          setYearlyUpdraftTowerYield(data) {
-            immerSet((state: CommonStoreState) => {
-              state.yearlyUpdraftTowerYield = [...data];
-            });
-          },
-          sumYearlyUpdraftTowerYield() {
-            let sum = 0;
-            for (const datum of this.yearlyUpdraftTowerYield) {
-              for (const prop in datum) {
-                if (datum.hasOwnProperty(prop)) {
-                  if (prop !== 'Month') {
-                    sum += datum[prop] as number;
-                  }
-                }
-              }
-            }
-            return sum;
-          },
-          updraftTowerLabels: [],
-          setUpdraftTowerLabels(labels) {
-            immerSet((state: CommonStoreState) => {
-              state.updraftTowerLabels = [...labels];
             });
           },
 
@@ -6049,10 +5788,7 @@ export const useStore = create<CommonStoreState>(
           'user',
           'sceneRadius',
           'weatherData',
-          'sensorLabels',
           'solarPanelLabels',
-          'dailyLightSensorData',
-          'yearlyLightSensorData',
           'solarPanelArrayLayoutParams',
           'solarPanelArrayLayoutConstraints',
           'economicsParams',

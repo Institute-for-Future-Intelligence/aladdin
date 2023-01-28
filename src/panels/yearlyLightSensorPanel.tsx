@@ -17,6 +17,7 @@ import { screenshot, showInfo } from '../helpers';
 import i18n from '../i18n/i18n';
 import { Rectangle } from '../models/Rectangle';
 import { usePrimitiveStore } from '../stores/commonPrimitive';
+import { useDataStore } from '../stores/commonData';
 
 const Container = styled.div`
   position: fixed;
@@ -79,8 +80,8 @@ const YearlyLightSensorPanel = ({ city }: YearlyLightSensorPanelProps) => {
   const opacity = useStore(Selector.floatingWindowOpacity) ?? FLOATING_WINDOW_OPACITY;
   const setCommonStore = useStore(Selector.set);
   const now = new Date(useStore(Selector.world.date));
-  const sensorData = useStore(Selector.yearlyLightSensorData);
-  const sensorLabels = useStore(Selector.sensorLabels);
+  const sensorData = useDataStore(Selector.yearlyLightSensorData);
+  const sensorLabels = useDataStore(Selector.sensorLabels);
   const panelRect = useStore(Selector.viewState.yearlyLightSensorPanelRect);
   const countElementsByType = useStore(Selector.countElementsByType);
   const daylightGraph = useStore(Selector.viewState.yearlyLightSensorPanelShowDaylight);

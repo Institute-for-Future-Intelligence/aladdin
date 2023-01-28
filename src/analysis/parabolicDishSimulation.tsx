@@ -17,6 +17,7 @@ import i18n from '../i18n/i18n';
 import { ParabolicDishModel } from '../models/ParabolicDishModel';
 import { SunMinutes } from './SunMinutes';
 import { usePrimitiveStore } from '../stores/commonPrimitive';
+import { useDataStore } from '../stores/commonData';
 
 export interface ParabolicDishSimulationProps {
   city: string | null;
@@ -31,13 +32,13 @@ const ParabolicDishSimulation = ({ city }: ParabolicDishSimulationProps) => {
   const elements = useStore.getState().elements;
   const getWeather = useStore(Selector.getWeather);
   const getParent = useStore(Selector.getParent);
-  const setDailyYield = useStore(Selector.setDailyParabolicDishYield);
+  const setDailyYield = useDataStore(Selector.setDailyParabolicDishYield);
   const updateDailyYield = useStore(Selector.updateSolarCollectorDailyYieldById);
-  const setYearlyYield = useStore(Selector.setYearlyParabolicDishYield);
+  const setYearlyYield = useDataStore(Selector.setYearlyParabolicDishYield);
   const updateYearlyYield = useStore(Selector.updateSolarCollectorYearlyYieldById);
   const dailyIndividualOutputs = usePrimitiveStore(Selector.dailyParabolicDishIndividualOutputs);
   const yearlyIndividualOutputs = usePrimitiveStore(Selector.yearlyParabolicDishIndividualOutputs);
-  const setParabolicDishLabels = useStore(Selector.setParabolicDishLabels);
+  const setParabolicDishLabels = useDataStore(Selector.setParabolicDishLabels);
   const runDailySimulation = usePrimitiveStore(Selector.runDailySimulationForParabolicDishes);
   const runYearlySimulation = usePrimitiveStore(Selector.runYearlySimulationForParabolicDishes);
   const pauseDailySimulation = usePrimitiveStore(Selector.pauseDailySimulationForParabolicDishes);
@@ -150,11 +151,11 @@ const ParabolicDishSimulation = ({ city }: ParabolicDishSimulationProps) => {
         finishDaily();
         if (loggable) {
           setCommonStore((state) => {
-            const totalYield = state.sumDailyParabolicDishYield;
+            const totalYield = useDataStore.getState().sumDailyParabolicDishYield();
             state.actionInfo = {
               name: 'Daily Simulation for Parabolic Dishes Completed',
               result: { totalYield: totalYield },
-              details: state.dailyParabolicDishYield,
+              details: useDataStore.getState().dailyParabolicDishYield,
               timestamp: new Date().getTime(),
             };
           });
@@ -354,11 +355,11 @@ const ParabolicDishSimulation = ({ city }: ParabolicDishSimulationProps) => {
           generateYearlyYieldData();
           if (loggable) {
             setCommonStore((state) => {
-              const totalYield = state.sumYearlyParabolicDishYield;
+              const totalYield = useDataStore.getState().sumYearlyParabolicDishYield();
               state.actionInfo = {
                 name: 'Yearly Simulation for Parabolic Dishes Completed',
                 result: { totalYield: totalYield },
-                details: state.yearlyParabolicDishYield,
+                details: useDataStore.getState().yearlyParabolicDishYield,
                 timestamp: new Date().getTime(),
               };
             });

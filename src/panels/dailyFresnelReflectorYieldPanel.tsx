@@ -17,6 +17,7 @@ import i18n from '../i18n/i18n';
 import { Rectangle } from '../models/Rectangle';
 import { FLOATING_WINDOW_OPACITY } from '../constants';
 import { usePrimitiveStore } from '../stores/commonPrimitive';
+import { useDataStore } from '../stores/commonData';
 
 const Container = styled.div`
   position: fixed;
@@ -80,10 +81,10 @@ const DailyFresnelReflectorYieldPanel = ({ city }: DailyFresnelReflectorYieldPan
   const setCommonStore = useStore(Selector.set);
   const now = new Date(useStore(Selector.world.date));
   const countElementsByType = useStore(Selector.countElementsByType);
-  const dailyYield = useStore(Selector.dailyFresnelReflectorYield);
+  const dailyYield = useDataStore(Selector.dailyFresnelReflectorYield);
   const individualOutputs = usePrimitiveStore(Selector.dailyFresnelReflectorIndividualOutputs);
   const panelRect = useStore(Selector.viewState.dailyFresnelReflectorYieldPanelRect);
-  const fresnelReflectorLabels = useStore(Selector.fresnelReflectorLabels);
+  const fresnelReflectorLabels = useDataStore(Selector.fresnelReflectorLabels);
   const simulationInProgress = usePrimitiveStore(Selector.simulationInProgress);
 
   // nodeRef is to suppress ReactDOM.findDOMNode() deprecation warning. See:

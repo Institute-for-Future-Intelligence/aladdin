@@ -16,6 +16,7 @@ import { CaretRightOutlined, ReloadOutlined, SaveOutlined } from '@ant-design/ic
 import i18n from '../i18n/i18n';
 import { Rectangle } from '../models/Rectangle';
 import { usePrimitiveStore } from '../stores/commonPrimitive';
+import { useDataStore } from '../stores/commonData';
 
 const Container = styled.div`
   position: fixed;
@@ -79,9 +80,9 @@ const YearlySolarUpdraftTowerYieldPanel = ({ city }: YearlySolarUpdraftTowerYiel
   const setCommonStore = useStore(Selector.set);
   const daysPerYear = useStore(Selector.world.sutDaysPerYear) ?? 6;
   const now = new Date(useStore(Selector.world.date));
-  const yearlyYield = useStore(Selector.yearlyUpdraftTowerYield);
+  const yearlyYield = useDataStore(Selector.yearlyUpdraftTowerYield);
   const individualOutputs = usePrimitiveStore(Selector.yearlyUpdraftTowerIndividualOutputs);
-  const labels = useStore(Selector.updraftTowerLabels);
+  const labels = useDataStore(Selector.updraftTowerLabels);
   const countSolarStructuresByType = useStore(Selector.countSolarStructuresByType);
   const panelRect = useStore(Selector.viewState.yearlyUpdraftTowerYieldPanelRect);
   const simulationInProgress = usePrimitiveStore(Selector.simulationInProgress);

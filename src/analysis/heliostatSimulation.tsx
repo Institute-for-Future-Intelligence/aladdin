@@ -18,6 +18,7 @@ import { HeliostatModel } from '../models/HeliostatModel';
 import { FoundationModel } from '../models/FoundationModel';
 import { SunMinutes } from './SunMinutes';
 import { usePrimitiveStore } from '../stores/commonPrimitive';
+import { useDataStore } from '../stores/commonData';
 
 export interface HeliostatSimulationProps {
   city: string | null;
@@ -32,13 +33,13 @@ const HeliostatSimulation = ({ city }: HeliostatSimulationProps) => {
   const elements = useStore.getState().elements;
   const getWeather = useStore(Selector.getWeather);
   const getParent = useStore(Selector.getParent);
-  const setDailyYield = useStore(Selector.setDailyHeliostatYield);
+  const setDailyYield = useDataStore(Selector.setDailyHeliostatYield);
   const updateDailyYield = useStore(Selector.updateSolarCollectorDailyYieldById);
   const dailyIndividualOutputs = usePrimitiveStore(Selector.dailyHeliostatIndividualOutputs);
-  const setYearlyYield = useStore(Selector.setYearlyHeliostatYield);
+  const setYearlyYield = useDataStore(Selector.setYearlyHeliostatYield);
   const updateYearlyYield = useStore(Selector.updateSolarCollectorYearlyYieldById);
   const yearlyIndividualOutputs = usePrimitiveStore(Selector.yearlyHeliostatIndividualOutputs);
-  const setHeliostatLabels = useStore(Selector.setHeliostatLabels);
+  const setHeliostatLabels = useDataStore(Selector.setHeliostatLabels);
   const runDailySimulation = usePrimitiveStore(Selector.runDailySimulationForHeliostats);
   const runYearlySimulation = usePrimitiveStore(Selector.runYearlySimulationForHeliostats);
   const pauseDailySimulation = usePrimitiveStore(Selector.pauseDailySimulationForHeliostats);
@@ -151,11 +152,11 @@ const HeliostatSimulation = ({ city }: HeliostatSimulationProps) => {
         finishDaily();
         if (loggable) {
           setCommonStore((state) => {
-            const totalYield = state.sumDailyHeliostatYield();
+            const totalYield = useDataStore.getState().sumDailyHeliostatYield();
             state.actionInfo = {
               name: 'Daily Simulation for Heliostats Completed',
               result: { totalYield: totalYield },
-              details: state.dailyHeliostatYield,
+              details: useDataStore.getState().dailyHeliostatYield,
               timestamp: new Date().getTime(),
             };
           });
@@ -355,11 +356,11 @@ const HeliostatSimulation = ({ city }: HeliostatSimulationProps) => {
           generateYearlyYieldData();
           if (loggable) {
             setCommonStore((state) => {
-              const totalYield = state.sumYearlyHeliostatYield();
+              const totalYield = useDataStore.getState().sumYearlyHeliostatYield();
               state.actionInfo = {
                 name: 'Yearly Simulation for Heliostats Completed',
                 result: { totalYield: totalYield },
-                details: state.yearlyHeliostatYield,
+                details: useDataStore.getState().yearlyHeliostatYield,
                 timestamp: new Date().getTime(),
               };
             });

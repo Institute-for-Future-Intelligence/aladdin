@@ -155,7 +155,7 @@ const ParabolicTroughSimulation = ({ city }: ParabolicTroughSimulationProps) => 
             state.actionInfo = {
               name: 'Daily Simulation for Parabolic Troughs Completed',
               result: { totalYield: totalYield },
-              details: state.dailyParabolicDishYield,
+              details: useDataStore.getState().dailyParabolicTroughYield,
               timestamp: new Date().getTime(),
             };
           });
@@ -359,7 +359,7 @@ const ParabolicTroughSimulation = ({ city }: ParabolicTroughSimulationProps) => 
               state.actionInfo = {
                 name: 'Yearly Simulation for Parabolic Troughs Completed',
                 result: { totalYield: totalYield },
-                details: state.yearlyParabolicDishYield,
+                details: useDataStore.getState().yearlyParabolicTroughYield,
                 timestamp: new Date().getTime(),
               };
             });

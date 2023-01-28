@@ -16,6 +16,7 @@ import { CaretRightOutlined, ReloadOutlined, SaveOutlined, UnorderedListOutlined
 import i18n from '../i18n/i18n';
 import { Rectangle } from '../models/Rectangle';
 import { usePrimitiveStore } from '../stores/commonPrimitive';
+import { useDataStore } from '../stores/commonData';
 
 const Container = styled.div`
   position: fixed;
@@ -79,9 +80,9 @@ const YearlyHeliostatYieldPanel = ({ city }: YearlyHeliostatYieldPanelProps) => 
   const setCommonStore = useStore(Selector.set);
   const daysPerYear = useStore(Selector.world.cspDaysPerYear) ?? 6;
   const now = new Date(useStore(Selector.world.date));
-  const yearlyYield = useStore(Selector.yearlyHeliostatYield);
+  const yearlyYield = useDataStore(Selector.yearlyHeliostatYield);
   const individualOutputs = usePrimitiveStore(Selector.yearlyHeliostatIndividualOutputs);
-  const heliostatLabels = useStore(Selector.heliostatLabels);
+  const heliostatLabels = useDataStore(Selector.heliostatLabels);
   const countElementsByType = useStore(Selector.countElementsByType);
   const panelRect = useStore(Selector.viewState.yearlyHeliostatYieldPanelRect);
   const simulationInProgress = usePrimitiveStore(Selector.simulationInProgress);

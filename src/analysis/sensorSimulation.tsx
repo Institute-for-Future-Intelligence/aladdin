@@ -29,6 +29,7 @@ import i18n from '../i18n/i18n';
 import { SunMinutes } from './SunMinutes';
 import { FoundationModel } from '../models/FoundationModel';
 import { usePrimitiveStore } from '../stores/commonPrimitive';
+import { useDataStore } from '../stores/commonData';
 
 export interface SensorSimulationProps {
   city: string | null;
@@ -46,9 +47,9 @@ const SensorSimulation = ({ city }: SensorSimulationProps) => {
   const getWeather = useStore(Selector.getWeather);
   const getHorizontalSolarRadiation = useStore(Selector.getHorizontalSolarRadiation);
   const getVerticalSolarRadiation = useStore(Selector.getVerticalSolarRadiation);
-  const setSensorLabels = useStore(Selector.setSensorLabels);
-  const setDailyLightSensorData = useStore(Selector.setDailyLightSensorData);
-  const setYearlyLightSensorData = useStore(Selector.setYearlyLightSensorData);
+  const setSensorLabels = useDataStore(Selector.setSensorLabels);
+  const setDailyLightSensorData = useDataStore(Selector.setDailyLightSensorData);
+  const setYearlyLightSensorData = useDataStore(Selector.setYearlyLightSensorData);
   const runDailyLightSensor = usePrimitiveStore(Selector.runDailyLightSensor);
   const pauseDailyLightSensor = usePrimitiveStore(Selector.pauseDailyLightSensor);
   const runYearlyLightSensor = usePrimitiveStore(Selector.runYearlyLightSensor);
@@ -154,7 +155,7 @@ const SensorSimulation = ({ city }: SensorSimulationProps) => {
       setCommonStore((state) => {
         state.actionInfo = {
           name: 'Static Daily Simulation for Sensors Completed',
-          details: state.dailyLightSensorData,
+          details: useDataStore.getState().dailyLightSensorData,
           timestamp: new Date().getTime(),
         };
       });
@@ -198,7 +199,7 @@ const SensorSimulation = ({ city }: SensorSimulationProps) => {
           setCommonStore((state) => {
             state.actionInfo = {
               name: 'Dynamic Daily Simulation for Sensors Completed',
-              details: state.dailyLightSensorData,
+              details: useDataStore.getState().dailyLightSensorData,
               timestamp: new Date().getTime(),
             };
           });
@@ -365,7 +366,7 @@ const SensorSimulation = ({ city }: SensorSimulationProps) => {
       setCommonStore((state) => {
         state.actionInfo = {
           name: 'Static Yearly Simulation for Sensors Completed',
-          details: state.yearlyLightSensorData,
+          details: useDataStore.getState().yearlyLightSensorData,
           timestamp: new Date().getTime(),
         };
       });
@@ -409,7 +410,7 @@ const SensorSimulation = ({ city }: SensorSimulationProps) => {
             setCommonStore((state) => {
               state.actionInfo = {
                 name: 'Dynamic Yearly Simulation for Sensors Completed',
-                details: state.yearlyLightSensorData,
+                details: useDataStore.getState().yearlyLightSensorData,
                 timestamp: new Date().getTime(),
               };
             });

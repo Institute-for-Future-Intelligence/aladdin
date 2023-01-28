@@ -850,23 +850,23 @@ export const pauseDailySimulationForFresnelReflectors = (state: PrimitiveStoreSt
 export const pauseYearlySimulationForFresnelReflectors = (state: PrimitiveStoreState) =>
   state.pauseYearlySimulationForFresnelReflectors;
 
-export const dailyFresnelReflectorYield = (state: CommonStoreState) => state.dailyFresnelReflectorYield;
+export const dailyFresnelReflectorYield = (state: DataStoreState) => state.dailyFresnelReflectorYield;
 
 export const dailyFresnelReflectorIndividualOutputs = (state: PrimitiveStoreState) =>
   state.dailyFresnelReflectorIndividualOutputs;
 
-export const setDailyFresnelReflectorYield = (state: CommonStoreState) => state.setDailyFresnelReflectorYield;
+export const setDailyFresnelReflectorYield = (state: DataStoreState) => state.setDailyFresnelReflectorYield;
 
-export const yearlyFresnelReflectorYield = (state: CommonStoreState) => state.yearlyFresnelReflectorYield;
+export const yearlyFresnelReflectorYield = (state: DataStoreState) => state.yearlyFresnelReflectorYield;
 
 export const yearlyFresnelReflectorIndividualOutputs = (state: PrimitiveStoreState) =>
   state.yearlyFresnelReflectorIndividualOutputs;
 
-export const setYearlyFresnelReflectorYield = (state: CommonStoreState) => state.setYearlyFresnelReflectorYield;
+export const setYearlyFresnelReflectorYield = (state: DataStoreState) => state.setYearlyFresnelReflectorYield;
 
-export const fresnelReflectorLabels = (state: CommonStoreState) => state.fresnelReflectorLabels;
+export const fresnelReflectorLabels = (state: DataStoreState) => state.fresnelReflectorLabels;
 
-export const setFresnelReflectorLabels = (state: CommonStoreState) => state.setFresnelReflectorLabels;
+export const setFresnelReflectorLabels = (state: DataStoreState) => state.setFresnelReflectorLabels;
 
 // heliostats (CSP)
 
@@ -880,21 +880,21 @@ export const pauseDailySimulationForHeliostats = (state: PrimitiveStoreState) =>
 export const pauseYearlySimulationForHeliostats = (state: PrimitiveStoreState) =>
   state.pauseYearlySimulationForHeliostats;
 
-export const dailyHeliostatYield = (state: CommonStoreState) => state.dailyHeliostatYield;
+export const dailyHeliostatYield = (state: DataStoreState) => state.dailyHeliostatYield;
 
 export const dailyHeliostatIndividualOutputs = (state: PrimitiveStoreState) => state.dailyHeliostatIndividualOutputs;
 
-export const setDailyHeliostatYield = (state: CommonStoreState) => state.setDailyHeliostatYield;
+export const setDailyHeliostatYield = (state: DataStoreState) => state.setDailyHeliostatYield;
 
-export const yearlyHeliostatYield = (state: CommonStoreState) => state.yearlyHeliostatYield;
+export const yearlyHeliostatYield = (state: DataStoreState) => state.yearlyHeliostatYield;
 
 export const yearlyHeliostatIndividualOutputs = (state: PrimitiveStoreState) => state.yearlyHeliostatIndividualOutputs;
 
-export const setYearlyHeliostatYield = (state: CommonStoreState) => state.setYearlyHeliostatYield;
+export const setYearlyHeliostatYield = (state: DataStoreState) => state.setYearlyHeliostatYield;
 
-export const heliostatLabels = (state: CommonStoreState) => state.heliostatLabels;
+export const heliostatLabels = (state: DataStoreState) => state.heliostatLabels;
 
-export const setHeliostatLabels = (state: CommonStoreState) => state.setHeliostatLabels;
+export const setHeliostatLabels = (state: DataStoreState) => state.setHeliostatLabels;
 
 // solar updraft towers
 
@@ -910,27 +910,27 @@ export const pauseDailySimulationForUpdraftTower = (state: PrimitiveStoreState) 
 export const pauseYearlySimulationForUpdraftTower = (state: PrimitiveStoreState) =>
   state.pauseYearlySimulationForUpdraftTower;
 
-export const dailyUpdraftTowerResults = (state: CommonStoreState) => state.dailyUpdraftTowerResults;
+export const dailyUpdraftTowerResults = (state: DataStoreState) => state.dailyUpdraftTowerResults;
 
-export const dailyUpdraftTowerYield = (state: CommonStoreState) => state.dailyUpdraftTowerYield;
+export const dailyUpdraftTowerYield = (state: DataStoreState) => state.dailyUpdraftTowerYield;
 
 export const dailyUpdraftTowerIndividualOutputs = (state: PrimitiveStoreState) =>
   state.dailyUpdraftTowerIndividualOutputs;
 
-export const setDailyUpdraftTowerResults = (state: CommonStoreState) => state.setDailyUpdraftTowerResults;
+export const setDailyUpdraftTowerResults = (state: DataStoreState) => state.setDailyUpdraftTowerResults;
 
-export const setDailyUpdraftTowerYield = (state: CommonStoreState) => state.setDailyUpdraftTowerYield;
+export const setDailyUpdraftTowerYield = (state: DataStoreState) => state.setDailyUpdraftTowerYield;
 
-export const yearlyUpdraftTowerYield = (state: CommonStoreState) => state.yearlyUpdraftTowerYield;
+export const yearlyUpdraftTowerYield = (state: DataStoreState) => state.yearlyUpdraftTowerYield;
 
 export const yearlyUpdraftTowerIndividualOutputs = (state: PrimitiveStoreState) =>
   state.yearlyUpdraftTowerIndividualOutputs;
 
-export const setYearlyUpdraftTowerYield = (state: CommonStoreState) => state.setYearlyUpdraftTowerYield;
+export const setYearlyUpdraftTowerYield = (state: DataStoreState) => state.setYearlyUpdraftTowerYield;
 
-export const updraftTowerLabels = (state: CommonStoreState) => state.updraftTowerLabels;
+export const updraftTowerLabels = (state: DataStoreState) => state.updraftTowerLabels;
 
-export const setUpdraftTowerLabels = (state: CommonStoreState) => state.setUpdraftTowerLabels;
+export const setUpdraftTowerLabels = (state: DataStoreState) => state.setUpdraftTowerLabels;
 
 // parabolic dishes (CSP)
 
@@ -946,23 +946,23 @@ export const pauseDailySimulationForParabolicDishes = (state: PrimitiveStoreStat
 export const pauseYearlySimulationForParabolicDishes = (state: PrimitiveStoreState) =>
   state.pauseYearlySimulationForParabolicDishes;
 
-export const dailyParabolicDishYield = (state: CommonStoreState) => state.dailyParabolicDishYield;
+export const dailyParabolicDishYield = (state: DataStoreState) => state.dailyParabolicDishYield;
 
 export const dailyParabolicDishIndividualOutputs = (state: PrimitiveStoreState) =>
   state.dailyParabolicDishIndividualOutputs;
 
-export const setDailyParabolicDishYield = (state: CommonStoreState) => state.setDailyParabolicDishYield;
+export const setDailyParabolicDishYield = (state: DataStoreState) => state.setDailyParabolicDishYield;
 
-export const yearlyParabolicDishYield = (state: CommonStoreState) => state.yearlyParabolicDishYield;
+export const yearlyParabolicDishYield = (state: DataStoreState) => state.yearlyParabolicDishYield;
 
 export const yearlyParabolicDishIndividualOutputs = (state: PrimitiveStoreState) =>
   state.yearlyParabolicDishIndividualOutputs;
 
-export const setYearlyParabolicDishYield = (state: CommonStoreState) => state.setYearlyParabolicDishYield;
+export const setYearlyParabolicDishYield = (state: DataStoreState) => state.setYearlyParabolicDishYield;
 
-export const parabolicDishLabels = (state: CommonStoreState) => state.parabolicDishLabels;
+export const parabolicDishLabels = (state: DataStoreState) => state.parabolicDishLabels;
 
-export const setParabolicDishLabels = (state: CommonStoreState) => state.setParabolicDishLabels;
+export const setParabolicDishLabels = (state: DataStoreState) => state.setParabolicDishLabels;
 
 // sensors
 
@@ -974,17 +974,17 @@ export const runYearlyLightSensor = (state: PrimitiveStoreState) => state.runYea
 
 export const pauseYearlyLightSensor = (state: PrimitiveStoreState) => state.pauseYearlyLightSensor;
 
-export const dailyLightSensorData = (state: CommonStoreState) => state.dailyLightSensorData;
+export const dailyLightSensorData = (state: DataStoreState) => state.dailyLightSensorData;
 
-export const setDailyLightSensorData = (state: CommonStoreState) => state.setDailyLightSensorData;
+export const setDailyLightSensorData = (state: DataStoreState) => state.setDailyLightSensorData;
 
-export const yearlyLightSensorData = (state: CommonStoreState) => state.yearlyLightSensorData;
+export const yearlyLightSensorData = (state: DataStoreState) => state.yearlyLightSensorData;
 
-export const setYearlyLightSensorData = (state: CommonStoreState) => state.setYearlyLightSensorData;
+export const setYearlyLightSensorData = (state: DataStoreState) => state.setYearlyLightSensorData;
 
-export const sensorLabels = (state: CommonStoreState) => state.sensorLabels;
+export const sensorLabels = (state: DataStoreState) => state.sensorLabels;
 
-export const setSensorLabels = (state: CommonStoreState) => state.setSensorLabels;
+export const setSensorLabels = (state: DataStoreState) => state.setSensorLabels;
 
 // handles
 

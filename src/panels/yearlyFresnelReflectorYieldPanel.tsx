@@ -16,6 +16,7 @@ import { CaretRightOutlined, ReloadOutlined, SaveOutlined, UnorderedListOutlined
 import i18n from '../i18n/i18n';
 import { Rectangle } from '../models/Rectangle';
 import { usePrimitiveStore } from '../stores/commonPrimitive';
+import { useDataStore } from '../stores/commonData';
 
 const Container = styled.div`
   position: fixed;
@@ -79,9 +80,9 @@ const YearlyFresnelReflectorYieldPanel = ({ city }: YearlyFresnelReflectorYieldP
   const setCommonStore = useStore(Selector.set);
   const daysPerYear = useStore(Selector.world.cspDaysPerYear) ?? 6;
   const now = new Date(useStore(Selector.world.date));
-  const yearlyYield = useStore(Selector.yearlyFresnelReflectorYield);
+  const yearlyYield = useDataStore(Selector.yearlyFresnelReflectorYield);
   const individualOutputs = usePrimitiveStore(Selector.yearlyFresnelReflectorIndividualOutputs);
-  const fresnelReflectorLabels = useStore(Selector.fresnelReflectorLabels);
+  const fresnelReflectorLabels = useDataStore(Selector.fresnelReflectorLabels);
   const countElementsByType = useStore(Selector.countElementsByType);
   const panelRect = useStore(Selector.viewState.yearlyFresnelReflectorYieldPanelRect);
   const simulationInProgress = usePrimitiveStore(Selector.simulationInProgress);

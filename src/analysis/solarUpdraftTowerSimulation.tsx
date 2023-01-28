@@ -31,6 +31,7 @@ import { SunMinutes } from './SunMinutes';
 import { FoundationModel } from '../models/FoundationModel';
 import { computeOutsideTemperature, getOutsideTemperatureAtMinute } from './heatTools';
 import { usePrimitiveStore } from '../stores/commonPrimitive';
+import { useDataStore } from '../stores/commonData';
 
 export interface SolarUpdraftTowerSimulationProps {
   city: string | null;
@@ -44,10 +45,10 @@ const SolarUpdraftTowerSimulation = ({ city }: SolarUpdraftTowerSimulationProps)
   const world = useStore.getState().world;
   const elements = useStore.getState().elements;
   const getWeather = useStore(Selector.getWeather);
-  const setLabels = useStore(Selector.setUpdraftTowerLabels);
-  const setDailyResults = useStore(Selector.setDailyUpdraftTowerResults);
-  const setDailyYield = useStore(Selector.setDailyUpdraftTowerYield);
-  const setYearlyYield = useStore(Selector.setYearlyUpdraftTowerYield);
+  const setLabels = useDataStore(Selector.setUpdraftTowerLabels);
+  const setDailyResults = useDataStore(Selector.setDailyUpdraftTowerResults);
+  const setDailyYield = useDataStore(Selector.setDailyUpdraftTowerYield);
+  const setYearlyYield = useDataStore(Selector.setYearlyUpdraftTowerYield);
   const runDailySimulation = usePrimitiveStore(Selector.runDailySimulationForUpdraftTower);
   const pauseDailySimulation = usePrimitiveStore(Selector.pauseDailySimulationForUpdraftTower);
   const runYearlySimulation = usePrimitiveStore(Selector.runYearlySimulationForUpdraftTower);
@@ -159,11 +160,11 @@ const SolarUpdraftTowerSimulation = ({ city }: SolarUpdraftTowerSimulationProps)
     finishDaily();
     if (loggable) {
       setCommonStore((state) => {
-        const totalYield = state.sumDailyUpdraftTowerYield();
+        const totalYield = useDataStore.getState().sumDailyUpdraftTowerYield();
         state.actionInfo = {
           name: 'Static Daily Simulation for Updraft Tower Completed',
           result: { totalYield: totalYield },
-          details: state.dailyUpdraftTowerYield,
+          details: useDataStore.getState().dailyUpdraftTowerYield,
           timestamp: new Date().getTime(),
         };
       });
@@ -205,11 +206,11 @@ const SolarUpdraftTowerSimulation = ({ city }: SolarUpdraftTowerSimulationProps)
         finishDaily();
         if (loggable) {
           setCommonStore((state) => {
-            const totalYield = state.sumDailyUpdraftTowerYield();
+            const totalYield = useDataStore.getState().sumDailyUpdraftTowerYield();
             state.actionInfo = {
               name: 'Dynamic Daily Simulation for Updraft Tower Completed',
               result: { totalYield: totalYield },
-              details: state.dailyUpdraftTowerYield,
+              details: useDataStore.getState().dailyUpdraftTowerYield,
               timestamp: new Date().getTime(),
             };
           });
@@ -464,11 +465,11 @@ const SolarUpdraftTowerSimulation = ({ city }: SolarUpdraftTowerSimulationProps)
     generateYearlyData();
     if (loggable) {
       setCommonStore((state) => {
-        const totalYield = state.sumYearlyUpdraftTowerYield();
+        const totalYield = useDataStore.getState().sumYearlyUpdraftTowerYield();
         state.actionInfo = {
           name: 'Static Yearly Simulation for Updraft Tower Completed',
           result: { totalYield: totalYield },
-          details: state.yearlyUpdraftTowerYield,
+          details: useDataStore.getState().yearlyUpdraftTowerYield,
           timestamp: new Date().getTime(),
         };
       });
@@ -513,11 +514,11 @@ const SolarUpdraftTowerSimulation = ({ city }: SolarUpdraftTowerSimulationProps)
           generateYearlyData();
           if (loggable) {
             setCommonStore((state) => {
-              const totalYield = state.sumYearlyUpdraftTowerYield();
+              const totalYield = useDataStore.getState().sumYearlyUpdraftTowerYield();
               state.actionInfo = {
                 name: 'Dynamic Yearly Simulation for Updraft Tower Completed',
                 result: { totalYield: totalYield },
-                details: state.yearlyUpdraftTowerYield,
+                details: useDataStore.getState().yearlyUpdraftTowerYield,
                 timestamp: new Date().getTime(),
               };
             });
