@@ -4,6 +4,7 @@
 import create from 'zustand';
 import { produce } from 'immer';
 import { DatumEntry } from '../types';
+import { Vantage } from '../analysis/Vantage';
 
 export interface DataStoreState {
   set: (fn: (state: DataStoreState) => void) => void;
@@ -14,6 +15,10 @@ export interface DataStoreState {
   setYearlyLightSensorData: (data: DatumEntry[]) => void;
   sensorLabels: string[];
   setSensorLabels: (labels: string[]) => void;
+
+  solarPanelVisibilityResults: Map<Vantage, Map<string, number>>;
+  setSolarPanelVisibilityResult: (vantage: Vantage, result: Map<string, number>) => void;
+  clearSolarPanelVisibilityResults: () => void;
 
   dailyParabolicDishYield: DatumEntry[];
   setDailyParabolicDishYield: (data: DatumEntry[]) => void;
@@ -110,6 +115,18 @@ export const useDataStore = create<DataStoreState>((set, get) => {
     setSensorLabels(labels) {
       immerSet((state) => {
         state.sensorLabels = [...labels];
+      });
+    },
+
+    solarPanelVisibilityResults: new Map<Vantage, Map<string, number>>(),
+    setSolarPanelVisibilityResult(vantage, result) {
+      immerSet((state) => {
+        state.solarPanelVisibilityResults.set(vantage, result);
+      });
+    },
+    clearSolarPanelVisibilityResults() {
+      immerSet((state) => {
+        state.solarPanelVisibilityResults.clear();
       });
     },
 

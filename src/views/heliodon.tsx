@@ -465,7 +465,12 @@ const Heliodon = ({ date, hourAngle, declinationAngle, worldLatitude }: Heliodon
                 userData={{ unintersectable: true }}
                 name={'Azimuth Angle'}
                 backgroundColor={'firebrick'}
-                text={Util.toDegrees(-azimuthAngle).toFixed(0) + '°'}
+                // force -180 degrees to become 180 degrees
+                text={
+                  Util.toDegrees(Math.abs(azimuthAngle - Math.PI) < 0.000001 ? azimuthAngle : -azimuthAngle).toFixed(
+                    0,
+                  ) + '°'
+                }
                 fontSize={80}
                 fontFace={'Times Roman'}
                 textHeight={angleLabelHeight}

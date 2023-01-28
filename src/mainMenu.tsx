@@ -1412,17 +1412,17 @@ const MainMenu = ({ viewOnly, set2DView, resetView, zoomView, canvas }: MainMenu
               showInfo(i18n.t('message.SimulationStarted', lang));
               // give it 0.1 second for the info to show up
               setTimeout(() => {
-                setCommonStore((state) => {
+                usePrimitiveStore.setState((state) => {
                   state.runSolarPanelVisibilityAnalysis = !state.runSolarPanelVisibilityAnalysis;
+                  state.simulationInProgress = true;
+                });
+                setCommonStore((state) => {
                   if (loggable) {
                     state.actionInfo = {
                       name: 'Run Visibility Analysis For Solar Panels',
                       timestamp: new Date().getTime(),
                     };
                   }
-                });
-                usePrimitiveStore.setState((state) => {
-                  state.simulationInProgress = true;
                 });
               }, 100);
             }}

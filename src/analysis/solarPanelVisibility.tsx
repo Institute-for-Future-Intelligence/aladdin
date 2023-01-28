@@ -15,6 +15,7 @@ import { Vantage } from './Vantage';
 import { showInfo } from '../helpers';
 import i18n from '../i18n/i18n';
 import { usePrimitiveStore } from '../stores/commonPrimitive';
+import { useDataStore } from '../stores/commonData';
 
 const SolarPanelVisibility = () => {
   const language = useStore(Selector.language);
@@ -24,7 +25,7 @@ const SolarPanelVisibility = () => {
   const setPrimitiveStore = usePrimitiveStore(Selector.setPrimitiveStore);
   const getParent = useStore(Selector.getParent);
   const getFoundation = useStore(Selector.getFoundation);
-  const runAnalysis = useStore(Selector.runSolarPanelVisibilityAnalysis);
+  const runAnalysis = usePrimitiveStore(Selector.runSolarPanelVisibilityAnalysis);
 
   const { scene } = useThree();
   const lang = { lng: language };
@@ -38,9 +39,9 @@ const SolarPanelVisibility = () => {
     if (runAnalysis) {
       if (elements && elements.length > 0) {
         analyze();
+        setPrimitiveStore('runSolarPanelVisibilityAnalysis', false);
         setCommonStore((state) => {
           state.viewState.showSolarPanelVisibilityResultsPanel = true;
-          state.runSolarPanelVisibilityAnalysis = false;
         });
         showInfo(i18n.t('message.SimulationCompleted', lang));
       }
@@ -78,9 +79,7 @@ const SolarPanelVisibility = () => {
   };
 
   const analyze = () => {
-    setCommonStore((state) => {
-      state.solarPanelVisibilityResults.clear();
-    });
+    useDataStore.getState().clearSolarPanelVisibilityResults();
     fetchVantages();
     if (vantagesRef.current.length === 0) return;
     fetchObjects();
@@ -100,9 +99,7 @@ const SolarPanelVisibility = () => {
           resultMap.set(sp.parentId, vf);
         }
       }
-      setCommonStore((state) => {
-        state.solarPanelVisibilityResults.set(vantage, resultMap);
-      });
+      useDataStore.getState().setSolarPanelVisibilityResult(vantage, resultMap);
     }
   };
 

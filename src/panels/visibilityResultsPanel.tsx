@@ -15,6 +15,7 @@ import i18n from '../i18n/i18n';
 import { HumanData } from '../HumanData';
 import { Rectangle } from '../models/Rectangle';
 import { usePrimitiveStore } from '../stores/commonPrimitive';
+import { useDataStore } from '../stores/commonData';
 
 const { Column } = Table;
 
@@ -75,7 +76,7 @@ const VisibilityResultsPanel = () => {
   const setCommonStore = useStore(Selector.set);
   const now = new Date(useStore(Selector.world.date));
   const panelRect = useStore(Selector.viewState.visibilityResultsPanelRect);
-  const solarPanelVisibilityResults = useStore(Selector.solarPanelVisibilityResults);
+  const solarPanelVisibilityResults = useDataStore(Selector.solarPanelVisibilityResults);
   const countObservers = useStore(Selector.countObservers);
 
   // nodeRef is to suppress ReactDOM.findDOMNode() deprecation warning. See:
@@ -264,9 +265,9 @@ const VisibilityResultsPanel = () => {
                 setTimeout(() => {
                   usePrimitiveStore.setState((state) => {
                     state.simulationInProgress = true;
+                    state.runSolarPanelVisibilityAnalysis = true;
                   });
                   setCommonStore((state) => {
-                    state.runSolarPanelVisibilityAnalysis = true;
                     if (loggable) {
                       state.actionInfo = {
                         name: 'Run Visibility Analysis For Solar Panels',

@@ -577,8 +577,6 @@ export interface CommonStoreState {
   removeAllChildElementsByType: (parentId: string, type: ObjectType) => void;
   removeAllElementsOnFoundationByType: (foundationId: string, type: ObjectType) => void;
 
-  runSolarPanelVisibilityAnalysis: boolean;
-  solarPanelVisibilityResults: Map<Vantage, Map<string, number>>;
   dailyPvYield: DatumEntry[];
   setDailyPvYield: (data: DatumEntry[]) => void;
   sumDailyPvYield: () => number;
@@ -871,8 +869,6 @@ export const useStore = create<CommonStoreState>(
             });
           },
 
-          runSolarPanelVisibilityAnalysis: false,
-          solarPanelVisibilityResults: new Map<Vantage, Map<string, number>>(),
           dailyPvYield: [],
           setDailyPvYield(data) {
             immerSet((state: CommonStoreState) => {

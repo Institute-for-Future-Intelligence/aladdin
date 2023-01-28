@@ -47,6 +47,7 @@ export interface PrimitiveStoreState {
   dailyHeliostatIndividualOutputs: boolean;
   yearlyHeliostatIndividualOutputs: boolean;
 
+  runSolarPanelVisibilityAnalysis: boolean;
   runDailySimulationForSolarPanels: boolean;
   pauseDailySimulationForSolarPanels: boolean;
   runYearlySimulationForSolarPanels: boolean;
@@ -128,6 +129,7 @@ export const usePrimitiveStore = create<PrimitiveStoreState>((set, get) => {
     dailyHeliostatIndividualOutputs: false,
     yearlyHeliostatIndividualOutputs: false,
 
+    runSolarPanelVisibilityAnalysis: false,
     runDailySimulationForSolarPanels: false,
     pauseDailySimulationForSolarPanels: false,
     runYearlySimulationForSolarPanels: false,

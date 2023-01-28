@@ -763,9 +763,9 @@ export const showHeatFluxes = (state: PrimitiveStoreState) => state.showHeatFlux
 
 // solar panels (PV)
 
-export const runSolarPanelVisibilityAnalysis = (state: CommonStoreState) => state.runSolarPanelVisibilityAnalysis;
+export const runSolarPanelVisibilityAnalysis = (state: PrimitiveStoreState) => state.runSolarPanelVisibilityAnalysis;
 
-export const solarPanelVisibilityResults = (state: CommonStoreState) => state.solarPanelVisibilityResults;
+export const solarPanelVisibilityResults = (state: DataStoreState) => state.solarPanelVisibilityResults;
 
 export const runDailySimulationForSolarPanels = (state: PrimitiveStoreState) => state.runDailySimulationForSolarPanels;
 
