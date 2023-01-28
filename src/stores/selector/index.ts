@@ -818,23 +818,23 @@ export const pauseDailySimulationForParabolicTroughs = (state: PrimitiveStoreSta
 export const pauseYearlySimulationForParabolicTroughs = (state: PrimitiveStoreState) =>
   state.pauseYearlySimulationForParabolicTroughs;
 
-export const dailyParabolicTroughYield = (state: CommonStoreState) => state.dailyParabolicTroughYield;
+export const dailyParabolicTroughYield = (state: DataStoreState) => state.dailyParabolicTroughYield;
 
 export const dailyParabolicTroughIndividualOutputs = (state: PrimitiveStoreState) =>
   state.dailyParabolicTroughIndividualOutputs;
 
-export const setDailyParabolicTroughYield = (state: CommonStoreState) => state.setDailyParabolicTroughYield;
+export const setDailyParabolicTroughYield = (state: DataStoreState) => state.setDailyParabolicTroughYield;
 
-export const yearlyParabolicTroughYield = (state: CommonStoreState) => state.yearlyParabolicTroughYield;
+export const yearlyParabolicTroughYield = (state: DataStoreState) => state.yearlyParabolicTroughYield;
 
 export const yearlyParabolicTroughIndividualOutputs = (state: PrimitiveStoreState) =>
   state.yearlyParabolicTroughIndividualOutputs;
 
-export const setYearlyParabolicTroughYield = (state: CommonStoreState) => state.setYearlyParabolicTroughYield;
+export const setYearlyParabolicTroughYield = (state: DataStoreState) => state.setYearlyParabolicTroughYield;
 
-export const parabolicTroughLabels = (state: CommonStoreState) => state.parabolicTroughLabels;
+export const parabolicTroughLabels = (state: DataStoreState) => state.parabolicTroughLabels;
 
-export const setParabolicTroughLabels = (state: CommonStoreState) => state.setParabolicTroughLabels;
+export const setParabolicTroughLabels = (state: DataStoreState) => state.setParabolicTroughLabels;
 
 // Fresnel reflectors (CSP)
 

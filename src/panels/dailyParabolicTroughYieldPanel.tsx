@@ -17,6 +17,7 @@ import i18n from '../i18n/i18n';
 import { Rectangle } from '../models/Rectangle';
 import { FLOATING_WINDOW_OPACITY } from '../constants';
 import { usePrimitiveStore } from '../stores/commonPrimitive';
+import { useDataStore } from '../stores/commonData';
 
 const Container = styled.div`
   position: fixed;
@@ -80,10 +81,10 @@ const DailyParabolicTroughYieldPanel = ({ city }: DailyParabolicTroughYieldPanel
   const setCommonStore = useStore(Selector.set);
   const now = new Date(useStore(Selector.world.date));
   const countElementsByType = useStore(Selector.countElementsByType);
-  const dailyYield = useStore(Selector.dailyParabolicTroughYield);
+  const dailyYield = useDataStore(Selector.dailyParabolicTroughYield);
   const individualOutputs = usePrimitiveStore(Selector.dailyParabolicTroughIndividualOutputs);
   const panelRect = useStore(Selector.viewState.dailyParabolicTroughYieldPanelRect);
-  const parabolicTroughLabels = useStore(Selector.parabolicTroughLabels);
+  const parabolicTroughLabels = useDataStore(Selector.parabolicTroughLabels);
   const simulationInProgress = usePrimitiveStore(Selector.simulationInProgress);
 
   // nodeRef is to suppress ReactDOM.findDOMNode() deprecation warning. See:

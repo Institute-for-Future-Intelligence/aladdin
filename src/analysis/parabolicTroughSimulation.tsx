@@ -17,6 +17,7 @@ import i18n from '../i18n/i18n';
 import { ParabolicTroughModel } from '../models/ParabolicTroughModel';
 import { SunMinutes } from './SunMinutes';
 import { usePrimitiveStore } from '../stores/commonPrimitive';
+import { useDataStore } from '../stores/commonData';
 
 export interface ParabolicTroughSimulationProps {
   city: string | null;
@@ -31,13 +32,13 @@ const ParabolicTroughSimulation = ({ city }: ParabolicTroughSimulationProps) => 
   const elements = useStore.getState().elements;
   const getWeather = useStore(Selector.getWeather);
   const getParent = useStore(Selector.getParent);
-  const setDailyYield = useStore(Selector.setDailyParabolicTroughYield);
+  const setDailyYield = useDataStore(Selector.setDailyParabolicTroughYield);
   const updateDailyYield = useStore(Selector.updateSolarCollectorDailyYieldById);
-  const setYearlyYield = useStore(Selector.setYearlyParabolicTroughYield);
+  const setYearlyYield = useDataStore(Selector.setYearlyParabolicTroughYield);
   const updateYearlyYield = useStore(Selector.updateSolarCollectorYearlyYieldById);
   const dailyIndividualOutputs = usePrimitiveStore(Selector.dailyParabolicTroughIndividualOutputs);
   const yearlyIndividualOutputs = usePrimitiveStore(Selector.yearlyParabolicTroughIndividualOutputs);
-  const setParabolicTroughLabels = useStore(Selector.setParabolicTroughLabels);
+  const setParabolicTroughLabels = useDataStore(Selector.setParabolicTroughLabels);
   const runDailySimulation = usePrimitiveStore(Selector.runDailySimulationForParabolicTroughs);
   const runYearlySimulation = usePrimitiveStore(Selector.runYearlySimulationForParabolicTroughs);
   const pauseDailySimulation = usePrimitiveStore(Selector.pauseDailySimulationForParabolicTroughs);
@@ -150,7 +151,7 @@ const ParabolicTroughSimulation = ({ city }: ParabolicTroughSimulationProps) => 
         finishDaily();
         if (loggable) {
           setCommonStore((state) => {
-            const totalYield = state.sumDailyParabolicTroughYield();
+            const totalYield = useDataStore.getState().sumDailyParabolicTroughYield();
             state.actionInfo = {
               name: 'Daily Simulation for Parabolic Troughs Completed',
               result: { totalYield: totalYield },
@@ -354,7 +355,7 @@ const ParabolicTroughSimulation = ({ city }: ParabolicTroughSimulationProps) => 
           generateYearlyYieldData();
           if (loggable) {
             setCommonStore((state) => {
-              const totalYield = state.sumYearlyParabolicTroughYield();
+              const totalYield = useDataStore.getState().sumYearlyParabolicTroughYield();
               state.actionInfo = {
                 name: 'Yearly Simulation for Parabolic Troughs Completed',
                 result: { totalYield: totalYield },

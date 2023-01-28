@@ -3,9 +3,19 @@
  */
 import create from 'zustand';
 import { produce } from 'immer';
+import { DatumEntry } from '../types';
 
 export interface DataStoreState {
   set: (fn: (state: DataStoreState) => void) => void;
+
+  dailyParabolicTroughYield: DatumEntry[];
+  setDailyParabolicTroughYield: (data: DatumEntry[]) => void;
+  sumDailyParabolicTroughYield: () => number;
+  yearlyParabolicTroughYield: DatumEntry[];
+  setYearlyParabolicTroughYield: (data: DatumEntry[]) => void;
+  sumYearlyParabolicTroughYield: () => number;
+  parabolicTroughLabels: string[];
+  setParabolicTroughLabels: (labels: string[]) => void;
 
   // store the calculated heat map on the surface of an element
   heatmaps: Map<string, number[][]>;
@@ -37,6 +47,51 @@ export const useDataStore = create<DataStoreState>((set, get) => {
       } catch (e) {
         console.log(e);
       }
+    },
+
+    dailyParabolicTroughYield: [],
+    setDailyParabolicTroughYield(data) {
+      immerSet((state) => {
+        state.dailyParabolicTroughYield = [...data];
+      });
+    },
+    sumDailyParabolicTroughYield() {
+      let sum = 0;
+      for (const datum of this.dailyParabolicTroughYield) {
+        for (const prop in datum) {
+          if (datum.hasOwnProperty(prop)) {
+            if (prop !== 'Hour') {
+              sum += datum[prop] as number;
+            }
+          }
+        }
+      }
+      return sum;
+    },
+    yearlyParabolicTroughYield: [],
+    setYearlyParabolicTroughYield(data) {
+      immerSet((state) => {
+        state.yearlyParabolicTroughYield = [...data];
+      });
+    },
+    sumYearlyParabolicTroughYield() {
+      let sum = 0;
+      for (const datum of this.yearlyParabolicTroughYield) {
+        for (const prop in datum) {
+          if (datum.hasOwnProperty(prop)) {
+            if (prop !== 'Month') {
+              sum += datum[prop] as number;
+            }
+          }
+        }
+      }
+      return sum;
+    },
+    parabolicTroughLabels: [],
+    setParabolicTroughLabels(labels) {
+      immerSet((state) => {
+        state.parabolicTroughLabels = [...labels];
+      });
     },
 
     heatmaps: new Map<string, number[][]>(),
@@ -82,6 +137,9 @@ export const useDataStore = create<DataStoreState>((set, get) => {
         state.hourlyHeatExchangeArrayMap.clear();
         state.hourlySolarHeatGainArrayMap.clear();
         state.hourlySolarPanelOutputArrayMap.clear();
+
+        state.dailyParabolicTroughYield.length = 0;
+        state.yearlyParabolicTroughYield.length = 0;
       });
     },
   };
