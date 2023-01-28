@@ -1,5 +1,5 @@
 /*
- * @Copyright 2021-2022. Institute for Future Intelligence, Inc.
+ * @Copyright 2021-2023. Institute for Future Intelligence, Inc.
  */
 
 import React, { useEffect, useRef, useState } from 'react';
@@ -11,14 +11,11 @@ import i18n from '../../../i18n/i18n';
 import { ObjectType, Orientation, RowAxis } from '../../../types';
 import { Util } from '../../../Util';
 import { PolygonModel } from '../../../models/PolygonModel';
-import { FoundationModel } from '../../../models/FoundationModel';
-import { ElementModelFactory } from '../../../models/ElementModelFactory';
-import { HALF_PI, UNIT_VECTOR_POS_Z } from '../../../constants';
-import { Point2 } from '../../../models/Point2';
 import { UndoableLayout } from '../../../undo/UndoableLayout';
 import { ElementModel } from '../../../models/ElementModel';
 import { showError } from '../../../helpers';
 import { SolarPanelArrayLayoutParams } from '../../../stores/SolarPanelArrayLayoutParams';
+import { SolarPanelLayout } from '../../../SolarPanelLayout';
 
 const { Option } = Select;
 
@@ -121,170 +118,87 @@ const SolarPanelLayoutWizard = ({ setDialogVisible }: { setDialogVisible: (b: bo
 
   const layout = () => {
     if (reference?.type === ObjectType.Polygon) {
-      const area = reference as PolygonModel;
-      const bounds = Util.calculatePolygonBounds(area.vertices);
-      const base = getParent(area);
-      if (base?.type === ObjectType.Foundation) {
+      const base = getParent(reference);
+      if (base) {
         const newElements: ElementModel[] = [];
-        const foundation = base as FoundationModel;
-        let n: number;
-        let start: number;
-        let delta: number;
-        const ly =
-          (orientationRef.current === Orientation.portrait ? pvModel.length : pvModel.width) * rowsPerRackRef.current;
-        let h = 0.5 * Math.abs(Math.sin(tiltAngleRef.current)) * ly;
-        if (rowAxisRef.current === RowAxis.meridional) {
-          // north-south axis, so the array is laid in x direction
-          n = Math.floor(((bounds.maxX() - bounds.minX()) * foundation.lx - ly) / interRowSpacingRef.current);
-          start = bounds.minX() + ly / (2 * foundation.lx);
-          delta = interRowSpacingRef.current / foundation.lx;
-          h /= foundation.lx;
-          let a: Point2 = { x: 0, y: -0.5 } as Point2;
-          let b: Point2 = { x: 0, y: 0.5 } as Point2;
-          const rotation = 'rotation' in foundation ? foundation.rotation : undefined;
-          for (let i = 0; i <= n; i++) {
-            const cx = start + i * delta;
-            a.x = b.x = cx - h;
-            const p1 = Util.polygonIntersections(a, b, area.vertices);
-            a.x = b.x = cx + h;
-            const p2 = Util.polygonIntersections(a, b, area.vertices);
-            if (p1.length > 1 && p2.length > 1) {
-              const b = Math.abs(p1[0].y - p1[1].y) < Math.abs(p2[0].y - p2[1].y);
-              let y1 = b ? p1[0].y : p2[0].y;
-              let y2 = b ? p1[1].y : p2[1].y;
-              const lx = Math.abs(y1 - y2) - 2 * relativeMargin;
-              if (lx > 0) {
-                const solarPanel = ElementModelFactory.makeSolarPanel(
-                  foundation,
-                  pvModel,
-                  cx,
-                  (y1 + y2) / 2,
-                  foundation.lz,
-                  Orientation.portrait,
-                  poleHeightRef.current,
-                  poleSpacingRef.current,
-                  tiltAngleRef.current,
-                  HALF_PI,
-                  UNIT_VECTOR_POS_Z,
-                  rotation,
-                  undefined,
-                  lx * foundation.ly,
-                  ly,
-                );
-                solarPanel.referenceId = area.id;
-                Util.changeOrientation(solarPanel, pvModel, orientationRef.current);
-                newElements.push(JSON.parse(JSON.stringify(solarPanel)));
+        const solarPanels = SolarPanelLayout.create(
+          reference as PolygonModel,
+          base,
+          pvModel,
+          orientationRef.current,
+          tiltAngleRef.current,
+          rowsPerRackRef.current,
+          interRowSpacingRef.current,
+          rowAxisRef.current,
+          poleHeightRef.current,
+          poleSpacingRef.current,
+          relativeMargin,
+        );
+        if (solarPanels.length > 0) {
+          for (const panel of solarPanels) {
+            newElements.push(JSON.parse(JSON.stringify(panel)));
+            setCommonStore((state) => {
+              state.elements.push(panel);
+            });
+          }
+          const undoableLayout = {
+            name: 'Solar Panel Array Layout',
+            timestamp: Date.now(),
+            oldElements: useStore.getState().deletedElements,
+            newElements: newElements,
+            oldParams: {
+              pvModelName: solarPanelArrayLayoutParams.pvModelName,
+              rowAxis: solarPanelArrayLayoutParams.rowAxis,
+              orientation: solarPanelArrayLayoutParams.orientation,
+              tiltAngle: solarPanelArrayLayoutParams.tiltAngle,
+              rowsPerRack: solarPanelArrayLayoutParams.rowsPerRack,
+              interRowSpacing: solarPanelArrayLayoutParams.interRowSpacing,
+              poleHeight: solarPanelArrayLayoutParams.poleHeight,
+              poleSpacing: solarPanelArrayLayoutParams.poleSpacing,
+            } as SolarPanelArrayLayoutParams,
+            newParams: {
+              pvModelName: pvModelNameRef.current,
+              rowAxis: rowAxisRef.current,
+              orientation: orientationRef.current,
+              tiltAngle: tiltAngleRef.current,
+              rowsPerRack: rowsPerRackRef.current,
+              interRowSpacing: interRowSpacingRef.current,
+              poleHeight: poleHeightRef.current,
+              poleSpacing: poleSpacingRef.current,
+            } as SolarPanelArrayLayoutParams,
+            referenceId: reference.id,
+            undo: () => {
+              removeElementsByReferenceId(undoableLayout.referenceId, false);
+              if (undoableLayout.oldElements.length > 0) {
                 setCommonStore((state) => {
-                  state.elements.push(solarPanel);
+                  for (const e of undoableLayout.oldElements) {
+                    state.elements.push(e);
+                  }
                 });
               }
-            }
-          }
-        } else {
-          // east-west axis, so the array is laid in y direction
-          n = Math.floor(((bounds.maxY() - bounds.minY()) * foundation.ly - ly) / interRowSpacingRef.current);
-          start = bounds.minY() + ly / (2 * foundation.ly) + relativeMargin;
-          delta = interRowSpacingRef.current / foundation.ly;
-          h /= foundation.ly;
-          let a: Point2 = { x: -0.5, y: 0 } as Point2;
-          let b: Point2 = { x: 0.5, y: 0 } as Point2;
-          const rotation = 'rotation' in foundation ? foundation.rotation : undefined;
-          for (let i = 0; i <= n; i++) {
-            const cy = start + i * delta;
-            a.y = b.y = cy - h;
-            const p1 = Util.polygonIntersections(a, b, area.vertices);
-            a.y = b.y = cy + h;
-            const p2 = Util.polygonIntersections(a, b, area.vertices);
-            if (p1.length > 1 && p2.length > 1) {
-              const b = Math.abs(p1[0].x - p1[1].x) < Math.abs(p2[0].x - p2[1].x);
-              let x1 = b ? p1[0].x : p2[0].x;
-              let x2 = b ? p1[1].x : p2[1].x;
-              const lx = Math.abs(x1 - x2) - 2 * relativeMargin;
-              if (lx > 0) {
-                const solarPanel = ElementModelFactory.makeSolarPanel(
-                  foundation,
-                  pvModel,
-                  (x1 + x2) / 2,
-                  cy,
-                  foundation.lz,
-                  Orientation.portrait,
-                  poleHeightRef.current,
-                  poleSpacingRef.current,
-                  tiltAngleRef.current,
-                  0,
-                  UNIT_VECTOR_POS_Z,
-                  rotation,
-                  undefined,
-                  lx * foundation.lx,
-                  ly,
-                );
-                solarPanel.referenceId = area.id;
-                Util.changeOrientation(solarPanel, pvModel, orientationRef.current);
-                newElements.push(JSON.parse(JSON.stringify(solarPanel)));
+              setParams(undoableLayout.oldParams);
+              updateStoreParams();
+            },
+            redo: () => {
+              removeElementsByReferenceId(undoableLayout.referenceId, false);
+              if (undoableLayout.newElements.length > 0) {
                 setCommonStore((state) => {
-                  state.elements.push(solarPanel);
+                  for (const e of undoableLayout.newElements) {
+                    state.elements.push(e);
+                  }
                 });
               }
-            }
-          }
+              setParams(undoableLayout.newParams);
+              updateStoreParams();
+            },
+          } as UndoableLayout;
+          addUndoable(undoableLayout);
+          setApplyCount(applyCount + 1);
         }
-        const undoableLayout = {
-          name: 'Solar Panel Array Layout',
-          timestamp: Date.now(),
-          oldElements: useStore.getState().deletedElements,
-          newElements: newElements,
-          oldParams: {
-            pvModelName: solarPanelArrayLayoutParams.pvModelName,
-            rowAxis: solarPanelArrayLayoutParams.rowAxis,
-            orientation: solarPanelArrayLayoutParams.orientation,
-            tiltAngle: solarPanelArrayLayoutParams.tiltAngle,
-            rowsPerRack: solarPanelArrayLayoutParams.rowsPerRack,
-            interRowSpacing: solarPanelArrayLayoutParams.interRowSpacing,
-            poleHeight: solarPanelArrayLayoutParams.poleHeight,
-            poleSpacing: solarPanelArrayLayoutParams.poleSpacing,
-          } as SolarPanelArrayLayoutParams,
-          newParams: {
-            pvModelName: pvModelNameRef.current,
-            rowAxis: rowAxisRef.current,
-            orientation: orientationRef.current,
-            tiltAngle: tiltAngleRef.current,
-            rowsPerRack: rowsPerRackRef.current,
-            interRowSpacing: interRowSpacingRef.current,
-            poleHeight: poleHeightRef.current,
-            poleSpacing: poleSpacingRef.current,
-          } as SolarPanelArrayLayoutParams,
-          referenceId: area.id,
-          undo: () => {
-            removeElementsByReferenceId(undoableLayout.referenceId, false);
-            if (undoableLayout.oldElements.length > 0) {
-              setCommonStore((state) => {
-                for (const e of undoableLayout.oldElements) {
-                  state.elements.push(e);
-                }
-              });
-            }
-            setParams(undoableLayout.oldParams);
-            updateStoreParams();
-          },
-          redo: () => {
-            removeElementsByReferenceId(undoableLayout.referenceId, false);
-            if (undoableLayout.newElements.length > 0) {
-              setCommonStore((state) => {
-                for (const e of undoableLayout.newElements) {
-                  state.elements.push(e);
-                }
-              });
-            }
-            setParams(undoableLayout.newParams);
-            updateStoreParams();
-          },
-        } as UndoableLayout;
-        addUndoable(undoableLayout);
-        setApplyCount(applyCount + 1);
       }
+      changedRef.current = false;
+      updateStoreParams();
     }
-    changedRef.current = false;
-    updateStoreParams();
   };
 
   const setParams = (params: SolarPanelArrayLayoutParams) => {
