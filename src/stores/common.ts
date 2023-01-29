@@ -70,7 +70,6 @@ import i18n from '../i18n/i18n';
 import { HumanData } from '../HumanData';
 import { SolarPanelArrayLayoutParams } from './SolarPanelArrayLayoutParams';
 import { DefaultSolarPanelArrayLayoutParams } from './DefaultSolarPanelArrayLayoutParams';
-import { Vantage } from '../analysis/Vantage';
 import { SolarCollector } from '../models/SolarCollector';
 import { ConcentratedSolarPowerCollector } from '../models/ConcentratedSolarPowerCollector';
 import { ParabolicTroughModel } from '../models/ParabolicTroughModel';

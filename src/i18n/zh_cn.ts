@@ -603,6 +603,8 @@ export const i18n_zh_cn = {
       LabelHeight: '标签的高度',
       LabelSize: '标签的大小',
       KeepShowingLabel: '显示标签',
+      OnlyThisFloor: '只这个建筑物的地板',
+      AllFloors: '所有建筑物的地板',
     },
 
     solarPowerTowerMenu: {

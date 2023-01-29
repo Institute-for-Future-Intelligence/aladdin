@@ -52,9 +52,9 @@ export class SolarPanelLayout {
         a.x = b.x = cx + h;
         const p2 = Util.polygonIntersections(a, b, area.vertices);
         if (p1.length > 1 && p2.length > 1) {
-          const b = Math.abs(p1[0].y - p1[1].y) < Math.abs(p2[0].y - p2[1].y);
-          let y1 = b ? p1[0].y : p2[0].y;
-          let y2 = b ? p1[1].y : p2[1].y;
+          const test = Math.abs(p1[0].y - p1[1].y) < Math.abs(p2[0].y - p2[1].y);
+          let y1 = test ? p1[0].y : p2[0].y;
+          let y2 = test ? p1[1].y : p2[1].y;
           const lx = Math.abs(y1 - y2) - 2 * relativeMargin;
           if (lx > 0) {
             const panel = ElementModelFactory.makeSolarPanel(
@@ -96,9 +96,9 @@ export class SolarPanelLayout {
         a.y = b.y = cy + h;
         const p2 = Util.polygonIntersections(a, b, area.vertices);
         if (p1.length > 1 && p2.length > 1) {
-          const b = Math.abs(p1[0].x - p1[1].x) < Math.abs(p2[0].x - p2[1].x);
-          let x1 = b ? p1[0].x : p2[0].x;
-          let x2 = b ? p1[1].x : p2[1].x;
+          const test = Math.abs(p1[0].x - p1[1].x) < Math.abs(p2[0].x - p2[1].x);
+          let x1 = test ? p1[0].x : p2[0].x;
+          let x2 = test ? p1[1].x : p2[1].x;
           const lx = Math.abs(x1 - x2) - 2 * relativeMargin;
           if (lx > 0) {
             const panel = ElementModelFactory.makeSolarPanel(

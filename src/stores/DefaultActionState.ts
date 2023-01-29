@@ -37,6 +37,7 @@ export class DefaultActionState implements ActionState {
   foundationHeight: number;
   foundationColor: string;
   foundationTexture: FoundationTexture;
+  floorRValue: number;
 
   cuboidHeight: number;
   cuboidFaceColors: string[];
@@ -151,6 +152,7 @@ export class DefaultActionState implements ActionState {
     this.foundationHeight = 0.1;
     this.foundationColor = '#808080';
     this.foundationTexture = FoundationTexture.NoTexture;
+    this.floorRValue = 2;
 
     this.cuboidHeight = 4;
     this.cuboidFaceColors = ['#808080', '#808080', '#808080', '#808080', '#808080', '#808080'];

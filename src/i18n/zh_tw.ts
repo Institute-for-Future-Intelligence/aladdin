@@ -604,6 +604,8 @@ export const i18n_zh_tw = {
       LabelHeight: '標籤的高度',
       LabelSize: '標籤的大小',
       KeepShowingLabel: '顯示標籤',
+      OnlyThisFloor: '只這個建築物的地板',
+      AllFloors: '所有建築物的地板',
     },
 
     solarPowerTowerMenu: {

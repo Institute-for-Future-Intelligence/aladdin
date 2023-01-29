@@ -14,7 +14,7 @@ import {
   TreeType,
   WallTexture,
 } from '../types';
-import { WallFill, WallStructure } from '../models/WallModel';
+import { WallStructure } from '../models/WallModel';
 import { WindowType } from 'src/models/WindowModel';
 import { RoofStructure } from '../models/RoofModel';
 import { DoorType } from 'src/models/DoorModel';
@@ -31,6 +31,7 @@ export interface ActionState {
   foundationHeight: number;
   foundationColor: string;
   foundationTexture: FoundationTexture;
+  floorRValue: number;
 
   cuboidHeight: number;
   cuboidFaceColors: string[];

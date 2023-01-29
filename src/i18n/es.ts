@@ -620,6 +620,8 @@ export const i18n_es = {
       LabelHeight: 'Label Height',
       LabelSize: 'Label Size',
       KeepShowingLabel: 'Keep Showing Label',
+      OnlyThisFloor: 'Only This Floor',
+      AllFloors: 'All Floors',
     },
 
     solarPowerTowerMenu: {
