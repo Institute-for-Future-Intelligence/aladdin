@@ -1,5 +1,5 @@
 /*
- * @Copyright 2022. Institute for Future Intelligence, Inc.
+ * @Copyright 2022-2023. Institute for Future Intelligence, Inc.
  */
 
 import React, { useEffect, useRef, useState } from 'react';
@@ -13,6 +13,7 @@ import { UndoableChange } from 'src/undo/UndoableChange';
 import { UndoableChangeGroup } from 'src/undo/UndoableChangeGroup';
 import { RoofModel } from '../../../models/RoofModel';
 import { Util } from '../../../Util';
+import { DEFAULT_ROOF_R_VALUE } from '../../../constants';
 
 const RoofRValueInput = ({ setDialogVisible }: { setDialogVisible: (b: boolean) => void }) => {
   const language = useStore(Selector.language);
@@ -37,7 +38,7 @@ const RoofRValueInput = ({ setDialogVisible }: { setDialogVisible: (b: boolean) 
     return null;
   });
 
-  const [inputValue, setInputValue] = useState<number>(roofModel?.rValue ?? 0.5);
+  const [inputValue, setInputValue] = useState<number>(roofModel?.rValue ?? DEFAULT_ROOF_R_VALUE);
   const [inputValueUS, setInputValueUS] = useState<number>(Util.toRValueInUS(inputValue));
   const [dragEnabled, setDragEnabled] = useState<boolean>(false);
   const [bounds, setBounds] = useState<DraggableBounds>({ left: 0, top: 0, bottom: 0, right: 0 } as DraggableBounds);
@@ -47,7 +48,7 @@ const RoofRValueInput = ({ setDialogVisible }: { setDialogVisible: (b: boolean) 
 
   useEffect(() => {
     if (roofModel) {
-      setInputValue(roofModel?.rValue ?? 0.5);
+      setInputValue(roofModel?.rValue ?? DEFAULT_ROOF_R_VALUE);
     }
   }, [roofModel?.rValue]);
 
@@ -83,7 +84,7 @@ const RoofRValueInput = ({ setDialogVisible }: { setDialogVisible: (b: boolean) 
           for (const e of state.elements) {
             if (e.type === ObjectType.Roof && !e.locked) {
               const roof = e as RoofModel;
-              oldValuesAll.set(e.id, roof.rValue ?? 0.5);
+              oldValuesAll.set(e.id, roof.rValue ?? DEFAULT_ROOF_R_VALUE);
               roof.rValue = value;
             }
           }
@@ -110,7 +111,7 @@ const RoofRValueInput = ({ setDialogVisible }: { setDialogVisible: (b: boolean) 
             for (const e of state.elements) {
               if (e.type === ObjectType.Roof && e.foundationId === roofModel.foundationId && !e.locked) {
                 const roof = e as RoofModel;
-                oldValuesAboveFoundation.set(e.id, roof.rValue ?? 0.5);
+                oldValuesAboveFoundation.set(e.id, roof.rValue ?? DEFAULT_ROOF_R_VALUE);
                 roof.rValue = value;
               }
             }
@@ -138,7 +139,7 @@ const RoofRValueInput = ({ setDialogVisible }: { setDialogVisible: (b: boolean) 
       default:
         if (roofModel) {
           const updatedRoof = getElementById(roofModel.id) as RoofModel;
-          const oldValue = updatedRoof.rValue ?? roofModel.rValue ?? 0.5;
+          const oldValue = updatedRoof.rValue ?? roofModel.rValue ?? DEFAULT_ROOF_R_VALUE;
           const undoableChange = {
             name: 'Set Roof R-Value',
             timestamp: Date.now(),
@@ -177,7 +178,7 @@ const RoofRValueInput = ({ setDialogVisible }: { setDialogVisible: (b: boolean) 
   };
 
   const close = () => {
-    setInputValue(roofModel?.rValue ?? 0.5);
+    setInputValue(roofModel?.rValue ?? DEFAULT_ROOF_R_VALUE);
     setDialogVisible(false);
   };
 

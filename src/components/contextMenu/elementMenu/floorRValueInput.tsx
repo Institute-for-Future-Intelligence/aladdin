@@ -13,6 +13,7 @@ import { UndoableChange } from 'src/undo/UndoableChange';
 import { UndoableChangeGroup } from 'src/undo/UndoableChangeGroup';
 import { Util } from '../../../Util';
 import { FoundationModel } from '../../../models/FoundationModel';
+import { DEFAULT_FLOOR_R_VALUE } from '../../../constants';
 
 const FloorRValueInput = ({ setDialogVisible }: { setDialogVisible: (b: boolean) => void }) => {
   const language = useStore(Selector.language);
@@ -37,7 +38,7 @@ const FloorRValueInput = ({ setDialogVisible }: { setDialogVisible: (b: boolean)
     return null;
   });
 
-  const [inputValue, setInputValue] = useState<number>(foundationModel?.rValue ?? 0.5);
+  const [inputValue, setInputValue] = useState<number>(foundationModel?.rValue ?? DEFAULT_FLOOR_R_VALUE);
   const [inputValueUS, setInputValueUS] = useState<number>(Util.toRValueInUS(inputValue));
   const [dragEnabled, setDragEnabled] = useState<boolean>(false);
   const [bounds, setBounds] = useState<DraggableBounds>({ left: 0, top: 0, bottom: 0, right: 0 } as DraggableBounds);
@@ -47,7 +48,7 @@ const FloorRValueInput = ({ setDialogVisible }: { setDialogVisible: (b: boolean)
 
   useEffect(() => {
     if (foundationModel) {
-      setInputValue(foundationModel?.rValue ?? 0.5);
+      setInputValue(foundationModel?.rValue ?? DEFAULT_FLOOR_R_VALUE);
     }
   }, [foundationModel?.rValue]);
 
@@ -83,7 +84,7 @@ const FloorRValueInput = ({ setDialogVisible }: { setDialogVisible: (b: boolean)
           for (const e of state.elements) {
             if (e.type === ObjectType.Foundation && !e.locked) {
               const foundation = e as FoundationModel;
-              oldValuesAll.set(e.id, foundation.rValue ?? 0.5);
+              oldValuesAll.set(e.id, foundation.rValue ?? DEFAULT_FLOOR_R_VALUE);
               foundation.rValue = value;
             }
           }
@@ -106,7 +107,7 @@ const FloorRValueInput = ({ setDialogVisible }: { setDialogVisible: (b: boolean)
       default:
         if (foundationModel) {
           const updatedFoundation = getElementById(foundationModel.id) as FoundationModel;
-          const oldValue = updatedFoundation.rValue ?? foundationModel.rValue ?? 0.5;
+          const oldValue = updatedFoundation.rValue ?? foundationModel.rValue ?? DEFAULT_FLOOR_R_VALUE;
           const undoableChange = {
             name: 'Set Floor R-Value',
             timestamp: Date.now(),
@@ -145,7 +146,7 @@ const FloorRValueInput = ({ setDialogVisible }: { setDialogVisible: (b: boolean)
   };
 
   const close = () => {
-    setInputValue(foundationModel?.rValue ?? 0.5);
+    setInputValue(foundationModel?.rValue ?? DEFAULT_FLOOR_R_VALUE);
     setDialogVisible(false);
   };
 

@@ -21,6 +21,13 @@ import { defaultShutter } from '../views/window/window';
 import { WindowType } from 'src/models/WindowModel';
 import { RoofStructure } from '../models/RoofModel';
 import { DoorType } from 'src/models/DoorModel';
+import {
+  DEFAULT_DOOR_U_VALUE,
+  DEFAULT_FLOOR_R_VALUE,
+  DEFAULT_ROOF_R_VALUE,
+  DEFAULT_WALL_R_VALUE,
+  DEFAULT_WINDOW_U_VALUE,
+} from '../constants';
 
 export class DefaultActionState implements ActionState {
   // Needed for immer drafting to work properly: https://immerjs.github.io/immer/docs/complex-objects
@@ -152,7 +159,7 @@ export class DefaultActionState implements ActionState {
     this.foundationHeight = 0.1;
     this.foundationColor = '#808080';
     this.foundationTexture = FoundationTexture.NoTexture;
-    this.floorRValue = 2;
+    this.floorRValue = DEFAULT_FLOOR_R_VALUE;
 
     this.cuboidHeight = 4;
     this.cuboidFaceColors = ['#808080', '#808080', '#808080', '#808080', '#808080', '#808080'];
@@ -174,7 +181,7 @@ export class DefaultActionState implements ActionState {
     this.wallStructureWidth = 0.1;
     this.wallStructureColor = '#ffffff';
     this.wallOpacity = 0.5;
-    this.wallRValue = 2;
+    this.wallRValue = DEFAULT_WALL_R_VALUE;
     this.wallVolumetricHeatCapacity = 0.5;
     this.wallUnfilledHeight = 0.5;
 
@@ -189,7 +196,7 @@ export class DefaultActionState implements ActionState {
     this.roofRafterWidth = 0.1;
     this.roofRafterSpacing = 1;
     this.roofRafterColor = '#ffffff';
-    this.roofRValue = 2;
+    this.roofRValue = DEFAULT_ROOF_R_VALUE;
     this.roofVolumetricHeatCapacity = 0.5;
     this.roofRise = 2;
 
@@ -198,7 +205,7 @@ export class DefaultActionState implements ActionState {
     this.doorType = DoorType.Default;
     this.doorArchHeight = 1;
     this.doorFilled = true;
-    this.doorUValue = 1;
+    this.doorUValue = DEFAULT_DOOR_U_VALUE;
     this.doorVolumetricHeatCapacity = 0.5;
 
     this.windowWidth = 1;
@@ -206,7 +213,7 @@ export class DefaultActionState implements ActionState {
     this.windowColor = '#ffffff';
     this.windowTint = '#73D8FF';
     this.windowOpacity = 0.5;
-    this.windowUValue = 2;
+    this.windowUValue = DEFAULT_WINDOW_U_VALUE;
     this.windowMullion = true;
     this.windowMullionWidth = 0.06;
     this.windowMullionSpacing = 0.5;

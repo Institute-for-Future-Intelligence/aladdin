@@ -1,5 +1,5 @@
 /*
- * @Copyright 2021-2022. Institute for Future Intelligence, Inc.
+ * @Copyright 2021-2023. Institute for Future Intelligence, Inc.
  */
 
 import React, { useState } from 'react';
@@ -47,9 +47,12 @@ import SolarPanelTiltAngleGaWizard from './solarPanelTiltAngleGaWizard';
 import SolarPanelTiltAnglePsoWizard from './solarPanelTiltAnglePsoWizard';
 import { UndoableChangeGroup } from '../../../undo/UndoableChangeGroup';
 import { UndoableCheck } from '../../../undo/UndoableCheck';
+import FloorRValueInput from './floorRValueInput';
+import { Util } from '../../../Util';
 
 export const FoundationMenu = React.memo(() => {
   const setCommonStore = useStore(Selector.set);
+  const elements = useStore(Selector.elements);
   const addUndoable = useStore(Selector.addUndoable);
   const countAllOffspringsByType = useStore(Selector.countAllOffspringsByTypeAtOnce);
   const removeAllChildElementsByType = useStore(Selector.removeAllChildElementsByType);
@@ -77,6 +80,7 @@ export const FoundationMenu = React.memo(() => {
   const [lengthDialogVisible, setLengthDialogVisible] = useState(false);
   const [heightDialogVisible, setHeightDialogVisible] = useState(false);
   const [azimuthDialogVisible, setAzimuthDialogVisible] = useState(false);
+  const [rValueDialogVisible, setRValueDialogVisible] = useState(false);
 
   const [solarAbsorberPipeHeightDialogVisible, setSolarAbsorberPipeHeightDialogVisible] = useState(false);
   const [solarAbsorberPipeApertureWidthDialogVisible, setSolarAbsorberPipeApertureWidthDialogVisible] = useState(false);
@@ -248,6 +252,8 @@ export const FoundationMenu = React.memo(() => {
       updateElementLabelById(foundation.id, labelText);
     }
   };
+
+  const isBuilding = Util.isCompleteBuilding(foundation, elements);
 
   return (
     <Menu.ItemGroup>
@@ -1128,6 +1134,20 @@ export const FoundationMenu = React.memo(() => {
           >
             {i18n.t('word.Azimuth', lang)} ...
           </Menu.Item>
+
+          {isBuilding && rValueDialogVisible && <FloorRValueInput setDialogVisible={setRValueDialogVisible} />}
+          {isBuilding && (
+            <Menu.Item
+              key={'floor-r-value'}
+              style={{ paddingLeft: '36px' }}
+              onClick={() => {
+                setApplyCount(0);
+                setRValueDialogVisible(true);
+              }}
+            >
+              {i18n.t('foundationMenu.FloorRValue', lang)} ...
+            </Menu.Item>
+          )}
         </>
       )}
 

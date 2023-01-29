@@ -1,5 +1,5 @@
 /*
- * @Copyright 2022. Institute for Future Intelligence, Inc.
+ * @Copyright 2022-2023. Institute for Future Intelligence, Inc.
  */
 
 import React, { useEffect, useRef, useState } from 'react';
@@ -13,6 +13,7 @@ import { UndoableChange } from 'src/undo/UndoableChange';
 import { UndoableChangeGroup } from 'src/undo/UndoableChangeGroup';
 import { DoorModel } from '../../../models/DoorModel';
 import { Util } from '../../../Util';
+import { DEFAULT_DOOR_U_VALUE } from '../../../constants';
 
 const DoorUValueInput = ({ setDialogVisible }: { setDialogVisible: (b: boolean) => void }) => {
   const language = useStore(Selector.language);
@@ -37,7 +38,7 @@ const DoorUValueInput = ({ setDialogVisible }: { setDialogVisible: (b: boolean) 
     return null;
   });
 
-  const [inputValue, setInputValue] = useState<number>(doorModel?.uValue ?? 1);
+  const [inputValue, setInputValue] = useState<number>(doorModel?.uValue ?? DEFAULT_DOOR_U_VALUE);
   const [inputValueUS, setInputValueUS] = useState<number>(Util.toUValueInUS(inputValue));
   const [dragEnabled, setDragEnabled] = useState<boolean>(false);
   const [bounds, setBounds] = useState<DraggableBounds>({ left: 0, top: 0, bottom: 0, right: 0 } as DraggableBounds);
@@ -47,7 +48,7 @@ const DoorUValueInput = ({ setDialogVisible }: { setDialogVisible: (b: boolean) 
 
   useEffect(() => {
     if (doorModel) {
-      setInputValue(doorModel?.uValue ?? 1);
+      setInputValue(doorModel?.uValue ?? DEFAULT_DOOR_U_VALUE);
     }
   }, [doorModel?.uValue]);
 
@@ -83,7 +84,7 @@ const DoorUValueInput = ({ setDialogVisible }: { setDialogVisible: (b: boolean) 
           for (const e of state.elements) {
             if (e.type === ObjectType.Door && !e.locked) {
               const door = e as DoorModel;
-              oldValuesAll.set(e.id, door.uValue ?? 1);
+              oldValuesAll.set(e.id, door.uValue ?? DEFAULT_DOOR_U_VALUE);
               door.uValue = value;
             }
           }
@@ -110,7 +111,7 @@ const DoorUValueInput = ({ setDialogVisible }: { setDialogVisible: (b: boolean) 
             for (const e of state.elements) {
               if (e.type === ObjectType.Door && e.parentId === doorModel.parentId && !e.locked) {
                 const door = e as DoorModel;
-                oldValues.set(e.id, door.uValue ?? 1);
+                oldValues.set(e.id, door.uValue ?? DEFAULT_DOOR_U_VALUE);
                 door.uValue = value;
               }
             }
@@ -142,7 +143,7 @@ const DoorUValueInput = ({ setDialogVisible }: { setDialogVisible: (b: boolean) 
             for (const e of state.elements) {
               if (e.type === ObjectType.Door && e.foundationId === doorModel.foundationId && !e.locked) {
                 const door = e as DoorModel;
-                oldValuesAboveFoundation.set(e.id, door.uValue ?? 1);
+                oldValuesAboveFoundation.set(e.id, door.uValue ?? DEFAULT_DOOR_U_VALUE);
                 door.uValue = value;
               }
             }
@@ -170,7 +171,7 @@ const DoorUValueInput = ({ setDialogVisible }: { setDialogVisible: (b: boolean) 
       default:
         if (doorModel) {
           const updatedDoor = getElementById(doorModel.id) as DoorModel;
-          const oldValue = updatedDoor.uValue ?? doorModel.uValue ?? 1;
+          const oldValue = updatedDoor.uValue ?? doorModel.uValue ?? DEFAULT_DOOR_U_VALUE;
           const undoableChange = {
             name: 'Set Door U-Value',
             timestamp: Date.now(),
@@ -209,7 +210,7 @@ const DoorUValueInput = ({ setDialogVisible }: { setDialogVisible: (b: boolean) 
   };
 
   const close = () => {
-    setInputValue(doorModel?.uValue ?? 1);
+    setInputValue(doorModel?.uValue ?? DEFAULT_DOOR_U_VALUE);
     setDialogVisible(false);
   };
 

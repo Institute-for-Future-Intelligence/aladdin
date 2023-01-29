@@ -620,6 +620,7 @@ export const i18n_en = {
       LabelHeight: 'Label Height',
       LabelSize: 'Label Size',
       KeepShowingLabel: 'Keep Showing Label',
+      FloorRValue: 'Floor R-Value',
       OnlyThisFloor: 'Only This Floor',
       AllFloors: 'All Floors',
     },

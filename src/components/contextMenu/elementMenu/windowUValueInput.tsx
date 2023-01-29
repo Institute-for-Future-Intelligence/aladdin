@@ -1,5 +1,5 @@
 /*
- * @Copyright 2022. Institute for Future Intelligence, Inc.
+ * @Copyright 2022-2023. Institute for Future Intelligence, Inc.
  */
 
 import React, { useEffect, useRef, useState } from 'react';
@@ -13,6 +13,7 @@ import { UndoableChange } from 'src/undo/UndoableChange';
 import { UndoableChangeGroup } from 'src/undo/UndoableChangeGroup';
 import { WindowModel } from 'src/models/WindowModel';
 import { Util } from '../../../Util';
+import { DEFAULT_WINDOW_U_VALUE } from '../../../constants';
 
 const WindowUValueInput = ({ setDialogVisible }: { setDialogVisible: (b: boolean) => void }) => {
   const language = useStore(Selector.language);
@@ -37,7 +38,7 @@ const WindowUValueInput = ({ setDialogVisible }: { setDialogVisible: (b: boolean
     return null;
   });
 
-  const [inputValue, setInputValue] = useState<number>(windowModel?.uValue ?? 2);
+  const [inputValue, setInputValue] = useState<number>(windowModel?.uValue ?? DEFAULT_WINDOW_U_VALUE);
   const [inputValueUS, setInputValueUS] = useState<number>(Util.toUValueInUS(inputValue));
   const [dragEnabled, setDragEnabled] = useState<boolean>(false);
   const [bounds, setBounds] = useState<DraggableBounds>({ left: 0, top: 0, bottom: 0, right: 0 } as DraggableBounds);
@@ -47,7 +48,7 @@ const WindowUValueInput = ({ setDialogVisible }: { setDialogVisible: (b: boolean
 
   useEffect(() => {
     if (windowModel) {
-      setInputValue(windowModel?.uValue ?? 2);
+      setInputValue(windowModel?.uValue ?? DEFAULT_WINDOW_U_VALUE);
     }
   }, [windowModel?.uValue]);
 
@@ -83,7 +84,7 @@ const WindowUValueInput = ({ setDialogVisible }: { setDialogVisible: (b: boolean
           for (const e of state.elements) {
             if (e.type === ObjectType.Window && !e.locked) {
               const window = e as WindowModel;
-              oldValuesAll.set(e.id, window.uValue ?? 2);
+              oldValuesAll.set(e.id, window.uValue ?? DEFAULT_WINDOW_U_VALUE);
               window.uValue = value;
             }
           }
@@ -110,7 +111,7 @@ const WindowUValueInput = ({ setDialogVisible }: { setDialogVisible: (b: boolean
             for (const e of state.elements) {
               if (e.type === ObjectType.Window && e.parentId === windowModel.parentId && !e.locked) {
                 const window = e as WindowModel;
-                oldValues.set(e.id, window.uValue ?? 2);
+                oldValues.set(e.id, window.uValue ?? DEFAULT_WINDOW_U_VALUE);
                 window.uValue = value;
               }
             }
@@ -142,7 +143,7 @@ const WindowUValueInput = ({ setDialogVisible }: { setDialogVisible: (b: boolean
             for (const e of state.elements) {
               if (e.type === ObjectType.Window && e.foundationId === windowModel.foundationId && !e.locked) {
                 const window = e as WindowModel;
-                oldValuesAboveFoundation.set(e.id, window.uValue ?? 2);
+                oldValuesAboveFoundation.set(e.id, window.uValue ?? DEFAULT_WINDOW_U_VALUE);
                 window.uValue = value;
               }
             }
@@ -170,7 +171,7 @@ const WindowUValueInput = ({ setDialogVisible }: { setDialogVisible: (b: boolean
       default:
         if (windowModel) {
           const updatedWindow = getElementById(windowModel.id) as WindowModel;
-          const oldValue = updatedWindow.uValue ?? windowModel.uValue ?? 2;
+          const oldValue = updatedWindow.uValue ?? windowModel.uValue ?? DEFAULT_WINDOW_U_VALUE;
           const undoableChange = {
             name: 'Set Window U-Value',
             timestamp: Date.now(),
@@ -209,7 +210,7 @@ const WindowUValueInput = ({ setDialogVisible }: { setDialogVisible: (b: boolean
   };
 
   const close = () => {
-    setInputValue(windowModel?.uValue ?? 2);
+    setInputValue(windowModel?.uValue ?? DEFAULT_WINDOW_U_VALUE);
     setDialogVisible(false);
   };
 

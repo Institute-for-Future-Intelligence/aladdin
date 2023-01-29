@@ -1,5 +1,5 @@
 /*
- * @Copyright 2022. Institute for Future Intelligence, Inc.
+ * @Copyright 2022-2023. Institute for Future Intelligence, Inc.
  */
 
 import React, { useEffect, useRef, useState } from 'react';
@@ -13,6 +13,7 @@ import { UndoableChange } from 'src/undo/UndoableChange';
 import { UndoableChangeGroup } from 'src/undo/UndoableChangeGroup';
 import { WallModel } from '../../../models/WallModel';
 import { Util } from '../../../Util';
+import { DEFAULT_WALL_R_VALUE } from '../../../constants';
 
 const WallRValueInput = ({ setDialogVisible }: { setDialogVisible: (b: boolean) => void }) => {
   const language = useStore(Selector.language);
@@ -37,7 +38,7 @@ const WallRValueInput = ({ setDialogVisible }: { setDialogVisible: (b: boolean) 
     return null;
   });
 
-  const [inputValue, setInputValue] = useState<number>(wallModel?.rValue ?? 0.5);
+  const [inputValue, setInputValue] = useState<number>(wallModel?.rValue ?? DEFAULT_WALL_R_VALUE);
   const [inputValueUS, setInputValueUS] = useState<number>(Util.toRValueInUS(inputValue));
   const [dragEnabled, setDragEnabled] = useState<boolean>(false);
   const [bounds, setBounds] = useState<DraggableBounds>({ left: 0, top: 0, bottom: 0, right: 0 } as DraggableBounds);
@@ -47,7 +48,7 @@ const WallRValueInput = ({ setDialogVisible }: { setDialogVisible: (b: boolean) 
 
   useEffect(() => {
     if (wallModel) {
-      setInputValue(wallModel?.rValue ?? 0.5);
+      setInputValue(wallModel?.rValue ?? DEFAULT_WALL_R_VALUE);
     }
   }, [wallModel?.rValue]);
 
@@ -83,7 +84,7 @@ const WallRValueInput = ({ setDialogVisible }: { setDialogVisible: (b: boolean) 
           for (const e of state.elements) {
             if (e.type === ObjectType.Wall && !e.locked) {
               const wall = e as WallModel;
-              oldValuesAll.set(e.id, wall.rValue ?? 0.5);
+              oldValuesAll.set(e.id, wall.rValue ?? DEFAULT_WALL_R_VALUE);
               wall.rValue = value;
             }
           }
@@ -110,7 +111,7 @@ const WallRValueInput = ({ setDialogVisible }: { setDialogVisible: (b: boolean) 
             for (const e of state.elements) {
               if (e.type === ObjectType.Wall && e.foundationId === wallModel.foundationId && !e.locked) {
                 const wall = e as WallModel;
-                oldValuesAboveFoundation.set(e.id, wall.rValue ?? 0.5);
+                oldValuesAboveFoundation.set(e.id, wall.rValue ?? DEFAULT_WALL_R_VALUE);
                 wall.rValue = value;
               }
             }
@@ -138,7 +139,7 @@ const WallRValueInput = ({ setDialogVisible }: { setDialogVisible: (b: boolean) 
       default:
         if (wallModel) {
           const updatedWall = getElementById(wallModel.id) as WallModel;
-          const oldValue = updatedWall.rValue ?? wallModel.rValue ?? 0.5;
+          const oldValue = updatedWall.rValue ?? wallModel.rValue ?? DEFAULT_WALL_R_VALUE;
           const undoableChange = {
             name: 'Set Wall R-Value',
             timestamp: Date.now(),
@@ -177,7 +178,7 @@ const WallRValueInput = ({ setDialogVisible }: { setDialogVisible: (b: boolean) 
   };
 
   const close = () => {
-    setInputValue(wallModel?.rValue ?? 0.5);
+    setInputValue(wallModel?.rValue ?? DEFAULT_WALL_R_VALUE);
     setDialogVisible(false);
   };
 

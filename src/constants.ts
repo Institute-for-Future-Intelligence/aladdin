@@ -26,6 +26,12 @@ export const DEFAULT_HEAT_FLUX_COLOR = 'gray';
 export const DEFAULT_HEAT_FLUX_WIDTH = 0.5;
 export const DEFAULT_HEAT_FLUX_DENSITY_FACTOR = 4;
 
+export const DEFAULT_FLOOR_R_VALUE = 2;
+export const DEFAULT_WALL_R_VALUE = 2;
+export const DEFAULT_ROOF_R_VALUE = 2;
+export const DEFAULT_WINDOW_U_VALUE = 2;
+export const DEFAULT_DOOR_U_VALUE = 1;
+
 export const DEFAULT_SOLAR_PANEL_SHININESS = 100;
 export const DEFAULT_WINDOW_SHININESS = 200;
 export const SOLAR_PANEL_BLUE_SPECULAR = '#3BB9FF';
