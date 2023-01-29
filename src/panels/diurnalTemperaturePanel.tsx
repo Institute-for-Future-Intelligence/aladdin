@@ -1,5 +1,5 @@
 /*
- * @Copyright 2022. Institute for Future Intelligence, Inc.
+ * @Copyright 2022-2023. Institute for Future Intelligence, Inc.
  */
 
 import React, { useEffect, useMemo, useRef, useState } from 'react';
@@ -11,7 +11,11 @@ import * as Selector from '../stores/selector';
 import { Util } from '../Util';
 import ReactDraggable, { DraggableEventHandler } from 'react-draggable';
 import i18n from '../i18n/i18n';
-import { computeOutsideTemperature, getOutsideTemperatureAtMinute } from '../analysis/heatTools';
+import {
+  calculateGroundTemperatureMinuteOfDay,
+  computeOutsideTemperature,
+  getOutsideTemperatureAtMinute,
+} from '../analysis/heatTools';
 import { computeSunriseAndSunsetInMinutes } from '../analysis/sunTools';
 import dayjs from 'dayjs';
 import { Radio, Space } from 'antd';
@@ -81,6 +85,7 @@ const DiurnalTemperaturePanel = ({ city }: DiurnalTemperaturePanelProps) => {
   const setCommonStore = useStore(Selector.set);
   const now = new Date(useStore(Selector.world.date));
   const latitude = useStore(Selector.world.latitude);
+  const ground = useStore(Selector.world.ground);
   const diurnalTemperatureModel =
     useStore(Selector.world.diurnalTemperatureModel) ?? DiurnalTemperatureModel.Sinusoidal;
   const highestTemperatureTimeInMinutes = useStore(Selector.world.highestTemperatureTimeInMinutes) ?? 900;
@@ -168,6 +173,16 @@ const DiurnalTemperaturePanel = ({ city }: DiurnalTemperaturePanelProps) => {
               highestTemperatureTimeInMinutes,
               sunMinutes,
               m,
+            ),
+            Ground: calculateGroundTemperatureMinuteOfDay(
+              latitude,
+              Util.dayOfYear(now),
+              m,
+              weather.lowestTemperatures,
+              weather.highestTemperatures,
+              0.5 * (t.high - t.low),
+              ground.thermalDiffusivity ?? 0.05,
+              1,
             ),
           });
         }
@@ -283,7 +298,7 @@ const DiurnalTemperaturePanel = ({ city }: DiurnalTemperaturePanelProps) => {
             referenceX={now.getHours()}
           />
           <Space style={{ alignSelf: 'center' }}>
-            <Space>{i18n.t('diurnalTemperaturePanel.SelectModel', lang)}</Space>
+            <Space>{i18n.t('diurnalTemperaturePanel.SelectAirTemperatureModel', lang)}</Space>
             <Radio.Group onChange={onChangeModel} value={selectedModel}>
               <Radio value={DiurnalTemperatureModel.Sinusoidal}>
                 {i18n.t('diurnalTemperaturePanel.Sinusoidal', lang)}

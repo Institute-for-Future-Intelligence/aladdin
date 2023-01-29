@@ -1218,7 +1218,7 @@ export const i18n_zh_tw = {
     },
 
     diurnalTemperaturePanel: {
-      SelectModel: '選擇模型',
+      SelectAirTemperatureModel: '選擇氣溫模型',
       Sinusoidal: '正弦函數',
     },
 

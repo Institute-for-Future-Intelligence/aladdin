@@ -98,6 +98,8 @@ const LineGraph = ({
           } else {
             if (i === 1) {
               name = 'PartonLogan';
+            } else if (i === 2) {
+              name = 'Ground';
             } else {
               name = 'Sinusoidal';
             }

@@ -2,7 +2,7 @@
  * @Copyright 2021-2023. Institute for Future Intelligence, Inc.
  */
 
-import { MINUTES_OF_DAY, OMEGA_DAY } from './analysisConstants';
+import { DAILY_LAG_IN_MINUTES, MINUTES_OF_DAY, OMEGA_DAY, OMEGA_YEAR, YEARLY_LAG_IN_DAYS } from './analysisConstants';
 import { Util } from '../Util';
 import { SunMinutes } from './SunMinutes';
 import { DiurnalTemperatureModel, ObjectType } from '../types';
@@ -151,4 +151,62 @@ export const computeOutsideTemperature = (day: Date, los: number[], his: number[
   const max = his[month1] + (his[month2] - his[month1]) * weight;
 
   return { low: min, high: max };
+};
+
+// calculate the average ground temperature of a given day using the Kusuda formula:
+// http://soilphysics.okstate.edu/software/SoilTemperature/document.pdf
+export const calculateTemperatureOnDay = (
+  latitude: number,
+  day: number,
+  los: number[],
+  his: number[],
+  thermalDiffusivity: number,
+  depth: number,
+): number => {
+  const n = los.length;
+  let average = 0;
+  let hiMax = -1000,
+    hiMin = 1000,
+    loMax = -1000,
+    loMin = 1000;
+  for (let i = 0; i < n; i++) {
+    average += his[i] + los[i];
+    if (hiMax < his[i]) {
+      hiMax = his[i];
+    }
+    if (loMax < los[i]) {
+      loMax = los[i];
+    }
+    if (hiMin > his[i]) {
+      hiMin = his[i];
+    }
+    if (loMin > los[i]) {
+      loMin = los[i];
+    }
+  }
+  average /= 2 * n;
+  const amplitude = 0.25 * (hiMax - hiMin + loMax - loMin);
+  const d2 = depth * Math.sqrt(OMEGA_YEAR / (2.0 * thermalDiffusivity));
+  if (latitude > 0) {
+    return average - amplitude * Math.exp(-d2) * Math.cos(OMEGA_YEAR * (day - YEARLY_LAG_IN_DAYS) - d2);
+  }
+  return average - amplitude * Math.exp(-d2) * Math.cos(Math.PI + OMEGA_YEAR * (day - YEARLY_LAG_IN_DAYS) - d2);
+};
+
+export const calculateGroundTemperatureMinuteOfDay = (
+  latitude: number,
+  day: number,
+  minute: number,
+  los: number[],
+  his: number[],
+  airTemperatrureFluctuationAmplitudeOfDay: number,
+  thermalDiffusivity: number,
+  depth: number,
+): number => {
+  return (
+    calculateTemperatureOnDay(latitude, day, los, his, thermalDiffusivity, depth) -
+    Math.exp(-depth * Math.sqrt(OMEGA_DAY / (2.0 * thermalDiffusivity))) *
+      airTemperatrureFluctuationAmplitudeOfDay *
+      Math.cos(OMEGA_DAY * (minute - DAILY_LAG_IN_MINUTES))
+  );
 };

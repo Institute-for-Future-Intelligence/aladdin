@@ -10,6 +10,8 @@ export const longitude = (state: CommonStoreState) => state.world.longitude;
 
 export const date = (state: CommonStoreState) => state.world.date;
 
+export const ground = (state: CommonStoreState) => state.world.ground;
+
 export const address = (state: CommonStoreState) => state.world.address;
 
 export const airAttenuationCoefficient = (state: CommonStoreState) => state.world.airAttenuationCoefficient;

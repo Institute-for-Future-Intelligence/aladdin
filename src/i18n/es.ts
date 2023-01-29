@@ -1240,7 +1240,7 @@ export const i18n_es = {
     },
 
     diurnalTemperaturePanel: {
-      SelectModel: 'Select Model',
+      SelectAirTemperatureModel: 'Select Air Temperature Model',
       Sinusoidal: 'Sinusoidal',
     },
 

@@ -1241,7 +1241,7 @@ export const i18n_tr = {
     },
 
     diurnalTemperaturePanel: {
-      SelectModel: 'Model Seç',
+      SelectAirTemperatureModel: 'Model Seç',
       Sinusoidal: 'Sinüzoidal',
     },
 
