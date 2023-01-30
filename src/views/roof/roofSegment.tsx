@@ -406,6 +406,7 @@ export const BufferRoofSegment = React.memo(
       geometry.setAttribute('position', new Float32BufferAttribute(positions, 3));
       geometry.setAttribute('uv', new Float32BufferAttribute(uvs, 2));
       geometry.computeVertexNormals();
+      geometry.computeBoundingSphere(); // add this to update hit test.
 
       // TODO: add window here
       // holeMesh.position.set(0, -2, 0);
