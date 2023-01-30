@@ -67,7 +67,7 @@ interface FlatRoofProps {
   heatmap: CanvasTexture | null;
 }
 
-const FlatRoof = ({
+export const FlatRoof = ({
   id,
   roofSegments,
   thickness,

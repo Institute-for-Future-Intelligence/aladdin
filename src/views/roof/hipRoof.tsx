@@ -40,6 +40,7 @@ import RoofSegment from './roofSegment';
 import { RoofUtil } from './RoofUtil';
 import { usePrimitiveStore } from '../../stores/commonPrimitive';
 import { useDataStore } from '../../stores/commonData';
+import { FlatRoof } from './pyramidRoof';
 
 const HipRoofWireframe = React.memo(({ roofSegments, thickness, lineWidth, lineColor }: RoofWireframeProps) => {
   if (roofSegments.length === 0) {
@@ -474,32 +475,46 @@ const HipRoof = (roofModel: HipRoofModel) => {
           handleContextMenu(e, id);
         }}
       >
-        <>
-          {roofSegments.map((segment, index, arr) => {
-            return (
-              // Roof segment idx is important for calculate normal
-              <RoofSegment
-                id={id}
-                key={index}
-                index={index}
-                roofType={roofType}
-                segment={segment}
-                centroid={new Vector3(centroid2D.x, centroid2D.y, topZ)}
-                thickness={thickness}
-                color={color}
-                sideColor={sideColor}
-                texture={texture}
-                heatmap={heatmapTextures && index < heatmapTextures.length ? heatmapTextures[index] : undefined}
-              />
-            );
-          })}
-          <HipRoofWireframe
+        {riseInnerState > 0 ? (
+          <>
+            {roofSegments.map((segment, index, arr) => {
+              return (
+                // Roof segment idx is important for calculate normal
+                <RoofSegment
+                  id={id}
+                  key={index}
+                  index={index}
+                  roofType={roofType}
+                  segment={segment}
+                  centroid={new Vector3(centroid2D.x, centroid2D.y, topZ)}
+                  thickness={thickness}
+                  color={color}
+                  sideColor={sideColor}
+                  texture={texture}
+                  heatmap={heatmapTextures && index < heatmapTextures.length ? heatmapTextures[index] : undefined}
+                />
+              );
+            })}
+            <HipRoofWireframe
+              roofSegments={roofSegments}
+              thickness={thickness}
+              lineColor={lineColor}
+              lineWidth={lineWidth}
+            />
+          </>
+        ) : (
+          <FlatRoof
+            id={id}
             roofSegments={roofSegments}
             thickness={thickness}
-            lineColor={lineColor}
             lineWidth={lineWidth}
+            lineColor={lineColor}
+            sideColor={sideColor}
+            color={color}
+            textureType={textureType}
+            heatmap={null}
           />
-        </>
+        )}
       </group>
 
       {/* handles */}
