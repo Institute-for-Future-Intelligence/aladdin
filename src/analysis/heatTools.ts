@@ -199,6 +199,7 @@ export const getGroundTemperatureAtMinute = (
   minute: number,
   los: number[],
   his: number[],
+  highestTemperatureTimeInMinutes: number,
   airTemperatrureFluctuationAmplitudeOfDay: number,
   thermalDiffusivity: number,
   depth: number,
@@ -207,6 +208,6 @@ export const getGroundTemperatureAtMinute = (
     calculateTemperatureOnDay(latitude, day, los, his, thermalDiffusivity, depth) -
     Math.exp(-depth * Math.sqrt(OMEGA_DAY / (2.0 * thermalDiffusivity))) *
       airTemperatrureFluctuationAmplitudeOfDay *
-      Math.cos(OMEGA_DAY * (minute - DAILY_LAG_IN_MINUTES))
+      Math.cos(OMEGA_DAY * (minute - (highestTemperatureTimeInMinutes - 720) - DAILY_LAG_IN_MINUTES))
   );
 };

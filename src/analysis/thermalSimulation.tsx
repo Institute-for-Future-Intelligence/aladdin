@@ -173,6 +173,7 @@ const ThermalSimulation = ({ city }: ThermalSimulationProps) => {
         minutes,
         weather.lowestTemperatures,
         weather.highestTemperatures,
+        highestTemperatureTimeInMinutes,
         0.5 * (outsideTemperatureRangeRef.current.high - outsideTemperatureRangeRef.current.low),
         ground.thermalDiffusivity ?? 0.05,
         DEFAULT_FOUNDATION_SLAB_DEPTH,

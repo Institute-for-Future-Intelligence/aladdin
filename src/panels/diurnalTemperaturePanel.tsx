@@ -180,6 +180,7 @@ const DiurnalTemperaturePanel = ({ city }: DiurnalTemperaturePanelProps) => {
               m,
               weather.lowestTemperatures,
               weather.highestTemperatures,
+              highestTemperatureTimeInMinutes,
               0.5 * (t.high - t.low),
               ground.thermalDiffusivity ?? 0.05,
               DEFAULT_FOUNDATION_SLAB_DEPTH,
