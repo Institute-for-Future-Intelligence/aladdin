@@ -800,11 +800,10 @@ const MansardRoof = (roofModel: MansardRoofModel) => {
               roofType={roofType}
               segment={segment}
               centroid={centroid}
-              defaultAngle={arr[0].angle}
               thickness={thickness}
               color={color}
               sideColor={sideColor}
-              textureType={textureType}
+              texture={texture}
               heatmap={heatmapTextures && index < heatmapTextures.length ? heatmapTextures[index] : undefined}
             />
           );

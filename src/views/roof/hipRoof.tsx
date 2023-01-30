@@ -22,6 +22,7 @@ import {
   useRoofHeight,
   useUpdateOldRoofFiles,
   useUpdateSegmentVerticesWithoutOverhangMap,
+  useRoofTexture,
 } from './hooks';
 import {
   addUndoableResizeRoofRise,
@@ -128,6 +129,7 @@ const HipRoof = (roofModel: HipRoofModel) => {
   }
 
   const currentWallArray = useCurrWallArray(wallsId[0]);
+  const texture = useRoofTexture(textureType);
 
   const [enableIntersectionPlane, setEnableIntersectionPlane] = useState(false);
   const [roofHandleType, setRoofHandleType] = useState<RoofHandleType>(RoofHandleType.Null);
@@ -472,31 +474,32 @@ const HipRoof = (roofModel: HipRoofModel) => {
           handleContextMenu(e, id);
         }}
       >
-        {roofSegments.map((segment, index, arr) => {
-          return (
-            // Roof segment idx is important for calculate normal
-            <RoofSegment
-              id={id}
-              key={index}
-              index={index}
-              roofType={roofType}
-              segment={segment}
-              centroid={new Vector3(centroid2D.x, centroid2D.y, topZ)}
-              defaultAngle={arr[0].angle}
-              thickness={thickness}
-              color={color}
-              sideColor={sideColor}
-              textureType={textureType}
-              heatmap={heatmapTextures && index < heatmapTextures.length ? heatmapTextures[index] : undefined}
-            />
-          );
-        })}
-        <HipRoofWireframe
-          roofSegments={roofSegments}
-          thickness={thickness}
-          lineColor={lineColor}
-          lineWidth={lineWidth}
-        />
+        <>
+          {roofSegments.map((segment, index, arr) => {
+            return (
+              // Roof segment idx is important for calculate normal
+              <RoofSegment
+                id={id}
+                key={index}
+                index={index}
+                roofType={roofType}
+                segment={segment}
+                centroid={new Vector3(centroid2D.x, centroid2D.y, topZ)}
+                thickness={thickness}
+                color={color}
+                sideColor={sideColor}
+                texture={texture}
+                heatmap={heatmapTextures && index < heatmapTextures.length ? heatmapTextures[index] : undefined}
+              />
+            );
+          })}
+          <HipRoofWireframe
+            roofSegments={roofSegments}
+            thickness={thickness}
+            lineColor={lineColor}
+            lineWidth={lineWidth}
+          />
+        </>
       </group>
 
       {/* handles */}

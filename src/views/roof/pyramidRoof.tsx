@@ -352,6 +352,7 @@ const PyramidRoof = (roofModel: PyramidRoofModel) => {
   } = roofModel;
 
   const { currentWallArray, isLoopRef } = useMultiCurrWallArray(foundationId, id, wallsId);
+  const texture = useRoofTexture(textureType);
 
   const setCommonStore = useStore(Selector.set);
   const getElementById = useStore(Selector.getElementById);
@@ -843,10 +844,9 @@ const PyramidRoof = (roofModel: PyramidRoofModel) => {
         ) : (
           <>
             {roofSegments.map((segment, index) => {
-              const { points, angle } = segment;
+              const { points } = segment;
               if (points.length > 0) {
                 const [leftPoint, rightPoint] = points;
-                const isFlat = Math.abs(leftPoint.z) < 0.01;
                 if (leftPoint.distanceTo(rightPoint) > 0.1) {
                   return (
                     <group name={`Roof segment ${index}`} key={index}>
@@ -856,11 +856,10 @@ const PyramidRoof = (roofModel: PyramidRoofModel) => {
                         roofType={roofType}
                         segment={segment}
                         centroid={new Vector3(centerPoint.x, centerPoint.y, topZ)}
-                        defaultAngle={isFlat ? 0 : angle}
                         thickness={thickness}
                         color={color}
                         sideColor={sideColor}
-                        textureType={textureType}
+                        texture={texture}
                         heatmap={heatmapTextures && index < heatmapTextures.length ? heatmapTextures[index] : undefined}
                       />
                     </group>

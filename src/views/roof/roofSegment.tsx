@@ -3,26 +3,11 @@
  */
 
 import React, { useEffect, useMemo, useRef } from 'react';
-import { RoofTexture } from 'src/types';
-import { useRoofTexture, useTransparent } from './hooks';
+import { useTransparent } from './hooks';
 import { RoofSegmentProps } from './roofRenderer';
 import * as Selector from 'src/stores/selector';
 import { useStore } from 'src/stores/common';
-import {
-  BoxBufferGeometry,
-  BufferAttribute,
-  BufferGeometry,
-  CanvasTexture,
-  DoubleSide,
-  Euler,
-  Float32BufferAttribute,
-  Mesh,
-  MeshBasicMaterial,
-  MeshStandardMaterial,
-  Texture,
-  Vector2,
-  Vector3,
-} from 'three';
+import { CanvasTexture, Euler, Float32BufferAttribute, Mesh, Texture, Vector2, Vector3 } from 'three';
 import { usePrimitiveStore } from '../../stores/commonPrimitive';
 import { Util } from '../../Util';
 import {
@@ -34,7 +19,7 @@ import {
   UNIT_VECTOR_POS_Z,
 } from '../../constants';
 import { useDataStore } from '../../stores/commonData';
-import { Box, Cone, Line } from '@react-three/drei';
+import { Cone, Line } from '@react-three/drei';
 import { Point2 } from '../../models/Point2';
 import { RoofType } from '../../models/RoofModel';
 import { CSG } from 'three-csg-ts';
@@ -48,7 +33,7 @@ export const RoofSegment = ({
   thickness,
   color,
   sideColor,
-  textureType,
+  texture,
   heatmap,
 }: {
   id: string;
@@ -56,11 +41,10 @@ export const RoofSegment = ({
   roofType: RoofType;
   segment: RoofSegmentProps;
   centroid: Vector3;
-  defaultAngle: number;
   thickness: number;
   color: string;
   sideColor: string;
-  textureType: RoofTexture;
+  texture: Texture;
   heatmap?: CanvasTexture;
 }) => {
   const showHeatFluxes = usePrimitiveStore(Selector.showHeatFluxes);
@@ -70,7 +54,6 @@ export const RoofSegment = ({
   const getRoofSegmentVerticesWithoutOverhang = useStore(Selector.getRoofSegmentVerticesWithoutOverhang);
 
   const { transparent, opacity } = useTransparent();
-  const texture = useRoofTexture(textureType);
 
   const heatFluxArrowHead = useRef<number>(0);
   const heatFluxArrowLength = useRef<Vector3>();

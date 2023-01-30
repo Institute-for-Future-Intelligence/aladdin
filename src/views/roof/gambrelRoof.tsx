@@ -37,6 +37,7 @@ import {
   useRoofHeight,
   useUpdateOldRoofFiles,
   useUpdateSegmentVerticesWithoutOverhangMap,
+  useRoofTexture,
 } from './hooks';
 import RoofSegment from './roofSegment';
 import { usePrimitiveStore } from '../../stores/commonPrimitive';
@@ -157,6 +158,7 @@ const GambrelRoof = (roofModel: GambrelRoofModel) => {
   const removeElementById = useStore(Selector.removeElementById);
 
   const currentWallArray = useCurrWallArray(wallsId[0]);
+  const texture = useRoofTexture(textureType);
 
   const { highestWallHeight, topZ, riseInnerState, setRiseInnerState } = useRoofHeight(currentWallArray, rise, true);
   useUpdateOldRoofFiles(roofModel, highestWallHeight);
@@ -721,11 +723,10 @@ const GambrelRoof = (roofModel: GambrelRoofModel) => {
               roofType={roofType}
               segment={segment}
               centroid={centroid}
-              defaultAngle={arr[0].angle}
               thickness={thickness}
               color={color}
               sideColor={sideColor}
-              textureType={textureType}
+              texture={texture}
               heatmap={heatmapTextures && index < heatmapTextures.length ? heatmapTextures[index] : undefined}
             />
           );
