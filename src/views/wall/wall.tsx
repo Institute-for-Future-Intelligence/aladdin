@@ -874,6 +874,63 @@ const Wall = ({ wallModel, foundationModel }: WallProps) => {
     oldWindowArchHeight.current = undefined;
   };
 
+  const checkPerpendicular = (leftWall: WallModel, rightWall: WallModel) => {
+    // from right point to left point
+    const vLeft = new Vector3().subVectors(
+      new Vector3().fromArray(leftWall.leftPoint).setZ(0),
+      new Vector3().fromArray(leftWall.rightPoint).setZ(0),
+    );
+    const vRight = new Vector3().subVectors(
+      new Vector3().fromArray(rightWall.rightPoint).setZ(0),
+      new Vector3().fromArray(rightWall.leftPoint).setZ(0),
+    );
+    const angle = vRight.angleTo(vLeft);
+    const threshold = 0.087; // 5 degree
+    return Math.abs(angle - Math.PI / 2) < threshold;
+  };
+
+  const isValidToAddRoof = (rect: boolean, sameHeight: boolean) => {
+    const wallMapOnFoundation = useStore.getState().elements.reduce((map, el) => {
+      if (el.type === ObjectType.Wall && el.parentId === parentId) {
+        map.set(el.id, el as WallModel);
+      }
+      return map;
+    }, new Map<string, WallModel>());
+
+    let isLoop = false,
+      isSameHeight = true,
+      isPerpendicular = true,
+      count = 0;
+
+    const startWall = wallModel;
+    let w = startWall;
+    while (w && w.rightJoints.length > 0) {
+      count++;
+      const rightWall = wallMapOnFoundation.get(w.rightJoints[0]);
+      if (!rightWall) break;
+      if (sameHeight && rightWall.lz !== startWall.lz) {
+        isSameHeight = false;
+        break;
+      }
+      if (rect && !checkPerpendicular(w, rightWall)) {
+        isPerpendicular = false;
+        break;
+      }
+      if (rightWall.id === startWall.id) {
+        isLoop = true;
+        break;
+      }
+      w = rightWall;
+      // avoid infinite loop
+      if (count > 100) break;
+    }
+
+    if (!isLoop) return false;
+    if (sameHeight && !isSameHeight) return false;
+    if (rect && (!isPerpendicular || count !== 4)) return false;
+    return true;
+  };
+
   const setElementPosDms = (id: string, pos: number[], dms: number[], archHeight?: number) => {
     setCommonStore((state) => {
       for (const e of state.elements) {
@@ -1489,7 +1546,7 @@ const Wall = ({ wallModel, foundationModel }: WallProps) => {
       let newElement: ElementModel | null = null;
       switch (useStore.getState().objectTypeToAdd) {
         case ObjectType.PyramidRoof: {
-          if (!roofId) {
+          if (!roofId && isValidToAddRoof(false, true)) {
             const actionState = useStore.getState().actionState;
             newElement = ElementModelFactory.makePyramidRoof(
               [wallModel.id],
@@ -1506,7 +1563,7 @@ const Wall = ({ wallModel, foundationModel }: WallProps) => {
           break;
         }
         case ObjectType.GableRoof: {
-          if (!roofId) {
+          if (!roofId && isValidToAddRoof(true, false)) {
             const actionState = useStore.getState().actionState;
             newElement = ElementModelFactory.makeGableRoof(
               [wallModel.id],
@@ -1523,7 +1580,7 @@ const Wall = ({ wallModel, foundationModel }: WallProps) => {
           break;
         }
         case ObjectType.HipRoof: {
-          if (!roofId) {
+          if (!roofId && isValidToAddRoof(true, true)) {
             const actionState = useStore.getState().actionState;
             newElement = ElementModelFactory.makeHipRoof(
               [wallModel.id],
@@ -1541,7 +1598,7 @@ const Wall = ({ wallModel, foundationModel }: WallProps) => {
           break;
         }
         case ObjectType.GambrelRoof: {
-          if (!roofId) {
+          if (!roofId && isValidToAddRoof(true, true)) {
             const actionState = useStore.getState().actionState;
             newElement = ElementModelFactory.makeGambrelRoof(
               [wallModel.id],
@@ -1558,7 +1615,7 @@ const Wall = ({ wallModel, foundationModel }: WallProps) => {
           break;
         }
         case ObjectType.MansardRoof: {
-          if (!roofId) {
+          if (!roofId && isValidToAddRoof(false, true)) {
             const actionState = useStore.getState().actionState;
             newElement = ElementModelFactory.makeMansardRoof(
               [wallModel.id],
