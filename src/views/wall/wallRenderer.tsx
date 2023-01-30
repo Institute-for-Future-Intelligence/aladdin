@@ -18,7 +18,7 @@ import { FoundationModel } from 'src/models/FoundationModel';
 const WallRenderer = (wallModel: WallModel) => {
   useUpdataOldFiles(wallModel);
 
-  const { id, parentId, cx, cy, lx, ly, lz, relativeAngle, fill, selected, locked, unfilledHeight } = wallModel;
+  const { id, parentId, roofId, cx, cy, lx, ly, lz, relativeAngle, fill, selected, locked, unfilledHeight } = wallModel;
 
   const [hx, hz] = [lx / 2, lz / 2];
 
@@ -59,6 +59,7 @@ const WallRenderer = (wallModel: WallModel) => {
           <WallResizeHandleWrapper
             id={id}
             parentLz={foundation.lz}
+            roofId={roofId}
             absAngle={relativeAngle + foundation.rotation[2]}
             x={hx}
             z={hz}

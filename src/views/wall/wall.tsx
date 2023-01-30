@@ -1598,7 +1598,7 @@ const Wall = ({ wallModel, foundationModel }: WallProps) => {
           break;
         }
         case ObjectType.GambrelRoof: {
-          if (!roofId && isValidToAddRoof(true, true)) {
+          if (!roofId && isValidToAddRoof(true, false)) {
             const actionState = useStore.getState().actionState;
             newElement = ElementModelFactory.makeGambrelRoof(
               [wallModel.id],

@@ -2,12 +2,12 @@
  * @Copyright 2021-2022. Institute for Future Intelligence, Inc.
  */
 
-import React, { useRef, useState } from 'react';
+import React, { useMemo, useRef, useState } from 'react';
 import { Box, Plane } from '@react-three/drei';
 import { DoubleSide, Euler, Mesh, Vector3 } from 'three';
 import { useStore } from 'src/stores/common';
 import { useRefStore } from 'src/stores/commonRef';
-import { ActionType, ObjectType, ResizeHandleType } from 'src/types';
+import { ObjectType, ResizeHandleType } from 'src/types';
 import { HALF_PI, HIGHLIGHT_HANDLE_COLOR, RESIZE_HANDLE_COLOR } from 'src/constants';
 import * as Selector from 'src/stores/selector';
 import { ThreeEvent } from '@react-three/fiber';
@@ -15,6 +15,7 @@ import { WallFill, WallModel } from 'src/models/WallModel';
 import { useHandleSize } from './hooks';
 import { Util } from 'src/Util';
 import { UndoableResizeWallHeight } from 'src/undo/UndoableResize';
+import { RoofModel, RoofType } from 'src/models/RoofModel';
 
 interface ResizeHandlesProps {
   x: number;
@@ -27,6 +28,7 @@ interface ResizeHandlesProps {
 interface WallResizeHandleWarpperProps {
   id: string;
   parentLz: number;
+  roofId: string | null | undefined;
   x: number;
   z: number;
   absAngle: number;
@@ -83,7 +85,7 @@ const WallResizeHandle = React.memo(({ x, z, handleType, highLight, handleSize }
 });
 
 const WallResizeHandleWrapper = React.memo(
-  ({ id, parentLz, x, z, absAngle, unfilledHeight, fill, highLight }: WallResizeHandleWarpperProps) => {
+  ({ id, parentLz, roofId, x, z, absAngle, unfilledHeight, fill, highLight }: WallResizeHandleWarpperProps) => {
     const setCommonStore = useStore(Selector.set);
     const orthographic = useStore(Selector.viewState.orthographic);
 
@@ -95,6 +97,13 @@ const WallResizeHandleWrapper = React.memo(
     const intersectionPlaneRef = useRef<Mesh>(null);
     const pointerDownRef = useRef(false);
     const oldHeightsRef = useRef<number[]>([z * 2, unfilledHeight]);
+
+    const roofType = useMemo(() => {
+      if (!roofId) return null;
+      const roof = useStore.getState().elements.find((e) => e.id === roofId && e.type === ObjectType.Roof);
+      if (!roof) return null;
+      return (roof as RoofModel).roofType;
+    }, [roofId]);
 
     if (orthographic) {
       z = -z;
@@ -167,17 +176,33 @@ const WallResizeHandleWrapper = React.memo(
         case ResizeHandleType.UpperLeft:
         case ResizeHandleType.UpperRight: {
           setCommonStore((state) => {
-            for (const e of state.elements) {
-              if (e.id === id && e.type === ObjectType.Wall) {
-                const wall = e as WallModel;
-                const newLz = Math.max(wall.unfilledHeight + handleSize, p.z - parentLz);
-                wall.lz = newLz;
-                wall.cz = newLz / 2;
-                state.selectedElementHeight = Math.max(0.1, p.z);
-                state.actionState.wallHeight = newLz;
-                break;
+            const newLz = Math.max(handleSize, p.z - parentLz);
+            if (roofType === null || roofType === RoofType.Gable || roofType === RoofType.Gambrel) {
+              for (const e of state.elements) {
+                if (e.type === ObjectType.Wall && e.id === id) {
+                  const wall = e as WallModel;
+                  wall.lz = newLz;
+                  wall.cz = newLz / 2;
+                  if (newLz < wall.unfilledHeight + handleSize) {
+                    wall.unfilledHeight = newLz - handleSize;
+                  }
+                  break;
+                }
+              }
+            } else {
+              for (const e of state.elements) {
+                if (e.type === ObjectType.Wall && (e as WallModel).roofId === roofId) {
+                  const wall = e as WallModel;
+                  wall.lz = newLz;
+                  wall.cz = newLz / 2;
+                  if (newLz < wall.unfilledHeight + handleSize) {
+                    wall.unfilledHeight = newLz - handleSize;
+                  }
+                }
               }
             }
+            state.selectedElementHeight = Math.max(0.1, p.z);
+            state.actionState.wallHeight = newLz;
             state.updateRoofFlag = !state.updateRoofFlag;
           });
           break;
