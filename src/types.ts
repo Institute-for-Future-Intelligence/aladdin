@@ -138,6 +138,7 @@ export interface EnergyUsage {
   heater: number;
   ac: number;
   solarPanel: number;
+  geothermal: number;
   label?: string;
 }
 

@@ -1,5 +1,5 @@
 /*
- * @Copyright 2022. Institute for Future Intelligence, Inc.
+ * @Copyright 2022-2023. Institute for Future Intelligence, Inc.
  */
 
 import { adjustEnergyUsage, computeOutsideTemperature } from './heatTools';
@@ -48,22 +48,26 @@ export const useDailyEnergySorter = (
         if (Util.onBuildingEnvelope(e)) {
           const exchange = hourlyHeatExchangeArrayMap.get(e.id);
           if (exchange) {
-            const f = getFoundation(e);
+            const f = e.type === ObjectType.Foundation ? (e as FoundationModel) : getFoundation(e);
             if (f && Util.isCompleteBuilding(f, elements)) {
               let energyUsage = energy.get(f.id);
               if (!energyUsage) {
                 energyUsage = hasSolarPanels
-                  ? ({ heater: 0, ac: 0, solarPanel: 0, label: f.label?.trim() } as EnergyUsage)
-                  : ({ heater: 0, ac: 0, label: f.label?.trim() } as EnergyUsage);
+                  ? ({ heater: 0, ac: 0, geothermal: 0, solarPanel: 0, label: f.label?.trim() } as EnergyUsage)
+                  : ({ heater: 0, ac: 0, geothermal: 0, label: f.label?.trim() } as EnergyUsage);
                 energy.set(f.id, energyUsage);
                 if (f.label && f.label.length > 0 && !dataLabels.includes(f.label)) {
                   dataLabels.push(f.label);
                 }
               }
-              if (exchange[i] < 0) {
-                energyUsage.heater += exchange[i];
+              if (e.type === ObjectType.Foundation) {
+                energyUsage.geothermal += exchange[i];
               } else {
-                energyUsage.ac += exchange[i];
+                if (exchange[i] < 0) {
+                  energyUsage.heater += exchange[i];
+                } else {
+                  energyUsage.ac += exchange[i];
+                }
               }
             }
           }
@@ -80,6 +84,8 @@ export const useDailyEnergySorter = (
               if (energyUsage.heater < 0) {
                 // It must be cold outside. Solar heat gain decreases heating burden in this case.
                 energyUsage.heater += h[i];
+                // solar heating cannot turn heater value into positive
+                if (energyUsage.heater > 0) energyUsage.heater = 0;
               } else if (energyUsage.ac > 0) {
                 // It must be hot outside. Solar heat gain increases cooling burden in this case.
                 energyUsage.ac += h[i];
@@ -107,10 +113,17 @@ export const useDailyEnergySorter = (
                 const setpoint = f.hvacSystem?.thermostatSetpoint ?? 20;
                 const threshold = f.hvacSystem?.temperatureThreshold ?? 3;
                 const id = value.label && value.label !== '' ? value.label : index.toString();
-                const adjustedHeat = Math.abs(
+                let adjustedHeat = Math.abs(
                   adjustEnergyUsage(outsideTemperatureRange, value.heater, setpoint, threshold),
                 );
-                const adjustedAc = adjustEnergyUsage(outsideTemperatureRange, value.ac, setpoint, threshold);
+                let adjustedAc = adjustEnergyUsage(outsideTemperatureRange, value.ac, setpoint, threshold);
+                if (adjustedHeat > 0) {
+                  adjustedHeat -= value.geothermal;
+                  if (adjustedHeat < 0) adjustedHeat = 0;
+                } else if (adjustedAc > 0) {
+                  adjustedAc += value.geothermal;
+                  if (adjustedAc < 0) adjustedAc = 0;
+                }
                 datum['Heater ' + id] = adjustedHeat;
                 datum['AC ' + id] = adjustedAc;
                 if (value.solarPanel !== undefined) {
@@ -147,10 +160,17 @@ export const useDailyEnergySorter = (
               if (Util.isCompleteBuilding(f, elements)) {
                 const setpoint = f.hvacSystem?.thermostatSetpoint ?? 20;
                 const threshold = f.hvacSystem?.temperatureThreshold ?? 3;
-                const adjustedHeat = Math.abs(
+                let adjustedHeat = Math.abs(
                   adjustEnergyUsage(outsideTemperatureRange, value.heater, setpoint, threshold),
                 );
-                const adjustedAc = adjustEnergyUsage(outsideTemperatureRange, value.ac, setpoint, threshold);
+                let adjustedAc = adjustEnergyUsage(outsideTemperatureRange, value.ac, setpoint, threshold);
+                if (adjustedHeat > 0) {
+                  adjustedHeat -= value.geothermal;
+                  if (adjustedHeat < 0) adjustedHeat = 0;
+                } else if (adjustedAc > 0) {
+                  adjustedAc += value.geothermal;
+                  if (adjustedAc < 0) adjustedAc = 0;
+                }
                 datum['Heater'] = adjustedHeat;
                 datum['AC'] = adjustedAc;
                 if (value.solarPanel !== undefined) {

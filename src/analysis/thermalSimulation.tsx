@@ -15,6 +15,7 @@ import { MINUTES_OF_DAY } from './analysisConstants';
 import { WallFill, WallModel, WallStructure } from '../models/WallModel';
 import {
   computeOutsideTemperature,
+  getGroundTemperatureAtMinute,
   getLightAbsorption,
   getOutsideTemperatureAtMinute,
   U_VALUE_OPENNING,
@@ -31,7 +32,15 @@ import { Point2 } from '../models/Point2';
 import { useThree } from '@react-three/fiber';
 import { Intersection, Object3D, Raycaster, Vector3 } from 'three';
 import { SolarRadiation } from './SolarRadiation';
-import { ZERO_TOLERANCE } from '../constants';
+import {
+  DEFAULT_DOOR_U_VALUE,
+  DEFAULT_FLOOR_R_VALUE,
+  DEFAULT_FOUNDATION_SLAB_DEPTH,
+  DEFAULT_ROOF_R_VALUE,
+  DEFAULT_WALL_R_VALUE,
+  DEFAULT_WINDOW_U_VALUE,
+  ZERO_TOLERANCE,
+} from '../constants';
 import { FoundationModel } from '../models/FoundationModel';
 import { SolarPanelModel } from '../models/SolarPanelModel';
 import { PvModel } from '../models/PvModel';
@@ -54,6 +63,8 @@ const ThermalSimulation = ({ city }: ThermalSimulationProps) => {
   const world = useStore.getState().world;
   const elements = useStore.getState().elements;
   const getWeather = useStore(Selector.getWeather);
+  const latitude = useStore(Selector.world.latitude);
+  const ground = useStore(Selector.world.ground);
   const getFoundation = useStore(Selector.getFoundation);
   const getParent = useStore(Selector.getParent);
   const getChildrenOfType = useStore(Selector.getChildrenOfType);
@@ -81,6 +92,7 @@ const ThermalSimulation = ({ city }: ThermalSimulationProps) => {
   const dayRef = useRef<number>(0);
   const outsideTemperatureRangeRef = useRef<{ high: number; low: number }>({ high: 20, low: 0 });
   const currentOutsideTemperatureRef = useRef<number>(20);
+  const currentGroundTemperatureRef = useRef<number>(20);
   const hourlyHeatExchangeArrayMapRef = useRef<Map<string, number[]>>(new Map<string, number[]>());
   const hourlySolarHeatGainArrayMapRef = useRef<Map<string, number[]>>(new Map<string, number[]>());
   const hourlySolarPanelOutputArrayMapRef = useRef<Map<string, number[]>>(new Map<string, number[]>());
@@ -146,13 +158,24 @@ const ThermalSimulation = ({ city }: ThermalSimulationProps) => {
         weather.highestTemperatures,
       );
       // get the air temperature at the current time
+      const minutes = Util.minutesIntoDay(currentTime);
       currentOutsideTemperatureRef.current = getOutsideTemperatureAtMinute(
         outsideTemperatureRangeRef.current.high,
         outsideTemperatureRangeRef.current.low,
         world.diurnalTemperatureModel ?? DiurnalTemperatureModel.Sinusoidal,
         highestTemperatureTimeInMinutes,
         computeSunriseAndSunsetInMinutes(currentTime, world.latitude),
-        Util.minutesIntoDay(currentTime),
+        minutes,
+      );
+      currentGroundTemperatureRef.current = getGroundTemperatureAtMinute(
+        latitude,
+        Util.dayOfYear(now),
+        minutes,
+        weather.lowestTemperatures,
+        weather.highestTemperatures,
+        0.5 * (outsideTemperatureRangeRef.current.high - outsideTemperatureRangeRef.current.low),
+        ground.thermalDiffusivity ?? 0.05,
+        DEFAULT_FOUNDATION_SLAB_DEPTH,
       );
     }
   };
@@ -525,7 +548,9 @@ const ThermalSimulation = ({ city }: ThermalSimulationProps) => {
           calculateWall(e as WallModel);
           break;
         case ObjectType.Roof:
-          calculateRoof(e as RoofModel);
+          const roof = e as RoofModel;
+          calculateRoof(roof);
+          calculateFloor(roof);
           break;
         case ObjectType.SolarPanel:
           calculateSolarPanel(e as SolarPanelModel);
@@ -613,7 +638,10 @@ const ThermalSimulation = ({ city }: ThermalSimulationProps) => {
         const area = Util.getWindowArea(window, parent);
         const deltaT = currentOutsideTemperatureRef.current - setpoint;
         // convert heat exchange to kWh
-        updateHeatExchangeNow(window.id, (deltaT * area * (window.uValue ?? 2) * 0.001) / timesPerHour);
+        updateHeatExchangeNow(
+          window.id,
+          (deltaT * area * (window.uValue ?? DEFAULT_WINDOW_U_VALUE) * 0.001) / timesPerHour,
+        );
       }
     }
   };
@@ -698,7 +726,10 @@ const ThermalSimulation = ({ city }: ThermalSimulationProps) => {
               : (totalSolarHeat * absorption) / ((door.volumetricHeatCapacity ?? 0.5) * area * Math.max(door.ly, 0.1));
           const deltaT = currentOutsideTemperatureRef.current + extraT - setpoint;
           // convert heat exchange to kWh
-          updateHeatExchangeNow(door.id, (deltaT * area * (door.uValue ?? 2) * 0.001) / timesPerHour);
+          updateHeatExchangeNow(
+            door.id,
+            (deltaT * area * (door.uValue ?? DEFAULT_DOOR_U_VALUE) * 0.001) / timesPerHour,
+          );
         } else {
           const deltaT = currentOutsideTemperatureRef.current - setpoint;
           // use a large U-value for an open door (not meant to be accurate, but as an indicator of something wrong)
@@ -778,13 +809,28 @@ const ThermalSimulation = ({ city }: ThermalSimulationProps) => {
             : (totalSolarHeat * absorption) / ((wall.volumetricHeatCapacity ?? 0.5) * area * wall.ly);
         const deltaT = currentOutsideTemperatureRef.current + extraT - setpoint;
         // U is the inverse of R with SI units of W/(m^2⋅K), we convert the energy unit to kWh here
-        updateHeatExchangeNow(wall.id, (((deltaT * area) / (wall.rValue ?? 0.5)) * 0.001) / timesPerHour);
+        updateHeatExchangeNow(
+          wall.id,
+          (((deltaT * area) / (wall.rValue ?? DEFAULT_WALL_R_VALUE)) * 0.001) / timesPerHour,
+        );
       } else {
         const deltaT = currentOutsideTemperatureRef.current - setpoint;
         // use a large U-value for an open wall (not meant to be accurate, but as an indicator of something wrong)
         updateHeatExchangeNow(wall.id, (deltaT * area * U_VALUE_OPENNING * 0.001) / timesPerHour);
       }
     }
+  };
+
+  const calculateFloor = (roof: RoofModel) => {
+    const foundation = getFoundation(roof);
+    if (!foundation) return;
+    const setpoint = foundation.hvacSystem?.thermostatSetpoint ?? 20;
+    const floorArea = Util.calculateBuildingArea(roof.id, roof.wallsId[0]);
+    const deltaT = currentGroundTemperatureRef.current - setpoint;
+    updateHeatExchangeNow(
+      foundation.id,
+      (((deltaT * floorArea) / (foundation.rValue ?? DEFAULT_FLOOR_R_VALUE)) * 0.001) / timesPerHour,
+    );
   };
 
   const calculateRoof = (roof: RoofModel) => {
@@ -815,7 +861,7 @@ const ThermalSimulation = ({ city }: ThermalSimulationProps) => {
         const deltaT = segmentResult.surfaceTemperature - setpoint;
         // convert heat exchange to kWh
         const segmentHeatExchange =
-          (((deltaT * segmentResult.totalArea) / (roof.rValue ?? 0.5)) * 0.001) / timesPerHour;
+          (((deltaT * segmentResult.totalArea) / (roof.rValue ?? DEFAULT_ROOF_R_VALUE)) * 0.001) / timesPerHour;
         updateHeatExchangeNow(roof.id + '-' + i, segmentHeatExchange);
         heatExchange += segmentHeatExchange;
       }

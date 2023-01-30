@@ -193,7 +193,7 @@ export const calculateTemperatureOnDay = (
   return average - amplitude * Math.exp(-d2) * Math.cos(Math.PI + OMEGA_YEAR * (day - YEARLY_LAG_IN_DAYS) - d2);
 };
 
-export const calculateGroundTemperatureMinuteOfDay = (
+export const getGroundTemperatureAtMinute = (
   latitude: number,
   day: number,
   minute: number,

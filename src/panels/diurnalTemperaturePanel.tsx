@@ -12,7 +12,7 @@ import { Util } from '../Util';
 import ReactDraggable, { DraggableEventHandler } from 'react-draggable';
 import i18n from '../i18n/i18n';
 import {
-  calculateGroundTemperatureMinuteOfDay,
+  getGroundTemperatureAtMinute,
   computeOutsideTemperature,
   getOutsideTemperatureAtMinute,
 } from '../analysis/heatTools';
@@ -20,7 +20,7 @@ import { computeSunriseAndSunsetInMinutes } from '../analysis/sunTools';
 import dayjs from 'dayjs';
 import { Radio, Space } from 'antd';
 import { Rectangle } from '../models/Rectangle';
-import { FLOATING_WINDOW_OPACITY } from '../constants';
+import { DEFAULT_FOUNDATION_SLAB_DEPTH, FLOATING_WINDOW_OPACITY } from '../constants';
 import { UndoableChange } from '../undo/UndoableChange';
 
 const Container = styled.div`
@@ -174,7 +174,7 @@ const DiurnalTemperaturePanel = ({ city }: DiurnalTemperaturePanelProps) => {
               sunMinutes,
               m,
             ),
-            Ground: calculateGroundTemperatureMinuteOfDay(
+            Ground: getGroundTemperatureAtMinute(
               latitude,
               Util.dayOfYear(now),
               m,
@@ -182,7 +182,7 @@ const DiurnalTemperaturePanel = ({ city }: DiurnalTemperaturePanelProps) => {
               weather.highestTemperatures,
               0.5 * (t.high - t.low),
               ground.thermalDiffusivity ?? 0.05,
-              1,
+              DEFAULT_FOUNDATION_SLAB_DEPTH,
             ),
           });
         }

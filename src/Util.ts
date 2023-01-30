@@ -132,6 +132,13 @@ export class Util {
     return true;
   }
 
+  static calculateBuildingArea(roofId: string, wallId: string) {
+    const wall = useStore.getState().getElementById(wallId) as WallModel;
+    if (!wall) return 0;
+    const wallPoints = Util.getWallPoints(roofId, wall);
+    return Util.getPolygonArea(wallPoints);
+  }
+
   static toUValueInUS(uValueInSI: number) {
     return uValueInSI / 5.67826;
   }
@@ -227,8 +234,8 @@ export class Util {
   }
 
   static onBuildingEnvelope(e: ElementModel): boolean {
-    // TODO: Add foundation later once we have a thermal model for the ground
     return (
+      e.type === ObjectType.Foundation ||
       e.type === ObjectType.Window ||
       e.type === ObjectType.Door ||
       e.type === ObjectType.Wall ||
