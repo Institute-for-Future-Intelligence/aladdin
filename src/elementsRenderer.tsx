@@ -18,7 +18,6 @@ import { TreeModel } from './models/TreeModel';
 import Tree from './views/tree';
 import { SolarPanelModel } from './models/SolarPanelModel';
 import { WallModel } from './models/WallModel';
-import Wall from './views/wall/wall';
 import RoofRenderer from './views/roof/roofRenderer';
 import { RoofModel } from './models/RoofModel';
 import Polygon from './views/polygon';

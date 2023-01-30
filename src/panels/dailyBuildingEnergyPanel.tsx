@@ -90,6 +90,7 @@ const DailyBuildingEnergyPanel = ({ city }: DailyBuildingEnergyPanelProps) => {
   const panelRect = useStore(Selector.viewState.dailyBuildingEnergyPanelRect);
   const flagOfDailySimulation = usePrimitiveStore(Selector.flagOfDailySimulation);
   const runDailySimulation = usePrimitiveStore(Selector.runDailyThermalSimulation);
+  const clearDailySimulationResultsFlag = usePrimitiveStore(Selector.clearDailySimulationResultsFlag);
   const simulationInProgress = usePrimitiveStore(Selector.simulationInProgress);
   const hasSolarPanels = Util.hasSolarPanels(useStore.getState().elements);
 
@@ -121,13 +122,21 @@ const DailyBuildingEnergyPanel = ({ city }: DailyBuildingEnergyPanelProps) => {
 
   useEffect(() => {
     if (runDailySimulation) {
-      setData([]);
-      setHeaterSum(0);
-      setAcSum(0);
-      setSolarPanelSum(0);
-      setNetSum(0);
+      clearResults();
     }
   }, [runDailySimulation]);
+
+  useEffect(() => {
+    clearResults();
+  }, [clearDailySimulationResultsFlag]);
+
+  const clearResults = () => {
+    setData([]);
+    setHeaterSum(0);
+    setAcSum(0);
+    setSolarPanelSum(0);
+    setNetSum(0);
+  };
 
   const { sum, sumHeaterMap, sumAcMap, sumSolarPanelMap, dataLabels } = useDailyEnergySorter(
     now,

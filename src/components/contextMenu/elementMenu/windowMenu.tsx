@@ -51,7 +51,13 @@ const SelectionDialogSettings = {
 };
 
 const NumberDialogSettings = {
-  Opacity: { attributeKey: 'opacity', range: [0, 1], step: 0.1, note: 'windowMenu.SolarHeatGainCoefficient' },
+  Opacity: {
+    attributeKey: 'opacity',
+    range: [0, 0.9],
+    step: 0.1,
+    note: 'windowMenu.SolarHeatGainCoefficient',
+    digit: 1,
+  },
   Width: { attributeKey: 'lx', range: [0.1, 100], step: 0.1, unit: 'word.MeterAbbreviation', digit: 1 },
   Height: { attributeKey: 'lz', range: [0.1, 100], step: 0.1, unit: 'word.MeterAbbreviation', digit: 1 },
   MullionWidth: { attributeKey: 'mullionWidth', range: [0, 0.2], step: 0.1, unit: 'word.MeterAbbreviation', digit: 1 },

@@ -789,10 +789,15 @@ export const useStore = create<CommonStoreState>(
               state.roofSegmentVerticesMap = new Map<string, Vector3[][]>();
               state.roofSegmentVerticesWithoutOverhangMap = new Map<string, Vector3[][]>();
               state.undoManager.clear();
+              state.loadingFile = false;
             });
             usePrimitiveStore.setState((state) => {
               state.showSolarRadiationHeatmap = false;
               state.showHeatFluxes = false;
+              state.simulationInProgress = false;
+              state.simulationPaused = false;
+              state.clearDailySimulationResultsFlag = !state.clearDailySimulationResultsFlag;
+              state.clearYearlySimulationResultsFlag = !state.clearYearlySimulationResultsFlag;
             });
             useDataStore.setState((state) => {
               state.clearDataStore();

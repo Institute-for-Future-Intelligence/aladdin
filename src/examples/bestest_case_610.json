@@ -100,7 +100,8 @@
       "label": "",
       "showLabel": false,
       "labelHeight": 8.5,
-      "labelSize": 0.8
+      "labelSize": 0.8,
+      "rValue": 5.283308619189682
     },
     {
       "type": "Wall",
@@ -633,7 +634,8 @@
       "labelSize": 0.8,
       "showLabel": false,
       "id": "pVKekTH3vBaJDuKFqWJNR3",
-      "selected": false
+      "selected": false,
+      "rValue": 5.283308619189682
     },
     {
       "type": "Roof",

@@ -370,8 +370,8 @@ const WindowNumberInput = ({
               onPressEnter={handleOk}
             />
             <div style={{ paddingTop: '20px', textAlign: 'left', fontSize: '11px' }}>
-              {i18n.t('word.Range', lang)}: [{range[0].toFixed(digit ?? 0)}, {range[1].toFixed(digit ?? 0)}] {unit}{' '}
-              <br />
+              {i18n.t('word.Range', lang)}: [{range[0].toFixed(range[0] === 0 ? 0 : digit ?? 0)},{' '}
+              {range[1].toFixed(digit ?? 0)}] {unit} <br />
               <br /> {note}
             </div>
           </Col>

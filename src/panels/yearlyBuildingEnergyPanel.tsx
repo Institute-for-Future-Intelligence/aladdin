@@ -90,6 +90,7 @@ const YearlyBuildingEnergyPanel = ({ city }: YearlyBuildingEnergyPanelProps) => 
   const hourlySolarPanelOutputArrayMap = useDataStore(Selector.hourlySolarPanelOutputArrayMap);
   const flagOfDailySimulation = usePrimitiveStore(Selector.flagOfDailySimulation);
   const runYearlySimulation = usePrimitiveStore(Selector.runYearlyThermalSimulation);
+  const clearYearlySimulationResultsFlag = usePrimitiveStore(Selector.clearYearlySimulationResultsFlag);
   const simulationInProgress = usePrimitiveStore(Selector.simulationInProgress);
   const hasSolarPanels = Util.hasSolarPanels(useStore.getState().elements);
 
@@ -114,7 +115,7 @@ const YearlyBuildingEnergyPanel = ({ city }: YearlyBuildingEnergyPanelProps) => 
 
   const [heaterSum, setHeaterSum] = useState(0);
   const [acSum, setAcSum] = useState(0);
-  const [solarPanelSum, setsolarPanelSum] = useState(0);
+  const [solarPanelSum, setSolarPanelSum] = useState(0);
   const [netSum, setNetSum] = useState(0);
   const [labels, setLabels] = useState(['Heater', 'AC', 'Solar', 'Net']);
   const [data, setData] = useState<DatumEntry[]>([]);
@@ -139,21 +140,26 @@ const YearlyBuildingEnergyPanel = ({ city }: YearlyBuildingEnergyPanelProps) => 
   const tooltipNetBreakdown = useRef<string>('');
 
   useEffect(() => {
-    resetRef();
-  }, [daysPerYear]);
+    clearResults();
+  }, [daysPerYear, clearYearlySimulationResultsFlag]);
 
   useEffect(() => {
     if (runYearlySimulation) {
-      resetRef();
+      clearResults();
     }
   }, [runYearlySimulation]);
 
-  const resetRef = () => {
+  const clearResults = () => {
     resultRef.current = new Array(daysPerYear).fill({});
     heaterSumRef.current = new Array(daysPerYear).fill(0);
     acSumRef.current = new Array(daysPerYear).fill(0);
     solarPanelSumRef.current = new Array(daysPerYear).fill(0);
     netSumRef.current = new Array(daysPerYear).fill(0);
+    setData([]);
+    setHeaterSum(0);
+    setAcSum(0);
+    setSolarPanelSum(0);
+    setNetSum(0);
   };
 
   useEffect(() => {
@@ -294,7 +300,7 @@ const YearlyBuildingEnergyPanel = ({ city }: YearlyBuildingEnergyPanelProps) => 
       heaterSumRef.current[indexOfMonth] + acSumRef.current[indexOfMonth] - solarPanelSumRef.current[indexOfMonth];
     setHeaterSum(heaterSumRef.current.slice(0, indexOfMonth + 1).reduce((pv, cv) => pv + cv, 0));
     setAcSum(acSumRef.current.slice(0, indexOfMonth + 1).reduce((pv, cv) => pv + cv, 0));
-    setsolarPanelSum(solarPanelSumRef.current.slice(0, indexOfMonth + 1).reduce((pv, cv) => pv + cv, 0));
+    setSolarPanelSum(solarPanelSumRef.current.slice(0, indexOfMonth + 1).reduce((pv, cv) => pv + cv, 0));
     setNetSum(netSumRef.current.slice(0, indexOfMonth + 1).reduce((pv, cv) => pv + cv, 0));
   }, [flagOfDailySimulation]);
 

@@ -1,6 +1,7 @@
 /*
  * @Copyright 2022-2023. Institute for Future Intelligence, Inc.
  */
+
 import create from 'zustand';
 
 // avoid using undefined value in the store for now.
@@ -14,6 +15,8 @@ export interface PrimitiveStoreState {
   pauseDailyThermalSimulation: boolean;
   runYearlyThermalSimulation: boolean;
   pauseYearlyThermalSimulation: boolean;
+  clearDailySimulationResultsFlag: boolean;
+  clearYearlySimulationResultsFlag: boolean;
 
   runDynamicSimulation: boolean;
   runStaticSimulation: boolean;
@@ -96,6 +99,8 @@ export const usePrimitiveStore = create<PrimitiveStoreState>((set, get) => {
     pauseDailyThermalSimulation: false,
     runYearlyThermalSimulation: false,
     pauseYearlyThermalSimulation: false,
+    clearDailySimulationResultsFlag: false,
+    clearYearlySimulationResultsFlag: false,
 
     runDynamicSimulation: false,
     runStaticSimulation: false,

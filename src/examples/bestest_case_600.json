@@ -1,7 +1,7 @@
 {
-  "docid": "2h2cqAryG8bYuiE8i5DLu7",
-  "time": "01/05/2023 11:43 am",
-  "timestamp": 1672936996262,
+  "docid": "edyq7YmhbSjGiUtJJouQs6",
+  "time": "01/30/2023 10:27 am",
+  "timestamp": 1675092478940,
   "userid": "QWecNcxhyvP6j6sBN11hBsfZDau1",
   "owner": null,
   "email": null,
@@ -100,7 +100,8 @@
       "label": "",
       "showLabel": false,
       "labelHeight": 8.5,
-      "labelSize": 0.8
+      "labelSize": 0.8,
+      "rValue": 5.283308619189682
     },
     {
       "type": "Wall",
@@ -475,9 +476,9 @@
     "dailyHeliostatYieldPanelX": 0,
     "showDailyParabolicDishYieldPanel": false,
     "cameraPosition": [
-      8.43970262592511,
-      -10.229429671505166,
-      2.7917629317012587
+      7.944367860466787,
+      -10.549231970126023,
+      2.206600435547651
     ],
     "showYearlyHeliostatYieldPanel": false,
     "orthographic": false,
@@ -526,8 +527,8 @@
     "shadowEnabled": true,
     "showInstructionPanel": true,
     "panCenter": [
-      1.8699123691558452,
-      2.578944652142625,
+      1.8531721737261184,
+      2.5703581157054773,
       0.7819560454316943
     ],
     "yearlyFresnelReflectorYieldPanelY": 0,

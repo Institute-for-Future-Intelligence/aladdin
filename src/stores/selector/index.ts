@@ -126,6 +126,10 @@ export const runYearlyThermalSimulation = (state: PrimitiveStoreState) => state.
 
 export const pauseYearlyThermalSimulation = (state: PrimitiveStoreState) => state.pauseYearlyThermalSimulation;
 
+export const clearDailySimulationResultsFlag = (state: PrimitiveStoreState) => state.clearDailySimulationResultsFlag;
+
+export const clearYearlySimulationResultsFlag = (state: PrimitiveStoreState) => state.clearYearlySimulationResultsFlag;
+
 export const runDynamicSimulation = (state: PrimitiveStoreState) => state.runDynamicSimulation;
 
 export const runStaticSimulation = (state: PrimitiveStoreState) => state.runStaticSimulation;
