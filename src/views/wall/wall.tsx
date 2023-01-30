@@ -1551,7 +1551,7 @@ const Wall = ({ wallModel, foundationModel }: WallProps) => {
             newElement = ElementModelFactory.makePyramidRoof(
               [wallModel.id],
               foundationModel,
-              actionState.roofRise,
+              actionState.roofRise < 0 ? 2 : actionState.roofRise,
               actionState.roofThickness,
               actionState.roofRValue,
               actionState.roofOverhang,
@@ -1568,7 +1568,7 @@ const Wall = ({ wallModel, foundationModel }: WallProps) => {
             newElement = ElementModelFactory.makeGableRoof(
               [wallModel.id],
               foundationModel,
-              actionState.roofRise,
+              actionState.roofRise < 0 ? 2 : actionState.roofRise,
               actionState.roofThickness,
               actionState.roofRValue,
               actionState.roofOverhang,
@@ -1585,7 +1585,7 @@ const Wall = ({ wallModel, foundationModel }: WallProps) => {
             newElement = ElementModelFactory.makeHipRoof(
               [wallModel.id],
               foundationModel,
-              actionState.roofRise,
+              actionState.roofRise < 0 ? 2 : actionState.roofRise,
               lx / 2,
               actionState.roofThickness,
               actionState.roofRValue,
@@ -1603,7 +1603,7 @@ const Wall = ({ wallModel, foundationModel }: WallProps) => {
             newElement = ElementModelFactory.makeGambrelRoof(
               [wallModel.id],
               foundationModel,
-              actionState.roofRise,
+              actionState.roofRise < 0 ? 2 : actionState.roofRise,
               actionState.roofThickness,
               actionState.roofRValue,
               actionState.roofOverhang,
@@ -1620,7 +1620,7 @@ const Wall = ({ wallModel, foundationModel }: WallProps) => {
             newElement = ElementModelFactory.makeMansardRoof(
               [wallModel.id],
               foundationModel,
-              actionState.roofRise,
+              actionState.roofRise < 0 ? 2 : actionState.roofRise,
               actionState.roofThickness,
               actionState.roofRValue,
               actionState.roofOverhang,
