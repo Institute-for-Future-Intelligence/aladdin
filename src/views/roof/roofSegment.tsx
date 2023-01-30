@@ -8,7 +8,21 @@ import { useRoofTexture, useTransparent } from './hooks';
 import { RoofSegmentProps } from './roofRenderer';
 import * as Selector from 'src/stores/selector';
 import { useStore } from 'src/stores/common';
-import { CanvasTexture, DoubleSide, Euler, Float32BufferAttribute, Mesh, Vector3 } from 'three';
+import {
+  BoxBufferGeometry,
+  BufferAttribute,
+  BufferGeometry,
+  CanvasTexture,
+  DoubleSide,
+  Euler,
+  Float32BufferAttribute,
+  Mesh,
+  MeshBasicMaterial,
+  MeshStandardMaterial,
+  Texture,
+  Vector2,
+  Vector3,
+} from 'three';
 import { usePrimitiveStore } from '../../stores/commonPrimitive';
 import { Util } from '../../Util';
 import {
@@ -20,9 +34,10 @@ import {
   UNIT_VECTOR_POS_Z,
 } from '../../constants';
 import { useDataStore } from '../../stores/commonData';
-import { Cone, Line } from '@react-three/drei';
+import { Box, Cone, Line } from '@react-three/drei';
 import { Point2 } from '../../models/Point2';
 import { RoofType } from '../../models/RoofModel';
+import { CSG } from 'three-csg-ts';
 
 export const RoofSegment = ({
   id,
@@ -30,7 +45,6 @@ export const RoofSegment = ({
   roofType,
   segment,
   centroid,
-  defaultAngle,
   thickness,
   color,
   sideColor,
@@ -49,93 +63,22 @@ export const RoofSegment = ({
   textureType: RoofTexture;
   heatmap?: CanvasTexture;
 }) => {
-  const world = useStore.getState().world;
-  const shadowEnabled = useStore(Selector.viewState.shadowEnabled);
-  const showSolarRadiationHeatmap = usePrimitiveStore(Selector.showSolarRadiationHeatmap);
   const showHeatFluxes = usePrimitiveStore(Selector.showHeatFluxes);
   const heatFluxScaleFactor = useStore(Selector.viewState.heatFluxScaleFactor);
   const heatFluxColor = useStore(Selector.viewState.heatFluxColor);
   const heatFluxWidth = useStore(Selector.viewState.heatFluxWidth);
   const getRoofSegmentVerticesWithoutOverhang = useStore(Selector.getRoofSegmentVerticesWithoutOverhang);
-  const hourlyHeatExchangeArrayMap = useDataStore.getState().hourlyHeatExchangeArrayMap;
 
   const { transparent, opacity } = useTransparent();
   const texture = useRoofTexture(textureType);
 
-  const heatmapMeshRef = useRef<Mesh>(null);
   const heatFluxArrowHead = useRef<number>(0);
   const heatFluxArrowLength = useRef<Vector3>();
   const heatFluxArrowEuler = useRef<Euler>();
 
-  const { points, angle, length } = segment;
-  const isFlat = Math.abs(points[0].z) < 0.1;
-
-  useEffect(() => {
-    if (heatmapMeshRef.current) {
-      const geo = heatmapMeshRef.current.geometry;
-      if (geo) {
-        const v10 = new Vector3().subVectors(points[1], points[0]);
-        const length10 = v10.length();
-        const uvs = [];
-        v10.normalize();
-        const v20 = new Vector3().subVectors(points[2], points[0]);
-        if (points.length === 6) {
-          // find the position of the top point relative to the first edge point
-          const mid = v20.dot(v10) / length10;
-          uvs.push(0, 0);
-          uvs.push(1, 0);
-          uvs.push(mid, 1);
-        } else if (points.length === 8) {
-          // find the position of the top-left and top-right points relative to the lower-left point
-          // the points go anticlockwise
-          const v30 = new Vector3().subVectors(points[3], points[0]);
-          const topLeft = v30.dot(v10) / length10;
-          const topRight = v20.dot(v10) / length10;
-          uvs.push(0, 0);
-          uvs.push(1, 0);
-          uvs.push(topRight, 1);
-          uvs.push(topRight, 1);
-          uvs.push(topLeft, 1);
-          uvs.push(0, 0);
-        }
-        geo.setAttribute('uv', new Float32BufferAttribute(uvs, 2));
-        const positions = new Float32Array(points.length === 6 ? 9 : 18);
-        if (points.length === 6) {
-          positions[0] = points[3].x;
-          positions[1] = points[3].y;
-          positions[2] = points[3].z;
-          positions[3] = points[4].x;
-          positions[4] = points[4].y;
-          positions[5] = points[4].z;
-          positions[6] = points[5].x;
-          positions[7] = points[5].y;
-          positions[8] = points[5].z;
-        } else if (points.length === 8) {
-          positions[0] = points[4].x;
-          positions[1] = points[4].y;
-          positions[2] = points[4].z;
-          positions[3] = points[5].x;
-          positions[4] = points[5].y;
-          positions[5] = points[5].z;
-          positions[6] = points[6].x;
-          positions[7] = points[6].y;
-          positions[8] = points[6].z;
-          positions[9] = points[6].x;
-          positions[10] = points[6].y;
-          positions[11] = points[6].z;
-          positions[12] = points[7].x;
-          positions[13] = points[7].y;
-          positions[14] = points[7].z;
-          positions[15] = points[4].x;
-          positions[16] = points[4].y;
-          positions[17] = points[4].z;
-        }
-        // don't call geo.setFromPoints. It doesn't seem to work correctly.
-        geo.setAttribute('position', new Float32BufferAttribute(positions, 3));
-        geo.computeVertexNormals();
-      }
-    }
-  }, [points, thickness, showSolarRadiationHeatmap]);
+  const world = useStore.getState().world;
+  const hourlyHeatExchangeArrayMap = useDataStore.getState().hourlyHeatExchangeArrayMap;
+  const { points } = segment;
 
   const overhangLines: Vector3[][] | undefined = useMemo(() => {
     if (!showHeatFluxes) return undefined;
@@ -259,71 +202,19 @@ export const RoofSegment = ({
     return vectors;
   }, [showHeatFluxes, heatFluxScaleFactor]);
 
-  const pointsForSingleSide = points.slice(points.length / 2);
-  // TODO: There may be a better way to do this, but convex geometry needs at least four points.
-  // For triangles, we fool it by duplicating the last point
-  if (pointsForSingleSide.length === 3) pointsForSingleSide.push(pointsForSingleSide[2].clone());
-
   return (
     <>
-      <mesh ref={heatmapMeshRef} castShadow={false} receiveShadow={false} visible={showSolarRadiationHeatmap}>
-        {showSolarRadiationHeatmap && heatmap ? (
-          <meshBasicMaterial
-            map={heatmap}
-            color={'white'}
-            needsUpdate={true}
-            opacity={opacity}
-            transparent={transparent}
-            side={DoubleSide}
-          />
-        ) : (
-          <meshBasicMaterial color={'white'} />
-        )}
-      </mesh>
-      {/*special case: the whole roof segment has no texture and only one color */}
-      {textureType === RoofTexture.NoTexture && color && color === sideColor ? (
-        <mesh
-          name={`Roof Segment ${index} Surface`}
-          uuid={id + '-' + index}
-          castShadow={shadowEnabled && !transparent}
-          receiveShadow={shadowEnabled}
-          userData={{ simulation: true }}
-          visible={!showSolarRadiationHeatmap}
-        >
-          <convexGeometry args={[points, isFlat ? defaultAngle : angle, isFlat ? 1 : length]} />
-          <meshStandardMaterial color={color} transparent={transparent} opacity={opacity} />
-        </mesh>
-      ) : (
-        <>
-          <mesh
-            name={`Roof Segment ${index} Surface`}
-            uuid={id + '-' + index}
-            receiveShadow={shadowEnabled}
-            userData={{ simulation: true }}
-            position={[0, 0, 0.01]}
-            visible={!showSolarRadiationHeatmap}
-          >
-            <convexGeometry args={[pointsForSingleSide, isFlat ? defaultAngle : angle, isFlat ? 1 : length]} />
-            <meshStandardMaterial
-              map={texture}
-              color={textureType === RoofTexture.Default || textureType === RoofTexture.NoTexture ? color : 'white'}
-              transparent={transparent}
-              opacity={opacity}
-              side={DoubleSide}
-            />
-          </mesh>
-          {!showSolarRadiationHeatmap && (
-            <mesh
-              name={`Roof segment ${index} bulk`}
-              castShadow={shadowEnabled && !transparent}
-              receiveShadow={shadowEnabled}
-            >
-              <convexGeometry args={[points, isFlat ? defaultAngle : angle, isFlat ? 1 : length]} />
-              <meshStandardMaterial color={sideColor} transparent={transparent} opacity={opacity} />
-            </mesh>
-          )}
-        </>
-      )}
+      <BufferRoofSegment
+        id={id}
+        index={index}
+        segment={segment}
+        color={color}
+        sideColor={sideColor}
+        texture={texture}
+        heatmap={heatmap}
+        transparent={transparent}
+        opacity={opacity}
+      />
 
       {overhangLines &&
         overhangLines.map((v, index) => {
@@ -373,5 +264,297 @@ export const RoofSegment = ({
     </>
   );
 };
+
+interface BufferRoofSegmentProps {
+  id: string;
+  index: number;
+  segment: RoofSegmentProps;
+  color: string;
+  sideColor: string;
+  texture: Texture;
+  heatmap?: CanvasTexture;
+  transparent: boolean;
+  opacity: number;
+}
+
+export const BufferRoofSegment = React.memo(
+  ({ id, index, segment, color, sideColor, texture, heatmap, transparent, opacity }: BufferRoofSegmentProps) => {
+    const shadowEnabled = useStore(Selector.viewState.shadowEnabled);
+    const showSolarRadiationHeatmap = usePrimitiveStore(Selector.showSolarRadiationHeatmap);
+
+    const ref = useRef<Mesh>(null);
+
+    const { points } = segment;
+    const topLayerTexture = showSolarRadiationHeatmap ? heatmap : texture;
+    const isTri = points.length === 6;
+    const isQuad = points.length === 8;
+
+    // const holeMesh = useMemo(() => new Mesh(new BoxBufferGeometry(0.5, 0.5, 5), new MeshBasicMaterial()), []);
+
+    const materialGroupNumber = render() ?? 6;
+
+    const materialArray = useMemo(() => Array(materialGroupNumber).fill(0), [materialGroupNumber]);
+
+    useEffect(() => {
+      render();
+    }, []);
+
+    if (!isTri && !isQuad) return null;
+
+    function render() {
+      if (!ref.current || (!isTri && !isQuad)) return;
+
+      const geometry = ref.current.geometry;
+      geometry.index = null;
+      geometry.clearGroups();
+
+      const positions: number[] = [];
+      const uvs: number[] = [];
+
+      let vertexIndex = 0;
+      let matierialIndex = 0;
+
+      /*
+       7----6
+      /|   /|       5
+     4----5 |      /|\
+     | |  | |     3---4
+     | 3--|-2     | 2 |
+     |/   |/      |/ \|
+     0----1       0---1
+      quad         tri
+    */
+
+      if (isTri) {
+        // set top layer positions, uvs and groups
+        const topLayerPoints = points.slice(points.length / 2);
+        addPositions(topLayerPoints);
+        showSolarRadiationHeatmap ? addHeatmapUVs() : addUVs(topLayerPoints);
+        addGroup(3);
+
+        // set bottom layer positions, uvs, groups
+        const bottomLayerPoints = points.slice(0, points.length / 2).reverse();
+        addPositions(bottomLayerPoints);
+        uvs.push(0, 0, 1, 0, 0, 1);
+        addGroup(3);
+
+        // side surfaces
+        buildSideSurface([
+          [0, 1, 4, 3],
+          [1, 2, 5, 4],
+          [2, 0, 3, 5],
+        ]);
+      } else if (isQuad) {
+        // set top layer positions
+        const topLayerPoints = points.slice(points.length / 2);
+        const [triTopLower, triTopUpper] = triangulate(topLayerPoints);
+        addPositions(triTopLower);
+        addPositions(triTopUpper);
+
+        const [ta, tb, tc, td] = topLayerPoints;
+        const isLowerLeft = triTopLower[2].equals(td); // is segment triangulated by lowerLeft and upperRight
+
+        // set top layer uvs
+        if (!showSolarRadiationHeatmap) {
+          const ab = new Vector3().subVectors(tb, ta);
+          const ac = new Vector3().subVectors(tc, ta);
+          const ad = new Vector3().subVectors(td, ta);
+          const abxy = new Vector2(tb.x - ta.x, tb.y - ta.y);
+          const lab = abxy.length();
+
+          const ub = lab;
+          const vb = 0;
+          const uc = ab.dot(ac) / lab;
+          const vc = ab.clone().cross(ac).length() / lab;
+          const ud = ab.dot(ad) / lab;
+          const vd = ab.clone().cross(ad).length() / lab;
+
+          if (isLowerLeft) {
+            uvs.push(0, 0, ub, vb, ud, vd); // lower
+            uvs.push(ub, vb, uc, vc, ud, vd); // upper
+          } else {
+            uvs.push(0, 0, ub, vb, uc, vc); // lower
+            uvs.push(0, 0, uc, vc, ud, vd); // upper
+          }
+        } else {
+          addHeatmapUVs(isLowerLeft);
+        }
+
+        // set top layer groups
+        addGroup(6);
+
+        // set bottom layer positions, uvs, groups
+        const bottomLayerPoints = points.slice(0, points.length / 2);
+        const [triBotLower, triBotUpper] = triangulate(bottomLayerPoints);
+        addPositions(triBotLower.reverse());
+        addPositions(triBotUpper.reverse());
+        uvs.push(0, 0, 1, 0, 0, 1);
+        uvs.push(0, 1, 1, 0, 1, 1);
+        addGroup(6);
+
+        // side surfaces
+        buildSideSurface([
+          [0, 1, 5, 4],
+          [1, 2, 6, 5],
+          [2, 3, 7, 6],
+          [3, 0, 4, 7],
+        ]);
+      } else {
+        throw new Error('segment is neither quad nor tri');
+      }
+
+      geometry.setAttribute('position', new Float32BufferAttribute(positions, 3));
+      geometry.setAttribute('uv', new Float32BufferAttribute(uvs, 2));
+      geometry.computeVertexNormals();
+
+      // TODO: add window here
+      // holeMesh.position.set(0, -2, 0);
+      // holeMesh.updateMatrix();
+      // const res = CSG.subtract(ref.current, holeMesh);
+      // geometry.copy(res.geometry);
+
+      const groupsNumber = geometry.groups.length;
+
+      return groupsNumber;
+
+      function addPositions(points: Vector3[]) {
+        for (const point of points) {
+          const { x, y, z } = point;
+          positions.push(x, y, z);
+        }
+      }
+
+      function addUVs(points: Vector3[]) {
+        const [a, b, c] = points;
+        const ab = new Vector3().subVectors(b, a);
+        const lab = ab.length();
+        const ac = new Vector3().subVectors(c, a);
+        const abxy = new Vector2(b.x - a.x, b.y - a.y);
+
+        const ub = abxy.length();
+        const vb = 0;
+        const uc = ab.dot(ac) / lab;
+        const vc = ab.clone().cross(ac).length() / lab;
+
+        uvs.push(0, 0, ub, vb, uc, vc);
+      }
+
+      function addHeatmapUVs(isLowerLeft = false) {
+        const v10 = new Vector3().subVectors(points[1], points[0]);
+        const length10 = v10.length();
+        v10.normalize();
+        const v20 = new Vector3().subVectors(points[2], points[0]);
+        if (isTri) {
+          // find the position of the top point relative to the first edge point
+          const mid = v20.dot(v10) / length10;
+          uvs.push(0, 0, 1, 0, mid, 1);
+        } else if (isQuad) {
+          // find the position of the top-left and top-right points relative to the lower-left point
+          // the points go anticlockwise
+          const v30 = new Vector3().subVectors(points[3], points[0]);
+          const topLeft = v30.dot(v10) / length10;
+          const topRight = v20.dot(v10) / length10;
+          if (isLowerLeft) {
+            uvs.push(0, 0, 1, 0, topLeft, 1);
+            uvs.push(1, 0, topRight, 1, topLeft, 1);
+          } else {
+            uvs.push(0, 0, 1, 0, topRight, 1);
+            uvs.push(0, 0, topRight, 1, topLeft, 1);
+          }
+        }
+      }
+
+      function addGroup(verticesNumber: number) {
+        geometry.addGroup(vertexIndex, verticesNumber, matierialIndex++);
+        vertexIndex += verticesNumber;
+      }
+
+      function buildSideSurface(surfacePointIndices: number[][]) {
+        for (const indices of surfacePointIndices) {
+          const [a, b, c, d] = indices;
+          const tri1 = [a, b, d].reduce((acc, i) => acc.concat(points[i].x, points[i].y, points[i].z), [] as number[]);
+          const tri2 = [d, b, c].reduce((acc, i) => acc.concat(points[i].x, points[i].y, points[i].z), [] as number[]);
+          positions.push(...tri1);
+          positions.push(...tri2);
+          uvs.push(0, 0, 1, 0, 0, 1);
+          uvs.push(0, 1, 1, 0, 1, 1);
+          addGroup(6);
+        }
+      }
+    }
+
+    function triangulate(points: Vector3[]) {
+      const [a, b, c, d] = points;
+      const dDis = Util.distanceFromPointToLine2D(d, a, b);
+      const cDis = Util.distanceFromPointToLine2D(c, a, b);
+      const lower: Vector3[] = [];
+      const upper: Vector3[] = [];
+      if (Math.abs(dDis - cDis) < 0.01) {
+        if (a.z > b.z) {
+          lower.push(a, b, c);
+          upper.push(a, c, d);
+        } else {
+          lower.push(a, b, d);
+          upper.push(b, c, d);
+        }
+      } else if (dDis <= cDis) {
+        lower.push(a, b, d);
+        upper.push(b, c, d);
+      } else {
+        lower.push(a, b, c);
+        upper.push(a, c, d);
+      }
+      return [lower, upper];
+    }
+
+    const HeatMapMaterial = () => (
+      <meshBasicMaterial
+        attachArray="material"
+        color={color}
+        map={topLayerTexture}
+        transparent={transparent}
+        opacity={opacity}
+      />
+    );
+
+    const TopLayerMaterial = () => (
+      <meshStandardMaterial
+        attachArray="material"
+        color={color}
+        map={topLayerTexture}
+        transparent={transparent}
+        opacity={opacity}
+      />
+    );
+
+    const SideSurfaceMaterial = () => (
+      <meshStandardMaterial attachArray="material" color={sideColor} transparent={transparent} opacity={opacity} />
+    );
+
+    const enableShadow = shadowEnabled && !showSolarRadiationHeatmap;
+
+    return (
+      <mesh
+        ref={ref}
+        name={`Buffer Roof Segment ${index}`}
+        uuid={id + '-' + index}
+        userData={{ simulation: true }}
+        receiveShadow={enableShadow}
+        castShadow={enableShadow}
+        frustumCulled={false}
+      >
+        {materialArray.map((_, i) => {
+          if (i !== 0) {
+            return <SideSurfaceMaterial key={i} />;
+          } else if (showSolarRadiationHeatmap) {
+            return <HeatMapMaterial key={i} />;
+          } else {
+            return <TopLayerMaterial key={i} />;
+          }
+        })}
+      </mesh>
+    );
+  },
+);
 
 export default React.memo(RoofSegment);
