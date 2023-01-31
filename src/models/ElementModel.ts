@@ -1,5 +1,5 @@
 /*
- * @Copyright 2021-2022. Institute for Future Intelligence, Inc.
+ * @Copyright 2021-2023. Institute for Future Intelligence, Inc.
  */
 
 import { ObjectType } from '../types';
@@ -26,6 +26,8 @@ export interface ElementModel {
   lineWidth?: number;
   label?: string;
   showLabel?: boolean;
+  labelSize?: number;
+  labelHeight?: number;
 
   // EVIL: DO NOT DO THIS!!!
   //[key: string]: any;

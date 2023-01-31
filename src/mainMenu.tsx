@@ -877,7 +877,8 @@ const MainMenu = ({ viewOnly, set2DView, resetView, zoomView, canvas }: MainMenu
               onClick={() => {
                 if (undoManager.hasUndo()) {
                   const commandName = undoManager.undo();
-                  if (commandName) showInfo(i18n.t('menu.edit.Undo', lang) + commandName, UNDO_SHOW_INFO_DURATION);
+                  if (commandName)
+                    showInfo(i18n.t('menu.edit.Undo', lang) + ': ' + commandName, UNDO_SHOW_INFO_DURATION);
                   if (loggable) {
                     setCommonStore((state) => {
                       state.actionInfo = {
@@ -899,7 +900,8 @@ const MainMenu = ({ viewOnly, set2DView, resetView, zoomView, canvas }: MainMenu
               onClick={() => {
                 if (undoManager.hasRedo()) {
                   const commandName = undoManager.redo();
-                  if (commandName) showInfo(i18n.t('menu.edit.Redo', lang) + commandName, UNDO_SHOW_INFO_DURATION);
+                  if (commandName)
+                    showInfo(i18n.t('menu.edit.Redo', lang) + ': ' + commandName, UNDO_SHOW_INFO_DURATION);
                   if (loggable) {
                     setCommonStore((state) => {
                       state.actionInfo = {

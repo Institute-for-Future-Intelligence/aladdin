@@ -1,5 +1,5 @@
 /*
- * @Copyright 2021-2022. Institute for Future Intelligence, Inc.
+ * @Copyright 2021-2023. Institute for Future Intelligence, Inc.
  */
 
 import { ElementModel } from './ElementModel';
@@ -10,10 +10,6 @@ import { SolarAbsorberPipeModel } from './SolarAbsorberPipeModel';
 import { HvacSystem } from './HvacSystem';
 
 export interface FoundationModel extends ElementModel {
-  labelHeight?: number;
-
-  labelSize?: number;
-
   textureType: FoundationTexture;
 
   solarStructure?: SolarStructure;

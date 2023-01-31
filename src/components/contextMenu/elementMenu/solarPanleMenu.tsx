@@ -12,7 +12,6 @@ import { Util } from '../../../Util';
 import { Copy, Cut, Lock } from '../menuItems';
 import i18n from '../../../i18n/i18n';
 import { UndoableCheck } from '../../../undo/UndoableCheck';
-import { UndoableChange } from '../../../undo/UndoableChange';
 import SolarPanelModelSelection from './solarPanelModelSelection';
 import SolarPanelOrientationSelection from './solarPanelOrientationSelection';
 import SolarPanelLengthInput from './solarPanelLengthInput';
@@ -25,11 +24,9 @@ import SolarPanelPoleSpacingInput from './solarPanelPoleSpacingInput';
 import SolarPanelFrameColorSelection from './solarPanelFrameColorSelection';
 import { UNIT_VECTOR_POS_Z } from '../../../constants';
 import { ObjectType } from '../../../types';
-import { useLabel } from './menuHooks';
+import { useLabel, useLabelShow, useLabelText } from './menuHooks';
 
 export const SolarPanelMenu = React.memo(() => {
-  const updateElementLabelById = useStore(Selector.updateElementLabelById);
-  const updateElementShowLabelById = useStore(Selector.updateElementShowLabelById);
   const updateSolarCollectorDrawSunBeamById = useStore(Selector.updateSolarCollectorDrawSunBeamById);
   const addUndoable = useStore(Selector.addUndoable);
   const setApplyCount = useStore(Selector.setApplyCount);
@@ -50,54 +47,14 @@ export const SolarPanelMenu = React.memo(() => {
   const [frameColorDialogVisible, setFrameColorDialogVisible] = useState(false);
 
   const { labelText, setLabelText } = useLabel(solarPanel);
+  const showLabel = useLabelShow(solarPanel);
+  const updateLabelText = useLabelText(solarPanel, labelText);
 
   if (!solarPanel) return null;
 
   const lang = { lng: language };
   const panelNormal = new Vector3().fromArray(solarPanel.normal);
   const editable = !solarPanel?.locked;
-
-  const showLabel = (checked: boolean) => {
-    if (solarPanel) {
-      const undoableCheck = {
-        name: 'Show Solar Panel Label',
-        timestamp: Date.now(),
-        checked: !solarPanel.showLabel,
-        selectedElementId: solarPanel.id,
-        selectedElementType: ObjectType.SolarPanel,
-        undo: () => {
-          updateElementShowLabelById(solarPanel.id, !undoableCheck.checked);
-        },
-        redo: () => {
-          updateElementShowLabelById(solarPanel.id, undoableCheck.checked);
-        },
-      } as UndoableCheck;
-      addUndoable(undoableCheck);
-      updateElementShowLabelById(solarPanel.id, checked);
-    }
-  };
-
-  const updateLabelText = () => {
-    if (solarPanel) {
-      const oldLabel = solarPanel.label;
-      const undoableChange = {
-        name: 'Set Solar Panel Label',
-        timestamp: Date.now(),
-        oldValue: oldLabel,
-        newValue: labelText,
-        changedElementId: solarPanel.id,
-        changedElementType: solarPanel.type,
-        undo: () => {
-          updateElementLabelById(undoableChange.changedElementId, undoableChange.oldValue as string);
-        },
-        redo: () => {
-          updateElementLabelById(undoableChange.changedElementId, undoableChange.newValue as string);
-        },
-      } as UndoableChange;
-      addUndoable(undoableChange);
-      updateElementLabelById(solarPanel.id, labelText);
-    }
-  };
 
   const drawSunBeam = (checked: boolean) => {
     if (solarPanel) {
@@ -303,7 +260,7 @@ export const SolarPanelMenu = React.memo(() => {
 
           {/* show label or not */}
           <Menu.Item key={'solar-panel-show-label'}>
-            <Checkbox checked={!!solarPanel?.showLabel} onChange={(e) => showLabel(e.target.checked)}>
+            <Checkbox checked={!!solarPanel?.showLabel} onChange={showLabel}>
               {i18n.t('solarCollectorMenu.KeepShowingLabel', lang)}
             </Checkbox>
           </Menu.Item>

@@ -29,9 +29,7 @@ import {
 } from '../../../constants';
 import { Vector3 } from 'three';
 import { ElementCounter } from '../../../stores/ElementCounter';
-import { UndoableCheck } from '../../../undo/UndoableCheck';
-import { UndoableChange } from '../../../undo/UndoableChange';
-import { useLabel } from './menuHooks';
+import { useLabel, useLabelShow, useLabelText } from './menuHooks';
 
 export const CuboidMenu = React.memo(() => {
   const setCommonStore = useStore(Selector.set);
@@ -39,8 +37,6 @@ export const CuboidMenu = React.memo(() => {
   const addUndoable = useStore(Selector.addUndoable);
   const countAllOffspringsByType = useStore(Selector.countAllOffspringsByTypeAtOnce);
   const removeAllChildElementsByType = useStore(Selector.removeAllChildElementsByType);
-  const updateElementLabelById = useStore(Selector.updateElementLabelById);
-  const updateElementShowLabelById = useStore(Selector.updateElementShowLabelById);
   const setCuboidActionScope = useStore(Selector.setCuboidActionScope);
   const addElement = useStore(Selector.addElement);
   const removeElementById = useStore(Selector.removeElementById);
@@ -60,6 +56,8 @@ export const CuboidMenu = React.memo(() => {
   const [azimuthDialogVisible, setAzimuthDialogVisible] = useState(false);
 
   const { labelText, setLabelText } = useLabel(cuboid);
+  const showLabel = useLabelShow(cuboid);
+  const updateLabelText = useLabelText(cuboid, labelText);
 
   if (!cuboid) return null;
 
@@ -82,48 +80,6 @@ export const CuboidMenu = React.memo(() => {
       }
     }
     return false;
-  };
-
-  const showLabel = (checked: boolean) => {
-    if (cuboid) {
-      const undoableCheck = {
-        name: 'Show Cuboid Label',
-        timestamp: Date.now(),
-        checked: !cuboid.showLabel,
-        selectedElementId: cuboid.id,
-        selectedElementType: ObjectType.Cuboid,
-        undo: () => {
-          updateElementShowLabelById(cuboid.id, !undoableCheck.checked);
-        },
-        redo: () => {
-          updateElementShowLabelById(cuboid.id, undoableCheck.checked);
-        },
-      } as UndoableCheck;
-      addUndoable(undoableCheck);
-      updateElementShowLabelById(cuboid.id, checked);
-    }
-  };
-
-  const updateLabelText = () => {
-    if (cuboid) {
-      const oldLabel = cuboid.label;
-      const undoableChange = {
-        name: 'Set Cuboid Label',
-        timestamp: Date.now(),
-        oldValue: oldLabel,
-        newValue: labelText,
-        changedElementId: cuboid.id,
-        changedElementType: ObjectType.Cuboid,
-        undo: () => {
-          updateElementLabelById(undoableChange.changedElementId, undoableChange.oldValue as string);
-        },
-        redo: () => {
-          updateElementLabelById(undoableChange.changedElementId, undoableChange.newValue as string);
-        },
-      } as UndoableChange;
-      addUndoable(undoableChange);
-      updateElementLabelById(cuboid.id, labelText);
-    }
   };
 
   return (
@@ -569,7 +525,7 @@ export const CuboidMenu = React.memo(() => {
 
       {/* show label or not */}
       <Menu.Item key={'cuboid-show-label'}>
-        <Checkbox checked={!!cuboid?.showLabel} onChange={(e) => showLabel(e.target.checked)}>
+        <Checkbox checked={!!cuboid?.showLabel} onChange={showLabel}>
           {i18n.t('cuboidMenu.KeepShowingLabel', lang)}
         </Checkbox>
       </Menu.Item>
