@@ -351,6 +351,7 @@ export const i18n_zh_cn = {
         EffectOfWindowSHGCOnBuildingEnergy: '窗户太阳能输入对房屋能耗的影响',
         EffectOfThermostatSetpointOnBuildingEnergy: '恒温器设定值对房屋能耗的影响',
         EffectOfSolarPanelsOnBuildingEnergy: '光伏板对房屋能耗的影响',
+        EffectOfGroundTemperatureOnBuildingEnergy: '地表温度对房屋能耗的影响',
         EffectOfTreesOnBuildingEnergy: '树荫对房屋能耗的影响',
       },
 

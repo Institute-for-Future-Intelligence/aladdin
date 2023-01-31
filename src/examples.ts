@@ -104,6 +104,7 @@ import effect_eaves_overhang_length from './examples/effect_eaves_overhang_lengt
 import effect_window_shgc from './examples/effect_window_shgc.json';
 import effect_thermostat_setpoint from './examples/effect_thermostat_setpoint.json';
 import effect_solar_panels from './examples/effect_solar_panels.json';
+import effect_ground_temperature from './examples/effect_ground_temperature.json';
 import effect_trees from './examples/effect_trees.json';
 import thermal_vs_building_envelope from './examples/thermal_vs_building_envelope.json';
 
@@ -148,6 +149,9 @@ export const getExample = (name: string) => {
       break;
     case 'effect_solar_panels':
       input = effect_solar_panels;
+      break;
+    case 'effect_ground_temperature':
+      input = effect_ground_temperature;
       break;
     case 'effect_trees':
       input = effect_trees;

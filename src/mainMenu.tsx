@@ -1835,6 +1835,9 @@ const MainMenu = ({ viewOnly, set2DView, resetView, zoomView, canvas }: MainMenu
           <Menu.Item key="effect_solar_panels" onClick={loadFile}>
             {i18n.t('menu.buildingScienceTutorials.EffectOfSolarPanelsOnBuildingEnergy', lang)}
           </Menu.Item>
+          <Menu.Item key="effect_ground_temperature" onClick={loadFile}>
+            {i18n.t('menu.buildingScienceTutorials.EffectOfGroundTemperatureOnBuildingEnergy', lang)}
+          </Menu.Item>
           <Menu.Item key="effect_trees" onClick={loadFile}>
             {i18n.t('menu.buildingScienceTutorials.EffectOfTreesOnBuildingEnergy', lang)}
           </Menu.Item>
