@@ -197,6 +197,10 @@ export const i18n_zh_tw = {
       MaximumNumberOfGenerationsHasBeenReached: '最大世代數已達到。',
       MaximumNumberOfStepsHasBeenReached: '最大步數已達到。',
       ObjectiveFunctionTypeError: '此操作不支持當前的目標函數。請從菜單啟動此功能。',
+      WallsAreNotAtSameHeight: '墻體高度不同。',
+      WallsAreNotPerpendicular: '墻體不垂直。',
+      WallsAreNotConnected: '墻體不相連。',
+      WallsNumebrNeedToBeFour: '墻體數量必須為4。',
     },
 
     menu: {

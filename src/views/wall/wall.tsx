@@ -72,6 +72,8 @@ import { HorizontalRuler } from '../horizontalRuler';
 import { InnerCommonState } from 'src/stores/InnerCommonState';
 import { usePrimitiveStore } from '../../stores/commonPrimitive';
 import { useDataStore } from '../../stores/commonData';
+import { showError } from 'src/helpers';
+import i18n from 'src/i18n/i18n';
 
 export interface WallProps {
   wallModel: WallModel;
@@ -902,6 +904,7 @@ const Wall = ({ wallModel, foundationModel }: WallProps) => {
       isPerpendicular = true,
       count = 0;
 
+    const lang = { lng: useStore.getState().language };
     const startWall = wallModel;
     let w = startWall;
     while (w && w.rightJoints.length > 0) {
@@ -910,11 +913,13 @@ const Wall = ({ wallModel, foundationModel }: WallProps) => {
       if (!rightWall) break;
       if (sameHeight && rightWall.lz !== startWall.lz) {
         isSameHeight = false;
-        break;
+        showError(i18n.t('message.WallsAreNotAtSameHeight', lang));
+        return false;
       }
       if (rect && !checkPerpendicular(w, rightWall)) {
         isPerpendicular = false;
-        break;
+        showError(i18n.t('message.WallsAreNotPerpendicular', lang));
+        return false;
       }
       if (rightWall.id === startWall.id) {
         isLoop = true;
@@ -925,9 +930,14 @@ const Wall = ({ wallModel, foundationModel }: WallProps) => {
       if (count > 100) break;
     }
 
-    if (!isLoop) return false;
-    if (sameHeight && !isSameHeight) return false;
-    if (rect && (!isPerpendicular || count !== 4)) return false;
+    if (!isLoop) {
+      showError(i18n.t('message.WallsAreNotConnected', lang));
+      return false;
+    }
+    if (rect && count !== 4) {
+      showError(i18n.t('message.WallsNumebrNeedToBeFour', lang));
+      return false;
+    }
     return true;
   };
 

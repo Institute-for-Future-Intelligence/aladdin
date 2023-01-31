@@ -197,6 +197,10 @@ export const i18n_zh_cn = {
       MaximumNumberOfGenerationsHasBeenReached: '最大世代数已达到。',
       MaximumNumberOfStepsHasBeenReached: '最大步数已达到。',
       ObjectiveFunctionTypeError: '此操作不支持当前的目标函数。请从菜单启动此功能。',
+      WallsAreNotAtSameHeight: '墙体高度不同。',
+      WallsAreNotPerpendicular: '墙体不垂直。',
+      WallsAreNotConnected: '墙体不相连。',
+      WallsNumebrNeedToBeFour: '墙体数量必须为4。',
     },
 
     menu: {

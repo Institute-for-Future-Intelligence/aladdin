@@ -198,6 +198,10 @@ export const i18n_tr = {
       MaximumNumberOfGenerationsHasBeenReached: 'Maksimum nesil sayısına ulaşıldı.',
       MaximumNumberOfStepsHasBeenReached: 'Maksimum adım sayısına ulaşıldı.',
       ObjectiveFunctionTypeError: 'Geçerli işlev desteklenmiyor. Lütfen menüden başlatınız.',
+      WallsAreNotAtSameHeight: 'Walls are not at same height.',
+      WallsAreNotPerpendicular: 'Walls are not perpendicular.',
+      WallsAreNotConnected: 'Walls are not connected.',
+      WallsNumebrNeedToBeFour: 'The number of walls needs to be four.',
     },
 
     menu: {

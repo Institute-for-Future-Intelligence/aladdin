@@ -199,6 +199,10 @@ export const i18n_es = {
       MaximumNumberOfStepsHasBeenReached: 'The maximum number of steps has been reached.',
       ObjectiveFunctionTypeError:
         'The current objective function is not supported by this operation. Please start from the menu.',
+      WallsAreNotAtSameHeight: 'Walls are not at the same height.',
+      WallsAreNotPerpendicular: 'Walls are not perpendicular.',
+      WallsAreNotConnected: 'Walls are not connected.',
+      WallsNumebrNeedToBeFour: 'The number of walls needs to be four.',
     },
 
     menu: {
