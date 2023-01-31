@@ -1613,8 +1613,8 @@ const Cuboid = ({
           text={labelText}
           fontSize={20}
           fontFace={'Times Roman'}
-          textHeight={0.2}
-          position={[0, 0, hz + 0.2]}
+          textHeight={cuboidModel?.labelSize ?? 0.2}
+          position={[0, 0, hz + (cuboidModel?.labelHeight ?? 0.2)]}
         />
       )}
     </group>

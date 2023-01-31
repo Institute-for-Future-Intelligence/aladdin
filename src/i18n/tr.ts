@@ -1,5 +1,5 @@
 /*
- * @Copyright 2021-2022. Institute for Future Intelligence, Inc.
+ * @Copyright 2021-2023. Institute for Future Intelligence, Inc.
  */
 
 export const i18n_tr = {
@@ -541,6 +541,14 @@ export const i18n_tr = {
       UnlockAllElements: 'Tüm Öğelerin Kilidini Aç',
     },
 
+    labelSubMenu: {
+      Label: 'Etiket',
+      LabelText: 'Label Text',
+      LabelHeight: 'Label Height',
+      LabelSize: 'Label Size',
+      KeepShowingLabel: 'Etiketi Göstermeye Devam Et',
+    },
+
     foundationMenu: {
       RemoveAllUnlockedSolarPanels: 'Tüm Kilitlenmemiş Güneş Panellerini Kaldır',
       RemoveAllUnlockedParabolicTroughs: 'Tüm Kilitlenmemiş Parabolik Olukları Kaldır',
@@ -617,10 +625,6 @@ export const i18n_tr = {
       GroupMaster: 'Grup Yöneticisi',
       LockAllElementsOnThisFoundation: ' Seçili temel üzerindeki tüm öğeleri kilitle',
       UnlockAllElementsOnThisFoundation: ' Seçili temel üzerindeki tüm öğelerin kilidini aç',
-      Label: 'Label',
-      LabelHeight: 'Label Height',
-      LabelSize: 'Label Size',
-      KeepShowingLabel: 'Keep Showing Label',
       FloorRValue: 'Floor R-Value',
       OnlyThisFloor: 'Only This Floor',
       AllFloors: 'All Floors',
@@ -702,8 +706,6 @@ export const i18n_tr = {
       AllSidesOfThisCuboid: 'Seçili Kübik Tüm Yüzeyler',
       AllSidesOfAllCuboids: 'Bütün Kübik Yüzeyleri ',
       AddPolygon: 'Poligon Ekle',
-      Label: 'Label',
-      KeepShowingLabel: 'Keep Showing Label',
     },
 
     polygonMenu: {
@@ -803,8 +805,6 @@ export const i18n_tr = {
       Flip: 'Flip',
       Type: 'Tür',
       Spread: 'Yayılım',
-      Label: 'Etiket',
-      KeepShowingLabel: 'Etiketi Göstermeye Devam Et',
     },
 
     flowerMenu: {
@@ -835,10 +835,6 @@ export const i18n_tr = {
       ExtraPoleHeight: 'Ekstra Direk Yüksekliği',
       ExtraPoleHeightInAdditionToHalfWidth: 'Yarım Genişliğe Ek Ekstra Direk Yüksekliği',
       DrawSunBeam: 'Güneş Işını Çiz',
-      Label: 'Etiket',
-      LabelHeight: 'Label Height',
-      LabelSize: 'Label Size',
-      KeepShowingLabel: 'Etiketi Göstermeye Devam Et',
     },
 
     concentratedSolarPowerCollectorMenu: {

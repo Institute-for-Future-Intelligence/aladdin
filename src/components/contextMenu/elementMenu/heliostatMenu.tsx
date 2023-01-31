@@ -3,7 +3,7 @@
  */
 
 import React, { useState } from 'react';
-import { Checkbox, Input, Menu } from 'antd';
+import { Checkbox, Input, InputNumber, Menu } from 'antd';
 import { useStore } from '../../../stores/common';
 import * as Selector from '../../../stores/selector';
 import { Copy, Cut, Lock } from '../menuItems';
@@ -16,7 +16,8 @@ import HeliostatReflectanceInput from './heliostatReflectorReflectanceInput';
 import HeliostatDrawSunBeamSelection from './heliostatDrawSunBeamSelection';
 import HeliostatTowerSelection from './heliostatTowerSelection';
 import { ObjectType } from '../../../types';
-import { useLabel, useLabelShow, useLabelText } from './menuHooks';
+import { useLabel, useLabelHeight, useLabelShow, useLabelSize, useLabelText } from './menuHooks';
+import SubMenu from 'antd/lib/menu/SubMenu';
 
 export const HeliostatMenu = React.memo(() => {
   const language = useStore(Selector.language);
@@ -35,6 +36,8 @@ export const HeliostatMenu = React.memo(() => {
   const { labelText, setLabelText } = useLabel(heliostat);
   const showLabel = useLabelShow(heliostat);
   const updateLabelText = useLabelText(heliostat, labelText);
+  const setLabelSize = useLabelSize(heliostat);
+  const setLabelHeight = useLabelHeight(heliostat);
 
   if (!heliostat) return null;
 
@@ -126,26 +129,52 @@ export const HeliostatMenu = React.memo(() => {
             {i18n.t('solarCollectorMenu.DrawSunBeam', lang)} ...
           </Menu.Item>
 
-          {/* show label or not */}
-          <Menu.Item key={'heliostat-show-label'}>
-            <Checkbox checked={!!heliostat?.showLabel} onChange={showLabel}>
-              {i18n.t('solarCollectorMenu.KeepShowingLabel', lang)}
-            </Checkbox>
-          </Menu.Item>
-
-          {/*have to wrap the text field with a Menu so that it can stay open when the user types in it */}
-          <Menu>
-            {/* label text */}
-            <Menu.Item key={'heliostat-label-text'} style={{ paddingLeft: '36px' }}>
-              <Input
-                addonBefore={i18n.t('solarCollectorMenu.Label', lang) + ':'}
-                value={labelText}
-                onChange={(e: React.ChangeEvent<HTMLInputElement>) => setLabelText(e.target.value)}
-                onPressEnter={updateLabelText}
-                onBlur={updateLabelText}
-              />
+          <SubMenu key={'heliostat-label'} title={i18n.t('labelSubMenu.Label', lang)} style={{ paddingLeft: '24px' }}>
+            {/* show label or not */}
+            <Menu.Item key={'heliostat-show-label'}>
+              <Checkbox checked={!!heliostat?.showLabel} onChange={showLabel}>
+                {i18n.t('labelSubMenu.KeepShowingLabel', lang)}
+              </Checkbox>
             </Menu.Item>
-          </Menu>
+
+            {/*have to wrap the text field with a Menu so that it can stay open when the user types in it */}
+            <Menu>
+              {/* label text */}
+              <Menu.Item key={'heliostat-label-text'} style={{ paddingLeft: '36px' }}>
+                <Input
+                  addonBefore={i18n.t('labelSubMenu.Label', lang) + ':'}
+                  value={labelText}
+                  onChange={(e: React.ChangeEvent<HTMLInputElement>) => setLabelText(e.target.value)}
+                  onPressEnter={updateLabelText}
+                  onBlur={updateLabelText}
+                />
+              </Menu.Item>
+              {/* the label's height relative to the center */}
+              <Menu.Item style={{ height: '36px', paddingLeft: '36px', marginTop: 0 }} key={'heliostat-label-height'}>
+                <InputNumber
+                  addonBefore={i18n.t('labelSubMenu.LabelHeight', lang) + ':'}
+                  min={0.2}
+                  max={5}
+                  step={0.1}
+                  precision={1}
+                  value={heliostat.labelHeight ?? 0.2}
+                  onChange={(value) => setLabelHeight(value)}
+                />
+              </Menu.Item>
+              {/* the label's size */}
+              <Menu.Item style={{ height: '36px', paddingLeft: '36px', marginTop: 0 }} key={'heliostat-label-size'}>
+                <InputNumber
+                  addonBefore={i18n.t('labelSubMenu.LabelSize', lang) + ':'}
+                  min={0.2}
+                  max={2}
+                  step={0.1}
+                  precision={1}
+                  value={heliostat.labelSize ?? 0.2}
+                  onChange={(value) => setLabelSize(value)}
+                />
+              </Menu.Item>
+            </Menu>
+          </SubMenu>
         </>
       )}
     </Menu.ItemGroup>

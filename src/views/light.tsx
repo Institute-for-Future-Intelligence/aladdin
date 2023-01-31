@@ -296,8 +296,8 @@ const Light = ({
           text={labelText}
           fontSize={20}
           fontFace={'Times Roman'}
-          textHeight={0.2}
-          position={[0, 0, (inside ? -parentThickness : 0) + lz + 0.2]}
+          textHeight={lightModel?.labelSize ?? 0.2}
+          position={[0, 0, (inside ? -parentThickness : 0) + lz + (lightModel?.labelHeight ?? 0.2)]}
         />
       )}
     </group>

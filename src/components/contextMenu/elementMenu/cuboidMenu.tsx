@@ -3,7 +3,7 @@
  */
 
 import React, { useState } from 'react';
-import { Checkbox, Input, Menu, Modal } from 'antd';
+import { Checkbox, Input, InputNumber, Menu, Modal } from 'antd';
 import { Copy, Cut, Lock, Paste } from '../menuItems';
 import SubMenu from 'antd/lib/menu/SubMenu';
 import { ExclamationCircleOutlined } from '@ant-design/icons';
@@ -29,7 +29,7 @@ import {
 } from '../../../constants';
 import { Vector3 } from 'three';
 import { ElementCounter } from '../../../stores/ElementCounter';
-import { useLabel, useLabelShow, useLabelText } from './menuHooks';
+import { useLabel, useLabelHeight, useLabelShow, useLabelSize, useLabelText } from './menuHooks';
 
 export const CuboidMenu = React.memo(() => {
   const setCommonStore = useStore(Selector.set);
@@ -58,6 +58,8 @@ export const CuboidMenu = React.memo(() => {
   const { labelText, setLabelText } = useLabel(cuboid);
   const showLabel = useLabelShow(cuboid);
   const updateLabelText = useLabelText(cuboid, labelText);
+  const setLabelSize = useLabelSize(cuboid);
+  const setLabelHeight = useLabelHeight(cuboid);
 
   if (!cuboid) return null;
 
@@ -523,26 +525,52 @@ export const CuboidMenu = React.memo(() => {
         {i18n.t('cuboidMenu.AddPolygon', lang)}
       </Menu.Item>
 
-      {/* show label or not */}
-      <Menu.Item key={'cuboid-show-label'}>
-        <Checkbox checked={!!cuboid?.showLabel} onChange={showLabel}>
-          {i18n.t('cuboidMenu.KeepShowingLabel', lang)}
-        </Checkbox>
-      </Menu.Item>
-
-      {/*have to wrap the text field with a Menu so that it can stay open when the user types in it */}
-      <Menu>
-        {/* label text */}
-        <Menu.Item key={'cuboid-label-text'} style={{ paddingLeft: '36px' }}>
-          <Input
-            addonBefore={i18n.t('cuboidMenu.Label', lang) + ':'}
-            value={labelText}
-            onChange={(e: React.ChangeEvent<HTMLInputElement>) => setLabelText(e.target.value)}
-            onPressEnter={updateLabelText}
-            onBlur={updateLabelText}
-          />
+      <SubMenu key={'cuboid-label'} title={i18n.t('labelSubMenu.Label', lang)} style={{ paddingLeft: '24px' }}>
+        {/* show label or not */}
+        <Menu.Item key={'cuboid-show-label'}>
+          <Checkbox checked={!!cuboid?.showLabel} onChange={showLabel}>
+            {i18n.t('labelSubMenu.KeepShowingLabel', lang)}
+          </Checkbox>
         </Menu.Item>
-      </Menu>
+
+        {/*have to wrap the text field with a Menu so that it can stay open when the user types in it */}
+        <Menu>
+          {/* label text */}
+          <Menu.Item key={'cuboid-label-text'} style={{ paddingLeft: '36px' }}>
+            <Input
+              addonBefore={i18n.t('labelSubMenu.LabelText', lang) + ':'}
+              value={labelText}
+              onChange={(e: React.ChangeEvent<HTMLInputElement>) => setLabelText(e.target.value)}
+              onPressEnter={updateLabelText}
+              onBlur={updateLabelText}
+            />
+          </Menu.Item>
+          {/* the label's height relative to the cuboid's top surface */}
+          <Menu.Item style={{ height: '36px', paddingLeft: '36px', marginTop: 0 }} key={'cuboid-label-height'}>
+            <InputNumber
+              addonBefore={i18n.t('labelSubMenu.LabelHeight', lang) + ':'}
+              min={0.5}
+              max={100}
+              step={1}
+              precision={1}
+              value={cuboid.labelHeight ?? 0.5}
+              onChange={(value) => setLabelHeight(value)}
+            />
+          </Menu.Item>
+          {/* the label's size */}
+          <Menu.Item style={{ height: '36px', paddingLeft: '36px', marginTop: 0 }} key={'cuboid-label-size'}>
+            <InputNumber
+              addonBefore={i18n.t('labelSubMenu.LabelSize', lang) + ':'}
+              min={0.2}
+              max={2}
+              step={0.1}
+              precision={1}
+              value={cuboid.labelSize ?? 0.2}
+              onChange={(value) => setLabelSize(value)}
+            />
+          </Menu.Item>
+        </Menu>
+      </SubMenu>
     </Menu.ItemGroup>
   );
 });

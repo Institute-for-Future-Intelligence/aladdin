@@ -1,5 +1,5 @@
 /*
- * @Copyright 2021-2022. Institute for Future Intelligence, Inc.
+ * @Copyright 2021-2023. Institute for Future Intelligence, Inc.
  */
 
 export const i18n_zh_tw = {
@@ -539,6 +539,14 @@ export const i18n_zh_tw = {
       UnlockAllElements: '解除所有的固定',
     },
 
+    labelSubMenu: {
+      Label: '標籤',
+      LabelText: '標籤的内容',
+      LabelHeight: '標籤的高度',
+      LabelSize: '標籤的大小',
+      KeepShowingLabel: '顯示標籤',
+    },
+
     foundationMenu: {
       RemoveAllUnlockedSolarPanels: '刪除此地基上所有非固定的光伏板',
       RemoveAllUnlockedParabolicTroughs: '刪除此地基上所有非固定的拋物線槽',
@@ -601,10 +609,6 @@ export const i18n_zh_tw = {
       GroupMaster: '主地基',
       LockAllElementsOnThisFoundation: '固定此地基上所有的部件',
       UnlockAllElementsOnThisFoundation: '解除此地基上所有的固定',
-      Label: '標籤',
-      LabelHeight: '標籤的高度',
-      LabelSize: '標籤的大小',
-      KeepShowingLabel: '顯示標籤',
       FloorRValue: '建築物地板的R值',
       OnlyThisFloor: '只這個建築物的地板',
       AllFloors: '所有建築物的地板',
@@ -680,8 +684,6 @@ export const i18n_zh_tw = {
       AllSidesOfThisCuboid: '這個長方體所有的側面',
       AllSidesOfAllCuboids: '所有的長方體所有的側面',
       AddPolygon: '添加多邊形',
-      Label: '標籤',
-      KeepShowingLabel: '顯示標籤',
     },
 
     polygonMenu: {
@@ -781,8 +783,6 @@ export const i18n_zh_tw = {
       Flip: '翻轉',
       Type: '樹種',
       Spread: '樹冠直徑',
-      Label: '標籤',
-      KeepShowingLabel: '顯示標籤',
     },
 
     flowerMenu: {
@@ -813,10 +813,6 @@ export const i18n_zh_tw = {
       ExtraPoleHeight: '額外的支架高度',
       ExtraPoleHeightInAdditionToHalfWidth: '寬度一半額外的支架高度',
       DrawSunBeam: '顯示光束',
-      Label: '標籤',
-      LabelHeight: '標籤的高度',
-      LabelSize: '標籤的大小',
-      KeepShowingLabel: '顯示標籤',
     },
 
     concentratedSolarPowerCollectorMenu: {

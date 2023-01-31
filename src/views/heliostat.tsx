@@ -1,5 +1,5 @@
 /*
- * @Copyright 2022. Institute for Future Intelligence, Inc.
+ * @Copyright 2022-2023. Institute for Future Intelligence, Inc.
  */
 
 import React, { useEffect, useMemo, useRef, useState } from 'react';
@@ -376,10 +376,10 @@ const Heliostat = ({
           text={labelText}
           fontSize={20}
           fontFace={'Times Roman'}
-          textHeight={0.2}
+          textHeight={heliostat?.labelSize ?? 0.2}
           castShadow={false}
           receiveShadow={false}
-          position={[0, 0, Math.max(hy * Math.abs(Math.sin(heliostat.tiltAngle)) + 0.1, 0.2)]}
+          position={[0, 0, heliostat?.labelHeight ?? Math.max(hy * Math.abs(Math.sin(heliostat.tiltAngle)) + 0.1, 0.2)]}
         />
       )}
     </group>

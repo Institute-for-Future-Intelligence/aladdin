@@ -13,7 +13,8 @@ import i18n from '../../../i18n/i18n';
 import { UndoableCheck } from '../../../undo/UndoableCheck';
 import { UndoableChange } from '../../../undo/UndoableChange';
 import { TreeModel } from '../../../models/TreeModel';
-import { useLabel, useLabelShow, useLabelText } from './menuHooks';
+import { useLabel, useLabelHeight, useLabelShow, useLabelSize, useLabelText } from './menuHooks';
+import SubMenu from 'antd/lib/menu/SubMenu';
 
 export const TreeMenu = React.memo(() => {
   const setCommonStore = useStore(Selector.set);
@@ -31,6 +32,8 @@ export const TreeMenu = React.memo(() => {
   const { labelText, setLabelText } = useLabel(tree);
   const showLabel = useLabelShow(tree);
   const updateLabelText = useLabelText(tree, labelText);
+  const setLabelSize = useLabelSize(tree);
+  const setLabelHeight = useLabelHeight(tree);
 
   if (!tree) return null;
 
@@ -191,29 +194,53 @@ export const TreeMenu = React.memo(() => {
         </Menu>
       )}
 
-      {/* show label or not */}
       {editable && (
-        <Menu.Item key={'tree-show-label'}>
-          <Checkbox checked={!!tree?.showLabel} onChange={showLabel}>
-            {i18n.t('treeMenu.KeepShowingLabel', lang)}
-          </Checkbox>
-        </Menu.Item>
-      )}
-
-      {/*have to wrap the text field with a Menu so that it can stay open when the user types in it */}
-      {editable && (
-        <Menu>
-          {/* label text */}
-          <Menu.Item key={'tree-label-text'} style={{ paddingLeft: '36px' }}>
-            <Input
-              addonBefore={i18n.t('treeMenu.Label', lang) + ':'}
-              value={labelText}
-              onChange={(e: React.ChangeEvent<HTMLInputElement>) => setLabelText(e.target.value)}
-              onPressEnter={updateLabelText}
-              onBlur={updateLabelText}
-            />
+        <SubMenu key={'tree-label'} title={i18n.t('labelSubMenu.Label', lang)} style={{ paddingLeft: '24px' }}>
+          {/* show label or not */}
+          <Menu.Item key={'tree-show-label'}>
+            <Checkbox checked={!!tree?.showLabel} onChange={showLabel}>
+              {i18n.t('labelSubMenu.KeepShowingLabel', lang)}
+            </Checkbox>
           </Menu.Item>
-        </Menu>
+
+          {/*have to wrap the text field with a Menu so that it can stay open when the user types in it */}
+          <Menu>
+            {/* label text */}
+            <Menu.Item key={'tree-label-text'} style={{ paddingLeft: '36px' }}>
+              <Input
+                addonBefore={i18n.t('labelSubMenu.LabelText', lang) + ':'}
+                value={labelText}
+                onChange={(e: React.ChangeEvent<HTMLInputElement>) => setLabelText(e.target.value)}
+                onPressEnter={updateLabelText}
+                onBlur={updateLabelText}
+              />
+            </Menu.Item>
+            {/* the label's height relative to the tree top */}
+            <Menu.Item style={{ height: '36px', paddingLeft: '36px', marginTop: 0 }} key={'tree-label-height'}>
+              <InputNumber
+                addonBefore={i18n.t('labelSubMenu.LabelHeight', lang) + ':'}
+                min={0.2}
+                max={5}
+                step={0.1}
+                precision={1}
+                value={tree.labelHeight ?? 0.2}
+                onChange={(value) => setLabelHeight(value)}
+              />
+            </Menu.Item>
+            {/* the label's size */}
+            <Menu.Item style={{ height: '36px', paddingLeft: '36px', marginTop: 0 }} key={'tree-label-size'}>
+              <InputNumber
+                addonBefore={i18n.t('labelSubMenu.LabelSize', lang) + ':'}
+                min={0.2}
+                max={2}
+                step={0.1}
+                precision={1}
+                value={tree.labelSize ?? 0.2}
+                onChange={(value) => setLabelSize(value)}
+              />
+            </Menu.Item>
+          </Menu>
+        </SubMenu>
       )}
     </Menu.ItemGroup>
   );

@@ -1,5 +1,5 @@
 /*
- * @Copyright 2021-2022. Institute for Future Intelligence, Inc.
+ * @Copyright 2021-2023. Institute for Future Intelligence, Inc.
  */
 
 export const i18n_en = {
@@ -541,6 +541,14 @@ export const i18n_en = {
       UnlockAllElements: 'Unlock All Elements',
     },
 
+    labelSubMenu: {
+      Label: 'Label',
+      LabelText: 'Label Text',
+      LabelHeight: 'Label Height',
+      LabelSize: 'Label Size',
+      KeepShowingLabel: 'Keep Showing Label',
+    },
+
     foundationMenu: {
       RemoveAllUnlockedSolarPanels: 'Remove All Unlocked Solar Panels',
       RemoveAllUnlockedParabolicTroughs: 'Remove All Unlocked Parabolic Troughs',
@@ -617,10 +625,6 @@ export const i18n_en = {
       GroupMaster: 'Group Master',
       LockAllElementsOnThisFoundation: 'Lock All Elements on This Foundation',
       UnlockAllElementsOnThisFoundation: 'Unlock All Elements on This Foundation',
-      Label: 'Label',
-      LabelHeight: 'Label Height',
-      LabelSize: 'Label Size',
-      KeepShowingLabel: 'Keep Showing Label',
       FloorRValue: 'Floor R-Value',
       OnlyThisFloor: 'Only This Floor',
       AllFloors: 'All Floors',
@@ -702,8 +706,6 @@ export const i18n_en = {
       AllSidesOfThisCuboid: 'All Sides of This Cuboid',
       AllSidesOfAllCuboids: 'All Sides of All Cuboids',
       AddPolygon: 'Add Polygon',
-      Label: 'Label',
-      KeepShowingLabel: 'Keep Showing Label',
     },
 
     polygonMenu: {
@@ -803,8 +805,6 @@ export const i18n_en = {
       Flip: 'Flip',
       Type: 'Type',
       Spread: 'Spread',
-      Label: 'Label',
-      KeepShowingLabel: 'Keep Showing Label',
     },
 
     flowerMenu: {
@@ -835,10 +835,6 @@ export const i18n_en = {
       ExtraPoleHeight: 'Extra Pole Height',
       ExtraPoleHeightInAdditionToHalfWidth: 'Extra Pole Height in Addition to Half Width',
       DrawSunBeam: 'Draw Sun Beam',
-      Label: 'Label',
-      LabelHeight: 'Label Height',
-      LabelSize: 'Label Size',
-      KeepShowingLabel: 'Keep Showing Label',
     },
 
     concentratedSolarPowerCollectorMenu: {

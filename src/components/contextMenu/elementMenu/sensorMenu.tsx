@@ -33,13 +33,13 @@ export const SensorMenu = React.memo(() => {
       <Lock keyName={'sensor-lock'} />
       <Menu.Item key={'sensor-show-label'}>
         <Checkbox checked={!!sensor?.showLabel} onChange={showLabel}>
-          {i18n.t('solarCollectorMenu.KeepShowingLabel', lang)}
+          {i18n.t('labelSubMenu.KeepShowingLabel', lang)}
         </Checkbox>
       </Menu.Item>
       <Menu>
         <Menu.Item key={'sensor-label-text'} style={{ paddingLeft: '36px' }}>
           <Input
-            addonBefore={i18n.t('solarCollectorMenu.Label', lang) + ':'}
+            addonBefore={i18n.t('labelSubMenu.LabelText', lang) + ':'}
             value={labelText}
             onChange={(e: React.ChangeEvent<HTMLInputElement>) => setLabelText(e.target.value)}
             onPressEnter={updateLabelText}

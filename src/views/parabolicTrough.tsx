@@ -674,8 +674,8 @@ const ParabolicTrough = ({
           text={labelText}
           fontSize={20}
           fontFace={'Times Roman'}
-          textHeight={0.2}
-          position={[0, 0, Math.max(hy * Math.abs(Math.sin(trough.tiltAngle)) + 0.1, 0.2)]}
+          textHeight={trough?.labelSize ?? 0.2}
+          position={[0, 0, trough?.labelHeight ?? Math.max(hy * Math.abs(Math.sin(trough.tiltAngle)) + 0.1, 0.2)]}
         />
       )}
     </group>

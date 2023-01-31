@@ -1560,11 +1560,11 @@ export const FoundationMenu = React.memo(() => {
       </SubMenu>
 
       {editable && (
-        <SubMenu key={'foundation-label'} title={i18n.t('foundationMenu.Label', lang)} style={{ paddingLeft: '24px' }}>
+        <SubMenu key={'foundation-label'} title={i18n.t('labelSubMenu.Label', lang)} style={{ paddingLeft: '24px' }}>
           {/* show label or not */}
           <Menu.Item key={'foundation-show-label'}>
             <Checkbox checked={!!foundation?.showLabel} onChange={showLabel}>
-              {i18n.t('foundationMenu.KeepShowingLabel', lang)}
+              {i18n.t('labelSubMenu.KeepShowingLabel', lang)}
             </Checkbox>
           </Menu.Item>
 
@@ -1573,7 +1573,7 @@ export const FoundationMenu = React.memo(() => {
             {/* label text */}
             <Menu.Item key={'foundation-label-text'} style={{ paddingLeft: '36px', marginTop: 10 }}>
               <Input
-                addonBefore={i18n.t('foundationMenu.Label', lang) + ':'}
+                addonBefore={i18n.t('labelSubMenu.LabelText', lang) + ':'}
                 value={labelText}
                 onChange={(e: React.ChangeEvent<HTMLInputElement>) => setLabelText(e.target.value)}
                 onPressEnter={updateLabelText}
@@ -1583,7 +1583,7 @@ export const FoundationMenu = React.memo(() => {
             {/* the label's height relative to the foundation's top surface */}
             <Menu.Item style={{ height: '36px', paddingLeft: '36px', marginTop: 0 }} key={'foundation-label-height'}>
               <InputNumber
-                addonBefore={i18n.t('foundationMenu.LabelHeight', lang) + ':'}
+                addonBefore={i18n.t('labelSubMenu.LabelHeight', lang) + ':'}
                 min={foundation.lz / 2 + 0.2}
                 max={100}
                 step={1}
@@ -1595,7 +1595,7 @@ export const FoundationMenu = React.memo(() => {
             {/* the label's size */}
             <Menu.Item style={{ height: '36px', paddingLeft: '36px', marginTop: 0 }} key={'foundation-label-size'}>
               <InputNumber
-                addonBefore={i18n.t('foundationMenu.LabelSize', lang) + ':'}
+                addonBefore={i18n.t('labelSubMenu.LabelSize', lang) + ':'}
                 min={0.2}
                 max={2}
                 step={0.1}

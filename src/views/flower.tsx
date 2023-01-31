@@ -1,5 +1,5 @@
 /*
- * @Copyright 2022. Institute for Future Intelligence, Inc.
+ * @Copyright 2022-2023. Institute for Future Intelligence, Inc.
  */
 
 import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
@@ -359,8 +359,8 @@ const Flower = ({
                 text={labelText}
                 fontSize={20}
                 fontFace={'Times Roman'}
-                textHeight={0.2}
-                position={[0, 0, height / 2 + 0.4]}
+                textHeight={flowerModel?.labelSize ?? 0.2}
+                position={[0, 0, height / 2 + (flowerModel?.labelHeight ?? 0.4)]}
               />
             )}
           </group>

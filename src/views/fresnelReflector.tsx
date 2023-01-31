@@ -638,10 +638,14 @@ const FresnelReflector = ({
           text={labelText}
           fontSize={20}
           fontFace={'Times Roman'}
-          textHeight={0.2}
+          textHeight={fresnelReflector?.labelSize ?? 0.2}
           castShadow={false}
           receiveShadow={false}
-          position={[0, 0, Math.max(hy * Math.abs(Math.sin(fresnelReflector.tiltAngle)) + 0.1, 0.2)]}
+          position={[
+            0,
+            0,
+            fresnelReflector?.labelHeight ?? Math.max(hy * Math.abs(Math.sin(fresnelReflector.tiltAngle)) + 0.1, 0.2),
+          ]}
         />
       )}
     </group>

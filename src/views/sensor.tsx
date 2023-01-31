@@ -1,5 +1,5 @@
 /*
- * @Copyright 2021-2022. Institute for Future Intelligence, Inc.
+ * @Copyright 2021-2023. Institute for Future Intelligence, Inc.
  */
 
 import React, { useMemo, useRef, useState } from 'react';
@@ -273,8 +273,8 @@ const Sensor = ({
           text={labelText}
           fontSize={20}
           fontFace={'Times Roman'}
-          textHeight={0.2}
-          position={[0, 0, lz + 0.2]}
+          textHeight={sensorModel?.labelSize ?? 0.2}
+          position={[0, 0, lz + (sensorModel?.labelHeight ?? 0.2)]}
         />
       )}
     </group>

@@ -3,7 +3,7 @@
  */
 
 import React, { useState } from 'react';
-import { Checkbox, Input, Menu } from 'antd';
+import { Checkbox, Input, InputNumber, Menu } from 'antd';
 import { FresnelReflectorModel } from '../../../models/FresnelReflectorModel';
 import { useStore } from '../../../stores/common';
 import * as Selector from '../../../stores/selector';
@@ -17,7 +17,8 @@ import FresnelReflectorReflectanceInput from './fresnelReflectorReflectanceInput
 import FresnelReflectorAbsorberSelection from './fresnelReflectorAbsorberSelection';
 import FresnelReflectorDrawSunBeamSelection from './fresnelReflectorDrawSunBeamSelection';
 import { ObjectType } from '../../../types';
-import { useLabel, useLabelShow, useLabelText } from './menuHooks';
+import { useLabel, useLabelHeight, useLabelShow, useLabelSize, useLabelText } from './menuHooks';
+import SubMenu from 'antd/lib/menu/SubMenu';
 
 export const FresnelReflectorMenu = React.memo(() => {
   const language = useStore(Selector.language);
@@ -37,6 +38,8 @@ export const FresnelReflectorMenu = React.memo(() => {
   const { labelText, setLabelText } = useLabel(fresnelReflector);
   const showLabel = useLabelShow(fresnelReflector);
   const updateLabelText = useLabelText(fresnelReflector, labelText);
+  const setLabelSize = useLabelSize(fresnelReflector);
+  const setLabelHeight = useLabelHeight(fresnelReflector);
 
   if (!fresnelReflector) return null;
 
@@ -145,26 +148,62 @@ export const FresnelReflectorMenu = React.memo(() => {
             {i18n.t('solarCollectorMenu.DrawSunBeam', lang)} ...
           </Menu.Item>
 
-          {/* show label or not */}
-          <Menu.Item key={'fresnel-reflector-show-label'}>
-            <Checkbox checked={!!fresnelReflector?.showLabel} onChange={showLabel}>
-              {i18n.t('solarCollectorMenu.KeepShowingLabel', lang)}
-            </Checkbox>
-          </Menu.Item>
-
-          {/*have to wrap the text field with a Menu so that it can stay open when the user types in it */}
-          <Menu>
-            {/* label text */}
-            <Menu.Item key={'fresnel-reflector-label-text'} style={{ paddingLeft: '36px' }}>
-              <Input
-                addonBefore={i18n.t('solarCollectorMenu.Label', lang) + ':'}
-                value={labelText}
-                onChange={(e: React.ChangeEvent<HTMLInputElement>) => setLabelText(e.target.value)}
-                onPressEnter={updateLabelText}
-                onBlur={updateLabelText}
-              />
+          <SubMenu
+            key={'fresnel-reflector-label'}
+            title={i18n.t('labelSubMenu.Label', lang)}
+            style={{ paddingLeft: '24px' }}
+          >
+            {/* show label or not */}
+            <Menu.Item key={'fresnel-reflector-show-label'}>
+              <Checkbox checked={!!fresnelReflector?.showLabel} onChange={showLabel}>
+                {i18n.t('labelSubMenu.KeepShowingLabel', lang)}
+              </Checkbox>
             </Menu.Item>
-          </Menu>
+
+            {/*have to wrap the text field with a Menu so that it can stay open when the user types in it */}
+            <Menu>
+              {/* label text */}
+              <Menu.Item key={'fresnel-reflector-label-text'} style={{ paddingLeft: '36px' }}>
+                <Input
+                  addonBefore={i18n.t('labelSubMenu.Label', lang) + ':'}
+                  value={labelText}
+                  onChange={(e: React.ChangeEvent<HTMLInputElement>) => setLabelText(e.target.value)}
+                  onPressEnter={updateLabelText}
+                  onBlur={updateLabelText}
+                />
+              </Menu.Item>
+              {/* the label's height relative to the dish center */}
+              <Menu.Item
+                style={{ height: '36px', paddingLeft: '36px', marginTop: 0 }}
+                key={'fresnel-reflector-label-height'}
+              >
+                <InputNumber
+                  addonBefore={i18n.t('labelSubMenu.LabelHeight', lang) + ':'}
+                  min={0.2}
+                  max={5}
+                  step={0.1}
+                  precision={1}
+                  value={fresnelReflector.labelHeight ?? 0.2}
+                  onChange={(value) => setLabelHeight(value)}
+                />
+              </Menu.Item>
+              {/* the label's size */}
+              <Menu.Item
+                style={{ height: '36px', paddingLeft: '36px', marginTop: 0 }}
+                key={'fresnel-reflector-label-size'}
+              >
+                <InputNumber
+                  addonBefore={i18n.t('labelSubMenu.LabelSize', lang) + ':'}
+                  min={0.2}
+                  max={2}
+                  step={0.1}
+                  precision={1}
+                  value={fresnelReflector.labelSize ?? 0.2}
+                  onChange={(value) => setLabelSize(value)}
+                />
+              </Menu.Item>
+            </Menu>
+          </SubMenu>
         </>
       )}
     </Menu.ItemGroup>

@@ -1,5 +1,5 @@
 /*
- * @Copyright 2021-2022. Institute for Future Intelligence, Inc.
+ * @Copyright 2021-2023. Institute for Future Intelligence, Inc.
  */
 
 import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
@@ -378,8 +378,8 @@ const Human = ({
                 text={labelText}
                 fontSize={20}
                 fontFace={'Times Roman'}
-                textHeight={0.2}
-                position={[0, 0, height / 2 + 0.4]}
+                textHeight={humanModel?.labelSize ?? 0.2}
+                position={[0, 0, height / 2 + (humanModel?.labelHeight ?? 0.4)]}
               />
             )}
           </group>

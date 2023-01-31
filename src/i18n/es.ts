@@ -1,5 +1,5 @@
 /*
- * @Copyright 2021-2022. Institute for Future Intelligence, Inc.
+ * @Copyright 2021-2023. Institute for Future Intelligence, Inc.
  */
 
 export const i18n_es = {
@@ -541,6 +541,14 @@ export const i18n_es = {
       UnlockAllElements: 'Unlock All Elements',
     },
 
+    labelSubMenu: {
+      Label: 'Etiqueta',
+      LabelText: 'Label Text',
+      LabelHeight: 'Label Height',
+      LabelSize: 'Label Size',
+      KeepShowingLabel: 'Seguir mostrando etiqueta',
+    },
+
     foundationMenu: {
       RemoveAllUnlockedSolarPanels: 'Eliminar todos los paneles solares',
       RemoveAllUnlockedParabolicTroughs: 'Remove All Unlocked Parabolic Troughs',
@@ -617,10 +625,6 @@ export const i18n_es = {
       GroupMaster: 'Group Master',
       LockAllElementsOnThisFoundation: 'Lock All Elements on This Foundation',
       UnlockAllElementsOnThisFoundation: 'Unlock All Elements on This Foundation',
-      Label: 'Label',
-      LabelHeight: 'Label Height',
-      LabelSize: 'Label Size',
-      KeepShowingLabel: 'Keep Showing Label',
       FloorRValue: 'Floor R-Value',
       OnlyThisFloor: 'Only This Floor',
       AllFloors: 'All Floors',
@@ -702,8 +706,6 @@ export const i18n_es = {
       AllSidesOfThisCuboid: 'Todos los lados en este cuboide',
       AllSidesOfAllCuboids: 'Todos los lados en todos los cuboides',
       AddPolygon: 'Añadir polígono',
-      Label: 'Label',
-      KeepShowingLabel: 'Keep Showing Label',
     },
 
     polygonMenu: {
@@ -803,8 +805,6 @@ export const i18n_es = {
       Flip: 'Flip',
       Type: 'Tipo',
       Spread: 'Extender',
-      Label: 'Etiqueta',
-      KeepShowingLabel: 'Seguir mostrando etiqueta',
     },
 
     flowerMenu: {
@@ -835,10 +835,6 @@ export const i18n_es = {
       ExtraPoleHeight: 'Extra Pole Height',
       ExtraPoleHeightInAdditionToHalfWidth: 'Extra Pole Height in Addition to Half Width',
       DrawSunBeam: 'Dibujar rayo del sol',
-      Label: 'Etiqueta',
-      LabelHeight: 'Label Height',
-      LabelSize: 'Label Size',
-      KeepShowingLabel: 'Seguir mostrando etiqueta',
     },
 
     concentratedSolarPowerCollectorMenu: {

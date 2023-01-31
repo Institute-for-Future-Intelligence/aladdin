@@ -740,8 +740,8 @@ const ParabolicDish = ({
           text={labelText}
           fontSize={20}
           fontFace={'Times Roman'}
-          textHeight={0.2}
-          position={[0, 0, Math.max(hy * Math.abs(Math.sin(dish.tiltAngle)) + 0.1, 0.2)]}
+          textHeight={dish?.labelSize ?? 0.2}
+          position={[0, 0, dish?.labelHeight ?? Math.max(hy * Math.abs(Math.sin(dish.tiltAngle)) + 0.1, 0.2)]}
         />
       )}
     </group>

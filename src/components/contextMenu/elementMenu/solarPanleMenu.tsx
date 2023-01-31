@@ -263,15 +263,11 @@ export const SolarPanelMenu = React.memo(() => {
             </Menu.Item>
           </SubMenu>
 
-          <SubMenu
-            key={'solar-panel-label'}
-            title={i18n.t('solarCollectorMenu.Label', lang)}
-            style={{ paddingLeft: '24px' }}
-          >
+          <SubMenu key={'solar-panel-label'} title={i18n.t('labelSubMenu.Label', lang)} style={{ paddingLeft: '24px' }}>
             {/* show label or not */}
             <Menu.Item key={'solar-panel-show-label'}>
               <Checkbox checked={!!solarPanel?.showLabel} onChange={showLabel}>
-                {i18n.t('solarCollectorMenu.KeepShowingLabel', lang)}
+                {i18n.t('labelSubMenu.KeepShowingLabel', lang)}
               </Checkbox>
             </Menu.Item>
 
@@ -280,7 +276,7 @@ export const SolarPanelMenu = React.memo(() => {
               {/* label text */}
               <Menu.Item key={'solar-panel-label-text'} style={{ paddingLeft: '36px' }}>
                 <Input
-                  addonBefore={i18n.t('solarCollectorMenu.Label', lang) + ':'}
+                  addonBefore={i18n.t('labelSubMenu.LabelText', lang) + ':'}
                   value={labelText}
                   onChange={(e: React.ChangeEvent<HTMLInputElement>) => setLabelText(e.target.value)}
                   onPressEnter={updateLabelText}
@@ -289,7 +285,7 @@ export const SolarPanelMenu = React.memo(() => {
               {/* the label's height relative to the solar panel's top surface */}
               <Menu.Item style={{ height: '36px', paddingLeft: '36px', marginTop: 0 }} key={'solar-panel-label-height'}>
                 <InputNumber
-                  addonBefore={i18n.t('solarCollectorMenu.LabelHeight', lang) + ':'}
+                  addonBefore={i18n.t('labelSubMenu.LabelHeight', lang) + ':'}
                   min={0}
                   max={100}
                   step={1}
@@ -301,7 +297,7 @@ export const SolarPanelMenu = React.memo(() => {
               {/* the label's size */}
               <Menu.Item style={{ height: '36px', paddingLeft: '36px', marginTop: 0 }} key={'solar-panel-label-size'}>
                 <InputNumber
-                  addonBefore={i18n.t('solarCollectorMenu.LabelSize', lang) + ':'}
+                  addonBefore={i18n.t('labelSubMenu.LabelSize', lang) + ':'}
                   min={0.2}
                   max={2}
                   step={0.1}

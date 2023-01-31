@@ -3,7 +3,7 @@
  */
 
 import React, { useState } from 'react';
-import { Checkbox, Input, Menu } from 'antd';
+import { Checkbox, Input, InputNumber, Menu } from 'antd';
 import { ParabolicTroughModel } from '../../../models/ParabolicTroughModel';
 import { useStore } from '../../../stores/common';
 import * as Selector from '../../../stores/selector';
@@ -20,7 +20,8 @@ import ParabolicTroughAbsorptanceInput from './parabolicTroughAbsorptanceInput';
 import ParabolicTroughOpticalEfficiencyInput from './parabolicTroughOpticalEfficiencyInput';
 import ParabolicTroughThermalEfficiencyInput from './parabolicTroughThermalEfficiencyInput';
 import { ObjectType } from '../../../types';
-import { useLabel, useLabelShow, useLabelText } from './menuHooks';
+import { useLabel, useLabelHeight, useLabelShow, useLabelSize, useLabelText } from './menuHooks';
+import SubMenu from 'antd/lib/menu/SubMenu';
 
 export const ParabolicTroughMenu = React.memo(() => {
   const language = useStore(Selector.language);
@@ -45,6 +46,8 @@ export const ParabolicTroughMenu = React.memo(() => {
   const { labelText, setLabelText } = useLabel(parabolicTrough);
   const showLabel = useLabelShow(parabolicTrough);
   const updateLabelText = useLabelText(parabolicTrough, labelText);
+  const setLabelSize = useLabelSize(parabolicTrough);
+  const setLabelHeight = useLabelHeight(parabolicTrough);
 
   if (!parabolicTrough) return null;
 
@@ -214,26 +217,62 @@ export const ParabolicTroughMenu = React.memo(() => {
             </Checkbox>
           </Menu.Item>
 
-          {/* show label or not */}
-          <Menu.Item key={'parabolic-trough-show-label'}>
-            <Checkbox checked={!!parabolicTrough?.showLabel} onChange={showLabel}>
-              {i18n.t('solarCollectorMenu.KeepShowingLabel', lang)}
-            </Checkbox>
-          </Menu.Item>
-
-          {/*have to wrap the text field with a Menu so that it can stay open when the user types in it */}
-          <Menu>
-            {/* label text */}
-            <Menu.Item key={'parabolic-trough-label-text'} style={{ paddingLeft: '36px' }}>
-              <Input
-                addonBefore={i18n.t('solarCollectorMenu.Label', lang) + ':'}
-                value={labelText}
-                onChange={(e: React.ChangeEvent<HTMLInputElement>) => setLabelText(e.target.value)}
-                onPressEnter={updateLabelText}
-                onBlur={updateLabelText}
-              />
+          <SubMenu
+            key={'parabolic-trough-label'}
+            title={i18n.t('labelSubMenu.Label', lang)}
+            style={{ paddingLeft: '24px' }}
+          >
+            {/* show label or not */}
+            <Menu.Item key={'parabolic-trough-show-label'}>
+              <Checkbox checked={!!parabolicTrough?.showLabel} onChange={showLabel}>
+                {i18n.t('labelSubMenu.KeepShowingLabel', lang)}
+              </Checkbox>
             </Menu.Item>
-          </Menu>
+
+            {/*have to wrap the text field with a Menu so that it can stay open when the user types in it */}
+            <Menu>
+              {/* label text */}
+              <Menu.Item key={'parabolic-trough-label-text'} style={{ paddingLeft: '36px' }}>
+                <Input
+                  addonBefore={i18n.t('labelSubMenu.Label', lang) + ':'}
+                  value={labelText}
+                  onChange={(e: React.ChangeEvent<HTMLInputElement>) => setLabelText(e.target.value)}
+                  onPressEnter={updateLabelText}
+                  onBlur={updateLabelText}
+                />
+              </Menu.Item>
+              {/* the label's height relative to the center */}
+              <Menu.Item
+                style={{ height: '36px', paddingLeft: '36px', marginTop: 0 }}
+                key={'parabolic-trough-label-height'}
+              >
+                <InputNumber
+                  addonBefore={i18n.t('labelSubMenu.LabelHeight', lang) + ':'}
+                  min={0.2}
+                  max={5}
+                  step={0.1}
+                  precision={1}
+                  value={parabolicTrough.labelHeight ?? 0.2}
+                  onChange={(value) => setLabelHeight(value)}
+                />
+              </Menu.Item>
+              {/* the label's size */}
+              <Menu.Item
+                style={{ height: '36px', paddingLeft: '36px', marginTop: 0 }}
+                key={'parabolic-trough-label-size'}
+              >
+                <InputNumber
+                  addonBefore={i18n.t('labelSubMenu.LabelSize', lang) + ':'}
+                  min={0.2}
+                  max={2}
+                  step={0.1}
+                  precision={1}
+                  value={parabolicTrough.labelSize ?? 0.2}
+                  onChange={(value) => setLabelSize(value)}
+                />
+              </Menu.Item>
+            </Menu>
+          </SubMenu>
         </>
       )}
     </Menu.ItemGroup>
