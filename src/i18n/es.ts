@@ -830,11 +830,14 @@ export const i18n_es = {
 
     solarCollectorMenu: {
       RelativeAzimuth: 'Azimut relativa',
+      Pole: 'Pole',
       PoleHeight: 'Altura del poste',
       ExtraPoleHeight: 'Extra Pole Height',
       ExtraPoleHeightInAdditionToHalfWidth: 'Extra Pole Height in Addition to Half Width',
       DrawSunBeam: 'Dibujar rayo del sol',
       Label: 'Etiqueta',
+      LabelHeight: 'Label Height',
+      LabelSize: 'Label Size',
       KeepShowingLabel: 'Seguir mostrando etiqueta',
     },
 

@@ -808,11 +808,14 @@ export const i18n_zh_tw = {
 
     solarCollectorMenu: {
       RelativeAzimuth: '相對方位角',
+      Pole: '支架',
       PoleHeight: '支架高度',
       ExtraPoleHeight: '額外的支架高度',
       ExtraPoleHeightInAdditionToHalfWidth: '寬度一半額外的支架高度',
       DrawSunBeam: '顯示光束',
       Label: '標籤',
+      LabelHeight: '標籤的高度',
+      LabelSize: '標籤的大小',
       KeepShowingLabel: '顯示標籤',
     },
 

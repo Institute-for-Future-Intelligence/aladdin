@@ -159,8 +159,8 @@ const Label = ({ sp }: LabelProps) => {
       text={labelText}
       fontSize={20}
       fontFace={'Times Roman'}
-      textHeight={0.2}
-      position={[0, 0, Math.max((sp.ly / 2) * Math.abs(Math.sin(sp.tiltAngle)) + 0.1, 0.2)]}
+      textHeight={sp.labelSize ?? 0.2}
+      position={[0, 0, sp.labelHeight ?? Math.max((sp.ly / 2) * Math.abs(Math.sin(sp.tiltAngle)) + 0.1, 0.2)]}
     />
   );
 };

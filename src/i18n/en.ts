@@ -830,11 +830,14 @@ export const i18n_en = {
 
     solarCollectorMenu: {
       RelativeAzimuth: 'Relative Azimuth',
+      Pole: 'Pole',
       PoleHeight: 'Pole Height',
       ExtraPoleHeight: 'Extra Pole Height',
       ExtraPoleHeightInAdditionToHalfWidth: 'Extra Pole Height in Addition to Half Width',
       DrawSunBeam: 'Draw Sun Beam',
       Label: 'Label',
+      LabelHeight: 'Label Height',
+      LabelSize: 'Label Size',
       KeepShowingLabel: 'Keep Showing Label',
     },
 

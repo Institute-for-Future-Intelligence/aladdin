@@ -896,8 +896,12 @@ const SolarPanel = ({
           text={labelText}
           fontSize={20}
           fontFace={'Times Roman'}
-          textHeight={0.2}
-          position={[0, 0, Math.max(hy * Math.abs(Math.sin(solarPanel.tiltAngle)) + 0.1, 0.2)]}
+          textHeight={solarPanel?.labelSize ?? 0.2}
+          position={[
+            0,
+            0,
+            solarPanel?.labelHeight ?? Math.max(hy * Math.abs(Math.sin(solarPanel.tiltAngle)) + 0.1, 0.2),
+          ]}
         />
       )}
     </group>

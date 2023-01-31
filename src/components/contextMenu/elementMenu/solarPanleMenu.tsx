@@ -3,7 +3,7 @@
  */
 
 import React, { useState } from 'react';
-import { Checkbox, Input, Menu } from 'antd';
+import { Checkbox, Input, InputNumber, Menu } from 'antd';
 import { Vector3 } from 'three';
 import { SolarPanelModel } from '../../../models/SolarPanelModel';
 import { useStore } from '../../../stores/common';
@@ -12,6 +12,7 @@ import { Util } from '../../../Util';
 import { Copy, Cut, Lock } from '../menuItems';
 import i18n from '../../../i18n/i18n';
 import { UndoableCheck } from '../../../undo/UndoableCheck';
+import SubMenu from 'antd/lib/menu/SubMenu';
 import SolarPanelModelSelection from './solarPanelModelSelection';
 import SolarPanelOrientationSelection from './solarPanelOrientationSelection';
 import SolarPanelLengthInput from './solarPanelLengthInput';
@@ -24,7 +25,7 @@ import SolarPanelPoleSpacingInput from './solarPanelPoleSpacingInput';
 import SolarPanelFrameColorSelection from './solarPanelFrameColorSelection';
 import { UNIT_VECTOR_POS_Z } from '../../../constants';
 import { ObjectType } from '../../../types';
-import { useLabel, useLabelShow, useLabelText } from './menuHooks';
+import { useLabel, useLabelHeight, useLabelShow, useLabelSize, useLabelText } from './menuHooks';
 
 export const SolarPanelMenu = React.memo(() => {
   const updateSolarCollectorDrawSunBeamById = useStore(Selector.updateSolarCollectorDrawSunBeamById);
@@ -49,6 +50,8 @@ export const SolarPanelMenu = React.memo(() => {
   const { labelText, setLabelText } = useLabel(solarPanel);
   const showLabel = useLabelShow(solarPanel);
   const updateLabelText = useLabelText(solarPanel, labelText);
+  const setLabelSize = useLabelSize(solarPanel);
+  const setLabelHeight = useLabelHeight(solarPanel);
 
   if (!solarPanel) return null;
 
@@ -77,7 +80,7 @@ export const SolarPanelMenu = React.memo(() => {
   };
 
   return (
-    <>
+    <Menu.ItemGroup>
       <Copy keyName={'solar-panel-copy'} paddingLeft={'36px'} />
       {editable && <Cut keyName={'solar-panel-cut'} paddingLeft={'36px'} />}
       <Lock keyName={'solar-panel-lock'} />
@@ -202,34 +205,6 @@ export const SolarPanelMenu = React.memo(() => {
                   </Menu.Item>
                 </>
               )}
-
-              {/* pole height */}
-              {poleHeightDialogVisible && <SolarPanelPoleHeightInput setDialogVisible={setPoleHeightDialogVisible} />}
-              <Menu.Item
-                key={'solar-panel-pole-height'}
-                style={{ paddingLeft: '36px' }}
-                onClick={() => {
-                  setApplyCount(0);
-                  setPoleHeightDialogVisible(true);
-                }}
-              >
-                {i18n.t('solarCollectorMenu.PoleHeight', lang)} ...
-              </Menu.Item>
-
-              {/* pole spacing */}
-              {poleSpacingDialogVisible && (
-                <SolarPanelPoleSpacingInput setDialogVisible={setPoleSpacingDialogVisible} />
-              )}
-              <Menu.Item
-                key={'solar-panel-pole-spacing'}
-                style={{ paddingLeft: '36px' }}
-                onClick={() => {
-                  setApplyCount(0);
-                  setPoleSpacingDialogVisible(true);
-                }}
-              >
-                {i18n.t('solarPanelMenu.PoleSpacing', lang)} ...
-              </Menu.Item>
             </>
           )}
 
@@ -258,27 +233,87 @@ export const SolarPanelMenu = React.memo(() => {
             </Checkbox>
           </Menu.Item>
 
-          {/* show label or not */}
-          <Menu.Item key={'solar-panel-show-label'}>
-            <Checkbox checked={!!solarPanel?.showLabel} onChange={showLabel}>
-              {i18n.t('solarCollectorMenu.KeepShowingLabel', lang)}
-            </Checkbox>
-          </Menu.Item>
-
-          {/*have to wrap the text field with a Menu so that it can stay open when the user types in it */}
-          <Menu>
-            {/* label text */}
-            <Menu.Item key={'solar-panel-label-text'} style={{ paddingLeft: '36px' }}>
-              <Input
-                addonBefore={i18n.t('solarCollectorMenu.Label', lang) + ':'}
-                value={labelText}
-                onChange={(e: React.ChangeEvent<HTMLInputElement>) => setLabelText(e.target.value)}
-                onPressEnter={updateLabelText}
-              />
+          <SubMenu
+            key={'solar-panel-pole'}
+            title={i18n.t('solarCollectorMenu.Pole', lang)}
+            style={{ paddingLeft: '24px' }}
+          >
+            {/* pole height */}
+            {poleHeightDialogVisible && <SolarPanelPoleHeightInput setDialogVisible={setPoleHeightDialogVisible} />}
+            <Menu.Item
+              key={'solar-panel-pole-height'}
+              onClick={() => {
+                setApplyCount(0);
+                setPoleHeightDialogVisible(true);
+              }}
+            >
+              {i18n.t('solarCollectorMenu.PoleHeight', lang)} ...
             </Menu.Item>
-          </Menu>
+
+            {/* pole spacing */}
+            {poleSpacingDialogVisible && <SolarPanelPoleSpacingInput setDialogVisible={setPoleSpacingDialogVisible} />}
+            <Menu.Item
+              key={'solar-panel-pole-spacing'}
+              onClick={() => {
+                setApplyCount(0);
+                setPoleSpacingDialogVisible(true);
+              }}
+            >
+              {i18n.t('solarPanelMenu.PoleSpacing', lang)} ...
+            </Menu.Item>
+          </SubMenu>
+
+          <SubMenu
+            key={'solar-panel-label'}
+            title={i18n.t('solarCollectorMenu.Label', lang)}
+            style={{ paddingLeft: '24px' }}
+          >
+            {/* show label or not */}
+            <Menu.Item key={'solar-panel-show-label'}>
+              <Checkbox checked={!!solarPanel?.showLabel} onChange={showLabel}>
+                {i18n.t('solarCollectorMenu.KeepShowingLabel', lang)}
+              </Checkbox>
+            </Menu.Item>
+
+            {/*have to wrap the text field with a Menu so that it can stay open when the user types in it */}
+            <Menu>
+              {/* label text */}
+              <Menu.Item key={'solar-panel-label-text'} style={{ paddingLeft: '36px' }}>
+                <Input
+                  addonBefore={i18n.t('solarCollectorMenu.Label', lang) + ':'}
+                  value={labelText}
+                  onChange={(e: React.ChangeEvent<HTMLInputElement>) => setLabelText(e.target.value)}
+                  onPressEnter={updateLabelText}
+                />
+              </Menu.Item>
+              {/* the label's height relative to the solar panel's top surface */}
+              <Menu.Item style={{ height: '36px', paddingLeft: '36px', marginTop: 0 }} key={'solar-panel-label-height'}>
+                <InputNumber
+                  addonBefore={i18n.t('solarCollectorMenu.LabelHeight', lang) + ':'}
+                  min={0}
+                  max={100}
+                  step={1}
+                  precision={1}
+                  value={solarPanel.labelHeight ?? 0.5}
+                  onChange={(value) => setLabelHeight(value)}
+                />
+              </Menu.Item>
+              {/* the label's size */}
+              <Menu.Item style={{ height: '36px', paddingLeft: '36px', marginTop: 0 }} key={'solar-panel-label-size'}>
+                <InputNumber
+                  addonBefore={i18n.t('solarCollectorMenu.LabelSize', lang) + ':'}
+                  min={0.2}
+                  max={2}
+                  step={0.1}
+                  precision={1}
+                  value={solarPanel.labelSize ?? 0.2}
+                  onChange={(value) => setLabelSize(value)}
+                />
+              </Menu.Item>
+            </Menu>
+          </SubMenu>
         </>
       )}
-    </>
+    </Menu.ItemGroup>
   );
 });

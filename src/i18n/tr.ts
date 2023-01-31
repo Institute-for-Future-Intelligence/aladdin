@@ -830,11 +830,14 @@ export const i18n_tr = {
 
     solarCollectorMenu: {
       RelativeAzimuth: 'Göreceli Azimut Açısı',
+      Pole: 'Pole',
       PoleHeight: 'Direk Yüksekliği',
       ExtraPoleHeight: 'Ekstra Direk Yüksekliği',
       ExtraPoleHeightInAdditionToHalfWidth: 'Yarım Genişliğe Ek Ekstra Direk Yüksekliği',
       DrawSunBeam: 'Güneş Işını Çiz',
       Label: 'Etiket',
+      LabelHeight: 'Label Height',
+      LabelSize: 'Label Size',
       KeepShowingLabel: 'Etiketi Göstermeye Devam Et',
     },
 
