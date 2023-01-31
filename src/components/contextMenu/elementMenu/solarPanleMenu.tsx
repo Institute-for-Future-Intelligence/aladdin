@@ -1,5 +1,5 @@
 /*
- * @Copyright 2021-2022. Institute for Future Intelligence, Inc.
+ * @Copyright 2021-2023. Institute for Future Intelligence, Inc.
  */
 
 import React, { useState } from 'react';
@@ -25,6 +25,7 @@ import SolarPanelPoleSpacingInput from './solarPanelPoleSpacingInput';
 import SolarPanelFrameColorSelection from './solarPanelFrameColorSelection';
 import { UNIT_VECTOR_POS_Z } from '../../../constants';
 import { ObjectType } from '../../../types';
+import { useLabel } from './menuHooks';
 
 export const SolarPanelMenu = React.memo(() => {
   const updateElementLabelById = useStore(Selector.updateElementLabelById);
@@ -37,7 +38,6 @@ export const SolarPanelMenu = React.memo(() => {
     state.elements.find((e) => e.selected && e.type === ObjectType.SolarPanel),
   ) as SolarPanelModel;
 
-  const [labelText, setLabelText] = useState<string>(solarPanel?.label ?? '');
   const [pvModelDialogVisible, setPvModelDialogVisible] = useState(false);
   const [orientationDialogVisible, setOrientationDialogVisible] = useState(false);
   const [widthDialogVisible, setWidthDialogVisible] = useState(false);
@@ -48,6 +48,8 @@ export const SolarPanelMenu = React.memo(() => {
   const [poleHeightDialogVisible, setPoleHeightDialogVisible] = useState(false);
   const [poleSpacingDialogVisible, setPoleSpacingDialogVisible] = useState(false);
   const [frameColorDialogVisible, setFrameColorDialogVisible] = useState(false);
+
+  const { labelText, setLabelText } = useLabel(solarPanel);
 
   if (!solarPanel) return null;
 

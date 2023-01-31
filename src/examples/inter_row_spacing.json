@@ -1,6 +1,7 @@
 {
-  "docid": "dMvsESgKDxzFVxfQ4Da7xH",
-  "timestamp": 1643476642322,
+  "docid": "x2xVLuvxag22T1ppP3ztXz",
+  "time": "01/31/2023 11:53 am",
+  "timestamp": 1675183983563,
   "userid": "QWecNcxhyvP6j6sBN11hBsfZDau1",
   "owner": null,
   "email": null,
@@ -67,7 +68,7 @@
       "foundationId": "7nkGUQpHaM9zN22MJgfSvf",
       "id": "snQKvKf7xPrhuT28Bo2tYv",
       "selected": false,
-      "dailyYield": 17.594654911816438,
+      "dailyYield": 20.344194814255086,
       "label": "R22"
     },
     {
@@ -102,7 +103,7 @@
       "id": "s6gwZqoX59Afjq9iWzuivT",
       "selected": false,
       "drawSunBeam": false,
-      "dailyYield": 17.557096724867407,
+      "dailyYield": 20.344194814255086,
       "label": "R23"
     },
     {
@@ -136,7 +137,7 @@
       "foundationId": "7nkGUQpHaM9zN22MJgfSvf",
       "id": "pbozwPgQw2bzssDtJKTqSk",
       "selected": false,
-      "dailyYield": 17.594654911816438,
+      "dailyYield": 20.301130494002802,
       "label": "R24"
     },
     {
@@ -171,7 +172,7 @@
       "id": "3nSBw847J9tSxs8CwWughr",
       "selected": false,
       "label": "R21",
-      "dailyYield": 20.418384465308375
+      "dailyYield": 20.423474876035336
     },
     {
       "type": "Solar Panel",
@@ -204,7 +205,7 @@
       "foundationId": "7nkGUQpHaM9zN22MJgfSvf",
       "id": "pu9LeYFSmjuxaejn2VSzZ1",
       "selected": false,
-      "dailyYield": 17.594654911816438,
+      "dailyYield": 20.34600992389522,
       "label": "R25"
     },
     {
@@ -227,7 +228,11 @@
       ],
       "parentId": "Ground",
       "id": "7nkGUQpHaM9zN22MJgfSvf",
-      "selected": false
+      "selected": false,
+      "showLabel": true,
+      "label": "Column 2",
+      "labelHeight": 2.5,
+      "labelSize": 1
     },
     {
       "type": "Human",
@@ -283,7 +288,7 @@
       "foundationId": "7LGxrgEwehUWBo5dH7C67q",
       "id": "oPGVYYGkGqjKAWacgXTr35",
       "selected": false,
-      "dailyYield": 11.701693771571362,
+      "dailyYield": 11.705639294931665,
       "label": "R12"
     },
     {
@@ -296,7 +301,7 @@
       "ly": 1.984,
       "lz": 0.046,
       "trackerType": "None",
-      "tiltAngle": 0.5235987755982988,
+      "tiltAngle": 0.5410520681182421,
       "relativeAzimuth": 0,
       "orientation": "Landscape",
       "poleRadius": 0.05,
@@ -317,7 +322,7 @@
       "foundationId": "7LGxrgEwehUWBo5dH7C67q",
       "id": "aiWW32QVkCjCBwtDMtjsXr",
       "selected": false,
-      "dailyYield": 20.418384465308375,
+      "dailyYield": 20.53798565909794,
       "label": "R11"
     },
     {
@@ -340,7 +345,11 @@
       ],
       "parentId": "Ground",
       "id": "7LGxrgEwehUWBo5dH7C67q",
-      "selected": false
+      "selected": false,
+      "labelHeight": 2.5,
+      "label": "Column 1",
+      "labelSize": 1,
+      "showLabel": true
     },
     {
       "type": "Solar Panel",
@@ -373,7 +382,7 @@
       "foundationId": "7LGxrgEwehUWBo5dH7C67q",
       "id": "gFDw5Wxzxz1fZY32qoSLoy",
       "selected": false,
-      "dailyYield": 11.690410759479263,
+      "dailyYield": 11.694143838550957,
       "label": "R13"
     },
     {
@@ -407,7 +416,7 @@
       "foundationId": "7LGxrgEwehUWBo5dH7C67q",
       "id": "3seUSu69aBJbCMJ1QTweLi",
       "selected": false,
-      "dailyYield": 11.701693771571362,
+      "dailyYield": 11.705639294931665,
       "label": "R14"
     },
     {
@@ -441,7 +450,7 @@
       "foundationId": "7LGxrgEwehUWBo5dH7C67q",
       "id": "hgGFwiEpscwf16U1io4zpD",
       "selected": false,
-      "dailyYield": 11.701693771571362,
+      "dailyYield": 11.705639294931665,
       "label": "R15"
     }
   ],
@@ -482,14 +491,14 @@
     "showYearlyLightSensorPanel": false,
     "mapType": "roadmap",
     "cameraPosition": [
-      26.638740984237113,
-      -37.12807705767134,
-      19.98609575543214
+      24.449661616157805,
+      -32.03067876334289,
+      17.208359550890634
     ],
     "panCenter": [
-      16.676839641041024,
-      0.697317195514167,
-      0.36124976444702794
+      16.853649553872028,
+      0.6961394156555122,
+      0.5033956296362099
     ],
     "orthographic": false,
     "enableRotate": true,
@@ -498,14 +507,77 @@
     "cameraPosition2D": [
       2.68477267877577,
       -0.19810500302601344,
-      47.99999980190954
+      150
     ],
     "panCenter2D": [
       2.68477267877577,
       -0.19805700089319547,
       5.501827899659354e-7
     ],
-    "solarRadiationHeatMapMaxValue": 4.5
+    "solarRadiationHeatMapMaxValue": 4.5,
+    "dailyPvYieldPanelRect": {
+      "x": 0,
+      "y": 0,
+      "width": 600,
+      "height": 400
+    }
+  },
+  "evolutionMethod": 1,
+  "solarPanelArrayLayoutParams": {
+    "pvModelName": "CS6X-355P-FG",
+    "rowAxis": "Zonal",
+    "orientation": "Landscape",
+    "tiltAngle": 0,
+    "rowsPerRack": 1,
+    "interRowSpacing": 2,
+    "poleHeight": 1,
+    "poleSpacing": 3
+  },
+  "solarPanelArrayLayoutConstraints": {
+    "minimumInterRowSpacing": 2,
+    "maximumInterRowSpacing": 10,
+    "minimumRowsPerRack": 1,
+    "maximumRowsPerRack": 6,
+    "minimumTiltAngle": -1.5707963267948966,
+    "maximumTiltAngle": 1.5707963267948966,
+    "poleHeight": 1,
+    "poleSpacing": 5,
+    "orientation": "Landscape",
+    "pvModelName": "CS6X-355P-FG",
+    "rowAxis": "Zonal"
+  },
+  "evolutionaryAlgorithmState": {
+    "geneticAlgorithmParams": {
+      "problem": "Solar Panel Tilt Angle",
+      "objectiveFunctionType": 1,
+      "selectionMethod": 1,
+      "searchMethod": 1,
+      "populationSize": 20,
+      "maximumGenerations": 5,
+      "selectionRate": 0.5,
+      "crossoverRate": 0.5,
+      "mutationRate": 0.1,
+      "convergenceThreshold": 0.01,
+      "localSearchRadius": 0.1
+    },
+    "particleSwarmOptimizationParams": {
+      "problem": "Solar Panel Tilt Angle",
+      "objectiveFunctionType": 1,
+      "searchMethod": 1,
+      "swarmSize": 20,
+      "maximumSteps": 5,
+      "vmax": 0.01,
+      "inertia": 0.8,
+      "cognitiveCoefficient": 0.1,
+      "socialCoefficient": 0.1,
+      "convergenceThreshold": 0.01,
+      "localSearchRadius": 0.1
+    }
+  },
+  "economicsParams": {
+    "projectLifeSpan": 25,
+    "electricitySellingPrice": 0.25,
+    "operationalCostPerUnit": 0.15
   },
   "notes": []
 }

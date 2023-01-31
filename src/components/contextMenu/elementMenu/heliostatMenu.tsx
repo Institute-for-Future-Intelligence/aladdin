@@ -1,5 +1,5 @@
 /*
- * @Copyright 2022. Institute for Future Intelligence, Inc.
+ * @Copyright 2022-2023. Institute for Future Intelligence, Inc.
  */
 
 import React, { useState } from 'react';
@@ -18,6 +18,7 @@ import HeliostatReflectanceInput from './heliostatReflectorReflectanceInput';
 import HeliostatDrawSunBeamSelection from './heliostatDrawSunBeamSelection';
 import HeliostatTowerSelection from './heliostatTowerSelection';
 import { ObjectType } from '../../../types';
+import { useLabel } from './menuHooks';
 
 export const HeliostatMenu = React.memo(() => {
   const language = useStore(Selector.language);
@@ -29,13 +30,14 @@ export const HeliostatMenu = React.memo(() => {
   const addUndoable = useStore(Selector.addUndoable);
   const setApplyCount = useStore(Selector.setApplyCount);
 
-  const [labelText, setLabelText] = useState<string>(heliostat?.label ?? '');
   const [widthDialogVisible, setWidthDialogVisible] = useState(false);
   const [lengthDialogVisible, setLengthDialogVisible] = useState(false);
   const [poleHeightDialogVisible, setPoleHeightDialogVisible] = useState(false);
   const [reflectanceDialogVisible, setReflectanceDialogVisible] = useState(false);
   const [sunBeamDialogVisible, setSunBeamDialogVisible] = useState(false);
   const [towerDialogVisible, setTowerDialogVisible] = useState(false);
+
+  const { labelText, setLabelText } = useLabel(heliostat);
 
   if (!heliostat) return null;
 

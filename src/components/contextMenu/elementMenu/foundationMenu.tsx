@@ -49,6 +49,7 @@ import { UndoableChangeGroup } from '../../../undo/UndoableChangeGroup';
 import { UndoableCheck } from '../../../undo/UndoableCheck';
 import FloorRValueInput from './floorRValueInput';
 import { Util } from '../../../Util';
+import { useLabel } from './menuHooks';
 
 export const FoundationMenu = React.memo(() => {
   const setCommonStore = useStore(Selector.set);
@@ -114,7 +115,8 @@ export const FoundationMenu = React.memo(() => {
   const [turbineEfficiencyDialogVisible, setTurbineEfficiencyDialogVisible] = useState(false);
   const [solarPanelTiltAngleGaWizardVisible, setSolarPanelTiltAngleGaWizardVisible] = useState(false);
   const [solarPanelTiltAnglePsoWizardVisible, setSolarPanelTiltAnglePsoWizardVisible] = useState(false);
-  const [labelText, setLabelText] = useState<string>(foundation?.label ?? '');
+
+  const { labelText, setLabelText } = useLabel(foundation);
 
   if (!foundation) return null;
 

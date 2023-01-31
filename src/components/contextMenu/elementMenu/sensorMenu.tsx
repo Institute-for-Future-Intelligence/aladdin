@@ -1,8 +1,8 @@
 /*
- * @Copyright 2021-2022. Institute for Future Intelligence, Inc.
+ * @Copyright 2021-2023. Institute for Future Intelligence, Inc.
  */
 
-import React, { useState } from 'react';
+import React from 'react';
 import { Checkbox, Input, Menu } from 'antd';
 import { CheckboxChangeEvent } from 'antd/lib/checkbox';
 import { useStore } from '../../../stores/common';
@@ -13,6 +13,7 @@ import { UndoableCheck } from '../../../undo/UndoableCheck';
 import { UndoableChange } from '../../../undo/UndoableChange';
 import { SensorModel } from '../../../models/SensorModel';
 import { ObjectType } from '../../../types';
+import { useLabel } from './menuHooks';
 
 export const SensorMenu = React.memo(() => {
   const language = useStore(Selector.language);
@@ -23,7 +24,7 @@ export const SensorMenu = React.memo(() => {
     state.elements.find((e) => e.selected && e.type === ObjectType.Sensor),
   ) as SensorModel;
 
-  const [labelText, setLabelText] = useState<string>(sensor?.label ?? '');
+  const { labelText, setLabelText } = useLabel(sensor);
 
   if (!sensor) return null;
 

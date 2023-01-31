@@ -1,5 +1,5 @@
 /*
- * @Copyright 2021-2022. Institute for Future Intelligence, Inc.
+ * @Copyright 2021-2023. Institute for Future Intelligence, Inc.
  */
 
 import React, { useState } from 'react';
@@ -31,6 +31,7 @@ import { Vector3 } from 'three';
 import { ElementCounter } from '../../../stores/ElementCounter';
 import { UndoableCheck } from '../../../undo/UndoableCheck';
 import { UndoableChange } from '../../../undo/UndoableChange';
+import { useLabel } from './menuHooks';
 
 export const CuboidMenu = React.memo(() => {
   const setCommonStore = useStore(Selector.set);
@@ -51,13 +52,14 @@ export const CuboidMenu = React.memo(() => {
     state.elements.find((e) => e.selected && e.type === ObjectType.Cuboid),
   ) as CuboidModel;
 
-  const [labelText, setLabelText] = useState<string>(cuboid?.label ?? '');
   const [colorDialogVisible, setColorDialogVisible] = useState(false);
   const [textureDialogVisible, setTextureDialogVisible] = useState(false);
   const [widthDialogVisible, setWidthDialogVisible] = useState(false);
   const [lengthDialogVisible, setLengthDialogVisible] = useState(false);
   const [heightDialogVisible, setHeightDialogVisible] = useState(false);
   const [azimuthDialogVisible, setAzimuthDialogVisible] = useState(false);
+
+  const { labelText, setLabelText } = useLabel(cuboid);
 
   if (!cuboid) return null;
 

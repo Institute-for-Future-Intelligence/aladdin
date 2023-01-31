@@ -1,5 +1,5 @@
 /*
- * @Copyright 2022. Institute for Future Intelligence, Inc.
+ * @Copyright 2022-2023. Institute for Future Intelligence, Inc.
  */
 
 import React, { useState } from 'react';
@@ -19,6 +19,7 @@ import FresnelReflectorReflectanceInput from './fresnelReflectorReflectanceInput
 import FresnelReflectorAbsorberSelection from './fresnelReflectorAbsorberSelection';
 import FresnelReflectorDrawSunBeamSelection from './fresnelReflectorDrawSunBeamSelection';
 import { ObjectType } from '../../../types';
+import { useLabel } from './menuHooks';
 
 export const FresnelReflectorMenu = React.memo(() => {
   const language = useStore(Selector.language);
@@ -30,7 +31,6 @@ export const FresnelReflectorMenu = React.memo(() => {
   const addUndoable = useStore(Selector.addUndoable);
   const setApplyCount = useStore(Selector.setApplyCount);
 
-  const [labelText, setLabelText] = useState<string>(fresnelReflector?.label ?? '');
   const [moduleLengthDialogVisible, setModuleLengthDialogVisible] = useState(false);
   const [widthDialogVisible, setWidthDialogVisible] = useState(false);
   const [lengthDialogVisible, setLengthDialogVisible] = useState(false);
@@ -38,6 +38,8 @@ export const FresnelReflectorMenu = React.memo(() => {
   const [reflectanceDialogVisible, setReflectanceDialogVisible] = useState(false);
   const [receiverDialogVisible, setReceiverDialogVisible] = useState(false);
   const [sunBeamDialogVisible, setSunBeamDialogVisible] = useState(false);
+
+  const { labelText, setLabelText } = useLabel(fresnelReflector);
 
   if (!fresnelReflector) return null;
 

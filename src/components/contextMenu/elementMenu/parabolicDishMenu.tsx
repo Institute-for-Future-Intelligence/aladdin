@@ -1,5 +1,5 @@
 /*
- * @Copyright 2022. Institute for Future Intelligence, Inc.
+ * @Copyright 2022-2023. Institute for Future Intelligence, Inc.
  */
 
 import React, { useState } from 'react';
@@ -20,6 +20,7 @@ import ParabolicDishOpticalEfficiencyInput from './parabolicDishOpticalEfficienc
 import ParabolicDishThermalEfficiencyInput from './parabolicDishThermalEfficiencyInput';
 import ParabolicDishStructureTypeInput from './parabolicDishStructureTypeInput';
 import { ObjectType } from '../../../types';
+import { useLabel } from './menuHooks';
 
 export const ParabolicDishMenu = React.memo(() => {
   const language = useStore(Selector.language);
@@ -32,7 +33,6 @@ export const ParabolicDishMenu = React.memo(() => {
   const addUndoable = useStore(Selector.addUndoable);
   const setApplyCount = useStore(Selector.setApplyCount);
 
-  const [labelText, setLabelText] = useState<string>(parabolicDish?.label ?? '');
   const [structureTypeDialogVisible, setStructureTypeDialogVisible] = useState(false);
   const [latusRectumDialogVisible, setLatusRectumDialogVisible] = useState(false);
   const [diameterDialogVisible, setDiameterDialogVisible] = useState(false);
@@ -41,6 +41,8 @@ export const ParabolicDishMenu = React.memo(() => {
   const [absorptanceDialogVisible, setAbsorptanceDialogVisible] = useState(false);
   const [opticalEfficiencyDialogVisible, setOpticalEfficiencyDialogVisible] = useState(false);
   const [thermalEfficiencyDialogVisible, setThermalEfficiencyDialogVisible] = useState(false);
+
+  const { labelText, setLabelText } = useLabel(parabolicDish);
 
   if (!parabolicDish) return null;
 

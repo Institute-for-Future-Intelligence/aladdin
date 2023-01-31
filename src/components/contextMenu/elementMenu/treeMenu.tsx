@@ -1,5 +1,5 @@
 /*
- * @Copyright 2021-2022. Institute for Future Intelligence, Inc.
+ * @Copyright 2021-2023. Institute for Future Intelligence, Inc.
  */
 
 import React, { useState } from 'react';
@@ -13,6 +13,7 @@ import i18n from '../../../i18n/i18n';
 import { UndoableCheck } from '../../../undo/UndoableCheck';
 import { UndoableChange } from '../../../undo/UndoableChange';
 import { TreeModel } from '../../../models/TreeModel';
+import { useLabel } from './menuHooks';
 
 export const TreeMenu = React.memo(() => {
   const setCommonStore = useStore(Selector.set);
@@ -28,7 +29,8 @@ export const TreeMenu = React.memo(() => {
 
   const [inputSpread, setInputSpread] = useState<number>(tree?.lx ?? 1);
   const [inputHeight, setInputHeight] = useState<number>(tree?.lz ?? 1);
-  const [labelText, setLabelText] = useState<string>(tree?.label ?? '');
+
+  const { labelText, setLabelText } = useLabel(tree);
 
   if (!tree) return null;
 
