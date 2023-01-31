@@ -83,7 +83,7 @@ export const GroundMenu = React.memo(() => {
   };
 
   return (
-    <>
+    <Menu.ItemGroup>
       {legalToPaste() && <Paste keyName={'ground-paste'} />}
       {humanCount > 0 && (
         <Menu.Item
@@ -424,6 +424,6 @@ export const GroundMenu = React.memo(() => {
           />
         </Menu.Item>
       </Menu>
-    </>
+    </Menu.ItemGroup>
   );
 });

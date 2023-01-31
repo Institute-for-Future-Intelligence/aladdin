@@ -104,7 +104,7 @@ export const HumanMenu = React.memo(() => {
   if (!human) return null;
 
   return (
-    <>
+    <Menu.ItemGroup>
       <Copy keyName={'human-copy'} />
       {editable && <Cut keyName={'human-cut'} />}
       <Lock keyName={'human-lock'} />
@@ -182,6 +182,6 @@ export const HumanMenu = React.memo(() => {
           </Menu.Item>
         </Menu>
       )}
-    </>
+    </Menu.ItemGroup>
   );
 });

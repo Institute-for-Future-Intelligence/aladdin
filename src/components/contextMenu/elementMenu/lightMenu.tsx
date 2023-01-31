@@ -1,5 +1,5 @@
 /*
- * @Copyright 2022. Institute for Future Intelligence, Inc.
+ * @Copyright 2022-2023. Institute for Future Intelligence, Inc.
  */
 
 import React, { useState } from 'react';
@@ -87,7 +87,7 @@ export const LightMenu = React.memo(() => {
   };
 
   return (
-    <>
+    <Menu.ItemGroup>
       <Copy keyName={'light-copy'} />
       <Cut keyName={'light-cut'} />
       <Lock keyName={'light-lock'} />
@@ -176,6 +176,6 @@ export const LightMenu = React.memo(() => {
           }}
         />
       </SubMenu>
-    </>
+    </Menu.ItemGroup>
   );
 });

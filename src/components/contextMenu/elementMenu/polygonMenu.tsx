@@ -83,7 +83,7 @@ export const PolygonMenu = React.memo(() => {
   };
 
   return (
-    <>
+    <Menu.ItemGroup>
       {legalToPaste() && <Paste keyName={'polygon-paste'} />}
       <Copy keyName={'polygon-copy'} />
       {editable && <Cut keyName={'polygon-cut'} />}
@@ -209,6 +209,6 @@ export const PolygonMenu = React.memo(() => {
           </Menu.Item>
         </>
       )}
-    </>
+    </Menu.ItemGroup>
   );
 });

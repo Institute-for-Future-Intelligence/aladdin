@@ -44,7 +44,7 @@ export const FresnelReflectorMenu = React.memo(() => {
   const editable = !fresnelReflector?.locked;
 
   return (
-    <>
+    <Menu.ItemGroup>
       <Copy keyName={'fresnel-reflector-copy'} paddingLeft={'36px'} />
       {editable && <Cut keyName={'fresnel-reflector-cut'} paddingLeft={'36px'} />}
       <Lock keyName={'fresnel-reflector-lock'} />
@@ -167,6 +167,6 @@ export const FresnelReflectorMenu = React.memo(() => {
           </Menu>
         </>
       )}
-    </>
+    </Menu.ItemGroup>
   );
 });

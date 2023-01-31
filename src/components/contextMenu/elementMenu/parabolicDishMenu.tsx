@@ -70,7 +70,7 @@ export const ParabolicDishMenu = React.memo(() => {
   };
 
   return (
-    <>
+    <Menu.ItemGroup>
       <Copy keyName={'parabolic-dish-copy'} paddingLeft={'36px'} />
       {editable && <Cut keyName={'parabolic-dish-cut'} paddingLeft={'36px'} />}
       <Lock keyName={'parabolic-dish-lock'} />
@@ -215,6 +215,6 @@ export const ParabolicDishMenu = React.memo(() => {
           </Menu>
         </>
       )}
-    </>
+    </Menu.ItemGroup>
   );
 });

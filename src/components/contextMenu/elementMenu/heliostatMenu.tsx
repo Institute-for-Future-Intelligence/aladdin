@@ -42,7 +42,7 @@ export const HeliostatMenu = React.memo(() => {
   const editable = !heliostat?.locked;
 
   return (
-    <>
+    <Menu.ItemGroup>
       <Copy keyName={'heliostat-copy'} paddingLeft={'36px'} />
       {editable && <Cut keyName={'heliostat-cut'} paddingLeft={'36px'} />}
       <Lock keyName={'heliostat-lock'} />
@@ -148,6 +148,6 @@ export const HeliostatMenu = React.memo(() => {
           </Menu>
         </>
       )}
-    </>
+    </Menu.ItemGroup>
   );
 });

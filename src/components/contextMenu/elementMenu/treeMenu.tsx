@@ -107,7 +107,7 @@ export const TreeMenu = React.memo(() => {
   };
 
   return (
-    <>
+    <Menu.ItemGroup>
       <Copy keyName={'tree-copy'} />
       {editable && <Cut keyName={'tree-cut'} />}
       <Lock keyName={'tree-lock'} />
@@ -215,6 +215,6 @@ export const TreeMenu = React.memo(() => {
           </Menu.Item>
         </Menu>
       )}
-    </>
+    </Menu.ItemGroup>
   );
 });

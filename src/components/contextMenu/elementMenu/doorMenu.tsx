@@ -1,5 +1,5 @@
 /*
- * @Copyright 2021-2022. Institute for Future Intelligence, Inc.
+ * @Copyright 2021-2023. Institute for Future Intelligence, Inc.
  */
 
 import React, { useState } from 'react';
@@ -114,7 +114,7 @@ export const DoorMenu = React.memo(() => {
   };
 
   return (
-    <>
+    <Menu.ItemGroup>
       <Copy keyName={'door-copy'} />
       {!door.locked && <Cut keyName={'door-cut'} />}
       <Lock keyName={'door-lock'} />
@@ -223,6 +223,6 @@ export const DoorMenu = React.memo(() => {
 
       {textureDialogVisible && <DoorTextureSelection setDialogVisible={setTextureDialogVisible} />}
       {colorDialogVisible && <DoorColorSelection setDialogVisible={setColorDialogVisible} />}
-    </>
+    </Menu.ItemGroup>
   );
 });

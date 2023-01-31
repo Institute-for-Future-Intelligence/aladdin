@@ -1,5 +1,5 @@
 /*
- * @Copyright 2022. Institute for Future Intelligence, Inc.
+ * @Copyright 2022-2023. Institute for Future Intelligence, Inc.
  */
 
 import React from 'react';
@@ -27,7 +27,7 @@ export const FlowerMenu = () => {
   const editable = !flower?.locked;
 
   return (
-    <>
+    <Menu.ItemGroup>
       <Copy keyName={'flower-copy'} />
       {editable && <Cut keyName={'flower-cut'} />}
       <Lock keyName={'flower-lock'} />
@@ -69,6 +69,6 @@ export const FlowerMenu = () => {
           </Menu.Item>
         </Menu>
       )}
-    </>
+    </Menu.ItemGroup>
   );
 };

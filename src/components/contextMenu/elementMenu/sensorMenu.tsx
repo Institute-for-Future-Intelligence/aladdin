@@ -27,7 +27,7 @@ export const SensorMenu = React.memo(() => {
   const lang = { lng: language };
 
   return (
-    <>
+    <Menu.ItemGroup>
       <Copy keyName={'sensor-copy'} />
       <Cut keyName={'sensor-cut'} />
       <Lock keyName={'sensor-lock'} />
@@ -47,6 +47,6 @@ export const SensorMenu = React.memo(() => {
           />
         </Menu.Item>
       </Menu>
-    </>
+    </Menu.ItemGroup>
   );
 });
