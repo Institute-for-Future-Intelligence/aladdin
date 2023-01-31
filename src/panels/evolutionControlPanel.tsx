@@ -1,5 +1,5 @@
 /*
- * @Copyright 2022. Institute for Future Intelligence, Inc.
+ * @Copyright 2022-2023. Institute for Future Intelligence, Inc.
  */
 
 import React from 'react';
@@ -32,7 +32,7 @@ const EvolutionControlPanel = () => {
   const setCommonStore = useStore(Selector.set);
   const loggable = useStore(Selector.loggable);
   const language = useStore(Selector.language);
-  const evolutionPaused = useStore(Selector.evolutionPaused);
+  const evolutionPaused = usePrimitiveStore(Selector.evolutionPaused);
   const showDesignInfoPanel = useStore(Selector.viewState.showDesignInfoPanel);
 
   const lang = { lng: language };
@@ -41,51 +41,51 @@ const EvolutionControlPanel = () => {
     usePrimitiveStore.setState((state) => {
       state.runStaticSimulation = false;
       state.pauseSimulation = false;
-    });
-    setCommonStore((state) => {
       state.runEvolution = false;
       state.pauseEvolution = false;
-      if (loggable) {
+    });
+    if (loggable) {
+      setCommonStore((state) => {
         state.actionInfo = {
           name: 'Cancel Evolution',
           timestamp: new Date().getTime(),
         };
-      }
-    });
+      });
+    }
   };
 
   const pause = () => {
     usePrimitiveStore.setState((state) => {
       state.pauseSimulation = true;
-    });
-    setCommonStore((state) => {
       if (state.runEvolution) {
         state.pauseEvolution = true;
       }
-      if (loggable) {
+    });
+    if (loggable) {
+      setCommonStore((state) => {
         state.actionInfo = {
           name: 'Pause Evolution',
           timestamp: new Date().getTime(),
         };
-      }
-    });
+      });
+    }
   };
 
   const resume = () => {
     usePrimitiveStore.setState((state) => {
       state.pauseSimulation = false;
-    });
-    setCommonStore((state) => {
       if (state.runEvolution) {
         state.pauseEvolution = false;
       }
-      if (loggable) {
+    });
+    if (loggable) {
+      setCommonStore((state) => {
         state.actionInfo = {
           name: 'Resume Evolution',
           timestamp: new Date().getTime(),
         };
-      }
-    });
+      });
+    }
   };
 
   return (

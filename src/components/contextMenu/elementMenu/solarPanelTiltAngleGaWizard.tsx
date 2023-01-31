@@ -1,5 +1,5 @@
 /*
- * @Copyright 2022. Institute for Future Intelligence, Inc.
+ * @Copyright 2022-2023. Institute for Future Intelligence, Inc.
  */
 
 import React, { useEffect, useRef, useState } from 'react';
@@ -16,6 +16,7 @@ import {
   SearchMethod,
 } from '../../../types';
 import { showInfo } from '../../../helpers';
+import { usePrimitiveStore } from '../../../stores/commonPrimitive';
 
 const { Option } = Select;
 
@@ -23,7 +24,7 @@ const SolarPanelTiltAngleGaWizard = ({ setDialogVisible }: { setDialogVisible: (
   const setCommonStore = useStore(Selector.set);
   const loggable = useStore(Selector.loggable);
   const language = useStore(Selector.language);
-  const runEvolution = useStore(Selector.runEvolution);
+  const runEvolution = usePrimitiveStore(Selector.runEvolution);
 
   const [updateFlag, setUpdateFlag] = useState<boolean>(false);
   const [dragEnabled, setDragEnabled] = useState<boolean>(false);
@@ -87,10 +88,12 @@ const SolarPanelTiltAngleGaWizard = ({ setDialogVisible }: { setDialogVisible: (
     updateStoreParams();
     // give it 0.1 second for the info to show up
     setTimeout(() => {
+      usePrimitiveStore.setState((state) => {
+        state.runEvolution = !state.runEvolution;
+      });
       setCommonStore((state) => {
         state.evolutionMethod = EvolutionMethod.GENETIC_ALGORITHM;
         state.evolutionaryAlgorithmState.geneticAlgorithmParams.problem = DesignProblem.SOLAR_PANEL_TILT_ANGLE;
-        state.runEvolution = !state.runEvolution;
         if (loggable) {
           state.actionInfo = {
             name: 'Run Genetic Algorithm for Solar Panel Tilt Angle',

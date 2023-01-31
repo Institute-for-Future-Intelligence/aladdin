@@ -1,5 +1,5 @@
 /*
- * @Copyright 2022. Institute for Future Intelligence, Inc.
+ * @Copyright 2022-2023. Institute for Future Intelligence, Inc.
  *
  */
 
@@ -15,9 +15,9 @@ import { usePrimitiveStore } from './stores/commonPrimitive';
 export default React.memo(function Loading({ loading }: { loading: boolean }) {
   const loadingFile = useStore(Selector.loadingFile);
   const simulationInProgress = usePrimitiveStore(Selector.simulationInProgress);
-  const evolutionInProgress = useStore(Selector.evolutionInProgress);
+  const evolutionInProgress = usePrimitiveStore(Selector.evolutionInProgress);
   const simulationPaused = usePrimitiveStore(Selector.simulationPaused);
-  const evolutionPaused = useStore(Selector.evolutionPaused);
+  const evolutionPaused = usePrimitiveStore(Selector.evolutionPaused);
   const noAnimationForSensorDataCollection = useStore(Selector.world.noAnimationForSensorDataCollection);
   const noAnimationForSolarPanelSimulation = useStore(Selector.world.noAnimationForSolarPanelSimulation);
   const noAnimationForHeatmapSimulation = useStore(Selector.world.noAnimationForHeatmapSimulation);

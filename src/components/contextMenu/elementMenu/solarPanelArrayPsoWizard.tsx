@@ -1,5 +1,5 @@
 /*
- * @Copyright 2022. Institute for Future Intelligence, Inc.
+ * @Copyright 2022-2023. Institute for Future Intelligence, Inc.
  */
 
 import React, { useEffect, useRef, useState } from 'react';
@@ -24,6 +24,7 @@ import { HALF_PI } from '../../../constants';
 import { FoundationModel } from '../../../models/FoundationModel';
 import { SolarPanelModel } from '../../../models/SolarPanelModel';
 import { PolygonModel } from '../../../models/PolygonModel';
+import { usePrimitiveStore } from '../../../stores/commonPrimitive';
 
 const { Option } = Select;
 const { TabPane } = Tabs;
@@ -32,7 +33,7 @@ const SolarPanelArrayPsoWizard = ({ setDialogVisible }: { setDialogVisible: (b: 
   const setCommonStore = useStore(Selector.set);
   const loggable = useStore(Selector.loggable);
   const language = useStore(Selector.language);
-  const runEvolution = useStore(Selector.runEvolution);
+  const runEvolution = usePrimitiveStore(Selector.runEvolution);
   const pvModules = useStore(Selector.pvModules);
   const polygon = useStore(Selector.selectedElement) as PolygonModel;
   const getParent = useStore(Selector.getParent);
@@ -148,9 +149,11 @@ const SolarPanelArrayPsoWizard = ({ setDialogVisible }: { setDialogVisible: (b: 
     updateStoreParams();
     // give it 0.1 second for the info to show up
     setTimeout(() => {
+      usePrimitiveStore.setState((state) => {
+        state.runEvolution = !state.runEvolution;
+      });
       setCommonStore((state) => {
         state.evolutionMethod = EvolutionMethod.PARTICLE_SWARM_OPTIMIZATION;
-        state.runEvolution = !state.runEvolution;
         if (loggable) {
           state.actionInfo = {
             name: 'Run Particle Swarm Optimization for Solar Panel Array Layout',

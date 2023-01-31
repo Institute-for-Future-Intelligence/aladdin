@@ -3,17 +3,16 @@
  */
 
 import create from 'zustand';
-import { devtools, persist } from 'zustand/middleware';
-import produce, { enableMapSet } from 'immer';
-import { WorldModel } from '../models/WorldModel';
-import { ElementModel } from '../models/ElementModel';
-import { WeatherModel } from '../models/WeatherModel';
+import short from 'short-uuid';
+import dayjs from 'dayjs';
+import Papa from 'papaparse';
+import i18n from '../i18n/i18n';
+import enUS from 'antd/lib/locale/en_US';
 import weather from '../resources/weather.csv';
 import solar_radiation_horizontal from '../resources/solar_radiation_horizontal.csv';
 import solar_radiation_vertical from '../resources/solar_radiation_vertical.csv';
 import pvmodules from '../resources/pvmodules.csv';
-import Papa from 'papaparse';
-import { Util } from '../Util';
+import produce, { enableMapSet } from 'immer';
 import {
   ActionInfo,
   ActionType,
@@ -41,12 +40,16 @@ import {
   User,
   WallTexture,
 } from '../types';
+import { devtools, persist } from 'zustand/middleware';
+import { WorldModel } from '../models/WorldModel';
+import { ElementModel } from '../models/ElementModel';
+import { WeatherModel } from '../models/WeatherModel';
+import { Util } from '../Util';
 import { DefaultWorldModel } from './DefaultWorldModel';
 import { Box3, Euler, Raycaster, Vector2, Vector3 } from 'three';
 import { ElementModelCloner } from '../models/ElementModelCloner';
 import { DefaultViewState } from './DefaultViewState';
 import { ViewState } from './ViewState';
-import short from 'short-uuid';
 import { ElementModelFactory } from '../models/ElementModelFactory';
 import { GroundModel } from '../models/GroundModel';
 import { PvModel } from '../models/PvModel';
@@ -54,7 +57,6 @@ import { ThreeEvent } from '@react-three/fiber';
 import { SolarPanelModel } from '../models/SolarPanelModel';
 import { WallModel, WallStructure } from '../models/WallModel';
 import { Locale } from 'antd/lib/locale-provider';
-import enUS from 'antd/lib/locale/en_US';
 import { Undoable } from '../undo/Undoable';
 import { UndoManager } from '../undo/UndoManager';
 import { TreeModel } from '../models/TreeModel';
@@ -66,7 +68,6 @@ import { PolygonModel } from '../models/PolygonModel';
 import { Point2 } from '../models/Point2';
 import { useRefStore } from './commonRef';
 import { showError } from '../helpers';
-import i18n from '../i18n/i18n';
 import { HumanData } from '../HumanData';
 import { SolarPanelArrayLayoutParams } from './SolarPanelArrayLayoutParams';
 import { DefaultSolarPanelArrayLayoutParams } from './DefaultSolarPanelArrayLayoutParams';
@@ -89,7 +90,6 @@ import { SolarPanelArrayLayoutConstraints } from './SolarPanelArrayLayoutConstra
 import { DefaultSolarPanelArrayLayoutConstraints } from './DefaultSolarPanelArrayLayoutConstraints';
 import { EconomicsParams } from './EconomicsParams';
 import { DefaultEconomicsParams } from './DefaultEconomicsParams';
-import dayjs from 'dayjs';
 import { RoofUtil } from 'src/views/roof/RoofUtil';
 import { FlowerModel } from '../models/FlowerModel';
 import { FlowerData } from '../FlowerData';
@@ -161,10 +161,7 @@ export interface CommonStoreState {
   aabb: Box3; // axis-aligned bounding box of elements
   animateSun: boolean;
   animate24Hours: boolean;
-  runEvolution: boolean;
-  pauseEvolution: boolean;
   evolutionMethod: EvolutionMethod;
-  objectiveEvaluationIndex: number; // index for evaluating objective function in genetic algorithms
   clickObjectType: ObjectType | null;
   contextMenuObjectType: ObjectType | null;
   hoveredHandle: MoveHandleType | ResizeHandleType | RotateHandleType | RoofHandleType | null;
@@ -576,17 +573,6 @@ export interface CommonStoreState {
   removeAllChildElementsByType: (parentId: string, type: ObjectType) => void;
   removeAllElementsOnFoundationByType: (foundationId: string, type: ObjectType) => void;
 
-  dailyPvYield: DatumEntry[];
-  setDailyPvYield: (data: DatumEntry[]) => void;
-  sumDailyPvYield: () => number;
-  getDailyPvProfit: () => number;
-  yearlyPvYield: DatumEntry[];
-  setYearlyPvYield: (data: DatumEntry[]) => void;
-  sumYearlyPvYield: () => number;
-  getYearlyPvProfit: () => number;
-  solarPanelLabels: string[];
-  setSolarPanelLabels: (labels: string[]) => void;
-
   // genetic algorithms and particle swarm optimization
   fittestIndividualResults: DatumEntry[];
   setFittestIndividualResults: (data: DatumEntry[]) => void;
@@ -647,8 +633,6 @@ export interface CommonStoreState {
   groupActionUpdateFlag: boolean;
 
   loadingFile: boolean;
-  evolutionInProgress: boolean;
-  evolutionPaused: boolean;
   locale: Locale;
   localFileName: string;
   createNewFileFlag: boolean;
@@ -783,8 +767,6 @@ export const useStore = create<CommonStoreState>(
                 content.evolutionaryAlgorithmState ?? new DefaultEvolutionaryAlgorithmState();
               state.economicsParams = content.economicsParams ?? new DefaultEconomicsParams();
               // clear existing data, if any
-              state.dailyPvYield.length = 0;
-              state.yearlyPvYield.length = 0;
               state.fittestIndividualResults.length = 0;
               state.roofSegmentVerticesMap = new Map<string, Vector3[][]>();
               state.roofSegmentVerticesWithoutOverhangMap = new Map<string, Vector3[][]>();
@@ -873,78 +855,6 @@ export const useStore = create<CommonStoreState>(
             });
           },
 
-          dailyPvYield: [],
-          setDailyPvYield(data) {
-            immerSet((state: CommonStoreState) => {
-              state.dailyPvYield = [...data];
-              // increment the index of objective evaluation to notify the genetic algorithm that
-              // this simulation has completed and the result has been reported to the common store
-              if (state.runEvolution) {
-                state.objectiveEvaluationIndex++;
-              }
-            });
-          },
-          sumDailyPvYield() {
-            let sum = 0;
-            for (const datum of this.dailyPvYield) {
-              for (const prop in datum) {
-                if (datum.hasOwnProperty(prop)) {
-                  if (prop !== 'Hour') {
-                    sum += datum[prop] as number;
-                  }
-                }
-              }
-            }
-            return sum;
-          },
-          getDailyPvProfit() {
-            const dailyYield = this.sumDailyPvYield();
-            const solarPanelNumber = Util.countAllSolarPanels();
-            return (
-              dailyYield * this.economicsParams.electricitySellingPrice -
-              solarPanelNumber * this.economicsParams.operationalCostPerUnit
-            );
-          },
-          yearlyPvYield: [],
-          setYearlyPvYield(data) {
-            immerSet((state: CommonStoreState) => {
-              state.yearlyPvYield = [...data];
-              // increment the index of objective evaluation to notify the genetic algorithm that
-              // this simulation has completed and the result has been reported to the common store
-              if (state.runEvolution) {
-                state.objectiveEvaluationIndex++;
-              }
-            });
-          },
-          sumYearlyPvYield() {
-            let sum = 0;
-            for (const datum of this.yearlyPvYield) {
-              for (const prop in datum) {
-                if (datum.hasOwnProperty(prop)) {
-                  if (prop !== 'Month') {
-                    sum += datum[prop] as number;
-                  }
-                }
-              }
-            }
-            const yearScaleFactor = 12 / (this.world?.daysPerYear ?? 6);
-            return sum * yearScaleFactor;
-          },
-          getYearlyPvProfit() {
-            const solarPanelNumber = Util.countAllSolarPanels();
-            const yearlyYield = this.sumYearlyPvYield();
-            return (
-              yearlyYield * this.economicsParams.electricitySellingPrice -
-              solarPanelNumber * this.economicsParams.operationalCostPerUnit * 365
-            );
-          },
-          solarPanelLabels: [],
-          setSolarPanelLabels(labels) {
-            immerSet((state: CommonStoreState) => {
-              state.solarPanelLabels = [...labels];
-            });
-          },
-
           // genetic algorithms
           fittestIndividualResults: [],
           setFittestIndividualResults(data) {
@@ -964,10 +874,7 @@ export const useStore = create<CommonStoreState>(
           aabb: new Box3(new Vector3(-10, -10, -10), new Vector3(10, 10, 10)),
           animateSun: false,
           animate24Hours: false,
-          runEvolution: false,
-          pauseEvolution: false,
           evolutionMethod: EvolutionMethod.GENETIC_ALGORITHM,
-          objectiveEvaluationIndex: 0,
           clickObjectType: null,
           contextMenuObjectType: null,
           hoveredHandle: null,
@@ -5740,8 +5647,6 @@ export const useStore = create<CommonStoreState>(
           groupActionUpdateFlag: false,
 
           loadingFile: false,
-          evolutionInProgress: false,
-          evolutionPaused: false,
           locale: enUS,
           localFileName: 'aladdin.ala',
           createNewFileFlag: false,
@@ -5788,7 +5693,6 @@ export const useStore = create<CommonStoreState>(
           'user',
           'sceneRadius',
           'weatherData',
-          'solarPanelLabels',
           'solarPanelArrayLayoutParams',
           'solarPanelArrayLayoutConstraints',
           'economicsParams',

@@ -80,7 +80,7 @@ const SolarPanelOptimizationResult = () => {
   const evolutionMethod = useStore(Selector.evolutionMethod);
   const evolutionaryAlgorithmState = useStore.getState().evolutionaryAlgorithmState;
   const simulationInProgress = usePrimitiveStore(Selector.simulationInProgress);
-  const evolutionInProgress = useStore(Selector.evolutionInProgress);
+  const evolutionInProgress = usePrimitiveStore(Selector.evolutionInProgress);
 
   // nodeRef is to suppress ReactDOM.findDOMNode() deprecation warning. See:
   // https://github.com/react-grid-layout/react-draggable/blob/v4.4.2/lib/DraggableCore.js#L159-L171
@@ -301,11 +301,13 @@ const SolarPanelOptimizationResult = () => {
                     showInfo(i18n.t('message.EvolutionStarted', lang));
                     // give it 0.1 second for the info to show up
                     setTimeout(() => {
-                      setCommonStore((state) => {
+                      usePrimitiveStore.setState((state) => {
                         state.runEvolution = true;
                         state.pauseEvolution = false;
                         state.evolutionInProgress = true;
-                        if (loggable) {
+                      });
+                      if (loggable) {
+                        setCommonStore((state) => {
                           let representationName;
                           if (params.problem === DesignProblem.SOLAR_PANEL_ARRAY) {
                             if (evolutionMethod === EvolutionMethod.GENETIC_ALGORITHM) {
@@ -323,8 +325,8 @@ const SolarPanelOptimizationResult = () => {
                           if (representationName) {
                             state.actionInfo = { name: representationName, timestamp: new Date().getTime() };
                           }
-                        }
-                      });
+                        });
+                      }
                     }, 100);
                   }}
                 />

@@ -25,6 +25,7 @@ import i18n from '../i18n/i18n';
 import { SunMinutes } from './SunMinutes';
 import { WallModel } from '../models/WallModel';
 import { usePrimitiveStore } from '../stores/commonPrimitive';
+import { useDataStore } from '../stores/commonData';
 
 export interface SolarPanelSimulationProps {
   city: string | null;
@@ -49,13 +50,13 @@ const SolarPanelSimulation = ({ city }: SolarPanelSimulationProps) => {
   const getWeather = useStore(Selector.getWeather);
   const getParent = useStore(Selector.getParent);
   const getFoundation = useStore(Selector.getFoundation);
-  const setDailyYield = useStore(Selector.setDailyPvYield);
+  const setDailyYield = useDataStore(Selector.setDailyPvYield);
   const updateDailyYield = useStore(Selector.updateSolarCollectorDailyYieldById);
-  const setYearlyYield = useStore(Selector.setYearlyPvYield);
+  const setYearlyYield = useDataStore(Selector.setYearlyPvYield);
   const updateYearlyYield = useStore(Selector.updateSolarCollectorYearlyYieldById);
   const dailyIndividualOutputs = usePrimitiveStore(Selector.dailyPvIndividualOutputs);
   const yearlyIndividualOutputs = usePrimitiveStore(Selector.yearlyPvIndividualOutputs);
-  const setSolarPanelLabels = useStore(Selector.setSolarPanelLabels);
+  const setSolarPanelLabels = useDataStore(Selector.setSolarPanelLabels);
   const runDailySimulation = usePrimitiveStore(Selector.runDailySimulationForSolarPanels);
   const runDailySimulationLastStep = usePrimitiveStore(Selector.runDailySimulationForSolarPanelsLastStep);
   const pauseDailySimulation = usePrimitiveStore(Selector.pauseDailySimulationForSolarPanels);
@@ -65,7 +66,7 @@ const SolarPanelSimulation = ({ city }: SolarPanelSimulationProps) => {
   const showDailyPvYieldPanel = useStore(Selector.viewState.showDailyPvYieldPanel);
   const noAnimation = useStore(Selector.world.noAnimationForSolarPanelSimulation);
   const highestTemperatureTimeInMinutes = useStore(Selector.world.highestTemperatureTimeInMinutes) ?? 900;
-  const runEvolution = useStore(Selector.runEvolution);
+  const runEvolution = usePrimitiveStore(Selector.runEvolution);
 
   const { scene } = useThree();
   const lang = { lng: language };
@@ -190,13 +191,14 @@ const SolarPanelSimulation = ({ city }: SolarPanelSimulationProps) => {
       // don't show info or log data when this simulation is called by an evolution
       showInfo(i18n.t('message.SimulationCompleted', lang));
       if (loggable) {
+        const totalDailyYield = useDataStore.getState().sumDailyPvYield();
+        const dailyProfit = useDataStore.getState().getDailyPvProfit();
+        const dailyYieldArray = useDataStore.getState().dailyPvYield;
         setCommonStore((state) => {
-          const totalYield = state.sumDailyPvYield();
-          const profit = state.getDailyPvProfit();
           state.actionInfo = {
             name: 'Static Daily Simulation for Solar Panels Completed',
-            result: { totalYield: totalYield, profit: profit },
-            details: state.dailyPvYield,
+            result: { totalYield: totalDailyYield, profit: dailyProfit },
+            details: dailyYieldArray,
             timestamp: new Date().getTime(),
           };
         });
@@ -240,13 +242,14 @@ const SolarPanelSimulation = ({ city }: SolarPanelSimulationProps) => {
           // don't show info or log data when this simulation is called by an evolution
           showInfo(i18n.t('message.SimulationCompleted', lang));
           if (loggable) {
+            const totalDailyYield = useDataStore.getState().sumDailyPvYield();
+            const dailyProfit = useDataStore.getState().getDailyPvProfit();
+            const dailyYieldArray = useDataStore.getState().dailyPvYield;
             setCommonStore((state) => {
-              const totalYield = state.sumDailyPvYield();
-              const profit = state.getDailyPvProfit();
               state.actionInfo = {
                 name: 'Dynamic Daily Simulation for Solar Panels Completed',
-                result: { totalYield: totalYield, profit: profit },
-                details: state.dailyPvYield,
+                result: { totalYield: totalDailyYield, profit: dailyProfit },
+                details: dailyYieldArray,
                 timestamp: new Date().getTime(),
               };
             });
@@ -469,13 +472,14 @@ const SolarPanelSimulation = ({ city }: SolarPanelSimulationProps) => {
       // don't show info or log data when this simulation is called by an evolution
       showInfo(i18n.t('message.SimulationCompleted', lang));
       if (loggable) {
+        const totalYearlyYield = useDataStore.getState().sumYearlyPvYield();
+        const yearlyProfit = useDataStore.getState().getYearlyPvProfit();
+        const yearlyYieldArray = useDataStore.getState().yearlyPvYield;
         setCommonStore((state) => {
-          const totalYield = state.sumYearlyPvYield();
-          const profit = state.getYearlyPvProfit();
           state.actionInfo = {
             name: 'Static Yearly Simulation for Solar Panels Completed',
-            result: { totalYield: totalYield, profit: profit },
-            details: state.yearlyPvYield,
+            result: { totalYield: totalYearlyYield, profit: yearlyProfit },
+            details: yearlyYieldArray,
             timestamp: new Date().getTime(),
           };
         });
@@ -519,13 +523,14 @@ const SolarPanelSimulation = ({ city }: SolarPanelSimulationProps) => {
             // don't show info or log data when this simulation is called by an evolution
             showInfo(i18n.t('message.SimulationCompleted', lang));
             if (loggable) {
+              const totalYearlyYield = useDataStore.getState().sumYearlyPvYield();
+              const yearlyProfit = useDataStore.getState().getYearlyPvProfit();
+              const yearlyYieldArray = useDataStore.getState().yearlyPvYield;
               setCommonStore((state) => {
-                const totalYield = state.sumYearlyPvYield();
-                const profit = state.getYearlyPvProfit();
                 state.actionInfo = {
                   name: 'Dynamic Yearly Simulation for Solar Panels Completed',
-                  result: { totalYield: totalYield, profit: profit },
-                  details: state.yearlyPvYield,
+                  result: { totalYield: totalYearlyYield, profit: yearlyProfit },
+                  details: yearlyYieldArray,
                   timestamp: new Date().getTime(),
                 };
               });

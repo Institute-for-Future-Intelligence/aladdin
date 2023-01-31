@@ -1,5 +1,5 @@
 /*
- * @Copyright 2022. Institute for Future Intelligence, Inc.
+ * @Copyright 2022-2023. Institute for Future Intelligence, Inc.
  */
 
 import React, { useEffect, useRef } from 'react';
@@ -21,6 +21,7 @@ import { FoundationModel } from '../../models/FoundationModel';
 import { PolygonModel } from '../../models/PolygonModel';
 import { SolarPanelArrayOptimizerGa } from './algorithm/SolarPanelArrayOptimizerGa';
 import { usePrimitiveStore } from '../../stores/commonPrimitive';
+import { useDataStore } from '../../stores/commonData';
 
 const SolarPanelArrayGa = () => {
   const setCommonStore = useStore(Selector.set);
@@ -28,13 +29,13 @@ const SolarPanelArrayGa = () => {
   const language = useStore(Selector.language);
   const daysPerYear = useStore(Selector.world.daysPerYear) ?? 6;
   const evolutionMethod = useStore(Selector.evolutionMethod);
-  const runEvolution = useStore(Selector.runEvolution);
-  const pauseEvolution = useStore(Selector.pauseEvolution);
+  const runEvolution = usePrimitiveStore(Selector.runEvolution);
+  const pauseEvolution = usePrimitiveStore(Selector.pauseEvolution);
   const getParent = useStore(Selector.getParent);
   const polygon = useStore(Selector.selectedElement) as PolygonModel;
   const getChildrenOfType = useStore(Selector.getChildrenOfType);
   const setFittestIndividualResults = useStore(Selector.setFittestIndividualResults);
-  const objectiveEvaluationIndex = useStore(Selector.objectiveEvaluationIndex);
+  const objectiveEvaluationIndex = usePrimitiveStore(Selector.objectiveEvaluationIndex);
   const geneLabels = useStore(Selector.variableLabels);
   const setGeneLabels = useStore(Selector.setVariableLabels);
   const getPvModule = useStore(Selector.getPvModule);
@@ -66,7 +67,7 @@ const SolarPanelArrayGa = () => {
         cancelAnimationFrame(requestRef.current);
         if (!evolutionCompletedRef.current) {
           showInfo(i18n.t('message.EvolutionAborted', lang));
-          setCommonStore((state) => {
+          usePrimitiveStore.setState((state) => {
             state.evolutionInProgress = false;
           });
           // revert to the initial solar panel array
@@ -87,12 +88,12 @@ const SolarPanelArrayGa = () => {
     pauseRef.current = pauseEvolution;
     if (pauseEvolution) {
       cancelAnimationFrame(requestRef.current);
-      setCommonStore((state) => {
+      usePrimitiveStore.setState((state) => {
         state.evolutionPaused = true;
       });
       showInfo(i18n.t('message.EvolutionPaused', lang));
     } else {
-      setCommonStore((state) => {
+      usePrimitiveStore.setState((state) => {
         state.evolutionPaused = false;
       });
       // continue the evolution
@@ -104,7 +105,7 @@ const SolarPanelArrayGa = () => {
   // getting ready for the evolution
   const init = () => {
     if (!polygon || !foundation) return;
-    setCommonStore((state) => {
+    usePrimitiveStore.setState((state) => {
       state.evolutionInProgress = true;
       state.objectiveEvaluationIndex = 0;
     });
@@ -156,7 +157,7 @@ const SolarPanelArrayGa = () => {
       case ObjectiveFunctionType.DAILY_TOTAL_OUTPUT:
       case ObjectiveFunctionType.DAILY_AVERAGE_OUTPUT:
       case ObjectiveFunctionType.DAILY_PROFIT:
-        const dailyPvYield = useStore.getState().dailyPvYield;
+        const dailyPvYield = useDataStore.getState().dailyPvYield;
         for (const datum of dailyPvYield) {
           for (const prop in datum) {
             if (datum.hasOwnProperty(prop)) {
@@ -170,7 +171,7 @@ const SolarPanelArrayGa = () => {
       case ObjectiveFunctionType.YEARLY_TOTAL_OUTPUT:
       case ObjectiveFunctionType.YEARLY_AVERAGE_OUTPUT:
       case ObjectiveFunctionType.YEARLY_PROFIT:
-        const yearlyPvYield = useStore.getState().yearlyPvYield;
+        const yearlyPvYield = useDataStore.getState().yearlyPvYield;
         for (const datum of yearlyPvYield) {
           for (const prop in datum) {
             if (datum.hasOwnProperty(prop)) {
@@ -289,12 +290,14 @@ const SolarPanelArrayGa = () => {
     });
     setCommonStore((state) => {
       state.elements.push(...solarPanelArrayRef.current);
-      if (lastStep) {
+    });
+    if (lastStep) {
+      usePrimitiveStore.setState((state) => {
         state.runEvolution = false;
         state.evolutionInProgress = false;
         state.objectiveEvaluationIndex = 0;
-      }
-    });
+      });
+    }
   };
 
   const updateResults = () => {

@@ -1,5 +1,5 @@
 /*
- * @Copyright 2022. Institute for Future Intelligence, Inc.
+ * @Copyright 2022-2023. Institute for Future Intelligence, Inc.
  */
 
 import React, { useEffect, useRef } from 'react';
@@ -14,6 +14,7 @@ import { HALF_PI } from '../../constants';
 import { Util } from '../../Util';
 import { SolarPanelTiltAngleOptimizerPso } from './algorithm/SolarPanelTiltAngleOptimizerPso';
 import { usePrimitiveStore } from '../../stores/commonPrimitive';
+import { useDataStore } from '../../stores/commonData';
 
 const SolarPanelTiltAnglePso = () => {
   const setCommonStore = useStore(Selector.set);
@@ -21,12 +22,12 @@ const SolarPanelTiltAnglePso = () => {
   const language = useStore(Selector.language);
   const daysPerYear = useStore(Selector.world.daysPerYear) ?? 6;
   const evolutionMethod = useStore(Selector.evolutionMethod);
-  const runEvolution = useStore(Selector.runEvolution);
-  const pauseEvolution = useStore(Selector.pauseEvolution);
+  const runEvolution = usePrimitiveStore(Selector.runEvolution);
+  const pauseEvolution = usePrimitiveStore(Selector.pauseEvolution);
   const foundation = useStore(Selector.selectedElement) as FoundationModel;
   const getChildrenOfType = useStore(Selector.getChildrenOfType);
   const setFittestParticleResults = useStore(Selector.setFittestIndividualResults);
-  const objectiveEvaluationIndex = useStore(Selector.objectiveEvaluationIndex);
+  const objectiveEvaluationIndex = usePrimitiveStore(Selector.objectiveEvaluationIndex);
   const particleLabels = useStore(Selector.variableLabels);
   const setParticleLabels = useStore(Selector.setVariableLabels);
   const params = useStore(Selector.evolutionaryAlgorithmState).particleSwarmOptimizationParams;
@@ -52,7 +53,7 @@ const SolarPanelTiltAnglePso = () => {
         cancelAnimationFrame(requestRef.current);
         if (!evolutionCompletedRef.current) {
           showInfo(i18n.t('message.EvolutionAborted', lang));
-          setCommonStore((state) => {
+          usePrimitiveStore.setState((state) => {
             state.evolutionInProgress = false;
           });
           // revert to the initial solar panels
@@ -70,12 +71,12 @@ const SolarPanelTiltAnglePso = () => {
     pauseRef.current = pauseEvolution;
     if (pauseEvolution) {
       cancelAnimationFrame(requestRef.current);
-      setCommonStore((state) => {
+      usePrimitiveStore.setState((state) => {
         state.evolutionPaused = true;
       });
       showInfo(i18n.t('message.EvolutionPaused', lang));
     } else {
-      setCommonStore((state) => {
+      usePrimitiveStore.setState((state) => {
         state.evolutionPaused = false;
       });
       // continue the evolution
@@ -87,7 +88,7 @@ const SolarPanelTiltAnglePso = () => {
   // getting ready for the evolution
   const init = () => {
     if (!foundation) return;
-    setCommonStore((state) => {
+    usePrimitiveStore.setState((state) => {
       state.evolutionInProgress = true;
       state.objectiveEvaluationIndex = 0;
     });
@@ -135,7 +136,7 @@ const SolarPanelTiltAnglePso = () => {
     let total = 0;
     switch (params.objectiveFunctionType) {
       case ObjectiveFunctionType.DAILY_TOTAL_OUTPUT:
-        const dailyPvYield = useStore.getState().dailyPvYield;
+        const dailyPvYield = useDataStore.getState().dailyPvYield;
         for (const datum of dailyPvYield) {
           for (const prop in datum) {
             if (datum.hasOwnProperty(prop)) {
@@ -147,7 +148,7 @@ const SolarPanelTiltAnglePso = () => {
         }
         break;
       case ObjectiveFunctionType.YEARLY_TOTAL_OUTPUT:
-        const yearlyPvYield = useStore.getState().yearlyPvYield;
+        const yearlyPvYield = useDataStore.getState().yearlyPvYield;
         for (const datum of yearlyPvYield) {
           for (const prop in datum) {
             if (datum.hasOwnProperty(prop)) {
@@ -252,12 +253,14 @@ const SolarPanelTiltAnglePso = () => {
           }
         }
       }
-      if (lastStep) {
+    });
+    if (lastStep) {
+      usePrimitiveStore.setState((state) => {
         state.runEvolution = false;
         state.evolutionInProgress = false;
         state.objectiveEvaluationIndex = 0;
-      }
-    });
+      });
+    }
   };
 
   const updateResults = () => {

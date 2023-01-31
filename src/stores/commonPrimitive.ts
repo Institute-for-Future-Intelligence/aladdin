@@ -10,6 +10,12 @@ export interface PrimitiveStoreState {
 
   simulationInProgress: boolean;
   simulationPaused: boolean;
+  evolutionInProgress: boolean;
+  evolutionPaused: boolean;
+
+  runEvolution: boolean;
+  pauseEvolution: boolean;
+  objectiveEvaluationIndex: number; // index for evaluating objective function in genetic algorithms
 
   runDailyThermalSimulation: boolean;
   pauseDailyThermalSimulation: boolean;
@@ -94,6 +100,12 @@ export const usePrimitiveStore = create<PrimitiveStoreState>((set, get) => {
 
     simulationInProgress: false,
     simulationPaused: false,
+    evolutionInProgress: false,
+    evolutionPaused: false,
+
+    runEvolution: false,
+    pauseEvolution: false,
+    objectiveEvaluationIndex: 0,
 
     runDailyThermalSimulation: false,
     pauseDailyThermalSimulation: false,

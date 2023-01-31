@@ -5,6 +5,9 @@ import create from 'zustand';
 import { produce } from 'immer';
 import { DatumEntry } from '../types';
 import { Vantage } from '../analysis/Vantage';
+import { Util } from '../Util';
+import { useStore } from './common';
+import { usePrimitiveStore } from './commonPrimitive';
 
 export interface DataStoreState {
   set: (fn: (state: DataStoreState) => void) => void;
@@ -16,6 +19,16 @@ export interface DataStoreState {
   sensorLabels: string[];
   setSensorLabels: (labels: string[]) => void;
 
+  dailyPvYield: DatumEntry[];
+  setDailyPvYield: (data: DatumEntry[]) => void;
+  sumDailyPvYield: () => number;
+  getDailyPvProfit: () => number;
+  yearlyPvYield: DatumEntry[];
+  setYearlyPvYield: (data: DatumEntry[]) => void;
+  sumYearlyPvYield: () => number;
+  getYearlyPvProfit: () => number;
+  solarPanelLabels: string[];
+  setSolarPanelLabels: (labels: string[]) => void;
   solarPanelVisibilityResults: Map<Vantage, Map<string, number>>;
   setSolarPanelVisibilityResult: (vantage: Vantage, result: Map<string, number>) => void;
   clearSolarPanelVisibilityResults: () => void;
@@ -118,6 +131,81 @@ export const useDataStore = create<DataStoreState>((set, get) => {
       });
     },
 
+    dailyPvYield: [],
+    setDailyPvYield(data) {
+      immerSet((state) => {
+        state.dailyPvYield = [...data];
+      });
+      // increment the index of objective evaluation to notify the genetic algorithm that
+      // this simulation has completed and the result has been reported to the common store
+      usePrimitiveStore.setState((state) => {
+        if (state.runEvolution) {
+          state.objectiveEvaluationIndex++;
+        }
+      });
+    },
+    sumDailyPvYield() {
+      let sum = 0;
+      for (const datum of this.dailyPvYield) {
+        for (const prop in datum) {
+          if (datum.hasOwnProperty(prop)) {
+            if (prop !== 'Hour') {
+              sum += datum[prop] as number;
+            }
+          }
+        }
+      }
+      return sum;
+    },
+    getDailyPvProfit() {
+      const dailyYield = this.sumDailyPvYield();
+      const solarPanelNumber = Util.countAllSolarPanels();
+      return (
+        dailyYield * useStore.getState().economicsParams.electricitySellingPrice -
+        solarPanelNumber * useStore.getState().economicsParams.operationalCostPerUnit
+      );
+    },
+    yearlyPvYield: [],
+    setYearlyPvYield(data) {
+      immerSet((state) => {
+        state.yearlyPvYield = [...data];
+      });
+      // increment the index of objective evaluation to notify the genetic algorithm that
+      // this simulation has completed and the result has been reported to the common store
+      usePrimitiveStore.setState((state) => {
+        if (state.runEvolution) {
+          state.objectiveEvaluationIndex++;
+        }
+      });
+    },
+    sumYearlyPvYield() {
+      let sum = 0;
+      for (const datum of this.yearlyPvYield) {
+        for (const prop in datum) {
+          if (datum.hasOwnProperty(prop)) {
+            if (prop !== 'Month') {
+              sum += datum[prop] as number;
+            }
+          }
+        }
+      }
+      const yearScaleFactor = 12 / (useStore.getState().world?.daysPerYear ?? 6);
+      return sum * yearScaleFactor;
+    },
+    getYearlyPvProfit() {
+      const solarPanelNumber = Util.countAllSolarPanels();
+      const yearlyYield = this.sumYearlyPvYield();
+      return (
+        yearlyYield * useStore.getState().economicsParams.electricitySellingPrice -
+        solarPanelNumber * useStore.getState().economicsParams.operationalCostPerUnit * 365
+      );
+    },
+    solarPanelLabels: [],
+    setSolarPanelLabels(labels) {
+      immerSet((state) => {
+        state.solarPanelLabels = [...labels];
+      });
+    },
     solarPanelVisibilityResults: new Map<Vantage, Map<string, number>>(),
     setSolarPanelVisibilityResult(vantage, result) {
       immerSet((state) => {
@@ -407,6 +495,9 @@ export const useDataStore = create<DataStoreState>((set, get) => {
 
         state.dailyLightSensorData.length = 0;
         state.yearlyLightSensorData.length = 0;
+
+        state.dailyPvYield.length = 0;
+        state.yearlyPvYield.length = 0;
 
         state.dailyParabolicDishYield.length = 0;
         state.yearlyParabolicDishYield.length = 0;

@@ -17,6 +17,7 @@ import i18n from '../i18n/i18n';
 import { Rectangle } from '../models/Rectangle';
 import { Util } from 'src/Util';
 import { usePrimitiveStore } from '../stores/commonPrimitive';
+import { useDataStore } from '../stores/commonData';
 
 const Container = styled.div`
   position: fixed;
@@ -80,12 +81,12 @@ const YearlyPvYieldPanel = ({ city }: YearlyPvYieldPanelProps) => {
   const setCommonStore = useStore(Selector.set);
   const daysPerYear = useStore(Selector.world.daysPerYear) ?? 6;
   const now = new Date(useStore(Selector.world.date));
-  const yearlyYield = useStore(Selector.yearlyPvYield);
+  const yearlyYield = useDataStore(Selector.yearlyPvYield);
   const individualOutputs = usePrimitiveStore(Selector.yearlyPvIndividualOutputs);
-  const solarPanelLabels = useStore(Selector.solarPanelLabels);
+  const solarPanelLabels = useDataStore(Selector.solarPanelLabels);
   const countElementsByType = useStore(Selector.countElementsByType);
   const panelRect = useStore(Selector.viewState.yearlyPvYieldPanelRect);
-  const runEvolution = useStore(Selector.runEvolution);
+  const runEvolution = usePrimitiveStore(Selector.runEvolution);
   const economics = useStore.getState().economicsParams;
   const simulationInProgress = usePrimitiveStore(Selector.simulationInProgress);
 

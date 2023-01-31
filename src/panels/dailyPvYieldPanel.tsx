@@ -18,6 +18,7 @@ import { Rectangle } from '../models/Rectangle';
 import { FLOATING_WINDOW_OPACITY } from '../constants';
 import { Util } from 'src/Util';
 import { usePrimitiveStore } from '../stores/commonPrimitive';
+import { useDataStore } from '../stores/commonData';
 
 const Container = styled.div`
   position: fixed;
@@ -81,11 +82,11 @@ const DailyPvYieldPanel = ({ city }: DailyPvYieldPanelProps) => {
   const setCommonStore = useStore(Selector.set);
   const now = new Date(useStore(Selector.world.date));
   const countElementsByType = useStore(Selector.countElementsByType);
-  const dailyYield = useStore(Selector.dailyPvYield);
+  const dailyYield = useDataStore(Selector.dailyPvYield);
   const individualOutputs = usePrimitiveStore(Selector.dailyPvIndividualOutputs);
   const panelRect = useStore(Selector.viewState.dailyPvYieldPanelRect);
-  const solarPanelLabels = useStore(Selector.solarPanelLabels);
-  const runEvolution = useStore(Selector.runEvolution);
+  const solarPanelLabels = useDataStore(Selector.solarPanelLabels);
+  const runEvolution = usePrimitiveStore(Selector.runEvolution);
   const economics = useStore.getState().economicsParams;
   const simulationInProgress = usePrimitiveStore(Selector.simulationInProgress);
 

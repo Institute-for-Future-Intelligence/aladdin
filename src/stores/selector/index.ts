@@ -136,13 +136,13 @@ export const runStaticSimulation = (state: PrimitiveStoreState) => state.runStat
 
 export const pauseSimulation = (state: PrimitiveStoreState) => state.pauseSimulation;
 
-export const runEvolution = (state: CommonStoreState) => state.runEvolution;
+export const runEvolution = (state: PrimitiveStoreState) => state.runEvolution;
 
-export const pauseEvolution = (state: CommonStoreState) => state.pauseEvolution;
+export const pauseEvolution = (state: PrimitiveStoreState) => state.pauseEvolution;
+
+export const objectiveEvaluationIndex = (state: PrimitiveStoreState) => state.objectiveEvaluationIndex;
 
 export const evolutionMethod = (state: CommonStoreState) => state.evolutionMethod;
-
-export const objectiveEvaluationIndex = (state: CommonStoreState) => state.objectiveEvaluationIndex;
 
 export const updateSceneRadiusFlag = (state: CommonStoreState) => state.updateSceneRadiusFlag;
 
@@ -720,9 +720,9 @@ export const simulationInProgress = (state: PrimitiveStoreState) => state.simula
 
 export const simulationPaused = (state: PrimitiveStoreState) => state.simulationPaused;
 
-export const evolutionInProgress = (state: CommonStoreState) => state.evolutionInProgress;
+export const evolutionInProgress = (state: PrimitiveStoreState) => state.evolutionInProgress;
 
-export const evolutionPaused = (state: CommonStoreState) => state.evolutionPaused;
+export const evolutionPaused = (state: PrimitiveStoreState) => state.evolutionPaused;
 
 export const contextMenuObjectType = (state: CommonStoreState) => state.contextMenuObjectType;
 
@@ -788,21 +788,21 @@ export const pauseDailySimulationForSolarPanels = (state: PrimitiveStoreState) =
 export const pauseYearlySimulationForSolarPanels = (state: PrimitiveStoreState) =>
   state.pauseYearlySimulationForSolarPanels;
 
-export const dailyPvYield = (state: CommonStoreState) => state.dailyPvYield;
+export const dailyPvYield = (state: DataStoreState) => state.dailyPvYield;
 
 export const dailyPvIndividualOutputs = (state: PrimitiveStoreState) => state.dailyPvIndividualOutputs;
 
-export const setDailyPvYield = (state: CommonStoreState) => state.setDailyPvYield;
+export const setDailyPvYield = (state: DataStoreState) => state.setDailyPvYield;
 
-export const yearlyPvYield = (state: CommonStoreState) => state.yearlyPvYield;
+export const yearlyPvYield = (state: DataStoreState) => state.yearlyPvYield;
 
 export const yearlyPvIndividualOutputs = (state: PrimitiveStoreState) => state.yearlyPvIndividualOutputs;
 
-export const setYearlyPvYield = (state: CommonStoreState) => state.setYearlyPvYield;
+export const setYearlyPvYield = (state: DataStoreState) => state.setYearlyPvYield;
 
-export const solarPanelLabels = (state: CommonStoreState) => state.solarPanelLabels;
+export const solarPanelLabels = (state: DataStoreState) => state.solarPanelLabels;
 
-export const setSolarPanelLabels = (state: CommonStoreState) => state.setSolarPanelLabels;
+export const setSolarPanelLabels = (state: DataStoreState) => state.setSolarPanelLabels;
 
 export const updateRoofFlag = (state: CommonStoreState) => state.updateRoofFlag;
 
