@@ -1100,7 +1100,7 @@ const Foundation = ({
                   w.leftPoint = undoableResize.newPoint[0];
                   w.rightPoint = undoableResize.newPoint[1];
                   // left handle
-                  if (undoableResize.oldJoints[0] !== undoableResize.newJoints[0]) {
+                  if (undoableResize.oldJoints[0][0] !== undoableResize.newJoints[0][0]) {
                     // left handle
                     for (const n of state.elements) {
                       if (n.type === ObjectType.Wall) {
@@ -1114,7 +1114,7 @@ const Foundation = ({
                     }
                   }
                   // right handle
-                  if (undoableResize.oldJoints[1] !== undoableResize.newJoints[1]) {
+                  if (undoableResize.oldJoints[1][0] !== undoableResize.newJoints[1][0]) {
                     for (const n of state.elements) {
                       if (n.type === ObjectType.Wall) {
                         if (n.id === undoableResize.newJoints[1][0]) {
