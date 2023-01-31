@@ -87,22 +87,24 @@ export const useLabelSize = (element: ElementModel) => {
   };
 
   return (value: number) => {
-    const oldSize = element.labelSize ?? 0.2;
-    const newSize = value;
-    const undoableChange = {
-      name: 'Set Label Size for ' + element.type,
-      timestamp: Date.now(),
-      oldValue: oldSize,
-      newValue: newSize,
-      undo: () => {
-        updateLabelSize(undoableChange.oldValue as number);
-      },
-      redo: () => {
-        updateLabelSize(undoableChange.newValue as number);
-      },
-    } as UndoableChange;
-    addUndoable(undoableChange);
-    updateLabelSize(newSize);
+    if (element) {
+      const oldSize = element.labelSize ?? 0.2;
+      const newSize = value;
+      const undoableChange = {
+        name: 'Set Label Size for ' + element.type,
+        timestamp: Date.now(),
+        oldValue: oldSize,
+        newValue: newSize,
+        undo: () => {
+          updateLabelSize(undoableChange.oldValue as number);
+        },
+        redo: () => {
+          updateLabelSize(undoableChange.newValue as number);
+        },
+      } as UndoableChange;
+      addUndoable(undoableChange);
+      updateLabelSize(newSize);
+    }
   };
 };
 
@@ -122,21 +124,23 @@ export const useLabelHeight = (element: ElementModel) => {
   };
 
   return (value: number) => {
-    const oldHeight = element.labelHeight ?? element.lz / 2 + 0.2;
-    const newHeight = value;
-    const undoableChange = {
-      name: 'Set Label Height for ' + element.type,
-      timestamp: Date.now(),
-      oldValue: oldHeight,
-      newValue: newHeight,
-      undo: () => {
-        updateLabelHeight(undoableChange.oldValue as number);
-      },
-      redo: () => {
-        updateLabelHeight(undoableChange.newValue as number);
-      },
-    } as UndoableChange;
-    addUndoable(undoableChange);
-    updateLabelHeight(newHeight);
+    if (element) {
+      const oldHeight = element.labelHeight ?? element.lz / 2 + 0.2;
+      const newHeight = value;
+      const undoableChange = {
+        name: 'Set Label Height for ' + element.type,
+        timestamp: Date.now(),
+        oldValue: oldHeight,
+        newValue: newHeight,
+        undo: () => {
+          updateLabelHeight(undoableChange.oldValue as number);
+        },
+        redo: () => {
+          updateLabelHeight(undoableChange.newValue as number);
+        },
+      } as UndoableChange;
+      addUndoable(undoableChange);
+      updateLabelHeight(newHeight);
+    }
   };
 };

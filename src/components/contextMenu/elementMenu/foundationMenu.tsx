@@ -114,6 +114,10 @@ export const FoundationMenu = React.memo(() => {
   const [solarPanelTiltAnglePsoWizardVisible, setSolarPanelTiltAnglePsoWizardVisible] = useState(false);
 
   const { labelText, setLabelText } = useLabel(foundation);
+  const showLabel = useLabelShow(foundation);
+  const updateLabelText = useLabelText(foundation, labelText);
+  const setLabelSize = useLabelSize(foundation);
+  const setLabelHeight = useLabelHeight(foundation);
 
   if (!foundation) return null;
 
@@ -149,11 +153,6 @@ export const FoundationMenu = React.memo(() => {
     }
     return false;
   };
-
-  const showLabel = useLabelShow(foundation);
-  const updateLabelText = useLabelText(foundation, labelText);
-  const setLabelSize = useLabelSize(foundation);
-  const setLabelHeight = useLabelHeight(foundation);
 
   const isBuilding = Util.isCompleteBuilding(foundation, elements);
 

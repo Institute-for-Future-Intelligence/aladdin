@@ -8,8 +8,6 @@ import { useStore } from '../../../stores/common';
 import * as Selector from '../../../stores/selector';
 import { Copy, Cut, Lock } from '../menuItems';
 import i18n from '../../../i18n/i18n';
-import { UndoableCheck } from '../../../undo/UndoableCheck';
-import { UndoableChange } from '../../../undo/UndoableChange';
 import { HeliostatModel } from '../../../models/HeliostatModel';
 import HeliostatWidthInput from './heliostatWidthInput';
 import HeliostatLengthInput from './heliostatLengthInput';
@@ -18,16 +16,13 @@ import HeliostatReflectanceInput from './heliostatReflectorReflectanceInput';
 import HeliostatDrawSunBeamSelection from './heliostatDrawSunBeamSelection';
 import HeliostatTowerSelection from './heliostatTowerSelection';
 import { ObjectType } from '../../../types';
-import { useLabel } from './menuHooks';
+import { useLabel, useLabelShow, useLabelText } from './menuHooks';
 
 export const HeliostatMenu = React.memo(() => {
   const language = useStore(Selector.language);
   const heliostat = useStore((state) =>
     state.elements.find((e) => e.selected && e.type === ObjectType.Heliostat),
   ) as HeliostatModel;
-  const updateElementLabelById = useStore(Selector.updateElementLabelById);
-  const updateElementShowLabelById = useStore(Selector.updateElementShowLabelById);
-  const addUndoable = useStore(Selector.addUndoable);
   const setApplyCount = useStore(Selector.setApplyCount);
 
   const [widthDialogVisible, setWidthDialogVisible] = useState(false);
@@ -38,53 +33,13 @@ export const HeliostatMenu = React.memo(() => {
   const [towerDialogVisible, setTowerDialogVisible] = useState(false);
 
   const { labelText, setLabelText } = useLabel(heliostat);
+  const showLabel = useLabelShow(heliostat);
+  const updateLabelText = useLabelText(heliostat, labelText);
 
   if (!heliostat) return null;
 
   const lang = { lng: language };
   const editable = !heliostat?.locked;
-
-  const showLabel = (checked: boolean) => {
-    if (heliostat) {
-      const undoableCheck = {
-        name: 'Show Heliostat Label',
-        timestamp: Date.now(),
-        checked: !heliostat.showLabel,
-        selectedElementId: heliostat.id,
-        selectedElementType: ObjectType.Heliostat,
-        undo: () => {
-          updateElementShowLabelById(heliostat.id, !undoableCheck.checked);
-        },
-        redo: () => {
-          updateElementShowLabelById(heliostat.id, undoableCheck.checked);
-        },
-      } as UndoableCheck;
-      addUndoable(undoableCheck);
-      updateElementShowLabelById(heliostat.id, checked);
-    }
-  };
-
-  const updateLabelText = () => {
-    if (heliostat) {
-      const oldLabel = heliostat.label;
-      const undoableChange = {
-        name: 'Set Heliostat Label',
-        timestamp: Date.now(),
-        oldValue: oldLabel,
-        newValue: labelText,
-        changedElementId: heliostat.id,
-        changedElementType: heliostat.type,
-        undo: () => {
-          updateElementLabelById(undoableChange.changedElementId, undoableChange.oldValue as string);
-        },
-        redo: () => {
-          updateElementLabelById(undoableChange.changedElementId, undoableChange.newValue as string);
-        },
-      } as UndoableChange;
-      addUndoable(undoableChange);
-      updateElementLabelById(heliostat.id, labelText);
-    }
-  };
 
   return (
     <>
@@ -173,7 +128,7 @@ export const HeliostatMenu = React.memo(() => {
 
           {/* show label or not */}
           <Menu.Item key={'heliostat-show-label'}>
-            <Checkbox checked={!!heliostat?.showLabel} onChange={(e) => showLabel(e.target.checked)}>
+            <Checkbox checked={!!heliostat?.showLabel} onChange={showLabel}>
               {i18n.t('solarCollectorMenu.KeepShowingLabel', lang)}
             </Checkbox>
           </Menu.Item>

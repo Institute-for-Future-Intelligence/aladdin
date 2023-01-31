@@ -10,7 +10,6 @@ import * as Selector from '../../../stores/selector';
 import { Copy, Cut, Lock } from '../menuItems';
 import i18n from '../../../i18n/i18n';
 import { UndoableCheck } from '../../../undo/UndoableCheck';
-import { UndoableChange } from '../../../undo/UndoableChange';
 import ParabolicTroughLengthInput from './parabolicTroughLengthInput';
 import ParabolicTroughWidthInput from './parabolicTroughWidthInput';
 import ParabolicTroughPoleHeightInput from './parabolicTroughPoleHeightInput';
@@ -21,18 +20,17 @@ import ParabolicTroughAbsorptanceInput from './parabolicTroughAbsorptanceInput';
 import ParabolicTroughOpticalEfficiencyInput from './parabolicTroughOpticalEfficiencyInput';
 import ParabolicTroughThermalEfficiencyInput from './parabolicTroughThermalEfficiencyInput';
 import { ObjectType } from '../../../types';
-import { useLabel } from './menuHooks';
+import { useLabel, useLabelShow, useLabelText } from './menuHooks';
 
 export const ParabolicTroughMenu = React.memo(() => {
   const language = useStore(Selector.language);
-  const parabolicTrough = useStore((state) =>
-    state.elements.find((e) => e.selected && e.type === ObjectType.ParabolicTrough),
-  ) as ParabolicTroughModel;
-  const updateElementLabelById = useStore(Selector.updateElementLabelById);
-  const updateElementShowLabelById = useStore(Selector.updateElementShowLabelById);
   const updateSolarCollectorDrawSunBeamById = useStore(Selector.updateSolarCollectorDrawSunBeamById);
   const addUndoable = useStore(Selector.addUndoable);
   const setApplyCount = useStore(Selector.setApplyCount);
+
+  const parabolicTrough = useStore((state) =>
+    state.elements.find((e) => e.selected && e.type === ObjectType.ParabolicTrough),
+  ) as ParabolicTroughModel;
 
   const [moduleLengthDialogVisible, setModuleLengthDialogVisible] = useState(false);
   const [latusRectumDialogVisible, setLatusRectumDialogVisible] = useState(false);
@@ -45,53 +43,13 @@ export const ParabolicTroughMenu = React.memo(() => {
   const [thermalEfficiencyDialogVisible, setThermalEfficiencyDialogVisible] = useState(false);
 
   const { labelText, setLabelText } = useLabel(parabolicTrough);
+  const showLabel = useLabelShow(parabolicTrough);
+  const updateLabelText = useLabelText(parabolicTrough, labelText);
 
   if (!parabolicTrough) return null;
 
   const lang = { lng: language };
   const editable = !parabolicTrough?.locked;
-
-  const showLabel = (checked: boolean) => {
-    if (parabolicTrough) {
-      const undoableCheck = {
-        name: 'Show Parabolic Trough Label',
-        timestamp: Date.now(),
-        checked: !parabolicTrough.showLabel,
-        selectedElementId: parabolicTrough.id,
-        selectedElementType: ObjectType.ParabolicTrough,
-        undo: () => {
-          updateElementShowLabelById(parabolicTrough.id, !undoableCheck.checked);
-        },
-        redo: () => {
-          updateElementShowLabelById(parabolicTrough.id, undoableCheck.checked);
-        },
-      } as UndoableCheck;
-      addUndoable(undoableCheck);
-      updateElementShowLabelById(parabolicTrough.id, checked);
-    }
-  };
-
-  const updateLabelText = () => {
-    if (parabolicTrough) {
-      const oldLabel = parabolicTrough.label;
-      const undoableChange = {
-        name: 'Set Parabolic Trough Label',
-        timestamp: Date.now(),
-        oldValue: oldLabel,
-        newValue: labelText,
-        changedElementId: parabolicTrough.id,
-        changedElementType: parabolicTrough.type,
-        undo: () => {
-          updateElementLabelById(undoableChange.changedElementId, undoableChange.oldValue as string);
-        },
-        redo: () => {
-          updateElementLabelById(undoableChange.changedElementId, undoableChange.newValue as string);
-        },
-      } as UndoableChange;
-      addUndoable(undoableChange);
-      updateElementLabelById(parabolicTrough.id, labelText);
-    }
-  };
 
   const drawSunBeam = (checked: boolean) => {
     if (parabolicTrough) {
@@ -258,7 +216,7 @@ export const ParabolicTroughMenu = React.memo(() => {
 
           {/* show label or not */}
           <Menu.Item key={'parabolic-trough-show-label'}>
-            <Checkbox checked={!!parabolicTrough?.showLabel} onChange={(e) => showLabel(e.target.checked)}>
+            <Checkbox checked={!!parabolicTrough?.showLabel} onChange={showLabel}>
               {i18n.t('solarCollectorMenu.KeepShowingLabel', lang)}
             </Checkbox>
           </Menu.Item>

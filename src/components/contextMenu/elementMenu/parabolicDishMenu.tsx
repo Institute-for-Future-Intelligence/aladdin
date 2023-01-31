@@ -10,7 +10,6 @@ import * as Selector from '../../../stores/selector';
 import { Copy, Cut, Lock } from '../menuItems';
 import i18n from '../../../i18n/i18n';
 import { UndoableCheck } from '../../../undo/UndoableCheck';
-import { UndoableChange } from '../../../undo/UndoableChange';
 import ParabolicDishDiameterInput from './parabolicDishDiameterInput';
 import ParabolicDishPoleHeightInput from './parabolicDishPoleHeightInput';
 import ParabolicDishLatusRectumInput from './parabolicDishLatusRectumInput';
@@ -20,18 +19,17 @@ import ParabolicDishOpticalEfficiencyInput from './parabolicDishOpticalEfficienc
 import ParabolicDishThermalEfficiencyInput from './parabolicDishThermalEfficiencyInput';
 import ParabolicDishStructureTypeInput from './parabolicDishStructureTypeInput';
 import { ObjectType } from '../../../types';
-import { useLabel } from './menuHooks';
+import { useLabel, useLabelShow, useLabelText } from './menuHooks';
 
 export const ParabolicDishMenu = React.memo(() => {
   const language = useStore(Selector.language);
-  const parabolicDish = useStore((state) =>
-    state.elements.find((e) => e.selected && e.type === ObjectType.ParabolicDish),
-  ) as ParabolicDishModel;
-  const updateElementLabelById = useStore(Selector.updateElementLabelById);
-  const updateElementShowLabelById = useStore(Selector.updateElementShowLabelById);
   const updateSolarCollectorDrawSunBeamById = useStore(Selector.updateSolarCollectorDrawSunBeamById);
   const addUndoable = useStore(Selector.addUndoable);
   const setApplyCount = useStore(Selector.setApplyCount);
+
+  const parabolicDish = useStore((state) =>
+    state.elements.find((e) => e.selected && e.type === ObjectType.ParabolicDish),
+  ) as ParabolicDishModel;
 
   const [structureTypeDialogVisible, setStructureTypeDialogVisible] = useState(false);
   const [latusRectumDialogVisible, setLatusRectumDialogVisible] = useState(false);
@@ -43,53 +41,13 @@ export const ParabolicDishMenu = React.memo(() => {
   const [thermalEfficiencyDialogVisible, setThermalEfficiencyDialogVisible] = useState(false);
 
   const { labelText, setLabelText } = useLabel(parabolicDish);
+  const showLabel = useLabelShow(parabolicDish);
+  const updateLabelText = useLabelText(parabolicDish, labelText);
 
   if (!parabolicDish) return null;
 
   const lang = { lng: language };
   const editable = !parabolicDish?.locked;
-
-  const showLabel = (checked: boolean) => {
-    if (parabolicDish) {
-      const undoableCheck = {
-        name: 'Show Parabolic Dish Label',
-        timestamp: Date.now(),
-        checked: !parabolicDish.showLabel,
-        selectedElementId: parabolicDish.id,
-        selectedElementType: ObjectType.ParabolicDish,
-        undo: () => {
-          updateElementShowLabelById(parabolicDish.id, !undoableCheck.checked);
-        },
-        redo: () => {
-          updateElementShowLabelById(parabolicDish.id, undoableCheck.checked);
-        },
-      } as UndoableCheck;
-      addUndoable(undoableCheck);
-      updateElementShowLabelById(parabolicDish.id, checked);
-    }
-  };
-
-  const updateLabelText = () => {
-    if (parabolicDish) {
-      const oldLabel = parabolicDish.label;
-      const undoableChange = {
-        name: 'Set Parabolic Dish Label',
-        timestamp: Date.now(),
-        oldValue: oldLabel,
-        newValue: labelText,
-        changedElementId: parabolicDish.id,
-        changedElementType: parabolicDish.type,
-        undo: () => {
-          updateElementLabelById(undoableChange.changedElementId, undoableChange.oldValue as string);
-        },
-        redo: () => {
-          updateElementLabelById(undoableChange.changedElementId, undoableChange.newValue as string);
-        },
-      } as UndoableChange;
-      addUndoable(undoableChange);
-      updateElementLabelById(parabolicDish.id, labelText);
-    }
-  };
 
   const drawSunBeam = (checked: boolean) => {
     if (parabolicDish) {
@@ -237,7 +195,7 @@ export const ParabolicDishMenu = React.memo(() => {
 
           {/* show label or not */}
           <Menu.Item key={'parabolic-dish-show-label'}>
-            <Checkbox checked={!!parabolicDish?.showLabel} onChange={(e) => showLabel(e.target.checked)}>
+            <Checkbox checked={!!parabolicDish?.showLabel} onChange={showLabel}>
               {i18n.t('solarCollectorMenu.KeepShowingLabel', lang)}
             </Checkbox>
           </Menu.Item>

@@ -9,8 +9,6 @@ import { useStore } from '../../../stores/common';
 import * as Selector from '../../../stores/selector';
 import { Copy, Cut, Lock } from '../menuItems';
 import i18n from '../../../i18n/i18n';
-import { UndoableCheck } from '../../../undo/UndoableCheck';
-import { UndoableChange } from '../../../undo/UndoableChange';
 import FresnelReflectorLengthInput from './fresnelReflectorLengthInput';
 import FresnelReflectorWidthInput from './fresnelReflectorWidthInput';
 import FresnelReflectorPoleHeightInput from './fresnelReflectorPoleHeightInput';
@@ -19,16 +17,13 @@ import FresnelReflectorReflectanceInput from './fresnelReflectorReflectanceInput
 import FresnelReflectorAbsorberSelection from './fresnelReflectorAbsorberSelection';
 import FresnelReflectorDrawSunBeamSelection from './fresnelReflectorDrawSunBeamSelection';
 import { ObjectType } from '../../../types';
-import { useLabel } from './menuHooks';
+import { useLabel, useLabelShow, useLabelText } from './menuHooks';
 
 export const FresnelReflectorMenu = React.memo(() => {
   const language = useStore(Selector.language);
   const fresnelReflector = useStore((state) =>
     state.elements.find((e) => e.selected && e.type === ObjectType.FresnelReflector),
   ) as FresnelReflectorModel;
-  const updateElementLabelById = useStore(Selector.updateElementLabelById);
-  const updateElementShowLabelById = useStore(Selector.updateElementShowLabelById);
-  const addUndoable = useStore(Selector.addUndoable);
   const setApplyCount = useStore(Selector.setApplyCount);
 
   const [moduleLengthDialogVisible, setModuleLengthDialogVisible] = useState(false);
@@ -40,53 +35,13 @@ export const FresnelReflectorMenu = React.memo(() => {
   const [sunBeamDialogVisible, setSunBeamDialogVisible] = useState(false);
 
   const { labelText, setLabelText } = useLabel(fresnelReflector);
+  const showLabel = useLabelShow(fresnelReflector);
+  const updateLabelText = useLabelText(fresnelReflector, labelText);
 
   if (!fresnelReflector) return null;
 
   const lang = { lng: language };
   const editable = !fresnelReflector?.locked;
-
-  const showLabel = (checked: boolean) => {
-    if (fresnelReflector) {
-      const undoableCheck = {
-        name: 'Show Fresnel Reflector Label',
-        timestamp: Date.now(),
-        checked: !fresnelReflector.showLabel,
-        selectedElementId: fresnelReflector.id,
-        selectedElementType: ObjectType.FresnelReflector,
-        undo: () => {
-          updateElementShowLabelById(fresnelReflector.id, !undoableCheck.checked);
-        },
-        redo: () => {
-          updateElementShowLabelById(fresnelReflector.id, undoableCheck.checked);
-        },
-      } as UndoableCheck;
-      addUndoable(undoableCheck);
-      updateElementShowLabelById(fresnelReflector.id, checked);
-    }
-  };
-
-  const updateLabelText = () => {
-    if (fresnelReflector) {
-      const oldLabel = fresnelReflector.label;
-      const undoableChange = {
-        name: 'Set Fresnel Reflector Label',
-        timestamp: Date.now(),
-        oldValue: oldLabel,
-        newValue: labelText,
-        changedElementId: fresnelReflector.id,
-        changedElementType: fresnelReflector.type,
-        undo: () => {
-          updateElementLabelById(undoableChange.changedElementId, undoableChange.oldValue as string);
-        },
-        redo: () => {
-          updateElementLabelById(undoableChange.changedElementId, undoableChange.newValue as string);
-        },
-      } as UndoableChange;
-      addUndoable(undoableChange);
-      updateElementLabelById(fresnelReflector.id, labelText);
-    }
-  };
 
   return (
     <>
@@ -192,7 +147,7 @@ export const FresnelReflectorMenu = React.memo(() => {
 
           {/* show label or not */}
           <Menu.Item key={'fresnel-reflector-show-label'}>
-            <Checkbox checked={!!fresnelReflector?.showLabel} onChange={(e) => showLabel(e.target.checked)}>
+            <Checkbox checked={!!fresnelReflector?.showLabel} onChange={showLabel}>
               {i18n.t('solarCollectorMenu.KeepShowingLabel', lang)}
             </Checkbox>
           </Menu.Item>
