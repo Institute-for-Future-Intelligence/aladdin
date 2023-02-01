@@ -1146,7 +1146,7 @@ const RoofSegment = ({
   length,
   textureType,
   heatmaps,
-  color,
+  color = 'white',
   sideColor,
   currWall,
   roofStructure,
@@ -1426,6 +1426,8 @@ const RoofSegment = ({
   // FIXME: Bulk mesh can be null if it is not initialized. Refreshing the page fixes the problem.
 
   const segment = { points: points, angle: angle, length: length };
+  const topLayerColor = textureType === RoofTexture.Default || textureType === RoofTexture.NoTexture ? color : 'white';
+
   return (
     <>
       {((_opacity > 0 && roofStructure === RoofStructure.Rafter) || roofStructure !== RoofStructure.Rafter) && (
@@ -1434,7 +1436,7 @@ const RoofSegment = ({
             id={id}
             index={index}
             segment={segment}
-            color={color ?? 'white'}
+            color={topLayerColor}
             sideColor={sideColor ?? 'white'}
             texture={texture}
             heatmap={heatmaps[index]}

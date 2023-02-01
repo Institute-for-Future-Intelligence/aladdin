@@ -11,7 +11,7 @@ import { WallModel } from 'src/models/WallModel';
 import { useStore } from 'src/stores/common';
 import { useRefStore } from 'src/stores/commonRef';
 import * as Selector from 'src/stores/selector';
-import { ActionType, ObjectType, RoofHandleType } from 'src/types';
+import { ActionType, ObjectType, RoofHandleType, RoofTexture } from 'src/types';
 import { UndoableResizeHipRoofRidge } from 'src/undo/UndoableResize';
 import { Util } from 'src/Util';
 import { CanvasTexture, DoubleSide, Euler, Mesh, Raycaster, Vector2, Vector3 } from 'three';
@@ -454,6 +454,7 @@ const HipRoof = (roofModel: HipRoofModel) => {
     centroid: ridgeMidPoint,
     roofSegments: roofSegments,
   };
+  const topLayerColor = textureType === RoofTexture.Default || textureType === RoofTexture.NoTexture ? color : 'white';
 
   return (
     <group position={[cx, cy, cz + 0.01]} rotation={[0, 0, rotation]} name={`Hip Roof Group ${id}`}>
@@ -488,7 +489,7 @@ const HipRoof = (roofModel: HipRoofModel) => {
                   segment={segment}
                   centroid={new Vector3(centroid2D.x, centroid2D.y, topZ)}
                   thickness={thickness}
-                  color={color}
+                  color={topLayerColor}
                   sideColor={sideColor}
                   texture={texture}
                   heatmap={heatmapTextures && index < heatmapTextures.length ? heatmapTextures[index] : undefined}
@@ -510,7 +511,7 @@ const HipRoof = (roofModel: HipRoofModel) => {
             lineWidth={lineWidth}
             lineColor={lineColor}
             sideColor={sideColor}
-            color={color}
+            color={topLayerColor}
             textureType={textureType}
             heatmap={null}
           />

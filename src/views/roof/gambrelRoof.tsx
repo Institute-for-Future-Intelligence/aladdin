@@ -28,7 +28,7 @@ import {
   updateRooftopElements,
   RoofSegmentGroupUserData,
 } from './roofRenderer';
-import { ActionType, ObjectType, RoofHandleType } from 'src/types';
+import { ActionType, ObjectType, RoofHandleType, RoofTexture } from 'src/types';
 import { RoofUtil } from './RoofUtil';
 import {
   useCurrWallArray,
@@ -693,6 +693,7 @@ const GambrelRoof = (roofModel: GambrelRoofModel) => {
     centroid: centroid,
     roofSegments: roofSegments,
   };
+  const topLayerColor = textureType === RoofTexture.Default || textureType === RoofTexture.NoTexture ? color : 'white';
 
   return (
     <group position={[cx, cy, cz + 0.01]} rotation={[0, 0, rotation]} name={`Gambrel Roof Group ${id}`}>
@@ -724,7 +725,7 @@ const GambrelRoof = (roofModel: GambrelRoofModel) => {
               segment={segment}
               centroid={centroid}
               thickness={thickness}
-              color={color}
+              color={topLayerColor}
               sideColor={sideColor}
               texture={texture}
               heatmap={heatmapTextures && index < heatmapTextures.length ? heatmapTextures[index] : undefined}
