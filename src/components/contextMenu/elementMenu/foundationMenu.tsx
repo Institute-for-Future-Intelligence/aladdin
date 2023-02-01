@@ -154,6 +154,7 @@ export const FoundationMenu = React.memo(() => {
     return false;
   };
 
+  // Do NOT put this in useMemo. Otherwise, it will crash the app.
   const isBuilding = Util.isCompleteBuilding(foundation, elements);
 
   return (
@@ -163,7 +164,7 @@ export const FoundationMenu = React.memo(() => {
       {editable && <Cut keyName={'foundation-cut'} />}
       <Lock keyName={'foundation-lock'} />
 
-      <Menu.Item>
+      <Menu.Item key={'group-master'}>
         <Checkbox
           checked={foundation.enableGroupMaster}
           onChange={(e) => {
