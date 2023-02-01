@@ -772,6 +772,7 @@ export const useStore = create<CommonStoreState>(
               state.roofSegmentVerticesWithoutOverhangMap = new Map<string, Vector3[][]>();
               state.undoManager.clear();
               state.loadingFile = false;
+              state.deletedRoofId = null;
             });
             usePrimitiveStore.setState((state) => {
               state.showSolarRadiationHeatmap = false;
