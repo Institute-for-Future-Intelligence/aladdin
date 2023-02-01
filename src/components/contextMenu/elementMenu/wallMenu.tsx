@@ -34,6 +34,7 @@ enum DataType {
   StructureColor = 'StructureColor',
   Color = 'Color',
   Texture = 'Texture',
+  EaveLength = 'EaveLength',
 }
 
 type NumberDialogSettingType = {
@@ -49,6 +50,7 @@ const DialogSetting = {
   StructureSpacing: { attributeKey: 'structureSpacing', range: [0.1, 1000], step: 0.1, unit: 'word.MeterAbbreviation' },
   StructureWidth: { attributeKey: 'structureWidth', range: [0.01, 1], step: 0.1, unit: 'word.MeterAbbreviation' },
   Thickness: { attributeKey: 'ly', range: [0.1, 1], step: 0.01, unit: 'word.MeterAbbreviation' },
+  EaveLength: { attributeKey: 'eaveLength', range: [0, 5], step: 0.01, unit: '' }, // todo:
 };
 
 export const radioStyle = {
@@ -472,6 +474,7 @@ export const WallMenu = React.memo(() => {
       case DataType.Thickness:
       case DataType.StructureSpacing:
       case DataType.StructureWidth:
+      case DataType.EaveLength:
         const setting = DialogSetting[dataType] as NumberDialogSettingType;
         if (!setting) return null;
         return (
@@ -519,6 +522,8 @@ export const WallMenu = React.memo(() => {
           {renderMenuItem(DataType.Thickness)}
 
           {renderMenuItem(DataType.Height)}
+
+          {renderMenuItem(DataType.EaveLength)}
 
           {/* r-value has its special UI */}
           {rValueDialogVisible && <WallRValueInput setDialogVisible={setRValueDialogVisible} />}

@@ -991,6 +991,7 @@ export const i18n_en = {
       Full: 'Full',
       Partial: 'Partial',
       Empty: 'Empty',
+      EaveLength: 'Eave Length',
     },
 
     windowMenu: {
