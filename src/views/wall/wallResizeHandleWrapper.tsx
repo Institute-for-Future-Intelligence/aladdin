@@ -35,6 +35,8 @@ interface WallResizeHandleWarpperProps {
   highLight: boolean;
   fill: WallFill;
   unfilledHeight: number;
+  leftJoints: string[];
+  rightJoints: string[];
 }
 
 const WallResizeHandle = React.memo(({ x, z, handleType, highLight, handleSize }: ResizeHandlesProps) => {
@@ -85,7 +87,19 @@ const WallResizeHandle = React.memo(({ x, z, handleType, highLight, handleSize }
 });
 
 const WallResizeHandleWrapper = React.memo(
-  ({ id, parentLz, roofId, x, z, absAngle, unfilledHeight, fill, highLight }: WallResizeHandleWarpperProps) => {
+  ({
+    id,
+    parentLz,
+    roofId,
+    x,
+    z,
+    absAngle,
+    unfilledHeight,
+    fill,
+    highLight,
+    leftJoints,
+    rightJoints,
+  }: WallResizeHandleWarpperProps) => {
     const setCommonStore = useStore(Selector.set);
     const orthographic = useStore(Selector.viewState.orthographic);
 
@@ -97,6 +111,8 @@ const WallResizeHandleWrapper = React.memo(
     const intersectionPlaneRef = useRef<Mesh>(null);
     const pointerDownRef = useRef(false);
     const oldHeightsRef = useRef<number[]>([z * 2, unfilledHeight]);
+    const leftWallLzRef = useRef<number | null>(null);
+    const rightWallLzRef = useRef<number | null>(null);
 
     const roofType = useMemo(() => {
       if (!roofId) return null;
@@ -130,6 +146,20 @@ const WallResizeHandleWrapper = React.memo(
       });
     };
 
+    const getJointedWallLz = () => {
+      if (leftJoints.length > 0 || rightJoints.length > 0) {
+        useStore.getState().elements.forEach((e) => {
+          if (e.id === leftJoints[0]) leftWallLzRef.current = e.lz;
+          if (e.id === rightJoints[0]) rightWallLzRef.current = e.lz;
+        });
+      }
+    };
+
+    const resetJointedWallLz = () => {
+      leftWallLzRef.current = null;
+      rightWallLzRef.current = null;
+    };
+
     const handlePointerDown = (e: ThreeEvent<PointerEvent>) => {
       if (useStore.getState().addedWallId) return;
 
@@ -150,11 +180,13 @@ const WallResizeHandleWrapper = React.memo(
         case ResizeHandleType.UpperLeft:
         case ResizeHandleType.WallPartialResizeLeft: {
           setIntersectionPlane(-x);
+          getJointedWallLz();
           break;
         }
         case ResizeHandleType.UpperRight:
         case ResizeHandleType.WallPartialResizeRight: {
           setIntersectionPlane(x);
+          getJointedWallLz();
           break;
         }
         default:
@@ -176,8 +208,17 @@ const WallResizeHandleWrapper = React.memo(
         case ResizeHandleType.UpperLeft:
         case ResizeHandleType.UpperRight: {
           setCommonStore((state) => {
-            const newLz = Math.max(handleSize, p.z - parentLz);
+            let newLz = Math.max(handleSize, p.z - parentLz);
             if (roofType === null || roofType === RoofType.Gable || roofType === RoofType.Gambrel) {
+              if (leftWallLzRef.current || rightWallLzRef.current) {
+                const leftDiff = Math.abs(newLz - (leftWallLzRef.current ?? Infinity));
+                const rightDiff = Math.abs(newLz - (rightWallLzRef.current ?? Infinity));
+                if (leftDiff < rightDiff && leftDiff < 0.5 && leftWallLzRef.current) {
+                  newLz = leftWallLzRef.current;
+                } else if (rightDiff <= leftDiff && rightDiff < 0.5 && rightWallLzRef.current) {
+                  newLz = rightWallLzRef.current;
+                }
+              }
               for (const e of state.elements) {
                 if (e.type === ObjectType.Wall && e.id === id) {
                   const wall = e as WallModel;
@@ -227,6 +268,7 @@ const WallResizeHandleWrapper = React.memo(
     const handlePointerUp = () => {
       useRefStore.getState().setEnableOrbitController(true);
       setShowIntersectionPlane(false);
+      resetJointedWallLz();
       pointerDownRef.current = false;
 
       const undoableChangeHeight = {

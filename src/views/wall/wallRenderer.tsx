@@ -18,7 +18,23 @@ import { FoundationModel } from 'src/models/FoundationModel';
 const WallRenderer = (wallModel: WallModel) => {
   useUpdataOldFiles(wallModel);
 
-  const { id, parentId, roofId, cx, cy, lx, ly, lz, relativeAngle, fill, selected, locked, unfilledHeight } = wallModel;
+  const {
+    id,
+    parentId,
+    roofId,
+    cx,
+    cy,
+    lx,
+    ly,
+    lz,
+    relativeAngle,
+    fill,
+    selected,
+    locked,
+    unfilledHeight,
+    leftJoints,
+    rightJoints,
+  } = wallModel;
 
   const [hx, hz] = [lx / 2, lz / 2];
 
@@ -66,6 +82,8 @@ const WallRenderer = (wallModel: WallModel) => {
             unfilledHeight={unfilledHeight}
             fill={fill}
             highLight={highLight}
+            leftJoints={leftJoints}
+            rightJoints={rightJoints}
           />
         </>
       )}
