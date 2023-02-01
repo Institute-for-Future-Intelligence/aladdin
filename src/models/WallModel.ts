@@ -32,6 +32,8 @@ export interface WallModel extends ElementModel {
 
   fill: WallFill;
   unfilledHeight: number;
+
+  eaveLength: number;
 }
 
 export enum WallFill {

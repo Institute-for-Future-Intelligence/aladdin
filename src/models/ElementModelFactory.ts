@@ -486,6 +486,7 @@ export class ElementModelFactory {
       lx: 0,
       ly: actionState.wallThickness ?? 0.3,
       lz: actionState.wallHeight ?? 5,
+      eaveLength: actionState.wallEaveLength ?? 0.3,
       rValue: actionState.wallRValue ?? 3,
       fill: WallFill.Full,
       unfilledHeight: actionState.wallUnfilledHeight ?? 0.5,

@@ -53,7 +53,8 @@ export const useUpdataOldFiles = (wallModel: WallModel) => {
       wallModel.structureColor === undefined ||
       wallModel.opacity === undefined ||
       wallModel.fill === undefined ||
-      wallModel.unfilledHeight === undefined
+      wallModel.unfilledHeight === undefined ||
+      wallModel.eaveLength === undefined
     ) {
       useStore.getState().set((state) => {
         for (const e of state.elements) {
@@ -79,6 +80,9 @@ export const useUpdataOldFiles = (wallModel: WallModel) => {
             }
             if (wall.unfilledHeight === undefined) {
               wall.unfilledHeight = 0.5;
+            }
+            if (wall.eaveLength === undefined) {
+              wall.eaveLength = 0.3;
             }
             break;
           }

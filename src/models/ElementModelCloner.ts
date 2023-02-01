@@ -612,6 +612,7 @@ export class ElementModelCloner {
       lx: wall.lx,
       ly: wall.ly,
       lz: wall.lz,
+      eaveLength: wall.eaveLength,
       rValue: wall.rValue,
       volumetricHeatCapacity: wall.volumetricHeatCapacity,
       fill: wall.fill,

@@ -63,6 +63,7 @@ export class DefaultActionState implements ActionState {
   wallRValue: number;
   wallVolumetricHeatCapacity: number;
   wallUnfilledHeight: number;
+  wallEaveLength: number;
 
   roofColor: string;
   roofSideColor: string;
@@ -187,6 +188,7 @@ export class DefaultActionState implements ActionState {
     this.wallRValue = DEFAULT_WALL_R_VALUE;
     this.wallVolumetricHeatCapacity = 0.5;
     this.wallUnfilledHeight = 0.5;
+    this.wallEaveLength = 0.3;
 
     this.roofColor = '#454769';
     this.roofSideColor = '#ffffff';
