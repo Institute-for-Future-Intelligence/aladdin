@@ -4145,23 +4145,10 @@ export const useStore = create<CommonStoreState>(
                   const relativePos = Util.wallRelativePosition(new Vector3(p.x, p.y), wallParentModel);
                   const wall = ElementModelFactory.makeWall(
                     wallParentModel,
-                    state.actionState.wallHeight,
-                    state.actionState.wallThickness,
-                    state.actionState.wallRValue,
-                    state.actionState.wallColor,
-                    state.actionState.wallVolumetricHeatCapacity,
-                    state.actionState.wallTexture,
-                    state.actionState.wallStructure,
-                    state.actionState.wallStructureSpacing,
-                    state.actionState.wallStructureWidth,
-                    state.actionState.wallStructureColor,
-                    state.actionState.wallOpacity,
-                    state.actionState.wallUnfilledHeight,
                     relativePos.x,
                     relativePos.y,
                     relativePos.z,
                     normal,
-                    'rotation' in parent ? parent.rotation : undefined,
                   );
                   state.elements.push(wall);
                   model = wall;
