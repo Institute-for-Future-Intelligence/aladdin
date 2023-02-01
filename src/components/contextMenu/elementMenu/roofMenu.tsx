@@ -3,7 +3,7 @@
  */
 
 import React, { useState } from 'react';
-import { Menu, Modal, Radio } from 'antd';
+import { Checkbox, Menu, Modal, Radio } from 'antd';
 import { useStore } from 'src/stores/common';
 import * as Selector from 'src/stores/selector';
 import { Lock, Paste } from '../menuItems';
@@ -30,6 +30,7 @@ import RoofSideColorSelection from './roofSideColorSelection';
 import RoofRValueInput from './roofRValueInput';
 import RoofHeightInput from './roofHeightInput';
 import RoofHeatCapacityInput from './roofHeatCapacityInput';
+import { UndoableCheck } from 'src/undo/UndoableCheck';
 
 export const RoofMenu = React.memo(() => {
   const setCommonStore = useStore(Selector.set);
@@ -270,14 +271,50 @@ export const RoofMenu = React.memo(() => {
     return null;
   };
 
+  const updateRoofShowCeiling = (roofId: string, b: boolean) => {
+    useStore.getState().set((state) => {
+      const roof = state.elements.find((e) => e.id === roofId && e.type === ObjectType.Roof) as RoofModel;
+      if (roof) {
+        roof.showCeiling = b;
+        state.actionState.showCeiling = b;
+      }
+    });
+  };
+
   return (
     <Menu.ItemGroup>
       {legalToPaste() && <Paste keyName={'roof-paste'} />}
       <Lock keyName={'roof-lock'} />
 
+      <Menu.Item key={'roof-showCeiling'}>
+        <Checkbox
+          checked={roof.showCeiling}
+          onChange={(e) => {
+            const checked = e.target.checked;
+            const undoableCheck = {
+              name: 'Roof showCeiling',
+              timestamp: Date.now(),
+              checked: checked,
+              selectedElementId: roof.id,
+              selectedElementType: roof.type,
+              undo: () => {
+                updateRoofShowCeiling(roof.id, !undoableCheck.checked);
+              },
+              redo: () => {
+                updateRoofShowCeiling(roof.id, undoableCheck.checked);
+              },
+            } as UndoableCheck;
+            addUndoable(undoableCheck);
+            updateRoofShowCeiling(roof.id, checked);
+          }}
+        >
+          {i18n.t('roofMenu.ShowCeiling', { lng: language })}
+        </Checkbox>
+      </Menu.Item>
+
       {renderElementsSubMenu()}
 
-      {!roof.locked && roof.roofType === RoofType.Gable && roof && (
+      {!roof.locked && roof.roofType === RoofType.Gable && (
         <SubMenu key={'roof-structure'} title={i18n.t('roofMenu.RoofStructure', lang)} style={{ paddingLeft: '24px' }}>
           <Radio.Group
             value={roof.roofStructure ?? RoofStructure.Default}
@@ -317,7 +354,7 @@ export const RoofMenu = React.memo(() => {
         </SubMenu>
       )}
 
-      {!roof.locked && roof && (
+      {!roof.locked && (
         <>
           {(roof.roofStructure === RoofStructure.Rafter || roof.roofStructure === RoofStructure.Glass) && (
             <>

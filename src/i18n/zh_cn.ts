@@ -1038,6 +1038,7 @@ export const i18n_zh_cn = {
       AllLightsOnRoofInside: '所有电灯在屋顶内',
       AllLightsOnRoofOutside: '所有电灯在屋顶外',
       CurrentRise: '当前相对高度',
+      ShowCeiling: '显示天花板',
     },
 
     doorMenu: {
