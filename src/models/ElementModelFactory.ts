@@ -52,6 +52,7 @@ import { WindTurbineModel } from './WindTurbineModel';
 import { FlowerData } from '../FlowerData';
 import { LightModel } from './LightModel';
 import { HvacSystem } from './HvacSystem';
+import { useStore } from 'src/stores/common';
 
 export class ElementModelFactory {
   static makeHuman(name: HumanName, parentId: string, x: number, y: number, z?: number) {
@@ -605,47 +606,6 @@ export class ElementModelFactory {
     } as LightModel;
   }
 
-  static makePyramidRoof(
-    wallsId: string[],
-    parent: ElementModel,
-    rise: number,
-    thickness: number,
-    rValue: number,
-    overhang: number,
-    color: string,
-    sideColor: string,
-    texture: RoofTexture,
-  ) {
-    return {
-      type: ObjectType.Roof,
-      cx: 0,
-      cy: 0,
-      cz: 0,
-      lx: 0,
-      ly: 0,
-      lz: 0,
-      rise: rise,
-      overhang: overhang ?? 0.3,
-      thickness: thickness ?? 0.2,
-      rValue: rValue ?? 3,
-      roofType: RoofType.Pyramid,
-      roofStructure: RoofStructure.Default,
-      wallsId: [...wallsId],
-      textureType: texture ?? RoofTexture.Default,
-      color: color ?? '#454769',
-      sideColor: sideColor ?? '#ffffff',
-      selected: false,
-      lineWidth: 0.2,
-      lineColor: '#000000',
-      showLabel: false,
-      normal: [0, 0, 1],
-      rotation: [0, 0, 0],
-      parentId: parent.id,
-      foundationId: parent.id,
-      id: short.generate() as string,
-    } as PyramidRoofModel;
-  }
-
   static makeWindow(
     parent: ElementModel,
     color: string,
@@ -755,17 +715,8 @@ export class ElementModelFactory {
     } as DoorModel;
   }
 
-  static makeGableRoof(
-    wallsId: string[],
-    parent: ElementModel,
-    rise: number,
-    thickness: number,
-    rValue: number,
-    overhang: number,
-    color: string,
-    sideColor: string,
-    texture: RoofTexture,
-  ) {
+  static makePyramidRoof(wallsId: string[], parent: ElementModel) {
+    const actionState = useStore.getState().actionState;
     return {
       type: ObjectType.Roof,
       cx: 0,
@@ -774,16 +725,50 @@ export class ElementModelFactory {
       lx: 0,
       ly: 0,
       lz: 0,
-      rise: rise,
-      overhang: overhang ?? 0.3,
-      thickness: thickness ?? 0.2,
-      rValue: rValue ?? 3,
+      showCeiling: actionState.showCeiling ?? false,
+      rise: actionState.roofRise < 0 ? 2 : actionState.roofRise,
+      overhang: actionState.roofOverhang ?? 0.3,
+      thickness: actionState.roofThickness ?? 0.2,
+      rValue: actionState.roofRValue ?? 3,
+      color: actionState.roofColor ?? '#454769',
+      sideColor: actionState.roofSideColor ?? '#ffffff',
+      textureType: actionState.roofTexture ?? RoofTexture.Default,
+      roofType: RoofType.Pyramid,
+      roofStructure: RoofStructure.Default,
+      wallsId: [...wallsId],
+      selected: false,
+      lineWidth: 0.2,
+      lineColor: '#000000',
+      showLabel: false,
+      normal: [0, 0, 1],
+      rotation: [0, 0, 0],
+      parentId: parent.id,
+      foundationId: parent.id,
+      id: short.generate() as string,
+    } as PyramidRoofModel;
+  }
+
+  static makeGableRoof(wallsId: string[], parent: ElementModel) {
+    const actionState = useStore.getState().actionState;
+    return {
+      type: ObjectType.Roof,
+      cx: 0,
+      cy: 0,
+      cz: 0,
+      lx: 0,
+      ly: 0,
+      lz: 0,
+      showCeiling: actionState.showCeiling ?? false,
+      rise: actionState.roofRise < 0 ? 2 : actionState.roofRise,
+      overhang: actionState.roofOverhang ?? 0.3,
+      thickness: actionState.roofThickness ?? 0.2,
+      rValue: actionState.roofRValue ?? 3,
+      color: actionState.roofColor ?? '#454769',
+      sideColor: actionState.roofSideColor ?? '#ffffff',
+      textureType: actionState.roofTexture ?? RoofTexture.Default,
       roofType: RoofType.Gable,
       roofStructure: RoofStructure.Default,
       wallsId: [...wallsId],
-      textureType: texture ?? RoofTexture.Default,
-      color: color ?? '#454769',
-      sideColor: sideColor ?? '#ffffff',
       selected: false,
       lineWidth: 0.2,
       lineColor: '#000000',
@@ -798,18 +783,8 @@ export class ElementModelFactory {
     } as GableRoofModel;
   }
 
-  static makeHipRoof(
-    wallsId: string[],
-    parent: ElementModel,
-    rise: number,
-    ridgeLength: number,
-    thickness: number,
-    rValue: number,
-    overhang: number,
-    color: string,
-    sideColor: string,
-    texture: RoofTexture,
-  ) {
+  static makeHipRoof(wallsId: string[], parent: ElementModel, ridgeLength: number) {
+    const actionState = useStore.getState().actionState;
     return {
       type: ObjectType.Roof,
       cx: 0,
@@ -818,16 +793,17 @@ export class ElementModelFactory {
       lx: 0,
       ly: 0,
       lz: 0,
-      rise: rise,
-      overhang: overhang ?? 0.3,
-      thickness: thickness ?? 0.2,
-      rValue: rValue ?? 3,
+      showCeiling: actionState.showCeiling ?? false,
+      rise: actionState.roofRise < 0 ? 2 : actionState.roofRise,
+      overhang: actionState.roofOverhang ?? 0.3,
+      thickness: actionState.roofThickness ?? 0.2,
+      rValue: actionState.roofRValue ?? 3,
+      color: actionState.roofColor ?? '#454769',
+      sideColor: actionState.roofSideColor ?? '#ffffff',
+      textureType: actionState.roofTexture ?? RoofTexture.Default,
       roofType: RoofType.Hip,
       roofStructure: RoofStructure.Default,
       wallsId: [...wallsId],
-      textureType: texture ?? RoofTexture.Default,
-      color: color ?? '#454769',
-      sideColor: sideColor ?? '#ffffff',
       selected: false,
       lineWidth: 0.2,
       lineColor: '#000000',
@@ -842,18 +818,9 @@ export class ElementModelFactory {
     } as HipRoofModel;
   }
 
-  static makeGambrelRoof(
-    wallsId: string[],
-    parent: ElementModel,
-    rise: number,
-    thickness: number,
-    rValue: number,
-    overhang: number,
-    color: string,
-    sideColor: string,
-    texture: RoofTexture,
-  ) {
+  static makeGambrelRoof(wallsId: string[], parent: ElementModel) {
     const xPercent = 0.35;
+    const actionState = useStore.getState().actionState;
     return {
       type: ObjectType.Roof,
       cx: 0,
@@ -862,19 +829,20 @@ export class ElementModelFactory {
       lx: 0,
       ly: 0,
       lz: 0,
-      rise: rise,
-      overhang: overhang ?? 0.3,
-      thickness: thickness ?? 0.2,
-      rValue: rValue ?? 3,
+      showCeiling: actionState.showCeiling ?? false,
+      rise: actionState.roofRise < 0 ? 2 : actionState.roofRise,
+      overhang: actionState.roofOverhang ?? 0.3,
+      thickness: actionState.roofThickness ?? 0.2,
+      rValue: actionState.roofRValue ?? 3,
+      color: actionState.roofColor ?? '#454769',
+      sideColor: actionState.roofSideColor ?? '#ffffff',
+      textureType: actionState.roofTexture ?? RoofTexture.Default,
       roofType: RoofType.Gambrel,
       roofStructure: RoofStructure.Default,
       wallsId: [...wallsId],
       topRidgePoint: [0, 1],
       frontRidgePoint: [xPercent, 0.5],
       backRidgePoint: [xPercent, 0.5],
-      textureType: texture ?? RoofTexture.Default,
-      color: color ?? '#454769',
-      sideColor: sideColor ?? '#ffffff',
       selected: false,
       lineWidth: 0.2,
       lineColor: '#000000',
@@ -887,17 +855,8 @@ export class ElementModelFactory {
     } as GambrelRoofModel;
   }
 
-  static makeMansardRoof(
-    wallsId: string[],
-    parent: ElementModel,
-    rise: number,
-    thickness: number,
-    rValue: number,
-    overhang: number,
-    color: string,
-    sideColor: string,
-    texture: RoofTexture,
-  ) {
+  static makeMansardRoof(wallsId: string[], parent: ElementModel) {
+    const actionState = useStore.getState().actionState;
     return {
       type: ObjectType.Roof,
       cx: 0,
@@ -906,17 +865,18 @@ export class ElementModelFactory {
       lx: 0,
       ly: 0,
       lz: 0,
-      rise: rise,
-      overhang: overhang ?? 0.3,
-      thickness: thickness ?? 0.2,
-      rValue: rValue ?? 3,
+      showCeiling: actionState.showCeiling ?? false,
+      rise: actionState.roofRise < 0 ? 2 : actionState.roofRise,
+      overhang: actionState.roofOverhang ?? 0.3,
+      thickness: actionState.roofThickness ?? 0.2,
+      rValue: actionState.roofRValue ?? 3,
+      color: actionState.roofColor ?? '#454769',
+      sideColor: actionState.roofSideColor ?? '#ffffff',
+      textureType: actionState.roofTexture ?? RoofTexture.Default,
       roofType: RoofType.Mansard,
       roofStructure: RoofStructure.Default,
       wallsId: [...wallsId],
       ridgeWidth: 1,
-      textureType: texture ?? RoofTexture.Default,
-      color: color ?? '#454769',
-      sideColor: sideColor ?? '#ffffff',
       selected: false,
       lineWidth: 0.2,
       lineColor: '#000000',

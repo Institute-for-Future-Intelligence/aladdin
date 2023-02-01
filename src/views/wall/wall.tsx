@@ -1557,87 +1557,31 @@ const Wall = ({ wallModel, foundationModel }: WallProps) => {
       switch (useStore.getState().objectTypeToAdd) {
         case ObjectType.PyramidRoof: {
           if (!roofId && isValidToAddRoof(false, true)) {
-            const actionState = useStore.getState().actionState;
-            newElement = ElementModelFactory.makePyramidRoof(
-              [wallModel.id],
-              foundationModel,
-              actionState.roofRise < 0 ? 2 : actionState.roofRise,
-              actionState.roofThickness,
-              actionState.roofRValue,
-              actionState.roofOverhang,
-              actionState.roofColor,
-              actionState.roofSideColor,
-              actionState.roofTexture,
-            );
+            newElement = ElementModelFactory.makePyramidRoof([wallModel.id], foundationModel);
           }
           break;
         }
         case ObjectType.GableRoof: {
           if (!roofId && isValidToAddRoof(true, false)) {
-            const actionState = useStore.getState().actionState;
-            newElement = ElementModelFactory.makeGableRoof(
-              [wallModel.id],
-              foundationModel,
-              actionState.roofRise < 0 ? 2 : actionState.roofRise,
-              actionState.roofThickness,
-              actionState.roofRValue,
-              actionState.roofOverhang,
-              actionState.roofColor,
-              actionState.roofSideColor,
-              actionState.roofTexture,
-            );
+            newElement = ElementModelFactory.makeGableRoof([wallModel.id], foundationModel);
           }
           break;
         }
         case ObjectType.HipRoof: {
           if (!roofId && isValidToAddRoof(true, true)) {
-            const actionState = useStore.getState().actionState;
-            newElement = ElementModelFactory.makeHipRoof(
-              [wallModel.id],
-              foundationModel,
-              actionState.roofRise < 0 ? 2 : actionState.roofRise,
-              lx / 2,
-              actionState.roofThickness,
-              actionState.roofRValue,
-              actionState.roofOverhang,
-              actionState.roofColor,
-              actionState.roofSideColor,
-              actionState.roofTexture,
-            );
+            newElement = ElementModelFactory.makeHipRoof([wallModel.id], foundationModel, lx / 2);
           }
           break;
         }
         case ObjectType.GambrelRoof: {
           if (!roofId && isValidToAddRoof(true, false)) {
-            const actionState = useStore.getState().actionState;
-            newElement = ElementModelFactory.makeGambrelRoof(
-              [wallModel.id],
-              foundationModel,
-              actionState.roofRise < 0 ? 2 : actionState.roofRise,
-              actionState.roofThickness,
-              actionState.roofRValue,
-              actionState.roofOverhang,
-              actionState.roofColor,
-              actionState.roofSideColor,
-              actionState.roofTexture,
-            );
+            newElement = ElementModelFactory.makeGambrelRoof([wallModel.id], foundationModel);
           }
           break;
         }
         case ObjectType.MansardRoof: {
           if (!roofId && isValidToAddRoof(false, true)) {
-            const actionState = useStore.getState().actionState;
-            newElement = ElementModelFactory.makeMansardRoof(
-              [wallModel.id],
-              foundationModel,
-              actionState.roofRise < 0 ? 2 : actionState.roofRise,
-              actionState.roofThickness,
-              actionState.roofRValue,
-              actionState.roofOverhang,
-              actionState.roofColor,
-              actionState.roofSideColor,
-              actionState.roofTexture,
-            );
+            newElement = ElementModelFactory.makeMansardRoof([wallModel.id], foundationModel);
           }
           break;
         }
