@@ -51,6 +51,7 @@ import RoofSegment from './roofSegment';
 import { RoofUtil } from './RoofUtil';
 import { usePrimitiveStore } from '../../stores/commonPrimitive';
 import { useDataStore } from '../../stores/commonData';
+import Ceiling from './ceiling';
 
 const intersectionPlanePosition = new Vector3();
 const intersectionPlaneRotation = new Euler();
@@ -127,6 +128,7 @@ const MansardRoof = (roofModel: MansardRoofModel) => {
     foundationId,
     ridgeWidth = 1,
     rise = lz,
+    showCeiling = false,
     // old files data
     frontRidge,
     backRidge,
@@ -863,6 +865,9 @@ const MansardRoof = (roofModel: MansardRoofModel) => {
           />
         )}
       </group>
+
+      {/* ceiling */}
+      {showCeiling && <Ceiling currWallArray={currentWallArray} />}
 
       {/* handles */}
       {selected && !locked && (

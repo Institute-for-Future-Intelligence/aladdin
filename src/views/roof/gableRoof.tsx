@@ -65,6 +65,7 @@ import { usePrimitiveStore } from '../../stores/commonPrimitive';
 import { FoundationModel } from '../../models/FoundationModel';
 import { useDataStore } from '../../stores/commonData';
 import { BufferRoofSegment } from './roofSegment';
+import Ceiling from './ceiling';
 
 const intersectionPlanePosition = new Vector3();
 const intersectionPlaneRotation = new Euler();
@@ -321,6 +322,7 @@ const GableRoof = (roofModel: GableRoofModel) => {
     glassTint = '#73D8FF',
     opacity = 0.5,
     rise = lz,
+    showCeiling = false,
   } = roofModel;
   const setCommonStore = useStore(Selector.set);
   const removeElementById = useStore(Selector.removeElementById);
@@ -934,6 +936,11 @@ const GableRoof = (roofModel: GableRoofModel) => {
           />
         )}
       </group>
+
+      {/* ceiling */}
+      {showCeiling && riseInnerState > 0 && currentWallArray[0].lz === currentWallArray[2].lz && (
+        <Ceiling currWallArray={currentWallArray} />
+      )}
 
       {/* rafter */}
       {roofStructure === RoofStructure.Rafter && (

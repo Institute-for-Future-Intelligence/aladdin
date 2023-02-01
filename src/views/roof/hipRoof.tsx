@@ -41,6 +41,7 @@ import { RoofUtil } from './RoofUtil';
 import { usePrimitiveStore } from '../../stores/commonPrimitive';
 import { useDataStore } from '../../stores/commonData';
 import { FlatRoof } from './pyramidRoof';
+import Ceiling from './ceiling';
 
 const HipRoofWireframe = React.memo(({ roofSegments, thickness, lineWidth, lineColor }: RoofWireframeProps) => {
   if (roofSegments.length === 0) {
@@ -104,6 +105,7 @@ const HipRoof = (roofModel: HipRoofModel) => {
     lineWidth = 0.2,
     roofType,
     rise = lz,
+    showCeiling = false,
   } = roofModel;
   // color = '#fb9e00';
 
@@ -517,6 +519,9 @@ const HipRoof = (roofModel: HipRoofModel) => {
           />
         )}
       </group>
+
+      {/* ceiling */}
+      {showCeiling && <Ceiling currWallArray={currentWallArray} />}
 
       {/* handles */}
       {selected && !locked && (

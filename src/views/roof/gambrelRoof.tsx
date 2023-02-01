@@ -42,6 +42,7 @@ import {
 import RoofSegment from './roofSegment';
 import { usePrimitiveStore } from '../../stores/commonPrimitive';
 import { useDataStore } from '../../stores/commonData';
+import Ceiling from './ceiling';
 
 const GambrelRoofWirefram = React.memo(({ roofSegments, thickness, lineWidth, lineColor }: RoofWireframeProps) => {
   if (roofSegments.length === 0) {
@@ -142,6 +143,7 @@ const GambrelRoof = (roofModel: GambrelRoofModel) => {
     lineWidth = 0.2,
     roofType,
     rise = lz,
+    showCeiling = false,
   } = roofModel;
 
   if (topRidgePoint === undefined) {
@@ -739,6 +741,9 @@ const GambrelRoof = (roofModel: GambrelRoofModel) => {
           lineWidth={lineWidth}
         />
       </group>
+
+      {/* ceiling */}
+      {showCeiling && currentWallArray[0].lz === currentWallArray[2].lz && <Ceiling currWallArray={currentWallArray} />}
 
       {/* handles */}
       {selected && !locked && (

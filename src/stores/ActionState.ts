@@ -64,6 +64,7 @@ export interface ActionState {
   roofRValue: number;
   roofVolumetricHeatCapacity: number;
   roofRise: number;
+  showCeiling: boolean;
 
   doorColor: string;
   doorTexture: DoorTexture;

@@ -77,6 +77,7 @@ export class DefaultActionState implements ActionState {
   roofRValue: number;
   roofVolumetricHeatCapacity: number;
   roofRise: number;
+  showCeiling: boolean;
 
   doorColor: string;
   doorTexture: DoorTexture;
@@ -199,6 +200,7 @@ export class DefaultActionState implements ActionState {
     this.roofRValue = DEFAULT_ROOF_R_VALUE;
     this.roofVolumetricHeatCapacity = 0.5;
     this.roofRise = 2;
+    this.showCeiling = false;
 
     this.doorColor = '#ffffff';
     this.doorTexture = DoorTexture.Default;

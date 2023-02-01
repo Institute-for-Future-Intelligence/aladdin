@@ -49,6 +49,7 @@ import {
 import RoofSegment from './roofSegment';
 import { usePrimitiveStore } from '../../stores/commonPrimitive';
 import { useDataStore } from '../../stores/commonData';
+import Ceiling from './ceiling';
 
 const intersectionPlanePosition = new Vector3();
 const intersectionPlaneRotation = new Euler();
@@ -349,6 +350,7 @@ const PyramidRoof = (roofModel: PyramidRoofModel) => {
     roofType,
     foundationId,
     rise = lz,
+    showCeiling = false,
   } = roofModel;
 
   const { currentWallArray, isLoopRef } = useMultiCurrWallArray(foundationId, id, wallsId);
@@ -879,6 +881,9 @@ const PyramidRoof = (roofModel: PyramidRoofModel) => {
           </>
         )}
       </group>
+
+      {/* ceiling */}
+      {showCeiling && <Ceiling currWallArray={currentWallArray} />}
 
       {/* handle */}
       {selected && !locked && (

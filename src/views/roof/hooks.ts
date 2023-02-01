@@ -374,6 +374,7 @@ export const useUpdateOldRoofFiles = (roofModel: RoofModel, highestWallHeight: n
   const fileChanged = useStore(Selector.fileChanged);
   useEffect(() => {
     if (
+      roofModel.showCeiling === undefined ||
       roofModel.rise === undefined ||
       (roofModel.roofType === RoofType.Gambrel &&
         ((roofModel as GambrelRoofModel).frontRidgePoint === undefined ||
@@ -384,6 +385,9 @@ export const useUpdateOldRoofFiles = (roofModel: RoofModel, highestWallHeight: n
         for (const e of state.elements) {
           if (e.id === roofModel.id && e.type === ObjectType.Roof) {
             const roof = e as RoofModel;
+            if (roof.showCeiling === undefined) {
+              roof.showCeiling = false;
+            }
             if (roof.rise === undefined) {
               roof.rise = roof.lz - highestWallHeight;
               roof.lz = 0;

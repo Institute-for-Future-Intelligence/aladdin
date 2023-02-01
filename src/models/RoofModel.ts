@@ -21,6 +21,7 @@ export interface RoofModel extends ElementModel {
   rValue: number;
   volumetricHeatCapacity: number;
   rise: number;
+  showCeiling: boolean;
 }
 
 export interface PyramidRoofModel extends RoofModel {}
