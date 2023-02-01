@@ -354,9 +354,7 @@ export const handlePointerDown = (
 
 export const handlePointerUp = (
   event: ThreeEvent<PointerEvent>,
-  id: string,
-  wall0: WallModel,
-  overhang: number,
+  roofModel: RoofModel,
   undoMove: () => void,
   addUndoableMove: (movingElement: SolarPanelModel | SensorModel | LightModel) => void,
 ) => {
@@ -365,14 +363,14 @@ export const handlePointerUp = (
 
   if (useStore.getState().moveHandleType) {
     const intersectionRoofs = event.intersections.filter((i) => i.eventObject.name.includes('Roof'));
-    const isFirstIntersectedRoof = intersectionRoofs[0].eventObject.userData.roofId === id;
+    const isFirstIntersectedRoof = intersectionRoofs[0].eventObject.userData.roofId === roofModel.id;
     if (isFirstIntersectedRoof && selectedElement.foundationId) {
       const foundation = useStore.getState().getElementById(selectedElement.foundationId);
       if (foundation) {
         switch (selectedElement.type) {
           case ObjectType.SolarPanel: {
             const solarPanel = selectedElement as SolarPanelModel;
-            const boundaryVertices = RoofUtil.getBoundaryVertices(id, wall0, overhang);
+            const boundaryVertices = RoofUtil.getRoofBoundaryVertices(roofModel);
             const solarPanelVertices = RoofUtil.getSolarPanelVerticesOnRoof(solarPanel, foundation);
             if (
               !spBoundaryCheck(solarPanelVertices, boundaryVertices) ||

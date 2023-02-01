@@ -132,10 +132,8 @@ export class Util {
     return true;
   }
 
-  static calculateBuildingArea(roofId: string, wallId: string) {
-    const wall = useStore.getState().getElementById(wallId) as WallModel;
-    if (!wall) return 0;
-    const wallPoints = Util.getWallPoints(roofId, wall);
+  static calculateBuildingArea(roof: RoofModel) {
+    const wallPoints = Util.getWallPointsOfRoof(roof);
     return Util.getPolygonArea(wallPoints);
   }
 
@@ -1086,13 +1084,12 @@ export class Util {
     return ElementState.Valid;
   }
 
-  static checkElementOnRoofState(sp: SolarPanelModel, parent: RoofModel) {
+  static checkElementOnRoofState(sp: SolarPanelModel, roof: RoofModel) {
     if (sp.foundationId) {
       const foundation = useStore.getState().getElementById(sp.foundationId);
-      const wall = useStore.getState().getElementById(parent.wallsId[0]) as WallModel;
-      if (foundation && wall) {
+      if (foundation) {
         const solarPanelVertices = RoofUtil.getSolarPanelVerticesOnRoof(sp as SolarPanelModel, foundation);
-        const wallVertices = RoofUtil.getBoundaryVertices(parent.id, wall, parent.overhang);
+        const wallVertices = RoofUtil.getRoofBoundaryVertices(roof);
         if (!RoofUtil.rooftopSPBoundaryCheck(solarPanelVertices, wallVertices)) {
           return ElementState.OutsideBoundary;
         }
@@ -1409,11 +1406,14 @@ export class Util {
   }
 
   // get the points for all the walls under a roof
-  static getWallPoints(roofId: string, wall: WallModel) {
+  static getWallPointsOfRoof(roof: RoofModel, wallModel?: WallModel) {
     const array = [];
+
+    let wall = wallModel ?? (useStore.getState().getElementById(roof.wallsId[0]) as WallModel);
     const startWall = wall;
-    while (wall && (!wall.roofId || wall.roofId === roofId)) {
-      array.push({ x: wall.leftPoint[0], y: wall.leftPoint[1] } as Point2);
+
+    while (wall && (!wall.roofId || wall.roofId === roof.id)) {
+      array.push({ x: wall.leftPoint[0], y: wall.leftPoint[1], eave: wall.eaveLength });
       if (wall.leftJoints[0]) {
         if (wall.leftJoints[0] !== startWall.id) {
           wall = useStore.getState().getElementById(wall.leftJoints[0]) as WallModel;
@@ -1431,8 +1431,8 @@ export class Util {
     array.reverse();
 
     wall = useStore.getState().getElementById(startWall.rightJoints[0]) as WallModel;
-    while (wall && (!wall.roofId || wall.roofId === roofId)) {
-      array.push({ x: wall.leftPoint[0], y: wall.leftPoint[1] } as Point2);
+    while (wall && (!wall.roofId || wall.roofId === roof.id)) {
+      array.push({ x: wall.leftPoint[0], y: wall.leftPoint[1], eave: wall.eaveLength });
       if (wall.rightJoints[0] && wall.rightJoints[0] !== startWall.id) {
         wall = useStore.getState().getElementById(wall.rightJoints[0]) as WallModel;
       } else {

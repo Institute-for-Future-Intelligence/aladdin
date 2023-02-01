@@ -342,7 +342,7 @@ const PyramidRoof = (roofModel: PyramidRoofModel) => {
     textureType,
     color = 'white',
     sideColor = 'white',
-    overhang,
+    // overhang,
     thickness,
     locked,
     lineWidth = 0.2,
@@ -421,11 +421,11 @@ const PyramidRoof = (roofModel: PyramidRoofModel) => {
       const w = currentWallArray[i];
       const leftPoint = new Vector3(w.leftPoint[0], w.leftPoint[1]);
       const rightPoint = new Vector3(w.rightPoint[0], w.rightPoint[1]);
-      const { lh, rh } = RoofUtil.getWallHeight(currentWallArray, i);
+      // const { lh, rh } = RoofUtil.getWallHeight(currentWallArray, i);
       const dLeft = RoofUtil.getDistance(leftPoint, rightPoint, centerPointV3);
-      const overhangHeightLeft = Math.min((overhang / dLeft) * (centerPointV3.z - lh), lh);
+      const overhangHeightLeft = Math.min((w.eaveLength / dLeft) * (centerPointV3.z - w.lz), w.lz);
       const dRight = RoofUtil.getDistance(leftPoint, rightPoint, centerPointV3);
-      const overhangHeightRight = Math.min((overhang / dRight) * (centerPointV3.z - rh), rh);
+      const overhangHeightRight = Math.min((w.eaveLength / dRight) * (centerPointV3.z - w.lz), w.lz);
       height = Math.min(Math.min(overhangHeightLeft, overhangHeightRight), height);
     }
 
@@ -452,7 +452,7 @@ const PyramidRoof = (roofModel: PyramidRoofModel) => {
   }, [centerPoint, topZ]);
 
   const overhangs = useMemo(() => {
-    const res = currentWallArray.map((wall) => RoofUtil.getWallNormal(wall).multiplyScalar(overhang));
+    const res = currentWallArray.map((wall) => RoofUtil.getWallNormal(wall).multiplyScalar(wall.eaveLength));
     if (!isLoopRef.current && res.length !== 0) {
       const n = new Vector3()
         .subVectors(
@@ -464,11 +464,11 @@ const PyramidRoof = (roofModel: PyramidRoofModel) => {
         )
         .applyEuler(HALF_PI_Z_EULER)
         .normalize()
-        .multiplyScalar(overhang);
+        .multiplyScalar(0.3);
       res.push(n);
     }
     return res;
-  }, [currentWallArray, overhang]);
+  }, [currentWallArray]);
 
   const wallPointsAfterOffset = useMemo(() => {
     const res = currentWallArray.map((wall, idx) => ({
@@ -589,7 +589,7 @@ const PyramidRoof = (roofModel: PyramidRoofModel) => {
     }
 
     return segments;
-  }, [currentWallArray, updateRoofFlag, centerPoint, overhang, thickness]);
+  }, [currentWallArray, updateRoofFlag, centerPoint, thickness]);
 
   // set position and rotation
   const foundation = getElementById(parentId);
@@ -827,7 +827,7 @@ const PyramidRoof = (roofModel: PyramidRoofModel) => {
           handlePointerMove(e, id);
         }}
         onPointerUp={(e) => {
-          handlePointerUp(e, id, currentWallArray[0], overhang, undoMove, addUndoableMove);
+          handlePointerUp(e, roofModel, undoMove, addUndoableMove);
         }}
         onContextMenu={(e) => {
           handleContextMenu(e, id);

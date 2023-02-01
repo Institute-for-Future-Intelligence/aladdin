@@ -189,16 +189,13 @@ const KeyboardListener = ({ canvas, set2DView, resetView, zoomView }: KeyboardLi
         const roof = getElementById(elem.parentId) as RoofModel;
         const foundation = getElementById(elem.foundationId);
         if (roof && foundation) {
-          const wall = getElementById(roof.wallsId[0]) as WallModel;
-          if (wall) {
-            const boundaryVertices = RoofUtil.getBoundaryVertices(roof.id, wall, roof.overhang);
-            const solarPanelVertices = RoofUtil.getSolarPanelVerticesOnRoof(clone as SolarPanelModel, foundation);
-            if (
-              !spBoundaryCheck(solarPanelVertices, boundaryVertices) ||
-              !spCollisionCheck(clone as SolarPanelModel, foundation, solarPanelVertices)
-            ) {
-              return false;
-            }
+          const boundaryVertices = RoofUtil.getRoofBoundaryVertices(roof);
+          const solarPanelVertices = RoofUtil.getSolarPanelVerticesOnRoof(clone as SolarPanelModel, foundation);
+          if (
+            !spBoundaryCheck(solarPanelVertices, boundaryVertices) ||
+            !spCollisionCheck(clone as SolarPanelModel, foundation, solarPanelVertices)
+          ) {
+            return false;
           }
         }
       }

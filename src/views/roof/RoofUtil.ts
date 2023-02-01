@@ -9,6 +9,7 @@ import { ElementModel } from 'src/models/ElementModel';
 import { Point2 } from 'src/models/Point2';
 import { useStore } from 'src/stores/common';
 import { ObjectType } from 'src/types';
+import { RoofModel } from 'src/models/RoofModel';
 
 export class RoofUtil {
   // roof related
@@ -254,15 +255,14 @@ export class RoofUtil {
     return { segmentIdx: -1, segmentVertices: null, normal: new Vector3(0, 0, 1), rotation: [0, 0, 0] };
   }
 
-  static getBoundaryVertices(roofId: string, wall: WallModel, overhang: number) {
-    const vertices = Util.getWallPoints(roofId, wall);
+  static getRoofBoundaryVertices(roof: RoofModel) {
+    const vertices = Util.getWallPointsOfRoof(roof);
     const centroid = Util.calculatePolygonCentroid(vertices);
     const centroidVector = new Vector3(centroid.x, centroid.y);
-    overhang += 0.1;
     return vertices.map((v) => {
       const diff = new Vector3(v.x, v.y).sub(centroidVector);
-      diff.setX(diff.x + overhang * Math.sign(diff.x));
-      diff.setY(diff.y + overhang * Math.sign(diff.y));
+      diff.setX(diff.x + v.eave * Math.sign(diff.x));
+      diff.setY(diff.y + v.eave * Math.sign(diff.y));
       const res = new Vector3().addVectors(centroidVector, diff);
       return { x: res.x, y: res.y };
     });

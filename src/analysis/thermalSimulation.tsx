@@ -827,7 +827,7 @@ const ThermalSimulation = ({ city }: ThermalSimulationProps) => {
     const foundation = getFoundation(roof);
     if (!foundation) return;
     const setpoint = foundation.hvacSystem?.thermostatSetpoint ?? 20;
-    const floorArea = Util.calculateBuildingArea(roof.id, roof.wallsId[0]);
+    const floorArea = Util.calculateBuildingArea(roof);
     const deltaT = currentGroundTemperatureRef.current - setpoint;
     updateHeatExchangeNow(
       foundation.id,

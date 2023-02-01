@@ -600,12 +600,11 @@ const SolarPanelOnRoof = ({
       if (pointerDownRef.current && (useStore.getState().rotateHandleType || useStore.getState().resizeHandleType)) {
         const roof = getElementById(parentId) as RoofModel;
         if (roof && foundationId) {
-          const wall = getElementById(roof.wallsId[0]) as WallModel;
           const sp = getElementById(id) as SolarPanelModel;
           const foundation = getElementById(foundationId) as FoundationModel;
 
-          if (sp && foundation && wall) {
-            const boundaryVertices = RoofUtil.getBoundaryVertices(roof.id, wall, roof.overhang);
+          if (sp && foundation) {
+            const boundaryVertices = RoofUtil.getRoofBoundaryVertices(roof);
             const solarPanelVertices = RoofUtil.getSolarPanelVerticesOnRoof(sp, foundation);
             if (
               !spBoundaryCheck(solarPanelVertices, boundaryVertices) ||

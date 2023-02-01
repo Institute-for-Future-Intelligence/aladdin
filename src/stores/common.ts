@@ -4805,20 +4805,15 @@ export const useStore = create<CommonStoreState>(
                         }
                         break;
                       }
-                      if (newParent?.type === ObjectType.Roof) {
-                        if (newParent && e.foundationId) {
+                      if (newParent && newParent.type === ObjectType.Roof) {
+                        if (e.foundationId) {
                           const foundation = state.getElementById(e.foundationId);
-                          const wall = state.getElementById((newParent as RoofModel).wallsId[0]) as WallModel;
-                          if (foundation && wall) {
+                          if (foundation) {
                             const solarPanelVertices = RoofUtil.getSolarPanelVerticesOnRoof(
                               e as SolarPanelModel,
                               foundation,
                             );
-                            const boundaryVertices = RoofUtil.getBoundaryVertices(
-                              newParent.id,
-                              wall,
-                              (newParent as RoofModel).overhang,
-                            );
+                            const boundaryVertices = RoofUtil.getRoofBoundaryVertices(newParent as RoofModel);
 
                             if (!RoofUtil.rooftopSPBoundaryCheck(solarPanelVertices, boundaryVertices)) {
                               showError(i18n.t('message.CannotPasteOutsideBoundary', lang));
@@ -5057,13 +5052,8 @@ export const useStore = create<CommonStoreState>(
                           if (parent.type === ObjectType.Roof) {
                             if (elem.foundationId) {
                               const foundation = state.getElementById(elem.foundationId);
-                              const wall = state.getElementById((parent as RoofModel).wallsId[0]) as WallModel;
-                              if (foundation && wall) {
-                                const boundaryVertices = RoofUtil.getBoundaryVertices(
-                                  parent.id,
-                                  wall,
-                                  (parent as RoofModel).overhang,
-                                );
+                              if (foundation) {
+                                const boundaryVertices = RoofUtil.getRoofBoundaryVertices(parent as RoofModel);
 
                                 const hx = e.lx / foundation.lx / 2;
                                 e.cx += hx * 1.25;
