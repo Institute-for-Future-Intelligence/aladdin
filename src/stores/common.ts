@@ -773,6 +773,7 @@ export const useStore = create<CommonStoreState>(
               state.undoManager.clear();
               state.loadingFile = false;
               state.deletedRoofId = null;
+              state.actionState = new DefaultActionState();
             });
             usePrimitiveStore.setState((state) => {
               state.showSolarRadiationHeatmap = false;
