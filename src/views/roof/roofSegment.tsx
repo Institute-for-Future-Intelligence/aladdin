@@ -492,13 +492,7 @@ export const BufferRoofSegment = React.memo(
     }
 
     const HeatMapMaterial = () => (
-      <meshBasicMaterial
-        attachArray="material"
-        color={color}
-        map={topLayerTexture}
-        transparent={transparent}
-        opacity={opacity}
-      />
+      <meshBasicMaterial attachArray="material" map={topLayerTexture} transparent={transparent} opacity={opacity} />
     );
 
     const TopLayerMaterial = () => (
@@ -529,11 +523,11 @@ export const BufferRoofSegment = React.memo(
       >
         {materialArray.map((_, i) => {
           if (i !== 0) {
-            return <SideSurfaceMaterial key={i} />;
+            return <SideSurfaceMaterial key={'side' + i} />;
           } else if (showSolarRadiationHeatmap) {
-            return <HeatMapMaterial key={i} />;
+            return <HeatMapMaterial key={'heat map' + i} />;
           } else {
-            return <TopLayerMaterial key={i} />;
+            return <TopLayerMaterial key={'texture' + i} />;
           }
         })}
       </mesh>
