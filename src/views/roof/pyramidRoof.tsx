@@ -809,6 +809,8 @@ const PyramidRoof = (roofModel: PyramidRoofModel) => {
     roofSegments: roofSegments,
   };
 
+  const topLayerColor = textureType === RoofTexture.Default || textureType === RoofTexture.NoTexture ? color : 'white';
+
   return (
     <group position={[cx, cy, cz]} rotation={[0, 0, rotation]} name={`Pyramid Roof Group ${id}`}>
       {/* roof segments group */}
@@ -837,7 +839,7 @@ const PyramidRoof = (roofModel: PyramidRoofModel) => {
             lineWidth={lineWidth}
             lineColor={lineColor}
             sideColor={sideColor}
-            color={color}
+            color={topLayerColor}
             textureType={textureType}
             heatmap={flatHeatmapTexture}
           />
@@ -857,7 +859,7 @@ const PyramidRoof = (roofModel: PyramidRoofModel) => {
                         segment={segment}
                         centroid={new Vector3(centerPoint.x, centerPoint.y, topZ)}
                         thickness={thickness}
-                        color={color}
+                        color={topLayerColor}
                         sideColor={sideColor}
                         texture={texture}
                         heatmap={heatmapTextures && index < heatmapTextures.length ? heatmapTextures[index] : undefined}
