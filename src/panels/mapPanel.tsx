@@ -1,5 +1,5 @@
 /*
- * @Copyright 2021-2022. Institute for Future Intelligence, Inc.
+ * @Copyright 2021-2023. Institute for Future Intelligence, Inc.
  */
 
 import React, { useEffect, useRef, useState } from 'react';
@@ -16,6 +16,7 @@ import 'antd/dist/antd.css';
 import i18n from '../i18n/i18n';
 import { UndoableChangeLocation } from '../undo/UndoableChangeLocation';
 import { UndoableCheck } from '../undo/UndoableCheck';
+import { Undoable } from '../undo/Undoable';
 
 const libraries = ['places'] as Libraries;
 
@@ -180,11 +181,26 @@ const MapPanel = () => {
   };
 
   const closePanel = () => {
+    const undoable = {
+      name: 'Close Maps',
+      timestamp: Date.now(),
+      undo: () => {
+        setCommonStore((state) => {
+          state.viewState.showMapPanel = true;
+        });
+      },
+      redo: () => {
+        setCommonStore((state) => {
+          state.viewState.showMapPanel = false;
+        });
+      },
+    } as Undoable;
+    addUndoable(undoable);
     setCommonStore((state) => {
       state.viewState.showMapPanel = false;
       if (loggable) {
         state.actionInfo = {
-          name: 'Close Map Window',
+          name: 'Close Maps',
           timestamp: new Date().getTime(),
         };
       }

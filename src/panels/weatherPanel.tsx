@@ -1,5 +1,5 @@
 /*
- * @Copyright 2021-2022. Institute for Future Intelligence, Inc.
+ * @Copyright 2021-2023. Institute for Future Intelligence, Inc.
  */
 
 import React, { useEffect, useMemo, useRef, useState } from 'react';
@@ -13,6 +13,7 @@ import { FLOATING_WINDOW_OPACITY, MONTHS } from '../constants';
 import ReactDraggable, { DraggableEventHandler } from 'react-draggable';
 import i18n from '../i18n/i18n';
 import { Rectangle } from '../models/Rectangle';
+import { Undoable } from '../undo/Undoable';
 
 const Container = styled.div`
   position: fixed;
@@ -74,6 +75,7 @@ const WeatherPanel = ({ city, graphs }: WeatherPanelProps) => {
   const loggable = useStore(Selector.loggable);
   const opacity = useStore(Selector.floatingWindowOpacity) ?? FLOATING_WINDOW_OPACITY;
   const setCommonStore = useStore(Selector.set);
+  const addUndoable = useStore(Selector.addUndoable);
   const now = new Date(useStore(Selector.world.date));
   const getWeather = useStore(Selector.getWeather);
   const panelRect = useStore(Selector.viewState.weatherPanelRect);
@@ -198,6 +200,21 @@ const WeatherPanel = ({ city, graphs }: WeatherPanelProps) => {
   };
 
   const closePanel = () => {
+    const undoable = {
+      name: 'Close Weather Panel',
+      timestamp: Date.now(),
+      undo: () => {
+        setCommonStore((state) => {
+          state.viewState.showWeatherPanel = true;
+        });
+      },
+      redo: () => {
+        setCommonStore((state) => {
+          state.viewState.showWeatherPanel = false;
+        });
+      },
+    } as Undoable;
+    addUndoable(undoable);
     setCommonStore((state) => {
       state.viewState.showWeatherPanel = false;
       if (loggable) {

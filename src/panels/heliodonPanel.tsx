@@ -1,5 +1,5 @@
 /*
- * @Copyright 2021-2022. Institute for Future Intelligence, Inc.
+ * @Copyright 2021-2023. Institute for Future Intelligence, Inc.
  */
 
 import React, { useEffect, useMemo, useRef, useState } from 'react';
@@ -17,6 +17,7 @@ import { UndoableChangeLocation } from '../undo/UndoableChangeLocation';
 import { computeSunriseAndSunsetInMinutes } from '../analysis/sunTools';
 import { throttle } from 'lodash';
 import { usePrimitiveStore } from '../stores/commonPrimitive';
+import { Undoable } from '../undo/Undoable';
 
 const Container = styled.div`
   position: absolute;
@@ -200,6 +201,21 @@ const HeliodonPanel = () => {
   };
 
   const closePanel = () => {
+    const undoable = {
+      name: 'Close Sun and Time Settings Panel',
+      timestamp: Date.now(),
+      undo: () => {
+        setCommonStore((state) => {
+          state.viewState.showHeliodonPanel = true;
+        });
+      },
+      redo: () => {
+        setCommonStore((state) => {
+          state.viewState.showHeliodonPanel = false;
+        });
+      },
+    } as Undoable;
+    addUndoable(undoable);
     setCommonStore((state) => {
       state.viewState.showHeliodonPanel = false;
       if (loggable) {

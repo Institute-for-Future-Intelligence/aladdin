@@ -22,6 +22,7 @@ import { Radio, Space } from 'antd';
 import { Rectangle } from '../models/Rectangle';
 import { DEFAULT_FOUNDATION_SLAB_DEPTH, FLOATING_WINDOW_OPACITY } from '../constants';
 import { UndoableChange } from '../undo/UndoableChange';
+import { Undoable } from '../undo/Undoable';
 
 const Container = styled.div`
   position: fixed;
@@ -211,6 +212,21 @@ const DiurnalTemperaturePanel = ({ city }: DiurnalTemperaturePanelProps) => {
   };
 
   const closePanel = () => {
+    const undoable = {
+      name: 'Close Diurnal Temperature Panel',
+      timestamp: Date.now(),
+      undo: () => {
+        setCommonStore((state) => {
+          state.viewState.showDiurnalTemperaturePanel = true;
+        });
+      },
+      redo: () => {
+        setCommonStore((state) => {
+          state.viewState.showDiurnalTemperaturePanel = false;
+        });
+      },
+    } as Undoable;
+    addUndoable(undoable);
     setCommonStore((state) => {
       state.viewState.showDiurnalTemperaturePanel = false;
       if (loggable) {

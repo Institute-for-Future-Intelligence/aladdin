@@ -1,5 +1,5 @@
 /*
- * @Copyright 2021-2022. Institute for Future Intelligence, Inc.
+ * @Copyright 2021-2023. Institute for Future Intelligence, Inc.
  */
 
 import React, { useEffect, useRef, useState } from 'react';
@@ -11,6 +11,7 @@ import { Input } from 'antd';
 import i18n from '../i18n/i18n';
 import { Rectangle } from '../models/Rectangle';
 import { FLOATING_WINDOW_OPACITY } from '../constants';
+import { Undoable } from '../undo/Undoable';
 
 const Container = styled.div`
   position: fixed;
@@ -66,6 +67,7 @@ const { TextArea } = Input;
 const StickyNotePanel = () => {
   const language = useStore(Selector.language);
   const loggable = useStore(Selector.loggable);
+  const addUndoable = useStore(Selector.addUndoable);
   const opacity = useStore(Selector.floatingWindowOpacity) ?? FLOATING_WINDOW_OPACITY;
   const setCommonStore = useStore(Selector.set);
   const notes = useStore(Selector.notes);
@@ -147,6 +149,21 @@ const StickyNotePanel = () => {
   };
 
   const closePanel = () => {
+    const undoable = {
+      name: 'Close Sticky Note',
+      timestamp: Date.now(),
+      undo: () => {
+        setCommonStore((state) => {
+          state.viewState.showStickyNotePanel = true;
+        });
+      },
+      redo: () => {
+        setCommonStore((state) => {
+          state.viewState.showStickyNotePanel = false;
+        });
+      },
+    } as Undoable;
+    addUndoable(undoable);
     setCommonStore((state) => {
       state.viewState.showStickyNotePanel = false;
       state.notes[0] = text;
@@ -180,7 +197,7 @@ const StickyNotePanel = () => {
             }}
           >
             <Header className="handle">
-              <span>{i18n.t('menu.view.StickyNote', lang)}</span>
+              <span>{i18n.t('menu.view.accessories.StickyNote', lang)}</span>
               <span
                 style={{ cursor: 'pointer' }}
                 onMouseDown={() => {

@@ -233,14 +233,14 @@ const MainMenu = ({ viewOnly, set2DView, resetView, zoomView, canvas }: MainMenu
           importContent(input);
         }, 0);
       }
-      setCommonStore((state) => {
-        if (loggable) {
+      if (loggable) {
+        setCommonStore((state) => {
           state.actionInfo = {
             name: 'Open Example: ' + e.key,
             timestamp: new Date().getTime(),
           };
-        }
-      });
+        });
+      }
       if (!viewOnly) {
         window.history.pushState({}, document.title, HOME_URL);
       }
@@ -319,6 +319,13 @@ const MainMenu = ({ viewOnly, set2DView, resetView, zoomView, canvas }: MainMenu
       state.viewState.shadowEnabled = !state.viewState.shadowEnabled;
       if (state.viewState.shadowEnabled) {
         state.updateSceneRadius();
+      }
+      if (loggable) {
+        state.actionInfo = {
+          name: 'Show Shadow',
+          result: !shadowEnabled,
+          timestamp: new Date().getTime(),
+        };
       }
     });
   };
@@ -431,6 +438,13 @@ const MainMenu = ({ viewOnly, set2DView, resetView, zoomView, canvas }: MainMenu
     addUndoable(undoableCheck);
     setCommonStore((state) => {
       state.viewState.showStickyNotePanel = !state.viewState.showStickyNotePanel;
+      if (loggable) {
+        state.actionInfo = {
+          name: 'Show Sticky Note',
+          result: !showStickyNotePanel,
+          timestamp: new Date().getTime(),
+        };
+      }
     });
   };
 
@@ -452,6 +466,12 @@ const MainMenu = ({ viewOnly, set2DView, resetView, zoomView, canvas }: MainMenu
     addUndoable(undoable);
     setCommonStore((state) => {
       state.viewState.showHeliodonPanel = true;
+      if (loggable) {
+        state.actionInfo = {
+          name: 'Open Sun and Time Settings Panel',
+          timestamp: new Date().getTime(),
+        };
+      }
     });
   };
 
@@ -473,6 +493,12 @@ const MainMenu = ({ viewOnly, set2DView, resetView, zoomView, canvas }: MainMenu
     addUndoable(undoable);
     setCommonStore((state) => {
       state.viewState.showMapPanel = true;
+      if (loggable) {
+        state.actionInfo = {
+          name: 'Open Maps',
+          timestamp: new Date().getTime(),
+        };
+      }
     });
   };
 
@@ -494,6 +520,12 @@ const MainMenu = ({ viewOnly, set2DView, resetView, zoomView, canvas }: MainMenu
     addUndoable(undoable);
     setCommonStore((state) => {
       state.viewState.showWeatherPanel = true;
+      if (loggable) {
+        state.actionInfo = {
+          name: 'Open Weather Panel',
+          timestamp: new Date().getTime(),
+        };
+      }
     });
   };
 
@@ -515,6 +547,12 @@ const MainMenu = ({ viewOnly, set2DView, resetView, zoomView, canvas }: MainMenu
     addUndoable(undoable);
     setCommonStore((state) => {
       state.viewState.showDiurnalTemperaturePanel = true;
+      if (loggable) {
+        state.actionInfo = {
+          name: 'Open Diurnal Temperature Panel',
+          timestamp: new Date().getTime(),
+        };
+      }
     });
   };
 
@@ -538,6 +576,13 @@ const MainMenu = ({ viewOnly, set2DView, resetView, zoomView, canvas }: MainMenu
     addUndoable(undoableCheck);
     setCommonStore((state) => {
       state.viewState.axes = checked;
+      if (loggable) {
+        state.actionInfo = {
+          name: 'Show Axes',
+          result: checked,
+          timestamp: new Date().getTime(),
+        };
+      }
     });
   };
 
@@ -557,6 +602,13 @@ const MainMenu = ({ viewOnly, set2DView, resetView, zoomView, canvas }: MainMenu
     set2DView(e.target.checked);
     setCommonStore((state) => {
       state.viewState.autoRotate = false;
+      if (loggable) {
+        state.actionInfo = {
+          name: 'Toggle 2D View',
+          result: !orthographic,
+          timestamp: new Date().getTime(),
+        };
+      }
     });
   };
 
@@ -589,6 +641,13 @@ const MainMenu = ({ viewOnly, set2DView, resetView, zoomView, canvas }: MainMenu
         state.groupActionMode = false;
         state.elementGroupId = null;
         state.viewState.autoRotate = !state.viewState.autoRotate;
+        if (loggable) {
+          state.actionInfo = {
+            name: 'Auto Rotate',
+            result: !autoRotate,
+            timestamp: new Date().getTime(),
+          };
+        }
       });
     }
   };
@@ -637,6 +696,16 @@ const MainMenu = ({ viewOnly, set2DView, resetView, zoomView, canvas }: MainMenu
         },
       } as UndoableDelete;
       addUndoable(undoableCut);
+      if (loggable) {
+        setCommonStore((state) => {
+          state.actionInfo = {
+            name: 'Cut',
+            timestamp: new Date().getTime(),
+            elementId: selectedElement.id,
+            elementType: selectedElement.type,
+          } as ActionInfo;
+        });
+      }
     }
   };
 
@@ -661,6 +730,14 @@ const MainMenu = ({ viewOnly, set2DView, resetView, zoomView, canvas }: MainMenu
           },
         } as UndoablePaste;
         addUndoable(undoablePaste);
+        if (loggable) {
+          setCommonStore((state) => {
+            state.actionInfo = {
+              name: 'Paste',
+              timestamp: new Date().getTime(),
+            } as ActionInfo;
+          });
+        }
       }
     }
   };
@@ -680,14 +757,14 @@ const MainMenu = ({ viewOnly, set2DView, resetView, zoomView, canvas }: MainMenu
     setTimeout(() => {
       selectNone();
       setPrimitiveStore('runStaticSimulation', !runStaticSimulation);
-      setCommonStore((state) => {
-        if (loggable) {
+      if (loggable) {
+        setCommonStore((state) => {
           state.actionInfo = {
             name: 'Generate Daily Solar Radiation Heatmap (Static)',
             timestamp: new Date().getTime(),
           };
-        }
-      });
+        });
+      }
     }, 100);
   };
 
@@ -699,14 +776,14 @@ const MainMenu = ({ viewOnly, set2DView, resetView, zoomView, canvas }: MainMenu
     setTimeout(() => {
       selectNone();
       setPrimitiveStore('runDynamicSimulation', !runDynamicSimulation);
-      setCommonStore((state) => {
-        if (loggable) {
+      if (loggable) {
+        setCommonStore((state) => {
           state.actionInfo = {
             name: 'Generate Daily Solar Radiation Heatmap (Dynamic)',
             timestamp: new Date().getTime(),
           };
-        }
-      });
+        });
+      }
     }, 100);
   };
 
@@ -991,11 +1068,6 @@ const MainMenu = ({ viewOnly, set2DView, resetView, zoomView, canvas }: MainMenu
           {i18n.t('menu.view.ZoomIn', lang)}
           <label style={{ paddingLeft: '2px', fontSize: 9 }}>({isMac ? '⌘' : 'Ctrl'}+[)</label>
         </Menu.Item>
-        <Menu.Item key={'axes-check-box'}>
-          <Checkbox checked={axes} onChange={toggleAxes}>
-            {i18n.t('skyMenu.Axes', lang)}
-          </Checkbox>
-        </Menu.Item>
         <Menu.Item key={'orthographic-check-box'}>
           <Checkbox checked={orthographic} onChange={toggle2DView}>
             {i18n.t('menu.view.TwoDimensionalView', lang)}
@@ -1010,9 +1082,9 @@ const MainMenu = ({ viewOnly, set2DView, resetView, zoomView, canvas }: MainMenu
             </Checkbox>
           </Menu.Item>
         )}
-        <Menu.Item key={'translucency-check-box'}>
-          <Checkbox checked={floatingWindowOpacity < 1} onChange={toggleTranslucency}>
-            {i18n.t('menu.view.TranslucentFloatingWindows', lang)}
+        <Menu.Item key={'axes-check-box'}>
+          <Checkbox checked={axes} onChange={toggleAxes}>
+            {i18n.t('skyMenu.Axes', lang)}
           </Checkbox>
         </Menu.Item>
         <Menu.Item key={'shadow-check-box'}>
@@ -1030,26 +1102,37 @@ const MainMenu = ({ viewOnly, set2DView, resetView, zoomView, canvas }: MainMenu
             {i18n.t('menu.view.ShowSurfaceShininess', lang)}
           </Checkbox>
         </Menu.Item>
-        <Menu.Item key={'site-info-panel-check-box'}>
-          <Checkbox checked={showSiteInfoPanel} onChange={toggleSiteInfoPanel}>
-            {i18n.t('menu.view.SiteInformation', lang)}
+        <Menu.Item key={'translucency-check-box'}>
+          <Checkbox checked={floatingWindowOpacity < 1} onChange={toggleTranslucency}>
+            {i18n.t('menu.view.TranslucentFloatingWindows', lang)}
           </Checkbox>
         </Menu.Item>
-        <Menu.Item key={'design-info-panel-check-box'}>
-          <Checkbox checked={showDesignInfoPanel} onChange={toggleDesignInfoPanel}>
-            {i18n.t('menu.view.DesignInformation', lang)}
-          </Checkbox>
-        </Menu.Item>
-        <Menu.Item key={'instruction-panel-check-box'}>
-          <Checkbox checked={showInstructionPanel} onChange={toggleInstructionPanel}>
-            {i18n.t('menu.view.Instruction', lang)}
-          </Checkbox>
-        </Menu.Item>
-        <Menu.Item key={'sticky-note-panel-check-box'}>
-          <Checkbox checked={showStickyNotePanel} onChange={toggleStickyNote}>
-            {i18n.t('menu.view.StickyNote', lang)}
-          </Checkbox>
-        </Menu.Item>
+        <SubMenu
+          key={'accessories'}
+          style={{ paddingLeft: '24px' }}
+          title={i18n.t('menu.view.accessoriesSubMenu', lang)}
+        >
+          <Menu.Item key={'site-info-panel-check-box'}>
+            <Checkbox checked={showSiteInfoPanel} onChange={toggleSiteInfoPanel}>
+              {i18n.t('menu.view.accessories.SiteInformation', lang)}
+            </Checkbox>
+          </Menu.Item>
+          <Menu.Item key={'design-info-panel-check-box'}>
+            <Checkbox checked={showDesignInfoPanel} onChange={toggleDesignInfoPanel}>
+              {i18n.t('menu.view.accessories.DesignInformation', lang)}
+            </Checkbox>
+          </Menu.Item>
+          <Menu.Item key={'instruction-panel-check-box'}>
+            <Checkbox checked={showInstructionPanel} onChange={toggleInstructionPanel}>
+              {i18n.t('menu.view.accessories.Instruction', lang)}
+            </Checkbox>
+          </Menu.Item>
+          <Menu.Item key={'sticky-note-panel-check-box'}>
+            <Checkbox checked={showStickyNotePanel} onChange={toggleStickyNote}>
+              {i18n.t('menu.view.accessories.StickyNote', lang)}
+            </Checkbox>
+          </Menu.Item>
+        </SubMenu>
       </SubMenu>
 
       {/* tool menu */}
@@ -1195,11 +1278,11 @@ const MainMenu = ({ viewOnly, set2DView, resetView, zoomView, canvas }: MainMenu
               showInfo(i18n.t('message.SimulationStarted', lang));
               // give it 0.1 second for the info to show up
               setTimeout(() => {
-                setCommonStore((state) => {
-                  if (loggable) {
+                if (loggable) {
+                  setCommonStore((state) => {
                     state.actionInfo = { name: 'Collect Daily Data for Sensors', timestamp: new Date().getTime() };
-                  }
-                });
+                  });
+                }
                 usePrimitiveStore.setState((state) => {
                   state.simulationInProgress = true;
                   state.runDailyLightSensor = true;
@@ -1220,11 +1303,11 @@ const MainMenu = ({ viewOnly, set2DView, resetView, zoomView, canvas }: MainMenu
               showInfo(i18n.t('message.SimulationStarted', lang));
               // give it 0.1 second for the info to show up
               setTimeout(() => {
-                setCommonStore((state) => {
-                  if (loggable) {
+                if (loggable) {
+                  setCommonStore((state) => {
                     state.actionInfo = { name: 'Collect Yearly Data for Sensors', timestamp: new Date().getTime() };
-                  }
-                });
+                  });
+                }
                 usePrimitiveStore.setState((state) => {
                   state.simulationInProgress = true;
                   state.runYearlyLightSensor = true;
@@ -1293,11 +1376,11 @@ const MainMenu = ({ viewOnly, set2DView, resetView, zoomView, canvas }: MainMenu
               showInfo(i18n.t('message.SimulationStarted', lang));
               // give it 0.1 second for the info to show up
               setTimeout(() => {
-                setCommonStore((state) => {
-                  if (loggable) {
+                if (loggable) {
+                  setCommonStore((state) => {
                     state.actionInfo = { name: 'Analyze Daily Building Energy', timestamp: new Date().getTime() };
-                  }
-                });
+                  });
+                }
                 usePrimitiveStore.setState((state) => {
                   state.runDailyThermalSimulation = true;
                   state.simulationInProgress = true;
@@ -1329,11 +1412,11 @@ const MainMenu = ({ viewOnly, set2DView, resetView, zoomView, canvas }: MainMenu
                   state.runYearlyThermalSimulation = true;
                   state.simulationInProgress = true;
                 });
-                setCommonStore((state) => {
-                  if (loggable) {
+                if (loggable) {
+                  setCommonStore((state) => {
                     state.actionInfo = { name: 'Analyze Yearly Building Energy', timestamp: new Date().getTime() };
-                  }
-                });
+                  });
+                }
               }, 100);
             }}
           >
@@ -1355,14 +1438,14 @@ const MainMenu = ({ viewOnly, set2DView, resetView, zoomView, canvas }: MainMenu
               showInfo(i18n.t('message.SimulationStarted', lang));
               // give it 0.1 second for the info to show up
               setTimeout(() => {
-                setCommonStore((state) => {
-                  if (loggable) {
+                if (loggable) {
+                  setCommonStore((state) => {
                     state.actionInfo = {
                       name: 'Run Daily Simulation For Solar Panels',
                       timestamp: new Date().getTime(),
                     };
-                  }
-                });
+                  });
+                }
                 usePrimitiveStore.setState((state) => {
                   state.simulationInProgress = true;
                   state.dailyPvIndividualOutputs = false;
@@ -1384,14 +1467,14 @@ const MainMenu = ({ viewOnly, set2DView, resetView, zoomView, canvas }: MainMenu
               showInfo(i18n.t('message.SimulationStarted', lang));
               // give it 0.1 second for the info to show up
               setTimeout(() => {
-                setCommonStore((state) => {
-                  if (loggable) {
+                if (loggable) {
+                  setCommonStore((state) => {
                     state.actionInfo = {
                       name: 'Run Yearly Simulation For Solar Panels',
                       timestamp: new Date().getTime(),
                     };
-                  }
-                });
+                  });
+                }
                 usePrimitiveStore.setState((state) => {
                   state.simulationInProgress = true;
                   state.yearlyPvIndividualOutputs = false;
@@ -1418,14 +1501,14 @@ const MainMenu = ({ viewOnly, set2DView, resetView, zoomView, canvas }: MainMenu
                   state.runSolarPanelVisibilityAnalysis = !state.runSolarPanelVisibilityAnalysis;
                   state.simulationInProgress = true;
                 });
-                setCommonStore((state) => {
-                  if (loggable) {
+                if (loggable) {
+                  setCommonStore((state) => {
                     state.actionInfo = {
                       name: 'Run Visibility Analysis For Solar Panels',
                       timestamp: new Date().getTime(),
                     };
-                  }
-                });
+                  });
+                }
               }, 100);
             }}
           >
@@ -1472,14 +1555,14 @@ const MainMenu = ({ viewOnly, set2DView, resetView, zoomView, canvas }: MainMenu
               showInfo(i18n.t('message.SimulationStarted', lang));
               // give it 0.1 second for the info to show up
               setTimeout(() => {
-                setCommonStore((state) => {
-                  if (loggable) {
+                if (loggable) {
+                  setCommonStore((state) => {
                     state.actionInfo = {
                       name: 'Run Daily Simulation for Parabolic Troughs',
                       timestamp: new Date().getTime(),
                     };
-                  }
-                });
+                  });
+                }
                 usePrimitiveStore.setState((state) => {
                   state.simulationInProgress = true;
                   state.dailyParabolicTroughIndividualOutputs = false;
@@ -1501,14 +1584,14 @@ const MainMenu = ({ viewOnly, set2DView, resetView, zoomView, canvas }: MainMenu
               showInfo(i18n.t('message.SimulationStarted', lang));
               // give it 0.1 second for the info to show up
               setTimeout(() => {
-                setCommonStore((state) => {
-                  if (loggable) {
+                if (loggable) {
+                  setCommonStore((state) => {
                     state.actionInfo = {
                       name: 'Run Yearly Simulation for Parabolic Troughs',
                       timestamp: new Date().getTime(),
                     };
-                  }
-                });
+                  });
+                }
                 usePrimitiveStore.setState((state) => {
                   state.simulationInProgress = true;
                   state.yearlyParabolicTroughIndividualOutputs = false;
@@ -1535,14 +1618,14 @@ const MainMenu = ({ viewOnly, set2DView, resetView, zoomView, canvas }: MainMenu
               showInfo(i18n.t('message.SimulationStarted', lang));
               // give it 0.1 second for the info to show up
               setTimeout(() => {
-                setCommonStore((state) => {
-                  if (loggable) {
+                if (loggable) {
+                  setCommonStore((state) => {
                     state.actionInfo = {
                       name: 'Run Daily Simulation for Parabolic Dishes',
                       timestamp: new Date().getTime(),
                     };
-                  }
-                });
+                  });
+                }
                 usePrimitiveStore.setState((state) => {
                   state.simulationInProgress = true;
                   state.dailyParabolicDishIndividualOutputs = false;
@@ -1564,14 +1647,14 @@ const MainMenu = ({ viewOnly, set2DView, resetView, zoomView, canvas }: MainMenu
               showInfo(i18n.t('message.SimulationStarted', lang));
               // give it 0.1 second for the info to show up
               setTimeout(() => {
-                setCommonStore((state) => {
-                  if (loggable) {
+                if (loggable) {
+                  setCommonStore((state) => {
                     state.actionInfo = {
                       name: 'Run Yearly Simulation for Parabolic Dishes',
                       timestamp: new Date().getTime(),
                     };
-                  }
-                });
+                  });
+                }
                 usePrimitiveStore.setState((state) => {
                   state.simulationInProgress = true;
                   state.yearlyParabolicDishIndividualOutputs = false;
@@ -1598,14 +1681,14 @@ const MainMenu = ({ viewOnly, set2DView, resetView, zoomView, canvas }: MainMenu
               showInfo(i18n.t('message.SimulationStarted', lang));
               // give it 0.1 second for the info to show up
               setTimeout(() => {
-                setCommonStore((state) => {
-                  if (loggable) {
+                if (loggable) {
+                  setCommonStore((state) => {
                     state.actionInfo = {
                       name: 'Run Daily Simulation for Fresnel Reflectors',
                       timestamp: new Date().getTime(),
                     };
-                  }
-                });
+                  });
+                }
                 usePrimitiveStore.setState((state) => {
                   state.simulationInProgress = true;
                   state.dailyFresnelReflectorIndividualOutputs = false;
@@ -1627,14 +1710,14 @@ const MainMenu = ({ viewOnly, set2DView, resetView, zoomView, canvas }: MainMenu
               showInfo(i18n.t('message.SimulationStarted', lang));
               // give it 0.1 second for the info to show up
               setTimeout(() => {
-                setCommonStore((state) => {
-                  if (loggable) {
+                if (loggable) {
+                  setCommonStore((state) => {
                     state.actionInfo = {
                       name: 'Run Yearly Simulation for Fresnel Reflectors',
                       timestamp: new Date().getTime(),
                     };
-                  }
-                });
+                  });
+                }
                 usePrimitiveStore.setState((state) => {
                   state.simulationInProgress = true;
                   state.yearlyFresnelReflectorIndividualOutputs = false;
@@ -1661,11 +1744,11 @@ const MainMenu = ({ viewOnly, set2DView, resetView, zoomView, canvas }: MainMenu
               showInfo(i18n.t('message.SimulationStarted', lang));
               // give it 0.1 second for the info to show up
               setTimeout(() => {
-                setCommonStore((state) => {
-                  if (loggable) {
+                if (loggable) {
+                  setCommonStore((state) => {
                     state.actionInfo = { name: 'Run Daily Simulation for Heliostats', timestamp: new Date().getTime() };
-                  }
-                });
+                  });
+                }
                 usePrimitiveStore.setState((state) => {
                   state.simulationInProgress = true;
                   state.dailyHeliostatIndividualOutputs = false;
@@ -1687,14 +1770,14 @@ const MainMenu = ({ viewOnly, set2DView, resetView, zoomView, canvas }: MainMenu
               showInfo(i18n.t('message.SimulationStarted', lang));
               // give it 0.1 second for the info to show up
               setTimeout(() => {
-                setCommonStore((state) => {
-                  if (loggable) {
+                if (loggable) {
+                  setCommonStore((state) => {
                     state.actionInfo = {
                       name: 'Run Yearly Simulation for Heliostats',
                       timestamp: new Date().getTime(),
                     };
-                  }
-                });
+                  });
+                }
                 usePrimitiveStore.setState((state) => {
                   state.simulationInProgress = true;
                   state.yearlyHeliostatIndividualOutputs = false;
@@ -1721,14 +1804,14 @@ const MainMenu = ({ viewOnly, set2DView, resetView, zoomView, canvas }: MainMenu
               showInfo(i18n.t('message.SimulationStarted', lang));
               // give it 0.1 second for the info to show up
               setTimeout(() => {
-                setCommonStore((state) => {
-                  if (loggable) {
+                if (loggable) {
+                  setCommonStore((state) => {
                     state.actionInfo = {
                       name: 'Run Daily Simulation for Solar Updraft Tower',
                       timestamp: new Date().getTime(),
                     };
-                  }
-                });
+                  });
+                }
                 usePrimitiveStore.setState((state) => {
                   state.simulationInProgress = true;
                   state.dailyUpdraftTowerIndividualOutputs = false;
@@ -1750,14 +1833,14 @@ const MainMenu = ({ viewOnly, set2DView, resetView, zoomView, canvas }: MainMenu
               showInfo(i18n.t('message.SimulationStarted', lang));
               // give it 0.1 second for the info to show up
               setTimeout(() => {
-                setCommonStore((state) => {
-                  if (loggable) {
+                if (loggable) {
+                  setCommonStore((state) => {
                     state.actionInfo = {
                       name: 'Run Yearly Simulation for Solar Updraft Tower',
                       timestamp: new Date().getTime(),
                     };
-                  }
-                });
+                  });
+                }
                 usePrimitiveStore.setState((state) => {
                   state.simulationInProgress = true;
                   state.yearlyUpdraftTowerIndividualOutputs = false;
