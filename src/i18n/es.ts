@@ -250,6 +250,7 @@ export const i18n_es = {
           DesignInformation: 'Información de diseño',
           Instruction: 'Instrucción',
           StickyNote: 'Nota adhesiva',
+          Note: 'Nota',
         },
       },
       toolSubMenu: 'Herramienta',

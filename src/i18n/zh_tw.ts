@@ -248,6 +248,7 @@ export const i18n_zh_tw = {
           DesignInformation: '設計資訊',
           Instruction: '操作說明',
           StickyNote: '便簽',
+          Note: '便簽',
         },
       },
       toolSubMenu: '工具',

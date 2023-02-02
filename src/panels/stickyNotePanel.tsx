@@ -197,7 +197,7 @@ const StickyNotePanel = () => {
             }}
           >
             <Header className="handle">
-              <span>{i18n.t('menu.view.accessories.StickyNote', lang)}</span>
+              <span>{i18n.t('menu.view.accessories.Note', lang)}</span>
               <span
                 style={{ cursor: 'pointer' }}
                 onMouseDown={() => {

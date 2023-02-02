@@ -1,7 +1,7 @@
 {
-  "docid": "5rcuZW2StRRh6NWhtdbAXs",
-  "time": "12/30/2022 04:50 pm",
-  "timestamp": 1672437020645,
+  "docid": "3bV7iKdYGFqm9zrVqgq1Ui",
+  "time": "02/02/2023 10:48 am",
+  "timestamp": 1675352914967,
   "userid": "QWecNcxhyvP6j6sBN11hBsfZDau1",
   "owner": null,
   "email": null,
@@ -367,7 +367,8 @@
         1
       ],
       "selected": false,
-      "rValue": 2.641654309594841
+      "rValue": 2.641654309594841,
+      "ceiling": false
     },
     {
       "type": "Window",
@@ -819,7 +820,8 @@
         1
       ],
       "selected": false,
-      "rValue": 2.641654309594841
+      "rValue": 2.641654309594841,
+      "ceiling": false
     },
     {
       "type": "Foundation",
@@ -884,9 +886,9 @@
     "dailyHeliostatYieldPanelX": 0,
     "showDailyParabolicDishYieldPanel": false,
     "cameraPosition": [
-      -25.681996262064782,
-      -24.478823310849524,
-      9.132470250026005
+      -25.68199626206477,
+      -24.47882331084952,
+      9.132470250026
     ],
     "showYearlyHeliostatYieldPanel": false,
     "orthographic": false,
@@ -913,7 +915,7 @@
     "showYearlyLightSensorPanel": false,
     "autoRotate": false,
     "heliodonPanelX": -14,
-    "showStickyNotePanel": false,
+    "showStickyNotePanel": true,
     "showDailyLightSensorPanel": false,
     "visibilityResultsPanelX": 0,
     "yearlyPvYieldPanelY": 0,
@@ -969,6 +971,12 @@
       "y": 0,
       "width": 600,
       "height": 400
+    },
+    "stickyNotePanelRect": {
+      "x": 221,
+      "y": -3,
+      "width": 203,
+      "height": 64
     }
   },
   "evolutionMethod": 1,
@@ -1028,5 +1036,7 @@
     "electricitySellingPrice": 0.25,
     "operationalCostPerUnit": 0.15
   },
-  "notes": []
+  "notes": [
+    "Effect of trees"
+  ]
 }

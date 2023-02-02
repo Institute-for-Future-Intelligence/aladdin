@@ -1,7 +1,7 @@
 {
-  "docid": "oDHau8Vkkjhp3CKmPsmWgY",
-  "time": "12/30/2022 03:59 pm",
-  "timestamp": 1672433952966,
+  "docid": "vbhUi2n6iw6XkaxKX8wzSd",
+  "time": "02/02/2023 09:45 am",
+  "timestamp": 1675349124278,
   "userid": "QWecNcxhyvP6j6sBN11hBsfZDau1",
   "owner": null,
   "email": null,
@@ -368,7 +368,8 @@
         1
       ],
       "selected": false,
-      "rValue": 2.1133234476758727
+      "rValue": 2.1133234476758727,
+      "ceiling": false
     },
     {
       "type": "Window",
@@ -798,7 +799,8 @@
         1
       ],
       "selected": false,
-      "rValue": 2.1133234476758727
+      "rValue": 2.1133234476758727,
+      "ceiling": false
     },
     {
       "type": "Foundation",
@@ -864,9 +866,9 @@
     "dailyHeliostatYieldPanelX": 0,
     "showDailyParabolicDishYieldPanel": false,
     "cameraPosition": [
-      3.840296491466285,
-      -33.895156396774475,
-      5.427606986670456
+      3.8402964914662876,
+      -33.89515639677446,
+      5.427606986670453
     ],
     "showYearlyHeliostatYieldPanel": false,
     "orthographic": false,
@@ -893,7 +895,7 @@
     "showYearlyLightSensorPanel": false,
     "autoRotate": false,
     "heliodonPanelX": -14,
-    "showStickyNotePanel": false,
+    "showStickyNotePanel": true,
     "showDailyLightSensorPanel": false,
     "visibilityResultsPanelX": 0,
     "yearlyPvYieldPanelY": 0,
@@ -955,6 +957,12 @@
       "y": 0,
       "width": 500,
       "height": 500
+    },
+    "stickyNotePanelRect": {
+      "x": 217,
+      "y": -4,
+      "width": 258,
+      "height": 75
     }
   },
   "evolutionMethod": 1,
@@ -1014,5 +1022,7 @@
     "electricitySellingPrice": 0.25,
     "operationalCostPerUnit": 0.15
   },
-  "notes": []
+  "notes": [
+    "Effect of house orientation"
+  ]
 }

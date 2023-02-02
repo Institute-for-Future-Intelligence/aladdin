@@ -1,7 +1,7 @@
 {
-  "docid": "qmVmU9b3oYXzvTdeckKd9N",
-  "time": "12/30/2022 04:49 pm",
-  "timestamp": 1672436956110,
+  "docid": "kyYePsNuhqtt7D312reBDz",
+  "time": "02/02/2023 10:45 am",
+  "timestamp": 1675352701163,
   "userid": "QWecNcxhyvP6j6sBN11hBsfZDau1",
   "owner": null,
   "email": null,
@@ -97,9 +97,9 @@
       },
       "id": "iFATUUjMA7c8wHKwioiCvi",
       "selected": false,
-      "label": "👎",
+      "label": "A",
       "showLabel": true,
-      "labelHeight": 8.5,
+      "labelHeight": 9,
       "labelSize": 0.8,
       "color": "#666666"
     },
@@ -1268,7 +1268,8 @@
         0,
         1
       ],
-      "volumetricHeatCapacity": 0.2
+      "volumetricHeatCapacity": 0.2,
+      "ceiling": false
     },
     {
       "type": "Window",
@@ -2815,7 +2816,8 @@
       ],
       "selected": false,
       "rValue": 2.8177645969011635,
-      "volumetricHeatCapacity": 0.2
+      "volumetricHeatCapacity": 0.2,
+      "ceiling": false
     },
     {
       "type": "Foundation",
@@ -2848,7 +2850,7 @@
       "showLabel": true,
       "id": "9Lzok59gfWu44BJHP6NeDv",
       "selected": false,
-      "label": "👍",
+      "label": "B",
       "color": "#666666"
     },
     {
@@ -2917,8 +2919,8 @@
     "dailyHeliostatYieldPanelX": 0,
     "showDailyParabolicDishYieldPanel": false,
     "cameraPosition": [
-      -21.20570614889885,
-      -34.50128024352178,
+      -21.205706148898827,
+      -34.501280243521734,
       7.541149435690317
     ],
     "showYearlyHeliostatYieldPanel": false,
@@ -2946,7 +2948,7 @@
     "showYearlyLightSensorPanel": false,
     "autoRotate": false,
     "heliodonPanelX": -14,
-    "showStickyNotePanel": false,
+    "showStickyNotePanel": true,
     "showDailyLightSensorPanel": false,
     "visibilityResultsPanelX": 0,
     "yearlyPvYieldPanelY": 0,
@@ -3002,6 +3004,12 @@
       "y": 218,
       "width": 775,
       "height": 342
+    },
+    "stickyNotePanelRect": {
+      "x": 226,
+      "y": 0,
+      "width": 275,
+      "height": 63
     }
   },
   "evolutionMethod": 1,
@@ -3061,5 +3069,7 @@
     "electricitySellingPrice": 0.25,
     "operationalCostPerUnit": 0.15
   },
-  "notes": []
+  "notes": [
+    "Effect of rooftop solar panels"
+  ]
 }

@@ -1,7 +1,7 @@
 {
-  "docid": "oNxxKAq5WcnMypfCtgJBDc",
-  "time": "01/27/2023 10:10 am",
-  "timestamp": 1674832203249,
+  "docid": "3EPyEpg5eBXkKCURdQV6iR",
+  "time": "02/02/2023 10:37 am",
+  "timestamp": 1675352248160,
   "userid": "QWecNcxhyvP6j6sBN11hBsfZDau1",
   "owner": null,
   "email": null,
@@ -367,7 +367,8 @@
         1
       ],
       "selected": false,
-      "rValue": 1.7611028730632272
+      "rValue": 1.7611028730632272,
+      "ceiling": false
     },
     {
       "type": "Foundation",
@@ -670,7 +671,8 @@
         0,
         1
       ],
-      "rValue": 1.7611028730632272
+      "rValue": 1.7611028730632272,
+      "ceiling": false
     },
     {
       "type": "Window",
@@ -870,8 +872,8 @@
     "dailyHeliostatYieldPanelX": 0,
     "showDailyParabolicDishYieldPanel": false,
     "cameraPosition": [
-      -20.87146532080159,
-      -18.257945460455637,
+      -20.87146532080158,
+      -18.25794546045563,
       3.7153893598089467
     ],
     "showYearlyHeliostatYieldPanel": false,
@@ -899,7 +901,7 @@
     "showYearlyLightSensorPanel": false,
     "autoRotate": false,
     "heliodonPanelX": -14,
-    "showStickyNotePanel": false,
+    "showStickyNotePanel": true,
     "showDailyLightSensorPanel": false,
     "visibilityResultsPanelX": 0,
     "yearlyPvYieldPanelY": 0,
@@ -955,6 +957,12 @@
       "y": 0,
       "width": 600,
       "height": 400
+    },
+    "stickyNotePanelRect": {
+      "x": 221,
+      "y": 0,
+      "width": 277,
+      "height": 60
     }
   },
   "evolutionMethod": 1,
@@ -1014,5 +1022,7 @@
     "electricitySellingPrice": 0.25,
     "operationalCostPerUnit": 0.15
   },
-  "notes": []
+  "notes": [
+    "Effect of eaves overhang"
+  ]
 }

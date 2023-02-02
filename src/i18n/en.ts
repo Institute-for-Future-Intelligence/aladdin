@@ -250,6 +250,7 @@ export const i18n_en = {
           DesignInformation: 'Design Information',
           Instruction: 'Instruction',
           StickyNote: 'Sticky Note',
+          Note: 'Note',
         },
       },
       toolSubMenu: 'Tool',

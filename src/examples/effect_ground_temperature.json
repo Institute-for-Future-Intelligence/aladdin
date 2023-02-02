@@ -1,7 +1,7 @@
 {
-  "docid": "hvVHS7Fw15TGnHm6iaQWxS",
-  "time": "01/30/2023 06:56 pm",
-  "timestamp": 1675122995607,
+  "docid": "kwkDx8Xv3YdyoHJxG5gE93",
+  "time": "02/02/2023 10:47 am",
+  "timestamp": 1675352838012,
   "userid": "QWecNcxhyvP6j6sBN11hBsfZDau1",
   "owner": null,
   "email": null,
@@ -368,7 +368,8 @@
         1
       ],
       "selected": false,
-      "rValue": 1.7611028730632272
+      "rValue": 1.7611028730632272,
+      "ceiling": false
     },
     {
       "type": "Foundation",
@@ -672,7 +673,8 @@
         0,
         1
       ],
-      "rValue": 1.7611028730632272
+      "rValue": 1.7611028730632272,
+      "ceiling": false
     },
     {
       "type": "Window",
@@ -872,9 +874,9 @@
     "dailyHeliostatYieldPanelX": 0,
     "showDailyParabolicDishYieldPanel": false,
     "cameraPosition": [
-      -18.653902319475712,
-      -18.59009164612226,
-      4.235527459875621
+      -18.653902319475694,
+      -18.590091646122243,
+      4.235527459875618
     ],
     "showYearlyHeliostatYieldPanel": false,
     "orthographic": false,
@@ -901,7 +903,7 @@
     "showYearlyLightSensorPanel": false,
     "autoRotate": false,
     "heliodonPanelX": -14,
-    "showStickyNotePanel": false,
+    "showStickyNotePanel": true,
     "showDailyLightSensorPanel": false,
     "visibilityResultsPanelX": 0,
     "yearlyPvYieldPanelY": 0,
@@ -958,7 +960,13 @@
       "width": 600,
       "height": 400
     },
-    "heatFluxScaleFactor": 10
+    "heatFluxScaleFactor": 10,
+    "stickyNotePanelRect": {
+      "x": -2,
+      "y": 344,
+      "width": 517,
+      "height": 60
+    }
   },
   "evolutionMethod": 1,
   "solarPanelArrayLayoutParams": {
@@ -1017,5 +1025,7 @@
     "electricitySellingPrice": 0.25,
     "operationalCostPerUnit": 0.15
   },
-  "notes": []
+  "notes": [
+    "Effect of ground temperature and floor insulation"
+  ]
 }

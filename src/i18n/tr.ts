@@ -249,6 +249,7 @@ export const i18n_tr = {
           DesignInformation: 'Izgara Hücre Sayısı',
           Instruction: 'Yardım',
           StickyNote: 'Notlar',
+          Note: 'Notlar',
         },
       },
       toolSubMenu: 'Araçlar',
