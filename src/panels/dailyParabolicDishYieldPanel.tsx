@@ -82,7 +82,7 @@ const DailyParabolicDishYieldPanel = ({ city }: DailyParabolicDishYieldPanelProp
   const now = new Date(useStore(Selector.world.date));
   const countElementsByType = useStore(Selector.countElementsByType);
   const dailyYield = useDataStore(Selector.dailyParabolicDishYield);
-  const individualOutputs = usePrimitiveStore(Selector.dailyParabolicDishIndividualOutputs);
+  const individualOutputs = useStore(Selector.dailyParabolicDishIndividualOutputs);
   const panelRect = useStore(Selector.viewState.dailyParabolicDishYieldPanelRect);
   const parabolicDishLabels = useDataStore(Selector.parabolicDishLabels);
   const simulationInProgress = usePrimitiveStore(Selector.simulationInProgress);
@@ -192,8 +192,8 @@ const DailyParabolicDishYieldPanel = ({ city }: DailyParabolicDishYieldPanelProp
   const parabolicDishCount = countElementsByType(ObjectType.ParabolicDish);
   useEffect(() => {
     if (parabolicDishCount < 2 && individualOutputs) {
-      usePrimitiveStore.setState((state) => {
-        state.dailyParabolicDishIndividualOutputs = false;
+      setCommonStore((state) => {
+        if (state.graphState) state.graphState.dailyParabolicDishIndividualOutputs = false;
       });
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -289,6 +289,7 @@ const DailyParabolicDishYieldPanel = ({ city }: DailyParabolicDishYieldPanelProp
                     // give it 0.1 second for the info to show up
                     setTimeout(() => {
                       setCommonStore((state) => {
+                        if (state.graphState) state.graphState.dailyParabolicDishIndividualOutputs = checked;
                         if (loggable) {
                           state.actionInfo = {
                             name: 'Run Daily Simulation For Parabolic Dishes: ' + (checked ? 'Individual' : 'Total'),
@@ -300,7 +301,6 @@ const DailyParabolicDishYieldPanel = ({ city }: DailyParabolicDishYieldPanelProp
                         state.runDailySimulationForParabolicDishes = true;
                         state.pauseDailySimulationForParabolicDishes = false;
                         state.simulationInProgress = true;
-                        state.dailyParabolicDishIndividualOutputs = checked;
                       });
                     }, 100);
                   }}

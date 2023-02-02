@@ -82,7 +82,7 @@ const DailyHeliostatYieldPanel = ({ city }: DailyHeliostatYieldPanelProps) => {
   const now = new Date(useStore(Selector.world.date));
   const countElementsByType = useStore(Selector.countElementsByType);
   const dailyYield = useDataStore(Selector.dailyHeliostatYield);
-  const individualOutputs = usePrimitiveStore(Selector.dailyHeliostatIndividualOutputs);
+  const individualOutputs = useStore(Selector.dailyHeliostatIndividualOutputs);
   const panelRect = useStore(Selector.viewState.dailyHeliostatYieldPanelRect);
   const heliostatLabels = useDataStore(Selector.heliostatLabels);
   const simulationInProgress = usePrimitiveStore(Selector.simulationInProgress);
@@ -192,8 +192,8 @@ const DailyHeliostatYieldPanel = ({ city }: DailyHeliostatYieldPanelProps) => {
   const heliostatCount = countElementsByType(ObjectType.Heliostat);
   useEffect(() => {
     if (heliostatCount < 2 && individualOutputs) {
-      usePrimitiveStore.setState((state) => {
-        state.dailyHeliostatIndividualOutputs = false;
+      setCommonStore((state) => {
+        if (state.graphState) state.graphState.dailyHeliostatIndividualOutputs = false;
       });
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -289,6 +289,7 @@ const DailyHeliostatYieldPanel = ({ city }: DailyHeliostatYieldPanelProps) => {
                     // give it 0.1 second for the info to show up
                     setTimeout(() => {
                       setCommonStore((state) => {
+                        if (state.graphState) state.graphState.dailyHeliostatIndividualOutputs = checked;
                         if (loggable) {
                           state.actionInfo = {
                             name: 'Run Daily Simulation For Heliostats: ' + (checked ? 'Individual' : 'Total'),
@@ -300,7 +301,6 @@ const DailyHeliostatYieldPanel = ({ city }: DailyHeliostatYieldPanelProps) => {
                         state.runDailySimulationForHeliostats = true;
                         state.pauseDailySimulationForHeliostats = false;
                         state.simulationInProgress = true;
-                        state.dailyHeliostatIndividualOutputs = checked;
                       });
                     }, 100);
                   }}

@@ -36,8 +36,8 @@ const ParabolicTroughSimulation = ({ city }: ParabolicTroughSimulationProps) => 
   const updateDailyYield = useStore(Selector.updateSolarCollectorDailyYieldById);
   const setYearlyYield = useDataStore(Selector.setYearlyParabolicTroughYield);
   const updateYearlyYield = useStore(Selector.updateSolarCollectorYearlyYieldById);
-  const dailyIndividualOutputs = usePrimitiveStore(Selector.dailyParabolicTroughIndividualOutputs);
-  const yearlyIndividualOutputs = usePrimitiveStore(Selector.yearlyParabolicTroughIndividualOutputs);
+  const dailyIndividualOutputs = useStore(Selector.dailyParabolicTroughIndividualOutputs);
+  const yearlyIndividualOutputs = useStore(Selector.yearlyParabolicTroughIndividualOutputs);
   const setParabolicTroughLabels = useDataStore(Selector.setParabolicTroughLabels);
   const runDailySimulation = usePrimitiveStore(Selector.runDailySimulationForParabolicTroughs);
   const runYearlySimulation = usePrimitiveStore(Selector.runYearlySimulationForParabolicTroughs);

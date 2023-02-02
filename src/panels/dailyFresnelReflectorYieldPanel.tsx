@@ -82,7 +82,7 @@ const DailyFresnelReflectorYieldPanel = ({ city }: DailyFresnelReflectorYieldPan
   const now = new Date(useStore(Selector.world.date));
   const countElementsByType = useStore(Selector.countElementsByType);
   const dailyYield = useDataStore(Selector.dailyFresnelReflectorYield);
-  const individualOutputs = usePrimitiveStore(Selector.dailyFresnelReflectorIndividualOutputs);
+  const individualOutputs = useStore(Selector.dailyFresnelReflectorIndividualOutputs);
   const panelRect = useStore(Selector.viewState.dailyFresnelReflectorYieldPanelRect);
   const fresnelReflectorLabels = useDataStore(Selector.fresnelReflectorLabels);
   const simulationInProgress = usePrimitiveStore(Selector.simulationInProgress);
@@ -192,8 +192,8 @@ const DailyFresnelReflectorYieldPanel = ({ city }: DailyFresnelReflectorYieldPan
   const fresnelReflectorCount = countElementsByType(ObjectType.FresnelReflector);
   useEffect(() => {
     if (fresnelReflectorCount < 2 && individualOutputs) {
-      usePrimitiveStore.setState((state) => {
-        state.dailyFresnelReflectorIndividualOutputs = false;
+      setCommonStore((state) => {
+        if (state.graphState) state.graphState.dailyFresnelReflectorIndividualOutputs = false;
       });
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -289,6 +289,7 @@ const DailyFresnelReflectorYieldPanel = ({ city }: DailyFresnelReflectorYieldPan
                     // give it 0.1 second for the info to show up
                     setTimeout(() => {
                       setCommonStore((state) => {
+                        if (state.graphState) state.graphState.dailyFresnelReflectorIndividualOutputs = checked;
                         if (loggable) {
                           state.actionInfo = {
                             name: 'Run Daily Simulation For Fresnel Reflectors: ' + (checked ? 'Individual' : 'Total'),
@@ -300,7 +301,6 @@ const DailyFresnelReflectorYieldPanel = ({ city }: DailyFresnelReflectorYieldPan
                         state.runDailySimulationForFresnelReflectors = true;
                         state.pauseDailySimulationForFresnelReflectors = false;
                         state.simulationInProgress = true;
-                        state.dailyFresnelReflectorIndividualOutputs = checked;
                       });
                     }, 100);
                   }}

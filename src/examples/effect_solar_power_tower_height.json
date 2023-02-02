@@ -1,6 +1,7 @@
 {
-  "docid": "7h7dvsVYvnkzb2piS292Jg",
-  "timestamp": 1645462803892,
+  "docid": "pZDY88jj4sXrYMWxTseZ1u",
+  "time": "02/02/2023 02:32 pm",
+  "timestamp": 1675366346931,
   "userid": "QWecNcxhyvP6j6sBN11hBsfZDau1",
   "owner": null,
   "email": null,
@@ -28,7 +29,7 @@
       ]
     },
     "address": "Phoenix, AZ, USA",
-    "date": "3/22/2022 12:00:00 PM",
+    "date": "3/22/2022, 12:00:00 PM",
     "name": "default",
     "orthographic": false,
     "cameraZoom": 35.16173831821251,
@@ -114,7 +115,7 @@
       "foundationId": "of4fAMi2p9MKmo6JDUYnfX",
       "id": "9caRxtuWoQpc52Rcvx4m2Y",
       "selected": false,
-      "dailyYield": 29.137544083548534,
+      "dailyYield": 29.12957022220564,
       "yearlyYield": 311.4614380820491,
       "label": "L6"
     },
@@ -147,7 +148,7 @@
       "foundationId": "of4fAMi2p9MKmo6JDUYnfX",
       "id": "3qHYF54uoRjqCcVSRMJa3K",
       "selected": false,
-      "dailyYield": 26.423771994266055,
+      "dailyYield": 12.632105204416524,
       "yearlyYield": 341.6536704139208,
       "label": "L4"
     },
@@ -180,7 +181,7 @@
       "id": "g1F68TNqBqLxmye4TdM9aX",
       "selected": false,
       "drawSunBeam": true,
-      "dailyYield": 25.42116212787597,
+      "dailyYield": 8.640669150547245,
       "yearlyYield": 285.77957159626914,
       "label": "L3"
     },
@@ -213,7 +214,7 @@
       "id": "hdPEQL9d6tCZYhADdWFZfX",
       "selected": false,
       "drawSunBeam": true,
-      "dailyYield": 24.050331334095127,
+      "dailyYield": 15.667514658355707,
       "yearlyYield": 347.0340046876023,
       "label": "L5"
     },
@@ -247,7 +248,7 @@
       "selected": false,
       "drawSunBeam": true,
       "label": "L2",
-      "dailyYield": 25.02617134764548
+      "dailyYield": 4.958857907473794
     },
     {
       "type": "Heliostat",
@@ -279,7 +280,7 @@
       "selected": false,
       "drawSunBeam": true,
       "label": "L1",
-      "dailyYield": 24.245423652000113
+      "dailyYield": 2.355020886123749
     },
     {
       "type": "Human",
@@ -333,7 +334,7 @@
       "id": "j3sWeAPDp1y53hV9TKpY1X",
       "selected": false,
       "drawSunBeam": true,
-      "dailyYield": 28.831860853574366,
+      "dailyYield": 28.834554606358278,
       "label": "H6"
     },
     {
@@ -365,7 +366,7 @@
       "id": "txZLYrcQ93XFhrpdAsV7Mp",
       "selected": false,
       "drawSunBeam": true,
-      "dailyYield": 26.579899333079638,
+      "dailyYield": 22.049770857324166,
       "label": "H4"
     },
     {
@@ -397,7 +398,7 @@
       "id": "9uaB6ZaFJqdfwW82X3mBGL",
       "selected": false,
       "drawSunBeam": true,
-      "dailyYield": 25.7138435887373,
+      "dailyYield": 17.30899182389923,
       "label": "H3"
     },
     {
@@ -429,7 +430,7 @@
       "id": "wQcg7xgoQBPNeT1VLa2pPS",
       "selected": false,
       "drawSunBeam": true,
-      "dailyYield": 24.23758038108342,
+      "dailyYield": 21.74570231867697,
       "label": "H5"
     },
     {
@@ -461,7 +462,7 @@
       "id": "xcPfzQdhBUHxAytCA4wYay",
       "selected": false,
       "drawSunBeam": true,
-      "dailyYield": 25.29712770697678,
+      "dailyYield": 14.042308959831052,
       "label": "H2"
     },
     {
@@ -493,7 +494,7 @@
       "id": "5otXu1RaMdbKFrMqe75zLT",
       "selected": false,
       "drawSunBeam": true,
-      "dailyYield": 24.475826765849234,
+      "dailyYield": 10.99900401218998,
       "label": "H1"
     },
     {
@@ -552,7 +553,7 @@
     "dailyLightSensorPanelX": -240,
     "weatherPanelX": 0,
     "heliodonPanelY": 17,
-    "groundColor": "forestgreen",
+    "groundColor": "#16a5a5",
     "groundPanelY": 0,
     "groundImage": false,
     "showDailyPvYieldPanel": false,
@@ -560,9 +561,9 @@
     "showYearlyLightSensorPanel": false,
     "mapType": "hybrid",
     "cameraPosition": [
-      -64.04310075373935,
-      -43.223282815061296,
-      10.926967172602279
+      -65.26004925031225,
+      -40.981584348790804,
+      10.926967172602259
     ],
     "panCenter": [
       -8.555794568197623,
@@ -572,7 +573,7 @@
     "orthographic": false,
     "enableRotate": true,
     "cameraZoom": 10.266841665590098,
-    "showInstructionPanel": true,
+    "showInstructionPanel": false,
     "showMapPanel": false,
     "cameraPosition2D": [
       8.410285062152344,
@@ -585,10 +586,92 @@
       0.000012467288726847116
     ],
     "solarRadiationHeatMapMaxValue": 6,
-    "showDailyHeliostatYieldPanel": false,
+    "showDailyHeliostatYieldPanel": true,
     "dailyHeliostatYieldPanelX": null,
     "dailyHeliostatYieldPanelY": null,
-    "showYearlyHeliostatYieldPanel": false
+    "showYearlyHeliostatYieldPanel": false,
+    "dailyHeliostatYieldPanelRect": {
+      "x": 0,
+      "y": 0,
+      "width": 600,
+      "height": 400
+    },
+    "showStickyNotePanel": true,
+    "stickyNotePanelRect": {
+      "x": 0,
+      "y": 0,
+      "width": 252,
+      "height": 65
+    }
   },
-  "notes": []
+  "graphState": {
+    "dailyParabolicDishIndividualOutputs": false,
+    "yearlyParabolicDishIndividualOutputs": false,
+    "dailyParabolicTroughIndividualOutputs": false,
+    "yearlyParabolicTroughIndividualOutputs": false,
+    "dailyFresnelReflectorIndividualOutputs": false,
+    "yearlyFresnelReflectorIndividualOutputs": false,
+    "dailyHeliostatIndividualOutputs": true,
+    "yearlyHeliostatIndividualOutputs": false
+  },
+  "evolutionMethod": 1,
+  "solarPanelArrayLayoutParams": {
+    "pvModelName": "CS6X-355P-FG",
+    "rowAxis": "Zonal",
+    "orientation": "Landscape",
+    "tiltAngle": 0,
+    "rowsPerRack": 1,
+    "interRowSpacing": 2,
+    "poleHeight": 1,
+    "poleSpacing": 3
+  },
+  "solarPanelArrayLayoutConstraints": {
+    "minimumInterRowSpacing": 2,
+    "maximumInterRowSpacing": 10,
+    "minimumRowsPerRack": 1,
+    "maximumRowsPerRack": 6,
+    "minimumTiltAngle": -1.5707963267948966,
+    "maximumTiltAngle": 1.5707963267948966,
+    "poleHeight": 1,
+    "poleSpacing": 5,
+    "orientation": "Landscape",
+    "pvModelName": "CS6X-355P-FG",
+    "rowAxis": "Zonal"
+  },
+  "evolutionaryAlgorithmState": {
+    "geneticAlgorithmParams": {
+      "problem": "Solar Panel Tilt Angle",
+      "objectiveFunctionType": 1,
+      "selectionMethod": 1,
+      "searchMethod": 1,
+      "populationSize": 20,
+      "maximumGenerations": 5,
+      "selectionRate": 0.5,
+      "crossoverRate": 0.5,
+      "mutationRate": 0.1,
+      "convergenceThreshold": 0.01,
+      "localSearchRadius": 0.1
+    },
+    "particleSwarmOptimizationParams": {
+      "problem": "Solar Panel Tilt Angle",
+      "objectiveFunctionType": 1,
+      "searchMethod": 1,
+      "swarmSize": 20,
+      "maximumSteps": 5,
+      "vmax": 0.01,
+      "inertia": 0.8,
+      "cognitiveCoefficient": 0.1,
+      "socialCoefficient": 0.1,
+      "convergenceThreshold": 0.01,
+      "localSearchRadius": 0.1
+    }
+  },
+  "economicsParams": {
+    "projectLifeSpan": 25,
+    "electricitySellingPrice": 0.25,
+    "operationalCostPerUnit": 0.15
+  },
+  "notes": [
+    "Effect of tower height"
+  ]
 }

@@ -1,6 +1,7 @@
 {
-  "docid": "qR8udueqf5t2BgywNZauN7",
-  "timestamp": 1645626342591,
+  "docid": "7S7bEV6ZYbto3VABAgFA3P",
+  "time": "02/02/2023 02:20 pm",
+  "timestamp": 1675365653613,
   "userid": "QWecNcxhyvP6j6sBN11hBsfZDau1",
   "owner": null,
   "email": null,
@@ -658,14 +659,14 @@
     "enableRotate": true,
     "ambientLightIntensity": 0.1,
     "cameraPosition": [
-      -0.3129797106794272,
-      39.88898545191547,
-      4.992858019561682
+      -0.31297971067942676,
+      39.88898545191545,
+      4.992858019561686
     ],
     "cameraPosition2D": [
       0.0944682441377376,
       -0.000020000888987681265,
-      19.999999999987036
+      150
     ],
     "panCenter": [
       0.8058435707077831,
@@ -689,10 +690,10 @@
     "showMapPanel": false,
     "showHeliodonPanel": false,
     "showWeatherPanel": false,
-    "showStickyNotePanel": false,
+    "showStickyNotePanel": true,
     "showSiteInfoPanel": true,
     "showDesignInfoPanel": false,
-    "showInstructionPanel": true,
+    "showInstructionPanel": false,
     "showDailyLightSensorPanel": false,
     "showYearlyLightSensorPanel": false,
     "showDailyPvYieldPanel": false,
@@ -738,7 +739,80 @@
     "yearlyFresnelReflectorYieldPanelX": -1274,
     "yearlyFresnelReflectorYieldPanelY": 14,
     "dailyFresnelReflectorYieldPanelX": -19,
-    "dailyFresnelReflectorYieldPanelY": 157
+    "dailyFresnelReflectorYieldPanelY": 157,
+    "stickyNotePanelRect": {
+      "x": 0,
+      "y": 0,
+      "width": 379,
+      "height": 67
+    }
   },
-  "notes": []
+  "graphState": {
+    "dailyParabolicDishIndividualOutputs": false,
+    "yearlyParabolicDishIndividualOutputs": false,
+    "dailyParabolicTroughIndividualOutputs": false,
+    "yearlyParabolicTroughIndividualOutputs": false,
+    "dailyFresnelReflectorIndividualOutputs": false,
+    "yearlyFresnelReflectorIndividualOutputs": false
+  },
+  "evolutionMethod": 1,
+  "solarPanelArrayLayoutParams": {
+    "pvModelName": "CS6X-355P-FG",
+    "rowAxis": "Zonal",
+    "orientation": "Landscape",
+    "tiltAngle": 0,
+    "rowsPerRack": 1,
+    "interRowSpacing": 2,
+    "poleHeight": 1,
+    "poleSpacing": 3
+  },
+  "solarPanelArrayLayoutConstraints": {
+    "minimumInterRowSpacing": 2,
+    "maximumInterRowSpacing": 10,
+    "minimumRowsPerRack": 1,
+    "maximumRowsPerRack": 6,
+    "minimumTiltAngle": -1.5707963267948966,
+    "maximumTiltAngle": 1.5707963267948966,
+    "poleHeight": 1,
+    "poleSpacing": 5,
+    "orientation": "Landscape",
+    "pvModelName": "CS6X-355P-FG",
+    "rowAxis": "Zonal"
+  },
+  "evolutionaryAlgorithmState": {
+    "geneticAlgorithmParams": {
+      "problem": "Solar Panel Tilt Angle",
+      "objectiveFunctionType": 1,
+      "selectionMethod": 1,
+      "searchMethod": 1,
+      "populationSize": 20,
+      "maximumGenerations": 5,
+      "selectionRate": 0.5,
+      "crossoverRate": 0.5,
+      "mutationRate": 0.1,
+      "convergenceThreshold": 0.01,
+      "localSearchRadius": 0.1
+    },
+    "particleSwarmOptimizationParams": {
+      "problem": "Solar Panel Tilt Angle",
+      "objectiveFunctionType": 1,
+      "searchMethod": 1,
+      "swarmSize": 20,
+      "maximumSteps": 5,
+      "vmax": 0.01,
+      "inertia": 0.8,
+      "cognitiveCoefficient": 0.1,
+      "socialCoefficient": 0.1,
+      "convergenceThreshold": 0.01,
+      "localSearchRadius": 0.1
+    }
+  },
+  "economicsParams": {
+    "projectLifeSpan": 25,
+    "electricitySellingPrice": 0.25,
+    "operationalCostPerUnit": 0.15
+  },
+  "notes": [
+    "Linear Fresnel reflectors with two absorbers"
+  ]
 }

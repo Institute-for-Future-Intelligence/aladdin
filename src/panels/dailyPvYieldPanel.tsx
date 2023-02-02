@@ -83,7 +83,7 @@ const DailyPvYieldPanel = ({ city }: DailyPvYieldPanelProps) => {
   const now = new Date(useStore(Selector.world.date));
   const countElementsByType = useStore(Selector.countElementsByType);
   const dailyYield = useDataStore(Selector.dailyPvYield);
-  const individualOutputs = usePrimitiveStore(Selector.dailyPvIndividualOutputs);
+  const individualOutputs = useStore(Selector.dailyPvIndividualOutputs);
   const panelRect = useStore(Selector.viewState.dailyPvYieldPanelRect);
   const solarPanelLabels = useDataStore(Selector.solarPanelLabels);
   const runEvolution = usePrimitiveStore(Selector.runEvolution);
@@ -194,8 +194,8 @@ const DailyPvYieldPanel = ({ city }: DailyPvYieldPanelProps) => {
   const solarPanelCount = countElementsByType(ObjectType.SolarPanel);
   useEffect(() => {
     if (solarPanelCount < 2 && individualOutputs) {
-      usePrimitiveStore.setState((state) => {
-        state.dailyPvIndividualOutputs = false;
+      setCommonStore((state) => {
+        if (state.graphState) state.graphState.dailyPvIndividualOutputs = false;
       });
     }
   }, [solarPanelCount, individualOutputs]);
@@ -304,6 +304,7 @@ const DailyPvYieldPanel = ({ city }: DailyPvYieldPanelProps) => {
                         // give it 0.1 second for the info to show up
                         setTimeout(() => {
                           setCommonStore((state) => {
+                            if (state.graphState) state.graphState.dailyPvIndividualOutputs = checked;
                             if (loggable) {
                               state.actionInfo = {
                                 name: 'Run Daily Simulation For Solar Panels: ' + (checked ? 'Individual' : 'Total'),
@@ -313,7 +314,6 @@ const DailyPvYieldPanel = ({ city }: DailyPvYieldPanelProps) => {
                           });
                           usePrimitiveStore.setState((state) => {
                             state.simulationInProgress = true;
-                            state.dailyPvIndividualOutputs = checked;
                             state.runDailySimulationForSolarPanels = true;
                             state.pauseDailySimulationForSolarPanels = false;
                           });

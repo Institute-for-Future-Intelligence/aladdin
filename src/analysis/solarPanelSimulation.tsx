@@ -54,8 +54,8 @@ const SolarPanelSimulation = ({ city }: SolarPanelSimulationProps) => {
   const updateDailyYield = useStore(Selector.updateSolarCollectorDailyYieldById);
   const setYearlyYield = useDataStore(Selector.setYearlyPvYield);
   const updateYearlyYield = useStore(Selector.updateSolarCollectorYearlyYieldById);
-  const dailyIndividualOutputs = usePrimitiveStore(Selector.dailyPvIndividualOutputs);
-  const yearlyIndividualOutputs = usePrimitiveStore(Selector.yearlyPvIndividualOutputs);
+  const dailyIndividualOutputs = useStore(Selector.dailyPvIndividualOutputs);
+  const yearlyIndividualOutputs = useStore(Selector.yearlyPvIndividualOutputs);
   const setSolarPanelLabels = useDataStore(Selector.setSolarPanelLabels);
   const runDailySimulation = usePrimitiveStore(Selector.runDailySimulationForSolarPanels);
   const runDailySimulationLastStep = usePrimitiveStore(Selector.runDailySimulationForSolarPanelsLastStep);

@@ -81,7 +81,7 @@ const YearlyFresnelReflectorYieldPanel = ({ city }: YearlyFresnelReflectorYieldP
   const daysPerYear = useStore(Selector.world.cspDaysPerYear) ?? 6;
   const now = new Date(useStore(Selector.world.date));
   const yearlyYield = useDataStore(Selector.yearlyFresnelReflectorYield);
-  const individualOutputs = usePrimitiveStore(Selector.yearlyFresnelReflectorIndividualOutputs);
+  const individualOutputs = useStore(Selector.yearlyFresnelReflectorIndividualOutputs);
   const fresnelReflectorLabels = useDataStore(Selector.fresnelReflectorLabels);
   const countElementsByType = useStore(Selector.countElementsByType);
   const panelRect = useStore(Selector.viewState.yearlyFresnelReflectorYieldPanelRect);
@@ -192,8 +192,8 @@ const YearlyFresnelReflectorYieldPanel = ({ city }: YearlyFresnelReflectorYieldP
   const fresnelReflectorCount = countElementsByType(ObjectType.FresnelReflector);
   useEffect(() => {
     if (fresnelReflectorCount < 2 && individualOutputs) {
-      usePrimitiveStore.setState((state) => {
-        state.yearlyFresnelReflectorIndividualOutputs = false;
+      setCommonStore((state) => {
+        if (state.graphState) state.graphState.yearlyFresnelReflectorIndividualOutputs = false;
       });
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -293,6 +293,7 @@ const YearlyFresnelReflectorYieldPanel = ({ city }: YearlyFresnelReflectorYieldP
                     // give it 0.1 second for the info to show up
                     setTimeout(() => {
                       setCommonStore((state) => {
+                        if (state.graphState) state.graphState.yearlyFresnelReflectorIndividualOutputs = checked;
                         if (loggable) {
                           state.actionInfo = {
                             name: 'Run Yearly Simulation For Fresnel Reflectors: ' + (checked ? 'Individual' : 'Total'),
@@ -304,7 +305,6 @@ const YearlyFresnelReflectorYieldPanel = ({ city }: YearlyFresnelReflectorYieldP
                         state.runYearlySimulationForFresnelReflectors = true;
                         state.pauseYearlySimulationForFresnelReflectors = false;
                         state.simulationInProgress = true;
-                        state.yearlyFresnelReflectorIndividualOutputs = checked;
                       });
                     }, 100);
                   }}

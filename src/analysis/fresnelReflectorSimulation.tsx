@@ -35,10 +35,10 @@ const FresnelReflectorSimulation = ({ city }: FresnelReflectorSimulationProps) =
   const getParent = useStore(Selector.getParent);
   const setDailyYield = useDataStore(Selector.setDailyFresnelReflectorYield);
   const updateDailyYield = useStore(Selector.updateSolarCollectorDailyYieldById);
-  const dailyIndividualOutputs = usePrimitiveStore(Selector.dailyFresnelReflectorIndividualOutputs);
+  const dailyIndividualOutputs = useStore(Selector.dailyFresnelReflectorIndividualOutputs);
   const setYearlyYield = useDataStore(Selector.setYearlyFresnelReflectorYield);
   const updateYearlyYield = useStore(Selector.updateSolarCollectorYearlyYieldById);
-  const yearlyIndividualOutputs = usePrimitiveStore(Selector.yearlyFresnelReflectorIndividualOutputs);
+  const yearlyIndividualOutputs = useStore(Selector.yearlyFresnelReflectorIndividualOutputs);
   const setFresnelReflectorLabels = useDataStore(Selector.setFresnelReflectorLabels);
   const runDailySimulation = usePrimitiveStore(Selector.runDailySimulationForFresnelReflectors);
   const runYearlySimulation = usePrimitiveStore(Selector.runYearlySimulationForFresnelReflectors);

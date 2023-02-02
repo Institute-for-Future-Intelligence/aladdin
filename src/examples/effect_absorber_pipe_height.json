@@ -1,7 +1,7 @@
 {
-  "docid": "vfAudNSjyyMo42sr1uMaQu",
-  "time": "02/02/2023 12:14 pm",
-  "timestamp": 1675358040222,
+  "docid": "ocJuZWYSitEgM5CmLbqaik",
+  "time": "02/02/2023 02:12 pm",
+  "timestamp": 1675365166608,
   "userid": "QWecNcxhyvP6j6sBN11hBsfZDau1",
   "owner": null,
   "email": null,
@@ -268,9 +268,9 @@
     "enableRotate": true,
     "ambientLightIntensity": 0.1,
     "cameraPosition": [
-      53.11784569640716,
-      -95.69780414866551,
-      24.112920613071175
+      53.11784569640714,
+      -95.69780414866548,
+      24.112920613071182
     ],
     "cameraPosition2D": [
       0,
@@ -361,6 +361,13 @@
       "width": 600,
       "height": 400
     }
+  },
+  "graphState": {
+    "dailyParabolicDishIndividualOutputs": false,
+    "yearlyParabolicDishIndividualOutputs": false,
+    "dailyParabolicTroughIndividualOutputs": false,
+    "yearlyParabolicTroughIndividualOutputs": false,
+    "dailyFresnelReflectorIndividualOutputs": true
   },
   "evolutionMethod": 1,
   "solarPanelArrayLayoutParams": {

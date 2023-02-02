@@ -36,8 +36,8 @@ const ParabolicDishSimulation = ({ city }: ParabolicDishSimulationProps) => {
   const updateDailyYield = useStore(Selector.updateSolarCollectorDailyYieldById);
   const setYearlyYield = useDataStore(Selector.setYearlyParabolicDishYield);
   const updateYearlyYield = useStore(Selector.updateSolarCollectorYearlyYieldById);
-  const dailyIndividualOutputs = usePrimitiveStore(Selector.dailyParabolicDishIndividualOutputs);
-  const yearlyIndividualOutputs = usePrimitiveStore(Selector.yearlyParabolicDishIndividualOutputs);
+  const dailyIndividualOutputs = useStore(Selector.dailyParabolicDishIndividualOutputs);
+  const yearlyIndividualOutputs = useStore(Selector.yearlyParabolicDishIndividualOutputs);
   const setParabolicDishLabels = useDataStore(Selector.setParabolicDishLabels);
   const runDailySimulation = usePrimitiveStore(Selector.runDailySimulationForParabolicDishes);
   const runYearlySimulation = usePrimitiveStore(Selector.runYearlySimulationForParabolicDishes);

@@ -495,25 +495,32 @@ export const useDataStore = create<DataStoreState>((set, get) => {
 
         state.dailyLightSensorData.length = 0;
         state.yearlyLightSensorData.length = 0;
+        state.sensorLabels.length = 0;
 
         state.dailyPvYield.length = 0;
         state.yearlyPvYield.length = 0;
+        state.solarPanelLabels.length = 0;
 
         state.dailyParabolicDishYield.length = 0;
         state.yearlyParabolicDishYield.length = 0;
+        state.parabolicDishLabels.length = 0;
 
         state.dailyParabolicTroughYield.length = 0;
         state.yearlyParabolicTroughYield.length = 0;
+        state.parabolicTroughLabels.length = 0;
 
         state.dailyFresnelReflectorYield.length = 0;
         state.yearlyFresnelReflectorYield.length = 0;
+        state.fresnelReflectorLabels.length = 0;
 
         state.dailyHeliostatYield.length = 0;
         state.yearlyHeliostatYield.length = 0;
+        state.heliostatLabels.length = 0;
 
         state.dailyUpdraftTowerYield.length = 0;
         state.dailyUpdraftTowerResults.length = 0;
         state.yearlyUpdraftTowerYield.length = 0;
+        state.updraftTowerLabels.length = 0;
       });
     },
   };

@@ -82,7 +82,7 @@ const DailyParabolicTroughYieldPanel = ({ city }: DailyParabolicTroughYieldPanel
   const now = new Date(useStore(Selector.world.date));
   const countElementsByType = useStore(Selector.countElementsByType);
   const dailyYield = useDataStore(Selector.dailyParabolicTroughYield);
-  const individualOutputs = usePrimitiveStore(Selector.dailyParabolicTroughIndividualOutputs);
+  const individualOutputs = useStore(Selector.dailyParabolicTroughIndividualOutputs);
   const panelRect = useStore(Selector.viewState.dailyParabolicTroughYieldPanelRect);
   const parabolicTroughLabels = useDataStore(Selector.parabolicTroughLabels);
   const simulationInProgress = usePrimitiveStore(Selector.simulationInProgress);
@@ -192,8 +192,8 @@ const DailyParabolicTroughYieldPanel = ({ city }: DailyParabolicTroughYieldPanel
   const parabolicTroughCount = countElementsByType(ObjectType.ParabolicTrough);
   useEffect(() => {
     if (parabolicTroughCount < 2 && individualOutputs) {
-      usePrimitiveStore.setState((state) => {
-        state.dailyParabolicTroughIndividualOutputs = false;
+      setCommonStore((state) => {
+        if (state.graphState) state.graphState.dailyParabolicTroughIndividualOutputs = false;
       });
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -289,6 +289,7 @@ const DailyParabolicTroughYieldPanel = ({ city }: DailyParabolicTroughYieldPanel
                     // give it 0.1 second for the info to show up
                     setTimeout(() => {
                       setCommonStore((state) => {
+                        if (state.graphState) state.graphState.dailyParabolicTroughIndividualOutputs = checked;
                         if (loggable) {
                           state.actionInfo = {
                             name: 'Run Daily Simulation For Parabolic Troughs: ' + (checked ? 'Individual' : 'Total'),
@@ -300,7 +301,6 @@ const DailyParabolicTroughYieldPanel = ({ city }: DailyParabolicTroughYieldPanel
                         state.runDailySimulationForParabolicTroughs = true;
                         state.pauseDailySimulationForParabolicTroughs = false;
                         state.simulationInProgress = true;
-                        state.dailyParabolicTroughIndividualOutputs = checked;
                       });
                     }, 100);
                   }}

@@ -81,7 +81,7 @@ const YearlyHeliostatYieldPanel = ({ city }: YearlyHeliostatYieldPanelProps) => 
   const daysPerYear = useStore(Selector.world.cspDaysPerYear) ?? 6;
   const now = new Date(useStore(Selector.world.date));
   const yearlyYield = useDataStore(Selector.yearlyHeliostatYield);
-  const individualOutputs = usePrimitiveStore(Selector.yearlyHeliostatIndividualOutputs);
+  const individualOutputs = useStore(Selector.yearlyHeliostatIndividualOutputs);
   const heliostatLabels = useDataStore(Selector.heliostatLabels);
   const countElementsByType = useStore(Selector.countElementsByType);
   const panelRect = useStore(Selector.viewState.yearlyHeliostatYieldPanelRect);
@@ -192,8 +192,8 @@ const YearlyHeliostatYieldPanel = ({ city }: YearlyHeliostatYieldPanelProps) => 
   const heliostatCount = countElementsByType(ObjectType.Heliostat);
   useEffect(() => {
     if (heliostatCount < 2 && individualOutputs) {
-      usePrimitiveStore.setState((state) => {
-        state.yearlyHeliostatIndividualOutputs = false;
+      setCommonStore((state) => {
+        if (state.graphState) state.graphState.yearlyHeliostatIndividualOutputs = false;
       });
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -293,6 +293,7 @@ const YearlyHeliostatYieldPanel = ({ city }: YearlyHeliostatYieldPanelProps) => 
                     // give it 0.1 second for the info to show up
                     setTimeout(() => {
                       setCommonStore((state) => {
+                        if (state.graphState) state.graphState.yearlyHeliostatIndividualOutputs = checked;
                         if (loggable) {
                           state.actionInfo = {
                             name: 'Run Yearly Simulation For Heliostats: ' + (checked ? 'Individual' : 'Total'),
@@ -304,7 +305,6 @@ const YearlyHeliostatYieldPanel = ({ city }: YearlyHeliostatYieldPanelProps) => 
                         state.runYearlySimulationForHeliostats = true;
                         state.pauseYearlySimulationForHeliostats = false;
                         state.simulationInProgress = true;
-                        state.yearlyHeliostatIndividualOutputs = checked;
                       });
                     }, 100);
                   }}

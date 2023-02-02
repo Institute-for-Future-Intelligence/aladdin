@@ -84,7 +84,7 @@ const DailySolarUpdraftTowerYieldPanel = ({ city }: DailySolarUpdraftTowerYieldP
   const countSolarStructuresByType = useStore(Selector.countSolarStructuresByType);
   const dailyYield = useDataStore(Selector.dailyUpdraftTowerYield);
   const dailyResults = useDataStore(Selector.dailyUpdraftTowerResults);
-  const individualOutputs = usePrimitiveStore(Selector.dailyUpdraftTowerIndividualOutputs);
+  const individualOutputs = useStore(Selector.dailyUpdraftTowerIndividualOutputs);
   const panelRect = useStore(Selector.viewState.dailyUpdraftTowerYieldPanelRect);
   const updraftTowerLabels = useDataStore(Selector.updraftTowerLabels);
   const simulationInProgress = usePrimitiveStore(Selector.simulationInProgress);
@@ -194,8 +194,8 @@ const DailySolarUpdraftTowerYieldPanel = ({ city }: DailySolarUpdraftTowerYieldP
   const towerCount = countSolarStructuresByType(SolarStructure.UpdraftTower);
   useEffect(() => {
     if (towerCount < 2 && individualOutputs) {
-      usePrimitiveStore.setState((state) => {
-        state.dailyUpdraftTowerIndividualOutputs = false;
+      setCommonStore((state) => {
+        if (state.graphState) state.graphState.dailyUpdraftTowerIndividualOutputs = false;
       });
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps

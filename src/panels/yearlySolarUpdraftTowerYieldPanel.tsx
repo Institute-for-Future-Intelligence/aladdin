@@ -81,7 +81,7 @@ const YearlySolarUpdraftTowerYieldPanel = ({ city }: YearlySolarUpdraftTowerYiel
   const daysPerYear = useStore(Selector.world.sutDaysPerYear) ?? 6;
   const now = new Date(useStore(Selector.world.date));
   const yearlyYield = useDataStore(Selector.yearlyUpdraftTowerYield);
-  const individualOutputs = usePrimitiveStore(Selector.yearlyUpdraftTowerIndividualOutputs);
+  const individualOutputs = useStore(Selector.yearlyUpdraftTowerIndividualOutputs);
   const labels = useDataStore(Selector.updraftTowerLabels);
   const countSolarStructuresByType = useStore(Selector.countSolarStructuresByType);
   const panelRect = useStore(Selector.viewState.yearlyUpdraftTowerYieldPanelRect);
@@ -192,8 +192,8 @@ const YearlySolarUpdraftTowerYieldPanel = ({ city }: YearlySolarUpdraftTowerYiel
   const towerCount = countSolarStructuresByType(SolarStructure.UpdraftTower);
   useEffect(() => {
     if (towerCount < 2 && individualOutputs) {
-      usePrimitiveStore.setState((state) => {
-        state.yearlyUpdraftTowerIndividualOutputs = false;
+      setCommonStore((state) => {
+        if (state.graphState) state.graphState.yearlyUpdraftTowerIndividualOutputs = false;
       });
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps

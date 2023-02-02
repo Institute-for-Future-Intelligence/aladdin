@@ -32,29 +32,21 @@ export interface PrimitiveStoreState {
   runYearlySimulationForParabolicDishes: boolean;
   pauseDailySimulationForParabolicDishes: boolean;
   pauseYearlySimulationForParabolicDishes: boolean;
-  dailyParabolicDishIndividualOutputs: boolean;
-  yearlyParabolicDishIndividualOutputs: boolean;
 
   runDailySimulationForParabolicTroughs: boolean;
   runYearlySimulationForParabolicTroughs: boolean;
   pauseDailySimulationForParabolicTroughs: boolean;
   pauseYearlySimulationForParabolicTroughs: boolean;
-  dailyParabolicTroughIndividualOutputs: boolean;
-  yearlyParabolicTroughIndividualOutputs: boolean;
 
   runDailySimulationForFresnelReflectors: boolean;
   runYearlySimulationForFresnelReflectors: boolean;
   pauseDailySimulationForFresnelReflectors: boolean;
   pauseYearlySimulationForFresnelReflectors: boolean;
-  dailyFresnelReflectorIndividualOutputs: boolean;
-  yearlyFresnelReflectorIndividualOutputs: boolean;
 
   runDailySimulationForHeliostats: boolean;
   runYearlySimulationForHeliostats: boolean;
   pauseDailySimulationForHeliostats: boolean;
   pauseYearlySimulationForHeliostats: boolean;
-  dailyHeliostatIndividualOutputs: boolean;
-  yearlyHeliostatIndividualOutputs: boolean;
 
   runSolarPanelVisibilityAnalysis: boolean;
   runDailySimulationForSolarPanels: boolean;
@@ -63,8 +55,6 @@ export interface PrimitiveStoreState {
   pauseYearlySimulationForSolarPanels: boolean;
   runDailySimulationForSolarPanelsLastStep: boolean;
   runYearlySimulationForSolarPanelsLastStep: boolean;
-  dailyPvIndividualOutputs: boolean;
-  yearlyPvIndividualOutputs: boolean;
 
   runDailyLightSensor: boolean;
   pauseDailyLightSensor: boolean;
@@ -75,8 +65,6 @@ export interface PrimitiveStoreState {
   runYearlySimulationForUpdraftTower: boolean;
   pauseDailySimulationForUpdraftTower: boolean;
   pauseYearlySimulationForUpdraftTower: boolean;
-  dailyUpdraftTowerIndividualOutputs: boolean;
-  yearlyUpdraftTowerIndividualOutputs: boolean;
 
   flagOfDailySimulation: boolean; // used as a flag to notify that daily results are ready
 
@@ -122,29 +110,21 @@ export const usePrimitiveStore = create<PrimitiveStoreState>((set, get) => {
     runYearlySimulationForParabolicDishes: false,
     pauseDailySimulationForParabolicDishes: false,
     pauseYearlySimulationForParabolicDishes: false,
-    dailyParabolicDishIndividualOutputs: false,
-    yearlyParabolicDishIndividualOutputs: false,
 
     runDailySimulationForParabolicTroughs: false,
     runYearlySimulationForParabolicTroughs: false,
     pauseDailySimulationForParabolicTroughs: false,
     pauseYearlySimulationForParabolicTroughs: false,
-    dailyParabolicTroughIndividualOutputs: false,
-    yearlyParabolicTroughIndividualOutputs: false,
 
     runDailySimulationForFresnelReflectors: false,
     runYearlySimulationForFresnelReflectors: false,
     pauseDailySimulationForFresnelReflectors: false,
     pauseYearlySimulationForFresnelReflectors: false,
-    dailyFresnelReflectorIndividualOutputs: false,
-    yearlyFresnelReflectorIndividualOutputs: false,
 
     runDailySimulationForHeliostats: false,
     runYearlySimulationForHeliostats: false,
     pauseDailySimulationForHeliostats: false,
     pauseYearlySimulationForHeliostats: false,
-    dailyHeliostatIndividualOutputs: false,
-    yearlyHeliostatIndividualOutputs: false,
 
     runSolarPanelVisibilityAnalysis: false,
     runDailySimulationForSolarPanels: false,
@@ -153,8 +133,6 @@ export const usePrimitiveStore = create<PrimitiveStoreState>((set, get) => {
     pauseYearlySimulationForSolarPanels: false,
     runDailySimulationForSolarPanelsLastStep: false,
     runYearlySimulationForSolarPanelsLastStep: false,
-    dailyPvIndividualOutputs: false,
-    yearlyPvIndividualOutputs: false,
 
     runDailyLightSensor: false,
     pauseDailyLightSensor: false,
@@ -165,8 +143,6 @@ export const usePrimitiveStore = create<PrimitiveStoreState>((set, get) => {
     runYearlySimulationForUpdraftTower: false,
     pauseDailySimulationForUpdraftTower: false,
     pauseYearlySimulationForUpdraftTower: false,
-    dailyUpdraftTowerIndividualOutputs: false,
-    yearlyUpdraftTowerIndividualOutputs: false,
 
     flagOfDailySimulation: false,
 

@@ -82,7 +82,7 @@ const YearlyPvYieldPanel = ({ city }: YearlyPvYieldPanelProps) => {
   const daysPerYear = useStore(Selector.world.daysPerYear) ?? 6;
   const now = new Date(useStore(Selector.world.date));
   const yearlyYield = useDataStore(Selector.yearlyPvYield);
-  const individualOutputs = usePrimitiveStore(Selector.yearlyPvIndividualOutputs);
+  const individualOutputs = useStore(Selector.yearlyPvIndividualOutputs);
   const solarPanelLabels = useDataStore(Selector.solarPanelLabels);
   const countElementsByType = useStore(Selector.countElementsByType);
   const panelRect = useStore(Selector.viewState.yearlyPvYieldPanelRect);
@@ -194,8 +194,8 @@ const YearlyPvYieldPanel = ({ city }: YearlyPvYieldPanelProps) => {
 
   useEffect(() => {
     if (solarPanelCount < 2 && individualOutputs) {
-      usePrimitiveStore.setState((state) => {
-        state.yearlyPvIndividualOutputs = false;
+      setCommonStore((state) => {
+        if (state.graphState) state.graphState.yearlyPvIndividualOutputs = false;
       });
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -310,6 +310,7 @@ const YearlyPvYieldPanel = ({ city }: YearlyPvYieldPanelProps) => {
                         // give it 0.1 second for the info to show up
                         setTimeout(() => {
                           setCommonStore((state) => {
+                            if (state.graphState) state.graphState.yearlyPvIndividualOutputs = checked;
                             if (loggable) {
                               state.actionInfo = {
                                 name: 'Run Yearly Simulation For Solar Panels: ' + (checked ? 'Individual' : 'Total'),
@@ -319,7 +320,6 @@ const YearlyPvYieldPanel = ({ city }: YearlyPvYieldPanelProps) => {
                           });
                           usePrimitiveStore.setState((state) => {
                             state.simulationInProgress = true;
-                            state.yearlyPvIndividualOutputs = checked;
                             state.runYearlySimulationForSolarPanels = true;
                             state.pauseYearlySimulationForSolarPanels = false;
                           });

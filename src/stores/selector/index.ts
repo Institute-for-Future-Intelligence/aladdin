@@ -790,13 +790,13 @@ export const pauseYearlySimulationForSolarPanels = (state: PrimitiveStoreState) 
 
 export const dailyPvYield = (state: DataStoreState) => state.dailyPvYield;
 
-export const dailyPvIndividualOutputs = (state: PrimitiveStoreState) => state.dailyPvIndividualOutputs;
+export const dailyPvIndividualOutputs = (state: CommonStoreState) => state.graphState?.dailyPvIndividualOutputs;
 
 export const setDailyPvYield = (state: DataStoreState) => state.setDailyPvYield;
 
 export const yearlyPvYield = (state: DataStoreState) => state.yearlyPvYield;
 
-export const yearlyPvIndividualOutputs = (state: PrimitiveStoreState) => state.yearlyPvIndividualOutputs;
+export const yearlyPvIndividualOutputs = (state: CommonStoreState) => state.graphState?.yearlyPvIndividualOutputs;
 
 export const setYearlyPvYield = (state: DataStoreState) => state.setYearlyPvYield;
 
@@ -824,15 +824,15 @@ export const pauseYearlySimulationForParabolicTroughs = (state: PrimitiveStoreSt
 
 export const dailyParabolicTroughYield = (state: DataStoreState) => state.dailyParabolicTroughYield;
 
-export const dailyParabolicTroughIndividualOutputs = (state: PrimitiveStoreState) =>
-  state.dailyParabolicTroughIndividualOutputs;
+export const dailyParabolicTroughIndividualOutputs = (state: CommonStoreState) =>
+  state.graphState?.dailyParabolicTroughIndividualOutputs;
 
 export const setDailyParabolicTroughYield = (state: DataStoreState) => state.setDailyParabolicTroughYield;
 
 export const yearlyParabolicTroughYield = (state: DataStoreState) => state.yearlyParabolicTroughYield;
 
-export const yearlyParabolicTroughIndividualOutputs = (state: PrimitiveStoreState) =>
-  state.yearlyParabolicTroughIndividualOutputs;
+export const yearlyParabolicTroughIndividualOutputs = (state: CommonStoreState) =>
+  state.graphState?.yearlyParabolicTroughIndividualOutputs;
 
 export const setYearlyParabolicTroughYield = (state: DataStoreState) => state.setYearlyParabolicTroughYield;
 
@@ -856,15 +856,15 @@ export const pauseYearlySimulationForFresnelReflectors = (state: PrimitiveStoreS
 
 export const dailyFresnelReflectorYield = (state: DataStoreState) => state.dailyFresnelReflectorYield;
 
-export const dailyFresnelReflectorIndividualOutputs = (state: PrimitiveStoreState) =>
-  state.dailyFresnelReflectorIndividualOutputs;
+export const dailyFresnelReflectorIndividualOutputs = (state: CommonStoreState) =>
+  state.graphState?.dailyFresnelReflectorIndividualOutputs;
 
 export const setDailyFresnelReflectorYield = (state: DataStoreState) => state.setDailyFresnelReflectorYield;
 
 export const yearlyFresnelReflectorYield = (state: DataStoreState) => state.yearlyFresnelReflectorYield;
 
-export const yearlyFresnelReflectorIndividualOutputs = (state: PrimitiveStoreState) =>
-  state.yearlyFresnelReflectorIndividualOutputs;
+export const yearlyFresnelReflectorIndividualOutputs = (state: CommonStoreState) =>
+  state.graphState?.yearlyFresnelReflectorIndividualOutputs;
 
 export const setYearlyFresnelReflectorYield = (state: DataStoreState) => state.setYearlyFresnelReflectorYield;
 
@@ -886,13 +886,15 @@ export const pauseYearlySimulationForHeliostats = (state: PrimitiveStoreState) =
 
 export const dailyHeliostatYield = (state: DataStoreState) => state.dailyHeliostatYield;
 
-export const dailyHeliostatIndividualOutputs = (state: PrimitiveStoreState) => state.dailyHeliostatIndividualOutputs;
+export const dailyHeliostatIndividualOutputs = (state: CommonStoreState) =>
+  state.graphState?.dailyHeliostatIndividualOutputs;
 
 export const setDailyHeliostatYield = (state: DataStoreState) => state.setDailyHeliostatYield;
 
 export const yearlyHeliostatYield = (state: DataStoreState) => state.yearlyHeliostatYield;
 
-export const yearlyHeliostatIndividualOutputs = (state: PrimitiveStoreState) => state.yearlyHeliostatIndividualOutputs;
+export const yearlyHeliostatIndividualOutputs = (state: CommonStoreState) =>
+  state.graphState?.yearlyHeliostatIndividualOutputs;
 
 export const setYearlyHeliostatYield = (state: DataStoreState) => state.setYearlyHeliostatYield;
 
@@ -918,8 +920,8 @@ export const dailyUpdraftTowerResults = (state: DataStoreState) => state.dailyUp
 
 export const dailyUpdraftTowerYield = (state: DataStoreState) => state.dailyUpdraftTowerYield;
 
-export const dailyUpdraftTowerIndividualOutputs = (state: PrimitiveStoreState) =>
-  state.dailyUpdraftTowerIndividualOutputs;
+export const dailyUpdraftTowerIndividualOutputs = (state: CommonStoreState) =>
+  state.graphState?.dailyUpdraftTowerIndividualOutputs;
 
 export const setDailyUpdraftTowerResults = (state: DataStoreState) => state.setDailyUpdraftTowerResults;
 
@@ -927,8 +929,8 @@ export const setDailyUpdraftTowerYield = (state: DataStoreState) => state.setDai
 
 export const yearlyUpdraftTowerYield = (state: DataStoreState) => state.yearlyUpdraftTowerYield;
 
-export const yearlyUpdraftTowerIndividualOutputs = (state: PrimitiveStoreState) =>
-  state.yearlyUpdraftTowerIndividualOutputs;
+export const yearlyUpdraftTowerIndividualOutputs = (state: CommonStoreState) =>
+  state.graphState?.yearlyUpdraftTowerIndividualOutputs;
 
 export const setYearlyUpdraftTowerYield = (state: DataStoreState) => state.setYearlyUpdraftTowerYield;
 
@@ -952,15 +954,15 @@ export const pauseYearlySimulationForParabolicDishes = (state: PrimitiveStoreSta
 
 export const dailyParabolicDishYield = (state: DataStoreState) => state.dailyParabolicDishYield;
 
-export const dailyParabolicDishIndividualOutputs = (state: PrimitiveStoreState) =>
-  state.dailyParabolicDishIndividualOutputs;
+export const dailyParabolicDishIndividualOutputs = (state: CommonStoreState) =>
+  state.graphState?.dailyParabolicDishIndividualOutputs;
 
 export const setDailyParabolicDishYield = (state: DataStoreState) => state.setDailyParabolicDishYield;
 
 export const yearlyParabolicDishYield = (state: DataStoreState) => state.yearlyParabolicDishYield;
 
-export const yearlyParabolicDishIndividualOutputs = (state: PrimitiveStoreState) =>
-  state.yearlyParabolicDishIndividualOutputs;
+export const yearlyParabolicDishIndividualOutputs = (state: CommonStoreState) =>
+  state.graphState?.yearlyParabolicDishIndividualOutputs;
 
 export const setYearlyParabolicDishYield = (state: DataStoreState) => state.setYearlyParabolicDishYield;
 

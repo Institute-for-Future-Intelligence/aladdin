@@ -35,10 +35,10 @@ const HeliostatSimulation = ({ city }: HeliostatSimulationProps) => {
   const getParent = useStore(Selector.getParent);
   const setDailyYield = useDataStore(Selector.setDailyHeliostatYield);
   const updateDailyYield = useStore(Selector.updateSolarCollectorDailyYieldById);
-  const dailyIndividualOutputs = usePrimitiveStore(Selector.dailyHeliostatIndividualOutputs);
+  const dailyIndividualOutputs = useStore(Selector.dailyHeliostatIndividualOutputs);
   const setYearlyYield = useDataStore(Selector.setYearlyHeliostatYield);
   const updateYearlyYield = useStore(Selector.updateSolarCollectorYearlyYieldById);
-  const yearlyIndividualOutputs = usePrimitiveStore(Selector.yearlyHeliostatIndividualOutputs);
+  const yearlyIndividualOutputs = useStore(Selector.yearlyHeliostatIndividualOutputs);
   const setHeliostatLabels = useDataStore(Selector.setHeliostatLabels);
   const runDailySimulation = usePrimitiveStore(Selector.runDailySimulationForHeliostats);
   const runYearlySimulation = usePrimitiveStore(Selector.runYearlySimulationForHeliostats);

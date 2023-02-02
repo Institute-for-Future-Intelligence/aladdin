@@ -72,6 +72,7 @@ const LineGraph = ({
   //init
   useEffect(() => {
     if (!dataSource || dataSource.length === 0) {
+      setLineCount(0);
       return;
     }
     const len = Array.isArray(dataSource) ? Object.keys(dataSource[0]).length - 1 : Object.keys(dataSource).length - 1;

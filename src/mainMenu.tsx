@@ -1438,17 +1438,17 @@ const MainMenu = ({ viewOnly, set2DView, resetView, zoomView, canvas }: MainMenu
               showInfo(i18n.t('message.SimulationStarted', lang));
               // give it 0.1 second for the info to show up
               setTimeout(() => {
-                if (loggable) {
-                  setCommonStore((state) => {
+                setCommonStore((state) => {
+                  if (state.graphState) state.graphState.dailyPvIndividualOutputs = false;
+                  if (loggable) {
                     state.actionInfo = {
                       name: 'Run Daily Simulation For Solar Panels',
                       timestamp: new Date().getTime(),
                     };
-                  });
-                }
+                  }
+                });
                 usePrimitiveStore.setState((state) => {
                   state.simulationInProgress = true;
-                  state.dailyPvIndividualOutputs = false;
                   state.runDailySimulationForSolarPanels = true;
                 });
               }, 100);
@@ -1467,17 +1467,17 @@ const MainMenu = ({ viewOnly, set2DView, resetView, zoomView, canvas }: MainMenu
               showInfo(i18n.t('message.SimulationStarted', lang));
               // give it 0.1 second for the info to show up
               setTimeout(() => {
-                if (loggable) {
-                  setCommonStore((state) => {
+                setCommonStore((state) => {
+                  if (state.graphState) state.graphState.yearlyPvIndividualOutputs = false;
+                  if (loggable) {
                     state.actionInfo = {
                       name: 'Run Yearly Simulation For Solar Panels',
                       timestamp: new Date().getTime(),
                     };
-                  });
-                }
+                  }
+                });
                 usePrimitiveStore.setState((state) => {
                   state.simulationInProgress = true;
-                  state.yearlyPvIndividualOutputs = false;
                   state.runYearlySimulationForSolarPanels = true;
                 });
               }, 100);
@@ -1555,17 +1555,17 @@ const MainMenu = ({ viewOnly, set2DView, resetView, zoomView, canvas }: MainMenu
               showInfo(i18n.t('message.SimulationStarted', lang));
               // give it 0.1 second for the info to show up
               setTimeout(() => {
-                if (loggable) {
-                  setCommonStore((state) => {
+                setCommonStore((state) => {
+                  if (state.graphState) state.graphState.dailyParabolicTroughIndividualOutputs = false;
+                  if (loggable) {
                     state.actionInfo = {
                       name: 'Run Daily Simulation for Parabolic Troughs',
                       timestamp: new Date().getTime(),
                     };
-                  });
-                }
+                  }
+                });
                 usePrimitiveStore.setState((state) => {
                   state.simulationInProgress = true;
-                  state.dailyParabolicTroughIndividualOutputs = false;
                   state.runDailySimulationForParabolicTroughs = true;
                 });
               }, 100);
@@ -1584,17 +1584,17 @@ const MainMenu = ({ viewOnly, set2DView, resetView, zoomView, canvas }: MainMenu
               showInfo(i18n.t('message.SimulationStarted', lang));
               // give it 0.1 second for the info to show up
               setTimeout(() => {
-                if (loggable) {
-                  setCommonStore((state) => {
+                setCommonStore((state) => {
+                  if (state.graphState) state.graphState.yearlyParabolicTroughIndividualOutputs = false;
+                  if (loggable) {
                     state.actionInfo = {
                       name: 'Run Yearly Simulation for Parabolic Troughs',
                       timestamp: new Date().getTime(),
                     };
-                  });
-                }
+                  }
+                });
                 usePrimitiveStore.setState((state) => {
                   state.simulationInProgress = true;
-                  state.yearlyParabolicTroughIndividualOutputs = false;
                   state.runYearlySimulationForParabolicTroughs = true;
                 });
               }, 100);
@@ -1618,17 +1618,17 @@ const MainMenu = ({ viewOnly, set2DView, resetView, zoomView, canvas }: MainMenu
               showInfo(i18n.t('message.SimulationStarted', lang));
               // give it 0.1 second for the info to show up
               setTimeout(() => {
-                if (loggable) {
-                  setCommonStore((state) => {
+                setCommonStore((state) => {
+                  if (state.graphState) state.graphState.dailyParabolicDishIndividualOutputs = false;
+                  if (loggable) {
                     state.actionInfo = {
                       name: 'Run Daily Simulation for Parabolic Dishes',
                       timestamp: new Date().getTime(),
                     };
-                  });
-                }
+                  }
+                });
                 usePrimitiveStore.setState((state) => {
                   state.simulationInProgress = true;
-                  state.dailyParabolicDishIndividualOutputs = false;
                   state.runDailySimulationForParabolicDishes = true;
                 });
               }, 100);
@@ -1647,17 +1647,17 @@ const MainMenu = ({ viewOnly, set2DView, resetView, zoomView, canvas }: MainMenu
               showInfo(i18n.t('message.SimulationStarted', lang));
               // give it 0.1 second for the info to show up
               setTimeout(() => {
-                if (loggable) {
-                  setCommonStore((state) => {
+                setCommonStore((state) => {
+                  if (state.graphState) state.graphState.yearlyParabolicDishIndividualOutputs = false;
+                  if (loggable) {
                     state.actionInfo = {
                       name: 'Run Yearly Simulation for Parabolic Dishes',
                       timestamp: new Date().getTime(),
                     };
-                  });
-                }
+                  }
+                });
                 usePrimitiveStore.setState((state) => {
                   state.simulationInProgress = true;
-                  state.yearlyParabolicDishIndividualOutputs = false;
                   state.runYearlySimulationForParabolicDishes = true;
                 });
               }, 100);
@@ -1681,17 +1681,17 @@ const MainMenu = ({ viewOnly, set2DView, resetView, zoomView, canvas }: MainMenu
               showInfo(i18n.t('message.SimulationStarted', lang));
               // give it 0.1 second for the info to show up
               setTimeout(() => {
-                if (loggable) {
-                  setCommonStore((state) => {
+                setCommonStore((state) => {
+                  if (state.graphState) state.graphState.dailyFresnelReflectorIndividualOutputs = false;
+                  if (loggable) {
                     state.actionInfo = {
                       name: 'Run Daily Simulation for Fresnel Reflectors',
                       timestamp: new Date().getTime(),
                     };
-                  });
-                }
+                  }
+                });
                 usePrimitiveStore.setState((state) => {
                   state.simulationInProgress = true;
-                  state.dailyFresnelReflectorIndividualOutputs = false;
                   state.runDailySimulationForFresnelReflectors = true;
                 });
               }, 100);
@@ -1710,17 +1710,17 @@ const MainMenu = ({ viewOnly, set2DView, resetView, zoomView, canvas }: MainMenu
               showInfo(i18n.t('message.SimulationStarted', lang));
               // give it 0.1 second for the info to show up
               setTimeout(() => {
-                if (loggable) {
-                  setCommonStore((state) => {
+                setCommonStore((state) => {
+                  if (state.graphState) state.graphState.yearlyFresnelReflectorIndividualOutputs = false;
+                  if (loggable) {
                     state.actionInfo = {
                       name: 'Run Yearly Simulation for Fresnel Reflectors',
                       timestamp: new Date().getTime(),
                     };
-                  });
-                }
+                  }
+                });
                 usePrimitiveStore.setState((state) => {
                   state.simulationInProgress = true;
-                  state.yearlyFresnelReflectorIndividualOutputs = false;
                   state.runYearlySimulationForFresnelReflectors = true;
                 });
               }, 100);
@@ -1744,14 +1744,14 @@ const MainMenu = ({ viewOnly, set2DView, resetView, zoomView, canvas }: MainMenu
               showInfo(i18n.t('message.SimulationStarted', lang));
               // give it 0.1 second for the info to show up
               setTimeout(() => {
-                if (loggable) {
-                  setCommonStore((state) => {
+                setCommonStore((state) => {
+                  if (state.graphState) state.graphState.dailyHeliostatIndividualOutputs = false;
+                  if (loggable) {
                     state.actionInfo = { name: 'Run Daily Simulation for Heliostats', timestamp: new Date().getTime() };
-                  });
-                }
+                  }
+                });
                 usePrimitiveStore.setState((state) => {
                   state.simulationInProgress = true;
-                  state.dailyHeliostatIndividualOutputs = false;
                   state.runDailySimulationForHeliostats = true;
                 });
               }, 100);
@@ -1770,17 +1770,17 @@ const MainMenu = ({ viewOnly, set2DView, resetView, zoomView, canvas }: MainMenu
               showInfo(i18n.t('message.SimulationStarted', lang));
               // give it 0.1 second for the info to show up
               setTimeout(() => {
-                if (loggable) {
-                  setCommonStore((state) => {
+                setCommonStore((state) => {
+                  if (state.graphState) state.graphState.yearlyHeliostatIndividualOutputs = false;
+                  if (loggable) {
                     state.actionInfo = {
                       name: 'Run Yearly Simulation for Heliostats',
                       timestamp: new Date().getTime(),
                     };
-                  });
-                }
+                  }
+                });
                 usePrimitiveStore.setState((state) => {
                   state.simulationInProgress = true;
-                  state.yearlyHeliostatIndividualOutputs = false;
                   state.runYearlySimulationForHeliostats = true;
                 });
               }, 100);
@@ -1804,17 +1804,17 @@ const MainMenu = ({ viewOnly, set2DView, resetView, zoomView, canvas }: MainMenu
               showInfo(i18n.t('message.SimulationStarted', lang));
               // give it 0.1 second for the info to show up
               setTimeout(() => {
-                if (loggable) {
-                  setCommonStore((state) => {
+                setCommonStore((state) => {
+                  if (state.graphState) state.graphState.dailyUpdraftTowerIndividualOutputs = false;
+                  if (loggable) {
                     state.actionInfo = {
                       name: 'Run Daily Simulation for Solar Updraft Tower',
                       timestamp: new Date().getTime(),
                     };
-                  });
-                }
+                  }
+                });
                 usePrimitiveStore.setState((state) => {
                   state.simulationInProgress = true;
-                  state.dailyUpdraftTowerIndividualOutputs = false;
                   state.runDailySimulationForUpdraftTower = true;
                 });
               }, 100);
@@ -1833,17 +1833,17 @@ const MainMenu = ({ viewOnly, set2DView, resetView, zoomView, canvas }: MainMenu
               showInfo(i18n.t('message.SimulationStarted', lang));
               // give it 0.1 second for the info to show up
               setTimeout(() => {
-                if (loggable) {
-                  setCommonStore((state) => {
+                setCommonStore((state) => {
+                  if (state.graphState) state.graphState.yearlyUpdraftTowerIndividualOutputs = false;
+                  if (loggable) {
                     state.actionInfo = {
                       name: 'Run Yearly Simulation for Solar Updraft Tower',
                       timestamp: new Date().getTime(),
                     };
-                  });
-                }
+                  }
+                });
                 usePrimitiveStore.setState((state) => {
                   state.simulationInProgress = true;
-                  state.yearlyUpdraftTowerIndividualOutputs = false;
                   state.runYearlySimulationForUpdraftTower = true;
                 });
               }, 100);

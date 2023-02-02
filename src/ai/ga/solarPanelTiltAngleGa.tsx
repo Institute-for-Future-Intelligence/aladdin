@@ -223,7 +223,6 @@ const SolarPanelTiltAngleGa = () => {
       if (solarPanelsRef.current) {
         switch (params.objectiveFunctionType) {
           case ObjectiveFunctionType.DAILY_TOTAL_OUTPUT:
-            state.dailyPvIndividualOutputs = false;
             if (lastStep) {
               state.runDailySimulationForSolarPanelsLastStep = true;
             } else {
@@ -231,7 +230,6 @@ const SolarPanelTiltAngleGa = () => {
             }
             break;
           case ObjectiveFunctionType.YEARLY_TOTAL_OUTPUT:
-            state.yearlyPvIndividualOutputs = false;
             if (lastStep) {
               state.runYearlySimulationForSolarPanelsLastStep = true;
             } else {
@@ -245,6 +243,16 @@ const SolarPanelTiltAngleGa = () => {
     });
     setCommonStore((state) => {
       if (solarPanelsRef.current) {
+        switch (params.objectiveFunctionType) {
+          case ObjectiveFunctionType.DAILY_TOTAL_OUTPUT:
+            if (state.graphState) state.graphState.dailyPvIndividualOutputs = false;
+            break;
+          case ObjectiveFunctionType.YEARLY_TOTAL_OUTPUT:
+            if (state.graphState) state.graphState.yearlyPvIndividualOutputs = false;
+            break;
+          default:
+            showError(i18n.t('message.ObjectiveFunctionTypeError', lang), 60);
+        }
         for (const e of state.elements) {
           if (e.type === ObjectType.SolarPanel) {
             const panel = e as SolarPanelModel;

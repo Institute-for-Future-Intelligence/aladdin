@@ -100,6 +100,8 @@ import { LightModel } from '../models/LightModel';
 import { HvacSystem } from '../models/HvacSystem';
 import { usePrimitiveStore } from './commonPrimitive';
 import { useDataStore } from './commonData';
+import { GraphState } from './GraphState';
+import { DefaultGraphState } from './DefaultGraphState';
 
 enableMapSet();
 
@@ -111,6 +113,7 @@ export interface CommonStoreState {
   elements: ElementModel[];
   viewState: ViewState;
   actionState: ActionState;
+  graphState: GraphState;
   notes: string[];
   user: User;
   userCount: number;
@@ -684,6 +687,7 @@ export const useStore = create<CommonStoreState>(
           elements: defaultElements,
           viewState: new DefaultViewState(),
           actionState: new DefaultActionState(),
+          graphState: new DefaultGraphState(),
           solarPanelArrayLayoutParams: new DefaultSolarPanelArrayLayoutParams(),
           solarPanelArrayLayoutConstraints: new DefaultSolarPanelArrayLayoutConstraints(),
           evolutionaryAlgorithmState: new DefaultEvolutionaryAlgorithmState(),
@@ -748,6 +752,7 @@ export const useStore = create<CommonStoreState>(
             immerSet((state: CommonStoreState) => {
               state.world = content.world;
               state.viewState = content.view;
+              state.graphState = content.graphState ?? new DefaultGraphState();
               state.elements = content.elements;
               state.notes = content.notes ?? [];
               state.cloudFile = title;
@@ -802,6 +807,7 @@ export const useStore = create<CommonStoreState>(
               world: JSON.parse(JSON.stringify(state.world)),
               elements: elements,
               view: JSON.parse(JSON.stringify(state.viewState)),
+              graphState: JSON.parse(JSON.stringify(state.graphState)),
               evolutionMethod: state.evolutionMethod,
               solarPanelArrayLayoutParams: JSON.parse(JSON.stringify(state.solarPanelArrayLayoutParams)),
               solarPanelArrayLayoutConstraints: JSON.parse(JSON.stringify(state.solarPanelArrayLayoutConstraints)),
@@ -5677,6 +5683,7 @@ export const useStore = create<CommonStoreState>(
           'world',
           'elements',
           'viewState',
+          'graphState',
           'actionState',
           'notes',
           'user',

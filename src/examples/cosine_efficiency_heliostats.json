@@ -1,6 +1,7 @@
 {
-  "docid": "8FjZnWCEc39zEpNwp51Bns",
-  "timestamp": 1645460936486,
+  "docid": "uuEUjSuNse5ouQBqLNQMdm",
+  "time": "02/02/2023 02:28 pm",
+  "timestamp": 1675366090270,
   "userid": "QWecNcxhyvP6j6sBN11hBsfZDau1",
   "owner": null,
   "email": null,
@@ -28,7 +29,7 @@
       ]
     },
     "address": "Phoenix, AZ, USA",
-    "date": "3/22/2022 1:00:00 PM",
+    "date": "3/22/2022, 1:00:00 PM",
     "name": "default",
     "orthographic": false,
     "cameraZoom": 35.16173831821251,
@@ -115,7 +116,7 @@
       "foundationId": "of4fAMi2p9MKmo6JDUYnfX",
       "id": "9caRxtuWoQpc52Rcvx4m2Y",
       "selected": false,
-      "dailyYield": 25.59597205852084,
+      "dailyYield": 25.54362655315038,
       "yearlyYield": 311.4614380820491
     },
     {
@@ -148,7 +149,7 @@
       "foundationId": "of4fAMi2p9MKmo6JDUYnfX",
       "id": "3qHYF54uoRjqCcVSRMJa3K",
       "selected": false,
-      "dailyYield": 28.888231364804646,
+      "dailyYield": 28.83063075372236,
       "yearlyYield": 341.6536704139208
     },
     {
@@ -181,7 +182,7 @@
       "id": "g1F68TNqBqLxmye4TdM9aX",
       "selected": false,
       "drawSunBeam": true,
-      "dailyYield": 23.314190283597984,
+      "dailyYield": 23.21442400772718,
       "yearlyYield": 285.77957159626914
     },
     {
@@ -214,7 +215,7 @@
       "id": "hdPEQL9d6tCZYhADdWFZfX",
       "selected": false,
       "drawSunBeam": true,
-      "dailyYield": 29.108913473883288,
+      "dailyYield": 29.15082293688426,
       "yearlyYield": 347.0340046876023
     }
   ],
@@ -247,7 +248,7 @@
     "dailyLightSensorPanelX": -240,
     "weatherPanelX": 0,
     "heliodonPanelY": 17,
-    "groundColor": "forestgreen",
+    "groundColor": "#68ccca",
     "groundPanelY": 0,
     "groundImage": false,
     "showDailyPvYieldPanel": false,
@@ -255,8 +256,8 @@
     "showYearlyLightSensorPanel": false,
     "mapType": "hybrid",
     "cameraPosition": [
-      -59.81099377207656,
-      -1.3321897008588723,
+      -59.81099377207652,
+      -1.3321897008588728,
       7.556432837410264
     ],
     "panCenter": [
@@ -267,7 +268,7 @@
     "orthographic": false,
     "enableRotate": true,
     "cameraZoom": 7.169718448170838,
-    "showInstructionPanel": true,
+    "showInstructionPanel": false,
     "showMapPanel": false,
     "cameraPosition2D": [
       8.410285062152344,
@@ -280,10 +281,92 @@
       0.000012467288726847116
     ],
     "solarRadiationHeatMapMaxValue": 6,
-    "showDailyHeliostatYieldPanel": false,
+    "showDailyHeliostatYieldPanel": true,
     "dailyHeliostatYieldPanelX": null,
     "dailyHeliostatYieldPanelY": null,
-    "showYearlyHeliostatYieldPanel": false
+    "showYearlyHeliostatYieldPanel": false,
+    "dailyHeliostatYieldPanelRect": {
+      "x": 0,
+      "y": 0,
+      "width": 600,
+      "height": 400
+    },
+    "showStickyNotePanel": true,
+    "stickyNotePanelRect": {
+      "x": 0,
+      "y": 0,
+      "width": 315,
+      "height": 67
+    }
   },
-  "notes": []
+  "graphState": {
+    "dailyParabolicDishIndividualOutputs": false,
+    "yearlyParabolicDishIndividualOutputs": false,
+    "dailyParabolicTroughIndividualOutputs": false,
+    "yearlyParabolicTroughIndividualOutputs": false,
+    "dailyFresnelReflectorIndividualOutputs": false,
+    "yearlyFresnelReflectorIndividualOutputs": false,
+    "dailyHeliostatIndividualOutputs": true,
+    "yearlyHeliostatIndividualOutputs": false
+  },
+  "evolutionMethod": 1,
+  "solarPanelArrayLayoutParams": {
+    "pvModelName": "CS6X-355P-FG",
+    "rowAxis": "Zonal",
+    "orientation": "Landscape",
+    "tiltAngle": 0,
+    "rowsPerRack": 1,
+    "interRowSpacing": 2,
+    "poleHeight": 1,
+    "poleSpacing": 3
+  },
+  "solarPanelArrayLayoutConstraints": {
+    "minimumInterRowSpacing": 2,
+    "maximumInterRowSpacing": 10,
+    "minimumRowsPerRack": 1,
+    "maximumRowsPerRack": 6,
+    "minimumTiltAngle": -1.5707963267948966,
+    "maximumTiltAngle": 1.5707963267948966,
+    "poleHeight": 1,
+    "poleSpacing": 5,
+    "orientation": "Landscape",
+    "pvModelName": "CS6X-355P-FG",
+    "rowAxis": "Zonal"
+  },
+  "evolutionaryAlgorithmState": {
+    "geneticAlgorithmParams": {
+      "problem": "Solar Panel Tilt Angle",
+      "objectiveFunctionType": 1,
+      "selectionMethod": 1,
+      "searchMethod": 1,
+      "populationSize": 20,
+      "maximumGenerations": 5,
+      "selectionRate": 0.5,
+      "crossoverRate": 0.5,
+      "mutationRate": 0.1,
+      "convergenceThreshold": 0.01,
+      "localSearchRadius": 0.1
+    },
+    "particleSwarmOptimizationParams": {
+      "problem": "Solar Panel Tilt Angle",
+      "objectiveFunctionType": 1,
+      "searchMethod": 1,
+      "swarmSize": 20,
+      "maximumSteps": 5,
+      "vmax": 0.01,
+      "inertia": 0.8,
+      "cognitiveCoefficient": 0.1,
+      "socialCoefficient": 0.1,
+      "convergenceThreshold": 0.01,
+      "localSearchRadius": 0.1
+    }
+  },
+  "economicsParams": {
+    "projectLifeSpan": 25,
+    "electricitySellingPrice": 0.25,
+    "operationalCostPerUnit": 0.15
+  },
+  "notes": [
+    "Cosine efficiency of heliostats"
+  ]
 }

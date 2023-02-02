@@ -81,7 +81,7 @@ const YearlyParabolicDishYieldPanel = ({ city }: YearlyParabolicDishYieldPanelPr
   const daysPerYear = useStore(Selector.world.cspDaysPerYear) ?? 6;
   const now = new Date(useStore(Selector.world.date));
   const yearlyYield = useDataStore(Selector.yearlyParabolicDishYield);
-  const individualOutputs = usePrimitiveStore(Selector.yearlyParabolicDishIndividualOutputs);
+  const individualOutputs = useStore(Selector.yearlyParabolicDishIndividualOutputs);
   const parabolicDishLabels = useDataStore(Selector.parabolicDishLabels);
   const countElementsByType = useStore(Selector.countElementsByType);
   const panelRect = useStore(Selector.viewState.yearlyParabolicDishYieldPanelRect);
@@ -192,8 +192,8 @@ const YearlyParabolicDishYieldPanel = ({ city }: YearlyParabolicDishYieldPanelPr
   const parabolicDishCount = countElementsByType(ObjectType.ParabolicDish);
   useEffect(() => {
     if (parabolicDishCount < 2 && individualOutputs) {
-      usePrimitiveStore.setState((state) => {
-        state.yearlyParabolicDishIndividualOutputs = false;
+      setCommonStore((state) => {
+        if (state.graphState) state.graphState.yearlyParabolicDishIndividualOutputs = false;
       });
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -293,6 +293,7 @@ const YearlyParabolicDishYieldPanel = ({ city }: YearlyParabolicDishYieldPanelPr
                     // give it 0.1 second for the info to show up
                     setTimeout(() => {
                       setCommonStore((state) => {
+                        if (state.graphState) state.graphState.yearlyParabolicDishIndividualOutputs = checked;
                         if (loggable) {
                           state.actionInfo = {
                             name: 'Run Yearly Simulation For Parabolic Dishes: ' + (checked ? 'Individual' : 'Total'),
@@ -304,7 +305,6 @@ const YearlyParabolicDishYieldPanel = ({ city }: YearlyParabolicDishYieldPanelPr
                         state.runYearlySimulationForParabolicDishes = true;
                         state.pauseYearlySimulationForParabolicDishes = false;
                         state.simulationInProgress = true;
-                        state.yearlyParabolicDishIndividualOutputs = checked;
                       });
                     }, 100);
                   }}

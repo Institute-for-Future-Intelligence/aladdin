@@ -1,7 +1,7 @@
 {
-  "docid": "fVo5DRaJ7VHqLHvdvQKDcL",
-  "time": "11/13/2022 05:27 pm",
-  "timestamp": 1668378444520,
+  "docid": "nAyY3ZutnSxurzmrfiodKh",
+  "time": "02/02/2023 02:25 pm",
+  "timestamp": 1675365924087,
   "userid": "QWecNcxhyvP6j6sBN11hBsfZDau1",
   "owner": null,
   "email": null,
@@ -29,7 +29,7 @@
       ]
     },
     "address": "Phoenix, AZ, USA",
-    "date": "6/22/2022 1:00:00 PM",
+    "date": "6/22/2022, 1:00:00 PM",
     "name": "default",
     "orthographic": false,
     "cameraZoom": 35.16173831821251,
@@ -115,7 +115,7 @@
       "foundationId": "of4fAMi2p9MKmo6JDUYnfX",
       "id": "9caRxtuWoQpc52Rcvx4m2Y",
       "selected": false,
-      "dailyYield": 25.59597205852084,
+      "dailyYield": 54.973155818694394,
       "yearlyYield": 311.4614380820491,
       "towerId": "eskWrngRsrfsVxitmEFwUG"
     },
@@ -149,7 +149,7 @@
       "foundationId": "of4fAMi2p9MKmo6JDUYnfX",
       "id": "3qHYF54uoRjqCcVSRMJa3K",
       "selected": false,
-      "dailyYield": 28.888231364804646,
+      "dailyYield": 54.692955030942635,
       "yearlyYield": 341.6536704139208,
       "towerId": "eskWrngRsrfsVxitmEFwUG"
     },
@@ -183,7 +183,7 @@
       "id": "g1F68TNqBqLxmye4TdM9aX",
       "selected": false,
       "drawSunBeam": false,
-      "dailyYield": 23.314190283597984,
+      "dailyYield": 55.22294044579748,
       "yearlyYield": 285.77957159626914,
       "towerId": "eskWrngRsrfsVxitmEFwUG"
     },
@@ -217,7 +217,7 @@
       "id": "hdPEQL9d6tCZYhADdWFZfX",
       "selected": false,
       "drawSunBeam": false,
-      "dailyYield": 29.108913473883288,
+      "dailyYield": 55.6028165469799,
       "yearlyYield": 347.0340046876023,
       "towerId": "eskWrngRsrfsVxitmEFwUG"
     },
@@ -250,7 +250,8 @@
       "id": "kTbu5NQZzH6fiJzt2zLCpV",
       "selected": false,
       "drawSunBeam": false,
-      "towerId": "eskWrngRsrfsVxitmEFwUG"
+      "towerId": "eskWrngRsrfsVxitmEFwUG",
+      "dailyYield": 53.246534571972845
     },
     {
       "type": "Heliostat",
@@ -281,7 +282,8 @@
       "id": "ugqyZH3Bjuab2xu6Qr2AeU",
       "selected": false,
       "drawSunBeam": false,
-      "towerId": "eskWrngRsrfsVxitmEFwUG"
+      "towerId": "eskWrngRsrfsVxitmEFwUG",
+      "dailyYield": 53.9189143477242
     },
     {
       "type": "Heliostat",
@@ -312,7 +314,8 @@
       "id": "k7rmzdYXVhRoVennqPqJYd",
       "selected": false,
       "drawSunBeam": false,
-      "towerId": "eskWrngRsrfsVxitmEFwUG"
+      "towerId": "eskWrngRsrfsVxitmEFwUG",
+      "dailyYield": 55.28401806609266
     },
     {
       "type": "Heliostat",
@@ -343,7 +346,8 @@
       "id": "jSyunViQPLX4rv6KUBXXTZ",
       "selected": false,
       "drawSunBeam": false,
-      "towerId": "eskWrngRsrfsVxitmEFwUG"
+      "towerId": "eskWrngRsrfsVxitmEFwUG",
+      "dailyYield": 54.779971752065364
     },
     {
       "type": "Heliostat",
@@ -374,7 +378,8 @@
       "id": "q1mgBumMQuofVfZ58dfPgn",
       "selected": false,
       "drawSunBeam": false,
-      "towerId": "eskWrngRsrfsVxitmEFwUG"
+      "towerId": "eskWrngRsrfsVxitmEFwUG",
+      "dailyYield": 54.56772790131693
     },
     {
       "type": "Heliostat",
@@ -405,7 +410,8 @@
       "id": "1BaYAuYZtqhDEGCFRqXDcs",
       "selected": false,
       "drawSunBeam": false,
-      "towerId": "eskWrngRsrfsVxitmEFwUG"
+      "towerId": "eskWrngRsrfsVxitmEFwUG",
+      "dailyYield": 54.94218222804658
     },
     {
       "type": "Heliostat",
@@ -436,7 +442,8 @@
       "id": "4sC4oY8P4gCm2XiADRkgDQ",
       "selected": false,
       "drawSunBeam": false,
-      "towerId": "eskWrngRsrfsVxitmEFwUG"
+      "towerId": "eskWrngRsrfsVxitmEFwUG",
+      "dailyYield": 55.12412968997117
     },
     {
       "type": "Heliostat",
@@ -467,7 +474,8 @@
       "id": "k2hvdFozuZeFRMXA2gCxru",
       "selected": false,
       "drawSunBeam": false,
-      "towerId": "eskWrngRsrfsVxitmEFwUG"
+      "towerId": "eskWrngRsrfsVxitmEFwUG",
+      "dailyYield": 56.06448667864852
     },
     {
       "type": "Heliostat",
@@ -498,7 +506,8 @@
       "id": "5gLYoZoHmvvc2dfNpBoMHu",
       "selected": false,
       "drawSunBeam": false,
-      "towerId": "eskWrngRsrfsVxitmEFwUG"
+      "towerId": "eskWrngRsrfsVxitmEFwUG",
+      "dailyYield": 55.30383700152939
     },
     {
       "type": "Heliostat",
@@ -529,7 +538,8 @@
       "id": "qoUTmK9iTzsVRu26aQmb6S",
       "selected": false,
       "drawSunBeam": false,
-      "towerId": "eskWrngRsrfsVxitmEFwUG"
+      "towerId": "eskWrngRsrfsVxitmEFwUG",
+      "dailyYield": 54.69974218752444
     },
     {
       "type": "Heliostat",
@@ -560,7 +570,8 @@
       "id": "aaDc1Nt2XKdpoCZWcocB2i",
       "selected": false,
       "drawSunBeam": false,
-      "towerId": "eskWrngRsrfsVxitmEFwUG"
+      "towerId": "eskWrngRsrfsVxitmEFwUG",
+      "dailyYield": 55.61502536288546
     },
     {
       "type": "Heliostat",
@@ -591,7 +602,8 @@
       "id": "bLKFf4eYJctoWDbAWu1oSp",
       "selected": false,
       "drawSunBeam": false,
-      "towerId": "eskWrngRsrfsVxitmEFwUG"
+      "towerId": "eskWrngRsrfsVxitmEFwUG",
+      "dailyYield": 54.28829012678498
     },
     {
       "type": "Heliostat",
@@ -622,7 +634,8 @@
       "id": "svsNMecQbfU155PmYUZ3Lt",
       "selected": false,
       "drawSunBeam": false,
-      "towerId": "eskWrngRsrfsVxitmEFwUG"
+      "towerId": "eskWrngRsrfsVxitmEFwUG",
+      "dailyYield": 54.28883413506117
     },
     {
       "type": "Heliostat",
@@ -653,7 +666,8 @@
       "id": "5WMpX8TYy1KfLhVCYdMj1p",
       "selected": false,
       "drawSunBeam": false,
-      "towerId": "eskWrngRsrfsVxitmEFwUG"
+      "towerId": "eskWrngRsrfsVxitmEFwUG",
+      "dailyYield": 55.62627922938169
     },
     {
       "type": "Heliostat",
@@ -684,7 +698,8 @@
       "id": "rLs3CXHWy1yv3CpNwWpHSg",
       "selected": false,
       "drawSunBeam": false,
-      "towerId": "eskWrngRsrfsVxitmEFwUG"
+      "towerId": "eskWrngRsrfsVxitmEFwUG",
+      "dailyYield": 55.26549812503945
     },
     {
       "type": "Heliostat",
@@ -715,7 +730,8 @@
       "id": "iYKv2L4bbvL99cSYqy9g78",
       "selected": false,
       "drawSunBeam": false,
-      "towerId": "eskWrngRsrfsVxitmEFwUG"
+      "towerId": "eskWrngRsrfsVxitmEFwUG",
+      "dailyYield": 55.848591160974706
     },
     {
       "type": "Heliostat",
@@ -746,7 +762,8 @@
       "id": "6h32hqP5LZJr3g6KkvENFf",
       "selected": false,
       "drawSunBeam": false,
-      "towerId": "eskWrngRsrfsVxitmEFwUG"
+      "towerId": "eskWrngRsrfsVxitmEFwUG",
+      "dailyYield": 56.08288958631672
     },
     {
       "type": "Heliostat",
@@ -777,7 +794,8 @@
       "id": "hJpPNqZeYCYBc9ZnrtL8rd",
       "selected": false,
       "drawSunBeam": false,
-      "towerId": "eskWrngRsrfsVxitmEFwUG"
+      "towerId": "eskWrngRsrfsVxitmEFwUG",
+      "dailyYield": 55.96978366441096
     },
     {
       "type": "Heliostat",
@@ -808,7 +826,8 @@
       "id": "oKHW4guazpWYWFUbcAtx78",
       "selected": false,
       "drawSunBeam": false,
-      "towerId": "eskWrngRsrfsVxitmEFwUG"
+      "towerId": "eskWrngRsrfsVxitmEFwUG",
+      "dailyYield": 55.07324281354023
     },
     {
       "type": "Heliostat",
@@ -839,7 +858,8 @@
       "id": "jGpvLznPcPbkxgRNT7LmEG",
       "selected": false,
       "drawSunBeam": false,
-      "towerId": "eskWrngRsrfsVxitmEFwUG"
+      "towerId": "eskWrngRsrfsVxitmEFwUG",
+      "dailyYield": 53.5263467357541
     },
     {
       "type": "Heliostat",
@@ -870,7 +890,8 @@
       "id": "7v652Vk2Y4W8Ugs74iPYyx",
       "selected": false,
       "drawSunBeam": false,
-      "towerId": "eskWrngRsrfsVxitmEFwUG"
+      "towerId": "eskWrngRsrfsVxitmEFwUG",
+      "dailyYield": 54.3806127412903
     },
     {
       "type": "Heliostat",
@@ -901,7 +922,8 @@
       "id": "wmMQERU6EmYPAHq1HGq5G1",
       "selected": false,
       "drawSunBeam": false,
-      "towerId": "eskWrngRsrfsVxitmEFwUG"
+      "towerId": "eskWrngRsrfsVxitmEFwUG",
+      "dailyYield": 56.09853407023647
     },
     {
       "type": "Heliostat",
@@ -932,7 +954,8 @@
       "id": "qmEBaJnQ1mYuWRgutUUj45",
       "selected": false,
       "drawSunBeam": false,
-      "towerId": "eskWrngRsrfsVxitmEFwUG"
+      "towerId": "eskWrngRsrfsVxitmEFwUG",
+      "dailyYield": 55.81901883725212
     },
     {
       "type": "Heliostat",
@@ -963,7 +986,8 @@
       "id": "hgFFjf5NE1fWwscAHtJz9W",
       "selected": false,
       "drawSunBeam": false,
-      "towerId": "eskWrngRsrfsVxitmEFwUG"
+      "towerId": "eskWrngRsrfsVxitmEFwUG",
+      "dailyYield": 56.9869366347695
     },
     {
       "type": "Heliostat",
@@ -994,7 +1018,8 @@
       "id": "5E44DCctaDCtPRiHgiN8Co",
       "selected": false,
       "drawSunBeam": false,
-      "towerId": "eskWrngRsrfsVxitmEFwUG"
+      "towerId": "eskWrngRsrfsVxitmEFwUG",
+      "dailyYield": 56.67185579391978
     },
     {
       "type": "Heliostat",
@@ -1025,7 +1050,8 @@
       "id": "h3FAf2Pb5iRxcMgjsAapYN",
       "selected": false,
       "drawSunBeam": false,
-      "towerId": "eskWrngRsrfsVxitmEFwUG"
+      "towerId": "eskWrngRsrfsVxitmEFwUG",
+      "dailyYield": 56.424415155619826
     },
     {
       "type": "Heliostat",
@@ -1056,7 +1082,8 @@
       "id": "phQzzL3Mgfme6Exr5WqXA9",
       "selected": false,
       "drawSunBeam": false,
-      "towerId": "eskWrngRsrfsVxitmEFwUG"
+      "towerId": "eskWrngRsrfsVxitmEFwUG",
+      "dailyYield": 56.464335531506855
     },
     {
       "type": "Heliostat",
@@ -1087,7 +1114,8 @@
       "id": "gSGxJne57KgDvvhX1w8m4S",
       "selected": false,
       "drawSunBeam": false,
-      "towerId": "eskWrngRsrfsVxitmEFwUG"
+      "towerId": "eskWrngRsrfsVxitmEFwUG",
+      "dailyYield": 56.33972665483218
     },
     {
       "type": "Heliostat",
@@ -1118,7 +1146,8 @@
       "id": "nvkfziKtbczLEbZ9noiReH",
       "selected": false,
       "drawSunBeam": false,
-      "towerId": "eskWrngRsrfsVxitmEFwUG"
+      "towerId": "eskWrngRsrfsVxitmEFwUG",
+      "dailyYield": 56.803611978337365
     },
     {
       "type": "Heliostat",
@@ -1149,7 +1178,8 @@
       "id": "e7BrgrYuxziAFGXqE8Paiu",
       "selected": false,
       "drawSunBeam": false,
-      "towerId": "eskWrngRsrfsVxitmEFwUG"
+      "towerId": "eskWrngRsrfsVxitmEFwUG",
+      "dailyYield": 56.234951957822524
     },
     {
       "type": "Heliostat",
@@ -1180,7 +1210,8 @@
       "id": "6E7Q93GeP3kP1LK9YLZv9E",
       "selected": false,
       "drawSunBeam": false,
-      "towerId": "eskWrngRsrfsVxitmEFwUG"
+      "towerId": "eskWrngRsrfsVxitmEFwUG",
+      "dailyYield": 55.62121496362152
     },
     {
       "type": "Heliostat",
@@ -1211,7 +1242,8 @@
       "id": "nSCCumTcS91dqnMuiik1qm",
       "selected": false,
       "drawSunBeam": false,
-      "towerId": "eskWrngRsrfsVxitmEFwUG"
+      "towerId": "eskWrngRsrfsVxitmEFwUG",
+      "dailyYield": 56.104806039406704
     },
     {
       "type": "Heliostat",
@@ -1242,7 +1274,8 @@
       "id": "pmLUXug8LEht87AKuCxfbz",
       "selected": false,
       "drawSunBeam": false,
-      "towerId": "eskWrngRsrfsVxitmEFwUG"
+      "towerId": "eskWrngRsrfsVxitmEFwUG",
+      "dailyYield": 55.86211984880036
     },
     {
       "type": "Heliostat",
@@ -1273,7 +1306,8 @@
       "id": "o54KAWAv76mbgsJ1MBkyC5",
       "selected": false,
       "drawSunBeam": false,
-      "towerId": "eskWrngRsrfsVxitmEFwUG"
+      "towerId": "eskWrngRsrfsVxitmEFwUG",
+      "dailyYield": 56.835251993794415
     },
     {
       "type": "Heliostat",
@@ -1304,7 +1338,8 @@
       "id": "f7h8FDUa15ALkGHaRaG5Hv",
       "selected": false,
       "drawSunBeam": false,
-      "towerId": "eskWrngRsrfsVxitmEFwUG"
+      "towerId": "eskWrngRsrfsVxitmEFwUG",
+      "dailyYield": 56.60557336298944
     },
     {
       "type": "Heliostat",
@@ -1335,7 +1370,8 @@
       "id": "2waE2goJnuKsD2ZPsCBxqm",
       "selected": false,
       "drawSunBeam": false,
-      "towerId": "eskWrngRsrfsVxitmEFwUG"
+      "towerId": "eskWrngRsrfsVxitmEFwUG",
+      "dailyYield": 56.239096027800045
     },
     {
       "type": "Heliostat",
@@ -1366,7 +1402,8 @@
       "id": "w5ovRP3PCZ5upU3ukAjjLY",
       "selected": false,
       "drawSunBeam": false,
-      "towerId": "eskWrngRsrfsVxitmEFwUG"
+      "towerId": "eskWrngRsrfsVxitmEFwUG",
+      "dailyYield": 55.57798820659272
     },
     {
       "type": "Heliostat",
@@ -1397,7 +1434,8 @@
       "id": "jLzYFijeuhoktLs4FcLsmr",
       "selected": false,
       "drawSunBeam": true,
-      "towerId": "eskWrngRsrfsVxitmEFwUG"
+      "towerId": "eskWrngRsrfsVxitmEFwUG",
+      "dailyYield": 56.655113036860335
     },
     {
       "type": "Heliostat",
@@ -1428,7 +1466,8 @@
       "id": "b3S1EEPjMRL48HLhjJkhr2",
       "selected": false,
       "drawSunBeam": true,
-      "towerId": "eskWrngRsrfsVxitmEFwUG"
+      "towerId": "eskWrngRsrfsVxitmEFwUG",
+      "dailyYield": 54.25718216433262
     },
     {
       "type": "Heliostat",
@@ -1459,7 +1498,8 @@
       "id": "aqxtvZXmbpAutc5KFCX7w3",
       "selected": false,
       "drawSunBeam": false,
-      "towerId": "eskWrngRsrfsVxitmEFwUG"
+      "towerId": "eskWrngRsrfsVxitmEFwUG",
+      "dailyYield": 54.07130415709169
     },
     {
       "type": "Heliostat",
@@ -1490,7 +1530,8 @@
       "id": "qn5fUEqKYEJLMaMGhD5V2c",
       "selected": false,
       "drawSunBeam": false,
-      "towerId": "eskWrngRsrfsVxitmEFwUG"
+      "towerId": "eskWrngRsrfsVxitmEFwUG",
+      "dailyYield": 55.18946575400989
     },
     {
       "type": "Heliostat",
@@ -1521,7 +1562,8 @@
       "id": "4t86vx9fAWouPiFQswUJGQ",
       "selected": false,
       "drawSunBeam": false,
-      "towerId": "eskWrngRsrfsVxitmEFwUG"
+      "towerId": "eskWrngRsrfsVxitmEFwUG",
+      "dailyYield": 54.72330556669799
     },
     {
       "type": "Heliostat",
@@ -1552,7 +1594,8 @@
       "id": "rufeUy74dsTyxkeFYKX4qa",
       "selected": false,
       "drawSunBeam": false,
-      "towerId": "eskWrngRsrfsVxitmEFwUG"
+      "towerId": "eskWrngRsrfsVxitmEFwUG",
+      "dailyYield": 54.045757801118675
     },
     {
       "type": "Heliostat",
@@ -1583,7 +1626,8 @@
       "id": "6GXoab5MEeebRm4uGu1EG9",
       "selected": false,
       "drawSunBeam": false,
-      "towerId": "eskWrngRsrfsVxitmEFwUG"
+      "towerId": "eskWrngRsrfsVxitmEFwUG",
+      "dailyYield": 54.60344034574142
     },
     {
       "type": "Heliostat",
@@ -1614,7 +1658,8 @@
       "id": "w5TEya7XNeGuhPop6Pj6Es",
       "selected": false,
       "drawSunBeam": false,
-      "towerId": "eskWrngRsrfsVxitmEFwUG"
+      "towerId": "eskWrngRsrfsVxitmEFwUG",
+      "dailyYield": 55.12631354865891
     },
     {
       "type": "Heliostat",
@@ -1645,7 +1690,8 @@
       "id": "eDoKDbTtFpnA5S8UAeT5JD",
       "selected": false,
       "drawSunBeam": true,
-      "towerId": "eskWrngRsrfsVxitmEFwUG"
+      "towerId": "eskWrngRsrfsVxitmEFwUG",
+      "dailyYield": 54.944324146238436
     },
     {
       "type": "Heliostat",
@@ -1676,7 +1722,8 @@
       "id": "bybZmMq5HCRUCdJHjru2JV",
       "selected": false,
       "drawSunBeam": false,
-      "towerId": "eskWrngRsrfsVxitmEFwUG"
+      "towerId": "eskWrngRsrfsVxitmEFwUG",
+      "dailyYield": 54.723474182002164
     },
     {
       "type": "Foundation",
@@ -1766,9 +1813,9 @@
     "showYearlyLightSensorPanel": false,
     "mapType": "hybrid",
     "cameraPosition": [
-      -114.20211728357529,
-      -13.511893921234797,
-      7.261369217489993
+      -114.20211728357525,
+      -13.511893921234794,
+      7.261369217489994
     ],
     "panCenter": [
       -1.8505902264752938,
@@ -1778,7 +1825,7 @@
     "orthographic": false,
     "enableRotate": true,
     "cameraZoom": 4.292775278858745,
-    "showInstructionPanel": true,
+    "showInstructionPanel": false,
     "showMapPanel": false,
     "cameraPosition2D": [
       30.004072506948148,
@@ -1791,10 +1838,33 @@
       0.00002423000647812703
     ],
     "solarRadiationHeatMapMaxValue": 10,
-    "showDailyHeliostatYieldPanel": false,
+    "showDailyHeliostatYieldPanel": true,
     "dailyHeliostatYieldPanelX": null,
     "dailyHeliostatYieldPanelY": null,
-    "showYearlyHeliostatYieldPanel": false
+    "showYearlyHeliostatYieldPanel": false,
+    "dailyHeliostatYieldPanelRect": {
+      "x": 0,
+      "y": 0,
+      "width": 600,
+      "height": 400
+    },
+    "showStickyNotePanel": true,
+    "stickyNotePanelRect": {
+      "x": 0,
+      "y": 0,
+      "width": 364,
+      "height": 67
+    }
+  },
+  "graphState": {
+    "dailyParabolicDishIndividualOutputs": false,
+    "yearlyParabolicDishIndividualOutputs": false,
+    "dailyParabolicTroughIndividualOutputs": false,
+    "yearlyParabolicTroughIndividualOutputs": false,
+    "dailyFresnelReflectorIndividualOutputs": false,
+    "yearlyFresnelReflectorIndividualOutputs": false,
+    "dailyHeliostatIndividualOutputs": false,
+    "yearlyHeliostatIndividualOutputs": false
   },
   "evolutionMethod": 1,
   "solarPanelArrayLayoutParams": {
@@ -1853,5 +1923,7 @@
     "electricitySellingPrice": 0.25,
     "operationalCostPerUnit": 0.15
   },
-  "notes": []
+  "notes": [
+    "Solar power tower surrounded by heliostats"
+  ]
 }

@@ -1,13 +1,13 @@
 {
-  "docid": "dyzR3GNVtchpXF2BEQ1z6F",
-  "time": "02/02/2023 12:00 pm",
-  "timestamp": 1675357234210,
+  "docid": "mB7ffXAEU7LS8ezXxByioa",
+  "time": "02/02/2023 02:01 pm",
+  "timestamp": 1675364468962,
   "userid": "QWecNcxhyvP6j6sBN11hBsfZDau1",
   "owner": null,
   "email": null,
   "world": {
     "name": "default",
-    "date": "12/22/2022 10:30:00 AM",
+    "date": "12/22/2022, 10:30:00 AM",
     "ground": {
       "albedo": 0.3,
       "thermalDiffusivity": 0.05,
@@ -117,7 +117,7 @@
       "foundationId": "4LeRe177Bf56Mb1oae55ip",
       "id": "dcjUqAUQZ4LNafSWu4PepW",
       "selected": false,
-      "dailyYield": 148.66524070968393,
+      "dailyYield": 147.4722488686051,
       "yearlyYield": "0[object Object][object Object][object Object][object Object][object Object][object Object][object Object][object Object][object Object][object Object][object Object][object Object]",
       "label": "EW2"
     },
@@ -155,7 +155,7 @@
       "foundationId": "4LeRe177Bf56Mb1oae55ip",
       "id": "pwQnP4mNmxVYhvmGqFmMN2",
       "selected": false,
-      "dailyYield": 136.70692434286747,
+      "dailyYield": 113.9525242653769,
       "yearlyYield": "0[object Object][object Object][object Object][object Object][object Object][object Object][object Object][object Object][object Object][object Object][object Object][object Object]",
       "drawSunBeam": false,
       "label": "EW1"
@@ -194,7 +194,7 @@
       "foundationId": "rahZRzHN5oxPmD7yBmrrsA",
       "id": "anQtntJ2EF1xbdU9j34juv",
       "selected": false,
-      "dailyYield": 105.96324989424235,
+      "dailyYield": 105.42067563837163,
       "yearlyYield": "0[object Object][object Object][object Object][object Object][object Object][object Object][object Object][object Object][object Object][object Object][object Object][object Object]",
       "drawSunBeam": false,
       "label": "NS1"
@@ -233,7 +233,7 @@
       "foundationId": "rahZRzHN5oxPmD7yBmrrsA",
       "id": "2kyncnrNRhEC8vcEWLLbSV",
       "selected": false,
-      "dailyYield": 111.20646705290646,
+      "dailyYield": 105.31845023255819,
       "yearlyYield": "0[object Object][object Object][object Object][object Object][object Object][object Object][object Object][object Object][object Object][object Object][object Object][object Object]",
       "label": "NS2"
     },
@@ -320,7 +320,7 @@
     "cameraPosition": [
       16.103455794589095,
       -53.110389552237656,
-      19.62875806202681
+      19.628758062026815
     ],
     "panCenter": [
       15.024700307415378,
@@ -335,7 +335,7 @@
     "cameraPosition2D": [
       0,
       -0.000020000888987681265,
-      19.9999999999896
+      150
     ],
     "panCenter2D": [
       0,
@@ -371,6 +371,12 @@
       "width": 336,
       "height": 66
     }
+  },
+  "graphState": {
+    "dailyParabolicDishIndividualOutputs": false,
+    "yearlyParabolicDishIndividualOutputs": false,
+    "dailyParabolicTroughIndividualOutputs": true,
+    "yearlyParabolicTroughIndividualOutputs": false
   },
   "evolutionMethod": 1,
   "solarPanelArrayLayoutParams": {

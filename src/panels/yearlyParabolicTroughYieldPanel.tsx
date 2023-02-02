@@ -81,7 +81,7 @@ const YearlyParabolicTroughYieldPanel = ({ city }: YearlyParabolicTroughYieldPan
   const daysPerYear = useStore(Selector.world.cspDaysPerYear) ?? 6;
   const now = new Date(useStore(Selector.world.date));
   const yearlyYield = useDataStore(Selector.yearlyParabolicTroughYield);
-  const individualOutputs = usePrimitiveStore(Selector.yearlyParabolicTroughIndividualOutputs);
+  const individualOutputs = useStore(Selector.yearlyParabolicTroughIndividualOutputs);
   const parabolicTroughLabels = useDataStore(Selector.parabolicTroughLabels);
   const countElementsByType = useStore(Selector.countElementsByType);
   const panelRect = useStore(Selector.viewState.yearlyParabolicTroughYieldPanelRect);
@@ -192,8 +192,8 @@ const YearlyParabolicTroughYieldPanel = ({ city }: YearlyParabolicTroughYieldPan
   const parabolicTroughCount = countElementsByType(ObjectType.ParabolicTrough);
   useEffect(() => {
     if (parabolicTroughCount < 2 && individualOutputs) {
-      usePrimitiveStore.setState((state) => {
-        state.yearlyParabolicTroughIndividualOutputs = false;
+      setCommonStore((state) => {
+        if (state.graphState) state.graphState.yearlyParabolicTroughIndividualOutputs = false;
       });
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -293,6 +293,7 @@ const YearlyParabolicTroughYieldPanel = ({ city }: YearlyParabolicTroughYieldPan
                     // give it 0.1 second for the info to show up
                     setTimeout(() => {
                       setCommonStore((state) => {
+                        if (state.graphState) state.graphState.yearlyParabolicTroughIndividualOutputs = checked;
                         if (loggable) {
                           state.actionInfo = {
                             name: 'Run Yearly Simulation For Parabolic Troughs: ' + (checked ? 'Individual' : 'Total'),
@@ -304,7 +305,6 @@ const YearlyParabolicTroughYieldPanel = ({ city }: YearlyParabolicTroughYieldPan
                         state.runYearlySimulationForParabolicTroughs = true;
                         state.pauseYearlySimulationForParabolicTroughs = false;
                         state.simulationInProgress = true;
-                        state.yearlyParabolicTroughIndividualOutputs = checked;
                       });
                     }, 100);
                   }}
