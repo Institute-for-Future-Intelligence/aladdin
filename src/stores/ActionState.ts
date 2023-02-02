@@ -55,7 +55,6 @@ export interface ActionState {
   roofSideColor: string;
   roofTexture: RoofTexture;
   roofThickness: number;
-  roofOverhang: number;
   roofStructure: RoofStructure;
   roofGlassOpacity: number;
   roofGlassTint: string;

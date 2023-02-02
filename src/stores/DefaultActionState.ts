@@ -69,7 +69,6 @@ export class DefaultActionState implements ActionState {
   roofSideColor: string;
   roofTexture: RoofTexture;
   roofThickness: number;
-  roofOverhang: number;
   roofStructure: RoofStructure;
   roofGlassOpacity: number;
   roofGlassTint: string;
@@ -194,7 +193,6 @@ export class DefaultActionState implements ActionState {
     this.roofSideColor = '#ffffff';
     this.roofTexture = RoofTexture.Default;
     this.roofThickness = 0.2;
-    this.roofOverhang = 0.3;
     this.roofStructure = RoofStructure.Default;
     this.roofGlassOpacity = 0.5;
     this.roofGlassTint = '#73D8FF';

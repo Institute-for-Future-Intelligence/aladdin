@@ -12,7 +12,6 @@ import { ObjectType, RoofTexture } from 'src/types';
 import RoofTextureSelection from './roofTextureSelection';
 import RoofColorSelection from './roofColorSelection';
 import { RoofModel, RoofStructure, RoofType } from 'src/models/RoofModel';
-import RoofOverhangInput from './roofOverhangInput';
 import RoofThicknessInput from './roofThicknessInput';
 import RoofRafterSpacingInput from './roofRafterSpacingInput';
 import RoofOpacityInput from './roofOpacityInput';
@@ -51,7 +50,6 @@ export const RoofMenu = React.memo(() => {
   const [rafterWidthDialogVisible, setRafterWidthDialogVisible] = useState(false);
   const [rafterColorDialogVisible, setRafterColorDialogVisible] = useState(false);
   const [heightDialogVisible, setHeightDialogVisible] = useState(false);
-  const [overhangDialogVisible, setOverhangDialogVisible] = useState(false);
   const [thicknessDialogVisible, setThicknessDialogVisible] = useState(false);
   const [textureDialogVisible, setTextureDialogVisible] = useState(false);
   const [roofColorDialogVisible, setRoofColorDialogVisible] = useState(false);
@@ -455,18 +453,6 @@ export const RoofMenu = React.memo(() => {
             }}
           >
             {i18n.t('word.Height', lang)} ...
-          </Menu.Item>
-
-          {overhangDialogVisible && <RoofOverhangInput setDialogVisible={setOverhangDialogVisible} />}
-          <Menu.Item
-            key={'roof-overhang'}
-            style={{ paddingLeft: paddingLeft }}
-            onClick={() => {
-              setApplyCount(0);
-              setOverhangDialogVisible(true);
-            }}
-          >
-            {i18n.t('roofMenu.EavesOverhangLength', lang)} ...
           </Menu.Item>
 
           {(roof.roofStructure !== RoofStructure.Rafter || roof.opacity === undefined || roof.opacity > 0) && (

@@ -743,7 +743,6 @@ export class ElementModelCloner {
       rafterSpacing: roof.rafterSpacing,
       rafterWidth: roof.rafterWidth,
       textureType: roof.textureType,
-      overhang: roof.overhang,
       thickness: roof.thickness,
       wallsId: [...roof.wallsId], // handled in common store
       opacity: roof.opacity,
