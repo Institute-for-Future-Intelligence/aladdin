@@ -1,7 +1,7 @@
 {
-  "docid": "x2xVLuvxag22T1ppP3ztXz",
-  "time": "01/31/2023 11:53 am",
-  "timestamp": 1675183983563,
+  "docid": "jjsf4fyHjbEnXGeSvWvoSZ",
+  "time": "02/01/2023 08:52 pm",
+  "timestamp": 1675302762210,
   "userid": "QWecNcxhyvP6j6sBN11hBsfZDau1",
   "owner": null,
   "email": null,
@@ -491,9 +491,9 @@
     "showYearlyLightSensorPanel": false,
     "mapType": "roadmap",
     "cameraPosition": [
-      24.449661616157805,
-      -32.03067876334289,
-      17.208359550890634
+      24.4496616161578,
+      -32.03067876334288,
+      17.208359550890627
     ],
     "panCenter": [
       16.853649553872028,
@@ -520,6 +520,13 @@
       "y": 0,
       "width": 600,
       "height": 400
+    },
+    "showStickyNotePanel": true,
+    "stickyNotePanelRect": {
+      "x": 0,
+      "y": 0,
+      "width": 261,
+      "height": 87
     }
   },
   "evolutionMethod": 1,
@@ -579,5 +586,7 @@
     "electricitySellingPrice": 0.25,
     "operationalCostPerUnit": 0.15
   },
-  "notes": []
+  "notes": [
+    "Effect of inter-row spacing on\noutputs of solar panel arrays"
+  ]
 }

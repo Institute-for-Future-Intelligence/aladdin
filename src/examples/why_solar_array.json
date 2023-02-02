@@ -1,6 +1,7 @@
 {
-  "docid": "qVDYFBgHKyYq4sgUuJKG3P",
-  "timestamp": 1643476620051,
+  "docid": "gTarwPZMrHCCrQwFwLuj3N",
+  "time": "02/01/2023 08:49 pm",
+  "timestamp": 1675302598198,
   "userid": "QWecNcxhyvP6j6sBN11hBsfZDau1",
   "owner": null,
   "email": null,
@@ -347,9 +348,9 @@
     "showYearlyLightSensorPanel": false,
     "mapType": "roadmap",
     "cameraPosition": [
-      27.765552362304852,
-      -33.58893146877144,
-      21.74036845978605
+      27.765552362304845,
+      -33.58893146877142,
+      21.740368459786044
     ],
     "panCenter": [
       15.700578278283736,
@@ -370,7 +371,79 @@
       -0.19805700089319547,
       5.501827899659354e-7
     ],
-    "solarRadiationHeatMapMaxValue": 4.5
+    "solarRadiationHeatMapMaxValue": 4.5,
+    "dailyPvYieldPanelRect": {
+      "x": 0,
+      "y": 0,
+      "width": 600,
+      "height": 400
+    },
+    "showStickyNotePanel": true,
+    "stickyNotePanelRect": {
+      "x": -4,
+      "y": 69,
+      "width": 200,
+      "height": 60
+    }
   },
-  "notes": []
+  "evolutionMethod": 1,
+  "solarPanelArrayLayoutParams": {
+    "pvModelName": "CS6X-355P-FG",
+    "rowAxis": "Zonal",
+    "orientation": "Landscape",
+    "tiltAngle": 0,
+    "rowsPerRack": 1,
+    "interRowSpacing": 2,
+    "poleHeight": 1,
+    "poleSpacing": 3
+  },
+  "solarPanelArrayLayoutConstraints": {
+    "minimumInterRowSpacing": 2,
+    "maximumInterRowSpacing": 10,
+    "minimumRowsPerRack": 1,
+    "maximumRowsPerRack": 6,
+    "minimumTiltAngle": -1.5707963267948966,
+    "maximumTiltAngle": 1.5707963267948966,
+    "poleHeight": 1,
+    "poleSpacing": 5,
+    "orientation": "Landscape",
+    "pvModelName": "CS6X-355P-FG",
+    "rowAxis": "Zonal"
+  },
+  "evolutionaryAlgorithmState": {
+    "geneticAlgorithmParams": {
+      "problem": "Solar Panel Tilt Angle",
+      "objectiveFunctionType": 1,
+      "selectionMethod": 1,
+      "searchMethod": 1,
+      "populationSize": 20,
+      "maximumGenerations": 5,
+      "selectionRate": 0.5,
+      "crossoverRate": 0.5,
+      "mutationRate": 0.1,
+      "convergenceThreshold": 0.01,
+      "localSearchRadius": 0.1
+    },
+    "particleSwarmOptimizationParams": {
+      "problem": "Solar Panel Tilt Angle",
+      "objectiveFunctionType": 1,
+      "searchMethod": 1,
+      "swarmSize": 20,
+      "maximumSteps": 5,
+      "vmax": 0.01,
+      "inertia": 0.8,
+      "cognitiveCoefficient": 0.1,
+      "socialCoefficient": 0.1,
+      "convergenceThreshold": 0.01,
+      "localSearchRadius": 0.1
+    }
+  },
+  "economicsParams": {
+    "projectLifeSpan": 25,
+    "electricitySellingPrice": 0.25,
+    "operationalCostPerUnit": 0.15
+  },
+  "notes": [
+    "Tilt or not tilt?"
+  ]
 }

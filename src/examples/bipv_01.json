@@ -1,7 +1,7 @@
 {
-  "docid": "jdYtEbjKGtVtUmwhoGv9kf",
-  "time": "12/03/2022 02:31 pm",
-  "timestamp": 1670095872864,
+  "docid": "dT8vnMb3Z7w6zRco1PDAx7",
+  "time": "02/01/2023 09:03 pm",
+  "timestamp": 1675303408325,
   "userid": "QWecNcxhyvP6j6sBN11hBsfZDau1",
   "owner": null,
   "email": null,
@@ -2004,8 +2004,8 @@
     "enableRotate": true,
     "weatherPanelY": 0,
     "cameraPosition": [
-      -41.48638943484857,
-      -53.78503721816278,
+      -41.486389434848554,
+      -53.785037218162756,
       15.500675823090146
     ],
     "showYearlyUpdraftTowerYieldPanel": false,
@@ -2048,7 +2048,7 @@
     "showDailyUpdraftTowerYieldPanel": false,
     "mapPanelY": 0,
     "dailyPvYieldPanelY": 0,
-    "showStickyNotePanel": false,
+    "showStickyNotePanel": true,
     "yearlyUpdraftTowerYieldPanelX": 0,
     "yearlyFresnelReflectorYieldPanelX": 0,
     "groundColor": "#16A5A5",
@@ -2118,10 +2118,10 @@
       "height": 400
     },
     "stickyNotePanelRect": {
-      "x": 0,
-      "y": 0,
-      "width": 400,
-      "height": 300
+      "x": 222,
+      "y": -3,
+      "width": 339,
+      "height": 63
     },
     "dailyLightSensorPanelRect": {
       "x": 0,
@@ -2277,5 +2277,7 @@
     "electricitySellingPrice": 0.25,
     "operationalCostPerUnit": 0.15
   },
-  "notes": []
+  "notes": [
+    "Building-integrated photovoltaics (BIPV)"
+  ]
 }

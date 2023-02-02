@@ -1,6 +1,7 @@
 {
-  "docid": "rSSbe8riyJzohjwFKk6TPu",
-  "timestamp": 1645378622223,
+  "docid": "bWFRU6kRthztN2bF3wme6g",
+  "time": "02/01/2023 08:42 pm",
+  "timestamp": 1675302158135,
   "userid": "QWecNcxhyvP6j6sBN11hBsfZDau1",
   "owner": null,
   "email": null,
@@ -320,7 +321,7 @@
   "view": {
     "weatherPanelX": 0,
     "heliodonPanelY": 453,
-    "showStickyNotePanel": false,
+    "showStickyNotePanel": true,
     "dailyPvYieldPanelX": 4,
     "weatherPanelY": 0,
     "dailyLightSensorPanelY": 525,
@@ -351,9 +352,9 @@
     "showDailyLightSensorPanel": false,
     "shadowEnabled": true,
     "cameraPosition": [
-      7.864807797681522,
-      -16.22877671125294,
-      3.831875591365555
+      8.023018704034044,
+      -16.232959358672062,
+      3.67727930352486
     ],
     "panCenter": [
       5.030220047531196,
@@ -375,9 +376,78 @@
       0,
       0
     ],
-    "showSolarRadiationHeatmap": false
+    "showSolarRadiationHeatmap": false,
+    "dailyPvYieldPanelRect": {
+      "x": 0,
+      "y": 0,
+      "width": 600,
+      "height": 400
+    },
+    "stickyNotePanelRect": {
+      "x": 1,
+      "y": 4,
+      "width": 202,
+      "height": 93
+    }
+  },
+  "evolutionMethod": 1,
+  "solarPanelArrayLayoutParams": {
+    "pvModelName": "CS6X-355P-FG",
+    "rowAxis": "Zonal",
+    "orientation": "Landscape",
+    "tiltAngle": 0,
+    "rowsPerRack": 1,
+    "interRowSpacing": 2,
+    "poleHeight": 1,
+    "poleSpacing": 3
+  },
+  "solarPanelArrayLayoutConstraints": {
+    "minimumInterRowSpacing": 2,
+    "maximumInterRowSpacing": 10,
+    "minimumRowsPerRack": 1,
+    "maximumRowsPerRack": 6,
+    "minimumTiltAngle": -1.5707963267948966,
+    "maximumTiltAngle": 1.5707963267948966,
+    "poleHeight": 1,
+    "poleSpacing": 5,
+    "orientation": "Landscape",
+    "pvModelName": "CS6X-355P-FG",
+    "rowAxis": "Zonal"
+  },
+  "evolutionaryAlgorithmState": {
+    "geneticAlgorithmParams": {
+      "problem": "Solar Panel Tilt Angle",
+      "objectiveFunctionType": 1,
+      "selectionMethod": 1,
+      "searchMethod": 1,
+      "populationSize": 20,
+      "maximumGenerations": 5,
+      "selectionRate": 0.5,
+      "crossoverRate": 0.5,
+      "mutationRate": 0.1,
+      "convergenceThreshold": 0.01,
+      "localSearchRadius": 0.1
+    },
+    "particleSwarmOptimizationParams": {
+      "problem": "Solar Panel Tilt Angle",
+      "objectiveFunctionType": 1,
+      "searchMethod": 1,
+      "swarmSize": 20,
+      "maximumSteps": 5,
+      "vmax": 0.01,
+      "inertia": 0.8,
+      "cognitiveCoefficient": 0.1,
+      "socialCoefficient": 0.1,
+      "convergenceThreshold": 0.01,
+      "localSearchRadius": 0.1
+    }
+  },
+  "economicsParams": {
+    "projectLifeSpan": 25,
+    "electricitySellingPrice": 0.25,
+    "operationalCostPerUnit": 0.15
   },
   "notes": [
-    "Solar trackers\n\nAs the sun moves across the sky, solar panels do not always face the sun. Solar trackers allow them to follow the sun like sunflowers to maximize their outputs. This model compares the outputs of solar panels driven by the horizontal single-axis tracker (HSAT), the vertical single-axis tracker (VSAT), and the altazimuth dual-axis trackers (AADAT), as well as that of a fixed solar panel. You can also animate the movement of the sun to see how the solar panels follow it."
+    "Effect of tilt angles on\nsolar panel outputs"
   ]
 }

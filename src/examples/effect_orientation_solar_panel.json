@@ -1,6 +1,7 @@
 {
-  "docid": "uwps48MWwk1jL4Qbr5ZMVe",
-  "timestamp": 1643478356126,
+  "docid": "j8awUXgdnwgQLiDkzk1bC2",
+  "time": "02/01/2023 08:57 pm",
+  "timestamp": 1675303025101,
   "userid": "QWecNcxhyvP6j6sBN11hBsfZDau1",
   "owner": null,
   "email": null,
@@ -69,7 +70,8 @@
       "selected": false,
       "dailyYield": 7.279546747940818,
       "label": "L2",
-      "yearlyYield": "0[object Object][object Object][object Object][object Object][object Object][object Object][object Object][object Object][object Object][object Object][object Object][object Object]"
+      "yearlyYield": "0[object Object][object Object][object Object][object Object][object Object][object Object][object Object][object Object][object Object][object Object][object Object][object Object]",
+      "labelSize": 0.5
     },
     {
       "type": "Solar Panel",
@@ -105,7 +107,8 @@
       "drawSunBeam": false,
       "dailyYield": 7.279546747940818,
       "label": "L3",
-      "yearlyYield": "0[object Object][object Object][object Object][object Object][object Object][object Object][object Object][object Object][object Object][object Object][object Object][object Object]"
+      "yearlyYield": "0[object Object][object Object][object Object][object Object][object Object][object Object][object Object][object Object][object Object][object Object][object Object][object Object]",
+      "labelSize": 0.5
     },
     {
       "type": "Solar Panel",
@@ -140,7 +143,8 @@
       "selected": false,
       "dailyYield": 7.279546747940818,
       "label": "L4",
-      "yearlyYield": "0[object Object][object Object][object Object][object Object][object Object][object Object][object Object][object Object][object Object][object Object][object Object][object Object]"
+      "yearlyYield": "0[object Object][object Object][object Object][object Object][object Object][object Object][object Object][object Object][object Object][object Object][object Object][object Object]",
+      "labelSize": 0.5
     },
     {
       "type": "Solar Panel",
@@ -175,7 +179,8 @@
       "selected": false,
       "label": "L1",
       "dailyYield": 13.26305876347581,
-      "yearlyYield": "0[object Object][object Object][object Object][object Object][object Object][object Object][object Object][object Object][object Object][object Object][object Object][object Object]"
+      "yearlyYield": "0[object Object][object Object][object Object][object Object][object Object][object Object][object Object][object Object][object Object][object Object][object Object][object Object]",
+      "labelSize": 0.5
     },
     {
       "type": "Solar Panel",
@@ -210,7 +215,8 @@
       "selected": false,
       "dailyYield": 7.279546747940818,
       "label": "L5",
-      "yearlyYield": "0[object Object][object Object][object Object][object Object][object Object][object Object][object Object][object Object][object Object][object Object][object Object][object Object]"
+      "yearlyYield": "0[object Object][object Object][object Object][object Object][object Object][object Object][object Object][object Object][object Object][object Object][object Object][object Object]",
+      "labelSize": 0.5
     },
     {
       "type": "Foundation",
@@ -290,7 +296,8 @@
       "selected": false,
       "dailyYield": 2.2942538181934733,
       "label": "P2",
-      "yearlyYield": "0[object Object][object Object][object Object][object Object][object Object][object Object][object Object][object Object][object Object][object Object][object Object][object Object]"
+      "yearlyYield": "0[object Object][object Object][object Object][object Object][object Object][object Object][object Object][object Object][object Object][object Object][object Object][object Object]",
+      "labelSize": 0.5
     },
     {
       "type": "Solar Panel",
@@ -325,7 +332,8 @@
       "selected": false,
       "dailyYield": 2.2651420460150113,
       "label": "P3",
-      "yearlyYield": "0[object Object][object Object][object Object][object Object][object Object][object Object][object Object][object Object][object Object][object Object][object Object][object Object]"
+      "yearlyYield": "0[object Object][object Object][object Object][object Object][object Object][object Object][object Object][object Object][object Object][object Object][object Object][object Object]",
+      "labelSize": 0.5
     },
     {
       "type": "Solar Panel",
@@ -360,7 +368,8 @@
       "selected": false,
       "dailyYield": 2.2651420460150113,
       "label": "P4",
-      "yearlyYield": "0[object Object][object Object][object Object][object Object][object Object][object Object][object Object][object Object][object Object][object Object][object Object][object Object]"
+      "yearlyYield": "0[object Object][object Object][object Object][object Object][object Object][object Object][object Object][object Object][object Object][object Object][object Object][object Object]",
+      "labelSize": 0.5
     },
     {
       "type": "Solar Panel",
@@ -395,7 +404,8 @@
       "selected": false,
       "dailyYield": 13.26305876347581,
       "label": "P1",
-      "yearlyYield": "0[object Object][object Object][object Object][object Object][object Object][object Object][object Object][object Object][object Object][object Object][object Object][object Object]"
+      "yearlyYield": "0[object Object][object Object][object Object][object Object][object Object][object Object][object Object][object Object][object Object][object Object][object Object][object Object]",
+      "labelSize": 0.5
     },
     {
       "type": "Solar Panel",
@@ -430,7 +440,8 @@
       "selected": false,
       "dailyYield": 2.2651420460150113,
       "label": "P5",
-      "yearlyYield": "0[object Object][object Object][object Object][object Object][object Object][object Object][object Object][object Object][object Object][object Object][object Object][object Object]"
+      "yearlyYield": "0[object Object][object Object][object Object][object Object][object Object][object Object][object Object][object Object][object Object][object Object][object Object][object Object]",
+      "labelSize": 0.5
     },
     {
       "type": "Foundation",
@@ -492,9 +503,9 @@
     "showYearlyLightSensorPanel": false,
     "mapType": "roadmap",
     "cameraPosition": [
-      23.15502210196006,
-      -23.900377279903523,
-      17.30084126341914
+      22.452978407808594,
+      -24.24705031350266,
+      17.04591134858279
     ],
     "panCenter": [
       16.676839641041024,
@@ -515,7 +526,79 @@
       -0.19805700089319547,
       5.501827899659354e-7
     ],
-    "solarRadiationHeatMapMaxValue": 4.5
+    "solarRadiationHeatMapMaxValue": 4.5,
+    "dailyPvYieldPanelRect": {
+      "x": 0,
+      "y": 0,
+      "width": 600,
+      "height": 400
+    },
+    "showStickyNotePanel": true,
+    "stickyNotePanelRect": {
+      "x": -1,
+      "y": 69,
+      "width": 321,
+      "height": 84
+    }
   },
-  "notes": []
+  "evolutionMethod": 1,
+  "solarPanelArrayLayoutParams": {
+    "pvModelName": "CS6X-355P-FG",
+    "rowAxis": "Zonal",
+    "orientation": "Landscape",
+    "tiltAngle": 0,
+    "rowsPerRack": 1,
+    "interRowSpacing": 2,
+    "poleHeight": 1,
+    "poleSpacing": 3
+  },
+  "solarPanelArrayLayoutConstraints": {
+    "minimumInterRowSpacing": 2,
+    "maximumInterRowSpacing": 10,
+    "minimumRowsPerRack": 1,
+    "maximumRowsPerRack": 6,
+    "minimumTiltAngle": -1.5707963267948966,
+    "maximumTiltAngle": 1.5707963267948966,
+    "poleHeight": 1,
+    "poleSpacing": 5,
+    "orientation": "Landscape",
+    "pvModelName": "CS6X-355P-FG",
+    "rowAxis": "Zonal"
+  },
+  "evolutionaryAlgorithmState": {
+    "geneticAlgorithmParams": {
+      "problem": "Solar Panel Tilt Angle",
+      "objectiveFunctionType": 1,
+      "selectionMethod": 1,
+      "searchMethod": 1,
+      "populationSize": 20,
+      "maximumGenerations": 5,
+      "selectionRate": 0.5,
+      "crossoverRate": 0.5,
+      "mutationRate": 0.1,
+      "convergenceThreshold": 0.01,
+      "localSearchRadius": 0.1
+    },
+    "particleSwarmOptimizationParams": {
+      "problem": "Solar Panel Tilt Angle",
+      "objectiveFunctionType": 1,
+      "searchMethod": 1,
+      "swarmSize": 20,
+      "maximumSteps": 5,
+      "vmax": 0.01,
+      "inertia": 0.8,
+      "cognitiveCoefficient": 0.1,
+      "socialCoefficient": 0.1,
+      "convergenceThreshold": 0.01,
+      "localSearchRadius": 0.1
+    }
+  },
+  "economicsParams": {
+    "projectLifeSpan": 25,
+    "electricitySellingPrice": 0.25,
+    "operationalCostPerUnit": 0.15
+  },
+  "notes": [
+    "Effect of orientation (landscape vs. portrait)\non outputs of solar panel arrays"
+  ]
 }

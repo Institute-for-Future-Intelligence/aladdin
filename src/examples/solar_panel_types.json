@@ -1,7 +1,7 @@
 {
-  "docid": "ndgWMaAtV1cNpctwNLxMGC",
-  "time": "11/16/2022 09:41 am",
-  "timestamp": 1668609673308,
+  "docid": "3LSActRK2shghsxitMtYD3",
+  "time": "02/01/2023 08:46 pm",
+  "timestamp": 1675302418112,
   "userid": "QWecNcxhyvP6j6sBN11hBsfZDau1",
   "owner": null,
   "email": null,
@@ -223,9 +223,9 @@
     "showYearlyLightSensorPanel": false,
     "mapType": "roadmap",
     "cameraPosition": [
-      6.349016434903461,
-      -11.792723067892469,
-      3.41898486250175
+      6.231682260523532,
+      -11.839635427091231,
+      3.4189848625017483
     ],
     "panCenter": [
       1.5940644020050898,
@@ -261,6 +261,13 @@
       "y": 52,
       "width": 500,
       "height": 500
+    },
+    "showStickyNotePanel": true,
+    "stickyNotePanelRect": {
+      "x": -2,
+      "y": 72,
+      "width": 200,
+      "height": 65
     }
   },
   "evolutionMethod": 1,
@@ -320,5 +327,7 @@
     "electricitySellingPrice": 0.25,
     "operationalCostPerUnit": 0.15
   },
-  "notes": []
+  "notes": [
+    "Solar panel types"
+  ]
 }

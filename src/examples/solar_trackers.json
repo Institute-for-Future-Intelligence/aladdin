@@ -1,8 +1,10 @@
 {
-  "docid": "f9XrD9Umxb1hQ1tbXyGdcm",
-  "timestamp": 1639932096665,
-  "owner": "Charles Xie",
-  "email": "charles@intofuture.org",
+  "docid": "tsDxbhe6Vay4Jq2DNUCeRa",
+  "time": "02/01/2023 08:59 pm",
+  "timestamp": 1675303160727,
+  "userid": "QWecNcxhyvP6j6sBN11hBsfZDau1",
+  "owner": null,
+  "email": null,
   "world": {
     "timesPerHour": 4,
     "address": "Natick, MA",
@@ -27,7 +29,7 @@
         0
       ]
     },
-    "date": "8/22/2022 2:00:00 PM",
+    "date": "8/22/2022, 2:00:00 PM",
     "orthographic": false,
     "cameraZoom": 43.16939043526371
   },
@@ -86,7 +88,8 @@
       ],
       "parentId": "iGgGyZAWhJDDrqTBSuKY6v",
       "foundationId": "iGgGyZAWhJDDrqTBSuKY6v",
-      "pvModelName": "SPR-X21-335-BLK"
+      "pvModelName": "SPR-X21-335-BLK",
+      "dailyYield": 1.9974383842410144
     },
     {
       "ly": 1.558,
@@ -120,7 +123,8 @@
       "orientation": "Portrait",
       "parentId": "iGgGyZAWhJDDrqTBSuKY6v",
       "foundationId": "iGgGyZAWhJDDrqTBSuKY6v",
-      "pvModelName": "SPR-X21-335-BLK"
+      "pvModelName": "SPR-X21-335-BLK",
+      "dailyYield": 2.073422461213974
     },
     {
       "lx": 1.046,
@@ -154,7 +158,8 @@
       "cz": 0.5000000074505806,
       "parentId": "iGgGyZAWhJDDrqTBSuKY6v",
       "foundationId": "iGgGyZAWhJDDrqTBSuKY6v",
-      "pvModelName": "SPR-X21-335-BLK"
+      "pvModelName": "SPR-X21-335-BLK",
+      "dailyYield": 2.215778465205723
     },
     {
       "tiltAngle": 0.5235987755982988,
@@ -188,12 +193,13 @@
       "type": "Solar Panel",
       "parentId": "iGgGyZAWhJDDrqTBSuKY6v",
       "foundationId": "iGgGyZAWhJDDrqTBSuKY6v",
-      "pvModelName": "SPR-X21-335-BLK"
+      "pvModelName": "SPR-X21-335-BLK",
+      "dailyYield": 1.590603475645371
     }
   ],
   "view": {
     "weatherPanelX": 0,
-    "heliodonPanelY": 453,
+    "heliodonPanelY": 314,
     "showStickyNotePanel": true,
     "dailyPvYieldPanelX": 4,
     "weatherPanelY": 0,
@@ -202,7 +208,7 @@
     "showHeliodonPanel": true,
     "showWeatherPanel": false,
     "yearlyLightSensorPanelY": 0,
-    "heliodonPanelX": -1244,
+    "heliodonPanelX": -1204,
     "theme": "Default",
     "autoRotate": false,
     "groundColor": "forestgreen",
@@ -248,7 +254,76 @@
       0,
       0,
       0
-    ]
+    ],
+    "stickyNotePanelRect": {
+      "x": 0,
+      "y": 0,
+      "width": 400,
+      "height": 300
+    },
+    "dailyPvYieldPanelRect": {
+      "x": 0,
+      "y": 0,
+      "width": 600,
+      "height": 400
+    }
+  },
+  "evolutionMethod": 1,
+  "solarPanelArrayLayoutParams": {
+    "pvModelName": "CS6X-355P-FG",
+    "rowAxis": "Zonal",
+    "orientation": "Landscape",
+    "tiltAngle": 0,
+    "rowsPerRack": 1,
+    "interRowSpacing": 2,
+    "poleHeight": 1,
+    "poleSpacing": 3
+  },
+  "solarPanelArrayLayoutConstraints": {
+    "minimumInterRowSpacing": 2,
+    "maximumInterRowSpacing": 10,
+    "minimumRowsPerRack": 1,
+    "maximumRowsPerRack": 6,
+    "minimumTiltAngle": -1.5707963267948966,
+    "maximumTiltAngle": 1.5707963267948966,
+    "poleHeight": 1,
+    "poleSpacing": 5,
+    "orientation": "Landscape",
+    "pvModelName": "CS6X-355P-FG",
+    "rowAxis": "Zonal"
+  },
+  "evolutionaryAlgorithmState": {
+    "geneticAlgorithmParams": {
+      "problem": "Solar Panel Tilt Angle",
+      "objectiveFunctionType": 1,
+      "selectionMethod": 1,
+      "searchMethod": 1,
+      "populationSize": 20,
+      "maximumGenerations": 5,
+      "selectionRate": 0.5,
+      "crossoverRate": 0.5,
+      "mutationRate": 0.1,
+      "convergenceThreshold": 0.01,
+      "localSearchRadius": 0.1
+    },
+    "particleSwarmOptimizationParams": {
+      "problem": "Solar Panel Tilt Angle",
+      "objectiveFunctionType": 1,
+      "searchMethod": 1,
+      "swarmSize": 20,
+      "maximumSteps": 5,
+      "vmax": 0.01,
+      "inertia": 0.8,
+      "cognitiveCoefficient": 0.1,
+      "socialCoefficient": 0.1,
+      "convergenceThreshold": 0.01,
+      "localSearchRadius": 0.1
+    }
+  },
+  "economicsParams": {
+    "projectLifeSpan": 25,
+    "electricitySellingPrice": 0.25,
+    "operationalCostPerUnit": 0.15
   },
   "notes": [
     "Solar trackers\n\nAs the sun moves across the sky, solar panels do not always face the sun. Solar trackers allow them to follow the sun like sunflowers to maximize their outputs. This model compares the outputs of solar panels driven by the horizontal single-axis tracker (HSAT), the vertical single-axis tracker (VSAT), and the altazimuth dual-axis trackers (AADAT), as well as that of a fixed solar panel. You can also animate the movement of the sun to see how the solar panels follow it."

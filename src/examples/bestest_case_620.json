@@ -1,7 +1,7 @@
 {
-  "docid": "gpFpn9xvHKiJnEsmEC4A2w",
-  "time": "01/05/2023 02:23 pm",
-  "timestamp": 1672946639956,
+  "docid": "rBjy1FnbeDgX9mfg29tDA3",
+  "time": "02/01/2023 08:23 pm",
+  "timestamp": 1675300996713,
   "userid": "QWecNcxhyvP6j6sBN11hBsfZDau1",
   "owner": null,
   "email": null,
@@ -473,8 +473,8 @@
     "dailyHeliostatYieldPanelX": 0,
     "showDailyParabolicDishYieldPanel": false,
     "cameraPosition": [
-      11.427289283038647,
-      -11.277019680971115,
+      11.427289283038643,
+      -11.277019680971108,
       2.795880222169619
     ],
     "showYearlyHeliostatYieldPanel": false,
@@ -502,7 +502,7 @@
     "showYearlyLightSensorPanel": false,
     "autoRotate": false,
     "heliodonPanelX": -1194,
-    "showStickyNotePanel": false,
+    "showStickyNotePanel": true,
     "showDailyLightSensorPanel": false,
     "visibilityResultsPanelX": 0,
     "yearlyPvYieldPanelY": 0,
@@ -564,6 +564,12 @@
       "y": 0,
       "width": 500,
       "height": 500
+    },
+    "stickyNotePanelRect": {
+      "x": 145,
+      "y": -3,
+      "width": 200,
+      "height": 60
     }
   },
   "evolutionMethod": 1,
@@ -623,5 +629,7 @@
     "electricitySellingPrice": 0.25,
     "operationalCostPerUnit": 0.15
   },
-  "notes": []
+  "notes": [
+    "BESTEST Case 620"
+  ]
 }

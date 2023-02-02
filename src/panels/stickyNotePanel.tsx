@@ -31,7 +31,7 @@ const ColumnWrapper = styled.div`
   top: 0;
   min-width: 200px;
   max-width: 800px;
-  min-height: 200px;
+  min-height: 60px;
   max-height: 600px;
   border: 2px solid gainsboro;
   border-radius: 10px 10px 10px 10px;

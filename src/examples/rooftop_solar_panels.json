@@ -1,7 +1,7 @@
 {
-  "docid": "dGTEGuq4Ejtao32Hk4wqJK",
-  "time": "12/03/2022 03:23 pm",
-  "timestamp": 1670098995986,
+  "docid": "2VKjRDk9YwWJfj2Y5AVjjd",
+  "time": "02/01/2023 09:07 pm",
+  "timestamp": 1675303665893,
   "userid": "QWecNcxhyvP6j6sBN11hBsfZDau1",
   "owner": null,
   "email": null,
@@ -1025,9 +1025,9 @@
     "dailyHeliostatYieldPanelX": 0,
     "showDailyParabolicDishYieldPanel": false,
     "cameraPosition": [
-      2.72461138343458,
-      -3.575413655799689,
-      21.294134719221624
+      3.1488315162915486,
+      -5.071491366307756,
+      20.90087579377811
     ],
     "showYearlyHeliostatYieldPanel": false,
     "orthographic": false,
@@ -1054,7 +1054,7 @@
     "showYearlyLightSensorPanel": false,
     "autoRotate": false,
     "heliodonPanelX": 0,
-    "showStickyNotePanel": false,
+    "showStickyNotePanel": true,
     "showDailyLightSensorPanel": false,
     "visibilityResultsPanelX": 0,
     "yearlyPvYieldPanelY": 0,
@@ -1106,6 +1106,12 @@
       "y": 17,
       "width": 600,
       "height": 360
+    },
+    "stickyNotePanelRect": {
+      "x": 0,
+      "y": 72,
+      "width": 297,
+      "height": 72
     }
   },
   "evolutionMethod": 1,
@@ -1165,5 +1171,7 @@
     "electricitySellingPrice": 0.25,
     "operationalCostPerUnit": 0.15
   },
-  "notes": []
+  "notes": [
+    "Solar panels on different sides of a roof"
+  ]
 }

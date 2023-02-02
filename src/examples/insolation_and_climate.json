@@ -1,13 +1,14 @@
 {
-  "docid": "iyGqi28EttPq8itEvZFREi",
-  "timestamp": 1644417637478,
+  "docid": "1z9DajSDsTbijYbSiNBS7u",
+  "time": "02/01/2023 08:34 pm",
+  "timestamp": 1675301683273,
   "userid": "QWecNcxhyvP6j6sBN11hBsfZDau1",
   "owner": null,
   "email": null,
   "world": {
     "latitude": 0,
     "timesPerHour": 6,
-    "date": "9/22/2022 3:00:00 PM",
+    "date": "9/22/2022, 3:00:00 PM",
     "longitude": -71.3488548,
     "name": "default",
     "address": "",
@@ -35,8 +36,8 @@
   },
   "elements": [
     {
-      "cy": 0.900803118273501,
-      "name": "Jess",
+      "cy": -3.793749931074972,
+      "name": "Jeanette",
       "type": "Human",
       "cz": 0,
       "normal": [
@@ -44,7 +45,7 @@
         1,
         0
       ],
-      "cx": 3.2452189539248018,
+      "cx": -1.8371287635005462,
       "selected": false,
       "id": "8si9AKQwGf4sYiD91xfFr6",
       "rotation": [
@@ -53,9 +54,9 @@
         0
       ],
       "parentId": "Ground",
-      "lx": 0.6,
+      "lx": 0.4,
       "ly": 0.6,
-      "lz": 1.4
+      "lz": 1.62
     },
     {
       "type": "Foundation",
@@ -122,11 +123,11 @@
     "dailyLightSensorPanelX": -31,
     "showYearlyLightSensorPanel": true,
     "weatherPanelY": 0,
-    "heliodonPanelX": -1238,
+    "heliodonPanelX": -1204,
     "showStickyNotePanel": true,
     "groundColor": "#16cda5",
     "weatherPanelX": 0,
-    "heliodonPanelY": 316,
+    "heliodonPanelY": 282,
     "groundPanelX": 0,
     "shadowEnabled": true,
     "theme": "Default",
@@ -137,9 +138,9 @@
     "mapZoom": 16,
     "stickyNotePanelX": 0,
     "cameraPosition": [
-      17.45429780555339,
-      -27.230848823611872,
-      9.767159755317197
+      13.505802919384953,
+      -21.070711731654686,
+      7.557642032181444
     ],
     "panCenter": [
       0,
@@ -160,7 +161,77 @@
       0,
       0
     ],
-    "showSunAngles": true
+    "showSunAngles": true,
+    "stickyNotePanelRect": {
+      "x": 0,
+      "y": 0,
+      "width": 407,
+      "height": 267
+    },
+    "yearlyLightSensorPanelRect": {
+      "x": 0,
+      "y": 0,
+      "width": 600,
+      "height": 500
+    },
+    "yearlyLightSensorPanelShowDaylight": false
+  },
+  "evolutionMethod": 1,
+  "solarPanelArrayLayoutParams": {
+    "pvModelName": "CS6X-355P-FG",
+    "rowAxis": "Zonal",
+    "orientation": "Landscape",
+    "tiltAngle": 0,
+    "rowsPerRack": 1,
+    "interRowSpacing": 2,
+    "poleHeight": 1,
+    "poleSpacing": 3
+  },
+  "solarPanelArrayLayoutConstraints": {
+    "minimumInterRowSpacing": 2,
+    "maximumInterRowSpacing": 10,
+    "minimumRowsPerRack": 1,
+    "maximumRowsPerRack": 6,
+    "minimumTiltAngle": -1.5707963267948966,
+    "maximumTiltAngle": 1.5707963267948966,
+    "poleHeight": 1,
+    "poleSpacing": 5,
+    "orientation": "Landscape",
+    "pvModelName": "CS6X-355P-FG",
+    "rowAxis": "Zonal"
+  },
+  "evolutionaryAlgorithmState": {
+    "geneticAlgorithmParams": {
+      "problem": "Solar Panel Tilt Angle",
+      "objectiveFunctionType": 1,
+      "selectionMethod": 1,
+      "searchMethod": 1,
+      "populationSize": 20,
+      "maximumGenerations": 5,
+      "selectionRate": 0.5,
+      "crossoverRate": 0.5,
+      "mutationRate": 0.1,
+      "convergenceThreshold": 0.01,
+      "localSearchRadius": 0.1
+    },
+    "particleSwarmOptimizationParams": {
+      "problem": "Solar Panel Tilt Angle",
+      "objectiveFunctionType": 1,
+      "searchMethod": 1,
+      "swarmSize": 20,
+      "maximumSteps": 5,
+      "vmax": 0.01,
+      "inertia": 0.8,
+      "cognitiveCoefficient": 0.1,
+      "socialCoefficient": 0.1,
+      "convergenceThreshold": 0.01,
+      "localSearchRadius": 0.1
+    }
+  },
+  "economicsParams": {
+    "projectLifeSpan": 25,
+    "electricitySellingPrice": 0.25,
+    "operationalCostPerUnit": 0.15
   },
   "notes": [
     "The solar radiation at different locations of the Earth in different seasons is largely responsible for local climate. Overall, every place on the Earth has about the same hours of daylight in total (ideally 12×365=4,380 hours), regardless of where it is. However, the distribution throughout the year is vastly different, resulting in large temperature variations across the globe. You can change the latitude to investigate these relationships. Make sure to refresh the graph after changing any variables."

@@ -1,7 +1,7 @@
 {
-  "docid": "jGDxrUPXtRodHDMAc5zCy3",
-  "time": "12/27/2022 06:21 pm",
-  "timestamp": 1672183307573,
+  "docid": "wmWMbjwhACxwrcJkmKupkP",
+  "time": "02/01/2023 08:39 pm",
+  "timestamp": 1675301991441,
   "userid": "QWecNcxhyvP6j6sBN11hBsfZDau1",
   "owner": null,
   "email": null,
@@ -922,9 +922,9 @@
     "dailyHeliostatYieldPanelX": 0,
     "showDailyParabolicDishYieldPanel": false,
     "cameraPosition": [
-      -20.512163291756742,
-      -32.886498668692944,
-      6.288186173520503
+      -23.305173327292493,
+      -30.914788826665394,
+      7.039269079297646
     ],
     "showYearlyHeliostatYieldPanel": false,
     "orthographic": false,
@@ -951,7 +951,7 @@
     "showYearlyLightSensorPanel": false,
     "autoRotate": false,
     "heliodonPanelX": -14,
-    "showStickyNotePanel": false,
+    "showStickyNotePanel": true,
     "showDailyLightSensorPanel": false,
     "visibilityResultsPanelX": 0,
     "yearlyPvYieldPanelY": 0,
@@ -1007,6 +1007,12 @@
       "y": 0,
       "width": 600,
       "height": 400
+    },
+    "stickyNotePanelRect": {
+      "x": 849,
+      "y": 21,
+      "width": 200,
+      "height": 60
     }
   },
   "evolutionMethod": 1,
@@ -1066,5 +1072,7 @@
     "electricitySellingPrice": 0.25,
     "operationalCostPerUnit": 0.15
   },
-  "notes": []
+  "notes": [
+    "Effect of house size"
+  ]
 }
