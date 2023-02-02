@@ -1,12 +1,13 @@
 {
-  "docid": "rD5DE7MAoB3wzvfQmiZwdJ",
-  "timestamp": 1651523655357,
+  "docid": "anrFxSGH61K9md1hspSx6c",
+  "time": "02/02/2023 12:15 pm",
+  "timestamp": 1675358110494,
   "userid": "QWecNcxhyvP6j6sBN11hBsfZDau1",
   "owner": null,
   "email": null,
   "world": {
     "name": "default",
-    "date": "9/22/2022 2:30:00 PM",
+    "date": "9/22/2022, 2:30:00 PM",
     "ground": {
       "albedo": 0.3,
       "thermalDiffusivity": 0.05,
@@ -97,7 +98,8 @@
       "parentId": "1jWhHcaUD3hYBmq8heF7Mt",
       "foundationId": "1jWhHcaUD3hYBmq8heF7Mt",
       "id": "n6Wes9AHD6Nu1BFW2ixX6c",
-      "selected": false
+      "selected": false,
+      "dailyYield": 58.654024482322484
     },
     {
       "type": "Cuboid",
@@ -164,7 +166,7 @@
   "view": {
     "weatherPanelX": 0,
     "heliodonPanelY": 0,
-    "showStickyNotePanel": false,
+    "showStickyNotePanel": true,
     "dailyPvYieldPanelX": 0,
     "weatherPanelY": 0,
     "dailyLightSensorPanelY": 0,
@@ -195,8 +197,8 @@
     "showDailyLightSensorPanel": false,
     "shadowEnabled": true,
     "cameraPosition": [
-      -2.4201832806358174,
-      -15.878268188373015,
+      -2.420183280635814,
+      -15.878268188373001,
       3.8943744657694412
     ],
     "panCenter": [
@@ -225,7 +227,7 @@
     "showSunAngles": false,
     "showMapPanel": false,
     "showDesignInfoPanel": true,
-    "showInstructionPanel": true,
+    "showInstructionPanel": false,
     "mapPanelX": 0,
     "mapPanelY": 0,
     "yearlyPvYieldPanelX": 0,
@@ -238,14 +240,36 @@
     "showYearlyParabolicTroughYieldPanel": false,
     "yearlyParabolicTroughYieldPanelX": 0,
     "yearlyParabolicTroughYieldPanelY": 0,
-    "showDailyParabolicDishYieldPanel": false,
+    "showDailyParabolicDishYieldPanel": true,
     "showYearlyParabolicDishYieldPanel": false,
     "dailyParabolicDishYieldPanelX": 0,
     "dailyParabolicDishYieldPanelY": 0,
     "yearlyParabolicDishYieldPanelX": 0,
-    "yearlyParabolicDishYieldPanelY": 0
+    "yearlyParabolicDishYieldPanelY": 0,
+    "stickyNotePanelRect": {
+      "x": 0,
+      "y": 0,
+      "width": 200,
+      "height": 60
+    },
+    "dailyParabolicDishYieldPanelRect": {
+      "x": 0,
+      "y": 0,
+      "width": 600,
+      "height": 400
+    }
   },
   "evolutionMethod": 1,
+  "solarPanelArrayLayoutParams": {
+    "pvModelName": "CS6X-355P-FG",
+    "rowAxis": "Zonal",
+    "orientation": "Landscape",
+    "tiltAngle": 0,
+    "rowsPerRack": 1,
+    "interRowSpacing": 2,
+    "poleHeight": 1,
+    "poleSpacing": 3
+  },
   "solarPanelArrayLayoutConstraints": {
     "minimumInterRowSpacing": 2,
     "maximumInterRowSpacing": 10,
@@ -287,5 +311,7 @@
     "electricitySellingPrice": 0.25,
     "operationalCostPerUnit": 0.15
   },
-  "notes": []
+  "notes": [
+    "Parabolic dish"
+  ]
 }

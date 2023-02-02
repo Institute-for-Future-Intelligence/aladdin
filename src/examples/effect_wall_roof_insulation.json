@@ -1,7 +1,7 @@
 {
-  "docid": "1qwhqwbxbtiuLzanhgzKDM",
-  "time": "02/02/2023 10:29 am",
-  "timestamp": 1675351776843,
+  "docid": "uZsWNkJ8MnNNc4aPvarWbD",
+  "time": "02/02/2023 12:37 pm",
+  "timestamp": 1675359462145,
   "userid": "QWecNcxhyvP6j6sBN11hBsfZDau1",
   "owner": null,
   "email": null,
@@ -864,9 +864,9 @@
     "dailyHeliostatYieldPanelX": 0,
     "showDailyParabolicDishYieldPanel": false,
     "cameraPosition": [
-      -25.899593911733398,
-      -24.253839627937523,
-      9.107322054854817
+      -25.899593911733387,
+      -24.25383962793752,
+      9.107322054854812
     ],
     "showYearlyHeliostatYieldPanel": false,
     "orthographic": false,
@@ -913,7 +913,7 @@
     "yearlyPvYieldPanelX": 0,
     "yearlyParabolicDishYieldPanelX": 0,
     "shadowEnabled": true,
-    "showInstructionPanel": true,
+    "showInstructionPanel": false,
     "panCenter": [
       0.196338274422923,
       0.010388763976434831,
@@ -951,10 +951,10 @@
       "height": 400
     },
     "stickyNotePanelRect": {
-      "x": 216,
-      "y": 0,
-      "width": 238,
-      "height": 73
+      "x": -2,
+      "y": -1,
+      "width": 243,
+      "height": 90
     }
   },
   "evolutionMethod": 1,
@@ -1015,6 +1015,6 @@
     "operationalCostPerUnit": 0.15
   },
   "notes": [
-    "Effect of insulation"
+    "Effect of insulation\n房屋隔熱性的影響"
   ]
 }

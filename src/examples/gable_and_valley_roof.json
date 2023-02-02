@@ -1,7 +1,7 @@
 {
-  "docid": "6kp3i1E2ECzPyuPC1ZvHTa",
-  "time": "12/03/2022 05:58 pm",
-  "timestamp": 1670108291326,
+  "docid": "3Wk7KjCzcwsgc2mbMgL7QJ",
+  "time": "02/02/2023 11:31 am",
+  "timestamp": 1675355468716,
   "userid": "QWecNcxhyvP6j6sBN11hBsfZDau1",
   "owner": null,
   "email": null,
@@ -349,7 +349,8 @@
         0,
         1
       ],
-      "rise": 2
+      "rise": 2,
+      "ceiling": false
     },
     {
       "type": "Wall",
@@ -605,7 +606,8 @@
         1
       ],
       "selected": false,
-      "rise": 2
+      "rise": 2,
+      "ceiling": false
     },
     {
       "type": "Foundation",
@@ -1937,8 +1939,8 @@
     "showDailyParabolicDishYieldPanel": false,
     "cameraPosition": [
       0.6668057415519819,
-      -23.043420335925237,
-      3.163637329474523
+      -23.043420335925227,
+      3.1636373294745264
     ],
     "showYearlyHeliostatYieldPanel": false,
     "orthographic": false,
@@ -1965,7 +1967,7 @@
     "showYearlyLightSensorPanel": false,
     "autoRotate": false,
     "heliodonPanelX": 0,
-    "showStickyNotePanel": false,
+    "showStickyNotePanel": true,
     "showDailyLightSensorPanel": false,
     "visibilityResultsPanelX": 0,
     "yearlyPvYieldPanelY": 0,
@@ -1985,7 +1987,7 @@
     "yearlyPvYieldPanelX": 0,
     "yearlyParabolicDishYieldPanelX": 0,
     "shadowEnabled": true,
-    "showInstructionPanel": true,
+    "showInstructionPanel": false,
     "panCenter": [
       0.8673813174759385,
       -0.43442831162207357,
@@ -1999,7 +2001,13 @@
     "showSolarPanelVisibilityResultsPanel": false,
     "stickyNotePanelY": 0,
     "showYearlyParabolicDishYieldPanel": false,
-    "showYearlyFresnelReflectorYieldPanel": false
+    "showYearlyFresnelReflectorYieldPanel": false,
+    "stickyNotePanelRect": {
+      "x": 0,
+      "y": 0,
+      "width": 256,
+      "height": 60
+    }
   },
   "evolutionMethod": 1,
   "solarPanelArrayLayoutParams": {
@@ -2058,5 +2066,7 @@
     "electricitySellingPrice": 0.25,
     "operationalCostPerUnit": 0.15
   },
-  "notes": []
+  "notes": [
+    "Gable-and-valley roof"
+  ]
 }

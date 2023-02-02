@@ -1,6 +1,7 @@
 {
-  "docid": "ek3gDyuATPFtS73fNP9mb6",
-  "timestamp": 1644201130802,
+  "docid": "dyzR3GNVtchpXF2BEQ1z6F",
+  "time": "02/02/2023 12:00 pm",
+  "timestamp": 1675357234210,
   "userid": "QWecNcxhyvP6j6sBN11hBsfZDau1",
   "owner": null,
   "email": null,
@@ -231,7 +232,7 @@
       "parentId": "rahZRzHN5oxPmD7yBmrrsA",
       "foundationId": "rahZRzHN5oxPmD7yBmrrsA",
       "id": "2kyncnrNRhEC8vcEWLLbSV",
-      "selected": true,
+      "selected": false,
       "dailyYield": 111.20646705290646,
       "yearlyYield": "0[object Object][object Object][object Object][object Object][object Object][object Object][object Object][object Object][object Object][object Object][object Object][object Object]",
       "label": "NS2"
@@ -286,7 +287,7 @@
   "view": {
     "weatherPanelX": 0,
     "heliodonPanelY": 0,
-    "showStickyNotePanel": false,
+    "showStickyNotePanel": true,
     "dailyPvYieldPanelX": 0,
     "weatherPanelY": 0,
     "dailyLightSensorPanelY": 0,
@@ -317,9 +318,9 @@
     "showDailyLightSensorPanel": false,
     "shadowEnabled": true,
     "cameraPosition": [
-      15.553788598211085,
-      -51.5202439754498,
-      23.834376653572278
+      16.103455794589095,
+      -53.110389552237656,
+      19.62875806202681
     ],
     "panCenter": [
       15.024700307415378,
@@ -347,7 +348,7 @@
     "showSunAngles": true,
     "showMapPanel": false,
     "showDesignInfoPanel": true,
-    "showInstructionPanel": true,
+    "showInstructionPanel": false,
     "mapPanelX": 0,
     "mapPanelY": 0,
     "yearlyPvYieldPanelX": 0,
@@ -357,7 +358,78 @@
     "showDailyParabolicTroughYieldPanel": true,
     "dailyParabolicTroughYieldPanelX": -5,
     "dailyParabolicTroughYieldPanelY": 5,
-    "showYearlyParabolicTroughYieldPanel": false
+    "showYearlyParabolicTroughYieldPanel": false,
+    "dailyParabolicTroughYieldPanelRect": {
+      "x": 0,
+      "y": 0,
+      "width": 600,
+      "height": 400
+    },
+    "stickyNotePanelRect": {
+      "x": 0,
+      "y": 0,
+      "width": 336,
+      "height": 66
+    }
   },
-  "notes": []
+  "evolutionMethod": 1,
+  "solarPanelArrayLayoutParams": {
+    "pvModelName": "CS6X-355P-FG",
+    "rowAxis": "Zonal",
+    "orientation": "Landscape",
+    "tiltAngle": 0,
+    "rowsPerRack": 1,
+    "interRowSpacing": 2,
+    "poleHeight": 1,
+    "poleSpacing": 3
+  },
+  "solarPanelArrayLayoutConstraints": {
+    "minimumInterRowSpacing": 2,
+    "maximumInterRowSpacing": 10,
+    "minimumRowsPerRack": 1,
+    "maximumRowsPerRack": 6,
+    "minimumTiltAngle": -1.5707963267948966,
+    "maximumTiltAngle": 1.5707963267948966,
+    "poleHeight": 1,
+    "poleSpacing": 5,
+    "orientation": "Landscape",
+    "pvModelName": "CS6X-355P-FG",
+    "rowAxis": "Zonal"
+  },
+  "evolutionaryAlgorithmState": {
+    "geneticAlgorithmParams": {
+      "problem": "Solar Panel Tilt Angle",
+      "objectiveFunctionType": 1,
+      "selectionMethod": 1,
+      "searchMethod": 1,
+      "populationSize": 20,
+      "maximumGenerations": 5,
+      "selectionRate": 0.5,
+      "crossoverRate": 0.5,
+      "mutationRate": 0.1,
+      "convergenceThreshold": 0.01,
+      "localSearchRadius": 0.1
+    },
+    "particleSwarmOptimizationParams": {
+      "problem": "Solar Panel Tilt Angle",
+      "objectiveFunctionType": 1,
+      "searchMethod": 1,
+      "swarmSize": 20,
+      "maximumSteps": 5,
+      "vmax": 0.01,
+      "inertia": 0.8,
+      "cognitiveCoefficient": 0.1,
+      "socialCoefficient": 0.1,
+      "convergenceThreshold": 0.01,
+      "localSearchRadius": 0.1
+    }
+  },
+  "economicsParams": {
+    "projectLifeSpan": 25,
+    "electricitySellingPrice": 0.25,
+    "operationalCostPerUnit": 0.15
+  },
+  "notes": [
+    "Effect of azimuths of parabolic troughs"
+  ]
 }

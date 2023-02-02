@@ -1,12 +1,13 @@
 {
-  "docid": "sjJGKf4Q84eBpUXbwEk11i",
-  "timestamp": 1645048322123,
+  "docid": "vfAudNSjyyMo42sr1uMaQu",
+  "time": "02/02/2023 12:14 pm",
+  "timestamp": 1675358040222,
   "userid": "QWecNcxhyvP6j6sBN11hBsfZDau1",
   "owner": null,
   "email": null,
   "world": {
     "name": "default",
-    "date": "9/22/2022 10:30:00 AM",
+    "date": "9/22/2022, 10:30:00 AM",
     "ground": {
       "albedo": 0.3,
       "thermalDiffusivity": 0.05,
@@ -120,7 +121,7 @@
       "foundationId": "dzfAzy3H4GMkDSbVLaRN5i",
       "id": "rBPLpQDftUWGq1uWVpV2JQ",
       "selected": false,
-      "dailyYield": 89.03662874713791,
+      "dailyYield": 46.64633299683992,
       "drawSunBeam": true,
       "label": "Short2",
       "yearlyYield": 547.7275410650782
@@ -157,7 +158,7 @@
       "foundationId": "dzfAzy3H4GMkDSbVLaRN5i",
       "id": "1FVTFf1Rdrpbt8TCGDL47X",
       "selected": false,
-      "dailyYield": 88.8558719624349,
+      "dailyYield": 46.68721550672282,
       "label": "Short1",
       "drawSunBeam": true,
       "yearlyYield": 547.8648836504849
@@ -221,7 +222,7 @@
       "foundationId": "5Xds31NJFC5WSWmddVnFan",
       "id": "t7wce5cujudUUycMCvBAKg",
       "selected": false,
-      "dailyYield": 97.03650672537353,
+      "dailyYield": 52.29842954176333,
       "drawSunBeam": true,
       "label": "Tall2"
     },
@@ -257,7 +258,7 @@
       "foundationId": "5Xds31NJFC5WSWmddVnFan",
       "id": "pU7aF7BDdSD7JUWEzZrwg7",
       "selected": false,
-      "dailyYield": 96.90221197270017,
+      "dailyYield": 52.33859564683257,
       "drawSunBeam": true,
       "label": "Tall1"
     }
@@ -267,9 +268,9 @@
     "enableRotate": true,
     "ambientLightIntensity": 0.1,
     "cameraPosition": [
-      53.11784569640721,
+      53.11784569640716,
       -95.69780414866551,
-      24.11292061307119
+      24.112920613071175
     ],
     "cameraPosition2D": [
       0,
@@ -298,10 +299,10 @@
     "showMapPanel": false,
     "showHeliodonPanel": false,
     "showWeatherPanel": false,
-    "showStickyNotePanel": false,
+    "showStickyNotePanel": true,
     "showSiteInfoPanel": true,
     "showDesignInfoPanel": false,
-    "showInstructionPanel": true,
+    "showInstructionPanel": false,
     "showDailyLightSensorPanel": false,
     "showYearlyLightSensorPanel": false,
     "showDailyPvYieldPanel": false,
@@ -342,12 +343,83 @@
     "mapType": "roadmap",
     "mapTilt": 0,
     "mapWeatherStations": false,
-    "showDailyFresnelReflectorYieldPanel": false,
+    "showDailyFresnelReflectorYieldPanel": true,
     "showYearlyFresnelReflectorYieldPanel": false,
     "yearlyFresnelReflectorYieldPanelX": -1274,
     "yearlyFresnelReflectorYieldPanelY": 14,
     "dailyFresnelReflectorYieldPanelX": -19,
-    "dailyFresnelReflectorYieldPanelY": 157
+    "dailyFresnelReflectorYieldPanelY": 157,
+    "stickyNotePanelRect": {
+      "x": 0,
+      "y": 0,
+      "width": 404,
+      "height": 64
+    },
+    "dailyFresnelReflectorYieldPanelRect": {
+      "x": 0,
+      "y": 0,
+      "width": 600,
+      "height": 400
+    }
   },
-  "notes": []
+  "evolutionMethod": 1,
+  "solarPanelArrayLayoutParams": {
+    "pvModelName": "CS6X-355P-FG",
+    "rowAxis": "Zonal",
+    "orientation": "Landscape",
+    "tiltAngle": 0,
+    "rowsPerRack": 1,
+    "interRowSpacing": 2,
+    "poleHeight": 1,
+    "poleSpacing": 3
+  },
+  "solarPanelArrayLayoutConstraints": {
+    "minimumInterRowSpacing": 2,
+    "maximumInterRowSpacing": 10,
+    "minimumRowsPerRack": 1,
+    "maximumRowsPerRack": 6,
+    "minimumTiltAngle": -1.5707963267948966,
+    "maximumTiltAngle": 1.5707963267948966,
+    "poleHeight": 1,
+    "poleSpacing": 5,
+    "orientation": "Landscape",
+    "pvModelName": "CS6X-355P-FG",
+    "rowAxis": "Zonal"
+  },
+  "evolutionaryAlgorithmState": {
+    "geneticAlgorithmParams": {
+      "problem": "Solar Panel Tilt Angle",
+      "objectiveFunctionType": 1,
+      "selectionMethod": 1,
+      "searchMethod": 1,
+      "populationSize": 20,
+      "maximumGenerations": 5,
+      "selectionRate": 0.5,
+      "crossoverRate": 0.5,
+      "mutationRate": 0.1,
+      "convergenceThreshold": 0.01,
+      "localSearchRadius": 0.1
+    },
+    "particleSwarmOptimizationParams": {
+      "problem": "Solar Panel Tilt Angle",
+      "objectiveFunctionType": 1,
+      "searchMethod": 1,
+      "swarmSize": 20,
+      "maximumSteps": 5,
+      "vmax": 0.01,
+      "inertia": 0.8,
+      "cognitiveCoefficient": 0.1,
+      "socialCoefficient": 0.1,
+      "convergenceThreshold": 0.01,
+      "localSearchRadius": 0.1
+    }
+  },
+  "economicsParams": {
+    "projectLifeSpan": 25,
+    "electricitySellingPrice": 0.25,
+    "operationalCostPerUnit": 0.15
+  },
+  "notes": [
+    "Effect of height of absorber pipe for Fresnel reflectors"
+  ]
 }

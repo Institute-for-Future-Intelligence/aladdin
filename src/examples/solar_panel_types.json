@@ -1,7 +1,7 @@
 {
-  "docid": "3LSActRK2shghsxitMtYD3",
-  "time": "02/01/2023 08:46 pm",
-  "timestamp": 1675302418112,
+  "docid": "a23ZVUe81EjtB3oPinKZm4",
+  "time": "02/02/2023 12:19 pm",
+  "timestamp": 1675358372271,
   "userid": "QWecNcxhyvP6j6sBN11hBsfZDau1",
   "owner": null,
   "email": null,
@@ -223,9 +223,9 @@
     "showYearlyLightSensorPanel": false,
     "mapType": "roadmap",
     "cameraPosition": [
-      6.231682260523532,
-      -11.839635427091231,
-      3.4189848625017483
+      6.231682260523529,
+      -11.839635427091224,
+      3.4189848625017474
     ],
     "panCenter": [
       1.5940644020050898,
@@ -235,7 +235,7 @@
     "orthographic": false,
     "enableRotate": true,
     "cameraZoom": 37.01235612443422,
-    "showInstructionPanel": true,
+    "showInstructionPanel": false,
     "cameraPosition2D": [
       2.68477267877577,
       -0.1982070075600382,
@@ -265,7 +265,7 @@
     "showStickyNotePanel": true,
     "stickyNotePanelRect": {
       "x": -2,
-      "y": 72,
+      "y": 0,
       "width": 200,
       "height": 65
     }

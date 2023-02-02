@@ -1,7 +1,7 @@
 {
-  "docid": "pV6w5xKTjJEraixGcSzRLT",
-  "time": "02/01/2023 08:31 pm",
-  "timestamp": 1675301492474,
+  "docid": "pSdH5rJWovu8hchgLSnsqT",
+  "time": "02/02/2023 12:24 pm",
+  "timestamp": 1675358675337,
   "userid": "QWecNcxhyvP6j6sBN11hBsfZDau1",
   "owner": null,
   "email": null,
@@ -87,8 +87,8 @@
     "mapZoom": 16,
     "stickyNotePanelX": 0,
     "cameraPosition": [
-      -2.2645315712935474,
-      -19.01640818527093,
+      -2.2645315712935465,
+      -19.016408185270922,
       3.0537676736998205
     ],
     "panCenter": [
@@ -99,7 +99,7 @@
     "orthographic": false,
     "enableRotate": true,
     "cameraZoom": 24.55475326309651,
-    "showInstructionPanel": true,
+    "showInstructionPanel": false,
     "cameraPosition2D": [
       0,
       -0.00004000177797536253,
@@ -112,10 +112,10 @@
     ],
     "showSunAngles": true,
     "stickyNotePanelRect": {
-      "x": 219,
-      "y": -1,
-      "width": 256,
-      "height": 61
+      "x": -5,
+      "y": -2,
+      "width": 309,
+      "height": 64
     }
   },
   "evolutionMethod": 1,

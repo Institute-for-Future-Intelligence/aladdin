@@ -1,7 +1,7 @@
 {
-  "docid": "bFfrjWFdEavm63Fac1nBQk",
-  "time": "11/13/2022 05:02 pm",
-  "timestamp": 1668376967579,
+  "docid": "9q5sS1hxGDArNFtMUxxGLt",
+  "time": "02/02/2023 12:31 pm",
+  "timestamp": 1675359088220,
   "userid": "QWecNcxhyvP6j6sBN11hBsfZDau1",
   "owner": null,
   "email": null,
@@ -156,8 +156,8 @@
     "showYearlyLightSensorPanel": false,
     "weatherPanelY": 0,
     "heliodonPanelX": -6,
-    "showStickyNotePanel": false,
-    "groundColor": "forestgreen",
+    "showStickyNotePanel": true,
+    "groundColor": "#68ccca",
     "weatherPanelX": 0,
     "heliodonPanelY": 9,
     "groundPanelX": 0,
@@ -170,19 +170,19 @@
     "mapZoom": 16,
     "stickyNotePanelX": 0,
     "cameraPosition": [
-      -5.808163625315518,
-      18.69110721804896,
-      4.627030158433927
+      -5.789682038682944,
+      18.727459047471708,
+      4.434763103599393
     ],
     "panCenter": [
-      -1.776412259431219,
-      -0.11309517798536872,
+      -1.75129140268729,
+      -0.10770909213304464,
       1.3605382204171563
     ],
     "orthographic": false,
     "enableRotate": true,
     "cameraZoom": 24.55475326309651,
-    "showInstructionPanel": true,
+    "showInstructionPanel": false,
     "cameraPosition2D": [
       0,
       -0.00004000177797536253,
@@ -192,7 +192,13 @@
       0,
       0,
       0
-    ]
+    ],
+    "stickyNotePanelRect": {
+      "x": 0,
+      "y": 0,
+      "width": 473,
+      "height": 61
+    }
   },
   "evolutionMethod": 1,
   "solarPanelArrayLayoutParams": {
@@ -251,5 +257,7 @@
     "electricitySellingPrice": 0.25,
     "operationalCostPerUnit": 0.15
   },
-  "notes": []
+  "notes": [
+    "Test if the sun beam aligns with the heliodon correctly"
+  ]
 }

@@ -1,7 +1,7 @@
 {
-  "docid": "o9GdF9kPFc2XHDZTYCxmvB",
-  "time": "02/02/2023 09:44 am",
-  "timestamp": 1675349042759,
+  "docid": "ipqPTpFLxQ3f2CsqnBsaWN",
+  "time": "02/02/2023 12:34 pm",
+  "timestamp": 1675359266875,
   "userid": "QWecNcxhyvP6j6sBN11hBsfZDau1",
   "owner": null,
   "email": null,
@@ -924,9 +924,9 @@
     "dailyHeliostatYieldPanelX": 0,
     "showDailyParabolicDishYieldPanel": false,
     "cameraPosition": [
-      -23.305173327292483,
-      -30.91478882666538,
-      7.039269079297646
+      -23.30517332729247,
+      -30.914788826665365,
+      7.039269079297642
     ],
     "showYearlyHeliostatYieldPanel": false,
     "orthographic": false,
@@ -973,7 +973,7 @@
     "yearlyPvYieldPanelX": 0,
     "yearlyParabolicDishYieldPanelX": 0,
     "shadowEnabled": true,
-    "showInstructionPanel": true,
+    "showInstructionPanel": false,
     "panCenter": [
       5.635542831447647,
       8.464690688330043,
@@ -1011,10 +1011,10 @@
       "height": 400
     },
     "stickyNotePanelRect": {
-      "x": 224,
-      "y": -3,
+      "x": -2,
+      "y": -2,
       "width": 200,
-      "height": 60
+      "height": 87
     }
   },
   "evolutionMethod": 1,
@@ -1075,6 +1075,6 @@
     "operationalCostPerUnit": 0.15
   },
   "notes": [
-    "Effect of house size"
+    "Effect of house size\n房子大小的影響"
   ]
 }

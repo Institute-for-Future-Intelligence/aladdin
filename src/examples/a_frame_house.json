@@ -1,7 +1,7 @@
 {
-  "docid": "4RJgUKBMmtRcy1hyKadiyR",
-  "time": "12/03/2022 06:02 pm",
-  "timestamp": 1670108524783,
+  "docid": "pDX2yXuNjCANh2VQFDa2Aw",
+  "time": "02/02/2023 11:26 am",
+  "timestamp": 1675355184106,
   "userid": "QWecNcxhyvP6j6sBN11hBsfZDau1",
   "owner": null,
   "email": null,
@@ -329,7 +329,8 @@
         0,
         1
       ],
-      "rise": 8.714205250083014
+      "rise": 8.714205250083014,
+      "ceiling": false
     },
     {
       "type": "Human",
@@ -895,7 +896,8 @@
         0.5,
         1
       ],
-      "rise": 0
+      "rise": 0,
+      "ceiling": false
     },
     {
       "type": "Door",
@@ -1045,8 +1047,8 @@
     "showDailyParabolicDishYieldPanel": false,
     "cameraPosition": [
       10.682934223558242,
-      -29.055032972806913,
-      4.366513230692265
+      -29.055032972806902,
+      4.366513230692259
     ],
     "showYearlyHeliostatYieldPanel": false,
     "orthographic": false,
@@ -1073,7 +1075,7 @@
     "showYearlyLightSensorPanel": false,
     "autoRotate": false,
     "heliodonPanelX": 0,
-    "showStickyNotePanel": false,
+    "showStickyNotePanel": true,
     "showDailyLightSensorPanel": false,
     "visibilityResultsPanelX": 0,
     "yearlyPvYieldPanelY": 0,
@@ -1093,7 +1095,7 @@
     "yearlyPvYieldPanelX": 0,
     "yearlyParabolicDishYieldPanelX": 0,
     "shadowEnabled": true,
-    "showInstructionPanel": true,
+    "showInstructionPanel": false,
     "panCenter": [
       -1.3476153456414062,
       -7.001555691507119,
@@ -1107,7 +1109,13 @@
     "showSolarPanelVisibilityResultsPanel": false,
     "stickyNotePanelY": 0,
     "showYearlyParabolicDishYieldPanel": false,
-    "showYearlyFresnelReflectorYieldPanel": false
+    "showYearlyFresnelReflectorYieldPanel": false,
+    "stickyNotePanelRect": {
+      "x": 0,
+      "y": 0,
+      "width": 200,
+      "height": 60
+    }
   },
   "evolutionMethod": 1,
   "solarPanelArrayLayoutParams": {
@@ -1166,5 +1174,7 @@
     "electricitySellingPrice": 0.25,
     "operationalCostPerUnit": 0.15
   },
-  "notes": []
+  "notes": [
+    "A-frame house"
+  ]
 }

@@ -217,6 +217,11 @@ const StickyNotePanel = () => {
               onChange={(e) => {
                 setText(e.target.value);
               }}
+              onBlur={() => {
+                setCommonStore((state) => {
+                  state.notes[0] = text;
+                });
+              }}
               onPointerOut={() => {
                 setCommonStore((state) => {
                   state.notes[0] = text;

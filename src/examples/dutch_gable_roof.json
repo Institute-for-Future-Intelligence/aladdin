@@ -1,7 +1,7 @@
 {
-  "docid": "ax1aULJq4wBcZy6ui3GWs5",
-  "time": "12/03/2022 05:56 pm",
-  "timestamp": 1670108213631,
+  "docid": "249fzMvnnXs4oWXPMehNno",
+  "time": "02/02/2023 11:34 am",
+  "timestamp": 1675355693996,
   "userid": "QWecNcxhyvP6j6sBN11hBsfZDau1",
   "owner": null,
   "email": null,
@@ -327,7 +327,8 @@
         1
       ],
       "selected": false,
-      "rise": 3.810423621996117
+      "rise": 3.810423621996117,
+      "ceiling": false
     },
     {
       "type": "Foundation",
@@ -1166,7 +1167,8 @@
       "rightRidgeLength": 3.4435183404805185,
       "leftRidgeLength": 3.4435183404805185,
       "selected": false,
-      "rise": 2
+      "rise": 2,
+      "ceiling": false
     },
     {
       "type": "Foundation",
@@ -1310,9 +1312,9 @@
     "dailyHeliostatYieldPanelX": 0,
     "showDailyParabolicDishYieldPanel": false,
     "cameraPosition": [
-      -14.038168376224032,
+      -14.03816837622403,
       -17.215132010441078,
-      2.866587902687307
+      2.8665879026873062
     ],
     "showYearlyHeliostatYieldPanel": false,
     "orthographic": false,
@@ -1339,7 +1341,7 @@
     "showYearlyLightSensorPanel": false,
     "autoRotate": false,
     "heliodonPanelX": 0,
-    "showStickyNotePanel": false,
+    "showStickyNotePanel": true,
     "showDailyLightSensorPanel": false,
     "visibilityResultsPanelX": 0,
     "yearlyPvYieldPanelY": 0,
@@ -1359,7 +1361,7 @@
     "yearlyPvYieldPanelX": 0,
     "yearlyParabolicDishYieldPanelX": 0,
     "shadowEnabled": true,
-    "showInstructionPanel": true,
+    "showInstructionPanel": false,
     "panCenter": [
       1.0474712570088618,
       -0.2712432848960137,
@@ -1373,7 +1375,13 @@
     "showSolarPanelVisibilityResultsPanel": false,
     "stickyNotePanelY": 0,
     "showYearlyParabolicDishYieldPanel": false,
-    "showYearlyFresnelReflectorYieldPanel": false
+    "showYearlyFresnelReflectorYieldPanel": false,
+    "stickyNotePanelRect": {
+      "x": 0,
+      "y": 0,
+      "width": 240,
+      "height": 60
+    }
   },
   "evolutionMethod": 1,
   "solarPanelArrayLayoutParams": {
@@ -1432,5 +1440,7 @@
     "electricitySellingPrice": 0.25,
     "operationalCostPerUnit": 0.15
   },
-  "notes": []
+  "notes": [
+    "Dutch gable roof"
+  ]
 }

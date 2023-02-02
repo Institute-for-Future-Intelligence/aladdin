@@ -1,7 +1,7 @@
 {
-  "docid": "18V6Rqbenwv3QWmtiMCqBe",
-  "time": "02/02/2023 10:35 am",
-  "timestamp": 1675352149225,
+  "docid": "6pBbqB9SJK5gpWs9Lo3SHG",
+  "time": "02/02/2023 12:38 pm",
+  "timestamp": 1675359522412,
   "userid": "QWecNcxhyvP6j6sBN11hBsfZDau1",
   "owner": null,
   "email": null,
@@ -872,9 +872,9 @@
     "dailyHeliostatYieldPanelX": 0,
     "showDailyParabolicDishYieldPanel": false,
     "cameraPosition": [
-      -19.378140611628396,
-      -17.837130059709718,
-      3.715389359808945
+      -19.55586574904609,
+      -17.641057541258817,
+      3.7153893598089467
     ],
     "showYearlyHeliostatYieldPanel": false,
     "orthographic": false,
@@ -921,7 +921,7 @@
     "yearlyPvYieldPanelX": 0,
     "yearlyParabolicDishYieldPanelX": 0,
     "shadowEnabled": true,
-    "showInstructionPanel": true,
+    "showInstructionPanel": false,
     "panCenter": [
       0.16135131717073387,
       0.052547924298830165,
@@ -959,10 +959,10 @@
       "height": 400
     },
     "stickyNotePanelRect": {
-      "x": 217,
-      "y": -3,
-      "width": 282,
-      "height": 71
+      "x": -3,
+      "y": -4,
+      "width": 278,
+      "height": 87
     }
   },
   "evolutionMethod": 1,
@@ -1023,6 +1023,6 @@
     "operationalCostPerUnit": 0.15
   },
   "notes": [
-    "Effect of roof color"
+    "Effect of roof color \n屋頂顔色的影響"
   ]
 }

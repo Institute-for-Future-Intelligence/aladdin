@@ -1,7 +1,7 @@
 {
-  "docid": "kyYePsNuhqtt7D312reBDz",
-  "time": "02/02/2023 10:45 am",
-  "timestamp": 1675352701163,
+  "docid": "d97j5e2w5pDHncc5Y9WbV1",
+  "time": "02/02/2023 12:48 pm",
+  "timestamp": 1675360114642,
   "userid": "QWecNcxhyvP6j6sBN11hBsfZDau1",
   "owner": null,
   "email": null,
@@ -2919,7 +2919,7 @@
     "dailyHeliostatYieldPanelX": 0,
     "showDailyParabolicDishYieldPanel": false,
     "cameraPosition": [
-      -21.205706148898827,
+      -21.205706148898823,
       -34.501280243521734,
       7.541149435690317
     ],
@@ -2968,7 +2968,7 @@
     "yearlyPvYieldPanelX": 0,
     "yearlyParabolicDishYieldPanelX": 0,
     "shadowEnabled": true,
-    "showInstructionPanel": true,
+    "showInstructionPanel": false,
     "panCenter": [
       7.9613043217859705,
       4.9057140700953275,
@@ -3006,8 +3006,8 @@
       "height": 342
     },
     "stickyNotePanelRect": {
-      "x": 226,
-      "y": 0,
+      "x": -3,
+      "y": -2,
       "width": 275,
       "height": 63
     }

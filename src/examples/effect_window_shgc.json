@@ -1,7 +1,7 @@
 {
-  "docid": "outekmJumK1J2yPYqzANHX",
-  "time": "02/02/2023 10:40 am",
-  "timestamp": 1675352422330,
+  "docid": "ezqaY9V2njTV6VAcG1f5A9",
+  "time": "02/02/2023 12:42 pm",
+  "timestamp": 1675359730995,
   "userid": "QWecNcxhyvP6j6sBN11hBsfZDau1",
   "owner": null,
   "email": null,
@@ -864,8 +864,8 @@
     "dailyHeliostatYieldPanelX": 0,
     "showDailyParabolicDishYieldPanel": false,
     "cameraPosition": [
-      -22.88251535105602,
-      -27.65389221128616,
+      -22.88251535105601,
+      -27.653892211286156,
       3.715389359808943
     ],
     "showYearlyHeliostatYieldPanel": false,
@@ -913,7 +913,7 @@
     "yearlyPvYieldPanelX": 0,
     "yearlyParabolicDishYieldPanelX": 0,
     "shadowEnabled": true,
-    "showInstructionPanel": true,
+    "showInstructionPanel": false,
     "panCenter": [
       0.13128238236780088,
       0.08035571779665726,
@@ -951,10 +951,10 @@
       "height": 400
     },
     "stickyNotePanelRect": {
-      "x": 218,
-      "y": -4,
-      "width": 443,
-      "height": 68
+      "x": -5,
+      "y": -1,
+      "width": 421,
+      "height": 65
     }
   },
   "evolutionMethod": 1,
@@ -1015,6 +1015,6 @@
     "operationalCostPerUnit": 0.15
   },
   "notes": [
-    "Effect of solar heat gain coefficients "
+    "Effect of solar heat gain coefficients (SHGC) of windows"
   ]
 }

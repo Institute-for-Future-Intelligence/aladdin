@@ -1,7 +1,7 @@
 {
-  "docid": "dT8vnMb3Z7w6zRco1PDAx7",
-  "time": "02/01/2023 09:03 pm",
-  "timestamp": 1675303408325,
+  "docid": "pcNATjPQi9ZrVGwzDzdTDN",
+  "time": "02/02/2023 12:23 pm",
+  "timestamp": 1675358585268,
   "userid": "QWecNcxhyvP6j6sBN11hBsfZDau1",
   "owner": null,
   "email": null,
@@ -590,7 +590,8 @@
       "parentId": "9VUxbWr6Hk1HaeGiLpEeqj",
       "foundationId": "9VUxbWr6Hk1HaeGiLpEeqj",
       "id": "a69gMcUNAL6smrEEJWVg5m",
-      "rise": 0
+      "rise": 0,
+      "ceiling": false
     },
     {
       "type": "Solar Panel",
@@ -1999,7 +2000,7 @@
     "yearlyParabolicTroughYieldPanelX": 0,
     "dailyParabolicTroughYieldPanelY": 0,
     "diurnalTemperaturePanelX": 0,
-    "showInstructionPanel": true,
+    "showInstructionPanel": false,
     "axes": true,
     "enableRotate": true,
     "weatherPanelY": 0,
@@ -2118,8 +2119,8 @@
       "height": 400
     },
     "stickyNotePanelRect": {
-      "x": 222,
-      "y": -3,
+      "x": -3,
+      "y": -2,
       "width": 339,
       "height": 63
     },

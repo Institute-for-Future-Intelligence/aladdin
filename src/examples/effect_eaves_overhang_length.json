@@ -1,7 +1,7 @@
 {
-  "docid": "3EPyEpg5eBXkKCURdQV6iR",
-  "time": "02/02/2023 10:37 am",
-  "timestamp": 1675352248160,
+  "docid": "wz3dcsbMgjYghZcY8KudEP",
+  "time": "02/02/2023 12:45 pm",
+  "timestamp": 1675359930063,
   "userid": "QWecNcxhyvP6j6sBN11hBsfZDau1",
   "owner": null,
   "email": null,
@@ -872,9 +872,9 @@
     "dailyHeliostatYieldPanelX": 0,
     "showDailyParabolicDishYieldPanel": false,
     "cameraPosition": [
-      -20.87146532080158,
-      -18.25794546045563,
-      3.7153893598089467
+      -20.871465320801565,
+      -18.257945460455613,
+      3.715389359808945
     ],
     "showYearlyHeliostatYieldPanel": false,
     "orthographic": false,
@@ -921,7 +921,7 @@
     "yearlyPvYieldPanelX": 0,
     "yearlyParabolicDishYieldPanelX": 0,
     "shadowEnabled": true,
-    "showInstructionPanel": true,
+    "showInstructionPanel": false,
     "panCenter": [
       0.16135131717073387,
       0.052547924298830165,
@@ -959,10 +959,10 @@
       "height": 400
     },
     "stickyNotePanelRect": {
-      "x": 221,
+      "x": -1,
       "y": 0,
-      "width": 277,
-      "height": 60
+      "width": 284,
+      "height": 88
     }
   },
   "evolutionMethod": 1,
@@ -1023,6 +1023,6 @@
     "operationalCostPerUnit": 0.15
   },
   "notes": [
-    "Effect of eaves overhang"
+    "Effect of eaves overhang\n屋簷延申長度的影響"
   ]
 }

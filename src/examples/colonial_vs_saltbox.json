@@ -1,7 +1,7 @@
 {
-  "docid": "nMNYM136vL8Faj43jkRZGg",
-  "time": "12/03/2022 05:48 pm",
-  "timestamp": 1670107720815,
+  "docid": "2TqWTU2pHb1jeEqJJvExLW",
+  "time": "02/02/2023 11:40 am",
+  "timestamp": 1675356001257,
   "userid": "QWecNcxhyvP6j6sBN11hBsfZDau1",
   "owner": null,
   "email": null,
@@ -417,7 +417,8 @@
         0,
         1
       ],
-      "rise": 2.2458395786002807
+      "rise": 2.2458395786002807,
+      "ceiling": false
     },
     {
       "type": "Window",
@@ -2444,7 +2445,8 @@
         1
       ],
       "selected": false,
-      "rise": 3.562941311903093
+      "rise": 3.562941311903093,
+      "ceiling": false
     },
     {
       "type": "Foundation",
@@ -2501,9 +2503,9 @@
     "dailyHeliostatYieldPanelX": 0,
     "showDailyParabolicDishYieldPanel": false,
     "cameraPosition": [
-      -29.471711302283914,
-      -25.767357989519283,
-      6.716894063284673
+      -29.44402582378222,
+      -25.741548603644382,
+      7.0939464158727255
     ],
     "showYearlyHeliostatYieldPanel": false,
     "orthographic": false,
@@ -2530,7 +2532,7 @@
     "showYearlyLightSensorPanel": false,
     "autoRotate": false,
     "heliodonPanelX": 0,
-    "showStickyNotePanel": false,
+    "showStickyNotePanel": true,
     "showDailyLightSensorPanel": false,
     "visibilityResultsPanelX": 0,
     "yearlyPvYieldPanelY": 0,
@@ -2550,7 +2552,7 @@
     "yearlyPvYieldPanelX": 0,
     "yearlyParabolicDishYieldPanelX": 0,
     "shadowEnabled": true,
-    "showInstructionPanel": true,
+    "showInstructionPanel": false,
     "panCenter": [
       -1.8484762737245803,
       -0.01599768987763376,
@@ -2564,7 +2566,13 @@
     "showSolarPanelVisibilityResultsPanel": false,
     "stickyNotePanelY": 0,
     "showYearlyParabolicDishYieldPanel": false,
-    "showYearlyFresnelReflectorYieldPanel": false
+    "showYearlyFresnelReflectorYieldPanel": false,
+    "stickyNotePanelRect": {
+      "x": 0,
+      "y": 0,
+      "width": 234,
+      "height": 61
+    }
   },
   "evolutionMethod": 1,
   "solarPanelArrayLayoutParams": {
@@ -2623,5 +2631,7 @@
     "electricitySellingPrice": 0.25,
     "operationalCostPerUnit": 0.15
   },
-  "notes": []
+  "notes": [
+    "colonial_vs_saltbox"
+  ]
 }

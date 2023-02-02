@@ -1,7 +1,7 @@
 {
-  "docid": "jxibFvFxRCNhgA8ecZ6jgw",
-  "time": "12/03/2022 05:55 pm",
-  "timestamp": 1670108131791,
+  "docid": "2M4GcWHeJSAzC4qMQFVaGm",
+  "time": "02/02/2023 11:36 am",
+  "timestamp": 1675355804579,
   "userid": "QWecNcxhyvP6j6sBN11hBsfZDau1",
   "owner": null,
   "email": null,
@@ -857,7 +857,8 @@
       "rightRidgeLength": 3.4435183404805185,
       "leftRidgeLength": 3.4435183404805185,
       "selected": false,
-      "rise": 2
+      "rise": 2,
+      "ceiling": false
     },
     {
       "type": "Foundation",
@@ -1183,7 +1184,8 @@
       "id": "1ruH3RPfFc3ThJYcd2omkK",
       "leftRidgeLength": 3.201607189072456,
       "rightRidgeLength": 3.144275873016056,
-      "rise": 3.17333907083463
+      "rise": 3.17333907083463,
+      "ceiling": false
     },
     {
       "type": "Human",
@@ -1997,7 +1999,8 @@
       "rightRidgeLength": 3.4435183404805185,
       "leftRidgeLength": 3.4435183404805185,
       "selected": false,
-      "rise": 3.340811239776026
+      "rise": 3.340811239776026,
+      "ceiling": false
     },
     {
       "type": "Foundation",
@@ -2265,7 +2268,8 @@
       "rightRidgeLength": 3.4435183404805185,
       "leftRidgeLength": 3.4435183404805185,
       "selected": false,
-      "rise": 1.5269644430820746
+      "rise": 1.5269644430820746,
+      "ceiling": false
     },
     {
       "type": "Foundation",
@@ -2323,9 +2327,9 @@
     "dailyHeliostatYieldPanelX": 0,
     "showDailyParabolicDishYieldPanel": false,
     "cameraPosition": [
-      -12.608981521701054,
-      -34.81367188626274,
-      3.36889502212926
+      -12.608981521701045,
+      -34.81367188626271,
+      3.368895022129253
     ],
     "showYearlyHeliostatYieldPanel": false,
     "orthographic": false,
@@ -2352,7 +2356,7 @@
     "showYearlyLightSensorPanel": false,
     "autoRotate": false,
     "heliodonPanelX": 0,
-    "showStickyNotePanel": false,
+    "showStickyNotePanel": true,
     "showDailyLightSensorPanel": false,
     "visibilityResultsPanelX": 0,
     "yearlyPvYieldPanelY": 0,
@@ -2372,7 +2376,7 @@
     "yearlyPvYieldPanelX": 0,
     "yearlyParabolicDishYieldPanelX": 0,
     "shadowEnabled": true,
-    "showInstructionPanel": true,
+    "showInstructionPanel": false,
     "panCenter": [
       -0.17215904908430746,
       3.1094271606158492,
@@ -2386,7 +2390,13 @@
     "showSolarPanelVisibilityResultsPanel": false,
     "stickyNotePanelY": 0,
     "showYearlyParabolicDishYieldPanel": false,
-    "showYearlyFresnelReflectorYieldPanel": false
+    "showYearlyFresnelReflectorYieldPanel": false,
+    "stickyNotePanelRect": {
+      "x": 0,
+      "y": 0,
+      "width": 334,
+      "height": 60
+    }
   },
   "evolutionMethod": 1,
   "solarPanelArrayLayoutParams": {
@@ -2445,5 +2455,7 @@
     "electricitySellingPrice": 0.25,
     "operationalCostPerUnit": 0.15
   },
-  "notes": []
+  "notes": [
+    "Combination roof vs. bonnet roof"
+  ]
 }

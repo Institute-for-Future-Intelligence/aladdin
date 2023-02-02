@@ -1,7 +1,7 @@
 {
-  "docid": "bj3mD9qMf6su8oLJbusPNf",
-  "time": "12/03/2022 06:00 pm",
-  "timestamp": 1670108452974,
+  "docid": "9y67dfz7jWN6uEoLD3CPoX",
+  "time": "02/02/2023 11:24 am",
+  "timestamp": 1675355096827,
   "userid": "QWecNcxhyvP6j6sBN11hBsfZDau1",
   "owner": null,
   "email": null,
@@ -1090,7 +1090,8 @@
       "parentId": "axj9GVUBNvhnWAa3G8T3wG",
       "foundationId": "axj9GVUBNvhnWAa3G8T3wG",
       "id": "wCPmoV4VwkScF5K7cf32UD",
-      "rise": 2
+      "rise": 2,
+      "ceiling": false
     },
     {
       "type": "Roof",
@@ -1129,7 +1130,8 @@
       "parentId": "3vsEsZfsBjGXDRnpzcE3dE",
       "foundationId": "3vsEsZfsBjGXDRnpzcE3dE",
       "id": "bdD5ztB6YGXg4uAZiGZwDr",
-      "rise": 2.399521849228247
+      "rise": 2.399521849228247,
+      "ceiling": false
     },
     {
       "type": "Window",
@@ -1538,9 +1540,9 @@
     "dailyHeliostatYieldPanelX": 0,
     "showDailyParabolicDishYieldPanel": false,
     "cameraPosition": [
-      -4.297487968561391,
+      -4.297487968561389,
       -16.845745793668158,
-      4.084049378760642
+      4.084049378760644
     ],
     "showYearlyHeliostatYieldPanel": false,
     "orthographic": false,
@@ -1567,7 +1569,7 @@
     "showYearlyLightSensorPanel": false,
     "autoRotate": false,
     "heliodonPanelX": 0,
-    "showStickyNotePanel": false,
+    "showStickyNotePanel": true,
     "showDailyLightSensorPanel": false,
     "visibilityResultsPanelX": 0,
     "yearlyPvYieldPanelY": 0,
@@ -1587,7 +1589,7 @@
     "yearlyPvYieldPanelX": 0,
     "yearlyParabolicDishYieldPanelX": 0,
     "shadowEnabled": true,
-    "showInstructionPanel": true,
+    "showInstructionPanel": false,
     "panCenter": [
       1.3277453693129069,
       -0.2039271051931454,
@@ -1601,7 +1603,13 @@
     "showSolarPanelVisibilityResultsPanel": false,
     "stickyNotePanelY": 0,
     "showYearlyParabolicDishYieldPanel": false,
-    "showYearlyFresnelReflectorYieldPanel": false
+    "showYearlyFresnelReflectorYieldPanel": false,
+    "stickyNotePanelRect": {
+      "x": 0,
+      "y": 0,
+      "width": 200,
+      "height": 60
+    }
   },
   "evolutionMethod": 1,
   "solarPanelArrayLayoutParams": {
@@ -1660,5 +1668,7 @@
     "electricitySellingPrice": 0.25,
     "operationalCostPerUnit": 0.15
   },
-  "notes": []
+  "notes": [
+    "Monitor roof"
+  ]
 }

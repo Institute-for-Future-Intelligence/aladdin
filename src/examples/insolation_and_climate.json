@@ -1,7 +1,7 @@
 {
-  "docid": "1z9DajSDsTbijYbSiNBS7u",
-  "time": "02/01/2023 08:34 pm",
-  "timestamp": 1675301683273,
+  "docid": "aLZxDeCyLDDueFWdBcXne3",
+  "time": "02/02/2023 12:27 pm",
+  "timestamp": 1675358863088,
   "userid": "QWecNcxhyvP6j6sBN11hBsfZDau1",
   "owner": null,
   "email": null,
@@ -123,11 +123,11 @@
     "dailyLightSensorPanelX": -31,
     "showYearlyLightSensorPanel": true,
     "weatherPanelY": 0,
-    "heliodonPanelX": -1204,
+    "heliodonPanelX": -5,
     "showStickyNotePanel": true,
     "groundColor": "#16cda5",
     "weatherPanelX": 0,
-    "heliodonPanelY": 282,
+    "heliodonPanelY": 4,
     "groundPanelX": 0,
     "shadowEnabled": true,
     "theme": "Default",
@@ -138,9 +138,9 @@
     "mapZoom": 16,
     "stickyNotePanelX": 0,
     "cameraPosition": [
-      13.505802919384953,
-      -21.070711731654686,
-      7.557642032181444
+      14.252594110627898,
+      -20.834202556609767,
+      6.804345920821559
     ],
     "panCenter": [
       0,
@@ -150,7 +150,7 @@
     "orthographic": false,
     "enableRotate": true,
     "cameraZoom": 58.72652247402654,
-    "showInstructionPanel": true,
+    "showInstructionPanel": false,
     "cameraPosition2D": [
       0,
       -0.00004000177797536253,
@@ -163,14 +163,14 @@
     ],
     "showSunAngles": true,
     "stickyNotePanelRect": {
-      "x": 0,
-      "y": 0,
-      "width": 407,
-      "height": 267
+      "x": 1204,
+      "y": 154,
+      "width": 595,
+      "height": 199
     },
     "yearlyLightSensorPanelRect": {
-      "x": 0,
-      "y": 0,
+      "x": -1284,
+      "y": 2,
       "width": 600,
       "height": 500
     },

@@ -1,12 +1,13 @@
 {
-  "docid": "rABPS5US7ognrMnCZ8rUcV",
-  "timestamp": 1645193295074,
+  "docid": "cAHSeyaqjcoDcXKsbEQyP4",
+  "time": "02/02/2023 12:56 pm",
+  "timestamp": 1675360619460,
   "userid": "QWecNcxhyvP6j6sBN11hBsfZDau1",
   "owner": null,
   "email": null,
   "world": {
     "name": "default",
-    "date": "6/22/2022 3:30:00 PM",
+    "date": "6/22/2022, 3:30:00 PM",
     "ground": {
       "albedo": 0.3,
       "thermalDiffusivity": 0.05,
@@ -65,7 +66,8 @@
       "solarAbsorberPipe": {
         "absorberHeight": 16,
         "apertureWidth": 1
-      }
+      },
+      "labelSize": 1
     },
     {
       "type": "Fresnel Reflector",
@@ -85,7 +87,7 @@
       "lx": 2,
       "ly": 30,
       "lz": 0.1,
-      "showLabel": false,
+      "showLabel": true,
       "normal": [
         0,
         0,
@@ -100,9 +102,11 @@
       "foundationId": "kxHYpYsUs7XEocuTYAj1Qu",
       "id": "vb4n6chMKJoqTfuUfT9HH9",
       "selected": false,
-      "dailyYield": 162.2942921751265,
+      "dailyYield": 74.96105824171634,
       "yearlyYield": 2328.274834535053,
-      "label": "8"
+      "label": "8",
+      "labelHeight": 1,
+      "labelSize": 1
     },
     {
       "type": "Human",
@@ -144,7 +148,7 @@
       "relativeAzimuth": 0,
       "poleRadius": 0.05,
       "poleHeight": 0.2,
-      "showLabel": false,
+      "showLabel": true,
       "normal": [
         0,
         0,
@@ -160,9 +164,11 @@
       "id": "hqQUyB5jvcbC5wykbyrwVq",
       "selected": false,
       "drawSunBeam": true,
-      "dailyYield": 161.43352813316395,
+      "dailyYield": 75.30871550026608,
       "yearlyYield": 2365.489808480604,
-      "label": "9"
+      "label": "9",
+      "labelHeight": 1,
+      "labelSize": 1
     },
     {
       "type": "Fresnel Reflector",
@@ -181,7 +187,7 @@
       "relativeAzimuth": 0,
       "poleRadius": 0.05,
       "poleHeight": 0.2,
-      "showLabel": false,
+      "showLabel": true,
       "normal": [
         0,
         0,
@@ -197,7 +203,9 @@
       "id": "3QNPRzuCQDcJYCHp3jv7xP",
       "selected": false,
       "label": "10",
-      "dailyYield": 159.23551883090204
+      "dailyYield": 74.47712896106862,
+      "labelHeight": 1,
+      "labelSize": 1
     },
     {
       "type": "Fresnel Reflector",
@@ -216,7 +224,7 @@
       "relativeAzimuth": 0,
       "poleRadius": 0.05,
       "poleHeight": 0.2,
-      "showLabel": false,
+      "showLabel": true,
       "normal": [
         0,
         0,
@@ -233,7 +241,9 @@
       "selected": false,
       "drawSunBeam": true,
       "label": "11",
-      "dailyYield": 156.85687573928945
+      "dailyYield": 72.69243415263071,
+      "labelHeight": 1,
+      "labelSize": 1
     },
     {
       "type": "Fresnel Reflector",
@@ -252,7 +262,7 @@
       "relativeAzimuth": 0,
       "poleRadius": 0.05,
       "poleHeight": 0.2,
-      "showLabel": false,
+      "showLabel": true,
       "normal": [
         0,
         0,
@@ -269,7 +279,9 @@
       "selected": false,
       "drawSunBeam": true,
       "label": "12",
-      "dailyYield": 154.77396657616575
+      "dailyYield": 71.32847705730514,
+      "labelHeight": 1,
+      "labelSize": 1
     },
     {
       "type": "Fresnel Reflector",
@@ -288,7 +300,7 @@
       "relativeAzimuth": 0,
       "poleRadius": 0.05,
       "poleHeight": 0.2,
-      "showLabel": false,
+      "showLabel": true,
       "normal": [
         0,
         0,
@@ -305,7 +317,9 @@
       "selected": false,
       "drawSunBeam": true,
       "label": "13",
-      "dailyYield": 151.66710252241504
+      "dailyYield": 69.36645769952737,
+      "labelHeight": 1,
+      "labelSize": 1
     },
     {
       "type": "Fresnel Reflector",
@@ -324,7 +338,7 @@
       "relativeAzimuth": 0,
       "poleRadius": 0.05,
       "poleHeight": 0.2,
-      "showLabel": false,
+      "showLabel": true,
       "normal": [
         0,
         0,
@@ -341,7 +355,9 @@
       "selected": false,
       "drawSunBeam": true,
       "label": "14",
-      "dailyYield": 148.99001840566953
+      "dailyYield": 68.18367399690828,
+      "labelHeight": 1,
+      "labelSize": 1
     },
     {
       "type": "Fresnel Reflector",
@@ -360,7 +376,7 @@
       "relativeAzimuth": 0,
       "poleRadius": 0.05,
       "poleHeight": 0.2,
-      "showLabel": false,
+      "showLabel": true,
       "normal": [
         0,
         0,
@@ -377,7 +393,9 @@
       "selected": false,
       "drawSunBeam": true,
       "label": "15",
-      "dailyYield": 146.54879976458537
+      "dailyYield": 66.51612857330484,
+      "labelHeight": 1,
+      "labelSize": 1
     },
     {
       "type": "Fresnel Reflector",
@@ -396,7 +414,7 @@
       "relativeAzimuth": 0,
       "poleRadius": 0.05,
       "poleHeight": 0.2,
-      "showLabel": false,
+      "showLabel": true,
       "normal": [
         0,
         0,
@@ -413,7 +431,9 @@
       "selected": false,
       "drawSunBeam": true,
       "label": "16",
-      "dailyYield": 148.53063046318988
+      "dailyYield": 66.9454970041269,
+      "labelHeight": 1,
+      "labelSize": 1
     },
     {
       "type": "Fresnel Reflector",
@@ -432,7 +452,7 @@
       "relativeAzimuth": 0,
       "poleRadius": 0.05,
       "poleHeight": 0.2,
-      "showLabel": false,
+      "showLabel": true,
       "normal": [
         0,
         0,
@@ -449,7 +469,9 @@
       "selected": false,
       "drawSunBeam": true,
       "label": "7",
-      "dailyYield": 160.21175772979316
+      "dailyYield": 74.46542587169182,
+      "labelHeight": 1,
+      "labelSize": 1
     },
     {
       "type": "Fresnel Reflector",
@@ -468,7 +490,7 @@
       "relativeAzimuth": 0,
       "poleRadius": 0.05,
       "poleHeight": 0.2,
-      "showLabel": false,
+      "showLabel": true,
       "normal": [
         0,
         0,
@@ -485,7 +507,9 @@
       "selected": false,
       "drawSunBeam": true,
       "label": "6",
-      "dailyYield": 158.5462037715698
+      "dailyYield": 73.42005146962971,
+      "labelHeight": 1,
+      "labelSize": 1
     },
     {
       "type": "Fresnel Reflector",
@@ -504,7 +528,7 @@
       "relativeAzimuth": 0,
       "poleRadius": 0.05,
       "poleHeight": 0.2,
-      "showLabel": false,
+      "showLabel": true,
       "normal": [
         0,
         0,
@@ -521,7 +545,9 @@
       "selected": false,
       "drawSunBeam": true,
       "label": "5",
-      "dailyYield": 155.7091605043855
+      "dailyYield": 71.56039677787652,
+      "labelHeight": 1,
+      "labelSize": 1
     },
     {
       "type": "Fresnel Reflector",
@@ -540,7 +566,7 @@
       "relativeAzimuth": 0,
       "poleRadius": 0.05,
       "poleHeight": 0.2,
-      "showLabel": false,
+      "showLabel": true,
       "normal": [
         0,
         0,
@@ -557,7 +583,9 @@
       "selected": false,
       "drawSunBeam": true,
       "label": "4",
-      "dailyYield": 152.56714364779413
+      "dailyYield": 69.76216278634425,
+      "labelHeight": 1,
+      "labelSize": 1
     },
     {
       "type": "Fresnel Reflector",
@@ -576,7 +604,7 @@
       "relativeAzimuth": 0,
       "poleRadius": 0.05,
       "poleHeight": 0.2,
-      "showLabel": false,
+      "showLabel": true,
       "normal": [
         0,
         0,
@@ -593,7 +621,9 @@
       "selected": false,
       "drawSunBeam": true,
       "label": "3",
-      "dailyYield": 150.34226359515554
+      "dailyYield": 68.34763018099684,
+      "labelHeight": 1,
+      "labelSize": 1
     },
     {
       "type": "Fresnel Reflector",
@@ -612,7 +642,7 @@
       "relativeAzimuth": 0,
       "poleRadius": 0.05,
       "poleHeight": 0.2,
-      "showLabel": false,
+      "showLabel": true,
       "normal": [
         0,
         0,
@@ -629,7 +659,9 @@
       "selected": false,
       "drawSunBeam": true,
       "label": "2",
-      "dailyYield": 148.05869994107735
+      "dailyYield": 66.89178735911106,
+      "labelHeight": 1,
+      "labelSize": 1
     },
     {
       "type": "Fresnel Reflector",
@@ -648,7 +680,7 @@
       "relativeAzimuth": 0,
       "poleRadius": 0.05,
       "poleHeight": 0.2,
-      "showLabel": false,
+      "showLabel": true,
       "normal": [
         0,
         0,
@@ -665,7 +697,9 @@
       "selected": false,
       "drawSunBeam": true,
       "label": "1",
-      "dailyYield": 148.93207880790618
+      "dailyYield": 66.97552153518168,
+      "labelHeight": 1,
+      "labelSize": 1
     }
   ],
   "view": {
@@ -673,19 +707,19 @@
     "enableRotate": true,
     "ambientLightIntensity": 0.1,
     "cameraPosition": [
-      0.21299989166615563,
-      -59.188603955836555,
-      12.473162077661332
+      -0.181665701084047,
+      -45.01608727927176,
+      13.053612747101962
     ],
     "cameraPosition2D": [
       0,
       -0.000020000888987681265,
-      19.999999999987377
+      150
     ],
     "panCenter": [
-      0.003460617529326666,
-      -0.04958263947769183,
-      0
+      0.5652994261175363,
+      0.42897477312561383,
+      2.1550210855619265
     ],
     "panCenter2D": [
       0,
@@ -704,10 +738,10 @@
     "showMapPanel": false,
     "showHeliodonPanel": false,
     "showWeatherPanel": false,
-    "showStickyNotePanel": false,
+    "showStickyNotePanel": true,
     "showSiteInfoPanel": true,
     "showDesignInfoPanel": false,
-    "showInstructionPanel": true,
+    "showInstructionPanel": false,
     "showDailyLightSensorPanel": false,
     "showYearlyLightSensorPanel": false,
     "showDailyPvYieldPanel": false,
@@ -748,12 +782,83 @@
     "mapType": "roadmap",
     "mapTilt": 0,
     "mapWeatherStations": false,
-    "showDailyFresnelReflectorYieldPanel": false,
+    "showDailyFresnelReflectorYieldPanel": true,
     "showYearlyFresnelReflectorYieldPanel": false,
     "yearlyFresnelReflectorYieldPanelX": -1274,
     "yearlyFresnelReflectorYieldPanelY": 14,
     "dailyFresnelReflectorYieldPanelX": -19,
-    "dailyFresnelReflectorYieldPanelY": 157
+    "dailyFresnelReflectorYieldPanelY": 157,
+    "stickyNotePanelRect": {
+      "x": 0,
+      "y": 0,
+      "width": 245,
+      "height": 60
+    },
+    "dailyFresnelReflectorYieldPanelRect": {
+      "x": 0,
+      "y": 0,
+      "width": 721,
+      "height": 335
+    }
   },
-  "notes": []
+  "evolutionMethod": 1,
+  "solarPanelArrayLayoutParams": {
+    "pvModelName": "CS6X-355P-FG",
+    "rowAxis": "Zonal",
+    "orientation": "Landscape",
+    "tiltAngle": 0,
+    "rowsPerRack": 1,
+    "interRowSpacing": 2,
+    "poleHeight": 1,
+    "poleSpacing": 3
+  },
+  "solarPanelArrayLayoutConstraints": {
+    "minimumInterRowSpacing": 2,
+    "maximumInterRowSpacing": 10,
+    "minimumRowsPerRack": 1,
+    "maximumRowsPerRack": 6,
+    "minimumTiltAngle": -1.5707963267948966,
+    "maximumTiltAngle": 1.5707963267948966,
+    "poleHeight": 1,
+    "poleSpacing": 5,
+    "orientation": "Landscape",
+    "pvModelName": "CS6X-355P-FG",
+    "rowAxis": "Zonal"
+  },
+  "evolutionaryAlgorithmState": {
+    "geneticAlgorithmParams": {
+      "problem": "Solar Panel Tilt Angle",
+      "objectiveFunctionType": 1,
+      "selectionMethod": 1,
+      "searchMethod": 1,
+      "populationSize": 20,
+      "maximumGenerations": 5,
+      "selectionRate": 0.5,
+      "crossoverRate": 0.5,
+      "mutationRate": 0.1,
+      "convergenceThreshold": 0.01,
+      "localSearchRadius": 0.1
+    },
+    "particleSwarmOptimizationParams": {
+      "problem": "Solar Panel Tilt Angle",
+      "objectiveFunctionType": 1,
+      "searchMethod": 1,
+      "swarmSize": 20,
+      "maximumSteps": 5,
+      "vmax": 0.01,
+      "inertia": 0.8,
+      "cognitiveCoefficient": 0.1,
+      "socialCoefficient": 0.1,
+      "convergenceThreshold": 0.01,
+      "localSearchRadius": 0.1
+    }
+  },
+  "economicsParams": {
+    "projectLifeSpan": 25,
+    "electricitySellingPrice": 0.25,
+    "operationalCostPerUnit": 0.15
+  },
+  "notes": [
+    "Linear Fresnel reflectors"
+  ]
 }

@@ -1,7 +1,7 @@
 {
-  "docid": "hbBFQeWw8Npf5dQoqg5K7E",
-  "time": "12/03/2022 05:46 pm",
-  "timestamp": 1670107604300,
+  "docid": "8FjEbsXLKqWkMELRcwjPF7",
+  "time": "02/02/2023 11:41 am",
+  "timestamp": 1675356078466,
   "userid": "QWecNcxhyvP6j6sBN11hBsfZDau1",
   "owner": null,
   "email": null,
@@ -1225,7 +1225,8 @@
       "id": "pNA4YvnHKpbgLLZoVdn8iH",
       "leftRidgeLength": 6,
       "rightRidgeLength": 6,
-      "rise": 2
+      "rise": 2,
+      "ceiling": false
     },
     {
       "type": "Roof",
@@ -1266,7 +1267,8 @@
         0,
         1
       ],
-      "rise": 2
+      "rise": 2,
+      "ceiling": false
     },
     {
       "type": "Human",
@@ -1837,7 +1839,8 @@
       "id": "45NB7k7GYboywbxoXsYHLH",
       "leftRidgeLength": 3,
       "rightRidgeLength": 3,
-      "rise": 2
+      "rise": 2,
+      "ceiling": false
     },
     {
       "type": "Door",
@@ -2258,8 +2261,8 @@
     "dailyHeliostatYieldPanelX": 0,
     "showDailyParabolicDishYieldPanel": false,
     "cameraPosition": [
-      -23.630904830042304,
-      -21.034516183653533,
+      -23.630904830042297,
+      -21.034516183653523,
       4.443596016430045
     ],
     "showYearlyHeliostatYieldPanel": false,
@@ -2287,7 +2290,7 @@
     "showYearlyLightSensorPanel": false,
     "autoRotate": false,
     "heliodonPanelX": 0,
-    "showStickyNotePanel": false,
+    "showStickyNotePanel": true,
     "showDailyLightSensorPanel": false,
     "visibilityResultsPanelX": 0,
     "yearlyPvYieldPanelY": 0,
@@ -2307,7 +2310,7 @@
     "yearlyPvYieldPanelX": 0,
     "yearlyParabolicDishYieldPanelX": 0,
     "shadowEnabled": true,
-    "showInstructionPanel": true,
+    "showInstructionPanel": false,
     "panCenter": [
       -2.2466183211875568,
       7.969767415619761,
@@ -2321,7 +2324,13 @@
     "showSolarPanelVisibilityResultsPanel": false,
     "stickyNotePanelY": 0,
     "showYearlyParabolicDishYieldPanel": false,
-    "showYearlyFresnelReflectorYieldPanel": false
+    "showYearlyFresnelReflectorYieldPanel": false,
+    "stickyNotePanelRect": {
+      "x": 0,
+      "y": 0,
+      "width": 288,
+      "height": 60
+    }
   },
   "evolutionMethod": 1,
   "solarPanelArrayLayoutParams": {
@@ -2380,5 +2389,7 @@
     "electricitySellingPrice": 0.25,
     "operationalCostPerUnit": 0.15
   },
-  "notes": []
+  "notes": [
+    "Gable roof vs. hip roof"
+  ]
 }

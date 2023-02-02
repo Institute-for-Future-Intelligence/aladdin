@@ -1,7 +1,7 @@
 {
-  "docid": "vbhUi2n6iw6XkaxKX8wzSd",
-  "time": "02/02/2023 09:45 am",
-  "timestamp": 1675349124278,
+  "docid": "7c79XcXHXro3suyFzb223Y",
+  "time": "02/02/2023 12:36 pm",
+  "timestamp": 1675359366899,
   "userid": "QWecNcxhyvP6j6sBN11hBsfZDau1",
   "owner": null,
   "email": null,
@@ -866,9 +866,9 @@
     "dailyHeliostatYieldPanelX": 0,
     "showDailyParabolicDishYieldPanel": false,
     "cameraPosition": [
-      3.8402964914662876,
+      3.840296491466292,
       -33.89515639677446,
-      5.427606986670453
+      5.427606986670456
     ],
     "showYearlyHeliostatYieldPanel": false,
     "orthographic": false,
@@ -915,7 +915,7 @@
     "yearlyPvYieldPanelX": 0,
     "yearlyParabolicDishYieldPanelX": 0,
     "shadowEnabled": true,
-    "showInstructionPanel": true,
+    "showInstructionPanel": false,
     "panCenter": [
       10.838986266637484,
       1.4239280652904787,
@@ -959,10 +959,10 @@
       "height": 500
     },
     "stickyNotePanelRect": {
-      "x": 217,
-      "y": -4,
-      "width": 258,
-      "height": 75
+      "x": -5,
+      "y": 0,
+      "width": 269,
+      "height": 92
     }
   },
   "evolutionMethod": 1,
@@ -1023,6 +1023,6 @@
     "operationalCostPerUnit": 0.15
   },
   "notes": [
-    "Effect of house orientation"
+    "Effect of house orientation\n房屋朝向的影響"
   ]
 }
