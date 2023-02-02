@@ -5,6 +5,8 @@ import { useStore } from 'src/stores/common';
 import { Util } from 'src/Util';
 import * as Selector from 'src/stores/selector';
 import { Vector3 } from 'three';
+import { ObjectType } from 'src/types';
+import { RoofModel } from 'src/models/RoofModel';
 
 export const useElements = (id: string, leftWallId?: string, rightWallId?: string, roofId?: string) => {
   const isElementTriggerWallChange = (elem: ElementModel) => {
@@ -82,7 +84,12 @@ export const useUpdataOldFiles = (wallModel: WallModel) => {
               wall.unfilledHeight = 0.5;
             }
             if (wall.eaveLength === undefined) {
-              wall.eaveLength = 0.3;
+              const roof = state.elements.find((e) => e.id === wall.roofId && e.type === ObjectType.Roof) as RoofModel;
+              if (roof) {
+                wall.eaveLength = roof.overhang;
+              } else {
+                wall.eaveLength = 0.3;
+              }
             }
             break;
           }

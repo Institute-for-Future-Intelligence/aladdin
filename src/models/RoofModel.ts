@@ -10,7 +10,6 @@ export interface RoofModel extends ElementModel {
   roofType: RoofType;
   roofStructure?: RoofStructure;
   textureType: RoofTexture;
-  overhang: number;
   thickness: number;
   sideColor?: string;
   rafterSpacing?: number;
@@ -23,6 +22,8 @@ export interface RoofModel extends ElementModel {
   rise: number;
   ceiling: boolean;
   ceilingRValue?: number;
+  // old files
+  overhang: number;
 }
 
 export interface PyramidRoofModel extends RoofModel {}
