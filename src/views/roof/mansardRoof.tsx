@@ -119,7 +119,6 @@ const MansardRoof = (roofModel: MansardRoofModel) => {
     textureType,
     color = 'white',
     sideColor = 'white',
-    overhang,
     thickness,
     locked,
     lineColor = 'black',
@@ -229,11 +228,11 @@ const MansardRoof = (roofModel: MansardRoofModel) => {
       const w = currentWallArray[i];
       const leftPoint = new Vector3(w.leftPoint[0], w.leftPoint[1]);
       const rightPoint = new Vector3(w.rightPoint[0], w.rightPoint[1]);
-      const { lh, rh } = RoofUtil.getWallHeight(currentWallArray, i);
+      // const { lh, rh } = RoofUtil.getWallHeight(currentWallArray, i);
       const dLeft = RoofUtil.getDistance(leftPoint, rightPoint, ridgePoints[i].leftPoint);
-      const overhangHeightLeft = Math.min((overhang / dLeft) * (ridgePoints[i].leftPoint.z - lh), lh);
+      const overhangHeightLeft = Math.min((w.eaveLength / dLeft) * (ridgePoints[i].leftPoint.z - w.lz), w.lz);
       const dRight = RoofUtil.getDistance(leftPoint, rightPoint, ridgePoints[i].rightPoint);
-      const overhangHeightRight = Math.min((overhang / dRight) * (ridgePoints[i].rightPoint.z - rh), rh);
+      const overhangHeightRight = Math.min((w.eaveLength / dRight) * (ridgePoints[i].rightPoint.z - w.lz), w.lz);
       height = Math.min(Math.min(overhangHeightLeft, overhangHeightRight), height);
     }
 
@@ -272,7 +271,7 @@ const MansardRoof = (roofModel: MansardRoofModel) => {
   }, [currentWallArray, topZ]);
 
   const overhangs = useMemo(() => {
-    const res = currentWallArray.map((wall) => RoofUtil.getWallNormal(wall).multiplyScalar(overhang));
+    const res = currentWallArray.map((wall) => RoofUtil.getWallNormal(wall).multiplyScalar(wall.eaveLength));
     if (!isLoopRef.current && res.length !== 0) {
       const n = new Vector3()
         .subVectors(
@@ -284,11 +283,11 @@ const MansardRoof = (roofModel: MansardRoofModel) => {
         )
         .applyEuler(HALF_PI_Z_EULER)
         .normalize()
-        .multiplyScalar(overhang);
+        .multiplyScalar(0.3);
       res.push(n);
     }
     return res;
-  }, [currentWallArray, overhang]);
+  }, [currentWallArray]);
 
   const wallPointsAfterOverhang = useMemo(() => {
     const res = currentWallArray.map((wall, idx) => ({
@@ -431,7 +430,7 @@ const MansardRoof = (roofModel: MansardRoofModel) => {
       segments.push({ points, angle: -angle, length });
     }
     return segments;
-  }, [currentWallArray, topZ, width, overhang, thickness]);
+  }, [currentWallArray, topZ, width, thickness]);
 
   const topRidgeShape = useMemo(() => {
     const s = new Shape();

@@ -255,17 +255,58 @@ export class RoofUtil {
     return { segmentIdx: -1, segmentVertices: null, normal: new Vector3(0, 0, 1), rotation: [0, 0, 0] };
   }
 
+  // todo: need to add roofId to each wall when adding roof
+  static getOrderedWallArrayOfRoof(roofId: string) {
+    const wallMap = new Map<string, WallModel>();
+    for (const e of useStore.getState().elements) {
+      if (e.type === ObjectType.Wall && (e as WallModel).roofId === roofId) {
+        wallMap.set(e.id, e as WallModel);
+      }
+    }
+
+    if (wallMap.size === 0) {
+      return { orderedWallArray: [] as WallModel[], isLoop: false };
+    }
+
+    const wall0 = wallMap.entries().next().value[1] as WallModel;
+    const orderedWallArray = [wall0];
+
+    let nextId = wall0.rightJoints[0];
+    while (nextId && nextId !== wall0.id) {
+      const nextWall = wallMap.get(nextId);
+      if (nextWall) {
+        orderedWallArray.push(nextWall);
+        nextId = nextWall.rightJoints[0];
+      } else {
+        break;
+      }
+    }
+
+    if (nextId === wall0.id) {
+      return { orderedWallArray, isLoop: true };
+    }
+
+    nextId = wall0.leftJoints[0];
+    while (nextId) {
+      const nextWall = wallMap.get(nextId);
+      if (nextWall) {
+        orderedWallArray.unshift(nextWall);
+        nextId = nextWall.leftJoints[0];
+      } else {
+        break;
+      }
+    }
+
+    return { orderedWallArray, isLoop: false };
+  }
+
   static getRoofBoundaryVertices(roof: RoofModel) {
-    const vertices = Util.getWallPointsOfRoof(roof);
-    const centroid = Util.calculatePolygonCentroid(vertices);
-    const centroidVector = new Vector3(centroid.x, centroid.y);
-    return vertices.map((v) => {
-      const diff = new Vector3(v.x, v.y).sub(centroidVector);
-      diff.setX(diff.x + v.eave * Math.sign(diff.x));
-      diff.setY(diff.y + v.eave * Math.sign(diff.y));
-      const res = new Vector3().addVectors(centroidVector, diff);
-      return { x: res.x, y: res.y };
-    });
+    const segments = useStore.getState().roofSegmentVerticesMap.get(roof.id);
+    if (!segments) throw new Error();
+    return segments.map((points) => ({
+      x: points[0].x,
+      y: points[0].y,
+    }));
   }
 
   static getSolarPanelVerticesOnRoof(sp: SolarPanelModel, foundation: ElementModel) {

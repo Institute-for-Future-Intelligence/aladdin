@@ -136,7 +136,6 @@ const GambrelRoof = (roofModel: GambrelRoofModel) => {
     textureType,
     color = 'white',
     sideColor = 'white',
-    overhang,
     thickness,
     locked,
     lineColor = 'black',
@@ -356,8 +355,8 @@ const GambrelRoof = (roofModel: GambrelRoofModel) => {
   }, [currentWallArray, centroid, backRidgePoint]);
 
   const overhangs = useMemo(() => {
-    return currentWallArray.map((wall) => RoofUtil.getWallNormal(wall).multiplyScalar(overhang));
-  }, [currentWallArray, overhang]);
+    return currentWallArray.map((wall) => RoofUtil.getWallNormal(wall).multiplyScalar(wall.eaveLength));
+  }, [currentWallArray]);
 
   const thicknessVector = useMemo(() => {
     return zVector3.clone().multiplyScalar(thickness);
@@ -393,13 +392,13 @@ const GambrelRoof = (roofModel: GambrelRoofModel) => {
 
     const d0 = RoofUtil.getDistance(wallPoint0, wallPoint1, frontRidgeLeftPointV3.clone().add(centroid));
     const overhangHeight0 = Math.min(
-      (overhang / d0) * (frontRidgeLeftPointV3.clone().add(centroid).z - frontWallLh),
+      (frontWall.eaveLength / d0) * (frontRidgeLeftPointV3.clone().add(centroid).z - frontWallLh),
       frontWallLh,
     );
 
     const d1 = RoofUtil.getDistance(wallPoint0, wallPoint1, frontRidgeRightPointV3.clone().add(centroid));
     const overhangHeight1 = Math.min(
-      (overhang / d1) * (frontRidgeRightPointV3.clone().add(centroid).z - frontWallRh),
+      (frontWall.eaveLength / d1) * (frontRidgeRightPointV3.clone().add(centroid).z - frontWallRh),
       frontWallRh,
     );
 
@@ -489,13 +488,13 @@ const GambrelRoof = (roofModel: GambrelRoofModel) => {
 
     const d2 = RoofUtil.getDistance(wallPoint2, wallPoint3, backRidgeLeftPointV3.clone().add(centroid));
     const overhangHeight2 = Math.min(
-      (overhang / d2) * (backRidgeLeftPointV3.clone().add(centroid).z - backWallLh),
+      (backWall.eaveLength / d2) * (backRidgeLeftPointV3.clone().add(centroid).z - backWallLh),
       backWallLh,
     );
 
     const d3 = RoofUtil.getDistance(wallPoint2, wallPoint3, backRidgeRightPointV3.clone().add(centroid));
     const overhangHeight3 = Math.min(
-      (overhang / d3) * (backRidgeRightPointV3.clone().add(centroid).z - backWallRh),
+      (backWall.eaveLength / d3) * (backRidgeRightPointV3.clone().add(centroid).z - backWallRh),
       backWallRh,
     );
 
@@ -565,7 +564,7 @@ const GambrelRoof = (roofModel: GambrelRoofModel) => {
     segments.push({ points: backSidePoints, angle: backAngle, length: backSideLenght });
 
     return segments;
-  }, [currentWallArray, topZ, overhang, thickness]);
+  }, [currentWallArray, topZ, thickness]);
 
   useEffect(() => {
     if (!isFirstMountRef.current || useStore.getState().addedRoofId === id) {

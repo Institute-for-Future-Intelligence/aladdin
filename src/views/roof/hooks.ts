@@ -359,6 +359,10 @@ export const useUpdateSegmentVerticesMap = (
     updateSegmentVertices();
   }
 
+  useEffect(() => {
+    updateSegmentVertices();
+  }, [roofSegments]);
+
   return updateSegmentVertices;
 };
 

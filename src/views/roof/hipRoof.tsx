@@ -98,7 +98,6 @@ const HipRoof = (roofModel: HipRoofModel) => {
     textureType,
     color = 'white',
     sideColor = 'white',
-    overhang,
     thickness,
     locked,
     lineColor = 'black',
@@ -274,11 +273,12 @@ const HipRoof = (roofModel: HipRoofModel) => {
     let height = Infinity;
 
     for (let i = 0; i < 4; i++) {
-      const { lh, rh } = RoofUtil.getWallHeight(currentWallArray, i);
+      const w = currentWallArray[i];
+      // const { lh, rh } = RoofUtil.getWallHeight(currentWallArray, i);
       const dLeft = RoofUtil.getDistance(wallPoints[i], wallPoints[(i + 1) % 4], ridges[i]);
-      const overhangHeightLeft = Math.min((overhang / dLeft) * (ridges[i].z - lh), lh);
+      const overhangHeightLeft = Math.min((w.eaveLength / dLeft) * (ridges[i].z - w.lz), w.lz);
       const dRight = RoofUtil.getDistance(wallPoints[i], wallPoints[(i + 1) % 4], ridges[(i + 1) % 4]);
-      const overhangHeightRight = Math.min((overhang / dRight) * (ridges[(i + 1) % 4].z - rh), rh);
+      const overhangHeightRight = Math.min((w.eaveLength / dRight) * (ridges[(i + 1) % 4].z - w.lz), w.lz);
       height = Math.min(Math.min(overhangHeightLeft, overhangHeightRight), height);
     }
 
@@ -286,8 +286,8 @@ const HipRoof = (roofModel: HipRoofModel) => {
   };
 
   const overhangs = useMemo(() => {
-    return currentWallArray.map((wall) => RoofUtil.getWallNormal(wall).multiplyScalar(overhang));
-  }, [currentWallArray, overhang]);
+    return currentWallArray.map((wall) => RoofUtil.getWallNormal(wall).multiplyScalar(wall.eaveLength));
+  }, [currentWallArray]);
 
   const thicknessVector = useMemo(() => {
     return zVector3.clone().multiplyScalar(thickness);
@@ -355,7 +355,7 @@ const HipRoof = (roofModel: HipRoofModel) => {
       segments.push({ points, angle: -wall.relativeAngle, length });
     }
     return segments;
-  }, [currentWallArray, ridgeLeftPoint, ridgeRightPoint, topZ, overhang, thickness]);
+  }, [currentWallArray, ridgeLeftPoint, ridgeRightPoint, topZ, thickness]);
 
   const setRayCast = (e: PointerEvent) => {
     mouse.x = (e.offsetX / gl.domElement.clientWidth) * 2 - 1;

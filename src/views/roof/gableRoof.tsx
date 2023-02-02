@@ -60,7 +60,6 @@ import {
 } from './hooks';
 import { ConvexGeometry } from 'src/js/ConvexGeometry';
 import { CSG } from 'three-csg-ts';
-import WindowWireFrame from '../window/windowWireFrame';
 import { usePrimitiveStore } from '../../stores/commonPrimitive';
 import { FoundationModel } from '../../models/FoundationModel';
 import { useDataStore } from '../../stores/commonData';
@@ -132,7 +131,7 @@ const Rafter = ({
   ridgeLeftPoint,
   ridgeRightPoint,
   wallArray,
-  overhang,
+  // overhang,
   height,
   isShed,
   width,
@@ -144,13 +143,13 @@ const Rafter = ({
   const ridgeUnitVector = useMemo(() => new Vector3().subVectors(ridgeRightPoint, ridgeLeftPoint).normalize(), []);
 
   const ridgeLeftPointAfterOverhang = useMemo(
-    () => ridgeLeftPoint.clone().add(ridgeUnitVector.clone().multiplyScalar(-overhang / 2)),
-    [ridgeLeftPoint, overhang],
+    () => ridgeLeftPoint.clone().add(ridgeUnitVector.clone().multiplyScalar(-leftWall.eaveLength / 2)),
+    [ridgeLeftPoint, leftWall.eaveLength],
   );
 
   const ridgeRightPointAfterOverhang = useMemo(
-    () => ridgeRightPoint.clone().add(ridgeUnitVector.clone().multiplyScalar(overhang / 2)),
-    [ridgeLeftPoint, overhang],
+    () => ridgeRightPoint.clone().add(ridgeUnitVector.clone().multiplyScalar(rightWall.eaveLength / 2)),
+    [ridgeLeftPoint, rightWall.eaveLength],
   );
 
   const frontWallLeftPoint = frontWall
@@ -189,8 +188,8 @@ const Rafter = ({
       const ridge = ridgeLeftPoint.clone().add(ridgeUnitVector.clone().multiplyScalar(len));
       const front = frontWallLeftPoint.clone().add(frontWallUnitVector.clone().multiplyScalar(len));
       const back = backWallRightPoint.clone().add(backWallUnitVector.clone().multiplyScalar(len));
-      const frontOverhang = new Vector3().subVectors(front, ridge).normalize().multiplyScalar(overhang);
-      const backOverhang = new Vector3().subVectors(back, ridge).normalize().multiplyScalar(overhang);
+      const frontOverhang = new Vector3().subVectors(front, ridge).normalize().multiplyScalar(frontWall.eaveLength);
+      const backOverhang = new Vector3().subVectors(back, ridge).normalize().multiplyScalar(backWall.eaveLength);
       front.add(frontOverhang);
       back.add(backOverhang);
       return { ridge, front, back };
@@ -309,12 +308,10 @@ const GableRoof = (roofModel: GableRoofModel) => {
     textureType,
     color = 'white',
     sideColor = 'white',
-    overhang,
     thickness,
     locked,
     lineColor = 'black',
     lineWidth = 0.2,
-    roofType,
     roofStructure,
     rafterSpacing = 2,
     rafterWidth = 0.1,
@@ -494,8 +491,8 @@ const GableRoof = (roofModel: GableRoofModel) => {
   }, [ridgeLeftPointV3, ridgeRightPointV3]);
 
   const overhangs = useMemo(() => {
-    return currentWallArray.map((wall) => RoofUtil.getWallNormal(wall).multiplyScalar(overhang));
-  }, [currentWallArray, overhang]);
+    return currentWallArray.map((wall) => RoofUtil.getWallNormal(wall).multiplyScalar(wall.eaveLength));
+  }, [currentWallArray]);
 
   const thicknessVector = useMemo(() => {
     return zVector3.clone().multiplyScalar(thickness);
@@ -537,16 +534,16 @@ const GableRoof = (roofModel: GableRoofModel) => {
       const { lh: backWallLh, rh: backWallRh } = getWallHeight(shiftedWallArray, 2);
 
       const d0 = RoofUtil.getDistance(wallPoint0, wallPoint1, wallPoint3);
-      const overhangHeight0 = Math.min((overhang / d0) * (topZ - frontWallLh), frontWallLh);
+      const overhangHeight0 = Math.min((frontWall.eaveLength / d0) * (topZ - frontWallLh), frontWallLh);
 
       const d1 = RoofUtil.getDistance(wallPoint0, wallPoint1, wallPoint2);
-      const overhangHeight1 = Math.min((overhang / d1) * (topZ - frontWallRh), frontWallRh);
+      const overhangHeight1 = Math.min((frontWall.eaveLength / d1) * (topZ - frontWallRh), frontWallRh);
 
       const d2 = RoofUtil.getDistance(wallPoint2, wallPoint3, wallPoint1);
-      const overhangHeight2 = Math.min((overhang / d2) * (topZ - frontWallRh), backWallLh);
+      const overhangHeight2 = Math.min((backWall.eaveLength / d2) * (topZ - frontWallRh), backWallLh);
 
       const d3 = RoofUtil.getDistance(wallPoint2, wallPoint3, wallPoint0);
-      const overhangHeight3 = Math.min((overhang / d3) * (topZ - frontWallLh), backWallRh);
+      const overhangHeight3 = Math.min((backWall.eaveLength / d3) * (topZ - frontWallLh), backWallRh);
 
       const frontWallLeftPointAfterOverhang = RoofUtil.getIntersectionPoint(
         leftWallLeftPointAfterOffset,
@@ -642,10 +639,10 @@ const GableRoof = (roofModel: GableRoofModel) => {
       const { lh: frontWallLh, rh: frontWallRh } = getWallHeight(currentWallArray, 0);
 
       const d0 = RoofUtil.getDistance(wallPoint0, wallPoint1, ridgeLeftPointV3);
-      const overhangHeight0 = Math.min((overhang / d0) * (ridgeLeftPointV3.z - frontWallLh), frontWallLh);
+      const overhangHeight0 = Math.min((frontWall.eaveLength / d0) * (ridgeLeftPointV3.z - frontWallLh), frontWallLh);
 
       const d1 = RoofUtil.getDistance(wallPoint0, wallPoint1, ridgeRightPointV3);
-      const overhangHeight1 = Math.min((overhang / d1) * (ridgeRightPointV3.z - frontWallRh), frontWallRh);
+      const overhangHeight1 = Math.min((frontWall.eaveLength / d1) * (ridgeRightPointV3.z - frontWallRh), frontWallRh);
 
       const frontWallLeftPointAfterOverhang = RoofUtil.getIntersectionPoint(
         leftWallLeftPointAfterOffset,
@@ -685,10 +682,10 @@ const GableRoof = (roofModel: GableRoofModel) => {
       const backPoints: Vector3[] = [];
       const { lh: backWallLh, rh: backWallRh } = getWallHeight(currentWallArray, 2);
       const d2 = RoofUtil.getDistance(wallPoint2, wallPoint3, ridgeRightPointV3);
-      const overhangHeight2 = Math.min((overhang / d2) * (ridgeRightPointV3.z - backWallLh), backWallLh);
+      const overhangHeight2 = Math.min((backWall.eaveLength / d2) * (ridgeRightPointV3.z - backWallLh), backWallLh);
 
       const d3 = RoofUtil.getDistance(wallPoint2, wallPoint3, ridgeLeftPointV3);
-      const overhangHeight3 = Math.min((overhang / d3) * (ridgeLeftPointV3.z - backWallRh), backWallRh);
+      const overhangHeight3 = Math.min((backWall.eaveLength / d3) * (ridgeLeftPointV3.z - backWallRh), backWallRh);
 
       const backWallLeftPointAfterOverhang = RoofUtil.getIntersectionPoint(
         rightWallLeftPointAfterOffset,
@@ -725,7 +722,7 @@ const GableRoof = (roofModel: GableRoofModel) => {
       segments.push({ points: backPoints, angle: -backWall.relativeAngle, length: backLength });
     }
     return segments;
-  }, [currentWallArray, ridgeLeftPointV3, ridgeRightPointV3, topZ, overhang, thickness]);
+  }, [currentWallArray, ridgeLeftPointV3, ridgeRightPointV3, topZ, thickness]);
 
   // set position and rotation
   const foundation = useStore((state) => {
@@ -956,7 +953,7 @@ const GableRoof = (roofModel: GableRoofModel) => {
             ridgeLeftPoint={ridgeLeftPointV3}
             ridgeRightPoint={ridgeRightPointV3}
             wallArray={currentWallArray}
-            overhang={overhang}
+            overhang={0}
             isShed={isShed}
             height={thickness}
             spacing={rafterSpacing}

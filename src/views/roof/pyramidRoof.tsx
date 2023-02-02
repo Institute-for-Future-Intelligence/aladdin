@@ -342,7 +342,6 @@ const PyramidRoof = (roofModel: PyramidRoofModel) => {
     textureType,
     color = 'white',
     sideColor = 'white',
-    // overhang,
     thickness,
     locked,
     lineWidth = 0.2,
