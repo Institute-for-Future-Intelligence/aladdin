@@ -1,5 +1,5 @@
 /*
- * @Copyright 2021-2022. Institute for Future Intelligence, Inc.
+ * @Copyright 2021-2023. Institute for Future Intelligence, Inc.
  */
 
 import { RoofTexture } from 'src/types';
@@ -21,7 +21,7 @@ export interface RoofModel extends ElementModel {
   rValue: number;
   volumetricHeatCapacity: number;
   rise: number;
-  showCeiling: boolean;
+  ceiling: boolean;
 }
 
 export interface PyramidRoofModel extends RoofModel {}

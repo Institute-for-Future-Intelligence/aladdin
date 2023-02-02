@@ -1061,7 +1061,7 @@ export const i18n_es = {
       AllLightsOnRoofInside: 'All Lights on Roof Inside',
       AllLightsOnRoofOutside: 'All Lights on Roof Outside',
       CurrentRise: 'Current Rise',
-      ShowCeiling: 'Show Ceiling',
+      Ceiling: 'Ceiling',
     },
 
     doorMenu: {

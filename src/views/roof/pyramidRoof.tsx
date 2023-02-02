@@ -350,7 +350,7 @@ const PyramidRoof = (roofModel: PyramidRoofModel) => {
     roofType,
     foundationId,
     rise = lz,
-    showCeiling = false,
+    ceiling = false,
   } = roofModel;
 
   const { currentWallArray, isLoopRef } = useMultiCurrWallArray(foundationId, id, wallsId);
@@ -883,7 +883,7 @@ const PyramidRoof = (roofModel: PyramidRoofModel) => {
       </group>
 
       {/* ceiling */}
-      {showCeiling && <Ceiling currWallArray={currentWallArray} />}
+      {ceiling && <Ceiling currWallArray={currentWallArray} />}
 
       {/* handle */}
       {selected && !locked && (

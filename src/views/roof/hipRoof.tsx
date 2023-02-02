@@ -105,7 +105,7 @@ const HipRoof = (roofModel: HipRoofModel) => {
     lineWidth = 0.2,
     roofType,
     rise = lz,
-    showCeiling = false,
+    ceiling = false,
   } = roofModel;
   // color = '#fb9e00';
 
@@ -521,7 +521,7 @@ const HipRoof = (roofModel: HipRoofModel) => {
       </group>
 
       {/* ceiling */}
-      {showCeiling && <Ceiling currWallArray={currentWallArray} />}
+      {ceiling && <Ceiling currWallArray={currentWallArray} />}
 
       {/* handles */}
       {selected && !locked && (

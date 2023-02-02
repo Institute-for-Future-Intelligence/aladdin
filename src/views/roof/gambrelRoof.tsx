@@ -143,7 +143,7 @@ const GambrelRoof = (roofModel: GambrelRoofModel) => {
     lineWidth = 0.2,
     roofType,
     rise = lz,
-    showCeiling = false,
+    ceiling = false,
   } = roofModel;
 
   if (topRidgePoint === undefined) {
@@ -743,7 +743,7 @@ const GambrelRoof = (roofModel: GambrelRoofModel) => {
       </group>
 
       {/* ceiling */}
-      {showCeiling && currentWallArray[0].lz === currentWallArray[2].lz && <Ceiling currWallArray={currentWallArray} />}
+      {ceiling && currentWallArray[0].lz === currentWallArray[2].lz && <Ceiling currWallArray={currentWallArray} />}
 
       {/* handles */}
       {selected && !locked && (

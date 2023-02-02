@@ -271,12 +271,12 @@ export const RoofMenu = React.memo(() => {
     return null;
   };
 
-  const updateRoofShowCeiling = (roofId: string, b: boolean) => {
+  const updateRoofCeiling = (roofId: string, b: boolean) => {
     useStore.getState().set((state) => {
       const roof = state.elements.find((e) => e.id === roofId && e.type === ObjectType.Roof) as RoofModel;
       if (roof) {
-        roof.showCeiling = b;
-        state.actionState.showCeiling = b;
+        roof.ceiling = b;
+        state.actionState.roofCeiling = b;
       }
     });
   };
@@ -286,29 +286,29 @@ export const RoofMenu = React.memo(() => {
       {legalToPaste() && <Paste keyName={'roof-paste'} />}
       <Lock keyName={'roof-lock'} />
 
-      <Menu.Item key={'roof-showCeiling'}>
+      <Menu.Item key={'roof-ceiling'}>
         <Checkbox
-          checked={roof.showCeiling}
+          checked={roof.ceiling}
           onChange={(e) => {
             const checked = e.target.checked;
             const undoableCheck = {
-              name: 'Roof showCeiling',
+              name: 'Roof Ceiling',
               timestamp: Date.now(),
               checked: checked,
               selectedElementId: roof.id,
               selectedElementType: roof.type,
               undo: () => {
-                updateRoofShowCeiling(roof.id, !undoableCheck.checked);
+                updateRoofCeiling(roof.id, !undoableCheck.checked);
               },
               redo: () => {
-                updateRoofShowCeiling(roof.id, undoableCheck.checked);
+                updateRoofCeiling(roof.id, undoableCheck.checked);
               },
             } as UndoableCheck;
             addUndoable(undoableCheck);
-            updateRoofShowCeiling(roof.id, checked);
+            updateRoofCeiling(roof.id, checked);
           }}
         >
-          {i18n.t('roofMenu.ShowCeiling', { lng: language })}
+          {i18n.t('roofMenu.Ceiling', { lng: language })}
         </Checkbox>
       </Menu.Item>
 

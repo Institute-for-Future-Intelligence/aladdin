@@ -322,7 +322,7 @@ const GableRoof = (roofModel: GableRoofModel) => {
     glassTint = '#73D8FF',
     opacity = 0.5,
     rise = lz,
-    showCeiling = false,
+    ceiling = false,
   } = roofModel;
   const setCommonStore = useStore(Selector.set);
   const removeElementById = useStore(Selector.removeElementById);
@@ -938,7 +938,7 @@ const GableRoof = (roofModel: GableRoofModel) => {
       </group>
 
       {/* ceiling */}
-      {showCeiling && riseInnerState > 0 && currentWallArray[0].lz === currentWallArray[2].lz && (
+      {ceiling && riseInnerState > 0 && currentWallArray[0].lz === currentWallArray[2].lz && (
         <Ceiling currWallArray={currentWallArray} />
       )}
 

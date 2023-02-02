@@ -128,7 +128,7 @@ const MansardRoof = (roofModel: MansardRoofModel) => {
     foundationId,
     ridgeWidth = 1,
     rise = lz,
-    showCeiling = false,
+    ceiling = false,
     // old files data
     frontRidge,
     backRidge,
@@ -867,7 +867,7 @@ const MansardRoof = (roofModel: MansardRoofModel) => {
       </group>
 
       {/* ceiling */}
-      {showCeiling && <Ceiling currWallArray={currentWallArray} />}
+      {ceiling && <Ceiling currWallArray={currentWallArray} />}
 
       {/* handles */}
       {selected && !locked && (
