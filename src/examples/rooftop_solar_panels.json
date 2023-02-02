@@ -1,7 +1,7 @@
 {
-  "docid": "3Gw7RUwbR9v4GTtjFzW7pL",
-  "time": "02/02/2023 12:21 pm",
-  "timestamp": 1675358519373,
+  "docid": "fsnBWKaWS85RJH34w16EVo",
+  "time": "02/02/2023 05:21 pm",
+  "timestamp": 1675376498920,
   "userid": "QWecNcxhyvP6j6sBN11hBsfZDau1",
   "owner": null,
   "email": null,
@@ -778,7 +778,7 @@
       "foundationId": "1rAGH78b5nt7cXyGU9vNRV",
       "id": "hggpkWHD6D2DWRepcABzSN",
       "selected": false,
-      "dailyYield": 0.9707572887845864,
+      "dailyYield": 1.1606630204047466,
       "yearlyYield": 14.01350339573908,
       "label": "S"
     },
@@ -816,7 +816,7 @@
       "foundationId": "1rAGH78b5nt7cXyGU9vNRV",
       "id": "3AjZD5PGir6Pw6qNxAXT2v",
       "selected": false,
-      "dailyYield": 0.9731540369615995,
+      "dailyYield": 0.7689476441385455,
       "yearlyYield": 9.02911259075203,
       "label": "N"
     },
@@ -854,7 +854,7 @@
       "foundationId": "1rAGH78b5nt7cXyGU9vNRV",
       "id": "dfe7nQ9k8jDK91KdkmUEv6",
       "selected": false,
-      "dailyYield": 0.6333852131837823,
+      "dailyYield": 0.9541736397038687,
       "yearlyYield": 11.32280863910204,
       "label": "W"
     },
@@ -892,7 +892,7 @@
       "foundationId": "1rAGH78b5nt7cXyGU9vNRV",
       "id": "1dU1iCu9PPq5BqZD1KErE7",
       "selected": false,
-      "dailyYield": 1.231269718416719,
+      "dailyYield": 0.9576426115274149,
       "yearlyYield": 11.37252332042091,
       "label": "E"
     },
@@ -1026,9 +1026,9 @@
     "dailyHeliostatYieldPanelX": 0,
     "showDailyParabolicDishYieldPanel": false,
     "cameraPosition": [
-      3.148831516291548,
-      -5.071491366307754,
-      20.900875793778102
+      3.1488315162915477,
+      -5.07149136630775,
+      20.900875793778095
     ],
     "showYearlyHeliostatYieldPanel": false,
     "orthographic": false,
@@ -1114,6 +1114,20 @@
       "width": 303,
       "height": 64
     }
+  },
+  "graphState": {
+    "dailyPvIndividualOutputs": true,
+    "yearlyPvIndividualOutputs": false,
+    "dailyParabolicDishIndividualOutputs": false,
+    "yearlyParabolicDishIndividualOutputs": false,
+    "dailyParabolicTroughIndividualOutputs": false,
+    "yearlyParabolicTroughIndividualOutputs": false,
+    "dailyFresnelReflectorIndividualOutputs": false,
+    "yearlyFresnelReflectorIndividualOutputs": false,
+    "dailyHeliostatIndividualOutputs": false,
+    "yearlyHeliostatIndividualOutputs": false,
+    "dailyUpdraftTowerIndividualOutputs": false,
+    "yearlyUpdraftTowerIndividualOutputs": false
   },
   "evolutionMethod": 1,
   "solarPanelArrayLayoutParams": {

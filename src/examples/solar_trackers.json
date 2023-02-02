@@ -1,7 +1,7 @@
 {
-  "docid": "tsDxbhe6Vay4Jq2DNUCeRa",
-  "time": "02/01/2023 08:59 pm",
-  "timestamp": 1675303160727,
+  "docid": "vhboPhKYLs7YFW4GNHvu35",
+  "time": "02/02/2023 05:12 pm",
+  "timestamp": 1675375965968,
   "userid": "QWecNcxhyvP6j6sBN11hBsfZDau1",
   "owner": null,
   "email": null,
@@ -211,7 +211,7 @@
     "heliodonPanelX": -1204,
     "theme": "Default",
     "autoRotate": false,
-    "groundColor": "forestgreen",
+    "groundColor": "#16a5a5",
     "groundPanelY": 0,
     "heliodon": false,
     "axes": true,
@@ -231,8 +231,8 @@
     "showDailyLightSensorPanel": false,
     "shadowEnabled": true,
     "cameraPosition": [
-      12.032136043105451,
-      -19.27500735361243,
+      12.032136043105444,
+      -19.275007353612423,
       7.568306918458618
     ],
     "panCenter": [
@@ -267,6 +267,20 @@
       "width": 600,
       "height": 400
     }
+  },
+  "graphState": {
+    "dailyPvIndividualOutputs": true,
+    "yearlyPvIndividualOutputs": false,
+    "dailyParabolicDishIndividualOutputs": false,
+    "yearlyParabolicDishIndividualOutputs": false,
+    "dailyParabolicTroughIndividualOutputs": false,
+    "yearlyParabolicTroughIndividualOutputs": false,
+    "dailyFresnelReflectorIndividualOutputs": false,
+    "yearlyFresnelReflectorIndividualOutputs": false,
+    "dailyHeliostatIndividualOutputs": false,
+    "yearlyHeliostatIndividualOutputs": false,
+    "dailyUpdraftTowerIndividualOutputs": false,
+    "yearlyUpdraftTowerIndividualOutputs": false
   },
   "evolutionMethod": 1,
   "solarPanelArrayLayoutParams": {

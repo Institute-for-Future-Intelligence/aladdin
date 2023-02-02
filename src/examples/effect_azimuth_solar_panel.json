@@ -1,7 +1,7 @@
 {
-  "docid": "mHnVrxPvsSt86wD3CXXf1w",
-  "time": "02/01/2023 08:44 pm",
-  "timestamp": 1675302273656,
+  "docid": "44QNMQZiyWYfqFnbbUSraT",
+  "time": "02/02/2023 03:04 pm",
+  "timestamp": 1675368269762,
   "userid": "QWecNcxhyvP6j6sBN11hBsfZDau1",
   "owner": null,
   "email": null,
@@ -90,7 +90,8 @@
       ],
       "parentId": "iGgGyZAWhJDDrqTBSuKY6v",
       "foundationId": "iGgGyZAWhJDDrqTBSuKY6v",
-      "pvModelName": "SPR-X21-335-BLK"
+      "pvModelName": "SPR-X21-335-BLK",
+      "dailyYield": 1.1296025646801735
     },
     {
       "ly": 1.558,
@@ -124,7 +125,8 @@
       "orientation": "Portrait",
       "parentId": "iGgGyZAWhJDDrqTBSuKY6v",
       "foundationId": "iGgGyZAWhJDDrqTBSuKY6v",
-      "pvModelName": "SPR-X21-335-BLK"
+      "pvModelName": "SPR-X21-335-BLK",
+      "dailyYield": 1.3296869651923566
     },
     {
       "lx": 1.046,
@@ -158,7 +160,8 @@
       "cz": 0.5000000074505806,
       "parentId": "iGgGyZAWhJDDrqTBSuKY6v",
       "foundationId": "iGgGyZAWhJDDrqTBSuKY6v",
-      "pvModelName": "SPR-X21-335-BLK"
+      "pvModelName": "SPR-X21-335-BLK",
+      "dailyYield": 1.1539575918080192
     },
     {
       "tiltAngle": 0.6981317007977318,
@@ -192,7 +195,8 @@
       "type": "Solar Panel",
       "parentId": "iGgGyZAWhJDDrqTBSuKY6v",
       "foundationId": "iGgGyZAWhJDDrqTBSuKY6v",
-      "pvModelName": "SPR-X21-335-BLK"
+      "pvModelName": "SPR-X21-335-BLK",
+      "dailyYield": 1.4023532989786718
     },
     {
       "type": "Solar Panel",
@@ -225,7 +229,8 @@
       "foundationId": "iGgGyZAWhJDDrqTBSuKY6v",
       "id": "sHpER3yfCDZgTy8YcbqJF4",
       "selected": false,
-      "label": "-30°"
+      "label": "-30°",
+      "dailyYield": 1.3216497104200369
     },
     {
       "type": "Solar Panel",
@@ -258,7 +263,8 @@
       "foundationId": "iGgGyZAWhJDDrqTBSuKY6v",
       "id": "3AQTuKXP5kZ5PgShm7kPSX",
       "selected": false,
-      "label": "90°"
+      "label": "90°",
+      "dailyYield": 0.9830976469578562
     },
     {
       "type": "Solar Panel",
@@ -291,7 +297,8 @@
       "foundationId": "iGgGyZAWhJDDrqTBSuKY6v",
       "id": "8GwG9uCiXmMbkeB4NtFJwK",
       "selected": false,
-      "label": "-90°"
+      "label": "-90°",
+      "dailyYield": 0.9777009351289816
     },
     {
       "type": "Human",
@@ -351,8 +358,8 @@
     "showDailyLightSensorPanel": false,
     "shadowEnabled": true,
     "cameraPosition": [
-      3.7636702379103735,
-      -16.617217304293,
+      3.763670237910374,
+      -16.61721730429299,
       2.914312591691999
     ],
     "panCenter": [
@@ -388,6 +395,20 @@
       "width": 200,
       "height": 91
     }
+  },
+  "graphState": {
+    "dailyPvIndividualOutputs": true,
+    "yearlyPvIndividualOutputs": false,
+    "dailyParabolicDishIndividualOutputs": false,
+    "yearlyParabolicDishIndividualOutputs": false,
+    "dailyParabolicTroughIndividualOutputs": false,
+    "yearlyParabolicTroughIndividualOutputs": false,
+    "dailyFresnelReflectorIndividualOutputs": false,
+    "yearlyFresnelReflectorIndividualOutputs": false,
+    "dailyHeliostatIndividualOutputs": false,
+    "yearlyHeliostatIndividualOutputs": false,
+    "dailyUpdraftTowerIndividualOutputs": false,
+    "yearlyUpdraftTowerIndividualOutputs": false
   },
   "evolutionMethod": 1,
   "solarPanelArrayLayoutParams": {

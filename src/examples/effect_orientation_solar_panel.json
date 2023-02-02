@@ -1,7 +1,7 @@
 {
-  "docid": "j8awUXgdnwgQLiDkzk1bC2",
-  "time": "02/01/2023 08:57 pm",
-  "timestamp": 1675303025101,
+  "docid": "dvN36C7J8FdfSS21QcUvBx",
+  "time": "02/02/2023 05:16 pm",
+  "timestamp": 1675376211296,
   "userid": "QWecNcxhyvP6j6sBN11hBsfZDau1",
   "owner": null,
   "email": null,
@@ -68,7 +68,7 @@
       "foundationId": "7nkGUQpHaM9zN22MJgfSvf",
       "id": "snQKvKf7xPrhuT28Bo2tYv",
       "selected": false,
-      "dailyYield": 7.279546747940818,
+      "dailyYield": 7.484195397296324,
       "label": "L2",
       "yearlyYield": "0[object Object][object Object][object Object][object Object][object Object][object Object][object Object][object Object][object Object][object Object][object Object][object Object]",
       "labelSize": 0.5
@@ -105,7 +105,7 @@
       "id": "s6gwZqoX59Afjq9iWzuivT",
       "selected": false,
       "drawSunBeam": false,
-      "dailyYield": 7.279546747940818,
+      "dailyYield": 7.484195397296324,
       "label": "L3",
       "yearlyYield": "0[object Object][object Object][object Object][object Object][object Object][object Object][object Object][object Object][object Object][object Object][object Object][object Object]",
       "labelSize": 0.5
@@ -141,7 +141,7 @@
       "foundationId": "7nkGUQpHaM9zN22MJgfSvf",
       "id": "pbozwPgQw2bzssDtJKTqSk",
       "selected": false,
-      "dailyYield": 7.279546747940818,
+      "dailyYield": 7.484195397296324,
       "label": "L4",
       "yearlyYield": "0[object Object][object Object][object Object][object Object][object Object][object Object][object Object][object Object][object Object][object Object][object Object][object Object]",
       "labelSize": 0.5
@@ -178,7 +178,7 @@
       "id": "3nSBw847J9tSxs8CwWughr",
       "selected": false,
       "label": "L1",
-      "dailyYield": 13.26305876347581,
+      "dailyYield": 13.210165552148743,
       "yearlyYield": "0[object Object][object Object][object Object][object Object][object Object][object Object][object Object][object Object][object Object][object Object][object Object][object Object]",
       "labelSize": 0.5
     },
@@ -213,7 +213,7 @@
       "foundationId": "7nkGUQpHaM9zN22MJgfSvf",
       "id": "pu9LeYFSmjuxaejn2VSzZ1",
       "selected": false,
-      "dailyYield": 7.279546747940818,
+      "dailyYield": 7.484195397296324,
       "label": "L5",
       "yearlyYield": "0[object Object][object Object][object Object][object Object][object Object][object Object][object Object][object Object][object Object][object Object][object Object][object Object]",
       "labelSize": 0.5
@@ -294,7 +294,7 @@
       "foundationId": "enRB3aUi95qo1iy8fc8PQq",
       "id": "6AH8jB41hnb2DKANJAvRwV",
       "selected": false,
-      "dailyYield": 2.2942538181934733,
+      "dailyYield": 2.263426258433755,
       "label": "P2",
       "yearlyYield": "0[object Object][object Object][object Object][object Object][object Object][object Object][object Object][object Object][object Object][object Object][object Object][object Object]",
       "labelSize": 0.5
@@ -330,7 +330,7 @@
       "foundationId": "enRB3aUi95qo1iy8fc8PQq",
       "id": "aB8iEcrZaWTL6xKZKhhAXB",
       "selected": false,
-      "dailyYield": 2.2651420460150113,
+      "dailyYield": 2.2442794871667524,
       "label": "P3",
       "yearlyYield": "0[object Object][object Object][object Object][object Object][object Object][object Object][object Object][object Object][object Object][object Object][object Object][object Object]",
       "labelSize": 0.5
@@ -366,7 +366,7 @@
       "foundationId": "enRB3aUi95qo1iy8fc8PQq",
       "id": "2meA9SG5bqFDgzeFyXtF9Q",
       "selected": false,
-      "dailyYield": 2.2651420460150113,
+      "dailyYield": 2.2442794871667524,
       "label": "P4",
       "yearlyYield": "0[object Object][object Object][object Object][object Object][object Object][object Object][object Object][object Object][object Object][object Object][object Object][object Object]",
       "labelSize": 0.5
@@ -402,7 +402,7 @@
       "foundationId": "enRB3aUi95qo1iy8fc8PQq",
       "id": "868aWiBhQX239e6oehaSij",
       "selected": false,
-      "dailyYield": 13.26305876347581,
+      "dailyYield": 13.21016555214874,
       "label": "P1",
       "yearlyYield": "0[object Object][object Object][object Object][object Object][object Object][object Object][object Object][object Object][object Object][object Object][object Object][object Object]",
       "labelSize": 0.5
@@ -438,7 +438,7 @@
       "foundationId": "enRB3aUi95qo1iy8fc8PQq",
       "id": "oBHHZdopRmiffSiEULht6u",
       "selected": false,
-      "dailyYield": 2.2651420460150113,
+      "dailyYield": 2.2442794871667524,
       "label": "P5",
       "yearlyYield": "0[object Object][object Object][object Object][object Object][object Object][object Object][object Object][object Object][object Object][object Object][object Object][object Object]",
       "labelSize": 0.5
@@ -503,9 +503,9 @@
     "showYearlyLightSensorPanel": false,
     "mapType": "roadmap",
     "cameraPosition": [
-      22.452978407808594,
-      -24.24705031350266,
-      17.04591134858279
+      22.452978407808587,
+      -24.247050313502623,
+      17.045911348582777
     ],
     "panCenter": [
       16.676839641041024,
@@ -515,7 +515,7 @@
     "orthographic": false,
     "enableRotate": true,
     "cameraZoom": 33.40365140230188,
-    "showInstructionPanel": true,
+    "showInstructionPanel": false,
     "cameraPosition2D": [
       2.651601657211317,
       -0.19810500302601344,
@@ -535,11 +535,25 @@
     },
     "showStickyNotePanel": true,
     "stickyNotePanelRect": {
-      "x": -1,
-      "y": 69,
+      "x": -2,
+      "y": -3,
       "width": 321,
       "height": 84
     }
+  },
+  "graphState": {
+    "dailyPvIndividualOutputs": true,
+    "yearlyPvIndividualOutputs": false,
+    "dailyParabolicDishIndividualOutputs": false,
+    "yearlyParabolicDishIndividualOutputs": false,
+    "dailyParabolicTroughIndividualOutputs": false,
+    "yearlyParabolicTroughIndividualOutputs": false,
+    "dailyFresnelReflectorIndividualOutputs": false,
+    "yearlyFresnelReflectorIndividualOutputs": false,
+    "dailyHeliostatIndividualOutputs": false,
+    "yearlyHeliostatIndividualOutputs": false,
+    "dailyUpdraftTowerIndividualOutputs": false,
+    "yearlyUpdraftTowerIndividualOutputs": false
   },
   "evolutionMethod": 1,
   "solarPanelArrayLayoutParams": {

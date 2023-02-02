@@ -1,7 +1,7 @@
 {
-  "docid": "bWFRU6kRthztN2bF3wme6g",
-  "time": "02/01/2023 08:42 pm",
-  "timestamp": 1675302158135,
+  "docid": "8D5YJAWj6vd3LW25Hcokqe",
+  "time": "02/02/2023 03:03 pm",
+  "timestamp": 1675368235538,
   "userid": "QWecNcxhyvP6j6sBN11hBsfZDau1",
   "owner": null,
   "email": null,
@@ -91,7 +91,8 @@
       ],
       "parentId": "iGgGyZAWhJDDrqTBSuKY6v",
       "foundationId": "iGgGyZAWhJDDrqTBSuKY6v",
-      "pvModelName": "SPR-X21-335-BLK"
+      "pvModelName": "SPR-X21-335-BLK",
+      "dailyYield": 1.3898315956697325
     },
     {
       "ly": 1.558,
@@ -125,7 +126,8 @@
       "orientation": "Portrait",
       "parentId": "iGgGyZAWhJDDrqTBSuKY6v",
       "foundationId": "iGgGyZAWhJDDrqTBSuKY6v",
-      "pvModelName": "SPR-X21-335-BLK"
+      "pvModelName": "SPR-X21-335-BLK",
+      "dailyYield": 1.3601290996632553
     },
     {
       "lx": 1.046,
@@ -159,7 +161,8 @@
       "cz": 0.5000000074505806,
       "parentId": "iGgGyZAWhJDDrqTBSuKY6v",
       "foundationId": "iGgGyZAWhJDDrqTBSuKY6v",
-      "pvModelName": "SPR-X21-335-BLK"
+      "pvModelName": "SPR-X21-335-BLK",
+      "dailyYield": 0.2655114569703831
     },
     {
       "tiltAngle": 0,
@@ -193,7 +196,8 @@
       "type": "Solar Panel",
       "parentId": "iGgGyZAWhJDDrqTBSuKY6v",
       "foundationId": "iGgGyZAWhJDDrqTBSuKY6v",
-      "pvModelName": "SPR-X21-335-BLK"
+      "pvModelName": "SPR-X21-335-BLK",
+      "dailyYield": 1.055863332406658
     },
     {
       "type": "Solar Panel",
@@ -226,7 +230,8 @@
       "foundationId": "iGgGyZAWhJDDrqTBSuKY6v",
       "id": "sHpER3yfCDZgTy8YcbqJF4",
       "selected": false,
-      "label": "-30°"
+      "label": "-30°",
+      "dailyYield": 0.5565058986546524
     },
     {
       "type": "Solar Panel",
@@ -259,7 +264,8 @@
       "foundationId": "iGgGyZAWhJDDrqTBSuKY6v",
       "id": "3AQTuKXP5kZ5PgShm7kPSX",
       "selected": false,
-      "label": "90°"
+      "label": "90°",
+      "dailyYield": 1.1380948831431423
     },
     {
       "type": "Solar Panel",
@@ -292,7 +298,8 @@
       "foundationId": "iGgGyZAWhJDDrqTBSuKY6v",
       "id": "8GwG9uCiXmMbkeB4NtFJwK",
       "selected": false,
-      "label": "-90°"
+      "label": "-90°",
+      "dailyYield": 0.3371955456546947
     },
     {
       "type": "Human",
@@ -389,6 +396,20 @@
       "width": 202,
       "height": 93
     }
+  },
+  "graphState": {
+    "dailyPvIndividualOutputs": true,
+    "yearlyPvIndividualOutputs": false,
+    "dailyParabolicDishIndividualOutputs": false,
+    "yearlyParabolicDishIndividualOutputs": false,
+    "dailyParabolicTroughIndividualOutputs": false,
+    "yearlyParabolicTroughIndividualOutputs": false,
+    "dailyFresnelReflectorIndividualOutputs": false,
+    "yearlyFresnelReflectorIndividualOutputs": false,
+    "dailyHeliostatIndividualOutputs": false,
+    "yearlyHeliostatIndividualOutputs": false,
+    "dailyUpdraftTowerIndividualOutputs": false,
+    "yearlyUpdraftTowerIndividualOutputs": false
   },
   "evolutionMethod": 1,
   "solarPanelArrayLayoutParams": {
