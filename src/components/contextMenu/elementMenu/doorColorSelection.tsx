@@ -1,5 +1,5 @@
 /*
- * @Copyright 2021-2022. Institute for Future Intelligence, Inc.
+ * @Copyright 2021-2023. Institute for Future Intelligence, Inc.
  */
 
 import React, { useEffect, useRef, useState } from 'react';
@@ -19,8 +19,8 @@ const DoorColorSelection = ({ setDialogVisible }: { setDialogVisible: (b: boolea
   const language = useStore(Selector.language);
   const door = useStore(Selector.selectedElement) as DoorModel;
   const addUndoable = useStore(Selector.addUndoable);
-  const doorActionScope = useStore(Selector.doorActionScope);
-  const setDoorActionScope = useStore(Selector.setDoorActionScope);
+  const actionScope = useStore(Selector.doorActionScope);
+  const setActionScope = useStore(Selector.setDoorActionScope);
   const applyCount = useStore(Selector.applyCount);
   const setApplyCount = useStore(Selector.setApplyCount);
   const revertApply = useStore(Selector.revertApply);
@@ -71,7 +71,7 @@ const DoorColorSelection = ({ setDialogVisible }: { setDialogVisible: (b: boolea
 
   const setColor = (value: string) => {
     if (!door) return;
-    switch (doorActionScope) {
+    switch (actionScope) {
       case Scope.AllObjectsOfThisType:
         const oldColorsAll = new Map<string, string>();
         for (const elem of useStore.getState().elements) {
@@ -272,7 +272,7 @@ const DoorColorSelection = ({ setDialogVisible }: { setDialogVisible: (b: boolea
             style={{ border: '2px dashed #ccc', paddingTop: '8px', paddingLeft: '12px', paddingBottom: '8px' }}
             span={13}
           >
-            <Radio.Group onChange={(e) => setDoorActionScope(e.target.value)} value={doorActionScope}>
+            <Radio.Group onChange={(e) => setActionScope(e.target.value)} value={actionScope}>
               <Space direction="vertical">
                 <Radio value={Scope.OnlyThisObject}>{i18n.t('doorMenu.OnlyThisDoor', lang)}</Radio>
                 <Radio value={Scope.OnlyThisSide}>{i18n.t('doorMenu.AllDoorsOnWall', lang)}</Radio>

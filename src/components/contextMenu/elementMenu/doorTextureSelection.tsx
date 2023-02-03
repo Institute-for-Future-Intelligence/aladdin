@@ -1,5 +1,5 @@
 /*
- * @Copyright 2021-2022. Institute for Future Intelligence, Inc.
+ * @Copyright 2021-2023. Institute for Future Intelligence, Inc.
  */
 
 import DoorTextureDefaultIcon from 'src/resources/door_edge.png';
@@ -31,8 +31,8 @@ const DoorTextureSelection = ({ setDialogVisible }: { setDialogVisible: (b: bool
   const language = useStore(Selector.language);
   const door = useStore(Selector.selectedElement) as DoorModel;
   const addUndoable = useStore(Selector.addUndoable);
-  const doorActionScope = useStore(Selector.doorActionScope);
-  const setDoorActionScope = useStore(Selector.setDoorActionScope);
+  const actionScope = useStore(Selector.doorActionScope);
+  const setActionScope = useStore(Selector.setDoorActionScope);
   const applyCount = useStore(Selector.applyCount);
   const setApplyCount = useStore(Selector.setApplyCount);
   const revertApply = useStore(Selector.revertApply);
@@ -84,7 +84,7 @@ const DoorTextureSelection = ({ setDialogVisible }: { setDialogVisible: (b: bool
   };
 
   const setTexture = (value: DoorTexture) => {
-    switch (doorActionScope) {
+    switch (actionScope) {
       case Scope.AllObjectsOfThisType:
         const oldTexturesAll = new Map<string, DoorTexture>();
         for (const elem of useStore.getState().elements) {
@@ -442,7 +442,7 @@ const DoorTextureSelection = ({ setDialogVisible }: { setDialogVisible: (b: bool
             style={{ border: '2px dashed #ccc', paddingTop: '8px', paddingLeft: '12px', paddingBottom: '8px' }}
             span={15}
           >
-            <Radio.Group value={doorActionScope} onChange={(e) => setDoorActionScope(e.target.value)}>
+            <Radio.Group value={actionScope} onChange={(e) => setActionScope(e.target.value)}>
               <Space direction="vertical">
                 <Radio value={Scope.OnlyThisObject}>{i18n.t('doorMenu.OnlyThisDoor', lang)}</Radio>
                 <Radio value={Scope.OnlyThisSide}>{i18n.t('doorMenu.AllDoorsOnWall', lang)}</Radio>
