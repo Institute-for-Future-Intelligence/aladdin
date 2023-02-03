@@ -553,7 +553,6 @@ const ThermalSimulation = ({ city }: ThermalSimulationProps) => {
           const roof = e as RoofModel;
           calculateRoof(roof);
           calculateFloor(roof);
-          calculateCeiling(roof);
           break;
         case ObjectType.SolarPanel:
           calculateSolarPanel(e as SolarPanelModel);
@@ -836,17 +835,15 @@ const ThermalSimulation = ({ city }: ThermalSimulationProps) => {
     );
   };
 
-  const calculateCeiling = (roof: RoofModel) => {
-    if (!roof.ceiling) return;
-    const foundation = getFoundation(roof);
-    if (!foundation) return;
-    const setpoint = foundation.hvacSystem?.thermostatSetpoint ?? 20;
-    const ceilingArea = Util.calculateBuildingArea(roof.id, roof.wallsId[0]);
-    const deltaT = (currentOutsideTemperatureRef.current - setpoint) / 2;
-    updateHeatExchangeNow(
-      roof.id,
-      (((deltaT * ceilingArea) / (roof.ceilingRValue ?? DEFAULT_CEILING_R_VALUE)) * 0.001) / timesPerHour,
-    );
+  /* Approximate the attic temperature based on the insulation values of the roof and the ceiling.
+   1) if the R-values are the same, the attic temperature is the mean temperature between inside and outside
+   2) if the R-value of the roof is higher, the attic temperature is closer to the inside temperature
+   3) if the R-value of the roof is lower, the attic temperature is closer to the outside temperature
+  */
+  const calculateAtticTemperature = (roof: RoofModel, outsideTemperature: number, setpoint: number) => {
+    const roofU = 1 / (roof.rValue ?? DEFAULT_ROOF_R_VALUE);
+    const ceilingU = 1 / (roof.ceilingRValue ?? DEFAULT_CEILING_R_VALUE);
+    return (roofU * outsideTemperature + ceilingU * setpoint) / (roofU + ceilingU);
   };
 
   const calculateRoof = (roof: RoofModel) => {
@@ -874,7 +871,9 @@ const ThermalSimulation = ({ city }: ThermalSimulationProps) => {
       const setpoint = foundation.hvacSystem?.thermostatSetpoint ?? 20;
       let heatExchange = 0;
       for (const [i, segmentResult] of roofSegmentResults.entries()) {
-        const deltaT = (segmentResult.surfaceTemperature - setpoint) * (roof.ceiling ? 0.5 : 1);
+        const deltaT =
+          segmentResult.surfaceTemperature -
+          (roof.ceiling ? calculateAtticTemperature(roof, segmentResult.surfaceTemperature, setpoint) : setpoint);
         // convert heat exchange to kWh
         const segmentHeatExchange =
           (((deltaT * segmentResult.totalArea) / (roof.rValue ?? DEFAULT_ROOF_R_VALUE)) * 0.001) / timesPerHour;
