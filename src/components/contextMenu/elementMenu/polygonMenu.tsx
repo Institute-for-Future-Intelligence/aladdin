@@ -1,5 +1,5 @@
 /*
- * @Copyright 2021-2022. Institute for Future Intelligence, Inc.
+ * @Copyright 2021-2023. Institute for Future Intelligence, Inc.
  */
 
 import React, { useState } from 'react';
@@ -28,6 +28,7 @@ export const PolygonMenu = React.memo(() => {
   const addUndoable = useStore(Selector.addUndoable);
   const elementsToPaste = useStore(Selector.elementsToPaste);
   const setApplyCount = useStore(Selector.setApplyCount);
+
   const polygon = useStore((state) =>
     state.elements.find((e) => e.selected && e.type === ObjectType.Polygon),
   ) as PolygonModel;

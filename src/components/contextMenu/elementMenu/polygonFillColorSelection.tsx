@@ -1,5 +1,5 @@
 /*
- * @Copyright 2021-2022. Institute for Future Intelligence, Inc.
+ * @Copyright 2021-2023. Institute for Future Intelligence, Inc.
  */
 
 import React, { useEffect, useRef, useState } from 'react';
@@ -24,13 +24,16 @@ const PolygonFillColorSelection = ({ setDialogVisible }: { setDialogVisible: (b:
   const updateElementFillColorOnSurface = useStore(Selector.updateElementColorOnSurface);
   const updateElementFillColorAboveFoundation = useStore(Selector.updateElementColorAboveFoundation);
   const updateElementFillColorForAll = useStore(Selector.updateElementColorForAll);
-  const polygon = useStore(Selector.selectedElement) as PolygonModel;
   const addUndoable = useStore(Selector.addUndoable);
-  const polygonActionScope = useStore(Selector.polygonActionScope);
-  const setPolygonActionScope = useStore(Selector.setPolygonActionScope);
+  const actionScope = useStore(Selector.polygonActionScope);
+  const setActionScope = useStore(Selector.setPolygonActionScope);
   const applyCount = useStore(Selector.applyCount);
   const setApplyCount = useStore(Selector.setApplyCount);
   const revertApply = useStore(Selector.revertApply);
+
+  const polygon = useStore((state) =>
+    state.elements.find((e) => e.selected && e.type === ObjectType.Polygon),
+  ) as PolygonModel;
 
   const [selectedColor, setSelectedColor] = useState<string>(polygon?.color ?? 'gray');
   const [updateFlag, setUpdateFlag] = useState<boolean>(false);
@@ -51,12 +54,12 @@ const PolygonFillColorSelection = ({ setDialogVisible }: { setDialogVisible: (b:
   }, [polygon]);
 
   const onScopeChange = (e: RadioChangeEvent) => {
-    setPolygonActionScope(e.target.value);
+    setActionScope(e.target.value);
     setUpdateFlag(!updateFlag);
   };
 
   const needChange = (color: string) => {
-    switch (polygonActionScope) {
+    switch (actionScope) {
       case Scope.AllObjectsOfThisType:
         for (const e of elements) {
           if (e.type === ObjectType.Polygon && !e.locked) {
@@ -100,7 +103,7 @@ const PolygonFillColorSelection = ({ setDialogVisible }: { setDialogVisible: (b:
   const setColor = (value: string) => {
     if (!polygon) return;
     if (!needChange(value)) return;
-    switch (polygonActionScope) {
+    switch (actionScope) {
       case Scope.AllObjectsOfThisType:
         const oldColorsAll = new Map<string, string>();
         for (const elem of elements) {
@@ -311,7 +314,7 @@ const PolygonFillColorSelection = ({ setDialogVisible }: { setDialogVisible: (b:
             style={{ border: '2px dashed #ccc', paddingTop: '8px', paddingLeft: '12px', paddingBottom: '8px' }}
             span={12}
           >
-            <Radio.Group onChange={onScopeChange} value={polygonActionScope}>
+            <Radio.Group onChange={onScopeChange} value={actionScope}>
               <Space direction="vertical">
                 <Radio value={Scope.OnlyThisObject}>{i18n.t('polygonMenu.OnlyThisPolygon', lang)}</Radio>
                 <Radio value={Scope.AllObjectsOfThisTypeOnSurface}>

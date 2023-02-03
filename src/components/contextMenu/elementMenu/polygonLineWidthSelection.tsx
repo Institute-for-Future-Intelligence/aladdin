@@ -1,5 +1,5 @@
 /*
- * @Copyright 2021-2022. Institute for Future Intelligence, Inc.
+ * @Copyright 2021-2023. Institute for Future Intelligence, Inc.
  */
 
 import React, { useEffect, useRef, useState } from 'react';
@@ -23,13 +23,16 @@ const PolygonLineWidthSelection = ({ setDialogVisible }: { setDialogVisible: (b:
   const updateElementLineWidthOnSurface = useStore(Selector.updateElementLineWidthOnSurface);
   const updateElementLineWidthAboveFoundation = useStore(Selector.updateElementLineWidthAboveFoundation);
   const updateElementLineWidthForAll = useStore(Selector.updateElementLineWidthForAll);
-  const polygon = useStore(Selector.selectedElement) as PolygonModel;
   const addUndoable = useStore(Selector.addUndoable);
-  const polygonActionScope = useStore(Selector.polygonActionScope);
-  const setPolygonActionScope = useStore(Selector.setPolygonActionScope);
+  const actionScope = useStore(Selector.polygonActionScope);
+  const setActionScope = useStore(Selector.setPolygonActionScope);
   const applyCount = useStore(Selector.applyCount);
   const setApplyCount = useStore(Selector.setApplyCount);
   const revertApply = useStore(Selector.revertApply);
+
+  const polygon = useStore((state) =>
+    state.elements.find((e) => e.selected && e.type === ObjectType.Polygon),
+  ) as PolygonModel;
 
   const [selectedLineWidth, setSelectedLineWidth] = useState<LineStyle>(polygon?.lineWidth ?? 1);
   const [updateFlag, setUpdateFlag] = useState<boolean>(false);
@@ -51,12 +54,12 @@ const PolygonLineWidthSelection = ({ setDialogVisible }: { setDialogVisible: (b:
   }, [polygon]);
 
   const onScopeChange = (e: RadioChangeEvent) => {
-    setPolygonActionScope(e.target.value);
+    setActionScope(e.target.value);
     setUpdateFlag(!updateFlag);
   };
 
   const needChange = (width: number) => {
-    switch (polygonActionScope) {
+    switch (actionScope) {
       case Scope.AllObjectsOfThisType:
         for (const e of elements) {
           if (e.type === ObjectType.Polygon && !e.locked) {
@@ -100,7 +103,7 @@ const PolygonLineWidthSelection = ({ setDialogVisible }: { setDialogVisible: (b:
   const setLineWidth = (value: number) => {
     if (!polygon) return;
     if (!needChange(value)) return;
-    switch (polygonActionScope) {
+    switch (actionScope) {
       case Scope.AllObjectsOfThisType:
         const oldLineWidthsAll = new Map<string, number>();
         for (const elem of elements) {
@@ -374,7 +377,7 @@ const PolygonLineWidthSelection = ({ setDialogVisible }: { setDialogVisible: (b:
             style={{ border: '2px dashed #ccc', paddingTop: '8px', paddingLeft: '12px', paddingBottom: '8px' }}
             span={14}
           >
-            <Radio.Group onChange={onScopeChange} value={polygonActionScope}>
+            <Radio.Group onChange={onScopeChange} value={actionScope}>
               <Space direction="vertical">
                 <Radio value={Scope.OnlyThisObject}>{i18n.t('polygonMenu.OnlyThisPolygon', lang)}</Radio>
                 <Radio value={Scope.AllObjectsOfThisTypeOnSurface}>

@@ -1,5 +1,5 @@
 /*
- * @Copyright 2021-2022. Institute for Future Intelligence, Inc.
+ * @Copyright 2021-2023. Institute for Future Intelligence, Inc.
  */
 
 import React, { useEffect, useRef, useState } from 'react';
@@ -23,13 +23,16 @@ const PolygonLineStyleSelection = ({ setDialogVisible }: { setDialogVisible: (b:
   const updatePolygonLineStyleOnSurface = useStore(Selector.updatePolygonLineStyleOnSurface);
   const updatePolygonLineStyleAboveFoundation = useStore(Selector.updatePolygonLineStyleAboveFoundation);
   const updatePolygonLineStyleForAll = useStore(Selector.updatePolygonLineStyleForAll);
-  const polygon = useStore(Selector.selectedElement) as PolygonModel;
   const addUndoable = useStore(Selector.addUndoable);
-  const polygonActionScope = useStore(Selector.polygonActionScope);
-  const setPolygonActionScope = useStore(Selector.setPolygonActionScope);
+  const actionScope = useStore(Selector.polygonActionScope);
+  const setActionScope = useStore(Selector.setPolygonActionScope);
   const applyCount = useStore(Selector.applyCount);
   const setApplyCount = useStore(Selector.setApplyCount);
   const revertApply = useStore(Selector.revertApply);
+
+  const polygon = useStore((state) =>
+    state.elements.find((e) => e.selected && e.type === ObjectType.Polygon),
+  ) as PolygonModel;
 
   const [selectedLineStyle, setSelectedLineStyle] = useState<LineStyle>(polygon?.lineStyle ?? LineStyle.Solid);
   const [updateFlag, setUpdateFlag] = useState<boolean>(false);
@@ -51,12 +54,12 @@ const PolygonLineStyleSelection = ({ setDialogVisible }: { setDialogVisible: (b:
   }, [polygon]);
 
   const onScopeChange = (e: RadioChangeEvent) => {
-    setPolygonActionScope(e.target.value);
+    setActionScope(e.target.value);
     setUpdateFlag(!updateFlag);
   };
 
   const needChange = (style: LineStyle) => {
-    switch (polygonActionScope) {
+    switch (actionScope) {
       case Scope.AllObjectsOfThisType:
         for (const e of elements) {
           if (e.type === ObjectType.Polygon && !e.locked) {
@@ -100,7 +103,7 @@ const PolygonLineStyleSelection = ({ setDialogVisible }: { setDialogVisible: (b:
   const setLineStyle = (value: LineStyle) => {
     if (!polygon) return;
     if (!needChange(value)) return;
-    switch (polygonActionScope) {
+    switch (actionScope) {
       case Scope.AllObjectsOfThisType:
         const oldLineStylesAll = new Map<string, LineStyle>();
         for (const elem of elements) {
@@ -257,7 +260,7 @@ const PolygonLineStyleSelection = ({ setDialogVisible }: { setDialogVisible: (b:
   return (
     <>
       <Modal
-        width={500}
+        width={600}
         visible={true}
         title={
           <div
@@ -295,9 +298,9 @@ const PolygonLineStyleSelection = ({ setDialogVisible }: { setDialogVisible: (b:
         )}
       >
         <Row gutter={6}>
-          <Col className="gutter-row" span={12}>
+          <Col className="gutter-row" span={10}>
             <Select
-              style={{ width: '180px' }}
+              style={{ width: '200px' }}
               value={selectedLineStyle}
               onChange={(value) => setSelectedLineStyle(value)}
             >
@@ -307,7 +310,7 @@ const PolygonLineStyleSelection = ({ setDialogVisible }: { setDialogVisible: (b:
                     display: 'inline-block',
                     verticalAlign: 'middle',
                     marginRight: '12px',
-                    width: '32px',
+                    width: '48px',
                     height: '1px',
                     border: '1px solid dimGray',
                   }}
@@ -323,7 +326,7 @@ const PolygonLineStyleSelection = ({ setDialogVisible }: { setDialogVisible: (b:
                     display: 'inline-block',
                     verticalAlign: 'middle',
                     marginRight: '12px',
-                    width: '32px',
+                    width: '48px',
                     height: '1px',
                     border: '1px dashed dimGray',
                   }}
@@ -339,7 +342,7 @@ const PolygonLineStyleSelection = ({ setDialogVisible }: { setDialogVisible: (b:
                     display: 'inline-block',
                     verticalAlign: 'middle',
                     marginRight: '12px',
-                    width: '32px',
+                    width: '48px',
                     height: '1px',
                     border: '1px dotted dimGray',
                   }}
@@ -353,9 +356,9 @@ const PolygonLineStyleSelection = ({ setDialogVisible }: { setDialogVisible: (b:
           <Col
             className="gutter-row"
             style={{ border: '2px dashed #ccc', paddingTop: '8px', paddingLeft: '12px', paddingBottom: '8px' }}
-            span={12}
+            span={14}
           >
-            <Radio.Group onChange={onScopeChange} value={polygonActionScope}>
+            <Radio.Group onChange={onScopeChange} value={actionScope}>
               <Space direction="vertical">
                 <Radio value={Scope.OnlyThisObject}>{i18n.t('polygonMenu.OnlyThisPolygon', lang)}</Radio>
                 <Radio value={Scope.AllObjectsOfThisTypeOnSurface}>

@@ -1,5 +1,5 @@
 /*
- * @Copyright 2021-2022. Institute for Future Intelligence, Inc.
+ * @Copyright 2021-2023. Institute for Future Intelligence, Inc.
  */
 
 import Polygon_Texture_01_Menu from '../../../resources/foundation_01_menu.png';
@@ -34,13 +34,16 @@ const PolygonTextureSelection = ({ setDialogVisible }: { setDialogVisible: (b: b
   const updatePolygonTextureOnSurface = useStore(Selector.updatePolygonTextureOnSurface);
   const updatePolygonTextureAboveFoundation = useStore(Selector.updatePolygonTextureAboveFoundation);
   const updatePolygonTextureForAll = useStore(Selector.updatePolygonTextureForAll);
-  const polygon = useStore(Selector.selectedElement) as PolygonModel;
   const addUndoable = useStore(Selector.addUndoable);
-  const polygonActionScope = useStore(Selector.polygonActionScope);
-  const setPolygonActionScope = useStore(Selector.setPolygonActionScope);
+  const actionScope = useStore(Selector.polygonActionScope);
+  const setActionScope = useStore(Selector.setPolygonActionScope);
   const applyCount = useStore(Selector.applyCount);
   const setApplyCount = useStore(Selector.setApplyCount);
   const revertApply = useStore(Selector.revertApply);
+
+  const polygon = useStore((state) =>
+    state.elements.find((e) => e.selected && e.type === ObjectType.Polygon),
+  ) as PolygonModel;
 
   const [selectedTexture, setSelectedTexture] = useState<PolygonTexture>(
     polygon?.textureType ?? PolygonTexture.NoTexture,
@@ -64,12 +67,12 @@ const PolygonTextureSelection = ({ setDialogVisible }: { setDialogVisible: (b: b
   }, [polygon]);
 
   const onScopeChange = (e: RadioChangeEvent) => {
-    setPolygonActionScope(e.target.value);
+    setActionScope(e.target.value);
     setUpdateFlag(!updateFlag);
   };
 
   const needChange = (texture: PolygonTexture) => {
-    switch (polygonActionScope) {
+    switch (actionScope) {
       case Scope.AllObjectsOfThisType:
         for (const e of elements) {
           if (e.type === ObjectType.Polygon && !e.locked) {
@@ -114,7 +117,7 @@ const PolygonTextureSelection = ({ setDialogVisible }: { setDialogVisible: (b: b
   const setTexture = (value: PolygonTexture) => {
     if (!polygon) return;
     if (!needChange(value)) return;
-    switch (polygonActionScope) {
+    switch (actionScope) {
       case Scope.AllObjectsOfThisType:
         const oldTexturesAll = new Map<string, PolygonTexture>();
         for (const elem of elements) {
@@ -443,7 +446,7 @@ const PolygonTextureSelection = ({ setDialogVisible }: { setDialogVisible: (b: b
             style={{ border: '2px dashed #ccc', paddingTop: '8px', paddingLeft: '12px', paddingBottom: '8px' }}
             span={14}
           >
-            <Radio.Group onChange={onScopeChange} value={polygonActionScope}>
+            <Radio.Group onChange={onScopeChange} value={actionScope}>
               <Space direction="vertical">
                 <Radio value={Scope.OnlyThisObject}>{i18n.t('polygonMenu.OnlyThisPolygon', lang)}</Radio>
                 <Radio value={Scope.AllObjectsOfThisTypeOnSurface}>
