@@ -1,7 +1,7 @@
 {
-  "docid": "39zZgziY5GAWqNka3134f1",
-  "time": "09/25/2022 06:42 pm",
-  "timestamp": 1664145746090,
+  "docid": "nXWtB4rWbhWvkvZtVhSWZF",
+  "time": "02/02/2023 08:30 pm",
+  "timestamp": 1675387805969,
   "userid": "QWecNcxhyvP6j6sBN11hBsfZDau1",
   "owner": null,
   "email": null,
@@ -802,9 +802,9 @@
     "showYearlyLightSensorPanel": false,
     "mapType": "hybrid",
     "cameraPosition": [
-      18.488951441874196,
-      -11.785046125916915,
-      7.14950943337891
+      18.48895144187419,
+      -11.785046125916908,
+      7.149509433378907
     ],
     "panCenter": [
       -0.011430693478356556,
@@ -814,7 +814,7 @@
     "orthographic": false,
     "enableRotate": true,
     "cameraZoom": 45.44146361606706,
-    "showInstructionPanel": true,
+    "showInstructionPanel": false,
     "cameraPosition2D": [
       2.68477267877577,
       -0.2201113364586017,
@@ -832,7 +832,28 @@
       "height": 400
     },
     "showMapPanel": false,
-    "solarRadiationHeatMapMaxValue": 4
+    "solarRadiationHeatMapMaxValue": 4,
+    "showStickyNotePanel": true,
+    "stickyNotePanelRect": {
+      "x": 0,
+      "y": 0,
+      "width": 205,
+      "height": 68
+    }
+  },
+  "graphState": {
+    "dailyPvIndividualOutputs": false,
+    "yearlyPvIndividualOutputs": false,
+    "dailyParabolicDishIndividualOutputs": false,
+    "yearlyParabolicDishIndividualOutputs": false,
+    "dailyParabolicTroughIndividualOutputs": false,
+    "yearlyParabolicTroughIndividualOutputs": false,
+    "dailyFresnelReflectorIndividualOutputs": false,
+    "yearlyFresnelReflectorIndividualOutputs": false,
+    "dailyHeliostatIndividualOutputs": false,
+    "yearlyHeliostatIndividualOutputs": false,
+    "dailyUpdraftTowerIndividualOutputs": false,
+    "yearlyUpdraftTowerIndividualOutputs": false
   },
   "evolutionMethod": 1,
   "solarPanelArrayLayoutParams": {
@@ -891,5 +912,7 @@
     "electricitySellingPrice": 0.25,
     "operationalCostPerUnit": 0.15
   },
-  "notes": []
+  "notes": [
+    "Agrivoltaics"
+  ]
 }

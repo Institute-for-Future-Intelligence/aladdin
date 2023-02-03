@@ -1,6 +1,7 @@
 {
-  "docid": "rWQzbo4xCsFQJxLhbC1Lqx",
-  "timestamp": 1643150100204,
+  "docid": "ag6x1qqPgPt1AJp2oKoKDF",
+  "time": "02/02/2023 08:27 pm",
+  "timestamp": 1675387657521,
   "userid": "QWecNcxhyvP6j6sBN11hBsfZDau1",
   "owner": null,
   "email": null,
@@ -551,8 +552,8 @@
     "showYearlyLightSensorPanel": false,
     "mapType": "roadmap",
     "cameraPosition": [
-      4.6885869336967305,
-      -41.63558463662863,
+      4.688586933696731,
+      -41.63558463662862,
       6.94326488693142
     ],
     "panCenter": [
@@ -563,7 +564,7 @@
     "orthographic": false,
     "enableRotate": true,
     "cameraZoom": 21.05263157894738,
-    "showInstructionPanel": true,
+    "showInstructionPanel": false,
     "cameraPosition2D": [
       2.659105574611795,
       -0.19810500302601344,
@@ -576,7 +577,87 @@
     ],
     "showSolarPanelVisibilityResultsPanel": true,
     "visibilityResultsPanelX": -6,
-    "visibilityResultsPanelY": -1
+    "visibilityResultsPanelY": -1,
+    "showStickyNotePanel": true,
+    "stickyNotePanelRect": {
+      "x": 0,
+      "y": 0,
+      "width": 342,
+      "height": 67
+    }
   },
-  "notes": []
+  "graphState": {
+    "dailyPvIndividualOutputs": false,
+    "yearlyPvIndividualOutputs": false,
+    "dailyParabolicDishIndividualOutputs": false,
+    "yearlyParabolicDishIndividualOutputs": false,
+    "dailyParabolicTroughIndividualOutputs": false,
+    "yearlyParabolicTroughIndividualOutputs": false,
+    "dailyFresnelReflectorIndividualOutputs": false,
+    "yearlyFresnelReflectorIndividualOutputs": false,
+    "dailyHeliostatIndividualOutputs": false,
+    "yearlyHeliostatIndividualOutputs": false,
+    "dailyUpdraftTowerIndividualOutputs": false,
+    "yearlyUpdraftTowerIndividualOutputs": false
+  },
+  "evolutionMethod": 1,
+  "solarPanelArrayLayoutParams": {
+    "pvModelName": "CS6X-355P-FG",
+    "rowAxis": "Zonal",
+    "orientation": "Landscape",
+    "tiltAngle": 0,
+    "rowsPerRack": 1,
+    "interRowSpacing": 2,
+    "poleHeight": 1,
+    "poleSpacing": 3
+  },
+  "solarPanelArrayLayoutConstraints": {
+    "minimumInterRowSpacing": 2,
+    "maximumInterRowSpacing": 10,
+    "minimumRowsPerRack": 1,
+    "maximumRowsPerRack": 6,
+    "minimumTiltAngle": -1.5707963267948966,
+    "maximumTiltAngle": 1.5707963267948966,
+    "poleHeight": 1,
+    "poleSpacing": 5,
+    "orientation": "Landscape",
+    "pvModelName": "CS6X-355P-FG",
+    "rowAxis": "Zonal"
+  },
+  "evolutionaryAlgorithmState": {
+    "geneticAlgorithmParams": {
+      "problem": "Solar Panel Tilt Angle",
+      "objectiveFunctionType": 1,
+      "selectionMethod": 1,
+      "searchMethod": 1,
+      "populationSize": 20,
+      "maximumGenerations": 5,
+      "selectionRate": 0.5,
+      "crossoverRate": 0.5,
+      "mutationRate": 0.1,
+      "convergenceThreshold": 0.01,
+      "localSearchRadius": 0.1
+    },
+    "particleSwarmOptimizationParams": {
+      "problem": "Solar Panel Tilt Angle",
+      "objectiveFunctionType": 1,
+      "searchMethod": 1,
+      "swarmSize": 20,
+      "maximumSteps": 5,
+      "vmax": 0.01,
+      "inertia": 0.8,
+      "cognitiveCoefficient": 0.1,
+      "socialCoefficient": 0.1,
+      "convergenceThreshold": 0.01,
+      "localSearchRadius": 0.1
+    }
+  },
+  "economicsParams": {
+    "projectLifeSpan": 25,
+    "electricitySellingPrice": 0.25,
+    "operationalCostPerUnit": 0.15
+  },
+  "notes": [
+    "Vegetative buffer to hide solar farms"
+  ]
 }
