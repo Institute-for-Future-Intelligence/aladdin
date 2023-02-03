@@ -1,5 +1,5 @@
 /*
- * @Copyright 2021-2022. Institute for Future Intelligence, Inc.
+ * @Copyright 2021-2023. Institute for Future Intelligence, Inc.
  */
 
 import React, { useEffect, useRef, useState } from 'react';
@@ -29,7 +29,6 @@ const SolarPanelOrientationSelection = ({ setDialogVisible }: { setDialogVisible
   const updateSolarPanelOrientationAboveFoundation = useStore(Selector.updateSolarPanelOrientationAboveFoundation);
   const updateSolarPanelOrientationForAll = useStore(Selector.updateSolarPanelOrientationForAll);
   const getParent = useStore(Selector.getParent);
-  const solarPanel = useStore(Selector.selectedElement) as SolarPanelModel;
   const setElementSize = useStore(Selector.setElementSize);
   const addUndoable = useStore(Selector.addUndoable);
   const solarPanelActionScope = useStore(Selector.solarPanelActionScope);
@@ -37,6 +36,10 @@ const SolarPanelOrientationSelection = ({ setDialogVisible }: { setDialogVisible
   const applyCount = useStore(Selector.applyCount);
   const setApplyCount = useStore(Selector.setApplyCount);
   const revertApply = useStore(Selector.revertApply);
+
+  const solarPanel = useStore((state) =>
+    state.elements.find((e) => e.selected && e.type === ObjectType.SolarPanel),
+  ) as SolarPanelModel;
 
   const [selectedOrientation, setSelectedOrientation] = useState<Orientation>(
     solarPanel?.orientation ?? Orientation.portrait,

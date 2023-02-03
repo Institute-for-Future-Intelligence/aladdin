@@ -1,5 +1,5 @@
 /*
- * @Copyright 2021-2022. Institute for Future Intelligence, Inc.
+ * @Copyright 2021-2023. Institute for Future Intelligence, Inc.
  */
 
 import React, { useEffect, useRef, useState } from 'react';
@@ -27,7 +27,6 @@ const SolarPanelModelSelection = ({ setDialogVisible }: { setDialogVisible: (b: 
   const updateSolarPanelModelAboveFoundation = useStore(Selector.updateSolarPanelModelAboveFoundation);
   const updateSolarPanelModelForAll = useStore(Selector.updateSolarPanelModelForAll);
   const getParent = useStore(Selector.getParent);
-  const solarPanel = useStore(Selector.selectedElement) as SolarPanelModel;
   const pvModules = useStore(Selector.pvModules);
   const getPvModule = useStore(Selector.getPvModule);
   const addUndoable = useStore(Selector.addUndoable);
@@ -36,6 +35,10 @@ const SolarPanelModelSelection = ({ setDialogVisible }: { setDialogVisible: (b: 
   const applyCount = useStore(Selector.applyCount);
   const setApplyCount = useStore(Selector.setApplyCount);
   const revertApply = useStore(Selector.revertApply);
+
+  const solarPanel = useStore((state) =>
+    state.elements.find((e) => e.selected && e.type === ObjectType.SolarPanel),
+  ) as SolarPanelModel;
 
   const [selectedPvModel, setSelectedPvModel] = useState<string>(solarPanel?.pvModelName ?? 'SPR-X21-335-BLK');
   const [updateFlag, setUpdateFlag] = useState<boolean>(false);

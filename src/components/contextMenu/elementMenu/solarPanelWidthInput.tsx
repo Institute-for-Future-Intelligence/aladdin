@@ -1,5 +1,5 @@
 /*
- * @Copyright 2021-2022. Institute for Future Intelligence, Inc.
+ * @Copyright 2021-2023. Institute for Future Intelligence, Inc.
  */
 
 import React, { useEffect, useRef, useState } from 'react';
@@ -26,13 +26,16 @@ const SolarPanelWidthInput = ({ setDialogVisible }: { setDialogVisible: (b: bool
   const updateSolarPanelLyAboveFoundation = useStore(Selector.updateSolarPanelLyAboveFoundation);
   const updateSolarPanelLyForAll = useStore(Selector.updateSolarPanelLyForAll);
   const getParent = useStore(Selector.getParent);
-  const solarPanel = useStore(Selector.selectedElement) as SolarPanelModel;
   const addUndoable = useStore(Selector.addUndoable);
   const solarPanelActionScope = useStore(Selector.solarPanelActionScope);
   const setSolarPanelActionScope = useStore(Selector.setSolarPanelActionScope);
   const applyCount = useStore(Selector.applyCount);
   const setApplyCount = useStore(Selector.setApplyCount);
   const revertApply = useStore(Selector.revertApply);
+
+  const solarPanel = useStore((state) =>
+    state.elements.find((e) => e.selected && e.type === ObjectType.SolarPanel),
+  ) as SolarPanelModel;
 
   const [dy, setDy] = useState<number>(0);
   const [updateFlag, setUpdateFlag] = useState<boolean>(false);
@@ -95,6 +98,8 @@ const SolarPanelWidthInput = ({ setDialogVisible }: { setDialogVisible: (b: bool
     return false;
   };
 
+  // FIXME: When there are multiple types of solar panels that have different dimensions,
+  // this will not work properly.
   const needChange = (ly: number) => {
     switch (solarPanelActionScope) {
       case Scope.AllObjectsOfThisType:

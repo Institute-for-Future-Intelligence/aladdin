@@ -1,9 +1,9 @@
 /*
- * @Copyright 2021-2022. Institute for Future Intelligence, Inc.
+ * @Copyright 2021-2023. Institute for Future Intelligence, Inc.
  */
 
 import React, { useEffect, useRef, useState } from 'react';
-import { Button, Col, Modal, Radio, RadioChangeEvent, Row, Select, Space } from 'antd';
+import { Button, Col, Modal, Radio, RadioChangeEvent, Row, Space } from 'antd';
 import Draggable, { DraggableBounds, DraggableData, DraggableEvent } from 'react-draggable';
 import { useStore } from '../../../stores/common';
 import * as Selector from '../../../stores/selector';
@@ -25,13 +25,16 @@ const SolarPanelFrameColorSelection = ({ setDialogVisible }: { setDialogVisible:
   const updateSolarPanelFrameColorAboveFoundation = useStore(Selector.updateSolarPanelFrameColorAboveFoundation);
   const updateSolarPanelFrameColorForAll = useStore(Selector.updateSolarPanelFrameColorForAll);
   const getParent = useStore(Selector.getParent);
-  const solarPanel = useStore(Selector.selectedElement) as SolarPanelModel;
   const addUndoable = useStore(Selector.addUndoable);
   const solarPanelActionScope = useStore(Selector.solarPanelActionScope);
   const setSolarPanelActionScope = useStore(Selector.setSolarPanelActionScope);
   const applyCount = useStore(Selector.applyCount);
   const setApplyCount = useStore(Selector.setApplyCount);
   const revertApply = useStore(Selector.revertApply);
+
+  const solarPanel = useStore((state) =>
+    state.elements.find((e) => e.selected && e.type === ObjectType.SolarPanel),
+  ) as SolarPanelModel;
 
   const [selectedColor, setSelectedColor] = useState<string>(solarPanel?.frameColor ?? 'white');
   const [updateFlag, setUpdateFlag] = useState<boolean>(false);

@@ -32,6 +32,7 @@ export const SolarPanelMenu = React.memo(() => {
   const addUndoable = useStore(Selector.addUndoable);
   const setApplyCount = useStore(Selector.setApplyCount);
   const language = useStore(Selector.language);
+
   const solarPanel = useStore((state) =>
     state.elements.find((e) => e.selected && e.type === ObjectType.SolarPanel),
   ) as SolarPanelModel;

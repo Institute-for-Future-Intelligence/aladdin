@@ -1,5 +1,5 @@
 /*
- * @Copyright 2021-2022. Institute for Future Intelligence, Inc.
+ * @Copyright 2021-2023. Institute for Future Intelligence, Inc.
  */
 
 import React, { useEffect, useRef, useState } from 'react';
@@ -26,13 +26,16 @@ const SolarPanelLengthInput = ({ setDialogVisible }: { setDialogVisible: (b: boo
   const updateSolarPanelLxAboveFoundation = useStore(Selector.updateSolarPanelLxAboveFoundation);
   const updateSolarPanelLxForAll = useStore(Selector.updateSolarPanelLxForAll);
   const getParent = useStore(Selector.getParent);
-  const solarPanel = useStore(Selector.selectedElement) as SolarPanelModel;
   const addUndoable = useStore(Selector.addUndoable);
   const solarPanelActionScope = useStore(Selector.solarPanelActionScope);
   const setSolarPanelActionScope = useStore(Selector.setSolarPanelActionScope);
   const applyCount = useStore(Selector.applyCount);
   const setApplyCount = useStore(Selector.setApplyCount);
   const revertApply = useStore(Selector.revertApply);
+
+  const solarPanel = useStore((state) =>
+    state.elements.find((e) => e.selected && e.type === ObjectType.SolarPanel),
+  ) as SolarPanelModel;
 
   const [dx, setDx] = useState<number>(0);
   const [updateFlag, setUpdateFlag] = useState<boolean>(false);
@@ -91,6 +94,8 @@ const SolarPanelLengthInput = ({ setDialogVisible }: { setDialogVisible: (b: boo
     return false;
   };
 
+  // FIXME: When there are multiple types of solar panels that have different dimensions,
+  // this will not work properly.
   const needChange = (lx: number) => {
     switch (solarPanelActionScope) {
       case Scope.AllObjectsOfThisType:
