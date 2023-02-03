@@ -742,7 +742,9 @@ const GambrelRoof = (roofModel: GambrelRoofModel) => {
       </group>
 
       {/* ceiling */}
-      {ceiling && currentWallArray[0].lz === currentWallArray[2].lz && <Ceiling currWallArray={currentWallArray} />}
+      {ceiling && currentWallArray[0].lz === currentWallArray[2].lz && riseInnerState > 0 && (
+        <Ceiling currWallArray={currentWallArray} />
+      )}
 
       {/* handles */}
       {selected && !locked && (

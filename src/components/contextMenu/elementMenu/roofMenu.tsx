@@ -286,31 +286,33 @@ export const RoofMenu = React.memo(() => {
       {legalToPaste() && <Paste keyName={'roof-paste'} />}
       <Lock keyName={'roof-lock'} />
 
-      <Menu.Item key={'roof-ceiling'}>
-        <Checkbox
-          checked={roof.ceiling}
-          onChange={(e) => {
-            const checked = e.target.checked;
-            const undoableCheck = {
-              name: 'Roof Ceiling',
-              timestamp: Date.now(),
-              checked: checked,
-              selectedElementId: roof.id,
-              selectedElementType: roof.type,
-              undo: () => {
-                updateRoofCeiling(roof.id, !undoableCheck.checked);
-              },
-              redo: () => {
-                updateRoofCeiling(roof.id, undoableCheck.checked);
-              },
-            } as UndoableCheck;
-            addUndoable(undoableCheck);
-            updateRoofCeiling(roof.id, checked);
-          }}
-        >
-          {i18n.t('roofMenu.Ceiling', { lng: language })}
-        </Checkbox>
-      </Menu.Item>
+      {roof.rise > 0 && (
+        <Menu.Item key={'roof-ceiling'}>
+          <Checkbox
+            checked={roof.ceiling}
+            onChange={(e) => {
+              const checked = e.target.checked;
+              const undoableCheck = {
+                name: 'Roof Ceiling',
+                timestamp: Date.now(),
+                checked: checked,
+                selectedElementId: roof.id,
+                selectedElementType: roof.type,
+                undo: () => {
+                  updateRoofCeiling(roof.id, !undoableCheck.checked);
+                },
+                redo: () => {
+                  updateRoofCeiling(roof.id, undoableCheck.checked);
+                },
+              } as UndoableCheck;
+              addUndoable(undoableCheck);
+              updateRoofCeiling(roof.id, checked);
+            }}
+          >
+            {i18n.t('roofMenu.Ceiling', { lng: language })}
+          </Checkbox>
+        </Menu.Item>
+      )}
 
       {renderElementsSubMenu()}
 

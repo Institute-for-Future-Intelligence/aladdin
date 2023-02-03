@@ -882,7 +882,7 @@ const PyramidRoof = (roofModel: PyramidRoofModel) => {
       </group>
 
       {/* ceiling */}
-      {ceiling && <Ceiling currWallArray={currentWallArray} />}
+      {ceiling && riseInnerState > 0 && <Ceiling currWallArray={currentWallArray} />}
 
       {/* handle */}
       {selected && !locked && (

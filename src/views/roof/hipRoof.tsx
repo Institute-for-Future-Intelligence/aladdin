@@ -521,7 +521,7 @@ const HipRoof = (roofModel: HipRoofModel) => {
       </group>
 
       {/* ceiling */}
-      {ceiling && <Ceiling currWallArray={currentWallArray} />}
+      {ceiling && riseInnerState > 0 && <Ceiling currWallArray={currentWallArray} />}
 
       {/* handles */}
       {selected && !locked && (
