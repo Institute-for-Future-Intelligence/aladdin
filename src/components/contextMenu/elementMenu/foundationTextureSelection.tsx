@@ -1,5 +1,5 @@
 /*
- * @Copyright 2021-2022. Institute for Future Intelligence, Inc.
+ * @Copyright 2021-2023. Institute for Future Intelligence, Inc.
  */
 
 import Foundation_Texture_01_Menu from '../../../resources/foundation_01_menu.png';
@@ -28,13 +28,16 @@ const FoundationTextureSelection = ({ setDialogVisible }: { setDialogVisible: (b
   const getElementById = useStore(Selector.getElementById);
   const updateFoundationTextureById = useStore(Selector.updateFoundationTextureById);
   const updateFoundationTextureForAll = useStore(Selector.updateFoundationTextureForAll);
-  const foundation = useStore(Selector.selectedElement) as FoundationModel;
   const addUndoable = useStore(Selector.addUndoable);
   const foundationActionScope = useStore(Selector.foundationActionScope);
   const setFoundationActionScope = useStore(Selector.setFoundationActionScope);
   const applyCount = useStore(Selector.applyCount);
   const setApplyCount = useStore(Selector.setApplyCount);
   const revertApply = useStore(Selector.revertApply);
+
+  const foundation = useStore((state) =>
+    state.elements.find((e) => e.selected && e.type === ObjectType.Foundation),
+  ) as FoundationModel;
 
   const [selectedTexture, setSelectedTexture] = useState<FoundationTexture>(
     foundation?.textureType ?? FoundationTexture.NoTexture,

@@ -1,5 +1,5 @@
 /*
- * @Copyright 2021-2022. Institute for Future Intelligence, Inc.
+ * @Copyright 2021-2023. Institute for Future Intelligence, Inc.
  */
 
 import React, { useEffect, useRef, useState } from 'react';
@@ -28,7 +28,6 @@ const FoundationHeightInput = ({ setDialogVisible }: { setDialogVisible: (b: boo
   const updateElementCzById = useStore(Selector.updateElementCzById);
   const updateElementLzForAll = useStore(Selector.updateElementLzForAll);
   const updateElementCzForAll = useStore(Selector.updateElementCzForAll);
-  const foundation = useStore(Selector.selectedElement) as FoundationModel;
   const addUndoable = useStore(Selector.addUndoable);
   const foundationActionScope = useStore(Selector.foundationActionScope);
   const setFoundationActionScope = useStore(Selector.setFoundationActionScope);
@@ -36,6 +35,10 @@ const FoundationHeightInput = ({ setDialogVisible }: { setDialogVisible: (b: boo
   const applyCount = useStore(Selector.applyCount);
   const setApplyCount = useStore(Selector.setApplyCount);
   const revertApply = useStore(Selector.revertApply);
+
+  const foundation = useStore((state) =>
+    state.elements.find((e) => e.selected && e.type === ObjectType.Foundation),
+  ) as FoundationModel;
 
   const [updateFlag, setUpdateFlag] = useState<boolean>(false);
   const [dragEnabled, setDragEnabled] = useState<boolean>(false);

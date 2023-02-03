@@ -24,7 +24,7 @@ import { DoorType } from 'src/models/DoorModel';
 import {
   DEFAULT_CEILING_R_VALUE,
   DEFAULT_DOOR_U_VALUE,
-  DEFAULT_FLOOR_R_VALUE,
+  DEFAULT_GROUND_FLOOR_R_VALUE,
   DEFAULT_ROOF_R_VALUE,
   DEFAULT_WALL_R_VALUE,
   DEFAULT_WINDOW_U_VALUE,
@@ -45,7 +45,7 @@ export class DefaultActionState implements ActionState {
   foundationHeight: number;
   foundationColor: string;
   foundationTexture: FoundationTexture;
-  floorRValue: number;
+  groundFloorRValue: number;
 
   cuboidHeight: number;
   cuboidFaceColors: string[];
@@ -162,7 +162,7 @@ export class DefaultActionState implements ActionState {
     this.foundationHeight = 0.1;
     this.foundationColor = '#808080';
     this.foundationTexture = FoundationTexture.NoTexture;
-    this.floorRValue = DEFAULT_FLOOR_R_VALUE;
+    this.groundFloorRValue = DEFAULT_GROUND_FLOOR_R_VALUE;
 
     this.cuboidHeight = 4;
     this.cuboidFaceColors = ['#808080', '#808080', '#808080', '#808080', '#808080', '#808080'];

@@ -4,7 +4,7 @@
 
 import { Color, Euler, Vector2, Vector3 } from 'three';
 
-export const VERSION = '0.7.4';
+export const VERSION = '0.7.5';
 
 export const isProd = process.env.NODE_ENV === 'production';
 
@@ -26,7 +26,7 @@ export const DEFAULT_HEAT_FLUX_COLOR = 'gray';
 export const DEFAULT_HEAT_FLUX_WIDTH = 0.5;
 export const DEFAULT_HEAT_FLUX_DENSITY_FACTOR = 4;
 
-export const DEFAULT_FLOOR_R_VALUE = 2;
+export const DEFAULT_GROUND_FLOOR_R_VALUE = 2;
 export const DEFAULT_WALL_R_VALUE = 2;
 export const DEFAULT_ROOF_R_VALUE = 2;
 export const DEFAULT_CEILING_R_VALUE = 2;

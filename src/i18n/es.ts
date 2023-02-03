@@ -633,9 +633,9 @@ export const i18n_es = {
       GroupMaster: 'Group Master',
       LockAllElementsOnThisFoundation: 'Lock All Elements on This Foundation',
       UnlockAllElementsOnThisFoundation: 'Unlock All Elements on This Foundation',
-      FloorRValue: 'Floor R-Value',
-      OnlyThisFloor: 'Only This Floor',
-      AllFloors: 'All Floors',
+      GroundFloorRValue: 'Ground Floor R-Value',
+      OnlyThisGroundFloor: 'Only This Ground Floor',
+      AllGroundFloors: 'All Ground Floors',
     },
 
     solarPowerTowerMenu: {

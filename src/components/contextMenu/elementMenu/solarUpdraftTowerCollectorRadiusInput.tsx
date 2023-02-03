@@ -20,13 +20,16 @@ const SolarUpdraftTowerCollectorRadiusInput = ({ setDialogVisible }: { setDialog
   const getElementById = useStore(Selector.getElementById);
   const updateCollectorRadiusById = useStore(Selector.updateSolarUpdraftTowerCollectorRadiusById);
   const updateCollectorRadiusForAll = useStore(Selector.updateSolarUpdraftTowerCollectorRadiusForAll);
-  const foundation = useStore(Selector.selectedElement) as FoundationModel;
   const addUndoable = useStore(Selector.addUndoable);
   const foundationActionScope = useStore(Selector.foundationActionScope);
   const setFoundationActionScope = useStore(Selector.setFoundationActionScope);
   const applyCount = useStore(Selector.applyCount);
   const setApplyCount = useStore(Selector.setApplyCount);
   const revertApply = useStore(Selector.revertApply);
+
+  const foundation = useStore((state) =>
+    state.elements.find((e) => e.selected && e.type === ObjectType.Foundation),
+  ) as FoundationModel;
 
   const [updateFlag, setUpdateFlag] = useState<boolean>(false);
   const [dragEnabled, setDragEnabled] = useState<boolean>(false);

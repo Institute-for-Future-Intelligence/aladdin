@@ -633,9 +633,9 @@ export const i18n_tr = {
       GroupMaster: 'Grup Yöneticisi',
       LockAllElementsOnThisFoundation: ' Seçili temel üzerindeki tüm öğeleri kilitle',
       UnlockAllElementsOnThisFoundation: ' Seçili temel üzerindeki tüm öğelerin kilidini aç',
-      FloorRValue: 'Floor R-Value',
-      OnlyThisFloor: 'Only This Floor',
-      AllFloors: 'All Floors',
+      GroundFloorRValue: 'Ground Floor R-Value',
+      OnlyThisGroundFloor: 'Only This Ground Floor',
+      AllGroundFloors: 'All Ground Floors',
     },
 
     solarPowerTowerMenu: {

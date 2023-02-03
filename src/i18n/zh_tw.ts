@@ -617,9 +617,9 @@ export const i18n_zh_tw = {
       GroupMaster: '主地基',
       LockAllElementsOnThisFoundation: '固定此地基上所有的部件',
       UnlockAllElementsOnThisFoundation: '解除此地基上所有的固定',
-      FloorRValue: '建築物地板的R值',
-      OnlyThisFloor: '只這個建築物的地板',
-      AllFloors: '所有建築物的地板',
+      GroundFloorRValue: '建築物地板的R值',
+      OnlyThisGroundFloor: '只這個建築物的地板',
+      AllGroundFloors: '所有建築物的地板',
     },
 
     solarPowerTowerMenu: {

@@ -13,10 +13,11 @@ import { UndoableChange } from 'src/undo/UndoableChange';
 import { UndoableChangeGroup } from 'src/undo/UndoableChangeGroup';
 import { Util } from '../../../Util';
 import { FoundationModel } from '../../../models/FoundationModel';
-import { DEFAULT_FLOOR_R_VALUE } from '../../../constants';
+import { DEFAULT_GROUND_FLOOR_R_VALUE, ZERO_TOLERANCE } from '../../../constants';
 
-const FloorRValueInput = ({ setDialogVisible }: { setDialogVisible: (b: boolean) => void }) => {
+const GroundFloorRValueInput = ({ setDialogVisible }: { setDialogVisible: (b: boolean) => void }) => {
   const language = useStore(Selector.language);
+  const elements = useStore(Selector.elements);
   const selectedElement = useStore(Selector.selectedElement) as FoundationModel;
   const addUndoable = useStore(Selector.addUndoable);
   const actionScope = useStore(Selector.foundationActionScope);
@@ -38,7 +39,7 @@ const FloorRValueInput = ({ setDialogVisible }: { setDialogVisible: (b: boolean)
     return null;
   });
 
-  const [inputValue, setInputValue] = useState<number>(foundationModel?.rValue ?? DEFAULT_FLOOR_R_VALUE);
+  const [inputValue, setInputValue] = useState<number>(foundationModel?.rValue ?? DEFAULT_GROUND_FLOOR_R_VALUE);
   const [inputValueUS, setInputValueUS] = useState<number>(Util.toRValueInUS(inputValue));
   const [dragEnabled, setDragEnabled] = useState<boolean>(false);
   const [bounds, setBounds] = useState<DraggableBounds>({ left: 0, top: 0, bottom: 0, right: 0 } as DraggableBounds);
@@ -48,9 +49,29 @@ const FloorRValueInput = ({ setDialogVisible }: { setDialogVisible: (b: boolean)
 
   useEffect(() => {
     if (foundationModel) {
-      setInputValue(foundationModel?.rValue ?? DEFAULT_FLOOR_R_VALUE);
+      setInputValue(foundationModel?.rValue ?? DEFAULT_GROUND_FLOOR_R_VALUE);
     }
   }, [foundationModel?.rValue]);
+
+  const needChange = (value: number) => {
+    switch (actionScope) {
+      case Scope.AllObjectsOfThisType:
+        for (const e of elements) {
+          if (e.type === ObjectType.Foundation && !e.locked) {
+            const f = e as FoundationModel;
+            if (f.rValue === undefined || Math.abs(f.rValue - value) > ZERO_TOLERANCE) {
+              return true;
+            }
+          }
+        }
+        break;
+      default:
+        if (foundationModel?.rValue === undefined || Math.abs(foundationModel?.rValue - value) > ZERO_TOLERANCE) {
+          return true;
+        }
+    }
+    return false;
+  };
 
   const updateById = (id: string, value: number) => {
     setCommonStore((state) => {
@@ -77,6 +98,7 @@ const FloorRValueInput = ({ setDialogVisible }: { setDialogVisible: (b: boolean)
 
   const setValue = (value: number) => {
     if (!foundationModel) return;
+    if (!needChange(value)) return;
     switch (actionScope) {
       case Scope.AllObjectsOfThisType:
         const oldValuesAll = new Map<string, number | undefined>();
@@ -84,13 +106,13 @@ const FloorRValueInput = ({ setDialogVisible }: { setDialogVisible: (b: boolean)
           for (const e of state.elements) {
             if (e.type === ObjectType.Foundation && !e.locked) {
               const foundation = e as FoundationModel;
-              oldValuesAll.set(e.id, foundation.rValue ?? DEFAULT_FLOOR_R_VALUE);
+              oldValuesAll.set(e.id, foundation.rValue ?? DEFAULT_GROUND_FLOOR_R_VALUE);
               foundation.rValue = value;
             }
           }
         });
         const undoableChangeAll = {
-          name: 'Set R-Value for All Floors',
+          name: 'Set R-Value for All Ground Floors',
           timestamp: Date.now(),
           oldValues: oldValuesAll,
           newValue: value,
@@ -107,9 +129,9 @@ const FloorRValueInput = ({ setDialogVisible }: { setDialogVisible: (b: boolean)
       default:
         if (foundationModel) {
           const updatedFoundation = getElementById(foundationModel.id) as FoundationModel;
-          const oldValue = updatedFoundation.rValue ?? foundationModel.rValue ?? DEFAULT_FLOOR_R_VALUE;
+          const oldValue = updatedFoundation.rValue ?? foundationModel.rValue ?? DEFAULT_GROUND_FLOOR_R_VALUE;
           const undoableChange = {
-            name: 'Set Floor R-Value',
+            name: 'Set Ground Floor R-Value',
             timestamp: Date.now(),
             oldValue: oldValue,
             newValue: value,
@@ -128,7 +150,7 @@ const FloorRValueInput = ({ setDialogVisible }: { setDialogVisible: (b: boolean)
         }
     }
     setCommonStore((state) => {
-      state.actionState.floorRValue = value;
+      state.actionState.groundFloorRValue = value;
     });
   };
 
@@ -146,7 +168,7 @@ const FloorRValueInput = ({ setDialogVisible }: { setDialogVisible: (b: boolean)
   };
 
   const close = () => {
-    setInputValue(foundationModel?.rValue ?? DEFAULT_FLOOR_R_VALUE);
+    setInputValue(foundationModel?.rValue ?? DEFAULT_GROUND_FLOOR_R_VALUE);
     setDialogVisible(false);
   };
 
@@ -249,8 +271,8 @@ const FloorRValueInput = ({ setDialogVisible }: { setDialogVisible: (b: boolean)
           >
             <Radio.Group onChange={(e) => setActionScope(e.target.value)} value={actionScope}>
               <Space direction="vertical">
-                <Radio value={Scope.OnlyThisObject}>{i18n.t('foundationMenu.OnlyThisFloor', lang)}</Radio>
-                <Radio value={Scope.AllObjectsOfThisType}>{i18n.t('foundationMenu.AllFloors', lang)}</Radio>
+                <Radio value={Scope.OnlyThisObject}>{i18n.t('foundationMenu.OnlyThisGroundFloor', lang)}</Radio>
+                <Radio value={Scope.AllObjectsOfThisType}>{i18n.t('foundationMenu.AllGroundFloors', lang)}</Radio>
               </Space>
             </Radio.Group>
           </Col>
@@ -260,4 +282,4 @@ const FloorRValueInput = ({ setDialogVisible }: { setDialogVisible: (b: boolean)
   );
 };
 
-export default FloorRValueInput;
+export default GroundFloorRValueInput;

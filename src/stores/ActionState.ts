@@ -1,5 +1,5 @@
 /*
- * @Copyright 2022. Institute for Future Intelligence, Inc.
+ * @Copyright 2022-2023. Institute for Future Intelligence, Inc.
  */
 
 import {
@@ -31,7 +31,7 @@ export interface ActionState {
   foundationHeight: number;
   foundationColor: string;
   foundationTexture: FoundationTexture;
-  floorRValue: number;
+  groundFloorRValue: number;
 
   cuboidHeight: number;
   cuboidFaceColors: string[];

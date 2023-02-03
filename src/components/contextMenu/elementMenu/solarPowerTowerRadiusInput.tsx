@@ -1,5 +1,5 @@
 /*
- * @Copyright 2022. Institute for Future Intelligence, Inc.
+ * @Copyright 2022-2023. Institute for Future Intelligence, Inc.
  */
 
 import React, { useEffect, useRef, useState } from 'react';
@@ -20,7 +20,6 @@ const SolarPowerTowerRadiusInput = ({ setDialogVisible }: { setDialogVisible: (b
   const getElementById = useStore(Selector.getElementById);
   const updateById = useStore(Selector.updateSolarPowerTowerRadiusById);
   const updateForAll = useStore(Selector.updateSolarPowerTowerRadiusForAll);
-  const foundation = useStore(Selector.selectedElement) as FoundationModel;
   const addUndoable = useStore(Selector.addUndoable);
   const foundationActionScope = useStore(Selector.foundationActionScope);
   const setFoundationActionScope = useStore(Selector.setFoundationActionScope);
@@ -28,6 +27,9 @@ const SolarPowerTowerRadiusInput = ({ setDialogVisible }: { setDialogVisible: (b
   const setApplyCount = useStore(Selector.setApplyCount);
   const revertApply = useStore(Selector.revertApply);
 
+  const foundation = useStore((state) =>
+    state.elements.find((e) => e.selected && e.type === ObjectType.Foundation),
+  ) as FoundationModel;
   const powerTower = foundation?.solarPowerTower;
 
   const [updateFlag, setUpdateFlag] = useState<boolean>(false);

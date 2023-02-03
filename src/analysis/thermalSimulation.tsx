@@ -35,7 +35,7 @@ import { SolarRadiation } from './SolarRadiation';
 import {
   DEFAULT_CEILING_R_VALUE,
   DEFAULT_DOOR_U_VALUE,
-  DEFAULT_FLOOR_R_VALUE,
+  DEFAULT_GROUND_FLOOR_R_VALUE,
   DEFAULT_FOUNDATION_SLAB_DEPTH,
   DEFAULT_ROOF_R_VALUE,
   DEFAULT_WALL_R_VALUE,
@@ -831,7 +831,7 @@ const ThermalSimulation = ({ city }: ThermalSimulationProps) => {
     const deltaT = currentGroundTemperatureRef.current - setpoint;
     updateHeatExchangeNow(
       foundation.id,
-      (((deltaT * floorArea) / (foundation.rValue ?? DEFAULT_FLOOR_R_VALUE)) * 0.001) / timesPerHour,
+      (((deltaT * floorArea) / (foundation.rValue ?? DEFAULT_GROUND_FLOOR_R_VALUE)) * 0.001) / timesPerHour,
     );
   };
 

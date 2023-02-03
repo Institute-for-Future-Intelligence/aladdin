@@ -46,7 +46,7 @@ import SolarUpdraftTowerCollectorEmissivityInput from './solarUpdraftTowerCollec
 import SolarPanelTiltAngleGaWizard from './solarPanelTiltAngleGaWizard';
 import SolarPanelTiltAnglePsoWizard from './solarPanelTiltAnglePsoWizard';
 import { UndoableChangeGroup } from '../../../undo/UndoableChangeGroup';
-import FloorRValueInput from './floorRValueInput';
+import GroundFloorRValueInput from './groundFloorRValueInput';
 import { Util } from '../../../Util';
 import { useLabel, useLabelHeight, useLabelShow, useLabelSize, useLabelText } from './menuHooks';
 
@@ -1037,17 +1037,17 @@ export const FoundationMenu = React.memo(() => {
             {i18n.t('word.Azimuth', lang)} ...
           </Menu.Item>
 
-          {isBuilding && rValueDialogVisible && <FloorRValueInput setDialogVisible={setRValueDialogVisible} />}
+          {isBuilding && rValueDialogVisible && <GroundFloorRValueInput setDialogVisible={setRValueDialogVisible} />}
           {isBuilding && (
             <Menu.Item
-              key={'floor-r-value'}
+              key={'ground-floor-r-value'}
               style={{ paddingLeft: '36px' }}
               onClick={() => {
                 setApplyCount(0);
                 setRValueDialogVisible(true);
               }}
             >
-              {i18n.t('foundationMenu.FloorRValue', lang)} ...
+              {i18n.t('foundationMenu.GroundFloorRValue', lang)} ...
             </Menu.Item>
           )}
         </>
