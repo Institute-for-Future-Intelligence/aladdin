@@ -1,5 +1,5 @@
 /*
- * @Copyright 2022. Institute for Future Intelligence, Inc.
+ * @Copyright 2022-2023. Institute for Future Intelligence, Inc.
  */
 
 import React, { useEffect, useRef, useState } from 'react';
@@ -24,13 +24,16 @@ const ParabolicTroughLatusRectumInput = ({ setDialogVisible }: { setDialogVisibl
   const updateLatusRectumAboveFoundation = useStore(Selector.updateParabolaLatusRectumAboveFoundation);
   const updateLatusRectumForAll = useStore(Selector.updateParabolaLatusRectumForAll);
   const getParent = useStore(Selector.getParent);
-  const parabolicTrough = useStore(Selector.selectedElement) as ParabolicTroughModel;
   const addUndoable = useStore(Selector.addUndoable);
   const actionScope = useStore(Selector.parabolicTroughActionScope);
   const setActionScope = useStore(Selector.setParabolicTroughActionScope);
   const applyCount = useStore(Selector.applyCount);
   const setApplyCount = useStore(Selector.setApplyCount);
   const revertApply = useStore(Selector.revertApply);
+
+  const parabolicTrough = useStore((state) =>
+    state.elements.find((e) => e.selected && e.type === ObjectType.ParabolicTrough),
+  ) as ParabolicTroughModel;
 
   const [updateFlag, setUpdateFlag] = useState<boolean>(false);
   const [dragEnabled, setDragEnabled] = useState<boolean>(false);

@@ -1,5 +1,5 @@
 /*
- * @Copyright 2022. Institute for Future Intelligence, Inc.
+ * @Copyright 2022-2023. Institute for Future Intelligence, Inc.
  */
 
 import React, { useEffect, useRef, useState } from 'react';
@@ -22,13 +22,16 @@ const FresnelReflectorReflectanceInput = ({ setDialogVisible }: { setDialogVisib
   const updateById = useStore(Selector.updateCspReflectanceById);
   const updateAboveFoundation = useStore(Selector.updateCspReflectanceAboveFoundation);
   const updateForAll = useStore(Selector.updateCspReflectanceForAll);
-  const fresnelReflector = useStore(Selector.selectedElement) as FresnelReflectorModel;
   const addUndoable = useStore(Selector.addUndoable);
   const actionScope = useStore(Selector.fresnelReflectorActionScope);
   const setActionScope = useStore(Selector.setFresnelReflectorActionScope);
   const applyCount = useStore(Selector.applyCount);
   const setApplyCount = useStore(Selector.setApplyCount);
   const revertApply = useStore(Selector.revertApply);
+
+  const fresnelReflector = useStore((state) =>
+    state.elements.find((e) => e.selected && e.type === ObjectType.FresnelReflector),
+  ) as FresnelReflectorModel;
 
   const [updateFlag, setUpdateFlag] = useState<boolean>(false);
   const [dragEnabled, setDragEnabled] = useState<boolean>(false);

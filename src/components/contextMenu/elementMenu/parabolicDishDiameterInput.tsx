@@ -1,5 +1,5 @@
 /*
- * @Copyright 2022. Institute for Future Intelligence, Inc.
+ * @Copyright 2022-2023. Institute for Future Intelligence, Inc.
  */
 
 import React, { useEffect, useRef, useState } from 'react';
@@ -27,13 +27,16 @@ const ParabolicDishDiameterInput = ({ setDialogVisible }: { setDialogVisible: (b
   const updateLxForAll = useStore(Selector.updateElementLxForAll);
   const updateLyForAll = useStore(Selector.updateElementLyForAll);
   const getParent = useStore(Selector.getParent);
-  const parabolicDish = useStore(Selector.selectedElement) as ParabolicDishModel;
   const addUndoable = useStore(Selector.addUndoable);
   const actionScope = useStore(Selector.parabolicDishActionScope);
   const setActionScope = useStore(Selector.setParabolicDishActionScope);
   const applyCount = useStore(Selector.applyCount);
   const setApplyCount = useStore(Selector.setApplyCount);
   const revertApply = useStore(Selector.revertApply);
+
+  const parabolicDish = useStore((state) =>
+    state.elements.find((e) => e.selected && e.type === ObjectType.ParabolicDish),
+  ) as ParabolicDishModel;
 
   const [updateFlag, setUpdateFlag] = useState<boolean>(false);
   const [dragEnabled, setDragEnabled] = useState<boolean>(false);

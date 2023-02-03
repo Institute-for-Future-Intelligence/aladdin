@@ -1,7 +1,7 @@
 {
-  "docid": "eLDxomXnXpgy7hEhLjfXNs",
-  "time": "02/02/2023 02:30 pm",
-  "timestamp": 1675366208791,
+  "docid": "k6wAWsKFrh7MUUMVt7Bvyz",
+  "time": "02/03/2023 04:09 pm",
+  "timestamp": 1675458565019,
   "userid": "QWecNcxhyvP6j6sBN11hBsfZDau1",
   "owner": null,
   "email": null,
@@ -117,7 +117,9 @@
       "selected": false,
       "dailyYield": 28.86248835017146,
       "yearlyYield": 311.4614380820491,
-      "label": "6"
+      "label": "6",
+      "labelHeight": 2,
+      "labelSize": 2
     },
     {
       "type": "Heliostat",
@@ -150,7 +152,9 @@
       "selected": false,
       "dailyYield": 22.07549342325896,
       "yearlyYield": 341.6536704139208,
-      "label": "4"
+      "label": "4",
+      "labelHeight": 2,
+      "labelSize": 2
     },
     {
       "type": "Heliostat",
@@ -183,7 +187,9 @@
       "drawSunBeam": true,
       "dailyYield": 17.32894620185682,
       "yearlyYield": 285.77957159626914,
-      "label": "3"
+      "label": "3",
+      "labelHeight": 2,
+      "labelSize": 2
     },
     {
       "type": "Heliostat",
@@ -216,7 +222,9 @@
       "drawSunBeam": true,
       "dailyYield": 21.79675399494804,
       "yearlyYield": 347.0340046876023,
-      "label": "5"
+      "label": "5",
+      "labelHeight": 2,
+      "labelSize": 2
     },
     {
       "type": "Heliostat",
@@ -248,7 +256,9 @@
       "selected": false,
       "drawSunBeam": true,
       "label": "2",
-      "dailyYield": 14.058256815685132
+      "dailyYield": 14.058256815685132,
+      "labelHeight": 2,
+      "labelSize": 2
     },
     {
       "type": "Heliostat",
@@ -280,7 +290,9 @@
       "selected": false,
       "drawSunBeam": true,
       "label": "1",
-      "dailyYield": 11.010081200524052
+      "dailyYield": 11.010081200524052,
+      "labelSize": 2,
+      "labelHeight": 2
     }
   ],
   "view": {
@@ -320,13 +332,13 @@
     "showYearlyLightSensorPanel": false,
     "mapType": "hybrid",
     "cameraPosition": [
-      -61.20741398700158,
-      -1.258778377193635,
-      21.64838528396058
+      -61.209597915228606,
+      -1.3390540628971292,
+      21.648385283960568
     ],
     "panCenter": [
-      -1.9066551550283481,
-      -2.872076351117812,
+      -1.9088390832554354,
+      -2.9523520368213196,
       7.55643283741026
     ],
     "orthographic": false,

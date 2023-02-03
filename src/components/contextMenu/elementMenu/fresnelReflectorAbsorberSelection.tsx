@@ -1,5 +1,5 @@
 /*
- * @Copyright 2022. Institute for Future Intelligence, Inc.
+ * @Copyright 2022-2023. Institute for Future Intelligence, Inc.
  */
 
 import React, { useEffect, useMemo, useRef, useState } from 'react';
@@ -24,13 +24,16 @@ const FresnelReflectorAbsorberSelection = ({ setDialogVisible }: { setDialogVisi
   const updateById = useStore(Selector.updateSolarReceiverById);
   const updateAboveFoundation = useStore(Selector.updateSolarReceiverAboveFoundation);
   const updateForAll = useStore(Selector.updateSolarReceiverForAll);
-  const fresnelReflector = useStore(Selector.selectedElement) as FresnelReflectorModel;
   const addUndoable = useStore(Selector.addUndoable);
   const actionScope = useStore(Selector.fresnelReflectorActionScope);
   const setActionScope = useStore(Selector.setFresnelReflectorActionScope);
   const applyCount = useStore(Selector.applyCount);
   const setApplyCount = useStore(Selector.setApplyCount);
   const revertApply = useStore(Selector.revertApply);
+
+  const fresnelReflector = useStore((state) =>
+    state.elements.find((e) => e.selected && e.type === ObjectType.FresnelReflector),
+  ) as FresnelReflectorModel;
 
   const [selectedReceiverId, setSelectedReceiverId] = useState<string>(fresnelReflector?.receiverId ?? 'None');
   const [updateFlag, setUpdateFlag] = useState<boolean>(false);

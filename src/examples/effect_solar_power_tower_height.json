@@ -1,7 +1,7 @@
 {
-  "docid": "pZDY88jj4sXrYMWxTseZ1u",
-  "time": "02/02/2023 02:32 pm",
-  "timestamp": 1675366346931,
+  "docid": "1pMd1NTQi5Pyg1ycNc7Sjb",
+  "time": "02/03/2023 04:14 pm",
+  "timestamp": 1675458872274,
   "userid": "QWecNcxhyvP6j6sBN11hBsfZDau1",
   "owner": null,
   "email": null,
@@ -117,7 +117,9 @@
       "selected": false,
       "dailyYield": 29.12957022220564,
       "yearlyYield": 311.4614380820491,
-      "label": "L6"
+      "label": "L6",
+      "labelHeight": 4,
+      "labelSize": 2
     },
     {
       "type": "Heliostat",
@@ -150,7 +152,9 @@
       "selected": false,
       "dailyYield": 12.632105204416524,
       "yearlyYield": 341.6536704139208,
-      "label": "L4"
+      "label": "L4",
+      "labelHeight": 4,
+      "labelSize": 2
     },
     {
       "type": "Heliostat",
@@ -183,7 +187,9 @@
       "drawSunBeam": true,
       "dailyYield": 8.640669150547245,
       "yearlyYield": 285.77957159626914,
-      "label": "L3"
+      "label": "L3",
+      "labelHeight": 4,
+      "labelSize": 2
     },
     {
       "type": "Heliostat",
@@ -216,7 +222,9 @@
       "drawSunBeam": true,
       "dailyYield": 15.667514658355707,
       "yearlyYield": 347.0340046876023,
-      "label": "L5"
+      "label": "L5",
+      "labelHeight": 4,
+      "labelSize": 2
     },
     {
       "type": "Heliostat",
@@ -248,7 +256,9 @@
       "selected": false,
       "drawSunBeam": true,
       "label": "L2",
-      "dailyYield": 4.958857907473794
+      "dailyYield": 4.958857907473794,
+      "labelHeight": 4,
+      "labelSize": 2
     },
     {
       "type": "Heliostat",
@@ -280,7 +290,9 @@
       "selected": false,
       "drawSunBeam": true,
       "label": "L1",
-      "dailyYield": 2.355020886123749
+      "dailyYield": 2.355020886123749,
+      "labelHeight": 4,
+      "labelSize": 2
     },
     {
       "type": "Human",
@@ -335,7 +347,9 @@
       "selected": false,
       "drawSunBeam": true,
       "dailyYield": 28.834554606358278,
-      "label": "H6"
+      "label": "H6",
+      "labelHeight": 4,
+      "labelSize": 2
     },
     {
       "type": "Heliostat",
@@ -367,7 +381,9 @@
       "selected": false,
       "drawSunBeam": true,
       "dailyYield": 22.049770857324166,
-      "label": "H4"
+      "label": "H4",
+      "labelHeight": 4,
+      "labelSize": 2
     },
     {
       "type": "Heliostat",
@@ -399,7 +415,9 @@
       "selected": false,
       "drawSunBeam": true,
       "dailyYield": 17.30899182389923,
-      "label": "H3"
+      "label": "H3",
+      "labelHeight": 4,
+      "labelSize": 2
     },
     {
       "type": "Heliostat",
@@ -431,7 +449,9 @@
       "selected": false,
       "drawSunBeam": true,
       "dailyYield": 21.74570231867697,
-      "label": "H5"
+      "label": "H5",
+      "labelHeight": 4,
+      "labelSize": 2
     },
     {
       "type": "Heliostat",
@@ -463,7 +483,9 @@
       "selected": false,
       "drawSunBeam": true,
       "dailyYield": 14.042308959831052,
-      "label": "H2"
+      "label": "H2",
+      "labelHeight": 4,
+      "labelSize": 2
     },
     {
       "type": "Heliostat",
@@ -495,7 +517,9 @@
       "selected": false,
       "drawSunBeam": true,
       "dailyYield": 10.99900401218998,
-      "label": "H1"
+      "label": "H1",
+      "labelHeight": 4,
+      "labelSize": 2
     },
     {
       "type": "Foundation",
@@ -561,9 +585,9 @@
     "showYearlyLightSensorPanel": false,
     "mapType": "hybrid",
     "cameraPosition": [
-      -65.26004925031225,
-      -40.981584348790804,
-      10.926967172602259
+      -65.26004925031205,
+      -40.981584348790705,
+      10.926967172602236
     ],
     "panCenter": [
       -8.555794568197623,

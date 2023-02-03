@@ -1,5 +1,5 @@
 /*
- * @Copyright 2022. Institute for Future Intelligence, Inc.
+ * @Copyright 2022-2023. Institute for Future Intelligence, Inc.
  */
 
 import React, { useEffect, useRef, useState } from 'react';
@@ -23,13 +23,16 @@ const HeliostatPoleHeightInput = ({ setDialogVisible }: { setDialogVisible: (b: 
   const updatePoleHeightAboveFoundation = useStore(Selector.updateSolarCollectorPoleHeightAboveFoundation);
   const updatePoleHeightForAll = useStore(Selector.updateSolarCollectorPoleHeightForAll);
   const getParent = useStore(Selector.getParent);
-  const heliostat = useStore(Selector.selectedElement) as HeliostatModel;
   const addUndoable = useStore(Selector.addUndoable);
   const actionScope = useStore(Selector.heliostatActionScope);
   const setActionScope = useStore(Selector.setHeliostatActionScope);
   const applyCount = useStore(Selector.applyCount);
   const setApplyCount = useStore(Selector.setApplyCount);
   const revertApply = useStore(Selector.revertApply);
+
+  const heliostat = useStore((state) =>
+    state.elements.find((e) => e.selected && e.type === ObjectType.Heliostat),
+  ) as HeliostatModel;
 
   const [updateFlag, setUpdateFlag] = useState<boolean>(false);
   const [dragEnabled, setDragEnabled] = useState<boolean>(false);
