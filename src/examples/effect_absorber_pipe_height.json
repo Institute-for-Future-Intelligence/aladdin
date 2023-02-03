@@ -1,7 +1,7 @@
 {
-  "docid": "ocJuZWYSitEgM5CmLbqaik",
-  "time": "02/02/2023 02:12 pm",
-  "timestamp": 1675365166608,
+  "docid": "91fFrr9emvLvmNx1sW7PMh",
+  "time": "02/03/2023 04:20 pm",
+  "timestamp": 1675459240163,
   "userid": "QWecNcxhyvP6j6sBN11hBsfZDau1",
   "owner": null,
   "email": null,
@@ -123,8 +123,10 @@
       "selected": false,
       "dailyYield": 46.64633299683992,
       "drawSunBeam": true,
-      "label": "Short2",
-      "yearlyYield": 547.7275410650782
+      "label": "Lo2",
+      "yearlyYield": 547.7275410650782,
+      "labelHeight": 4,
+      "labelSize": 2
     },
     {
       "type": "Fresnel Reflector",
@@ -159,9 +161,11 @@
       "id": "1FVTFf1Rdrpbt8TCGDL47X",
       "selected": false,
       "dailyYield": 46.68721550672282,
-      "label": "Short1",
+      "label": "Lo1",
       "drawSunBeam": true,
-      "yearlyYield": 547.8648836504849
+      "yearlyYield": 547.8648836504849,
+      "labelHeight": 4,
+      "labelSize": 2
     },
     {
       "type": "Foundation",
@@ -224,7 +228,9 @@
       "selected": false,
       "dailyYield": 52.29842954176333,
       "drawSunBeam": true,
-      "label": "Tall2"
+      "label": "Hi2",
+      "labelHeight": 4,
+      "labelSize": 2
     },
     {
       "type": "Fresnel Reflector",
@@ -260,7 +266,9 @@
       "selected": false,
       "dailyYield": 52.33859564683257,
       "drawSunBeam": true,
-      "label": "Tall1"
+      "label": "Hi1",
+      "labelHeight": 4,
+      "labelSize": 2
     }
   ],
   "view": {
@@ -268,9 +276,9 @@
     "enableRotate": true,
     "ambientLightIntensity": 0.1,
     "cameraPosition": [
-      53.11784569640714,
-      -95.69780414866548,
-      24.112920613071182
+      53.11784569640703,
+      -95.69780414866537,
+      24.112920613071175
     ],
     "cameraPosition2D": [
       0,

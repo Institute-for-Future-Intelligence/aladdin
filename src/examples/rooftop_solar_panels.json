@@ -1,7 +1,7 @@
 {
-  "docid": "fsnBWKaWS85RJH34w16EVo",
-  "time": "02/02/2023 05:21 pm",
-  "timestamp": 1675376498920,
+  "docid": "nrvve83QwwTxh6XjncGyka",
+  "time": "02/03/2023 04:46 pm",
+  "timestamp": 1675460767231,
   "userid": "QWecNcxhyvP6j6sBN11hBsfZDau1",
   "owner": null,
   "email": null,
@@ -780,7 +780,8 @@
       "selected": false,
       "dailyYield": 1.1606630204047466,
       "yearlyYield": 14.01350339573908,
-      "label": "S"
+      "label": "S",
+      "labelSize": 0.4
     },
     {
       "type": "Solar Panel",
@@ -818,7 +819,8 @@
       "selected": false,
       "dailyYield": 0.7689476441385455,
       "yearlyYield": 9.02911259075203,
-      "label": "N"
+      "label": "N",
+      "labelSize": 0.4
     },
     {
       "type": "Solar Panel",
@@ -856,7 +858,8 @@
       "selected": false,
       "dailyYield": 0.9541736397038687,
       "yearlyYield": 11.32280863910204,
-      "label": "W"
+      "label": "W",
+      "labelSize": 0.4
     },
     {
       "type": "Solar Panel",
@@ -894,7 +897,8 @@
       "selected": false,
       "dailyYield": 0.9576426115274149,
       "yearlyYield": 11.37252332042091,
-      "label": "E"
+      "label": "E",
+      "labelSize": 0.4
     },
     {
       "type": "Sensor",
@@ -1026,9 +1030,9 @@
     "dailyHeliostatYieldPanelX": 0,
     "showDailyParabolicDishYieldPanel": false,
     "cameraPosition": [
-      3.1488315162915477,
-      -5.07149136630775,
-      20.900875793778095
+      3.096291394829856,
+      -4.886200526627761,
+      20.95681240092
     ],
     "showYearlyHeliostatYieldPanel": false,
     "orthographic": false,

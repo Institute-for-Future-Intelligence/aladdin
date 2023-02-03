@@ -1,7 +1,7 @@
 {
-  "docid": "mB7ffXAEU7LS8ezXxByioa",
-  "time": "02/02/2023 02:01 pm",
-  "timestamp": 1675364468962,
+  "docid": "tKo6pFHzEmKPLUAtFMSXH1",
+  "time": "02/03/2023 04:17 pm",
+  "timestamp": 1675459040307,
   "userid": "QWecNcxhyvP6j6sBN11hBsfZDau1",
   "owner": null,
   "email": null,
@@ -119,7 +119,9 @@
       "selected": false,
       "dailyYield": 147.4722488686051,
       "yearlyYield": "0[object Object][object Object][object Object][object Object][object Object][object Object][object Object][object Object][object Object][object Object][object Object][object Object]",
-      "label": "EW2"
+      "label": "EW2",
+      "labelHeight": 4,
+      "labelSize": 2
     },
     {
       "type": "Parabolic Trough",
@@ -158,7 +160,9 @@
       "dailyYield": 113.9525242653769,
       "yearlyYield": "0[object Object][object Object][object Object][object Object][object Object][object Object][object Object][object Object][object Object][object Object][object Object][object Object]",
       "drawSunBeam": false,
-      "label": "EW1"
+      "label": "EW1",
+      "labelHeight": 4,
+      "labelSize": 2
     },
     {
       "type": "Parabolic Trough",
@@ -197,7 +201,9 @@
       "dailyYield": 105.42067563837163,
       "yearlyYield": "0[object Object][object Object][object Object][object Object][object Object][object Object][object Object][object Object][object Object][object Object][object Object][object Object]",
       "drawSunBeam": false,
-      "label": "NS1"
+      "label": "NS1",
+      "labelHeight": 4,
+      "labelSize": 2
     },
     {
       "type": "Parabolic Trough",
@@ -235,7 +241,9 @@
       "selected": false,
       "dailyYield": 105.31845023255819,
       "yearlyYield": "0[object Object][object Object][object Object][object Object][object Object][object Object][object Object][object Object][object Object][object Object][object Object][object Object]",
-      "label": "NS2"
+      "label": "NS2",
+      "labelHeight": 4,
+      "labelSize": 2
     },
     {
       "type": "Foundation",

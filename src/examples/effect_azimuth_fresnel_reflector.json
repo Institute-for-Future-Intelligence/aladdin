@@ -1,7 +1,7 @@
 {
-  "docid": "8SXqDCVpMaKQeM6Xg9qBk5",
-  "time": "02/02/2023 02:14 pm",
-  "timestamp": 1675365286142,
+  "docid": "vKXC3Vu98tLTj5EYPySBoM",
+  "time": "02/03/2023 04:23 pm",
+  "timestamp": 1675459380199,
   "userid": "QWecNcxhyvP6j6sBN11hBsfZDau1",
   "owner": null,
   "email": null,
@@ -124,7 +124,9 @@
       "dailyYield": 52.29842954176333,
       "drawSunBeam": true,
       "label": "NS-E",
-      "yearlyYield": 547.7275410650782
+      "yearlyYield": 547.7275410650782,
+      "labelHeight": 4,
+      "labelSize": 2
     },
     {
       "type": "Fresnel Reflector",
@@ -161,7 +163,9 @@
       "dailyYield": 52.33859564683257,
       "label": "NS-W",
       "drawSunBeam": true,
-      "yearlyYield": 547.8648836504849
+      "yearlyYield": 547.8648836504849,
+      "labelHeight": 4,
+      "labelSize": 2
     },
     {
       "type": "Foundation",
@@ -224,7 +228,9 @@
       "selected": false,
       "dailyYield": 51.241946460146316,
       "drawSunBeam": true,
-      "label": "EW-N"
+      "label": "EW-N",
+      "labelHeight": 4,
+      "labelSize": 2
     },
     {
       "type": "Fresnel Reflector",
@@ -260,7 +266,9 @@
       "selected": false,
       "dailyYield": 36.12397534329661,
       "drawSunBeam": true,
-      "label": "EW-S"
+      "label": "EW-S",
+      "labelHeight": 4,
+      "labelSize": 2
     }
   ],
   "view": {
@@ -268,9 +276,9 @@
     "enableRotate": true,
     "ambientLightIntensity": 0.1,
     "cameraPosition": [
-      30.357044963149473,
-      -83.64765831905055,
-      20.411043875881713
+      33.85725619257774,
+      -80.53017579058466,
+      26.560297986535087
     ],
     "cameraPosition2D": [
       0,
