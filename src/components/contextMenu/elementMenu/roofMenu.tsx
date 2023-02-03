@@ -31,6 +31,7 @@ import RoofRValueInput from './roofRValueInput';
 import RoofHeightInput from './roofHeightInput';
 import RoofHeatCapacityInput from './roofHeatCapacityInput';
 import { UndoableCheck } from 'src/undo/UndoableCheck';
+import CeilingRValueInput from './ceilingRValueInput';
 
 export const RoofMenu = React.memo(() => {
   const setCommonStore = useStore(Selector.set);
@@ -57,7 +58,8 @@ export const RoofMenu = React.memo(() => {
   const [roofSideColorDialogVisible, setRoofSideColorDialogVisible] = useState(false);
   const [glassTintDialogVisible, setGlassTintDialogVisible] = useState(false);
   const [opacityDialogVisible, setOpacityDialogVisible] = useState(false);
-  const [rValueDialogVisible, setRValueDialogVisible] = useState(false);
+  const [roofRValueDialogVisible, setRoofRValueDialogVisible] = useState(false);
+  const [ceilingRValueDialogVisible, setCeilingRValueDialogVisible] = useState(false);
   const [heatCapacityDialogVisible, setHeatCapacityDialogVisible] = useState(false);
 
   if (!roof) return null;
@@ -286,39 +288,39 @@ export const RoofMenu = React.memo(() => {
       {legalToPaste() && <Paste keyName={'roof-paste'} />}
       <Lock keyName={'roof-lock'} />
 
-      <Menu.Item key={'roof-ceiling'}>
-        <Checkbox
-          checked={roof.ceiling}
-          onChange={(e) => {
-            const checked = e.target.checked;
-            const undoableCheck = {
-              name: 'Roof Ceiling',
-              timestamp: Date.now(),
-              checked: checked,
-              selectedElementId: roof.id,
-              selectedElementType: roof.type,
-              undo: () => {
-                updateRoofCeiling(roof.id, !undoableCheck.checked);
-              },
-              redo: () => {
-                updateRoofCeiling(roof.id, undoableCheck.checked);
-              },
-            } as UndoableCheck;
-            addUndoable(undoableCheck);
-            updateRoofCeiling(roof.id, checked);
-          }}
-        >
-          {i18n.t('roofMenu.Ceiling', { lng: language })}
-        </Checkbox>
-      </Menu.Item>
-
       {renderElementsSubMenu()}
 
       {!roof.locked && roof.roofType === RoofType.Gable && (
         <SubMenu key={'roof-structure'} title={i18n.t('roofMenu.RoofStructure', lang)} style={{ paddingLeft: '24px' }}>
+          <Menu.Item key={'roof-ceiling'} style={{ paddingBottom: '0' }}>
+            <Checkbox
+              checked={roof.ceiling}
+              onChange={(e) => {
+                const checked = e.target.checked;
+                const undoableCheck = {
+                  name: 'Roof Ceiling',
+                  timestamp: Date.now(),
+                  checked: checked,
+                  selectedElementId: roof.id,
+                  selectedElementType: roof.type,
+                  undo: () => {
+                    updateRoofCeiling(roof.id, !undoableCheck.checked);
+                  },
+                  redo: () => {
+                    updateRoofCeiling(roof.id, undoableCheck.checked);
+                  },
+                } as UndoableCheck;
+                addUndoable(undoableCheck);
+                updateRoofCeiling(roof.id, checked);
+              }}
+            >
+              {i18n.t('roofMenu.Ceiling', { lng: language })}
+            </Checkbox>
+          </Menu.Item>
+
           <Radio.Group
             value={roof.roofStructure ?? RoofStructure.Default}
-            style={{ height: '110px' }}
+            style={{ height: '110px', paddingTop: '0' }}
             onChange={(e) => {
               const undoableChange = {
                 name: 'Select Roof Structure',
@@ -469,17 +471,32 @@ export const RoofMenu = React.memo(() => {
 
           {(roof.roofStructure !== RoofStructure.Rafter || roof.opacity === undefined || roof.opacity > 0) && (
             <>
-              {rValueDialogVisible && <RoofRValueInput setDialogVisible={setRValueDialogVisible} />}
+              {roofRValueDialogVisible && <RoofRValueInput setDialogVisible={setRoofRValueDialogVisible} />}
               <Menu.Item
                 key={'roof-r-value'}
                 style={{ paddingLeft: '36px' }}
                 onClick={() => {
                   setApplyCount(0);
-                  setRValueDialogVisible(true);
+                  setRoofRValueDialogVisible(true);
                 }}
               >
-                {i18n.t('word.RValue', lang)} ...
+                {i18n.t('roofMenu.RoofRValue', lang)} ...
               </Menu.Item>
+              {roof.ceiling && ceilingRValueDialogVisible && (
+                <CeilingRValueInput setDialogVisible={setCeilingRValueDialogVisible} />
+              )}
+              {roof.ceiling && (
+                <Menu.Item
+                  key={'ceiling-r-value'}
+                  style={{ paddingLeft: '36px' }}
+                  onClick={() => {
+                    setApplyCount(0);
+                    setCeilingRValueDialogVisible(true);
+                  }}
+                >
+                  {i18n.t('roofMenu.CeilingRValue', lang)} ...
+                </Menu.Item>
+              )}
               {heatCapacityDialogVisible && <RoofHeatCapacityInput setDialogVisible={setHeatCapacityDialogVisible} />}
               <Menu.Item
                 key={'roof-heat-capacity'}

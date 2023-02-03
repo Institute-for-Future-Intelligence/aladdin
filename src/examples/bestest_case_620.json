@@ -1,7 +1,7 @@
 {
-  "docid": "rBjy1FnbeDgX9mfg29tDA3",
-  "time": "02/01/2023 08:23 pm",
-  "timestamp": 1675300996713,
+  "docid": "wEDxGcvV1NTSB7ZiaiuZTb",
+  "time": "02/02/2023 05:52 pm",
+  "timestamp": 1675378348211,
   "userid": "QWecNcxhyvP6j6sBN11hBsfZDau1",
   "owner": null,
   "email": null,
@@ -359,7 +359,8 @@
       "parentId": "iFATUUjMA7c8wHKwioiCvi",
       "foundationId": "iFATUUjMA7c8wHKwioiCvi",
       "id": "vBPx8vrh1SNvECDHWBPRBR",
-      "volumetricHeatCapacity": 0.1
+      "volumetricHeatCapacity": 0.1,
+      "ceiling": false
     },
     {
       "type": "Window",
@@ -522,7 +523,7 @@
     "yearlyPvYieldPanelX": 0,
     "yearlyParabolicDishYieldPanelX": 0,
     "shadowEnabled": true,
-    "showInstructionPanel": true,
+    "showInstructionPanel": false,
     "panCenter": [
       1.8699123691558452,
       2.578944652142625,
@@ -566,11 +567,25 @@
       "height": 500
     },
     "stickyNotePanelRect": {
-      "x": 145,
-      "y": -3,
+      "x": -5,
+      "y": -2,
       "width": 200,
       "height": 60
     }
+  },
+  "graphState": {
+    "dailyPvIndividualOutputs": false,
+    "yearlyPvIndividualOutputs": false,
+    "dailyParabolicDishIndividualOutputs": false,
+    "yearlyParabolicDishIndividualOutputs": false,
+    "dailyParabolicTroughIndividualOutputs": false,
+    "yearlyParabolicTroughIndividualOutputs": false,
+    "dailyFresnelReflectorIndividualOutputs": false,
+    "yearlyFresnelReflectorIndividualOutputs": false,
+    "dailyHeliostatIndividualOutputs": false,
+    "yearlyHeliostatIndividualOutputs": false,
+    "dailyUpdraftTowerIndividualOutputs": false,
+    "yearlyUpdraftTowerIndividualOutputs": false
   },
   "evolutionMethod": 1,
   "solarPanelArrayLayoutParams": {

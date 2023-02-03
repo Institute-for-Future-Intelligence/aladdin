@@ -1,7 +1,7 @@
 {
-  "docid": "sxwufbHbFc15M8njt4MFj6",
-  "time": "02/01/2023 08:23 pm",
-  "timestamp": 1675301032524,
+  "docid": "xnNXg2V7crfiVJ22VXAUh1",
+  "time": "02/02/2023 05:52 pm",
+  "timestamp": 1675378369571,
   "userid": "QWecNcxhyvP6j6sBN11hBsfZDau1",
   "owner": null,
   "email": null,
@@ -548,7 +548,8 @@
       ],
       "parentId": "pVKekTH3vBaJDuKFqWJNR3",
       "foundationId": "pVKekTH3vBaJDuKFqWJNR3",
-      "id": "sEJTDSykek3p5kyccPdUdD"
+      "id": "sEJTDSykek3p5kyccPdUdD",
+      "ceiling": false
     },
     {
       "type": "Window",
@@ -825,7 +826,8 @@
         "4vW6e4BZW3jyozPbqjnt5D",
         "wAZYpbu3zMiGQjV2LpAcDG"
       ],
-      "selected": false
+      "selected": false,
+      "ceiling": false
     },
     {
       "type": "Foundation",
@@ -900,7 +902,8 @@
       "parentId": "iFATUUjMA7c8wHKwioiCvi",
       "foundationId": "iFATUUjMA7c8wHKwioiCvi",
       "id": "vBPx8vrh1SNvECDHWBPRBR",
-      "volumetricHeatCapacity": 0.1
+      "volumetricHeatCapacity": 0.1,
+      "ceiling": false
     }
   ],
   "view": {
@@ -981,7 +984,7 @@
     "yearlyPvYieldPanelX": 0,
     "yearlyParabolicDishYieldPanelX": 0,
     "shadowEnabled": true,
-    "showInstructionPanel": true,
+    "showInstructionPanel": false,
     "panCenter": [
       4.485245288976777,
       3.6907945473464463,
@@ -1025,11 +1028,25 @@
       "height": 500
     },
     "stickyNotePanelRect": {
-      "x": 149,
-      "y": -2,
+      "x": -3,
+      "y": -3,
       "width": 200,
       "height": 60
     }
+  },
+  "graphState": {
+    "dailyPvIndividualOutputs": false,
+    "yearlyPvIndividualOutputs": false,
+    "dailyParabolicDishIndividualOutputs": false,
+    "yearlyParabolicDishIndividualOutputs": false,
+    "dailyParabolicTroughIndividualOutputs": false,
+    "yearlyParabolicTroughIndividualOutputs": false,
+    "dailyFresnelReflectorIndividualOutputs": false,
+    "yearlyFresnelReflectorIndividualOutputs": false,
+    "dailyHeliostatIndividualOutputs": false,
+    "yearlyHeliostatIndividualOutputs": false,
+    "dailyUpdraftTowerIndividualOutputs": false,
+    "yearlyUpdraftTowerIndividualOutputs": false
   },
   "evolutionMethod": 1,
   "solarPanelArrayLayoutParams": {

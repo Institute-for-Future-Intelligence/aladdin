@@ -22,6 +22,7 @@ import { WindowType } from 'src/models/WindowModel';
 import { RoofStructure } from '../models/RoofModel';
 import { DoorType } from 'src/models/DoorModel';
 import {
+  DEFAULT_CEILING_R_VALUE,
   DEFAULT_DOOR_U_VALUE,
   DEFAULT_FLOOR_R_VALUE,
   DEFAULT_ROOF_R_VALUE,
@@ -78,6 +79,7 @@ export class DefaultActionState implements ActionState {
   roofVolumetricHeatCapacity: number;
   roofRise: number;
   roofCeiling: boolean;
+  ceilingRValue: number;
 
   doorColor: string;
   doorTexture: DoorTexture;
@@ -201,6 +203,7 @@ export class DefaultActionState implements ActionState {
     this.roofVolumetricHeatCapacity = 0.5;
     this.roofRise = 2;
     this.roofCeiling = false;
+    this.ceilingRValue = DEFAULT_CEILING_R_VALUE;
 
     this.doorColor = '#ffffff';
     this.doorTexture = DoorTexture.Default;

@@ -1,5 +1,5 @@
 /*
- * @Copyright 2022-2023. Institute for Future Intelligence, Inc.
+ * @Copyright 2023. Institute for Future Intelligence, Inc.
  */
 
 import React, { useEffect, useRef, useState } from 'react';
@@ -13,9 +13,9 @@ import { UndoableChange } from 'src/undo/UndoableChange';
 import { UndoableChangeGroup } from 'src/undo/UndoableChangeGroup';
 import { RoofModel } from '../../../models/RoofModel';
 import { Util } from '../../../Util';
-import { DEFAULT_ROOF_R_VALUE } from '../../../constants';
+import { DEFAULT_CEILING_R_VALUE } from '../../../constants';
 
-const RoofRValueInput = ({ setDialogVisible }: { setDialogVisible: (b: boolean) => void }) => {
+const CeilingRValueInput = ({ setDialogVisible }: { setDialogVisible: (b: boolean) => void }) => {
   const language = useStore(Selector.language);
   const selectedElement = useStore(Selector.selectedElement) as RoofModel;
   const addUndoable = useStore(Selector.addUndoable);
@@ -38,7 +38,7 @@ const RoofRValueInput = ({ setDialogVisible }: { setDialogVisible: (b: boolean) 
     return null;
   });
 
-  const [inputValue, setInputValue] = useState<number>(roofModel?.rValue ?? DEFAULT_ROOF_R_VALUE);
+  const [inputValue, setInputValue] = useState<number>(roofModel?.ceilingRValue ?? DEFAULT_CEILING_R_VALUE);
   const [inputValueUS, setInputValueUS] = useState<number>(Util.toRValueInUS(inputValue));
   const [dragEnabled, setDragEnabled] = useState<boolean>(false);
   const [bounds, setBounds] = useState<DraggableBounds>({ left: 0, top: 0, bottom: 0, right: 0 } as DraggableBounds);
@@ -48,15 +48,15 @@ const RoofRValueInput = ({ setDialogVisible }: { setDialogVisible: (b: boolean) 
 
   useEffect(() => {
     if (roofModel) {
-      setInputValue(roofModel?.rValue ?? DEFAULT_ROOF_R_VALUE);
+      setInputValue(roofModel?.ceilingRValue ?? DEFAULT_CEILING_R_VALUE);
     }
-  }, [roofModel?.rValue]);
+  }, [roofModel?.ceilingRValue]);
 
   const updateById = (id: string, value: number) => {
     setCommonStore((state) => {
       for (const e of state.elements) {
         if (e.id === id) {
-          (e as RoofModel).rValue = value;
+          (e as RoofModel).ceilingRValue = value;
           break;
         }
       }
@@ -84,13 +84,13 @@ const RoofRValueInput = ({ setDialogVisible }: { setDialogVisible: (b: boolean) 
           for (const e of state.elements) {
             if (e.type === ObjectType.Roof && !e.locked) {
               const roof = e as RoofModel;
-              oldValuesAll.set(e.id, roof.rValue ?? DEFAULT_ROOF_R_VALUE);
-              roof.rValue = value;
+              oldValuesAll.set(e.id, roof.ceilingRValue ?? DEFAULT_CEILING_R_VALUE);
+              roof.ceilingRValue = value;
             }
           }
         });
         const undoableChangeAll = {
-          name: 'Set R-Value for All Roofs',
+          name: 'Set R-Value for All Ceilings',
           timestamp: Date.now(),
           oldValues: oldValuesAll,
           newValue: value,
@@ -111,13 +111,13 @@ const RoofRValueInput = ({ setDialogVisible }: { setDialogVisible: (b: boolean) 
             for (const e of state.elements) {
               if (e.type === ObjectType.Roof && e.foundationId === roofModel.foundationId && !e.locked) {
                 const roof = e as RoofModel;
-                oldValuesAboveFoundation.set(e.id, roof.rValue ?? DEFAULT_ROOF_R_VALUE);
-                roof.rValue = value;
+                oldValuesAboveFoundation.set(e.id, roof.ceilingRValue ?? DEFAULT_CEILING_R_VALUE);
+                roof.ceilingRValue = value;
               }
             }
           });
           const undoableChangeAboveFoundation = {
-            name: 'Set R-Value for All Roofs Above Foundation',
+            name: 'Set R-Value for All Ceilings Above Foundation',
             timestamp: Date.now(),
             oldValues: oldValuesAboveFoundation,
             newValue: value,
@@ -139,9 +139,9 @@ const RoofRValueInput = ({ setDialogVisible }: { setDialogVisible: (b: boolean) 
       default:
         if (roofModel) {
           const updatedRoof = getElementById(roofModel.id) as RoofModel;
-          const oldValue = updatedRoof.rValue ?? roofModel.rValue ?? DEFAULT_ROOF_R_VALUE;
+          const oldValue = updatedRoof.ceilingRValue ?? roofModel.ceilingRValue ?? DEFAULT_CEILING_R_VALUE;
           const undoableChange = {
-            name: 'Set Roof R-Value',
+            name: 'Set Ceiling R-Value',
             timestamp: Date.now(),
             oldValue: oldValue,
             newValue: value,
@@ -178,7 +178,7 @@ const RoofRValueInput = ({ setDialogVisible }: { setDialogVisible: (b: boolean) 
   };
 
   const close = () => {
-    setInputValue(roofModel?.rValue ?? DEFAULT_ROOF_R_VALUE);
+    setInputValue(roofModel?.ceilingRValue ?? DEFAULT_CEILING_R_VALUE);
     setDialogVisible(false);
   };
 
@@ -208,7 +208,7 @@ const RoofRValueInput = ({ setDialogVisible }: { setDialogVisible: (b: boolean) 
             onMouseOver={() => setDragEnabled(true)}
             onMouseOut={() => setDragEnabled(false)}
           >
-            {i18n.t('roofMenu.RoofRValue', lang) + ' '}({i18n.t('word.ThermalResistance', lang)})
+            {i18n.t('roofMenu.CeilingRValue', lang) + ' '}({i18n.t('word.ThermalResistance', lang)})
           </div>
         }
         footer={[
@@ -281,11 +281,11 @@ const RoofRValueInput = ({ setDialogVisible }: { setDialogVisible: (b: boolean) 
           >
             <Radio.Group onChange={(e) => setActionScope(e.target.value)} value={actionScope}>
               <Space direction="vertical">
-                <Radio value={Scope.OnlyThisObject}>{i18n.t('roofMenu.OnlyThisRoof', lang)}</Radio>
+                <Radio value={Scope.OnlyThisObject}>{i18n.t('roofMenu.OnlyThisCeiling', lang)}</Radio>
                 <Radio value={Scope.AllObjectsOfThisTypeAboveFoundation}>
-                  {i18n.t('roofMenu.AllRoofsAboveFoundation', lang)}
+                  {i18n.t('roofMenu.AllCeilingsAboveFoundation', lang)}
                 </Radio>
-                <Radio value={Scope.AllObjectsOfThisType}>{i18n.t('roofMenu.AllRoofs', lang)}</Radio>
+                <Radio value={Scope.AllObjectsOfThisType}>{i18n.t('roofMenu.AllCeilings', lang)}</Radio>
               </Space>
             </Radio.Group>
           </Col>
@@ -295,4 +295,4 @@ const RoofRValueInput = ({ setDialogVisible }: { setDialogVisible: (b: boolean) 
   );
 };
 
-export default RoofRValueInput;
+export default CeilingRValueInput;

@@ -1,13 +1,13 @@
 {
-  "docid": "cBixCfsAg8Q6wS2TpffZ3p",
-  "time": "01/25/2023 11:59 am",
-  "timestamp": 1674665995971,
+  "docid": "4DBcULnYsAX96VHP3p37YR",
+  "time": "02/02/2023 07:29 pm",
+  "timestamp": 1675384152206,
   "userid": "QWecNcxhyvP6j6sBN11hBsfZDau1",
   "owner": null,
   "email": null,
   "world": {
     "solarRadiationHeatmapGridCellSize": 0.25,
-    "date": "7/22/2022, 12:00:00 PM",
+    "date": "1/22/2022, 12:00:00 PM",
     "cspTimesPerHour": 4,
     "noAnimationForHeatmapSimulation": false,
     "cspGridCellSize": 0.5,
@@ -48,12 +48,12 @@
   "elements": [
     {
       "type": "Human",
-      "name": "Jena",
+      "name": "Judd",
       "cx": 2.5001103094985826,
       "cy": -6.058721988130646,
       "cz": 0.030962420627473897,
-      "lx": 0.695,
-      "lz": 1.6,
+      "lx": 0.544,
+      "lz": 1.68,
       "normal": [
         0,
         1,
@@ -71,8 +71,8 @@
     },
     {
       "type": "Foundation",
-      "cx": -0.08795553742385742,
-      "cy": 0.9950006169371699,
+      "cx": -10.117024999999996,
+      "cy": 0.27838070851727714,
       "cz": 0.05,
       "lx": 16.34049294383023,
       "ly": 14.404432132963985,
@@ -97,7 +97,7 @@
       },
       "id": "iFATUUjMA7c8wHKwioiCvi",
       "selected": false,
-      "label": "Eaves are not part of thermal envelope",
+      "label": "No Ceiling",
       "showLabel": true,
       "labelHeight": 6,
       "labelSize": 0.5,
@@ -354,7 +354,7 @@
       "roofType": "Gable",
       "roofStructure": "Default",
       "textureType": "No Roof Texture",
-      "overhang": 1,
+      "overhang": 0.2,
       "thickness": 0.1,
       "wallsId": [
         "py4fscALBHuoNNVWKoXS9c"
@@ -368,7 +368,8 @@
         1
       ],
       "selected": false,
-      "rValue": 1.7611028730632272
+      "rValue": 1.7611028730632272,
+      "ceiling": false
     },
     {
       "type": "Window",
@@ -482,6 +483,442 @@
       "parentId": "py4fscALBHuoNNVWKoXS9c",
       "foundationId": "iFATUUjMA7c8wHKwioiCvi",
       "selected": false
+    },
+    {
+      "type": "Human",
+      "name": "Jena",
+      "cx": 2.5001103094985826,
+      "cy": -6.058721988130646,
+      "cz": 0.030962420627473897,
+      "lx": 0.695,
+      "ly": 0.42,
+      "lz": 1.6,
+      "normal": [
+        0,
+        1,
+        0
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "parentId": "cfvC81ormzBEgA9Ah4eP3v",
+      "id": "34EHkp2Lb8b2vnEKfniznR",
+      "selected": false
+    },
+    {
+      "type": "Wall",
+      "cx": 0.08181822642150738,
+      "cy": 4.8859377925947785,
+      "cz": 2.2408122612280286,
+      "lx": 12,
+      "ly": 0.2,
+      "lz": 3,
+      "rValue": 2.1133234476758727,
+      "volumetricHeatCapacity": 0.1,
+      "fill": "Full",
+      "unfilledHeight": 0.5,
+      "leftJoints": [
+        "rHyZXvwyEPAa7dU7nYmXpR"
+      ],
+      "rightJoints": [
+        "jvSvdwWqKHJqgaZtgavr3X"
+      ],
+      "leftPoint": [
+        6.081818226421507,
+        4.885937792594777,
+        0.1
+      ],
+      "rightPoint": [
+        -5.9181817735784925,
+        4.8859377925947785,
+        0.1
+      ],
+      "relativeAngle": 3.141592653589793,
+      "textureType": "No Wall Texture",
+      "color": "#ffffff",
+      "normal": [
+        0,
+        0,
+        1
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "id": "8NQNpFkXNGAXtcTwXhtHNW",
+      "parentId": "cfvC81ormzBEgA9Ah4eP3v",
+      "foundationId": "cfvC81ormzBEgA9Ah4eP3v",
+      "wallStructure": "Default",
+      "structureSpacing": 2,
+      "structureColor": "white",
+      "structureWidth": 0.1,
+      "opacity": 0.5,
+      "roofId": "gCFHHnVKnRgFUFksjrmZCm",
+      "leftRoofHeight": 3,
+      "rightRoofHeight": 3,
+      "selected": false
+    },
+    {
+      "type": "Wall",
+      "cx": 6.081818226421506,
+      "cy": -0.114062207405222,
+      "cz": 2.2301039869226305,
+      "lx": 10,
+      "ly": 0.2,
+      "lz": 3,
+      "rValue": 2.1133234476758727,
+      "volumetricHeatCapacity": 0.1,
+      "fill": "Full",
+      "unfilledHeight": 0.5,
+      "leftJoints": [
+        "sb7GHiMmhgNyZJdQ71BL5y"
+      ],
+      "rightJoints": [
+        "8NQNpFkXNGAXtcTwXhtHNW"
+      ],
+      "leftPoint": [
+        6.081818226421504,
+        -5.1140622074052215,
+        0.1
+      ],
+      "rightPoint": [
+        6.0818182264215075,
+        4.8859377925947785,
+        0.1
+      ],
+      "relativeAngle": 1.5707963267948963,
+      "textureType": "No Wall Texture",
+      "color": "#ffffff",
+      "normal": [
+        0,
+        0,
+        1
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "id": "rHyZXvwyEPAa7dU7nYmXpR",
+      "parentId": "cfvC81ormzBEgA9Ah4eP3v",
+      "foundationId": "cfvC81ormzBEgA9Ah4eP3v",
+      "wallStructure": "Default",
+      "structureSpacing": 2,
+      "structureColor": "white",
+      "structureWidth": 0.1,
+      "opacity": 0.5,
+      "roofId": "gCFHHnVKnRgFUFksjrmZCm",
+      "leftRoofHeight": 3,
+      "rightRoofHeight": 3,
+      "centerRoofHeight": [
+        0,
+        5.068830689450057
+      ],
+      "selected": false
+    },
+    {
+      "type": "Wall",
+      "cx": -5.9181817735784925,
+      "cy": -0.114062207405222,
+      "cz": 2.228839888904333,
+      "lx": 10,
+      "ly": 0.2,
+      "lz": 3,
+      "rValue": 2.1133234476758727,
+      "volumetricHeatCapacity": 0.1,
+      "fill": "Full",
+      "unfilledHeight": 0.5,
+      "leftJoints": [
+        "8NQNpFkXNGAXtcTwXhtHNW"
+      ],
+      "rightJoints": [
+        "sb7GHiMmhgNyZJdQ71BL5y"
+      ],
+      "leftPoint": [
+        -5.918181773578492,
+        4.8859377925947785,
+        0.1
+      ],
+      "rightPoint": [
+        -5.9181817735784925,
+        -5.1140622074052215,
+        0.1
+      ],
+      "relativeAngle": 4.71238898038469,
+      "textureType": "No Wall Texture",
+      "color": "#ffffff",
+      "normal": [
+        0,
+        0,
+        1
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "id": "jvSvdwWqKHJqgaZtgavr3X",
+      "parentId": "cfvC81ormzBEgA9Ah4eP3v",
+      "foundationId": "cfvC81ormzBEgA9Ah4eP3v",
+      "wallStructure": "Default",
+      "structureSpacing": 2,
+      "structureColor": "white",
+      "structureWidth": 0.1,
+      "opacity": 0.5,
+      "roofId": "gCFHHnVKnRgFUFksjrmZCm",
+      "leftRoofHeight": 3,
+      "rightRoofHeight": 3,
+      "centerRoofHeight": [
+        0,
+        5.068830689450057
+      ],
+      "selected": false
+    },
+    {
+      "type": "Wall",
+      "cx": 0.08181822642150782,
+      "cy": -5.1140622074052215,
+      "cz": 2.268765007024547,
+      "lx": 12,
+      "ly": 0.2,
+      "lz": 3,
+      "rValue": 2.1133234476758727,
+      "volumetricHeatCapacity": 0.1,
+      "fill": "Full",
+      "unfilledHeight": 0.5,
+      "leftJoints": [
+        "jvSvdwWqKHJqgaZtgavr3X"
+      ],
+      "rightJoints": [
+        "rHyZXvwyEPAa7dU7nYmXpR"
+      ],
+      "leftPoint": [
+        -5.9181817735784925,
+        -5.1140622074052215,
+        0.1
+      ],
+      "rightPoint": [
+        6.0818182264215075,
+        -5.1140622074052215,
+        0.1
+      ],
+      "relativeAngle": 0,
+      "textureType": "No Wall Texture",
+      "color": "#ffffff",
+      "normal": [
+        0,
+        0,
+        1
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "id": "sb7GHiMmhgNyZJdQ71BL5y",
+      "parentId": "cfvC81ormzBEgA9Ah4eP3v",
+      "foundationId": "cfvC81ormzBEgA9Ah4eP3v",
+      "wallStructure": "Default",
+      "structureSpacing": 2,
+      "structureColor": "white",
+      "structureWidth": 0.1,
+      "opacity": 0.5,
+      "roofId": "gCFHHnVKnRgFUFksjrmZCm",
+      "leftRoofHeight": 3,
+      "rightRoofHeight": 3,
+      "selected": false
+    },
+    {
+      "type": "Window",
+      "cx": -0.3125,
+      "cy": 0.1,
+      "cz": 0.08333333333333333,
+      "lx": 0.125,
+      "ly": 0.2,
+      "lz": 0.5,
+      "uValue": 2,
+      "mullion": true,
+      "mullionWidth": 0.06,
+      "mullionSpacing": 1,
+      "mullionColor": "white",
+      "frame": true,
+      "frameWidth": 0.1,
+      "windowType": "Default",
+      "archHeight": 1,
+      "color": "white",
+      "normal": [
+        0,
+        0,
+        1
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "id": "q6p3CCHJFvsqrEsXwbRh1R",
+      "parentId": "sb7GHiMmhgNyZJdQ71BL5y",
+      "foundationId": "cfvC81ormzBEgA9Ah4eP3v",
+      "tint": "#73D8FF",
+      "opacity": 0.55,
+      "shutter": {
+        "showLeft": false,
+        "showRight": false,
+        "color": "grey",
+        "width": 0.5
+      },
+      "selected": false
+    },
+    {
+      "type": "Window",
+      "cx": 0.3125,
+      "cy": 0.1,
+      "cz": 0.08333333333333333,
+      "lx": 0.125,
+      "ly": 0.2,
+      "lz": 0.5,
+      "mullion": true,
+      "mullionWidth": 0.06,
+      "mullionSpacing": 1,
+      "mullionColor": "white",
+      "frame": true,
+      "frameWidth": 0.1,
+      "windowType": "Default",
+      "archHeight": 1,
+      "color": "white",
+      "normal": [
+        0,
+        0,
+        1
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "id": "j1XnXywfGpFArNKZPbAhkm",
+      "parentId": "sb7GHiMmhgNyZJdQ71BL5y",
+      "foundationId": "cfvC81ormzBEgA9Ah4eP3v",
+      "tint": "#73D8FF",
+      "opacity": 0.55,
+      "shutter": {
+        "showLeft": false,
+        "showRight": false,
+        "color": "grey",
+        "width": 0.5
+      },
+      "selected": false
+    },
+    {
+      "type": "Door",
+      "cx": 4.625929269271485e-18,
+      "cy": 0,
+      "cz": -0.08333333333333333,
+      "lx": 0.16666666666666666,
+      "ly": 0,
+      "lz": 0.8333333333333334,
+      "color": "white",
+      "uValue": 1.7034779999999998,
+      "textureType": "Door Texture #4",
+      "filled": true,
+      "doorType": "Default",
+      "archHeight": 1,
+      "normal": [
+        0,
+        0,
+        1
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "id": "6uoZg4uoFLaTiYnPcJZ3V9",
+      "parentId": "sb7GHiMmhgNyZJdQ71BL5y",
+      "foundationId": "cfvC81ormzBEgA9Ah4eP3v",
+      "selected": false
+    },
+    {
+      "id": "gCFHHnVKnRgFUFksjrmZCm",
+      "type": "Roof",
+      "cx": 0,
+      "cy": 0,
+      "cz": 0,
+      "lx": 0,
+      "ly": 0,
+      "lz": 0,
+      "ceiling": true,
+      "rise": 2.068830689450057,
+      "color": "#4d4d4d",
+      "rValue": 1.7611028730632272,
+      "sideColor": "#ffffff",
+      "normal": [
+        0,
+        0,
+        1
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "parentId": "cfvC81ormzBEgA9Ah4eP3v",
+      "foundationId": "cfvC81ormzBEgA9Ah4eP3v",
+      "roofType": "Gable",
+      "roofStructure": "Default",
+      "textureType": "No Roof Texture",
+      "overhang": 0.2,
+      "thickness": 0.1,
+      "wallsId": [
+        "sb7GHiMmhgNyZJdQ71BL5y"
+      ],
+      "ridgeLeftPoint": [
+        0,
+        1
+      ],
+      "ridgeRightPoint": [
+        0,
+        1
+      ],
+      "selected": false,
+      "ceilingRValue": 3.5222057461264544
+    },
+    {
+      "type": "Foundation",
+      "cx": 10.177578528084874,
+      "cy": 0.23562811833261754,
+      "cz": 0.05,
+      "lx": 16.34049294383023,
+      "ly": 14.404432132963985,
+      "lz": 0.061924839603321916,
+      "normal": [
+        0,
+        0,
+        1
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "parentId": "Ground",
+      "color": "#808080",
+      "solarUpdraftTower": {},
+      "solarAbsorberPipe": {},
+      "solarPowerTower": {},
+      "hvacSystem": {
+        "thermostatSetpoint": 20,
+        "temperatureThreshold": 5
+      },
+      "labelHeight": 6,
+      "labelSize": 0.5,
+      "showLabel": true,
+      "id": "cfvC81ormzBEgA9Ah4eP3v",
+      "selected": false,
+      "label": "Insulated Ceiling"
     }
   ],
   "view": {
@@ -490,15 +927,15 @@
     "dailyFresnelReflectorYieldPanelX": 0,
     "panCenter2D": [
       0,
-      0.042868749999999976,
-      0
+      0.08573749999997851,
+      4.287065548240426e-8
     ],
     "yearlyHeliostatYieldPanelY": 0,
     "mapPanelX": 0,
     "yearlyHeliostatYieldPanelX": 0,
     "cameraPosition2D": [
       0,
-      0.042718743332617236,
+      0.08558749333259577,
       150
     ],
     "theme": "Default",
@@ -513,9 +950,9 @@
     "dailyHeliostatYieldPanelX": 0,
     "showDailyParabolicDishYieldPanel": false,
     "cameraPosition": [
-      16.350148414958763,
-      -11.507101426393445,
-      3.039949529564288
+      -20.825935508514945,
+      -21.517015691103687,
+      5.712166306286436
     ],
     "showYearlyHeliostatYieldPanel": false,
     "orthographic": false,
@@ -542,7 +979,7 @@
     "showYearlyLightSensorPanel": false,
     "autoRotate": false,
     "heliodonPanelX": -14,
-    "showStickyNotePanel": false,
+    "showStickyNotePanel": true,
     "showDailyLightSensorPanel": false,
     "visibilityResultsPanelX": 0,
     "yearlyPvYieldPanelY": 0,
@@ -562,16 +999,16 @@
     "yearlyPvYieldPanelX": 0,
     "yearlyParabolicDishYieldPanelX": 0,
     "shadowEnabled": true,
-    "showInstructionPanel": true,
+    "showInstructionPanel": false,
     "panCenter": [
-      1.7588949365810376,
-      2.5055436825580286,
-      1.1926702085485714
+      4.250083601310625,
+      0.8431435640707386,
+      0.9827579553092305
     ],
     "yearlyFresnelReflectorYieldPanelY": 0,
     "showHeliodonPanel": false,
     "axes": true,
-    "solarRadiationHeatMapMaxValue": 5.5,
+    "solarRadiationHeatMapMaxValue": 3,
     "dailyParabolicDishYieldPanelX": 0,
     "showSolarPanelVisibilityResultsPanel": false,
     "stickyNotePanelY": 0,
@@ -580,10 +1017,10 @@
     "showDailyBuildingEnergyPanel": true,
     "directLightIntensity": 1,
     "dailyBuildingEnergyPanelRect": {
-      "x": -5,
-      "y": 7,
-      "width": 600,
-      "height": 360
+      "x": -2,
+      "y": 3,
+      "width": 510,
+      "height": 354
     },
     "showDiurnalTemperaturePanel": false,
     "diurnalTemperaturePanelRect": {
@@ -599,7 +1036,27 @@
       "width": 600,
       "height": 400
     },
-    "heatFluxScaleFactor": 6
+    "heatFluxScaleFactor": 2,
+    "stickyNotePanelRect": {
+      "x": -4,
+      "y": 2,
+      "width": 397,
+      "height": 65
+    }
+  },
+  "graphState": {
+    "dailyPvIndividualOutputs": false,
+    "yearlyPvIndividualOutputs": false,
+    "dailyParabolicDishIndividualOutputs": false,
+    "yearlyParabolicDishIndividualOutputs": false,
+    "dailyParabolicTroughIndividualOutputs": false,
+    "yearlyParabolicTroughIndividualOutputs": false,
+    "dailyFresnelReflectorIndividualOutputs": false,
+    "yearlyFresnelReflectorIndividualOutputs": false,
+    "dailyHeliostatIndividualOutputs": false,
+    "yearlyHeliostatIndividualOutputs": false,
+    "dailyUpdraftTowerIndividualOutputs": false,
+    "yearlyUpdraftTowerIndividualOutputs": false
   },
   "evolutionMethod": 1,
   "solarPanelArrayLayoutParams": {
@@ -658,5 +1115,7 @@
     "electricitySellingPrice": 0.25,
     "operationalCostPerUnit": 0.15
   },
-  "notes": []
+  "notes": [
+    "Thermal envelope vs. building envelope"
+  ]
 }

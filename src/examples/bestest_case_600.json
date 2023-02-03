@@ -1,7 +1,7 @@
 {
-  "docid": "3cZsVi49x4RTeTefHBzzfE",
-  "time": "02/01/2023 08:21 pm",
-  "timestamp": 1675300917029,
+  "docid": "icZ48DhdDRCkQSfS574Yqc",
+  "time": "02/02/2023 05:51 pm",
+  "timestamp": 1675378297820,
   "userid": "QWecNcxhyvP6j6sBN11hBsfZDau1",
   "owner": null,
   "email": null,
@@ -444,7 +444,8 @@
       "parentId": "iFATUUjMA7c8wHKwioiCvi",
       "foundationId": "iFATUUjMA7c8wHKwioiCvi",
       "id": "vBPx8vrh1SNvECDHWBPRBR",
-      "volumetricHeatCapacity": 0.1
+      "volumetricHeatCapacity": 0.1,
+      "ceiling": false
     }
   ],
   "view": {
@@ -476,7 +477,7 @@
     "dailyHeliostatYieldPanelX": 0,
     "showDailyParabolicDishYieldPanel": false,
     "cameraPosition": [
-      7.818578510252992,
+      7.8185785102529906,
       -10.621731483534056,
       2.062041901327996
     ],
@@ -525,7 +526,7 @@
     "yearlyPvYieldPanelX": 0,
     "yearlyParabolicDishYieldPanelX": 0,
     "shadowEnabled": true,
-    "showInstructionPanel": true,
+    "showInstructionPanel": false,
     "panCenter": [
       1.8531721737261184,
       2.5703581157054773,
@@ -569,11 +570,25 @@
       "height": 500
     },
     "stickyNotePanelRect": {
-      "x": 146,
-      "y": -3,
+      "x": -2,
+      "y": 0,
       "width": 225,
       "height": 60
     }
+  },
+  "graphState": {
+    "dailyPvIndividualOutputs": false,
+    "yearlyPvIndividualOutputs": false,
+    "dailyParabolicDishIndividualOutputs": false,
+    "yearlyParabolicDishIndividualOutputs": false,
+    "dailyParabolicTroughIndividualOutputs": false,
+    "yearlyParabolicTroughIndividualOutputs": false,
+    "dailyFresnelReflectorIndividualOutputs": false,
+    "yearlyFresnelReflectorIndividualOutputs": false,
+    "dailyHeliostatIndividualOutputs": false,
+    "yearlyHeliostatIndividualOutputs": false,
+    "dailyUpdraftTowerIndividualOutputs": false,
+    "yearlyUpdraftTowerIndividualOutputs": false
   },
   "evolutionMethod": 1,
   "solarPanelArrayLayoutParams": {

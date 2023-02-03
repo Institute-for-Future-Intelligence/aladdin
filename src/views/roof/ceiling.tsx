@@ -1,5 +1,5 @@
 /*
- * @Copyright 2022-2023. Institute for Future Intelligence, Inc.
+ * @Copyright 2023. Institute for Future Intelligence, Inc.
  */
 
 import { Extrude } from '@react-three/drei';
@@ -26,8 +26,8 @@ const Ceiling = ({ currWallArray }: CeilingProps) => {
   shape.closePath();
 
   return (
-    <Extrude position={[0, 0, wall0.lz]} args={[shape, { steps: 1, depth: 0.1, bevelEnabled: false }]}>
-      <meshStandardMaterial side={DoubleSide} />
+    <Extrude scale={0.99} position={[0, 0, wall0.lz]} args={[shape, { steps: 1, depth: 0.1, bevelEnabled: false }]}>
+      <meshStandardMaterial side={DoubleSide} color={'white'} />
     </Extrude>
   );
 };

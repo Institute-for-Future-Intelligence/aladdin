@@ -1033,6 +1033,9 @@ export const i18n_es = {
       OnlyThisRoof: 'Only This Wall',
       AllRoofsAboveFoundation: 'All Walls Above the Same Foundation',
       AllRoofs: 'All Roofs',
+      OnlyThisCeiling: 'Only This Ceiling',
+      AllCeilingsAboveFoundation: 'All Ceilings Above the Same Foundation',
+      AllCeilings: 'All Ceilings',
       EavesOverhangLength: 'Eaves Overhang Length',
       RafterSpacing: 'Rafter Spacing',
       RafterWidth: 'Rafter Width',
@@ -1063,6 +1066,8 @@ export const i18n_es = {
       AllLightsOnRoofOutside: 'All Lights on Roof Outside',
       CurrentRise: 'Current Rise',
       Ceiling: 'Ceiling',
+      RoofRValue: 'Roof R-Value',
+      CeilingRValue: 'Ceiling R-Value',
     },
 
     doorMenu: {

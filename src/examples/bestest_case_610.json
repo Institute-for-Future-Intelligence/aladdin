@@ -1,7 +1,7 @@
 {
-  "docid": "b2QbNC6yhv2B1pAdoKSVfM",
-  "time": "02/01/2023 08:22 pm",
-  "timestamp": 1675300959882,
+  "docid": "nyGm7rNFEyisTAqMjbC1WL",
+  "time": "02/02/2023 05:52 pm",
+  "timestamp": 1675378329283,
   "userid": "QWecNcxhyvP6j6sBN11hBsfZDau1",
   "owner": null,
   "email": null,
@@ -444,7 +444,8 @@
       "parentId": "iFATUUjMA7c8wHKwioiCvi",
       "foundationId": "iFATUUjMA7c8wHKwioiCvi",
       "id": "vBPx8vrh1SNvECDHWBPRBR",
-      "volumetricHeatCapacity": 0.1
+      "volumetricHeatCapacity": 0.1,
+      "ceiling": false
     },
     {
       "type": "Wall",
@@ -675,7 +676,8 @@
       ],
       "parentId": "pVKekTH3vBaJDuKFqWJNR3",
       "foundationId": "pVKekTH3vBaJDuKFqWJNR3",
-      "id": "eCmwXFv4Ww2kw8FWSivF6T"
+      "id": "eCmwXFv4Ww2kw8FWSivF6T",
+      "ceiling": false
     }
   ],
   "view": {
@@ -756,7 +758,7 @@
     "yearlyPvYieldPanelX": 0,
     "yearlyParabolicDishYieldPanelX": 0,
     "shadowEnabled": true,
-    "showInstructionPanel": true,
+    "showInstructionPanel": false,
     "panCenter": [
       3.447654823068404,
       9.854417213021707,
@@ -800,11 +802,25 @@
       "height": 500
     },
     "stickyNotePanelRect": {
-      "x": 161,
-      "y": -1,
+      "x": -4,
+      "y": 0,
       "width": 200,
       "height": 60
     }
+  },
+  "graphState": {
+    "dailyPvIndividualOutputs": false,
+    "yearlyPvIndividualOutputs": false,
+    "dailyParabolicDishIndividualOutputs": false,
+    "yearlyParabolicDishIndividualOutputs": false,
+    "dailyParabolicTroughIndividualOutputs": false,
+    "yearlyParabolicTroughIndividualOutputs": false,
+    "dailyFresnelReflectorIndividualOutputs": false,
+    "yearlyFresnelReflectorIndividualOutputs": false,
+    "dailyHeliostatIndividualOutputs": false,
+    "yearlyHeliostatIndividualOutputs": false,
+    "dailyUpdraftTowerIndividualOutputs": false,
+    "yearlyUpdraftTowerIndividualOutputs": false
   },
   "evolutionMethod": 1,
   "solarPanelArrayLayoutParams": {

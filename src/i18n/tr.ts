@@ -1034,6 +1034,9 @@ export const i18n_tr = {
       OnlyThisRoof: 'Sadece  Seçili Çatı',
       AllRoofsAboveFoundation: 'Aynı Temelin Üzerinde Tüm Çatılar',
       AllRoofs: 'Tüm Çatılar',
+      OnlyThisCeiling: 'Only This Ceiling',
+      AllCeilingsAboveFoundation: 'All Ceilings Above the Same Foundation',
+      AllCeilings: 'All Ceilings',
       EavesOverhangLength: 'Eaves Overhang Length',
       RafterSpacing: 'Mertek Aralığı',
       RafterWidth: 'Mertek Genişliği',
@@ -1064,6 +1067,8 @@ export const i18n_tr = {
       AllLightsOnRoofOutside: 'All Lights on Roof Outside',
       CurrentRise: 'Current Rise',
       Ceiling: 'Ceiling',
+      RoofRValue: 'Roof R-Value',
+      CeilingRValue: 'Ceiling R-Value',
     },
 
     doorMenu: {

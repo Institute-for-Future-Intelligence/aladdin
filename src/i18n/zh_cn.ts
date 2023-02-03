@@ -1010,6 +1010,9 @@ export const i18n_zh_cn = {
       OnlyThisRoof: '只这个屋顶',
       AllRoofsAboveFoundation: '同一地基上所有的屋顶',
       AllRoofs: '所有的屋顶',
+      OnlyThisCeiling: '只这个天花板',
+      AllCeilingsAboveFoundation: '同一地基上所有的天花板',
+      AllCeilings: '所有的天花板',
       EavesOverhangLength: '屋檐延伸长度',
       RafterSpacing: '屋椽间距',
       RafterWidth: '屋椽宽度',
@@ -1040,6 +1043,8 @@ export const i18n_zh_cn = {
       AllLightsOnRoofOutside: '所有电灯在屋顶外',
       CurrentRise: '当前相对高度',
       Ceiling: '天花板',
+      RoofRValue: '屋顶R值',
+      CeilingRValue: '天花板R值',
     },
 
     doorMenu: {

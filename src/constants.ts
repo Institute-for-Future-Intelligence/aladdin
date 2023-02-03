@@ -29,6 +29,7 @@ export const DEFAULT_HEAT_FLUX_DENSITY_FACTOR = 4;
 export const DEFAULT_FLOOR_R_VALUE = 2;
 export const DEFAULT_WALL_R_VALUE = 2;
 export const DEFAULT_ROOF_R_VALUE = 2;
+export const DEFAULT_CEILING_R_VALUE = 2;
 export const DEFAULT_WINDOW_U_VALUE = 2;
 export const DEFAULT_DOOR_U_VALUE = 1;
 export const DEFAULT_FOUNDATION_SLAB_DEPTH = 1;
