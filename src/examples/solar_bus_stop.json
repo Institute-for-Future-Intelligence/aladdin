@@ -1,7 +1,7 @@
 {
-  "docid": "ewaPDiyfxoCxRLMJnecBCG",
-  "time": "12/03/2022 06:08 pm",
-  "timestamp": 1670108906598,
+  "docid": "xaaR3mXUj8dBmNYCygiUNp",
+  "time": "02/03/2023 10:29 am",
+  "timestamp": 1675438190259,
   "userid": "QWecNcxhyvP6j6sBN11hBsfZDau1",
   "owner": null,
   "email": null,
@@ -310,9 +310,9 @@
     {
       "type": "Human",
       "name": "Judd",
-      "cx": 1.1480908985199054,
-      "cy": -0.35174459086931265,
-      "cz": 0.05000000074505806,
+      "cx": 1.633148784510131,
+      "cy": -0.48619735894130045,
+      "cz": 0.02866500802338123,
       "lx": 0.544,
       "lz": 1.68,
       "normal": [
@@ -351,7 +351,8 @@
       ],
       "parentId": "m7AH7DcnoGzAq9kryBy4RS",
       "id": "rzeLyCpDSHwygv1oZdbv2w",
-      "selected": false
+      "selected": false,
+      "flip": true
     },
     {
       "type": "Roof",
@@ -395,7 +396,8 @@
         0.5,
         1
       ],
-      "rise": 0
+      "rise": 0,
+      "ceiling": false
     },
     {
       "type": "Solar Panel",
@@ -506,9 +508,9 @@
     "dailyHeliostatYieldPanelX": 0,
     "showDailyParabolicDishYieldPanel": false,
     "cameraPosition": [
-      -7.111858480231937,
-      -12.177881926052857,
-      4.972837670439112
+      -4.898987225987276,
+      -9.182628086113699,
+      3.563487477681719
     ],
     "showYearlyHeliostatYieldPanel": false,
     "orthographic": false,
@@ -535,7 +537,7 @@
     "showYearlyLightSensorPanel": false,
     "autoRotate": false,
     "heliodonPanelX": 0,
-    "showStickyNotePanel": false,
+    "showStickyNotePanel": true,
     "showDailyLightSensorPanel": false,
     "visibilityResultsPanelX": 0,
     "yearlyPvYieldPanelY": 0,
@@ -555,11 +557,11 @@
     "yearlyPvYieldPanelX": 0,
     "yearlyParabolicDishYieldPanelX": 0,
     "shadowEnabled": true,
-    "showInstructionPanel": true,
+    "showInstructionPanel": false,
     "panCenter": [
-      -0.8907784064251919,
-      2.8931645360465335,
-      1.3756764021735797
+      -0.2469393365439706,
+      2.7582746226325283,
+      1.9240094094942006
     ],
     "yearlyFresnelReflectorYieldPanelY": 0,
     "showHeliodonPanel": false,
@@ -569,7 +571,27 @@
     "showSolarPanelVisibilityResultsPanel": false,
     "stickyNotePanelY": 0,
     "showYearlyParabolicDishYieldPanel": false,
-    "showYearlyFresnelReflectorYieldPanel": false
+    "showYearlyFresnelReflectorYieldPanel": false,
+    "stickyNotePanelRect": {
+      "x": 0,
+      "y": 0,
+      "width": 207,
+      "height": 64
+    }
+  },
+  "graphState": {
+    "dailyPvIndividualOutputs": false,
+    "yearlyPvIndividualOutputs": false,
+    "dailyParabolicDishIndividualOutputs": false,
+    "yearlyParabolicDishIndividualOutputs": false,
+    "dailyParabolicTroughIndividualOutputs": false,
+    "yearlyParabolicTroughIndividualOutputs": false,
+    "dailyFresnelReflectorIndividualOutputs": false,
+    "yearlyFresnelReflectorIndividualOutputs": false,
+    "dailyHeliostatIndividualOutputs": false,
+    "yearlyHeliostatIndividualOutputs": false,
+    "dailyUpdraftTowerIndividualOutputs": false,
+    "yearlyUpdraftTowerIndividualOutputs": false
   },
   "evolutionMethod": 1,
   "solarPanelArrayLayoutParams": {
@@ -628,5 +650,7 @@
     "electricitySellingPrice": 0.25,
     "operationalCostPerUnit": 0.15
   },
-  "notes": []
+  "notes": [
+    "Solar bus stop"
+  ]
 }

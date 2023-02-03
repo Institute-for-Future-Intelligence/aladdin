@@ -1,7 +1,7 @@
 {
-  "docid": "sS6KwM9LaMFpANn6nt5nLV",
-  "time": "12/03/2022 02:49 pm",
-  "timestamp": 1670096967221,
+  "docid": "nhiskT1FrRFHckm65yAwtD",
+  "time": "02/03/2023 11:11 am",
+  "timestamp": 1675440671414,
   "userid": "QWecNcxhyvP6j6sBN11hBsfZDau1",
   "owner": null,
   "email": null,
@@ -873,7 +873,8 @@
       "thickness": 0.2,
       "cz": 0,
       "cx": 0,
-      "rise": 0
+      "rise": 0,
+      "ceiling": false
     },
     {
       "faceColors": [
@@ -1797,7 +1798,8 @@
         0,
         1
       ],
-      "rise": 0.2748876513561207
+      "rise": 0.2748876513561207,
+      "ceiling": false
     },
     {
       "rotation": [
@@ -8294,7 +8296,8 @@
       "lineColor": "black",
       "selected": false,
       "color": "#ffffff",
-      "rise": 1.3393317550628012
+      "rise": 1.3393317550628012,
+      "ceiling": false
     },
     {
       "overhang": 0.3,
@@ -8338,7 +8341,8 @@
       ],
       "roofType": "Gable",
       "parentId": "kqR5p2bajX4NMTBq55qbCM",
-      "rise": 0
+      "rise": 0,
+      "ceiling": false
     },
     {
       "showLabel": false,
@@ -8382,7 +8386,8 @@
       "locked": false,
       "lx": 0,
       "id": "rSsa8T9bULkoQ2pinqnr8i",
-      "rise": 0.977141261476465
+      "rise": 0.977141261476465,
+      "ceiling": false
     },
     {
       "parentId": "b7G57PTXunVqeHXzCWeuRF",
@@ -8660,7 +8665,8 @@
       "textureType": "No Roof Texture",
       "lineColor": "black",
       "selected": false,
-      "rise": 1.4201872195519947
+      "rise": 1.4201872195519947,
+      "ceiling": false
     },
     {
       "lx": 0,
@@ -8699,7 +8705,8 @@
       "textureType": "No Roof Texture",
       "type": "Roof",
       "lineWidth": 0.2,
-      "rise": 2
+      "rise": 2,
+      "ceiling": false
     },
     {
       "locked": false,
@@ -8743,7 +8750,8 @@
         0
       ],
       "roofType": "Gable",
-      "rise": 1.060818180566665
+      "rise": 1.060818180566665,
+      "ceiling": false
     },
     {
       "overhang": 0.3,
@@ -8782,7 +8790,8 @@
       "lineColor": "black",
       "type": "Roof",
       "id": "oTjPo4r99EKfdasnxT3n5a",
-      "rise": 2
+      "rise": 2,
+      "ceiling": false
     },
     {
       "cz": 0,
@@ -8826,7 +8835,8 @@
       ],
       "foundationId": "qJBTbMiP4tUMstkk4bQqAp",
       "roofType": "Gable",
-      "rise": 1.111126896848333
+      "rise": 1.111126896848333,
+      "ceiling": false
     },
     {
       "color": "#ffffff",
@@ -8870,7 +8880,8 @@
         0
       ],
       "cx": 0,
-      "rise": 0.7887515239338372
+      "rise": 0.7887515239338372,
+      "ceiling": false
     },
     {
       "cy": 0.22491740558796045,
@@ -9410,7 +9421,8 @@
       "color": "#ffffff",
       "cy": 0,
       "thickness": 0.2,
-      "rise": 0.2748876513561207
+      "rise": 0.2748876513561207,
+      "ceiling": false
     },
     {
       "type": "Foundation",
@@ -9474,7 +9486,8 @@
       "lx": 0,
       "type": "Roof",
       "cz": 0,
-      "rise": 5
+      "rise": 5,
+      "ceiling": false
     },
     {
       "selected": false,
@@ -9512,7 +9525,8 @@
       "color": "#ffffff",
       "rightRidgeLength": 12.757143526762304,
       "type": "Roof",
-      "rise": 2.8291651006338494
+      "rise": 2.8291651006338494,
+      "ceiling": false
     },
     {
       "ly": 0,
@@ -9556,7 +9570,8 @@
         1
       ],
       "lz": 0,
-      "rise": 1.714737050020105
+      "rise": 1.714737050020105,
+      "ceiling": false
     },
     {
       "normal": [
@@ -9594,7 +9609,8 @@
       "id": "teQS3ohvRHqAbgCQQahyC6",
       "lineColor": "black",
       "ly": 0,
-      "rise": 5
+      "rise": 5,
+      "ceiling": false
     },
     {
       "ly": 5.984113255877874,
@@ -10164,7 +10180,8 @@
         1
       ],
       "lz": 0,
-      "rise": 0.4407500599176517
+      "rise": 0.4407500599176517,
+      "ceiling": false
     },
     {
       "selected": false,
@@ -10452,7 +10469,8 @@
       "type": "Roof",
       "lx": 0,
       "roofType": "Gable",
-      "rise": 0.4407500599176517
+      "rise": 0.4407500599176517,
+      "ceiling": false
     },
     {
       "lz": 1,
@@ -11017,7 +11035,8 @@
         -0.5,
         1
       ],
-      "rise": 0
+      "rise": 0,
+      "ceiling": false
     },
     {
       "cz": 0,
@@ -11056,7 +11075,8 @@
       "lz": 0,
       "thickness": 0.2,
       "roofType": "Pyramid",
-      "rise": 1.0848601282561745
+      "rise": 1.0848601282561745,
+      "ceiling": false
     },
     {
       "type": "Roof",
@@ -11100,7 +11120,8 @@
       "parentId": "98vBSiAe7BeqTZRNu482vh",
       "cy": 0,
       "showLabel": false,
-      "rise": 2
+      "rise": 2,
+      "ceiling": false
     },
     {
       "cy": 0,
@@ -11138,7 +11159,8 @@
       "lineColor": "black",
       "thickness": 0.2,
       "lz": 0,
-      "rise": 2.5
+      "rise": 2.5,
+      "ceiling": false
     },
     {
       "cx": 40.42324164440271,
@@ -12797,7 +12819,8 @@
         0,
         0
       ],
-      "rise": 0
+      "rise": 0,
+      "ceiling": false
     },
     {
       "lz": 0,
@@ -12840,7 +12863,8 @@
       ],
       "lineColor": "black",
       "cx": 0,
-      "rise": 0
+      "rise": 0,
+      "ceiling": false
     },
     {
       "lz": 0,
@@ -12883,7 +12907,8 @@
       "cz": 0,
       "foundationId": "5Ccs4YQJG3fyuyHdGw79zD",
       "lx": 0,
-      "rise": 0
+      "rise": 0,
+      "ceiling": false
     },
     {
       "normal": [
@@ -12922,7 +12947,8 @@
       ],
       "ly": 0,
       "id": "1qyyipEsGS2s5T9XgP6Hmh",
-      "rise": 0
+      "rise": 0,
+      "ceiling": false
     },
     {
       "color": "#ffffff",
@@ -12961,7 +12987,8 @@
       "type": "Roof",
       "lx": 0,
       "cx": 0,
-      "rise": 0
+      "rise": 0,
+      "ceiling": false
     },
     {
       "locked": false,
@@ -13000,7 +13027,8 @@
       "selected": false,
       "id": "79Z3Q6kmRSdUu2gZAfxqYU",
       "lineWidth": 0.2,
-      "rise": 0
+      "rise": 0,
+      "ceiling": false
     },
     {
       "roofType": "Pyramid",
@@ -13042,7 +13070,8 @@
       "color": "#ffffff",
       "lz": 0,
       "parentId": "9VLFJ7oUEizHpLYBMkGrSR",
-      "rise": 0
+      "rise": 0,
+      "ceiling": false
     },
     {
       "roofType": "Pyramid",
@@ -13080,7 +13109,8 @@
       "lx": 0,
       "cx": 0,
       "lineWidth": 0.2,
-      "rise": 0
+      "rise": 0,
+      "ceiling": false
     },
     {
       "lx": 0,
@@ -13119,7 +13149,8 @@
       "lz": 0,
       "locked": false,
       "type": "Roof",
-      "rise": 0
+      "rise": 0,
+      "ceiling": false
     },
     {
       "cx": 3.772871790220627,
@@ -13904,7 +13935,8 @@
         1
       ],
       "cy": 0,
-      "rise": 0
+      "rise": 0,
+      "ceiling": false
     },
     {
       "ly": 0,
@@ -13948,7 +13980,8 @@
       "id": "9Di2gUsu4cUvfnKcucwxcz",
       "cx": 0,
       "lineWidth": 0.2,
-      "rise": 0
+      "rise": 0,
+      "ceiling": false
     },
     {
       "ly": 0,
@@ -13992,7 +14025,8 @@
       "lz": 0,
       "overhang": 0.3,
       "foundationId": "rDKG6AKNM5QvYPq1qfdTX1",
-      "rise": 0
+      "rise": 0,
+      "ceiling": false
     },
     {
       "lx": 5.387680016251569,
@@ -14771,7 +14805,8 @@
       "locked": false,
       "parentId": "un11oZ7V5tAhWhFKuL8M5Q",
       "id": "a67eFG3dY8EiYs3GWgTwsF",
-      "rise": 3
+      "rise": 3,
+      "ceiling": false
     },
     {
       "selected": false,
@@ -14815,7 +14850,8 @@
         0,
         1
       ],
-      "rise": 0
+      "rise": 0,
+      "ceiling": false
     },
     {
       "ly": 0,
@@ -14859,7 +14895,8 @@
       "textureType": "No Roof Texture",
       "locked": false,
       "type": "Roof",
-      "rise": 0
+      "rise": 0,
+      "ceiling": false
     },
     {
       "textureType": "No Roof Texture",
@@ -14903,7 +14940,8 @@
       ],
       "cx": 0,
       "roofType": "Gable",
-      "rise": 0
+      "rise": 0,
+      "ceiling": false
     },
     {
       "showLabel": false,
@@ -14947,7 +14985,8 @@
       "thickness": 0.2,
       "type": "Roof",
       "selected": false,
-      "rise": 0
+      "rise": 0,
+      "ceiling": false
     },
     {
       "lineColor": "black",
@@ -14985,7 +15024,8 @@
         0,
         0
       ],
-      "rise": 2.5
+      "rise": 2.5,
+      "ceiling": false
     },
     {
       "normal": [
@@ -15246,7 +15286,8 @@
       "lz": 0,
       "parentId": "rQHuxdXYQbCuq9CeyutKyt",
       "overhang": 0.3,
-      "rise": 0
+      "rise": 0,
+      "ceiling": false
     },
     {
       "locked": false,
@@ -15533,7 +15574,8 @@
       "locked": false,
       "lz": 0,
       "textureType": "No Roof Texture",
-      "rise": 0
+      "rise": 0,
+      "ceiling": false
     },
     {
       "solarAbsorberPipe": {},
@@ -15820,7 +15862,8 @@
       ],
       "cx": 0,
       "lx": 0,
-      "rise": 0
+      "rise": 0,
+      "ceiling": false
     },
     {
       "solarAbsorberPipe": {},
@@ -15890,7 +15933,8 @@
       "cz": 0,
       "lineWidth": 0.2,
       "foundationId": "jsSCnAypzh29RxPH7MED73",
-      "rise": 0
+      "rise": 0,
+      "ceiling": false
     },
     {
       "locked": false,
@@ -16151,7 +16195,8 @@
         0,
         1
       ],
-      "rise": 0
+      "rise": 0,
+      "ceiling": false
     },
     {
       "cy": -47.30267633910208,
@@ -16439,7 +16484,8 @@
         0,
         1
       ],
-      "rise": 0
+      "rise": 0,
+      "ceiling": false
     },
     {
       "type": "Foundation",
@@ -16722,7 +16768,8 @@
         0,
         2.731440279371126
       ],
-      "rise": 0
+      "rise": 0,
+      "ceiling": false
     },
     {
       "cy": -87.33804902014363,
@@ -17004,7 +17051,8 @@
       "ly": 0,
       "type": "Roof",
       "cz": 0,
-      "rise": 0
+      "rise": 0,
+      "ceiling": false
     },
     {
       "color": "#808080",
@@ -17286,7 +17334,8 @@
         1
       ],
       "foundationId": "7sPS9WfdHAu8wqjpcnPHgs",
-      "rise": 0
+      "rise": 0,
+      "ceiling": false
     },
     {
       "selected": false,
@@ -17355,7 +17404,8 @@
       "cz": 0,
       "selected": false,
       "lineWidth": 0.2,
-      "rise": 0.9752174096903712
+      "rise": 0.9752174096903712,
+      "ceiling": false
     },
     {
       "lx": 9.337227070632437,
@@ -17611,7 +17661,8 @@
       "color": "#ffffff",
       "lz": 0,
       "lx": 0,
-      "rise": 0.9752174096903712
+      "rise": 0.9752174096903712,
+      "ceiling": false
     },
     {
       "selected": false,
@@ -17893,7 +17944,8 @@
       "id": "jRbh8euqUSp75DJHpm8gNn",
       "cz": 0,
       "type": "Roof",
-      "rise": 0.9752174096903712
+      "rise": 0.9752174096903712,
+      "ceiling": false
     },
     {
       "solarAbsorberPipe": {},
@@ -18175,7 +18227,8 @@
         1
       ],
       "cy": 0,
-      "rise": 0.9752174096903712
+      "rise": 0.9752174096903712,
+      "ceiling": false
     },
     {
       "rotation": [
@@ -18457,7 +18510,8 @@
       "color": "#ffffff",
       "cy": 0,
       "foundationId": "88UbNAdWUbzJHGAmrqJWPn",
-      "rise": 0
+      "rise": 0,
+      "ceiling": false
     },
     {
       "normal": [
@@ -18739,7 +18793,8 @@
         1
       ],
       "parentId": "3GmVD3k9gEdK1KyAQNL7Qd",
-      "rise": 0
+      "rise": 0,
+      "ceiling": false
     },
     {
       "color": "#808080",
@@ -19021,7 +19076,8 @@
       "cz": 0,
       "selected": false,
       "thickness": 0.2,
-      "rise": 0
+      "rise": 0,
+      "ceiling": false
     },
     {
       "normal": [
@@ -19085,7 +19141,8 @@
       "ly": 0,
       "cy": 0,
       "color": "#ffffff",
-      "rise": 0
+      "rise": 0,
+      "ceiling": false
     },
     {
       "cy": 0,
@@ -19123,7 +19180,8 @@
       ],
       "ly": 0,
       "lx": 0,
-      "rise": 0
+      "rise": 0,
+      "ceiling": false
     },
     {
       "cz": 0,
@@ -19161,7 +19219,8 @@
       "foundationId": "jH5z454ciczrceJTNes5b4",
       "lineWidth": 0.2,
       "showLabel": false,
-      "rise": 0
+      "rise": 0,
+      "ceiling": false
     },
     {
       "rotation": [
@@ -19199,7 +19258,8 @@
       "selected": false,
       "thickness": 0.2,
       "lz": 0,
-      "rise": 0
+      "rise": 0,
+      "ceiling": false
     }
   ],
   "view": {
@@ -19245,7 +19305,7 @@
     "weatherPanelX": 0,
     "solarRadiationHeatMapMaxValue": 5,
     "dailyPvYieldPanelY": 0,
-    "showInstructionPanel": true,
+    "showInstructionPanel": false,
     "yearlyPvYieldPanelRect": {
       "width": 600,
       "y": 86,
@@ -19278,9 +19338,9 @@
     "showDailyFresnelReflectorYieldPanel": false,
     "stickyNotePanelRect": {
       "y": 0,
-      "width": 400,
+      "width": 236,
       "x": 0,
-      "height": 300
+      "height": 87
     },
     "yearlyLightSensorPanelY": 0,
     "groundImage": true,
@@ -19338,7 +19398,7 @@
       -23.3410033657338,
       0.000026460494326568842
     ],
-    "showStickyNotePanel": false,
+    "showStickyNotePanel": true,
     "showDailyParabolicDishYieldPanel": false,
     "yearlyHeliostatYieldPanelRect": {
       "x": 0,
@@ -19392,7 +19452,7 @@
     "solarRadiationHeatMapReflectionOnly": false,
     "cameraPosition": [
       79.58351721186,
-      -134.39312421107908,
+      -134.3931242110791,
       147.3552432306341
     ],
     "showYearlyLightSensorPanel": false,
@@ -19419,6 +19479,20 @@
       20.00001332267289
     ],
     "dailyParabolicDishYieldPanelY": 0
+  },
+  "graphState": {
+    "dailyPvIndividualOutputs": false,
+    "yearlyPvIndividualOutputs": false,
+    "dailyParabolicDishIndividualOutputs": false,
+    "yearlyParabolicDishIndividualOutputs": false,
+    "dailyParabolicTroughIndividualOutputs": false,
+    "yearlyParabolicTroughIndividualOutputs": false,
+    "dailyFresnelReflectorIndividualOutputs": false,
+    "yearlyFresnelReflectorIndividualOutputs": false,
+    "dailyHeliostatIndividualOutputs": false,
+    "yearlyHeliostatIndividualOutputs": false,
+    "dailyUpdraftTowerIndividualOutputs": false,
+    "yearlyUpdraftTowerIndividualOutputs": false
   },
   "evolutionMethod": 1,
   "solarPanelArrayLayoutParams": {
@@ -19477,5 +19551,7 @@
     "electricitySellingPrice": 0.25,
     "operationalCostPerUnit": 0.15
   },
-  "notes": []
+  "notes": [
+    "Mescalero Apache School\nNew Mexico, USA"
+  ]
 }

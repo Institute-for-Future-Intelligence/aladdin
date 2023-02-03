@@ -1,7 +1,7 @@
 {
-  "docid": "7dfHtpvB3EYmqWmFE9Pjj3",
-  "time": "12/03/2022 06:07 pm",
-  "timestamp": 1670108827526,
+  "docid": "sCc2obYiY4HJszFgTk1q2U",
+  "time": "02/03/2023 10:27 am",
+  "timestamp": 1675438054197,
   "userid": "QWecNcxhyvP6j6sBN11hBsfZDau1",
   "owner": null,
   "email": null,
@@ -916,7 +916,8 @@
       "foundationId": "s7XmQ94X6RJALjEtkckmRw",
       "id": "715hHLBU5uPxPmY3VTjteR",
       "sideColor": "#999999",
-      "rise": 0
+      "rise": 0,
+      "ceiling": false
     },
     {
       "type": "Wall",
@@ -1256,7 +1257,8 @@
         1
       ],
       "sideColor": "#999999",
-      "rise": 0
+      "rise": 0,
+      "ceiling": false
     },
     {
       "type": "Window",
@@ -1899,9 +1901,9 @@
     "dailyHeliostatYieldPanelX": 0,
     "showDailyParabolicDishYieldPanel": false,
     "cameraPosition": [
-      -60.49927780338878,
-      -80.4695135122307,
-      101.06701884770689
+      -60.49927780338874,
+      -80.46951351223069,
+      101.06701884770686
     ],
     "showYearlyHeliostatYieldPanel": false,
     "orthographic": false,
@@ -1928,7 +1930,7 @@
     "showYearlyLightSensorPanel": false,
     "autoRotate": false,
     "heliodonPanelX": 0,
-    "showStickyNotePanel": false,
+    "showStickyNotePanel": true,
     "showDailyLightSensorPanel": false,
     "visibilityResultsPanelX": 0,
     "yearlyPvYieldPanelY": 0,
@@ -1948,7 +1950,7 @@
     "yearlyPvYieldPanelX": 0,
     "yearlyParabolicDishYieldPanelX": 0,
     "shadowEnabled": true,
-    "showInstructionPanel": true,
+    "showInstructionPanel": false,
     "panCenter": [
       -9.958026327854226,
       -20.88083011142786,
@@ -1989,8 +1991,8 @@
     "stickyNotePanelRect": {
       "x": 0,
       "y": 0,
-      "width": 400,
-      "height": 300
+      "width": 353,
+      "height": 64
     },
     "dailyLightSensorPanelRect": {
       "x": 0,
@@ -2091,6 +2093,20 @@
       "height": 400
     }
   },
+  "graphState": {
+    "dailyPvIndividualOutputs": false,
+    "yearlyPvIndividualOutputs": false,
+    "dailyParabolicDishIndividualOutputs": false,
+    "yearlyParabolicDishIndividualOutputs": false,
+    "dailyParabolicTroughIndividualOutputs": false,
+    "yearlyParabolicTroughIndividualOutputs": false,
+    "dailyFresnelReflectorIndividualOutputs": false,
+    "yearlyFresnelReflectorIndividualOutputs": false,
+    "dailyHeliostatIndividualOutputs": false,
+    "yearlyHeliostatIndividualOutputs": false,
+    "dailyUpdraftTowerIndividualOutputs": false,
+    "yearlyUpdraftTowerIndividualOutputs": false
+  },
   "evolutionMethod": 1,
   "solarPanelArrayLayoutParams": {
     "pvModelName": "SPR-X21-335-BLK",
@@ -2148,5 +2164,7 @@
     "electricitySellingPrice": 0.25,
     "operationalCostPerUnit": 0.15
   },
-  "notes": []
+  "notes": [
+    "Hypothetical solar canopies for a garage"
+  ]
 }

@@ -1,7 +1,7 @@
 {
-  "docid": "ix7Ji7cQXRdaNyCMrFjGSE",
-  "time": "05/27/2022 07:44 am",
-  "timestamp": 1653651896256,
+  "docid": "cDRFb4iqnwtsyWroJFv1xS",
+  "time": "02/03/2023 11:05 am",
+  "timestamp": 1675440336959,
   "userid": "QWecNcxhyvP6j6sBN11hBsfZDau1",
   "owner": null,
   "email": null,
@@ -230,7 +230,7 @@
     "dailyLightSensorPanelX": -240,
     "weatherPanelX": 0,
     "heliodonPanelY": -14,
-    "groundColor": "forestgreen",
+    "groundColor": "#16a5a5",
     "groundPanelY": 0,
     "groundImage": false,
     "showDailyPvYieldPanel": false,
@@ -250,7 +250,7 @@
     "orthographic": false,
     "enableRotate": true,
     "cameraZoom": 12.604988194492186,
-    "showInstructionPanel": true,
+    "showInstructionPanel": false,
     "cameraPosition2D": [
       2.3674379904539022,
       -0.03943765886515896,
@@ -271,7 +271,28 @@
       "y": 0,
       "width": 543,
       "height": 341
+    },
+    "showStickyNotePanel": true,
+    "stickyNotePanelRect": {
+      "x": 0,
+      "y": 0,
+      "width": 343,
+      "height": 89
     }
+  },
+  "graphState": {
+    "dailyPvIndividualOutputs": false,
+    "yearlyPvIndividualOutputs": false,
+    "dailyParabolicDishIndividualOutputs": false,
+    "yearlyParabolicDishIndividualOutputs": false,
+    "dailyParabolicTroughIndividualOutputs": false,
+    "yearlyParabolicTroughIndividualOutputs": false,
+    "dailyFresnelReflectorIndividualOutputs": false,
+    "yearlyFresnelReflectorIndividualOutputs": false,
+    "dailyHeliostatIndividualOutputs": false,
+    "yearlyHeliostatIndividualOutputs": false,
+    "dailyUpdraftTowerIndividualOutputs": false,
+    "yearlyUpdraftTowerIndividualOutputs": false
   },
   "evolutionMethod": 1,
   "solarPanelArrayLayoutParams": {
@@ -325,5 +346,7 @@
     "electricitySellingPrice": 0.25,
     "operationalCostPerUnit": 0.3
   },
-  "notes": []
+  "notes": [
+    "Generative design of a solar farm\nin an arbitrary shape with a nearby structure"
+  ]
 }

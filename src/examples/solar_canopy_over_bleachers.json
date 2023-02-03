@@ -1,7 +1,7 @@
 {
-  "docid": "eBfAsHuuktpG97Drc3U5ZB",
-  "time": "11/13/2022 05:33 pm",
-  "timestamp": 1668378831535,
+  "docid": "cpQtXDN91AWfQ7C3APvJh3",
+  "time": "02/03/2023 10:25 am",
+  "timestamp": 1675437921671,
   "userid": "QWecNcxhyvP6j6sBN11hBsfZDau1",
   "owner": null,
   "email": null,
@@ -659,8 +659,8 @@
     "stickyNotePanelRect": {
       "y": 0,
       "x": 0,
-      "height": 300,
-      "width": 400
+      "height": 61,
+      "width": 267
     },
     "visibilityResultsPanelX": 0,
     "showYearlyUpdraftTowerYieldPanel": false,
@@ -718,12 +718,12 @@
       "height": 400,
       "y": 0
     },
-    "showStickyNotePanel": false,
+    "showStickyNotePanel": true,
     "heliodon": false,
     "dailyLightSensorPanelY": 0,
     "solarRadiationHeatMapReflectionOnly": false,
     "showEvolutionPanel": false,
-    "showInstructionPanel": true,
+    "showInstructionPanel": false,
     "showSunAngles": false,
     "showYearlyPvYieldPanel": false,
     "dailyHeliostatYieldPanelRect": {
@@ -740,6 +740,20 @@
     "dailyFresnelReflectorYieldPanelX": 0,
     "axes": false,
     "visibilityResultsPanelY": 0
+  },
+  "graphState": {
+    "dailyPvIndividualOutputs": false,
+    "yearlyPvIndividualOutputs": false,
+    "dailyParabolicDishIndividualOutputs": false,
+    "yearlyParabolicDishIndividualOutputs": false,
+    "dailyParabolicTroughIndividualOutputs": false,
+    "yearlyParabolicTroughIndividualOutputs": false,
+    "dailyFresnelReflectorIndividualOutputs": false,
+    "yearlyFresnelReflectorIndividualOutputs": false,
+    "dailyHeliostatIndividualOutputs": false,
+    "yearlyHeliostatIndividualOutputs": false,
+    "dailyUpdraftTowerIndividualOutputs": false,
+    "yearlyUpdraftTowerIndividualOutputs": false
   },
   "evolutionMethod": 1,
   "solarPanelArrayLayoutParams": {
@@ -798,5 +812,7 @@
     "operationalCostPerUnit": 0.15,
     "projectLifeSpan": 25
   },
-  "notes": []
+  "notes": [
+    "Solar canopy over bleachers"
+  ]
 }

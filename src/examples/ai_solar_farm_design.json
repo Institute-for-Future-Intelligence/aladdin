@@ -1,7 +1,7 @@
 {
-  "docid": "8yMVzt4UFKCJP8mWLaLtxL",
-  "time": "05/27/2022 07:42 am",
-  "timestamp": 1653651726829,
+  "docid": "mhq8PTfidxgr7xVxYcPtdp",
+  "time": "02/03/2023 11:03 am",
+  "timestamp": 1675440237775,
   "userid": "QWecNcxhyvP6j6sBN11hBsfZDau1",
   "owner": null,
   "email": null,
@@ -130,7 +130,7 @@
       ],
       "parentId": "of4fAMi2p9MKmo6JDUYnfX",
       "foundationId": "of4fAMi2p9MKmo6JDUYnfX",
-      "selected": true,
+      "selected": false,
       "filled": true,
       "selectedIndex": 4,
       "id": "u4ViXg39ZL8tds2AfD2o6U",
@@ -190,7 +190,7 @@
     "dailyLightSensorPanelX": -240,
     "weatherPanelX": 0,
     "heliodonPanelY": -14,
-    "groundColor": "forestgreen",
+    "groundColor": "#16a5a5",
     "groundPanelY": 0,
     "groundImage": false,
     "showDailyPvYieldPanel": false,
@@ -198,9 +198,9 @@
     "showYearlyLightSensorPanel": false,
     "mapType": "roadmap",
     "cameraPosition": [
-      14.448053603741622,
-      -21.17207217663719,
-      31.321445199621493
+      14.820121145460428,
+      -22.099346360333602,
+      30.775378977099834
     ],
     "panCenter": [
       14.4714120590319,
@@ -210,7 +210,7 @@
     "orthographic": false,
     "enableRotate": true,
     "cameraZoom": 12.604988194492186,
-    "showInstructionPanel": true,
+    "showInstructionPanel": false,
     "cameraPosition2D": [
       2.3674379904539022,
       -0.03943765886515896,
@@ -231,7 +231,28 @@
       "y": 0,
       "width": 520,
       "height": 318
+    },
+    "showStickyNotePanel": true,
+    "stickyNotePanelRect": {
+      "x": 0,
+      "y": 0,
+      "width": 290,
+      "height": 86
     }
+  },
+  "graphState": {
+    "dailyPvIndividualOutputs": false,
+    "yearlyPvIndividualOutputs": false,
+    "dailyParabolicDishIndividualOutputs": false,
+    "yearlyParabolicDishIndividualOutputs": false,
+    "dailyParabolicTroughIndividualOutputs": false,
+    "yearlyParabolicTroughIndividualOutputs": false,
+    "dailyFresnelReflectorIndividualOutputs": false,
+    "yearlyFresnelReflectorIndividualOutputs": false,
+    "dailyHeliostatIndividualOutputs": false,
+    "yearlyHeliostatIndividualOutputs": false,
+    "dailyUpdraftTowerIndividualOutputs": false,
+    "yearlyUpdraftTowerIndividualOutputs": false
   },
   "evolutionMethod": 2,
   "solarPanelArrayLayoutParams": {
@@ -285,5 +306,7 @@
     "electricitySellingPrice": 0.25,
     "operationalCostPerUnit": 0.3
   },
-  "notes": []
+  "notes": [
+    "Generative design of a solar farm \nin an arbitrary shape"
+  ]
 }

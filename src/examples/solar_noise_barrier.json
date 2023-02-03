@@ -1,7 +1,7 @@
 {
-  "docid": "kb8VXw8WpFyLE66Zon2wei",
-  "time": "11/05/2022 02:15 pm",
-  "timestamp": 1667672116079,
+  "docid": "9J5vzBxZ8UEKUiQGnyPEwk",
+  "time": "02/03/2023 10:36 am",
+  "timestamp": 1675438564802,
   "userid": "QWecNcxhyvP6j6sBN11hBsfZDau1",
   "owner": null,
   "email": null,
@@ -64,7 +64,7 @@
         0.17972820802569928
       ],
       "parentId": "Ground",
-      "selected": true,
+      "selected": false,
       "solarUpdraftTower": {},
       "solarAbsorberPipe": {},
       "solarPowerTower": {},
@@ -117,7 +117,9 @@
       "structureWidth": 0.1,
       "structureColor": "white",
       "opacity": 0.5,
-      "color": "#999999"
+      "color": "#999999",
+      "fill": "Full",
+      "unfilledHeight": 0.5
     },
     {
       "type": "Solar Panel",
@@ -1938,9 +1940,9 @@
     "dailyHeliostatYieldPanelX": 0,
     "showDailyParabolicDishYieldPanel": false,
     "cameraPosition": [
-      -42.7763215755641,
-      -34.11926565233777,
-      20.00044774998299
+      -42.77632157556409,
+      -34.119265652337766,
+      20.000447749982982
     ],
     "showYearlyHeliostatYieldPanel": false,
     "orthographic": false,
@@ -1967,7 +1969,7 @@
     "showYearlyLightSensorPanel": false,
     "autoRotate": false,
     "heliodonPanelX": 0,
-    "showStickyNotePanel": false,
+    "showStickyNotePanel": true,
     "showDailyLightSensorPanel": false,
     "visibilityResultsPanelX": 0,
     "yearlyPvYieldPanelY": 0,
@@ -1987,7 +1989,7 @@
     "yearlyPvYieldPanelX": 0,
     "yearlyParabolicDishYieldPanelX": 0,
     "shadowEnabled": true,
-    "showInstructionPanel": true,
+    "showInstructionPanel": false,
     "panCenter": [
       -26.714608093209538,
       -11.412788709722923,
@@ -2008,7 +2010,27 @@
       "y": 0,
       "width": 600,
       "height": 400
+    },
+    "stickyNotePanelRect": {
+      "x": 0,
+      "y": 0,
+      "width": 413,
+      "height": 68
     }
+  },
+  "graphState": {
+    "dailyPvIndividualOutputs": false,
+    "yearlyPvIndividualOutputs": false,
+    "dailyParabolicDishIndividualOutputs": false,
+    "yearlyParabolicDishIndividualOutputs": false,
+    "dailyParabolicTroughIndividualOutputs": false,
+    "yearlyParabolicTroughIndividualOutputs": false,
+    "dailyFresnelReflectorIndividualOutputs": false,
+    "yearlyFresnelReflectorIndividualOutputs": false,
+    "dailyHeliostatIndividualOutputs": false,
+    "yearlyHeliostatIndividualOutputs": false,
+    "dailyUpdraftTowerIndividualOutputs": false,
+    "yearlyUpdraftTowerIndividualOutputs": false
   },
   "evolutionMethod": 1,
   "solarPanelArrayLayoutParams": {
@@ -2067,5 +2089,7 @@
     "electricitySellingPrice": 0.25,
     "operationalCostPerUnit": 0.15
   },
-  "notes": []
+  "notes": [
+    "A proposed solar noise barrier in Lexington, MA"
+  ]
 }

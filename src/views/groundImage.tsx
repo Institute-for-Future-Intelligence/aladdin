@@ -1,5 +1,5 @@
 /*
- * @Copyright 2021-2022. Institute for Future Intelligence, Inc.
+ * @Copyright 2021-2023. Institute for Future Intelligence, Inc.
  */
 
 import React from 'react';
@@ -30,6 +30,7 @@ const GroundImage = () => {
       ? getSatelliteImage(640, latitude, longitude, mapZoom)
       : getRoadMap(640, latitude, longitude, mapZoom),
   );
+
   let zoomScale;
   if (mapZoom === 21) {
     zoomScale = 0.5;
@@ -40,11 +41,13 @@ const GroundImage = () => {
   }
   const scale = MERCATOR_PROJECTION_SCALE_CONSTANT * Math.cos(Util.toRadians(latitude)) * zoomScale;
 
-  return (
+  return texture ? (
     <mesh rotation={[0, 0, 0]} position={[0, 0, 0]} renderOrder={-1} scale={[scale, scale, 1]} receiveShadow={true}>
       <planeBufferGeometry args={[100, 100]} />
       <meshStandardMaterial attach="material" depthTest={false} side={DoubleSide} map={texture} opacity={1} />
     </mesh>
+  ) : (
+    <></>
   );
 };
 

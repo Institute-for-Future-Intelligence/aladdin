@@ -1,7 +1,7 @@
 {
-  "docid": "18NUH6Rbm1jQZqd3siUz59",
-  "time": "08/28/2022 12:49 pm",
-  "timestamp": 1661705360453,
+  "docid": "mETyjNhcSpLHUreuu362jG",
+  "time": "02/03/2023 10:33 am",
+  "timestamp": 1675438394402,
   "userid": "QWecNcxhyvP6j6sBN11hBsfZDau1",
   "owner": null,
   "email": null,
@@ -1989,9 +1989,9 @@
     "dailyHeliostatYieldPanelX": 0,
     "showDailyParabolicDishYieldPanel": false,
     "cameraPosition": [
-      14.985665341192856,
-      -94.01207606498474,
-      5.484037741591008
+      14.98566534119282,
+      -94.01207606498471,
+      5.484037741591015
     ],
     "showYearlyHeliostatYieldPanel": false,
     "orthographic": false,
@@ -2018,7 +2018,7 @@
     "showYearlyLightSensorPanel": false,
     "autoRotate": false,
     "heliodonPanelX": 0,
-    "showStickyNotePanel": false,
+    "showStickyNotePanel": true,
     "showDailyLightSensorPanel": false,
     "visibilityResultsPanelX": 0,
     "yearlyPvYieldPanelY": 0,
@@ -2038,7 +2038,7 @@
     "yearlyPvYieldPanelX": 0,
     "yearlyParabolicDishYieldPanelX": 0,
     "shadowEnabled": true,
-    "showInstructionPanel": true,
+    "showInstructionPanel": false,
     "panCenter": [
       -22.269354989815284,
       10.551050181634587,
@@ -2052,7 +2052,27 @@
     "showSolarPanelVisibilityResultsPanel": false,
     "stickyNotePanelY": 0,
     "showYearlyParabolicDishYieldPanel": false,
-    "showYearlyFresnelReflectorYieldPanel": false
+    "showYearlyFresnelReflectorYieldPanel": false,
+    "stickyNotePanelRect": {
+      "x": 0,
+      "y": 0,
+      "width": 366,
+      "height": 67
+    }
+  },
+  "graphState": {
+    "dailyPvIndividualOutputs": false,
+    "yearlyPvIndividualOutputs": false,
+    "dailyParabolicDishIndividualOutputs": false,
+    "yearlyParabolicDishIndividualOutputs": false,
+    "dailyParabolicTroughIndividualOutputs": false,
+    "yearlyParabolicTroughIndividualOutputs": false,
+    "dailyFresnelReflectorIndividualOutputs": false,
+    "yearlyFresnelReflectorIndividualOutputs": false,
+    "dailyHeliostatIndividualOutputs": false,
+    "yearlyHeliostatIndividualOutputs": false,
+    "dailyUpdraftTowerIndividualOutputs": false,
+    "yearlyUpdraftTowerIndividualOutputs": false
   },
   "evolutionMethod": 1,
   "solarPanelArrayLayoutParams": {
@@ -2111,5 +2131,7 @@
     "electricitySellingPrice": 0.25,
     "operationalCostPerUnit": 0.15
   },
-  "notes": []
+  "notes": [
+    "A proposed solar canal in California"
+  ]
 }

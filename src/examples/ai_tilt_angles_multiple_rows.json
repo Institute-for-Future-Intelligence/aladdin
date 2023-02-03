@@ -1,6 +1,7 @@
 {
-  "docid": "3i6pcNU98x7h18z9bALfDc",
-  "timestamp": 1651525865467,
+  "docid": "fuDyjFnfZyxqES42bpME47",
+  "time": "02/03/2023 11:00 am",
+  "timestamp": 1675440031518,
   "userid": "QWecNcxhyvP6j6sBN11hBsfZDau1",
   "owner": null,
   "email": null,
@@ -94,7 +95,9 @@
       "foundationId": "of4fAMi2p9MKmo6JDUYnfX",
       "pvModelName": "CS6X-355P-FG",
       "dailyYield": 3.8430599051077174,
-      "yearlyYield": 87.98498978626
+      "yearlyYield": 87.98498978626,
+      "labelSize": 0.5,
+      "labelHeight": 1
     },
     {
       "type": "Solar Panel",
@@ -129,7 +132,9 @@
       "selected": false,
       "dailyYield": 3.8430599051077174,
       "label": "Row2",
-      "yearlyYield": 88.73443715558736
+      "yearlyYield": 88.73443715558736,
+      "labelHeight": 1,
+      "labelSize": 0.5
     },
     {
       "type": "Solar Panel",
@@ -164,7 +169,9 @@
       "selected": false,
       "label": "Row3",
       "dailyYield": 3.8430599051077174,
-      "yearlyYield": 102.12190598796778
+      "yearlyYield": 102.12190598796778,
+      "labelHeight": 1,
+      "labelSize": 0.5
     },
     {
       "type": "Solar Panel",
@@ -199,7 +206,9 @@
       "selected": false,
       "label": "Row4",
       "dailyYield": 3.8430599051077174,
-      "yearlyYield": 87.95400017679898
+      "yearlyYield": 87.95400017679898,
+      "labelHeight": 1,
+      "labelSize": 0.5
     },
     {
       "type": "Human",
@@ -254,7 +263,7 @@
     "dailyLightSensorPanelX": -240,
     "weatherPanelX": 0,
     "heliodonPanelY": -14,
-    "groundColor": "forestgreen",
+    "groundColor": "#16a5a5",
     "groundPanelY": 0,
     "groundImage": false,
     "showDailyPvYieldPanel": false,
@@ -262,19 +271,19 @@
     "showYearlyLightSensorPanel": false,
     "mapType": "roadmap",
     "cameraPosition": [
-      16.5864965214659,
-      -11.947258480355291,
-      3.9167767950331918
+      14.323665130331175,
+      -8.426692001879298,
+      3.5655944521137717
     ],
     "panCenter": [
-      0,
-      0,
-      0
+      1.684900046296442,
+      2.3084248015304936,
+      0.043382642438776854
     ],
     "orthographic": false,
     "enableRotate": true,
     "cameraZoom": 33.40365140230188,
-    "showInstructionPanel": true,
+    "showInstructionPanel": false,
     "cameraPosition2D": [
       2.68477267877577,
       -0.19810500302601344,
@@ -292,11 +301,42 @@
     "evolutionPanelRect": {
       "x": 0,
       "y": 0,
-      "width": 518,
-      "height": 335
+      "width": 565,
+      "height": 359
+    },
+    "showStickyNotePanel": true,
+    "stickyNotePanelRect": {
+      "x": 0,
+      "y": 0,
+      "width": 322,
+      "height": 91
     }
   },
+  "graphState": {
+    "dailyPvIndividualOutputs": false,
+    "yearlyPvIndividualOutputs": false,
+    "dailyParabolicDishIndividualOutputs": false,
+    "yearlyParabolicDishIndividualOutputs": false,
+    "dailyParabolicTroughIndividualOutputs": false,
+    "yearlyParabolicTroughIndividualOutputs": false,
+    "dailyFresnelReflectorIndividualOutputs": false,
+    "yearlyFresnelReflectorIndividualOutputs": false,
+    "dailyHeliostatIndividualOutputs": false,
+    "yearlyHeliostatIndividualOutputs": false,
+    "dailyUpdraftTowerIndividualOutputs": false,
+    "yearlyUpdraftTowerIndividualOutputs": false
+  },
   "evolutionMethod": 2,
+  "solarPanelArrayLayoutParams": {
+    "pvModelName": "CS6X-355P-FG",
+    "rowAxis": "Zonal",
+    "orientation": "Landscape",
+    "tiltAngle": 0,
+    "rowsPerRack": 1,
+    "interRowSpacing": 2,
+    "poleHeight": 1,
+    "poleSpacing": 3
+  },
   "solarPanelArrayLayoutConstraints": {
     "minimumInterRowSpacing": 2,
     "maximumInterRowSpacing": 10,
@@ -338,5 +378,7 @@
     "electricitySellingPrice": 0.25,
     "operationalCostPerUnit": 0.15
   },
-  "notes": []
+  "notes": [
+    "Find optimal tilt angles \nfor multiple rows of solar panels"
+  ]
 }

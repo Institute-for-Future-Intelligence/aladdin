@@ -1,7 +1,7 @@
 {
-  "docid": "gAr3NnME2EEM6LZhs1fQn2",
-  "time": "12/03/2022 02:51 pm",
-  "timestamp": 1670097090071,
+  "docid": "8MzkkhrtFswUzZrHHxZsaP",
+  "time": "02/03/2023 11:09 am",
+  "timestamp": 1675440574935,
   "userid": "QWecNcxhyvP6j6sBN11hBsfZDau1",
   "owner": null,
   "email": null,
@@ -736,7 +736,8 @@
       "foundationId": "pAENrJmYZCM1ckJVXJhbjf",
       "lz": 0,
       "sideColor": "#bbc0c4",
-      "rise": 0
+      "rise": 0,
+      "ceiling": false
     },
     {
       "id": "bJhvoWT5frHADN5rpErFAp",
@@ -1146,7 +1147,8 @@
       "cx": 0,
       "parentId": "bJhvoWT5frHADN5rpErFAp",
       "sideColor": "#bbc0c4",
-      "rise": 0
+      "rise": 0,
+      "ceiling": false
     },
     {
       "textureTypes": [
@@ -2107,7 +2109,8 @@
         0
       ],
       "sideColor": "#a0a8a1",
-      "rise": 0
+      "rise": 0,
+      "ceiling": false
     },
     {
       "rotation": [
@@ -3936,7 +3939,8 @@
       "cy": 0,
       "id": "vaDVUZ1uyEALYaHTbs211h",
       "sideColor": "#f9fdfe",
-      "rise": 0
+      "rise": 0,
+      "ceiling": false
     },
     {
       "selected": false,
@@ -4114,7 +4118,7 @@
     "showDailyLightSensorPanel": false,
     "yearlyHeliostatYieldPanelY": 0,
     "yearlyFresnelReflectorYieldPanelY": 0,
-    "showInstructionPanel": true,
+    "showInstructionPanel": false,
     "yearlyParabolicDishYieldPanelRect": {
       "x": 0,
       "y": 0,
@@ -4156,10 +4160,10 @@
       "height": 400
     },
     "stickyNotePanelRect": {
-      "width": 400,
+      "width": 269,
       "y": 0,
-      "x": 0,
-      "height": 300
+      "x": -3,
+      "height": 87
     },
     "cameraPosition2D": [
       -38.51386717609555,
@@ -4230,7 +4234,7 @@
       "y": 0,
       "height": 470
     },
-    "showStickyNotePanel": false,
+    "showStickyNotePanel": true,
     "yearlyLightSensorPanelShowClearness": false,
     "showElevationAngle": true,
     "weatherPanelY": 0,
@@ -4267,9 +4271,9 @@
     },
     "orthographic": false,
     "cameraPosition": [
-      35.70270957619603,
-      -94.1677596689102,
-      142.42515130862247
+      35.702709576196014,
+      -94.16775966891016,
+      142.42515130862242
     ],
     "showDailyUpdraftTowerYieldPanel": false,
     "showDailyPvYieldPanel": false,
@@ -4328,6 +4332,20 @@
       "height": 400
     }
   },
+  "graphState": {
+    "dailyPvIndividualOutputs": false,
+    "yearlyPvIndividualOutputs": false,
+    "dailyParabolicDishIndividualOutputs": false,
+    "yearlyParabolicDishIndividualOutputs": false,
+    "dailyParabolicTroughIndividualOutputs": false,
+    "yearlyParabolicTroughIndividualOutputs": false,
+    "dailyFresnelReflectorIndividualOutputs": false,
+    "yearlyFresnelReflectorIndividualOutputs": false,
+    "dailyHeliostatIndividualOutputs": false,
+    "yearlyHeliostatIndividualOutputs": false,
+    "dailyUpdraftTowerIndividualOutputs": false,
+    "yearlyUpdraftTowerIndividualOutputs": false
+  },
   "evolutionMethod": 1,
   "solarPanelArrayLayoutParams": {
     "rowAxis": "Zonal",
@@ -4385,5 +4403,7 @@
     "projectLifeSpan": 25,
     "operationalCostPerUnit": 0.15
   },
-  "notes": []
+  "notes": [
+    "South Burlington High School\nVermont, USA"
+  ]
 }
