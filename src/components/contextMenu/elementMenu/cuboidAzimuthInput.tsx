@@ -1,5 +1,5 @@
 /*
- * @Copyright 2021-2022. Institute for Future Intelligence, Inc.
+ * @Copyright 2021-2023. Institute for Future Intelligence, Inc.
  */
 
 import React, { useEffect, useRef, useState } from 'react';
@@ -21,13 +21,16 @@ const CuboidAzimuthInput = ({ setDialogVisible }: { setDialogVisible: (b: boolea
   const getElementById = useStore(Selector.getElementById);
   const updateElementRotationById = useStore(Selector.updateElementRotationById);
   const updateElementRotationForAll = useStore(Selector.updateElementRotationForAll);
-  const cuboid = useStore(Selector.selectedElement) as CuboidModel;
   const addUndoable = useStore(Selector.addUndoable);
-  const cuboidActionScope = useStore(Selector.cuboidActionScope);
-  const setCuboidActionScope = useStore(Selector.setCuboidActionScope);
+  const actionScope = useStore(Selector.cuboidActionScope);
+  const setActionScope = useStore(Selector.setCuboidActionScope);
   const applyCount = useStore(Selector.applyCount);
   const setApplyCount = useStore(Selector.setApplyCount);
   const revertApply = useStore(Selector.revertApply);
+
+  const cuboid = useStore((state) =>
+    state.elements.find((e) => e.selected && e.type === ObjectType.Cuboid),
+  ) as CuboidModel;
 
   const [updateFlag, setUpdateFlag] = useState<boolean>(false);
   const [dragEnabled, setDragEnabled] = useState<boolean>(false);
@@ -45,12 +48,12 @@ const CuboidAzimuthInput = ({ setDialogVisible }: { setDialogVisible: (b: boolea
   }, [cuboid]);
 
   const onScopeChange = (e: RadioChangeEvent) => {
-    setCuboidActionScope(e.target.value);
+    setActionScope(e.target.value);
     setUpdateFlag(!updateFlag);
   };
 
   const needChange = (azimuth: number) => {
-    switch (cuboidActionScope) {
+    switch (actionScope) {
       case Scope.AllObjectsOfThisType:
         for (const e of elements) {
           if (e.type === ObjectType.Cuboid && !e.locked) {
@@ -72,7 +75,7 @@ const CuboidAzimuthInput = ({ setDialogVisible }: { setDialogVisible: (b: boolea
   const setAzimuth = (value: number) => {
     if (!cuboid) return;
     if (!needChange(value)) return;
-    switch (cuboidActionScope) {
+    switch (actionScope) {
       case Scope.AllObjectsOfThisType:
         const oldAzimuthsAll = new Map<string, number>();
         for (const elem of elements) {
@@ -222,7 +225,7 @@ const CuboidAzimuthInput = ({ setDialogVisible }: { setDialogVisible: (b: boolea
             style={{ border: '2px dashed #ccc', paddingTop: '8px', paddingLeft: '12px', paddingBottom: '8px' }}
             span={17}
           >
-            <Radio.Group onChange={onScopeChange} value={cuboidActionScope}>
+            <Radio.Group onChange={onScopeChange} value={actionScope}>
               <Space direction="vertical">
                 <Radio value={Scope.OnlyThisObject}>{i18n.t('cuboidMenu.OnlyThisCuboid', lang)}</Radio>
                 <Radio value={Scope.AllObjectsOfThisType}>{i18n.t('cuboidMenu.AllCuboids', lang)}</Radio>

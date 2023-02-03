@@ -25,8 +25,8 @@ const SolarUpdraftTowerCollectorTransmissivityInput = ({
   const updateById = useStore(Selector.updateSolarUpdraftTowerCollectorTransmissivityById);
   const updateForAll = useStore(Selector.updateSolarUpdraftTowerCollectorTransmissivityForAll);
   const addUndoable = useStore(Selector.addUndoable);
-  const foundationActionScope = useStore(Selector.foundationActionScope);
-  const setFoundationActionScope = useStore(Selector.setFoundationActionScope);
+  const actionScope = useStore(Selector.foundationActionScope);
+  const setActionScope = useStore(Selector.setFoundationActionScope);
   const applyCount = useStore(Selector.applyCount);
   const setApplyCount = useStore(Selector.setApplyCount);
   const revertApply = useStore(Selector.revertApply);
@@ -50,12 +50,12 @@ const SolarUpdraftTowerCollectorTransmissivityInput = ({
   }, [foundation]);
 
   const onScopeChange = (e: RadioChangeEvent) => {
-    setFoundationActionScope(e.target.value);
+    setActionScope(e.target.value);
     setUpdateFlag(!updateFlag);
   };
 
   const needChange = (transmissivity: number) => {
-    switch (foundationActionScope) {
+    switch (actionScope) {
       case Scope.AllObjectsOfThisType:
         for (const e of elements) {
           if (e.type === ObjectType.Foundation && !e.locked) {
@@ -87,7 +87,7 @@ const SolarUpdraftTowerCollectorTransmissivityInput = ({
   const setTransmissivity = (value: number) => {
     if (!foundation) return;
     if (!needChange(value)) return;
-    switch (foundationActionScope) {
+    switch (actionScope) {
       case Scope.AllObjectsOfThisType:
         const oldValuesAll = new Map<string, number>();
         for (const elem of elements) {
@@ -245,7 +245,7 @@ const SolarUpdraftTowerCollectorTransmissivityInput = ({
             }}
             span={17}
           >
-            <Radio.Group onChange={onScopeChange} value={foundationActionScope}>
+            <Radio.Group onChange={onScopeChange} value={actionScope}>
               <Space direction="vertical">
                 <Radio value={Scope.OnlyThisObject}>{i18n.t('foundationMenu.OnlyThisFoundation', lang)}</Radio>
                 <Radio value={Scope.AllObjectsOfThisType}>{i18n.t('foundationMenu.AllFoundations', lang)}</Radio>

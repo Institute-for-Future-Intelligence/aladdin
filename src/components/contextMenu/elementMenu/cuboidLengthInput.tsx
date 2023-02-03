@@ -1,5 +1,5 @@
 /*
- * @Copyright 2021-2022. Institute for Future Intelligence, Inc.
+ * @Copyright 2021-2023. Institute for Future Intelligence, Inc.
  */
 
 import React, { useEffect, useRef, useState } from 'react';
@@ -30,15 +30,18 @@ const CuboidLengthInput = ({ setDialogVisible }: { setDialogVisible: (b: boolean
   const updateElementLxById = useStore(Selector.updateElementLxById);
   const updateElementLxForAll = useStore(Selector.updateElementLxForAll);
   const updatePolygonVerticesById = useStore(Selector.updatePolygonVerticesById);
-  const cuboid = useStore(Selector.selectedElement) as CuboidModel;
   const setElementPosition = useStore(Selector.setElementPosition);
   const addUndoable = useStore(Selector.addUndoable);
-  const cuboidActionScope = useStore(Selector.cuboidActionScope);
-  const setCuboidActionScope = useStore(Selector.setCuboidActionScope);
+  const actionScope = useStore(Selector.cuboidActionScope);
+  const setActionScope = useStore(Selector.setCuboidActionScope);
   const setCommonStore = useStore(Selector.set);
   const applyCount = useStore(Selector.applyCount);
   const setApplyCount = useStore(Selector.setApplyCount);
   const revertApply = useStore(Selector.revertApply);
+
+  const cuboid = useStore((state) =>
+    state.elements.find((e) => e.selected && e.type === ObjectType.Cuboid),
+  ) as CuboidModel;
 
   const [updateFlag, setUpdateFlag] = useState<boolean>(false);
   const [dragEnabled, setDragEnabled] = useState<boolean>(false);
@@ -66,12 +69,12 @@ const CuboidLengthInput = ({ setDialogVisible }: { setDialogVisible: (b: boolean
   }, [cuboid]);
 
   const onScopeChange = (e: RadioChangeEvent) => {
-    setCuboidActionScope(e.target.value);
+    setActionScope(e.target.value);
     setUpdateFlag(!updateFlag);
   };
 
   const containsAllChildren = (lx: number) => {
-    switch (cuboidActionScope) {
+    switch (actionScope) {
       case Scope.AllObjectsOfThisType:
         for (const e of elements) {
           if (e.type === ObjectType.Cuboid) {
@@ -104,7 +107,7 @@ const CuboidLengthInput = ({ setDialogVisible }: { setDialogVisible: (b: boolean
   };
 
   const needChange = (lx: number) => {
-    switch (cuboidActionScope) {
+    switch (actionScope) {
       case Scope.AllObjectsOfThisType:
         for (const e of elements) {
           if (e.type === ObjectType.Cuboid && !e.locked) {
@@ -303,7 +306,7 @@ const CuboidLengthInput = ({ setDialogVisible }: { setDialogVisible: (b: boolean
       rejectedValue.current = value;
       inputLxRef.current = oldLx;
     } else {
-      switch (cuboidActionScope) {
+      switch (actionScope) {
         case Scope.AllObjectsOfThisType:
           const oldLxsAll = new Map<string, number>();
           for (const elem of elements) {
@@ -538,7 +541,7 @@ const CuboidLengthInput = ({ setDialogVisible }: { setDialogVisible: (b: boolean
             style={{ border: '2px dashed #ccc', paddingTop: '8px', paddingLeft: '12px', paddingBottom: '8px' }}
             span={17}
           >
-            <Radio.Group onChange={onScopeChange} value={cuboidActionScope}>
+            <Radio.Group onChange={onScopeChange} value={actionScope}>
               <Space direction="vertical">
                 <Radio value={Scope.OnlyThisObject}>{i18n.t('cuboidMenu.OnlyThisCuboid', lang)}</Radio>
                 <Radio value={Scope.AllObjectsOfThisType}>{i18n.t('cuboidMenu.AllCuboids', lang)}</Radio>

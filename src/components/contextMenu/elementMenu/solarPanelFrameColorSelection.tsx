@@ -26,8 +26,8 @@ const SolarPanelFrameColorSelection = ({ setDialogVisible }: { setDialogVisible:
   const updateSolarPanelFrameColorForAll = useStore(Selector.updateSolarPanelFrameColorForAll);
   const getParent = useStore(Selector.getParent);
   const addUndoable = useStore(Selector.addUndoable);
-  const solarPanelActionScope = useStore(Selector.solarPanelActionScope);
-  const setSolarPanelActionScope = useStore(Selector.setSolarPanelActionScope);
+  const actionScope = useStore(Selector.solarPanelActionScope);
+  const setActionScope = useStore(Selector.setSolarPanelActionScope);
   const applyCount = useStore(Selector.applyCount);
   const setApplyCount = useStore(Selector.setApplyCount);
   const revertApply = useStore(Selector.revertApply);
@@ -55,12 +55,12 @@ const SolarPanelFrameColorSelection = ({ setDialogVisible }: { setDialogVisible:
   }, [solarPanel]);
 
   const onScopeChange = (e: RadioChangeEvent) => {
-    setSolarPanelActionScope(e.target.value);
+    setActionScope(e.target.value);
     setUpdateFlag(!updateFlag);
   };
 
   const needChange = (frameColor: string) => {
-    switch (solarPanelActionScope) {
+    switch (actionScope) {
       case Scope.AllObjectsOfThisType:
         for (const e of elements) {
           if (e.type === ObjectType.SolarPanel && !e.locked) {
@@ -122,7 +122,7 @@ const SolarPanelFrameColorSelection = ({ setDialogVisible }: { setDialogVisible:
   const setFrameColor = (value: string) => {
     if (!solarPanel) return;
     if (!needChange(value)) return;
-    switch (solarPanelActionScope) {
+    switch (actionScope) {
       case Scope.AllObjectsOfThisType:
         const oldFrameColorsAll = new Map<string, string>();
         for (const elem of elements) {
@@ -345,7 +345,7 @@ const SolarPanelFrameColorSelection = ({ setDialogVisible }: { setDialogVisible:
             style={{ border: '2px dashed #ccc', paddingTop: '8px', paddingLeft: '12px', paddingBottom: '8px' }}
             span={14}
           >
-            <Radio.Group onChange={onScopeChange} value={solarPanelActionScope}>
+            <Radio.Group onChange={onScopeChange} value={actionScope}>
               <Space direction="vertical">
                 <Radio value={Scope.OnlyThisObject}>{i18n.t('solarPanelMenu.OnlyThisSolarPanel', lang)}</Radio>
                 <Radio value={Scope.AllObjectsOfThisTypeOnSurface}>

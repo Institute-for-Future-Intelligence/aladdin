@@ -29,8 +29,8 @@ const FoundationHeightInput = ({ setDialogVisible }: { setDialogVisible: (b: boo
   const updateElementLzForAll = useStore(Selector.updateElementLzForAll);
   const updateElementCzForAll = useStore(Selector.updateElementCzForAll);
   const addUndoable = useStore(Selector.addUndoable);
-  const foundationActionScope = useStore(Selector.foundationActionScope);
-  const setFoundationActionScope = useStore(Selector.setFoundationActionScope);
+  const actionScope = useStore(Selector.foundationActionScope);
+  const setActionScope = useStore(Selector.setFoundationActionScope);
   const setElementPosition = useStore(Selector.setElementPosition);
   const applyCount = useStore(Selector.applyCount);
   const setApplyCount = useStore(Selector.setApplyCount);
@@ -60,7 +60,7 @@ const FoundationHeightInput = ({ setDialogVisible }: { setDialogVisible: (b: boo
   }, [foundation]);
 
   const onScopeChange = (e: RadioChangeEvent) => {
-    setFoundationActionScope(e.target.value);
+    setActionScope(e.target.value);
     setUpdateFlag(!updateFlag);
   };
 
@@ -70,7 +70,7 @@ const FoundationHeightInput = ({ setDialogVisible }: { setDialogVisible: (b: boo
   };
 
   const needChange = (lz: number) => {
-    switch (foundationActionScope) {
+    switch (actionScope) {
       case Scope.AllObjectsOfThisType:
         for (const e of elements) {
           if (e.type === ObjectType.Foundation && !e.locked) {
@@ -185,7 +185,7 @@ const FoundationHeightInput = ({ setDialogVisible }: { setDialogVisible: (b: boo
   const setLz = (value: number) => {
     if (!foundation) return;
     if (!needChange(value)) return;
-    switch (foundationActionScope) {
+    switch (actionScope) {
       case Scope.AllObjectsOfThisType:
         const oldLzsAll = new Map<string, number>();
         for (const elem of elements) {
@@ -396,7 +396,7 @@ const FoundationHeightInput = ({ setDialogVisible }: { setDialogVisible: (b: boo
             style={{ border: '2px dashed #ccc', paddingTop: '8px', paddingLeft: '12px', paddingBottom: '8px' }}
             span={17}
           >
-            <Radio.Group onChange={onScopeChange} value={foundationActionScope}>
+            <Radio.Group onChange={onScopeChange} value={actionScope}>
               <Space direction="vertical">
                 <Radio value={Scope.OnlyThisObject}>{i18n.t('foundationMenu.OnlyThisFoundation', lang)}</Radio>
                 <Radio value={Scope.AllObjectsOfThisType}>{i18n.t('foundationMenu.AllFoundations', lang)}</Radio>

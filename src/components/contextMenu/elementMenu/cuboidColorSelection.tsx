@@ -1,5 +1,5 @@
 /*
- * @Copyright 2021-2022. Institute for Future Intelligence, Inc.
+ * @Copyright 2021-2023. Institute for Future Intelligence, Inc.
  */
 
 import React, { useEffect, useRef, useState } from 'react';
@@ -21,14 +21,17 @@ const CuboidColorSelection = ({ setDialogVisible }: { setDialogVisible: (b: bool
   const updateCuboidColorBySide = useStore(Selector.updateCuboidColorBySide);
   const updateCuboidColorById = useStore(Selector.updateCuboidColorById);
   const updateCuboidColorForAll = useStore(Selector.updateCuboidColorForAll);
-  const cuboid = useStore(Selector.selectedElement) as CuboidModel;
   const addUndoable = useStore(Selector.addUndoable);
-  const cuboidActionScope = useStore(Selector.cuboidActionScope);
-  const setCuboidActionScope = useStore(Selector.setCuboidActionScope);
+  const actionScope = useStore(Selector.cuboidActionScope);
+  const setActionScope = useStore(Selector.setCuboidActionScope);
   const selectedSideIndex = useStore(Selector.selectedSideIndex);
   const applyCount = useStore(Selector.applyCount);
   const setApplyCount = useStore(Selector.setApplyCount);
   const revertApply = useStore(Selector.revertApply);
+
+  const cuboid = useStore((state) =>
+    state.elements.find((e) => e.selected && e.type === ObjectType.Cuboid),
+  ) as CuboidModel;
 
   const [selectedColor, setSelectedColor] = useState<string>(cuboid?.color ?? '#808080');
   const [updateFlag, setUpdateFlag] = useState<boolean>(false);
@@ -47,7 +50,7 @@ const CuboidColorSelection = ({ setDialogVisible }: { setDialogVisible: (b: bool
   }, [cuboid, selectedSideIndex]);
 
   const onScopeChange = (e: RadioChangeEvent) => {
-    setCuboidActionScope(e.target.value);
+    setActionScope(e.target.value);
     setUpdateFlag(!updateFlag);
   };
 
@@ -62,7 +65,7 @@ const CuboidColorSelection = ({ setDialogVisible }: { setDialogVisible: (b: bool
   };
 
   const needChange = (color: string) => {
-    switch (cuboidActionScope) {
+    switch (actionScope) {
       case Scope.AllObjectsOfThisType:
         for (const e of elements) {
           if (e.type === ObjectType.Cuboid && !e.locked) {
@@ -114,7 +117,7 @@ const CuboidColorSelection = ({ setDialogVisible }: { setDialogVisible: (b: bool
   const setColor = (value: string) => {
     if (!cuboid) return;
     if (!needChange(value)) return;
-    switch (cuboidActionScope) {
+    switch (actionScope) {
       case Scope.AllObjectsOfThisType:
         const oldColorsAll = new Map<string, string[]>();
         for (const elem of elements) {
@@ -324,7 +327,7 @@ const CuboidColorSelection = ({ setDialogVisible }: { setDialogVisible: (b: bool
             style={{ border: '2px dashed #ccc', paddingTop: '8px', paddingLeft: '12px', paddingBottom: '8px' }}
             span={12}
           >
-            <Radio.Group onChange={onScopeChange} value={cuboidActionScope}>
+            <Radio.Group onChange={onScopeChange} value={actionScope}>
               <Space direction="vertical">
                 <Radio value={Scope.OnlyThisSide}>{i18n.t('cuboidMenu.OnlyThisSide', lang)}</Radio>
                 <Radio value={Scope.OnlyThisObject}>{i18n.t('cuboidMenu.AllSidesOfThisCuboid', lang)}</Radio>

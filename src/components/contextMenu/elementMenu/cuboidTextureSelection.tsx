@@ -1,5 +1,5 @@
 /*
- * @Copyright 2021-2022. Institute for Future Intelligence, Inc.
+ * @Copyright 2021-2023. Institute for Future Intelligence, Inc.
  */
 
 import CuboidTexture01Icon from '../../../resources/building_facade_01_menu.png';
@@ -31,14 +31,17 @@ const CuboidTextureSelection = ({ setDialogVisible }: { setDialogVisible: (b: bo
   const updateCuboidTextureBySide = useStore(Selector.updateCuboidTextureBySide);
   const updateCuboidTextureById = useStore(Selector.updateCuboidFacadeTextureById);
   const updateCuboidTextureForAll = useStore(Selector.updateCuboidFacadeTextureForAll);
-  const cuboid = useStore(Selector.selectedElement) as CuboidModel;
   const addUndoable = useStore(Selector.addUndoable);
-  const cuboidActionScope = useStore(Selector.cuboidActionScope);
-  const setCuboidActionScope = useStore(Selector.setCuboidActionScope);
+  const actionScope = useStore(Selector.cuboidActionScope);
+  const setActionScope = useStore(Selector.setCuboidActionScope);
   const selectedSideIndex = useStore(Selector.selectedSideIndex);
   const applyCount = useStore(Selector.applyCount);
   const setApplyCount = useStore(Selector.setApplyCount);
   const revertApply = useStore(Selector.revertApply);
+
+  const cuboid = useStore((state) =>
+    state.elements.find((e) => e.selected && e.type === ObjectType.Cuboid),
+  ) as CuboidModel;
 
   const [selectedTexture, setSelectedTexture] = useState<CuboidTexture>(
     cuboid && cuboid.textureTypes && selectedSideIndex >= 0
@@ -68,12 +71,12 @@ const CuboidTextureSelection = ({ setDialogVisible }: { setDialogVisible: (b: bo
   }, [cuboid, selectedSideIndex]);
 
   const onScopeChange = (e: RadioChangeEvent) => {
-    setCuboidActionScope(e.target.value);
+    setActionScope(e.target.value);
     setUpdateFlag(!updateFlag);
   };
 
   const needChange = (texture: CuboidTexture) => {
-    switch (cuboidActionScope) {
+    switch (actionScope) {
       case Scope.AllObjectsOfThisType:
         for (const e of elements) {
           if (e.type === ObjectType.Cuboid && !e.locked) {
@@ -112,7 +115,7 @@ const CuboidTextureSelection = ({ setDialogVisible }: { setDialogVisible: (b: bo
   const setTexture = (value: CuboidTexture) => {
     if (!cuboid) return;
     if (!needChange(value)) return;
-    switch (cuboidActionScope) {
+    switch (actionScope) {
       case Scope.AllObjectsOfThisType:
         const oldTexturesAll = new Map<string, CuboidTexture[] | undefined>();
         for (const elem of elements) {
@@ -455,7 +458,7 @@ const CuboidTextureSelection = ({ setDialogVisible }: { setDialogVisible: (b: bo
             style={{ border: '2px dashed #ccc', paddingTop: '8px', paddingLeft: '12px', paddingBottom: '8px' }}
             span={12}
           >
-            <Radio.Group onChange={onScopeChange} value={cuboidActionScope}>
+            <Radio.Group onChange={onScopeChange} value={actionScope}>
               <Space direction="vertical">
                 <Radio value={Scope.OnlyThisSide}>{i18n.t('cuboidMenu.OnlyThisSide', lang)}</Radio>
                 <Radio value={Scope.OnlyThisObject}>{i18n.t('cuboidMenu.AllSidesOfThisCuboid', lang)}</Radio>

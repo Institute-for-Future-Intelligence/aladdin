@@ -21,8 +21,8 @@ const SolarUpdraftTowerChimneyRadiusInput = ({ setDialogVisible }: { setDialogVi
   const updateChimneyRadiusById = useStore(Selector.updateSolarUpdraftTowerChimneyRadiusById);
   const updateChimneyRadiusForAll = useStore(Selector.updateSolarUpdraftTowerChimneyRadiusForAll);
   const addUndoable = useStore(Selector.addUndoable);
-  const foundationActionScope = useStore(Selector.foundationActionScope);
-  const setFoundationActionScope = useStore(Selector.setFoundationActionScope);
+  const actionScope = useStore(Selector.foundationActionScope);
+  const setActionScope = useStore(Selector.setFoundationActionScope);
   const applyCount = useStore(Selector.applyCount);
   const setApplyCount = useStore(Selector.setApplyCount);
   const revertApply = useStore(Selector.revertApply);
@@ -49,12 +49,12 @@ const SolarUpdraftTowerChimneyRadiusInput = ({ setDialogVisible }: { setDialogVi
   }, [foundation]);
 
   const onScopeChange = (e: RadioChangeEvent) => {
-    setFoundationActionScope(e.target.value);
+    setActionScope(e.target.value);
     setUpdateFlag(!updateFlag);
   };
 
   const needChange = (chimneyRadius: number) => {
-    switch (foundationActionScope) {
+    switch (actionScope) {
       case Scope.AllObjectsOfThisType:
         for (const e of elements) {
           if (e.type === ObjectType.Foundation && !e.locked) {
@@ -86,7 +86,7 @@ const SolarUpdraftTowerChimneyRadiusInput = ({ setDialogVisible }: { setDialogVi
   const setChimneyRadius = (value: number) => {
     if (!foundation) return;
     if (!needChange(value)) return;
-    switch (foundationActionScope) {
+    switch (actionScope) {
       case Scope.AllObjectsOfThisType:
         const oldValuesAll = new Map<string, number>();
         for (const elem of elements) {
@@ -246,7 +246,7 @@ const SolarUpdraftTowerChimneyRadiusInput = ({ setDialogVisible }: { setDialogVi
             style={{ border: '2px dashed #ccc', paddingTop: '8px', paddingLeft: '12px', paddingBottom: '8px' }}
             span={16}
           >
-            <Radio.Group onChange={onScopeChange} value={foundationActionScope}>
+            <Radio.Group onChange={onScopeChange} value={actionScope}>
               <Space direction="vertical">
                 <Radio value={Scope.OnlyThisObject}>{i18n.t('foundationMenu.OnlyThisFoundation', lang)}</Radio>
                 <Radio value={Scope.AllObjectsOfThisType}>{i18n.t('foundationMenu.AllFoundations', lang)}</Radio>

@@ -37,13 +37,13 @@ export const CuboidMenu = React.memo(() => {
   const addUndoable = useStore(Selector.addUndoable);
   const countAllOffspringsByType = useStore(Selector.countAllOffspringsByTypeAtOnce);
   const removeAllChildElementsByType = useStore(Selector.removeAllChildElementsByType);
-  const setCuboidActionScope = useStore(Selector.setCuboidActionScope);
+  const setActionScope = useStore(Selector.setCuboidActionScope);
   const addElement = useStore(Selector.addElement);
   const removeElementById = useStore(Selector.removeElementById);
   const setApplyCount = useStore(Selector.setApplyCount);
-
   const selectedSideIndex = useStore(Selector.selectedSideIndex);
   const elementsToPaste = useStore(Selector.elementsToPaste);
+
   const cuboid = useStore((state) =>
     state.elements.find((e) => e.selected && e.type === ObjectType.Cuboid),
   ) as CuboidModel;
@@ -414,7 +414,7 @@ export const CuboidMenu = React.memo(() => {
             onClick={() => {
               // no side selection for length
               if (useStore.getState().cuboidActionScope === Scope.OnlyThisSide) {
-                setCuboidActionScope(Scope.OnlyThisObject);
+                setActionScope(Scope.OnlyThisObject);
               }
               setApplyCount(0);
               setLengthDialogVisible(true);
@@ -430,7 +430,7 @@ export const CuboidMenu = React.memo(() => {
             onClick={() => {
               // no side selection for width
               if (useStore.getState().cuboidActionScope === Scope.OnlyThisSide) {
-                setCuboidActionScope(Scope.OnlyThisObject);
+                setActionScope(Scope.OnlyThisObject);
               }
               setApplyCount(0);
               setWidthDialogVisible(true);
@@ -446,7 +446,7 @@ export const CuboidMenu = React.memo(() => {
             onClick={() => {
               // no side selection for height
               if (useStore.getState().cuboidActionScope === Scope.OnlyThisSide) {
-                setCuboidActionScope(Scope.OnlyThisObject);
+                setActionScope(Scope.OnlyThisObject);
               }
               setApplyCount(0);
               setHeightDialogVisible(true);
@@ -462,7 +462,7 @@ export const CuboidMenu = React.memo(() => {
             onClick={() => {
               // no side selection for azimuth
               if (useStore.getState().cuboidActionScope === Scope.OnlyThisSide) {
-                setCuboidActionScope(Scope.OnlyThisObject);
+                setActionScope(Scope.OnlyThisObject);
               }
               setApplyCount(0);
               setAzimuthDialogVisible(true);
