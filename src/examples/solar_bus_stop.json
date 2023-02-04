@@ -1,7 +1,7 @@
 {
-  "docid": "xaaR3mXUj8dBmNYCygiUNp",
-  "time": "02/03/2023 10:29 am",
-  "timestamp": 1675438190259,
+  "docid": "6qdi8GbmVW5VuZ8pVNooD5",
+  "time": "02/04/2023 02:17 pm",
+  "timestamp": 1675538272094,
   "userid": "QWecNcxhyvP6j6sBN11hBsfZDau1",
   "owner": null,
   "email": null,
@@ -126,7 +126,8 @@
       "structureWidth": 0.1,
       "structureColor": "white",
       "fill": "Full",
-      "unfilledHeight": 0.5
+      "unfilledHeight": 0.5,
+      "eavesLength": 0.3
     },
     {
       "type": "Wall",
@@ -187,7 +188,8 @@
       "structureWidth": 0.1,
       "structureColor": "white",
       "fill": "Full",
-      "unfilledHeight": 0.5
+      "unfilledHeight": 0.5,
+      "eavesLength": 0.3
     },
     {
       "lx": 2.059449883655177,
@@ -248,7 +250,8 @@
       "structureWidth": 0.1,
       "structureColor": "white",
       "fill": "Full",
-      "unfilledHeight": 0.5
+      "unfilledHeight": 0.5,
+      "eavesLength": 0.3
     },
     {
       "showLabel": false,
@@ -305,7 +308,8 @@
       "structureWidth": 0.1,
       "structureColor": "white",
       "fill": "Full",
-      "unfilledHeight": 0.5
+      "unfilledHeight": 0.5,
+      "eavesLength": 0.3
     },
     {
       "type": "Human",
@@ -362,7 +366,6 @@
       "lx": 0,
       "ly": 0,
       "lz": 0,
-      "overhang": 0.3,
       "thickness": 0.05,
       "roofType": "Gable",
       "roofStructure": "Rafter",
@@ -508,9 +511,9 @@
     "dailyHeliostatYieldPanelX": 0,
     "showDailyParabolicDishYieldPanel": false,
     "cameraPosition": [
-      -4.898987225987276,
-      -9.182628086113699,
-      3.563487477681719
+      -4.898987225987274,
+      -9.182628086113693,
+      3.56348747768172
     ],
     "showYearlyHeliostatYieldPanel": false,
     "orthographic": false,

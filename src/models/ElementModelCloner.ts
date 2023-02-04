@@ -18,6 +18,8 @@ import { PolygonModel } from './PolygonModel';
 import { Util } from '../Util';
 import { Vector3 } from 'three';
 import {
+  DEFAULT_CEILING_R_VALUE,
+  DEFAULT_GROUND_FLOOR_R_VALUE,
   UNIT_VECTOR_NEG_X,
   UNIT_VECTOR_NEG_Y,
   UNIT_VECTOR_POS_X,
@@ -571,6 +573,7 @@ export class ElementModelCloner {
       labelHeight: foundation.labelHeight,
       labelSize: foundation.labelSize,
       showLabel: foundation.showLabel,
+      rValue: foundation.rValue ?? DEFAULT_GROUND_FLOOR_R_VALUE,
       id: short.generate() as string,
     } as FoundationModel;
   }
@@ -731,6 +734,7 @@ export class ElementModelCloner {
       rise: roof.rise,
       color: roof.color,
       rValue: roof.rValue,
+      ceilingRValue: roof.ceilingRValue ?? DEFAULT_CEILING_R_VALUE,
       volumetricHeatCapacity: roof.volumetricHeatCapacity,
       sideColor: roof.sideColor,
       normal: [...roof.normal],

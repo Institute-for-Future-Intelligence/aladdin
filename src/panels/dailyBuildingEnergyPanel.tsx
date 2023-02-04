@@ -136,6 +136,7 @@ const DailyBuildingEnergyPanel = ({ city }: DailyBuildingEnergyPanelProps) => {
     setAcSum(0);
     setSolarPanelSum(0);
     setNetSum(0);
+    setLabels([]);
   };
 
   const { sum, sumHeaterMap, sumAcMap, sumSolarPanelMap, dataLabels } = useDailyEnergySorter(

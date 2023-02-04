@@ -160,6 +160,7 @@ const YearlyBuildingEnergyPanel = ({ city }: YearlyBuildingEnergyPanelProps) => 
     setAcSum(0);
     setSolarPanelSum(0);
     setNetSum(0);
+    setLabels([]);
   };
 
   useEffect(() => {
