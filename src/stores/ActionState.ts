@@ -49,7 +49,7 @@ export interface ActionState {
   wallRValue: number;
   wallVolumetricHeatCapacity: number;
   wallUnfilledHeight: number;
-  wallEaveLength: number;
+  wallEavesLength: number;
 
   roofColor: string;
   roofSideColor: string;

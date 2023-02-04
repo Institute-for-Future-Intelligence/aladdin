@@ -143,13 +143,13 @@ const Rafter = ({
   const ridgeUnitVector = useMemo(() => new Vector3().subVectors(ridgeRightPoint, ridgeLeftPoint).normalize(), []);
 
   const ridgeLeftPointAfterOverhang = useMemo(
-    () => ridgeLeftPoint.clone().add(ridgeUnitVector.clone().multiplyScalar(-leftWall.eaveLength / 2)),
-    [ridgeLeftPoint, leftWall.eaveLength],
+    () => ridgeLeftPoint.clone().add(ridgeUnitVector.clone().multiplyScalar(-(leftWall.eavesLength ?? 0) / 2)),
+    [ridgeLeftPoint, leftWall.eavesLength],
   );
 
   const ridgeRightPointAfterOverhang = useMemo(
-    () => ridgeRightPoint.clone().add(ridgeUnitVector.clone().multiplyScalar(rightWall.eaveLength / 2)),
-    [ridgeLeftPoint, rightWall.eaveLength],
+    () => ridgeRightPoint.clone().add(ridgeUnitVector.clone().multiplyScalar((rightWall.eavesLength ?? 0) / 2)),
+    [ridgeLeftPoint, rightWall.eavesLength],
   );
 
   const frontWallLeftPoint = frontWall
@@ -188,8 +188,14 @@ const Rafter = ({
       const ridge = ridgeLeftPoint.clone().add(ridgeUnitVector.clone().multiplyScalar(len));
       const front = frontWallLeftPoint.clone().add(frontWallUnitVector.clone().multiplyScalar(len));
       const back = backWallRightPoint.clone().add(backWallUnitVector.clone().multiplyScalar(len));
-      const frontOverhang = new Vector3().subVectors(front, ridge).normalize().multiplyScalar(frontWall.eaveLength);
-      const backOverhang = new Vector3().subVectors(back, ridge).normalize().multiplyScalar(backWall.eaveLength);
+      const frontOverhang = new Vector3()
+        .subVectors(front, ridge)
+        .normalize()
+        .multiplyScalar(frontWall.eavesLength ?? 0);
+      const backOverhang = new Vector3()
+        .subVectors(back, ridge)
+        .normalize()
+        .multiplyScalar(backWall.eavesLength ?? 0);
       front.add(frontOverhang);
       back.add(backOverhang);
       return { ridge, front, back };
@@ -491,7 +497,7 @@ const GableRoof = (roofModel: GableRoofModel) => {
   }, [ridgeLeftPointV3, ridgeRightPointV3]);
 
   const overhangs = useMemo(() => {
-    return currentWallArray.map((wall) => RoofUtil.getWallNormal(wall).multiplyScalar(wall.eaveLength));
+    return currentWallArray.map((wall) => RoofUtil.getWallNormal(wall).multiplyScalar(wall.eavesLength ?? 0));
   }, [currentWallArray]);
 
   const thicknessVector = useMemo(() => {
@@ -534,16 +540,16 @@ const GableRoof = (roofModel: GableRoofModel) => {
       const { lh: backWallLh, rh: backWallRh } = getWallHeight(shiftedWallArray, 2);
 
       const d0 = RoofUtil.getDistance(wallPoint0, wallPoint1, wallPoint3);
-      const overhangHeight0 = Math.min((frontWall.eaveLength / d0) * (topZ - frontWallLh), frontWallLh);
+      const overhangHeight0 = Math.min(((frontWall.eavesLength ?? 0) / d0) * (topZ - frontWallLh), frontWallLh);
 
       const d1 = RoofUtil.getDistance(wallPoint0, wallPoint1, wallPoint2);
-      const overhangHeight1 = Math.min((frontWall.eaveLength / d1) * (topZ - frontWallRh), frontWallRh);
+      const overhangHeight1 = Math.min(((frontWall.eavesLength ?? 0) / d1) * (topZ - frontWallRh), frontWallRh);
 
       const d2 = RoofUtil.getDistance(wallPoint2, wallPoint3, wallPoint1);
-      const overhangHeight2 = Math.min((backWall.eaveLength / d2) * (topZ - frontWallRh), backWallLh);
+      const overhangHeight2 = Math.min(((backWall.eavesLength ?? 0) / d2) * (topZ - frontWallRh), backWallLh);
 
       const d3 = RoofUtil.getDistance(wallPoint2, wallPoint3, wallPoint0);
-      const overhangHeight3 = Math.min((backWall.eaveLength / d3) * (topZ - frontWallLh), backWallRh);
+      const overhangHeight3 = Math.min(((backWall.eavesLength ?? 0) / d3) * (topZ - frontWallLh), backWallRh);
 
       const frontWallLeftPointAfterOverhang = RoofUtil.getIntersectionPoint(
         leftWallLeftPointAfterOffset,
@@ -639,10 +645,16 @@ const GableRoof = (roofModel: GableRoofModel) => {
       const { lh: frontWallLh, rh: frontWallRh } = getWallHeight(currentWallArray, 0);
 
       const d0 = RoofUtil.getDistance(wallPoint0, wallPoint1, ridgeLeftPointV3);
-      const overhangHeight0 = Math.min((frontWall.eaveLength / d0) * (ridgeLeftPointV3.z - frontWallLh), frontWallLh);
+      const overhangHeight0 = Math.min(
+        ((frontWall.eavesLength ?? 0) / d0) * (ridgeLeftPointV3.z - frontWallLh),
+        frontWallLh,
+      );
 
       const d1 = RoofUtil.getDistance(wallPoint0, wallPoint1, ridgeRightPointV3);
-      const overhangHeight1 = Math.min((frontWall.eaveLength / d1) * (ridgeRightPointV3.z - frontWallRh), frontWallRh);
+      const overhangHeight1 = Math.min(
+        ((frontWall.eavesLength ?? 0) / d1) * (ridgeRightPointV3.z - frontWallRh),
+        frontWallRh,
+      );
 
       const frontWallLeftPointAfterOverhang = RoofUtil.getIntersectionPoint(
         leftWallLeftPointAfterOffset,
@@ -682,10 +694,16 @@ const GableRoof = (roofModel: GableRoofModel) => {
       const backPoints: Vector3[] = [];
       const { lh: backWallLh, rh: backWallRh } = getWallHeight(currentWallArray, 2);
       const d2 = RoofUtil.getDistance(wallPoint2, wallPoint3, ridgeRightPointV3);
-      const overhangHeight2 = Math.min((backWall.eaveLength / d2) * (ridgeRightPointV3.z - backWallLh), backWallLh);
+      const overhangHeight2 = Math.min(
+        ((backWall.eavesLength ?? 0) / d2) * (ridgeRightPointV3.z - backWallLh),
+        backWallLh,
+      );
 
       const d3 = RoofUtil.getDistance(wallPoint2, wallPoint3, ridgeLeftPointV3);
-      const overhangHeight3 = Math.min((backWall.eaveLength / d3) * (ridgeLeftPointV3.z - backWallRh), backWallRh);
+      const overhangHeight3 = Math.min(
+        ((backWall.eavesLength ?? 0) / d3) * (ridgeLeftPointV3.z - backWallRh),
+        backWallRh,
+      );
 
       const backWallLeftPointAfterOverhang = RoofUtil.getIntersectionPoint(
         rightWallLeftPointAfterOffset,

@@ -1,5 +1,5 @@
 /*
- * @Copyright 2021-2022. Institute for Future Intelligence, Inc.
+ * @Copyright 2021-2023. Institute for Future Intelligence, Inc.
  */
 
 import short from 'short-uuid';
@@ -612,7 +612,7 @@ export class ElementModelCloner {
       lx: wall.lx,
       ly: wall.ly,
       lz: wall.lz,
-      eaveLength: wall.eaveLength,
+      eavesLength: wall.eavesLength ?? 0,
       rValue: wall.rValue,
       volumetricHeatCapacity: wall.volumetricHeatCapacity,
       fill: wall.fill,

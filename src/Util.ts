@@ -1413,7 +1413,7 @@ export class Util {
     const startWall = wall;
 
     while (wall && (!wall.roofId || wall.roofId === roof.id)) {
-      array.push({ x: wall.leftPoint[0], y: wall.leftPoint[1], eave: wall.eaveLength });
+      array.push({ x: wall.leftPoint[0], y: wall.leftPoint[1], eave: wall.eavesLength ?? 0 });
       if (wall.leftJoints[0]) {
         if (wall.leftJoints[0] !== startWall.id) {
           wall = useStore.getState().getElementById(wall.leftJoints[0]) as WallModel;
@@ -1432,7 +1432,7 @@ export class Util {
 
     wall = useStore.getState().getElementById(startWall.rightJoints[0]) as WallModel;
     while (wall && (!wall.roofId || wall.roofId === roof.id)) {
-      array.push({ x: wall.leftPoint[0], y: wall.leftPoint[1], eave: wall.eaveLength });
+      array.push({ x: wall.leftPoint[0], y: wall.leftPoint[1], eave: wall.eavesLength ?? 0 });
       if (wall.rightJoints[0] && wall.rightJoints[0] !== startWall.id) {
         wall = useStore.getState().getElementById(wall.rightJoints[0]) as WallModel;
       } else {

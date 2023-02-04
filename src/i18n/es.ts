@@ -991,7 +991,7 @@ export const i18n_es = {
       Full: 'Full',
       Partial: 'Partial',
       Empty: 'Empty',
-      EaveLength: 'Eave Length',
+      EavesLength: 'Eaves Overhang Length',
     },
 
     windowMenu: {

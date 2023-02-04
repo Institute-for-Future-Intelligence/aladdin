@@ -1,4 +1,8 @@
-import { useEffect, useMemo, useState } from 'react';
+/*
+ * @Copyright 2022-2023. Institute for Future Intelligence, Inc.
+ */
+
+import { useEffect, useMemo } from 'react';
 import { ElementModel } from 'src/models/ElementModel';
 import { WallModel, WallFill, WallStructure } from 'src/models/WallModel';
 import { useStore } from 'src/stores/common';
@@ -56,7 +60,7 @@ export const useUpdataOldFiles = (wallModel: WallModel) => {
       wallModel.opacity === undefined ||
       wallModel.fill === undefined ||
       wallModel.unfilledHeight === undefined ||
-      wallModel.eaveLength === undefined
+      wallModel.eavesLength === undefined
     ) {
       useStore.getState().set((state) => {
         for (const e of state.elements) {
@@ -83,12 +87,12 @@ export const useUpdataOldFiles = (wallModel: WallModel) => {
             if (wall.unfilledHeight === undefined) {
               wall.unfilledHeight = 0.5;
             }
-            if (wall.eaveLength === undefined) {
+            if (wall.eavesLength === undefined) {
               const roof = state.elements.find((e) => e.id === wall.roofId && e.type === ObjectType.Roof) as RoofModel;
               if (roof) {
-                wall.eaveLength = roof.overhang;
+                wall.eavesLength = roof.overhang;
               } else {
-                wall.eaveLength = 0.3;
+                wall.eavesLength = 0.3;
               }
             }
             break;

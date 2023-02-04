@@ -355,7 +355,7 @@ const GambrelRoof = (roofModel: GambrelRoofModel) => {
   }, [currentWallArray, centroid, backRidgePoint]);
 
   const overhangs = useMemo(() => {
-    return currentWallArray.map((wall) => RoofUtil.getWallNormal(wall).multiplyScalar(wall.eaveLength));
+    return currentWallArray.map((wall) => RoofUtil.getWallNormal(wall).multiplyScalar(wall.eavesLength ?? 0));
   }, [currentWallArray]);
 
   const thicknessVector = useMemo(() => {
@@ -392,13 +392,13 @@ const GambrelRoof = (roofModel: GambrelRoofModel) => {
 
     const d0 = RoofUtil.getDistance(wallPoint0, wallPoint1, frontRidgeLeftPointV3.clone().add(centroid));
     const overhangHeight0 = Math.min(
-      (frontWall.eaveLength / d0) * (frontRidgeLeftPointV3.clone().add(centroid).z - frontWallLh),
+      ((frontWall.eavesLength ?? 0) / d0) * (frontRidgeLeftPointV3.clone().add(centroid).z - frontWallLh),
       frontWallLh,
     );
 
     const d1 = RoofUtil.getDistance(wallPoint0, wallPoint1, frontRidgeRightPointV3.clone().add(centroid));
     const overhangHeight1 = Math.min(
-      (frontWall.eaveLength / d1) * (frontRidgeRightPointV3.clone().add(centroid).z - frontWallRh),
+      ((frontWall.eavesLength ?? 0) / d1) * (frontRidgeRightPointV3.clone().add(centroid).z - frontWallRh),
       frontWallRh,
     );
 
@@ -488,13 +488,13 @@ const GambrelRoof = (roofModel: GambrelRoofModel) => {
 
     const d2 = RoofUtil.getDistance(wallPoint2, wallPoint3, backRidgeLeftPointV3.clone().add(centroid));
     const overhangHeight2 = Math.min(
-      (backWall.eaveLength / d2) * (backRidgeLeftPointV3.clone().add(centroid).z - backWallLh),
+      ((backWall.eavesLength ?? 0) / d2) * (backRidgeLeftPointV3.clone().add(centroid).z - backWallLh),
       backWallLh,
     );
 
     const d3 = RoofUtil.getDistance(wallPoint2, wallPoint3, backRidgeRightPointV3.clone().add(centroid));
     const overhangHeight3 = Math.min(
-      (backWall.eaveLength / d3) * (backRidgeRightPointV3.clone().add(centroid).z - backWallRh),
+      ((backWall.eavesLength ?? 0) / d3) * (backRidgeRightPointV3.clone().add(centroid).z - backWallRh),
       backWallRh,
     );
 

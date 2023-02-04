@@ -66,8 +66,8 @@ const WallNumberInput = ({
         case 'structureWidth':
           state.actionState.wallStructureWidth = val;
           break;
-        case 'eaveLength':
-          state.actionState.wallEaveLength = val;
+        case 'eavesLength':
+          state.actionState.wallEavesLength = val;
           break;
       }
     });

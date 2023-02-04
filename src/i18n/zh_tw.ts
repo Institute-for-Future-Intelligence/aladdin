@@ -969,7 +969,7 @@ export const i18n_zh_tw = {
       Full: '全部',
       Partial: '部分',
       Empty: '空白',
-      EaveLength: '屋簷長度',
+      EavesLength: '屋簷延伸長度',
     },
 
     windowMenu: {

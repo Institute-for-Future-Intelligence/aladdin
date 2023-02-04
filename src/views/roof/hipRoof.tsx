@@ -276,9 +276,9 @@ const HipRoof = (roofModel: HipRoofModel) => {
       const w = currentWallArray[i];
       // const { lh, rh } = RoofUtil.getWallHeight(currentWallArray, i);
       const dLeft = RoofUtil.getDistance(wallPoints[i], wallPoints[(i + 1) % 4], ridges[i]);
-      const overhangHeightLeft = Math.min((w.eaveLength / dLeft) * (ridges[i].z - w.lz), w.lz);
+      const overhangHeightLeft = Math.min(((w.eavesLength ?? 0) / dLeft) * (ridges[i].z - w.lz), w.lz);
       const dRight = RoofUtil.getDistance(wallPoints[i], wallPoints[(i + 1) % 4], ridges[(i + 1) % 4]);
-      const overhangHeightRight = Math.min((w.eaveLength / dRight) * (ridges[(i + 1) % 4].z - w.lz), w.lz);
+      const overhangHeightRight = Math.min(((w.eavesLength ?? 0) / dRight) * (ridges[(i + 1) % 4].z - w.lz), w.lz);
       height = Math.min(Math.min(overhangHeightLeft, overhangHeightRight), height);
     }
 
@@ -286,7 +286,7 @@ const HipRoof = (roofModel: HipRoofModel) => {
   };
 
   const overhangs = useMemo(() => {
-    return currentWallArray.map((wall) => RoofUtil.getWallNormal(wall).multiplyScalar(wall.eaveLength));
+    return currentWallArray.map((wall) => RoofUtil.getWallNormal(wall).multiplyScalar(wall.eavesLength ?? 0));
   }, [currentWallArray]);
 
   const thicknessVector = useMemo(() => {

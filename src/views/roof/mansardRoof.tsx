@@ -13,7 +13,6 @@ import {
   HALF_PI,
   HALF_PI_Z_EULER,
   TWO_PI,
-  UNIT_VECTOR_POS_Z,
 } from 'src/constants';
 import { Point2 } from 'src/models/Point2';
 import { MansardRoofModel, RoofModel, RoofType } from 'src/models/RoofModel';
@@ -230,9 +229,12 @@ const MansardRoof = (roofModel: MansardRoofModel) => {
       const rightPoint = new Vector3(w.rightPoint[0], w.rightPoint[1]);
       // const { lh, rh } = RoofUtil.getWallHeight(currentWallArray, i);
       const dLeft = RoofUtil.getDistance(leftPoint, rightPoint, ridgePoints[i].leftPoint);
-      const overhangHeightLeft = Math.min((w.eaveLength / dLeft) * (ridgePoints[i].leftPoint.z - w.lz), w.lz);
+      const overhangHeightLeft = Math.min(((w.eavesLength ?? 0) / dLeft) * (ridgePoints[i].leftPoint.z - w.lz), w.lz);
       const dRight = RoofUtil.getDistance(leftPoint, rightPoint, ridgePoints[i].rightPoint);
-      const overhangHeightRight = Math.min((w.eaveLength / dRight) * (ridgePoints[i].rightPoint.z - w.lz), w.lz);
+      const overhangHeightRight = Math.min(
+        ((w.eavesLength ?? 0) / dRight) * (ridgePoints[i].rightPoint.z - w.lz),
+        w.lz,
+      );
       height = Math.min(Math.min(overhangHeightLeft, overhangHeightRight), height);
     }
 
@@ -271,7 +273,7 @@ const MansardRoof = (roofModel: MansardRoofModel) => {
   }, [currentWallArray, topZ]);
 
   const overhangs = useMemo(() => {
-    const res = currentWallArray.map((wall) => RoofUtil.getWallNormal(wall).multiplyScalar(wall.eaveLength));
+    const res = currentWallArray.map((wall) => RoofUtil.getWallNormal(wall).multiplyScalar(wall.eavesLength ?? 0));
     if (!isLoopRef.current && res.length !== 0) {
       const n = new Vector3()
         .subVectors(

@@ -415,16 +415,15 @@ const PyramidRoof = (roofModel: PyramidRoofModel) => {
 
   const getOverhangHeight = () => {
     let height = Infinity;
-
     for (let i = 0; i < currentWallArray.length; i++) {
       const w = currentWallArray[i];
       const leftPoint = new Vector3(w.leftPoint[0], w.leftPoint[1]);
       const rightPoint = new Vector3(w.rightPoint[0], w.rightPoint[1]);
       // const { lh, rh } = RoofUtil.getWallHeight(currentWallArray, i);
       const dLeft = RoofUtil.getDistance(leftPoint, rightPoint, centerPointV3);
-      const overhangHeightLeft = Math.min((w.eaveLength / dLeft) * (centerPointV3.z - w.lz), w.lz);
+      const overhangHeightLeft = Math.min(((w.eavesLength ?? 0) / dLeft) * (centerPointV3.z - w.lz), w.lz);
       const dRight = RoofUtil.getDistance(leftPoint, rightPoint, centerPointV3);
-      const overhangHeightRight = Math.min((w.eaveLength / dRight) * (centerPointV3.z - w.lz), w.lz);
+      const overhangHeightRight = Math.min(((w.eavesLength ?? 0) / dRight) * (centerPointV3.z - w.lz), w.lz);
       height = Math.min(Math.min(overhangHeightLeft, overhangHeightRight), height);
     }
 
@@ -451,7 +450,7 @@ const PyramidRoof = (roofModel: PyramidRoofModel) => {
   }, [centerPoint, topZ]);
 
   const overhangs = useMemo(() => {
-    const res = currentWallArray.map((wall) => RoofUtil.getWallNormal(wall).multiplyScalar(wall.eaveLength));
+    const res = currentWallArray.map((wall) => RoofUtil.getWallNormal(wall).multiplyScalar(wall.eavesLength ?? 0));
     if (!isLoopRef.current && res.length !== 0) {
       const n = new Vector3()
         .subVectors(

@@ -253,7 +253,7 @@ export const useMultiCurrWallArray = (fId: string | undefined, roofId: string, w
     return JSON.stringify(
       state.elements
         .filter((e) => (e.type === ObjectType.Wall && e.foundationId === fId) || e.id === fId)
-        .map((w) => [w.cx, w.cy, w.cz, w.lx, w.ly, w.lz, (w as WallModel).eaveLength]),
+        .map((w) => [w.cx, w.cy, w.cz, w.lx, w.ly, w.lz, (w as WallModel).eavesLength]),
     );
   });
 
