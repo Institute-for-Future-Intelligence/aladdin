@@ -15,7 +15,7 @@ import { DoorModel } from '../../../models/DoorModel';
 
 const DoorWidthInput = ({ setDialogVisible }: { setDialogVisible: (b: boolean) => void }) => {
   const language = useStore(Selector.language);
-  const selectedElement = useStore(Selector.selectedElement) as DoorModel;
+  const elements = useStore(Selector.elements);
   const addUndoable = useStore(Selector.addUndoable);
   const actionScope = useStore(Selector.doorActionScope);
   const setActionScope = useStore(Selector.setDoorActionScope);
@@ -26,22 +26,14 @@ const DoorWidthInput = ({ setDialogVisible }: { setDialogVisible: (b: boolean) =
   const setCommonStore = useStore(Selector.set);
   const getParent = useStore(Selector.getParent);
 
-  const doorModel = useStore((state) => {
-    if (selectedElement) {
-      for (const e of state.elements) {
-        if (e.id === selectedElement.id) {
-          return e as DoorModel;
-        }
-      }
-    }
-    return null;
-  });
-  const parent = doorModel ? getParent(doorModel) : null;
+  const door = useStore((state) => state.elements.find((e) => e.selected && e.type === ObjectType.Door)) as DoorModel;
+  const parent = door ? getParent(door) : null;
+
   const currentValue = useMemo(() => {
-    const v = doorModel ? doorModel.lx : 1;
+    const v = door ? door.lx : 1;
     if (parent) return v * parent.lx;
     return v;
-  }, [doorModel?.lx, parent?.lx]);
+  }, [door?.lx, parent?.lx]);
 
   const [inputValue, setInputValue] = useState<number>(currentValue);
   const [dragEnabled, setDragEnabled] = useState<boolean>(false);
@@ -51,10 +43,10 @@ const DoorWidthInput = ({ setDialogVisible }: { setDialogVisible: (b: boolean) =
   const lang = { lng: language };
 
   useEffect(() => {
-    if (doorModel) {
-      setInputValue(doorModel?.lx * (parent ? parent.lx : 1) ?? 1);
+    if (door) {
+      setInputValue(door?.lx * (parent ? parent.lx : 1) ?? 1);
     }
-  }, [doorModel?.lx]);
+  }, [door?.lx]);
 
   const updateById = (id: string, value: number) => {
     setCommonStore((state) => {
@@ -79,8 +71,42 @@ const DoorWidthInput = ({ setDialogVisible }: { setDialogVisible: (b: boolean) =
     }
   };
 
+  const needChange = (value: number) => {
+    const lx = parent ? value / parent.lx : value;
+    switch (actionScope) {
+      case Scope.AllObjectsOfThisType:
+        for (const e of elements) {
+          if (e.type === ObjectType.Door && lx !== e.lx && !e.locked) {
+            return true;
+          }
+        }
+        break;
+      case Scope.AllObjectsOfThisTypeAboveFoundation:
+        for (const e of elements) {
+          if (e.type === ObjectType.Door && e.foundationId === door.foundationId && lx !== e.lx && !e.locked) {
+            return true;
+          }
+        }
+        break;
+      case Scope.OnlyThisSide:
+        for (const e of elements) {
+          if (e.type === ObjectType.Door && e.parentId === door.parentId && lx !== e.lx && !e.locked) {
+            return true;
+          }
+        }
+        break;
+      default:
+        if (lx !== door?.lx) {
+          return true;
+        }
+        break;
+    }
+    return false;
+  };
+
   const setValue = (value: number) => {
-    if (!doorModel) return;
+    if (!door) return;
+    if (!needChange(value)) return;
     switch (actionScope) {
       case Scope.AllObjectsOfThisType:
         const oldValuesAll = new Map<string, number | undefined>();
@@ -108,44 +134,12 @@ const DoorWidthInput = ({ setDialogVisible }: { setDialogVisible: (b: boolean) =
         addUndoable(undoableChangeAll);
         setApplyCount(applyCount + 1);
         break;
-      case Scope.OnlyThisSide:
-        if (doorModel.parentId) {
-          const oldValues = new Map<string, number>();
-          setCommonStore((state) => {
-            for (const e of state.elements) {
-              if (e.type === ObjectType.Door && e.parentId === doorModel.parentId && !e.locked) {
-                const door = e as DoorModel;
-                oldValues.set(e.id, door.lx * (parent ? parent.lx : 1));
-                door.lx = parent ? value / parent.lx : value;
-              }
-            }
-          });
-          const undoableChangeOnSameWall = {
-            name: 'Set Width for All Doors On the Same Wall',
-            timestamp: Date.now(),
-            oldValues: oldValues,
-            newValue: value,
-            groupId: doorModel.parentId,
-            undo: () => {
-              undoInMap(undoableChangeOnSameWall.oldValues as Map<string, number>);
-            },
-            redo: () => {
-              updateInMap(
-                undoableChangeOnSameWall.oldValues as Map<string, number>,
-                undoableChangeOnSameWall.newValue as number,
-              );
-            },
-          } as UndoableChangeGroup;
-          addUndoable(undoableChangeOnSameWall);
-          setApplyCount(applyCount + 1);
-        }
-        break;
       case Scope.AllObjectsOfThisTypeAboveFoundation:
-        if (doorModel.foundationId) {
+        if (door.foundationId) {
           const oldValuesAboveFoundation = new Map<string, number | undefined>();
           setCommonStore((state) => {
             for (const e of state.elements) {
-              if (e.type === ObjectType.Door && e.foundationId === doorModel.foundationId && !e.locked) {
+              if (e.type === ObjectType.Door && e.foundationId === door.foundationId && !e.locked) {
                 const door = e as DoorModel;
                 oldValuesAboveFoundation.set(e.id, door.lx * (parent ? parent.lx : 1));
                 door.lx = parent ? value / parent.lx : value;
@@ -157,7 +151,7 @@ const DoorWidthInput = ({ setDialogVisible }: { setDialogVisible: (b: boolean) =
             timestamp: Date.now(),
             oldValues: oldValuesAboveFoundation,
             newValue: value,
-            groupId: doorModel.foundationId,
+            groupId: door.foundationId,
             undo: () => {
               undoInMap(undoableChangeAboveFoundation.oldValues as Map<string, number>);
             },
@@ -172,17 +166,49 @@ const DoorWidthInput = ({ setDialogVisible }: { setDialogVisible: (b: boolean) =
           setApplyCount(applyCount + 1);
         }
         break;
+      case Scope.OnlyThisSide:
+        if (door.parentId) {
+          const oldValues = new Map<string, number>();
+          setCommonStore((state) => {
+            for (const e of state.elements) {
+              if (e.type === ObjectType.Door && e.parentId === door.parentId && !e.locked) {
+                const door = e as DoorModel;
+                oldValues.set(e.id, door.lx * (parent ? parent.lx : 1));
+                door.lx = parent ? value / parent.lx : value;
+              }
+            }
+          });
+          const undoableChangeOnSameWall = {
+            name: 'Set Width for All Doors On the Same Wall',
+            timestamp: Date.now(),
+            oldValues: oldValues,
+            newValue: value,
+            groupId: door.parentId,
+            undo: () => {
+              undoInMap(undoableChangeOnSameWall.oldValues as Map<string, number>);
+            },
+            redo: () => {
+              updateInMap(
+                undoableChangeOnSameWall.oldValues as Map<string, number>,
+                undoableChangeOnSameWall.newValue as number,
+              );
+            },
+          } as UndoableChangeGroup;
+          addUndoable(undoableChangeOnSameWall);
+          setApplyCount(applyCount + 1);
+        }
+        break;
       default:
-        if (doorModel) {
-          const updatedDoor = getElementById(doorModel.id) as DoorModel;
-          const oldValue = (updatedDoor.lx ?? doorModel.lx ?? 0.1) * (parent ? parent.lx : 1);
+        if (door) {
+          const updatedDoor = getElementById(door.id) as DoorModel;
+          const oldValue = (updatedDoor.lx ?? door.lx ?? 0.1) * (parent ? parent.lx : 1);
           const undoableChange = {
             name: 'Set Door Width',
             timestamp: Date.now(),
             oldValue: oldValue,
             newValue: value,
-            changedElementId: doorModel.id,
-            changedElementType: doorModel.type,
+            changedElementId: door.id,
+            changedElementType: door.type,
             undo: () => {
               updateById(undoableChange.changedElementId, undoableChange.oldValue as number);
             },
@@ -191,7 +217,7 @@ const DoorWidthInput = ({ setDialogVisible }: { setDialogVisible: (b: boolean) =
             },
           } as UndoableChange;
           addUndoable(undoableChange);
-          updateById(doorModel.id, value);
+          updateById(door.id, value);
           setApplyCount(applyCount + 1);
         }
     }
@@ -230,8 +256,7 @@ const DoorWidthInput = ({ setDialogVisible }: { setDialogVisible: (b: boolean) =
     setValue(inputValue);
   };
 
-  const max =
-    parent && doorModel ? 2 * parent.lx * Math.min(Math.abs(0.5 - doorModel.cx), Math.abs(-0.5 - doorModel.cx)) : 100;
+  const max = parent && door ? 2 * parent.lx * Math.min(Math.abs(0.5 - door.cx), Math.abs(-0.5 - door.cx)) : 100;
 
   return (
     <>

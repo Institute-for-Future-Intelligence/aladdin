@@ -29,7 +29,7 @@ import { DoorModel } from 'src/models/DoorModel';
 
 const DoorTextureSelection = ({ setDialogVisible }: { setDialogVisible: (b: boolean) => void }) => {
   const language = useStore(Selector.language);
-  const door = useStore(Selector.selectedElement) as DoorModel;
+  const elements = useStore(Selector.elements);
   const addUndoable = useStore(Selector.addUndoable);
   const actionScope = useStore(Selector.doorActionScope);
   const setActionScope = useStore(Selector.setDoorActionScope);
@@ -38,6 +38,8 @@ const DoorTextureSelection = ({ setDialogVisible }: { setDialogVisible: (b: bool
   const revertApply = useStore(Selector.revertApply);
   const setCommonStore = useStore(Selector.set);
   const getElementById = useStore(Selector.getElementById);
+
+  const door = useStore((state) => state.elements.find((e) => e.selected && e.type === ObjectType.Door)) as DoorModel;
 
   const [selectedTexture, setSelectedTexture] = useState<DoorTexture>(door?.textureType ?? DoorTexture.Default);
   const [dragEnabled, setDragEnabled] = useState<boolean>(false);
@@ -83,7 +85,51 @@ const DoorTextureSelection = ({ setDialogVisible }: { setDialogVisible: (b: bool
     }
   };
 
+  const needChange = (value: DoorTexture) => {
+    switch (actionScope) {
+      case Scope.AllObjectsOfThisType:
+        for (const e of elements) {
+          if (e.type === ObjectType.Door && value !== (e as DoorModel).textureType && !e.locked) {
+            return true;
+          }
+        }
+        break;
+      case Scope.AllObjectsOfThisTypeAboveFoundation:
+        for (const e of elements) {
+          if (
+            e.type === ObjectType.Door &&
+            e.foundationId === door.foundationId &&
+            value !== (e as DoorModel).textureType &&
+            !e.locked
+          ) {
+            return true;
+          }
+        }
+        break;
+      case Scope.OnlyThisSide:
+        for (const e of elements) {
+          if (
+            e.type === ObjectType.Door &&
+            e.parentId === door.parentId &&
+            value !== (e as DoorModel).textureType &&
+            !e.locked
+          ) {
+            return true;
+          }
+        }
+        break;
+      default:
+        if (value !== door?.textureType) {
+          return true;
+        }
+        break;
+    }
+    return false;
+  };
+
   const setTexture = (value: DoorTexture) => {
+    if (!door) return;
+    if (!needChange(value)) return;
     switch (actionScope) {
       case Scope.AllObjectsOfThisType:
         const oldTexturesAll = new Map<string, DoorTexture>();
@@ -110,37 +156,6 @@ const DoorTextureSelection = ({ setDialogVisible }: { setDialogVisible: (b: bool
         addUndoable(undoableChangeAll);
         updateTextureInMap(oldTexturesAll, value);
         setApplyCount(applyCount + 1);
-        break;
-      case Scope.OnlyThisSide:
-        if (door.parentId) {
-          const oldTexturesOnSameWall = new Map<string, DoorTexture>();
-          for (const elem of useStore.getState().elements) {
-            if (elem.type === ObjectType.Door && elem.parentId === door.parentId && !elem.locked) {
-              oldTexturesOnSameWall.set(elem.id, (elem as DoorModel).textureType);
-            }
-          }
-          const undoableChangeOnSameWall = {
-            name: 'Set Texture for All Doors On the Same Wall',
-            timestamp: Date.now(),
-            oldValues: oldTexturesOnSameWall,
-            newValue: value,
-            groupId: door.parentId,
-            undo: () => {
-              undoTextureInMap(undoableChangeOnSameWall.oldValues as Map<string, DoorTexture>);
-            },
-            redo: () => {
-              if (undoableChangeOnSameWall.groupId) {
-                updateTextureInMap(
-                  undoableChangeOnSameWall.oldValues as Map<string, DoorTexture>,
-                  undoableChangeOnSameWall.newValue as DoorTexture,
-                );
-              }
-            },
-          } as UndoableChangeGroup;
-          addUndoable(undoableChangeOnSameWall);
-          updateTextureInMap(oldTexturesOnSameWall, value);
-          setApplyCount(applyCount + 1);
-        }
         break;
       case Scope.AllObjectsOfThisTypeAboveFoundation:
         if (door.foundationId) {
@@ -170,6 +185,37 @@ const DoorTextureSelection = ({ setDialogVisible }: { setDialogVisible: (b: bool
           } as UndoableChangeGroup;
           addUndoable(undoableChangeAboveFoundation);
           updateTextureInMap(oldTexturesAboveFoundation, value);
+          setApplyCount(applyCount + 1);
+        }
+        break;
+      case Scope.OnlyThisSide:
+        if (door.parentId) {
+          const oldTexturesOnSameWall = new Map<string, DoorTexture>();
+          for (const elem of useStore.getState().elements) {
+            if (elem.type === ObjectType.Door && elem.parentId === door.parentId && !elem.locked) {
+              oldTexturesOnSameWall.set(elem.id, (elem as DoorModel).textureType);
+            }
+          }
+          const undoableChangeOnSameWall = {
+            name: 'Set Texture for All Doors On the Same Wall',
+            timestamp: Date.now(),
+            oldValues: oldTexturesOnSameWall,
+            newValue: value,
+            groupId: door.parentId,
+            undo: () => {
+              undoTextureInMap(undoableChangeOnSameWall.oldValues as Map<string, DoorTexture>);
+            },
+            redo: () => {
+              if (undoableChangeOnSameWall.groupId) {
+                updateTextureInMap(
+                  undoableChangeOnSameWall.oldValues as Map<string, DoorTexture>,
+                  undoableChangeOnSameWall.newValue as DoorTexture,
+                );
+              }
+            },
+          } as UndoableChangeGroup;
+          addUndoable(undoableChangeOnSameWall);
+          updateTextureInMap(oldTexturesOnSameWall, value);
           setApplyCount(applyCount + 1);
         }
         break;

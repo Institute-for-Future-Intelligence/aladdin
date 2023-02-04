@@ -17,7 +17,7 @@ import { DoorModel } from 'src/models/DoorModel';
 const DoorColorSelection = ({ setDialogVisible }: { setDialogVisible: (b: boolean) => void }) => {
   const setCommonStore = useStore(Selector.set);
   const language = useStore(Selector.language);
-  const door = useStore(Selector.selectedElement) as DoorModel;
+  const elements = useStore(Selector.elements);
   const addUndoable = useStore(Selector.addUndoable);
   const actionScope = useStore(Selector.doorActionScope);
   const setActionScope = useStore(Selector.setDoorActionScope);
@@ -25,6 +25,8 @@ const DoorColorSelection = ({ setDialogVisible }: { setDialogVisible: (b: boolea
   const setApplyCount = useStore(Selector.setApplyCount);
   const revertApply = useStore(Selector.revertApply);
   const getElementById = useStore(Selector.getElementById);
+
+  const door = useStore((state) => state.elements.find((e) => e.selected && e.type === ObjectType.Door)) as DoorModel;
 
   const [selectedColor, setSelectedColor] = useState<string>(door?.color ?? '#ffffff');
   const [dragEnabled, setDragEnabled] = useState<boolean>(false);
@@ -69,8 +71,41 @@ const DoorColorSelection = ({ setDialogVisible }: { setDialogVisible: (b: boolea
     }
   };
 
+  const needChange = (color: string) => {
+    switch (actionScope) {
+      case Scope.AllObjectsOfThisType:
+        for (const e of elements) {
+          if (e.type === ObjectType.Door && color !== e.color && !e.locked) {
+            return true;
+          }
+        }
+        break;
+      case Scope.AllObjectsOfThisTypeAboveFoundation:
+        for (const e of elements) {
+          if (e.type === ObjectType.Door && e.foundationId === door.foundationId && color !== e.color && !e.locked) {
+            return true;
+          }
+        }
+        break;
+      case Scope.OnlyThisSide:
+        for (const e of elements) {
+          if (e.type === ObjectType.Door && e.parentId === door.parentId && color !== e.color && !e.locked) {
+            return true;
+          }
+        }
+        break;
+      default:
+        if (color !== door?.color) {
+          return true;
+        }
+        break;
+    }
+    return false;
+  };
+
   const setColor = (value: string) => {
     if (!door) return;
+    if (!needChange(value)) return;
     switch (actionScope) {
       case Scope.AllObjectsOfThisType:
         const oldColorsAll = new Map<string, string>();
@@ -94,37 +129,6 @@ const DoorColorSelection = ({ setDialogVisible }: { setDialogVisible: (b: boolea
         addUndoable(undoableChangeAll);
         updateColorInMap(oldColorsAll, value);
         setApplyCount(applyCount + 1);
-        break;
-      case Scope.OnlyThisSide:
-        if (door.parentId) {
-          const oldColorsOnSameWall = new Map<string, string>();
-          for (const elem of useStore.getState().elements) {
-            if (elem.type === ObjectType.Door && elem.parentId === door.parentId && !door.locked) {
-              oldColorsOnSameWall.set(elem.id, elem.color ?? '#ffffff');
-            }
-          }
-          const undoableChangeOnSameWall = {
-            name: 'Set Color for All Doors On the Same Wall',
-            timestamp: Date.now(),
-            oldValues: oldColorsOnSameWall,
-            newValue: value,
-            groupId: door.parentId,
-            undo: () => {
-              undoColorInMap(undoableChangeOnSameWall.oldValues as Map<string, string>);
-            },
-            redo: () => {
-              if (undoableChangeOnSameWall.groupId) {
-                updateColorInMap(
-                  undoableChangeOnSameWall.oldValues as Map<string, string>,
-                  undoableChangeOnSameWall.newValue as string,
-                );
-              }
-            },
-          } as UndoableChangeGroup;
-          addUndoable(undoableChangeOnSameWall);
-          updateColorInMap(oldColorsOnSameWall, value);
-          setApplyCount(applyCount + 1);
-        }
         break;
       case Scope.AllObjectsOfThisTypeAboveFoundation:
         if (door.foundationId) {
@@ -154,6 +158,37 @@ const DoorColorSelection = ({ setDialogVisible }: { setDialogVisible: (b: boolea
           } as UndoableChangeGroup;
           addUndoable(undoableChangeAboveFoundation);
           updateColorInMap(oldColorsAboveFoundation, value);
+          setApplyCount(applyCount + 1);
+        }
+        break;
+      case Scope.OnlyThisSide:
+        if (door.parentId) {
+          const oldColorsOnSameWall = new Map<string, string>();
+          for (const elem of useStore.getState().elements) {
+            if (elem.type === ObjectType.Door && elem.parentId === door.parentId && !door.locked) {
+              oldColorsOnSameWall.set(elem.id, elem.color ?? '#ffffff');
+            }
+          }
+          const undoableChangeOnSameWall = {
+            name: 'Set Color for All Doors On the Same Wall',
+            timestamp: Date.now(),
+            oldValues: oldColorsOnSameWall,
+            newValue: value,
+            groupId: door.parentId,
+            undo: () => {
+              undoColorInMap(undoableChangeOnSameWall.oldValues as Map<string, string>);
+            },
+            redo: () => {
+              if (undoableChangeOnSameWall.groupId) {
+                updateColorInMap(
+                  undoableChangeOnSameWall.oldValues as Map<string, string>,
+                  undoableChangeOnSameWall.newValue as string,
+                );
+              }
+            },
+          } as UndoableChangeGroup;
+          addUndoable(undoableChangeOnSameWall);
+          updateColorInMap(oldColorsOnSameWall, value);
           setApplyCount(applyCount + 1);
         }
         break;

@@ -12,10 +12,11 @@ import i18n from 'src/i18n/i18n';
 import { UndoableChange } from 'src/undo/UndoableChange';
 import { UndoableChangeGroup } from 'src/undo/UndoableChangeGroup';
 import { DoorModel } from '../../../models/DoorModel';
+import { DEFAULT_DOOR_U_VALUE } from '../../../constants';
 
 const DoorHeatCapacityInput = ({ setDialogVisible }: { setDialogVisible: (b: boolean) => void }) => {
   const language = useStore(Selector.language);
-  const selectedElement = useStore(Selector.selectedElement) as DoorModel;
+  const elements = useStore(Selector.elements);
   const addUndoable = useStore(Selector.addUndoable);
   const actionScope = useStore(Selector.doorActionScope);
   const setActionScope = useStore(Selector.setDoorActionScope);
@@ -25,18 +26,9 @@ const DoorHeatCapacityInput = ({ setDialogVisible }: { setDialogVisible: (b: boo
   const getElementById = useStore(Selector.getElementById);
   const setCommonStore = useStore(Selector.set);
 
-  const doorModel = useStore((state) => {
-    if (selectedElement) {
-      for (const e of state.elements) {
-        if (e.id === selectedElement.id) {
-          return e as DoorModel;
-        }
-      }
-    }
-    return null;
-  });
+  const door = useStore((state) => state.elements.find((e) => e.selected && e.type === ObjectType.Door)) as DoorModel;
 
-  const [inputValue, setInputValue] = useState<number>(doorModel?.volumetricHeatCapacity ?? 0.5);
+  const [inputValue, setInputValue] = useState<number>(door?.volumetricHeatCapacity ?? 0.5);
   const [dragEnabled, setDragEnabled] = useState<boolean>(false);
   const [bounds, setBounds] = useState<DraggableBounds>({ left: 0, top: 0, bottom: 0, right: 0 } as DraggableBounds);
   const dragRef = useRef<HTMLDivElement | null>(null);
@@ -44,10 +36,10 @@ const DoorHeatCapacityInput = ({ setDialogVisible }: { setDialogVisible: (b: boo
   const lang = { lng: language };
 
   useEffect(() => {
-    if (doorModel) {
-      setInputValue(doorModel?.volumetricHeatCapacity ?? 0.5);
+    if (door) {
+      setInputValue(door?.volumetricHeatCapacity ?? 0.5);
     }
-  }, [doorModel?.volumetricHeatCapacity]);
+  }, [door?.volumetricHeatCapacity]);
 
   const updateById = (id: string, value: number) => {
     setCommonStore((state) => {
@@ -72,8 +64,51 @@ const DoorHeatCapacityInput = ({ setDialogVisible }: { setDialogVisible: (b: boo
     }
   };
 
+  const needChange = (value: number) => {
+    switch (actionScope) {
+      case Scope.AllObjectsOfThisType:
+        for (const e of elements) {
+          if (e.type === ObjectType.Door && value !== (e as DoorModel).volumetricHeatCapacity && !e.locked) {
+            return true;
+          }
+        }
+        break;
+      case Scope.AllObjectsOfThisTypeAboveFoundation:
+        for (const e of elements) {
+          if (
+            e.type === ObjectType.Door &&
+            e.foundationId === door.foundationId &&
+            value !== (e as DoorModel).volumetricHeatCapacity &&
+            !e.locked
+          ) {
+            return true;
+          }
+        }
+        break;
+      case Scope.OnlyThisSide:
+        for (const e of elements) {
+          if (
+            e.type === ObjectType.Door &&
+            e.parentId === door.parentId &&
+            value !== (e as DoorModel).volumetricHeatCapacity &&
+            !e.locked
+          ) {
+            return true;
+          }
+        }
+        break;
+      default:
+        if (value !== door?.volumetricHeatCapacity) {
+          return true;
+        }
+        break;
+    }
+    return false;
+  };
+
   const setValue = (value: number) => {
-    if (!doorModel) return;
+    if (!door) return;
+    if (!needChange(value)) return;
     switch (actionScope) {
       case Scope.AllObjectsOfThisType:
         const oldValuesAll = new Map<string, number | undefined>();
@@ -102,11 +137,11 @@ const DoorHeatCapacityInput = ({ setDialogVisible }: { setDialogVisible: (b: boo
         setApplyCount(applyCount + 1);
         break;
       case Scope.AllObjectsOfThisTypeAboveFoundation:
-        if (doorModel.foundationId) {
+        if (door.foundationId) {
           const oldValuesAboveFoundation = new Map<string, number | undefined>();
           setCommonStore((state) => {
             for (const e of state.elements) {
-              if (e.type === ObjectType.Door && e.foundationId === doorModel.foundationId && !e.locked) {
+              if (e.type === ObjectType.Door && e.foundationId === door.foundationId && !e.locked) {
                 const door = e as DoorModel;
                 oldValuesAboveFoundation.set(e.id, door.volumetricHeatCapacity ?? 0.5);
                 door.volumetricHeatCapacity = value;
@@ -118,7 +153,7 @@ const DoorHeatCapacityInput = ({ setDialogVisible }: { setDialogVisible: (b: boo
             timestamp: Date.now(),
             oldValues: oldValuesAboveFoundation,
             newValue: value,
-            groupId: doorModel.foundationId,
+            groupId: door.foundationId,
             undo: () => {
               undoInMap(undoableChangeAboveFoundation.oldValues as Map<string, number>);
             },
@@ -133,17 +168,49 @@ const DoorHeatCapacityInput = ({ setDialogVisible }: { setDialogVisible: (b: boo
           setApplyCount(applyCount + 1);
         }
         break;
+      case Scope.OnlyThisSide:
+        if (door.parentId) {
+          const oldValues = new Map<string, number>();
+          setCommonStore((state) => {
+            for (const e of state.elements) {
+              if (e.type === ObjectType.Door && e.parentId === door.parentId && !e.locked) {
+                const door = e as DoorModel;
+                oldValues.set(e.id, door.volumetricHeatCapacity ?? 0.5);
+                door.volumetricHeatCapacity = value;
+              }
+            }
+          });
+          const undoableChangeOnSameWall = {
+            name: 'Set Volumetric Heat Capacity for All Doors On the Same Wall',
+            timestamp: Date.now(),
+            oldValues: oldValues,
+            newValue: value,
+            groupId: door.parentId,
+            undo: () => {
+              undoInMap(undoableChangeOnSameWall.oldValues as Map<string, number>);
+            },
+            redo: () => {
+              updateInMap(
+                undoableChangeOnSameWall.oldValues as Map<string, number>,
+                undoableChangeOnSameWall.newValue as number,
+              );
+            },
+          } as UndoableChangeGroup;
+          addUndoable(undoableChangeOnSameWall);
+          setApplyCount(applyCount + 1);
+        }
+        break;
       default:
-        if (doorModel) {
-          const updatedDoor = getElementById(doorModel.id) as DoorModel;
-          const oldValue = updatedDoor.volumetricHeatCapacity ?? doorModel.volumetricHeatCapacity ?? 0.5;
+        if (door) {
+          const updatedDoor = getElementById(door.id) as DoorModel;
+          const oldValue = updatedDoor.volumetricHeatCapacity ?? door.volumetricHeatCapacity ?? 0.5;
           const undoableChange = {
             name: 'Set Volumetric Heat Capacity of Door',
             timestamp: Date.now(),
             oldValue: oldValue,
             newValue: value,
-            changedElementId: doorModel.id,
-            changedElementType: doorModel.type,
+            changedElementId: door.id,
+            changedElementType: door.type,
             undo: () => {
               updateById(undoableChange.changedElementId, undoableChange.oldValue as number);
             },
@@ -152,7 +219,7 @@ const DoorHeatCapacityInput = ({ setDialogVisible }: { setDialogVisible: (b: boo
             },
           } as UndoableChange;
           addUndoable(undoableChange);
-          updateById(doorModel.id, value);
+          updateById(door.id, value);
           setApplyCount(applyCount + 1);
         }
     }
@@ -175,7 +242,7 @@ const DoorHeatCapacityInput = ({ setDialogVisible }: { setDialogVisible: (b: boo
   };
 
   const close = () => {
-    setInputValue(doorModel?.volumetricHeatCapacity ?? 0.5);
+    setInputValue(door?.volumetricHeatCapacity ?? 0.5);
     setDialogVisible(false);
   };
 
@@ -257,6 +324,7 @@ const DoorHeatCapacityInput = ({ setDialogVisible }: { setDialogVisible: (b: boo
             <Radio.Group onChange={(e) => setActionScope(e.target.value)} value={actionScope}>
               <Space direction="vertical">
                 <Radio value={Scope.OnlyThisObject}>{i18n.t('doorMenu.OnlyThisDoor', lang)}</Radio>
+                <Radio value={Scope.OnlyThisSide}>{i18n.t('doorMenu.AllDoorsOnWall', lang)}</Radio>
                 <Radio value={Scope.AllObjectsOfThisTypeAboveFoundation}>
                   {i18n.t('doorMenu.AllDoorsAboveFoundation', lang)}
                 </Radio>
