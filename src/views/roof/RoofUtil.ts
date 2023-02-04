@@ -303,10 +303,10 @@ export class RoofUtil {
   static getRoofBoundaryVertices(roof: RoofModel) {
     const segments = useStore.getState().roofSegmentVerticesMap.get(roof.id);
     if (!segments) throw new Error();
-    return segments.map((points) => ({
-      x: points[0].x,
-      y: points[0].y,
-    }));
+    return segments.reduce((acc, points) => {
+      acc.push({ x: points[0].x, y: points[0].y }, { x: points[1].x, y: points[1].y });
+      return acc;
+    }, [] as { x: number; y: number }[]);
   }
 
   static getSolarPanelVerticesOnRoof(sp: SolarPanelModel, foundation: ElementModel) {
