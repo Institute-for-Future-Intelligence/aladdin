@@ -1,7 +1,7 @@
 {
-  "docid": "vtpJGoQvNHKRZCyxs7SMNf",
-  "time": "02/02/2023 12:47 pm",
-  "timestamp": 1675360028828,
+  "docid": "1M576fPGc7MD36pEzqbjhA",
+  "time": "02/04/2023 01:38 pm",
+  "timestamp": 1675535897444,
   "userid": "QWecNcxhyvP6j6sBN11hBsfZDau1",
   "owner": null,
   "email": null,
@@ -154,7 +154,8 @@
       "roofId": "45EQZzpZDmcCPwStDm4gUQ",
       "leftRoofHeight": 4,
       "rightRoofHeight": 4,
-      "selected": false
+      "selected": false,
+      "eavesLength": 0.2
     },
     {
       "type": "Wall",
@@ -212,7 +213,8 @@
         0,
         7.4648066919643785
       ],
-      "selected": false
+      "selected": false,
+      "eavesLength": 0.2
     },
     {
       "type": "Wall",
@@ -270,7 +272,8 @@
         0,
         7.4648066919643785
       ],
-      "selected": false
+      "selected": false,
+      "eavesLength": 0.2
     },
     {
       "type": "Wall",
@@ -324,7 +327,8 @@
       "roofId": "45EQZzpZDmcCPwStDm4gUQ",
       "leftRoofHeight": 4,
       "rightRoofHeight": 4,
-      "selected": false
+      "selected": false,
+      "eavesLength": 0.2
     },
     {
       "id": "45EQZzpZDmcCPwStDm4gUQ",
@@ -353,7 +357,6 @@
       "roofType": "Gable",
       "roofStructure": "Default",
       "textureType": "No Roof Texture",
-      "overhang": 0.2,
       "thickness": 0.2,
       "wallsId": [
         "py4fscALBHuoNNVWKoXS9c"
@@ -505,7 +508,8 @@
       "roofId": "w7eDFcjLuyPhMChKfhs6jB",
       "leftRoofHeight": 4,
       "rightRoofHeight": 4,
-      "selected": false
+      "selected": false,
+      "eavesLength": 0.2
     },
     {
       "type": "Wall",
@@ -563,7 +567,8 @@
         0,
         7.4648066919643785
       ],
-      "selected": false
+      "selected": false,
+      "eavesLength": 0.2
     },
     {
       "type": "Wall",
@@ -621,7 +626,8 @@
         0,
         7.4648066919643785
       ],
-      "selected": false
+      "selected": false,
+      "eavesLength": 0.2
     },
     {
       "type": "Wall",
@@ -675,7 +681,8 @@
       "roofId": "w7eDFcjLuyPhMChKfhs6jB",
       "leftRoofHeight": 4,
       "rightRoofHeight": 4,
-      "selected": false
+      "selected": false,
+      "eavesLength": 0.2
     },
     {
       "type": "Window",
@@ -784,7 +791,6 @@
       "roofType": "Gable",
       "roofStructure": "Default",
       "textureType": "No Roof Texture",
-      "overhang": 0.2,
       "thickness": 0.2,
       "wallsId": [
         "14k9EDHAzKUWAkBFT1miXA"
@@ -864,9 +870,9 @@
     "dailyHeliostatYieldPanelX": 0,
     "showDailyParabolicDishYieldPanel": false,
     "cameraPosition": [
-      -25.68199626206471,
-      -24.4788233108495,
-      9.132470250025992
+      -25.681996262064686,
+      -24.47882331084947,
+      9.132470250025985
     ],
     "showYearlyHeliostatYieldPanel": false,
     "orthographic": false,
@@ -956,6 +962,20 @@
       "width": 277,
       "height": 63
     }
+  },
+  "graphState": {
+    "dailyPvIndividualOutputs": false,
+    "yearlyPvIndividualOutputs": false,
+    "dailyParabolicDishIndividualOutputs": false,
+    "yearlyParabolicDishIndividualOutputs": false,
+    "dailyParabolicTroughIndividualOutputs": false,
+    "yearlyParabolicTroughIndividualOutputs": false,
+    "dailyFresnelReflectorIndividualOutputs": false,
+    "yearlyFresnelReflectorIndividualOutputs": false,
+    "dailyHeliostatIndividualOutputs": false,
+    "yearlyHeliostatIndividualOutputs": false,
+    "dailyUpdraftTowerIndividualOutputs": false,
+    "yearlyUpdraftTowerIndividualOutputs": false
   },
   "evolutionMethod": 1,
   "solarPanelArrayLayoutParams": {

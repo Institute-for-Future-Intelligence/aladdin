@@ -1,7 +1,7 @@
 {
-  "docid": "3pz77pxTaECK5AyQkahVJH",
-  "time": "12/03/2022 02:46 pm",
-  "timestamp": 1670096780206,
+  "docid": "4h5Yuv7EPhBks5AdBdPSrH",
+  "time": "02/04/2023 12:51 pm",
+  "timestamp": 1675533085778,
   "userid": "QWecNcxhyvP6j6sBN11hBsfZDau1",
   "owner": null,
   "email": null,
@@ -177,7 +177,8 @@
       "structureColor": "white",
       "opacity": 0.5,
       "fill": "Full",
-      "unfilledHeight": 0.5
+      "unfilledHeight": 0.5,
+      "eavesLength": 0.2
     },
     {
       "type": "Wall",
@@ -234,7 +235,8 @@
       "structureColor": "white",
       "opacity": 0.5,
       "fill": "Full",
-      "unfilledHeight": 0.5
+      "unfilledHeight": 0.5,
+      "eavesLength": 0.2
     },
     {
       "type": "Wall",
@@ -291,7 +293,8 @@
       "structureColor": "white",
       "opacity": 0.5,
       "fill": "Full",
-      "unfilledHeight": 0.5
+      "unfilledHeight": 0.5,
+      "eavesLength": 0.2
     },
     {
       "type": "Wall",
@@ -348,7 +351,8 @@
       "structureColor": "white",
       "opacity": 0.5,
       "fill": "Full",
-      "unfilledHeight": 0.5
+      "unfilledHeight": 0.5,
+      "eavesLength": 1
     },
     {
       "type": "Wall",
@@ -405,7 +409,8 @@
       "structureColor": "white",
       "opacity": 0.5,
       "fill": "Full",
-      "unfilledHeight": 0.5
+      "unfilledHeight": 0.5,
+      "eavesLength": 1
     },
     {
       "type": "Wall",
@@ -462,7 +467,8 @@
       "structureColor": "white",
       "opacity": 0.5,
       "fill": "Full",
-      "unfilledHeight": 0.5
+      "unfilledHeight": 0.5,
+      "eavesLength": 0.2
     },
     {
       "type": "Foundation",
@@ -1176,7 +1182,6 @@
       "lx": 0,
       "ly": 0,
       "lz": 0,
-      "overhang": 1,
       "thickness": 0.2,
       "roofType": "Pyramid",
       "roofStructure": "Default",
@@ -1208,7 +1213,8 @@
       "foundationId": "m7AH7DcnoGzAq9kryBy4RS",
       "id": "5PVMZuTRFmTCfk2YbWKwPq",
       "locked": false,
-      "rise": 0
+      "rise": 0,
+      "ceiling": false
     },
     {
       "type": "Window",
@@ -2197,9 +2203,9 @@
     "dailyHeliostatYieldPanelX": 0,
     "showDailyParabolicDishYieldPanel": false,
     "cameraPosition": [
-      11.745277768968359,
-      -10.932517839018058,
-      2.457105139993578
+      15.787159546699485,
+      -4.342256139127052,
+      2.457105139993579
     ],
     "showYearlyHeliostatYieldPanel": false,
     "orthographic": false,
@@ -2261,6 +2267,20 @@
     "stickyNotePanelY": 0,
     "showYearlyParabolicDishYieldPanel": false,
     "showYearlyFresnelReflectorYieldPanel": false
+  },
+  "graphState": {
+    "dailyPvIndividualOutputs": false,
+    "yearlyPvIndividualOutputs": false,
+    "dailyParabolicDishIndividualOutputs": false,
+    "yearlyParabolicDishIndividualOutputs": false,
+    "dailyParabolicTroughIndividualOutputs": false,
+    "yearlyParabolicTroughIndividualOutputs": false,
+    "dailyFresnelReflectorIndividualOutputs": false,
+    "yearlyFresnelReflectorIndividualOutputs": false,
+    "dailyHeliostatIndividualOutputs": false,
+    "yearlyHeliostatIndividualOutputs": false,
+    "dailyUpdraftTowerIndividualOutputs": false,
+    "yearlyUpdraftTowerIndividualOutputs": false
   },
   "evolutionMethod": 1,
   "solarPanelArrayLayoutParams": {

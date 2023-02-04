@@ -1,7 +1,7 @@
 {
-  "docid": "8MzkkhrtFswUzZrHHxZsaP",
-  "time": "02/03/2023 11:09 am",
-  "timestamp": 1675440574935,
+  "docid": "iTjDf3ar2Wi1xMDNhVPun5",
+  "time": "02/03/2023 08:02 pm",
+  "timestamp": 1675472536455,
   "userid": "QWecNcxhyvP6j6sBN11hBsfZDau1",
   "owner": null,
   "email": null,
@@ -293,7 +293,8 @@
       "structureColor": "white",
       "opacity": 0.5,
       "fill": "Full",
-      "unfilledHeight": 0.5
+      "unfilledHeight": 0.5,
+      "eavesLength": 0.3
     },
     {
       "relativeAngle": 1.9379701606131157,
@@ -350,7 +351,8 @@
       "structureColor": "white",
       "opacity": 0.5,
       "fill": "Full",
-      "unfilledHeight": 0.5
+      "unfilledHeight": 0.5,
+      "eavesLength": 0.3
     },
     {
       "lineWidth": 0.2,
@@ -407,7 +409,8 @@
       "structureColor": "white",
       "opacity": 0.5,
       "fill": "Full",
-      "unfilledHeight": 0.5
+      "unfilledHeight": 0.5,
+      "eavesLength": 0.3
     },
     {
       "rotation": [
@@ -464,7 +467,8 @@
       "structureColor": "white",
       "opacity": 0.5,
       "fill": "Full",
-      "unfilledHeight": 0.5
+      "unfilledHeight": 0.5,
+      "eavesLength": 0.3
     },
     {
       "ly": 0.3,
@@ -521,7 +525,8 @@
       "structureColor": "white",
       "opacity": 0.5,
       "fill": "Full",
-      "unfilledHeight": 0.5
+      "unfilledHeight": 0.5,
+      "eavesLength": 0.3
     },
     {
       "lineColor": "black",
@@ -578,7 +583,8 @@
       "structureColor": "white",
       "opacity": 0.5,
       "fill": "Full",
-      "unfilledHeight": 0.5
+      "unfilledHeight": 0.5,
+      "eavesLength": 0.3
     },
     {
       "normal": [
@@ -635,7 +641,8 @@
       "structureColor": "white",
       "opacity": 0.5,
       "fill": "Full",
-      "unfilledHeight": 0.5
+      "unfilledHeight": 0.5,
+      "eavesLength": 0.3
     },
     {
       "ly": 0.3,
@@ -692,10 +699,10 @@
       "structureColor": "white",
       "opacity": 0.5,
       "fill": "Full",
-      "unfilledHeight": 0.5
+      "unfilledHeight": 0.5,
+      "eavesLength": 0.3
     },
     {
-      "overhang": 0.3,
       "cz": 0,
       "locked": true,
       "selected": false,
@@ -820,7 +827,8 @@
       "structureColor": "white",
       "opacity": 0.5,
       "fill": "Full",
-      "unfilledHeight": 0.5
+      "unfilledHeight": 0.5,
+      "eavesLength": 0.3
     },
     {
       "color": "#e27300",
@@ -877,7 +885,8 @@
       "structureColor": "white",
       "opacity": 0.5,
       "fill": "Full",
-      "unfilledHeight": 0.5
+      "unfilledHeight": 0.5,
+      "eavesLength": 0.3
     },
     {
       "normal": [
@@ -934,7 +943,8 @@
       "structureColor": "white",
       "opacity": 0.5,
       "fill": "Full",
-      "unfilledHeight": 0.5
+      "unfilledHeight": 0.5,
+      "eavesLength": 0.3
     },
     {
       "windows": [],
@@ -991,7 +1001,8 @@
       "structureColor": "white",
       "opacity": 0.5,
       "fill": "Full",
-      "unfilledHeight": 0.5
+      "unfilledHeight": 0.5,
+      "eavesLength": 0.3
     },
     {
       "cz": 0,
@@ -1048,7 +1059,8 @@
       "structureColor": "white",
       "opacity": 0.5,
       "fill": "Full",
-      "unfilledHeight": 0.5
+      "unfilledHeight": 0.5,
+      "eavesLength": 0.3
     },
     {
       "cx": -4.999999999999997,
@@ -1105,7 +1117,8 @@
       "structureColor": "white",
       "opacity": 0.5,
       "fill": "Full",
-      "unfilledHeight": 0.5
+      "unfilledHeight": 0.5,
+      "eavesLength": 0.3
     },
     {
       "roofType": "Pyramid",
@@ -1124,7 +1137,6 @@
       "locked": true,
       "cz": 0,
       "lineColor": "black",
-      "overhang": 0.3,
       "selected": false,
       "color": "#bbc0c4",
       "type": "Roof",
@@ -1311,7 +1323,8 @@
       "structureColor": "white",
       "opacity": 0.5,
       "fill": "Full",
-      "unfilledHeight": 0.5
+      "unfilledHeight": 0.5,
+      "eavesLength": 0.3
     },
     {
       "type": "Wall",
@@ -1368,7 +1381,8 @@
       "structureColor": "white",
       "opacity": 0.5,
       "fill": "Full",
-      "unfilledHeight": 0.5
+      "unfilledHeight": 0.5,
+      "eavesLength": 0.3
     },
     {
       "id": "fPtvUV7Bzhezt9xwDuPEmF",
@@ -1425,7 +1439,8 @@
       "structureColor": "white",
       "opacity": 0.5,
       "fill": "Full",
-      "unfilledHeight": 0.5
+      "unfilledHeight": 0.5,
+      "eavesLength": 0.3
     },
     {
       "parentId": "1nEGYML9Y5W4dWVRK3n5WW",
@@ -1482,7 +1497,8 @@
       "structureColor": "white",
       "opacity": 0.5,
       "fill": "Full",
-      "unfilledHeight": 0.5
+      "unfilledHeight": 0.5,
+      "eavesLength": 0.3
     },
     {
       "foundationId": "1nEGYML9Y5W4dWVRK3n5WW",
@@ -1539,7 +1555,8 @@
       "structureColor": "white",
       "opacity": 0.5,
       "fill": "Full",
-      "unfilledHeight": 0.5
+      "unfilledHeight": 0.5,
+      "eavesLength": 0.3
     },
     {
       "cy": -16.63156986902993,
@@ -1702,7 +1719,8 @@
       "structureColor": "white",
       "opacity": 0.5,
       "fill": "Full",
-      "unfilledHeight": 0.5
+      "unfilledHeight": 0.5,
+      "eavesLength": 0.3
     },
     {
       "lineWidth": 0.2,
@@ -1759,7 +1777,8 @@
       "structureColor": "white",
       "opacity": 0.5,
       "fill": "Full",
-      "unfilledHeight": 0.5
+      "unfilledHeight": 0.5,
+      "eavesLength": 0.3
     },
     {
       "lz": 9,
@@ -1816,7 +1835,8 @@
       "structureColor": "white",
       "opacity": 0.5,
       "fill": "Full",
-      "unfilledHeight": 0.5
+      "unfilledHeight": 0.5,
+      "eavesLength": 0.3
     },
     {
       "cx": -2.2158130411354513,
@@ -1913,7 +1933,8 @@
       "structureColor": "white",
       "opacity": 0.5,
       "fill": "Full",
-      "unfilledHeight": 0.5
+      "unfilledHeight": 0.5,
+      "eavesLength": 0.3
     },
     {
       "showLabel": false,
@@ -1970,7 +1991,8 @@
       "structureColor": "white",
       "opacity": 0.5,
       "fill": "Full",
-      "unfilledHeight": 0.5
+      "unfilledHeight": 0.5,
+      "eavesLength": 0.3
     },
     {
       "textureType": "Wall Texture Default",
@@ -2027,7 +2049,8 @@
       "structureColor": "white",
       "opacity": 0.5,
       "fill": "Full",
-      "unfilledHeight": 0.5
+      "unfilledHeight": 0.5,
+      "eavesLength": 0.3
     },
     {
       "ly": 18.600818138777164,
@@ -2070,7 +2093,6 @@
       "locked": true
     },
     {
-      "overhang": 0.3,
       "lineColor": "black",
       "foundationId": "jqbU6DNc1hw25bSjkKpMiq",
       "cz": 0,
@@ -3929,7 +3951,6 @@
       "showLabel": false,
       "lineWidth": 0.2,
       "thickness": 0.2,
-      "overhang": 0.3,
       "normal": [
         0,
         0,

@@ -23,7 +23,7 @@ export interface RoofModel extends ElementModel {
   ceiling: boolean;
   ceilingRValue?: number;
   // old files
-  overhang: number;
+  overhang?: number;
 }
 
 export interface PyramidRoofModel extends RoofModel {}

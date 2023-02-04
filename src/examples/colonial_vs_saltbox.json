@@ -1,7 +1,7 @@
 {
-  "docid": "2TqWTU2pHb1jeEqJJvExLW",
-  "time": "02/02/2023 11:40 am",
-  "timestamp": 1675356001257,
+  "docid": "9w6UzUJEcveUiMjbykb1jG",
+  "time": "02/04/2023 01:50 pm",
+  "timestamp": 1675536610339,
   "userid": "QWecNcxhyvP6j6sBN11hBsfZDau1",
   "owner": null,
   "email": null,
@@ -118,7 +118,8 @@
       "structureColor": "white",
       "opacity": 0.5,
       "fill": "Full",
-      "unfilledHeight": 0.5
+      "unfilledHeight": 0.5,
+      "eavesLength": 0.2
     },
     {
       "type": "Wall",
@@ -174,7 +175,8 @@
       "structureColor": "white",
       "opacity": 0.5,
       "fill": "Full",
-      "unfilledHeight": 0.5
+      "unfilledHeight": 0.5,
+      "eavesLength": 0.2
     },
     {
       "type": "Wall",
@@ -230,7 +232,8 @@
       "structureColor": "white",
       "opacity": 0.5,
       "fill": "Full",
-      "unfilledHeight": 0.5
+      "unfilledHeight": 0.5,
+      "eavesLength": 0.2
     },
     {
       "type": "Wall",
@@ -282,7 +285,8 @@
       "structureColor": "white",
       "opacity": 0.5,
       "fill": "Full",
-      "unfilledHeight": 0.5
+      "unfilledHeight": 0.5,
+      "eavesLength": 0.2
     },
     {
       "type": "Window",
@@ -386,7 +390,6 @@
       "lx": 0,
       "ly": 0,
       "lz": 0,
-      "overhang": 0.2,
       "thickness": 0.15,
       "roofType": "Gable",
       "wallsId": [
@@ -1333,7 +1336,8 @@
       "leftRoofHeight": 5.158338809071295,
       "rightRoofHeight": 5.158338809071295,
       "fill": "Full",
-      "unfilledHeight": 0.5
+      "unfilledHeight": 0.5,
+      "eavesLength": 0.2
     },
     {
       "type": "Window",
@@ -1629,7 +1633,8 @@
         8.721280120974388
       ],
       "fill": "Full",
-      "unfilledHeight": 0.5
+      "unfilledHeight": 0.5,
+      "eavesLength": 0.2
     },
     {
       "type": "Window",
@@ -1845,7 +1850,8 @@
         8.721280120974388
       ],
       "fill": "Full",
-      "unfilledHeight": 0.5
+      "unfilledHeight": 0.5,
+      "eavesLength": 0.2
     },
     {
       "type": "Window",
@@ -2057,7 +2063,8 @@
       "leftRoofHeight": 5.158338809071295,
       "rightRoofHeight": 5.158338809071295,
       "fill": "Full",
-      "unfilledHeight": 0.5
+      "unfilledHeight": 0.5,
+      "eavesLength": 0.2
     },
     {
       "type": "Window",
@@ -2431,7 +2438,6 @@
       "foundationId": "hszWAAkWMHNQoK3CMWw8fv",
       "roofType": "Gable",
       "textureType": "Roof Texture #2",
-      "overhang": 0.2,
       "thickness": 0.15,
       "wallsId": [
         "hZoCtb7QW6TLTCnow7LXWA"
@@ -2503,9 +2509,9 @@
     "dailyHeliostatYieldPanelX": 0,
     "showDailyParabolicDishYieldPanel": false,
     "cameraPosition": [
-      -29.44402582378222,
-      -25.741548603644382,
-      7.0939464158727255
+      -19.983521483473943,
+      -19.199654840849345,
+      5.338919298813099
     ],
     "showYearlyHeliostatYieldPanel": false,
     "orthographic": false,
@@ -2574,6 +2580,20 @@
       "height": 61
     }
   },
+  "graphState": {
+    "dailyPvIndividualOutputs": false,
+    "yearlyPvIndividualOutputs": false,
+    "dailyParabolicDishIndividualOutputs": false,
+    "yearlyParabolicDishIndividualOutputs": false,
+    "dailyParabolicTroughIndividualOutputs": false,
+    "yearlyParabolicTroughIndividualOutputs": false,
+    "dailyFresnelReflectorIndividualOutputs": false,
+    "yearlyFresnelReflectorIndividualOutputs": false,
+    "dailyHeliostatIndividualOutputs": false,
+    "yearlyHeliostatIndividualOutputs": false,
+    "dailyUpdraftTowerIndividualOutputs": false,
+    "yearlyUpdraftTowerIndividualOutputs": false
+  },
   "evolutionMethod": 1,
   "solarPanelArrayLayoutParams": {
     "pvModelName": "SPR-X21-335-BLK",
@@ -2632,6 +2652,6 @@
     "operationalCostPerUnit": 0.15
   },
   "notes": [
-    "colonial_vs_saltbox"
+    "Colonial vs. saltbox"
   ]
 }

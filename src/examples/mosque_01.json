@@ -1,7 +1,7 @@
 {
-  "docid": "6bQ87ExLNU5AkeL6gtktPs",
-  "time": "12/03/2022 06:41 pm",
-  "timestamp": 1670110894353,
+  "docid": "tn5NXrCgVkn7A5sexifmrP",
+  "time": "02/04/2023 01:00 pm",
+  "timestamp": 1675533609468,
   "userid": "QWecNcxhyvP6j6sBN11hBsfZDau1",
   "owner": null,
   "email": null,
@@ -95,7 +95,8 @@
       "leftRoofHeight": 10,
       "rightRoofHeight": 10,
       "fill": "Full",
-      "unfilledHeight": 0.5
+      "unfilledHeight": 0.5,
+      "eavesLength": 0.2
     },
     {
       "type": "Foundation",
@@ -180,7 +181,8 @@
       "leftRoofHeight": 10,
       "rightRoofHeight": 10,
       "fill": "Full",
-      "unfilledHeight": 0.5
+      "unfilledHeight": 0.5,
+      "eavesLength": 0.2
     },
     {
       "type": "Wall",
@@ -239,7 +241,8 @@
       "leftRoofHeight": 10,
       "rightRoofHeight": 10,
       "fill": "Full",
-      "unfilledHeight": 0.5
+      "unfilledHeight": 0.5,
+      "eavesLength": 0.2
     },
     {
       "type": "Wall",
@@ -298,7 +301,8 @@
       "leftRoofHeight": 10,
       "rightRoofHeight": 10,
       "fill": "Full",
-      "unfilledHeight": 0.5
+      "unfilledHeight": 0.5,
+      "eavesLength": 0.2
     },
     {
       "type": "Human",
@@ -331,7 +335,6 @@
       "lx": 0,
       "ly": 0,
       "lz": 0,
-      "overhang": 0.2,
       "thickness": 0.5,
       "roofType": "Pyramid",
       "roofStructure": "Default",
@@ -361,7 +364,8 @@
       "foundationId": "1rAGH78b5nt7cXyGU9vNRV",
       "id": "q6GhCTYocV8Du6Z7WCqnGz",
       "sideColor": "#ffffff",
-      "rise": 0
+      "rise": 0,
+      "ceiling": false
     },
     {
       "type": "Door",
@@ -696,7 +700,8 @@
       "rightRoofHeight": 16,
       "selected": false,
       "fill": "Full",
-      "unfilledHeight": 0.5
+      "unfilledHeight": 0.5,
+      "eavesLength": 0.4
     },
     {
       "type": "Wall",
@@ -746,7 +751,8 @@
       "rightRoofHeight": 16,
       "selected": false,
       "fill": "Full",
-      "unfilledHeight": 0.5
+      "unfilledHeight": 0.5,
+      "eavesLength": 0.4
     },
     {
       "type": "Wall",
@@ -796,7 +802,8 @@
       "rightRoofHeight": 16,
       "selected": false,
       "fill": "Full",
-      "unfilledHeight": 0.5
+      "unfilledHeight": 0.5,
+      "eavesLength": 0.4
     },
     {
       "id": "wyopmFLrEU8Q6F3Eo2E8qH",
@@ -823,7 +830,6 @@
       "roofType": "Pyramid",
       "roofStructure": "Default",
       "textureType": "No Roof Texture",
-      "overhang": 0.4,
       "thickness": 0.5,
       "wallsId": [
         "iC5vVUbJMtmDkNzYUxBZPA",
@@ -832,7 +838,8 @@
       ],
       "selected": false,
       "sideColor": "#ffffff",
-      "rise": 0
+      "rise": 0,
+      "ceiling": false
     },
     {
       "type": "Foundation",
@@ -1581,7 +1588,8 @@
       "rightRoofHeight": 16,
       "selected": false,
       "fill": "Full",
-      "unfilledHeight": 0.5
+      "unfilledHeight": 0.5,
+      "eavesLength": 0.4
     },
     {
       "type": "Window",
@@ -2057,7 +2065,8 @@
       "leftRoofHeight": 30,
       "rightRoofHeight": 30,
       "fill": "Full",
-      "unfilledHeight": 0.5
+      "unfilledHeight": 0.5,
+      "eavesLength": 1.2
     },
     {
       "type": "Wall",
@@ -2114,7 +2123,8 @@
       "leftRoofHeight": 30,
       "rightRoofHeight": 30,
       "fill": "Full",
-      "unfilledHeight": 0.5
+      "unfilledHeight": 0.5,
+      "eavesLength": 1.2
     },
     {
       "type": "Wall",
@@ -2171,7 +2181,8 @@
       "leftRoofHeight": 30,
       "rightRoofHeight": 30,
       "fill": "Full",
-      "unfilledHeight": 0.5
+      "unfilledHeight": 0.5,
+      "eavesLength": 1.2
     },
     {
       "type": "Wall",
@@ -2228,7 +2239,8 @@
       "leftRoofHeight": 30,
       "rightRoofHeight": 30,
       "fill": "Full",
-      "unfilledHeight": 0.5
+      "unfilledHeight": 0.5,
+      "eavesLength": 1.2
     },
     {
       "type": "Wall",
@@ -2285,7 +2297,8 @@
       "leftRoofHeight": 30,
       "rightRoofHeight": 30,
       "fill": "Full",
-      "unfilledHeight": 0.5
+      "unfilledHeight": 0.5,
+      "eavesLength": 1.2
     },
     {
       "type": "Wall",
@@ -2342,7 +2355,8 @@
       "leftRoofHeight": 30,
       "rightRoofHeight": 30,
       "fill": "Full",
-      "unfilledHeight": 0.5
+      "unfilledHeight": 0.5,
+      "eavesLength": 1.2
     },
     {
       "type": "Wall",
@@ -2399,7 +2413,8 @@
       "leftRoofHeight": 30,
       "rightRoofHeight": 30,
       "fill": "Full",
-      "unfilledHeight": 0.5
+      "unfilledHeight": 0.5,
+      "eavesLength": 1.2
     },
     {
       "type": "Wall",
@@ -2456,7 +2471,8 @@
       "leftRoofHeight": 30,
       "rightRoofHeight": 30,
       "fill": "Full",
-      "unfilledHeight": 0.5
+      "unfilledHeight": 0.5,
+      "eavesLength": 1.2
     },
     {
       "type": "Wall",
@@ -2508,7 +2524,8 @@
       "rightRoofHeight": 20,
       "selected": false,
       "fill": "Full",
-      "unfilledHeight": 0.5
+      "unfilledHeight": 0.5,
+      "eavesLength": 1
     },
     {
       "type": "Wall",
@@ -2560,7 +2577,8 @@
       "rightRoofHeight": 20,
       "selected": false,
       "fill": "Full",
-      "unfilledHeight": 0.5
+      "unfilledHeight": 0.5,
+      "eavesLength": 1
     },
     {
       "type": "Wall",
@@ -2612,7 +2630,8 @@
       "rightRoofHeight": 20,
       "selected": false,
       "fill": "Full",
-      "unfilledHeight": 0.5
+      "unfilledHeight": 0.5,
+      "eavesLength": 1
     },
     {
       "type": "Wall",
@@ -2664,7 +2683,8 @@
       "rightRoofHeight": 20,
       "selected": false,
       "fill": "Full",
-      "unfilledHeight": 0.5
+      "unfilledHeight": 0.5,
+      "eavesLength": 1
     },
     {
       "type": "Wall",
@@ -2716,7 +2736,8 @@
       "rightRoofHeight": 20,
       "selected": false,
       "fill": "Full",
-      "unfilledHeight": 0.5
+      "unfilledHeight": 0.5,
+      "eavesLength": 1
     },
     {
       "type": "Wall",
@@ -2768,7 +2789,8 @@
       "rightRoofHeight": 20,
       "selected": false,
       "fill": "Full",
-      "unfilledHeight": 0.5
+      "unfilledHeight": 0.5,
+      "eavesLength": 1
     },
     {
       "type": "Wall",
@@ -2820,7 +2842,8 @@
       "rightRoofHeight": 20,
       "selected": false,
       "fill": "Full",
-      "unfilledHeight": 0.5
+      "unfilledHeight": 0.5,
+      "eavesLength": 1
     },
     {
       "type": "Wall",
@@ -2872,7 +2895,8 @@
       "rightRoofHeight": 20,
       "selected": false,
       "fill": "Full",
-      "unfilledHeight": 0.5
+      "unfilledHeight": 0.5,
+      "eavesLength": 1
     },
     {
       "type": "Foundation",
@@ -2909,7 +2933,6 @@
       "lx": 0,
       "ly": 0,
       "lz": 0,
-      "overhang": 1.2,
       "thickness": 1,
       "roofType": "Pyramid",
       "roofStructure": "Default",
@@ -2943,7 +2966,8 @@
       "parentId": "jo2xWjh3Cc1HQacSqq3RwZ",
       "foundationId": "jo2xWjh3Cc1HQacSqq3RwZ",
       "id": "ask5m4JZ2uoEk2cEnnLbsK",
-      "rise": 0
+      "rise": 0,
+      "ceiling": false
     },
     {
       "type": "Wall",
@@ -2995,7 +3019,8 @@
       "rightRoofHeight": 40,
       "selected": false,
       "fill": "Full",
-      "unfilledHeight": 0.5
+      "unfilledHeight": 0.5,
+      "eavesLength": 0.3
     },
     {
       "type": "Wall",
@@ -3047,7 +3072,8 @@
       "rightRoofHeight": 40,
       "selected": false,
       "fill": "Full",
-      "unfilledHeight": 0.5
+      "unfilledHeight": 0.5,
+      "eavesLength": 0.3
     },
     {
       "type": "Wall",
@@ -3099,7 +3125,8 @@
       "rightRoofHeight": 40,
       "selected": false,
       "fill": "Full",
-      "unfilledHeight": 0.5
+      "unfilledHeight": 0.5,
+      "eavesLength": 0.3
     },
     {
       "type": "Wall",
@@ -3151,7 +3178,8 @@
       "rightRoofHeight": 40,
       "selected": false,
       "fill": "Full",
-      "unfilledHeight": 0.5
+      "unfilledHeight": 0.5,
+      "eavesLength": 0.3
     },
     {
       "type": "Wall",
@@ -3203,7 +3231,8 @@
       "rightRoofHeight": 40,
       "selected": false,
       "fill": "Full",
-      "unfilledHeight": 0.5
+      "unfilledHeight": 0.5,
+      "eavesLength": 0.3
     },
     {
       "type": "Wall",
@@ -3255,7 +3284,8 @@
       "rightRoofHeight": 40,
       "selected": false,
       "fill": "Full",
-      "unfilledHeight": 0.5
+      "unfilledHeight": 0.5,
+      "eavesLength": 0.3
     },
     {
       "type": "Wall",
@@ -3307,7 +3337,8 @@
       "rightRoofHeight": 40,
       "selected": false,
       "fill": "Full",
-      "unfilledHeight": 0.5
+      "unfilledHeight": 0.5,
+      "eavesLength": 0.3
     },
     {
       "type": "Wall",
@@ -3359,7 +3390,8 @@
       "rightRoofHeight": 40,
       "selected": false,
       "fill": "Full",
-      "unfilledHeight": 0.5
+      "unfilledHeight": 0.5,
+      "eavesLength": 0.3
     },
     {
       "type": "Foundation",
@@ -3396,7 +3428,6 @@
       "lx": 0,
       "ly": 0,
       "lz": 0,
-      "overhang": 0.3,
       "thickness": 0.05,
       "roofType": "Pyramid",
       "roofStructure": "Default",
@@ -3430,7 +3461,8 @@
       "parentId": "nSuM9UkMkLHBgCAuUp64m1",
       "foundationId": "nSuM9UkMkLHBgCAuUp64m1",
       "id": "8T3htfZzkyzGKAg9MjWEi4",
-      "rise": 13.522672727906091
+      "rise": 13.522672727906091,
+      "ceiling": false
     },
     {
       "type": "Roof",
@@ -3440,7 +3472,6 @@
       "lx": 0,
       "ly": 0,
       "lz": 0,
-      "overhang": 1,
       "thickness": 1,
       "roofType": "Pyramid",
       "roofStructure": "Default",
@@ -3474,7 +3505,8 @@
       "parentId": "idmo7S3eXBpD6VWYDG7diy",
       "foundationId": "idmo7S3eXBpD6VWYDG7diy",
       "id": "dyG5Lv9BjBabdoCAJRrzex",
-      "rise": 0
+      "rise": 0,
+      "ceiling": false
     },
     {
       "type": "Wall",
@@ -3526,7 +3558,8 @@
       "rightRoofHeight": 20,
       "selected": false,
       "fill": "Full",
-      "unfilledHeight": 0.5
+      "unfilledHeight": 0.5,
+      "eavesLength": 1
     },
     {
       "type": "Wall",
@@ -3578,7 +3611,8 @@
       "rightRoofHeight": 20,
       "selected": false,
       "fill": "Full",
-      "unfilledHeight": 0.5
+      "unfilledHeight": 0.5,
+      "eavesLength": 1
     },
     {
       "type": "Wall",
@@ -3630,7 +3664,8 @@
       "rightRoofHeight": 20,
       "selected": false,
       "fill": "Full",
-      "unfilledHeight": 0.5
+      "unfilledHeight": 0.5,
+      "eavesLength": 1
     },
     {
       "type": "Wall",
@@ -3682,7 +3717,8 @@
       "rightRoofHeight": 20,
       "selected": false,
       "fill": "Full",
-      "unfilledHeight": 0.5
+      "unfilledHeight": 0.5,
+      "eavesLength": 1
     },
     {
       "type": "Wall",
@@ -3734,7 +3770,8 @@
       "rightRoofHeight": 20,
       "selected": false,
       "fill": "Full",
-      "unfilledHeight": 0.5
+      "unfilledHeight": 0.5,
+      "eavesLength": 1
     },
     {
       "type": "Wall",
@@ -3786,7 +3823,8 @@
       "rightRoofHeight": 20,
       "selected": false,
       "fill": "Full",
-      "unfilledHeight": 0.5
+      "unfilledHeight": 0.5,
+      "eavesLength": 1
     },
     {
       "type": "Wall",
@@ -3838,7 +3876,8 @@
       "rightRoofHeight": 20,
       "selected": false,
       "fill": "Full",
-      "unfilledHeight": 0.5
+      "unfilledHeight": 0.5,
+      "eavesLength": 1
     },
     {
       "type": "Wall",
@@ -3890,7 +3929,8 @@
       "rightRoofHeight": 20,
       "selected": false,
       "fill": "Full",
-      "unfilledHeight": 0.5
+      "unfilledHeight": 0.5,
+      "eavesLength": 1
     },
     {
       "id": "oxncVFS4dMKc2b6nwpauSP",
@@ -3918,7 +3958,6 @@
       "roofType": "Pyramid",
       "roofStructure": "Default",
       "textureType": "No Roof Texture",
-      "overhang": 1,
       "thickness": 1,
       "wallsId": [
         "rwkRVKiYfYKkrL5fSm48ht",
@@ -3931,7 +3970,8 @@
         "e41wz75u2ryRdJixSo4bbC"
       ],
       "selected": false,
-      "rise": 0
+      "rise": 0,
+      "ceiling": false
     },
     {
       "type": "Foundation",
@@ -4008,7 +4048,8 @@
       "rightRoofHeight": 30,
       "selected": false,
       "fill": "Full",
-      "unfilledHeight": 0.5
+      "unfilledHeight": 0.5,
+      "eavesLength": 1.5
     },
     {
       "type": "Wall",
@@ -4058,7 +4099,8 @@
       "rightRoofHeight": 30,
       "selected": false,
       "fill": "Full",
-      "unfilledHeight": 0.5
+      "unfilledHeight": 0.5,
+      "eavesLength": 1.5
     },
     {
       "type": "Wall",
@@ -4108,7 +4150,8 @@
       "rightRoofHeight": 30,
       "selected": false,
       "fill": "Full",
-      "unfilledHeight": 0.5
+      "unfilledHeight": 0.5,
+      "eavesLength": 1.5
     },
     {
       "type": "Wall",
@@ -4158,7 +4201,8 @@
       "rightRoofHeight": 30,
       "selected": false,
       "fill": "Full",
-      "unfilledHeight": 0.5
+      "unfilledHeight": 0.5,
+      "eavesLength": 1.5
     },
     {
       "type": "Wall",
@@ -4208,7 +4252,8 @@
       "rightRoofHeight": 30,
       "selected": false,
       "fill": "Full",
-      "unfilledHeight": 0.5
+      "unfilledHeight": 0.5,
+      "eavesLength": 1.5
     },
     {
       "type": "Wall",
@@ -4258,7 +4303,8 @@
       "rightRoofHeight": 30,
       "selected": false,
       "fill": "Full",
-      "unfilledHeight": 0.5
+      "unfilledHeight": 0.5,
+      "eavesLength": 1.5
     },
     {
       "type": "Wall",
@@ -4308,7 +4354,8 @@
       "rightRoofHeight": 30,
       "selected": false,
       "fill": "Full",
-      "unfilledHeight": 0.5
+      "unfilledHeight": 0.5,
+      "eavesLength": 1.5
     },
     {
       "type": "Wall",
@@ -4358,7 +4405,8 @@
       "rightRoofHeight": 30,
       "selected": false,
       "fill": "Full",
-      "unfilledHeight": 0.5
+      "unfilledHeight": 0.5,
+      "eavesLength": 1.5
     },
     {
       "id": "uMr4G8iwQhvVEE8TbWYbgJ",
@@ -4386,7 +4434,6 @@
       "roofType": "Pyramid",
       "roofStructure": "Default",
       "textureType": "No Roof Texture",
-      "overhang": 1.5,
       "thickness": 1,
       "wallsId": [
         "5kERhDJVYnRwidcZHzNwPz",
@@ -4399,7 +4446,8 @@
         "mCZwmWyb4fsNj2wmYQBvsz"
       ],
       "selected": false,
-      "rise": 0
+      "rise": 0,
+      "ceiling": false
     },
     {
       "type": "Foundation",
@@ -4479,7 +4527,8 @@
       "rightRoofHeight": 40,
       "selected": false,
       "fill": "Full",
-      "unfilledHeight": 0.5
+      "unfilledHeight": 0.5,
+      "eavesLength": 0.3
     },
     {
       "type": "Wall",
@@ -4531,7 +4580,8 @@
       "rightRoofHeight": 40,
       "selected": false,
       "fill": "Full",
-      "unfilledHeight": 0.5
+      "unfilledHeight": 0.5,
+      "eavesLength": 0.3
     },
     {
       "type": "Wall",
@@ -4583,7 +4633,8 @@
       "rightRoofHeight": 40,
       "selected": false,
       "fill": "Full",
-      "unfilledHeight": 0.5
+      "unfilledHeight": 0.5,
+      "eavesLength": 0.3
     },
     {
       "type": "Wall",
@@ -4635,7 +4686,8 @@
       "rightRoofHeight": 40,
       "selected": false,
       "fill": "Full",
-      "unfilledHeight": 0.5
+      "unfilledHeight": 0.5,
+      "eavesLength": 0.3
     },
     {
       "type": "Wall",
@@ -4687,7 +4739,8 @@
       "rightRoofHeight": 40,
       "selected": false,
       "fill": "Full",
-      "unfilledHeight": 0.5
+      "unfilledHeight": 0.5,
+      "eavesLength": 0.3
     },
     {
       "type": "Wall",
@@ -4739,7 +4792,8 @@
       "rightRoofHeight": 40,
       "selected": false,
       "fill": "Full",
-      "unfilledHeight": 0.5
+      "unfilledHeight": 0.5,
+      "eavesLength": 0.3
     },
     {
       "type": "Wall",
@@ -4791,7 +4845,8 @@
       "rightRoofHeight": 40,
       "selected": false,
       "fill": "Full",
-      "unfilledHeight": 0.5
+      "unfilledHeight": 0.5,
+      "eavesLength": 0.3
     },
     {
       "type": "Wall",
@@ -4843,7 +4898,8 @@
       "rightRoofHeight": 40,
       "selected": false,
       "fill": "Full",
-      "unfilledHeight": 0.5
+      "unfilledHeight": 0.5,
+      "eavesLength": 0.3
     },
     {
       "id": "eGKywH11tWPx9igpC5XjNU",
@@ -4871,7 +4927,6 @@
       "roofType": "Pyramid",
       "roofStructure": "Default",
       "textureType": "No Roof Texture",
-      "overhang": 0.3,
       "thickness": 0.05,
       "wallsId": [
         "mMt5DmNXZy5oG4vq89vafC",
@@ -4884,7 +4939,8 @@
         "ho9ZWX9Y7gps9CuiwCZxjF"
       ],
       "selected": false,
-      "rise": 13.522672727906091
+      "rise": 13.522672727906091,
+      "ceiling": false
     },
     {
       "type": "Foundation",
@@ -4963,7 +5019,8 @@
       "rightRoofHeight": 17,
       "selected": false,
       "fill": "Full",
-      "unfilledHeight": 0.5
+      "unfilledHeight": 0.5,
+      "eavesLength": 0
     },
     {
       "type": "Door",
@@ -5041,7 +5098,8 @@
       "rightRoofHeight": 17,
       "selected": false,
       "fill": "Full",
-      "unfilledHeight": 0.5
+      "unfilledHeight": 0.5,
+      "eavesLength": 0
     },
     {
       "type": "Wall",
@@ -5091,7 +5149,8 @@
       "rightRoofHeight": 17,
       "selected": false,
       "fill": "Full",
-      "unfilledHeight": 0.5
+      "unfilledHeight": 0.5,
+      "eavesLength": 0
     },
     {
       "type": "Wall",
@@ -5141,7 +5200,8 @@
       "roofId": null,
       "selected": false,
       "fill": "Full",
-      "unfilledHeight": 0.5
+      "unfilledHeight": 0.5,
+      "eavesLength": 0.3
     },
     {
       "type": "Door",
@@ -5205,7 +5265,6 @@
       "lx": 0,
       "ly": 0,
       "lz": 0,
-      "overhang": 0,
       "thickness": 0.05,
       "roofType": "Mansard",
       "roofStructure": "Default",
@@ -5233,7 +5292,8 @@
       "parentId": "tLnj42ybzfx7UvcxHnYBsE",
       "foundationId": "tLnj42ybzfx7UvcxHnYBsE",
       "id": "vL7dGWufEhTghRwUx8yTvj",
-      "rise": 1.907584707016376
+      "rise": 1.907584707016376,
+      "ceiling": false
     },
     {
       "type": "Human",
@@ -5332,8 +5392,8 @@
     "dailyHeliostatYieldPanelX": 0,
     "showDailyParabolicDishYieldPanel": false,
     "cameraPosition": [
-      40.16161458870259,
-      -83.52840108412629,
+      40.16161458870258,
+      -83.52840108412623,
       20.640119356575983
     ],
     "showYearlyHeliostatYieldPanel": false,
@@ -5414,6 +5474,20 @@
       "width": 600,
       "height": 360
     }
+  },
+  "graphState": {
+    "dailyPvIndividualOutputs": false,
+    "yearlyPvIndividualOutputs": false,
+    "dailyParabolicDishIndividualOutputs": false,
+    "yearlyParabolicDishIndividualOutputs": false,
+    "dailyParabolicTroughIndividualOutputs": false,
+    "yearlyParabolicTroughIndividualOutputs": false,
+    "dailyFresnelReflectorIndividualOutputs": false,
+    "yearlyFresnelReflectorIndividualOutputs": false,
+    "dailyHeliostatIndividualOutputs": false,
+    "yearlyHeliostatIndividualOutputs": false,
+    "dailyUpdraftTowerIndividualOutputs": false,
+    "yearlyUpdraftTowerIndividualOutputs": false
   },
   "evolutionMethod": 1,
   "solarPanelArrayLayoutParams": {

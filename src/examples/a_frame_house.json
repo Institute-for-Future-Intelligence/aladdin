@@ -1,13 +1,13 @@
 {
-  "docid": "pDX2yXuNjCANh2VQFDa2Aw",
-  "time": "02/02/2023 11:26 am",
-  "timestamp": 1675355184106,
+  "docid": "cQFntaaHiJqTbhbdqwuhLT",
+  "time": "02/04/2023 02:03 pm",
+  "timestamp": 1675537385441,
   "userid": "QWecNcxhyvP6j6sBN11hBsfZDau1",
   "owner": null,
   "email": null,
   "world": {
     "solarRadiationHeatmapGridCellSize": 0.5,
-    "date": "4/22/2022 10:30:00 AM",
+    "date": "4/22/2022, 10:30:00 AM",
     "cspTimesPerHour": 4,
     "noAnimationForHeatmapSimulation": false,
     "cspGridCellSize": 0.5,
@@ -99,7 +99,8 @@
         9.714205250083014
       ],
       "fill": "Full",
-      "unfilledHeight": 0.5
+      "unfilledHeight": 0.5,
+      "eavesLength": 0.5
     },
     {
       "type": "Wall",
@@ -151,7 +152,8 @@
       "structureColor": "white",
       "opacity": 0.5,
       "fill": "Full",
-      "unfilledHeight": 0.5
+      "unfilledHeight": 0.5,
+      "eavesLength": 0.1
     },
     {
       "type": "Wall",
@@ -203,7 +205,8 @@
       "structureColor": "white",
       "opacity": 0.5,
       "fill": "Full",
-      "unfilledHeight": 0.5
+      "unfilledHeight": 0.5,
+      "eavesLength": 0.1
     },
     {
       "type": "Wall",
@@ -259,7 +262,8 @@
         9.714205250083014
       ],
       "fill": "Full",
-      "unfilledHeight": 0.5
+      "unfilledHeight": 0.5,
+      "eavesLength": 0.5
     },
     {
       "type": "Foundation",
@@ -295,7 +299,6 @@
       "lx": 0,
       "ly": 0,
       "lz": 0,
-      "overhang": 0.3,
       "thickness": 0.3,
       "roofType": "Gable",
       "roofStructure": "Default",
@@ -667,7 +670,8 @@
         4.183499794647806
       ],
       "fill": "Full",
-      "unfilledHeight": 0.5
+      "unfilledHeight": 0.5,
+      "eavesLength": 0.2
     },
     {
       "type": "Wall",
@@ -719,7 +723,8 @@
       "leftRoofHeight": 4.183499794647806,
       "rightRoofHeight": 4.183499794647806,
       "fill": "Full",
-      "unfilledHeight": 0.5
+      "unfilledHeight": 0.5,
+      "eavesLength": 0.2
     },
     {
       "type": "Wall",
@@ -771,7 +776,8 @@
       "leftRoofHeight": 3.091798357527264,
       "rightRoofHeight": 3.091798357527264,
       "fill": "Full",
-      "unfilledHeight": 0.5
+      "unfilledHeight": 0.5,
+      "eavesLength": 0.4
     },
     {
       "type": "Wall",
@@ -827,7 +833,8 @@
         4.183499794647806
       ],
       "fill": "Full",
-      "unfilledHeight": 0.5
+      "unfilledHeight": 0.5,
+      "eavesLength": 0.2
     },
     {
       "type": "Foundation",
@@ -862,7 +869,6 @@
       "lx": 0,
       "ly": 0,
       "lz": 0,
-      "overhang": 0.2,
       "thickness": 0.1,
       "roofType": "Gable",
       "roofStructure": "Default",
@@ -1046,9 +1052,9 @@
     "dailyHeliostatYieldPanelX": 0,
     "showDailyParabolicDishYieldPanel": false,
     "cameraPosition": [
-      10.682934223558242,
-      -29.055032972806902,
-      4.366513230692259
+      10.10094784677706,
+      -27.939690213400574,
+      5.094100247928614
     ],
     "showYearlyHeliostatYieldPanel": false,
     "orthographic": false,
@@ -1097,8 +1103,8 @@
     "shadowEnabled": true,
     "showInstructionPanel": false,
     "panCenter": [
-      -1.3476153456414062,
-      -7.001555691507119,
+      -1.314773820088976,
+      -7.013268109259434,
       3.838532276527987
     ],
     "yearlyFresnelReflectorYieldPanelY": 0,
@@ -1116,6 +1122,20 @@
       "width": 200,
       "height": 60
     }
+  },
+  "graphState": {
+    "dailyPvIndividualOutputs": false,
+    "yearlyPvIndividualOutputs": false,
+    "dailyParabolicDishIndividualOutputs": false,
+    "yearlyParabolicDishIndividualOutputs": false,
+    "dailyParabolicTroughIndividualOutputs": false,
+    "yearlyParabolicTroughIndividualOutputs": false,
+    "dailyFresnelReflectorIndividualOutputs": false,
+    "yearlyFresnelReflectorIndividualOutputs": false,
+    "dailyHeliostatIndividualOutputs": false,
+    "yearlyHeliostatIndividualOutputs": false,
+    "dailyUpdraftTowerIndividualOutputs": false,
+    "yearlyUpdraftTowerIndividualOutputs": false
   },
   "evolutionMethod": 1,
   "solarPanelArrayLayoutParams": {

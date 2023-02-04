@@ -1,7 +1,7 @@
 {
-  "docid": "6wGeXeQASrp3vPDYL2UGUB",
-  "time": "12/03/2022 06:29 pm",
-  "timestamp": 1670110141510,
+  "docid": "vJJYJ1HsGKH3n49cWGrCxo",
+  "time": "02/04/2023 12:55 pm",
+  "timestamp": 1675533339769,
   "userid": "QWecNcxhyvP6j6sBN11hBsfZDau1",
   "owner": null,
   "email": null,
@@ -96,7 +96,8 @@
       "opacity": 0.5,
       "locked": false,
       "fill": "Full",
-      "unfilledHeight": 0.5
+      "unfilledHeight": 0.5,
+      "eavesLength": 0.4
     },
     {
       "type": "Wall",
@@ -149,7 +150,8 @@
       "opacity": 0.5,
       "locked": false,
       "fill": "Full",
-      "unfilledHeight": 0.5
+      "unfilledHeight": 0.5,
+      "eavesLength": 0.4
     },
     {
       "type": "Wall",
@@ -202,7 +204,8 @@
       "opacity": 0.5,
       "locked": false,
       "fill": "Full",
-      "unfilledHeight": 0.5
+      "unfilledHeight": 0.5,
+      "eavesLength": 0.4
     },
     {
       "type": "Wall",
@@ -255,7 +258,8 @@
       "opacity": 0.5,
       "locked": false,
       "fill": "Full",
-      "unfilledHeight": 0.5
+      "unfilledHeight": 0.5,
+      "eavesLength": 0.4
     },
     {
       "type": "Foundation",
@@ -334,7 +338,8 @@
       "opacity": 0.5,
       "locked": false,
       "fill": "Full",
-      "unfilledHeight": 0.5
+      "unfilledHeight": 0.5,
+      "eavesLength": 0.2
     },
     {
       "type": "Wall",
@@ -387,7 +392,8 @@
       "opacity": 0.5,
       "locked": false,
       "fill": "Full",
-      "unfilledHeight": 0.5
+      "unfilledHeight": 0.5,
+      "eavesLength": 0.2
     },
     {
       "type": "Wall",
@@ -440,7 +446,8 @@
       "opacity": 0.5,
       "locked": false,
       "fill": "Full",
-      "unfilledHeight": 0.5
+      "unfilledHeight": 0.5,
+      "eavesLength": 0.2
     },
     {
       "type": "Wall",
@@ -493,7 +500,8 @@
       "opacity": 0,
       "locked": false,
       "fill": "Full",
-      "unfilledHeight": 0.5
+      "unfilledHeight": 0.5,
+      "eavesLength": 0.2
     },
     {
       "type": "Foundation",
@@ -530,7 +538,6 @@
       "lx": 0,
       "ly": 0,
       "lz": 0,
-      "overhang": 0.2,
       "thickness": 0.1,
       "roofType": "Mansard",
       "roofStructure": "Default",
@@ -557,7 +564,8 @@
       "parentId": "axj9GVUBNvhnWAa3G8T3wG",
       "foundationId": "axj9GVUBNvhnWAa3G8T3wG",
       "id": "wCPmoV4VwkScF5K7cf32UD",
-      "rise": 0.3478700995805717
+      "rise": 0.3478700995805717,
+      "ceiling": false
     },
     {
       "type": "Door",
@@ -1329,7 +1337,6 @@
       "lx": 0,
       "ly": 0,
       "lz": 0,
-      "overhang": 0.4,
       "thickness": 0.1,
       "roofType": "Hip",
       "roofStructure": "Default",
@@ -1357,7 +1364,8 @@
       "id": "cgHKR8ai6snf9XinDUWwjd",
       "leftRidgeLength": 4.503938109916677,
       "rightRidgeLength": 4.503938109916677,
-      "rise": 2.5896529887286306
+      "rise": 2.5896529887286306,
+      "ceiling": false
     },
     {
       "type": "Human",
@@ -1972,9 +1980,9 @@
     "dailyHeliostatYieldPanelX": 0,
     "showDailyParabolicDishYieldPanel": false,
     "cameraPosition": [
-      -12.088777022183123,
-      -23.090274029132647,
-      4.016418591168008
+      -8.799044184275518,
+      -26.08974743708738,
+      6.2896908161368765
     ],
     "showYearlyHeliostatYieldPanel": false,
     "orthographic": false,
@@ -2023,8 +2031,8 @@
     "shadowEnabled": true,
     "showInstructionPanel": true,
     "panCenter": [
-      1.1584989084764534,
-      1.4479628457435418,
+      1.1670673639808453,
+      1.410226786909764,
       3.821084992361519
     ],
     "yearlyFresnelReflectorYieldPanelY": 0,
@@ -2036,6 +2044,20 @@
     "stickyNotePanelY": 0,
     "showYearlyParabolicDishYieldPanel": false,
     "showYearlyFresnelReflectorYieldPanel": false
+  },
+  "graphState": {
+    "dailyPvIndividualOutputs": false,
+    "yearlyPvIndividualOutputs": false,
+    "dailyParabolicDishIndividualOutputs": false,
+    "yearlyParabolicDishIndividualOutputs": false,
+    "dailyParabolicTroughIndividualOutputs": false,
+    "yearlyParabolicTroughIndividualOutputs": false,
+    "dailyFresnelReflectorIndividualOutputs": false,
+    "yearlyFresnelReflectorIndividualOutputs": false,
+    "dailyHeliostatIndividualOutputs": false,
+    "yearlyHeliostatIndividualOutputs": false,
+    "dailyUpdraftTowerIndividualOutputs": false,
+    "yearlyUpdraftTowerIndividualOutputs": false
   },
   "evolutionMethod": 1,
   "solarPanelArrayLayoutParams": {

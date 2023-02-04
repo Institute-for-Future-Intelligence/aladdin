@@ -216,10 +216,10 @@ const MainMenu = ({ viewOnly, set2DView, resetView, zoomView, canvas }: MainMenu
             setCommonStore((state) => {
               state.loadingFile = true;
             });
-            // give it 0 second for this modal to close
+            // give it a brief moment for this modal to close
             setTimeout(() => {
               importContent(input);
-            }, 0);
+            }, 10);
           },
           okText: i18n.t('word.Yes', lang),
           cancelText: i18n.t('word.No', lang),
@@ -228,10 +228,10 @@ const MainMenu = ({ viewOnly, set2DView, resetView, zoomView, canvas }: MainMenu
         setCommonStore((state) => {
           state.loadingFile = true;
         });
-        // give it 0 second for the loading spinner to show
+        // give it a bried moment for the loading spinner to show
         setTimeout(() => {
           importContent(input);
-        }, 0);
+        }, 10);
       }
       if (loggable) {
         setCommonStore((state) => {

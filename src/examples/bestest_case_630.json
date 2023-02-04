@@ -1,7 +1,7 @@
 {
-  "docid": "xnNXg2V7crfiVJ22VXAUh1",
-  "time": "02/02/2023 05:52 pm",
-  "timestamp": 1675378369571,
+  "docid": "67HXdfbAHrwMfJ2uYxYEr9",
+  "time": "02/04/2023 12:05 pm",
+  "timestamp": 1675530342623,
   "userid": "QWecNcxhyvP6j6sBN11hBsfZDau1",
   "owner": null,
   "email": null,
@@ -155,7 +155,8 @@
       "roofId": "vBPx8vrh1SNvECDHWBPRBR",
       "leftRoofHeight": 2.7,
       "rightRoofHeight": 2.7,
-      "selected": false
+      "selected": false,
+      "eavesLength": 0
     },
     {
       "type": "Wall",
@@ -209,7 +210,8 @@
       "roofId": "vBPx8vrh1SNvECDHWBPRBR",
       "leftRoofHeight": 2.7,
       "rightRoofHeight": 2.7,
-      "selected": false
+      "selected": false,
+      "eavesLength": 0
     },
     {
       "type": "Wall",
@@ -263,7 +265,8 @@
       "roofId": "vBPx8vrh1SNvECDHWBPRBR",
       "leftRoofHeight": 2.7,
       "rightRoofHeight": 2.7,
-      "selected": false
+      "selected": false,
+      "eavesLength": 0
     },
     {
       "type": "Wall",
@@ -317,7 +320,8 @@
       "roofId": "vBPx8vrh1SNvECDHWBPRBR",
       "leftRoofHeight": 2.7,
       "rightRoofHeight": 2.7,
-      "selected": false
+      "selected": false,
+      "eavesLength": 0
     },
     {
       "type": "Wall",
@@ -369,7 +373,8 @@
       "roofId": "sEJTDSykek3p5kyccPdUdD",
       "leftRoofHeight": 2.7,
       "rightRoofHeight": 2.7,
-      "selected": false
+      "selected": false,
+      "eavesLength": 0
     },
     {
       "type": "Foundation",
@@ -454,7 +459,8 @@
       "roofId": "sEJTDSykek3p5kyccPdUdD",
       "leftRoofHeight": 2.7,
       "rightRoofHeight": 2.7,
-      "selected": false
+      "selected": false,
+      "eavesLength": 0
     },
     {
       "type": "Wall",
@@ -508,7 +514,8 @@
       "roofId": "sEJTDSykek3p5kyccPdUdD",
       "leftRoofHeight": 2.7,
       "rightRoofHeight": 2.7,
-      "selected": false
+      "selected": false,
+      "eavesLength": 0
     },
     {
       "type": "Roof",
@@ -519,7 +526,6 @@
       "ly": 0,
       "lz": 0,
       "rise": 0,
-      "overhang": 0,
       "thickness": 0.1,
       "rValue": 4,
       "roofType": "Pyramid",
@@ -683,7 +689,8 @@
       "roofId": "pKTG8B6HTAm7A7dtN3ZbsU",
       "leftRoofHeight": 2.7,
       "rightRoofHeight": 2.7,
-      "selected": false
+      "selected": false,
+      "eavesLength": 0
     },
     {
       "type": "Wall",
@@ -735,7 +742,8 @@
       "roofId": "pKTG8B6HTAm7A7dtN3ZbsU",
       "leftRoofHeight": 2.7,
       "rightRoofHeight": 2.7,
-      "selected": false
+      "selected": false,
+      "eavesLength": 0
     },
     {
       "type": "Wall",
@@ -789,7 +797,8 @@
       "roofId": "pKTG8B6HTAm7A7dtN3ZbsU",
       "leftRoofHeight": 2.7,
       "rightRoofHeight": 2.7,
-      "selected": false
+      "selected": false,
+      "eavesLength": 0
     },
     {
       "id": "pKTG8B6HTAm7A7dtN3ZbsU",
@@ -819,7 +828,6 @@
       "roofType": "Pyramid",
       "roofStructure": "Default",
       "textureType": "No Roof Texture",
-      "overhang": 0,
       "thickness": 0.1,
       "wallsId": [
         "7vsveQVeKqeZenZ1pDApJC",
@@ -871,7 +879,6 @@
       "ly": 0,
       "lz": 0,
       "rise": 0,
-      "overhang": 0,
       "thickness": 0.1,
       "rValue": 4,
       "roofType": "Pyramid",

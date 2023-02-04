@@ -1,7 +1,7 @@
 {
-  "docid": "sn5V3NxwA6cejdC1vdnGHG",
-  "time": "12/03/2022 06:23 pm",
-  "timestamp": 1670109821895,
+  "docid": "6bs3pvd5ZZrEPvtBhsQ8TK",
+  "time": "02/04/2023 12:32 pm",
+  "timestamp": 1675531937853,
   "userid": "QWecNcxhyvP6j6sBN11hBsfZDau1",
   "owner": null,
   "email": null,
@@ -120,7 +120,8 @@
       "opacity": 0.5,
       "locked": true,
       "fill": "Full",
-      "unfilledHeight": 0.5
+      "unfilledHeight": 0.5,
+      "eavesLength": 2
     },
     {
       "type": "Wall",
@@ -175,9 +176,10 @@
       "structureWidth": 0.1,
       "structureColor": "white",
       "opacity": 0.5,
-      "locked": true,
+      "locked": false,
       "fill": "Full",
-      "unfilledHeight": 0.5
+      "unfilledHeight": 0.5,
+      "eavesLength": 1
     },
     {
       "type": "Wall",
@@ -232,9 +234,10 @@
       "structureWidth": 0.1,
       "structureColor": "white",
       "opacity": 0.5,
-      "locked": true,
+      "locked": false,
       "fill": "Full",
-      "unfilledHeight": 0.5
+      "unfilledHeight": 0.5,
+      "eavesLength": 1
     },
     {
       "type": "Foundation",
@@ -319,7 +322,8 @@
       "opacity": 0.5,
       "locked": false,
       "fill": "Full",
-      "unfilledHeight": 0.5
+      "unfilledHeight": 0.5,
+      "eavesLength": 2
     },
     {
       "type": "Roof",
@@ -329,7 +333,6 @@
       "lx": 0,
       "ly": 0,
       "lz": 0,
-      "overhang": 2,
       "thickness": 0.2,
       "roofType": "Gable",
       "roofStructure": "Default",
@@ -365,7 +368,8 @@
       ],
       "locked": false,
       "sideColor": "#999999",
-      "rise": -2.1347629020127235
+      "rise": -2.1347629020127235,
+      "ceiling": false
     },
     {
       "type": "Wall",
@@ -418,7 +422,8 @@
       "structureColor": "white",
       "locked": true,
       "fill": "Full",
-      "unfilledHeight": 0.5
+      "unfilledHeight": 0.5,
+      "eavesLength": 0.3
     },
     {
       "type": "Wall",
@@ -471,7 +476,8 @@
       "structureColor": "white",
       "locked": true,
       "fill": "Full",
-      "unfilledHeight": 0.5
+      "unfilledHeight": 0.5,
+      "eavesLength": 0.3
     },
     {
       "type": "Wall",
@@ -524,7 +530,8 @@
       "structureColor": "white",
       "locked": true,
       "fill": "Full",
-      "unfilledHeight": 0.5
+      "unfilledHeight": 0.5,
+      "eavesLength": 0.3
     },
     {
       "type": "Wall",
@@ -576,7 +583,8 @@
       "structureColor": "white",
       "locked": true,
       "fill": "Full",
-      "unfilledHeight": 0.5
+      "unfilledHeight": 0.5,
+      "eavesLength": 0.3
     },
     {
       "type": "Foundation",
@@ -612,7 +620,6 @@
       "lx": 0,
       "ly": 0,
       "lz": 0,
-      "overhang": 0.3,
       "thickness": 0.2,
       "roofType": "Mansard",
       "roofStructure": "Default",
@@ -640,7 +647,8 @@
       "foundationId": "oR9dfJF3BCFMyFyFLPCHa7",
       "id": "5By6QsyR9XJzwW57eFw7Rg",
       "locked": true,
-      "rise": 0
+      "rise": 0,
+      "ceiling": false
     },
     {
       "type": "Wall",
@@ -691,7 +699,8 @@
       "structureColor": "white",
       "locked": true,
       "fill": "Full",
-      "unfilledHeight": 0.5
+      "unfilledHeight": 0.5,
+      "eavesLength": 0.3
     },
     {
       "type": "Wall",
@@ -742,7 +751,8 @@
       "structureColor": "white",
       "locked": true,
       "fill": "Full",
-      "unfilledHeight": 0.5
+      "unfilledHeight": 0.5,
+      "eavesLength": 0.3
     },
     {
       "type": "Wall",
@@ -793,7 +803,8 @@
       "structureColor": "white",
       "locked": true,
       "fill": "Full",
-      "unfilledHeight": 0.5
+      "unfilledHeight": 0.5,
+      "eavesLength": 0.3
     },
     {
       "type": "Wall",
@@ -843,7 +854,8 @@
       "structureColor": "white",
       "locked": true,
       "fill": "Full",
-      "unfilledHeight": 0.5
+      "unfilledHeight": 0.5,
+      "eavesLength": 0.3
     },
     {
       "type": "Foundation",
@@ -1681,8 +1693,8 @@
       "showLabel": false,
       "normal": [
         0,
-        -0.2584595890813664,
-        0.9660220705614813
+        -0.25845958908136635,
+        0.9660220705614811
       ],
       "rotation": [
         0.2614272700856308,
@@ -1711,8 +1723,8 @@
       "showLabel": false,
       "normal": [
         0,
-        -0.2584595890813664,
-        0.9660220705614813
+        -0.25845958908136635,
+        0.9660220705614811
       ],
       "rotation": [
         0.2614272700856308,
@@ -1739,14 +1751,14 @@
       "lz": 0.08,
       "showLabel": false,
       "normal": [
-        -4.4438633136576935e-17,
+        -5.510628883078975e-17,
         -0.2584595890813664,
         0.9660220705614811
       ],
       "rotation": [
         0.2614272700856308,
         0,
-        -2.220446049250313e-16
+        -4.440892098500626e-16
       ],
       "parentId": "9DRBXRS4our7656cx2vwpG",
       "foundationId": "fbqvzYqiEy79jeL8wsadib",
@@ -1790,20 +1802,20 @@
       "color": "#f44e3b",
       "cx": 0.03479011577552929,
       "cy": 0.29915344735612687,
-      "cz": 8.962264816189863,
+      "cz": 8.962264816189862,
       "lx": 0.16,
       "ly": 0.16,
       "lz": 0.08,
       "showLabel": false,
       "normal": [
-        -4.4438633136576935e-17,
+        -5.510628883078975e-17,
         -0.2584595890813664,
         0.9660220705614811
       ],
       "rotation": [
         0.2614272700856308,
         0,
-        -2.220446049250313e-16
+        -4.440892098500626e-16
       ],
       "parentId": "9DRBXRS4our7656cx2vwpG",
       "foundationId": "fbqvzYqiEy79jeL8wsadib",
@@ -1841,8 +1853,8 @@
     "dailyHeliostatYieldPanelX": 0,
     "showDailyParabolicDishYieldPanel": false,
     "cameraPosition": [
-      18.45282079694865,
-      -0.16530986696952343,
+      18.666315208595826,
+      1.5733632503872264,
       5.925571220819373
     ],
     "showYearlyHeliostatYieldPanel": false,
@@ -1906,6 +1918,20 @@
     "showYearlyParabolicDishYieldPanel": false,
     "showYearlyFresnelReflectorYieldPanel": false,
     "waterSurface": true
+  },
+  "graphState": {
+    "dailyPvIndividualOutputs": false,
+    "yearlyPvIndividualOutputs": false,
+    "dailyParabolicDishIndividualOutputs": false,
+    "yearlyParabolicDishIndividualOutputs": false,
+    "dailyParabolicTroughIndividualOutputs": false,
+    "yearlyParabolicTroughIndividualOutputs": false,
+    "dailyFresnelReflectorIndividualOutputs": false,
+    "yearlyFresnelReflectorIndividualOutputs": false,
+    "dailyHeliostatIndividualOutputs": false,
+    "yearlyHeliostatIndividualOutputs": false,
+    "dailyUpdraftTowerIndividualOutputs": false,
+    "yearlyUpdraftTowerIndividualOutputs": false
   },
   "evolutionMethod": 1,
   "solarPanelArrayLayoutParams": {

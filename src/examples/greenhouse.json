@@ -1,7 +1,7 @@
 {
-  "docid": "sGSvxM4HoAw4Ve3GSfN5x6",
-  "time": "12/03/2022 06:36 pm",
-  "timestamp": 1670110587674,
+  "docid": "a12Z1aJsLwHf8DzkQqUMZt",
+  "time": "02/04/2023 12:58 pm",
+  "timestamp": 1675533539849,
   "userid": "QWecNcxhyvP6j6sBN11hBsfZDau1",
   "owner": null,
   "email": null,
@@ -122,7 +122,8 @@
       "structureWidth": 0.1,
       "structureColor": "white",
       "fill": "Full",
-      "unfilledHeight": 0.5
+      "unfilledHeight": 0.5,
+      "eavesLength": 0
     },
     {
       "type": "Wall",
@@ -180,7 +181,8 @@
       "structureWidth": 0.1,
       "structureColor": "white",
       "fill": "Full",
-      "unfilledHeight": 0.5
+      "unfilledHeight": 0.5,
+      "eavesLength": 0
     },
     {
       "lx": 10,
@@ -238,7 +240,8 @@
       "structureWidth": 0.1,
       "structureColor": "white",
       "fill": "Full",
-      "unfilledHeight": 0.5
+      "unfilledHeight": 0.5,
+      "eavesLength": 0
     },
     {
       "showLabel": false,
@@ -292,7 +295,8 @@
       "structureWidth": 0.1,
       "structureColor": "white",
       "fill": "Full",
-      "unfilledHeight": 0.5
+      "unfilledHeight": 0.5,
+      "eavesLength": 0
     },
     {
       "type": "Human",
@@ -348,7 +352,6 @@
       "lx": 0,
       "ly": 0,
       "lz": 0,
-      "overhang": 0,
       "thickness": 0.05,
       "roofType": "Gable",
       "roofStructure": "Rafter",
@@ -382,7 +385,8 @@
         0,
         1
       ],
-      "rise": 1.790804943100949
+      "rise": 1.790804943100949,
+      "ceiling": false
     },
     {
       "type": "Flower",
@@ -2722,6 +2726,20 @@
     "stickyNotePanelY": 0,
     "showYearlyParabolicDishYieldPanel": false,
     "showYearlyFresnelReflectorYieldPanel": false
+  },
+  "graphState": {
+    "dailyPvIndividualOutputs": false,
+    "yearlyPvIndividualOutputs": false,
+    "dailyParabolicDishIndividualOutputs": false,
+    "yearlyParabolicDishIndividualOutputs": false,
+    "dailyParabolicTroughIndividualOutputs": false,
+    "yearlyParabolicTroughIndividualOutputs": false,
+    "dailyFresnelReflectorIndividualOutputs": false,
+    "yearlyFresnelReflectorIndividualOutputs": false,
+    "dailyHeliostatIndividualOutputs": false,
+    "yearlyHeliostatIndividualOutputs": false,
+    "dailyUpdraftTowerIndividualOutputs": false,
+    "yearlyUpdraftTowerIndividualOutputs": false
   },
   "evolutionMethod": 1,
   "solarPanelArrayLayoutParams": {

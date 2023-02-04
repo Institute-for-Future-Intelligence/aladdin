@@ -1,7 +1,7 @@
 {
-  "docid": "icZ48DhdDRCkQSfS574Yqc",
-  "time": "02/02/2023 05:51 pm",
-  "timestamp": 1675378297820,
+  "docid": "gbXM1tEmZzS8k1fXMr7e4c",
+  "time": "02/04/2023 12:04 pm",
+  "timestamp": 1675530248432,
   "userid": "QWecNcxhyvP6j6sBN11hBsfZDau1",
   "owner": null,
   "email": null,
@@ -155,7 +155,8 @@
       "roofId": "vBPx8vrh1SNvECDHWBPRBR",
       "leftRoofHeight": 2.7,
       "rightRoofHeight": 2.7,
-      "selected": false
+      "selected": false,
+      "eavesLength": 0
     },
     {
       "type": "Wall",
@@ -209,7 +210,8 @@
       "roofId": "vBPx8vrh1SNvECDHWBPRBR",
       "leftRoofHeight": 2.7,
       "rightRoofHeight": 2.7,
-      "selected": false
+      "selected": false,
+      "eavesLength": 0
     },
     {
       "type": "Wall",
@@ -263,7 +265,8 @@
       "roofId": "vBPx8vrh1SNvECDHWBPRBR",
       "leftRoofHeight": 2.7,
       "rightRoofHeight": 2.7,
-      "selected": false
+      "selected": false,
+      "eavesLength": 0
     },
     {
       "type": "Wall",
@@ -317,7 +320,8 @@
       "roofId": "vBPx8vrh1SNvECDHWBPRBR",
       "leftRoofHeight": 2.7,
       "rightRoofHeight": 2.7,
-      "selected": false
+      "selected": false,
+      "eavesLength": 0
     },
     {
       "type": "Window",
@@ -413,7 +417,6 @@
       "ly": 0,
       "lz": 0,
       "rise": 0,
-      "overhang": 0,
       "thickness": 0.1,
       "rValue": 4,
       "roofType": "Pyramid",

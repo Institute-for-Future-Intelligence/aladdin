@@ -1,7 +1,7 @@
 {
-  "docid": "4DBcULnYsAX96VHP3p37YR",
-  "time": "02/02/2023 07:29 pm",
-  "timestamp": 1675384152206,
+  "docid": "nngLSCGNjX2LjHZeemnaq7",
+  "time": "02/04/2023 01:25 pm",
+  "timestamp": 1675535142316,
   "userid": "QWecNcxhyvP6j6sBN11hBsfZDau1",
   "owner": null,
   "email": null,
@@ -155,7 +155,8 @@
       "roofId": "45EQZzpZDmcCPwStDm4gUQ",
       "leftRoofHeight": 3,
       "rightRoofHeight": 3,
-      "selected": false
+      "selected": false,
+      "eavesLength": 0.2
     },
     {
       "type": "Wall",
@@ -213,7 +214,8 @@
         0,
         5.068830689450057
       ],
-      "selected": false
+      "selected": false,
+      "eavesLength": 0.2
     },
     {
       "type": "Wall",
@@ -271,7 +273,8 @@
         0,
         5.068830689450057
       ],
-      "selected": false
+      "selected": false,
+      "eavesLength": 0.2
     },
     {
       "type": "Wall",
@@ -325,7 +328,8 @@
       "roofId": "45EQZzpZDmcCPwStDm4gUQ",
       "leftRoofHeight": 3,
       "rightRoofHeight": 3,
-      "selected": false
+      "selected": false,
+      "eavesLength": 0.2
     },
     {
       "id": "45EQZzpZDmcCPwStDm4gUQ",
@@ -354,7 +358,6 @@
       "roofType": "Gable",
       "roofStructure": "Default",
       "textureType": "No Roof Texture",
-      "overhang": 0.2,
       "thickness": 0.1,
       "wallsId": [
         "py4fscALBHuoNNVWKoXS9c"
@@ -559,7 +562,8 @@
       "roofId": "gCFHHnVKnRgFUFksjrmZCm",
       "leftRoofHeight": 3,
       "rightRoofHeight": 3,
-      "selected": false
+      "selected": false,
+      "eavesLength": 0.2
     },
     {
       "type": "Wall",
@@ -617,7 +621,8 @@
         0,
         5.068830689450057
       ],
-      "selected": false
+      "selected": false,
+      "eavesLength": 0.2
     },
     {
       "type": "Wall",
@@ -675,7 +680,8 @@
         0,
         5.068830689450057
       ],
-      "selected": false
+      "selected": false,
+      "eavesLength": 0.2
     },
     {
       "type": "Wall",
@@ -729,7 +735,8 @@
       "roofId": "gCFHHnVKnRgFUFksjrmZCm",
       "leftRoofHeight": 3,
       "rightRoofHeight": 3,
-      "selected": false
+      "selected": false,
+      "eavesLength": 0.2
     },
     {
       "type": "Window",
@@ -870,7 +877,6 @@
       "roofType": "Gable",
       "roofStructure": "Default",
       "textureType": "No Roof Texture",
-      "overhang": 0.2,
       "thickness": 0.1,
       "wallsId": [
         "sb7GHiMmhgNyZJdQ71BL5y"
@@ -950,9 +956,9 @@
     "dailyHeliostatYieldPanelX": 0,
     "showDailyParabolicDishYieldPanel": false,
     "cameraPosition": [
-      -20.825935508514945,
-      -21.517015691103687,
-      5.712166306286436
+      -20.825935508514938,
+      -21.517015691103683,
+      5.712166306286438
     ],
     "showYearlyHeliostatYieldPanel": false,
     "orthographic": false,

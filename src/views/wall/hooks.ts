@@ -90,7 +90,7 @@ export const useUpdataOldFiles = (wallModel: WallModel) => {
             if (wall.eavesLength === undefined) {
               const roof = state.elements.find((e) => e.id === wall.roofId && e.type === ObjectType.Roof) as RoofModel;
               if (roof) {
-                wall.eavesLength = roof.overhang;
+                wall.eavesLength = roof.overhang !== undefined ? roof.overhang : 0.3;
               } else {
                 wall.eavesLength = 0.3;
               }

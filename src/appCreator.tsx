@@ -133,14 +133,14 @@ const AppCreator = ({ viewOnly = false }: AppCreatorProps) => {
   const evolutionMethod = useStore(Selector.evolutionMethod);
   const evolutionaryAlgorithmState = useStore(Selector.evolutionaryAlgorithmState);
 
-  const [loading, setLoading] = useState(true);
+  const [initializing, setInitializing] = useState(true);
   const [city, setCity] = useState<string>('Boston MA, USA');
 
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const lang = { lng: language };
 
   useEffect(() => {
-    setLoading(false);
+    setInitializing(false);
   }, []);
 
   useEffect(() => {
@@ -264,7 +264,7 @@ const AppCreator = ({ viewOnly = false }: AppCreatorProps) => {
   return (
     <div className="App">
       {/* Spinner, Simulation and Evolution control panels */}
-      <Loading loading={loading} />
+      <Loading initializing={initializing} />
 
       <div
         style={{

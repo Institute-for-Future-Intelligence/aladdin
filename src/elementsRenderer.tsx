@@ -1,5 +1,5 @@
 /*
- * @Copyright 2021-2022. Institute for Future Intelligence, Inc.
+ * @Copyright 2021-2023. Institute for Future Intelligence, Inc.
  */
 
 import React, { useEffect, useRef } from 'react';
@@ -41,6 +41,7 @@ import WallRenderer from './views/wall/wallRenderer';
 
 const ElementsRenderer: React.FC = () => {
   const elements = useStore(Selector.elements);
+  const loadingFile = useStore(Selector.loadingFile);
 
   const groupRef = useRef<Group>(null);
 
@@ -53,12 +54,12 @@ const ElementsRenderer: React.FC = () => {
   }, []);
 
   useEffect(() => {
-    if (useStore.getState().loadingFile) {
+    if (loadingFile) {
       useStore.getState().set((state) => {
         state.loadingFile = false;
       });
     }
-  });
+  }, [loadingFile]);
 
   // console.log(groupRef)
   // console.log(elements);
