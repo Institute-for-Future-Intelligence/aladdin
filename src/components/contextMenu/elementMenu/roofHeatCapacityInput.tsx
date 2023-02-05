@@ -1,5 +1,5 @@
 /*
- * @Copyright 2022. Institute for Future Intelligence, Inc.
+ * @Copyright 2022-2023. Institute for Future Intelligence, Inc.
  */
 
 import React, { useEffect, useRef, useState } from 'react';
@@ -15,7 +15,7 @@ import { RoofModel } from '../../../models/RoofModel';
 
 const RoofHeatCapacityInput = ({ setDialogVisible }: { setDialogVisible: (b: boolean) => void }) => {
   const language = useStore(Selector.language);
-  const selectedElement = useStore(Selector.selectedElement) as RoofModel;
+  const elements = useStore(Selector.elements);
   const addUndoable = useStore(Selector.addUndoable);
   const actionScope = useStore(Selector.wallActionScope);
   const setActionScope = useStore(Selector.setWallActionScope);
@@ -25,18 +25,9 @@ const RoofHeatCapacityInput = ({ setDialogVisible }: { setDialogVisible: (b: boo
   const getElementById = useStore(Selector.getElementById);
   const setCommonStore = useStore(Selector.set);
 
-  const roofModel = useStore((state) => {
-    if (selectedElement) {
-      for (const e of state.elements) {
-        if (e.id === selectedElement.id) {
-          return e as RoofModel;
-        }
-      }
-    }
-    return null;
-  });
+  const roof = useStore((state) => state.elements.find((e) => e.selected && e.type === ObjectType.Roof)) as RoofModel;
 
-  const [inputValue, setInputValue] = useState<number>(roofModel?.volumetricHeatCapacity ?? 0.5);
+  const [inputValue, setInputValue] = useState<number>(roof?.volumetricHeatCapacity ?? 0.5);
   const [dragEnabled, setDragEnabled] = useState<boolean>(false);
   const [bounds, setBounds] = useState<DraggableBounds>({ left: 0, top: 0, bottom: 0, right: 0 } as DraggableBounds);
   const dragRef = useRef<HTMLDivElement | null>(null);
@@ -44,10 +35,10 @@ const RoofHeatCapacityInput = ({ setDialogVisible }: { setDialogVisible: (b: boo
   const lang = { lng: language };
 
   useEffect(() => {
-    if (roofModel) {
-      setInputValue(roofModel?.volumetricHeatCapacity ?? 0.5);
+    if (roof) {
+      setInputValue(roof?.volumetricHeatCapacity ?? 0.5);
     }
-  }, [roofModel?.volumetricHeatCapacity]);
+  }, [roof?.volumetricHeatCapacity]);
 
   const updateById = (id: string, value: number) => {
     setCommonStore((state) => {
@@ -72,8 +63,39 @@ const RoofHeatCapacityInput = ({ setDialogVisible }: { setDialogVisible: (b: boo
     }
   };
 
+  const needChange = (value: number) => {
+    switch (actionScope) {
+      case Scope.AllObjectsOfThisType:
+        for (const e of elements) {
+          if (e.type === ObjectType.Roof && value !== (e as RoofModel).volumetricHeatCapacity && !e.locked) {
+            return true;
+          }
+        }
+        break;
+      case Scope.AllObjectsOfThisTypeAboveFoundation:
+        for (const e of elements) {
+          if (
+            e.type === ObjectType.Roof &&
+            e.foundationId === roof.foundationId &&
+            value !== (e as RoofModel).volumetricHeatCapacity &&
+            !e.locked
+          ) {
+            return true;
+          }
+        }
+        break;
+      default:
+        if (value !== roof?.volumetricHeatCapacity) {
+          return true;
+        }
+        break;
+    }
+    return false;
+  };
+
   const setValue = (value: number) => {
-    if (!roofModel) return;
+    if (!roof) return;
+    if (!needChange(value)) return;
     switch (actionScope) {
       case Scope.AllObjectsOfThisType:
         const oldValuesAll = new Map<string, number | undefined>();
@@ -102,11 +124,11 @@ const RoofHeatCapacityInput = ({ setDialogVisible }: { setDialogVisible: (b: boo
         setApplyCount(applyCount + 1);
         break;
       case Scope.AllObjectsOfThisTypeAboveFoundation:
-        if (roofModel.foundationId) {
+        if (roof.foundationId) {
           const oldValuesAboveFoundation = new Map<string, number | undefined>();
           setCommonStore((state) => {
             for (const e of state.elements) {
-              if (e.type === ObjectType.Roof && e.foundationId === roofModel.foundationId && !e.locked) {
+              if (e.type === ObjectType.Roof && e.foundationId === roof.foundationId && !e.locked) {
                 const roof = e as RoofModel;
                 oldValuesAboveFoundation.set(e.id, roof.volumetricHeatCapacity ?? 0.5);
                 roof.volumetricHeatCapacity = value;
@@ -118,7 +140,7 @@ const RoofHeatCapacityInput = ({ setDialogVisible }: { setDialogVisible: (b: boo
             timestamp: Date.now(),
             oldValues: oldValuesAboveFoundation,
             newValue: value,
-            groupId: roofModel.foundationId,
+            groupId: roof.foundationId,
             undo: () => {
               undoInMap(undoableChangeAboveFoundation.oldValues as Map<string, number>);
             },
@@ -134,16 +156,16 @@ const RoofHeatCapacityInput = ({ setDialogVisible }: { setDialogVisible: (b: boo
         }
         break;
       default:
-        if (roofModel) {
-          const updatedRoof = getElementById(roofModel.id) as RoofModel;
-          const oldValue = updatedRoof.volumetricHeatCapacity ?? roofModel.volumetricHeatCapacity ?? 0.5;
+        if (roof) {
+          const updatedRoof = getElementById(roof.id) as RoofModel;
+          const oldValue = updatedRoof.volumetricHeatCapacity ?? roof.volumetricHeatCapacity ?? 0.5;
           const undoableChange = {
             name: 'Set Volumetric Heat Capacity of Roof',
             timestamp: Date.now(),
             oldValue: oldValue,
             newValue: value,
-            changedElementId: roofModel.id,
-            changedElementType: roofModel.type,
+            changedElementId: roof.id,
+            changedElementType: roof.type,
             undo: () => {
               updateById(undoableChange.changedElementId, undoableChange.oldValue as number);
             },
@@ -152,7 +174,7 @@ const RoofHeatCapacityInput = ({ setDialogVisible }: { setDialogVisible: (b: boo
             },
           } as UndoableChange;
           addUndoable(undoableChange);
-          updateById(roofModel.id, value);
+          updateById(roof.id, value);
           setApplyCount(applyCount + 1);
         }
     }
@@ -175,7 +197,7 @@ const RoofHeatCapacityInput = ({ setDialogVisible }: { setDialogVisible: (b: boo
   };
 
   const close = () => {
-    setInputValue(roofModel?.volumetricHeatCapacity ?? 0.5);
+    setInputValue(roof?.volumetricHeatCapacity ?? 0.5);
     setDialogVisible(false);
   };
 

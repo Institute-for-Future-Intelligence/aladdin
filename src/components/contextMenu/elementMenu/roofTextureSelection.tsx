@@ -1,5 +1,5 @@
 /*
- * @Copyright 2021-2022. Institute for Future Intelligence, Inc.
+ * @Copyright 2021-2023. Institute for Future Intelligence, Inc.
  */
 
 import RoofTextureDefaultIcon from 'src/resources/roof_edge_menu.png';
@@ -23,16 +23,18 @@ import { UndoableChangeGroup } from 'src/undo/UndoableChangeGroup';
 import { RoofModel } from 'src/models/RoofModel';
 
 const RoofTextureSelection = ({ setDialogVisible }: { setDialogVisible: (b: boolean) => void }) => {
+  const elements = useStore(Selector.elements);
   const language = useStore(Selector.language);
-  const roof = useStore(Selector.selectedElement) as RoofModel;
   const addUndoable = useStore(Selector.addUndoable);
-  const roofActionScope = useStore(Selector.roofActionScope);
-  const setRoofActionScope = useStore(Selector.setRoofActionScope);
+  const actionScope = useStore(Selector.roofActionScope);
+  const setActionScope = useStore(Selector.setRoofActionScope);
   const applyCount = useStore(Selector.applyCount);
   const setApplyCount = useStore(Selector.setApplyCount);
   const revertApply = useStore(Selector.revertApply);
   const setCommonStore = useStore(Selector.set);
   const getElementById = useStore(Selector.getElementById);
+
+  const roof = useStore((state) => state.elements.find((e) => e.selected && e.type === ObjectType.Roof)) as RoofModel;
 
   const [selectedTexture, setSelectedTexture] = useState<RoofTexture>(roof?.textureType ?? RoofTexture.Default);
   const [dragEnabled, setDragEnabled] = useState<boolean>(false);
@@ -78,11 +80,43 @@ const RoofTextureSelection = ({ setDialogVisible }: { setDialogVisible: (b: bool
     }
   };
 
+  const needChange = (value: RoofTexture) => {
+    switch (actionScope) {
+      case Scope.AllObjectsOfThisType:
+        for (const e of elements) {
+          if (e.type === ObjectType.Roof && value !== (e as RoofModel).textureType && !e.locked) {
+            return true;
+          }
+        }
+        break;
+      case Scope.AllObjectsOfThisTypeAboveFoundation:
+        for (const e of elements) {
+          if (
+            e.type === ObjectType.Roof &&
+            e.foundationId === roof.foundationId &&
+            value !== (e as RoofModel).textureType &&
+            !e.locked
+          ) {
+            return true;
+          }
+        }
+        break;
+      default:
+        if (value !== roof?.textureType) {
+          return true;
+        }
+        break;
+    }
+    return false;
+  };
+
   const setTexture = (value: RoofTexture) => {
-    switch (roofActionScope) {
+    if (!roof) return;
+    if (!needChange(value)) return;
+    switch (actionScope) {
       case Scope.AllObjectsOfThisType:
         const oldTexturesAll = new Map<string, RoofTexture>();
-        for (const elem of useStore.getState().elements) {
+        for (const elem of elements) {
           if (elem.type === ObjectType.Roof && !elem.locked) {
             oldTexturesAll.set(elem.id, (elem as RoofModel).textureType ?? RoofTexture.Default);
           }
@@ -109,7 +143,7 @@ const RoofTextureSelection = ({ setDialogVisible }: { setDialogVisible: (b: bool
       case Scope.AllObjectsOfThisTypeAboveFoundation:
         if (roof.foundationId) {
           const oldTexturesAboveFoundation = new Map<string, RoofTexture>();
-          for (const elem of useStore.getState().elements) {
+          for (const elem of elements) {
             if (elem.type === ObjectType.Roof && elem.foundationId === roof.foundationId && !elem.locked) {
               oldTexturesAboveFoundation.set(elem.id, (elem as RoofModel).textureType);
             }
@@ -351,7 +385,7 @@ const RoofTextureSelection = ({ setDialogVisible }: { setDialogVisible: (b: bool
             style={{ border: '2px dashed #ccc', paddingTop: '8px', paddingLeft: '12px', paddingBottom: '8px' }}
             span={15}
           >
-            <Radio.Group value={roofActionScope} onChange={(e) => setRoofActionScope(e.target.value)}>
+            <Radio.Group value={actionScope} onChange={(e) => setActionScope(e.target.value)}>
               <Space direction="vertical">
                 <Radio value={Scope.OnlyThisObject}>{i18n.t('roofMenu.OnlyThisRoof', lang)}</Radio>
                 <Radio value={Scope.AllObjectsOfThisTypeAboveFoundation}>

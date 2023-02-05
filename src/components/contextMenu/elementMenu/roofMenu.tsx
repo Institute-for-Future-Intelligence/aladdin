@@ -27,7 +27,7 @@ import { UndoableRemoveAllChildren } from '../../../undo/UndoableRemoveAllChildr
 import { LightModel } from '../../../models/LightModel';
 import RoofSideColorSelection from './roofSideColorSelection';
 import RoofRValueInput from './roofRValueInput';
-import RoofHeightInput from './roofHeightInput';
+import RoofRiseInput from './roofRiseInput';
 import RoofHeatCapacityInput from './roofHeatCapacityInput';
 import { UndoableCheck } from 'src/undo/UndoableCheck';
 import CeilingRValueInput from './ceilingRValueInput';
@@ -49,7 +49,7 @@ export const RoofMenu = React.memo(() => {
   const [rafterSpacingDialogVisible, setRafterSpacingDialogVisible] = useState(false);
   const [rafterWidthDialogVisible, setRafterWidthDialogVisible] = useState(false);
   const [rafterColorDialogVisible, setRafterColorDialogVisible] = useState(false);
-  const [heightDialogVisible, setHeightDialogVisible] = useState(false);
+  const [riseDialogVisible, setRiseDialogVisible] = useState(false);
   const [thicknessDialogVisible, setThicknessDialogVisible] = useState(false);
   const [textureDialogVisible, setTextureDialogVisible] = useState(false);
   const [roofColorDialogVisible, setRoofColorDialogVisible] = useState(false);
@@ -445,16 +445,16 @@ export const RoofMenu = React.memo(() => {
             </>
           )}
 
-          {heightDialogVisible && <RoofHeightInput setDialogVisible={setHeightDialogVisible} />}
+          {riseDialogVisible && <RoofRiseInput setDialogVisible={setRiseDialogVisible} />}
           <Menu.Item
-            key={'roof-height'}
+            key={'roof-rise'}
             style={{ paddingLeft: paddingLeft }}
             onClick={() => {
               setApplyCount(0);
-              setHeightDialogVisible(true);
+              setRiseDialogVisible(true);
             }}
           >
-            {i18n.t('word.Height', lang)} ...
+            {i18n.t('roofMenu.Rise', lang)} ...
           </Menu.Item>
 
           {(roof.roofStructure !== RoofStructure.Rafter || roof.opacity === undefined || roof.opacity > 0) && (

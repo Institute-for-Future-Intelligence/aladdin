@@ -1,5 +1,5 @@
 /*
- * @Copyright 2021-2022. Institute for Future Intelligence, Inc.
+ * @Copyright 2022-2023. Institute for Future Intelligence, Inc.
  */
 
 import React, { useEffect, useRef, useState } from 'react';
@@ -15,15 +15,17 @@ import { RoofModel } from 'src/models/RoofModel';
 
 const RoofRafterWidthInput = ({ setDialogVisible }: { setDialogVisible: (b: boolean) => void }) => {
   const language = useStore(Selector.language);
-  const roof = useStore(Selector.selectedElement) as RoofModel;
+  const elements = useStore(Selector.elements);
   const addUndoable = useStore(Selector.addUndoable);
-  const roofActionScope = useStore(Selector.roofActionScope);
-  const setRoofActionScope = useStore(Selector.setRoofActionScope);
+  const actionScope = useStore(Selector.roofActionScope);
+  const setActionScope = useStore(Selector.setRoofActionScope);
   const applyCount = useStore(Selector.applyCount);
   const setApplyCount = useStore(Selector.setApplyCount);
   const revertApply = useStore(Selector.revertApply);
   const getElementById = useStore(Selector.getElementById);
   const setCommonStore = useStore(Selector.set);
+
+  const roof = useStore((state) => state.elements.find((e) => e.selected && e.type === ObjectType.Roof)) as RoofModel;
 
   const [input, setInput] = useState<number>(roof?.rafterWidth ?? 0.1);
   const [dragEnabled, setDragEnabled] = useState<boolean>(false);
@@ -61,19 +63,48 @@ const RoofRafterWidthInput = ({ setDialogVisible }: { setDialogVisible: (b: bool
     }
   };
 
+  const needChange = (value: number) => {
+    switch (actionScope) {
+      case Scope.AllObjectsOfThisType:
+        for (const e of elements) {
+          if (e.type === ObjectType.Roof && value !== (e as RoofModel).rafterWidth && !e.locked) {
+            return true;
+          }
+        }
+        break;
+      case Scope.AllObjectsOfThisTypeAboveFoundation:
+        for (const e of elements) {
+          if (
+            e.type === ObjectType.Roof &&
+            e.foundationId === roof.foundationId &&
+            value !== (e as RoofModel).rafterWidth &&
+            !e.locked
+          ) {
+            return true;
+          }
+        }
+        break;
+      default:
+        if (value !== roof?.rafterWidth) {
+          return true;
+        }
+        break;
+    }
+    return false;
+  };
+
   const setValue = (value: number) => {
     if (!roof) return;
-    switch (roofActionScope) {
+    if (!needChange(value)) return;
+    switch (actionScope) {
       case Scope.AllObjectsOfThisType:
         const oldValAll = new Map<string, number>();
-        setCommonStore((state) => {
-          for (const e of state.elements) {
-            if (e.type === ObjectType.Roof && !e.locked) {
-              oldValAll.set(e.id, (e as RoofModel).rafterWidth ?? 0.1);
-              (e as RoofModel).rafterWidth = value;
-            }
+        for (const e of elements) {
+          if (e.type === ObjectType.Roof && !e.locked) {
+            oldValAll.set(e.id, (e as RoofModel).rafterWidth ?? 0.1);
+            updateById(e.id, value);
           }
-        });
+        }
         const undoableChangeAll = {
           name: 'Set Rafter Width for All Roofs',
           timestamp: Date.now(),
@@ -92,14 +123,12 @@ const RoofRafterWidthInput = ({ setDialogVisible }: { setDialogVisible: (b: bool
       case Scope.AllObjectsOfThisTypeAboveFoundation:
         if (roof.foundationId) {
           const oldValAboveFoundation = new Map<string, number>();
-          setCommonStore((state) => {
-            for (const elem of state.elements) {
-              if (elem.type === ObjectType.Roof && elem.foundationId === roof.foundationId && !elem.locked) {
-                oldValAboveFoundation.set(elem.id, (elem as RoofModel).rafterWidth ?? 0.1);
-                (elem as RoofModel).rafterWidth = value;
-              }
+          for (const e of elements) {
+            if (e.type === ObjectType.Roof && e.foundationId === roof.foundationId && !e.locked) {
+              oldValAboveFoundation.set(e.id, (e as RoofModel).rafterWidth ?? 0.1);
+              updateById(e.id, value);
             }
-          });
+          }
           const undoableChangeAboveFoundation = {
             name: 'Set Rafter Width for All Roofs Above Foundation',
             timestamp: Date.now(),
@@ -238,7 +267,7 @@ const RoofRafterWidthInput = ({ setDialogVisible }: { setDialogVisible: (b: bool
             style={{ border: '2px dashed #ccc', paddingTop: '8px', paddingLeft: '12px', paddingBottom: '8px' }}
             span={17}
           >
-            <Radio.Group onChange={(e) => setRoofActionScope(e.target.value)} value={roofActionScope}>
+            <Radio.Group onChange={(e) => setActionScope(e.target.value)} value={actionScope}>
               <Space direction="vertical">
                 <Radio value={Scope.OnlyThisObject}>{i18n.t('roofMenu.OnlyThisRoof', lang)}</Radio>
                 <Radio value={Scope.AllObjectsOfThisTypeAboveFoundation}>

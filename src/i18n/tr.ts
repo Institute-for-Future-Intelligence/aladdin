@@ -1066,7 +1066,7 @@ export const i18n_tr = {
       DoYouReallyWantToRemoveAllLightsOnThisRoof: 'Do you really want to remove all the lights on this roof',
       AllLightsOnRoofInside: 'All Lights on Roof Inside',
       AllLightsOnRoofOutside: 'All Lights on Roof Outside',
-      CurrentRise: 'Current Rise',
+      Rise: 'Rise',
       Ceiling: 'Ceiling',
       RoofRValue: 'Roof R-Value',
       CeilingRValue: 'Ceiling R-Value',

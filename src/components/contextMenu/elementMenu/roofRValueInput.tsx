@@ -17,7 +17,7 @@ import { DEFAULT_ROOF_R_VALUE } from '../../../constants';
 
 const RoofRValueInput = ({ setDialogVisible }: { setDialogVisible: (b: boolean) => void }) => {
   const language = useStore(Selector.language);
-  const selectedElement = useStore(Selector.selectedElement) as RoofModel;
+  const elements = useStore(Selector.elements);
   const addUndoable = useStore(Selector.addUndoable);
   const actionScope = useStore(Selector.roofActionScope);
   const setActionScope = useStore(Selector.setRoofActionScope);
@@ -27,18 +27,9 @@ const RoofRValueInput = ({ setDialogVisible }: { setDialogVisible: (b: boolean) 
   const getElementById = useStore(Selector.getElementById);
   const setCommonStore = useStore(Selector.set);
 
-  const roofModel = useStore((state) => {
-    if (selectedElement) {
-      for (const e of state.elements) {
-        if (e.id === selectedElement.id) {
-          return e as RoofModel;
-        }
-      }
-    }
-    return null;
-  });
+  const roof = useStore((state) => state.elements.find((e) => e.selected && e.type === ObjectType.Roof)) as RoofModel;
 
-  const [inputValue, setInputValue] = useState<number>(roofModel?.rValue ?? DEFAULT_ROOF_R_VALUE);
+  const [inputValue, setInputValue] = useState<number>(roof?.rValue ?? DEFAULT_ROOF_R_VALUE);
   const [inputValueUS, setInputValueUS] = useState<number>(Util.toRValueInUS(inputValue));
   const [dragEnabled, setDragEnabled] = useState<boolean>(false);
   const [bounds, setBounds] = useState<DraggableBounds>({ left: 0, top: 0, bottom: 0, right: 0 } as DraggableBounds);
@@ -47,10 +38,10 @@ const RoofRValueInput = ({ setDialogVisible }: { setDialogVisible: (b: boolean) 
   const lang = { lng: language };
 
   useEffect(() => {
-    if (roofModel) {
-      setInputValue(roofModel?.rValue ?? DEFAULT_ROOF_R_VALUE);
+    if (roof) {
+      setInputValue(roof?.rValue ?? DEFAULT_ROOF_R_VALUE);
     }
-  }, [roofModel?.rValue]);
+  }, [roof?.rValue]);
 
   const updateById = (id: string, value: number) => {
     setCommonStore((state) => {
@@ -75,20 +66,49 @@ const RoofRValueInput = ({ setDialogVisible }: { setDialogVisible: (b: boolean) 
     }
   };
 
+  const needChange = (value: number) => {
+    switch (actionScope) {
+      case Scope.AllObjectsOfThisType:
+        for (const e of elements) {
+          if (e.type === ObjectType.Roof && value !== (e as RoofModel).rValue && !e.locked) {
+            return true;
+          }
+        }
+        break;
+      case Scope.AllObjectsOfThisTypeAboveFoundation:
+        for (const e of elements) {
+          if (
+            e.type === ObjectType.Roof &&
+            e.foundationId === roof.foundationId &&
+            value !== (e as RoofModel).rValue &&
+            !e.locked
+          ) {
+            return true;
+          }
+        }
+        break;
+      default:
+        if (value !== roof?.rValue) {
+          return true;
+        }
+        break;
+    }
+    return false;
+  };
+
   const setValue = (value: number) => {
-    if (!roofModel) return;
+    if (!roof) return;
+    if (!needChange(value)) return;
     switch (actionScope) {
       case Scope.AllObjectsOfThisType:
         const oldValuesAll = new Map<string, number | undefined>();
-        setCommonStore((state) => {
-          for (const e of state.elements) {
-            if (e.type === ObjectType.Roof && !e.locked) {
-              const roof = e as RoofModel;
-              oldValuesAll.set(e.id, roof.rValue ?? DEFAULT_ROOF_R_VALUE);
-              roof.rValue = value;
-            }
+        for (const e of elements) {
+          if (e.type === ObjectType.Roof && !e.locked) {
+            const roof = e as RoofModel;
+            oldValuesAll.set(e.id, roof.rValue ?? DEFAULT_ROOF_R_VALUE);
+            updateById(roof.id, value);
           }
-        });
+        }
         const undoableChangeAll = {
           name: 'Set R-Value for All Roofs',
           timestamp: Date.now(),
@@ -105,23 +125,21 @@ const RoofRValueInput = ({ setDialogVisible }: { setDialogVisible: (b: boolean) 
         setApplyCount(applyCount + 1);
         break;
       case Scope.AllObjectsOfThisTypeAboveFoundation:
-        if (roofModel.foundationId) {
+        if (roof.foundationId) {
           const oldValuesAboveFoundation = new Map<string, number | undefined>();
-          setCommonStore((state) => {
-            for (const e of state.elements) {
-              if (e.type === ObjectType.Roof && e.foundationId === roofModel.foundationId && !e.locked) {
-                const roof = e as RoofModel;
-                oldValuesAboveFoundation.set(e.id, roof.rValue ?? DEFAULT_ROOF_R_VALUE);
-                roof.rValue = value;
-              }
+          for (const e of elements) {
+            if (e.type === ObjectType.Roof && e.foundationId === roof.foundationId && !e.locked) {
+              const roof = e as RoofModel;
+              oldValuesAboveFoundation.set(e.id, roof.rValue ?? DEFAULT_ROOF_R_VALUE);
+              updateById(roof.id, value);
             }
-          });
+          }
           const undoableChangeAboveFoundation = {
             name: 'Set R-Value for All Roofs Above Foundation',
             timestamp: Date.now(),
             oldValues: oldValuesAboveFoundation,
             newValue: value,
-            groupId: roofModel.foundationId,
+            groupId: roof.foundationId,
             undo: () => {
               undoInMap(undoableChangeAboveFoundation.oldValues as Map<string, number>);
             },
@@ -137,16 +155,16 @@ const RoofRValueInput = ({ setDialogVisible }: { setDialogVisible: (b: boolean) 
         }
         break;
       default:
-        if (roofModel) {
-          const updatedRoof = getElementById(roofModel.id) as RoofModel;
-          const oldValue = updatedRoof.rValue ?? roofModel.rValue ?? DEFAULT_ROOF_R_VALUE;
+        if (roof) {
+          const updatedRoof = getElementById(roof.id) as RoofModel;
+          const oldValue = updatedRoof.rValue ?? roof.rValue ?? DEFAULT_ROOF_R_VALUE;
           const undoableChange = {
             name: 'Set Roof R-Value',
             timestamp: Date.now(),
             oldValue: oldValue,
             newValue: value,
-            changedElementId: roofModel.id,
-            changedElementType: roofModel.type,
+            changedElementId: roof.id,
+            changedElementType: roof.type,
             undo: () => {
               updateById(undoableChange.changedElementId, undoableChange.oldValue as number);
             },
@@ -155,7 +173,7 @@ const RoofRValueInput = ({ setDialogVisible }: { setDialogVisible: (b: boolean) 
             },
           } as UndoableChange;
           addUndoable(undoableChange);
-          updateById(roofModel.id, value);
+          updateById(roof.id, value);
           setApplyCount(applyCount + 1);
         }
     }
@@ -178,7 +196,7 @@ const RoofRValueInput = ({ setDialogVisible }: { setDialogVisible: (b: boolean) 
   };
 
   const close = () => {
-    setInputValue(roofModel?.rValue ?? DEFAULT_ROOF_R_VALUE);
+    setInputValue(roof?.rValue ?? DEFAULT_ROOF_R_VALUE);
     setDialogVisible(false);
   };
 
