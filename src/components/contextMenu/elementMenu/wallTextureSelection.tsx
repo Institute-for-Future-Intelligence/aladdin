@@ -1,5 +1,5 @@
 /*
- * @Copyright 2021-2022. Institute for Future Intelligence, Inc.
+ * @Copyright 2021-2023. Institute for Future Intelligence, Inc.
  */
 
 import WallTextureDefaultIcon from 'src/resources/wall_edge.png';
@@ -32,14 +32,15 @@ const WallTextureSelection = ({ setDialogVisible }: { setDialogVisible: () => vo
   const updateWallTextureById = useStore(Selector.updateWallTextureById);
   const updateWallTextureAboveFoundation = useStore(Selector.updateWallTextureAboveFoundation);
   const updateWallTextureForAll = useStore(Selector.updateWallTextureForAll);
-  const wall = useStore(Selector.selectedElement) as WallModel;
   const addUndoable = useStore(Selector.addUndoable);
-  const wallActionScope = useStore(Selector.wallActionScope);
-  const setWallActionScope = useStore(Selector.setWallActionScope);
+  const actionScope = useStore(Selector.wallActionScope);
+  const setActionScope = useStore(Selector.setWallActionScope);
   const applyCount = useStore(Selector.applyCount);
   const setApplyCount = useStore(Selector.setApplyCount);
   const revertApply = useStore(Selector.revertApply);
   const getElementById = useStore(Selector.getElementById);
+
+  const wall = useStore((state) => state.elements.find((e) => e.selected && e.type === ObjectType.Wall)) as WallModel;
 
   const [selectedTexture, setSelectedTexture] = useState<WallTexture>(wall?.textureType ?? WallTexture.Default);
   const [updateFlag, setUpdateFlag] = useState<boolean>(false);
@@ -61,18 +62,49 @@ const WallTextureSelection = ({ setDialogVisible }: { setDialogVisible: () => vo
   }, [wall]);
 
   const onScopeChange = (e: RadioChangeEvent) => {
-    setWallActionScope(e.target.value);
+    setActionScope(e.target.value);
     setUpdateFlag(!updateFlag);
+  };
+
+  const needChange = (value: WallTexture) => {
+    switch (actionScope) {
+      case Scope.AllObjectsOfThisType:
+        for (const e of elements) {
+          if (e.type === ObjectType.Wall && value !== (e as WallModel).textureType && !e.locked) {
+            return true;
+          }
+        }
+        break;
+      case Scope.AllObjectsOfThisTypeAboveFoundation:
+        for (const e of elements) {
+          if (
+            e.type === ObjectType.Wall &&
+            e.foundationId === wall.foundationId &&
+            value !== (e as WallModel).textureType &&
+            !e.locked
+          ) {
+            return true;
+          }
+        }
+        break;
+      default:
+        if (value !== wall?.textureType) {
+          return true;
+        }
+        break;
+    }
+    return false;
   };
 
   const setTexture = (value: WallTexture) => {
     if (!wall) return;
-    switch (wallActionScope) {
+    if (!needChange(value)) return;
+    switch (actionScope) {
       case Scope.AllObjectsOfThisType:
         const oldTexturesAll = new Map<string, WallTexture>();
-        for (const elem of elements) {
-          if (elem.type === ObjectType.Wall && !elem.locked) {
-            oldTexturesAll.set(elem.id, (elem as WallModel).textureType ?? WallTexture.Default);
+        for (const e of elements) {
+          if (e.type === ObjectType.Wall && !e.locked) {
+            oldTexturesAll.set(e.id, (e as WallModel).textureType ?? WallTexture.Default);
           }
         }
         const undoableChangeAll = {
@@ -96,9 +128,9 @@ const WallTextureSelection = ({ setDialogVisible }: { setDialogVisible: () => vo
       case Scope.AllObjectsOfThisTypeAboveFoundation:
         if (wall.foundationId) {
           const oldTexturesAboveFoundation = new Map<string, WallTexture>();
-          for (const elem of elements) {
-            if (elem.type === ObjectType.Wall && elem.foundationId === wall.foundationId && !elem.locked) {
-              oldTexturesAboveFoundation.set(elem.id, (elem as WallModel).textureType);
+          for (const e of elements) {
+            if (e.type === ObjectType.Wall && e.foundationId === wall.foundationId && !e.locked) {
+              oldTexturesAboveFoundation.set(e.id, (e as WallModel).textureType);
             }
           }
           const undoableChangeAboveFoundation = {
@@ -372,7 +404,7 @@ const WallTextureSelection = ({ setDialogVisible }: { setDialogVisible: () => vo
             style={{ border: '2px dashed #ccc', paddingTop: '8px', paddingLeft: '12px', paddingBottom: '8px' }}
             span={15}
           >
-            <Radio.Group onChange={onScopeChange} value={wallActionScope}>
+            <Radio.Group onChange={onScopeChange} value={actionScope}>
               <Space direction="vertical">
                 <Radio value={Scope.OnlyThisObject}>{i18n.t('wallMenu.OnlyThisWall', lang)}</Radio>
                 <Radio value={Scope.AllObjectsOfThisTypeAboveFoundation}>

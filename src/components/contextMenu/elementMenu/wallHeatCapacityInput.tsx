@@ -1,5 +1,5 @@
 /*
- * @Copyright 2022. Institute for Future Intelligence, Inc.
+ * @Copyright 2022-2023. Institute for Future Intelligence, Inc.
  */
 
 import React, { useEffect, useRef, useState } from 'react';
@@ -15,7 +15,7 @@ import { WallModel } from '../../../models/WallModel';
 
 const WallHeatCapacityInput = ({ setDialogVisible }: { setDialogVisible: (b: boolean) => void }) => {
   const language = useStore(Selector.language);
-  const selectedElement = useStore(Selector.selectedElement) as WallModel;
+  const elements = useStore(Selector.elements);
   const addUndoable = useStore(Selector.addUndoable);
   const actionScope = useStore(Selector.wallActionScope);
   const setActionScope = useStore(Selector.setWallActionScope);
@@ -25,18 +25,9 @@ const WallHeatCapacityInput = ({ setDialogVisible }: { setDialogVisible: (b: boo
   const getElementById = useStore(Selector.getElementById);
   const setCommonStore = useStore(Selector.set);
 
-  const wallModel = useStore((state) => {
-    if (selectedElement) {
-      for (const e of state.elements) {
-        if (e.id === selectedElement.id) {
-          return e as WallModel;
-        }
-      }
-    }
-    return null;
-  });
+  const wall = useStore((state) => state.elements.find((e) => e.selected && e.type === ObjectType.Wall)) as WallModel;
 
-  const [inputValue, setInputValue] = useState<number>(wallModel?.volumetricHeatCapacity ?? 0.5);
+  const [inputValue, setInputValue] = useState<number>(wall?.volumetricHeatCapacity ?? 0.5);
   const [dragEnabled, setDragEnabled] = useState<boolean>(false);
   const [bounds, setBounds] = useState<DraggableBounds>({ left: 0, top: 0, bottom: 0, right: 0 } as DraggableBounds);
   const dragRef = useRef<HTMLDivElement | null>(null);
@@ -44,10 +35,10 @@ const WallHeatCapacityInput = ({ setDialogVisible }: { setDialogVisible: (b: boo
   const lang = { lng: language };
 
   useEffect(() => {
-    if (wallModel) {
-      setInputValue(wallModel?.volumetricHeatCapacity ?? 0.5);
+    if (wall) {
+      setInputValue(wall?.volumetricHeatCapacity ?? 0.5);
     }
-  }, [wallModel?.volumetricHeatCapacity]);
+  }, [wall?.volumetricHeatCapacity]);
 
   const updateById = (id: string, value: number) => {
     setCommonStore((state) => {
@@ -72,20 +63,49 @@ const WallHeatCapacityInput = ({ setDialogVisible }: { setDialogVisible: (b: boo
     }
   };
 
+  const needChange = (value: number) => {
+    switch (actionScope) {
+      case Scope.AllObjectsOfThisType:
+        for (const e of elements) {
+          if (e.type === ObjectType.Wall && value !== (e as WallModel).volumetricHeatCapacity && !e.locked) {
+            return true;
+          }
+        }
+        break;
+      case Scope.AllObjectsOfThisTypeAboveFoundation:
+        for (const e of elements) {
+          if (
+            e.type === ObjectType.Wall &&
+            e.foundationId === wall.foundationId &&
+            value !== (e as WallModel).volumetricHeatCapacity &&
+            !e.locked
+          ) {
+            return true;
+          }
+        }
+        break;
+      default:
+        if (value !== wall?.volumetricHeatCapacity) {
+          return true;
+        }
+        break;
+    }
+    return false;
+  };
+
   const setValue = (value: number) => {
-    if (!wallModel) return;
+    if (!wall) return;
+    if (!needChange(value)) return;
     switch (actionScope) {
       case Scope.AllObjectsOfThisType:
         const oldValuesAll = new Map<string, number | undefined>();
-        setCommonStore((state) => {
-          for (const e of state.elements) {
-            if (e.type === ObjectType.Wall && !e.locked) {
-              const wall = e as WallModel;
-              oldValuesAll.set(e.id, wall.volumetricHeatCapacity ?? 0.5);
-              wall.volumetricHeatCapacity = value;
-            }
+        for (const e of elements) {
+          if (e.type === ObjectType.Wall && !e.locked) {
+            const wall = e as WallModel;
+            oldValuesAll.set(e.id, wall.volumetricHeatCapacity ?? 0.5);
+            updateById(wall.id, value);
           }
-        });
+        }
         const undoableChangeAll = {
           name: 'Set Volumetric Heat Capacity for All Walls',
           timestamp: Date.now(),
@@ -102,23 +122,21 @@ const WallHeatCapacityInput = ({ setDialogVisible }: { setDialogVisible: (b: boo
         setApplyCount(applyCount + 1);
         break;
       case Scope.AllObjectsOfThisTypeAboveFoundation:
-        if (wallModel.foundationId) {
+        if (wall.foundationId) {
           const oldValuesAboveFoundation = new Map<string, number | undefined>();
-          setCommonStore((state) => {
-            for (const e of state.elements) {
-              if (e.type === ObjectType.Wall && e.foundationId === wallModel.foundationId && !e.locked) {
-                const wall = e as WallModel;
-                oldValuesAboveFoundation.set(e.id, wall.volumetricHeatCapacity ?? 0.5);
-                wall.volumetricHeatCapacity = value;
-              }
+          for (const e of elements) {
+            if (e.type === ObjectType.Wall && e.foundationId === wall.foundationId && !e.locked) {
+              const wall = e as WallModel;
+              oldValuesAboveFoundation.set(e.id, wall.volumetricHeatCapacity ?? 0.5);
+              updateById(wall.id, value);
             }
-          });
+          }
           const undoableChangeAboveFoundation = {
             name: 'Set Volumetric Heat Capacity for All Walls Above Foundation',
             timestamp: Date.now(),
             oldValues: oldValuesAboveFoundation,
             newValue: value,
-            groupId: wallModel.foundationId,
+            groupId: wall.foundationId,
             undo: () => {
               undoInMap(undoableChangeAboveFoundation.oldValues as Map<string, number>);
             },
@@ -134,16 +152,16 @@ const WallHeatCapacityInput = ({ setDialogVisible }: { setDialogVisible: (b: boo
         }
         break;
       default:
-        if (wallModel) {
-          const updatedWall = getElementById(wallModel.id) as WallModel;
-          const oldValue = updatedWall.volumetricHeatCapacity ?? wallModel.volumetricHeatCapacity ?? 0.5;
+        if (wall) {
+          const updatedWall = getElementById(wall.id) as WallModel;
+          const oldValue = updatedWall.volumetricHeatCapacity ?? wall.volumetricHeatCapacity ?? 0.5;
           const undoableChange = {
             name: 'Set Volumetric Heat Capacity of Wall',
             timestamp: Date.now(),
             oldValue: oldValue,
             newValue: value,
-            changedElementId: wallModel.id,
-            changedElementType: wallModel.type,
+            changedElementId: wall.id,
+            changedElementType: wall.type,
             undo: () => {
               updateById(undoableChange.changedElementId, undoableChange.oldValue as number);
             },
@@ -152,7 +170,7 @@ const WallHeatCapacityInput = ({ setDialogVisible }: { setDialogVisible: (b: boo
             },
           } as UndoableChange;
           addUndoable(undoableChange);
-          updateById(wallModel.id, value);
+          updateById(wall.id, value);
           setApplyCount(applyCount + 1);
         }
     }
@@ -175,7 +193,7 @@ const WallHeatCapacityInput = ({ setDialogVisible }: { setDialogVisible: (b: boo
   };
 
   const close = () => {
-    setInputValue(wallModel?.volumetricHeatCapacity ?? 0.5);
+    setInputValue(wall?.volumetricHeatCapacity ?? 0.5);
     setDialogVisible(false);
   };
 

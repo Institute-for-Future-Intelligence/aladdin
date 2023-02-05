@@ -10,7 +10,7 @@ import * as Selector from '../../../stores/selector';
 import { Copy, Cut, Lock, Paste } from '../menuItems';
 import i18n from '../../../i18n/i18n';
 import WallTextureSelection from './wallTextureSelection';
-import WallBodyColorSelection from './wallColorSelection';
+import WallColorSelection from './wallColorSelection';
 import { WallModel, WallFill, WallStructure } from 'src/models/WallModel';
 import { ObjectType, WallTexture } from 'src/types';
 import { ElementCounter } from '../../../stores/ElementCounter';
@@ -489,7 +489,7 @@ export const WallMenu = React.memo(() => {
           />
         );
       case DataType.Color:
-        return <WallBodyColorSelection setDialogVisible={() => setDataType(null)} />;
+        return <WallColorSelection setDialogVisible={() => setDataType(null)} />;
       case DataType.StructureColor:
         return <WallStructureColorSelection setDialogVisible={() => setDataType(null)} />;
       case DataType.Texture:

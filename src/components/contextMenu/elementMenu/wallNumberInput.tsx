@@ -1,5 +1,5 @@
 /*
- * @Copyright 2021-2022. Institute for Future Intelligence, Inc.
+ * @Copyright 2021-2023. Institute for Future Intelligence, Inc.
  */
 
 import React, { useRef, useState } from 'react';
@@ -32,10 +32,11 @@ const WallNumberInput = ({
   unit,
   setDialogVisible,
 }: WallNumberInputProps) => {
+  const elements = useStore(Selector.elements);
   const language = useStore(Selector.language);
   const addUndoable = useStore(Selector.addUndoable);
-  const wallActionScope = useStore(Selector.wallActionScope);
-  const setWallActionScope = useStore(Selector.setWallActionScope);
+  const actionScope = useStore(Selector.wallActionScope);
+  const setActionScope = useStore(Selector.setWallActionScope);
   const applyCount = useStore(Selector.applyCount);
   const setApplyCount = useStore(Selector.setApplyCount);
   const revertApply = useStore(Selector.revertApply);
@@ -48,26 +49,26 @@ const WallNumberInput = ({
 
   const lang = { lng: language };
 
-  const updateActionState = (val: number) => {
+  const updateActionState = (value: number) => {
     setCommonStore((state) => {
       switch (attributeKey) {
         case 'ly':
-          state.actionState.wallThickness = val;
+          state.actionState.wallThickness = value;
           break;
         case 'lz':
-          state.actionState.wallHeight = val;
+          state.actionState.wallHeight = value;
           break;
         case 'opacity':
-          state.actionState.wallOpacity = val;
+          state.actionState.wallOpacity = value;
           break;
         case 'structureSpacing':
-          state.actionState.wallStructureSpacing = val;
+          state.actionState.wallStructureSpacing = value;
           break;
         case 'structureWidth':
-          state.actionState.wallStructureWidth = val;
+          state.actionState.wallStructureWidth = value;
           break;
         case 'eavesLength':
-          state.actionState.wallEavesLength = val;
+          state.actionState.wallEavesLength = value;
           break;
       }
     });
@@ -108,23 +109,54 @@ const WallNumberInput = ({
   };
 
   const onScopeChange = (e: RadioChangeEvent) => {
-    setWallActionScope(e.target.value);
+    setActionScope(e.target.value);
   };
 
-  const setVal = (value: number) => {
-    if (!wall) return;
-    switch (wallActionScope) {
+  const needChange = (value: number) => {
+    switch (actionScope) {
       case Scope.AllObjectsOfThisType:
-        const oldValsAll = new Map<string, number>();
-        for (const elem of useStore.getState().elements) {
-          if (elem.type === ObjectType.Wall) {
-            oldValsAll.set(elem.id, (elem as WallModel)[attributeKey] as number);
+        for (const e of elements) {
+          if (e.type === ObjectType.Wall && value !== (e as WallModel)[attributeKey] && !e.locked) {
+            return true;
+          }
+        }
+        break;
+      case Scope.AllObjectsOfThisTypeAboveFoundation:
+        for (const e of elements) {
+          if (
+            e.type === ObjectType.Wall &&
+            e.foundationId === wall.foundationId &&
+            value !== (e as WallModel)[attributeKey] &&
+            !e.locked
+          ) {
+            return true;
+          }
+        }
+        break;
+      default:
+        if (value !== wall[attributeKey]) {
+          return true;
+        }
+        break;
+    }
+    return false;
+  };
+
+  const setValue = (value: number) => {
+    if (!wall) return;
+    if (!needChange(value)) return;
+    switch (actionScope) {
+      case Scope.AllObjectsOfThisType:
+        const oldValuesAll = new Map<string, number>();
+        for (const e of elements) {
+          if (e.type === ObjectType.Wall) {
+            oldValuesAll.set(e.id, (e as WallModel)[attributeKey] as number);
           }
         }
         const undoableChangeAll = {
           name: `Set ${dataType} for All Walls`,
           timestamp: Date.now(),
-          oldValues: oldValsAll,
+          oldValues: oldValuesAll,
           newValue: value,
           undo: () => {
             for (const [id, wh] of undoableChangeAll.oldValues.entries()) {
@@ -141,16 +173,16 @@ const WallNumberInput = ({
         break;
       case Scope.AllObjectsOfThisTypeAboveFoundation:
         if (wall.foundationId) {
-          const oldValsAboveFoundation = new Map<string, number>();
-          for (const elem of useStore.getState().elements) {
-            if (elem.type === ObjectType.Wall && elem.foundationId === wall.foundationId) {
-              oldValsAboveFoundation.set(elem.id, (elem as WallModel)[attributeKey] as number);
+          const oldValuesAboveFoundation = new Map<string, number>();
+          for (const e of elements) {
+            if (e.type === ObjectType.Wall && e.foundationId === wall.foundationId) {
+              oldValuesAboveFoundation.set(e.id, (e as WallModel)[attributeKey] as number);
             }
           }
           const undoableChangeAboveFoundation = {
             name: `Set ${dataType} for All Walls Above Foundation`,
             timestamp: Date.now(),
-            oldValues: oldValsAboveFoundation,
+            oldValues: oldValuesAboveFoundation,
             newValue: value,
             groupId: wall.foundationId,
             undo: () => {
@@ -173,11 +205,11 @@ const WallNumberInput = ({
         }
         break;
       default:
-        const oldVal = wall[attributeKey] as number;
+        const oldValue = wall[attributeKey] as number;
         const undoableChange = {
           name: `Set Wall ${dataType}`,
           timestamp: Date.now(),
-          oldValue: oldVal,
+          oldValue: oldValue,
           newValue: value,
           changedElementId: wall.id,
           changedElementType: wall.type,
@@ -218,7 +250,7 @@ const WallNumberInput = ({
   };
 
   const ok = () => {
-    setVal(inputRef.current);
+    setValue(inputRef.current);
     setDialogVisible();
     setApplyCount(0);
   };
@@ -241,7 +273,7 @@ const WallNumberInput = ({
           <Button
             key="Apply"
             onClick={() => {
-              setVal(inputRef.current);
+              setValue(inputRef.current);
             }}
           >
             {i18n.t('word.Apply', lang)}
@@ -287,7 +319,7 @@ const WallNumberInput = ({
             style={{ border: '2px dashed #ccc', paddingTop: '8px', paddingLeft: '12px', paddingBottom: '8px' }}
             span={17}
           >
-            <Radio.Group onChange={onScopeChange} value={wallActionScope}>
+            <Radio.Group onChange={onScopeChange} value={actionScope}>
               <Space direction="vertical">
                 <Radio value={Scope.OnlyThisObject}>{i18n.t('wallMenu.OnlyThisWall', lang)}</Radio>
                 <Radio value={Scope.AllObjectsOfThisTypeAboveFoundation}>
