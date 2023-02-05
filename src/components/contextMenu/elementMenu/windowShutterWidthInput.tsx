@@ -1,5 +1,5 @@
 /*
- * @Copyright 2022. Institute for Future Intelligence, Inc.
+ * @Copyright 2022-2023. Institute for Future Intelligence, Inc.
  */
 
 import React, { useEffect, useRef, useState } from 'react';
@@ -15,26 +15,19 @@ import { WindowModel } from 'src/models/WindowModel';
 
 const WindowShutterWidthInput = ({ setDialogVisible }: { setDialogVisible: (b: boolean) => void }) => {
   const language = useStore(Selector.language);
-  const selectedElement = useStore(Selector.selectedElement) as WindowModel;
+  const elements = useStore(Selector.elements);
   const addUndoable = useStore(Selector.addUndoable);
-  const windowActionScope = useStore(Selector.windowActionScope);
-  const setWindowActionScope = useStore(Selector.setWindowActionScope);
+  const actionScope = useStore(Selector.windowActionScope);
+  const setActionScope = useStore(Selector.setWindowActionScope);
   const applyCount = useStore(Selector.applyCount);
   const setApplyCount = useStore(Selector.setApplyCount);
   const revertApply = useStore(Selector.revertApply);
   const getElementById = useStore(Selector.getElementById);
   const setCommonStore = useStore(Selector.set);
 
-  const windowModel = useStore((state) => {
-    if (selectedElement) {
-      for (const e of state.elements) {
-        if (e.id === selectedElement.id) {
-          return e as WindowModel;
-        }
-      }
-    }
-    return null;
-  });
+  const windowModel = useStore((state) =>
+    state.elements.find((e) => e.selected && e.type === ObjectType.Window),
+  ) as WindowModel;
 
   const [input, setInput] = useState<number>(windowModel?.shutter?.width ?? 0.5);
   const [dragEnabled, setDragEnabled] = useState<boolean>(false);
@@ -75,22 +68,63 @@ const WindowShutterWidthInput = ({ setDialogVisible }: { setDialogVisible: (b: b
     }
   };
 
+  const needChange = (value: number) => {
+    switch (actionScope) {
+      case Scope.AllObjectsOfThisType:
+        for (const e of elements) {
+          if (e.type === ObjectType.Window && value !== (e as WindowModel).shutter.width && !e.locked) {
+            return true;
+          }
+        }
+        break;
+      case Scope.AllObjectsOfThisTypeAboveFoundation:
+        for (const e of elements) {
+          if (
+            e.type === ObjectType.Window &&
+            e.foundationId === windowModel.foundationId &&
+            value !== (e as WindowModel).shutter.width &&
+            !e.locked
+          ) {
+            return true;
+          }
+        }
+        break;
+      case Scope.OnlyThisSide:
+        for (const e of elements) {
+          if (
+            e.type === ObjectType.Window &&
+            e.parentId === windowModel.parentId &&
+            value !== (e as WindowModel).shutter.width &&
+            !e.locked
+          ) {
+            return true;
+          }
+        }
+        break;
+      default:
+        if (value !== windowModel?.shutter.width) {
+          return true;
+        }
+        break;
+    }
+    return false;
+  };
+
   const setValue = (value: number) => {
     if (!windowModel) return;
-    switch (windowActionScope) {
+    if (!needChange(value)) return;
+    switch (actionScope) {
       case Scope.AllObjectsOfThisType:
         const oldValuesAll = new Map<string, number | undefined>();
-        setCommonStore((state) => {
-          for (const e of state.elements) {
-            if (e.type === ObjectType.Window && !e.locked) {
-              const w = e as WindowModel;
-              if (w.shutter) {
-                oldValuesAll.set(e.id, w.shutter.width);
-                w.shutter.width = value;
-              }
+        for (const e of elements) {
+          if (e.type === ObjectType.Window && !e.locked) {
+            const w = e as WindowModel;
+            if (w.shutter) {
+              oldValuesAll.set(e.id, w.shutter.width);
+              updateById(w.id, value);
             }
           }
-        });
+        }
         const undoableChangeAll = {
           name: 'Set Shutter Width for All Windows',
           timestamp: Date.now(),
@@ -106,54 +140,18 @@ const WindowShutterWidthInput = ({ setDialogVisible }: { setDialogVisible: (b: b
         addUndoable(undoableChangeAll);
         setApplyCount(applyCount + 1);
         break;
-      case Scope.OnlyThisSide:
-        if (windowModel.parentId) {
-          const oldValues = new Map<string, number>();
-          setCommonStore((state) => {
-            for (const elem of state.elements) {
-              if (elem.type === ObjectType.Window && elem.parentId === windowModel.parentId && !elem.locked) {
-                const w = elem as WindowModel;
-                if (w.shutter) {
-                  oldValues.set(elem.id, w.shutter.width);
-                  w.shutter.width = value;
-                }
-              }
-            }
-          });
-          const undoableChangeOnSameWall = {
-            name: 'Set Shutter Width for All Windows On the Same Wall',
-            timestamp: Date.now(),
-            oldValues: oldValues,
-            newValue: value,
-            groupId: windowModel.parentId,
-            undo: () => {
-              undoInMap(undoableChangeOnSameWall.oldValues as Map<string, number>);
-            },
-            redo: () => {
-              updateInMap(
-                undoableChangeOnSameWall.oldValues as Map<string, number>,
-                undoableChangeOnSameWall.newValue as number,
-              );
-            },
-          } as UndoableChangeGroup;
-          addUndoable(undoableChangeOnSameWall);
-          setApplyCount(applyCount + 1);
-        }
-        break;
       case Scope.AllObjectsOfThisTypeAboveFoundation:
         if (windowModel.foundationId) {
           const oldValuesAboveFoundation = new Map<string, number | undefined>();
-          setCommonStore((state) => {
-            for (const elem of state.elements) {
-              if (elem.type === ObjectType.Window && elem.foundationId === windowModel.foundationId && !elem.locked) {
-                const w = elem as WindowModel;
-                if (w.shutter) {
-                  oldValuesAboveFoundation.set(elem.id, w.shutter.width);
-                  w.shutter.width = value;
-                }
+          for (const e of elements) {
+            if (e.type === ObjectType.Window && e.foundationId === windowModel.foundationId && !e.locked) {
+              const w = e as WindowModel;
+              if (w.shutter) {
+                oldValuesAboveFoundation.set(e.id, w.shutter.width);
+                updateById(w.id, value);
               }
             }
-          });
+          }
           const undoableChangeAboveFoundation = {
             name: 'Set Shutter Width for All Windows Above Foundation',
             timestamp: Date.now(),
@@ -171,6 +169,38 @@ const WindowShutterWidthInput = ({ setDialogVisible }: { setDialogVisible: (b: b
             },
           } as UndoableChangeGroup;
           addUndoable(undoableChangeAboveFoundation);
+          setApplyCount(applyCount + 1);
+        }
+        break;
+      case Scope.OnlyThisSide:
+        if (windowModel.parentId) {
+          const oldValues = new Map<string, number>();
+          for (const e of elements) {
+            if (e.type === ObjectType.Window && e.parentId === windowModel.parentId && !e.locked) {
+              const w = e as WindowModel;
+              if (w.shutter) {
+                oldValues.set(e.id, w.shutter.width);
+                updateById(w.id, value);
+              }
+            }
+          }
+          const undoableChangeOnSameWall = {
+            name: 'Set Shutter Width for All Windows On the Same Wall',
+            timestamp: Date.now(),
+            oldValues: oldValues,
+            newValue: value,
+            groupId: windowModel.parentId,
+            undo: () => {
+              undoInMap(undoableChangeOnSameWall.oldValues as Map<string, number>);
+            },
+            redo: () => {
+              updateInMap(
+                undoableChangeOnSameWall.oldValues as Map<string, number>,
+                undoableChangeOnSameWall.newValue as number,
+              );
+            },
+          } as UndoableChangeGroup;
+          addUndoable(undoableChangeOnSameWall);
           setApplyCount(applyCount + 1);
         }
         break;
@@ -292,7 +322,7 @@ const WindowShutterWidthInput = ({ setDialogVisible }: { setDialogVisible: (b: b
             style={{ border: '2px dashed #ccc', paddingTop: '8px', paddingLeft: '12px', paddingBottom: '8px' }}
             span={17}
           >
-            <Radio.Group onChange={(e) => setWindowActionScope(e.target.value)} value={windowActionScope}>
+            <Radio.Group onChange={(e) => setActionScope(e.target.value)} value={actionScope}>
               <Space direction="vertical">
                 <Radio value={Scope.OnlyThisObject}>{i18n.t('windowMenu.OnlyThisWindow', lang)}</Radio>
                 <Radio value={Scope.OnlyThisSide}>{i18n.t('windowMenu.AllWindowsOnWall', lang)}</Radio>

@@ -1,5 +1,5 @@
 /*
- * @Copyright 2022. Institute for Future Intelligence, Inc.
+ * @Copyright 2022-2023. Institute for Future Intelligence, Inc.
  */
 
 import React, { useEffect, useRef, useState } from 'react';
@@ -16,28 +16,21 @@ import { WindowModel } from 'src/models/WindowModel';
 
 const WindowShutterColorSelection = ({ setDialogVisible }: { setDialogVisible: (b: boolean) => void }) => {
   const setCommonStore = useStore(Selector.set);
+  const elements = useStore(Selector.elements);
   const language = useStore(Selector.language);
-  const selectedElement = useStore(Selector.selectedElement) as WindowModel;
   const addUndoable = useStore(Selector.addUndoable);
-  const windowActionScope = useStore(Selector.windowActionScope);
-  const setWindowActionScope = useStore(Selector.setWindowActionScope);
+  const actionScope = useStore(Selector.windowActionScope);
+  const setActionScope = useStore(Selector.setWindowActionScope);
   const applyCount = useStore(Selector.applyCount);
   const setApplyCount = useStore(Selector.setApplyCount);
   const revertApply = useStore(Selector.revertApply);
   const getElementById = useStore(Selector.getElementById);
 
-  const windowElement = useStore((state) => {
-    if (selectedElement) {
-      for (const e of state.elements) {
-        if (e.id === selectedElement.id) {
-          return e as WindowModel;
-        }
-      }
-    }
-    return null;
-  });
+  const windowModel = useStore((state) =>
+    state.elements.find((e) => e.selected && e.type === ObjectType.Window),
+  ) as WindowModel;
 
-  const [selectedColor, setSelectedColor] = useState<string>(windowElement?.shutter?.color ?? '#808080');
+  const [selectedColor, setSelectedColor] = useState<string>(windowModel?.shutter?.color ?? '#808080');
   const [dragEnabled, setDragEnabled] = useState<boolean>(false);
   const [bounds, setBounds] = useState<DraggableBounds>({ left: 0, top: 0, bottom: 0, right: 0 } as DraggableBounds);
   const dragRef = useRef<HTMLDivElement | null>(null);
@@ -50,10 +43,10 @@ const WindowShutterColorSelection = ({ setDialogVisible }: { setDialogVisible: (
   const lang = { lng: language };
 
   useEffect(() => {
-    if (windowElement) {
-      setSelectedColor(windowElement?.shutter?.color ?? '#808080');
+    if (windowModel) {
+      setSelectedColor(windowModel?.shutter?.color ?? '#808080');
     }
-  }, [windowElement?.shutter?.color]);
+  }, [windowModel?.shutter?.color]);
 
   const updateById = (id: string, color: string) => {
     setCommonStore((state) => {
@@ -83,20 +76,63 @@ const WindowShutterColorSelection = ({ setDialogVisible }: { setDialogVisible: (
     }
   };
 
-  const setColor = (value: string) => {
-    if (!windowElement) return;
-    switch (windowActionScope) {
+  const needChange = (value: string) => {
+    switch (actionScope) {
       case Scope.AllObjectsOfThisType:
-        const oldValsAll = new Map<string, string>();
-        for (const elem of useStore.getState().elements) {
-          if (elem.type === ObjectType.Window && !elem.locked) {
-            oldValsAll.set(elem.id, (elem as WindowModel).shutter?.color ?? '#808080');
+        for (const e of elements) {
+          if (e.type === ObjectType.Window && value !== (e as WindowModel).shutter.color && !e.locked) {
+            return true;
+          }
+        }
+        break;
+      case Scope.AllObjectsOfThisTypeAboveFoundation:
+        for (const e of elements) {
+          if (
+            e.type === ObjectType.Window &&
+            e.foundationId === windowModel.foundationId &&
+            value !== (e as WindowModel).shutter.color &&
+            !e.locked
+          ) {
+            return true;
+          }
+        }
+        break;
+      case Scope.OnlyThisSide:
+        for (const e of elements) {
+          if (
+            e.type === ObjectType.Window &&
+            e.parentId === windowModel.parentId &&
+            value !== (e as WindowModel).shutter.color &&
+            !e.locked
+          ) {
+            return true;
+          }
+        }
+        break;
+      default:
+        if (value !== windowModel?.shutter.color) {
+          return true;
+        }
+        break;
+    }
+    return false;
+  };
+
+  const setColor = (value: string) => {
+    if (!windowModel) return;
+    if (!needChange(value)) return;
+    switch (actionScope) {
+      case Scope.AllObjectsOfThisType:
+        const oldValuesAll = new Map<string, string>();
+        for (const e of elements) {
+          if (e.type === ObjectType.Window && !e.locked) {
+            oldValuesAll.set(e.id, (e as WindowModel).shutter?.color ?? '#808080');
           }
         }
         const undoableChangeAll = {
           name: 'Set Shutter Color for All Windows',
           timestamp: Date.now(),
-          oldValues: oldValsAll,
+          oldValues: oldValuesAll,
           newValue: value,
           undo: () => {
             undoInMap(undoableChangeAll.oldValues as Map<string, string>);
@@ -106,61 +142,23 @@ const WindowShutterColorSelection = ({ setDialogVisible }: { setDialogVisible: (
           },
         } as UndoableChangeGroup;
         addUndoable(undoableChangeAll);
-        updateInMap(oldValsAll, value);
+        updateInMap(oldValuesAll, value);
         setApplyCount(applyCount + 1);
         break;
-      case Scope.OnlyThisSide:
-        if (windowElement.parentId) {
-          const oldValues = new Map<string, string>();
-          setCommonStore((state) => {
-            for (const elem of state.elements) {
-              if (elem.type === ObjectType.Window && elem.parentId === windowElement.parentId && !elem.locked) {
-                const w = elem as WindowModel;
-                if (w.shutter) {
-                  oldValues.set(elem.id, w.shutter.color);
-                  w.shutter.color = value;
-                }
-              }
-            }
-          });
-          const undoableChangeOnSameWall = {
-            name: 'Set Shutter Color for All Windows On the Same Wall',
-            timestamp: Date.now(),
-            oldValues: oldValues,
-            newValue: value,
-            groupId: windowElement.parentId,
-            undo: () => {
-              undoInMap(undoableChangeOnSameWall.oldValues as Map<string, string>);
-            },
-            redo: () => {
-              updateInMap(
-                undoableChangeOnSameWall.oldValues as Map<string, string>,
-                undoableChangeOnSameWall.newValue as string,
-              );
-            },
-          } as UndoableChangeGroup;
-          addUndoable(undoableChangeOnSameWall);
-          setApplyCount(applyCount + 1);
-        }
-        break;
       case Scope.AllObjectsOfThisTypeAboveFoundation:
-        if (windowElement.foundationId) {
-          const oldValsAboveFoundation = new Map<string, string>();
-          for (const elem of useStore.getState().elements) {
-            if (
-              elem.type === ObjectType.Window &&
-              elem.foundationId === windowElement.foundationId &&
-              !windowElement.locked
-            ) {
-              oldValsAboveFoundation.set(elem.id, (elem as WindowModel).shutter?.color ?? '#808080');
+        if (windowModel.foundationId) {
+          const oldValuesAboveFoundation = new Map<string, string>();
+          for (const e of elements) {
+            if (e.type === ObjectType.Window && e.foundationId === windowModel.foundationId && !windowModel.locked) {
+              oldValuesAboveFoundation.set(e.id, (e as WindowModel).shutter?.color ?? '#808080');
             }
           }
           const undoableChangeAboveFoundation = {
             name: 'Set Shutter Color for All Windows Above Foundation',
             timestamp: Date.now(),
-            oldValues: oldValsAboveFoundation,
+            oldValues: oldValuesAboveFoundation,
             newValue: value,
-            groupId: windowElement.foundationId,
+            groupId: windowModel.foundationId,
             undo: () => {
               undoInMap(undoableChangeAboveFoundation.oldValues as Map<string, string>);
             },
@@ -174,21 +172,53 @@ const WindowShutterColorSelection = ({ setDialogVisible }: { setDialogVisible: (
             },
           } as UndoableChangeGroup;
           addUndoable(undoableChangeAboveFoundation);
-          updateInMap(oldValsAboveFoundation, value);
+          updateInMap(oldValuesAboveFoundation, value);
+          setApplyCount(applyCount + 1);
+        }
+        break;
+      case Scope.OnlyThisSide:
+        if (windowModel.parentId) {
+          const oldValues = new Map<string, string>();
+          for (const e of elements) {
+            if (e.type === ObjectType.Window && e.parentId === windowModel.parentId && !e.locked) {
+              const w = e as WindowModel;
+              if (w.shutter) {
+                oldValues.set(e.id, w.shutter.color);
+              }
+            }
+          }
+          const undoableChangeOnSameWall = {
+            name: 'Set Shutter Color for All Windows On the Same Wall',
+            timestamp: Date.now(),
+            oldValues: oldValues,
+            newValue: value,
+            groupId: windowModel.parentId,
+            undo: () => {
+              undoInMap(undoableChangeOnSameWall.oldValues as Map<string, string>);
+            },
+            redo: () => {
+              updateInMap(
+                undoableChangeOnSameWall.oldValues as Map<string, string>,
+                undoableChangeOnSameWall.newValue as string,
+              );
+            },
+          } as UndoableChangeGroup;
+          addUndoable(undoableChangeOnSameWall);
+          updateInMap(oldValues, value);
           setApplyCount(applyCount + 1);
         }
         break;
       default:
-        if (windowElement) {
-          const updatedWindow = getElementById(windowElement.id) as WindowModel;
-          const oldColor = (updatedWindow ? updatedWindow.tint : windowElement.tint) ?? '#808080';
+        if (windowModel) {
+          const updatedWindow = getElementById(windowModel.id) as WindowModel;
+          const oldColor = (updatedWindow ? updatedWindow.tint : windowModel.tint) ?? '#808080';
           const undoableChange = {
             name: 'Set Shutter Color of Selected window',
             timestamp: Date.now(),
             oldValue: oldColor,
             newValue: value,
-            changedElementId: windowElement.id,
-            changedElementType: windowElement.type,
+            changedElementId: windowModel.id,
+            changedElementType: windowModel.type,
             undo: () => {
               updateById(undoableChange.changedElementId, undoableChange.oldValue as string);
             },
@@ -197,7 +227,7 @@ const WindowShutterColorSelection = ({ setDialogVisible }: { setDialogVisible: (
             },
           } as UndoableChange;
           addUndoable(undoableChange);
-          updateById(windowElement.id, value);
+          updateById(windowModel.id, value);
           setApplyCount(applyCount + 1);
         }
     }
@@ -220,8 +250,8 @@ const WindowShutterColorSelection = ({ setDialogVisible }: { setDialogVisible: (
   };
 
   const close = () => {
-    if (windowElement?.tint) {
-      setSelectedColor(windowElement.tint);
+    if (windowModel?.tint) {
+      setSelectedColor(windowModel.tint);
     }
     setDialogVisible(false);
   };
@@ -232,8 +262,8 @@ const WindowShutterColorSelection = ({ setDialogVisible }: { setDialogVisible: (
   };
 
   const handleOk = () => {
-    if (!windowElement) return;
-    const updatedRoof = getElementById(windowElement.id) as WindowModel;
+    if (!windowModel) return;
+    const updatedRoof = getElementById(windowModel.id) as WindowModel;
     if (updatedRoof && updatedRoof.tint !== selectedColor) {
       setColor(selectedColor);
     }
@@ -283,7 +313,7 @@ const WindowShutterColorSelection = ({ setDialogVisible }: { setDialogVisible: (
         <Row gutter={6}>
           <Col className="gutter-row" span={11}>
             <CompactPicker
-              color={selectedColor ?? windowElement?.tint ?? '#808080'}
+              color={selectedColor ?? windowModel?.tint ?? '#808080'}
               onChangeComplete={(colorResult) => {
                 setSelectedColor(colorResult.hex);
               }}
@@ -294,7 +324,7 @@ const WindowShutterColorSelection = ({ setDialogVisible }: { setDialogVisible: (
             style={{ border: '2px dashed #ccc', paddingTop: '8px', paddingLeft: '12px', paddingBottom: '8px' }}
             span={13}
           >
-            <Radio.Group onChange={(e) => setWindowActionScope(e.target.value)} value={windowActionScope}>
+            <Radio.Group onChange={(e) => setActionScope(e.target.value)} value={actionScope}>
               <Space direction="vertical">
                 <Radio value={Scope.OnlyThisObject}>{i18n.t('windowMenu.OnlyThisWindow', lang)}</Radio>
                 <Radio value={Scope.OnlyThisSide}>{i18n.t('windowMenu.AllWindowsOnWall', lang)}</Radio>

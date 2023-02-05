@@ -3,7 +3,7 @@
  */
 
 import React, { useState } from 'react';
-import { CommonStoreState, useStore } from '../../../stores/common';
+import { useStore } from '../../../stores/common';
 import * as Selector from '../../../stores/selector';
 import { Copy, Cut, Lock } from '../menuItems';
 import { WindowModel, WindowType } from '../../../models/WindowModel';
@@ -71,17 +71,7 @@ const NumberDialogSettings = {
   FrameWidth: { attributeKey: 'frameWidth', range: [0.05, 0.2], step: 0.01, unit: 'word.MeterAbbreviation', digit: 2 },
 };
 
-const getSelectedWindow = (state: CommonStoreState) => {
-  for (const el of state.elements) {
-    if (el.selected && el.type === ObjectType.Window) {
-      return el as WindowModel;
-    }
-  }
-  return null;
-};
-
 export const WindowMenu = React.memo(() => {
-  const window = useStore(getSelectedWindow);
   const setCommonStore = useStore(Selector.set);
   const language = useStore(Selector.language);
   const addUndoable = useStore(Selector.addUndoable);
@@ -92,6 +82,10 @@ export const WindowMenu = React.memo(() => {
 
   const [dataType, setDataType] = useState<WindowDataType | null>(null);
   const [uValueDialogVisible, setUValueDialogVisible] = useState(false);
+
+  const window = useStore((state) =>
+    state.elements.find((e) => e.selected && e.type === ObjectType.Window),
+  ) as WindowModel;
 
   if (!window) return null;
 
@@ -288,7 +282,7 @@ export const WindowMenu = React.memo(() => {
         if (!setting) return null;
         return (
           <WindowNumberInput
-            windowElement={window!}
+            windowModel={window!}
             dataType={dataType}
             attributeKey={setting.attributeKey}
             range={setting.range}

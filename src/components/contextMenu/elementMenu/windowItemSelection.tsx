@@ -1,5 +1,5 @@
 /*
- * @Copyright 2021-2022. Institute for Future Intelligence, Inc.
+ * @Copyright 2021-2023. Institute for Future Intelligence, Inc.
  */
 
 import React, { useEffect, useRef, useState } from 'react';
@@ -28,11 +28,12 @@ const WindowItemSelection = ({
   attributeKey,
   setDialogVisible,
 }: WindowItemSelectionProps) => {
+  const elements = useStore(Selector.elements);
   const setCommonStore = useStore(Selector.set);
   const language = useStore(Selector.language);
   const addUndoable = useStore(Selector.addUndoable);
-  const windowActionScope = useStore(Selector.windowActionScope);
-  const setWindowActionScope = useStore(Selector.setWindowActionScope);
+  const actionScope = useStore(Selector.windowActionScope);
+  const setActionScope = useStore(Selector.setWindowActionScope);
   const applyCount = useStore(Selector.applyCount);
   const setApplyCount = useStore(Selector.setApplyCount);
   const revertApply = useStore(Selector.revertApply);
@@ -98,20 +99,63 @@ const WindowItemSelection = ({
     }
   };
 
+  const needChange = (value: string) => {
+    switch (actionScope) {
+      case Scope.AllObjectsOfThisType:
+        for (const e of elements) {
+          if (e.type === ObjectType.Window && value !== (e as WindowModel)[attributeKey] && !e.locked) {
+            return true;
+          }
+        }
+        break;
+      case Scope.AllObjectsOfThisTypeAboveFoundation:
+        for (const e of elements) {
+          if (
+            e.type === ObjectType.Window &&
+            e.foundationId === windowModel.foundationId &&
+            value !== (e as WindowModel)[attributeKey] &&
+            !e.locked
+          ) {
+            return true;
+          }
+        }
+        break;
+      case Scope.OnlyThisSide:
+        for (const e of elements) {
+          if (
+            e.type === ObjectType.Window &&
+            e.parentId === windowModel.parentId &&
+            value !== (e as WindowModel)[attributeKey] &&
+            !e.locked
+          ) {
+            return true;
+          }
+        }
+        break;
+      default:
+        if (value !== windowModel[attributeKey]) {
+          return true;
+        }
+        break;
+    }
+    return false;
+  };
+
   const setValue = (value: string) => {
     if (!windowModel) return;
-    switch (windowActionScope) {
+    if (!needChange(value)) return;
+    switch (actionScope) {
       case Scope.AllObjectsOfThisType:
-        const oldValsAll = new Map<string, string>();
-        for (const elem of useStore.getState().elements) {
-          if (elem.type === ObjectType.Window && !elem.locked) {
-            oldValsAll.set(elem.id, (elem as WindowModel)[attributeKey] as string);
+        const oldValuesAll = new Map<string, string>();
+        for (const e of elements) {
+          if (e.type === ObjectType.Window && !e.locked) {
+            oldValuesAll.set(e.id, (e as WindowModel)[attributeKey] as string);
           }
         }
         const undoableChangeAll = {
           name: `Set ${dataType} for All Windows`,
           timestamp: Date.now(),
-          oldValues: oldValsAll,
+          oldValues: oldValuesAll,
           newValue: value,
           undo: () => {
             undoInMap(undoableChangeAll.oldValues as Map<string, string>);
@@ -124,50 +168,18 @@ const WindowItemSelection = ({
         updateForAll(value);
         setApplyCount(applyCount + 1);
         break;
-      case Scope.OnlyThisSide:
-        if (windowModel.parentId) {
-          const oldValues = new Map<string, string>();
-          setCommonStore((state) => {
-            for (const elem of state.elements) {
-              if (elem.type === ObjectType.Window && elem.parentId === windowModel.parentId && !elem.locked) {
-                oldValues.set(elem.id, (elem as WindowModel)[attributeKey] as string);
-                ((elem as WindowModel)[attributeKey] as string) = value;
-              }
-            }
-          });
-          const undoableChangeOnSameWall = {
-            name: `Set ${dataType} for All Windows On the Same Wall`,
-            timestamp: Date.now(),
-            oldValues: oldValues,
-            newValue: value,
-            groupId: windowModel.parentId,
-            undo: () => {
-              undoInMap(undoableChangeOnSameWall.oldValues as Map<string, string>);
-            },
-            redo: () => {
-              updateOnSameWall(windowModel.parentId, undoableChangeOnSameWall.newValue as string);
-            },
-          } as UndoableChangeGroup;
-          addUndoable(undoableChangeOnSameWall);
-          setApplyCount(applyCount + 1);
-        }
-        break;
       case Scope.AllObjectsOfThisTypeAboveFoundation:
         if (windowModel.foundationId) {
-          const oldValsAboveFoundation = new Map<string, string>();
-          for (const elem of useStore.getState().elements) {
-            if (
-              elem.type === ObjectType.Window &&
-              elem.foundationId === windowModel.foundationId &&
-              !windowModel.locked
-            ) {
-              oldValsAboveFoundation.set(elem.id, (elem as WindowModel)[attributeKey] as string);
+          const oldValuesAboveFoundation = new Map<string, string>();
+          for (const e of elements) {
+            if (e.type === ObjectType.Window && e.foundationId === windowModel.foundationId && !windowModel.locked) {
+              oldValuesAboveFoundation.set(e.id, (e as WindowModel)[attributeKey] as string);
             }
           }
           const undoableChangeAboveFoundation = {
             name: `Set ${dataType} for All Windows Above Foundation`,
             timestamp: Date.now(),
-            oldValues: oldValsAboveFoundation,
+            oldValues: oldValuesAboveFoundation,
             newValue: value,
             groupId: windowModel.foundationId,
             undo: () => {
@@ -185,13 +197,39 @@ const WindowItemSelection = ({
           setApplyCount(applyCount + 1);
         }
         break;
+      case Scope.OnlyThisSide:
+        if (windowModel.parentId) {
+          const oldValues = new Map<string, string>();
+          for (const e of elements) {
+            if (e.type === ObjectType.Window && e.parentId === windowModel.parentId && !e.locked) {
+              oldValues.set(e.id, (e as WindowModel)[attributeKey] as string);
+            }
+          }
+          const undoableChangeOnSameWall = {
+            name: `Set ${dataType} for All Windows On the Same Wall`,
+            timestamp: Date.now(),
+            oldValues: oldValues,
+            newValue: value,
+            groupId: windowModel.parentId,
+            undo: () => {
+              undoInMap(undoableChangeOnSameWall.oldValues as Map<string, string>);
+            },
+            redo: () => {
+              updateOnSameWall(windowModel.parentId, undoableChangeOnSameWall.newValue as string);
+            },
+          } as UndoableChangeGroup;
+          addUndoable(undoableChangeOnSameWall);
+          updateOnSameWall(windowModel.parentId, value);
+          setApplyCount(applyCount + 1);
+        }
+        break;
       default:
         if (windowModel) {
-          const oldVal = windowModel[attributeKey] as string;
+          const oldValue = windowModel[attributeKey] as string;
           const undoableChange = {
             name: `Set ${dataType} of Selected window`,
             timestamp: Date.now(),
-            oldValue: oldVal,
+            oldValue: oldValue,
             newValue: value,
             changedElementId: windowModel.id,
             changedElementType: windowModel.type,
@@ -307,7 +345,7 @@ const WindowItemSelection = ({
             style={{ border: '2px dashed #ccc', paddingTop: '8px', paddingLeft: '12px', paddingBottom: '8px' }}
             span={13}
           >
-            <Radio.Group onChange={(e) => setWindowActionScope(e.target.value)} value={windowActionScope}>
+            <Radio.Group onChange={(e) => setActionScope(e.target.value)} value={actionScope}>
               <Space direction="vertical">
                 <Radio value={Scope.OnlyThisObject}>{i18n.t('windowMenu.OnlyThisWindow', lang)}</Radio>
                 <Radio value={Scope.OnlyThisSide}>{i18n.t('windowMenu.AllWindowsOnWall', lang)}</Radio>

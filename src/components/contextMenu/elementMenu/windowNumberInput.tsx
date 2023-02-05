@@ -1,5 +1,5 @@
 /*
- * @Copyright 2022. Institute for Future Intelligence, Inc.
+ * @Copyright 2022-2023. Institute for Future Intelligence, Inc.
  */
 
 import React, { useMemo, useRef, useState } from 'react';
@@ -15,7 +15,7 @@ import { WindowModel } from 'src/models/WindowModel';
 import { WindowDataType } from './windowMenu';
 
 interface WindowNumberInputProps {
-  windowElement: WindowModel;
+  windowModel: WindowModel;
   dataType: string;
   attributeKey: keyof WindowModel;
   range: [min: number, max: number];
@@ -27,7 +27,7 @@ interface WindowNumberInputProps {
 }
 
 const WindowNumberInput = ({
-  windowElement,
+  windowModel,
   dataType,
   attributeKey,
   range,
@@ -37,25 +37,26 @@ const WindowNumberInput = ({
   digit,
   setDialogVisible,
 }: WindowNumberInputProps) => {
+  const elements = useStore(Selector.elements);
   const language = useStore(Selector.language);
   const addUndoable = useStore(Selector.addUndoable);
-  const windowActionScope = useStore(Selector.windowActionScope);
-  const setWindowActionScope = useStore(Selector.setWindowActionScope);
+  const actionScope = useStore(Selector.windowActionScope);
+  const setActionScope = useStore(Selector.setWindowActionScope);
   const applyCount = useStore(Selector.applyCount);
   const setApplyCount = useStore(Selector.setApplyCount);
   const revertApply = useStore(Selector.revertApply);
   const setCommonStore = useStore(Selector.set);
   const getParent = useStore(Selector.getParent);
 
-  const parent = getParent(windowElement);
+  const parent = getParent(windowModel);
   const currentValue = useMemo(() => {
-    const v = windowElement[attributeKey] as number;
+    const v = windowModel[attributeKey] as number;
     if (parent) {
       if (attributeKey === 'lx') return v * parent.lx;
       if (attributeKey === 'lz') return v * parent.lz;
     }
     return v;
-  }, [attributeKey, windowElement, parent?.lx, parent?.lz]);
+  }, [attributeKey, windowModel, parent?.lx, parent?.lz]);
 
   const [inputValue, setInputValue] = useState<number>(currentValue);
   const [dragEnabled, setDragEnabled] = useState<boolean>(false);
@@ -124,28 +125,75 @@ const WindowNumberInput = ({
     }
   };
 
+  const needChange = (value: number) => {
+    if (parent) {
+      if (attributeKey === 'lx') {
+        value /= parent.lx;
+      } else if (attributeKey === 'lz') {
+        value /= parent.lz;
+      }
+    }
+    switch (actionScope) {
+      case Scope.AllObjectsOfThisType:
+        for (const e of elements) {
+          if (e.type === ObjectType.Window && value !== (e as WindowModel)[attributeKey] && !e.locked) {
+            return true;
+          }
+        }
+        break;
+      case Scope.AllObjectsOfThisTypeAboveFoundation:
+        for (const e of elements) {
+          if (
+            e.type === ObjectType.Window &&
+            e.foundationId === windowModel.foundationId &&
+            value !== (e as WindowModel)[attributeKey] &&
+            !e.locked
+          ) {
+            return true;
+          }
+        }
+        break;
+      case Scope.OnlyThisSide:
+        for (const e of elements) {
+          if (
+            e.type === ObjectType.Window &&
+            e.parentId === windowModel.parentId &&
+            value !== (e as WindowModel)[attributeKey] &&
+            !e.locked
+          ) {
+            return true;
+          }
+        }
+        break;
+      default:
+        if (value !== windowModel[attributeKey]) {
+          return true;
+        }
+        break;
+    }
+    return false;
+  };
+
   const setValue = (value: number) => {
-    if (!windowElement) return;
-    switch (windowActionScope) {
+    if (!windowModel) return;
+    if (!needChange(value)) return;
+    switch (actionScope) {
       case Scope.AllObjectsOfThisType:
         const oldValuesAll = new Map<string, number>();
-        setCommonStore((state) => {
-          for (const e of state.elements) {
-            if (e.type === ObjectType.Window && !e.locked) {
-              const window = e as WindowModel;
-              let oldValue = window[attributeKey] as number;
-              if (parent) {
-                if (attributeKey === 'lx') {
-                  oldValue *= parent.lx;
-                } else if (attributeKey === 'lz') {
-                  oldValue *= parent.lz;
-                }
+        for (const e of elements) {
+          if (e.type === ObjectType.Window && !e.locked) {
+            const window = e as WindowModel;
+            let oldValue = window[attributeKey] as number;
+            if (parent) {
+              if (attributeKey === 'lx') {
+                oldValue *= parent.lx;
+              } else if (attributeKey === 'lz') {
+                oldValue *= parent.lz;
               }
-              oldValuesAll.set(e.id, oldValue);
-              setAttribute(window, attributeKey, value);
             }
+            oldValuesAll.set(e.id, oldValue);
           }
-        });
+        }
         const undoableChangeAll = {
           name: `Set ${dataType} for All Windows`,
           timestamp: Date.now(),
@@ -159,85 +207,82 @@ const WindowNumberInput = ({
           },
         } as UndoableChangeGroup;
         addUndoable(undoableChangeAll);
+        updateForAll(value);
         setApplyCount(applyCount + 1);
         break;
-      case Scope.OnlyThisSide:
-        if (windowElement.parentId) {
-          const oldValuesOnSameWall = new Map<string, number>();
-          setCommonStore((state) => {
-            for (const e of state.elements) {
-              if (e.type === ObjectType.Window && e.parentId === windowElement.parentId && !e.locked) {
-                const window = e as WindowModel;
-                let oldValue = window[attributeKey] as number;
-                if (parent) {
-                  if (attributeKey === 'lx') {
-                    oldValue *= parent.lx;
-                  } else if (attributeKey === 'lz') {
-                    oldValue *= parent.lz;
-                  }
-                }
-                oldValuesOnSameWall.set(e.id, oldValue);
-                setAttribute(window, attributeKey, value);
-              }
-            }
-          });
-          const undoableChangeOnSameWall = {
-            name: `Set ${dataType} for All Windows On the Same Wall`,
-            timestamp: Date.now(),
-            oldValues: oldValuesOnSameWall,
-            newValue: value,
-            groupId: windowElement.parentId,
-            undo: () => {
-              undoInMap(undoableChangeOnSameWall.oldValues as Map<string, number>);
-            },
-            redo: () => {
-              updateOnSameWall(windowElement.parentId, undoableChangeOnSameWall.newValue as number);
-            },
-          } as UndoableChangeGroup;
-          addUndoable(undoableChangeOnSameWall);
-          setApplyCount(applyCount + 1);
-        }
-        break;
       case Scope.AllObjectsOfThisTypeAboveFoundation:
-        if (windowElement.foundationId) {
+        if (windowModel.foundationId) {
           const oldValuesAboveFoundation = new Map<string, number>();
-          setCommonStore((state) => {
-            for (const e of state.elements) {
-              if (e.type === ObjectType.Window && e.foundationId === windowElement.foundationId && !e.locked) {
-                const window = e as WindowModel;
-                let oldValue = window[attributeKey] as number;
-                if (parent) {
-                  if (attributeKey === 'lx') {
-                    oldValue *= parent.lx;
-                  } else if (attributeKey === 'lz') {
-                    oldValue *= parent.lz;
-                  }
+          for (const e of elements) {
+            if (e.type === ObjectType.Window && e.foundationId === windowModel.foundationId && !e.locked) {
+              const window = e as WindowModel;
+              let oldValue = window[attributeKey] as number;
+              if (parent) {
+                if (attributeKey === 'lx') {
+                  oldValue *= parent.lx;
+                } else if (attributeKey === 'lz') {
+                  oldValue *= parent.lz;
                 }
-                oldValuesAboveFoundation.set(e.id, oldValue);
-                setAttribute(window, attributeKey, value);
               }
+              oldValuesAboveFoundation.set(e.id, oldValue);
             }
-          });
+          }
           const undoableChangeAboveFoundation = {
             name: `Set ${dataType} for All Windows Above Foundation`,
             timestamp: Date.now(),
             oldValues: oldValuesAboveFoundation,
             newValue: value,
-            groupId: windowElement.foundationId,
+            groupId: windowModel.foundationId,
             undo: () => {
               undoInMap(undoableChangeAboveFoundation.oldValues as Map<string, number>);
             },
             redo: () => {
-              updateAboveFoundation(windowElement.foundationId, undoableChangeAboveFoundation.newValue as number);
+              updateAboveFoundation(windowModel.foundationId, undoableChangeAboveFoundation.newValue as number);
             },
           } as UndoableChangeGroup;
           addUndoable(undoableChangeAboveFoundation);
+          updateAboveFoundation(windowModel.foundationId, value);
+          setApplyCount(applyCount + 1);
+        }
+        break;
+      case Scope.OnlyThisSide:
+        if (windowModel.parentId) {
+          const oldValuesOnSameWall = new Map<string, number>();
+          for (const e of elements) {
+            if (e.type === ObjectType.Window && e.parentId === windowModel.parentId && !e.locked) {
+              const window = e as WindowModel;
+              let oldValue = window[attributeKey] as number;
+              if (parent) {
+                if (attributeKey === 'lx') {
+                  oldValue *= parent.lx;
+                } else if (attributeKey === 'lz') {
+                  oldValue *= parent.lz;
+                }
+              }
+              oldValuesOnSameWall.set(e.id, oldValue);
+            }
+          }
+          const undoableChangeOnSameWall = {
+            name: `Set ${dataType} for All Windows On the Same Wall`,
+            timestamp: Date.now(),
+            oldValues: oldValuesOnSameWall,
+            newValue: value,
+            groupId: windowModel.parentId,
+            undo: () => {
+              undoInMap(undoableChangeOnSameWall.oldValues as Map<string, number>);
+            },
+            redo: () => {
+              updateOnSameWall(windowModel.parentId, undoableChangeOnSameWall.newValue as number);
+            },
+          } as UndoableChangeGroup;
+          addUndoable(undoableChangeOnSameWall);
+          updateOnSameWall(windowModel.parentId, value);
           setApplyCount(applyCount + 1);
         }
         break;
       default:
-        if (windowElement) {
-          let oldValue = windowElement[attributeKey] as number;
+        if (windowModel) {
+          let oldValue = windowModel[attributeKey] as number;
           if (parent) {
             if (attributeKey === 'lx') {
               oldValue *= parent.lx;
@@ -250,8 +295,8 @@ const WindowNumberInput = ({
             timestamp: Date.now(),
             oldValue: oldValue,
             newValue: value,
-            changedElementId: windowElement.id,
-            changedElementType: windowElement.type,
+            changedElementId: windowModel.id,
+            changedElementType: windowModel.type,
             undo: () => {
               updateById(undoableChange.changedElementId, undoableChange.oldValue as number);
             },
@@ -260,7 +305,7 @@ const WindowNumberInput = ({
             },
           } as UndoableChange;
           addUndoable(undoableChange);
-          updateById(windowElement.id, value);
+          updateById(windowModel.id, value);
           setApplyCount(applyCount + 1);
         }
     }
@@ -383,7 +428,7 @@ const WindowNumberInput = ({
             style={{ border: '2px dashed #ccc', paddingTop: '8px', paddingLeft: '12px', paddingBottom: '8px' }}
             span={17}
           >
-            <Radio.Group onChange={(e) => setWindowActionScope(e.target.value)} value={windowActionScope}>
+            <Radio.Group onChange={(e) => setActionScope(e.target.value)} value={actionScope}>
               <Space direction="vertical">
                 <Radio value={Scope.OnlyThisObject}>{i18n.t('windowMenu.OnlyThisWindow', lang)}</Radio>
                 <Radio value={Scope.OnlyThisSide}>{i18n.t('windowMenu.AllWindowsOnWall', lang)}</Radio>
