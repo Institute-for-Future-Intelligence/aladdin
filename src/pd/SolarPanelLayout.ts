@@ -48,35 +48,33 @@ export class SolarPanelLayout {
       for (let i = 0; i <= n; i++) {
         const cx = start + i * delta;
         a.x = b.x = cx - h;
-        const p1 = Util.polygonIntersections(a, b, area.vertices);
+        const p1 = Util.polygonIntersections(a, b, area.vertices).sort((a, b) => a.y - b.y);
         a.x = b.x = cx + h;
-        const p2 = Util.polygonIntersections(a, b, area.vertices);
-        if (p1.length > 1 && p2.length > 1) {
-          const test = Math.abs(p1[0].y - p1[1].y) < Math.abs(p2[0].y - p2[1].y);
-          let y1 = test ? p1[0].y : p2[0].y;
-          let y2 = test ? p1[1].y : p2[1].y;
-          const lx = Math.abs(y1 - y2) - (2 * margin) / foundation.ly;
-          if (lx > 0) {
-            const panel = ElementModelFactory.makeSolarPanel(
+        const p2 = Util.polygonIntersections(a, b, area.vertices).sort((a, b) => a.y - b.y);
+        const numberOfSegments = Math.max(p1.length, p2.length) / 2;
+        if (numberOfSegments > 0) {
+          for (let s = 0; s < numberOfSegments; s++) {
+            const t = s * 2;
+            const panel = SolarPanelLayout.makeMeridionalSegment(
+              p1[t] ?? p2[t],
+              p1[t + 1] ?? p2[t + 1],
+              p2[t] ?? p1[t],
+              p2[t + 1] ?? p1[t + 1],
+              rotation,
+              cx,
+              ly,
               foundation,
               pvModel,
-              cx,
-              (y1 + y2) / 2,
-              foundation.lz,
-              Orientation.portrait,
+              tiltAngle,
               poleHeight,
               poleSpacing,
-              tiltAngle,
-              HALF_PI,
-              UNIT_VECTOR_POS_Z,
-              rotation,
-              undefined,
-              lx * foundation.ly,
-              ly,
+              margin,
             );
-            panel.referenceId = area.id;
-            Util.changeOrientation(panel, pvModel, orientation);
-            solarPanels.push(panel);
+            if (panel) {
+              panel.referenceId = area.id;
+              Util.changeOrientation(panel, pvModel, orientation);
+              solarPanels.push(panel);
+            }
           }
         }
       }
@@ -99,7 +97,7 @@ export class SolarPanelLayout {
         if (numberOfSegments > 0) {
           for (let s = 0; s < numberOfSegments; s++) {
             const t = s * 2;
-            const panel = SolarPanelLayout.makeSegment(
+            const panel = SolarPanelLayout.makeZonalSegment(
               p1[t] ?? p2[t],
               p1[t + 1] ?? p2[t + 1],
               p2[t] ?? p1[t],
@@ -126,9 +124,54 @@ export class SolarPanelLayout {
     return solarPanels;
   }
 
+  // solar panel rows in north-south direction
+  // p1 and q1 are the end points of the left line of this segment
+  // p2 and q2 are the end points of the right line of this segment
+  static makeMeridionalSegment(
+    p1: Point2,
+    q1: Point2,
+    p2: Point2,
+    q2: Point2,
+    rotation: number[] | undefined,
+    cx: number,
+    ly: number,
+    foundation: FoundationModel,
+    pvModel: PvModel,
+    tiltAngle: number,
+    poleHeight: number,
+    poleSpacing: number,
+    margin: number,
+  ) {
+    const test = Math.abs(p1.y - q1.y) < Math.abs(p2.y - q2.y);
+    let y1 = test ? p1.y : p2.y;
+    let y2 = test ? q1.y : q2.y;
+    const lx = Math.abs(y1 - y2) - (2 * margin) / foundation.ly;
+    if (lx > 0) {
+      return ElementModelFactory.makeSolarPanel(
+        foundation,
+        pvModel,
+        cx,
+        (y1 + y2) / 2,
+        foundation.lz,
+        Orientation.portrait,
+        poleHeight,
+        poleSpacing,
+        tiltAngle,
+        HALF_PI,
+        UNIT_VECTOR_POS_Z,
+        rotation,
+        undefined,
+        lx * foundation.ly,
+        ly,
+      );
+    }
+    return undefined;
+  }
+
+  // solar panel rows in east-west direction
   // p1 and q1 are the end points of the lower line of this segment
   // p2 and q2 are the end points of the upper line of this segment
-  static makeSegment(
+  static makeZonalSegment(
     p1: Point2,
     q1: Point2,
     p2: Point2,
