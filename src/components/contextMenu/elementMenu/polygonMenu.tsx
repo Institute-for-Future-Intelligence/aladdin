@@ -21,6 +21,7 @@ import PolygonLineStyleSelection from './polygonLineStyleSelection';
 import PolygonLineWidthSelection from './polygonLineWidthSelection';
 import SolarPanelArrayGaWizard from './solarPanelArrayGaWizard';
 import SolarPanelArrayPsoWizard from './solarPanelArrayPsoWizard';
+import PolygonOpacityInput from './polygonOpacityInput';
 
 export const PolygonMenu = React.memo(() => {
   const language = useStore(Selector.language);
@@ -38,6 +39,7 @@ export const PolygonMenu = React.memo(() => {
   const [lineWidthDialogVisible, setLineWidthDialogVisible] = useState(false);
   const [fillColorDialogVisible, setFillColorDialogVisible] = useState(false);
   const [textureDialogVisible, setTextureDialogVisible] = useState(false);
+  const [opacityDialogVisible, setOpacityDialogVisible] = useState(false);
   const [solarPanelLayoutWizardVisible, setSolarPanelLayoutWizardVisible] = useState(false);
   const [solarPanelLayoutGaWizardVisible, setSolarPanelLayoutGaWizardVisible] = useState(false);
   const [solarPanelLayoutPsoWizardVisible, setSolarPanelLayoutPsoWizardVisible] = useState(false);
@@ -180,7 +182,7 @@ export const PolygonMenu = React.memo(() => {
           </Menu.Item>
         </>
       )}
-      {editable && (!polygon.textureType || polygon.textureType === PolygonTexture.NoTexture) && (
+      {editable && polygon.filled && (!polygon.textureType || polygon.textureType === PolygonTexture.NoTexture) && (
         <>
           {fillColorDialogVisible && <PolygonFillColorSelection setDialogVisible={setFillColorDialogVisible} />}
           <Menu.Item
@@ -195,7 +197,7 @@ export const PolygonMenu = React.memo(() => {
           </Menu.Item>
         </>
       )}
-      {editable && (
+      {editable && polygon.filled && (
         <>
           {textureDialogVisible && <PolygonTextureSelection setDialogVisible={setTextureDialogVisible} />}
           <Menu.Item
@@ -207,6 +209,21 @@ export const PolygonMenu = React.memo(() => {
             }}
           >
             {i18n.t('polygonMenu.FillTexture', lang)} ...
+          </Menu.Item>
+        </>
+      )}
+      {editable && polygon.filled && (
+        <>
+          {opacityDialogVisible && <PolygonOpacityInput setDialogVisible={setOpacityDialogVisible} />}
+          <Menu.Item
+            key={'polygon-opacity'}
+            style={{ paddingLeft: '36px' }}
+            onClick={() => {
+              setApplyCount(0);
+              setOpacityDialogVisible(true);
+            }}
+          >
+            {i18n.t('polygonMenu.Opacity', lang)} ...
           </Menu.Item>
         </>
       )}

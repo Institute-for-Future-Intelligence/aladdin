@@ -69,6 +69,15 @@ const PolygonFillColorSelection = ({ setDialogVisible }: { setDialogVisible: (b:
           }
         }
         break;
+      case Scope.AllObjectsOfThisTypeAboveFoundation:
+        for (const e of elements) {
+          if (e.type === ObjectType.Polygon && e.foundationId === polygon.foundationId && !e.locked) {
+            if (e.color !== color) {
+              return true;
+            }
+          }
+        }
+        break;
       case Scope.AllObjectsOfThisTypeOnSurface:
         for (const e of elements) {
           if (
@@ -77,15 +86,6 @@ const PolygonFillColorSelection = ({ setDialogVisible }: { setDialogVisible: (b:
             Util.isIdentical(e.normal, polygon.normal) &&
             !e.locked
           ) {
-            if (e.color !== color) {
-              return true;
-            }
-          }
-        }
-        break;
-      case Scope.AllObjectsOfThisTypeAboveFoundation:
-        for (const e of elements) {
-          if (e.type === ObjectType.Polygon && e.foundationId === polygon.foundationId && !e.locked) {
             if (e.color !== color) {
               return true;
             }
@@ -129,6 +129,40 @@ const PolygonFillColorSelection = ({ setDialogVisible }: { setDialogVisible: (b:
         updateElementFillColorForAll(ObjectType.Polygon, value);
         setApplyCount(applyCount + 1);
         break;
+      case Scope.AllObjectsOfThisTypeAboveFoundation:
+        if (polygon.foundationId) {
+          const oldFillColorsAboveFoundation = new Map<string, string>();
+          for (const elem of elements) {
+            if (elem.type === ObjectType.Polygon && elem.foundationId === polygon.foundationId) {
+              oldFillColorsAboveFoundation.set(elem.id, elem.color ?? 'gray');
+            }
+          }
+          const undoableChangeAboveFoundation = {
+            name: 'Set Fill Color for All Polygons Above Foundation',
+            timestamp: Date.now(),
+            oldValues: oldFillColorsAboveFoundation,
+            newValue: value,
+            groupId: polygon.foundationId,
+            undo: () => {
+              for (const [id, lc] of undoableChangeAboveFoundation.oldValues.entries()) {
+                updateElementFillColorById(id, lc as string);
+              }
+            },
+            redo: () => {
+              if (undoableChangeAboveFoundation.groupId) {
+                updateElementFillColorAboveFoundation(
+                  ObjectType.Polygon,
+                  undoableChangeAboveFoundation.groupId,
+                  undoableChangeAboveFoundation.newValue as string,
+                );
+              }
+            },
+          } as UndoableChangeGroup;
+          addUndoable(undoableChangeAboveFoundation);
+          updateElementFillColorAboveFoundation(ObjectType.Polygon, polygon.foundationId, value);
+          setApplyCount(applyCount + 1);
+        }
+        break;
       case Scope.AllObjectsOfThisTypeOnSurface:
         const parent = getParent(polygon);
         if (parent) {
@@ -167,40 +201,6 @@ const PolygonFillColorSelection = ({ setDialogVisible }: { setDialogVisible: (b:
           } as UndoableChangeGroup;
           addUndoable(undoableChangeOnSurface);
           updateElementFillColorOnSurface(ObjectType.Polygon, polygon.parentId, polygon.normal, value);
-          setApplyCount(applyCount + 1);
-        }
-        break;
-      case Scope.AllObjectsOfThisTypeAboveFoundation:
-        if (polygon.foundationId) {
-          const oldFillColorsAboveFoundation = new Map<string, string>();
-          for (const elem of elements) {
-            if (elem.type === ObjectType.Polygon && elem.foundationId === polygon.foundationId) {
-              oldFillColorsAboveFoundation.set(elem.id, elem.color ?? 'gray');
-            }
-          }
-          const undoableChangeAboveFoundation = {
-            name: 'Set Fill Color for All Polygons Above Foundation',
-            timestamp: Date.now(),
-            oldValues: oldFillColorsAboveFoundation,
-            newValue: value,
-            groupId: polygon.foundationId,
-            undo: () => {
-              for (const [id, lc] of undoableChangeAboveFoundation.oldValues.entries()) {
-                updateElementFillColorById(id, lc as string);
-              }
-            },
-            redo: () => {
-              if (undoableChangeAboveFoundation.groupId) {
-                updateElementFillColorAboveFoundation(
-                  ObjectType.Polygon,
-                  undoableChangeAboveFoundation.groupId,
-                  undoableChangeAboveFoundation.newValue as string,
-                );
-              }
-            },
-          } as UndoableChangeGroup;
-          addUndoable(undoableChangeAboveFoundation);
-          updateElementFillColorAboveFoundation(ObjectType.Polygon, polygon.foundationId, value);
           setApplyCount(applyCount + 1);
         }
         break;

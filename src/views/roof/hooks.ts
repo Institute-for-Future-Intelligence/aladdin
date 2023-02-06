@@ -182,7 +182,7 @@ export const useTransparent = (transparent?: boolean, opacity?: number) => {
   const _transparent = groundImage && orthographic;
   const _opacity = _transparent ? 0.25 : 1;
 
-  return { transparent: transparent || _transparent, opacity: Math.min(opacity ?? 1, _opacity) };
+  return { transparent: transparent || _transparent, opacity: Math.min(opacity !== undefined ? opacity : 1, _opacity) };
 };
 
 export const useCurrWallArray = (frontWallId: string) => {

@@ -2072,6 +2072,9 @@ const MainMenu = ({ viewOnly, set2DView, resetView, zoomView, canvas }: MainMenu
             <Menu.Item key="solar_farm_fixed_array" onClick={loadFile}>
               {i18n.t('menu.solarEnergyExamples.FixedSolarPanelArraysFraminghamMA', lang)}
             </Menu.Item>
+            <Menu.Item key="mickey_mouse_solar_farm" onClick={loadFile}>
+              {i18n.t('menu.solarEnergyExamples.MickeyMouseSolarFarmOrlandoFL', lang)}
+            </Menu.Item>
             <Menu.Item key="solar_panels_over_canal" onClick={loadFile}>
               {i18n.t('menu.solarEnergyExamples.SolarPanelsOverCanalBakersfieldCA', lang)}
             </Menu.Item>

@@ -1,5 +1,5 @@
 /*
- * @Copyright 2021-2023. Institute for Future Intelligence, Inc.
+ * @Copyright 2023. Institute for Future Intelligence, Inc.
  */
 
 import React, { useEffect, useRef, useState } from 'react';
@@ -11,23 +11,26 @@ import { ObjectType, Scope } from 'src/types';
 import i18n from 'src/i18n/i18n';
 import { UndoableChange } from 'src/undo/UndoableChange';
 import { UndoableChangeGroup } from 'src/undo/UndoableChangeGroup';
-import { RoofModel } from 'src/models/RoofModel';
+import { PolygonModel } from '../../../models/PolygonModel';
+import { Util } from '../../../Util';
 
-const RoofOpacityInput = ({ setDialogVisible }: { setDialogVisible: (b: boolean) => void }) => {
+const PolygonOpacityInput = ({ setDialogVisible }: { setDialogVisible: (b: boolean) => void }) => {
   const language = useStore(Selector.language);
   const elements = useStore(Selector.elements);
   const addUndoable = useStore(Selector.addUndoable);
-  const actionScope = useStore(Selector.roofActionScope);
-  const setActionScope = useStore(Selector.setRoofActionScope);
+  const actionScope = useStore(Selector.polygonActionScope);
+  const setActionScope = useStore(Selector.setPolygonActionScope);
   const applyCount = useStore(Selector.applyCount);
   const setApplyCount = useStore(Selector.setApplyCount);
   const revertApply = useStore(Selector.revertApply);
   const getElementById = useStore(Selector.getElementById);
   const setCommonStore = useStore(Selector.set);
 
-  const roof = useStore((state) => state.elements.find((e) => e.selected && e.type === ObjectType.Roof)) as RoofModel;
+  const polygon = useStore((state) =>
+    state.elements.find((e) => e.selected && e.type === ObjectType.Polygon),
+  ) as PolygonModel;
 
-  const [input, setInput] = useState<number>(roof?.opacity !== undefined ? roof.opacity : 0.5);
+  const [input, setInput] = useState<number>(polygon?.opacity !== undefined ? polygon.opacity : 1);
   const [dragEnabled, setDragEnabled] = useState<boolean>(false);
   const [bounds, setBounds] = useState<DraggableBounds>({ left: 0, top: 0, bottom: 0, right: 0 } as DraggableBounds);
   const dragRef = useRef<HTMLDivElement | null>(null);
@@ -35,16 +38,16 @@ const RoofOpacityInput = ({ setDialogVisible }: { setDialogVisible: (b: boolean)
   const lang = { lng: language };
 
   useEffect(() => {
-    if (roof) {
-      setInput(roof.opacity !== undefined ? roof.opacity : 0.5);
+    if (polygon) {
+      setInput(polygon.opacity !== undefined ? polygon.opacity : 1);
     }
-  }, [roof]);
+  }, [polygon]);
 
   const updateOpacityById = (id: string, value: number) => {
     setCommonStore((state) => {
       for (const e of state.elements) {
         if (e.id === id) {
-          (e as RoofModel).opacity = value;
+          (e as PolygonModel).opacity = value;
           break;
         }
       }
@@ -67,7 +70,7 @@ const RoofOpacityInput = ({ setDialogVisible }: { setDialogVisible: (b: boolean)
     switch (actionScope) {
       case Scope.AllObjectsOfThisType:
         for (const e of elements) {
-          if (e.type === ObjectType.Roof && value !== (e as RoofModel).opacity && !e.locked) {
+          if (e.type === ObjectType.Polygon && value !== (e as PolygonModel).opacity && !e.locked) {
             return true;
           }
         }
@@ -75,9 +78,22 @@ const RoofOpacityInput = ({ setDialogVisible }: { setDialogVisible: (b: boolean)
       case Scope.AllObjectsOfThisTypeAboveFoundation:
         for (const e of elements) {
           if (
-            e.type === ObjectType.Roof &&
-            e.foundationId === roof.foundationId &&
-            value !== (e as RoofModel).opacity &&
+            e.type === ObjectType.Polygon &&
+            e.foundationId === polygon.foundationId &&
+            value !== (e as PolygonModel).opacity &&
+            !e.locked
+          ) {
+            return true;
+          }
+        }
+        break;
+      case Scope.AllObjectsOfThisTypeOnSurface:
+        for (const e of elements) {
+          if (
+            e.type === ObjectType.Polygon &&
+            e.parentId === polygon.parentId &&
+            Util.isIdentical(e.normal, polygon.normal) &&
+            value !== (e as PolygonModel).opacity &&
             !e.locked
           ) {
             return true;
@@ -85,7 +101,7 @@ const RoofOpacityInput = ({ setDialogVisible }: { setDialogVisible: (b: boolean)
         }
         break;
       default:
-        if (value !== roof?.opacity) {
+        if (value !== polygon?.opacity) {
           return true;
         }
         break;
@@ -94,20 +110,20 @@ const RoofOpacityInput = ({ setDialogVisible }: { setDialogVisible: (b: boolean)
   };
 
   const setValue = (value: number) => {
-    if (!roof) return;
+    if (!polygon) return;
     if (!needChange(value)) return;
     switch (actionScope) {
       case Scope.AllObjectsOfThisType:
         const oldValuesAll = new Map<string, number | undefined>();
         for (const e of elements) {
-          if (e.type === ObjectType.Roof && !e.locked) {
-            const roof = e as RoofModel;
-            oldValuesAll.set(e.id, roof.opacity);
-            updateOpacityById(roof.id, value);
+          if (e.type === ObjectType.Polygon && !e.locked) {
+            const polygon = e as PolygonModel;
+            oldValuesAll.set(e.id, polygon.opacity);
+            updateOpacityById(polygon.id, value);
           }
         }
         const undoableChangeAll = {
-          name: 'Set Opacity for All Roofs',
+          name: 'Set Opacity for All Polygons',
           timestamp: Date.now(),
           oldValues: oldValuesAll,
           newValue: value,
@@ -122,21 +138,56 @@ const RoofOpacityInput = ({ setDialogVisible }: { setDialogVisible: (b: boolean)
         setApplyCount(applyCount + 1);
         break;
       case Scope.AllObjectsOfThisTypeAboveFoundation:
-        if (roof.foundationId) {
+        if (polygon.foundationId) {
           const oldValuesAboveFoundation = new Map<string, number | undefined>();
           for (const e of elements) {
-            if (e.type === ObjectType.Roof && e.foundationId === roof.foundationId && !e.locked) {
-              const roof = e as RoofModel;
-              oldValuesAboveFoundation.set(e.id, roof.opacity);
-              updateOpacityById(roof.id, value);
+            if (e.type === ObjectType.Polygon && e.foundationId === polygon.foundationId && !e.locked) {
+              const polygon = e as PolygonModel;
+              oldValuesAboveFoundation.set(e.id, polygon.opacity);
+              updateOpacityById(polygon.id, value);
             }
           }
           const undoableChangeAboveFoundation = {
-            name: 'Set Opacity for All Roofs Above Foundation',
+            name: 'Set Opacity for All Polygons Above Foundation',
             timestamp: Date.now(),
             oldValues: oldValuesAboveFoundation,
             newValue: value,
-            groupId: roof.foundationId,
+            groupId: polygon.foundationId,
+            undo: () => {
+              undoInMap(undoableChangeAboveFoundation.oldValues as Map<string, number>);
+            },
+            redo: () => {
+              updateInMap(
+                undoableChangeAboveFoundation.oldValues as Map<string, number>,
+                undoableChangeAboveFoundation.newValue as number,
+              );
+            },
+          } as UndoableChangeGroup;
+          addUndoable(undoableChangeAboveFoundation);
+          setApplyCount(applyCount + 1);
+        }
+        break;
+      case Scope.AllObjectsOfThisTypeOnSurface:
+        if (polygon.parentId) {
+          const oldValuesOnSurface = new Map<string, number | undefined>();
+          for (const e of elements) {
+            if (
+              e.type === ObjectType.Polygon &&
+              e.parentId === polygon.parentId &&
+              Util.isIdentical(e.normal, polygon.normal) &&
+              !e.locked
+            ) {
+              const polygon = e as PolygonModel;
+              oldValuesOnSurface.set(e.id, polygon.opacity);
+              updateOpacityById(polygon.id, value);
+            }
+          }
+          const undoableChangeAboveFoundation = {
+            name: 'Set Opacity for All Polygons Above Foundation',
+            timestamp: Date.now(),
+            oldValues: oldValuesOnSurface,
+            newValue: value,
+            groupId: polygon.foundationId,
             undo: () => {
               undoInMap(undoableChangeAboveFoundation.oldValues as Map<string, number>);
             },
@@ -152,17 +203,21 @@ const RoofOpacityInput = ({ setDialogVisible }: { setDialogVisible: (b: boolean)
         }
         break;
       default:
-        if (roof) {
-          const updatedRoof = getElementById(roof.id) as RoofModel;
+        if (polygon) {
+          const updatedPolygon = getElementById(polygon.id) as PolygonModel;
           const oldOpacity =
-            updatedRoof.opacity !== undefined ? updatedRoof.opacity : roof.opacity !== undefined ? roof.opacity : 0.5;
+            updatedPolygon.opacity !== undefined
+              ? updatedPolygon.opacity
+              : polygon.opacity !== undefined
+              ? polygon.opacity
+              : 1;
           const undoableChange = {
-            name: 'Set Roof Opacity',
+            name: 'Set Polygon Opacity',
             timestamp: Date.now(),
             oldValue: oldOpacity,
             newValue: value,
-            changedElementId: roof.id,
-            changedElementType: roof.type,
+            changedElementId: polygon.id,
+            changedElementType: polygon.type,
             undo: () => {
               updateOpacityById(undoableChange.changedElementId, undoableChange.oldValue as number);
             },
@@ -171,13 +226,10 @@ const RoofOpacityInput = ({ setDialogVisible }: { setDialogVisible: (b: boolean)
             },
           } as UndoableChange;
           addUndoable(undoableChange);
-          updateOpacityById(roof.id, value);
+          updateOpacityById(polygon.id, value);
           setApplyCount(applyCount + 1);
         }
     }
-    setCommonStore((state) => {
-      state.actionState.roofGlassOpacity = value;
-    });
   };
 
   const onStart = (event: DraggableEvent, uiData: DraggableData) => {
@@ -194,7 +246,7 @@ const RoofOpacityInput = ({ setDialogVisible }: { setDialogVisible: (b: boolean)
   };
 
   const close = () => {
-    setInput(roof.opacity !== undefined ? roof.opacity : 0.5);
+    setInput(polygon.opacity !== undefined ? polygon.opacity : 1);
     setDialogVisible(false);
   };
 
@@ -224,7 +276,7 @@ const RoofOpacityInput = ({ setDialogVisible }: { setDialogVisible: (b: boolean)
             onMouseOver={() => setDragEnabled(true)}
             onMouseOut={() => setDragEnabled(false)}
           >
-            {i18n.t('roofMenu.Opacity', lang)}
+            {i18n.t('polygonMenu.Opacity', lang)}
           </div>
         }
         footer={[
@@ -254,10 +306,10 @@ const RoofOpacityInput = ({ setDialogVisible }: { setDialogVisible: (b: boolean)
               min={0}
               max={1}
               style={{ width: 120 }}
-              step={0.01}
-              precision={2}
+              step={0.1}
+              precision={1}
               value={input}
-              formatter={(a) => Number(a).toFixed(2)}
+              formatter={(a) => Number(a).toFixed(1)}
               onChange={(value) => setInput(value)}
               onPressEnter={handleOk}
             />
@@ -272,11 +324,14 @@ const RoofOpacityInput = ({ setDialogVisible }: { setDialogVisible: (b: boolean)
           >
             <Radio.Group onChange={(e) => setActionScope(e.target.value)} value={actionScope}>
               <Space direction="vertical">
-                <Radio value={Scope.OnlyThisObject}>{i18n.t('roofMenu.OnlyThisRoof', lang)}</Radio>
-                <Radio value={Scope.AllObjectsOfThisTypeAboveFoundation}>
-                  {i18n.t('roofMenu.AllRoofsAboveFoundation', lang)}
+                <Radio value={Scope.OnlyThisObject}>{i18n.t('polygonMenu.OnlyThisPolygon', lang)}</Radio>
+                <Radio value={Scope.AllObjectsOfThisTypeOnSurface}>
+                  {i18n.t('polygonMenu.AllPolygonsOnSurface', lang)}
                 </Radio>
-                <Radio value={Scope.AllObjectsOfThisType}>{i18n.t('roofMenu.AllRoofs', lang)}</Radio>
+                <Radio value={Scope.AllObjectsOfThisTypeAboveFoundation}>
+                  {i18n.t('polygonMenu.AllPolygonsAboveFoundation', lang)}
+                </Radio>
+                <Radio value={Scope.AllObjectsOfThisType}>{i18n.t('polygonMenu.AllPolygons', lang)}</Radio>
               </Space>
             </Radio.Group>
           </Col>
@@ -286,4 +341,4 @@ const RoofOpacityInput = ({ setDialogVisible }: { setDialogVisible: (b: boolean)
   );
 };
 
-export default RoofOpacityInput;
+export default PolygonOpacityInput;

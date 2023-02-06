@@ -9,6 +9,7 @@ import sun_beam_at_center from './examples/sun_beam_at_center.json';
 import solar_panel_types from './examples/solar_panel_types.json';
 import rooftop_solar_panels from './examples/rooftop_solar_panels.json';
 import solar_farm_fixed_array from './examples/solar_farm_fixed_array.json';
+import mickey_mouse_solar_farm from './examples/mickey_mouse_solar_farm.json';
 import solar_farm_hsat_array from './examples/solar_farm_hsat_array.json';
 import solar_farm_aadat_array from './examples/solar_farm_aadat_array.json';
 import solar_noise_barrier from './examples/solar_noise_barrier.json';
@@ -245,6 +246,9 @@ export const getExample = (name: string) => {
       break;
     case 'solar_farm_fixed_array':
       input = solar_farm_fixed_array;
+      break;
+    case 'mickey_mouse_solar_farm':
+      input = mickey_mouse_solar_farm;
       break;
     case 'solar_farm_hsat_array':
       input = solar_farm_hsat_array;

@@ -502,7 +502,7 @@ export class ElementModelFactory {
       studSpacing: actionState.wallStructureSpacing ?? 2,
       studWidth: actionState.wallStructureWidth ?? 0.1,
       studColor: actionState.wallStructureColor ?? '#ffffff',
-      opacity: actionState.wallOpacity ?? 0.5,
+      opacity: actionState.wallOpacity !== undefined ? actionState.wallOpacity : 0.5,
       selected: true,
       lineWidth: 0.2,
       lineColor: '#000000',
@@ -643,7 +643,7 @@ export class ElementModelFactory {
       showLabel: false,
       color: color ?? '#ffffff', // frame color
       tint: tint ?? '#73D8FF', // glass color
-      opacity: opacity ?? 0.5,
+      opacity: opacity !== undefined ? opacity : 0.5,
       uValue: uValue ?? 0.5,
       normal: normal ? normal.toArray() : [0, 0, 1],
       rotation: rotation ? rotation : [0, 0, 0],

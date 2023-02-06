@@ -58,7 +58,7 @@ const SolarPanelLayoutWizard = ({ setDialogVisible }: { setDialogVisible: (b: bo
   const lang = { lng: language };
   const pvModel = getPvModule(pvModelNameRef.current);
   const reference = getSelectedElement();
-  const relativeMargin = 0.01;
+  const relativeMargin = 0.0;
 
   useEffect(() => {
     okButtonRef.current?.focus();
