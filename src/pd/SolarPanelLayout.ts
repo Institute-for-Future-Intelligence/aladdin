@@ -2,16 +2,16 @@
  * @Copyright 2023. Institute for Future Intelligence, Inc.
  */
 
-import { PolygonModel } from './models/PolygonModel';
-import { Util } from './Util';
-import { ObjectType, Orientation, RowAxis } from './types';
-import { ElementModel } from './models/ElementModel';
-import { FoundationModel } from './models/FoundationModel';
-import { Point2 } from './models/Point2';
-import { ElementModelFactory } from './models/ElementModelFactory';
-import { HALF_PI, UNIT_VECTOR_POS_Z } from './constants';
-import { PvModel } from './models/PvModel';
-import { SolarPanelModel } from './models/SolarPanelModel';
+import { PolygonModel } from '../models/PolygonModel';
+import { Util } from '../Util';
+import { ObjectType, Orientation, RowAxis } from '../types';
+import { ElementModel } from '../models/ElementModel';
+import { FoundationModel } from '../models/FoundationModel';
+import { Point2 } from '../models/Point2';
+import { ElementModelFactory } from '../models/ElementModelFactory';
+import { HALF_PI, UNIT_VECTOR_POS_Z } from '../constants';
+import { PvModel } from '../models/PvModel';
+import { SolarPanelModel } from '../models/SolarPanelModel';
 
 export class SolarPanelLayout {
   static create(
@@ -92,39 +92,80 @@ export class SolarPanelLayout {
       for (let i = 0; i <= n; i++) {
         const cy = start + i * delta;
         a.y = b.y = cy - h;
-        const p1 = Util.polygonIntersections(a, b, area.vertices);
+        const p1 = Util.polygonIntersections(a, b, area.vertices).sort((a, b) => a.x - b.x);
         a.y = b.y = cy + h;
-        const p2 = Util.polygonIntersections(a, b, area.vertices);
-        if (p1.length > 1 && p2.length > 1) {
-          const test = Math.abs(p1[0].x - p1[1].x) < Math.abs(p2[0].x - p2[1].x);
-          let x1 = test ? p1[0].x : p2[0].x;
-          let x2 = test ? p1[1].x : p2[1].x;
-          const lx = Math.abs(x1 - x2) - 2 * relativeMargin;
-          if (lx > 0) {
-            const panel = ElementModelFactory.makeSolarPanel(
+        const p2 = Util.polygonIntersections(a, b, area.vertices).sort((a, b) => a.x - b.x);
+        const numberOfSegments = Math.max(p1.length, p2.length) / 2;
+        if (numberOfSegments > 0) {
+          for (let s = 0; s < numberOfSegments; s++) {
+            const t = s * 2;
+            const panel = SolarPanelLayout.makeSegment(
+              p1[t] ?? p2[t],
+              p1[t + 1] ?? p2[t + 1],
+              p2[t] ?? p1[t],
+              p2[t + 1] ?? p1[t + 1],
+              rotation,
+              cy,
+              ly,
               foundation,
               pvModel,
-              (x1 + x2) / 2,
-              cy,
-              foundation.lz,
-              Orientation.portrait,
+              tiltAngle,
               poleHeight,
               poleSpacing,
-              tiltAngle,
-              0,
-              UNIT_VECTOR_POS_Z,
-              rotation,
-              undefined,
-              lx * foundation.lx,
-              ly,
+              relativeMargin,
             );
-            panel.referenceId = area.id;
-            Util.changeOrientation(panel, pvModel, orientation);
-            solarPanels.push(panel);
+            if (panel) {
+              panel.referenceId = area.id;
+              Util.changeOrientation(panel, pvModel, orientation);
+              solarPanels.push(panel);
+            }
           }
         }
       }
     }
     return solarPanels;
+  }
+
+  // p1 and q1 are the end points of the lower line of this segment
+  // p2 and q2 are the end points of the upper line of this segment
+  static makeSegment(
+    p1: Point2,
+    q1: Point2,
+    p2: Point2,
+    q2: Point2,
+    rotation: number[] | undefined,
+    cy: number,
+    ly: number,
+    foundation: FoundationModel,
+    pvModel: PvModel,
+    tiltAngle: number,
+    poleHeight: number,
+    poleSpacing: number,
+    relativeMargin: number,
+  ) {
+    const test = Math.abs(p1.x - q1.x) < Math.abs(p2.x - q2.x);
+    const x1 = test ? p1.x : p2.x;
+    const x2 = test ? q1.x : q2.x;
+    const lx = Math.abs(x1 - x2) - 2 * relativeMargin;
+    if (lx > 0) {
+      return ElementModelFactory.makeSolarPanel(
+        foundation,
+        pvModel,
+        (x1 + x2) / 2,
+        cy,
+        foundation.lz,
+        Orientation.portrait,
+        poleHeight,
+        poleSpacing,
+        tiltAngle,
+        0,
+        UNIT_VECTOR_POS_Z,
+        rotation,
+        undefined,
+        lx * foundation.lx,
+        ly,
+      );
+    }
+    return undefined;
   }
 }

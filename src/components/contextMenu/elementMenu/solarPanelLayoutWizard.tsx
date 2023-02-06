@@ -15,7 +15,7 @@ import { UndoableLayout } from '../../../undo/UndoableLayout';
 import { ElementModel } from '../../../models/ElementModel';
 import { showError } from '../../../helpers';
 import { SolarPanelArrayLayoutParams } from '../../../stores/SolarPanelArrayLayoutParams';
-import { SolarPanelLayout } from '../../../SolarPanelLayout';
+import { SolarPanelLayout } from '../../../pd/SolarPanelLayout';
 
 const { Option } = Select;
 

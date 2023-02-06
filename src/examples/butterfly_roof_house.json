@@ -1,7 +1,7 @@
 {
-  "docid": "6bs3pvd5ZZrEPvtBhsQ8TK",
-  "time": "02/04/2023 12:32 pm",
-  "timestamp": 1675531937853,
+  "docid": "xnYaNWQp32TgAydDKsysGZ",
+  "time": "02/05/2023 03:12 pm",
+  "timestamp": 1675627948353,
   "userid": "QWecNcxhyvP6j6sBN11hBsfZDau1",
   "owner": null,
   "email": null,
@@ -179,7 +179,7 @@
       "locked": false,
       "fill": "Full",
       "unfilledHeight": 0.5,
-      "eavesLength": 1
+      "eavesLength": 0.5
     },
     {
       "type": "Wall",
@@ -237,7 +237,7 @@
       "locked": false,
       "fill": "Full",
       "unfilledHeight": 0.5,
-      "eavesLength": 1
+      "eavesLength": 0.5
     },
     {
       "type": "Foundation",
@@ -1684,16 +1684,16 @@
       "poleHeight": 1,
       "poleRadius": 0.05,
       "poleSpacing": 3,
-      "cx": 0.025986985042767287,
-      "cy": 0.11079514014514832,
-      "cz": 7.885731872523452,
-      "lx": 7.79,
+      "cx": 0.02669213223982052,
+      "cy": 0.08291430106063127,
+      "cz": 7.726383258156051,
+      "lx": 6.232,
       "ly": 8.368,
       "lz": 0.046,
       "showLabel": false,
       "normal": [
         0,
-        -0.25845958908136635,
+        -0.2584595890813664,
         0.9660220705614811
       ],
       "rotation": [
@@ -1716,14 +1716,14 @@
       "color": "#fe9200",
       "cx": 0.05226827991600305,
       "cy": -0.11746474188720647,
-      "cz": 6.5811476130673565,
+      "cz": 6.581147613067356,
       "lx": 0.16,
       "ly": 0.16,
       "lz": 0.08,
       "showLabel": false,
       "normal": [
         0,
-        -0.25845958908136635,
+        -0.2584595890813664,
         0.9660220705614811
       ],
       "rotation": [
@@ -1751,7 +1751,7 @@
       "lz": 0.08,
       "showLabel": false,
       "normal": [
-        -5.510628883078975e-17,
+        -6.262269137366339e-17,
         -0.2584595890813664,
         0.9660220705614811
       ],
@@ -1808,7 +1808,7 @@
       "lz": 0.08,
       "showLabel": false,
       "normal": [
-        -5.510628883078975e-17,
+        -6.262269137366339e-17,
         -0.2584595890813664,
         0.9660220705614811
       ],
@@ -1853,9 +1853,9 @@
     "dailyHeliostatYieldPanelX": 0,
     "showDailyParabolicDishYieldPanel": false,
     "cameraPosition": [
-      18.666315208595826,
-      1.5733632503872264,
-      5.925571220819373
+      19.66411101746247,
+      2.319728376255528,
+      6.745159151214622
     ],
     "showYearlyHeliostatYieldPanel": false,
     "orthographic": false,
