@@ -757,6 +757,7 @@ export const i18n_tr = {
       SolarPanelArrayRowAxis: 'Dizi Sıra Ekseni',
       SolarPanelArrayZonalRowAxis: 'Bölgesel (Doğu-Batı)',
       SolarPanelArrayMeridionalRowAxis: 'Meridyen (Kuzey-Güney)',
+      SolarPanelArrayMargin: 'Margin',
       SolarPanelArrayPoleHeight: 'Direk Yükseklik',
       SolarPanelArrayPoleSpacing: 'Direk Aralık',
       LayoutNotAcceptedCheckYourParameters: 'Bu yerleşim düzeni uygulanamaz. Lütfen parametrelerinizi kontrol edin.',

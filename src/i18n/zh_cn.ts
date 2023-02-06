@@ -734,6 +734,7 @@ export const i18n_zh_cn = {
       SolarPanelArrayRowAxis: '行轴方向',
       SolarPanelArrayZonalRowAxis: '纬线方向(东西向)',
       SolarPanelArrayMeridionalRowAxis: '经线方向(南北向)',
+      SolarPanelArrayMargin: '边缘余地',
       SolarPanelArrayPoleHeight: '支架高度',
       SolarPanelArrayPoleSpacing: '支柱间隔',
       LayoutNotAcceptedCheckYourParameters: '恕不能采用此布局。请检查您的参数设置。',

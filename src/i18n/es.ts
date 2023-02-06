@@ -757,6 +757,7 @@ export const i18n_es = {
       SolarPanelArrayRowAxis: 'Row Axis',
       SolarPanelArrayZonalRowAxis: 'Zonal (East-West)',
       SolarPanelArrayMeridionalRowAxis: 'Meridional (North-South)',
+      SolarPanelArrayMargin: 'Margin',
       SolarPanelArrayPoleHeight: 'Pole Height',
       SolarPanelArrayPoleSpacing: 'Pole Spacing',
       LayoutNotAcceptedCheckYourParameters: 'This layout is not accepted. Please check your parameters.',

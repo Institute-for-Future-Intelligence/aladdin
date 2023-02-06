@@ -25,7 +25,7 @@ export class SolarPanelLayout {
     rowAxis: RowAxis,
     poleHeight: number,
     poleSpacing: number,
-    relativeMargin: number,
+    margin: number,
   ): SolarPanelModel[] {
     if (base.type !== ObjectType.Foundation) throw new Error('base must be a foundation');
     const foundation = base as FoundationModel;
@@ -39,7 +39,7 @@ export class SolarPanelLayout {
     if (rowAxis === RowAxis.meridional) {
       // north-south axis, so the array is laid in x direction
       n = Math.floor(((bounds.maxX() - bounds.minX()) * foundation.lx - ly) / interRowSpacing);
-      start = bounds.minX() + ly / (2 * foundation.lx);
+      start = bounds.minX() + ly / (2 * foundation.lx) + margin / foundation.lx;
       delta = interRowSpacing / foundation.lx;
       h /= foundation.lx;
       let a: Point2 = { x: 0, y: -0.5 } as Point2;
@@ -55,7 +55,7 @@ export class SolarPanelLayout {
           const test = Math.abs(p1[0].y - p1[1].y) < Math.abs(p2[0].y - p2[1].y);
           let y1 = test ? p1[0].y : p2[0].y;
           let y2 = test ? p1[1].y : p2[1].y;
-          const lx = Math.abs(y1 - y2) - 2 * relativeMargin;
+          const lx = Math.abs(y1 - y2) - (2 * margin) / foundation.ly;
           if (lx > 0) {
             const panel = ElementModelFactory.makeSolarPanel(
               foundation,
@@ -82,8 +82,8 @@ export class SolarPanelLayout {
       }
     } else {
       // east-west axis, so the array is laid in y direction
-      n = Math.floor(((bounds.maxY() - bounds.minY()) * foundation.ly - ly) / interRowSpacing);
-      start = bounds.minY() + ly / (2 * foundation.ly) + relativeMargin;
+      n = Math.floor(((bounds.maxY() - bounds.minY()) * foundation.ly - 2 * margin - ly) / interRowSpacing);
+      start = bounds.minY() + ly / (2 * foundation.ly) + margin / foundation.ly;
       delta = interRowSpacing / foundation.ly;
       h /= foundation.ly;
       let a: Point2 = { x: -0.5, y: 0 } as Point2;
@@ -112,7 +112,7 @@ export class SolarPanelLayout {
               tiltAngle,
               poleHeight,
               poleSpacing,
-              relativeMargin,
+              margin,
             );
             if (panel) {
               panel.referenceId = area.id;
@@ -141,12 +141,12 @@ export class SolarPanelLayout {
     tiltAngle: number,
     poleHeight: number,
     poleSpacing: number,
-    relativeMargin: number,
+    margin: number,
   ) {
     const test = Math.abs(p1.x - q1.x) < Math.abs(p2.x - q2.x);
     const x1 = test ? p1.x : p2.x;
     const x2 = test ? q1.x : q2.x;
-    const lx = Math.abs(x1 - x2) - 2 * relativeMargin;
+    const lx = Math.abs(x1 - x2) - (2 * margin) / foundation.lx;
     if (lx > 0) {
       return ElementModelFactory.makeSolarPanel(
         foundation,

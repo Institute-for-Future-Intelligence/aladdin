@@ -1,5 +1,5 @@
 /*
- * @Copyright 2021-2022. Institute for Future Intelligence, Inc.
+ * @Copyright 2021-2023. Institute for Future Intelligence, Inc.
  */
 
 import { SolarPanelArrayLayoutParams } from './SolarPanelArrayLayoutParams';
@@ -18,6 +18,7 @@ export class DefaultSolarPanelArrayLayoutParams implements SolarPanelArrayLayout
   interRowSpacing: number;
   poleHeight: number;
   poleSpacing: number;
+  margin?: number;
 
   constructor() {
     this.pvModelName = 'CS6X-355P-FG';

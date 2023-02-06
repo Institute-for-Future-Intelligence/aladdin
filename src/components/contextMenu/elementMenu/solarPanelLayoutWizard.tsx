@@ -52,13 +52,13 @@ const SolarPanelLayoutWizard = ({ setDialogVisible }: { setDialogVisible: (b: bo
   const tiltAngleRef = useRef<number>(useStore(Selector.solarPanelArrayLayoutParams.tiltAngle));
   const rowsPerRackRef = useRef<number>(useStore(Selector.solarPanelArrayLayoutParams.rowWidth));
   const interRowSpacingRef = useRef<number>(useStore(Selector.solarPanelArrayLayoutParams.interRowSpacing));
+  const marginRef = useRef<number>(useStore(Selector.solarPanelArrayLayoutParams.margin) ?? 0);
   const poleHeightRef = useRef<number>(useStore(Selector.solarPanelArrayLayoutParams.poleHeight));
   const poleSpacingRef = useRef<number>(useStore(Selector.solarPanelArrayLayoutParams.poleSpacing));
 
   const lang = { lng: language };
   const pvModel = getPvModule(pvModelNameRef.current);
   const reference = getSelectedElement();
-  const relativeMargin = 0.0;
 
   useEffect(() => {
     okButtonRef.current?.focus();
@@ -132,7 +132,7 @@ const SolarPanelLayoutWizard = ({ setDialogVisible }: { setDialogVisible: (b: bo
           rowAxisRef.current,
           poleHeightRef.current,
           poleSpacingRef.current,
-          relativeMargin,
+          marginRef.current,
         );
         if (solarPanels.length > 0) {
           for (const panel of solarPanels) {
@@ -155,6 +155,7 @@ const SolarPanelLayoutWizard = ({ setDialogVisible }: { setDialogVisible: (b: bo
               interRowSpacing: solarPanelArrayLayoutParams.interRowSpacing,
               poleHeight: solarPanelArrayLayoutParams.poleHeight,
               poleSpacing: solarPanelArrayLayoutParams.poleSpacing,
+              margin: solarPanelArrayLayoutParams.margin,
             } as SolarPanelArrayLayoutParams,
             newParams: {
               pvModelName: pvModelNameRef.current,
@@ -165,6 +166,7 @@ const SolarPanelLayoutWizard = ({ setDialogVisible }: { setDialogVisible: (b: bo
               interRowSpacing: interRowSpacingRef.current,
               poleHeight: poleHeightRef.current,
               poleSpacing: poleSpacingRef.current,
+              margin: marginRef.current,
             } as SolarPanelArrayLayoutParams,
             referenceId: reference.id,
             undo: () => {
@@ -210,6 +212,7 @@ const SolarPanelLayoutWizard = ({ setDialogVisible }: { setDialogVisible: (b: bo
     interRowSpacingRef.current = params.interRowSpacing;
     poleHeightRef.current = params.poleHeight;
     poleSpacingRef.current = params.poleSpacing;
+    marginRef.current = params.margin ?? 0;
   };
 
   // save the values in the common store so that they can be retrieved
@@ -223,6 +226,7 @@ const SolarPanelLayoutWizard = ({ setDialogVisible }: { setDialogVisible: (b: bo
       state.solarPanelArrayLayoutParams.interRowSpacing = interRowSpacingRef.current;
       state.solarPanelArrayLayoutParams.poleHeight = poleHeightRef.current;
       state.solarPanelArrayLayoutParams.poleSpacing = poleSpacingRef.current;
+      state.solarPanelArrayLayoutParams.margin = marginRef.current;
     });
   };
 
@@ -482,6 +486,30 @@ const SolarPanelLayoutWizard = ({ setDialogVisible }: { setDialogVisible: (b: bo
               step={0.5}
               onChange={(value) => {
                 interRowSpacingRef.current = value;
+                changedRef.current = true;
+                setUpdateFlag(!updateFlag);
+              }}
+            />
+          </Col>
+        </Row>
+
+        <Row gutter={6} style={{ paddingBottom: '4px' }}>
+          <Col className="gutter-row" span={14}>
+            {i18n.t('polygonMenu.SolarPanelArrayMargin', lang) +
+              ' ([0, 5] ' +
+              i18n.t('word.MeterAbbreviation', lang) +
+              '): '}
+          </Col>
+          <Col className="gutter-row" span={10}>
+            <InputNumber
+              min={0}
+              max={5}
+              style={{ width: '100%' }}
+              precision={1}
+              value={marginRef.current}
+              step={0.1}
+              onChange={(value) => {
+                marginRef.current = value;
                 changedRef.current = true;
                 setUpdateFlag(!updateFlag);
               }}
