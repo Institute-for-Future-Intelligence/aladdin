@@ -45,8 +45,6 @@ export const useSolarPanelTexture = (
   customizedFrameColor: string | undefined,
   customizedBacksheetColor: string | undefined,
 ) => {
-  const { invalidate } = useThree();
-
   const frameColor =
     customizedFrameColor ??
     (pvModel?.color === 'Black' && pvModel?.cellType === 'Monocrystalline' ? 'silver' : 'white');
@@ -71,8 +69,7 @@ export const useSolarPanelTexture = (
       const ny = Math.max(1, Math.round(ly / (orientation === Orientation.landscape ? width : length)));
       canvasTexture.repeat.set(nx, ny);
       canvasTexture.wrapS = canvasTexture.wrapT = RepeatWrapping;
-      setTexture(canvasTexture);
-      invalidate();
+      setTexture(canvasTexture.clone());
     }
   }, [canvasTexture, lx, ly]);
 
