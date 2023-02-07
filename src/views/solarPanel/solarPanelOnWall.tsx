@@ -33,6 +33,7 @@ import { FoundationModel } from 'src/models/FoundationModel';
 import { UndoableChange } from 'src/undo/UndoableChange';
 import { useSolarPanelHeatmapTexture, useSolarPanelTexture } from './hooks';
 import { usePrimitiveStore } from '../../stores/commonPrimitive';
+import { PvModel } from 'src/models/PvModel';
 
 interface SumbeamProps {
   drawSunbeam: boolean;
@@ -364,9 +365,9 @@ const SolarPanelOnWall = ({
   const solarPanelShininess = useStore(Selector.viewState.solarPanelShininess);
   const getElementById = useStore(Selector.getElementById);
   const selectMe = useStore(Selector.selectMe);
-  const getPvModule = useStore(Selector.getPvModule);
   const resizeHandleType = useStore(Selector.resizeHandleType);
   const orthographic = useStore(Selector.viewState.orthographic) ?? false;
+  const pvModules = useStore(Selector.pvModules);
 
   const { camera, gl } = useThree();
 
@@ -386,7 +387,7 @@ const SolarPanelOnWall = ({
   const ray = useMemo(() => new Raycaster(), []);
   const mouse = useMemo(() => new Vector2(), []);
 
-  const pvModel = getPvModule(pvModelName);
+  const pvModel = pvModules[pvModelName] as PvModel;
 
   if (pvModel) {
     lz = pvModel.thickness;

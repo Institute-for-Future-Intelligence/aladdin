@@ -44,6 +44,7 @@ import i18n from '../../i18n/i18n';
 import { LineData } from '../LineData';
 import { useSolarPanelHeatmapTexture, useSolarPanelTexture } from './hooks';
 import { usePrimitiveStore } from '../../stores/commonPrimitive';
+import { PvModel } from 'src/models/PvModel';
 
 const SolarPanel = ({
   id,
@@ -83,12 +84,12 @@ const SolarPanel = ({
   const getElementById = useStore(Selector.getElementById);
   const selectMe = useStore(Selector.selectMe);
   const updateSolarPanelTiltAngleById = useStore(Selector.updateSolarPanelTiltAngleById);
-  const getPvModule = useStore(Selector.getPvModule);
   const sceneRadius = useStore(Selector.sceneRadius);
   const resizeHandleType = useStore(Selector.resizeHandleType);
   const rotateHandleType = useStore(Selector.rotateHandleType);
   const addUndoable = useStore(Selector.addUndoable);
   const orthographic = useStore(Selector.viewState.orthographic) ?? false;
+  const pvModules = useStore(Selector.pvModules);
 
   const {
     gl: { domElement },
@@ -113,7 +114,7 @@ const SolarPanel = ({
 
   const sunBeamLength = Math.max(100, 10 * sceneRadius);
   const panelNormal = new Vector3().fromArray(normal);
-  const pvModel = getPvModule(pvModelName);
+  const pvModel = pvModules[pvModelName] as PvModel;
   const lang = { lng: language };
 
   // be sure to get the updated parent so that this memorized element can move with it

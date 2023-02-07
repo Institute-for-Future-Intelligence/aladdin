@@ -39,6 +39,7 @@ import i18n from 'src/i18n/i18n';
 import { RoofUtil } from '../roof/RoofUtil';
 import { useSolarPanelHeatmapTexture, useSolarPanelTexture } from './hooks';
 import { usePrimitiveStore } from '../../stores/commonPrimitive';
+import { PvModel } from 'src/models/PvModel';
 
 interface MoveHandleProps {
   id: string;
@@ -468,14 +469,14 @@ const SolarPanelOnRoof = ({
 }: SolarPanelModel) => {
   const setCommonStore = useStore(Selector.set);
   const selectMe = useStore(Selector.selectMe);
-  const getPvModule = useStore(Selector.getPvModule);
   const getElementById = useStore(Selector.getElementById);
   const showSolarRadiationHeatmap = usePrimitiveStore(Selector.showSolarRadiationHeatmap);
   const shadowEnabled = useStore(Selector.viewState.shadowEnabled);
   const solarPanelShininess = useStore(Selector.viewState.solarPanelShininess);
   const orthographic = useStore(Selector.viewState.orthographic) ?? false;
+  const pvModules = useStore(Selector.pvModules);
 
-  const pvModel = getPvModule(pvModelName);
+  const pvModel = pvModules[pvModelName] as PvModel;
   if (pvModel) {
     lz = pvModel.thickness;
   }

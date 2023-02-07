@@ -45,7 +45,6 @@ export const useSolarPanelTexture = (
   customizedFrameColor: string | undefined,
   customizedBacksheetColor: string | undefined,
 ) => {
-  const [texture, setTexture] = useState<CanvasTexture | null>(null);
   const { invalidate } = useThree();
 
   const frameColor =
@@ -62,6 +61,8 @@ export const useSolarPanelTexture = (
       return drawSolarPanelCanvasTexture(cellType, length, width, m, n, color, frameColor, backsheetColor);
     }
   }, [pvModel, orientation, frameColor]);
+
+  const [texture, setTexture] = useState<CanvasTexture | null>(canvasTexture);
 
   useEffect(() => {
     if (canvasTexture && pvModel) {
