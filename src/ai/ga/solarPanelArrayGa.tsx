@@ -69,15 +69,20 @@ const SolarPanelArrayGa = () => {
           showInfo(i18n.t('message.EvolutionAborted', lang));
           usePrimitiveStore.setState((state) => {
             state.evolutionInProgress = false;
+            state.runDailySimulationForSolarPanels = false;
+            state.runYearlySimulationForSolarPanels = false;
           });
-          // revert to the initial solar panel array
-          if (solarPanelArrayRef.current.length > 0) {
-            removeElementsByReferenceId(polygon.id, false);
-          }
-          if (initialSolarPanelArrayRef.current.length > 0) {
-            solarPanelArrayRef.current = [...initialSolarPanelArrayRef.current];
-            runCallback(true);
-          }
+          // this may put the function call to the last in the event queue
+          setTimeout(() => {
+            // revert to the initial solar panel array
+            if (solarPanelArrayRef.current.length > 0) {
+              removeElementsByReferenceId(polygon.id, false);
+            }
+            if (initialSolarPanelArrayRef.current.length > 0) {
+              solarPanelArrayRef.current = [...initialSolarPanelArrayRef.current];
+              runCallback(true);
+            }
+          }, 10);
         }
       };
     }

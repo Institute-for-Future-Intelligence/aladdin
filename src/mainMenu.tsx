@@ -217,6 +217,7 @@ const MainMenu = ({ viewOnly, set2DView, resetView, zoomView, canvas }: MainMenu
               state.loadingFile = true;
             });
             // give it a brief moment for this modal to close
+            // this may also put the function call to the last in the event queue
             setTimeout(() => {
               importContent(input);
             }, 10);
@@ -228,7 +229,8 @@ const MainMenu = ({ viewOnly, set2DView, resetView, zoomView, canvas }: MainMenu
         setCommonStore((state) => {
           state.loadingFile = true;
         });
-        // give it a bried moment for the loading spinner to show
+        // give it a brief moment for the loading spinner to show
+        // this may also put the function call to the last in the event queue
         setTimeout(() => {
           importContent(input);
         }, 10);

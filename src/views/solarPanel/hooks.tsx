@@ -70,7 +70,7 @@ export const useSolarPanelTexture = (
       canvasTexture.wrapS = canvasTexture.wrapT = RepeatWrapping;
       setTexture(canvasTexture.clone());
     }
-  }, [canvasTexture, lx, ly, orientation, pvModel]);
+  }, [canvasTexture, lx, ly]);
 
   return texture;
 };
