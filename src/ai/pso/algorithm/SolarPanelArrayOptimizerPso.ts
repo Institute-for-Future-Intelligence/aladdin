@@ -38,6 +38,7 @@ export class SolarPanelArrayOptimizerPso extends OptimizerPso {
   maximumRowsPerRack: number = 6;
   minimumTiltAngle: number = -HALF_PI;
   maximumTiltAngle: number = HALF_PI;
+  margin: number = 0;
 
   constructor(
     pvModel: PvModel,
@@ -61,6 +62,7 @@ export class SolarPanelArrayOptimizerPso extends OptimizerPso {
     maximumRowsPerRack: number,
     minimumTiltAngle: number,
     maximumTiltAngle: number,
+    margin: number,
   ) {
     super(
       foundation,
@@ -85,6 +87,7 @@ export class SolarPanelArrayOptimizerPso extends OptimizerPso {
     this.maximumRowsPerRack = maximumRowsPerRack;
     this.minimumTiltAngle = minimumTiltAngle;
     this.maximumTiltAngle = maximumTiltAngle;
+    this.margin = margin;
     this.setInterRowSpacingBounds();
     // set the first particle to be the current design, if any
     if (initialSolarPanels && initialSolarPanels.length > 0) {

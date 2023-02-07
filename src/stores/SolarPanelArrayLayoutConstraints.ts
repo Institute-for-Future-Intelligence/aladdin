@@ -1,5 +1,5 @@
 /*
- * @Copyright 2022. Institute for Future Intelligence, Inc.
+ * @Copyright 2022-2023. Institute for Future Intelligence, Inc.
  */
 
 import { Orientation, RowAxis } from '../types';
@@ -16,4 +16,5 @@ export interface SolarPanelArrayLayoutConstraints {
   orientation: Orientation;
   pvModelName: string;
   rowAxis: RowAxis;
+  margin?: number;
 }

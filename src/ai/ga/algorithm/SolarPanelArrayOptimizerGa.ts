@@ -1,5 +1,5 @@
 /*
- * @Copyright 2022. Institute for Future Intelligence, Inc.
+ * @Copyright 2022-2023. Institute for Future Intelligence, Inc.
  *
  * The chromosome of an individual solar panel array has three genes:
  * tilt angle (a), inter-row spacing (d), panel row number on rack (r)
@@ -44,6 +44,7 @@ export class SolarPanelArrayOptimizerGa extends OptimizerGa {
   maximumRowsPerRack: number = 6;
   minimumTiltAngle: number = -HALF_PI;
   maximumTiltAngle: number = HALF_PI;
+  margin: number = 0;
 
   constructor(
     pvModel: PvModel,
@@ -67,6 +68,7 @@ export class SolarPanelArrayOptimizerGa extends OptimizerGa {
     maximumRowsPerRack: number,
     minimumTiltAngle: number,
     maximumTiltAngle: number,
+    margin: number,
   ) {
     super(
       foundation,
@@ -91,6 +93,7 @@ export class SolarPanelArrayOptimizerGa extends OptimizerGa {
     this.maximumRowsPerRack = maximumRowsPerRack;
     this.minimumTiltAngle = minimumTiltAngle;
     this.maximumTiltAngle = maximumTiltAngle;
+    this.margin = margin;
     this.setInterRowSpacingBounds();
     this.geneNames[0] = 'Tilt Angle';
     this.geneNames[1] = 'Inter-Row Spacing';

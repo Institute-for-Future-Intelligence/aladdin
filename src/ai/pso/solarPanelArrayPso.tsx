@@ -138,6 +138,7 @@ const SolarPanelArrayPso = () => {
       constraints.maximumRowsPerRack,
       constraints.minimumTiltAngle,
       constraints.maximumTiltAngle,
+      constraints.margin ?? 0,
     );
     optimizerRef.current.inertia = params.inertia;
     optimizerRef.current.cognitiveCoefficient = params.cognitiveCoefficient;

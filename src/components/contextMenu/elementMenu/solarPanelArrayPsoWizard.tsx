@@ -95,6 +95,7 @@ const SolarPanelArrayPsoWizard = ({ setDialogVisible }: { setDialogVisible: (b: 
       ? originalSolarPanels[0].poleSpacing
       : constraints.poleSpacing ?? 3,
   );
+  const marginRef = useRef<number>(constraints.margin ?? 0);
 
   const onStart = (event: DraggableEvent, uiData: DraggableData) => {
     if (dragRef.current) {
@@ -139,6 +140,7 @@ const SolarPanelArrayPsoWizard = ({ setDialogVisible }: { setDialogVisible: (b: 
       state.solarPanelArrayLayoutConstraints.pvModelName = pvModelNameRef.current;
       state.solarPanelArrayLayoutConstraints.rowAxis = rowAxisRef.current;
       state.solarPanelArrayLayoutConstraints.orientation = orientationRef.current;
+      state.solarPanelArrayLayoutConstraints.margin = marginRef.current;
     });
   };
 
@@ -718,6 +720,63 @@ const SolarPanelArrayPsoWizard = ({ setDialogVisible }: { setDialogVisible: (b: 
                     {i18n.t('solarPanelMenu.Landscape', lang)}
                   </Option>
                 </Select>
+              </Col>
+            </Row>
+
+            <Row gutter={6} style={{ paddingBottom: '0px', paddingTop: '12px' }}>
+              <Col className="gutter-row" span={12}>
+                {i18n.t('polygonMenu.SolarPanelArrayMargin', lang) + ':'}
+              </Col>
+              <Col className="gutter-row" span={12}>
+                <Slider
+                  style={{ paddingBottom: 0, paddingTop: 0, marginTop: '16px', marginBottom: '16px' }}
+                  onChange={(value) => {
+                    marginRef.current = value;
+                    setUpdateFlag(!updateFlag);
+                  }}
+                  min={0}
+                  max={5}
+                  step={0.1}
+                  defaultValue={marginRef.current}
+                  marks={{
+                    0: {
+                      style: {
+                        fontSize: '10px',
+                      },
+                      label: '0m',
+                    },
+                    1: {
+                      style: {
+                        fontSize: '10px',
+                      },
+                      label: '1m',
+                    },
+                    2: {
+                      style: {
+                        fontSize: '10px',
+                      },
+                      label: '2m',
+                    },
+                    3: {
+                      style: {
+                        fontSize: '10px',
+                      },
+                      label: '3m',
+                    },
+                    4: {
+                      style: {
+                        fontSize: '10px',
+                      },
+                      label: '4m',
+                    },
+                    5: {
+                      style: {
+                        fontSize: '10px',
+                      },
+                      label: '5m',
+                    },
+                  }}
+                />
               </Col>
             </Row>
 

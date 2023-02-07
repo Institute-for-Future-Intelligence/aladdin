@@ -1,5 +1,5 @@
 /*
- * @Copyright 2022. Institute for Future Intelligence, Inc.
+ * @Copyright 2022-2023. Institute for Future Intelligence, Inc.
  */
 
 import { SolarPanelArrayLayoutConstraints } from './SolarPanelArrayLayoutConstraints';
@@ -22,6 +22,7 @@ export class DefaultSolarPanelArrayLayoutConstraints implements SolarPanelArrayL
   orientation: Orientation;
   pvModelName: string;
   rowAxis: RowAxis;
+  margin?: number;
 
   constructor() {
     this.minimumInterRowSpacing = 2;

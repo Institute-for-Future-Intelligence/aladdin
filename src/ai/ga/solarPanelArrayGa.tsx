@@ -138,6 +138,7 @@ const SolarPanelArrayGa = () => {
       constraints.maximumRowsPerRack,
       constraints.minimumTiltAngle,
       constraints.maximumTiltAngle,
+      constraints.margin ?? 0,
     );
     optimizerRef.current.selectionRate = params.selectionRate;
     optimizerRef.current.crossoverRate = params.crossoverRate;
