@@ -2,7 +2,6 @@
  * @Copyright 2022-2023. Institute for Future Intelligence, Inc.
  */
 
-import { useThree } from '@react-three/fiber';
 import { useEffect, useMemo, useState } from 'react';
 import {
   GAP_PERCENT,
@@ -58,7 +57,7 @@ export const useSolarPanelTexture = (
     } else {
       return drawSolarPanelCanvasTexture(cellType, length, width, m, n, color, frameColor, backsheetColor);
     }
-  }, [pvModel, orientation, frameColor]);
+  }, [pvModel, orientation, frameColor, backsheetColor]);
 
   const [texture, setTexture] = useState<CanvasTexture | null>(canvasTexture);
 
@@ -71,7 +70,7 @@ export const useSolarPanelTexture = (
       canvasTexture.wrapS = canvasTexture.wrapT = RepeatWrapping;
       setTexture(canvasTexture.clone());
     }
-  }, [canvasTexture, lx, ly]);
+  }, [canvasTexture, lx, ly, orientation, pvModel]);
 
   return texture;
 };
