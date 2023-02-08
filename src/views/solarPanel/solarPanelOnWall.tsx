@@ -511,7 +511,7 @@ const SolarPanelOnWall = ({
 
   const tiltHandlePointerUp = () => {
     const sp = getElementById(id) as SolarPanelModel;
-    if (sp && oldTiltRef.current && Math.abs(sp.tiltAngle - oldTiltRef.current) > ZERO_TOLERANCE) {
+    if (sp && oldTiltRef.current !== null && Math.abs(sp.tiltAngle - oldTiltRef.current) > ZERO_TOLERANCE) {
       const undoableChange = {
         name: 'Set Solar Panel Tilt Angle',
         timestamp: Date.now(),
