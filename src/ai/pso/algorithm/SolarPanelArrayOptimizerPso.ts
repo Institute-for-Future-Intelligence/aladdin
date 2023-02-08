@@ -1,5 +1,5 @@
 /*
- * @Copyright 2022. Institute for Future Intelligence, Inc.
+ * @Copyright 2022-2023. Institute for Future Intelligence, Inc.
  *
  * The chromosome of an individual solar panel array has three genes:
  * tilt angle (a), inter-row spacing (d), panel row number on rack (r)
@@ -9,15 +9,14 @@
 import { OptimizerPso } from './OptimizerPso';
 import { FoundationModel } from '../../../models/FoundationModel';
 import { ObjectiveFunctionType, Orientation, RowAxis, SearchMethod } from '../../../types';
-import { HALF_PI, UNIT_VECTOR_POS_Z } from '../../../constants';
+import { HALF_PI } from '../../../constants';
 import { Util } from '../../../Util';
 import { PolygonModel } from '../../../models/PolygonModel';
 import { SolarPanelModel } from '../../../models/SolarPanelModel';
 import { PvModel } from '../../../models/PvModel';
-import { Point2 } from '../../../models/Point2';
-import { ElementModelFactory } from '../../../models/ElementModelFactory';
 import { Rectangle } from '../../../models/Rectangle';
 import { Particle } from './Particle';
+import { SolarPanelLayout } from '../../../pd/SolarPanelLayout';
 
 export class SolarPanelArrayOptimizerPso extends OptimizerPso {
   polygon: PolygonModel;
@@ -188,115 +187,31 @@ export class SolarPanelArrayOptimizerPso extends OptimizerPso {
 
   // translate position to structure for the specified position
   private translatePosition(position: number[]): SolarPanelModel[] {
+    if (!this.bounds) return [];
     const tiltAngle = position[0] * (this.maximumTiltAngle - this.minimumTiltAngle) + this.minimumTiltAngle;
     const interRowSpacing =
       position[1] * (this.maximumInterRowSpacing - this.minimumInterRowSpacing) + this.minimumInterRowSpacing;
     const rowsPerRack = Math.floor(
       position[2] * (this.maximumRowsPerRack - this.minimumRowsPerRack) + this.minimumRowsPerRack,
     );
-    const solarPanels = this.layout(tiltAngle, interRowSpacing, rowsPerRack);
-    this.solarRackCount = solarPanels.length;
-    return solarPanels;
-  }
-
-  layout(tiltAngle: number, interRowSpacing: number, rowsPerRack: number): SolarPanelModel[] {
-    if (!this.bounds) return [];
-    const solarPanels: SolarPanelModel[] = [];
+    const solarPanels = SolarPanelLayout.create(
+      this.polygon,
+      this.foundation,
+      this.pvModel,
+      this.orientation,
+      tiltAngle,
+      rowsPerRack,
+      interRowSpacing,
+      this.rowAxis,
+      this.poleHeight,
+      this.poleSpacing,
+      this.margin,
+    );
     this.solarPanelCount = 0;
-    let n: number;
-    let start: number;
-    let delta: number;
-    const ly = (this.orientation === Orientation.portrait ? this.pvModel.length : this.pvModel.width) * rowsPerRack;
-    let h = 0.5 * Math.abs(Math.sin(tiltAngle)) * ly;
-    if (this.rowAxis === RowAxis.meridional) {
-      // north-south axis, so the array is laid in x direction
-      n = Math.floor(((this.bounds.maxX() - this.bounds.minX()) * this.foundation.lx - ly) / interRowSpacing);
-      start = this.bounds.minX() + ly / (2 * this.foundation.lx);
-      delta = interRowSpacing / this.foundation.lx;
-      h /= this.foundation.lx;
-      let a: Point2 = { x: 0, y: -0.5 } as Point2;
-      let b: Point2 = { x: 0, y: 0.5 } as Point2;
-      const rotation = 'rotation' in this.foundation ? this.foundation.rotation : undefined;
-      for (let i = 0; i <= n; i++) {
-        const cx = start + i * delta;
-        a.x = b.x = cx - h;
-        const p1 = Util.polygonIntersections(a, b, this.polygon.vertices);
-        a.x = b.x = cx + h;
-        const p2 = Util.polygonIntersections(a, b, this.polygon.vertices);
-        if (p1.length > 1 && p2.length > 1) {
-          const b = Math.abs(p1[0].y - p1[1].y) < Math.abs(p2[0].y - p2[1].y);
-          let y1 = b ? p1[0].y : p2[0].y;
-          let y2 = b ? p1[1].y : p2[1].y;
-          const lx = Math.abs(y1 - y2) - 2 * this.relativeMargin;
-          if (lx > 0) {
-            const solarPanel = ElementModelFactory.makeSolarPanel(
-              this.foundation,
-              this.pvModel,
-              cx,
-              (y1 + y2) / 2,
-              this.foundation.lz,
-              Orientation.portrait,
-              this.poleHeight,
-              this.poleSpacing,
-              tiltAngle,
-              HALF_PI,
-              UNIT_VECTOR_POS_Z,
-              rotation,
-              undefined,
-              lx * this.foundation.ly,
-              ly,
-            );
-            solarPanel.referenceId = this.polygon.id;
-            Util.changeOrientation(solarPanel, this.pvModel, this.orientation);
-            solarPanels.push(JSON.parse(JSON.stringify(solarPanel)));
-            this.solarPanelCount += Util.countSolarPanelsOnRack(solarPanel, this.pvModel);
-          }
-        }
-      }
-    } else {
-      // east-west axis, so the array is laid in y direction
-      n = Math.floor(((this.bounds.maxY() - this.bounds.minY()) * this.foundation.ly - ly) / interRowSpacing);
-      start = this.bounds.minY() + ly / (2 * this.foundation.ly) + this.relativeMargin;
-      delta = interRowSpacing / this.foundation.ly;
-      h /= this.foundation.ly;
-      let a: Point2 = { x: -0.5, y: 0 } as Point2;
-      let b: Point2 = { x: 0.5, y: 0 } as Point2;
-      const rotation = 'rotation' in this.foundation ? this.foundation.rotation : undefined;
-      for (let i = 0; i <= n; i++) {
-        const cy = start + i * delta;
-        a.y = b.y = cy - h;
-        const p1 = Util.polygonIntersections(a, b, this.polygon.vertices);
-        a.y = b.y = cy + h;
-        const p2 = Util.polygonIntersections(a, b, this.polygon.vertices);
-        if (p1.length > 1 && p2.length > 1) {
-          const b = Math.abs(p1[0].x - p1[1].x) < Math.abs(p2[0].x - p2[1].x);
-          let x1 = b ? p1[0].x : p2[0].x;
-          let x2 = b ? p1[1].x : p2[1].x;
-          const lx = Math.abs(x1 - x2) - 2 * this.relativeMargin;
-          if (lx > 0) {
-            const solarPanel = ElementModelFactory.makeSolarPanel(
-              this.foundation,
-              this.pvModel,
-              (x1 + x2) / 2,
-              cy,
-              this.foundation.lz,
-              Orientation.portrait,
-              this.poleHeight,
-              this.poleSpacing,
-              tiltAngle,
-              0,
-              UNIT_VECTOR_POS_Z,
-              rotation,
-              undefined,
-              lx * this.foundation.lx,
-              ly,
-            );
-            solarPanel.referenceId = this.polygon.id;
-            Util.changeOrientation(solarPanel, this.pvModel, this.orientation);
-            solarPanels.push(JSON.parse(JSON.stringify(solarPanel)));
-            this.solarPanelCount += Util.countSolarPanelsOnRack(solarPanel, this.pvModel);
-          }
-        }
+    this.solarRackCount = solarPanels.length;
+    if (solarPanels.length > 0) {
+      for (const sp of solarPanels) {
+        this.solarPanelCount += Util.countSolarPanelsOnRack(sp, this.pvModel);
       }
     }
     return solarPanels;

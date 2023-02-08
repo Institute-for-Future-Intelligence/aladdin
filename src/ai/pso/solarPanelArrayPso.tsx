@@ -82,7 +82,7 @@ const SolarPanelArrayPso = () => {
               solarPanelArrayRef.current = [...initialSolarPanelArrayRef.current];
               runCallback(true);
             }
-          }, 10);
+          }, 100);
         }
       };
     }
@@ -259,17 +259,17 @@ const SolarPanelArrayPso = () => {
         }
         return;
       }
+      removeElementsByReferenceId(polygon.id, false);
       // this may put the function call to the last in the event queue to avoid crash in ray cast
       // when switching the optimization method
       setTimeout(() => {
-        removeElementsByReferenceId(polygon.id, false);
         if (optimizerRef.current) {
           solarPanelArrayRef.current = optimizerRef.current.translateParticleByIndex(
             particleIndexRef.current % params.swarmSize,
           );
         }
         runCallback(false);
-      }, 10);
+      }, 100);
     }
   };
 
