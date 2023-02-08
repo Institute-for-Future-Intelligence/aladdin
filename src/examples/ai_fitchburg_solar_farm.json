@@ -1,7 +1,7 @@
 {
-  "docid": "sazBVcnzEZYCbW963UwPCf",
-  "time": "09/17/2022 10:40 am",
-  "timestamp": 1663425646413,
+  "docid": "njsXMFnx8AbzYmZZZSFsP4",
+  "time": "02/08/2023 12:40 pm",
+  "timestamp": 1675878006595,
   "userid": "QWecNcxhyvP6j6sBN11hBsfZDau1",
   "owner": null,
   "email": null,
@@ -29,7 +29,7 @@
       ]
     },
     "address": "275 Pleasant St, Lunenburg, MA 01462, USA",
-    "date": "10/15/2021, 12:00:00 PM",
+    "date": "10/15/2021, 12:00:00 PM",
     "name": "default",
     "orthographic": false,
     "cameraZoom": 35.16173831821251,
@@ -184,10 +184,11 @@
       "parentId": "of4fAMi2p9MKmo6JDUYnfX",
       "foundationId": "of4fAMi2p9MKmo6JDUYnfX",
       "selected": false,
-      "filled": false,
+      "filled": true,
       "selectedIndex": 6,
       "id": "1mf9SJGR5RjzYzk7AYxvf2",
-      "lineColor": "#f44e3b"
+      "lineColor": "#f44e3b",
+      "opacity": 0.1
     },
     {
       "type": "Cuboid",
@@ -266,9 +267,9 @@
     "showYearlyLightSensorPanel": false,
     "mapType": "hybrid",
     "cameraPosition": [
-      163.38459818305665,
-      -117.91480988023643,
-      162.04475988877357
+      145.94862814334945,
+      -106.4764934595526,
+      163.4608323959844
     ],
     "panCenter": [
       85.94985190690319,
@@ -300,6 +301,20 @@
       "width": 640,
       "height": 400
     }
+  },
+  "graphState": {
+    "dailyPvIndividualOutputs": false,
+    "yearlyPvIndividualOutputs": false,
+    "dailyParabolicDishIndividualOutputs": false,
+    "yearlyParabolicDishIndividualOutputs": false,
+    "dailyParabolicTroughIndividualOutputs": false,
+    "yearlyParabolicTroughIndividualOutputs": false,
+    "dailyFresnelReflectorIndividualOutputs": false,
+    "yearlyFresnelReflectorIndividualOutputs": false,
+    "dailyHeliostatIndividualOutputs": false,
+    "yearlyHeliostatIndividualOutputs": false,
+    "dailyUpdraftTowerIndividualOutputs": false,
+    "yearlyUpdraftTowerIndividualOutputs": false
   },
   "evolutionMethod": 1,
   "solarPanelArrayLayoutParams": {

@@ -1,14 +1,14 @@
 {
-  "docid": "cDRFb4iqnwtsyWroJFv1xS",
-  "time": "02/03/2023 11:05 am",
-  "timestamp": 1675440336959,
+  "docid": "wdLWJpkLqaNK26sDZ4kU9P",
+  "time": "02/08/2023 12:31 pm",
+  "timestamp": 1675877477724,
   "userid": "QWecNcxhyvP6j6sBN11hBsfZDau1",
   "owner": null,
   "email": null,
   "world": {
     "latitude": 42.2844063,
     "pvGridCellSize": 0.5,
-    "timesPerHour": 4,
+    "timesPerHour": 1,
     "longitude": -71.3488548,
     "ground": {
       "albedo": 0.3,
@@ -29,7 +29,7 @@
       ]
     },
     "address": "Natick, MA",
-    "date": "3/22/2022, 12:00:00 PM",
+    "date": "3/22/2022, 12:00:00 PM",
     "name": "default",
     "orthographic": false,
     "cameraZoom": 35.16173831821251,
@@ -40,7 +40,7 @@
   },
   "elements": [
     {
-      "cy": -0.05939884982430854,
+      "cy": 0.01692723373211437,
       "normal": [
         0,
         0,
@@ -50,7 +50,7 @@
       "ly": 28.838141151400354,
       "id": "of4fAMi2p9MKmo6JDUYnfX",
       "type": "Foundation",
-      "cx": -1.7579129577303791,
+      "cx": 0.11281543499276836,
       "cz": 0.05,
       "rotation": [
         0,
@@ -84,75 +84,102 @@
       ],
       "vertices": [
         {
-          "x": -0.14812638621745453,
-          "y": -0.46813003407969145
-        },
-        {
-          "x": -0.37031596554363627,
-          "y": -0.06935259764143577
+          "x": -0.2777369741577272,
+          "y": -0.4507918846693325
         },
         {
           "x": -0.46289495692954535,
-          "y": 0.38143928702789676
+          "y": -0.3294248387968199
+        },
+        {
+          "x": -0.46289495692954535,
+          "y": 0.3294248387968199
         },
         {
           "x": -0.2592211758805454,
           "y": 0.46813003407969145
         },
         {
-          "x": 0.22218957932618177,
+          "x": 0.44437915865236355,
           "y": 0.46813003407969145
         },
         {
-          "x": 0.35180016726645447,
-          "y": 0.38143928702789676
+          "x": 0.44437915865236355,
+          "y": -0.4507918846693325
         },
         {
-          "x": 0.31975653145803984,
-          "y": -0.21313783808799217
+          "x": -0.018515798277181816,
+          "y": -0.4507918846693325
         },
         {
-          "x": 0.1531143469634035,
-          "y": -0.21313783808799217
+          "x": -0.018515798277181816,
+          "y": -0.20805779292430732
         },
         {
-          "x": 0.14812638621745453,
-          "y": -0.3641011376175378
+          "x": 0.11109478966309089,
+          "y": -0.20805779292430732
         },
         {
-          "x": 0.31476857071209086,
-          "y": -0.3641011376175378
+          "x": 0.11109478966309089,
+          "y": 0
         },
         {
-          "x": 0.31476857071209086,
-          "y": -0.46813003407969145
+          "x": -0.1296105879402727,
+          "y": 0
+        },
+        {
+          "x": -0.1296105879402727,
+          "y": -0.4507918846693325
         }
       ],
       "parentId": "of4fAMi2p9MKmo6JDUYnfX",
       "foundationId": "of4fAMi2p9MKmo6JDUYnfX",
       "selected": false,
       "filled": true,
-      "selectedIndex": 4,
+      "selectedIndex": 6,
       "id": "u4ViXg39ZL8tds2AfD2o6U",
       "textureType": "No Polygon Texture",
       "locked": true
     },
     {
+      "type": "Human",
+      "name": "Jack",
+      "cx": -12.151272035486986,
+      "cy": -13.311260979474763,
+      "cz": 0.05000000074505806,
+      "lx": 0.6,
+      "lz": 1.8,
+      "normal": [
+        0,
+        1,
+        0
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "parentId": "of4fAMi2p9MKmo6JDUYnfX",
+      "id": "rrK38LJKu6CVWVjf2zV1b2",
+      "selected": false,
+      "ly": 0.6
+    },
+    {
       "type": "Cuboid",
-      "cx": 7.416523588560649,
-      "cy": -8.218199087568228,
+      "cx": -0.11397611677121855,
+      "cy": -3.067571806666861,
       "cz": 2,
-      "lx": 5.885558899621623,
-      "ly": 2.63032996641639,
+      "lx": 5.2532346498753135,
+      "ly": 4.048511424070542,
       "lz": 4,
-      "color": "#999999",
+      "color": "#808080",
       "faceColors": [
-        "#999999",
-        "#999999",
-        "#999999",
-        "#999999",
-        "#999999",
-        "gray"
+        "#808080",
+        "#808080",
+        "#808080",
+        "#808080",
+        "#808080",
+        "#808080"
       ],
       "textureTypes": [
         "No Facade Texture",
@@ -174,31 +201,8 @@
       ],
       "parentId": "Ground",
       "selected": false,
-      "id": "iRR7r8U8TVYVH3vipQSJGM",
+      "id": "ky59NZpXJyTcUSib43iVfq",
       "locked": true
-    },
-    {
-      "type": "Human",
-      "name": "Judd",
-      "cx": 10.603917360410481,
-      "cy": -12.559388994116993,
-      "cz": 0.05000000074505806,
-      "lx": 0.6,
-      "lz": 1.68,
-      "normal": [
-        0,
-        1,
-        0
-      ],
-      "rotation": [
-        0,
-        0,
-        0
-      ],
-      "parentId": "of4fAMi2p9MKmo6JDUYnfX",
-      "id": "rrK38LJKu6CVWVjf2zV1b2",
-      "selected": false,
-      "ly": 0.6
     }
   ],
   "view": {
@@ -238,28 +242,28 @@
     "showYearlyLightSensorPanel": false,
     "mapType": "roadmap",
     "cameraPosition": [
-      14.238207538078159,
-      -23.11187753204144,
-      30.138555703667482
+      14.904063706626683,
+      -45.61046168179694,
+      13.166442421440415
     ],
     "panCenter": [
-      14.4714120590319,
-      -3.416758286517111,
+      14.528251370304552,
+      -3.4151425205700146,
       0
     ],
     "orthographic": false,
     "enableRotate": true,
-    "cameraZoom": 12.604988194492186,
+    "cameraZoom": 17.147500000000004,
     "showInstructionPanel": false,
     "cameraPosition2D": [
-      2.3674379904539022,
-      -0.03943765886515896,
-      47.999999960583935
+      4.762164053203386,
+      1.2445149902246018,
+      150
     ],
     "panCenter2D": [
-      2.3674379904539022,
-      -0.03938965673234099,
-      7.088571867787634e-7
+      4.762164053203386,
+      1.244664996889924,
+      0.0000020723025878093974
     ],
     "showEvolutionPanel": true,
     "solarRadiationHeatMapMaxValue": 3.5,
@@ -269,16 +273,23 @@
     "evolutionPanelRect": {
       "x": 0,
       "y": 0,
-      "width": 543,
-      "height": 341
+      "width": 520,
+      "height": 318
     },
     "showStickyNotePanel": true,
     "stickyNotePanelRect": {
       "x": 0,
       "y": 0,
-      "width": 343,
-      "height": 89
-    }
+      "width": 344,
+      "height": 83
+    },
+    "yearlyPvYieldPanelRect": {
+      "x": 0,
+      "y": 0,
+      "width": 600,
+      "height": 400
+    },
+    "solarPanelShininess": 0
   },
   "graphState": {
     "dailyPvIndividualOutputs": false,
@@ -311,7 +322,13 @@
     "minimumRowsPerRack": 1,
     "maximumRowsPerRack": 5,
     "minimumTiltAngle": 0,
-    "maximumTiltAngle": 1.5707963267948966
+    "maximumTiltAngle": 1.5707963267948966,
+    "poleHeight": 1,
+    "poleSpacing": 3,
+    "pvModelName": "CS6X-355P-FG",
+    "rowAxis": "Zonal",
+    "orientation": "Landscape",
+    "margin": 0
   },
   "evolutionaryAlgorithmState": {
     "geneticAlgorithmParams": {
@@ -347,6 +364,6 @@
     "operationalCostPerUnit": 0.3
   },
   "notes": [
-    "Generative design of a solar farm\nin an arbitrary shape with a nearby structure"
+    "Generative design of a solar farm \nin an arbitrary shape with a nearby structure"
   ]
 }
