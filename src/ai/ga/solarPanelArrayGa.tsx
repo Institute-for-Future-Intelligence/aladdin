@@ -72,7 +72,7 @@ const SolarPanelArrayGa = () => {
             state.runDailySimulationForSolarPanels = false;
             state.runYearlySimulationForSolarPanels = false;
           });
-          // this may put the function call to the last in the event queue
+          // this may put the function call to the last in the event queue to avoid crash in ray cast
           setTimeout(() => {
             // revert to the initial solar panel array
             if (solarPanelArrayRef.current.length > 0) {
@@ -261,11 +261,17 @@ const SolarPanelArrayGa = () => {
         }
         return;
       }
-      removeElementsByReferenceId(polygon.id, false);
-      solarPanelArrayRef.current = optimizerRef.current.translateIndividualByIndex(
-        individualIndexRef.current % params.populationSize,
-      );
-      runCallback(false);
+      // this may put the function call to the last in the event queue to avoid crash in ray cast
+      // when switching the optimization method
+      setTimeout(() => {
+        removeElementsByReferenceId(polygon.id, false);
+        if (optimizerRef.current) {
+          solarPanelArrayRef.current = optimizerRef.current.translateIndividualByIndex(
+            individualIndexRef.current % params.populationSize,
+          );
+        }
+        runCallback(false);
+      }, 10);
     }
   };
 
