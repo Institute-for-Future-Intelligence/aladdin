@@ -259,7 +259,7 @@ const AppCreator = ({ viewOnly = false }: AppCreatorProps) => {
     });
   };
 
-  console.log('x');
+  console.log('xx');
 
   return (
     <div className="App">
