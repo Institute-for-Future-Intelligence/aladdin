@@ -47,9 +47,9 @@ export class SolarPanelLayout {
       for (let i = 0; i <= n; i++) {
         const cx = start + i * delta;
         a.x = b.x = cx - h;
-        const p1 = Util.polygonIntersections(a, b, area.vertices).sort((a, b) => a.y - b.y);
+        const p1 = Util.polygonIntersections(a, b, area.vertices).sort((v1, v2) => v1.y - v2.y);
         a.x = b.x = cx + h;
-        const p2 = Util.polygonIntersections(a, b, area.vertices).sort((a, b) => a.y - b.y);
+        const p2 = Util.polygonIntersections(a, b, area.vertices).sort((v1, v2) => v1.y - v2.y);
         const numberOfSegments = Math.max(p1.length, p2.length) / 2;
         if (numberOfSegments > 0) {
           for (let s = 0; s < numberOfSegments; s++) {
@@ -89,9 +89,9 @@ export class SolarPanelLayout {
       for (let i = 0; i <= n; i++) {
         const cy = start + i * delta;
         a.y = b.y = cy - h;
-        const p1 = Util.polygonIntersections(a, b, area.vertices).sort((a, b) => a.x - b.x);
+        const p1 = Util.polygonIntersections(a, b, area.vertices).sort((v1, v2) => v1.x - v2.x);
         a.y = b.y = cy + h;
-        const p2 = Util.polygonIntersections(a, b, area.vertices).sort((a, b) => a.x - b.x);
+        const p2 = Util.polygonIntersections(a, b, area.vertices).sort((v1, v2) => v1.x - v2.x);
         const numberOfSegments = Math.max(p1.length, p2.length) / 2;
         if (numberOfSegments > 0) {
           for (let s = 0; s < numberOfSegments; s++) {

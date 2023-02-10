@@ -707,6 +707,19 @@ export class Util {
     }
   }
 
+  static rotatePolygon(polygonModel: PolygonModel, angleInRadian: number): Point2[] {
+    const vertices: Point2[] = [];
+    const centroid = Util.calculatePolygonCentroid(polygonModel.vertices);
+    const cos = Math.cos(angleInRadian);
+    const sin = Math.sin(angleInRadian);
+    for (const v of polygonModel.vertices) {
+      const dx = v.x - centroid.x;
+      const dy = v.y - centroid.y;
+      vertices.push({ x: centroid.x + dx * cos - dy * sin, y: centroid.y + dx * sin + dy * cos } as Point2);
+    }
+    return vertices;
+  }
+
   // note: this assumes that the center of the parent does NOT change
   static doesNewSizeContainAllChildren(
     parent: ElementModel,
