@@ -143,32 +143,6 @@ const MainMenu = ({ viewOnly, set2DView, resetView, zoomView, canvas }: MainMenu
   const lang = { lng: language };
   const isMac = Util.isMac();
 
-  const keyF2 = useMemo(() => {
-    const os = Util.getOS();
-    if (os) {
-      if (os.includes('OS X')) {
-        return 'fn+F2';
-      }
-      if (os.includes('Chrome')) {
-        return '🔍+➔';
-      }
-    }
-    return 'F2';
-  }, []);
-
-  const keyF4 = useMemo(() => {
-    const os = Util.getOS();
-    if (os) {
-      if (os.includes('OS X')) {
-        return 'fn+F4';
-      }
-      if (os.includes('Chrome')) {
-        return '🔍+⛶';
-      }
-    }
-    return 'F4';
-  }, []);
-
   const keyHome = useMemo(() => {
     const os = Util.getOS();
     if (os) {
@@ -1073,14 +1047,14 @@ const MainMenu = ({ viewOnly, set2DView, resetView, zoomView, canvas }: MainMenu
         <Menu.Item key={'orthographic-check-box'}>
           <Checkbox checked={orthographic} onChange={toggle2DView}>
             {i18n.t('menu.view.TwoDimensionalView', lang)}
-            <label style={{ paddingLeft: '2px', fontSize: 9 }}>({keyF2})</label>
+            <label style={{ paddingLeft: '2px', fontSize: 9 }}>({isMac ? '⌘' : 'Ctrl'}+B)</label>
           </Checkbox>
         </Menu.Item>
         {!orthographic && (
           <Menu.Item key={'auto-rotate-check-box'}>
             <Checkbox checked={autoRotate} onChange={toggleAutoRotate}>
               {i18n.t('menu.view.AutoRotate', lang)}
-              <label style={{ paddingLeft: '2px', fontSize: 9 }}>({keyF4})</label>
+              <label style={{ paddingLeft: '2px', fontSize: 9 }}>({isMac ? '⌘' : 'Ctrl'}+M)</label>
             </Checkbox>
           </Menu.Item>
         )}

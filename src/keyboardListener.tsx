@@ -97,6 +97,10 @@ const KeyboardListener = ({ canvas, set2DView, resetView, zoomView }: KeyboardLi
     'meta+z',
     'ctrl+y',
     'meta+y',
+    'ctrl+m',
+    'meta+m',
+    'ctrl+b',
+    'meta+b',
     'shift',
     'esc',
     'ctrl+home',
@@ -768,9 +772,13 @@ const KeyboardListener = ({ canvas, set2DView, resetView, zoomView }: KeyboardLi
         }
         break;
       case 'f2':
+      case 'ctrl+b':
+      case 'meta+b':
         toggle2DView();
         break;
       case 'f4':
+      case 'ctrl+m':
+      case 'meta+m':
         toggleAutoRotate();
         break;
       case 'ctrl+f':

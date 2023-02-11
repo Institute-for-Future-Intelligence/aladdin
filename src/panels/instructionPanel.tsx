@@ -1,14 +1,13 @@
 /*
- * @Copyright 2021-2022. Institute for Future Intelligence, Inc.
+ * @Copyright 2021-2023. Institute for Future Intelligence, Inc.
  */
 
-import React, { useMemo } from 'react';
+import React from 'react';
 import { useStore } from '../stores/common';
 import styled from 'styled-components';
 import i18n from '../i18n/i18n';
 import * as Selector from '../stores/selector';
 import { Util } from '../Util';
-import { fontSize } from 'html2canvas/dist/types/css/property-descriptors/font-size';
 
 const Container = styled.div`
   position: absolute;
@@ -51,18 +50,7 @@ const InstructionPanel = () => {
   const lang = { lng: language };
   const color = sunlightDirection.y > 0 ? 'navajowhite' : 'antiquewhite';
 
-  const keyF2 = useMemo(() => {
-    const os = Util.getOS();
-    if (os) {
-      if (os.includes('OS X')) {
-        return 'fn + F2';
-      }
-      if (os.includes('Chrome')) {
-        return '🔍 + ➔';
-      }
-    }
-    return 'F2';
-  }, []);
+  const isMac = Util.isMac();
 
   return (
     <Container>
@@ -78,19 +66,9 @@ const InstructionPanel = () => {
         <label>
           <b>{i18n.t('instructionPanel.Pan', lang)}</b>: {i18n.t('instructionPanel.HoldCtrlDragMouse', lang)}
         </label>
-        {/*{!orthographic && (*/}
-        {/*  <label>*/}
-        {/*    <b>{i18n.t('instructionPanel.ResetView', lang)}</b>: {i18n.t('word.Press', lang)} Ctrl+Home*/}
-        {/*  </label>*/}
-        {/*)}*/}
         <label>
-          <b>{i18n.t('instructionPanel.Toggle2D3D', lang)}</b>: {i18n.t('word.Press', lang)} {keyF2}
+          <b>{i18n.t('instructionPanel.Toggle2D3D', lang)}</b>: {i18n.t('word.Press', lang)} {isMac ? '⌘' : 'Ctrl'}+B
         </label>
-        {/*{!orthographic && (*/}
-        {/*  <label>*/}
-        {/*    <b>{i18n.t('instructionPanel.AutoRotate', lang)}</b>: {i18n.t('instructionPanel.StartOrStop', lang)}*/}
-        {/*  </label>*/}
-        {/*)}*/}
       </ColumnWrapper>
     </Container>
   );
