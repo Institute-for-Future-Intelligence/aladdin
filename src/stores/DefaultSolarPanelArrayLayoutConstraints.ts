@@ -35,6 +35,6 @@ export class DefaultSolarPanelArrayLayoutConstraints implements SolarPanelArrayL
     this.poleSpacing = 5;
     this.orientation = Orientation.landscape;
     this.pvModelName = 'CS6X-355P-FG';
-    this.rowAxis = RowAxis.zonal;
+    this.rowAxis = RowAxis.leftRight;
   }
 }

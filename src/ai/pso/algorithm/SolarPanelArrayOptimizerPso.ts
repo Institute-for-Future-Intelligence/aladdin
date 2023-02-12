@@ -22,7 +22,7 @@ export class SolarPanelArrayOptimizerPso extends OptimizerPso {
   polygon: PolygonModel;
   pvModel: PvModel;
   orientation: Orientation = Orientation.landscape;
-  rowAxis: RowAxis = RowAxis.zonal;
+  rowAxis: RowAxis = RowAxis.leftRight;
   relativeMargin: number = 0.01;
   poleHeight: number = 2;
   poleSpacing: number = 5;
@@ -100,7 +100,7 @@ export class SolarPanelArrayOptimizerPso extends OptimizerPso {
 
         const sp2 = initialSolarPanels[1];
         const interRowSpacing =
-          this.rowAxis === RowAxis.meridional
+          this.rowAxis === RowAxis.upDown
             ? Math.abs(sp1.cx - sp2.cx) * this.foundation.lx
             : Math.abs(sp1.cy - sp2.cy) * this.foundation.ly;
         let normalizedInterRowSpacing =

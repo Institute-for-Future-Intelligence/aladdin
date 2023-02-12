@@ -71,7 +71,7 @@ const SolarPanelArrayGaWizard = ({ setDialogVisible }: { setDialogVisible: (b: b
   }, []);
 
   const lang = { lng: language };
-  const rowAxisRef = useRef<RowAxis>(constraints.rowAxis ?? RowAxis.zonal);
+  const rowAxisRef = useRef<RowAxis>(constraints.rowAxis ?? RowAxis.leftRight);
   const foundation = polygon ? (getParent(polygon) as FoundationModel) : undefined;
   const originalSolarPanels = foundation
     ? (getChildrenOfType(ObjectType.SolarPanel, foundation.id) as SolarPanelModel[])
@@ -695,11 +695,11 @@ const SolarPanelArrayGaWizard = ({ setDialogVisible }: { setDialogVisible: (b: b
                     setUpdateFlag(!updateFlag);
                   }}
                 >
-                  <Option key={RowAxis.zonal} value={RowAxis.zonal}>
-                    {i18n.t('polygonMenu.SolarPanelArrayZonalRowAxis', lang)}
+                  <Option key={RowAxis.leftRight} value={RowAxis.leftRight}>
+                    {i18n.t('polygonMenu.SolarPanelArrayLeftRightRowAxis', lang)}
                   </Option>
-                  <Option key={RowAxis.meridional} value={RowAxis.meridional}>
-                    {i18n.t('polygonMenu.SolarPanelArrayMeridionalRowAxis', lang)}
+                  <Option key={RowAxis.upDown} value={RowAxis.upDown}>
+                    {i18n.t('polygonMenu.SolarPanelArrayUpDownRowAxis', lang)}
                   </Option>
                 </Select>
               </Col>

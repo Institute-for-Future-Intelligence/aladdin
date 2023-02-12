@@ -4369,7 +4369,7 @@
   },
   "evolutionMethod": 1,
   "solarPanelArrayLayoutParams": {
-    "rowAxis": "Zonal",
+    "rowAxis": "Left-Right",
     "interRowSpacing": 2,
     "tiltAngle": 0,
     "poleSpacing": 3,
@@ -4381,7 +4381,7 @@
   "solarPanelArrayLayoutConstraints": {
     "maximumTiltAngle": 1.5707963267948966,
     "minimumRowsPerRack": 1,
-    "rowAxis": "Zonal",
+    "rowAxis": "Left-Right",
     "orientation": "Landscape",
     "maximumRowsPerRack": 6,
     "minimumTiltAngle": -1.5707963267948966,

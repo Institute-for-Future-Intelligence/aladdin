@@ -19687,7 +19687,7 @@
   "evolutionMethod": 1,
   "solarPanelArrayLayoutParams": {
     "interRowSpacing": 2,
-    "rowAxis": "Zonal",
+    "rowAxis": "Left-Right",
     "pvModelName": "SPR-X21-335-BLK",
     "tiltAngle": 0,
     "poleSpacing": 3,
@@ -19696,7 +19696,7 @@
     "rowsPerRack": 1
   },
   "solarPanelArrayLayoutConstraints": {
-    "rowAxis": "Zonal",
+    "rowAxis": "Left-Right",
     "poleHeight": 1,
     "minimumTiltAngle": -1.5707963267948966,
     "minimumRowsPerRack": 1,

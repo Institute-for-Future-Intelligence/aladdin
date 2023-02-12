@@ -403,11 +403,11 @@ const SolarPanelLayoutWizard = ({ setDialogVisible }: { setDialogVisible: (b: bo
                 setUpdateFlag(!updateFlag);
               }}
             >
-              <Option key={RowAxis.zonal} value={RowAxis.zonal}>
-                {i18n.t('polygonMenu.SolarPanelArrayZonalRowAxis', lang)}
+              <Option key={RowAxis.leftRight} value={RowAxis.leftRight}>
+                {i18n.t('polygonMenu.SolarPanelArrayLeftRightRowAxis', lang)}
               </Option>
-              <Option key={RowAxis.meridional} value={RowAxis.meridional}>
-                {i18n.t('polygonMenu.SolarPanelArrayMeridionalRowAxis', lang)}
+              <Option key={RowAxis.upDown} value={RowAxis.upDown}>
+                {i18n.t('polygonMenu.SolarPanelArrayUpDownRowAxis', lang)}
               </Option>
               <Option key={RowAxis.eastWest} value={RowAxis.eastWest}>
                 {i18n.t('polygonMenu.SolarPanelArrayEastWestRowAxis', lang)}

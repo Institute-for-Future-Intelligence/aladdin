@@ -313,8 +313,8 @@ export enum Orientation {
 export enum RowAxis {
   eastWest = 'East-West', // absolute
   northSouth = 'North-South', // absolute
-  zonal = 'Zonal', // relative to the parent
-  meridional = 'Meridional', // relative to the parent
+  leftRight = 'Left-Right', // relative to the parent
+  upDown = 'Up-Down', // relative to the parent
 }
 
 export enum TrackerType {

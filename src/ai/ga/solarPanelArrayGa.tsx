@@ -123,7 +123,7 @@ const SolarPanelArrayGa = () => {
     }
     optimizerRef.current = new SolarPanelArrayOptimizerGa(
       getPvModule(constraints.pvModelName ?? 'CS6X-355P-FG'),
-      constraints.rowAxis ?? RowAxis.zonal,
+      constraints.rowAxis ?? RowAxis.leftRight,
       constraints.orientation ?? Orientation.landscape,
       constraints.poleHeight ?? 1,
       constraints.poleSpacing ?? 3,

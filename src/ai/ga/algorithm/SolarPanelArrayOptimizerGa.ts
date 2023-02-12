@@ -28,7 +28,7 @@ export class SolarPanelArrayOptimizerGa extends OptimizerGa {
   polygon: PolygonModel;
   pvModel: PvModel;
   orientation: Orientation = Orientation.landscape;
-  rowAxis: RowAxis = RowAxis.zonal;
+  rowAxis: RowAxis = RowAxis.leftRight;
   poleHeight: number = 2;
   poleSpacing: number = 5;
   bounds?: Rectangle;
@@ -108,7 +108,7 @@ export class SolarPanelArrayOptimizerGa extends OptimizerGa {
 
         const sp2 = initialSolarPanels[1];
         const interRowSpacing =
-          this.rowAxis === RowAxis.meridional
+          this.rowAxis === RowAxis.upDown
             ? Math.abs(sp1.cx - sp2.cx) * this.foundation.lx
             : Math.abs(sp1.cy - sp2.cy) * this.foundation.ly;
         let gene2 =

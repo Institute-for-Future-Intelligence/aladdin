@@ -22,7 +22,7 @@ export class DefaultSolarPanelArrayLayoutParams implements SolarPanelArrayLayout
 
   constructor() {
     this.pvModelName = 'CS6X-355P-FG';
-    this.rowAxis = RowAxis.zonal;
+    this.rowAxis = RowAxis.leftRight;
     this.orientation = Orientation.landscape;
     this.tiltAngle = 0;
     this.rowsPerRack = 1;

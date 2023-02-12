@@ -308,7 +308,7 @@
   "evolutionMethod": 1,
   "solarPanelArrayLayoutParams": {
     "pvModelName": "CS6X-355P-FG",
-    "rowAxis": "Zonal",
+    "rowAxis": "Left-Right",
     "orientation": "Landscape",
     "tiltAngle": 0,
     "rowsPerRack": 1,
@@ -326,7 +326,7 @@
     "poleHeight": 1,
     "poleSpacing": 3,
     "pvModelName": "CS6X-355P-FG",
-    "rowAxis": "Zonal",
+    "rowAxis": "Left-Right",
     "orientation": "Landscape",
     "margin": 0
   },

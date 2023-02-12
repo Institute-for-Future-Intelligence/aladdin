@@ -35,7 +35,7 @@ export class SolarPanelLayoutRelative {
     let delta: number;
     const ly = (orientation === Orientation.portrait ? pvModel.length : pvModel.width) * rowsPerRack;
     let h = 0.5 * Math.abs(Math.sin(tiltAngle)) * ly;
-    if (rowAxis === RowAxis.meridional) {
+    if (rowAxis === RowAxis.upDown) {
       // north-south axis, so the array is laid in x direction
       n = Math.floor(((bounds.maxX() - bounds.minX()) * base.lx - ly) / interRowSpacing);
       start = bounds.minX() + ly / (2 * base.lx) + margin / base.lx;
@@ -54,7 +54,7 @@ export class SolarPanelLayoutRelative {
         if (numberOfSegments > 0) {
           for (let s = 0; s < numberOfSegments; s++) {
             const t = s * 2;
-            const panel = SolarPanelLayoutRelative.makeMeridionalSegment(
+            const panel = SolarPanelLayoutRelative.makeUpDownSegment(
               p1[t] ?? p2[t],
               p1[t + 1] ?? p2[t + 1],
               p2[t] ?? p1[t],
@@ -96,7 +96,7 @@ export class SolarPanelLayoutRelative {
         if (numberOfSegments > 0) {
           for (let s = 0; s < numberOfSegments; s++) {
             const t = s * 2;
-            const panel = SolarPanelLayoutRelative.makeZonalSegment(
+            const panel = SolarPanelLayoutRelative.makeLeftRightSegment(
               p1[t] ?? p2[t],
               p1[t + 1] ?? p2[t + 1],
               p2[t] ?? p1[t],
@@ -123,10 +123,10 @@ export class SolarPanelLayoutRelative {
     return solarPanels;
   }
 
-  // solar panel rows in north-south direction
+  // solar panel rows in up-down direction (north-south if the base's azimuth is zero)
   // p1 and q1 are the end points of the left line of this segment
   // p2 and q2 are the end points of the right line of this segment
-  static makeMeridionalSegment(
+  static makeUpDownSegment(
     p1: Point2,
     q1: Point2,
     p2: Point2,
@@ -167,10 +167,10 @@ export class SolarPanelLayoutRelative {
     return undefined;
   }
 
-  // solar panel rows in east-west direction
+  // solar panel rows in left-right direction (west-east if the base's azimuth is zero)
   // p1 and q1 are the end points of the lower line of this segment
   // p2 and q2 are the end points of the upper line of this segment
-  static makeZonalSegment(
+  static makeLeftRightSegment(
     p1: Point2,
     q1: Point2,
     p2: Point2,
