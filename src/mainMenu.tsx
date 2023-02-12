@@ -1965,6 +1965,9 @@ const MainMenu = ({ viewOnly, set2DView, resetView, zoomView, canvas }: MainMenu
           <Menu.Item key="effect_orientation_solar_panel" onClick={loadFile}>
             {i18n.t('menu.photovoltaicSolarPowerTutorials.EffectOfOrientationOfSolarPanels', lang)}
           </Menu.Item>
+          <Menu.Item key="solar_panel_array_auto_layout" onClick={loadFile}>
+            {i18n.t('menu.photovoltaicSolarPowerTutorials.SolarPanelArrayAutomaticLayout', lang)}
+          </Menu.Item>
           <Menu.Item key="rooftop_solar_panels" onClick={loadFile}>
             {i18n.t('menu.solarEnergyExamples.RooftopSolarPanels', lang)}
           </Menu.Item>

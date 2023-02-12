@@ -390,6 +390,7 @@ export const i18n_tr = {
           'Sadece güneş panellerini kullanarak yüzeyi kaplamak neden iyi bir fikir değildir?',
         InterRowSpacingOfSolarPanelArray: 'Güneş Paneli Dizi Arası Boşluk Etkisi',
         EffectOfOrientationOfSolarPanels: 'Güneş Panelleri Yön Etkisi',
+        SolarPanelArrayAutomaticLayout: 'Solar Panel Array Automatic Layout',
       },
 
       concentratedSolarPowerSubMenu: 'Yoğunlaştırılmış Güneş Enerjisi',

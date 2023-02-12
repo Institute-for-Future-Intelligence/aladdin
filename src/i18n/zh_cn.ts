@@ -388,6 +388,7 @@ export const i18n_zh_cn = {
         CoveringGroundWithSolarPanels: '为什么我们不简单地用光伏板覆盖地面',
         InterRowSpacingOfSolarPanelArray: '光伏板阵列行间距对发电量的影响',
         EffectOfOrientationOfSolarPanels: '光伏板排列方向对发电量的影响',
+        SolarPanelArrayAutomaticLayout: '光伏板自动排列',
       },
 
       concentratedSolarPowerSubMenu: '光热发电',
