@@ -15,8 +15,8 @@ import { UndoableLayout } from '../../../undo/UndoableLayout';
 import { ElementModel } from '../../../models/ElementModel';
 import { showError } from '../../../helpers';
 import { SolarPanelArrayLayoutParams } from '../../../stores/SolarPanelArrayLayoutParams';
-import { SolarPanelLayout } from '../../../pd/SolarPanelLayout';
-import { SolarPanelLayout2 } from '../../../pd/SolarPanelLayout2';
+import { SolarPanelLayoutRelative } from '../../../pd/SolarPanelLayoutRelative';
+import { SolarPanelLayoutAbsolute } from '../../../pd/SolarPanelLayoutAbsolute';
 
 const { Option } = Select;
 
@@ -122,19 +122,34 @@ const SolarPanelLayoutWizard = ({ setDialogVisible }: { setDialogVisible: (b: bo
       const base = getParent(reference);
       if (base) {
         const newElements: ElementModel[] = [];
-        const solarPanels = SolarPanelLayout2.create(
-          reference as PolygonModel,
-          base,
-          pvModel,
-          orientationRef.current,
-          tiltAngleRef.current,
-          rowsPerRackRef.current,
-          interRowSpacingRef.current,
-          rowAxisRef.current,
-          poleHeightRef.current,
-          poleSpacingRef.current,
-          marginRef.current,
-        );
+        const abs = rowAxisRef.current === RowAxis.eastWest || rowAxisRef.current === RowAxis.northSouth;
+        const solarPanels = abs
+          ? SolarPanelLayoutAbsolute.create(
+              reference as PolygonModel,
+              base,
+              pvModel,
+              orientationRef.current,
+              tiltAngleRef.current,
+              rowsPerRackRef.current,
+              interRowSpacingRef.current,
+              rowAxisRef.current,
+              poleHeightRef.current,
+              poleSpacingRef.current,
+              marginRef.current,
+            )
+          : SolarPanelLayoutRelative.create(
+              reference as PolygonModel,
+              base,
+              pvModel,
+              orientationRef.current,
+              tiltAngleRef.current,
+              rowsPerRackRef.current,
+              interRowSpacingRef.current,
+              rowAxisRef.current,
+              poleHeightRef.current,
+              poleSpacingRef.current,
+              marginRef.current,
+            );
         if (solarPanels.length > 0) {
           for (const panel of solarPanels) {
             newElements.push(JSON.parse(JSON.stringify(panel)));
@@ -393,6 +408,12 @@ const SolarPanelLayoutWizard = ({ setDialogVisible }: { setDialogVisible: (b: bo
               </Option>
               <Option key={RowAxis.meridional} value={RowAxis.meridional}>
                 {i18n.t('polygonMenu.SolarPanelArrayMeridionalRowAxis', lang)}
+              </Option>
+              <Option key={RowAxis.eastWest} value={RowAxis.eastWest}>
+                {i18n.t('polygonMenu.SolarPanelArrayEastWestRowAxis', lang)}
+              </Option>
+              <Option key={RowAxis.northSouth} value={RowAxis.northSouth}>
+                {i18n.t('polygonMenu.SolarPanelArrayNorthSouthRowAxis', lang)}
               </Option>
             </Select>
           </Col>

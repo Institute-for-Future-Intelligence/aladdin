@@ -12,7 +12,7 @@ import { HALF_PI, UNIT_VECTOR_POS_Z } from '../constants';
 import { PvModel } from '../models/PvModel';
 import { SolarPanelModel } from '../models/SolarPanelModel';
 
-export class SolarPanelLayout {
+export class SolarPanelLayoutRelative {
   static create(
     area: PolygonModel,
     base: ElementModel,
@@ -54,7 +54,7 @@ export class SolarPanelLayout {
         if (numberOfSegments > 0) {
           for (let s = 0; s < numberOfSegments; s++) {
             const t = s * 2;
-            const panel = SolarPanelLayout.makeMeridionalSegment(
+            const panel = SolarPanelLayoutRelative.makeMeridionalSegment(
               p1[t] ?? p2[t],
               p1[t + 1] ?? p2[t + 1],
               p2[t] ?? p1[t],
@@ -96,7 +96,7 @@ export class SolarPanelLayout {
         if (numberOfSegments > 0) {
           for (let s = 0; s < numberOfSegments; s++) {
             const t = s * 2;
-            const panel = SolarPanelLayout.makeZonalSegment(
+            const panel = SolarPanelLayoutRelative.makeZonalSegment(
               p1[t] ?? p2[t],
               p1[t + 1] ?? p2[t + 1],
               p2[t] ?? p1[t],

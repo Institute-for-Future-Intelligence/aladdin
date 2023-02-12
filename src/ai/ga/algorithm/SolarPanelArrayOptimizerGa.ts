@@ -22,7 +22,7 @@ import { PolygonModel } from '../../../models/PolygonModel';
 import { SolarPanelModel } from '../../../models/SolarPanelModel';
 import { PvModel } from '../../../models/PvModel';
 import { Rectangle } from '../../../models/Rectangle';
-import { SolarPanelLayout } from '../../../pd/SolarPanelLayout';
+import { SolarPanelLayoutRelative } from '../../../pd/SolarPanelLayoutRelative';
 
 export class SolarPanelArrayOptimizerGa extends OptimizerGa {
   polygon: PolygonModel;
@@ -208,7 +208,7 @@ export class SolarPanelArrayOptimizerGa extends OptimizerGa {
     const rowsPerRack = Math.floor(
       individual.getGene(2) * (this.maximumRowsPerRack - this.minimumRowsPerRack) + this.minimumRowsPerRack,
     );
-    const solarPanels = SolarPanelLayout.create(
+    const solarPanels = SolarPanelLayoutRelative.create(
       this.polygon,
       this.foundation,
       this.pvModel,

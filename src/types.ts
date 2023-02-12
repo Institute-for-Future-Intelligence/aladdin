@@ -1,5 +1,5 @@
 /*
- * @Copyright 2021-2022. Institute for Future Intelligence, Inc.
+ * @Copyright 2021-2023. Institute for Future Intelligence, Inc.
  */
 
 import { extend, Object3DNode } from '@react-three/fiber';
@@ -311,8 +311,10 @@ export enum Orientation {
 }
 
 export enum RowAxis {
-  zonal = 'Zonal', // east-west
-  meridional = 'Meridional', // north-south
+  eastWest = 'East-West', // absolute
+  northSouth = 'North-South', // absolute
+  zonal = 'Zonal', // relative to the parent
+  meridional = 'Meridional', // relative to the parent
 }
 
 export enum TrackerType {

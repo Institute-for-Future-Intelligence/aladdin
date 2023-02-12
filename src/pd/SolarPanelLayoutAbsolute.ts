@@ -12,7 +12,7 @@ import { UNIT_VECTOR_POS_Z } from '../constants';
 import { PvModel } from '../models/PvModel';
 import { SolarPanelModel } from '../models/SolarPanelModel';
 
-export class SolarPanelLayout2 {
+export class SolarPanelLayoutAbsolute {
   static create(
     area: PolygonModel,
     base: ElementModel,
@@ -64,7 +64,7 @@ export class SolarPanelLayout2 {
           const lx = Math.hypot(x1 - x2, y1 - y2) - 2 * margin;
           if (lx > 0) {
             let cp = Util.relativeCoordinates((x1 + x2) / 2, cy, 0, base);
-            const panel = SolarPanelLayout2.makeSegment(
+            const panel = SolarPanelLayoutAbsolute.makeSegment(
               cp.x,
               cp.y,
               lx,
