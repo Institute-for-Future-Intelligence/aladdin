@@ -707,17 +707,24 @@ export class Util {
     }
   }
 
-  static rotatePolygon(polygonModel: PolygonModel, angleInRadian: number): Point2[] {
-    const vertices: Point2[] = [];
-    const centroid = Util.calculatePolygonCentroid(polygonModel.vertices);
+  static rotatePolygon(vertices: Point2[], cx: number, cy: number, angleInRadian: number): Point2[] {
+    const rotatedVertices: Point2[] = [];
     const cos = Math.cos(angleInRadian);
     const sin = Math.sin(angleInRadian);
-    for (const v of polygonModel.vertices) {
-      const dx = v.x - centroid.x;
-      const dy = v.y - centroid.y;
-      vertices.push({ x: centroid.x + dx * cos - dy * sin, y: centroid.y + dx * sin + dy * cos } as Point2);
+    for (const v of vertices) {
+      const dx = v.x - cx;
+      const dy = v.y - cy;
+      rotatedVertices.push({ x: cx + dx * cos - dy * sin, y: cy + dx * sin + dy * cos } as Point2);
     }
-    return vertices;
+    return rotatedVertices;
+  }
+
+  static rotatePoint(point: Point2, cx: number, cy: number, angleInRadian: number): Point2 {
+    const cos = Math.cos(angleInRadian);
+    const sin = Math.sin(angleInRadian);
+    const dx = point.x - cx;
+    const dy = point.y - cy;
+    return { x: cx + dx * cos - dy * sin, y: cy + dx * sin + dy * cos } as Point2;
   }
 
   // note: this assumes that the center of the parent does NOT change

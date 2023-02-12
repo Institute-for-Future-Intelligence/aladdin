@@ -16,6 +16,7 @@ import { ElementModel } from '../../../models/ElementModel';
 import { showError } from '../../../helpers';
 import { SolarPanelArrayLayoutParams } from '../../../stores/SolarPanelArrayLayoutParams';
 import { SolarPanelLayout } from '../../../pd/SolarPanelLayout';
+import { SolarPanelLayout2 } from '../../../pd/SolarPanelLayout2';
 
 const { Option } = Select;
 
@@ -121,7 +122,7 @@ const SolarPanelLayoutWizard = ({ setDialogVisible }: { setDialogVisible: (b: bo
       const base = getParent(reference);
       if (base) {
         const newElements: ElementModel[] = [];
-        const solarPanels = SolarPanelLayout.create(
+        const solarPanels = SolarPanelLayout2.create(
           reference as PolygonModel,
           base,
           pvModel,
