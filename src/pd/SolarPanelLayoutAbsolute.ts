@@ -42,8 +42,8 @@ export class SolarPanelLayoutAbsolute {
       const maxLength = bounds.maxY() - bounds.minY();
       const n = Math.floor((maxLength - 2 * margin - ly) / interRowSpacing);
       const start = bounds.minY() + ly / 2 + margin;
-      let a: Point2 = { x: bounds.minX(), y: 0 } as Point2;
-      let b: Point2 = { x: bounds.maxX(), y: 0 } as Point2;
+      const a: Point2 = { x: bounds.minX(), y: 0 } as Point2;
+      const b: Point2 = { x: bounds.maxX(), y: 0 } as Point2;
       for (let i = 0; i <= n; i++) {
         const cy = start + i * interRowSpacing;
         a.y = b.y = cy - h;
@@ -94,8 +94,8 @@ export class SolarPanelLayoutAbsolute {
       const maxLength = bounds.maxX() - bounds.minX();
       const n = Math.floor((maxLength - 2 * margin - ly) / interRowSpacing);
       const start = bounds.minX() + ly / 2 + margin;
-      let a: Point2 = { x: 0, y: bounds.minY() } as Point2;
-      let b: Point2 = { x: 0, y: bounds.maxY() } as Point2;
+      const a: Point2 = { x: 0, y: bounds.minY() } as Point2;
+      const b: Point2 = { x: 0, y: bounds.maxY() } as Point2;
       for (let i = 0; i <= n; i++) {
         const cx = start + i * interRowSpacing;
         a.x = b.x = cx - h;

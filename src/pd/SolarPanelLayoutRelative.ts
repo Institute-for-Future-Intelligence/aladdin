@@ -30,19 +30,15 @@ export class SolarPanelLayoutRelative {
       throw new Error('base must be a foundation or cuboid');
     const solarPanels: SolarPanelModel[] = [];
     const bounds = Util.calculatePolygonBounds(area.vertices);
-    let n: number;
-    let start: number;
-    let delta: number;
     const ly = (orientation === Orientation.portrait ? pvModel.length : pvModel.width) * rowsPerRack;
-    let h = 0.5 * Math.abs(Math.sin(tiltAngle)) * ly;
     if (rowAxis === RowAxis.upDown) {
       // north-south axis, so the array is laid in x direction
-      n = Math.floor(((bounds.maxX() - bounds.minX()) * base.lx - ly) / interRowSpacing);
-      start = bounds.minX() + ly / (2 * base.lx) + margin / base.lx;
-      delta = interRowSpacing / base.lx;
-      h /= base.lx;
-      let a: Point2 = { x: 0, y: -0.5 } as Point2;
-      let b: Point2 = { x: 0, y: 0.5 } as Point2;
+      const n = Math.floor(((bounds.maxX() - bounds.minX()) * base.lx - ly) / interRowSpacing);
+      const start = bounds.minX() + ly / (2 * base.lx) + margin / base.lx;
+      const delta = interRowSpacing / base.lx;
+      const h = (0.5 * Math.abs(Math.sin(tiltAngle)) * ly) / base.lx;
+      const a: Point2 = { x: 0, y: -0.5 } as Point2;
+      const b: Point2 = { x: 0, y: 0.5 } as Point2;
       const rotation = 'rotation' in base ? base.rotation : undefined;
       for (let i = 0; i <= n; i++) {
         const cx = start + i * delta;
@@ -79,12 +75,12 @@ export class SolarPanelLayoutRelative {
       }
     } else {
       // east-west axis, so the array is laid in y direction
-      n = Math.floor(((bounds.maxY() - bounds.minY()) * base.ly - 2 * margin - ly) / interRowSpacing);
-      start = bounds.minY() + ly / (2 * base.ly) + margin / base.ly;
-      delta = interRowSpacing / base.ly;
-      h /= base.ly;
-      let a: Point2 = { x: -0.5, y: 0 } as Point2;
-      let b: Point2 = { x: 0.5, y: 0 } as Point2;
+      const n = Math.floor(((bounds.maxY() - bounds.minY()) * base.ly - 2 * margin - ly) / interRowSpacing);
+      const start = bounds.minY() + ly / (2 * base.ly) + margin / base.ly;
+      const delta = interRowSpacing / base.ly;
+      const h = (0.5 * Math.abs(Math.sin(tiltAngle)) * ly) / base.ly;
+      const a: Point2 = { x: -0.5, y: 0 } as Point2;
+      const b: Point2 = { x: 0.5, y: 0 } as Point2;
       const rotation = 'rotation' in base ? base.rotation : undefined;
       for (let i = 0; i <= n; i++) {
         const cy = start + i * delta;
@@ -141,9 +137,9 @@ export class SolarPanelLayoutRelative {
     poleSpacing: number,
     margin: number,
   ) {
-    const test = Math.abs(p1.y - q1.y) < Math.abs(p2.y - q2.y);
-    let y1 = test ? p1.y : p2.y;
-    let y2 = test ? q1.y : q2.y;
+    const shorter = Math.abs(p1.y - q1.y) < Math.abs(p2.y - q2.y);
+    let y1 = shorter ? p1.y : p2.y;
+    let y2 = shorter ? q1.y : q2.y;
     const lx = Math.abs(y1 - y2) - (2 * margin) / base.ly;
     if (lx > 0) {
       return ElementModelFactory.makeSolarPanel(
@@ -185,9 +181,9 @@ export class SolarPanelLayoutRelative {
     poleSpacing: number,
     margin: number,
   ) {
-    const test = Math.abs(p1.x - q1.x) < Math.abs(p2.x - q2.x);
-    const x1 = test ? p1.x : p2.x;
-    const x2 = test ? q1.x : q2.x;
+    const shorter = Math.abs(p1.x - q1.x) < Math.abs(p2.x - q2.x);
+    const x1 = shorter ? p1.x : p2.x;
+    const x2 = shorter ? q1.x : q2.x;
     const lx = Math.abs(x1 - x2) - (2 * margin) / base.lx;
     if (lx > 0) {
       return ElementModelFactory.makeSolarPanel(

@@ -211,7 +211,7 @@
     "mapZoom": 16,
     "axes": true,
     "theme": "Default",
-    "showSiteInfoPanel": false,
+    "showSiteInfoPanel": true,
     "showDesignInfoPanel": true,
     "showWeatherPanel": false,
     "groundPanelX": 0,
