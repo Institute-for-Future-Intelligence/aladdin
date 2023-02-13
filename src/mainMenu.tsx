@@ -37,6 +37,7 @@ import BuildingEnergySimulationSettings from './components/contextMenu/elementMe
 import { usePrimitiveStore } from './stores/commonPrimitive';
 import { getExample } from './examples';
 import { checkBuilding, CheckStatus } from './analysis/heatTools';
+import Explorer from './explorer';
 
 const { SubMenu } = Menu;
 
@@ -138,6 +139,7 @@ const MainMenu = ({ viewOnly, set2DView, resetView, zoomView, canvas }: MainMenu
   const panCenter = useStore.getState().viewState.panCenter;
   const selectedElement = useStore.getState().selectedElement;
 
+  const [explore, setExplore] = useState(false);
   const [aboutUs, setAboutUs] = useState(false);
 
   const lang = { lng: language };
@@ -155,14 +157,6 @@ const MainMenu = ({ viewOnly, set2DView, resetView, zoomView, canvas }: MainMenu
     }
     return 'Ctrl+Home';
   }, []);
-
-  const openAboutUs = (on: boolean) => {
-    setAboutUs(on);
-  };
-
-  const gotoAboutPage = () => {
-    openAboutUs(true);
-  };
 
   const takeScreenshot = () => {
     if (canvas) {
@@ -2256,8 +2250,17 @@ const MainMenu = ({ viewOnly, set2DView, resetView, zoomView, canvas }: MainMenu
           </Radio>
         </Radio.Group>
       </SubMenu>
-      {/* about menu */}
-      <Menu.Item key="about" onClick={gotoAboutPage}>
+      {/* explore window */}
+      <Menu.Item
+        key="world"
+        onClick={() => {
+          setExplore(true);
+        }}
+      >
+        {i18n.t('menu.Explore', lang)}...
+      </Menu.Item>
+      {/* about window */}
+      <Menu.Item key="about" onClick={() => setAboutUs(true)}>
         {i18n.t('menu.AboutUs', lang)}...
       </Menu.Item>
     </Menu>
@@ -2284,7 +2287,8 @@ const MainMenu = ({ viewOnly, set2DView, resetView, zoomView, canvas }: MainMenu
           </LabelContainer>
         </MainMenuContainer>
       </Dropdown>
-      {aboutUs && <About openAboutUs={openAboutUs} />}
+      {explore && <Explorer close={() => setExplore(false)} />}
+      {aboutUs && <About close={() => setAboutUs(false)} />}
     </>
   );
 };

@@ -495,6 +495,7 @@ export const i18n_zh_cn = {
       },
 
       languageSubMenu: '语言',
+      Explore: '探索',
       AboutUs: '关于我们',
     },
 

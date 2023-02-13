@@ -498,6 +498,7 @@ export const i18n_tr = {
       },
 
       languageSubMenu: 'Dil',
+      Explore: 'Explore',
       AboutUs: 'Hakkımızda',
     },
 

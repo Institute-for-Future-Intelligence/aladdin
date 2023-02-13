@@ -1,5 +1,5 @@
 /*
- * @Copyright 2021-2022. Institute for Future Intelligence, Inc.
+ * @Copyright 2021-2023. Institute for Future Intelligence, Inc.
  */
 
 import React, { useCallback, useRef, useState } from 'react';
@@ -10,13 +10,7 @@ import { UndoableChange } from '../undo/UndoableChange';
 import { UndoableChangeLocation } from '../undo/UndoableChangeLocation';
 import { throttle } from 'lodash';
 
-const containerStyle = {
-  border: '1px solid',
-  width: '400px',
-  height: '400px',
-};
-
-const Maps = () => {
+const Maps = ({ fill = false, width = 400, height = 400 }: { fill: boolean; width?: number; height?: number }) => {
   const setCommonStore = useStore(Selector.set);
   const addUndoable = useStore(Selector.addUndoable);
   const latitude = useStore(Selector.world.latitude);
@@ -210,7 +204,11 @@ const Maps = () => {
 
   return (
     <GoogleMap
-      mapContainerStyle={containerStyle}
+      mapContainerStyle={{
+        border: '1px solid',
+        width: fill ? '100%' : width + 'px',
+        height: fill ? '100%' : height + 'px',
+      }}
       mapTypeId={mapType}
       center={latLng}
       zoom={mapZoom}

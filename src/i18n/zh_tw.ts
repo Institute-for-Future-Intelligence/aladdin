@@ -496,6 +496,7 @@ export const i18n_zh_tw = {
       },
 
       languageSubMenu: '語言',
+      Explore: '探索',
       AboutUs: '關於我們',
     },
 

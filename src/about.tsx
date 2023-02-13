@@ -1,5 +1,5 @@
 /*
- * @Copyright 2021-2022. Institute for Future Intelligence, Inc.
+ * @Copyright 2021-2023. Institute for Future Intelligence, Inc.
  */
 
 import React from 'react';
@@ -24,11 +24,7 @@ const Container = styled.div`
   box-shadow: 3px 3px 3px 3px black;
 `;
 
-export interface AboutProps {
-  openAboutUs: (on: boolean) => void;
-}
-
-const About = ({ openAboutUs }: AboutProps) => {
+const About = ({ close }: { close: () => void }) => {
   const language = useStore(Selector.language);
   return (
     <Container>
@@ -42,7 +38,7 @@ const About = ({ openAboutUs }: AboutProps) => {
           bottom: '10px',
         }}
         onMouseDown={() => {
-          openAboutUs(false);
+          close();
         }}
       >
         {i18n.t('word.Close', { lng: language })}

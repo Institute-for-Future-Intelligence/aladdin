@@ -302,7 +302,7 @@ const MapPanel = () => {
             {isLoaded ? (
               <Space>
                 <div>
-                  <Maps />
+                  <Maps fill={false} width={400} height={400} />
                   <p style={{ paddingTop: '10px' }}>
                     {i18n.t('mapPanel.Coordinates', lang) + ':'} ({latitude.toFixed(4)}°, {longitude.toFixed(4)}°),
                     &nbsp;

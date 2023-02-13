@@ -498,6 +498,7 @@ export const i18n_en = {
       },
 
       languageSubMenu: 'Language',
+      Explore: 'Explore',
       AboutUs: 'About Us',
     },
 
