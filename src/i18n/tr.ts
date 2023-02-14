@@ -1137,7 +1137,8 @@ export const i18n_tr = {
 
     mapPanel: {
       ImageOnGround: 'Yüzey Görünümü',
-      StationsOnMap: 'Referans',
+      WeatherStations: 'Referans',
+      WeatherStationsNote: 'Turn this off to speed up',
       Coordinates: 'Koordinatlar',
       Zoom: 'Büyüt',
     },

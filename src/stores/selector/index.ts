@@ -87,6 +87,8 @@ export const modelMapTilt = (state: CommonStoreState) => state.modelMapTilt;
 
 export const modelMapType = (state: CommonStoreState) => state.modelMapType;
 
+export const modelMapWeatherStations = (state: CommonStoreState) => state.modelMapWeatherStations;
+
 export const showCloudFileTitleDialog = (state: CommonStoreState) => state.showCloudFileTitleDialog;
 
 export const showCloudFileTitleDialogFlag = (state: CommonStoreState) => state.showCloudFileTitleDialogFlag;

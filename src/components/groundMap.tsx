@@ -2,8 +2,8 @@
  * @Copyright 2021-2023. Institute for Future Intelligence, Inc.
  */
 
-import React, { useCallback, useRef, useState } from 'react';
-import { GoogleMap, Marker } from '@react-google-maps/api';
+import React, { useCallback, useState } from 'react';
+import { GoogleMap } from '@react-google-maps/api';
 import { useStore } from '../stores/common';
 import * as Selector from '../stores/selector';
 import { UndoableChange } from '../undo/UndoableChange';
@@ -15,16 +15,11 @@ const GroundMap = ({ width = 400, height = 400 }: { width: number; height: numbe
   const addUndoable = useStore(Selector.addUndoable);
   const latitude = useStore(Selector.world.latitude);
   const longitude = useStore(Selector.world.longitude);
-  const weatherData = useStore(Selector.weatherData);
-  const mapWeatherStations = useStore(Selector.viewState.mapWeatherStations);
   const mapZoom = useStore(Selector.viewState.mapZoom);
   const mapTilt = useStore(Selector.viewState.mapTilt);
   const mapType = useStore(Selector.viewState.mapType);
 
   const [map, setMap] = useState<google.maps.Map | null>(null);
-  const bounds = useRef<google.maps.LatLngBounds | null | undefined>();
-  const cities = useRef<google.maps.LatLng[]>([]);
-  const [updateFlag, setUpdateFlag] = useState<boolean>(false);
 
   const onLoad = useCallback((map: google.maps.Map) => {
     setMap(map);
@@ -33,45 +28,6 @@ const GroundMap = ({ width = 400, height = 400 }: { width: number; height: numbe
   const onUnmount = useCallback(function callback() {
     setMap(null);
   }, []);
-
-  const loadCities = () => {
-    if (bounds.current) {
-      cities.current.length = 0;
-      for (const x in weatherData) {
-        if (weatherData.hasOwnProperty(x)) {
-          const w = weatherData[x];
-          const pos = new google.maps.LatLng(w.latitude, w.longitude);
-          if (bounds.current.contains(pos)) {
-            cities.current.push(pos);
-          }
-        }
-      }
-      setUpdateFlag(!updateFlag);
-    }
-  };
-
-  const onBoundsChanged = throttle(
-    () => {
-      if (map) {
-        const oldPos = bounds.current?.getCenter();
-        bounds.current = map.getBounds();
-        const newPos = bounds.current?.getCenter();
-        let same = true;
-        if (oldPos && newPos) {
-          if (oldPos.lat() !== newPos.lat() || oldPos.lng() !== newPos.lng()) {
-            same = false;
-          }
-        }
-        if (!same) {
-          if (mapWeatherStations) {
-            loadCities();
-          }
-        }
-      }
-    },
-    1000,
-    { leading: false, trailing: true },
-  );
 
   const onCenterChanged = throttle(
     () => {
@@ -200,8 +156,6 @@ const GroundMap = ({ width = 400, height = 400 }: { width: number; height: numbe
     }
   };
 
-  const latLng = { lat: latitude, lng: longitude };
-
   return (
     <GoogleMap
       mapContainerStyle={{
@@ -210,37 +164,16 @@ const GroundMap = ({ width = 400, height = 400 }: { width: number; height: numbe
         height: height + 'px',
       }}
       mapTypeId={mapType}
-      center={latLng}
+      center={{ lat: latitude, lng: longitude }}
       zoom={mapZoom}
       tilt={mapTilt}
       onLoad={onLoad}
-      onBoundsChanged={onBoundsChanged}
       onUnmount={onUnmount}
       onCenterChanged={onCenterChanged}
       onZoomChanged={onZoomChanged}
       onTiltChanged={onTiltChanged}
       onMapTypeIdChanged={onMapTypeIdChanged}
-    >
-      {/* Child components, such as markers, info windows, etc. */}
-      <>
-        {mapWeatherStations &&
-          cities.current.map((c, index) => {
-            const scale = 0.2 * mapZoom;
-            return (
-              <Marker
-                key={index}
-                icon={{
-                  path: google.maps.SymbolPath.CIRCLE,
-                  strokeColor: 'red',
-                  strokeWeight: scale + 2,
-                  scale: scale,
-                }}
-                position={c}
-              />
-            );
-          })}
-      </>
-    </GoogleMap>
+    />
   );
 };
 

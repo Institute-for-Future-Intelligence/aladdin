@@ -134,6 +134,7 @@ export interface CommonStoreState {
   modelMapZoom: number;
   modelMapType: string;
   modelMapTilt: number;
+  modelMapWeatherStations: boolean;
 
   roofSegmentVerticesMap: Map<string, Vector3[][]>; // key: roofId, val: [segmentIndex][vertex]
   getRoofSegmentVertices: (id: string) => Vector3[][] | undefined;
@@ -721,6 +722,7 @@ export const useStore = create<CommonStoreState>(
           modelMapZoom: DEFAULT_MODEL_MAP_ZOOM,
           modelMapType: 'roadmap',
           modelMapTilt: 0,
+          modelMapWeatherStations: false,
 
           roofSegmentVerticesMap: new Map<string, Vector3[][]>(),
           getRoofSegmentVertices(id) {

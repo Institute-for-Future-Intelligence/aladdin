@@ -1136,7 +1136,8 @@ export const i18n_en = {
 
     mapPanel: {
       ImageOnGround: 'Image on Ground',
-      StationsOnMap: 'Stations on Map',
+      WeatherStations: 'Weather Stations',
+      WeatherStationsNote: 'Turn this off to speed up',
       Coordinates: 'Coordinates',
       Zoom: 'Zoom',
     },

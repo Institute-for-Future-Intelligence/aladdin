@@ -10,7 +10,7 @@ import i18n from './i18n/i18n';
 import { Libraries } from '@react-google-maps/api/dist/utils/make-load-script-url';
 import { useJsApiLoader } from '@react-google-maps/api';
 import Spinner from './components/spinner';
-import { Space } from 'antd';
+import { Checkbox, Space } from 'antd';
 import ModelMap from './components/modelMap';
 
 const libraries = ['places'] as Libraries;
@@ -37,6 +37,7 @@ export interface ExplorerProps {
 const Explorer = ({ openCloudFile }: ExplorerProps) => {
   const language = useStore(Selector.language);
   const setCommonStore = useStore(Selector.set);
+  const mapWeatherStations = useStore(Selector.modelMapWeatherStations);
 
   const { isLoaded, loadError } = useJsApiLoader({
     id: 'google-map-script',
@@ -64,24 +65,59 @@ const Explorer = ({ openCloudFile }: ExplorerProps) => {
           <div>Map cannot be loaded right now, sorry.</div>
         </Space>
       )}
-      <div
-        style={{
-          position: 'absolute',
-          fontSize: 'medium',
-          color: 'black',
-          cursor: 'pointer',
-          bottom: '8px',
-          width: '64px',
-          height: '24px',
-          background: 'orange',
-          boxShadow: '1px 1px 1px 1px gray',
-        }}
-        onMouseDown={() => {
-          close();
-        }}
-      >
-        {i18n.t('word.Close', { lng: language })}
-      </div>
+      <>
+        <Space>
+          <div
+            style={{
+              position: 'absolute',
+              fontSize: 'medium',
+              color: 'black',
+              cursor: 'pointer',
+              bottom: '8px',
+              left: '50%',
+              width: '64px',
+              height: '28px',
+              background: 'orange',
+              boxShadow: '1px 1px 1px 1px gray',
+            }}
+            onMouseDown={() => {
+              close();
+            }}
+          >
+            {i18n.t('word.Close', { lng: language })}
+          </div>
+        </Space>
+        <Space>
+          <Checkbox
+            style={{
+              position: 'absolute',
+              fontSize: 'medium',
+              color: 'black',
+              cursor: 'pointer',
+              bottom: '8px',
+              left: 'calc(50% - 160px)',
+              width: '160px',
+              height: '28px',
+              background: 'white',
+              boxShadow: '1px 1px 1px 1px gray',
+              paddingLeft: '4px',
+            }}
+            onChange={() => {
+              setCommonStore((state) => {
+                state.modelMapWeatherStations = !state.modelMapWeatherStations;
+              });
+            }}
+          >
+            {mapWeatherStations ? (
+              <label title={i18n.t('mapPanel.WeatherStationsNote', { lng: language })}>
+                {i18n.t('mapPanel.WeatherStations', { lng: language })}
+              </label>
+            ) : (
+              <label>{i18n.t('mapPanel.WeatherStations', { lng: language })}</label>
+            )}
+          </Checkbox>
+        </Space>
+      </>
     </Container>
   );
 };

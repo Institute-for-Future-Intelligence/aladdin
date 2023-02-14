@@ -1113,7 +1113,8 @@ export const i18n_zh_cn = {
 
     mapPanel: {
       ImageOnGround: '地面显示图像',
-      StationsOnMap: '显示气象站位置',
+      WeatherStations: '气象站',
+      WeatherStationsNote: '关闭此选项以提高地图速度',
       Coordinates: '经纬度坐标',
       Zoom: '放大程度',
     },

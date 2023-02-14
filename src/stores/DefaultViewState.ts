@@ -106,7 +106,6 @@ export class DefaultViewState implements ViewState {
   mapZoom: number;
   mapType: string;
   mapTilt: number;
-  mapWeatherStations: boolean;
 
   constructor() {
     this.orthographic = false;
@@ -198,7 +197,6 @@ export class DefaultViewState implements ViewState {
     this.mapZoom = 18;
     this.mapType = 'roadmap';
     this.mapTilt = 0;
-    this.mapWeatherStations = false;
   }
 
   static resetViewState(viewState: ViewState) {
@@ -291,6 +289,5 @@ export class DefaultViewState implements ViewState {
     viewState.mapZoom = 18;
     viewState.mapType = 'roadmap';
     viewState.mapTilt = 0;
-    viewState.mapWeatherStations = false;
   }
 }

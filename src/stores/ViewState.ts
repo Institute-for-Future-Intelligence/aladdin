@@ -94,5 +94,4 @@ export interface ViewState {
   mapZoom: number;
   mapType: string;
   mapTilt: number;
-  mapWeatherStations: boolean;
 }

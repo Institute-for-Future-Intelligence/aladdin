@@ -158,7 +158,8 @@
     "longitude": -77.0365298,
     "type": "Building",
     "label": "The White House",
-    "town": "Washington DC",
+    "town": "Washington",
+    "state": "DC",
     "country": "United States",
     "userid": "QWecNcxhyvP6j6sBN11hBsfZDau1",
     "title": "White House"

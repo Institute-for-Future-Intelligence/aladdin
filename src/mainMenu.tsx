@@ -2249,22 +2249,24 @@ const MainMenu = ({ viewOnly, set2DView, resetView, zoomView, canvas }: MainMenu
         </Radio.Group>
       </SubMenu>
       {/* explore window */}
-      <Menu.Item
-        key="world"
-        onClick={() => {
-          setCommonStore((state) => {
-            state.openModelMap = true;
-            if (loggable) {
-              state.actionInfo = {
-                name: 'Open Model Map',
-                timestamp: new Date().getTime(),
-              };
-            }
-          });
-        }}
-      >
-        {i18n.t('menu.Explore', lang)}...
-      </Menu.Item>
+      {!viewOnly && (
+        <Menu.Item
+          key="world"
+          onClick={() => {
+            setCommonStore((state) => {
+              state.openModelMap = true;
+              if (loggable) {
+                state.actionInfo = {
+                  name: 'Open Model Map',
+                  timestamp: new Date().getTime(),
+                };
+              }
+            });
+          }}
+        >
+          {i18n.t('menu.Explore', lang)}...
+        </Menu.Item>
+      )}
       {/* about window */}
       <Menu.Item key="about" onClick={() => setAboutUs(true)}>
         {i18n.t('menu.AboutUs', lang)}...

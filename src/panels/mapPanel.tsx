@@ -262,16 +262,6 @@ const MapPanel = () => {
                     });
                   }}
                 />
-                {/*<Space>{i18n.t('mapPanel.StationsOnMap', lang) + ':'}</Space>*/}
-                {/*<Switch*/}
-                {/*  title={'Show weather stations'}*/}
-                {/*  checked={mapWeatherStations}*/}
-                {/*  onChange={(checked) => {*/}
-                {/*    setCommonStore((state) => {*/}
-                {/*      state.viewState.mapWeatherStations = checked;*/}
-                {/*    });*/}
-                {/*  }}*/}
-                {/*/>*/}
               </Space>
             </Space>
             {isLoaded && (

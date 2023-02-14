@@ -49,38 +49,35 @@ const ModelMap = ({ closeMap, openModel }: ModelMapProps) => {
   const mapZoom = useStore(Selector.modelMapZoom) ?? DEFAULT_MODEL_MAP_ZOOM;
   const mapTilt = useStore(Selector.modelMapTilt) ?? 0;
   const mapType = useStore(Selector.modelMapType) ?? 'roadmap';
+  const weatherData = useStore(Selector.weatherData);
+  const mapWeatherStations = useStore(Selector.modelMapWeatherStations);
 
   const [map, setMap] = useState<google.maps.Map | null>(null);
   const [selectedSite, setSelectedSite] = useState<ModelSite | null>(null);
   const previousSiteRef = useRef<ModelSite | null>(null);
-  const bounds = useRef<google.maps.LatLngBounds | null | undefined>();
+  const cities = useRef<google.maps.LatLng[]>([]);
 
   const lang = { lng: language };
 
+  const loadCities = () => {
+    cities.current.length = 0;
+    for (const x in weatherData) {
+      if (weatherData.hasOwnProperty(x)) {
+        const w = weatherData[x];
+        const pos = new google.maps.LatLng(w.latitude, w.longitude);
+        cities.current.push(pos);
+      }
+    }
+  };
+
   const onLoad = useCallback((map: google.maps.Map) => {
     setMap(map);
+    loadCities();
   }, []);
 
   const onUnmount = useCallback(function callback() {
     setMap(null);
   }, []);
-
-  const onBoundsChanged = () => {
-    if (map) {
-      const oldPos = bounds.current?.getCenter();
-      bounds.current = map.getBounds();
-      const newPos = bounds.current?.getCenter();
-      let same = true;
-      if (oldPos && newPos) {
-        if (oldPos.lat() !== newPos.lat() || oldPos.lng() !== newPos.lng()) {
-          same = false;
-        }
-      }
-      if (!same) {
-        // TODO
-      }
-    }
-  };
 
   const onCenterChanged = () => {
     if (map) {
@@ -201,8 +198,6 @@ const ModelMap = ({ closeMap, openModel }: ModelMapProps) => {
     }
   };
 
-  const latLng = { lat: latitude, lng: longitude };
-
   const options = {
     styles: [
       {
@@ -218,6 +213,15 @@ const ModelMap = ({ closeMap, openModel }: ModelMapProps) => {
     ],
   } as GoogleMapProps;
 
+  const openSite = (site: ModelSite) => {
+    if (site.userid && site.title) {
+      openModel(site.userid, site.title);
+      closeMap();
+    } else {
+      showError(i18n.t('message.ModelNotFound', lang));
+    }
+  };
+
   return (
     <GoogleMap
       mapContainerStyle={{
@@ -227,11 +231,10 @@ const ModelMap = ({ closeMap, openModel }: ModelMapProps) => {
       }}
       options={options}
       mapTypeId={mapType}
-      center={latLng}
+      center={{ lat: latitude, lng: longitude }}
       zoom={mapZoom}
       tilt={mapTilt}
       onLoad={onLoad}
-      onBoundsChanged={onBoundsChanged}
       onUnmount={onUnmount}
       onCenterChanged={onCenterChanged}
       onZoomChanged={onZoomChanged}
@@ -240,57 +243,70 @@ const ModelMap = ({ closeMap, openModel }: ModelMapProps) => {
     >
       {/* Child components, such as markers, info windows, etc. */}
       <>
+        {mapWeatherStations &&
+          cities.current.map((c, index) => {
+            const scale = 0.2 * mapZoom;
+            return (
+              <Marker
+                key={index}
+                icon={{
+                  path: google.maps.SymbolPath.CIRCLE,
+                  strokeColor: 'red',
+                  strokeWeight: scale + 2,
+                  scale: scale,
+                }}
+                position={c}
+              />
+            );
+          })}
         {selectedSite && (
           <InfoWindow position={{ lat: selectedSite.latitude, lng: selectedSite.longitude }}>
             <div>
-              {selectedSite.label}
+              <label style={{ cursor: 'pointer' }} onClick={() => openSite(selectedSite)}>
+                {selectedSite.label}
+              </label>
               <hr />
               {selectedSite.town + ', ' + selectedSite.state + ', ' + selectedSite.country}
             </div>
           </InfoWindow>
         )}
         {sites.map((site: ModelSite, index: number) => {
-          let icon = BuildingIcon;
+          let iconUrl = BuildingIcon;
           switch (site.type) {
             case 'PV':
-              icon = SolarPanelIcon;
+              iconUrl = SolarPanelIcon;
               break;
             case 'Parabolic Dish':
-              icon = ParabolicDishIcon;
+              iconUrl = ParabolicDishIcon;
               break;
             case 'Parabolic Trough':
-              icon = ParabolicTroughIcon;
+              iconUrl = ParabolicTroughIcon;
               break;
             case 'Fresnel Reflector':
-              icon = FresnelReflectorIcon;
+              iconUrl = FresnelReflectorIcon;
               break;
             case 'Power Tower':
-              icon = PowerTowerIcon;
+              iconUrl = PowerTowerIcon;
               break;
           }
+          const scaledSize = Math.min(32, 4 * mapZoom);
           return (
-            <>
-              <Marker
-                key={index}
-                icon={icon}
-                position={{ lat: site.latitude, lng: site.longitude }}
-                onClick={() => {
-                  if (site.userid && site.title) {
-                    openModel(site.userid, site.title);
-                    closeMap();
-                  } else {
-                    showError(i18n.t('message.ModelNotFound', lang));
-                  }
-                }}
-                onMouseOver={(e) => {
-                  previousSiteRef.current = selectedSite;
-                  setSelectedSite(site);
-                }}
-                onMouseOut={(e) => {
-                  if (selectedSite === previousSiteRef.current) setSelectedSite(null);
-                }}
-              />
-            </>
+            <Marker
+              key={index}
+              icon={{
+                url: iconUrl,
+                scaledSize: new google.maps.Size(scaledSize, scaledSize),
+              }}
+              position={{ lat: site.latitude, lng: site.longitude }}
+              onClick={() => openSite(site)}
+              onMouseOver={(e) => {
+                previousSiteRef.current = selectedSite;
+                setSelectedSite(site);
+              }}
+              onMouseOut={(e) => {
+                if (selectedSite === previousSiteRef.current) setSelectedSite(null);
+              }}
+            />
           );
         })}
       </>
