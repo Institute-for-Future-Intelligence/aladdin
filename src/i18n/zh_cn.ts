@@ -254,7 +254,6 @@ export const i18n_zh_cn = {
       },
       toolSubMenu: '工具',
       tool: {
-        Map: '地图',
         WeatherData: '气象数据',
         DiurnalTemperature: '昼夜温度',
         Heliodon: '日影仪',

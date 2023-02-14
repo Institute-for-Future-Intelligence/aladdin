@@ -1112,7 +1112,7 @@ const MainMenu = ({ viewOnly, set2DView, resetView, zoomView, canvas }: MainMenu
         )}
         {!showMapPanel && (
           <Menu.Item key={'map-panel-check-box'} onClick={openMapPanel}>
-            {i18n.t('menu.tool.Map', lang)}...
+            {i18n.t('word.Location', lang)}...
           </Menu.Item>
         )}
         {!showWeatherPanel && (

@@ -255,7 +255,6 @@ export const i18n_tr = {
       },
       toolSubMenu: 'Araçlar',
       tool: {
-        Map: 'Harita',
         WeatherData: 'Hava Durumu',
         DiurnalTemperature: 'Günlük Sıcaklık',
         Heliodon: 'Heliodon',

@@ -256,7 +256,6 @@ export const i18n_en = {
       },
       toolSubMenu: 'Tool',
       tool: {
-        Map: 'Map',
         WeatherData: 'Weather Data',
         DiurnalTemperature: 'Diurnal Temperature',
         Heliodon: 'Heliodon',
