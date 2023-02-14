@@ -11,7 +11,7 @@ import FresnelReflectorIcon from '../assets/map-fresnel-reflector.png';
 import PowerTowerIcon from '../assets/map-power-tower.png';
 
 import React, { useCallback, useRef, useState } from 'react';
-import { GoogleMap, Marker, GoogleMapProps } from '@react-google-maps/api';
+import { GoogleMap, Marker, GoogleMapProps, InfoWindow } from '@react-google-maps/api';
 import { useStore } from '../stores/common';
 import * as Selector from '../stores/selector';
 import { UndoableChange } from '../undo/UndoableChange';
@@ -23,6 +23,19 @@ import i18n from '../i18n/i18n';
 export interface ModelMapProps {
   closeMap: () => void;
   openModel: (userid: string, title: string) => void;
+}
+
+export interface ModelSite {
+  latitude: number;
+  longitude: number;
+  type: string;
+  module_number?: number;
+  label?: string;
+  town?: string;
+  state?: string;
+  country?: string;
+  userid: string;
+  title: string;
 }
 
 const ModelMap = ({ closeMap, openModel }: ModelMapProps) => {
@@ -38,6 +51,8 @@ const ModelMap = ({ closeMap, openModel }: ModelMapProps) => {
   const mapType = useStore(Selector.modelMapType) ?? 'roadmap';
 
   const [map, setMap] = useState<google.maps.Map | null>(null);
+  const [selectedSite, setSelectedSite] = useState<ModelSite | null>(null);
+  const previousSiteRef = useRef<ModelSite | null>(null);
   const bounds = useRef<google.maps.LatLngBounds | null | undefined>();
 
   const lang = { lng: language };
@@ -225,7 +240,16 @@ const ModelMap = ({ closeMap, openModel }: ModelMapProps) => {
     >
       {/* Child components, such as markers, info windows, etc. */}
       <>
-        {sites.map((site, index) => {
+        {selectedSite && (
+          <InfoWindow position={{ lat: selectedSite.latitude, lng: selectedSite.longitude }}>
+            <div>
+              {selectedSite.label}
+              <hr />
+              {selectedSite.town + ', ' + selectedSite.state + ', ' + selectedSite.country}
+            </div>
+          </InfoWindow>
+        )}
+        {sites.map((site: ModelSite, index: number) => {
           let icon = BuildingIcon;
           switch (site.type) {
             case 'PV':
@@ -245,19 +269,28 @@ const ModelMap = ({ closeMap, openModel }: ModelMapProps) => {
               break;
           }
           return (
-            <Marker
-              key={index}
-              icon={icon}
-              position={{ lat: site.latitude, lng: site.longitude }}
-              onClick={() => {
-                if (site.userid && site.title) {
-                  openModel(site.userid, site.title);
-                  closeMap();
-                } else {
-                  showError(i18n.t('message.ModelNotFound', lang));
-                }
-              }}
-            />
+            <>
+              <Marker
+                key={index}
+                icon={icon}
+                position={{ lat: site.latitude, lng: site.longitude }}
+                onClick={() => {
+                  if (site.userid && site.title) {
+                    openModel(site.userid, site.title);
+                    closeMap();
+                  } else {
+                    showError(i18n.t('message.ModelNotFound', lang));
+                  }
+                }}
+                onMouseOver={(e) => {
+                  previousSiteRef.current = selectedSite;
+                  setSelectedSite(site);
+                }}
+                onMouseOut={(e) => {
+                  if (selectedSite === previousSiteRef.current) setSelectedSite(null);
+                }}
+              />
+            </>
           );
         })}
       </>
