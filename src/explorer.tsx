@@ -30,14 +30,25 @@ const Container = styled.div`
   box-shadow: 1px 1px 1px 1px gray;
 `;
 
-const Explorer = ({ close }: { close: () => void }) => {
+export interface ExplorerProps {
+  openCloudFile: (userid: string, title: string) => void;
+}
+
+const Explorer = ({ openCloudFile }: ExplorerProps) => {
   const language = useStore(Selector.language);
+  const setCommonStore = useStore(Selector.set);
 
   const { isLoaded, loadError } = useJsApiLoader({
     id: 'google-map-script',
     googleMapsApiKey: process.env.REACT_APP_MAPS_API_KEY as string,
     libraries: libraries,
   });
+
+  const close = () => {
+    setCommonStore((state) => {
+      state.openModelMap = false;
+    });
+  };
 
   return (
     <Container
@@ -47,7 +58,7 @@ const Explorer = ({ close }: { close: () => void }) => {
         }
       }}
     >
-      {isLoaded ? <ModelMap close={close} /> : <Spinner />}
+      {isLoaded ? <ModelMap closeMap={close} openModel={openCloudFile} /> : <Spinner />}
       {loadError && (
         <Space>
           <div>Map cannot be loaded right now, sorry.</div>

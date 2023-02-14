@@ -144,6 +144,7 @@ export const i18n_zh_cn = {
     },
 
     message: {
+      ModelNotFound: '没有找到模型',
       CannotSignIn: '登录失败',
       CannotSignOut: '退出失败',
       YourAccountWasCreated: '成功建立您的账号。',

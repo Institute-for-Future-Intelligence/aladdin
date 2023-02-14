@@ -23,6 +23,7 @@ import Draggable, { DraggableBounds, DraggableData, DraggableEvent } from 'react
 import { ExclamationCircleOutlined } from '@ant-design/icons';
 import { Util } from './Util';
 import { HOME_URL } from './constants';
+import Explorer from './explorer';
 
 const ButtonsContainer = styled.div`
   position: absolute;
@@ -49,6 +50,7 @@ const MainToolBar = ({ viewOnly = false }: MainToolBarProps) => {
   const exportContent = useStore(Selector.exportContent);
   const showCloudFilePanel = useStore(Selector.showCloudFilePanel);
   const showAccountSettingsPanel = useStore(Selector.showAccountSettingsPanel);
+  const openModelMap = useStore(Selector.openModelMap);
   const cloudFile = useStore(Selector.cloudFile);
   const saveCloudFileFlag = useStore(Selector.saveCloudFileFlag);
   const listCloudFilesFlag = useStore(Selector.listCloudFilesFlag);
@@ -674,6 +676,7 @@ const MainToolBar = ({ viewOnly = false }: MainToolBarProps) => {
         />
       )}
       {showAccountSettingsPanel && <AccountSettingsPanel />}
+      {openModelMap && <Explorer openCloudFile={openCloudFileWithSaveReminder} />}
     </>
   );
 };

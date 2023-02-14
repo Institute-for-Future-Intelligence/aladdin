@@ -144,6 +144,7 @@ export const i18n_en = {
     },
 
     message: {
+      ModelNotFound: 'Model not found',
       CannotSignIn: 'Cannot sign in',
       CannotSignOut: 'Cannot sign out',
       YourAccountWasCreated: 'Your account was created.',

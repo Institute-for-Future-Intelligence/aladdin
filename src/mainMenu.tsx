@@ -37,7 +37,6 @@ import BuildingEnergySimulationSettings from './components/contextMenu/elementMe
 import { usePrimitiveStore } from './stores/commonPrimitive';
 import { getExample } from './examples';
 import { checkBuilding, CheckStatus } from './analysis/heatTools';
-import Explorer from './explorer';
 
 const { SubMenu } = Menu;
 
@@ -139,7 +138,6 @@ const MainMenu = ({ viewOnly, set2DView, resetView, zoomView, canvas }: MainMenu
   const panCenter = useStore.getState().viewState.panCenter;
   const selectedElement = useStore.getState().selectedElement;
 
-  const [explore, setExplore] = useState(false);
   const [aboutUs, setAboutUs] = useState(false);
 
   const lang = { lng: language };
@@ -2254,7 +2252,15 @@ const MainMenu = ({ viewOnly, set2DView, resetView, zoomView, canvas }: MainMenu
       <Menu.Item
         key="world"
         onClick={() => {
-          setExplore(true);
+          setCommonStore((state) => {
+            state.openModelMap = true;
+            if (loggable) {
+              state.actionInfo = {
+                name: 'Open Model Map',
+                timestamp: new Date().getTime(),
+              };
+            }
+          });
         }}
       >
         {i18n.t('menu.Explore', lang)}...
@@ -2287,7 +2293,6 @@ const MainMenu = ({ viewOnly, set2DView, resetView, zoomView, canvas }: MainMenu
           </LabelContainer>
         </MainMenuContainer>
       </Dropdown>
-      {explore && <Explorer close={() => setExplore(false)} />}
       {aboutUs && <About close={() => setAboutUs(false)} />}
     </>
   );

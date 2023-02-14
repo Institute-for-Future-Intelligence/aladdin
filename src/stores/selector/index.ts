@@ -75,6 +75,8 @@ export const actionInfo = (state: CommonStoreState) => state.actionInfo;
 
 export const currentUndoable = (state: CommonStoreState) => state.currentUndoable;
 
+export const openModelMap = (state: CommonStoreState) => state.openModelMap;
+
 export const modelMapLatitude = (state: CommonStoreState) => state.modelMapLatitude;
 
 export const modelMapLongitude = (state: CommonStoreState) => state.modelMapLongitude;

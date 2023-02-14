@@ -128,6 +128,7 @@ export interface CommonStoreState {
   floatingWindowOpacity: number;
   cloudFile: string | undefined;
 
+  openModelMap: boolean;
   modelMapLatitude: number;
   modelMapLongitude: number;
   modelMapZoom: number;
@@ -714,6 +715,7 @@ export const useStore = create<CommonStoreState>(
           floatingWindowOpacity: FLOATING_WINDOW_OPACITY,
           cloudFile: undefined,
 
+          openModelMap: false,
           modelMapLatitude: 42.2844063,
           modelMapLongitude: -71.3488548,
           modelMapZoom: DEFAULT_MODEL_MAP_ZOOM,
@@ -5689,6 +5691,7 @@ export const useStore = create<CommonStoreState>(
           'floatingWindowOpacity',
           'locale',
           'cloudFile',
+          'openModelMap',
           'modelMapLatitude',
           'modelMapLongitude',
           'modelMapZoom',

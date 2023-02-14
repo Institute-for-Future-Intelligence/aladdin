@@ -5,6 +5,10 @@
 import sites from '../sites/sites.json';
 import BuildingIcon from '../assets/map-building.png';
 import SolarPanelIcon from '../assets/map-solar-panel.png';
+import ParabolicDishIcon from '../assets/map-parabolic-dish.png';
+import ParabolicTroughIcon from '../assets/map-parabolic-trough.png';
+import FresnelReflectorIcon from '../assets/map-fresnel-reflector.png';
+import PowerTowerIcon from '../assets/map-power-tower.png';
 
 import React, { useCallback, useRef, useState } from 'react';
 import { GoogleMap, Marker, GoogleMapProps } from '@react-google-maps/api';
@@ -12,9 +16,17 @@ import { useStore } from '../stores/common';
 import * as Selector from '../stores/selector';
 import { UndoableChange } from '../undo/UndoableChange';
 import { UndoableChangeLocation } from '../undo/UndoableChangeLocation';
-import { DEFAULT_MODEL_MAP_ZOOM, HOME_URL } from '../constants';
+import { DEFAULT_MODEL_MAP_ZOOM } from '../constants';
+import { showError } from '../helpers';
+import i18n from '../i18n/i18n';
 
-const ModelMap = ({ close }: { close: () => void }) => {
+export interface ModelMapProps {
+  closeMap: () => void;
+  openModel: (userid: string, title: string) => void;
+}
+
+const ModelMap = ({ closeMap, openModel }: ModelMapProps) => {
+  const language = useStore(Selector.language);
   const setCommonStore = useStore(Selector.set);
   const addUndoable = useStore(Selector.addUndoable);
   const modelMapLatitude = useStore(Selector.modelMapLatitude);
@@ -27,6 +39,8 @@ const ModelMap = ({ close }: { close: () => void }) => {
 
   const [map, setMap] = useState<google.maps.Map | null>(null);
   const bounds = useRef<google.maps.LatLngBounds | null | undefined>();
+
+  const lang = { lng: language };
 
   const onLoad = useCallback((map: google.maps.Map) => {
     setMap(map);
@@ -213,8 +227,22 @@ const ModelMap = ({ close }: { close: () => void }) => {
       <>
         {sites.map((site, index) => {
           let icon = BuildingIcon;
-          if (site.type === 'PV') {
-            icon = SolarPanelIcon;
+          switch (site.type) {
+            case 'PV':
+              icon = SolarPanelIcon;
+              break;
+            case 'Parabolic Dish':
+              icon = ParabolicDishIcon;
+              break;
+            case 'Parabolic Trough':
+              icon = ParabolicTroughIcon;
+              break;
+            case 'Fresnel Reflector':
+              icon = FresnelReflectorIcon;
+              break;
+            case 'Power Tower':
+              icon = PowerTowerIcon;
+              break;
           }
           return (
             <Marker
@@ -222,10 +250,11 @@ const ModelMap = ({ close }: { close: () => void }) => {
               icon={icon}
               position={{ lat: site.latitude, lng: site.longitude }}
               onClick={() => {
-                close();
-                if (site.url) {
-                  const url = HOME_URL + '?client=web&' + site.url;
-                  window.history.pushState({}, document.title, url);
+                if (site.userid && site.title) {
+                  openModel(site.userid, site.title);
+                  closeMap();
+                } else {
+                  showError(i18n.t('message.ModelNotFound', lang));
                 }
               }}
             />

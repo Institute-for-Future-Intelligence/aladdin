@@ -144,6 +144,7 @@ export const i18n_tr = {
     },
 
     message: {
+      ModelNotFound: 'Model not found',
       CannotSignIn: 'Oturum açılamıyor',
       CannotSignOut: 'Çıkış yapılamıyor',
       YourAccountWasCreated: 'Hesabınız oluşturuldu',
