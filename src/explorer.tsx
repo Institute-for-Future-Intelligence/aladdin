@@ -7,11 +7,11 @@ import styled from 'styled-components';
 import { useStore } from './stores/common';
 import * as Selector from './stores/selector';
 import i18n from './i18n/i18n';
-import Maps from './components/maps';
 import { Libraries } from '@react-google-maps/api/dist/utils/make-load-script-url';
 import { useJsApiLoader } from '@react-google-maps/api';
 import Spinner from './components/spinner';
 import { Space } from 'antd';
+import ModelMap from './components/modelMap';
 
 const libraries = ['places'] as Libraries;
 
@@ -40,8 +40,14 @@ const Explorer = ({ close }: { close: () => void }) => {
   });
 
   return (
-    <Container>
-      {isLoaded ? <Maps fill={true} /> : <Spinner />}
+    <Container
+      onKeyDown={(e) => {
+        if (e.key === 'Escape') {
+          close();
+        }
+      }}
+    >
+      {isLoaded ? <ModelMap close={close} /> : <Spinner />}
       {loadError && (
         <Space>
           <div>Map cannot be loaded right now, sorry.</div>

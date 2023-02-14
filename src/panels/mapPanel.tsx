@@ -7,7 +7,7 @@ import { useStore } from '../stores/common';
 import * as Selector from '../stores/selector';
 import styled from 'styled-components';
 import { Space, Switch } from 'antd';
-import Maps from '../components/maps';
+import GroundMap from '../components/groundMap';
 import { StandaloneSearchBox, useJsApiLoader } from '@react-google-maps/api';
 import { Libraries } from '@react-google-maps/api/dist/utils/make-load-script-url';
 import Spinner from '../components/spinner';
@@ -302,7 +302,7 @@ const MapPanel = () => {
             {isLoaded ? (
               <Space>
                 <div>
-                  <Maps fill={false} width={400} height={400} />
+                  <GroundMap width={400} height={400} />
                   <p style={{ paddingTop: '10px' }}>
                     {i18n.t('mapPanel.Coordinates', lang) + ':'} ({latitude.toFixed(4)}°, {longitude.toFixed(4)}°),
                     &nbsp;

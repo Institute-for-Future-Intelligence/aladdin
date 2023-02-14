@@ -75,6 +75,16 @@ export const actionInfo = (state: CommonStoreState) => state.actionInfo;
 
 export const currentUndoable = (state: CommonStoreState) => state.currentUndoable;
 
+export const modelMapLatitude = (state: CommonStoreState) => state.modelMapLatitude;
+
+export const modelMapLongitude = (state: CommonStoreState) => state.modelMapLongitude;
+
+export const modelMapZoom = (state: CommonStoreState) => state.modelMapZoom;
+
+export const modelMapTilt = (state: CommonStoreState) => state.modelMapTilt;
+
+export const modelMapType = (state: CommonStoreState) => state.modelMapType;
+
 export const showCloudFileTitleDialog = (state: CommonStoreState) => state.showCloudFileTitleDialog;
 
 export const showCloudFileTitleDialogFlag = (state: CommonStoreState) => state.showCloudFileTitleDialogFlag;

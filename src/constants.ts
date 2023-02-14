@@ -4,7 +4,7 @@
 
 import { Color, Euler, Vector2, Vector3 } from 'three';
 
-export const VERSION = '0.8.0';
+export const VERSION = '0.8.1';
 
 export const isProd = process.env.NODE_ENV === 'production';
 
@@ -38,6 +38,8 @@ export const DEFAULT_SOLAR_PANEL_SHININESS = 100;
 export const DEFAULT_WINDOW_SHININESS = 200;
 export const SOLAR_PANEL_BLUE_SPECULAR = '#3BB9FF';
 export const SOLAR_PANEL_BLACK_SPECULAR = '#36454F';
+
+export const DEFAULT_MODEL_MAP_ZOOM = 10;
 
 export const MONTHS = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
 

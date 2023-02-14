@@ -10,7 +10,7 @@ import { UndoableChange } from '../undo/UndoableChange';
 import { UndoableChangeLocation } from '../undo/UndoableChangeLocation';
 import { throttle } from 'lodash';
 
-const Maps = ({ fill = false, width = 400, height = 400 }: { fill: boolean; width?: number; height?: number }) => {
+const GroundMap = ({ width = 400, height = 400 }: { width: number; height: number }) => {
   const setCommonStore = useStore(Selector.set);
   const addUndoable = useStore(Selector.addUndoable);
   const latitude = useStore(Selector.world.latitude);
@@ -206,8 +206,8 @@ const Maps = ({ fill = false, width = 400, height = 400 }: { fill: boolean; widt
     <GoogleMap
       mapContainerStyle={{
         border: '1px solid',
-        width: fill ? '100%' : width + 'px',
-        height: fill ? '100%' : height + 'px',
+        width: width + 'px',
+        height: height + 'px',
       }}
       mapTypeId={mapType}
       center={latLng}
@@ -244,4 +244,4 @@ const Maps = ({ fill = false, width = 400, height = 400 }: { fill: boolean; widt
   );
 };
 
-export default React.memo(Maps);
+export default React.memo(GroundMap);

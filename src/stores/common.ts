@@ -63,7 +63,14 @@ import { TreeModel } from '../models/TreeModel';
 import { HumanModel } from '../models/HumanModel';
 import { FoundationModel } from '../models/FoundationModel';
 import { CuboidModel } from '../models/CuboidModel';
-import { FLOATING_WINDOW_OPACITY, GROUND_ID, HALF_PI, ORIGIN_VECTOR2, UNIT_VECTOR_POS_Z_ARRAY } from '../constants';
+import {
+  DEFAULT_MODEL_MAP_ZOOM,
+  FLOATING_WINDOW_OPACITY,
+  GROUND_ID,
+  HALF_PI,
+  ORIGIN_VECTOR2,
+  UNIT_VECTOR_POS_Z_ARRAY,
+} from '../constants';
 import { PolygonModel } from '../models/PolygonModel';
 import { Point2 } from '../models/Point2';
 import { useRefStore } from './commonRef';
@@ -120,6 +127,12 @@ export interface CommonStoreState {
   language: string;
   floatingWindowOpacity: number;
   cloudFile: string | undefined;
+
+  modelMapLatitude: number;
+  modelMapLongitude: number;
+  modelMapZoom: number;
+  modelMapType: string;
+  modelMapTilt: number;
 
   roofSegmentVerticesMap: Map<string, Vector3[][]>; // key: roofId, val: [segmentIndex][vertex]
   getRoofSegmentVertices: (id: string) => Vector3[][] | undefined;
@@ -700,6 +713,12 @@ export const useStore = create<CommonStoreState>(
           language: 'en',
           floatingWindowOpacity: FLOATING_WINDOW_OPACITY,
           cloudFile: undefined,
+
+          modelMapLatitude: 42.2844063,
+          modelMapLongitude: -71.3488548,
+          modelMapZoom: DEFAULT_MODEL_MAP_ZOOM,
+          modelMapType: 'roadmap',
+          modelMapTilt: 0,
 
           roofSegmentVerticesMap: new Map<string, Vector3[][]>(),
           getRoofSegmentVertices(id) {
@@ -5670,6 +5689,11 @@ export const useStore = create<CommonStoreState>(
           'floatingWindowOpacity',
           'locale',
           'cloudFile',
+          'modelMapLatitude',
+          'modelMapLongitude',
+          'modelMapZoom',
+          'modelMapType',
+          'modelMapTilt',
           'world',
           'elements',
           'viewState',
