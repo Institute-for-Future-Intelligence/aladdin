@@ -15,25 +15,14 @@ import Ground from './views/ground';
 import Heliodon from './views/heliodonWrapper';
 import ifiLogo from './assets/ifi-logo.png';
 import MainMenu from './mainMenu';
-import MapPanel from './panels/mapPanel';
-import HeliodonPanel from './panels/heliodonPanel';
 import { VERSION } from './constants';
 import { visitHomepage, visitIFI } from './helpers';
 import AcceptCookie from './acceptCookie';
 import GroundImage from './views/groundImage';
 import DropdownContextMenu from './components/contextMenu';
-import WeatherPanel from './panels/weatherPanel';
-import { DesignProblem, EvolutionMethod, GraphDataType } from './types';
-import SensorSimulation from './analysis/sensorSimulation';
-import SolarPanelSimulation from './analysis/solarPanelSimulation';
-import YearlyLightSensorPanel from './panels/yearlyLightSensorPanel';
-import DailyLightSensorPanel from './panels/dailyLightSensorPanel';
+import { DesignProblem, EvolutionMethod } from './types';
 import MainToolBar from './mainToolBar';
 import ActionLogger from './actionLogger';
-import StickyNotePanel from './panels/stickyNotePanel';
-import InstructionPanel from './panels/instructionPanel';
-import YearlyPvYieldPanel from './panels/yearlyPvYieldPanel';
-import DailyPvYieldPanel from './panels/dailyPvYieldPanel';
 import Lights from './lights';
 import { Auxiliary } from './auxiliary';
 import CompassContainer from './compassContainer';
@@ -42,45 +31,18 @@ import KeyboardListener from './keyboardListener';
 import CloudImage from './assets/cloud.png';
 import SceneRadiusCalculator from './sceneRadiusCalculator';
 import { UndoableChange } from './undo/UndoableChange';
-import DesignInfoPanel from './panels/designInfoPanel';
-import SiteInfoPanel from './panels/siteInfoPanel';
 import CameraController from './cameraController';
 import { useRefStore } from './stores/commonRef';
 import { UndoableCameraChange } from './undo/UndoableCameraChange';
-import SolarPanelVisibility from './analysis/solarPanelVisibility';
 import ShareLink from './shareLinks';
-import VisualizationControlPanel from './panels/visualizationControlPanel';
-import VisibilityResultsPanel from './panels/visibilityResultsPanel';
-import ThermalSimulation from './analysis/thermalSimulation';
-import StaticSolarRadiationSimulation from './analysis/staticSolarRadiationSimulation';
-import DynamicSolarRadiationSimulation from './analysis/dynamicSolarRadiationSimulation';
-import YearlyParabolicTroughYieldPanel from './panels/yearlyParabolicTroughYieldPanel';
-import DailyParabolicTroughYieldPanel from './panels/dailyParabolicTroughYieldPanel';
-import ParabolicTroughSimulation from './analysis/parabolicTroughSimulation';
-import DailyParabolicDishYieldPanel from './panels/dailyParabolicDishYieldPanel';
-import YearlyParabolicDishYieldPanel from './panels/yearlyParabolicDishYieldPanel';
-import ParabolicDishSimulation from './analysis/parabolicDishSimulation';
-import FresnelReflectorSimulation from './analysis/fresnelReflectorSimulation';
-import DailyFresnelReflectorYieldPanel from './panels/dailyFresnelReflectorYieldPanel';
-import YearlyFresnelReflectorYieldPanel from './panels/yearlyFresnelReflectorYieldPanel';
-import DailyHeliostatYieldPanel from './panels/dailyHeliostatYieldPanel';
-import YearlyHeliostatYieldPanel from './panels/yearlyHeliostatYieldPanel';
-import HeliostatSimulation from './analysis/heliostatSimulation';
-import SolarUpdraftTowerSimulation from './analysis/solarUpdraftTowerSimulation';
-import DailySolarUpdraftTowerYieldPanel from './panels/dailySolarUpdraftTowerYieldPanel';
-import DiurnalTemperaturePanel from './panels/diurnalTemperaturePanel';
-import YearlySolarUpdraftTowerYieldPanel from './panels/yearlySolarUpdraftTowerYieldPanel';
 import SolarPanelTiltAngleGa from './ai/ga/solarPanelTiltAngleGa';
 import SolarPanelArrayGa from './ai/ga/solarPanelArrayGa';
 import SolarPanelTiltAnglePso from './ai/pso/solarPanelTiltAnglePso';
-import SolarPanelOptimizationResult from './panels/solarPanelOptimizationResult';
-import EconomicsPanel from './panels/economicsPanel';
 import SolarPanelArrayPso from './ai/pso/solarPanelArrayPso';
 import PointerStyleController from './pointerStyleController';
 import Loading from './loading';
-import DailyBuildingEnergyPanel from './panels/dailyBuildingEnergyPanel';
-import YearlyBuildingEnergyPanel from './panels/yearlyBuildingEnergyPanel';
-import { usePrimitiveStore } from './stores/commonPrimitive';
+import Panels from './panels';
+import Simulations from './simulations';
 
 export interface AppCreatorProps {
   viewOnly: boolean;
@@ -93,48 +55,16 @@ const AppCreator = ({ viewOnly = false }: AppCreatorProps) => {
   const language = useStore(Selector.language);
   const changed = useStore(Selector.changed);
   const addUndoable = useStore(Selector.addUndoable);
-  const getClosestCity = useStore(Selector.getClosestCity);
-  const worldLatitude = useStore(Selector.world.latitude);
-  const worldLongitude = useStore(Selector.world.longitude);
   const orthographic = useStore(Selector.viewState.orthographic) ?? false;
   const sceneRadius = useStore(Selector.sceneRadius);
   const cloudFile = useStore(Selector.cloudFile);
   const axes = useStore(Selector.viewState.axes);
   const theme = useStore(Selector.viewState.theme);
   const groundImage = useStore(Selector.viewState.groundImage);
-  const showSiteInfoPanel = useStore(Selector.viewState.showSiteInfoPanel);
-  const showDesignInfoPanel = useStore(Selector.viewState.showDesignInfoPanel);
-  const showInstructionPanel = useStore(Selector.viewState.showInstructionPanel);
-  const showMapPanel = useStore(Selector.viewState.showMapPanel);
-  const showHeliodonPanel = useStore(Selector.viewState.showHeliodonPanel);
-  const showStickyNotePanel = useStore(Selector.viewState.showStickyNotePanel);
-  const showWeatherPanel = useStore(Selector.viewState.showWeatherPanel);
-  const showDiurnalTemperaturePanel = useStore(Selector.viewState.showDiurnalTemperaturePanel);
-  const showEconomicsPanel = useStore(Selector.viewState.showEconomicsPanel);
-  const showSolarRadiationHeatmap = usePrimitiveStore(Selector.showSolarRadiationHeatmap);
-  const showDailyLightSensorPanel = useStore(Selector.viewState.showDailyLightSensorPanel);
-  const showYearlyLightSensorPanel = useStore(Selector.viewState.showYearlyLightSensorPanel);
-  const showDailyPvYieldPanel = useStore(Selector.viewState.showDailyPvYieldPanel);
-  const showYearlyPvYieldPanel = useStore(Selector.viewState.showYearlyPvYieldPanel);
-  const showVisibilityResultsPanel = useStore(Selector.viewState.showVisibilityResultsPanel);
-  const showDailyParabolicTroughYieldPanel = useStore(Selector.viewState.showDailyParabolicTroughYieldPanel);
-  const showYearlyParabolicTroughYieldPanel = useStore(Selector.viewState.showYearlyParabolicTroughYieldPanel);
-  const showDailyParabolicDishYieldPanel = useStore(Selector.viewState.showDailyParabolicDishYieldPanel);
-  const showYearlyParabolicDishYieldPanel = useStore(Selector.viewState.showYearlyParabolicDishYieldPanel);
-  const showDailyFresnelReflectorYieldPanel = useStore(Selector.viewState.showDailyFresnelReflectorYieldPanel);
-  const showYearlyFresnelReflectorYieldPanel = useStore(Selector.viewState.showYearlyFresnelReflectorYieldPanel);
-  const showDailyHeliostatYieldPanel = useStore(Selector.viewState.showDailyHeliostatYieldPanel);
-  const showYearlyHeliostatYieldPanel = useStore(Selector.viewState.showYearlyHeliostatYieldPanel);
-  const showDailyUpdraftTowerYieldPanel = useStore(Selector.viewState.showDailyUpdraftTowerYieldPanel);
-  const showYearlyUpdraftTowerYieldPanel = useStore(Selector.viewState.showYearlyUpdraftTowerYieldPanel);
-  const showDailyBuildingEnergyPanel = useStore(Selector.viewState.showDailyBuildingEnergyPanel);
-  const showYearlyBuildingEnergyPanel = useStore(Selector.viewState.showYearlyBuildingEnergyPanel);
-  const showEvolutionPanel = useStore(Selector.viewState.showEvolutionPanel);
   const evolutionMethod = useStore(Selector.evolutionMethod);
   const evolutionaryAlgorithmState = useStore(Selector.evolutionaryAlgorithmState);
 
   const [initializing, setInitializing] = useState(true);
-  const [city, setCity] = useState<string>('Boston MA, USA');
 
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const lang = { lng: language };
@@ -142,11 +72,6 @@ const AppCreator = ({ viewOnly = false }: AppCreatorProps) => {
   useEffect(() => {
     setInitializing(false);
   }, []);
-
-  useEffect(() => {
-    setCity(getClosestCity(worldLatitude, worldLongitude) ?? 'Boston MA, USA');
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [worldLatitude, worldLongitude]);
 
   useEffect(() => {
     setCommonStore((state) => {
@@ -378,44 +303,7 @@ const AppCreator = ({ viewOnly = false }: AppCreatorProps) => {
         zoomView={zoomView}
       />
       <MainToolBar viewOnly={viewOnly} />
-      {showMapPanel && <MapPanel />}
-      {showHeliodonPanel && <HeliodonPanel />}
-      {showStickyNotePanel && <StickyNotePanel />}
-      {showSiteInfoPanel && <SiteInfoPanel city={city} />}
-      {showDesignInfoPanel && <DesignInfoPanel />}
-      {showInstructionPanel && <InstructionPanel />}
-      {showWeatherPanel && (
-        <WeatherPanel city={city} graphs={[GraphDataType.MonthlyTemperatures, GraphDataType.SunshineHours]} />
-      )}
-      {showDiurnalTemperaturePanel && <DiurnalTemperaturePanel city={city} />}
-      {showEconomicsPanel && (
-        <EconomicsPanel
-          setDialogVisible={(visible) => {
-            setCommonStore((state) => {
-              state.viewState.showEconomicsPanel = visible;
-            });
-          }}
-        />
-      )}
-      {showYearlyLightSensorPanel && <YearlyLightSensorPanel city={city} />}
-      {showDailyLightSensorPanel && <DailyLightSensorPanel city={city} />}
-      {showYearlyPvYieldPanel && <YearlyPvYieldPanel city={city} />}
-      {showDailyPvYieldPanel && <DailyPvYieldPanel city={city} />}
-      {showVisibilityResultsPanel && <VisibilityResultsPanel />}
-      {showYearlyParabolicTroughYieldPanel && <YearlyParabolicTroughYieldPanel city={city} />}
-      {showDailyParabolicTroughYieldPanel && <DailyParabolicTroughYieldPanel city={city} />}
-      {showYearlyParabolicDishYieldPanel && <YearlyParabolicDishYieldPanel city={city} />}
-      {showDailyParabolicDishYieldPanel && <DailyParabolicDishYieldPanel city={city} />}
-      {showDailyFresnelReflectorYieldPanel && <DailyFresnelReflectorYieldPanel city={city} />}
-      {showYearlyFresnelReflectorYieldPanel && <YearlyFresnelReflectorYieldPanel city={city} />}
-      {showDailyHeliostatYieldPanel && <DailyHeliostatYieldPanel city={city} />}
-      {showYearlyHeliostatYieldPanel && <YearlyHeliostatYieldPanel city={city} />}
-      {showDailyUpdraftTowerYieldPanel && <DailySolarUpdraftTowerYieldPanel city={city} />}
-      {showYearlyUpdraftTowerYieldPanel && <YearlySolarUpdraftTowerYieldPanel city={city} />}
-      {showDailyBuildingEnergyPanel && <DailyBuildingEnergyPanel city={city} />}
-      {showYearlyBuildingEnergyPanel && <YearlyBuildingEnergyPanel city={city} />}
-      {showSolarRadiationHeatmap && <VisualizationControlPanel />}
-      {showEvolutionPanel && <SolarPanelOptimizationResult />}
+      <Panels />
       <DropdownContextMenu>
         <div>
           <Canvas
@@ -442,17 +330,7 @@ const AppCreator = ({ viewOnly = false }: AppCreatorProps) => {
               {/* <Obj/> */}
             </Suspense>
             <SceneRadiusCalculator />
-            <ThermalSimulation city={city} />
-            <StaticSolarRadiationSimulation city={city} />
-            <DynamicSolarRadiationSimulation city={city} />
-            <SensorSimulation city={city} />
-            <SolarPanelSimulation city={city} />
-            <SolarPanelVisibility />
-            <ParabolicTroughSimulation city={city} />
-            <ParabolicDishSimulation city={city} />
-            <FresnelReflectorSimulation city={city} />
-            <HeliostatSimulation city={city} />
-            <SolarUpdraftTowerSimulation city={city} />
+            <Simulations />
             {evolutionMethod === EvolutionMethod.GENETIC_ALGORITHM &&
               evolutionaryAlgorithmState.geneticAlgorithmParams.problem === DesignProblem.SOLAR_PANEL_TILT_ANGLE && (
                 <SolarPanelTiltAngleGa />
