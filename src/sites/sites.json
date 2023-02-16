@@ -66,6 +66,19 @@
   },
   {
     "author": "Charles Xie",
+    "latitude": 34.661401193155264,
+    "longitude": -118.08438229389954,
+    "type": "PV",
+    "module_number": 0,
+    "label": "AADAT Solar Trackers",
+    "town": "Lancaster",
+    "state": "California",
+    "country": "United States",
+    "userid": "QWecNcxhyvP6j6sBN11hBsfZDau1",
+    "title": "AADAT Solar Trackers Lancaster"
+  },
+  {
+    "author": "Charles Xie",
     "latitude": 44.45608804405367,
     "longitude": -73.17554674932099,
     "type": "PV",

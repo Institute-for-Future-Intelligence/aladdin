@@ -160,20 +160,24 @@ const MainMenu = ({ viewOnly, set2DView, resetView, zoomView, canvas }: MainMenu
   const takeScreenshot = () => {
     if (canvas) {
       saveImage('screenshot.png', canvas.toDataURL('image/png'));
-      if (loggable) {
-        setCommonStore((state) => {
+      setCommonStore((state) => {
+        state.openModelMap = false;
+        if (loggable) {
           state.actionInfo = {
             name: 'Take Screenshot',
             timestamp: new Date().getTime(),
           };
-        });
-      }
+        }
+      });
     }
   };
 
   const loadFile = (e: any) => {
     const input = getExample(e.key);
     if (input) {
+      setCommonStore((state) => {
+        state.openModelMap = false;
+      });
       if (!viewOnly && changed) {
         Modal.confirm({
           title: i18n.t('message.DoYouWantToSaveChanges', lang),
@@ -761,143 +765,148 @@ const MainMenu = ({ viewOnly, set2DView, resetView, zoomView, canvas }: MainMenu
   const menu = (
     <Menu triggerSubMenuAction={'click'}>
       {/* file menu */}
-      <SubMenu key={'file'} title={i18n.t('menu.fileSubMenu', lang)}>
-        {!viewOnly && (
+      {!openModelMap && (
+        <SubMenu key={'file'} title={i18n.t('menu.fileSubMenu', lang)}>
+          {!viewOnly && (
+            <Menu.Item
+              key="create-new-file"
+              onClick={() => {
+                undoManager.clear();
+                setCommonStore((state) => {
+                  state.createNewFileFlag = !state.createNewFileFlag;
+                  state.objectTypeToAdd = ObjectType.None;
+                  state.groupActionMode = false;
+                  state.elementGroupId = null;
+                  state.openModelMap = false; // in case the user uses the keyboard shortcut
+                  window.history.pushState({}, document.title, HOME_URL);
+                  if (loggable) {
+                    state.actionInfo = {
+                      name: 'Create New File',
+                      timestamp: new Date().getTime(),
+                    };
+                  }
+                });
+              }}
+            >
+              {i18n.t('menu.file.CreateNewFile', lang)}
+              <label style={{ paddingLeft: '2px', fontSize: 9 }}>({isMac ? '⌘' : 'Ctrl'}+F)</label>
+            </Menu.Item>
+          )}
+
+          {!viewOnly && (
+            <Menu.Item
+              key="open-local-file"
+              onClick={() => {
+                undoManager.clear();
+                setCommonStore((state) => {
+                  state.openLocalFileFlag = !state.openLocalFileFlag;
+                  state.objectTypeToAdd = ObjectType.None;
+                  state.groupActionMode = false;
+                  state.elementGroupId = null;
+                  state.cloudFile = undefined;
+                  state.openModelMap = false; // in case the user uses the keyboard shortcut
+                  window.history.pushState({}, document.title, HOME_URL);
+                  if (loggable) {
+                    state.actionInfo = {
+                      name: 'Open Local File',
+                      timestamp: new Date().getTime(),
+                    };
+                  }
+                });
+              }}
+            >
+              {i18n.t('menu.file.OpenLocalFile', lang)}
+              <label style={{ paddingLeft: '2px', fontSize: 9 }}>({isMac ? '⌘' : 'Ctrl'}+O)</label>...
+            </Menu.Item>
+          )}
+
           <Menu.Item
-            key="create-new-file"
+            key="save-local-file"
             onClick={() => {
-              undoManager.clear();
               setCommonStore((state) => {
-                state.createNewFileFlag = !state.createNewFileFlag;
-                state.objectTypeToAdd = ObjectType.None;
-                state.groupActionMode = false;
-                state.elementGroupId = null;
-                window.history.pushState({}, document.title, HOME_URL);
+                state.saveLocalFileDialogVisible = true;
                 if (loggable) {
                   state.actionInfo = {
-                    name: 'Create New File',
+                    name: 'Save as Local File',
                     timestamp: new Date().getTime(),
                   };
                 }
               });
             }}
           >
-            {i18n.t('menu.file.CreateNewFile', lang)}
-            <label style={{ paddingLeft: '2px', fontSize: 9 }}>({isMac ? '⌘' : 'Ctrl'}+F)</label>
+            {i18n.t('menu.file.SaveAsLocalFile', lang)}
+            <label style={{ paddingLeft: '2px', fontSize: 9 }}>({isMac ? '⌘' : 'Ctrl'}+S)</label>...
           </Menu.Item>
-        )}
 
-        {!viewOnly && (
-          <Menu.Item
-            key="open-local-file"
-            onClick={() => {
-              undoManager.clear();
-              setCommonStore((state) => {
-                state.openLocalFileFlag = !state.openLocalFileFlag;
-                state.objectTypeToAdd = ObjectType.None;
-                state.groupActionMode = false;
-                state.elementGroupId = null;
-                state.cloudFile = undefined;
-                window.history.pushState({}, document.title, HOME_URL);
-                if (loggable) {
-                  state.actionInfo = {
-                    name: 'Open Local File',
-                    timestamp: new Date().getTime(),
-                  };
-                }
-              });
-            }}
-          >
-            {i18n.t('menu.file.OpenLocalFile', lang)}
-            <label style={{ paddingLeft: '2px', fontSize: 9 }}>({isMac ? '⌘' : 'Ctrl'}+O)</label>...
+          {user.uid && !viewOnly && (
+            <Menu.Item
+              key="open-cloud-file"
+              onClick={() => {
+                setCommonStore((state) => {
+                  state.listCloudFilesFlag = !state.listCloudFilesFlag;
+                  state.openModelMap = false; // in case the user uses the keyboard shortcut
+                  if (loggable) {
+                    state.actionInfo = {
+                      name: 'List Cloud Files',
+                      timestamp: new Date().getTime(),
+                    };
+                  }
+                });
+              }}
+            >
+              {i18n.t('menu.file.OpenCloudFile', lang)}
+              <label style={{ paddingLeft: '2px', fontSize: 9 }}>({isMac ? '⌘' : 'Ctrl'}+Shift+O)</label>...
+            </Menu.Item>
+          )}
+
+          {user.uid && cloudFile && !viewOnly && (
+            <Menu.Item
+              key="save-cloud-file"
+              onClick={() => {
+                setCommonStore((state) => {
+                  state.saveCloudFileFlag = !state.saveCloudFileFlag;
+                  if (loggable) {
+                    state.actionInfo = {
+                      name: 'Save Cloud File',
+                      timestamp: new Date().getTime(),
+                    };
+                  }
+                });
+              }}
+            >
+              {i18n.t('menu.file.SaveCloudFile', lang)}
+              <label style={{ paddingLeft: '2px', fontSize: 9 }}>({isMac ? '⌘' : 'Ctrl'}+Shift+S)</label>
+            </Menu.Item>
+          )}
+
+          {user.uid && !viewOnly && (
+            <Menu.Item
+              key="save-as-cloud-file"
+              onClick={() => {
+                setCommonStore((state) => {
+                  state.showCloudFileTitleDialogFlag = !state.showCloudFileTitleDialogFlag;
+                  state.showCloudFileTitleDialog = true;
+                  if (loggable) {
+                    state.actionInfo = {
+                      name: 'Save as Cloud File',
+                      timestamp: new Date().getTime(),
+                    };
+                  }
+                });
+              }}
+            >
+              {i18n.t('menu.file.SaveAsCloudFile', lang)}...
+            </Menu.Item>
+          )}
+
+          <Menu.Item key="screenshot" onClick={takeScreenshot}>
+            {i18n.t('menu.file.TakeScreenshot', lang)}
           </Menu.Item>
-        )}
-
-        <Menu.Item
-          key="save-local-file"
-          onClick={() => {
-            setCommonStore((state) => {
-              state.saveLocalFileDialogVisible = true;
-              if (loggable) {
-                state.actionInfo = {
-                  name: 'Save as Local File',
-                  timestamp: new Date().getTime(),
-                };
-              }
-            });
-          }}
-        >
-          {i18n.t('menu.file.SaveAsLocalFile', lang)}
-          <label style={{ paddingLeft: '2px', fontSize: 9 }}>({isMac ? '⌘' : 'Ctrl'}+S)</label>...
-        </Menu.Item>
-
-        {user.uid && !viewOnly && (
-          <Menu.Item
-            key="open-cloud-file"
-            onClick={() => {
-              setCommonStore((state) => {
-                state.listCloudFilesFlag = !state.listCloudFilesFlag;
-                if (loggable) {
-                  state.actionInfo = {
-                    name: 'List Cloud Files',
-                    timestamp: new Date().getTime(),
-                  };
-                }
-              });
-            }}
-          >
-            {i18n.t('menu.file.OpenCloudFile', lang)}
-            <label style={{ paddingLeft: '2px', fontSize: 9 }}>({isMac ? '⌘' : 'Ctrl'}+Shift+O)</label>...
-          </Menu.Item>
-        )}
-
-        {user.uid && cloudFile && !viewOnly && (
-          <Menu.Item
-            key="save-cloud-file"
-            onClick={() => {
-              setCommonStore((state) => {
-                state.saveCloudFileFlag = !state.saveCloudFileFlag;
-                if (loggable) {
-                  state.actionInfo = {
-                    name: 'Save Cloud File',
-                    timestamp: new Date().getTime(),
-                  };
-                }
-              });
-            }}
-          >
-            {i18n.t('menu.file.SaveCloudFile', lang)}
-            <label style={{ paddingLeft: '2px', fontSize: 9 }}>({isMac ? '⌘' : 'Ctrl'}+Shift+S)</label>
-          </Menu.Item>
-        )}
-
-        {user.uid && !viewOnly && (
-          <Menu.Item
-            key="save-as-cloud-file"
-            onClick={() => {
-              setCommonStore((state) => {
-                state.showCloudFileTitleDialogFlag = !state.showCloudFileTitleDialogFlag;
-                state.showCloudFileTitleDialog = true;
-                if (loggable) {
-                  state.actionInfo = {
-                    name: 'Save as Cloud File',
-                    timestamp: new Date().getTime(),
-                  };
-                }
-              });
-            }}
-          >
-            {i18n.t('menu.file.SaveAsCloudFile', lang)}...
-          </Menu.Item>
-        )}
-
-        <Menu.Item key="screenshot" onClick={takeScreenshot}>
-          {i18n.t('menu.file.TakeScreenshot', lang)}
-        </Menu.Item>
-      </SubMenu>
+        </SubMenu>
+      )}
 
       {/* edit menu */}
-      {(selectedElement || readyToPaste || undoManager.hasUndo() || undoManager.hasRedo()) && (
+      {(selectedElement || readyToPaste || undoManager.hasUndo() || undoManager.hasRedo()) && !openModelMap && (
         <SubMenu key={'edit'} title={i18n.t('menu.editSubMenu', lang)}>
           {selectedElement && (
             <Menu.Item key="copy" onClick={copySelectedElement}>
@@ -967,862 +976,871 @@ const MainMenu = ({ viewOnly, set2DView, resetView, zoomView, canvas }: MainMenu
       )}
 
       {/* view menu */}
-      <SubMenu key={'view'} title={i18n.t('menu.viewSubMenu', lang)}>
-        {!orthographic && !viewAlreadyReset && (
+      {!openModelMap && (
+        <SubMenu key={'view'} title={i18n.t('menu.viewSubMenu', lang)}>
+          {!orthographic && !viewAlreadyReset && (
+            <Menu.Item
+              key={'reset-view'}
+              onClick={() => {
+                const undoableResetView = {
+                  name: 'Reset View',
+                  timestamp: Date.now(),
+                  oldCameraPosition: [...cameraPosition],
+                  oldPanCenter: [...panCenter],
+                  undo: () => {
+                    const orbitControlsRef = useRefStore.getState().orbitControlsRef;
+                    if (orbitControlsRef?.current) {
+                      orbitControlsRef.current.object.position.set(
+                        undoableResetView.oldCameraPosition[0],
+                        undoableResetView.oldCameraPosition[1],
+                        undoableResetView.oldCameraPosition[2],
+                      );
+                      orbitControlsRef.current.target.set(
+                        undoableResetView.oldPanCenter[0],
+                        undoableResetView.oldPanCenter[1],
+                        undoableResetView.oldPanCenter[2],
+                      );
+                      orbitControlsRef.current.update();
+                      setCommonStore((state) => {
+                        const v = state.viewState;
+                        v.cameraPosition = [...undoableResetView.oldCameraPosition];
+                        v.panCenter = [...undoableResetView.oldPanCenter];
+                      });
+                    }
+                  },
+                  redo: () => {
+                    resetView();
+                  },
+                } as UndoableResetView;
+                addUndoable(undoableResetView);
+                resetView();
+                setCommonStore((state) => {
+                  state.objectTypeToAdd = ObjectType.None;
+                  state.groupActionMode = false;
+                  state.elementGroupId = null;
+                  state.viewState.orthographic = false;
+                });
+              }}
+              style={{ paddingLeft: '36px' }}
+            >
+              {i18n.t('menu.view.ResetView', lang)}
+              <label style={{ paddingLeft: '2px', fontSize: 9 }}>({keyHome})</label>
+            </Menu.Item>
+          )}
           <Menu.Item
-            key={'reset-view'}
+            key={'zoom-out-view'}
             onClick={() => {
-              const undoableResetView = {
-                name: 'Reset View',
-                timestamp: Date.now(),
-                oldCameraPosition: [...cameraPosition],
-                oldPanCenter: [...panCenter],
-                undo: () => {
-                  const orbitControlsRef = useRefStore.getState().orbitControlsRef;
-                  if (orbitControlsRef?.current) {
-                    orbitControlsRef.current.object.position.set(
-                      undoableResetView.oldCameraPosition[0],
-                      undoableResetView.oldCameraPosition[1],
-                      undoableResetView.oldCameraPosition[2],
-                    );
-                    orbitControlsRef.current.target.set(
-                      undoableResetView.oldPanCenter[0],
-                      undoableResetView.oldPanCenter[1],
-                      undoableResetView.oldPanCenter[2],
-                    );
-                    orbitControlsRef.current.update();
-                    setCommonStore((state) => {
-                      const v = state.viewState;
-                      v.cameraPosition = [...undoableResetView.oldCameraPosition];
-                      v.panCenter = [...undoableResetView.oldPanCenter];
-                    });
-                  }
-                },
-                redo: () => {
-                  resetView();
-                },
-              } as UndoableResetView;
-              addUndoable(undoableResetView);
-              resetView();
-              setCommonStore((state) => {
-                state.objectTypeToAdd = ObjectType.None;
-                state.groupActionMode = false;
-                state.elementGroupId = null;
-                state.viewState.orthographic = false;
-              });
+              zoomView(1.1);
             }}
             style={{ paddingLeft: '36px' }}
           >
-            {i18n.t('menu.view.ResetView', lang)}
-            <label style={{ paddingLeft: '2px', fontSize: 9 }}>({keyHome})</label>
+            {i18n.t('menu.view.ZoomOut', lang)}
+            <label style={{ paddingLeft: '2px', fontSize: 9 }}>({isMac ? '⌘' : 'Ctrl'}+])</label>
           </Menu.Item>
-        )}
-        <Menu.Item
-          key={'zoom-out-view'}
-          onClick={() => {
-            zoomView(1.1);
-          }}
-          style={{ paddingLeft: '36px' }}
-        >
-          {i18n.t('menu.view.ZoomOut', lang)}
-          <label style={{ paddingLeft: '2px', fontSize: 9 }}>({isMac ? '⌘' : 'Ctrl'}+])</label>
-        </Menu.Item>
-        <Menu.Item
-          key={'zoom-in-view'}
-          onClick={() => {
-            zoomView(0.9);
-          }}
-          style={{ paddingLeft: '36px' }}
-        >
-          {i18n.t('menu.view.ZoomIn', lang)}
-          <label style={{ paddingLeft: '2px', fontSize: 9 }}>({isMac ? '⌘' : 'Ctrl'}+[)</label>
-        </Menu.Item>
-        <Menu.Item key={'orthographic-check-box'}>
-          <Checkbox checked={orthographic} onChange={toggle2DView}>
-            {i18n.t('menu.view.TwoDimensionalView', lang)}
-            <label style={{ paddingLeft: '2px', fontSize: 9 }}>({isMac ? '⌘' : 'Ctrl'}+B)</label>
-          </Checkbox>
-        </Menu.Item>
-        {!orthographic && (
-          <Menu.Item key={'auto-rotate-check-box'}>
-            <Checkbox checked={autoRotate} onChange={toggleAutoRotate}>
-              {i18n.t('menu.view.AutoRotate', lang)}
-              <label style={{ paddingLeft: '2px', fontSize: 9 }}>({isMac ? '⌘' : 'Ctrl'}+M)</label>
-            </Checkbox>
-          </Menu.Item>
-        )}
-        <Menu.Item key={'axes-check-box'}>
-          <Checkbox checked={axes} onChange={toggleAxes}>
-            {i18n.t('skyMenu.Axes', lang)}
-          </Checkbox>
-        </Menu.Item>
-        <Menu.Item key={'shadow-check-box'}>
-          <Checkbox checked={shadowEnabled} onChange={toggleShadow}>
-            {i18n.t('menu.view.ShowShadow', lang)}
-          </Checkbox>
-        </Menu.Item>
-        <Menu.Item key={'shininess-check-box'}>
-          <Checkbox
-            checked={solarPanelShininess === undefined || solarPanelShininess > 0}
-            onChange={(e) => {
-              setSurfaceShininess(e.target.checked ? DEFAULT_SOLAR_PANEL_SHININESS : 0);
+          <Menu.Item
+            key={'zoom-in-view'}
+            onClick={() => {
+              zoomView(0.9);
             }}
+            style={{ paddingLeft: '36px' }}
           >
-            {i18n.t('menu.view.ShowSurfaceShininess', lang)}
-          </Checkbox>
-        </Menu.Item>
-        <Menu.Item key={'translucency-check-box'}>
-          <Checkbox checked={floatingWindowOpacity < 1} onChange={toggleTranslucency}>
-            {i18n.t('menu.view.TranslucentFloatingWindows', lang)}
-          </Checkbox>
-        </Menu.Item>
-        <SubMenu
-          key={'accessories'}
-          style={{ paddingLeft: '24px' }}
-          title={i18n.t('menu.view.accessoriesSubMenu', lang)}
-        >
-          <Menu.Item key={'site-info-panel-check-box'}>
-            <Checkbox checked={showSiteInfoPanel} onChange={toggleSiteInfoPanel}>
-              {i18n.t('menu.view.accessories.SiteInformation', lang)}
+            {i18n.t('menu.view.ZoomIn', lang)}
+            <label style={{ paddingLeft: '2px', fontSize: 9 }}>({isMac ? '⌘' : 'Ctrl'}+[)</label>
+          </Menu.Item>
+          <Menu.Item key={'orthographic-check-box'}>
+            <Checkbox checked={orthographic} onChange={toggle2DView}>
+              {i18n.t('menu.view.TwoDimensionalView', lang)}
+              <label style={{ paddingLeft: '2px', fontSize: 9 }}>({isMac ? '⌘' : 'Ctrl'}+B)</label>
             </Checkbox>
           </Menu.Item>
-          <Menu.Item key={'design-info-panel-check-box'}>
-            <Checkbox checked={showDesignInfoPanel} onChange={toggleDesignInfoPanel}>
-              {i18n.t('menu.view.accessories.DesignInformation', lang)}
+          {!orthographic && (
+            <Menu.Item key={'auto-rotate-check-box'}>
+              <Checkbox checked={autoRotate} onChange={toggleAutoRotate}>
+                {i18n.t('menu.view.AutoRotate', lang)}
+                <label style={{ paddingLeft: '2px', fontSize: 9 }}>({isMac ? '⌘' : 'Ctrl'}+M)</label>
+              </Checkbox>
+            </Menu.Item>
+          )}
+          <Menu.Item key={'axes-check-box'}>
+            <Checkbox checked={axes} onChange={toggleAxes}>
+              {i18n.t('skyMenu.Axes', lang)}
             </Checkbox>
           </Menu.Item>
-          <Menu.Item key={'instruction-panel-check-box'}>
-            <Checkbox checked={showInstructionPanel} onChange={toggleInstructionPanel}>
-              {i18n.t('menu.view.accessories.Instruction', lang)}
+          <Menu.Item key={'shadow-check-box'}>
+            <Checkbox checked={shadowEnabled} onChange={toggleShadow}>
+              {i18n.t('menu.view.ShowShadow', lang)}
             </Checkbox>
           </Menu.Item>
-          <Menu.Item key={'sticky-note-panel-check-box'}>
-            <Checkbox checked={showStickyNotePanel} onChange={toggleStickyNote}>
-              {i18n.t('menu.view.accessories.StickyNote', lang)}
+          <Menu.Item key={'shininess-check-box'}>
+            <Checkbox
+              checked={solarPanelShininess === undefined || solarPanelShininess > 0}
+              onChange={(e) => {
+                setSurfaceShininess(e.target.checked ? DEFAULT_SOLAR_PANEL_SHININESS : 0);
+              }}
+            >
+              {i18n.t('menu.view.ShowSurfaceShininess', lang)}
             </Checkbox>
           </Menu.Item>
+          <Menu.Item key={'translucency-check-box'}>
+            <Checkbox checked={floatingWindowOpacity < 1} onChange={toggleTranslucency}>
+              {i18n.t('menu.view.TranslucentFloatingWindows', lang)}
+            </Checkbox>
+          </Menu.Item>
+          <SubMenu
+            key={'accessories'}
+            style={{ paddingLeft: '24px' }}
+            title={i18n.t('menu.view.accessoriesSubMenu', lang)}
+          >
+            <Menu.Item key={'site-info-panel-check-box'}>
+              <Checkbox checked={showSiteInfoPanel} onChange={toggleSiteInfoPanel}>
+                {i18n.t('menu.view.accessories.SiteInformation', lang)}
+              </Checkbox>
+            </Menu.Item>
+            <Menu.Item key={'design-info-panel-check-box'}>
+              <Checkbox checked={showDesignInfoPanel} onChange={toggleDesignInfoPanel}>
+                {i18n.t('menu.view.accessories.DesignInformation', lang)}
+              </Checkbox>
+            </Menu.Item>
+            <Menu.Item key={'instruction-panel-check-box'}>
+              <Checkbox checked={showInstructionPanel} onChange={toggleInstructionPanel}>
+                {i18n.t('menu.view.accessories.Instruction', lang)}
+              </Checkbox>
+            </Menu.Item>
+            <Menu.Item key={'sticky-note-panel-check-box'}>
+              <Checkbox checked={showStickyNotePanel} onChange={toggleStickyNote}>
+                {i18n.t('menu.view.accessories.StickyNote', lang)}
+              </Checkbox>
+            </Menu.Item>
+          </SubMenu>
         </SubMenu>
-      </SubMenu>
+      )}
 
       {/* tool menu */}
-      <SubMenu key={'tool'} title={i18n.t('menu.toolSubMenu', lang)}>
-        {!showHeliodonPanel && (
-          <Menu.Item key={'heliodon-panel-check-box'} onClick={openHeliodonPanel}>
-            {i18n.t('menu.tool.SunAndTime', lang)}...
-          </Menu.Item>
-        )}
-        {!showMapPanel && (
-          <Menu.Item key={'map-panel-check-box'} onClick={openMapPanel}>
-            {i18n.t('word.Location', lang)}...
-          </Menu.Item>
-        )}
-        {!showWeatherPanel && (
-          <Menu.Item key={'weather-panel-check-box'} onClick={openWeatherPanel}>
-            {i18n.t('menu.tool.WeatherData', lang)}...
-          </Menu.Item>
-        )}
-        {!showDiurnalTemperaturePanel && (
-          <Menu.Item key={'diurnal-temperature-panel-check-box'} onClick={openDiurnalTemperaturePanel}>
-            {i18n.t('menu.tool.DiurnalTemperature', lang)}...
-          </Menu.Item>
-        )}
-        {!showEconomicsPanel && (
-          <Menu.Item
-            key={'economics-panel-menu-item'}
-            onClick={() => {
-              setCommonStore((state) => {
-                state.viewState.showEconomicsPanel = true;
-                if (loggable) {
-                  state.actionInfo = {
-                    name: 'Open Economics Panel',
-                    timestamp: new Date().getTime(),
-                  };
-                }
-              });
-            }}
-          >
-            {i18n.t('economicsPanel.EconomicsParameters', lang)}...
-          </Menu.Item>
-        )}
-      </SubMenu>
+      {!openModelMap && (
+        <SubMenu key={'tool'} title={i18n.t('menu.toolSubMenu', lang)}>
+          {!showHeliodonPanel && (
+            <Menu.Item key={'heliodon-panel-check-box'} onClick={openHeliodonPanel}>
+              {i18n.t('menu.tool.SunAndTime', lang)}...
+            </Menu.Item>
+          )}
+          {!showMapPanel && (
+            <Menu.Item key={'map-panel-check-box'} onClick={openMapPanel}>
+              {i18n.t('word.Location', lang)}...
+            </Menu.Item>
+          )}
+          {!showWeatherPanel && (
+            <Menu.Item key={'weather-panel-check-box'} onClick={openWeatherPanel}>
+              {i18n.t('menu.tool.WeatherData', lang)}...
+            </Menu.Item>
+          )}
+          {!showDiurnalTemperaturePanel && (
+            <Menu.Item key={'diurnal-temperature-panel-check-box'} onClick={openDiurnalTemperaturePanel}>
+              {i18n.t('menu.tool.DiurnalTemperature', lang)}...
+            </Menu.Item>
+          )}
+          {!showEconomicsPanel && (
+            <Menu.Item
+              key={'economics-panel-menu-item'}
+              onClick={() => {
+                setCommonStore((state) => {
+                  state.viewState.showEconomicsPanel = true;
+                  if (loggable) {
+                    state.actionInfo = {
+                      name: 'Open Economics Panel',
+                      timestamp: new Date().getTime(),
+                    };
+                  }
+                });
+              }}
+            >
+              {i18n.t('economicsPanel.EconomicsParameters', lang)}...
+            </Menu.Item>
+          )}
+        </SubMenu>
+      )}
 
       {/* analysis menu */}
-      <SubMenu key={'analysis'} title={i18n.t('menu.analysisSubMenu', lang)}>
-        {/* physics */}
-        <SubMenu key={'physics'} title={i18n.t('menu.physicsSubMenu', lang)}>
-          <Menu.Item
-            key={'daily-solar-radiation-heatmap'}
-            onClick={
-              !noAnimationForHeatmapSimulation || Util.hasMovingParts(elements)
-                ? toggleDynamicSolarRadiationHeatmap
-                : toggleStaticSolarRadiationHeatmap
-            }
-          >
-            {i18n.t('menu.physics.DailySolarRadiationHeatmap', lang)}
-          </Menu.Item>
-          <SubMenu
-            key={'solar-radiation-heatmap-options'}
-            title={i18n.t('menu.physics.SolarRadiationHeatmapOptions', lang)}
-          >
-            <Menu>
-              <Menu.Item key={'solar-radiation-heatmap-grid-cell-size'}>
-                <Space style={{ width: '280px' }}>
-                  {i18n.t('menu.physics.SolarRadiationHeatmapGridCellSize', lang) + ':'}
-                </Space>
-                <InputNumber
-                  min={0.1}
-                  max={20}
-                  step={0.1}
-                  style={{ width: 60 }}
-                  precision={1}
-                  value={solarRadiationHeatmapGridCellSize ?? 0.5}
-                  onChange={(value) => {
-                    setCommonStore((state) => {
-                      state.world.solarRadiationHeatmapGridCellSize = value;
-                    });
-                  }}
-                />
-                <Space style={{ paddingLeft: '10px' }}>{i18n.t('word.MeterAbbreviation', lang)}</Space>
-              </Menu.Item>
-              <Menu.Item key={'solar-radiation-heatmap-max-value'}>
-                <Space style={{ width: '280px' }}>
-                  {i18n.t('menu.physics.SolarRadiationHeatmapMaxValue', lang) + ':'}
-                </Space>
-                <InputNumber
-                  min={0.5}
-                  max={50}
-                  step={0.5}
-                  style={{ width: 60 }}
-                  precision={1}
-                  value={solarRadiationHeatmapMaxValue ?? 5}
-                  onChange={(value) => {
-                    setCommonStore((state) => {
-                      state.viewState.solarRadiationHeatMapMaxValue = value;
-                    });
-                  }}
-                />
-              </Menu.Item>
-              {Util.hasHeliostatOrFresnelReflectors(elements) && (
-                <Menu.Item key={'solar-radiation-heatmap-reflection-only'}>
-                  <Space style={{ width: '280px' }}>{i18n.t('menu.physics.ReflectionHeatmap', lang) + ':'}</Space>
-                  <Switch
-                    checked={solarRadiationHeatmapReflectionOnly}
-                    onChange={(checked) => {
-                      setCommonStore((state) => {
-                        state.viewState.solarRadiationHeatMapReflectionOnly = checked;
-                      });
-                    }}
-                  />
-                </Menu.Item>
-              )}
-              {!Util.hasMovingParts(elements) && (
-                <Menu.Item key={'solar-radiation-heatmap-no-animation'}>
+      {!openModelMap && (
+        <SubMenu key={'analysis'} title={i18n.t('menu.analysisSubMenu', lang)}>
+          {/* physics */}
+          <SubMenu key={'physics'} title={i18n.t('menu.physicsSubMenu', lang)}>
+            <Menu.Item
+              key={'daily-solar-radiation-heatmap'}
+              onClick={
+                !noAnimationForHeatmapSimulation || Util.hasMovingParts(elements)
+                  ? toggleDynamicSolarRadiationHeatmap
+                  : toggleStaticSolarRadiationHeatmap
+              }
+            >
+              {i18n.t('menu.physics.DailySolarRadiationHeatmap', lang)}
+            </Menu.Item>
+            <SubMenu
+              key={'solar-radiation-heatmap-options'}
+              title={i18n.t('menu.physics.SolarRadiationHeatmapOptions', lang)}
+            >
+              <Menu>
+                <Menu.Item key={'solar-radiation-heatmap-grid-cell-size'}>
                   <Space style={{ width: '280px' }}>
-                    {i18n.t('menu.physics.SolarRadiationHeatmapNoAnimation', lang) + ':'}
+                    {i18n.t('menu.physics.SolarRadiationHeatmapGridCellSize', lang) + ':'}
                   </Space>
-                  <Switch
-                    checked={noAnimationForHeatmapSimulation}
-                    onChange={(checked) => {
+                  <InputNumber
+                    min={0.1}
+                    max={20}
+                    step={0.1}
+                    style={{ width: 60 }}
+                    precision={1}
+                    value={solarRadiationHeatmapGridCellSize ?? 0.5}
+                    onChange={(value) => {
                       setCommonStore((state) => {
-                        state.world.noAnimationForHeatmapSimulation = checked;
+                        state.world.solarRadiationHeatmapGridCellSize = value;
                       });
                     }}
                   />
+                  <Space style={{ paddingLeft: '10px' }}>{i18n.t('word.MeterAbbreviation', lang)}</Space>
                 </Menu.Item>
-              )}
-            </Menu>
-          </SubMenu>
-        </SubMenu>
-
-        {/* sensors */}
-        <SubMenu key={'sensors'} title={i18n.t('menu.sensorSubMenu', lang)}>
-          <Menu.Item
-            key={'sensor-collect-daily-data'}
-            onClick={() => {
-              const sensorCount = countElementsByType(ObjectType.Sensor);
-              if (sensorCount === 0) {
-                showInfo(i18n.t('analysisManager.NoSensorForCollectingData', lang));
-                return;
-              }
-              showInfo(i18n.t('message.SimulationStarted', lang));
-              // give it 0.1 second for the info to show up
-              setTimeout(() => {
-                if (loggable) {
-                  setCommonStore((state) => {
-                    state.actionInfo = { name: 'Collect Daily Data for Sensors', timestamp: new Date().getTime() };
-                  });
-                }
-                usePrimitiveStore.setState((state) => {
-                  state.simulationInProgress = true;
-                  state.runDailyLightSensor = true;
-                });
-              }, 100);
-            }}
-          >
-            {i18n.t('menu.sensor.CollectDailyData', lang)}
-          </Menu.Item>
-          <Menu.Item
-            key={'sensor-collect-yearly-data'}
-            onClick={() => {
-              const sensorCount = countElementsByType(ObjectType.Sensor);
-              if (sensorCount === 0) {
-                showInfo(i18n.t('analysisManager.NoSensorForCollectingData', lang));
-                return;
-              }
-              showInfo(i18n.t('message.SimulationStarted', lang));
-              // give it 0.1 second for the info to show up
-              setTimeout(() => {
-                if (loggable) {
-                  setCommonStore((state) => {
-                    state.actionInfo = { name: 'Collect Yearly Data for Sensors', timestamp: new Date().getTime() };
-                  });
-                }
-                usePrimitiveStore.setState((state) => {
-                  state.simulationInProgress = true;
-                  state.runYearlyLightSensor = true;
-                });
-              }, 100);
-            }}
-          >
-            {i18n.t('menu.sensor.CollectYearlyData', lang)}
-          </Menu.Item>
-          <SubMenu key={'sensor-simulation-options'} title={i18n.t('word.Options', lang)}>
-            <Menu>
-              <Menu.Item key={'sensor-simulation-sampling-frequency'}>
-                <Space style={{ width: '150px' }}>{i18n.t('menu.option.SamplingFrequency', lang) + ':'}</Space>
-                <InputNumber
-                  min={1}
-                  max={60}
-                  step={1}
-                  style={{ width: 60 }}
-                  precision={0}
-                  value={timesPerHour}
-                  formatter={(a) => Number(a).toFixed(0)}
-                  onChange={(value) => {
-                    setCommonStore((state) => {
-                      state.world.timesPerHour = value;
-                    });
-                  }}
-                />
-                <Space style={{ paddingLeft: '10px' }}>{i18n.t('menu.option.TimesPerHour', lang)}</Space>
-              </Menu.Item>
-              {!Util.hasMovingParts(elements) && (
-                <Menu.Item key={'sensor-simulation-no-animation'}>
+                <Menu.Item key={'solar-radiation-heatmap-max-value'}>
                   <Space style={{ width: '280px' }}>
-                    {i18n.t('menu.sensor.SensorSimulationNoAnimation', lang) + ':'}
+                    {i18n.t('menu.physics.SolarRadiationHeatmapMaxValue', lang) + ':'}
                   </Space>
-                  <Switch
-                    checked={noAnimationForSensorDataCollection}
-                    onChange={(checked) => {
+                  <InputNumber
+                    min={0.5}
+                    max={50}
+                    step={0.5}
+                    style={{ width: 60 }}
+                    precision={1}
+                    value={solarRadiationHeatmapMaxValue ?? 5}
+                    onChange={(value) => {
                       setCommonStore((state) => {
-                        state.world.noAnimationForSensorDataCollection = checked;
+                        state.viewState.solarRadiationHeatMapMaxValue = value;
                       });
                     }}
                   />
                 </Menu.Item>
-              )}
-            </Menu>
+                {Util.hasHeliostatOrFresnelReflectors(elements) && (
+                  <Menu.Item key={'solar-radiation-heatmap-reflection-only'}>
+                    <Space style={{ width: '280px' }}>{i18n.t('menu.physics.ReflectionHeatmap', lang) + ':'}</Space>
+                    <Switch
+                      checked={solarRadiationHeatmapReflectionOnly}
+                      onChange={(checked) => {
+                        setCommonStore((state) => {
+                          state.viewState.solarRadiationHeatMapReflectionOnly = checked;
+                        });
+                      }}
+                    />
+                  </Menu.Item>
+                )}
+                {!Util.hasMovingParts(elements) && (
+                  <Menu.Item key={'solar-radiation-heatmap-no-animation'}>
+                    <Space style={{ width: '280px' }}>
+                      {i18n.t('menu.physics.SolarRadiationHeatmapNoAnimation', lang) + ':'}
+                    </Space>
+                    <Switch
+                      checked={noAnimationForHeatmapSimulation}
+                      onChange={(checked) => {
+                        setCommonStore((state) => {
+                          state.world.noAnimationForHeatmapSimulation = checked;
+                        });
+                      }}
+                    />
+                  </Menu.Item>
+                )}
+              </Menu>
+            </SubMenu>
           </SubMenu>
-        </SubMenu>
 
-        {/* buildings */}
-        <SubMenu key={'buildings'} title={i18n.t('menu.buildingSubMenu', lang)}>
-          <Menu.Item
-            key={'building-energy-daily-data'}
-            onClick={() => {
-              const status = checkBuilding(elements, countElementsByType, getChildrenOfType);
-              if (status === CheckStatus.NO_BUILDING) {
-                showInfo(i18n.t('analysisManager.NoBuildingForAnalysis', lang));
-                return;
-              }
-              if (status === CheckStatus.AT_LEAST_ONE_BAD_NO_GOOD) {
-                showError(i18n.t('message.SimulationWillNotStartDueToErrors', lang));
-                return;
-              }
-              if (status === CheckStatus.AT_LEAST_ONE_BAD_AT_LEAST_ONE_GOOD) {
-                showWarning(i18n.t('message.SimulationWillStartDespiteErrors', lang));
-              }
-              showInfo(i18n.t('message.SimulationStarted', lang));
-              // give it 0.1 second for the info to show up
-              setTimeout(() => {
-                if (loggable) {
-                  setCommonStore((state) => {
-                    state.actionInfo = { name: 'Analyze Daily Building Energy', timestamp: new Date().getTime() };
-                  });
+          {/* sensors */}
+          <SubMenu key={'sensors'} title={i18n.t('menu.sensorSubMenu', lang)}>
+            <Menu.Item
+              key={'sensor-collect-daily-data'}
+              onClick={() => {
+                const sensorCount = countElementsByType(ObjectType.Sensor);
+                if (sensorCount === 0) {
+                  showInfo(i18n.t('analysisManager.NoSensorForCollectingData', lang));
+                  return;
                 }
-                usePrimitiveStore.setState((state) => {
-                  state.runDailyThermalSimulation = true;
-                  state.simulationInProgress = true;
-                });
-              }, 100);
-            }}
-          >
-            {i18n.t('menu.building.AnalyzeDailyBuildingEnergy', lang)}
-          </Menu.Item>
-          <Menu.Item
-            key={'building-energy-yearly-data'}
-            onClick={() => {
-              const status = checkBuilding(elements, countElementsByType, getChildrenOfType);
-              if (status === CheckStatus.NO_BUILDING) {
-                showInfo(i18n.t('analysisManager.NoBuildingForAnalysis', lang));
-                return;
-              }
-              if (status === CheckStatus.AT_LEAST_ONE_BAD_NO_GOOD) {
-                showError(i18n.t('message.SimulationWillNotStartDueToErrors', lang));
-                return;
-              }
-              if (status === CheckStatus.AT_LEAST_ONE_BAD_AT_LEAST_ONE_GOOD) {
-                showWarning(i18n.t('message.SimulationWillStartDespiteErrors', lang));
-              }
-              showInfo(i18n.t('message.SimulationStarted', lang));
-              // give it 0.1 second for the info to show up
-              setTimeout(() => {
-                usePrimitiveStore.setState((state) => {
-                  state.runYearlyThermalSimulation = true;
-                  state.simulationInProgress = true;
-                });
-                if (loggable) {
-                  setCommonStore((state) => {
-                    state.actionInfo = { name: 'Analyze Yearly Building Energy', timestamp: new Date().getTime() };
-                  });
-                }
-              }, 100);
-            }}
-          >
-            {i18n.t('menu.building.AnalyzeYearlyBuildingEnergy', lang)}
-          </Menu.Item>
-          <BuildingEnergySimulationSettings />
-        </SubMenu>
-
-        {/* solar panels */}
-        <SubMenu key={'solar-panels'} title={i18n.t('menu.solarPanelSubMenu', lang)}>
-          <Menu.Item
-            key={'solar-panel-daily-yield'}
-            onClick={() => {
-              const solarPanelCount = countElementsByType(ObjectType.SolarPanel);
-              if (solarPanelCount === 0) {
-                showInfo(i18n.t('analysisManager.NoSolarPanelForAnalysis', lang));
-                return;
-              }
-              showInfo(i18n.t('message.SimulationStarted', lang));
-              // give it 0.1 second for the info to show up
-              setTimeout(() => {
-                setCommonStore((state) => {
-                  if (state.graphState) state.graphState.dailyPvIndividualOutputs = false;
+                showInfo(i18n.t('message.SimulationStarted', lang));
+                // give it 0.1 second for the info to show up
+                setTimeout(() => {
                   if (loggable) {
-                    state.actionInfo = {
-                      name: 'Run Daily Simulation For Solar Panels',
-                      timestamp: new Date().getTime(),
-                    };
-                  }
-                });
-                usePrimitiveStore.setState((state) => {
-                  state.simulationInProgress = true;
-                  state.runDailySimulationForSolarPanels = true;
-                });
-              }, 100);
-            }}
-          >
-            {i18n.t('menu.solarPanel.AnalyzeDailyYield', lang)}
-          </Menu.Item>
-          <Menu.Item
-            key={'solar-panel-yearly-yield'}
-            onClick={() => {
-              const solarPanelCount = countElementsByType(ObjectType.SolarPanel);
-              if (solarPanelCount === 0) {
-                showInfo(i18n.t('analysisManager.NoSolarPanelForAnalysis', lang));
-                return;
-              }
-              showInfo(i18n.t('message.SimulationStarted', lang));
-              // give it 0.1 second for the info to show up
-              setTimeout(() => {
-                setCommonStore((state) => {
-                  if (state.graphState) state.graphState.yearlyPvIndividualOutputs = false;
-                  if (loggable) {
-                    state.actionInfo = {
-                      name: 'Run Yearly Simulation For Solar Panels',
-                      timestamp: new Date().getTime(),
-                    };
-                  }
-                });
-                usePrimitiveStore.setState((state) => {
-                  state.simulationInProgress = true;
-                  state.runYearlySimulationForSolarPanels = true;
-                });
-              }, 100);
-            }}
-          >
-            {i18n.t('menu.solarPanel.AnalyzeYearlyYield', lang)}
-          </Menu.Item>
-          <PvSimulationSettings />
-          <Menu.Item
-            key={'solar-panel-visibility'}
-            onClick={() => {
-              const observerCount = countObservers();
-              if (observerCount === 0) {
-                showInfo(i18n.t('analysisManager.NoObserverForVisibilityAnalysis', lang));
-                return;
-              }
-              showInfo(i18n.t('message.SimulationStarted', lang));
-              // give it 0.1 second for the info to show up
-              setTimeout(() => {
-                usePrimitiveStore.setState((state) => {
-                  state.runSolarPanelVisibilityAnalysis = !state.runSolarPanelVisibilityAnalysis;
-                  state.simulationInProgress = true;
-                });
-                if (loggable) {
-                  setCommonStore((state) => {
-                    state.actionInfo = {
-                      name: 'Run Visibility Analysis For Solar Panels',
-                      timestamp: new Date().getTime(),
-                    };
-                  });
-                }
-              }, 100);
-            }}
-          >
-            {i18n.t('menu.solarPanel.AnalyzeVisibility', lang)}
-          </Menu.Item>
-          <SubMenu
-            key={'solar-panel-visibility-analysis-options'}
-            title={i18n.t('menu.solarPanel.VisibilityAnalysisOptions', lang)}
-          >
-            <Menu>
-              <Menu.Item key={'solar-panel-visibility-grid-cell-size'}>
-                <Space style={{ paddingRight: '10px' }}>
-                  {i18n.t('menu.solarPanel.VisibilityGridCellSize', lang) + ':'}
-                </Space>
-                <InputNumber
-                  min={0.1}
-                  max={5}
-                  step={0.1}
-                  style={{ width: 60 }}
-                  precision={1}
-                  value={solarPanelVisibilityGridCellSize ?? 0.2}
-                  onChange={(value) => {
                     setCommonStore((state) => {
-                      state.world.solarPanelVisibilityGridCellSize = value;
+                      state.actionInfo = { name: 'Collect Daily Data for Sensors', timestamp: new Date().getTime() };
                     });
-                  }}
-                />
-                <Space style={{ paddingLeft: '10px' }}>{i18n.t('word.MeterAbbreviation', lang)}</Space>
-              </Menu.Item>
-            </Menu>
+                  }
+                  usePrimitiveStore.setState((state) => {
+                    state.simulationInProgress = true;
+                    state.runDailyLightSensor = true;
+                  });
+                }, 100);
+              }}
+            >
+              {i18n.t('menu.sensor.CollectDailyData', lang)}
+            </Menu.Item>
+            <Menu.Item
+              key={'sensor-collect-yearly-data'}
+              onClick={() => {
+                const sensorCount = countElementsByType(ObjectType.Sensor);
+                if (sensorCount === 0) {
+                  showInfo(i18n.t('analysisManager.NoSensorForCollectingData', lang));
+                  return;
+                }
+                showInfo(i18n.t('message.SimulationStarted', lang));
+                // give it 0.1 second for the info to show up
+                setTimeout(() => {
+                  if (loggable) {
+                    setCommonStore((state) => {
+                      state.actionInfo = { name: 'Collect Yearly Data for Sensors', timestamp: new Date().getTime() };
+                    });
+                  }
+                  usePrimitiveStore.setState((state) => {
+                    state.simulationInProgress = true;
+                    state.runYearlyLightSensor = true;
+                  });
+                }, 100);
+              }}
+            >
+              {i18n.t('menu.sensor.CollectYearlyData', lang)}
+            </Menu.Item>
+            <SubMenu key={'sensor-simulation-options'} title={i18n.t('word.Options', lang)}>
+              <Menu>
+                <Menu.Item key={'sensor-simulation-sampling-frequency'}>
+                  <Space style={{ width: '150px' }}>{i18n.t('menu.option.SamplingFrequency', lang) + ':'}</Space>
+                  <InputNumber
+                    min={1}
+                    max={60}
+                    step={1}
+                    style={{ width: 60 }}
+                    precision={0}
+                    value={timesPerHour}
+                    formatter={(a) => Number(a).toFixed(0)}
+                    onChange={(value) => {
+                      setCommonStore((state) => {
+                        state.world.timesPerHour = value;
+                      });
+                    }}
+                  />
+                  <Space style={{ paddingLeft: '10px' }}>{i18n.t('menu.option.TimesPerHour', lang)}</Space>
+                </Menu.Item>
+                {!Util.hasMovingParts(elements) && (
+                  <Menu.Item key={'sensor-simulation-no-animation'}>
+                    <Space style={{ width: '280px' }}>
+                      {i18n.t('menu.sensor.SensorSimulationNoAnimation', lang) + ':'}
+                    </Space>
+                    <Switch
+                      checked={noAnimationForSensorDataCollection}
+                      onChange={(checked) => {
+                        setCommonStore((state) => {
+                          state.world.noAnimationForSensorDataCollection = checked;
+                        });
+                      }}
+                    />
+                  </Menu.Item>
+                )}
+              </Menu>
+            </SubMenu>
+          </SubMenu>
+
+          {/* buildings */}
+          <SubMenu key={'buildings'} title={i18n.t('menu.buildingSubMenu', lang)}>
+            <Menu.Item
+              key={'building-energy-daily-data'}
+              onClick={() => {
+                const status = checkBuilding(elements, countElementsByType, getChildrenOfType);
+                if (status === CheckStatus.NO_BUILDING) {
+                  showInfo(i18n.t('analysisManager.NoBuildingForAnalysis', lang));
+                  return;
+                }
+                if (status === CheckStatus.AT_LEAST_ONE_BAD_NO_GOOD) {
+                  showError(i18n.t('message.SimulationWillNotStartDueToErrors', lang));
+                  return;
+                }
+                if (status === CheckStatus.AT_LEAST_ONE_BAD_AT_LEAST_ONE_GOOD) {
+                  showWarning(i18n.t('message.SimulationWillStartDespiteErrors', lang));
+                }
+                showInfo(i18n.t('message.SimulationStarted', lang));
+                // give it 0.1 second for the info to show up
+                setTimeout(() => {
+                  if (loggable) {
+                    setCommonStore((state) => {
+                      state.actionInfo = { name: 'Analyze Daily Building Energy', timestamp: new Date().getTime() };
+                    });
+                  }
+                  usePrimitiveStore.setState((state) => {
+                    state.runDailyThermalSimulation = true;
+                    state.simulationInProgress = true;
+                  });
+                }, 100);
+              }}
+            >
+              {i18n.t('menu.building.AnalyzeDailyBuildingEnergy', lang)}
+            </Menu.Item>
+            <Menu.Item
+              key={'building-energy-yearly-data'}
+              onClick={() => {
+                const status = checkBuilding(elements, countElementsByType, getChildrenOfType);
+                if (status === CheckStatus.NO_BUILDING) {
+                  showInfo(i18n.t('analysisManager.NoBuildingForAnalysis', lang));
+                  return;
+                }
+                if (status === CheckStatus.AT_LEAST_ONE_BAD_NO_GOOD) {
+                  showError(i18n.t('message.SimulationWillNotStartDueToErrors', lang));
+                  return;
+                }
+                if (status === CheckStatus.AT_LEAST_ONE_BAD_AT_LEAST_ONE_GOOD) {
+                  showWarning(i18n.t('message.SimulationWillStartDespiteErrors', lang));
+                }
+                showInfo(i18n.t('message.SimulationStarted', lang));
+                // give it 0.1 second for the info to show up
+                setTimeout(() => {
+                  usePrimitiveStore.setState((state) => {
+                    state.runYearlyThermalSimulation = true;
+                    state.simulationInProgress = true;
+                  });
+                  if (loggable) {
+                    setCommonStore((state) => {
+                      state.actionInfo = { name: 'Analyze Yearly Building Energy', timestamp: new Date().getTime() };
+                    });
+                  }
+                }, 100);
+              }}
+            >
+              {i18n.t('menu.building.AnalyzeYearlyBuildingEnergy', lang)}
+            </Menu.Item>
+            <BuildingEnergySimulationSettings />
+          </SubMenu>
+
+          {/* solar panels */}
+          <SubMenu key={'solar-panels'} title={i18n.t('menu.solarPanelSubMenu', lang)}>
+            <Menu.Item
+              key={'solar-panel-daily-yield'}
+              onClick={() => {
+                const solarPanelCount = countElementsByType(ObjectType.SolarPanel);
+                if (solarPanelCount === 0) {
+                  showInfo(i18n.t('analysisManager.NoSolarPanelForAnalysis', lang));
+                  return;
+                }
+                showInfo(i18n.t('message.SimulationStarted', lang));
+                // give it 0.1 second for the info to show up
+                setTimeout(() => {
+                  setCommonStore((state) => {
+                    if (state.graphState) state.graphState.dailyPvIndividualOutputs = false;
+                    if (loggable) {
+                      state.actionInfo = {
+                        name: 'Run Daily Simulation For Solar Panels',
+                        timestamp: new Date().getTime(),
+                      };
+                    }
+                  });
+                  usePrimitiveStore.setState((state) => {
+                    state.simulationInProgress = true;
+                    state.runDailySimulationForSolarPanels = true;
+                  });
+                }, 100);
+              }}
+            >
+              {i18n.t('menu.solarPanel.AnalyzeDailyYield', lang)}
+            </Menu.Item>
+            <Menu.Item
+              key={'solar-panel-yearly-yield'}
+              onClick={() => {
+                const solarPanelCount = countElementsByType(ObjectType.SolarPanel);
+                if (solarPanelCount === 0) {
+                  showInfo(i18n.t('analysisManager.NoSolarPanelForAnalysis', lang));
+                  return;
+                }
+                showInfo(i18n.t('message.SimulationStarted', lang));
+                // give it 0.1 second for the info to show up
+                setTimeout(() => {
+                  setCommonStore((state) => {
+                    if (state.graphState) state.graphState.yearlyPvIndividualOutputs = false;
+                    if (loggable) {
+                      state.actionInfo = {
+                        name: 'Run Yearly Simulation For Solar Panels',
+                        timestamp: new Date().getTime(),
+                      };
+                    }
+                  });
+                  usePrimitiveStore.setState((state) => {
+                    state.simulationInProgress = true;
+                    state.runYearlySimulationForSolarPanels = true;
+                  });
+                }, 100);
+              }}
+            >
+              {i18n.t('menu.solarPanel.AnalyzeYearlyYield', lang)}
+            </Menu.Item>
+            <PvSimulationSettings />
+            <Menu.Item
+              key={'solar-panel-visibility'}
+              onClick={() => {
+                const observerCount = countObservers();
+                if (observerCount === 0) {
+                  showInfo(i18n.t('analysisManager.NoObserverForVisibilityAnalysis', lang));
+                  return;
+                }
+                showInfo(i18n.t('message.SimulationStarted', lang));
+                // give it 0.1 second for the info to show up
+                setTimeout(() => {
+                  usePrimitiveStore.setState((state) => {
+                    state.runSolarPanelVisibilityAnalysis = !state.runSolarPanelVisibilityAnalysis;
+                    state.simulationInProgress = true;
+                  });
+                  if (loggable) {
+                    setCommonStore((state) => {
+                      state.actionInfo = {
+                        name: 'Run Visibility Analysis For Solar Panels',
+                        timestamp: new Date().getTime(),
+                      };
+                    });
+                  }
+                }, 100);
+              }}
+            >
+              {i18n.t('menu.solarPanel.AnalyzeVisibility', lang)}
+            </Menu.Item>
+            <SubMenu
+              key={'solar-panel-visibility-analysis-options'}
+              title={i18n.t('menu.solarPanel.VisibilityAnalysisOptions', lang)}
+            >
+              <Menu>
+                <Menu.Item key={'solar-panel-visibility-grid-cell-size'}>
+                  <Space style={{ paddingRight: '10px' }}>
+                    {i18n.t('menu.solarPanel.VisibilityGridCellSize', lang) + ':'}
+                  </Space>
+                  <InputNumber
+                    min={0.1}
+                    max={5}
+                    step={0.1}
+                    style={{ width: 60 }}
+                    precision={1}
+                    value={solarPanelVisibilityGridCellSize ?? 0.2}
+                    onChange={(value) => {
+                      setCommonStore((state) => {
+                        state.world.solarPanelVisibilityGridCellSize = value;
+                      });
+                    }}
+                  />
+                  <Space style={{ paddingLeft: '10px' }}>{i18n.t('word.MeterAbbreviation', lang)}</Space>
+                </Menu.Item>
+              </Menu>
+            </SubMenu>
+          </SubMenu>
+
+          {/* parabolic troughs */}
+          <SubMenu key={'parabolic-trough'} title={i18n.t('menu.parabolicTroughSubMenu', lang)}>
+            <Menu.Item
+              key={'parabolic-trough-daily-yield'}
+              onClick={() => {
+                const parabolicTroughCount = countElementsByType(ObjectType.ParabolicTrough);
+                if (parabolicTroughCount === 0) {
+                  showInfo(i18n.t('analysisManager.NoParabolicTroughForAnalysis', lang));
+                  return;
+                }
+                showInfo(i18n.t('message.SimulationStarted', lang));
+                // give it 0.1 second for the info to show up
+                setTimeout(() => {
+                  setCommonStore((state) => {
+                    if (state.graphState) state.graphState.dailyParabolicTroughIndividualOutputs = false;
+                    if (loggable) {
+                      state.actionInfo = {
+                        name: 'Run Daily Simulation for Parabolic Troughs',
+                        timestamp: new Date().getTime(),
+                      };
+                    }
+                  });
+                  usePrimitiveStore.setState((state) => {
+                    state.simulationInProgress = true;
+                    state.runDailySimulationForParabolicTroughs = true;
+                  });
+                }, 100);
+              }}
+            >
+              {i18n.t('menu.parabolicTrough.AnalyzeDailyYield', lang)}
+            </Menu.Item>
+            <Menu.Item
+              key={'parabolic-trough-yearly-yield'}
+              onClick={() => {
+                const parabolicTroughCount = countElementsByType(ObjectType.ParabolicTrough);
+                if (parabolicTroughCount === 0) {
+                  showInfo(i18n.t('analysisManager.NoParabolicTroughForAnalysis', lang));
+                  return;
+                }
+                showInfo(i18n.t('message.SimulationStarted', lang));
+                // give it 0.1 second for the info to show up
+                setTimeout(() => {
+                  setCommonStore((state) => {
+                    if (state.graphState) state.graphState.yearlyParabolicTroughIndividualOutputs = false;
+                    if (loggable) {
+                      state.actionInfo = {
+                        name: 'Run Yearly Simulation for Parabolic Troughs',
+                        timestamp: new Date().getTime(),
+                      };
+                    }
+                  });
+                  usePrimitiveStore.setState((state) => {
+                    state.simulationInProgress = true;
+                    state.runYearlySimulationForParabolicTroughs = true;
+                  });
+                }, 100);
+              }}
+            >
+              {i18n.t('menu.parabolicTrough.AnalyzeYearlyYield', lang)}
+            </Menu.Item>
+            <CspSimulationSettings name={'parabolic-trough'} />
+          </SubMenu>
+
+          {/* parabolic dishes */}
+          <SubMenu key={'parabolic-dish'} title={i18n.t('menu.parabolicDishSubMenu', lang)}>
+            <Menu.Item
+              key={'parabolic-dish-daily-yield'}
+              onClick={() => {
+                const parabolicDishCount = countElementsByType(ObjectType.ParabolicDish);
+                if (parabolicDishCount === 0) {
+                  showInfo(i18n.t('analysisManager.NoParabolicDishForAnalysis', lang));
+                  return;
+                }
+                showInfo(i18n.t('message.SimulationStarted', lang));
+                // give it 0.1 second for the info to show up
+                setTimeout(() => {
+                  setCommonStore((state) => {
+                    if (state.graphState) state.graphState.dailyParabolicDishIndividualOutputs = false;
+                    if (loggable) {
+                      state.actionInfo = {
+                        name: 'Run Daily Simulation for Parabolic Dishes',
+                        timestamp: new Date().getTime(),
+                      };
+                    }
+                  });
+                  usePrimitiveStore.setState((state) => {
+                    state.simulationInProgress = true;
+                    state.runDailySimulationForParabolicDishes = true;
+                  });
+                }, 100);
+              }}
+            >
+              {i18n.t('menu.parabolicDish.AnalyzeDailyYield', lang)}
+            </Menu.Item>
+            <Menu.Item
+              key={'parabolic-dish-yearly-yield'}
+              onClick={() => {
+                const parabolicDishCount = countElementsByType(ObjectType.ParabolicDish);
+                if (parabolicDishCount === 0) {
+                  showInfo(i18n.t('analysisManager.NoParabolicDishForAnalysis', lang));
+                  return;
+                }
+                showInfo(i18n.t('message.SimulationStarted', lang));
+                // give it 0.1 second for the info to show up
+                setTimeout(() => {
+                  setCommonStore((state) => {
+                    if (state.graphState) state.graphState.yearlyParabolicDishIndividualOutputs = false;
+                    if (loggable) {
+                      state.actionInfo = {
+                        name: 'Run Yearly Simulation for Parabolic Dishes',
+                        timestamp: new Date().getTime(),
+                      };
+                    }
+                  });
+                  usePrimitiveStore.setState((state) => {
+                    state.simulationInProgress = true;
+                    state.runYearlySimulationForParabolicDishes = true;
+                  });
+                }, 100);
+              }}
+            >
+              {i18n.t('menu.parabolicDish.AnalyzeYearlyYield', lang)}
+            </Menu.Item>
+            <CspSimulationSettings name={'parabolic-dish'} />
+          </SubMenu>
+
+          {/* Fresnel reflector */}
+          <SubMenu key={'fresnel-reflector'} title={i18n.t('menu.fresnelReflectorSubMenu', lang)}>
+            <Menu.Item
+              key={'fresnel-reflector-daily-yield'}
+              onClick={() => {
+                const fresnelReflectorCount = countElementsByType(ObjectType.FresnelReflector);
+                if (fresnelReflectorCount === 0) {
+                  showInfo(i18n.t('analysisManager.NoFresnelReflectorForAnalysis', lang));
+                  return;
+                }
+                showInfo(i18n.t('message.SimulationStarted', lang));
+                // give it 0.1 second for the info to show up
+                setTimeout(() => {
+                  setCommonStore((state) => {
+                    if (state.graphState) state.graphState.dailyFresnelReflectorIndividualOutputs = false;
+                    if (loggable) {
+                      state.actionInfo = {
+                        name: 'Run Daily Simulation for Fresnel Reflectors',
+                        timestamp: new Date().getTime(),
+                      };
+                    }
+                  });
+                  usePrimitiveStore.setState((state) => {
+                    state.simulationInProgress = true;
+                    state.runDailySimulationForFresnelReflectors = true;
+                  });
+                }, 100);
+              }}
+            >
+              {i18n.t('menu.fresnelReflector.AnalyzeDailyYield', lang)}
+            </Menu.Item>
+            <Menu.Item
+              key={'fresnel-reflector-yearly-yield'}
+              onClick={() => {
+                const fresnelReflectorCount = countElementsByType(ObjectType.FresnelReflector);
+                if (fresnelReflectorCount === 0) {
+                  showInfo(i18n.t('analysisManager.NoFresnelReflectorForAnalysis', lang));
+                  return;
+                }
+                showInfo(i18n.t('message.SimulationStarted', lang));
+                // give it 0.1 second for the info to show up
+                setTimeout(() => {
+                  setCommonStore((state) => {
+                    if (state.graphState) state.graphState.yearlyFresnelReflectorIndividualOutputs = false;
+                    if (loggable) {
+                      state.actionInfo = {
+                        name: 'Run Yearly Simulation for Fresnel Reflectors',
+                        timestamp: new Date().getTime(),
+                      };
+                    }
+                  });
+                  usePrimitiveStore.setState((state) => {
+                    state.simulationInProgress = true;
+                    state.runYearlySimulationForFresnelReflectors = true;
+                  });
+                }, 100);
+              }}
+            >
+              {i18n.t('menu.fresnelReflector.AnalyzeYearlyYield', lang)}
+            </Menu.Item>
+            <CspSimulationSettings name={'fresnel-reflector'} />
+          </SubMenu>
+
+          {/* heliostat */}
+          <SubMenu key={'heliostat'} title={i18n.t('menu.heliostatSubMenu', lang)}>
+            <Menu.Item
+              key={'heliostat-daily-yield'}
+              onClick={() => {
+                const heliostatCount = countElementsByType(ObjectType.Heliostat);
+                if (heliostatCount === 0) {
+                  showInfo(i18n.t('analysisManager.NoHeliostatForAnalysis', lang));
+                  return;
+                }
+                showInfo(i18n.t('message.SimulationStarted', lang));
+                // give it 0.1 second for the info to show up
+                setTimeout(() => {
+                  setCommonStore((state) => {
+                    if (state.graphState) state.graphState.dailyHeliostatIndividualOutputs = false;
+                    if (loggable) {
+                      state.actionInfo = {
+                        name: 'Run Daily Simulation for Heliostats',
+                        timestamp: new Date().getTime(),
+                      };
+                    }
+                  });
+                  usePrimitiveStore.setState((state) => {
+                    state.simulationInProgress = true;
+                    state.runDailySimulationForHeliostats = true;
+                  });
+                }, 100);
+              }}
+            >
+              {i18n.t('menu.heliostat.AnalyzeDailyYield', lang)}
+            </Menu.Item>
+            <Menu.Item
+              key={'heliostat-yearly-yield'}
+              onClick={() => {
+                const heliostatCount = countElementsByType(ObjectType.Heliostat);
+                if (heliostatCount === 0) {
+                  showInfo(i18n.t('analysisManager.NoHeliostatForAnalysis', lang));
+                  return;
+                }
+                showInfo(i18n.t('message.SimulationStarted', lang));
+                // give it 0.1 second for the info to show up
+                setTimeout(() => {
+                  setCommonStore((state) => {
+                    if (state.graphState) state.graphState.yearlyHeliostatIndividualOutputs = false;
+                    if (loggable) {
+                      state.actionInfo = {
+                        name: 'Run Yearly Simulation for Heliostats',
+                        timestamp: new Date().getTime(),
+                      };
+                    }
+                  });
+                  usePrimitiveStore.setState((state) => {
+                    state.simulationInProgress = true;
+                    state.runYearlySimulationForHeliostats = true;
+                  });
+                }, 100);
+              }}
+            >
+              {i18n.t('menu.heliostat.AnalyzeYearlyYield', lang)}
+            </Menu.Item>
+            <CspSimulationSettings name={'heliostat'} />
+          </SubMenu>
+
+          {/* solar updraft tower */}
+          <SubMenu key={'solar-updraft-tower'} title={i18n.t('menu.solarUpdraftTowerSubMenu', lang)}>
+            <Menu.Item
+              key={'solar-updraft-tower-daily-yield'}
+              onClick={() => {
+                const towerCount = countSolarStructuresByType(SolarStructure.UpdraftTower);
+                if (towerCount === 0) {
+                  showInfo(i18n.t('analysisManager.NoSolarUpdraftTowerForAnalysis', lang));
+                  return;
+                }
+                showInfo(i18n.t('message.SimulationStarted', lang));
+                // give it 0.1 second for the info to show up
+                setTimeout(() => {
+                  setCommonStore((state) => {
+                    if (state.graphState) state.graphState.dailyUpdraftTowerIndividualOutputs = false;
+                    if (loggable) {
+                      state.actionInfo = {
+                        name: 'Run Daily Simulation for Solar Updraft Tower',
+                        timestamp: new Date().getTime(),
+                      };
+                    }
+                  });
+                  usePrimitiveStore.setState((state) => {
+                    state.simulationInProgress = true;
+                    state.runDailySimulationForUpdraftTower = true;
+                  });
+                }, 100);
+              }}
+            >
+              {i18n.t('menu.solarUpdraftTower.AnalyzeDailyYield', lang)}
+            </Menu.Item>
+            <Menu.Item
+              key={'solar-updraft-tower-yearly-yield'}
+              onClick={() => {
+                const towerCount = countSolarStructuresByType(SolarStructure.UpdraftTower);
+                if (towerCount === 0) {
+                  showInfo(i18n.t('analysisManager.NoSolarUpdraftTowerForAnalysis', lang));
+                  return;
+                }
+                showInfo(i18n.t('message.SimulationStarted', lang));
+                // give it 0.1 second for the info to show up
+                setTimeout(() => {
+                  setCommonStore((state) => {
+                    if (state.graphState) state.graphState.yearlyUpdraftTowerIndividualOutputs = false;
+                    if (loggable) {
+                      state.actionInfo = {
+                        name: 'Run Yearly Simulation for Solar Updraft Tower',
+                        timestamp: new Date().getTime(),
+                      };
+                    }
+                  });
+                  usePrimitiveStore.setState((state) => {
+                    state.simulationInProgress = true;
+                    state.runYearlySimulationForUpdraftTower = true;
+                  });
+                }, 100);
+              }}
+            >
+              {i18n.t('menu.solarUpdraftTower.AnalyzeYearlyYield', lang)}
+            </Menu.Item>
+            <SutSimulationSettings />
           </SubMenu>
         </SubMenu>
-
-        {/* parabolic troughs */}
-        <SubMenu key={'parabolic-trough'} title={i18n.t('menu.parabolicTroughSubMenu', lang)}>
-          <Menu.Item
-            key={'parabolic-trough-daily-yield'}
-            onClick={() => {
-              const parabolicTroughCount = countElementsByType(ObjectType.ParabolicTrough);
-              if (parabolicTroughCount === 0) {
-                showInfo(i18n.t('analysisManager.NoParabolicTroughForAnalysis', lang));
-                return;
-              }
-              showInfo(i18n.t('message.SimulationStarted', lang));
-              // give it 0.1 second for the info to show up
-              setTimeout(() => {
-                setCommonStore((state) => {
-                  if (state.graphState) state.graphState.dailyParabolicTroughIndividualOutputs = false;
-                  if (loggable) {
-                    state.actionInfo = {
-                      name: 'Run Daily Simulation for Parabolic Troughs',
-                      timestamp: new Date().getTime(),
-                    };
-                  }
-                });
-                usePrimitiveStore.setState((state) => {
-                  state.simulationInProgress = true;
-                  state.runDailySimulationForParabolicTroughs = true;
-                });
-              }, 100);
-            }}
-          >
-            {i18n.t('menu.parabolicTrough.AnalyzeDailyYield', lang)}
-          </Menu.Item>
-          <Menu.Item
-            key={'parabolic-trough-yearly-yield'}
-            onClick={() => {
-              const parabolicTroughCount = countElementsByType(ObjectType.ParabolicTrough);
-              if (parabolicTroughCount === 0) {
-                showInfo(i18n.t('analysisManager.NoParabolicTroughForAnalysis', lang));
-                return;
-              }
-              showInfo(i18n.t('message.SimulationStarted', lang));
-              // give it 0.1 second for the info to show up
-              setTimeout(() => {
-                setCommonStore((state) => {
-                  if (state.graphState) state.graphState.yearlyParabolicTroughIndividualOutputs = false;
-                  if (loggable) {
-                    state.actionInfo = {
-                      name: 'Run Yearly Simulation for Parabolic Troughs',
-                      timestamp: new Date().getTime(),
-                    };
-                  }
-                });
-                usePrimitiveStore.setState((state) => {
-                  state.simulationInProgress = true;
-                  state.runYearlySimulationForParabolicTroughs = true;
-                });
-              }, 100);
-            }}
-          >
-            {i18n.t('menu.parabolicTrough.AnalyzeYearlyYield', lang)}
-          </Menu.Item>
-          <CspSimulationSettings name={'parabolic-trough'} />
-        </SubMenu>
-
-        {/* parabolic dishes */}
-        <SubMenu key={'parabolic-dish'} title={i18n.t('menu.parabolicDishSubMenu', lang)}>
-          <Menu.Item
-            key={'parabolic-dish-daily-yield'}
-            onClick={() => {
-              const parabolicDishCount = countElementsByType(ObjectType.ParabolicDish);
-              if (parabolicDishCount === 0) {
-                showInfo(i18n.t('analysisManager.NoParabolicDishForAnalysis', lang));
-                return;
-              }
-              showInfo(i18n.t('message.SimulationStarted', lang));
-              // give it 0.1 second for the info to show up
-              setTimeout(() => {
-                setCommonStore((state) => {
-                  if (state.graphState) state.graphState.dailyParabolicDishIndividualOutputs = false;
-                  if (loggable) {
-                    state.actionInfo = {
-                      name: 'Run Daily Simulation for Parabolic Dishes',
-                      timestamp: new Date().getTime(),
-                    };
-                  }
-                });
-                usePrimitiveStore.setState((state) => {
-                  state.simulationInProgress = true;
-                  state.runDailySimulationForParabolicDishes = true;
-                });
-              }, 100);
-            }}
-          >
-            {i18n.t('menu.parabolicDish.AnalyzeDailyYield', lang)}
-          </Menu.Item>
-          <Menu.Item
-            key={'parabolic-dish-yearly-yield'}
-            onClick={() => {
-              const parabolicDishCount = countElementsByType(ObjectType.ParabolicDish);
-              if (parabolicDishCount === 0) {
-                showInfo(i18n.t('analysisManager.NoParabolicDishForAnalysis', lang));
-                return;
-              }
-              showInfo(i18n.t('message.SimulationStarted', lang));
-              // give it 0.1 second for the info to show up
-              setTimeout(() => {
-                setCommonStore((state) => {
-                  if (state.graphState) state.graphState.yearlyParabolicDishIndividualOutputs = false;
-                  if (loggable) {
-                    state.actionInfo = {
-                      name: 'Run Yearly Simulation for Parabolic Dishes',
-                      timestamp: new Date().getTime(),
-                    };
-                  }
-                });
-                usePrimitiveStore.setState((state) => {
-                  state.simulationInProgress = true;
-                  state.runYearlySimulationForParabolicDishes = true;
-                });
-              }, 100);
-            }}
-          >
-            {i18n.t('menu.parabolicDish.AnalyzeYearlyYield', lang)}
-          </Menu.Item>
-          <CspSimulationSettings name={'parabolic-dish'} />
-        </SubMenu>
-
-        {/* Fresnel reflector */}
-        <SubMenu key={'fresnel-reflector'} title={i18n.t('menu.fresnelReflectorSubMenu', lang)}>
-          <Menu.Item
-            key={'fresnel-reflector-daily-yield'}
-            onClick={() => {
-              const fresnelReflectorCount = countElementsByType(ObjectType.FresnelReflector);
-              if (fresnelReflectorCount === 0) {
-                showInfo(i18n.t('analysisManager.NoFresnelReflectorForAnalysis', lang));
-                return;
-              }
-              showInfo(i18n.t('message.SimulationStarted', lang));
-              // give it 0.1 second for the info to show up
-              setTimeout(() => {
-                setCommonStore((state) => {
-                  if (state.graphState) state.graphState.dailyFresnelReflectorIndividualOutputs = false;
-                  if (loggable) {
-                    state.actionInfo = {
-                      name: 'Run Daily Simulation for Fresnel Reflectors',
-                      timestamp: new Date().getTime(),
-                    };
-                  }
-                });
-                usePrimitiveStore.setState((state) => {
-                  state.simulationInProgress = true;
-                  state.runDailySimulationForFresnelReflectors = true;
-                });
-              }, 100);
-            }}
-          >
-            {i18n.t('menu.fresnelReflector.AnalyzeDailyYield', lang)}
-          </Menu.Item>
-          <Menu.Item
-            key={'fresnel-reflector-yearly-yield'}
-            onClick={() => {
-              const fresnelReflectorCount = countElementsByType(ObjectType.FresnelReflector);
-              if (fresnelReflectorCount === 0) {
-                showInfo(i18n.t('analysisManager.NoFresnelReflectorForAnalysis', lang));
-                return;
-              }
-              showInfo(i18n.t('message.SimulationStarted', lang));
-              // give it 0.1 second for the info to show up
-              setTimeout(() => {
-                setCommonStore((state) => {
-                  if (state.graphState) state.graphState.yearlyFresnelReflectorIndividualOutputs = false;
-                  if (loggable) {
-                    state.actionInfo = {
-                      name: 'Run Yearly Simulation for Fresnel Reflectors',
-                      timestamp: new Date().getTime(),
-                    };
-                  }
-                });
-                usePrimitiveStore.setState((state) => {
-                  state.simulationInProgress = true;
-                  state.runYearlySimulationForFresnelReflectors = true;
-                });
-              }, 100);
-            }}
-          >
-            {i18n.t('menu.fresnelReflector.AnalyzeYearlyYield', lang)}
-          </Menu.Item>
-          <CspSimulationSettings name={'fresnel-reflector'} />
-        </SubMenu>
-
-        {/* heliostat */}
-        <SubMenu key={'heliostat'} title={i18n.t('menu.heliostatSubMenu', lang)}>
-          <Menu.Item
-            key={'heliostat-daily-yield'}
-            onClick={() => {
-              const heliostatCount = countElementsByType(ObjectType.Heliostat);
-              if (heliostatCount === 0) {
-                showInfo(i18n.t('analysisManager.NoHeliostatForAnalysis', lang));
-                return;
-              }
-              showInfo(i18n.t('message.SimulationStarted', lang));
-              // give it 0.1 second for the info to show up
-              setTimeout(() => {
-                setCommonStore((state) => {
-                  if (state.graphState) state.graphState.dailyHeliostatIndividualOutputs = false;
-                  if (loggable) {
-                    state.actionInfo = { name: 'Run Daily Simulation for Heliostats', timestamp: new Date().getTime() };
-                  }
-                });
-                usePrimitiveStore.setState((state) => {
-                  state.simulationInProgress = true;
-                  state.runDailySimulationForHeliostats = true;
-                });
-              }, 100);
-            }}
-          >
-            {i18n.t('menu.heliostat.AnalyzeDailyYield', lang)}
-          </Menu.Item>
-          <Menu.Item
-            key={'heliostat-yearly-yield'}
-            onClick={() => {
-              const heliostatCount = countElementsByType(ObjectType.Heliostat);
-              if (heliostatCount === 0) {
-                showInfo(i18n.t('analysisManager.NoHeliostatForAnalysis', lang));
-                return;
-              }
-              showInfo(i18n.t('message.SimulationStarted', lang));
-              // give it 0.1 second for the info to show up
-              setTimeout(() => {
-                setCommonStore((state) => {
-                  if (state.graphState) state.graphState.yearlyHeliostatIndividualOutputs = false;
-                  if (loggable) {
-                    state.actionInfo = {
-                      name: 'Run Yearly Simulation for Heliostats',
-                      timestamp: new Date().getTime(),
-                    };
-                  }
-                });
-                usePrimitiveStore.setState((state) => {
-                  state.simulationInProgress = true;
-                  state.runYearlySimulationForHeliostats = true;
-                });
-              }, 100);
-            }}
-          >
-            {i18n.t('menu.heliostat.AnalyzeYearlyYield', lang)}
-          </Menu.Item>
-          <CspSimulationSettings name={'heliostat'} />
-        </SubMenu>
-
-        {/* solar updraft tower */}
-        <SubMenu key={'solar-updraft-tower'} title={i18n.t('menu.solarUpdraftTowerSubMenu', lang)}>
-          <Menu.Item
-            key={'solar-updraft-tower-daily-yield'}
-            onClick={() => {
-              const towerCount = countSolarStructuresByType(SolarStructure.UpdraftTower);
-              if (towerCount === 0) {
-                showInfo(i18n.t('analysisManager.NoSolarUpdraftTowerForAnalysis', lang));
-                return;
-              }
-              showInfo(i18n.t('message.SimulationStarted', lang));
-              // give it 0.1 second for the info to show up
-              setTimeout(() => {
-                setCommonStore((state) => {
-                  if (state.graphState) state.graphState.dailyUpdraftTowerIndividualOutputs = false;
-                  if (loggable) {
-                    state.actionInfo = {
-                      name: 'Run Daily Simulation for Solar Updraft Tower',
-                      timestamp: new Date().getTime(),
-                    };
-                  }
-                });
-                usePrimitiveStore.setState((state) => {
-                  state.simulationInProgress = true;
-                  state.runDailySimulationForUpdraftTower = true;
-                });
-              }, 100);
-            }}
-          >
-            {i18n.t('menu.solarUpdraftTower.AnalyzeDailyYield', lang)}
-          </Menu.Item>
-          <Menu.Item
-            key={'solar-updraft-tower-yearly-yield'}
-            onClick={() => {
-              const towerCount = countSolarStructuresByType(SolarStructure.UpdraftTower);
-              if (towerCount === 0) {
-                showInfo(i18n.t('analysisManager.NoSolarUpdraftTowerForAnalysis', lang));
-                return;
-              }
-              showInfo(i18n.t('message.SimulationStarted', lang));
-              // give it 0.1 second for the info to show up
-              setTimeout(() => {
-                setCommonStore((state) => {
-                  if (state.graphState) state.graphState.yearlyUpdraftTowerIndividualOutputs = false;
-                  if (loggable) {
-                    state.actionInfo = {
-                      name: 'Run Yearly Simulation for Solar Updraft Tower',
-                      timestamp: new Date().getTime(),
-                    };
-                  }
-                });
-                usePrimitiveStore.setState((state) => {
-                  state.simulationInProgress = true;
-                  state.runYearlySimulationForUpdraftTower = true;
-                });
-              }, 100);
-            }}
-          >
-            {i18n.t('menu.solarUpdraftTower.AnalyzeYearlyYield', lang)}
-          </Menu.Item>
-          <SutSimulationSettings />
-        </SubMenu>
-      </SubMenu>
+      )}
 
       {/* benchmarks menu */}
       <SubMenu key={'benchmarks'} title={i18n.t('menu.benchmarksSubMenu', lang)}>
@@ -2270,7 +2288,15 @@ const MainMenu = ({ viewOnly, set2DView, resetView, zoomView, canvas }: MainMenu
         </Menu.Item>
       )}
       {/* about window */}
-      <Menu.Item key="about" onClick={() => setAboutUs(true)}>
+      <Menu.Item
+        key="about"
+        onClick={() => {
+          setCommonStore((state) => {
+            state.openModelMap = false;
+          });
+          setAboutUs(true);
+        }}
+      >
         {i18n.t('menu.AboutUs', lang)}...
       </Menu.Item>
     </Menu>

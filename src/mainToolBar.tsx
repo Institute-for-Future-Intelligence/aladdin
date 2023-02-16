@@ -1,5 +1,5 @@
 /*
- * @Copyright 2021-2022. Institute for Future Intelligence, Inc.
+ * @Copyright 2021-2023. Institute for Future Intelligence, Inc.
  */
 
 import React, { useEffect, useRef, useState } from 'react';
@@ -647,7 +647,7 @@ const MainToolBar = ({ viewOnly = false }: MainToolBarProps) => {
       {loading && <Spinner />}
       <ButtonsContainer>
         <Space direction="horizontal">
-          <MainToolBarButtons />
+          {!openModelMap && <MainToolBarButtons />}
           <div style={{ verticalAlign: 'top' }}>
             {user.displayName ? (
               <Dropdown overlay={avatarMenu} trigger={['click']}>

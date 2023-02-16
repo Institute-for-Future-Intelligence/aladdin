@@ -77,6 +77,14 @@ const KeyboardListener = ({ canvas, set2DView, resetView, zoomView }: KeyboardLi
     'shift+up',
     'shift+right',
     'shift+down',
+    'ctrl+shift+left',
+    'ctrl+shift+up',
+    'ctrl+shift+right',
+    'ctrl+shift+down',
+    'meta+shift+left',
+    'meta+shift+up',
+    'meta+shift+right',
+    'meta+shift+down',
     'ctrl+f',
     'meta+f',
     'ctrl+o',
@@ -620,29 +628,45 @@ const KeyboardListener = ({ canvas, set2DView, resetView, zoomView }: KeyboardLi
     const selectedElement = getSelectedElement();
     const step = 1;
     switch (keyName) {
-      case 'shift+left':
-        moveLeft(step / FINE_GRID_RATIO);
-        break;
       case 'left':
         moveLeft(step);
         break;
-      case 'shift+right':
-        moveRight(step / FINE_GRID_RATIO);
+      case 'shift+left':
+        moveLeft(step / FINE_GRID_RATIO);
+        break;
+      case 'ctrl+shift+left':
+      case 'meta+shift+left':
+        moveLeft(step * FINE_GRID_RATIO);
         break;
       case 'right':
         moveRight(step);
         break;
-      case 'shift+down':
-        moveDown(step / FINE_GRID_RATIO);
+      case 'shift+right':
+        moveRight(step / FINE_GRID_RATIO);
+        break;
+      case 'ctrl+shift+right':
+      case 'meta+shift+right':
+        moveRight(step * FINE_GRID_RATIO);
         break;
       case 'down':
         moveDown(step);
         break;
-      case 'shift+up':
-        moveUp(step / FINE_GRID_RATIO);
+      case 'shift+down':
+        moveDown(step / FINE_GRID_RATIO);
+        break;
+      case 'ctrl+shift+down':
+      case 'meta+shift+down':
+        moveDown(step * FINE_GRID_RATIO);
         break;
       case 'up':
         moveUp(step);
+        break;
+      case 'shift+up':
+        moveUp(step / FINE_GRID_RATIO);
+        break;
+      case 'ctrl+shift+up':
+      case 'meta+shift+up':
+        moveUp(step * FINE_GRID_RATIO);
         break;
       case 'ctrl+[':
       case 'meta+[': // for Mac

@@ -27,6 +27,7 @@ const Container = styled.div`
   z-index: 999;
   tab-index: 0;
   background: white;
+  //box-shadow: 1px 1px 1px 1px dimgray;
 `;
 
 export interface ExplorerProps {
@@ -41,9 +42,8 @@ const Explorer = ({ openCloudFile }: ExplorerProps) => {
   const containerRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
-    setTimeout(() => {
-      containerRef.current?.click();
-    }, 100);
+    // TODO: This doesn't seem to work
+    containerRef.current?.focus();
   }, []);
 
   const { isLoaded, loadError } = useJsApiLoader({
@@ -61,12 +61,6 @@ const Explorer = ({ openCloudFile }: ExplorerProps) => {
   return (
     <Container
       ref={containerRef}
-      onFocus={(e) => {
-        console.log('focus', e);
-      }}
-      onBlur={(e) => {
-        console.log(e);
-      }}
       onKeyDown={(e) => {
         if (e.key === 'Escape') {
           close();
