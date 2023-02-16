@@ -92,6 +92,32 @@
   },
   {
     "author": "Charles Xie",
+    "latitude": 44.45608804405367,
+    "longitude": -73.17554674932099,
+    "type": "PV",
+    "module_number": 0,
+    "label": "Solar Canopy Over Bleachers",
+    "town": "South Burlington",
+    "state": "Vermont",
+    "country": "United States",
+    "userid": "QWecNcxhyvP6j6sBN11hBsfZDau1",
+    "title": "Solar Canopy Over Bleachers"
+  },
+  {
+    "author": "Charles Xie",
+    "latitude": 42.32511193715191,
+    "longitude": -71.36164588865577,
+    "type": "PV",
+    "module_number": 0,
+    "label": "Wayland Middle School Solar Canopies",
+    "town": "Wayland",
+    "state": "Massachusetts",
+    "country": "United States",
+    "userid": "QWecNcxhyvP6j6sBN11hBsfZDau1",
+    "title": "Wayland Middle School Solar Canopies"
+  },
+  {
+    "author": "Charles Xie",
     "latitude": 33.74249063340524,
     "longitude": -84.41325446099088,
     "type": "PV",

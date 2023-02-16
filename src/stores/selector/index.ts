@@ -81,6 +81,8 @@ export const modelMapLatitude = (state: CommonStoreState) => state.modelMapLatit
 
 export const modelMapLongitude = (state: CommonStoreState) => state.modelMapLongitude;
 
+export const modelMapAddress = (state: CommonStoreState) => state.modelMapAddress;
+
 export const modelMapZoom = (state: CommonStoreState) => state.modelMapZoom;
 
 export const modelMapTilt = (state: CommonStoreState) => state.modelMapTilt;

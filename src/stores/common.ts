@@ -131,6 +131,7 @@ export interface CommonStoreState {
   openModelMap: boolean;
   modelMapLatitude: number;
   modelMapLongitude: number;
+  modelMapAddress: string;
   modelMapZoom: number;
   modelMapType: string;
   modelMapTilt: number;
@@ -719,6 +720,7 @@ export const useStore = create<CommonStoreState>(
           openModelMap: false,
           modelMapLatitude: 42.2844063,
           modelMapLongitude: -71.3488548,
+          modelMapAddress: 'Natick, MA',
           modelMapZoom: DEFAULT_MODEL_MAP_ZOOM,
           modelMapType: 'roadmap',
           modelMapTilt: 0,
@@ -5696,6 +5698,7 @@ export const useStore = create<CommonStoreState>(
           'openModelMap',
           'modelMapLatitude',
           'modelMapLongitude',
+          'modelMapAddress',
           'modelMapZoom',
           'modelMapType',
           'modelMapTilt',

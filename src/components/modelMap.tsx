@@ -74,6 +74,7 @@ const ModelMap = ({ closeMap, openModel }: ModelMapProps) => {
   const onLoad = useCallback((map: google.maps.Map) => {
     setMap(map);
     loadCities();
+    map.setMapTypeId(mapType); // for some reason, we have to do this again
   }, []);
 
   const onUnmount = useCallback(function callback() {
@@ -230,8 +231,8 @@ const ModelMap = ({ closeMap, openModel }: ModelMapProps) => {
         width: '100%',
         height: '100%',
       }}
-      options={options}
       mapTypeId={mapType}
+      options={options}
       center={{ lat: latitude, lng: longitude }}
       zoom={mapZoom}
       tilt={mapTilt}

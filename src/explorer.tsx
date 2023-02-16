@@ -8,10 +8,11 @@ import { useStore } from './stores/common';
 import * as Selector from './stores/selector';
 import i18n from './i18n/i18n';
 import { Libraries } from '@react-google-maps/api/dist/utils/make-load-script-url';
-import { useJsApiLoader } from '@react-google-maps/api';
+import { StandaloneSearchBox, useJsApiLoader } from '@react-google-maps/api';
 import Spinner from './components/spinner';
 import { Checkbox, Space } from 'antd';
 import ModelMap from './components/modelMap';
+import { UndoableChangeLocation } from './undo/UndoableChangeLocation';
 
 const libraries = ['places'] as Libraries;
 
@@ -35,10 +36,18 @@ export interface ExplorerProps {
 }
 
 const Explorer = ({ openCloudFile }: ExplorerProps) => {
+  const user = useStore(Selector.user);
   const language = useStore(Selector.language);
   const setCommonStore = useStore(Selector.set);
+  const addUndoable = useStore(Selector.addUndoable);
+  const modelMapLatitude = useStore(Selector.modelMapLatitude);
+  const latitude = modelMapLatitude !== undefined ? modelMapLatitude : 42.2844063;
+  const modelMapLongitude = useStore(Selector.modelMapLongitude);
+  const longitude = modelMapLongitude !== undefined ? modelMapLongitude : -71.3488548;
+  const address = useStore(Selector.modelMapAddress) ?? 'Natick, MA';
   const mapWeatherStations = useStore(Selector.modelMapWeatherStations);
 
+  const searchBox = useRef<google.maps.places.SearchBox>();
   const containerRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -58,6 +67,51 @@ const Explorer = ({ openCloudFile }: ExplorerProps) => {
     });
   };
 
+  const onLoad = (s: google.maps.places.SearchBox) => {
+    searchBox.current = s;
+  };
+
+  const onPlacesChanged = () => {
+    const places = searchBox.current?.getPlaces();
+    if (places && places.length > 0) {
+      const geometry = places[0].geometry;
+      if (geometry) {
+        const undoableChangeLocation = {
+          name: 'Set Model Map Location',
+          timestamp: Date.now(),
+          oldLatitude: latitude,
+          newLatitude: geometry.location.lat(),
+          oldLongitude: longitude,
+          newLongitude: geometry.location.lng(),
+          oldAddress: address,
+          newAddress: places[0].formatted_address as string,
+          undo: () => {
+            setCommonStore((state) => {
+              state.modelMapLatitude = undoableChangeLocation.oldLatitude;
+              state.modelMapLongitude = undoableChangeLocation.oldLongitude;
+              state.modelMapAddress = undoableChangeLocation.oldAddress;
+            });
+          },
+          redo: () => {
+            setCommonStore((state) => {
+              state.modelMapLatitude = undoableChangeLocation.newLatitude;
+              state.modelMapLongitude = undoableChangeLocation.newLongitude;
+              state.modelMapAddress = undoableChangeLocation.newAddress;
+            });
+          },
+        } as UndoableChangeLocation;
+        addUndoable(undoableChangeLocation);
+        setCommonStore((state) => {
+          state.modelMapLatitude = geometry.location.lat();
+          state.modelMapLongitude = geometry.location.lng();
+          state.modelMapAddress = places[0].formatted_address as string;
+        });
+      }
+    }
+  };
+
+  const ifiUser = user.email?.endsWith('@intofuture.org');
+
   return (
     <Container
       ref={containerRef}
@@ -67,6 +121,43 @@ const Explorer = ({ openCloudFile }: ExplorerProps) => {
         }
       }}
     >
+      {isLoaded && (
+        <Space>
+          <div
+            style={{
+              position: 'absolute',
+              fontSize: 'medium',
+              color: 'black',
+              cursor: 'pointer',
+              top: '-40px',
+              left: '40%',
+              width: '20%',
+              height: '28px',
+              background: 'white',
+              boxShadow: '1px 1px 1px 1px gray',
+            }}
+          >
+            <StandaloneSearchBox onLoad={onLoad} onPlacesChanged={onPlacesChanged}>
+              <input
+                type="text"
+                placeholder={address}
+                style={{
+                  boxSizing: `border-box`,
+                  border: `1px solid transparent`,
+                  width: `100%`,
+                  height: `100%`,
+                  fontSize: `14px`,
+                  paddingLeft: '8px',
+                  paddingRight: '8px',
+                  outline: `none`,
+                  textOverflow: `ellipses`,
+                  position: 'relative',
+                }}
+              />
+            </StandaloneSearchBox>
+          </div>
+        </Space>
+      )}
       {isLoaded ? <ModelMap closeMap={close} openModel={openCloudFile} /> : <Spinner />}
       {loadError && (
         <Space>
@@ -81,8 +172,8 @@ const Explorer = ({ openCloudFile }: ExplorerProps) => {
               fontSize: 'medium',
               color: 'black',
               cursor: 'pointer',
-              bottom: '8px',
-              left: '50%',
+              top: '-52px',
+              right: user.uid ? '60px' : '100px',
               width: '64px',
               height: '28px',
               background: 'orange',
@@ -95,37 +186,39 @@ const Explorer = ({ openCloudFile }: ExplorerProps) => {
             {i18n.t('word.Close', { lng: language })}
           </div>
         </Space>
-        <Space>
-          <Checkbox
-            checked={mapWeatherStations}
-            style={{
-              position: 'absolute',
-              fontSize: 'medium',
-              color: 'black',
-              cursor: 'pointer',
-              bottom: '8px',
-              left: 'calc(50% - 160px)',
-              width: '160px',
-              height: '28px',
-              background: 'white',
-              boxShadow: '1px 1px 1px 1px gray',
-              paddingLeft: '4px',
-            }}
-            onChange={() => {
-              setCommonStore((state) => {
-                state.modelMapWeatherStations = !state.modelMapWeatherStations;
-              });
-            }}
-          >
-            {mapWeatherStations ? (
-              <label title={i18n.t('mapPanel.WeatherStationsNote', { lng: language })}>
-                {i18n.t('mapPanel.WeatherStations', { lng: language })}
-              </label>
-            ) : (
-              <label>{i18n.t('mapPanel.WeatherStations', { lng: language })}</label>
-            )}
-          </Checkbox>
-        </Space>
+        {ifiUser && (
+          <Space>
+            <Checkbox
+              checked={mapWeatherStations}
+              style={{
+                position: 'absolute',
+                fontSize: 'medium',
+                color: 'black',
+                cursor: 'pointer',
+                top: '-52px',
+                right: '130px',
+                width: '160px',
+                height: '28px',
+                background: 'white',
+                boxShadow: '1px 1px 1px 1px gray',
+                paddingLeft: '4px',
+              }}
+              onChange={() => {
+                setCommonStore((state) => {
+                  state.modelMapWeatherStations = !state.modelMapWeatherStations;
+                });
+              }}
+            >
+              {mapWeatherStations ? (
+                <label title={i18n.t('mapPanel.WeatherStationsNote', { lng: language })}>
+                  {i18n.t('mapPanel.WeatherStations', { lng: language })}
+                </label>
+              ) : (
+                <label>{i18n.t('mapPanel.WeatherStations', { lng: language })}</label>
+              )}
+            </Checkbox>
+          </Space>
+        )}
       </>
     </Container>
   );
