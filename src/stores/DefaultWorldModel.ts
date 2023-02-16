@@ -10,7 +10,7 @@ import { WorldModel } from '../models/WorldModel';
 import { GroundModel } from '../models/GroundModel';
 import { HumanModel } from '../models/HumanModel';
 import short from 'short-uuid';
-import { GROUND_ID } from '../constants';
+import { DEFAULT_ADDRESS, GROUND_ID } from '../constants';
 import { HumanData } from '../HumanData';
 import { immerable } from 'immer';
 
@@ -56,7 +56,7 @@ export class DefaultWorldModel implements WorldModel {
   constructor() {
     this.latitude = 42.2844063;
     this.longitude = -71.3488548;
-    this.address = 'Natick, MA';
+    this.address = DEFAULT_ADDRESS;
     this.date = new Date(new Date().getFullYear(), 5, 22, 12).toLocaleString('en-US');
 
     this.name = 'default';
@@ -98,7 +98,7 @@ export class DefaultWorldModel implements WorldModel {
   static resetWorldModel(worldModel: WorldModel) {
     worldModel.latitude = 42.2844063;
     worldModel.longitude = -71.3488548;
-    worldModel.address = 'Natick, MA';
+    worldModel.address = DEFAULT_ADDRESS;
     worldModel.date = new Date(new Date().getFullYear(), 5, 22, 12).toLocaleString('en-US');
 
     worldModel.name = 'default';

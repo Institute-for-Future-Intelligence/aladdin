@@ -29,6 +29,7 @@ const GroundMap = ({ width = 400, height = 400 }: { width: number; height: numbe
     setMap(null);
   }, []);
 
+  // FIXME: Undo doesn't work unless the focus is returned to the main window
   const onCenterChanged = throttle(
     () => {
       if (map) {

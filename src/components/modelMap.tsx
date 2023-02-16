@@ -81,6 +81,7 @@ const ModelMap = ({ closeMap, openModel }: ModelMapProps) => {
     setMap(null);
   }, []);
 
+  // FIXME: Undo doesn't work unless the focus is returned to the main window
   const onCenterChanged = () => {
     if (map) {
       const center = map.getCenter();

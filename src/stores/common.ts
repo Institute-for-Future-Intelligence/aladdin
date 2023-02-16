@@ -64,6 +64,7 @@ import { HumanModel } from '../models/HumanModel';
 import { FoundationModel } from '../models/FoundationModel';
 import { CuboidModel } from '../models/CuboidModel';
 import {
+  DEFAULT_ADDRESS,
   DEFAULT_MODEL_MAP_ZOOM,
   FLOATING_WINDOW_OPACITY,
   GROUND_ID,
@@ -720,7 +721,7 @@ export const useStore = create<CommonStoreState>(
           openModelMap: false,
           modelMapLatitude: 42.2844063,
           modelMapLongitude: -71.3488548,
-          modelMapAddress: 'Natick, MA',
+          modelMapAddress: DEFAULT_ADDRESS,
           modelMapZoom: DEFAULT_MODEL_MAP_ZOOM,
           modelMapType: 'roadmap',
           modelMapTilt: 0,

@@ -13,6 +13,7 @@ import Spinner from './components/spinner';
 import { Checkbox, Space } from 'antd';
 import ModelMap from './components/modelMap';
 import { UndoableChangeLocation } from './undo/UndoableChangeLocation';
+import { DEFAULT_ADDRESS } from './constants';
 
 const libraries = ['places'] as Libraries;
 
@@ -44,7 +45,7 @@ const Explorer = ({ openCloudFile }: ExplorerProps) => {
   const latitude = modelMapLatitude !== undefined ? modelMapLatitude : 42.2844063;
   const modelMapLongitude = useStore(Selector.modelMapLongitude);
   const longitude = modelMapLongitude !== undefined ? modelMapLongitude : -71.3488548;
-  const address = useStore(Selector.modelMapAddress) ?? 'Natick, MA';
+  const address = useStore.getState().modelMapAddress ?? DEFAULT_ADDRESS;
   const mapWeatherStations = useStore(Selector.modelMapWeatherStations);
 
   const searchBox = useRef<google.maps.places.SearchBox>();
@@ -71,6 +72,7 @@ const Explorer = ({ openCloudFile }: ExplorerProps) => {
     searchBox.current = s;
   };
 
+  // FIXME: Undo doesn't change the value of the input field
   const onPlacesChanged = () => {
     const places = searchBox.current?.getPlaces();
     if (places && places.length > 0) {
