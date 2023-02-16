@@ -618,30 +618,31 @@ const KeyboardListener = ({ canvas, set2DView, resetView, zoomView }: KeyboardLi
 
   const handleKeyDown = () => {
     const selectedElement = getSelectedElement();
+    const step = 1;
     switch (keyName) {
       case 'shift+left':
-        moveLeft(1 / FINE_GRID_RATIO);
+        moveLeft(step / FINE_GRID_RATIO);
         break;
       case 'left':
-        moveLeft(1);
+        moveLeft(step);
         break;
       case 'shift+right':
-        moveRight(1 / FINE_GRID_RATIO);
+        moveRight(step / FINE_GRID_RATIO);
         break;
       case 'right':
-        moveRight(1);
+        moveRight(step);
         break;
       case 'shift+down':
-        moveDown(1 / FINE_GRID_RATIO);
+        moveDown(step / FINE_GRID_RATIO);
         break;
       case 'down':
-        moveDown(1);
+        moveDown(step);
         break;
       case 'shift+up':
-        moveUp(1 / FINE_GRID_RATIO);
+        moveUp(step / FINE_GRID_RATIO);
         break;
       case 'up':
-        moveUp(1);
+        moveUp(step);
         break;
       case 'ctrl+[':
       case 'meta+[': // for Mac

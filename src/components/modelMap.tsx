@@ -29,6 +29,7 @@ export interface ModelSite {
   latitude: number;
   longitude: number;
   type: string;
+  author?: string;
   module_number?: number;
   label?: string;
   town?: string;
@@ -265,6 +266,8 @@ const ModelMap = ({ closeMap, openModel }: ModelMapProps) => {
               <label style={{ cursor: 'pointer' }} onClick={() => openSite(selectedSite)}>
                 {selectedSite.label}
               </label>
+              <br />
+              <label>by {selectedSite.author ?? 'Anonymous'}</label>
               <hr />
               {selectedSite.town + ', ' + selectedSite.state + ', ' + selectedSite.country}
             </div>

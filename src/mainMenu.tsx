@@ -101,6 +101,7 @@ const MainMenu = ({ viewOnly, set2DView, resetView, zoomView, canvas }: MainMenu
   const countSolarStructuresByType = useStore(Selector.countSolarStructuresByType);
   const selectNone = useStore(Selector.selectNone);
   const addUndoable = useStore(Selector.addUndoable);
+  const openModelMap = useStore(Selector.openModelMap);
 
   const loggable = useStore.getState().loggable;
   const language = useStore.getState().language;
@@ -2249,12 +2250,13 @@ const MainMenu = ({ viewOnly, set2DView, resetView, zoomView, canvas }: MainMenu
         </Radio.Group>
       </SubMenu>
       {/* explore window */}
-      {!viewOnly && (
+      {!viewOnly && !openModelMap && (
         <Menu.Item
           key="world"
           onClick={() => {
             setCommonStore((state) => {
               state.openModelMap = true;
+              state.modelMapWeatherStations = false;
               if (loggable) {
                 state.actionInfo = {
                   name: 'Open Model Map',

@@ -2,7 +2,7 @@
  * @Copyright 2023. Institute for Future Intelligence, Inc.
  */
 
-import React from 'react';
+import React, { useEffect, useRef } from 'react';
 import styled from 'styled-components';
 import { useStore } from './stores/common';
 import * as Selector from './stores/selector';
@@ -17,17 +17,16 @@ const libraries = ['places'] as Libraries;
 
 const Container = styled.div`
   position: absolute;
-  top: 80px;
-  left: 10px;
+  top: 70px;
+  left: 0;
   display: flex;
-  width: calc(100% - 20px);
-  height: calc(100% - 90px);
+  width: 100%;
+  height: calc(100% - 70px);
   flex-direction: column;
   align-items: center;
   z-index: 999;
-  border-radius: 10px;
+  tab-index: 0;
   background: white;
-  box-shadow: 1px 1px 1px 1px gray;
 `;
 
 export interface ExplorerProps {
@@ -38,6 +37,14 @@ const Explorer = ({ openCloudFile }: ExplorerProps) => {
   const language = useStore(Selector.language);
   const setCommonStore = useStore(Selector.set);
   const mapWeatherStations = useStore(Selector.modelMapWeatherStations);
+
+  const containerRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    setTimeout(() => {
+      containerRef.current?.click();
+    }, 100);
+  }, []);
 
   const { isLoaded, loadError } = useJsApiLoader({
     id: 'google-map-script',
@@ -53,6 +60,13 @@ const Explorer = ({ openCloudFile }: ExplorerProps) => {
 
   return (
     <Container
+      ref={containerRef}
+      onFocus={(e) => {
+        console.log('focus', e);
+      }}
+      onBlur={(e) => {
+        console.log(e);
+      }}
       onKeyDown={(e) => {
         if (e.key === 'Escape') {
           close();
@@ -89,6 +103,7 @@ const Explorer = ({ openCloudFile }: ExplorerProps) => {
         </Space>
         <Space>
           <Checkbox
+            checked={mapWeatherStations}
             style={{
               position: 'absolute',
               fontSize: 'medium',
