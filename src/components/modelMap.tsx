@@ -85,34 +85,36 @@ const ModelMap = ({ closeMap, openModel }: ModelMapProps) => {
   const onCenterChanged = () => {
     if (map) {
       const center = map.getCenter();
-      const lat = center.lat();
-      const lng = center.lng();
-      if (lat !== latitude || lng !== longitude) {
-        const undoableChangeLocation = {
-          name: 'Set Model Map Location',
-          timestamp: Date.now(),
-          oldLatitude: latitude,
-          newLatitude: lat,
-          oldLongitude: longitude,
-          newLongitude: lng,
-          undo: () => {
-            setCommonStore((state) => {
-              state.modelMapLatitude = undoableChangeLocation.oldLatitude;
-              state.modelMapLongitude = undoableChangeLocation.oldLongitude;
-            });
-          },
-          redo: () => {
-            setCommonStore((state) => {
-              state.modelMapLatitude = undoableChangeLocation.newLatitude;
-              state.modelMapLongitude = undoableChangeLocation.newLongitude;
-            });
-          },
-        } as UndoableChangeLocation;
-        addUndoable(undoableChangeLocation);
-        setCommonStore((state) => {
-          state.modelMapLatitude = lat;
-          state.modelMapLongitude = lng;
-        });
+      if (center) {
+        const lat = center.lat();
+        const lng = center.lng();
+        if (lat !== latitude || lng !== longitude) {
+          const undoableChangeLocation = {
+            name: 'Set Model Map Location',
+            timestamp: Date.now(),
+            oldLatitude: latitude,
+            newLatitude: lat,
+            oldLongitude: longitude,
+            newLongitude: lng,
+            undo: () => {
+              setCommonStore((state) => {
+                state.modelMapLatitude = undoableChangeLocation.oldLatitude;
+                state.modelMapLongitude = undoableChangeLocation.oldLongitude;
+              });
+            },
+            redo: () => {
+              setCommonStore((state) => {
+                state.modelMapLatitude = undoableChangeLocation.newLatitude;
+                state.modelMapLongitude = undoableChangeLocation.newLongitude;
+              });
+            },
+          } as UndoableChangeLocation;
+          addUndoable(undoableChangeLocation);
+          setCommonStore((state) => {
+            state.modelMapLatitude = lat;
+            state.modelMapLongitude = lng;
+          });
+        }
       }
     }
   };
@@ -120,7 +122,7 @@ const ModelMap = ({ closeMap, openModel }: ModelMapProps) => {
   const onZoomChanged = () => {
     if (map) {
       const z = map.getZoom();
-      if (z !== mapZoom) {
+      if (z !== undefined && z !== mapZoom) {
         const undoableChange = {
           name: 'Zoom Model Map',
           timestamp: Date.now(),
@@ -148,7 +150,7 @@ const ModelMap = ({ closeMap, openModel }: ModelMapProps) => {
   const onTiltChanged = () => {
     if (map) {
       const t = map.getTilt();
-      if (t !== mapTilt) {
+      if (t !== undefined && t !== mapTilt) {
         const undoableChange = {
           name: 'Tilt Model Map',
           timestamp: Date.now(),
@@ -176,7 +178,7 @@ const ModelMap = ({ closeMap, openModel }: ModelMapProps) => {
   const onMapTypeIdChanged = () => {
     if (map) {
       const typeId = map.getMapTypeId();
-      if (typeId !== mapType) {
+      if (typeId !== undefined && typeId !== mapType) {
         const undoableChange = {
           name: 'Change Model Map Type',
           timestamp: Date.now(),
@@ -277,48 +279,50 @@ const ModelMap = ({ closeMap, openModel }: ModelMapProps) => {
         )}
         {
           <MarkerClusterer gridSize={90} minimumClusterSize={3}>
-            {(c) =>
-              sites.map((site: ModelSite, index: number) => {
-                let iconUrl = BuildingIcon;
-                switch (site.type) {
-                  case 'PV':
-                    iconUrl = SolarPanelIcon;
-                    break;
-                  case 'Parabolic Dish':
-                    iconUrl = ParabolicDishIcon;
-                    break;
-                  case 'Parabolic Trough':
-                    iconUrl = ParabolicTroughIcon;
-                    break;
-                  case 'Fresnel Reflector':
-                    iconUrl = FresnelReflectorIcon;
-                    break;
-                  case 'Power Tower':
-                    iconUrl = PowerTowerIcon;
-                    break;
-                }
-                const scaledSize = Math.min(32, 3 * mapZoom);
-                return (
-                  <Marker
-                    key={index}
-                    icon={{
-                      url: iconUrl,
-                      scaledSize: new google.maps.Size(scaledSize, scaledSize),
-                    }}
-                    // label={{text: index.toString(), color: 'white'}}
-                    position={{ lat: site.latitude, lng: site.longitude }}
-                    onClick={() => openSite(site)}
-                    onMouseOver={(e) => {
-                      previousSiteRef.current = selectedSite;
-                      setSelectedSite(site);
-                    }}
-                    onMouseOut={(e) => {
-                      if (selectedSite === previousSiteRef.current) setSelectedSite(null);
-                    }}
-                  />
-                );
-              })
-            }
+            {(c) => (
+              <div>
+                {sites.map((site: ModelSite, index: number) => {
+                  let iconUrl = BuildingIcon;
+                  switch (site.type) {
+                    case 'PV':
+                      iconUrl = SolarPanelIcon;
+                      break;
+                    case 'Parabolic Dish':
+                      iconUrl = ParabolicDishIcon;
+                      break;
+                    case 'Parabolic Trough':
+                      iconUrl = ParabolicTroughIcon;
+                      break;
+                    case 'Fresnel Reflector':
+                      iconUrl = FresnelReflectorIcon;
+                      break;
+                    case 'Power Tower':
+                      iconUrl = PowerTowerIcon;
+                      break;
+                  }
+                  const scaledSize = Math.min(32, 3 * mapZoom);
+                  return (
+                    <Marker
+                      key={index}
+                      icon={{
+                        url: iconUrl,
+                        scaledSize: new google.maps.Size(scaledSize, scaledSize),
+                      }}
+                      // label={{text: index.toString(), color: 'white'}}
+                      position={{ lat: site.latitude, lng: site.longitude }}
+                      onClick={() => openSite(site)}
+                      onMouseOver={(e) => {
+                        previousSiteRef.current = selectedSite;
+                        setSelectedSite(site);
+                      }}
+                      onMouseOut={(e) => {
+                        if (selectedSite === previousSiteRef.current) setSelectedSite(null);
+                      }}
+                    />
+                  );
+                })}
+              </div>
+            )}
           </MarkerClusterer>
         }
       </>

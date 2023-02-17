@@ -125,7 +125,7 @@ const MapPanel = () => {
     const places = searchBox.current?.getPlaces();
     if (places && places.length > 0) {
       const geometry = places[0].geometry;
-      if (geometry) {
+      if (geometry && geometry.location) {
         const undoableChangeLocation = {
           name: 'Set Location',
           timestamp: Date.now(),
@@ -154,8 +154,10 @@ const MapPanel = () => {
         } as UndoableChangeLocation;
         addUndoable(undoableChangeLocation);
         setCommonStore((state) => {
-          state.world.latitude = geometry.location.lat();
-          state.world.longitude = geometry.location.lng();
+          if (geometry.location) {
+            state.world.latitude = geometry.location.lat();
+            state.world.longitude = geometry.location.lng();
+          }
           state.world.address = places[0].formatted_address as string;
         });
       }

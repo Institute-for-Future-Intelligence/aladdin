@@ -34,34 +34,36 @@ const GroundMap = ({ width = 400, height = 400 }: { width: number; height: numbe
     () => {
       if (map) {
         const center = map.getCenter();
-        const lat = center.lat();
-        const lng = center.lng();
-        if (lat !== latitude || lng !== longitude) {
-          const undoableChangeLocation = {
-            name: 'Set Location',
-            timestamp: Date.now(),
-            oldLatitude: latitude,
-            newLatitude: lat,
-            oldLongitude: longitude,
-            newLongitude: lng,
-            undo: () => {
-              setCommonStore((state) => {
-                state.world.latitude = undoableChangeLocation.oldLatitude;
-                state.world.longitude = undoableChangeLocation.oldLongitude;
-              });
-            },
-            redo: () => {
-              setCommonStore((state) => {
-                state.world.latitude = undoableChangeLocation.newLatitude;
-                state.world.longitude = undoableChangeLocation.newLongitude;
-              });
-            },
-          } as UndoableChangeLocation;
-          addUndoable(undoableChangeLocation);
-          setCommonStore((state) => {
-            state.world.latitude = lat;
-            state.world.longitude = lng;
-          });
+        if (center) {
+          const lat = center.lat();
+          const lng = center.lng();
+          if (lat !== latitude || lng !== longitude) {
+            const undoableChangeLocation = {
+              name: 'Set Location',
+              timestamp: Date.now(),
+              oldLatitude: latitude,
+              newLatitude: lat,
+              oldLongitude: longitude,
+              newLongitude: lng,
+              undo: () => {
+                setCommonStore((state) => {
+                  state.world.latitude = undoableChangeLocation.oldLatitude;
+                  state.world.longitude = undoableChangeLocation.oldLongitude;
+                });
+              },
+              redo: () => {
+                setCommonStore((state) => {
+                  state.world.latitude = undoableChangeLocation.newLatitude;
+                  state.world.longitude = undoableChangeLocation.newLongitude;
+                });
+              },
+            } as UndoableChangeLocation;
+            addUndoable(undoableChangeLocation);
+            setCommonStore((state) => {
+              state.world.latitude = lat;
+              state.world.longitude = lng;
+            });
+          }
         }
       }
     },
@@ -73,7 +75,7 @@ const GroundMap = ({ width = 400, height = 400 }: { width: number; height: numbe
     () => {
       if (map) {
         const z = map.getZoom();
-        if (z !== mapZoom) {
+        if (z !== undefined && z !== mapZoom) {
           const undoableChange = {
             name: 'Zoom Map',
             timestamp: Date.now(),
@@ -104,7 +106,7 @@ const GroundMap = ({ width = 400, height = 400 }: { width: number; height: numbe
   const onTiltChanged = () => {
     if (map) {
       const t = map.getTilt();
-      if (t !== mapTilt) {
+      if (t !== undefined && t !== mapTilt) {
         const undoableChange = {
           name: 'Tilt Map',
           timestamp: Date.now(),
@@ -132,7 +134,7 @@ const GroundMap = ({ width = 400, height = 400 }: { width: number; height: numbe
   const onMapTypeIdChanged = () => {
     if (map) {
       const typeId = map.getMapTypeId();
-      if (typeId !== mapType) {
+      if (typeId !== undefined && typeId !== mapType) {
         const undoableChange = {
           name: 'Change Map Type',
           timestamp: Date.now(),

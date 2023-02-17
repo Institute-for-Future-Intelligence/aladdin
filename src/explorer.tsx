@@ -77,7 +77,7 @@ const Explorer = ({ openCloudFile }: ExplorerProps) => {
     const places = searchBox.current?.getPlaces();
     if (places && places.length > 0) {
       const geometry = places[0].geometry;
-      if (geometry) {
+      if (geometry && geometry.location) {
         const undoableChangeLocation = {
           name: 'Set Model Map Location',
           timestamp: Date.now(),
@@ -104,8 +104,10 @@ const Explorer = ({ openCloudFile }: ExplorerProps) => {
         } as UndoableChangeLocation;
         addUndoable(undoableChangeLocation);
         setCommonStore((state) => {
-          state.modelMapLatitude = geometry.location.lat();
-          state.modelMapLongitude = geometry.location.lng();
+          if (geometry.location) {
+            state.modelMapLatitude = geometry.location.lat();
+            state.modelMapLongitude = geometry.location.lng();
+          }
           state.modelMapAddress = places[0].formatted_address as string;
         });
       }
