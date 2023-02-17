@@ -11,7 +11,7 @@ import FresnelReflectorIcon from '../assets/map-fresnel-reflector.png';
 import PowerTowerIcon from '../assets/map-power-tower.png';
 
 import React, { useCallback, useRef, useState } from 'react';
-import { GoogleMap, Marker, GoogleMapProps, InfoWindow } from '@react-google-maps/api';
+import { GoogleMap, Marker, GoogleMapProps, InfoWindow, MarkerClusterer } from '@react-google-maps/api';
 import { useStore } from '../stores/common';
 import * as Selector from '../stores/selector';
 import { UndoableChange } from '../undo/UndoableChange';
@@ -275,45 +275,52 @@ const ModelMap = ({ closeMap, openModel }: ModelMapProps) => {
             </div>
           </InfoWindow>
         )}
-        {sites.map((site: ModelSite, index: number) => {
-          let iconUrl = BuildingIcon;
-          switch (site.type) {
-            case 'PV':
-              iconUrl = SolarPanelIcon;
-              break;
-            case 'Parabolic Dish':
-              iconUrl = ParabolicDishIcon;
-              break;
-            case 'Parabolic Trough':
-              iconUrl = ParabolicTroughIcon;
-              break;
-            case 'Fresnel Reflector':
-              iconUrl = FresnelReflectorIcon;
-              break;
-            case 'Power Tower':
-              iconUrl = PowerTowerIcon;
-              break;
-          }
-          const scaledSize = Math.min(32, 4 * mapZoom);
-          return (
-            <Marker
-              key={index}
-              icon={{
-                url: iconUrl,
-                scaledSize: new google.maps.Size(scaledSize, scaledSize),
-              }}
-              position={{ lat: site.latitude, lng: site.longitude }}
-              onClick={() => openSite(site)}
-              onMouseOver={(e) => {
-                previousSiteRef.current = selectedSite;
-                setSelectedSite(site);
-              }}
-              onMouseOut={(e) => {
-                if (selectedSite === previousSiteRef.current) setSelectedSite(null);
-              }}
-            />
-          );
-        })}
+        {
+          <MarkerClusterer gridSize={90} minimumClusterSize={3}>
+            {(c) =>
+              sites.map((site: ModelSite, index: number) => {
+                let iconUrl = BuildingIcon;
+                switch (site.type) {
+                  case 'PV':
+                    iconUrl = SolarPanelIcon;
+                    break;
+                  case 'Parabolic Dish':
+                    iconUrl = ParabolicDishIcon;
+                    break;
+                  case 'Parabolic Trough':
+                    iconUrl = ParabolicTroughIcon;
+                    break;
+                  case 'Fresnel Reflector':
+                    iconUrl = FresnelReflectorIcon;
+                    break;
+                  case 'Power Tower':
+                    iconUrl = PowerTowerIcon;
+                    break;
+                }
+                const scaledSize = Math.min(32, 3 * mapZoom);
+                return (
+                  <Marker
+                    key={index}
+                    icon={{
+                      url: iconUrl,
+                      scaledSize: new google.maps.Size(scaledSize, scaledSize),
+                    }}
+                    // label={{text: index.toString(), color: 'white'}}
+                    position={{ lat: site.latitude, lng: site.longitude }}
+                    onClick={() => openSite(site)}
+                    onMouseOver={(e) => {
+                      previousSiteRef.current = selectedSite;
+                      setSelectedSite(site);
+                    }}
+                    onMouseOut={(e) => {
+                      if (selectedSite === previousSiteRef.current) setSelectedSite(null);
+                    }}
+                  />
+                );
+              })
+            }
+          </MarkerClusterer>
+        }
       </>
     </GoogleMap>
   );

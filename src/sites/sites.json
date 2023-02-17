@@ -26,6 +26,19 @@
     "title": "Rainbow Swash Solar Panel Arrays"
   },
   {
+    "author": "Rundong Jiang",
+    "latitude": 41.699493414544676,
+    "longitude": -71.45058045403499,
+    "type": "PV",
+    "module_number": 0,
+    "label": "West Shore Road Solar Park",
+    "town": "Warwick",
+    "state": "Rhode Island",
+    "country": "United States",
+    "userid": "JmlYdhia1fROj6WNd8dDZwwtW8Q2",
+    "title": "West Shore Public Hearing Proposed Design"
+  },
+  {
     "author": "Charles Xie",
     "latitude": 35.2397498816683,
     "longitude": -119.02084409607578,
