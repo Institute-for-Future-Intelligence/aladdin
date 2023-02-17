@@ -14,6 +14,19 @@
   },
   {
     "author": "Charles Xie",
+    "latitude": 42.30152633098348,
+    "longitude": -71.04686341053608,
+    "type": "PV",
+    "module_number": 0,
+    "label": "Rainbow Swash Solar Panel Arrays",
+    "town": "Boston",
+    "state": "Massachusetts",
+    "country": "United States",
+    "userid": "QWecNcxhyvP6j6sBN11hBsfZDau1",
+    "title": "Rainbow Swash Solar Panel Arrays"
+  },
+  {
+    "author": "Charles Xie",
     "latitude": 35.2397498816683,
     "longitude": -119.02084409607578,
     "type": "PV",
@@ -79,6 +92,19 @@
   },
   {
     "author": "Charles Xie",
+    "latitude": 42.364528256019696,
+    "longitude": -71.02168530421756,
+    "type": "PV",
+    "module_number": 0,
+    "label": "Terminal A Logan Airport",
+    "town": "Boston",
+    "state": "Massachusetts",
+    "country": "United States",
+    "userid": "QWecNcxhyvP6j6sBN11hBsfZDau1",
+    "title": "Terminal A Logan Airport"
+  },
+  {
+    "author": "Charles Xie",
     "latitude": 44.45608804405367,
     "longitude": -73.17554674932099,
     "type": "PV",
@@ -115,6 +141,19 @@
     "country": "United States",
     "userid": "QWecNcxhyvP6j6sBN11hBsfZDau1",
     "title": "Wayland Middle School Solar Canopies"
+  },
+  {
+    "author": "Charles Xie",
+    "latitude": 42.27622544431889,
+    "longitude": -71.36106583981172,
+    "type": "PV",
+    "module_number": 0,
+    "label": "Natick High School",
+    "town": "Natick",
+    "state": "Massachusetts",
+    "country": "United States",
+    "userid": "QWecNcxhyvP6j6sBN11hBsfZDau1",
+    "title": "Natick High School Massachusetts"
   },
   {
     "author": "Charles Xie",

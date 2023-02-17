@@ -243,10 +243,10 @@ export const FlatRoof = ({
           {!showSolarRadiationHeatmap && (
             <Extrude
               args={[shape, { steps: 1, depth: thickness, bevelEnabled: false }]}
-              castShadow={false}
-              receiveShadow={false}
+              castShadow={shadowEnabled}
+              receiveShadow={shadowEnabled}
             >
-              <meshStandardMaterial color={sideColor ?? 'white'} />
+              <meshStandardMaterial color={sideColor ?? 'white'} transparent={transparent} opacity={opacity} />
             </Extrude>
           )}
         </>
