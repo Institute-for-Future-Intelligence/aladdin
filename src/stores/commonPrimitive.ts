@@ -8,6 +8,8 @@ import create from 'zustand';
 export interface PrimitiveStoreState {
   setPrimitiveStore: <K extends keyof PrimitiveStoreState, V extends PrimitiveStoreState[K]>(key: K, val: V) => void;
 
+  publishOnMapFlag: boolean;
+
   simulationInProgress: boolean;
   simulationPaused: boolean;
   evolutionInProgress: boolean;
@@ -85,6 +87,8 @@ export const usePrimitiveStore = create<PrimitiveStoreState>((set, get) => {
         }
       });
     },
+
+    publishOnMapFlag: false,
 
     simulationInProgress: false,
     simulationPaused: false,

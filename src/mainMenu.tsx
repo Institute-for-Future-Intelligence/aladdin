@@ -79,6 +79,7 @@ const LabelContainer = styled.div`
 `;
 
 export interface MainMenuProps {
+  owner: boolean;
   viewOnly: boolean;
   set2DView: (selected: boolean) => void;
   resetView: () => void;
@@ -86,7 +87,7 @@ export interface MainMenuProps {
   canvas?: HTMLCanvasElement | null;
 }
 
-const MainMenu = ({ viewOnly, set2DView, resetView, zoomView, canvas }: MainMenuProps) => {
+const MainMenu = ({ owner, viewOnly, set2DView, resetView, zoomView, canvas }: MainMenuProps) => {
   const setCommonStore = useStore(Selector.set);
   const setPrimitiveStore = usePrimitiveStore(Selector.setPrimitiveStore);
   const pasteElements = useStore(Selector.pasteElementsByKey);
@@ -899,18 +900,21 @@ const MainMenu = ({ viewOnly, set2DView, resetView, zoomView, canvas }: MainMenu
             </Menu.Item>
           )}
 
-          {user.uid && cloudFile && !viewOnly && (
+          {user.uid && cloudFile && !viewOnly && owner && (
             <Menu.Item
               key="publish-on-model-map"
               onClick={() => {
-                setCommonStore((state) => {
-                  if (loggable) {
+                usePrimitiveStore.setState((state) => {
+                  state.publishOnMapFlag = !state.publishOnMapFlag;
+                });
+                if (loggable) {
+                  setCommonStore((state) => {
                     state.actionInfo = {
                       name: 'Publish on Model Map',
                       timestamp: new Date().getTime(),
                     };
-                  }
-                });
+                  });
+                }
               }}
             >
               {i18n.t('menu.file.PublishOnModelMap', lang)}

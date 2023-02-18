@@ -99,6 +99,8 @@ export const cloudFile = (state: CommonStoreState) => state.cloudFile;
 
 export const saveCloudFileFlag = (state: CommonStoreState) => state.saveCloudFileFlag;
 
+export const publishOnMapFlag = (state: PrimitiveStoreState) => state.publishOnMapFlag;
+
 export const listCloudFilesFlag = (state: CommonStoreState) => state.listCloudFilesFlag;
 
 export const localContentToImportAfterCloudFileUpdate = (state: CommonStoreState) =>

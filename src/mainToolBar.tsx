@@ -12,8 +12,8 @@ import styled from 'styled-components';
 import firebase from 'firebase/app';
 import 'firebase/auth';
 import 'firebase/firestore';
-import { showError, showInfo } from './helpers';
-import { ClassID, CloudFileInfo, FirebaseName, ObjectType, SchoolID, User } from './types';
+import { showError, showInfo, showSuccess } from './helpers';
+import { ClassID, CloudFileInfo, FirebaseName, ModelSite, ObjectType, SchoolID, User } from './types';
 import CloudFilePanel from './panels/cloudFilePanel';
 import Spinner from './components/spinner';
 import AccountSettingsPanel from './panels/accountSettingsPanel';
@@ -24,6 +24,7 @@ import { ExclamationCircleOutlined } from '@ant-design/icons';
 import { Util } from './Util';
 import { HOME_URL } from './constants';
 import Explorer from './explorer';
+import { usePrimitiveStore } from './stores/commonPrimitive';
 
 const ButtonsContainer = styled.div`
   position: absolute;
@@ -47,12 +48,15 @@ const MainToolBar = ({ viewOnly = false }: MainToolBarProps) => {
   const setCommonStore = useStore(Selector.set);
   const language = useStore(Selector.language);
   const user = useStore(Selector.user);
+  const latitude = useStore(Selector.world.latitude);
+  const longitude = useStore(Selector.world.longitude);
   const exportContent = useStore(Selector.exportContent);
   const showCloudFilePanel = useStore(Selector.showCloudFilePanel);
   const showAccountSettingsPanel = useStore(Selector.showAccountSettingsPanel);
   const openModelMap = useStore(Selector.openModelMap);
   const cloudFile = useStore(Selector.cloudFile);
   const saveCloudFileFlag = useStore(Selector.saveCloudFileFlag);
+  const publishOnMapFlag = usePrimitiveStore(Selector.publishOnMapFlag);
   const listCloudFilesFlag = useStore(Selector.listCloudFilesFlag);
   const showCloudFileTitleDialog = useStore(Selector.showCloudFileTitleDialog);
   const showCloudFileTitleDialogFlag = useStore(Selector.showCloudFileTitleDialogFlag);
@@ -72,6 +76,7 @@ const MainToolBar = ({ viewOnly = false }: MainToolBarProps) => {
   const dragRef = useRef<HTMLDivElement | null>(null);
   const cloudFiles = useRef<CloudFileInfo[] | void>();
   const firstCallUpdateCloudFile = useRef<boolean>(true);
+  const firstCallPublishOnMap = useRef<boolean>(true);
   const firstCallListCloudFiles = useRef<boolean>(true);
   const firstAccountSettings = useRef<boolean>(true);
 
@@ -159,6 +164,15 @@ const MainToolBar = ({ viewOnly = false }: MainToolBarProps) => {
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [saveCloudFileFlag]);
+
+  useEffect(() => {
+    if (firstCallPublishOnMap.current) {
+      firstCallPublishOnMap.current = false;
+    } else {
+      publishOnModelMap();
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [publishOnMapFlag]);
 
   useEffect(() => {
     if (firstCallListCloudFiles.current) {
@@ -331,15 +345,29 @@ const MainToolBar = ({ viewOnly = false }: MainToolBarProps) => {
     }
   };
 
-  const publishOnModelMap = (userid: string, title: string, callback?: Function) => {
-    if (userid && title) {
-      const collection = firebase.firestore().collection('sites');
-      if (collection) {
-        const doc = collection.doc(title + ' - ' + userid);
-        if (doc) {
-          doc.set({ x: 0, y: 0 }).then(() => {
-            if (callback) callback();
-          });
+  const publishOnModelMap = () => {
+    if (user) {
+      if (user.uid && title) {
+        const p = new URLSearchParams(window.location.search);
+        const useridFromURL = p.get('userid');
+        const titleFromURL = p.get('title');
+        if (useridFromURL === user.uid && titleFromURL === title) {
+          const collection = firebase.firestore().collection('sites');
+          if (collection) {
+            const doc = collection.doc(title + ' - ' + user.uid);
+            if (doc) {
+              const modelSite = {
+                latitude: latitude,
+                longitude: longitude,
+                author: user.displayName,
+                userid: user.uid,
+                title: title,
+              } as ModelSite;
+              doc.set(modelSite).then(() => {
+                showSuccess(i18n.t('menu.file.PublishedOnModelMap', lang) + '.');
+              });
+            }
+          }
         }
       }
     }

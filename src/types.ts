@@ -48,9 +48,8 @@ export enum FirebaseName {
 export interface ModelSite {
   latitude: number;
   longitude: number;
-  type: string;
+  type?: string;
   author?: string;
-  module_number?: number;
   label?: string;
   town?: string;
   state?: string;

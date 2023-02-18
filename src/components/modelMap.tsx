@@ -271,7 +271,7 @@ const ModelMap = ({ closeMap, openModel }: ModelMapProps) => {
             {(clusterer) => (
               <div>
                 {sites.map((site: ModelSite, index: number) => {
-                  let iconUrl = BuildingIcon;
+                  let iconUrl = undefined;
                   switch (site.type) {
                     case 'PV':
                       iconUrl = SolarPanelIcon;
@@ -288,16 +288,23 @@ const ModelMap = ({ closeMap, openModel }: ModelMapProps) => {
                     case 'Power Tower':
                       iconUrl = PowerTowerIcon;
                       break;
+                    case 'Building':
+                      iconUrl = BuildingIcon;
+                      break;
                   }
                   const scaledSize = Math.min(32, 3 * mapZoom);
                   return (
                     <Marker
                       key={index}
                       clusterer={clusterer}
-                      icon={{
-                        url: iconUrl,
-                        scaledSize: new google.maps.Size(scaledSize, scaledSize),
-                      }}
+                      icon={
+                        iconUrl
+                          ? {
+                              url: iconUrl,
+                              scaledSize: new google.maps.Size(scaledSize, scaledSize),
+                            }
+                          : undefined
+                      }
                       position={{ lat: site.latitude, lng: site.longitude }}
                       onClick={() => openSite(site)}
                       onMouseOver={(e) => {
