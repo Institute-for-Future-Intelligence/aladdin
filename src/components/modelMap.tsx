@@ -267,19 +267,21 @@ const ModelMap = ({ closeMap, openModel }: ModelMapProps) => {
         {selectedSite && (
           <InfoWindow position={{ lat: selectedSite.latitude, lng: selectedSite.longitude }}>
             <div>
-              <label style={{ cursor: 'pointer' }} onClick={() => openSite(selectedSite)}>
+              <label style={{ cursor: 'pointer', color: 'darkblue' }} onClick={() => openSite(selectedSite)}>
                 {selectedSite.label}
               </label>
               <br />
-              <label>by {selectedSite.author ?? 'Anonymous'}</label>
+              <label style={{ fontSize: '11px' }}>
+                {selectedSite.town + ', ' + selectedSite.state + ', ' + selectedSite.country}
+              </label>
               <hr />
-              {selectedSite.town + ', ' + selectedSite.state + ', ' + selectedSite.country}
+              <label>by {selectedSite.author ?? 'Anonymous'}</label>
             </div>
           </InfoWindow>
         )}
         {
-          <MarkerClusterer gridSize={90} minimumClusterSize={3}>
-            {(c) => (
+          <MarkerClusterer>
+            {(clusterer) => (
               <div>
                 {sites.map((site: ModelSite, index: number) => {
                   let iconUrl = BuildingIcon;
@@ -304,11 +306,11 @@ const ModelMap = ({ closeMap, openModel }: ModelMapProps) => {
                   return (
                     <Marker
                       key={index}
+                      clusterer={clusterer}
                       icon={{
                         url: iconUrl,
                         scaledSize: new google.maps.Size(scaledSize, scaledSize),
                       }}
-                      // label={{text: index.toString(), color: 'white'}}
                       position={{ lat: site.latitude, lng: site.longitude }}
                       onClick={() => openSite(site)}
                       onMouseOver={(e) => {
