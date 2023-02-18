@@ -124,6 +124,10 @@ export const i18n_zh_tw = {
       Fixed: '固定',
       Elements: '部件',
       Energy: '能量',
+      Unknown: '未知',
+      Label: '標籤',
+      Building: '建築',
+      Photovoltaic: '光伏',
     },
 
     shared: {
@@ -141,6 +145,7 @@ export const i18n_zh_tw = {
       WindTurbineElement: '風力渦輪機',
       LightElement: '電燈',
       ElementLocked: '固定',
+      ModelType: '模型類别',
     },
 
     message: {

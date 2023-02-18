@@ -24,6 +24,7 @@ import {
   FoundationTexture,
   HumanName,
   LineStyle,
+  ModelType,
   MoveHandleType,
   ObjectType,
   OldRooftopElementData,
@@ -813,6 +814,7 @@ export const useStore = create<CommonStoreState>(
               state.simulationPaused = false;
               state.clearDailySimulationResultsFlag = !state.clearDailySimulationResultsFlag;
               state.clearYearlySimulationResultsFlag = !state.clearYearlySimulationResultsFlag;
+              state.modelType = ModelType.UNKNOWN;
             });
             useDataStore.setState((state) => {
               state.clearDataStore();

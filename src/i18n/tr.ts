@@ -124,6 +124,10 @@ export const i18n_tr = {
       Fixed: 'Sabit',
       Elements: 'Öğeler',
       Energy: 'Energy',
+      Unknown: 'Unknown',
+      Label: 'Label',
+      Building: 'Building',
+      Photovoltaic: 'Photovoltaic',
     },
 
     shared: {
@@ -141,6 +145,7 @@ export const i18n_tr = {
       WindTurbineElement: 'Wind Turbine',
       LightElement: 'Light',
       ElementLocked: 'Kilitli',
+      ModelType: 'Model Type',
     },
 
     message: {

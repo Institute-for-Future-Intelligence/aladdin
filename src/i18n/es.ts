@@ -124,6 +124,10 @@ export const i18n_es = {
       Fixed: 'Fixed',
       Elements: 'Elements',
       Energy: 'Energy',
+      Unknown: 'Unknown',
+      Label: 'Label',
+      Building: 'Building',
+      Photovoltaic: 'Photovoltaic',
     },
 
     shared: {
@@ -141,6 +145,7 @@ export const i18n_es = {
       WindTurbineElement: 'Wind Turbine',
       LightElement: 'Light',
       ElementLocked: 'Bloqueado',
+      ModelType: 'Model Type',
     },
 
     message: {

@@ -19,7 +19,7 @@ import { UndoableChangeLocation } from '../undo/UndoableChangeLocation';
 import { DEFAULT_MODEL_MAP_ZOOM } from '../constants';
 import { showError } from '../helpers';
 import i18n from '../i18n/i18n';
-import { ModelSite } from '../types';
+import { ModelSite, ModelType } from '../types';
 
 export interface ModelMapProps {
   closeMap: () => void;
@@ -258,9 +258,7 @@ const ModelMap = ({ closeMap, openModel }: ModelMapProps) => {
                 {selectedSite.label}
               </label>
               <br />
-              <label style={{ fontSize: '11px' }}>
-                {selectedSite.town + ', ' + selectedSite.state + ', ' + selectedSite.country}
-              </label>
+              <label style={{ fontSize: '11px' }}>{selectedSite.address ?? 'Unknown'}</label>
               <hr />
               <label>by {selectedSite.author ?? 'Anonymous'}</label>
             </div>
@@ -273,22 +271,22 @@ const ModelMap = ({ closeMap, openModel }: ModelMapProps) => {
                 {sites.map((site: ModelSite, index: number) => {
                   let iconUrl = undefined;
                   switch (site.type) {
-                    case 'PV':
+                    case ModelType.PHOTOVOLTAIC:
                       iconUrl = SolarPanelIcon;
                       break;
-                    case 'Parabolic Dish':
+                    case ModelType.PARABOLIC_DISH:
                       iconUrl = ParabolicDishIcon;
                       break;
-                    case 'Parabolic Trough':
+                    case ModelType.PARABOLIC_TROUGH:
                       iconUrl = ParabolicTroughIcon;
                       break;
-                    case 'Fresnel Reflector':
+                    case ModelType.FRESNEL_REFLECTOR:
                       iconUrl = FresnelReflectorIcon;
                       break;
-                    case 'Power Tower':
+                    case ModelType.SOLAR_POWER_TOWER:
                       iconUrl = PowerTowerIcon;
                       break;
-                    case 'Building':
+                    case ModelType.BUILDING:
                       iconUrl = BuildingIcon;
                       break;
                   }

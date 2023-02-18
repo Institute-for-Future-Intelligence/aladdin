@@ -50,6 +50,7 @@ const MainToolBar = ({ viewOnly = false }: MainToolBarProps) => {
   const user = useStore(Selector.user);
   const latitude = useStore(Selector.world.latitude);
   const longitude = useStore(Selector.world.longitude);
+  const address = useStore(Selector.world.address);
   const exportContent = useStore(Selector.exportContent);
   const showCloudFilePanel = useStore(Selector.showCloudFilePanel);
   const showAccountSettingsPanel = useStore(Selector.showAccountSettingsPanel);
@@ -359,9 +360,12 @@ const MainToolBar = ({ viewOnly = false }: MainToolBarProps) => {
               const modelSite = {
                 latitude: latitude,
                 longitude: longitude,
+                address: address,
+                type: usePrimitiveStore.getState().modelType,
                 author: user.displayName,
                 userid: user.uid,
                 title: title,
+                label: usePrimitiveStore.getState().modelLabel,
               } as ModelSite;
               doc.set(modelSite).then(() => {
                 showSuccess(i18n.t('menu.file.PublishedOnModelMap', lang) + '.');

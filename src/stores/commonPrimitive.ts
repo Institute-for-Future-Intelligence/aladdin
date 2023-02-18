@@ -3,12 +3,15 @@
  */
 
 import create from 'zustand';
+import { ModelType } from '../types';
 
 // avoid using undefined value in the store for now.
 export interface PrimitiveStoreState {
   setPrimitiveStore: <K extends keyof PrimitiveStoreState, V extends PrimitiveStoreState[K]>(key: K, val: V) => void;
 
   publishOnMapFlag: boolean;
+  modelType: ModelType;
+  modelLabel: string | undefined;
 
   simulationInProgress: boolean;
   simulationPaused: boolean;
@@ -89,6 +92,8 @@ export const usePrimitiveStore = create<PrimitiveStoreState>((set, get) => {
     },
 
     publishOnMapFlag: false,
+    modelType: ModelType.UNKNOWN,
+    modelLabel: undefined,
 
     simulationInProgress: false,
     simulationPaused: false,

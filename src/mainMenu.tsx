@@ -37,6 +37,7 @@ import BuildingEnergySimulationSettings from './components/contextMenu/elementMe
 import { usePrimitiveStore } from './stores/commonPrimitive';
 import { getExample } from './examples';
 import { checkBuilding, CheckStatus } from './analysis/heatTools';
+import ModelAnnotationDialog from './components/contextMenu/elementMenu/modelAnnotationDialog';
 
 const { SubMenu } = Menu;
 
@@ -141,6 +142,7 @@ const MainMenu = ({ owner, viewOnly, set2DView, resetView, zoomView, canvas }: M
   const selectedElement = useStore.getState().selectedElement;
 
   const [aboutUs, setAboutUs] = useState(false);
+  const [modelAnnotationDialogVisible, setModelAnnotationDialogVisible] = useState(false);
 
   const lang = { lng: language };
   const isMac = Util.isMac();
@@ -901,24 +903,14 @@ const MainMenu = ({ owner, viewOnly, set2DView, resetView, zoomView, canvas }: M
           )}
 
           {user.uid && cloudFile && !viewOnly && owner && (
-            <Menu.Item
-              key="publish-on-model-map"
-              onClick={() => {
-                usePrimitiveStore.setState((state) => {
-                  state.publishOnMapFlag = !state.publishOnMapFlag;
-                });
-                if (loggable) {
-                  setCommonStore((state) => {
-                    state.actionInfo = {
-                      name: 'Publish on Model Map',
-                      timestamp: new Date().getTime(),
-                    };
-                  });
-                }
-              }}
-            >
-              {i18n.t('menu.file.PublishOnModelMap', lang)}
-            </Menu.Item>
+            <>
+              {modelAnnotationDialogVisible && (
+                <ModelAnnotationDialog setDialogVisible={setModelAnnotationDialogVisible} />
+              )}
+              <Menu.Item key="publish-on-model-map" onClick={() => setModelAnnotationDialogVisible(true)}>
+                {i18n.t('menu.file.PublishOnModelMap', lang)}
+              </Menu.Item>
+            </>
           )}
 
           <Menu.Item key="screenshot" onClick={takeScreenshot}>

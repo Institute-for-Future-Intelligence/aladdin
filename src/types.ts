@@ -46,16 +46,14 @@ export enum FirebaseName {
 }
 
 export interface ModelSite {
+  userid: string;
+  title: string;
   latitude: number;
   longitude: number;
+  address?: string;
   type?: string;
   author?: string;
   label?: string;
-  town?: string;
-  state?: string;
-  country?: string;
-  userid: string;
-  title: string;
 }
 
 export enum SchoolID {
@@ -97,6 +95,16 @@ export interface ActionInfo {
   readonly result?: any;
   readonly details?: any;
   readonly steps?: number;
+}
+
+export enum ModelType {
+  UNKNOWN = 'Unknown',
+  BUILDING = 'Building',
+  PHOTOVOLTAIC = 'Photovoltaic',
+  PARABOLIC_DISH = 'Parabolic Dish',
+  PARABOLIC_TROUGH = 'Parabolic Trough',
+  FRESNEL_REFLECTOR = 'Fresnel Reflector',
+  SOLAR_POWER_TOWER = 'Solar Power Tower',
 }
 
 export enum DesignProblem {
