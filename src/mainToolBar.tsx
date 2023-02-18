@@ -331,6 +331,20 @@ const MainToolBar = ({ viewOnly = false }: MainToolBarProps) => {
     }
   };
 
+  const publishOnModelMap = (userid: string, title: string, callback?: Function) => {
+    if (userid && title) {
+      const collection = firebase.firestore().collection('sites');
+      if (collection) {
+        const doc = collection.doc(title + ' - ' + userid);
+        if (doc) {
+          doc.set({ x: 0, y: 0 }).then(() => {
+            if (callback) callback();
+          });
+        }
+      }
+    }
+  };
+
   const saveToCloud = (tlt: string, silent: boolean) => {
     const t = tlt.trim();
     if (t.length > 0) {

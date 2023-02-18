@@ -899,6 +899,24 @@ const MainMenu = ({ viewOnly, set2DView, resetView, zoomView, canvas }: MainMenu
             </Menu.Item>
           )}
 
+          {user.uid && cloudFile && !viewOnly && (
+            <Menu.Item
+              key="publish-on-model-map"
+              onClick={() => {
+                setCommonStore((state) => {
+                  if (loggable) {
+                    state.actionInfo = {
+                      name: 'Publish on Model Map',
+                      timestamp: new Date().getTime(),
+                    };
+                  }
+                });
+              }}
+            >
+              {i18n.t('menu.file.PublishOnModelMap', lang)}
+            </Menu.Item>
+          )}
+
           <Menu.Item key="screenshot" onClick={takeScreenshot}>
             {i18n.t('menu.file.TakeScreenshot', lang)}
           </Menu.Item>

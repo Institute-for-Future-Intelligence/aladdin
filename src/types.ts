@@ -45,6 +45,20 @@ export enum FirebaseName {
   LOG_DATA = 'Log Data',
 }
 
+export interface ModelSite {
+  latitude: number;
+  longitude: number;
+  type: string;
+  author?: string;
+  module_number?: number;
+  label?: string;
+  town?: string;
+  state?: string;
+  country?: string;
+  userid: string;
+  title: string;
+}
+
 export enum SchoolID {
   UNKNOWN = 'UNKNOWN SCHOOL',
   SCHOOL1 = 'SCHOOL 1',

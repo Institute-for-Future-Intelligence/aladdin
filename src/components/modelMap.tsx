@@ -19,24 +19,11 @@ import { UndoableChangeLocation } from '../undo/UndoableChangeLocation';
 import { DEFAULT_MODEL_MAP_ZOOM } from '../constants';
 import { showError } from '../helpers';
 import i18n from '../i18n/i18n';
+import { ModelSite } from '../types';
 
 export interface ModelMapProps {
   closeMap: () => void;
   openModel: (userid: string, title: string) => void;
-}
-
-export interface ModelSite {
-  latitude: number;
-  longitude: number;
-  type: string;
-  author?: string;
-  module_number?: number;
-  label?: string;
-  town?: string;
-  state?: string;
-  country?: string;
-  userid: string;
-  title: string;
 }
 
 const ModelMap = ({ closeMap, openModel }: ModelMapProps) => {

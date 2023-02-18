@@ -228,6 +228,8 @@ export const i18n_tr = {
         ToSaveYourWorkPleaseSignIn: 'Çalışmanızı kaydetmek için lütfen oturum açınız.',
         TakeScreenshot: 'Ekran görüntüsü al',
         UseCloudFileName: 'Bulut Dosya Adını Kullan',
+        PublishOnModelMap: 'Publish On Model Map',
+        PublishedOnModelMap: 'Your model has been published on the Model Map',
       },
       editSubMenu: 'Düzen',
       edit: {

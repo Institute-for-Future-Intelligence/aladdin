@@ -1,5 +1,5 @@
 /*
- * @Copyright 2021-2022. Institute for Future Intelligence, Inc.
+ * @Copyright 2021-2023. Institute for Future Intelligence, Inc.
  */
 
 import React, { useEffect, useRef, useState } from 'react';
@@ -241,10 +241,10 @@ const CloudFilePanel = ({ cloudFileArray, openCloudFile, deleteCloudFile, rename
                 pageSizeOptions: ['10', '20', '50'],
               }}
             >
-              <Column title={i18n.t('word.Title', lang)} dataIndex="title" key="title" />
-              <Column title={i18n.t('word.Owner', lang)} dataIndex="owner" key="owner" />
-              <Column title={i18n.t('word.Time', lang)} dataIndex="time" key="time" />
+              <Column title={i18n.t('word.Title', lang)} dataIndex="title" key="title" width={'50%'} />
+              <Column title={i18n.t('word.Time', lang)} dataIndex="time" key="time" width={'28%'} />
               <Column
+                width={'22%'}
                 title={i18n.t('word.Action', lang)}
                 key="action"
                 render={(text, record: any) => (
@@ -256,8 +256,8 @@ const CloudFilePanel = ({ cloudFileArray, openCloudFile, deleteCloudFile, rename
                       onClick={() => {
                         openCloudFile(record.userid, record.title);
                       }}
-                      height={20}
-                      width={20}
+                      height={16}
+                      width={16}
                       style={{
                         cursor: 'pointer',
                         verticalAlign: 'middle',
@@ -270,8 +270,8 @@ const CloudFilePanel = ({ cloudFileArray, openCloudFile, deleteCloudFile, rename
                       onClick={() => {
                         deleteFile(record.userid, record.title);
                       }}
-                      height={20}
-                      width={20}
+                      height={16}
+                      width={16}
                       style={{
                         cursor: 'pointer',
                         verticalAlign: 'middle',
@@ -286,8 +286,8 @@ const CloudFilePanel = ({ cloudFileArray, openCloudFile, deleteCloudFile, rename
                         setUserid(record.userid);
                         setRenameDialogVisible(true);
                       }}
-                      height={20}
-                      width={20}
+                      height={16}
+                      width={16}
                       style={{
                         cursor: 'pointer',
                         verticalAlign: 'middle',
@@ -307,8 +307,8 @@ const CloudFilePanel = ({ cloudFileArray, openCloudFile, deleteCloudFile, rename
                         copyTextToClipboard(url);
                         showSuccess(i18n.t('cloudFilePanel.LinkGeneratedInClipBoard', lang) + '.');
                       }}
-                      height={20}
-                      width={20}
+                      height={16}
+                      width={16}
                       style={{
                         cursor: 'pointer',
                         verticalAlign: 'middle',
