@@ -75,7 +75,6 @@ const MainToolBar = ({ viewOnly = false }: MainToolBarProps) => {
   const firstCallListCloudFiles = useRef<boolean>(true);
   const firstAccountSettings = useRef<boolean>(true);
 
-  const params = new URLSearchParams(window.location.search);
   const lang = { lng: language };
 
   useEffect(() => {
@@ -188,6 +187,7 @@ const MainToolBar = ({ viewOnly = false }: MainToolBarProps) => {
   }, [user.signFile, user.schoolID, user.classID]);
 
   const init = () => {
+    const params = new URLSearchParams(window.location.search);
     const userid = params.get('userid');
     const title = params.get('title');
     if (userid && title) {
